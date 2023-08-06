@@ -19,8 +19,8 @@ public class WMapStruct258 {
   /** short */
   public int colour_20;
 
-  public WMapStruct258Sub60[] _24;
-  public int _28;
+  public WMapAtmosphericEffectInstance60[] _24;
+  public int clutYIndex_28;
   public FileData imageData_2c;
   public FileData imageData_30;
   public final GsCOORDINATE2 coord2_34 = new GsCOORDINATE2();

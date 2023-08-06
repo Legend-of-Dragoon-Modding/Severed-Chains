@@ -3,24 +3,24 @@ package legend.game.wmap;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.SVECTOR;
 
-public class WMapStruct258Sub60 {
+public class WMapAtmosphericEffectInstance60 {
   public final GsCOORDINATE2 coord2_00 = new GsCOORDINATE2();
   public final SVECTOR rotation_50 = new SVECTOR();
   /** short */
-  public int _58;
+  public int x_58;
   /** short */
-  public int _5a;
+  public int y_5a;
   /** short */
-  public int _5c;
+  public int brightness_5c;
   /** byte */
-  public int _5e;
+  public int z_5e;
 
-  public void set(final WMapStruct258Sub60 other) {
+  public void set(final WMapAtmosphericEffectInstance60 other) {
     this.coord2_00.set(other.coord2_00);
     this.rotation_50.set(other.rotation_50);
-    this._58 = other._58;
-    this._5a = other._5a;
-    this._5c = other._5c;
-    this._5e = other._5e;
+    this.x_58 = other.x_58;
+    this.y_5a = other.y_5a;
+    this.brightness_5c = other.brightness_5c;
+    this.z_5e = other.z_5e;
   }
 }
