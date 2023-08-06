@@ -3,6 +3,7 @@ package legend.core.gte;
 import legend.core.memory.Value;
 import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.ShortRef;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 
@@ -39,6 +40,13 @@ public class SVECTOR implements MemoryRef {
     this.setX((short)other.getX());
     this.setY((short)other.getY());
     this.setZ((short)other.getZ());
+    return this;
+  }
+
+  public SVECTOR set(final Vector3f other) {
+    this.setX((short)other.x);
+    this.setY((short)other.y);
+    this.setZ((short)other.z);
     return this;
   }
 
@@ -295,6 +303,40 @@ public class SVECTOR implements MemoryRef {
     this.y.or(value);
     this.z.or(value);
     return this;
+  }
+
+  public SVECTOR mul(final MATRIX matrix, final SVECTOR out) {
+    out.set(
+      (short)((long)matrix.get(0, 0) * this.getX() + matrix.get(0, 1) * this.getY() + matrix.get(0, 2) * this.getZ() >> 12),
+      (short)((long)matrix.get(1, 0) * this.getX() + matrix.get(1, 1) * this.getY() + matrix.get(1, 2) * this.getZ() >> 12),
+      (short)((long)matrix.get(2, 0) * this.getX() + matrix.get(2, 1) * this.getY() + matrix.get(2, 2) * this.getZ() >> 12)
+    );
+
+    return this;
+  }
+
+  public SVECTOR mul(final MATRIX matrix, final Vector3f out) {
+    out.set(
+      (short)((long)matrix.get(0, 0) * this.getX() + matrix.get(0, 1) * this.getY() + matrix.get(0, 2) * this.getZ() >> 12) / 4096.0f,
+      (short)((long)matrix.get(1, 0) * this.getX() + matrix.get(1, 1) * this.getY() + matrix.get(1, 2) * this.getZ() >> 12) / 4096.0f,
+      (short)((long)matrix.get(2, 0) * this.getX() + matrix.get(2, 1) * this.getY() + matrix.get(2, 2) * this.getZ() >> 12) / 4096.0f
+    );
+
+    return this;
+  }
+
+  public SVECTOR mul(final MATRIX matrix, final VECTOR out) {
+    out.set(
+      (int)((long)matrix.get(0, 0) * this.getX() + matrix.get(0, 1) * this.getY() + matrix.get(0, 2) * this.getZ() >> 12),
+      (int)((long)matrix.get(1, 0) * this.getX() + matrix.get(1, 1) * this.getY() + matrix.get(1, 2) * this.getZ() >> 12),
+      (int)((long)matrix.get(2, 0) * this.getX() + matrix.get(2, 1) * this.getY() + matrix.get(2, 2) * this.getZ() >> 12)
+    );
+
+    return this;
+  }
+
+  public SVECTOR mul(final MATRIX matrix) {
+    return this.mul(matrix, this);
   }
 
   @Override

@@ -5,32 +5,33 @@ import legend.game.scripting.ScriptState;
 
 import java.util.function.BiConsumer;
 
-public class EffectManagerData6c extends BattleScriptDataBase {
+public class EffectManagerData6c<T extends EffectManagerData6cInner<T>> extends BattleScriptDataBase {
   public final String name;
 
   public int flags_04;
   public int scriptIndex_0c;
   public int coord2Index_0d;
-  public ScriptState<EffectManagerData6c> myScriptState_0e;
+  public ScriptState<EffectManagerData6c<T>> myScriptState_0e;
 
-  public final EffectManagerData6cInner _10 = new EffectManagerData6cInner();
+  public final T _10;
   public Effect effect_44;
-  public BiConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c> ticker_48;
-  public BiConsumer<ScriptState<EffectManagerData6c>, EffectManagerData6c> destructor_4c;
-  public ScriptState<EffectManagerData6c> parentScript_50;
-  public ScriptState<EffectManagerData6c> childScript_52;
+  public BiConsumer<ScriptState<EffectManagerData6c<T>>, EffectManagerData6c<T>> ticker_48;
+  public BiConsumer<ScriptState<EffectManagerData6c<T>>, EffectManagerData6c<T>> destructor_4c;
+  public ScriptState<EffectManagerData6c<?>> parentScript_50;
+  public ScriptState<EffectManagerData6c<?>> childScript_52;
   /** If replacing a child, this is the old child's ID */
-  public ScriptState<EffectManagerData6c> oldChildScript_54;
+  public ScriptState<EffectManagerData6c<?>> oldChildScript_54;
   /** If replaced as a child, this is the new child's ID */
-  public ScriptState<EffectManagerData6c> newChildScript_56;
+  public ScriptState<EffectManagerData6c<?>> newChildScript_56;
   public BttlScriptData6cSubBase2 _58;
   //  public String type_5c; Equivalent to "name" above
 
-  public EffectManagerData6c(final String name) {
+  public EffectManagerData6c(final String name, final T inner) {
     this.name = name;
+    this._10 = inner;
   }
 
-  public void set(final EffectManagerData6c other) {
+  public void set(final EffectManagerData6c<T> other) {
     this.flags_04 = other.flags_04;
     this.scriptIndex_0c = other.scriptIndex_0c;
     this.coord2Index_0d = other.coord2Index_0d;

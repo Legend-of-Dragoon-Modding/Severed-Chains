@@ -25,7 +25,7 @@ public class VramTextureStitched extends VramTexture {
   @Override
   public int getTexel(final VramTexture palette, final int pageX, final int x, final int y) {
     for(final VramTexture texture : this.textures) {
-      final int textureOffset = (texture.rect.x() - pageX) * this.bpp.widthScale;
+      final int textureOffset = (texture.rect.x() - pageX) * this.bpp.widthDivisor;
       final int textureX = x - textureOffset;
 
       if(textureX >= 0 && textureX < texture.rect.w()) {
@@ -39,7 +39,7 @@ public class VramTextureStitched extends VramTexture {
   @Override
   public int getTexel(final int pageX, final int x, final int y) {
     for(final VramTexture texture : this.textures) {
-      final int textureOffset = (texture.rect.x() - pageX) * this.bpp.widthScale;
+      final int textureOffset = (texture.rect.x() - pageX) * this.bpp.widthDivisor;
       final int textureX = x - textureOffset;
 
       if(textureX >= 0 && textureX < texture.rect.w()) {

@@ -3,6 +3,7 @@ package legend.core.gte;
 import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 
@@ -26,11 +27,24 @@ public class VECTOR implements MemoryRef {
     this.set(x, y, z);
   }
 
+  public VECTOR(final Vector3f other) {
+    this();
+    this.set(other);
+  }
+
   public VECTOR(final Value ref) {
     this.ref = ref;
     this.x = new IntRef(ref.offset(4, 0x0L));
     this.y = new IntRef(ref.offset(4, 0x4L));
     this.z = new IntRef(ref.offset(4, 0x8L));
+  }
+
+  /** NOTE: does NOT set pad */
+  public VECTOR set(final Vector3f other) {
+    this.setX((int)other.x);
+    this.setY((int)other.y);
+    this.setZ((int)other.z);
+    return this;
   }
 
   /** NOTE: does NOT set pad */
@@ -58,6 +72,14 @@ public class VECTOR implements MemoryRef {
   }
 
   /** NOTE: does NOT set pad */
+  public VECTOR set(final BVEC4 other) {
+    this.setX(other.getX());
+    this.setY(other.getY());
+    this.setZ(other.getZ());
+    return this;
+  }
+
+  /** NOTE: does NOT set pad */
   public VECTOR set(final int x, final int y, final int z) {
     this.setX(x);
     this.setY(y);
@@ -72,6 +94,10 @@ public class VECTOR implements MemoryRef {
       case 2 -> this.getZ();
       default -> throw new IllegalArgumentException("Invalid element");
     };
+  }
+
+  public void get(final Vector3f dest) {
+    dest.set(this.getX(), this.getY(), this.getZ());
   }
 
   public IntRef component(final int element) {
@@ -288,6 +314,47 @@ public class VECTOR implements MemoryRef {
 
   public long lengthSquared() {
     return (long)this.getX() * this.getX() + this.getY() * this.getY() + this.getZ() * this.getZ();
+  }
+
+  public VECTOR normalize() {
+    if(this.getX() == 0 && this.getY() == 0 && this.getZ() == 0) {
+      return this;
+    }
+
+    final int length = this.length();
+    return this.shl(12).div(length);
+  }
+
+  public VECTOR cross(final VECTOR right, final VECTOR out) {
+    out.set(
+      this.getZ() * right.getY() - this.getY() * right.getZ() >> 12,
+      this.getX() * right.getZ() - this.getZ() * right.getX() >> 12,
+      this.getY() * right.getX() - this.getX() * right.getY() >> 12
+    );
+
+    return this;
+  }
+
+  public VECTOR cross(final VECTOR right) {
+    return this.cross(right, this);
+  }
+
+  public VECTOR mul(final MATRIX matrix, final VECTOR out) {
+    out.set(
+      (int)((long)matrix.get(0, 0) * this.getX() + matrix.get(0, 1) * this.getY() + matrix.get(0, 2) * this.getZ() >> 12),
+      (int)((long)matrix.get(1, 0) * this.getX() + matrix.get(1, 1) * this.getY() + matrix.get(1, 2) * this.getZ() >> 12),
+      (int)((long)matrix.get(2, 0) * this.getX() + matrix.get(2, 1) * this.getY() + matrix.get(2, 2) * this.getZ() >> 12)
+    );
+
+    return this;
+  }
+
+  public VECTOR mul(final MATRIX matrix) {
+    return this.mul(matrix, this);
+  }
+
+  public Vector3f toVec3() {
+    return new Vector3f(this.getX(), this.getY(), this.getZ());
   }
 
   @Override

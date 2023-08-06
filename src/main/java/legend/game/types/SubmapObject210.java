@@ -1,6 +1,7 @@
 package legend.game.types;
 
 import legend.core.gte.VECTOR;
+import org.joml.Vector3f;
 
 public class SubmapObject210 {
   public final Model124 model_00;
@@ -27,7 +28,7 @@ public class SubmapObject210 {
   public int s_178;
 
   /** The amount to rotate this sobj by each frame for {@link SubmapObject210#rotationFrames_188} frames */
-  public final VECTOR rotationAmount_17c = new VECTOR();
+  public final Vector3f rotationAmount_17c = new Vector3f();
   /** Number of frames to apply rotation for */
   public int rotationFrames_188;
   public int ui_18c;
@@ -76,9 +77,7 @@ public class SubmapObject210 {
   public int flatLightBlue_1c7;
   public boolean ambientColourEnabled_1c8;
 
-  public int ambientRed_1ca;
-  public int ambientGreen_1cc;
-  public int ambientBlue_1ce;
+  public final Vector3f ambientColour_1ca = new Vector3f();
   public final BigSubStruct _1d0 = new BigSubStruct();
 
   public SubmapObject210(final String name) {

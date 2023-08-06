@@ -8,6 +8,7 @@ import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
 import legend.game.combat.environment.BattleLightStruct64;
 import legend.game.types.Translucency;
+import org.joml.Vector3f;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
@@ -28,7 +29,7 @@ public final class Renderer {
   public static void renderDobj2(final GsDOBJ2 dobj2, final boolean useSpecialTranslucency, final int ctmdFlag) {
     final TmdObjTable1c objTable = dobj2.tmd_08;
     final SVECTOR[] vertices = objTable.vert_top_00;
-    final SVECTOR[] normals = objTable.normal_top_08;
+    final Vector3f[] normals = objTable.normal_top_08;
 
     // CTMD flag and scripted "uniform lighting" + transparency flag for STMDs in DEFFs
     final int specialFlags = ctmdFlag | ((dobj2.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0);
@@ -39,7 +40,9 @@ public final class Renderer {
     }
   }
 
-  public static void renderTmdPrimitive(final TmdObjTable1c.Primitive primitive, final SVECTOR[] vertices, final SVECTOR[] normals, final boolean useSpecialTranslucency, final int specialFlags) {
+  private static final Vector3f ZERO = new Vector3f();
+
+  public static void renderTmdPrimitive(final TmdObjTable1c.Primitive primitive, final SVECTOR[] vertices, final Vector3f[] normals, final boolean useSpecialTranslucency, final int specialFlags) {
     // Read type info from command ---
     final int command = (primitive.header() | specialFlags) & 0xff04_0000;
     final int primitiveId = command >>> 24;
@@ -164,29 +167,22 @@ public final class Renderer {
 
       if(textured && translucent && !lit && (ctmd || uniformLit)) {
         final BattleLightStruct64 bkLight = _800c6930;
-        final int rbk = bkLight.colour_00.getX();
-        final int gbk = bkLight.colour_00.getY();
-        final int bbk = bkLight.colour_00.getZ();
 
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
           int rgb = poly.vertices[vertexIndex].colour;
-          final int r = (((rgb & 0xff) * rbk >> 12) & 0xff);
-          final int g = ((((rgb >>> 8) & 0xff) * gbk >> 12) & 0xff);
-          final int b = ((((rgb >>> 16) & 0xff) * bbk >> 12) & 0xff);
+          final int r = (int)((rgb        & 0xff) * bkLight.colour_00.x) & 0xff;
+          final int g = (int)((rgb >>>  8 & 0xff) * bkLight.colour_00.y) & 0xff;
+          final int b = (int)((rgb >>> 16 & 0xff) * bkLight.colour_00.z) & 0xff;
           rgb = b << 16 | g << 8 | r;
           cmd.rgb(vertexIndex, rgb);
         }
       } else if(!textured || lit) {
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
-          GTE.setRgbc(poly.vertices[vertexIndex].colour);
-
           if(poly.vertices[vertexIndex].normalIndex < normals.length) {
-            GTE.setVertex(0, normals[poly.vertices[vertexIndex].normalIndex]);
+            cmd.rgb(vertexIndex, GTE.normalColour(normals[poly.vertices[vertexIndex].normalIndex], poly.vertices[vertexIndex].colour));
           } else {
-            GTE.setVertex(0, 0, 0, 0);
+            cmd.rgb(vertexIndex, GTE.normalColour(ZERO, poly.vertices[vertexIndex].colour));
           }
-
-          cmd.rgb(vertexIndex, GTE.normalColour());
         }
       } else {
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {

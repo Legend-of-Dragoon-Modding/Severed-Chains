@@ -32,7 +32,7 @@ public final class VramTextureLoader {
     final RECT imageSize = tim.getImageRect();
 
     final Bpp bpp = tim.getBpp();
-    final int width = imageSize.w.get() * bpp.widthScale;
+    final int width = imageSize.w.get() * bpp.widthDivisor;
     final int height = imageSize.h.get();
 
     final int[] data = new int[width * height];

@@ -10,9 +10,7 @@ import legend.core.gpu.VramTexture;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.MATRIX;
-import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdWithId;
-import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.opengl.Window;
 import legend.game.fmv.Fmv;
@@ -28,6 +26,7 @@ import legend.game.types.EngineState;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
+import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
@@ -63,7 +62,6 @@ import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
-import static legend.game.Scus94491BpeSegment_8003.ScaleMatrixL;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
@@ -75,7 +73,6 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 
 public final class Ttle {
   private Ttle() { }
@@ -252,8 +249,8 @@ public final class Ttle {
 
     resizeDisplay(384, 240);
     setProjectionPlaneDistance(320);
-    GsRVIEW2_800c6760.viewpoint_00.set(0, 0, 2000);
-    GsRVIEW2_800c6760.refpoint_0c.set(0, 0, -4000);
+    GsRVIEW2_800c6760.viewpoint_00.set(0.0f, 0.0f, 2000.0f);
+    GsRVIEW2_800c6760.refpoint_0c.set(0.0f, 0.0f, -4000.0f);
     GsRVIEW2_800c6760.viewpointTwist_18 = 0;
     GsRVIEW2_800c6760.super_1c = null;
     GsSetRefView2L(GsRVIEW2_800c6760);
@@ -1008,8 +1005,8 @@ public final class Ttle {
 
   @Method(0x800cb728L)
   public static void renderMenuLogoFire() {
-    final SVECTOR rotation = new SVECTOR().set((short)0, (short)-0x800, (short)0);
-    final VECTOR scale = new VECTOR().set(0xdac, 0x1000, 0x1000);
+    final Vector3f rotation = new Vector3f(0.0f, -MathHelper.TWO_PI / 2.0f, 0.0f);
+    final Vector3f scale = new Vector3f(0.8544922f, 1.0f, 1.0f);
 
     if(!logoFireInitialized) {
       logoFireInitialized = true;
@@ -1037,7 +1034,7 @@ public final class Ttle {
       FUN_800cc26c(rotation, coord2s[i]);
       GsGetLws(dobj2s[i].coord2_04, sp10, sp30);
       GsSetLightMatrix(sp10);
-      ScaleMatrixL(sp30, scale);
+      sp30.scaleL(scale);
       setRotTransMatrix(sp30);
       zOffset_1f8003e8.set(100);
       fireRenderable[i]
@@ -1149,9 +1146,8 @@ public final class Ttle {
   }
 
   @Method(0x800cc26cL)
-  public static void FUN_800cc26c(final SVECTOR a0, final GsCOORDINATE2 a1) {
-    final MATRIX m = new MATRIX();
-    m.set(identityMatrix_800c3568);
+  public static void FUN_800cc26c(final Vector3f a0, final GsCOORDINATE2 a1) {
+    final MATRIX m = new MATRIX().identity();
     m.transfer.set(a1.coord.transfer);
     RotMatrix_Xyz(a0, m);
     a1.coord.set(m);

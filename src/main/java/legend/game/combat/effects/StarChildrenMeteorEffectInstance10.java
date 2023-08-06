@@ -11,10 +11,10 @@ public class StarChildrenMeteorEffectInstance10 {
   /* Fields repeatedly set but never used
   public int previousCenterOffsetX_06;
   public int previousCenterOffsetY_08; */
-  public int scale_0a;
+  public float scale_0a;
   /** ushorts */
-  public int scaleW_0c;
-  public int scaleH_0e;
+  public float scaleW_0c;
+  public float scaleH_0e;
 
   public StarChildrenMeteorEffectInstance10(final int index) {
     this.index = index;

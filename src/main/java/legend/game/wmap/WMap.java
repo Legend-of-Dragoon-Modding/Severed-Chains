@@ -44,6 +44,8 @@ import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
+import org.joml.Math;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -87,11 +89,9 @@ import static legend.game.Scus94491BpeSegment_8002.renderModel;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.strcmp;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
-import static legend.game.Scus94491BpeSegment_8003.FUN_8003ea80;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
-import static legend.game.Scus94491BpeSegment_8003.GsSetAmbient;
 import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
@@ -103,7 +103,6 @@ import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransformTriple;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
-import static legend.game.Scus94491BpeSegment_8004.FUN_80040e40;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.previousEngineState_8004dd28;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
@@ -130,7 +129,6 @@ import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.textboxes_800be358;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 
 public class WMap {
   private static final Value _800c6690 = MEMORY.ref(4, 0x800c6690L);
@@ -186,7 +184,7 @@ public class WMap {
   private static final COLOUR _800c8778 = MEMORY.ref(4, 0x800c8778L, COLOUR::new);
   private static final RECT _800c877c = MEMORY.ref(4, 0x800c877cL, RECT::new);
 
-  private static final VECTOR _800c87d8 = new VECTOR(0, 0x1000, 0);
+  private static final Vector3f _800c87d8 = new Vector3f(0.0f, 1.0f, 0.0f);
   private static final COLOUR _800c87e8 = MEMORY.ref(4, 0x800c87e8L, COLOUR::new);
   private static final RECT _800c87ec = MEMORY.ref(4, 0x800c87ecL, RECT::new);
   private static final COLOUR _800c87f4 = MEMORY.ref(4, 0x800c87f4L, COLOUR::new);
@@ -1541,9 +1539,9 @@ public class WMap {
     GsInitCoordinate2(null, _800c66b0.coord2_20);
 
     _800c66b0.coord2_20.coord.transfer.set(0, 0, 0);
-    _800c66b0.mapRotation_70.set((short)0, (short)0, (short)0);
-    _800c66b0.rview2_00.viewpoint_00.set(0, -300, -900);
-    _800c66b0.rview2_00.refpoint_0c.set(0, 300, 900);
+    _800c66b0.mapRotation_70.zero();
+    _800c66b0.rview2_00.viewpoint_00.set(0.0f, -300.0f, -900.0f);
+    _800c66b0.rview2_00.refpoint_0c.set(0.0f, 300.0f, 900.0f);
     _800c66b0.rview2_00.viewpointTwist_18 = 0;
     _800c66b0.rview2_00.super_1c = _800c66b0.coord2_20;
 
@@ -1551,7 +1549,7 @@ public class WMap {
     FUN_800d1914();
 
     _800c66b0._114 = 0;
-    _800c66b0._118 = 1100;
+    _800c66b0.projectionPlaneDistance_118 = 1100;
     _800c66b0._11a = 0;
   }
 
@@ -1590,15 +1588,15 @@ public class WMap {
     }
 
     //LAB_800d1c88
-    v0.ambientLight_14c.set((short)0x600, (short)0x600, (short)0x600);
-    GsSetAmbient(v0.ambientLight_14c.getX(), v0.ambientLight_14c.getY(), v0.ambientLight_14c.getZ());
+    v0.ambientLight_14c.set(0.375f, 0.375f, 0.375f);
+    GTE.setBackgroundColour(v0.ambientLight_14c.x, v0.ambientLight_14c.y, v0.ambientLight_14c.z);
     v0._88 = 0;
   }
 
   @Method(0x800d1d28L)
   public static void FUN_800d1d28() {
     _800c66b0.mapRotating_80 = false;
-    _800c66b0.mapRotationStep_7c = 0;
+    _800c66b0.mapRotationStep_7c = 0.0f;
     _800c66b0._c5 = 0;
     _800c66b0._c4 = 0;
 
@@ -1627,12 +1625,12 @@ public class WMap {
         //LAB_800d1e90
         if(FUN_800eb09c(i, 1, _800c66b0._154[count].vec_08) == 0) {
           //LAB_800d1ee0
-          final long dx = x - _800c66b0._154[count].vec_08.getX();
-          final long dy = y - _800c66b0._154[count].vec_08.getY();
-          final long dz = z - _800c66b0._154[count].vec_08.getZ();
+          final float dx = x - _800c66b0._154[count].vec_08.x;
+          final float dy = y - _800c66b0._154[count].vec_08.y;
+          final float dz = z - _800c66b0._154[count].vec_08.z;
 
           _800c66b0._154[count].index_00 = i;
-          _800c66b0._154[count].vecLength_04 = SquareRoot0(dx * dx + dy * dy + dz * dz);
+          _800c66b0._154[count].vecLength_04 = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
           count++;
         }
@@ -1643,7 +1641,7 @@ public class WMap {
 
     //LAB_800d2088
     _800c66b0._154[count].index_00 = -1;
-    Arrays.sort(_800c66b0._154, Comparator.comparingInt(a -> a.vecLength_04));
+    Arrays.sort(_800c66b0._154, Comparator.comparingDouble(a -> a.vecLength_04));
   }
 
   @Method(0x800d219cL)
@@ -1763,8 +1761,8 @@ public class WMap {
     FUN_800d2fa8();
     FUN_800d3fc8();
 
-    struct.mapRotation_70.and(0xfff);
-    struct.mapRotationEndAngle_7a &= 0xfff;
+    MathHelper.floorMod(struct.mapRotation_70, MathHelper.TWO_PI);
+    struct.mapRotationEndAngle_7a = MathHelper.floorMod(struct.mapRotationEndAngle_7a, MathHelper.TWO_PI);
   }
 
   @Method(0x800d2fa8L)
@@ -1781,7 +1779,7 @@ public class WMap {
     final WMapStruct19c0 struct = _800c66b0;
 
     //LAB_800d3014
-    if(struct.mapRotationStep_7c == 0) {
+    if(struct.mapRotationStep_7c == 0.0f) {
       struct.mapRotating_80 = false;
     }
 
@@ -1806,11 +1804,11 @@ public class WMap {
               //LAB_800d3140
             } else {
               //LAB_800d3148
-              struct.mapRotation_70.y.add((short)struct.mapRotationStep_7c);
+              struct.mapRotation_70.y += struct.mapRotationStep_7c;
               struct.mapRotationCounter_7e++;
 
               if(struct.mapRotationCounter_7e > 5) {
-                struct.mapRotation_70.setY((short)struct.mapRotationEndAngle_7a);
+                struct.mapRotation_70.y = struct.mapRotationEndAngle_7a;
                 struct.mapRotating_80 = false;
               }
             }
@@ -1829,11 +1827,11 @@ public class WMap {
       _800c66b0._110 = 2;
     } else if(v0 == 3) {
       //LAB_800d3434
-      _800c66b0.rview2_00.viewpoint_00.setY(_800c66b0.rview2_c8.viewpoint_00.getY() + _800c66b0.viewpointY_ec * _800c66b0._10e);
-      _800c66b0.rview2_00.viewpoint_00.setZ(_800c66b0.rview2_c8.viewpoint_00.getZ() + _800c66b0.viewpointZ_f0 * _800c66b0._10e);
-      _800c66b0.rview2_00.refpoint_0c.setY(_800c66b0.rview2_c8.refpoint_0c.getY() + _800c66b0.refpointY_f8 * _800c66b0._10e);
-      _800c66b0.rview2_00.refpoint_0c.setZ(_800c66b0.rview2_c8.refpoint_0c.getZ() + _800c66b0.refpointZ_fc * _800c66b0._10e);
-      _800c66b0.mapRotation_70.setY((short)(_800c66b0._10a + _800c66b0._10c * _800c66b0._10e));
+      _800c66b0.rview2_00.viewpoint_00.y = _800c66b0.rview2_c8.viewpoint_00.y + _800c66b0.viewpointY_ec * _800c66b0._10e;
+      _800c66b0.rview2_00.viewpoint_00.z = _800c66b0.rview2_c8.viewpoint_00.z + _800c66b0.viewpointZ_f0 * _800c66b0._10e;
+      _800c66b0.rview2_00.refpoint_0c.y = _800c66b0.rview2_c8.refpoint_0c.y + _800c66b0.refpointY_f8 * _800c66b0._10e;
+      _800c66b0.rview2_00.refpoint_0c.z = _800c66b0.rview2_c8.refpoint_0c.z + _800c66b0.refpointZ_fc * _800c66b0._10e;
+      _800c66b0.mapRotation_70.y = _800c66b0.angle_10a + _800c66b0.angle_10c * _800c66b0._10e;
 
       if(_800c66b0._10e > 0) {
         _800c66b0._10e--;
@@ -1851,16 +1849,16 @@ public class WMap {
 
     //LAB_800d3228
     //LAB_800d3268
-    _800c66b0.rview2_00.viewpoint_00.setY(_800c66b0.rview2_c8.viewpoint_00.getY() + _800c66b0.viewpointY_ec * _800c66b0._10e);
-    _800c66b0.rview2_00.viewpoint_00.setZ(_800c66b0.rview2_c8.viewpoint_00.getZ() + _800c66b0.viewpointZ_f0 * _800c66b0._10e);
-    _800c66b0.rview2_00.refpoint_0c.setY(_800c66b0.rview2_c8.refpoint_0c.getY() + _800c66b0.refpointY_f8 * _800c66b0._10e);
-    _800c66b0.rview2_00.refpoint_0c.setZ(_800c66b0.rview2_c8.refpoint_0c.getZ() + _800c66b0.refpointZ_fc * _800c66b0._10e);
-    _800c66b0.mapRotation_70.setY((short)(_800c66b0._10a + _800c66b0._10c * _800c66b0._10e));
+    _800c66b0.rview2_00.viewpoint_00.y = _800c66b0.rview2_c8.viewpoint_00.y + _800c66b0.viewpointY_ec * _800c66b0._10e;
+    _800c66b0.rview2_00.viewpoint_00.z = _800c66b0.rview2_c8.viewpoint_00.z + _800c66b0.viewpointZ_f0 * _800c66b0._10e;
+    _800c66b0.rview2_00.refpoint_0c.y = _800c66b0.rview2_c8.refpoint_0c.y + _800c66b0.refpointY_f8 * _800c66b0._10e;
+    _800c66b0.rview2_00.refpoint_0c.z = _800c66b0.rview2_c8.refpoint_0c.z + _800c66b0.refpointZ_fc * _800c66b0._10e;
+    _800c66b0.mapRotation_70.y = _800c66b0.angle_10a + _800c66b0.angle_10c * _800c66b0._10e;
 
     _800c66b0._10e++;
     if((short)_800c66b0._10e >= 16) {
       _800c66b0._10e = 16;
-      _800c66b0.mapRotation_70.setY((short)_800c66b0._108);
+      _800c66b0.mapRotation_70.y = _800c66b0.angle_108;
     }
 
     //LAB_800d342c
@@ -1916,9 +1914,9 @@ public class WMap {
       }
     } else if(v0 == 1) {
       //LAB_800d38dc
-      _800c66b0.rview2_00.viewpoint_00.y.sub(1450);
-      _800c66b0.rview2_00.refpoint_0c.y.add(1450);
-      _800c66b0.mapRotation_70.setY((short)(_800c66b0._9a + _800c66b0._9c * _800c66b0._a0));
+      _800c66b0.rview2_00.viewpoint_00.y -= 1450.0f;
+      _800c66b0.rview2_00.refpoint_0c.y += 1450.0f;
+      _800c66b0.mapRotation_70.y = _800c66b0.angle_9a + _800c66b0.angle_9c * _800c66b0._a0;
       _800c66b0.vec_b4.add(_800c66b0.vec_a4);
       _800c66b0.coord2_20.coord.transfer.setX(struct258_800c66a8.coord2_34.coord.transfer.getX() - _800c66b0.vec_b4.getX() / 0x100);
       _800c66b0.coord2_20.coord.transfer.setY(struct258_800c66a8.coord2_34.coord.transfer.getY() - _800c66b0.vec_b4.getY() / 0x100);
@@ -1926,9 +1924,9 @@ public class WMap {
       _800c66b0._a0++;
 
       if(_800c66b0._a0 >= 6) {
-        _800c66b0.rview2_00.viewpoint_00.y.set(_800c66b0._9e);
-        _800c66b0.rview2_00.refpoint_0c.y.set(-_800c66b0._9e);
-        _800c66b0.mapRotation_70.setY((short)_800c66b0._98);
+        _800c66b0.rview2_00.viewpoint_00.y = _800c66b0._9e;
+        _800c66b0.rview2_00.refpoint_0c.y = -_800c66b0._9e;
+        _800c66b0.mapRotation_70.y = _800c66b0.angle_98;
         _800c66b0.coord2_20.coord.transfer.set(0, 0, 0);
         _800c66b0._c5 = 0;
         struct258_800c66a8.zoomState_1f8 = 1;
@@ -1936,16 +1934,16 @@ public class WMap {
     } else if(v0 == 2) {
       //LAB_800d3bd8
       if(struct258_800c66a8._05 == 0) {
-        _800c66b0.rview2_00.viewpoint_00.y.add(1450);
-        _800c66b0.rview2_00.refpoint_0c.y.sub(1450);
+        _800c66b0.rview2_00.viewpoint_00.y += 1450.0f;
+        _800c66b0.rview2_00.refpoint_0c.y -= 1450.0f;
       } else {
         //LAB_800d3c44
-        _800c66b0.rview2_00.viewpoint_00.y.add(290);
-        _800c66b0.rview2_00.refpoint_0c.y.sub(290);
+        _800c66b0.rview2_00.viewpoint_00.y += 290.0f;
+        _800c66b0.rview2_00.refpoint_0c.y -= 290.0f;
       }
 
       //LAB_800d3c8c
-      _800c66b0.mapRotation_70.setY((short)(_800c66b0._9a + _800c66b0._9c * _800c66b0._a0));
+      _800c66b0.mapRotation_70.y = _800c66b0.angle_9a + _800c66b0.angle_9c * _800c66b0._a0;
       _800c66b0.vec_b4.add(_800c66b0.vec_a4);
       _800c66b0.coord2_20.coord.transfer.setX(_800c66b0.vec_b4.getX() >> 8);
       _800c66b0.coord2_20.coord.transfer.setY(_800c66b0.vec_b4.getY() >> 8);
@@ -1966,9 +1964,9 @@ public class WMap {
 
       //LAB_800d3ea8
       if(sp18) {
-        _800c66b0.rview2_00.viewpoint_00.setY(_800c66b0._9e);
-        _800c66b0.rview2_00.refpoint_0c.setY(-_800c66b0._9e);
-        _800c66b0.mapRotation_70.setY((short)_800c66b0._98);
+        _800c66b0.rview2_00.viewpoint_00.y = _800c66b0._9e;
+        _800c66b0.rview2_00.refpoint_0c.y = -_800c66b0._9e;
+        _800c66b0.mapRotation_70.y = _800c66b0.angle_98;
         _800c66b0.coord2_20.coord.transfer.set(struct258_800c66a8.coord2_34.coord.transfer);
         _800c66b0._c5 = 0;
         mapState_800c6798.disableInput_d0 = false;
@@ -1987,7 +1985,7 @@ public class WMap {
   public static void FUN_800d3fc8() {
     if(struct258_800c66a8._250 == 1) {
       //LAB_800d401c
-      _800c66b0.mapRotation_70.y.add((short)8);
+      _800c66b0.mapRotation_70.y += MathHelper.psxDegToRad(8);
     }
   }
 
@@ -2150,32 +2148,32 @@ public class WMap {
 
   @Method(0x800d4bc8L)
   public static void FUN_800d4bc8(final int a0) {
-    final int sp18;
-    final int sp14;
-    int sp10;
+    final float sp18;
+    final float sp14;
+    float sp10;
 
     final WMapStruct19c0 struct = _800c66b0;
 
     if(a0 == 0) {
-      struct._9a = struct.mapRotation_70.getY();
-      struct._98 = 0;
-      sp10 = struct._98 - struct._9a;
-      sp14 = struct._98 - (struct._9a - 0x1000);
+      struct.angle_9a = struct.mapRotation_70.y;
+      struct.angle_98 = 0;
+      sp10 = struct.angle_98 - struct.angle_9a;
+      sp14 = struct.angle_98 - (struct.angle_9a - MathHelper.TWO_PI);
     } else {
       //LAB_800d4c80
-      struct._98 = struct._9a;
-      struct._9a = struct.mapRotation_70.getY();
+      struct.angle_98 = struct.angle_9a;
+      struct.angle_9a = struct.mapRotation_70.y;
 
-      if(struct._9a < struct._98) {
-        sp18 = -0x1000;
+      if(struct.angle_9a < struct.angle_98) {
+        sp18 = -MathHelper.TWO_PI;
       } else {
         //LAB_800d4cf8
-        sp18 = 0x1000;
+        sp18 = MathHelper.TWO_PI;
       }
 
       //LAB_800d4d00
-      sp10 = struct._98 - struct._9a;
-      sp14 = struct._9a - struct._98 + sp18;
+      sp10 = struct.angle_98 - struct.angle_9a;
+      sp14 = struct.angle_9a - struct.angle_98 + sp18;
     }
 
     //LAB_800d4d64
@@ -2192,25 +2190,27 @@ public class WMap {
     }
 
     //LAB_800d4e88
-    struct._9c = sp10 / 6;
+    struct.angle_9c = sp10 / 6.0f;
     struct._a0 = 0;
   }
 
   @Method(0x800d4ed8L)
   public static void startMapRotation(final int direction) {
+    final float angleDelta = MathHelper.TWO_PI / 8.0f;
+
     final WMapStruct19c0 struct = _800c66b0;
     struct.mapRotationCounter_7e = 0;
-    struct.mapRotationStartAngle_78 = struct.mapRotation_70.getY();
-    struct.mapRotationEndAngle_7a = struct.mapRotation_70.getY() + direction * 0x200;
-    int sp10 = -direction * 0x200;
-    final int sp14 = sp10 + 0x1000;
+    struct.mapRotationStartAngle_78 = struct.mapRotation_70.y;
+    struct.mapRotationEndAngle_7a = struct.mapRotation_70.y + direction * angleDelta;
+    float sp10 = -direction * angleDelta;
+    final float sp14 = sp10 + MathHelper.TWO_PI;
 
     if(Math.abs(sp14) < Math.abs(sp10)) {
       sp10 = sp14;
     }
 
     //LAB_800d4fd0
-    struct.mapRotationStep_7c = -sp10 / 6;
+    struct.mapRotationStep_7c = -sp10 / 6.0f;
   }
 
   @Method(0x800d5018L)
@@ -2222,24 +2222,24 @@ public class WMap {
     struct.rview2_c8.refpoint_0c.set(struct.rview2_00.refpoint_0c);
     struct.rview2_c8.viewpointTwist_18 = struct.rview2_00.viewpointTwist_18;
     struct.rview2_c8.super_1c = struct.rview2_00.super_1c;
-    struct.viewpointY_ec = (-100 - struct.rview2_c8.viewpoint_00.getY()) / 16;
-    struct.viewpointZ_f0 = (-600 - struct.rview2_c8.viewpoint_00.getZ()) / 16;
-    struct.refpointY_f8 = ( -90 - struct.rview2_c8.refpoint_0c.getY()) / 16;
-    struct.refpointZ_fc = -struct.rview2_c8.refpoint_0c.getZ() / 16;
-    struct._10a = struct.mapRotation_70.getY();
+    struct.viewpointY_ec = (-100.0f - struct.rview2_c8.viewpoint_00.y) / 16.0f;
+    struct.viewpointZ_f0 = (-600.0f - struct.rview2_c8.viewpoint_00.z) / 16.0f;
+    struct.refpointY_f8 = ( -90.0f - struct.rview2_c8.refpoint_0c.y) / 16.0f;
+    struct.refpointZ_fc = -struct.rview2_c8.refpoint_0c.z / 16.0f;
+    struct.angle_10a = struct.mapRotation_70.y;
 
-    final int sp18 = struct258_800c66a8.rotation_a4.getY() + 0x800;
-    struct._108 = sp18;
+    final float angle = struct258_800c66a8.rotation_a4.y + MathHelper.PI;
+    struct.angle_108 = angle;
 
-    int sp10 = struct.mapRotation_70.getY() - sp18;
-    final int sp14 = struct.mapRotation_70.getY() - (sp18 - 0x1000);
+    float sp10 = struct.mapRotation_70.y - angle;
+    final float sp14 = struct.mapRotation_70.y - (angle - MathHelper.TWO_PI);
 
     if(Math.abs(sp14) < Math.abs(sp10)) {
       sp10 = sp14;
     }
 
     //LAB_800d5244
-    struct._10c = -sp10 / 16;
+    struct.angle_10c = -sp10 / 16;
   }
 
   @Method(0x800d5288L)
@@ -2248,7 +2248,7 @@ public class WMap {
     final int v0 = struct._11a;
 
     if(v0 == 0) {
-      if(struct._154[0].vecLength_04 < 90) {
+      if(struct._154[0].vecLength_04 < 90.0f) {
         struct._11a = 1;
         //LAB_800d52e8
       } else if(struct258_800c66a8._05 == 0 || struct._c5 != 2) {
@@ -2266,10 +2266,10 @@ public class WMap {
       struct._114++;
 
       //LAB_800d5424
-      struct._118 += Math.max(4, 64 - struct._114 * 2);
+      struct.projectionPlaneDistance_118 += Math.max(4, 64 - struct._114 * 2);
 
-      if(struct._118 >= 800) {
-        struct._118 = 800;
+      if(struct.projectionPlaneDistance_118 >= 800) {
+        struct.projectionPlaneDistance_118 = 800;
         struct._11a = 0;
       }
     } else if(v0 == 2) {
@@ -2277,10 +2277,10 @@ public class WMap {
       struct._114++;
 
       //LAB_800d5424
-      struct._118 += Math.max(4, 64 - struct._114 * 2);
+      struct.projectionPlaneDistance_118 += Math.max(4, 64 - struct._114 * 2);
 
-      if(struct._118 >= 800) {
-        struct._118 = 800;
+      if(struct.projectionPlaneDistance_118 >= 800) {
+        struct.projectionPlaneDistance_118 = 800;
         struct._11a = 0;
       }
     } else if(v0 == 3) {
@@ -2298,10 +2298,10 @@ public class WMap {
       struct._114++;
 
       //LAB_800d5558
-      struct._118 -= Math.max(4, 64 - struct._114 * 2);
+      struct.projectionPlaneDistance_118 -= Math.max(4, 64 - struct._114 * 2);
 
-      if(struct._118 <= 600) {
-        struct._118 = 600;
+      if(struct.projectionPlaneDistance_118 <= 600) {
+        struct.projectionPlaneDistance_118 = 600;
         struct._11a = 0;
       }
     } else if(v0 == 4) {
@@ -2309,15 +2309,15 @@ public class WMap {
       struct._114++;
 
       //LAB_800d5558
-      struct._118 -= Math.max(4, 64 - struct._114 * 2);
+      struct.projectionPlaneDistance_118 -= Math.max(4, 64 - struct._114 * 2);
 
-      if(struct._118 <= 600) {
-        struct._118 = 600;
+      if(struct.projectionPlaneDistance_118 <= 600) {
+        struct.projectionPlaneDistance_118 = 600;
         struct._11a = 0;
       }
     }
 
-    setProjectionPlaneDistance(struct._118);
+    setProjectionPlaneDistance(struct.projectionPlaneDistance_118);
   }
 
   @Method(0x800d55fcL)
@@ -2808,7 +2808,7 @@ public class WMap {
     }
 
     final MATRIX sp0x18 = new MATRIX();
-    final VECTOR sp0x40 = new VECTOR();
+    final Vector3f sp0x40 = new Vector3f();
 
     //LAB_800d7b84
     final int sp98 = tickCount_800bb0fc.get() / 5 % 3;
@@ -2847,11 +2847,11 @@ public class WMap {
               .vramPos(640, 256);
 
             if(struct258_800c66a8.zoomState_1f8 == 0) {
-              final int dx = x - sp0x40.getX();
-              final int dy = y - sp0x40.getY();
-              final int dz = z - sp0x40.getZ();
-              final int sp90 = Math.max(0, 0x200 - SquareRoot0(dx * dx + dy * dy + dz * dz)) / 2;
-              cmd.rgb(sp90 * 31 / 256, sp90 * 63 / 256, 0);
+              final float dx = x - sp0x40.x;
+              final float dy = y - sp0x40.y;
+              final float dz = z - sp0x40.z;
+              final float sp90 = Math.max(0, 0x200 - Math.sqrt(dx * dx + dy * dy + dz * dz)) / 2;
+              cmd.rgb((int)(sp90 * 31 / 256), (int)(sp90 * 63 / 256), 0);
             } else {
               //LAB_800d8048
               cmd.rgb(31, 63, 0);
@@ -3047,7 +3047,7 @@ public class WMap {
     for(int i = 0; i < struct258_800c66a8.tmdRendering_08.count_0c; i++) {
       final GsDOBJ2 dobj2 = struct258_800c66a8.tmdRendering_08.dobj2s_00[i];
       final GsCOORDINATE2 coord2 = struct258_800c66a8.tmdRendering_08.coord2s_04[i];
-      final SVECTOR rotation = struct258_800c66a8.tmdRendering_08.rotations_08[i];
+      final Vector3f rotation = struct258_800c66a8.tmdRendering_08.rotations_08[i];
 
       //LAB_800d9180
       if(mapState_800c6798.continentIndex_00 != 7) {
@@ -3277,9 +3277,6 @@ public class WMap {
    */
   @Method(0x800da248L)
   public static void FUN_800da248() {
-    final VECTOR sp0x38 = new VECTOR();
-    final VECTOR sp0x48 = new VECTOR();
-
     if(mapState_800c6798._fc == 1) {
       return;
     }
@@ -3354,26 +3351,26 @@ public class WMap {
     }
 
     //LAB_800da544
-    final int x;
+    final float x;
     switch(struct258._220 + 1) {
       case 1:
         playSound(0, 4, 0, 0, (short)0, (short)0);
 
         struct258.svec_200.set(_800c66b0.coord2_20.coord.transfer);
 
-        struct258.svec_208.setX((short)(struct258.vec_94.getX() >> 12));
-        struct258.svec_208.setY((short)(struct258.vec_94.getY() >> 12));
-        struct258.svec_208.setZ((short)(struct258.vec_94.getZ() >> 12));
+        struct258.svec_208.setX((short)struct258.vec_94.x);
+        struct258.svec_208.setY((short)struct258.vec_94.y);
+        struct258.svec_208.setZ((short)struct258.vec_94.z);
 
-        struct258._21c = struct258.rotation_a4.getY();
-        struct258._21e = _800c66b0.mapRotation_70.getY();
+        struct258.angle_21c = struct258.rotation_a4.y;
+        struct258.angle_21e = _800c66b0.mapRotation_70.y;
         struct258._223 = 0;
         struct258._220 = 1;
-        struct258.models_0c[2].coord2Param_64.rotate.set((short)0, struct258.rotation_a4.getY(), (short)0);
-        struct258.models_0c[2].scaleVector_fc.setX(0x400);
-        struct258.coord2_34.coord.transfer.setX(struct258.vec_94.getX() >> 12);
-        struct258.coord2_34.coord.transfer.setY(struct258.vec_94.getY() >> 12);
-        struct258.coord2_34.coord.transfer.setZ(struct258.vec_94.getZ() >> 12);
+        struct258.models_0c[2].coord2Param_64.rotate.set(0.0f, struct258.rotation_a4.y, 0.0f);
+        struct258.models_0c[2].scaleVector_fc.x = 0.25f;
+        struct258.coord2_34.coord.transfer.setX((int)struct258.vec_94.x);
+        struct258.coord2_34.coord.transfer.setY((int)struct258.vec_94.y);
+        struct258.coord2_34.coord.transfer.setZ((int)struct258.vec_94.z);
         struct258.models_0c[2].coord2_14.coord.transfer.set(struct258.coord2_34.coord.transfer);
 
         //LAB_800da8a0
@@ -3400,17 +3397,17 @@ public class WMap {
       case 2:
         renderWinglyTeleportScreenEffect();
 
-        struct258.models_0c[2].scaleVector_fc.y.add(0x40);
+        struct258.models_0c[2].scaleVector_fc.y += 0.015625f; // 1/64
 
-        if(struct258.models_0c[2].scaleVector_fc.getX() > 0x600) {
-          struct258.models_0c[2].scaleVector_fc.setX(0x600);
+        if(struct258.models_0c[2].scaleVector_fc.x > 0.375f) { // 24/64
+          struct258.models_0c[2].scaleVector_fc.x = 0.375f;
         }
 
         //LAB_800da9fc
-        x = struct258.models_0c[2].scaleVector_fc.getX();
-        struct258.models_0c[2].scaleVector_fc.setY(x);
-        struct258.models_0c[2].scaleVector_fc.setZ(x);
-        struct258.vec_94.y.sub(0x6_0000);
+        x = struct258.models_0c[2].scaleVector_fc.x;
+        struct258.models_0c[2].scaleVector_fc.y = x;
+        struct258.models_0c[2].scaleVector_fc.z = x;
+        struct258.vec_94.y -= 96.0f;
 
         _800c66b0.coord2_20.coord.transfer.y.sub(0x60);
 
@@ -3419,12 +3416,12 @@ public class WMap {
         }
 
         //LAB_800daab8
-        if(struct258.vec_94.getY() < -2512) {
-          struct258.vec_94.setY(-2500);
+        if(struct258.vec_94.y < -2500.0f) {
+          struct258.vec_94.y = -2500.0f;
         }
 
         //LAB_800daaf0
-        if(struct258.vec_94.getY() <= -2500) {
+        if(struct258.vec_94.y <= -2500.0f) {
           if(_800c66b0.coord2_20.coord.transfer.getY() <= -1500) {
             struct258._220 = 2;
           }
@@ -3441,10 +3438,10 @@ public class WMap {
         break;
 
       case 3:
-        struct258.models_0c[2].scaleVector_fc.set(0, 0, 0);
-        struct258.models_0c[2].coord2Param_64.rotate.set((short)0x400, (short)0x800, (short)0);
+        struct258.models_0c[2].scaleVector_fc.set(0.0f, 0.0f, 0.0f);
+        struct258.models_0c[2].coord2Param_64.rotate.set(MathHelper.TWO_PI / 4.0f, MathHelper.TWO_PI / 2.0f, 0.0f);
 
-        _800c66b0.mapRotation_70.setY((short)0);
+        _800c66b0.mapRotation_70.y = 0.0f;
         _800c66b0.coord2_20.coord.transfer.set(720, -1500, 628);
         _800c66b0._11a = 3;
 
@@ -3468,7 +3465,7 @@ public class WMap {
 
         //LAB_800dad4c
         if(mapState_800c6798.continentIndex_00 == 4) { // Mille Seseau
-          if(struct258.vec_94.getZ() >> 12 < -400) {
+          if(struct258.vec_94.z < -400.0f) {
             struct258.coolonWarpIndex_221 = 5;
           } else {
             //LAB_800dad9c
@@ -3479,7 +3476,7 @@ public class WMap {
         //LAB_800dadac
         struct258.coolonWarpIndex_222 = coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_221)._14.get();
         struct258._220 = 3;
-        struct258.vec_94.set(coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_221).vec_00);
+        coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_221).vec_00.get(struct258.vec_94);
         break;
 
       case 4:
@@ -3517,22 +3514,22 @@ public class WMap {
         }
 
         //LAB_800db07c
-        struct258.models_0c[2].scaleVector_fc.x.add(0x200);
+        struct258.models_0c[2].scaleVector_fc.x += 0.125f;
 
-        if(struct258.models_0c[2].scaleVector_fc.getX() > 0x800) {
-          struct258.models_0c[2].scaleVector_fc.setX(0x800);
+        if(struct258.models_0c[2].scaleVector_fc.x > 0.5f) {
+          struct258.models_0c[2].scaleVector_fc.x = 0.5f;
         }
 
         //LAB_800db0f0
-        x = struct258.models_0c[2].scaleVector_fc.getX();
-        struct258.models_0c[2].scaleVector_fc.setY(x);
-        struct258.models_0c[2].scaleVector_fc.setZ(x);
+        x = struct258.models_0c[2].scaleVector_fc.x;
+        struct258.models_0c[2].scaleVector_fc.y = x;
+        struct258.models_0c[2].scaleVector_fc.z = x;
 
         renderCoolonMap(true, 0x1L);
         break;
 
       case 5:
-        struct258.models_0c[2].scaleVector_fc.set(0x800, 0x800, 0x800);
+        struct258.models_0c[2].scaleVector_fc.set(0.5f, 0.5f, 0.5f);
 
         if(FUN_8002a488(6) != 0) {
           struct258._220 = 5;
@@ -3586,9 +3583,6 @@ public class WMap {
         break;
 
       case 7:
-        sp0x38.set(coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_221).vec_00).shra(12);
-        sp0x48.set(coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222).vec_00).shra(12);
-
         struct258._218++;
 
         if(struct258._218 > 12) {
@@ -3597,18 +3591,18 @@ public class WMap {
         }
 
         //LAB_800db698
-        FUN_800dcc20(struct258.vec_94, sp0x38, sp0x48, 12, struct258._218);
+        lerp(struct258.vec_94, coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_221).vec_00.toVec3().div(4096.0f), coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222).vec_00.toVec3().div(4096.0f), 12.0f / struct258._218);
 
-        struct258.models_0c[2].scaleVector_fc.x.sub(170);
+        struct258.models_0c[2].scaleVector_fc.x -= 0.041503906f; // ~1/24
 
-        if(struct258.models_0c[2].scaleVector_fc.getX() < 0) {
-          struct258.models_0c[2].scaleVector_fc.setX(0);
+        if(struct258.models_0c[2].scaleVector_fc.x < 0.0f) {
+          struct258.models_0c[2].scaleVector_fc.x = 0.0f;
         }
 
         //LAB_800db74c
-        x = struct258.models_0c[2].scaleVector_fc.getX();
-        struct258.models_0c[2].scaleVector_fc.setY(x);
-        struct258.models_0c[2].scaleVector_fc.setZ(x);
+        x = struct258.models_0c[2].scaleVector_fc.x;
+        struct258.models_0c[2].scaleVector_fc.y = x;
+        struct258.models_0c[2].scaleVector_fc.z = x;
 
         renderCoolonMap(false, 0);
         break;
@@ -3643,17 +3637,14 @@ public class WMap {
       case 0xb:
         _800c66b0.coord2_20.coord.transfer.set(struct258.svec_200);
         _800c66b0.coord2_20.coord.transfer.setY(-1500);
-        struct258.vec_94.setX(struct258.svec_208.getX() << 12);
-        struct258.vec_94.setY(struct258.svec_208.getY() << 12);
-        struct258.vec_94.setZ(struct258.svec_208.getZ() << 12);
-        struct258.vec_94.setY(-5000 << 12);
-        struct258.rotation_a4.setY((short)struct258._21c);
-        _800c66b0.mapRotation_70.setY((short)struct258._21e);
-        struct258.models_0c[2].coord2Param_64.rotate.set((short)0, struct258.rotation_a4.getY(), (short)0);
-        struct258.models_0c[2].scaleVector_fc.setX(0x600);
-        x = struct258.models_0c[2].scaleVector_fc.getX();
-        struct258.models_0c[2].scaleVector_fc.setY(x);
-        struct258.models_0c[2].scaleVector_fc.setZ(x);
+        struct258.vec_94.x = struct258.svec_208.getX();
+        struct258.vec_94.y = struct258.svec_208.getY();
+        struct258.vec_94.z = struct258.svec_208.getZ();
+        struct258.vec_94.y = -5000.0f;
+        struct258.rotation_a4.y = struct258.angle_21c;
+        _800c66b0.mapRotation_70.y = struct258.angle_21e;
+        struct258.models_0c[2].coord2Param_64.rotate.set(0.0f, struct258.rotation_a4.y, 0.0f);
+        struct258.models_0c[2].scaleVector_fc.set(0.375f, 0.375f, 0.375f);
         struct258._220 = 11;
 
         FUN_80019c80(soundFiles_800bcf80[12], 1, 1);
@@ -3672,7 +3663,7 @@ public class WMap {
         //LAB_800dbd6c
         if(_800c66b0.coord2_20.coord.transfer.getY() >= struct258.svec_200.getY()) {
           struct258._220 = 12;
-          struct258.vec_94.setY(-400);
+          struct258.vec_94.y = -0.09765625f; // 100/1024
         }
 
         //LAB_800dbdb8
@@ -3686,28 +3677,28 @@ public class WMap {
         break;
 
       case 0xd:
-        struct258.vec_94.y.add(0x1_0000);
+        struct258.vec_94.y += 16.0f;
 
-        if(struct258.svec_208.getY() << 12 < struct258.vec_94.getY()) {
-          struct258.vec_94.setY(struct258.svec_208.getY() << 12);
+        if(struct258.svec_208.getY() < struct258.vec_94.y) {
+          struct258.vec_94.y = struct258.svec_208.getY();
         }
 
         //LAB_800dbe70
-        if(struct258.svec_208.getY() << 12 <= struct258.vec_94.getY()) {
+        if(struct258.svec_208.getY() <= struct258.vec_94.y) {
           struct258._220 = -1;
         }
 
         //LAB_800dbeb4
-        struct258.models_0c[2].scaleVector_fc.x.sub(16);
+        struct258.models_0c[2].scaleVector_fc.x -= 0.00390625f; // 1/256
 
-        if(struct258.models_0c[2].scaleVector_fc.getX() < 1024) {
-          struct258.models_0c[2].scaleVector_fc.setZ(1024);
+        if(struct258.models_0c[2].scaleVector_fc.x < 0.25f) { // 64/256
+          struct258.models_0c[2].scaleVector_fc.x = 0.25f;
         }
 
         //LAB_800dbf28
-        x = struct258.models_0c[2].scaleVector_fc.getX();
-        struct258.models_0c[2].scaleVector_fc.setY(x);
-        struct258.models_0c[2].scaleVector_fc.setZ(x);
+        x = struct258.models_0c[2].scaleVector_fc.x;
+        struct258.models_0c[2].scaleVector_fc.y = x;
+        struct258.models_0c[2].scaleVector_fc.z = x;
 
         _800ef1a4.subu(0x1L);
 
@@ -3723,10 +3714,15 @@ public class WMap {
 
         _800c66b0.coord2_20.coord.transfer.set(struct258.svec_200);
 
-        struct258.vec_94.set(struct258.svec_208).shl(12);
-        struct258.rotation_a4.setY((short)struct258._21c);
+        struct258.vec_94.set(
+          struct258.svec_208.getX(),
+          struct258.svec_208.getY(),
+          struct258.svec_208.getZ()
+        );
 
-        _800c66b0.mapRotation_70.setY((short)struct258._21e);
+        struct258.rotation_a4.y = struct258.angle_21c;
+
+        _800c66b0.mapRotation_70.y = struct258.angle_21e;
 
         struct258._250 = 0;
         struct258._220 = 0;
@@ -3749,8 +3745,8 @@ public class WMap {
     short x = (short)(warp1.x_18.get() - warp2.x_18.get());
     short y = (short)(warp1.y_1a.get() - warp2.y_1a.get());
 
-    struct.rotation_a4.setY((short)(ratan2(y, x) + 0x400 & 0xfff));
-    struct.models_0c[2].coord2Param_64.rotate.y.add((short)((struct.rotation_a4.getY() - struct.models_0c[2].coord2Param_64.rotate.getY()) / 8));
+    struct.rotation_a4.y = MathHelper.floorMod(MathHelper.atan2(y, x) + MathHelper.PI / 2.0f, MathHelper.TWO_PI);
+    struct.models_0c[2].coord2Param_64.rotate.y += (struct.rotation_a4.y - struct.models_0c[2].coord2Param_64.rotate.y) / 8;
 
     if(enableInput) {
       if((repeat_800bee98.get() & 0x6000) != 0) {
@@ -3867,14 +3863,16 @@ public class WMap {
   }
 
   @Method(0x800dcc20L)
-  public static void FUN_800dcc20(final VECTOR a0, final VECTOR a1, final VECTOR a2, final int a3, final int a4) {
-    if(a3 == a4) {
-      a0.set(a2).shl(12);
+  public static void lerp(final Vector3f out, final Vector3f a, final Vector3f b, final float ratio) {
+    if(ratio == 0.0f) {
+      out.set(a);
+    } else if(ratio == 1.0f) {
+      out.set(b);
     } else {
       //LAB_800dcca4
-      a0.setX(((a2.getX() - a1.getX() << 12) / a3 * a4 >> 12) + a1.getX() << 12);
-      a0.setY(((a2.getY() - a1.getY() << 12) / a3 * a4 >> 12) + a1.getY() << 12);
-      a0.setZ(((a2.getZ() - a1.getZ() << 12) / a3 * a4 >> 12) + a1.getZ() << 12);
+      out.x = (b.x - a.x) * ratio + a.x;
+      out.y = (b.y - a.y) * ratio + a.y;
+      out.z = (b.z - a.z) * ratio + a.z;
     }
 
     //LAB_800dcddc
@@ -3887,8 +3885,7 @@ public class WMap {
 
   @Method(0x800dce64L)
   public static void rotateCoord2(final SVECTOR rotation, final GsCOORDINATE2 coord2) {
-    final MATRIX mat = new MATRIX().set(identityMatrix_800c3568);
-
+    final MATRIX mat = new MATRIX().identity();
     mat.transfer.set(coord2.coord.transfer);
 
     RotMatrix_Xyz(rotation, mat);
@@ -3897,18 +3894,14 @@ public class WMap {
     coord2.coord.set(mat);
   }
 
-  /**
-   * Resets the matrix to identity but maintains transforms
-   */
-  @Method(0x800dcf80L)
-  public static void clearLinearTransforms(final MATRIX mat) {
-    final int x = mat.transfer.getX();
-    final int y = mat.transfer.getY();
-    final int z = mat.transfer.getZ();
-    mat.set(identityMatrix_800c3568);
-    mat.transfer.setX(x);
-    mat.transfer.setY(y);
-    mat.transfer.setZ(z);
+  public static void rotateCoord2(final Vector3f rotation, final GsCOORDINATE2 coord2) {
+    final MATRIX mat = new MATRIX().identity();
+    mat.transfer.set(coord2.coord.transfer);
+
+    RotMatrix_Xyz(rotation, mat);
+
+    coord2.flg = 0;
+    coord2.coord.set(mat);
   }
 
   /** Don't really know what makes it special. Seems to use a fixed Z value and doesn't check if the triangles are on screen. Used for water. */
@@ -3997,9 +3990,9 @@ public class WMap {
   @Method(0x800dfbd8L)
   public static void FUN_800dfbd8() {
     final WMapStruct258 struct258 = struct258_800c66a8;
-    struct258.vec_94.setX(struct258.coord2_34.coord.transfer.getX() << 12);
-    struct258.vec_94.setY(struct258.coord2_34.coord.transfer.getY() << 12);
-    struct258.vec_94.setZ(struct258.coord2_34.coord.transfer.getZ() << 12);
+    struct258.vec_94.x = struct258.coord2_34.coord.transfer.getX();
+    struct258.vec_94.y = struct258.coord2_34.coord.transfer.getY();
+    struct258.vec_94.z = struct258.coord2_34.coord.transfer.getZ();
     struct258.vec_84.set(struct258.vec_94);
 
     //LAB_800dfca4
@@ -4011,8 +4004,8 @@ public class WMap {
       loadModelStandardAnimation(model, struct258._b4[i].tmdAnim_08[0]);
 
       model.coord2_14.coord.transfer.set(struct258.coord2_34.coord.transfer);
-      model.coord2Param_64.rotate.set((short)0, struct258.rotation_a4.getY(), (short)0);
-      model.scaleVector_fc.set(0, 0, 0);
+      model.coord2Param_64.rotate.set(0.0f, struct258.rotation_a4.y, 0.0f);
+      model.scaleVector_fc.set(0.0f, 0.0f, 0.0f);
     }
 
     //LAB_800dff4c
@@ -4034,23 +4027,23 @@ public class WMap {
     final Model124 model = struct258.models_0c[modelIndex];
     if(modelIndex == 0) {
       //LAB_800e00c4
-      model.scaleVector_fc.set(0x800, 0x666, 0x800);
+      model.scaleVector_fc.set(0.5f, 0.4f, 0.5f);
     } else if(modelIndex == 1) {
       //LAB_800e0114
       if(mapState_800c6798.continentIndex_00 == 7) { // Teleporting
-        model.scaleVector_fc.set(0x1000, 0x1000, 0x1000);
+        model.scaleVector_fc.set(1.0f, 1.0f, 1.0f);
       } else {
-        model.scaleVector_fc.set(0x2000, 0x2000, 0x2000);
+        model.scaleVector_fc.set(2.0f, 2.0f, 2.0f);
       }
 
       //LAB_800e01b8
       //LAB_800e00a4
     } else if(modelIndex == 2) {
       //LAB_800e01c0
-      model.scaleVector_fc.set(0, 0, 0);
+      model.scaleVector_fc.set(0.0f, 0.0f, 0.0f);
     } else if(modelIndex == 3) {
       //LAB_800e0210
-      model.scaleVector_fc.set(0, 0, 0);
+      model.scaleVector_fc.set(0.0f, 0.0f, 0.0f);
     }
 
     //LAB_800e0260
@@ -4076,34 +4069,33 @@ public class WMap {
     final int modelIndex = struct.modelIndex_1e4;
     if(modelIndex == 0) {
       //LAB_800e03a0
-      GsSetAmbient(0xc80, 0xc80, 0xc80);
+      GTE.setBackgroundColour(0.78125f, 0.78125f, 0.78125f);
 
-      struct.models_0c[0].scaleVector_fc.set(0x800, 0x666, 0x800);
+      struct.models_0c[0].scaleVector_fc.set(0.5f, 0.4f, 0.5f);
     } else if(modelIndex == 1) {
       //LAB_800e0404
-      GsSetAmbient(0x800, 0x800, 0x800);
-
+      GTE.setBackgroundColour(0.5f, 0.5f, 0.5f);
 
       if(mapState_800c6798.continentIndex_00 == 7) { // Teleporting
-        struct.models_0c[1].scaleVector_fc.set(0x1000, 0x1000, 0x1000);
+        struct.models_0c[1].scaleVector_fc.set(1.0f, 1.0f, 1.0f);
       } else {
-        struct.models_0c[1].scaleVector_fc.set(0x2000, 0x2000, 0x2000);
+        struct.models_0c[1].scaleVector_fc.set(2.0f, 2.0f, 2.0f);
       }
 
       //LAB_800e04bc
       //LAB_800e0380
     } else if(modelIndex == 2) {
       //LAB_800e04c4
-      GsSetAmbient(0x800, 0x800, 0x800);
+      GTE.setBackgroundColour(0.5f, 0.5f, 0.5f);
     } else if(modelIndex == 3) {
       //LAB_800e04e0
-      GsSetAmbient(0x800, 0x800, 0x800);
+      GTE.setBackgroundColour(0.5f, 0.5f, 0.5f);
     }
 
     //LAB_800e04fc
     struct.models_0c[struct.modelIndex_1e4].zOffset_a0 = 78;
     renderModel(struct.models_0c[struct.modelIndex_1e4]);
-    GsSetAmbient(_800c66b0.ambientLight_14c.getX(), _800c66b0.ambientLight_14c.getY(), _800c66b0.ambientLight_14c.getZ());
+    GTE.setBackgroundColour(_800c66b0.ambientLight_14c.x, _800c66b0.ambientLight_14c.y, _800c66b0.ambientLight_14c.z);
     FUN_800e06d0();
     FUN_800e1364();
   }
@@ -4127,20 +4119,20 @@ public class WMap {
     } else if(struct258_800c66a8._250 == 1) {
       //LAB_800e0770
       //LAB_800e0774
-      int sp3c = 0;
+      int locationIndex = 0;
       for(int i = 0; i < 6; i++) {
         //LAB_800e0790
         if(mapState_800c6798.locationIndex_10 == _800ef698.get(i).locationIndex_00.get()) {
-          sp3c = _800ef698.get(i)._04.get();
+          locationIndex = _800ef698.get(i).locationIndex2_04.get();
           break;
         }
       }
 
       //LAB_800e0810
-      final SVECTOR sp0x18 = new SVECTOR();
-      final SVECTOR sp0x20 = new SVECTOR();
+      final Vector3f sp0x18 = new Vector3f();
+      final Vector3f sp0x20 = new Vector3f();
       FUN_800e0d70(mapState_800c6798.locationIndex_10, sp0x18);
-      FUN_800e0d70(sp3c, sp0x20);
+      FUN_800e0d70(locationIndex, sp0x20);
 
       //LAB_800e0878
       if(struct258_800c66a8._248 == 0 || struct258_800c66a8._248 == 1) {
@@ -4153,7 +4145,7 @@ public class WMap {
         //LAB_800e08b8
         renderWinglyTeleportScreenEffect();
 
-        FUN_800e0e4c(struct258_800c66a8.vec_94, sp0x18, sp0x20, 0x20, struct258_800c66a8._24c);
+        lerpish(struct258_800c66a8.vec_94, sp0x18, sp0x20, 32.0f / struct258_800c66a8._24c);
 
         struct258_800c66a8._24c++;
         if(struct258_800c66a8._24c > 32) {
@@ -4161,17 +4153,17 @@ public class WMap {
         }
 
         //LAB_800e0980
-        final int a0 = struct258_800c66a8._24c * 0x40 + (rsin(struct258_800c66a8._24c * 0x200) * 0x100 >> 12);
-        struct258_800c66a8.models_0c[3].scaleVector_fc.set(a0, a0, a0);
-        struct258_800c66a8.models_0c[struct258_800c66a8.modelIndex_1e4].coord2Param_64.rotate.setY(_800c66b0.mapRotation_70.getY());
-        struct258_800c66a8.rotation_a4.setY(_800c66b0.mapRotation_70.getY());
+        final float scale = struct258_800c66a8._24c * 0x40 + (rsin(struct258_800c66a8._24c * 0x200) * 0x100 >> 12) / (float)0x1000;
+        struct258_800c66a8.models_0c[3].scaleVector_fc.set(scale, scale, scale);
+        struct258_800c66a8.models_0c[struct258_800c66a8.modelIndex_1e4].coord2Param_64.rotate.y = _800c66b0.mapRotation_70.y;
+        struct258_800c66a8.rotation_a4.y = _800c66b0.mapRotation_70.y;
       } else if(struct258_800c66a8._248 == 2) {
         //LAB_800e0a6c
-        gameState_800babc8._17c.set(sp3c, true);
+        gameState_800babc8._17c.set(locationIndex, true);
 
         //LAB_800e0b64
-        mapState_800c6798.submapCut_c8 = locations_800f0e34.get(sp3c).submapCut_08.get();
-        mapState_800c6798.submapScene_ca = locations_800f0e34.get(sp3c).submapScene_0a.get();
+        mapState_800c6798.submapCut_c8 = locations_800f0e34.get(locationIndex).submapCut_08.get();
+        mapState_800c6798.submapScene_ca = locations_800f0e34.get(locationIndex).submapScene_0a.get();
         submapCut_80052c30.set(mapState_800c6798.submapCut_c8);
         submapScene_80052c34.set(mapState_800c6798.submapScene_ca);
 
@@ -4179,36 +4171,40 @@ public class WMap {
         struct258_800c66a8._248 = 3;
       } else if(struct258_800c66a8._248 == 3) {
         //LAB_800e0c00
-        struct258_800c66a8.models_0c[3].scaleVector_fc.x.sub(0x400);
+        struct258_800c66a8.models_0c[3].scaleVector_fc.x -= 0.25f;
 
-        if(struct258_800c66a8.models_0c[3].scaleVector_fc.getX() < 0) {
-          struct258_800c66a8.models_0c[3].scaleVector_fc.setX(0);
+        if(struct258_800c66a8.models_0c[3].scaleVector_fc.x < 0.0f) {
+          struct258_800c66a8.models_0c[3].scaleVector_fc.x = 0.0f;
         }
 
         //LAB_800e0c70
-        final int a0 = struct258_800c66a8.models_0c[3].scaleVector_fc.getX();
-        struct258_800c66a8.models_0c[3].scaleVector_fc.setY(a0);
-        struct258_800c66a8.models_0c[3].scaleVector_fc.setZ(a0);
+        final float a0 = struct258_800c66a8.models_0c[3].scaleVector_fc.x;
+        struct258_800c66a8.models_0c[3].scaleVector_fc.y = a0;
+        struct258_800c66a8.models_0c[3].scaleVector_fc.z = a0;
       }
 
       //LAB_800e0cbc
     }
 
     //LAB_800e0cc4
-    struct258_800c66a8.rotation_a4.x.and(0xfff);
-    struct258_800c66a8.rotation_a4.y.and(0xfff);
-    struct258_800c66a8.rotation_a4.z.and(0xfff);
+    struct258_800c66a8.rotation_a4.x = MathHelper.floorMod(struct258_800c66a8.rotation_a4.x, MathHelper.TWO_PI);
+    struct258_800c66a8.rotation_a4.y = MathHelper.floorMod(struct258_800c66a8.rotation_a4.y, MathHelper.TWO_PI);
+    struct258_800c66a8.rotation_a4.z = MathHelper.floorMod(struct258_800c66a8.rotation_a4.z, MathHelper.TWO_PI);
 
     FUN_800e10a0();
   }
 
   @Method(0x800e0d70L)
-  public static void FUN_800e0d70(final int locationIndex, final SVECTOR a1) {
+  public static void FUN_800e0d70(final int locationIndex, final Vector3f a1) {
     //LAB_800e0d84
     for(int i = 0; i < 6; i++) {
       //LAB_800e0da0
       if(locationIndex == _800ef6c8.get(i).locationIndex_00.get()) {
-        a1.set(_800ef6c8.get(i)._04);
+        a1.set(
+          _800ef6c8.get(i)._04.getX(),
+          _800ef6c8.get(i)._04.getY(),
+          _800ef6c8.get(i)._04.getZ()
+        );
         break;
       }
     }
@@ -4216,15 +4212,18 @@ public class WMap {
     //LAB_800e0e3c
   }
 
+  /** lerp, but I think it decreases Y more the lower the ratio */
   @Method(0x800e0e4cL)
-  public static void FUN_800e0e4c(final VECTOR out, final SVECTOR a1, final SVECTOR a2, final int a3, final int a4) {
-    if(a3 == a4) {
-      out.set(a2).shl(12);
+  public static void lerpish(final Vector3f out, final Vector3f a1, final Vector3f a2, final float ratio) {
+    if(ratio == 0.0f) {
+      out.set(a1);
+    } else if(ratio == 1.0f) {
+      out.set(a2);
     } else {
       //LAB_800e0ed8
-      out.setX( a1.getX() + ((a2.getX() - a1.getX() << 12) / a3 * a4 >> 12) << 12);
-      out.setY((a1.getY() + ((a2.getY() - a1.getY() << 12) / a3 * a4 >> 12) << 12) + rsin(0x800 / a3 * a4) * -200);
-      out.setZ( a1.getZ() + ((a2.getZ() - a1.getZ() << 12) / a3 * a4 >> 12) << 12);
+      out.x = a1.x + (a2.x - a1.x) * ratio;
+      out.y = a1.y + (a2.y - a1.y) * ratio + MathHelper.sin(MathHelper.PI * ratio) * -200;
+      out.z = a1.z + (a2.z - a1.z) * ratio;
     }
 
     //LAB_800e108c
@@ -4236,7 +4235,7 @@ public class WMap {
 
     struct.currentAnimIndex_ac = struct.animIndex_b0;
 
-    if(struct.vec_84.getX() != struct.vec_94.getX() || struct.vec_84.getY() != struct.vec_94.getY() || struct.vec_84.getZ() != struct.vec_94.getZ()) {
+    if(struct.vec_84.x != struct.vec_94.x || struct.vec_84.y != struct.vec_94.y || struct.vec_84.z != struct.vec_94.z) {
       final EncounterRateMode mode = CONFIG.getConfig(CoreMod.ENCOUNTER_RATE_CONFIG.get());
 
       //LAB_800e117c
@@ -4282,21 +4281,21 @@ public class WMap {
     renderPlayerShadow();
 
     final WMapStruct258 struct = struct258_800c66a8;
-    struct.coord2_34.coord.transfer.set(struct.vec_94).shra(12);
+    struct.coord2_34.coord.transfer.set(struct.vec_94);
     struct.models_0c[struct.modelIndex_1e4].coord2_14.coord.transfer.set(struct.coord2_34.coord.transfer);
 
     if(struct._250 == 0) {
-      int sp10 = struct.rotation_a4.getY() - struct.models_0c[struct.modelIndex_1e4].coord2Param_64.rotate.getY();
-      final int sp14 = struct.rotation_a4.getY() - (struct.models_0c[struct.modelIndex_1e4].coord2Param_64.rotate.getY() - 0x1000);
+      float sp10 = struct.rotation_a4.y - struct.models_0c[struct.modelIndex_1e4].coord2Param_64.rotate.y;
+      final float sp14 = struct.rotation_a4.y - (struct.models_0c[struct.modelIndex_1e4].coord2Param_64.rotate.y - MathHelper.TWO_PI);
 
       if(Math.abs(sp14) < Math.abs(sp10)) {
         sp10 = sp14;
       }
 
       //LAB_800e15e4
-      struct.models_0c[struct.modelIndex_1e4].coord2Param_64.rotate.y.add((short)(sp10 / 2));
-      struct.models_0c[struct.modelIndex_1e4].coord2Param_64.rotate.setX(struct.rotation_a4.getX());
-      struct.models_0c[struct.modelIndex_1e4].coord2Param_64.rotate.setZ(struct.rotation_a4.getZ());
+      struct.models_0c[struct.modelIndex_1e4].coord2Param_64.rotate.y += sp10 / 2.0f;
+      struct.models_0c[struct.modelIndex_1e4].coord2Param_64.rotate.x = struct.rotation_a4.x;
+      struct.models_0c[struct.modelIndex_1e4].coord2Param_64.rotate.z = struct.rotation_a4.z;
     }
 
     //LAB_800e16f8
@@ -4355,19 +4354,15 @@ public class WMap {
     final IntRef sp0x70 = new IntRef();
     final IntRef sp0x74 = new IntRef();
 
-    final VECTOR sp0x88 = new VECTOR();
-    final VECTOR sp0x98 = new VECTOR();
-    final VECTOR sp0xa8 = new VECTOR();
-    final VECTOR sp0xb8 = new VECTOR();
-    final VECTOR sp0xc8 = new VECTOR();
+    final Vector3f sp0x88 = new Vector3f();
+    final Vector3f sp0x98 = new Vector3f();
+    final Vector3f sp0xa8 = new Vector3f();
 
-    sp0xb8.set(_800c87d8);
-
-    sp0xa8.set(struct258_800c66a8.vec_84).sub(struct258_800c66a8.vec_94).shra(12);
-    FUN_8003ea80(sp0xa8, sp0xa8);
-    FUN_80040e40(sp0xa8, sp0xb8, sp0xc8);
-    sp0x88.set(struct258_800c66a8.vec_94).shra(12);
-    FUN_800e2ae4(sp0xc8, sp0x88);
+    final Vector3f delta = new Vector3f(struct258_800c66a8.vec_84)
+      .sub(struct258_800c66a8.vec_94)
+      .normalize()
+      .cross(_800c87d8);
+    FUN_800e2ae4(delta, struct258_800c66a8.vec_94);
     rotateCoord2(struct258_800c66a8.tmdRendering_08.rotations_08[0], struct258_800c66a8.tmdRendering_08.coord2s_04[0]);
     GsGetLs(struct258_800c66a8.tmdRendering_08.coord2s_04[0], sp0x28);
     setRotTransMatrix(sp0x28);
@@ -4376,29 +4371,29 @@ public class WMap {
     for(int i = 0; i < 39; i++) {
       //LAB_800e1ce8
       FUN_800e2e1c(i, sp0x88, sp0x98, sp0x74, sp0x70);
-      int spc8 = sp0x88.getX() * sp0x70.get() >> 12;
-      int spcc = sp0x88.getY() * sp0x70.get() >> 12;
-      int spd0 = sp0x88.getZ() * sp0x70.get() >> 12;
-      final int spd8 = -spc8;
-      final int spdc = -spcc;
-      final int spe0 = -spd0;
-      sp0x48.setX((short)(spc8 + sp0x98.getX()));
-      sp0x48.setY((short)(spcc + sp0x98.getY()));
-      sp0x48.setZ((short)(spd0 + sp0x98.getZ()));
-      sp0x50.setX((short)sp0x98.getX());
-      sp0x50.setY((short)sp0x98.getY());
-      sp0x50.setZ((short)sp0x98.getZ());
+      float spc8 = sp0x88.x * sp0x70.get();
+      float spcc = sp0x88.y * sp0x70.get();
+      float spd0 = sp0x88.z * sp0x70.get();
+      final float spd8 = -spc8;
+      final float spdc = -spcc;
+      final float spe0 = -spd0;
+      sp0x48.setX((short)(spc8 + sp0x98.x));
+      sp0x48.setY((short)(spcc + sp0x98.y));
+      sp0x48.setZ((short)(spd0 + sp0x98.z));
+      sp0x50.setX((short)sp0x98.x);
+      sp0x50.setY((short)sp0x98.y);
+      sp0x50.setZ((short)sp0x98.z);
 
       FUN_800e2e1c(i + 1, sp0x88, sp0xa8, sp0x74, sp0x70);
-      spc8 = sp0x88.getX() * sp0x70.get() >> 12;
-      spcc = sp0x88.getY() * sp0x70.get() >> 12;
-      spd0 = sp0x88.getZ() * sp0x70.get() >> 12;
-      final int spe8 = -spc8;
-      final int spec = -spcc;
-      final int spf0 = -spd0;
-      sp0x58.setX((short)(spc8 + sp0xa8.getX()));
-      sp0x58.setY((short)(spcc + sp0xa8.getY()));
-      sp0x58.setZ((short)(spd0 + sp0xa8.getZ()));
+      spc8 = sp0x88.x * sp0x70.get();
+      spcc = sp0x88.y * sp0x70.get();
+      spd0 = sp0x88.z * sp0x70.get();
+      final float spe8 = -spc8;
+      final float spec = -spcc;
+      final float spf0 = -spd0;
+      sp0x58.setX((short)(spc8 + sp0xa8.x));
+      sp0x58.setY((short)(spcc + sp0xa8.y));
+      sp0x58.setZ((short)(spd0 + sp0xa8.z));
       sp0x60.set(sp0xa8);
 
       int sp78 = 256 - sp0x74.get() * 256 / 40;
@@ -4447,12 +4442,12 @@ public class WMap {
       }
 
       //LAB_800e2440
-      sp0x48.setX((short)(spd8 + sp0x98.getX()));
-      sp0x48.setY((short)(spdc + sp0x98.getY()));
-      sp0x48.setZ((short)(spe0 + sp0x98.getZ()));
-      sp0x58.setX((short)(spe8 + sp0xa8.getX()));
-      sp0x58.setY((short)(spec + sp0xa8.getY()));
-      sp0x58.setZ((short)(spf0 + sp0xa8.getZ()));
+      sp0x48.setX((short)(spd8 + sp0x98.x));
+      sp0x48.setY((short)(spdc + sp0x98.y));
+      sp0x48.setZ((short)(spe0 + sp0x98.z));
+      sp0x58.setX((short)(spe8 + sp0xa8.x));
+      sp0x58.setY((short)(spec + sp0xa8.y));
+      sp0x58.setZ((short)(spf0 + sp0xa8.z));
       z = RotTransPers4(sp0x48, sp0x50, sp0x58, sp0x60, sxyz0, sxyz1, sxyz2, sxyz3);
 
       if(z >= 3 && z < orderingTableSize_1f8003c8.get()) {
@@ -4489,7 +4484,7 @@ public class WMap {
       }
 
       //LAB_800e2808
-      struct258_800c66a8.ptr_22c[sp6c]++;
+      struct258_800c66a8._22c[sp6c]++;
     }
 
     //LAB_800e289c
@@ -4500,24 +4495,24 @@ public class WMap {
   public static void FUN_800e28dc(final int a0, final int a1) {
     final int count = a0 * a1;
 
-    struct258_800c66a8.vecs_224 = new VECTOR[count];
-    struct258_800c66a8.vecs_228 = new VECTOR[count];
+    struct258_800c66a8.vecs_224 = new Vector3f[count];
+    struct258_800c66a8.vecs_228 = new Vector3f[count];
 
-    struct258_800c66a8.ptr_22c = new int[count];
+    struct258_800c66a8._22c = new int[count];
     struct258_800c66a8._230 = 0;
     struct258_800c66a8._234 = count - 1;
     struct258_800c66a8._238 = count;
     struct258_800c66a8._23c = a1;
 
     //NOTE: there's a bug in the original code, it just sets the first vector in the array over and over again
-    Arrays.setAll(struct258_800c66a8.vecs_224, i -> new VECTOR());
-    Arrays.setAll(struct258_800c66a8.vecs_228, i -> new VECTOR());
+    Arrays.setAll(struct258_800c66a8.vecs_224, i -> new Vector3f());
+    Arrays.setAll(struct258_800c66a8.vecs_228, i -> new Vector3f());
 
     struct258_800c66a8._244 = 0;
   }
 
   @Method(0x800e2ae4L)
-  public static void FUN_800e2ae4(final VECTOR a0, final VECTOR a1) {
+  public static void FUN_800e2ae4(final Vector3f a0, final Vector3f a1) {
     final WMapStruct258 struct258 = struct258_800c66a8;
 
     if(struct258._244 == 0) {
@@ -4537,20 +4532,20 @@ public class WMap {
     struct258.vecs_224[struct258._230].set(a0);
     struct258.vecs_228[struct258._230].set(a1);
 
-    struct258.ptr_22c[struct258._230] = 0;
+    struct258._22c[struct258._230] = 0;
 
     struct258._234 = struct258._230;
     struct258._230 = (struct258._230 + 1) % struct258._238;
   }
 
   @Method(0x800e2e1cL)
-  public static void FUN_800e2e1c(final int a0, final VECTOR a1, final VECTOR a2, final IntRef a3, final IntRef a4) {
+  public static void FUN_800e2e1c(final int a0, final Vector3f a1, final Vector3f a2, final IntRef a3, final IntRef a4) {
     if(a0 == 0) {
       a1.set(struct258_800c66a8.vecs_224[struct258_800c66a8._234]);
       a2.set(struct258_800c66a8.vecs_228[struct258_800c66a8._234]);
-      a3.set(struct258_800c66a8.ptr_22c[struct258_800c66a8._234]);
-      final int v0 = struct258_800c66a8.ptr_22c[struct258_800c66a8._234] - struct258_800c66a8._240;
-      a4.set(struct258_800c66a8.ptr_22c[struct258_800c66a8._234] + (rsin(v0 << 8 & 0x7ff) * struct258_800c66a8.ptr_22c[struct258_800c66a8._234] >> 12));
+      a3.set(struct258_800c66a8._22c[struct258_800c66a8._234]);
+      final int v0 = struct258_800c66a8._22c[struct258_800c66a8._234] - struct258_800c66a8._240;
+      a4.set(struct258_800c66a8._22c[struct258_800c66a8._234] + (rsin(v0 << 8 & 0x7ff) * struct258_800c66a8._22c[struct258_800c66a8._234] >> 12));
     } else {
       //LAB_800e3024
       int sp10 = struct258_800c66a8._230 - a0 * struct258_800c66a8._23c;
@@ -4562,9 +4557,9 @@ public class WMap {
       //LAB_800e3090
       a1.set(struct258_800c66a8.vecs_224[sp10]);
       a2.set(struct258_800c66a8.vecs_228[sp10]);
-      a3.set(struct258_800c66a8.ptr_22c[sp10]);
-      final int v0 = struct258_800c66a8.ptr_22c[sp10] - struct258_800c66a8._240;
-      a4.set(struct258_800c66a8.ptr_22c[sp10] + (rsin(v0 << 8 & 0x7ff) * struct258_800c66a8.ptr_22c[sp10] >> 12));
+      a3.set(struct258_800c66a8._22c[sp10]);
+      final int v0 = struct258_800c66a8._22c[sp10] - struct258_800c66a8._240;
+      a4.set(struct258_800c66a8._22c[sp10] + (rsin(v0 << 8 & 0x7ff) * struct258_800c66a8._22c[sp10] >> 12));
     }
 
     //LAB_800e321c
@@ -4691,12 +4686,12 @@ public class WMap {
     final int nobj = tmd.tmd.header.nobj;
     a0.dobj2s_00 = new GsDOBJ2[nobj];
     a0.coord2s_04 = new GsCOORDINATE2[nobj];
-    a0.rotations_08 = new SVECTOR[nobj];
+    a0.rotations_08 = new Vector3f[nobj];
     a0._10 = new int[nobj];
 
     Arrays.setAll(a0.dobj2s_00, i -> new GsDOBJ2());
     Arrays.setAll(a0.coord2s_04, i -> new GsCOORDINATE2());
-    Arrays.setAll(a0.rotations_08, i -> new SVECTOR());
+    Arrays.setAll(a0.rotations_08, i -> new Vector3f());
 
     //LAB_800e3d24
     for(int i = 0; i < nobj; i++) {
@@ -4715,14 +4710,14 @@ public class WMap {
     for(int i = 0; i < a0.count_0c; i++) {
       final GsDOBJ2 dobj2 = a0.dobj2s_00[i];
       final GsCOORDINATE2 coord2 = a0.coord2s_04[i];
-      final SVECTOR rotation = a0.rotations_08[i];
+      final Vector3f rotation = a0.rotations_08[i];
 
       //LAB_800e3e20
       GsInitCoordinate2(superCoord, coord2);
 
       dobj2.coord2_04 = coord2;
       coord2.coord.transfer.set(0, 0, 0);
-      rotation.set((short)0, (short)0, (short)0);
+      rotation.set(0.0f, 0.0f, 0.0f);
     }
 
     //LAB_800e3ee8
@@ -4797,8 +4792,8 @@ public class WMap {
 
         _800c66b0._11a = 1;
         _800c66b0.coord2_20.coord.transfer.set(0, 0, 0);
-        _800c66b0._9a = 0;
-        _800c66b0.mapRotation_70.setY((short)0);
+        _800c66b0.angle_9a = 0;
+        _800c66b0.mapRotation_70.y = 0.0f;
 
         FUN_800d4bc8(1);
 
@@ -4844,13 +4839,13 @@ public class WMap {
         //LAB_800e4144
         scriptStartEffect(2, 15);
 
-        _800c66b0.rview2_00.viewpoint_00.setY(-9000);
-        _800c66b0.rview2_00.refpoint_0c.setY(9000);
+        _800c66b0.rview2_00.viewpoint_00.y = -9000.0f;
+        _800c66b0.rview2_00.refpoint_0c.y = 9000.0f;
         _800c66b0._11a = 1;
         _800c66b0.coord2_20.coord.transfer.set(0, 0, 0);
         _800c66b0._9e = -300;
-        _800c66b0._9a = 0;
-        _800c66b0.mapRotation_70.setY((short)0);
+        _800c66b0.angle_9a = 0;
+        _800c66b0.mapRotation_70.y = 0.0f;
 
         FUN_800d4bc8(1);
 
@@ -5386,12 +5381,12 @@ public class WMap {
         break;
 
       case 6:
-        if(mapState_800c6798._c0 != 0) {
-          mapState_800c6798._c0 = 0;
+        if(mapState_800c6798.angle_c0 != 0.0f) {
+          mapState_800c6798.angle_c0 = 0.0f;
           mapState_800c6798.facing_1c = 1;
         } else {
           //LAB_800e6704
-          mapState_800c6798._c0 = 0x800;
+          mapState_800c6798.angle_c0 = MathHelper.PI;
           mapState_800c6798.facing_1c = -1;
         }
 
@@ -5824,7 +5819,7 @@ public class WMap {
         dx = sp48.get(0).getX() - sp48.get(1).getX();
         dz = sp48.get(0).getZ() - sp48.get(1).getZ();
 
-        mapState_800c6798._c0 = 0;
+        mapState_800c6798.angle_c0 = 0.0f;
       } else {
         //LAB_800e8190
         final int index = _800f5810.get(Math.abs(area._00.get()) - 1).get() - 1;
@@ -5833,13 +5828,13 @@ public class WMap {
 
         struct258_800c66a8.coord2_34.coord.transfer.set(sp48.get(index).getX(), sp48.get(index).getY() - 2, sp48.get(index).getZ());
 
-        mapState_800c6798._c0 = 0x800;
+        mapState_800c6798.angle_c0 = MathHelper.PI;
       }
 
       //LAB_800e838c
-      struct258_800c66a8.rotation_a4.set((short)0, (short)ratan2(dx, dz), (short)0);
-      mapState_800c6798.previousPlayerRotation_c2 = struct258_800c66a8.rotation_a4.getY();
-      struct258_800c66a8.rotation_a4.y.add((short)mapState_800c6798._c0);
+      struct258_800c66a8.rotation_a4.set(0.0f, MathHelper.atan2(dx, dz), 0.0f);
+      mapState_800c6798.previousPlayerRotation_c2 = struct258_800c66a8.rotation_a4.y;
+      struct258_800c66a8.rotation_a4.y += mapState_800c6798.angle_c0;
 
       mapState_800c6798._f8 = 0;
       mapState_800c6798._fc = 0;
@@ -5855,14 +5850,14 @@ public class WMap {
     mapState_800c6798.submapCut_c8 = locations_800f0e34.get(locationIndex).submapCut_08.get();
     mapState_800c6798.submapScene_ca = locations_800f0e34.get(locationIndex).submapScene_0a.get();
 
-    final VECTOR avg = new VECTOR();
-    final VECTOR playerPos = new VECTOR();
-    final VECTOR nextPathPos = new VECTOR();
+    final Vector3f avg = new Vector3f();
+    final Vector3f playerPos = new Vector3f();
+    final Vector3f nextPathPos = new Vector3f();
 
     getPathPositions(playerPos, nextPathPos);
     weightedAvg(4 - mapState_800c6798.dotOffset_18, mapState_800c6798.dotOffset_18, avg, playerPos, nextPathPos);
 
-    struct258_800c66a8.coord2_34.coord.transfer.set(avg).div(0x1000);
+    struct258_800c66a8.coord2_34.coord.transfer.set(avg);
     struct258_800c66a8.coord2_34.coord.transfer.y.sub(2);
 
     if(mapState_800c6798.submapCut_c4 == 242 && mapState_800c6798.submapScene_c6 == 3) { // Donau
@@ -5986,11 +5981,11 @@ public class WMap {
 
     //LAB_800e8c40
     if(sp0 < 0) {
-      mapState_800c6798._c0 = 0x800;
+      mapState_800c6798.angle_c0 = MathHelper.PI;
       mapState_800c6798.facing_1c = -1;
     } else {
       //LAB_800e8c70
-      mapState_800c6798._c0 = 0;
+      mapState_800c6798.angle_c0 = 0.0f;
       mapState_800c6798.facing_1c = 1;
     }
 
@@ -6126,7 +6121,7 @@ public class WMap {
     final int directionInput = (input_800bee90.get() & 0xffff) >>> 12;
 
     if(directionInput != 0) {
-      final int sp0 = (_800c66b0.mapRotation_70.getY() - mapState_800c6798.previousPlayerRotation_c2 - 0x700 & 0xfff) >> 9;
+      final int sp0 = MathHelper.radToPsxDeg(MathHelper.floorMod(_800c66b0.mapRotation_70.y - mapState_800c6798.previousPlayerRotation_c2 - 0.875f * MathHelper.PI, MathHelper.TWO_PI)) >> 9;
       final int sp8 = directionInput & _800f0204.get(sp0).get();
       final int spc = directionInput & _800f0210.get(sp0).get();
 
@@ -6153,11 +6148,11 @@ public class WMap {
         mapState_800c6798.dotOffset_18 += movement;
 
         if(movement < 0) {
-          mapState_800c6798._c0 = 0x800;
+          mapState_800c6798.angle_c0 = MathHelper.PI;
           mapState_800c6798.facing_1c = -1;
         } else {
           //LAB_800e93f4
-          mapState_800c6798._c0 = 0;
+          mapState_800c6798.angle_c0 = 0.0f;
           mapState_800c6798.facing_1c = 1;
         }
       }
@@ -6167,25 +6162,25 @@ public class WMap {
   }
 
   @Method(0x800e9418L)
-  public static void getPathPositions(final VECTOR playerPos, final VECTOR nextPathPos) {
+  public static void getPathPositions(final Vector3f playerPos, final Vector3f nextPathPos) {
     final UnboundedArrayRef<VECTOR> dots = pathDotPosPtrArr_800f591c.get(mapState_800c6798.pathIndex_14).deref();
-    playerPos.set(dots.get(mapState_800c6798.dotIndex_16));
-    nextPathPos.set(dots.get(mapState_800c6798.dotIndex_16 + 1));
+    dots.get(mapState_800c6798.dotIndex_16).get(playerPos);
+    dots.get(mapState_800c6798.dotIndex_16 + 1).get(nextPathPos);
   }
 
   @Method(0x800e94f0L)
-  public static void weightedAvg(final int weight1, final int weight2, final VECTOR out, final VECTOR vec1, final VECTOR vec2) {
-    out.setX((weight1 * vec1.getX() + weight2 * vec2.getX()) / (weight1 + weight2) * 0x1000);
-    out.setY((weight1 * vec1.getY() + weight2 * vec2.getY()) / (weight1 + weight2) * 0x1000);
-    out.setZ((weight1 * vec1.getZ() + weight2 * vec2.getZ()) / (weight1 + weight2) * 0x1000);
+  public static void weightedAvg(final int weight1, final int weight2, final Vector3f out, final Vector3f vec1, final Vector3f vec2) {
+    out.x = (weight1 * vec1.x + weight2 * vec2.x) / (weight1 + weight2);
+    out.y = (weight1 * vec1.y + weight2 * vec2.y) / (weight1 + weight2);
+    out.z = (weight1 * vec1.z + weight2 * vec2.z) / (weight1 + weight2);
   }
 
   @Method(0x800e9648L)
   public static void updatePlayerRotation() {
     final WMapStruct258 struct258 = struct258_800c66a8;
-    struct258.rotation_a4.set((short)0, (short)ratan2(mapState_800c6798.playerPos_20.getX() - mapState_800c6798.nextDotPos_30.getX(), mapState_800c6798.playerPos_20.getZ() - mapState_800c6798.nextDotPos_30.getZ()), (short)0);
-    mapState_800c6798.previousPlayerRotation_c2 = struct258.rotation_a4.getY();
-    struct258.rotation_a4.y.add((short)mapState_800c6798._c0);
+    struct258.rotation_a4.set(0.0f, MathHelper.atan2(mapState_800c6798.playerPos_20.x - mapState_800c6798.nextDotPos_30.x, mapState_800c6798.playerPos_20.z - mapState_800c6798.nextDotPos_30.z), 0.0f);
+    mapState_800c6798.previousPlayerRotation_c2 = struct258.rotation_a4.y;
+    struct258.rotation_a4.y += mapState_800c6798.angle_c0;
   }
 
   @Method(0x800e975cL)
@@ -6201,18 +6196,18 @@ public class WMap {
       mapState_800c6798._dc[i] = -1;
     }
 
-    final VECTOR sp0x10 = new VECTOR();
-    final VECTOR sp0x20 = new VECTOR();
-    final VECTOR sp0x30 = new VECTOR();
+    final Vector3f playerPos = new Vector3f();
+    final Vector3f nextPathPos = new Vector3f();
+    final Vector3f pos = new Vector3f();
 
     //LAB_800e97dc
-    getPathPositions(sp0x10, sp0x20);
+    getPathPositions(playerPos, nextPathPos);
 
     if(mapState_800c6798._f8 == 1) {
-      sp0x30.set(sp0x10);
+      pos.set(playerPos);
     } else {
       //LAB_800e9834
-      sp0x30.set(sp0x20);
+      pos.set(nextPathPos);
     }
 
     //LAB_800e985c
@@ -6235,15 +6230,15 @@ public class WMap {
               final int pathIndex = Math.abs(sp50) - 1;
               final int dotIndex = _800f5810.get(pathIndex).get();
               final UnboundedArrayRef<VECTOR> dots = pathDotPosPtrArr_800f591c.get(pathIndex).deref();
-              sp0x10.set(dots.get(dotIndex - 1));
-              sp0x20.set(dots.get(0));
+              dots.get(dotIndex - 1).get(playerPos);
+              dots.get(0).get(nextPathPos);
 
-              if(sp0x30.getX() == sp0x10.getX() && sp0x30.getY() == sp0x10.getY() && sp0x30.getZ() == sp0x10.getZ()) {
+              if(pos.x == playerPos.x && pos.y == playerPos.y && pos.z == playerPos.z) {
                 mapState_800c6798._40[sp4c].set(dots.get(dotIndex - 2));
                 mapState_800c6798._dc[sp4c] = sp54;
                 sp4c++;
                 //LAB_800e9bd8
-              } else if(sp0x30.getX() == sp0x20.getX() && sp0x30.getY() == sp0x20.getY() && sp0x30.getZ() == sp0x20.getZ()) {
+              } else if(pos.x == nextPathPos.x && pos.y == nextPathPos.y && pos.z == nextPathPos.z) {
                 mapState_800c6798._40[sp4c].set(dots.get(1));
                 mapState_800c6798._dc[sp4c] = sp54;
                 sp4c++;
@@ -6257,7 +6252,7 @@ public class WMap {
     }
 
     //LAB_800e9cf8
-    mapState_800c6798._b0.set(sp0x30);
+    mapState_800c6798._b0.set(pos);
     mapState_800c6798._f8 = 0;
 
     if(sp4c == 1) {
@@ -6312,9 +6307,9 @@ public class WMap {
       }
 
       //LAB_800e9edc
-      sp0xb0.set(struct258_800c66a8.vec_94).shra(12).sub(mapState_800c6798._40[i]);
+      sp0xb0.set(struct258_800c66a8.vec_94).sub(mapState_800c6798._40[i]);
 
-      sp0xc8[i] = (short)(_800c66b0.mapRotation_70.getY() - ratan2(sp0xb0.getX(), sp0xb0.getZ()) + 0x800 & 0xfff);
+      sp0xc8[i] = (short)(MathHelper.radToPsxDeg(_800c66b0.mapRotation_70.y) - ratan2(sp0xb0.getX(), sp0xb0.getZ()) + 0x800 & 0xfff);
 
       final int v0 = (sp0xc8[i] + 0x100 & 0xfff) >> 9;
       if((movementInput & _800f0204.get(v0).get()) != 0) {
@@ -6353,27 +6348,28 @@ public class WMap {
     //LAB_800ea1dc
     final UnboundedArrayRef<VECTOR> dots = pathDotPosPtrArr_800f591c.get(mapState_800c6798.pathIndex_14).deref();
 
+    final VECTOR dot;
     if(area._00.get() >= 0) {
-      sp0xb0.set(dots.get(0));
+      dot = dots.get(0);
     } else {
       //LAB_800ea248
-      sp0xb0.set(dots.get(_800f5810.get(mapState_800c6798.pathIndex_14).get() - 1));
+      dot = dots.get(_800f5810.get(mapState_800c6798.pathIndex_14).get() - 1);
     }
 
     //LAB_800ea2a8
-    if(mapState_800c6798._b0.getX() != sp0xb0.getX() || mapState_800c6798._b0.getY() != sp0xb0.getY() || mapState_800c6798._b0.getZ() != sp0xb0.getZ()) {
+    if(mapState_800c6798._b0.x != dot.getX() || mapState_800c6798._b0.y != dot.getY() || mapState_800c6798._b0.z != dot.getZ()) {
       //LAB_800ea2f8
       if(area._00.get() >= 0) {
         mapState_800c6798.dotIndex_16 = (short)(_800f5810.get(Math.abs(area._00.get()) - 1).get() - 2);
         mapState_800c6798.dotOffset_18 = 2;
         mapState_800c6798.facing_1c = -1;
-        mapState_800c6798._c0 = 0x800;
+        mapState_800c6798.angle_c0 = MathHelper.PI;
       } else {
         //LAB_800ea39c
         mapState_800c6798.dotIndex_16 = 0;
         mapState_800c6798.dotOffset_18 = 1;
         mapState_800c6798.facing_1c = 1;
-        mapState_800c6798._c0 = 0;
+        mapState_800c6798.angle_c0 = 0.0f;
       }
     }
 
@@ -6382,12 +6378,12 @@ public class WMap {
 
   @Method(0x800ea3d8L)
   public static void updatePlayer() {
-    final VECTOR playerPos = new VECTOR();
-    final VECTOR nextDotPos = new VECTOR();
+    final Vector3f playerPos = new Vector3f();
+    final Vector3f nextDotPos = new Vector3f();
 
     getPathPositions(playerPos, nextDotPos);
     weightedAvg(4 - mapState_800c6798.dotOffset_18, mapState_800c6798.dotOffset_18, struct258_800c66a8.vec_94, playerPos, nextDotPos);
-    struct258_800c66a8.vec_94.y.sub(0x2000);
+    struct258_800c66a8.vec_94.y -= 2.0f;
     mapState_800c6798.playerPos_20.set(playerPos);
     mapState_800c6798.nextDotPos_30.set(nextDotPos);
 
@@ -6459,7 +6455,7 @@ public class WMap {
 
       mapState_800c6798.dotIndex_16 = 0;
       mapState_800c6798.dotOffset_18 = 0;
-      mapState_800c6798._c0 = 0;
+      mapState_800c6798.angle_c0 = 0.0f;
       mapState_800c6798.facing_1c = 1;
     } else {
       //LAB_800ea8d4
@@ -6471,14 +6467,14 @@ public class WMap {
 
       mapState_800c6798.dotIndex_16 = dotIndex - 1;
       mapState_800c6798.dotOffset_18 = 3;
-      mapState_800c6798._c0 = 0x800;
+      mapState_800c6798.angle_c0 = MathHelper.PI;
       mapState_800c6798.facing_1c = -1;
     }
 
     //LAB_800eaafc
-    struct258.rotation_a4.set((short)0, (short)ratan2(dx, dz), (short)0);
+    struct258.rotation_a4.set(0.0f, MathHelper.atan2(dx, dz), 0.0f);
 
-    mapState_800c6798.previousPlayerRotation_c2 = struct258.rotation_a4.getY();
+    mapState_800c6798.previousPlayerRotation_c2 = struct258.rotation_a4.y;
     mapState_800c6798._f8 = 0;
     mapState_800c6798._fc = 0;
 
@@ -6518,7 +6514,7 @@ public class WMap {
       struct258.coord2_34.coord.transfer.set(dots.get(dotIndex).getX(), dots.get(dotIndex).getY() - 2, dots.get(dotIndex).getZ());
       mapState_800c6798.dotIndex_16 = dotIndex - 1;
       mapState_800c6798.dotOffset_18 = 3;
-      mapState_800c6798._c0 = 0;
+      mapState_800c6798.angle_c0 = 0.0f;
       dx = dots.get(dotIndex).getX() - dots.get(dotIndex - 1).getX();
       dz = dots.get(dotIndex).getZ() - dots.get(dotIndex - 1).getZ();
     } else {
@@ -6526,14 +6522,14 @@ public class WMap {
       struct258.coord2_34.coord.transfer.set(dots.get(0).getX(), dots.get(0).getY() - 2, dots.get(0).getZ());
       mapState_800c6798.dotIndex_16 = 0;
       mapState_800c6798.dotOffset_18 = 0;
-      mapState_800c6798._c0 = 0x800;
+      mapState_800c6798.angle_c0 = MathHelper.PI;
       dx = dots.get(0).getX() - dots.get(1).getX();
       dz = dots.get(0).getZ() - dots.get(1).getZ();
     }
 
     //LAB_800eb00c
-    struct258.rotation_a4.set((short)0, (short)ratan2(dx, dz), (short)0);
-    mapState_800c6798.previousPlayerRotation_c2 = struct258.rotation_a4.getY();
+    struct258.rotation_a4.set(0.0f, MathHelper.atan2(dx, dz), 0.0f);
+    mapState_800c6798.previousPlayerRotation_c2 = struct258.rotation_a4.y;
     mapState_800c6798._fc = 0;
 
     //LAB_800eb088
@@ -6543,7 +6539,7 @@ public class WMap {
    * a1 used to be either 0, -1, or a VECTOR. If passing a VECTOR, pass it as vec and set a1 to 1
    */
   @Method(0x800eb09cL)
-  public static int FUN_800eb09c(final int locationIndex, final int a1, @Nullable final VECTOR vec) {
+  public static int FUN_800eb09c(final int locationIndex, final int a1, @Nullable final Vector3f vec) {
     if(locations_800f0e34.get(locationIndex).areaIndex_00.get() == -1) {
       return -1;
     }
@@ -6578,10 +6574,10 @@ public class WMap {
     final UnboundedArrayRef<VECTOR> v1 = pathDotPosPtrArr_800f591c.get(sp18).deref();
 
     if(sp14 > 0) {
-      vec.set(v1.get(0));
+      v1.get(0).get(vec);
     } else {
       //LAB_800eb2fc
-      vec.set(v1.get(_800f5810.get(sp18).get() - 1));
+      v1.get(_800f5810.get(sp18).get() - 1).get(vec);
     }
 
     //LAB_800eb3a8
@@ -6594,13 +6590,13 @@ public class WMap {
     final boolean[] sp0xd0 = new boolean[0x101];
     int sp24 = 0;
 
-    final VECTOR sp0x30 = new VECTOR();
-    final VECTOR sp0x40 = new VECTOR();
-    final VECTOR sp0x50 = new VECTOR();
-    final VECTOR[] sp0x60 = new VECTOR[0x101];
+    final Vector3f sp0x30 = new Vector3f();
+    final Vector3f sp0x40 = new Vector3f();
+    final Vector3f sp0x50 = new Vector3f();
+    final Vector3f[] sp0x60 = new Vector3f[0x101];
 
     for(int i = 0; i < sp0x60.length; i++) {
-      sp0x60[i] = new VECTOR();
+      sp0x60[i] = new Vector3f();
     }
 
     //LAB_800eb420
@@ -6655,11 +6651,11 @@ public class WMap {
               //LAB_800eb778
               sp0x40.set(sp0x60[sp1c + 1]);
               weightedAvg(1, 1, sp0x50, sp0x30, sp0x40);
-              sp0x30.set(sp0x50).div(0x1000);
+              sp0x30.set(sp0x50);
             }
 
             //LAB_800eb828
-            _800c74b8.get(sp24).set(sp0x50).shra(12);
+            _800c74b8.get(sp24).set(sp0x50);
           }
 
           //LAB_800eb8ac
@@ -6837,7 +6833,7 @@ public class WMap {
         //LAB_800ec3c8
         final MATRIX sp0x10 = new MATRIX();
         GsGetLs(sp38.coord2_00, sp0x10);
-        clearLinearTransforms(sp0x10);
+        sp0x10.identity(); // NOTE: does not clear translation
         setRotTransMatrix(sp0x10);
         GTE.perspectiveTransform(-sp38._58, -sp38._5a, 0);
         final short sx0 = GTE.getScreenX(2);
@@ -6959,7 +6955,7 @@ public class WMap {
   @Method(0x800ecd10L)
   public static void renderSnow() {
     final MATRIX sp0x10 = new MATRIX();
-    final SVECTOR sp0x80 = new SVECTOR();
+    final Vector3f sp0x80 = new Vector3f();
 
     //LAB_800ecdb4
     for(int i = 0; i < 64; i++) {
@@ -7006,7 +7002,7 @@ public class WMap {
         //LAB_800ed2bc
         rotateCoord2(sp0x80, sp38.coord2_00);
         GsGetLs(sp38.coord2_00, sp0x10);
-        clearLinearTransforms(sp0x10);
+        sp0x10.identity(); // NOTE: does not clear translation
         setRotTransMatrix(sp0x10);
         GTE.perspectiveTransform(-2, -2, 0);
 
@@ -7143,7 +7139,7 @@ public class WMap {
 
   @Method(0x800edbc0L)
   public static void renderSmoke() {
-    final SVECTOR rotation = new SVECTOR(); // Just (0, 0, 0)
+    final Vector3f rotation = new Vector3f(); // Just (0, 0, 0)
     final MATRIX ls = new MATRIX();
 
     if((filesLoadedFlags_800c66b8.get() & 0x1000L) == 0) {
@@ -7240,7 +7236,7 @@ public class WMap {
               //LAB_800ee5f0
               rotateCoord2(rotation, struct.coord2_00);
               GsGetLs(struct.coord2_00, ls);
-              clearLinearTransforms(ls);
+              ls.identity(); // NOTE: does not clear translation
               setRotTransMatrix(ls);
 
               final GpuCommandPoly cmd = new GpuCommandPoly(4)

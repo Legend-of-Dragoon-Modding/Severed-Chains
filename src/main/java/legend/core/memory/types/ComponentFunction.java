@@ -1,5 +1,8 @@
 package legend.core.memory.types;
 
-public interface ComponentFunction<T, U, V, X, Y> {
-  int apply(T t, U u, V v, X x, Y y);
+import org.joml.Vector3f;
+
+@FunctionalInterface
+public interface ComponentFunction {
+  float apply(int component, int scriptIndex, Vector3f point);
 }

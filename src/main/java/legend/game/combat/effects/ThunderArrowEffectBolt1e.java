@@ -9,5 +9,5 @@ public class ThunderArrowEffectBolt1e {
   public final USCOLOUR colour_0a = new USCOLOUR();
   public final USCOLOUR svec_10 = new USCOLOUR();
   public final USCOLOUR svec_16 = new USCOLOUR();
-  public byte _1c;
+  public byte size_1c;
 }

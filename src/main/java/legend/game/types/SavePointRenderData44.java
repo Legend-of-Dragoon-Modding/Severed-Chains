@@ -9,11 +9,11 @@ public class SavePointRenderData44 {
   public final SVECTOR vert3_18 = new SVECTOR();
   public int screenOffsetX_20;
   public int screenOffsetY_24;
-  public int rotation_28;
-  public int fadeAmount_2c;
-  /** 16.16 fixed-point */
-  public int fadeAccumulator_30;
-  public int colour_34;
+  public float rotation_28;
+  public float fadeAmount_2c;
+//  /** 16.16 fixed-point */
+//  public int fadeAccumulator_30;
+  public float colour_34;
   /** 0: fade in, 1: fade out */
   public short fadeState_38;
 

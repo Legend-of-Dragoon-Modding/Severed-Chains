@@ -1,14 +1,14 @@
 package legend.game.combat.environment;
 
 import legend.core.IoHelper;
-import legend.core.gte.USCOLOUR;
 import legend.game.scripting.Param;
+import org.joml.Vector3f;
 
 import java.nio.ByteBuffer;
 
 public class StageAmbiance4c {
-  public final USCOLOUR ambientColour_00 = new USCOLOUR();
-  public final USCOLOUR _06 = new USCOLOUR();
+  public final Vector3f ambientColour_00 = new Vector3f();
+  public final Vector3f _06 = new Vector3f();
   public int _0c;
   public int _0e;
   public final BattleStruct14[] _10 = {new BattleStruct14(), new BattleStruct14(), new BattleStruct14()};
@@ -42,12 +42,12 @@ public class StageAmbiance4c {
       vals[i] = param.array(i).get();
     }
 
-    this.ambientColour_00.setX(vals[0] & 0xffff);
-    this.ambientColour_00.setY(vals[0] >>> 16 & 0xffff);
-    this.ambientColour_00.setZ(vals[1] & 0xffff);
-    this._06.setX(vals[1] >>> 16 & 0xffff);
-    this._06.setY(vals[2] & 0xffff);
-    this._06.setZ(vals[2] >>> 16 & 0xffff);
+    this.ambientColour_00.x = (vals[0] & 0xffff) / 4096.0f;
+    this.ambientColour_00.y = (vals[0] >>> 16 & 0xffff) / 4096.0f;
+    this.ambientColour_00.z = (vals[1] & 0xffff) / 4096.0f;
+    this._06.x = (vals[1] >>> 16 & 0xffff) / 4096.0f;
+    this._06.y = (vals[2] & 0xffff) / 4096.0f;
+    this._06.z = (vals[2] >>> 16 & 0xffff) / 4096.0f;
     this._0c = (short)vals[3];
     this._0e = (short)(vals[3] >> 16);
 

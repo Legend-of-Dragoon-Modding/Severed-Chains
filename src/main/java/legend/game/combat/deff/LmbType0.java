@@ -8,9 +8,9 @@ public class LmbType0 extends Lmb {
   public LmbType0(final FileData data) {
     super(data);
 
-    this._08 = new PartInfo0c[this.count_04];
+    this._08 = new PartInfo0c[this.objectCount_04];
 
-    for(int i = 0; i < this.count_04; i++) {
+    for(int i = 0; i < this.objectCount_04; i++) {
       this._08[i] = new PartInfo0c(data.slice(0x8 + i * 0xc, 0xc), data);
     }
   }

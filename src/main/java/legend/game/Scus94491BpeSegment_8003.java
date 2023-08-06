@@ -20,7 +20,9 @@ import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 
@@ -40,16 +42,15 @@ import static legend.game.Scus94491BpeSegment_8002.SetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SetTransMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
-import static legend.game.Scus94491BpeSegment_8005._800546c0;
-import static legend.game.Scus94491BpeSegment_8005._800546c2;
-import static legend.game.Scus94491BpeSegment_8005._80054870;
 import static legend.game.Scus94491BpeSegment_8005.matrixStackIndex_80054a08;
 import static legend.game.Scus94491BpeSegment_8005.matrixStack_80054a0c;
+import static legend.game.Scus94491BpeSegment_8005.vectorStack_80054a0c;
+import static legend.game.Scus94491BpeSegment_8005.vramHeight_800546c2;
+import static legend.game.Scus94491BpeSegment_8005.vramWidth_800546c0;
 import static legend.game.Scus94491BpeSegment_800c.PSDCNT_800c34d0;
 import static legend.game.Scus94491BpeSegment_800c.coord2s_800c35a8;
 import static legend.game.Scus94491BpeSegment_800c.displayRect_800c34c8;
 import static legend.game.Scus94491BpeSegment_800c.identityAspectMatrix_800c3588;
-import static legend.game.Scus94491BpeSegment_800c.identityMatrix_800c3568;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
@@ -62,14 +63,11 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x80038190L)
   public static void ResetGraph() {
     GPU.resetCommandBuffer();
-
-    _800546c0.setu(1024);
-    _800546c2.setu(512);
   }
 
   @Method(0x80038574L)
   private static void validateRect(final String text, final RECT rect) {
-    if(rect.w.get() > _800546c0.get() || rect.x.get() + rect.w.get() > _800546c0.get() || rect.y.get() > _800546c2.get() || rect.y.get() + rect.h.get() > _800546c2.get() || rect.w.get() < 0 || rect.x.get() < 0 || rect.y.get() < 0 || rect.h.get() < 0) {
+    if(rect.w.get() > vramWidth_800546c0 || rect.x.get() + rect.w.get() > vramWidth_800546c0 || rect.y.get() > vramHeight_800546c2 || rect.y.get() + rect.h.get() > vramHeight_800546c2 || rect.w.get() < 0 || rect.x.get() < 0 || rect.y.get() < 0 || rect.h.get() < 0) {
       LOGGER.warn("%s:bad RECT", text);
       LOGGER.warn("(%d,%d)-(%d,%d)", rect.x.get(), rect.y.get(), rect.w.get(), rect.h.get());
     }
@@ -91,8 +89,8 @@ public final class Scus94491BpeSegment_8003 {
   public static long StoreImage(final RECT rect, final FileData data) {
     validateRect("StoreImage", rect);
 
-    rect.w.set(MathHelper.clamp(rect.w.get(), (short)0, (short)_800546c0.get()));
-    rect.h.set(MathHelper.clamp(rect.h.get(), (short)0, (short)_800546c2.get()));
+    rect.w.set(MathHelper.clamp(rect.w.get(), (short)0, (short)vramWidth_800546c0));
+    rect.h.set(MathHelper.clamp(rect.h.get(), (short)0, (short)vramHeight_800546c2));
 
     if(rect.w.get() <= 0 || rect.h.get() <= 0) {
       throw new IllegalArgumentException("RECT width and height must be greater than 0");
@@ -246,36 +244,14 @@ public final class Scus94491BpeSegment_8003 {
     displayWidth_1f8003e0.set(displayWidth);
     displayHeight_1f8003e4.set(displayHeight);
 
-    final int a0 = (displayHeight << 14) / displayWidth / 3;
+    final int aspect = (displayHeight << 14) / displayWidth / 3;
 
-    identityMatrix_800c3568.set(0, 0, (short)0x1000);
-    identityMatrix_800c3568.set(0, 1, (short)0);
-    identityMatrix_800c3568.set(0, 2, (short)0);
-    identityMatrix_800c3568.set(1, 0, (short)0);
-    identityMatrix_800c3568.set(1, 1, (short)0x1000);
-    identityMatrix_800c3568.set(1, 2, (short)0);
-    identityMatrix_800c3568.set(2, 0, (short)0);
-    identityMatrix_800c3568.set(2, 1, (short)0);
-    identityMatrix_800c3568.set(2, 2, (short)0x1000);
-    identityMatrix_800c3568.transfer.setX(0);
-    identityMatrix_800c3568.transfer.setY(0);
-    identityMatrix_800c3568.transfer.setZ(0);
-
-    identityAspectMatrix_800c3588.set(0, 0, (short)0x1000);
-    identityAspectMatrix_800c3588.set(0, 1, (short)0);
-    identityAspectMatrix_800c3588.set(0, 2, (short)0);
-    identityAspectMatrix_800c3588.set(1, 0, (short)0);
-    identityAspectMatrix_800c3588.set(1, 1, (short)a0);
-    identityAspectMatrix_800c3588.set(1, 2, (short)0);
-    identityAspectMatrix_800c3588.set(2, 0, (short)0);
-    identityAspectMatrix_800c3588.set(2, 1, (short)0);
-    identityAspectMatrix_800c3588.set(2, 2, (short)0x1000);
-    identityAspectMatrix_800c3588.transfer.setX(0);
-    identityAspectMatrix_800c3588.transfer.setY(0);
-    identityAspectMatrix_800c3588.transfer.setZ(0);
+    identityAspectMatrix_800c3588.identity();
+    identityAspectMatrix_800c3588.set(1, 1, (short)aspect);
+    identityAspectMatrix_800c3588.transfer.set(0, 0, 0);
 
     lightDirectionMatrix_800c34e8.clear();
-    lightColourMatrix_800c3508.clear();
+    lightColourMatrix_800c3508.zero();
 
     centreScreenX_1f8003dc.set((short)0);
     centreScreenY_1f8003de.set((short)0);
@@ -349,7 +325,8 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x8003c400L)
   public static void GsInitCoordinate2(@Nullable final GsCOORDINATE2 superCoord, final GsCOORDINATE2 newCoord) {
     newCoord.flg = 0;
-    newCoord.coord.set(identityMatrix_800c3568);
+    newCoord.coord.identity();
+    newCoord.coord.transfer.set(0, 0, 0);
     newCoord.super_ = superCoord;
 
     if(superCoord != null) {
@@ -367,12 +344,8 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003c4a0L)
   public static void GsSetLightMatrix(final MATRIX mp) {
-    final MATRIX lightDirection = new MATRIX().set(lightDirectionMatrix_800c34e8);
-
-    PushMatrix();
-    MulMatrix(lightDirection, mp);
-    PopMatrix();
-
+    final Matrix3f lightDirection = new Matrix3f();
+    mp.mul(lightDirectionMatrix_800c34e8, lightDirection);
     SetLightMatrix(lightDirection);
   }
 
@@ -409,26 +382,24 @@ public final class Scus94491BpeSegment_8003 {
       return -1;
     }
 
-    lightDirectionMatrix_800c34e8.set(lightDirectionMatrix_800c34e8);
-
     if(id == 0) {
       //LAB_8003c7ec
       lightDirectionMatrix_800c34e8.set(0, (short)((-light.direction_00.getX() << 12) / mag));
       lightDirectionMatrix_800c34e8.set(1, (short)((-light.direction_00.getY() << 12) / mag));
       lightDirectionMatrix_800c34e8.set(2, (short)((-light.direction_00.getZ() << 12) / mag));
 
-      lightColourMatrix_800c3508.set(0, (short)((r << 12) / 0xff));
-      lightColourMatrix_800c3508.set(3, (short)((g << 12) / 0xff));
-      lightColourMatrix_800c3508.set(6, (short)((b << 12) / 0xff));
+      lightColourMatrix_800c3508.m00 = r / 255.0f;
+      lightColourMatrix_800c3508.m01 = g / 255.0f;
+      lightColourMatrix_800c3508.m02 = b / 255.0f;
     } else if(id == 1) {
       //LAB_8003c904
       lightDirectionMatrix_800c34e8.set(3, (short)((-light.direction_00.getX() << 12) / mag));
       lightDirectionMatrix_800c34e8.set(4, (short)((-light.direction_00.getY() << 12) / mag));
       lightDirectionMatrix_800c34e8.set(5, (short)((-light.direction_00.getZ() << 12) / mag));
 
-      lightColourMatrix_800c3508.set(1, (short)((r << 12) / 0xff));
-      lightColourMatrix_800c3508.set(4, (short)((g << 12) / 0xff));
-      lightColourMatrix_800c3508.set(7, (short)((b << 12) / 0xff));
+      lightColourMatrix_800c3508.m10 = r / 255.0f;
+      lightColourMatrix_800c3508.m11 = g / 255.0f;
+      lightColourMatrix_800c3508.m12 = b / 255.0f;
       //LAB_8003c7dc
     } else if(id == 2) {
       //LAB_8003ca20
@@ -436,9 +407,9 @@ public final class Scus94491BpeSegment_8003 {
       lightDirectionMatrix_800c34e8.set(7, (short)((-light.direction_00.getY() << 12) / mag));
       lightDirectionMatrix_800c34e8.set(8, (short)((-light.direction_00.getZ() << 12) / mag));
 
-      lightColourMatrix_800c3508.set(2, (short)((r << 12) / 0xff));
-      lightColourMatrix_800c3508.set(5, (short)((g << 12) / 0xff));
-      lightColourMatrix_800c3508.set(8, (short)((b << 12) / 0xff));
+      lightColourMatrix_800c3508.m20 = r / 255.0f;
+      lightColourMatrix_800c3508.m21 = g / 255.0f;
+      lightColourMatrix_800c3508.m22 = b / 255.0f;
     }
 
     //LAB_8003cb34
@@ -446,11 +417,6 @@ public final class Scus94491BpeSegment_8003 {
 
     //LAB_8003cb88
     return 0;
-  }
-
-  @Method(0x8003cce0L)
-  public static void GsSetAmbient(final int r, final int g, final int b) {
-    GTE.setBackgroundColour(r, g, b);
   }
 
   /**
@@ -464,7 +430,6 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x8003cda0L)
   public static void GsInit3D() {
     InitGeom();
-    SetFarColour(0, 0, 0);
     SetGeomOffset(0, 0);
   }
 
@@ -511,7 +476,8 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003cee0L)
   public static void FUN_8003cee0(final MATRIX matrix, final short sin, final short cos, final int type) {
-    matrix.set(identityMatrix_800c3568);
+    matrix.identity();
+    matrix.transfer.set(0, 0, 0);
 
     //TODO this is weird... these are the positions for rotation matrices, but if they were transposed
 
@@ -539,8 +505,8 @@ public final class Scus94491BpeSegment_8003 {
    */
   @Method(0x8003d550L)
   public static void GsMulCoord2(final MATRIX matrix1, final MATRIX matrix2) {
-    ApplyMatrixLV(matrix1, matrix2.transfer, matrix2.transfer);
-    MulMatrix2(matrix1, matrix2);
+    matrix2.transfer.mul(matrix1);
+    matrix2.mul(matrix1);
     matrix2.transfer.add(matrix1.transfer);
   }
 
@@ -560,7 +526,8 @@ public final class Scus94491BpeSegment_8003 {
       rot.set(2, 0, (short)0);
       rot.set(2, 1, (short)0);
       rot.set(2, 2, (short)0x1000);
-      MulMatrix(matrix, rot);
+
+      rot.mul(matrix, matrix);
     }
   }
 
@@ -641,14 +608,15 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   /**
-   * GsMulCoord3 multiplies the MATRIX m2 by the translation matrix m1and stores the result in m2.
+   * GsMulCoord3 multiplies the MATRIX m2 by the translation matrix m1 and stores the result in m1.
    * <p>
    * m1 = m1 x m2
    */
   @Method(0x8003d950L)
   public static void GsMulCoord3(final MATRIX m1, final MATRIX m2) {
-    final VECTOR out = ApplyMatrixLV(m1, m2.transfer);
-    MulMatrix(m1, m2);
+    final VECTOR out = new VECTOR();
+    m2.transfer.mul(m1, out);
+    m2.mul(m1, m1);
     m1.transfer.add(out);
   }
 
@@ -816,56 +784,54 @@ public final class Scus94491BpeSegment_8003 {
    * insufficient precision is improved. However, its execution time is doubled
    */
   @Method(0x8003dfc0L)
-  public static long GsSetRefView2L(final GsRVIEW2 s2) {
+  public static void GsSetRefView2L(final GsRVIEW2 s2) {
     worldToScreenMatrix_800c3548.set(identityAspectMatrix_800c3588);
     FUN_8003d5d0(worldToScreenMatrix_800c3548, -s2.viewpointTwist_18);
 
-    final int deltaX = s2.refpoint_0c.getX() - s2.viewpoint_00.getX();
-    final int deltaY = s2.refpoint_0c.getY() - s2.viewpoint_00.getY();
-    final int deltaZ = s2.refpoint_0c.getZ() - s2.viewpoint_00.getZ();
+    final float deltaX = s2.refpoint_0c.x - s2.viewpoint_00.x;
+    final float deltaY = s2.refpoint_0c.y - s2.viewpoint_00.y;
+    final float deltaZ = s2.refpoint_0c.z - s2.viewpoint_00.z;
 
-    final int vectorLengthSquared = deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
+    final float vectorLengthSquared = deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
 
-    if(vectorLengthSquared == 0) {
-      return 0x1L;
+    if(vectorLengthSquared == 0.0f) {
+      return;
     }
 
-    final int vectorLength = (int)Math.sqrt(vectorLengthSquared);
+    final float vectorLength = Math.max(1.0f, (float)Math.sqrt(vectorLengthSquared));
 
-    final int normalizedY = deltaY * 0x1000 / vectorLength;
+    final float normalizedY = deltaY * 0x1000 / vectorLength;
 
-    final int horizontalLength = (int)Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
-    final int normalizedHypotenuse = horizontalLength * 0x1000 / vectorLength;
+    final float horizontalLength = (float)Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
+    final float normalizedHypotenuse = horizontalLength * 0x1000 / vectorLength;
 
     //LAB_8003e230
     final MATRIX sp0x30 = new MATRIX();
     FUN_8003cee0(sp0x30, (short)normalizedY, (short)normalizedHypotenuse, 0);
-    MulMatrix(worldToScreenMatrix_800c3548, sp0x30);
+    sp0x30.mul(worldToScreenMatrix_800c3548, worldToScreenMatrix_800c3548);
 
     if(horizontalLength != 0) {
-      final int normalizedX = deltaX * -0x1000 / horizontalLength;
-      final int normalizedZ = deltaZ * 0x1000 / horizontalLength;
+      final float normalizedX = deltaX * -0x1000 / horizontalLength;
+      final float normalizedZ = deltaZ * 0x1000 / horizontalLength;
 
       FUN_8003cee0(sp0x30, (short)normalizedX, (short)normalizedZ, 1);
-      MulMatrix(worldToScreenMatrix_800c3548, sp0x30);
+      sp0x30.mul(worldToScreenMatrix_800c3548, worldToScreenMatrix_800c3548);
     }
 
     //LAB_8003e474
-    ApplyMatrixLV(worldToScreenMatrix_800c3548, new VECTOR().set(s2.viewpoint_00).negate(), worldToScreenMatrix_800c3548.transfer);
+    new VECTOR().set(s2.viewpoint_00).negate().mul(worldToScreenMatrix_800c3548, worldToScreenMatrix_800c3548.transfer);
 
     if(s2.super_1c != null) {
       final MATRIX lw = new MATRIX();
       GsGetLw(s2.super_1c, lw);
 
       final MATRIX transposedLw = new MATRIX();
-      TransposeMatrix(lw, transposedLw);
-      ApplyMatrixLV(transposedLw, lw.transfer, transposedLw.transfer).negate();
+      lw.transpose(transposedLw);
+      lw.transfer.mul(transposedLw, transposedLw.transfer);
+      transposedLw.transfer.negate();
       GsMulCoord2(worldToScreenMatrix_800c3548, transposedLw);
       worldToScreenMatrix_800c3548.set(transposedLw);
     }
-
-    //LAB_8003e5a8
-    return 0;
   }
 
   /**
@@ -985,415 +951,34 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003e958L)
   public static void InitGeom() {
-    GTE.setAverageZScaleFactors(0x155, 0x100);
-    GTE.setProjectionPlaneDistance((short)1000);
-    GTE.setDepthQueueingParameters(-0x1062, 0x1400000);
+    GTE.setProjectionPlaneDistance(1000);
     GTE.setScreenOffset(0, 0);
-  }
-
-  @Method(0x8003ea80L)
-  public static void FUN_8003ea80(final VECTOR a0, final VECTOR a1) {
-    a1.set(a0);
-    FUN_8003eae0(a1);
-  }
-
-  @Method(0x8003eae0L)
-  public static void FUN_8003eae0(final VECTOR t0) {
-    // Fix retail bug where inputs can all be 0. Would result in negative array index.
-    if(t0.getX() == 0 && t0.getY() == 0 && t0.getZ() == 0) {
-      return;
-    }
-
-    final int vectorLength = (int)t0.lengthSquared();
-    final int lzc = GTE.leadingZeroCount(vectorLength) & 0xffff_fffe; // Leading zero count
-    final int t6 = (31 - lzc) / 2;
-    final int t4;
-    if(lzc >= 24) {
-      t4 = vectorLength << (lzc - 24);
-    } else {
-      //LAB_8003eb40
-      t4 = vectorLength >> (24 - lzc);
-    }
-
-    //LAB_8003eb4c
-    GTE.setIr0(_80054870.get(t4 - 0x40).get());
-    GTE.setIr123(t0);
-    GTE.generalPurposeInterpolate(); // General purpose interpolation (MAC123 = IR123 * IR0 >> 12)
-    t0.set(GTE.getMac1() >> t6, GTE.getMac2() >> t6, GTE.getMac3() >> t6);
-  }
-
-  @Method(0x8003eba0L)
-  public static void FUN_8003eba0(final MATRIX a0, final MATRIX a1) {
-    final short oldRot11 = GTE.getRotationMatrixValue(0);
-    final short oldRot22 = GTE.getRotationMatrixValue(4);
-    final short oldRot33 = GTE.getRotationMatrixValue(8);
-
-    GTE.setIr123(a0.get(3), a0.get(4), a0.get(5)); // transforms forward?
-
-    GTE.setRotationMatrixValue(0, a0.get(0)); // r11 // transforms right?
-    GTE.setRotationMatrixValue(4, a0.get(1)); // r22
-    GTE.setRotationMatrixValue(8, a0.get(2)); // r33
-    GTE.outerProduct(); // outer product of two vectors (sf 12), (IR3*R22-IR2*R33, IR1*R33-IR3*R11, IR2*R11-IR1*R22) >> 12
-    final int productX0 = GTE.getMac1();
-    final int productY0 = GTE.getMac2();
-    final int productZ0 = GTE.getMac3();
-
-    GTE.setRotationMatrixValue(0, a0.get(3)); // r11 // transforms forward?
-    GTE.setRotationMatrixValue(4, a0.get(4)); // r22
-    GTE.setRotationMatrixValue(8, a0.get(5)); // r33
-    GTE.outerProduct(); // outer product of two vectors (sf 12), (IR3*R22-IR2*R33, IR1*R33-IR3*R11, IR2*R11-IR1*R22) >> 12
-    final int productX1 = GTE.getMac1();
-    final int productY1 = GTE.getMac2();
-    final int productZ1 = GTE.getMac3();
-
-    GTE.setRotationMatrixValue(0, oldRot11);
-    GTE.setRotationMatrixValue(4, oldRot22);
-    GTE.setRotationMatrixValue(8, oldRot33);
-
-    final VECTOR t0 = new VECTOR().set(productX1, productY1, productZ1);
-    FUN_8003eae0(t0);
-    a1.set(0, (short)t0.getX());
-    a1.set(1, (short)t0.getY());
-    a1.set(2, (short)t0.getZ());
-
-    t0.set(a0.get(3), a0.get(4), a0.get(5));
-    FUN_8003eae0(t0);
-    a1.set(3, (short)t0.getX());
-    a1.set(4, (short)t0.getY());
-    a1.set(5, (short)t0.getZ());
-
-    t0.set(productX0, productY0, productZ0);
-    FUN_8003eae0(t0);
-    a1.set(6, (short)t0.getX());
-    a1.set(7, (short)t0.getY());
-    a1.set(8, (short)t0.getZ());
-  }
-
-  @Method(0x8003ec90L)
-  public static MATRIX FUN_8003ec90(final MATRIX transformMatrix0, final MATRIX transformMatrix1, final MATRIX outMatrix) {
-    GTE.setRotationMatrix(transformMatrix0);
-
-    GTE.rotateVector(transformMatrix1.get(0), transformMatrix1.get(3), transformMatrix1.get(6));
-    outMatrix.set(0, GTE.getIr1());
-    outMatrix.set(3, GTE.getIr2());
-    outMatrix.set(6, GTE.getIr3());
-
-    GTE.rotateVector(transformMatrix1.get(1), transformMatrix1.get(4), transformMatrix1.get(7));
-    outMatrix.set(1, GTE.getIr1());
-    outMatrix.set(4, GTE.getIr2());
-    outMatrix.set(7, GTE.getIr3());
-
-    GTE.rotateVector(transformMatrix1.get(2), transformMatrix1.get(5), transformMatrix1.get(8));
-    outMatrix.set(2, GTE.getIr1());
-    outMatrix.set(5, GTE.getIr2());
-    outMatrix.set(8, GTE.getIr3());
-
-    GTE.rotateVector(transformMatrix1.transfer);
-    outMatrix.transfer.set(transformMatrix0.transfer).add(GTE.getMac1(), GTE.getMac2(), GTE.getMac3());
-
-    return outMatrix;
-  }
-
-  public static VECTOR ApplyMatrixLV(final MATRIX matrix, final VECTOR vector) {
-    return ApplyMatrixLV(matrix, vector, null);
-  }
-
-  /**
-   * Multiplies matrix by vector beginning from the rightmost end. The result is saved in vector v1. It is a 16
-   * x 32 bit multiplier which uses the GTE. It destroys the constant rotation matrix
-   */
-  @Method(0x8003edf0L)
-  public static VECTOR ApplyMatrixLV(final MATRIX matrix, final VECTOR vector, @Nullable VECTOR out) {
-    GTE.setRotationMatrix(matrix);
-
-    final int wholeX;
-    final int fractX;
-    if(vector.getX() < 0) {
-      wholeX = -(-vector.getX() / 8 >> 12);
-      fractX = -(-vector.getX() & 0x7fff);
-    } else {
-      //LAB_8003ee44
-      wholeX = vector.getX() / 8 >> 12;
-      fractX = vector.getX() & 0x7fff;
-    }
-
-    //LAB_8003ee4c
-    final int wholeY;
-    final int fractY;
-    if(vector.getY() < 0) {
-      wholeY = -(-vector.getY() / 8 >> 12);
-      fractY = -(-vector.getY() & 0x7fff);
-    } else {
-      //LAB_8003ee6c
-      wholeY = vector.getY() / 8 >> 12;
-      fractY = vector.getY() & 0x7fff;
-    }
-
-    //LAB_8003ee74
-    final int wholeZ;
-    final int fractZ;
-    if(vector.getZ() < 0) {
-      wholeZ = -(-vector.getZ() / 8 >> 12);
-      fractZ = -(-vector.getZ() & 0x7fff);
-    } else {
-      //LAB_8003ee94
-      wholeZ = vector.getZ() / 8 >> 12;
-      fractZ = vector.getZ() & 0x7fff;
-    }
-
-    //LAB_8003ee9c
-    GTE.rotateVector0(wholeX, wholeY, wholeZ);
-    final int x1 = GTE.getMac1();
-    final int y1 = GTE.getMac2();
-    final int z1 = GTE.getMac3();
-
-    GTE.rotateVector(fractX, fractY, fractZ);
-    final int x2 = GTE.getMac1();
-    final int y2 = GTE.getMac2();
-    final int z2 = GTE.getMac3();
-
-    if(out == null) {
-      out = new VECTOR();
-    }
-
-    return out.set(x2 + x1 * 8, y2 + y1 * 8, z2 + z1 * 8);
-  }
-
-  /** Transforms vec using the matrix already loaded into the GTE */
-  @Method(0x8003ef50L)
-  public static VECTOR ApplyRotMatrix(final SVECTOR vec, final VECTOR out) {
-    GTE.rotateVector(vec);
-    out.setX(GTE.getIr1());
-    out.setY(GTE.getIr2());
-    out.setZ(GTE.getIr3());
-    return out;
   }
 
   @Method(0x8003ef80L)
   public static void PushMatrix() {
-    final int i = (int)matrixStackIndex_80054a08.get();
-
-    if(i >= 640) {
+    if(matrixStackIndex_80054a08 >= 20) {
       throw new RuntimeException("Error: Can't push matrix, stack(max 20) is full!");
     }
 
     //LAB_8003efc0
-    final MATRIX matrix = matrixStack_80054a0c[i / 32];
-    GTE.getRotationMatrix(matrix);
-    GTE.getTranslationVector(matrix.transfer);
+    GTE.getRotationMatrix(matrixStack_80054a0c[matrixStackIndex_80054a08]);
+    GTE.getTranslationVector(vectorStack_80054a0c[matrixStackIndex_80054a08]);
 
-    matrixStackIndex_80054a08.addu(0x20L);
+    matrixStackIndex_80054a08++;
   }
 
   @Method(0x8003f024L)
   public static void PopMatrix() {
-    int i = (int)matrixStackIndex_80054a08.get();
-
-    if(i == 0) {
+    if(matrixStackIndex_80054a08 == 0) {
       throw new RuntimeException("Error: Can't pop matrix, stack is empty!");
     }
 
     //LAB_8003f060
-    i -= 0x20;
-    matrixStackIndex_80054a08.subu(0x20L);
+    matrixStackIndex_80054a08--;
 
-    final MATRIX matrix = matrixStack_80054a0c[i / 32];
-    GTE.setRotationMatrix(matrix);
-    GTE.setTranslationVector(matrix.transfer);
-  }
-
-  @Method(0x8003f0d0L)
-  public static MATRIX ScaleMatrix(final MATRIX mat, final VECTOR vector) {
-    mat.set(0, (short)(mat.get(0) * vector.x.get() >> 12));
-    mat.set(1, (short)(mat.get(1) * vector.x.get() >> 12));
-    mat.set(2, (short)(mat.get(2) * vector.x.get() >> 12));
-    mat.set(3, (short)(mat.get(3) * vector.y.get() >> 12));
-    mat.set(4, (short)(mat.get(4) * vector.y.get() >> 12));
-    mat.set(5, (short)(mat.get(5) * vector.y.get() >> 12));
-    mat.set(6, (short)(mat.get(6) * vector.z.get() >> 12));
-    mat.set(7, (short)(mat.get(7) * vector.z.get() >> 12));
-    mat.set(8, (short)(mat.get(8) * vector.z.get() >> 12));
-    return mat;
-  }
-
-  @Method(0x8003f210L)
-  public static MATRIX MulMatrix0(final MATRIX a0, final MATRIX a1, final MATRIX out) {
-    GTE.setRotationMatrix(a0);
-
-    GTE.rotateVector(a1.get(0), a1.get(3), a1.get(6));
-    out.set(0, GTE.getIr1());
-    out.set(3, GTE.getIr2());
-    out.set(6, GTE.getIr3());
-
-    GTE.rotateVector(a1.get(1), a1.get(4), a1.get(7));
-    out.set(1, GTE.getIr1());
-    out.set(4, GTE.getIr2());
-    out.set(7, GTE.getIr3());
-
-    GTE.rotateVector(a1.get(2), a1.get(5), a1.get(8));
-    out.set(2, GTE.getIr1());
-    out.set(5, GTE.getIr2());
-    out.set(8, GTE.getIr3());
-
-    final int wholeX;
-    final int fractX;
-    if(a1.transfer.getX() < 0) {
-      wholeX = -(-a1.transfer.getX() >> 15);
-      fractX = -(-a1.transfer.getX() & 0x7fff);
-    } else {
-      //LAB_8003f33c
-      wholeX = a1.transfer.getX() >> 15;
-      fractX = a1.transfer.getX() & 0x7fff;
-    }
-
-    //LAB_8003f344
-    final int wholeY;
-    final int fractY;
-    if(a1.transfer.getY() < 0) {
-      wholeY = -(-a1.transfer.getY() >> 15);
-      fractY = -(-a1.transfer.getY() & 0x7fff);
-    } else {
-      //LAB_8003f364
-      wholeY = a1.transfer.getY() >> 15;
-      fractY = a1.transfer.getY() & 0x7fff;
-    }
-
-    //LAB_8003f36c
-    final int wholeZ;
-    final int fractZ;
-    if(a1.transfer.getZ() < 0) {
-      wholeZ = -(-a1.transfer.getZ() >> 15);
-      fractZ = -(-a1.transfer.getZ() & 0x7fff);
-    } else {
-      //LAB_8003f38c
-      wholeZ = a1.transfer.getZ() >> 15;
-      fractZ = a1.transfer.getZ() & 0x7fff;
-    }
-
-    //LAB_8003f394
-    GTE.rotateVector0(wholeX, wholeY, wholeZ);
-    final int t3 = GTE.getMac1();
-    final int t4 = GTE.getMac2();
-    final int t5 = GTE.getMac3();
-
-    GTE.rotateVector(fractX, fractY, fractZ);
-
-    out.transfer.setX(GTE.getMac1() + t3 * 8 + a0.transfer.getX());
-    out.transfer.setY(GTE.getMac2() + t4 * 8 + a0.transfer.getY());
-    out.transfer.setZ(GTE.getMac3() + t5 * 8 + a0.transfer.getZ());
-    return out;
-  }
-
-  /**
-   * Multiply two matrices. Multiplies m1 by m0. The result is stored in m0 and returned.
-   *
-   * @param m0 Matrix 0 - both modified and returned
-   * @param m1 Matrix 1
-   *
-   * @return m0
-   */
-  @Method(0x8003f460L)
-  public static MATRIX MulMatrix(final MATRIX m0, final MATRIX m1) {
-    GTE.setRotationMatrix(m0);
-
-    GTE.rotateVector(m1.get(0), m1.get(3), m1.get(6));
-    m0.set(0, GTE.getIr1());
-    m0.set(3, GTE.getIr2());
-    m0.set(6, GTE.getIr3());
-
-    GTE.rotateVector(m1.get(1), m1.get(4), m1.get(7));
-    m0.set(1, GTE.getIr1());
-    m0.set(4, GTE.getIr2());
-    m0.set(7, GTE.getIr3());
-
-    GTE.rotateVector(m1.get(2), m1.get(5), m1.get(8));
-    m0.set(2, GTE.getIr1());
-    m0.set(5, GTE.getIr2());
-    m0.set(8, GTE.getIr3());
-
-    return m0;
-  }
-
-  /**
-   * Multiply two matrices. Multiplies m1 by m0. m1 is both modified and returned.
-   *
-   * @param m0 Matrix 0
-   * @param m1 Matrix 1 - both modified and returned
-   *
-   * @return m1
-   */
-  @Method(0x8003f570L)
-  public static MATRIX MulMatrix2(final MATRIX m0, final MATRIX m1) {
-    GTE.setRotationMatrix(m0);
-
-    // First row
-    GTE.rotateVector(m1.get(0), m1.get(3), m1.get(6));
-    m1.set(0, GTE.getIr1());
-    m1.set(3, GTE.getIr2());
-    m1.set(6, GTE.getIr3());
-
-    // Second row
-    GTE.rotateVector(m1.get(1), m1.get(4), m1.get(7));
-    m1.set(1, GTE.getIr1());
-    m1.set(4, GTE.getIr2());
-    m1.set(7, GTE.getIr3());
-
-    // Third row
-    GTE.rotateVector(m1.get(2), m1.get(5), m1.get(8));
-    m1.set(2, GTE.getIr1());
-    m1.set(5, GTE.getIr2());
-    m1.set(8, GTE.getIr3());
-
-    return m1;
-  }
-
-  @Method(0x8003f680L)
-  public static VECTOR ApplyMatrix(final MATRIX a0, final SVECTOR a1, final VECTOR out) {
-    GTE.setRotationMatrix(a0);
-    GTE.rotateVector(a1);
-    out.set(GTE.getMac1(), GTE.getMac2(), GTE.getMac3());
-    return out;
-  }
-
-  @Method(0x8003f6d0L)
-  public static SVECTOR ApplyMatrixSV(final MATRIX mat, final SVECTOR in, final SVECTOR out) {
-    GTE.setRotationMatrix(mat);
-    GTE.rotateVector(in);
-    out.set(GTE.getIr1(), GTE.getIr2(), GTE.getIr3());
-    return out;
-  }
-
-  /**
-   * Gives an amount of parallel transfer expressed by v to the matrix m.
-   *
-   * @param out Pointer to matrix (output)
-   * @param vector Pointer to transfer vector (input)
-   *
-   * @return matrix
-   */
-  @Method(0x8003f730L)
-  public static MATRIX TransMatrix(final MATRIX out, final VECTOR vector) {
-    out.transfer.set(vector);
-    return out;
-  }
-
-  @Method(0x8003f760L)
-  public static MATRIX ScaleMatrixL(final MATRIX out, final VECTOR vector) {
-    final int vx = vector.getX();
-    final int vy = vector.getY();
-    final int vz = vector.getZ();
-
-    out.set(0, (short)(out.get(0) * vx >> 12));
-    out.set(1, (short)(out.get(1) * vy >> 12));
-    out.set(2, (short)(out.get(2) * vz >> 12));
-    out.set(3, (short)(out.get(3) * vx >> 12));
-    out.set(4, (short)(out.get(4) * vy >> 12));
-    out.set(5, (short)(out.get(5) * vz >> 12));
-    out.set(6, (short)(out.get(6) * vx >> 12));
-    out.set(7, (short)(out.get(7) * vy >> 12));
-    out.set(8, (short)(out.get(8) * vz >> 12));
-
-    return out;
+    GTE.setRotationMatrix(matrixStack_80054a0c[matrixStackIndex_80054a08]);
+    GTE.setTranslationVector(vectorStack_80054a0c[matrixStackIndex_80054a08]);
   }
 
   @Method(0x8003f8a0L)
@@ -1405,11 +990,6 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x8003f8c0L)
   public static int getProjectionPlaneDistance() {
     return GTE.getProjectionPlaneDistance();
-  }
-
-  @Method(0x8003f8d0L)
-  public static void SetFarColour(final int r, final int g, final int b) {
-    GTE.setFarColour(r << 4, g << 4, b << 4);
   }
 
   @Method(0x8003f8f0L) //Also 0x8003c6d0
@@ -1434,12 +1014,6 @@ public final class Scus94491BpeSegment_8003 {
     screen2.set(GTE.getScreenX(2), GTE.getScreenY(2));
 
     return GTE.getScreenZ(3) >> 2;
-  }
-
-  @Method(0x8003f990L)
-  public static void RotTrans(final SVECTOR v0, final VECTOR out) {
-    GTE.rotateTranslateVector(v0);
-    out.set(GTE.getMac1(), GTE.getMac2(), GTE.getMac3());
   }
 
   /**
@@ -1473,34 +1047,17 @@ public final class Scus94491BpeSegment_8003 {
     return GTE.getScreenZ(3) >> 2;
   }
 
-  /**
-   * Transposes matrix m0 into m1.
-   *
-   * @param m0 Input
-   * @param m1 Output
-   * @return m1
-   */
-  @Method(0x8003fab0L)
-  public static MATRIX TransposeMatrix(final MATRIX m0, final MATRIX m1) {
-    m1.set(0, m0.get(0));
-    m1.set(1, m0.get(3));
-    m1.set(2, m0.get(6));
-    m1.set(3, m0.get(1));
-    m1.set(4, m0.get(4));
-    m1.set(5, m0.get(7));
-    m1.set(6, m0.get(2));
-    m1.set(7, m0.get(5));
-    m1.set(8, m0.get(8));
-    return m1;
-  }
-
   @Method(0x8003faf0L)
   public static void RotMatrix_Xyz(final SVECTOR rotation, final MATRIX matrixOut) {
     matrixOut.set(new Matrix4f().rotateXYZ(MathHelper.psxDegToRad(rotation.getX()), MathHelper.psxDegToRad(rotation.getY()), MathHelper.psxDegToRad(rotation.getZ())));
   }
 
+  public static void RotMatrix_Xyz(final Vector3f rotation, final MATRIX matrixOut) {
+    matrixOut.set(new Matrix4f().rotateXYZ(rotation.x, rotation.y, rotation.z));
+  }
+
   @Method(0x8003fd80L)
-  public static void RotMatrix_Yxz(final SVECTOR rotation, final MATRIX matrixOut) {
-    matrixOut.set(new Matrix4f().rotateYXZ(MathHelper.psxDegToRad(rotation.getY()), MathHelper.psxDegToRad(rotation.getX()), MathHelper.psxDegToRad(rotation.getZ())));
+  public static void RotMatrix_Yxz(final Vector3f rotation, final MATRIX matrixOut) {
+    matrixOut.set(new Matrix4f().rotateYXZ(rotation.y, rotation.x, rotation.z));
   }
 }
