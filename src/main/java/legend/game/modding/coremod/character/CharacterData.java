@@ -45,7 +45,7 @@ public class CharacterData {
     for(int i = 0; i < 8; i++) {
       dmg += addition.hits[i].damageMultiplier_08 > 0 ? addition.hits[i].damageMultiplier_08 : 0;
     }
-    dmg = Math.round(dmg * (100 + multi.dmgMultiplier_03) / 100);
+    dmg = dmg * (100 + multi.dmgMultiplier_03) / 100;
     return dmg;
   }
 
