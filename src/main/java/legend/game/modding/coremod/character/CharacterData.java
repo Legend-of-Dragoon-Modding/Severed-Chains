@@ -19,8 +19,8 @@ public class CharacterData {
   public ArrayList<AdditionMultiplier> additionsMultiplier = new ArrayList<>();
   public ArrayList<SingleAddition> dragoonAddition = new ArrayList<>();
 
-  public int getAdditionHitCount(int index) {
-    SingleAddition addition = additions.get(index);
+  public int getAdditionHitCount(final int index) {
+    final SingleAddition addition = additions.get(index);
     int hitCount = 0;
     for(int i = 0; i < 8; i++) {
       hitCount += addition.hits[i].totalFrames_02 > 0 ? 1 : 0;
@@ -28,9 +28,9 @@ public class CharacterData {
     return hitCount - 1;
   }
 
-  public int getAdditionLevelSP(int index, int level) {
-    SingleAddition addition = additions.get(index);
-    AdditionMultiplierLevel multi = additionsMultiplier.get(index).levelMultiplier.get(level);
+  public int getAdditionLevelSP(final int index, final int level) {
+    final SingleAddition addition = this.additions.get(index);
+    final AdditionMultiplierLevel multi = this.additionsMultiplier.get(index).levelMultiplier.get(level);
     int SP = 0;
     for(int i = 0; i < 8; i++) {
       SP += addition.hits[i].spValue_0a > 0 ? (addition.hits[i].spValue_0a * (100 + multi.spMultiplier_02) / 100) : 0;
@@ -38,22 +38,22 @@ public class CharacterData {
     return SP;
   }
 
-  public int getAdditionDamage(int index, int level) {
-    SingleAddition addition = additions.get(index);
-    AdditionMultiplierLevel multi = additionsMultiplier.get(index).levelMultiplier.get(level);
+  public int getAdditionDamage(final int index, final int level) {
+    final SingleAddition addition = this.additions.get(index);
+    final AdditionMultiplierLevel multi = this.additionsMultiplier.get(index).levelMultiplier.get(level);
     int dmg = 0;
     for(int i = 0; i < 8; i++) {
       dmg += addition.hits[i].damageMultiplier_08 > 0 ? addition.hits[i].damageMultiplier_08 : 0;
     }
-    dmg = Math.round(dmg * (100 + multi.dmgMultiplier_03) / 100);
+    dmg = dmg * (100 + multi.dmgMultiplier_03) / 100;
     return dmg;
   }
 
-  public int getNonMaxedAdditions(int index) {
-    int notMaxed = additions.size();
+  public int getNonMaxedAdditions(final int index) {
+    int notMaxed = this.additions.size();
     final CharacterData2c charData = gameState_800babc8.charData_32c[index];
 
-    for (int i = 0; i < additions.size(); i++) {
+    for (int i = 0; i < this.additions.size(); i++) {
       if (charData.additionLevels_1a[i] == CoreMod.MAX_ADDITION_LEVEL) {
         notMaxed--;
       }
@@ -71,9 +71,9 @@ public class CharacterData {
   }
 
   public static class AdditionMultiplierLevel {
-    public int _00 = 0;
-    public int _01 = 0;
-    public int spMultiplier_02 = 0;
-    public int dmgMultiplier_03 = 0;
+    public int _00;
+    public int _01;
+    public int spMultiplier_02;
+    public int dmgMultiplier_03;
   }
 }

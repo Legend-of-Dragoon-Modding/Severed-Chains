@@ -252,8 +252,8 @@ public final class GameEngine {
   }
 
   private static void loadCharacterData() throws IOException {
-    String[] characters = {"dart", "lavitz", "shana", "rose", "haschel", "albert", "meru", "kongol", "miranda"};
-    int[] additions = {7, 5, 1, 4, 6, 5, 5, 3, 1};
+    final String[] characters = {"dart", "lavitz", "shana", "rose", "haschel", "albert", "meru", "kongol", "miranda"};
+    final int[] additions = {7, 5, 1, 4, 6, 5, 5, 3, 1};
 
     for(int i = 0; i < 9; i++) {
       CoreMod.CHARACTER_DATA[i] = new CharacterData();

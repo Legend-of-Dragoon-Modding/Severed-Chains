@@ -1033,7 +1033,7 @@ public final class Scus94491BpeSegment {
 
     //LAB_800174a4
     if((gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {
-      DivineDragoonEvent divineEvent = EVENTS.postEvent(new DivineDragoonEvent());
+      final DivineDragoonEvent divineEvent = EVENTS.postEvent(new DivineDragoonEvent());
 
       if(!divineEvent.bypassOverride) {
         final CharacterData2c charData = gameState_800babc8.charData_32c[0];
@@ -1096,7 +1096,7 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_80017614
-    DivineDragoonEvent divineEvent = EVENTS.postEvent(new DivineDragoonEvent());
+    final DivineDragoonEvent divineEvent = EVENTS.postEvent(new DivineDragoonEvent());
 
     if(!divineEvent.bypassOverride) {
       if((gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {

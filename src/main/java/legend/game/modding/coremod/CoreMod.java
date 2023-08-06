@@ -209,41 +209,41 @@ public class CoreMod {
     }
   }
 
-  public static void loadCharacterXp(int charIndex, String charName) throws IOException {
+  public static void loadCharacterXp(final int charIndex, final String charName) throws IOException {
     final FileData file = new FileData(Files.readAllBytes(Paths.get("./files/characters/" + charName + "/xp")));
     for(int i = 0; i < CoreMod.CHARACTER_DATA[charIndex].xpTable.length; i++) {
       CoreMod.CHARACTER_DATA[charIndex].xpTable[i] = file.readInt(i * 4);
     }
   }
 
-  public static void loadCharacterStats(int charIndex, String charName) throws IOException {
+  public static void loadCharacterStats(final int charIndex, final String charName) throws IOException {
     final FileData file = new FileData(Files.readAllBytes(Paths.get("./files/characters/" + charName + "/stats")));
     for(int i = 0; i < CoreMod.CHARACTER_DATA[charIndex].statsTable.length; i++) {
       CoreMod.CHARACTER_DATA[charIndex].statsTable[i] = new LevelStuff08(file.readUShort(i * 8), file.readByte(i * 8 + 2), file.readUByte(i * 8 + 3), file.readUByte(i * 8 + 4), file.readUByte(i * 8 + 5), file.readUByte(i * 8 + 6), file.readUByte(i * 8 + 7));
     }
   }
 
-  public static void loadCharacterDragoonXp(int charIndex, String charName) throws IOException {
+  public static void loadCharacterDragoonXp(final int charIndex, final String charName) throws IOException {
     final FileData file = new FileData(Files.readAllBytes(Paths.get("./files/characters/" + charName + "/dxp")));
     for(int i = 0; i < CoreMod.CHARACTER_DATA[charIndex].dxpTable.length; i++) {
       CoreMod.CHARACTER_DATA[charIndex].dxpTable[i] = file.readUShort(i * 2);
     }
   }
 
-  public static void loadCharacterDragoonStats(int charIndex, String charName) throws IOException {
+  public static void loadCharacterDragoonStats(final int charIndex, final String charName) throws IOException {
     final FileData file = new FileData(Files.readAllBytes(Paths.get("./files/characters/" + charName + "/dstats")));
     for(int i = 0; i < CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable.length; i++) {
       CoreMod.CHARACTER_DATA[charIndex].dragoonStatsTable[i] = new MagicStuff08(file.readUShort(i * 8), file.readByte(i * 8 + 2), file.readUByte(i * 8 + 3), file.readUByte(i * 8 + 4), file.readUByte(i * 8 + 5), file.readUByte(i * 8 + 6), file.readUByte(i * 8 + 7));
     }
   }
 
-  public static void loadCharacterAdditions(int charIndex, String charName, int additions) throws IOException {
-    FileData hit = new FileData(Files.readAllBytes(Paths.get("./files/characters/" + charName +"/additionhit")));
-    FileData multiplier = new FileData(Files.readAllBytes(Paths.get("./files/characters/" + charName + "/additionmultipler")));
+  public static void loadCharacterAdditions(final int charIndex, final String charName, final int additions) throws IOException {
+    final FileData hit = new FileData(Files.readAllBytes(Paths.get("./files/characters/" + charName +"/additionhit")));
+    final FileData multiplier = new FileData(Files.readAllBytes(Paths.get("./files/characters/" + charName + "/additionmultipler")));
 
     for(int i = 0; i < additions; i++) {
       CoreMod.CHARACTER_DATA[charIndex].additions.add(new CharacterData.SingleAddition());
-      CharacterData.SingleAddition addition = CoreMod.CHARACTER_DATA[charIndex].additions.get(i);
+      final CharacterData.SingleAddition addition = CoreMod.CHARACTER_DATA[charIndex].additions.get(i);
       for(int x = 0; x < 8; x++) {
         addition.hits[x] = new BattlePreloadedEntities_18cb0.AdditionHitProperties20();
         for(int y = 0; y < 16; y++) {
@@ -256,7 +256,7 @@ public class CoreMod {
       CoreMod.CHARACTER_DATA[charIndex].additionsMultiplier.add(new CharacterData.AdditionMultiplier());
       for(int y = 0; y < 6; y++) {
         CoreMod.CHARACTER_DATA[charIndex].additionsMultiplier.get(x).levelMultiplier.add(new CharacterData.AdditionMultiplierLevel());
-        CharacterData.AdditionMultiplierLevel levelData = CoreMod.CHARACTER_DATA[charIndex].additionsMultiplier.get(x).levelMultiplier.get(y);
+        final CharacterData.AdditionMultiplierLevel levelData = CoreMod.CHARACTER_DATA[charIndex].additionsMultiplier.get(x).levelMultiplier.get(y);
         levelData._00 = multiplier.readUByte((x * 24) + (y * 4));
         levelData._01 = multiplier.readUByte((x * 24) + (y * 4) + 1);
         levelData.spMultiplier_02 = multiplier.readUByte((x * 24) + (y * 4) + 2);
@@ -280,9 +280,6 @@ public class CoreMod {
       for(int x = 0; x < 8; x++) {
         CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.get(1).hits[x] = new BattlePreloadedEntities_18cb0.AdditionHitProperties20();
         for(int y = 0; y < 16; y++) {
-          if(charIndex == 2 || charIndex == 8) {
-            break;
-          }
           CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.get(1).hits[x].set(y, hit.readByte((additions * 128) + (x * 16) + y));
         }
         CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.get(1).hits[x].set(4, (short) (CoreMod.CHARACTER_DATA[charIndex].dragoonAddition.get(0).hits[x].damageMultiplier_08 * 2));

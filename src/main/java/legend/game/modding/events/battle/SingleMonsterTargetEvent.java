@@ -6,7 +6,7 @@ import legend.game.combat.bobj.MonsterBattleObject;
 public class SingleMonsterTargetEvent extends BattleEvent {
   public final MonsterBattleObject monster;
 
-  public SingleMonsterTargetEvent(MonsterBattleObject monster) {
+  public SingleMonsterTargetEvent(final MonsterBattleObject monster) {
     this.monster = monster;
   }
 }
