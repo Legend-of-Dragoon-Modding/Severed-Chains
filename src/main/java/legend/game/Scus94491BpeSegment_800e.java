@@ -159,7 +159,7 @@ public final class Scus94491BpeSegment_800e {
 
     FUN_800e6b3c(model_800bda10, container, animation);
 
-    model_800bda10.transforms_64.rotate.zero();
+    model_800bda10.coord2_14.transforms.rotate.zero();
     model_800bda10.colourMap_9d = 0;
     model_800bda10.movementType_cc = 0;
   }
@@ -206,7 +206,6 @@ public final class Scus94491BpeSegment_800e {
 
     //LAB_800e6c64
     initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00, model.count_c8);
-    model.coord2_14.transforms = model.transforms_64;
     GsInitCoordinate2(null, model.coord2_14);
     prepareObjTable2(model.ObjTable_0c, model.tmd_8c, model.coord2_14, model.count_c8, model.tmdNobj_ca + 1);
 
@@ -219,7 +218,7 @@ public final class Scus94491BpeSegment_800e {
 
     model.coord2_14.coord.transfer.set(x, y, z);
     model.movementType_cc = 0;
-    model.transforms_64.scale.set(1.0f, 1.0f, 1.0f);
+    model.coord2_14.transforms.scale.set(1.0f, 1.0f, 1.0f);
     model.vector_10c.set(1.0f, 1.0f, 1.0f);
     model.vector_118.set(0, 0, 0);
   }

@@ -382,7 +382,6 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80020838
     initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00, model.count_c8);
-    model.coord2_14.transforms = model.transforms_64;
     GsInitCoordinate2(null, model.coord2_14);
     prepareObjTable2(model.ObjTable_0c, model.tmd_8c, model.coord2_14, model.count_c8, model.tmdNobj_ca + 1);
 
@@ -400,7 +399,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_800209b0
     model.movementType_cc = 0;
     model.modelPartIndex_cd = -2;
-    model.transforms_64.scale.set(1.0f, 1.0f, 1.0f);
+    model.coord2_14.transforms.scale.set(1.0f, 1.0f, 1.0f);
     model.vector_10c.set(1.0f, 1.0f, 1.0f);
     model.vector_118.set(0, 0, 0);
   }
@@ -693,8 +692,8 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800214bcL)
   public static void applyModelRotationAndScale(final Model124 model) {
-    RotMatrix_Xyz(model.transforms_64.rotate, model.coord2_14.coord);
-    model.coord2_14.coord.scale(model.transforms_64.scale);
+    RotMatrix_Xyz(model.coord2_14.transforms.rotate, model.coord2_14.coord);
+    model.coord2_14.coord.scale(model.coord2_14.transforms.scale);
     model.coord2_14.flg = 0;
   }
 
@@ -770,9 +769,9 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800217a4L)
   public static void FUN_800217a4(final Model124 model) {
-    model.transforms_64.rotate.y = MathHelper.psxDegToRad(FUN_800ea4c8(MathHelper.radToPsxDeg(model.transforms_64.rotate.y)));
-    RotMatrix_Xyz(model.transforms_64.rotate, model.coord2_14.coord);
-    model.coord2_14.coord.scale(model.transforms_64.scale);
+    model.coord2_14.transforms.rotate.y = MathHelper.psxDegToRad(FUN_800ea4c8(MathHelper.radToPsxDeg(model.coord2_14.transforms.rotate.y)));
+    RotMatrix_Xyz(model.coord2_14.transforms.rotate, model.coord2_14.coord);
+    model.coord2_14.coord.scale(model.coord2_14.transforms.scale);
     model.coord2_14.flg = 0;
   }
 
@@ -858,8 +857,6 @@ public final class Scus94491BpeSegment_8002 {
       dobj2s[i].coord2_04 = new GsCOORDINATE2();
       dobj2s[i].tmd_08 = null;
       dobj2s[i].id_0c = -1;
-
-      dobj2s[i].coord2_04.transforms = new Transforms();
     }
 
     //LAB_80021b5c

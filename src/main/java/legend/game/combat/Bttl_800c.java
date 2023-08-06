@@ -2641,12 +2641,12 @@ public final class Bttl_800c {
     state._cc--;
     if(state._cc > 0) {
       state._d0 -= state._d4;
-      data.model_148.transforms_64.rotate.y = angle + MathHelper.psxDegToRad(state._d0);
+      data.model_148.coord2_14.transforms.rotate.y = angle + MathHelper.psxDegToRad(state._d0);
       return false;
     }
 
     //LAB_800cb3e0
-    data.model_148.transforms_64.rotate.y = angle;
+    data.model_148.coord2_14.transforms.rotate.y = angle;
 
     //LAB_800cb3e8
     return true;
@@ -2673,25 +2673,25 @@ public final class Bttl_800c {
   @Method(0x800cb4c8L)
   public static FlowControl scriptSetBobjRotation(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bobj.model_148.transforms_64.rotate.x = MathHelper.psxDegToRad(script.params_20[1].get());
-    bobj.model_148.transforms_64.rotate.y = MathHelper.psxDegToRad(script.params_20[2].get());
-    bobj.model_148.transforms_64.rotate.z = MathHelper.psxDegToRad(script.params_20[3].get());
+    bobj.model_148.coord2_14.transforms.rotate.x = MathHelper.psxDegToRad(script.params_20[1].get());
+    bobj.model_148.coord2_14.transforms.rotate.y = MathHelper.psxDegToRad(script.params_20[2].get());
+    bobj.model_148.coord2_14.transforms.rotate.z = MathHelper.psxDegToRad(script.params_20[3].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800cb534L)
   public static FlowControl scriptSetBobjRotationY(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bobj.model_148.transforms_64.rotate.y = MathHelper.psxDegToRad(script.params_20[1].get());
+    bobj.model_148.coord2_14.transforms.rotate.y = MathHelper.psxDegToRad(script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800cb578L)
   public static FlowControl scriptGetBobjRotation(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[1].set(MathHelper.radToPsxDeg(bobj.model_148.transforms_64.rotate.x));
-    script.params_20[2].set(MathHelper.radToPsxDeg(bobj.model_148.transforms_64.rotate.y));
-    script.params_20[3].set(MathHelper.radToPsxDeg(bobj.model_148.transforms_64.rotate.z));
+    script.params_20[1].set(MathHelper.radToPsxDeg(bobj.model_148.coord2_14.transforms.rotate.x));
+    script.params_20[2].set(MathHelper.radToPsxDeg(bobj.model_148.coord2_14.transforms.rotate.y));
+    script.params_20[3].set(MathHelper.radToPsxDeg(bobj.model_148.coord2_14.transforms.rotate.z));
     return FlowControl.CONTINUE;
   }
 
@@ -3063,7 +3063,7 @@ public final class Bttl_800c {
     final BattleObject27c s0 = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final BattleObject27c v0 = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
 
-    s0.model_148.transforms_64.rotate.y = MathHelper.atan2(v0.model_148.coord2_14.coord.transfer.getX() - s0.model_148.coord2_14.coord.transfer.getX(), v0.model_148.coord2_14.coord.transfer.getZ() - s0.model_148.coord2_14.coord.transfer.getZ()) + MathHelper.PI;
+    s0.model_148.coord2_14.transforms.rotate.y = MathHelper.atan2(v0.model_148.coord2_14.coord.transfer.getX() - s0.model_148.coord2_14.coord.transfer.getX(), v0.model_148.coord2_14.coord.transfer.getZ() - s0.model_148.coord2_14.coord.transfer.getZ()) + MathHelper.PI;
     return FlowControl.CONTINUE;
   }
 
@@ -3076,7 +3076,7 @@ public final class Bttl_800c {
     final BattleObject27c bobj1 = state1.innerStruct_00;
     final BattleObject27c bobj2 = state2.innerStruct_00;
     final int s2 = script.params_20[2].get();
-    final float v0 = MathHelper.floorMod(MathHelper.atan2(bobj2.model_148.coord2_14.coord.transfer.getX() - bobj1.model_148.coord2_14.coord.transfer.getX(), bobj2.model_148.coord2_14.coord.transfer.getZ() - bobj1.model_148.coord2_14.coord.transfer.getZ()) - bobj1.model_148.transforms_64.rotate.y, MathHelper.TWO_PI) - MathHelper.PI;
+    final float v0 = MathHelper.floorMod(MathHelper.atan2(bobj2.model_148.coord2_14.coord.transfer.getX() - bobj1.model_148.coord2_14.coord.transfer.getX(), bobj2.model_148.coord2_14.coord.transfer.getZ() - bobj1.model_148.coord2_14.coord.transfer.getZ()) - bobj1.model_148.coord2_14.transforms.rotate.y, MathHelper.TWO_PI) - MathHelper.PI;
     state1.scriptState_c8 = state2;
     state1._cc = s2;
     state1._d0 = MathHelper.radToPsxDeg(v0);
@@ -3500,7 +3500,7 @@ public final class Bttl_800c {
     bobj.charSlot_276 = monsterCount_800c6768.get();
     monsterCount_800c6768.incr();
     bobj.model_148.coord2_14.coord.transfer.set(0, 0, 0);
-    bobj.model_148.transforms_64.rotate.zero();
+    bobj.model_148.coord2_14.transforms.rotate.zero();
     return FlowControl.CONTINUE;
   }
 

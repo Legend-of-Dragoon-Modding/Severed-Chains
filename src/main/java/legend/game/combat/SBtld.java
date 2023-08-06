@@ -210,7 +210,7 @@ public class SBtld {
       data.combatant_144 = getCombatant(combatantIndex);
       data.combatantIndex_26c = combatantIndex;
       data.model_148.coord2_14.coord.transfer.set(s5.pos_02);
-      data.model_148.transforms_64.rotate.set(0.0f, MathHelper.TWO_PI * 0.75f, 0.0f);
+      data.model_148.coord2_14.transforms.rotate.set(0.0f, MathHelper.TWO_PI * 0.75f, 0.0f);
       state.storage_44[7] |= 0x4;
       allBobjCount_800c66d0.incr();
       monsterCount_800c6768.incr();

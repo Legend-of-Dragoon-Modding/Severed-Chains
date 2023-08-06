@@ -6635,7 +6635,7 @@ public final class SEffe {
   @Method(0x80110074L)
   public static Vector3f getScriptedObjectRotation(final int scriptIndex) {
     final BattleScriptDataBase data = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
-    return BattleScriptDataBase.EM__.equals(data.magic_00) ? ((EffectManagerData6c<?>)data)._10.rot_10 : ((BattleObject27c)data).model_148.transforms_64.rotate;
+    return BattleScriptDataBase.EM__.equals(data.magic_00) ? ((EffectManagerData6c<?>)data)._10.rot_10 : ((BattleObject27c)data).model_148.coord2_14.transforms.rotate;
   }
 
   @Method(0x801100b8L)
@@ -6653,7 +6653,7 @@ public final class SEffe {
     //LAB_801100fc
     final BattleObject27c bobj = (BattleObject27c)obj;
     translation.set(bobj.model_148.coord2_14.coord.transfer);
-    rotation.set(bobj.model_148.transforms_64.rotate);
+    rotation.set(bobj.model_148.coord2_14.transforms.rotate);
   }
 
   /** Used in the item throwing parabolic */
@@ -7551,7 +7551,7 @@ public final class SEffe {
       t1 = ((EffectManagerData6c<?>)t0)._10.scale_16;
     } else {
       //LAB_80113660
-      t1 = ((BattleObject27c)t0).model_148.transforms_64.scale;
+      t1 = ((BattleObject27c)t0).model_148.coord2_14.transforms.scale;
     }
 
     //LAB_801136a0
@@ -7567,7 +7567,7 @@ public final class SEffe {
         svec = ((EffectManagerData6c<?>)t0)._10.scale_16;
       } else {
         //LAB_80113708
-        svec = new Vector3f(((BattleObject27c)t0).model_148.transforms_64.scale);
+        svec = new Vector3f(((BattleObject27c)t0).model_148.coord2_14.transforms.scale);
       }
 
       //LAB_80113744
@@ -7605,7 +7605,7 @@ public final class SEffe {
       t0 = ((EffectManagerData6c<?>)a3)._10.scale_16;
     } else {
       //LAB_80113834
-      t0 = ((BattleObject27c)a3).model_148.transforms_64.scale;
+      t0 = ((BattleObject27c)a3).model_148.coord2_14.transforms.scale;
     }
 
     //LAB_80113874
@@ -7621,7 +7621,7 @@ public final class SEffe {
         a0_1 = ((EffectManagerData6c<?>)a3)._10.scale_16;
       } else {
         //LAB_801138dc
-        a0_1 = ((BattleObject27c)a3).model_148.transforms_64.scale;
+        a0_1 = ((BattleObject27c)a3).model_148.coord2_14.transforms.scale;
       }
 
       //LAB_8011391c
@@ -7663,7 +7663,7 @@ public final class SEffe {
         v1 = ((EffectManagerData6c<?>)a1_0)._10.scale_16;
       } else {
         //LAB_80113a64
-        v1 = ((BattleObject27c)a1_0).model_148.transforms_64.scale;
+        v1 = ((BattleObject27c)a1_0).model_148.coord2_14.transforms.scale;
       }
 
       //LAB_80113aa0
@@ -7681,7 +7681,7 @@ public final class SEffe {
       ((EffectManagerData6c<?>)a0_0)._10.scale_16.set(sp0x00);
     } else {
       //LAB_80113b64
-      ((BattleObject27c)a0_0).model_148.transforms_64.scale.set(sp0x00);
+      ((BattleObject27c)a0_0).model_148.coord2_14.transforms.scale.set(sp0x00);
     }
 
     //LAB_80113b94

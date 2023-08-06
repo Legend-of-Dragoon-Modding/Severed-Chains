@@ -4634,7 +4634,6 @@ public final class Bttl_800d {
 
     model.tpage_108 = (int)((tmdWithId.id & 0xffff_0000L) >>> 11);
     initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00, model.count_c8);
-    model.coord2_14.transforms = model.transforms_64;
     GsInitCoordinate2(null, model.coord2_14);
     model.ObjTable_0c.nobj = count;
 
@@ -4669,7 +4668,7 @@ public final class Bttl_800d {
     }
 
     //LAB_800ddce8
-    model.transforms_64.scale.set(1.0f, 1.0f, 1.0f);
+    model.coord2_14.transforms.scale.set(1.0f, 1.0f, 1.0f);
     model.movementType_cc = 0;
     model.vector_10c.set(1.0f, 1.0f, 1.0f);
     model.vector_118.set(0, 0, 0);

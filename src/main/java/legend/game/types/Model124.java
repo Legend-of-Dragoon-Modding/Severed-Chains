@@ -23,7 +23,7 @@ public class Model124 {
   public final GsOBJTABLE2 ObjTable_0c = new GsOBJTABLE2();
   // Supercoordinate system for all model part coordinate systems, all model parts are attached to this
   public final GsCOORDINATE2 coord2_14 = new GsCOORDINATE2();
-  public final Transforms transforms_64 = new Transforms();
+//  public final Transforms transforms_64 = new Transforms(); // Use coord2_14.transforms
   public Tmd tmd_8c;
   /** [keyframe][part] */
   public ModelPartTransforms0c[][] partTransforms_90;
@@ -131,7 +131,6 @@ public class Model124 {
     this.cmbAnim_08.set(other.cmbAnim_08);
     this.ObjTable_0c.set(other.ObjTable_0c);
     this.coord2_14.set(other.coord2_14);
-    this.transforms_64.set(other.transforms_64);
     this.tmd_8c = other.tmd_8c;
     this.partTransforms_90 = other.partTransforms_90;
     this.partTransforms_94 = other.partTransforms_94;

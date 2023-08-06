@@ -332,8 +332,8 @@ public final class Bttl_800e {
       } else {
         //LAB_800e49f4
         final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[a2].innerStruct_00;
-        sp0x10.x = bobj.model_148.transforms_64.rotate.x;
-        sp0x10.z = bobj.model_148.transforms_64.rotate.z;
+        sp0x10.x = bobj.model_148.coord2_14.transforms.rotate.x;
+        sp0x10.z = bobj.model_148.coord2_14.transforms.rotate.z;
       }
     }
 
@@ -364,7 +364,7 @@ public final class Bttl_800e {
     } else {
       //LAB_800e4b40
       final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[s1].innerStruct_00;
-      s0 = bobj.model_148.transforms_64.rotate;
+      s0 = bobj.model_148.coord2_14.transforms.rotate;
     }
 
     //LAB_800e4b64
@@ -524,7 +524,7 @@ public final class Bttl_800e {
     } else {
       //LAB_800e51e8
       final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[s2].innerStruct_00;
-      s0.vec_28.set(bobj.model_148.transforms_64.rotate);
+      s0.vec_28.set(bobj.model_148.coord2_14.transforms.rotate);
     }
 
     //LAB_800e522c
@@ -569,7 +569,7 @@ public final class Bttl_800e {
     light.scriptIndex_48 = bobjIndex;
 
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[bobjIndex].innerStruct_00;
-    a0_0.angle_04.set(sp0x10).sub(bobj.model_148.transforms_64.rotate);
+    a0_0.angle_04.set(sp0x10).sub(bobj.model_148.coord2_14.transforms.rotate);
     a0_0.vec_10.zero();
     a0_0.vec_1c.zero();
     return FlowControl.CONTINUE;
@@ -766,7 +766,7 @@ public final class Bttl_800e {
         //LAB_800e5bf0
         final Vector3f sp0x10 = new Vector3f();
         final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[light.scriptIndex_48].innerStruct_00;
-        sp0x10.set(bobj.model_148.transforms_64.rotate).add(a2.angle_04);
+        sp0x10.set(bobj.model_148.coord2_14.transforms.rotate).add(a2.angle_04);
         FUN_800e4674(light.light_00.direction_00, sp0x10);
       } else if(v1 == 3) {
         //LAB_800e5bdc
@@ -2160,7 +2160,7 @@ public final class Bttl_800e {
     model.ObjTable_0c.top = a1.objTable2_550.top;
     model.ObjTable_0c.nobj = a1.objTable2_550.nobj;
     model.coord2_14.set(a1.coord2_558);
-    model.transforms_64.set(a1.param_5a8);
+    model.coord2_14.transforms.set(a1.param_5a8);
 
     model.tmd_8c = a1.tmd_5d0;
     model.animType_90 = -1;
@@ -2183,7 +2183,7 @@ public final class Bttl_800e {
     }
 
     model.partInvisible_f4 = a1._5e4;
-    model.transforms_64.scale.set(1.0f, 1.0f, 1.0f);
+    model.coord2_14.transforms.scale.set(1.0f, 1.0f, 1.0f);
     model.tpage_108 = 0;
     model.vector_10c.set(1.0f, 1.0f, 1.0f);
     model.vector_118.set(0, 0, 0);
@@ -2192,23 +2192,16 @@ public final class Bttl_800e {
 
     final int count = model.count_c8;
     model.dobj2ArrPtr_00 = new GsDOBJ2[count];
-
-    for(int i = 0; i < count; i++) {
-      model.dobj2ArrPtr_00[i] = new GsDOBJ2().set(a1.dobj2s_00[i]);
-    }
-
-    final GsCOORDINATE2 parent = model.coord2_14;
+    Arrays.setAll(model.dobj2ArrPtr_00, i -> new GsDOBJ2().set(a1.dobj2s_00[i]));
 
     //LAB_800e9d34
     for(int i = 0; i < count; i++) {
       final GsDOBJ2 dobj2 = model.dobj2ArrPtr_00[i];
       dobj2.coord2_04 = new GsCOORDINATE2();
-      dobj2.coord2_04.transforms = new Transforms();
-      dobj2.coord2_04.super_ = parent;
+      dobj2.coord2_04.super_ = model.coord2_14;
     }
 
     //LAB_800e9d90
-    model.coord2_14.transforms = model.transforms_64;
     model.ObjTable_0c.top = model.dobj2ArrPtr_00;
   }
 
@@ -2219,23 +2212,16 @@ public final class Bttl_800e {
 
     final int count = model1.count_c8;
     model1.dobj2ArrPtr_00 = new GsDOBJ2[count];
-
-    for(int i = 0; i < count; i++) {
-      model1.dobj2ArrPtr_00[i] = new GsDOBJ2().set(model2.dobj2ArrPtr_00[i]);
-    }
-
-    final GsCOORDINATE2 parent = model1.coord2_14;
+    Arrays.setAll(model1.dobj2ArrPtr_00, i -> new GsDOBJ2().set(model2.dobj2ArrPtr_00[i]));
 
     //LAB_800e9ee8
     for(int i = 0; i < count; i++) {
       final GsDOBJ2 dobj2 = model1.dobj2ArrPtr_00[i];
       dobj2.coord2_04 = new GsCOORDINATE2();
-      dobj2.coord2_04.transforms = new Transforms();
-      dobj2.coord2_04.super_ = parent;
+      dobj2.coord2_04.super_ = model1.coord2_14;
     }
 
     //LAB_800e9f44
-    model1.coord2_14.transforms = model1.transforms_64;
     model1.ObjTable_0c.top = model1.dobj2ArrPtr_00;
   }
 
@@ -2272,8 +2258,8 @@ public final class Bttl_800e {
     //LAB_800ea04c
     final Model124 model = s0.model_134;
     manager._10.trans_04.set(model.coord2_14.coord.transfer);
-    manager._10.rot_10.set(model.transforms_64.rotate);
-    manager._10.scale_16.set(model.transforms_64.scale);
+    manager._10.rot_10.set(model.coord2_14.transforms.rotate);
+    manager._10.scale_16.set(model.coord2_14.transforms.scale);
     manager._10.flags_00 = 0x1400_0040;
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
@@ -2386,8 +2372,8 @@ public final class Bttl_800e {
 
     final BttlScriptData6cSub13c effect = (BttlScriptData6cSub13c)manager.effect_44;
     final Model124 model = effect.model_134;
-    model.transforms_64.rotate.set(manager._10.rot_10);
-    model.transforms_64.scale.set(manager._10.scale_16);
+    model.coord2_14.transforms.rotate.set(manager._10.rot_10);
+    model.coord2_14.transforms.scale.set(manager._10.scale_16);
     model.zOffset_a0 = manager._10.z_22;
     model.coord2_14.coord.set(sp0x10);
     model.coord2_14.flg = 0;
@@ -3020,7 +3006,7 @@ public final class Bttl_800e {
     if(model.movementType_cc == 3) {
       //LAB_800ec2ec
       s2.coord2_14.coord.transfer.setX(model.vector_118.getX() + model.dobj2ArrPtr_00[model.modelPartIndex_cd].coord2_04.coord.transfer.getX());
-      s2.coord2_14.coord.transfer.setY(model.vector_118.getY() - MathHelper.safeDiv(model.coord2_14.coord.transfer.getY(), model.transforms_64.scale.y));
+      s2.coord2_14.coord.transfer.setY(model.vector_118.getY() - MathHelper.safeDiv(model.coord2_14.coord.transfer.getY(), model.coord2_14.transforms.scale.y));
       s2.coord2_14.coord.transfer.setZ(model.vector_118.getZ() + model.dobj2ArrPtr_00[model.modelPartIndex_cd].coord2_04.coord.transfer.getZ());
     } else {
       s2.coord2_14.coord.transfer.setX(model.vector_118.getX());
@@ -3029,7 +3015,7 @@ public final class Bttl_800e {
         s2.coord2_14.coord.transfer.setY(model.vector_118.getY());
       } else {
         //LAB_800ec2bc
-        s2.coord2_14.coord.transfer.setY(model.vector_118.getY() - MathHelper.safeDiv(model.coord2_14.coord.transfer.getY(), model.transforms_64.scale.y));
+        s2.coord2_14.coord.transfer.setY(model.vector_118.getY() - MathHelper.safeDiv(model.coord2_14.coord.transfer.getY(), model.coord2_14.transforms.scale.y));
       }
 
       //LAB_800ec2e0
@@ -3038,9 +3024,9 @@ public final class Bttl_800e {
 
     //LAB_800ec370
     s2.zOffset_a0 = model.zOffset_a0 + 16;
-    s2.transforms_64.scale.set(model.vector_10c.x).div(4.0f);
-    RotMatrix_Xyz(s2.transforms_64.rotate, s2.coord2_14.coord);
-    s2.coord2_14.coord.scaleL(s2.transforms_64.scale);
+    s2.coord2_14.transforms.scale.set(model.vector_10c.x).div(4.0f);
+    RotMatrix_Xyz(s2.coord2_14.transforms.rotate, s2.coord2_14.coord);
+    s2.coord2_14.coord.scaleL(s2.coord2_14.transforms.scale);
     s2.coord2_14.flg = 0;
     final GsCOORDINATE2 v0 = s2.dobj2ArrPtr_00[0].coord2_04;
     final Transforms s0 = v0.transforms;
@@ -3381,14 +3367,14 @@ public final class Bttl_800e {
   public static FlowControl scriptSetBobjScaleUniform(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final float scale = script.params_20[1].get() / (float)0x1000;
-    bobj.model_148.transforms_64.scale.set(scale, scale, scale);
+    bobj.model_148.coord2_14.transforms.scale.set(scale, scale, scale);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800ee324L)
   public static FlowControl scriptSetBobjScale(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bobj.model_148.transforms_64.scale.set(script.params_20[1].get() / (float)0x1000, script.params_20[2].get() / (float)0x1000, script.params_20[3].get() / (float)0x1000);
+    bobj.model_148.coord2_14.transforms.scale.set(script.params_20[1].get() / (float)0x1000, script.params_20[2].get() / (float)0x1000, script.params_20[3].get() / (float)0x1000);
     return FlowControl.CONTINUE;
   }
 
