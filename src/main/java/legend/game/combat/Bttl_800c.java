@@ -7,7 +7,6 @@ import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
 import legend.core.gte.DVECTOR;
-import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
@@ -189,9 +188,9 @@ import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
 import static legend.game.Scus94491BpeSegment_800b.unlockedUltimateAddition_800bc910;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
-import static legend.game.combat.Bttl_800d.resetCameraMovement;
-import static legend.game.combat.Bttl_800d.calculateYAngleFromRefpointToViewpoint;
 import static legend.game.combat.Bttl_800d.calculateXAngleFromRefpointToViewpoint;
+import static legend.game.combat.Bttl_800d.calculateYAngleFromRefpointToViewpoint;
+import static legend.game.combat.Bttl_800d.resetCameraMovement;
 import static legend.game.combat.Bttl_800e.FUN_800ec51c;
 import static legend.game.combat.Bttl_800e.FUN_800ec744;
 import static legend.game.combat.Bttl_800e.FUN_800ee610;
@@ -1847,7 +1846,6 @@ public final class Bttl_800c {
       final BattlePreloadedEntities_18cb0.Rendering1298 a0_0 = battlePreloadedEntities_1f8003f4._9ce8[s0.charSlot_19c];
 
       model.dobj2ArrPtr_00 = a0_0.dobj2s_00;
-      model.coord2ArrPtr_04 = a0_0.coord2s_230;
       model.coord2ParamArrPtr_08 = a0_0.params_d20;
       model.count_c8 = 35;
 
@@ -2644,12 +2642,12 @@ public final class Bttl_800c {
     state._cc--;
     if(state._cc > 0) {
       state._d0 -= state._d4;
-      data.model_148.coord2Param_64.rotate.y = angle + MathHelper.psxDegToRad(state._d0);
+      data.model_148.transforms_64.rotate.y = angle + MathHelper.psxDegToRad(state._d0);
       return false;
     }
 
     //LAB_800cb3e0
-    data.model_148.coord2Param_64.rotate.y = angle;
+    data.model_148.transforms_64.rotate.y = angle;
 
     //LAB_800cb3e8
     return true;
@@ -2676,25 +2674,25 @@ public final class Bttl_800c {
   @Method(0x800cb4c8L)
   public static FlowControl scriptSetBobjRotation(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bobj.model_148.coord2Param_64.rotate.x = MathHelper.psxDegToRad(script.params_20[1].get());
-    bobj.model_148.coord2Param_64.rotate.y = MathHelper.psxDegToRad(script.params_20[2].get());
-    bobj.model_148.coord2Param_64.rotate.z = MathHelper.psxDegToRad(script.params_20[3].get());
+    bobj.model_148.transforms_64.rotate.x = MathHelper.psxDegToRad(script.params_20[1].get());
+    bobj.model_148.transforms_64.rotate.y = MathHelper.psxDegToRad(script.params_20[2].get());
+    bobj.model_148.transforms_64.rotate.z = MathHelper.psxDegToRad(script.params_20[3].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800cb534L)
   public static FlowControl scriptSetBobjRotationY(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bobj.model_148.coord2Param_64.rotate.y = MathHelper.psxDegToRad(script.params_20[1].get());
+    bobj.model_148.transforms_64.rotate.y = MathHelper.psxDegToRad(script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800cb578L)
   public static FlowControl scriptGetBobjRotation(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[1].set(MathHelper.radToPsxDeg(bobj.model_148.coord2Param_64.rotate.x));
-    script.params_20[2].set(MathHelper.radToPsxDeg(bobj.model_148.coord2Param_64.rotate.y));
-    script.params_20[3].set(MathHelper.radToPsxDeg(bobj.model_148.coord2Param_64.rotate.z));
+    script.params_20[1].set(MathHelper.radToPsxDeg(bobj.model_148.transforms_64.rotate.x));
+    script.params_20[2].set(MathHelper.radToPsxDeg(bobj.model_148.transforms_64.rotate.y));
+    script.params_20[3].set(MathHelper.radToPsxDeg(bobj.model_148.transforms_64.rotate.z));
     return FlowControl.CONTINUE;
   }
 
@@ -3066,7 +3064,7 @@ public final class Bttl_800c {
     final BattleObject27c s0 = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final BattleObject27c v0 = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
 
-    s0.model_148.coord2Param_64.rotate.y = MathHelper.atan2(v0.model_148.coord2_14.coord.transfer.getX() - s0.model_148.coord2_14.coord.transfer.getX(), v0.model_148.coord2_14.coord.transfer.getZ() - s0.model_148.coord2_14.coord.transfer.getZ()) + MathHelper.PI;
+    s0.model_148.transforms_64.rotate.y = MathHelper.atan2(v0.model_148.coord2_14.coord.transfer.getX() - s0.model_148.coord2_14.coord.transfer.getX(), v0.model_148.coord2_14.coord.transfer.getZ() - s0.model_148.coord2_14.coord.transfer.getZ()) + MathHelper.PI;
     return FlowControl.CONTINUE;
   }
 
@@ -3079,7 +3077,7 @@ public final class Bttl_800c {
     final BattleObject27c bobj1 = state1.innerStruct_00;
     final BattleObject27c bobj2 = state2.innerStruct_00;
     final int s2 = script.params_20[2].get();
-    final float v0 = MathHelper.floorMod(MathHelper.atan2(bobj2.model_148.coord2_14.coord.transfer.getX() - bobj1.model_148.coord2_14.coord.transfer.getX(), bobj2.model_148.coord2_14.coord.transfer.getZ() - bobj1.model_148.coord2_14.coord.transfer.getZ()) - bobj1.model_148.coord2Param_64.rotate.y, MathHelper.TWO_PI) - MathHelper.PI;
+    final float v0 = MathHelper.floorMod(MathHelper.atan2(bobj2.model_148.coord2_14.coord.transfer.getX() - bobj1.model_148.coord2_14.coord.transfer.getX(), bobj2.model_148.coord2_14.coord.transfer.getZ() - bobj1.model_148.coord2_14.coord.transfer.getZ()) - bobj1.model_148.transforms_64.rotate.y, MathHelper.TWO_PI) - MathHelper.PI;
     state1.scriptState_c8 = state2;
     state1._cc = s2;
     state1._d0 = MathHelper.radToPsxDeg(v0);
@@ -3503,7 +3501,7 @@ public final class Bttl_800c {
     bobj.charSlot_276 = monsterCount_800c6768.get();
     monsterCount_800c6768.incr();
     bobj.model_148.coord2_14.coord.transfer.set(0, 0, 0);
-    bobj.model_148.coord2Param_64.rotate.zero();
+    bobj.model_148.transforms_64.rotate.zero();
     return FlowControl.CONTINUE;
   }
 
@@ -3873,7 +3871,7 @@ public final class Bttl_800c {
     //LAB_800ce320
     for(int i = 0; i < 2; i++) {
       final MATRIX perspectiveTransformMatrix = new MATRIX();
-      GsGetLw(trail.parentModel_30.coord2ArrPtr_04[trail.dobjIndex_08], perspectiveTransformMatrix);
+      GsGetLw(trail.parentModel_30.dobj2ArrPtr_00[trail.dobjIndex_08].coord2_04, perspectiveTransformMatrix);
       (i == 0 ? trail.smallestVertex_20 : trail.largestVertex_10).mul(perspectiveTransformMatrix, segment.endpointCoords_04[i]); // Yes, I hate me for this syntax too
       segment.endpointCoords_04[i].add(perspectiveTransformMatrix.transfer);
     }
@@ -4253,7 +4251,7 @@ public final class Bttl_800c {
 
     //LAB_800cfd40
     final MATRIX sp0x10 = new MATRIX();
-    GsGetLw(model.coord2ArrPtr_04[script.params_20[1].get()], sp0x10);
+    GsGetLw(model.dobj2ArrPtr_00[script.params_20[1].get()].coord2_04, sp0x10);
     // This was multiplying vector (0, 0, 0) so I removed it
     final VECTOR sp0x40 = new VECTOR().set(sp0x10.transfer);
     script.params_20[2].set(sp0x40.getX());
@@ -4266,13 +4264,12 @@ public final class Bttl_800c {
   public static FlowControl scriptGetBobjDimension(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final int componentIndex = script.params_20[1].get();
-    final GsCOORDINATE2[] coords = bobj.model_148.coord2ArrPtr_04;
 
     //LAB_800cfe54
     int largest = 0x8000_0001;
     int smallest = 0x7fff_ffff;
     for(int animIndex = bobj.model_148.partCount_98 - 1; animIndex >= 0; animIndex--) {
-      final int component = coords[animIndex].coord.transfer.get(componentIndex);
+      final int component = bobj.model_148.dobj2ArrPtr_00[animIndex].coord2_04.coord.transfer.get(componentIndex);
 
       if(largest < component) {
         largest = component;
@@ -4328,7 +4325,7 @@ public final class Bttl_800c {
   @Method(0x800cffd8L)
   public static void getModelObjectTranslation(final int scriptIndex, final VECTOR translation, final int objIndex) {
     final MATRIX transformMatrix = new MATRIX();
-    GsGetLw(((BattleObject27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00).model_148.coord2ArrPtr_04[objIndex], transformMatrix);
+    GsGetLw(((BattleObject27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00).model_148.dobj2ArrPtr_00[objIndex].coord2_04, transformMatrix);
     // Does nothing? Changed line below to set //ApplyMatrixLV(transformMatrix, new VECTOR(), translation);
     translation.set(transformMatrix.transfer);
   }

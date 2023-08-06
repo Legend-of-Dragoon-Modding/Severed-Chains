@@ -1,6 +1,6 @@
 package legend.game.types;
 
-import legend.core.gte.GsCOORD2PARAM;
+import legend.core.gte.Transforms;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.GsOBJTABLE2;
@@ -14,16 +14,16 @@ public class Model124 {
   public final String name;
 
   public GsDOBJ2[] dobj2ArrPtr_00;
-  public GsCOORDINATE2[] coord2ArrPtr_04;
-  public GsCOORD2PARAM[] coord2ParamArrPtr_08;
+//  public GsCOORDINATE2[] coord2ArrPtr_04; // Use coord2 on dobj2
+  public Transforms[] coord2ParamArrPtr_08;
   /** Union with {@link #coord2ParamArrPtr_08} */
   public final LmbAnim lmbAnim_08 = new LmbAnim();
   /** Union with {@link #coord2ParamArrPtr_08} */
   public final CmbAnim cmbAnim_08 = new CmbAnim();
   public final GsOBJTABLE2 ObjTable_0c = new GsOBJTABLE2();
-  // 0x50 bytes
+  // Supercoordinate system for all model part coordinate systems, all model parts are attached to this
   public final GsCOORDINATE2 coord2_14 = new GsCOORDINATE2();
-  public final GsCOORD2PARAM coord2Param_64 = new GsCOORD2PARAM();
+  public final Transforms transforms_64 = new Transforms();
   public Tmd tmd_8c;
   /** [keyframe][part] */
   public ModelPartTransforms0c[][] partTransforms_90;
@@ -80,7 +80,7 @@ public class Model124 {
   /** 0/1/2/3 - if 0, the model won't render (byte) */
   public int movementType_cc;
   /** byte */
-  public int b_cd;
+  public int modelPartIndex_cd;
 
   public final short[][] ptrs_d0 = new short[7][];
   /** ubyte */
@@ -88,7 +88,7 @@ public class Model124 {
 
   /** One bit per object in TMD object table */
   public long partInvisible_f4;
-  public final Vector3f scaleVector_fc = new Vector3f();
+//  public final Vector3f scaleVector_fc = new Vector3f(); // Using transforms_64.scale instead
   /** Pretty sure this doesn't include VRAM X/Y */
   public int tpage_108;
   /** Maybe initial scale? */
@@ -127,13 +127,12 @@ public class Model124 {
 
   public void set(final Model124 other) {
     this.dobj2ArrPtr_00 = other.dobj2ArrPtr_00;
-    this.coord2ArrPtr_04 = other.coord2ArrPtr_04;
     this.coord2ParamArrPtr_08 = other.coord2ParamArrPtr_08;
     this.lmbAnim_08.set(other.lmbAnim_08);
     this.cmbAnim_08.set(other.cmbAnim_08);
     this.ObjTable_0c.set(other.ObjTable_0c);
     this.coord2_14.set(other.coord2_14);
-    this.coord2Param_64.set(other.coord2Param_64);
+    this.transforms_64.set(other.transforms_64);
     this.tmd_8c = other.tmd_8c;
     this.partTransforms_90 = other.partTransforms_90;
     this.partTransforms_94 = other.partTransforms_94;
@@ -154,11 +153,10 @@ public class Model124 {
     this.count_c8 = other.count_c8;
     this.tmdNobj_ca = other.tmdNobj_ca;
     this.movementType_cc = other.movementType_cc;
-    this.b_cd = other.b_cd;
+    this.modelPartIndex_cd = other.modelPartIndex_cd;
     System.arraycopy(other.ptrs_d0, 0, this.ptrs_d0, 0, 7);
     System.arraycopy(other.animateTextures_ec, 0, this.animateTextures_ec, 0, 7);
     this.partInvisible_f4 = other.partInvisible_f4;
-    this.scaleVector_fc.set(other.scaleVector_fc);
     this.tpage_108 = other.tpage_108;
     this.vector_10c.set(other.vector_10c);
     this.vector_118.set(other.vector_118);

@@ -5,14 +5,13 @@ import legend.core.MathHelper;
 import legend.core.gpu.GpuCommandLine;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.COLOUR;
-import legend.core.gte.GsCOORD2PARAM;
-import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
+import legend.core.gte.Transforms;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.types.CString;
@@ -111,10 +110,6 @@ import static legend.game.combat.Bttl_800c._800faa94;
 import static legend.game.combat.Bttl_800c._800faa98;
 import static legend.game.combat.Bttl_800c._800faa9c;
 import static legend.game.combat.Bttl_800c._800faa9d;
-import static legend.game.combat.Bttl_800c.temp1_800faba0;
-import static legend.game.combat.Bttl_800c.temp2_800faba8;
-import static legend.game.combat.Bttl_800c.viewpointSetFromScriptMethods_800fabbc;
-import static legend.game.combat.Bttl_800c.refpointSetFromScriptMethods_800fabdc;
 import static legend.game.combat.Bttl_800c._800fabfc;
 import static legend.game.combat.Bttl_800c._800fac1c;
 import static legend.game.combat.Bttl_800c._800fac3c;
@@ -142,16 +137,20 @@ import static legend.game.combat.Bttl_800c.getModelObjectTranslation;
 import static legend.game.combat.Bttl_800c.guardEffectMetrics_800fa76c;
 import static legend.game.combat.Bttl_800c.radialGradientEffectRenderers_800fa758;
 import static legend.game.combat.Bttl_800c.refpointComponentMethods_800fad7c;
+import static legend.game.combat.Bttl_800c.refpointSetFromScriptMethods_800fabdc;
 import static legend.game.combat.Bttl_800c.rotateAndTranslateEffect;
 import static legend.game.combat.Bttl_800c.screenOffsetX_800c67bc;
 import static legend.game.combat.Bttl_800c.screenOffsetY_800c67c0;
 import static legend.game.combat.Bttl_800c.scriptGetScriptedObjectPos;
 import static legend.game.combat.Bttl_800c.seed_800fa754;
 import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
+import static legend.game.combat.Bttl_800c.temp1_800faba0;
+import static legend.game.combat.Bttl_800c.temp2_800faba8;
 import static legend.game.combat.Bttl_800c.transformWorldspaceToScreenspace;
 import static legend.game.combat.Bttl_800c.unused_800c67d8;
 import static legend.game.combat.Bttl_800c.useCameraWobble_800fabb8;
 import static legend.game.combat.Bttl_800c.viewpointComponentMethods_800fad9c;
+import static legend.game.combat.Bttl_800c.viewpointSetFromScriptMethods_800fabbc;
 import static legend.game.combat.Bttl_800c.wobbleFramesRemaining_800c67c4;
 import static legend.game.combat.Bttl_800e.allocateEffectManager;
 import static legend.game.combat.Bttl_800e.renderGenericSpriteAtZOffset0;
@@ -4631,16 +4630,14 @@ public final class Bttl_800d {
     model.tmdNobj_ca = count;
     model.count_c8 = count;
     model.dobj2ArrPtr_00 = new GsDOBJ2[count];
-    model.coord2ArrPtr_04 = new GsCOORDINATE2[count];
-    model.coord2ParamArrPtr_08 = new GsCOORD2PARAM[count];
+    model.coord2ParamArrPtr_08 = new Transforms[count];
 
     Arrays.setAll(model.dobj2ArrPtr_00, i -> new GsDOBJ2());
-    Arrays.setAll(model.coord2ArrPtr_04, i -> new GsCOORDINATE2());
-    Arrays.setAll(model.coord2ParamArrPtr_08, i -> new GsCOORD2PARAM());
+    Arrays.setAll(model.coord2ParamArrPtr_08, i -> new Transforms());
 
     model.tpage_108 = (int)((tmdWithId.id & 0xffff_0000L) >>> 11);
-    initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00, model.coord2ArrPtr_04, model.coord2ParamArrPtr_08, model.count_c8);
-    model.coord2_14.param = model.coord2Param_64;
+    initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00, model.coord2ParamArrPtr_08, model.count_c8);
+    model.coord2_14.param = model.transforms_64;
     GsInitCoordinate2(null, model.coord2_14);
     model.ObjTable_0c.nobj = count;
 
@@ -4660,7 +4657,7 @@ public final class Bttl_800d {
     //LAB_800ddc54
     //LAB_800ddc64
     for(int i = 0; i < count; i++) {
-      model.coord2ArrPtr_04[i].super_ = model.coord2_14;
+      model.dobj2ArrPtr_00[i].coord2_04.super_ = model.coord2_14;
     }
 
     //LAB_800ddc80
@@ -4675,7 +4672,7 @@ public final class Bttl_800d {
     }
 
     //LAB_800ddce8
-    model.scaleVector_fc.set(1.0f, 1.0f, 1.0f);
+    model.transforms_64.scale.set(1.0f, 1.0f, 1.0f);
     model.movementType_cc = 0;
     model.vector_10c.set(1.0f, 1.0f, 1.0f);
     model.vector_118.set(0, 0, 0);

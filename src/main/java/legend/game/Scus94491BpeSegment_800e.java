@@ -3,10 +3,9 @@ package legend.game;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
-import legend.core.gte.GsCOORD2PARAM;
-import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.Tmd;
+import legend.core.gte.Transforms;
 import legend.core.memory.Method;
 import legend.game.types.CContainer;
 import legend.game.types.EngineState;
@@ -161,7 +160,7 @@ public final class Scus94491BpeSegment_800e {
 
     FUN_800e6b3c(model_800bda10, container, animation);
 
-    model_800bda10.coord2Param_64.rotate.zero();
+    model_800bda10.transforms_64.rotate.zero();
     model_800bda10.colourMap_9d = 0;
     model_800bda10.movementType_cc = 0;
   }
@@ -179,13 +178,11 @@ public final class Scus94491BpeSegment_800e {
     }
 
     model.dobj2ArrPtr_00 = new GsDOBJ2[tmdAnimFile.modelPartCount_0c];
-    model.coord2ArrPtr_04 = new GsCOORDINATE2[tmdAnimFile.modelPartCount_0c];
-    model.coord2ParamArrPtr_08 = new GsCOORD2PARAM[tmdAnimFile.modelPartCount_0c];
+    model.coord2ParamArrPtr_08 = new Transforms[tmdAnimFile.modelPartCount_0c];
     model.count_c8 = tmdAnimFile.modelPartCount_0c;
 
     Arrays.setAll(model.dobj2ArrPtr_00, i -> new GsDOBJ2());
-    Arrays.setAll(model.coord2ArrPtr_04, i -> new GsCOORDINATE2());
-    Arrays.setAll(model.coord2ParamArrPtr_08, i -> new GsCOORD2PARAM());
+    Arrays.setAll(model.coord2ParamArrPtr_08, i -> new Transforms());
 
     final Tmd tmd = cContainer.tmdPtr_00.tmd;
     model.tmd_8c = tmd;
@@ -211,8 +208,8 @@ public final class Scus94491BpeSegment_800e {
     }
 
     //LAB_800e6c64
-    initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00, model.coord2ArrPtr_04, model.coord2ParamArrPtr_08, model.count_c8);
-    model.coord2_14.param = model.coord2Param_64;
+    initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00, model.coord2ParamArrPtr_08, model.count_c8);
+    model.coord2_14.param = model.transforms_64;
     GsInitCoordinate2(null, model.coord2_14);
     prepareObjTable2(model.ObjTable_0c, model.tmd_8c, model.coord2_14, model.count_c8, model.tmdNobj_ca + 1);
 
@@ -225,7 +222,7 @@ public final class Scus94491BpeSegment_800e {
 
     model.coord2_14.coord.transfer.set(x, y, z);
     model.movementType_cc = 0;
-    model.scaleVector_fc.set(1.0f, 1.0f, 1.0f);
+    model.transforms_64.scale.set(1.0f, 1.0f, 1.0f);
     model.vector_10c.set(1.0f, 1.0f, 1.0f);
     model.vector_118.set(0, 0, 0);
   }

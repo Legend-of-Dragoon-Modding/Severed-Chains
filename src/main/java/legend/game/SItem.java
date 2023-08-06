@@ -325,7 +325,7 @@ public final class SItem {
       bobj.model_148.coord2_14.coord.transfer.setX((int)MEMORY.ref(2, fp).offset(charSlot * 0x4L).offset(0x0L).getSigned());
       bobj.model_148.coord2_14.coord.transfer.setY(0);
       bobj.model_148.coord2_14.coord.transfer.setZ((int)MEMORY.ref(2, fp).offset(charSlot * 0x4L).offset(0x2L).getSigned());
-      bobj.model_148.coord2Param_64.rotate.zero();
+      bobj.model_148.transforms_64.rotate.zero();
       allBobjCount_800c66d0.incr();
     }
 

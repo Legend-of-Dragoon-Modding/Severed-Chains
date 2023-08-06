@@ -4,7 +4,7 @@ public class GsCOORDINATE2 {
   public int flg;
   public final MATRIX coord = new MATRIX();
   public final MATRIX workm = new MATRIX();
-  public GsCOORD2PARAM param;
+  public Transforms param;
   public GsCOORDINATE2 super_;
   public GsCOORDINATE2 sub;
 

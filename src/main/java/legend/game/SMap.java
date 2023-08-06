@@ -11,7 +11,7 @@ import legend.core.gpu.RECT;
 import legend.core.gpu.Rect4i;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.DVECTOR;
-import legend.core.gte.GsCOORD2PARAM;
+import legend.core.gte.Transforms;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.MATRIX;
@@ -787,15 +787,15 @@ public final class SMap {
     model_800bda10.coord2_14.coord.transfer.set(model.vector_118);
     model_800bda10.zOffset_a0 = model.zOffset_a0 + 16;
 
-    model_800bda10.scaleVector_fc.set(model.vector_10c).div(64.0f);
+    model_800bda10.transforms_64.scale.set(model.vector_10c).div(64.0f);
 
-    RotMatrix_Xyz(model_800bda10.coord2Param_64.rotate, model_800bda10.coord2_14.coord);
+    RotMatrix_Xyz(model_800bda10.transforms_64.rotate, model_800bda10.coord2_14.coord);
 
-    model_800bda10.coord2_14.coord.scaleL(model_800bda10.scaleVector_fc);
+    model_800bda10.coord2_14.coord.scaleL(model_800bda10.transforms_64.scale);
     model_800bda10.coord2_14.flg = 0;
 
-    final MATRIX matrix = model_800bda10.coord2ArrPtr_04[0].coord;
-    final GsCOORD2PARAM params = model_800bda10.coord2ArrPtr_04[0].param;
+    final MATRIX matrix = model_800bda10.dobj2ArrPtr_00[0].coord2_04.coord;
+    final Transforms params = model_800bda10.dobj2ArrPtr_00[0].coord2_04.param;
 
     params.rotate.zero();
     RotMatrix_Zyx(params.rotate, matrix);
@@ -812,7 +812,7 @@ public final class SMap {
     GTE.setTranslationVector(ls.transfer);
 
     Renderer.renderDobj2(model_800bda10.ObjTable_0c.top[0], false, 0);
-    model_800bda10.coord2ArrPtr_04[0].flg--;
+    model_800bda10.dobj2ArrPtr_00[0].coord2_04.flg--;
   }
 
   @Method(0x800da6c8L)
@@ -874,7 +874,7 @@ public final class SMap {
       final GsDOBJ2 dobj2 = a0.dobj2ArrPtr_00[i];
 
       final GsCOORDINATE2 coord2 = dobj2.coord2_04;
-      final GsCOORD2PARAM params = coord2.param;
+      final Transforms params = coord2.param;
       final MATRIX matrix = coord2.coord;
 
       RotMatrix_Zyx(params.rotate, matrix);
@@ -1332,7 +1332,7 @@ public final class SMap {
       angle = MathHelper.positiveAtan2(movement.getZ(), movement.getX());
     } else {
       movement.set((short)0, (short)model.coord2_14.coord.transfer.getY(), (short)0);
-      angle = model.coord2Param_64.rotate.y;
+      angle = model.transforms_64.rotate.y;
     }
 
     //LAB_800def28
@@ -1434,7 +1434,7 @@ public final class SMap {
   public static FlowControl scriptSetModelRotate(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
-    model.coord2Param_64.rotate.set(MathHelper.psxDegToRad(script.params_20[1].get()), MathHelper.psxDegToRad(script.params_20[2].get()), MathHelper.psxDegToRad(script.params_20[3].get()));
+    model.transforms_64.rotate.set(MathHelper.psxDegToRad(script.params_20[1].get()), MathHelper.psxDegToRad(script.params_20[2].get()), MathHelper.psxDegToRad(script.params_20[3].get()));
     sobj.rotationFrames_188 = 0;
     return FlowControl.CONTINUE;
   }
@@ -1443,9 +1443,9 @@ public final class SMap {
   public static FlowControl scriptReadModelRotate(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
-    script.params_20[1].set(MathHelper.radToPsxDeg(model.coord2Param_64.rotate.x));
-    script.params_20[2].set(MathHelper.radToPsxDeg(model.coord2Param_64.rotate.y));
-    script.params_20[3].set(MathHelper.radToPsxDeg(model.coord2Param_64.rotate.z));
+    script.params_20[1].set(MathHelper.radToPsxDeg(model.transforms_64.rotate.x));
+    script.params_20[2].set(MathHelper.radToPsxDeg(model.transforms_64.rotate.y));
+    script.params_20[3].set(MathHelper.radToPsxDeg(model.transforms_64.rotate.z));
     return FlowControl.CONTINUE;
   }
 
@@ -1622,7 +1622,7 @@ public final class SMap {
   @Method(0x800df954L)
   public static FlowControl scriptFacePlayer(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)script.scriptState_04.innerStruct_00;
-    sobj.model_00.coord2Param_64.rotate.y = MathHelper.positiveAtan2(_800c68e8.playerPos_00.getZ(), _800c68e8.playerPos_00.getX());
+    sobj.model_00.transforms_64.rotate.y = MathHelper.positiveAtan2(_800c68e8.playerPos_00.getZ(), _800c68e8.playerPos_00.getX());
     sobj.rotationFrames_188 = 0;
     return FlowControl.CONTINUE;
   }
@@ -1685,7 +1685,7 @@ public final class SMap {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
-    model.scaleVector_fc.set(
+    model.transforms_64.scale.set(
       (script.params_20[1].get() / (float)0x1000),
       (script.params_20[2].get() / (float)0x1000),
       (script.params_20[3].get() / (float)0x1000)
@@ -1699,9 +1699,9 @@ public final class SMap {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
-    model.scaleVector_fc.x = script.params_20[1].get() / (float)0x1000;
-    model.scaleVector_fc.y = script.params_20[1].get() / (float)0x1000;
-    model.scaleVector_fc.z = script.params_20[1].get() / (float)0x1000;
+    model.transforms_64.scale.x = script.params_20[1].get() / (float)0x1000;
+    model.transforms_64.scale.y = script.params_20[1].get() / (float)0x1000;
+    model.transforms_64.scale.z = script.params_20[1].get() / (float)0x1000;
     return FlowControl.CONTINUE;
   }
 
@@ -1805,7 +1805,7 @@ public final class SMap {
   public static FlowControl scriptFacePoint(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
-    model.coord2Param_64.rotate.y = MathHelper.positiveAtan2(script.params_20[3].get() - model.coord2_14.coord.transfer.getZ(), script.params_20[1].get() - model.coord2_14.coord.transfer.getX());
+    model.transforms_64.rotate.y = MathHelper.positiveAtan2(script.params_20[3].get() - model.coord2_14.coord.transfer.getZ(), script.params_20[1].get() - model.coord2_14.coord.transfer.getX());
     sobj.rotationFrames_188 = 0;
     return FlowControl.CONTINUE;
   }
@@ -1937,7 +1937,7 @@ public final class SMap {
   @Method(0x800e04b4L)
   public static FlowControl scriptFaceCamera(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    sobj.model_00.coord2Param_64.rotate.y = MathHelper.positiveAtan2(cameraPos_800c6aa0.z, cameraPos_800c6aa0.x);
+    sobj.model_00.transforms_64.rotate.y = MathHelper.positiveAtan2(cameraPos_800c6aa0.z, cameraPos_800c6aa0.x);
     sobj.rotationFrames_188 = 0;
     return FlowControl.CONTINUE;
   }
@@ -2163,14 +2163,12 @@ public final class SMap {
     final int count = cContainer.tmdPtr_00.tmd.header.nobj;
     model.count_c8 = count;
     model.dobj2ArrPtr_00 = new GsDOBJ2[count];
-    model.coord2ArrPtr_04 = new GsCOORDINATE2[count];
-    model.coord2ParamArrPtr_08 = new GsCOORD2PARAM[count];
+    model.coord2ParamArrPtr_08 = new Transforms[count];
     model.tmd_8c = cContainer.tmdPtr_00.tmd;
     model.tmdNobj_ca = count;
 
     Arrays.setAll(model.dobj2ArrPtr_00, i -> new GsDOBJ2());
-    Arrays.setAll(model.coord2ArrPtr_04, i -> new GsCOORDINATE2());
-    Arrays.setAll(model.coord2ParamArrPtr_08, i -> new GsCOORD2PARAM());
+    Arrays.setAll(model.coord2ParamArrPtr_08, i -> new Transforms());
 
     if(cContainer.ext_04 != null) {
       final SmallerStruct smallerStruct = new SmallerStruct();
@@ -2209,9 +2207,9 @@ public final class SMap {
     }
 
     //LAB_800e0f10
-    initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00, model.coord2ArrPtr_04, model.coord2ParamArrPtr_08, model.count_c8);
+    initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00, model.coord2ParamArrPtr_08, model.count_c8);
 
-    model.coord2_14.param = model.coord2Param_64;
+    model.coord2_14.param = model.transforms_64;
 
     GsInitCoordinate2(null, model.coord2_14);
     prepareObjTable2(model.ObjTable_0c, model.tmd_8c, model.coord2_14, model.count_c8, model.tmdNobj_ca + 1);
@@ -2223,13 +2221,8 @@ public final class SMap {
 
     loadModelStandardAnimation(model, tmdAnimFile);
 
-    model.coord2_14.coord.transfer.setX(transferX);
-    model.coord2_14.coord.transfer.setY(transferY);
-    model.coord2_14.coord.transfer.setZ(transferZ);
-
-    model.scaleVector_fc.x = 1.0f;
-    model.scaleVector_fc.y = 1.0f;
-    model.scaleVector_fc.z = 1.0f;
+    model.coord2_14.coord.transfer.set(transferX, transferY, transferZ);
+    model.transforms_64.scale.set(1.0f, 1.0f, 1.0f);
   }
 
   @Method(0x800e0ff0L)
@@ -2245,7 +2238,7 @@ public final class SMap {
     if(sobj.s_128 == 0) {
       if(sobj.rotationFrames_188 != 0) {
         sobj.rotationFrames_188--;
-        model.coord2Param_64.rotate.add(sobj.rotationAmount_17c);
+        model.transforms_64.rotate.add(sobj.rotationAmount_17c);
       }
 
       if(sobj.sobjIndex_12e == 0) {
@@ -2333,8 +2326,8 @@ public final class SMap {
     final int reachX;
     final int reachZ;
     if(reach != 0) {
-      reachX = (int)(MathHelper.sin(model.coord2Param_64.rotate.y) * -reach);
-      reachZ = (int)(MathHelper.cos(model.coord2Param_64.rotate.y) * -reach);
+      reachX = (int)(MathHelper.sin(model.transforms_64.rotate.y) * -reach);
+      reachZ = (int)(MathHelper.cos(model.transforms_64.rotate.y) * -reach);
     } else {
       reachX = 0;
       reachZ = 0;
@@ -2716,7 +2709,7 @@ public final class SMap {
           if(i == 0) { // Player
             FUN_800e0d18(playerModel_800c6748, tmd, anim);
             playerModel_800c6748.coord2_14.coord.transfer.set(0, 0, 0);
-            playerModel_800c6748.coord2Param_64.rotate.zero();
+            playerModel_800c6748.transforms_64.rotate.zero();
           }
 
           //LAB_800e1c50
@@ -2758,7 +2751,7 @@ public final class SMap {
           //LAB_800e1ce4
           final SobjPos14 pos = sobjPositions_800bd818[i];
           model.coord2_14.coord.transfer.set(pos.pos_00);
-          model.coord2Param_64.rotate.set(pos.rot_0c);
+          model.transforms_64.rotate.set(pos.rot_0c);
 
           state.innerStruct_00.ui_18c = 7;
           state.innerStruct_00.flags_190 = 0;
@@ -2953,7 +2946,7 @@ public final class SMap {
         final SubmapObject210 sobj = sobjState.innerStruct_00;
         final Model124 model = sobj.model_00;
         pos.pos_00.set(model.coord2_14.coord.transfer);
-        pos.rot_0c.set(model.coord2Param_64.rotate);
+        pos.rot_0c.set(model.transforms_64.rotate);
         sobjs_800c6880[i].deallocateWithChildren();
       } else {
         //LAB_800e231c
@@ -3501,8 +3494,8 @@ public final class SMap {
 
     sobj.collidedWithSobjIndex_1a8 = -1;
 
-    final int reachX = (int)(MathHelper.sin(model.coord2Param_64.rotate.y) * -sobj.collisionReach_1b4);
-    final int reachZ = (int)(MathHelper.cos(model.coord2Param_64.rotate.y) * -sobj.collisionReach_1b4);
+    final int reachX = (int)(MathHelper.sin(model.transforms_64.rotate.y) * -sobj.collisionReach_1b4);
+    final int reachZ = (int)(MathHelper.cos(model.transforms_64.rotate.y) * -sobj.collisionReach_1b4);
     final int colliderMinY = model.coord2_14.coord.transfer.getY() - sobj.collisionSizeVertical_1b0;
     final int colliderMaxY = model.coord2_14.coord.transfer.getY() + sobj.collisionSizeVertical_1b0;
 
@@ -7123,7 +7116,7 @@ public final class SMap {
     submapModel_800d4bf8.coord2_14.coord.transfer.setY(0);
     submapModel_800d4bf8.coord2_14.coord.transfer.setZ(0);
 
-    submapModel_800d4bf8.coord2Param_64.rotate.zero();
+    submapModel_800d4bf8.transforms_64.rotate.zero();
 
     applyModelRotationAndScale(submapModel_800d4bf8);
     animateModel(submapModel_800d4bf8);
@@ -7381,15 +7374,13 @@ public final class SMap {
 
         s0.scale_08 += s0.scaleStep_04;
 
-        dustModel_800d4d40.scaleVector_fc.x = s0.scale_08;
-        dustModel_800d4d40.scaleVector_fc.y = s0.scale_08;
-        dustModel_800d4d40.scaleVector_fc.z = s0.scale_08;
+        dustModel_800d4d40.transforms_64.scale.set(s0.scale_08, s0.scale_08, s0.scale_08);
 
         applyModelRotationAndScale(dustModel_800d4d40);
         renderModel(dustModel_800d4d40);
 
         dustModel_800d4d40.remainingFrames_9e = 0;
-        dustModel_800d4d40.coord2ArrPtr_04[0].flg--;
+        dustModel_800d4d40.dobj2ArrPtr_00[0].coord2_04.flg--;
         s0._00++;
 
         s1 = s0;
@@ -8678,7 +8669,7 @@ public final class SMap {
     final int screenOffsetY = screenOffsetY_800cb56c.get();
 
     final Model124 model = savePointModel_800d5eb0;
-    model.scaleVector_fc.set(1.5f, 3.0f, 1.5f);
+    model.transforms_64.scale.set(1.5f, 3.0f, 1.5f);
     model.coord2_14.coord.transfer.set(savePointPos_800d5622);
 
     applyModelRotationAndScale(model);

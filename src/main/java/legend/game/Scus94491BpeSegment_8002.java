@@ -8,14 +8,13 @@ import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
-import legend.core.gte.GsCOORD2PARAM;
+import legend.core.gte.Transforms;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.GsOBJTABLE2;
 import legend.core.gte.MATRIX;
 import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable1c;
-import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.IntRef;
@@ -382,8 +381,8 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80020838
-    initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00, model.coord2ArrPtr_04, model.coord2ParamArrPtr_08, model.count_c8);
-    model.coord2_14.param = model.coord2Param_64;
+    initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00, model.coord2ParamArrPtr_08, model.count_c8);
+    model.coord2_14.param = model.transforms_64;
     GsInitCoordinate2(null, model.coord2_14);
     prepareObjTable2(model.ObjTable_0c, model.tmd_8c, model.coord2_14, model.count_c8, model.tmdNobj_ca + 1);
 
@@ -400,8 +399,8 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_800209b0
     model.movementType_cc = 0;
-    model.b_cd = -2;
-    model.scaleVector_fc.set(1.0f, 1.0f, 1.0f);
+    model.modelPartIndex_cd = -2;
+    model.transforms_64.scale.set(1.0f, 1.0f, 1.0f);
     model.vector_10c.set(1.0f, 1.0f, 1.0f);
     model.vector_118.set(0, 0, 0);
   }
@@ -411,12 +410,10 @@ public final class Scus94491BpeSegment_8002 {
     model.count_c8 = CContainer.tmdPtr_00.tmd.header.nobj;
 
     model.dobj2ArrPtr_00 = new GsDOBJ2[model.count_c8];
-    model.coord2ArrPtr_04 = new GsCOORDINATE2[model.count_c8];
-    model.coord2ParamArrPtr_08 = new GsCOORD2PARAM[model.count_c8];
+    model.coord2ParamArrPtr_08 = new Transforms[model.count_c8];
 
     Arrays.setAll(model.dobj2ArrPtr_00, i -> new GsDOBJ2());
-    Arrays.setAll(model.coord2ArrPtr_04, i -> new GsCOORDINATE2());
-    Arrays.setAll(model.coord2ParamArrPtr_08, i -> new GsCOORD2PARAM());
+    Arrays.setAll(model.coord2ParamArrPtr_08, i -> new Transforms());
 
     FUN_80020718(model, CContainer, tmdAnimFile);
   }
@@ -468,7 +465,7 @@ public final class Scus94491BpeSegment_8002 {
         //LAB_80020ce0
         for(int i = 0; i < model.tmdNobj_ca; i++) {
           final GsCOORDINATE2 coord2 = model.dobj2ArrPtr_00[i].coord2_04;
-          final GsCOORD2PARAM params = coord2.param;
+          final Transforms params = coord2.param;
           RotMatrix_Zyx(params.rotate, coord2.coord);
           params.trans.set(
             (params.trans.x + transforms[0][i].translate_06.x) / 2.0f,
@@ -484,7 +481,7 @@ public final class Scus94491BpeSegment_8002 {
         //LAB_80020d8c
         for(int i = 0; i < model.tmdNobj_ca; i++) {
           final GsCOORDINATE2 coord2 = model.dobj2ArrPtr_00[i].coord2_04;
-          final GsCOORD2PARAM params = coord2.param;
+          final Transforms params = coord2.param;
 
           params.rotate.set(transforms[0][i].rotate_00);
           RotMatrix_Zyx(params.rotate, coord2.coord);
@@ -502,7 +499,7 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_80020e24
       for(int i = 0; i < model.tmdNobj_ca; i++) {
         final GsCOORDINATE2 coord2 = model.dobj2ArrPtr_00[i].coord2_04;
-        final GsCOORD2PARAM params = coord2.param;
+        final Transforms params = coord2.param;
 
         params.rotate.set(transforms[0][i].rotate_00);
         RotMatrix_Zyx(params.rotate, coord2.coord);
@@ -663,7 +660,7 @@ public final class Scus94491BpeSegment_8002 {
       final GsDOBJ2 obj2 = model.dobj2ArrPtr_00[i];
 
       final GsCOORDINATE2 coord2 = obj2.coord2_04;
-      final GsCOORD2PARAM params = coord2.param;
+      final Transforms params = coord2.param;
       final MATRIX matrix = coord2.coord;
 
       params.rotate.set(transforms[0][i].rotate_00);
@@ -684,7 +681,7 @@ public final class Scus94491BpeSegment_8002 {
       final ModelPartTransforms0c transforms = model.partTransforms_94[0][i];
       final GsCOORDINATE2 coord2 = model.dobj2ArrPtr_00[i].coord2_04;
       final MATRIX coord = coord2.coord;
-      final GsCOORD2PARAM params = coord2.param;
+      final Transforms params = coord2.param;
       RotMatrix_Zyx(params.rotate, coord);
       params.trans.x = (params.trans.x + transforms.translate_06.x) / 2.0f;
       params.trans.y = (params.trans.y + transforms.translate_06.y) / 2.0f;
@@ -698,8 +695,8 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800214bcL)
   public static void applyModelRotationAndScale(final Model124 model) {
-    RotMatrix_Xyz(model.coord2Param_64.rotate, model.coord2_14.coord);
-    model.coord2_14.coord.scale(model.scaleVector_fc);
+    RotMatrix_Xyz(model.transforms_64.rotate, model.coord2_14.coord);
+    model.coord2_14.coord.scale(model.transforms_64.scale);
     model.coord2_14.flg = 0;
   }
 
@@ -775,9 +772,9 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800217a4L)
   public static void FUN_800217a4(final Model124 model) {
-    model.coord2Param_64.rotate.y = MathHelper.psxDegToRad(FUN_800ea4c8(MathHelper.radToPsxDeg(model.coord2Param_64.rotate.y)));
-    RotMatrix_Xyz(model.coord2Param_64.rotate, model.coord2_14.coord);
-    model.coord2_14.coord.scale(model.scaleVector_fc);
+    model.transforms_64.rotate.y = MathHelper.psxDegToRad(FUN_800ea4c8(MathHelper.radToPsxDeg(model.transforms_64.rotate.y)));
+    RotMatrix_Xyz(model.transforms_64.rotate, model.coord2_14.coord);
+    model.coord2_14.coord.scale(model.transforms_64.scale);
     model.coord2_14.flg = 0;
   }
 
@@ -853,18 +850,18 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80021b08L)
-  public static void initObjTable2(final GsOBJTABLE2 table, final GsDOBJ2[] dobj2s, final GsCOORDINATE2[] coord2s, final GsCOORD2PARAM[] params, final int size) {
+  public static void initObjTable2(final GsOBJTABLE2 table, final GsDOBJ2[] dobj2s, final Transforms[] params, final int size) {
     table.top = dobj2s;
     table.nobj = 0;
 
     //LAB_80021b2c
     for(int i = 0; i < size; i++) {
       dobj2s[i].attribute_00 = 0x8000_0000;
-      dobj2s[i].coord2_04 = coord2s[i];
+      dobj2s[i].coord2_04 = new GsCOORDINATE2();
       dobj2s[i].tmd_08 = null;
       dobj2s[i].id_0c = -1;
 
-      coord2s[i].param = params[i];
+      dobj2s[i].coord2_04.param = params[i];
     }
 
     //LAB_80021b5c
