@@ -6,8 +6,8 @@ import org.joml.Vector3f;
 
 public class Gte {
   private static class Vector2 {
-    public short x;
-    public short y;
+    public float x;
+    public float y;
 
     public void set(final Vector2 other) {
       this.x = other.x;
@@ -69,7 +69,7 @@ public class Gte {
 
   private void NCLIP() { //Normal clipping
     // MAC0 = SX0*SY1 + SX1*SY2 + SX2*SY0 - SX0*SY2 - SX1*SY0 - SX2*SY1
-    this.MAC0 = (int)this.setMAC0((long)this.SXY[0].x * (this.SXY[1].y - this.SXY[2].y) + this.SXY[1].x * (this.SXY[2].y - this.SXY[0].y) + this.SXY[2].x * (this.SXY[0].y - this.SXY[1].y));
+    this.MAC0 = (int)this.setMAC0((long)(this.SXY[0].x * (this.SXY[1].y - this.SXY[2].y) + this.SXY[1].x * (this.SXY[2].y - this.SXY[0].y) + this.SXY[2].x * (this.SXY[0].y - this.SXY[1].y)));
   }
 
   private void RTPT() { //Perspective Transformation Triple
@@ -85,16 +85,16 @@ public class Gte {
     //IR2 = MAC2 = (TRY*1000h + RT21*VX0 + RT22*VY0 + RT23*VZ0) SAR (sf*12)
     //IR3 = MAC3 = (TRZ*1000h + RT31*VX0 + RT32*VY0 + RT33*VZ0) SAR (sf*12)
     this.V[r]
-      .mulTranspose(this.RT, this.positionTemp)
+      .mul(this.RT, this.positionTemp)
       .add(this.translation);
 
-    this.positionTemp.z = MathHelper.clamp(this.positionTemp.z, 0.0f, 16.0f);
+    this.positionTemp.z = MathHelper.clamp(this.positionTemp.z, 0.0f, 65536.0f);
 
     //SZ3 = MAC3 SAR ((1-sf)*12)                           ;ScreenZ FIFO 0..+FFFFh
     this.SZ[0] = this.SZ[1];
     this.SZ[1] = this.SZ[2];
     this.SZ[2] = this.SZ[3];
-    this.SZ[3] = (int)(this.positionTemp.z * 4096.0f);
+    this.SZ[3] = (int)this.positionTemp.z;
 
     final float n;
     if(this.SZ[3] == 0) {
@@ -107,16 +107,13 @@ public class Gte {
     //MAC0=(((H*20000h/SZ3)+1)/2)*IR1+OFX, SX2=MAC0/10000h ;ScrX FIFO -400h..+3FFh
     //MAC0=(((H*20000h/SZ3)+1)/2)*IR2+OFY, SY2=MAC0/10000h ;ScrY FIFO -400h..+3FFh
     //MAC0=(((H*20000h/SZ3)+1)/2)*DQA+DQB, IR0=MAC0/1000h  ;Depth cueing 0..+1000h
-    final int x = (int)(n * this.positionTemp.x * 0x1_0000 + this.OFX);
-    final int y = (int)(n * this.positionTemp.y * 0x1_0000 + this.OFY);
-
     this.SXY[0].set(this.SXY[1]);
     this.SXY[1].set(this.SXY[2]);
-    this.SXY[2].x = this.setSXY(x);
-    this.SXY[2].y = this.setSXY(y);
+    this.SXY[2].x = this.setSXY(n * this.positionTemp.x + this.OFX);
+    this.SXY[2].y = this.setSXY(n * this.positionTemp.y + this.OFY);
   }
 
-  private short setSXY(final int value) {
+  private float setSXY(final float value) {
     if(value < -0x400) {
       this.FLAG |= 0x4000L >>> 2 - 1;
       return -0x400;
@@ -127,7 +124,7 @@ public class Gte {
       return 0x3ff;
     }
 
-    return (short)value;
+    return value;
   }
 
   private short setSZ3(final long value) {
@@ -156,16 +153,16 @@ public class Gte {
 
   /** Data register 0/1, 2/3, 4/5 */
   public void setVertex(final int index, final int x, final int y, final int z) {
-    this.V[index].x = x / 4096.0f;
-    this.V[index].y = y / 4096.0f;
-    this.V[index].z = z / 4096.0f;
+    this.V[index].x = x;
+    this.V[index].y = y;
+    this.V[index].z = z;
   }
 
   /** Data register 0/1, 2/3, 4/5 */
   public void setVertex(final int index, final float x, final float y, final float z) {
-    this.V[index].x = x / 4096.0f;
-    this.V[index].y = y / 4096.0f;
-    this.V[index].z = z / 4096.0f;
+    this.V[index].x = x;
+    this.V[index].y = y;
+    this.V[index].z = z;
   }
 
   /** Data register 0/1, 2/3, 4/5 */
@@ -180,12 +177,12 @@ public class Gte {
 
   /** Data register 12, 13, 14, 15 */
   public short getScreenX(final int index) {
-    return this.SXY[index].x;
+    return (short)this.SXY[index].x;
   }
 
   /** Data register 12, 13, 14, 15 */
   public short getScreenY(final int index) {
-    return this.SXY[index].y;
+    return (short)this.SXY[index].y;
   }
 
   /** Data register 16, 17, 18, 19 */
@@ -227,6 +224,7 @@ public class Gte {
     this.RT.m20 = matrix.get(6) / 4096.0f;
     this.RT.m21 = matrix.get(7) / 4096.0f;
     this.RT.m22 = matrix.get(8) / 4096.0f;
+    this.RT.transpose();
   }
 
   /** Control register 0-4 */
@@ -236,9 +234,9 @@ public class Gte {
 
   /** Control register 5-7 */
   public void getTranslationVector(final VECTOR vector) {
-    vector.setX((int)(this.translation.x * 4096.0f));
-    vector.setY((int)(this.translation.y * 4096.0f));
-    vector.setZ((int)(this.translation.z * 4096.0f));
+    vector.setX((int)this.translation.x);
+    vector.setY((int)this.translation.y);
+    vector.setZ((int)this.translation.z);
   }
 
   /** Control register 5-7 */
@@ -248,9 +246,9 @@ public class Gte {
 
   /** Control register 5-7 */
   public void setTranslationVector(final VECTOR vector) {
-    this.translation.x = vector.getX() / 4096.0f;
-    this.translation.y = vector.getY() / 4096.0f;
-    this.translation.z = vector.getZ() / 4096.0f;
+    this.translation.x = vector.getX();
+    this.translation.y = vector.getY();
+    this.translation.z = vector.getZ();
   }
 
   /** Control register 5-7 */
@@ -300,12 +298,12 @@ public class Gte {
 
   /** Control register 26 projection plane distance (H) */
   public int getProjectionPlaneDistance() {
-    return (int)(this.H * 0x1_0000);
+    return (int)this.H;
   }
 
   /** Control register 26 projection plane distance (H) */
-  public void setProjectionPlaneDistance(final int distance) {
-    this.H = distance / (float)0x1_0000;
+  public void setProjectionPlaneDistance(final float distance) {
+    this.H = distance;
   }
 
   /** Control register 31 */
@@ -386,7 +384,7 @@ public class Gte {
   public int normalColour(final Vector3f normal, final int colour) {
     this.RGBC.val(colour);
 
-    MathHelper.clamp(normal.mulTranspose(this.lightDirection, this.colourTemp), 0.0f, Float.MAX_VALUE)
+    MathHelper.clamp(normal.mul(this.lightDirection, this.colourTemp), 0.0f, Float.MAX_VALUE)
       .mul(this.lightColour)
       .add(this.backgroundColour);
 

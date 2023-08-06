@@ -58,6 +58,17 @@ public class MATRIX {
     return this.toMat4f(new Matrix4f());
   }
 
+  public Matrix3f toMat3f(final Matrix3f mat) {
+    return mat
+      .m00(this.get(0) / 4096.0f).m10(this.get(1) / 4096.0f).m20(this.get(2) / 4096.0f)
+      .m01(this.get(3) / 4096.0f).m11(this.get(4) / 4096.0f).m21(this.get(5) / 4096.0f)
+      .m02(this.get(6) / 4096.0f).m12(this.get(7) / 4096.0f).m22(this.get(8) / 4096.0f);
+  }
+
+  public Matrix3f toMat3f() {
+    return this.toMat3f(new Matrix3f());
+  }
+
   public MATRIX clear() {
     Arrays.fill(this.data2, (short)0);
     this.transfer.set(0, 0, 0);

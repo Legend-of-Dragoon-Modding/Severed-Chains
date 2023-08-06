@@ -20,17 +20,17 @@ public class StageAmbiance4c {
     this._0e = IoHelper.readShort(buffer);
 
     for(final BattleStruct14 struct : this._10) {
-      IoHelper.readSvec3(buffer, struct.lightDirection_00);
-      struct._06 = IoHelper.readShort(buffer);
-      struct._08 = IoHelper.readShort(buffer);
+      IoHelper.readSvec3_12(buffer, struct.lightDirection_00);
+      struct.x_06 = IoHelper.readShort(buffer) / (float)0x1000;
+      struct.y_08 = IoHelper.readShort(buffer) / (float)0x1000;
       struct.lightColour_0a.r.set(IoHelper.readUByte(buffer));
       struct.lightColour_0a.g.set(IoHelper.readUByte(buffer));
       struct.lightColour_0a.b.set(IoHelper.readUByte(buffer));
       struct._0d.r.set(IoHelper.readUByte(buffer));
       struct._0d.g.set(IoHelper.readUByte(buffer));
       struct._0d.b.set(IoHelper.readUByte(buffer));
-      struct._10 = IoHelper.readShort(buffer);
-      struct._12 = IoHelper.readShort(buffer);
+      struct.x_10 = IoHelper.readShort(buffer) / (float)0x1000;
+      struct.y_12 = IoHelper.readShort(buffer) / (float)0x1000;
     }
 
     return this;
@@ -53,19 +53,19 @@ public class StageAmbiance4c {
 
     int paramIndex = 4;
     for(final BattleStruct14 struct : this._10) {
-      struct.lightDirection_00.setX((short)vals[paramIndex]);
-      struct.lightDirection_00.setY((short)(vals[paramIndex] >> 16));
-      struct.lightDirection_00.setZ((short)vals[paramIndex + 1]);
-      struct._06 = (short)(vals[paramIndex + 1] >> 16);
-      struct._08 = (short)vals[paramIndex + 2];
+      struct.lightDirection_00.x = (short)vals[paramIndex] / (float)0x1000;
+      struct.lightDirection_00.y = (short)(vals[paramIndex] >> 16) / (float)0x1000;
+      struct.lightDirection_00.z = (short)vals[paramIndex + 1] / (float)0x1000;
+      struct.x_06 = (short)(vals[paramIndex + 1] >> 16) / (float)0x1000;
+      struct.y_08 = (short)vals[paramIndex + 2] / (float)0x1000;
       struct.lightColour_0a.r.set(vals[paramIndex + 2] >>> 16 & 0xff);
       struct.lightColour_0a.g.set(vals[paramIndex + 2] >>> 24 & 0xff);
       struct.lightColour_0a.b.set(vals[paramIndex + 3] & 0xff);
       struct._0d.r.set(vals[paramIndex + 3] >>  8 & 0xff);
       struct._0d.g.set(vals[paramIndex + 3] >> 16 & 0xff);
       struct._0d.b.set(vals[paramIndex + 3] >> 24 & 0xff);
-      struct._10 = (short)vals[paramIndex + 4];
-      struct._12 = (short)(vals[paramIndex + 4] >> 16);
+      struct.x_10 = (short)vals[paramIndex + 4] / (float)0x1000;
+      struct.y_12 = (short)(vals[paramIndex + 4] >> 16) / (float)0x1000;
       paramIndex += 5;
     }
 

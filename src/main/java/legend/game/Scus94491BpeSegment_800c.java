@@ -34,7 +34,7 @@ public final class Scus94491BpeSegment_800c {
   /** Incremented with each frame - overflows to 1 */
   public static int PSDCNT_800c34d0;
 
-  public static final MATRIX lightDirectionMatrix_800c34e8 = new MATRIX();
+  public static final Matrix3f lightDirectionMatrix_800c34e8 = new Matrix3f();
   public static final Matrix3f lightColourMatrix_800c3508 = new Matrix3f();
 
   public static final MATRIX worldToScreenMatrix_800c3548 = new MATRIX();

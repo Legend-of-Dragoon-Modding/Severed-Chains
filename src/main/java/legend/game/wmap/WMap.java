@@ -1571,19 +1571,17 @@ public class WMap {
     //LAB_800d1984
     for(int i = 0; i < 3; i++) {
       //LAB_800d19a0
-      v0._19a8[i] = 15;
-      v0._19ae[i] = 315;
+      v0._19a8[i] = Math.toRadians(15);
+      v0._19ae[i] = Math.toRadians(315);
 
       final GsF_LIGHT light = v0.lights_11c[i];
-      light.r_0c = 0x20;
-      light.g_0d = 0x20;
-      light.b_0e = 0x20;
-      light.direction_00.setX(rsin((v0._19a8[i] << 12) / 360) << 12 >> 12);
-      light.direction_00.setY(rcos((v0._19ae[i] << 12) / 360) << 12 >> 12);
-      light.direction_00.setZ(rcos((v0._19a8[i] << 12) / 360) << 12 >> 12);
-      light.direction_00.setX(1000);
-      light.direction_00.setY(100);
-      light.direction_00.setZ(0);
+      light.r_0c = 0.125f;
+      light.g_0d = 0.125f;
+      light.b_0e = 0.125f;
+      light.direction_00.x = MathHelper.sin(v0._19a8[i]);
+      light.direction_00.y = MathHelper.cos(v0._19ae[i]);
+      light.direction_00.z = MathHelper.cosFromSin(v0._19a8[i], light.direction_00.x);
+      light.direction_00.set(0.24414062f, 0.024414062f, 0.0f);
       GsSetFlatLight(i, light);
     }
 
@@ -1662,21 +1660,21 @@ public class WMap {
           for(int i = 0; i < 3; i++) {
             //LAB_800d2278
             final WMapStruct19c0 struct = _800c66b0;
-            struct.colour_8c[i].setR(struct.lights_11c[i].r_0c);
-            struct.colour_8c[i].setG(struct.lights_11c[i].g_0d);
-            struct.colour_8c[i].setB(struct.lights_11c[i].b_0e);
+            struct.colour_8c[i].setR((int)(struct.lights_11c[i].r_0c * 0x100));
+            struct.colour_8c[i].setG((int)(struct.lights_11c[i].g_0d * 0x100));
+            struct.colour_8c[i].setB((int)(struct.lights_11c[i].b_0e * 0x100));
           }
 
           //LAB_800d235c
-          _800c66b0._84 = 256;
+          _800c66b0._84 = 1.0f;
           _800c66b0._88 = 1;
         }
 
         //LAB_800d237c
-        _800c66b0._84 -= 36;
+        _800c66b0._84 -= 0.140625f;
 
-        if(_800c66b0._84 < 64) {
-          _800c66b0._84 = 32;
+        if(_800c66b0._84 < 0.25f) {
+          _800c66b0._84 = 0.125f;
           _800c66b0._88 = 2;
         }
 
@@ -1707,14 +1705,14 @@ public class WMap {
     final int v0 = _800c66b0._88;
     if(v0 == 2) {
       //LAB_800d2608
-      _800c66b0._84 = 64;
+      _800c66b0._84 = 0.25f;
       _800c66b0._88 = 3;
     } else if(v0 == 3) {
       //LAB_800d2628
-      _800c66b0._84 += 36;
+      _800c66b0._84 += 0.140625f;
 
-      if(_800c66b0._84 > 255) {
-        _800c66b0._84 = 255;
+      if(_800c66b0._84 > 1.0f) {
+        _800c66b0._84 = 1.0f;
         _800c66b0._88 = 0;
       }
 
@@ -3207,9 +3205,9 @@ public class WMap {
             //LAB_800d996c
             //LAB_800d99c4
             //LAB_800d9a1c
-            _800c66b0.lights_11c[i].r_0c = _800c66b0.colour_8c[i].r.get() / 4;
-            _800c66b0.lights_11c[i].g_0d = _800c66b0.colour_8c[i].g.get() / 4;
-            _800c66b0.lights_11c[i].b_0e = _800c66b0.colour_8c[i].b.get() / 4;
+            _800c66b0.lights_11c[i].r_0c = _800c66b0.colour_8c[i].r.get() / 4.0f / 0x100;
+            _800c66b0.lights_11c[i].g_0d = _800c66b0.colour_8c[i].g.get() / 4.0f / 0x100;
+            _800c66b0.lights_11c[i].b_0e = _800c66b0.colour_8c[i].b.get() / 4.0f / 0x100;
 
             GsSetFlatLight(i, _800c66b0.lights_11c[i]);
           }

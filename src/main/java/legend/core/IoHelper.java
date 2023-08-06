@@ -230,6 +230,10 @@ public final class IoHelper {
     return svec.set(readShort(stream), readShort(stream), readShort(stream));
   }
 
+  public static Vector3f readSvec3_12(final ByteBuffer stream, final Vector3f svec) {
+    return svec.set(readShort(stream) / (float)0x1000, readShort(stream) / (float)0x1000, readShort(stream) / (float)0x1000);
+  }
+
   public static SVECTOR readSvec3(final byte[] data, final int offset, final SVECTOR svec) {
     return svec.set(readShort(data, offset), readShort(data, offset), readShort(data, offset));
   }

@@ -377,7 +377,7 @@ public final class Bttl_800c {
     additionStarburstRenderers_800c6dc4[2] = Bttl_800d::renderAdditionCompletedStarburst;
   }
 
-  public static final GsF_LIGHT light_800c6ddc = new GsF_LIGHT(0x1000, 0x1000, 0x1000);
+  public static final GsF_LIGHT light_800c6ddc = new GsF_LIGHT(1.0f, 1.0f, 1.0f);
 
   public static final ArrayRef<UnsignedShortRef> repeatItemIds_800c6e34 = MEMORY.ref(2, 0x800c6e34L, ArrayRef.of(UnsignedShortRef.class, 9, 2, UnsignedShortRef::new));
 

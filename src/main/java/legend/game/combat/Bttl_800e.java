@@ -86,6 +86,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.joml.Matrix3f;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
@@ -234,19 +235,18 @@ public final class Bttl_800e {
   private static final Marker DEFF = MarkerManager.getMarker("DEFF");
 
   @Method(0x800e45c0L)
-  public static void FUN_800e45c0(final Vector3f a0, final VECTOR a1) {
-    final float angle = MathHelper.atan2(a1.getX(), a1.getZ());
-    a0.x = MathHelper.atan2(-a1.getY(), MathHelper.cos(-angle) * a1.getZ() - MathHelper.sin(-angle) * a1.getX());
+  public static void FUN_800e45c0(final Vector3f a0, final Vector3f a1) {
+    final float angle = MathHelper.atan2(a1.x, a1.z);
+    final float sin = MathHelper.sin(-angle);
+    final float cos = MathHelper.cosFromSin(sin, -angle);
+    a0.x = MathHelper.atan2(-a1.y, cos * a1.z - sin * a1.x);
     a0.y = angle;
     a0.z = 0;
   }
 
   @Method(0x800e4674L)
-  public static VECTOR FUN_800e4674(final VECTOR out, final Vector3f rotation) {
-    final MATRIX rotMatrix = new MATRIX();
-    RotMatrix_Zyx(rotation, rotMatrix);
-    out.set(0, 0, 1 << 12).mul(rotMatrix);
-    return out;
+  public static Vector3f FUN_800e4674(final Vector3f out, final Vector3f rotation) {
+    return out.set(0.0f, 0.0f, 1.0f).mul(new Matrix3f().rotationZYX(rotation.z, rotation.y, rotation.z));
   }
 
   @Method(0x800e46c8L)
@@ -255,10 +255,10 @@ public final class Bttl_800e {
     v1.colour_00.set(0x800, 0x800, 0x800);
 
     final BttlLightStruct84 a0 = lights_800c692c[0];
-    a0.light_00.direction_00.set(0, 1 << 12, 0);
-    a0.light_00.r_0c = 0x80;
-    a0.light_00.g_0d = 0x80;
-    a0.light_00.b_0e = 0x80;
+    a0.light_00.direction_00.set(0.0f, 1.0f, 0.0f);
+    a0.light_00.r_0c = 0.5f;
+    a0.light_00.g_0d = 0.5f;
+    a0.light_00.b_0e = 0.5f;
     a0._10._00 = 0;
     a0._4c._00 = 0;
 
@@ -274,7 +274,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e475cL)
-  public static void setLightDirection(final int lightIndex, final int x, final int y, final int z) {
+  public static void setLightDirection(final int lightIndex, final float x, final float y, final float z) {
     final BttlLightStruct84 light = lights_800c692c[lightIndex];
     light.light_00.direction_00.set(x, y, z);
     light._10._00 = 0;
@@ -282,22 +282,22 @@ public final class Bttl_800e {
 
   @Method(0x800e4788L)
   public static FlowControl scriptSetLightDirection(final RunningScript<?> script) {
-    setLightDirection(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    setLightDirection(script.params_20[0].get(), script.params_20[1].get() / (float)0x1000, script.params_20[2].get() / (float)0x1000, script.params_20[3].get() / (float)0x1000);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e47c8L)
   public static FlowControl scriptGetLightDirection(final RunningScript<?> script) {
     final BttlLightStruct84 light = lights_800c692c[script.params_20[0].get()];
-    script.params_20[1].set(light.light_00.direction_00.getX());
-    script.params_20[2].set(light.light_00.direction_00.getY());
-    script.params_20[3].set(light.light_00.direction_00.getZ());
+    script.params_20[1].set((int)(light.light_00.direction_00.x * 0x1000));
+    script.params_20[2].set((int)(light.light_00.direction_00.y * 0x1000));
+    script.params_20[3].set((int)(light.light_00.direction_00.z * 0x1000));
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e4824L)
   public static void FUN_800e4824(final int lightIndex, final float x, final float y, final float z) {
-    final VECTOR sp0x18 = new VECTOR();
+    final Vector3f sp0x18 = new Vector3f();
     FUN_800e4674(sp0x18, new Vector3f(x, y, z));
     final BttlLightStruct84 light = lights_800c692c[lightIndex];
     light.light_00.direction_00.set(sp0x18);
@@ -339,7 +339,7 @@ public final class Bttl_800e {
 
     //LAB_800e4a34
     //LAB_800e4a38
-    final VECTOR sp0x18 = new VECTOR();
+    final Vector3f sp0x18 = new Vector3f();
     sp0x10.x += MathHelper.psxDegToRad(script.params_20[2].get());
     sp0x10.y += MathHelper.psxDegToRad(script.params_20[3].get());
     sp0x10.z += MathHelper.psxDegToRad(script.params_20[4].get());
@@ -375,7 +375,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e4bc0L)
-  public static void FUN_800e4bc0(final int lightIndex, final int r, final int g, final int b) {
+  public static void FUN_800e4bc0(final int lightIndex, final float r, final float g, final float b) {
     final BttlLightStruct84 light = lights_800c692c[lightIndex];
     light.light_00.r_0c = r;
     light.light_00.g_0d = g;
@@ -385,16 +385,16 @@ public final class Bttl_800e {
 
   @Method(0x800e4c10L)
   public static FlowControl FUN_800e4c10(final RunningScript<?> script) {
-    FUN_800e4bc0(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    FUN_800e4bc0(script.params_20[0].get(), script.params_20[1].get() / (float)0x100, script.params_20[2].get() / (float)0x100, script.params_20[3].get() / (float)0x100);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e4c90L)
   public static FlowControl FUN_800e4c90(final RunningScript<?> script) {
     final BttlLightStruct84 light = lights_800c692c[script.params_20[0].get()];
-    script.params_20[1].set(light.light_00.r_0c);
-    script.params_20[2].set(light.light_00.g_0d);
-    script.params_20[3].set(light.light_00.b_0e);
+    script.params_20[1].set((int)(light.light_00.r_0c * 0x100));
+    script.params_20[2].set((int)(light.light_00.g_0d * 0x100));
+    script.params_20[3].set((int)(light.light_00.b_0e * 0x100));
     return FlowControl.CONTINUE;
   }
 
@@ -451,23 +451,19 @@ public final class Bttl_800e {
   @Method(0x800e4ea0L)
   public static FlowControl FUN_800e4ea0(final RunningScript<?> script) {
     final BttlLightStruct84 light = lights_800c692c[script.params_20[0].get()];
-    final int t1 = script.params_20[4].get();
+    final int ticks = script.params_20[4].get();
     final BttlLightStruct84Sub38 t0 = light._10;
 
     t0._00 = 0;
-    t0.vec_04.setX(light.light_00.direction_00.getX() << 12);
-    t0.vec_04.setY(light.light_00.direction_00.getY() << 12);
-    t0.vec_04.setZ(light.light_00.direction_00.getZ() << 12);
-    t0.vec_28.setX(script.params_20[1].get() << 12);
-    t0.vec_28.setY(script.params_20[2].get() << 12);
-    t0.vec_28.setZ(script.params_20[3].get() << 12);
-    t0._34 = t1;
+    t0.angle_04.set(light.light_00.direction_00);
+    t0.vec_28.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    t0.ticksRemaining_34 = ticks;
 
-    if(t1 > 0) {
-      t0.vec_10.setX((t0.vec_28.getX() - t0.vec_04.getX()) / t1);
-      t0.vec_10.setY((t0.vec_28.getY() - t0.vec_04.getY()) / t1);
-      t0.vec_10.setZ((t0.vec_28.getZ() - t0.vec_04.getZ()) / t1);
-      t0.vec_1c.set(0, 0, 0);
+    if(ticks > 0) {
+      t0.vec_10.x = (t0.vec_28.x - t0.angle_04.x) / ticks;
+      t0.vec_10.y = (t0.vec_28.y - t0.angle_04.y) / ticks;
+      t0.vec_10.z = (t0.vec_28.z - t0.angle_04.z) / ticks;
+      t0.vec_1c.zero();
       t0._00 = 0xa001;
     }
 
@@ -477,10 +473,10 @@ public final class Bttl_800e {
 
   @Method(0x800e4fa0L)
   public static FlowControl FUN_800e4fa0(final RunningScript<?> script) {
-    final int s3 = script.params_20[1].get();
-    final int s4 = script.params_20[2].get();
-    final int s2 = script.params_20[3].get();
-    final int s5 = script.params_20[4].get();
+    final int x = script.params_20[1].get();
+    final int y = script.params_20[2].get();
+    final int z = script.params_20[3].get();
+    final int ticks = script.params_20[4].get();
 
     final BttlLightStruct84 light = lights_800c692c[script.params_20[0].get()];
     final Vector3f sp0x10 = new Vector3f();
@@ -488,19 +484,15 @@ public final class Bttl_800e {
     light._10._00 = 0;
 
     final BttlLightStruct84Sub38 a3 = light._10;
-    a3.vec_04.set(
-      MathHelper.radToPsxDeg(sp0x10.x),
-      MathHelper.radToPsxDeg(sp0x10.y),
-      MathHelper.radToPsxDeg(sp0x10.z)
-    );
-    a3.vec_28.set(s3, s4, s2);
-    a3._34 = s5;
+    a3.angle_04.set(sp0x10);
+    a3.vec_28.set(x, y, z);
+    a3.ticksRemaining_34 = ticks;
 
-    if(s5 > 0) {
-      a3.vec_1c.set(0, 0, 0);
-      a3.vec_10.setX((s3 - a3.vec_04.getX()) / s5);
-      a3.vec_10.setY((s4 - a3.vec_04.getY()) / s5);
-      a3.vec_10.setZ((s2 - a3.vec_04.getZ()) / s5);
+    if(ticks > 0) {
+      a3.vec_1c.zero();
+      a3.vec_10.x = (x - a3.angle_04.x) / ticks;
+      a3.vec_10.y = (y - a3.angle_04.y) / ticks;
+      a3.vec_10.z = (z - a3.angle_04.z) / ticks;
       a3._00 = 0xc001;
     }
 
@@ -516,45 +508,33 @@ public final class Bttl_800e {
     final int x = script.params_20[2].get();
     final int y = script.params_20[3].get();
     final int z = script.params_20[4].get();
-    final int s4 = script.params_20[5].get();
+    final int ticks = script.params_20[5].get();
 
     final Vector3f sp0x10 = new Vector3f();
     FUN_800e45c0(sp0x10, lights_800c692c[s3].light_00.direction_00);
 
     final BttlLightStruct84Sub38 s0 = lights_800c692c[s3]._10;
     s0._00 = 0;
-    s0.vec_04.set(
-      MathHelper.radToPsxDeg(sp0x10.x),
-      MathHelper.radToPsxDeg(sp0x10.y),
-      MathHelper.radToPsxDeg(sp0x10.z)
-    );
+    s0.angle_04.set(sp0x10);
 
     if(s2 > 0 && s2 < 4) {
       final Vector3f sp0x18 = new Vector3f();
       FUN_800e45c0(sp0x18, lights_800c692c[s2 - 1].light_00.direction_00);
-      s0.vec_28.set(
-        MathHelper.radToPsxDeg(sp0x18.x),
-        MathHelper.radToPsxDeg(sp0x18.y),
-        MathHelper.radToPsxDeg(sp0x18.z)
-      );
+      s0.vec_28.set(sp0x18);
     } else {
       //LAB_800e51e8
       final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[s2].innerStruct_00;
-      s0.vec_28.set(
-        MathHelper.radToPsxDeg(bobj.model_148.coord2Param_64.rotate.x),
-        MathHelper.radToPsxDeg(bobj.model_148.coord2Param_64.rotate.y),
-        MathHelper.radToPsxDeg(bobj.model_148.coord2Param_64.rotate.z)
-      );
+      s0.vec_28.set(bobj.model_148.coord2Param_64.rotate);
     }
 
     //LAB_800e522c
-    s0._34 = s4;
+    s0.ticksRemaining_34 = ticks;
     s0.vec_28.add(x, y, z);
 
-    if(s4 > 0) {
+    if(ticks > 0) {
       s0._00 = 0xc001;
-      s0.vec_10.set(s0.vec_28).sub(s0.vec_04).div(s4);
-      s0.vec_1c.set(0, 0, 0);
+      s0.vec_10.set(s0.vec_28).sub(s0.angle_04).div(ticks);
+      s0.vec_1c.zero();
     }
 
     //LAB_800e52c8
@@ -570,9 +550,9 @@ public final class Bttl_800e {
 
     final BttlLightStruct84Sub38 v1 = light._10;
     v1._00 = 0x4001;
-    v1.vec_04.set(MathHelper.radToPsxDeg(sp0x10.x) << 12, MathHelper.radToPsxDeg(sp0x10.y) << 12, MathHelper.radToPsxDeg(sp0x10.z) << 12);
-    v1.vec_10.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
-    v1.vec_1c.set(script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get());
+    v1.angle_04.set(sp0x10);
+    v1.vec_10.set(script.params_20[1].get() / (float)0x1000, script.params_20[2].get() / (float)0x1000, script.params_20[3].get() / (float)0x1000);
+    v1.vec_1c.set(script.params_20[4].get() / (float)0x1000, script.params_20[5].get() / (float)0x1000, script.params_20[6].get() / (float)0x1000);
     return FlowControl.CONTINUE;
   }
 
@@ -589,13 +569,9 @@ public final class Bttl_800e {
     light.scriptIndex_48 = bobjIndex;
 
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[bobjIndex].innerStruct_00;
-    a0_0.vec_04.set(
-      MathHelper.radToPsxDeg(sp0x10.x - bobj.model_148.coord2Param_64.rotate.x),
-      MathHelper.radToPsxDeg(sp0x10.y - bobj.model_148.coord2Param_64.rotate.y),
-      MathHelper.radToPsxDeg(sp0x10.z - bobj.model_148.coord2Param_64.rotate.z)
-    );
-    a0_0.vec_10.set(0, 0, 0);
-    a0_0.vec_1c.set(0, 0, 0);
+    a0_0.angle_04.set(sp0x10).sub(bobj.model_148.coord2Param_64.rotate);
+    a0_0.vec_10.zero();
+    a0_0.vec_1c.zero();
     return FlowControl.CONTINUE;
   }
 
@@ -623,15 +599,15 @@ public final class Bttl_800e {
     final BttlLightStruct84Sub38 t0 = light._4c;
 
     t0._00 = 0;
-    t0.vec_04.setX(light.light_00.r_0c << 12);
-    t0.vec_04.setY(light.light_00.g_0d << 12);
-    t0.vec_04.setZ(light.light_00.b_0e << 12);
-    t0.vec_28.set(script.params_20[1].get() << 12, script.params_20[2].get() << 12, script.params_20[3].get() << 12);
-    t0._34 = t1;
+    t0.angle_04.x = light.light_00.r_0c;
+    t0.angle_04.y = light.light_00.g_0d;
+    t0.angle_04.z = light.light_00.b_0e;
+    t0.vec_28.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    t0.ticksRemaining_34 = t1;
 
     if(t1 > 0) {
-      t0.vec_1c.set(0, 0, 0);
-      t0.vec_10.set(t0.vec_28).sub(t0.vec_04).div(t1);
+      t0.vec_1c.zero();
+      t0.vec_10.set(t0.vec_28).sub(t0.angle_04).div(t1);
       t0._00 = 0x8001;
     }
 
@@ -644,11 +620,11 @@ public final class Bttl_800e {
     final BttlLightStruct84 light = lights_800c692c[script.params_20[0].get()];
     final BttlLightStruct84Sub38 v1 = light._4c;
     v1._00 = 0;
-    v1.vec_04.set(light.light_00.r_0c << 12, light.light_00.g_0d << 12, light.light_00.b_0e << 12);
-    v1.vec_10.set(script.params_20[1].get() << 12, script.params_20[2].get() << 12, script.params_20[3].get() << 12);
-    v1.vec_1c.set(script.params_20[4].get() << 12, script.params_20[5].get() << 12, script.params_20[6].get() << 12);
+    v1.angle_04.set(light.light_00.r_0c, light.light_00.g_0d, light.light_00.b_0e);
+    v1.vec_10.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    v1.vec_1c.set(script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get());
 
-    if(v1._34 > 0) {
+    if(v1.ticksRemaining_34 > 0) {
       v1._00 = 0x1;
     }
 
@@ -678,26 +654,26 @@ public final class Bttl_800e {
       final BttlLightStruct84 a1 = lights_800c692c[i];
       final BattleStruct14 a0 = ambiance._10[i];
       a1.light_00.direction_00.set(a0.lightDirection_00);
-      a1.light_00.r_0c = a0.lightColour_0a.getR();
-      a1.light_00.g_0d = a0.lightColour_0a.getG();
-      a1.light_00.b_0e = a0.lightColour_0a.getB();
+      a1.light_00.r_0c = a0.lightColour_0a.getR() / (float)0x100;
+      a1.light_00.g_0d = a0.lightColour_0a.getG() / (float)0x100;
+      a1.light_00.b_0e = a0.lightColour_0a.getB() / (float)0x100;
 
-      if((a0._06 | a0._08) != 0) {
+      if(a0.x_06 != 0 || a0.y_08 != 0) {
         a1._10._00 = 0x3;
-        a1._10.vec_04.set(a1.light_00.direction_00);
-        a1._10.vec_10.set(a0._06, a0._08, 0);
+        a1._10.angle_04.set(a1.light_00.direction_00);
+        a1._10.vec_10.set(a0.x_06, a0.y_08, 0);
       } else {
         //LAB_800e58cc
         a1._10._00 = 0;
       }
 
       //LAB_800e58d0
-      if(a0._12 != 0) {
+      if(a0.y_12 != 0) {
         a1._4c._00 = 0x3;
-        a1._4c.vec_04.set(a1.light_00.r_0c, a1.light_00.g_0d, a1.light_00.b_0e);
+        a1._4c.angle_04.set(a1.light_00.r_0c, a1.light_00.g_0d, a1.light_00.b_0e);
         a1._4c.vec_10.set(a0._0d.getR(), a0._0d.getG(), a0._0d.getB());
-        a1._4c.vec_28.setX(a0._10);
-        a1._4c.vec_28.setY(a0._12);
+        a1._4c.vec_28.x = a0.x_10;
+        a1._4c.vec_28.y = a0.y_12;
       } else {
         //LAB_800e5944
         a1._4c._00 = 0;
@@ -766,39 +742,31 @@ public final class Bttl_800e {
       if(v1 == 1) {
         //LAB_800e5c50
         a2.vec_10.add(a2.vec_1c);
-        a2.vec_04.add(a2.vec_10);
+        a2.angle_04.add(a2.vec_10);
 
         if((a2._00 & 0x8000) != 0) {
-          a2._34--;
+          a2.ticksRemaining_34--;
 
-          if(a2._34 <= 0) {
+          if(a2.ticksRemaining_34 <= 0) {
             a2._00 = 0;
-            a2.vec_04.set(a2.vec_28);
+            a2.angle_04.set(a2.vec_28);
           }
         }
 
         //LAB_800e5cf4
         if((a2._00 & 0x2000) != 0) {
-          light.light_00.direction_00.set(a2.vec_04).div(0x1000);
+          light.light_00.direction_00.set(a2.angle_04);
           //LAB_800e5d40
         } else if((a2._00 & 0x4000) != 0) {
           final Vector3f sp0x18 = new Vector3f();
-          sp0x18.set(
-            MathHelper.psxDegToRad(a2.vec_04.getX()),
-            MathHelper.psxDegToRad(a2.vec_04.getY()),
-            MathHelper.psxDegToRad(a2.vec_04.getZ())
-          );
+          sp0x18.set(a2.angle_04);
           FUN_800e4674(light.light_00.direction_00, sp0x18);
         }
       } else if(v1 == 2) {
         //LAB_800e5bf0
         final Vector3f sp0x10 = new Vector3f();
         final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[light.scriptIndex_48].innerStruct_00;
-        sp0x10.set(
-          bobj.model_148.coord2Param_64.rotate.x + MathHelper.radToPsxDeg(a2.vec_04.x.get()),
-          bobj.model_148.coord2Param_64.rotate.y + MathHelper.radToPsxDeg(a2.vec_04.y.get()),
-          bobj.model_148.coord2Param_64.rotate.z + MathHelper.radToPsxDeg(a2.vec_04.z.get())
-        );
+        sp0x10.set(bobj.model_148.coord2Param_64.rotate).add(a2.angle_04);
         FUN_800e4674(light.light_00.direction_00, sp0x10);
       } else if(v1 == 3) {
         //LAB_800e5bdc
@@ -806,9 +774,9 @@ public final class Bttl_800e {
         final Vector3f sp0x18 = new Vector3f();
 
         final int ticks = lightTicks_800c6928.get() & 0xfff;
-        sp0x18.x = MathHelper.psxDegToRad(a2.vec_04.getX() + a2.vec_10.getX() * ticks);
-        sp0x18.y = MathHelper.psxDegToRad(a2.vec_04.getY() + a2.vec_10.getY() * ticks);
-        sp0x18.z = MathHelper.psxDegToRad(a2.vec_04.getZ() + a2.vec_10.getZ() * ticks);
+        sp0x18.x = a2.angle_04.x + a2.vec_10.x * ticks;
+        sp0x18.y = a2.angle_04.y + a2.vec_10.y * ticks;
+        sp0x18.z = a2.angle_04.z + a2.vec_10.z * ticks;
 
         //LAB_800e5dcc
         FUN_800e4674(light.light_00.direction_00, sp0x18);
@@ -820,29 +788,29 @@ public final class Bttl_800e {
       if(v1 == 1) {
         //LAB_800e5df4
         s0.vec_10.add(s0.vec_1c);
-        s0.vec_04.add(s0.vec_10);
+        s0.angle_04.add(s0.vec_10);
 
         if((s0._00 & 0x8000) != 0) {
-          s0._34--;
+          s0.ticksRemaining_34--;
 
-          if(s0._34 <= 0) {
+          if(s0.ticksRemaining_34 <= 0) {
             s0._00 = 0;
-            s0.vec_04.set(s0.vec_28);
+            s0.angle_04.set(s0.vec_28);
           }
         }
 
         //LAB_800e5e90
-        lights_800c692c[i].light_00.r_0c = s0.vec_04.getX() >> 12;
-        lights_800c692c[i].light_00.g_0d = s0.vec_04.getY() >> 12;
-        lights_800c692c[i].light_00.b_0e = s0.vec_04.getZ() >> 12;
+        lights_800c692c[i].light_00.r_0c = s0.angle_04.x;
+        lights_800c692c[i].light_00.g_0d = s0.angle_04.y;
+        lights_800c692c[i].light_00.b_0e = s0.angle_04.z;
       } else if(v1 == 3) {
         //LAB_800e5ed0
-        final short theta = rcos(((lightTicks_800c6928.get() + s0.vec_28.getX()) % s0.vec_28.getY() << 12) / s0.vec_28.getY());
-        final int a3_0 = 0x1000 + theta;
-        final int a2_0 = 0x1000 - theta;
-        lights_800c692c[i].light_00.r_0c = (s0.vec_04.getX() * a3_0 + s0.vec_10.getX() * a2_0) / 0x2000;
-        lights_800c692c[i].light_00.g_0d = (s0.vec_04.getY() * a3_0 + s0.vec_10.getY() * a2_0) / 0x2000;
-        lights_800c692c[i].light_00.b_0e = (s0.vec_04.getZ() * a3_0 + s0.vec_10.getZ() * a2_0) / 0x2000;
+        final float theta = MathHelper.cos(((lightTicks_800c6928.get() + s0.vec_28.x) % s0.vec_28.y) / s0.vec_28.y);
+        final float ratioA = MathHelper.TWO_PI + theta;
+        final float ratioB = MathHelper.TWO_PI - theta;
+        lights_800c692c[i].light_00.r_0c = (s0.angle_04.x * ratioA + s0.vec_10.x * ratioB) / 2.0f;
+        lights_800c692c[i].light_00.g_0d = (s0.angle_04.y * ratioA + s0.vec_10.y * ratioB) / 2.0f;
+        lights_800c692c[i].light_00.b_0e = (s0.angle_04.z * ratioA + s0.vec_10.z * ratioB) / 2.0f;
       }
 
       //LAB_800e5fb8

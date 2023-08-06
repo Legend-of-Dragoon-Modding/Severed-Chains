@@ -20,6 +20,7 @@ import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Math;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -41,7 +42,6 @@ import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8002.SetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SetTransMatrix;
-import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8005.matrixStackIndex_80054a08;
 import static legend.game.Scus94491BpeSegment_8005.matrixStack_80054a0c;
 import static legend.game.Scus94491BpeSegment_8005.vectorStack_80054a0c;
@@ -250,7 +250,7 @@ public final class Scus94491BpeSegment_8003 {
     identityAspectMatrix_800c3588.set(1, 1, (short)aspect);
     identityAspectMatrix_800c3588.transfer.set(0, 0, 0);
 
-    lightDirectionMatrix_800c34e8.clear();
+    lightDirectionMatrix_800c34e8.zero();
     lightColourMatrix_800c3508.zero();
 
     centreScreenX_1f8003dc.set((short)0);
@@ -343,10 +343,14 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003c4a0L)
-  public static void GsSetLightMatrix(final MATRIX mp) {
+  public static void GsSetLightMatrix(final Matrix3f mp) {
     final Matrix3f lightDirection = new Matrix3f();
-    mp.mul(lightDirectionMatrix_800c34e8, lightDirection);
+    lightDirectionMatrix_800c34e8.mul(mp, lightDirection);
     SetLightMatrix(lightDirection);
+  }
+
+  public static void GsSetLightMatrix(final MATRIX mp) {
+    GsSetLightMatrix(mp.toMat3f());
   }
 
   @Method(0x8003c5e0L)
@@ -368,15 +372,15 @@ public final class Scus94491BpeSegment_8003 {
    */
   @Method(0x8003c6f0L)
   public static int GsSetFlatLight(final int id, final GsF_LIGHT light) {
-    final int x = light.direction_00.getX();
-    final int y = light.direction_00.getY();
-    final int z = light.direction_00.getZ();
-    final int r = light.r_0c;
-    final int g = light.g_0d;
-    final int b = light.b_0e;
+    final float x = light.direction_00.x;
+    final float y = light.direction_00.y;
+    final float z = light.direction_00.z;
+    final float r = light.r_0c;
+    final float g = light.g_0d;
+    final float b = light.b_0e;
 
     // Normalize vector - calculate magnitude
-    final long mag = SquareRoot0(x * x + y * y + z * z);
+    final float mag = Math.sqrt(x * x + y * y + z * z);
 
     if(mag == 0) {
       return -1;
@@ -384,32 +388,32 @@ public final class Scus94491BpeSegment_8003 {
 
     if(id == 0) {
       //LAB_8003c7ec
-      lightDirectionMatrix_800c34e8.set(0, (short)((-light.direction_00.getX() << 12) / mag));
-      lightDirectionMatrix_800c34e8.set(1, (short)((-light.direction_00.getY() << 12) / mag));
-      lightDirectionMatrix_800c34e8.set(2, (short)((-light.direction_00.getZ() << 12) / mag));
+      lightDirectionMatrix_800c34e8.m00(-light.direction_00.x / mag);
+      lightDirectionMatrix_800c34e8.m10(-light.direction_00.y / mag);
+      lightDirectionMatrix_800c34e8.m20(-light.direction_00.z / mag);
 
-      lightColourMatrix_800c3508.m00 = r / 255.0f;
-      lightColourMatrix_800c3508.m01 = g / 255.0f;
-      lightColourMatrix_800c3508.m02 = b / 255.0f;
+      lightColourMatrix_800c3508.m00 = r;
+      lightColourMatrix_800c3508.m01 = g;
+      lightColourMatrix_800c3508.m02 = b;
     } else if(id == 1) {
       //LAB_8003c904
-      lightDirectionMatrix_800c34e8.set(3, (short)((-light.direction_00.getX() << 12) / mag));
-      lightDirectionMatrix_800c34e8.set(4, (short)((-light.direction_00.getY() << 12) / mag));
-      lightDirectionMatrix_800c34e8.set(5, (short)((-light.direction_00.getZ() << 12) / mag));
+      lightDirectionMatrix_800c34e8.m01(-light.direction_00.x / mag);
+      lightDirectionMatrix_800c34e8.m11(-light.direction_00.y / mag);
+      lightDirectionMatrix_800c34e8.m21(-light.direction_00.z / mag);
 
-      lightColourMatrix_800c3508.m10 = r / 255.0f;
-      lightColourMatrix_800c3508.m11 = g / 255.0f;
-      lightColourMatrix_800c3508.m12 = b / 255.0f;
+      lightColourMatrix_800c3508.m10 = r;
+      lightColourMatrix_800c3508.m11 = g;
+      lightColourMatrix_800c3508.m12 = b;
       //LAB_8003c7dc
     } else if(id == 2) {
       //LAB_8003ca20
-      lightDirectionMatrix_800c34e8.set(6, (short)((-light.direction_00.getX() << 12) / mag));
-      lightDirectionMatrix_800c34e8.set(7, (short)((-light.direction_00.getY() << 12) / mag));
-      lightDirectionMatrix_800c34e8.set(8, (short)((-light.direction_00.getZ() << 12) / mag));
+      lightDirectionMatrix_800c34e8.m02(-light.direction_00.x / mag);
+      lightDirectionMatrix_800c34e8.m12(-light.direction_00.y / mag);
+      lightDirectionMatrix_800c34e8.m22(-light.direction_00.z / mag);
 
-      lightColourMatrix_800c3508.m20 = r / 255.0f;
-      lightColourMatrix_800c3508.m21 = g / 255.0f;
-      lightColourMatrix_800c3508.m22 = b / 255.0f;
+      lightColourMatrix_800c3508.m20 = r;
+      lightColourMatrix_800c3508.m21 = g;
+      lightColourMatrix_800c3508.m22 = b;
     }
 
     //LAB_8003cb34

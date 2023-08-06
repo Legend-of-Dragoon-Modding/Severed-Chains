@@ -24,7 +24,7 @@ public class WMapStruct19c0 {
   /** ubyte */
   public boolean mapRotating_80;
 
-  public int _84;
+  public float _84;
   public int _88;
   public final COLOUR[] colour_8c = {new COLOUR(), new COLOUR(), new COLOUR()};
   /** short */
@@ -76,8 +76,8 @@ public class WMapStruct19c0 {
   public int _1970;
   public int _1974;
 
-  public final short[] _19a8 = new short[3];
-  public final short[] _19ae = new short[3];
+  public final float[] _19a8 = new float[3];
+  public final float[] _19ae = new float[3];
 
   public WMapStruct19c0() {
     Arrays.setAll(this._154, i -> new WMapSubStruct18());

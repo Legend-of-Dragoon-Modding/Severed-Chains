@@ -2362,25 +2362,19 @@ public final class SMap {
       if(sobj.flatLightingEnabled_1c4) {
         final GsF_LIGHT light = new GsF_LIGHT();
 
-        light.direction_00.setX(0);
-        light.direction_00.setY(0x1000);
-        light.direction_00.setZ(0);
-        light.r_0c = sobj.flatLightRed_1c5;
-        light.g_0d = sobj.flatLightGreen_1c6;
-        light.b_0e = sobj.flatLightBlue_1c7;
+        light.direction_00.set(0.0f, 1.0f, 0.0f);
+        light.r_0c = sobj.flatLightRed_1c5 / (float)0x100;
+        light.g_0d = sobj.flatLightGreen_1c6 / (float)0x100;
+        light.b_0e = sobj.flatLightBlue_1c7 / (float)0x100;
         GsSetFlatLight(0, light);
 
-        light.direction_00.setX(0x1000);
-        light.direction_00.setY(0);
-        light.direction_00.setZ(0);
+        light.direction_00.set(1.0f, 0.0f, 0.0f);
         light.r_0c = sobj.flatLightRed_1c5;
         light.g_0d = sobj.flatLightGreen_1c6;
         light.b_0e = sobj.flatLightBlue_1c7;
         GsSetFlatLight(1, light);
 
-        light.direction_00.setX(0);
-        light.direction_00.setY(0);
-        light.direction_00.setZ(0x1000);
+        light.direction_00.set(0.0f, 0.0f, 0.0f);
         light.r_0c = sobj.flatLightRed_1c5;
         light.g_0d = sobj.flatLightGreen_1c6;
         light.b_0e = sobj.flatLightBlue_1c7;
@@ -2425,26 +2419,20 @@ public final class SMap {
         }
 
         //LAB_800e1440
-        GsF_LIGHT_0_800c66d8.direction_00.setX(0);
-        GsF_LIGHT_0_800c66d8.direction_00.setY(0x1000);
-        GsF_LIGHT_0_800c66d8.direction_00.setZ(0);
-        GsF_LIGHT_0_800c66d8.r_0c = 0x80;
-        GsF_LIGHT_0_800c66d8.g_0d = 0x80;
-        GsF_LIGHT_0_800c66d8.b_0e = 0x80;
+        GsF_LIGHT_0_800c66d8.direction_00.set(0.0f, 1.0f, 0.0f);
+        GsF_LIGHT_0_800c66d8.r_0c = 0.5f;
+        GsF_LIGHT_0_800c66d8.g_0d = 0.5f;
+        GsF_LIGHT_0_800c66d8.b_0e = 0.5f;
         GsSetFlatLight(0, GsF_LIGHT_0_800c66d8);
-        GsF_LIGHT_1_800c66e8.direction_00.setX(0);
-        GsF_LIGHT_1_800c66e8.direction_00.setY(0x1000);
-        GsF_LIGHT_1_800c66e8.direction_00.setZ(0);
-        GsF_LIGHT_1_800c66e8.r_0c = 0;
-        GsF_LIGHT_1_800c66e8.g_0d = 0;
-        GsF_LIGHT_1_800c66e8.b_0e = 0;
+        GsF_LIGHT_1_800c66e8.direction_00.set(0.0f, 1.0f, 0.0f);
+        GsF_LIGHT_1_800c66e8.r_0c = 0.0f;
+        GsF_LIGHT_1_800c66e8.g_0d = 0.0f;
+        GsF_LIGHT_1_800c66e8.b_0e = 0.0f;
         GsSetFlatLight(1, GsF_LIGHT_1_800c66e8);
-        GsF_LIGHT_2_800c66f8.direction_00.setX(0);
-        GsF_LIGHT_2_800c66f8.direction_00.setY(0x1000);
-        GsF_LIGHT_2_800c66f8.direction_00.setZ(0);
-        GsF_LIGHT_2_800c66f8.r_0c = 0;
-        GsF_LIGHT_2_800c66f8.g_0d = 0;
-        GsF_LIGHT_2_800c66f8.b_0e = 0;
+        GsF_LIGHT_2_800c66f8.direction_00.set(0.0f, 1.0f, 0.0f);
+        GsF_LIGHT_2_800c66f8.r_0c = 0.0f;
+        GsF_LIGHT_2_800c66f8.g_0d = 0.0f;
+        GsF_LIGHT_2_800c66f8.b_0e = 0.0f;
         GsSetFlatLight(2, GsF_LIGHT_2_800c66f8);
 
         GTE.setBackgroundColour(0.5f, 0.5f, 0.5f);
