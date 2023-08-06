@@ -102,7 +102,7 @@ public class MATRIX {
     out.set(7, (short)product0.getY());
     out.set(8, (short)product0.getZ());
 
-    return this;
+    return out;
   }
 
   public MATRIX normalize() {
@@ -133,7 +133,7 @@ public class MATRIX {
     out.data2[6] = this.data2[2];
     out.data2[7] = this.data2[5];
     out.data2[8] = this.data2[8];
-    return this;
+    return out;
   }
 
   /** Rotate with parallel translation */
@@ -182,7 +182,7 @@ public class MATRIX {
     out.set(7, (short)(o6 * t1 + o7 * t4 + o8 * t7 >> 12));
     out.set(8, (short)(o6 * t2 + o7 * t5 + o8 * t8 >> 12));
 
-    return this;
+    return out;
   }
 
   public MATRIX mul(final MATRIX rotation) {
@@ -330,5 +330,10 @@ public class MATRIX {
     );
 
     return out;
+  }
+
+  @Override
+  public String toString() {
+    return "MATRIX %d, %d, %d, %d, %d, %d, %d, %d, %d".formatted(this.data2[0], this.data2[1], this.data2[2], this.data2[3], this.data2[4], this.data2[5], this.data2[6], this.data2[7], this.data2[8]);
   }
 }
