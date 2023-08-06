@@ -1846,7 +1846,6 @@ public final class Bttl_800c {
       final BattlePreloadedEntities_18cb0.Rendering1298 a0_0 = battlePreloadedEntities_1f8003f4._9ce8[s0.charSlot_19c];
 
       model.dobj2ArrPtr_00 = a0_0.dobj2s_00;
-      model.coord2ParamArrPtr_08 = a0_0.params_d20;
       model.count_c8 = 35;
 
       final long a3;

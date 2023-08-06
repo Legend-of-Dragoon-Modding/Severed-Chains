@@ -4,7 +4,7 @@ public class GsCOORDINATE2 {
   public int flg;
   public final MATRIX coord = new MATRIX();
   public final MATRIX workm = new MATRIX();
-  public Transforms param;
+  public Transforms transforms;
   public GsCOORDINATE2 super_;
   public GsCOORDINATE2 sub;
 
@@ -12,7 +12,7 @@ public class GsCOORDINATE2 {
     this.flg = other.flg;
     this.coord.set(other.coord);
     this.workm.set(other.workm);
-    this.param = other.param;
+    this.transforms = other.transforms;
     this.super_ = other.super_;
     this.sub = other.sub;
     return this;

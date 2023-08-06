@@ -11,7 +11,6 @@ import legend.core.gte.SVECTOR;
 import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
-import legend.core.gte.Transforms;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.types.CString;
@@ -4630,14 +4629,12 @@ public final class Bttl_800d {
     model.tmdNobj_ca = count;
     model.count_c8 = count;
     model.dobj2ArrPtr_00 = new GsDOBJ2[count];
-    model.coord2ParamArrPtr_08 = new Transforms[count];
 
     Arrays.setAll(model.dobj2ArrPtr_00, i -> new GsDOBJ2());
-    Arrays.setAll(model.coord2ParamArrPtr_08, i -> new Transforms());
 
     model.tpage_108 = (int)((tmdWithId.id & 0xffff_0000L) >>> 11);
-    initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00, model.coord2ParamArrPtr_08, model.count_c8);
-    model.coord2_14.param = model.transforms_64;
+    initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00, model.count_c8);
+    model.coord2_14.transforms = model.transforms_64;
     GsInitCoordinate2(null, model.coord2_14);
     model.ObjTable_0c.nobj = count;
 

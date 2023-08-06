@@ -15,10 +15,10 @@ public class Model124 {
 
   public GsDOBJ2[] dobj2ArrPtr_00;
 //  public GsCOORDINATE2[] coord2ArrPtr_04; // Use coord2 on dobj2
-  public Transforms[] coord2ParamArrPtr_08;
-  /** Union with {@link #coord2ParamArrPtr_08} */
+//  public Transforms[] coord2ParamArrPtr_08; // Use dobj2.coord.transforms
+  /** Union with coord2ParamArrPtr_08 */
   public final LmbAnim lmbAnim_08 = new LmbAnim();
-  /** Union with {@link #coord2ParamArrPtr_08} */
+  /** Union with coord2ParamArrPtr_08 */
   public final CmbAnim cmbAnim_08 = new CmbAnim();
   public final GsOBJTABLE2 ObjTable_0c = new GsOBJTABLE2();
   // Supercoordinate system for all model part coordinate systems, all model parts are attached to this
@@ -127,7 +127,6 @@ public class Model124 {
 
   public void set(final Model124 other) {
     this.dobj2ArrPtr_00 = other.dobj2ArrPtr_00;
-    this.coord2ParamArrPtr_08 = other.coord2ParamArrPtr_08;
     this.lmbAnim_08.set(other.lmbAnim_08);
     this.cmbAnim_08.set(other.cmbAnim_08);
     this.ObjTable_0c.set(other.ObjTable_0c);

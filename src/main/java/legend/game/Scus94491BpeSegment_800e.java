@@ -5,7 +5,6 @@ import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.Tmd;
-import legend.core.gte.Transforms;
 import legend.core.memory.Method;
 import legend.game.types.CContainer;
 import legend.game.types.EngineState;
@@ -178,11 +177,9 @@ public final class Scus94491BpeSegment_800e {
     }
 
     model.dobj2ArrPtr_00 = new GsDOBJ2[tmdAnimFile.modelPartCount_0c];
-    model.coord2ParamArrPtr_08 = new Transforms[tmdAnimFile.modelPartCount_0c];
     model.count_c8 = tmdAnimFile.modelPartCount_0c;
 
     Arrays.setAll(model.dobj2ArrPtr_00, i -> new GsDOBJ2());
-    Arrays.setAll(model.coord2ParamArrPtr_08, i -> new Transforms());
 
     final Tmd tmd = cContainer.tmdPtr_00.tmd;
     model.tmd_8c = tmd;
@@ -208,8 +205,8 @@ public final class Scus94491BpeSegment_800e {
     }
 
     //LAB_800e6c64
-    initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00, model.coord2ParamArrPtr_08, model.count_c8);
-    model.coord2_14.param = model.transforms_64;
+    initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00, model.count_c8);
+    model.coord2_14.transforms = model.transforms_64;
     GsInitCoordinate2(null, model.coord2_14);
     prepareObjTable2(model.ObjTable_0c, model.tmd_8c, model.coord2_14, model.count_c8, model.tmdNobj_ca + 1);
 

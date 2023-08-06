@@ -11,13 +11,13 @@ import legend.core.gpu.RECT;
 import legend.core.gpu.Rect4i;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.DVECTOR;
-import legend.core.gte.Transforms;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
+import legend.core.gte.Transforms;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
@@ -795,7 +795,7 @@ public final class SMap {
     model_800bda10.coord2_14.flg = 0;
 
     final MATRIX matrix = model_800bda10.dobj2ArrPtr_00[0].coord2_04.coord;
-    final Transforms params = model_800bda10.dobj2ArrPtr_00[0].coord2_04.param;
+    final Transforms params = model_800bda10.dobj2ArrPtr_00[0].coord2_04.transforms;
 
     params.rotate.zero();
     RotMatrix_Zyx(params.rotate, matrix);
@@ -874,7 +874,7 @@ public final class SMap {
       final GsDOBJ2 dobj2 = a0.dobj2ArrPtr_00[i];
 
       final GsCOORDINATE2 coord2 = dobj2.coord2_04;
-      final Transforms params = coord2.param;
+      final Transforms params = coord2.transforms;
       final MATRIX matrix = coord2.coord;
 
       RotMatrix_Zyx(params.rotate, matrix);
@@ -2163,12 +2163,10 @@ public final class SMap {
     final int count = cContainer.tmdPtr_00.tmd.header.nobj;
     model.count_c8 = count;
     model.dobj2ArrPtr_00 = new GsDOBJ2[count];
-    model.coord2ParamArrPtr_08 = new Transforms[count];
     model.tmd_8c = cContainer.tmdPtr_00.tmd;
     model.tmdNobj_ca = count;
 
     Arrays.setAll(model.dobj2ArrPtr_00, i -> new GsDOBJ2());
-    Arrays.setAll(model.coord2ParamArrPtr_08, i -> new Transforms());
 
     if(cContainer.ext_04 != null) {
       final SmallerStruct smallerStruct = new SmallerStruct();
@@ -2207,9 +2205,9 @@ public final class SMap {
     }
 
     //LAB_800e0f10
-    initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00, model.coord2ParamArrPtr_08, model.count_c8);
+    initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00, model.count_c8);
 
-    model.coord2_14.param = model.transforms_64;
+    model.coord2_14.transforms = model.transforms_64;
 
     GsInitCoordinate2(null, model.coord2_14);
     prepareObjTable2(model.ObjTable_0c, model.tmd_8c, model.coord2_14, model.count_c8, model.tmdNobj_ca + 1);

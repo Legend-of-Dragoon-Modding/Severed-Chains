@@ -2192,11 +2192,9 @@ public final class Bttl_800e {
 
     final int count = model.count_c8;
     model.dobj2ArrPtr_00 = new GsDOBJ2[count];
-    model.coord2ParamArrPtr_08 = new Transforms[count];
 
     for(int i = 0; i < count; i++) {
       model.dobj2ArrPtr_00[i] = new GsDOBJ2().set(a1.dobj2s_00[i]);
-      model.coord2ParamArrPtr_08[i] = new Transforms().set(a1.params_3c0[i]);
     }
 
     final GsCOORDINATE2 parent = model.coord2_14;
@@ -2205,12 +2203,12 @@ public final class Bttl_800e {
     for(int i = 0; i < count; i++) {
       final GsDOBJ2 dobj2 = model.dobj2ArrPtr_00[i];
       dobj2.coord2_04 = new GsCOORDINATE2();
-      dobj2.coord2_04.param = model.coord2ParamArrPtr_08[i];
+      dobj2.coord2_04.transforms = new Transforms();
       dobj2.coord2_04.super_ = parent;
     }
 
     //LAB_800e9d90
-    model.coord2_14.param = model.transforms_64;
+    model.coord2_14.transforms = model.transforms_64;
     model.ObjTable_0c.top = model.dobj2ArrPtr_00;
   }
 
@@ -2221,11 +2219,9 @@ public final class Bttl_800e {
 
     final int count = model1.count_c8;
     model1.dobj2ArrPtr_00 = new GsDOBJ2[count];
-    model1.coord2ParamArrPtr_08 = new Transforms[count];
 
     for(int i = 0; i < count; i++) {
       model1.dobj2ArrPtr_00[i] = new GsDOBJ2().set(model2.dobj2ArrPtr_00[i]);
-      model1.coord2ParamArrPtr_08[i] = new Transforms().set(model2.coord2ParamArrPtr_08[i]);
     }
 
     final GsCOORDINATE2 parent = model1.coord2_14;
@@ -2234,12 +2230,12 @@ public final class Bttl_800e {
     for(int i = 0; i < count; i++) {
       final GsDOBJ2 dobj2 = model1.dobj2ArrPtr_00[i];
       dobj2.coord2_04 = new GsCOORDINATE2();
-      dobj2.coord2_04.param = model1.coord2ParamArrPtr_08[i];
+      dobj2.coord2_04.transforms = new Transforms();
       dobj2.coord2_04.super_ = parent;
     }
 
     //LAB_800e9f44
-    model1.coord2_14.param = model1.transforms_64;
+    model1.coord2_14.transforms = model1.transforms_64;
     model1.ObjTable_0c.top = model1.dobj2ArrPtr_00;
   }
 
@@ -2897,8 +2893,8 @@ public final class Bttl_800e {
     }
 
     //LAB_800eba8c
-    initObjTable2(stage.objTable2_550, stage.dobj2s_00, stage.params_3c0, 10);
-    stage.coord2_558.param = stage.param_5a8;
+    initObjTable2(stage.objTable2_550, stage.dobj2s_00, 10);
+    stage.coord2_558.transforms = stage.param_5a8;
     GsInitCoordinate2(null, stage.coord2_558);
     prepareObjTable2(stage.objTable2_550, stage.tmd_5d0, stage.coord2_558, 10, extTmd.tmdPtr_00.tmd.header.nobj + 1);
     applyInitialStageTransforms(stage, tmdAnim);
@@ -3047,7 +3043,7 @@ public final class Bttl_800e {
     s2.coord2_14.coord.scaleL(s2.transforms_64.scale);
     s2.coord2_14.flg = 0;
     final GsCOORDINATE2 v0 = s2.dobj2ArrPtr_00[0].coord2_04;
-    final Transforms s0 = v0.param;
+    final Transforms s0 = v0.transforms;
     s0.rotate.zero();
     RotMatrix_Zyx(s0.rotate, v0.coord);
     s0.trans.zero();
@@ -3114,7 +3110,7 @@ public final class Bttl_800e {
     for(int i = 0; i < stage.partCount_5dc; i++) {
       final ModelPartTransforms0c rotTrans = stage.rotTrans_5d8[0][i];
       final GsCOORDINATE2 coord2 = stage.dobj2s_00[i].coord2_04;
-      final Transforms param = coord2.param;
+      final Transforms param = coord2.transforms;
 
       param.rotate.set(rotTrans.rotate_00);
       RotMatrix_Zyx(param.rotate, coord2.coord);
