@@ -16,7 +16,6 @@ import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
-import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.ByteRef;
@@ -36,7 +35,6 @@ import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.types.CContainer;
 import legend.game.types.CoolonWarpDestination20;
-import legend.game.types.WmapSmokeCloudInstance60;
 import legend.game.types.EngineState;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.LodString;
@@ -45,6 +43,7 @@ import legend.game.types.Model124;
 import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
+import legend.game.types.WmapSmokeCloudInstance60;
 import legend.game.unpacker.FileData;
 import org.joml.Math;
 import org.joml.Vector3f;
@@ -86,7 +85,6 @@ import static legend.game.Scus94491BpeSegment_8002.initTextbox;
 import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.rand;
-import static legend.game.Scus94491BpeSegment_8002.renderDobj2;
 import static legend.game.Scus94491BpeSegment_8002.renderModel;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.strcmp;
@@ -169,7 +167,7 @@ public class WMap {
   private static final IntRef encounterAccumulator_800c6ae8 = MEMORY.ref(4, 0x800c6ae8L, IntRef::new);
 
   private static final ArrayRef<VECTOR> smokeTranslationVectors_800c74b8 = MEMORY.ref(4, 0x800c74b8L, ArrayRef.of(VECTOR.class, 0x101, 0x10, VECTOR::new));
-  private static final ArrayRef<ShortRef> _800c84c8 = MEMORY.ref(2, 0x800c84c8L, ArrayRef.of(ShortRef.class, 0x101, 2, ShortRef::new));
+  private static final ArrayRef<ShortRef> locationsIndices_800c84c8 = MEMORY.ref(2, 0x800c84c8L, ArrayRef.of(ShortRef.class, 0x101, 2, ShortRef::new));
 
   private static final IntRef _800c86cc = MEMORY.ref(4, 0x800c86ccL, IntRef::new);
 
@@ -271,8 +269,15 @@ public class WMap {
     shadowRenderers_800ef684[3] = WMap::FUN_800e32fc;
   }
 
-  /** array bytes */
-  private static final Value _800ef694 = MEMORY.ref(1, 0x800ef694L);
+  /**
+   * <ol start="0">
+   *   <li>Dart</li>
+   *   <li>Queen Fury</li>
+   *   <li>Coolon</li>
+   *   <li>Teleporter</li>
+   * </ol>
+   */
+  private static final ArrayRef<ByteRef> playerAvatarColourMapOffsets_800ef694 = MEMORY.ref(1, 0x800ef694L, ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new));
   private static final ArrayRef<WMapStruct08> _800ef698 = MEMORY.ref(4, 0x800ef698L, ArrayRef.of(WMapStruct08.class, 6, 0x8, WMapStruct08::new));
   private static final ArrayRef<WMapStruct0c> _800ef6c8 = MEMORY.ref(4, 0x800ef6c8L, ArrayRef.of(WMapStruct0c.class, 6, 0xc, WMapStruct0c::new));
 
@@ -295,8 +300,8 @@ public class WMap {
 
   private static final ArrayRef<UnsignedByteRef> _800f0204 = MEMORY.ref(1, 0x800f0204L, ArrayRef.of(UnsignedByteRef.class, 0xc, 1, UnsignedByteRef::new));
   private static final ArrayRef<UnsignedByteRef> _800f0210 = MEMORY.ref(1, 0x800f0210L, ArrayRef.of(UnsignedByteRef.class, 0xc, 1, UnsignedByteRef::new));
-  /** array shorts */
-  private static final Value _800f021c = MEMORY.ref(2, 0x800f021cL);
+  /** Used in calculation determining which path you take at a path intersection point */
+  private static final ArrayRef<UnsignedShortRef> inputModifierForIntersectionPosition_800f021c = MEMORY.ref(2, 0x800f021cL, ArrayRef.of(UnsignedShortRef.class, 12, 2, UnsignedShortRef::new));
 
   private static final UnboundedArrayRef<Place0c> places_800f0234 = MEMORY.ref(4, 0x800f0234L, UnboundedArrayRef.of(0xc, Place0c::new));
 
@@ -719,7 +724,7 @@ public class WMap {
     loadWmapTextures();
     FUN_800d177c();
     FUN_800d8d18();
-    FUN_800dfa70();
+    loadPlayerAvatarTextureAndModelFiles();
     FUN_800e4f60();
     allocateSmoke();
     FUN_800e4e1c();
@@ -2372,7 +2377,7 @@ public class WMap {
   }
 
   @Method(0x800d5a30L)
-  public static void FUN_800d5a30(final List<FileData> files, final int whichFile) {
+  public static void loadPlayerAvatarModelFiles(final List<FileData> files, final int whichFile) {
     if(files.get(0).size() != 0) {
       wmapStruct258_800c66a8._b4[whichFile].extendedTmd_00 = new CContainer("DRGN0/" + (5714 + whichFile), files.get(0));
     }
@@ -2385,7 +2390,6 @@ public class WMap {
         //LAB_800d5ab8
         wmapStruct258_800c66a8._b4[whichFile].tmdAnim_08[i - 2] = new TmdAnimationFile(files.get(i));
       }
-
       //LAB_800d5b2c
     }
 
@@ -2404,7 +2408,6 @@ public class WMap {
       //LAB_800d5c18
       filesLoadedFlags_800c66b8.or(0x400);
     }
-
     //LAB_800d5c38
     //LAB_800d5c40
   }
@@ -3076,7 +3079,7 @@ public class WMap {
       } else {
         //LAB_800d93b4
         //LAB_800d93c8
-        renderDobj2(dobj2);
+        //renderDobj2(dobj2);
       }
 
       //LAB_800d93d4
@@ -3941,7 +3944,7 @@ public class WMap {
   }
 
   @Method(0x800dfa70L)
-  public static void FUN_800dfa70() {
+  public static void loadPlayerAvatarTextureAndModelFiles() {
     filesLoadedFlags_800c66b8.and(0xffff_fd57);
 
     loadDrgnDir(0, 5713, files -> timsLoaded(files, 0x2a8));
@@ -3951,8 +3954,8 @@ public class WMap {
       //LAB_800dfae8
       wmapStruct258_800c66a8.models_0c[i] = new Model124("Player " + i);
       final int finalI = i;
-      loadDrgnDir(0, 5714 + i, files -> FUN_800d5a30(files, finalI));
-      wmapStruct258_800c66a8.models_0c[i].colourMap_9d = (int)_800ef694.offset(i).get() + 0x80;
+      loadDrgnDir(0, 5714 + i, files -> loadPlayerAvatarModelFiles(files, finalI));
+      wmapStruct258_800c66a8.models_0c[i].colourMap_9d = playerAvatarColourMapOffsets_800ef694.get(i).get() + 0x80;
     }
 
     //LAB_800dfbb4
@@ -5493,7 +5496,7 @@ public class WMap {
     final MATRIX sp0x38 = new MATRIX();
     for(int i = 0; i < _800c86cc.get(); i++) {
       //LAB_800e6c5c
-      if(!places_800f0234.get(locations_800f0e34.get(_800c84c8.get(i).get()).placeIndex_02.get()).name_00.isNull()) {
+      if(!places_800f0234.get(locations_800f0e34.get(locationsIndices_800c84c8.get(i).get()).placeIndex_02.get()).name_00.isNull()) {
         //LAB_800e6ccc
         GsGetLs(wmapStruct258_800c66a8.tmdRendering_08.coord2s_04[0], sp0x38);
         setRotTransMatrix(sp0x38);
@@ -5514,7 +5517,7 @@ public class WMap {
             if(z >= 6 && z < orderingTableSize_1f8003c8.get() - 1) {
               final WMapStruct0c_2 struct = new WMapStruct0c_2();
               struct.z_00 = z;
-              struct._04 = _800c84c8.get(i).get();
+              struct._04 = locationsIndices_800c84c8.get(i).get();
               struct.xy_08.set(sx, sy);
               structs.add(struct);
             }
@@ -6233,18 +6236,19 @@ public class WMap {
     //LAB_800e9d54
   }
 
+  /** Seems related to cross intersection points, possibly to handle which direction you travel */
   @Method(0x800e9d68L)
   public static void FUN_800e9d68() {
+    if(mapState_800c6798._fc != 2) {
+      return;
+    }
+
     final VECTOR sp0xb0 = new VECTOR();
     final short[] sp0xc8 = new short[7];
 
     int sp18 = 0;
     boolean sp28 = false;
     int spda = 0x1000;
-
-    if(mapState_800c6798._fc != 2) {
-      return;
-    }
 
     //LAB_800e9da0
     if(mapState_800c6798._d8 != 0) {
@@ -6282,8 +6286,8 @@ public class WMap {
       final int v0 = (sp0xc8[i] + 0x100 & 0xfff) >> 9;
       if((movementInput & _800f0204.get(v0).get()) != 0) {
         final int spd8 = spda;
-        spda = (int)Math.abs(sp0xc8[i] - _800f021c.offset((movementInput - 1) * 0x2L).getSigned());
-        final int sp14 = Math.abs(sp0xc8[i] - (int)_800f021c.offset((movementInput - 1) * 0x2L).getSigned() - 0x1000);
+        spda = Math.abs(sp0xc8[i] - inputModifierForIntersectionPosition_800f021c.get((movementInput - 1)).get());
+        final int sp14 = Math.abs(sp0xc8[i] - inputModifierForIntersectionPosition_800f021c.get((movementInput - 1)).get() - 0x1000);
 
         if(sp14 < spda) {
           spda = sp14;
@@ -6297,7 +6301,6 @@ public class WMap {
         //LAB_800ea13c
         sp28 = true;
       }
-
       //LAB_800ea144
     }
 
@@ -6340,7 +6343,6 @@ public class WMap {
         mapState_800c6798.angle_c0 = 0.0f;
       }
     }
-
     //LAB_800ea3c4
   }
 
@@ -6627,7 +6629,7 @@ public class WMap {
           }
 
           //LAB_800eb8ac
-          _800c84c8.get(sp24).set((short)i);
+          locationsIndices_800c84c8.get(sp24).set((short)i);
 
           sp24++;
         }
@@ -7130,13 +7132,13 @@ public class WMap {
       final WmapSmokeCloudInstance60 smoke = smokeCloudInstances_800c86f8[i];
 
       //LAB_800edccc
-      if(!places_800f0234.get(locations_800f0e34.get(_800c84c8.get(i).get()).placeIndex_02.get()).name_00.isNull()) {
+      if(!places_800f0234.get(locations_800f0e34.get(locationsIndices_800c84c8.get(i).get()).placeIndex_02.get()).name_00.isNull()) {
         //LAB_800edd3c
-        final int mode = locations_800f0e34.get(_800c84c8.get(i).get()).effectFlags_12.get() & 0xc;
+        final int mode = locations_800f0e34.get(locationsIndices_800c84c8.get(i).get()).effectFlags_12.get() & 0xc;
 
         if(mode != 0) {
           //LAB_800edda0
-          if(locations_800f0e34.get(_800c84c8.get(i).get()).continentNumber_0e.get() == mapState_800c6798.continentIndex_00 + 1) {
+          if(locations_800f0e34.get(locationsIndices_800c84c8.get(i).get()).continentNumber_0e.get() == mapState_800c6798.continentIndex_00 + 1) {
             //LAB_800eddfc
             if(i >= 9) {
               break;
