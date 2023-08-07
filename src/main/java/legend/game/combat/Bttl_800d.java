@@ -4665,8 +4665,8 @@ public final class Bttl_800d {
     //LAB_800ddce8
     model.coord2_14.transforms.scale.set(1.0f, 1.0f, 1.0f);
     model.shadowType_cc = 0;
-    model.vector_10c.set(1.0f, 1.0f, 1.0f);
-    model.vector_118.set(0, 0, 0);
+    model.shadowSize_10c.set(1.0f, 1.0f, 1.0f);
+    model.shadowOffset_118.set(0, 0, 0);
   }
 
   @Method(0x800ddd3cL)

@@ -2060,7 +2060,7 @@ public final class Bttl_800e {
     final int a0 = script.params_20[1].get();
     if(a0 == -1) {
       model.shadowType_cc = 2;
-      model.modelPartIndex_cd = -1;
+      model.modelPartWithShadowIndex_cd = -1;
     } else if(a0 == -2) {
       //LAB_800e982c
       model.shadowType_cc = 3;
@@ -2072,7 +2072,7 @@ public final class Bttl_800e {
       //LAB_800e9844
       //LAB_800e9848
       model.shadowType_cc = 3;
-      model.modelPartIndex_cd = a0;
+      model.modelPartWithShadowIndex_cd = a0;
     }
 
     //LAB_800e984c
@@ -2180,10 +2180,10 @@ public final class Bttl_800e {
     model.partInvisible_f4 = a1._5e4;
     model.coord2_14.transforms.scale.set(1.0f, 1.0f, 1.0f);
     model.tpage_108 = 0;
-    model.vector_10c.set(1.0f, 1.0f, 1.0f);
-    model.vector_118.set(0, 0, 0);
+    model.shadowSize_10c.set(1.0f, 1.0f, 1.0f);
+    model.shadowOffset_118.set(0, 0, 0);
     model.shadowType_cc = 0;
-    model.modelPartIndex_cd = 0;
+    model.modelPartWithShadowIndex_cd = 0;
 
     model.modelParts_00 = new ModelPart10[a1.dobj2s_00.length];
     Arrays.setAll(model.modelParts_00, i -> new ModelPart10().set(a1.dobj2s_00[i]));
@@ -2300,7 +2300,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ea2a0L)
-  public static FlowControl FUN_800ea2a0(final RunningScript<?> script) {
+  public static FlowControl scriptSetBttlShadowSize(final RunningScript<?> script) {
     final BattleScriptDataBase a2 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
 
     final Model124 model;
@@ -2312,13 +2312,13 @@ public final class Bttl_800e {
     }
 
     //LAB_800ea300
-    model.vector_10c.x = script.params_20[1].get() / (float)0x1000;
-    model.vector_10c.z = script.params_20[2].get() / (float)0x1000;
+    model.shadowSize_10c.x = script.params_20[1].get() / (float)0x1000;
+    model.shadowSize_10c.z = script.params_20[2].get() / (float)0x1000;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800ea30cL)
-  public static FlowControl FUN_800ea30c(final RunningScript<?> script) {
+  public static FlowControl scriptSetBttlShadowOffset(final RunningScript<?> script) {
     final BattleScriptDataBase a3 = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
 
     final Model124 model;
@@ -2330,7 +2330,7 @@ public final class Bttl_800e {
     }
 
     //LAB_800ea374
-    model.vector_118.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    model.shadowOffset_118.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     return FlowControl.CONTINUE;
   }
 
@@ -2992,26 +2992,26 @@ public final class Bttl_800e {
 
     if(model.shadowType_cc == 3) {
       //LAB_800ec2ec
-      shadow.coord2_14.coord.transfer.setX(model.vector_118.getX() + model.modelParts_00[model.modelPartIndex_cd].coord2_04.coord.transfer.getX());
-      shadow.coord2_14.coord.transfer.setY(model.vector_118.getY() - MathHelper.safeDiv(model.coord2_14.coord.transfer.getY(), model.coord2_14.transforms.scale.y));
-      shadow.coord2_14.coord.transfer.setZ(model.vector_118.getZ() + model.modelParts_00[model.modelPartIndex_cd].coord2_04.coord.transfer.getZ());
+      shadow.coord2_14.coord.transfer.setX(model.shadowOffset_118.getX() + model.modelParts_00[model.modelPartWithShadowIndex_cd].coord2_04.coord.transfer.getX());
+      shadow.coord2_14.coord.transfer.setY(model.shadowOffset_118.getY() - MathHelper.safeDiv(model.coord2_14.coord.transfer.getY(), model.coord2_14.transforms.scale.y));
+      shadow.coord2_14.coord.transfer.setZ(model.shadowOffset_118.getZ() + model.modelParts_00[model.modelPartWithShadowIndex_cd].coord2_04.coord.transfer.getZ());
     } else {
-      shadow.coord2_14.coord.transfer.setX(model.vector_118.getX());
+      shadow.coord2_14.coord.transfer.setX(model.shadowOffset_118.getX());
 
       if(model.shadowType_cc == 1) {
-        shadow.coord2_14.coord.transfer.setY(model.vector_118.getY());
+        shadow.coord2_14.coord.transfer.setY(model.shadowOffset_118.getY());
       } else {
         //LAB_800ec2bc
-        shadow.coord2_14.coord.transfer.setY(model.vector_118.getY() - MathHelper.safeDiv(model.coord2_14.coord.transfer.getY(), model.coord2_14.transforms.scale.y));
+        shadow.coord2_14.coord.transfer.setY(model.shadowOffset_118.getY() - MathHelper.safeDiv(model.coord2_14.coord.transfer.getY(), model.coord2_14.transforms.scale.y));
       }
 
       //LAB_800ec2e0
-      shadow.coord2_14.coord.transfer.setZ(model.vector_118.getZ());
+      shadow.coord2_14.coord.transfer.setZ(model.shadowOffset_118.getZ());
     }
 
     //LAB_800ec370
     shadow.zOffset_a0 = model.zOffset_a0 + 16;
-    shadow.coord2_14.transforms.scale.set(model.vector_10c.x).div(4.0f);
+    shadow.coord2_14.transforms.scale.set(model.shadowSize_10c.x).div(4.0f);
     RotMatrix_Xyz(shadow.coord2_14.transforms.rotate, shadow.coord2_14.coord);
     shadow.coord2_14.coord.scaleL(shadow.coord2_14.transforms.scale);
     shadow.coord2_14.flg = 0;
@@ -3368,7 +3368,7 @@ public final class Bttl_800e {
   public static FlowControl FUN_800ee384(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     bobj.model_148.shadowType_cc = 2;
-    bobj.model_148.modelPartIndex_cd = -1;
+    bobj.model_148.modelPartWithShadowIndex_cd = -1;
     return FlowControl.CONTINUE;
   }
 
@@ -3376,18 +3376,18 @@ public final class Bttl_800e {
   public static FlowControl FUN_800ee3c0(final RunningScript<?> script) {
     final BattleObject27c v1 = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     v1.model_148.shadowType_cc = 3;
-    v1.model_148.modelPartIndex_cd = script.params_20[1].get();
+    v1.model_148.modelPartWithShadowIndex_cd = script.params_20[1].get();
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800ee408L)
   public static FlowControl FUN_800ee408(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    final int a0_0 = bobj.model_148.modelPartIndex_cd;
-    if(a0_0 == -2) {
+    final int index = bobj.model_148.modelPartWithShadowIndex_cd;
+    if(index == -2) {
       //LAB_800ee450
       bobj.model_148.shadowType_cc = 0;
-    } else if(a0_0 == -1) {
+    } else if(index == -1) {
       bobj.model_148.shadowType_cc = 2;
     } else {
       //LAB_800ee458
@@ -3399,24 +3399,24 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ee468L)
-  public static FlowControl FUN_800ee468(final RunningScript<?> script) {
+  public static FlowControl scriptDisableBobjShadow(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     bobj.model_148.shadowType_cc = 0;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800ee49cL)
-  public static FlowControl FUN_800ee49c(final RunningScript<?> script) {
+  public static FlowControl scriptSetBobjShadowSize(final RunningScript<?> script) {
     final BattleObject27c a1 = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    a1.model_148.vector_10c.x = script.params_20[1].get() / (float)0x1000;
-    a1.model_148.vector_10c.z = script.params_20[2].get() / (float)0x1000;
+    a1.model_148.shadowSize_10c.x = script.params_20[1].get() / (float)0x1000;
+    a1.model_148.shadowSize_10c.z = script.params_20[2].get() / (float)0x1000;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800ee4e8L)
-  public static FlowControl FUN_800ee4e8(final RunningScript<?> script) {
+  public static FlowControl scriptSetBobjShadowOffset(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bobj.model_148.vector_118.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    bobj.model_148.shadowOffset_118.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     return FlowControl.CONTINUE;
   }
 

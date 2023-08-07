@@ -214,8 +214,8 @@ public final class Scus94491BpeSegment_800e {
     model.coord2_14.coord.transfer.set(x, y, z);
     model.shadowType_cc = 0;
     model.coord2_14.transforms.scale.set(1.0f, 1.0f, 1.0f);
-    model.vector_10c.set(1.0f, 1.0f, 1.0f);
-    model.vector_118.set(0, 0, 0);
+    model.shadowSize_10c.set(1.0f, 1.0f, 1.0f);
+    model.shadowOffset_118.set(0, 0, 0);
   }
 
   @Method(0x800e6d60L)

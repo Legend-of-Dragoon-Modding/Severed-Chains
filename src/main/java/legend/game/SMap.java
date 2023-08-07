@@ -785,11 +785,11 @@ public final class SMap {
     GsInitCoordinate2(model.coord2_14, shadowModel_800bda10.coord2_14);
 
     shadowModel_800bda10.zOffset_a0 = model.zOffset_a0 + 16;
-    shadowModel_800bda10.coord2_14.transforms.scale.set(model.vector_10c).div(64.0f);
+    shadowModel_800bda10.coord2_14.transforms.scale.set(model.shadowSize_10c).div(64.0f);
 
     RotMatrix_Xyz(shadowModel_800bda10.coord2_14.transforms.rotate, shadowModel_800bda10.coord2_14.coord);
     shadowModel_800bda10.coord2_14.coord.scaleL(shadowModel_800bda10.coord2_14.transforms.scale);
-    shadowModel_800bda10.coord2_14.coord.transfer.set(model.vector_118);
+    shadowModel_800bda10.coord2_14.coord.transfer.set(model.shadowOffset_118);
 
     final ModelPart10 modelPart = shadowModel_800bda10.modelParts_00[0];
     final GsCOORDINATE2 partCoord = modelPart.coord2_04;
@@ -1703,7 +1703,7 @@ public final class SMap {
   }
 
   @Method(0x800dfca0L)
-  public static FlowControl FUN_800dfca0(final RunningScript<?> script) {
+  public static FlowControl scriptSetModelZOffset(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj.model_00.zOffset_a0 = script.params_20[1].get();
     return FlowControl.CONTINUE;
@@ -1966,7 +1966,7 @@ public final class SMap {
   }
 
   @Method(0x800e0614L)
-  public static FlowControl FUN_800e0614(final RunningScript<?> script) {
+  public static FlowControl scriptEnableSobjFlatLight(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj.flatLightingEnabled_1c4 = true;
     sobj.flatLightRed_1c5 = script.params_20[1].get() & 0xff;
@@ -1976,7 +1976,7 @@ public final class SMap {
   }
 
   @Method(0x800e0684L)
-  public static FlowControl FUN_800e0684(final RunningScript<?> script) {
+  public static FlowControl scriptDisableSobjFlatLight(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj.flatLightingEnabled_1c4 = false;
     sobj.flatLightRed_1c5 = 0x80;
@@ -2005,7 +2005,7 @@ public final class SMap {
   }
 
   @Method(0x800e0894L)
-  public static FlowControl FUN_800e0894(final RunningScript<?> script) {
+  public static FlowControl scriptSetSobjCollision2(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj.collisionSizeHorizontal_1ac = script.params_20[1].get();
     sobj.collisionSizeVertical_1b0 = script.params_20[2].get();
@@ -2014,7 +2014,7 @@ public final class SMap {
   }
 
   @Method(0x800e08f4L)
-  public static FlowControl FUN_800e08f4(final RunningScript<?> script) {
+  public static FlowControl scriptGetSobjCollidedWith2(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     script.params_20[1].set(sobj.collidedWithSobjIndex_1a8);
     return FlowControl.CONTINUE;
@@ -2055,23 +2055,23 @@ public final class SMap {
   }
 
   @Method(0x800e0a48L)
-  public static FlowControl FUN_800e0a48(final RunningScript<?> script) {
+  public static FlowControl scriptSetShadowSize(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
-    model.vector_10c.x = script.params_20[1].get() / (float)0x1000;
-    model.vector_10c.z = script.params_20[2].get() / (float)0x1000;
+    model.shadowSize_10c.x = script.params_20[1].get() / (float)0x1000;
+    model.shadowSize_10c.z = script.params_20[2].get() / (float)0x1000;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e0a94L)
-  public static FlowControl FUN_800e0a94(final RunningScript<?> script) {
+  public static FlowControl scriptSetShadowOffset(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
-    model.vector_118.setX(script.params_20[1].get());
-    model.vector_118.setY(script.params_20[2].get());
-    model.vector_118.setZ(script.params_20[3].get());
+    model.shadowOffset_118.setX(script.params_20[1].get());
+    model.shadowOffset_118.setY(script.params_20[2].get());
+    model.shadowOffset_118.setZ(script.params_20[3].get());
     return FlowControl.CONTINUE;
   }
 
@@ -2099,7 +2099,7 @@ public final class SMap {
   }
 
   @Method(0x800e0ba0L)
-  public static FlowControl FUN_800e0ba0(final RunningScript<?> script) {
+  public static FlowControl scriptSetSobjPlayerCollisionMetrics(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj.playerCollisionSizeHorizontal_1b8 = script.params_20[1].get();
     sobj.playerCollisionSizeVertical_1bc = script.params_20[2].get();
@@ -5146,7 +5146,7 @@ public final class SMap {
   }
 
   @Method(0x800e06c4L)
-  public static FlowControl FUN_800e06c4(final RunningScript<?> script) {
+  public static FlowControl scriptSetSobjCollision1(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj.collisionSizeHorizontal_1a0 = script.params_20[1].get();
     sobj.collisionSizeVertical_1a4 = script.params_20[2].get();
@@ -5154,7 +5154,7 @@ public final class SMap {
   }
 
   @Method(0x800e0710L)
-  public static FlowControl FUN_800e0710(final RunningScript<?> script) {
+  public static FlowControl scriptGetSobjCollidedWith1(final RunningScript<?> script) {
     script.params_20[1].set(((SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).collidedWithSobjIndex_19c);
     return FlowControl.CONTINUE;
   }

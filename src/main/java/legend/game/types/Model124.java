@@ -77,7 +77,7 @@ public class Model124 {
   /** 0/1/2/3 - if 0, some model attached to this model won't render (maybe shadow/dust?) (byte) */
   public int shadowType_cc;
   /** byte */
-  public int modelPartIndex_cd;
+  public int modelPartWithShadowIndex_cd;
 
   public final short[][] ptrs_d0 = new short[7][];
   /** ubyte */
@@ -88,10 +88,8 @@ public class Model124 {
 //  public final Vector3f scaleVector_fc = new Vector3f(); // Using transforms_64.scale instead
   /** Pretty sure this doesn't include VRAM X/Y */
   public int tpage_108;
-  /** Maybe initial scale? */
-  public final Vector3f vector_10c = new Vector3f();
-  /** Maybe initial translation? */
-  public final VECTOR vector_118 = new VECTOR();
+  public final Vector3f shadowSize_10c = new Vector3f();
+  public final VECTOR shadowOffset_118 = new VECTOR();
 
   public Model124(final String name) {
     this.name = name;
@@ -144,12 +142,12 @@ public class Model124 {
     System.arraycopy(other.usArr_ac, 0, this.usArr_ac, 0, 7);
     System.arraycopy(other.usArr_ba, 0, this.usArr_ba, 0, 7);
     this.shadowType_cc = other.shadowType_cc;
-    this.modelPartIndex_cd = other.modelPartIndex_cd;
+    this.modelPartWithShadowIndex_cd = other.modelPartWithShadowIndex_cd;
     System.arraycopy(other.ptrs_d0, 0, this.ptrs_d0, 0, 7);
     System.arraycopy(other.animateTextures_ec, 0, this.animateTextures_ec, 0, 7);
     this.partInvisible_f4 = other.partInvisible_f4;
     this.tpage_108 = other.tpage_108;
-    this.vector_10c.set(other.vector_10c);
-    this.vector_118.set(other.vector_118);
+    this.shadowSize_10c.set(other.shadowSize_10c);
+    this.shadowOffset_118.set(other.shadowOffset_118);
   }
 }
