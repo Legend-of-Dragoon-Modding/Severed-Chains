@@ -7,13 +7,11 @@ public class GsDOBJ2 {
   /** local dmatrix */
   public GsCOORDINATE2 coord2_04;
   public TmdObjTable1c tmd_08;
-  public int id_0c;
 
   public GsDOBJ2 set(final GsDOBJ2 other) {
     this.attribute_00 = other.attribute_00;
     this.coord2_04 = other.coord2_04;
     this.tmd_08 = other.tmd_08;
-    this.id_0c = other.id_0c;
     return this;
   }
 }

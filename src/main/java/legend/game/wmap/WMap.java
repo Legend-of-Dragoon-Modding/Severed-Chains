@@ -440,14 +440,12 @@ public class WMap {
 
   @Method(0x800c925cL) // Renders the player
   public static void renderWmapModel(final Model124 model) {
-    final int nobj = model.ObjTable_0c.nobj;
-
     zOffset_1f8003e8.set(model.zOffset_a0);
     tmdGp0Tpage_1f8003ec.set(model.tpage_108);
 
     //LAB_800c92c8
-    for(int i = 0; i < nobj; i++) {
-      final GsDOBJ2 dobj2 = model.ObjTable_0c.top[i];
+    for(int i = 0; i < model.dobj2ArrPtr_00.length; i++) {
+      final GsDOBJ2 dobj2 = model.dobj2ArrPtr_00[i];
 
       if((model.partInvisible_f4 & 1L << i) == 0) {
         final MATRIX ls = new MATRIX();
@@ -3349,7 +3347,6 @@ public class WMap {
     }
 
     //LAB_800da544
-    final float x;
     switch(struct258._220 + 1) {
       case 1:
         playSound(0, 4, 0, 0, (short)0, (short)0);
@@ -3402,9 +3399,7 @@ public class WMap {
         }
 
         //LAB_800da9fc
-        x = struct258.models_0c[2].coord2_14.transforms.scale.x;
-        struct258.models_0c[2].coord2_14.transforms.scale.y = x;
-        struct258.models_0c[2].coord2_14.transforms.scale.z = x;
+        struct258.models_0c[2].coord2_14.transforms.scale.set(struct258.models_0c[2].coord2_14.transforms.scale.x);
         struct258.vec_94.y -= 96.0f;
 
         _800c66b0.coord2_20.coord.transfer.y.sub(0x60);
@@ -3519,9 +3514,7 @@ public class WMap {
         }
 
         //LAB_800db0f0
-        x = struct258.models_0c[2].coord2_14.transforms.scale.x;
-        struct258.models_0c[2].coord2_14.transforms.scale.y = x;
-        struct258.models_0c[2].coord2_14.transforms.scale.z = x;
+        struct258.models_0c[2].coord2_14.transforms.scale.set(struct258.models_0c[2].coord2_14.transforms.scale.x);
 
         renderCoolonMap(true, 0x1L);
         break;
@@ -3598,9 +3591,7 @@ public class WMap {
         }
 
         //LAB_800db74c
-        x = struct258.models_0c[2].coord2_14.transforms.scale.x;
-        struct258.models_0c[2].coord2_14.transforms.scale.y = x;
-        struct258.models_0c[2].coord2_14.transforms.scale.z = x;
+        struct258.models_0c[2].coord2_14.transforms.scale.set(struct258.models_0c[2].coord2_14.transforms.scale.x);
 
         renderCoolonMap(false, 0);
         break;
@@ -3694,9 +3685,7 @@ public class WMap {
         }
 
         //LAB_800dbf28
-        x = struct258.models_0c[2].coord2_14.transforms.scale.x;
-        struct258.models_0c[2].coord2_14.transforms.scale.y = x;
-        struct258.models_0c[2].coord2_14.transforms.scale.z = x;
+        struct258.models_0c[2].coord2_14.transforms.scale.set(struct258.models_0c[2].coord2_14.transforms.scale.x);
 
         _800ef1a4.subu(0x1L);
 

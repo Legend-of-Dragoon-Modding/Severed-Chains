@@ -234,8 +234,8 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[123] = SMap::FUN_800de1d0;
     scriptSubFunctions_8004e29c[124] = SMap::scriptFacePlayer;
     scriptSubFunctions_8004e29c[125] = SMap::FUN_800df9a8;
-    scriptSubFunctions_8004e29c[126] = SMap::FUN_800dfb28;
-    scriptSubFunctions_8004e29c[127] = SMap::FUN_800dfb44;
+    scriptSubFunctions_8004e29c[126] = SMap::scriptGetCurrentSubmapIndex;
+    scriptSubFunctions_8004e29c[127] = SMap::scriptMeGetSobjNobj;
 
     scriptSubFunctions_8004e29c[128] = Bttl_800c::scriptSetBobjPos;
     scriptSubFunctions_8004e29c[129] = Bttl_800c::scriptGetBobjPos;
@@ -356,9 +356,9 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[270] = SMap::FUN_800e6cac;
     scriptSubFunctions_8004e29c[271] = SMap::FUN_800e6ce0;
 
-    scriptSubFunctions_8004e29c[288] = SMap::FUN_800dfb74;
-    scriptSubFunctions_8004e29c[289] = SMap::FUN_800dfba4;
-    scriptSubFunctions_8004e29c[290] = SMap::FUN_800dfbd4;
+    scriptSubFunctions_8004e29c[288] = SMap::scriptMeHideModelPart;
+    scriptSubFunctions_8004e29c[289] = SMap::scriptMeShowModelPart;
+    scriptSubFunctions_8004e29c[290] = SMap::scriptMeFaceCamera;
     scriptSubFunctions_8004e29c[291] = SMap::scriptScaleXyz;
     scriptSubFunctions_8004e29c[292] = SMap::scriptScaleUniform;
     scriptSubFunctions_8004e29c[293] = SMap::FUN_800dfca0;
@@ -626,8 +626,8 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[688] = SMap::FUN_800e02fc;
     scriptSubFunctions_8004e29c[689] = SMap::FUN_800deba0;
     scriptSubFunctions_8004e29c[690] = SMap::scriptGetSobjNobj;
-    scriptSubFunctions_8004e29c[691] = SMap::FUN_800e03e4;
-    scriptSubFunctions_8004e29c[692] = SMap::FUN_800e0448;
+    scriptSubFunctions_8004e29c[691] = SMap::scriptHideModelPart;
+    scriptSubFunctions_8004e29c[692] = SMap::scriptShowModelPart;
     scriptSubFunctions_8004e29c[693] = SMap::scriptFaceCamera;
     scriptSubFunctions_8004e29c[694] = SMap::FUN_800e0520;
     scriptSubFunctions_8004e29c[695] = SMap::FUN_800e057c;

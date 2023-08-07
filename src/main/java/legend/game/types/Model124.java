@@ -1,9 +1,7 @@
 package legend.game.types;
 
-import legend.core.gte.Transforms;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
-import legend.core.gte.GsOBJTABLE2;
 import legend.core.gte.Tmd;
 import legend.core.gte.VECTOR;
 import legend.game.combat.deff.Cmb;
@@ -20,7 +18,7 @@ public class Model124 {
   public final LmbAnim lmbAnim_08 = new LmbAnim();
   /** Union with coord2ParamArrPtr_08 */
   public final CmbAnim cmbAnim_08 = new CmbAnim();
-  public final GsOBJTABLE2 ObjTable_0c = new GsOBJTABLE2();
+//  public final GsOBJTABLE2 ObjTable_0c = new GsOBJTABLE2();
   // Supercoordinate system for all model part coordinate systems, all model parts are attached to this
   public final GsCOORDINATE2 coord2_14 = new GsCOORDINATE2();
 //  public final Transforms transforms_64 = new Transforms(); // Use coord2_14.transforms
@@ -73,10 +71,10 @@ public class Model124 {
   public final int[] usArr_ac = new int[7];
   /** ushort */
   public final int[] usArr_ba = new int[7];
-  /** short */
-  public int count_c8;
-  /** ushort */
-  public int tmdNobj_ca;
+//  /** short */
+//  public int count_c8; // Use _00.length
+//  /** ushort */
+//  public int tmdNobj_ca; // Use _00.length
   /** 0/1/2/3 - if 0, the model won't render (byte) */
   public int movementType_cc;
   /** byte */
@@ -129,7 +127,6 @@ public class Model124 {
     this.dobj2ArrPtr_00 = other.dobj2ArrPtr_00;
     this.lmbAnim_08.set(other.lmbAnim_08);
     this.cmbAnim_08.set(other.cmbAnim_08);
-    this.ObjTable_0c.set(other.ObjTable_0c);
     this.coord2_14.set(other.coord2_14);
     this.tmd_8c = other.tmd_8c;
     this.partTransforms_90 = other.partTransforms_90;
@@ -148,8 +145,6 @@ public class Model124 {
     this.ptr_a8 = other.ptr_a8;
     System.arraycopy(other.usArr_ac, 0, this.usArr_ac, 0, 7);
     System.arraycopy(other.usArr_ba, 0, this.usArr_ba, 0, 7);
-    this.count_c8 = other.count_c8;
-    this.tmdNobj_ca = other.tmdNobj_ca;
     this.movementType_cc = other.movementType_cc;
     this.modelPartIndex_cd = other.modelPartIndex_cd;
     System.arraycopy(other.ptrs_d0, 0, this.ptrs_d0, 0, 7);

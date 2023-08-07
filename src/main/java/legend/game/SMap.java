@@ -805,13 +805,13 @@ public final class SMap {
 
     final MATRIX lw = new MATRIX();
     final MATRIX ls = new MATRIX();
-    GsGetLws(model_800bda10.ObjTable_0c.top[0].coord2_04, lw, ls);
+    GsGetLws(model_800bda10.dobj2ArrPtr_00[0].coord2_04, lw, ls);
     GsSetLightMatrix(lw);
 
     GTE.setRotationMatrix(ls);
     GTE.setTranslationVector(ls.transfer);
 
-    Renderer.renderDobj2(model_800bda10.ObjTable_0c.top[0], false, 0);
+    Renderer.renderDobj2(model_800bda10.dobj2ArrPtr_00[0], false, 0);
     model_800bda10.dobj2ArrPtr_00[0].coord2_04.flg--;
   }
 
@@ -870,7 +870,7 @@ public final class SMap {
     final ModelPartTransforms0c[][] transforms = a0.partTransforms_94;
 
     //LAB_800da96c
-    for(int i = 0; i < a0.tmdNobj_ca; i++) {
+    for(int i = 0; i < a0.dobj2ArrPtr_00.length; i++) {
       final GsDOBJ2 dobj2 = a0.dobj2ArrPtr_00[i];
 
       final GsCOORDINATE2 coord2 = dobj2.coord2_04;
@@ -900,9 +900,9 @@ public final class SMap {
     //LAB_800daaa8
     final MATRIX lw = new MATRIX();
     final MATRIX ls = new MATRIX();
-    for(int i = 0; i < a0.ObjTable_0c.nobj; i++) {
+    for(int i = 0; i < a0.dobj2ArrPtr_00.length; i++) {
       if((a0.partInvisible_f4 & 1L << i) == 0) {
-        final GsDOBJ2 dobj2 = a0.ObjTable_0c.top[i];
+        final GsDOBJ2 dobj2 = a0.dobj2ArrPtr_00[i];
 
         GsGetLws(dobj2.coord2_04, lw, ls);
         GsSetLightMatrix(lw);
@@ -1648,34 +1648,34 @@ public final class SMap {
   }
 
   @Method(0x800dfb28L)
-  public static FlowControl FUN_800dfb28(final RunningScript<?> script) {
+  public static FlowControl scriptGetCurrentSubmapIndex(final RunningScript<?> script) {
     script.params_20[0].set(submapIndex_800bd808.get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800dfb44L)
-  public static FlowControl FUN_800dfb44(final RunningScript<?> script) {
+  public static FlowControl scriptMeGetSobjNobj(final RunningScript<?> script) {
     script.params_20[1] = script.params_20[0];
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
     return scriptGetSobjNobj(script);
   }
 
   @Method(0x800dfb74L)
-  public static FlowControl FUN_800dfb74(final RunningScript<?> script) {
+  public static FlowControl scriptMeHideModelPart(final RunningScript<?> script) {
     script.params_20[1] = script.params_20[0];
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
-    return FUN_800e03e4(script);
+    return scriptHideModelPart(script);
   }
 
   @Method(0x800dfba4L)
-  public static FlowControl FUN_800dfba4(final RunningScript<?> script) {
+  public static FlowControl scriptMeShowModelPart(final RunningScript<?> script) {
     script.params_20[1] = script.params_20[0];
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
-    return FUN_800e0448(script);
+    return scriptShowModelPart(script);
   }
 
   @Method(0x800dfbd4L)
-  public static FlowControl FUN_800dfbd4(final RunningScript<?> script) {
+  public static FlowControl scriptMeFaceCamera(final RunningScript<?> script) {
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
     return scriptFaceCamera(script);
   }
@@ -1902,12 +1902,12 @@ public final class SMap {
   @Method(0x800e03a8L)
   public static FlowControl scriptGetSobjNobj(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[1].set(sobj.model_00.ObjTable_0c.nobj);
+    script.params_20[1].set(sobj.model_00.dobj2ArrPtr_00.length);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e03e4L)
-  public static FlowControl FUN_800e03e4(final RunningScript<?> script) {
+  public static FlowControl scriptHideModelPart(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
@@ -1921,7 +1921,7 @@ public final class SMap {
   }
 
   @Method(0x800e0448L)
-  public static FlowControl FUN_800e0448(final RunningScript<?> script) {
+  public static FlowControl scriptShowModelPart(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
@@ -2161,10 +2161,8 @@ public final class SMap {
     }
 
     final int count = cContainer.tmdPtr_00.tmd.header.nobj;
-    model.count_c8 = count;
     model.dobj2ArrPtr_00 = new GsDOBJ2[count];
     model.tmd_8c = cContainer.tmdPtr_00.tmd;
-    model.tmdNobj_ca = count;
 
     Arrays.setAll(model.dobj2ArrPtr_00, i -> new GsDOBJ2());
 
@@ -2205,9 +2203,9 @@ public final class SMap {
     }
 
     //LAB_800e0f10
-    initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00, model.count_c8);
+    initObjTable2(model.dobj2ArrPtr_00);
     GsInitCoordinate2(null, model.coord2_14);
-    prepareObjTable2(model.ObjTable_0c, model.tmd_8c, model.coord2_14, model.count_c8, model.tmdNobj_ca + 1);
+    prepareObjTable2(model.dobj2ArrPtr_00, model.tmd_8c, model.coord2_14);
 
     model.zOffset_a0 = 0;
     model.ub_a2 = 0;
@@ -7149,14 +7147,14 @@ public final class SMap {
     final MATRIX lw = new MATRIX();
 
     //LAB_800eee94
-    for(int i = 0; i < model.ObjTable_0c.nobj; i++) {
-      GsGetLw(model.ObjTable_0c.top[0].coord2_04, lw);
+    for(final GsDOBJ2 dobj2 : model.dobj2ArrPtr_00) {
+      GsGetLw(dobj2.coord2_04, lw);
       GsSetLightMatrix(lw);
 
       PushMatrix();
       GTE.setRotationMatrix(matrix);
       GTE.setTranslationVector(matrix.transfer);
-      renderDobj2(model.ObjTable_0c.top[i]);
+      renderDobj2(dobj2);
       PopMatrix();
     }
 

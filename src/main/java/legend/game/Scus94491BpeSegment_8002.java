@@ -10,7 +10,6 @@ import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.GsDOBJ2;
-import legend.core.gte.GsOBJTABLE2;
 import legend.core.gte.MATRIX;
 import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable1c;
@@ -69,7 +68,6 @@ import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Matrix3f;
-import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -351,9 +349,7 @@ public final class Scus94491BpeSegment_8002 {
       model.animateTextures_ec[i] = false;
     }
 
-    final Tmd tmd = cContainer.tmdPtr_00.tmd;
-    model.tmd_8c = tmd;
-    model.tmdNobj_ca = tmd.header.nobj;
+    model.tmd_8c = cContainer.tmdPtr_00.tmd;
 
     if(engineState_8004dd20 == EngineState.SUBMAP_05) {
       FUN_800de004(model, cContainer);
@@ -381,9 +377,9 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80020838
-    initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00, model.count_c8);
+    initObjTable2(model.dobj2ArrPtr_00);
     GsInitCoordinate2(null, model.coord2_14);
-    prepareObjTable2(model.ObjTable_0c, model.tmd_8c, model.coord2_14, model.count_c8, model.tmdNobj_ca + 1);
+    prepareObjTable2(model.dobj2ArrPtr_00, model.tmd_8c, model.coord2_14);
 
     model.zOffset_a0 = 0;
     model.ub_a2 = 0;
@@ -406,9 +402,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80020a00L)
   public static void initModel(final Model124 model, final CContainer CContainer, final TmdAnimationFile tmdAnimFile) {
-    model.count_c8 = CContainer.tmdPtr_00.tmd.header.nobj;
-
-    model.dobj2ArrPtr_00 = new GsDOBJ2[model.count_c8];
+    model.dobj2ArrPtr_00 = new GsDOBJ2[CContainer.tmdPtr_00.tmd.header.nobj];
 
     Arrays.setAll(model.dobj2ArrPtr_00, i -> new GsDOBJ2());
 
@@ -460,7 +454,7 @@ public final class Scus94491BpeSegment_8002 {
     if((model.remainingFrames_9e & 0x1) == 0 && model.ub_a2 == 0) { // Interpolation frame (only applies to some animations in combat?)
       if(model.ub_a3 == 0) { // Only set to 1 sometimes on submaps?
         //LAB_80020ce0
-        for(int i = 0; i < model.tmdNobj_ca; i++) {
+        for(int i = 0; i < model.dobj2ArrPtr_00.length; i++) {
           final GsCOORDINATE2 coord2 = model.dobj2ArrPtr_00[i].coord2_04;
           final Transforms params = coord2.transforms;
           RotMatrix_Zyx(params.rotate, coord2.coord);
@@ -476,7 +470,7 @@ public final class Scus94491BpeSegment_8002 {
       } else {
         //LAB_80020d74
         //LAB_80020d8c
-        for(int i = 0; i < model.tmdNobj_ca; i++) {
+        for(int i = 0; i < model.dobj2ArrPtr_00.length; i++) {
           final GsCOORDINATE2 coord2 = model.dobj2ArrPtr_00[i].coord2_04;
           final Transforms params = coord2.transforms;
 
@@ -494,7 +488,7 @@ public final class Scus94491BpeSegment_8002 {
     } else {
       //LAB_80020e0c
       //LAB_80020e24
-      for(int i = 0; i < model.tmdNobj_ca; i++) {
+      for(int i = 0; i < model.dobj2ArrPtr_00.length; i++) {
         final GsCOORDINATE2 coord2 = model.dobj2ArrPtr_00[i].coord2_04;
         final Transforms params = coord2.transforms;
 
@@ -646,14 +640,14 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800212d8L)
   public static void applyModelPartTransforms(final Model124 model) {
-    if(model.tmdNobj_ca == 0) {
+    if(model.dobj2ArrPtr_00.length == 0) {
       return;
     }
 
     final ModelPartTransforms0c[][] transforms = model.partTransforms_94;
 
     //LAB_80021320
-    for(int i = 0; i < model.tmdNobj_ca; i++) {
+    for(int i = 0; i < model.dobj2ArrPtr_00.length; i++) {
       final GsDOBJ2 obj2 = model.dobj2ArrPtr_00[i];
 
       final GsCOORDINATE2 coord2 = obj2.coord2_04;
@@ -661,9 +655,9 @@ public final class Scus94491BpeSegment_8002 {
       final MATRIX matrix = coord2.coord;
 
       params.rotate.set(transforms[0][i].rotate_00);
-      RotMatrix_Zyx(params.rotate, matrix);
-
       params.trans.set(transforms[0][i].translate_06);
+
+      RotMatrix_Zyx(params.rotate, matrix);
       matrix.transfer.set(params.trans);
     }
 
@@ -674,7 +668,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x800213c4L)
   public static void applyInterpolationFrame(final Model124 model) {
     //LAB_80021404
-    for(int i = 0; i < model.tmdNobj_ca; i++) {
+    for(int i = 0; i < model.dobj2ArrPtr_00.length; i++) {
       final ModelPartTransforms0c transforms = model.partTransforms_94[0][i];
       final GsCOORDINATE2 coord2 = model.dobj2ArrPtr_00[i].coord2_04;
       final MATRIX coord = coord2.coord;
@@ -735,16 +729,16 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80021628L)
   public static void adjustModelUvs(final Model124 model) {
     if(engineState_8004dd20 == EngineState.SUBMAP_05) {
-      for(int i = 0; i < model.ObjTable_0c.nobj; i++) {
-        adjustSmapUvs(model.ObjTable_0c.top[i], model.colourMap_9d);
+      for(final GsDOBJ2 dobj2 : model.dobj2ArrPtr_00) {
+        adjustSmapUvs(dobj2, model.colourMap_9d);
       }
     } else if(engineState_8004dd20 == EngineState.WORLD_MAP_08) {
-      for(int i = 0; i < model.ObjTable_0c.nobj; i++) {
-        adjustWmapUvs(model.ObjTable_0c.top[i], model.colourMap_9d);
+      for(final GsDOBJ2 dobj2 : model.dobj2ArrPtr_00) {
+        adjustWmapUvs(dobj2, model.colourMap_9d);
       }
     } else {
-      for(int i = 0; i < model.ObjTable_0c.nobj; i++) {
-        adjustCombatUvs(model.ObjTable_0c.top[i], model.colourMap_9d);
+      for(final GsDOBJ2 dobj2 : model.dobj2ArrPtr_00) {
+        adjustCombatUvs(dobj2, model.colourMap_9d);
       }
     }
   }
@@ -783,167 +777,53 @@ public final class Scus94491BpeSegment_8002 {
     }
   }
 
-  @Method(0x80021918L)
-  public static void prepareObjTable2Step(final GsOBJTABLE2 table, final Tmd tmd, final GsCOORDINATE2 coord2, final int maxSize, final int a4) {
-    final int s2 = a4 >> 8;
-    final int dobj2Id = a4 & 0xff;
-
-    GsDOBJ2 dobj2 = getDObj2ById(table, dobj2Id);
-
-    final MATRIX coord;
-    final Vector3f scale;
-    final Vector3f rotation;
-    final Vector3f translation;
-
-    if(dobj2 == null) {
-      dobj2 = new GsDOBJ2(); //sp0x10;
-      coord = new MATRIX(); //sp0x20;
-      scale = new Vector3f();
-      rotation = new Vector3f(); //sp0x40;
-      translation = new Vector3f();
-    } else {
-      //LAB_80021984
-      dobj2.coord2_04.flg = 0;
-
-      scale = dobj2.coord2_04.transforms.scale;
-      rotation = dobj2.coord2_04.transforms.rotate;
-      translation = dobj2.coord2_04.transforms.trans;
-      coord = dobj2.coord2_04.coord;
-
-      if(dobj2.coord2_04.super_ == null) {
-        dobj2.coord2_04.super_ = coord2;
-      }
-    }
-
-    //LAB_800219ac
-    //LAB_80021a98
-    if(s2 == 2 && tmd != null) {
-      dobj2.tmd_08 = getTmdObjTableOffset(tmd, dobj2Id)[0];
-    }
-
-    //LAB_800219d8
-    //LAB_80021ac0
-    if(s2 == 8 && table != null) {
-      addNewDobj2(table, dobj2Id, maxSize);
-    }
-
-    if(s2 == 1) {
-      //LAB_800219ec
-      dobj2.coord2_04.coord.identity();
-
-      // Dunno why but models are initialized with a 1-degree rotation on all axes
-      final float oneDegree = (float)Math.toRadians(1.0);
-      rotation.set(oneDegree, oneDegree, oneDegree);
-      RotMatrix_Xyz(rotation, coord);
-
-      scale.set(1.0f, 1.0f, 1.0f);
-      coord.scaleL(scale);
-
-      translation.set(1.0f, 1.0f, 1.0f);
-      coord.transfer.set(translation);
-    }
-
-    //LAB_80021ad8
-  }
-
   @Method(0x80021b08L)
-  public static void initObjTable2(final GsOBJTABLE2 table, final GsDOBJ2[] dobj2s, final int size) {
-    table.top = dobj2s;
-    table.nobj = 0;
-
-    //LAB_80021b2c
-    for(int i = 0; i < size; i++) {
-      dobj2s[i].attribute_00 = 0x8000_0000;
-      dobj2s[i].coord2_04 = new GsCOORDINATE2();
-      dobj2s[i].tmd_08 = null;
-      dobj2s[i].id_0c = -1;
+  public static void initObjTable2(final GsDOBJ2[] dobj2s) {
+    for(final GsDOBJ2 dobj2 : dobj2s) {
+      dobj2.attribute_00 = 0x8000_0000;
+      dobj2.coord2_04 = new GsCOORDINATE2();
+      dobj2.tmd_08 = null;
     }
-
-    //LAB_80021b5c
-  }
-
-  @Method(0x80021b64L)
-  public static GsDOBJ2 getDObj2ById(final GsOBJTABLE2 table, final int id) {
-    //LAB_80021b80
-    for(int i = 0; i < table.nobj; i++) {
-      final GsDOBJ2 obj2 = table.top[i];
-
-      if(obj2.id_0c == id) {
-        return obj2;
-      }
-
-      //LAB_80021b98
-    }
-
-    //LAB_80021ba4
-    return null;
   }
 
   @Method(0x80021bacL)
-  public static void addNewDobj2(final GsOBJTABLE2 table, final int id, final int maxSize) {
-    final int size = table.nobj;
-
-    //LAB_80021bd4
-    GsDOBJ2 dobj2 = table.top[0];
-    int i;
-    for(i = 0; i < size; i++) {
-      if(dobj2.id_0c == -1) {
-        break;
-      }
-
-      dobj2 = table.top[i];
-    }
-
-    //LAB_80021c08
-    if(i >= maxSize) {
-      return;
-    }
-
-    //LAB_80021bf4
-    if(i >= size) {
-      dobj2 = table.top[table.nobj];
-      table.nobj++;
-    }
-
-    //LAB_80021c2c
-    dobj2.id_0c = id;
+  public static void addNewDobj2(final GsDOBJ2 dobj2) {
     dobj2.attribute_00 = 0;
     GsInitCoordinate2(null, dobj2.coord2_04);
     dobj2.tmd_08 = null;
-
-    //LAB_80021c48
-  }
-
-  @Method(0x80021c58L)
-  public static TmdObjTable1c[] getTmdObjTableOffset(final Tmd tmd, final int objId) {
-    //LAB_80021c74
-    for(int i = 0; i < tmd.header.nobj; i++) {
-      if(i + 1 == objId) {
-        //LAB_80021c8c
-        return Arrays.copyOfRange(tmd.objTable, i, tmd.objTable.length);
-      }
-    }
-
-    //LAB_80021c8c
-    //LAB_80021c98
-    return null;
   }
 
   @Method(0x80021ca0L)
-  public static void prepareObjTable2(final GsOBJTABLE2 table, final Tmd tmd, final GsCOORDINATE2 coord2, final int maxSize, final int nobj) {
+  public static void prepareObjTable2(final GsDOBJ2[] table, final Tmd tmd, final GsCOORDINATE2 coord2) {
     //LAB_80021d08
-    for(int i = 1; i < nobj; i++) {
-      // Add new dobj2
-      prepareObjTable2Step(table, tmd, coord2, maxSize, 0x800 | i);
+    for(final GsDOBJ2 dobj2 : table) {
+      addNewDobj2(dobj2);
     }
 
     //LAB_80021d3c
     //LAB_80021d64
-    for(int i = 1; i < nobj; i++) {
-      // Merge TMD packets
-      prepareObjTable2Step(table, tmd, coord2, maxSize, 0x200 | i);
-      // Set initial transforms
-      prepareObjTable2Step(table, tmd, coord2, maxSize, 0x100 | i);
+    for(int i = 0; i < table.length; i++) {
+      final GsDOBJ2 dobj2 = table[i];
+
+      dobj2.coord2_04.flg = 0;
+
+      if(dobj2.coord2_04.super_ == null) {
+        dobj2.coord2_04.super_ = coord2;
+      }
+
+      dobj2.tmd_08 = tmd.objTable[i];
+
+      dobj2.coord2_04.coord.identity();
+
+      // Dunno why but models are initialized with a 1-degree rotation on all axes
+      final float oneDegree = (float)Math.toRadians(1.0);
+      dobj2.coord2_04.transforms.rotate.set(oneDegree, oneDegree, oneDegree);
+      dobj2.coord2_04.transforms.scale.set(1.0f, 1.0f, 1.0f);
+      dobj2.coord2_04.transforms.trans.set(1.0f, 1.0f, 1.0f);
+
+      RotMatrix_Xyz(dobj2.coord2_04.transforms.rotate, dobj2.coord2_04.coord);
+      dobj2.coord2_04.coord.scaleL(dobj2.coord2_04.transforms.scale);
+      dobj2.coord2_04.coord.transfer.set(dobj2.coord2_04.transforms.trans);
     }
 
     //LAB_80021db4

@@ -2155,10 +2155,6 @@ public final class Bttl_800e {
 
   @Method(0x800e9ae4L)
   public static void FUN_800e9ae4(final Model124 model, final BattleStage a1) {
-    model.count_c8 = a1.objTable2_550.nobj;
-    model.tmdNobj_ca = a1.objTable2_550.nobj;
-    model.ObjTable_0c.top = a1.objTable2_550.top;
-    model.ObjTable_0c.nobj = a1.objTable2_550.nobj;
     model.coord2_14.set(a1.coord2_558);
     model.coord2_14.transforms.set(a1.param_5a8);
 
@@ -2190,19 +2186,14 @@ public final class Bttl_800e {
     model.movementType_cc = 0;
     model.modelPartIndex_cd = 0;
 
-    final int count = model.count_c8;
-    model.dobj2ArrPtr_00 = new GsDOBJ2[count];
+    model.dobj2ArrPtr_00 = new GsDOBJ2[a1.dobj2s_00.length];
     Arrays.setAll(model.dobj2ArrPtr_00, i -> new GsDOBJ2().set(a1.dobj2s_00[i]));
 
     //LAB_800e9d34
-    for(int i = 0; i < count; i++) {
-      final GsDOBJ2 dobj2 = model.dobj2ArrPtr_00[i];
+    for(final GsDOBJ2 dobj2 : model.dobj2ArrPtr_00) {
       dobj2.coord2_04 = new GsCOORDINATE2();
       dobj2.coord2_04.super_ = model.coord2_14;
     }
-
-    //LAB_800e9d90
-    model.ObjTable_0c.top = model.dobj2ArrPtr_00;
   }
 
   @Method(0x800e9db4L)
@@ -2210,19 +2201,14 @@ public final class Bttl_800e {
     //LAB_800e9dd8
     model1.set(model2);
 
-    final int count = model1.count_c8;
-    model1.dobj2ArrPtr_00 = new GsDOBJ2[count];
+    model1.dobj2ArrPtr_00 = new GsDOBJ2[model1.dobj2ArrPtr_00.length];
     Arrays.setAll(model1.dobj2ArrPtr_00, i -> new GsDOBJ2().set(model2.dobj2ArrPtr_00[i]));
 
     //LAB_800e9ee8
-    for(int i = 0; i < count; i++) {
-      final GsDOBJ2 dobj2 = model1.dobj2ArrPtr_00[i];
+    for(final GsDOBJ2 dobj2 : model1.dobj2ArrPtr_00) {
       dobj2.coord2_04 = new GsCOORDINATE2();
       dobj2.coord2_04.super_ = model1.coord2_14;
     }
-
-    //LAB_800e9f44
-    model1.ObjTable_0c.top = model1.dobj2ArrPtr_00;
   }
 
   @Method(0x800e9f68L)
@@ -2879,10 +2865,12 @@ public final class Bttl_800e {
     }
 
     //LAB_800eba8c
-    initObjTable2(stage.objTable2_550, stage.dobj2s_00, 10);
+    stage.dobj2s_00 = new GsDOBJ2[stage.tmd_5d0.header.nobj];
+    Arrays.setAll(stage.dobj2s_00, i -> new GsDOBJ2());
+    initObjTable2(stage.dobj2s_00);
     stage.coord2_558.transforms = stage.param_5a8;
     GsInitCoordinate2(null, stage.coord2_558);
-    prepareObjTable2(stage.objTable2_550, stage.tmd_5d0, stage.coord2_558, 10, extTmd.tmdPtr_00.tmd.header.nobj + 1);
+    prepareObjTable2(stage.dobj2s_00, stage.tmd_5d0, stage.coord2_558);
     applyInitialStageTransforms(stage, tmdAnim);
 
     stage.coord2_558.coord.transfer.set(x, y, z);
@@ -3037,11 +3025,11 @@ public final class Bttl_800e {
 
     final MATRIX sp0x30 = new MATRIX();
     final MATRIX sp0x10 = new MATRIX();
-    GsGetLws(s2.ObjTable_0c.top[0].coord2_04, sp0x30, sp0x10);
+    GsGetLws(s2.dobj2ArrPtr_00[0].coord2_04, sp0x30, sp0x10);
     GsSetLightMatrix(sp0x30);
     GTE.setRotationMatrix(sp0x10);
     GTE.setTranslationVector(sp0x10.transfer);
-    Renderer.renderDobj2(s2.ObjTable_0c.top[0], true, 0);
+    Renderer.renderDobj2(s2.dobj2ArrPtr_00[0], true, 0);
     s2.dobj2ArrPtr_00[0].coord2_04.flg--;
   }
 
@@ -3071,8 +3059,7 @@ public final class Bttl_800e {
 
     //LAB_800ec5a0
     long s4 = 0x1L;
-    for(int i = 0; i < stage.objTable2_550.nobj; i++) {
-      final GsDOBJ2 dobj2 = stage.objTable2_550.top[i];
+    for(final GsDOBJ2 dobj2 : stage.dobj2s_00) {
       if((s4 & stage._5e4) == 0) {
         final MATRIX ls = new MATRIX();
         final MATRIX lw = new MATRIX();
@@ -3189,9 +3176,9 @@ public final class Bttl_800e {
     zOffset_1f8003e8.set(model.zOffset_a0);
 
     //LAB_800ec9d0
-    for(int i = 0; i < model.ObjTable_0c.nobj; i++) {
+    for(int i = 0; i < model.dobj2ArrPtr_00.length; i++) {
       if((model.partInvisible_f4 & 1L << i) == 0) {
-        final GsDOBJ2 s2 = model.ObjTable_0c.top[i];
+        final GsDOBJ2 s2 = model.dobj2ArrPtr_00[i];
         final MATRIX sp0x30 = new MATRIX();
         final MATRIX sp0x10 = new MATRIX();
         GsGetLws(s2.coord2_04, sp0x30, sp0x10);
@@ -3442,7 +3429,7 @@ public final class Bttl_800e {
 
   @Method(0x800ee574L)
   public static FlowControl scriptGetStageNobj(final RunningScript<?> script) {
-    script.params_20[0].set(stage_800bda0c.objTable2_550.nobj);
+    script.params_20[0].set(stage_800bda0c.dobj2s_00.length);
     return FlowControl.CONTINUE;
   }
 

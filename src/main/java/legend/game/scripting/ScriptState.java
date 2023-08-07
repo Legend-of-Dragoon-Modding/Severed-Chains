@@ -52,6 +52,7 @@ public class ScriptState<T> {
   public final int[] callStack_1c = new int[10];
   /**
    * <ul>
+   *   <li>0 - my script index</li>
    *   <li>5 - parent script index</li>
    *   <li>6 - child script index</li>
    *   <li>

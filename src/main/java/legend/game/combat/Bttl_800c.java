@@ -7,6 +7,7 @@ import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
 import legend.core.gte.DVECTOR;
+import legend.core.gte.GsDOBJ2;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
@@ -1845,8 +1846,10 @@ public final class Bttl_800c {
     if((s0.flags_19e & 0x4) != 0) {
       final BattlePreloadedEntities_18cb0.Rendering1298 a0_0 = battlePreloadedEntities_1f8003f4._9ce8[s0.charSlot_19c];
 
+      a0_0.dobj2s_00 = new GsDOBJ2[tmd.tmdPtr_00.tmd.header.nobj];
+      Arrays.setAll(a0_0.dobj2s_00, i -> new GsDOBJ2());
+
       model.dobj2ArrPtr_00 = a0_0.dobj2s_00;
-      model.count_c8 = 35;
 
       final long a3;
       if((s0.charIndex_1a2 & 0x1) != 0) {
@@ -3601,7 +3604,7 @@ public final class Bttl_800c {
   @Method(0x800cd9fcL)
   public static FlowControl scriptGetBobjNobj(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[1].set(bobj.model_148.ObjTable_0c.nobj);
+    script.params_20[1].set(bobj.model_148.dobj2ArrPtr_00.length);
     return FlowControl.CONTINUE;
   }
 

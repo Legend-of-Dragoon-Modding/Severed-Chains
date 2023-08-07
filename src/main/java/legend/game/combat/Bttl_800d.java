@@ -4471,7 +4471,7 @@ public final class Bttl_800d {
     }
 
     //LAB_800dd680
-    final int count = Math.min(model.count_c8, model.partCount_98);
+    final int count = Math.min(model.dobj2ArrPtr_00.length, model.partCount_98);
 
     //LAB_800dd69c
     final LmbType0 lmb = (LmbType0)model.lmbAnim_08.lmb_00;
@@ -4547,7 +4547,6 @@ public final class Bttl_800d {
     final long v0;
     final long v1;
     long s6;
-    final int nobj = model.ObjTable_0c.nobj;
     zOffset_1f8003e8.set(model.zOffset_a0);
     tmdGp0Tpage_1f8003ec.set(model.tpage_108);
     s6 = deffManager_800c693c.flags_20 & 0x4;
@@ -4556,8 +4555,8 @@ public final class Bttl_800d {
     s6 = v1 | v0;
 
     //LAB_800dd928
-    for(int i = 0; i < nobj; i++) {
-      final GsDOBJ2 s2 = model.ObjTable_0c.top[i];
+    for(int i = 0; i < model.dobj2ArrPtr_00.length; i++) {
+      final GsDOBJ2 s2 = model.dobj2ArrPtr_00[i];
 
       //LAB_800dd940
       if((model.partInvisible_f4 & 1L << i) == 0) {
@@ -4626,16 +4625,13 @@ public final class Bttl_800d {
 
     model.tmd_8c = tmd;
     final int count = tmd.header.nobj;
-    model.tmdNobj_ca = count;
-    model.count_c8 = count;
     model.dobj2ArrPtr_00 = new GsDOBJ2[count];
 
     Arrays.setAll(model.dobj2ArrPtr_00, i -> new GsDOBJ2());
 
     model.tpage_108 = (int)((tmdWithId.id & 0xffff_0000L) >>> 11);
-    initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00, model.count_c8);
+    initObjTable2(model.dobj2ArrPtr_00);
     GsInitCoordinate2(null, model.coord2_14);
-    model.ObjTable_0c.nobj = count;
 
     //LAB_800ddc0c
     for(int i = 0; i < count; i++) {
@@ -4691,7 +4687,7 @@ public final class Bttl_800d {
 
     // Note: these two variables _should_ be the same
     final int modelPartCount = cmb.modelPartCount_0c;
-    final int count = Math.min(model.count_c8, model.partCount_98);
+    final int count = Math.min(model.dobj2ArrPtr_00.length, model.partCount_98);
 
     //LAB_800dddc4
     int frameIndex;
