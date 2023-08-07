@@ -9,13 +9,13 @@ public class WMapRender40 {
   public final WMapRender24[][] renderPacket_0c = new WMapRender24[2][];
 
   public RECT[] rects_1c;
-  public final long[] _20 = new long[2];
+  // public final long[] _20 = new long[2]; // Unused
 
   public int _28;
   public int _2c;
   public int count_30;
-  public short _34;
-  public short _36;
+  public short currentBrightness_34;
+  public short previousBrightness_36;
   public int x_38;
   public int y_3a;
   public boolean transparency_3c;

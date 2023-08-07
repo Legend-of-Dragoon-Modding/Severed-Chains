@@ -85,6 +85,7 @@ import static legend.game.Scus94491BpeSegment_8002.initTextbox;
 import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.rand;
+import static legend.game.Scus94491BpeSegment_8002.renderDobj2;
 import static legend.game.Scus94491BpeSegment_8002.renderModel;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.strcmp;
@@ -227,12 +228,7 @@ public class WMap {
     _800ef000[11] = WMap::FUN_800ccbd8;
     _800ef000[12] = WMap::FUN_800ccef4;
   }
-
-  private static final UnsignedShortRef vramX_800ef0d4 = MEMORY.ref(2, 0x800ef0d4L, UnsignedShortRef::new);
-  private static final UnsignedShortRef vramY_800ef0d6 = MEMORY.ref(2, 0x800ef0d6L, UnsignedShortRef::new);
-  private static final UnsignedShortRef clutX_800ef0d8 = MEMORY.ref(2, 0x800ef0d8L, UnsignedShortRef::new);
-  private static final UnsignedShortRef clutY_800ef0da = MEMORY.ref(2, 0x800ef0daL, UnsignedShortRef::new);
-
+  /** Only seems to use element at index 1, but not positive */
   private static final ArrayRef<WmapLocationThumbnailMetrics08> locationThumbnailMetrics_800ef0cc = MEMORY.ref(2, 0x800ef0ccL, ArrayRef.of(WmapLocationThumbnailMetrics08.class, 7, 8, WmapLocationThumbnailMetrics08::new));
   private static final ArrayRef<WmapRectMetrics06> zoomUiMetrics_800ef104 = MEMORY.ref(1, 0x800ef104L, ArrayRef.of(WmapRectMetrics06.class, 7, 6, WmapRectMetrics06::new));
 
@@ -257,16 +253,16 @@ public class WMap {
    * <ol start="0">
    *   <li>{@link WMap#renderDartShadow}</li>
    *   <li>{@link WMap#renderQueenFuryWake}</li>
-   *   <li>{@link WMap#FUN_800e32fc}</li>
-   *   <li>{@link WMap#FUN_800e32fc}</li>
+   *   <li>{@link WMap#renderNoOp}</li>
+   *   <li>{@link WMap#renderNoOp}</li>
    * </ul>
    */
   private static final Runnable[] shadowRenderers_800ef684 = new Runnable[4];
   static {
     shadowRenderers_800ef684[0] = WMap::renderDartShadow;
     shadowRenderers_800ef684[1] = WMap::renderQueenFuryWake;
-    shadowRenderers_800ef684[2] = WMap::FUN_800e32fc;
-    shadowRenderers_800ef684[3] = WMap::FUN_800e32fc;
+    shadowRenderers_800ef684[2] = WMap::renderNoOp; // Coolon
+    shadowRenderers_800ef684[3] = WMap::renderNoOp; // Teleporter
   }
 
   /**
@@ -297,7 +293,6 @@ public class WMap {
     _800f01fc[0] = WMap::FUN_800e406c;
     _800f01fc[1] = WMap::FUN_800e469c;
   }
-
   private static final ArrayRef<UnsignedByteRef> _800f0204 = MEMORY.ref(1, 0x800f0204L, ArrayRef.of(UnsignedByteRef.class, 0xc, 1, UnsignedByteRef::new));
   private static final ArrayRef<UnsignedByteRef> _800f0210 = MEMORY.ref(1, 0x800f0210L, ArrayRef.of(UnsignedByteRef.class, 0xc, 1, UnsignedByteRef::new));
   /** Used in calculation determining which path you take at a path intersection point */
@@ -314,7 +309,7 @@ public class WMap {
 
   private static final ArrayRef<WMapStruct2c> _800f5a6c = MEMORY.ref(2, 0x800f5a6cL, ArrayRef.of(WMapStruct2c.class, 0x40, 0x2c, WMapStruct2c::new));
   private static final IntRef currentWmapEffect_800f6598 = MEMORY.ref(4, 0x800f6598L, IntRef::new);
-  private static final IntRef oldWmapEffect_800f659c = MEMORY.ref(4, 0x800f659cL, IntRef::new);
+  private static final IntRef previousWmapEffect_800f659c = MEMORY.ref(4, 0x800f659cL, IntRef::new);
   private static final IntRef unused_800f65a0 = MEMORY.ref(4, 0x800f65a0L, IntRef::new);
   /**
    * Allocators for subsequent renderers
@@ -840,7 +835,7 @@ public class WMap {
     sp34._28 = a7;
     sp34._2c = a8;
     sp34.count_30 = a7 * a8;
-    sp34._34 = (short)a0;
+    sp34.currentBrightness_34 = (short)a0;
     sp34.x_38 = 0;
     sp34.y_3a = 0;
     sp34.transparency_3c = transparency;
@@ -945,7 +940,7 @@ public class WMap {
   public static void FUN_800ce0bc(final WMapRender40 a0, final int type, final COLOUR colour0, final COLOUR colour1, final COLOUR colour2, final COLOUR colour3, final COLOUR a6) {
     a0.type_3f = type;
     FUN_800cf20c(a0._00, type, a0._28, a0._2c, colour0, colour1, colour2, colour3, a6);
-    a0._36 = -1;
+    a0.previousBrightness_36 = -1;
   }
 
   @Method(0x800ce4dcL)
@@ -996,15 +991,15 @@ public class WMap {
 
   @Method(0x800cea1cL)
   public static void setRenderColours(final WMapRender40 a0) {
-    if(a0._34 < 0) {
-      a0._34 = 0;
+    if(a0.currentBrightness_34 < 0) {
+      a0.currentBrightness_34 = 0;
       //LAB_800cea54
-    } else if(a0._34 > 0x100) {
-      a0._34 = 0x100;
+    } else if(a0.currentBrightness_34 > 0x100) {
+      a0.currentBrightness_34 = 0x100;
     }
 
     //LAB_800cea7c
-    if(a0._34 == a0._36) {
+    if(a0.currentBrightness_34 == a0.previousBrightness_36) {
       return;
     }
 
@@ -1017,18 +1012,18 @@ public class WMap {
       final WMapRender24 sp8 = a0.renderPacket_0c[GPU.getDrawBufferIndex() ^ 1][i];
       final WMapRender10 sp14 = a0._00[n];
 
-      final int r0 = sp14._00.getR() * a0._34 / 0x100;
-      final int g0 = sp14._00.getG() * a0._34 / 0x100;
-      final int b0 = sp14._00.getB() * a0._34 / 0x100;
-      final int r1 = sp14._04.getR() * a0._34 / 0x100;
-      final int g1 = sp14._04.getG() * a0._34 / 0x100;
-      final int b1 = sp14._04.getB() * a0._34 / 0x100;
-      final int r2 = sp14._08.getR() * a0._34 / 0x100;
-      final int g2 = sp14._08.getG() * a0._34 / 0x100;
-      final int b2 = sp14._08.getB() * a0._34 / 0x100;
-      final int r3 = sp14._0c.getR() * a0._34 / 0x100;
-      final int g3 = sp14._0c.getG() * a0._34 / 0x100;
-      final int b3 = sp14._0c.getB() * a0._34 / 0x100;
+      final int r0 = sp14._00.getR() * a0.currentBrightness_34 / 0x100;
+      final int g0 = sp14._00.getG() * a0.currentBrightness_34 / 0x100;
+      final int b0 = sp14._00.getB() * a0.currentBrightness_34 / 0x100;
+      final int r1 = sp14._04.getR() * a0.currentBrightness_34 / 0x100;
+      final int g1 = sp14._04.getG() * a0.currentBrightness_34 / 0x100;
+      final int b1 = sp14._04.getB() * a0.currentBrightness_34 / 0x100;
+      final int r2 = sp14._08.getR() * a0.currentBrightness_34 / 0x100;
+      final int g2 = sp14._08.getG() * a0.currentBrightness_34 / 0x100;
+      final int b2 = sp14._08.getB() * a0.currentBrightness_34 / 0x100;
+      final int r3 = sp14._0c.getR() * a0.currentBrightness_34 / 0x100;
+      final int g3 = sp14._0c.getG() * a0.currentBrightness_34 / 0x100;
+      final int b3 = sp14._0c.getB() * a0.currentBrightness_34 / 0x100;
 
       sp4.colour_04.set(r0, g0, b0);
       sp4.colour_0c.set(r1, g1, b1);
@@ -1047,7 +1042,7 @@ public class WMap {
 
     //LAB_800cf1dc
     //LAB_800cf1e4
-    a0._36 = a0._34;
+    a0.previousBrightness_36 = a0.currentBrightness_34;
 
     //LAB_800cf1fc
   }
@@ -3079,7 +3074,7 @@ public class WMap {
       } else {
         //LAB_800d93b4
         //LAB_800d93c8
-        //renderDobj2(dobj2);
+        renderDobj2(dobj2);
       }
 
       //LAB_800d93d4
@@ -4546,7 +4541,7 @@ public class WMap {
   }
 
   @Method(0x800e32fcL)
-  public static void FUN_800e32fc() {
+  public static void renderNoOp() {
     // no-op
   }
 
@@ -5091,7 +5086,7 @@ public class WMap {
         }
 
         //LAB_800e54c4
-        _800c6898._34 = 0;
+        _800c6898.currentBrightness_34 = 0;
         locationThumbnailBrightness_800c86d0.set((short)0x100);
         _800c86d2.set(0);
         break;
@@ -5131,7 +5126,7 @@ public class WMap {
         break;
 
       case 3: // Trying to enter an area
-        _800c6898._34 += 0x40;
+        _800c6898.currentBrightness_34 += 0x40;
 
         FUN_800ce4dc(_800c6898);
 
@@ -5197,8 +5192,8 @@ public class WMap {
         if((filesLoadedFlags_800c66b8.get() & 0x800) != 0) {
           final GpuCommandPoly cmd = new GpuCommandPoly(4)
             .bpp(Bpp.BITS_8)
-            .clut(clutX_800ef0d8.get(), clutY_800ef0da.get())
-            .vramPos(vramX_800ef0d4.get(), vramY_800ef0d6.get());
+            .clut(locationThumbnailMetrics_800ef0cc.get(1).clutX_04.get(), locationThumbnailMetrics_800ef0cc.get(1).clutY_06.get())
+            .vramPos(locationThumbnailMetrics_800ef0cc.get(1).imageX_00.get(), locationThumbnailMetrics_800ef0cc.get(1).imageY_02.get());
 
           if(gameState_800babc8._17c.get(mapState_800c6798.locationIndex_10)) {
             //LAB_800e5e98
@@ -5342,11 +5337,11 @@ public class WMap {
         break;
 
       case 5:
-        _800c6898._34 -= 0x80;
+        _800c6898.currentBrightness_34 -= 0x80;
 
         FUN_800ce4dc(_800c6898);
 
-        if(textboxes_800be358[6]._00 == 0 && textboxes_800be358[7]._00 == 0 && _800c6898._34 == 0) {
+        if(textboxes_800be358[6]._00 == 0 && textboxes_800be358[7]._00 == 0 && _800c6898.currentBrightness_34 == 0) {
           _800c68a4.set(9);
         }
 
@@ -6645,7 +6640,7 @@ public class WMap {
   @Method(0x800eb914L)
   public static void allocateSmoke() {
     currentWmapEffect_800f6598.set((locations_800f0e34.get(mapState_800c6798.locationIndex_10).effectFlags_12.get() & 0x30) >>> 4);
-    oldWmapEffect_800f659c.set(currentWmapEffect_800f6598.get());
+    previousWmapEffect_800f659c.set(currentWmapEffect_800f6598.get());
     unused_800f65a0.set(0);
 
     smokeCloudInstances_800c86f8 = new WmapSmokeCloudInstance60[48];
@@ -7012,7 +7007,7 @@ public class WMap {
                       if(sy3 - sy1 <= 0x200) {
                         //LAB_800ed5d8
                         snowflake.rotation_50.setZ((short)((snowflake.rotation_50.getZ() + 1) % 12));
-                        final int index = snowflake.rotation_50.getZ() / 2 * 2;
+                        final int index = snowflake.rotation_50.getZ() / 2;
 
                         final int u = snowUvs_800f65c8.get(index).get(0).get();
                         final int v = snowUvs_800f65c8.get(index).get(1).get();
@@ -7075,11 +7070,11 @@ public class WMap {
         //LAB_800edaa4
         break;
       case 5:
-        oldWmapEffect_800f659c.set(currentWmapEffect_800f6598.get());
+        previousWmapEffect_800f659c.set(currentWmapEffect_800f6598.get());
         currentWmapEffect_800f6598.set((locations_800f0e34.get(mapState_800c6798.locationIndex_10).effectFlags_12.get() & 0x30) >>> 4);
 
-        if(currentWmapEffect_800f6598.get() != oldWmapEffect_800f659c.get()) {
-          atmosphericEffectDeallocators_800f65bc[oldWmapEffect_800f659c.get()].run();
+        if(currentWmapEffect_800f6598.get() != previousWmapEffect_800f659c.get()) {
+          atmosphericEffectDeallocators_800f65bc[previousWmapEffect_800f659c.get()].run();
           smokeEffectStage_800c66a4.set(3);
         } else {
           //LAB_800edb5c
@@ -7261,15 +7256,15 @@ public class WMap {
 
                                 //LAB_800ee9b0
                                 //LAB_800eea34
-                                final int v1_0 = smoke.scaleAndColourFade_50 / 0x40;
+                                final int index = smoke.scaleAndColourFade_50 / 0x40;
 
                                 cmd
                                   .clut(640, 505)
                                   .monochrome(0x80 - smoke.scaleAndColourFade_50)
-                                  .uv(0, smokeUvs_800f65d4.get(v1_0).get(0).get(), smokeUvs_800f65d4.get(v1_0).get(1).get())
-                                  .uv(1, smokeUvs_800f65d4.get(v1_0).get(0).get() + 31, smokeUvs_800f65d4.get(v1_0).get(1).get())
-                                  .uv(2, smokeUvs_800f65d4.get(v1_0).get(0).get(), smokeUvs_800f65d4.get(v1_0).get(1).get() + 31)
-                                  .uv(3, smokeUvs_800f65d4.get(v1_0).get(0).get() + 31, smokeUvs_800f65d4.get(v1_0).get(1).get() + 31);
+                                  .uv(0, smokeUvs_800f65d4.get(index).get(0).get(), smokeUvs_800f65d4.get(index).get(1).get())
+                                  .uv(1, smokeUvs_800f65d4.get(index).get(0).get() + 31, smokeUvs_800f65d4.get(index).get(1).get())
+                                  .uv(2, smokeUvs_800f65d4.get(index).get(0).get(), smokeUvs_800f65d4.get(index).get(1).get() + 31)
+                                  .uv(3, smokeUvs_800f65d4.get(index).get(0).get() + 31, smokeUvs_800f65d4.get(index).get(1).get() + 31);
 
                                 GPU.queueCommand(100 + z, cmd);
 
