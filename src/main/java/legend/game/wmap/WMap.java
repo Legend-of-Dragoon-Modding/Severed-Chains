@@ -9,7 +9,7 @@ import legend.core.gpu.RECT;
 import legend.core.gte.COLOUR;
 import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORDINATE2;
-import legend.core.gte.GsDOBJ2;
+import legend.core.gte.ModelPart10;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
@@ -361,7 +361,7 @@ public class WMap {
   private static final Value _800f65d4 = MEMORY.ref(1, 0x800f65d4L);
 
   @Method(0x800c8844L)
-  public static void adjustWmapUvs(final GsDOBJ2 dobj2, final int colourMapIndex) {
+  public static void adjustWmapUvs(final ModelPart10 dobj2, final int colourMapIndex) {
     for(final TmdObjTable1c.Primitive primitive : dobj2.tmd_08.primitives_10) {
       final int cmd = primitive.header() & 0xff04_0000;
 
@@ -444,8 +444,8 @@ public class WMap {
     tmdGp0Tpage_1f8003ec.set(model.tpage_108);
 
     //LAB_800c92c8
-    for(int i = 0; i < model.dobj2ArrPtr_00.length; i++) {
-      final GsDOBJ2 dobj2 = model.dobj2ArrPtr_00[i];
+    for(int i = 0; i < model.modelParts_00.length; i++) {
+      final ModelPart10 dobj2 = model.modelParts_00[i];
 
       if((model.partInvisible_f4 & 1L << i) == 0) {
         final MATRIX ls = new MATRIX();
@@ -3041,7 +3041,7 @@ public class WMap {
     //LAB_800d90cc
     //LAB_800d9150
     for(int i = 0; i < struct258_800c66a8.tmdRendering_08.count_0c; i++) {
-      final GsDOBJ2 dobj2 = struct258_800c66a8.tmdRendering_08.dobj2s_00[i];
+      final ModelPart10 dobj2 = struct258_800c66a8.tmdRendering_08.dobj2s_00[i];
       final GsCOORDINATE2 coord2 = struct258_800c66a8.tmdRendering_08.coord2s_04[i];
       final Vector3f rotation = struct258_800c66a8.tmdRendering_08.rotations_08[i];
 
@@ -3893,7 +3893,7 @@ public class WMap {
 
   /** Don't really know what makes it special. Seems to use a fixed Z value and doesn't check if the triangles are on screen. Used for water. */
   @Method(0x800dd05cL)
-  public static void renderSpecialDobj2(final GsDOBJ2 dobj2) {
+  public static void renderSpecialDobj2(final ModelPart10 dobj2) {
     final SVECTOR[] vertices = dobj2.tmd_08.vert_top_00;
 
     for(final TmdObjTable1c.Primitive primitive : dobj2.tmd_08.primitives_10) {
@@ -4671,12 +4671,12 @@ public class WMap {
   @Method(0x800e3bd4L)
   public static int allocateTmdRenderer(final WMapTmdRenderingStruct18 a0, final TmdWithId tmd) {
     final int nobj = tmd.tmd.header.nobj;
-    a0.dobj2s_00 = new GsDOBJ2[nobj];
+    a0.dobj2s_00 = new ModelPart10[nobj];
     a0.coord2s_04 = new GsCOORDINATE2[nobj];
     a0.rotations_08 = new Vector3f[nobj];
     a0._10 = new int[nobj];
 
-    Arrays.setAll(a0.dobj2s_00, i -> new GsDOBJ2());
+    Arrays.setAll(a0.dobj2s_00, i -> new ModelPart10());
     Arrays.setAll(a0.coord2s_04, i -> new GsCOORDINATE2());
     Arrays.setAll(a0.rotations_08, i -> new Vector3f());
 
@@ -4695,7 +4695,7 @@ public class WMap {
   public static void initTmdTransforms(final WMapTmdRenderingStruct18 a0, @Nullable final GsCOORDINATE2 superCoord) {
     //LAB_800e3dfc
     for(int i = 0; i < a0.count_0c; i++) {
-      final GsDOBJ2 dobj2 = a0.dobj2s_00[i];
+      final ModelPart10 dobj2 = a0.dobj2s_00[i];
       final GsCOORDINATE2 coord2 = a0.coord2s_04[i];
       final Vector3f rotation = a0.rotations_08[i];
 
@@ -4714,7 +4714,7 @@ public class WMap {
   public static void setAllCoord2Attribs(final WMapTmdRenderingStruct18 a0, final int attribute) {
     //LAB_800e3f24
     for(int i = 0; i < a0.count_0c; i++) {
-      final GsDOBJ2 sp4 = a0.dobj2s_00[i];
+      final ModelPart10 sp4 = a0.dobj2s_00[i];
 
       //LAB_800e3f48
       sp4.attribute_00 = attribute;

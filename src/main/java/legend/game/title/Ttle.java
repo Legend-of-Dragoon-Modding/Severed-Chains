@@ -8,7 +8,7 @@ import legend.core.gpu.Rect4i;
 import legend.core.gpu.Renderable;
 import legend.core.gpu.VramTexture;
 import legend.core.gte.GsCOORDINATE2;
-import legend.core.gte.GsDOBJ2;
+import legend.core.gte.ModelPart10;
 import legend.core.gte.MATRIX;
 import legend.core.gte.TmdWithId;
 import legend.core.memory.Method;
@@ -1030,7 +1030,7 @@ public final class Ttle {
     //LAB_800cb7f0
     GsSetRefView2L(GsRVIEW2_800c6760);
 
-    final GsDOBJ2[] dobj2s = _800c66d0.dobj2s_00;
+    final ModelPart10[] dobj2s = _800c66d0.dobj2s_00;
     final GsCOORDINATE2[] coord2s = _800c66d0.coord2s_04;
 
     //LAB_800cb834
@@ -1108,10 +1108,10 @@ public final class Ttle {
 
   @Method(0x800cbf3cL)
   public static int prepareTmdRenderer(final TmdRenderingStruct tmdRenderer, final TmdWithId tmd) {
-    tmdRenderer.dobj2s_00 = new GsDOBJ2[tmd.tmd.header.nobj];
+    tmdRenderer.dobj2s_00 = new ModelPart10[tmd.tmd.header.nobj];
     tmdRenderer.coord2s_04 = new GsCOORDINATE2[tmd.tmd.header.nobj];
 
-    Arrays.setAll(tmdRenderer.dobj2s_00, i -> new GsDOBJ2());
+    Arrays.setAll(tmdRenderer.dobj2s_00, i -> new ModelPart10());
     Arrays.setAll(tmdRenderer.coord2s_04, i -> new GsCOORDINATE2());
 
     //LAB_800cc02c
@@ -1130,7 +1130,7 @@ public final class Ttle {
     //LAB_800cc0f0
     for(int i = 0; i < renderer.count_08; i++) {
       final GsCOORDINATE2 coord2 = renderer.coord2s_04[i];
-      final GsDOBJ2 dobj2 = renderer.dobj2s_00[i];
+      final ModelPart10 dobj2 = renderer.dobj2s_00[i];
 
       //LAB_800cc114
       GsInitCoordinate2(superCoord2, coord2);

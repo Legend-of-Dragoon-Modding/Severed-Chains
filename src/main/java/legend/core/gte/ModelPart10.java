@@ -1,14 +1,13 @@
 package legend.core.gte;
 
-/** 0x10 bytes long */
-public class GsDOBJ2 {
+public class ModelPart10 {
   /** perspective, translation, rotate, display */
   public int attribute_00;
   /** local dmatrix */
   public GsCOORDINATE2 coord2_04;
   public TmdObjTable1c tmd_08;
 
-  public GsDOBJ2 set(final GsDOBJ2 other) {
+  public ModelPart10 set(final ModelPart10 other) {
     this.attribute_00 = other.attribute_00;
     this.coord2_04 = other.coord2_04;
     this.tmd_08 = other.tmd_08;

@@ -1,8 +1,7 @@
 package legend.game.types;
 
 import legend.core.gte.GsCOORDINATE2;
-import legend.core.gte.GsDOBJ2;
-import legend.core.gte.Tmd;
+import legend.core.gte.ModelPart10;
 import legend.core.gte.VECTOR;
 import legend.game.combat.deff.Cmb;
 import legend.game.combat.deff.Lmb;
@@ -11,9 +10,9 @@ import org.joml.Vector3f;
 public class Model124 {
   public final String name;
 
-  public GsDOBJ2[] dobj2ArrPtr_00;
-//  public GsCOORDINATE2[] coord2ArrPtr_04; // Use coord2 on dobj2
-//  public Transforms[] coord2ParamArrPtr_08; // Use dobj2.coord.transforms
+  public ModelPart10[] modelParts_00;
+//  public GsCOORDINATE2[] coord2ArrPtr_04; // Use coord2 on modelParts_00
+//  public Transforms[] coord2ParamArrPtr_08; // Use modelParts_00.coord.transforms
   /** Union with coord2ParamArrPtr_08 */
   public final LmbAnim lmbAnim_08 = new LmbAnim();
   /** Union with coord2ParamArrPtr_08 */
@@ -22,7 +21,7 @@ public class Model124 {
   // Supercoordinate system for all model part coordinate systems, all model parts are attached to this
   public final GsCOORDINATE2 coord2_14 = new GsCOORDINATE2();
 //  public final Transforms transforms_64 = new Transforms(); // Use coord2_14.transforms
-  public Tmd tmd_8c;
+//  public Tmd tmd_8c;
   /** [keyframe][part] */
   public ModelPartTransforms0c[][] partTransforms_90;
   /** [keyframe][part] One entry for each TMD object (tmdNobj_ca) */
@@ -72,9 +71,9 @@ public class Model124 {
   /** ushort */
   public final int[] usArr_ba = new int[7];
 //  /** short */
-//  public int count_c8; // Use _00.length
+//  public int count_c8; // Use modelParts_00.length
 //  /** ushort */
-//  public int tmdNobj_ca; // Use _00.length
+//  public int tmdNobj_ca; // Use modelParts_00.length
   /** 0/1/2/3 - if 0, the model won't render (byte) */
   public int movementType_cc;
   /** byte */
@@ -124,11 +123,10 @@ public class Model124 {
   }
 
   public void set(final Model124 other) {
-    this.dobj2ArrPtr_00 = other.dobj2ArrPtr_00;
+    this.modelParts_00 = other.modelParts_00;
     this.lmbAnim_08.set(other.lmbAnim_08);
     this.cmbAnim_08.set(other.cmbAnim_08);
     this.coord2_14.set(other.coord2_14);
-    this.tmd_8c = other.tmd_8c;
     this.partTransforms_90 = other.partTransforms_90;
     this.partTransforms_94 = other.partTransforms_94;
     this.animType_90 = other.animType_90;

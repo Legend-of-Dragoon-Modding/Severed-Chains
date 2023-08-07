@@ -1,6 +1,6 @@
 package legend.game.combat.environment;
 
-import legend.core.gte.GsDOBJ2;
+import legend.core.gte.ModelPart10;
 import legend.game.types.McqHeader;
 
 import java.util.Arrays;
@@ -103,7 +103,7 @@ public class BattlePreloadedEntities_18cb0 {
   }
 
   public static class Rendering1298 {
-    public GsDOBJ2[] dobj2s_00;
+    public ModelPart10[] dobj2s_00;
 //    public final GsCOORDINATE2[] coord2s_230 = new GsCOORDINATE2[35]; // Use coord2 on dobj2
 //    public final Transforms[] params_d20 = new Transforms[35]; // Use dobj2.coord2.transforms
   }

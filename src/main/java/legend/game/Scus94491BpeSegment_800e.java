@@ -3,7 +3,7 @@ package legend.game;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
-import legend.core.gte.GsDOBJ2;
+import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
 import legend.game.types.CContainer;
 import legend.game.types.EngineState;
@@ -175,11 +175,10 @@ public final class Scus94491BpeSegment_800e {
       model.animateTextures_ec[i] = false;
     }
 
-    model.dobj2ArrPtr_00 = new GsDOBJ2[tmdAnimFile.modelPartCount_0c];
+    model.modelParts_00 = new ModelPart10[tmdAnimFile.modelPartCount_0c];
 
-    Arrays.setAll(model.dobj2ArrPtr_00, i -> new GsDOBJ2());
+    Arrays.setAll(model.modelParts_00, i -> new ModelPart10());
 
-    model.tmd_8c = cContainer.tmdPtr_00.tmd;
     model.tpage_108 = (int)((cContainer.tmdPtr_00.id & 0xffff0000L) >>> 11);
 
     if(cContainer.ptr_08 != null) {
@@ -201,9 +200,9 @@ public final class Scus94491BpeSegment_800e {
     }
 
     //LAB_800e6c64
-    initObjTable2(model.dobj2ArrPtr_00);
+    initObjTable2(model.modelParts_00);
     GsInitCoordinate2(null, model.coord2_14);
-    prepareObjTable2(model.dobj2ArrPtr_00, model.tmd_8c, model.coord2_14);
+    prepareObjTable2(model.modelParts_00, cContainer.tmdPtr_00.tmd, model.coord2_14);
 
     model.zOffset_a0 = 0;
     model.ub_a2 = 0;

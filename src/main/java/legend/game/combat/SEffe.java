@@ -15,7 +15,7 @@ import legend.core.gpu.Rect4i;
 import legend.core.gte.COLOUR;
 import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORDINATE2;
-import legend.core.gte.GsDOBJ2;
+import legend.core.gte.ModelPart10;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.Tmd;
@@ -1111,7 +1111,7 @@ public final class SEffe {
       }
 
       //LAB_800fd040
-      final GsDOBJ2 dobj = new GsDOBJ2();
+      final ModelPart10 dobj = new ModelPart10();
       dobj.attribute_00 = particleMetrics.flags_00;
       dobj.tmd_08 = tmd;
 
@@ -3437,7 +3437,7 @@ public final class SEffe {
 
     final GsCOORDINATE2 coord2;
     if(coordType == 0) {
-      coord2 = bobj.model_148.dobj2ArrPtr_00[1].coord2_04;
+      coord2 = bobj.model_148.modelParts_00[1].coord2_04;
     } else {
       //LAB_80105fe4
       coord2 = bobj.model_148.coord2_14;
@@ -6037,7 +6037,7 @@ public final class SEffe {
     final GoldDragoonTransformEffect20 effect = (GoldDragoonTransformEffect20)manager.effect_44;
     effect._04++;
 
-    final GsDOBJ2 dobj2 = new GsDOBJ2();
+    final ModelPart10 dobj2 = new ModelPart10();
     final VECTOR trans = new VECTOR();
     final MATRIX transforms = new MATRIX();
     final MATRIX sp0x98 = new MATRIX();
@@ -6437,7 +6437,7 @@ public final class SEffe {
       final Vector3f scale = new Vector3f();
       final MATRIX transformMatrix0 = new MATRIX();
 
-      final GsDOBJ2 dobj = new GsDOBJ2();
+      final ModelPart10 dobj = new ModelPart10();
 
       //LAB_8010f3a4
       for(int i = 0; i < impactEffect.impactArray_08.length; i++) {
@@ -7040,7 +7040,7 @@ public final class SEffe {
         model.coord2_14.coord.set(sp0x10);
 
         //LAB_80111a0c
-        final GsCOORDINATE2 coord2 = model.dobj2ArrPtr_00[a2].coord2_04;
+        final GsCOORDINATE2 coord2 = model.modelParts_00[a2].coord2_04;
         GsGetLw(coord2, a0);
         coord2.flg = 0;
       } else if(type == 0) {
@@ -7080,7 +7080,7 @@ public final class SEffe {
     } else {
       final Model124 model = ((BattleObject27c)s0).model_148;
       applyModelRotationAndScale(model);
-      final GsCOORDINATE2 coord2 = model.dobj2ArrPtr_00[a2].coord2_04;
+      final GsCOORDINATE2 coord2 = model.modelParts_00[a2].coord2_04;
       GsGetLw(coord2, a0);
       coord2.flg = 0;
     }
@@ -9345,7 +9345,7 @@ public final class SEffe {
         GsSetLightMatrix(sp0x10);
         setRotTransMatrix(sp0x10);
 
-        final GsDOBJ2 dobj2 = new GsDOBJ2();
+        final ModelPart10 dobj2 = new ModelPart10();
         dobj2.attribute_00 = data._10.flags_00;
         dobj2.tmd_08 = s1.tmd_08;
 
@@ -9451,14 +9451,14 @@ public final class SEffe {
         final int v1 = effects.flags_04 & 0xff00_0000;
         if(v1 == 0x100_0000 || v1 == 0x200_0000) {
           //LAB_8011867c
-          objTable = ((BttlScriptData6cSub13c)effects.effect_44).model_134.dobj2ArrPtr_00[objIndex].tmd_08;
+          objTable = ((BttlScriptData6cSub13c)effects.effect_44).model_134.modelParts_00[objIndex].tmd_08;
         } else {
           objTable = null;
         }
       } else {
         //LAB_801186a4
         //LAB_801186b4
-        objTable = ((BattleObject27c)a0_0).model_148.dobj2ArrPtr_00[objIndex].tmd_08;
+        objTable = ((BattleObject27c)a0_0).model_148.modelParts_00[objIndex].tmd_08;
       }
     }
 
@@ -9527,7 +9527,7 @@ public final class SEffe {
       tmdGp0Tpage_1f8003ec.set(manager._10.flags_00 >>> 23 & 0x60);
       zOffset_1f8003e8.set(manager._10.z_22);
       FUN_800e60e0(manager._10.colour_1c.getX() / 128.0f, manager._10.colour_1c.getY() / 128.0f, manager._10.colour_1c.getZ() / 128.0f);
-      renderTmdSpriteEffect(model_800bda10.dobj2ArrPtr_00[0].tmd_08, manager._10, sp0x10);
+      renderTmdSpriteEffect(model_800bda10.modelParts_00[0].tmd_08, manager._10, sp0x10);
       FUN_800e6170();
     }
 
@@ -9537,7 +9537,7 @@ public final class SEffe {
   @Method(0x801188ecL)
   public static FlowControl FUN_801188ec(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
-      "Unknown (FUN_801188ec, %s)".formatted(model_800bda10.dobj2ArrPtr_00[0].tmd_08.name),
+      "Unknown (FUN_801188ec, %s)".formatted(model_800bda10.modelParts_00[0].tmd_08.name),
       script.scriptState_04,
       null,
       SEffe::FUN_80118790,

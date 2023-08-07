@@ -3,7 +3,7 @@ package legend.game.tmd;
 import legend.core.IoHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
-import legend.core.gte.GsDOBJ2;
+import legend.core.gte.ModelPart10;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
 import legend.game.combat.environment.BattleLightStruct64;
@@ -26,7 +26,7 @@ public final class Renderer {
   /**
    * @param useSpecialTranslucency Used in battle, some TMDs have translucency info in the upper 16 bits of their ID. Also enables backside culling.
    */
-  public static void renderDobj2(final GsDOBJ2 dobj2, final boolean useSpecialTranslucency, final int ctmdFlag) {
+  public static void renderDobj2(final ModelPart10 dobj2, final boolean useSpecialTranslucency, final int ctmdFlag) {
     final TmdObjTable1c objTable = dobj2.tmd_08;
     final SVECTOR[] vertices = objTable.vert_top_00;
     final Vector3f[] normals = objTable.normal_top_08;

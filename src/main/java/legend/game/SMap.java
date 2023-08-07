@@ -12,7 +12,7 @@ import legend.core.gpu.Rect4i;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORDINATE2;
-import legend.core.gte.GsDOBJ2;
+import legend.core.gte.ModelPart10;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
@@ -358,7 +358,7 @@ public final class SMap {
 
   public static final Value _800cbda4 = MEMORY.ref(4, 0x800cbda4L);
   public static final GsCOORDINATE2 GsCOORDINATE2_800cbda8 = new GsCOORDINATE2();
-  public static final GsDOBJ2 GsDOBJ2_800cbdf8 = new GsDOBJ2();
+  public static final ModelPart10 GsDOBJ2_800cbdf8 = new ModelPart10();
   public static final SomethingStruct SomethingStruct_800cbe08 = new SomethingStruct();
   public static final Value _800cbe30 = MEMORY.ref(4, 0x800cbe30L);
   public static UnknownStruct2 _800cbe34;
@@ -693,7 +693,7 @@ public final class SMap {
   }
 
   @Method(0x800d9e64L)
-  public static void adjustSmapUvs(final GsDOBJ2 dobj2, final int colourMap) {
+  public static void adjustSmapUvs(final ModelPart10 dobj2, final int colourMap) {
     final TmdObjTable1c objTable = dobj2.tmd_08;
 
     //LAB_800d9e90
@@ -794,8 +794,8 @@ public final class SMap {
     model_800bda10.coord2_14.coord.scaleL(model_800bda10.coord2_14.transforms.scale);
     model_800bda10.coord2_14.flg = 0;
 
-    final MATRIX matrix = model_800bda10.dobj2ArrPtr_00[0].coord2_04.coord;
-    final Transforms params = model_800bda10.dobj2ArrPtr_00[0].coord2_04.transforms;
+    final MATRIX matrix = model_800bda10.modelParts_00[0].coord2_04.coord;
+    final Transforms params = model_800bda10.modelParts_00[0].coord2_04.transforms;
 
     params.rotate.zero();
     RotMatrix_Zyx(params.rotate, matrix);
@@ -805,14 +805,14 @@ public final class SMap {
 
     final MATRIX lw = new MATRIX();
     final MATRIX ls = new MATRIX();
-    GsGetLws(model_800bda10.dobj2ArrPtr_00[0].coord2_04, lw, ls);
+    GsGetLws(model_800bda10.modelParts_00[0].coord2_04, lw, ls);
     GsSetLightMatrix(lw);
 
     GTE.setRotationMatrix(ls);
     GTE.setTranslationVector(ls.transfer);
 
-    Renderer.renderDobj2(model_800bda10.dobj2ArrPtr_00[0], false, 0);
-    model_800bda10.dobj2ArrPtr_00[0].coord2_04.flg--;
+    Renderer.renderDobj2(model_800bda10.modelParts_00[0], false, 0);
+    model_800bda10.modelParts_00[0].coord2_04.flg--;
   }
 
   @Method(0x800da6c8L)
@@ -870,8 +870,8 @@ public final class SMap {
     final ModelPartTransforms0c[][] transforms = a0.partTransforms_94;
 
     //LAB_800da96c
-    for(int i = 0; i < a0.dobj2ArrPtr_00.length; i++) {
-      final GsDOBJ2 dobj2 = a0.dobj2ArrPtr_00[i];
+    for(int i = 0; i < a0.modelParts_00.length; i++) {
+      final ModelPart10 dobj2 = a0.modelParts_00[i];
 
       final GsCOORDINATE2 coord2 = dobj2.coord2_04;
       final Transforms params = coord2.transforms;
@@ -900,9 +900,9 @@ public final class SMap {
     //LAB_800daaa8
     final MATRIX lw = new MATRIX();
     final MATRIX ls = new MATRIX();
-    for(int i = 0; i < a0.dobj2ArrPtr_00.length; i++) {
+    for(int i = 0; i < a0.modelParts_00.length; i++) {
       if((a0.partInvisible_f4 & 1L << i) == 0) {
-        final GsDOBJ2 dobj2 = a0.dobj2ArrPtr_00[i];
+        final ModelPart10 dobj2 = a0.modelParts_00[i];
 
         GsGetLws(dobj2.coord2_04, lw, ls);
         GsSetLightMatrix(lw);
@@ -1902,7 +1902,7 @@ public final class SMap {
   @Method(0x800e03a8L)
   public static FlowControl scriptGetSobjNobj(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[1].set(sobj.model_00.dobj2ArrPtr_00.length);
+    script.params_20[1].set(sobj.model_00.modelParts_00.length);
     return FlowControl.CONTINUE;
   }
 
@@ -2161,10 +2161,9 @@ public final class SMap {
     }
 
     final int count = cContainer.tmdPtr_00.tmd.header.nobj;
-    model.dobj2ArrPtr_00 = new GsDOBJ2[count];
-    model.tmd_8c = cContainer.tmdPtr_00.tmd;
+    model.modelParts_00 = new ModelPart10[count];
 
-    Arrays.setAll(model.dobj2ArrPtr_00, i -> new GsDOBJ2());
+    Arrays.setAll(model.modelParts_00, i -> new ModelPart10());
 
     if(cContainer.ext_04 != null) {
       final SmallerStruct smallerStruct = new SmallerStruct();
@@ -2203,9 +2202,9 @@ public final class SMap {
     }
 
     //LAB_800e0f10
-    initObjTable2(model.dobj2ArrPtr_00);
+    initObjTable2(model.modelParts_00);
     GsInitCoordinate2(null, model.coord2_14);
-    prepareObjTable2(model.dobj2ArrPtr_00, model.tmd_8c, model.coord2_14);
+    prepareObjTable2(model.modelParts_00, cContainer.tmdPtr_00.tmd, model.coord2_14);
 
     model.zOffset_a0 = 0;
     model.ub_a2 = 0;
@@ -5335,7 +5334,7 @@ public final class SMap {
   }
 
   @Method(0x800e8c50L)
-  public static void FUN_800e8c50(final GsDOBJ2 dobj2, final SomethingStruct a1, final TmdWithId tmd) {
+  public static void FUN_800e8c50(final ModelPart10 dobj2, final SomethingStruct a1, final TmdWithId tmd) {
     a1.tmdPtr_1c = tmd;
     final TmdObjTable1c[] objTables = tmd.tmd.objTable;
     dobj2.tmd_08 = objTables[0];
@@ -7147,7 +7146,7 @@ public final class SMap {
     final MATRIX lw = new MATRIX();
 
     //LAB_800eee94
-    for(final GsDOBJ2 dobj2 : model.dobj2ArrPtr_00) {
+    for(final ModelPart10 dobj2 : model.modelParts_00) {
       GsGetLw(dobj2.coord2_04, lw);
       GsSetLightMatrix(lw);
 
@@ -7373,7 +7372,7 @@ public final class SMap {
         renderModel(dustModel_800d4d40);
 
         dustModel_800d4d40.remainingFrames_9e = 0;
-        dustModel_800d4d40.dobj2ArrPtr_00[0].coord2_04.flg--;
+        dustModel_800d4d40.modelParts_00[0].coord2_04.flg--;
         s0._00++;
 
         s1 = s0;

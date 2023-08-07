@@ -10,7 +10,7 @@ import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
 import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORDINATE2;
-import legend.core.gte.GsDOBJ2;
+import legend.core.gte.ModelPart10;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdWithId;
@@ -1749,8 +1749,8 @@ public final class Bttl_800e {
           sp0x10.set(s1.coord2_14.coord);
         } else {
           //LAB_800e8738
-          GsGetLw(s1.dobj2ArrPtr_00[coord2Index].coord2_04, sp0x10);
-          s1.dobj2ArrPtr_00[coord2Index].coord2_04.flg = 0;
+          GsGetLw(s1.modelParts_00[coord2Index].coord2_04, sp0x10);
+          s1.modelParts_00[coord2Index].coord2_04.flg = 0;
         }
 
         //LAB_800e8774
@@ -2158,7 +2158,6 @@ public final class Bttl_800e {
     model.coord2_14.set(a1.coord2_558);
     model.coord2_14.transforms.set(a1.param_5a8);
 
-    model.tmd_8c = a1.tmd_5d0;
     model.animType_90 = -1;
     model.partTransforms_90 = a1.rotTrans_5d4;
     model.partTransforms_94 = a1.rotTrans_5d8;
@@ -2186,11 +2185,11 @@ public final class Bttl_800e {
     model.movementType_cc = 0;
     model.modelPartIndex_cd = 0;
 
-    model.dobj2ArrPtr_00 = new GsDOBJ2[a1.dobj2s_00.length];
-    Arrays.setAll(model.dobj2ArrPtr_00, i -> new GsDOBJ2().set(a1.dobj2s_00[i]));
+    model.modelParts_00 = new ModelPart10[a1.dobj2s_00.length];
+    Arrays.setAll(model.modelParts_00, i -> new ModelPart10().set(a1.dobj2s_00[i]));
 
     //LAB_800e9d34
-    for(final GsDOBJ2 dobj2 : model.dobj2ArrPtr_00) {
+    for(final ModelPart10 dobj2 : model.modelParts_00) {
       dobj2.coord2_04 = new GsCOORDINATE2();
       dobj2.coord2_04.super_ = model.coord2_14;
     }
@@ -2201,11 +2200,11 @@ public final class Bttl_800e {
     //LAB_800e9dd8
     model1.set(model2);
 
-    model1.dobj2ArrPtr_00 = new GsDOBJ2[model1.dobj2ArrPtr_00.length];
-    Arrays.setAll(model1.dobj2ArrPtr_00, i -> new GsDOBJ2().set(model2.dobj2ArrPtr_00[i]));
+    model1.modelParts_00 = new ModelPart10[model1.modelParts_00.length];
+    Arrays.setAll(model1.modelParts_00, i -> new ModelPart10().set(model2.modelParts_00[i]));
 
     //LAB_800e9ee8
-    for(final GsDOBJ2 dobj2 : model1.dobj2ArrPtr_00) {
+    for(final ModelPart10 dobj2 : model1.modelParts_00) {
       dobj2.coord2_04 = new GsCOORDINATE2();
       dobj2.coord2_04.super_ = model1.coord2_14;
     }
@@ -2255,7 +2254,7 @@ public final class Bttl_800e {
   public static GsCOORDINATE2 FUN_800ea0f4(final EffectManagerData6c<?> effectManager, final int coord2Index) {
     final Model124 model = ((BttlScriptData6cSub13c)effectManager.effect_44).model_10;
     applyModelRotationAndScale(model);
-    return model.dobj2ArrPtr_00[coord2Index].coord2_04;
+    return model.modelParts_00[coord2Index].coord2_04;
   }
 
   @Method(0x800ea13cL)
@@ -2865,8 +2864,8 @@ public final class Bttl_800e {
     }
 
     //LAB_800eba8c
-    stage.dobj2s_00 = new GsDOBJ2[stage.tmd_5d0.header.nobj];
-    Arrays.setAll(stage.dobj2s_00, i -> new GsDOBJ2());
+    stage.dobj2s_00 = new ModelPart10[stage.tmd_5d0.header.nobj];
+    Arrays.setAll(stage.dobj2s_00, i -> new ModelPart10());
     initObjTable2(stage.dobj2s_00);
     stage.coord2_558.transforms = stage.param_5a8;
     GsInitCoordinate2(null, stage.coord2_558);
@@ -2993,9 +2992,9 @@ public final class Bttl_800e {
 
     if(model.movementType_cc == 3) {
       //LAB_800ec2ec
-      s2.coord2_14.coord.transfer.setX(model.vector_118.getX() + model.dobj2ArrPtr_00[model.modelPartIndex_cd].coord2_04.coord.transfer.getX());
+      s2.coord2_14.coord.transfer.setX(model.vector_118.getX() + model.modelParts_00[model.modelPartIndex_cd].coord2_04.coord.transfer.getX());
       s2.coord2_14.coord.transfer.setY(model.vector_118.getY() - MathHelper.safeDiv(model.coord2_14.coord.transfer.getY(), model.coord2_14.transforms.scale.y));
-      s2.coord2_14.coord.transfer.setZ(model.vector_118.getZ() + model.dobj2ArrPtr_00[model.modelPartIndex_cd].coord2_04.coord.transfer.getZ());
+      s2.coord2_14.coord.transfer.setZ(model.vector_118.getZ() + model.modelParts_00[model.modelPartIndex_cd].coord2_04.coord.transfer.getZ());
     } else {
       s2.coord2_14.coord.transfer.setX(model.vector_118.getX());
 
@@ -3016,7 +3015,7 @@ public final class Bttl_800e {
     RotMatrix_Xyz(s2.coord2_14.transforms.rotate, s2.coord2_14.coord);
     s2.coord2_14.coord.scaleL(s2.coord2_14.transforms.scale);
     s2.coord2_14.flg = 0;
-    final GsCOORDINATE2 v0 = s2.dobj2ArrPtr_00[0].coord2_04;
+    final GsCOORDINATE2 v0 = s2.modelParts_00[0].coord2_04;
     final Transforms s0 = v0.transforms;
     s0.rotate.zero();
     RotMatrix_Zyx(s0.rotate, v0.coord);
@@ -3025,12 +3024,12 @@ public final class Bttl_800e {
 
     final MATRIX sp0x30 = new MATRIX();
     final MATRIX sp0x10 = new MATRIX();
-    GsGetLws(s2.dobj2ArrPtr_00[0].coord2_04, sp0x30, sp0x10);
+    GsGetLws(s2.modelParts_00[0].coord2_04, sp0x30, sp0x10);
     GsSetLightMatrix(sp0x30);
     GTE.setRotationMatrix(sp0x10);
     GTE.setTranslationVector(sp0x10.transfer);
-    Renderer.renderDobj2(s2.dobj2ArrPtr_00[0], true, 0);
-    s2.dobj2ArrPtr_00[0].coord2_04.flg--;
+    Renderer.renderDobj2(s2.modelParts_00[0], true, 0);
+    s2.modelParts_00[0].coord2_04.flg--;
   }
 
   @Method(0x800ec4bcL)
@@ -3059,7 +3058,7 @@ public final class Bttl_800e {
 
     //LAB_800ec5a0
     long s4 = 0x1L;
-    for(final GsDOBJ2 dobj2 : stage.dobj2s_00) {
+    for(final ModelPart10 dobj2 : stage.dobj2s_00) {
       if((s4 & stage._5e4) == 0) {
         final MATRIX ls = new MATRIX();
         final MATRIX lw = new MATRIX();
@@ -3176,9 +3175,9 @@ public final class Bttl_800e {
     zOffset_1f8003e8.set(model.zOffset_a0);
 
     //LAB_800ec9d0
-    for(int i = 0; i < model.dobj2ArrPtr_00.length; i++) {
+    for(int i = 0; i < model.modelParts_00.length; i++) {
       if((model.partInvisible_f4 & 1L << i) == 0) {
-        final GsDOBJ2 s2 = model.dobj2ArrPtr_00[i];
+        final ModelPart10 s2 = model.modelParts_00[i];
         final MATRIX sp0x30 = new MATRIX();
         final MATRIX sp0x10 = new MATRIX();
         GsGetLws(s2.coord2_04, sp0x30, sp0x10);

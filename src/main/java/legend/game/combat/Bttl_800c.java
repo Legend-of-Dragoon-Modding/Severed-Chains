@@ -7,7 +7,7 @@ import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
 import legend.core.gte.DVECTOR;
-import legend.core.gte.GsDOBJ2;
+import legend.core.gte.ModelPart10;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
@@ -1846,10 +1846,10 @@ public final class Bttl_800c {
     if((s0.flags_19e & 0x4) != 0) {
       final BattlePreloadedEntities_18cb0.Rendering1298 a0_0 = battlePreloadedEntities_1f8003f4._9ce8[s0.charSlot_19c];
 
-      a0_0.dobj2s_00 = new GsDOBJ2[tmd.tmdPtr_00.tmd.header.nobj];
-      Arrays.setAll(a0_0.dobj2s_00, i -> new GsDOBJ2());
+      a0_0.dobj2s_00 = new ModelPart10[tmd.tmdPtr_00.tmd.header.nobj];
+      Arrays.setAll(a0_0.dobj2s_00, i -> new ModelPart10());
 
-      model.dobj2ArrPtr_00 = a0_0.dobj2s_00;
+      model.modelParts_00 = a0_0.dobj2s_00;
 
       final long a3;
       if((s0.charIndex_1a2 & 0x1) != 0) {
@@ -3604,7 +3604,7 @@ public final class Bttl_800c {
   @Method(0x800cd9fcL)
   public static FlowControl scriptGetBobjNobj(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[1].set(bobj.model_148.dobj2ArrPtr_00.length);
+    script.params_20[1].set(bobj.model_148.modelParts_00.length);
     return FlowControl.CONTINUE;
   }
 
@@ -3696,7 +3696,7 @@ public final class Bttl_800c {
     short smallest = 0x7fff;
     int largestIndex = 0;
     int smallestIndex = 0;
-    final TmdObjTable1c tmd = model.dobj2ArrPtr_00[dobjIndex].tmd_08;
+    final TmdObjTable1c tmd = model.modelParts_00[dobjIndex].tmd_08;
 
     //LAB_800cdd24
     for(int i = 0; i < tmd.n_vert_04; i++) {
@@ -3873,7 +3873,7 @@ public final class Bttl_800c {
     //LAB_800ce320
     for(int i = 0; i < 2; i++) {
       final MATRIX perspectiveTransformMatrix = new MATRIX();
-      GsGetLw(trail.parentModel_30.dobj2ArrPtr_00[trail.dobjIndex_08].coord2_04, perspectiveTransformMatrix);
+      GsGetLw(trail.parentModel_30.modelParts_00[trail.dobjIndex_08].coord2_04, perspectiveTransformMatrix);
       (i == 0 ? trail.smallestVertex_20 : trail.largestVertex_10).mul(perspectiveTransformMatrix, segment.endpointCoords_04[i]); // Yes, I hate me for this syntax too
       segment.endpointCoords_04[i].add(perspectiveTransformMatrix.transfer);
     }
@@ -4253,7 +4253,7 @@ public final class Bttl_800c {
 
     //LAB_800cfd40
     final MATRIX sp0x10 = new MATRIX();
-    GsGetLw(model.dobj2ArrPtr_00[script.params_20[1].get()].coord2_04, sp0x10);
+    GsGetLw(model.modelParts_00[script.params_20[1].get()].coord2_04, sp0x10);
     // This was multiplying vector (0, 0, 0) so I removed it
     final VECTOR sp0x40 = new VECTOR().set(sp0x10.transfer);
     script.params_20[2].set(sp0x40.getX());
@@ -4271,7 +4271,7 @@ public final class Bttl_800c {
     int largest = 0x8000_0001;
     int smallest = 0x7fff_ffff;
     for(int animIndex = bobj.model_148.partCount_98 - 1; animIndex >= 0; animIndex--) {
-      final int component = bobj.model_148.dobj2ArrPtr_00[animIndex].coord2_04.coord.transfer.get(componentIndex);
+      final int component = bobj.model_148.modelParts_00[animIndex].coord2_04.coord.transfer.get(componentIndex);
 
       if(largest < component) {
         largest = component;
@@ -4327,7 +4327,7 @@ public final class Bttl_800c {
   @Method(0x800cffd8L)
   public static void getModelObjectTranslation(final int scriptIndex, final VECTOR translation, final int objIndex) {
     final MATRIX transformMatrix = new MATRIX();
-    GsGetLw(((BattleObject27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00).model_148.dobj2ArrPtr_00[objIndex].coord2_04, transformMatrix);
+    GsGetLw(((BattleObject27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00).model_148.modelParts_00[objIndex].coord2_04, transformMatrix);
     // Does nothing? Changed line below to set //ApplyMatrixLV(transformMatrix, new VECTOR(), translation);
     translation.set(transformMatrix.transfer);
   }

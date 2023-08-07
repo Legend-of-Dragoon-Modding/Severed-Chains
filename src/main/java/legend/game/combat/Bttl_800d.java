@@ -5,7 +5,7 @@ import legend.core.MathHelper;
 import legend.core.gpu.GpuCommandLine;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.COLOUR;
-import legend.core.gte.GsDOBJ2;
+import legend.core.gte.ModelPart10;
 import legend.core.gte.MATRIX;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.Tmd;
@@ -4471,7 +4471,7 @@ public final class Bttl_800d {
     }
 
     //LAB_800dd680
-    final int count = Math.min(model.dobj2ArrPtr_00.length, model.partCount_98);
+    final int count = Math.min(model.modelParts_00.length, model.partCount_98);
 
     //LAB_800dd69c
     final LmbType0 lmb = (LmbType0)model.lmbAnim_08.lmb_00;
@@ -4498,7 +4498,7 @@ public final class Bttl_800d {
     //LAB_800dd720
     for(int i = 0; i < count; i++) {
       final LmbTransforms14 transforms = lmb._08[i]._08[a0_0];
-      final MATRIX matrix = model.dobj2ArrPtr_00[i].coord2_04.coord;
+      final MATRIX matrix = model.modelParts_00[i].coord2_04.coord;
 
       final VECTOR trans = new VECTOR();
       trans.set(transforms.trans_06);
@@ -4555,8 +4555,8 @@ public final class Bttl_800d {
     s6 = v1 | v0;
 
     //LAB_800dd928
-    for(int i = 0; i < model.dobj2ArrPtr_00.length; i++) {
-      final GsDOBJ2 s2 = model.dobj2ArrPtr_00[i];
+    for(int i = 0; i < model.modelParts_00.length; i++) {
+      final ModelPart10 s2 = model.modelParts_00[i];
 
       //LAB_800dd940
       if((model.partInvisible_f4 & 1L << i) == 0) {
@@ -4623,24 +4623,23 @@ public final class Bttl_800d {
     final TmdWithId tmdWithId = extTmd.tmdPtr_00;
     final Tmd tmd = tmdWithId.tmd;
 
-    model.tmd_8c = tmd;
     final int count = tmd.header.nobj;
-    model.dobj2ArrPtr_00 = new GsDOBJ2[count];
+    model.modelParts_00 = new ModelPart10[count];
 
-    Arrays.setAll(model.dobj2ArrPtr_00, i -> new GsDOBJ2());
+    Arrays.setAll(model.modelParts_00, i -> new ModelPart10());
 
     model.tpage_108 = (int)((tmdWithId.id & 0xffff_0000L) >>> 11);
-    initObjTable2(model.dobj2ArrPtr_00);
+    initObjTable2(model.modelParts_00);
     GsInitCoordinate2(null, model.coord2_14);
 
     //LAB_800ddc0c
     for(int i = 0; i < count; i++) {
       if((tmd.header.flags & 0x2) != 0) { // CTMD, no longer used
-        model.dobj2ArrPtr_00[i].tmd_08 = tmd.objTable[i];
+        model.modelParts_00[i].tmd_08 = tmd.objTable[i];
       } else {
-        final GsDOBJ2 dobj2 = new GsDOBJ2();
+        final ModelPart10 dobj2 = new ModelPart10();
         dobj2.tmd_08 = tmd.objTable[i];
-        model.dobj2ArrPtr_00[i].tmd_08 = dobj2.tmd_08;
+        model.modelParts_00[i].tmd_08 = dobj2.tmd_08;
       }
 
       //LAB_800ddc34
@@ -4649,7 +4648,7 @@ public final class Bttl_800d {
     //LAB_800ddc54
     //LAB_800ddc64
     for(int i = 0; i < count; i++) {
-      model.dobj2ArrPtr_00[i].coord2_04.super_ = model.coord2_14;
+      model.modelParts_00[i].coord2_04.super_ = model.coord2_14;
     }
 
     //LAB_800ddc80
@@ -4659,7 +4658,7 @@ public final class Bttl_800d {
     model.zOffset_a0 = 0;
     model.coord2_14.coord.transfer.set(sp0x18);
 
-    if((model.tmd_8c.header.flags & 0x2) == 0 && model.colourMap_9d != 0) {
+    if((tmd.header.flags & 0x2) == 0 && model.colourMap_9d != 0) {
       adjustModelUvs(model);
     }
 
@@ -4687,7 +4686,7 @@ public final class Bttl_800d {
 
     // Note: these two variables _should_ be the same
     final int modelPartCount = cmb.modelPartCount_0c;
-    final int count = Math.min(model.dobj2ArrPtr_00.length, model.partCount_98);
+    final int count = Math.min(model.modelParts_00.length, model.partCount_98);
 
     //LAB_800dddc4
     int frameIndex;
@@ -4753,7 +4752,7 @@ public final class Bttl_800d {
         final Cmb.SubTransforms08 subTransforms = cmb.subTransforms[a1_0][i];
         final ModelPartTransforms0c modelTransforms = cmbAnim.transforms_08[i];
 
-        final MATRIX modelPartMatrix = model.dobj2ArrPtr_00[i].coord2_04.coord;
+        final MATRIX modelPartMatrix = model.modelParts_00[i].coord2_04.coord;
         RotMatrix_Zyx(modelTransforms.rotate_00, modelPartMatrix);
         modelPartMatrix.transfer.set(modelTransforms.translate_06);
 
@@ -4774,7 +4773,7 @@ public final class Bttl_800d {
       //LAB_800de164
       for(int i = 0; i < count; i++) {
         final ModelPartTransforms0c modelTransforms = cmbAnim.transforms_08[i];
-        final MATRIX modelPartMatrix = model.dobj2ArrPtr_00[i].coord2_04.coord;
+        final MATRIX modelPartMatrix = model.modelParts_00[i].coord2_04.coord;
         RotMatrix_Zyx(modelTransforms.rotate_00, modelPartMatrix);
         modelPartMatrix.transfer.set(modelTransforms.translate_06);
       }
@@ -4892,7 +4891,7 @@ public final class Bttl_800d {
       //LAB_800de50c
       setRotTransMatrix(sp0x10);
 
-      final GsDOBJ2 dobj2 = new GsDOBJ2();
+      final ModelPart10 dobj2 = new ModelPart10();
       dobj2.attribute_00 = a1.flags_00;
       dobj2.tmd_08 = a0;
 
@@ -4937,7 +4936,7 @@ public final class Bttl_800d {
   @Method(0x800de76cL)
   public static TmdObjTable1c optimisePacketsIfNecessary(final TmdWithId tmd, final int objIndex) {
     if((tmd.tmd.header.flags & 0x2) == 0) {
-      final GsDOBJ2 dobj2 = new GsDOBJ2();
+      final ModelPart10 dobj2 = new ModelPart10();
       dobj2.tmd_08 = tmd.tmd.objTable[objIndex];
       return dobj2.tmd_08;
     }

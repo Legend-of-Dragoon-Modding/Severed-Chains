@@ -9,7 +9,7 @@ import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
 import legend.core.gte.GsCOORDINATE2;
-import legend.core.gte.GsDOBJ2;
+import legend.core.gte.ModelPart10;
 import legend.core.gte.MATRIX;
 import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable1c;
@@ -317,7 +317,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80020468L)
-  public static void adjustCombatUvs(final GsDOBJ2 dobj2, final int colourMap) {
+  public static void adjustCombatUvs(final ModelPart10 dobj2, final int colourMap) {
     final TmdObjTable1c objTable = dobj2.tmd_08;
 
     for(final TmdObjTable1c.Primitive primitive : objTable.primitives_10) {
@@ -349,8 +349,6 @@ public final class Scus94491BpeSegment_8002 {
       model.animateTextures_ec[i] = false;
     }
 
-    model.tmd_8c = cContainer.tmdPtr_00.tmd;
-
     if(engineState_8004dd20 == EngineState.SUBMAP_05) {
       FUN_800de004(model, cContainer);
     }
@@ -377,9 +375,9 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80020838
-    initObjTable2(model.dobj2ArrPtr_00);
+    initObjTable2(model.modelParts_00);
     GsInitCoordinate2(null, model.coord2_14);
-    prepareObjTable2(model.dobj2ArrPtr_00, model.tmd_8c, model.coord2_14);
+    prepareObjTable2(model.modelParts_00, cContainer.tmdPtr_00.tmd, model.coord2_14);
 
     model.zOffset_a0 = 0;
     model.ub_a2 = 0;
@@ -402,9 +400,9 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80020a00L)
   public static void initModel(final Model124 model, final CContainer CContainer, final TmdAnimationFile tmdAnimFile) {
-    model.dobj2ArrPtr_00 = new GsDOBJ2[CContainer.tmdPtr_00.tmd.header.nobj];
+    model.modelParts_00 = new ModelPart10[CContainer.tmdPtr_00.tmd.header.nobj];
 
-    Arrays.setAll(model.dobj2ArrPtr_00, i -> new GsDOBJ2());
+    Arrays.setAll(model.modelParts_00, i -> new ModelPart10());
 
     FUN_80020718(model, CContainer, tmdAnimFile);
   }
@@ -454,8 +452,8 @@ public final class Scus94491BpeSegment_8002 {
     if((model.remainingFrames_9e & 0x1) == 0 && model.ub_a2 == 0) { // Interpolation frame (only applies to some animations in combat?)
       if(model.ub_a3 == 0) { // Only set to 1 sometimes on submaps?
         //LAB_80020ce0
-        for(int i = 0; i < model.dobj2ArrPtr_00.length; i++) {
-          final GsCOORDINATE2 coord2 = model.dobj2ArrPtr_00[i].coord2_04;
+        for(int i = 0; i < model.modelParts_00.length; i++) {
+          final GsCOORDINATE2 coord2 = model.modelParts_00[i].coord2_04;
           final Transforms params = coord2.transforms;
           RotMatrix_Zyx(params.rotate, coord2.coord);
           params.trans.set(
@@ -470,8 +468,8 @@ public final class Scus94491BpeSegment_8002 {
       } else {
         //LAB_80020d74
         //LAB_80020d8c
-        for(int i = 0; i < model.dobj2ArrPtr_00.length; i++) {
-          final GsCOORDINATE2 coord2 = model.dobj2ArrPtr_00[i].coord2_04;
+        for(int i = 0; i < model.modelParts_00.length; i++) {
+          final GsCOORDINATE2 coord2 = model.modelParts_00[i].coord2_04;
           final Transforms params = coord2.transforms;
 
           params.rotate.set(transforms[0][i].rotate_00);
@@ -488,8 +486,8 @@ public final class Scus94491BpeSegment_8002 {
     } else {
       //LAB_80020e0c
       //LAB_80020e24
-      for(int i = 0; i < model.dobj2ArrPtr_00.length; i++) {
-        final GsCOORDINATE2 coord2 = model.dobj2ArrPtr_00[i].coord2_04;
+      for(int i = 0; i < model.modelParts_00.length; i++) {
+        final GsCOORDINATE2 coord2 = model.modelParts_00[i].coord2_04;
         final Transforms params = coord2.transforms;
 
         params.rotate.set(transforms[0][i].rotate_00);
@@ -616,7 +614,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80021258L)
-  public static void renderDobj2(final GsDOBJ2 dobj2) {
+  public static void renderDobj2(final ModelPart10 dobj2) {
     if(engineState_8004dd20 == EngineState.SUBMAP_05) {
       //LAB_800212b0
       Renderer.renderDobj2(dobj2, false, 0);
@@ -640,15 +638,15 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800212d8L)
   public static void applyModelPartTransforms(final Model124 model) {
-    if(model.dobj2ArrPtr_00.length == 0) {
+    if(model.modelParts_00.length == 0) {
       return;
     }
 
     final ModelPartTransforms0c[][] transforms = model.partTransforms_94;
 
     //LAB_80021320
-    for(int i = 0; i < model.dobj2ArrPtr_00.length; i++) {
-      final GsDOBJ2 obj2 = model.dobj2ArrPtr_00[i];
+    for(int i = 0; i < model.modelParts_00.length; i++) {
+      final ModelPart10 obj2 = model.modelParts_00[i];
 
       final GsCOORDINATE2 coord2 = obj2.coord2_04;
       final Transforms params = coord2.transforms;
@@ -668,9 +666,9 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x800213c4L)
   public static void applyInterpolationFrame(final Model124 model) {
     //LAB_80021404
-    for(int i = 0; i < model.dobj2ArrPtr_00.length; i++) {
+    for(int i = 0; i < model.modelParts_00.length; i++) {
       final ModelPartTransforms0c transforms = model.partTransforms_94[0][i];
-      final GsCOORDINATE2 coord2 = model.dobj2ArrPtr_00[i].coord2_04;
+      final GsCOORDINATE2 coord2 = model.modelParts_00[i].coord2_04;
       final MATRIX coord = coord2.coord;
       final Transforms params = coord2.transforms;
       RotMatrix_Zyx(params.rotate, coord);
@@ -729,15 +727,15 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80021628L)
   public static void adjustModelUvs(final Model124 model) {
     if(engineState_8004dd20 == EngineState.SUBMAP_05) {
-      for(final GsDOBJ2 dobj2 : model.dobj2ArrPtr_00) {
+      for(final ModelPart10 dobj2 : model.modelParts_00) {
         adjustSmapUvs(dobj2, model.colourMap_9d);
       }
     } else if(engineState_8004dd20 == EngineState.WORLD_MAP_08) {
-      for(final GsDOBJ2 dobj2 : model.dobj2ArrPtr_00) {
+      for(final ModelPart10 dobj2 : model.modelParts_00) {
         adjustWmapUvs(dobj2, model.colourMap_9d);
       }
     } else {
-      for(final GsDOBJ2 dobj2 : model.dobj2ArrPtr_00) {
+      for(final ModelPart10 dobj2 : model.modelParts_00) {
         adjustCombatUvs(dobj2, model.colourMap_9d);
       }
     }
@@ -778,8 +776,8 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80021b08L)
-  public static void initObjTable2(final GsDOBJ2[] dobj2s) {
-    for(final GsDOBJ2 dobj2 : dobj2s) {
+  public static void initObjTable2(final ModelPart10[] dobj2s) {
+    for(final ModelPart10 dobj2 : dobj2s) {
       dobj2.attribute_00 = 0x8000_0000;
       dobj2.coord2_04 = new GsCOORDINATE2();
       dobj2.tmd_08 = null;
@@ -787,23 +785,23 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80021bacL)
-  public static void addNewDobj2(final GsDOBJ2 dobj2) {
+  public static void addNewDobj2(final ModelPart10 dobj2) {
     dobj2.attribute_00 = 0;
     GsInitCoordinate2(null, dobj2.coord2_04);
     dobj2.tmd_08 = null;
   }
 
   @Method(0x80021ca0L)
-  public static void prepareObjTable2(final GsDOBJ2[] table, final Tmd tmd, final GsCOORDINATE2 coord2) {
+  public static void prepareObjTable2(final ModelPart10[] table, final Tmd tmd, final GsCOORDINATE2 coord2) {
     //LAB_80021d08
-    for(final GsDOBJ2 dobj2 : table) {
+    for(final ModelPart10 dobj2 : table) {
       addNewDobj2(dobj2);
     }
 
     //LAB_80021d3c
     //LAB_80021d64
     for(int i = 0; i < table.length; i++) {
-      final GsDOBJ2 dobj2 = table[i];
+      final ModelPart10 dobj2 = table[i];
 
       dobj2.coord2_04.flg = 0;
 
