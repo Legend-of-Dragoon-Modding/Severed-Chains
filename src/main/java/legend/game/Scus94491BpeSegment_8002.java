@@ -94,7 +94,7 @@ import static legend.game.SItem.renderMenus;
 import static legend.game.SItem.renderPostCombatReport;
 import static legend.game.SItem.textLength;
 import static legend.game.SMap.FUN_800da114;
-import static legend.game.SMap.FUN_800da524;
+import static legend.game.SMap.renderSmapShadow;
 import static legend.game.SMap.FUN_800de004;
 import static legend.game.SMap.FUN_800e2428;
 import static legend.game.SMap.FUN_800e3fac;
@@ -203,9 +203,9 @@ import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800e.main;
-import static legend.game.combat.Bttl_800e.FUN_800ec258;
+import static legend.game.combat.Bttl_800e.renderBttlShadow;
 import static legend.game.combat.Bttl_800e.renderBttlModel;
-import static legend.game.wmap.WMap.FUN_800c8d90;
+import static legend.game.wmap.WMap.renderWmapShadow;
 import static legend.game.wmap.WMap.adjustWmapUvs;
 import static legend.game.wmap.WMap.renderWmapModel;
 
@@ -391,7 +391,7 @@ public final class Scus94491BpeSegment_8002 {
     adjustModelUvs(model);
 
     //LAB_800209b0
-    model.movementType_cc = 0;
+    model.shadowType_cc = 0;
     model.modelPartIndex_cd = -2;
     model.coord2_14.transforms.scale.set(1.0f, 1.0f, 1.0f);
     model.vector_10c.set(1.0f, 1.0f, 1.0f);
@@ -742,18 +742,13 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80021724L)
-  public static void FUN_80021724(final Model124 model) {
-    final EngineState state = engineState_8004dd20;
-    if(state == EngineState.SUBMAP_05) {
-      //LAB_8002177c
-      FUN_800da524(model);
-      //LAB_80021758
-    } else if(state == EngineState.COMBAT_06) {
-      //LAB_8002176c
-      FUN_800ec258(model);
-    } else if(state == EngineState.WORLD_MAP_08) {
-      //LAB_8002178c
-      FUN_800c8d90(model);
+  public static void renderShadow(final Model124 model) {
+    if(engineState_8004dd20 == EngineState.SUBMAP_05) {
+      renderSmapShadow(model);
+    } else if(engineState_8004dd20 == EngineState.COMBAT_06) {
+      renderBttlShadow(model);
+    } else if(engineState_8004dd20 == EngineState.WORLD_MAP_08) {
+      renderWmapShadow(model);
     }
 
     //LAB_80021794

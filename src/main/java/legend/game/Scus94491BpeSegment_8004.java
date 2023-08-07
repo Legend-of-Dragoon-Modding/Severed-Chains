@@ -379,8 +379,8 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[308] = SMap::FUN_800e08f4;
     scriptSubFunctions_8004e29c[309] = SMap::scriptSetAmbientColour;
     scriptSubFunctions_8004e29c[310] = SMap::scriptResetAmbientColour;
-    scriptSubFunctions_8004e29c[311] = SMap::FUN_800e09e0;
-    scriptSubFunctions_8004e29c[312] = SMap::FUN_800e0a14;
+    scriptSubFunctions_8004e29c[311] = SMap::scriptEnableShadow;
+    scriptSubFunctions_8004e29c[312] = SMap::scriptDisableShadow;
     scriptSubFunctions_8004e29c[313] = SMap::FUN_800e0a48;
     scriptSubFunctions_8004e29c[314] = SMap::FUN_800e0a94;
     scriptSubFunctions_8004e29c[315] = SMap::scriptCheckPlayerCollision;

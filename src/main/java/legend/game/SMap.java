@@ -208,7 +208,7 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.hasNoEncounters_800bed58;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.matrix_800bed30;
-import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
+import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.musicLoaded_800bd782;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.projectionPlaneDistance_800bd810;
@@ -781,38 +781,35 @@ public final class SMap {
   }
 
   @Method(0x800da524L)
-  public static void FUN_800da524(final Model124 model) {
-    GsInitCoordinate2(model.coord2_14, model_800bda10.coord2_14);
+  public static void renderSmapShadow(final Model124 model) {
+    GsInitCoordinate2(model.coord2_14, shadowModel_800bda10.coord2_14);
 
-    model_800bda10.coord2_14.coord.transfer.set(model.vector_118);
-    model_800bda10.zOffset_a0 = model.zOffset_a0 + 16;
+    shadowModel_800bda10.zOffset_a0 = model.zOffset_a0 + 16;
+    shadowModel_800bda10.coord2_14.transforms.scale.set(model.vector_10c).div(64.0f);
 
-    model_800bda10.coord2_14.transforms.scale.set(model.vector_10c).div(64.0f);
+    RotMatrix_Xyz(shadowModel_800bda10.coord2_14.transforms.rotate, shadowModel_800bda10.coord2_14.coord);
+    shadowModel_800bda10.coord2_14.coord.scaleL(shadowModel_800bda10.coord2_14.transforms.scale);
+    shadowModel_800bda10.coord2_14.coord.transfer.set(model.vector_118);
 
-    RotMatrix_Xyz(model_800bda10.coord2_14.transforms.rotate, model_800bda10.coord2_14.coord);
+    final ModelPart10 modelPart = shadowModel_800bda10.modelParts_00[0];
+    final GsCOORDINATE2 partCoord = modelPart.coord2_04;
 
-    model_800bda10.coord2_14.coord.scaleL(model_800bda10.coord2_14.transforms.scale);
-    model_800bda10.coord2_14.flg = 0;
+    partCoord.transforms.rotate.zero();
+    partCoord.transforms.trans.zero();
 
-    final MATRIX matrix = model_800bda10.modelParts_00[0].coord2_04.coord;
-    final Transforms params = model_800bda10.modelParts_00[0].coord2_04.transforms;
-
-    params.rotate.zero();
-    RotMatrix_Zyx(params.rotate, matrix);
-
-    params.trans.zero();
-    matrix.transfer.set(params.trans);
+    RotMatrix_Zyx(partCoord.transforms.rotate, partCoord.coord);
+    partCoord.coord.transfer.set(partCoord.transforms.trans);
 
     final MATRIX lw = new MATRIX();
     final MATRIX ls = new MATRIX();
-    GsGetLws(model_800bda10.modelParts_00[0].coord2_04, lw, ls);
+    GsGetLws(partCoord, lw, ls);
     GsSetLightMatrix(lw);
 
     GTE.setRotationMatrix(ls);
     GTE.setTranslationVector(ls.transfer);
 
-    Renderer.renderDobj2(model_800bda10.modelParts_00[0], false, 0);
-    model_800bda10.modelParts_00[0].coord2_04.flg--;
+    Renderer.renderDobj2(modelPart, false, 0);
+    partCoord.flg--;
   }
 
   @Method(0x800da6c8L)
@@ -893,16 +890,16 @@ public final class SMap {
   }
 
   @Method(0x800daa3cL)
-  public static void renderSmapModel(final Model124 a0) {
-    zOffset_1f8003e8.set(a0.zOffset_a0);
-    tmdGp0Tpage_1f8003ec.set(a0.tpage_108);
+  public static void renderSmapModel(final Model124 model) {
+    zOffset_1f8003e8.set(model.zOffset_a0);
+    tmdGp0Tpage_1f8003ec.set(model.tpage_108);
 
     //LAB_800daaa8
     final MATRIX lw = new MATRIX();
     final MATRIX ls = new MATRIX();
-    for(int i = 0; i < a0.modelParts_00.length; i++) {
-      if((a0.partInvisible_f4 & 1L << i) == 0) {
-        final ModelPart10 dobj2 = a0.modelParts_00[i];
+    for(int i = 0; i < model.modelParts_00.length; i++) {
+      if((model.partInvisible_f4 & 1L << i) == 0) {
+        final ModelPart10 dobj2 = model.modelParts_00[i];
 
         GsGetLws(dobj2.coord2_04, lw, ls);
         GsSetLightMatrix(lw);
@@ -913,8 +910,8 @@ public final class SMap {
     }
 
     //LAB_800dab34
-    if(a0.movementType_cc != 0) {
-      FUN_800da524(a0);
+    if(model.shadowType_cc != 0) {
+      renderSmapShadow(model);
     }
 
     //LAB_800dab4c
@@ -2044,16 +2041,16 @@ public final class SMap {
   }
 
   @Method(0x800e09e0L)
-  public static FlowControl FUN_800e09e0(final RunningScript<?> script) {
+  public static FlowControl scriptEnableShadow(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    sobj.model_00.movementType_cc = 1;
+    sobj.model_00.shadowType_cc = 1;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e0a14L)
-  public static FlowControl FUN_800e0a14(final RunningScript<?> script) {
+  public static FlowControl scriptDisableShadow(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    sobj.model_00.movementType_cc = 0;
+    sobj.model_00.shadowType_cc = 0;
     return FlowControl.CONTINUE;
   }
 

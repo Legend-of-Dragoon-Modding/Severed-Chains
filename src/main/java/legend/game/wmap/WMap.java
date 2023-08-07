@@ -384,7 +384,7 @@ public class WMap {
   }
 
   @Method(0x800c8d90L)
-  public static void FUN_800c8d90(final Model124 model) {
+  public static void renderWmapShadow(final Model124 model) {
     assert false;
   }
 
@@ -459,8 +459,8 @@ public class WMap {
     }
 
     //LAB_800c9354
-    if(model.movementType_cc != 0) {
-      FUN_800c8d90(model);
+    if(model.shadowType_cc != 0) {
+      renderWmapShadow(model);
     }
 
     //LAB_800c936c

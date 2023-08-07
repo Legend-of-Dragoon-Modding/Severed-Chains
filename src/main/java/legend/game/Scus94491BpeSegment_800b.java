@@ -156,7 +156,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static final IntRef _800bda08 = MEMORY.ref(4, 0x800bda08L, IntRef::new);
   public static BattleStage stage_800bda0c;
-  public static final Model124 model_800bda10 = new Model124("Oval blob");
+  public static final Model124 shadowModel_800bda10 = new Model124("Shadow");
 
   public static EngineState _800bdb88 = EngineState.PRELOAD_00;
 

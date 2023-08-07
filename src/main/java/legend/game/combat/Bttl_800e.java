@@ -138,7 +138,7 @@ import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800be5d0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
+import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
@@ -1519,7 +1519,7 @@ public final class Bttl_800e {
    */
   @Method(0x800e7944L)
   public static void FUN_800e7944(final GenericSpriteEffect24 spriteEffect, final VECTOR translation, final int zMod) {
-    if((int)spriteEffect.flags_00 >= 0) {
+    if((int)spriteEffect.flags_00 >= 0) { // No errors
       final VECTOR finalTranslation = new VECTOR();
       translation.mul(worldToScreenMatrix_800c3548, finalTranslation);
       finalTranslation.add(worldToScreenMatrix_800c3548.transfer);
@@ -1713,7 +1713,7 @@ public final class Bttl_800e {
     //LAB_800e8604
     while(scriptIndex >= 0) {
       final ScriptState<?> state = scriptStatePtrArr_800bc1c0[scriptIndex];
-      if(state == null) {
+      if(state == null) { // error, parent no longer exists
         manager._10.flags_00 |= 0x8000_0000;
         transformMatrix.transfer.setZ(-0x7fff);
         scriptIndex = -2;
@@ -1756,8 +1756,8 @@ public final class Bttl_800e {
         //LAB_800e8774
         transformMatrix.compose(sp0x10);
         currentManager = null;
-        scriptIndex = -1;
-      } else {
+        scriptIndex = -1; // finished
+      } else { // error, parent not a bobj or effect
         //LAB_800e878c
         //LAB_800e8790
         manager._10.flags_00 |= 0x8000_0000;
@@ -1768,7 +1768,7 @@ public final class Bttl_800e {
     }
 
     //LAB_800e87b4
-    if(scriptIndex == -2) {
+    if(scriptIndex == -2) { // error
       final MATRIX transposedWs = new MATRIX();
       final VECTOR transposedTranslation = new VECTOR();
       worldToScreenMatrix_800c3548.transpose(transposedWs);
@@ -1964,7 +1964,7 @@ public final class Bttl_800e {
   /** Has some relation to rendering of certain effect sprites, like ones from HUD DEFF */
   @Method(0x800e9428L)
   public static void renderBillboardSpriteEffect_(final SpriteMetrics08 metrics, final EffectManagerData6cInner<?> managerInner, final MATRIX transformMatrix) {
-    if(managerInner.flags_00 >= 0) {
+    if(managerInner.flags_00 >= 0) { // No errors
       final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24();
       spriteEffect.flags_00 = managerInner.flags_00 & 0xffff_ffffL;
       spriteEffect.x_04 = (short)(-metrics.w_04 / 2);
@@ -2059,19 +2059,19 @@ public final class Bttl_800e {
     //LAB_800e97ec
     final int a0 = script.params_20[1].get();
     if(a0 == -1) {
-      model.movementType_cc = 2;
+      model.shadowType_cc = 2;
       model.modelPartIndex_cd = -1;
     } else if(a0 == -2) {
       //LAB_800e982c
-      model.movementType_cc = 3;
+      model.shadowType_cc = 3;
       //LAB_800e980c
     } else if(a0 == -3) {
       //LAB_800e983c
-      model.movementType_cc = 0;
+      model.shadowType_cc = 0;
     } else {
       //LAB_800e9844
       //LAB_800e9848
-      model.movementType_cc = 3;
+      model.shadowType_cc = 3;
       model.modelPartIndex_cd = a0;
     }
 
@@ -2182,7 +2182,7 @@ public final class Bttl_800e {
     model.tpage_108 = 0;
     model.vector_10c.set(1.0f, 1.0f, 1.0f);
     model.vector_118.set(0, 0, 0);
-    model.movementType_cc = 0;
+    model.shadowType_cc = 0;
     model.modelPartIndex_cd = 0;
 
     model.modelParts_00 = new ModelPart10[a1.dobj2s_00.length];
@@ -2985,37 +2985,37 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ec258L)
-  public static void FUN_800ec258(final Model124 model) {
-    final Model124 s2 = model_800bda10;
+  public static void renderBttlShadow(final Model124 model) {
+    final Model124 shadow = shadowModel_800bda10;
 
-    GsInitCoordinate2(model.coord2_14, s2.coord2_14);
+    GsInitCoordinate2(model.coord2_14, shadow.coord2_14);
 
-    if(model.movementType_cc == 3) {
+    if(model.shadowType_cc == 3) {
       //LAB_800ec2ec
-      s2.coord2_14.coord.transfer.setX(model.vector_118.getX() + model.modelParts_00[model.modelPartIndex_cd].coord2_04.coord.transfer.getX());
-      s2.coord2_14.coord.transfer.setY(model.vector_118.getY() - MathHelper.safeDiv(model.coord2_14.coord.transfer.getY(), model.coord2_14.transforms.scale.y));
-      s2.coord2_14.coord.transfer.setZ(model.vector_118.getZ() + model.modelParts_00[model.modelPartIndex_cd].coord2_04.coord.transfer.getZ());
+      shadow.coord2_14.coord.transfer.setX(model.vector_118.getX() + model.modelParts_00[model.modelPartIndex_cd].coord2_04.coord.transfer.getX());
+      shadow.coord2_14.coord.transfer.setY(model.vector_118.getY() - MathHelper.safeDiv(model.coord2_14.coord.transfer.getY(), model.coord2_14.transforms.scale.y));
+      shadow.coord2_14.coord.transfer.setZ(model.vector_118.getZ() + model.modelParts_00[model.modelPartIndex_cd].coord2_04.coord.transfer.getZ());
     } else {
-      s2.coord2_14.coord.transfer.setX(model.vector_118.getX());
+      shadow.coord2_14.coord.transfer.setX(model.vector_118.getX());
 
-      if(model.movementType_cc == 1) {
-        s2.coord2_14.coord.transfer.setY(model.vector_118.getY());
+      if(model.shadowType_cc == 1) {
+        shadow.coord2_14.coord.transfer.setY(model.vector_118.getY());
       } else {
         //LAB_800ec2bc
-        s2.coord2_14.coord.transfer.setY(model.vector_118.getY() - MathHelper.safeDiv(model.coord2_14.coord.transfer.getY(), model.coord2_14.transforms.scale.y));
+        shadow.coord2_14.coord.transfer.setY(model.vector_118.getY() - MathHelper.safeDiv(model.coord2_14.coord.transfer.getY(), model.coord2_14.transforms.scale.y));
       }
 
       //LAB_800ec2e0
-      s2.coord2_14.coord.transfer.setZ(model.vector_118.getZ());
+      shadow.coord2_14.coord.transfer.setZ(model.vector_118.getZ());
     }
 
     //LAB_800ec370
-    s2.zOffset_a0 = model.zOffset_a0 + 16;
-    s2.coord2_14.transforms.scale.set(model.vector_10c.x).div(4.0f);
-    RotMatrix_Xyz(s2.coord2_14.transforms.rotate, s2.coord2_14.coord);
-    s2.coord2_14.coord.scaleL(s2.coord2_14.transforms.scale);
-    s2.coord2_14.flg = 0;
-    final GsCOORDINATE2 v0 = s2.modelParts_00[0].coord2_04;
+    shadow.zOffset_a0 = model.zOffset_a0 + 16;
+    shadow.coord2_14.transforms.scale.set(model.vector_10c.x).div(4.0f);
+    RotMatrix_Xyz(shadow.coord2_14.transforms.rotate, shadow.coord2_14.coord);
+    shadow.coord2_14.coord.scaleL(shadow.coord2_14.transforms.scale);
+    shadow.coord2_14.flg = 0;
+    final GsCOORDINATE2 v0 = shadow.modelParts_00[0].coord2_04;
     final Transforms s0 = v0.transforms;
     s0.rotate.zero();
     RotMatrix_Zyx(s0.rotate, v0.coord);
@@ -3024,12 +3024,12 @@ public final class Bttl_800e {
 
     final MATRIX sp0x30 = new MATRIX();
     final MATRIX sp0x10 = new MATRIX();
-    GsGetLws(s2.modelParts_00[0].coord2_04, sp0x30, sp0x10);
+    GsGetLws(shadow.modelParts_00[0].coord2_04, sp0x30, sp0x10);
     GsSetLightMatrix(sp0x30);
     GTE.setRotationMatrix(sp0x10);
     GTE.setTranslationVector(sp0x10.transfer);
-    Renderer.renderDobj2(s2.modelParts_00[0], true, 0);
-    s2.modelParts_00[0].coord2_04.flg--;
+    Renderer.renderDobj2(shadow.modelParts_00[0], true, 0);
+    shadow.modelParts_00[0].coord2_04.flg--;
   }
 
   @Method(0x800ec4bcL)
@@ -3189,8 +3189,8 @@ public final class Bttl_800e {
     }
 
     //LAB_800eca58
-    if(model.movementType_cc != 0) {
-      FUN_800ec258(model);
+    if(model.shadowType_cc != 0) {
+      renderBttlShadow(model);
     }
 
     //LAB_800eca70
@@ -3367,7 +3367,7 @@ public final class Bttl_800e {
   @Method(0x800ee384L)
   public static FlowControl FUN_800ee384(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bobj.model_148.movementType_cc = 2;
+    bobj.model_148.shadowType_cc = 2;
     bobj.model_148.modelPartIndex_cd = -1;
     return FlowControl.CONTINUE;
   }
@@ -3375,7 +3375,7 @@ public final class Bttl_800e {
   @Method(0x800ee3c0L)
   public static FlowControl FUN_800ee3c0(final RunningScript<?> script) {
     final BattleObject27c v1 = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    v1.model_148.movementType_cc = 3;
+    v1.model_148.shadowType_cc = 3;
     v1.model_148.modelPartIndex_cd = script.params_20[1].get();
     return FlowControl.CONTINUE;
   }
@@ -3386,12 +3386,12 @@ public final class Bttl_800e {
     final int a0_0 = bobj.model_148.modelPartIndex_cd;
     if(a0_0 == -2) {
       //LAB_800ee450
-      bobj.model_148.movementType_cc = 0;
+      bobj.model_148.shadowType_cc = 0;
     } else if(a0_0 == -1) {
-      bobj.model_148.movementType_cc = 2;
+      bobj.model_148.shadowType_cc = 2;
     } else {
       //LAB_800ee458
-      bobj.model_148.movementType_cc = 3;
+      bobj.model_148.shadowType_cc = 3;
     }
 
     //LAB_800ee460
@@ -3401,7 +3401,7 @@ public final class Bttl_800e {
   @Method(0x800ee468L)
   public static FlowControl FUN_800ee468(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bobj.model_148.movementType_cc = 0;
+    bobj.model_148.shadowType_cc = 0;
     return FlowControl.CONTINUE;
   }
 

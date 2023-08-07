@@ -156,7 +156,7 @@ import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
-import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
+import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
@@ -9508,7 +9508,7 @@ public final class SEffe {
   /** TODO renders some kind of deff tmd maybe, uses ctmd render pipeline */
   @Method(0x80118790L)
   public static void FUN_80118790(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
-    if(manager._10.flags_00 >= 0) {
+    if(manager._10.flags_00 >= 0) { // No errors
       final int y = manager._10.trans_04.getY();
       manager._10.trans_04.setY(0);
       final MATRIX sp0x10 = new MATRIX();
@@ -9527,7 +9527,7 @@ public final class SEffe {
       tmdGp0Tpage_1f8003ec.set(manager._10.flags_00 >>> 23 & 0x60);
       zOffset_1f8003e8.set(manager._10.z_22);
       FUN_800e60e0(manager._10.colour_1c.getX() / 128.0f, manager._10.colour_1c.getY() / 128.0f, manager._10.colour_1c.getZ() / 128.0f);
-      renderTmdSpriteEffect(model_800bda10.modelParts_00[0].tmd_08, manager._10, sp0x10);
+      renderTmdSpriteEffect(shadowModel_800bda10.modelParts_00[0].tmd_08, manager._10, sp0x10);
       FUN_800e6170();
     }
 
@@ -9537,7 +9537,7 @@ public final class SEffe {
   @Method(0x801188ecL)
   public static FlowControl FUN_801188ec(final RunningScript<? extends BattleScriptDataBase> script) {
     final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
-      "Unknown (FUN_801188ec, %s)".formatted(model_800bda10.modelParts_00[0].tmd_08.name),
+      "Unknown (FUN_801188ec, %s)".formatted(shadowModel_800bda10.modelParts_00[0].tmd_08.name),
       script.scriptState_04,
       null,
       SEffe::FUN_80118790,
@@ -9668,7 +9668,7 @@ public final class SEffe {
   @Method(0x80118e98L)
   public static void renderSpriteWithTrailEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.ColourType>> state, final EffectManagerData6c<EffectManagerData6cInner.ColourType> manager) {
     final SpriteWithTrailEffect30 effect = (SpriteWithTrailEffect30)manager.effect_44;
-    if(manager._10.flags_00 >= 0) {
+    if(manager._10.flags_00 >= 0) { // No errors
       final MATRIX transformMatrix = new MATRIX();
       calculateEffectTransforms(transformMatrix, manager);
 

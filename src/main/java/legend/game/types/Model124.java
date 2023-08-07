@@ -74,8 +74,8 @@ public class Model124 {
 //  public int count_c8; // Use modelParts_00.length
 //  /** ushort */
 //  public int tmdNobj_ca; // Use modelParts_00.length
-  /** 0/1/2/3 - if 0, the model won't render (byte) */
-  public int movementType_cc;
+  /** 0/1/2/3 - if 0, some model attached to this model won't render (maybe shadow/dust?) (byte) */
+  public int shadowType_cc;
   /** byte */
   public int modelPartIndex_cd;
 
@@ -143,7 +143,7 @@ public class Model124 {
     this.ptr_a8 = other.ptr_a8;
     System.arraycopy(other.usArr_ac, 0, this.usArr_ac, 0, 7);
     System.arraycopy(other.usArr_ba, 0, this.usArr_ba, 0, 7);
-    this.movementType_cc = other.movementType_cc;
+    this.shadowType_cc = other.shadowType_cc;
     this.modelPartIndex_cd = other.modelPartIndex_cd;
     System.arraycopy(other.ptrs_d0, 0, this.ptrs_d0, 0, 7);
     System.arraycopy(other.animateTextures_ec, 0, this.animateTextures_ec, 0, 7);

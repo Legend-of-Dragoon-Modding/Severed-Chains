@@ -18,14 +18,14 @@ import java.util.Arrays;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
-import static legend.game.Scus94491BpeSegment.extendedTmd_800103d0;
+import static legend.game.Scus94491BpeSegment.shadowCContainer_800103d0;
 import static legend.game.Scus94491BpeSegment.initSound;
 import static legend.game.Scus94491BpeSegment.loadMenuSounds;
 import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
-import static legend.game.Scus94491BpeSegment.ovalBlobTimHeader_80010548;
+import static legend.game.Scus94491BpeSegment.shadowTexture_80010548;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
-import static legend.game.Scus94491BpeSegment.tmdAnimFile_8001051c;
+import static legend.game.Scus94491BpeSegment.shadowAnimation_8001051c;
 import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
@@ -52,7 +52,7 @@ import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b.fmvStage_800bf0d8;
-import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
+import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
@@ -97,7 +97,7 @@ public final class Scus94491BpeSegment_800e {
     precalculateTpages();
     loadSystemFont();
     SCRIPTS.clear();
-    loadOvalBlobTexture();
+    loadShadow();
     FUN_800e6d60();
     initFmvs();
   }
@@ -142,10 +142,10 @@ public final class Scus94491BpeSegment_800e {
   }
 
   @Method(0x800e6998L)
-  public static void loadOvalBlobTexture() {
+  public static void loadShadow() {
     submapIndex_800bd808.set(0);
 
-    final TimHeader header = parseTimHeader(ovalBlobTimHeader_80010548);
+    final TimHeader header = parseTimHeader(shadowTexture_80010548);
     LoadImage(header.getImageRect(), header.getImageAddress());
 
     if(header.hasClut()) {
@@ -153,14 +153,14 @@ public final class Scus94491BpeSegment_800e {
     }
 
     //LAB_800e6af0
-    final CContainer container = new CContainer("Oval blob", new FileData(MEMORY.getBytes(extendedTmd_800103d0.getAddress(), 0x14c)));
-    final TmdAnimationFile animation = new TmdAnimationFile(new FileData(MEMORY.getBytes(tmdAnimFile_8001051c.getAddress(), 0x28)));
+    final CContainer container = new CContainer("Shadow", new FileData(MEMORY.getBytes(shadowCContainer_800103d0.getAddress(), 0x14c)));
+    final TmdAnimationFile animation = new TmdAnimationFile(new FileData(MEMORY.getBytes(shadowAnimation_8001051c.getAddress(), 0x28)));
 
-    FUN_800e6b3c(model_800bda10, container, animation);
+    FUN_800e6b3c(shadowModel_800bda10, container, animation);
 
-    model_800bda10.coord2_14.transforms.rotate.zero();
-    model_800bda10.colourMap_9d = 0;
-    model_800bda10.movementType_cc = 0;
+    shadowModel_800bda10.coord2_14.transforms.rotate.zero();
+    shadowModel_800bda10.colourMap_9d = 0;
+    shadowModel_800bda10.shadowType_cc = 0;
   }
 
   /** Very similar to {@link Scus94491BpeSegment_8002#FUN_80020718(Model124, CContainer, TmdAnimationFile)} */
@@ -212,7 +212,7 @@ public final class Scus94491BpeSegment_800e {
     loadModelStandardAnimation(model, tmdAnimFile);
 
     model.coord2_14.coord.transfer.set(x, y, z);
-    model.movementType_cc = 0;
+    model.shadowType_cc = 0;
     model.coord2_14.transforms.scale.set(1.0f, 1.0f, 1.0f);
     model.vector_10c.set(1.0f, 1.0f, 1.0f);
     model.vector_118.set(0, 0, 0);

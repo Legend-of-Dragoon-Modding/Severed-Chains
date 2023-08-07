@@ -238,12 +238,12 @@ public final class Scus94491BpeSegment {
   public static final Value _8001032c = MEMORY.ref(1, 0x8001032cL);
   public static final Value _80010334 = MEMORY.ref(1, 0x80010334L);
 
-  public static final Value extendedTmd_800103d0 = MEMORY.ref(4, 0x800103d0L);
-  public static final Value tmdAnimFile_8001051c = MEMORY.ref(4, 0x8001051cL);
+  public static final Value shadowCContainer_800103d0 = MEMORY.ref(4, 0x800103d0L);
+  public static final Value shadowAnimation_8001051c = MEMORY.ref(4, 0x8001051cL);
   /** TIM */
   public static final Value _80010544 = MEMORY.ref(4, 0x80010544L);
 
-  public static final Value ovalBlobTimHeader_80010548 = MEMORY.ref(4, 0x80010548L);
+  public static final Value shadowTexture_80010548 = MEMORY.ref(4, 0x80010548L);
 
   public static final ArrayRef<RECT> rectArray28_80010770 = MEMORY.ref(4, 0x80010770L, ArrayRef.of(RECT.class, 28, 8, RECT::new));
 

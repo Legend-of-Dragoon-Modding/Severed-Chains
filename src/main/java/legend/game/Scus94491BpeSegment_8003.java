@@ -720,8 +720,8 @@ public final class Scus94491BpeSegment_8003 {
     do {
       coord2s_800c35a8[s1] = coord;
 
-      if(coord.super_ == null) {
-        if(coord.flg == PSDCNT_800c34d0 || coord.flg == 0) {
+      if(coord.super_ == null) { // If top level coord2...
+        if(coord.flg == PSDCNT_800c34d0 || coord.flg == 0) { // ...and not initialized (or initialized this frame - maybe prevents loops?)
           //LAB_8003dd14
           coord.flg = PSDCNT_800c34d0;
           coord.workm.set(coord.coord);
@@ -730,14 +730,14 @@ public final class Scus94491BpeSegment_8003 {
         }
 
         //LAB_8003dda4
-        s1 = a + 1;
-        if(a == 100) {
+        if(a == 100) { // ...and this is the only coord2
           lw.set(coord2s_800c35a8[0].workm);
           s1 = 0;
           break;
         }
 
         //LAB_8003de00
+        s1 = a + 1;
         lw.set(coord2s_800c35a8[s1].workm);
         break;
       }

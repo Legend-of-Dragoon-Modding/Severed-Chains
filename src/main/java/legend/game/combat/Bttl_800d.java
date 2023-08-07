@@ -77,7 +77,7 @@ import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zMin;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80021724;
+import static legend.game.Scus94491BpeSegment_8002.renderShadow;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8002.adjustModelUvs;
 import static legend.game.Scus94491BpeSegment_8002.animateModelTextures;
@@ -4604,8 +4604,8 @@ public final class Bttl_800d {
       //LAB_800dda70
     }
 
-    if(model.movementType_cc != 0) {
-      FUN_80021724(model);
+    if(model.shadowType_cc != 0) {
+      renderShadow(model);
     }
 
     //LAB_800dda98
@@ -4664,7 +4664,7 @@ public final class Bttl_800d {
 
     //LAB_800ddce8
     model.coord2_14.transforms.scale.set(1.0f, 1.0f, 1.0f);
-    model.movementType_cc = 0;
+    model.shadowType_cc = 0;
     model.vector_10c.set(1.0f, 1.0f, 1.0f);
     model.vector_118.set(0, 0, 0);
   }
