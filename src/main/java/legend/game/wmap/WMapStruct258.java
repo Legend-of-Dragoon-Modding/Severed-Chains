@@ -41,7 +41,7 @@ public class WMapStruct258 {
   /** ubyte */
   public int _1f9;
 
-  public WMapRender40 _1fc;
+  public WmapMenuTextHighlight40 coolonTravelMenuSelectorHighlight_1fc;
   public final SVECTOR svec_200 = new SVECTOR();
   public final SVECTOR svec_208 = new SVECTOR();
 

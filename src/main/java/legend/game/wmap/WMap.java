@@ -9,8 +9,8 @@ import legend.core.gpu.RECT;
 import legend.core.gte.COLOUR;
 import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORDINATE2;
-import legend.core.gte.ModelPart10;
 import legend.core.gte.MATRIX;
+import legend.core.gte.ModelPart10;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
@@ -159,11 +159,11 @@ public class WMap {
 
   public static final MapState100 mapState_800c6798 = new MapState100();
 
-  private static WMapRender40 _800c6898;
-  private static WMapRender40 _800c689c;
-  private static final IntRef _800c68a0 = MEMORY.ref(4, 0x800c68a0L, IntRef::new);
-  private static final IntRef _800c68a4 = MEMORY.ref(4, 0x800c68a4L, IntRef::new);
-  private static final BoolRef _800c68a8 = MEMORY.ref(4, 0x800c68a8L, BoolRef::new);
+  private static WmapMenuTextHighlight40 locationMenuNameShadow_800c6898;
+  private static WmapMenuTextHighlight40 locationMenuSelectorHighlight_800c689c;
+  private static final IntRef cancelLocationEntryDelayTick_800c68a0 = MEMORY.ref(4, 0x800c68a0L, IntRef::new);
+  private static final IntRef mapTransitionState_800c68a4 = MEMORY.ref(4, 0x800c68a4L, IntRef::new);
+  private static final BoolRef startLocationLabelsActive_800c68a8 = MEMORY.ref(4, 0x800c68a8L, BoolRef::new);
 
   private static final IntRef encounterAccumulator_800c6ae8 = MEMORY.ref(4, 0x800c6ae8L, IntRef::new);
 
@@ -173,9 +173,9 @@ public class WMap {
   private static final IntRef _800c86cc = MEMORY.ref(4, 0x800c86ccL, IntRef::new);
 
   private static final ShortRef locationThumbnailBrightness_800c86d0 = MEMORY.ref(2, 0x800c86d0L, ShortRef::new);
-  private static final ByteRef _800c86d2 = MEMORY.ref(1, 0x800c86d2L, ByteRef::new);
+  private static final ByteRef menuSelectorOptionIndex_800c86d2 = MEMORY.ref(1, 0x800c86d2L, ByteRef::new);
 
-  private static final int[] _800c86d4 = new int[8];
+  private static final int[] startButtonLabelStages_800c86d4 = new int[8];
 
   private static final IntRef _800c86f0 = MEMORY.ref(4, 0x800c86f0L, IntRef::new);
 
@@ -274,8 +274,8 @@ public class WMap {
    * </ol>
    */
   private static final ArrayRef<ByteRef> playerAvatarColourMapOffsets_800ef694 = MEMORY.ref(1, 0x800ef694L, ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new));
-  private static final ArrayRef<WMapStruct08> _800ef698 = MEMORY.ref(4, 0x800ef698L, ArrayRef.of(WMapStruct08.class, 6, 0x8, WMapStruct08::new));
-  private static final ArrayRef<WMapStruct0c> _800ef6c8 = MEMORY.ref(4, 0x800ef6c8L, ArrayRef.of(WMapStruct0c.class, 6, 0xc, WMapStruct0c::new));
+  private static final ArrayRef<TeleportationEndpoints08> teleportationEndpoints_800ef698 = MEMORY.ref(4, 0x800ef698L, ArrayRef.of(TeleportationEndpoints08.class, 6, 0x8, TeleportationEndpoints08::new));
+  private static final ArrayRef<TeleportationLocation0c> teleportationLocations_800ef6c8 = MEMORY.ref(4, 0x800ef6c8L, ArrayRef.of(TeleportationLocation0c.class, 6, 0xc, TeleportationLocation0c::new));
 
   private static final LodString No_800effa4 = MEMORY.ref(4, 0x800effa4L, LodString::new);
   private static final LodString Yes_800effb0 = MEMORY.ref(4, 0x800effb0L, LodString::new);
@@ -283,7 +283,7 @@ public class WMap {
   private static final LodString Move_800f00e8 = MEMORY.ref(4, 0x800f00e8L, LodString::new);
 
   private static final ArrayRef<Pointer<LodString>> services_800f01cc = MEMORY.ref(4, 0x800f01ccL, ArrayRef.of(Pointer.classFor(LodString.class), 5, 4, Pointer.deferred(4, LodString::new)));
-  private static final Pointer<LodString> _800f01e0 = MEMORY.ref(4, 0x800f01e0L, Pointer.deferred(4, LodString::new));
+  private static final Pointer<LodString> No_Facilities_800f01e0 = MEMORY.ref(4, 0x800f01e0L, Pointer.deferred(4, LodString::new));
   private static final Pointer<LodString> No_Entry_800f01e4 = MEMORY.ref(4, 0x800f01e4L, Pointer.deferred(4, LodString::new));
   private static final Pointer<LodString> Enter_800f01e8 = MEMORY.ref(4, 0x800f01e8L, Pointer.deferred(4, LodString::new));
   private static final ArrayRef<Pointer<LodString>> regions_800f01ec = MEMORY.ref(4, 0x800f01ecL, ArrayRef.of(Pointer.classFor(LodString.class), 3, 4, Pointer.deferred(4, LodString::new)));
@@ -293,8 +293,10 @@ public class WMap {
     _800f01fc[0] = WMap::FUN_800e406c;
     _800f01fc[1] = WMap::FUN_800e469c;
   }
-  private static final ArrayRef<UnsignedByteRef> _800f0204 = MEMORY.ref(1, 0x800f0204L, ArrayRef.of(UnsignedByteRef.class, 0xc, 1, UnsignedByteRef::new));
-  private static final ArrayRef<UnsignedByteRef> _800f0210 = MEMORY.ref(1, 0x800f0210L, ArrayRef.of(UnsignedByteRef.class, 0xc, 1, UnsignedByteRef::new));
+  /** Each element is an input value mask, with values counter-clockwise from north */
+  private static final ArrayRef<UnsignedByteRef> positiveDirectionMovementMask_800f0204 = MEMORY.ref(1, 0x800f0204L, ArrayRef.of(UnsignedByteRef.class, 0xc, 1, UnsignedByteRef::new));
+  /** Each element is an input value mask, with values counter-clockwise from south */
+  private static final ArrayRef<UnsignedByteRef> negativeDirectionMovementMask_800f0210 = MEMORY.ref(1, 0x800f0210L, ArrayRef.of(UnsignedByteRef.class, 0xc, 1, UnsignedByteRef::new));
   /** Used in calculation determining which path you take at a path intersection point */
   private static final ArrayRef<UnsignedShortRef> inputModifierForIntersectionPosition_800f021c = MEMORY.ref(2, 0x800f021cL, ArrayRef.of(UnsignedShortRef.class, 12, 2, UnsignedShortRef::new));
 
@@ -636,7 +638,7 @@ public class WMap {
       FUN_8002a3ec((short)i, 0);
     }
 
-    _800c68a8.set(true);
+    startLocationLabelsActive_800c68a8.set(false);
     pregameLoadingStage_800bb10c.set(5);
   }
 
@@ -824,13 +826,13 @@ public class WMap {
   }
 
   @Method(0x800cd3c8L)
-  public static WMapRender40 FUN_800cd3c8(final int a0, final COLOUR colour0, final COLOUR colour1, final COLOUR colour2, final COLOUR colour3, final COLOUR a5, final RECT a6, final int a7, final int a8, final int type, final boolean transparency, final Translucency transparencyMode, final int z) {
+  public static WmapMenuTextHighlight40 initializeWmapMenuTextHighlight(final int a0, final COLOUR colour0, final COLOUR colour1, final COLOUR colour2, final COLOUR colour3, final COLOUR a5, final RECT a6, final int a7, final int a8, final int type, final boolean transparency, final Translucency transparencyMode, final int z) {
     int sp2c = 0;
     int sp30 = 0;
     short x;
     short y;
 
-    final WMapRender40 sp34 = new WMapRender40();
+    final WmapMenuTextHighlight40 sp34 = new WmapMenuTextHighlight40();
 
     sp34._28 = a7;
     sp34._2c = a8;
@@ -879,15 +881,15 @@ public class WMap {
     //LAB_800cd74c
     for(int i = 0; i < 2; i++) {
       //LAB_800cd768
-      sp34.renderPacket_0c[i] = new WMapRender24[sp34.count_30];
-      Arrays.setAll(sp34.renderPacket_0c[i], n -> new WMapRender24());
+      sp34.renderPacket_0c[i] = new WMapMenuTextHighlightGradient24[sp34.count_30];
+      Arrays.setAll(sp34.renderPacket_0c[i], n -> new WMapMenuTextHighlightGradient24());
     }
 
     //LAB_800cd7d0
     //LAB_800cd82c
     for(int i = 0; i < sp34.count_30; i++) {
-      final WMapRender24 render0 = sp34.renderPacket_0c[0][i];
-      final WMapRender24 render1 = sp34.renderPacket_0c[1][i];
+      final WMapMenuTextHighlightGradient24 render0 = sp34.renderPacket_0c[0][i];
+      final WMapMenuTextHighlightGradient24 render1 = sp34.renderPacket_0c[1][i];
 
       //LAB_800cd850
       if(transparency) {
@@ -937,21 +939,22 @@ public class WMap {
   }
 
   @Method(0x800ce0bcL)
-  public static void FUN_800ce0bc(final WMapRender40 a0, final int type, final COLOUR colour0, final COLOUR colour1, final COLOUR colour2, final COLOUR colour3, final COLOUR a6) {
+  public static void FUN_800ce0bc(final WmapMenuTextHighlight40 a0, final int type, final COLOUR colour0, final COLOUR colour1, final COLOUR colour2, final COLOUR colour3, final COLOUR a6) {
     a0.type_3f = type;
     FUN_800cf20c(a0._00, type, a0._28, a0._2c, colour0, colour1, colour2, colour3, a6);
     a0.previousBrightness_36 = -1;
   }
 
+  /** Renders shadow and selector in location menu */
   @Method(0x800ce4dcL)
-  public static void FUN_800ce4dc(final WMapRender40 a0) {
+  public static void renderLocationMenuTextHighlight(final WmapMenuTextHighlight40 a0) {
     setRenderColours(a0);
 
     //LAB_800ce538
     //LAB_800ce5a0
     //LAB_800ce5a4
     for(int i = 0; i < a0.count_30; i++) {
-      final WMapRender24 renderPacket = a0.renderPacket_0c[GPU.getDrawBufferIndex()][i];
+      final WMapMenuTextHighlightGradient24 renderPacket = a0.renderPacket_0c[GPU.getDrawBufferIndex()][i];
       final RECT rect = a0.rects_1c[i];
 
       //LAB_800ce5c8
@@ -990,7 +993,7 @@ public class WMap {
   }
 
   @Method(0x800cea1cL)
-  public static void setRenderColours(final WMapRender40 a0) {
+  public static void setRenderColours(final WmapMenuTextHighlight40 a0) {
     if(a0.currentBrightness_34 < 0) {
       a0.currentBrightness_34 = 0;
       //LAB_800cea54
@@ -1008,8 +1011,8 @@ public class WMap {
     //LAB_800ceb38
     int n = 0;
     for(int i = 0; i < a0.count_30; i++) {
-      final WMapRender24 sp4 = a0.renderPacket_0c[GPU.getDrawBufferIndex()][i];
-      final WMapRender24 sp8 = a0.renderPacket_0c[GPU.getDrawBufferIndex() ^ 1][i];
+      final WMapMenuTextHighlightGradient24 sp4 = a0.renderPacket_0c[GPU.getDrawBufferIndex()][i];
+      final WMapMenuTextHighlightGradient24 sp8 = a0.renderPacket_0c[GPU.getDrawBufferIndex() ^ 1][i];
       final WMapRender10 sp14 = a0._00[n];
 
       final int r0 = sp14._00.getR() * a0.currentBrightness_34 / 0x100;
@@ -2965,7 +2968,7 @@ public class WMap {
 
     final COLOUR sp0x48 = new COLOUR();
 
-    wmapStruct258_800c66a8._1fc = FUN_800cd3c8(
+    wmapStruct258_800c66a8.coolonTravelMenuSelectorHighlight_1fc = initializeWmapMenuTextHighlight(
       0x80,
       sp0x48,
       sp0x48,
@@ -3200,7 +3203,7 @@ public class WMap {
             //LAB_800d9a8c
             for(int i = 0; i < 8; i++) {
               //LAB_800d9aa8
-              _800c86d4[i] = 0;
+              startButtonLabelStages_800c86d4[i] = 0;
             }
           }
         }
@@ -3361,7 +3364,7 @@ public class WMap {
         //LAB_800da8f0
         for(int i = 0; i < 8; i++) {
           //LAB_800da90c
-          _800c86d4[i] = 0;
+          startButtonLabelStages_800c86d4[i] = 0;
         }
 
         //LAB_800da940
@@ -3551,9 +3554,9 @@ public class WMap {
         }
 
         //LAB_800db4b4
-        struct258._1fc.y_3a = struct258._223 * 0x10;
+        struct258.coolonTravelMenuSelectorHighlight_1fc.y_3a = struct258._223 * 0x10;
 
-        FUN_800ce4dc(struct258._1fc);
+        renderLocationMenuTextHighlight(struct258.coolonTravelMenuSelectorHighlight_1fc);
         break;
 
       case 7:
@@ -3850,7 +3853,7 @@ public class WMap {
 
   @Method(0x800dcde8L)
   public static void deallocateWorldMap() {
-    wmapStruct258_800c66a8._1fc = null;
+    wmapStruct258_800c66a8.coolonTravelMenuSelectorHighlight_1fc = null;
   }
 
   @Method(0x800dce64L)
@@ -4092,17 +4095,17 @@ public class WMap {
       int locationIndex = 0;
       for(int i = 0; i < 6; i++) {
         //LAB_800e0790
-        if(mapState_800c6798.locationIndex_10 == _800ef698.get(i).locationIndex_00.get()) {
-          locationIndex = _800ef698.get(i).locationIndex2_04.get();
+        if(mapState_800c6798.locationIndex_10 == teleportationEndpoints_800ef698.get(i).originLocationIndex_00.get()) {
+          locationIndex = teleportationEndpoints_800ef698.get(i).targetLocationIndex_04.get();
           break;
         }
       }
 
       //LAB_800e0810
-      final Vector3f sp0x18 = new Vector3f();
-      final Vector3f sp0x20 = new Vector3f();
-      FUN_800e0d70(mapState_800c6798.locationIndex_10, sp0x18);
-      FUN_800e0d70(locationIndex, sp0x20);
+      final Vector3f originTranslation = new Vector3f();
+      final Vector3f targetTranslation = new Vector3f();
+      getTeleportationLocationTranslation(mapState_800c6798.locationIndex_10, originTranslation);
+      getTeleportationLocationTranslation(locationIndex, targetTranslation);
 
       //LAB_800e0878
       if(wmapStruct258_800c66a8._248 == 0 || wmapStruct258_800c66a8._248 == 1) {
@@ -4115,7 +4118,7 @@ public class WMap {
         //LAB_800e08b8
         renderWinglyTeleportScreenEffect();
 
-        lerpish(wmapStruct258_800c66a8.vec_94, sp0x18, sp0x20, 32.0f / wmapStruct258_800c66a8._24c);
+        lerpish(wmapStruct258_800c66a8.vec_94, originTranslation, targetTranslation, 32.0f / wmapStruct258_800c66a8._24c);
 
         wmapStruct258_800c66a8._24c++;
         if(wmapStruct258_800c66a8._24c > 32) {
@@ -4165,20 +4168,19 @@ public class WMap {
   }
 
   @Method(0x800e0d70L)
-  public static void FUN_800e0d70(final int locationIndex, final Vector3f a1) {
+  public static void getTeleportationLocationTranslation(final int locationIndex, final Vector3f translation) {
     //LAB_800e0d84
     for(int i = 0; i < 6; i++) {
       //LAB_800e0da0
-      if(locationIndex == _800ef6c8.get(i).locationIndex_00.get()) {
-        a1.set(
-          _800ef6c8.get(i)._04.getX(),
-          _800ef6c8.get(i)._04.getY(),
-          _800ef6c8.get(i)._04.getZ()
+      if(locationIndex == teleportationLocations_800ef6c8.get(i).locationIndex_00.get()) {
+        translation.set(
+          teleportationLocations_800ef6c8.get(i).translation_04.getX(),
+          teleportationLocations_800ef6c8.get(i).translation_04.getY(),
+          teleportationLocations_800ef6c8.get(i).translation_04.getZ()
         );
         break;
       }
     }
-
     //LAB_800e0e3c
   }
 
@@ -4979,7 +4981,7 @@ public class WMap {
   public static void FUN_800e4f60() {
     final COLOUR sp0x50 = new COLOUR();
 
-    _800c6898 = FUN_800cd3c8(
+    locationMenuNameShadow_800c6898 = initializeWmapMenuTextHighlight(
       0,
       sp0x50,
       sp0x50,
@@ -4997,7 +4999,7 @@ public class WMap {
 
     final COLOUR sp0x60 = new COLOUR();
 
-    _800c689c = FUN_800cd3c8(
+    locationMenuSelectorHighlight_800c689c = initializeWmapMenuTextHighlight(
       0x80,
       sp0x60,
       sp0x60,
@@ -5023,7 +5025,7 @@ public class WMap {
     //LAB_800e5178
     //LAB_800e5194
     if(mapState_800c6798._fc != 1) {
-      FUN_800e69e8();
+      handleStartButtonLocationLabels();
       return;
     }
 
@@ -5050,7 +5052,7 @@ public class WMap {
     //LAB_800e5248
     int sp28;
     final int sp2c;
-    switch(_800c68a4.get()) {
+    switch(mapTransitionState_800c68a4.get()) {
       case 0:
         sp2c = -areaData_800f2248.get(mapState_800c6798._dc[0])._00.get();
 
@@ -5079,16 +5081,16 @@ public class WMap {
         textZ_800bdf00.set(13);
         mapState_800c6798.submapCut_c8 = locations_800f0e34.get(mapState_800c6798.locationIndex_10).submapCut_08.get();
         mapState_800c6798.submapScene_ca = locations_800f0e34.get(mapState_800c6798.locationIndex_10).submapScene_0a.get();
-        _800c68a4.set(1);
+        mapTransitionState_800c68a4.set(1);
 
         if(places_800f0234.get(locations_800f0e34.get(mapState_800c6798.locationIndex_10).placeIndex_02.get()).name_00.isNull()) {
-          _800c68a4.set(8);
+          mapTransitionState_800c68a4.set(8);
         }
 
         //LAB_800e54c4
-        _800c6898.currentBrightness_34 = 0;
+        locationMenuNameShadow_800c6898.currentBrightness_34 = 0;
         locationThumbnailBrightness_800c86d0.set((short)0x100);
-        _800c86d2.set(0);
+        menuSelectorOptionIndex_800c86d2.set(0);
         break;
 
       case 1:
@@ -5097,7 +5099,7 @@ public class WMap {
         loadDrgnFile(0, 5655 + places_800f0234.get(locations_800f0e34.get(mapState_800c6798.locationIndex_10).placeIndex_02.get()).fileIndex_04.get(), data -> loadLocationThumbnailImage(new Tim(data), 1));
         initTextbox(7, 1, 240, 120, 14, 16);
 
-        _800c68a4.set(2);
+        mapTransitionState_800c68a4.set(2);
 
         playSound(0, 4, 0, 0, (short)0, (short)0);
 
@@ -5119,16 +5121,16 @@ public class WMap {
       case 2:
         if(FUN_8002a488(7) != 0) {
           initTextbox(6, 0, 240, 70, 13, 7);
-          _800c68a4.set(3);
+          mapTransitionState_800c68a4.set(3);
         }
 
         //LAB_800e5700
         break;
 
       case 3: // Trying to enter an area
-        _800c6898.currentBrightness_34 += 0x40;
+        locationMenuNameShadow_800c6898.currentBrightness_34 += 0x40;
 
-        FUN_800ce4dc(_800c6898);
+        renderLocationMenuTextHighlight(locationMenuNameShadow_800c6898);
 
         if(mapState_800c6798.submapCut_c8 == 999) { // Going to a different region
           final int sp38 = mapState_800c6798.submapScene_ca >>> 4 & 0xffff;
@@ -5139,10 +5141,10 @@ public class WMap {
           renderCenteredShadowedText(regions_800f01ec.get(sp3c).deref(), 240, 200, TextColour.WHITE, 0);
 
           if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
-            _800c86d2.sub(1);
+            menuSelectorOptionIndex_800c86d2.sub(1);
 
-            if(_800c86d2.get() < 0) {
-              _800c86d2.set(2);
+            if(menuSelectorOptionIndex_800c86d2.get() < 0) {
+              menuSelectorOptionIndex_800c86d2.set(2);
             }
 
             //LAB_800e5950
@@ -5151,10 +5153,10 @@ public class WMap {
 
           //LAB_800e5970
           if(Input.pressedThisFrame(InputAction.DPAD_DOWN) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
-            _800c86d2.add(1);
+            menuSelectorOptionIndex_800c86d2.add(1);
 
-            if(_800c86d2.get() >= 3) {
-              _800c86d2.set(0);
+            if(menuSelectorOptionIndex_800c86d2.get() >= 3) {
+              menuSelectorOptionIndex_800c86d2.set(0);
             }
 
             //LAB_800e59c0
@@ -5162,7 +5164,7 @@ public class WMap {
           }
 
           //LAB_800e59e0
-          _800c689c.y_3a = _800c86d2.get() * 18 + 8;
+          locationMenuSelectorHighlight_800c689c.y_3a = menuSelectorOptionIndex_800c86d2.get() * 18 + 8;
         } else { // Entering a town, etc.
           //LAB_800e5a18
           renderCenteredShadowedText(No_Entry_800f01e4.deref(), 240, 170, TextColour.WHITE, 0);
@@ -5171,17 +5173,17 @@ public class WMap {
           // World Map Location Menu (No Entry,Enter)
           if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.DPAD_DOWN) ||
             Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
-            _800c86d2.xor(0x1);
+            menuSelectorOptionIndex_800c86d2.xor(0x1);
 
             playSound(0, 1, 0, 0, (short)0, (short)0);
           }
 
           //LAB_800e5b38
-          _800c689c.y_3a = _800c86d2.get() * 20 + 14;
+          locationMenuSelectorHighlight_800c689c.y_3a = menuSelectorOptionIndex_800c86d2.get() * 20 + 14;
         }
 
         //LAB_800e5b68
-        FUN_800ce4dc(_800c689c);
+        renderLocationMenuTextHighlight(locationMenuSelectorHighlight_800c689c);
 
         final int placeIndex = locations_800f0e34.get(mapState_800c6798.locationIndex_10).placeIndex_02.get();
         final IntRef width = new IntRef();
@@ -5250,7 +5252,7 @@ public class WMap {
 
             //LAB_800e6260
             if(servicesCount == 0) {
-              renderCenteredShadowedText(_800f01e0.deref(), 240, 62, TextColour.WHITE, 0);
+              renderCenteredShadowedText(No_Facilities_800f01e0.deref(), 240, 62, TextColour.WHITE, 0);
             }
 
             //LAB_800e6290
@@ -5266,10 +5268,10 @@ public class WMap {
 
         //LAB_800e62d4
         if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
-          if(_800c86d2.get() == 0) {
+          if(menuSelectorOptionIndex_800c86d2.get() == 0) {
             FUN_8002a3ec(6, 0);
             FUN_8002a3ec(7, 1);
-            _800c68a4.set(6);
+            mapTransitionState_800c68a4.set(6);
 
             playSound(0, 3, 0, 0, (short)0, (short)0);
 
@@ -5291,7 +5293,7 @@ public class WMap {
             FUN_800e3fac(1);
             FUN_8002a3ec(6, 0);
             FUN_8002a3ec(7, 1);
-            _800c68a4.set(5);
+            mapTransitionState_800c68a4.set(5);
 
             playSound(0, 2, 0, 0, (short)0, (short)0);
 
@@ -5329,7 +5331,7 @@ public class WMap {
             //LAB_800e6614
             FUN_8002a3ec(6, 0);
             FUN_8002a3ec(7, 1);
-            _800c68a4.set(6);
+            mapTransitionState_800c68a4.set(6);
           }
         }
 
@@ -5337,12 +5339,12 @@ public class WMap {
         break;
 
       case 5:
-        _800c6898.currentBrightness_34 -= 0x80;
+        locationMenuNameShadow_800c6898.currentBrightness_34 -= 0x80;
 
-        FUN_800ce4dc(_800c6898);
+        renderLocationMenuTextHighlight(locationMenuNameShadow_800c6898);
 
-        if(textboxes_800be358[6]._00 == 0 && textboxes_800be358[7]._00 == 0 && _800c6898.currentBrightness_34 == 0) {
-          _800c68a4.set(9);
+        if(textboxes_800be358[6]._00 == 0 && textboxes_800be358[7]._00 == 0 && locationMenuNameShadow_800c6898.currentBrightness_34 == 0) {
+          mapTransitionState_800c68a4.set(9);
         }
 
         //LAB_800e66cc
@@ -5360,30 +5362,30 @@ public class WMap {
 
         //LAB_800e671c
         mapState_800c6798._d4 = 1;
-        _800c68a0.set(0);
-        _800c68a4.set(7);
+        cancelLocationEntryDelayTick_800c68a0.set(0);
+        mapTransitionState_800c68a4.set(7);
 
       case 7:
-        _800c68a0.add(1);
+        cancelLocationEntryDelayTick_800c68a0.add(1);
 
-        if(_800c68a0.get() > 3) {
-          _800c68a4.set(8);
+        if(cancelLocationEntryDelayTick_800c68a0.get() > 3) {
+          mapTransitionState_800c68a4.set(8);
         }
 
         //LAB_800e6770
         break;
 
       case 8:
-        _800c68a4.set(0);
+        mapTransitionState_800c68a4.set(0);
         mapState_800c6798.disableInput_d0 = false;
         mapState_800c6798._d4 = 0;
         mapState_800c6798._fc = 0;
-        _800c68a8.set(false);
+        startLocationLabelsActive_800c68a8.set(true);
 
         //LAB_800e67a8
         for(int i = 0; i < 7; i++) {
           //LAB_800e67c4
-          _800c86d4[i] = 0;
+          startButtonLabelStages_800c86d4[i] = 0;
         }
 
         //LAB_800e67f8
@@ -5401,7 +5403,7 @@ public class WMap {
           submapCut_80052c30.set(locations_800f0e34.get(mapState_800c6798.locationIndex_10).submapCut_04.get());
 
           final int sp20;
-          if(_800c86d2.get() == 1) {
+          if(menuSelectorOptionIndex_800c86d2.get() == 1) {
             sp20 = mapState_800c6798.submapScene_ca >>> 4 & 0xffff;
           } else {
             //LAB_800e69a0
@@ -5421,7 +5423,7 @@ public class WMap {
   }
 
   @Method(0x800e69e8L)
-  public static void FUN_800e69e8() {
+  public static void handleStartButtonLocationLabels() {
     if(_800c6690.get() != 0) {
       return;
     }
@@ -5438,30 +5440,17 @@ public class WMap {
 
     //LAB_800e6a50
     // World Map Name Info
-    if(_800c68a8.get()) {
-      if(Input.pressedThisFrame(InputAction.BUTTON_CENTER_2)) {
-        playSound(0, 2, 0, 0, (short)0, (short)0);
-        _800c68a8.set(false);
-
-        //LAB_800e6aac
-        for(int i = 0; i < 7; i++) {
-          //LAB_800e6ac8
-          _800c86d4[i] = 0;
-        }
-      }
-
-      //LAB_800e6afc
-    } else {
+    if(startLocationLabelsActive_800c68a8.get()) {
       //LAB_800e6b04
       if(!Input.getButtonState(InputAction.BUTTON_CENTER_2)) {
         //LAB_800e6b20
-        for(int i = 0; i < 7; i++) {
+        for(int i = 0; i < 3; i++) {
           //LAB_800e6b3c
           FUN_8002a3ec(i, 0);
         }
 
         //LAB_800e6b6c
-        _800c68a8.set(true);
+        startLocationLabelsActive_800c68a8.set(false);
       }
 
       //LAB_800e6b74
@@ -5473,19 +5462,31 @@ public class WMap {
         }
 
         //LAB_800e6bdc
-        _800c68a8.set(true);
+        startLocationLabelsActive_800c68a8.set(false);
+      }
+      //LAB_800e6afc
+    } else {
+      if(Input.pressedThisFrame(InputAction.BUTTON_CENTER_2)) {
+        playSound(0, 2, 0, 0, (short)0, (short)0);
+        startLocationLabelsActive_800c68a8.set(true);
+
+        //LAB_800e6aac
+        for(int i = 0; i < 7; i++) {
+          //LAB_800e6ac8
+          startButtonLabelStages_800c86d4[i] = 0;
+        }
       }
     }
 
     //LAB_800e6be4
-    if(_800c68a8.get()) {
+    if(!startLocationLabelsActive_800c68a8.get()) {
       return;
     }
 
     //LAB_800e6c00
     rotateCoord2(wmapStruct258_800c66a8.tmdRendering_08.rotations_08[0], wmapStruct258_800c66a8.tmdRendering_08.coord2s_04[0]);
 
-    final List<WMapStruct0c_2> structs = new ArrayList<>();
+    final List<WMapLocationLabelMetrics0c> structs = new ArrayList<>();
 
     //LAB_800e6c38
     final MATRIX sp0x38 = new MATRIX();
@@ -5510,9 +5511,9 @@ public class WMap {
           if(y >= -32 && y < 273) {
             //LAB_800e6e64
             if(z >= 6 && z < orderingTableSize_1f8003c8.get() - 1) {
-              final WMapStruct0c_2 struct = new WMapStruct0c_2();
+              final WMapLocationLabelMetrics0c struct = new WMapLocationLabelMetrics0c();
               struct.z_00 = z;
-              struct._04 = locationsIndices_800c84c8.get(i).get();
+              struct.locationIndex_04 = locationsIndices_800c84c8.get(i).get();
               struct.xy_08.set(sx, sy);
               structs.add(struct);
             }
@@ -5529,14 +5530,14 @@ public class WMap {
     //LAB_800e6fa0
     int i;
     for(i = 0; i < Math.min(7, structs.size()); i++) {
-      final WMapStruct0c_2 struct = structs.get(i);
+      final WMapLocationLabelMetrics0c label = structs.get(i);
 
       //LAB_800e6fec
       //LAB_800e6fec
       //LAB_800e6ff4
-      final int x = struct.xy_08.getX() + 160;
-      final int y = struct.xy_08.getY() + 104;
-      final int place = locations_800f0e34.get(struct._04).placeIndex_02.get();
+      final int x = label.xy_08.getX() + 160;
+      final int y = label.xy_08.getY() + 104;
+      final int place = locations_800f0e34.get(label.locationIndex_04).placeIndex_02.get();
 
       if(!places_800f0234.get(place).name_00.isNull()) {
         //LAB_800e70f4
@@ -5544,23 +5545,12 @@ public class WMap {
         final IntRef lines = new IntRef();
         measureText(places_800f0234.get(place).name_00.deref(), width, lines);
 
-        final int v0 = _800c86d4[i];
+        final int v0 = startButtonLabelStages_800c86d4[i];
         if(v0 == 0) {
           //LAB_800e7168
           initTextbox(i, 0, x, y, width.get() - 1, lines.get() - 1);
 
-          _800c86d4[i] = 1;
-
-          //LAB_800e71d8
-          textZ_800bdf00.set(i + 14);
-          textboxes_800be358[i].chars_18 = Math.max(width.get(), 4);
-          textboxes_800be358[i].lines_1a = lines.get();
-          textboxes_800be358[i].width_1c = textboxes_800be358[i].chars_18 * 9 / 2;
-          textboxes_800be358[i].height_1e = textboxes_800be358[i].lines_1a * 6;
-          textboxes_800be358[i].x_14 = x;
-          textboxes_800be358[i].y_16 = y;
-          textboxes_800be358[i].z_0c = i + 14;
-          _800c86d4[i] = 2;
+          startButtonLabelStages_800c86d4[i] = 1;
         } else if(v0 == 1) {
           //LAB_800e71d8
           textZ_800bdf00.set(i + 14);
@@ -5571,7 +5561,7 @@ public class WMap {
           textboxes_800be358[i].height_1e = textboxes_800be358[i].lines_1a * 6;
           textboxes_800be358[i].x_14 = x;
           textboxes_800be358[i].y_16 = y;
-          _800c86d4[i] = 2;
+          startButtonLabelStages_800c86d4[i] = 2;
         } else if(v0 == 2) {
           //LAB_800e72e8
           textboxes_800be358[i].chars_18 = Math.max(width.get(), 4);
@@ -5588,7 +5578,6 @@ public class WMap {
 
         renderCenteredShadowedText(places_800f0234.get(place).name_00.deref(), x, y - lines.get() * 7 + 1, TextColour.WHITE, 0);
       }
-
       //LAB_800e7590
     }
 
@@ -5596,9 +5585,8 @@ public class WMap {
     for(; i < 7; i++) {
       //LAB_800e75c4
       FUN_8002a3ec(i, 0);
-      _800c86d4[i] = 0;
+      startButtonLabelStages_800c86d4[i] = 0;
     }
-
     //LAB_800e7610
   }
 
@@ -5650,8 +5638,8 @@ public class WMap {
 
   @Method(0x800e7888L)
   public static void FUN_800e7888() {
-    _800c6898 = null;
-    _800c689c = null;
+    locationMenuNameShadow_800c6898 = null;
+    locationMenuSelectorHighlight_800c689c = null;
   }
 
   @Method(0x800e78c0L)
@@ -5865,13 +5853,13 @@ public class WMap {
     }
 
     //LAB_800e8990
-    _800c68a4.set(0);
-    _800c68a8.set(true);
+    mapTransitionState_800c68a4.set(0);
+    startLocationLabelsActive_800c68a8.set(false);
 
     //LAB_800e89a4
     for(int i = 0; i < 8; i++) {
       //LAB_800e89c0
-      _800c86d4[i] = 0;
+      startButtonLabelStages_800c86d4[i] = 0;
     }
 
     //LAB_800e89f4
@@ -6088,16 +6076,20 @@ public class WMap {
     //LAB_800e91cc
     final int directionInput = (input_800bee90.get() & 0xffff) >>> 12;
 
+    // Calculates Dart's orientation on the map, reducing it to 8 headings, counting counter-clockwise.
+    // This is used to index 2 arrays, one for input values counting from N and the other counting from S.
+    // Whichever mask gives a non-zero result determines whether the movement direction is positive or
+    // negative. If both are zero or both are non-zero, Dart moves whichever way he is facing.
     if(directionInput != 0) {
-      final int sp0 = MathHelper.radToPsxDeg(MathHelper.floorMod(wmapStruct19c0_800c66b0.mapRotation_70.y - mapState_800c6798.previousPlayerRotation_c2 - 0.875f * MathHelper.PI, MathHelper.TWO_PI)) >> 9;
-      final int sp8 = directionInput & _800f0204.get(sp0).get();
-      final int spc = directionInput & _800f0210.get(sp0).get();
+      final int directionMaskIndex = MathHelper.radToPsxDeg(MathHelper.floorMod(wmapStruct19c0_800c66b0.mapRotation_70.y - mapState_800c6798.previousPlayerRotation_c2 - 0.875f * MathHelper.PI, MathHelper.TWO_PI)) >> 9;
+      final int positiveDirectionMask = directionInput & positiveDirectionMovementMask_800f0204.get(directionMaskIndex).get();
+      final int negativeDirectionMask = directionInput & negativeDirectionMovementMask_800f0210.get(directionMaskIndex).get();
 
       int movement;
-      if(sp8 != 0 && spc == 0) {
+      if(positiveDirectionMask != 0 && negativeDirectionMask == 0) {
         movement = 1;
         //LAB_800e92d0
-      } else if(sp8 == 0 && spc != 0) {
+      } else if(positiveDirectionMask == 0 && negativeDirectionMask != 0) {
         movement = -1;
       } else {
         //LAB_800e9300
@@ -6279,7 +6271,7 @@ public class WMap {
       sp0xc8[i] = (short)(MathHelper.radToPsxDeg(wmapStruct19c0_800c66b0.mapRotation_70.y) - ratan2(sp0xb0.getX(), sp0xb0.getZ()) + 0x800 & 0xfff);
 
       final int v0 = (sp0xc8[i] + 0x100 & 0xfff) >> 9;
-      if((movementInput & _800f0204.get(v0).get()) != 0) {
+      if((movementInput & positiveDirectionMovementMask_800f0204.get(v0).get()) != 0) {
         final int spd8 = spda;
         spda = Math.abs(sp0xc8[i] - inputModifierForIntersectionPosition_800f021c.get((movementInput - 1)).get());
         final int sp14 = Math.abs(sp0xc8[i] - inputModifierForIntersectionPosition_800f021c.get((movementInput - 1)).get() - 0x1000);

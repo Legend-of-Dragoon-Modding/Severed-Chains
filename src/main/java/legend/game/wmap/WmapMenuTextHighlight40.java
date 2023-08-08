@@ -3,10 +3,10 @@ package legend.game.wmap;
 import legend.core.gpu.RECT;
 import legend.game.types.Translucency;
 
-public class WMapRender40 {
+public class WmapMenuTextHighlight40 {
   public WMapRender10[] _00;
   public final Translucency[][] tpagePacket_04 = new Translucency[2][];
-  public final WMapRender24[][] renderPacket_0c = new WMapRender24[2][];
+  public final WMapMenuTextHighlightGradient24[][] renderPacket_0c = new WMapMenuTextHighlightGradient24[2][];
 
   public RECT[] rects_1c;
   // public final long[] _20 = new long[2]; // Unused
