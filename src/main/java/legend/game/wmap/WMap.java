@@ -132,7 +132,7 @@ import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 
 public class WMap {
-  private static final IntRef _800c6690 = MEMORY.ref(4, 0x800c6690L, IntRef::new);
+  private static final IntRef tickMainMenuOpenTransition_800c6690 = MEMORY.ref(4, 0x800c6690L, IntRef::new);
 
   private static int worldMapState_800c6698;
   private static int playerState_800c669c;
@@ -177,12 +177,12 @@ public class WMap {
 
   private static final int[] startButtonLabelStages_800c86d4 = new int[8];
 
-  private static final IntRef _800c86f0 = MEMORY.ref(4, 0x800c86f0L, IntRef::new);
+  private static final IntRef destinationLabelStage_800c86f0 = MEMORY.ref(4, 0x800c86f0L, IntRef::new);
 
   private static WmapSmokeCloudInstance60[] smokeCloudInstances_800c86f8;
   /** This doesn't seem to have any effect, since the only time it's used is checking whether to turn it off */
   private static final BoolRef renderAtmosphericEffect_800c86fc = MEMORY.ref(4, 0x800c86fcL, BoolRef::new);
-  private static final RECT _800c8700 = MEMORY.ref(4, 0x800c8700L, RECT::new);
+  private static final RECT pathRect_800c8700 = MEMORY.ref(4, 0x800c8700L, RECT::new);
   private static final COLOUR _800c8778 = MEMORY.ref(4, 0x800c8778L, COLOUR::new);
   private static final RECT _800c877c = MEMORY.ref(4, 0x800c877cL, RECT::new);
 
@@ -309,7 +309,7 @@ public class WMap {
 
   private static final ArrayRef<Pointer<UnboundedArrayRef<VECTOR>>> pathDotPosPtrArr_800f591c = MEMORY.ref(4, 0x800f591cL, ArrayRef.of(Pointer.classFor(UnboundedArrayRef.classFor(VECTOR.class)), 66, 4, Pointer.deferred(4, UnboundedArrayRef.of(0x10, VECTOR::new))));
 
-  private static final ArrayRef<WMapStruct2c> _800f5a6c = MEMORY.ref(2, 0x800f5a6cL, ArrayRef.of(WMapStruct2c.class, 0x40, 0x2c, WMapStruct2c::new));
+  private static final ArrayRef<WMapDestinationMarker2c> wmapDestinationMarkers_800f5a6c = MEMORY.ref(2, 0x800f5a6cL, ArrayRef.of(WMapDestinationMarker2c.class, 0x40, 0x2c, WMapDestinationMarker2c::new));
   private static final IntRef currentWmapEffect_800f6598 = MEMORY.ref(4, 0x800f6598L, IntRef::new);
   private static final IntRef previousWmapEffect_800f659c = MEMORY.ref(4, 0x800f659cL, IntRef::new);
   private static final IntRef unused_800f65a0 = MEMORY.ref(4, 0x800f65a0L, IntRef::new);
@@ -497,7 +497,7 @@ public class WMap {
 
   @Method(0x800cc83cL)
   public static void FUN_800cc83c() {
-    if(_800c6690.get() == 0) {
+    if(tickMainMenuOpenTransition_800c6690.get() == 0) {
       if((input_800bee90.get() & 0x1af) == 0) {
         final WMapStruct19c0 v1 = wmapStruct19c0_800c66b0;
 
@@ -516,7 +516,7 @@ public class WMap {
                           if(a0._250 == 0) {
                             scriptStartEffect(1, 15);
                             mapState_800c6798.disableInput_d0 = true;
-                            _800c6690.set(1);
+                            tickMainMenuOpenTransition_800c6690.set(1);
                           }
                         }
                       }
@@ -539,8 +539,8 @@ public class WMap {
     }
 
     //LAB_800cc998
-    _800c6690.add(1);
-    if(_800c6690.get() < 16) {
+    tickMainMenuOpenTransition_800c6690.add(1);
+    if(tickMainMenuOpenTransition_800c6690.get() < 16) {
       return;
     }
 
@@ -550,7 +550,7 @@ public class WMap {
     wmapStruct258_800c66a8.imageData_2c = new FileData(new byte[0x1_0000]);
     wmapStruct258_800c66a8.imageData_30 = new FileData(new byte[0x1_0000]);
 
-    StoreImage(_800c8700, wmapStruct258_800c66a8.imageData_2c);
+    StoreImage(pathRect_800c8700, wmapStruct258_800c66a8.imageData_2c);
     StoreImage(new RECT((short)320, (short)0, (short)64, (short)512), wmapStruct258_800c66a8.imageData_30);
 
     //LAB_800cca5c
@@ -561,7 +561,7 @@ public class WMap {
     final WMapStruct258 struct = wmapStruct258_800c66a8;
     vsyncMode_8007a3b8 = 3;
     scriptStartEffect(2, 15);
-    LoadImage(_800c8700, struct.imageData_2c);
+    LoadImage(pathRect_800c8700, struct.imageData_2c);
     LoadImage(new RECT().set((short)320, (short)0, (short)64, (short)512), struct.imageData_30);
     struct.imageData_2c = null;
     struct.imageData_30 = null;
@@ -572,7 +572,7 @@ public class WMap {
     }
 
     //LAB_800ccb6c
-    _800c6690.set(0);
+    tickMainMenuOpenTransition_800c6690.set(0);
     setProjectionPlaneDistance(1100);
     pregameLoadingStage_800bb10c.set(3);
   }
@@ -615,7 +615,7 @@ public class WMap {
     }
 
     FUN_800ccf04();
-    _800c6690.set(0);
+    tickMainMenuOpenTransition_800c6690.set(0);
     pregameLoadingStage_800bb10c.set(3);
   }
 
@@ -1868,7 +1868,7 @@ public class WMap {
       //LAB_800d3654
       //LAB_800d3670
       //LAB_800d368c
-      if(mapState_800c6798.continentIndex_00 != 7 && mapState_800c6798._d8 == 0 && _800c6690.get() == 0) {
+      if(mapState_800c6798.continentIndex_00 != 7 && mapState_800c6798._d8 == 0 && tickMainMenuOpenTransition_800c6690.get() == 0) {
         //LAB_800d36a8
         if(mapState_800c6798._fc != 1) {
           if(!wmapStruct19c0_800c66b0.mapRotating_80) {
@@ -1999,7 +1999,7 @@ public class WMap {
     final int v;
     if(zoomState == 1) {
       //LAB_800d4108
-      _800c86f0.set(0);
+      destinationLabelStage_800c86f0.set(0);
       size = 16;
       v = 32;
     } else if(zoomState == 4) {
@@ -2018,7 +2018,7 @@ public class WMap {
       FUN_8002a3ec(7, 0);
 
       if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_2)) { // R2
-        _800c86f0.set(0);
+        destinationLabelStage_800c86f0.set(0);
       }
 
       //LAB_800d41e0
@@ -2028,7 +2028,7 @@ public class WMap {
       FUN_8002a3ec(7, 0);
 
       if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_2)) { // R2
-        _800c86f0.set(0);
+        destinationLabelStage_800c86f0.set(0);
       }
 
       //LAB_800d4158
@@ -2039,14 +2039,14 @@ public class WMap {
     }
 
     //LAB_800d41f8
-    final MATRIX sp0x38 = new MATRIX();
+    final MATRIX wmapRotation = new MATRIX();
     rotateCoord2(wmapStruct258_800c66a8.tmdRendering_08.rotations_08[0], wmapStruct258_800c66a8.tmdRendering_08.coord2s_04[0]);
-    GsGetLs(wmapStruct258_800c66a8.tmdRendering_08.coord2s_04[0], sp0x38);
-    setRotTransMatrix(sp0x38);
+    GsGetLs(wmapStruct258_800c66a8.tmdRendering_08.coord2s_04[0], wmapRotation);
+    setRotTransMatrix(wmapRotation);
 
-    final SVECTOR sp0x58 = new SVECTOR().set(wmapStruct258_800c66a8.coord2_34.coord.transfer);
-    final DVECTOR sp0x60 = new DVECTOR(); // sxy2
-    perspectiveTransform(sp0x58, sp0x60);
+    final SVECTOR playerTranslation = new SVECTOR().set(wmapStruct258_800c66a8.coord2_34.coord.transfer);
+    final DVECTOR playerArrowXy = new DVECTOR(); // sxy2
+    perspectiveTransform(playerTranslation, playerArrowXy);
 
     // Player arrow on map
     GPU.queueCommand(25, new GpuCommandQuad()
@@ -2054,26 +2054,26 @@ public class WMap {
       .clut(640, 496)
       .vramPos(640, 256)
       .rgb(0x55, 0, 0)
-      .pos(sp0x60.getX() - size / 2, sp0x60.getY() - size, size, size)
+      .pos(playerArrowXy.getX() - size / 2, playerArrowXy.getY() - size, size, size)
       .uv((tickCount_800bb0fc.get() & 0x7) * size, v)
     );
 
     if(wmapStruct258_800c66a8.zoomState_1f8 == 4) {
       //LAB_800d44d0
-      int sp24 = 0;
+      int destinationIndex = 0;
 
       //LAB_800d44d8
-      for(int sp20 = 0; sp20 < 49; sp20++) {
+      for(int i = 0; i < 49; i++) {
         //LAB_800d4518
-        if(gameState_800babc8.scriptFlags2_bc.get(_800f5a6c.get(sp20).packedFlag_00.get())) {
+        if(gameState_800babc8.scriptFlags2_bc.get(wmapDestinationMarkers_800f5a6c.get(i).packedFlag_00.get())) {
           //LAB_800d45cc
-          sp24 = sp20;
+          destinationIndex = i;
         }
         //LAB_800d45d8
       }
 
       //LAB_800d45f0
-      if(sp24 != 0) {
+      if(destinationIndex != 0) {
         //LAB_800d4608
         // Destination arrow on map
         GPU.queueCommand(25, new GpuCommandQuad()
@@ -2081,49 +2081,35 @@ public class WMap {
           .clut(640, 496)
           .vramPos(640, 256)
           .rgb(0, 0, 0x55)
-          .pos(_800f5a6c.get(sp24).x_24.get() - 160, _800f5a6c.get(sp24).y_26.get() - 120, size, size)
+          .pos(wmapDestinationMarkers_800f5a6c.get(destinationIndex).x_24.get() - 160, wmapDestinationMarkers_800f5a6c.get(destinationIndex).y_26.get() - 120, size, size)
           .uv((tickCount_800bb0fc.get() & 0x7) * size, v)
         );
 
-        if(!places_800f0234.get(_800f5a6c.get(sp24).placeIndex_28.get()).name_00.isNull()) {
+        if(!places_800f0234.get(wmapDestinationMarkers_800f5a6c.get(destinationIndex).placeIndex_28.get()).name_00.isNull()) {
           //LAB_800d4878
-          final int x = _800f5a6c.get(sp24).x_24.get();
-          final int y = _800f5a6c.get(sp24).y_26.get() - 8;
+          final int x = wmapDestinationMarkers_800f5a6c.get(destinationIndex).x_24.get();
+          final int y = wmapDestinationMarkers_800f5a6c.get(destinationIndex).y_26.get() - 8;
 
           final IntRef width = new IntRef();
           final IntRef lines = new IntRef();
-          measureText(places_800f0234.get(_800f5a6c.get(sp24).placeIndex_28.get()).name_00.deref(), width, lines);
+          measureText(places_800f0234.get(wmapDestinationMarkers_800f5a6c.get(destinationIndex).placeIndex_28.get()).name_00.deref(), width, lines);
 
-          final int v0 = _800c86f0.get();
-          if(v0 == 1) {
-            //LAB_800d49e4
-            textZ_800bdf00.set(14);
-            textboxes_800be358[7].z_0c = 14;
-            textboxes_800be358[7].chars_18 = Math.max(width.get(), 4);
-            textboxes_800be358[7].lines_1a = lines.get();
-            _800c86f0.set(2);
-            //LAB_800d4974
-          } else if(v0 == 0) {
+          final int labelStage = destinationLabelStage_800c86f0.get();
+          textboxes_800be358[7].chars_18 = Math.max(width.get(), 4);
+          textboxes_800be358[7].lines_1a = lines.get();
+          //LAB_800d4974
+          if(labelStage == 0) {
             //LAB_800d4988
             initTextbox(7, 0, x, y, width.get() - 1, lines.get() - 1);
-            _800c86f0.set(1);
 
             //LAB_800d49e4
-            textZ_800bdf00.set(14);
-            textboxes_800be358[7].z_0c = 14;
-            textboxes_800be358[7].chars_18 = Math.max(width.get(), 4);
-            textboxes_800be358[7].lines_1a = lines.get();
-            _800c86f0.set(2);
-          } else if(v0 == 2) {
+            destinationLabelStage_800c86f0.set(2);
+          } else if(labelStage == 1) {
+            //LAB_800d49e4
+            destinationLabelStage_800c86f0.set(2);
+          } else if(labelStage == 2) {
             //LAB_800d4a40
-            textboxes_800be358[7].chars_18 = width.get();
-
-            if(width.get() < 4) {
-              textboxes_800be358[7].chars_18 = 4;
-            }
-
             //LAB_800d4a6c
-            textboxes_800be358[7].lines_1a = lines.get();
             textboxes_800be358[7].width_1c = textboxes_800be358[7].chars_18 * 9 / 2;
             textboxes_800be358[7].height_1e = textboxes_800be358[7].lines_1a * 6;
             textboxes_800be358[7].x_14 = x;
@@ -2134,7 +2120,7 @@ public class WMap {
           textZ_800bdf00.set(26);
           textboxes_800be358[7].z_0c = 26;
 
-          renderCenteredShadowedText(places_800f0234.get(_800f5a6c.get(sp24).placeIndex_28.get()).name_00.deref(), x, y - lines.get() * 7 + 1, TextColour.WHITE, 0);
+          renderCenteredShadowedText(places_800f0234.get(wmapDestinationMarkers_800f5a6c.get(destinationIndex).placeIndex_28.get()).name_00.deref(), x, y - lines.get() * 7 + 1, TextColour.WHITE, 0);
         }
       }
     }
@@ -3296,7 +3282,7 @@ public class WMap {
     }
 
     //LAB_800da344
-    if(_800c6690.get() != 0) {
+    if(tickMainMenuOpenTransition_800c6690.get() != 0) {
       return;
     }
 
@@ -3786,7 +3772,7 @@ public class WMap {
     if(a1 == 0) {
       //LAB_800dcbf4
       FUN_8002a3ec(7, 0);
-      _800c86f0.set(0);
+      destinationLabelStage_800c86f0.set(0);
     } else {
       x += 167;
       y += 116;
@@ -3797,24 +3783,24 @@ public class WMap {
       final int width = widthRef.get();
       final int lines = linesRef.get();
 
-      final int v0 = _800c86f0.get();
+      final int v0 = destinationLabelStage_800c86f0.get();
       if(v0 == 0) {
         //LAB_800dc9e4
         initTextbox(7, 0, x, y, width - 1, lines - 1);
-        _800c86f0.set(1);
+        destinationLabelStage_800c86f0.set(1);
 
         //LAB_800dca40
         textZ_800bdf00.set(14);
         textboxes_800be358[7].z_0c = 14;
         textboxes_800be358[7].chars_18 = Math.max(width, 4);
         textboxes_800be358[7].lines_1a = lines;
-        _800c86f0.set(2);
+        destinationLabelStage_800c86f0.set(2);
       } else if(v0 == 1) {
         textZ_800bdf00.set(14);
         textboxes_800be358[7].z_0c = 14;
         textboxes_800be358[7].chars_18 = Math.max(width, 4);
         textboxes_800be358[7].lines_1a = lines;
-        _800c86f0.set(2);
+        destinationLabelStage_800c86f0.set(2);
         //LAB_800dc9d0
       } else if(v0 == 2) {
         //LAB_800dca9c
@@ -5018,7 +5004,7 @@ public class WMap {
 
   @Method(0x800e5150L)
   public static void handleMapTransitions() {
-    if(_800c6690.get() != 0) {
+    if(tickMainMenuOpenTransition_800c6690.get() != 0) {
       return;
     }
 
@@ -5424,7 +5410,7 @@ public class WMap {
 
   @Method(0x800e69e8L)
   public static void handleStartButtonLocationLabels() {
-    if(_800c6690.get() != 0) {
+    if(tickMainMenuOpenTransition_800c6690.get() != 0) {
       return;
     }
 
@@ -5486,7 +5472,7 @@ public class WMap {
     //LAB_800e6c00
     rotateCoord2(wmapStruct258_800c66a8.tmdRendering_08.rotations_08[0], wmapStruct258_800c66a8.tmdRendering_08.coord2s_04[0]);
 
-    final List<WMapLocationLabelMetrics0c> structs = new ArrayList<>();
+    final List<WmapLocationLabelMetrics0c> labelList = new ArrayList<>();
 
     //LAB_800e6c38
     final MATRIX sp0x38 = new MATRIX();
@@ -5511,11 +5497,11 @@ public class WMap {
           if(y >= -32 && y < 273) {
             //LAB_800e6e64
             if(z >= 6 && z < orderingTableSize_1f8003c8.get() - 1) {
-              final WMapLocationLabelMetrics0c struct = new WMapLocationLabelMetrics0c();
-              struct.z_00 = z;
-              struct.locationIndex_04 = locationsIndices_800c84c8.get(i).get();
-              struct.xy_08.set(sx, sy);
-              structs.add(struct);
+              final WmapLocationLabelMetrics0c label = new WmapLocationLabelMetrics0c();
+              label.z_00 = z;
+              label.locationIndex_04 = locationsIndices_800c84c8.get(i).get();
+              label.xy_08.set(sx, sy);
+              labelList.add(label);
             }
           }
         }
@@ -5525,12 +5511,12 @@ public class WMap {
     // Render world map place names when start is held down
 
     //LAB_800e6f54
-    structs.sort(Comparator.comparingInt(o -> o.z_00));
+    labelList.sort(Comparator.comparingInt(o -> o.z_00));
 
     //LAB_800e6fa0
     int i;
-    for(i = 0; i < Math.min(7, structs.size()); i++) {
-      final WMapLocationLabelMetrics0c label = structs.get(i);
+    for(i = 0; i < Math.min(7, labelList.size()); i++) {
+      final WmapLocationLabelMetrics0c label = labelList.get(i);
 
       //LAB_800e6fec
       //LAB_800e6fec
@@ -5545,32 +5531,28 @@ public class WMap {
         final IntRef lines = new IntRef();
         measureText(places_800f0234.get(place).name_00.deref(), width, lines);
 
-        final int v0 = startButtonLabelStages_800c86d4[i];
-        if(v0 == 0) {
+        // labelStage == 2 uses code common to all conditions
+        final int labelStage = startButtonLabelStages_800c86d4[i];
+        if(labelStage == 0) {
           //LAB_800e7168
           initTextbox(i, 0, x, y, width.get() - 1, lines.get() - 1);
 
-          startButtonLabelStages_800c86d4[i] = 1;
-        } else if(v0 == 1) {
           //LAB_800e71d8
-          textZ_800bdf00.set(i + 14);
           textboxes_800be358[i].z_0c = i + 14;
-          textboxes_800be358[i].chars_18 = Math.max(width.get(), 4);
-          textboxes_800be358[i].lines_1a = lines.get();
-          textboxes_800be358[i].width_1c = textboxes_800be358[i].chars_18 * 9 / 2;
-          textboxes_800be358[i].height_1e = textboxes_800be358[i].lines_1a * 6;
-          textboxes_800be358[i].x_14 = x;
-          textboxes_800be358[i].y_16 = y;
+          startButtonLabelStages_800c86d4[i] = 1;
+        } else if(labelStage == 1) {
+          //LAB_800e71d8
+          textboxes_800be358[i].z_0c = i + 14;
           startButtonLabelStages_800c86d4[i] = 2;
-        } else if(v0 == 2) {
-          //LAB_800e72e8
-          textboxes_800be358[i].chars_18 = Math.max(width.get(), 4);
-          textboxes_800be358[i].lines_1a = lines.get();
-          textboxes_800be358[i].width_1c = textboxes_800be358[i].chars_18 * 9 / 2;
-          textboxes_800be358[i].height_1e = textboxes_800be358[i].lines_1a * 6;
-          textboxes_800be358[i].x_14 = x;
-          textboxes_800be358[i].y_16 = y;
         }
+
+        //LAB_800e72e8
+        textboxes_800be358[i].chars_18 = Math.max(width.get(), 4);
+        textboxes_800be358[i].lines_1a = lines.get();
+        textboxes_800be358[i].width_1c = textboxes_800be358[i].chars_18 * 9 / 2;
+        textboxes_800be358[i].height_1e = textboxes_800be358[i].lines_1a * 6;
+        textboxes_800be358[i].x_14 = x;
+        textboxes_800be358[i].y_16 = y;
 
         //LAB_800e74d8
         textZ_800bdf00.set(i + 119);
@@ -5648,15 +5630,14 @@ public class WMap {
     //LAB_800e7944
     for(int i = 0; i < 49; i++) {
       //LAB_800e7984
-      if(gameState_800babc8.scriptFlags2_bc.get(_800f5a6c.get(i).packedFlag_00.get())) {
+      if(gameState_800babc8.scriptFlags2_bc.get(wmapDestinationMarkers_800f5a6c.get(i).packedFlag_00.get())) {
         //LAB_800e7a38
         //LAB_800e7a3c
         for(int flagIndex = 0; flagIndex < 8; flagIndex++) {
           //LAB_800e7a58
-          gameState_800babc8.wmapFlags_15c.setRaw(flagIndex, _800f5a6c.get(i)._04.get(flagIndex).get());
+          gameState_800babc8.wmapFlags_15c.setRaw(flagIndex, wmapDestinationMarkers_800f5a6c.get(i).flags_04.get(flagIndex).get());
         }
       }
-
       //LAB_800e7acc
     }
 
@@ -5679,7 +5660,6 @@ public class WMap {
         sp18 = true;
         break;
       }
-
       //LAB_800e7bc0
     }
 
@@ -5752,7 +5732,6 @@ public class WMap {
             }
           }
         }
-
         //LAB_800e7fb4
       }
 
@@ -6020,7 +5999,7 @@ public class WMap {
                       //LAB_800e903c
                       if((filesLoadedFlags_800c66b8.get() & 0x1) != 0) {
                         //LAB_800e905c
-                        if(_800c6690.get() == 0) {
+                        if(tickMainMenuOpenTransition_800c6690.get() == 0) {
                           //LAB_800e9078
                           if(Input.pressedThisFrame(InputAction.BUTTON_WEST)) { // Square
                             if(mapState_800c6798._fc != 1) {
@@ -7094,7 +7073,7 @@ public class WMap {
     }
 
     //LAB_800edc04
-    if(_800c6690.get() != 0) {
+    if(tickMainMenuOpenTransition_800c6690.get() != 0) {
       return;
     }
 
