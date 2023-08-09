@@ -831,7 +831,7 @@ public final class Bttl_800c {
 
   /** Related to loading deffs */
   public static final IntRef _800fafe8 = MEMORY.ref(4, 0x800fafe8L, IntRef::new);
-  public static final ArrayRef<ByteRef> dragoonDeffFlags_800fafec = MEMORY.ref(1, 0x800fafecL, ArrayRef.of(ByteRef.class, 84, 1, ByteRef::new));
+  public static final ArrayRef<ByteRef> dragoonDeffFlags_800fafec = MEMORY.ref(1, 0x800fafecL, ArrayRef.of(ByteRef.class, 127, 1, ByteRef::new));
   /**
    * <ol start="0">
    *   <li>0x4</li>
