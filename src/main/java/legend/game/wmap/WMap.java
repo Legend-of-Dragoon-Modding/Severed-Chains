@@ -182,15 +182,15 @@ public class WMap {
   private static WmapSmokeCloudInstance60[] smokeCloudInstances_800c86f8;
   /** This doesn't seem to have any effect, since the only time it's used is checking whether to turn it off */
   private static final BoolRef renderAtmosphericEffect_800c86fc = MEMORY.ref(4, 0x800c86fcL, BoolRef::new);
-  private static final RECT pathRect_800c8700 = MEMORY.ref(4, 0x800c8700L, RECT::new);
-  private static final COLOUR _800c8778 = MEMORY.ref(4, 0x800c8778L, COLOUR::new);
-  private static final RECT _800c877c = MEMORY.ref(4, 0x800c877cL, RECT::new);
+  private static final RECT storedPathsRect_800c8700 = MEMORY.ref(4, 0x800c8700L, RECT::new);
+  private static final COLOUR coolonMenuSelectorBaseColour_800c8778 = MEMORY.ref(4, 0x800c8778L, COLOUR::new);
+  private static final RECT coolonMenuSelectorRect_800c877c = MEMORY.ref(4, 0x800c877cL, RECT::new);
 
   private static final Vector3f _800c87d8 = new Vector3f(0.0f, 1.0f, 0.0f);
-  private static final COLOUR _800c87e8 = MEMORY.ref(4, 0x800c87e8L, COLOUR::new);
-  private static final RECT _800c87ec = MEMORY.ref(4, 0x800c87ecL, RECT::new);
-  private static final COLOUR _800c87f4 = MEMORY.ref(4, 0x800c87f4L, COLOUR::new);
-  private static final RECT _800c87f8 = MEMORY.ref(4, 0x800c87f8L, RECT::new);
+  private static final COLOUR locationMenuNameShadowBaseColour_800c87e8 = MEMORY.ref(4, 0x800c87e8L, COLOUR::new);
+  private static final RECT locationMenuNameShadowRect_800c87ec = MEMORY.ref(4, 0x800c87ecL, RECT::new);
+  private static final COLOUR locationMenuSelectorBaseColour_800c87f4 = MEMORY.ref(4, 0x800c87f4L, COLOUR::new);
+  private static final RECT locationMenuSelectorRect_800c87f8 = MEMORY.ref(4, 0x800c87f8L, RECT::new);
 
   /** Array of 0x14-length structs, but have to figure out what everything means */
   private static final ArrayRef<ArrayRef<IntRef>> _800eee48 = MEMORY.ref(4, 0x800eee48L, ArrayRef.of(ArrayRef.classFor(IntRef.class), 22, 20, ArrayRef.of(IntRef.class, 5, 4, IntRef::new)));
@@ -550,7 +550,7 @@ public class WMap {
     wmapStruct258_800c66a8.imageData_2c = new FileData(new byte[0x1_0000]);
     wmapStruct258_800c66a8.imageData_30 = new FileData(new byte[0x1_0000]);
 
-    StoreImage(pathRect_800c8700, wmapStruct258_800c66a8.imageData_2c);
+    StoreImage(storedPathsRect_800c8700, wmapStruct258_800c66a8.imageData_2c);
     StoreImage(new RECT((short)320, (short)0, (short)64, (short)512), wmapStruct258_800c66a8.imageData_30);
 
     //LAB_800cca5c
@@ -561,7 +561,7 @@ public class WMap {
     final WMapStruct258 struct = wmapStruct258_800c66a8;
     vsyncMode_8007a3b8 = 3;
     scriptStartEffect(2, 15);
-    LoadImage(pathRect_800c8700, struct.imageData_2c);
+    LoadImage(storedPathsRect_800c8700, struct.imageData_2c);
     LoadImage(new RECT().set((short)320, (short)0, (short)64, (short)512), struct.imageData_30);
     struct.imageData_2c = null;
     struct.imageData_30 = null;
@@ -720,9 +720,9 @@ public class WMap {
     FUN_800e78c0();
     loadWmapTextures();
     FUN_800d177c();
-    FUN_800d8d18();
+    loadMapModelAssetsAndInitializeCoolonMenuSelector();
     loadPlayerAvatarTextureAndModelFiles();
-    FUN_800e4f60();
+    initializeLocationMenuTextHighlightEffects();
     allocateSmoke();
     FUN_800e4e1c();
 
@@ -826,54 +826,55 @@ public class WMap {
   }
 
   @Method(0x800cd3c8L)
-  public static WmapMenuTextHighlight40 initializeWmapMenuTextHighlight(final int a0, final COLOUR colour0, final COLOUR colour1, final COLOUR colour2, final COLOUR colour3, final COLOUR a5, final RECT a6, final int a7, final int a8, final int type, final boolean transparency, final Translucency transparencyMode, final int z) {
-    int sp2c = 0;
-    int sp30 = 0;
+  public static WmapMenuTextHighlight40 initializeWmapMenuTextHighlight(final int brightness, final COLOUR colour0, final COLOUR colour1, final COLOUR colour2, final COLOUR colour3, final COLOUR baseColour, final RECT fullRect, final int columnCount, final int rowCount, final int type, final boolean transparency, final Translucency transparencyMode, final int z) {
+    int horizontalRectIndex = 0;
+    int verticalRectIndex = 0;
     short x;
     short y;
 
-    final WmapMenuTextHighlight40 sp34 = new WmapMenuTextHighlight40();
+    final WmapMenuTextHighlight40 highlight = new WmapMenuTextHighlight40();
 
-    sp34._28 = a7;
-    sp34._2c = a8;
-    sp34.count_30 = a7 * a8;
-    sp34.currentBrightness_34 = (short)a0;
-    sp34.x_38 = 0;
-    sp34.y_3a = 0;
-    sp34.transparency_3c = transparency;
-    sp34.z_3e = z;
+    highlight.columnCount_28 = columnCount;
+    highlight.rowCount_2c = rowCount;
+    highlight.subRectCount_30 = columnCount * rowCount;
+    highlight.currentBrightness_34 = (short)brightness;
+    highlight.x_38 = 0;
+    highlight.y_3a = 0;
+    highlight.transparency_3c = transparency;
+    highlight.z_3e = z;
 
+    // Types 2 and 4 are the only ones used by retail; 0 would be a single-color rect
     if(type == 0) {
-      sp34._00 = new WMapRender10[] { new WMapRender10() };
+      highlight.subRectVertexColoursArray_00 = new WMapTextHighlightSubRectVertexColours10[] { new WMapTextHighlightSubRectVertexColours10() };
     } else {
       //LAB_800cd4fc
-      sp34._00 = new WMapRender10[sp34.count_30];
-      Arrays.setAll(sp34._00, i -> new WMapRender10());
+      highlight.subRectVertexColoursArray_00 = new WMapTextHighlightSubRectVertexColours10[highlight.subRectCount_30];
+      Arrays.setAll(highlight.subRectVertexColoursArray_00, i -> new WMapTextHighlightSubRectVertexColours10());
     }
 
     //LAB_800cd534
-    FUN_800ce0bc(sp34, type, colour0, colour1, colour2, colour3, a5);
+    initializeWmapTextHighlightTypeAndColour(highlight, type, colour0, colour1, colour2, colour3, baseColour);
 
     //LAB_800cd578
     for(int i = 0; i < 2; i++) {
       //LAB_800cd594
-      sp34.tpagePacket_04[i] = null;
-      sp34.renderPacket_0c[i] = null;
+      highlight.tpagePacket_04[i] = null;
+      highlight.renderPacket_0c[i] = null;
     }
 
     //LAB_800cd600
-    sp34.rects_1c = new RECT[sp34.count_30];
-    Arrays.setAll(sp34.rects_1c, i -> new RECT());
+    highlight.rects_1c = new RECT[highlight.subRectCount_30];
+    Arrays.setAll(highlight.rects_1c, i -> new RECT());
 
-    final short w = (short)(a6.w.get() / a7);
-    final short h = (short)(a6.h.get() / a8);
+    final short w = (short)(fullRect.w.get() / columnCount);
+    final short h = (short)(fullRect.h.get() / rowCount);
 
     //LAB_800cd6b8
     if(transparency) {
       //LAB_800cd6cc
       for(int i = 0; i < 2; i++) {
         //LAB_800cd6e8
-        sp34.tpagePacket_04[i] = new Translucency[sp34.count_30];
+        highlight.tpagePacket_04[i] = new Translucency[highlight.subRectCount_30];
       }
     }
 
@@ -881,25 +882,25 @@ public class WMap {
     //LAB_800cd74c
     for(int i = 0; i < 2; i++) {
       //LAB_800cd768
-      sp34.renderPacket_0c[i] = new WMapMenuTextHighlightGradient24[sp34.count_30];
-      Arrays.setAll(sp34.renderPacket_0c[i], n -> new WMapMenuTextHighlightGradient24());
+      highlight.renderPacket_0c[i] = new WMapMenuTextHighlightGradient24[highlight.subRectCount_30];
+      Arrays.setAll(highlight.renderPacket_0c[i], n -> new WMapMenuTextHighlightGradient24());
     }
 
     //LAB_800cd7d0
     //LAB_800cd82c
-    for(int i = 0; i < sp34.count_30; i++) {
-      final WMapMenuTextHighlightGradient24 render0 = sp34.renderPacket_0c[0][i];
-      final WMapMenuTextHighlightGradient24 render1 = sp34.renderPacket_0c[1][i];
+    for(int i = 0; i < highlight.subRectCount_30; i++) {
+      final WMapMenuTextHighlightGradient24 render0 = highlight.renderPacket_0c[0][i];
+      final WMapMenuTextHighlightGradient24 render1 = highlight.renderPacket_0c[1][i];
 
       //LAB_800cd850
       if(transparency) {
-        sp34.tpagePacket_04[0][i] = transparencyMode;
-        sp34.tpagePacket_04[1][i] = transparencyMode;
+        highlight.tpagePacket_04[0][i] = transparencyMode;
+        highlight.tpagePacket_04[1][i] = transparencyMode;
       }
 
       //LAB_800cd8e8
-      x = (short)(a6.x.get() + w * sp2c - 160);
-      y = (short)(a6.y.get() + h * sp30 - 120);
+      x = (short)(fullRect.x.get() + w * horizontalRectIndex - 160);
+      y = (short)(fullRect.y.get() + h * verticalRectIndex - 120);
 
       render0.x0_08 = x;
       render0.y0_0a = y;
@@ -919,47 +920,47 @@ public class WMap {
       render1.x3_20 = x + w;
       render1.y3_22 = y + h;
 
-      sp34.rects_1c[i].set(x, y, w, h);
+      highlight.rects_1c[i].set(x, y, w, h);
 
-      if(sp2c < a7 - 1) {
+      if(horizontalRectIndex < columnCount - 1) {
         //LAB_800cdb6c
-        sp2c++;
+        horizontalRectIndex++;
       } else {
-        sp2c = 0;
+        horizontalRectIndex = 0;
 
-        if(sp30 < a8 - 1) {
-          sp30++;
+        if(verticalRectIndex < rowCount - 1) {
+          verticalRectIndex++;
         }
       }
     }
 
     //LAB_800ce094
     //LAB_800ce0a8
-    return sp34;
+    return highlight;
   }
 
   @Method(0x800ce0bcL)
-  public static void FUN_800ce0bc(final WmapMenuTextHighlight40 a0, final int type, final COLOUR colour0, final COLOUR colour1, final COLOUR colour2, final COLOUR colour3, final COLOUR a6) {
-    a0.type_3f = type;
-    FUN_800cf20c(a0._00, type, a0._28, a0._2c, colour0, colour1, colour2, colour3, a6);
-    a0.previousBrightness_36 = -1;
+  public static void initializeWmapTextHighlightTypeAndColour(final WmapMenuTextHighlight40 highlight, final int type, final COLOUR colour0, final COLOUR colour1, final COLOUR colour2, final COLOUR colour3, final COLOUR baseColour) {
+    highlight.type_3f = type;
+    shadeWmapTextHighlightSubRectVertices(highlight.subRectVertexColoursArray_00, type, highlight.columnCount_28, highlight.rowCount_2c, colour0, colour1, colour2, colour3, baseColour);
+    highlight.previousBrightness_36 = -1;
   }
 
-  /** Renders shadow and selector in location menu */
+  /** Renders shadow and selector in location menu (and Coolon move confirmation) */
   @Method(0x800ce4dcL)
-  public static void renderLocationMenuTextHighlight(final WmapMenuTextHighlight40 a0) {
-    setRenderColours(a0);
+  public static void renderLocationMenuTextHighlight(final WmapMenuTextHighlight40 highlight) {
+    setRenderColours(highlight);
 
     //LAB_800ce538
     //LAB_800ce5a0
     //LAB_800ce5a4
-    for(int i = 0; i < a0.count_30; i++) {
-      final WMapMenuTextHighlightGradient24 renderPacket = a0.renderPacket_0c[GPU.getDrawBufferIndex()][i];
-      final RECT rect = a0.rects_1c[i];
+    for(int i = 0; i < highlight.subRectCount_30; i++) {
+      final WMapMenuTextHighlightGradient24 renderPacket = highlight.renderPacket_0c[GPU.getDrawBufferIndex()][i];
+      final RECT rect = highlight.rects_1c[i];
 
       //LAB_800ce5c8
-      final int left = a0.x_38 + rect.x.get();
-      final int top = a0.y_3a + rect.y.get();
+      final int left = highlight.x_38 + rect.x.get();
+      final int top = highlight.y_3a + rect.y.get();
       final int right = left + rect.w.get();
       final int bottom = top + rect.h.get();
       renderPacket.x0_08 = left;
@@ -981,13 +982,12 @@ public class WMap {
         .pos(2, left, bottom)
         .pos(3, right, bottom);
 
-      if(a0.transparency_3c) {
-        cmd.translucent(a0.tpagePacket_04[GPU.getDrawBufferIndex()][i]);
+      if(highlight.transparency_3c) {
+        cmd.translucent(highlight.tpagePacket_04[GPU.getDrawBufferIndex()][i]);
       }
 
-      GPU.queueCommand(a0.z_3e, cmd);
+      GPU.queueCommand(highlight.z_3e, cmd);
     }
-
     //LAB_800ce7e8
     //LAB_800cea08
   }
@@ -1010,23 +1010,23 @@ public class WMap {
     //LAB_800ceacc
     //LAB_800ceb38
     int n = 0;
-    for(int i = 0; i < a0.count_30; i++) {
+    for(int i = 0; i < a0.subRectCount_30; i++) {
       final WMapMenuTextHighlightGradient24 sp4 = a0.renderPacket_0c[GPU.getDrawBufferIndex()][i];
       final WMapMenuTextHighlightGradient24 sp8 = a0.renderPacket_0c[GPU.getDrawBufferIndex() ^ 1][i];
-      final WMapRender10 sp14 = a0._00[n];
+      final WMapTextHighlightSubRectVertexColours10 sp14 = a0.subRectVertexColoursArray_00[n];
 
-      final int r0 = sp14._00.getR() * a0.currentBrightness_34 / 0x100;
-      final int g0 = sp14._00.getG() * a0.currentBrightness_34 / 0x100;
-      final int b0 = sp14._00.getB() * a0.currentBrightness_34 / 0x100;
-      final int r1 = sp14._04.getR() * a0.currentBrightness_34 / 0x100;
-      final int g1 = sp14._04.getG() * a0.currentBrightness_34 / 0x100;
-      final int b1 = sp14._04.getB() * a0.currentBrightness_34 / 0x100;
-      final int r2 = sp14._08.getR() * a0.currentBrightness_34 / 0x100;
-      final int g2 = sp14._08.getG() * a0.currentBrightness_34 / 0x100;
-      final int b2 = sp14._08.getB() * a0.currentBrightness_34 / 0x100;
-      final int r3 = sp14._0c.getR() * a0.currentBrightness_34 / 0x100;
-      final int g3 = sp14._0c.getG() * a0.currentBrightness_34 / 0x100;
-      final int b3 = sp14._0c.getB() * a0.currentBrightness_34 / 0x100;
+      final int r0 = sp14.topLeft_00.getR() * a0.currentBrightness_34 / 0x100;
+      final int g0 = sp14.topLeft_00.getG() * a0.currentBrightness_34 / 0x100;
+      final int b0 = sp14.topLeft_00.getB() * a0.currentBrightness_34 / 0x100;
+      final int r1 = sp14.topRight_04.getR() * a0.currentBrightness_34 / 0x100;
+      final int g1 = sp14.topRight_04.getG() * a0.currentBrightness_34 / 0x100;
+      final int b1 = sp14.topRight_04.getB() * a0.currentBrightness_34 / 0x100;
+      final int r2 = sp14.bottomLeft_08.getR() * a0.currentBrightness_34 / 0x100;
+      final int g2 = sp14.bottomLeft_08.getG() * a0.currentBrightness_34 / 0x100;
+      final int b2 = sp14.bottomLeft_08.getB() * a0.currentBrightness_34 / 0x100;
+      final int r3 = sp14.bottomRight_0c.getR() * a0.currentBrightness_34 / 0x100;
+      final int g3 = sp14.bottomRight_0c.getG() * a0.currentBrightness_34 / 0x100;
+      final int b3 = sp14.bottomRight_0c.getB() * a0.currentBrightness_34 / 0x100;
 
       sp4.colour_04.set(r0, g0, b0);
       sp4.colour_0c.set(r1, g1, b1);
@@ -1050,17 +1050,27 @@ public class WMap {
     //LAB_800cf1fc
   }
 
+  /**
+   * Only types 2 and 4 are used by retail
+   * <ol start="0">
+   *   <li>Flat, single sub-rect</li>
+   *   <li>Flat, multiple sub-rects</li>
+   *   <li>Gradient, horizontal, multiple sub-rects</li>
+   *   <li>Gradient, vertical, multiple sub-rects</li>
+   *   <li>Gradient, free-form blob, multiple sub-rects</li>
+   * </ol>
+   */
   @Method(0x800cf20cL)
-  public static void FUN_800cf20c(final WMapRender10[] a0, final int type, final int a2, final int a3, final COLOUR colour0, final COLOUR colour1, final COLOUR colour2, final COLOUR colour3, final COLOUR a8) {
-    int sp14;
+  public static void shadeWmapTextHighlightSubRectVertices(final WMapTextHighlightSubRectVertexColours10[] subRectArray, final int type, final int horizontalRectCount, final int verticalRectCount, final COLOUR colour0, final COLOUR colour1, final COLOUR colour2, final COLOUR colour3, final COLOUR baseColour) {
+    int subRectIndex;
     final ColourBlending20 blending = new ColourBlending20();
 
     switch(type) {
       case 0 -> {
-        a0[0]._00.set(colour0);
-        a0[0]._04.set(colour1);
-        a0[0]._08.set(colour2);
-        a0[0]._0c.set(colour3);
+        subRectArray[0].topLeft_00.set(colour0);
+        subRectArray[0].topRight_04.set(colour1);
+        subRectArray[0].bottomLeft_08.set(colour2);
+        subRectArray[0].bottomRight_0c.set(colour3);
       }
 
       case 1 -> {
@@ -1068,43 +1078,42 @@ public class WMap {
         blending.colour0End_04 = colour1;
         blending.colour1Start_08 = colour2;
         blending.colour1End_0c = colour3;
-        sp14 = 0;
+        subRectIndex = 0;
 
         //LAB_800cf32c
-        for(int sp1c = 0; sp1c < a3; sp1c++) {
+        for(int i = 0; i < verticalRectCount; i++) {
           //LAB_800cf34c
           //LAB_800cf350
-          for(int sp18 = 0; sp18 < a2; sp18++) {
-            final WMapRender10 sp20 = a0[sp14];
+          for(int j = 0; j < horizontalRectCount; j++) {
+            final WMapTextHighlightSubRectVertexColours10 subRect = subRectArray[subRectIndex];
 
             //LAB_800cf370
-            blending.colourEndRatio_10 = sp18;
-            blending.colourStartRatio_14 = a2 - sp18;
-            blending.colour1Ratio_18 = sp1c;
-            blending.colour0Ratio_1c = a3 - sp1c;
-            blendColours(blending, sp20._00);
+            blending.colourEndRatio_10 = j;
+            blending.colourStartRatio_14 = horizontalRectCount - j;
+            blending.colour1Ratio_18 = i;
+            blending.colour0Ratio_1c = verticalRectCount - i;
+            blendColours(blending, subRect.topLeft_00);
 
-            blending.colourEndRatio_10 = sp18 + 1;
-            blending.colourStartRatio_14 = a2 - 1 - sp18;
-            blending.colour1Ratio_18 = sp1c;
-            blending.colour0Ratio_1c = a3 - sp1c;
-            blendColours(blending, sp20._04);
+            blending.colourEndRatio_10 = j + 1;
+            blending.colourStartRatio_14 = horizontalRectCount - 1 - j;
+            blending.colour1Ratio_18 = i;
+            blending.colour0Ratio_1c = verticalRectCount - i;
+            blendColours(blending, subRect.topRight_04);
 
-            blending.colourEndRatio_10 = sp18;
-            blending.colourStartRatio_14 = a2 - sp18;
-            blending.colour1Ratio_18 = sp1c + 1;
-            blending.colour0Ratio_1c = a3 - 1 - sp1c;
-            blendColours(blending, sp20._08);
+            blending.colourEndRatio_10 = j;
+            blending.colourStartRatio_14 = horizontalRectCount - j;
+            blending.colour1Ratio_18 = i + 1;
+            blending.colour0Ratio_1c = verticalRectCount - 1 - i;
+            blendColours(blending, subRect.bottomLeft_08);
 
-            blending.colourEndRatio_10 = sp18 + 1;
-            blending.colourStartRatio_14 = a2 - 1 - sp18;
-            blending.colour1Ratio_18 = sp1c + 1;
-            blending.colour0Ratio_1c = a3 - 1 - sp1c;
-            blendColours(blending, sp20._0c);
+            blending.colourEndRatio_10 = j + 1;
+            blending.colourStartRatio_14 = horizontalRectCount - 1 - j;
+            blending.colour1Ratio_18 = i + 1;
+            blending.colour0Ratio_1c = verticalRectCount - 1 - i;
+            blendColours(blending, subRect.bottomRight_0c);
 
-            sp14++;
+            subRectIndex++;
           }
-
           //LAB_800cf54c
         }
       }
@@ -1113,89 +1122,87 @@ public class WMap {
       case 2 -> {
         blending.colour0Start_00 = colour0;
         blending.colour0End_04 = colour1;
-        blending.colour1Start_08 = a8;
-        blending.colour1End_0c = a8;
-        sp14 = 0;
+        blending.colour1Start_08 = baseColour;
+        blending.colour1End_0c = baseColour;
+        subRectIndex = 0;
 
         //LAB_800cf5a4
-        for(int sp1c = 0; sp1c < a3 / 2; sp1c++) {
+        for(int i = 0; i < verticalRectCount / 2; i++) {
           //LAB_800cf5d8
           //LAB_800cf5dc
-          for(int sp18 = 0; sp18 < a2; sp18++) {
-            final WMapRender10 sp20 = a0[sp14];
+          for(int j = 0; j < horizontalRectCount; j++) {
+            final WMapTextHighlightSubRectVertexColours10 subRect = subRectArray[subRectIndex];
 
             //LAB_800cf5fc
-            blending.colourEndRatio_10 = sp18;
-            blending.colourStartRatio_14 = a2 - sp18;
-            blending.colour1Ratio_18 = sp1c;
-            blending.colour0Ratio_1c = a3 / 2 - sp1c;
-            blendColours(blending, sp20._00);
+            blending.colourEndRatio_10 = j;
+            blending.colourStartRatio_14 = horizontalRectCount - j;
+            blending.colour1Ratio_18 = i;
+            blending.colour0Ratio_1c = verticalRectCount / 2 - i;
+            blendColours(blending, subRect.topLeft_00);
 
-            blending.colourEndRatio_10 = sp18 + 1;
-            blending.colourStartRatio_14 = a2 - 1 - sp18;
-            blending.colour1Ratio_18 = sp1c;
-            blending.colour0Ratio_1c = a3 / 2 - sp1c;
-            blendColours(blending, sp20._04);
+            blending.colourEndRatio_10 = j + 1;
+            blending.colourStartRatio_14 = horizontalRectCount - 1 - j;
+            blending.colour1Ratio_18 = i;
+            blending.colour0Ratio_1c = verticalRectCount / 2 - i;
+            blendColours(blending, subRect.topRight_04);
 
-            blending.colourEndRatio_10 = sp18;
-            blending.colourStartRatio_14 = a2 - sp18;
-            blending.colour1Ratio_18 = sp1c + 1;
-            blending.colour0Ratio_1c = a3 / 2 - 1 - sp1c;
-            blendColours(blending, sp20._08);
+            blending.colourEndRatio_10 = j;
+            blending.colourStartRatio_14 = horizontalRectCount - j;
+            blending.colour1Ratio_18 = i + 1;
+            blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
+            blendColours(blending, subRect.bottomLeft_08);
 
-            blending.colourEndRatio_10 = sp18 + 1;
-            blending.colourStartRatio_14 = a2 - 1 - sp18;
-            blending.colour1Ratio_18 = sp1c + 1;
-            blending.colour0Ratio_1c = a3 / 2 - 1 - sp1c;
-            blendColours(blending, sp20._0c);
+            blending.colourEndRatio_10 = j + 1;
+            blending.colourStartRatio_14 = horizontalRectCount - 1 - j;
+            blending.colour1Ratio_18 = i + 1;
+            blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
+            blendColours(blending, subRect.bottomRight_0c);
 
-            sp14++;
+            subRectIndex++;
           }
-
           //LAB_800cf820
         }
 
         //LAB_800cf838
-        blending.colour0Start_00 = a8;
-        blending.colour0End_04 = a8;
+        blending.colour0Start_00 = baseColour;
+        blending.colour0End_04 = baseColour;
         blending.colour1Start_08 = colour2;
         blending.colour1End_0c = colour3;
 
         //LAB_800cf870
-        for(int sp1c = 0; sp1c < a3 / 2; sp1c++) {
+        for(int i = 0; i < verticalRectCount / 2; i++) {
           //LAB_800cf8a4
           //LAB_800cf8a8
-          for(int sp18 = 0; sp18 < a2; sp18++) {
-            final WMapRender10 sp20 = a0[sp14];
+          for(int j = 0; j < horizontalRectCount; j++) {
+            final WMapTextHighlightSubRectVertexColours10 subRect = subRectArray[subRectIndex];
 
             //LAB_800cf8c8
-            blending.colourEndRatio_10 = sp18;
-            blending.colourStartRatio_14 = a2 - sp18;
-            blending.colour1Ratio_18 = sp1c;
-            blending.colour0Ratio_1c = a3 / 2 - sp1c;
-            blendColours(blending, sp20._00);
+            blending.colourEndRatio_10 = j;
+            blending.colourStartRatio_14 = horizontalRectCount - j;
+            blending.colour1Ratio_18 = i;
+            blending.colour0Ratio_1c = verticalRectCount / 2 - i;
+            blendColours(blending, subRect.topLeft_00);
 
-            blending.colourEndRatio_10 = sp18 + 1;
-            blending.colourStartRatio_14 = a2 - 1 - sp18;
-            blending.colour1Ratio_18 = sp1c;
-            blending.colour0Ratio_1c = a3 / 2 - sp1c;
-            blendColours(blending, sp20._04);
+            blending.colourEndRatio_10 = j + 1;
+            blending.colourStartRatio_14 = horizontalRectCount - 1 - j;
+            blending.colour1Ratio_18 = i;
+            blending.colour0Ratio_1c = verticalRectCount / 2 - i;
+            blendColours(blending, subRect.topRight_04);
 
-            blending.colourEndRatio_10 = sp18;
-            blending.colourStartRatio_14 = a2 - sp18;
-            blending.colour1Ratio_18 = sp1c + 1;
-            blending.colour0Ratio_1c = a3 / 2 - 1 - sp1c;
-            blendColours(blending, sp20._08);
+            blending.colourEndRatio_10 = j;
+            blending.colourStartRatio_14 = horizontalRectCount - j;
+            blending.colour1Ratio_18 = i + 1;
+            blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
+            blendColours(blending, subRect.bottomLeft_08);
 
-            blending.colourEndRatio_10 = sp18 + 1;
-            blending.colourStartRatio_14 = a2 - 1 - sp18;
-            blending.colour1Ratio_18 = sp1c + 1;
-            blending.colour0Ratio_1c = a3 / 2 - 1 - sp1c;
-            blendColours(blending, sp20._0c);
+            blending.colourEndRatio_10 = j + 1;
+            blending.colourStartRatio_14 = horizontalRectCount - 1 - j;
+            blending.colour1Ratio_18 = i + 1;
+            blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
+            blendColours(blending, subRect.bottomRight_0c);
 
-            sp14++;
+            subRectIndex++;
           }
-
           //LAB_800cfaec
         }
       }
@@ -1203,330 +1210,329 @@ public class WMap {
       //LAB_800cfb04
       case 3 -> {
         blending.colour0Start_00 = colour0;
-        blending.colour0End_04 = a8;
+        blending.colour0End_04 = baseColour;
         blending.colour1Start_08 = colour2;
-        blending.colour1End_0c = a8;
-        sp14 = 0;
+        blending.colour1End_0c = baseColour;
+        subRectIndex = 0;
 
         //LAB_800cfb50
-        for(int sp1c = 0; sp1c < a3; sp1c++) {
+        for(int i = 0; i < verticalRectCount; i++) {
           //LAB_800cfb70
           //LAB_800cfb74
-          for(int sp18 = 0; sp18 < a2 / 2; sp18++) {
-            final WMapRender10 sp20 = a0[sp14];
+          for(int j = 0; j < horizontalRectCount / 2; j++) {
+            final WMapTextHighlightSubRectVertexColours10 subRect = subRectArray[subRectIndex];
 
             //LAB_800cfba8
-            blending.colourEndRatio_10 = sp18;
-            blending.colourStartRatio_14 = a2 / 2 - sp18;
-            blending.colour1Ratio_18 = sp1c;
-            blending.colour0Ratio_1c = a3 - sp1c;
-            blendColours(blending, sp20._00);
+            blending.colourEndRatio_10 = j;
+            blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
+            blending.colour1Ratio_18 = i;
+            blending.colour0Ratio_1c = verticalRectCount - i;
+            blendColours(blending, subRect.topLeft_00);
 
-            blending.colourEndRatio_10 = sp18 + 1;
-            blending.colourStartRatio_14 = a2 / 2 - 1 - sp18;
-            blending.colour1Ratio_18 = sp1c;
-            blending.colour0Ratio_1c = a3 - sp1c;
-            blendColours(blending, sp20._04);
+            blending.colourEndRatio_10 = j + 1;
+            blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
+            blending.colour1Ratio_18 = i;
+            blending.colour0Ratio_1c = verticalRectCount - i;
+            blendColours(blending, subRect.topRight_04);
 
-            blending.colourEndRatio_10 = sp18;
-            blending.colourStartRatio_14 = a2 / 2 - sp18;
-            blending.colour1Ratio_18 = sp1c + 1;
-            blending.colour0Ratio_1c = a3 - 1 - sp1c;
-            blendColours(blending, sp20._08);
+            blending.colourEndRatio_10 = j;
+            blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
+            blending.colour1Ratio_18 = i + 1;
+            blending.colour0Ratio_1c = verticalRectCount - 1 - i;
+            blendColours(blending, subRect.bottomLeft_08);
 
-            blending.colourEndRatio_10 = sp18 + 1;
-            blending.colourStartRatio_14 = a2 / 2 - 1 - sp18;
-            blending.colour1Ratio_18 = sp1c + 1;
-            blending.colour0Ratio_1c = a3 - 1 - sp1c;
-            blendColours(blending, sp20._0c);
+            blending.colourEndRatio_10 = j + 1;
+            blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
+            blending.colour1Ratio_18 = i + 1;
+            blending.colour0Ratio_1c = verticalRectCount - 1 - i;
+            blendColours(blending, subRect.bottomRight_0c);
 
-            sp14++;
+            subRectIndex++;
           }
 
           //LAB_800cfdcc
-          sp14 += a2 / 2;
+          subRectIndex += horizontalRectCount / 2;
         }
 
         //LAB_800cfe14
-        blending.colour0Start_00 = a8;
+        blending.colour0Start_00 = baseColour;
         blending.colour0End_04 = colour1;
-        blending.colour1Start_08 = a8;
+        blending.colour1Start_08 = baseColour;
         blending.colour1End_0c = colour3;
-        sp14 = a2 / 2;
+        subRectIndex = horizontalRectCount / 2;
 
         //LAB_800cfe7c
-        for(int sp1c = 0; sp1c < a3; sp1c++) {
+        for(int i = 0; i < verticalRectCount; i++) {
           //LAB_800cfe9c
           //LAB_800cfea0
-          for(int sp18 = 0; sp18 < a2 / 2; sp18++) {
-            final WMapRender10 sp20 = a0[sp14];
+          for(int j = 0; j < horizontalRectCount / 2; j++) {
+            final WMapTextHighlightSubRectVertexColours10 subRect = subRectArray[subRectIndex];
 
             //LAB_800cfed4
-            blending.colourEndRatio_10 = sp18;
-            blending.colourStartRatio_14 = a2 / 2 - sp18;
-            blending.colour1Ratio_18 = sp1c;
-            blending.colour0Ratio_1c = a3 - sp1c;
-            blendColours(blending, sp20._00);
+            blending.colourEndRatio_10 = j;
+            blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
+            blending.colour1Ratio_18 = i;
+            blending.colour0Ratio_1c = verticalRectCount - i;
+            blendColours(blending, subRect.topLeft_00);
 
-            blending.colourEndRatio_10 = sp18 + 1;
-            blending.colourStartRatio_14 = a2 / 2 - 1 - sp18;
-            blending.colour1Ratio_18 = sp1c;
-            blending.colour0Ratio_1c = a3 - sp1c;
-            blendColours(blending, sp20._04);
+            blending.colourEndRatio_10 = j + 1;
+            blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
+            blending.colour1Ratio_18 = i;
+            blending.colour0Ratio_1c = verticalRectCount - i;
+            blendColours(blending, subRect.topRight_04);
 
-            blending.colourEndRatio_10 = sp18;
-            blending.colourStartRatio_14 = a2 / 2 - sp18;
-            blending.colour1Ratio_18 = sp1c + 1;
-            blending.colour0Ratio_1c = a3 - 1 - sp1c;
-            blendColours(blending, sp20._08);
+            blending.colourEndRatio_10 = j;
+            blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
+            blending.colour1Ratio_18 = i + 1;
+            blending.colour0Ratio_1c = verticalRectCount - 1 - i;
+            blendColours(blending, subRect.bottomLeft_08);
 
-            blending.colourEndRatio_10 = sp18 + 1;
-            blending.colourStartRatio_14 = a2 / 2 - 1 - sp18;
-            blending.colour1Ratio_18 = sp1c + 1;
-            blending.colour0Ratio_1c = a3 - 1 - sp1c;
-            blendColours(blending, sp20._0c);
+            blending.colourEndRatio_10 = j + 1;
+            blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
+            blending.colour1Ratio_18 = i + 1;
+            blending.colour0Ratio_1c = verticalRectCount - 1 - i;
+            blendColours(blending, subRect.bottomRight_0c);
 
-            sp14++;
+            subRectIndex++;
           }
 
           //LAB_800d00f8
-          sp14 += a2 / 2;
+          subRectIndex += horizontalRectCount / 2;
         }
       }
 
       //LAB_800d0140
       case 4 -> {
-        final COLOUR sp0x28 = new COLOUR();
-        final COLOUR sp0x30 = new COLOUR();
-        final COLOUR sp0x38 = new COLOUR();
-        final COLOUR sp0x40 = new COLOUR();
+        final COLOUR blendedColour0 = new COLOUR();
+        final COLOUR blendedColour1 = new COLOUR();
+        final COLOUR blendedColour2 = new COLOUR();
+        final COLOUR blendedColour3 = new COLOUR();
         blending.colour0Start_00 = colour0;
         blending.colour0End_04 = colour1;
         blending.colour1Start_08 = colour2;
         blending.colour1End_0c = colour3;
-        blending.colourEndRatio_10 = a2 / 2;
-        blending.colourStartRatio_14 = a2 / 2;
+        blending.colourEndRatio_10 = horizontalRectCount / 2;
+        blending.colourStartRatio_14 = horizontalRectCount / 2;
         blending.colour1Ratio_18 = 0;
-        blending.colour0Ratio_1c = a3;
-        blendColours(blending, sp0x28);
+        blending.colour0Ratio_1c = verticalRectCount;
+        blendColours(blending, blendedColour0);
         blending.colourEndRatio_10 = 0;
-        blending.colourStartRatio_14 = a2;
-        blending.colour1Ratio_18 = a3 / 2;
-        blending.colour0Ratio_1c = a3 / 2;
-        blendColours(blending, sp0x30);
-        blending.colourEndRatio_10 = a2;
+        blending.colourStartRatio_14 = horizontalRectCount;
+        blending.colour1Ratio_18 = verticalRectCount / 2;
+        blending.colour0Ratio_1c = verticalRectCount / 2;
+        blendColours(blending, blendedColour1);
+        blending.colourEndRatio_10 = horizontalRectCount;
         blending.colourStartRatio_14 = 0;
-        blending.colour1Ratio_18 = a3 / 2;
-        blending.colour0Ratio_1c = a3 / 2;
-        blendColours(blending, sp0x38);
-        blending.colourEndRatio_10 = a2 / 2;
-        blending.colourStartRatio_14 = a2 / 2;
-        blending.colour1Ratio_18 = a3;
+        blending.colour1Ratio_18 = verticalRectCount / 2;
+        blending.colour0Ratio_1c = verticalRectCount / 2;
+        blendColours(blending, blendedColour2);
+        blending.colourEndRatio_10 = horizontalRectCount / 2;
+        blending.colourStartRatio_14 = horizontalRectCount / 2;
+        blending.colour1Ratio_18 = verticalRectCount;
         blending.colour0Ratio_1c = 0;
-        blendColours(blending, sp0x40);
+        blendColours(blending, blendedColour3);
+
         blending.colour0Start_00 = colour0;
-        blending.colour0End_04 = sp0x28;
-        blending.colour1Start_08 = sp0x30;
-        blending.colour1End_0c = a8;
-        sp14 = 0;
+        blending.colour0End_04 = blendedColour0;
+        blending.colour1Start_08 = blendedColour1;
+        blending.colour1End_0c = baseColour;
+        subRectIndex = 0;
 
         //LAB_800d0334
-        for(int sp1c = 0; sp1c < a3 / 2; sp1c++) {
+        for(int i = 0; i < verticalRectCount / 2; i++) {
           //LAB_800d0368
           //LAB_800d036c
-          for(int sp18 = 0; sp18 < a2 / 2; sp18++) {
-            final WMapRender10 sp20 = a0[sp14];
+          for(int j = 0; j < horizontalRectCount / 2; j++) {
+            final WMapTextHighlightSubRectVertexColours10 subRect = subRectArray[subRectIndex];
 
             //LAB_800d03a0
-            blending.colourEndRatio_10 = sp18;
-            blending.colourStartRatio_14 = a2 / 2 - sp18;
-            blending.colour1Ratio_18 = sp1c;
-            blending.colour0Ratio_1c = a3 / 2 - sp1c;
-            blendColours(blending, sp20._00);
+            blending.colourEndRatio_10 = j;
+            blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
+            blending.colour1Ratio_18 = i;
+            blending.colour0Ratio_1c = verticalRectCount / 2 - i;
+            blendColours(blending, subRect.topLeft_00);
 
-            blending.colourEndRatio_10 = sp18 + 1;
-            blending.colourStartRatio_14 = a2 / 2 - 1 - sp18;
-            blending.colour1Ratio_18 = sp1c;
-            blending.colour0Ratio_1c = a3 / 2 - sp1c;
-            blendColours(blending, sp20._04);
+            blending.colourEndRatio_10 = j + 1;
+            blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
+            blending.colour1Ratio_18 = i;
+            blending.colour0Ratio_1c = verticalRectCount / 2 - i;
+            blendColours(blending, subRect.topRight_04);
 
-            blending.colourEndRatio_10 = sp18;
-            blending.colourStartRatio_14 = a2 / 2 - sp18;
-            blending.colour1Ratio_18 = sp1c + 1;
-            blending.colour0Ratio_1c = a3 / 2 - 1 - sp1c;
-            blendColours(blending, sp20._08);
+            blending.colourEndRatio_10 = j;
+            blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
+            blending.colour1Ratio_18 = i + 1;
+            blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
+            blendColours(blending, subRect.bottomLeft_08);
 
-            blending.colourEndRatio_10 = sp18 + 1;
-            blending.colourStartRatio_14 = a2 / 2 - 1 - sp18;
-            blending.colour1Ratio_18 = sp1c + 1;
-            blending.colour0Ratio_1c = a3 / 2 - 1 - sp1c;
-            blendColours(blending, sp20._0c);
+            blending.colourEndRatio_10 = j + 1;
+            blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
+            blending.colour1Ratio_18 = i + 1;
+            blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
+            blendColours(blending, subRect.bottomRight_0c);
 
-            sp14++;
+            subRectIndex++;
           }
 
           //LAB_800d060c
-          sp14 += a2 / 2;
+          subRectIndex += horizontalRectCount / 2;
         }
 
         //LAB_800d0654
-        blending.colour0Start_00 = sp0x28;
+        blending.colour0Start_00 = blendedColour0;
         blending.colour0End_04 = colour1;
-        blending.colour1Start_08 = a8;
-        blending.colour1End_0c = sp0x38;
-        sp14 = a2 / 2;
+        blending.colour1Start_08 = baseColour;
+        blending.colour1End_0c = blendedColour2;
+        subRectIndex = horizontalRectCount / 2;
 
         //LAB_800d06b4
-        for(int sp1c = 0; sp1c < a3 / 2; sp1c++) {
+        for(int i = 0; i < verticalRectCount / 2; i++) {
           //LAB_800d06e8
           //LAB_800d06ec
-          for(int sp18 = 0; sp18 < a2 / 2; sp18++) {
-            final WMapRender10 sp20 = a0[sp14];
+          for(int j = 0; j < horizontalRectCount / 2; j++) {
+            final WMapTextHighlightSubRectVertexColours10 subRect = subRectArray[subRectIndex];
 
             //LAB_800d0720
-            blending.colourEndRatio_10 = sp18;
-            blending.colourStartRatio_14 = a2 / 2 - sp18;
-            blending.colour1Ratio_18 = sp1c;
-            blending.colour0Ratio_1c = a3 / 2 - sp1c;
-            blendColours(blending, sp20._00);
+            blending.colourEndRatio_10 = j;
+            blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
+            blending.colour1Ratio_18 = i;
+            blending.colour0Ratio_1c = verticalRectCount / 2 - i;
+            blendColours(blending, subRect.topLeft_00);
 
-            blending.colourEndRatio_10 = sp18 + 1;
-            blending.colourStartRatio_14 = a2 / 2 - 1 - sp18;
-            blending.colour1Ratio_18 = sp1c;
-            blending.colour0Ratio_1c = a3 / 2 - sp1c;
-            blendColours(blending, sp20._04);
+            blending.colourEndRatio_10 = j + 1;
+            blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
+            blending.colour1Ratio_18 = i;
+            blending.colour0Ratio_1c = verticalRectCount / 2 - i;
+            blendColours(blending, subRect.topRight_04);
 
-            blending.colourEndRatio_10 = sp18;
-            blending.colourStartRatio_14 = a2 / 2 - sp18;
-            blending.colour1Ratio_18 = sp1c + 1;
-            blending.colour0Ratio_1c = a3 / 2 - 1 - sp1c;
-            blendColours(blending, sp20._08);
+            blending.colourEndRatio_10 = j;
+            blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
+            blending.colour1Ratio_18 = i + 1;
+            blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
+            blendColours(blending, subRect.bottomLeft_08);
 
-            blending.colourEndRatio_10 = sp18 + 1;
-            blending.colourStartRatio_14 = a2 / 2 - 1 - sp18;
-            blending.colour1Ratio_18 = sp1c + 1;
-            blending.colour0Ratio_1c = a3 / 2 - 1 - sp1c;
-            blendColours(blending, sp20._0c);
+            blending.colourEndRatio_10 = j + 1;
+            blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
+            blending.colour1Ratio_18 = i + 1;
+            blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
+            blendColours(blending, subRect.bottomRight_0c);
 
-            sp14++;
+            subRectIndex++;
           }
 
           //LAB_800d098c
-          sp14 += a2 / 2;
+          subRectIndex += horizontalRectCount / 2;
         }
 
         //LAB_800d09d4
-        blending.colour0Start_00 = sp0x30;
-        blending.colour0End_04 = a8;
+        blending.colour0Start_00 = blendedColour1;
+        blending.colour0End_04 = baseColour;
         blending.colour1Start_08 = colour2;
-        blending.colour1End_0c = sp0x40;
-        sp14 = a2 * a3 / 2;
+        blending.colour1End_0c = blendedColour3;
+        subRectIndex = horizontalRectCount * verticalRectCount / 2;
 
         //LAB_800d0a40
-        for(int sp1c = 0; sp1c < a3 / 2; sp1c++) {
+        for(int i = 0; i < verticalRectCount / 2; i++) {
           //LAB_800d0a74
           //LAB_800d0a78
-          for(int sp18 = 0; sp18 < a2 / 2; sp18++) {
-            final WMapRender10 sp20 = a0[sp14];
+          for(int j = 0; j < horizontalRectCount / 2; j++) {
+            final WMapTextHighlightSubRectVertexColours10 subRect = subRectArray[subRectIndex];
 
             //LAB_800d0aac
-            blending.colourEndRatio_10 = sp18;
-            blending.colourStartRatio_14 = a2 / 2 - sp18;
-            blending.colour1Ratio_18 = sp1c;
-            blending.colour0Ratio_1c = a3 / 2 - sp1c;
-            blendColours(blending, sp20._00);
+            blending.colourEndRatio_10 = j;
+            blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
+            blending.colour1Ratio_18 = i;
+            blending.colour0Ratio_1c = verticalRectCount / 2 - i;
+            blendColours(blending, subRect.topLeft_00);
 
-            blending.colourEndRatio_10 = sp18 + 1;
-            blending.colourStartRatio_14 = a2 / 2 - 1 - sp18;
-            blending.colour1Ratio_18 = sp1c;
-            blending.colour0Ratio_1c = a3 / 2 - sp1c;
-            blendColours(blending, sp20._04);
+            blending.colourEndRatio_10 = j + 1;
+            blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
+            blending.colour1Ratio_18 = i;
+            blending.colour0Ratio_1c = verticalRectCount / 2 - i;
+            blendColours(blending, subRect.topRight_04);
 
-            blending.colourEndRatio_10 = sp18;
-            blending.colourStartRatio_14 = a2 / 2 - sp18;
-            blending.colour1Ratio_18 = sp1c + 1;
-            blending.colour0Ratio_1c = a3 / 2 - 1 - sp1c;
-            blendColours(blending, sp20._08);
+            blending.colourEndRatio_10 = j;
+            blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
+            blending.colour1Ratio_18 = i + 1;
+            blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
+            blendColours(blending, subRect.bottomLeft_08);
 
-            blending.colourEndRatio_10 = sp18 + 1;
-            blending.colourStartRatio_14 = a2 / 2 - 1 - sp18;
-            blending.colour1Ratio_18 = sp1c + 1;
-            blending.colour0Ratio_1c = a3 / 2 - 1 - sp1c;
-            blendColours(blending, sp20._0c);
+            blending.colourEndRatio_10 = j + 1;
+            blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
+            blending.colour1Ratio_18 = i + 1;
+            blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
+            blendColours(blending, subRect.bottomRight_0c);
 
-            sp14++;
+            subRectIndex++;
           }
 
           //LAB_800d0d18
-          sp14 += a2 / 2;
+          subRectIndex += horizontalRectCount / 2;
         }
 
         //LAB_800d0d60
-        blending.colour0Start_00 = a8;
-        blending.colour0End_04 = sp0x38;
-        blending.colour1Start_08 = sp0x40;
+        blending.colour0Start_00 = baseColour;
+        blending.colour0End_04 = blendedColour2;
+        blending.colour1Start_08 = blendedColour3;
         blending.colour1End_0c = colour3;
-        sp14 = a2 * a3 / 2 + a2 / 2;
+        subRectIndex = horizontalRectCount * verticalRectCount / 2 + horizontalRectCount / 2;
 
         //LAB_800d0df0
-        for(int sp1c = 0; sp1c < a3 / 2; sp1c++) {
+        for(int i = 0; i < verticalRectCount / 2; i++) {
           //LAB_800d0e24
           //LAB_800d0e28
-          for(int sp18 = 0; sp18 < a2 / 2; sp18++) {
-            final WMapRender10 sp20 = a0[sp14];
+          for(int j = 0; j < horizontalRectCount / 2; j++) {
+            final WMapTextHighlightSubRectVertexColours10 subRect = subRectArray[subRectIndex];
 
             //LAB_800d0e5c
-            blending.colourEndRatio_10 = sp18;
-            blending.colourStartRatio_14 = a2 / 2 - sp18;
-            blending.colour1Ratio_18 = sp1c;
-            blending.colour0Ratio_1c = a3 / 2 - sp1c;
-            blendColours(blending, sp20._00);
+            blending.colourEndRatio_10 = j;
+            blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
+            blending.colour1Ratio_18 = i;
+            blending.colour0Ratio_1c = verticalRectCount / 2 - i;
+            blendColours(blending, subRect.topLeft_00);
 
-            blending.colourEndRatio_10 = sp18 + 1;
-            blending.colourStartRatio_14 = a2 / 2 - 1 - sp18;
-            blending.colour1Ratio_18 = sp1c;
-            blending.colour0Ratio_1c = a3 / 2 - sp1c;
-            blendColours(blending, sp20._04);
+            blending.colourEndRatio_10 = j + 1;
+            blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
+            blending.colour1Ratio_18 = i;
+            blending.colour0Ratio_1c = verticalRectCount / 2 - i;
+            blendColours(blending, subRect.topRight_04);
 
-            blending.colourEndRatio_10 = sp18;
-            blending.colourStartRatio_14 = a2 / 2 - sp18;
-            blending.colour1Ratio_18 = sp1c + 1;
-            blending.colour0Ratio_1c = a3 / 2 - 1 - sp1c;
-            blendColours(blending, sp20._08);
+            blending.colourEndRatio_10 = j;
+            blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
+            blending.colour1Ratio_18 = i + 1;
+            blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
+            blendColours(blending, subRect.bottomLeft_08);
 
-            blending.colourEndRatio_10 = sp18 + 1;
-            blending.colourStartRatio_14 = a2 / 2 - 1 - sp18;
-            blending.colour1Ratio_18 = sp1c + 1;
-            blending.colour0Ratio_1c = a3 / 2 - 1 - sp1c;
-            blendColours(blending, sp20._0c);
+            blending.colourEndRatio_10 = j + 1;
+            blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
+            blending.colour1Ratio_18 = i + 1;
+            blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
+            blendColours(blending, subRect.bottomRight_0c);
 
-            sp14++;
+            subRectIndex++;
           }
 
           //LAB_800d10c8
-          sp14 += a2 / 2;
+          subRectIndex += horizontalRectCount / 2;
         }
       }
-
       //LAB_800d1110
     }
-
     //LAB_800d1118
   }
 
   @Method(0x800d112cL)
-  public static void blendColours(final ColourBlending20 a0, final COLOUR out) {
-    final int r0 = (a0.colour0End_04.getR() * a0.colourEndRatio_10 + a0.colour0Start_00.getR() * a0.colourStartRatio_14) / (a0.colourEndRatio_10 + a0.colourStartRatio_14);
-    final int g0 = (a0.colour0End_04.getG() * a0.colourEndRatio_10 + a0.colour0Start_00.getG() * a0.colourStartRatio_14) / (a0.colourEndRatio_10 + a0.colourStartRatio_14);
-    final int b0 = (a0.colour0End_04.getB() * a0.colourEndRatio_10 + a0.colour0Start_00.getB() * a0.colourStartRatio_14) / (a0.colourEndRatio_10 + a0.colourStartRatio_14);
+  public static void blendColours(final ColourBlending20 blending, final COLOUR out) {
+    final int r0 = (blending.colour0End_04.getR() * blending.colourEndRatio_10 + blending.colour0Start_00.getR() * blending.colourStartRatio_14) / (blending.colourEndRatio_10 + blending.colourStartRatio_14);
+    final int g0 = (blending.colour0End_04.getG() * blending.colourEndRatio_10 + blending.colour0Start_00.getG() * blending.colourStartRatio_14) / (blending.colourEndRatio_10 + blending.colourStartRatio_14);
+    final int b0 = (blending.colour0End_04.getB() * blending.colourEndRatio_10 + blending.colour0Start_00.getB() * blending.colourStartRatio_14) / (blending.colourEndRatio_10 + blending.colourStartRatio_14);
 
-    final int r1 = (a0.colour1End_0c.getR() * a0.colourEndRatio_10 + a0.colour1Start_08.getR() * a0.colourStartRatio_14) / (a0.colourEndRatio_10 + a0.colourStartRatio_14);
-    final int g1 = (a0.colour1End_0c.getG() * a0.colourEndRatio_10 + a0.colour1Start_08.getG() * a0.colourStartRatio_14) / (a0.colourEndRatio_10 + a0.colourStartRatio_14);
-    final int b1 = (a0.colour1End_0c.getB() * a0.colourEndRatio_10 + a0.colour1Start_08.getB() * a0.colourStartRatio_14) / (a0.colourEndRatio_10 + a0.colourStartRatio_14);
+    final int r1 = (blending.colour1End_0c.getR() * blending.colourEndRatio_10 + blending.colour1Start_08.getR() * blending.colourStartRatio_14) / (blending.colourEndRatio_10 + blending.colourStartRatio_14);
+    final int g1 = (blending.colour1End_0c.getG() * blending.colourEndRatio_10 + blending.colour1Start_08.getG() * blending.colourStartRatio_14) / (blending.colourEndRatio_10 + blending.colourStartRatio_14);
+    final int b1 = (blending.colour1End_0c.getB() * blending.colourEndRatio_10 + blending.colour1Start_08.getB() * blending.colourStartRatio_14) / (blending.colourEndRatio_10 + blending.colourStartRatio_14);
 
-    out.r.set((a0.colour1Ratio_18 * r1 + a0.colour0Ratio_1c * r0) / (a0.colour1Ratio_18 + a0.colour0Ratio_1c));
-    out.g.set((a0.colour1Ratio_18 * g1 + a0.colour0Ratio_1c * g0) / (a0.colour1Ratio_18 + a0.colour0Ratio_1c));
-    out.b.set((a0.colour1Ratio_18 * b1 + a0.colour0Ratio_1c * b0) / (a0.colour1Ratio_18 + a0.colour0Ratio_1c));
+    out.r.set((blending.colour1Ratio_18 * r1 + blending.colour0Ratio_1c * r0) / (blending.colour1Ratio_18 + blending.colour0Ratio_1c));
+    out.g.set((blending.colour1Ratio_18 * g1 + blending.colour0Ratio_1c * g0) / (blending.colour1Ratio_18 + blending.colour0Ratio_1c));
+    out.b.set((blending.colour1Ratio_18 * b1 + blending.colour0Ratio_1c * b0) / (blending.colour1Ratio_18 + blending.colour0Ratio_1c));
   }
 
   @Method(0x800d177cL)
@@ -2946,24 +2952,24 @@ public class WMap {
   }
 
   @Method(0x800d8d18L)
-  public static void FUN_800d8d18() {
+  public static void loadMapModelAssetsAndInitializeCoolonMenuSelector() {
     loadMapModelAndTexture(mapState_800c6798.continentIndex_00);
 
     wmapStruct258_800c66a8.zoomState_1f8 = 0;
     wmapStruct258_800c66a8._220 = 0;
 
-    final COLOUR sp0x48 = new COLOUR();
+    final COLOUR rgb = new COLOUR();
 
     wmapStruct258_800c66a8.coolonTravelMenuSelectorHighlight_1fc = initializeWmapMenuTextHighlight(
       0x80,
-      sp0x48,
-      sp0x48,
-      sp0x48,
-      sp0x48,
-      _800c8778,
-      _800c877c,
-      4,
-      4,
+      rgb,
+      rgb,
+      rgb,
+      rgb,
+      coolonMenuSelectorBaseColour_800c8778,
+      coolonMenuSelectorRect_800c877c,
+      1,
+      2,
       2,
       true,
       Translucency.B_PLUS_F,
@@ -4964,17 +4970,16 @@ public class WMap {
   }
 
   @Method(0x800e4f60L)
-  public static void FUN_800e4f60() {
-    final COLOUR sp0x50 = new COLOUR();
-
+  public static void initializeLocationMenuTextHighlightEffects() {
+    final COLOUR rgbShadow = new COLOUR();
     locationMenuNameShadow_800c6898 = initializeWmapMenuTextHighlight(
       0,
-      sp0x50,
-      sp0x50,
-      sp0x50,
-      sp0x50,
-      _800c87e8,
-      _800c87ec,
+      rgbShadow,
+      rgbShadow,
+      rgbShadow,
+      rgbShadow,
+      locationMenuNameShadowBaseColour_800c87e8,
+      locationMenuNameShadowRect_800c87ec,
       8,
       8,
       4,
@@ -4983,18 +4988,17 @@ public class WMap {
       14
     );
 
-    final COLOUR sp0x60 = new COLOUR();
-
+    final COLOUR rgbHighlight = new COLOUR();
     locationMenuSelectorHighlight_800c689c = initializeWmapMenuTextHighlight(
       0x80,
-      sp0x60,
-      sp0x60,
-      sp0x60,
-      sp0x60,
-      _800c87f4,
-      _800c87f8,
-      4,
-      4,
+      rgbHighlight,
+      rgbHighlight,
+      rgbHighlight,
+      rgbHighlight,
+      locationMenuSelectorBaseColour_800c87f4,
+      locationMenuSelectorRect_800c87f8,
+      1,
+      2,
       2,
       true,
       Translucency.B_PLUS_F,
