@@ -59,7 +59,7 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
 import static legend.game.Scus94491BpeSegment.FUN_80019c80;
-import static legend.game.Scus94491BpeSegment.FUN_8001eea8;
+import static legend.game.Scus94491BpeSegment.loadLocationMenuSoundEffects;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
@@ -182,7 +182,7 @@ public class WMap {
   private static WmapSmokeCloudInstance60[] smokeCloudInstances_800c86f8;
   /** This doesn't seem to have any effect, since the only time it's used is checking whether to turn it off */
   private static final BoolRef renderAtmosphericEffect_800c86fc = MEMORY.ref(4, 0x800c86fcL, BoolRef::new);
-  private static final RECT storedPathsRect_800c8700 = MEMORY.ref(4, 0x800c8700L, RECT::new);
+  private static final RECT storedEffectsRect_800c8700 = MEMORY.ref(4, 0x800c8700L, RECT::new);
   private static final COLOUR coolonMenuSelectorBaseColour_800c8778 = MEMORY.ref(4, 0x800c8778L, COLOUR::new);
   private static final RECT coolonMenuSelectorRect_800c877c = MEMORY.ref(4, 0x800c877cL, RECT::new);
 
@@ -192,8 +192,7 @@ public class WMap {
   private static final COLOUR locationMenuSelectorBaseColour_800c87f4 = MEMORY.ref(4, 0x800c87f4L, COLOUR::new);
   private static final RECT locationMenuSelectorRect_800c87f8 = MEMORY.ref(4, 0x800c87f8L, RECT::new);
 
-  /** Array of 0x14-length structs, but have to figure out what everything means */
-  private static final ArrayRef<ArrayRef<IntRef>> _800eee48 = MEMORY.ref(4, 0x800eee48L, ArrayRef.of(ArrayRef.classFor(IntRef.class), 22, 20, ArrayRef.of(IntRef.class, 5, 4, IntRef::new)));
+  private static final ArrayRef<WmapUvAdjustmentMetrics14> tmdUvAdjustmentMetrics_800eee48 = MEMORY.ref(4, 0x800eee48L, ArrayRef.of(WmapUvAdjustmentMetrics14.class, 22, 20, WmapUvAdjustmentMetrics14::new));
 
   /**
    * <ol start="0">
@@ -203,7 +202,7 @@ public class WMap {
    *   <li>{@link WMap#FUN_800cccbc}</li>
    *   <li>{@link WMap#FUN_800ccce4}</li>
    *   <li>{@link WMap#FUN_800cc758}</li>
-   *   <li>{@link WMap#FUN_800ccd70}</li>
+   *   <li>{@link WMap#restoreMapOnExitMainMenu}</li>
    *   <li>{@link WMap#FUN_800ccda4}</li>
    *   <li>{@link WMap#transitionToCombat}</li>
    *   <li>{@link WMap#FUN_800cce9c}</li>
@@ -220,7 +219,7 @@ public class WMap {
     _800ef000[3] = WMap::FUN_800cccbc;
     _800ef000[4] = WMap::FUN_800ccce4;
     _800ef000[5] = WMap::FUN_800cc758;
-    _800ef000[6] = WMap::FUN_800ccd70;
+    _800ef000[6] = WMap::restoreMapOnExitMainMenu;
     _800ef000[7] = WMap::FUN_800ccda4;
     _800ef000[8] = WMap::transitionToCombat;
     _800ef000[9] = WMap::FUN_800cce9c;
@@ -364,19 +363,19 @@ public class WMap {
       final int cmd = primitive.header() & 0xff04_0000;
 
       if(cmd == 0x3700_0000) {
-        FUN_800c9130(primitive, colourMapIndex & 0x7f);
+        adjustWmapTriPrimitiveUvs(primitive, colourMapIndex & 0x7f);
       } else if(cmd == 0x3e00_0000) {
-        FUN_800c9090(primitive, colourMapIndex & 0x7f);
+        adjustWmapQuadPrimitiveUvs(primitive, colourMapIndex & 0x7f);
       } else if(cmd == 0x3d00_0000 || cmd == 0x3f00_0000) {
-        FUN_800c91bc(primitive, colourMapIndex & 0x7f);
+        adjustWmapQuadPrimitiveUvs(primitive, colourMapIndex & 0x7f);
       } else if(cmd == 0x3c00_0000) {
-        FUN_800c9090(primitive, colourMapIndex & 0x7f);
+        adjustWmapQuadPrimitiveUvs(primitive, colourMapIndex & 0x7f);
       } else if(cmd == 0x3500_0000) {
-        FUN_800c9130(primitive, colourMapIndex & 0x7f);
+        adjustWmapTriPrimitiveUvs(primitive, colourMapIndex & 0x7f);
       } else if(cmd == 0x3600_0000) {
-        FUN_800c9004(primitive, colourMapIndex & 0x7f);
+        adjustWmapTriPrimitiveUvs(primitive, colourMapIndex & 0x7f);
       } else if(cmd == 0x3400_0000) {
-        FUN_800c9004(primitive, colourMapIndex & 0x7f);
+        adjustWmapTriPrimitiveUvs(primitive, colourMapIndex & 0x7f);
       }
     }
   }
@@ -387,52 +386,27 @@ public class WMap {
   }
 
   @Method(0x800c9004L)
-  public static void FUN_800c9004(final TmdObjTable1c.Primitive primitive, final int colourMap) {
-    final ArrayRef<IntRef> a3 = _800eee48.get(colourMap);
+  public static void adjustWmapTriPrimitiveUvs(final TmdObjTable1c.Primitive primitive, final int colourMap) {
+    final WmapUvAdjustmentMetrics14 metrics = tmdUvAdjustmentMetrics_800eee48.get(colourMap);
 
     //LAB_800c9024
     for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & a3.get(1).get() | a3.get(0).get()) + a3.get(4).get());
-      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & a3.get(3).get() | a3.get(2).get()) + a3.get(4).get());
-      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + a3.get(4).get());
+      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & metrics.clutMaskOn_04.get() | metrics.clutMaskOff_00.get()) + metrics.uvOffset_10.get());
+      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & metrics.tpageMaskOn_0c.get() | metrics.tpageMaskOff_08.get()) + metrics.uvOffset_10.get());
+      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + metrics.uvOffset_10.get());
     }
   }
 
   @Method(0x800c9090L)
-  public static void FUN_800c9090(final TmdObjTable1c.Primitive primitive, final int colourMap) {
-    final ArrayRef<IntRef> a3 = _800eee48.get(colourMap);
+  public static void adjustWmapQuadPrimitiveUvs(final TmdObjTable1c.Primitive primitive, final int colourMap) {
+    final WmapUvAdjustmentMetrics14 metrics = tmdUvAdjustmentMetrics_800eee48.get(colourMap);
 
     //LAB_800c90b0
     for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & a3.get(1).get() | a3.get(0).get()) + a3.get(4).get());
-      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & a3.get(3).get() | a3.get(2).get()) + a3.get(4).get());
-      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + a3.get(4).get());
-      MathHelper.set(data, 0xc, 4,  MathHelper.get(data, 0xc, 4) + a3.get(4).get());
-    }
-  }
-
-  @Method(0x800c9130L)
-  public static void FUN_800c9130(final TmdObjTable1c.Primitive primitive, final int colourMap) {
-    final ArrayRef<IntRef> a3 = _800eee48.get(colourMap);
-
-    //LAB_800c9150
-    for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & a3.get(1).get() | a3.get(0).get()) + a3.get(4).get());
-      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & a3.get(3).get() | a3.get(2).get()) + a3.get(4).get());
-      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + a3.get(4).get());
-    }
-  }
-
-  @Method(0x800c91bcL)
-  public static void FUN_800c91bc(final TmdObjTable1c.Primitive primitive, final int colourMap) {
-    final ArrayRef<IntRef> a3 = _800eee48.get(colourMap);
-
-    //LAB_800c91dc
-    for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & a3.get(1).get() | a3.get(0).get()) + a3.get(4).get());
-      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & a3.get(3).get() | a3.get(2).get()) + a3.get(4).get());
-      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + a3.get(4).get());
-      MathHelper.set(data, 0xc, 4,  MathHelper.get(data, 0xc, 4) + a3.get(4).get());
+      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & metrics.clutMaskOn_04.get() | metrics.clutMaskOff_00.get()) + metrics.uvOffset_10.get());
+      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & metrics.tpageMaskOn_0c.get() | metrics.tpageMaskOff_08.get()) + metrics.uvOffset_10.get());
+      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + metrics.uvOffset_10.get());
+      MathHelper.set(data, 0xc, 4,  MathHelper.get(data, 0xc, 4) + metrics.uvOffset_10.get());
     }
   }
 
@@ -550,22 +524,22 @@ public class WMap {
     wmapStruct258_800c66a8.imageData_2c = new FileData(new byte[0x1_0000]);
     wmapStruct258_800c66a8.imageData_30 = new FileData(new byte[0x1_0000]);
 
-    StoreImage(storedPathsRect_800c8700, wmapStruct258_800c66a8.imageData_2c);
+    StoreImage(storedEffectsRect_800c8700, wmapStruct258_800c66a8.imageData_2c);
     StoreImage(new RECT((short)320, (short)0, (short)64, (short)512), wmapStruct258_800c66a8.imageData_30);
 
     //LAB_800cca5c
   }
 
   @Method(0x800cca74L)
-  public static void FUN_800cca74() {
+  public static void restoreMapOnExitMenu_() {
     final WMapStruct258 struct = wmapStruct258_800c66a8;
     vsyncMode_8007a3b8 = 3;
     scriptStartEffect(2, 15);
-    LoadImage(storedPathsRect_800c8700, struct.imageData_2c);
+    LoadImage(storedEffectsRect_800c8700, struct.imageData_2c);
     LoadImage(new RECT().set((short)320, (short)0, (short)64, (short)512), struct.imageData_30);
     struct.imageData_2c = null;
     struct.imageData_30 = null;
-    FUN_800d1914();
+    initLighting();
 
     if(struct.zoomState_1f8 == 0) {
       mapState_800c6798.disableInput_d0 = false;
@@ -643,11 +617,10 @@ public class WMap {
   }
 
   @Method(0x800ccd70L)
-  public static void FUN_800ccd70() {
+  public static void restoreMapOnExitMainMenu() {
     if((getLoadedDrgnFiles() & 0x80L) == 0) {
-      FUN_800cca74();
+      restoreMapOnExitMenu_();
     }
-
     //LAB_800ccd94
   }
 
@@ -719,20 +692,19 @@ public class WMap {
     FUN_800e3fac(0);
     FUN_800e78c0();
     loadWmapTextures();
-    FUN_800d177c();
+    initCameraAndLight();
     loadMapModelAssetsAndInitializeCoolonMenuSelector();
     loadPlayerAvatarTextureAndModelFiles();
     initializeLocationMenuTextHighlightEffects();
     allocateSmoke();
-    FUN_800e4e1c();
+    loadMapMcq();
 
     if(mapState_800c6798.continentIndex_00 < 3) { // South Serdio, North Serdio, Tiberoa
-      FUN_8001eea8(1);
+      loadLocationMenuSoundEffects(1);
     } else {
       //LAB_800cd004
-      FUN_8001eea8(mapState_800c6798.continentIndex_00 + 1);
+      loadLocationMenuSoundEffects(mapState_800c6798.continentIndex_00 + 1);
     }
-
     //LAB_800cd020
   }
 
@@ -1536,7 +1508,7 @@ public class WMap {
   }
 
   @Method(0x800d177cL)
-  public static void FUN_800d177c() {
+  public static void initCameraAndLight() {
     wmapStruct19c0_800c66b0 = new WMapStruct19c0();
 
     GsInitCoordinate2(null, wmapStruct19c0_800c66b0.coord2_20);
@@ -1549,7 +1521,7 @@ public class WMap {
     wmapStruct19c0_800c66b0.rview2_00.super_1c = wmapStruct19c0_800c66b0.coord2_20;
 
     FUN_800d1d28();
-    FUN_800d1914();
+    initLighting();
 
     wmapStruct19c0_800c66b0._114 = 0;
     wmapStruct19c0_800c66b0.projectionPlaneDistance_118 = 1100;
@@ -1557,7 +1529,7 @@ public class WMap {
   }
 
   @Method(0x800d1914L)
-  public static void FUN_800d1914() {
+  public static void initLighting() {
     final WMapStruct19c0 v0 = wmapStruct19c0_800c66b0;
 
     clearRed_8007a3a8.set(0);
@@ -2312,18 +2284,18 @@ public class WMap {
   }
 
   @Method(0x800d562cL)
-  public static void FUN_800d562c(final FileData data) {
+  public static void loadMapMcqToVram(final FileData data) {
     final McqHeader mcq = new McqHeader(data);
 
     //LAB_800d568c
-    final RECT sp0x18 = new RECT(
+    final RECT rect = new RECT(
       (short)320,
       (short)0,
       (short)mcq.vramWidth_08,
       (short)mcq.vramHeight_0a
     );
 
-    LoadImage(sp0x18, mcq.imageData);
+    LoadImage(rect, mcq.imageData);
     mcqHeader_800c6768 = mcq;
 
     filesLoadedFlags_800c66b8.or(0x1);
@@ -4942,9 +4914,9 @@ public class WMap {
   }
 
   @Method(0x800e4e1cL)
-  public static void FUN_800e4e1c() {
+  public static void loadMapMcq() {
     filesLoadedFlags_800c66b8.and(0xffff_fffe);
-    loadDrgnFile(0, 5696, WMap::FUN_800d562c);
+    loadDrgnFile(0, 5696, WMap::loadMapMcqToVram);
     mcqColour_800c6794.set((short)0);
   }
 
