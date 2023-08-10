@@ -259,17 +259,17 @@ public final class SMap {
   public static final Value _800c686e = MEMORY.ref(2, 0x800c686eL);
   public static final Value _800c6870 = MEMORY.ref(2, 0x800c6870L);
 
-  public static final BoolRef submapAssetsLoaded_800c6874 = MEMORY.ref(4, 0x800c6874L, BoolRef::new);
+  public static boolean submapAssetsLoaded_800c6874;
   public static List<FileData> submapAssetsMrg_800c6878;
   public static final Value _800c687c = MEMORY.ref(2, 0x800c687cL);
   public static final Value _800c687e = MEMORY.ref(2, 0x800c687eL);
   public static final ScriptState<SubmapObject210>[] sobjs_800c6880 = new ScriptState[20];
-  public static final BoolRef submapScriptsLoaded_800c68d0 = MEMORY.ref(4, 0x800c68d0L, BoolRef::new);
+  public static boolean submapScriptsLoaded_800c68d0;
 
   public static List<FileData> submapScriptsMrg_800c68d8;
   public static SubmapAssets submapAssets;
 
-  public static final BoolRef chapterTitleCardLoaded_800c68e0 = MEMORY.ref(2, 0x800c68e0L, BoolRef::new);
+  public static boolean chapterTitleCardLoaded_800c68e0;
 
   public static final Value loadingStage_800c68e4 = MEMORY.ref(4, 0x800c68e4L);
   public static final SubmapStruct80 _800c68e8 = new SubmapStruct80();
@@ -282,7 +282,7 @@ public final class SMap {
   public static final Value submapObjectFlags_800c6a50 = MEMORY.ref(4, 0x800c6a50L);
 
   public static final Vector3f cameraPos_800c6aa0 = new Vector3f();
-  public static final Value _800c6aac = MEMORY.ref(2, 0x800c6aacL);
+
   public static final VECTOR prevPlayerPos_800c6ab0 = new VECTOR();
   public static float encounterMultiplier_800c6abc;
   public static final MATRIX matrix_800c6ac0 = new MATRIX();
@@ -2102,14 +2102,14 @@ public final class SMap {
 
   @Method(0x800e0c00L)
   public static FlowControl scriptLoadChapterTitleCard(final RunningScript<?> script) {
-    chapterTitleCardLoaded_800c68e0.set(false);
+    chapterTitleCardLoaded_800c68e0 = false;
     chapterTitleNum_800c6738.set(script.params_20[0].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e0c24L)
   public static FlowControl scriptIsChapterTitleCardLoaded(final RunningScript<?> script) {
-    script.params_20[0].set(chapterTitleCardLoaded_800c68e0.get() ? 1 : 0);
+    script.params_20[0].set(chapterTitleCardLoaded_800c68e0 ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 
@@ -2504,8 +2504,8 @@ public final class SMap {
         assert submapAssetsMrg_800c6878 == null : "Submap assets MRG was not empty";
         assert submapScriptsMrg_800c68d8 == null : "Submap scripts MRG was not empty";
 
-        submapScriptsLoaded_800c68d0.set(false);
-        submapAssetsLoaded_800c6874.set(false);
+        submapScriptsLoaded_800c68d0 = false;
+        submapAssetsLoaded_800c6874 = false;
 
         final IntRef drgnIndex = new IntRef();
         final IntRef fileIndex = new IntRef();
@@ -2527,7 +2527,7 @@ public final class SMap {
 
       // Wait for map assets to load
       case 6 -> {
-        if(submapAssetsLoaded_800c6874.get() && submapScriptsLoaded_800c68d0.get()) {
+        if(submapAssetsLoaded_800c6874 && submapScriptsLoaded_800c68d0) {
           final int objCount = submapScriptsMrg_800c68d8.size() - 2;
 
           submapAssets = new SubmapAssets();
@@ -2763,7 +2763,7 @@ public final class SMap {
         _800c686e.setu(0);
         _800c687c.setu(0);
         _800c687e.setu(0);
-        chapterTitleCardLoaded_800c68e0.set(false);
+        chapterTitleCardLoaded_800c68e0 = false;
         loadingStage_800c68e4.addu(0x1L);
 
         _800c69fc = new TriangleIndicator140();
@@ -2778,18 +2778,10 @@ public final class SMap {
           _800c6970.get(i).set(-1);
         }
 
-        _800c6aac.setu(10);
         _800bd7b8.setu(0);
       }
 
       case 10 -> {
-        if(fullScreenEffect_800bb140.currentColour_28 != 0 || _800c6aac.get() != 0) {
-          //LAB_800e1f24
-          if(_800c6aac.get() != 0) {
-            _800c6aac.subu(0x1L);
-          }
-        }
-
         //LAB_800e1f40
         _800bd7b4.setu(0x1L);
         if(chapterTitleNum_800c6738.get() != 0) {
@@ -3016,7 +3008,7 @@ public final class SMap {
 
     if(chapterTitleState == 1) {
       //LAB_800e27b8
-      if(chapterTitleCardLoaded_800c68e0.get() && (chapterTitleNum_800c6738.get() & 0x80) != 0) {
+      if(chapterTitleCardLoaded_800c68e0 && (chapterTitleNum_800c6738.get() & 0x80) != 0) {
         chapterTitleState_800c6708.incr();
       }
 
@@ -3290,7 +3282,7 @@ public final class SMap {
       chapterTitleNum_800c6738.set(0);
       _800c687e.setu(0);
       _800c687c.setu(0);
-      chapterTitleCardLoaded_800c68e0.set(false);
+      chapterTitleCardLoaded_800c68e0 = false;
       _800c670c.setu(0);
       _800c670a.setu(0);
       chapterTitleState_800c6708.set(0);
@@ -3313,19 +3305,19 @@ public final class SMap {
     switch(assetType) {
       // Submap assets
       case 0x0 -> {
-        submapAssetsLoaded_800c6874.set(true);
+        submapAssetsLoaded_800c6874 = true;
         submapAssetsMrg_800c6878 = files;
       }
 
       // Submap scripts
       case 0x1 -> {
-        submapScriptsLoaded_800c68d0.set(true);
+        submapScriptsLoaded_800c68d0 = true;
         submapScriptsMrg_800c68d8 = files;
       }
 
       // Chapter title cards
       case 0x10 -> {
-        chapterTitleCardLoaded_800c68e0.set(true);
+        chapterTitleCardLoaded_800c68e0 = true;
         chapterTitleCardMrg_800c6710 = files;
       }
     }
@@ -3870,7 +3862,6 @@ public final class SMap {
       _800cb448.setu(0);
     }
 
-    _800c6aac.setu(0xaL);
     _800bd7b4.setu(0);
     if(_800cab28.get() == 0) {
       if(fullScreenEffect_800bb140._24 == 0) {
@@ -4003,7 +3994,7 @@ public final class SMap {
     if(_800cab2c.get() == 0x1L) {
       FUN_8002aa04();
       smapLoadingStage_800cb430.setu(0);
-      smapLoadingStage_800cb430.offset(0x10L).setu(_800cab2c.get());
+      _800cb440.setu(_800cab2c.get());
     }
 
     //LAB_800e5984
@@ -4126,6 +4117,7 @@ public final class SMap {
         FUN_800e81a0(submapScene_80052c34.get());
         loadCollisionAndTransitions(submapCut_80052c30.get());
         FUN_800e6d4c();
+
         if(_800cab2c.get() != 0) { // This might be to transition to another map or something?
           FUN_800e7328();
           buildBackgroundRenderingPacket(envStruct_800cab30);
@@ -4205,7 +4197,6 @@ public final class SMap {
         }
 
         //LAB_800e6018
-        _800c6aac.setu(0xaL);
         switch(_800caaf0) {
           case UNLOAD_INVENTORY_MENU_5:
             if(gameState_800babc8.isOnWorldMap_4e4) {

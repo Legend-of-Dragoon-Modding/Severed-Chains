@@ -750,11 +750,11 @@ public final class Scus94491BpeSegment_8003 {
       return;
     }
 
-    final float vectorLength = Math.max(1.0f, (float)Math.sqrt(vectorLengthSquared));
+    final float vectorLength = Math.max(1.0f, Math.sqrt(vectorLengthSquared));
 
     final float normalizedY = deltaY * 0x1000 / vectorLength;
 
-    final float horizontalLength = (float)Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
+    final float horizontalLength = Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
     final float normalizedHypotenuse = horizontalLength * 0x1000 / vectorLength;
 
     //LAB_8003e230
