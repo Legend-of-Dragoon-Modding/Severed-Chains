@@ -340,7 +340,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[255] = Scus94491BpeSegment::scriptSssqFadeIn;
 
     scriptSubFunctions_8004e29c[256] = SMap::FUN_800e67d4;
-    scriptSubFunctions_8004e29c[257] = SMap::FUN_800e68b4;
+    scriptSubFunctions_8004e29c[257] = SMap::scriptGetScreenOffset;
     scriptSubFunctions_8004e29c[258] = SMap::FUN_800e6904;
     scriptSubFunctions_8004e29c[259] = SMap::FUN_800e69a4;
     scriptSubFunctions_8004e29c[260] = SMap::FUN_800e69e8;

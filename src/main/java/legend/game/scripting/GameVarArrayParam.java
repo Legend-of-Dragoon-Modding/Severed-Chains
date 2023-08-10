@@ -10,7 +10,7 @@ import legend.game.combat.bobj.PlayerBattleObject;
 import legend.game.combat.types.battlestate.SpecialEffects20;
 import legend.game.modding.events.battle.DragonBlockStaffOffEvent;
 import legend.game.modding.events.battle.DragonBlockStaffOnEvent;
-import legend.game.types.SubmapObject210;
+import legend.game.submap.SubmapObject210;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;

@@ -13,7 +13,7 @@ import legend.game.combat.bobj.PlayerBattleObject;
 import legend.game.combat.effects.TransformationMode;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.types.EngineState;
-import legend.game.types.SubmapObject210;
+import legend.game.submap.SubmapObject210;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
@@ -92,7 +92,7 @@ public class GameVarParam extends Param {
 
       case 64 -> SMap.sobjs_800c6880[0].index;
       case 65 -> SMap.submapControllerState_800c6740.index;
-      case 66 -> SMap.sobjCount_800c6730.get();
+      case 66 -> SMap.sobjCount_800c6730;
       case 67 -> Scus94491BpeSegment_800b._800bd7b0.get();
       case 68 -> Scus94491BpeSegment_800b._800bda08.get();
       case 69 -> Scus94491BpeSegment_8005.submapCut_80052c30.get();
@@ -223,7 +223,7 @@ public class GameVarParam extends Param {
 
       case 64 -> SMap.sobjs_800c6880[0] = (ScriptState<SubmapObject210>)scriptStatePtrArr_800bc1c0[val];
       case 65 -> SMap.submapControllerState_800c6740 = (ScriptState<Void>)scriptStatePtrArr_800bc1c0[val];
-      case 66 -> SMap.sobjCount_800c6730.set(val);
+      case 66 -> SMap.sobjCount_800c6730 = val;
       case 67 -> Scus94491BpeSegment_800b._800bd7b0.set(val);
       case 68 -> Scus94491BpeSegment_800b._800bda08.set(val);
       case 69 -> Scus94491BpeSegment_8005.submapCut_80052c30.set(val);

@@ -102,7 +102,7 @@ import static legend.game.SMap.FUN_800e4018;
 import static legend.game.SMap.FUN_800e4708;
 import static legend.game.SMap.FUN_800e4e5c;
 import static legend.game.SMap.FUN_800e4f8c;
-import static legend.game.SMap.FUN_800e519c;
+import static legend.game.SMap.renderEnvironment;
 import static legend.game.SMap.FUN_800e5534;
 import static legend.game.SMap.FUN_800e828c;
 import static legend.game.SMap.FUN_800e8e50;
@@ -4618,7 +4618,7 @@ public final class Scus94491BpeSegment_8002 {
         return 0;
 
       case 0x5:
-        FUN_800e519c();
+        renderEnvironment();
         FUN_800e8e50();
         FUN_800e828c();
         FUN_800e4f8c();
@@ -4628,7 +4628,7 @@ public final class Scus94491BpeSegment_8002 {
         break;
 
       case 0x4:
-        FUN_800e519c();
+        renderEnvironment();
 
       case 0x3:
         FUN_800e8e50();
@@ -4643,7 +4643,7 @@ public final class Scus94491BpeSegment_8002 {
 
       case 0x0:
         s0 = 0x1L;
-        FUN_800e519c();
+        renderEnvironment();
         break;
     }
 

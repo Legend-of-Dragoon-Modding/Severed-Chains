@@ -19,7 +19,7 @@ import javafx.util.StringConverter;
 import legend.core.MathHelper;
 import legend.game.SMap;
 import legend.game.scripting.ScriptState;
-import legend.game.types.SubmapObject210;
+import legend.game.submap.SubmapObject210;
 
 import static legend.game.SMap.sobjCount_800c6730;
 import static legend.game.SMap.sobjs_800c6880;
@@ -79,7 +79,7 @@ public class SmapDebuggerController {
   private SubmapObject210 sobj;
 
   public void initialize() {
-    for(int i = 0; i < sobjCount_800c6730.get(); i++) {
+    for(int i = 0; i < sobjCount_800c6730; i++) {
       this.sobjs.add(new ListItem(this::getSobjName, i));
     }
 

@@ -1,4 +1,4 @@
-package legend.game.types;
+package legend.game.submap;
 
 public class TriangleIndicator140 {
   public int playerX_08;
