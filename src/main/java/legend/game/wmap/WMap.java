@@ -993,16 +993,16 @@ public class WMap {
   }
 
   @Method(0x800cea1cL)
-  public static void setRenderColours(final WmapMenuTextHighlight40 a0) {
-    if(a0.currentBrightness_34 < 0) {
-      a0.currentBrightness_34 = 0;
+  public static void setRenderColours(final WmapMenuTextHighlight40 highlight) {
+    if(highlight.currentBrightness_34 < 0) {
+      highlight.currentBrightness_34 = 0;
       //LAB_800cea54
-    } else if(a0.currentBrightness_34 > 0x100) {
-      a0.currentBrightness_34 = 0x100;
+    } else if(highlight.currentBrightness_34 > 0x100) {
+      highlight.currentBrightness_34 = 0x100;
     }
 
     //LAB_800cea7c
-    if(a0.currentBrightness_34 == a0.previousBrightness_36) {
+    if(highlight.currentBrightness_34 == highlight.previousBrightness_36) {
       return;
     }
 
@@ -1010,42 +1010,42 @@ public class WMap {
     //LAB_800ceacc
     //LAB_800ceb38
     int n = 0;
-    for(int i = 0; i < a0.subRectCount_30; i++) {
-      final WMapMenuTextHighlightGradient24 sp4 = a0.renderPacket_0c[GPU.getDrawBufferIndex()][i];
-      final WMapMenuTextHighlightGradient24 sp8 = a0.renderPacket_0c[GPU.getDrawBufferIndex() ^ 1][i];
-      final WMapTextHighlightSubRectVertexColours10 sp14 = a0.subRectVertexColoursArray_00[n];
+    for(int i = 0; i < highlight.subRectCount_30; i++) {
+      final WMapMenuTextHighlightGradient24 gradient0 = highlight.renderPacket_0c[GPU.getDrawBufferIndex()][i];
+      final WMapMenuTextHighlightGradient24 gradient1 = highlight.renderPacket_0c[GPU.getDrawBufferIndex() ^ 1][i];
+      final WMapTextHighlightSubRectVertexColours10 colours = highlight.subRectVertexColoursArray_00[n];
 
-      final int r0 = sp14.topLeft_00.getR() * a0.currentBrightness_34 / 0x100;
-      final int g0 = sp14.topLeft_00.getG() * a0.currentBrightness_34 / 0x100;
-      final int b0 = sp14.topLeft_00.getB() * a0.currentBrightness_34 / 0x100;
-      final int r1 = sp14.topRight_04.getR() * a0.currentBrightness_34 / 0x100;
-      final int g1 = sp14.topRight_04.getG() * a0.currentBrightness_34 / 0x100;
-      final int b1 = sp14.topRight_04.getB() * a0.currentBrightness_34 / 0x100;
-      final int r2 = sp14.bottomLeft_08.getR() * a0.currentBrightness_34 / 0x100;
-      final int g2 = sp14.bottomLeft_08.getG() * a0.currentBrightness_34 / 0x100;
-      final int b2 = sp14.bottomLeft_08.getB() * a0.currentBrightness_34 / 0x100;
-      final int r3 = sp14.bottomRight_0c.getR() * a0.currentBrightness_34 / 0x100;
-      final int g3 = sp14.bottomRight_0c.getG() * a0.currentBrightness_34 / 0x100;
-      final int b3 = sp14.bottomRight_0c.getB() * a0.currentBrightness_34 / 0x100;
+      final int r0 = colours.topLeft_00.getR() * highlight.currentBrightness_34 / 0x100;
+      final int g0 = colours.topLeft_00.getG() * highlight.currentBrightness_34 / 0x100;
+      final int b0 = colours.topLeft_00.getB() * highlight.currentBrightness_34 / 0x100;
+      final int r1 = colours.topRight_04.getR() * highlight.currentBrightness_34 / 0x100;
+      final int g1 = colours.topRight_04.getG() * highlight.currentBrightness_34 / 0x100;
+      final int b1 = colours.topRight_04.getB() * highlight.currentBrightness_34 / 0x100;
+      final int r2 = colours.bottomLeft_08.getR() * highlight.currentBrightness_34 / 0x100;
+      final int g2 = colours.bottomLeft_08.getG() * highlight.currentBrightness_34 / 0x100;
+      final int b2 = colours.bottomLeft_08.getB() * highlight.currentBrightness_34 / 0x100;
+      final int r3 = colours.bottomRight_0c.getR() * highlight.currentBrightness_34 / 0x100;
+      final int g3 = colours.bottomRight_0c.getG() * highlight.currentBrightness_34 / 0x100;
+      final int b3 = colours.bottomRight_0c.getB() * highlight.currentBrightness_34 / 0x100;
 
-      sp4.colour_04.set(r0, g0, b0);
-      sp4.colour_0c.set(r1, g1, b1);
-      sp4.colour_14.set(r2, g2, b2);
-      sp4.colour_1c.set(r3, g3, b3);
+      gradient0.colour_04.set(r0, g0, b0);
+      gradient0.colour_0c.set(r1, g1, b1);
+      gradient0.colour_14.set(r2, g2, b2);
+      gradient0.colour_1c.set(r3, g3, b3);
 
-      sp8.colour_04.set(r0, g0, b0);
-      sp8.colour_0c.set(r1, g1, b1);
-      sp8.colour_14.set(r2, g2, b2);
-      sp8.colour_1c.set(r3, g3, b3);
+      gradient1.colour_04.set(r0, g0, b0);
+      gradient1.colour_0c.set(r1, g1, b1);
+      gradient1.colour_14.set(r2, g2, b2);
+      gradient1.colour_1c.set(r3, g3, b3);
 
-      if(a0.type_3f != 0) {
+      if(highlight.type_3f != 0) {
         n++;
       }
     }
 
     //LAB_800cf1dc
     //LAB_800cf1e4
-    a0.previousBrightness_36 = a0.currentBrightness_34;
+    highlight.previousBrightness_36 = highlight.currentBrightness_34;
 
     //LAB_800cf1fc
   }
