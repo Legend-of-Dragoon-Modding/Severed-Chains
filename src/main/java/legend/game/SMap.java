@@ -97,6 +97,7 @@ import legend.game.submap.TriangleIndicator44;
 import legend.game.types.UnknownStruct;
 import legend.game.types.UnknownStruct2;
 import legend.game.unpacker.FileData;
+import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Math;
@@ -3595,11 +3596,7 @@ public final class SMap {
 
   @Method(0x800e4b20L)
   public static long handleEncounters() {
-    if(_800c6ae0.get() < 0xfL) {
-      return 0;
-    }
-
-    if(gameState_800babc8.indicatorsDisabled_4e3) {
+    if(_800c6ae0.get() < 0xf || Unpacker.getLoadingFileCount() != 0 || gameState_800babc8.indicatorsDisabled_4e3) {
       return 0;
     }
 

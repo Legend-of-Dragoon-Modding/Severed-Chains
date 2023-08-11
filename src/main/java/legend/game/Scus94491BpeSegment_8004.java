@@ -1153,6 +1153,9 @@ public final class Scus94491BpeSegment_8004 {
 
     if(sshd.soundBankSize_04 != 0) {
       SPU.directWrite(addressInSoundBuffer, soundbank.getBytes());
+    } else {
+      LOGGER.warn("Soundbank size was 0!");
+      spuDmaCallback();
     }
 
     playableSounds_800c43d0.add(sound);

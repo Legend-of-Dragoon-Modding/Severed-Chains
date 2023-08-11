@@ -44,6 +44,7 @@ import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
+import legend.game.unpacker.Unpacker;
 import org.joml.Math;
 import org.joml.Vector3f;
 
@@ -499,7 +500,7 @@ public class WMap {
 
   @Method(0x800cc83cL)
   public static void FUN_800cc83c() {
-    if(_800c6690.get() == 0) {
+    if(Unpacker.getLoadingFileCount() == 0 && _800c6690.get() == 0) {
       if((input_800bee90.get() & 0x1af) == 0) {
         final WMapStruct19c0 v1 = _800c66b0;
 
@@ -4578,18 +4579,7 @@ public class WMap {
 
   @Method(0x800e367cL)
   public static void handleEncounters(final float encounterRateMultiplier) {
-    //LAB_800e36a8
-    if(worldMapState_800c6698 != 5) {
-      return;
-    }
-
-    //LAB_800e36c4
-    if(playerState_800c669c != 5) {
-      return;
-    }
-
-    //LAB_800e36e0
-    if(struct258_800c66a8.modelIndex_1e4 >= 2) {
+    if(Unpacker.getLoadingFileCount() != 0 || worldMapState_800c6698 != 5 || playerState_800c669c != 5 || struct258_800c66a8.modelIndex_1e4 >= 2) {
       return;
     }
 
@@ -5035,7 +5025,7 @@ public class WMap {
 
   @Method(0x800e5150L)
   public static void handleMapTransitions() {
-    if(_800c6690.get() != 0) {
+    if(Unpacker.getLoadingFileCount() != 0 || _800c6690.get() != 0) {
       return;
     }
 
@@ -6080,7 +6070,7 @@ public class WMap {
   @Method(0x800e9104L)
   public static void processInput() {
     //LAB_800e912c
-    if(struct258_800c66a8._05 != 0) {
+    if(Unpacker.getLoadingFileCount() != 0 || struct258_800c66a8._05 != 0) {
       return;
     }
 

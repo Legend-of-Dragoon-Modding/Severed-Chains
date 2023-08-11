@@ -8,6 +8,7 @@ import legend.game.input.InputAction;
 import legend.game.types.EngineState;
 import legend.game.types.McqHeader;
 import legend.game.unpacker.FileData;
+import legend.game.unpacker.Unpacker;
 
 import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.bootMods;
@@ -47,11 +48,13 @@ public final class GameOver {
   public static void gameOver() {
     switch(pregameLoadingStage_800bb10c.get()) {
       case 0 -> {
-        bootMods(MODS.getAllModIds());
+        if(Unpacker.getLoadingFileCount() == 0) {
+          bootMods(MODS.getAllModIds());
 
-        FUN_8002a9c0();
-        resizeDisplay(640, 240);
-        pregameLoadingStage_800bb10c.set(1);
+          FUN_8002a9c0();
+          resizeDisplay(640, 240);
+          pregameLoadingStage_800bb10c.set(1);
+        }
       }
 
       case 1 -> {
