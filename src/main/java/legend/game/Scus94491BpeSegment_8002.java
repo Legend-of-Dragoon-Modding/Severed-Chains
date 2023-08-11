@@ -4414,8 +4414,8 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002a3ecL)
-  public static void FUN_8002a3ec(final int textboxIndex, final long a1) {
-    if((a1 & 0x1L) == 0) {
+  public static void FUN_8002a3ec(final int textboxIndex, final int mode) {
+    if(mode == 0) {
       //LAB_8002a40c
       textboxText_800bdf38[textboxIndex]._00 = 0;
       textboxes_800be358[textboxIndex]._00 = 0;

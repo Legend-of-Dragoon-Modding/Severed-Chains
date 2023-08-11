@@ -2,7 +2,7 @@ package legend.game.wmap;
 
 import legend.core.gte.COLOUR;
 
-public class WMapRender24 {
+public class WMapMenuTextHighlightGradient24 {
   public final COLOUR colour_04 = new COLOUR();
   public int x0_08;
   public int y0_0a;

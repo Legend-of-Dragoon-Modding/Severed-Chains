@@ -3395,7 +3395,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001eea8L)
-  public static void FUN_8001eea8(final int index) {
+  public static void loadLocationMenuSoundEffects(final int index) {
     loadedDrgnFiles_800bcf78.oru(0x8000L);
     loadDrgnDir(0, 5740 + index, files -> FUN_8001eefc(files, "Unknown WMAP sounds %d (file %d)".formatted(index, 5740 + index)));
   }
