@@ -127,6 +127,9 @@ public final class Ttle {
   private static VramTexture fireTexture;
   private static VramTexture[] firePalettes;
   private static Renderable[] fireRenderable;
+  private static boolean texturesLoaded;
+  private static boolean fireLoaded;
+  private static boolean renderablesLoaded;
 
   public static final int[][] startingEquipment_800ce6fc = {
     { 0, 76, 46, 93, 152},
@@ -252,6 +255,10 @@ public final class Ttle {
     fadeOutTimer_800c6754 = 0;
     flamesZ = 100;
 
+    texturesLoaded = false;
+    fireLoaded = false;
+    renderablesLoaded = false;
+
     hasSavedGames = 0;
     selectedMenuOption = 0;
 
@@ -267,8 +274,6 @@ public final class Ttle {
 
     loadDrgnDir(0, 5718, Ttle::menuTexturesMrgLoaded);
     loadDrgnFile(0, 5719, file -> menuFireTmdLoaded("DRGN0/5719", file));
-
-    prepareRenderables();
 
     // Prepare fire animation struct
     //LAB_800c7d30
@@ -334,6 +339,8 @@ public final class Ttle {
     );
 
     firePalettes = palettesFromTims(new Tim(files.get(10)), new Tim(files.get(7)), new Tim(files.get(8)), new Tim(files.get(9)));
+
+    texturesLoaded = true;
   }
 
   @Method(0x800c7c18L)
@@ -342,15 +349,7 @@ public final class Ttle {
     _800c66d0 = parseTmdFile(tmd);
     FUN_800cc0b0(_800c66d0, null);
     setDobjAttributes(_800c66d0, 0);
-
-    fireRenderable = new Renderable[_800c66d0.dobj2s_00.length];
-    for(int i = 0; i < _800c66d0.dobj2s_00.length; i++) {
-      fireRenderable[i] = ModelLoader
-        .fromTmd("Fire " + i, _800c66d0.dobj2s_00[i].tmd_08)
-        .texture(fireTexture)
-        .palettes(firePalettes)
-        .build();
-    }
+    fireLoaded = true;
   }
 
   private static void prepareRenderables() {
@@ -449,6 +448,15 @@ public final class Ttle {
       .texture(copyrightTexture)
       .palettes(copyrightPalettes)
       .build();
+
+    fireRenderable = new Renderable[_800c66d0.dobj2s_00.length];
+    for(int i = 0; i < _800c66d0.dobj2s_00.length; i++) {
+      fireRenderable[i] = ModelLoader
+        .fromTmd("Fire " + i, _800c66d0.dobj2s_00[i].tmd_08)
+        .texture(fireTexture)
+        .palettes(firePalettes)
+        .build();
+    }
   }
 
   @Method(0x800c7e50L)
@@ -620,6 +628,14 @@ public final class Ttle {
 
   @Method(0x800c8298L)
   public static void renderMainMenu() {
+    if(!renderablesLoaded) {
+      if(!texturesLoaded || !fireLoaded) {
+        return;
+      }
+
+      prepareRenderables();
+    }
+
     if(menuLoadingStage == 0) {
       //LAB_800c82f0
       if(backgroundScrollAmount > -40) {

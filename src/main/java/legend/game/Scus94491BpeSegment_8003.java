@@ -13,7 +13,6 @@ import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;
-import legend.game.types.DR_TPAGE;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Translucency;
@@ -29,7 +28,6 @@ import javax.annotation.Nullable;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
-import static legend.core.GameEngine.MEMORY;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
@@ -144,56 +142,6 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x8003b430L)
   public static int GetClut(final int x, final int y) {
     return (y << 6 | x >> 4 & 0x3f) & 0xffff;
-  }
-
-  @Method(0x8003b490L)
-  public static void gpuLinkedListSetCommandTransparency(final long entryAddress, final boolean transparency) {
-    if(transparency) {
-      MEMORY.ref(1, entryAddress).offset(0x7L).oru(0x2L);
-    } else {
-      MEMORY.ref(1, entryAddress).offset(0x7L).and(0xfdL);
-    }
-  }
-
-  @Method(0x8003b750L)
-  public static void SetDrawTPage(final DR_TPAGE p, final boolean allowDrawing, final boolean dither, final long tpage) {
-    p.tag.and(0xff_ffffL).or(0x100_0000L);
-
-    final long command = 0xe100_0000L; // Texpage/draw mode settings
-
-    final long ditherBit = dither ? 0x200L : 0;
-    final long drawingBit = allowDrawing ? 0x400L : 0;
-    final long otherBits = tpage & 0x9ffL; // Texpage X/Y base; trans; texpage colours, tex disable
-
-    //LAB_8003b770
-    p.code.get(0).set(command | drawingBit | ditherBit | otherBits);
-  }
-
-  /**
-   * <p>Links primitive p0 to primitive p1. The combined primitive size of p0 and p1 must be less than 15 words.
-   * Within this size, any number of connections is possible.</p>
-   *
-   * <p>The resulting linked primitives can be added to an OT using AddPrim().
-   * p0 and p1 describe continuous regions of memory. p1 must be the higher address.</p>
-   *
-   * @param packet1 First primitive
-   * @param packet2 Second primitive
-   *
-   * @return 0 on success, -1 on failure.
-   */
-  @Method(0x8003b7e0L)
-  public static long MargePrim(final long packet1, final long packet2) {
-    final long size = MEMORY.ref(1, packet2).offset(0x3L).get() + MEMORY.ref(1, packet1).offset(0x3L).get() + 0x1L;
-
-    if(size < 0x11L) {
-      MEMORY.ref(1, packet1).offset(0x3L).setu(size);
-      MEMORY.ref(4, packet2).setu(0);
-      return 0;
-    }
-
-    //LAB_8003b80c
-    //LAB_8003b810
-    return -0x1L;
   }
 
   /**
@@ -802,11 +750,11 @@ public final class Scus94491BpeSegment_8003 {
       return;
     }
 
-    final float vectorLength = Math.max(1.0f, (float)Math.sqrt(vectorLengthSquared));
+    final float vectorLength = Math.max(1.0f, Math.sqrt(vectorLengthSquared));
 
     final float normalizedY = deltaY * 0x1000 / vectorLength;
 
-    final float horizontalLength = (float)Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
+    final float horizontalLength = Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
     final float normalizedHypotenuse = horizontalLength * 0x1000 / vectorLength;
 
     //LAB_8003e230

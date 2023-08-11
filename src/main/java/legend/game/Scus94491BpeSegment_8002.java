@@ -9,8 +9,8 @@ import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
 import legend.core.gte.GsCOORDINATE2;
-import legend.core.gte.ModelPart10;
 import legend.core.gte.MATRIX;
+import legend.core.gte.ModelPart10;
 import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.Transforms;
@@ -94,7 +94,6 @@ import static legend.game.SItem.renderMenus;
 import static legend.game.SItem.renderPostCombatReport;
 import static legend.game.SItem.textLength;
 import static legend.game.SMap.FUN_800da114;
-import static legend.game.SMap.renderSmapShadow;
 import static legend.game.SMap.FUN_800de004;
 import static legend.game.SMap.FUN_800e2428;
 import static legend.game.SMap.FUN_800e3fac;
@@ -102,7 +101,6 @@ import static legend.game.SMap.FUN_800e4018;
 import static legend.game.SMap.FUN_800e4708;
 import static legend.game.SMap.FUN_800e4e5c;
 import static legend.game.SMap.FUN_800e4f8c;
-import static legend.game.SMap.FUN_800e519c;
 import static legend.game.SMap.FUN_800e5534;
 import static legend.game.SMap.FUN_800e828c;
 import static legend.game.SMap.FUN_800e8e50;
@@ -113,7 +111,9 @@ import static legend.game.SMap.adjustSmapUvs;
 import static legend.game.SMap.encounterAccumulator_800c6ae8;
 import static legend.game.SMap.getCollisionAndTransitionInfo;
 import static legend.game.SMap.handleEncounters;
+import static legend.game.SMap.renderEnvironment;
 import static legend.game.SMap.renderSmapModel;
+import static legend.game.SMap.renderSmapShadow;
 import static legend.game.SMap.unloadSmap;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
@@ -126,7 +126,7 @@ import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
-import static legend.game.Scus94491BpeSegment.loadDrgnFile;
+import static legend.game.Scus94491BpeSegment.loadDrgnFileSync;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.rectArray28_80010770;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
@@ -203,11 +203,11 @@ import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800e.main;
-import static legend.game.combat.Bttl_800e.renderBttlShadow;
 import static legend.game.combat.Bttl_800e.renderBttlModel;
-import static legend.game.wmap.WMap.renderWmapShadow;
+import static legend.game.combat.Bttl_800e.renderBttlShadow;
 import static legend.game.wmap.WMap.adjustWmapUvs;
 import static legend.game.wmap.WMap.renderWmapModel;
+import static legend.game.wmap.WMap.renderWmapShadow;
 
 public final class Scus94491BpeSegment_8002 {
   private Scus94491BpeSegment_8002() { }
@@ -1023,8 +1023,8 @@ public final class Scus94491BpeSegment_8002 {
           renderablePtr_800bdc5c = null;
           uiFile_800bdc3c = null;
           resizeDisplay(384, 240);
-          loadDrgnFile(0, 6665, data -> menuAssetsLoaded(data, 0));
-          loadDrgnFile(0, 6666, data -> menuAssetsLoaded(data, 1));
+          loadDrgnFileSync(0, 6665, data -> menuAssetsLoaded(data, 0));
+          loadDrgnFileSync(0, 6666, data -> menuAssetsLoaded(data, 1));
           textZ_800bdf00.set(33);
 
           loadSupportOverlay(2, () -> {
@@ -4618,7 +4618,7 @@ public final class Scus94491BpeSegment_8002 {
         return 0;
 
       case 0x5:
-        FUN_800e519c();
+        renderEnvironment();
         FUN_800e8e50();
         FUN_800e828c();
         FUN_800e4f8c();
@@ -4628,7 +4628,7 @@ public final class Scus94491BpeSegment_8002 {
         break;
 
       case 0x4:
-        FUN_800e519c();
+        renderEnvironment();
 
       case 0x3:
         FUN_800e8e50();
@@ -4643,7 +4643,7 @@ public final class Scus94491BpeSegment_8002 {
 
       case 0x0:
         s0 = 0x1L;
-        FUN_800e519c();
+        renderEnvironment();
         break;
     }
 

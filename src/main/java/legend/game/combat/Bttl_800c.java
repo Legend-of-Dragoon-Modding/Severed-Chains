@@ -1167,7 +1167,7 @@ public final class Bttl_800c {
       return;
     }
 
-    if(allBobjCount_800c66d0.get() > 0 && !_800c66b9.get() && FUN_800c7da8()) {
+    if(Unpacker.getLoadingFileCount() == 0 && allBobjCount_800c66d0.get() > 0 && !_800c66b9.get() && FUN_800c7da8()) {
       vsyncMode_8007a3b8 = 3;
       mcqColour_800fa6dc.set(0x80);
       currentTurnBobj_800c66c8.storage_44[7] &= 0xffff_efff;

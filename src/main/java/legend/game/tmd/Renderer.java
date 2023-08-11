@@ -40,6 +40,11 @@ public final class Renderer {
     }
   }
 
+  public static void renderTmdPrimitive(final TmdObjTable1c.Primitive primitive, final SVECTOR[] vertices, final Vector3f[] normals, final int attribute) {
+    final int specialFlags = (attribute & 0x4000_0000) != 0 ? 0x12 : 0x0;
+    renderTmdPrimitive(primitive, vertices, normals, false, specialFlags);
+  }
+
   private static final Vector3f ZERO = new Vector3f();
 
   public static void renderTmdPrimitive(final TmdObjTable1c.Primitive primitive, final SVECTOR[] vertices, final Vector3f[] normals, final boolean useSpecialTranslucency, final int specialFlags) {
@@ -53,6 +58,7 @@ public final class Renderer {
     final boolean ctmd = (specialFlags & 0x20) != 0;
     final boolean uniformLit = (specialFlags & 0x10) != 0;
     final boolean shaded = (command & 0x4_0000) != 0;
+    final boolean gourad = (primitiveId & 0b1_0000) != 0;
     final boolean quad = (primitiveId & 0b1000) != 0;
     final boolean textured = (primitiveId & 0b100) != 0;
     final boolean translucent = ((primitiveId & 0b10) != 0) || ((specialFlags & 0x2) != 0);
@@ -110,8 +116,12 @@ public final class Renderer {
 
       for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
         if(lit) {
-          poly.vertices[vertexIndex].normalIndex = IoHelper.readUShort(data, primitivesOffset);
-          primitivesOffset += 2;
+          if(gourad || vertexIndex == 0) {
+            poly.vertices[vertexIndex].normalIndex = IoHelper.readUShort(data, primitivesOffset);
+            primitivesOffset += 2;
+          } else {
+            poly.vertices[vertexIndex].normalIndex = poly.vertices[0].normalIndex;
+          }
         }
 
         poly.vertices[vertexIndex].vertexIndex = IoHelper.readUShort(data, primitivesOffset);
