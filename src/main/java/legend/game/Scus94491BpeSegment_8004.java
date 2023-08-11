@@ -58,7 +58,6 @@ import static legend.game.Scus94491BpeSegment_800c.playableSounds_800c43d0;
 import static legend.game.Scus94491BpeSegment_800c.playingNotes_800c3a40;
 import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
 import static legend.game.Scus94491BpeSegment_800c.soundEnv_800c6630;
-import static legend.game.Scus94491BpeSegment_800c.spuDmaCompleteCallback_800c6628;
 import static legend.game.Scus94491BpeSegment_800c.sshdPtr_800c4ac0;
 import static legend.game.Scus94491BpeSegment_800c.sssqChannelInfo_800C6680;
 import static legend.game.Scus94491BpeSegment_800c.sssqReader_800c667c;
@@ -89,7 +88,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link SMap#executeSmapLoadingStage()} Sets up rendering and loads scene</li>
    *   <li>{@link Scus94491BpeSegment#FUN_80018658()}</li>
    *   <li>{@link GameOver#gameOver()}</li>
-   *   <li>{@link WMap#FUN_800cc738()}</li>
+   *   <li>{@link WMap#executeWmapState()}</li>
    *   <li>{@link SMap#startFmvLoadingStage()}</li>
    *   <li>swapDiskLoadingStage</li>
    *   <li>{@link SMap#FUN_800d9e08()}</li>
@@ -113,7 +112,7 @@ public final class Scus94491BpeSegment_8004 {
     gameStateCallbacks_8004dbc0[5] = new CallbackStruct(SMap::executeSmapLoadingStage, "\\OVL\\SMAP.OV_", 0x800c6690L, 0xf9f0);
     gameStateCallbacks_8004dbc0[6] = new CallbackStruct(Scus94491BpeSegment::FUN_80018658, "\\OVL\\BTTL.OV_", 0x800c6690L, 0x668);
     gameStateCallbacks_8004dbc0[7] = new CallbackStruct(GameOver::gameOver, "\\OVL\\TTLE.OV_", 0x800c6690L, 0xf0);
-    gameStateCallbacks_8004dbc0[8] = new CallbackStruct(WMap::FUN_800cc738, "\\OVL\\WMAP.OV_", 0x800c6690L, 0x2070);
+    gameStateCallbacks_8004dbc0[8] = new CallbackStruct(WMap::executeWmapState, "\\OVL\\WMAP.OV_", 0x800c6690L, 0x2070);
     gameStateCallbacks_8004dbc0[9] = new CallbackStruct(SMap::startFmvLoadingStage, "\\OVL\\SMAP.OV_", 0x800c6690L, 0xf9f0);
 //    gameStateCallbacks_8004dbc0[10] = new CallbackStruct(swapDiskLoadingStage);
     gameStateCallbacks_8004dbc0[11] = new CallbackStruct(SMap::FUN_800d9e08, "\\OVL\\SMAP.OV_", 0x800c6690L, 0xf9f0);
@@ -1026,14 +1025,6 @@ public final class Scus94491BpeSegment_8004 {
     return -1;
   }
 
-  @Method(0x8004ab2cL)
-  public static void spuDmaCallback() {
-    //LAB_8004ab5c
-    if(soundEnv_800c6630.hasCallback_38) {
-      spuDmaCompleteCallback_800c6628.run();
-    }
-  }
-
   @Method(0x8004ad2cL)
   public static void updateVoiceVolume(final int voiceIndex) {
     final PlayingNote66 playingNote = playingNotes_800c3a40[voiceIndex];
@@ -1123,16 +1114,6 @@ public final class Scus94491BpeSegment_8004 {
     }
   }
 
-  @Method(0x8004be7cL)
-  public static void setSpuDmaCompleteCallback(@Nullable final Runnable callback) {
-    if(callback == null) {
-      soundEnv_800c6630.hasCallback_38 = false;
-    } else {
-      spuDmaCompleteCallback_800c6628 = callback;
-      soundEnv_800c6630.hasCallback_38 = true;
-    }
-  }
-
   /**
    * @return Index into {@link Scus94491BpeSegment_800c#playableSounds_800c43d0}, or -1 on error
    */
@@ -1153,9 +1134,6 @@ public final class Scus94491BpeSegment_8004 {
 
     if(sshd.soundBankSize_04 != 0) {
       SPU.directWrite(addressInSoundBuffer, soundbank.getBytes());
-    } else {
-      LOGGER.warn("Soundbank size was 0!");
-      spuDmaCallback();
     }
 
     playableSounds_800c43d0.add(sound);

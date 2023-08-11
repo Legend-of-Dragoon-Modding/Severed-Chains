@@ -12,8 +12,8 @@ import legend.core.gpu.Rect4i;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORDINATE2;
-import legend.core.gte.ModelPart10;
 import legend.core.gte.MATRIX;
+import legend.core.gte.ModelPart10;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
@@ -42,10 +42,17 @@ import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
 import legend.game.scripting.ScriptStorageParam;
 import legend.game.submap.EncounterRateMode;
+import legend.game.submap.EnvironmentFile;
+import legend.game.submap.EnvironmentForegroundTextureMetrics;
 import legend.game.submap.EnvironmentRenderingMetrics24;
+import legend.game.submap.EnvironmentStruct;
 import legend.game.submap.IndicatorMode;
+import legend.game.submap.SobjPos14;
 import legend.game.submap.SubmapAssets;
 import legend.game.submap.SubmapObject;
+import legend.game.submap.SubmapObject210;
+import legend.game.submap.TriangleIndicator140;
+import legend.game.submap.TriangleIndicator44;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
@@ -59,8 +66,6 @@ import legend.game.types.CharacterData2c;
 import legend.game.types.CreditStruct1c;
 import legend.game.types.DustRenderData54;
 import legend.game.types.EngineState;
-import legend.game.submap.EnvironmentFile;
-import legend.game.submap.EnvironmentStruct;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.MediumStruct;
@@ -73,11 +78,9 @@ import legend.game.types.SavePointRenderData44;
 import legend.game.types.ShopStruct40;
 import legend.game.types.SmallerStruct;
 import legend.game.types.SnowEffect;
-import legend.game.submap.SobjPos14;
 import legend.game.types.SomethingStruct;
 import legend.game.types.SomethingStructSub0c_1;
 import legend.game.types.SomethingStructSub0c_2;
-import legend.game.submap.EnvironmentForegroundTextureMetrics;
 import legend.game.types.Struct14;
 import legend.game.types.Struct18;
 import legend.game.types.Struct20;
@@ -86,14 +89,11 @@ import legend.game.types.Struct34_2;
 import legend.game.types.Structb0;
 import legend.game.types.SubmapCutInfo;
 import legend.game.types.SubmapEncounterData_04;
-import legend.game.submap.SubmapObject210;
 import legend.game.types.SubmapStruct80;
 import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.TmdSubExtension;
 import legend.game.types.Translucency;
-import legend.game.submap.TriangleIndicator140;
-import legend.game.submap.TriangleIndicator44;
 import legend.game.types.UnknownStruct;
 import legend.game.types.UnknownStruct2;
 import legend.game.unpacker.FileData;
@@ -206,7 +206,6 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.hasNoEncounters_800bed58;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.matrix_800bed30;
-import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.musicLoaded_800bd782;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.projectionPlaneDistance_800bd810;
@@ -215,6 +214,7 @@ import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.screenOffsetX_800bed50;
 import static legend.game.Scus94491BpeSegment_800b.screenOffsetY_800bed54;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
+import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.sobjPositions_800bd818;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
@@ -6155,19 +6155,17 @@ public final class SMap {
         final int h = credit.height_10.get();
         final int x = -w / 2 - 8;
         final int y = credit.y_0c.get();
-        final int tpage = texPages_800bb110.get(Bpp.BITS_4).get(Translucency.HALF_B_PLUS_HALF_F).get(TexPageY.Y_0).get() | (creditSlot / 8 * 128 + 512 & 0x3c0) >> 6;
         final int clut = creditSlot << 6 | 0x38;
 
         //LAB_800eb8e8
         renderQuad(
-          tpage, clut,
+          Bpp.BITS_4, creditSlot / 8 * 128 + 512 & 0x3c0, 0, clut,
           credit.colour_00.getR(), credit.colour_00.getG(), credit.colour_00.getB(),
           0, creditSlot % 8 * 64,
           w, h,
           x, y,
           w, h,
-          orderingTableSize_1f8003c8.get() - 3,
-          0
+          orderingTableSize_1f8003c8.get() - 3
         );
 
         //LAB_800eba4c
@@ -6508,11 +6506,11 @@ public final class SMap {
   }
 
   @Method(0x800ed3b0L)
-  public static void renderQuad(final int tpage, final int clut, final int r, final int g, final int b, final int u, final int v, final int tw, final int th, final int x, final int y, final int w, final int h, final int z, final int translucent) {
+  public static void renderQuad(final Bpp bpp, final int vramX, final int vramY, final int clut, final int r, final int g, final int b, final int u, final int v, final int tw, final int th, final int x, final int y, final int w, final int h, final int z) {
     final GpuCommandPoly cmd = new GpuCommandPoly(4)
-      .bpp(Bpp.of(tpage >>> 7 & 0b11))
+      .bpp(bpp)
       .clut((clut & 0b111111) * 16, clut >>> 6)
-      .vramPos((tpage & 0b1111) * 64, (tpage & 0x10000) != 0 ? 256 : 0)
+      .vramPos(vramX, vramY)
       .rgb(r, g, b)
       .pos(0, x, y)
       .pos(1, x + w, y)
@@ -6522,10 +6520,6 @@ public final class SMap {
       .uv(1, u + tw, v)
       .uv(2, u, v + th)
       .uv(3, u + tw, v + th);
-
-    if(translucent != 0) {
-      cmd.translucent(Translucency.of(tpage >>> 5 & 0b11));
-    }
 
     GPU.queueCommand(z, cmd);
   }

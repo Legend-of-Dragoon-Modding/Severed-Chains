@@ -62,7 +62,6 @@ public final class Scus94491BpeSegment_800c {
   static {
     Arrays.setAll(sequenceData_800c4ac8, i -> new SequenceData124());
   }
-  public static Runnable spuDmaCompleteCallback_800c6628;
 
   public static final SoundEnv44 soundEnv_800c6630 = new SoundEnv44();
   public static Instrument instrument_800c6674;

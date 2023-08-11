@@ -40,7 +40,6 @@ import legend.game.types.GsF_LIGHT;
 import legend.game.types.LodString;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
-import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.types.WmapSmokeCloudInstance60;
@@ -54,16 +53,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
 import static legend.game.Scus94491BpeSegment.FUN_80019c80;
-import static legend.game.Scus94491BpeSegment.loadLocationMenuSoundEffects;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
+import static legend.game.Scus94491BpeSegment.loadDrgnFileSync;
+import static legend.game.Scus94491BpeSegment.loadLocationMenuSoundEffects;
 import static legend.game.Scus94491BpeSegment.loadWmapMusic;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.playSound;
@@ -126,13 +127,14 @@ import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.repeat_800bee98;
 import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.soundFiles_800bcf80;
-import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.textboxes_800be358;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 
-public class WMap {
+public final class WMap {
+  private WMap() { }
+
   private static final IntRef tickMainMenuOpenTransition_800c6690 = MEMORY.ref(4, 0x800c6690L, IntRef::new);
 
   private static int worldMapState_800c6698;
@@ -149,10 +151,9 @@ public class WMap {
    *   <li>0x4 - wmap mesh</li>
    * </ul>
    */
-  private static final IntRef filesLoadedFlags_800c66b8 = MEMORY.ref(4, 0x800c66b8L, IntRef::new);
+  private static final AtomicInteger filesLoadedFlags_800c66b8 = new AtomicInteger();
 
   private static final IntRef tempZ_800c66d8 = MEMORY.ref(4, 0x800c66d8L, IntRef::new);
-  private static final ShortRef unusedTexPage_800c66dc = MEMORY.ref(2, 0x800c66dcL, ShortRef::new);
 
   private static McqHeader mcqHeader_800c6768;
 
@@ -212,21 +213,21 @@ public class WMap {
    *   <li>{@link WMap#FUN_800ccef4}</li>
    * </ol>
    */
-  private static final Runnable[] _800ef000 = new Runnable[13];
+  private static final Runnable[] wmapStates_800ef000 = new Runnable[13];
   static {
-    _800ef000[0] = WMap::initWmap;
-    _800ef000[1] = WMap::waitForWmapMusicToLoad;
-    _800ef000[2] = WMap::FUN_800ccc64;
-    _800ef000[3] = WMap::FUN_800cccbc;
-    _800ef000[4] = WMap::FUN_800ccce4;
-    _800ef000[5] = WMap::FUN_800cc758;
-    _800ef000[6] = WMap::restoreMapOnExitMainMenu;
-    _800ef000[7] = WMap::FUN_800ccda4;
-    _800ef000[8] = WMap::transitionToCombat;
-    _800ef000[9] = WMap::FUN_800cce9c;
-    _800ef000[10] = WMap::FUN_800ccecc;
-    _800ef000[11] = WMap::FUN_800ccbd8;
-    _800ef000[12] = WMap::FUN_800ccef4;
+    wmapStates_800ef000[0] = WMap::initWmap;
+    wmapStates_800ef000[1] = WMap::waitForWmapMusicToLoad;
+    wmapStates_800ef000[2] = WMap::FUN_800ccc64;
+    wmapStates_800ef000[3] = WMap::FUN_800cccbc;
+    wmapStates_800ef000[4] = WMap::FUN_800ccce4;
+    wmapStates_800ef000[5] = WMap::FUN_800cc758;
+    wmapStates_800ef000[6] = WMap::restoreMapOnExitMainMenu;
+    wmapStates_800ef000[7] = WMap::FUN_800ccda4;
+    wmapStates_800ef000[8] = WMap::transitionToCombat;
+    wmapStates_800ef000[9] = WMap::FUN_800cce9c;
+    wmapStates_800ef000[10] = WMap::FUN_800ccecc;
+    wmapStates_800ef000[11] = WMap::FUN_800ccbd8;
+    wmapStates_800ef000[12] = WMap::FUN_800ccef4;
   }
   /** Only seems to use element at index 1, but not positive */
   private static final ArrayRef<WmapLocationThumbnailMetrics08> locationThumbnailMetrics_800ef0cc = MEMORY.ref(2, 0x800ef0ccL, ArrayRef.of(WmapLocationThumbnailMetrics08.class, 7, 8, WmapLocationThumbnailMetrics08::new));
@@ -440,8 +441,8 @@ public class WMap {
   }
 
   @Method(0x800cc738L) // Pretty sure this is the entry point to WMap
-  public static void FUN_800cc738() {
-    FUN_800ccb98();
+  public static void executeWmapState() {
+    wmapStates_800ef000[pregameLoadingStage_800bb10c.get()].run();
   }
 
   @Method(0x800cc758L)
@@ -550,11 +551,6 @@ public class WMap {
     tickMainMenuOpenTransition_800c6690.set(0);
     setProjectionPlaneDistance(1100);
     pregameLoadingStage_800bb10c.set(3);
-  }
-
-  @Method(0x800ccb98L)
-  public static void FUN_800ccb98() {
-    _800ef000[pregameLoadingStage_800bb10c.get()].run();
   }
 
   @Method(0x800ccbd8L)
@@ -688,7 +684,6 @@ public class WMap {
     zOffset_1f8003e8.set(0);
     tmdGp0Tpage_1f8003ec.set(0x20);
     tempZ_800c66d8.set(0);
-    unusedTexPage_800c66dc.set((short)texPages_800bb110.get(Bpp.BITS_4).get(Translucency.B_PLUS_F).get(TexPageY.Y_0).get());
 
     FUN_800e3fac(0);
     FUN_800e78c0();
@@ -2299,20 +2294,20 @@ public class WMap {
     LoadImage(rect, mcq.imageData);
     mcqHeader_800c6768 = mcq;
 
-    filesLoadedFlags_800c66b8.or(0x1);
+    filesLoadedFlags_800c66b8.updateAndGet(val -> val | 0x1);
   }
 
   @Method(0x800d5768L)
   public static void loadLocationThumbnailImage(final Tim tim, final int param) {
     final WmapLocationThumbnailMetrics08 thumbnail = locationThumbnailMetrics_800ef0cc.get(param);
     loadLocationThumbnailImage_(tim, thumbnail.imageX_00.get(), thumbnail.imageY_02.get(), thumbnail.clutX_04.get(), thumbnail.clutY_06.get());
-    filesLoadedFlags_800c66b8.or(0x800);
+    filesLoadedFlags_800c66b8.updateAndGet(val -> val | 0x800);
 
     //LAB_800d5848
   }
 
   @Method(0x800d5858L) //TODO loads general world map stuff (location text, doors, buttons, etc.), several blobs that may be smoke?, tons of terrain and terrain sprites
-  public static void timsLoaded(final List<FileData> files, final int param) {
+  public static void timsLoaded(final List<FileData> files, final int fileFlag) {
     //LAB_800d5874
     for(final FileData file : files) {
       //LAB_800d5898
@@ -2323,7 +2318,7 @@ public class WMap {
     }
 
     //LAB_800d5938
-    filesLoadedFlags_800c66b8.or(param);
+    filesLoadedFlags_800c66b8.updateAndGet(val -> val | fileFlag);
 
     //LAB_800d5970
   }
@@ -2336,7 +2331,7 @@ public class WMap {
     initTmdTransforms(wmapStruct258_800c66a8.tmdRendering_08, null);
     wmapStruct258_800c66a8.tmdRendering_08.tmd_14 = tmd;
     setAllCoord2Attribs(wmapStruct258_800c66a8.tmdRendering_08, 0);
-    filesLoadedFlags_800c66b8.or(0x4);
+    filesLoadedFlags_800c66b8.updateAndGet(val -> val | 0x4);
   }
 
   @Method(0x800d5a30L)
@@ -2359,17 +2354,17 @@ public class WMap {
     //LAB_800d5b44
     if(whichFile == 0) {
       //LAB_800d5bb8
-      filesLoadedFlags_800c66b8.or(0x10);
+      filesLoadedFlags_800c66b8.updateAndGet(val -> val | 0x10);
     } else if(whichFile == 1) {
       //LAB_800d5bd8
-      filesLoadedFlags_800c66b8.or(0x40);
+      filesLoadedFlags_800c66b8.updateAndGet(val -> val | 0x40);
       //LAB_800d5b98
     } else if(whichFile == 2) {
       //LAB_800d5bf8
-      filesLoadedFlags_800c66b8.or(0x100);
+      filesLoadedFlags_800c66b8.updateAndGet(val -> val | 0x100);
     } else if(whichFile == 3) {
       //LAB_800d5c18
-      filesLoadedFlags_800c66b8.or(0x400);
+      filesLoadedFlags_800c66b8.updateAndGet(val -> val | 0x400);
     }
     //LAB_800d5c38
     //LAB_800d5c40
@@ -2567,7 +2562,7 @@ public class WMap {
 
   @Method(0x800d6880L)
   public static void loadWmapTextures() {
-    filesLoadedFlags_800c66b8.and(0xffff_efff);
+    filesLoadedFlags_800c66b8.updateAndGet(val -> val & 0xffff_efff);
     loadDrgnDir(0, 5695, files -> timsLoaded(files, 0x1_1000));
     wmapStruct258_800c66a8.colour_20 = 0;
   }
@@ -2952,7 +2947,7 @@ public class WMap {
 
   @Method(0x800d8e4cL)
   public static void loadMapModelAndTexture(final int index) {
-    filesLoadedFlags_800c66b8.and(0xffff_fffd);
+    filesLoadedFlags_800c66b8.updateAndGet(val -> val & 0xffff_fffd);
     loadDrgnDir(0, 5697 + index, files -> timsLoaded(files, 0x2));
     loadDrgnFile(0, 5705 + index, files -> loadTmdCallback("DRGN0/" + (5705 + index), files));
   }
@@ -3908,7 +3903,7 @@ public class WMap {
 
   @Method(0x800dfa70L)
   public static void loadPlayerAvatarTextureAndModelFiles() {
-    filesLoadedFlags_800c66b8.and(0xffff_fd57);
+    filesLoadedFlags_800c66b8.updateAndGet(val -> val & 0xffff_fd57);
 
     loadDrgnDir(0, 5713, files -> timsLoaded(files, 0x2a8));
 
@@ -4905,7 +4900,7 @@ public class WMap {
 
   @Method(0x800e4e1cL)
   public static void loadMapMcq() {
-    filesLoadedFlags_800c66b8.and(0xffff_fffe);
+    filesLoadedFlags_800c66b8.updateAndGet(val -> val & 0xffff_fffe);
     loadDrgnFile(0, 5696, WMap::loadMapMcqToVram);
     mcqColour_800c6794.set((short)0);
   }
@@ -5046,9 +5041,9 @@ public class WMap {
         break;
 
       case 1:
-        filesLoadedFlags_800c66b8.and(0xffff_f7ff);
+        filesLoadedFlags_800c66b8.updateAndGet(val -> val & 0xffff_f7ff);
 
-        loadDrgnFile(0, 5655 + places_800f0234.get(locations_800f0e34.get(mapState_800c6798.locationIndex_10).placeIndex_02.get()).fileIndex_04.get(), data -> loadLocationThumbnailImage(new Tim(data), 1));
+        loadDrgnFileSync(0, 5655 + places_800f0234.get(locations_800f0e34.get(mapState_800c6798.locationIndex_10).placeIndex_02.get()).fileIndex_04.get(), data -> loadLocationThumbnailImage(new Tim(data), 1));
         initTextbox(7, 1, 240, 120, 14, 16);
 
         mapTransitionState_800c68a4.set(2);

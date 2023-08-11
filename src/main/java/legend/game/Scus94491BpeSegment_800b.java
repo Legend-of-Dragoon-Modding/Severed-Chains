@@ -37,6 +37,7 @@ import legend.game.types.UiFile;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static legend.core.GameEngine.MEMORY;
 
@@ -101,7 +102,7 @@ public final class Scus94491BpeSegment_800b {
    * Bits:
    * 0 - MRG @ 62802 - audio
    */
-  public static final Value loadedDrgnFiles_800bcf78 = MEMORY.ref(4, 0x800bcf78L);
+  public static final AtomicInteger loadedDrgnFiles_800bcf78 = new AtomicInteger();
 
   public static final SoundFile[] soundFiles_800bcf80 = new SoundFile[13];
   static {

@@ -2,7 +2,6 @@ package legend.core.spu;
 
 import legend.core.DebugHelper;
 import legend.core.MathHelper;
-import legend.game.Scus94491BpeSegment_8004;
 import legend.game.sound.ReverbConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -416,7 +415,6 @@ public class Spu implements Runnable {
 
     synchronized(Spu.class) {
       System.arraycopy(dma, 0, this.ram, spuRamOffset, dma.length);
-      Scus94491BpeSegment_8004.spuDmaCallback();
     }
   }
 

@@ -297,7 +297,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x800203f0L)
   public static FlowControl scriptReplaceMonsterSounds(final RunningScript<?> script) {
     unloadSoundFile(3);
-    loadedDrgnFiles_800bcf78.oru(0x10L);
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x10);
     soundBufferOffset = 0;
 
     final int fileIndex = 1290 + script.params_20[0].get();
@@ -312,7 +312,7 @@ public final class Scus94491BpeSegment_8002 {
       }
     }
 
-    loadedDrgnFiles_800bcf78.and(0xffff_ffefL);
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_ffef);
     return FlowControl.CONTINUE;
   }
 

@@ -53,8 +53,8 @@ public class SoundEnv44 {
   public int reverbType_34;
 //  /** ushort */
 //  public boolean mono_36;
-  /** ubyte */
-  public boolean hasCallback_38;
+//  /** ubyte */
+//  public boolean hasCallback_38;
 //  /** No longer used */
 //  public int dmaIndex_39;
   /** Was two ushorts */
