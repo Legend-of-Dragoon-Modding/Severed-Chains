@@ -1056,6 +1056,13 @@ public final class Unpacker {
   private static Map<String, FileData> playerScriptDamageCapsTransformer(final String name, final FileData data, final Set<String> flags) {
     flags.add(name);
 
+    // Remove Shana/??? SP gain table from script and move it to subfunc 900
+    final byte[] patch = {0x38, 0x06, (byte)0x84, 0x3, 0x08, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+    for(int i = 0; i < patch.length; i++) {
+      data.writeByte(0x8358 + i, patch[i]);
+    }
+
     data.writeInt(0x9f0, 999999999);
     data.writeInt(0xa00, 999999999);
     data.writeInt(0x82b0, 999999999);
