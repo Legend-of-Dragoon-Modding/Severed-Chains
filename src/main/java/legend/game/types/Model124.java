@@ -56,10 +56,11 @@ public class Model124 {
   public int colourMap_9d;
   /** short */
   public int remainingFrames_9e;
+  public int interpolationFrameIndex;
   /** short */
   public int zOffset_a0;
   /** Always 0 except sometimes on submaps (ubyte) */
-  public int ub_a2;
+  public boolean disableInterpolation_a2;
   /** ubyte */
   public int ub_a3;
   /** Pointer to an address on the linked list, 0x30 bytes long, contains data copied from {@link CContainer#ext_04} */
@@ -135,7 +136,7 @@ public class Model124 {
     this.colourMap_9d = other.colourMap_9d;
     this.remainingFrames_9e = other.remainingFrames_9e;
     this.zOffset_a0 = other.zOffset_a0;
-    this.ub_a2 = other.ub_a2;
+    this.disableInterpolation_a2 = other.disableInterpolation_a2;
     this.ub_a3 = other.ub_a3;
     this.smallerStructPtr_a4 = other.smallerStructPtr_a4;
     this.ptr_a8 = other.ptr_a8;

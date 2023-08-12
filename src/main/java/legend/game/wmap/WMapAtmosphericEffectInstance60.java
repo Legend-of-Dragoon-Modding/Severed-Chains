@@ -11,7 +11,7 @@ public class WMapAtmosphericEffectInstance60 {
   /** short */
   public int y_5a;
   /** short */
-  public int brightness_5c;
+  public float brightness_5c;
   /** byte */
   public int z_5e;
 

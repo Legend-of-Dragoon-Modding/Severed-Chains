@@ -102,6 +102,10 @@ public class GpuCommandPoly extends GpuCommand {
     return this.rgb(colour, colour, colour);
   }
 
+  public GpuCommandPoly monochrome(final float colour) {
+    return this.monochrome((int)(colour * 0x100));
+  }
+
   public GpuCommandPoly rgb(final int vertex, final int colour) {
     this.shaded = true;
     this.colour[vertex] = colour;

@@ -69,6 +69,10 @@ public class GpuCommandQuad extends GpuCommand {
     return this.rgb(colour, colour, colour);
   }
 
+  public GpuCommandQuad monochrome(final float colour) {
+    return this.monochrome((int)(colour * 0x100));
+  }
+
   public GpuCommandQuad pos(final int x, final int y, final int w, final int h) {
     this.x = x;
     this.y = y;

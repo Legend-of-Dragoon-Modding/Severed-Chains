@@ -710,12 +710,12 @@ public final class SMap {
   }
 
   @Method(0x800da114L)
-  public static void FUN_800da114(final Model124 struct) {
-    if(struct.smallerStructPtr_a4 != null) {
+  public static void FUN_800da114(final Model124 model) {
+    if(model.smallerStructPtr_a4 != null) {
       //LAB_800da138
       for(int i = 0; i < 4; i++) {
-        if(struct.smallerStructPtr_a4.uba_04[i]) {
-          FUN_800dde70(struct, i);
+        if(model.smallerStructPtr_a4.uba_04[i]) {
+          FUN_800dde70(model, i);
         }
 
         //LAB_800da15c
@@ -725,52 +725,54 @@ public final class SMap {
     //LAB_800da16c
     //LAB_800da174
     for(int i = 0; i < 7; i++) {
-      if(struct.animateTextures_ec[i]) {
-        animateModelTextures(struct, i);
+      if(model.animateTextures_ec[i]) {
+        animateModelTextures(model, i);
       }
 
       //LAB_800da18c
     }
 
-    if(struct.animationState_9c == 2) {
+    if(model.animationState_9c == 2) {
       return;
     }
 
-    if(struct.animationState_9c == 0) {
-      if(struct.ub_a2 == 0) {
-        struct.remainingFrames_9e = struct.totalFrames_9a;
-      } else {
+    if(model.animationState_9c == 0) {
+      if(model.disableInterpolation_a2) {
         //LAB_800da1d0
-        struct.remainingFrames_9e = struct.totalFrames_9a / 2;
+        model.remainingFrames_9e = model.totalFrames_9a / 2;
+      } else {
+        model.remainingFrames_9e = model.totalFrames_9a;
       }
 
+      model.interpolationFrameIndex = 0;
+
       //LAB_800da1e4
-      struct.animationState_9c = 1;
-      struct.partTransforms_94 = struct.partTransforms_90;
+      model.animationState_9c = 1;
+      model.partTransforms_94 = model.partTransforms_90;
     }
 
     //LAB_800da1f8
-    if((struct.remainingFrames_9e & 0x1) == 0 && struct.ub_a2 == 0) {
-      final ModelPartTransforms0c[][] old = struct.partTransforms_94;
+    if((model.remainingFrames_9e & 0x1) == 0 && !model.disableInterpolation_a2) {
+      final ModelPartTransforms0c[][] old = model.partTransforms_94;
 
-      if(struct.ub_a3 == 0) {
-        applyInterpolationFrame(struct);
+      if(model.ub_a3 == 0) {
+        applyInterpolationFrame(model);
       } else {
         //LAB_800da23c
-        applyModelPartTransforms(struct);
+        applyModelPartTransforms(model);
       }
 
-      struct.partTransforms_94 = old;
+      model.partTransforms_94 = old;
     } else {
       //LAB_800da24c
-      applyModelPartTransforms(struct);
+      applyModelPartTransforms(model);
     }
 
     //LAB_800da254
-    struct.remainingFrames_9e--;
+    model.remainingFrames_9e--;
 
-    if(struct.remainingFrames_9e == 0) {
-      struct.animationState_9c = 0;
+    if(model.remainingFrames_9e == 0) {
+      model.animationState_9c = 0;
     }
 
     //LAB_800da274
@@ -1760,7 +1762,7 @@ public final class SMap {
     final Model124 model = sobj.model_00;
 
     sobj.animIndex_132 = script.params_20[1].get();
-    model.ub_a2 = 0;
+    model.disableInterpolation_a2 = false;
     model.ub_a3 = 0;
 
     loadModelStandardAnimation(model, submapAssets.objects.get(sobj.sobjIndex_12e).animations.get(sobj.animIndex_132));
@@ -1991,7 +1993,7 @@ public final class SMap {
 
     sobj.animIndex_132 = script.params_20[1].get();
     model.ub_a3 = 0;
-    model.ub_a2 = 1;
+    model.disableInterpolation_a2 = true;
     loadModelStandardAnimation(model, submapAssets.objects.get(sobj.sobjIndex_12e).animations.get(sobj.animIndex_132));
     sobj.us_12c = 0;
     sobj.flags_190 &= 0x9fff_ffff;
@@ -2198,7 +2200,7 @@ public final class SMap {
     prepareObjTable2(model.modelParts_00, cContainer.tmdPtr_00.tmd, model.coord2_14);
 
     model.zOffset_a0 = 0;
-    model.ub_a2 = 0;
+    model.disableInterpolation_a2 = false;
     model.ub_a3 = 0;
     model.partInvisible_f4 = 0;
 
@@ -7234,6 +7236,7 @@ public final class SMap {
         renderModel(dustModel_800d4d40);
 
         dustModel_800d4d40.remainingFrames_9e = 0;
+        dustModel_800d4d40.interpolationFrameIndex = 0;
         dustModel_800d4d40.modelParts_00[0].coord2_04.flg--;
         s0._00++;
 

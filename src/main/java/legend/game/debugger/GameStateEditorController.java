@@ -494,7 +494,7 @@ public class GameStateEditorController {
 
   @FXML
   public void setDotOffset() {
-    gameState_800babc8.dotOffset_4dc = Integer.parseInt(this.textDotOffset.getText());
+    gameState_800babc8.dotOffset_4dc = Float.parseFloat(this.textDotOffset.getText());
   }
 
   @FXML

@@ -205,7 +205,7 @@ public final class Scus94491BpeSegment_800e {
     prepareObjTable2(model.modelParts_00, cContainer.tmdPtr_00.tmd, model.coord2_14);
 
     model.zOffset_a0 = 0;
-    model.ub_a2 = 0;
+    model.disableInterpolation_a2 = false;
     model.ub_a3 = 0;
     model.partInvisible_f4 = 0;
 

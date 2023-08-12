@@ -17,10 +17,10 @@ public class WMapStruct258 {
   public final Model124[] models_0c = new Model124[4];
   public TextureAnimation20 textureAnimation_1c;
   /** short */
-  public int colour_20;
+  public float colour_20;
 
   public WMapAtmosphericEffectInstance60[] _24;
-  public int clutYIndex_28;
+  public float clutYIndex_28;
   public FileData imageData_2c;
   public FileData imageData_30;
   public final GsCOORDINATE2 coord2_34 = new GsCOORDINATE2();

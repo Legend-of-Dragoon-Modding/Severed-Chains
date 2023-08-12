@@ -58,7 +58,7 @@ public class GameState52c {
   // World map stuff
   public int pathIndex_4d8;
   public int dotIndex_4da;
-  public int dotOffset_4dc;
+  public float dotOffset_4dc;
   public int facing_4dd;
   public int areaIndex_4de;
 

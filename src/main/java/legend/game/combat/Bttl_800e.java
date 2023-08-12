@@ -2166,10 +2166,11 @@ public final class Bttl_800e {
     model.animationState_9c = a1.animationState_5e0;
     model.colourMap_9d = 0;
     model.zOffset_a0 = 0x200;
-    model.ub_a2 = 0;
+    model.disableInterpolation_a2 = false;
     model.ub_a3 = 0;
     model.smallerStructPtr_a4 = null;
     model.remainingFrames_9e = a1.remainingFrames_5e2;
+    model.interpolationFrameIndex = 0;
     model.ptr_a8 = a1._5ec;
 
     //LAB_800e9c0c

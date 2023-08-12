@@ -247,7 +247,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[136] = Bttl_800c::scriptGetMonsterStatusResistFlags;
     scriptSubFunctions_8004e29c[137] = Scus94491BpeSegment::scriptRewindAndPause2;
     scriptSubFunctions_8004e29c[138] = Bttl_800c::FUN_800cb618;
-    scriptSubFunctions_8004e29c[139] = Bttl_800c::FUN_800cb674;
+    scriptSubFunctions_8004e29c[139] = Bttl_800c::scriptSetInterpolationDisabled;
     scriptSubFunctions_8004e29c[140] = Bttl_800c::FUN_800cb6bc;
     scriptSubFunctions_8004e29c[141] = Bttl_800c::FUN_800cb764;
     scriptSubFunctions_8004e29c[142] = Bttl_800c::FUN_800cb76c;

@@ -2,7 +2,6 @@ package legend.game.wmap;
 
 import legend.core.gte.COLOUR;
 import legend.core.gte.GsCOORDINATE2;
-import legend.core.gte.VECTOR;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsRVIEW2;
 import org.joml.Vector3f;
@@ -24,7 +23,7 @@ public class WMapStruct19c0 {
   /** ubyte */
   public boolean mapRotating_80;
 
-  public float _84;
+  public float brightness_84;
   public int _88;
   public final COLOUR[] colour_8c = {new COLOUR(), new COLOUR(), new COLOUR()};
   /** short */
@@ -36,9 +35,9 @@ public class WMapStruct19c0 {
   /** short */
   public int _9e;
   /** short */
-  public int _a0;
-  public final VECTOR vec_a4 = new VECTOR();
-  public final VECTOR vec_b4 = new VECTOR();
+  public float _a0;
+  public final Vector3f vec_a4 = new Vector3f();
+  public final Vector3f vec_b4 = new Vector3f();
   /** byte (bool?) */
   public int _c4;
   /** ubyte */
@@ -59,13 +58,13 @@ public class WMapStruct19c0 {
   /** short */
   public float angle_10c;
   /** ushort */
-  public int _10e;
+  public float _10e;
   /** ubyte */
   public int _110;
 
   public int _114;
   /** short */
-  public int projectionPlaneDistance_118;
+  public float projectionPlaneDistance_118;
   /** ubyte */
   public int _11a;
 

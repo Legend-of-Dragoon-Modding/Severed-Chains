@@ -387,7 +387,7 @@ public final class V3Serializer {
     offset += 2;
     data.writeShort(offset, state.dotIndex_4da);
     offset += 2;
-    data.writeByte(offset, state.dotOffset_4dc);
+    data.writeByte(offset, (int)state.dotOffset_4dc);
     offset++;
     data.writeByte(offset, state.facing_4dd);
     offset++;

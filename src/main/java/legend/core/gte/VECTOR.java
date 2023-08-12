@@ -168,6 +168,13 @@ public class VECTOR implements MemoryRef {
     return this;
   }
 
+  public VECTOR sub(final Vector3f other) {
+    this.x.sub((int)other.x);
+    this.y.sub((int)other.y);
+    this.z.sub((int)other.z);
+    return this;
+  }
+
   public VECTOR sub(final SVECTOR other) {
     this.x.sub(other.x.get());
     this.y.sub(other.y.get());

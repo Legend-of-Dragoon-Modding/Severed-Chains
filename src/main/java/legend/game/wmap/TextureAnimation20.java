@@ -13,5 +13,5 @@ public class TextureAnimation20 {
   public int _14;
   public short _18;
   public short _1a;
-  public short _1c;
+  public float _1c;
 }

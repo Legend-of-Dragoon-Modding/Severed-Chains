@@ -14,8 +14,8 @@ public class WmapMenuTextHighlight40 {
   public int columnCount_28;
   public int rowCount_2c;
   public int subRectCount_30;
-  public short currentBrightness_34;
-  public short previousBrightness_36;
+  public float currentBrightness_34;
+  public float previousBrightness_36;
   public int x_38;
   public int y_3a;
   public boolean transparency_3c;

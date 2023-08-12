@@ -4428,7 +4428,12 @@ public final class Bttl_800d {
     //LAB_800dd4fc
     final int totalFrames;
     final int frame;
-    if(model.ub_a2 == 0) {
+    if(model.disableInterpolation_a2) {
+      frame = animationTicks % (model.totalFrames_9a / 2);
+      model.partTransforms_94 = Arrays.copyOfRange(model.partTransforms_90, frame, model.partTransforms_90.length);
+      applyModelPartTransforms(model);
+      totalFrames = (short)model.totalFrames_9a >> 1;
+    } else {
       //LAB_800dd568
       frame = animationTicks % model.totalFrames_9a;
       model.partTransforms_94 = Arrays.copyOfRange(model.partTransforms_90, frame / 2, model.partTransforms_90.length);
@@ -4442,15 +4447,11 @@ public final class Bttl_800d {
 
       //LAB_800dd5ec
       totalFrames = model.totalFrames_9a;
-    } else {
-      frame = animationTicks % (model.totalFrames_9a / 2);
-      model.partTransforms_94 = Arrays.copyOfRange(model.partTransforms_90, frame, model.partTransforms_90.length);
-      applyModelPartTransforms(model);
-      totalFrames = (short)model.totalFrames_9a >> 1;
     }
 
     //LAB_800dd5f0
     model.remainingFrames_9e = totalFrames - frame - 1;
+    model.interpolationFrameIndex = 0;
 
     if(model.remainingFrames_9e == 0) {
       model.animationState_9c = 0;
@@ -4480,20 +4481,21 @@ public final class Bttl_800d {
     final int frame;
     final int remainingFrames;
     final int isInterpolationFrame;
-    if(model.ub_a2 == 0) {
+    if(model.disableInterpolation_a2) {
+      isInterpolationFrame = 0;
+      a0_0 = (animationTicks << 1) % model.totalFrames_9a >>> 1;
+      remainingFrames = (model.totalFrames_9a >> 1) - a0_0;
+    } else {
       //LAB_800dd6dc
       frame = animationTicks % model.totalFrames_9a;
       isInterpolationFrame = (animationTicks & 0x1) << 11; // Dunno why this is shifted, makes no difference
       a0_0 = frame >>> 1;
       remainingFrames = model.totalFrames_9a - frame;
-    } else {
-      isInterpolationFrame = 0;
-      a0_0 = (animationTicks << 1) % model.totalFrames_9a >>> 1;
-      remainingFrames = (model.totalFrames_9a >> 1) - a0_0;
     }
 
     //LAB_800dd700
     model.remainingFrames_9e = remainingFrames - 1;
+    model.interpolationFrameIndex = 0;
 
     //LAB_800dd720
     for(int i = 0; i < count; i++) {
@@ -4652,7 +4654,7 @@ public final class Bttl_800d {
     }
 
     //LAB_800ddc80
-    model.ub_a2 = 0;
+    model.disableInterpolation_a2 = false;
     model.ub_a3 = 0;
     model.partInvisible_f4 = 0;
     model.zOffset_a0 = 0;
@@ -4692,7 +4694,12 @@ public final class Bttl_800d {
     int frameIndex;
     final int a1_0;
     final int isInterpolationFrame;
-    if(model.ub_a2 == 0) {
+    if(model.disableInterpolation_a2) {
+      isInterpolationFrame = 0;
+      a1_0 = (animationTicks << 1) % model.totalFrames_9a >>> 1;
+      frameIndex = (cmbAnim.animationTicks_00 << 1) % model.totalFrames_9a >> 1;
+      model.remainingFrames_9e = (model.totalFrames_9a >> 1) - a1_0 - 1;
+    } else {
       //LAB_800dde1c
       // This modulo has to be unsigned due to a bug causing the number of ticks
       // to go negative. This matches the retail behaviour (it uses divu).
@@ -4706,12 +4713,9 @@ public final class Bttl_800d {
       if(frameIndex < 0) {
         frameIndex = 0;
       }
-    } else {
-      isInterpolationFrame = 0;
-      a1_0 = (animationTicks << 1) % model.totalFrames_9a >>> 1;
-      frameIndex = (cmbAnim.animationTicks_00 << 1) % model.totalFrames_9a >> 1;
-      model.remainingFrames_9e = (model.totalFrames_9a >> 1) - a1_0 - 1;
     }
+
+    model.interpolationFrameIndex = 0;
 
     //LAB_800dde60
     if(frameIndex > a1_0) {
@@ -4810,6 +4814,7 @@ public final class Bttl_800d {
     model.totalFrames_9a = cmb.totalFrames_0e * 2;
     model.animationState_9c = 1;
     model.remainingFrames_9e = cmb.totalFrames_0e * 2;
+    model.interpolationFrameIndex = 0;
 
     //LAB_800de270
     for(int i = 0; i < count; i++) {
@@ -4856,6 +4861,7 @@ public final class Bttl_800d {
       model.totalFrames_9a = lmb._08[0].count_04 * 2;
       model.animationState_9c = 1;
       model.remainingFrames_9e = lmb._08[0].count_04 * 2;
+      model.interpolationFrameIndex = 0;
     } else {
       //LAB_800de3dc
       loadModelStandardAnimation(model, (TmdAnimationFile)anim);

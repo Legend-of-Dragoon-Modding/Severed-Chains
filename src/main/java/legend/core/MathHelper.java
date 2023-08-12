@@ -250,4 +250,8 @@ public final class MathHelper {
   public static boolean flEq(final float a, final float b, final float epsilon) {
     return Math.abs(a - b) < epsilon;
   }
+
+  public static boolean flEq(final float a, final float b) {
+    return flEq(a, b, 0.00001f);
+  }
 }

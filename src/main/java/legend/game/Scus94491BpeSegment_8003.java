@@ -945,7 +945,7 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003f8f0L) //Also 0x8003c6d0
-  public static void setProjectionPlaneDistance(final int distance) {
+  public static void setProjectionPlaneDistance(final float distance) {
     GTE.setProjectionPlaneDistance(distance);
   }
 

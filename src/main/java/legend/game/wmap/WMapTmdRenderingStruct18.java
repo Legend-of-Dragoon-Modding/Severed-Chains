@@ -10,6 +10,6 @@ public class WMapTmdRenderingStruct18 {
   public GsCOORDINATE2[] coord2s_04;
   public Vector3f[] rotations_08;
   public int count_0c;
-  public int[] _10;
+  public float[] angles_10;
   public TmdWithId tmd_14;
 }

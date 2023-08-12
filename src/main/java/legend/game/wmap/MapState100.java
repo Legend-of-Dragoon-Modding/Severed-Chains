@@ -35,7 +35,7 @@ public class MapState100 {
   /** The path dot the player is on (800c67ae) */
   public int dotIndex_16;
   /** The distance the player is from the dot (range: 0-3) (800c67b0) */
-  public int dotOffset_18;
+  public float dotOffset_18;
 
   /** +1 - left, -1 - right (800c67b4) */
   public int facing_1c;
@@ -48,7 +48,7 @@ public class MapState100 {
   /** 800c6848 */
   public final Vector3f _b0 = new Vector3f();
   /** 800c6858 */
-  public float angle_c0;
+  public float playerDestAngle_c0;
   /** 800c685a */
   public float previousPlayerRotation_c2;
   /** 800c685c */

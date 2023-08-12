@@ -2721,9 +2721,9 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cb674L)
-  public static FlowControl FUN_800cb674(final RunningScript<?> script) {
+  public static FlowControl scriptSetInterpolationDisabled(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bobj.model_148.ub_a2 = script.params_20[1].get() < 1 ? 1 : 0;
+    bobj.model_148.disableInterpolation_a2 = script.params_20[1].get() < 1;
     return FlowControl.CONTINUE;
   }
 

@@ -67,6 +67,7 @@ import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Math;
 import org.joml.Matrix3f;
 
 import javax.annotation.Nullable;
@@ -380,7 +381,7 @@ public final class Scus94491BpeSegment_8002 {
     prepareObjTable2(model.modelParts_00, cContainer.tmdPtr_00.tmd, model.coord2_14);
 
     model.zOffset_a0 = 0;
-    model.ub_a2 = 0;
+    model.disableInterpolation_a2 = false;
     model.ub_a3 = 0;
     model.partInvisible_f4 = 0;
 
@@ -409,6 +410,10 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80020b98L)
   public static void animateModel(final Model124 model) {
+    animateModel(model, 1);
+  }
+
+  public static void animateModel(final Model124 model, final int interpolationFrameCount) {
     if(engineState_8004dd20 == EngineState.SUBMAP_05) {
       FUN_800da114(model);
       return;
@@ -434,12 +439,14 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80020c3c
     if(model.animationState_9c == 0) {
-      if(model.ub_a2 == 0) {
-        model.remainingFrames_9e = model.totalFrames_9a;
-      } else {
+      if(model.disableInterpolation_a2) {
         //LAB_80020c68
         model.remainingFrames_9e = model.totalFrames_9a / 2;
+      } else {
+        model.remainingFrames_9e = model.totalFrames_9a;
       }
+
+      model.interpolationFrameIndex = 0;
 
       //LAB_80020c7c
       model.animationState_9c = 1;
@@ -449,17 +456,20 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80020c90
     final ModelPartTransforms0c[][] transforms = model.partTransforms_94;
 
-    if((model.remainingFrames_9e & 0x1) == 0 && model.ub_a2 == 0) { // Interpolation frame (only applies to some animations in combat?)
+    if(model.interpolationFrameIndex != interpolationFrameCount && !model.disableInterpolation_a2) { // Interpolation frame
       if(model.ub_a3 == 0) { // Only set to 1 sometimes on submaps?
         //LAB_80020ce0
         for(int i = 0; i < model.modelParts_00.length; i++) {
           final GsCOORDINATE2 coord2 = model.modelParts_00[i].coord2_04;
           final Transforms params = coord2.transforms;
+
+          final float interpolationScale = (model.interpolationFrameIndex + 1) / (float)interpolationFrameCount;
+
           RotMatrix_Zyx(params.rotate, coord2.coord);
           params.trans.set(
-            (params.trans.x + transforms[0][i].translate_06.x) / 2.0f,
-            (params.trans.y + transforms[0][i].translate_06.y) / 2.0f,
-            (params.trans.z + transforms[0][i].translate_06.z) / 2.0f
+            Math.lerp(params.trans.x, transforms[0][i].translate_06.x, interpolationScale),
+            Math.lerp(params.trans.y, transforms[0][i].translate_06.y, interpolationScale),
+            Math.lerp(params.trans.z, transforms[0][i].translate_06.z, interpolationScale)
           );
           coord2.coord.transfer.set(params.trans);
         }
@@ -482,6 +492,12 @@ public final class Scus94491BpeSegment_8002 {
         //LAB_80020dfc
       }
 
+      if(model.interpolationFrameIndex == 0) {
+        model.remainingFrames_9e--;
+      }
+
+      model.interpolationFrameIndex++;
+
       //LAB_80020e00
     } else {
       //LAB_80020e0c
@@ -499,10 +515,11 @@ public final class Scus94491BpeSegment_8002 {
 
       //LAB_80020e94
       model.partTransforms_94 = Arrays.copyOfRange(transforms, 1, transforms.length);
+      model.interpolationFrameIndex = 0;
+      model.remainingFrames_9e--;
     }
 
     //LAB_80020e98
-    model.remainingFrames_9e--;
 
     //LAB_80020ea8
   }
@@ -712,12 +729,14 @@ public final class Scus94491BpeSegment_8002 {
 
     applyModelPartTransforms(model);
 
-    if(model.ub_a2 == 0) {
-      model.remainingFrames_9e = model.totalFrames_9a;
-    } else {
+    if(model.disableInterpolation_a2) {
       //LAB_800215e8
       model.remainingFrames_9e = model.totalFrames_9a / 2;
+    } else {
+      model.remainingFrames_9e = model.totalFrames_9a;
     }
+
+    model.interpolationFrameIndex = 0;
 
     //LAB_80021608
     model.animationState_9c = 1;
