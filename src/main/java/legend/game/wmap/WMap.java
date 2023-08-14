@@ -77,7 +77,7 @@ import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a3ec;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002a488;
+import static legend.game.Scus94491BpeSegment_8002.isTextboxInState6;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.animateModel;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
@@ -202,8 +202,8 @@ public final class WMap {
    *   <li>{@link WMap#waitForWmapMusicToLoad}</li>
    *   <li>{@link WMap#FUN_800ccc64}</li>
    *   <li>{@link WMap#FUN_800cccbc}</li>
-   *   <li>{@link WMap#FUN_800ccce4}</li>
-   *   <li>{@link WMap#FUN_800cc758}</li>
+   *   <li>{@link WMap#transitionToScreens}</li>
+   *   <li>{@link WMap#renderWmapScreens}</li>
    *   <li>{@link WMap#restoreMapOnExitMainMenu}</li>
    *   <li>{@link WMap#FUN_800ccda4}</li>
    *   <li>{@link WMap#transitionToCombat}</li>
@@ -219,8 +219,8 @@ public final class WMap {
     wmapStates_800ef000[1] = WMap::waitForWmapMusicToLoad;
     wmapStates_800ef000[2] = WMap::FUN_800ccc64;
     wmapStates_800ef000[3] = WMap::FUN_800cccbc;
-    wmapStates_800ef000[4] = WMap::FUN_800ccce4;
-    wmapStates_800ef000[5] = WMap::FUN_800cc758;
+    wmapStates_800ef000[4] = WMap::transitionToScreens;
+    wmapStates_800ef000[5] = WMap::renderWmapScreens;
     wmapStates_800ef000[6] = WMap::restoreMapOnExitMainMenu;
     wmapStates_800ef000[7] = WMap::FUN_800ccda4;
     wmapStates_800ef000[8] = WMap::transitionToCombat;
@@ -446,8 +446,9 @@ public final class WMap {
     wmapStates_800ef000[pregameLoadingStage_800bb10c.get()].run();
   }
 
+  /** Just the inventory menu right now, but we might add more later */
   @Method(0x800cc758L)
-  public static void FUN_800cc758() {
+  public static void renderWmapScreens() {
     loadAndRenderMenus();
 
     if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
@@ -474,26 +475,28 @@ public final class WMap {
 
   @Method(0x800cc83cL)
   public static void FUN_800cc83c() {
-    if(Unpacker.getLoadingFileCount() == 0 && tickMainMenuOpenTransition_800c6690.get() == 0) {
-      if((input_800bee90.get() & 0x1af) == 0) {
-        final WMapStruct19c0 v1 = wmapStruct19c0_800c66b0;
+    if(Unpacker.getLoadingFileCount() == 0) {
+      if(tickMainMenuOpenTransition_800c6690.get() == 0) {
+        if((input_800bee90.get() & 0x1af) == 0) {
+          final WMapStruct19c0 v1 = wmapStruct19c0_800c66b0;
 
-        if(v1._c5 == 0) {
-          if(v1._c4 == 0) {
-            final WMapStruct258 a0 = wmapStruct258_800c66a8;
+          if(v1._c5 == 0) {
+            if(v1._c4 == 0) {
+              final WMapStruct258 a0 = wmapStruct258_800c66a8;
 
-            if(a0.zoomState_1f8 == 0) {
-              if(a0._220 == 0) {
-                if(worldMapState_800c6698 >= 3 || playerState_800c669c >= 3) {
-                  //LAB_800cc900
-                  if(Input.pressedThisFrame(InputAction.BUTTON_NORTH)) {
-                    if(mapState_800c6798._fc != 1) {
-                      if(a0._05 == 0) {
-                        if(mapState_800c6798._d8 == 0) {
-                          if(a0._250 == 0) {
-                            scriptStartEffect(1, 15);
-                            mapState_800c6798.disableInput_d0 = true;
-                            tickMainMenuOpenTransition_800c6690.set(1);
+              if(a0.zoomState_1f8 == 0) {
+                if(a0._220 == 0) {
+                  if(worldMapState_800c6698 >= 3 || playerState_800c669c >= 3) {
+                    //LAB_800cc900
+                    if(Input.pressedThisFrame(InputAction.BUTTON_NORTH)) {
+                      if(mapState_800c6798._fc != 1) {
+                        if(a0._05 == 0) {
+                          if(mapState_800c6798._d8 == 0) {
+                            if(a0._250 == 0) {
+                              scriptStartEffect(1, 15);
+                              mapState_800c6798.disableInput_d0 = true;
+                              tickMainMenuOpenTransition_800c6690.set(1);
+                            }
                           }
                         }
                       }
@@ -504,31 +507,31 @@ public final class WMap {
             }
           }
         }
+
+        return;
       }
 
-      return;
+      //LAB_800cc970
+      wmapStruct258_800c66a8.colour_20 -= 0x20 / (3.0f / vsyncMode_8007a3b8);
+      if(wmapStruct258_800c66a8.colour_20 < 0.0f) {
+        wmapStruct258_800c66a8.colour_20 = 0.0f;
+      }
+
+      //LAB_800cc998
+      tickMainMenuOpenTransition_800c6690.add(1);
+      if(tickMainMenuOpenTransition_800c6690.get() < 48) {
+        return;
+      }
+
+      pregameLoadingStage_800bb10c.set(4);
+      whichMenu_800bdc38 = WhichMenu.INIT_INVENTORY_MENU_1;
+
+      wmapStruct258_800c66a8.imageData_2c = new FileData(new byte[0x1_0000]);
+      wmapStruct258_800c66a8.imageData_30 = new FileData(new byte[0x1_0000]);
+
+      StoreImage(storedEffectsRect_800c8700, wmapStruct258_800c66a8.imageData_2c);
+      StoreImage(new RECT((short)320, (short)0, (short)64, (short)512), wmapStruct258_800c66a8.imageData_30);
     }
-
-    //LAB_800cc970
-    wmapStruct258_800c66a8.colour_20 -= 0x20 / (3.0f / vsyncMode_8007a3b8);
-    if(wmapStruct258_800c66a8.colour_20 < 0.0f) {
-      wmapStruct258_800c66a8.colour_20 = 0.0f;
-    }
-
-    //LAB_800cc998
-    tickMainMenuOpenTransition_800c6690.add(1);
-    if(tickMainMenuOpenTransition_800c6690.get() < 48) {
-      return;
-    }
-
-    pregameLoadingStage_800bb10c.set(4);
-    whichMenu_800bdc38 = WhichMenu.INIT_INVENTORY_MENU_1;
-
-    wmapStruct258_800c66a8.imageData_2c = new FileData(new byte[0x1_0000]);
-    wmapStruct258_800c66a8.imageData_30 = new FileData(new byte[0x1_0000]);
-
-    StoreImage(storedEffectsRect_800c8700, wmapStruct258_800c66a8.imageData_2c);
-    StoreImage(new RECT((short)320, (short)0, (short)64, (short)512), wmapStruct258_800c66a8.imageData_30);
 
     //LAB_800cca5c
   }
@@ -598,7 +601,7 @@ public final class WMap {
   }
 
   @Method(0x800ccce4L)
-  public static void FUN_800ccce4() {
+  public static void transitionToScreens() {
     gameState_800babc8.areaIndex_4de = mapState_800c6798.areaIndex_12;
     gameState_800babc8.pathIndex_4d8 = mapState_800c6798.pathIndex_14;
     gameState_800babc8.dotIndex_4da = mapState_800c6798.dotIndex_16;
@@ -3483,7 +3486,7 @@ public final class WMap {
       case 5:
         struct258.models_0c[2].coord2_14.transforms.scale.set(0.5f, 0.5f, 0.5f);
 
-        if(FUN_8002a488(6) != 0) {
+        if(isTextboxInState6(6)) {
           struct258._220 = 5;
           struct258._223 = 0;
           struct258._218 = 0;
@@ -5081,7 +5084,7 @@ public final class WMap {
         break;
 
       case 2:
-        if(FUN_8002a488(7) != 0) {
+        if(isTextboxInState6(7)) {
           initTextbox(6, 0, 240, 70, 13, 7);
           mapTransitionState_800c68a4.set(3);
         }
@@ -5305,7 +5308,7 @@ public final class WMap {
 
         renderLocationMenuTextHighlight(locationMenuNameShadow_800c6898);
 
-        if(textboxes_800be358[6]._00 == 0 && textboxes_800be358[7]._00 == 0 && MathHelper.flEq(locationMenuNameShadow_800c6898.currentBrightness_34, 0.0f)) {
+        if(textboxes_800be358[6].state_00 == 0 && textboxes_800be358[7].state_00 == 0 && MathHelper.flEq(locationMenuNameShadow_800c6898.currentBrightness_34, 0.0f)) {
           mapTransitionState_800c68a4.set(9);
         }
 

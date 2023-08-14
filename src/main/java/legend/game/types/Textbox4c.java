@@ -1,7 +1,7 @@
 package legend.game.types;
 
 public class Textbox4c {
-  public int _00;
+  public int state_00;
   public int _04;
   public int _06;
   public int _08;
