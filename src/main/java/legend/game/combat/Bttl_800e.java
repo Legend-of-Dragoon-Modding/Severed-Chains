@@ -4287,15 +4287,15 @@ public final class Bttl_800e {
                 .pos(2, left, bottom)
                 .pos(3, right, bottom);
 
-              final ArrayRef<UnsignedByteRef> spBarColours = spBarColours_800c6f04.get(spBarIndex);
+              final int[] spBarColours = CoreMod.CHARACTER_DATA[player.charId_272].getSpBarColour(spBarIndex);
 
               cmd
-                .rgb(0, spBarColours.get(0).get(), spBarColours.get(1).get(), spBarColours.get(2).get())
-                .rgb(1, spBarColours.get(0).get(), spBarColours.get(1).get(), spBarColours.get(2).get());
+                .rgb(0, spBarColours[0], spBarColours[1], spBarColours[2])
+                .rgb(1, spBarColours[0], spBarColours[1], spBarColours[2]);
 
               cmd
-                .rgb(2, spBarColours.get(3).get(), spBarColours.get(4).get(), spBarColours.get(5).get())
-                .rgb(3, spBarColours.get(3).get(), spBarColours.get(4).get(), spBarColours.get(5).get());
+                .rgb(2, spBarColours[3], spBarColours[4], spBarColours[5])
+                .rgb(3, spBarColours[3], spBarColours[4], spBarColours[5]);
 
               GPU.queueCommand(31, cmd);
             }
