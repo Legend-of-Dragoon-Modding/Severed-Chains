@@ -172,7 +172,7 @@ public final class WMap {
   private static final ArrayRef<VECTOR> smokeTranslationVectors_800c74b8 = MEMORY.ref(4, 0x800c74b8L, ArrayRef.of(VECTOR.class, 0x101, 0x10, VECTOR::new));
   private static final ArrayRef<ShortRef> locationsIndices_800c84c8 = MEMORY.ref(2, 0x800c84c8L, ArrayRef.of(ShortRef.class, 0x101, 2, ShortRef::new));
 
-  private static final IntRef _800c86cc = MEMORY.ref(4, 0x800c86ccL, IntRef::new);
+  private static final IntRef effectCount_800c86cc = MEMORY.ref(4, 0x800c86ccL, IntRef::new);
 
   private static float locationThumbnailBrightness_800c86d0;
   private static final ByteRef menuSelectorOptionIndex_800c86d2 = MEMORY.ref(1, 0x800c86d2L, ByteRef::new);
@@ -5452,7 +5452,7 @@ public final class WMap {
 
     //LAB_800e6c38
     final MATRIX sp0x38 = new MATRIX();
-    for(int i = 0; i < _800c86cc.get(); i++) {
+    for(int i = 0; i < effectCount_800c86cc.get(); i++) {
       //LAB_800e6c5c
       if(!places_800f0234.get(locations_800f0e34.get(locationsIndices_800c84c8.get(i).get()).placeIndex_02.get()).name_00.isNull()) {
         //LAB_800e6ccc
@@ -6500,7 +6500,7 @@ public final class WMap {
   @Method(0x800eb3c8L)
   public static void FUN_800eb3c8() {
     final boolean[] sp0xd0 = new boolean[0x101];
-    int sp24 = 0;
+    int effectCount = 0;
 
     final Vector3f sp0x30 = new Vector3f();
     final Vector3f sp0x40 = new Vector3f();
@@ -6553,7 +6553,7 @@ public final class WMap {
 
           //LAB_800eb694
           if(sp20 == 1) {
-            smokeTranslationVectors_800c74b8.get(sp24).set(sp0x60[0]);
+            smokeTranslationVectors_800c74b8.get(effectCount).set(sp0x60[0]);
           } else {
             //LAB_800eb724
             sp0x30.set(sp0x60[0]);
@@ -6567,13 +6567,13 @@ public final class WMap {
             }
 
             //LAB_800eb828
-            smokeTranslationVectors_800c74b8.get(sp24).set(sp0x50);
+            smokeTranslationVectors_800c74b8.get(effectCount).set(sp0x50);
           }
 
           //LAB_800eb8ac
-          locationsIndices_800c84c8.get(sp24).set((short)i);
+          locationsIndices_800c84c8.get(effectCount).set((short)i);
 
-          sp24++;
+          effectCount++;
         }
       }
 
@@ -6581,7 +6581,7 @@ public final class WMap {
     }
 
     //LAB_800eb8f4
-    _800c86cc.set(sp24);
+    effectCount_800c86cc.set(effectCount);
   }
 
   @Method(0x800eb914L)
@@ -7070,7 +7070,7 @@ public final class WMap {
 
     //LAB_800edc84
     //LAB_800edca8
-    for(int i = 0; i < _800c86cc.get(); i++) {
+    for(int i = 0; i < effectCount_800c86cc.get(); i++) {
       final WmapSmokeCloudInstance60 smoke = smokeCloudInstances_800c86f8[i];
 
       //LAB_800edccc
