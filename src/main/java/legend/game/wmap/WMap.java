@@ -3321,20 +3321,14 @@ public final class WMap {
         playSound(0, 4, 0, 0, (short)0, (short)0);
 
         struct258.svec_200.set(wmapStruct19c0_800c66b0.coord2_20.coord.transfer);
-
-        struct258.svec_208.setX((short)struct258.vec_94.x);
-        struct258.svec_208.setY((short)struct258.vec_94.y);
-        struct258.svec_208.setZ((short)struct258.vec_94.z);
-
+        struct258.svec_208.set(struct258.vec_94);
         struct258.angle_21c = struct258.rotation_a4.y;
         struct258.angle_21e = wmapStruct19c0_800c66b0.mapRotation_70.y;
         struct258._223 = 0;
         struct258._220 = 1;
         struct258.models_0c[2].coord2_14.transforms.rotate.set(0.0f, struct258.rotation_a4.y, 0.0f);
         struct258.models_0c[2].coord2_14.transforms.scale.x = 0.25f;
-        struct258.coord2_34.coord.transfer.setX((int)struct258.vec_94.x);
-        struct258.coord2_34.coord.transfer.setY((int)struct258.vec_94.y);
-        struct258.coord2_34.coord.transfer.setZ((int)struct258.vec_94.z);
+        struct258.coord2_34.coord.transfer.set(struct258.vec_94);
         struct258.models_0c[2].coord2_14.coord.transfer.set(struct258.coord2_34.coord.transfer);
 
         //LAB_800da8a0
@@ -3439,6 +3433,7 @@ public final class WMap {
         struct258.coolonWarpIndex_222 = coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_221)._14.get();
         struct258._220 = 3;
         coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_221).vec_00.get(struct258.vec_94);
+        struct258.vec_94.div(4096.0f);
         break;
 
       case 4:

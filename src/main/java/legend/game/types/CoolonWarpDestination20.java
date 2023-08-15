@@ -11,6 +11,7 @@ import legend.core.memory.types.UnsignedByteRef;
 public class CoolonWarpDestination20 implements MemoryRef {
   private final Value ref;
 
+  /** 12-bit fixed-point */
   public final VECTOR vec_00;
   public final IntRef _10;
   public final UnsignedByteRef _14;
