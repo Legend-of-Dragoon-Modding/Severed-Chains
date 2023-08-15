@@ -3307,6 +3307,7 @@ public final class WMap {
     renderQueenFuryCoolonUi(0);
 
     if(Input.pressedThisFrame(InputAction.BUTTON_WEST)) { // Square
+      destinationLabelStage_800c86f0.set(0);
       struct258._250 = 2;
     }
 
