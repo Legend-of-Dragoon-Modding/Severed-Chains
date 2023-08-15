@@ -611,7 +611,7 @@ public final class WMap {
 
     //LAB_800ccd30
     for(int i = 0; i < 8; i++) {
-      FUN_8002a3ec((short)i, 0);
+      FUN_8002a3ec(i, 0);
     }
 
     startLocationLabelsActive_800c68a8.set(false);
@@ -3367,7 +3367,7 @@ public final class WMap {
         struct258.models_0c[2].coord2_14.transforms.scale.set(struct258.models_0c[2].coord2_14.transforms.scale.x);
         struct258.vec_94.y -= 96.0f / (3.0f / vsyncMode_8007a3b8);
 
-        wmapStruct19c0_800c66b0.coord2_20.coord.transfer.y.sub(0x60);
+        wmapStruct19c0_800c66b0.coord2_20.coord.transfer.y.sub((int)(96 / (3.0f / vsyncMode_8007a3b8)));
 
         if(wmapStruct19c0_800c66b0.coord2_20.coord.transfer.getY() < -1500) {
           wmapStruct19c0_800c66b0.coord2_20.coord.transfer.setY(-1500);
@@ -3608,7 +3608,7 @@ public final class WMap {
       case 0xc:
         renderWinglyTeleportScreenEffect();
 
-        wmapStruct19c0_800c66b0.coord2_20.coord.transfer.y.add(0x70);
+        wmapStruct19c0_800c66b0.coord2_20.coord.transfer.y.add((int)(112 / (3.0f / vsyncMode_8007a3b8)));
 
         if(wmapStruct19c0_800c66b0.coord2_20.coord.transfer.getY() < struct258.svec_200.getY()) {
           wmapStruct19c0_800c66b0.coord2_20.coord.transfer.setY(struct258.svec_200.getY());
