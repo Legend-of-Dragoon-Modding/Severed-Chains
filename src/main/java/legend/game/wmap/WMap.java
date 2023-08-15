@@ -200,12 +200,12 @@ public final class WMap {
    * <ol start="0">
    *   <li>{@link WMap#initWmap}</li>
    *   <li>{@link WMap#waitForWmapMusicToLoad}</li>
-   *   <li>{@link WMap#FUN_800ccc64}</li>
-   *   <li>{@link WMap#FUN_800cccbc}</li>
+   *   <li>{@link WMap#initWmap2}</li>
+   *   <li>{@link WMap#handleAndRenderWmap}</li>
    *   <li>{@link WMap#transitionToScreens}</li>
    *   <li>{@link WMap#renderWmapScreens}</li>
    *   <li>{@link WMap#restoreMapOnExitMainMenu}</li>
-   *   <li>{@link WMap#FUN_800ccda4}</li>
+   *   <li>{@link WMap#transitionToSubmap}</li>
    *   <li>{@link WMap#transitionToCombat}</li>
    *   <li>{@link WMap#FUN_800cce9c}</li>
    *   <li>{@link WMap#FUN_800ccecc}</li>
@@ -217,12 +217,12 @@ public final class WMap {
   static {
     wmapStates_800ef000[0] = WMap::initWmap;
     wmapStates_800ef000[1] = WMap::waitForWmapMusicToLoad;
-    wmapStates_800ef000[2] = WMap::FUN_800ccc64;
-    wmapStates_800ef000[3] = WMap::FUN_800cccbc;
+    wmapStates_800ef000[2] = WMap::initWmap2;
+    wmapStates_800ef000[3] = WMap::handleAndRenderWmap;
     wmapStates_800ef000[4] = WMap::transitionToScreens;
     wmapStates_800ef000[5] = WMap::renderWmapScreens;
     wmapStates_800ef000[6] = WMap::restoreMapOnExitMainMenu;
-    wmapStates_800ef000[7] = WMap::FUN_800ccda4;
+    wmapStates_800ef000[7] = WMap::transitionToSubmap;
     wmapStates_800ef000[8] = WMap::transitionToCombat;
     wmapStates_800ef000[9] = WMap::FUN_800cce9c;
     wmapStates_800ef000[10] = WMap::FUN_800ccecc;
@@ -473,8 +473,9 @@ public final class WMap {
     //LAB_800cc82c
   }
 
+  /** Checks for triangle press and transitions into the inv screen */
   @Method(0x800cc83cL)
-  public static void FUN_800cc83c() {
+  public static void handleInventoryTransition() {
     if(Unpacker.getLoadingFileCount() == 0) {
       if(tickMainMenuOpenTransition_800c6690.get() == 0) {
         if((input_800bee90.get() & 0x1af) == 0) {
@@ -581,7 +582,7 @@ public final class WMap {
   }
 
   @Method(0x800ccc64L)
-  public static void FUN_800ccc64() {
+  public static void initWmap2() {
     setProjectionPlaneDistance(1100);
 
     //LAB_800ccc84
@@ -595,9 +596,9 @@ public final class WMap {
   }
 
   @Method(0x800cccbcL)
-  public static void FUN_800cccbc() {
-    FUN_800cd030();
-    FUN_800cc83c();
+  public static void handleAndRenderWmap() {
+    handleAndRenderMapAndPlayer();
+    handleInventoryTransition();
   }
 
   @Method(0x800ccce4L)
@@ -626,14 +627,14 @@ public final class WMap {
   }
 
   @Method(0x800ccda4L)
-  public static void FUN_800ccda4() {
+  public static void transitionToSubmap() {
     gameState_800babc8.areaIndex_4de = mapState_800c6798.areaIndex_12;
     gameState_800babc8.pathIndex_4d8 = mapState_800c6798.pathIndex_14;
     gameState_800babc8.dotIndex_4da = mapState_800c6798.dotIndex_16;
     gameState_800babc8.dotOffset_4dc = mapState_800c6798.dotOffset_18;
     gameState_800babc8.facing_4dd = mapState_800c6798.facing_1c;
 
-    FUN_800cd278();
+    deallocate();
 
     _80052c6c.setu(0);
     engineStateOnceLoaded_8004dd24 = EngineState.SUBMAP_05;
@@ -649,8 +650,8 @@ public final class WMap {
     gameState_800babc8.dotOffset_4dc = mapState_800c6798.dotOffset_18;
     gameState_800babc8.facing_4dd = mapState_800c6798.facing_1c;
 
-    FUN_800cd030();
-    FUN_800cd278();
+    handleAndRenderMapAndPlayer();
+    deallocate();
 
     _80052c6c.setu(0);
     engineStateOnceLoaded_8004dd24 = EngineState.COMBAT_06;
@@ -660,14 +661,14 @@ public final class WMap {
 
   @Method(0x800cce9cL)
   public static void FUN_800cce9c() {
-    FUN_800cd278();
+    deallocate();
     _80052c6c.setu(0x1L);
     pregameLoadingStage_800bb10c.set(0);
   }
 
   @Method(0x800cceccL)
   public static void FUN_800ccecc() {
-    FUN_800cd278();
+    deallocate();
     pregameLoadingStage_800bb10c.set(11);
   }
 
@@ -709,11 +710,11 @@ public final class WMap {
   }
 
   /** This is a hack to "fix" a bug caused by the game loading too fast. Without this delay, Dart will automatically walk forward a bit when leaving a submap. */
-  private static int loadWait = 60;
+  private static int loadWait = 60 / vsyncMode_8007a3b8;
 
   @Method(0x800cd030L)
-  public static void FUN_800cd030() {
-    FUN_800d1d88();
+  public static void handleAndRenderMapAndPlayer() {
+    updateMapCameraAndLights();
     FUN_800e3ff0();
 
     switch(worldMapState_800c6698) {
@@ -741,7 +742,7 @@ public final class WMap {
 
     //LAB_800cd148
     switch(playerState_800c669c) {
-      case 0 -> loadWait = 60;
+      case 0 -> loadWait = 60 / vsyncMode_8007a3b8;
 
       case 2 -> {
         if((filesLoadedFlags_800c66b8.get() & 0x2a8) == 0x2a8 && (filesLoadedFlags_800c66b8.get() & 0x550) == 0x550) {
@@ -751,8 +752,8 @@ public final class WMap {
 
       //LAB_800cd1dc
       case 3 -> {
-        if(loadWait-- > 30) break;
-        FUN_800dfbd8();
+        if(loadWait-- > 30 / vsyncMode_8007a3b8) break;
+        initPlayerModelAndAnimation();
         playerState_800c669c = 4;
       }
 
@@ -771,13 +772,13 @@ public final class WMap {
     }
 
     //LAB_800cd250
-    FUN_800e4e84();
+    renderMapBackground();
     renderMapOverlay();
     handleSmokeEffect();
   }
 
   @Method(0x800cd278L)
-  public static void FUN_800cd278() {
+  public static void deallocate() {
     FUN_800d55fc();
     deallocateWorldMap();
     unloadWmapPlayerModels();
@@ -1536,12 +1537,12 @@ public final class WMap {
     clearGreen_800bb104.set(0);
     clearBlue_800babc0.set(0);
 
-    v0._154[0].index_00 = -1;
+    v0._154[0].locationIndex_00 = -1;
     v0._196c = 0;
     v0._1970 = 0;
     v0._1974 = -1;
 
-    FUN_800d1db8();
+    calculateDistancesToPlaces();
 
     //LAB_800d1984
     for(int i = 0; i < 3; i++) {
@@ -1577,18 +1578,18 @@ public final class WMap {
   }
 
   @Method(0x800d1d88L)
-  public static void FUN_800d1d88() {
-    FUN_800d1db8();
-    FUN_800d2d90();
+  public static void updateMapCameraAndLights() {
+    calculateDistancesToPlaces();
+    updateMapAndCamera();
     updateLights();
   }
 
   @Method(0x800d1db8L)
-  public static void FUN_800d1db8() {
+  public static void calculateDistancesToPlaces() {
     final WMapStruct258 v0 = wmapStruct258_800c66a8;
-    final long x = v0.coord2_34.coord.transfer.getX();
-    final long y = v0.coord2_34.coord.transfer.getY();
-    final long z = v0.coord2_34.coord.transfer.getZ();
+    final int x = v0.coord2_34.coord.transfer.getX();
+    final int y = v0.coord2_34.coord.transfer.getY();
+    final int z = v0.coord2_34.coord.transfer.getZ();
 
     //LAB_800d1e14
     int count = 0;
@@ -1596,14 +1597,14 @@ public final class WMap {
       //LAB_800d1e38
       if(!places_800f0234.get(locations_800f0e34.get(i).placeIndex_02.get()).name_00.isNull()) {
         //LAB_800d1e90
-        if(FUN_800eb09c(i, 1, wmapStruct19c0_800c66b0._154[count].vec_08) == 0) {
+        if(FUN_800eb09c(i, 1, wmapStruct19c0_800c66b0._154[count].position_08) == 0) {
           //LAB_800d1ee0
-          final float dx = x - wmapStruct19c0_800c66b0._154[count].vec_08.x;
-          final float dy = y - wmapStruct19c0_800c66b0._154[count].vec_08.y;
-          final float dz = z - wmapStruct19c0_800c66b0._154[count].vec_08.z;
+          final float dx = x - wmapStruct19c0_800c66b0._154[count].position_08.x;
+          final float dy = y - wmapStruct19c0_800c66b0._154[count].position_08.y;
+          final float dz = z - wmapStruct19c0_800c66b0._154[count].position_08.z;
 
-          wmapStruct19c0_800c66b0._154[count].index_00 = i;
-          wmapStruct19c0_800c66b0._154[count].vecLength_04 = Math.sqrt(dx * dx + dy * dy + dz * dz);
+          wmapStruct19c0_800c66b0._154[count].locationIndex_00 = i;
+          wmapStruct19c0_800c66b0._154[count].distanceFromPlayer_04 = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
           count++;
         }
@@ -1613,8 +1614,8 @@ public final class WMap {
     }
 
     //LAB_800d2088
-    wmapStruct19c0_800c66b0._154[count].index_00 = -1;
-    Arrays.sort(wmapStruct19c0_800c66b0._154, Comparator.comparingDouble(a -> a.vecLength_04));
+    wmapStruct19c0_800c66b0._154[count].locationIndex_00 = -1;
+    Arrays.sort(wmapStruct19c0_800c66b0._154, Comparator.comparingDouble(a -> a.distanceFromPlayer_04));
   }
 
   @Method(0x800d219cL)
@@ -1712,7 +1713,7 @@ public final class WMap {
   }
 
   @Method(0x800d2d90L)
-  public static void FUN_800d2d90() {
+  public static void updateMapAndCamera() {
     FUN_800d5288();
 
     final WMapStruct19c0 struct = wmapStruct19c0_800c66b0;
@@ -1793,7 +1794,7 @@ public final class WMap {
     //LAB_800d31e8
     FUN_800d35fc();
 
-    final long v0 = wmapStruct19c0_800c66b0._110;
+    final int v0 = wmapStruct19c0_800c66b0._110;
     if(v0 == 1) {
       //LAB_800d3250
       FUN_800d5018();
@@ -1813,7 +1814,7 @@ public final class WMap {
       }
 
       return;
-    } else if((int)v0 < 2) {
+    } else if(v0 < 2) {
       //LAB_800d3248
       return;
     }
@@ -2220,7 +2221,7 @@ public final class WMap {
     final int v0 = struct._11a;
 
     if(v0 == 0) {
-      if(struct._154[0].vecLength_04 < 90.0f) {
+      if(struct._154[0].distanceFromPlayer_04 < 90.0f) {
         struct._11a = 1;
         //LAB_800d52e8
       } else if(wmapStruct258_800c66a8._05 == 0 || struct._c5 != 2) {
@@ -3939,7 +3940,7 @@ public final class WMap {
   }
 
   @Method(0x800dfbd8L)
-  public static void FUN_800dfbd8() {
+  public static void initPlayerModelAndAnimation() {
     final WMapStruct258 struct258 = wmapStruct258_800c66a8;
     struct258.vec_94.x = struct258.coord2_34.coord.transfer.getX();
     struct258.vec_94.y = struct258.coord2_34.coord.transfer.getY();
@@ -4924,7 +4925,7 @@ public final class WMap {
   }
 
   @Method(0x800e4e84L)
-  public static void FUN_800e4e84() {
+  public static void renderMapBackground() {
     if((filesLoadedFlags_800c66b8.get() & 0x1) == 0) {
       return;
     }
