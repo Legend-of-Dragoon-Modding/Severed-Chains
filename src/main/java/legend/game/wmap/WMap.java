@@ -2647,6 +2647,10 @@ public final class WMap {
         .clut(640, i < 5 ? 502 : 503)
         .vramPos(640, 256);
 
+      if(i < 2) {
+        cmd.translucent(Translucency.HALF_B_PLUS_HALF_F);
+      }
+
       //LAB_800d6d44
       //LAB_800d6d84
       //LAB_800d6da8
