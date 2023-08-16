@@ -4843,7 +4843,7 @@ public final class SMap {
     }
 
     //LAB_800e77d8
-    if(textureIndex > 32) {
+    if(textureIndex >= envRenderMetrics_800cb710.length) {
       return -1;
     }
 
@@ -4998,9 +4998,9 @@ public final class SMap {
         metrics.y_12 = submapOffsetY_800cb564 + screenOffsetY_800cb56c + metrics.offsetY_1e + envForegroundMetrics_800cb590[i].y_04;
 
         // This was causing a problem when moving left from the room before Zackwell. Not sure if this is a retail issue or SC-specific. GH#332
-        int z = envZs[i];
-        if(z < 0) {
-          z = (1 << orderingTableBits_1f8003c0.get()) - 1;
+        final int z = envZs[i];
+        if((short)z < 0) {
+          continue;
         }
 
         GPU.queueCommand(z, new GpuCommandQuad()
