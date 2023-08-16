@@ -172,7 +172,7 @@ public final class WMap {
   private static final ArrayRef<VECTOR> smokeTranslationVectors_800c74b8 = MEMORY.ref(4, 0x800c74b8L, ArrayRef.of(VECTOR.class, 0x101, 0x10, VECTOR::new));
   private static final ArrayRef<ShortRef> locationsIndices_800c84c8 = MEMORY.ref(2, 0x800c84c8L, ArrayRef.of(ShortRef.class, 0x101, 2, ShortRef::new));
 
-  private static final IntRef effectCount_800c86cc = MEMORY.ref(4, 0x800c86ccL, IntRef::new);
+  private static final IntRef placeCount_800c86cc = MEMORY.ref(4, 0x800c86ccL, IntRef::new);
 
   private static float locationThumbnailBrightness_800c86d0;
   private static final ByteRef menuSelectorOptionIndex_800c86d2 = MEMORY.ref(1, 0x800c86d2L, ByteRef::new);
@@ -5410,7 +5410,7 @@ public final class WMap {
       //LAB_800e6b04
       if(!Input.getButtonState(InputAction.BUTTON_CENTER_2)) {
         //LAB_800e6b20
-        for(int i = 0; i < 3; i++) {
+        for(int i = 0; i < 7; i++) {
           //LAB_800e6b3c
           FUN_8002a3ec(i, 0);
         }
@@ -5456,7 +5456,7 @@ public final class WMap {
 
     //LAB_800e6c38
     final MATRIX sp0x38 = new MATRIX();
-    for(int i = 0; i < effectCount_800c86cc.get(); i++) {
+    for(int i = 0; i < placeCount_800c86cc.get(); i++) {
       //LAB_800e6c5c
       if(!places_800f0234.get(locations_800f0e34.get(locationsIndices_800c84c8.get(i).get()).placeIndex_02.get()).name_00.isNull()) {
         //LAB_800e6ccc
@@ -6585,7 +6585,7 @@ public final class WMap {
     }
 
     //LAB_800eb8f4
-    effectCount_800c86cc.set(effectCount);
+    placeCount_800c86cc.set(effectCount);
   }
 
   @Method(0x800eb914L)
@@ -7074,7 +7074,7 @@ public final class WMap {
 
     //LAB_800edc84
     //LAB_800edca8
-    for(int i = 0; i < effectCount_800c86cc.get(); i++) {
+    for(int i = 0; i < placeCount_800c86cc.get(); i++) {
       final WmapSmokeCloudInstance60 smoke = smokeCloudInstances_800c86f8[i];
 
       //LAB_800edccc
