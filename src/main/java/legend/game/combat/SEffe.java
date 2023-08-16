@@ -8000,8 +8000,8 @@ public final class SEffe {
   }
 
   @Method(0x80114f3cL)
-  public static void FUN_80114f3c(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.AnimType>> manager, final int propertyIndex, final int speed, final int acceleration) {
-    final EffectManagerData6c<EffectManagerData6cInner.AnimType> state = manager.innerStruct_00;
+  public static <T extends EffectManagerData6cInner<T>> void FUN_80114f3c(final ScriptState<EffectManagerData6c<T>> manager, final int propertyIndex, final int speed, final int acceleration) {
+    final EffectManagerData6c<?> state = manager.innerStruct_00;
 
     if((1L << propertyIndex + 5 & state.flags_04) != 0) {
       FUN_800e8d04(state, propertyIndex + 5);
@@ -8019,7 +8019,7 @@ public final class SEffe {
 
   /** TODO this method advances animation frames */
   @Method(0x80114d98L)
-  public static int FUN_80114d98(final EffectManagerData6c<EffectManagerData6cInner.AnimType> a0, final BttlScriptData6cSub1c_3 a1) {
+  public static <T extends EffectManagerData6cInner<T>> int FUN_80114d98(final EffectManagerData6c<T> a0, final BttlScriptData6cSub1c_3 a1) {
     a1.speed_10 += a1.acceleration_14;
     a1.accumulator_0c += a1.speed_10;
 
