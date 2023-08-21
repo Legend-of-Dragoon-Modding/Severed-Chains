@@ -1,5 +1,6 @@
 package legend.game.inventory.screens;
 
+import legend.game.Scus94491BpeSegment;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Glyph;
@@ -13,7 +14,6 @@ import java.util.function.Function;
 import static legend.core.IoHelper.getPackedFlag;
 import static legend.game.SItem._8011b75c;
 import static legend.game.SItem.goodsItemNames_8011c008;
-import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -27,7 +27,7 @@ public class GoodsScreen extends MenuScreen {
 
   public GoodsScreen(final Runnable unload) {
     deallocateRenderables(0xff);
-    scriptStartEffect(2, 10);
+    Scus94491BpeSegment.startFadeEffect(2, 10);
 
     this.unload = unload;
 

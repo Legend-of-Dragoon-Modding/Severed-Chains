@@ -1,5 +1,6 @@
 package legend.game.inventory.screens;
 
+import legend.game.Scus94491BpeSegment;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Button;
@@ -28,7 +29,6 @@ import static legend.game.SItem.renderCentredText;
 import static legend.game.SItem.renderCharacter;
 import static legend.game.SItem.submapNames_8011c108;
 import static legend.game.SItem.worldMapNames_8011c1ec;
-import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.getTimestampPart;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
@@ -40,7 +40,7 @@ import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
-import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
+import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
 public class MainMenuScreen extends MenuScreen {
@@ -165,7 +165,7 @@ public class MainMenuScreen extends MenuScreen {
     switch(this.loadingStage) {
       case 0 -> {
         cacheCharacterSlots();
-        scriptStartEffect(2, 10);
+        Scus94491BpeSegment.startFadeEffect(2, 10);
 
         for(int i = 0; i < 3; i++) {
           this.charCards[i].setCharId(gameState_800babc8.charIds_88[i]);
@@ -186,7 +186,7 @@ public class MainMenuScreen extends MenuScreen {
       // Fade out
       case 100 -> {
         this.renderInventoryMenu(0);
-        scriptStartEffect(1, 10);
+        Scus94491BpeSegment.startFadeEffect(1, 10);
         this.loadingStage++;
       }
 
@@ -217,7 +217,7 @@ public class MainMenuScreen extends MenuScreen {
 
     final LodString name;
     if(engineState_8004dd20 == EngineState.SUBMAP_05) {
-      name = submapNames_8011c108.get(submapIndex_800bd808.get()).deref();
+      name = submapNames_8011c108.get(submapId_800bd808.get()).deref();
     } else {
       name = worldMapNames_8011c1ec.get(continentIndex_800bf0b0.get()).deref();
     }

@@ -2,6 +2,7 @@ package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
 import legend.core.memory.Method;
+import legend.game.Scus94491BpeSegment;
 import legend.game.input.InputAction;
 import legend.game.inventory.UseItemResponse;
 import legend.game.types.ActiveStatsa0;
@@ -41,7 +42,6 @@ import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderMenuItems;
 import static legend.game.SItem.renderString;
 import static legend.game.SItem.useItemGlyphs_801141fc;
-import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.getItemIcon;
@@ -83,7 +83,7 @@ public class UseItemScreen extends MenuScreen {
   protected void render() {
     switch(this.loadingStage) {
       case 0 -> {
-        scriptStartEffect(2, 10);
+        Scus94491BpeSegment.startFadeEffect(2, 10);
         this.charSlot = 0;
         this.slotScroll = 0;
         this.selectedSlot = 0;

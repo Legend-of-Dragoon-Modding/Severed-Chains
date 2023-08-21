@@ -31,7 +31,7 @@ import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b.fmvStage_800bf0d8;
-import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
+import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public final class Fmv {
@@ -209,7 +209,7 @@ public final class Fmv {
   public static void playCurrentFmv() {
     sssqResetStuff();
 
-    submapIndex_800bd808.set(-1);
+    submapId_800bd808.set(-1);
 
     Fmv.play(diskFmvs_80052d7c[drgnBinIndex_800bc058 - 1][fmvIndex_800bf0dc - _80052d6c.get(drgnBinIndex_800bc058 - 1).get()], true);
     fmvStage_800bf0d8.setu(0);

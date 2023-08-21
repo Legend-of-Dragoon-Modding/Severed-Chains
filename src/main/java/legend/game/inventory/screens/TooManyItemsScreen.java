@@ -1,6 +1,7 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
+import legend.game.Scus94491BpeSegment;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.types.EngineState;
@@ -29,7 +30,6 @@ import static legend.game.SItem.renderMenuItems;
 import static legend.game.SItem.renderString;
 import static legend.game.SItem.renderText;
 import static legend.game.SMap.FUN_800e3fac;
-import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.itemCantBeDiscarded;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
@@ -92,7 +92,7 @@ public class TooManyItemsScreen extends MenuScreen {
       case _3 -> {
         deallocateRenderables(0);
         this.FUN_8010fd80(true, this.droppedItems.get(this.dropIndex).itemId_00, this.invIndex, this.invScroll, 0);
-        scriptStartEffect(2, 10);
+        Scus94491BpeSegment.startFadeEffect(2, 10);
         this.menuState = MenuState._4;
       }
 
@@ -170,7 +170,7 @@ public class TooManyItemsScreen extends MenuScreen {
               }
             }
 
-            scriptStartEffect(1, 10);
+            Scus94491BpeSegment.startFadeEffect(1, 10);
             this.menuState = MenuState._12;
           } else {
             this.menuState = MenuState._6;
@@ -184,7 +184,7 @@ public class TooManyItemsScreen extends MenuScreen {
         this.FUN_8010fd80(false, this.droppedItems.get(this.dropIndex).itemId_00, this.invIndex, this.invScroll, 0);
 
         if(fullScreenEffect_800bb140.currentColour_28 >= 0xff) {
-          scriptStartEffect(2, 10);
+          Scus94491BpeSegment.startFadeEffect(2, 10);
           deallocateRenderables(0xff);
           uiFile_800bdc3c = null;
           whichMenu_800bdc38 = WhichMenu.UNLOAD_TOO_MANY_ITEMS_MENU_35;

@@ -18,6 +18,7 @@ public class SubmapObject210 {
   public int s_134;
 
   public final VECTOR vec_138 = new VECTOR();
+  /** Number of frames for movement? */
   public int i_144;
   public final VECTOR vec_148 = new VECTOR();
   public final VECTOR vec_154 = new VECTOR();
@@ -27,7 +28,8 @@ public class SubmapObject210 {
   public int s_172;
   public int s_174;
 
-  public int s_178;
+  /** Only one sobj may have this value set at a time */
+  public boolean cameraAttached_178;
 
   /** The amount to rotate this sobj by each frame for {@link SubmapObject210#rotationFrames_188} frames */
   public final Vector3f rotationAmount_17c = new Vector3f();

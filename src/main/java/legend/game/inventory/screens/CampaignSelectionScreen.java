@@ -2,6 +2,7 @@ package legend.game.inventory.screens;
 
 import legend.core.GameEngine;
 import legend.game.SItem;
+import legend.game.Scus94491BpeSegment;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.controls.Background;
@@ -24,7 +25,6 @@ import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.SAVES;
 import static legend.core.GameEngine.bootMods;
 import static legend.game.SItem.menuStack;
-import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
@@ -37,7 +37,7 @@ import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 public class CampaignSelectionScreen extends MenuScreen {
   public CampaignSelectionScreen() {
     deallocateRenderables(0xff);
-    scriptStartEffect(2, 10);
+    Scus94491BpeSegment.startFadeEffect(2, 10);
 
     this.addControl(new Background());
 
@@ -93,7 +93,7 @@ public class CampaignSelectionScreen extends MenuScreen {
       }
     }, () -> {
       menuStack.popScreen();
-      scriptStartEffect(2, 10);
+      Scus94491BpeSegment.startFadeEffect(2, 10);
     }, campaign));
 
     if(missingMods.isEmpty()) {

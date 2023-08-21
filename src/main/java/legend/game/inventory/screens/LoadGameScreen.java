@@ -1,6 +1,7 @@
 package legend.game.inventory.screens;
 
 import legend.game.SItem;
+import legend.game.Scus94491BpeSegment;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.BigList;
@@ -15,7 +16,6 @@ import java.util.function.Consumer;
 
 import static legend.core.GameEngine.SAVES;
 import static legend.game.SItem.menuStack;
-import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 
@@ -28,7 +28,7 @@ public class LoadGameScreen extends MenuScreen {
     this.closed = closed;
 
     deallocateRenderables(0xff);
-    scriptStartEffect(2, 10);
+    Scus94491BpeSegment.startFadeEffect(2, 10);
 
     this.addControl(new Background());
 

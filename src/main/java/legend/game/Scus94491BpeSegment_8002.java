@@ -131,7 +131,6 @@ import static legend.game.Scus94491BpeSegment.loadDrgnFileSync;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.rectArray28_80010770;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
-import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.soundBufferOffset;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
@@ -1088,7 +1087,7 @@ public final class Scus94491BpeSegment_8002 {
         deallocateRenderables(0xff);
         uiFile_800bdc3c = null;
 
-        scriptStartEffect(2, 10);
+        Scus94491BpeSegment.startFadeEffect(2, 10);
 
         if(engineState_8004dd20 == EngineState.SUBMAP_05) {
           FUN_800e3fac();
@@ -4688,7 +4687,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002bb38L)
-  public static void FUN_8002bb38(final int joypadIndex, final long a1) {
+  public static void FUN_8002bb38(final int joypadIndex, final int a1) {
     if(!gameState_800babc8.vibrationEnabled_4e1) {
       return;
     }
@@ -4697,7 +4696,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002bcc8L)
-  public static void FUN_8002bcc8(final long a0, final long a1) {
+  public static void FUN_8002bcc8(final int a0, final int a1) {
     if(!gameState_800babc8.vibrationEnabled_4e1) {
       return;
     }
@@ -4706,7 +4705,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002bda4L)
-  public static void FUN_8002bda4(final long a0, final long a1, final long a2) {
+  public static void FUN_8002bda4(final int a0, final int a1, final int a2) {
     if(!gameState_800babc8.vibrationEnabled_4e1) {
       return;
     }

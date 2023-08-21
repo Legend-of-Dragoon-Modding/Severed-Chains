@@ -1,6 +1,7 @@
 package legend.game.inventory.screens;
 
 import legend.core.GameEngine;
+import legend.game.Scus94491BpeSegment;
 import legend.game.i18n.I18n;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.controls.Background;
@@ -13,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 
@@ -22,7 +22,7 @@ public class OptionsScreen extends VerticalLayoutScreen {
 
   public OptionsScreen(final ConfigCollection config, final Set<ConfigStorageLocation> validLocations, final Runnable unload) {
     deallocateRenderables(0xff);
-    scriptStartEffect(2, 10);
+    Scus94491BpeSegment.startFadeEffect(2, 10);
 
     this.unload = unload;
 

@@ -1,5 +1,6 @@
 package legend.game.inventory.screens;
 
+import legend.game.Scus94491BpeSegment;
 import legend.game.i18n.I18n;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.controls.Background;
@@ -13,7 +14,6 @@ import java.util.List;
 import java.util.Set;
 
 import static legend.core.GameEngine.MODS;
-import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 
@@ -22,7 +22,7 @@ public class ModsScreen extends VerticalLayoutScreen {
 
   public ModsScreen(final Set<String> enabledMods, final Runnable unload) {
     deallocateRenderables(0xff);
-    scriptStartEffect(2, 10);
+    Scus94491BpeSegment.startFadeEffect(2, 10);
 
     this.unload = unload;
 
