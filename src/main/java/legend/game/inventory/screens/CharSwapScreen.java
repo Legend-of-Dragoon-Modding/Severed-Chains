@@ -2,7 +2,6 @@ package legend.game.inventory.screens;
 
 import legend.core.Config;
 import legend.core.MathHelper;
-import legend.game.Scus94491BpeSegment;
 import legend.game.input.InputAction;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.Renderable58;
@@ -16,6 +15,7 @@ import static legend.game.SItem.initGlyph;
 import static legend.game.SItem.renderCharacterSlot;
 import static legend.game.SItem.renderFourDigitNumber;
 import static legend.game.SItem.renderGlyphs;
+import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
@@ -42,7 +42,7 @@ public class CharSwapScreen extends MenuScreen {
   protected void render() {
     switch(this.loadingStage) {
       case 0 -> {
-        Scus94491BpeSegment.startFadeEffect(2, 10);
+        startFadeEffect(2, 10);
         this.primaryCharIndex = 0;
         this.secondaryCharIndex = 0;
         this.loadingStage++;

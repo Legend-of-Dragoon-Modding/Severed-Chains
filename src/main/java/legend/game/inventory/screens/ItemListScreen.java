@@ -1,7 +1,6 @@
 package legend.game.inventory.screens;
 
 import it.unimi.dsi.fastutil.ints.IntList;
-import legend.game.Scus94491BpeSegment;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Glyph;
@@ -20,6 +19,7 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.game.SItem.getItemDescription;
 import static legend.game.SItem.loadItemsAndEquipmentForDisplay;
 import static legend.game.SItem.menuStack;
+import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.menuItemComparator;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
@@ -35,7 +35,7 @@ public class ItemListScreen extends MenuScreen {
 
   public ItemListScreen(final Runnable unload) {
     deallocateRenderables(0xff);
-    Scus94491BpeSegment.startFadeEffect(2, 10);
+    startFadeEffect(2, 10);
 
     this.unload = unload;
 

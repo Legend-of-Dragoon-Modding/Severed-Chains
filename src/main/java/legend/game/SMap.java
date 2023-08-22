@@ -114,6 +114,7 @@ import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.SItem.loadCharacterStats;
+import static legend.game.Scus94491BpeSegment.*;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001ada0;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
@@ -4053,7 +4054,7 @@ public final class SMap {
     _800bd7b4.setu(0);
     if(_800cab28.get() == 0) {
       if(fullScreenEffect_800bb140._24 == 0) {
-        Scus94491BpeSegment.startFadeEffect(1, 10);
+        startFadeEffect(1, 10);
         _800cab28.addu(0x1L);
       }
     } else {
@@ -4334,7 +4335,7 @@ public final class SMap {
           FUN_800e770c();
           savedGameSelected_800bdc34.set(false);
           _80052c44.setu(0);
-          Scus94491BpeSegment.startFadeEffect(2, 10);
+          startFadeEffect(2, 10);
           _800cab24 = FUN_800ea974(_800caaf4.get());
           cacheHasNoEncounters();
           smapLoadingStage_800cb430.setu(0xcL);
@@ -4356,7 +4357,7 @@ public final class SMap {
         _800bd7b4.setu(0);
         if(_800cab28.get() != 0 || fullScreenEffect_800bb140._24 == 0) {
           if(fullScreenEffect_800bb140._24 == 0) {
-            Scus94491BpeSegment.startFadeEffect(1, 10);
+            startFadeEffect(1, 10);
           }
 
           //LAB_800e5fa4
@@ -4436,7 +4437,7 @@ public final class SMap {
         _800bd7b4.setu(0);
         if(_800cab28.get() != 0 || fullScreenEffect_800bb140._24 == 0) {
           if(fullScreenEffect_800bb140._24 == 0) {
-            Scus94491BpeSegment.startFadeEffect(1, 10);
+            startFadeEffect(1, 10);
           }
 
           //LAB_800e61fc
@@ -4468,7 +4469,7 @@ public final class SMap {
         _800bd7b4.setu(0);
         if(_800cab28.get() != 0 || fullScreenEffect_800bb140._24 == 0) {
           if(fullScreenEffect_800bb140._24 == 0) {
-            Scus94491BpeSegment.startFadeEffect(1, 10);
+            startFadeEffect(1, 10);
           }
 
           //LAB_800e62b0
@@ -4504,7 +4505,7 @@ public final class SMap {
         _800bd7b4.setu(0);
         if(_800cab28.get() != 0 || fullScreenEffect_800bb140._24 == 0) {
           if(fullScreenEffect_800bb140._24 == 0) {
-            Scus94491BpeSegment.startFadeEffect(1, 10);
+            startFadeEffect(1, 10);
           }
 
           //LAB_800e643c
@@ -4535,7 +4536,7 @@ public final class SMap {
         _800bd7b4.setu(0);
         if(_800cab28.get() != 0 || fullScreenEffect_800bb140._24 == 0) {
           if(fullScreenEffect_800bb140._24 == 0) {
-            Scus94491BpeSegment.startFadeEffect(1, 10);
+            startFadeEffect(1, 10);
           }
 
           //LAB_800e6394
@@ -6244,7 +6245,7 @@ public final class SMap {
   public static void fadeInCredits() {
     if(_800bf0cf.get() == 4) {
       //LAB_800eadd0
-      Scus94491BpeSegment.startFadeEffect(2, 15);
+      startFadeEffect(2, 15);
       pregameLoadingStage_800bb10c.set(4);
     }
 
@@ -6264,7 +6265,7 @@ public final class SMap {
 
   @Method(0x800eae38L)
   public static void fadeOutCredits() {
-    Scus94491BpeSegment.startFadeEffect(1, 15);
+    startFadeEffect(1, 15);
     pregameLoadingStage_800bb10c.set(6);
   }
 

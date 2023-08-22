@@ -1,7 +1,6 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
-import legend.game.Scus94491BpeSegment;
 import legend.game.input.InputAction;
 import legend.game.types.MenuItemStruct04;
 import legend.game.types.Renderable58;
@@ -26,6 +25,7 @@ import static legend.game.SItem.renderCharacterStats;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderMenuItems;
 import static legend.game.SItem.renderString;
+import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.addHp;
 import static legend.game.Scus94491BpeSegment_8002.addMp;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
@@ -61,7 +61,7 @@ public class EquipmentScreen extends MenuScreen {
   protected void render() {
     switch(this.loadingStage) {
       case 0:
-        Scus94491BpeSegment.startFadeEffect(2, 10);
+        startFadeEffect(2, 10);
         deallocateRenderables(0xff);
         this.loadingStage++;
 
