@@ -113,7 +113,7 @@ public class ScriptState<T> {
    */
   public final int[] storage_44 = new int[33];
   public ScriptState<BattleObject27c> scriptState_c8;
-  public int _cc;
+  public int ticks_cc;
   public int _d0;
   public int _d4;
   public int _d8;

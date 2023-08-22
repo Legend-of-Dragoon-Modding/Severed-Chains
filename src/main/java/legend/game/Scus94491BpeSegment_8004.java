@@ -247,7 +247,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[136] = Bttl_800c::scriptGetMonsterStatusResistFlags;
     scriptSubFunctions_8004e29c[137] = Scus94491BpeSegment::scriptRewindAndPause2;
     scriptSubFunctions_8004e29c[138] = Bttl_800c::FUN_800cb618;
-    scriptSubFunctions_8004e29c[139] = Bttl_800c::scriptSetInterpolationDisabled;
+    scriptSubFunctions_8004e29c[139] = Bttl_800c::scriptSetInterpolationEnabled;
     scriptSubFunctions_8004e29c[140] = Bttl_800c::FUN_800cb6bc;
     scriptSubFunctions_8004e29c[141] = Bttl_800c::FUN_800cb764;
     scriptSubFunctions_8004e29c[142] = Bttl_800c::FUN_800cb76c;
@@ -284,21 +284,21 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[173] = Bttl_800c::scriptSetBobjDeadAndDropLoot;
     scriptSubFunctions_8004e29c[174] = Bttl_800c::scriptGetHitProperty;
     scriptSubFunctions_8004e29c[175] = Bttl_800c::scriptSetBobjDead;
-    scriptSubFunctions_8004e29c[176] = Bttl_800c::levelUpAddition;
+    scriptSubFunctions_8004e29c[176] = Bttl_800c::scriptLevelUpAddition;
     scriptSubFunctions_8004e29c[177] = Bttl_800c::scriptGetBobjStat2;
     scriptSubFunctions_8004e29c[178] = Bttl_800c::scriptSetBobjRawStat;
 
     scriptSubFunctions_8004e29c[192] = Scus94491BpeSegment_8002::scriptGetFreeTextboxIndex;
-    scriptSubFunctions_8004e29c[193] = Scus94491BpeSegment_8002::FUN_80029bd4;
-    scriptSubFunctions_8004e29c[194] = Scus94491BpeSegment_8002::FUN_80025158;
+    scriptSubFunctions_8004e29c[193] = Scus94491BpeSegment_8002::scriptInitTextbox;
+    scriptSubFunctions_8004e29c[194] = Scus94491BpeSegment_8002::scriptSetTextboxContents;
     scriptSubFunctions_8004e29c[195] = Scus94491BpeSegment_8002::FUN_80029c98;
     scriptSubFunctions_8004e29c[196] = Scus94491BpeSegment_8002::FUN_80029cf4;
     scriptSubFunctions_8004e29c[197] = Scus94491BpeSegment_8002::FUN_80029d34;
     scriptSubFunctions_8004e29c[198] = Scus94491BpeSegment_8002::scriptAddSobjTextbox;
     scriptSubFunctions_8004e29c[199] = Scus94491BpeSegment_8002::FUN_80029e8c;
-    scriptSubFunctions_8004e29c[200] = Scus94491BpeSegment_8002::FUN_800254bc;
-    scriptSubFunctions_8004e29c[201] = Scus94491BpeSegment_8002::FUN_80029d6c;
-    scriptSubFunctions_8004e29c[202] = Scus94491BpeSegment_8002::FUN_80029e04;
+    scriptSubFunctions_8004e29c[200] = Scus94491BpeSegment_8002::scriptAddTextbox;
+    scriptSubFunctions_8004e29c[201] = Scus94491BpeSegment_8002::scriptDeallocateTextbox;
+    scriptSubFunctions_8004e29c[202] = Scus94491BpeSegment_8002::scriptDeallocateAllTextboxes;
     scriptSubFunctions_8004e29c[203] = Scus94491BpeSegment_8002::FUN_80029ecc;
     scriptSubFunctions_8004e29c[204] = Scus94491BpeSegment_8002::FUN_80028ff8;
     scriptSubFunctions_8004e29c[205] = Scus94491BpeSegment_8002::FUN_80029f48;

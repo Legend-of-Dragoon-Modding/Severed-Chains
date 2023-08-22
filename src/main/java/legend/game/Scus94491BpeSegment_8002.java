@@ -36,6 +36,8 @@ import legend.game.modding.events.inventory.TakeItemEvent;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
+import legend.game.scripting.ScriptDescription;
+import legend.game.scripting.ScriptParam;
 import legend.game.sound.EncounterSoundEffects10;
 import legend.game.sound.QueuedSound28;
 import legend.game.sound.SoundFile;
@@ -96,7 +98,7 @@ import static legend.game.SItem.renderPostCombatReport;
 import static legend.game.SItem.textLength;
 import static legend.game.SMap.FUN_800da114;
 import static legend.game.SMap.FUN_800de004;
-import static legend.game.SMap.FUN_800e2428;
+import static legend.game.SMap.positionTextboxAtSobj;
 import static legend.game.SMap.FUN_800e3fac;
 import static legend.game.SMap.FUN_800e4018;
 import static legend.game.SMap.FUN_800e4708;
@@ -2117,10 +2119,14 @@ public final class Scus94491BpeSegment_8002 {
     textV_800be5c8.setu(0);
   }
 
+  @ScriptDescription("Sets a textbox's text and type")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The textbox index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "The textbox type")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.STRING, name = "text", description = "The textbox text")
   @Method(0x80025158L)
-  public static FlowControl FUN_80025158(final RunningScript<?> script) {
+  public static FlowControl scriptSetTextboxContents(final RunningScript<?> script) {
     final int textboxIndex = script.params_20[0].get();
-    FUN_800258a8(textboxIndex);
+    clearTextboxText(textboxIndex);
 
     final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
     textboxText.type_04 = script.params_20[1].get();
@@ -2128,10 +2134,17 @@ public final class Scus94491BpeSegment_8002 {
     textboxText.str_24 = LodString.fromParam(script.params_20[2]);
     textboxText.chars_58 = new TextboxChar08[textboxText.chars_1c * (textboxText.lines_1e + 1)];
     Arrays.setAll(textboxText.chars_58, i -> new TextboxChar08());
-    FUN_80027d74(textboxIndex, textboxText.x_14, textboxText.y_16);
+    calculateAppropriateTextboxBounds(textboxIndex, textboxText.x_14, textboxText.y_16);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Adds a textbox to a submap object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The textbox index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "submapObjectIndex", description = "The submap object, but may also have the flag 0x1000 set (unknown meaning)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "packedData", description = "Unknown data, 3 nibbles")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "width", description = "The textbox width")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "height", description = "The textbox height")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.STRING, name = "text", description = "The textbox text")
   @Method(0x80025218L)
   public static FlowControl scriptAddSobjTextbox(final RunningScript<?> script) {
     if(script.params_20[2].get() == 0) {
@@ -2149,7 +2162,7 @@ public final class Scus94491BpeSegment_8002 {
     textbox.y_16 = 0;
     textbox.chars_18 = script.params_20[3].get() + 1;
     textbox.lines_1a = script.params_20[4].get() + 1;
-    FUN_800258a8(textboxIndex);
+    clearTextboxText(textboxIndex);
 
     final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
     textboxText.type_04 = type;
@@ -2190,35 +2203,43 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   /** Allocate textbox used in yellow-name textboxes and combat effect popups, maybe others */
+  @ScriptDescription("Adds a textbox to a submap object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The textbox index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "packedData", description = "Unknown data, 3 nibbles")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The textbox x")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The textbox y")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "width", description = "The textbox width")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "height", description = "The textbox height")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.STRING, name = "text", description = "The textbox text")
   @Method(0x800254bcL)
-  public static FlowControl FUN_800254bc(final RunningScript<?> a0) {
-    final int textboxIndex = a0.params_20[0].get();
+  public static FlowControl scriptAddTextbox(final RunningScript<?> script) {
+    final int textboxIndex = script.params_20[0].get();
 
-    if(a0.params_20[1].get() != 0) {
-      final int a2 = a0.params_20[1].get();
+    if(script.params_20[1].get() != 0) {
+      final int a2 = script.params_20[1].get();
       final short s0 = (short)_80052b88.offset((a2 & 0xf0) >>> 3).get();
       final short s1 = (short)_80052b68.offset((a2 & 0xf) * 0x2L).get();
       final short type = (short)_80052ba8.offset((a2 & 0xf00) >>> 7).get();
       clearTextbox(textboxIndex);
 
-      final Textbox4c struct4c = textboxes_800be358[textboxIndex];
+      final Textbox4c textbox = textboxes_800be358[textboxIndex];
       final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
 
-      struct4c._04 = s0;
-      struct4c._06 = s1;
-      struct4c.x_14 = a0.params_20[2].get();
-      struct4c.y_16 = a0.params_20[3].get();
-      struct4c.chars_18 = a0.params_20[4].get() + 1;
-      struct4c.lines_1a = a0.params_20[5].get() + 1;
+      textbox._04 = s0;
+      textbox._06 = s1;
+      textbox.x_14 = script.params_20[2].get();
+      textbox.y_16 = script.params_20[3].get();
+      textbox.chars_18 = script.params_20[4].get() + 1;
+      textbox.lines_1a = script.params_20[5].get() + 1;
       textboxText.type_04 = type;
-      textboxText.str_24 = LodString.fromParam(a0.params_20[6]);
+      textboxText.str_24 = LodString.fromParam(script.params_20[6]);
 
       // This is a stupid hack to allow inns to display 99,999,999 gold without the G falling down to the next line (see GH#546)
       if("?Funds ?G".equals(textboxText.str_24.get())) {
-        struct4c.chars_18++;
+        textbox.chars_18++;
       }
 
-      FUN_800258a8(textboxIndex);
+      clearTextboxText(textboxIndex);
 
       if(type == 1 && (a2 & 0x1000) > 0) {
         textboxText._08 |= 0x20;
@@ -2239,20 +2260,24 @@ public final class Scus94491BpeSegment_8002 {
       textboxText._08 |= 0x1000;
       textboxText.chars_58 = new TextboxChar08[textboxText.chars_1c * (textboxText.lines_1e + 1)];
       Arrays.setAll(textboxText.chars_58, i -> new TextboxChar08());
-      FUN_80027d74(textboxIndex, textboxText.x_14, textboxText.y_16);
+      calculateAppropriateTextboxBounds(textboxIndex, textboxText.x_14, textboxText.y_16);
     }
 
     //LAB_800256f0
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to textboxes")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The textbox index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
   @Method(0x80025718L)
-  public static FlowControl FUN_80025718(final RunningScript<?> a0) {
-    final TextboxText84 textboxText = textboxText_800bdf38[a0.params_20[0].get()];
+  public static FlowControl FUN_80025718(final RunningScript<?> script) {
+    final TextboxText84 textboxText = textboxText_800bdf38[script.params_20[0].get()];
 
     textboxText._6c = -1;
-    textboxText._70 = a0.params_20[2].get();
-    textboxText._72 = a0.params_20[1].get();
+    textboxText._70 = script.params_20[2].get();
+    textboxText._72 = script.params_20[1].get();
 
     if(textboxText._00 == 13) {
       textboxText._00 = 23;
@@ -2298,7 +2323,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x800258a8L)
-  public static void FUN_800258a8(final int a0) {
+  public static void clearTextboxText(final int a0) {
     final TextboxText84 textboxText = textboxText_800bdf38[a0];
     textboxText._00 = 1;
     textboxText._08 = 0;
@@ -3573,7 +3598,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80027d74L)
-  public static void FUN_80027d74(final int textboxIndex, final int x, final int y) {
+  public static void calculateAppropriateTextboxBounds(final int textboxIndex, final int x, final int y) {
     final int maxX;
     if(engineState_8004dd20 == EngineState.SUBMAP_05) {
       maxX = 350;
@@ -3820,7 +3845,7 @@ public final class Scus94491BpeSegment_8002 {
     final Textbox4c textbox = textboxes_800be358[textboxIndex];
     final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
 
-    FUN_800e2428(sobjIndex);
+    positionTextboxAtSobj(sobjIndex);
     final SubmapStruct80 struct = _800c68e8;
     final int s4 = struct.x2_70;
     textbox._28 = s4;
@@ -3966,7 +3991,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80028e9c
-    FUN_80027d74(textboxIndex, (short)x, (short)(sp18 + sp10 + textHeight));
+    calculateAppropriateTextboxBounds(textboxIndex, (short)x, (short)(sp18 + sp10 + textHeight));
     textboxes_800be358[textboxIndex]._48 = 6;
 
     //LAB_80028ef0
@@ -3994,6 +4019,8 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80028ff0
   }
 
+  @ScriptDescription("Unknown, sets textbox 0 to hardcoded values")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "ret", description = "Always set to 0")
   @Method(0x80028ff8L)
   public static FlowControl FUN_80028ff8(final RunningScript<?> script) {
     clearTextbox(0);
@@ -4004,7 +4031,7 @@ public final class Scus94491BpeSegment_8002 {
     struct4c.y_16 = 120;
     struct4c.chars_18 = 6;
     struct4c.lines_1a = 8;
-    FUN_800258a8(0);
+    clearTextboxText(0);
 
     final TextboxText84 textboxText = textboxText_800bdf38[0];
     textboxText.type_04 = (int)_80052baa.get();
@@ -4015,7 +4042,7 @@ public final class Scus94491BpeSegment_8002 {
     Arrays.setAll(textboxText.chars_58, i -> new TextboxChar08());
 
     //LAB_80029100
-    FUN_80027d74(0, textboxText.x_14, textboxText.y_16);
+    calculateAppropriateTextboxBounds(0, textboxText.x_14, textboxText.y_16);
     script.params_20[0].set(0);
     return FlowControl.CONTINUE;
   }
@@ -4187,6 +4214,8 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80029b50
   }
 
+  @ScriptDescription("Gets the first free textbox index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "textboxIndex", description = "Textbox index, or -1 if none are free")
   @Method(0x80029b68L)
   public static FlowControl scriptGetFreeTextboxIndex(final RunningScript<?> script) {
     //LAB_80029b7c
@@ -4204,8 +4233,15 @@ public final class Scus94491BpeSegment_8002 {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Initialize a textbox")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "textboxIndex", description = "The textbox index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The textbox x")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The textbox y")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "width", description = "The textbox width")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "height", description = "The textbox height")
   @Method(0x80029bd4L)
-  public static FlowControl FUN_80029bd4(final RunningScript<?> script) {
+  public static FlowControl scriptInitTextbox(final RunningScript<?> script) {
     final int textboxIndex = script.params_20[0].get();
     clearTextbox(textboxIndex);
 
@@ -4218,6 +4254,9 @@ public final class Scus94491BpeSegment_8002 {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, gets textbox value")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The textbox index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The return value")
   @Method(0x80029c98L)
   public static FlowControl FUN_80029c98(final RunningScript<?> script) {
     final int textboxIndex = script.params_20[0].get();
@@ -4225,22 +4264,30 @@ public final class Scus94491BpeSegment_8002 {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, gets textbox value")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The textbox index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The return value")
   @Method(0x80029cf4L)
   public static FlowControl FUN_80029cf4(final RunningScript<?> script) {
     script.params_20[1].set(textboxes_800be358[script.params_20[0].get()].state_00);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, gets textbox value")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The textbox index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The return value")
   @Method(0x80029d34L)
   public static FlowControl FUN_80029d34(final RunningScript<?> script) {
     script.params_20[1].set(textboxText_800bdf38[script.params_20[0].get()]._00);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Deallocates a textbox")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The textbox index")
   @Method(0x80029d6cL)
-  public static FlowControl FUN_80029d6c(final RunningScript<?> script) {
-    final int s1 = script.params_20[0].get();
-    final TextboxText84 textboxText = textboxText_800bdf38[s1];
+  public static FlowControl scriptDeallocateTextbox(final RunningScript<?> script) {
+    final int textboxIndex = script.params_20[0].get();
+    final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
 
     if(textboxText._00 != 0) {
       textboxText.chars_58 = null;
@@ -4248,13 +4295,14 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80029db8
     textboxText._00 = 0;
-    textboxes_800be358[s1].state_00 = 0;
-    setTextboxArrowPosition(s1, 0);
+    textboxes_800be358[textboxIndex].state_00 = 0;
+    setTextboxArrowPosition(textboxIndex, 0);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Deallocates all textboxes")
   @Method(0x80029e04L)
-  public static FlowControl FUN_80029e04(final RunningScript<?> script) {
+  public static FlowControl scriptDeallocateAllTextboxes(final RunningScript<?> script) {
     //LAB_80029e2c
     for(int i = 0; i < 8; i++) {
       final Textbox4c s2 = textboxes_800be358[i];
@@ -4273,12 +4321,17 @@ public final class Scus94491BpeSegment_8002 {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to textboxes")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The textbox index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "value")
   @Method(0x80029e8cL)
   public static FlowControl FUN_80029e8c(final RunningScript<?> script) {
     _800bdf10.offset(Math.min(9, script.params_20[0].get()) * 0x4L).setu(script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to textboxes")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The textbox index")
   @Method(0x80029eccL)
   public static FlowControl FUN_80029ecc(final RunningScript<?> script) {
     final TextboxText84 textboxText = textboxText_800bdf38[script.params_20[0].get()];
@@ -4292,12 +4345,18 @@ public final class Scus94491BpeSegment_8002 {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to textboxes")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The textbox index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value")
   @Method(0x80029f48L)
   public static FlowControl FUN_80029f48(final RunningScript<?> script) {
     script.params_20[1].set(textboxText_800bdf38[script.params_20[0].get()]._6c);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to textboxes")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The textbox index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value")
   @Method(0x80029f80L)
   public static FlowControl FUN_80029f80(final RunningScript<?> script) {
     script.params_20[1].set(textboxText_800bdf38[script.params_20[0].get()]._7c);

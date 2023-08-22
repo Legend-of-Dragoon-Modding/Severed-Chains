@@ -140,7 +140,7 @@ import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800217a4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800218f0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80029e04;
+import static legend.game.Scus94491BpeSegment_8002.scriptDeallocateAllTextboxes;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a9c0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002aa04;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
@@ -3127,7 +3127,7 @@ public final class SMap {
     submapAssetsMrg_800c6878 = null;
     submapScriptsMrg_800c68d8 = null;
 
-    FUN_80029e04(null);
+    scriptDeallocateAllTextboxes(null);
 
     _800c6870.setu(-0x1L);
     callbackArr_800f5ad4[(int)callbackIndex_800c6968.get()].run();
@@ -3139,7 +3139,7 @@ public final class SMap {
   }
 
   @Method(0x800e2428L)
-  public static void FUN_800e2428(final int sobjIndex) {
+  public static void positionTextboxAtSobj(final int sobjIndex) {
     final MATRIX ls = new MATRIX();
     final MATRIX lw = new MATRIX();
 
