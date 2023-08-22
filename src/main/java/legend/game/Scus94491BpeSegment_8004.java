@@ -305,30 +305,30 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[206] = Scus94491BpeSegment_8002::FUN_80029f80;
     scriptSubFunctions_8004e29c[207] = Scus94491BpeSegment_8002::FUN_80025718;
 
-    scriptSubFunctions_8004e29c[224] = Scus94491BpeSegment::FUN_8001e640;
+    scriptSubFunctions_8004e29c[224] = Scus94491BpeSegment::scriptLoadMenuSounds;
     scriptSubFunctions_8004e29c[225] = Scus94491BpeSegment::FUN_8001e918;
-    scriptSubFunctions_8004e29c[226] = Scus94491BpeSegment::FUN_8001e920;
+    scriptSubFunctions_8004e29c[226] = Scus94491BpeSegment::scriptLoadCharAttackSounds;
     scriptSubFunctions_8004e29c[227] = Scus94491BpeSegment::FUN_8001eb30;
     scriptSubFunctions_8004e29c[228] = Scus94491BpeSegment::scriptLoadBattleCutsceneSounds;
     scriptSubFunctions_8004e29c[229] = Scus94491BpeSegment::scriptLoadMonsterAttackSounds;
     scriptSubFunctions_8004e29c[230] = Scus94491BpeSegment::scriptLoadMusicPackage;
     scriptSubFunctions_8004e29c[231] = Scus94491BpeSegment::FUN_8001fe28;
     scriptSubFunctions_8004e29c[232] = Scus94491BpeSegment::scriptUnloadSoundFile;
-    scriptSubFunctions_8004e29c[233] = Scus94491BpeSegment_8002::FUN_8002013c;
-    scriptSubFunctions_8004e29c[234] = Scus94491BpeSegment_8002::FUN_80020230;
-    scriptSubFunctions_8004e29c[235] = Scus94491BpeSegment_8002::FUN_800202a4;
+    scriptSubFunctions_8004e29c[233] = Scus94491BpeSegment_8002::scriptUnuseCharSoundFile;
+    scriptSubFunctions_8004e29c[234] = Scus94491BpeSegment_8002::scriptStopEncounterSoundEffects;
+    scriptSubFunctions_8004e29c[235] = Scus94491BpeSegment_8002::scriptFreeEncounterSoundEffects;
     scriptSubFunctions_8004e29c[236] = Scus94491BpeSegment::scriptPlaySound;
-    scriptSubFunctions_8004e29c[237] = Scus94491BpeSegment::FUN_8001ab98;
+    scriptSubFunctions_8004e29c[237] = Scus94491BpeSegment::scriptStopSound;
     scriptSubFunctions_8004e29c[238] = Scus94491BpeSegment::scriptPlayBobjSound;
-    scriptSubFunctions_8004e29c[239] = Scus94491BpeSegment::FUN_8001ac48;
-    scriptSubFunctions_8004e29c[240] = Scus94491BpeSegment::FUN_8001ad5c;
-    scriptSubFunctions_8004e29c[241] = Scus94491BpeSegment::FUN_8001adc8;
-    scriptSubFunctions_8004e29c[242] = Scus94491BpeSegment::FUN_8001ae18;
-    scriptSubFunctions_8004e29c[243] = Scus94491BpeSegment::FUN_8001ae68;
+    scriptSubFunctions_8004e29c[239] = Scus94491BpeSegment::scriptStopBobjSound;
+    scriptSubFunctions_8004e29c[240] = Scus94491BpeSegment::scriptStopSoundsAndSequences;
+    scriptSubFunctions_8004e29c[241] = Scus94491BpeSegment::scriptStartCurrentMusicSequence;
+    scriptSubFunctions_8004e29c[242] = Scus94491BpeSegment::scriptStopCurrentMusicSequence;
+    scriptSubFunctions_8004e29c[243] = Scus94491BpeSegment::scriptStopCurrentMusicSequence2;
     scriptSubFunctions_8004e29c[244] = Scus94491BpeSegment::FUN_8001aec8;
-    scriptSubFunctions_8004e29c[245] = Scus94491BpeSegment::FUN_8001af34;
-    scriptSubFunctions_8004e29c[246] = Scus94491BpeSegment::FUN_8001afa4;
-    scriptSubFunctions_8004e29c[247] = Scus94491BpeSegment::FUN_8001b014;
+    scriptSubFunctions_8004e29c[245] = Scus94491BpeSegment::scriptStartEncounterSounds;
+    scriptSubFunctions_8004e29c[246] = Scus94491BpeSegment::scriptStopEncounterSounds;
+    scriptSubFunctions_8004e29c[247] = Scus94491BpeSegment::scriptStopEncounterSounds2;
     scriptSubFunctions_8004e29c[248] = Scus94491BpeSegment::FUN_8001b094;
     scriptSubFunctions_8004e29c[249] = Scus94491BpeSegment::FUN_8001b134;
     scriptSubFunctions_8004e29c[250] = Scus94491BpeSegment::FUN_8001b13c;
@@ -338,22 +338,22 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[254] = Scus94491BpeSegment::scriptSetAllSoundSequenceVolumes;
     scriptSubFunctions_8004e29c[255] = Scus94491BpeSegment::scriptSssqFadeIn;
 
-    scriptSubFunctions_8004e29c[256] = SMap::FUN_800e67d4;
-    scriptSubFunctions_8004e29c[257] = SMap::scriptGetScreenOffset;
-    scriptSubFunctions_8004e29c[258] = SMap::FUN_800e6904;
-    scriptSubFunctions_8004e29c[259] = SMap::FUN_800e69a4;
+    scriptSubFunctions_8004e29c[256] = SMap::scriptMapTransition;
+    scriptSubFunctions_8004e29c[257] = SMap::scriptGetCameraOffset;
+    scriptSubFunctions_8004e29c[258] = SMap::scriptSetCameraOffset;
+    scriptSubFunctions_8004e29c[259] = SMap::scriptGetCollisionAndTransitionInfo;
     scriptSubFunctions_8004e29c[260] = SMap::FUN_800e69e8;
     scriptSubFunctions_8004e29c[261] = SMap::FUN_800e69f0;
     scriptSubFunctions_8004e29c[262] = SMap::FUN_800e6a28;
-    scriptSubFunctions_8004e29c[263] = SMap::FUN_800e6a64;
-    scriptSubFunctions_8004e29c[264] = SMap::FUN_800e683c;
-    scriptSubFunctions_8004e29c[265] = SMap::FUN_800e6af0;
+    scriptSubFunctions_8004e29c[263] = SMap::scriptSetEnvForegroundPosition;
+    scriptSubFunctions_8004e29c[264] = SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject;
+    scriptSubFunctions_8004e29c[265] = SMap::scriptGetSetEncountersDisabled;
     scriptSubFunctions_8004e29c[266] = SMap::FUN_800e6aa0;
     scriptSubFunctions_8004e29c[267] = SMap::FUN_800e6b64;
     scriptSubFunctions_8004e29c[268] = SMap::FUN_800e6bd8;
     scriptSubFunctions_8004e29c[269] = SMap::FUN_800e6be0;
     scriptSubFunctions_8004e29c[270] = SMap::FUN_800e6cac;
-    scriptSubFunctions_8004e29c[271] = SMap::FUN_800e6ce0;
+    scriptSubFunctions_8004e29c[271] = SMap::scriptStartFmv;
 
     scriptSubFunctions_8004e29c[288] = SMap::scriptSelfHideModelPart;
     scriptSubFunctions_8004e29c[289] = SMap::scriptSelfShowModelPart;
@@ -361,7 +361,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[291] = SMap::scriptScaleXyz;
     scriptSubFunctions_8004e29c[292] = SMap::scriptScaleUniform;
     scriptSubFunctions_8004e29c[293] = SMap::scriptSetModelZOffset;
-    scriptSubFunctions_8004e29c[294] = SMap::FUN_800dfcd8;
+    scriptSubFunctions_8004e29c[294] = SMap::scriptSelfSetSobjFlag;
     scriptSubFunctions_8004e29c[295] = SMap::FUN_800dfd10;
     scriptSubFunctions_8004e29c[296] = SMap::FUN_800de334;
     scriptSubFunctions_8004e29c[297] = SMap::FUN_800de4b4;
@@ -384,7 +384,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[314] = SMap::scriptSetShadowOffset;
     scriptSubFunctions_8004e29c[315] = SMap::scriptCheckPlayerCollision;
     scriptSubFunctions_8004e29c[316] = SMap::scriptGetPlayerMovement;
-    scriptSubFunctions_8004e29c[317] = SMap::FUN_800e0b34;
+    scriptSubFunctions_8004e29c[317] = SMap::scriptSwapShadowTexture;
     scriptSubFunctions_8004e29c[318] = SMap::scriptSetSobjPlayerCollisionMetrics;
     scriptSubFunctions_8004e29c[319] = SMap::FUN_800e0cb8;
 
@@ -628,8 +628,8 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[691] = SMap::scriptHideModelPart;
     scriptSubFunctions_8004e29c[692] = SMap::scriptShowModelPart;
     scriptSubFunctions_8004e29c[693] = SMap::scriptFaceCamera;
-    scriptSubFunctions_8004e29c[694] = SMap::FUN_800e0520;
-    scriptSubFunctions_8004e29c[695] = SMap::FUN_800e057c;
+    scriptSubFunctions_8004e29c[694] = SMap::scriptSetSobjFlag;
+    scriptSubFunctions_8004e29c[695] = SMap::scriptGetSobjFlag;
     scriptSubFunctions_8004e29c[696] = SMap::FUN_800e074c;
     scriptSubFunctions_8004e29c[697] = SMap::FUN_800e07f0;
     scriptSubFunctions_8004e29c[698] = SMap::FUN_800e0184;
@@ -648,12 +648,12 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[710] = Scus94491BpeSegment::scriptGetLoadedSoundFiles;
     scriptSubFunctions_8004e29c[711] = Scus94491BpeSegment::scriptGetSequenceVolume;
     scriptSubFunctions_8004e29c[712] = Scus94491BpeSegment::scriptPlayCombatantSound;
-    scriptSubFunctions_8004e29c[713] = Scus94491BpeSegment::scriptStopBobjSound;
+    scriptSubFunctions_8004e29c[713] = Scus94491BpeSegment::scriptStopBobjSound2;
     scriptSubFunctions_8004e29c[714] = Scus94491BpeSegment_8002::FUN_80020060;
     scriptSubFunctions_8004e29c[715] = Scus94491BpeSegment::scriptLoadPlayerAttackSounds;
     scriptSubFunctions_8004e29c[716] = Scus94491BpeSegment_8002::scriptReplaceMonsterSounds;
-    scriptSubFunctions_8004e29c[717] = Scus94491BpeSegment::FUN_8001f674;
-    scriptSubFunctions_8004e29c[718] = Scus94491BpeSegment::FUN_8001f560;
+    scriptSubFunctions_8004e29c[717] = Scus94491BpeSegment::scriptLoadCutsceneSounds;
+    scriptSubFunctions_8004e29c[718] = Scus94491BpeSegment::scriptLoadFinalBattleSounds;
 
     scriptSubFunctions_8004e29c[736] = Bttl_800d::FUN_800d3090;
     scriptSubFunctions_8004e29c[737] = Bttl_800c::scriptAllocateFullScreenOverlay;
@@ -1468,7 +1468,7 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004d034L)
-  public static void stopMusicSequence(final SequenceData124 sequenceData, final int a1) {
+  public static void stopMusicSequence(final SequenceData124 sequenceData, final int mode) {
     boolean resetAdsr = false;
     final PlayableSound0c playableSound = sequenceData.playableSound_020;
     final Sshd sshd = playableSound.sshdPtr_04;
@@ -1481,7 +1481,7 @@ public final class Scus94491BpeSegment_8004 {
         if(playableSound.used_00) {
           boolean stopNotes = false;
 
-          if(a1 == 0) {
+          if(mode == 0) {
             //LAB_8004d13c
             sequenceData.sssqReader_010.jump(0x110);
             sequenceData.musicPlaying_028 = false;
@@ -1489,7 +1489,7 @@ public final class Scus94491BpeSegment_8004 {
             sequenceData._0e8 = false;
             sequenceData.repeatCounter_035 = 0;
             stopNotes = true;
-          } else if(a1 == 1) {
+          } else if(mode == 1) {
             //LAB_8004d134
             resetAdsr = true;
 
@@ -1501,7 +1501,7 @@ public final class Scus94491BpeSegment_8004 {
             sequenceData.repeatCounter_035 = 0;
             stopNotes = true;
             //LAB_8004d11c
-          } else if(a1 == 2) {
+          } else if(mode == 2) {
             //LAB_8004d154
             if(sequenceData.musicPlaying_028) {
               sequenceData.musicPlaying_028 = false;
@@ -1514,7 +1514,7 @@ public final class Scus94491BpeSegment_8004 {
               sequenceData.musicPlaying_028 = true;
               sequenceData._0e8 = false;
             }
-          } else if(a1 == 3) {
+          } else if(mode == 3) {
             //LAB_8004d188
             if(sequenceData.musicPlaying_028) {
               //LAB_8004d1b4
@@ -1740,7 +1740,7 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004d91cL)
-  public static void FUN_8004d91c(final boolean resetVoice) {
+  public static void stopSoundsAndSequences(final boolean resetVoice) {
     SEQUENCER.waitForLock(() -> {
       //LAB_8004d96c
       for(int voiceIndex = 0; voiceIndex < SPU.voices.length; voiceIndex++) {

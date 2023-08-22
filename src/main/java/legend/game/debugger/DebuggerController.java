@@ -21,7 +21,7 @@ import legend.game.wmap.AreaData08;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
-import static legend.game.SMap.FUN_800e5534;
+import static legend.game.SMap.mapTransition;
 import static legend.game.SMap.encounterData_800f64c4;
 import static legend.game.SMap.smapLoadingStage_800cb430;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
@@ -316,7 +316,7 @@ public class DebuggerController {
       } else {
         combatStage_800bb0f4.set(encounterData_800f64c4.get(submapCut_80052c30.get()).stage_03.get());
       }
-      FUN_800e5534(-1, 0);
+      mapTransition(-1, 0);
     } else if(engineState_8004dd20 == EngineState.WORLD_MAP_08) {
       final AreaData08 area = areaData_800f2248.get(mapState_800c6798.areaIndex_12);
 

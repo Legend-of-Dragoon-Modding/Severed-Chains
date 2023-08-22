@@ -122,8 +122,8 @@ import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
-import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
-import static legend.game.Scus94491BpeSegment.FUN_8001af00;
+import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
+import static legend.game.Scus94491BpeSegment.startEncounterSounds;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.btldLoadEncounterSoundEffectsAndMusic;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
@@ -1198,7 +1198,7 @@ public final class Bttl_800c {
 
             if(encounterId_800bb0f8.get() != 443) { // Standard victory
               postBattleActionIndex_800bc974.set(1);
-              FUN_8001af00();
+              startEncounterSounds();
             } else { // Melbu Victory
               //LAB_800c7d30
               postBattleActionIndex_800bc974.set(4);
@@ -1369,7 +1369,7 @@ public final class Bttl_800c {
 
       //LAB_800c8368
       //LAB_800c8394
-      FUN_8001ad18();
+      stopAndResetSoundsAndSequences();
 
       //LAB_800c83b8
       while(allBobjCount_800c66d0.get() > 0) {

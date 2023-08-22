@@ -104,12 +104,12 @@ import static legend.game.SMap.FUN_800e4018;
 import static legend.game.SMap.FUN_800e4708;
 import static legend.game.SMap.FUN_800e4e5c;
 import static legend.game.SMap.FUN_800e4f8c;
-import static legend.game.SMap.FUN_800e5534;
+import static legend.game.SMap.mapTransition;
 import static legend.game.SMap.FUN_800e828c;
 import static legend.game.SMap.FUN_800e8e50;
 import static legend.game.SMap.FUN_800ea4c8;
 import static legend.game.SMap._800c68e8;
-import static legend.game.SMap._800f7e54;
+import static legend.game.SMap.submapFlags_800f7e54;
 import static legend.game.SMap.adjustSmapUvs;
 import static legend.game.SMap.encounterAccumulator_800c6ae8;
 import static legend.game.SMap.getCollisionAndTransitionInfo;
@@ -118,7 +118,7 @@ import static legend.game.SMap.renderEnvironment;
 import static legend.game.SMap.renderSmapModel;
 import static legend.game.SMap.renderSmapShadow;
 import static legend.game.SMap.unloadSmap;
-import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
+import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
 import static legend.game.Scus94491BpeSegment.FUN_8001d51c;
 import static legend.game.Scus94491BpeSegment.FUN_8001e010;
@@ -218,7 +218,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80020008L)
   public static void sssqResetStuff() {
-    FUN_8001ad18();
+    stopAndResetSoundsAndSequences();
     unloadSoundFile(1);
     unloadSoundFile(3);
     unloadSoundFile(4);
@@ -230,7 +230,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80020060L)
   public static FlowControl FUN_80020060(final RunningScript<?> script) {
-    FUN_8001ad18();
+    stopAndResetSoundsAndSequences();
     unloadSoundFile(1);
     unloadSoundFile(3);
     unloadSoundFile(4);
@@ -241,8 +241,10 @@ public final class Scus94491BpeSegment_8002 {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Mark a character battle object's sound files as no longer used")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c index")
   @Method(0x8002013cL)
-  public static FlowControl FUN_8002013c(final RunningScript<?> script) {
+  public static FlowControl scriptUnuseCharSoundFile(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
@@ -260,20 +262,23 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80020220
   }
 
+  @ScriptDescription("Stops and unloads the encounter's sound effects")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The sound effect index")
   @Method(0x80020230L)
-  public static FlowControl FUN_80020230(final RunningScript<?> script) {
+  public static FlowControl scriptStopEncounterSoundEffects(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
+  @ScriptDescription("Frees the encounter's sound effects")
   @Method(0x800202a4L)
-  public static FlowControl FUN_800202a4(final RunningScript<?> script) {
+  public static FlowControl scriptFreeEncounterSoundEffects(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
   @Method(0x80020308L)
   public static void FUN_80020308() {
     FUN_8001ae90();
-    FUN_8001ad18();
+    stopAndResetSoundsAndSequences();
     unloadSoundFile(1);
     unloadSoundFile(3);
     unloadSoundFile(4);
@@ -4726,10 +4731,10 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //caseD_6
-    if(_800f7e54.get(0x1L) == 0) {
+    if((submapFlags_800f7e54 & 0x1) == 0) {
       // If an encounter should start
       if(handleEncounters() != 0) {
-        FUN_800e5534(-1, 0);
+        mapTransition(-1, 0);
       }
     }
 
@@ -4737,7 +4742,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_8002abe0
     final int collisionAndTransitionInfo = getCollisionAndTransitionInfo(index_80052c38.get());
     if((collisionAndTransitionInfo & 0x10) != 0) {
-      FUN_800e5534(collisionAndTransitionInfo >>> 22, collisionAndTransitionInfo >>> 16 & 0x3f);
+      mapTransition(collisionAndTransitionInfo >>> 22, collisionAndTransitionInfo >>> 16 & 0x3f);
     }
 
     //LAB_8002ac10

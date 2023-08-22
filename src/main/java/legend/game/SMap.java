@@ -114,10 +114,11 @@ import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.SItem.loadCharacterStats;
-import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
-import static legend.game.Scus94491BpeSegment.FUN_8001ada0;
+import static legend.game.Scus94491BpeSegment.startFadeEffect;
+import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
+import static legend.game.Scus94491BpeSegment.startCurrentMusicSequence;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
-import static legend.game.Scus94491BpeSegment._80010544;
+import static legend.game.Scus94491BpeSegment.shadowTimFile_80010544;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.getSubmapMusicChange;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
@@ -450,7 +451,7 @@ public final class SMap {
   /** Maps submap cuts to their submap */
   public static final ArrayRef<UnsignedShortRef> cutToSubmap_800d610c = MEMORY.ref(2, 0x800d610cL, ArrayRef.of(UnsignedShortRef.class, 792, 2, UnsignedShortRef::new));
   /** TIM */
-  public static final Value _800d673c = MEMORY.ref(4, 0x800d673cL);
+  public static final Value biggerShadowTimFile_800d673c = MEMORY.ref(4, 0x800d673cL);
 
   public static final Value timFile_800d689c = MEMORY.ref(4, 0x800d689cL);
 
@@ -528,8 +529,13 @@ public final class SMap {
   public static final Value _800f7e30 = MEMORY.ref(4, 0x800f7e30L);
 
   public static final Value _800f7e4c = MEMORY.ref(4, 0x800f7e4cL);
-  public static final Value _800f7e50 = MEMORY.ref(4, 0x800f7e50L);
-  public static final Value _800f7e54 = MEMORY.ref(4, 0x800f7e54L);
+  public static int scriptSetOffsetMode_800f7e50;
+  /**
+   * <ul>
+   *   <li>0x1 - disable encounters</li>
+   * </ul>
+   */
+  public static int submapFlags_800f7e54;
   public static final Value _800f7e58 = MEMORY.ref(4, 0x800f7e58L);
 
   public static boolean _800f7f0c;
@@ -1065,6 +1071,9 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to triangle indicators")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
   @Method(0x800de334L)
   public static FlowControl FUN_800de334(final RunningScript<?> script) {
     final SVECTOR sp0x10 = new SVECTOR();
@@ -1096,6 +1105,8 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to triangle indicators")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "p0")
   @Method(0x800de4b4L)
   public static FlowControl FUN_800de4b4(final RunningScript<?> script) {
     final SVECTOR sp0x10 = new SVECTOR();
@@ -1326,6 +1337,11 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Checks player collision")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "deltaX", description = "Movement along the X axis")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "deltaY", description = "Movement along the Y axis")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "deltaZ", description = "Movement along the Z axis")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "collidee", description = "The SubmapObject210 script index collided with, or -1 if not collided")
   @Method(0x800dee28L)
   public static FlowControl scriptCheckPlayerCollision(final RunningScript<SubmapObject210> script) {
     final SVECTOR deltaMovement = new SVECTOR();
@@ -1802,12 +1818,18 @@ public final class SMap {
     return scriptShowModelPart(script);
   }
 
+  @ScriptDescription("Make this submap object face the camera")
   @Method(0x800dfbd4L)
   public static FlowControl scriptSelfFaceCamera(final RunningScript<?> script) {
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
     return scriptFaceCamera(script);
   }
 
+  @ScriptDescription("Scale a submap object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The new X scale (12-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The new Y scale (12-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The new Z scale (12-bit fixed-point)")
   @Method(0x800dfc00L)
   public static FlowControl scriptScaleXyz(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -1822,6 +1844,9 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Scale a submap object uniformly")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scale", description = "The new XYZ scale (12-bit fixed-point)")
   @Method(0x800dfc60L)
   public static FlowControl scriptScaleUniform(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -1833,6 +1858,9 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Set a submap object's Z offset")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "offset", description = "The new Z offset")
   @Method(0x800dfca0L)
   public static FlowControl scriptSetModelZOffset(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -1840,24 +1868,38 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Set this submap object's flag")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bitIndex", description = "The flag to set")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "value", description = "The flag value")
   @Method(0x800dfcd8L)
-  public static FlowControl FUN_800dfcd8(final RunningScript<?> script) {
+  public static FlowControl scriptSelfSetSobjFlag(final RunningScript<?> script) {
     script.params_20[2] = script.params_20[1];
     script.params_20[1] = script.params_20[0];
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
-    return FUN_800e0520(script);
+    return scriptSetSobjFlag(script);
   }
 
+  @ScriptDescription("Get this submap object's flag")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bitIndex", description = "The flag to get")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "value", description = "The flag value")
   @Method(0x800dfd10L)
   public static FlowControl FUN_800dfd10(final RunningScript<?> script) {
-    throw new RuntimeException("Not implemented");
+    script.params_20[2] = script.params_20[1];
+    script.params_20[1] = script.params_20[0];
+    script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
+    return scriptGetSobjFlag(script);
   }
 
+  @ScriptDescription("Unknown, related to triangle indicators")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
   @Method(0x800dfd48L)
   public static FlowControl FUN_800dfd48(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
+  @ScriptDescription("Show the triangle indicator for this submap object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y offset for the indicator")
   @Method(0x800dfd8cL)
   public static FlowControl scriptShowAlertIndicator(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -1866,6 +1908,8 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Hide the triangle indicator for this submap object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
   @Method(0x800dfdd8L)
   public static FlowControl scriptHideAlertIndicator(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -2121,6 +2165,8 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Make a submap object face the camera")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
   @Method(0x800e04b4L)
   public static FlowControl scriptFaceCamera(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -2129,8 +2175,12 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Set a submap object's flag")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bitIndex", description = "The flag to set")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "value", description = "The flag value")
   @Method(0x800e0520L)
-  public static FlowControl FUN_800e0520(final RunningScript<?> script) {
+  public static FlowControl scriptSetSobjFlag(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
 
     sobj.flags_190 = sobj.flags_190
@@ -2140,21 +2190,35 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Get a submap object's flag")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bitIndex", description = "The flag to get")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "value", description = "The flag value")
   @Method(0x800e057cL)
-  public static FlowControl FUN_800e057c(final RunningScript<?> script) {
+  public static FlowControl scriptGetSobjFlag(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
+  @ScriptDescription("Unknown")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "value")
   @Method(0x800e05c8L)
   public static FlowControl FUN_800e05c8(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
+  @ScriptDescription("Unknown")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index")
   @Method(0x800e05f0L)
   public static FlowControl FUN_800e05f0(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
+  @ScriptDescription("Enable flag lighting for a submap object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "r", description = "The red colour")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "g", description = "The green colour")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "b", description = "The blue colour")
   @Method(0x800e0614L)
   public static FlowControl scriptEnableSobjFlatLight(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -2165,6 +2229,8 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Disable flag lighting for a submap object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
   @Method(0x800e0684L)
   public static FlowControl scriptDisableSobjFlatLight(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -2194,6 +2260,11 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets collision metrics for a submap object (collision type unknown)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "horizontalSize", description = "The horizontal collision size")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "verticalSize", description = "The vertical collision size")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "reach", description = "The collision reach")
   @Method(0x800e0894L)
   public static FlowControl scriptSetSobjCollision2(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -2203,6 +2274,9 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Checks if a submap object is collided (collision type unknown)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "collided", description = "True if the submap object is collided")
   @Method(0x800e08f4L)
   public static FlowControl scriptGetSobjCollidedWith2(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -2210,6 +2284,11 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets the ambient colour of a submap object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "r", description = "The red channel")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "g", description = "The green channel")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "b", description = "The blue channel")
   @Method(0x800e0930L)
   public static FlowControl scriptSetAmbientColour(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -2222,6 +2301,8 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Disables the ambient colour of a submap object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
   @Method(0x800e09a0L)
   public static FlowControl scriptResetAmbientColour(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -2230,6 +2311,8 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Enable shadows for a submap object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
   @Method(0x800e09e0L)
   public static FlowControl scriptEnableShadow(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -2237,6 +2320,8 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Disables shadows for a submap object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
   @Method(0x800e0a14L)
   public static FlowControl scriptDisableShadow(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -2244,6 +2329,10 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets the shadow size of a submap object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X size of the shadow")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z size of the shadow")
   @Method(0x800e0a48L)
   public static FlowControl scriptSetShadowSize(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -2254,6 +2343,11 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets the shadow offset of a submap object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X offset of the shadow")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y offset of the shadow")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z offset of the shadow")
   @Method(0x800e0a94L)
   public static FlowControl scriptSetShadowOffset(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -2265,6 +2359,10 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Gets the movement vector of this submap object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X movement")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y movement")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z movement")
   @Method(0x800e0af4L)
   public static FlowControl scriptGetPlayerMovement(final RunningScript<?> script) {
     script.params_20[0].set(_800c68e8.playerMovement_0c.getX());
@@ -2273,21 +2371,28 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Swaps between the normal and larger shadow textures")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "0 = normal, 1 = large")
   @Method(0x800e0b34L)
-  public static FlowControl FUN_800e0b34(final RunningScript<?> script) {
+  public static FlowControl scriptSwapShadowTexture(final RunningScript<?> script) {
     if(script.params_20[0].get() == 0) {
-      loadTimImage(_80010544.getAddress());
+      loadTimImage(shadowTimFile_80010544.getAddress());
     }
 
     //LAB_800e0b68
     if(script.params_20[0].get() == 1) {
-      loadTimImage(_800d673c.getAddress());
+      loadTimImage(biggerShadowTimFile_800d673c.getAddress());
     }
 
     //LAB_800e0b8c
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets collision metrics for a submap object (collision type unknown)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "horizontalSize", description = "The horizontal collision size")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "verticalSize", description = "The vertical collision size")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "reach", description = "The collision reach")
   @Method(0x800e0ba0L)
   public static FlowControl scriptSetSobjPlayerCollisionMetrics(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -2331,6 +2436,8 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
   @Method(0x800e0cb8L)
   public static FlowControl FUN_800e0cb8(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
@@ -2583,7 +2690,7 @@ public final class SMap {
   public static void executeSceneGraphicsLoadingStage(final int index) {
     switch((int)loadingStage_800c68e4.get()) {
       case 0 -> {
-        loadTimImage(_80010544.getAddress());
+        loadTimImage(shadowTimFile_80010544.getAddress());
 
         if(_80050274.get() != submapCut_80052c30.get()) {
           _800bda08.set(_80050274.get());
@@ -2624,7 +2731,7 @@ public final class SMap {
         //LAB_800e15b8
         //LAB_800e15b8
         if(submapId_800bd808.get() != oldSubmapIndex) { // Reload sounds when changing submap
-          FUN_8001ad18();
+          stopAndResetSoundsAndSequences();
           unloadSoundFile(4);
           loadSubmapSounds(submapId_800bd808.get());
         } else {
@@ -2652,7 +2759,7 @@ public final class SMap {
         }
 
         if(ret == -2) {
-          FUN_8001ada0();
+          startCurrentMusicSequence();
 
           //LAB_800e15b8
           musicLoaded_800bd782 = true;
@@ -3135,7 +3242,7 @@ public final class SMap {
     _800f9eac.set(-1);
     loadSmapMedia();
     _800c69fc = null;
-    loadTimImage(_80010544.getAddress());
+    loadTimImage(shadowTimFile_80010544.getAddress());
   }
 
   @Method(0x800e2428L)
@@ -4031,9 +4138,9 @@ public final class SMap {
     return sobjs_800c6880[index] != null;
   }
 
-  /** Part of map transitioning */
+  /** Also does things like open menus using special values */
   @Method(0x800e5534L)
-  public static long FUN_800e5534(final int newCut, final int newScene) {
+  public static long mapTransition(final int newCut, final int newScene) {
     if(smapLoadingStage_800cb430.get() != 0xcL) {
       return 0;
     }
@@ -4053,7 +4160,7 @@ public final class SMap {
     _800bd7b4.setu(0);
     if(_800cab28.get() == 0) {
       if(fullScreenEffect_800bb140._24 == 0) {
-        Scus94491BpeSegment.startFadeEffect(1, 10);
+        startFadeEffect(1, 10);
         _800cab28.addu(0x1L);
       }
     } else {
@@ -4304,7 +4411,7 @@ public final class SMap {
         FUN_800e4d00(submapCut_80052c30.get(), submapScene_80052c34.get());
         FUN_800e81a0(submapScene_80052c34.get());
         loadCollisionAndTransitions(submapCut_80052c30.get());
-        FUN_800e6d4c();
+        clearSubmapFlags();
 
         if(_800cab2c.get() != 0) { // This might be to transition to another map or something?
           FUN_800e7328();
@@ -4334,7 +4441,7 @@ public final class SMap {
           FUN_800e770c();
           savedGameSelected_800bdc34.set(false);
           _80052c44.setu(0);
-          Scus94491BpeSegment.startFadeEffect(2, 10);
+          startFadeEffect(2, 10);
           _800cab24 = FUN_800ea974(_800caaf4.get());
           cacheHasNoEncounters();
           smapLoadingStage_800cb430.setu(0xcL);
@@ -4347,7 +4454,7 @@ public final class SMap {
         _80052c44.setu(0);
         FUN_800e5104(_800caaf8.get(), _800cab24);
         if(Input.pressedThisFrame(InputAction.BUTTON_NORTH) && !gameState_800babc8.indicatorsDisabled_4e3) {
-          FUN_800e5534(-1, 0x3ff);
+          mapTransition(-1, 0x3ff);
         }
       }
 
@@ -4356,7 +4463,7 @@ public final class SMap {
         _800bd7b4.setu(0);
         if(_800cab28.get() != 0 || fullScreenEffect_800bb140._24 == 0) {
           if(fullScreenEffect_800bb140._24 == 0) {
-            Scus94491BpeSegment.startFadeEffect(1, 10);
+            startFadeEffect(1, 10);
           }
 
           //LAB_800e5fa4
@@ -4404,7 +4511,7 @@ public final class SMap {
           case UNLOAD_SAVE_GAME_MENU_20:
             smapLoadingStage_800cb430.setu(0xcL);
             _800f7e4c.setu(0);
-            FUN_800e5534((int)_800f7e2c.offset(gameState_800babc8.chapterIndex_98 * 8).get(), (int)_800f7e30.offset(gameState_800babc8.chapterIndex_98 * 8).get());
+            mapTransition((int)_800f7e2c.offset(gameState_800babc8.chapterIndex_98 * 8).get(), (int)_800f7e30.offset(gameState_800babc8.chapterIndex_98 * 8).get());
             index_80052c38.set((int)_800f7e30.get());
         }
       }
@@ -4416,7 +4523,7 @@ public final class SMap {
         _800f7e4c.setu(0);
         smapLoadingStage_800cb430.setu(0xcL);
         if(savedGameSelected_800bdc34.get()) {
-          FUN_800e5534(submapCut_80052c30.get(), submapScene_80052c34.get());
+          mapTransition(submapCut_80052c30.get(), submapScene_80052c34.get());
         }
       }
 
@@ -4436,7 +4543,7 @@ public final class SMap {
         _800bd7b4.setu(0);
         if(_800cab28.get() != 0 || fullScreenEffect_800bb140._24 == 0) {
           if(fullScreenEffect_800bb140._24 == 0) {
-            Scus94491BpeSegment.startFadeEffect(1, 10);
+            startFadeEffect(1, 10);
           }
 
           //LAB_800e61fc
@@ -4468,7 +4575,7 @@ public final class SMap {
         _800bd7b4.setu(0);
         if(_800cab28.get() != 0 || fullScreenEffect_800bb140._24 == 0) {
           if(fullScreenEffect_800bb140._24 == 0) {
-            Scus94491BpeSegment.startFadeEffect(1, 10);
+            startFadeEffect(1, 10);
           }
 
           //LAB_800e62b0
@@ -4504,7 +4611,7 @@ public final class SMap {
         _800bd7b4.setu(0);
         if(_800cab28.get() != 0 || fullScreenEffect_800bb140._24 == 0) {
           if(fullScreenEffect_800bb140._24 == 0) {
-            Scus94491BpeSegment.startFadeEffect(1, 10);
+            startFadeEffect(1, 10);
           }
 
           //LAB_800e643c
@@ -4535,7 +4642,7 @@ public final class SMap {
         _800bd7b4.setu(0);
         if(_800cab28.get() != 0 || fullScreenEffect_800bb140._24 == 0) {
           if(fullScreenEffect_800bb140._24 == 0) {
-            Scus94491BpeSegment.startFadeEffect(1, 10);
+            startFadeEffect(1, 10);
           }
 
           //LAB_800e6394
@@ -4635,118 +4742,153 @@ public final class SMap {
     return 1;
   }
 
+  @ScriptDescription("Transitions to another submap cut/scene (certain values have special meanings - FMVs, menus)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "submapCut", description = "The submap cut")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "submapScene", description = "The submap scene")
   @Method(0x800e67d4L)
-  public static FlowControl FUN_800e67d4(final RunningScript<?> script) {
+  public static FlowControl scriptMapTransition(final RunningScript<?> script) {
     final int scene = script.params_20[1].get();
 
-    FUN_800e5534(script.params_20[0].get(), scene);
+    mapTransition(script.params_20[0].get(), scene);
 
-    if(scene == 0x3fe || scene == 0x3fa || scene == 0x3ff) {
+    if(scene == 0x3fa || scene == 0x3fc || scene == 0x3fe || scene == 0x3ff) {
       return FlowControl.CONTINUE;
     }
 
     //LAB_800e6828
-    return scene != 0x3fc ? FlowControl.PAUSE_AND_REWIND : FlowControl.CONTINUE;
+    return FlowControl.PAUSE_AND_REWIND;
   }
 
+  @ScriptDescription("Either sets the mode for a subsequent call to scriptSetCameraOffset, or hides a submap foreground overlay. May be for revealing areas when walking through doors, for example.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "< 3, sets the mode for a subsequent call to scriptSetCameraOffset; 3 hides foreground object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "foregroundObjectIndex", description = "The foreground object index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "out", description = "The value passed in for mode, unless mode is 3, in which case the mode variable isn't updated and the previous value is returned")
   @Method(0x800e683cL)
-  public static FlowControl FUN_800e683c(final RunningScript<?> script) {
+  public static FlowControl scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject(final RunningScript<?> script) {
     if(script.params_20[0].get() < 3) {
-      _800f7e50.setu(script.params_20[0].get());
+      scriptSetOffsetMode_800f7e50 = script.params_20[0].get();
     }
 
     //LAB_800e686c
     if(script.params_20[0].get() == 3) {
-      FUN_800e76b0(1024, 1024, script.params_20[1].get());
+      setEnvForegroundPosition(1024, 1024, script.params_20[1].get()); // Hide foreground object
     }
 
     //LAB_800e688c
-    script.params_20[2].set((int)_800f7e50.get());
+    script.params_20[2].set(scriptSetOffsetMode_800f7e50);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Gets the camera offset")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The camera X offset")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The camera Y offset")
   @Method(0x800e68b4L)
-  public static FlowControl scriptGetScreenOffset(final RunningScript<?> script) {
+  public static FlowControl scriptGetCameraOffset(final RunningScript<?> script) {
     script.params_20[0].set(screenOffsetX_800cb568);
     script.params_20[1].set(screenOffsetY_800cb56c);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets the camera offset (mode is based on the last call to scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The camera X offset")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The camera Y offset")
   @Method(0x800e6904L)
-  public static FlowControl FUN_800e6904(final RunningScript<?> script) {
+  public static FlowControl scriptSetCameraOffset(final RunningScript<?> script) {
     final int x = script.params_20[0].get();
     final int y = script.params_20[1].get();
-    final long v1 = _800f7e50.get();
+    final int mode = scriptSetOffsetMode_800f7e50;
 
-    if(v1 == 0x1L) {
+    if(mode == 1 || mode == 2) {
       //LAB_800e695c
       setGeomOffsetIfNotSet(x, y);
-    } else {
-      if(v1 == 0x2L) {
-        //LAB_800e6970
-        setGeomOffsetIfNotSet(x, y);
-      }
+    }
 
-      //LAB_800e697c
+    if(mode == 2 || mode == 3) {
       setScreenOffsetIfNotSet(x, y);
     }
 
     //LAB_800e6988
-    _800f7e50.setu(0);
+    scriptSetOffsetMode_800f7e50 = 0;
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Gets collision and transition info (not fully understood, don't know what index is, or what the flags are)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "flags", description = "The collision and transition info")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The index")
   @Method(0x800e69a4L)
-  public static FlowControl FUN_800e69a4(final RunningScript<?> script) {
+  public static FlowControl scriptGetCollisionAndTransitionInfo(final RunningScript<?> script) {
     script.params_20[0].set(getCollisionAndTransitionInfo(script.params_20[1].get()));
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("No-op")
   @Method(0x800e69e8L)
   public static FlowControl FUN_800e69e8(final RunningScript<?> script) {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets collision and transition flag 0x8 (not fully understood, don't know what index is, or what the flags are)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The index")
   @Method(0x800e69f0L)
   public static FlowControl FUN_800e69f0(final RunningScript<?> script) {
     setCollisionAndTransitionInfo(getCollisionAndTransitionInfo(script.params_20[0].get()) | 0x8);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Clears collision and transition flag 0x8 (not fully understood, don't know what index is, or what the flags are)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The index")
   @Method(0x800e6a28L)
   public static FlowControl FUN_800e6a28(final RunningScript<?> script) {
     setCollisionAndTransitionInfo(getCollisionAndTransitionInfo(script.params_20[0].get()) & 0xffff_fff7);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets the position of an environment foreground overlay")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The new X position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The new Y position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "overlayIndex", description = "The overlay index")
   @Method(0x800e6a64L)
-  public static FlowControl FUN_800e6a64(final RunningScript<?> script) {
-    FUN_800e76b0(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
+  public static FlowControl scriptSetEnvForegroundPosition(final RunningScript<?> script) {
+    setEnvForegroundPosition(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to environment foreground overlays")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "The mode (maybe layering mode?)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "overlayIndex", description = "The overlay index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The new Z position (only applies in modes 2 and 5")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "out", description = "The overlay's Z position")
   @Method(0x800e6aa0L)
   public static FlowControl FUN_800e6aa0(final RunningScript<?> script) {
     script.params_20[3].set(FUN_800e7728(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get()));
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Gets (and optionally sets) whether submap encounters are disabled")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "set", description = "True to disable encounters, false otherwise")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "apply", description = "If false, does not update value, only returns it")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The value of the submap flags (0x1 - encounters disabled)")
   @Method(0x800e6af0L)
-  public static FlowControl FUN_800e6af0(final RunningScript<?> script) {
+  public static FlowControl scriptGetSetEncountersDisabled(final RunningScript<?> script) {
     if(script.params_20[1].get() == 1) {
       if(script.params_20[0].get() != 0) {
-        _800f7e54.oru(0x1L);
+        submapFlags_800f7e54 |= 0x1;
       } else {
         //LAB_800e6b34
-        _800f7e54.and(0xffff_fffeL);
+        submapFlags_800f7e54 &= 0xffff_fffe;
       }
     }
 
     //LAB_800e6b48
-    script.params_20[2].set((int)_800f7e54.get());
+    script.params_20[2].set(submapFlags_800f7e54);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, returns vector possibly related to collision")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X value")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y value")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z value")
   @Method(0x800e6b64L)
   public static FlowControl FUN_800e6b64(final RunningScript<?> script) {
     if(script.params_20[0].get() >= 0) {
@@ -4762,11 +4904,15 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("No-op")
   @Method(0x800e6bd8L)
   public static FlowControl FUN_800e6bd8(final RunningScript<?> script) {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown usage, I think this calculates a Z sorting value for a submap object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The calculated Z value")
   @Method(0x800e6be0L)
   public static FlowControl FUN_800e6be0(final RunningScript<?> script) {
     final MATRIX coord = sobjs_800c6880[script.params_20[0].get()].innerStruct_00.model_00.coord2_14.coord;
@@ -4774,15 +4920,23 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, seems to be a temporary X/Y camera offset for the next time the offset is calculated")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The camera X offset")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "Y", description = "The camera Y offset")
   @Method(0x800e6cacL)
   public static FlowControl FUN_800e6cac(final RunningScript<?> script) {
     FUN_800e80e4(script.params_20[0].get(), script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Starts an FMV")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "fmvIndex", description = "The FMV index to play")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "engineStateAfterFmv", description = "The engine state to transition to after the FMV")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "submapCutAfterFmv", description = "The submap cut after the FMV")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "submapSceneAfterFmv", description = "The submap scene after the FMV")
   @Method(0x800e6ce0L)
-  public static FlowControl FUN_800e6ce0(final RunningScript<?> script) {
-    FUN_800e5534(script.params_20[0].get() + 0x800, script.params_20[1].get());
+  public static FlowControl scriptStartFmv(final RunningScript<?> script) {
+    mapTransition(script.params_20[0].get() + 0x800, script.params_20[1].get());
     submapCut_80052c30.set(script.params_20[2].get());
     _800cb450.setu(submapCut_80052c30.get());
     submapScene_80052c34.set(script.params_20[3].get());
@@ -4790,12 +4944,12 @@ public final class SMap {
   }
 
   @Method(0x800e6d4cL)
-  public static void FUN_800e6d4c() {
-    _800f7e54.setu(0);
+  public static void clearSubmapFlags() {
+    submapFlags_800f7e54 = 0;
   }
 
   @Method(0x800e6d58L)
-  public static long FUN_800e6d58(final long submapCut) {
+  public static long FUN_800e6d58(final int submapCut) {
     for(int i = 0; i < 0x2d; i++) {
       if(_800f7e58.offset(i * 0x4L).get() == submapCut) {
         return 0x1L;
@@ -4997,7 +5151,7 @@ public final class SMap {
   }
 
   @Method(0x800e76b0L)
-  public static void FUN_800e76b0(final int x, final int y, final int index) {
+  public static void setEnvForegroundPosition(final int x, final int y, final int index) {
     if(x == 1024 && y == 1024) {
       envForegroundMetrics_800cb590[index].hidden_08 = true;
       return;
@@ -5261,6 +5415,10 @@ public final class SMap {
     //LAB_800e80dc
   }
 
+  @ScriptDescription("Sets collision metrics for a submap object (collision type unknown)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "horizontalSize", description = "The horizontal collision size")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "verticalSize", description = "The vertical collision size")
   @Method(0x800e06c4L)
   public static FlowControl scriptSetSobjCollision1(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -5269,6 +5427,9 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Checks if a submap object is collided (collision type unknown)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "collided", description = "True if the submap object is collided")
   @Method(0x800e0710L)
   public static FlowControl scriptGetSobjCollidedWith1(final RunningScript<?> script) {
     script.params_20[1].set(((SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).collidedWithSobjIndex_19c);
@@ -6244,7 +6405,7 @@ public final class SMap {
   public static void fadeInCredits() {
     if(_800bf0cf.get() == 4) {
       //LAB_800eadd0
-      Scus94491BpeSegment.startFadeEffect(2, 15);
+      startFadeEffect(2, 15);
       pregameLoadingStage_800bb10c.set(4);
     }
 
@@ -6264,7 +6425,7 @@ public final class SMap {
 
   @Method(0x800eae38L)
   public static void fadeOutCredits() {
-    Scus94491BpeSegment.startFadeEffect(1, 15);
+    startFadeEffect(1, 15);
     pregameLoadingStage_800bb10c.set(6);
   }
 
