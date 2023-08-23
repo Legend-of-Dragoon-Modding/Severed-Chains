@@ -2546,14 +2546,14 @@ public final class Scus94491BpeSegment {
       SubmapMusic08 a2;
       int a3;
       for(a3 = 0, a2 = _8004fb00.get(a3); a2.submapCut_00.get() != 99 || a2.musicIndex_02.get() != 99; a3++, a2 = _8004fb00.get(a3)) { // I think 99 is just a sentinel value that means "end of list"
-        final int submapIndex = submapId_800bd808.get();
+        final int submapId = submapId_800bd808.get();
 
-        if(submapIndex == a2.submapCut_00.get()) {
+        if(submapId == a2.submapCut_00.get()) {
           int v1 = 0;
 
           //LAB_8001c680
           do {
-            if(submapIndex == 57) { // Opening (Rose intro, Dart forest, horses)
+            if(submapId == 57) { // Opening (Rose intro, Dart forest, horses)
               if(a2.submapCuts_04.deref().get(v1).get() != submapCut_80052c30.get()) {
                 continue;
               }

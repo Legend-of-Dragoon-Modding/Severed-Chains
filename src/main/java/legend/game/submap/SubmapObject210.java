@@ -17,9 +17,11 @@ public class SubmapObject210 {
   public int animIndex_132;
   public int s_134;
 
+  /** Movement destination? */
   public final VECTOR vec_138 = new VECTOR();
   /** Number of frames for movement? */
   public int i_144;
+  /** Movement step? */
   public final VECTOR vec_148 = new VECTOR();
   public final VECTOR vec_154 = new VECTOR();
   public final VECTOR vec_160 = new VECTOR();
