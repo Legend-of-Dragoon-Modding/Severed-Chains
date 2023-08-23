@@ -27,5 +27,6 @@ public @interface ScriptParam {
     FLAG,
     /** Lower 5 bits are what bit to set (i.e. 1 << n), upper 3 bits is the index into flags array */
     FLAG_ARRAY,
+    STRING,
   }
 }

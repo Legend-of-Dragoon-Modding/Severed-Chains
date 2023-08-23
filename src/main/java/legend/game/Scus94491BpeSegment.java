@@ -990,6 +990,7 @@ public final class Scus94491BpeSegment {
     preloadingAudioAssets_8004ddcc.set(loading);
   }
 
+  @ScriptDescription("Does nothing")
   @Method(0x8001734cL)
   public static FlowControl scriptRewindAndPause2(final RunningScript<?> script) {
     return FlowControl.PAUSE_AND_REWIND;
