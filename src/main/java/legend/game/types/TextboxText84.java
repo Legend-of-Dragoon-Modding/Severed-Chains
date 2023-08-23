@@ -4,7 +4,12 @@ public class TextboxText84 {
   public int _00;
   public int type_04;
 
-  public int _08;
+  /**
+   * <ul>
+   *   <li>0x20 - disables being able to advance the textbox, maybe part of automatic textboxes?</li>
+   * </ul>
+   */
+  public int flags_08;
   public int z_0c;
   public int _10;
   public int x_14;
