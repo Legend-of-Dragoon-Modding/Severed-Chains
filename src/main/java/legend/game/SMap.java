@@ -1649,7 +1649,7 @@ public final class SMap {
   public static FlowControl scriptSetCameraPos(final RunningScript<?> script) {
     SetRotMatrix(worldToScreenMatrix_800c3548);
     SetTransMatrix(worldToScreenMatrix_800c3548);
-    setCameraPos(new SVECTOR().set((short)script.params_20[0].get(), (short)script.params_20[0].get(), (short)script.params_20[0].get()));
+    setCameraPos(new SVECTOR().set((short)script.params_20[0].get(), (short)script.params_20[1].get(), (short)script.params_20[2].get())); // Retail bugfix - these were all 0
 
     //LAB_800df744
     for(int i = 0; i < sobjCount_800c6730; i++) {

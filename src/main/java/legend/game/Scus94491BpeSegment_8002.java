@@ -2131,7 +2131,7 @@ public final class Scus94491BpeSegment_8002 {
 
     final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
     textboxText.type_04 = script.params_20[1].get();
-    textboxText._08 |= 0x1000;
+    textboxText.flags_08 |= 0x1000;
     textboxText.str_24 = LodString.fromParam(script.params_20[2]);
     textboxText.chars_58 = new TextboxChar08[textboxText.chars_1c * (textboxText.lines_1e + 1)];
     Arrays.setAll(textboxText.chars_58, i -> new TextboxChar08());
@@ -2170,7 +2170,7 @@ public final class Scus94491BpeSegment_8002 {
     textboxText.str_24 = LodString.fromParam(script.params_20[5]);
 
     if(type == 1 && (script.params_20[1].get() & 0x1000) > 0) {
-      textboxText._08 |= 0x20;
+      textboxText.flags_08 |= 0x20;
     }
 
     //LAB_80025370
@@ -2181,11 +2181,11 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_800253a4
     if(type == 4) {
-      textboxText._08 |= 0x200;
+      textboxText.flags_08 |= 0x200;
     }
 
     //LAB_800253d4
-    textboxText._08 |= 0x1000;
+    textboxText.flags_08 |= 0x1000;
     textboxText.chars_58 = new TextboxChar08[textboxText.chars_1c * (textboxText.lines_1e + 1)];
     Arrays.setAll(textboxText.chars_58, i -> new TextboxChar08());
     positionSobjTextbox(textboxIndex, script.params_20[1].get());
@@ -2243,7 +2243,7 @@ public final class Scus94491BpeSegment_8002 {
       clearTextboxText(textboxIndex);
 
       if(type == 1 && (a2 & 0x1000) > 0) {
-        textboxText._08 |= 0x20;
+        textboxText.flags_08 |= 0x20;
       }
 
       //LAB_8002562c
@@ -2254,11 +2254,11 @@ public final class Scus94491BpeSegment_8002 {
 
       //LAB_80025660
       if(type == 4) {
-        textboxText._08 |= 0x200;
+        textboxText.flags_08 |= 0x200;
       }
 
       //LAB_80025690
-      textboxText._08 |= 0x1000;
+      textboxText.flags_08 |= 0x1000;
       textboxText.chars_58 = new TextboxChar08[textboxText.chars_1c * (textboxText.lines_1e + 1)];
       Arrays.setAll(textboxText.chars_58, i -> new TextboxChar08());
       calculateAppropriateTextboxBounds(textboxIndex, textboxText.x_14, textboxText.y_16);
@@ -2288,7 +2288,7 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_800257bc
-    textboxText._08 |= 0x800;
+    textboxText.flags_08 |= 0x800;
     return FlowControl.CONTINUE;
   }
 
@@ -2327,7 +2327,7 @@ public final class Scus94491BpeSegment_8002 {
   public static void clearTextboxText(final int a0) {
     final TextboxText84 textboxText = textboxText_800bdf38[a0];
     textboxText._00 = 1;
-    textboxText._08 = 0;
+    textboxText.flags_08 = 0;
     textboxText.z_0c = 13;
     textboxText._10 = 0;
     textboxText._20 = 0x1000;
@@ -2662,7 +2662,7 @@ public final class Scus94491BpeSegment_8002 {
     long v1 = textboxText._00;
     if(v1 == 1) {
       //LAB_8002663c
-      if((textboxText._08 & 0x1) == 0) {
+      if((textboxText.flags_08 & 0x1) == 0) {
         switch(textboxText.type_04) {
           case 0:
             textboxText._00 = 0xc;
@@ -2670,7 +2670,7 @@ public final class Scus94491BpeSegment_8002 {
 
           case 2:
             textboxText._00 = 10;
-            textboxText._08 |= 0x1;
+            textboxText.flags_08 |= 0x1;
             textboxText._2a = 1;
             textboxText.charX_34 = 0;
             textboxText.charY_36 = textboxText.lines_1e;
@@ -2678,7 +2678,7 @@ public final class Scus94491BpeSegment_8002 {
 
           case 3:
             textboxText._00 = 23;
-            textboxText._08 |= 0x1;
+            textboxText.flags_08 |= 0x1;
             textboxText._2a = 1;
             textboxText.charX_34 = 0;
             textboxText.charY_36 = 0;
@@ -2691,9 +2691,9 @@ public final class Scus94491BpeSegment_8002 {
             //LAB_80026780
             do {
               FUN_800274f0(textboxIndex);
-            } while((textboxText._08 & 0x400) == 0);
+            } while((textboxText.flags_08 & 0x400) == 0);
 
-            textboxText._08 ^= 0x400;
+            textboxText.flags_08 ^= 0x400;
             // Fall through
 
           default:
@@ -2710,10 +2710,10 @@ public final class Scus94491BpeSegment_8002 {
       FUN_800274f0(textboxIndex);
     } else if(v1 == 5) {
       //LAB_800267d4
-      if((textboxText._08 & 0x1) != 0) {
+      if((textboxText.flags_08 & 0x1) != 0) {
         //LAB_800267f4
-        if(textboxText._3a >= textboxText.lines_1e - ((textboxText._08 & 0x200) == 0 ? 1 : 2)) {
-          textboxText._08 ^= 0x1;
+        if(textboxText._3a >= textboxText.lines_1e - ((textboxText.flags_08 & 0x200) == 0 ? 1 : 2)) {
+          textboxText.flags_08 ^= 0x1;
           textboxText._3a = 0;
           setTextboxArrowPosition(textboxIndex, 1);
         } else {
@@ -2724,9 +2724,9 @@ public final class Scus94491BpeSegment_8002 {
         }
       } else {
         //LAB_8002684c
-        if((textboxText._08 & 0x20) != 0) {
+        if((textboxText.flags_08 & 0x20) != 0) {
           textboxText._00 = 9;
-          textboxText._08 |= 0x1;
+          textboxText.flags_08 |= 0x1;
         } else {
           //LAB_8002686c
           if((press_800bee94.get() & 0x20) != 0 || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
@@ -2736,7 +2736,7 @@ public final class Scus94491BpeSegment_8002 {
             if(v1 == 1 || v1 == 4) {
               //LAB_800268b4
               textboxText._00 = 9;
-              textboxText._08 |= 0x1;
+              textboxText.flags_08 |= 0x1;
             }
 
             if(v1 == 2) {
@@ -2760,7 +2760,7 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_80026928
-      if((textboxText._08 & 0x20) == 0) {
+      if((textboxText.flags_08 & 0x20) == 0) {
         if((input_800bee90.get() & 0x20) != 0 || CONFIG.getConfig(CoreMod.QUICK_TEXT_CONFIG.get())) {
           s3 = 0;
 
@@ -2803,16 +2803,16 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_80026a00
       FUN_800288a4(textboxIndex);
 
-      if((textboxText._08 & 0x4) != 0) {
-        textboxText._08 ^= 0x4;
-        if((textboxText._08 & 0x2) == 0) {
+      if((textboxText.flags_08 & 0x4) != 0) {
+        textboxText.flags_08 ^= 0x4;
+        if((textboxText.flags_08 & 0x2) == 0) {
           //LAB_80026a5c
           do {
             FUN_800274f0(textboxIndex);
             v1 = textboxText._00;
             if(v1 == 0xf) {
               textboxText._3a = 0;
-              textboxText._08 |= 0x2;
+              textboxText.flags_08 |= 0x2;
             }
           } while(v1 != 0x5 && v1 != 0xf);
 
@@ -2834,12 +2834,12 @@ public final class Scus94491BpeSegment_8002 {
         clearTextboxChars(textboxIndex);
 
         textboxText._00 = 4;
-        textboxText._08 ^= 0x1;
+        textboxText.flags_08 ^= 0x1;
         textboxText.charX_34 = 0;
         textboxText.charY_36 = 0;
         textboxText._3a = 0;
 
-        if((textboxText._08 & 0x8) != 0) {
+        if((textboxText.flags_08 & 0x8) != 0) {
           textboxText._00 = 13;
         }
       }
@@ -2851,7 +2851,7 @@ public final class Scus94491BpeSegment_8002 {
       }
     } else if(v1 == 13) {
       //LAB_80026b34
-      textboxText._08 |= 0x8;
+      textboxText.flags_08 |= 0x8;
       setTextboxArrowPosition(textboxIndex, 1);
 
       //LAB_80026b4c
@@ -2866,7 +2866,7 @@ public final class Scus94491BpeSegment_8002 {
       } while(v1 != 0xf);
 
       //LAB_80026b6c
-      if((textboxText._08 & 0x20) != 0) {
+      if((textboxText.flags_08 & 0x20) != 0) {
         setTextboxArrowPosition(textboxIndex, 0);
       }
 
@@ -2878,7 +2878,7 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_80026bc8
-      if((textboxText._08 & 0x800) != 0) {
+      if((textboxText.flags_08 & 0x800) != 0) {
         setTextboxArrowPosition(textboxIndex, 0);
         textboxText._00 = 23;
         textboxText._64 = 10;
@@ -2888,7 +2888,7 @@ public final class Scus94491BpeSegment_8002 {
       }
     } else if(v1 == 14) {
       //LAB_80026c18
-      if((textboxText._08 & 0x40) == 0) {
+      if((textboxText.flags_08 & 0x40) == 0) {
         textboxText._40--;
 
         if(textboxText._40 <= 0) {
@@ -2902,7 +2902,7 @@ public final class Scus94491BpeSegment_8002 {
             textboxText.charY_36 = 0;
             textboxText._3a = 0;
             textboxText._00 = 13;
-            textboxText._08 ^= 0x1;
+            textboxText.flags_08 ^= 0x1;
           } else if(v1 == 15) {
             //LAB_80026c98
             //LAB_80026c9c
@@ -2913,7 +2913,7 @@ public final class Scus94491BpeSegment_8002 {
       }
     } else if(v1 == 15) {
       //LAB_80026cb0
-      if((textboxText._08 & 0x20) != 0) {
+      if((textboxText.flags_08 & 0x20) != 0) {
         textboxText._00 = 16;
       } else {
         //LAB_80026cd0
@@ -2927,7 +2927,7 @@ public final class Scus94491BpeSegment_8002 {
     } else if(v1 == 16) {
       //LAB_80026cdc
       //LAB_80026ce8
-      if((textboxText._08 & 0x40) != 0) {
+      if((textboxText.flags_08 & 0x40) != 0) {
         textboxText.chars_58 = null;
         textboxText._00 = 0;
         setTextboxArrowPosition(textboxIndex, 0);
@@ -2948,7 +2948,7 @@ public final class Scus94491BpeSegment_8002 {
         if(v1 == 0xfL) {
           textboxText._00 = 18;
           textboxText._3a = 0;
-          textboxText._08 |= 0x102;
+          textboxText.flags_08 |= 0x102;
           break;
         }
       } while(true);
@@ -2971,7 +2971,7 @@ public final class Scus94491BpeSegment_8002 {
         if((input_800bee90.get() & 0x4000) == 0) {
           //LAB_80026ee8
           if(Input.getButtonState(InputAction.DPAD_UP) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
-            if((textboxText._08 & 0x100) == 0 || textboxText._68 != 0) {
+            if((textboxText.flags_08 & 0x100) == 0 || textboxText._68 != 0) {
               //LAB_80026f38
               Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
 
@@ -2983,7 +2983,7 @@ public final class Scus94491BpeSegment_8002 {
                 textboxText._68--;
               } else {
                 //LAB_80026f88
-                if((textboxText._08 & 0x2) != 0) {
+                if((textboxText.flags_08 & 0x2) != 0) {
                   v1 = textboxText._3a;
 
                   // TODO not sure about this block of code
@@ -2997,7 +2997,7 @@ public final class Scus94491BpeSegment_8002 {
 
                     //LAB_80026fc0
                     textboxText._3a = 0;
-                    textboxText._08 ^= 0x2;
+                    textboxText.flags_08 ^= 0x2;
                   }
 
                   //LAB_80026fe8
@@ -3034,7 +3034,7 @@ public final class Scus94491BpeSegment_8002 {
                   //LAB_800270b0
                   textboxText.charX_34 = 0;
                   textboxText.charY_36 = 0;
-                  textboxText._08 |= 0x80;
+                  textboxText.flags_08 |= 0x80;
 
                   //LAB_800270dc
                   do {
@@ -3043,7 +3043,7 @@ public final class Scus94491BpeSegment_8002 {
 
                   //LAB_80027104
                   textboxText._00 = 21;
-                  textboxText._08 ^= 0x80;
+                  textboxText.flags_08 ^= 0x80;
                 }
               }
             }
@@ -3054,7 +3054,7 @@ public final class Scus94491BpeSegment_8002 {
         textboxText._60++;
         textboxText._64 = 4;
         textboxText._68++;
-        if((textboxText._08 & 0x100) == 0 || textboxText.charY_36 + 1 != textboxText._68) {
+        if((textboxText.flags_08 & 0x100) == 0 || textboxText.charY_36 + 1 != textboxText._68) {
           //LAB_80026e68
           //LAB_80026e6c
           if(textboxText._60 < textboxText.lines_1e) {
@@ -3063,7 +3063,7 @@ public final class Scus94491BpeSegment_8002 {
 
             //LAB_80026ee8
             if(Input.getButtonState(InputAction.DPAD_UP) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
-              if((textboxText._08 & 0x100) == 0 || textboxText._68 != 0) {
+              if((textboxText.flags_08 & 0x100) == 0 || textboxText._68 != 0) {
                 //LAB_80026f38
                 Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
 
@@ -3075,7 +3075,7 @@ public final class Scus94491BpeSegment_8002 {
                   textboxText._68--;
                 } else {
                   //LAB_80026f88
-                  if((textboxText._08 & 0x2) != 0) {
+                  if((textboxText.flags_08 & 0x2) != 0) {
                     v1 = textboxText._3a;
 
                     // TODO not sure about this block of code
@@ -3089,7 +3089,7 @@ public final class Scus94491BpeSegment_8002 {
 
                       //LAB_80026fc0
                       textboxText._3a = 0;
-                      textboxText._08 ^= 0x2;
+                      textboxText.flags_08 ^= 0x2;
                     }
 
                     //LAB_80026fe8
@@ -3126,7 +3126,7 @@ public final class Scus94491BpeSegment_8002 {
                     //LAB_800270b0
                     textboxText.charX_34 = 0;
                     textboxText.charY_36 = 0;
-                    textboxText._08 |= 0x80;
+                    textboxText.flags_08 |= 0x80;
 
                     //LAB_800270dc
                     do {
@@ -3135,7 +3135,7 @@ public final class Scus94491BpeSegment_8002 {
 
                     //LAB_80027104
                     textboxText._00 = 21;
-                    textboxText._08 ^= 0x80;
+                    textboxText.flags_08 ^= 0x80;
                   }
                 }
               }
@@ -3164,7 +3164,7 @@ public final class Scus94491BpeSegment_8002 {
       if(textboxText._64 == 0) {
         textboxText._00 = 18;
 
-        if((textboxText._08 & 0x800) != 0) {
+        if((textboxText.flags_08 & 0x800) != 0) {
           textboxText._00 = 22;
         }
       }
@@ -3174,16 +3174,16 @@ public final class Scus94491BpeSegment_8002 {
 
       if(textboxText._2c >= 12) {
         FUN_80027eb4(textboxIndex);
-        textboxText._08 |= 0x4;
+        textboxText.flags_08 |= 0x4;
         textboxText._2c -= 12;
         textboxText.charY_36 = textboxText.lines_1e;
       }
 
       //LAB_800271a8
-      if((textboxText._08 & 0x4) != 0) {
-        textboxText._08 ^= 0x4;
+      if((textboxText.flags_08 & 0x4) != 0) {
+        textboxText.flags_08 ^= 0x4;
 
-        if((textboxText._08 & 0x2) == 0) {
+        if((textboxText.flags_08 & 0x2) == 0) {
           //LAB_8002720c
           //LAB_80027220
           do {
@@ -3192,7 +3192,7 @@ public final class Scus94491BpeSegment_8002 {
             v1 = textboxText._00;
             if(v1 == 0xf) {
               textboxText._3a = 0;
-              textboxText._08 |= 0x2;
+              textboxText.flags_08 |= 0x2;
               break;
             }
           } while(v1 != 5);
@@ -3217,11 +3217,11 @@ public final class Scus94491BpeSegment_8002 {
         textboxText.charY_36 = 0;
         textboxText._2c = 0;
         textboxText._00 = 18;
-        textboxText._08 |= 0x4;
+        textboxText.flags_08 |= 0x4;
       }
 
       //LAB_800272b0
-      if((textboxText._08 & 0x4) != 0) {
+      if((textboxText.flags_08 & 0x4) != 0) {
         final LodString str = textboxText.str_24;
 
         //LAB_800272dc
@@ -3310,7 +3310,7 @@ public final class Scus94491BpeSegment_8002 {
     final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
     final LodString str = textboxText.str_24;
 
-    if((textboxText._08 & 0x10) != 0) {
+    if((textboxText.flags_08 & 0x10) != 0) {
       final int s1 = (short)textboxText._80;
       FUN_8002a180(textboxIndex, textboxText.charX_34, textboxText.charY_36, textboxText._28, textboxText.digits_46[s1]);
 
@@ -3321,7 +3321,7 @@ public final class Scus94491BpeSegment_8002 {
       if(textboxText.charX_34 < textboxText.chars_1c) {
         //LAB_80027768
         if(textboxText.digits_46[s1 + 1] == -1) {
-          textboxText._08 ^= 0x10;
+          textboxText.flags_08 ^= 0x10;
         }
       } else if(textboxText.charY_36 >= textboxText.lines_1e - 1) {
         if(textboxText.digits_46[s1 + 1] != -1) {
@@ -3343,7 +3343,7 @@ public final class Scus94491BpeSegment_8002 {
           setTextboxArrowPosition(textboxIndex, 1);
 
           //LAB_80027740
-          textboxText_800bdf38[textboxIndex]._08 ^= 0x10;
+          textboxText_800bdf38[textboxIndex].flags_08 ^= 0x10;
           return;
         }
 
@@ -3382,7 +3382,7 @@ public final class Scus94491BpeSegment_8002 {
           }
 
           //LAB_80027740
-          textboxText_800bdf38[textboxIndex]._08 ^= 0x10;
+          textboxText_800bdf38[textboxIndex].flags_08 ^= 0x10;
           return;
         }
       }
@@ -3409,13 +3409,13 @@ public final class Scus94491BpeSegment_8002 {
         case 0xa1 -> {
           textboxText.charX_34 = 0;
           textboxText.charY_36++;
-          textboxText._08 |= 0x400;
+          textboxText.flags_08 |= 0x400;
 
-          if(textboxText.charY_36 >= textboxText.lines_1e || (textboxText._08 & 0x80) != 0) {
+          if(textboxText.charY_36 >= textboxText.lines_1e || (textboxText.flags_08 & 0x80) != 0) {
             //LAB_80027880
             textboxText._00 = 5;
 
-            if((textboxText._08 & 0x1) == 0) {
+            if((textboxText.flags_08 & 0x1) == 0) {
               setTextboxArrowPosition(textboxIndex, 1);
             }
 
@@ -3461,7 +3461,7 @@ public final class Scus94491BpeSegment_8002 {
         }
 
         case 0xa8 -> {
-          textboxText._08 |= 0x10;
+          textboxText.flags_08 |= 0x10;
 
           //LAB_80027970
           Arrays.fill(textboxText.digits_46, -1);
@@ -3532,10 +3532,10 @@ public final class Scus94491BpeSegment_8002 {
 
         case 0xb2 -> {
           if((a0_0 & 0x1L) == 0x1L) {
-            textboxText._08 |= 0x1000;
+            textboxText.flags_08 |= 0x1000;
           } else {
             //LAB_80027bd0
-            textboxText._08 ^= 0x1000;
+            textboxText.flags_08 ^= 0x1000;
           }
         }
 
@@ -3564,17 +3564,17 @@ public final class Scus94491BpeSegment_8002 {
 
               //LAB_80027c9c
               textboxText._00 = 5;
-              textboxText._08 |= 0x400;
+              textboxText.flags_08 |= 0x400;
               textboxText.charX_34 = 0;
               textboxText.charY_36++;
 
-              if((textboxText._08 & 0x1) == 0) {
+              if((textboxText.flags_08 & 0x1) == 0) {
                 setTextboxArrowPosition(textboxIndex, 1);
               }
             }
           } else {
             //LAB_80027ce0
-            textboxText._08 |= 0x400;
+            textboxText.flags_08 |= 0x400;
             textboxText.charX_34 = 0;
             textboxText.charY_36++;
 
@@ -3650,7 +3650,7 @@ public final class Scus94491BpeSegment_8002 {
     final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
 
     //LAB_80027efc
-    for(int i = (textboxText._08 & 0x200) > 0 ? 1 : 0; i < textboxText.lines_1e; i++) {
+    for(int i = (textboxText.flags_08 & 0x200) > 0 ? 1 : 0; i < textboxText.lines_1e; i++) {
       //LAB_80027f18
       for(int a1 = 0; a1 < textboxText.chars_1c; a1++) {
         final TextboxChar08 v0 = textboxText.chars_58[(i + 1) * textboxText.chars_1c + a1];
@@ -3715,7 +3715,7 @@ public final class Scus94491BpeSegment_8002 {
 
     final int sp10;
     final int sp14;
-    if((textboxText._08 & 0x200) != 0) {
+    if((textboxText.flags_08 & 0x200) != 0) {
       sp10 = textboxText.chars_1c;
       sp14 = textboxText.chars_1c * 2;
     } else {
@@ -3741,7 +3741,7 @@ public final class Scus94491BpeSegment_8002 {
         s1 = 0;
         s2 = 0;
         s3 = 0;
-        if((textboxText._08 & 0x1) != 0) {
+        if((textboxText.flags_08 & 0x1) != 0) {
           if(i >= sp10 && i < sp14) {
             final int v1 = textboxText._2c;
             s1 = -v1;
@@ -3769,7 +3769,7 @@ public final class Scus94491BpeSegment_8002 {
           final int x = textboxText._18 + chr.x_00 * 9 - centreScreenX_1f8003dc.get() - sp38;
           final int y;
 
-          if((textboxText._08 & 0x200) != 0 && i < textboxText.chars_1c) {
+          if((textboxText.flags_08 & 0x200) != 0 && i < textboxText.chars_1c) {
             y = textboxText._1a + chr.y_02 * 12 - centreScreenY_1f8003de.get() - s1;
           } else {
             y = textboxText._1a + chr.y_02 * 12 - centreScreenY_1f8003de.get() - s1 - textboxText._2c;
@@ -3831,7 +3831,7 @@ public final class Scus94491BpeSegment_8002 {
 
       if(textboxText._2c >= 12) {
         FUN_80027eb4(textboxIndex);
-        textboxText._08 |= 0x4;
+        textboxText.flags_08 |= 0x4;
         textboxText._2c -= 12;
         textboxText.charY_36 = textboxText.lines_1e;
       }
@@ -4037,7 +4037,7 @@ public final class Scus94491BpeSegment_8002 {
     final TextboxText84 textboxText = textboxText_800bdf38[0];
     textboxText.type_04 = (int)_80052baa.get();
     textboxText.str_24 = _80052c20;
-    textboxText._08 |= 0x40;
+    textboxText.flags_08 |= 0x40;
 
     textboxText.chars_58 = new TextboxChar08[textboxText.chars_1c * (textboxText.lines_1e + 1)];
     Arrays.setAll(textboxText.chars_58, i -> new TextboxChar08());
@@ -4186,7 +4186,7 @@ public final class Scus94491BpeSegment_8002 {
 
     if((arrow._00 & 0x1) != 0) {
       final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
-      if((textboxText._08 & 0x1000) != 0) {
+      if((textboxText.flags_08 & 0x1000) != 0) {
         final int left = arrow.x_04 - centreScreenX_1f8003dc.get() - 8;
         final int right = arrow.x_04 - centreScreenX_1f8003dc.get() + 8;
         final int top = arrow.y_06 - centreScreenY_1f8003de.get() - 6;
@@ -4336,13 +4336,13 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80029eccL)
   public static FlowControl FUN_80029ecc(final RunningScript<?> script) {
     final TextboxText84 textboxText = textboxText_800bdf38[script.params_20[0].get()];
-    if(textboxText._00 == 16 && (textboxText._08 & 0x20) != 0) {
-      textboxText._08 ^= 0x20;
+    if(textboxText._00 == 16 && (textboxText.flags_08 & 0x20) != 0) {
+      textboxText.flags_08 ^= 0x20;
     }
 
     //LAB_80029f18
     //LAB_80029f1c
-    textboxText._08 |= 0x40;
+    textboxText.flags_08 |= 0x40;
     return FlowControl.CONTINUE;
   }
 
@@ -4407,7 +4407,7 @@ public final class Scus94491BpeSegment_8002 {
     chr.x_00 = charX;
     chr.y_02 = charY;
 
-    if((textboxText._08 & 0x200) != 0 && charY == 0) {
+    if((textboxText.flags_08 & 0x200) != 0 && charY == 0) {
       a3 = 8;
     }
 
@@ -4514,7 +4514,7 @@ public final class Scus94491BpeSegment_8002 {
     final TextboxArrow0c arrow = textboxArrows_800bdea0[textboxIndex];
 
     if((arrow._00 & 0x1) != 0) {
-      if((textboxText_800bdf38[textboxIndex]._08 & 0x1000) != 0) {
+      if((textboxText_800bdf38[textboxIndex].flags_08 & 0x1000) != 0) {
         if((tickCount_800bb0fc.get() & 0x1) == 0) {
           arrow.spriteIndex_08++;
         }

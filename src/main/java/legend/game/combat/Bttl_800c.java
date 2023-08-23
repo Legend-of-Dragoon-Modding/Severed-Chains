@@ -3346,7 +3346,7 @@ public final class Bttl_800c {
 
   @ScriptDescription("Unknown")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "p1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "isDragoon", description = "Whether or not the battle object is a dragoon")
   @Method(0x800ccba4L)
   public static FlowControl FUN_800ccba4(final RunningScript<?> script) {
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
@@ -3515,14 +3515,14 @@ public final class Bttl_800c {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "dead", description = "True for dead, false otherwise")
   @Method(0x800cd078L)
   public static FlowControl scriptSetBobjDead(final RunningScript<?> script) {
-    final ScriptState<?> a1 = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
+    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
 
     //LAB_800cd0d0
     if(script.params_20[1].get() != 0) {
-      a1.storage_44[7] |= 0x40;
+      state.storage_44[7] |= 0x40;
     } else {
       //LAB_800cd0c4
-      a1.storage_44[7] &= 0xffff_ffbf;
+      state.storage_44[7] &= 0xffff_ffbf;
     }
 
     cacheLivingBobjs();
