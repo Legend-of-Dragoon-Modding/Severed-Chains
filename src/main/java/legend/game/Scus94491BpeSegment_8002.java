@@ -98,27 +98,26 @@ import static legend.game.SItem.renderPostCombatReport;
 import static legend.game.SItem.textLength;
 import static legend.game.SMap.FUN_800da114;
 import static legend.game.SMap.FUN_800de004;
-import static legend.game.SMap.positionTextboxAtSobj;
 import static legend.game.SMap.FUN_800e3fac;
 import static legend.game.SMap.FUN_800e4018;
 import static legend.game.SMap.FUN_800e4708;
 import static legend.game.SMap.FUN_800e4e5c;
 import static legend.game.SMap.FUN_800e4f8c;
-import static legend.game.SMap.mapTransition;
 import static legend.game.SMap.FUN_800e828c;
 import static legend.game.SMap.FUN_800e8e50;
 import static legend.game.SMap.FUN_800ea4c8;
 import static legend.game.SMap._800c68e8;
-import static legend.game.SMap.submapFlags_800f7e54;
 import static legend.game.SMap.adjustSmapUvs;
 import static legend.game.SMap.encounterAccumulator_800c6ae8;
 import static legend.game.SMap.getCollisionAndTransitionInfo;
 import static legend.game.SMap.handleEncounters;
+import static legend.game.SMap.mapTransition;
+import static legend.game.SMap.positionTextboxAtSobj;
 import static legend.game.SMap.renderEnvironment;
 import static legend.game.SMap.renderSmapModel;
 import static legend.game.SMap.renderSmapShadow;
+import static legend.game.SMap.submapFlags_800f7e54;
 import static legend.game.SMap.unloadSmap;
-import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
 import static legend.game.Scus94491BpeSegment.FUN_8001d51c;
 import static legend.game.Scus94491BpeSegment.FUN_8001e010;
@@ -134,6 +133,8 @@ import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.rectArray28_80010770;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.soundBufferOffset;
+import static legend.game.Scus94491BpeSegment.startFadeEffect;
+import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
@@ -1094,7 +1095,7 @@ public final class Scus94491BpeSegment_8002 {
         deallocateRenderables(0xff);
         uiFile_800bdc3c = null;
 
-        Scus94491BpeSegment.startFadeEffect(2, 10);
+        startFadeEffect(2, 10);
 
         if(engineState_8004dd20 == EngineState.SUBMAP_05) {
           FUN_800e3fac();

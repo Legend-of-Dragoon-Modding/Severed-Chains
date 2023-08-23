@@ -2,7 +2,6 @@ package legend.game.title;
 
 import legend.core.gpu.RECT;
 import legend.core.memory.Method;
-import legend.game.Scus94491BpeSegment;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
@@ -16,14 +15,15 @@ import static legend.core.GameEngine.bootMods;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.renderMcq;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
+import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a9c0;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
+import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameOverMcq_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
-import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 
 public final class GameOver {
@@ -64,7 +64,7 @@ public final class GameOver {
 
       case 3 -> {
         deallocateRenderables(0xff);
-        Scus94491BpeSegment.startFadeEffect(2, 10);
+        startFadeEffect(2, 10);
         pregameLoadingStage_800bb10c.set(4);
       }
 
@@ -73,7 +73,7 @@ public final class GameOver {
         if(Input.pressedThisFrame(InputAction.BUTTON_CENTER_2) || Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
           Scus94491BpeSegment_8002.playSound(2);
           pregameLoadingStage_800bb10c.set(5);
-          Scus94491BpeSegment.startFadeEffect(1, 10);
+          startFadeEffect(1, 10);
         }
 
         renderGameOver();

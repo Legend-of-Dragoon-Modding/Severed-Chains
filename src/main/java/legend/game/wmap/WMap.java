@@ -25,7 +25,6 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedShortRef;
-import legend.game.Scus94491BpeSegment;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
@@ -73,17 +72,18 @@ import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.simpleRand;
+import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a3ec;
-import static legend.game.Scus94491BpeSegment_8002.isTextboxInState6;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.animateModel;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.clearTextbox;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.initTextbox;
+import static legend.game.Scus94491BpeSegment_8002.isTextboxInState6;
 import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.rand;
@@ -494,7 +494,7 @@ public final class WMap {
                         if(a0._05 == 0) {
                           if(mapState_800c6798._d8 == 0) {
                             if(a0._250 == 0) {
-                              Scus94491BpeSegment.startFadeEffect(1, 15);
+                              startFadeEffect(1, 15);
                               mapState_800c6798.disableInput_d0 = true;
                               tickMainMenuOpenTransition_800c6690.set(1);
                             }
@@ -541,7 +541,7 @@ public final class WMap {
   public static void restoreMapOnExitMenu_() {
     final WMapStruct258 struct = wmapStruct258_800c66a8;
     vsyncMode_8007a3b8 = 1;
-    Scus94491BpeSegment.startFadeEffect(2, 15);
+    startFadeEffect(2, 15);
     LoadImage(storedEffectsRect_800c8700, struct.imageData_2c);
     LoadImage(new RECT().set((short)320, (short)0, (short)64, (short)512), struct.imageData_30);
     struct.imageData_2c = null;
@@ -4728,7 +4728,7 @@ public final class WMap {
         //LAB_800e4478
       } else if(v0 == 0 && (worldMapState_800c6698 >= 3 || playerState_800c669c >= 3)) {
         //LAB_800e44b0
-        Scus94491BpeSegment.startFadeEffect(2, 15);
+        startFadeEffect(2, 15);
 
         wmapStruct19c0_800c66b0._11a = 1;
         wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(0, 0, 0);
@@ -4777,7 +4777,7 @@ public final class WMap {
         //LAB_800e42fc
       } else if(v0 == 0 && (worldMapState_800c6698 >= 3 || playerState_800c669c >= 3)) {
         //LAB_800e4144
-        Scus94491BpeSegment.startFadeEffect(2, 15);
+        startFadeEffect(2, 15);
 
         wmapStruct19c0_800c66b0.rview2_00.viewpoint_00.y = -9000.0f;
         wmapStruct19c0_800c66b0.rview2_00.refpoint_0c.y = 9000.0f;
@@ -4805,7 +4805,7 @@ public final class WMap {
   public static void FUN_800e469c() {
     if(wmapStruct258_800c66a8._04 == 0) {
       //LAB_800e46f0
-      Scus94491BpeSegment.startFadeEffect(1, 30);
+      startFadeEffect(1, 30);
       wmapStruct19c0_800c66b0._110 = 1;
       wmapStruct19c0_800c66b0._10e = 0;
       wmapStruct258_800c66a8._04 = 1;

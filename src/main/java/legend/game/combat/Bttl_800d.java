@@ -2393,15 +2393,15 @@ public final class Bttl_800d {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "How the camera should move")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "newDistance", description = "The new projection plane distance")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "frames", description = "The number of frames it should take to change the distance")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "?")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepZ1")
   @Method(0x800d8decL)
   public static FlowControl scriptMoveCameraProjectionPlane(final RunningScript<?> script) {
     final int mode = script.params_20[0].get();
     final float newProjectionPlaneDistance = script.params_20[1].get();
     final int projectionPlaneChangeFrames = script.params_20[2].get();
-    final int s4 = script.params_20[3].get();
+    final int stepZ1 = script.params_20[3].get();
 
-    LOGGER.info(CAMERA, "[CAMERA] scriptMoveCameraProjectionPlane mode=%d, new=%d, frames=%d, s4=%d", mode, newProjectionPlaneDistance, projectionPlaneChangeFrames, s4);
+    LOGGER.info(CAMERA, "[CAMERA] scriptMoveCameraProjectionPlane mode=%d, new=%d, frames=%d, s4=%d", mode, newProjectionPlaneDistance, projectionPlaneChangeFrames, stepZ1);
 
     final BattleCamera cam = camera_800c67f0;
     cam.projectionPlaneDistance_100 = getProjectionPlaneDistance();
@@ -2425,7 +2425,7 @@ public final class Bttl_800d {
       //LAB_800d8ea0
       final FloatRef initialStepZ = new FloatRef();
       final FloatRef finalStepZ = new FloatRef();
-      setInitialAndFinalCameraVelocities(mode - 1, s4, projectionPlaneDelta, projectionPlaneChangeFrames, initialStepZ, finalStepZ);
+      setInitialAndFinalCameraVelocities(mode - 1, stepZ1, projectionPlaneDelta, projectionPlaneChangeFrames, initialStepZ, finalStepZ);
       cam.projectionPlaneDistanceStep_10c = initialStepZ.get();
       cam.projectionPlaneDistanceStepAcceleration_110 = (finalStepZ.get() - initialStepZ.get()) / projectionPlaneChangeFrames;
     }
