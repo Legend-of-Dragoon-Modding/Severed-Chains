@@ -27,7 +27,7 @@ public class BattleStage {
   public int animationState_5e0;
   /** short */
   public int remainingFrames_5e2;
-  public int _5e4;
+  public int flags_5e4;
   /** short */
   public int z_5e8;
 

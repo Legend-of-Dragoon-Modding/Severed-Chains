@@ -36,6 +36,8 @@ import legend.game.modding.events.battle.BattleDescriptionEvent;
 import legend.game.modding.events.battle.SpellStatsEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
+import legend.game.scripting.ScriptDescription;
+import legend.game.scripting.ScriptParam;
 import legend.game.scripting.ScriptState;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.LodString;
@@ -523,6 +525,11 @@ public final class Bttl_800f {
     return damage;
   }
 
+  @ScriptDescription("Perform a battle object's physical attack against another battle object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attackerIndex", description = "The BattleObject27c attacker script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "defenderIndex", description = "The BattleObject27c defender script index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "damage", description = "The amount of damage done")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "specialEffects", description = "Status effect bitset (or -1 for none)")
   @Method(0x800f2500L)
   public static FlowControl scriptPhysicalAttack(final RunningScript<?> script) {
     final BattleObject27c attacker = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -535,6 +542,12 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Perform a battle object's magic or status attack against another battle object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attackerIndex", description = "The BattleObject27c attacker script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "defenderIndex", description = "The BattleObject27c defender script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "spellId", description = "The attacker's spell ID")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "damage", description = "The amount of damage done")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "specialEffects", description = "Status effect bitset (or -1 for none)")
   @Method(0x800f2694L)
   public static FlowControl scriptDragoonMagicStatusItemAttack(final RunningScript<?> script) {
     final BattleObject27c attacker = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -565,6 +578,11 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Perform a battle object's item attack against another battle object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attackerIndex", description = "The BattleObject27c attacker script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "defenderIndex", description = "The BattleObject27c defender script index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "damage", description = "The amount of damage done")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "specialEffects", description = "Status effect bitset (or -1 for none)")
   @Method(0x800f2838L)
   public static FlowControl scriptItemMagicAttack(final RunningScript<?> script) {
     final BattleObject27c attacker = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -1073,6 +1091,10 @@ public final class Bttl_800f {
     FUN_800f89f4(bobjIndex, 0, 0x2L, damage, clampX(screenCoords.getX() + centreScreenX_1f8003dc.get()), clampY(screenCoords.getY() + centreScreenY_1f8003de.get()), 60 / vsyncMode_8007a3b8 / 4, s4);
   }
 
+  @ScriptDescription("Gives SP to a battle object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "amount", description = "The amount of SP to add")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "total", description = "The total SP after adding the amount requested")
   @Method(0x800f43dcL)
   public static FlowControl scriptGiveSp(final RunningScript<?> script) {
     //LAB_800f43f8
@@ -1096,6 +1118,10 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Consumes SP from a battle object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused", description = "Unused")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "amount", description = "The amount of SP to take away")
   @Method(0x800f4518L)
   public static FlowControl scriptConsumeSp(final RunningScript<?> script) {
     //LAB_800f4534
@@ -1125,6 +1151,10 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, this might handle players selecting an attack target")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "targetBobjIndex", description = "The targeted BattleObject27c script index (or -1 if attack all)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "itemOrSpellId", description = "The item or spell ID selected")
   @Method(0x800f4600L)
   public static FlowControl FUN_800f4600(final RunningScript<?> script) {
     final CombatMenua4 combatMenu = combatMenu_800c6b60;
@@ -1180,6 +1210,9 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to selecting a target or using items/spells")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "targetMode")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "targetBobjIndex", description = "The targeted BattleObject27c script index (or -1 if attack all)")
   @Method(0x800f480cL)
   public static FlowControl FUN_800f480c(final RunningScript<?> script) {
     BattleObject27c a1 = null;
@@ -1226,7 +1259,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f4964L)
-  public static void resetCombatMenu() {
+  public static void resetBattleMenu() {
     final CombatMenua4 combatMenu = combatMenu_800c6b60;
     combatMenu.menuState_00 = 0;
     combatMenu._02 = 0;
@@ -1248,7 +1281,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f49bcL)
-  public static void initCombatMenu(final int charIndex, final int menuType) {
+  public static void initBattleMenu(final int charIndex, final int menuType) {
     final CombatMenua4 combatMenu = combatMenu_800c6b60;
     combatMenu.menuState_00 = 1;
     combatMenu.x_04 = 160;
@@ -1719,7 +1752,7 @@ public final class Bttl_800f {
         }
 
         //LAB_800f568c
-        resetCombatMenu();
+        resetBattleMenu();
       }
     }
 
@@ -3217,30 +3250,49 @@ public final class Bttl_800f {
     return damage;
   }
 
+  @ScriptDescription("Checks if a battle object's physical attack hits another battle object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attackerIndex", description = "The BattleObject27c attacker script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "defenderIndex", description = "The BattleObject27c defender script index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "hit", description = "True if attack hit, false otherwise")
   @Method(0x800f95d0L)
   public static FlowControl scriptCheckPhysicalHit(final RunningScript<?> script) {
     script.params_20[2].set(checkHit(script.params_20[0].get(), script.params_20[1].get(), AttackType.PHYSICAL) ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Checks if a battle object's spell or status attack hits another battle object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attackerIndex", description = "The BattleObject27c attacker script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "defenderIndex", description = "The BattleObject27c defender script index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "hit", description = "True if attack hit, false otherwise")
   @Method(0x800f9618L)
   public static FlowControl scriptCheckSpellOrStatusHit(final RunningScript<?> script) {
     script.params_20[2].set(checkHit(script.params_20[0].get(), script.params_20[1].get(), AttackType.DRAGOON_MAGIC_STATUS_ITEMS) ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Checks if a battle object's item magic attack hits another battle object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attackerIndex", description = "The BattleObject27c attacker script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "defenderIndex", description = "The BattleObject27c defender script index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "hit", description = "True if attack hit, false otherwise")
   @Method(0x800f9660L)
   public static FlowControl scriptCheckItemHit(final RunningScript<?> script) {
     script.params_20[2].set(checkHit(script.params_20[0].get(), script.params_20[1].get(), AttackType.ITEM_MAGIC) ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Caches selected spell's stats on a battle object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
   @Method(0x800f96a8L)
   public static FlowControl scriptSetTempSpellStats(final RunningScript<?> script) {
     setTempSpellStats((BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Gets a battle object's position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attackerIndex", description = "The BattleObject27c attacker script index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X position")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y position")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z position")
   @Method(0x800f96d4L)
   public static FlowControl scriptGetBobjPos(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -3250,6 +3302,10 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Adds a floating number")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "number", description = "The number")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X coordinate")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y coordinate")
   @Method(0x800f9730L)
   public static FlowControl scriptAddFloatingNumber(final RunningScript<?> script) {
     //LAB_800f9758
@@ -3268,26 +3324,37 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Initialized the battle menu for a battle object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "menuType", description = "0 = items, 1 = spells, 2 = ?")
   @Method(0x800f97d8L)
-  public static FlowControl scriptInitCombatMenu(final RunningScript<?> script) {
-    resetCombatMenu();
-    initCombatMenu(((BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).charId_272, (short)script.params_20[1].get());
+  public static FlowControl scriptInitBattleMenu(final RunningScript<?> script) {
+    resetBattleMenu();
+    initBattleMenu(((BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).charId_272, (short)script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Render recovery amount for a battle object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "amount", description = "The amount recovered")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2", description = "Something to do with CLUT/colour")
   @Method(0x800f984cL)
   public static FlowControl scriptRenderRecover(final RunningScript<?> script) {
     addFloatingNumberForBobj(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Caches selected spell's stats on a battle object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
   @Method(0x800f9884L)
   public static FlowControl scriptSetTempItemMagicStats(final RunningScript<?> script) {
     setTempItemMagicStats((BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00);
     return FlowControl.CONTINUE;
   }
 
-  /** If param 0 is -1 then a random item is taken */
+  @ScriptDescription("Takes a specific (or random) item from the player")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "itemId", description = "The item ID (or -1 to take a random item)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "itemTaken", description = "The item ID that was taken (or -1 if none could be taken)")
   @Method(0x800f98b0L)
   public static FlowControl scriptTakeItem(final RunningScript<?> script) {
     int itemId = script.params_20[0].get();
@@ -3321,20 +3388,26 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Gives a specific item to the player")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "itemId", description = "The item ID")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "itemTaken", description = "The item ID that was given (or -1 if none could be given)")
   @Method(0x800f99ecL)
   public static FlowControl scriptGiveItem(final RunningScript<?> script) {
-    final int s1;
+    final int givenItem;
     if(giveItem(script.params_20[0].get()) == 0) {
-      s1 = script.params_20[0].get();
+      givenItem = script.params_20[0].get();
     } else {
-      s1 = -1;
+      givenItem = -1;
     }
 
     //LAB_800f9a2c
-    script.params_20[1].set(s1);
+    script.params_20[1].set(givenItem);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to targeting")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "targetType", description = "0 = characters, 1 = monsters, 2 = any")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "targetBobjIndex", description = "The targeted BattleObject27c script index")
   @Method(0x800f9a50L)
   public static FlowControl FUN_800f9a50(final RunningScript<?> script) {
     final int targetType = script.params_20[0].get();
@@ -3376,6 +3449,8 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Checks if any floating number is on the screen")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "onScreen", description = "True if any floating number is on screen, false otherwise")
   @Method(0x800f9b2cL)
   public static FlowControl scriptIsFloatingNumberOnScreen(final RunningScript<?> script) {
     //LAB_800f9b3c
@@ -3394,6 +3469,8 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets the active dragoon space element")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "charId", description = "The character ID whose element should be used")
   @Method(0x800f9b78L)
   public static FlowControl scriptSetDragoonSpaceElementIndex(final RunningScript<?> script) {
     final int characterId = script.params_20[0].get();
@@ -3416,26 +3493,38 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to menu")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
   @Method(0x800f9b94L)
   public static FlowControl FUN_800f9b94(final RunningScript<?> script) {
     // Unused menu-related code
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to menu")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
   @Method(0x800f9bd4L)
   public static FlowControl FUN_800f9bd4(final RunningScript<?> script) {
     // Unused menu-related code
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to menu")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
   @Method(0x800f9c00L)
   public static FlowControl FUN_800f9c00(final RunningScript<?> script) {
     // Unused menu-related code
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Renders the battle HUD background")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X position (centre)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y position (centre)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "width", description = "The width")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "height", description = "The height")
   @Method(0x800f9c2cL)
-  public static FlowControl FUN_800f9c2c(final RunningScript<?> script) {
+  public static FlowControl scriptRenderBattleHudBackground(final RunningScript<?> script) {
     final int colourIndex = script.params_20[4].get();
     final int r = textboxColours_800c6fec.get(colourIndex).get(0).get();
     final int g = textboxColours_800c6fec.get(colourIndex).get(1).get();
@@ -3453,17 +3542,19 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, disables menu icons if certain flags are set")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "iconIndicesBitset", description = "The icons to disable if their flag matches a certain value (unknown)")
   @Method(0x800f9cacL)
   public static FlowControl FUN_800f9cac(final RunningScript<?> script) {
     final BattleMenuStruct58 menu = battleMenu_800c6c34;
-    final int t2 = script.params_20[0].get();
+    final int iconIndicesBitset = script.params_20[0].get();
 
     //LAB_800f9d18
-    for(int t0 = 0; t0 < 8; t0++) {
-      if((t2 & 1 << t0) != 0) {
+    for(int i = 0; i < 8; i++) {
+      if((iconIndicesBitset & 0x1 << i) != 0) {
         //LAB_800f9d34
         for(int icon = 0; icon < 8; icon++) {
-          if((menu.iconFlags_10[icon] & 0xf) == iconFlags_800c7194.get(t0).get()) {
+          if((menu.iconFlags_10[icon] & 0xf) == iconFlags_800c7194.get(i).get()) {
             menu.iconFlags_10[icon] |= 0x80;
             break;
           }
@@ -3475,6 +3566,8 @@ public final class Bttl_800f {
   }
 
   /** Called after any bobj finishes its turn */
+  @ScriptDescription("Called after any battle object finishes its turn, ticks temporary stats and calls turnFinished on custom battle objects")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
   @Method(0x800f9d7cL)
   public static FlowControl scriptFinishBobjTurn(final RunningScript<?> script) {
     final int bobjIndex = script.params_20[0].get();

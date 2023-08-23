@@ -8379,27 +8379,27 @@ public final class SEffe {
       //LAB_80115d84
       if(a0 == 0) {
         //LAB_80115dc0
-        if((stage_800bda0c._5e4 & 0x8000) != 0) {
+        if((stage_800bda0c.flags_5e4 & 0x8000) != 0) {
           allocateScreenDarkeningEffect(6, 16);
         }
 
         //LAB_80115de8
-        stage_800bda0c._5e4 &= ~(_00 | _02 | _04);
+        stage_800bda0c.flags_5e4 &= ~(_00 | _02 | _04);
         //LAB_80115da8
       } else if(a0 == 1) {
         //LAB_80115e18
-        stage_800bda0c._5e4 |= _00;
+        stage_800bda0c.flags_5e4 |= _00;
       } else if(a0 == 2) {
         //LAB_80115e34
-        stage_800bda0c._5e4 |= _02;
+        stage_800bda0c.flags_5e4 |= _02;
 
-        if((stage_800bda0c._5e4 & 0x8000) != 0) {
+        if((stage_800bda0c.flags_5e4 & 0x8000) != 0) {
           allocateScreenDarkeningEffect(16, 6);
         }
       } else if(a0 == 3) {
         //LAB_80115e70
         //LAB_80115e8c
-        stage_800bda0c._5e4 |= _04;
+        stage_800bda0c.flags_5e4 |= _04;
       }
     }
 

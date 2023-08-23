@@ -67,7 +67,9 @@ import legend.game.modding.events.battle.StatDisplayEvent;
 import legend.game.modding.events.inventory.RepeatItemReturnEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
+import legend.game.scripting.ScriptDescription;
 import legend.game.scripting.ScriptFile;
+import legend.game.scripting.ScriptParam;
 import legend.game.scripting.ScriptState;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
@@ -221,7 +223,7 @@ import static legend.game.combat.Bttl_800f.getTargetEnemyName;
 import static legend.game.combat.Bttl_800f.prepareItemList;
 import static legend.game.combat.Bttl_800f.renderBattleHudBackground;
 import static legend.game.combat.Bttl_800f.renderNumber;
-import static legend.game.combat.Bttl_800f.resetCombatMenu;
+import static legend.game.combat.Bttl_800f.resetBattleMenu;
 import static legend.game.combat.SBtld.monsterNames_80112068;
 import static legend.game.combat.SBtld.monsterStats_8010ba98;
 import static legend.game.combat.SEffe.FUN_80114f3c;
@@ -267,6 +269,7 @@ public final class Bttl_800e {
     lights_800c692c[2].clear();
   }
 
+  @ScriptDescription("Resets battle lighting")
   @Method(0x800e473cL)
   public static FlowControl scriptResetLights(final RunningScript<?> script) {
     resetLights();
@@ -280,12 +283,22 @@ public final class Bttl_800e {
     light._10._00 = 0;
   }
 
+  @ScriptDescription("Sets the battle light direction")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X direction (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y direction (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z direction (PSX degrees)")
   @Method(0x800e4788L)
   public static FlowControl scriptSetLightDirection(final RunningScript<?> script) {
     setLightDirection(script.params_20[0].get(), script.params_20[1].get() / (float)0x1000, script.params_20[2].get() / (float)0x1000, script.params_20[3].get() / (float)0x1000);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Gets the battle light direction")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X direction (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y direction (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z direction (PSX degrees)")
   @Method(0x800e47c8L)
   public static FlowControl scriptGetLightDirection(final RunningScript<?> script) {
     final BttlLightStruct84 light = lights_800c692c[script.params_20[0].get()];
@@ -297,59 +310,80 @@ public final class Bttl_800e {
 
   @Method(0x800e4824L)
   public static void FUN_800e4824(final int lightIndex, final float x, final float y, final float z) {
-    final Vector3f sp0x18 = new Vector3f();
-    FUN_800e4674(sp0x18, new Vector3f(x, y, z));
+    final Vector3f rotation = new Vector3f();
+    FUN_800e4674(rotation, new Vector3f(x, y, z));
     final BttlLightStruct84 light = lights_800c692c[lightIndex];
-    light.light_00.direction_00.set(sp0x18);
+    light.light_00.direction_00.set(rotation);
     light._10._00 = 0;
   }
 
+  @ScriptDescription("Unknown, sets the battle light direction using the vector (0, 0, 1) rotated by ZYX")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X direction (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y direction (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z direction (PSX degrees)")
   @Method(0x800e48a8L)
   public static FlowControl FUN_800e48a8(final RunningScript<?> script) {
     FUN_800e4824(script.params_20[0].get(), MathHelper.psxDegToRad(script.params_20[1].get()), MathHelper.psxDegToRad(script.params_20[2].get()), MathHelper.psxDegToRad(script.params_20[3].get()));
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, gets the battle light direction using the vector (0, 0, 1) rotated by ZYX")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X direction (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y direction (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z direction (PSX degrees)")
   @Method(0x800e48e8L)
   public static FlowControl FUN_800e48e8(final RunningScript<?> script) {
-    final Vector3f sp0x10 = new Vector3f();
-    FUN_800e45c0(sp0x10, lights_800c692c[script.params_20[0].get()].light_00.direction_00);
-    script.params_20[1].set(MathHelper.radToPsxDeg(sp0x10.x));
-    script.params_20[2].set(MathHelper.radToPsxDeg(sp0x10.y));
-    script.params_20[3].set(MathHelper.radToPsxDeg(sp0x10.z));
+    final Vector3f rotation = new Vector3f();
+    FUN_800e45c0(rotation, lights_800c692c[script.params_20[0].get()].light_00.direction_00);
+    script.params_20[1].set(MathHelper.radToPsxDeg(rotation.x));
+    script.params_20[2].set(MathHelper.radToPsxDeg(rotation.y));
+    script.params_20[3].set(MathHelper.radToPsxDeg(rotation.z));
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, sets the battle light direction")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "Either a light index or battle object index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X direction (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y direction (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z direction (PSX degrees)")
   @Method(0x800e4964L)
   public static FlowControl FUN_800e4964(final RunningScript<?> script) {
-    final Vector3f sp0x10 = new Vector3f();
+    final Vector3f rotation = new Vector3f();
 
-    final int a2 = script.params_20[1].get();
-    if(a2 != -1) {
+    final int index = script.params_20[1].get();
+    if(index != -1) {
       //LAB_800e49c0
-      if(a2 > 0 && a2 - 1 < 3) {
-        FUN_800e45c0(sp0x10, lights_800c692c[a2 - 1].light_00.direction_00);
+      if(index > 0 && index - 1 < 3) {
+        FUN_800e45c0(rotation, lights_800c692c[index - 1].light_00.direction_00);
       } else {
         //LAB_800e49f4
-        final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[a2].innerStruct_00;
-        sp0x10.x = bobj.model_148.coord2_14.transforms.rotate.x;
-        sp0x10.z = bobj.model_148.coord2_14.transforms.rotate.z;
+        final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[index].innerStruct_00;
+        rotation.x = bobj.model_148.coord2_14.transforms.rotate.x;
+        rotation.z = bobj.model_148.coord2_14.transforms.rotate.z;
       }
     }
 
     //LAB_800e4a34
     //LAB_800e4a38
-    final Vector3f sp0x18 = new Vector3f();
-    sp0x10.x += MathHelper.psxDegToRad(script.params_20[2].get());
-    sp0x10.y += MathHelper.psxDegToRad(script.params_20[3].get());
-    sp0x10.z += MathHelper.psxDegToRad(script.params_20[4].get());
-    FUN_800e4674(sp0x18, sp0x10);
+    final Vector3f direction = new Vector3f();
+    rotation.x += MathHelper.psxDegToRad(script.params_20[2].get());
+    rotation.y += MathHelper.psxDegToRad(script.params_20[3].get());
+    rotation.z += MathHelper.psxDegToRad(script.params_20[4].get());
+    FUN_800e4674(direction, rotation);
     final BttlLightStruct84 light = lights_800c692c[script.params_20[0].get()];
-    light.light_00.direction_00.set(sp0x18);
+    light.light_00.direction_00.set(direction);
     light._10._00 = 0;
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, gets the battle light direction")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
+  @ScriptParam(direction = ScriptParam.Direction.BOTH, type = ScriptParam.Type.INT, name = "indexAndX", description = "In: either a light index or battle object index, out: the X direction (PSX degrees)") // why
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y direction (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z direction (PSX degrees)")
   @Method(0x800e4abcL)
   public static FlowControl FUN_800e4abc(final RunningScript<?> script) {
     final int s1 = script.params_20[1].get();
@@ -375,7 +409,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e4bc0L)
-  public static void FUN_800e4bc0(final int lightIndex, final float r, final float g, final float b) {
+  public static void setBattleLightColour(final int lightIndex, final float r, final float g, final float b) {
     final BttlLightStruct84 light = lights_800c692c[lightIndex];
     light.light_00.r_0c = r;
     light.light_00.g_0d = g;
@@ -383,14 +417,24 @@ public final class Bttl_800e {
     light._4c._00 = 0;
   }
 
+  @ScriptDescription("Sets the battle light colour")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "r", description = "The red channel (8-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "g", description = "The green channel (8-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "b", description = "The blue channel (8-bit fixed-point)")
   @Method(0x800e4c10L)
-  public static FlowControl FUN_800e4c10(final RunningScript<?> script) {
-    FUN_800e4bc0(script.params_20[0].get(), script.params_20[1].get() / (float)0x100, script.params_20[2].get() / (float)0x100, script.params_20[3].get() / (float)0x100);
+  public static FlowControl scriptSetBattleLightColour(final RunningScript<?> script) {
+    setBattleLightColour(script.params_20[0].get(), script.params_20[1].get() / (float)0x100, script.params_20[2].get() / (float)0x100, script.params_20[3].get() / (float)0x100);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets the battle light colour")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "r", description = "The red channel (8-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "g", description = "The green channel (8-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "b", description = "The blue channel (8-bit fixed-point)")
   @Method(0x800e4c90L)
-  public static FlowControl FUN_800e4c90(final RunningScript<?> script) {
+  public static FlowControl scriptGetBattleLightColour(final RunningScript<?> script) {
     final BttlLightStruct84 light = lights_800c692c[script.params_20[0].get()];
     script.params_20[1].set((int)(light.light_00.r_0c * 0x100));
     script.params_20[2].set((int)(light.light_00.g_0d * 0x100));
@@ -399,31 +443,36 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e4cf8L)
-  public static void FUN_800e4cf8(final float r, final float g, final float b) {
+  public static void setBattleBackgroundLight(final float r, final float g, final float b) {
     final BattleLightStruct64 v0 = _800c6930;
     v0.colour_00.set(r, g, b);
     v0._24 = 0;
     GTE.setBackgroundColour(r, g, b);
   }
 
-  /**
-   * script set back color
-   */
+  @ScriptDescription("Sets the battle light background colour")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "r", description = "The red channel (12-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "g", description = "The green channel (12-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "b", description = "The blue channel (12-bit fixed-point)")
   @Method(0x800e4d2cL)
-  public static FlowControl FUN_800e4d2c(final RunningScript<?> script) {
-    FUN_800e4cf8(script.params_20[0].get() / 4096.0f, script.params_20[1].get() / 4096.0f, script.params_20[2].get() / 4096.0f);
+  public static FlowControl scriptSetBattleBackgroundLightColour(final RunningScript<?> script) {
+    setBattleBackgroundLight(script.params_20[0].get() / 4096.0f, script.params_20[1].get() / 4096.0f, script.params_20[2].get() / 4096.0f);
     _800c6930._24 = 0;
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800e4d74L)
-  public static void getLightColour(final Vector3f colour) {
+  public static void getBattleBackgroundLightColour(final Vector3f colour) {
     final BattleLightStruct64 light = _800c6930;
     colour.set(light.colour_00);
   }
 
+  @ScriptDescription("Sets the battle light background colour")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "r", description = "The red channel (12-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "g", description = "The green channel (12-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "b", description = "The blue channel (12-bit fixed-point)")
   @Method(0x800e4db4L)
-  public static FlowControl scriptGetLightColour(final RunningScript<?> script) {
+  public static FlowControl scriptGetBattleBackgroundLightColour(final RunningScript<?> script) {
     final BattleLightStruct64 v0 = _800c6930;
     script.params_20[0].set((int)(v0.colour_00.x * 0x1000));
     script.params_20[1].set((int)(v0.colour_00.y * 0x1000));
@@ -431,23 +480,36 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to battle lights")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
   @Method(0x800e4dfcL)
   public static FlowControl FUN_800e4dfc(final RunningScript<?> script) {
     lights_800c692c[script.params_20[0].get()]._10._00 = 0;
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to battle lights")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
   @Method(0x800e4e2cL)
   public static FlowControl FUN_800e4e2c(final RunningScript<?> script) {
     return lights_800c692c[script.params_20[0].get()]._10._00 != 0 ? FlowControl.PAUSE_AND_REWIND : FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to battle lights")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "out")
   @Method(0x800e4e64L)
   public static FlowControl FUN_800e4e64(final RunningScript<?> script) {
     script.params_20[1].set(lights_800c692c[script.params_20[0].get()]._10._00);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, must change battle light over time")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks", description = "The number of ticks for the change")
   @Method(0x800e4ea0L)
   public static FlowControl FUN_800e4ea0(final RunningScript<?> script) {
     final BttlLightStruct84 light = lights_800c692c[script.params_20[0].get()];
@@ -471,6 +533,12 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, must change battle light over time")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks", description = "The number of ticks for the change")
   @Method(0x800e4fa0L)
   public static FlowControl FUN_800e4fa0(final RunningScript<?> script) {
     final int x = script.params_20[1].get();
@@ -501,29 +569,36 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, must change battle light over time")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightOrBobjIndex", description = "Either a light index or battle object index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks", description = "The number of ticks for the change")
   @Method(0x800e50e8L)
   public static FlowControl FUN_800e50e8(final RunningScript<?> script) {
-    final int s3 = script.params_20[0].get();
-    final int s2 = script.params_20[1].get();
+    final int lightIndex = script.params_20[0].get();
+    final int lightOrBobjIndex = script.params_20[1].get();
     final int x = script.params_20[2].get();
     final int y = script.params_20[3].get();
     final int z = script.params_20[4].get();
     final int ticks = script.params_20[5].get();
 
     final Vector3f sp0x10 = new Vector3f();
-    FUN_800e45c0(sp0x10, lights_800c692c[s3].light_00.direction_00);
+    FUN_800e45c0(sp0x10, lights_800c692c[lightIndex].light_00.direction_00);
 
-    final BttlLightStruct84Sub38 s0 = lights_800c692c[s3]._10;
+    final BttlLightStruct84Sub38 s0 = lights_800c692c[lightIndex]._10;
     s0._00 = 0;
     s0.angle_04.set(sp0x10);
 
-    if(s2 > 0 && s2 < 4) {
+    if(lightOrBobjIndex > 0 && lightOrBobjIndex < 4) {
       final Vector3f sp0x18 = new Vector3f();
-      FUN_800e45c0(sp0x18, lights_800c692c[s2 - 1].light_00.direction_00);
+      FUN_800e45c0(sp0x18, lights_800c692c[lightOrBobjIndex - 1].light_00.direction_00);
       s0.vec_28.set(sp0x18);
     } else {
       //LAB_800e51e8
-      final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[s2].innerStruct_00;
+      final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[lightOrBobjIndex].innerStruct_00;
       s0.vec_28.set(bobj.model_148.coord2_14.transforms.rotate);
     }
 
@@ -542,6 +617,14 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to battle lights")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z1")
   @Method(0x800e52f8L)
   public static FlowControl FUN_800e52f8(final RunningScript<?> script) {
     final BttlLightStruct84 light = lights_800c692c[script.params_20[0].get()];
@@ -556,6 +639,9 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to battle lights")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c's script index")
   @Method(0x800e540cL)
   public static FlowControl FUN_800e540c(final RunningScript<?> script) {
     final int bobjIndex = script.params_20[1].get();
@@ -575,39 +661,52 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to battle lights")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
   @Method(0x800e54f8L)
   public static FlowControl FUN_800e54f8(final RunningScript<?> script) {
     lights_800c692c[script.params_20[0].get()]._4c._00 = 0;
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to battle lights")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
   @Method(0x800e5528L)
   public static FlowControl FUN_800e5528(final RunningScript<?> script) {
     return lights_800c692c[script.params_20[0].get()]._4c._00 != 0 ? FlowControl.PAUSE_AND_REWIND : FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to battle lights")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value")
   @Method(0x800e5560L)
   public static FlowControl FUN_800e5560(final RunningScript<?> script) {
     script.params_20[1].set(lights_800c692c[script.params_20[0].get()]._4c._00);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to battle lights")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "The number of ticks")
   @Method(0x800e559cL)
   public static FlowControl FUN_800e559c(final RunningScript<?> script) {
     final BttlLightStruct84 light = lights_800c692c[script.params_20[0].get()];
-    final int t1 = script.params_20[4].get();
-    final BttlLightStruct84Sub38 t0 = light._4c;
+    final int ticks = script.params_20[4].get();
 
+    final BttlLightStruct84Sub38 t0 = light._4c;
     t0._00 = 0;
     t0.angle_04.x = light.light_00.r_0c;
     t0.angle_04.y = light.light_00.g_0d;
     t0.angle_04.z = light.light_00.b_0e;
     t0.vec_28.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
-    t0.ticksRemaining_34 = t1;
+    t0.ticksRemaining_34 = ticks;
 
-    if(t1 > 0) {
+    if(ticks > 0) {
       t0.vec_1c.zero();
-      t0.vec_10.set(t0.vec_28).sub(t0.angle_04).div(t1);
+      t0.vec_10.set(t0.vec_28).sub(t0.angle_04).div(ticks);
       t0._00 = 0x8001;
     }
 
@@ -615,6 +714,14 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to battle lights")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z1")
   @Method(0x800e569cL)
   public static FlowControl FUN_800e569c(final RunningScript<?> script) {
     final BttlLightStruct84 light = lights_800c692c[script.params_20[0].get()];
@@ -634,7 +741,7 @@ public final class Bttl_800e {
 
   @Method(0x800e5768L)
   public static void applyStageAmbiance(final StageAmbiance4c ambiance) {
-    FUN_800e4cf8(ambiance.ambientColour_00.x, ambiance.ambientColour_00.y, ambiance.ambientColour_00.z);
+    setBattleBackgroundLight(ambiance.ambientColour_00.x, ambiance.ambientColour_00.y, ambiance.ambientColour_00.z);
 
     final BattleLightStruct64 v1 = _800c6930;
     if(ambiance._0e > 0) {
@@ -683,8 +790,9 @@ public final class Bttl_800e {
     }
   }
 
+  @ScriptDescription("Applies the current battle stage's ambiance (including Dragoon Space)")
   @Method(0x800e596cL)
-  public static FlowControl FUN_800e596c(final RunningScript<?> script) {
+  public static FlowControl scriptApplyStageAmbiance(final RunningScript<?> script) {
     final int v0 = currentStage_800c66a4.get() - 0x47;
 
     if(v0 >= 0 && v0 < 0x8) {
@@ -697,6 +805,9 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, sets or applies stage ambiance")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "-1, -2, -3")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "data", description = "Int or int array")
   @Method(0x800e59d8L)
   public static FlowControl FUN_800e59d8(final RunningScript<?> script) {
     final int a0 = script.params_20[0].get();
@@ -856,7 +967,7 @@ public final class Bttl_800e {
 
     final BattleLightStruct64 light = _800c6930;
     final Vector3f colour = light.colours_30[light.colourIndex_60];
-    getLightColour(colour);
+    getBattleBackgroundLightColour(colour);
 
     light.colour_00.set(r, g, b);
     light.colourIndex_60 = light.colourIndex_60 + 1 & 3;
@@ -939,8 +1050,13 @@ public final class Bttl_800e {
     struct7cc.flags_20 &= 0xff80_ffff;
   }
 
+  @ScriptDescription("Allocates an effect manager child for a battle object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flagsAndIndex", description = "The effect manager's flags in the upper 16 bits, DEFF index in the lower 16 bits")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptEntrypoint", description = "The effect manager's entrypoint into this script")
   @Method(0x800e6470L)
-  public static ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> allocateDeffEffectManager(final RunningScript<? extends BattleScriptDataBase> script) {
+  public static ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> scriptAllocateDeffEffectManager(final RunningScript<? extends BattleScriptDataBase> script) {
     final DeffManager7cc struct7cc = deffManager_800c693c;
 
     final int flags = script.params_20[0].get();
@@ -978,7 +1094,7 @@ public final class Bttl_800e {
     v0.bobjState_04 = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[script.params_20[1].get()];
     v0._08 = script.params_20[2].get();
     v0.scriptIndex_0c = script.scriptState_04.index;
-    v0.scriptOffsetIndex_10 = script.params_20[3].get() & 0xff;
+    v0.scriptEntrypoint_10 = script.params_20[3].get() & 0xff;
     v0.managerState_18 = state;
     v0.init_1c = false;
     v0.frameCount_20 = -1;
@@ -987,16 +1103,21 @@ public final class Bttl_800e {
     return state;
   }
 
+  @ScriptDescription("Allocates a DEFF and effect manager child for a battle object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flagsAndIndex", description = "The effect manager's flags in the upper 16 bits, DEFF index in the lower 16 bits")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptEntrypoint", description = "The effect manager's entrypoint into this script")
   @Method(0x800e665cL)
   public static void loadDragoonDeff(final RunningScript<? extends BattleScriptDataBase> script) {
     final int index = script.params_20[0].get() & 0xffff;
-    final int soundType = script.params_20[3].get() & 0xff;
+    final int scriptEntrypoint = script.params_20[3].get() & 0xff;
 
     LOGGER.info(DEFF, "Loading dragoon DEFF (ID: %d, flags: %x)", index, script.params_20[0].get() & 0xffff_0000);
 
     final DeffManager7cc deffManager = deffManager_800c693c;
     deffManager.flags_20 |= dragoonDeffFlags_800fafec.get(index).get() << 16;
-    allocateDeffEffectManager(script);
+    scriptAllocateDeffEffectManager(script);
 
     final BattleStruct24_2 battle24 = _800c6938;
     battle24.type_00 |= 0x100_0000;
@@ -1004,7 +1125,7 @@ public final class Bttl_800e {
     if((deffManager.flags_20 & 0x4_0000) != 0) {
       //LAB_800e66fc
       //LAB_800e670c
-      loadDeffSounds(battle24.bobjState_04, index != 0x2e || soundType != 0 ? 0 : 2);
+      loadDeffSounds(battle24.bobjState_04, index != 0x2e || scriptEntrypoint != 0 ? 0 : 2);
     }
 
     //LAB_800e6714
@@ -1041,7 +1162,7 @@ public final class Bttl_800e {
     LOGGER.info(DEFF, "Loading spell item DEFF (ID: %d, flags: %x)", id, script.params_20[0].get() & 0xffff_0000);
 
     deffManager_800c693c.flags_20 |= 0x40_0000;
-    allocateDeffEffectManager(script);
+    scriptAllocateDeffEffectManager(script);
 
     final BattleStruct24_2 t0 = _800c6938;
 
@@ -1074,7 +1195,7 @@ public final class Bttl_800e {
 
     //LAB_800e69a8
     deffManager_800c693c.flags_20 |= s1 & 0x10_0000;
-    allocateDeffEffectManager(script);
+    scriptAllocateDeffEffectManager(script);
 
     final BattleStruct24_2 v1 = _800c6938;
 
@@ -1122,7 +1243,7 @@ public final class Bttl_800e {
 
     LOGGER.info(DEFF, "Loading cutscene DEFF (ID: %d, flags: %x)", cutsceneIndex, v1 & 0xffff_0000);
 
-    allocateDeffEffectManager(script);
+    scriptAllocateDeffEffectManager(script);
 
     final BattleStruct24_2 a0_0 = _800c6938;
 
@@ -1195,7 +1316,7 @@ public final class Bttl_800e {
 
           //LAB_800e6eb0
           final BattleStruct24_2 struct24 = _800c6938;
-          struct24.managerState_18.loadScriptFile(struct24.script_14, struct24.scriptOffsetIndex_10);
+          struct24.managerState_18.loadScriptFile(struct24.script_14, struct24.scriptEntrypoint_10);
           struct24.init_1c = false;
           struct24.frameCount_20 = 0;
           _800fafe8.set(3);
@@ -1257,6 +1378,11 @@ public final class Bttl_800e {
     return flow;
   }
 
+  @ScriptDescription("Unknown, can allocate a DEFF and effect manager child for a battle object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flagsAndIndex", description = "The effect manager's flags in the upper 16 bits, DEFF index in the lower 16 bits")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptEntrypoint", description = "The effect manager's entrypoint into this script")
   @Method(0x800e6fb4L)
   public static FlowControl FUN_800e6fb4(final RunningScript<? extends BattleScriptDataBase> script) {
     if(_800fafe8.get() != 0 && script.scriptState_04.index != _800c6938.scriptIndex_0c) {
@@ -1319,7 +1445,7 @@ public final class Bttl_800e {
         }
 
         //LAB_800e719c
-        state.loadScriptFile(a0.script_14, a0.scriptOffsetIndex_10);
+        state.loadScriptFile(a0.script_14, a0.scriptEntrypoint_10);
         a0.init_1c = false;
         a0.frameCount_20 = 0;
       }
@@ -2178,7 +2304,7 @@ public final class Bttl_800e {
       model.animateTextures_ec[i] = false;
     }
 
-    model.partInvisible_f4 = a1._5e4;
+    model.partInvisible_f4 = a1.flags_5e4;
     model.coord2_14.transforms.scale.set(1.0f, 1.0f, 1.0f);
     model.tpage_108 = 0;
     model.shadowSize_10c.set(1.0f, 1.0f, 1.0f);
@@ -2874,7 +3000,7 @@ public final class Bttl_800e {
     applyInitialStageTransforms(stage, tmdAnim);
 
     stage.coord2_558.coord.transfer.set(x, y, z);
-    stage._5e4 = 0;
+    stage.flags_5e4 = 0;
     stage.z_5e8 = 0x200;
   }
 
@@ -3058,9 +3184,9 @@ public final class Bttl_800e {
     zOffset_1f8003e8.set(stage.z_5e8);
 
     //LAB_800ec5a0
-    long s4 = 0x1L;
+    int part = 0x1;
     for(final ModelPart10 dobj2 : stage.dobj2s_00) {
-      if((s4 & stage._5e4) == 0) {
+      if((part & stage.flags_5e4) == 0) {
         final MATRIX ls = new MATRIX();
         final MATRIX lw = new MATRIX();
         GsGetLws(dobj2.coord2_04, lw, ls);
@@ -3071,7 +3197,7 @@ public final class Bttl_800e {
       }
 
       //LAB_800ec608
-      s4 = s4 << 1;
+      part <<= 1;
     }
 
     //LAB_800ec618
@@ -3337,12 +3463,22 @@ public final class Bttl_800e {
     GPU.queueCommand(28, cmd);
   }
 
+  @ScriptDescription("Copies a block of vram from one position to another")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "destX", description = "The destination X coordinate")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "destY", description = "The destination Y coordinate")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "width", description = "The block width")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "height", description = "The block height")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sourceX", description = "The source X coordinate")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sourceY", description = "The source Y coordinate")
   @Method(0x800ee210L)
   public static FlowControl scriptCopyVram(final RunningScript<?> script) {
     GPU.queueCommand(1, new GpuCommandCopyVramToVram(script.params_20[4].get(), script.params_20[5].get(), script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get() / 4, (short)script.params_20[3].get()));
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets a battle object's Z offset")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z offset")
   @Method(0x800ee2acL)
   public static FlowControl scriptSetBobjZOffset(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -3350,6 +3486,9 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets a battle object's scale uniformly")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scale", description = "The uniform scale (12-bit fixed-point)")
   @Method(0x800ee2e4L)
   public static FlowControl scriptSetBobjScaleUniform(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -3358,6 +3497,11 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets a battle object's scale")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X scale (12-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y scale (12-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z scale (12-bit fixed-point)")
   @Method(0x800ee324L)
   public static FlowControl scriptSetBobjScale(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -3365,6 +3509,8 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, sets shadow type to 2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
   @Method(0x800ee384L)
   public static FlowControl FUN_800ee384(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -3373,6 +3519,9 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, sets shadow type to 3")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "modelPartAttachmentIndex", description = "The model part index to attach the shadow to")
   @Method(0x800ee3c0L)
   public static FlowControl FUN_800ee3c0(final RunningScript<?> script) {
     final BattleObject27c v1 = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -3381,6 +3530,8 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, sets shadow type")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
   @Method(0x800ee408L)
   public static FlowControl FUN_800ee408(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -3399,6 +3550,8 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Disables a battle object's shadow")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
   @Method(0x800ee468L)
   public static FlowControl scriptDisableBobjShadow(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -3406,6 +3559,10 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets a battle object's shadow size")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The shadow's X size (12-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The shadow's Z size (12-bit fixed-point)")
   @Method(0x800ee49cL)
   public static FlowControl scriptSetBobjShadowSize(final RunningScript<?> script) {
     final BattleObject27c a1 = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -3414,6 +3571,11 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets a battle object's shadow offset")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The shadow's X size (12-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The shadow's Y size (12-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The shadow's Z size (12-bit fixed-point)")
   @Method(0x800ee4e8L)
   public static FlowControl scriptSetBobjShadowOffset(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -3421,30 +3583,40 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Darkens the combat stage (for things like counter-attacks, certain dragoon transformations, etc.)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "intensity", description = "How intense the darkening effect should be")
   @Method(0x800ee548L)
   public static FlowControl scriptApplyScreenDarkening(final RunningScript<?> script) {
     applyScreenDarkening(script.params_20[0].get());
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Gets the number of model parts in the battle stage's model")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "count", description = "The number of model parts")
   @Method(0x800ee574L)
   public static FlowControl scriptGetStageNobj(final RunningScript<?> script) {
     script.params_20[0].set(stage_800bda0c.dobj2s_00.length);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Shows the battle stage's model part")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "modelPartIndex", description = "The model part index")
   @Method(0x800ee594L)
-  public static FlowControl FUN_800ee594(final RunningScript<?> a0) {
-    stage_800bda0c._5e4 |= 1L << a0.params_20[0].get();
+  public static FlowControl scriptShowStageModelPart(final RunningScript<?> a0) {
+    stage_800bda0c.flags_5e4 |= 0x1 << a0.params_20[0].get();
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Hides the battle stage's model part")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "modelPartIndex", description = "The model part index")
   @Method(0x800ee5c0L)
-  public static FlowControl FUN_800ee5c0(final RunningScript<?> a0) {
-    stage_800bda0c._5e4 &= ~(1L << a0.params_20[0].get());
+  public static FlowControl scriptHideStageModelPart(final RunningScript<?> a0) {
+    stage_800bda0c.flags_5e4 &= ~(0x1 << a0.params_20[0].get());
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets the battle stage model's Z offset")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z offset")
   @Method(0x800ee5f0L)
   public static FlowControl scriptSetStageZ(final RunningScript<?> script) {
     stage_800bda0c.z_5e8 = script.params_20[0].get();
@@ -3459,7 +3631,7 @@ public final class Bttl_800e {
     battleMenu_800c6c34 = new BattleMenuStruct58();
 
     clearBattleHudDisplay();
-    resetCombatMenu();
+    resetBattleMenu();
 
     final CombatMenua4 v0 = combatMenu_800c6b60;
     v0._26 = 0;

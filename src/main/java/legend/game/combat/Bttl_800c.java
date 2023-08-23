@@ -239,7 +239,7 @@ public final class Bttl_800c {
   public static final IntRef _800c66b4 = MEMORY.ref(4, 0x800c66b4L, IntRef::new);
   public static final BoolRef stageHasModel_800c66b8 = MEMORY.ref(1, 0x800c66b8L, BoolRef::new);
   /** Character scripts deallocated? */
-  public static final BoolRef _800c66b9 = MEMORY.ref(1, 0x800c66b9L, BoolRef::new);
+  public static final BoolRef combatDisabled_800c66b9 = MEMORY.ref(1, 0x800c66b9L, BoolRef::new);
 
   public static ScriptState<? extends BattleObject27c> forcedTurnBobj_800c66bc;
   /** These two bools are set but never used */
@@ -1169,7 +1169,7 @@ public final class Bttl_800c {
       return;
     }
 
-    if(Unpacker.getLoadingFileCount() == 0 && allBobjCount_800c66d0.get() > 0 && !_800c66b9.get() && FUN_800c7da8()) {
+    if(Unpacker.getLoadingFileCount() == 0 && allBobjCount_800c66d0.get() > 0 && !combatDisabled_800c66b9.get() && FUN_800c7da8()) {
       vsyncMode_8007a3b8 = 3;
       mcqColour_800fa6dc.set(0x80);
       currentTurnBobj_800c66c8.storage_44[7] &= 0xffff_efff;
@@ -1614,7 +1614,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c8ed8L)
-  public static void FUN_800c8ed8() {
+  public static void setDontRenderStageBackground() {
     shouldRenderMcq_800c66d4.set(false);
   }
 
@@ -2577,9 +2577,9 @@ public final class Bttl_800c {
     allBobjCount_800c66d0.decr();
 
     //LAB_800cb0d4
-    for(int i = bobj.bobjIndex_274; i < allBobjCount_800c66d0.get(); i++) {
+    for(int i = bobj.bobjSlot_274; i < allBobjCount_800c66d0.get(); i++) {
       battleState_8006e398.allBobjs_e0c[i] = battleState_8006e398.allBobjs_e0c[i + 1];
-      battleState_8006e398.allBobjs_e0c[i].innerStruct_00.bobjIndex_274 = i;
+      battleState_8006e398.allBobjs_e0c[i].innerStruct_00.bobjSlot_274 = i;
     }
 
     //LAB_800cb11c
@@ -3277,8 +3277,12 @@ public final class Bttl_800c {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Enables or disables a battle object's texture's animation")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "textureIndex", description = "The texture index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "enabled", description = "True to enable, false otherwise")
   @Method(0x800cc9d8L)
-  public static FlowControl FUN_800cc9d8(final RunningScript<?> script) {
+  public static FlowControl scriptEnableBobjTextureAnimation(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     bobj.model_148.animateTextures_ec[script.params_20[1].get()] = script.params_20[2].get() > 0;
     return FlowControl.CONTINUE;
@@ -3610,6 +3614,10 @@ public final class Bttl_800c {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Changes the visibility of a battle object's model part")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "partIndex", description = "The model part index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "visible", description = "True for visible, false otherwise")
   @Method(0x800cd3b4L)
   public static FlowControl scriptSetModelPartVisibility(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -3624,30 +3632,43 @@ public final class Bttl_800c {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, something to do with loading files")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "drgnIndex", description = "The DRGN#.BIN index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "fileIndex", description = "The file index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "index", description = "The output battleState_8006e398._580 array index")
   @Method(0x800cd468L)
   public static FlowControl FUN_800cd468(final RunningScript<?> script) {
     script.params_20[2].set(FUN_800cac38(script.params_20[0].get(), script.params_20[1].get()));
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, something to do with loading files, may wait until the file is loaded")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The battleState_8006e398._580 array index")
   @Method(0x800cd4b0L)
   public static FlowControl FUN_800cd4b0(final RunningScript<?> script) {
     final BttlStruct08 v0 = FUN_800cad50(script.params_20[0].get());
     return v0._04 == 1 ? FlowControl.PAUSE_AND_REWIND : FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, something to do with loading files, may clear the file entry")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The battleState_8006e398._580 array index")
   @Method(0x800cd4f0L)
   public static FlowControl FUN_800cd4f0(final RunningScript<?> script) {
     FUN_800cad64(script.params_20[0].get());
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Adds a combatant to the battle")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "charIndexAndFlags", description = "Exact use unknown, seems to be flags, and possibly character ID in the higher bits?")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "combatantIndex", description = "The new combatant's index")
   @Method(0x800cd52cL)
   public static FlowControl scriptAddCombatant(final RunningScript<?> script) {
     script.params_20[1].set(addCombatant(script.params_20[0].get(), -1));
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Deallocates and removes a combatant from the battle")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "combatantIndex", description = "The combatant's index")
   @Method(0x800cd570L)
   public static FlowControl scriptDeallocateAndRemoveCombatant(final RunningScript<?> script) {
     deallocateCombatant(script.params_20[0].get());
@@ -3655,8 +3676,11 @@ public final class Bttl_800c {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Allocate a battle object child of this script")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "entrypointIndex", description = "The entrypoint of this script for the new battle object to enter")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "combatantIndex", description = "The combatant to attach to the new battle object")
   @Method(0x800cd5b4L)
-  public static FlowControl FUN_800cd5b4(final RunningScript<?> script) {
+  public static FlowControl scriptAllocateBobj(final RunningScript<?> script) {
     final String name = "Bobj allocated by script " + script.scriptState_04.index;
     final ScriptState<MonsterBattleObject> state = SCRIPTS.allocateScriptState(name, new MonsterBattleObject(name));
     script.params_20[2].set(state.index);
@@ -3673,7 +3697,7 @@ public final class Bttl_800c {
     bobj.combatant_144 = combatant;
     bobj.combatantIndex_26c = script.params_20[1].get();
     bobj.charId_272 = combatant.charIndex_1a2;
-    bobj.bobjIndex_274 = allBobjCount_800c66d0.get();
+    bobj.bobjSlot_274 = allBobjCount_800c66d0.get();
     allBobjCount_800c66d0.incr();
     bobj.charSlot_276 = monsterCount_800c6768.get();
     monsterCount_800c6768.incr();
@@ -3682,6 +3706,9 @@ public final class Bttl_800c {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to combatants")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "combatantIndex", description = "The combatant index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
   @Method(0x800cd740L)
   public static FlowControl FUN_800cd740(final RunningScript<?> script) {
     final BttlStruct08 v0 = FUN_800cad50(script.params_20[0].get());
@@ -3697,11 +3724,14 @@ public final class Bttl_800c {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to combatants")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0", description = "Combatant index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
   @Method(0x800cd7a8L)
   public static FlowControl FUN_800cd7a8(final RunningScript<?> script) {
-    final long v0 = script.params_20[0].get();
+    final BttlStruct08 v0 = FUN_800cad50(script.params_20[0].get());
 
-    if(MEMORY.ref(1, v0).offset(0x4L).get() == 1) {
+    if(v0._04 == 1) {
       //LAB_800cd7fc
       return FlowControl.PAUSE_AND_REWIND;
     }
@@ -3712,6 +3742,10 @@ public final class Bttl_800c {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to combatants")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "combatantIndex", description = "The combatant index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
   @Method(0x800cd810L)
   public static FlowControl FUN_800cd810(final RunningScript<?> script) {
     final int s0 = script.params_20[2].get();
@@ -3733,6 +3767,9 @@ public final class Bttl_800c {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to combatant textures")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "combatantIndex", description = "The combatant index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
   @Method(0x800cd8a4L)
   public static FlowControl FUN_800cd8a4(final RunningScript<?> script) {
     final BttlStruct08 a1 = FUN_800cad50(script.params_20[1].get());
@@ -3748,12 +3785,18 @@ public final class Bttl_800c {
     return FlowControl.PAUSE;
   }
 
+  @ScriptDescription("Unknown, loads files")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "drgnIndex", description = "The DRGN#.BIN index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "fileIndex", description = "The file index")
   @Method(0x800cd910L)
   public static FlowControl FUN_800cd910(final RunningScript<?> script) {
     script.params_20[2].set(FUN_800cac38(script.params_20[0].get(), script.params_20[1].get()));
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Gets the combatant index for a battle object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "combatantIndex", description = "The combatant index")
   @Method(0x800cd958L)
   public static FlowControl scriptGetCombatantIndex(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -3761,21 +3804,28 @@ public final class Bttl_800c {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Gets the bobj slot or char slot for a battle object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "charOrBobjSlot", description = "The character or battle object slot")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "mode", description = "If true, returns character slot, if false returns battle object slot")
   @Method(0x800cd998L)
-  public static FlowControl FUN_800cd998(final RunningScript<?> script) {
-    final BattleObject27c v1 = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+  public static FlowControl scriptGetBobjSlot(final RunningScript<?> script) {
+    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
 
     if(script.params_20[2].get() != 0) {
-      script.params_20[1].set(v1.charSlot_276);
+      script.params_20[1].set(bobj.charSlot_276);
     } else {
       //LAB_800cd9e8
-      script.params_20[1].set(v1.bobjIndex_274);
+      script.params_20[1].set(bobj.bobjSlot_274);
     }
 
     //LAB_800cd9f4
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Gets the number of parts in a battle object's model")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c's script index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "count")
   @Method(0x800cd9fcL)
   public static FlowControl scriptGetBobjNobj(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -3783,12 +3833,16 @@ public final class Bttl_800c {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Deallocates a battle object's combatant")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
   @Method(0x800cda3cL)
   public static FlowControl scriptDeallocateCombatant(final RunningScript<?> script) {
     deallocateCombatant(script.params_20[0].get());
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to asset loading")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
   @Method(0x800cda78L)
   public static FlowControl FUN_800cda78(final RunningScript<?> script) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
@@ -3808,22 +3862,26 @@ public final class Bttl_800c {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Stops rendering the battle stage and skybox")
   @Method(0x800cdb18L)
-  public static FlowControl FUN_800cdb18(final RunningScript<?> script) {
+  public static FlowControl scriptStopRenderingStage(final RunningScript<?> script) {
     setStageHasNoModel();
-    FUN_800c8ed8();
+    setDontRenderStageBackground();
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Loads a new battle stage")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stageIndex", description = "The stage index")
   @Method(0x800cdb44L)
   public static FlowControl scriptLoadStage(final RunningScript<?> script) {
     loadStage(script.params_20[0].get());
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Clears combat scripts and sets the combat disabled flag")
   @Method(0x800cdb74L)
-  public static FlowControl FUN_800cdb74(final RunningScript<?> script) {
-    _800c66b9.set(true);
+  public static FlowControl scriptDisableCombat(final RunningScript<?> script) {
+    combatDisabled_800c66b9.set(true);
 
     //LAB_800cdbb8
     for(int i = 0; i < charCount_800c677c.get(); i++) {

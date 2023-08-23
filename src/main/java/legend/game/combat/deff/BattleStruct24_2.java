@@ -20,7 +20,7 @@ public class BattleStruct24_2 {
   public ScriptState<BattleObject27c> bobjState_04;
   public int _08;
   public int scriptIndex_0c;
-  public int scriptOffsetIndex_10;
+  public int scriptEntrypoint_10;
   public ScriptFile script_14;
   public ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> managerState_18;
   public boolean init_1c;
