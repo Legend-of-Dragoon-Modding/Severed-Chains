@@ -26,7 +26,7 @@ import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.SAVES;
 import static legend.core.GameEngine.bootMods;
 import static legend.game.SItem.menuStack;
-import static legend.game.Scus94491BpeSegment.scriptStartEffect;
+import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -46,7 +46,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     this.enabledMods.addAll(MODS.getAllModIds());
 
     deallocateRenderables(0xff);
-    scriptStartEffect(2, 10);
+    startFadeEffect(2, 10);
 
     this.addControl(new Background());
 
@@ -57,7 +57,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
 
     this.addRow("", new Button("Options")).onPressed(() ->
       SItem.menuStack.pushScreen(new OptionsScreen(CONFIG, EnumSet.allOf(ConfigStorageLocation.class), () -> {
-        scriptStartEffect(2, 10);
+        startFadeEffect(2, 10);
         SItem.menuStack.popScreen();
 
         // Update global config but don't save campaign config until an actual save file is made so we don't end up with orphan campaigns
@@ -69,7 +69,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
       SItem.menuStack.pushScreen(new ModsScreen(this.enabledMods, () -> {
         bootMods(this.enabledMods);
 
-        scriptStartEffect(2, 10);
+        startFadeEffect(2, 10);
         SItem.menuStack.popScreen();
       }))
     );

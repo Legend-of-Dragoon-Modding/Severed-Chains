@@ -14,7 +14,7 @@ import legend.game.unpacker.FileData;
 import static legend.core.GameEngine.CONFIG;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
-import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
+import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 
 public final class V3Serializer {
@@ -224,7 +224,7 @@ public final class V3Serializer {
       locationIndex = state.chapterIndex_98;
     } else {
       locationType = 0;
-      locationIndex = submapIndex_800bd808.get();
+      locationIndex = submapId_800bd808.get();
     }
 
     int offset = 0;

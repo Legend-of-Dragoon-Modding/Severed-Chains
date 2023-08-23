@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 import static legend.core.GameEngine.MODS;
-import static legend.game.Scus94491BpeSegment.scriptStartEffect;
+import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 
@@ -22,7 +22,7 @@ public class ModsScreen extends VerticalLayoutScreen {
 
   public ModsScreen(final Set<String> enabledMods, final Runnable unload) {
     deallocateRenderables(0xff);
-    scriptStartEffect(2, 10);
+    startFadeEffect(2, 10);
 
     this.unload = unload;
 

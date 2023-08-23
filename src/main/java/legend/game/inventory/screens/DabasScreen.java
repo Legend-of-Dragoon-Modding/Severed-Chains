@@ -39,7 +39,7 @@ import static legend.game.SItem.renderString;
 import static legend.game.SItem.renderText;
 import static legend.game.SItem.setMessageBoxText;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
-import static legend.game.Scus94491BpeSegment.scriptStartEffect;
+import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.getItemIcon;
@@ -82,7 +82,7 @@ public class DabasScreen extends MenuScreen {
         //TODO this is the Pocketstation minigame to upload to the memcard
         loadDrgnFile(0, 6668, file -> this.dabasFilePtr_8011dd00 = file);
 
-        scriptStartEffect(2, 10);
+        startFadeEffect(2, 10);
         this.menuIndex = 0;
 
         deallocateRenderables(0xff);

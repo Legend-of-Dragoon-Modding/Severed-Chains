@@ -22,7 +22,7 @@ import static legend.game.SItem.renderCharacterSlot;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderText;
 import static legend.game.SItem.renderThreeDigitNumber;
-import static legend.game.Scus94491BpeSegment.scriptStartEffect;
+import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
@@ -54,7 +54,7 @@ public class AdditionsScreen extends MenuScreen {
         this.charSlot = 0;
         this.selectedSlot = 0;
         this.additionHighlight = null;
-        scriptStartEffect(2, 10);
+        startFadeEffect(2, 10);
         deallocateRenderables(0xff);
         this.loadingStage++;
       }

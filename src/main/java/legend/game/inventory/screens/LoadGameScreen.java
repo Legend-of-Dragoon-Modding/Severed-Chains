@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 
 import static legend.core.GameEngine.SAVES;
 import static legend.game.SItem.menuStack;
-import static legend.game.Scus94491BpeSegment.scriptStartEffect;
+import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 
@@ -28,7 +28,7 @@ public class LoadGameScreen extends MenuScreen {
     this.closed = closed;
 
     deallocateRenderables(0xff);
-    scriptStartEffect(2, 10);
+    startFadeEffect(2, 10);
 
     this.addControl(new Background());
 

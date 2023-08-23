@@ -8,7 +8,7 @@ import legend.game.modding.coremod.CoreMod;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigStorageLocation;
 
-import static legend.game.Scus94491BpeSegment.scriptStartEffect;
+import static legend.game.Scus94491BpeSegment.startFadeEffect;
 
 public class ControllerKeybindsConfigEntry extends ConfigEntry<Void> {
   public ControllerKeybindsConfigEntry() {
@@ -17,7 +17,7 @@ public class ControllerKeybindsConfigEntry extends ConfigEntry<Void> {
     this.setEditControl((current, configCollection) -> {
       final Button button = new Button(I18n.translate(CoreMod.MOD_ID + ".config.controller_keybinds.configure"));
       button.onPressed(() -> button.getScreen().getStack().pushScreen(new KeybindsScreen(configCollection, () -> {
-        scriptStartEffect(2, 10);
+        startFadeEffect(2, 10);
         SItem.menuStack.popScreen();
       })));
 

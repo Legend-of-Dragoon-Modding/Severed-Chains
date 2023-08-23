@@ -7,8 +7,8 @@ import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
 import legend.core.gte.DVECTOR;
-import legend.core.gte.ModelPart10;
 import legend.core.gte.MATRIX;
+import legend.core.gte.ModelPart10;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.VECTOR;
@@ -136,9 +136,9 @@ import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.renderMcq;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
-import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.setDepthResolution;
 import static legend.game.Scus94491BpeSegment.simpleRand;
+import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020308;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021520;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80029e04;
@@ -1052,7 +1052,7 @@ public final class Bttl_800c {
 
     battleLoaded_800bc94c.set(true);
 
-    scriptStartEffect(4, 30);
+    startFadeEffect(4, 30);
 
     _800bc960.or(0x20);
     battleState_8006e398.stageProgression_eec = 0;
@@ -1338,7 +1338,7 @@ public final class Bttl_800c {
       loadSupportOverlay(2, () -> { });
 
       if(fullScreenEffect_800bb140.currentColour_28 == 0) {
-        scriptStartEffect(1, postCombatActionFrames_800fa6d0.get(postBattleActionIndex).get());
+        startFadeEffect(1, postCombatActionFrames_800fa6d0.get(postBattleActionIndex).get());
       }
 
       //LAB_800c8274
@@ -2729,23 +2729,23 @@ public final class Bttl_800c {
 
   @Method(0x800cb6bcL)
   public static FlowControl FUN_800cb6bc(final RunningScript<?> a0) {
-    final ScriptState<?> v0 = scriptStatePtrArr_800bc1c0[a0.params_20[0].get()];
-    if((v0.storage_44[7] & 0x1) != 0) {
+    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[a0.params_20[0].get()];
+    if((state.storage_44[7] & 0x1) != 0) {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
-    final BattleObject27c s0 = (BattleObject27c)v0.innerStruct_00;
+    final BattleObject27c bobj = (BattleObject27c)state.innerStruct_00;
     final int animIndex = a0.params_20[1].get();
 
-    if(s0.animIndex_270 < 0) {
-      FUN_800c9e10(s0.combatantIndex_26c, animIndex);
-      s0.animIndex_270 = animIndex;
-    } else if(s0.animIndex_270 != animIndex) {
-      FUN_800ca194(s0.combatantIndex_26c, s0.animIndex_270);
+    if(bobj.animIndex_270 < 0) {
+      FUN_800c9e10(bobj.combatantIndex_26c, animIndex);
+      bobj.animIndex_270 = animIndex;
+    } else if(bobj.animIndex_270 != animIndex) {
+      FUN_800ca194(bobj.combatantIndex_26c, bobj.animIndex_270);
 
       //LAB_800cb73c
-      FUN_800c9e10(s0.combatantIndex_26c, animIndex);
-      s0.animIndex_270 = animIndex;
+      FUN_800c9e10(bobj.combatantIndex_26c, animIndex);
+      bobj.animIndex_270 = animIndex;
     }
 
     //LAB_800cb750
@@ -3138,11 +3138,11 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cc948L)
-  public static FlowControl FUN_800cc948(final RunningScript<?> script) {
+  public static FlowControl loadAllCharAttackAnimations(final RunningScript<?> script) {
     //LAB_800cc970
     for(int i = 0; i < combatantCount_800c66a0.get(); i++) {
-      final CombatantStruct1a8 v1 = getCombatant(i);
-      if((v1.flags_19e & 0x1) != 0 && v1.charIndex_1a2 >= 0) {
+      final CombatantStruct1a8 combatant = getCombatant(i);
+      if((combatant.flags_19e & 0x1) != 0 && combatant.charIndex_1a2 >= 0) {
         loadAttackAnimations(i);
       }
 

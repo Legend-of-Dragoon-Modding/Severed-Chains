@@ -146,7 +146,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bd7b8 = MEMORY.ref(4, 0x800bd7b8L);
 
   public static final GsRVIEW2 rview2_800bd7e8 = new GsRVIEW2();
-  public static final IntRef submapIndex_800bd808 = MEMORY.ref(4, 0x800bd808L, IntRef::new);
+  public static final IntRef submapId_800bd808 = MEMORY.ref(4, 0x800bd808L, IntRef::new);
 
   public static final Value projectionPlaneDistance_800bd810 = MEMORY.ref(4, 0x800bd810L);
 

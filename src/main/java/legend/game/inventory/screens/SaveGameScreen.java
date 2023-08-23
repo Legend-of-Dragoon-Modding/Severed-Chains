@@ -19,7 +19,7 @@ import static legend.core.GameEngine.SAVES;
 import static legend.game.SItem.Overwrite_save_8011c9e8;
 import static legend.game.SItem.menuStack;
 import static legend.game.SMap._800cb450;
-import static legend.game.Scus94491BpeSegment.scriptStartEffect;
+import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
@@ -35,7 +35,7 @@ public class SaveGameScreen extends MenuScreen {
     this.unload = unload;
 
     deallocateRenderables(0xff);
-    scriptStartEffect(2, 10);
+    startFadeEffect(2, 10);
 
     this.addControl(new Background());
 

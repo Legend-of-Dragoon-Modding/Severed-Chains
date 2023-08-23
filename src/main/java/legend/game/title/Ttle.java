@@ -8,8 +8,8 @@ import legend.core.gpu.Rect4i;
 import legend.core.gpu.Renderable;
 import legend.core.gpu.VramTexture;
 import legend.core.gte.GsCOORDINATE2;
-import legend.core.gte.ModelPart10;
 import legend.core.gte.MATRIX;
+import legend.core.gte.ModelPart10;
 import legend.core.gte.TmdWithId;
 import legend.core.memory.Method;
 import legend.core.opengl.Window;
@@ -55,7 +55,7 @@ import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.rsin;
-import static legend.game.Scus94491BpeSegment.scriptStartEffect;
+import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
@@ -283,7 +283,7 @@ public final class Ttle {
       fireAnimation_800c66d4[i] = FUN_800cdaa0(rect, _800ce7b0[i]);
     }
 
-    scriptStartEffect(2, 15);
+    startFadeEffect(2, 15);
     SetGeomOffset(0, 0);
     pregameLoadingStage_800bb10c.set(3);
 
@@ -462,7 +462,7 @@ public final class Ttle {
   @Method(0x800c7e50L)
   public static void fadeOutForNewGame() {
     if(fadeOutTimer_800c6754 == 0) {
-      scriptStartEffect(1, 15);
+      startFadeEffect(1, 15);
     }
 
     //LAB_800c7fcc
@@ -509,7 +509,7 @@ public final class Ttle {
 
   public static void fadeOutForOptions() {
     if(fadeOutTimer_800c6754 == 0) {
-      scriptStartEffect(1, 15);
+      startFadeEffect(1, 15);
     }
 
     //LAB_800c7fcc
@@ -546,7 +546,7 @@ public final class Ttle {
   @Method(0x800c7fa0L)
   public static void waitForSaveSelection() {
     if(fadeOutTimer_800c6754 == 0) {
-      scriptStartEffect(1, 15);
+      startFadeEffect(1, 15);
     }
 
     //LAB_800c7fcc
@@ -601,7 +601,7 @@ public final class Ttle {
   @Method(0x800c8148L)
   public static void fadeOutMainMenu() {
     if(fadeOutTimer_800c6754 == 0) {
-      scriptStartEffect(1, 15);
+      startFadeEffect(1, 15);
     }
 
     //LAB_800c8174

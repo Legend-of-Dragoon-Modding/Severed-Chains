@@ -55,7 +55,7 @@ import static legend.game.Scus94491BpeSegment_800b.fmvStage_800bf0d8;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
-import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
+import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800c.timHeader_800c6748;
@@ -143,7 +143,7 @@ public final class Scus94491BpeSegment_800e {
 
   @Method(0x800e6998L)
   public static void loadShadow() {
-    submapIndex_800bd808.set(0);
+    submapId_800bd808.set(0);
 
     final TimHeader header = parseTimHeader(shadowTexture_80010548);
     LoadImage(header.getImageRect(), header.getImageAddress());

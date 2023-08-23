@@ -48,6 +48,8 @@ import legend.game.combat.environment.BattleCamera;
 import legend.game.combat.types.BattleScriptDataBase;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
+import legend.game.scripting.ScriptDescription;
+import legend.game.scripting.ScriptParam;
 import legend.game.scripting.ScriptState;
 import legend.game.tmd.Renderer;
 import legend.game.types.CContainer;
@@ -2387,14 +2389,19 @@ public final class Bttl_800d {
     cam.refpointCallbackIndex_121 = 23;
   }
 
+  @ScriptDescription("Causes the battle camera projection plane distance to begin moving")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "How the camera should move")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "newDistance", description = "The new projection plane distance")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "frames", description = "The number of frames it should take to change the distance")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepZ1")
   @Method(0x800d8decL)
   public static FlowControl scriptMoveCameraProjectionPlane(final RunningScript<?> script) {
     final int mode = script.params_20[0].get();
     final float newProjectionPlaneDistance = script.params_20[1].get();
     final int projectionPlaneChangeFrames = script.params_20[2].get();
-    final int s4 = script.params_20[3].get();
+    final int stepZ1 = script.params_20[3].get();
 
-    LOGGER.info(CAMERA, "[CAMERA] scriptMoveCameraProjectionPlane mode=%d, new=%d, frames=%d, s4=%d", mode, newProjectionPlaneDistance, projectionPlaneChangeFrames, s4);
+    LOGGER.info(CAMERA, "[CAMERA] scriptMoveCameraProjectionPlane mode=%d, new=%d, frames=%d, s4=%d", mode, newProjectionPlaneDistance, projectionPlaneChangeFrames, stepZ1);
 
     final BattleCamera cam = camera_800c67f0;
     cam.projectionPlaneDistance_100 = getProjectionPlaneDistance();
@@ -2418,7 +2425,7 @@ public final class Bttl_800d {
       //LAB_800d8ea0
       final FloatRef initialStepZ = new FloatRef();
       final FloatRef finalStepZ = new FloatRef();
-      setInitialAndFinalCameraVelocities(mode - 1, s4, projectionPlaneDelta, projectionPlaneChangeFrames, initialStepZ, finalStepZ);
+      setInitialAndFinalCameraVelocities(mode - 1, stepZ1, projectionPlaneDelta, projectionPlaneChangeFrames, initialStepZ, finalStepZ);
       cam.projectionPlaneDistanceStep_10c = initialStepZ.get();
       cam.projectionPlaneDistanceStepAcceleration_110 = (finalStepZ.get() - initialStepZ.get()) / projectionPlaneChangeFrames;
     }
@@ -3121,6 +3128,7 @@ public final class Bttl_800d {
     //LAB_800dabb8
   }
 
+  @ScriptDescription("Resets battle camera movement")
   @Method(0x800dabccL)
   public static FlowControl scriptResetCameraMovement(final RunningScript<?> script) {
     resetCameraMovement();
@@ -3139,6 +3147,12 @@ public final class Bttl_800d {
     cam.refpointMoving_123 = false;
   }
 
+  @ScriptDescription("Related to battle camera movement")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "How the camera moves")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "8-bit fixed-point position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "Only used in some modes, the scripted object used in calculations")
   @Method(0x800dac20L)
   public static FlowControl FUN_800dac20(final RunningScript<?> script) {
     float x = script.params_20[1].get() / (float)0x100;
@@ -3295,6 +3309,12 @@ public final class Bttl_800d {
     cam.viewpointCallbackIndex_120 = 7;
   }
 
+  @ScriptDescription("Related to battle camera movement")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "How the camera moves")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "8-bit fixed-point position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "Only used in some modes, the scripted object used in calculations")
   @Method(0x800db034L)
   public static FlowControl FUN_800db034(final RunningScript<?> script) {
     float x = script.params_20[1].get() / (float)0x100;
@@ -3452,6 +3472,15 @@ public final class Bttl_800d {
     cam.refpointCallbackIndex_121 = 7;
   }
 
+  @ScriptDescription("Related to battle camera movement")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "How the camera moves")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "8-bit fixed-point position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "?")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks", description = "Duration of movement")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepType", description = "Two 2-bit packed values for X and Y respectively")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "Only used in some modes, the scripted object used in calculations")
   @Method(0x800db460L)
   public static FlowControl FUN_800db460(final RunningScript<?> script) {
     float x = script.params_20[1].get() / (float)0x100;
@@ -3502,6 +3531,15 @@ public final class Bttl_800d {
     // no-op
   }
 
+  @ScriptDescription("Related to battle camera movement")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "How the camera moves")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "8-bit fixed-point position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "?")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks", description = "Duration of movement")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepType", description = "Two 2-bit packed values for X and Y respectively")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "Only used in some modes, the scripted object used in calculations")
   @Method(0x800db574L)
   public static FlowControl FUN_800db574(final RunningScript<?> script) {
     float x = script.params_20[1].get() / (float)0x100;
@@ -3547,6 +3585,15 @@ public final class Bttl_800d {
     // no-op
   }
 
+  @ScriptDescription("Related to battle camera movement")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "How the camera moves")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "8-bit fixed-point position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "initialStepZ")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "finalStepZ")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepType", description = "Two 2-bit packed values for X and Y respectively")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "Only used in some modes, the scripted object used in calculations")
   @Method(0x800db688L)
   public static FlowControl FUN_800db688(final RunningScript<?> script) {
     float x = script.params_20[1].get() / (float)0x100;
@@ -3569,15 +3616,24 @@ public final class Bttl_800d {
    * @param z 8-bit fixed-point
    */
   @Method(0x800db714L)
-  public static void FUN_800db714(final int callbackIndex, final float x, final float y, final float z, final int a4, final int a5, final int a6, final int scriptIndex) {
-    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac1c, FUN index=%d, x=%f, y=%f, z=%f, a4=%d, a5=%d, a6=%d, script index=%d", callbackIndex, x, y, z, a4, a5, a6, scriptIndex);
-    _800fac1c[callbackIndex].accept(x, y, z, a4, a5, a6, scriptIndex);
+  public static void FUN_800db714(final int callbackIndex, final float x, final float y, final float z, final int initialStepZ, final int finalStepZ, final int stepType, final int scriptIndex) {
+    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac1c, FUN index=%d, x=%f, y=%f, z=%f, initialStepZ=%d, finalStepZ=%d, stepType=%d, script index=%d", callbackIndex, x, y, z, initialStepZ, finalStepZ, stepType, scriptIndex);
+    _800fac1c[callbackIndex].accept(x, y, z, initialStepZ, finalStepZ, stepType, scriptIndex);
 
     final BattleCamera cam = camera_800c67f0;
     cam.viewpointCallbackIndex_fc = callbackIndex;
     cam.viewpointMoving_122 = true;
   }
 
+  @ScriptDescription("Related to battle camera movement")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "How the camera moves")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "8-bit fixed-point position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "initialStepZ")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "finalStepZ")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepType", description = "Two 2-bit packed values for X and Y respectively")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "Only used in some modes, the scripted object used in calculations")
   @Method(0x800db79cL)
   public static FlowControl FUN_800db79c(final RunningScript<?> script) {
     float x = script.params_20[1].get() / (float)0x100;
@@ -3600,14 +3656,24 @@ public final class Bttl_800d {
    * @param z 8-bit fixed-point
    */
   @Method(0x800db828L)
-  public static void FUN_800db828(final int callbackIndex, final float x, final float y, final float z, final int ticks, final int stepType, final int a6, final int scriptIndex) {
-    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac7c, FUN index=%d, x=%f, y=%f, z=%f, ticks=%d, stepType=%d, a6=%d, scriptIndex=%d", callbackIndex, x, y, z, ticks, stepType, a6, scriptIndex);
-    _800fac7c[callbackIndex].accept(x, y, z, ticks, stepType, a6, scriptIndex);
+  public static void FUN_800db828(final int callbackIndex, final float x, final float y, final float z, final int initialStepZ, final int finalStepZ, final int stepType, final int scriptIndex) {
+    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac7c, FUN index=%d, x=%f, y=%f, z=%f, initialStepZ=%d, finalStepZ=%d, stepType=%d, scriptIndex=%d", callbackIndex, x, y, z, initialStepZ, finalStepZ, stepType, scriptIndex);
+    _800fac7c[callbackIndex].accept(x, y, z, initialStepZ, finalStepZ, stepType, scriptIndex);
     final BattleCamera cam = camera_800c67f0;
     cam.refpointCallbackIndex_88 = callbackIndex;
     cam.refpointMoving_123 = true;
   }
 
+  @ScriptDescription("Related to battle camera movement")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "How the camera moves")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "8-bit fixed-point position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks", description = "Duration of movement")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepSmoothingMode")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepZ", description = "8-bit fixed-point")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepType", description = "Two 2-bit packed values for X and Y respectively")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "Only used in some modes, the scripted object used in calculations")
   @Method(0x800db8b0L)
   public static FlowControl FUN_800db8b0(final RunningScript<?> script) {
     float x = script.params_20[1].get() / (float)0x100;
@@ -3658,6 +3724,16 @@ public final class Bttl_800d {
     // no-op
   }
 
+  @ScriptDescription("Related to battle camera movement")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "How the camera moves")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "8-bit fixed-point position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks", description = "Duration of movement")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepSmoothingMode")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepZ", description = "8-bit fixed-point")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepType", description = "Two 2-bit packed values for X and Y respectively")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "Only used in some modes, the scripted object used in calculations")
   @Method(0x800db9e0L)
   public static FlowControl FUN_800db9e0(final RunningScript<?> script) {
     float x = script.params_20[1].get() / (float)0x100;
@@ -3675,9 +3751,9 @@ public final class Bttl_800d {
   }
 
   @Method(0x800dba80L)
-  public static void FUN_800dba80(final int callbackIndex, final float x, final float y, final float z, final int ticks, final int a5, final float a6, final int stepType, final int scriptIndex) {
-    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac9c, FUN index=%d, x=%f, y=%f, z=%f, ticks=%d, a5=%d, a6=%f, stepType=%d, script index=%d", callbackIndex, x, y, z, ticks, a5, a6, stepType, scriptIndex);
-    _800fac9c[callbackIndex].accept(x, y, z, ticks, a5, a6, stepType, scriptIndex);
+  public static void FUN_800dba80(final int callbackIndex, final float x, final float y, final float z, final int ticks, final int stepSmoothingMode, final float stepZ, final int stepType, final int scriptIndex) {
+    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac9c, FUN index=%d, x=%f, y=%f, z=%f, ticks=%d, stepSmoothingMode=%d, stepZ=%f, stepType=%d, script index=%d", callbackIndex, x, y, z, ticks, stepSmoothingMode, stepZ, stepType, scriptIndex);
+    _800fac9c[callbackIndex].accept(x, y, z, ticks, stepSmoothingMode, stepZ, stepType, scriptIndex);
     final BattleCamera cam = camera_800c67f0;
     cam.refpointCallbackIndex_88 = callbackIndex;
     cam.refpointMoving_123 = true;
@@ -3703,6 +3779,9 @@ public final class Bttl_800d {
     // no-op
   }
 
+  @ScriptDescription("Whether or not the camera is currently moving")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "0 = viewpoint moving, 1 = refpoint moving")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "isMoving")
   @Method(0x800dbb10L)
   public static FlowControl scriptIsCameraMoving(final RunningScript<?> script) {
     final BattleCamera cam = camera_800c67f0;
@@ -3723,17 +3802,24 @@ public final class Bttl_800d {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unused")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "?")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "?")
   @Method(0x800dbb9cL)
   public static FlowControl FUN_800dbb9c(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
+  @ScriptDescription("Sets the viewport twist")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "twist", description = "The new viewpoint twist")
   @Method(0x800dbc2cL)
   public static FlowControl scriptSetViewportTwist(final RunningScript<?> script) {
     camera_800c67f0.rview2_00.viewpointTwist_18 = script.params_20[0].get();
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "0 = viewpoint, 1 = refpoint")
   @Method(0x800dbc80L)
   public static FlowControl FUN_800dbc80(final RunningScript<?> script) {
     final int type = script.params_20[0].get();
@@ -3753,6 +3839,8 @@ public final class Bttl_800d {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets camera projection plane distance")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "distance", description = "The projection plane distance")
   @Method(0x800dbcc8L)
   public static FlowControl scriptSetCameraProjectionPlaneDistance(final RunningScript<?> script) {
     LOGGER.info(CAMERA, "[CAMERA] scriptSetCameraProjectionPlaneDistance distance=%d", script.params_20[0].get());
@@ -3764,6 +3852,8 @@ public final class Bttl_800d {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Gets the camera projection plane distance")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "distance", description = "The projection plane distance")
   @Method(0x800dbcfcL)
   public static FlowControl scriptGetProjectionPlaneDistance(final RunningScript<?> script) {
     script.params_20[0].set(getProjectionPlaneDistance());
@@ -3944,6 +4034,12 @@ public final class Bttl_800d {
     // no-op
   }
 
+  @ScriptDescription("Calculates multiple different absolute or relative camera values")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "0 = viewpoint, 1 = refpoint")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "Which calculation to perform")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "component", description = "0 = X, 1 = Y, 2 = Z")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "Only used in some modes, the scripted object used in calculations")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "out", description = "If mode is even, values are 8-bit fixed-point; if mode is odd, values are PSX degrees")
   @Method(0x800dc2d8L)
   public static FlowControl scriptCalculateCameraValue(final RunningScript<?> script) {
     LOGGER.info(CAMERA, "[CAMERA] Calc val: use refpoint=%b, FUN index=%d, component=%d, script index=%d", script.params_20[0].get() != 0, script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
@@ -4150,6 +4246,8 @@ public final class Bttl_800d {
     return calculate3dAngleOrMagnitude(getScriptedObjectTranslation(scriptIndex), point, component);
   }
 
+  @ScriptDescription("Stops camera movement")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "0 = viewpoint, 1 = refpoint")
   @Method(0x800dcb84L)
   public static FlowControl scriptStopCameraMovement(final RunningScript<?> script) {
     final BattleCamera cam = camera_800c67f0;
@@ -4174,6 +4272,11 @@ public final class Bttl_800d {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets the camera wobble")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "frames", description = "The number of frames to perform the wobble")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "framesUntilWobble", description = "The number of frames until the wobble starts")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "Wobble offset X")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "Wobble offset Y")
   @Method(0x800dcbecL)
   public static FlowControl scriptWobbleCamera(final RunningScript<?> script) {
     wobbleFramesRemaining_800c67c4.set(script.params_20[0].get());

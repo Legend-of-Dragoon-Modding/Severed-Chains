@@ -32,6 +32,8 @@ import legend.game.inventory.WhichMenu;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
+import legend.game.scripting.ScriptDescription;
+import legend.game.scripting.ScriptParam;
 import legend.game.scripting.ScriptState;
 import legend.game.sound.EncounterSoundEffects10;
 import legend.game.sound.PlayableSound0c;
@@ -193,7 +195,7 @@ import static legend.game.Scus94491BpeSegment_800b.sequenceVolume_800bd108;
 import static legend.game.Scus94491BpeSegment_800b.soundFiles_800bcf80;
 import static legend.game.Scus94491BpeSegment_800b.sssqTempoScale_800bd100;
 import static legend.game.Scus94491BpeSegment_800b.sssqTempo_800bd104;
-import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
+import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
@@ -712,7 +714,7 @@ public final class Scus94491BpeSegment {
    * @param effectType 1 - fade out, 2 - fade in
    */
   @Method(0x800136dcL)
-  public static void scriptStartEffect(final int effectType, final int frames) {
+  public static void startFadeEffect(final int effectType, final int frames) {
     //LAB_800136f4
     fullScreenEffect_800bb140.type_00 = effectType;
     fullScreenEffect_800bb140.totalFrames_08 = frames > 0 ? frames : 15;
@@ -993,29 +995,25 @@ public final class Scus94491BpeSegment {
     return FlowControl.PAUSE_AND_REWIND;
   }
 
-  /**
-   * Forces disabling/enabling of indicators during scripted movement (not during normal play)
-   */
+  @ScriptDescription("Forces disabling/enabling of indicators during scripted movement (not during normal play)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "disabled", description = "True to disable indicators")
   @Method(0x80017354L)
   public static FlowControl scriptSetIndicatorsDisabled(final RunningScript<?> script) {
     gameState_800babc8.indicatorsDisabled_4e3 = script.params_20[0].get() != 0;
     return FlowControl.CONTINUE;
   }
 
-  /**
-   * Reads indicator status during some scripted movement (only identified instance so far is Bale boat ride)
-   */
+  @ScriptDescription("Reads indicator status during some scripted movement (only identified instance so far is Bale boat ride)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "disabled", description = "True if indicators are disabled")
   @Method(0x80017374L)
   public static FlowControl scriptReadIndicatorsDisabled(final RunningScript<?> script) {
     script.params_20[0].set(gameState_800babc8.indicatorsDisabled_4e3 ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 
-  /**
-   * <p>Sets or clears a bit in the flags 1 array at {@link Scus94491BpeSegment_800b#gameState_800babc8#scriptFlags1_13c}.</p>
-   * <p>If work array element 1 is non-zero, the bit is set. If it's 0, the bit is cleared.</p>
-   * <p>The lower 5 bits of work array element 0 is what bit to set (i.e. 1 << n), and the upper 3 bits is the index into the array.</p>
-   */
+  @ScriptDescription("Sets or clears a bit in the flags 1 array at GameState#scriptFlags1_13c")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLAG, name = "flag", description = "Which flag to set")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "value", description = "True to set the flag, false to unset")
   @Method(0x80017390L)
   public static FlowControl scriptSetGlobalFlag1(final RunningScript<?> script) {
     final int shift = script.params_20[0].get() & 0x1f;
@@ -1036,11 +1034,9 @@ public final class Scus94491BpeSegment {
     return FlowControl.CONTINUE;
   }
 
-  /**
-   * <p>Reads a bit in the flags 1 array at {@link Scus94491BpeSegment_800b#gameState_800babc8#scriptFlags1_13c}.</p>
-   * <p>If the flag is set, a 1 is stored as the value of the work array element 1; otherwise, 0 is stored.</p>
-   * <p>The lower 5 bits of work array element 0 is what bit to read (i.e. 1 << n), and the upper 3 bits is the index into the array.</p>
-   */
+  @ScriptDescription("Reads a bit in the flags 1 array at GameState#scriptFlags1_13c")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLAG, name = "flag", description = "Which flag to read")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "value", description = "True the flag was set, false if unset")
   @Method(0x800173fcL)
   public static FlowControl scriptReadGlobalFlag1(final RunningScript<?> script) {
     final int value = script.params_20[0].get();
@@ -1056,6 +1052,9 @@ public final class Scus94491BpeSegment {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets or clears a bit in the flags 2 array at GameState#scriptFlags2_bc")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLAG, name = "flag", description = "Which flag to set")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "value", description = "True to set the flag, false to unset")
   @Method(0x80017440L)
   public static FlowControl scriptSetGlobalFlag2(final RunningScript<?> script) {
     gameState_800babc8.scriptFlags2_bc.set(script.params_20[0].get(), script.params_20[1].get() != 0);
@@ -1071,11 +1070,9 @@ public final class Scus94491BpeSegment {
     return FlowControl.CONTINUE;
   }
 
-  /**
-   * <p>Reads a bit in the flags 2 array at {@link Scus94491BpeSegment_800b#gameState_800babc8#scriptFlags2_bc}.</p>
-   * <p>If the flag is set, a 1 is stored as the value of the work array element 1; otherwise, 0 is stored.</p>
-   * <p>The lower 5 bits of work array element 0 is what bit to read (i.e. 1 << n), and the upper 3 bits is the index into the array.</p>
-   */
+  @ScriptDescription("Reads a bit in the flags 2 array at GameState#scriptFlags2_bc")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLAG, name = "flag", description = "Which flag to read")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "value", description = "True the flag was set, false if unset")
   @Method(0x800174d8L)
   public static FlowControl scriptReadGlobalFlag2(final RunningScript<?> script) {
     final int val = script.params_20[0].get();
@@ -1091,25 +1088,36 @@ public final class Scus94491BpeSegment {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Starts a full-screen fade effect")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "The type of effect to start")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "frames", description = "The number of frames until the effect finishes")
   @Method(0x8001751cL)
-  public static FlowControl scriptStartEffect(final RunningScript<?> script) {
-    scriptStartEffect(script.params_20[0].get(), Math.max(1, script.params_20[1].get()));
+  public static FlowControl scriptStartFadeEffect(final RunningScript<?> script) {
+    startFadeEffect(script.params_20[0].get(), Math.max(1, script.params_20[1].get()));
     return FlowControl.CONTINUE;
   }
 
   @Method(0x80017564L)
+  @ScriptDescription("Rewinds if there are files currently loading; pauses otherwise")
   public static FlowControl scriptWaitForFilesToLoad(final RunningScript<?> script) {
     return Unpacker.getLoadingFileCount() == 0 ? FlowControl.PAUSE : FlowControl.PAUSE_AND_REWIND;
   }
 
+  @ScriptDescription("Something related to rumble")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "joypadIndex")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
   @Method(0x80017584L)
   public static FlowControl FUN_80017584(final RunningScript<?> script) {
     FUN_8002bb38(script.params_20[0].get(), script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets or clears a bit in a flags array")
+  @ScriptParam(direction = ScriptParam.Direction.BOTH, type = ScriptParam.Type.INT_ARRAY, name = "flags", description = "The array of flags")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLAG, name = "flag", description = "Which flag to set")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "value", description = "True to set the flag, false to unset")
   @Method(0x800175b4L)
-  public static FlowControl FUN_800175b4(final RunningScript<?> script) {
+  public static FlowControl scriptSetFlag(final RunningScript<?> script) {
     final int shift = script.params_20[1].get() & 0x1f;
     final int index = script.params_20[1].get() >>> 5;
 
@@ -1130,8 +1138,12 @@ public final class Scus94491BpeSegment {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Reads a bit in a flags array")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "flags", description = "The array of flags")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLAG, name = "flag", description = "Which flag to read")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "value", description = "True the flag was set, false if unset")
   @Method(0x80017648L)
-  public static FlowControl FUN_80017648(final RunningScript<?> script) {
+  public static FlowControl scriptReadFlag(final RunningScript<?> script) {
     final int shift = script.params_20[1].get() & 0x1f;
     final int index = script.params_20[1].get() >>> 5;
 
@@ -1139,18 +1151,25 @@ public final class Scus94491BpeSegment {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Something related to rumble")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
   @Method(0x80017688L)
   public static FlowControl FUN_80017688(final RunningScript<?> script) {
     FUN_8002bda4(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Something related to rumble")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
   @Method(0x800176c0L)
   public static FlowControl FUN_800176c0(final RunningScript<?> script) {
     FUN_8002c178(script.params_20[0].get());
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Something related to rumble")
   @Method(0x800176ecL)
   public static FlowControl FUN_800176ec(final RunningScript<?> script) {
     FUN_8002c184();
@@ -1737,7 +1756,7 @@ public final class Scus94491BpeSegment {
     //LAB_80019a20
     //LAB_80019a24
     if(engineState_8004dd20 != EngineState.SUBMAP_05) {
-      submapIndex_800bd808.set(-1);
+      submapId_800bd808.set(-1);
     }
 
     //LAB_80019a3c
@@ -2337,7 +2356,7 @@ public final class Scus94491BpeSegment {
       if(_8004f6ec.get() == 0) {
         _8004f6ec.setu(0x1L);
         FUN_8001c594(0x1L, 0x6L);
-        scriptStartEffect(1, 1);
+        startFadeEffect(1, 1);
       }
     }
 
@@ -2527,14 +2546,14 @@ public final class Scus94491BpeSegment {
       SubmapMusic08 a2;
       int a3;
       for(a3 = 0, a2 = _8004fb00.get(a3); a2.submapCut_00.get() != 99 || a2.musicIndex_02.get() != 99; a3++, a2 = _8004fb00.get(a3)) { // I think 99 is just a sentinel value that means "end of list"
-        final int submapIndex = submapIndex_800bd808.get();
+        final int submapId = submapId_800bd808.get();
 
-        if(submapIndex == a2.submapCut_00.get()) {
+        if(submapId == a2.submapCut_00.get()) {
           int v1 = 0;
 
           //LAB_8001c680
           do {
-            if(submapIndex == 57) { // Opening (Rose intro, Dart forest, horses)
+            if(submapId == 57) { // Opening (Rose intro, Dart forest, horses)
               if(a2.submapCuts_04.deref().get(v1).get() != submapCut_80052c30.get()) {
                 continue;
               }
@@ -2563,7 +2582,7 @@ public final class Scus94491BpeSegment {
       //LAB_8001c728
       SubmapMusic08 a0;
       for(a3 = 0, a0 = _8004fa98.get(a3); a0.submapCut_00.get() != 99 || a0.musicIndex_02.get() != 99; a3++, a0 = _8004fa98.get(a3)) {
-        if(submapIndex_800bd808.get() == a0.submapCut_00.get()) {
+        if(submapId_800bd808.get() == a0.submapCut_00.get()) {
           int v1 = 0;
 
           //LAB_8001c748
@@ -2611,7 +2630,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001c874L)
   public static int getCurrentSubmapMusic() {
-    if(submapIndex_800bd808.get() == 56) { // Moon
+    if(submapId_800bd808.get() == 56) { // Moon
       for(int i = 0; ; i++) {
         final MoonMusic08 moonMusic = moonMusic_8004ff10.get(i);
 
@@ -2622,7 +2641,7 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_8001c8bc
-    return submapMusic_80050068.get(submapIndex_800bd808.get()).get();
+    return submapMusic_80050068.get(submapId_800bd808.get()).get();
   }
 
   @Method(0x8001cae0L)
