@@ -2,7 +2,6 @@ package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
 import legend.core.memory.Method;
-import legend.game.Scus94491BpeSegment;
 import legend.game.input.InputAction;
 import legend.game.inventory.UseItemResponse;
 import legend.game.types.ActiveStatsa0;
@@ -19,7 +18,6 @@ import static legend.game.SItem.Completely_recovered_8011d534;
 import static legend.game.SItem.Detoxified_8011d5c8;
 import static legend.game.SItem.Encounter_risk_reduced_8011d594;
 import static legend.game.SItem.FUN_80104b60;
-import static legend.game.SItem.renderCharacterStatusEffect;
 import static legend.game.SItem.Fear_gone_8011d604;
 import static legend.game.SItem.HP_8011d57c;
 import static legend.game.SItem.HP_recovered_for_all_8011cfcc;
@@ -37,11 +35,13 @@ import static legend.game.SItem.glyph_801142d4;
 import static legend.game.SItem.initGlyph;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.menuStack;
+import static legend.game.SItem.renderCharacterStatusEffect;
 import static legend.game.SItem.renderFourDigitNumber;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderMenuItems;
 import static legend.game.SItem.renderString;
 import static legend.game.SItem.useItemGlyphs_801141fc;
+import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.getItemIcon;
@@ -83,7 +83,7 @@ public class UseItemScreen extends MenuScreen {
   protected void render() {
     switch(this.loadingStage) {
       case 0 -> {
-        Scus94491BpeSegment.startFadeEffect(2, 10);
+        startFadeEffect(2, 10);
         this.charSlot = 0;
         this.slotScroll = 0;
         this.selectedSlot = 0;

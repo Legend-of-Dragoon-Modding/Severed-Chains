@@ -1,7 +1,6 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
-import legend.game.Scus94491BpeSegment;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
@@ -55,6 +54,7 @@ import static legend.game.SItem.renderThreeDigitNumberComparison;
 import static legend.game.SItem.renderTwoDigitNumber;
 import static legend.game.SMap.FUN_800e3fac;
 import static legend.game.SMap.shops_800f4930;
+import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.addGold;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
@@ -128,7 +128,7 @@ public class ShopScreen extends MenuScreen {
 
       case AWAIT_INIT_1 -> {
         if(uiFile_800bdc3c != null) {
-          Scus94491BpeSegment.startFadeEffect(2, 10);
+          startFadeEffect(2, 10);
           this.menuState = MenuState.INIT_2;
         }
       }
@@ -264,7 +264,7 @@ public class ShopScreen extends MenuScreen {
 
       case _16, _17 -> {
         if(this.menuState == MenuState._16) {
-          Scus94491BpeSegment.startFadeEffect(1, 10);
+          startFadeEffect(1, 10);
           this.menuState = MenuState._17;
         }
 
@@ -276,7 +276,7 @@ public class ShopScreen extends MenuScreen {
       }
 
       case UNLOAD_19 -> {
-        Scus94491BpeSegment.startFadeEffect(2, 10);
+        startFadeEffect(2, 10);
         deallocateRenderables(0xff);
 
         if(engineState_8004dd20 == EngineState.SUBMAP_05) {
@@ -758,7 +758,7 @@ public class ShopScreen extends MenuScreen {
       case 2 -> // Carried
         menuStack.pushScreen(new ItemListScreen(() -> {
           menuStack.popScreen();
-          Scus94491BpeSegment.startFadeEffect(2, 10);
+          startFadeEffect(2, 10);
           this.menuState = MenuState.INIT_2;
         }));
 

@@ -118,6 +118,7 @@ import static legend.game.SMap.renderEnvironment;
 import static legend.game.SMap.renderSmapModel;
 import static legend.game.SMap.renderSmapShadow;
 import static legend.game.SMap.unloadSmap;
+import static legend.game.Scus94491BpeSegment.*;
 import static legend.game.Scus94491BpeSegment.FUN_8001ad18;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
 import static legend.game.Scus94491BpeSegment.FUN_8001d51c;
@@ -1089,7 +1090,7 @@ public final class Scus94491BpeSegment_8002 {
         deallocateRenderables(0xff);
         uiFile_800bdc3c = null;
 
-        Scus94491BpeSegment.startFadeEffect(2, 10);
+        startFadeEffect(2, 10);
 
         if(engineState_8004dd20 == EngineState.SUBMAP_05) {
           FUN_800e3fac();

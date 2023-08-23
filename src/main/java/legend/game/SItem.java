@@ -61,6 +61,7 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.SMap.FUN_800e3fac;
+import static legend.game.Scus94491BpeSegment.*;
 import static legend.game.Scus94491BpeSegment.FUN_80018e84;
 import static legend.game.Scus94491BpeSegment.FUN_800192d8;
 import static legend.game.Scus94491BpeSegment.FUN_80019470;
@@ -545,12 +546,12 @@ public final class SItem {
             whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20;
 
           case RENDER_CHAR_SWAP_MENU_24 -> {
-            Scus94491BpeSegment.startFadeEffect(2, 10);
+            startFadeEffect(2, 10);
             whichMenu_800bdc38 = WhichMenu.UNLOAD_CHAR_SWAP_MENU_25;
           }
 
           default -> {
-            Scus94491BpeSegment.startFadeEffect(2, 10);
+            startFadeEffect(2, 10);
             whichMenu_800bdc38 = WhichMenu.UNLOAD_INVENTORY_MENU_5;
           }
         }
@@ -2030,7 +2031,7 @@ public final class SItem {
 
       case AWAIT_INIT_1:
         if(uiFile_800bdc3c != null) {
-          Scus94491BpeSegment.startFadeEffect(2, 10);
+          startFadeEffect(2, 10);
           inventoryMenuState_800bdc28.set(InventoryMenuState._2);
         }
         break;
@@ -2341,7 +2342,7 @@ public final class SItem {
         break;
 
       case LIST_INIT_16:
-        Scus94491BpeSegment.startFadeEffect(1, 10);
+        startFadeEffect(1, 10);
         inventoryMenuState_800bdc28.set(InventoryMenuState._17);
 
       case _17:
@@ -2355,7 +2356,7 @@ public final class SItem {
         break;
 
       case _18:
-        Scus94491BpeSegment.startFadeEffect(2, 10);
+        startFadeEffect(2, 10);
         deallocateRenderables(0xff);
         uiFile_800bdc3c = null;
         whichMenu_800bdc38 = WhichMenu.UNLOAD_POST_COMBAT_REPORT_30;

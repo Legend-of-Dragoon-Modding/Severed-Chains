@@ -7,8 +7,8 @@ import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
 import legend.core.gte.DVECTOR;
-import legend.core.gte.ModelPart10;
 import legend.core.gte.MATRIX;
+import legend.core.gte.ModelPart10;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.VECTOR;
@@ -27,7 +27,6 @@ import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.SItem;
-import legend.game.Scus94491BpeSegment;
 import legend.game.Scus94491BpeSegment_8005;
 import legend.game.characters.Element;
 import legend.game.combat.bobj.BattleObject27c;
@@ -141,6 +140,7 @@ import static legend.game.Scus94491BpeSegment.renderMcq;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.setDepthResolution;
 import static legend.game.Scus94491BpeSegment.simpleRand;
+import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020308;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021520;
 import static legend.game.Scus94491BpeSegment_8002.scriptDeallocateAllTextboxes;
@@ -1054,7 +1054,7 @@ public final class Bttl_800c {
 
     battleLoaded_800bc94c.set(true);
 
-    Scus94491BpeSegment.startFadeEffect(4, 30);
+    startFadeEffect(4, 30);
 
     _800bc960.or(0x20);
     battleState_8006e398.stageProgression_eec = 0;
@@ -1340,7 +1340,7 @@ public final class Bttl_800c {
       loadSupportOverlay(2, () -> { });
 
       if(fullScreenEffect_800bb140.currentColour_28 == 0) {
-        Scus94491BpeSegment.startFadeEffect(1, postCombatActionFrames_800fa6d0.get(postBattleActionIndex).get());
+        startFadeEffect(1, postCombatActionFrames_800fa6d0.get(postBattleActionIndex).get());
       }
 
       //LAB_800c8274
