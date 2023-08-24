@@ -494,7 +494,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[525] = Bttl_800e::FUN_800ee408;
     scriptSubFunctions_8004e29c[526] = Bttl_800e::scriptSetStageZ;
 
-    scriptSubFunctions_8004e29c[544] = SEffe::FUN_801115ec;
+    scriptSubFunctions_8004e29c[544] = SEffe::scriptGetTranslationRelativeToParent;
     scriptSubFunctions_8004e29c[545] = SEffe::scriptSetRelativeTranslation;
     scriptSubFunctions_8004e29c[546] = SEffe::scriptGetRotationDifference;
     scriptSubFunctions_8004e29c[547] = SEffe::scriptSetRelativeRotation;
@@ -516,7 +516,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[563] = SEffe::FUN_80112900;
     scriptSubFunctions_8004e29c[564] = SEffe::FUN_8011299c;
     scriptSubFunctions_8004e29c[565] = SEffe::FUN_80115440;
-    scriptSubFunctions_8004e29c[566] = SEffe::FUN_80111658;
+    scriptSubFunctions_8004e29c[566] = SEffe::scriptGetEffectTranslationRelativeToParent;
     scriptSubFunctions_8004e29c[567] = SEffe::scriptSetRotationScaler;
     scriptSubFunctions_8004e29c[568] = SEffe::FUN_80112bf0;
     scriptSubFunctions_8004e29c[569] = SEffe::FUN_80112e00; // not implemented
@@ -593,7 +593,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[638] = Bttl_800e::FUN_800e71e4;
     scriptSubFunctions_8004e29c[639] = Bttl_800e::FUN_800e727c;
 
-    scriptSubFunctions_8004e29c[640] = SEffe::FUN_8011357c;
+    scriptSubFunctions_8004e29c[640] = SEffe::scriptConvertRotationYxzToXyz;
     scriptSubFunctions_8004e29c[641] = SEffe::FUN_80115a28;
     scriptSubFunctions_8004e29c[642] = SEffe::FUN_8011287c;
     scriptSubFunctions_8004e29c[643] = Bttl_800e::FUN_800e9798;
