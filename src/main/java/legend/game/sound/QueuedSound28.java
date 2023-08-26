@@ -1,6 +1,6 @@
 package legend.game.sound;
 
-import legend.game.combat.bobj.BattleObject27c;
+import legend.game.combat.bent.BattleEntity27c;
 
 public class QueuedSound28 {
   /**
@@ -15,7 +15,7 @@ public class QueuedSound28 {
    */
   public int type_00;
 
-  public BattleObject27c bobj_04;
+  public BattleEntity27c bent_04;
   public SoundFile soundFile_08;
   public int soundIndex_0c;
   /** I think if this has flag 0x80 set it enables reverb? I don't think it's ever used? (short) */

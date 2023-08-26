@@ -14,10 +14,10 @@ import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.combat.Bttl_800c;
-import legend.game.combat.bobj.BattleObject27c;
-import legend.game.combat.bobj.PlayerBattleObject;
+import legend.game.combat.bent.BattleEntity27c;
+import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
-import legend.game.combat.types.BattleScriptDataBase;
+import legend.game.combat.types.BattleObject;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.MainMenuScreen;
@@ -126,7 +126,7 @@ import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.unlockedUltimateAddition_800bc910;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.combat.Bttl_800c.addCombatant;
-import static legend.game.combat.Bttl_800c.allBobjCount_800c66d0;
+import static legend.game.combat.Bttl_800c.allBentCount_800c66d0;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c.characterElements_800c706c;
 import static legend.game.combat.Bttl_800c.combatantCount_800c66a0;
@@ -287,7 +287,7 @@ public final class SItem {
   public static final EnumRef<MessageBoxResult> msgboxResult_8011e1e8 = MEMORY.ref(4, 0x8011e1e8L, EnumRef.of(MessageBoxResult.values()));
 
   @Method(0x800fbd78L)
-  public static void allocatePlayerBattleObjects() {
+  public static void allocatePlayerBattleEntities() {
     //LAB_800fbdb8
     for(charCount_800c677c.set(0); charCount_800c677c.get() < 3; charCount_800c677c.incr()) {
       if(gameState_800babc8.charIds_88[charCount_800c677c.get()] < 0) {
@@ -308,30 +308,30 @@ public final class SItem {
     //LAB_800fbe70
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
       final int charIndex = gameState_800babc8.charIds_88[charSlot];
-      final String name = "Char ID " + charIndex + " (bobj + " + (charSlot + 6) + ')';
-      final ScriptState<PlayerBattleObject> state = SCRIPTS.allocateScriptState(charSlot + 6, name, 0, new PlayerBattleObject(name, charSlot + 6));
-      state.setTicker(Bttl_800c::bobjTicker);
-      state.setDestructor(Bttl_800c::bobjDestructor);
-      battleState_8006e398.allBobjs_e0c[allBobjCount_800c66d0.get()] = state;
-      battleState_8006e398.charBobjs_e40[charSlot] = state;
-      final PlayerBattleObject bobj = state.innerStruct_00;
-      bobj.magic_00 = BattleScriptDataBase.BOBJ;
-      bobj.element = characterElements_800c706c[charIndex].get();
-      bobj.combatant_144 = getCombatant((short)charIndices[charSlot]);
-      bobj.charId_272 = charIndex;
-      bobj.bobjSlot_274 = allBobjCount_800c66d0.get();
-      bobj.charSlot_276 = charSlot;
-      bobj.combatantIndex_26c = charIndices[charSlot];
-      bobj.model_148.coord2_14.coord.transfer.setX((int)MEMORY.ref(2, fp).offset(charSlot * 0x4L).offset(0x0L).getSigned());
-      bobj.model_148.coord2_14.coord.transfer.setY(0);
-      bobj.model_148.coord2_14.coord.transfer.setZ((int)MEMORY.ref(2, fp).offset(charSlot * 0x4L).offset(0x2L).getSigned());
-      bobj.model_148.coord2_14.transforms.rotate.zero();
-      allBobjCount_800c66d0.incr();
+      final String name = "Char ID " + charIndex + " (bent + " + (charSlot + 6) + ')';
+      final ScriptState<PlayerBattleEntity> state = SCRIPTS.allocateScriptState(charSlot + 6, name, 0, new PlayerBattleEntity(name, charSlot + 6));
+      state.setTicker(Bttl_800c::bentTicker);
+      state.setDestructor(Bttl_800c::bentDestructor);
+      battleState_8006e398.allBents_e0c[allBentCount_800c66d0.get()] = state;
+      battleState_8006e398.charBents_e40[charSlot] = state;
+      final PlayerBattleEntity bent = state.innerStruct_00;
+      bent.magic_00 = BattleObject.BOBJ;
+      bent.element = characterElements_800c706c[charIndex].get();
+      bent.combatant_144 = getCombatant((short)charIndices[charSlot]);
+      bent.charId_272 = charIndex;
+      bent.bentSlot_274 = allBentCount_800c66d0.get();
+      bent.charSlot_276 = charSlot;
+      bent.combatantIndex_26c = charIndices[charSlot];
+      bent.model_148.coord2_14.coord.transfer.setX((int)MEMORY.ref(2, fp).offset(charSlot * 0x4L).offset(0x0L).getSigned());
+      bent.model_148.coord2_14.coord.transfer.setY(0);
+      bent.model_148.coord2_14.coord.transfer.setZ((int)MEMORY.ref(2, fp).offset(charSlot * 0x4L).offset(0x2L).getSigned());
+      bent.model_148.coord2_14.transforms.rotate.zero();
+      allBentCount_800c66d0.incr();
     }
 
     //LAB_800fbf6c
-    battleState_8006e398.allBobjs_e0c[allBobjCount_800c66d0.get()] = null;
-    battleState_8006e398.charBobjs_e40[charCount_800c677c.get()] = null;
+    battleState_8006e398.allBents_e0c[allBentCount_800c66d0.get()] = null;
+    battleState_8006e398.charBents_e40[charCount_800c677c.get()] = null;
 
     FUN_800f863c();
   }
@@ -352,7 +352,7 @@ public final class SItem {
     //LAB_800fc064
     //LAB_800fc09c
     for(int i = 0; i < charCount_800c677c.get(); i++) {
-      combatants_8005e398[battleState_8006e398.charBobjs_e40[i].innerStruct_00.combatantIndex_26c].flags_19e |= 0x2a;
+      combatants_8005e398[battleState_8006e398.charBents_e40[i].innerStruct_00.combatantIndex_26c].flags_19e |= 0x2a;
     }
 
     //LAB_800fc104
@@ -364,7 +364,7 @@ public final class SItem {
   @Method(0x800fc210L)
   public static void loadCharTmdAndAnims(final List<FileData> files, final int charSlot) {
     //LAB_800fc260
-    final BattleObject27c data = battleState_8006e398.charBobjs_e40[charSlot].innerStruct_00;
+    final BattleEntity27c data = battleState_8006e398.charBents_e40[charSlot].innerStruct_00;
 
     //LAB_800fc298
     combatantTmdAndAnimLoadedCallback(files, data.combatantIndex_26c, false);
@@ -413,8 +413,8 @@ public final class SItem {
 
   @Method(0x800fc548L)
   public static void loadCharacterTim(final FileData file, final int charSlot) {
-    final BattleObject27c bobj = battleState_8006e398.charBobjs_e40[charSlot].innerStruct_00;
-    loadCombatantTim(bobj.combatantIndex_26c, file);
+    final BattleEntity27c bent = battleState_8006e398.charBents_e40[charSlot].innerStruct_00;
+    loadCombatantTim(bent.combatantIndex_26c, file);
   }
 
   @Method(0x800fc654L)

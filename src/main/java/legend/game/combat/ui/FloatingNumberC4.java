@@ -5,8 +5,8 @@ import java.util.Arrays;
 public class FloatingNumberC4 {
   public int state_00;
   public int flags_02;
-  /** Must be the bobj that the floating number is attached to */
-  public int bobjIndex_04;
+  /** Must be the bent that the floating number is attached to */
+  public int bentIndex_04;
   public boolean translucent_08;
   /**
    * TODO not 100% sure if these are actually backwards (BGR), but pretty sure

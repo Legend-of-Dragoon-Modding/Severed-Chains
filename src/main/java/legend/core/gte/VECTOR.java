@@ -339,7 +339,7 @@ public class VECTOR implements MemoryRef {
       this.getY() * right.getX() - this.getX() * right.getY() >> 12
     );
 
-    return this;
+    return out;
   }
 
   public VECTOR cross(final VECTOR right) {
@@ -353,7 +353,7 @@ public class VECTOR implements MemoryRef {
       (int)((long)matrix.get(2, 0) * this.getX() + matrix.get(2, 1) * this.getY() + matrix.get(2, 2) * this.getZ() >> 12)
     );
 
-    return this;
+    return out;
   }
 
   public VECTOR mul(final MATRIX matrix) {

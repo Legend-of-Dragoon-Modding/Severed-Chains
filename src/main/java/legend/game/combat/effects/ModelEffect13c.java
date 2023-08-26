@@ -5,7 +5,7 @@ import legend.game.combat.deff.DeffPart;
 import legend.game.types.CContainer;
 import legend.game.types.Model124;
 
-public class BttlScriptData6cSub13c implements Effect {
+public class ModelEffect13c implements Effect {
   public int _00;
   /** Can be LMB or CMB subtype */
   public DeffPart.TmdType tmdType_04;
@@ -14,7 +14,7 @@ public class BttlScriptData6cSub13c implements Effect {
   public final Model124 model_10;
   public Model124 model_134;
 
-  public BttlScriptData6cSub13c(final String name) {
+  public ModelEffect13c(final String name) {
     this.model_10 = new Model124(name);
   }
 }

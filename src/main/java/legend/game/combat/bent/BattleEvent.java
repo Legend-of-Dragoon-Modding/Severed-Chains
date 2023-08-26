@@ -1,4 +1,4 @@
-package legend.game.combat.bobj;
+package legend.game.combat.bent;
 
 import legend.game.modding.events.Event;
 

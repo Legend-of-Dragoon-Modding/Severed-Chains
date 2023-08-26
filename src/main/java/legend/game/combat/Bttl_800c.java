@@ -29,12 +29,12 @@ import legend.core.memory.types.UnsignedShortRef;
 import legend.game.SItem;
 import legend.game.Scus94491BpeSegment_8005;
 import legend.game.characters.Element;
-import legend.game.combat.bobj.BattleObject27c;
-import legend.game.combat.bobj.MonsterBattleObject;
-import legend.game.combat.bobj.PlayerBattleObject;
+import legend.game.combat.bent.BattleEntity27c;
+import legend.game.combat.bent.MonsterBattleEntity;
+import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.deff.BattleStruct24_2;
 import legend.game.combat.deff.DeffManager7cc;
-import legend.game.combat.effects.BttlScriptData6cSub13c;
+import legend.game.combat.effects.ModelEffect13c;
 import legend.game.combat.effects.ButtonPressHudMetrics06;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerData6cInner;
@@ -65,7 +65,7 @@ import legend.game.combat.environment.CombatPortraitBorderMetrics0c;
 import legend.game.combat.environment.NameAndPortraitDisplayMetrics0c;
 import legend.game.combat.environment.SpBarBorderMetrics04;
 import legend.game.combat.types.BattleHudStatLabelMetrics0c;
-import legend.game.combat.types.BattleScriptDataBase;
+import legend.game.combat.types.BattleObject;
 import legend.game.combat.types.BattleStateEf4;
 import legend.game.combat.types.BttlStruct08;
 import legend.game.combat.types.CombatantStruct1a8;
@@ -83,7 +83,7 @@ import legend.game.fmv.Fmv;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.BattleEndedEvent;
-import legend.game.modding.events.battle.BattleObjectTurnEvent;
+import legend.game.modding.events.battle.BattleEntityTurnEvent;
 import legend.game.modding.events.battle.BattleStartedEvent;
 import legend.game.modding.registries.RegistryDelegate;
 import legend.game.scripting.FlowControl;
@@ -212,7 +212,7 @@ import static legend.game.combat.Bttl_800f.FUN_800f1a00;
 import static legend.game.combat.Bttl_800f.FUN_800f417c;
 import static legend.game.combat.Bttl_800f.FUN_800f60ac;
 import static legend.game.combat.Bttl_800f.FUN_800f84c0;
-import static legend.game.combat.Bttl_800f.addFloatingNumberForBobj;
+import static legend.game.combat.Bttl_800f.addFloatingNumberForBent;
 import static legend.game.combat.Bttl_800f.handleCombatMenu;
 import static legend.game.combat.Bttl_800f.initializeCombatMenuIcons;
 import static legend.game.combat.Bttl_800f.loadBattleHudTextures;
@@ -225,8 +225,7 @@ public final class Bttl_800c {
 
   public static final UnsignedShortRef currentPostCombatActionFrame_800c6690 = MEMORY.ref(2, 0x800c6690L, UnsignedShortRef::new);
 
-  public static final UnsignedByteRef uniqueMonsterCount_800c6698 = MEMORY.ref(1, 0x800c6698L).cast(UnsignedByteRef::new);
-  public static final IntRef aliveBobjCount_800c669c = MEMORY.ref(4, 0x800c669cL, IntRef::new);
+  public static final IntRef aliveBentCount_800c669c = MEMORY.ref(4, 0x800c669cL, IntRef::new);
   /** The number of {@link Scus94491BpeSegment_8005#combatants_8005e398}s */
   public static final IntRef combatantCount_800c66a0 = MEMORY.ref(4, 0x800c66a0L, IntRef::new);
   public static final IntRef currentStage_800c66a4 = MEMORY.ref(4, 0x800c66a4L, IntRef::new);
@@ -241,15 +240,15 @@ public final class Bttl_800c {
   /** Character scripts deallocated? */
   public static final BoolRef combatDisabled_800c66b9 = MEMORY.ref(1, 0x800c66b9L, BoolRef::new);
 
-  public static ScriptState<? extends BattleObject27c> forcedTurnBobj_800c66bc;
+  public static ScriptState<? extends BattleEntity27c> forcedTurnBent_800c66bc;
   /** These two bools are set but never used */
   public static final BoolRef unused_800c66c0 = MEMORY.ref(1, 0x800c66c0L, BoolRef::new);
   public static final BoolRef unused_800c66c1 = MEMORY.ref(1, 0x800c66c1L, BoolRef::new);
 
   public static final IntRef _800c66c4 = MEMORY.ref(4, 0x800c66c4L, IntRef::new);
-  public static ScriptState<? extends BattleObject27c> currentTurnBobj_800c66c8;
+  public static ScriptState<? extends BattleEntity27c> currentTurnBent_800c66c8;
   public static final IntRef mcqBaseOffsetX_800c66cc = MEMORY.ref(4, 0x800c66ccL, IntRef::new);
-  public static final IntRef allBobjCount_800c66d0 = MEMORY.ref(4, 0x800c66d0L, IntRef::new);
+  public static final IntRef allBentCount_800c66d0 = MEMORY.ref(4, 0x800c66d0L, IntRef::new);
   public static final BoolRef shouldRenderMcq_800c66d4 = MEMORY.ref(1, 0x800c66d4L, BoolRef::new);
 
   public static ScriptFile script_800c66fc;
@@ -298,7 +297,7 @@ public final class Bttl_800c {
 
   public static final BattleCamera camera_800c67f0 = new BattleCamera();
 
-  public static ScriptState<? extends BattleObject27c> scriptState_800c6914;
+  public static ScriptState<? extends BattleEntity27c> scriptState_800c6914;
   public static final IntRef _800c6918 = MEMORY.ref(4, 0x800c6918L, IntRef::new);
 
   public static final IntRef lightTicks_800c6928 = MEMORY.ref(4, 0x800c6928L, IntRef::new);
@@ -335,7 +334,7 @@ public final class Bttl_800c {
   public static Element dragoonSpaceElement_800c6b64;
   public static final IntRef itemTargetType_800c6b68 = MEMORY.ref(4, 0x800c6b68L, IntRef::new);
 
-  public static final ArrayRef<IntRef> monsterBobjs_800c6b78 = MEMORY.ref(4, 0x800c6b78L, ArrayRef.of(IntRef.class, 9, 4, IntRef::new));
+  public static final ArrayRef<IntRef> monsterBents_800c6b78 = MEMORY.ref(4, 0x800c6b78L, ArrayRef.of(IntRef.class, 9, 4, IntRef::new));
   public static final IntRef monsterCount_800c6b9c = MEMORY.ref(4, 0x800c6b9cL, IntRef::new);
   public static final ByteRef countCameraPositionIndicesIndices_800c6ba0 = MEMORY.ref(1, 0x800c6ba0L, ByteRef::new);
   public static final ByteRef currentCameraPositionIndicesIndicesIndex_800c6ba1 = MEMORY.ref(1, 0x800c6ba1L, ByteRef::new);
@@ -421,8 +420,8 @@ public final class Bttl_800c {
   public static final ArrayRef<ShortRef> battleMenuIconStates_800c71e4 = MEMORY.ref(2, 0x800c71e4L, ArrayRef.of(ShortRef.class, 4, 2, ShortRef::new));
   public static final ArrayRef<ByteRef> uiTextureElementBrightness_800c71ec = MEMORY.ref(1, 0x800c71ecL, ArrayRef.of(ByteRef.class, 3, 1, ByteRef::new));
 
-  /** Different sets of bobjs for different target types (chars, monsters, all) */
-  public static ScriptState<BattleObject27c>[][] targetBobjs_800c71f0;
+  /** Different sets of bents for different target types (chars, monsters, all) */
+  public static ScriptState<BattleEntity27c>[][] targetBents_800c71f0;
 
   public static final ArrayRef<IntRef> buffDebuffStatIndices_800c723c = MEMORY.ref(4, 0x800c723cL, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
 
@@ -926,14 +925,14 @@ public final class Bttl_800c {
   public static final ArrayRef<BattleMenuTextMetrics08> battleMenuTextMetrics_800fb72c = MEMORY.ref(4, 0x800fb72cL, ArrayRef.of(BattleMenuTextMetrics08.class, 12, 8, BattleMenuTextMetrics08::new));
 
   @Method(0x800c7304L)
-  public static void cacheLivingBobjs() {
+  public static void cacheLivingBents() {
     int i;
     int count;
     //LAB_800c7330
-    for(i = 0, count = 0; i < allBobjCount_800c66d0.get(); i++) {
-      final ScriptState<? extends BattleObject27c> bobjState = battleState_8006e398.allBobjs_e0c[i];
-      if((bobjState.storage_44[7] & 0x40) == 0) {
-        battleState_8006e398.aliveBobjs_e78[count] = bobjState;
+    for(i = 0, count = 0; i < allBentCount_800c66d0.get(); i++) {
+      final ScriptState<? extends BattleEntity27c> bentState = battleState_8006e398.allBents_e0c[i];
+      if((bentState.storage_44[7] & 0x40) == 0) {
+        battleState_8006e398.aliveBents_e78[count] = bentState;
         count++;
       }
 
@@ -941,13 +940,13 @@ public final class Bttl_800c {
     }
 
     //LAB_800c737c
-    aliveBobjCount_800c669c.set(count);
+    aliveBentCount_800c669c.set(count);
 
     //LAB_800c73b0
     for(i = 0, count = 0; i < charCount_800c677c.get(); i++) {
-      final ScriptState<PlayerBattleObject> playerState = battleState_8006e398.charBobjs_e40[i];
+      final ScriptState<PlayerBattleEntity> playerState = battleState_8006e398.charBents_e40[i];
       if((playerState.storage_44[7] & 0x40) == 0) {
-        battleState_8006e398.aliveCharBobjs_eac[count] = playerState;
+        battleState_8006e398.aliveCharBents_eac[count] = playerState;
         count++;
       }
 
@@ -959,9 +958,9 @@ public final class Bttl_800c {
 
     //LAB_800c7430
     for(i = 0, count = 0; i < monsterCount_800c6768.get(); i++) {
-      final ScriptState<MonsterBattleObject> monsterState = battleState_8006e398.monsterBobjs_e50[i];
+      final ScriptState<MonsterBattleEntity> monsterState = battleState_8006e398.monsterBents_e50[i];
       if((monsterState.storage_44[7] & 0x40) == 0) {
-        battleState_8006e398.aliveMonsterBobjs_ebc[count] = monsterState;
+        battleState_8006e398.aliveMonsterBents_ebc[count] = monsterState;
         count++;
       }
 
@@ -974,7 +973,7 @@ public final class Bttl_800c {
 
   @Method(0x800c7488L)
   public static int getHitProperty(final int charSlot, final int hitNum, final int hitPropertyIndex) {
-    if((battleState_8006e398.charBobjs_e40[charSlot].storage_44[7] & 0x2) != 0) { // Is dragoon
+    if((battleState_8006e398.charBents_e40[charSlot].storage_44[7] & 0x2) != 0) { // Is dragoon
       return battlePreloadedEntities_1f8003f4.additionHits_38[charSlot + 3].hits_00[hitNum].get(hitPropertyIndex);
     }
 
@@ -1063,7 +1062,7 @@ public final class Bttl_800c {
     FUN_800c8ee4();
     FUN_800cae44();
 
-    allBobjCount_800c66d0.set(0);
+    allBentCount_800c66d0.set(0);
     monsterCount_800c6768.set(0);
     charCount_800c677c.set(0);
 
@@ -1071,7 +1070,7 @@ public final class Bttl_800c {
 
     //LAB_800c7830
     for(int i = 0; i < 12; i++) {
-      battleState_8006e398.allBobjs_e0c[i] = null;
+      battleState_8006e398.allBents_e0c[i] = null;
     }
 
     FUN_800ee610();
@@ -1083,14 +1082,14 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c788cL)
-  public static void deferAllocateEnemyBattleObjects() {
-    loadSupportOverlay(1, SBtld::allocateEnemyBattleObjects);
+  public static void deferAllocateEnemyBattleEntities() {
+    loadSupportOverlay(1, SBtld::allocateEnemyBattleEntities);
     pregameLoadingStage_800bb10c.incr();
   }
 
   @Method(0x800c78d4L)
-  public static void deferAllocatePlayerBattleObjects() {
-    loadSupportOverlay(2, SItem::allocatePlayerBattleObjects);
+  public static void deferAllocatePlayerBattleEntities() {
+    loadSupportOverlay(2, SItem::allocatePlayerBattleEntities);
     pregameLoadingStage_800bb10c.incr();
   }
 
@@ -1118,7 +1117,7 @@ public final class Bttl_800c {
 
   @Method(0x800c79f0L)
   public static void FUN_800c79f0() {
-    currentTurnBobj_800c66c8 = battleState_8006e398.allBobjs_e0c[0];
+    currentTurnBent_800c66c8 = battleState_8006e398.allBents_e0c[0];
     FUN_800f417c();
 
     EVENTS.postEvent(new BattleStartedEvent());
@@ -1138,15 +1137,15 @@ public final class Bttl_800c {
       _800bc960.or(0x10);
 
       //LAB_800c7ae4
-      for(int i = 0; i < allBobjCount_800c66d0.get(); i++) {
-        final ScriptState<? extends BattleObject27c> bobjState = battleState_8006e398.allBobjs_e0c[i];
-        final BattleObject27c bobj = bobjState.innerStruct_00;
+      for(int i = 0; i < allBentCount_800c66d0.get(); i++) {
+        final ScriptState<? extends BattleEntity27c> bentState = battleState_8006e398.allBents_e0c[i];
+        final BattleEntity27c bent = bentState.innerStruct_00;
 
-        if((bobjState.storage_44[7] & 0x4) != 0) {
-          bobj.turnValue_4c = simpleRand() * 0xd9 / 0x10000;
+        if((bentState.storage_44[7] & 0x4) != 0) {
+          bent.turnValue_4c = simpleRand() * 0xd9 / 0x10000;
         } else {
           //LAB_800c7b3c
-          bobj.turnValue_4c = simpleRand() * 0xa7 / 0x10000 + 0x32;
+          bent.turnValue_4c = simpleRand() * 0xa7 / 0x10000 + 0x32;
         }
 
         //LAB_800c7b68
@@ -1169,28 +1168,28 @@ public final class Bttl_800c {
       return;
     }
 
-    if(Unpacker.getLoadingFileCount() == 0 && allBobjCount_800c66d0.get() > 0 && !combatDisabled_800c66b9.get() && FUN_800c7da8()) {
+    if(Unpacker.getLoadingFileCount() == 0 && allBentCount_800c66d0.get() > 0 && !combatDisabled_800c66b9.get() && FUN_800c7da8()) {
       vsyncMode_8007a3b8 = 3;
       mcqColour_800fa6dc.set(0x80);
-      currentTurnBobj_800c66c8.storage_44[7] &= 0xffff_efff;
+      currentTurnBent_800c66c8.storage_44[7] &= 0xffff_efff;
 
       if(aliveCharCount_800c6760.get() > 0) {
         //LAB_800c7c98
-        final ScriptState<? extends BattleObject27c> forcedTurnBobj = getForcedTurnBobj();
-        forcedTurnBobj_800c66bc = forcedTurnBobj;
+        final ScriptState<? extends BattleEntity27c> forcedTurnBent = getForcedTurnBent();
+        forcedTurnBent_800c66bc = forcedTurnBent;
 
-        if(forcedTurnBobj != null) { // A bobj has a forced turn
-          forcedTurnBobj.storage_44[7] = forcedTurnBobj.storage_44[7] & 0xffff_ffdf | 0x1008;
-          currentTurnBobj_800c66c8 = forcedTurnBobj;
-          EVENTS.postEvent(new BattleObjectTurnEvent<>(forcedTurnBobj));
+        if(forcedTurnBent != null) { // A bent has a forced turn
+          forcedTurnBent.storage_44[7] = forcedTurnBent.storage_44[7] & 0xffff_ffdf | 0x1008;
+          currentTurnBent_800c66c8 = forcedTurnBent;
+          EVENTS.postEvent(new BattleEntityTurnEvent<>(forcedTurnBent));
         } else { // Take regular turns
           //LAB_800c7ce8
-          if(aliveMonsterCount_800c6758.get() > 0) { // Monsters alive, calculate next bobj turn
+          if(aliveMonsterCount_800c6758.get() > 0) { // Monsters alive, calculate next bent turn
             //LAB_800c7d3c
-            final ScriptState<? extends BattleObject27c> currentTurn = getCurrentTurnBobj();
-            currentTurnBobj_800c66c8 = currentTurn;
+            final ScriptState<? extends BattleEntity27c> currentTurn = getCurrentTurnBent();
+            currentTurnBent_800c66c8 = currentTurn;
             currentTurn.storage_44[7] |= 0x1008;
-            EVENTS.postEvent(new BattleObjectTurnEvent<>(currentTurn));
+            EVENTS.postEvent(new BattleEntityTurnEvent<>(currentTurn));
 
             //LAB_800c7d74
           } else { // Monsters dead
@@ -1223,8 +1222,8 @@ public final class Bttl_800c {
   @Method(0x800c7da8L)
   public static boolean FUN_800c7da8() {
     //LAB_800c7dd8
-    for(int i = 0; i < allBobjCount_800c66d0.get(); i++) {
-      if((battleState_8006e398.allBobjs_e0c[i].storage_44[7] & 0x408) != 0) {
+    for(int i = 0; i < allBentCount_800c66d0.get(); i++) {
+      if((battleState_8006e398.allBents_e0c[i].storage_44[7] & 0x408) != 0) {
         return false;
       }
 
@@ -1236,12 +1235,12 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c7e24L)
-  public static ScriptState<? extends BattleObject27c> getForcedTurnBobj() {
+  public static ScriptState<? extends BattleEntity27c> getForcedTurnBent() {
     //LAB_800c7e54
-    for(int i = 0; i < aliveBobjCount_800c669c.get(); i++) {
-      final ScriptState<? extends BattleObject27c> bobjState = battleState_8006e398.aliveBobjs_e78[i];
-      if(bobjState != null && (bobjState.storage_44[7] & 0x20) != 0) {
-        return bobjState;
+    for(int i = 0; i < aliveBentCount_800c669c.get(); i++) {
+      final ScriptState<? extends BattleEntity27c> bentState = battleState_8006e398.aliveBents_e78[i];
+      if(bentState != null && (bentState.storage_44[7] & 0x20) != 0) {
+        return bentState;
       }
 
       //LAB_800c7e8c
@@ -1252,14 +1251,14 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c7ea0L)
-  public static ScriptState<? extends BattleObject27c> getCurrentTurnBobj() {
+  public static ScriptState<? extends BattleEntity27c> getCurrentTurnBent() {
     //LAB_800c7ee4
     for(int s4 = 0; s4 < 32; s4++) {
       //LAB_800c7ef0
       int highestTurnValue = 0;
       int highestCombatantindex = 0;
-      for(int combatantIndex = 0; combatantIndex < aliveBobjCount_800c669c.get(); combatantIndex++) {
-        final int turnValue = battleState_8006e398.aliveBobjs_e78[combatantIndex].innerStruct_00.turnValue_4c;
+      for(int combatantIndex = 0; combatantIndex < aliveBentCount_800c669c.get(); combatantIndex++) {
+        final int turnValue = battleState_8006e398.aliveBents_e78[combatantIndex].innerStruct_00.turnValue_4c;
 
         if(highestTurnValue <= turnValue) {
           highestTurnValue = turnValue;
@@ -1271,7 +1270,7 @@ public final class Bttl_800c {
 
       //LAB_800c7f40
       if(highestTurnValue > 0xd9) {
-        final ScriptState<? extends BattleObject27c> state = battleState_8006e398.aliveBobjs_e78[highestCombatantindex];
+        final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.aliveBents_e78[highestCombatantindex];
         state.innerStruct_00.turnValue_4c = highestTurnValue - 0xd9;
 
         if((state.storage_44[7] & 0x4) == 0) {
@@ -1284,18 +1283,18 @@ public final class Bttl_800c {
 
       //LAB_800c7fa4
       //LAB_800c7fb0
-      for(int combatantIndex = 0; combatantIndex < aliveBobjCount_800c669c.get(); combatantIndex++) {
-        final BattleObject27c bobj = battleState_8006e398.aliveBobjs_e78[combatantIndex].innerStruct_00;
-        highestTurnValue = bobj.stats.getStat(CoreMod.SPEED_STAT.get()).get() * (simpleRand() + 0x4_4925);
+      for(int combatantIndex = 0; combatantIndex < aliveBentCount_800c669c.get(); combatantIndex++) {
+        final BattleEntity27c bent = battleState_8006e398.aliveBents_e78[combatantIndex].innerStruct_00;
+        highestTurnValue = bent.stats.getStat(CoreMod.SPEED_STAT.get()).get() * (simpleRand() + 0x4_4925);
         final int v1 = (int)(highestTurnValue * 0x35c2_9183L >>> 32) >> 16; //TODO _pretty_ sure this is roughly /312,110 (seems oddly specific?)
-        bobj.turnValue_4c += v1;
+        bent.turnValue_4c += v1;
       }
 
       //LAB_800c8028
     }
 
     //LAB_800c8040
-    return battleState_8006e398.aliveCharBobjs_eac[0];
+    return battleState_8006e398.aliveCharBents_eac[0];
   }
 
   @Method(0x800c8068L)
@@ -1309,23 +1308,23 @@ public final class Bttl_800c {
 
       if(postBattleAction >= 0) {
         _800c6748.set(postBattleAction);
-        scriptState_800c6914 = currentTurnBobj_800c66c8;
+        scriptState_800c6914 = currentTurnBent_800c66c8;
       }
 
       //LAB_800c80c8
-      final int aliveCharBobjs = aliveCharCount_800c6760.get();
-      livingCharCount_800bc97c.set(aliveCharBobjs);
+      final int aliveCharBents = aliveCharCount_800c6760.get();
+      livingCharCount_800bc97c.set(aliveCharBents);
 
       //LAB_800c8104
-      for(int i = 0; i < aliveCharBobjs; i++) {
-        livingCharIds_800bc968.get(i).set(battleState_8006e398.aliveCharBobjs_eac[i].innerStruct_00.charId_272);
+      for(int i = 0; i < aliveCharBents; i++) {
+        livingCharIds_800bc968.get(i).set(battleState_8006e398.aliveCharBents_eac[i].innerStruct_00.charId_272);
       }
 
       //LAB_800c8144
       if(postBattleActionIndex == 1) {
         //LAB_800c8180
         for(int i = 0; i < charCount_800c677c.get(); i++) {
-          battleState_8006e398.charBobjs_e40[i].storage_44[7] |= 0x8;
+          battleState_8006e398.charBents_e40[i].storage_44[7] |= 0x8;
         }
       }
     }
@@ -1372,8 +1371,8 @@ public final class Bttl_800c {
       stopAndResetSoundsAndSequences();
 
       //LAB_800c83b8
-      while(allBobjCount_800c66d0.get() > 0) {
-        battleState_8006e398.allBobjs_e0c[0].deallocateWithChildren();
+      while(allBentCount_800c66d0.get() > 0) {
+        battleState_8006e398.allBents_e0c[0].deallocateWithChildren();
       }
 
       //LAB_800c83d8
@@ -1461,14 +1460,14 @@ public final class Bttl_800c {
   public static void FUN_800c8624() {
     battlePreloadedEntities_1f8003f4 = new BattlePreloadedEntities_18cb0();
     battleState_8006e398 = new BattleStateEf4();
-    targetBobjs_800c71f0 = new ScriptState[][] {battleState_8006e398.charBobjs_e40, battleState_8006e398.aliveMonsterBobjs_ebc, battleState_8006e398.aliveBobjs_e78};
+    targetBents_800c71f0 = new ScriptState[][] {battleState_8006e398.charBents_e40, battleState_8006e398.aliveMonsterBents_ebc, battleState_8006e398.aliveBents_e78};
   }
 
   @Method(0x800c8748L)
   public static void FUN_800c8748() {
     battlePreloadedEntities_1f8003f4 = null;
     battleState_8006e398 = null;
-    targetBobjs_800c71f0 = null;
+    targetBents_800c71f0 = null;
   }
 
   @Method(0x800c8774L)
@@ -2500,8 +2499,8 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cae50L)
-  public static void bobjTicker(final ScriptState<? extends BattleObject27c> state, final BattleObject27c bobj) {
-    bobj._278 = 0;
+  public static void bentTicker(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
+    bent._278 = 0;
 
     final int v1;
     if((state.storage_44[7] & 0x4) != 0) {
@@ -2512,17 +2511,17 @@ public final class Bttl_800c {
     }
 
     //LAB_800cae98
-    if(v1 != 0 && FUN_800c90b0(bobj.combatantIndex_26c) != 0) {
-      bobj.model_148.colourMap_9d = getCombatantColourMap(bobj.combatantIndex_26c);
-      bobj.animIndex_26e = 0;
-      FUN_800c952c(bobj.model_148, bobj.combatantIndex_26c);
-      bobj._278 = 1;
-      bobj.animIndex_270 = -1;
+    if(v1 != 0 && FUN_800c90b0(bent.combatantIndex_26c) != 0) {
+      bent.model_148.colourMap_9d = getCombatantColourMap(bent.combatantIndex_26c);
+      bent.animIndex_26e = 0;
+      FUN_800c952c(bent.model_148, bent.combatantIndex_26c);
+      bent._278 = 1;
+      bent.animIndex_270 = -1;
 
       if((state.storage_44[7] & 0x800) == 0) {
         final ScriptFile script;
         if((state.storage_44[7] & 0x4) != 0) {
-          script = getCombatantScript(bobj.combatantIndex_26c);
+          script = getCombatantScript(bent.combatantIndex_26c);
         } else {
           //LAB_800caf18
           script = script_800c66fc;
@@ -2540,20 +2539,20 @@ public final class Bttl_800c {
   }
 
   @Method(0x800caf2cL)
-  public static void FUN_800caf50(final ScriptState<? extends BattleObject27c> state, final BattleObject27c data) {
+  public static void FUN_800caf50(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
     state.setRenderer(Bttl_800c::FUN_800cb024);
     state.setTicker(Bttl_800c::FUN_800cafb4);
-    FUN_800cafb4(state, data);
+    FUN_800cafb4(state, bent);
   }
 
   @Method(0x800cafb4L)
-  public static void FUN_800cafb4(final ScriptState<? extends BattleObject27c> state, final BattleObject27c data) {
+  public static void FUN_800cafb4(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
     if((state.storage_44[7] & 0x211) == 0) {
-      applyModelRotationAndScale(data.model_148);
+      applyModelRotationAndScale(bent.model_148);
 
-      if((state.storage_44[7] & 0x80) == 0 || data.model_148.remainingFrames_9e != 0) {
+      if((state.storage_44[7] & 0x80) == 0 || bent.model_148.remainingFrames_9e != 0) {
         //LAB_800cb004
-        animateModel(data.model_148);
+        animateModel(bent.model_148);
       }
     }
 
@@ -2561,25 +2560,25 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cb024L)
-  public static void FUN_800cb024(final ScriptState<? extends BattleObject27c> state, final BattleObject27c data) {
+  public static void FUN_800cb024(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
     if((state.storage_44[7] & 0x211) == 0) {
-      renderModel(data.model_148);
+      renderModel(bent.model_148);
     }
 
     //LAB_800cb048
   }
 
   @Method(0x800cb058L)
-  public static void bobjDestructor(final ScriptState<? extends BattleObject27c> state, final BattleObject27c bobj) {
+  public static void bentDestructor(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
     //LAB_800cb088
-    FUN_800ca194(bobj.combatantIndex_26c, bobj.animIndex_26e);
+    FUN_800ca194(bent.combatantIndex_26c, bent.animIndex_26e);
 
-    allBobjCount_800c66d0.decr();
+    allBentCount_800c66d0.decr();
 
     //LAB_800cb0d4
-    for(int i = bobj.bobjSlot_274; i < allBobjCount_800c66d0.get(); i++) {
-      battleState_8006e398.allBobjs_e0c[i] = battleState_8006e398.allBobjs_e0c[i + 1];
-      battleState_8006e398.allBobjs_e0c[i].innerStruct_00.bobjSlot_274 = i;
+    for(int i = bent.bentSlot_274; i < allBentCount_800c66d0.get(); i++) {
+      battleState_8006e398.allBents_e0c[i] = battleState_8006e398.allBents_e0c[i + 1];
+      battleState_8006e398.allBents_e0c[i].innerStruct_00.bentSlot_274 = i;
     }
 
     //LAB_800cb11c
@@ -2587,18 +2586,18 @@ public final class Bttl_800c {
       monsterCount_800c6768.decr();
 
       //LAB_800cb168
-      for(int i = bobj.charSlot_276; i < monsterCount_800c6768.get(); i++) {
-        battleState_8006e398.monsterBobjs_e50[i] = battleState_8006e398.monsterBobjs_e50[i + 1];
-        battleState_8006e398.monsterBobjs_e50[i].innerStruct_00.charSlot_276 = i;
+      for(int i = bent.charSlot_276; i < monsterCount_800c6768.get(); i++) {
+        battleState_8006e398.monsterBents_e50[i] = battleState_8006e398.monsterBents_e50[i + 1];
+        battleState_8006e398.monsterBents_e50[i].innerStruct_00.charSlot_276 = i;
       }
     } else {
       //LAB_800cb1b8
       charCount_800c677c.decr();
 
       //LAB_800cb1f4
-      for(int i = bobj.charSlot_276; i < charCount_800c677c.get(); i++) {
-        battleState_8006e398.charBobjs_e40[i] = battleState_8006e398.charBobjs_e40[i + 1];
-        battleState_8006e398.charBobjs_e40[i].innerStruct_00.charSlot_276 = i;
+      for(int i = bent.charSlot_276; i < charCount_800c677c.get(); i++) {
+        battleState_8006e398.charBents_e40[i] = battleState_8006e398.charBents_e40[i + 1];
+        battleState_8006e398.charBents_e40[i].innerStruct_00.charSlot_276 = i;
       }
     }
 
@@ -2606,13 +2605,13 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cb250L)
-  public static boolean FUN_800cb250(final ScriptState<BattleObject27c> state, final BattleObject27c data) {
+  public static boolean FUN_800cb250(final ScriptState<BattleEntity27c> state, final BattleEntity27c data) {
     int x = state._e8;
     int y = state._ec;
     int z = state._f0;
 
     if(state.scriptState_c8 != null) {
-      final BattleObject27c data2 = state.scriptState_c8.innerStruct_00;
+      final BattleEntity27c data2 = state.scriptState_c8.innerStruct_00;
 
       x += data2.model_148.coord2_14.coord.transfer.getX();
       y += data2.model_148.coord2_14.coord.transfer.getY();
@@ -2638,9 +2637,9 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cb34cL)
-  public static boolean FUN_800cb34c(final ScriptState<BattleObject27c> state, final BattleObject27c data) {
-    final BattleObject27c bobj = state.scriptState_c8.innerStruct_00;
-    final VECTOR vec = bobj.model_148.coord2_14.coord.transfer;
+  public static boolean FUN_800cb34c(final ScriptState<BattleEntity27c> state, final BattleEntity27c data) {
+    final BattleEntity27c bent = state.scriptState_c8.innerStruct_00;
+    final VECTOR vec = bent.model_148.coord2_14.coord.transfer;
     final float angle = MathHelper.atan2(vec.getX() - data.model_148.coord2_14.coord.transfer.getX(), vec.getZ() - data.model_148.coord2_14.coord.transfer.getZ()) + MathHelper.PI;
 
     state.ticks_cc--;
@@ -2657,84 +2656,84 @@ public final class Bttl_800c {
     return true;
   }
 
-  @ScriptDescription("Sets the position of a battle object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Sets the position of a battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X position")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y position")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z position")
   @Method(0x800cb3fcL)
-  public static FlowControl scriptSetBobjPos(final RunningScript<?> script) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bobj.model_148.coord2_14.coord.transfer.setX(script.params_20[1].get());
-    bobj.model_148.coord2_14.coord.transfer.setY(script.params_20[2].get());
-    bobj.model_148.coord2_14.coord.transfer.setZ(script.params_20[3].get());
+  public static FlowControl scriptSetBentPos(final RunningScript<?> script) {
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    bent.model_148.coord2_14.coord.transfer.setX(script.params_20[1].get());
+    bent.model_148.coord2_14.coord.transfer.setY(script.params_20[2].get());
+    bent.model_148.coord2_14.coord.transfer.setZ(script.params_20[3].get());
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Gets the position of a battle object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Gets the position of a battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X position")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y position")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z position")
   @Method(0x800cb468L)
-  public static FlowControl scriptGetBobjPos(final RunningScript<?> script) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[1].set(bobj.model_148.coord2_14.coord.transfer.getX());
-    script.params_20[2].set(bobj.model_148.coord2_14.coord.transfer.getY());
-    script.params_20[3].set(bobj.model_148.coord2_14.coord.transfer.getZ());
+  public static FlowControl scriptGetBentPos(final RunningScript<?> script) {
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    script.params_20[1].set(bent.model_148.coord2_14.coord.transfer.getX());
+    script.params_20[2].set(bent.model_148.coord2_14.coord.transfer.getY());
+    script.params_20[3].set(bent.model_148.coord2_14.coord.transfer.getZ());
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Sets the rotation of a battle object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Sets the rotation of a battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X rotation (PSX degrees)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y rotation (PSX degrees)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z rotation (PSX degrees)")
   @Method(0x800cb4c8L)
-  public static FlowControl scriptSetBobjRotation(final RunningScript<?> script) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bobj.model_148.coord2_14.transforms.rotate.x = MathHelper.psxDegToRad(script.params_20[1].get());
-    bobj.model_148.coord2_14.transforms.rotate.y = MathHelper.psxDegToRad(script.params_20[2].get());
-    bobj.model_148.coord2_14.transforms.rotate.z = MathHelper.psxDegToRad(script.params_20[3].get());
+  public static FlowControl scriptSetBentRotation(final RunningScript<?> script) {
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    bent.model_148.coord2_14.transforms.rotate.x = MathHelper.psxDegToRad(script.params_20[1].get());
+    bent.model_148.coord2_14.transforms.rotate.y = MathHelper.psxDegToRad(script.params_20[2].get());
+    bent.model_148.coord2_14.transforms.rotate.z = MathHelper.psxDegToRad(script.params_20[3].get());
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Sets the Y rotation of a battle object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Sets the Y rotation of a battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y rotation (PSX degrees)")
   @Method(0x800cb534L)
-  public static FlowControl scriptSetBobjRotationY(final RunningScript<?> script) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bobj.model_148.coord2_14.transforms.rotate.y = MathHelper.psxDegToRad(script.params_20[1].get());
+  public static FlowControl scriptSetBentRotationY(final RunningScript<?> script) {
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    bent.model_148.coord2_14.transforms.rotate.y = MathHelper.psxDegToRad(script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Gets the rotation of a battle object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Gets the rotation of a battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X rotation (PSX degrees)")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y rotation (PSX degrees)")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z rotation (PSX degrees)")
   @Method(0x800cb578L)
-  public static FlowControl scriptGetBobjRotation(final RunningScript<?> script) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[1].set(MathHelper.radToPsxDeg(bobj.model_148.coord2_14.transforms.rotate.x));
-    script.params_20[2].set(MathHelper.radToPsxDeg(bobj.model_148.coord2_14.transforms.rotate.y));
-    script.params_20[3].set(MathHelper.radToPsxDeg(bobj.model_148.coord2_14.transforms.rotate.z));
+  public static FlowControl scriptGetBentRotation(final RunningScript<?> script) {
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    script.params_20[1].set(MathHelper.radToPsxDeg(bent.model_148.coord2_14.transforms.rotate.x));
+    script.params_20[2].set(MathHelper.radToPsxDeg(bent.model_148.coord2_14.transforms.rotate.y));
+    script.params_20[3].set(MathHelper.radToPsxDeg(bent.model_148.coord2_14.transforms.rotate.z));
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Gets the status resist flags of a monster battle object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Gets the status resist flags of a monster battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "flags", description = "The status resist flags")
   @Method(0x800cb5d8L)
   public static FlowControl scriptGetMonsterStatusResistFlags(final RunningScript<?> script) {
-    final MonsterBattleObject monster = (MonsterBattleObject)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final MonsterBattleEntity monster = (MonsterBattleEntity)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     script.params_20[1].set(monster.monsterStatusResistFlag_76);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Sets bit 10 of battle object script flags (possibly whether a battle object renders and animates?)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Sets bit 10 of battle entity script flags (possibly whether a battle entity renders and animates?)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "set", description = "True to set the flag, false otherwise")
   @Method(0x800cb618L)
   public static FlowControl FUN_800cb618(final RunningScript<?> script) {
@@ -2751,18 +2750,18 @@ public final class Bttl_800c {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Sets whether or not a battle object's animation interpolation is enabled")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Sets whether or not a battle entity's animation interpolation is enabled")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "set", description = "True to enable interpolation, false otherwise")
   @Method(0x800cb674L)
   public static FlowControl scriptSetInterpolationEnabled(final RunningScript<?> script) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bobj.model_148.disableInterpolation_a2 = script.params_20[1].get() == 0;
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    bent.model_148.disableInterpolation_a2 = script.params_20[1].get() == 0;
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Something related to loading a battle object's animation")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Something related to loading a battle entity's animation")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "animIndex", description = "The animation index")
   @Method(0x800cb6bcL)
   public static FlowControl FUN_800cb6bc(final RunningScript<?> a0) {
@@ -2771,18 +2770,18 @@ public final class Bttl_800c {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
-    final BattleObject27c bobj = (BattleObject27c)state.innerStruct_00;
+    final BattleEntity27c bent = (BattleEntity27c)state.innerStruct_00;
     final int animIndex = a0.params_20[1].get();
 
-    if(bobj.animIndex_270 < 0) {
-      FUN_800c9e10(bobj.combatantIndex_26c, animIndex);
-      bobj.animIndex_270 = animIndex;
-    } else if(bobj.animIndex_270 != animIndex) {
-      FUN_800ca194(bobj.combatantIndex_26c, bobj.animIndex_270);
+    if(bent.animIndex_270 < 0) {
+      FUN_800c9e10(bent.combatantIndex_26c, animIndex);
+      bent.animIndex_270 = animIndex;
+    } else if(bent.animIndex_270 != animIndex) {
+      FUN_800ca194(bent.combatantIndex_26c, bent.animIndex_270);
 
       //LAB_800cb73c
-      FUN_800c9e10(bobj.combatantIndex_26c, animIndex);
-      bobj.animIndex_270 = animIndex;
+      FUN_800c9e10(bent.combatantIndex_26c, animIndex);
+      bent.animIndex_270 = animIndex;
     }
 
     //LAB_800cb750
@@ -2795,12 +2794,12 @@ public final class Bttl_800c {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Something related battle object animation")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Something related battle entity animation")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800cb76cL)
   public static FlowControl FUN_800cb76c(final RunningScript<?> a0) {
     final ScriptState<?> s2 = scriptStatePtrArr_800bc1c0[a0.params_20[0].get()];
-    final BattleObject27c s0 = (BattleObject27c)s2.innerStruct_00;
+    final BattleEntity27c s0 = (BattleEntity27c)s2.innerStruct_00;
     if((s2.storage_44[7] & 0x1) == 0) {
       int animIndex = s0.animIndex_270;
 
@@ -2825,13 +2824,13 @@ public final class Bttl_800c {
     return FlowControl.PAUSE_AND_REWIND;
   }
 
-  @ScriptDescription("Something related battle object animation")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Something related battle entity animation")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "animIndex", description = "The animation index")
   @Method(0x800cb84cL)
   public static FlowControl FUN_800cb84c(final RunningScript<?> script) {
     final ScriptState<?> s2 = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
-    final BattleObject27c s0 = (BattleObject27c)s2.innerStruct_00;
+    final BattleEntity27c s0 = (BattleEntity27c)s2.innerStruct_00;
 
     if((s2.storage_44[7] & 0x1) == 0) {
       final int newAnim = script.params_20[1].get();
@@ -2865,48 +2864,48 @@ public final class Bttl_800c {
     return FlowControl.PAUSE_AND_REWIND;
   }
 
-  @ScriptDescription("Something related battle object animation")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Something related battle entity animation")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800cb95cL)
   public static FlowControl FUN_800cb95c(final RunningScript<?> script) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    FUN_800ca26c(bobj.combatantIndex_26c);
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    FUN_800ca26c(bent.combatantIndex_26c);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Gets a battle object's animIndex_26e")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Gets a battle entity's animIndex_26e")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "animationIndex", description = "The animation index")
   @Method(0x800cb9b0L)
   public static FlowControl FUN_800cb9b0(final RunningScript<?> script) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[1].set(bobj.animIndex_26e);
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    script.params_20[1].set(bent.animIndex_26e);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Pauses a battle object's animation")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Pauses a battle entity's animation")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800cb9f0L)
   public static FlowControl scriptPauseAnimation(final RunningScript<?> script) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bobj.model_148.animationState_9c = 2;
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    bent.model_148.animationState_9c = 2;
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Resumes a battle object's animation")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Resumes a battle entity's animation")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800cba28L)
   public static FlowControl scriptResumeAnimation(final RunningScript<?> script) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bobj.model_148.animationState_9c = 1;
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    bent.model_148.animationState_9c = 1;
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Sets a battle object's loop state")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Sets a battle entity's loop state")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "loop", description = "True to enable looping, false to disable")
   @Method(0x800cba60L)
-  public static FlowControl scriptSetBobjAnimationLoopState(final RunningScript<?> script) {
+  public static FlowControl scriptSetBentAnimationLoopState(final RunningScript<?> script) {
     //LAB_800cbab0
     if(script.params_20[1].get() != 0) {
       scriptStatePtrArr_800bc1c0[script.params_20[0].get()].storage_44[7] &= 0xffff_ff7f;
@@ -2918,19 +2917,19 @@ public final class Bttl_800c {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Check if a battle object's animation has finished")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Check if a battle entity's animation has finished")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "finished", description = "True if finished, false otherwise")
   @Method(0x800cbabcL)
   public static FlowControl scriptAnimationHasFinished(final RunningScript<?> script) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[1].set(bobj.model_148.remainingFrames_9e > 0 ? 0 : 1);
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    script.params_20[1].set(bent.model_148.remainingFrames_9e > 0 ? 0 : 1);
     return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex0", description = "A BattleObject27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex1", description = "A BattleObject27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex0", description = "A BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex1", description = "A BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y")
@@ -2938,8 +2937,8 @@ public final class Bttl_800c {
   @Method(0x800cbb00L)
   public static FlowControl FUN_800cbb00(final RunningScript<?> script) {
     final int scriptIndex = script.params_20[0].get();
-    final ScriptState<BattleObject27c> state = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[scriptIndex];
-    BattleObject27c v1 = state.innerStruct_00;
+    final ScriptState<BattleEntity27c> state = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex];
+    BattleEntity27c v1 = state.innerStruct_00;
 
     int x = v1.model_148.coord2_14.coord.transfer.getX();
     int y = v1.model_148.coord2_14.coord.transfer.getY();
@@ -2947,7 +2946,7 @@ public final class Bttl_800c {
 
     final int t0 = script.params_20[1].get();
     if(t0 >= 0) {
-      state.scriptState_c8 = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[t0];
+      state.scriptState_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[t0];
       v1 = state.scriptState_c8.innerStruct_00;
       x -= v1.model_148.coord2_14.coord.transfer.getX();
       y -= v1.model_148.coord2_14.coord.transfer.getY();
@@ -2963,8 +2962,8 @@ public final class Bttl_800c {
   }
 
   @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex0", description = "A BattleObject27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex1", description = "A BattleObject27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex0", description = "A BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex1", description = "A BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y")
@@ -2972,15 +2971,15 @@ public final class Bttl_800c {
   @Method(0x800cbc14L)
   public static FlowControl FUN_800cbc14(final RunningScript<?> script) {
     final int scriptIndex1 = script.params_20[0].get();
-    final ScriptState<BattleObject27c> state = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
-    final BattleObject27c bobj1 = state.innerStruct_00;
-    final VECTOR vec = new VECTOR().set(bobj1.model_148.coord2_14.coord.transfer);
+    final ScriptState<BattleEntity27c> state = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
+    final BattleEntity27c bent1 = state.innerStruct_00;
+    final VECTOR vec = new VECTOR().set(bent1.model_148.coord2_14.coord.transfer);
     final int scriptIndex2 = script.params_20[1].get();
 
     if(scriptIndex2 >= 0) {
-      state.scriptState_c8 = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[scriptIndex2];
-      final BattleObject27c bobj2 = state.scriptState_c8.innerStruct_00;
-      vec.sub(bobj2.model_148.coord2_14.coord.transfer);
+      state.scriptState_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex2];
+      final BattleEntity27c bent2 = state.scriptState_c8.innerStruct_00;
+      vec.sub(bent2.model_148.coord2_14.coord.transfer);
     } else {
       state.scriptState_c8 = null;
     }
@@ -2995,26 +2994,26 @@ public final class Bttl_800c {
   }
 
   @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex0", description = "A BattleObject27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex1", description = "A BattleObject27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex0", description = "A BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex1", description = "A BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
   @Method(0x800cbde0L)
   public static FlowControl FUN_800cbde0(final RunningScript<?> script) {
-    final ScriptState<BattleObject27c> state = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
-    BattleObject27c bobj = state.innerStruct_00;
-    int x = bobj.model_148.coord2_14.coord.transfer.getX();
-    int y = bobj.model_148.coord2_14.coord.transfer.getY();
-    int z = bobj.model_148.coord2_14.coord.transfer.getZ();
+    final ScriptState<BattleEntity27c> state = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
+    BattleEntity27c bent = state.innerStruct_00;
+    int x = bent.model_148.coord2_14.coord.transfer.getX();
+    int y = bent.model_148.coord2_14.coord.transfer.getY();
+    int z = bent.model_148.coord2_14.coord.transfer.getZ();
 
     if(script.params_20[1].get() >= 0) {
-      state.scriptState_c8 = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[script.params_20[1].get()];
-      bobj = state.scriptState_c8.innerStruct_00;
-      x -= bobj.model_148.coord2_14.coord.transfer.getX();
-      y -= bobj.model_148.coord2_14.coord.transfer.getY();
-      z -= bobj.model_148.coord2_14.coord.transfer.getZ();
+      state.scriptState_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[script.params_20[1].get()];
+      bent = state.scriptState_c8.innerStruct_00;
+      x -= bent.model_148.coord2_14.coord.transfer.getX();
+      y -= bent.model_148.coord2_14.coord.transfer.getY();
+      z -= bent.model_148.coord2_14.coord.transfer.getZ();
     } else {
       state.scriptState_c8 = null;
     }
@@ -3026,8 +3025,8 @@ public final class Bttl_800c {
   }
 
   @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex0", description = "A BattleObject27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex1", description = "A BattleObject27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex0", description = "A BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex1", description = "A BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y")
@@ -3036,14 +3035,14 @@ public final class Bttl_800c {
   public static FlowControl FUN_800cbef8(final RunningScript<?> state) {
     final int scriptIndex1 = state.params_20[0].get();
     final int scriptIndex2 = state.params_20[1].get();
-    final ScriptState<BattleObject27c> s5 = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
-    final BattleObject27c bobj1 = s5.innerStruct_00;
-    final VECTOR vec = new VECTOR().set(bobj1.model_148.coord2_14.coord.transfer);
+    final ScriptState<BattleEntity27c> s5 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
+    final BattleEntity27c bent1 = s5.innerStruct_00;
+    final VECTOR vec = new VECTOR().set(bent1.model_148.coord2_14.coord.transfer);
 
     if(scriptIndex2 >= 0) {
-      s5.scriptState_c8 = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[scriptIndex2];
-      final BattleObject27c bobj2 = s5.scriptState_c8.innerStruct_00;
-      vec.sub(bobj2.model_148.coord2_14.coord.transfer);
+      s5.scriptState_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex2];
+      final BattleEntity27c bent2 = s5.scriptState_c8.innerStruct_00;
+      vec.sub(bent2.model_148.coord2_14.coord.transfer);
     } else {
       s5.scriptState_c8 = null;
     }
@@ -3058,20 +3057,20 @@ public final class Bttl_800c {
   }
 
   @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex0", description = "A BattleObject27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex1", description = "A BattleObject27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex0", description = "A BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex1", description = "A BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
   @Method(0x800cc0c8L)
   public static FlowControl FUN_800cc0c8(final RunningScript<?> script) {
     final int s0 = script.params_20[0].get();
-    final ScriptState<BattleObject27c> a0 = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[s0];
+    final ScriptState<BattleEntity27c> a0 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[s0];
     final VECTOR a1 = new VECTOR().set(a0.innerStruct_00.model_148.coord2_14.coord.transfer);
     final int t0 = script.params_20[1].get();
 
     if(t0 >= 0) {
-      a0.scriptState_c8 = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[t0];
+      a0.scriptState_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[t0];
       a1.sub(a0.scriptState_c8.innerStruct_00.model_148.coord2_14.coord.transfer);
     } else {
       a0.scriptState_c8 = null;
@@ -3084,8 +3083,8 @@ public final class Bttl_800c {
   }
 
   @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex0", description = "A BattleObject27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex1", description = "A BattleObject27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex0", description = "A BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex1", description = "A BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
@@ -3093,14 +3092,14 @@ public final class Bttl_800c {
   public static FlowControl FUN_800cc1cc(final RunningScript<?> script) {
     final int scriptIndex1 = script.params_20[0].get();
     final int scriptIndex2 = script.params_20[1].get();
-    final ScriptState<BattleObject27c> state1 = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
-    final BattleObject27c bobj1 = state1.innerStruct_00;
-    final VECTOR vec = new VECTOR().set(bobj1.model_148.coord2_14.coord.transfer);
+    final ScriptState<BattleEntity27c> state1 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
+    final BattleEntity27c bent1 = state1.innerStruct_00;
+    final VECTOR vec = new VECTOR().set(bent1.model_148.coord2_14.coord.transfer);
 
     if(scriptIndex2 >= 0) {
-      state1.scriptState_c8 = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[scriptIndex2];
-      final BattleObject27c bobj2 = state1.scriptState_c8.innerStruct_00;
-      vec.sub(bobj2.model_148.coord2_14.coord.transfer);
+      state1.scriptState_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex2];
+      final BattleEntity27c bent2 = state1.scriptState_c8.innerStruct_00;
+      vec.sub(bent2.model_148.coord2_14.coord.transfer);
     } else {
       state1.scriptState_c8 = null;
     }
@@ -3114,8 +3113,8 @@ public final class Bttl_800c {
   }
 
   @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex0", description = "A BattleObject27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex1", description = "A BattleObject27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex0", description = "A BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex1", description = "A BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
@@ -3123,14 +3122,14 @@ public final class Bttl_800c {
   public static FlowControl FUN_800cc364(final RunningScript<?> script) {
     final int scriptIndex1 = script.params_20[0].get();
     final int scriptIndex2 = script.params_20[1].get();
-    final ScriptState<BattleObject27c> state1 = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
-    final BattleObject27c bobj1 = state1.innerStruct_00;
-    final VECTOR vec = new VECTOR().set(bobj1.model_148.coord2_14.coord.transfer);
+    final ScriptState<BattleEntity27c> state1 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
+    final BattleEntity27c bent1 = state1.innerStruct_00;
+    final VECTOR vec = new VECTOR().set(bent1.model_148.coord2_14.coord.transfer);
 
     if(scriptIndex2 >= 0) {
-      state1.scriptState_c8 = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[scriptIndex2];
-      final BattleObject27c bobj2 = state1.scriptState_c8.innerStruct_00;
-      vec.sub(bobj2.model_148.coord2_14.coord.transfer);
+      state1.scriptState_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex2];
+      final BattleEntity27c bent2 = state1.scriptState_c8.innerStruct_00;
+      vec.sub(bent2.model_148.coord2_14.coord.transfer);
     } else {
       state1.scriptState_c8 = null;
     }
@@ -3142,8 +3141,8 @@ public final class Bttl_800c {
   }
 
   @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex0", description = "A BattleObject27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex1", description = "A BattleObject27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex0", description = "A BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex1", description = "A BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
@@ -3151,14 +3150,14 @@ public final class Bttl_800c {
   public static FlowControl FUN_800cc46c(final RunningScript<?> script) {
     final int scriptIndex1 = script.params_20[0].get();
     final int scriptIndex2 = script.params_20[1].get();
-    final ScriptState<BattleObject27c> s5 = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
-    final BattleObject27c bobj1 = s5.innerStruct_00;
-    final VECTOR vec = new VECTOR().set(bobj1.model_148.coord2_14.coord.transfer);
+    final ScriptState<BattleEntity27c> s5 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
+    final BattleEntity27c bent1 = s5.innerStruct_00;
+    final VECTOR vec = new VECTOR().set(bent1.model_148.coord2_14.coord.transfer);
 
     if(scriptIndex2 >= 0) {
-      s5.scriptState_c8 = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[scriptIndex2];
-      final BattleObject27c bobj2 = s5.scriptState_c8.innerStruct_00;
-      vec.sub(bobj2.model_148.coord2_14.coord.transfer);
+      s5.scriptState_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex2];
+      final BattleEntity27c bent2 = s5.scriptState_c8.innerStruct_00;
+      vec.sub(bent2.model_148.coord2_14.coord.transfer);
     } else {
       s5.scriptState_c8 = null;
     }
@@ -3171,32 +3170,32 @@ public final class Bttl_800c {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Turn a battle object towards another")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndexToTurn", description = "A BattleObject27c script index to turn")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndexTarget", description = "A BattleObject27c script index to target")
+  @ScriptDescription("Turn a battle entity towards another")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndexToTurn", description = "A BattleEntity27c script index to turn")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndexTarget", description = "A BattleEntity27c script index to target")
   @Method(0x800cc608L)
-  public static FlowControl scriptBobjLookAtBobj(final RunningScript<?> script) {
-    final BattleObject27c s0 = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    final BattleObject27c v0 = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
+  public static FlowControl scriptBentLookAtBent(final RunningScript<?> script) {
+    final BattleEntity27c s0 = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c v0 = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
 
     s0.model_148.coord2_14.transforms.rotate.y = MathHelper.atan2(v0.model_148.coord2_14.coord.transfer.getX() - s0.model_148.coord2_14.coord.transfer.getX(), v0.model_148.coord2_14.coord.transfer.getZ() - s0.model_148.coord2_14.coord.transfer.getZ()) + MathHelper.PI;
     return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex0", description = "A BattleObject27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex1", description = "A BattleObject27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex0", description = "A BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex1", description = "A BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
   @Method(0x800cc698L)
   public static FlowControl FUN_800cc698(final RunningScript<?> script) {
     final int scriptIndex1 = script.params_20[0].get();
     final int scriptIndex2 = script.params_20[1].get();
-    final ScriptState<BattleObject27c> state1 = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
-    final ScriptState<BattleObject27c> state2 = (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[scriptIndex2];
-    final BattleObject27c bobj1 = state1.innerStruct_00;
-    final BattleObject27c bobj2 = state2.innerStruct_00;
+    final ScriptState<BattleEntity27c> state1 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
+    final ScriptState<BattleEntity27c> state2 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex2];
+    final BattleEntity27c bent1 = state1.innerStruct_00;
+    final BattleEntity27c bent2 = state2.innerStruct_00;
     final int ticks = script.params_20[2].get();
-    final float v0 = MathHelper.floorMod(MathHelper.atan2(bobj2.model_148.coord2_14.coord.transfer.getX() - bobj1.model_148.coord2_14.coord.transfer.getX(), bobj2.model_148.coord2_14.coord.transfer.getZ() - bobj1.model_148.coord2_14.coord.transfer.getZ()) - bobj1.model_148.coord2_14.transforms.rotate.y, MathHelper.TWO_PI) - MathHelper.PI;
+    final float v0 = MathHelper.floorMod(MathHelper.atan2(bent2.model_148.coord2_14.coord.transfer.getX() - bent1.model_148.coord2_14.coord.transfer.getX(), bent2.model_148.coord2_14.coord.transfer.getZ() - bent1.model_148.coord2_14.coord.transfer.getZ()) - bent1.model_148.coord2_14.transforms.rotate.y, MathHelper.TWO_PI) - MathHelper.PI;
     state1.scriptState_c8 = state2;
     state1.ticks_cc = ticks;
     state1._d0 = MathHelper.radToPsxDeg(v0);
@@ -3206,21 +3205,21 @@ public final class Bttl_800c {
   }
 
   @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800cc784L)
   public static FlowControl FUN_800cc784(final RunningScript<?> script) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    FUN_800ca418(bobj.combatantIndex_26c);
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    FUN_800ca418(bent.combatantIndex_26c);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Something related to battle object asset loading")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Something related to battle entity asset loading")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800cc7d8L)
   public static FlowControl FUN_800cc7d8(final RunningScript<?> script) {
     final ScriptState<?> v1 = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
     final long s2 = v1.storage_44[7] & 0x4;
-    final int s1 = ((BattleObject27c)v1.innerStruct_00).combatantIndex_26c;
+    final int s1 = ((BattleEntity27c)v1.innerStruct_00).combatantIndex_26c;
 
     //LAB_800cc83c
     for(int i = 0; i < combatantCount_800c66a0.get(); i++) {
@@ -3251,12 +3250,12 @@ public final class Bttl_800c {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Loads the attack animations for a battle object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Loads the attack animations for a battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800cc8f4L)
   public static FlowControl scriptLoadAttackAnimations(final RunningScript<?> script) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    loadAttackAnimations(bobj.combatantIndex_26c);
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    loadAttackAnimations(bent.combatantIndex_26c);
     return FlowControl.CONTINUE;
   }
 
@@ -3277,14 +3276,14 @@ public final class Bttl_800c {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Enables or disables a battle object's texture's animation")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Enables or disables a battle entity's texture's animation")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "textureIndex", description = "The texture index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "enabled", description = "True to enable, false otherwise")
   @Method(0x800cc9d8L)
-  public static FlowControl scriptEnableBobjTextureAnimation(final RunningScript<?> script) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bobj.model_148.animateTextures_ec[script.params_20[1].get()] = script.params_20[2].get() > 0;
+  public static FlowControl scriptEnableBentTextureAnimation(final RunningScript<?> script) {
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    bent.model_148.animateTextures_ec[script.params_20[1].get()] = script.params_20[2].get() > 0;
     return FlowControl.CONTINUE;
   }
 
@@ -3293,7 +3292,7 @@ public final class Bttl_800c {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "disabledIconsBitset", description = "A bitset of which icons are disabled")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "selectedAction", description = "The action the player has selected")
   @Method(0x800cca34L)
-  public static FlowControl scriptSetUpAndHandleCombatMenu(final RunningScript<BattleObject27c> script) {
+  public static FlowControl scriptSetUpAndHandleCombatMenu(final RunningScript<BattleEntity27c> script) {
     final int displayableIconsBitset = script.params_20[0].get();
 
     if(currentDisplayableIconsBitset_800c675c.get() != displayableIconsBitset || (script.scriptState_04.storage_44[7] & 0x1000) != 0) {
@@ -3330,8 +3329,8 @@ public final class Bttl_800c {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Adds a damage number to a battle object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Adds a damage number to a battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "damage", description = "The amount of damage done")
   @Method(0x800ccb3cL)
   public static FlowControl scriptRenderDamage(final RunningScript<?> script) {
@@ -3339,28 +3338,28 @@ public final class Bttl_800c {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Adds a floating number above a battle object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Adds a floating number above a battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "value", description = "The number to show")
   @Method(0x800ccb70L)
-  public static FlowControl scriptAddFloatingNumberForBobj(final RunningScript<?> script) {
-    addFloatingNumberForBobj(script.params_20[0].get(), script.params_20[1].get(), 0xdL);
+  public static FlowControl scriptAddFloatingNumberForBent(final RunningScript<?> script) {
+    addFloatingNumberForBent(script.params_20[0].get(), script.params_20[1].get(), 0xdL);
     return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "isDragoon", description = "Whether or not the battle object is a dragoon")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "isDragoon", description = "Whether or not the battle entity is a dragoon")
   @Method(0x800ccba4L)
   public static FlowControl FUN_800ccba4(final RunningScript<?> script) {
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
-    final BattleObject27c bobj = (BattleObject27c)state.innerStruct_00;
-    final CombatantStruct1a8 combatant = bobj.combatant_144;
-    final int combatantIndex = bobj.combatantIndex_26c;
+    final BattleEntity27c bent = (BattleEntity27c)state.innerStruct_00;
+    final CombatantStruct1a8 combatant = bent.combatant_144;
+    final int combatantIndex = bent.combatantIndex_26c;
 
     if((state.storage_44[7] & 0x1) == 0) {
-      if(bobj.animIndex_270 >= 0) {
-        FUN_800ca194(combatantIndex, bobj.animIndex_270);
+      if(bent.animIndex_270 >= 0) {
+        FUN_800ca194(combatantIndex, bent.animIndex_270);
       }
 
       //LAB_800ccc24
@@ -3380,9 +3379,9 @@ public final class Bttl_800c {
       loadCombatantTmdAndAnims(combatantIndex);
       //LAB_800ccc94
     } else if((combatant.flags_19e & 0x20) == 0) {
-      FUN_800c952c(bobj.model_148, combatantIndex);
-      bobj.animIndex_26e = 0;
-      bobj.animIndex_270 = -1;
+      FUN_800c952c(bent.model_148, combatantIndex);
+      bent.animIndex_26e = 0;
+      bent.animIndex_270 = -1;
       state.storage_44[7] &= 0xffff_fffe;
       return FlowControl.CONTINUE;
     }
@@ -3391,63 +3390,63 @@ public final class Bttl_800c {
     return FlowControl.PAUSE_AND_REWIND;
   }
 
-  @ScriptDescription("Gets the character or monster ID for a battle object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Gets the character or monster ID for a battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "id", description = "The character or monster ID")
   @Method(0x800cccf4L)
   public static FlowControl scriptGetCharOrMonsterId(final RunningScript<?> script) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[1].set(bobj.charId_272);
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    script.params_20[1].set(bent.charId_272);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Sets a stat value of a battle object (doesn't allow setting negative HP)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Sets a stat value of a battle entity (doesn't allow setting negative HP)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "value", description = "The new stat value")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "statIndex", description = "The stat index")
   @Method(0x800ccd34L)
-  public static FlowControl scriptSetBobjStat(final RunningScript<?> script) {
+  public static FlowControl scriptSetBentStat(final RunningScript<?> script) {
     int value = script.params_20[1].get();
     if(script.params_20[2].get() == 2 && value < 0) {
       value = 0;
     }
 
     //LAB_800ccd8c
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bobj.setStat(script.params_20[2].get(), value);
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    bent.setStat(script.params_20[2].get(), value);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Sets a stat value of a battle object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Sets a stat value of a battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "value", description = "The new stat value")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "statIndex", description = "The stat index")
   @Method(0x800ccda0L)
-  public static FlowControl scriptSetBobjRawStat(final RunningScript<?> script) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bobj.setStat(Math.max(0, script.params_20[2].get()), script.params_20[1].get());
+  public static FlowControl scriptSetBentRawStat(final RunningScript<?> script) {
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    bent.setStat(Math.max(0, script.params_20[2].get()), script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Gets a stat value of a battle object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Gets a stat value of a battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "statIndex", description = "The stat index")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The stat value")
   @Method(0x800cce04L)
-  public static FlowControl scriptGetBobjStat(final RunningScript<?> script) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[2].set(bobj.getStat(script.params_20[1].get()));
+  public static FlowControl scriptGetBentStat(final RunningScript<?> script) {
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    script.params_20[2].set(bent.getStat(script.params_20[1].get()));
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Gets a stat value of a battle object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Gets a stat value of a battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "statIndex", description = "The stat index")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The stat value")
   @Method(0x800cce70L)
-  public static FlowControl scriptGetBobjStat2(final RunningScript<?> script) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[2].set(bobj.getStat(script.params_20[1].get()));
+  public static FlowControl scriptGetBentStat2(final RunningScript<?> script) {
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    script.params_20[2].set(bent.getStat(script.params_20[1].get()));
     return FlowControl.CONTINUE;
   }
 
@@ -3474,13 +3473,13 @@ public final class Bttl_800c {
     return FlowControl.PAUSE_AND_REWIND;
   }
 
-  @ScriptDescription("Sets a battle object as dead (or not dead) and drops its loot")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Sets a battle entity as dead (or not dead) and drops its loot")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "dead", description = "True for dead, false otherwise")
   @Method(0x800ccf2cL)
-  public static FlowControl scriptSetBobjDeadAndDropLoot(final RunningScript<?> script) {
+  public static FlowControl scriptSetBentDeadAndDropLoot(final RunningScript<?> script) {
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
-    final BattleObject27c data = (BattleObject27c)state.innerStruct_00;
+    final BattleEntity27c data = (BattleEntity27c)state.innerStruct_00;
 
     int flags = state.storage_44[7];
     if(script.params_20[1].get() != 0) {
@@ -3510,15 +3509,15 @@ public final class Bttl_800c {
 
     //LAB_800cd054
     state.storage_44[7] = flags;
-    cacheLivingBobjs();
+    cacheLivingBents();
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Sets a battle object as dead (or not), but doesn't drop loot")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Sets a battle entity as dead (or not), but doesn't drop loot")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "dead", description = "True for dead, false otherwise")
   @Method(0x800cd078L)
-  public static FlowControl scriptSetBobjDead(final RunningScript<?> script) {
+  public static FlowControl scriptSetBentDead(final RunningScript<?> script) {
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
 
     //LAB_800cd0d0
@@ -3529,20 +3528,20 @@ public final class Bttl_800c {
       state.storage_44[7] &= 0xffff_ffbf;
     }
 
-    cacheLivingBobjs();
+    cacheLivingBents();
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Gets the hit property of a battle object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Gets the hit property of a battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "hitNum", description = "The hit number")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "hitPropertyIndex", description = "The hit property index")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The hit property value")
   @Method(0x800cd0ecL)
   public static FlowControl scriptGetHitProperty(final RunningScript<?> script) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     script.params_20[3].set(getHitProperty(
-      bobj.charSlot_276,
+      bent.charSlot_276,
       script.params_20[1].get(),
       script.params_20[2].get()
     ));
@@ -3551,14 +3550,14 @@ public final class Bttl_800c {
   }
 
   @ScriptDescription("Levels up a character's addition")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "doIt", description = "If false, this method does nothing")
   @Method(0x800cd160L)
   public static FlowControl scriptLevelUpAddition(final RunningScript<?> script) {
     if(script.params_20[1].get() != 0) {
-      final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+      final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
 
-      final int charIndex = bobj.charId_272;
+      final int charIndex = bent.charId_272;
       final CharacterData2c charData = gameState_800babc8.charData_32c[charIndex];
 
       final int additionIndex = charData.selectedAddition_19 - additionOffsets_8004f5ac.get(charIndex).get();
@@ -3603,7 +3602,7 @@ public final class Bttl_800c {
         }
 
         //LAB_800cd36c
-        unlockedUltimateAddition_800bc910[bobj.charSlot_276] = true;
+        unlockedUltimateAddition_800bc910[bent.charSlot_276] = true;
       }
 
       //LAB_800cd390
@@ -3614,18 +3613,18 @@ public final class Bttl_800c {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Changes the visibility of a battle object's model part")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Changes the visibility of a battle entity's model part")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "partIndex", description = "The model part index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "visible", description = "True for visible, false otherwise")
   @Method(0x800cd3b4L)
   public static FlowControl scriptSetModelPartVisibility(final RunningScript<?> script) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     if(script.params_20[2].get() != 0) {
-      bobj.model_148.partInvisible_f4 &= ~(0x1L << script.params_20[1].get());
+      bent.model_148.partInvisible_f4 &= ~(0x1L << script.params_20[1].get());
     } else {
       //LAB_800cd420
-      bobj.model_148.partInvisible_f4 |= 0x1L << script.params_20[1].get();
+      bent.model_148.partInvisible_f4 |= 0x1L << script.params_20[1].get();
     }
 
     //LAB_800cd460
@@ -3676,33 +3675,33 @@ public final class Bttl_800c {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Allocate a battle object child of this script")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "entrypointIndex", description = "The entrypoint of this script for the new battle object to enter")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "combatantIndex", description = "The combatant to attach to the new battle object")
+  @ScriptDescription("Allocate a battle entity child of this script")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "entrypointIndex", description = "The entrypoint of this script for the new battle entity to enter")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "combatantIndex", description = "The combatant to attach to the new battle entity")
   @Method(0x800cd5b4L)
-  public static FlowControl scriptAllocateBobj(final RunningScript<?> script) {
-    final String name = "Bobj allocated by script " + script.scriptState_04.index;
-    final ScriptState<MonsterBattleObject> state = SCRIPTS.allocateScriptState(name, new MonsterBattleObject(name));
+  public static FlowControl scriptAllocateBent(final RunningScript<?> script) {
+    final String name = "Bent allocated by script " + script.scriptState_04.index;
+    final ScriptState<MonsterBattleEntity> state = SCRIPTS.allocateScriptState(name, new MonsterBattleEntity(name));
     script.params_20[2].set(state.index);
-    state.setTicker(Bttl_800c::bobjTicker);
-    state.setDestructor(Bttl_800c::bobjDestructor);
+    state.setTicker(Bttl_800c::bentTicker);
+    state.setDestructor(Bttl_800c::bentDestructor);
     state.loadScriptFile(script.scriptState_04.scriptPtr_14, script.params_20[0].get());
     state.storage_44[7] |= 0x804;
-    battleState_8006e398.allBobjs_e0c[allBobjCount_800c66d0.get()] = state;
-    battleState_8006e398.monsterBobjs_e50[monsterCount_800c6768.get()] = state;
+    battleState_8006e398.allBents_e0c[allBentCount_800c66d0.get()] = state;
+    battleState_8006e398.monsterBents_e50[monsterCount_800c6768.get()] = state;
 
-    final BattleObject27c bobj = state.innerStruct_00;
-    bobj.magic_00 = BattleScriptDataBase.BOBJ;
+    final BattleEntity27c bent = state.innerStruct_00;
+    bent.magic_00 = BattleObject.BOBJ;
     final CombatantStruct1a8 combatant = getCombatant(script.params_20[1].get());
-    bobj.combatant_144 = combatant;
-    bobj.combatantIndex_26c = script.params_20[1].get();
-    bobj.charId_272 = combatant.charIndex_1a2;
-    bobj.bobjSlot_274 = allBobjCount_800c66d0.get();
-    allBobjCount_800c66d0.incr();
-    bobj.charSlot_276 = monsterCount_800c6768.get();
+    bent.combatant_144 = combatant;
+    bent.combatantIndex_26c = script.params_20[1].get();
+    bent.charId_272 = combatant.charIndex_1a2;
+    bent.bentSlot_274 = allBentCount_800c66d0.get();
+    allBentCount_800c66d0.incr();
+    bent.charSlot_276 = monsterCount_800c6768.get();
     monsterCount_800c6768.incr();
-    bobj.model_148.coord2_14.coord.transfer.set(0, 0, 0);
-    bobj.model_148.coord2_14.transforms.rotate.zero();
+    bent.model_148.coord2_14.coord.transfer.set(0, 0, 0);
+    bent.model_148.coord2_14.transforms.rotate.zero();
     return FlowControl.CONTINUE;
   }
 
@@ -3794,47 +3793,47 @@ public final class Bttl_800c {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Gets the combatant index for a battle object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Gets the combatant index for a battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "combatantIndex", description = "The combatant index")
   @Method(0x800cd958L)
   public static FlowControl scriptGetCombatantIndex(final RunningScript<?> script) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[1].set(bobj.combatantIndex_26c);
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    script.params_20[1].set(bent.combatantIndex_26c);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Gets the bobj slot or char slot for a battle object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "charOrBobjSlot", description = "The character or battle object slot")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "mode", description = "If true, returns character slot, if false returns battle object slot")
+  @ScriptDescription("Gets the battle entity slot or char slot for a battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "charOrBentSlot", description = "The character or battle entity slot")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "mode", description = "If true, returns character slot, if false returns battle entity slot")
   @Method(0x800cd998L)
-  public static FlowControl scriptGetBobjSlot(final RunningScript<?> script) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+  public static FlowControl scriptGetBentSlot(final RunningScript<?> script) {
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
 
     if(script.params_20[2].get() != 0) {
-      script.params_20[1].set(bobj.charSlot_276);
+      script.params_20[1].set(bent.charSlot_276);
     } else {
       //LAB_800cd9e8
-      script.params_20[1].set(bobj.bobjSlot_274);
+      script.params_20[1].set(bent.bentSlot_274);
     }
 
     //LAB_800cd9f4
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Gets the number of parts in a battle object's model")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c's script index")
+  @ScriptDescription("Gets the number of parts in a battle entity's model")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c's script index")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "count")
   @Method(0x800cd9fcL)
-  public static FlowControl scriptGetBobjNobj(final RunningScript<?> script) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[1].set(bobj.model_148.modelParts_00.length);
+  public static FlowControl scriptGetBentNobj(final RunningScript<?> script) {
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    script.params_20[1].set(bent.model_148.modelParts_00.length);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Deallocates a battle object's combatant")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Deallocates a battle entity's combatant")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800cda3cL)
   public static FlowControl scriptDeallocateCombatant(final RunningScript<?> script) {
     deallocateCombatant(script.params_20[0].get());
@@ -3842,21 +3841,21 @@ public final class Bttl_800c {
   }
 
   @ScriptDescription("Unknown, related to asset loading")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800cda78L)
   public static FlowControl FUN_800cda78(final RunningScript<?> script) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
 
-    if(FUN_800c90b0(bobj.combatantIndex_26c) == 0) {
+    if(FUN_800c90b0(bent.combatantIndex_26c) == 0) {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
     //LAB_800cdacc
-    bobj.combatant_144.charIndex_1a2 = -1;
+    bent.combatant_144.charIndex_1a2 = -1;
 
     //LAB_800cdaf4
-    bobj.animIndex_26e = 0;
-    FUN_800c952c(bobj.model_148, bobj.combatantIndex_26c);
+    bent.animIndex_26e = 0;
+    FUN_800c952c(bent.model_148, bent.combatantIndex_26c);
 
     //LAB_800cdb08
     return FlowControl.CONTINUE;
@@ -3885,7 +3884,7 @@ public final class Bttl_800c {
 
     //LAB_800cdbb8
     for(int i = 0; i < charCount_800c677c.get(); i++) {
-      battleState_8006e398.charBobjs_e40[i].loadScriptFile(null);
+      battleState_8006e398.charBents_e40[i].loadScriptFile(null);
     }
 
     //LAB_800cdbe0
@@ -3896,7 +3895,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cdc1cL)
-  public static void FUN_800cdc1c(final ScriptState<BattleObject27c> s1, final int x0, final int y0, final int z0, final int x1, final int y1, final int z1, final int a7, final int ticks) {
+  public static void FUN_800cdc1c(final ScriptState<BattleEntity27c> s1, final int x0, final int y0, final int z0, final int x1, final int y1, final int z1, final int a7, final int ticks) {
     final int dx = x1 - x0 << 8;
     final int dy = y1 - y0 << 8;
     final int dz = z1 - z0 << 8;
@@ -4171,7 +4170,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800ce6a8L)
-  public static FlowControl allocateWeaponTrailEffect(final RunningScript<? extends BattleScriptDataBase> script) {
+  public static FlowControl allocateWeaponTrailEffect(final RunningScript<? extends BattleObject> script) {
     final ScriptState<EffectManagerData6c<EffectManagerData6cInner.WeaponTrailType>> state = allocateEffectManager(
       "Weapon trail",
       script.scriptState_04,
@@ -4203,12 +4202,12 @@ public final class Bttl_800c {
     trail.segmentCount_0e = 20;
     manager._10.colour_1c.set(0xff, 0x80, 0x60);
 
-    final BattleScriptDataBase parent = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
-    if(BattleScriptDataBase.EM__.equals(parent.magic_00)) {
-      trail.parentModel_30 = ((BttlScriptData6cSub13c)((EffectManagerData6c<?>)parent).effect_44).model_10;
+    final BattleObject parent = (BattleObject)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
+    if(BattleObject.EM__.equals(parent.magic_00)) {
+      trail.parentModel_30 = ((ModelEffect13c)((EffectManagerData6c<?>)parent).effect_44).model_10;
     } else {
       //LAB_800ce7f8
-      trail.parentModel_30 = ((BattleObject27c)parent).model_148;
+      trail.parentModel_30 = ((BattleEntity27c)parent).model_148;
     }
 
     //LAB_800ce804
@@ -4261,21 +4260,9 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cea1cL)
-  public static VECTOR scriptGetScriptedObjectPos(final int scriptIndex, final VECTOR posOut) {
-    final BattleScriptDataBase data = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
-
-    final VECTOR pos;
-    if(BattleScriptDataBase.EM__.equals(data.magic_00)) {
-      //LAB_800cea78
-      pos = ((EffectManagerData6c<?>)data)._10.trans_04;
-    } else {
-      pos = ((BattleObject27c)data).model_148.coord2_14.coord.transfer;
-    }
-
-    posOut.set(pos);
-
-    //LAB_800cea8c
-    return pos;
+  public static void scriptGetScriptedObjectPos(final int scriptIndex, final VECTOR posOut) {
+    final BattleObject bobj = (BattleObject)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
+    posOut.set(bobj.getPosition());
   }
 
   @Method(0x800cea9cL)
@@ -4305,7 +4292,7 @@ public final class Bttl_800c {
 
   /** Used at the end of Rose transform, lots during Albert transform */
   @Method(0x800cec8cL)
-  public static FlowControl scriptAllocateFullScreenOverlay(final RunningScript<? extends BattleScriptDataBase> script) {
+  public static FlowControl scriptAllocateFullScreenOverlay(final RunningScript<? extends BattleObject> script) {
     final int r = script.params_20[1].get() << 8;
     final int g = script.params_20[2].get() << 8;
     final int b = script.params_20[3].get() << 8;
@@ -4474,14 +4461,14 @@ public final class Bttl_800c {
   @Method(0x800cfcccL)
   public static FlowControl FUN_800cfccc(final RunningScript<?> script) {
     final ScriptState<?> a1 = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
-    final BattleScriptDataBase a0 = (BattleScriptDataBase)a1.innerStruct_00;
+    final BattleObject a0 = (BattleObject)a1.innerStruct_00;
 
     final Model124 model;
-    if(BattleScriptDataBase.EM__.equals(a0.magic_00)) {
-      model = ((BttlScriptData6cSub13c)((EffectManagerData6c<?>)a0).effect_44).model_10;
+    if(BattleObject.EM__.equals(a0.magic_00)) {
+      model = ((ModelEffect13c)((EffectManagerData6c<?>)a0).effect_44).model_10;
     } else {
       //LAB_800cfd34
-      model = ((BattleObject27c)a0).model_148;
+      model = ((BattleEntity27c)a0).model_148;
     }
 
     //LAB_800cfd40
@@ -4496,15 +4483,15 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cfdf8L)
-  public static FlowControl scriptGetBobjDimension(final RunningScript<?> script) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+  public static FlowControl scriptGetBentDimension(final RunningScript<?> script) {
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final int componentIndex = script.params_20[1].get();
 
     //LAB_800cfe54
     int largest = 0x8000_0001;
     int smallest = 0x7fff_ffff;
-    for(int animIndex = bobj.model_148.partCount_98 - 1; animIndex >= 0; animIndex--) {
-      final int component = bobj.model_148.modelParts_00[animIndex].coord2_04.coord.transfer.get(componentIndex);
+    for(int animIndex = bent.model_148.partCount_98 - 1; animIndex >= 0; animIndex--) {
+      final int component = bent.model_148.modelParts_00[animIndex].coord2_04.coord.transfer.get(componentIndex);
 
       if(largest < component) {
         largest = component;
@@ -4560,7 +4547,7 @@ public final class Bttl_800c {
   @Method(0x800cffd8L)
   public static void getModelObjectTranslation(final int scriptIndex, final VECTOR translation, final int objIndex) {
     final MATRIX transformMatrix = new MATRIX();
-    GsGetLw(((BattleObject27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00).model_148.modelParts_00[objIndex].coord2_04, transformMatrix);
+    GsGetLw(((BattleEntity27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00).model_148.modelParts_00[objIndex].coord2_04, transformMatrix);
     // Does nothing? Changed line below to set //ApplyMatrixLV(transformMatrix, new VECTOR(), translation);
     translation.set(transformMatrix.transfer);
   }

@@ -1,26 +1,29 @@
-package legend.game.combat.bobj;
+package legend.game.combat.bent;
 
+import legend.core.gte.USCOLOUR;
+import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.game.characters.Element;
 import legend.game.characters.ElementSet;
 import legend.game.characters.StatCollection;
 import legend.game.characters.StatType;
 import legend.game.combat.types.AttackType;
-import legend.game.combat.types.BattleScriptDataBase;
+import legend.game.combat.types.BattleObject;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.modding.events.battle.RegisterBattleObjectStatsEvent;
+import legend.game.modding.events.battle.RegisterBattleEntityStatsEvent;
 import legend.game.types.ItemStats0c;
 import legend.game.types.Model124;
 import legend.game.types.SpellStats0c;
+import org.joml.Vector3f;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import static legend.core.GameEngine.EVENTS;
 
-public abstract class BattleObject27c extends BattleScriptDataBase {
-  public final BattleObjectType type;
+public abstract class BattleEntity27c extends BattleObject {
+  public final BattleEntityType type;
 
   public final StatCollection stats;
 
@@ -163,17 +166,19 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
   public int animIndex_270;
   /** Also monster ID */
   public int charId_272;
-  public int bobjSlot_274;
+  public int bentSlot_274;
   public int charSlot_276;
   /** Has model? Used to be used to free model, no longer used since it's managed by java */
   public int _278;
 
-  public BattleObject27c(final BattleObjectType type, final String name) {
+  private final USCOLOUR colour = new USCOLOUR().set(0x80, 0x80, 0x80);
+
+  public BattleEntity27c(final BattleEntityType type, final String name) {
     this.type = type;
     this.model_148 = new Model124(name);
 
     final Set<StatType> stats = new HashSet<>();
-    EVENTS.postEvent(new RegisterBattleObjectStatsEvent(type, stats));
+    EVENTS.postEvent(new RegisterBattleEntityStatsEvent(type, stats));
     this.stats = new StatCollection(stats.toArray(StatType[]::new));
   }
 
@@ -188,11 +193,11 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
   public abstract ElementSet getAttackElements();
   public abstract Element getElement();
 
-  public abstract int calculatePhysicalDamage(final BattleObject27c target);
+  public abstract int calculatePhysicalDamage(final BattleEntity27c target);
   /**
    * @param magicType item (0), spell (1)
    */
-  public abstract int calculateMagicDamage(final BattleObject27c target, final int magicType);
+  public abstract int calculateMagicDamage(final BattleEntity27c target, final int magicType);
 
   public int applyPhysicalDamageMultipliers(final int damage) {
     return damage;
@@ -439,5 +444,25 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
 
       default -> throw new IllegalArgumentException("Some other stat that I haven't implemented " + statIndex);
     }
+  }
+
+  @Override
+  public VECTOR getPosition() {
+    return this.model_148.coord2_14.coord.transfer;
+  }
+
+  @Override
+  public Vector3f getRotation() {
+    return this.model_148.coord2_14.transforms.rotate;
+  }
+
+  @Override
+  public Vector3f getScale() {
+    return this.model_148.coord2_14.transforms.scale;
+  }
+
+  @Override
+  public USCOLOUR getColour() {
+    return this.colour; // defaultEffectColour_800fb94c;
   }
 }

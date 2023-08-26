@@ -1,5 +1,6 @@
 package legend.game.combat.environment;
 
+import legend.game.combat.types.BattleObject;
 import legend.game.types.GsRVIEW2;
 import org.joml.Vector3f;
 
@@ -40,7 +41,7 @@ public class BattleCamera {
   /** for vec_60/stepZ_6c */
   public float stepZAcceleration_70;
   public final Vector3f refpointTargetTranslation_74 = new Vector3f();
-  public int refpointBobjIndex_80;
+  public BattleObject refpointBobj_80;
 
   public int refpointCallbackIndex_88;
   //
@@ -77,7 +78,7 @@ public class BattleCamera {
   public float stepZAcceleration_e4;
   /** 8-bit fixed-point */
   public final Vector3f viewpointTargetTranslation_e8 = new Vector3f();
-  public int viewpointBobjIndex_f4;
+  public BattleObject viewpointBobj_f4;
 
   public int viewpointCallbackIndex_fc;
   //
