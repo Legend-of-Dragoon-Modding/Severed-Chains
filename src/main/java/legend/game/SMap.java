@@ -451,7 +451,7 @@ public final class SMap {
   /** Maps submap cuts to their submap */
   public static final ArrayRef<UnsignedShortRef> cutToSubmap_800d610c = MEMORY.ref(2, 0x800d610cL, ArrayRef.of(UnsignedShortRef.class, 792, 2, UnsignedShortRef::new));
   /** TIM */
-  public static final Value biggerShadowTimFile_800d673c = MEMORY.ref(4, 0x800d673cL);
+  public static final Value darkerShadowTimFile_800d673c = MEMORY.ref(4, 0x800d673cL);
 
   public static final Value timFile_800d689c = MEMORY.ref(4, 0x800d689cL);
 
@@ -2360,9 +2360,9 @@ public final class SMap {
   }
 
   @ScriptDescription("Gets the movement vector of this submap object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X movement")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y movement")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z movement")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X movement")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y movement")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z movement")
   @Method(0x800e0af4L)
   public static FlowControl scriptGetPlayerMovement(final RunningScript<?> script) {
     script.params_20[0].set(_800c68e8.playerMovement_0c.getX());
@@ -2371,8 +2371,8 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Swaps between the normal and larger shadow textures")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "0 = normal, 1 = large")
+  @ScriptDescription("Swaps between the normal and darker shadow textures")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "0 = normal, 1 = darker")
   @Method(0x800e0b34L)
   public static FlowControl scriptSwapShadowTexture(final RunningScript<?> script) {
     if(script.params_20[0].get() == 0) {
@@ -2381,7 +2381,7 @@ public final class SMap {
 
     //LAB_800e0b68
     if(script.params_20[0].get() == 1) {
-      loadTimImage(biggerShadowTimFile_800d673c.getAddress());
+      loadTimImage(darkerShadowTimFile_800d673c.getAddress());
     }
 
     //LAB_800e0b8c
