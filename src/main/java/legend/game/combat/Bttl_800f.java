@@ -3565,7 +3565,7 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Called after any battle entity finishes its turn, ticks temporary stats and calls turnFinished on custom battle entitys")
+  @ScriptDescription("Called after any battle entity finishes its turn, ticks temporary stats and calls turnFinished on custom battle entities")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800f9d7cL)
   public static FlowControl scriptFinishBentTurn(final RunningScript<?> script) {
