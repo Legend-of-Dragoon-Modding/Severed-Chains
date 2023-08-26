@@ -97,7 +97,7 @@ import static legend.game.Scus94491BpeSegment_8003.GsSwapDispBuff;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.setDrawOffset;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8004.FUN_8004d91c;
+import static legend.game.Scus94491BpeSegment_8004.stopSoundsAndSequences;
 import static legend.game.Scus94491BpeSegment_8004._8004dd0c;
 import static legend.game.Scus94491BpeSegment_8004._8004dd48;
 import static legend.game.Scus94491BpeSegment_8004._8004f2a8;
@@ -245,10 +245,7 @@ public final class Scus94491BpeSegment {
 
   public static final Value shadowCContainer_800103d0 = MEMORY.ref(4, 0x800103d0L);
   public static final Value shadowAnimation_8001051c = MEMORY.ref(4, 0x8001051cL);
-  /** TIM */
-  public static final Value _80010544 = MEMORY.ref(4, 0x80010544L);
-
-  public static final Value shadowTexture_80010548 = MEMORY.ref(4, 0x80010548L);
+  public static final Value shadowTimFile_80010544 = MEMORY.ref(4, 0x80010544L);
 
   public static final ArrayRef<RECT> rectArray28_80010770 = MEMORY.ref(4, 0x80010770L, ArrayRef.of(RECT.class, 28, 8, RECT::new));
 
@@ -1820,7 +1817,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80019c80L)
-  public static void FUN_80019c80(final SoundFile soundFile, final int soundIndex, final int a2) {
+  public static void stopSound(final SoundFile soundFile, final int soundIndex, final int mode) {
     //LAB_80019cc4
     for(int sequenceIndex = 0; sequenceIndex < 24; sequenceIndex++) {
       final SpuStruct08 s0 = _800bc9a8[sequenceIndex];
@@ -1828,7 +1825,7 @@ public final class Scus94491BpeSegment {
       if(s0.soundFile_02 == soundFile && s0.soundIndex_03 == soundIndex) {
         stopSoundSequence(sequenceData_800c4ac8[sequenceIndex], true);
 
-        if((a2 & 0x1) == 0) {
+        if((mode & 0x1) == 0) {
           break;
         }
       }
@@ -1838,7 +1835,7 @@ public final class Scus94491BpeSegment {
     //LAB_80019d1c
     queuedSounds_800bd110.removeIf(queuedSound -> queuedSound.type_00 == 4 && queuedSound.soundIndex_0c == soundIndex && queuedSound.soundFile_08 == soundFile);
 
-    if((a2 & 0x2) != 0) {
+    if((mode & 0x2) != 0) {
       //LAB_80019d84
       queuedSounds_800bd110.removeIf(queuedSound -> (queuedSound.type_00 == 3 && (queuedSound.repeatDelayTotal_20 != 0 || queuedSound.initialDelay_24 != 0) || queuedSound._1c != 0) && queuedSound.soundIndex_0c == soundIndex && queuedSound.soundFile_08 == soundFile);
     }
@@ -1954,7 +1951,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001a164L)
-  public static void stopBobjSound(final long a0, final BattleObject27c bobj, final long soundIndex, final long a3) {
+  public static void stopBobjSound(final BattleObject27c bobj, final int soundIndex, final int mode) {
     //LAB_8001a1a8
     for(int sequenceIndex = 0; sequenceIndex < 24; sequenceIndex++) {
       final SpuStruct08 s0 = _800bc9a8[sequenceIndex];
@@ -1962,7 +1959,7 @@ public final class Scus94491BpeSegment {
       if(s0.soundIndex_03 == soundIndex && s0.bobj_04 == bobj) {
         stopSoundSequence(sequenceData_800c4ac8[sequenceIndex], true);
 
-        if((a3 & 0x1) == 0) {
+        if((mode & 0x1) == 0) {
           break;
         }
       }
@@ -1971,7 +1968,7 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_8001a1f4
-    if((a3 & 0x2) != 0) {
+    if((mode & 0x2) != 0) {
       //LAB_8001a208
       queuedSounds_800bd110.removeIf(queuedSound -> queuedSound.type_00 != 0 && (queuedSound.repeatDelayTotal_20 != 0 || queuedSound.initialDelay_24 != 0) && queuedSound.soundIndex_0c == soundIndex && queuedSound.bobj_04 == bobj);
     }
@@ -2103,116 +2100,154 @@ public final class Scus94491BpeSegment {
     }
   }
 
+  @ScriptDescription("Play a sound")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "soundFileIndex", description = "The sound file index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "soundIndex", description = "The sound index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "a2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "a3")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "initialDelay", description = "The initial delay before the sound starts")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "repeatDelay", description = "The delay before a sound repeats")
   @Method(0x8001ab34L)
   public static FlowControl scriptPlaySound(final RunningScript<?> script) {
     playSound(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), (short)script.params_20[4].get(), (short)script.params_20[5].get());
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Stop a sound")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "soundFileIndex", description = "The sound file index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "soundIndex", description = "The sound index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode")
   @Method(0x8001ab98L)
-  public static FlowControl FUN_8001ab98(final RunningScript<?> script) {
-    FUN_80019c80(soundFiles_800bcf80[script.params_20[0].get()], script.params_20[1].get(), script.params_20[2].get());
+  public static FlowControl scriptStopSound(final RunningScript<?> script) {
+    stopSound(soundFiles_800bcf80[script.params_20[0].get()], script.params_20[1].get(), script.params_20[2].get());
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Play a battle object sound")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "1 = player, 2 = monster")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "soundIndex", description = "The sound index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "a3")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "a4")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "initialDelay", description = "The initial delay before the sound starts")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "repeatDelay", description = "The delay before a sound repeats")
   @Method(0x8001abd0L)
   public static FlowControl scriptPlayBobjSound(final RunningScript<?> script) {
     playBobjSound(script.params_20[0].get(), (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[script.params_20[1].get()], script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get());
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Stop a battle object sound")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "soundIndex", description = "The sound index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode")
   @Method(0x8001ac48L)
-  public static FlowControl FUN_8001ac48(final RunningScript<?> script) {
-    stopBobjSound(script.params_20[0].get(), (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00, script.params_20[2].get(), script.params_20[3].get());
+  public static FlowControl scriptStopBobjSound(final RunningScript<?> script) {
+    stopBobjSound((BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00, script.params_20[2].get(), script.params_20[3].get());
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Plays a combatant sound")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "1 = player, 2 = monster")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "charOrMonsterIndex", description = "The character or monster index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "soundIndex", description = "The sound index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "initialDelay", description = "The initial delay before the sound starts")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "repeatDelay", description = "The delay before a sound repeats")
   @Method(0x8001ac88L)
   public static FlowControl scriptPlayCombatantSound(final RunningScript<?> script) {
     playCombatantSound(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), (short)script.params_20[3].get(), (short)script.params_20[4].get());
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Stop a battle object sound")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "soundIndex", description = "The sound index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode")
   @Method(0x8001acd8L)
-  public static FlowControl scriptStopBobjSound(final RunningScript<?> script) {
-    stopBobjSound(script.params_20[0].get(), (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00, script.params_20[2].get(), script.params_20[3].get());
-    return FlowControl.CONTINUE;
+  public static FlowControl scriptStopBobjSound2(final RunningScript<?> script) {
+    return scriptStopBobjSound(script);
   }
 
   @Method(0x8001ad18L)
-  public static void FUN_8001ad18() {
+  public static void stopAndResetSoundsAndSequences() {
     //LAB_8001ad2c
     queuedSounds_800bd110.clear();
-    FUN_8004d91c(true);
+    stopSoundsAndSequences(true);
   }
 
+  @ScriptDescription("Stops all sounds and sequences")
   @Method(0x8001ad5cL)
-  public static FlowControl FUN_8001ad5c(final RunningScript<?> script) {
+  public static FlowControl scriptStopSoundsAndSequences(final RunningScript<?> script) {
     //LAB_8001ad70
-    FUN_8001ad18();
+    stopAndResetSoundsAndSequences();
     return FlowControl.CONTINUE;
   }
 
   @Method(0x8001ada0L)
-  public static void FUN_8001ada0() {
+  public static void startCurrentMusicSequence() {
     startMusicSequence(currentSequenceData_800bd0f8);
   }
 
+  @ScriptDescription("Starts the current music sequence")
   @Method(0x8001adc8L)
-  public static FlowControl FUN_8001adc8(final RunningScript<?> script) {
-    startMusicSequence(currentSequenceData_800bd0f8);
+  public static FlowControl scriptStartCurrentMusicSequence(final RunningScript<?> script) {
+    startCurrentMusicSequence();
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Stops the current music sequence")
   @Method(0x8001ae18L)
-  public static FlowControl FUN_8001ae18(final RunningScript<?> script) {
+  public static FlowControl scriptStopCurrentMusicSequence(final RunningScript<?> script) {
     stopMusicSequence(currentSequenceData_800bd0f8, 2);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Stops the current music sequence")
   @Method(0x8001ae68L)
-  public static FlowControl FUN_8001ae68(final RunningScript<?> script) {
-    stopMusicSequence(currentSequenceData_800bd0f8, 2);
-    return FlowControl.CONTINUE;
+  public static FlowControl scriptStopCurrentMusicSequence2(final RunningScript<?> script) {
+    return scriptStopCurrentMusicSequence(script);
   }
 
   @Method(0x8001ae90L)
   public static void FUN_8001ae90() {
-    if(_800bd0f0.get() == 0x2L) {
+    if(_800bd0f0.getSigned() == 2) {
       stopMusicSequence(currentSequenceData_800bd0f8, 0);
     }
   }
 
+  @ScriptDescription("Stops the current music sequence if 800bd0f0 is 2")
   @Method(0x8001aec8L)
   public static FlowControl FUN_8001aec8(final RunningScript<?> script) {
-    if(_800bd0f0.getSigned() == 0x2L) {
-      stopMusicSequence(currentSequenceData_800bd0f8, 0);
-    }
-
-    //LAB_8001aef0
+    FUN_8001ae90();
     return FlowControl.CONTINUE;
   }
 
   @Method(0x8001af00L)
-  public static void FUN_8001af00() {
+  public static void startEncounterSounds() {
     startMusicSequence(encounterSoundEffects_800bd610.sequenceData_0c);
   }
 
+  @ScriptDescription("Starts the encounter sounds sequence")
   @Method(0x8001af34L)
-  public static FlowControl FUN_8001af34(final RunningScript<?> script) {
+  public static FlowControl scriptStartEncounterSounds(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
+  @ScriptDescription("Stops the encounter sounds sequence")
   @Method(0x8001afa4L)
-  public static FlowControl FUN_8001afa4(final RunningScript<?> script) {
+  public static FlowControl scriptStopEncounterSounds(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
+  @ScriptDescription("Stops the encounter sounds sequence")
   @Method(0x8001b014L)
-  public static FlowControl FUN_8001b014(final RunningScript<?> script) {
+  public static FlowControl scriptStopEncounterSounds2(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
+  @ScriptDescription("Stops the encounter sounds sequence if 800bd0f0 is 2")
   @Method(0x8001b094L)
   public static FlowControl FUN_8001b094(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
@@ -2230,27 +2265,35 @@ public final class Scus94491BpeSegment {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("No-op")
   @Method(0x8001b134L)
   public static FlowControl FUN_8001b134(final RunningScript<?> script) {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("No-op")
   @Method(0x8001b13cL)
   public static FlowControl FUN_8001b13c(final RunningScript<?> script) {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("No-op")
   @Method(0x8001b144L)
   public static FlowControl FUN_8001b144(final RunningScript<?> script) {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets the main volume")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "left", description = "The left volume")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "right", description = "The right volume")
   @Method(0x8001b14cL)
   public static FlowControl scriptSetMainVolume(final RunningScript<?> script) {
     setMainVolume((short)script.params_20[0].get(), (short)script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets the sequence volume")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "volume", description = "The volume")
   @Method(0x8001b17cL)
   public static FlowControl scriptSetSequenceVolume(final RunningScript<?> script) {
     setSequenceVolume((short)script.params_20[0].get());
@@ -2263,12 +2306,16 @@ public final class Scus94491BpeSegment {
     sequenceVolume_800bd108 = volume;
   }
 
+  @ScriptDescription("Gets the sequence volume")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "volume", description = "The volume")
   @Method(0x8001b1ecL)
   public static FlowControl scriptGetSequenceVolume(final RunningScript<?> script) {
     script.params_20[0].set(sequenceVolume_800bd108);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets the volume for all sequences")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "volume", description = "The volume")
   @Method(0x8001b208L)
   public static FlowControl scriptSetAllSoundSequenceVolumes(final RunningScript<?> script) {
     //LAB_8001b22c
@@ -2289,12 +2336,18 @@ public final class Scus94491BpeSegment {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Fade in all sequenced audio")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "fadeTime", description = "The number of ticks to fade in")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "volume", description = "The volume once the fade in has finished")
   @Method(0x8001b27cL)
   public static FlowControl scriptSssqFadeIn(final RunningScript<?> script) {
     sssqFadeIn((short)script.params_20[0].get(), (short)script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Start the current sequence and fade it in")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "fadeTime", description = "The number of ticks to fade in")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "volume", description = "The volume once the fade in has finished")
   @Method(0x8001b2acL)
   public static FlowControl scriptStartSequenceAndChangeVolumeOverTime(final RunningScript<?> script) {
     startSequenceAndChangeVolumeOverTime(currentSequenceData_800bd0f8, (short)script.params_20[0].get(), (short)script.params_20[1].get());
@@ -2302,15 +2355,17 @@ public final class Scus94491BpeSegment {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Fade out all sequenced audio")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "fadeTime", description = "The number of ticks to fade out")
   @Method(0x8001b310L)
   public static FlowControl scriptSssqFadeOut(final RunningScript<?> script) {
     sssqFadeOut((short)script.params_20[0].get());
     return FlowControl.CONTINUE;
   }
 
-  /**
-   * Something to do with sequenced audio
-   */
+  @ScriptDescription("Adjust the current sequence's volume over time")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "fadeTime", description = "The number of ticks to fade for")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "volume", description = "The volume once the fade in has finished")
   @Method(0x8001b33cL)
   public static FlowControl scriptChangeSequenceVolumeOverTime(final RunningScript<?> script) {
     changeSequenceVolumeOverTime(currentSequenceData_800bd0f8, (short)script.params_20[0].get(), (short)script.params_20[1].get());
@@ -2318,6 +2373,8 @@ public final class Scus94491BpeSegment {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Get the current sequence's flags")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "flags", description = "The current sequence's flags")
   @Method(0x8001b3a0L)
   public static FlowControl scriptGetSequenceFlags(final RunningScript<?> script) {
     script.params_20[0].set(getSequenceFlags(currentSequenceData_800bd0f8));
@@ -2673,7 +2730,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001cce8L)
-  public static void FUN_8001cce8(final int bobjIndex, final int type) {
+  public static void loadCharAttackSounds(final int bobjIndex, final int type) {
     final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[bobjIndex].innerStruct_00;
 
     //LAB_8001cd3c
@@ -2710,11 +2767,11 @@ public final class Scus94491BpeSegment {
 
     //LAB_8001ce70
     final int finalCharSlot = charSlot;
-    loadDrgnDir(0, fileIndex, files -> Scus94491BpeSegment.FUN_8001ce98(files, soundName, finalCharSlot));
+    loadDrgnDir(0, fileIndex, files -> Scus94491BpeSegment.charAttackSoundsLoaded(files, soundName, finalCharSlot));
   }
 
   @Method(0x8001ce98L)
-  public static void FUN_8001ce98(final List<FileData> files, final String soundName, final int charSlot) {
+  public static void charAttackSoundsLoaded(final List<FileData> files, final String soundName, final int charSlot) {
     final SoundFile sound = soundFiles_800bcf80[characterSoundFileIndices_800500f8.get(charSlot).get()];
 
     //LAB_8001cee8
@@ -2723,7 +2780,7 @@ public final class Scus94491BpeSegment {
     sound.indices_08 = SoundFileIndices.load(files.get(1));
     sound.charId_02 = files.get(0).readShort(0);
     sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(files.get(2)), charSlotSpuOffsets_80050190.get(charSlot).get());
-    FUN_8001e950();
+    cleanUpCharAttackSounds();
     setSoundSequenceVolume(sound.playableSound_10, 0x7f);
     sound.used_00 = true;
   }
@@ -3078,7 +3135,7 @@ public final class Scus94491BpeSegment {
     if(a0 == 0) {
       //LAB_8001e054
       copyPlayingSounds(queuedSounds_800bd110, playingSoundsBackup_800bca78);
-      FUN_8001ad18();
+      stopAndResetSoundsAndSequences();
       unloadSoundFile(8);
       unloadSoundFile(8);
 
@@ -3087,7 +3144,7 @@ public final class Scus94491BpeSegment {
       //LAB_8001e044
     } else if(a0 == 1) {
       //LAB_8001e094
-      FUN_8001ad18();
+      stopAndResetSoundsAndSequences();
       unloadSoundFile(8);
       unloadSoundFile(8);
 
@@ -3118,7 +3175,7 @@ public final class Scus94491BpeSegment {
             musicLoaded_800bd782 = true;
           } else if(musicIndex == -2) {
             //LAB_8001e1f4
-            FUN_8001ada0();
+            startCurrentMusicSequence();
 
             //LAB_8001e200
             musicLoaded_800bd782 = true;
@@ -3143,7 +3200,7 @@ public final class Scus94491BpeSegment {
       }
 
       //LAB_8001e26c
-      FUN_8001ad18();
+      stopAndResetSoundsAndSequences();
       copyPlayingSounds(playingSoundsBackup_800bca78, queuedSounds_800bd110);
       playingSoundsBackup_800bca78.clear();
     }
@@ -3290,8 +3347,9 @@ public final class Scus94491BpeSegment {
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_fffe);
   }
 
+  @ScriptDescription("Loads the main menu sounds")
   @Method(0x8001e640L)
-  public static FlowControl FUN_8001e640(final RunningScript<?> script) {
+  public static FlowControl scriptLoadMenuSounds(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
@@ -3305,19 +3363,23 @@ public final class Scus94491BpeSegment {
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_fff7);
   }
 
+  @ScriptDescription("Unused")
   @Method(0x8001e918L)
   public static FlowControl FUN_8001e918(final RunningScript<?> script) {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Loads attack sounds for a character")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "The attack sounds type, 1 for regular, any other value for dragoon")
   @Method(0x8001e920L)
-  public static FlowControl FUN_8001e920(final RunningScript<?> script) {
-    FUN_8001cce8(script.params_20[0].get(), script.params_20[1].get());
+  public static FlowControl scriptLoadCharAttackSounds(final RunningScript<?> script) {
+    loadCharAttackSounds(script.params_20[0].get(), script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
   @Method(0x8001e950L)
-  public static void FUN_8001e950() {
+  public static void cleanUpCharAttackSounds() {
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_fff7);
   }
 
@@ -3346,9 +3408,10 @@ public final class Scus94491BpeSegment {
     loadDrgnDir(0, 5750 + submapIndex, files -> submapSoundsLoaded(files, "Submap %d sounds (file %d)".formatted(submapIndex, 5750 + submapIndex)));
   }
 
+  @ScriptDescription("Unused")
   @Method(0x8001eb30L)
   public static FlowControl FUN_8001eb30(final RunningScript<?> script) {
-    throw new RuntimeException("Not implemented");
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x8001eb38L)
@@ -3375,6 +3438,8 @@ public final class Scus94491BpeSegment {
     musicLoaded_800bd782 = true;
   }
 
+  @ScriptDescription("Load a battle cutscene's sounds")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "cutsceneIndex", description = "The cutscene index")
   @Method(0x8001ecccL)
   public static FlowControl scriptLoadBattleCutsceneSounds(final RunningScript<?> script) {
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x4);
@@ -3433,6 +3498,8 @@ public final class Scus94491BpeSegment {
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_7fff);
   }
 
+  @ScriptDescription("Load a monster's sounds")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "monsterIndex", description = "The monster index")
   @Method(0x8001f070L)
   public static FlowControl scriptLoadMonsterAttackSounds(final RunningScript<?> script) {
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x20);
@@ -3508,6 +3575,9 @@ public final class Scus94491BpeSegment {
     loadDrgnDir(0, fileIndex, files -> Scus94491BpeSegment.musicPackageLoadedCallback(files, fileIndex << 8 | a1));
   }
 
+  @ScriptDescription("Load a music package")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "musicIndex", description = "The music index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
   @Method(0x8001f450L)
   public static FlowControl scriptLoadMusicPackage(final RunningScript<?> script) {
     unloadSoundFile(8);
@@ -3518,8 +3588,11 @@ public final class Scus94491BpeSegment {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Loads sounds for the final battle")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "battleProgress", description = "The current stage of the multi-stage final fight (0-3)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
   @Method(0x8001f560L)
-  public static FlowControl FUN_8001f560(final RunningScript<?> script) {
+  public static FlowControl scriptLoadFinalBattleSounds(final RunningScript<?> script) {
     unloadSoundFile(8);
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x80);
     final int fileIndex = 732 + script.params_20[0].get() * 5;
@@ -3528,8 +3601,11 @@ public final class Scus94491BpeSegment {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Loads sounds for a cutscene")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "cutsceneIndex", description = "The cutscene index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
   @Method(0x8001f674L)
-  public static FlowControl FUN_8001f674(final RunningScript<?> script) {
+  public static FlowControl scriptLoadCutsceneSounds(final RunningScript<?> script) {
     unloadSoundFile(8);
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x80);
     final int fileIndex = 2353 + script.params_20[0].get() * 6;
@@ -3649,6 +3725,9 @@ public final class Scus94491BpeSegment {
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_bfff);
   }
 
+  @ScriptDescription("Load some kind of audio package")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "musicIndex", description = "The music index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
   @Method(0x8001fe28L)
   public static FlowControl FUN_8001fe28(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
@@ -3666,10 +3745,12 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001ffc0L)
   public static FlowControl scriptGetLoadedSoundFiles(final RunningScript<?> script) {
-    script.params_20[0].set((int)loadedDrgnFiles_800bcf78.get());
+    script.params_20[0].set(loadedDrgnFiles_800bcf78.get());
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unloads a sound file")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "soundType", description = "The sound type")
   @Method(0x8001ffdcL)
   public static FlowControl scriptUnloadSoundFile(final RunningScript<?> script) {
     unloadSoundFile(script.params_20[0].get());

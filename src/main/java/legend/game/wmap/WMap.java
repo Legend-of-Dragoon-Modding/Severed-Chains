@@ -59,7 +59,7 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
-import static legend.game.Scus94491BpeSegment.FUN_80019c80;
+import static legend.game.Scus94491BpeSegment.stopSound;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
@@ -3562,7 +3562,7 @@ public final class WMap {
         break;
 
       case 8:
-        FUN_80019c80(soundFiles_800bcf80[12], 1, 1);
+        stopSound(soundFiles_800bcf80[12], 1, 1);
 
         if(struct258.coolonWarpIndex_222 == 8) {
           gameState_800babc8._17c.set(coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222)._10.get(), true);
@@ -3601,7 +3601,7 @@ public final class WMap {
         struct258.models_0c[2].coord2_14.transforms.scale.set(0.375f, 0.375f, 0.375f);
         struct258._220 = 11;
 
-        FUN_80019c80(soundFiles_800bcf80[12], 1, 1);
+        stopSound(soundFiles_800bcf80[12], 1, 1);
 
         // Fall through
 
@@ -5247,7 +5247,7 @@ public final class WMap {
               final int soundIndex = places_800f0234.get(locations_800f0e34.get(mapState_800c6798.locationIndex_10).placeIndex_02.get()).soundIndices_06.get(i).get();
 
               if(soundIndex > 0) {
-                FUN_80019c80(soundFiles_800bcf80[12], soundIndex, 1);
+                stopSound(soundFiles_800bcf80[12], soundIndex, 1);
               }
 
               //LAB_800e63ec
@@ -5269,7 +5269,7 @@ public final class WMap {
               final int soundIndex = places_800f0234.get(locations_800f0e34.get(mapState_800c6798.locationIndex_10).placeIndex_02.get()).soundIndices_06.get(i).get();
 
               if(soundIndex > 0) {
-                FUN_80019c80(soundFiles_800bcf80[12], soundIndex, 1);
+                stopSound(soundFiles_800bcf80[12], soundIndex, 1);
               }
 
               //LAB_800e6504
@@ -5288,7 +5288,7 @@ public final class WMap {
               final int soundIndex = places_800f0234.get(locations_800f0e34.get(mapState_800c6798.locationIndex_10).placeIndex_02.get()).soundIndices_06.get(i).get();
 
               if(soundIndex > 0) {
-                FUN_80019c80(soundFiles_800bcf80[12], soundIndex, 1);
+                stopSound(soundFiles_800bcf80[12], soundIndex, 1);
               }
 
               //LAB_800e65fc
