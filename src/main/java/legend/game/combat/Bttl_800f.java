@@ -1152,9 +1152,9 @@ public final class Bttl_800f {
   }
 
   @ScriptDescription("Unknown, this might handle players selecting an attack target")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "targetBobjIndex", description = "The targeted BattleObject27c script index (or -1 if attack all)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "itemOrSpellId", description = "The item or spell ID selected")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "targetBobjIndex", description = "The targeted BattleObject27c script index (or -1 if attack all)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "itemOrSpellId", description = "The item or spell ID selected")
   @Method(0x800f4600L)
   public static FlowControl FUN_800f4600(final RunningScript<?> script) {
     final CombatMenua4 combatMenu = combatMenu_800c6b60;
@@ -1210,11 +1210,11 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, related to selecting a target or using items/spells")
+  @ScriptDescription("Gets the item/spell attack target")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "targetMode")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "targetBobjIndex", description = "The targeted BattleObject27c script index (or -1 if attack all)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "targetBobjIndex", description = "The targeted BattleObject27c script index (or -1 if attack all)")
   @Method(0x800f480cL)
-  public static FlowControl FUN_800f480c(final RunningScript<?> script) {
+  public static FlowControl scriptGetItemOrSpellAttackTarget(final RunningScript<?> script) {
     BattleObject27c a1 = null;
     final int[] sp0x10 = {0, 0, 1, 0, 2, 1, 1, 1};
 
@@ -3337,7 +3337,7 @@ public final class Bttl_800f {
   @ScriptDescription("Render recovery amount for a battle object")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "amount", description = "The amount recovered")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2", description = "Something to do with CLUT/colour")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "colourIndex", description = "Which colour to use (indices are unknown)")
   @Method(0x800f984cL)
   public static FlowControl scriptRenderRecover(final RunningScript<?> script) {
     addFloatingNumberForBobj(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
@@ -3390,7 +3390,7 @@ public final class Bttl_800f {
 
   @ScriptDescription("Gives a specific item to the player")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "itemId", description = "The item ID")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "itemTaken", description = "The item ID that was given (or -1 if none could be given)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "itemGiven", description = "The item ID that was given (or -1 if none could be given)")
   @Method(0x800f99ecL)
   public static FlowControl scriptGiveItem(final RunningScript<?> script) {
     final int givenItem;

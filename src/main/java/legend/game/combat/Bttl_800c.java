@@ -3679,6 +3679,7 @@ public final class Bttl_800c {
   @ScriptDescription("Allocate a battle object child of this script")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "entrypointIndex", description = "The entrypoint of this script for the new battle object to enter")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "combatantIndex", description = "The combatant to attach to the new battle object")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The allocated script index")
   @Method(0x800cd5b4L)
   public static FlowControl scriptAllocateBobj(final RunningScript<?> script) {
     final String name = "Bobj allocated by script " + script.scriptState_04.index;
@@ -3788,6 +3789,7 @@ public final class Bttl_800c {
   @ScriptDescription("Unknown, loads files")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "drgnIndex", description = "The DRGN#.BIN index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "fileIndex", description = "The file index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "queueIndex", description = "The index into the file queue")
   @Method(0x800cd910L)
   public static FlowControl FUN_800cd910(final RunningScript<?> script) {
     script.params_20[2].set(FUN_800cac38(script.params_20[0].get(), script.params_20[1].get()));

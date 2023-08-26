@@ -6999,7 +6999,7 @@ public final class SEffe {
     throw new RuntimeException("Bugged effect allocator");
   }
 
-  @ScriptDescription("Calculates the relative offset from one scripted object to its parent (or just returns the first object's position if the parent is is -1)")
+  @ScriptDescription("Calculates the relative offset from one scripted object to its parent (or just returns the first object's position if the parent is -1)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptedObjectIndex", description = "The scripted object index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentIndex", description = "The scripted object parent index (-1 for none)")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The calculated X position")
@@ -7015,7 +7015,7 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Calculates the relative offset from one effect to its parent (or just returns the first effect's position if the parent is is -1)")
+  @ScriptDescription("Calculates the relative offset from one effect to its parent (or just returns the first effect's position if the parent is -1)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentIndex", description = "The parent index (-1 for none)")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The calculated X position")
@@ -7690,7 +7690,7 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Sets the relative rotation between two scripted objects (or from the origin if the second is -1)")
+  @ScriptDescription("Sets the relative scale between two scripted objects (or from the origin if the second is -1)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptedObjectIndex1", description = "The scripted object 1")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptedObjectIndex2", description = "The scripted object 2 (or -1 for none)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X rotation (PSX degrees)")

@@ -382,8 +382,8 @@ public final class Bttl_800e {
   @ScriptDescription("Unknown, gets the battle light direction")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
   @ScriptParam(direction = ScriptParam.Direction.BOTH, type = ScriptParam.Type.INT, name = "indexAndX", description = "In: either a light index or battle object index, out: the X direction (PSX degrees)") // why
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y direction (PSX degrees)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z direction (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y direction (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z direction (PSX degrees)")
   @Method(0x800e4abcL)
   public static FlowControl FUN_800e4abc(final RunningScript<?> script) {
     final int s1 = script.params_20[1].get();
