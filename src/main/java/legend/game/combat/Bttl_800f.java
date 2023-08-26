@@ -1214,7 +1214,7 @@ public final class Bttl_800f {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "targetMode")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "targetBentIndex", description = "The targeted BattleEntity27c script index (or -1 if attack all)")
   @Method(0x800f480cL)
-  public static FlowControl FUN_800f480c(final RunningScript<?> script) {
+  public static FlowControl scriptGetItemOrSpellAttackTarget(final RunningScript<?> script) {
     BattleEntity27c a1 = null;
     final int[] sp0x10 = {0, 0, 1, 0, 2, 1, 1, 1};
 
