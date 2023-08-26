@@ -34,12 +34,12 @@ import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.deff.BattleStruct24_2;
 import legend.game.combat.deff.DeffManager7cc;
-import legend.game.combat.effects.ModelEffect13c;
 import legend.game.combat.effects.ButtonPressHudMetrics06;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerData6cInner;
 import legend.game.combat.effects.FullScreenOverlayEffect0e;
 import legend.game.combat.effects.GuardEffectMetrics04;
+import legend.game.combat.effects.ModelEffect13c;
 import legend.game.combat.effects.RadialGradientEffect14;
 import legend.game.combat.effects.SpriteMetrics08;
 import legend.game.combat.effects.WeaponTrailEffect3c;
@@ -121,8 +121,6 @@ import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
-import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
-import static legend.game.Scus94491BpeSegment.startEncounterSounds;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.btldLoadEncounterSoundEffectsAndMusic;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
@@ -140,16 +138,18 @@ import static legend.game.Scus94491BpeSegment.renderMcq;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.setDepthResolution;
 import static legend.game.Scus94491BpeSegment.simpleRand;
+import static legend.game.Scus94491BpeSegment.startEncounterSounds;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
+import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020308;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021520;
-import static legend.game.Scus94491BpeSegment_8002.scriptDeallocateAllTextboxes;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.animateModel;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.renderModel;
+import static legend.game.Scus94491BpeSegment_8002.scriptDeallocateAllTextboxes;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.MoveImage;
@@ -3678,6 +3678,7 @@ public final class Bttl_800c {
   @ScriptDescription("Allocate a battle entity child of this script")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "entrypointIndex", description = "The entrypoint of this script for the new battle entity to enter")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "combatantIndex", description = "The combatant to attach to the new battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The allocated script index")
   @Method(0x800cd5b4L)
   public static FlowControl scriptAllocateBent(final RunningScript<?> script) {
     final String name = "Bent allocated by script " + script.scriptState_04.index;
@@ -3787,6 +3788,7 @@ public final class Bttl_800c {
   @ScriptDescription("Unknown, loads files")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "drgnIndex", description = "The DRGN#.BIN index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "fileIndex", description = "The file index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "queueIndex", description = "The index into the file queue")
   @Method(0x800cd910L)
   public static FlowControl FUN_800cd910(final RunningScript<?> script) {
     script.params_20[2].set(FUN_800cac38(script.params_20[0].get(), script.params_20[1].get()));

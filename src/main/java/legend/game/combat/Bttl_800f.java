@@ -24,8 +24,8 @@ import legend.game.combat.environment.BattleMenuTextMetrics08;
 import legend.game.combat.types.AttackType;
 import legend.game.combat.ui.BattleDisplayStats144;
 import legend.game.combat.ui.BattleDisplayStatsDigit10;
-import legend.game.combat.ui.BattleMenuStruct58;
 import legend.game.combat.ui.BattleHudCharacterDisplay3c;
+import legend.game.combat.ui.BattleMenuStruct58;
 import legend.game.combat.ui.CombatItem02;
 import legend.game.combat.ui.CombatMenua4;
 import legend.game.combat.ui.FloatingNumberC4;
@@ -80,13 +80,10 @@ import static legend.game.combat.Bttl_800c._800c697c;
 import static legend.game.combat.Bttl_800c._800c697e;
 import static legend.game.combat.Bttl_800c._800c6980;
 import static legend.game.combat.Bttl_800c.activePartyBattleHudCharacterDisplays_800c6c40;
-import static legend.game.combat.Bttl_800c.battleHudBorderMetrics_800c6f4c;
-import static legend.game.combat.Bttl_800c.floatingTextType3DigitUs_800c70e0;
-import static legend.game.combat.Bttl_800c.floatingTextDigitClutOffsets_800c70f4;
-import static legend.game.combat.Bttl_800c.buffDebuffStatIndices_800c723c;
 import static legend.game.combat.Bttl_800c.aliveBentCount_800c669c;
 import static legend.game.combat.Bttl_800c.aliveMonsterCount_800c6758;
 import static legend.game.combat.Bttl_800c.allText_800fb3c0;
+import static legend.game.combat.Bttl_800c.battleHudBorderMetrics_800c6f4c;
 import static legend.game.combat.Bttl_800c.battleItemMenuScrollArrowUvMetrics_800c7190;
 import static legend.game.combat.Bttl_800c.battleMenuBackgroundDisplayMetrics_800fb614;
 import static legend.game.combat.Bttl_800c.battleMenuBackgroundMetrics_800fb5dc;
@@ -98,6 +95,7 @@ import static legend.game.combat.Bttl_800c.battleMenuIconVOffsets_800fb6f4;
 import static legend.game.combat.Bttl_800c.battleMenuTextMetrics_800fb72c;
 import static legend.game.combat.Bttl_800c.battleMenu_800c6c34;
 import static legend.game.combat.Bttl_800c.battleUiElementClutVramXy_800c7114;
+import static legend.game.combat.Bttl_800c.buffDebuffStatIndices_800c723c;
 import static legend.game.combat.Bttl_800c.cameraPositionIndicesIndices_800c6c30;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c.combatItems_800c6988;
@@ -107,12 +105,14 @@ import static legend.game.combat.Bttl_800c.currentCameraPositionIndicesIndex_800
 import static legend.game.combat.Bttl_800c.currentCameraPositionIndicesIndicesIndex_800c6ba1;
 import static legend.game.combat.Bttl_800c.currentStageData_800c6718;
 import static legend.game.combat.Bttl_800c.digitOffsetXy_800c7014;
-import static legend.game.combat.Bttl_800c.floatingTextType1DigitUs_800c7028;
 import static legend.game.combat.Bttl_800c.displayStats_800c6c2c;
 import static legend.game.combat.Bttl_800c.dragoonSpaceElement_800c6b64;
 import static legend.game.combat.Bttl_800c.dragoonSpells_800c6960;
 import static legend.game.combat.Bttl_800c.dragoonSpiritIconClutOffsets_800c71d0;
 import static legend.game.combat.Bttl_800c.floatingNumbers_800c6b5c;
+import static legend.game.combat.Bttl_800c.floatingTextDigitClutOffsets_800c70f4;
+import static legend.game.combat.Bttl_800c.floatingTextType1DigitUs_800c7028;
+import static legend.game.combat.Bttl_800c.floatingTextType3DigitUs_800c70e0;
 import static legend.game.combat.Bttl_800c.iconFlags_800c7194;
 import static legend.game.combat.Bttl_800c.itemTargetAll_800c69c8;
 import static legend.game.combat.Bttl_800c.itemTargetType_800c6b68;
@@ -1152,9 +1152,9 @@ public final class Bttl_800f {
   }
 
   @ScriptDescription("Unknown, this might handle players selecting an attack target")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "targetBentIndex", description = "The targeted BattleEntity27c script index (or -1 if attack all)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "itemOrSpellId", description = "The item or spell ID selected")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "targetBentIndex", description = "The targeted BattleEntity27c script index (or -1 if attack all)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "itemOrSpellId", description = "The item or spell ID selected")
   @Method(0x800f4600L)
   public static FlowControl FUN_800f4600(final RunningScript<?> script) {
     final CombatMenua4 combatMenu = combatMenu_800c6b60;
@@ -1210,9 +1210,9 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, related to selecting a target or using items/spells")
+  @ScriptDescription("Gets the item/spell attack target")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "targetMode")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "targetBentIndex", description = "The targeted BattleEntity27c script index (or -1 if attack all)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "targetBentIndex", description = "The targeted BattleEntity27c script index (or -1 if attack all)")
   @Method(0x800f480cL)
   public static FlowControl FUN_800f480c(final RunningScript<?> script) {
     BattleEntity27c a1 = null;
@@ -3337,7 +3337,7 @@ public final class Bttl_800f {
   @ScriptDescription("Render recovery amount for a battle entity")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "amount", description = "The amount recovered")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2", description = "Something to do with CLUT/colour")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "colourIndex", description = "Which colour to use (indices are unknown)")
   @Method(0x800f984cL)
   public static FlowControl scriptRenderRecover(final RunningScript<?> script) {
     addFloatingNumberForBent(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
@@ -3390,7 +3390,7 @@ public final class Bttl_800f {
 
   @ScriptDescription("Gives a specific item to the player")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "itemId", description = "The item ID")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "itemTaken", description = "The item ID that was given (or -1 if none could be given)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "itemGiven", description = "The item ID that was given (or -1 if none could be given)")
   @Method(0x800f99ecL)
   public static FlowControl scriptGiveItem(final RunningScript<?> script) {
     final int givenItem;
