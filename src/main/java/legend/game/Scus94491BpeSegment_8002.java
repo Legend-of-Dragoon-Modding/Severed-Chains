@@ -242,8 +242,8 @@ public final class Scus94491BpeSegment_8002 {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Mark a character battle object's sound files as no longer used")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c index")
+  @ScriptDescription("Mark a character battle entity's sound files as no longer used")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c index")
   @Method(0x8002013cL)
   public static FlowControl scriptUnuseCharSoundFile(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");

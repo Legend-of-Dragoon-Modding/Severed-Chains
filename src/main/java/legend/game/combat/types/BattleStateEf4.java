@@ -1,8 +1,8 @@
 package legend.game.combat.types;
 
-import legend.game.combat.bobj.BattleObject27c;
-import legend.game.combat.bobj.MonsterBattleObject;
-import legend.game.combat.bobj.PlayerBattleObject;
+import legend.game.combat.bent.BattleEntity27c;
+import legend.game.combat.bent.MonsterBattleEntity;
+import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.types.battlestate.AdditionExtra04;
 import legend.game.combat.types.battlestate.SpecialEffects20;
 import legend.game.combat.types.battlestate.Status04;
@@ -281,7 +281,7 @@ public class BattleStateEf4 {
   public int _54c;
   public int dragonBlockStaff_550;
   public int _554;
-  /** Bit set specifying which bobj indices are being targeted */
+  /** Bit set specifying which bent indices are being targeted */
   public int attackTargets_558;
   public int _55c;
   public int _560;
@@ -297,12 +297,12 @@ public class BattleStateEf4 {
   // This was used for storing animation files in VRAM
 //  public final int[] y_d80 = new int[3];
   public final BattleStateEf4Sub08[] _d8c = new BattleStateEf4Sub08[16];
-  public final ScriptState<? extends BattleObject27c>[] allBobjs_e0c = new ScriptState[13];
-  public final ScriptState<PlayerBattleObject>[] charBobjs_e40 = new ScriptState[4];
-  public final ScriptState<MonsterBattleObject>[] monsterBobjs_e50 = new ScriptState[10];
-  public final ScriptState<? extends BattleObject27c>[] aliveBobjs_e78 = new ScriptState[13];
-  public final ScriptState<? extends BattleObject27c>[] aliveCharBobjs_eac = new ScriptState[4];
-  public final ScriptState<MonsterBattleObject>[] aliveMonsterBobjs_ebc = new ScriptState[10];
+  public final ScriptState<? extends BattleEntity27c>[] allBents_e0c = new ScriptState[13];
+  public final ScriptState<PlayerBattleEntity>[] charBents_e40 = new ScriptState[4];
+  public final ScriptState<MonsterBattleEntity>[] monsterBents_e50 = new ScriptState[10];
+  public final ScriptState<? extends BattleEntity27c>[] aliveBents_e78 = new ScriptState[13];
+  public final ScriptState<? extends BattleEntity27c>[] aliveCharBents_eac = new ScriptState[4];
+  public final ScriptState<MonsterBattleEntity>[] aliveMonsterBents_ebc = new ScriptState[10];
   // Reads directly from gameState now
 //  public TransformationMode morphMode_ee4;
 

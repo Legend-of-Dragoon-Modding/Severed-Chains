@@ -1,6 +1,6 @@
 package legend.game.sound;
 
-import legend.game.combat.bobj.BattleObject27c;
+import legend.game.combat.bent.BattleEntity27c;
 
 public class SpuStruct08 {
   /** ushort */
@@ -9,5 +9,5 @@ public class SpuStruct08 {
   public SoundFile soundFile_02;
   /** byte */
   public int soundIndex_03;
-  public BattleObject27c bobj_04;
+  public BattleEntity27c bent_04;
 }

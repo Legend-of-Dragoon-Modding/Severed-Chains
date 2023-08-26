@@ -1,6 +1,6 @@
 package legend.game.characters;
 
-import legend.game.combat.bobj.BattleObject27c;
+import legend.game.combat.bent.BattleEntity27c;
 
 public class TurnBasedFlatBuff implements StatMod<UnaryStat> {
   private final int amount;
@@ -17,7 +17,7 @@ public class TurnBasedFlatBuff implements StatMod<UnaryStat> {
   }
 
   @Override
-  public void turnFinished(final StatCollection stats, final StatType<UnaryStat> type, final BattleObject27c bobj) {
+  public void turnFinished(final StatCollection stats, final StatType<UnaryStat> type, final BattleEntity27c bent) {
     this.turns--;
   }
 

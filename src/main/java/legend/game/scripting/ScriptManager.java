@@ -83,6 +83,30 @@ public class ScriptManager {
     throw new RuntimeException("Ran out of script states");
   }
 
+  public ScriptState<?> getState(final int index) {
+    if(index == -1) {
+      return null;
+    }
+
+    return scriptStatePtrArr_800bc1c0[index];
+  }
+
+  public <T> ScriptState<T> getState(final int index, final Class<T> type) {
+    if(index == -1) {
+      return null;
+    }
+
+    return ScriptState.classFor(type).cast(scriptStatePtrArr_800bc1c0[index]);
+  }
+
+  public <T> T getObject(final int index, final Class<T> type) {
+    if(index == -1 || scriptStatePtrArr_800bc1c0[index] == null) {
+      return null;
+    }
+
+    return type.cast(scriptStatePtrArr_800bc1c0[index].innerStruct_00);
+  }
+
   public <T> ScriptState<T> allocateScriptState(final String name, @Nullable final T type) {
     return this.allocateScriptState(this.findFreeScriptState(), name, 0, type);
   }

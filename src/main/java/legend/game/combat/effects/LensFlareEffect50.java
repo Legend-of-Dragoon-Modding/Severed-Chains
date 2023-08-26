@@ -12,7 +12,7 @@ public class LensFlareEffect50 implements Effect {
   public final int[] clut_2c = new int[5];
 
   public final LensFlareEffectInstance3c[] instances_38 = new LensFlareEffectInstance3c[5];
-  public int bobjIndex_3c;
+  public int bentIndex_3c;
   public short x_40;
   public short y_42;
   public short z_44;

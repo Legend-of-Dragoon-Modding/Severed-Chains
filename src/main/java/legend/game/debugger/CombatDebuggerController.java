@@ -18,9 +18,9 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import legend.game.characters.UnaryStat;
 import legend.game.characters.VitalsStat;
-import legend.game.combat.bobj.BattleObject27c;
-import legend.game.combat.bobj.MonsterBattleObject;
-import legend.game.combat.bobj.PlayerBattleObject;
+import legend.game.combat.bent.BattleEntity27c;
+import legend.game.combat.bent.MonsterBattleEntity;
+import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptState;
@@ -32,8 +32,8 @@ import static legend.game.combat.Bttl_800c.playerNames_800fb378;
 
 public class CombatDebuggerController {
   @FXML
-  private ListView<ListItem> bobjList;
-  private final ObservableList<ListItem> bobjs = FXCollections.observableArrayList(e -> new Observable[] {e.prop});
+  private ListView<ListItem> bentList;
+  private final ObservableList<ListItem> bents = FXCollections.observableArrayList(e -> new Observable[] {e.prop});
 
   @FXML
   private Button scriptIndex;
@@ -83,11 +83,11 @@ public class CombatDebuggerController {
 
   public void initialize() {
     for(int i = 0; i < 10; i++) {
-      this.bobjs.add(new ListItem(this::getCombatantName, i));
+      this.bents.add(new ListItem(this::getCombatantName, i));
     }
 
-    this.bobjList.setItems(this.bobjs);
-    this.bobjList.setCellFactory(param -> {
+    this.bentList.setItems(this.bents);
+    this.bentList.setCellFactory(param -> {
       final TextFieldListCell<ListItem> cell = new TextFieldListCell<>();
       cell.setConverter(new StringConverter<>() {
         @Override
@@ -103,7 +103,7 @@ public class CombatDebuggerController {
       return cell;
     });
 
-    this.bobjList.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+    this.bentList.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
       final int index = newValue.intValue();
       this.displayStats(index);
     });
@@ -127,21 +127,21 @@ public class CombatDebuggerController {
     this.aavd.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9999));
     this.mavd.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 9999));
 
-    this.bobjList.getSelectionModel().select(0);
+    this.bentList.getSelectionModel().select(0);
   }
 
   private void displayStats(final int index) {
-    final ScriptState<? extends BattleObject27c> state = battleState_8006e398.allBobjs_e0c[index];
+    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[index];
 
     if(state == null) {
       return;
     }
 
-    final BattleObject27c bobj = state.innerStruct_00;
+    final BattleEntity27c bent = state.innerStruct_00;
 
     this.scriptIndex.setText("View script %d".formatted(state.index));
 
-    if(bobj instanceof final PlayerBattleObject player) {
+    if(bent instanceof final PlayerBattleEntity player) {
       final VitalsStat mp = player.stats.getStat(CoreMod.MP_STAT.get());
       final VitalsStat sp = player.stats.getStat(CoreMod.SP_STAT.get());
 
@@ -155,7 +155,7 @@ public class CombatDebuggerController {
       this.mp.setVisible(true);
       this.maxMp.setVisible(true);
       this.sp.setVisible(true);
-    } else if(bobj instanceof MonsterBattleObject) {
+    } else if(bent instanceof MonsterBattleEntity) {
       this.level.setVisible(false);
       this.dlevel.setVisible(false);
       this.mp.setVisible(false);
@@ -163,74 +163,74 @@ public class CombatDebuggerController {
       this.sp.setVisible(false);
     }
 
-    final VitalsStat hp = bobj.stats.getStat(CoreMod.HP_STAT.get());
+    final VitalsStat hp = bent.stats.getStat(CoreMod.HP_STAT.get());
     this.hp.getValueFactory().setValue(hp.getCurrent());
     this.maxHp.getValueFactory().setValue(hp.getMaxRaw());
 
-    final UnaryStat speedStat = bobj.stats.getStat(CoreMod.SPEED_STAT.get());
+    final UnaryStat speedStat = bent.stats.getStat(CoreMod.SPEED_STAT.get());
     final int speedMod = speedStat.getMods();
     this.spd.getValueFactory().setValue(speedStat.getRaw());
     this.spdMod.setText(speedMod < 0 ? Integer.toString(speedMod) : "+" + speedMod);
 
-    this.turn.getValueFactory().setValue(bobj.turnValue_4c);
-    this.atk.getValueFactory().setValue(bobj.attack_34);
-    this.def.getValueFactory().setValue(bobj.defence_38);
-    this.matk.getValueFactory().setValue(bobj.magicAttack_36);
-    this.mdef.getValueFactory().setValue(bobj.magicDefence_3a);
-    this.ahit.getValueFactory().setValue(bobj.attackHit_3c);
-    this.mhit.getValueFactory().setValue(bobj.magicHit_3e);
-    this.aavd.getValueFactory().setValue(bobj.attackAvoid_40);
-    this.mavd.getValueFactory().setValue(bobj.magicAvoid_42);
+    this.turn.getValueFactory().setValue(bent.turnValue_4c);
+    this.atk.getValueFactory().setValue(bent.attack_34);
+    this.def.getValueFactory().setValue(bent.defence_38);
+    this.matk.getValueFactory().setValue(bent.magicAttack_36);
+    this.mdef.getValueFactory().setValue(bent.magicDefence_3a);
+    this.ahit.getValueFactory().setValue(bent.attackHit_3c);
+    this.mhit.getValueFactory().setValue(bent.magicHit_3e);
+    this.aavd.getValueFactory().setValue(bent.attackAvoid_40);
+    this.mavd.getValueFactory().setValue(bent.magicAvoid_42);
   }
 
   private String getCombatantName(final int combatantIndex) {
-    final ScriptState<? extends BattleObject27c> state = battleState_8006e398.allBobjs_e0c[combatantIndex];
+    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[combatantIndex];
 
     if(state == null) {
       return "unused";
     }
 
-    final BattleObject27c bobj = state.innerStruct_00;
+    final BattleEntity27c bent = state.innerStruct_00;
 
-    final CombatantStruct1a8 combatant = combatants_8005e398[bobj.combatantIndex_26c];
+    final CombatantStruct1a8 combatant = combatants_8005e398[bent.combatantIndex_26c];
 
     if((combatant.flags_19e & 0x1) == 0) {
       return "unused";
     }
 
     if((combatant.flags_19e & 0x4) == 0) {
-      return currentEnemyNames_800c69d0.get(bobj.charSlot_276).get();
+      return currentEnemyNames_800c69d0.get(bent.charSlot_276).get();
     }
 
-    return bobj.charId_272 == 8 ? "Who?" : playerNames_800fb378.get(bobj.charId_272).deref().get();
+    return bent.charId_272 == 8 ? "Who?" : playerNames_800fb378.get(bent.charId_272).deref().get();
   }
 
   public void openScriptDebugger(final ActionEvent event) throws Exception {
-    if(this.bobjList.getSelectionModel().getSelectedIndex() < 0) {
+    if(this.bentList.getSelectionModel().getSelectedIndex() < 0) {
       return;
     }
 
-    final ScriptState<? extends BattleObject27c> state = battleState_8006e398.allBobjs_e0c[this.bobjList.getSelectionModel().getSelectedIndex()];
+    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[this.bentList.getSelectionModel().getSelectedIndex()];
 
     final ScriptDebugger scriptDebugger = new ScriptDebugger();
     scriptDebugger.preselectScript(state.index).start(new Stage());
   }
 
   public void refreshStats(final ActionEvent event) {
-    this.displayStats(this.bobjList.getSelectionModel().getSelectedIndex());
+    this.displayStats(this.bentList.getSelectionModel().getSelectedIndex());
   }
 
   public void updateStats(final ActionEvent event) {
-    final int index = this.bobjList.getSelectionModel().getSelectedIndex();
-    final ScriptState<? extends BattleObject27c> state = battleState_8006e398.allBobjs_e0c[index];
+    final int index = this.bentList.getSelectionModel().getSelectedIndex();
+    final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[index];
 
     if(state == null) {
       return;
     }
 
-    final BattleObject27c bobj = state.innerStruct_00;
+    final BattleEntity27c bent = state.innerStruct_00;
 
-    if(bobj instanceof final PlayerBattleObject player) {
+    if(bent instanceof final PlayerBattleEntity player) {
       final VitalsStat mp = player.stats.getStat(CoreMod.MP_STAT.get());
       final VitalsStat sp = player.stats.getStat(CoreMod.SP_STAT.get());
 
@@ -241,20 +241,20 @@ public class CombatDebuggerController {
       sp.setCurrent(this.sp.getValue());
     }
 
-    final VitalsStat hp = bobj.stats.getStat(CoreMod.HP_STAT.get());
+    final VitalsStat hp = bent.stats.getStat(CoreMod.HP_STAT.get());
     hp.setCurrent(this.hp.getValue());
     hp.setMaxRaw(this.maxHp.getValue());
 
-    bobj.stats.getStat(CoreMod.SPEED_STAT.get()).setRaw(this.spd.getValue());
-    bobj.turnValue_4c = this.turn.getValue().shortValue();
-    bobj.attack_34 = this.atk.getValue();
-    bobj.defence_38 = this.def.getValue();
-    bobj.magicAttack_36 = this.matk.getValue();
-    bobj.magicDefence_3a = this.mdef.getValue();
-    bobj.attackHit_3c = this.ahit.getValue().shortValue();
-    bobj.magicHit_3e = this.mhit.getValue().shortValue();
-    bobj.attackAvoid_40 = this.aavd.getValue().shortValue();
-    bobj.magicAvoid_42 = this.mavd.getValue().shortValue();
+    bent.stats.getStat(CoreMod.SPEED_STAT.get()).setRaw(this.spd.getValue());
+    bent.turnValue_4c = this.turn.getValue().shortValue();
+    bent.attack_34 = this.atk.getValue();
+    bent.defence_38 = this.def.getValue();
+    bent.magicAttack_36 = this.matk.getValue();
+    bent.magicDefence_3a = this.mdef.getValue();
+    bent.attackHit_3c = this.ahit.getValue().shortValue();
+    bent.magicHit_3e = this.mhit.getValue().shortValue();
+    bent.attackAvoid_40 = this.aavd.getValue().shortValue();
+    bent.magicAvoid_42 = this.mavd.getValue().shortValue();
   }
 
   private static class ListItem {

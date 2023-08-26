@@ -1,4 +1,4 @@
-package legend.game.combat.bobj;
+package legend.game.combat.bent;
 
 import legend.core.Latch;
 import legend.core.memory.Method;
@@ -14,8 +14,8 @@ import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.combat.Bttl_800c.getHitProperty;
 import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
 
-public class PlayerBattleObject extends BattleObject27c {
-  private final Latch<ScriptState<PlayerBattleObject>> scriptState;
+public class PlayerBattleEntity extends BattleEntity27c {
+  private final Latch<ScriptState<PlayerBattleEntity>> scriptState;
 
   public Element element;
 
@@ -62,11 +62,11 @@ public class PlayerBattleObject extends BattleObject27c {
   public int hpMulti_13c;
   public int mpMulti_13e;
 
-  public PlayerBattleObject(final String name, final int scriptIndex) {
+  public PlayerBattleEntity(final String name, final int scriptIndex) {
     super(CoreMod.PLAYER_TYPE.get(), name);
 
     //noinspection unchecked
-    this.scriptState = new Latch<>(() -> (ScriptState<PlayerBattleObject>)scriptStatePtrArr_800bc1c0[scriptIndex]);
+    this.scriptState = new Latch<>(() -> (ScriptState<PlayerBattleEntity>)scriptStatePtrArr_800bc1c0[scriptIndex]);
   }
 
   public boolean isDragoon() {
@@ -107,7 +107,7 @@ public class PlayerBattleObject extends BattleObject27c {
 
   @Override
   @Method(0x800f2af4L)
-  public int calculatePhysicalDamage(final BattleObject27c target) {
+  public int calculatePhysicalDamage(final BattleEntity27c target) {
     int attack = this.attack_34;
     int attackMultiplier = 100;
 
@@ -150,7 +150,7 @@ public class PlayerBattleObject extends BattleObject27c {
    */
   @Override
   @Method(0x800f2e98L)
-  public int calculateMagicDamage(final BattleObject27c target, final int magicType) {
+  public int calculateMagicDamage(final BattleEntity27c target, final int magicType) {
     int matk = this.magicAttack_36;
     if(magicType == 1) {
       matk += spellStats_800fa0b8[this.spellId_4e].multi_04;

@@ -23,8 +23,8 @@ import legend.core.memory.types.UnsignedShortRef;
 import legend.core.opengl.MatrixStack;
 import legend.core.opengl.ScissorStack;
 import legend.core.spu.Voice;
-import legend.game.combat.bobj.BattleObject27c;
-import legend.game.combat.bobj.MonsterBattleObject;
+import legend.game.combat.bent.BattleEntity27c;
+import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
 import legend.game.combat.environment.StageData10;
 import legend.game.debugger.Debugger;
@@ -202,7 +202,7 @@ import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
 import static legend.game.combat.Bttl_800c.FUN_800c882c;
 import static legend.game.combat.Bttl_800c.FUN_800c8cf0;
 import static legend.game.combat.Bttl_800c.FUN_800c90b0;
-import static legend.game.combat.Bttl_800c.cacheLivingBobjs;
+import static legend.game.combat.Bttl_800c.cacheLivingBents;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800d.FUN_800d8f10;
@@ -1337,14 +1337,14 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_800187b0
-    cacheLivingBobjs();
+    cacheLivingBents();
   }
 
   @Method(0x800187ccL)
   public static long FUN_800187cc() {
     //LAB_80018800
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      if(FUN_800c90b0(battleState_8006e398.charBobjs_e40[charSlot].innerStruct_00.combatantIndex_26c) == 0) {
+      if(FUN_800c90b0(battleState_8006e398.charBents_e40[charSlot].innerStruct_00.combatantIndex_26c) == 0) {
         return 0;
       }
     }
@@ -1358,7 +1358,7 @@ public final class Scus94491BpeSegment {
   public static long FUN_8001886c() {
     //LAB_800188a09
     for(int i = 0; i < monsterCount_800c6768.get(); i++) {
-      if(FUN_800c90b0(battleState_8006e398.monsterBobjs_e50[i].innerStruct_00.combatantIndex_26c) == 0) {
+      if(FUN_800c90b0(battleState_8006e398.monsterBents_e50[i].innerStruct_00.combatantIndex_26c) == 0) {
         return 0;
       }
     }
@@ -1371,7 +1371,7 @@ public final class Scus94491BpeSegment {
   @Method(0x8001890cL)
   public static void FUN_8001890c() {
     FUN_800d8f10();
-    cacheLivingBobjs();
+    cacheLivingBents();
     FUN_800c8cf0();
     FUN_800c882c();
   }
@@ -1847,15 +1847,15 @@ public final class Scus94491BpeSegment {
    * @param type 1 - player, 2 - monster
    */
   @Method(0x80019e24L)
-  public static void playBobjSound(final int type, final ScriptState<BattleObject27c> state, final int soundIndex, final int a3, final int a4, final int initialDelay, final int repeatDelay) {
-    final BattleObject27c bobj = state.innerStruct_00;
+  public static void playBentSound(final int type, final ScriptState<BattleEntity27c> state, final int soundIndex, final int a3, final int a4, final int initialDelay, final int repeatDelay) {
+    final BattleEntity27c bent = state.innerStruct_00;
 
     int soundFileIndex = 0;
     if(type == 1) {
       //LAB_80019e68
       for(int charSlot = 0; charSlot < 3; charSlot++) {
         final int index = characterSoundFileIndices_800500f8.get(charSlot).get();
-        if(soundFiles_800bcf80[index].charId_02 == bobj.charId_272) {
+        if(soundFiles_800bcf80[index].charId_02 == bent.charId_272) {
           //LAB_80019ea4
           soundFileIndex = index;
           break;
@@ -1866,7 +1866,7 @@ public final class Scus94491BpeSegment {
       //LAB_80019f30
       for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
         final int index = monsterSoundFileIndices_800500e8.get(monsterSlot).get();
-        if(soundFiles_800bcf80[index].charId_02 == bobj.charId_272) {
+        if(soundFiles_800bcf80[index].charId_02 == bent.charId_272) {
           //LAB_80019ea4
           soundFileIndex = index;
           break;
@@ -1895,15 +1895,15 @@ public final class Scus94491BpeSegment {
     //LAB_80019f9c
   }
 
-  /** Same as playBobjSound, but looks up bobj by combatant index */
+  /** Same as playBentSound, but looks up bent by combatant index */
   @Method(0x80019facL)
   public static void playCombatantSound(final int type, final int charOrMonsterIndex, final int soundIndex, final short initialDelay, final short repeatDelay) {
     int soundFileIndex = 0;
-    ScriptState<? extends BattleObject27c> state = null;
+    ScriptState<? extends BattleEntity27c> state = null;
 
     //LAB_80019fdc
     for(int i = 0; i < monsterCount_800c6768.get(); i++) {
-      final ScriptState<MonsterBattleObject> monster = battleState_8006e398.monsterBobjs_e50[i];
+      final ScriptState<MonsterBattleEntity> monster = battleState_8006e398.monsterBents_e50[i];
 
       if(monster.innerStruct_00.charId_272 == charOrMonsterIndex) {
         //LAB_8001a070
@@ -1951,12 +1951,12 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001a164L)
-  public static void stopBobjSound(final BattleObject27c bobj, final int soundIndex, final int mode) {
+  public static void stopBentSound(final BattleEntity27c bent, final int soundIndex, final int mode) {
     //LAB_8001a1a8
     for(int sequenceIndex = 0; sequenceIndex < 24; sequenceIndex++) {
       final SpuStruct08 s0 = _800bc9a8[sequenceIndex];
 
-      if(s0.soundIndex_03 == soundIndex && s0.bobj_04 == bobj) {
+      if(s0.soundIndex_03 == soundIndex && s0.bent_04 == bent) {
         stopSoundSequence(sequenceData_800c4ac8[sequenceIndex], true);
 
         if((mode & 0x1) == 0) {
@@ -1970,7 +1970,7 @@ public final class Scus94491BpeSegment {
     //LAB_8001a1f4
     if((mode & 0x2) != 0) {
       //LAB_8001a208
-      queuedSounds_800bd110.removeIf(queuedSound -> queuedSound.type_00 != 0 && (queuedSound.repeatDelayTotal_20 != 0 || queuedSound.initialDelay_24 != 0) && queuedSound.soundIndex_0c == soundIndex && queuedSound.bobj_04 == bobj);
+      queuedSounds_800bd110.removeIf(queuedSound -> queuedSound.type_00 != 0 && (queuedSound.repeatDelayTotal_20 != 0 || queuedSound.initialDelay_24 != 0) && queuedSound.soundIndex_0c == soundIndex && queuedSound.bent_04 == bent);
     }
 
     //LAB_8001a270
@@ -2051,16 +2051,16 @@ public final class Scus94491BpeSegment {
       final SpuStruct08 struct08 = _800bc9a8[sequenceIndex];
       struct08.soundFile_02 = playingSound.soundFile_08;
       struct08.soundIndex_03 = playingSound.soundIndex_0c;
-      struct08.bobj_04 = playingSound.bobj_04;
+      struct08.bent_04 = playingSound.bent_04;
     }
 
     //LAB_8001a704
   }
 
   @Method(0x8001a714L)
-  public static void playSound(final int type, final SoundFile soundFile, final int soundIndex, final QueuedSound28 playingSound, final PlayableSound0c playableSound, final SoundFileIndices soundFileIndices, final int a6, final short pitchShiftVolRight, final short pitchShiftVolLeft, final short pitch, final short repeatDelay, final short initialDelay, @Nullable final ScriptState<? extends BattleObject27c> state) {
+  public static void playSound(final int type, final SoundFile soundFile, final int soundIndex, final QueuedSound28 playingSound, final PlayableSound0c playableSound, final SoundFileIndices soundFileIndices, final int a6, final short pitchShiftVolRight, final short pitchShiftVolLeft, final short pitch, final short repeatDelay, final short initialDelay, @Nullable final ScriptState<? extends BattleEntity27c> state) {
     playingSound.type_00 = type;
-    playingSound.bobj_04 = state != null ? state.innerStruct_00 : null;
+    playingSound.bent_04 = state != null ? state.innerStruct_00 : null;
     playingSound.soundFile_08 = soundFile;
     playingSound.soundIndex_0c = soundIndex;
     playingSound.playableSound_10 = playableSound;
@@ -2123,28 +2123,28 @@ public final class Scus94491BpeSegment {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Play a battle object sound")
+  @ScriptDescription("Play a battle entity sound")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "1 = player, 2 = monster")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "soundIndex", description = "The sound index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "a3")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "a4")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "initialDelay", description = "The initial delay before the sound starts")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "repeatDelay", description = "The delay before a sound repeats")
   @Method(0x8001abd0L)
-  public static FlowControl scriptPlayBobjSound(final RunningScript<?> script) {
-    playBobjSound(script.params_20[0].get(), (ScriptState<BattleObject27c>)scriptStatePtrArr_800bc1c0[script.params_20[1].get()], script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get());
+  public static FlowControl scriptPlayBentSound(final RunningScript<?> script) {
+    playBentSound(script.params_20[0].get(), (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[script.params_20[1].get()], script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get());
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Stop a battle object sound")
+  @ScriptDescription("Stop a battle entity sound")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "soundIndex", description = "The sound index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode")
   @Method(0x8001ac48L)
-  public static FlowControl scriptStopBobjSound(final RunningScript<?> script) {
-    stopBobjSound((BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00, script.params_20[2].get(), script.params_20[3].get());
+  public static FlowControl scriptStopBentSound(final RunningScript<?> script) {
+    stopBentSound((BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00, script.params_20[2].get(), script.params_20[3].get());
     return FlowControl.CONTINUE;
   }
 
@@ -2160,14 +2160,14 @@ public final class Scus94491BpeSegment {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Stop a battle object sound")
+  @ScriptDescription("Stop a battle entity sound")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "soundIndex", description = "The sound index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode")
   @Method(0x8001acd8L)
-  public static FlowControl scriptStopBobjSound2(final RunningScript<?> script) {
-    return scriptStopBobjSound(script);
+  public static FlowControl scriptStopBentSound2(final RunningScript<?> script) {
+    return scriptStopBentSound(script);
   }
 
   @Method(0x8001ad18L)
@@ -2730,15 +2730,15 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001cce8L)
-  public static void loadCharAttackSounds(final int bobjIndex, final int type) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[bobjIndex].innerStruct_00;
+  public static void loadCharAttackSounds(final int bentIndex, final int type) {
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[bentIndex].innerStruct_00;
 
     //LAB_8001cd3c
     int charSlot;
     for(charSlot = 0; charSlot < 3; charSlot++) {
       final SoundFile soundFile = soundFiles_800bcf80[characterSoundFileIndices_800500f8.get(charSlot).get()];
 
-      if(soundFile.charId_02 == bobj.charId_272) {
+      if(soundFile.charId_02 == bent.charId_272) {
         break;
       }
     }
@@ -2754,11 +2754,11 @@ public final class Scus94491BpeSegment {
     final String soundName;
     if(type != 0) {
       //LAB_8001ce44
-      fileIndex = 1298 + bobj.charId_272;
+      fileIndex = 1298 + bent.charId_272;
       soundName = "Char slot %d attack sounds".formatted(fileIndex);
-    } else if(bobj.charId_272 != 0 || (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 == 0) {
+    } else if(bent.charId_272 != 0 || (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 == 0) {
       //LAB_8001ce18
-      fileIndex = 1307 + bobj.charId_272;
+      fileIndex = 1307 + bent.charId_272;
       soundName = "Char slot %d dragoon attack sounds".formatted(fileIndex);
     } else {
       fileIndex = 1307;
@@ -2793,8 +2793,8 @@ public final class Scus94491BpeSegment {
    * </ol>
    */
   @Method(0x8001d068L)
-  public static void loadDeffSounds(final ScriptState<BattleObject27c> bobjState, final int type) {
-    final BattleObject27c bobj = bobjState.innerStruct_00;
+  public static void loadDeffSounds(final ScriptState<BattleEntity27c> bentState, final int type) {
+    final BattleEntity27c bent = bentState.innerStruct_00;
 
     unloadSoundFile(3);
     unloadSoundFile(6);
@@ -2802,10 +2802,10 @@ public final class Scus94491BpeSegment {
     if(type == 0) {
       //LAB_8001d0e0
       loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x40);
-      if(bobj.charId_272 != 0 || (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 == 0) {
+      if(bent.charId_272 != 0 || (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 == 0) {
         //LAB_8001d134
         // Regular dragoons
-        loadDrgnDir(0, 1317 + bobj.charId_272, files -> FUN_8001e98c(files, "%s dragoon transformation sounds (file %d)".formatted(getCharacterName(bobj.charId_272), 1317 + bobj.charId_272)));
+        loadDrgnDir(0, 1317 + bent.charId_272, files -> FUN_8001e98c(files, "%s dragoon transformation sounds (file %d)".formatted(getCharacterName(bent.charId_272), 1317 + bent.charId_272)));
       } else {
         // Divine dragoon
         loadDrgnDir(0, 1328, files -> FUN_8001e98c(files, "Divine dragoon transformation sounds (file 1328)"));
@@ -3370,7 +3370,7 @@ public final class Scus94491BpeSegment {
   }
 
   @ScriptDescription("Loads attack sounds for a character")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "The attack sounds type, 1 for regular, any other value for dragoon")
   @Method(0x8001e920L)
   public static FlowControl scriptLoadCharAttackSounds(final RunningScript<?> script) {

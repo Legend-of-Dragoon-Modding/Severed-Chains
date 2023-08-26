@@ -1,6 +1,6 @@
 package legend.game.characters;
 
-import legend.game.combat.bobj.BattleObject27c;
+import legend.game.combat.bent.BattleEntity27c;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,9 +19,9 @@ public class StatCollection {
     return (T)this.stats.get(type);
   }
 
-  public void turnFinished(final BattleObject27c bobj) {
+  public void turnFinished(final BattleEntity27c bent) {
     for(final Stat stat : this.stats.values()) {
-      stat.turnFinished(bobj);
+      stat.turnFinished(bent);
     }
   }
 }

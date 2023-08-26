@@ -11,10 +11,10 @@ import legend.game.Scus94491BpeSegment_8002;
 import legend.game.characters.Element;
 import legend.game.characters.TurnBasedPercentileBuff;
 import legend.game.characters.VitalsStat;
-import legend.game.combat.bobj.AttackEvent;
-import legend.game.combat.bobj.BattleObject27c;
-import legend.game.combat.bobj.MonsterBattleObject;
-import legend.game.combat.bobj.PlayerBattleObject;
+import legend.game.combat.bent.AttackEvent;
+import legend.game.combat.bent.BattleEntity27c;
+import legend.game.combat.bent.MonsterBattleEntity;
+import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.environment.BattleHudBorderMetrics14;
 import legend.game.combat.environment.BattleMenuBackgroundDisplayMetrics0c;
 import legend.game.combat.environment.BattleMenuBackgroundUvMetrics04;
@@ -24,8 +24,8 @@ import legend.game.combat.environment.BattleMenuTextMetrics08;
 import legend.game.combat.types.AttackType;
 import legend.game.combat.ui.BattleDisplayStats144;
 import legend.game.combat.ui.BattleDisplayStatsDigit10;
-import legend.game.combat.ui.BattleMenuStruct58;
 import legend.game.combat.ui.BattleHudCharacterDisplay3c;
+import legend.game.combat.ui.BattleMenuStruct58;
 import legend.game.combat.ui.CombatItem02;
 import legend.game.combat.ui.CombatMenua4;
 import legend.game.combat.ui.FloatingNumberC4;
@@ -80,13 +80,10 @@ import static legend.game.combat.Bttl_800c._800c697c;
 import static legend.game.combat.Bttl_800c._800c697e;
 import static legend.game.combat.Bttl_800c._800c6980;
 import static legend.game.combat.Bttl_800c.activePartyBattleHudCharacterDisplays_800c6c40;
-import static legend.game.combat.Bttl_800c.battleHudBorderMetrics_800c6f4c;
-import static legend.game.combat.Bttl_800c.floatingTextType3DigitUs_800c70e0;
-import static legend.game.combat.Bttl_800c.floatingTextDigitClutOffsets_800c70f4;
-import static legend.game.combat.Bttl_800c.buffDebuffStatIndices_800c723c;
-import static legend.game.combat.Bttl_800c.aliveBobjCount_800c669c;
+import static legend.game.combat.Bttl_800c.aliveBentCount_800c669c;
 import static legend.game.combat.Bttl_800c.aliveMonsterCount_800c6758;
 import static legend.game.combat.Bttl_800c.allText_800fb3c0;
+import static legend.game.combat.Bttl_800c.battleHudBorderMetrics_800c6f4c;
 import static legend.game.combat.Bttl_800c.battleItemMenuScrollArrowUvMetrics_800c7190;
 import static legend.game.combat.Bttl_800c.battleMenuBackgroundDisplayMetrics_800fb614;
 import static legend.game.combat.Bttl_800c.battleMenuBackgroundMetrics_800fb5dc;
@@ -98,6 +95,7 @@ import static legend.game.combat.Bttl_800c.battleMenuIconVOffsets_800fb6f4;
 import static legend.game.combat.Bttl_800c.battleMenuTextMetrics_800fb72c;
 import static legend.game.combat.Bttl_800c.battleMenu_800c6c34;
 import static legend.game.combat.Bttl_800c.battleUiElementClutVramXy_800c7114;
+import static legend.game.combat.Bttl_800c.buffDebuffStatIndices_800c723c;
 import static legend.game.combat.Bttl_800c.cameraPositionIndicesIndices_800c6c30;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c.combatItems_800c6988;
@@ -107,12 +105,14 @@ import static legend.game.combat.Bttl_800c.currentCameraPositionIndicesIndex_800
 import static legend.game.combat.Bttl_800c.currentCameraPositionIndicesIndicesIndex_800c6ba1;
 import static legend.game.combat.Bttl_800c.currentStageData_800c6718;
 import static legend.game.combat.Bttl_800c.digitOffsetXy_800c7014;
-import static legend.game.combat.Bttl_800c.floatingTextType1DigitUs_800c7028;
 import static legend.game.combat.Bttl_800c.displayStats_800c6c2c;
 import static legend.game.combat.Bttl_800c.dragoonSpaceElement_800c6b64;
 import static legend.game.combat.Bttl_800c.dragoonSpells_800c6960;
 import static legend.game.combat.Bttl_800c.dragoonSpiritIconClutOffsets_800c71d0;
 import static legend.game.combat.Bttl_800c.floatingNumbers_800c6b5c;
+import static legend.game.combat.Bttl_800c.floatingTextDigitClutOffsets_800c70f4;
+import static legend.game.combat.Bttl_800c.floatingTextType1DigitUs_800c7028;
+import static legend.game.combat.Bttl_800c.floatingTextType3DigitUs_800c70e0;
 import static legend.game.combat.Bttl_800c.iconFlags_800c7194;
 import static legend.game.combat.Bttl_800c.itemTargetAll_800c69c8;
 import static legend.game.combat.Bttl_800c.itemTargetType_800c6b68;
@@ -121,7 +121,7 @@ import static legend.game.combat.Bttl_800c.melbuStageToMonsterNameIndices_800c6f
 import static legend.game.combat.Bttl_800c.protectedItems_800c72cc;
 import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
 import static legend.game.combat.Bttl_800c.targetAllItemIds_800c7124;
-import static legend.game.combat.Bttl_800c.targetBobjs_800c71f0;
+import static legend.game.combat.Bttl_800c.targetBents_800c71f0;
 import static legend.game.combat.Bttl_800c.textboxColours_800c6fec;
 import static legend.game.combat.Bttl_800c.uiTextureElementBrightness_800c71ec;
 import static legend.game.combat.Bttl_800e.initializeBattleHudCharacterDisplay;
@@ -350,9 +350,9 @@ public final class Bttl_800f {
 
   @Method(0x800f1aa8L)
   public static boolean checkHit(final int attackerIndex, final int defenderIndex, final AttackType attackType) {
-    final BattleObject27c attacker = (BattleObject27c)scriptStatePtrArr_800bc1c0[attackerIndex].innerStruct_00;
-    final BattleObject27c defender = (BattleObject27c)scriptStatePtrArr_800bc1c0[defenderIndex].innerStruct_00;
-    final boolean isMonster = attacker instanceof MonsterBattleObject;
+    final BattleEntity27c attacker = (BattleEntity27c)scriptStatePtrArr_800bc1c0[attackerIndex].innerStruct_00;
+    final BattleEntity27c defender = (BattleEntity27c)scriptStatePtrArr_800bc1c0[defenderIndex].innerStruct_00;
+    final boolean isMonster = attacker instanceof MonsterBattleEntity;
 
     int effectAccuracy;
     if(attackType == AttackType.PHYSICAL) {
@@ -433,7 +433,7 @@ public final class Bttl_800f {
    * @param magicType item (0), spell (1)
    */
   @Method(0x800f204cL)
-  public static int calculateMagicDamage(final BattleObject27c attacker, final BattleObject27c defender, final int magicType) {
+  public static int calculateMagicDamage(final BattleEntity27c attacker, final BattleEntity27c defender, final int magicType) {
     // Stat mod item
     if(magicType == 0 && attacker.item_d4.type_0b != 0) {
       //LAB_800f2404
@@ -480,22 +480,22 @@ public final class Bttl_800f {
     if(attacker.spell_94 != null && (attacker.spell_94.flags_01 & 0x4) != 0) {
       damage = defender.stats.getStat(CoreMod.HP_STAT.get()).getMax() * attacker.spell_94.multi_04 / 100;
 
-      final List<BattleObject27c> targets = new ArrayList<>();
+      final List<BattleEntity27c> targets = new ArrayList<>();
       if((attacker.spell_94.targetType_00 & 0x8) != 0) { // Attack all
-        if(attacker instanceof PlayerBattleObject) {
+        if(attacker instanceof PlayerBattleEntity) {
           for(int i = 0; i < charCount_800c677c.get(); i++) {
-            targets.add(battleState_8006e398.charBobjs_e40[i].innerStruct_00);
+            targets.add(battleState_8006e398.charBents_e40[i].innerStruct_00);
           }
         } else {
           for(int i = 0; i < aliveMonsterCount_800c6758.get(); i++) {
-            targets.add(battleState_8006e398.aliveMonsterBobjs_ebc[i].innerStruct_00);
+            targets.add(battleState_8006e398.aliveMonsterBents_ebc[i].innerStruct_00);
           }
         }
       } else { // Attack single
         targets.add(defender);
       }
 
-      for(final BattleObject27c target : targets) {
+      for(final BattleEntity27c target : targets) {
         applyBuffOrDebuff(attacker, target);
       }
 
@@ -525,15 +525,15 @@ public final class Bttl_800f {
     return damage;
   }
 
-  @ScriptDescription("Perform a battle object's physical attack against another battle object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attackerIndex", description = "The BattleObject27c attacker script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "defenderIndex", description = "The BattleObject27c defender script index")
+  @ScriptDescription("Perform a battle entity's physical attack against another battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attackerIndex", description = "The BattleEntity27c attacker script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "defenderIndex", description = "The BattleEntity27c defender script index")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "damage", description = "The amount of damage done")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "specialEffects", description = "Status effect bitset (or -1 for none)")
   @Method(0x800f2500L)
   public static FlowControl scriptPhysicalAttack(final RunningScript<?> script) {
-    final BattleObject27c attacker = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    final BattleObject27c defender = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
+    final BattleEntity27c attacker = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c defender = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
 
     final int damage = EVENTS.postEvent(new AttackEvent(attacker, defender, AttackType.PHYSICAL, CoreMod.PHYSICAL_DAMAGE_FORMULA.calculate(attacker, defender))).damage;
 
@@ -542,16 +542,16 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Perform a battle object's magic or status attack against another battle object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attackerIndex", description = "The BattleObject27c attacker script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "defenderIndex", description = "The BattleObject27c defender script index")
+  @ScriptDescription("Perform a battle entity's magic or status attack against another battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attackerIndex", description = "The BattleEntity27c attacker script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "defenderIndex", description = "The BattleEntity27c defender script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "spellId", description = "The attacker's spell ID")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "damage", description = "The amount of damage done")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "specialEffects", description = "Status effect bitset (or -1 for none)")
   @Method(0x800f2694L)
   public static FlowControl scriptDragoonMagicStatusItemAttack(final RunningScript<?> script) {
-    final BattleObject27c attacker = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    final BattleObject27c defender = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
+    final BattleEntity27c attacker = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c defender = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
 
     attacker.spellId_4e = script.params_20[2].get();
 
@@ -578,15 +578,15 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Perform a battle object's item attack against another battle object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attackerIndex", description = "The BattleObject27c attacker script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "defenderIndex", description = "The BattleObject27c defender script index")
+  @ScriptDescription("Perform a battle entity's item attack against another battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attackerIndex", description = "The BattleEntity27c attacker script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "defenderIndex", description = "The BattleEntity27c defender script index")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "damage", description = "The amount of damage done")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "specialEffects", description = "Status effect bitset (or -1 for none)")
   @Method(0x800f2838L)
   public static FlowControl scriptItemMagicAttack(final RunningScript<?> script) {
-    final BattleObject27c attacker = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    final BattleObject27c defender = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
+    final BattleEntity27c attacker = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c defender = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
 
     clearTempWeaponAndSpellStats(attacker);
     setTempItemMagicStats(attacker);
@@ -613,9 +613,9 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f3204L)
-  public static void recalculateSpeedAndPerHitStats(final BattleObject27c bobj) {
-    if(bobj instanceof final PlayerBattleObject player) {
-      final ActiveStatsa0 stats = stats_800be5f8[bobj.charId_272];
+  public static void recalculateSpeedAndPerHitStats(final BattleEntity27c bent) {
+    if(bent instanceof final PlayerBattleEntity player) {
+      final ActiveStatsa0 stats = stats_800be5f8[bent.charId_272];
 
       player.spPerPhysicalHit_12a = stats.equipmentSpPerPhysicalHit_4e;
       player.mpPerPhysicalHit_12c = stats.equipmentMpPerPhysicalHit_50;
@@ -660,7 +660,7 @@ public final class Bttl_800f {
 
     //LAB_800f34d4
     num.flags_02 = 0;
-    num.bobjIndex_04 = -1;
+    num.bentIndex_04 = -1;
     num.translucent_08 = false;
     num.b_0c = 0x80;
     num.g_0d = 0x80;
@@ -799,16 +799,16 @@ public final class Bttl_800f {
     for(final FloatingNumberC4 num : floatingNumbers_800c6b5c) {
       if((num.flags_02 & 0x8000) != 0) {
         if(num.state_00 != 0) {
-          final int bobjIndex = num.bobjIndex_04;
+          final int bentIndex = num.bentIndex_04;
 
-          if(bobjIndex != -1) {
-            final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bobjIndex];
-            final BattleObject27c bobj = (BattleObject27c)state.innerStruct_00;
+          if(bentIndex != -1) {
+            final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bentIndex];
+            final BattleEntity27c bent = (BattleEntity27c)state.innerStruct_00;
 
             final short x;
             final short y;
             final short z;
-            if(bobj instanceof final MonsterBattleObject monster) {
+            if(bent instanceof final MonsterBattleEntity monster) {
               x = (short)(-monster.targetArrowPos_78.getZ() * 100);
               y = (short)(-monster.targetArrowPos_78.getY() * 100);
               z = (short)(-monster.targetArrowPos_78.getX() * 100);
@@ -820,7 +820,7 @@ public final class Bttl_800f {
             }
 
             //LAB_800f3a44
-            final DVECTOR screenCoords = perspectiveTransformXyz(bobj.model_148, x, y, z);
+            final DVECTOR screenCoords = perspectiveTransformXyz(bent.model_148, x, y, z);
             num.x_1c = clampX(screenCoords.getX() + centreScreenX_1f8003dc.get());
             num.y_20 = clampY(screenCoords.getY() + centreScreenY_1f8003de.get());
           }
@@ -894,7 +894,7 @@ public final class Bttl_800f {
             //LAB_800f3d38
             num.state_00 = 0;
             num.flags_02 = 0;
-            num.bobjIndex_04 = -1;
+            num.bentIndex_04 = -1;
             num.translucent_08 = false;
             num.b_0c = 0x80;
             num.g_0d = 0x80;
@@ -1066,14 +1066,14 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f4268L)
-  public static void addFloatingNumberForBobj(final int bobjIndex, final int damage, final long s4) {
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bobjIndex];
-    final BattleObject27c bobj = (BattleObject27c)state.innerStruct_00;
+  public static void addFloatingNumberForBent(final int bentIndex, final int damage, final long s4) {
+    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bentIndex];
+    final BattleEntity27c bent = (BattleEntity27c)state.innerStruct_00;
 
     final short x;
     final short y;
     final short z;
-    if(bobj instanceof final MonsterBattleObject monster) {
+    if(bent instanceof final MonsterBattleEntity monster) {
       x = (short)(-monster.targetArrowPos_78.getZ() * 100);
       y = (short)(-monster.targetArrowPos_78.getY() * 100);
       z = (short)(-monster.targetArrowPos_78.getX() * 100);
@@ -1085,14 +1085,14 @@ public final class Bttl_800f {
     }
 
     //LAB_800f4320
-    final DVECTOR screenCoords = perspectiveTransformXyz(bobj.model_148, x, y, z);
+    final DVECTOR screenCoords = perspectiveTransformXyz(bent.model_148, x, y, z);
 
     //LAB_800f4394
-    FUN_800f89f4(bobjIndex, 0, 0x2L, damage, clampX(screenCoords.getX() + centreScreenX_1f8003dc.get()), clampY(screenCoords.getY() + centreScreenY_1f8003de.get()), 60 / vsyncMode_8007a3b8 / 4, s4);
+    FUN_800f89f4(bentIndex, 0, 0x2L, damage, clampX(screenCoords.getX() + centreScreenX_1f8003dc.get()), clampY(screenCoords.getY() + centreScreenY_1f8003de.get()), 60 / vsyncMode_8007a3b8 / 4, s4);
   }
 
-  @ScriptDescription("Gives SP to a battle object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Gives SP to a battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "amount", description = "The amount of SP to add")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "total", description = "The total SP after adding the amount requested")
   @Method(0x800f43dcL)
@@ -1101,13 +1101,13 @@ public final class Bttl_800f {
     //LAB_800f4410
     int charSlot;
     for(charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      if(battleState_8006e398.charBobjs_e40[charSlot].index == script.params_20[0].get()) {
+      if(battleState_8006e398.charBents_e40[charSlot].index == script.params_20[0].get()) {
         break;
       }
     }
 
     //LAB_800f4430
-    final PlayerBattleObject player = (PlayerBattleObject)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final PlayerBattleEntity player = (PlayerBattleEntity)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final VitalsStat sp = player.stats.getStat(CoreMod.SP_STAT.get());
 
     sp.setCurrent(sp.getCurrent() + script.params_20[1].get());
@@ -1118,8 +1118,8 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Consumes SP from a battle object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Consumes SP from a battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused", description = "Unused")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "amount", description = "The amount of SP to take away")
   @Method(0x800f4518L)
@@ -1128,7 +1128,7 @@ public final class Bttl_800f {
     //LAB_800f454c
     int i;
     for(i = 0; i < charCount_800c677c.get(); i++) {
-      if(battleState_8006e398.charBobjs_e40[i].index == script.params_20[0].get()) {
+      if(battleState_8006e398.charBents_e40[i].index == script.params_20[0].get()) {
         break;
       }
     }
@@ -1138,7 +1138,7 @@ public final class Bttl_800f {
     charDisplay.unused_0c.set((short)0);
     charDisplay.unused_0e.set((short)script.params_20[1].get());
 
-    final PlayerBattleObject player = (PlayerBattleObject)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final PlayerBattleEntity player = (PlayerBattleEntity)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final VitalsStat sp = player.stats.getStat(CoreMod.SP_STAT.get());
 
     sp.setCurrent(sp.getCurrent() - script.params_20[2].get());
@@ -1153,7 +1153,7 @@ public final class Bttl_800f {
 
   @ScriptDescription("Unknown, this might handle players selecting an attack target")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "p0")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "targetBobjIndex", description = "The targeted BattleObject27c script index (or -1 if attack all)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "targetBentIndex", description = "The targeted BattleEntity27c script index (or -1 if attack all)")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "itemOrSpellId", description = "The item or spell ID selected")
   @Method(0x800f4600L)
   public static FlowControl FUN_800f4600(final RunningScript<?> script) {
@@ -1182,17 +1182,17 @@ public final class Bttl_800f {
     script.params_20[2].set(itemOrSpellId);
 
     //LAB_800f4770
-    PlayerBattleObject playerBobj = null;
+    PlayerBattleEntity playerBent = null;
     for(int i = 0; i < charCount_800c677c.get(); i++) {
-      playerBobj = battleState_8006e398.charBobjs_e40[i].innerStruct_00;
+      playerBent = battleState_8006e398.charBents_e40[i].innerStruct_00;
 
-      if(playerBobj.charId_272 == combatMenu.charIndex_08) {
+      if(playerBent.charId_272 == combatMenu.charIndex_08) {
         break;
       }
     }
 
     //LAB_800f47ac
-    playerBobj.spellId_4e = itemOrSpellId;
+    playerBent.spellId_4e = itemOrSpellId;
 
     if(combatMenu._a0 == 1 && combatMenu.menuType_0a == 0) {
       //LAB_800f47e4
@@ -1212,10 +1212,10 @@ public final class Bttl_800f {
 
   @ScriptDescription("Gets the item/spell attack target")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "targetMode")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "targetBobjIndex", description = "The targeted BattleObject27c script index (or -1 if attack all)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "targetBentIndex", description = "The targeted BattleEntity27c script index (or -1 if attack all)")
   @Method(0x800f480cL)
-  public static FlowControl scriptGetItemOrSpellAttackTarget(final RunningScript<?> script) {
-    BattleObject27c a1 = null;
+  public static FlowControl FUN_800f480c(final RunningScript<?> script) {
+    BattleEntity27c a1 = null;
     final int[] sp0x10 = {0, 0, 1, 0, 2, 1, 1, 1};
 
     int targetMode = script.params_20[0].get();
@@ -1224,7 +1224,7 @@ public final class Bttl_800f {
 
     //LAB_800f489c
     for(int a0 = 0; a0 < charCount_800c677c.get(); a0++) {
-      a1 = battleState_8006e398.charBobjs_e40[a0].innerStruct_00;
+      a1 = battleState_8006e398.charBents_e40[a0].innerStruct_00;
 
       if(menu.charIndex_04 == a1.charId_272) {
         break;
@@ -1532,10 +1532,10 @@ public final class Bttl_800f {
 
         if((press_800bee94.get() & 0x20) != 0) { // X
           //LAB_800f5078
-          PlayerBattleObject player = null;
+          PlayerBattleEntity player = null;
 
           for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-            player = battleState_8006e398.charBobjs_e40[charSlot].innerStruct_00;
+            player = battleState_8006e398.charBents_e40[charSlot].innerStruct_00;
 
             if(combatMenu.charIndex_08 == player.charId_272) {
               //LAB_800f503c
@@ -1561,7 +1561,7 @@ public final class Bttl_800f {
             itemTargetAll_800c69c8.set((player.item_d4.target_00 & 0x2) != 0);
           } else {
             //LAB_800f5134
-            final PlayerBattleObject caster = setActiveCharacterSpell(combatMenu.itemOrSpellId_1c);
+            final PlayerBattleEntity caster = setActiveCharacterSpell(combatMenu.itemOrSpellId_1c);
 
             if(caster.stats.getStat(CoreMod.MP_STAT.get()).getCurrent() < caster.spell_94.mp_06) {
               //LAB_800f5160
@@ -1647,12 +1647,12 @@ public final class Bttl_800f {
       case 6 -> {
         combatMenu._a0 = 0;
         combatMenu.itemOrSpellId_1c = (short)getItemOrSpellId();
-        PlayerBattleObject player;
+        PlayerBattleEntity player;
 
         //LAB_800f538c
         int charSlot = 0;
         do {
-          player = battleState_8006e398.charBobjs_e40[charSlot].innerStruct_00;
+          player = battleState_8006e398.charBents_e40[charSlot].innerStruct_00;
 
           if(combatMenu.charIndex_08 == player.charId_272) {
             break;
@@ -1908,10 +1908,10 @@ public final class Bttl_800f {
         }
 
         //LAB_800f5acc
-        final PlayerBattleObject bobj = setActiveCharacterSpell(spellId);
+        final PlayerBattleEntity bent = setActiveCharacterSpell(spellId);
 
         // Not enough MP for spell
-        if(bobj.stats.getStat(CoreMod.MP_STAT.get()).getCurrent() < bobj.spell_94.mp_06) {
+        if(bent.stats.getStat(CoreMod.MP_STAT.get()).getCurrent() < bent.spell_94.mp_06) {
           textColour = TextColour.GREY;
         }
       } else {
@@ -2030,8 +2030,8 @@ public final class Bttl_800f {
           //LAB_800f5f94
           textType = 5;
           if((structa4._02 & 0x2) != 0) {
-            final BattleObject27c bobj = setActiveCharacterSpell(structa4.itemOrSpellId_1c);
-            addFloatingNumber(0, 0x1L, 0, bobj.spell_94.mp_06, 280, 135, 0, structa4.menuType_0a);
+            final BattleEntity27c bent = setActiveCharacterSpell(structa4.itemOrSpellId_1c);
+            addFloatingNumber(0, 0x1L, 0, bent.spell_94.mp_06, 280, 135, 0, structa4.menuType_0a);
             renderBattleMenuElement(236 - centreScreenX_1f8003dc.get(), 130 - centreScreenY_1f8003de.get(), 16, 128, 24, 16, 0x2c, null);
             renderBattleHudBackground(236, 130, 64, 14, Config.changeBattleRgb() ? Config.getBattleRgb() : 0x00299f);
           }
@@ -2087,7 +2087,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f6134L)
-  public static void initializeCombatMenuIcons(final ScriptState<? extends BattleObject27c> bobjState, final int displayedIconsBitset, final int disabledIconsBitset) {
+  public static void initializeCombatMenuIcons(final ScriptState<? extends BattleEntity27c> bentState, final int displayedIconsBitset, final int disabledIconsBitset) {
     final BattleMenuStruct58 menu = battleMenu_800c6c34;
     menu.state_00 = 1;
     menu.highlightState_02 = 2;
@@ -2119,16 +2119,16 @@ public final class Bttl_800f {
 
     //LAB_800f6224
     //LAB_800f6234
-    int bobjIndex;
-    for(bobjIndex = 0; bobjIndex < charCount_800c677c.get(); bobjIndex++) {
-      if(battleState_8006e398.charBobjs_e40[bobjIndex] == bobjState) {
+    int bentIndex;
+    for(bentIndex = 0; bentIndex < charCount_800c677c.get(); bentIndex++) {
+      if(battleState_8006e398.charBents_e40[bentIndex] == bentState) {
         break;
       }
     }
 
     //LAB_800f6254
     menu.iconCount_0e = 0;
-    menu.charIndex_04 = (short)battleState_8006e398.charBobjs_e40[bobjIndex].innerStruct_00.charId_272;
+    menu.charIndex_04 = (short)battleState_8006e398.charBents_e40[bentIndex].innerStruct_00.charId_272;
 
     //LAB_800f62a4
     for(int i = 0, used = 0; i < 8; i++) {
@@ -2686,7 +2686,7 @@ public final class Bttl_800f {
         count = charCount_800c677c.get();
       } else {
         //LAB_800f77f0
-        count = aliveBobjCount_800c669c.get();
+        count = aliveBentCount_800c669c.get();
       }
     }
 
@@ -2718,9 +2718,9 @@ public final class Bttl_800f {
     //LAB_800f78ac
     //LAB_800f78d4
     int v1;
-    ScriptState<BattleObject27c> target = null;
+    ScriptState<BattleEntity27c> target = null;
     for(v1 = 0; v1 < count; v1++) {
-      target = targetBobjs_800c71f0[targetType][_800c697c.get()];
+      target = targetBents_800c71f0[targetType][_800c697c.get()];
 
       if(target != null && (target.storage_44[7] & 0x4000) == 0) {
         break;
@@ -2742,7 +2742,7 @@ public final class Bttl_800f {
 
     //LAB_800f7960
     if(v1 == count) {
-      target = targetBobjs_800c71f0[targetType][_800c697c.get()];
+      target = targetBents_800c71f0[targetType][_800c697c.get()];
       _800c697c.set((short)0);
     }
 
@@ -2787,39 +2787,39 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f7a74L)
-  public static void setTempItemMagicStats(final BattleObject27c bobj) {
+  public static void setTempItemMagicStats(final BattleEntity27c bent) {
     //LAB_800f7a98
-    bobj.item_d4 = itemStats_8004f2ac[bobj.itemId_52];
-    bobj._ec = 0;
-    bobj._ee = 0;
-    bobj._f0 = 0;
-    bobj._f2 = 0;
+    bent.item_d4 = itemStats_8004f2ac[bent.itemId_52];
+    bent._ec = 0;
+    bent._ee = 0;
+    bent._f0 = 0;
+    bent._f2 = 0;
   }
 
   @Method(0x800f7b68L)
-  public static void setTempSpellStats(final BattleObject27c bobj) {
+  public static void setTempSpellStats(final BattleEntity27c bent) {
     //LAB_800f7b8c
-    if(bobj.spellId_4e != -1 && bobj.spellId_4e <= 127) {
-      bobj.spell_94 = EVENTS.postEvent(new SpellStatsEvent(bobj.spellId_4e, spellStats_800fa0b8[bobj.spellId_4e])).spell;
+    if(bent.spellId_4e != -1 && bent.spellId_4e <= 127) {
+      bent.spell_94 = EVENTS.postEvent(new SpellStatsEvent(bent.spellId_4e, spellStats_800fa0b8[bent.spellId_4e])).spell;
     } else {
-      if(bobj.spellId_4e > 127) {
-        LOGGER.error("Retail bug: spell index out of bounds (%d). This is known to happen during Shana/Miranda's dragoon attack.", bobj.spellId_4e);
+      if(bent.spellId_4e > 127) {
+        LOGGER.error("Retail bug: spell index out of bounds (%d). This is known to happen during Shana/Miranda's dragoon attack.", bent.spellId_4e);
       }
 
-      bobj.spell_94 = new SpellStats0c();
+      bent.spell_94 = new SpellStats0c();
     }
 
     //LAB_800f7c54
   }
 
   @Method(0x800f7c5cL)
-  public static int determineAttackSpecialEffects(final BattleObject27c attacker, final BattleObject27c defender, final AttackType attackType) {
+  public static int determineAttackSpecialEffects(final BattleEntity27c attacker, final BattleEntity27c defender, final AttackType attackType) {
     final int[] statusEffectChances = {32, 79, 32, 79, 79, 32}; // onHitStatusChance, statusChance, onHitStatusChance, statusChance, statusChance, onHitStatusChance
     final int[] statusEffectStats = {35, 81, 112, 81, 81, 112}; // onHitStatus, statusType, itemStatus, statusType, statusType, itemStatus
     final int[] specialEffectStats = {8, 73, 104, 73, 73, 104}; // specialEffectFlag, spellFlags, itemTarget, spellFlags, spellFlags, itemTarget
     final int[] specialEffectMasks = {0x40, 0xf0, 0x80, 0xf0, 0xf0, 0x80};
 
-    final boolean isAttackerMonster = attacker instanceof MonsterBattleObject;
+    final boolean isAttackerMonster = attacker instanceof MonsterBattleEntity;
 
     final int index = (!isAttackerMonster ? 0 : 3) + attackType.ordinal(); //TODO
 
@@ -2908,7 +2908,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f8568L)
-  public static LodString getTargetEnemyName(final BattleObject27c target, final LodString targetName) {
+  public static LodString getTargetEnemyName(final BattleEntity27c target, final LodString targetName) {
     // Seems to be special-case handling to replace Tentacle, since the Melbu fight has more enemies than the engine can handle
     if(target.charId_272 == 0x185) {
       final int stageProgression = battleState_8006e398.stageProgression_eec;
@@ -2926,12 +2926,12 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f8670L)
-  public static void loadMonster(final ScriptState<MonsterBattleObject> state) {
+  public static void loadMonster(final ScriptState<MonsterBattleEntity> state) {
     loadSupportOverlay(1, () -> Bttl_800e.loadMonster(state));
   }
 
   @Method(0x800f8854L)
-  public static void applyItemSpecialEffects(final BattleObject27c attacker, final BattleObject27c defender) {
+  public static void applyItemSpecialEffects(final BattleEntity27c attacker, final BattleEntity27c defender) {
     setTempItemMagicStats(attacker);
 
     final int turnCount = attacker != defender ? 3 : 4;
@@ -2994,7 +2994,7 @@ public final class Bttl_800f {
       defender.stats.getStat(CoreMod.SPEED_STAT.get()).addMod(new TurnBasedPercentileBuff(attacker.item_d4.speedUp, turnCount));
     }
 
-    if(defender instanceof final PlayerBattleObject playerDefender) {
+    if(defender instanceof final PlayerBattleEntity playerDefender) {
       if(attacker.item_d4.spPerPhysicalHit != 0) {
         playerDefender.tempSpPerPhysicalHit_cc = attacker.item_d4.spPerPhysicalHit;
         playerDefender.tempSpPerPhysicalHitTurns_cd = turnCount;
@@ -3020,14 +3020,14 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f89f4L)
-  public static long FUN_800f89f4(final int bobjIndex, final long a1, final long a2, final int rawDamage, final int x, final int y, final int a6, final long a7) {
+  public static long FUN_800f89f4(final int bentIndex, final long a1, final long a2, final int rawDamage, final int x, final int y, final int a6, final long a7) {
     //LAB_800f8a30
     for(int i = 0; i < floatingNumbers_800c6b5c.length; i++) {
       final FloatingNumberC4 num = floatingNumbers_800c6b5c[i];
 
       if(num.state_00 == 0) {
         addFloatingNumber(i, a1, a2, rawDamage, x, y, a6, a7);
-        num.bobjIndex_04 = bobjIndex;
+        num.bentIndex_04 = bentIndex;
         return 0x1L;
       }
 
@@ -3039,8 +3039,8 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f8aa4L)
-  public static void renderDamage(final int bobjIndex, final int damage) {
-    addFloatingNumberForBobj(bobjIndex, damage, 0x8L);
+  public static void renderDamage(final int bentIndex, final int damage) {
+    addFloatingNumberForBent(bentIndex, damage, 0x8L);
   }
 
   /**
@@ -3177,7 +3177,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f9380L)
-  public static void applyBuffOrDebuff(final BattleObject27c attacker, final BattleObject27c defender) {
+  public static void applyBuffOrDebuff(final BattleEntity27c attacker, final BattleEntity27c defender) {
     for(int i = 0; i < 8; i++) {
       // This has been intentionally changed to attacker.buffType. Defender.buffType was always set to attacker.buffType anyway.
       if((attacker.spell_94.buffType_0a & (0x80 >> i)) != 0) {
@@ -3193,7 +3193,7 @@ public final class Bttl_800f {
    * @param magicType spell (0), item (1)
    */
   @Method(0x800f946cL)
-  public static int applyMagicDamageMultiplier(final BattleObject27c attacker, final int damage, final int magicType) {
+  public static int applyMagicDamageMultiplier(final BattleEntity27c attacker, final int damage, final int magicType) {
     final int damageMultiplier;
     if(magicType == 0) {
       damageMultiplier = spellStats_800fa0b8[attacker.spellId_4e].damageMultiplier_03;
@@ -3250,9 +3250,9 @@ public final class Bttl_800f {
     return damage;
   }
 
-  @ScriptDescription("Checks if a battle object's physical attack hits another battle object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attackerIndex", description = "The BattleObject27c attacker script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "defenderIndex", description = "The BattleObject27c defender script index")
+  @ScriptDescription("Checks if a battle entity's physical attack hits another battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attackerIndex", description = "The BattleEntity27c attacker script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "defenderIndex", description = "The BattleEntity27c defender script index")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "hit", description = "True if attack hit, false otherwise")
   @Method(0x800f95d0L)
   public static FlowControl scriptCheckPhysicalHit(final RunningScript<?> script) {
@@ -3260,9 +3260,9 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Checks if a battle object's spell or status attack hits another battle object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attackerIndex", description = "The BattleObject27c attacker script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "defenderIndex", description = "The BattleObject27c defender script index")
+  @ScriptDescription("Checks if a battle entity's spell or status attack hits another battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attackerIndex", description = "The BattleEntity27c attacker script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "defenderIndex", description = "The BattleEntity27c defender script index")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "hit", description = "True if attack hit, false otherwise")
   @Method(0x800f9618L)
   public static FlowControl scriptCheckSpellOrStatusHit(final RunningScript<?> script) {
@@ -3270,9 +3270,9 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Checks if a battle object's item magic attack hits another battle object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attackerIndex", description = "The BattleObject27c attacker script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "defenderIndex", description = "The BattleObject27c defender script index")
+  @ScriptDescription("Checks if a battle entity's item magic attack hits another battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attackerIndex", description = "The BattleEntity27c attacker script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "defenderIndex", description = "The BattleEntity27c defender script index")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "hit", description = "True if attack hit, false otherwise")
   @Method(0x800f9660L)
   public static FlowControl scriptCheckItemHit(final RunningScript<?> script) {
@@ -3280,25 +3280,25 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Caches selected spell's stats on a battle object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Caches selected spell's stats on a battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800f96a8L)
   public static FlowControl scriptSetTempSpellStats(final RunningScript<?> script) {
-    setTempSpellStats((BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00);
+    setTempSpellStats((BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Gets a battle object's position")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attackerIndex", description = "The BattleObject27c attacker script index")
+  @ScriptDescription("Gets a battle entity's position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attackerIndex", description = "The BattleEntity27c attacker script index")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X position")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y position")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z position")
   @Method(0x800f96d4L)
-  public static FlowControl scriptGetBobjPos(final RunningScript<?> script) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[1].set(bobj.model_148.coord2_14.coord.transfer.getX());
-    script.params_20[2].set(bobj.model_148.coord2_14.coord.transfer.getY());
-    script.params_20[3].set(bobj.model_148.coord2_14.coord.transfer.getZ());
+  public static FlowControl scriptGetBentPos(final RunningScript<?> script) {
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    script.params_20[1].set(bent.model_148.coord2_14.coord.transfer.getX());
+    script.params_20[2].set(bent.model_148.coord2_14.coord.transfer.getY());
+    script.params_20[3].set(bent.model_148.coord2_14.coord.transfer.getZ());
     return FlowControl.CONTINUE;
   }
 
@@ -3324,31 +3324,31 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Initialized the battle menu for a battle object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Initialized the battle menu for a battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "menuType", description = "0 = items, 1 = spells, 2 = ?")
   @Method(0x800f97d8L)
   public static FlowControl scriptInitBattleMenu(final RunningScript<?> script) {
     resetBattleMenu();
-    initBattleMenu(((BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).charId_272, (short)script.params_20[1].get());
+    initBattleMenu(((BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).charId_272, (short)script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Render recovery amount for a battle object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Render recovery amount for a battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "amount", description = "The amount recovered")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "colourIndex", description = "Which colour to use (indices are unknown)")
   @Method(0x800f984cL)
   public static FlowControl scriptRenderRecover(final RunningScript<?> script) {
-    addFloatingNumberForBobj(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
+    addFloatingNumberForBent(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Caches selected spell's stats on a battle object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Caches selected spell's stats on a battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800f9884L)
   public static FlowControl scriptSetTempItemMagicStats(final RunningScript<?> script) {
-    setTempItemMagicStats((BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00);
+    setTempItemMagicStats((BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00);
     return FlowControl.CONTINUE;
   }
 
@@ -3407,31 +3407,31 @@ public final class Bttl_800f {
 
   @ScriptDescription("Unknown, related to targeting")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "targetType", description = "0 = characters, 1 = monsters, 2 = any")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "targetBobjIndex", description = "The targeted BattleObject27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "targetBentIndex", description = "The targeted BattleEntity27c script index")
   @Method(0x800f9a50L)
   public static FlowControl FUN_800f9a50(final RunningScript<?> script) {
     final int targetType = script.params_20[0].get();
-    final int targetBobj = script.params_20[1].get();
+    final int targetBent = script.params_20[1].get();
 
-    final ScriptState<? extends BattleObject27c>[] bobjs;
+    final ScriptState<? extends BattleEntity27c>[] bents;
     final int count;
     if(targetType == 0) {
-      bobjs = battleState_8006e398.charBobjs_e40;
+      bents = battleState_8006e398.charBents_e40;
       count = charCount_800c677c.get();
     } else if(targetType == 1) {
       //LAB_800f9a94
-      bobjs = battleState_8006e398.aliveMonsterBobjs_ebc;
+      bents = battleState_8006e398.aliveMonsterBents_ebc;
       count = aliveMonsterCount_800c6758.get();
     } else {
       //LAB_800f9aac
-      bobjs = battleState_8006e398.aliveBobjs_e78;
-      count = aliveBobjCount_800c669c.get();
+      bents = battleState_8006e398.aliveBents_e78;
+      count = aliveBentCount_800c669c.get();
     }
 
     //LAB_800f9abc
     //LAB_800f9adc
     for(int i = 0; i < count; i++) {
-      if(targetBobj == bobjs[i].index) {
+      if(targetBent == bents[i].index) {
         if(targetType == 0) {
           _800c6980.set((short)i);
         } else if(targetType == 1) {
@@ -3482,8 +3482,8 @@ public final class Bttl_800f {
         dragoonSpaceElement_800c6b64 = CoreMod.DIVINE_ELEMENT.get();
       } else {
         for(int i = 0; i < charCount_800c677c.get(); i++) {
-          if(battleState_8006e398.charBobjs_e40[i].innerStruct_00.charId_272 == characterId) {
-            dragoonSpaceElement_800c6b64 = battleState_8006e398.charBobjs_e40[i].innerStruct_00.element;
+          if(battleState_8006e398.charBents_e40[i].innerStruct_00.charId_272 == characterId) {
+            dragoonSpaceElement_800c6b64 = battleState_8006e398.charBents_e40[i].innerStruct_00.element;
             break;
           }
         }
@@ -3565,56 +3565,55 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
-  /** Called after any bobj finishes its turn */
-  @ScriptDescription("Called after any battle object finishes its turn, ticks temporary stats and calls turnFinished on custom battle objects")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The BattleObject27c script index")
+  @ScriptDescription("Called after any battle entity finishes its turn, ticks temporary stats and calls turnFinished on custom battle entities")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800f9d7cL)
-  public static FlowControl scriptFinishBobjTurn(final RunningScript<?> script) {
-    final int bobjIndex = script.params_20[0].get();
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[bobjIndex].innerStruct_00;
+  public static FlowControl scriptFinishBentTurn(final RunningScript<?> script) {
+    final int bentIndex = script.params_20[0].get();
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[bentIndex].innerStruct_00;
 
     // Temporary power stats
     for(int statIndex = 88; statIndex <= 97; statIndex++) {
-      scriptTickTemporaryStatMod(bobj, statIndex);
+      scriptTickTemporaryStatMod(bent, statIndex);
     }
 
-    if(bobj instanceof PlayerBattleObject) {
+    if(bent instanceof PlayerBattleEntity) {
       // Temp MP/SP per hit stats
       for(int statIndex = 100; statIndex <= 103; statIndex++) {
-        scriptTickTemporaryStatMod(bobj, statIndex);
+        scriptTickTemporaryStatMod(bent, statIndex);
       }
     }
 
-    bobj.turnFinished();
+    bent.turnFinished();
 
-    recalculateSpeedAndPerHitStats(bobj);
+    recalculateSpeedAndPerHitStats(bent);
     return FlowControl.CONTINUE;
   }
 
-  private static void scriptTickTemporaryStatMod(final BattleObject27c bobj, final int statIndex) {
-    if(bobj.getStat(statIndex) != 0) {
-      if((bobj.getStat(statIndex) & 0xff00) < 0x200) { // Turns is stored in upper byte
-        bobj.setStat(statIndex, 0);
+  private static void scriptTickTemporaryStatMod(final BattleEntity27c bent, final int statIndex) {
+    if(bent.getStat(statIndex) != 0) {
+      if((bent.getStat(statIndex) & 0xff00) < 0x200) { // Turns is stored in upper byte
+        bent.setStat(statIndex, 0);
       } else {
-        bobj.setStat(statIndex, bobj.getStat(statIndex) - 0x100); // Subtract one turn
+        bent.setStat(statIndex, bent.getStat(statIndex) - 0x100); // Subtract one turn
       }
     }
   }
 
   @Method(0x800f9e10L)
-  public static void clearTempWeaponAndSpellStats(final BattleObject27c a0) {
+  public static void clearTempWeaponAndSpellStats(final BattleEntity27c a0) {
     a0.item_d4 = null;
     a0.spell_94 = null;
   }
 
   @Method(0x800f9e50L)
-  public static PlayerBattleObject setActiveCharacterSpell(final int spellId) {
+  public static PlayerBattleEntity setActiveCharacterSpell(final int spellId) {
     final int charIndex = combatMenu_800c6b60.charIndex_08;
 
     //LAB_800f9e8c
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      final ScriptState<PlayerBattleObject> playerState = battleState_8006e398.charBobjs_e40[charSlot];
-      final PlayerBattleObject player = playerState.innerStruct_00;
+      final ScriptState<PlayerBattleEntity> playerState = battleState_8006e398.charBents_e40[charSlot];
+      final PlayerBattleEntity player = playerState.innerStruct_00;
 
       if(charIndex == player.charId_272) {
         //LAB_800f9ec8

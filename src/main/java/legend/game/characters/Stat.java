@@ -1,6 +1,6 @@
 package legend.game.characters;
 
-import legend.game.combat.bobj.BattleObject27c;
+import legend.game.combat.bent.BattleEntity27c;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +20,9 @@ public abstract class Stat {
     return mod;
   }
 
-  protected void turnFinished(final BattleObject27c bobj) {
+  protected void turnFinished(final BattleEntity27c bent) {
     for(final StatMod mod : this.mods) {
-      mod.turnFinished(this.stats, this.type, bobj);
+      mod.turnFinished(this.stats, this.type, bent);
     }
 
     this.mods.removeIf(StatMod::isFinished);

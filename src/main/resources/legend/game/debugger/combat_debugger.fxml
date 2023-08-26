@@ -18,8 +18,8 @@
          <HBox.margin>
             <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
          </HBox.margin>
-         <Label text="Battle Objects" />
-         <ListView fx:id="bobjList" prefHeight="398.0" prefWidth="182.0" />
+         <Label text="Battle Entities" />
+         <ListView fx:id="bentList" prefHeight="398.0" prefWidth="182.0" />
       </VBox>
       <VBox prefHeight="400.0" prefWidth="400.0">
          <padding>

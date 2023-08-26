@@ -4,7 +4,7 @@ import legend.core.DebugHelper;
 import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.game.Scus94491BpeSegment_8004;
-import legend.game.combat.bobj.BattleObject27c;
+import legend.game.combat.bent.BattleEntity27c;
 import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
 import legend.game.modding.events.scripting.ScriptTickEvent;
 import org.apache.logging.log4j.LogManager;
@@ -82,14 +82,14 @@ public class ScriptState<T> {
    *       <li>0x2 - dragoon</li>
    *       <li>0x4 - monster</li>
    *       <li>0x8 - it is this character's turn</li>
-   *       <li>0x10 - don't animate or render bobj?</li>
+   *       <li>0x10 - don't animate or render bent?</li>
    *       <li>0x20 - forced turn, probably bosses who have reaction attacks</li>
    *       <li>0x40 - dead</li>
    *       <li>0x80 - finish the current animation and then stop animating</li>
    *       <li>0x100 - ?</li>
    *       <li>0x200 - ?</li>
    *       <li>0x400 - ?</li>
-   *       <li>0x800 - don't load script (used by cutscene bobjs controlled by other scripts)</li>
+   *       <li>0x800 - don't load script (used by cutscene bents controlled by other scripts)</li>
    *       <li>0x1000 - ?</li>
    *       <li>0x2000 - don't drop loot (set when monster has died to prevent duplicate drops)</li>
    *       <li>0x4000 - cannot target</li>
@@ -112,7 +112,7 @@ public class ScriptState<T> {
    * </ul>
    */
   public final int[] storage_44 = new int[33];
-  public ScriptState<BattleObject27c> scriptState_c8;
+  public ScriptState<BattleEntity27c> scriptState_c8;
   public int ticks_cc;
   public int _d0;
   public int _d4;
@@ -125,6 +125,10 @@ public class ScriptState<T> {
   public int _f0;
   public int _f4;
   public int ui_fc;
+
+  public static <T> Class<ScriptState<T>> classFor(final Class<T> cls) {
+    return (Class<ScriptState<T>>)(Class<?>)ScriptState.class;
+  }
 
   public ScriptState(final ScriptManager manager, final int index, final String name, @Nullable final T innerStruct) {
     this.manager = manager;
