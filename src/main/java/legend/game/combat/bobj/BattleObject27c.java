@@ -163,7 +163,7 @@ public abstract class BattleObject27c extends BattleScriptDataBase {
   public int animIndex_270;
   /** Also monster ID */
   public int charId_272;
-  public int bobjIndex_274;
+  public int bobjSlot_274;
   public int charSlot_276;
   /** Has model? Used to be used to free model, no longer used since it's managed by java */
   public int _278;

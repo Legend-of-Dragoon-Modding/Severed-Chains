@@ -319,7 +319,7 @@ public final class SItem {
       bobj.element = characterElements_800c706c[charIndex].get();
       bobj.combatant_144 = getCombatant((short)charIndices[charSlot]);
       bobj.charId_272 = charIndex;
-      bobj.bobjIndex_274 = allBobjCount_800c66d0.get();
+      bobj.bobjSlot_274 = allBobjCount_800c66d0.get();
       bobj.charSlot_276 = charSlot;
       bobj.combatantIndex_26c = charIndices[charSlot];
       bobj.model_148.coord2_14.coord.transfer.setX((int)MEMORY.ref(2, fp).offset(charSlot * 0x4L).offset(0x0L).getSigned());

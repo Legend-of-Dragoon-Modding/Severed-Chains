@@ -101,7 +101,9 @@ import legend.game.combat.ui.AdditionOverlayMode;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
+import legend.game.scripting.ScriptDescription;
 import legend.game.scripting.ScriptFile;
+import legend.game.scripting.ScriptParam;
 import legend.game.scripting.ScriptState;
 import legend.game.tmd.Renderer;
 import legend.game.types.CContainer;
@@ -6656,119 +6658,119 @@ public final class SEffe {
     rotation.set(bobj.model_148.coord2_14.transforms.rotate);
   }
 
-  /** Used in the item throwing parabolic */
+  /** Gets rotation between two vectors (used in the item throwing parabolic) */
   @Method(0x80110120L)
-  public static Vector3f FUN_80110120(final Vector3f rotation, @Nullable VECTOR translation, final VECTOR in) {
+  public static Vector3f FUN_80110120(final Vector3f out, @Nullable VECTOR translation, final VECTOR parentTranslation) {
     if(translation == null) {
       translation = new VECTOR();
     }
 
-    //LAB_8011014c
-    final VECTOR sp0x10 = new VECTOR().set(in).sub(translation);
-    rotation.z = 0.0f;
-    rotation.y = MathHelper.atan2(sp0x10.getX(), sp0x10.getZ());
+    final VECTOR translationDelta = new VECTOR().set(parentTranslation).sub(translation);
+    out.z = 0.0f;
+    out.y = MathHelper.atan2(translationDelta.getX(), translationDelta.getZ());
 
-    final float s1 = MathHelper.cos(-rotation.y) * sp0x10.getZ() - MathHelper.sin(-rotation.y) * sp0x10.getX();
-    rotation.x = MathHelper.atan2(-sp0x10.getY(), s1);
-    return rotation;
+    final float s1 = MathHelper.cos(-out.y) * translationDelta.getZ() - MathHelper.sin(-out.y) * translationDelta.getX();
+    out.x = MathHelper.atan2(-translationDelta.getY(), s1);
+    return out;
   }
 
-  /** Transform rotation vector of script using rotation and translation of second */
+  /** Gets rotation between two vectors (converts rotation from ZYX to XYZ) */
   @Method(0x80110228L)
-  public static Vector3f FUN_80110228(final Vector3f rotation, @Nullable VECTOR translation1, final VECTOR translation2) {
-    if(translation1 == null) {
-      translation1 = new VECTOR();
+  public static Vector3f FUN_80110228(final Vector3f out, @Nullable VECTOR translation, final VECTOR parentTranslation) {
+    if(translation == null) {
+      translation = new VECTOR();
     }
 
-    //LAB_80110258
-    final VECTOR sp0x10 = new VECTOR().set(translation2).sub(translation1).negate();
-    final Vector3f sp0x30 = new Vector3f();
-    sp0x30.y = MathHelper.atan2(sp0x10.getX(), sp0x10.getZ());
+    final VECTOR translationDelta = new VECTOR().set(parentTranslation).sub(translation).negate();
+    out.z = 0.0f;
+    out.y = MathHelper.atan2(translationDelta.getX(), translationDelta.getZ());
 
-    final float s1 = MathHelper.cos(-sp0x30.y) * sp0x10.getZ() - MathHelper.sin(-sp0x30.y) * sp0x10.getX();
-    sp0x30.x = MathHelper.atan2(-sp0x10.getY(), s1);
+    final float s1 = MathHelper.cos(-out.y) * translationDelta.getZ() - MathHelper.sin(-out.y) * translationDelta.getX();
+    out.x = MathHelper.atan2(-translationDelta.getY(), s1);
 
+    // Convert from ZYX rotation to XYZ
     final MATRIX transforms = new MATRIX();
-    RotMatrix_Zyx(sp0x30, transforms);
-    getRotationFromTransforms(rotation, transforms);
+    RotMatrix_Zyx(out, transforms);
+    getRotationFromTransforms(out, transforms);
 
-    return rotation;
+    return out;
   }
 
+  /** I'm like 96% sure this name is correct */
   @Method(0x8011035cL)
-  public static void FUN_8011035c(final int scriptIndex1, final int scriptIndex2, final VECTOR a2) {
-    final VECTOR translation1 = getScriptedObjectTranslation(scriptIndex1);
+  public static void getTranslationRelativeToParent(final int scriptIndex, final int parentIndex, final VECTOR out) {
+    final VECTOR translation = getScriptedObjectTranslation(scriptIndex);
 
-    if(scriptIndex2 == -1) {
-      a2.set(translation1);
+    if(parentIndex == -1) {
+      out.set(translation);
     } else {
       //LAB_801103b8
-      final Ref<Vector3f> rotation2 = new Ref<>();
-      final Ref<VECTOR> translation2 = new Ref<>();
-      getScriptedObjectRotationAndTranslation(scriptIndex2, rotation2, translation2);
+      final Ref<Vector3f> parentRotation = new Ref<>();
+      final Ref<VECTOR> parentTranslation = new Ref<>();
+      getScriptedObjectRotationAndTranslation(parentIndex, parentRotation, parentTranslation);
 
-      final VECTOR translationDelta = new VECTOR().set(translation1).sub(translation2.get());
-      final MATRIX sp0x38 = new MATRIX();
-      RotMatrix_Xyz(rotation2.get(), sp0x38);
+      final VECTOR translationDelta = new VECTOR().set(translation).sub(parentTranslation.get());
+      final MATRIX parentRotationMatrix = new MATRIX();
+      RotMatrix_Xyz(parentRotation.get(), parentRotationMatrix);
 
-      final VECTOR sp0x28 = new VECTOR();
-      sp0x38.transpose();
-      translationDelta.mul(sp0x38, sp0x28);
-      a2.set(sp0x28);
+      parentRotationMatrix.transpose();
+      translationDelta.mul(parentRotationMatrix, out);
     }
 
     //LAB_80110450
   }
 
+  /** I'm like 96% sure this name is correct */
   @Method(0x80110488L)
-  public static void FUN_80110488(final int scriptIndex1, final int scriptIndex2, final VECTOR s1) {
-    final MATRIX transforms1 = new MATRIX();
-    calculateEffectTransforms(transforms1, (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00);
+  public static void getEffectTranslationRelativeToParent(final int scriptIndex, final int parentIndex, final VECTOR out) {
+    final MATRIX transforms = new MATRIX();
+    calculateEffectTransforms(transforms, (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00);
 
-    if(scriptIndex2 == -1) {
-      s1.set(transforms1.transfer);
+    if(parentIndex == -1) {
+      out.set(transforms.transfer);
     } else {
       //LAB_80110500
-      final MATRIX transforms2 = new MATRIX();
-      calculateEffectTransforms(transforms2, (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[scriptIndex2].innerStruct_00);
-      transforms1.transfer.sub(transforms2.transfer);
+      final MATRIX parentTransforms = new MATRIX();
+      calculateEffectTransforms(parentTransforms, (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[parentIndex].innerStruct_00);
+      transforms.transfer.sub(parentTransforms.transfer);
 
-      transforms2.transpose();
-      transforms1.transfer.mul(transforms2, s1);
+      parentTransforms.transpose();
+      transforms.transfer.mul(parentTransforms, out);
     }
 
     //LAB_80110594
   }
 
+  /** Translates an object relative to the thing it's attached to */
   @Method(0x801105ccL)
-  public static void getTranslationWithRotation(final VECTOR out, final int scriptIndex, final VECTOR in) {
-    final Ref<Vector3f> rotation = new Ref<>();
-    final Ref<VECTOR> translation = new Ref<>();
-    getScriptedObjectRotationAndTranslation(scriptIndex, rotation, translation);
+  public static void translateRelativeToParent(final VECTOR out, final int parentIndex, final VECTOR in) {
+    final Ref<Vector3f> parentRotation = new Ref<>();
+    final Ref<VECTOR> parentTranslation = new Ref<>();
+    getScriptedObjectRotationAndTranslation(parentIndex, parentRotation, parentTranslation);
 
-    final MATRIX rotMatrix = new MATRIX();
-    RotMatrix_Xyz(rotation.get(), rotMatrix);
+    final MATRIX parentRotationMatrix = new MATRIX();
+    RotMatrix_Xyz(parentRotation.get(), parentRotationMatrix);
 
-    in.mul(rotMatrix, out);
-    out.add(translation.get());
+    in.mul(parentRotationMatrix, out);
+    out.add(parentTranslation.get());
   }
 
-  /** Sets translation on script, from second script if one specified */
+  /** Sets translation on script, relative to parent if specified */
   @Method(0x8011066cL)
-  public static BattleScriptDataBase setRelativeTranslation(final int scriptIndex1, final int scriptIndex2, final VECTOR translation) {
-    final BattleScriptDataBase obj = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
+  public static BattleScriptDataBase setRelativeTranslation(final int scriptIndex, final int parentIndex, final VECTOR translation) {
+    final BattleScriptDataBase obj = (BattleScriptDataBase)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
 
     if(BattleScriptDataBase.EM__.equals(obj.magic_00) && (((EffectManagerData6c<?>)obj).flags_04 & 0x2) != 0) {
       FUN_800e8d04((EffectManagerData6c<?>)obj, 0x1L);
     }
 
     //LAB_801106dc
-    final VECTOR objTranslation = getScriptedObjectTranslation(scriptIndex1);
-    if(scriptIndex2 == -1) {
+    final VECTOR objTranslation = getScriptedObjectTranslation(scriptIndex);
+    if(parentIndex == -1) {
       objTranslation.set(translation);
     } else {
       //LAB_80110718
-      getTranslationWithRotation(objTranslation, scriptIndex2, translation);
+      translateRelativeToParent(objTranslation, parentIndex, translation);
     }
 
     //LAB_80110720
@@ -6864,13 +6866,13 @@ public final class SEffe {
 
   /** Sets translation scaler with additional scaling based on translation and rotation of a second script */
   @Method(0x80110aa8L)
-  public static TransformScalerEffect34 setTranslationScalerWithRotation(final int transformType, final int scriptIndex1, final int scriptIndex2, final int stepCount, final int x, final int y, final int z) {
+  public static TransformScalerEffect34 setTranslationScalerWithRotation(final int transformType, final int scriptIndex, final int parentIndex, final int stepCount, final int x, final int y, final int z) {
     if(stepCount < 0) {
       return null;
     }
 
     //LAB_80110afc
-    final EffectManagerData6c<?> manager = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
+    final EffectManagerData6c<?> manager = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
     if((manager.flags_04 & 0x2) != 0) {
       FUN_800e8d04(manager, 0x1L);
     }
@@ -6879,20 +6881,20 @@ public final class SEffe {
 
     //LAB_80110b38
     final TransformScalerEffect34 translationScaler = FUN_800e8dd4(manager, 1, 0, SEffe::tickTranslationScalerWithRotation, new TransformScalerEffect34());
-    if(scriptIndex2 == -1) {
+    if(parentIndex == -1) {
       translationVelocity.set(x, y, z)
-        .sub(getScriptedObjectTranslation(scriptIndex1));
+        .sub(getScriptedObjectTranslation(scriptIndex));
       //LAB_80110b9c
     } else if(transformType == 0) {  // XYZ minus script 1 translation + script 2 translation
       //LAB_80110bc0
       translationVelocity.set(x, y, z)
-        .sub(getScriptedObjectTranslation(scriptIndex1))
-        .add(getScriptedObjectTranslation(scriptIndex2));
+        .sub(getScriptedObjectTranslation(scriptIndex))
+        .add(getScriptedObjectTranslation(parentIndex));
     } else if(transformType == 1) {  // XYZ minus script 1 translation + script 2 translation with rotation
       //LAB_80110c0c
-      getTranslationWithRotation(translationVelocity, scriptIndex2, new VECTOR().set(x, y, z));
+      translateRelativeToParent(translationVelocity, parentIndex, new VECTOR().set(x, y, z));
       translationVelocity
-        .sub(getScriptedObjectTranslation(scriptIndex1));
+        .sub(getScriptedObjectTranslation(scriptIndex));
     }
 
     //LAB_80110c6c
@@ -6918,8 +6920,8 @@ public final class SEffe {
   }
 
   @Method(0x80110d34L)
-  public static TransformScalerEffect34 FUN_80110d34(final int a0, final int scriptIndex1, final int scriptIndex2, final int a3, final int x, final int y, final int z) {
-    final EffectManagerData6c<?> s1 = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[scriptIndex1].innerStruct_00;
+  public static TransformScalerEffect34 FUN_80110d34(final int a0, final int scriptIndex, final int parentIndex, final int a3, final int x, final int y, final int z) {
+    final EffectManagerData6c<?> s1 = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
     if((s1.flags_04 & 0x2) != 0) {
       FUN_800e8d04(s1, 1);
     }
@@ -6938,20 +6940,20 @@ public final class SEffe {
       //LAB_80110e30
       final VECTOR sp0x18 = new VECTOR();
 
-      if(scriptIndex2 == -1) {
+      if(parentIndex == -1) {
         sp0x18.set(x, y, z)
-          .sub(getScriptedObjectTranslation(scriptIndex1));
+          .sub(getScriptedObjectTranslation(scriptIndex));
         //LAB_80110e70
       } else if(a0 == 0) {
         //LAB_80110e94
         sp0x18.set(x, y, z)
-          .sub(getScriptedObjectTranslation(scriptIndex1))
-          .add(getScriptedObjectTranslation(scriptIndex2));
+          .sub(getScriptedObjectTranslation(scriptIndex))
+          .add(getScriptedObjectTranslation(parentIndex));
       } else if(a0 == 1) {
         //LAB_80110ee0
-        getTranslationWithRotation(sp0x18, scriptIndex2, new VECTOR().set(x, y, z));
+        translateRelativeToParent(sp0x18, parentIndex, new VECTOR().set(x, y, z));
         sp0x18
-          .sub(getScriptedObjectTranslation(scriptIndex1));
+          .sub(getScriptedObjectTranslation(scriptIndex));
       }
 
       //LAB_80110f38
@@ -6997,23 +6999,35 @@ public final class SEffe {
     throw new RuntimeException("Bugged effect allocator");
   }
 
+  @ScriptDescription("Calculates the relative offset from one scripted object to its parent (or just returns the first object's position if the parent is -1)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptedObjectIndex", description = "The scripted object index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentIndex", description = "The scripted object parent index (-1 for none)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The calculated X position")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The calculated Y position")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The calculated Z position")
   @Method(0x801115ecL)
-  public static FlowControl FUN_801115ec(final RunningScript<?> script) {
-    final VECTOR sp0x10 = new VECTOR();
-    FUN_8011035c(script.params_20[0].get(), script.params_20[1].get(), sp0x10);
-    script.params_20[2].set(sp0x10.getX());
-    script.params_20[3].set(sp0x10.getY());
-    script.params_20[4].set(sp0x10.getZ());
+  public static FlowControl scriptGetTranslationRelativeToParent(final RunningScript<?> script) {
+    final VECTOR translation = new VECTOR();
+    getTranslationRelativeToParent(script.params_20[0].get(), script.params_20[1].get(), translation);
+    script.params_20[2].set(translation.getX());
+    script.params_20[3].set(translation.getY());
+    script.params_20[4].set(translation.getZ());
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Calculates the relative offset from one effect to its parent (or just returns the first effect's position if the parent is -1)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentIndex", description = "The parent index (-1 for none)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The calculated X position")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The calculated Y position")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The calculated Z position")
   @Method(0x80111658L)
-  public static FlowControl FUN_80111658(final RunningScript<?> script) {
-    final VECTOR sp0x10 = new VECTOR();
-    FUN_80110488(script.params_20[0].get(), script.params_20[1].get(), sp0x10);
-    script.params_20[2].set(sp0x10.getX());
-    script.params_20[3].set(sp0x10.getY());
-    script.params_20[4].set(sp0x10.getZ());
+  public static FlowControl scriptGetEffectTranslationRelativeToParent(final RunningScript<?> script) {
+    final VECTOR translation = new VECTOR();
+    getEffectTranslationRelativeToParent(script.params_20[0].get(), script.params_20[1].get(), translation);
+    script.params_20[2].set(translation.getX());
+    script.params_20[3].set(translation.getY());
+    script.params_20[4].set(translation.getZ());
     return FlowControl.CONTINUE;
   }
 
@@ -7094,7 +7108,7 @@ public final class SEffe {
     final int a2 = script.params_20[1].get();
     if(a2 == -1) {
       //LAB_80111acc
-      return FUN_80111658(script);
+      return scriptGetEffectTranslationRelativeToParent(script);
     }
 
     final MATRIX sp0x20 = new MATRIX();
@@ -7107,6 +7121,12 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Translates an object relative to its parent, if one is specified")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex1", description = "The BattleObject27c script index 1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex1", description = "The BattleObject27c script index 2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The calculated X position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The calculated Y position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The calculated Z position")
   @Method(0x80111ae4L)
   public static FlowControl scriptSetRelativeTranslation(final RunningScript<?> script) {
     final VECTOR sp0x10 = new VECTOR().set(script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get());
@@ -7344,6 +7364,12 @@ public final class SEffe {
     return 1;
   }
 
+  @ScriptDescription("Calculates the relative rotation between two scripted objects (or just returns the first object's rotation if the second is -1)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptedObjectIndex1", description = "The scripted object 1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptedObjectIndex2", description = "The scripted object 2 (or -1 for none)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The calculated X rotation (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The calculated Y rotation (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The calculated Z rotation (PSX degrees)")
   @Method(0x80112704L)
   public static FlowControl scriptGetRotationDifference(final RunningScript<?> script) {
     final Vector3f sp0x10 = new Vector3f();
@@ -7354,6 +7380,12 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets the relative rotation between two scripted objects (or from the origin if the second is -1)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptedObjectIndex1", description = "The scripted object 1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptedObjectIndex2", description = "The scripted object 2 (or -1 for none)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X rotation (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y rotation (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z rotation (PSX degrees)")
   @Method(0x80112770L)
   public static FlowControl scriptSetRelativeRotation(final RunningScript<?> script) {
     setRelativeRotation(
@@ -7521,16 +7553,26 @@ public final class SEffe {
     throw new RuntimeException("Not implemented");
   }
 
+  @ScriptDescription("Converts a YXZ rotation to a XYZ rotation")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "yxzX", description = "The YXZ X rotation")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "yxzY", description = "The YXZ Y rotation")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "yxzZ", description = "The YXZ Z rotation")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "xyzX", description = "The XYZ X rotation")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "xyzY", description = "The XYZ Y rotation")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "xyzZ", description = "The XYZ Z rotation")
   @Method(0x8011357cL)
-  public static FlowControl FUN_8011357c(final RunningScript<?> script) {
+  public static FlowControl scriptConvertRotationYxzToXyz(final RunningScript<?> script) {
     final Vector3f rot = new Vector3f(
       MathHelper.psxDegToRad((short)script.params_20[1].get()),
       MathHelper.psxDegToRad((short)script.params_20[2].get()),
       MathHelper.psxDegToRad((short)script.params_20[3].get())
     );
+
     final MATRIX transforms = new MATRIX();
     RotMatrix_Yxz(rot, transforms);
     getRotationFromTransforms(rot, transforms);
+
     script.params_20[4].set(MathHelper.radToPsxDeg(rot.x));
     script.params_20[5].set(MathHelper.radToPsxDeg(rot.y));
     script.params_20[6].set(MathHelper.radToPsxDeg(rot.z));
@@ -7543,31 +7585,31 @@ public final class SEffe {
    */
   @Method(0x80113624L)
   public static Vector3f getScaleRatio(final int scriptIndex1, final int scriptIndex2, final Vector3f outScale) {
-    ScriptState<?> a3 = scriptStatePtrArr_800bc1c0[scriptIndex1];
-    BattleScriptDataBase t0 = (BattleScriptDataBase)a3.innerStruct_00;
+    ScriptState<?> state1 = scriptStatePtrArr_800bc1c0[scriptIndex1];
+    BattleScriptDataBase obj1 = (BattleScriptDataBase)state1.innerStruct_00;
 
-    final Vector3f t1;
-    if(BattleScriptDataBase.EM__.equals(t0.magic_00)) {
-      t1 = ((EffectManagerData6c<?>)t0)._10.scale_16;
+    final Vector3f scale;
+    if(BattleScriptDataBase.EM__.equals(obj1.magic_00)) {
+      scale = ((EffectManagerData6c<?>)obj1)._10.scale_16;
     } else {
       //LAB_80113660
-      t1 = ((BattleObject27c)t0).model_148.coord2_14.transforms.scale;
+      scale = ((BattleObject27c)obj1).model_148.coord2_14.transforms.scale;
     }
 
     //LAB_801136a0
     if(scriptIndex2 == -1) {
-      outScale.set(t1);
+      outScale.set(scale);
     } else {
       //LAB_801136d0
-      a3 = scriptStatePtrArr_800bc1c0[scriptIndex1];
-      t0 = (BattleScriptDataBase)a3.innerStruct_00;
+      state1 = scriptStatePtrArr_800bc1c0[scriptIndex1];
+      obj1 = (BattleScriptDataBase)state1.innerStruct_00;
 
       final Vector3f svec;
-      if(BattleScriptDataBase.EM__.equals(t0.magic_00)) {
-        svec = ((EffectManagerData6c<?>)t0)._10.scale_16;
+      if(BattleScriptDataBase.EM__.equals(obj1.magic_00)) {
+        svec = ((EffectManagerData6c<?>)obj1)._10.scale_16;
       } else {
         //LAB_80113708
-        svec = new Vector3f(((BattleObject27c)t0).model_148.coord2_14.transforms.scale);
+        svec = new Vector3f(((BattleObject27c)obj1).model_148.coord2_14.transforms.scale);
       }
 
       //LAB_80113744
@@ -7586,9 +7628,9 @@ public final class SEffe {
       }
 
       //LAB_80113780
-      outScale.x = t1.x / svec.x;
-      outScale.y = t1.y / svec.y;
-      outScale.z = t1.z / svec.z;
+      outScale.x = scale.x / svec.x;
+      outScale.y = scale.y / svec.y;
+      outScale.z = scale.z / svec.z;
     }
 
     //LAB_801137ec
@@ -7632,56 +7674,67 @@ public final class SEffe {
     return out;
   }
 
+  @ScriptDescription("NOTE: this method is bugged, it only uses the first index! Calculates the scale ratio between two scripted objects (or just returns the first object's rotation if the second is -1)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptedObjectIndex1", description = "The scripted object 1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptedObjectIndex2", description = "The scripted object 2 (or -1 for none)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The calculated X scale ratio (12-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The calculated Y scale ratio (12-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The calculated Z scale ratio (12-bit fixed-point)")
   @Method(0x80113964L)
   public static FlowControl scriptGetScaleRatio(final RunningScript<?> script) {
-    final Vector3f sp0x10 = new Vector3f();
-    getScaleRatio(script.params_20[0].get(), script.params_20[1].get(), sp0x10);
-    script.params_20[2].set((int)(sp0x10.x * 0x1000));
-    script.params_20[3].set((int)(sp0x10.y * 0x1000));
-    script.params_20[4].set((int)(sp0x10.z * 0x1000));
+    final Vector3f scale = new Vector3f();
+    getScaleRatio(script.params_20[0].get(), script.params_20[1].get(), scale);
+    script.params_20[2].set((int)(scale.x * 0x1000));
+    script.params_20[3].set((int)(scale.y * 0x1000));
+    script.params_20[4].set((int)(scale.z * 0x1000));
     return FlowControl.CONTINUE;
   }
 
-  /** Set model scale, transfer from second script if included */
+  @ScriptDescription("Sets the relative scale between two scripted objects (or from the origin if the second is -1)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptedObjectIndex1", description = "The scripted object 1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptedObjectIndex2", description = "The scripted object 2 (or -1 for none)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X rotation (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y rotation (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z rotation (PSX degrees)")
   @Method(0x801139d0L)
   public static FlowControl scriptSetRelativeScale(final RunningScript<?> script) {
-    final int t1 = script.params_20[0].get();
-    final int a1 = script.params_20[1].get();
+    final int scriptIndex1 = script.params_20[0].get();
+    final int scriptIndex2 = script.params_20[1].get();
     final float x = (short)script.params_20[2].get() / (float)0x1000;
     final float y = (short)script.params_20[3].get() / (float)0x1000;
     final float z = (short)script.params_20[4].get() / (float)0x1000;
-    final Vector3f sp0x00 = new Vector3f();
-    if(a1 == -1) {
-      sp0x00.set(x, y, z);
+    final Vector3f newScale = new Vector3f();
+    if(scriptIndex2 == -1) {
+      newScale.set(x, y, z);
     } else {
       //LAB_80113a28
-      final ScriptState<?> state = scriptStatePtrArr_800bc1c0[a1];
-      final BattleScriptDataBase a1_0 = (BattleScriptDataBase)state.innerStruct_00;
+      final ScriptState<?> state2 = scriptStatePtrArr_800bc1c0[scriptIndex2];
+      final BattleScriptDataBase data2 = (BattleScriptDataBase)state2.innerStruct_00;
 
-      final Vector3f v1;
-      if(BattleScriptDataBase.EM__.equals(a1_0.magic_00)) {
-        v1 = ((EffectManagerData6c<?>)a1_0)._10.scale_16;
+      final Vector3f scale2;
+      if(BattleScriptDataBase.EM__.equals(data2.magic_00)) {
+        scale2 = ((EffectManagerData6c<?>)data2)._10.scale_16;
       } else {
         //LAB_80113a64
-        v1 = ((BattleObject27c)a1_0).model_148.coord2_14.transforms.scale;
+        scale2 = ((BattleObject27c)data2).model_148.coord2_14.transforms.scale;
       }
 
       //LAB_80113aa0
       //LAB_80113abc
       //LAB_80113ae0
       //LAB_80113b04
-      sp0x00.set(x * v1.x, y * v1.y, z * v1.z);
+      newScale.set(x * scale2.x, y * scale2.y, z * scale2.z);
     }
 
     //LAB_80113b0c
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[t1];
-    final BattleScriptDataBase a0_0 = (BattleScriptDataBase)state.innerStruct_00;
+    final ScriptState<?> state1 = scriptStatePtrArr_800bc1c0[scriptIndex1];
+    final BattleScriptDataBase data1 = (BattleScriptDataBase)state1.innerStruct_00;
 
-    if(BattleScriptDataBase.EM__.equals(a0_0.magic_00)) {
-      ((EffectManagerData6c<?>)a0_0)._10.scale_16.set(sp0x00);
+    if(BattleScriptDataBase.EM__.equals(data1.magic_00)) {
+      ((EffectManagerData6c<?>)data1)._10.scale_16.set(newScale);
     } else {
       //LAB_80113b64
-      ((BattleObject27c)a0_0).model_148.coord2_14.transforms.scale.set(sp0x00);
+      ((BattleObject27c)data1).model_148.coord2_14.transforms.scale.set(newScale);
     }
 
     //LAB_80113b94
@@ -8379,27 +8432,27 @@ public final class SEffe {
       //LAB_80115d84
       if(a0 == 0) {
         //LAB_80115dc0
-        if((stage_800bda0c._5e4 & 0x8000) != 0) {
+        if((stage_800bda0c.flags_5e4 & 0x8000) != 0) {
           allocateScreenDarkeningEffect(6, 16);
         }
 
         //LAB_80115de8
-        stage_800bda0c._5e4 &= ~(_00 | _02 | _04);
+        stage_800bda0c.flags_5e4 &= ~(_00 | _02 | _04);
         //LAB_80115da8
       } else if(a0 == 1) {
         //LAB_80115e18
-        stage_800bda0c._5e4 |= _00;
+        stage_800bda0c.flags_5e4 |= _00;
       } else if(a0 == 2) {
         //LAB_80115e34
-        stage_800bda0c._5e4 |= _02;
+        stage_800bda0c.flags_5e4 |= _02;
 
-        if((stage_800bda0c._5e4 & 0x8000) != 0) {
+        if((stage_800bda0c.flags_5e4 & 0x8000) != 0) {
           allocateScreenDarkeningEffect(16, 6);
         }
       } else if(a0 == 3) {
         //LAB_80115e70
         //LAB_80115e8c
-        stage_800bda0c._5e4 |= _04;
+        stage_800bda0c.flags_5e4 |= _04;
       }
     }
 
