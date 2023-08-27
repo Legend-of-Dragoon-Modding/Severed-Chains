@@ -201,12 +201,12 @@ public class ScriptState<T> {
     this.loadScriptFile(script, 0);
   }
 
-  public void loadScriptFile(@Nullable final ScriptFile script, final int offsetIndex) {
+  public void loadScriptFile(@Nullable final ScriptFile script, final int entrypointIndex) {
     if(script != null) {
-      LOGGER.info(SCRIPT_MARKER, "Loading script %s into index %d (entry point 0x%x)", script.name, this.index, offsetIndex);
+      LOGGER.info(SCRIPT_MARKER, "Loading script %s into index %d (entry point 0x%x)", script.name, this.index, entrypointIndex);
 
       this.scriptPtr_14 = script;
-      this.offset_18 = script.getEntry(offsetIndex);
+      this.offset_18 = script.getEntry(entrypointIndex);
       this.storage_44[7] &= 0xfffd_ffff;
     } else {
       LOGGER.info(SCRIPT_MARKER, "Clearing script index %d", this.index);
