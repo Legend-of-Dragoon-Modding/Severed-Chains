@@ -162,7 +162,7 @@ import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
-import static legend.game.combat.Bttl_800c.FUN_800cf4f4;
+import static legend.game.combat.Bttl_800c.getRelativeOffset;
 import static legend.game.combat.Bttl_800c.FUN_800cf684;
 import static legend.game.combat.Bttl_800c.FUN_800cfb94;
 import static legend.game.combat.Bttl_800c.FUN_800cfc20;
@@ -2420,8 +2420,18 @@ public final class SEffe {
     effect.halfH_36 = (short)(effect.h_5f >>> 1);
   }
 
+  @ScriptDescription("Allocates a particle effect manager")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentIndex", description = "The parent index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "Packed value, controls how the particle behaves")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "count", description = "The particle count")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p4")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p5")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p6")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p7", description = "Unknown packed values")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type2", description = "Also controls how the particle behaves")
   @Method(0x80102088L)
-  public static FlowControl allocateParticleEffect(final RunningScript<? extends BattleObject> script) {
+  public static FlowControl scriptAllocateParticleEffect(final RunningScript<? extends BattleObject> script) {
     final int particleCount = script.params_20[3].get();
 
     final ScriptState<EffectManagerData6c<EffectManagerData6cInner.ParticleType>> state = allocateEffectManager(
@@ -2498,20 +2508,27 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets a particle's acceleration")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationX", description = "The X acceleration")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationY", description = "The Y acceleration")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationZ", description = "The Z acceleration")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationScale", description = "A value multiplied with the acceleration")
   @Method(0x80102364L)
-  public static FlowControl FUN_80102364(final RunningScript<?> script) {
-    final ParticleEffectData98 effect = (ParticleEffectData98)((EffectManagerData6c<EffectManagerData6cInner.ParticleType>)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00).effect_44;
+  public static FlowControl scriptSetParticleAcceleration(final RunningScript<?> script) {
+    final ParticleEffectData98 effect = (ParticleEffectData98)SCRIPTS.getObject(script.params_20[1].get(), EffectManagerData6c.classFor(EffectManagerData6cInner.ParticleType.class)).effect_44;
 
-    final int a2 = script.params_20[0].get();
-    if(a2 == 0) {
+    final int mode = script.params_20[0].get();
+    if(mode == 0) {
       effect.scaleOrUseEffectAcceleration_6c = true;
       effect.effectAcceleration_70.set(script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get());
       effect.scaleParticleAcceleration_80 = script.params_20[5].get();
       //LAB_801023d0
-    } else if(a2 == 1) {
+    } else if(mode == 1) {
       effect.scaleOrUseEffectAcceleration_6c = false;
       //LAB_801023e0
-    } else if(a2 == 2) {
+    } else if(mode == 2) {
       //LAB_801023e8
       effect.scaleParticleAcceleration_80 = script.params_20[5].get();
     }
@@ -2520,14 +2537,18 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("No-op")
   @Method(0x801023f4L)
   public static FlowControl FUN_801023f4(final RunningScript<?> script) {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Returns which particles are alive")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The particle effect index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL_ARRAY, name = "alive", description = "An array of booleans, each one denoting whether its respective particle instance is alive")
   @Method(0x801023fcL)
-  public static FlowControl FUN_801023fc(final RunningScript<?> script) {
-    final ParticleEffectData98 effect = (ParticleEffectData98)((EffectManagerData6c<EffectManagerData6cInner.ParticleType>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).effect_44;
+  public static FlowControl scriptGetAliveParticles(final RunningScript<?> script) {
+    final ParticleEffectData98 effect = (ParticleEffectData98)SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.classFor(EffectManagerData6cInner.ParticleType.class)).effect_44;
 
     //LAB_8010243c
     for(int i = 0; i < effect.countParticleInstance_50; i++) {
@@ -2539,9 +2560,15 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Gets the position of a particle")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The particle effect index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "particleIndex", description = "The particle index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X position")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y position")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z position")
   @Method(0x8010246cL)
-  public static FlowControl FUN_8010246c(final RunningScript<?> script) {
-    final ParticleEffectData98 effect = (ParticleEffectData98)((EffectManagerData6c<EffectManagerData6cInner.ParticleType>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).effect_44;
+  public static FlowControl scriptGetParticlePosition(final RunningScript<?> script) {
+    final ParticleEffectData98 effect = (ParticleEffectData98)SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.classFor(EffectManagerData6cInner.ParticleType.class)).effect_44;
     final ParticleEffectInstance94 particle = effect.particleArray_68[script.params_20[1].get()];
 
     final VECTOR sp0x20 = new VECTOR();
@@ -2552,11 +2579,13 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Mo-op (pause)")
   @Method(0x80102608L)
   public static FlowControl FUN_80102608(final RunningScript<?> script) {
-    throw new RuntimeException("Not implemented");
+    return FlowControl.PAUSE;
   }
 
+  @ScriptDescription("No-op")
   @Method(0x80102610L)
   public static FlowControl FUN_80102610(final RunningScript<?> script) {
     return FlowControl.CONTINUE;
@@ -3226,8 +3255,17 @@ public final class SEffe {
     }
   }
 
+  @ScriptDescription("Allocates an electricity effect")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentIndex", description = "The parent index (or -1 for none)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "boltAngleRangeCutoff", description = "The maximum angle for a bolt")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "boltCount", description = "The number of bolts")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "maxSegmentLength", description = "The maximum length of a segment")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "boltAngleStep", description = "The angle increment per frame")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flags", description = "Multiple packed values")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "The electricity type")
   @Method(0x801052dcL)
-  public static FlowControl allocateElectricityEffect(final RunningScript<? extends BattleObject> script) {
+  public static FlowControl scriptAllocateElectricityEffect(final RunningScript<? extends BattleObject> script) {
     final int effectFlag = script.params_20[6].get();
     final int callbackIndex = script.params_20[7].get();
     final int boltCount = script.params_20[3].get();
@@ -3287,15 +3325,22 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Calculates the end of an electricity bolt segment")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The electricity effect index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "boltIndex", description = "The bolt index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "segmentIndex", description = "The segment index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X position")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y position")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Y position")
   @Method(0x80105604L)
-  public static FlowControl FUN_80105604(final RunningScript<?> script) {
-    final EffectManagerData6c<EffectManagerData6cInner.ElectricityType> a0 = (EffectManagerData6c<EffectManagerData6cInner.ElectricityType>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    final LightningBoltEffect14 a1 = ((ElectricityEffect38)a0.effect_44).bolts_34[script.params_20[1].get()];
-    final LightningBoltEffectSegment30 v0 = a1.boltSegments_10[script.params_20[2].get()];
+  public static FlowControl scriptGetBoltSegmentEnd(final RunningScript<?> script) {
+    final EffectManagerData6c<EffectManagerData6cInner.ElectricityType> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.classFor(EffectManagerData6cInner.ElectricityType.class));
+    final LightningBoltEffect14 bolt = ((ElectricityEffect38)manager.effect_44).bolts_34[script.params_20[1].get()];
+    final LightningBoltEffectSegment30 segment = bolt.boltSegments_10[script.params_20[2].get()];
 
-    final VECTOR sp0x10 = new VECTOR().set(v0.origin_00);
+    final VECTOR sp0x10 = new VECTOR().set(segment.origin_00);
     final VECTOR sp0x20 = new VECTOR();
-    FUN_800cf4f4(a0, a1.rotation_04, sp0x10, sp0x20);
+    getRelativeOffset(manager, bolt.rotation_04, sp0x10, sp0x20);
     script.params_20[3].set(sp0x20.getX());
     script.params_20[4].set(sp0x20.getY());
     script.params_20[5].set(sp0x20.getZ());
@@ -3303,7 +3348,7 @@ public final class SEffe {
   }
 
   @Method(0x80105704L)
-  public static void FUN_80105704(final ScriptState<ThunderArrowEffect1c> state, final ThunderArrowEffect1c data) {
+  public static void renderThunderArrowEffect(final ScriptState<ThunderArrowEffect1c> state, final ThunderArrowEffect1c data) {
     final DVECTOR[] sp0x18 = new DVECTOR[4];
     Arrays.setAll(sp0x18, n -> new DVECTOR());
 
@@ -3343,7 +3388,7 @@ public final class SEffe {
   }
 
   @Method(0x80105aa0L)
-  public static void FUN_80105aa0(final ScriptState<ThunderArrowEffect1c> state, final ThunderArrowEffect1c data) {
+  public static void tickThunderArrowEffect(final ScriptState<ThunderArrowEffect1c> state, final ThunderArrowEffect1c data) {
     data._04--;
 
     if(data._04 <= 0) {
@@ -3362,30 +3407,32 @@ public final class SEffe {
     }
   }
 
+  @ScriptDescription("Allocates a thunder arrow effect extension to an electricity effect")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The electricity effect index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
   @Method(0x80105c38L)
-  public static FlowControl FUN_80105c38(final RunningScript<?> script) {
+  public static FlowControl scriptAllocateThunderArrowEffect(final RunningScript<?> script) {
     final VECTOR sp0x18 = new VECTOR();
     final ShortRef refX = new ShortRef();
     final ShortRef refY = new ShortRef();
 
-    final int scriptIndex = script.params_20[0].get();
     final int s3 = script.params_20[1].get();
-    final EffectManagerData6c<EffectManagerData6cInner.ElectricityType> manager = (EffectManagerData6c<EffectManagerData6cInner.ElectricityType>)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
-    final ElectricityEffect38 s1 = (ElectricityEffect38)manager.effect_44;
+    final EffectManagerData6c<EffectManagerData6cInner.ElectricityType> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.classFor(EffectManagerData6cInner.ElectricityType.class));
+    final ElectricityEffect38 electricityEffect = (ElectricityEffect38)manager.effect_44;
     final ScriptState<ThunderArrowEffect1c> state = SCRIPTS.allocateScriptState("ThunderArrowEffect1c", new ThunderArrowEffect1c());
     state.loadScriptFile(doNothingScript_8004f650);
-    state.setTicker(SEffe::FUN_80105aa0);
-    state.setRenderer(SEffe::FUN_80105704);
+    state.setTicker(SEffe::tickThunderArrowEffect);
+    state.setRenderer(SEffe::renderThunderArrowEffect);
     final ThunderArrowEffect1c effect = state.innerStruct_00;
-    effect.count_00 = s1.boltCount_00;
+    effect.count_00 = electricityEffect.boltCount_00;
     effect._04 = s3;
-    effect.count_0c = s1.boltSegmentCount_28;
+    effect.count_0c = electricityEffect.boltSegmentCount_28;
     effect._10 = manager._10.flags_00;
     effect._18 = new ThunderArrowEffectBolt1e[effect.count_00][];
 
     //LAB_80105d64
     for(int s7 = 0; s7 < effect.count_00; s7++) {
-      final LightningBoltEffect14 struct14 = s1.bolts_34[s7];
+      final LightningBoltEffect14 struct14 = electricityEffect.bolts_34[s7];
       effect._18[s7] = new ThunderArrowEffectBolt1e[effect.count_0c];
 
       //LAB_80105da0
@@ -3493,7 +3540,7 @@ public final class SEffe {
     int hitNum;
     for(hitNum = 0; hitNum < 8; hitNum++) {
       // Number of hits calculated by counting to first hit with 0 total frames
-      if((getHitProperty(s5.charSlot_276, hitNum, 1, autoCompleteType) & 0xffL) == 0) {
+      if((getHitProperty(s5.charSlot_276, hitNum, 1, autoCompleteType) & 0xff) == 0) {
         break;
       }
     }
@@ -4057,14 +4104,24 @@ public final class SEffe {
     //LAB_80107764
   }
 
+  @ScriptDescription("Gets the success or failure of the addition hit")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The hit index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "result", description = "0 = not attempted, 1 = success, -1 = too early, -2 = too late, -3 = wrong button")
   @Method(0x801077bcL)
   public static FlowControl scriptGetHitCompletionState(final RunningScript<?> script) {
     script.params_20[2].set(additionHitCompletionState_8011a014[script.params_20[1].get()]);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Allocates an addition overlays effect manager")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attackerIndex", description = "The attacker battle entity index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "targetIndex", description = "The target battle entity index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "autoCompleteType", description = "0 = normal, 2 = Wargod Calling/Ultimate Wargod")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @Method(0x801077e8L)
-  public static FlowControl allocateAdditionOverlaysEffect(final RunningScript<? extends BattleObject> script) {
+  public static FlowControl scriptAllocateAdditionOverlaysEffect(final RunningScript<? extends BattleObject> script) {
     final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
       "Addition overlays",
       script.scriptState_04,
@@ -4082,12 +4139,15 @@ public final class SEffe {
   }
 
   /**
-   * Script subfunc related to pausing ticking/rendering of addition overlay during counterattacks. v1 == 0 occurs when
+   * Script subfunc related to pause ticking/rendering of addition overlay during counterattacks. additionContinuationState == 0 occurs when
    * counterattack counter is successful; have not gotten other conditions to trigger
    */
+  @ScriptDescription("Pauses ticker/renderer of addition overlays during counterattacks")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "state", description = "0 = counterattack successful, other values unknown")
   @Method(0x801078c0L)
   public static FlowControl scriptAlterAdditionContinuationState(final RunningScript<?> script) {
-    final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager = (EffectManagerData6c<EffectManagerData6cInner.VoidType>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.classFor(EffectManagerData6cInner.VoidType.class));
     final AdditionOverlaysEffect44 effect = (AdditionOverlaysEffect44)manager.effect_44;
     final int additionContinuationState = script.params_20[1].get();
 
@@ -4119,7 +4179,9 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  /** Param 0 is 0 for addition, 1 for dragoon addition */
+  @ScriptDescription("Gets the addition overlay state")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "0 = addition, 1 = dragoon addition")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "state", description = "The overlay state")
   @Method(0x801079a4L)
   public static FlowControl scriptGetAdditionOverlayActiveStatus(final RunningScript<?> script) {
     if(script.params_20[0].get() == 0) {
@@ -4484,8 +4546,14 @@ public final class SEffe {
     //LAB_801087dc
   }
 
+  @ScriptDescription("Allocates a dragoon addition effect")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flags", description = "Various flags")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "charId", description = "The character ID")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticksUntilStart", description = "The number of ticks until the addition starts")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "hudX", description = "The HUD X position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "hudY", description = "The HUD Y position")
   @Method(0x801087f8L)
-  public static FlowControl allocateDragoonAdditionScript(final RunningScript<?> script) {
+  public static FlowControl scriptAllocateDragoonAdditionScript(final RunningScript<?> script) {
     final int charId = script.params_20[1].get();
     final int flag = script.params_20[0].get();
 
@@ -4533,6 +4601,8 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Gets the number of dragoon addition hits completed")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "count", description = "The number of hits completed")
   @Method(0x801089ccL)
   public static FlowControl scriptGetDragoonAdditionHitsCompleted(final RunningScript<?> script) {
     script.params_20[1].set(daddyHitsCompleted_80119f40.get());
@@ -4657,16 +4727,20 @@ public final class SEffe {
     }
   }
 
+  @ScriptDescription("No-op")
   @Method(0x80108de8L)
   public static FlowControl FUN_80108de8(final RunningScript<?> script) {
-    throw new RuntimeException("Not implemented");
+    return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("No-op")
   @Method(0x80108df0L)
   public static FlowControl FUN_80108df0(final RunningScript<?> script) {
-    throw new RuntimeException("Not implemented");
+    return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Allocates an empty effect manager")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @Method(0x80108df8L)
   public static FlowControl FUN_80108df8(final RunningScript<? extends BattleObject> script) {
     script.params_20[0].set(allocateEffectManager("Unknown (FUN_80108df8)", script.scriptState_04, null, null, null, null).index);
@@ -4711,8 +4785,11 @@ public final class SEffe {
     //LAB_80109110
   }
 
+  @ScriptDescription("Allocates a rain effect")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "count", description = "How dense the rain should be")
   @Method(0x80109158L)
-  public static FlowControl allocateRainEffect(final RunningScript<? extends BattleObject> script) {
+  public static FlowControl scriptAllocateRainEffect(final RunningScript<? extends BattleObject> script) {
     final int count = script.params_20[1].get();
     final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
       "RainEffect08",
@@ -4815,8 +4892,12 @@ public final class SEffe {
     // no-op
   }
 
+  @ScriptDescription("Allocates a screen distortion effect")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "angleStep", description = "The amount to rotate each frame (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "The distortion type")
   @Method(0x80109a7cL)
-  public static FlowControl allocateScreenDistortionEffect(final RunningScript<? extends BattleObject> script) {
+  public static FlowControl scriptAllocateScreenDistortionEffect(final RunningScript<? extends BattleObject> script) {
     final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
       "Screen distortion",
       script.scriptState_04,
@@ -4864,8 +4945,13 @@ public final class SEffe {
   }
 
   /** Kubila demon frog, Lloyd's cape, Selebus' strapple and zambo hands, Grand Jewel heal, etc. */
+  @ScriptDescription("Allocates a vertex difference animation for an effect")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "differenceIndex", description = "The difference index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks", description = "The number of ticks until the animation finishes")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scale", description = "How much to grow each frame")
   @Method(0x80109d30L)
-  public static FlowControl allocateVertexDifferenceAnimation(final RunningScript<?> script) {
+  public static FlowControl scriptAllocateVertexDifferenceAnimation(final RunningScript<?> script) {
     final int ticksRemaining = script.params_20[2].get();
     final int embiggener = script.params_20[3].get();
 
@@ -4950,8 +5036,13 @@ public final class SEffe {
     effect._1a += (short)(manager._10._24 << 7 >> 8);
   }
 
+  @ScriptDescription("Allocates a frozen jet effect")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "tmdDeffIndex", description = "The effect index of the model to use")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p3")
   @Method(0x8010a3fcL)
-  public static FlowControl FUN_8010a3fc(final RunningScript<? extends BattleObject> script) {
+  public static FlowControl scriptAllocateFrozenJetEffect(final RunningScript<? extends BattleObject> script) {
     final int s4 = script.params_20[2].get();
     final int sp18 = script.params_20[3].get();
 
@@ -4979,8 +5070,17 @@ public final class SEffe {
   }
 
   /** Used in Rose transform */
+  @ScriptDescription("Allocates a gradient rays effect")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "count", description = "The ray count")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p3")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p4")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p5")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flags", description = "The effect flags")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "The effect type")
   @Method(0x8010a610L)
-  public static FlowControl allocateGradientRaysEffect(final RunningScript<? extends BattleObject> script) {
+  public static FlowControl scriptAllocateGradientRaysEffect(final RunningScript<? extends BattleObject> script) {
     final int count = script.params_20[1].get();
 
     final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
@@ -5210,11 +5310,17 @@ public final class SEffe {
     };
   }
 
-  /**
-   * Used for Death Dimension, Melbu's screenshot attack, and Kubila's demon frog, possibly other unknown effects
-   */
+  /** Used for Death Dimension, Melbu's screenshot attack, and Kubila's demon frog, possibly other unknown effects */
+  @ScriptDescription("Allocates a screen capture effect")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "deffFlags", description = "The DEFF flags")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "w", description = "The width")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "h", description = "The height")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "The effect type")
   @Method(0x8010b1d8L)
-  public static FlowControl allocateScreenCaptureEffect(final RunningScript<? extends BattleObject> script) {
+  public static FlowControl scriptAllocateScreenCaptureEffect(final RunningScript<? extends BattleObject> script) {
     final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
       "Screen capture",
       script.scriptState_04,
@@ -5541,9 +5647,9 @@ public final class SEffe {
   }
 
   @Method(0x8010c2e0L)
-  public static void FUN_8010c2e0(final ScreenCaptureEffectMetrics8 metrics, final int a1) {
-    if((a1 & 0xf_ff00) != 0xf_ff00) {
-      final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(a1 | 0x400_0000);
+  public static void FUN_8010c2e0(final ScreenCaptureEffectMetrics8 metrics, final int deffFlags) {
+    if((deffFlags & 0xf_ff00) != 0xf_ff00) {
+      final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(deffFlags | 0x400_0000);
       final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
       metrics.u_00 = deffMetrics.u_00;
       metrics.v_02 = deffMetrics.v_02;
@@ -5553,8 +5659,19 @@ public final class SEffe {
     //LAB_8010c368
   }
 
+  @ScriptDescription("Allocates a lens flare effect attached to a battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The battle entity to attach to")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "deffFlags1", description = "The DEFF flags for layer 1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "deffFlags2", description = "The DEFF flags for layer 2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "deffFlags3", description = "The DEFF flags for layer 3")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "deffFlags4", description = "The DEFF flags for layer 4")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "deffFlags5", description = "The DEFF flags for layer 5")
   @Method(0x8010c378L)
-  public static FlowControl allocateLensFlareEffect(final RunningScript<? extends BattleObject> script) {
+  public static FlowControl scriptAllocateLensFlareEffect(final RunningScript<? extends BattleObject> script) {
     final int bentIndex = script.params_20[1].get();
     final int x = script.params_20[2].get();
     final int y = script.params_20[3].get();
@@ -5773,8 +5890,12 @@ public final class SEffe {
     //LAB_8010d1ac
   }
 
+  @ScriptDescription("Allocates a white-silver dragoon transformation feathers effect")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "count", description = "The number of feathers")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "deffFlags", description = "The DEFF flags")
   @Method(0x8010d1dcL)
-  public static FlowControl allocateWsDragoonTransformationFeathersEffect(final RunningScript<? extends BattleObject> script) {
+  public static FlowControl scriptAllocateWsDragoonTransformationFeathersEffect(final RunningScript<? extends BattleObject> script) {
     final int featherCount = script.params_20[1].get();
     final int effectFlags = script.params_20[2].get();
 
@@ -5903,14 +6024,23 @@ public final class SEffe {
     }
   }
 
+  @ScriptDescription("Allocates a gold dragoon transformation effect")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "deffFlags", description = "The DEFF flags")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "count", description = "The effect instance count")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "horizontalMax", description = "The maximum position deviation on the XZ plane")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "verticalMin", description = "The minimum deviation on the Y axis")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "verticalMax", description = "The maximum deviation on the Y axis")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p7")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p8")
   @Method(0x8010d7dcL)
-  public static FlowControl allocateGoldDragoonTransformEffect(final RunningScript<? extends BattleObject> script) {
-    final int s7 = script.params_20[1].get();
+  public static FlowControl scriptAllocateGoldDragoonTransformEffect(final RunningScript<? extends BattleObject> script) {
+    final int deffFlags = script.params_20[1].get();
     final int count = script.params_20[2].get();
-    final int sp1c = 32;
-    final int sp20 = script.params_20[4].get();
-    final int sp24 = script.params_20[5].get();
-    final int sp28 = script.params_20[6].get();
+    final int horizontalMin = 32;
+    final int horizontalMax = script.params_20[4].get();
+    final int verticalMin = script.params_20[5].get();
+    final int verticalMax = script.params_20[6].get();
     final int sp2c = script.params_20[7].get();
     final int sp30 = script.params_20[8].get();
 
@@ -5934,11 +6064,11 @@ public final class SEffe {
       instance._69 = 0x7f;
       instance._6a = 0x7f;
 
-      final int s2 = rand() % (sp20 - sp1c + 1) + sp1c;
+      final int horizontalOffset = rand() % (horizontalMax - horizontalMin + 1) + horizontalMin;
       final int theta = rand() % 4096;
-      instance.transStep_28.setX(rcos(theta) * s2 >> 4);
-      instance.transStep_28.setY(rand() % (sp28 - sp24 + 1) + sp24 << 8);
-      instance.transStep_28.setZ(rsin(theta) * s2 >> 4);
+      instance.transStep_28.setX(rcos(theta) * horizontalOffset >> 4);
+      instance.transStep_28.setY(rand() % (verticalMax - verticalMin + 1) + verticalMin << 8);
+      instance.transStep_28.setZ(rsin(theta) * horizontalOffset >> 4);
       instance.rot_38.x = MathHelper.psxDegToRad(rand() % 4096);
       instance.rot_38.y = MathHelper.psxDegToRad(rand() % 4096);
       instance.rot_38.z = MathHelper.psxDegToRad(rand() % 4096);
@@ -5957,13 +6087,13 @@ public final class SEffe {
       instance._7e = (short)(rand() % (sp30 + 2));
       instance._80 = -1;
 
-      if((s7 & 0xf_ff00) == 0xf_ff00) {
+      if((deffFlags & 0xf_ff00) == 0xf_ff00) {
         //TODO I added the first deref here, this might have been a retail bug...
         //     Looking at how _800c6944 gets set, I don't see how it could have been correct
-        instance.tmd_70 = tmds_800c6944[s7 & 0xff];
+        instance.tmd_70 = tmds_800c6944[deffFlags & 0xff];
       } else {
         //LAB_8010dc40
-        final DeffPart.TmdType tmdType = (DeffPart.TmdType)getDeffPart(s7 | 0x300_0000);
+        final DeffPart.TmdType tmdType = (DeffPart.TmdType)getDeffPart(deffFlags | 0x300_0000);
         instance.tmd_70 = tmdType.tmd_0c.tmdPtr_00.tmd.objTable[0];
       }
 
@@ -6066,8 +6196,12 @@ public final class SEffe {
     //LAB_8010e020
   }
 
+  @ScriptDescription("Allocates a Star Children meteor effect")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "deffFlags", description = "The DEFF flags")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "count", description = "The meteor count")
   @Method(0x8010e04cL)
-  public static FlowControl allocateStarChildrenMeteorEffect(final RunningScript<? extends BattleObject> script) {
+  public static FlowControl scriptAllocateStarChildrenMeteorEffect(final RunningScript<? extends BattleObject> script) {
     final int meteorCount = script.params_20[2].get();
     final int effectFlag = script.params_20[1].get();
 
@@ -6202,8 +6336,14 @@ public final class SEffe {
     //LAB_8010e87c
   }
 
+  @ScriptDescription("Allocates a Moon Light stars effect")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "deffFlags", description = "The DEFF flags")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "maxToggleFrameThreshold", description = "The maximum number of frames for each star before toggling visibility")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "maxScale", description = "The maximum scale multiplier for each star")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "count", description = "The number of stars")
   @Method(0x8010e89cL)
-  public static FlowControl allocateMoonlightStarsEffect(final RunningScript<? extends BattleObject> script) {
+  public static FlowControl scriptAllocateMoonlightStarsEffect(final RunningScript<? extends BattleObject> script) {
     final int starCount = script.params_20[4].get();
     final int effectFlags = script.params_20[1].get();
     final int maxToggleFrameThreshold = script.params_20[2].get();
@@ -6302,8 +6442,13 @@ public final class SEffe {
     //LAB_8010edac
   }
 
+  @ScriptDescription("Allocates a Star Children impact effect")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "count", description = "The impact count")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "maxStartingFrame", description = "The maximum random frame each impact can start on")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "maxTranslationMagnitude", description = "The maximum random multiplier for each impact's X and Z coordinates")
   @Method(0x8010edc8L)
-  public static FlowControl allocateStarChildrenImpactEffect(final RunningScript<? extends BattleObject> script) {
+  public static FlowControl scriptAllocateStarChildrenImpactEffect(final RunningScript<? extends BattleObject> script) {
     final int impactCount = script.params_20[1].get();
     final int maxStartingFrame = script.params_20[2].get();
     final int maxTranslationMagnitude = script.params_20[3].get();
@@ -7452,6 +7597,7 @@ public final class SEffe {
 
   @ScriptDescription("Adds a rotation scaler attachment to an effect")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityX", description = "The X rotation velocity")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityY", description = "The Y rotation velocity")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityZ", description = "The Z rotation velocity")
@@ -8371,7 +8517,7 @@ public final class SEffe {
 
   @ScriptDescription("Loads this script into another script state and jumps to a script address")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "address", description = "The script address")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "address", description = "The script address", branch = ScriptParam.Branch.REENTRY)
   @Method(0x80115690L)
   public static FlowControl scriptLoadSameScriptAndJump(final RunningScript<?> script) {
     final ScriptState<?> state = SCRIPTS.getState(script.params_20[0].get());

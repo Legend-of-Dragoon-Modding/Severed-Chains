@@ -10,7 +10,7 @@ public class AdditionNameTextEffect1c {
   public int _04;
   public int length_08;
   /** ubyte */
-  public int _0c;
+  public int positionMovement_0c;
   public int _10;
   public QuadConsumer<AdditionNameTextEffect1c, AdditionCharEffectData0c, Long, Long> renderer_14;
   public AdditionCharEffectData0c[] ptr_18;

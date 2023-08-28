@@ -229,8 +229,9 @@ public final class Scus94491BpeSegment_8002 {
     unloadEncounterSoundEffects();
   }
 
+  @ScriptDescription("Stops and unloads all music and sound sequences")
   @Method(0x80020060L)
-  public static FlowControl FUN_80020060(final RunningScript<?> script) {
+  public static FlowControl scriptStopAndUnloadSequences(final RunningScript<?> script) {
     stopAndResetSoundsAndSequences();
     unloadSoundFile(1);
     unloadSoundFile(3);
@@ -301,7 +302,8 @@ public final class Scus94491BpeSegment_8002 {
     }
   }
 
-  /** Used when Melbu changes forms (not sure if used elsewhere too) */
+  @ScriptDescription("Replaces a monster's attack sounds (e.g. used when Melbu changes forms)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "monsterId", description = "The monster ID")
   @Method(0x800203f0L)
   public static FlowControl scriptReplaceMonsterSounds(final RunningScript<?> script) {
     unloadSoundFile(3);
@@ -1995,12 +1997,18 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80024460
   }
 
+  @ScriptDescription("Gives the player gold")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "amount", description = "The amount of gold")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "out", description = "Always 0")
   @Method(0x80024480L)
   public static FlowControl scriptGiveGold(final RunningScript<?> script) {
     script.params_20[1].set(addGold(script.params_20[0].get()));
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Gives the player chest contents")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "itemId", description = "The item ID (0xfb = 20G, 0xfc = 50G, 0xfd = 100G, 0xfe = 200G, 0xff = nothing)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "itemGiven", description = "The item ID if an item was given (0xff = unable to give, 0 = gave gold)")
   @Method(0x800244c4L)
   public static FlowControl scriptGiveChestContents(final RunningScript<?> script) {
     final int a0 = switch(script.params_20[0].get()) {
@@ -2019,6 +2027,9 @@ public final class Scus94491BpeSegment_8002 {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Takes an item from the player")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "itemId", description = "The item ID")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "itemTaken", description = "The item ID taken, of 0xff if none could be taken")
   @Method(0x80024590L)
   public static FlowControl scriptTakeItem(final RunningScript<?> script) {
     final int itemId = script.params_20[0].get() & 0xff;

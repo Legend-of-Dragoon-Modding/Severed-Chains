@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 public class WeaponTrailEffect3c implements Effect {
   public int currentSegmentIndex_00;
-  public int unused_04;
+  public int parentIndex_04;
   public int dobjIndex_08;
   public int largestVertexIndex_0a;
   public int smallestVertexIndex_0c;

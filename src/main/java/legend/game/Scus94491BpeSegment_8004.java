@@ -630,8 +630,8 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[693] = SMap::scriptFaceCamera;
     scriptSubFunctions_8004e29c[694] = SMap::scriptSetSobjFlag;
     scriptSubFunctions_8004e29c[695] = SMap::scriptGetSobjFlag;
-    scriptSubFunctions_8004e29c[696] = SMap::FUN_800e074c;
-    scriptSubFunctions_8004e29c[697] = SMap::FUN_800e07f0;
+    scriptSubFunctions_8004e29c[696] = SMap::loadInterpolatedSobjAnimation;
+    scriptSubFunctions_8004e29c[697] = SMap::loadUninterpolatedSobjAnimation;
     scriptSubFunctions_8004e29c[698] = SMap::FUN_800e0184;
     scriptSubFunctions_8004e29c[699] = SMap::FUN_800e0c40;
     scriptSubFunctions_8004e29c[700] = SMap::FUN_800e0c80;
@@ -649,44 +649,44 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[711] = Scus94491BpeSegment::scriptGetSequenceVolume;
     scriptSubFunctions_8004e29c[712] = Scus94491BpeSegment::scriptPlayCombatantSound;
     scriptSubFunctions_8004e29c[713] = Scus94491BpeSegment::scriptStopBentSound2;
-    scriptSubFunctions_8004e29c[714] = Scus94491BpeSegment_8002::FUN_80020060;
-    scriptSubFunctions_8004e29c[715] = Scus94491BpeSegment::scriptLoadPlayerAttackSounds;
+    scriptSubFunctions_8004e29c[714] = Scus94491BpeSegment_8002::scriptStopAndUnloadSequences;
+    scriptSubFunctions_8004e29c[715] = Scus94491BpeSegment::scriptLoadCharacterAttackSounds;
     scriptSubFunctions_8004e29c[716] = Scus94491BpeSegment_8002::scriptReplaceMonsterSounds;
     scriptSubFunctions_8004e29c[717] = Scus94491BpeSegment::scriptLoadCutsceneSounds;
     scriptSubFunctions_8004e29c[718] = Scus94491BpeSegment::scriptLoadFinalBattleSounds;
 
     scriptSubFunctions_8004e29c[736] = Bttl_800d::FUN_800d3090;
     scriptSubFunctions_8004e29c[737] = Bttl_800c::scriptAllocateFullScreenOverlay;
-    scriptSubFunctions_8004e29c[738] = Bttl_800c::FUN_800cee50;
+    scriptSubFunctions_8004e29c[738] = Bttl_800c::scriptRand;
     scriptSubFunctions_8004e29c[739] = Bttl_800c::scriptSetWeaponTrailSegmentCount;
     scriptSubFunctions_8004e29c[740] = Bttl_800d::FUN_800d3098;
     scriptSubFunctions_8004e29c[741] = Bttl_800d::FUN_800d30a0;
     scriptSubFunctions_8004e29c[742] = Bttl_800d::FUN_800d30a8;
     scriptSubFunctions_8004e29c[743] = Bttl_800d::FUN_800d30b0;
-    scriptSubFunctions_8004e29c[744] = Bttl_800c::FUN_800cef00;
+    scriptSubFunctions_8004e29c[744] = Bttl_800c::scriptRenderColouredQuad;
     scriptSubFunctions_8004e29c[745] = Bttl_800c::FUN_800cf0b4;
-    scriptSubFunctions_8004e29c[746] = SEffe::allocateParticleEffect;
-    scriptSubFunctions_8004e29c[747] = SEffe::FUN_80102364;
+    scriptSubFunctions_8004e29c[746] = SEffe::scriptAllocateParticleEffect;
+    scriptSubFunctions_8004e29c[747] = SEffe::scriptSetParticleAcceleration;
     scriptSubFunctions_8004e29c[748] = Bttl_800d::FUN_800d30b8;
-    scriptSubFunctions_8004e29c[749] = Bttl_800d::allocateProjectileHitEffect;
+    scriptSubFunctions_8004e29c[749] = Bttl_800d::scriptAllocateProjectileHitEffect;
     scriptSubFunctions_8004e29c[750] = Bttl_800d::FUN_800d09b8;
-    scriptSubFunctions_8004e29c[751] = Bttl_800d::allocateAdditionSparksEffect;
+    scriptSubFunctions_8004e29c[751] = Bttl_800d::scriptAllocateAdditionSparksEffect;
     scriptSubFunctions_8004e29c[752] = SEffe::FUN_80102608;
-    scriptSubFunctions_8004e29c[753] = SEffe::allocateAdditionOverlaysEffect;
+    scriptSubFunctions_8004e29c[753] = SEffe::scriptAllocateAdditionOverlaysEffect;
     scriptSubFunctions_8004e29c[754] = SEffe::scriptGetHitCompletionState;
     scriptSubFunctions_8004e29c[755] = SEffe::FUN_80108de8;
-    scriptSubFunctions_8004e29c[756] = Bttl_800d::allocateAdditionStarburstEffect;
+    scriptSubFunctions_8004e29c[756] = Bttl_800d::scriptAllocateAdditionStarburstEffect;
     scriptSubFunctions_8004e29c[757] = Bttl_800d::FUN_800d1cac;
     scriptSubFunctions_8004e29c[758] = Bttl_800d::FUN_800d1cf4;
     scriptSubFunctions_8004e29c[759] = SEffe::scriptAlterAdditionContinuationState;
     scriptSubFunctions_8004e29c[760] = SEffe::FUN_80108df0;
-    scriptSubFunctions_8004e29c[761] = Bttl_800d::allocateGuardEffect;
-    scriptSubFunctions_8004e29c[762] = Bttl_800c::allocateWeaponTrailEffect;
-    scriptSubFunctions_8004e29c[763] = Bttl_800d::allocateRadialGradientEffect;
+    scriptSubFunctions_8004e29c[761] = Bttl_800d::scriptAllocateGuardEffect;
+    scriptSubFunctions_8004e29c[762] = Bttl_800c::scriptAllocateWeaponTrailEffect;
+    scriptSubFunctions_8004e29c[763] = Bttl_800d::scriptAllocateRadialGradientEffect;
     scriptSubFunctions_8004e29c[764] = Bttl_800d::scriptAllocateAdditionScript;
-    scriptSubFunctions_8004e29c[765] = Bttl_800c::FUN_800cfccc;
-    scriptSubFunctions_8004e29c[766] = Bttl_800d::FUN_800d4338;
-    scriptSubFunctions_8004e29c[767] = Bttl_800d::FUN_800d4580;
+    scriptSubFunctions_8004e29c[765] = Bttl_800c::scriptGetBobjLocalWorldMatrixTranslation;
+    scriptSubFunctions_8004e29c[766] = Bttl_800d::scriptAllocateSpTextEffect;
+    scriptSubFunctions_8004e29c[767] = Bttl_800d::scriptAllocateAdditionNameEffect;
 
     scriptSubFunctions_8004e29c[768] = SMap::FUN_800f2048;
     scriptSubFunctions_8004e29c[769] = SMap::FUN_800f1f9c;
@@ -698,7 +698,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[775] = SMap::FUN_800f2090;
     scriptSubFunctions_8004e29c[776] = SMap::FUN_800f2198;
     scriptSubFunctions_8004e29c[777] = SMap::FUN_800f1eb8;
-    scriptSubFunctions_8004e29c[778] = SMap::FUN_800f2618;
+    scriptSubFunctions_8004e29c[778] = SMap::scriptAllocateTriangleIndicatorArray;
     scriptSubFunctions_8004e29c[779] = SMap::FUN_800f1b64;
     scriptSubFunctions_8004e29c[780] = SMap::FUN_800f26c8;
     scriptSubFunctions_8004e29c[781] = SMap::FUN_800f1d0c;
@@ -712,12 +712,12 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[789] = SMap::FUN_800f25a8;
     scriptSubFunctions_8004e29c[790] = SMap::FUN_800f1274;
 
-    scriptSubFunctions_8004e29c[800] = SEffe::allocateLensFlareEffect;
-    scriptSubFunctions_8004e29c[801] = SEffe::allocateWsDragoonTransformationFeathersEffect;
-    scriptSubFunctions_8004e29c[802] = SEffe::allocateGoldDragoonTransformEffect;
-    scriptSubFunctions_8004e29c[803] = SEffe::allocateStarChildrenMeteorEffect;
-    scriptSubFunctions_8004e29c[804] = SEffe::allocateStarChildrenImpactEffect;
-    scriptSubFunctions_8004e29c[805] = SEffe::allocateMoonlightStarsEffect;
+    scriptSubFunctions_8004e29c[800] = SEffe::scriptAllocateLensFlareEffect;
+    scriptSubFunctions_8004e29c[801] = SEffe::scriptAllocateWsDragoonTransformationFeathersEffect;
+    scriptSubFunctions_8004e29c[802] = SEffe::scriptAllocateGoldDragoonTransformEffect;
+    scriptSubFunctions_8004e29c[803] = SEffe::scriptAllocateStarChildrenMeteorEffect;
+    scriptSubFunctions_8004e29c[804] = SEffe::scriptAllocateStarChildrenImpactEffect;
+    scriptSubFunctions_8004e29c[805] = SEffe::scriptAllocateMoonlightStarsEffect;
     scriptSubFunctions_8004e29c[806] = Scus94491BpeSegment::FUN_8001c5fc;
     scriptSubFunctions_8004e29c[807] = Scus94491BpeSegment::FUN_8001c604;
 
@@ -725,32 +725,32 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[833] = SEffe::FUN_80108df8;
     scriptSubFunctions_8004e29c[834] = SEffe::FUN_80102610;
     scriptSubFunctions_8004e29c[835] = Bttl_800c::scriptGetBentDimension;
-    scriptSubFunctions_8004e29c[836] = SEffe::allocateRainEffect;
-    scriptSubFunctions_8004e29c[837] = Bttl_800c::FUN_800ce9b0;
-    scriptSubFunctions_8004e29c[838] = SEffe::allocateElectricityEffect;
-    scriptSubFunctions_8004e29c[839] = SEffe::FUN_80105604;
-    scriptSubFunctions_8004e29c[840] = SEffe::allocateDragoonAdditionScript;
-    scriptSubFunctions_8004e29c[841] = SEffe::FUN_80105c38;
+    scriptSubFunctions_8004e29c[836] = SEffe::scriptAllocateRainEffect;
+    scriptSubFunctions_8004e29c[837] = Bttl_800c::scriptApplyWeaponTrailScaling;
+    scriptSubFunctions_8004e29c[838] = SEffe::scriptAllocateElectricityEffect;
+    scriptSubFunctions_8004e29c[839] = SEffe::scriptGetBoltSegmentEnd;
+    scriptSubFunctions_8004e29c[840] = SEffe::scriptAllocateDragoonAdditionScript;
+    scriptSubFunctions_8004e29c[841] = SEffe::scriptAllocateThunderArrowEffect;
     // scriptSubFunctions_8004e29c[842] = Temp::FUN_800c6968;
-    scriptSubFunctions_8004e29c[843] = SEffe::allocateScreenDistortionEffect;
+    scriptSubFunctions_8004e29c[843] = SEffe::scriptAllocateScreenDistortionEffect;
     scriptSubFunctions_8004e29c[844] = SEffe::scriptGetDragoonAdditionHitsCompleted;
     scriptSubFunctions_8004e29c[845] = SEffe::FUN_801023f4;
     scriptSubFunctions_8004e29c[846] = Bttl_800c::FUN_800cfec8;
-    scriptSubFunctions_8004e29c[847] = SEffe::FUN_801023fc;
-    scriptSubFunctions_8004e29c[848] = SEffe::FUN_8010246c;
+    scriptSubFunctions_8004e29c[847] = SEffe::scriptGetAliveParticles;
+    scriptSubFunctions_8004e29c[848] = SEffe::scriptGetParticlePosition;
     scriptSubFunctions_8004e29c[849] = Bttl_800c::scriptSetMtSeed;
-    scriptSubFunctions_8004e29c[850] = SEffe::allocateVertexDifferenceAnimation;
-    scriptSubFunctions_8004e29c[851] = SEffe::FUN_8010a3fc;
-    scriptSubFunctions_8004e29c[852] = Bttl_800d::allocateMonsterDeathEffect;
-    scriptSubFunctions_8004e29c[853] = Bttl_800d::FUN_800d0124;
+    scriptSubFunctions_8004e29c[850] = SEffe::scriptAllocateVertexDifferenceAnimation;
+    scriptSubFunctions_8004e29c[851] = SEffe::scriptAllocateFrozenJetEffect;
+    scriptSubFunctions_8004e29c[852] = Bttl_800d::scriptAllocateMonsterDeathEffect;
+    scriptSubFunctions_8004e29c[853] = Bttl_800d::scriptGetBobjModelPartCount;
     scriptSubFunctions_8004e29c[854] = SEffe::scriptGetAdditionOverlayActiveStatus;
 
     scriptSubFunctions_8004e29c[864] = Scus94491BpeSegment_8002::scriptGiveChestContents;
     scriptSubFunctions_8004e29c[865] = Scus94491BpeSegment_8002::scriptTakeItem;
     scriptSubFunctions_8004e29c[866] = Scus94491BpeSegment_8002::scriptGiveGold;
 
-    scriptSubFunctions_8004e29c[896] = SEffe::allocateGradientRaysEffect;
-    scriptSubFunctions_8004e29c[897] = SEffe::allocateScreenCaptureEffect;
+    scriptSubFunctions_8004e29c[896] = SEffe::scriptAllocateGradientRaysEffect;
+    scriptSubFunctions_8004e29c[897] = SEffe::scriptAllocateScreenCaptureEffect;
   }
   // 8004f29c end of jump table
 
