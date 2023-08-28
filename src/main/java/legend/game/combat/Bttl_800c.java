@@ -830,8 +830,7 @@ public final class Bttl_800c {
 
   public static final ArrayRef<ShortRef> enemyDeffFileIndices_800faec4 = MEMORY.ref(2, 0x800faec4L, ArrayRef.of(ShortRef.class, 146, 2, ShortRef::new));
 
-  /** Related to loading deffs */
-  public static final IntRef _800fafe8 = MEMORY.ref(4, 0x800fafe8L, IntRef::new);
+  public static final IntRef deffLoadingStage_800fafe8 = MEMORY.ref(4, 0x800fafe8L, IntRef::new);
   public static final ArrayRef<ByteRef> dragoonDeffFlags_800fafec = MEMORY.ref(1, 0x800fafecL, ArrayRef.of(ByteRef.class, 84, 1, ByteRef::new));
   /**
    * <ol start="0">

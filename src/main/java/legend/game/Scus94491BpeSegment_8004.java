@@ -562,10 +562,10 @@ public final class Scus94491BpeSegment_8004 {
 
     scriptSubFunctions_8004e29c[608] = SEffe::FUN_801181a8;
 
-    scriptSubFunctions_8004e29c[610] = Bttl_800e::FUN_800ea200;
+    scriptSubFunctions_8004e29c[610] = Bttl_800e::scriptLoadCmbAnimation;
     scriptSubFunctions_8004e29c[611] = SEffe::FUN_801156f8;
-    scriptSubFunctions_8004e29c[612] = Bttl_800e::FUN_800ea13c;
-    scriptSubFunctions_8004e29c[613] = Bttl_800e::FUN_800ea19c;
+    scriptSubFunctions_8004e29c[612] = Bttl_800e::scriptHideEffectModelPart;
+    scriptSubFunctions_8004e29c[613] = Bttl_800e::scriptShowEffectModelPart;
     scriptSubFunctions_8004e29c[614] = Bttl_800e::scriptAddRedEyeDragoonTransformationFlameArmorEffectAttachment;
     scriptSubFunctions_8004e29c[615] = Bttl_800e::scriptApplyTextureAnimationAttachment;
     scriptSubFunctions_8004e29c[616] = Bttl_800e::scriptRemoveTextureAnimationAttachment;
@@ -573,25 +573,25 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[618] = SEffe::scriptLoadSameScriptAndJump;
     scriptSubFunctions_8004e29c[619] = SEffe::allocateShirleyTransformWipeEffect;
     scriptSubFunctions_8004e29c[620] = SEffe::FUN_80111a58;
-    scriptSubFunctions_8004e29c[621] = Bttl_800e::FUN_800ea384;
+    scriptSubFunctions_8004e29c[621] = Bttl_800e::scriptGetEffectLoopCount;
     scriptSubFunctions_8004e29c[622] = SEffe::allocateSpriteWithTrailEffect;
     scriptSubFunctions_8004e29c[623] = Bttl_800e::scriptLoadDeff;
     scriptSubFunctions_8004e29c[624] = Bttl_800e::FUN_800e6db4;
-    scriptSubFunctions_8004e29c[625] = Bttl_800e::FUN_800e7490;
+    scriptSubFunctions_8004e29c[625] = Bttl_800e::scriptGetDeffLoadingStage;
     scriptSubFunctions_8004e29c[626] = SEffe::scriptGetEffectZ;
     scriptSubFunctions_8004e29c[627] = SEffe::scriptSetEffectZ;
-    scriptSubFunctions_8004e29c[628] = SEffe::FUN_801184e4;
+    scriptSubFunctions_8004e29c[628] = SEffe::allocateDeffTmdRenderer;
     scriptSubFunctions_8004e29c[629] = SEffe::FUN_801157d0;
-    scriptSubFunctions_8004e29c[630] = SEffe::FUN_801127e0;
+    scriptSubFunctions_8004e29c[630] = SEffe::scriptGetEffectRotation;
     scriptSubFunctions_8004e29c[631] = SEffe::FUN_801181f0;
-    scriptSubFunctions_8004e29c[632] = SEffe::FUN_801114b8;
+    scriptSubFunctions_8004e29c[632] = SEffe::scriptAllocateBuggedEffect;
 
-    scriptSubFunctions_8004e29c[634] = SEffe::FUN_80115ab0;
-    scriptSubFunctions_8004e29c[635] = SEffe::FUN_80115a94;
+    scriptSubFunctions_8004e29c[634] = SEffe::scriptWaitForXaToLoad;
+    scriptSubFunctions_8004e29c[635] = SEffe::scriptGetXaLoadingStage;
     scriptSubFunctions_8004e29c[636] = SEffe::scriptPlayXaAudio;
-    scriptSubFunctions_8004e29c[637] = Bttl_800e::FUN_800e7314;
-    scriptSubFunctions_8004e29c[638] = Bttl_800e::FUN_800e71e4;
-    scriptSubFunctions_8004e29c[639] = Bttl_800e::FUN_800e727c;
+    scriptSubFunctions_8004e29c[637] = Bttl_800e::scriptLoadCutsceneDeff;
+    scriptSubFunctions_8004e29c[638] = Bttl_800e::scriptLoadSpellOrItemDeff;
+    scriptSubFunctions_8004e29c[639] = Bttl_800e::scriptLoadEnemyOrBossDeff;
 
     scriptSubFunctions_8004e29c[640] = SEffe::scriptConvertRotationYxzToXyz;
     scriptSubFunctions_8004e29c[641] = SEffe::FUN_80115a28;
@@ -600,9 +600,9 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[644] = Bttl_800e::scriptSetBttlShadowSize;
     scriptSubFunctions_8004e29c[645] = Bttl_800e::scriptSetBttlShadowOffset;
     scriptSubFunctions_8004e29c[646] = SEffe::FUN_801188ec;
-    scriptSubFunctions_8004e29c[647] = SEffe::FUN_80115ad8;
-    scriptSubFunctions_8004e29c[648] = SEffe::FUN_80115ea4;
-    scriptSubFunctions_8004e29c[649] = SEffe::FUN_80115ed4;
+    scriptSubFunctions_8004e29c[647] = SEffe::scriptUpdateDeffManagerFlags;
+    scriptSubFunctions_8004e29c[648] = SEffe::scriptLoadDeffStageEffects;
+    scriptSubFunctions_8004e29c[649] = SEffe::scriptGetEffectTextureMetrics;
     scriptSubFunctions_8004e29c[650] = SEffe::FUN_801154f4;
     scriptSubFunctions_8004e29c[651] = SEffe::scriptConsolidateEffectMemory;
 
