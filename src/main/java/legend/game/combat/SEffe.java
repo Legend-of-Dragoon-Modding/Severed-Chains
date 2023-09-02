@@ -4139,7 +4139,7 @@ public final class SEffe {
   }
 
   /**
-   * Script subfunc related to pause ticking/rendering of addition overlay during counterattacks. additionContinuationState == 0 occurs when
+   * Script subfunc related to pausing ticking/rendering of addition overlay during counterattacks. additionContinuationState == 0 occurs when
    * counterattack counter is successful; have not gotten other conditions to trigger
    */
   @ScriptDescription("Pauses ticker/renderer of addition overlays during counterattacks")
@@ -4602,6 +4602,7 @@ public final class SEffe {
   }
 
   @ScriptDescription("Gets the number of dragoon addition hits completed")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "count", description = "The number of hits completed")
   @Method(0x801089ccL)
   public static FlowControl scriptGetDragoonAdditionHitsCompleted(final RunningScript<?> script) {

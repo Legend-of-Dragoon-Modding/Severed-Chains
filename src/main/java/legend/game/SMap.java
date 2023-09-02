@@ -2455,7 +2455,7 @@ public final class SMap {
   }
 
   @ScriptDescription("Unknown, related to chapter title cards")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
   @Method(0x800e0c9cL)
   public static FlowControl FUN_800e0c9c(final RunningScript<?> script) {
     _800c673c.setu(script.params_20[0].get());
@@ -8540,7 +8540,7 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, adds a triangle indicator (possible for a door)")
+  @ScriptDescription("Unknown, adds a triangle indicator (possibly for a door)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")

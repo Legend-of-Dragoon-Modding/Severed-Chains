@@ -1257,7 +1257,7 @@ public final class Bttl_800d {
     //LAB_800d3d1c
   }
 
-  @ScriptDescription("Allocates an addition addition name display script state")
+  @ScriptDescription("Allocates an addition name display script state")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "charId", description = "The character ID")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1", description = "Unknown, -1 will deallocate next tick")
   @Method(0x800d3d74L)

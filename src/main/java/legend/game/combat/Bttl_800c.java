@@ -4559,8 +4559,9 @@ public final class Bttl_800c {
   }
 
   @ScriptDescription("Gets a bounding box dimension for a battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The battle entity index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "axis", description = "The axis index")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "size", description = "The size")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "axis", description = "The axis")
   @Method(0x800cfdf8L)
   public static FlowControl scriptGetBentDimension(final RunningScript<?> script) {
     final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
