@@ -7376,9 +7376,9 @@ public final class SEffe {
   @ScriptDescription("Gets an effect's rotation")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X rotation (PSX degrees)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y rotation (PSX degrees)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z rotation (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X rotation (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y rotation (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z rotation (PSX degrees)")
   @Method(0x801127e0L)
   public static FlowControl scriptGetEffectRotation(final RunningScript<?> script) {
     final MATRIX transforms = new MATRIX();
@@ -7395,9 +7395,9 @@ public final class SEffe {
   @ScriptDescription("Unknown")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "partIndex", description = "The model part index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X rotation (PSX degrees)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y rotation (PSX degrees)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z rotation (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X rotation (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y rotation (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z rotation (PSX degrees)")
   @Method(0x8011287cL)
   public static FlowControl FUN_8011287c(final RunningScript<?> script) {
     final Vector3f rot = new Vector3f();
@@ -8664,9 +8664,9 @@ public final class SEffe {
         h = 0x100;
       } else {
         final EffectManagerData6c<?> manager = (EffectManagerData6c<?>)bobj;
-        final int v1 = manager.flags_04 & 0xff00_0000;
-        if(v1 != 0x200_0000) {
-          if(v1 == 0x300_0000) {
+        final int managerType = manager.flags_04 & 0xff00_0000;
+        if(managerType != 0x200_0000) {
+          if(managerType == 0x300_0000) {
             //LAB_80116014
             throw new RuntimeException("ASM is bugged");
 //          v0 = manager._44.deref();
@@ -8677,7 +8677,7 @@ public final class SEffe {
 //          w = MEMORY.ref(2, v0).offset(0x4L).getSigned() * 4;
 //          h = MEMORY.ref(2, v0).offset(0x6L).getSigned();
             //LAB_80115fc8
-          } else if(v1 == 0x400_0000) {
+          } else if(managerType == 0x400_0000) {
             //LAB_8011602c
             final StarChildrenMeteorEffect10 effect = (StarChildrenMeteorEffect10)manager.effect_44;
             u = effect.metrics_04.u_00;

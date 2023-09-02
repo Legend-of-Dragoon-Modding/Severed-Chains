@@ -237,11 +237,11 @@ public final class Bttl_800e {
   private static final Marker DEFF = MarkerManager.getMarker("DEFF");
 
   @Method(0x800e45c0L)
-  public static void FUN_800e45c0(final Vector3f out, final Vector3f a1) {
-    final float angle = MathHelper.atan2(a1.x, a1.z);
+  public static void FUN_800e45c0(final Vector3f out, final Vector3f in) {
+    final float angle = MathHelper.atan2(in.x, in.z);
     final float sin = MathHelper.sin(-angle);
     final float cos = MathHelper.cosFromSin(sin, -angle);
-    out.x = MathHelper.atan2(-a1.y, cos * a1.z - sin * a1.x); // Angle from the XZ plane
+    out.x = MathHelper.atan2(-in.y, cos * in.z - sin * in.x); // Angle from the XZ plane
     out.y = angle; // Angle from the X axis
     out.z = 0;
   }
@@ -2414,7 +2414,7 @@ public final class Bttl_800e {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z size (12-bit fixed-point)")
   @Method(0x800ea2a0L)
   public static FlowControl scriptSetBttlShadowSize(final RunningScript<?> script) {
-    final BattleObject bobj = (BattleObject)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleObject bobj = SCRIPTS.getObject(script.params_20[0].get(), BattleObject.class);
 
     final Model124 model;
     if(BattleObject.EM__.equals(bobj.magic_00)) {
@@ -2437,7 +2437,7 @@ public final class Bttl_800e {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z offset")
   @Method(0x800ea30cL)
   public static FlowControl scriptSetBttlShadowOffset(final RunningScript<?> script) {
-    final BattleObject bobj = (BattleObject)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleObject bobj = SCRIPTS.getObject(script.params_20[0].get(), BattleObject.class);
 
     final Model124 model;
     if(BattleObject.EM__.equals(bobj.magic_00)) {
