@@ -152,7 +152,7 @@ import static legend.game.combat.Bttl_800c._800c6930;
 import static legend.game.combat.Bttl_800c._800c6938;
 import static legend.game.combat.Bttl_800c._800c697e;
 import static legend.game.combat.Bttl_800c._800c6980;
-import static legend.game.combat.Bttl_800c._800fafe8;
+import static legend.game.combat.Bttl_800c.deffLoadingStage_800fafe8;
 import static legend.game.combat.Bttl_800c.activePartyBattleHudCharacterDisplays_800c6c40;
 import static legend.game.combat.Bttl_800c.ailments_800fb3a0;
 import static legend.game.combat.Bttl_800c.aliveBentCount_800c669c;
@@ -237,13 +237,13 @@ public final class Bttl_800e {
   private static final Marker DEFF = MarkerManager.getMarker("DEFF");
 
   @Method(0x800e45c0L)
-  public static void FUN_800e45c0(final Vector3f a0, final Vector3f a1) {
-    final float angle = MathHelper.atan2(a1.x, a1.z);
+  public static void FUN_800e45c0(final Vector3f out, final Vector3f in) {
+    final float angle = MathHelper.atan2(in.x, in.z);
     final float sin = MathHelper.sin(-angle);
     final float cos = MathHelper.cosFromSin(sin, -angle);
-    a0.x = MathHelper.atan2(-a1.y, cos * a1.z - sin * a1.x);
-    a0.y = angle;
-    a0.z = 0;
+    out.x = MathHelper.atan2(-in.y, cos * in.z - sin * in.x); // Angle from the XZ plane
+    out.y = angle; // Angle from the X axis
+    out.z = 0;
   }
 
   @Method(0x800e4674L)
@@ -1023,7 +1023,7 @@ public final class Bttl_800e {
 
     struct7cc.deffPackage_5a8 = null;
 
-    _800fafe8.set(4);
+    deffLoadingStage_800fafe8.set(4);
 
     if((struct7cc.flags_20 & 0x4_0000) != 0) {
       loadDeffSounds(_800c6938.bentState_04, 1);
@@ -1151,9 +1151,14 @@ public final class Bttl_800e {
       LOGGER.info(DEFF, "Loading DEFF script");
       _800c6938.script_14 = new ScriptFile(4140 + index * 2 + "/1", file.getBytes());
     });
-    _800fafe8.set(1);
+    deffLoadingStage_800fafe8.set(1);
   }
 
+  @ScriptDescription("Allocates a DEFF and effect manager child for a spell or item")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flagsAndIndex", description = "The effect manager's flags in the upper 16 bits, DEFF index in the lower 16 bits")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptEntrypoint", description = "The effect manager's entrypoint into this script")
   @Method(0x800e6844L)
   public static void loadSpellItemDeff(final RunningScript<? extends BattleObject> script) {
     final int id = script.params_20[0].get() & 0xffff;
@@ -1177,9 +1182,14 @@ public final class Bttl_800e {
       LOGGER.info(DEFF, "Loading DEFF script");
       _800c6938.script_14 = new ScriptFile(4308 + s0 + "/1", file.getBytes());
     });
-    _800fafe8.set(1);
+    deffLoadingStage_800fafe8.set(1);
   }
 
+  @ScriptDescription("Allocates a DEFF and effect manager child for an enemy or boss")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flagsAndIndex", description = "The effect manager's flags in the upper 16 bits, DEFF index in the lower 16 bits")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptEntrypoint", description = "The effect manager's entrypoint into this script")
   @Method(0x800e6920L)
   public static void loadEnemyOrBossDeff(final RunningScript<? extends BattleObject> script) {
     final int s1 = script.params_20[0].get() & 0xff_0000;
@@ -1233,9 +1243,14 @@ public final class Bttl_800e {
     }
 
     //LAB_800e6a9c
-    _800fafe8.set(1);
+    deffLoadingStage_800fafe8.set(1);
   }
 
+  @ScriptDescription("Allocates a DEFF and effect manager child for a cutscene")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flagsAndIndex", description = "The effect manager's flags in the upper 16 bits, DEFF index in the lower 16 bits")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptEntrypoint", description = "The effect manager's entrypoint into this script")
   @Method(0x800e6aecL)
   public static void loadCutsceneDeff(final RunningScript<? extends BattleObject> script) {
     final int v1 = script.params_20[0].get();
@@ -1273,20 +1288,22 @@ public final class Bttl_800e {
     });
 
     //LAB_800e6d7c
-    _800fafe8.set(1);
+    deffLoadingStage_800fafe8.set(1);
   }
 
+  @ScriptDescription("Unknown, related to loading DEFFs")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
   @Method(0x800e6db4L)
   public static FlowControl FUN_800e6db4(final RunningScript<?> script) {
     final FlowControl flow;
-    final long v1;
+    final int deffStage;
     switch(script.params_20[0].get() & 0xffff) {
       case 0, 1 -> {
-        v1 = _800fafe8.get();
-        if(v1 == 0x1L) {
+        deffStage = deffLoadingStage_800fafe8.get();
+        if(deffStage == 1) {
           //LAB_800e6e20
           flow = FlowControl.PAUSE_AND_REWIND;
-        } else if(v1 == 0x2L) {
+        } else if(deffStage == 2) {
           //LAB_800e6e28
           flow = FlowControl.CONTINUE;
         } else {
@@ -1297,11 +1314,11 @@ public final class Bttl_800e {
       }
 
       case 2 -> {
-        v1 = _800fafe8.get();
-        if(v1 == 0x1L) {
+        deffStage = deffLoadingStage_800fafe8.get();
+        if(deffStage == 1) {
           //LAB_800e6e58
           flow = FlowControl.PAUSE_AND_REWIND;
-        } else if(v1 == 0x2L) {
+        } else if(deffStage == 2) {
           final DeffManager7cc struct7cc = deffManager_800c693c;
 
           //LAB_800e6e60
@@ -1319,7 +1336,7 @@ public final class Bttl_800e {
           struct24.managerState_18.loadScriptFile(struct24.script_14, struct24.scriptEntrypoint_10);
           struct24.init_1c = false;
           struct24.frameCount_20 = 0;
-          _800fafe8.set(3);
+          deffLoadingStage_800fafe8.set(3);
           flow = FlowControl.CONTINUE;
         } else {
           throw new RuntimeException("undefined t0");
@@ -1329,13 +1346,13 @@ public final class Bttl_800e {
       }
 
       case 3 -> {
-        v1 = _800fafe8.get();
-        if(v1 == 0x3L) {
+        deffStage = deffLoadingStage_800fafe8.get();
+        if(deffStage == 3) {
           //LAB_800e6f10
           flow = FlowControl.PAUSE_AND_REWIND;
-        } else if(v1 == 0x4L) {
+        } else if(deffStage == 4) {
           //LAB_800e6f18
-          _800fafe8.set(0);
+          deffLoadingStage_800fafe8.set(0);
           flow = FlowControl.CONTINUE;
         } else {
           throw new RuntimeException("undefined a3");
@@ -1345,7 +1362,7 @@ public final class Bttl_800e {
       }
 
       case 4 -> {
-        switch(_800fafe8.get()) {
+        switch(deffLoadingStage_800fafe8.get()) {
           case 0:
             flow = FlowControl.CONTINUE;
             break;
@@ -1359,7 +1376,7 @@ public final class Bttl_800e {
             _800c6938.managerState_18.deallocateWithChildren();
 
           case 4:
-            _800fafe8.set(0);
+            deffLoadingStage_800fafe8.set(0);
             _800c6938.managerState_18 = null;
             flow = FlowControl.CONTINUE;
             break;
@@ -1385,13 +1402,13 @@ public final class Bttl_800e {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptEntrypoint", description = "The effect manager's entrypoint into this script")
   @Method(0x800e6fb4L)
   public static FlowControl FUN_800e6fb4(final RunningScript<? extends BattleObject> script) {
-    if(_800fafe8.get() != 0 && script.scriptState_04.index != _800c6938.scriptIndex_0c) {
+    if(deffLoadingStage_800fafe8.get() != 0 && script.scriptState_04.index != _800c6938.scriptIndex_0c) {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
     //LAB_800e6fec
     //LAB_800e6ff0
-    final long v1 = _800fafe8.get();
+    final long v1 = deffLoadingStage_800fafe8.get();
 
     //LAB_800e7014
     if(v1 == 0) {
@@ -1404,7 +1421,7 @@ public final class Bttl_800e {
 
     if(v1 == 4) {
       //LAB_800e702c
-      _800fafe8.set(0);
+      deffLoadingStage_800fafe8.set(0);
       _800c6938.managerState_18 = null;
       return FlowControl.CONTINUE;
     }
@@ -1454,25 +1471,30 @@ public final class Bttl_800e {
     //LAB_800e71c4
   }
 
+  @ScriptDescription("Allocates a DEFF and effect manager child for a spell or item")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flagsAndIndex", description = "The effect manager's flags in the upper 16 bits, DEFF index in the lower 16 bits")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptEntrypoint", description = "The effect manager's entrypoint into this script")
   @Method(0x800e71e4L)
-  public static FlowControl FUN_800e71e4(final RunningScript<? extends BattleObject> script) {
-    if(_800fafe8.get() != 0 && script.scriptState_04.index != _800c6938.scriptIndex_0c) {
+  public static FlowControl scriptLoadSpellOrItemDeff(final RunningScript<? extends BattleObject> script) {
+    if(deffLoadingStage_800fafe8.get() != 0 && script.scriptState_04.index != _800c6938.scriptIndex_0c) {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
     //LAB_800e721c
     //LAB_800e7220
-    final long v1 = _800fafe8.get();
+    final int deffStage = deffLoadingStage_800fafe8.get();
 
-    if(v1 == 4) {
+    if(deffStage == 4) {
       //LAB_800e725c
-      _800fafe8.set(0);
+      deffLoadingStage_800fafe8.set(0);
       _800c6938.managerState_18 = null;
       return FlowControl.CONTINUE;
     }
 
     //LAB_800e7244
-    if(v1 == 0) {
+    if(deffStage == 0) {
       loadSpellItemDeff(script);
     }
 
@@ -1480,25 +1502,30 @@ public final class Bttl_800e {
     return FlowControl.PAUSE_AND_REWIND;
   }
 
+  @ScriptDescription("Allocates a DEFF and effect manager child for an enemy or boss")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flagsAndIndex", description = "The effect manager's flags in the upper 16 bits, DEFF index in the lower 16 bits")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptEntrypoint", description = "The effect manager's entrypoint into this script")
   @Method(0x800e727cL)
-  public static FlowControl FUN_800e727c(final RunningScript<? extends BattleObject> script) {
-    if(_800fafe8.get() != 0 && script.scriptState_04.index != _800c6938.scriptIndex_0c) {
+  public static FlowControl scriptLoadEnemyOrBossDeff(final RunningScript<? extends BattleObject> script) {
+    if(deffLoadingStage_800fafe8.get() != 0 && script.scriptState_04.index != _800c6938.scriptIndex_0c) {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
     //LAB_800e72b4
     //LAB_800e72b8
-    final long v1 = _800fafe8.get();
+    final int deffStage = deffLoadingStage_800fafe8.get();
 
-    if(v1 == 4) {
+    if(deffStage == 4) {
       //LAB_800e72f4
-      _800fafe8.set(0);
+      deffLoadingStage_800fafe8.set(0);
       _800c6938.managerState_18 = null;
       return FlowControl.CONTINUE;
     }
 
     //LAB_800e72dc
-    if(v1 == 0) {
+    if(deffStage == 0) {
       loadEnemyOrBossDeff(script);
     }
 
@@ -1506,25 +1533,30 @@ public final class Bttl_800e {
     return FlowControl.PAUSE_AND_REWIND;
   }
 
+  @ScriptDescription("Allocates a DEFF and effect manager child for a cutscene")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flagsAndIndex", description = "The effect manager's flags in the upper 16 bits, DEFF index in the lower 16 bits")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptEntrypoint", description = "The effect manager's entrypoint into this script")
   @Method(0x800e7314L)
-  public static FlowControl FUN_800e7314(final RunningScript<? extends BattleObject> script) {
-    if(_800fafe8.get() != 0 && script.scriptState_04.index != _800c6938.scriptIndex_0c) {
+  public static FlowControl scriptLoadCutsceneDeff(final RunningScript<? extends BattleObject> script) {
+    if(deffLoadingStage_800fafe8.get() != 0 && script.scriptState_04.index != _800c6938.scriptIndex_0c) {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
     //LAB_800e734c
     //LAB_800e7350
-    final long v1 = _800fafe8.get();
+    final int deffStage = deffLoadingStage_800fafe8.get();
 
-    if(v1 == 4) {
+    if(deffStage == 4) {
       //LAB_800e738c
-      _800fafe8.set(0);
+      deffLoadingStage_800fafe8.set(0);
       _800c6938.managerState_18 = null;
       return FlowControl.CONTINUE;
     }
 
     //LAB_800e7374
-    if(v1 == 0) {
+    if(deffStage == 0) {
       loadCutsceneDeff(script);
     }
 
@@ -1532,9 +1564,15 @@ public final class Bttl_800e {
     return FlowControl.PAUSE_AND_REWIND;
   }
 
+  @ScriptDescription("Allocates a DEFF and effect manager child")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flagsAndIndex", description = "The effect manager's flags in the upper 16 bits, DEFF index in the lower 16 bits")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptEntrypoint", description = "The effect manager's entrypoint into this script")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "0x100_0000 = dragoon, 0x200_0000 = spell/item, 0x300_0000/0x400_0000 = enemy/boss, 0x500_0000 = cutscene")
   @Method(0x800e73acL)
   public static FlowControl scriptLoadDeff(final RunningScript<? extends BattleObject> script) {
-    if(_800fafe8.get() != 0) {
+    if(deffLoadingStage_800fafe8.get() != 0) {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
@@ -1555,9 +1593,11 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Gets the current DEFF loading stage")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "loadingStage")
   @Method(0x800e7490L)
-  public static FlowControl FUN_800e7490(final RunningScript<?> script) {
-    script.params_20[0].set(_800fafe8.get());
+  public static FlowControl scriptGetDeffLoadingStage(final RunningScript<?> script) {
+    script.params_20[0].set(deffLoadingStage_800fafe8.get());
     return FlowControl.CONTINUE;
   }
 
@@ -1576,14 +1616,14 @@ public final class Bttl_800e {
   public static void FUN_800e74e0(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> data) {
     final BattleStruct24_2 struct24 = _800c6938;
 
-    final long v1 = _800fafe8.get();
-    if(v1 == 1) {
+    final int deffStage = deffLoadingStage_800fafe8.get();
+    if(deffStage == 1) {
       //LAB_800e7510
       if(struct24.init_1c && struct24.script_14 != null && ((deffManager_800c693c.flags_20 & 0x4_0000) == 0 || (getLoadedDrgnFiles() & 0x40) == 0)) {
         //LAB_800e756c
-        _800fafe8.set(2);
+        deffLoadingStage_800fafe8.set(2);
       }
-    } else if(v1 == 3) {
+    } else if(deffStage == 3) {
       //LAB_800e7574
       if(struct24.frameCount_20 >= 0) {
         struct24.frameCount_20 += vsyncMode_8007a3b8;
@@ -1964,11 +2004,11 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e9178L)
-  public static void FUN_800e9178(final int a0) {
-    if(a0 == 1) {
+  public static void FUN_800e9178(final int mode) {
+    if(mode == 1) {
       //LAB_800e91a0
       deffManager_800c693c.scriptState_1c.innerStruct_00.removeAttachment(10);
-    } else if(a0 == 2) {
+    } else if(mode == 2) {
       //LAB_800e91d8
       deffManager_800c693c.scriptState_1c.innerStruct_00.removeAttachment(10);
       deallocateDeffManagerScriptsArray();
@@ -2094,15 +2134,18 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, sets shadow type")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode")
   @Method(0x800e9798L)
   public static FlowControl FUN_800e9798(final RunningScript<?> script) {
-    final BattleObject a2 = (BattleObject)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleObject bobj = (BattleObject)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
 
     final Model124 model;
-    if(BattleObject.EM__.equals(a2.magic_00)) {
-      model = ((ModelEffect13c)((EffectManagerData6c)a2).effect_44).model_134;
+    if(BattleObject.EM__.equals(bobj.magic_00)) {
+      model = ((ModelEffect13c)((EffectManagerData6c<?>)bobj).effect_44).model_134;
     } else {
-      model = ((BattleEntity27c)a2).model_148;
+      model = ((BattleEntity27c)bobj).model_148;
     }
 
     //LAB_800e97e8
@@ -2173,6 +2216,9 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Allocates an unknown model effect manager")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flags", description = "The DEFF flags, mostly unknown")
   @Method(0x800e99bcL)
   public static FlowControl FUN_800e99bc(final RunningScript<? extends BattleObject> script) {
     final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)getDeffPart(script.params_20[1].get() | 0x100_0000);
@@ -2313,37 +2359,44 @@ public final class Bttl_800e {
     return model.modelParts_00[coord2Index].coord2_04;
   }
 
+  @ScriptDescription("Hides an effect's model part")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLAG, name = "part", description = "Which model part to hide")
   @Method(0x800ea13cL)
-  public static FlowControl FUN_800ea13c(final RunningScript<?> script) {
-    final EffectManagerData6c<?> manager = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[(short)script.params_20[0].get()].innerStruct_00;
+  public static FlowControl scriptHideEffectModelPart(final RunningScript<?> script) {
+    final EffectManagerData6c<?> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
     final Model124 model = ((ModelEffect13c)manager.effect_44).model_134;
-    final int a1 = script.params_20[1].get() & 0xffff;
+    final int flag = script.params_20[1].get() & 0xffff;
 
-    final int index = a1 >>> 5;
-    final int shift = a1 & 0x1f;
+    final int index = flag >>> 5;
+    final int shift = flag & 0x1f;
 
     model.partInvisible_f4 |= 0x1L << shift + index * 32;
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Shows an effect's model part")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.FLAG, name = "part", description = "Which model part to show")
   @Method(0x800ea19cL)
-  public static FlowControl FUN_800ea19c(final RunningScript<?> script) {
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[(short)script.params_20[0].get()].innerStruct_00;
+  public static FlowControl scriptShowEffectModelPart(final RunningScript<?> script) {
+    final EffectManagerData6c<?> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
     final Model124 model = ((ModelEffect13c)manager.effect_44).model_134;
-    final int v1 = script.params_20[1].get() & 0xffff;
+    final int flag = script.params_20[1].get() & 0xffff;
 
-    final int index = v1 >>> 5;
-    final int shift = v1 & 0x1f;
+    final int index = flag >>> 5;
+    final int shift = flag & 0x1f;
 
     model.partInvisible_f4 &= ~(0x1L << shift + index * 32);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Loads a CMB animation")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flags", description = "The DEFF flags, mostly unknown")
   @Method(0x800ea200L)
-  public static FlowControl FUN_800ea200(final RunningScript<?> script) {
-    final int effectIndex = script.params_20[0].get();
-    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.AnimType>> state = (ScriptState<EffectManagerData6c<EffectManagerData6cInner.AnimType>>)scriptStatePtrArr_800bc1c0[effectIndex];
-    final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager = state.innerStruct_00;
+  public static FlowControl scriptLoadCmbAnimation(final RunningScript<?> script) {
+    final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.classFor(EffectManagerData6cInner.AnimType.class));
     final ModelEffect13c effect = (ModelEffect13c)manager.effect_44;
 
     final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)getDeffPart(script.params_20[1].get() | 0x200_0000);
@@ -2355,16 +2408,20 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets the shadow size for a battle object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The battle object index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X size (12-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z size (12-bit fixed-point)")
   @Method(0x800ea2a0L)
   public static FlowControl scriptSetBttlShadowSize(final RunningScript<?> script) {
-    final BattleObject a2 = (BattleObject)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleObject bobj = SCRIPTS.getObject(script.params_20[0].get(), BattleObject.class);
 
     final Model124 model;
-    if(BattleObject.EM__.equals(a2.magic_00)) {
-      model = ((ModelEffect13c)((EffectManagerData6c<?>)a2).effect_44).model_134;
+    if(BattleObject.EM__.equals(bobj.magic_00)) {
+      model = ((ModelEffect13c)((EffectManagerData6c<?>)bobj).effect_44).model_134;
     } else {
       //LAB_800ea2f8
-      model = ((BattleEntity27c)a2).model_148;
+      model = ((BattleEntity27c)bobj).model_148;
     }
 
     //LAB_800ea300
@@ -2373,16 +2430,21 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets the shadow offset for a battle object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The battle object index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X offset")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y offset")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z offset")
   @Method(0x800ea30cL)
   public static FlowControl scriptSetBttlShadowOffset(final RunningScript<?> script) {
-    final BattleObject a3 = (BattleObject)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleObject bobj = SCRIPTS.getObject(script.params_20[0].get(), BattleObject.class);
 
     final Model124 model;
-    if(BattleObject.EM__.equals(a3.magic_00)) {
-      model = ((ModelEffect13c)((EffectManagerData6c<?>)a3).effect_44).model_134;
+    if(BattleObject.EM__.equals(bobj.magic_00)) {
+      model = ((ModelEffect13c)((EffectManagerData6c<?>)bobj).effect_44).model_134;
     } else {
       //LAB_800ea36c
-      model = ((BattleEntity27c)a3).model_148;
+      model = ((BattleEntity27c)bobj).model_148;
     }
 
     //LAB_800ea374
@@ -2390,9 +2452,12 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Gets the number of times an effect's animation has looped")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "loopCount", description = "The number of loops")
   @Method(0x800ea384L)
-  public static FlowControl FUN_800ea384(final RunningScript<?> script) {
-    final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager = (EffectManagerData6c<EffectManagerData6cInner.AnimType>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+  public static FlowControl scriptGetEffectLoopCount(final RunningScript<?> script) {
+    final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.classFor(EffectManagerData6cInner.AnimType.class));
     final ModelEffect13c effect = (ModelEffect13c)manager.effect_44;
 
     if(effect.anim_0c == null) {
@@ -2575,14 +2640,7 @@ public final class Bttl_800e {
 
   @Method(0x800eab8cL)
   public static void deallocateDeffManagerScriptsArray() {
-    final DeffManager7cc struct7cc = deffManager_800c693c;
-
-    //LAB_800eabf4
-    //LAB_800eac1c
-    if(struct7cc.scripts_2c != null) {
-      struct7cc.scripts_2c = null;
-    }
-    //LAB_800eac48
+    deffManager_800c693c.scripts_2c = null;
   }
 
   /** See {@link DeffPart#flags_00} */
@@ -2670,12 +2728,15 @@ public final class Bttl_800e {
     return attachment;
   }
 
+  @ScriptDescription("Removes a texture animation attachment")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "textureIndex", description = "The texture index")
   @Method(0x800eb01cL)
   public static FlowControl scriptRemoveTextureAnimationAttachment(final RunningScript<?> script) {
     final EffectManagerData6c<?> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
     final DeffTmdRenderer14 effect = (DeffTmdRenderer14)manager.effect_44;
     final DeffPart.TmdType tmdType = effect.tmdType_04;
-    final DeffPart.TextureInfo textureInfo = tmdType.textureInfo_08[(short)script.params_20[1].get() * 2];
+    final DeffPart.TextureInfo textureInfo = tmdType.textureInfo_08[script.params_20[1].get() * 2];
 
     EffectManagerData6c<?> managerWithTextureAnimationAttachment = manager;
 
@@ -2715,6 +2776,9 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Applies a texture animation attachment update")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "textureIndex", description = "The texture index")
   @Method(0x800eb188L)
   public static FlowControl scriptApplyTextureAnimationAttachment(final RunningScript<?> script) {
     final EffectManagerData6c<?> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
@@ -2855,6 +2919,11 @@ public final class Bttl_800e {
     return 1;
   }
 
+  @ScriptDescription("Attached the red eye dragoon transformation flame armour effect to an effect manager")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "textureIndex1", description = "The first texture index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "textureIndex2", description = "The second texture index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attachmentStep", description = "The attachment step")
   @Method(0x800eb84cL)
   public static FlowControl scriptAddRedEyeDragoonTransformationFlameArmorEffectAttachment(final RunningScript<?> script) {
     EffectManagerData6c<?> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);

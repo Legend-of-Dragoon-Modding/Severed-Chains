@@ -6646,13 +6646,13 @@ public final class SEffe {
   public static Vector3f calculateRelativeAngleBetweenPositions(final Vector3f out, final VECTOR pos1, final VECTOR pos2) {
     final VECTOR delta = new VECTOR().set(pos2).sub(pos1).negate();
 
-    out.y = MathHelper.atan2(delta.getX(), delta.getZ());
+    out.y = MathHelper.atan2(delta.getX(), delta.getZ()); // Angle from the X axis
 
     final float sin = MathHelper.sin(-out.y);
     final float cos = MathHelper.cosFromSin(sin, -out.y);
 
-    final float s1 = cos * delta.getZ() - sin * delta.getX();
-    out.x = MathHelper.atan2(-delta.getY(), s1);
+    final float s1 = cos * delta.getZ() - sin * delta.getX(); // Hypotenuse rotated to be parallel with X axis
+    out.x = MathHelper.atan2(-delta.getY(), s1); // Angle from XZ plane
     out.z = 0.0f;
 
     // Convert from ZYX rotation to XYZ
@@ -6875,8 +6875,13 @@ public final class SEffe {
     return effect;
   }
 
+  @ScriptDescription("A bugged effect, do not use")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p3")
   @Method(0x801114b8L)
-  public static FlowControl FUN_801114b8(final RunningScript<?> script) {
+  public static FlowControl scriptAllocateBuggedEffect(final RunningScript<?> script) {
     throw new RuntimeException("Bugged effect allocator");
   }
 
@@ -6926,7 +6931,7 @@ public final class SEffe {
   }
 
   @Method(0x801116c4L)
-  public static MATRIX FUN_801116c4(final MATRIX a0, final int scriptIndex, final int a2) {
+  public static MATRIX FUN_801116c4(final MATRIX a0, final int scriptIndex, final int partIndex) {
     final VECTOR trans = new VECTOR();
     final Vector3f scale = new Vector3f();
     final MATRIX transforms = new MATRIX();
@@ -6948,7 +6953,7 @@ public final class SEffe {
         model.coord2_14.coord.set(sp0x10);
 
         //LAB_80111a0c
-        final GsCOORDINATE2 coord2 = model.modelParts_00[a2].coord2_04;
+        final GsCOORDINATE2 coord2 = model.modelParts_00[partIndex].coord2_04;
         GsGetLw(coord2, a0);
         coord2.flg = 0;
       } else if(type == 0) {
@@ -6961,7 +6966,7 @@ public final class SEffe {
           //LAB_801117ac
           final int a0_0 = Math.max(0, effects._10.ticks_24) % (a2_0._08 * 2);
           final int a1_0 = a0_0 / 2;
-          final LmbTransforms14 lmbTransforms = lmb._08[a2]._08[a1_0];
+          final LmbTransforms14 lmbTransforms = lmb._08[partIndex]._08[a1_0];
           scale.set(lmbTransforms.scale_00);
           trans.set(lmbTransforms.trans_06);
 
@@ -6973,7 +6978,7 @@ public final class SEffe {
             }
 
             //LAB_8011188c
-            final LmbTransforms14 a0_1 = lmb._08[a2]._08[v1];
+            final LmbTransforms14 a0_1 = lmb._08[partIndex]._08[v1];
             scale.add(a0_1.scale_00).div(2);
             trans.add(a0_1.trans_06).div(2);
           }
@@ -6988,7 +6993,7 @@ public final class SEffe {
     } else {
       final Model124 model = ((BattleEntity27c)s0).model_148;
       applyModelRotationAndScale(model);
-      final GsCOORDINATE2 coord2 = model.modelParts_00[a2].coord2_04;
+      final GsCOORDINATE2 coord2 = model.modelParts_00[partIndex].coord2_04;
       GsGetLw(coord2, a0);
       coord2.flg = 0;
     }
@@ -6997,16 +7002,22 @@ public final class SEffe {
     return a0;
   }
 
+  @ScriptDescription("Unknown, returns a position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "modelPartIndex", description = "The model part index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X position")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y position")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z position")
   @Method(0x80111a58L)
   public static FlowControl FUN_80111a58(final RunningScript<?> script) {
-    final int a2 = script.params_20[1].get();
-    if(a2 == -1) {
+    final int partIndex = script.params_20[1].get();
+    if(partIndex == -1) {
       //LAB_80111acc
       return scriptGetEffectTranslationRelativeToParent(script);
     }
 
     final MATRIX sp0x20 = new MATRIX();
-    FUN_801116c4(sp0x20, script.params_20[0].get(), a2);
+    FUN_801116c4(sp0x20, script.params_20[0].get(), partIndex);
     script.params_20[2].set(sp0x20.transfer.getX());
     script.params_20[3].set(sp0x20.transfer.getY());
     script.params_20[4].set(sp0x20.transfer.getZ());
@@ -7362,10 +7373,16 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Gets an effect's rotation")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X rotation (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y rotation (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z rotation (PSX degrees)")
   @Method(0x801127e0L)
-  public static FlowControl FUN_801127e0(final RunningScript<?> script) {
+  public static FlowControl scriptGetEffectRotation(final RunningScript<?> script) {
     final MATRIX transforms = new MATRIX();
-    calculateEffectTransforms(transforms, (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00);
+    calculateEffectTransforms(transforms, SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class));
 
     final Vector3f rot = new Vector3f();
     getRotationFromTransforms(rot, transforms);
@@ -7375,6 +7392,12 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "partIndex", description = "The model part index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X rotation (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y rotation (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z rotation (PSX degrees)")
   @Method(0x8011287cL)
   public static FlowControl FUN_8011287c(final RunningScript<?> script) {
     final Vector3f rot = new Vector3f();
@@ -8346,7 +8369,9 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  /** Loads the same script that's currently executing into script index param0 and jumps to param1 */
+  @ScriptDescription("Loads this script into another script state and jumps to a script address")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "address", description = "The script address")
   @Method(0x80115690L)
   public static FlowControl scriptLoadSameScriptAndJump(final RunningScript<?> script) {
     final ScriptState<?> state = SCRIPTS.getState(script.params_20[0].get());
@@ -8355,23 +8380,33 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, possibly something to do with effect manager parents")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "coord2Index")
   @Method(0x801156f8L)
   public static FlowControl FUN_801156f8(final RunningScript<?> script) {
-    final EffectManagerData6c<?> manager = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final EffectManagerData6c<?> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
     manager.scriptIndex_0c = script.params_20[1].get();
     manager.coord2Index_0d = script.params_20[2].get();
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Gets an effect manager's Z value")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z coordinate")
   @Method(0x8011574cL)
   public static FlowControl scriptGetEffectZ(final RunningScript<?> script) {
-    script.params_20[1].set(((EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00)._10.z_22);
+    script.params_20[1].set(SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class)._10.z_22);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets an effect manager's Z value")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z coordinate")
   @Method(0x8011578cL)
   public static FlowControl scriptSetEffectZ(final RunningScript<?> script) {
-    final EffectManagerData6c<?> manager = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final EffectManagerData6c<?> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
     manager._10.z_22 = script.params_20[1].get();
 
 //    if(manager._10.z_22 < 0) {
@@ -8382,12 +8417,16 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "coord2Index")
   @Method(0x801157d0L)
   public static FlowControl FUN_801157d0(final RunningScript<?> script) {
     final int scriptIndex = script.params_20[1].get();
     final int coord2Index = script.params_20[2].get();
 
-    final EffectManagerData6c<?> manager = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final EffectManagerData6c<?> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
 
     final MATRIX sp0x10 = new MATRIX();
     final MATRIX sp0x30 = new MATRIX();
@@ -8430,45 +8469,57 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, possibly for finishing a DEFF")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode")
   @Method(0x80115a28L)
   public static FlowControl FUN_80115a28(final RunningScript<?> script) {
     FUN_800e9178(script.params_20[0].get());
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Plays an XA sound")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "loadingStage", description = "The loading stage")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "archiveIndex", description = "The archive index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "fileIndex", description = "The file index")
   @Method(0x80115a58L)
   public static FlowControl scriptPlayXaAudio(final RunningScript<?> script) {
     playXaAudio(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Gets the current XA loading stage (probably doesn't work in SC)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "loadingStage", description = "The stage")
   @Method(0x80115a94L)
-  public static FlowControl FUN_80115a94(final RunningScript<?> script) {
+  public static FlowControl scriptGetXaLoadingStage(final RunningScript<?> script) {
     script.params_20[0].set((int)_800bf0cf.get());
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Waits for the currently-loading XA audio to load (no-op in SC)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "expectedStage", description = "The expected stage")
   @Method(0x80115ab0L)
-  public static FlowControl FUN_80115ab0(final RunningScript<?> script) {
+  public static FlowControl scriptWaitForXaToLoad(final RunningScript<?> script) {
 //    return _800bf0cf.get() != a0.params_20.get(0).deref().get() ? 2 : 0;
     //TODO GH#3 the XA code is rewritten and it never sets 800bf0cf back to 0, I dunno if this is important or not
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Updates the DEFF manager flags")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flags", description = "OR mask if positive, AND mask if negative")
   @Method(0x80115ad8L)
-  public static FlowControl FUN_80115ad8(final RunningScript<?> script) {
-    final DeffManager7cc v1 = deffManager_800c693c;
+  public static FlowControl scriptUpdateDeffManagerFlags(final RunningScript<?> script) {
+    final DeffManager7cc deffManager = deffManager_800c693c;
 
-    final int v0;
+    final int flags;
     if(script.params_20[0].get() >= 0) {
       //LAB_80115b08
-      v0 = script.params_20[0].get() | v1.flags_20;
+      flags = script.params_20[0].get() | deffManager.flags_20;
     } else {
-      v0 = script.params_20[0].get() & v1.flags_20;
+      flags = script.params_20[0].get() & deffManager.flags_20;
     }
 
     //LAB_80115b20
-    v1.flags_20 = v0;
+    deffManager.flags_20 = flags;
     return FlowControl.CONTINUE;
   }
 
@@ -8516,7 +8567,7 @@ public final class SEffe {
   }
 
   @Method(0x80115cacL)
-  public static long loadDeffStageEffects(final int a0) {
+  public static long loadDeffStageEffects(final int mode) {
     final int _00;
     final int _02;
     final int _04;
@@ -8545,7 +8596,7 @@ public final class SEffe {
       }
 
       //LAB_80115d84
-      if(a0 == 0) {
+      if(mode == 0) {
         //LAB_80115dc0
         if((stage_800bda0c.flags_5e4 & 0x8000) != 0) {
           allocateScreenDarkeningEffect(6, 16);
@@ -8554,17 +8605,17 @@ public final class SEffe {
         //LAB_80115de8
         stage_800bda0c.flags_5e4 &= ~(_00 | _02 | _04);
         //LAB_80115da8
-      } else if(a0 == 1) {
+      } else if(mode == 1) {
         //LAB_80115e18
         stage_800bda0c.flags_5e4 |= _00;
-      } else if(a0 == 2) {
+      } else if(mode == 2) {
         //LAB_80115e34
         stage_800bda0c.flags_5e4 |= _02;
 
         if((stage_800bda0c.flags_5e4 & 0x8000) != 0) {
           allocateScreenDarkeningEffect(16, 6);
         }
-      } else if(a0 == 3) {
+      } else if(mode == 3) {
         //LAB_80115e70
         //LAB_80115e8c
         stage_800bda0c.flags_5e4 |= _04;
@@ -8576,37 +8627,46 @@ public final class SEffe {
     return 0;
   }
 
+  @ScriptDescription("Loads DEFF effects for the current battle stage")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "Unknown")
   @Method(0x80115ea4L)
-  public static FlowControl FUN_80115ea4(final RunningScript<?> script) {
+  public static FlowControl scriptLoadDeffStageEffects(final RunningScript<?> script) {
     loadDeffStageEffects(script.params_20[0].get());
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Gets the texture metrics for various effect types")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "typeOrBobjIndex", description = "DEFF type, or battle object index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "textureIndex", description = "Texture index (only for types 0x100_0000 and 0x300_0000)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "u", description = "The texture U")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "v", description = "The texture V")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "w", description = "The texture W")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "h", description = "The texture H")
   @Method(0x80115ed4L)
-  public static FlowControl FUN_80115ed4(final RunningScript<?> script) {
+  public static FlowControl scriptGetEffectTextureMetrics(final RunningScript<?> script) {
     final int w;
     final int v;
     final int h;
     final int u;
-    final int a2 = script.params_20[0].get();
-    final int s0 = script.params_20[1].get();
-    final int type = a2 & 0xff00_0000;
+    final int typeOrBobjIndex = script.params_20[0].get();
+    final int textureIndex = script.params_20[1].get();
+    final int type = typeOrBobjIndex & 0xff00_0000;
     if(type == 0) {
       //LAB_80115f54
-      final BattleObject a0 = (BattleObject)scriptStatePtrArr_800bc1c0[a2].innerStruct_00;
-      final long v0;
-      if(!BattleObject.EM__.equals(a0.magic_00)) {
+      final BattleObject bobj = SCRIPTS.getObject(typeOrBobjIndex, BattleObject.class);
+      final int uvs;
+      if(!BattleObject.EM__.equals(bobj.magic_00)) {
         //LAB_8011604c
-        v0 = colourMapUvs_800fb0ec.get(((BattleEntity27c)a0).model_148.colourMap_9d).get();
-        u = (int)((v0 & 0xf) << 6);
-        v = (int)((v0 & 0x10) << 4);
+        uvs = colourMapUvs_800fb0ec.get(((BattleEntity27c)bobj).model_148.colourMap_9d).get();
+        u = (uvs & 0xf) << 6;
+        v = (uvs & 0x10) << 4;
         w = 0x100;
         h = 0x100;
       } else {
-        final EffectManagerData6c<?> manager = (EffectManagerData6c<?>)a0;
-        final int v1 = manager.flags_04 & 0xff00_0000;
-        if(v1 != 0x200_0000) {
-          if(v1 == 0x300_0000) {
+        final EffectManagerData6c<?> manager = (EffectManagerData6c<?>)bobj;
+        final int managerType = manager.flags_04 & 0xff00_0000;
+        if(managerType != 0x200_0000) {
+          if(managerType == 0x300_0000) {
             //LAB_80116014
             throw new RuntimeException("ASM is bugged");
 //          v0 = manager._44.deref();
@@ -8617,7 +8677,7 @@ public final class SEffe {
 //          w = MEMORY.ref(2, v0).offset(0x4L).getSigned() * 4;
 //          h = MEMORY.ref(2, v0).offset(0x6L).getSigned();
             //LAB_80115fc8
-          } else if(v1 == 0x400_0000) {
+          } else if(managerType == 0x400_0000) {
             //LAB_8011602c
             final StarChildrenMeteorEffect10 effect = (StarChildrenMeteorEffect10)manager.effect_44;
             u = effect.metrics_04.u_00;
@@ -8629,16 +8689,16 @@ public final class SEffe {
           }
         } else {
           //LAB_80115fd8
-          v0 = colourMapUvs_800fb0ec.get(((ModelEffect13c)manager.effect_44).model_134.colourMap_9d).get();
-          u = (int)((v0 & 0xf) << 6);
-          v = (int)((v0 & 0x10) << 4);
+          uvs = colourMapUvs_800fb0ec.get(((ModelEffect13c)manager.effect_44).model_134.colourMap_9d).get();
+          u = (uvs & 0xf) << 6;
+          v = (uvs & 0x10) << 4;
           w = 256;
           h = 256;
         }
       }
     } else if(type == 0x200_0000) {
       //LAB_80116098
-      final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)getDeffPart(a2);
+      final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)getDeffPart(typeOrBobjIndex);
       final DeffPart.TextureInfo textureInfo = animatedTmdType.textureInfo_08[0];
       u = textureInfo.vramPos_00.x.get();
       v = textureInfo.vramPos_00.y.get();
@@ -8647,8 +8707,8 @@ public final class SEffe {
     } else if(type == 0x100_0000 || type == 0x300_0000) {
       //LAB_801160c0
       //LAB_801160d4
-      final DeffPart.TmdType tmdType = (DeffPart.TmdType)getDeffPart(a2);
-      final DeffPart.TextureInfo textureInfo = tmdType.textureInfo_08[s0 * 2];
+      final DeffPart.TmdType tmdType = (DeffPart.TmdType)getDeffPart(typeOrBobjIndex);
+      final DeffPart.TextureInfo textureInfo = tmdType.textureInfo_08[textureIndex * 2];
       u = textureInfo.vramPos_00.x.get();
       v = textureInfo.vramPos_00.y.get();
       w = textureInfo.vramPos_00.w.get() * 4;
@@ -8657,7 +8717,7 @@ public final class SEffe {
     } else if(type == 0x400_0000) {
       //LAB_801160f4
       final BillboardSpriteEffect0c sp0x10 = new BillboardSpriteEffect0c();
-      getSpriteMetricsFromSource(sp0x10, a2 & 0xff_ffff);
+      getSpriteMetricsFromSource(sp0x10, typeOrBobjIndex & 0xff_ffff);
       u = sp0x10.metrics_04.u_00;
       v = sp0x10.metrics_04.v_02;
       w = sp0x10.metrics_04.w_04;
@@ -8674,6 +8734,7 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unused in SC")
   @Method(0x80116160L)
   public static FlowControl scriptConsolidateEffectMemory(final RunningScript<?> script) {
     // Used to reallocate memory to consolidate it and prevent fragmentation (I think)
@@ -9383,7 +9444,9 @@ public final class SEffe {
     //LAB_80117e80
   }
 
-  /** Effect renderer for Down Burst and Night Raid items */
+  @ScriptDescription("Allocates an unknown effect used by down burst and night raid")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lmbFlags", description = "Unknown, selects which LMB to use")
   @Method(0x80117eb0L)
   public static FlowControl FUN_80117eb0(final RunningScript<? extends BattleObject> script) {
     final int param1 = script.params_20[1].get();
@@ -9460,22 +9523,32 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, something to do with LMB animation")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "value")
   @Method(0x801181a8L)
   public static FlowControl FUN_801181a8(final RunningScript<?> script) {
-    final EffectManagerData6c<?> manager = (EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final EffectManagerData6c<?> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
     ((BttlScriptData6cSub5c)manager.effect_44)._14[script.params_20[1].get()] = script.params_20[2].get();
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, something to do with LMB animation")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p3")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p4")
   @Method(0x801181f0L)
   public static FlowControl FUN_801181f0(final RunningScript<?> script) {
-    final BttlScriptData6cSub5c v0 = (BttlScriptData6cSub5c)((EffectManagerData6c<?>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).effect_44;
+    final BttlScriptData6cSub5c effect = (BttlScriptData6cSub5c)SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class).effect_44;
 
     final int v1 = script.params_20[3].get() + 1;
-    v0._34 = script.params_20[1].get();
-    v0._38 = script.params_20[2].get() * v1;
-    v0._3c = 0x1000 / v1;
-    v0._40 = script.params_20[4].get();
+    effect._34 = script.params_20[1].get();
+    effect._38 = script.params_20[2].get() * v1;
+    effect._3c = 0x1000 / v1;
+    effect._40 = script.params_20[4].get();
     return FlowControl.CONTINUE;
   }
 
@@ -9544,6 +9617,9 @@ public final class SEffe {
     //LAB_801183ac
   }
 
+  @ScriptDescription("Allocates a DEFF TMD effect manager")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flags", description = "The DEFF flags, mostly unknown")
   @Method(0x801183c0L)
   public static FlowControl allocateDeffTmd(final RunningScript<? extends BattleObject> script) {
     final int s1 = script.params_20[1].get();
@@ -9590,8 +9666,12 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Allocates a DEFF TMD renderer effect manager")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flags", description = "DEFF flags, not fully understood")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "objIndex", description = "The model object index")
   @Method(0x801184e4L)
-  public static FlowControl FUN_801184e4(final RunningScript<? extends BattleObject> script) {
+  public static FlowControl allocateDeffTmdRenderer(final RunningScript<? extends BattleObject> script) {
     final int flags = script.params_20[1].get();
     final int objIndex = script.params_20[2].get();
 
@@ -9613,9 +9693,9 @@ public final class SEffe {
       objTable = battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[objIndex].tmd_08;
     } else {
       //LAB_80118634
-      final BattleObject a0_0 = (BattleObject)scriptStatePtrArr_800bc1c0[flags].innerStruct_00;
-      if(BattleObject.EM__.equals(a0_0.magic_00)) {
-        final EffectManagerData6c<?> effects = (EffectManagerData6c<?>)a0_0;
+      final BattleObject bobj = (BattleObject)scriptStatePtrArr_800bc1c0[flags].innerStruct_00;
+      if(BattleObject.EM__.equals(bobj.magic_00)) {
+        final EffectManagerData6c<?> effects = (EffectManagerData6c<?>)bobj;
         final int v1 = effects.flags_04 & 0xff00_0000;
         if(v1 == 0x100_0000 || v1 == 0x200_0000) {
           //LAB_8011867c
@@ -9626,7 +9706,7 @@ public final class SEffe {
       } else {
         //LAB_801186a4
         //LAB_801186b4
-        objTable = ((BattleEntity27c)a0_0).model_148.modelParts_00[objIndex].tmd_08;
+        objTable = ((BattleEntity27c)bobj).model_148.modelParts_00[objIndex].tmd_08;
       }
     }
 
@@ -9702,6 +9782,8 @@ public final class SEffe {
     //LAB_801188d8
   }
 
+  @ScriptDescription("Allocates an unknown effect")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @Method(0x801188ecL)
   public static FlowControl FUN_801188ec(final RunningScript<? extends BattleObject> script) {
     final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
@@ -9813,6 +9895,8 @@ public final class SEffe {
    * Used when Shirley transforms into another char. Causes the wipe effect where her model
    * disappears from top to bottom and then reappears as another char from bottom to top.
    */
+  @ScriptDescription("Allocates a new wipe effect (used by Shirley when she transforms)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @Method(0x80118df4L)
   public static FlowControl allocateShirleyTransformWipeEffect(final RunningScript<? extends BattleObject> script) {
     final ScriptState<EffectManagerData6c<EffectManagerData6cInner.ShirleyType>> state = allocateEffectManager(
@@ -9971,6 +10055,13 @@ public final class SEffe {
    * Used for effect sprite overlays on red glow in Death Dimension, for one. Seems to be for
    * generic sprite animations where multiple instances create a "trail" of effect copies.
    */
+  @ScriptDescription("Allocates a sprite with a trail effect")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flags", description = "Effect flags are unknown")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "colourAndScaleFlags", description = "0x4 - apply colour, 0x8 - apply scale")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "count", description = "The number of copies")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "steps", description = "The number of steps to apply to each copy")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "brightnessAndScaleChange", description = "The amount to change per step")
   @Method(0x80119484L)
   public static FlowControl allocateSpriteWithTrailEffect(final RunningScript<? extends BattleObject> script) {
     final int effectFlag = script.params_20[1].get();

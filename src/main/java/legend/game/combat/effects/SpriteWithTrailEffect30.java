@@ -5,6 +5,12 @@ import legend.core.gte.VECTOR;
 import java.util.Arrays;
 
 public class SpriteWithTrailEffect30 implements Effect {
+  /**
+   * <ul>
+   *   <li>0x4 - use colour</li>
+   *   <li>0x8 - use scale</li>
+   * </ul>
+   */
   public int colourAndScaleFlags_00;
   public int effectFlag_04;
   public int countCopies_08;
