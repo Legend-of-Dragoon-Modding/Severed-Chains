@@ -295,7 +295,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[196] = Scus94491BpeSegment_8002::FUN_80029cf4;
     scriptSubFunctions_8004e29c[197] = Scus94491BpeSegment_8002::FUN_80029d34;
     scriptSubFunctions_8004e29c[198] = Scus94491BpeSegment_8002::scriptAddSobjTextbox;
-    scriptSubFunctions_8004e29c[199] = Scus94491BpeSegment_8002::FUN_80029e8c;
+    scriptSubFunctions_8004e29c[199] = Scus94491BpeSegment_8002::scriptSetTextboxVariable;
     scriptSubFunctions_8004e29c[200] = Scus94491BpeSegment_8002::scriptAddTextbox;
     scriptSubFunctions_8004e29c[201] = Scus94491BpeSegment_8002::scriptDeallocateTextbox;
     scriptSubFunctions_8004e29c[202] = Scus94491BpeSegment_8002::scriptDeallocateAllTextboxes;

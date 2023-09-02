@@ -2790,6 +2790,7 @@ public final class Bttl_800c {
   }
 
   @ScriptDescription("No-op")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused")
   @Method(0x800cb764L)
   public static FlowControl FUN_800cb764(final RunningScript<?> a0) {
     return FlowControl.CONTINUE;
