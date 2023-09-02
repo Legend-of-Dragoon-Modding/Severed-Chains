@@ -7079,7 +7079,7 @@ public final class SEffe {
     return data.hasAttachment(1) ? FlowControl.PAUSE_AND_REWIND : FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Checks if an effect has an specific attachment")
+  @ScriptDescription("Adds a position scaler attachment to an effect (relative to a battle object if specified)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentIndex", description = "The parent index (or -1 for none)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityX", description = "The X velocity")
@@ -7126,15 +7126,15 @@ public final class SEffe {
           final MATRIX rotMatrix = new MATRIX();
           RotMatrix_Xyz(bobj.getRotation(), rotMatrix);
 
-          VECTOR sp0x50 = new VECTOR().set(velocityX, velocityY, velocityZ).mul(rotMatrix);
-          velocityX = sp0x50.getX();
-          velocityY = sp0x50.getY();
-          velocityZ = sp0x50.getZ();
+          final VECTOR velocity = new VECTOR().set(velocityX, velocityY, velocityZ).mul(rotMatrix);
+          velocityX = velocity.getX();
+          velocityY = velocity.getY();
+          velocityZ = velocity.getZ();
 
-          sp0x50 = new VECTOR().set(accelerationX, accelerationY, accelerationZ).mul(rotMatrix);
-          accelerationX = sp0x50.getX();
-          accelerationY = sp0x50.getY();
-          accelerationZ = sp0x50.getZ();
+          final VECTOR acceleration = new VECTOR().set(accelerationX, accelerationY, accelerationZ).mul(rotMatrix);
+          accelerationX = acceleration.getX();
+          accelerationY = acceleration.getY();
+          accelerationZ = acceleration.getZ();
         }
 
         //LAB_80111e40
@@ -7884,7 +7884,7 @@ public final class SEffe {
   @ScriptDescription("Adds a difference scale scaler attachment to an effect (relative to a parent battle object if one is specified)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentIndex", description = "The parent index (or -1 if none)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks", description = "The number of ticks until the rotation finishes")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks", description = "The number of ticks until the scaling finishes")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X scale (12-bit fixed-point)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y scale (12-bit fixed-point)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z scale (12-bit fixed-point)")
@@ -7896,7 +7896,7 @@ public final class SEffe {
   @ScriptDescription("Adds a multiplicative scale scaler attachment to an effect (relative to a parent battle object if one is specified)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentIndex", description = "The parent index (or -1 if none)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks", description = "The number of ticks until the rotation finishes")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks", description = "The number of ticks until the scaling finishes")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X scale (12-bit fixed-point)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y scale (12-bit fixed-point)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z scale (12-bit fixed-point)")
@@ -7908,7 +7908,7 @@ public final class SEffe {
   @ScriptDescription("Adds a multiplicative scale scaler attachment to an effect (relative to a parent battle object if one is specified)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentIndex", description = "The parent index (or -1 if none)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "distancePerTick", description = "The amount to rotate per frame until the rotation finishes")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "distancePerTick", description = "The amount to scaling per frame until the scale finishes")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X scale (12-bit fixed-point)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y scale (12-bit fixed-point)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z scale (12-bit fixed-point)")
@@ -8182,7 +8182,7 @@ public final class SEffe {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "varIndex", description = "The generic variable index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "value", description = "The target value")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks", description = "The number of effects until finished")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks", description = "The number of ticks until finished")
   @Method(0x80115058L)
   public static FlowControl scriptAddGenericAttachmentTicks(final RunningScript<?> script) {
     final int varIndex = script.params_20[1].get();
@@ -8323,7 +8323,7 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Checks if an effect has an specific attachment")
+  @ScriptDescription("Checks if an effect has a specific attachment")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "hasAttachment", description = "True if the attachment is present, false otherwise")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attachmentId", description = "The attachment ID")
