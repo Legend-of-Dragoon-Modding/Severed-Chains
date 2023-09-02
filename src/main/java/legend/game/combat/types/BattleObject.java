@@ -30,8 +30,8 @@ public abstract class BattleObject {
 
   /** Translates a position relative to this BattleObject's local coordinate system */
   @Method(0x801105ccL)
-  public void getRelativePosition(final VECTOR in) {
-    this.getRelativePosition(in, in);
+  public void getRelativePosition(final VECTOR inOut) {
+    this.getRelativePosition(inOut, inOut);
   }
 
   /** Returns the relative position from a parent BattleObject's local coordinate system */

@@ -1561,6 +1561,9 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Returns two unknown values")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "bentIndex")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "p1")
   @Method(0x800e74acL)
   public static FlowControl FUN_800e74ac(final RunningScript<?> script) {
     final BattleStruct24_2 struct24 = _800c6938;
@@ -1694,7 +1697,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e7dbcL)
-  public static int FUN_800e7dbc(final DVECTOR out, final VECTOR translation) {
+  public static int transformToScreenSpace(final DVECTOR out, final VECTOR translation) {
     final VECTOR transformed = new VECTOR();
     translation.mul(worldToScreenMatrix_800c3548, transformed);
     transformed.add(worldToScreenMatrix_800c3548.transfer);
@@ -1997,6 +2000,8 @@ public final class Bttl_800e {
     //LAB_800e9354
   }
 
+  @ScriptDescription("Allocates an empty effect manager")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @Method(0x800e93e0L)
   public static FlowControl scriptAllocateEmptyEffectManagerChild(final RunningScript<? extends BattleObject> script) {
     script.params_20[0].set(allocateEffectManager("Empty EffectManager child, allocated by script %d (%s) from FUN_800e93e0".formatted(script.scriptState_04.index, script.scriptState_04.name), script.scriptState_04, null, null, null, null).index);
@@ -2067,6 +2072,9 @@ public final class Bttl_800e {
     //LAB_800e96bc
   }
 
+  @ScriptDescription("Allocates a new billboard sprite effect manager")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flags", description = "Flag meanings are unknown")
   @Method(0x800e96ccL)
   public static FlowControl allocateBillboardSpriteEffect(final RunningScript<? extends BattleObject> script) {
     final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
@@ -2121,6 +2129,8 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Allocates an unknown model effect")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @Method(0x800e9854L)
   public static FlowControl FUN_800e9854(final RunningScript<? extends BattleObject> script) {
     final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)getDeffPart(script.params_20[1].get() | 0x200_0000);
@@ -2157,7 +2167,7 @@ public final class Bttl_800e {
 
     loadModelTmd(model, effect.extTmd_08);
     loadModelAnim(model, effect.anim_0c);
-    addGenericAttachment(state, 0, 0x100, 0);
+    addGenericAttachment(manager, 0, 0x100, 0);
     manager._10.flags_00 = 0x1400_0040;
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
@@ -2177,20 +2187,20 @@ public final class Bttl_800e {
       new EffectManagerData6cInner.AnimType()
     );
 
-    final EffectManagerData6c<EffectManagerData6cInner.AnimType> data = state.innerStruct_00;
-    data.flags_04 = 0x100_0000;
-    final ModelEffect13c s0 = (ModelEffect13c)data.effect_44;
-    s0._00 = 0;
+    final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager = state.innerStruct_00;
+    manager.flags_04 = 0x100_0000;
+    final ModelEffect13c effect = (ModelEffect13c)manager.effect_44;
+    effect._00 = 0;
 
-    s0.tmdType_04 = animatedTmdType;
-    s0.extTmd_08 = animatedTmdType.tmd_0c;
-    s0.anim_0c = animatedTmdType.anim_14;
-    s0.model_10.colourMap_9d = 0;
-    s0.model_134 = s0.model_10;
-    loadModelTmd(s0.model_134, s0.extTmd_08);
-    loadModelAnim(s0.model_134, s0.anim_0c);
-    addGenericAttachment(state, 0, 0x100, 0);
-    data._10.flags_00 = 0x5400_0000;
+    effect.tmdType_04 = animatedTmdType;
+    effect.extTmd_08 = animatedTmdType.tmd_0c;
+    effect.anim_0c = animatedTmdType.anim_14;
+    effect.model_10.colourMap_9d = 0;
+    effect.model_134 = effect.model_10;
+    loadModelTmd(effect.model_134, effect.extTmd_08);
+    loadModelAnim(effect.model_134, effect.anim_0c);
+    addGenericAttachment(manager, 0, 0x100, 0);
+    manager._10.flags_00 = 0x5400_0000;
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
@@ -2253,6 +2263,9 @@ public final class Bttl_800e {
     }
   }
 
+  @ScriptDescription("Allocates an effect manager for an unknown purpose")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager's index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
   @Method(0x800e9f68L)
   public static FlowControl FUN_800e9f68(final RunningScript<? extends BattleObject> script) {
     final int s2 = script.params_20[1].get();
@@ -2338,7 +2351,7 @@ public final class Bttl_800e {
     effect.anim_0c = cmb;
     loadModelAnim(effect.model_134, cmb);
     manager._10.ticks_24 = 0;
-    addGenericAttachment(state, 0, 0x100, 0);
+    addGenericAttachment(manager, 0, 0x100, 0);
     return FlowControl.CONTINUE;
   }
 
@@ -2801,6 +2814,10 @@ public final class Bttl_800e {
     addOrUpdateTextureAnimationAttachment(manager, tmdType.textureInfo_08[textureIndex * 2].vramPos_00, step);
   }
 
+  @ScriptDescription("Adds or updates a texture animation attachment to an effect")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "varIndex", description = "The texture index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "step", description = "The animation movement step")
   @Method(0x800eb518L)
   public static FlowControl scriptAddOrUpdateTextureAnimationAttachment(final RunningScript<?> script) {
     addOrUpdateTextureAnimationAttachment(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
