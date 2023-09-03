@@ -103,7 +103,7 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
-import static legend.game.combat.Bttl_800c.FUN_800cf4f4;
+import static legend.game.combat.Bttl_800c.getRelativeOffset;
 import static legend.game.combat.Bttl_800c.FUN_800cfb14;
 import static legend.game.combat.Bttl_800c.ZERO;
 import static legend.game.combat.Bttl_800c._800faa90;
@@ -178,10 +178,12 @@ public final class Bttl_800d {
     }
   }
 
+  @ScriptDescription("Gets a battle object model's part count")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The battle object index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "partCount", description = "The part count")
   @Method(0x800d0124L)
-  public static FlowControl FUN_800d0124(final RunningScript<?> script) {
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
-    final BattleObject data = (BattleObject)state.innerStruct_00;
+  public static FlowControl scriptGetBobjModelPartCount(final RunningScript<?> script) {
+    final BattleObject data = SCRIPTS.getObject(script.params_20[0].get(), BattleObject.class);
 
     if(BattleObject.EM__.equals(data.magic_00)) {
       script.params_20[1].set(((ModelEffect13c)((EffectManagerData6c<?>)data).effect_44).model_10.partCount_98);
@@ -271,8 +273,14 @@ public final class Bttl_800d {
     //LAB_800d0508
   }
 
+  @ScriptDescription("Allocates a projectile hit effect manager")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "count", description = "The effect count")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "r", description = "The red channel")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "g", description = "The green channel")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "b", description = "The blue channel")
   @Method(0x800d0564L)
-  public static FlowControl allocateProjectileHitEffect(final RunningScript<? extends BattleObject> script) {
+  public static FlowControl scriptAllocateProjectileHitEffect(final RunningScript<? extends BattleObject> script) {
     final int count = script.params_20[1].get();
 
     final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
@@ -320,14 +328,15 @@ public final class Bttl_800d {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("No-op")
   @Method(0x800d09b8L)
   public static FlowControl FUN_800d09b8(final RunningScript<?> script) {
-    throw new RuntimeException("Not implemented");
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800d09c0L)
   public static void FUN_800d09c0(final EffectManagerData6c<EffectManagerData6cInner.VoidType> a0, final AdditionSparksEffectInstance4c inst) {
-    FUN_800cf4f4(a0, null, inst.startPos_08, inst.startPos_08);
+    getRelativeOffset(a0, null, inst.startPos_08, inst.startPos_08);
     rotateAndTranslateEffect(a0, null, inst.speed_28, inst.speed_28);
     inst.endPos_18.set(inst.startPos_08);
   }
@@ -405,8 +414,16 @@ public final class Bttl_800d {
     //LAB_800d0d94
   }
 
+  @ScriptDescription("Allocates an addition sparks effect manager")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "count", description = "The effect count")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "r", description = "The red channel")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "g", description = "The green channel")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "b", description = "The blue channel")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p5", description = "Unknown")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p6", description = "Unknown, possibly ticks")
   @Method(0x800d0decL)
-  public static FlowControl allocateAdditionSparksEffect(final RunningScript<? extends BattleObject> script) {
+  public static FlowControl scriptAllocateAdditionSparksEffect(final RunningScript<? extends BattleObject> script) {
     final int count = script.params_20[1].get();
     final int s4 = script.params_20[6].get();
 
@@ -455,13 +472,13 @@ public final class Bttl_800d {
   /** If a secondary script is specified, modifies the translations of the starburst rays by the secondary script's translation. */
   @Method(0x800d1194L)
   public static void modifyAdditionStarburstTranslation(final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager, final AdditionStarburstEffect10 starburstEffect, final IntRef[] outTranslations) {
-    if(starburstEffect.scriptIndex_00 == -1) {
+    if(starburstEffect.parentIndex_00 == -1) {
       outTranslations[0].set(0);
       outTranslations[1].set(0);
     } else {
       //LAB_800d11c4
       final VECTOR scriptTranslation = new VECTOR();
-      scriptGetScriptedObjectPos(starburstEffect.scriptIndex_00, scriptTranslation);
+      scriptGetScriptedObjectPos(starburstEffect.parentIndex_00, scriptTranslation);
       scriptTranslation.add(manager._10.trans_04);
       transformWorldspaceToScreenspace(scriptTranslation, outTranslations[0], outTranslations[1]);
     }
@@ -561,8 +578,13 @@ public final class Bttl_800d {
     //LAB_800d1940
   }
 
+  @ScriptDescription("Allocates an addition starburst effect manager")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentIndex", description = "The parent battle entity index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "rayCount", description = "The number of rays")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "Controls how the effect behaves")
   @Method(0x800d19ecL)
-  public static FlowControl allocateAdditionStarburstEffect(final RunningScript<? extends BattleObject> script) {
+  public static FlowControl scriptAllocateAdditionStarburstEffect(final RunningScript<? extends BattleObject> script) {
     final int rayCount = script.params_20[2].get();
 
     final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
@@ -576,7 +598,7 @@ public final class Bttl_800d {
 
     final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager = state.innerStruct_00;
     final AdditionStarburstEffect10 effect = (AdditionStarburstEffect10)manager.effect_44;
-    effect.scriptIndex_00 = script.params_20[1].get();
+    effect.parentIndex_00 = script.params_20[1].get();
     effect.unused_08 = 0;
     final AdditionStarburstEffectRay10[] rayArray = effect.rayArray_0c;
 
@@ -596,12 +618,16 @@ public final class Bttl_800d {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Allocates an empty effect manager")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @Method(0x800d1cacL)
   public static FlowControl FUN_800d1cac(final RunningScript<? extends BattleObject> script) {
     script.params_20[0].set(allocateEffectManager("Unknown (FUN_800d1cac)", script.scriptState_04, null, null, null, null).index);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Allocates an empty effect manager")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @Method(0x800d1cf4L)
   public static FlowControl FUN_800d1cf4(final RunningScript<? extends BattleObject> script) {
     script.params_20[0].set(allocateEffectManager("Unknown (FUN_800d1cf4)", script.scriptState_04, null, null, null, null).index);
@@ -720,10 +746,14 @@ public final class Bttl_800d {
     //LAB_800d2710
   }
 
+  @ScriptDescription("Allocates a radial gradient effect manager")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "count", description = "The number of subdivisions in the gradient")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "The gradient type")
   @Method(0x800d2734L)
-  public static FlowControl allocateRadialGradientEffect(final RunningScript<? extends BattleObject> script) {
+  public static FlowControl scriptAllocateRadialGradientEffect(final RunningScript<? extends BattleObject> script) {
     final int circleSubdivisionModifier = script.params_20[1].get();
-    final int rendererIndex = script.params_20[2].get();
+    final int type = script.params_20[2].get();
 
     final ScriptState<EffectManagerData6c<EffectManagerData6cInner.RadialGradientType>> state = allocateEffectManager(
       "RadialGradientEffect14",
@@ -742,8 +772,8 @@ public final class Bttl_800d {
 
     final RadialGradientEffect14 effect = (RadialGradientEffect14)manager.effect_44;
     effect.circleSubdivisionModifier_00 = circleSubdivisionModifier;
-    effect.scaleModifier_01 = (rendererIndex - 3 & 0xffff_ffffL) >= 2 ? 4.0f : 1.0f;
-    effect.renderer_10 = radialGradientEffectRenderers_800fa758[rendererIndex];
+    effect.scaleModifier_01 = (type - 3 & 0xffff_ffffL) >= 2 ? 4.0f : 1.0f;
+    effect.renderer_10 = radialGradientEffectRenderers_800fa758[type];
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
@@ -854,8 +884,10 @@ public final class Bttl_800d {
     }
   }
 
+  @ScriptDescription("Allocates a guard effect manager")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @Method(0x800d2ff4L)
-  public static FlowControl allocateGuardEffect(final RunningScript<? extends BattleObject> script) {
+  public static FlowControl scriptAllocateGuardEffect(final RunningScript<? extends BattleObject> script) {
     final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
       "GuardEffect06",
       script.scriptState_04,
@@ -879,35 +911,42 @@ public final class Bttl_800d {
     } else {
       manager._10.colour_1c.set(255, 0, 0);
     }
+
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("No-op")
   @Method(0x800d3090L)
   public static FlowControl FUN_800d3090(final RunningScript<?> script) {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("No-op")
   @Method(0x800d3098L)
   public static FlowControl FUN_800d3098(final RunningScript<?> script) {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("No-op")
   @Method(0x800d30a0L)
   public static FlowControl FUN_800d30a0(final RunningScript<?> script) {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("No-op")
   @Method(0x800d30a8L)
   public static FlowControl FUN_800d30a8(final RunningScript<?> script) {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("No-op")
   @Method(0x800d30b0L)
   public static FlowControl FUN_800d30b0(final RunningScript<?> script) {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("No-op")
   @Method(0x800d30b8L)
   public static FlowControl FUN_800d30b8(final RunningScript<?> script) {
     return FlowControl.CONTINUE;
@@ -988,9 +1027,14 @@ public final class Bttl_800d {
     //LAB_800d346c
   }
 
+  @ScriptDescription("Allocates a monster death effect effect for a monster battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The battle object index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "spriteIndex", description = "Which sprite to use")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused", description = "Unused in code but passed by scripts")
   @Method(0x800d34bcL)
-  public static FlowControl allocateMonsterDeathEffect(final RunningScript<? extends BattleObject> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
+  public static FlowControl scriptAllocateMonsterDeathEffect(final RunningScript<? extends BattleObject> script) {
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[1].get(), BattleEntity27c.class);
     final int modelObjectCount = bent.model_148.partCount_98;
 
     final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
@@ -1135,7 +1179,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d3a64L)
-  public static void FUN_800d3a64(final AdditionNameTextEffect1c a0, final AdditionCharEffectData0c a1, final long charAlpha, final long a3) {
+  public static void renderAdditionNameEffect(final AdditionNameTextEffect1c a0, final AdditionCharEffectData0c a1, final long charAlpha, final long a3) {
     final String sp0x18 = String.valueOf(a0._10);
 
     long s4;
@@ -1167,7 +1211,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d3bb8L)
-  public static void FUN_800d3bb8(final ScriptState<AdditionNameTextEffect1c> state, final AdditionNameTextEffect1c additionStruct) {
+  public static void tickAdditionNameEffect(final ScriptState<AdditionNameTextEffect1c> state, final AdditionNameTextEffect1c additionStruct) {
     additionStruct._04++;
 
     if(_800faa9d.get() == 0) {
@@ -1179,7 +1223,7 @@ public final class Bttl_800d {
         final AdditionCharEffectData0c charStruct = additionStruct.ptr_18[charIdx];
 
         if(charStruct.scrolling_00 != 0) {
-          charStruct.position_04 += additionStruct._0c;
+          charStruct.position_04 += additionStruct.positionMovement_0c;
 
           if(charStruct.position_04 >= charStruct.offsetX_08) {
             charStruct.position_04 = charStruct.offsetX_08;
@@ -1213,6 +1257,9 @@ public final class Bttl_800d {
     //LAB_800d3d1c
   }
 
+  @ScriptDescription("Allocates an addition name display script state")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "charId", description = "The character ID")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1", description = "Unknown, -1 will deallocate next tick")
   @Method(0x800d3d74L)
   public static FlowControl scriptAllocateAdditionScript(final RunningScript<?> script) {
     if(script.params_20[1].get() == -1) {
@@ -1222,7 +1269,7 @@ public final class Bttl_800d {
       final int addition = gameState_800babc8.charData_32c[script.params_20[0].get()].selectedAddition_19;
       final ScriptState<AdditionNameTextEffect1c> state = SCRIPTS.allocateScriptState("AdditionNameTextEffect1c", new AdditionNameTextEffect1c());
       state.loadScriptFile(doNothingScript_8004f650);
-      state.setTicker(Bttl_800d::FUN_800d3bb8);
+      state.setTicker(Bttl_800d::tickAdditionNameEffect);
       final CString additionName = getAdditionName(0, addition);
 
       //LAB_800d3e5c
@@ -1237,7 +1284,7 @@ public final class Bttl_800d {
       additionStruct.addition_02 = addition;
       additionStruct._04 = 0;
       additionStruct.length_08 = textLength;
-      additionStruct._0c = 120;
+      additionStruct.positionMovement_0c = 120;
       additionStruct.renderer_14 = Bttl_800d::renderAdditionNameChar;
       additionStruct.ptr_18 = new AdditionCharEffectData0c[additionStruct.length_08];
       Arrays.setAll(additionStruct.ptr_18, i -> new AdditionCharEffectData0c());
@@ -1272,7 +1319,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d4018L)
-  public static void FUN_800d4018(final ScriptState<SpTextEffect40> state, final SpTextEffect40 s3) {
+  public static void tickSpTextEffect(final ScriptState<SpTextEffect40> state, final SpTextEffect40 s3) {
     if(_800faa94.get() == 0 && s3._00 == 0) {
       if(s3._02 == 0) {
         state.deallocateWithChildren();
@@ -1349,8 +1396,11 @@ public final class Bttl_800d {
     //LAB_800d42dc
   }
 
+  @ScriptDescription("Allocates an addition SP text display effect manager")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptParam(direction = ScriptParam.Direction.BOTH, type = ScriptParam.Type.INT, name = "p1")
   @Method(0x800d4338L)
-  public static FlowControl FUN_800d4338(final RunningScript<?> script) {
+  public static FlowControl scriptAllocateSpTextEffect(final RunningScript<?> script) {
     final int s2 = script.params_20[0].get();
     final int s3 = script.params_20[1].get();
 
@@ -1360,7 +1410,7 @@ public final class Bttl_800d {
       //LAB_800d4388
       final ScriptState<SpTextEffect40> state = SCRIPTS.allocateScriptState("SpTextEffect40", new SpTextEffect40());
       state.loadScriptFile(doNothingScript_8004f650);
-      state.setTicker(Bttl_800d::FUN_800d4018);
+      state.setTicker(Bttl_800d::tickSpTextEffect);
 
       final SpTextEffect40 s1 = state.innerStruct_00;
       s1._00 = 1;
@@ -1415,18 +1465,20 @@ public final class Bttl_800d {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Allocates an addition name effect manager")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
   @Method(0x800d4580L)
-  public static FlowControl FUN_800d4580(final RunningScript<?> script) {
+  public static FlowControl scriptAllocateAdditionNameEffect(final RunningScript<?> script) {
     final int s2 = script.params_20[0].get();
     if(s2 != -1) {
       final ScriptState<AdditionNameTextEffect1c> state = SCRIPTS.allocateScriptState("AdditionScriptData1c", new AdditionNameTextEffect1c());
       state.loadScriptFile(doNothingScript_8004f650);
-      state.setTicker(Bttl_800d::FUN_800d3bb8);
+      state.setTicker(Bttl_800d::tickAdditionNameEffect);
       final AdditionNameTextEffect1c s0 = state.innerStruct_00;
       s0.ptr_18 = new AdditionCharEffectData0c[] {new AdditionCharEffectData0c()};
       _800faa9c.set(1);
-      s0._0c = 40;
-      s0.renderer_14 = Bttl_800d::FUN_800d3a64;
+      s0.positionMovement_0c = 40;
+      s0.renderer_14 = Bttl_800d::renderAdditionNameEffect;
       s0._00 = 0;
       s0.addition_02 = 0;
       s0._04 = 0;
@@ -1448,6 +1500,12 @@ public final class Bttl_800d {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Allocates the button press HUD for additions")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "The button press type")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "translucency", description = "The translucency mode")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "brightness", description = "The brightness")
   @Method(0x800d46d4L)
   public static FlowControl scriptRenderButtonPressHudElement(final RunningScript<?> script) {
     final ButtonPressHudMetrics06 metrics = buttonPressHudMetrics_800faaa0.get(script.params_20[0].get());

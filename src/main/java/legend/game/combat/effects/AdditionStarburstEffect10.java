@@ -3,7 +3,7 @@ package legend.game.combat.effects;
 import java.util.Arrays;
 
 public class AdditionStarburstEffect10 implements Effect {
-  public int scriptIndex_00;
+  public int parentIndex_00;
   /** ushort */
   public int rayCount_04;
 

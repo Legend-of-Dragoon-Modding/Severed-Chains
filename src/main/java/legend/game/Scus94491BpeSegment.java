@@ -2253,12 +2253,16 @@ public final class Scus94491BpeSegment {
     throw new RuntimeException("Not implemented");
   }
 
+  @ScriptDescription("Gets the current sequence's tempo scale")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "tempoScale", description = "The tempo scale")
   @Method(0x8001b0f0L)
   public static FlowControl scriptGetSssqTempoScale(final RunningScript<?> script) {
     script.params_20[0].set(sssqTempoScale_800bd100);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets the current sequence's tempo scale")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "tempoScale", description = "The tempo scale")
   @Method(0x8001b118L)
   public static FlowControl scriptSetSssqTempoScale(final RunningScript<?> script) {
     sssqTempoScale_800bd100 = script.params_20[0].get();
@@ -2583,11 +2587,13 @@ public final class Scus94491BpeSegment {
     }
   }
 
+  @ScriptDescription("Not implemented in retail")
   @Method(0x8001c5fcL)
   public static FlowControl FUN_8001c5fc(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
+  @ScriptDescription("Not implemented in retail")
   @Method(0x8001c604L)
   public static FlowControl FUN_8001c604(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
@@ -3525,18 +3531,20 @@ public final class Scus94491BpeSegment {
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_ffdf);
   }
 
+  @ScriptDescription("Loads a character's attack sounds")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "charId", description = "The character ID")
   @Method(0x8001f250L)
-  public static FlowControl scriptLoadPlayerAttackSounds(final RunningScript<?> script) {
+  public static FlowControl scriptLoadCharacterAttackSounds(final RunningScript<?> script) {
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x1_0000);
     unloadSoundFile(7);
     final int charId = script.params_20[0].get();
     final int dirIndex = 1897 + charId;
-    loadDrgnDir(0, dirIndex, files -> playerAttackSoundsLoaded(files, "Addition index %d sounds (file %d)".formatted(charId, dirIndex)));
+    loadDrgnDir(0, dirIndex, files -> characterAttackSoundsLoaded(files, "Addition index %d sounds (file %d)".formatted(charId, dirIndex)));
     return FlowControl.CONTINUE;
   }
 
   @Method(0x8001f2c0L)
-  public static void playerAttackSoundsLoaded(final List<FileData> files, final String soundName) {
+  public static void characterAttackSoundsLoaded(final List<FileData> files, final String soundName) {
     final SoundFile sound = soundFiles_800bcf80[10];
     sound.name = soundName;
     sound.used_00 = true;
@@ -3743,6 +3751,8 @@ public final class Scus94491BpeSegment {
     return loadedDrgnFiles_800bcf78.get();
   }
 
+  @ScriptDescription("Gets the currently-loaded sound files")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "flags", description = "The loaded file flags")
   @Method(0x8001ffc0L)
   public static FlowControl scriptGetLoadedSoundFiles(final RunningScript<?> script) {
     script.params_20[0].set(loadedDrgnFiles_800bcf78.get());

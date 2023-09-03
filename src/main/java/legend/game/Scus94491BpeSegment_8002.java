@@ -176,8 +176,7 @@ import static legend.game.Scus94491BpeSegment_800b._800bdb88;
 import static legend.game.Scus94491BpeSegment_800b._800bdc58;
 import static legend.game.Scus94491BpeSegment_800b._800bdf04;
 import static legend.game.Scus94491BpeSegment_800b._800bdf08;
-import static legend.game.Scus94491BpeSegment_800b._800bdf10;
-import static legend.game.Scus94491BpeSegment_800b._800bdf18;
+import static legend.game.Scus94491BpeSegment_800b.textboxVariables_800bdf10;
 import static legend.game.Scus94491BpeSegment_800b._800be5d0;
 import static legend.game.Scus94491BpeSegment_800b._800bed28;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
@@ -229,8 +228,9 @@ public final class Scus94491BpeSegment_8002 {
     unloadEncounterSoundEffects();
   }
 
+  @ScriptDescription("Stops and unloads all music and sound sequences")
   @Method(0x80020060L)
-  public static FlowControl FUN_80020060(final RunningScript<?> script) {
+  public static FlowControl scriptStopAndUnloadSequences(final RunningScript<?> script) {
     stopAndResetSoundsAndSequences();
     unloadSoundFile(1);
     unloadSoundFile(3);
@@ -301,7 +301,8 @@ public final class Scus94491BpeSegment_8002 {
     }
   }
 
-  /** Used when Melbu changes forms (not sure if used elsewhere too) */
+  @ScriptDescription("Replaces a monster's attack sounds (e.g. used when Melbu changes forms)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "monsterId", description = "The monster ID")
   @Method(0x800203f0L)
   public static FlowControl scriptReplaceMonsterSounds(final RunningScript<?> script) {
     unloadSoundFile(3);
@@ -1995,12 +1996,18 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80024460
   }
 
+  @ScriptDescription("Gives the player gold")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "amount", description = "The amount of gold")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "out", description = "Always 0")
   @Method(0x80024480L)
   public static FlowControl scriptGiveGold(final RunningScript<?> script) {
     script.params_20[1].set(addGold(script.params_20[0].get()));
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Gives the player chest contents")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "itemId", description = "The item ID (0xfb = 20G, 0xfc = 50G, 0xfd = 100G, 0xfe = 200G, 0xff = nothing)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "itemGiven", description = "The item ID if an item was given (0xff = unable to give, 0 = gave gold)")
   @Method(0x800244c4L)
   public static FlowControl scriptGiveChestContents(final RunningScript<?> script) {
     final int a0 = switch(script.params_20[0].get()) {
@@ -2019,6 +2026,9 @@ public final class Scus94491BpeSegment_8002 {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Takes an item from the player")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "itemId", description = "The item ID")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "itemTaken", description = "The item ID taken, of 0xff if none could be taken")
   @Method(0x80024590L)
   public static FlowControl scriptTakeItem(final RunningScript<?> script) {
     final int itemId = script.params_20[0].get() & 0xff;
@@ -2117,8 +2127,8 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80025118
-    for(int i = 0; i < 8; i++) {
-      _800bdf18.offset(i * 0x4L).setu(0);
+    for(int i = 0; i < 10; i++) {
+      textboxVariables_800bdf10.get(i).set(0);
     }
 
     textU_800be5c0.setu(0);
@@ -3471,14 +3481,14 @@ public final class Scus94491BpeSegment_8002 {
           //LAB_80027970
           Arrays.fill(textboxText.digits_46, -1);
 
-          int a1 = (int)_800bdf10.offset((a0_0 & 0xff) * 0x4L).get();
-          int a3 = 1_000_000_000;
+          int variable = textboxVariables_800bdf10.get(a0_0 & 0xff).get();
+          int divisor = 1_000_000_000;
           final long[] sp0x18 = new long[10]; //TODO LodString
           //LAB_800279dc
           for(int i = 0; i < sp0x18.length; i++) {
-            sp0x18[i] = _80052b40.get(a1 / a3).deref().charAt(0);
-            a1 = a1 % a3;
-            a3 = a3 / 10;
+            sp0x18[i] = _80052b40.get(variable / divisor).deref().charAt(0);
+            variable %= divisor;
+            divisor /= 10;
           }
 
           //LAB_80027a34
@@ -4327,12 +4337,12 @@ public final class Scus94491BpeSegment_8002 {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, related to textboxes")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The textbox index")
+  @ScriptDescription("Sets a variable used in a textbox's text (<var:n>)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The variable index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "value")
   @Method(0x80029e8cL)
-  public static FlowControl FUN_80029e8c(final RunningScript<?> script) {
-    _800bdf10.offset(Math.min(9, script.params_20[0].get()) * 0x4L).setu(script.params_20[1].get());
+  public static FlowControl scriptSetTextboxVariable(final RunningScript<?> script) {
+    textboxVariables_800bdf10.get(Math.min(9, script.params_20[0].get())).set(script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 

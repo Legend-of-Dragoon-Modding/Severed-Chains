@@ -34,6 +34,7 @@ import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.deff.BattleStruct24_2;
 import legend.game.combat.deff.DeffManager7cc;
+import legend.game.combat.effects.Attachment18;
 import legend.game.combat.effects.ButtonPressHudMetrics06;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerData6cInner;
@@ -217,6 +218,7 @@ import static legend.game.combat.Bttl_800f.handleCombatMenu;
 import static legend.game.combat.Bttl_800f.initializeCombatMenuIcons;
 import static legend.game.combat.Bttl_800f.loadBattleHudTextures;
 import static legend.game.combat.Bttl_800f.toggleBattleMenuSelectorRendering;
+import static legend.game.combat.SEffe.scriptGetPositionScalerAttachmentVelocity;
 
 public final class Bttl_800c {
   private Bttl_800c() { }
@@ -2788,6 +2790,7 @@ public final class Bttl_800c {
   }
 
   @ScriptDescription("No-op")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused")
   @Method(0x800cb764L)
   public static FlowControl FUN_800cb764(final RunningScript<?> a0) {
     return FlowControl.CONTINUE;
@@ -4114,7 +4117,7 @@ public final class Bttl_800c {
     //LAB_800ce3e0
     segment = trail.currentSegment_38;
     while(segment != null) {
-      FUN_800ce880(segment.endpointCoords_04[1], segment.endpointCoords_04[0], 0x1000, 0x400);
+      applyWeaponTrailScaling(segment.endpointCoords_04[1], segment.endpointCoords_04[0], 0x1000, 0x400);
       segment = segment.previousSegmentRef_24;
     }
 
@@ -4170,8 +4173,12 @@ public final class Bttl_800c {
     //LAB_800ce650
   }
 
+  @ScriptDescription("Allocates a weapon trail effect manager")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentIndex", description = "The battle object index to trail behind")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "dobjIndex", description = "The model index")
   @Method(0x800ce6a8L)
-  public static FlowControl allocateWeaponTrailEffect(final RunningScript<? extends BattleObject> script) {
+  public static FlowControl scriptAllocateWeaponTrailEffect(final RunningScript<? extends BattleObject> script) {
     final ScriptState<EffectManagerData6c<EffectManagerData6cInner.WeaponTrailType>> state = allocateEffectManager(
       "Weapon trail",
       script.scriptState_04,
@@ -4198,12 +4205,12 @@ public final class Bttl_800c {
 
     trail.currentSegment_38 = null;
     trail.currentSegmentIndex_00 = -1;
-    trail.unused_04 = script.params_20[1].get();
+    trail.parentIndex_04 = script.params_20[1].get();
     trail.dobjIndex_08 = script.params_20[2].get();
     trail.segmentCount_0e = 20;
     manager._10.colour_1c.set(0xff, 0x80, 0x60);
 
-    final BattleObject parent = (BattleObject)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
+    final BattleObject parent = SCRIPTS.getObject(script.params_20[1].get(), BattleObject.class);
     if(BattleObject.EM__.equals(parent.magic_00)) {
       trail.parentModel_30 = ((ModelEffect13c)((EffectManagerData6c<?>)parent).effect_44).model_10;
     } else {
@@ -4230,7 +4237,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800ce880L)
-  public static void FUN_800ce880(final VECTOR largestVertex, final VECTOR smallestVertex, final int largestVertexDiffScale, final int smallestVertexDiffScale) {
+  public static void applyWeaponTrailScaling(final VECTOR largestVertex, final VECTOR smallestVertex, final int largestVertexDiffScale, final int smallestVertexDiffScale) {
     final VECTOR vertexDiff = new VECTOR();
     final VECTOR scaledVertexDiff = new VECTOR();
     vertexDiff.set(largestVertex).sub(smallestVertex);
@@ -4252,11 +4259,15 @@ public final class Bttl_800c {
     smallestVertex.add(scaledVertexDiff);
   }
 
+  @ScriptDescription("Rescales the weapon trail effect as it progresses")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The weapon trail effect index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "smallScalingFactor", description = "The scaling factor for the trailing end")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "largeScalingFactor", description = "The scaling factor for the leading end")
   @Method(0x800ce9b0L)
-  public static FlowControl FUN_800ce9b0(final RunningScript<?> script) {
-    final EffectManagerData6c<EffectManagerData6cInner.WeaponTrailType> manager = (EffectManagerData6c<EffectManagerData6cInner.WeaponTrailType>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+  public static FlowControl scriptApplyWeaponTrailScaling(final RunningScript<?> script) {
+    final EffectManagerData6c<EffectManagerData6cInner.WeaponTrailType> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.classFor(EffectManagerData6cInner.WeaponTrailType.class));
     final WeaponTrailEffect3c trail = (WeaponTrailEffect3c)manager.effect_44;
-    FUN_800ce880(trail.largestVertex_10, trail.smallestVertex_20, script.params_20[2].get(), script.params_20[1].get());
+    applyWeaponTrailScaling(trail.largestVertex_10, trail.smallestVertex_20, script.params_20[2].get(), script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
@@ -4292,6 +4303,15 @@ public final class Bttl_800c {
   }
 
   /** Used at the end of Rose transform, lots during Albert transform */
+  @ScriptDescription("Allocates a full-screen overlay effect")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "startR", description = "The starting red channel")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "startG", description = "The starting green channel")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "startB", description = "The starting blue channel")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "endR", description = "The ending red channel")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "endG", description = "The ending green channel")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "endB", description = "The ending blue channel")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks", description = "The number of ticks before the colour transition finishes")
   @Method(0x800cec8cL)
   public static FlowControl scriptAllocateFullScreenOverlay(final RunningScript<? extends BattleObject> script) {
     final int r = script.params_20[1].get() << 8;
@@ -4327,13 +4347,20 @@ public final class Bttl_800c {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Generates a random number using the Mersenne Twister algorithm")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The random number")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "min", description = "The minimum value (inclusive)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "max", description = "The maximum value (exclusive)")
   @Method(0x800cee50L)
-  public static FlowControl FUN_800cee50(final RunningScript<?> script) {
-    final int a2 = script.params_20[1].get();
-    script.params_20[0].set((int)(seed_800fa754.advance().get() % (script.params_20[2].get() - a2 + 1) + a2));
+  public static FlowControl scriptRand(final RunningScript<?> script) {
+    final int min = script.params_20[1].get();
+    script.params_20[0].set((int)(seed_800fa754.advance().get() % (script.params_20[2].get() - min + 1) + min));
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets a weapon trail effect's segment count")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "count", description = "The segment count")
   @Method(0x800ceeccL)
   public static FlowControl scriptSetWeaponTrailSegmentCount(final RunningScript<?> script) {
     setWeaponTrailSegmentCount(script.params_20[0].get(), script.params_20[1].get());
@@ -4341,8 +4368,13 @@ public final class Bttl_800c {
   }
 
   /** Used in Flameshot */
+  @ScriptDescription("Renders a full-screen, coloured quad")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "r", description = "The red channel")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "g", description = "The green channel")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "b", description = "The blue channel")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "translucency", description = "The translucency mode")
   @Method(0x800cef00L)
-  public static FlowControl FUN_800cef00(final RunningScript<?> script) {
+  public static FlowControl scriptRenderColouredQuad(final RunningScript<?> script) {
     GPU.queueCommand(30, new GpuCommandQuad()
       .translucent(Translucency.of(script.params_20[3].get() + 1))
       .rgb(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get())
@@ -4352,9 +4384,48 @@ public final class Bttl_800c {
     return FlowControl.CONTINUE;
   }
 
+  @Method(0x800cf03cL)
+  public static int FUN_800cf03c(final EffectManagerData6c<?> manager, final Attachment18 attachment) {
+    manager._10.trans_04.x.add(attachment._0c.getX() * attachment.direction_14);
+    manager._10.trans_04.y.add(attachment._0c.getY() * attachment.direction_14);
+    manager._10.trans_04.z.add(attachment._0c.getZ() * attachment.direction_14);
+    attachment.direction_14 = (byte)-attachment.direction_14;
+    return 1;
+  }
+
+  @ScriptDescription("Adds an unknown, unused attachment to an effect. Seems to oscillate an effect's position back and forth by a certain amount.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p3")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p4")
   @Method(0x800cf0b4L)
   public static FlowControl FUN_800cf0b4(final RunningScript<?> script) {
-    throw new RuntimeException("Not implemented");
+    final EffectManagerData6c<?> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
+    final Attachment18 attachment = manager.addAttachment(0, 0, Bttl_800c::FUN_800cf03c, new Attachment18());
+    attachment.direction_14 = 1;
+
+    if(script.params_20[4].get() != 0) {
+      script.params_20[1].set(0);
+
+      scriptGetPositionScalerAttachmentVelocity(script);
+
+      final int p1 = script.params_20[1].get();
+      attachment._0c.setX((short)(p1 * script.params_20[2].get() >> 16));
+      attachment._0c.setY((short)(p1 * script.params_20[3].get() >> 16));
+      attachment._0c.setZ((short)(p1 * script.params_20[4].get() >> 16));
+    } else {
+      //LAB_800cf1e0
+      attachment._0c.set((short)script.params_20[1].get(), (short)script.params_20[2].get(), (short)script.params_20[3].get());
+    }
+
+    //LAB_800cf1f8
+    if(manager.hasAttachment(1)) {
+      manager.removeAttachment(1);
+    }
+
+    //LAB_800cf218
+    return FlowControl.CONTINUE;
   }
 
   /** @return Z */
@@ -4386,10 +4457,10 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cf4f4L)
-  public static void FUN_800cf4f4(final EffectManagerData6c<?> manager, @Nullable final Vector3f extraRotation, final VECTOR a2, final VECTOR out) {
+  public static void getRelativeOffset(final EffectManagerData6c<?> manager, @Nullable final Vector3f extraRotation, final VECTOR in, final VECTOR out) {
     final MATRIX sp0x28 = new MATRIX();
 
-    final Vector3f sp0x20 = new Vector3f(manager._10.rot_10);
+    final Vector3f sp0x20 = new Vector3f(manager.getRotation());
 
     if(extraRotation != null) {
       //LAB_800cf53c
@@ -4398,9 +4469,9 @@ public final class Bttl_800c {
 
     //LAB_800cf578
     RotMatrix_Xyz(sp0x20, sp0x28);
-    sp0x28.transfer.set(manager._10.trans_04);
+    sp0x28.transfer.set(manager.getPosition());
 
-    a2.mul(sp0x28, out);
+    in.mul(sp0x28, out);
     out.add(sp0x28.transfer);
   }
 
@@ -4459,33 +4530,41 @@ public final class Bttl_800c {
     return FUN_800cf7d4(managerRotation, managerTranslation, translation, outX, outY);
   }
 
+  @ScriptDescription("Gets a battle object's local world matrix translation")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "partIndex", description = "The model part index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X position")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y position")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z position")
   @Method(0x800cfcccL)
-  public static FlowControl FUN_800cfccc(final RunningScript<?> script) {
-    final ScriptState<?> a1 = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
-    final BattleObject a0 = (BattleObject)a1.innerStruct_00;
+  public static FlowControl scriptGetBobjLocalWorldMatrixTranslation(final RunningScript<?> script) {
+    final BattleObject bobj = SCRIPTS.getObject(script.params_20[0].get(), BattleObject.class);
 
     final Model124 model;
-    if(BattleObject.EM__.equals(a0.magic_00)) {
-      model = ((ModelEffect13c)((EffectManagerData6c<?>)a0).effect_44).model_10;
+    if(BattleObject.EM__.equals(bobj.magic_00)) {
+      model = ((ModelEffect13c)((EffectManagerData6c<?>)bobj).effect_44).model_10;
     } else {
       //LAB_800cfd34
-      model = ((BattleEntity27c)a0).model_148;
+      model = ((BattleEntity27c)bobj).model_148;
     }
 
     //LAB_800cfd40
-    final MATRIX sp0x10 = new MATRIX();
-    GsGetLw(model.modelParts_00[script.params_20[1].get()].coord2_04, sp0x10);
+    final MATRIX lw = new MATRIX();
+    GsGetLw(model.modelParts_00[script.params_20[1].get()].coord2_04, lw);
     // This was multiplying vector (0, 0, 0) so I removed it
-    final VECTOR sp0x40 = new VECTOR().set(sp0x10.transfer);
-    script.params_20[2].set(sp0x40.getX());
-    script.params_20[3].set(sp0x40.getY());
-    script.params_20[4].set(sp0x40.getZ());
+    script.params_20[2].set(lw.transfer.getX());
+    script.params_20[3].set(lw.transfer.getY());
+    script.params_20[4].set(lw.transfer.getZ());
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Gets a bounding box dimension for a battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The battle entity index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "axis", description = "The axis index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "size", description = "The size")
   @Method(0x800cfdf8L)
   public static FlowControl scriptGetBentDimension(final RunningScript<?> script) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[0].get(), BattleEntity27c.class);
     final int componentIndex = script.params_20[1].get();
 
     //LAB_800cfe54
@@ -4509,9 +4588,10 @@ public final class Bttl_800c {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("No-op")
   @Method(0x800cfec8L)
   public static FlowControl FUN_800cfec8(final RunningScript<?> script) {
-    throw new RuntimeException("Not implemented");
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800cfed0L)
@@ -4519,6 +4599,8 @@ public final class Bttl_800c {
     seed_800fa754.set(seed ^ 0x75b_d924L);
   }
 
+  @ScriptDescription("Sets the Mersenne Twister random number seed")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "seed", description = "The seed")
   @Method(0x800cff24L)
   public static FlowControl scriptSetMtSeed(final RunningScript<?> script) {
     setMtSeed(script.params_20[0].get());

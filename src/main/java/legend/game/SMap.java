@@ -2241,14 +2241,29 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Loads an interpolated animation into a submap object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "animIndex", description = "The animation index")
   @Method(0x800e074cL)
-  public static FlowControl FUN_800e074c(final RunningScript<?> script) {
-    throw new RuntimeException("Not implemented");
+  public static FlowControl loadInterpolatedSobjAnimation(final RunningScript<?> script) {
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
+    final Model124 model = sobj.model_00;
+
+    sobj.animIndex_132 = script.params_20[1].get();
+    model.ub_a3 = 1;
+    model.disableInterpolation_a2 = false;
+    loadModelStandardAnimation(model, submapAssets.objects.get(sobj.sobjIndex_12e).animations.get(sobj.animIndex_132));
+    sobj.us_12c = 0;
+    sobj.flags_190 &= 0x9fff_ffff;
+    return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Loads an uninterpolated animation into a submap object")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "animIndex", description = "The animation index")
   @Method(0x800e07f0L)
-  public static FlowControl FUN_800e07f0(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+  public static FlowControl loadUninterpolatedSobjAnimation(final RunningScript<?> script) {
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     final Model124 model = sobj.model_00;
 
     sobj.animIndex_132 = script.params_20[1].get();
@@ -2402,6 +2417,8 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Starts loading a chapter title card")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "titleNum", description = "The title card index")
   @Method(0x800e0c00L)
   public static FlowControl scriptLoadChapterTitleCard(final RunningScript<?> script) {
     chapterTitleCardLoaded_800c68e0 = false;
@@ -2409,12 +2426,17 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Checks if the chapter title card has finished loading")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "loaded", description = "True if loaded, false otherwise")
   @Method(0x800e0c24L)
   public static FlowControl scriptIsChapterTitleCardLoaded(final RunningScript<?> script) {
     script.params_20[0].set(chapterTitleCardLoaded_800c68e0 ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to chapter title cards")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
   @Method(0x800e0c40L)
   public static FlowControl FUN_800e0c40(final RunningScript<?> script) {
     chapterTitleNum_800c6738.or(0x80);
@@ -2424,12 +2446,16 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to chapter title cards")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "p0")
   @Method(0x800e0c80L)
   public static FlowControl FUN_800e0c80(final RunningScript<?> script) {
     script.params_20[0].set((int)_800c686e.getSigned());
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to chapter title cards")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
   @Method(0x800e0c9cL)
   public static FlowControl FUN_800e0c9c(final RunningScript<?> script) {
     _800c673c.setu(script.params_20[0].get());
@@ -8194,6 +8220,8 @@ public final class SMap {
     }
   }
 
+  @ScriptDescription("Unknown")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "data", description = "An array of unknown struct data")
   @Method(0x800f1060L)
   public static FlowControl FUN_800f1060(final RunningScript<?> script) {
     if(_800d4fe8.getSigned() != 0) {
@@ -8254,6 +8282,17 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p6")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p7")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p8")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p9")
   @Method(0x800f1274L)
   public static FlowControl FUN_800f1274(final RunningScript<?> script) {
     _800f9e74.setu(0x1L);
@@ -8303,6 +8342,16 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p3")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p4")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p5")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p6")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p7")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p8")
   @Method(0x800f14f0L)
   public static FlowControl FUN_800f14f0(final RunningScript<?> script) {
     final int v1 = script.params_20[0].get();
@@ -8343,6 +8392,16 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p3")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "width")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "translucency")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "r")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "g")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "b")
   @Method(0x800f1634L)
   public static FlowControl FUN_800f1634(final RunningScript<?> script) {
     final ScriptState<?> state = script.scriptState_04;
@@ -8376,6 +8435,11 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Adds a save point to the map")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "hasSavePoint", description = "True to add a savepoint, false otherwise")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z position")
   @Method(0x800f179cL)
   public static FlowControl scriptAddSavePoint(final RunningScript<?> script) {
     final DVECTOR sp0x48 = new DVECTOR();
@@ -8436,6 +8500,8 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, adds triangle indicators (possibly for doors)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "data", description = "The struct data")
   @Method(0x800f1b64L)
   public static FlowControl FUN_800f1b64(final RunningScript<?> script) {
     final SVECTOR sp0x10 = new SVECTOR();
@@ -8474,6 +8540,11 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, adds a triangle indicator (possibly for a door)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y")
   @Method(0x800f1d0cL)
   public static FlowControl FUN_800f1d0c(final RunningScript<?> script) {
     final GsCOORDINATE2 sp0x40 = new GsCOORDINATE2();
@@ -8510,14 +8581,22 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
   @Method(0x800f1eb8L)
   public static FlowControl FUN_800f1eb8(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
+  @ScriptDescription("Unknown")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p3")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p4")
   @Method(0x800f1f9cL)
   public static FlowControl FUN_800f1f9c(final RunningScript<?> script) {
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj._1d0._04 = script.params_20[1].get();
     sobj._1d0.size_28 = script.params_20[2].get();
     sobj._1d0._30 = script.params_20[3].get();
@@ -8540,6 +8619,11 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, self version of FUN_800f1f9c")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p3")
   @Method(0x800f2048L)
   public static FlowControl FUN_800f2048(final RunningScript<?> script) {
     script.params_20[4] = script.params_20[3];
@@ -8550,6 +8634,8 @@ public final class SMap {
     return FUN_800f1f9c(script);
   }
 
+  @ScriptDescription("Unknown")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "data", description = "An array of struct data")
   @Method(0x800f2090L)
   public static FlowControl FUN_800f2090(final RunningScript<?> script) {
     final Param ints = script.params_20[0];
@@ -8607,6 +8693,12 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p3")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p4")
   @Method(0x800f2198L)
   public static FlowControl FUN_800f2198(final RunningScript<?> script) {
     final short a1 = (short)script.params_20[0].get();
@@ -8639,13 +8731,15 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
   @Method(0x800f2264L)
   public static FlowControl FUN_800f2264(final RunningScript<?> script) {
     final ScriptState<?> sobj1 = script.scriptState_04;
-    script.params_20[1] = new ScriptStorageParam(sobj1, 0);
+    script.params_20[1] = new ScriptStorageParam(sobj1, 0); // Unused? Why?
 
-    final SubmapObject210 sobj2 = (SubmapObject210)scriptStatePtrArr_800bc1c0[sobj1.storage_44[0]].innerStruct_00;
-    if(script.params_20[0].get() - 1 < 2) {
+    final SubmapObject210 sobj2 = (SubmapObject210)scriptStatePtrArr_800bc1c0[sobj1.storage_44[0]].innerStruct_00; // Storage 0 is my script index, isn't this just getting the same state?
+    if((script.params_20[0].get() - 1 & 0xffff_ffffL) < 2) {
       sobj2._1d0._08 = 1;
       sobj2._1d0._10 = 0;
       sobj2._1d0._34 = 9;
@@ -8658,6 +8752,10 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
   @Method(0x800f22c4L)
   public static FlowControl FUN_800f22c4(final RunningScript<?> script) {
     script.params_20[2] = new ScriptStorageParam(script.scriptState_04, 0);
@@ -8697,6 +8795,8 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
   @Method(0x800f23a0L)
   public static FlowControl FUN_800f23a0(final RunningScript<?> script) {
     script.params_20[1] = new ScriptStorageParam(script.scriptState_04, 0);
@@ -8715,9 +8815,14 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p3")
   @Method(0x800f23ecL)
   public static FlowControl FUN_800f23ec(final RunningScript<?> script) {
-    script.params_20[4] = new ScriptStorageParam(script.scriptState_04, 0);
+    script.params_20[4] = new ScriptStorageParam(script.scriptState_04, 0); //TODO Does nothing, why?
     final int a2 = script.params_20[0].get();
     final SubmapObject210 a1 = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.scriptState_04.storage_44[0]].innerStruct_00;
 
@@ -8746,6 +8851,8 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
   @Method(0x800f24b0L)
   public static FlowControl FUN_800f24b0(final RunningScript<?> script) {
     if(script.params_20[0].get() == 1) {
@@ -8756,6 +8863,8 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
   @Method(0x800f24d8L)
   public static FlowControl FUN_800f24d8(final RunningScript<?> script) {
     if(script.params_20[0].get() != 0) {
@@ -8781,11 +8890,16 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
   @Method(0x800f2554L)
   public static FlowControl FUN_800f2554(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
+  @ScriptDescription("Unknown")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
   @Method(0x800f25a8L)
   public static FlowControl FUN_800f25a8(final RunningScript<?> script) {
     final ScriptState<?> v1 = script.scriptState_04;
@@ -8801,8 +8915,10 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Allocates triangle indicators from an array of struct data")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "data", description = "The struct data")
   @Method(0x800f2618L)
-  public static FlowControl FUN_800f2618(final RunningScript<?> script) {
+  public static FlowControl scriptAllocateTriangleIndicatorArray(final RunningScript<?> script) {
     final TriangleIndicator140 v1 = _800c69fc;
 
     //LAB_800f266c
@@ -8820,14 +8936,19 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
   @Method(0x800f26c8L)
   public static FlowControl FUN_800f26c8(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
+  @ScriptDescription("No-op")
   @Method(0x800f2780L)
   public static FlowControl FUN_800f2780(final RunningScript<?> script) {
-    throw new RuntimeException("Not implemented");
+    return FlowControl.CONTINUE;
   }
 
   @Method(0x800f2788L)
