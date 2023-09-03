@@ -2,7 +2,7 @@ package legend.game.modding.events.battle;
 
 import legend.game.characters.StatType;
 import legend.game.combat.bent.BattleEntityType;
-import legend.game.modding.events.Event;
+import org.legendofdragoon.modloader.events.Event;
 
 import java.util.Set;
 

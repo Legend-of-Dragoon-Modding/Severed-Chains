@@ -13,16 +13,16 @@ import legend.core.Config;
 import legend.game.combat.AdditionMode;
 import legend.game.combat.SEffe;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.modding.events.EventListener;
 import legend.game.modding.events.config.ConfigLoadedEvent;
 import legend.game.modding.events.config.ConfigUpdatedEvent;
 import legend.game.types.EngineState;
 import legend.game.wmap.AreaData08;
+import org.legendofdragoon.modloader.events.EventListener;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
-import static legend.game.SMap.mapTransition;
 import static legend.game.SMap.encounterData_800f64c4;
+import static legend.game.SMap.mapTransition;
 import static legend.game.SMap.smapLoadingStage_800cb430;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
@@ -31,8 +31,8 @@ import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
-import static legend.game.wmap.WMap.mapState_800c6798;
 import static legend.game.wmap.WMap.areaData_800f2248;
+import static legend.game.wmap.WMap.mapState_800c6798;
 
 public class DebuggerController {
   @FXML

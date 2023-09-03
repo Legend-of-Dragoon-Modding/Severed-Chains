@@ -3,8 +3,8 @@ package legend.game.characters;
 import legend.core.GameEngine;
 import legend.game.combat.types.AttackType;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.modding.registries.RegistryEntry;
-import legend.game.modding.registries.RegistryId;
+import org.legendofdragoon.modloader.registries.RegistryEntry;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 public abstract class Element extends RegistryEntry {
   /** TODO figure out a way to remove this, mods will add elements with conflicting flags */

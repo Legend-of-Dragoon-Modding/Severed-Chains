@@ -2230,24 +2230,28 @@ public final class Scus94491BpeSegment {
   }
 
   @ScriptDescription("Starts the encounter sounds sequence")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
   @Method(0x8001af34L)
   public static FlowControl scriptStartEncounterSounds(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
   @ScriptDescription("Stops the encounter sounds sequence")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
   @Method(0x8001afa4L)
   public static FlowControl scriptStopEncounterSounds(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
   @ScriptDescription("Stops the encounter sounds sequence")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
   @Method(0x8001b014L)
   public static FlowControl scriptStopEncounterSounds2(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
   }
 
   @ScriptDescription("Stops the encounter sounds sequence if 800bd0f0 is 2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
   @Method(0x8001b094L)
   public static FlowControl FUN_8001b094(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
@@ -2270,6 +2274,8 @@ public final class Scus94491BpeSegment {
   }
 
   @ScriptDescription("No-op")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
   @Method(0x8001b134L)
   public static FlowControl FUN_8001b134(final RunningScript<?> script) {
     return FlowControl.CONTINUE;
@@ -3415,6 +3421,7 @@ public final class Scus94491BpeSegment {
   }
 
   @ScriptDescription("Unused")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused")
   @Method(0x8001eb30L)
   public static FlowControl FUN_8001eb30(final RunningScript<?> script) {
     return FlowControl.CONTINUE;

@@ -1,7 +1,7 @@
 package legend.game.modding.events.battle;
 
-import legend.game.modding.events.Event;
 import legend.game.types.SpellStats0c;
+import org.legendofdragoon.modloader.events.Event;
 
 public class SpellStatsEvent extends Event {
   public final int spellId;

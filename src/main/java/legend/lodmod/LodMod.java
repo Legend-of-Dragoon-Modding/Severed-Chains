@@ -6,13 +6,13 @@ import legend.game.inventory.EquipmentRegistryEvent;
 import legend.game.inventory.Item;
 import legend.game.inventory.ItemRegistryEvent;
 import legend.game.inventory.SpellRegistryEvent;
-import legend.game.modding.Mod;
-import legend.game.modding.events.EventListener;
-import legend.game.modding.registries.RegistryId;
 import legend.game.types.EquipmentStats1c;
 import legend.game.types.ItemStats0c;
 import legend.game.types.SpellStats0c;
 import legend.game.unpacker.Unpacker;
+import org.legendofdragoon.modloader.Mod;
+import org.legendofdragoon.modloader.events.EventListener;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import static legend.game.SItem.equipmentStats_80111ff0;
 import static legend.game.SItem.equipment_8011972c;

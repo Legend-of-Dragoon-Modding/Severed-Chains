@@ -8,8 +8,6 @@ import legend.game.modding.events.input.InputPressedEvent;
 import legend.game.modding.events.input.InputReleasedEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nullable;
 
@@ -28,7 +26,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_GAMEPAD_AXIS_LEFT_Y;
 
 public final class Input {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
-  private static final Marker INPUT_MARKER = MarkerManager.getMarker("INPUT");
 
   public static final ControllerManager controllerManager = new ControllerManager(Input::onControllerConnected, Input::onControllerDisconnected);
   private static Controller activeController;

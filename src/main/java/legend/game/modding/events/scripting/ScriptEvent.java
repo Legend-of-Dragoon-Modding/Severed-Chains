@@ -1,6 +1,6 @@
 package legend.game.modding.events.scripting;
 
-import legend.game.modding.events.Event;
+import org.legendofdragoon.modloader.events.Event;
 
 public class ScriptEvent extends Event {
   public final int scriptIndex;

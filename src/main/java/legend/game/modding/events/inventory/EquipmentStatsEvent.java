@@ -1,7 +1,7 @@
 package legend.game.modding.events.inventory;
 
-import legend.game.modding.events.Event;
 import legend.game.types.EquipmentStats1c;
+import org.legendofdragoon.modloader.events.Event;
 
 public class EquipmentStatsEvent extends Event {
   public final int charId;

@@ -2,7 +2,7 @@ package legend.game.modding.coremod.elements;
 
 import legend.game.characters.Element;
 import legend.game.combat.types.AttackType;
-import legend.game.modding.registries.RegistryDelegate;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
 public class SimpleElement extends Element {
   private final RegistryDelegate<Element> opposed;

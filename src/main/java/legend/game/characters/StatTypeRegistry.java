@@ -1,6 +1,6 @@
 package legend.game.characters;
 
-import legend.game.modding.registries.MutableRegistry;
+import org.legendofdragoon.modloader.registries.MutableRegistry;
 
 public class StatTypeRegistry extends MutableRegistry<StatType<?>> {
 }

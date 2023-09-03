@@ -1,7 +1,7 @@
 package legend.game.inventory;
 
-import legend.game.modding.registries.RegistryEntry;
 import legend.game.types.EquipmentStats1c;
+import org.legendofdragoon.modloader.registries.RegistryEntry;
 
 public class Equipment extends RegistryEntry {
   public final String name;

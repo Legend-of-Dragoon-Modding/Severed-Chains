@@ -1,6 +1,6 @@
 package legend.game.modding.events.inventory;
 
-import legend.game.modding.events.Event;
+import org.legendofdragoon.modloader.events.Event;
 
 public class ShopItemEvent extends Event {
   public final int shopId;

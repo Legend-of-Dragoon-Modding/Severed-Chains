@@ -1,7 +1,7 @@
 package legend.game.saves;
 
-import legend.game.modding.events.registries.RegistryEvent;
-import legend.game.modding.registries.MutableRegistry;
+import org.legendofdragoon.modloader.events.registries.RegistryEvent;
+import org.legendofdragoon.modloader.registries.MutableRegistry;
 
 public class ConfigRegistryEvent extends RegistryEvent.Register<ConfigEntry<?>> {
   public ConfigRegistryEvent(final MutableRegistry<ConfigEntry<?>> registry) {

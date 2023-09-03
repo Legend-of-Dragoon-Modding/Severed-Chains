@@ -4,10 +4,10 @@ import legend.core.GameEngine;
 import legend.game.i18n.I18n;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.controls.Background;
-import legend.game.modding.registries.RegistryId;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigStorageLocation;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,7 +1,7 @@
 package legend.game.saves;
 
 import legend.game.inventory.screens.Control;
-import legend.game.modding.registries.RegistryEntry;
+import org.legendofdragoon.modloader.registries.RegistryEntry;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;

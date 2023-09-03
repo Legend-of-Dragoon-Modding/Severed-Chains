@@ -17,11 +17,7 @@ import legend.core.spu.Spu;
 import legend.core.ui.ScreenStack;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.fmv.Fmv;
-import legend.game.i18n.LangManager;
 import legend.game.input.Input;
-import legend.game.modding.ModManager;
-import legend.game.modding.events.EventManager;
-import legend.game.modding.registries.Registries;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
@@ -39,6 +35,9 @@ import legend.game.unpacker.UnpackerStoppedRuntimeException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4f;
+import org.legendofdragoon.modloader.ModManager;
+import org.legendofdragoon.modloader.events.EventManager;
+import org.legendofdragoon.modloader.i18n.LangManager;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -80,7 +79,7 @@ public final class GameEngine {
   public static final ModManager MODS = new ModManager(access -> MOD_ACCESS = access);
   public static final LangManager LANG = new LangManager(access -> LANG_ACCESS = access);
   public static final EventManager EVENTS = new EventManager(access -> EVENT_ACCESS = access);
-  public static final Registries REGISTRIES = new Registries(access -> REGISTRY_ACCESS = access);
+  public static final Registries REGISTRIES = new Registries(EVENTS, access -> REGISTRY_ACCESS = access);
 
   public static final ScriptManager SCRIPTS = new ScriptManager();
   public static final Sequencer SEQUENCER = new Sequencer();
@@ -242,10 +241,10 @@ public final class GameEngine {
     final Set<String> missingMods = MOD_ACCESS.loadMods(modIds);
 
     // Initialize language
-    LANG_ACCESS.initialize(Locale.getDefault());
+    LANG_ACCESS.initialize(MODS, Locale.getDefault());
 
     // Initialize event bus and find all event handlers
-    EVENT_ACCESS.initialize();
+    EVENT_ACCESS.initialize(MODS);
 
     // Initialize config registry and fire off config registry events
     REGISTRY_ACCESS.initialize(REGISTRIES.config);

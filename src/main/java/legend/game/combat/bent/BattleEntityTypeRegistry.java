@@ -1,6 +1,6 @@
 package legend.game.combat.bent;
 
-import legend.game.modding.registries.MutableRegistry;
+import org.legendofdragoon.modloader.registries.MutableRegistry;
 
 public class BattleEntityTypeRegistry extends MutableRegistry<BattleEntityType> {
 }

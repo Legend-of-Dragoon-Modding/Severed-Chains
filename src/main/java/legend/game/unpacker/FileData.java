@@ -5,8 +5,8 @@ import legend.core.gpu.RECT;
 import legend.core.gte.BVEC4;
 import legend.core.gte.COLOUR;
 import legend.core.gte.SVECTOR;
-import legend.game.modding.registries.RegistryId;
 import org.joml.Vector3f;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;

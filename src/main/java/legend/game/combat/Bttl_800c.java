@@ -86,7 +86,6 @@ import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.BattleEndedEvent;
 import legend.game.modding.events.battle.BattleEntityTurnEvent;
 import legend.game.modding.events.battle.BattleStartedEvent;
-import legend.game.modding.registries.RegistryDelegate;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.IntParam;
 import legend.game.scripting.RunningScript;
@@ -108,6 +107,7 @@ import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import org.joml.Vector3f;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;

@@ -1,11 +1,11 @@
 package legend.game.saves;
 
 import legend.game.modding.events.config.ConfigLoadedEvent;
-import legend.game.modding.registries.RegistryDelegate;
-import legend.game.modding.registries.RegistryId;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.io.IOException;
 import java.nio.file.Files;
