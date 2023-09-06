@@ -28,6 +28,7 @@ import legend.core.memory.types.IntRef;
 import legend.core.memory.types.RelativePointer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
+import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.combat.types.Ptr;
 import legend.game.fmv.Fmv;
@@ -233,16 +234,17 @@ public final class SMap {
   public static final GsF_LIGHT GsF_LIGHT_1_800c66e8 = new GsF_LIGHT();
   public static final GsF_LIGHT GsF_LIGHT_2_800c66f8 = new GsF_LIGHT();
   public static final UnsignedShortRef chapterTitleState_800c6708 = MEMORY.ref(2, 0x800c6708L, UnsignedShortRef::new);
-  public static final Value _800c670a = MEMORY.ref(2, 0x800c670aL);
-  public static final Value _800c670c = MEMORY.ref(2, 0x800c670cL);
-  public static final Value _800c670e = MEMORY.ref(2, 0x800c670eL);
+  public static final ShortRef chapterTitleAnimationTicksRemaining_800c670a = MEMORY.ref(2, 0x800c670aL, ShortRef::new);
+  public static final ShortRef chapterTitleDropShadowOffsetX_800c670c = MEMORY.ref(2, 0x800c670cL, ShortRef::new);
+  public static final ShortRef chapterTitleDropShadowOffsetY_800c670e = MEMORY.ref(2, 0x800c670eL, ShortRef::new);
   public static List<FileData> chapterTitleCardMrg_800c6710;
-  public static final Value _800c6714 = MEMORY.ref(4, 0x800c6714L);
-  public static final Value _800c6718 = MEMORY.ref(4, 0x800c6718L);
-  public static final Value _800c671c = MEMORY.ref(4, 0x800c671cL);
-  public static final Value _800c6720 = MEMORY.ref(4, 0x800c6720L);
-  public static final Value _800c6724 = MEMORY.ref(4, 0x800c6724L);
-  public static final Value _800c6728 = MEMORY.ref(1, 0x800c6728L);
+  public static final IntRef chapterTitleNumberOffsetX_800c6714 = MEMORY.ref(4, 0x800c6714L, IntRef::new);
+  public static final IntRef chapterTitleNumberOffsetY_800c6718 = MEMORY.ref(4, 0x800c6718L, IntRef::new);
+  public static final IntRef chapterTitleNameOffsetX_800c671c = MEMORY.ref(4, 0x800c671cL, IntRef::new);
+  public static final IntRef chapterTitleNameOffsetY_800c6720 = MEMORY.ref(4, 0x800c6720L, IntRef::new);
+  /** Inverted condition from retail */
+  public static final BoolRef chapterTitleIsTranslucent_800c6724 = MEMORY.ref(4, 0x800c6724L, BoolRef::new);
+  public static final UnsignedByteRef chapterTitleBrightness_800c6728 = MEMORY.ref(1, 0x800c6728L, UnsignedByteRef::new);
 
   public static final Value _800c672c = MEMORY.ref(4, 0x800c672cL);
   public static int sobjCount_800c6730;
@@ -250,22 +252,22 @@ public final class SMap {
   /**
    * Lower 4 bits are chapter title num (starting at 1), used for displaying chapter title cards
    *
-   * Also has flag 0x80 OR'd with it sometimes, unknown what it means
+   * 0x80 bit indicates that the origin XY of the title card have been set and the animation is ready to start rendering
    */
   public static final UnsignedShortRef chapterTitleNum_800c6738 = MEMORY.ref(2, 0x800c6738L, UnsignedShortRef::new);
 
-  public static final Value _800c673c = MEMORY.ref(4, 0x800c673cL);
+  public static final IntRef chapterTitleAnimationPauseTicksRemaining_800c673c = MEMORY.ref(4, 0x800c673cL, IntRef::new);
   public static ScriptState<Void> submapControllerState_800c6740;
 
   public static final Model124 playerModel_800c6748 = new Model124("Player");
   public static final Value _800c686c = MEMORY.ref(2, 0x800c686cL);
-  public static final Value _800c686e = MEMORY.ref(2, 0x800c686eL);
+  public static final ShortRef chapterTitleAnimationComplete_800c686e = MEMORY.ref(2, 0x800c686eL, ShortRef::new);
   public static final Value _800c6870 = MEMORY.ref(2, 0x800c6870L);
 
   public static boolean submapAssetsLoaded_800c6874;
   public static List<FileData> submapAssetsMrg_800c6878;
-  public static final Value _800c687c = MEMORY.ref(2, 0x800c687cL);
-  public static final Value _800c687e = MEMORY.ref(2, 0x800c687eL);
+  public static final ShortRef chapterTitleOriginX_800c687c = MEMORY.ref(2, 0x800c687cL, ShortRef::new);
+  public static final ShortRef chapterTitleOriginY_800c687e = MEMORY.ref(2, 0x800c687eL, ShortRef::new);
   public static final ScriptState<SubmapObject210>[] sobjs_800c6880 = new ScriptState[20];
   public static boolean submapScriptsLoaded_800c68d0;
 
@@ -2434,31 +2436,31 @@ public final class SMap {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, related to chapter title cards")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
+  @ScriptDescription("Sets origin XY of chapter title card and flags it to move to the rendering state")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "originX", description = "X origin position of chapter title")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "originY", description = "Y origin position of chapter title")
   @Method(0x800e0c40L)
-  public static FlowControl FUN_800e0c40(final RunningScript<?> script) {
+  public static FlowControl scriptSetChapterTitleCardReadyToRender(final RunningScript<?> script) {
     chapterTitleNum_800c6738.or(0x80);
-    _800c686e.setu(0);
-    _800c687c.setu(script.params_20[0].get());
-    _800c687e.setu(script.params_20[1].get());
+    chapterTitleAnimationComplete_800c686e.set((short)0);
+    chapterTitleOriginX_800c687c.set((short)script.params_20[0].get());
+    chapterTitleOriginY_800c687e.set((short)script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, related to chapter title cards")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptDescription("Gets completion status of chapter title card animation")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "complete", description = "0 = not complete, 1 = complete")
   @Method(0x800e0c80L)
-  public static FlowControl FUN_800e0c80(final RunningScript<?> script) {
-    script.params_20[0].set((int)_800c686e.getSigned());
+  public static FlowControl scriptGetChapterTitleCardAnimationComplete(final RunningScript<?> script) {
+    script.params_20[0].set(chapterTitleAnimationComplete_800c686e.get());
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, related to chapter title cards")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptDescription("Set the number of ticks to hold on the title card before fading it out")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
   @Method(0x800e0c9cL)
-  public static FlowControl FUN_800e0c9c(final RunningScript<?> script) {
-    _800c673c.setu(script.params_20[0].get());
+  public static FlowControl scriptSetTitleCardAnimationPauseTicks(final RunningScript<?> script) {
+    chapterTitleAnimationPauseTicksRemaining_800c673c.set(script.params_20[0].get());
     return FlowControl.CONTINUE;
   }
 
@@ -3073,21 +3075,21 @@ public final class SMap {
 
         //LAB_800e1d88
         chapterTitleState_800c6708.set(0);
-        _800c670a.setu(0);
-        _800c670c.setu(0);
-        _800c670e.setu(0);
+        chapterTitleAnimationTicksRemaining_800c670a.set((short)0);
+        chapterTitleDropShadowOffsetX_800c670c.set((short)0);
+        chapterTitleDropShadowOffsetY_800c670e.set((short)0);
         chapterTitleCardMrg_800c6710 = null;
-        _800c6714.setu(0);
-        _800c6718.setu(0);
-        _800c671c.setu(0);
-        _800c6720.setu(0);
+        chapterTitleNumberOffsetX_800c6714.set(0);
+        chapterTitleNumberOffsetY_800c6718.set(0);
+        chapterTitleNameOffsetX_800c671c.set(0);
+        chapterTitleNameOffsetY_800c6720.set(0);
 
         chapterTitleNum_800c6738.set(0);
-        _800c673c.setu(0x3cL);
+        chapterTitleAnimationPauseTicksRemaining_800c673c.set(60);
 
-        _800c686e.setu(0);
-        _800c687c.setu(0);
-        _800c687e.setu(0);
+        chapterTitleAnimationComplete_800c686e.set((short)0);
+        chapterTitleOriginX_800c687c.set((short)0);
+        chapterTitleOriginY_800c687e.set((short)0);
         chapterTitleCardLoaded_800c68e0 = false;
         loadingStage_800c68e4.addu(0x1L);
 
@@ -3342,121 +3344,121 @@ public final class SMap {
 
     if(chapterTitleState == 2) {
       //LAB_800e27e8
-      final long v1 = _800c670a.getSigned();
+      final long currentTick = chapterTitleAnimationTicksRemaining_800c670a.get();
 
       //LAB_800e284c
-      if(v1 == 0) {
+      if(currentTick == 0) {
         //LAB_800e2860
         new Tim(chapterTitleCardMrg_800c6710.get(5)).uploadToGpu();
         new Tim(chapterTitleCardMrg_800c6710.get(13)).uploadToGpu();
 
         //LAB_800e2980
-        _800c6728.setu(0);
-        _800c6724.setu(0);
-        _800c6714.setu(0x20L);
-        _800c6718.setu(0x10L);
-        _800c671c.setu(0x40L);
-        _800c6720.setu(0x10L);
-        _800c670a.addu(0x1L);
-      } else if(v1 == 0x22L) {
+        chapterTitleBrightness_800c6728.set(0);
+        chapterTitleIsTranslucent_800c6724.set(true);
+        chapterTitleNumberOffsetX_800c6714.set(32);
+        chapterTitleNumberOffsetY_800c6718.set(16);
+        chapterTitleNameOffsetX_800c671c.set(64);
+        chapterTitleNameOffsetY_800c6720.set(16);
+        chapterTitleAnimationTicksRemaining_800c670a.add((short)1);
+      } else if(currentTick == 34) {
         //LAB_800e30c0
-        _800c670c.addu(0x1L);
+        chapterTitleDropShadowOffsetX_800c670c.add((short)1);
 
-        if(_800c670c.getSigned() == 0x3L) {
-          _800c670e.setu(0x1L);
-          _800c670a.addu(0x1L);
+        if(chapterTitleDropShadowOffsetX_800c670c.get() == 3) {
+          chapterTitleDropShadowOffsetY_800c670e.set((short)1);
+          chapterTitleAnimationTicksRemaining_800c670a.add((short)1);
         }
-      } else if(v1 == 0x23L) {
+      } else if(currentTick == 35) {
         //LAB_800e30f8
-        _800c673c.subu(0x1L);
+        chapterTitleAnimationPauseTicksRemaining_800c673c.sub(1);
 
-        if(_800c673c.get() == 0) {
-          _800c670a.setu(0xc9L);
+        if(chapterTitleAnimationPauseTicksRemaining_800c673c.get() == 0) {
+          chapterTitleAnimationTicksRemaining_800c670a.set((short)201);
         }
-      } else if(v1 == 0xe9L) {
+      } else if(currentTick == 233) {
         //LAB_800e376c
         chapterTitleCardMrg_800c6710 = null;
         chapterTitleState_800c6708.incr();
-      } else if((int)v1 >= 0x23L) {
+      } else if(currentTick >= 35) {
         //LAB_800e2828
-        if((int)v1 < 0xe9L) {
-          if((int)v1 >= 0xc9L) {
+        if(currentTick < 233) {
+          if(currentTick >= 201) {
             //LAB_800e311c
-            if(v1 == 0xd4L) {
+            if(currentTick == 212) {
               new Tim(chapterTitleCardMrg_800c6710.get(1)).uploadToGpu();
               new Tim(chapterTitleCardMrg_800c6710.get(9)).uploadToGpu();
 
               //LAB_800e3248
               //LAB_800e3254
-            } else if(v1 == 0xd8L) {
+            } else if(currentTick == 216) {
               new Tim(chapterTitleCardMrg_800c6710.get(2)).uploadToGpu();
               new Tim(chapterTitleCardMrg_800c6710.get(10)).uploadToGpu();
 
               //LAB_800e3384
               //LAB_800e3390
-            } else if(v1 == 0xdcL) {
+            } else if(currentTick == 220) {
               new Tim(chapterTitleCardMrg_800c6710.get(3)).uploadToGpu();
               new Tim(chapterTitleCardMrg_800c6710.get(11)).uploadToGpu();
 
               //LAB_800e34c0
               //LAB_800e34cc
-            } else if(v1 == 0xe0L) {
+            } else if(currentTick == 224) {
               new Tim(chapterTitleCardMrg_800c6710.get(4)).uploadToGpu();
               new Tim(chapterTitleCardMrg_800c6710.get(12)).uploadToGpu();
 
               //LAB_800e35fc
               //LAB_800e3608
-            } else if(v1 == 0xe4L) {
+            } else if(currentTick == 228) {
               new Tim(chapterTitleCardMrg_800c6710.get(5)).uploadToGpu();
               new Tim(chapterTitleCardMrg_800c6710.get(13)).uploadToGpu();
             }
 
             //LAB_800e3744
-            _800c6724.setu(0);
-            _800c6728.subu(0x4L);
+            chapterTitleIsTranslucent_800c6724.set(true);
+            chapterTitleBrightness_800c6728.sub(4);
           }
 
           //LAB_800e3790
-          _800c670a.addu(0x1L);
+          chapterTitleAnimationTicksRemaining_800c670a.add((short)1);
         }
-      } else if((int)v1 >= 0x21L) {
+      } else if(currentTick >= 33) {
         //LAB_800e3070
-        _800c6724.setu(0x1L);
-        _800c6720.setu(0);
-        _800c671c.setu(0);
-        _800c6718.setu(0);
-        _800c6714.setu(0);
-        _800c6728.setu(0x80L);
-        _800c670a.addu(0x1L);
-        _800c670c.setu(0x1L);
-        _800c670e.setu(0);
-      } else if((int)v1 > 0) {
+        chapterTitleIsTranslucent_800c6724.set(false);
+        chapterTitleNameOffsetY_800c6720.set(0);
+        chapterTitleNameOffsetX_800c671c.set(0);
+        chapterTitleNumberOffsetY_800c6718.set(0);
+        chapterTitleNumberOffsetX_800c6714.set(0);
+        chapterTitleBrightness_800c6728.set(128);
+        chapterTitleAnimationTicksRemaining_800c670a.add((short)1);
+        chapterTitleDropShadowOffsetX_800c670c.set((short)1);
+        chapterTitleDropShadowOffsetY_800c670e.set((short)0);
+      } else if((int)currentTick > 0) {
         //LAB_800e29d4
-        if(v1 == 0x4L) {
+        if(currentTick == 4) {
           new Tim(chapterTitleCardMrg_800c6710.get(4)).uploadToGpu();
           new Tim(chapterTitleCardMrg_800c6710.get(12)).uploadToGpu();
 
           //LAB_800e2afc
           //LAB_800e2b08
-        } else if(v1 == 0x8L) {
+        } else if(currentTick == 8) {
           new Tim(chapterTitleCardMrg_800c6710.get(3)).uploadToGpu();
           new Tim(chapterTitleCardMrg_800c6710.get(11)).uploadToGpu();
 
           //LAB_800e2c38
           //LAB_800e2c44
-        } else if(v1 == 0xcL) {
+        } else if(currentTick == 12) {
           new Tim(chapterTitleCardMrg_800c6710.get(2)).uploadToGpu();
           new Tim(chapterTitleCardMrg_800c6710.get(10)).uploadToGpu();
 
           //LAB_800e2d74
           //LAB_800e2d80
-        } else if(v1 == 0x10L) {
+        } else if(currentTick == 16) {
           new Tim(chapterTitleCardMrg_800c6710.get(1)).uploadToGpu();
           new Tim(chapterTitleCardMrg_800c6710.get(9)).uploadToGpu();
 
           //LAB_800e2eb0
           //LAB_800e2ebc
-        } else if(v1 == 0x14L) {
+        } else if(currentTick == 20) {
           new Tim(chapterTitleCardMrg_800c6710.get(0)).uploadToGpu();
           new Tim(chapterTitleCardMrg_800c6710.get(8)).uploadToGpu();
 
@@ -3464,32 +3466,34 @@ public final class SMap {
         }
 
         //LAB_800e2ff8
-        _800c6728.addu(0x4L);
-        _800c6714.subu(0x1L);
-        _800c671c.subu(0x2L);
+        chapterTitleBrightness_800c6728.add(4);
+        chapterTitleNumberOffsetX_800c6714.sub(1);
+        chapterTitleNameOffsetX_800c671c.sub(2);
 
-        if((_800c670a.get() & 0x1L) == 0) {
-          _800c6718.subu(0x1L);
-          _800c6720.subu(0x1L);
+        // Decrement Y-offset every other tick
+        if((chapterTitleAnimationTicksRemaining_800c670a.get() & 0x1) == 0) {
+          chapterTitleNumberOffsetY_800c6718.sub(1);
+          chapterTitleNameOffsetY_800c6720.sub(1);
         }
 
         //LAB_800e3038
         //LAB_800e3064
-        _800c670a.addu(0x1L);
+        chapterTitleAnimationTicksRemaining_800c670a.add((short)1);
       } else {
         //LAB_800e3790
-        _800c670a.addu(0x1L);
+        chapterTitleAnimationTicksRemaining_800c670a.add((short)1);
       }
 
       //LAB_800e37a0
-      int left = (int)(_800c687c.getSigned() + _800c6714.getSigned() - 58);
-      int top = (int)(_800c687e.getSigned() + _800c6718.getSigned() - 66);
-      int right = (int)(_800c687c.getSigned() - (_800c6714.getSigned() - 34));
-      int bottom = (int)(_800c687e.getSigned() - (_800c6718.getSigned() + 30));
+      int left = chapterTitleOriginX_800c687c.get() + chapterTitleNumberOffsetX_800c6714.get() - 58;
+      int top = chapterTitleOriginY_800c687e.get() + chapterTitleNumberOffsetY_800c6718.get() - 66;
+      int right = chapterTitleOriginX_800c687c.get() - (chapterTitleNumberOffsetX_800c6714.get() - 34);
+      int bottom = chapterTitleOriginY_800c687e.get() - (chapterTitleNumberOffsetY_800c6718.get() + 30);
 
+      // Chapter number text
       final GpuCommandPoly cmd1 = new GpuCommandPoly(4)
         .bpp(Bpp.BITS_4)
-        .monochrome((int)_800c6728.get())
+        .monochrome(chapterTitleBrightness_800c6728.get())
         .clut(512, 510)
         .vramPos(512, 256)
         .uv(0,  0, 64)
@@ -3501,20 +3505,21 @@ public final class SMap {
         .pos(2, left, bottom)
         .pos(3, right, bottom);
 
-      if(_800c6724.get() == 0) {
+      if(chapterTitleIsTranslucent_800c6724.get()) {
         cmd1.translucent(Translucency.B_PLUS_F);
       }
 
       GPU.queueCommand(28, cmd1);
 
-      left = (int)(_800c687c.get() - (_800c671c.get() + 140));
-      top = (int)(_800c687e.get() - (_800c6720.get() + 16));
-      right = (int)(_800c687c.get() + _800c671c.get() + 116);
-      bottom = (int)(_800c687e.get() + _800c6720.get() + 45);
+      left = chapterTitleOriginX_800c687c.get() - (chapterTitleNameOffsetX_800c671c.get() + 140);
+      top = chapterTitleOriginY_800c687e.get() - (chapterTitleNameOffsetY_800c6720.get() + 16);
+      right = chapterTitleOriginX_800c687c.get() + chapterTitleNameOffsetX_800c671c.get() + 116;
+      bottom = chapterTitleOriginY_800c687e.get() + chapterTitleNameOffsetY_800c6720.get() + 45;
 
+      // Chapter name text
       final GpuCommandPoly cmd2 = new GpuCommandPoly(4)
         .bpp(Bpp.BITS_4)
-        .monochrome((int)_800c6728.get())
+        .monochrome(chapterTitleBrightness_800c6728.get())
         .clut(512, 508)
         .vramPos(512, 256)
         .uv(0,   0,  0)
@@ -3526,22 +3531,23 @@ public final class SMap {
         .pos(2, left, bottom)
         .pos(3, right, bottom);
 
-      if(_800c6724.get() == 0) {
+      if(chapterTitleIsTranslucent_800c6724.get()) {
         cmd2.translucent(Translucency.B_PLUS_F);
       }
 
       GPU.queueCommand(28, cmd2);
 
-      if(_800c670c.getSigned() != 0) {
-        left = (int)(_800c670c.get() + _800c687c.get() + _800c6714.get() - 58);
-        top = (int)(_800c670e.get() + _800c687e.get() + _800c6718.get() - 66);
-        right = (int)(_800c670c.get() + _800c687c.get() - (_800c6714.get() - 34));
-        bottom = (int)(_800c670e.get() + _800c687e.get() - (_800c6718.get() + 30));
+      if(chapterTitleDropShadowOffsetX_800c670c.get() != 0) {
+        left = chapterTitleDropShadowOffsetX_800c670c.get() + chapterTitleOriginX_800c687c.get() + chapterTitleNumberOffsetX_800c6714.get() - 58;
+        top = chapterTitleDropShadowOffsetY_800c670e.get() + chapterTitleOriginY_800c687e.get() + chapterTitleNumberOffsetY_800c6718.get() - 66;
+        right = chapterTitleDropShadowOffsetX_800c670c.get() + chapterTitleOriginX_800c687c.get() - (chapterTitleNumberOffsetX_800c6714.get() - 34);
+        bottom = chapterTitleDropShadowOffsetY_800c670e.get() + chapterTitleOriginY_800c687e.get() - (chapterTitleNumberOffsetY_800c6718.get() + 30);
 
+        // Chapter number drop shadow
         final GpuCommandPoly cmd3 = new GpuCommandPoly(4)
           .bpp(Bpp.BITS_4)
           .translucent(Translucency.HALF_B_PLUS_HALF_F)
-          .monochrome((int)_800c6728.get())
+          .monochrome(chapterTitleBrightness_800c6728.get())
           .clut(512, 511)
           .vramPos(512, 256)
           .uv(0,  0, 64)
@@ -3565,15 +3571,16 @@ public final class SMap {
         //LAB_800e3b14
         GPU.queueCommand(28, cmd3);
 
-        left = (int)(_800c670c.get() + _800c687c.get() - (_800c671c.get() + 140));
-        top = (int)(_800c670e.get() + _800c687e.get() - (_800c6720.get() + 16));
-        right = (int)(_800c670c.get() + _800c687c.get() + _800c671c.get() + 116);
-        bottom = (int)(_800c670e.get() + _800c687e.get() + _800c6720.get() + 45);
+        left = chapterTitleDropShadowOffsetX_800c670c.get() + chapterTitleOriginX_800c687c.get() - (chapterTitleNameOffsetX_800c671c.get() + 140);
+        top = chapterTitleDropShadowOffsetY_800c670e.get() + chapterTitleOriginY_800c687e.get() - (chapterTitleNameOffsetY_800c6720.get() + 16);
+        right = chapterTitleDropShadowOffsetX_800c670c.get() + chapterTitleOriginX_800c687c.get() + chapterTitleNameOffsetX_800c671c.get() + 116;
+        bottom = chapterTitleDropShadowOffsetY_800c670e.get() + chapterTitleOriginY_800c687e.get() + chapterTitleNameOffsetY_800c6720.get() + 45;
 
+        // Chapter name drop shadow
         final GpuCommandPoly cmd4 = new GpuCommandPoly(4)
           .bpp(Bpp.BITS_4)
           .translucent(Translucency.HALF_B_PLUS_HALF_F)
-          .monochrome((int)_800c6728.get())
+          .monochrome(chapterTitleBrightness_800c6728.get())
           .clut(512, 509)
           .vramPos(512, 256)
           .uv(0,   0,  0)
@@ -3605,13 +3612,13 @@ public final class SMap {
     if(chapterTitleState == 3) {
       //LAB_800e3c60
       chapterTitleNum_800c6738.set(0);
-      _800c687e.setu(0);
-      _800c687c.setu(0);
+      chapterTitleOriginY_800c687e.set((short)0);
+      chapterTitleOriginX_800c687c.set((short)0);
       chapterTitleCardLoaded_800c68e0 = false;
-      _800c670c.setu(0);
-      _800c670a.setu(0);
+      chapterTitleDropShadowOffsetX_800c670c.set((short)0);
+      chapterTitleAnimationTicksRemaining_800c670a.set((short)0);
       chapterTitleState_800c6708.set(0);
-      _800c686e.setu(0x1L);
+      chapterTitleAnimationComplete_800c686e.set((short)1);
     }
   }
 

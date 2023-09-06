@@ -633,11 +633,11 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[696] = SMap::loadInterpolatedSobjAnimation;
     scriptSubFunctions_8004e29c[697] = SMap::loadUninterpolatedSobjAnimation;
     scriptSubFunctions_8004e29c[698] = SMap::FUN_800e0184;
-    scriptSubFunctions_8004e29c[699] = SMap::FUN_800e0c40;
-    scriptSubFunctions_8004e29c[700] = SMap::FUN_800e0c80;
+    scriptSubFunctions_8004e29c[699] = SMap::scriptSetChapterTitleCardReadyToRender;
+    scriptSubFunctions_8004e29c[700] = SMap::scriptGetChapterTitleCardAnimationComplete;
     scriptSubFunctions_8004e29c[701] = SMap::scriptLoadChapterTitleCard;
     scriptSubFunctions_8004e29c[702] = SMap::scriptIsChapterTitleCardLoaded;
-    scriptSubFunctions_8004e29c[703] = SMap::FUN_800e0c9c;
+    scriptSubFunctions_8004e29c[703] = SMap::scriptSetTitleCardAnimationPauseTicks;
 
     scriptSubFunctions_8004e29c[704] = Scus94491BpeSegment::scriptStartSequenceAndChangeVolumeOverTime;
     scriptSubFunctions_8004e29c[705] = Scus94491BpeSegment::scriptSssqFadeOut;
