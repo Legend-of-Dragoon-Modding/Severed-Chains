@@ -44,6 +44,7 @@ import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptParam;
 import legend.game.scripting.ScriptState;
 import legend.game.scripting.ScriptStorageParam;
+import legend.game.submap.AlertIndicator14;
 import legend.game.submap.EncounterRateMode;
 import legend.game.submap.EnvironmentFile;
 import legend.game.submap.EnvironmentForegroundTextureMetrics;
@@ -246,7 +247,6 @@ public final class SMap {
   public static final BoolRef chapterTitleIsTranslucent_800c6724 = MEMORY.ref(4, 0x800c6724L, BoolRef::new);
   public static final UnsignedByteRef chapterTitleBrightness_800c6728 = MEMORY.ref(1, 0x800c6728L, UnsignedByteRef::new);
 
-  public static final Value _800c672c = MEMORY.ref(4, 0x800c672cL);
   public static int sobjCount_800c6730;
 
   /**
@@ -260,9 +260,9 @@ public final class SMap {
   public static ScriptState<Void> submapControllerState_800c6740;
 
   public static final Model124 playerModel_800c6748 = new Model124("Player");
-  public static final Value _800c686c = MEMORY.ref(2, 0x800c686cL);
+  public static final BoolRef readyToLoadSubmapObjects_800c686c = MEMORY.ref(2, 0x800c686cL, BoolRef::new);
   public static final ShortRef chapterTitleAnimationComplete_800c686e = MEMORY.ref(2, 0x800c686eL, ShortRef::new);
-  public static final Value _800c6870 = MEMORY.ref(2, 0x800c6870L);
+  public static final ShortRef _800c6870 = MEMORY.ref(2, 0x800c6870L, ShortRef::new);
 
   public static boolean submapAssetsLoaded_800c6874;
   public static List<FileData> submapAssetsMrg_800c6878;
@@ -276,12 +276,13 @@ public final class SMap {
 
   public static boolean chapterTitleCardLoaded_800c68e0;
 
-  public static final Value loadingStage_800c68e4 = MEMORY.ref(4, 0x800c68e4L);
+  public static final IntRef loadingStage_800c68e4 = MEMORY.ref(4, 0x800c68e4L, IntRef::new);
   public static final SubmapStruct80 _800c68e8 = new SubmapStruct80();
-  public static final Value callbackIndex_800c6968 = MEMORY.ref(2, 0x800c6968L);
-  public static final ArrayRef<IntRef> _800c6970 = MEMORY.ref(4, 0x800c6970L, ArrayRef.of(IntRef.class, 32, 4, IntRef::new));
+  public static final ShortRef callbackIndex_800c6968 = MEMORY.ref(2, 0x800c6968L, ShortRef::new);
+  /** Index 31 tracks the current tick since indicator last enabled. Have not yet seen other elements set to anything but -1 */
+  public static final ArrayRef<IntRef> indicatorTickCountArray_800c6970 = MEMORY.ref(4, 0x800c6970L, ArrayRef.of(IntRef.class, 32, 4, IntRef::new));
 
-  public static TriangleIndicator140 _800c69fc;
+  public static TriangleIndicator140 triangleIndicator_800c69fc;
 
   /** TODO array, flags for submap objects - 0x80 means the model is the same as the previous one */
   public static final Value submapObjectFlags_800c6a50 = MEMORY.ref(4, 0x800c6a50L);
@@ -514,11 +515,12 @@ public final class SMap {
     Arrays.setAll(callbackArr_800f5ad4, i -> SMap::FUN_800e4994);
     callbackArr_800f5ad4[65] = SMap::FUN_800eddb4;
   }
-  public static final Value _800f5cd4 = MEMORY.ref(2, 0x800f5cd4L);
+  public static final ArrayRef<ShortRef> smapLoadingCallbackIndicesArray_800f5cd4 = MEMORY.ref(2, 0x800f5cd4L, ArrayRef.of(ShortRef.class, 1000, 2, ShortRef::new));
 
-  public static final Value _800f64ac = MEMORY.ref(4, 0x800f64acL);
+  /** Related to indicator being disabled for cutscenes/conversations */
+  public static final BoolRef indicatorDisabledForCutscene_800f64ac = MEMORY.ref(4, 0x800f64acL, BoolRef::new);
 
-  public static final Value _800f64b0 = MEMORY.ref(2, 0x800f64b0L);
+  public static final AlertIndicator14 alertIndicatorMetrics_800f64b0 = MEMORY.ref(2, 0x800f64b0L, AlertIndicator14::new);
 
   /** Indexed by submap cut */
   public static final UnboundedArrayRef<SubmapEncounterData_04> encounterData_800f64c4 = MEMORY.ref(1, 0x800f64c4L, UnboundedArrayRef.of(4, SubmapEncounterData_04::new));
@@ -1091,14 +1093,14 @@ public final class SMap {
     final short y = GTE.getScreenY(2);
 
     //LAB_800de438
-    final TriangleIndicator140 struct = _800c69fc;
+    final TriangleIndicator140 indicator = triangleIndicator_800c69fc;
     for(int i = 0; i < 20; i++) {
-      if(struct._18[i] == -1) {
-        struct.x_40[i] = x;
-        struct.y_68[i] = y;
-        struct._18[i] = (short)script.params_20[1].get();
-        struct.screenOffsetX_90[i] = screenOffsetX_800cb568;
-        struct.screenOffsetY_e0[i] = screenOffsetY_800cb56c;
+      if(indicator._18[i] == -1) {
+        indicator.x_40[i] = x;
+        indicator.y_68[i] = y;
+        indicator._18[i] = (short)script.params_20[1].get();
+        indicator.screenOffsetX_90[i] = screenOffsetX_800cb568;
+        indicator.screenOffsetY_e0[i] = screenOffsetY_800cb56c;
         break;
       }
     }
@@ -1132,14 +1134,14 @@ public final class SMap {
 
       //LAB_800de5d4
       for(int i = 0; i < 20; i++) {
-        final TriangleIndicator140 a1 = _800c69fc;
+        final TriangleIndicator140 indicator = triangleIndicator_800c69fc;
 
-        if(a1._18[i] == -1) {
-          a1.x_40[i] = x;
-          a1.y_68[i] = y;
-          a1._18[i] = (short)ints.array(s0).get();
-          a1.screenOffsetX_90[i] = screenOffsetX_800cb568;
-          a1.screenOffsetY_e0[i] = screenOffsetY_800cb56c;
+        if(indicator._18[i] == -1) {
+          indicator.x_40[i] = x;
+          indicator.y_68[i] = y;
+          indicator._18[i] = (short)ints.array(s0).get();
+          indicator.screenOffsetX_90[i] = screenOffsetX_800cb568;
+          indicator.screenOffsetY_e0[i] = screenOffsetY_800cb56c;
           break;
         }
       }
@@ -2716,7 +2718,7 @@ public final class SMap {
 
   @Method(0x800e13b0L)
   public static void executeSceneGraphicsLoadingStage(final int index) {
-    switch((int)loadingStage_800c68e4.get()) {
+    switch(loadingStage_800c68e4.get()) {
       case 0 -> {
         loadTimImage(shadowTimFile_80010544.getAddress());
 
@@ -2743,7 +2745,7 @@ public final class SMap {
         GsSetFlatLight(2, GsF_LIGHT_2_800c66f8);
 
         GTE.setBackgroundColour(0.5f, 0.5f, 0.5f);
-        loadingStage_800c68e4.addu(0x1L);
+        loadingStage_800c68e4.add(1);
       }
 
       case 1 -> {
@@ -2766,7 +2768,7 @@ public final class SMap {
           //LAB_800e1550
           if(_800bda08.get() == submapCut_80052c30.get()) {
             //LAB_800e15d0
-            loadingStage_800c68e4.addu(0x1L);
+            loadingStage_800c68e4.add(1);
             break;
           }
 
@@ -2782,7 +2784,7 @@ public final class SMap {
 
           //LAB_800e15b8
           musicLoaded_800bd782 = true;
-          loadingStage_800c68e4.addu(0x1L);
+          loadingStage_800c68e4.add(1);
           break;
         }
 
@@ -2791,25 +2793,25 @@ public final class SMap {
 
           //LAB_800e15b8
           musicLoaded_800bd782 = true;
-          loadingStage_800c68e4.addu(0x1L);
+          loadingStage_800c68e4.add(1);
           break;
         }
 
         if(ret == -3) {
           //LAB_800e15b8
           musicLoaded_800bd782 = true;
-          loadingStage_800c68e4.addu(0x1L);
+          loadingStage_800c68e4.add(1);
           break;
         }
 
         //LAB_800e15c0
         loadMusicPackage(ret, 0);
-        loadingStage_800c68e4.addu(0x1L);
+        loadingStage_800c68e4.add(1);
       }
 
       case 2 -> {
         if(musicLoaded_800bd782 && (getLoadedDrgnFiles() & 0x2) == 0) {
-          loadingStage_800c68e4.addu(0x1L);
+          loadingStage_800c68e4.add(1);
         }
       }
 
@@ -2819,7 +2821,7 @@ public final class SMap {
         loadSmapMedia();
 
         if(_800f9eac.get() == 0x1L) {
-          loadingStage_800c68e4.addu(0x1L);
+          loadingStage_800c68e4.add(1);
         }
       }
 
@@ -2827,7 +2829,7 @@ public final class SMap {
         loadSmapMedia();
 
         if(_800f9eac.get() == 0x2L) {
-          loadingStage_800c68e4.addu(0x1L);
+          loadingStage_800c68e4.add(1);
         }
       }
 
@@ -2854,7 +2856,7 @@ public final class SMap {
           loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 2, files -> SMap.submapAssetsLoadedCallback(files, 1));
         }
 
-        loadingStage_800c68e4.addu(0x1L);
+        loadingStage_800c68e4.add(1);
       }
 
       // Wait for map assets to load
@@ -2916,24 +2918,24 @@ public final class SMap {
             submapAssets.pxls.add(new Tim(submapAssetsMrg_800c6878.get(objCount * 34 + i)));
           }
 
-          loadingStage_800c68e4.addu(0x1L);
+          loadingStage_800c68e4.add(1);
         }
       }
 
       case 7 -> {
-        _800c6870.setu(0);
-        _800c686c.setu(0);
-        loadingStage_800c68e4.addu(0x1L);
-        callbackIndex_800c6968.setu(_800f5cd4.offset(submapCut_80052c30.get() * 0x2L));
+        _800c6870.set((short)0);
+        readyToLoadSubmapObjects_800c686c.set(false);
+        loadingStage_800c68e4.add(1);
+        callbackIndex_800c6968.set(smapLoadingCallbackIndicesArray_800f5cd4.get(submapCut_80052c30.get()));
       }
 
       case 8 -> {
-        callbackArr_800f5ad4[(int)callbackIndex_800c6968.get()].run();
+        callbackArr_800f5ad4[callbackIndex_800c6968.get()].run();
 
-        if(_800c686c.get() != 0) {
+        if(readyToLoadSubmapObjects_800c686c.get()) {
           //LAB_800e18a4
           //LAB_800e18a8
-          loadingStage_800c68e4.addu(0x1L);
+          loadingStage_800c68e4.add(1);
         }
       }
 
@@ -2943,7 +2945,7 @@ public final class SMap {
 
         final int sobjCount = submapAssets.objects.size();
 
-        _800c672c.setu(sobjCount);
+        // Removed setting of unused sobjCount static
         sobjCount_800c6730 = sobjCount;
 
         final long s3;
@@ -3091,9 +3093,9 @@ public final class SMap {
         chapterTitleOriginX_800c687c.set((short)0);
         chapterTitleOriginY_800c687e.set((short)0);
         chapterTitleCardLoaded_800c68e0 = false;
-        loadingStage_800c68e4.addu(0x1L);
+        loadingStage_800c68e4.add(1);
 
-        _800c69fc = new TriangleIndicator140();
+        triangleIndicator_800c69fc = new TriangleIndicator140();
 
         cameraPos_800c6aa0.set(rview2_800bd7e8.viewpoint_00).sub(rview2_800bd7e8.refpoint_0c);
 
@@ -3102,7 +3104,7 @@ public final class SMap {
 
         //LAB_800e1ecc
         for(int i = 0; i < 32; i++) {
-          _800c6970.get(i).set(-1);
+          indicatorTickCountArray_800c6970.get(i).set(-1);
         }
 
         _800bd7b8.setu(0);
@@ -3264,12 +3266,12 @@ public final class SMap {
 
     scriptDeallocateAllTextboxes(null);
 
-    _800c6870.setu(-0x1L);
+    _800c6870.set((short)-1);
     callbackArr_800f5ad4[(int)callbackIndex_800c6968.get()].run();
 
     _800f9eac.set(-1);
     loadSmapMedia();
-    _800c69fc = null;
+    triangleIndicator_800c69fc = null;
     loadTimImage(shadowTimFile_80010544.getAddress());
   }
 
@@ -3747,14 +3749,14 @@ public final class SMap {
   }
 
   @Method(0x800e4018L)
-  public static void FUN_800e4018() {
+  public static void setIndicatorStatusAndResetIndicatorTickCountOnReenable() {
     if(gameState_800babc8.indicatorsDisabled_4e3) {
-      if(_800f64ac.get() == 0) {
-        _800f64ac.setu(0x1L);
+      if(!indicatorDisabledForCutscene_800f64ac.get()) {
+        indicatorDisabledForCutscene_800f64ac.set(true);
       }
-    } else if(_800f64ac.get() == 0x1L) {
-      _800f64ac.setu(0);
-      _800c6970.get(31).set(0);
+    } else if(indicatorDisabledForCutscene_800f64ac.get()) {
+      indicatorDisabledForCutscene_800f64ac.set(false);
+      indicatorTickCountArray_800c6970.get(31).set(0);
     }
   }
 
@@ -3862,21 +3864,21 @@ public final class SMap {
       .monochrome(0x80)
       .clut(976, 464)
       .vramPos(960, 256)
-      .pos(0, (int)_800f64b0.offset(0x0L).getSigned() + sx, (int)_800f64b0.offset(0x4L).getSigned() + sy)
-      .pos(1, (int)_800f64b0.offset(0x2L).getSigned() + sx, (int)_800f64b0.offset(0x4L).getSigned() + sy)
-      .pos(2, (int)_800f64b0.offset(0x0L).getSigned() + sx, (int)_800f64b0.offset(0x6L).getSigned() + sy)
-      .pos(3, (int)_800f64b0.offset(0x2L).getSigned() + sx, (int)_800f64b0.offset(0x6L).getSigned() + sy)
-      .uv(0, (int)_800f64b0.offset(1, 0x8L).get(), (int)_800f64b0.offset(1, 0xcL).get())
-      .uv(1, (int)_800f64b0.offset(1, 0xaL).get(), (int)_800f64b0.offset(1, 0xcL).get())
-      .uv(2, (int)_800f64b0.offset(1, 0x8L).get(), (int)_800f64b0.offset(1, 0xeL).get())
-      .uv(3, (int)_800f64b0.offset(1, 0xaL).get(), (int)_800f64b0.offset(1, 0xeL).get());
+      .pos(0, alertIndicatorMetrics_800f64b0.x0_00.get() + sx, alertIndicatorMetrics_800f64b0.y0_04.get() + sy)
+      .pos(1, alertIndicatorMetrics_800f64b0.x1_02.get() + sx, alertIndicatorMetrics_800f64b0.y0_04.get() + sy)
+      .pos(2, alertIndicatorMetrics_800f64b0.x0_00.get() + sx, alertIndicatorMetrics_800f64b0.y1_06.get() + sy)
+      .pos(3, alertIndicatorMetrics_800f64b0.x1_02.get() + sx, alertIndicatorMetrics_800f64b0.y1_06.get() + sy)
+      .uv(0, alertIndicatorMetrics_800f64b0.u0_08.get(), alertIndicatorMetrics_800f64b0.v0_0c.get())
+      .uv(1, alertIndicatorMetrics_800f64b0.u1_0a.get(), alertIndicatorMetrics_800f64b0.v0_0c.get())
+      .uv(2, alertIndicatorMetrics_800f64b0.u0_08.get(), alertIndicatorMetrics_800f64b0.v1_0e.get())
+      .uv(3, alertIndicatorMetrics_800f64b0.u1_0a.get(), alertIndicatorMetrics_800f64b0.v1_0e.get());
 
     GPU.queueCommand(37, cmd);
   }
 
   @Method(0x800e4994L)
   public static void FUN_800e4994() {
-    _800c686c.setu(0x1L);
+    readyToLoadSubmapObjects_800c686c.set(true);
   }
 
   @Method(0x800e49a4L)
@@ -4458,14 +4460,14 @@ public final class SMap {
       }
 
       case 0xa -> {
-        loadingStage_800c68e4.setu(0);
+        loadingStage_800c68e4.set(0);
         executeSceneGraphicsLoadingStage(_800caaf8.get());
         smapLoadingStage_800cb430.setu(0xbL);
       }
 
       case 0xb -> {
         executeSceneGraphicsLoadingStage(_800caaf8.get());
-        if(loadingStage_800c68e4.get() == 0xaL) {
+        if(loadingStage_800c68e4.get() == 10) {
           if(isScriptLoaded(0)) {
             sobjs_800c6880[0].innerStruct_00.ui_16c = _800caaf8.get();
           }
@@ -6916,7 +6918,7 @@ public final class SMap {
 
   @Method(0x800eddb4L)
   public static void FUN_800eddb4() {
-    if(_800c6870.getSigned() == -1) {
+    if(_800c6870.get() == -1) {
       _800f9e5a.setu(-1);
     }
 
@@ -7006,7 +7008,7 @@ public final class SMap {
           matrix_800d4bb0.set(submapCutMatrix);
 
           _800f9e5a.addu(0x1L);
-          _800c686c.setu(0x1L);
+          readyToLoadSubmapObjects_800c686c.set(true);
 
           submapCutTexture = null;
           submapCutMatrix = null;
@@ -7584,7 +7586,7 @@ public final class SMap {
 
       //LAB_800ef728
       if(a1._18 == 1) {
-        if(_800c6870.getSigned() != -1) {
+        if(_800c6870.get() != -1) {
           FUN_800f0644(model, a1);
         }
       }
@@ -8517,7 +8519,7 @@ public final class SMap {
 
     GsInitCoordinate2(null, sp0x18);
 
-    final TriangleIndicator140 a0 = _800c69fc;
+    final TriangleIndicator140 indicator = triangleIndicator_800c69fc;
 
     //LAB_800f1ba8
     final Param ints = script.params_20[0];
@@ -8536,11 +8538,11 @@ public final class SMap {
       final short sy = GTE.getScreenY(2);
       PopMatrix();
 
-      a0._18[i] = (short)ints.array(s0++).get();
-      a0.x_40[i] = (short)(sx + ints.array(s0++).get());
-      a0.y_68[i] = (short)(sy + ints.array(s0++).get());
-      a0.screenOffsetX_90[i] = screenOffsetX_800cb568;
-      a0.screenOffsetY_e0[i] = screenOffsetY_800cb56c;
+      indicator._18[i] = (short)ints.array(s0++).get();
+      indicator.x_40[i] = (short)(sx + ints.array(s0++).get());
+      indicator.y_68[i] = (short)(sy + ints.array(s0++).get());
+      indicator.screenOffsetX_90[i] = screenOffsetX_800cb568;
+      indicator.screenOffsetY_e0[i] = screenOffsetY_800cb56c;
     }
 
     //LAB_800f1cf0
@@ -8572,14 +8574,14 @@ public final class SMap {
 
     //LAB_800f1e20
     for(int i = 0; i < 20; i++) {
-      final TriangleIndicator140 a1 = _800c69fc;
+      final TriangleIndicator140 indicator = triangleIndicator_800c69fc;
 
-      if(a1._18[i] == -1) {
-        a1._18[i] = (short)script.params_20[1].get();
-        a1.x_40[i] = (short)(sx + script.params_20[2].get());
-        a1.y_68[i] = (short)(sy + script.params_20[3].get());
-        a1.screenOffsetX_90[i] = screenOffsetX_800cb568;
-        a1.screenOffsetY_e0[i] = screenOffsetY_800cb56c;
+      if(indicator._18[i] == -1) {
+        indicator._18[i] = (short)script.params_20[1].get();
+        indicator.x_40[i] = (short)(sx + script.params_20[2].get());
+        indicator.y_68[i] = (short)(sy + script.params_20[3].get());
+        indicator.screenOffsetX_90[i] = screenOffsetX_800cb568;
+        indicator.screenOffsetY_e0[i] = screenOffsetY_800cb56c;
         break;
       }
     }
@@ -8926,17 +8928,17 @@ public final class SMap {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "data", description = "The struct data")
   @Method(0x800f2618L)
   public static FlowControl scriptAllocateTriangleIndicatorArray(final RunningScript<?> script) {
-    final TriangleIndicator140 v1 = _800c69fc;
+    final TriangleIndicator140 indicator = triangleIndicator_800c69fc;
 
     //LAB_800f266c
     int i = 0;
     final Param a0 = script.params_20[0];
     for(int a1 = 0; a0.array(i).get() != -1; a1++) {
-      v1._18[a1] = (short)a0.array(i++).get();
-      v1.x_40[a1] = (short)(a0.array(i++).get() + screenOffsetX_800cb568);
-      v1.y_68[a1] = (short)(a0.array(i++).get() + screenOffsetY_800cb56c);
-      v1.screenOffsetX_90[a1] = screenOffsetX_800cb568;
-      v1.screenOffsetY_e0[a1] = screenOffsetY_800cb56c;
+      indicator._18[a1] = (short)a0.array(i++).get();
+      indicator.x_40[a1] = (short)(a0.array(i++).get() + screenOffsetX_800cb568);
+      indicator.y_68[a1] = (short)(a0.array(i++).get() + screenOffsetY_800cb56c);
+      indicator.screenOffsetX_90[a1] = screenOffsetX_800cb568;
+      indicator.screenOffsetY_e0[a1] = screenOffsetY_800cb56c;
     }
 
     //LAB_800f26b4
@@ -9151,8 +9153,8 @@ public final class SMap {
 
   @Method(0x800f31bcL)
   public static void handleTriangleIndicators() {
-    _800c69fc.screenOffsetX_10 = screenOffsetX_800cb568;
-    _800c69fc.screenOffsetY_14 = screenOffsetY_800cb56c;
+    triangleIndicator_800c69fc.screenOffsetX_10 = screenOffsetX_800cb568;
+    triangleIndicator_800c69fc.screenOffsetY_14 = screenOffsetY_800cb56c;
 
     if(gameState_800babc8.indicatorsDisabled_4e3) {
       return;
@@ -9216,8 +9218,8 @@ public final class SMap {
     final short topY = GTE.getScreenY(2);
 
     GTE.perspectiveTransform(0, -(topY - bottomY) - 48, 0);
-    _800c69fc.playerX_08 = GTE.getScreenX(2);
-    _800c69fc.playerY_0c = GTE.getScreenY(2);
+    triangleIndicator_800c69fc.playerX_08 = GTE.getScreenX(2);
+    triangleIndicator_800c69fc.playerY_0c = GTE.getScreenY(2);
 
     PopMatrix();
 
@@ -9236,7 +9238,7 @@ public final class SMap {
 
   @Method(0x800f352cL)
   public static void renderTriangleIndicators() {
-    final TriangleIndicator140 s5 = _800c69fc;
+    final TriangleIndicator140 indicator = triangleIndicator_800c69fc;
 
     //LAB_800f35b0
     for(int indicatorIndex = 0; indicatorIndex < 21; indicatorIndex++) {
@@ -9246,20 +9248,20 @@ public final class SMap {
       if(indicatorIndex == 0) {
         // Player indicator
 
-        s1.x_34.set(s5.playerX_08);
-        s1.y_38.set(s5.playerY_0c - 28);
+        s1.x_34.set(indicator.playerX_08);
+        s1.y_38.set(indicator.playerY_0c - 28);
 
         anm = playerIndicatorAnimation_800d5588.anm_00.deref();
       } else {
         // Door indicators
 
         //LAB_800f35f4
-        if(s5._18[indicatorIndex - 1] < 0) {
+        if(indicator._18[indicatorIndex - 1] < 0) {
           break;
         }
 
-        s1.x_34.set(s5.screenOffsetX_10 - s5.screenOffsetX_90[indicatorIndex - 1] + s5.x_40[indicatorIndex - 1] -  2);
-        s1.y_38.set(s5.screenOffsetY_14 - s5.screenOffsetY_e0[indicatorIndex - 1] + s5.y_68[indicatorIndex - 1] - 32);
+        s1.x_34.set(indicator.screenOffsetX_10 - indicator.screenOffsetX_90[indicatorIndex - 1] + indicator.x_40[indicatorIndex - 1] -  2);
+        s1.y_38.set(indicator.screenOffsetY_14 - indicator.screenOffsetY_e0[indicatorIndex - 1] + indicator.y_68[indicatorIndex - 1] - 32);
 
         anm = doorIndicatorAnimation_800d5590.anm_00.deref();
       }
@@ -9319,7 +9321,7 @@ public final class SMap {
             cmd.translucent(Translucency.of(tpage >>> 5 & 0b11));
           }
 
-          cmd.clut(992, (sprite.cba_04.get() >>> 6 & 0x1ff) - _800d6cc8.get(s5._18[indicatorIndex - 1]).get());
+          cmd.clut(992, (sprite.cba_04.get() >>> 6 & 0x1ff) - _800d6cc8.get(indicator._18[indicatorIndex - 1]).get());
         }
 
         //LAB_800f38b0
@@ -9371,11 +9373,11 @@ public final class SMap {
     }
 
     //LAB_800f3b14
-    final TriangleIndicator140 v0 = _800c69fc;
+    final TriangleIndicator140 indicator = triangleIndicator_800c69fc;
 
     //LAB_800f3b24
     for(int i = 0; i < 20; i++) {
-      v0._18[i] = -1;
+      indicator._18[i] = -1;
     }
   }
 
@@ -9589,7 +9591,7 @@ public final class SMap {
 
   @Method(0x800f4354L)
   public static void FUN_800f4354() {
-    if(_800c6870.getSigned() == -1) {
+    if(_800c6870.get() == -1) {
       FUN_800f41dc();
 
       if(_800f9e60.get() - 0x1L < 0x2L) {

@@ -99,7 +99,7 @@ import static legend.game.SItem.textLength;
 import static legend.game.SMap.FUN_800da114;
 import static legend.game.SMap.FUN_800de004;
 import static legend.game.SMap.FUN_800e3fac;
-import static legend.game.SMap.FUN_800e4018;
+import static legend.game.SMap.setIndicatorStatusAndResetIndicatorTickCountOnReenable;
 import static legend.game.SMap.FUN_800e4708;
 import static legend.game.SMap.FUN_800e4e5c;
 import static legend.game.SMap.FUN_800e4f8c;
@@ -541,7 +541,7 @@ public final class Scus94491BpeSegment_8002 {
 
       //LAB_80020f20
       FUN_8002aae8();
-      FUN_800e4018();
+      setIndicatorStatusAndResetIndicatorTickCountOnReenable();
     }
 
     //LAB_80020f30
