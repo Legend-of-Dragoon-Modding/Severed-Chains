@@ -60,11 +60,11 @@ import legend.game.combat.ui.BattleMenuStruct58;
 import legend.game.combat.ui.CombatMenua4;
 import legend.game.combat.ui.FloatingNumberC4;
 import legend.game.combat.ui.FloatingNumberC4Sub20;
+import legend.game.inventory.Item;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.MonsterStatsEvent;
 import legend.game.modding.events.battle.StatDisplayEvent;
-import legend.game.modding.events.inventory.RepeatItemReturnEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
@@ -116,7 +116,6 @@ import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80023a88;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
-import static legend.game.Scus94491BpeSegment_8002.checkForPsychBombX;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
@@ -196,7 +195,6 @@ import static legend.game.combat.Bttl_800c.monsterBents_800c6b78;
 import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800c.monsterCount_800c6b9c;
 import static legend.game.combat.Bttl_800c.playerNames_800fb378;
-import static legend.game.combat.Bttl_800c.repeatItemIds_800c6e34;
 import static legend.game.combat.Bttl_800c.spBarBorderMetrics_800fb46c;
 import static legend.game.combat.Bttl_800c.spBarColours_800c6f04;
 import static legend.game.combat.Bttl_800c.spBarFlashingBorderMetrics_800fb47c;
@@ -3658,33 +3656,7 @@ public final class Bttl_800e {
       }
     }
 
-    checkForPsychBombX();
-
     usedRepeatItems_800c6c3c.clear();
-
-    //LAB_800ee80c
-    //LAB_800ee824
-    for(int itemSlot = 0; itemSlot < gameState_800babc8.items_2e9.size(); itemSlot++) {
-      final int itemId = gameState_800babc8.items_2e9.getInt(itemSlot);
-      boolean returnItem = false;
-
-      for(int repeatItemIndex = 0; repeatItemIndex < 9; repeatItemIndex++) {
-        if(itemId == repeatItemIds_800c6e34.get(repeatItemIndex).get()) {
-          returnItem = true;
-          break;
-        }
-
-        //LAB_800ee848
-      }
-
-      final RepeatItemReturnEvent repeatItemReturnEvent = EVENTS.postEvent(new RepeatItemReturnEvent(itemId, returnItem));
-
-      if(repeatItemReturnEvent.returnItem) {
-        usedRepeatItems_800c6c3c.add(itemId);
-      }
-
-      //LAB_800ee858
-    }
 
     _800c697e.set((short)0);
     _800c6980.set((short)0);
@@ -3765,42 +3737,9 @@ public final class Bttl_800e {
       charData.sp_0c = bent.stats.getStat(CoreMod.SP_STAT.get()).getCurrent();
     }
 
-    //LAB_800eecf4
-    if(gameState_800babc8.scriptFlags2_bc.get(13, 18)) { // Used Psych Bomb X this battle
-      //LAB_800eed30
-      boolean hasPsychBombX = false;
-      for(int i = 0; i < gameState_800babc8.items_2e9.size(); i++) {
-        if(gameState_800babc8.items_2e9.getInt(i) == 0xfa) { // Psych Bomb X
-          hasPsychBombX = true;
-          break;
-        }
-      }
-
-      //LAB_800eed54
-      if(!hasPsychBombX) {
-        giveItem(0xfa); // Psych Bomb X
-      }
-    }
-
-    //LAB_800eed64
-    checkForPsychBombX();
-
     //LAB_800eed78
-    for(final int itemId : usedRepeatItems_800c6c3c) {
-      boolean hasRepeatItem = false;
-
-      //LAB_800eedb0
-      for(int itemSlot = 0; itemSlot < gameState_800babc8.items_2e9.size(); itemSlot++) {
-        if(gameState_800babc8.items_2e9.getInt(itemSlot) == itemId) {
-          hasRepeatItem = true;
-          break;
-        }
-      }
-
-      //LAB_800eedd8
-      if(!hasRepeatItem) {
-        giveItem(itemId);
-      }
+    for(final Item item : usedRepeatItems_800c6c3c) {
+      giveItem(item);
     }
 
     usedRepeatItems_800c6c3c.clear();
@@ -3852,7 +3791,7 @@ public final class Bttl_800e {
     monsterHp.setCurrent(statsEvent.hp);
     monsterHp.setMaxRaw(statsEvent.maxHp);
     monster.specialEffectFlag_14 = statsEvent.specialEffectFlag;
-    monster.equipmentType_16 = 0;
+//    monster.equipmentType_16 = 0;
     monster.equipment_02_18 = 0;
     monster.equipmentEquipableFlags_1a = 0;
     monster.displayElement_1c = statsEvent.elementFlag;
@@ -3949,7 +3888,7 @@ public final class Bttl_800e {
       playerMp.setMaxRaw(stats.maxMp_6e);
       player.status_0e = stats.flags_0c;
       player.specialEffectFlag_14 = stats.specialEffectFlag_76;
-      player.equipmentType_16 = stats.equipmentType_77;
+//      player.equipmentType_16 = stats.equipmentType_77;
       player.equipment_02_18 = stats.equipment_02_78;
       player.equipmentEquipableFlags_1a = stats.equipmentEquipableFlags_79;
       player.equipmentAttackElements_1c.set(stats.equipmentAttackElements_7a);
@@ -3987,11 +3926,8 @@ public final class Bttl_800e {
       player._118 = stats.addition_00_9c;
       player.additionSpMultiplier_11a = stats.additionSpMultiplier_9e;
       player.additionDamageMultiplier_11c = stats.additionDamageMultiplier_9f;
-      player.equipment0_11e = stats.equipment_30[0];
-      player.equipment1_120 = stats.equipment_30[1];
-      player.equipment2_122 = stats.equipment_30[2];
-      player.equipment3_124 = stats.equipment_30[3];
-      player.equipment4_126 = stats.equipment_30[4];
+      player.equipment_11e.clear();
+      player.equipment_11e.putAll(stats.equipment_30);
       player.spMultiplier_128 = stats.equipmentSpMultiplier_4c;
       player.spPerPhysicalHit_12a = stats.equipmentSpPerPhysicalHit_4e;
       player.mpPerPhysicalHit_12c = stats.equipmentMpPerPhysicalHit_50;

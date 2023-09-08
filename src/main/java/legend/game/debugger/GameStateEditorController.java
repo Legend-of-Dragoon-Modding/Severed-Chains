@@ -6,8 +6,10 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.types.EquipmentSlot;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 
 public class GameStateEditorController {
@@ -387,35 +389,35 @@ public class GameStateEditorController {
 
   public void getEquipment() {
     if(!gameState_800babc8.equipment_1e8.isEmpty()) {
-      this.textEquipment.setText(String.valueOf(gameState_800babc8.equipment_1e8.getInt(this.getEquipment.getValue())));
+      this.textEquipment.setText(gameState_800babc8.equipment_1e8.get(this.getEquipment.getValue()).getRegistryId().toString());
     } else {
-      this.textEquipment.setText(String.valueOf(255));
+      this.textEquipment.clear();
     }
   }
 
   @FXML
   public void setEquipment() {
     if(this.getEquipment.getValue() >= gameState_800babc8.equipment_1e8.size()) {
-      gameState_800babc8.equipment_1e8.add(Integer.valueOf(this.textEquipment.getText()));
+      gameState_800babc8.equipment_1e8.add(REGISTRIES.equipment.getEntry(this.textEquipment.getText()).get());
     } else {
-      gameState_800babc8.equipment_1e8.set((int)this.getEquipment.getValue(), Integer.valueOf(this.textEquipment.getText()));
+      gameState_800babc8.equipment_1e8.set(this.getEquipment.getValue(), REGISTRIES.equipment.getEntry(this.textEquipment.getText()).get());
     }
   }
 
   public void getItems() {
     if(!gameState_800babc8.items_2e9.isEmpty()) {
-      this.textItems.setText(String.valueOf(gameState_800babc8.items_2e9.getInt(this.getItems.getValue())));
+      this.textItems.setText(gameState_800babc8.items_2e9.get(this.getItems.getValue()).getRegistryId().toString());
     } else {
-      this.textEquipment.setText(String.valueOf(255));
+      this.textEquipment.clear();
     }
   }
 
   @FXML
   public void setItems() {
     if(this.getItems.getValue() >= gameState_800babc8.items_2e9.size()) {
-      gameState_800babc8.items_2e9.add(Integer.valueOf(this.textItems.getText()));
+      gameState_800babc8.items_2e9.add(REGISTRIES.items.getEntry(this.textItems.getText()).get());
     } else {
-      gameState_800babc8.items_2e9.set((int)this.getItems.getValue(), Integer.valueOf(this.textItems.getText()));
+      gameState_800babc8.items_2e9.set(this.getItems.getValue(), REGISTRIES.items.getEntry(this.textItems.getText()).get());
     }
   }
 
@@ -440,7 +442,7 @@ public class GameStateEditorController {
       case 6 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].status_10);
       case 7 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].level_12);
       case 8 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].dlevel_13);
-      case 9, 10, 11, 12, 13 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].equipment_14[this.getCharacterData.getSelectionModel().getSelectedIndex() - 9]);
+      case 9, 10, 11, 12, 13 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].equipment_14.get(EquipmentSlot.fromLegacy(this.getCharacterData.getSelectionModel().getSelectedIndex() - 9)).getRegistryId().toString();
       case 14 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].selectedAddition_19);
       case 15, 16, 17, 18, 19, 20, 21, 22 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].additionLevels_1a[this.getCharacterData.getSelectionModel().getSelectedIndex() - 15]);
       case 23, 24, 25, 26, 27, 28, 29, 30 -> String.valueOf(gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].additionXp_22[this.getCharacterData.getSelectionModel().getSelectedIndex() - 23]);
@@ -460,7 +462,7 @@ public class GameStateEditorController {
       case 6 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].status_10 = Integer.parseInt(this.textCharacterData.getText());
       case 7 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].level_12 = Integer.parseInt(this.textCharacterData.getText());
       case 8 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].dlevel_13 = Integer.parseInt(this.textCharacterData.getText());
-      case 9, 10, 11, 12, 13 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].equipment_14[this.getCharacterData.getSelectionModel().getSelectedIndex() - 9] = Integer.parseInt(this.textCharacterData.getText());
+      case 9, 10, 11, 12, 13 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].equipment_14.put(EquipmentSlot.fromLegacy(this.getCharacterData.getSelectionModel().getSelectedIndex() - 9), REGISTRIES.equipment.getEntry(this.textCharacterData.getText()).get());
       case 14 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].selectedAddition_19 = Integer.parseInt(this.textCharacterData.getText());
       case 15, 16, 17, 18, 19, 20, 21, 22 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].additionLevels_1a[this.getCharacterData.getSelectionModel().getSelectedIndex() - 15] = Integer.parseInt(this.textCharacterData.getText());
       case 23, 24, 25, 26, 27, 28, 29, 30 -> gameState_800babc8.charData_32c[this.getCharacter.getSelectionModel().getSelectedIndex()].additionXp_22[this.getCharacterData.getSelectionModel().getSelectedIndex() - 23] = Integer.parseInt(this.textCharacterData.getText());

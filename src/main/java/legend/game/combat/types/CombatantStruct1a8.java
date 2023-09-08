@@ -1,5 +1,6 @@
 package legend.game.combat.types;
 
+import legend.game.inventory.InventoryEntry;
 import legend.game.scripting.ScriptFile;
 import legend.game.types.CContainer;
 import legend.game.unpacker.FileData;
@@ -18,8 +19,8 @@ public class CombatantStruct1a8 {
   public int xp_194;
   public int gold_196;
   public final List<ItemDrop> drops = new ArrayList<>();
-  public int itemChance_198;
-  public int itemDrop_199;
+//  public int itemChance_198;
+//  public int itemDrop_199;
   public int _19a;
   public int charSlot_19c;
   /**
@@ -38,6 +39,6 @@ public class CombatantStruct1a8 {
   public int _1a4;
   public int _1a6;
 
-  public record ItemDrop(int chance, int item) {
+  public record ItemDrop(int chance, InventoryEntry item) {
   }
 }

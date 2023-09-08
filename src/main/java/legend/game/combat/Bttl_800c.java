@@ -1,7 +1,5 @@
 package legend.game.combat;
 
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.MathHelper;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
@@ -72,6 +70,7 @@ import legend.game.combat.types.BttlStruct08;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.CombatantStruct1a8_c;
 import legend.game.combat.types.DragoonSpells09;
+import legend.game.combat.types.EnemyDrop;
 import legend.game.combat.types.MersenneTwisterSeed;
 import legend.game.combat.types.Vec2;
 import legend.game.combat.ui.BattleDisplayStats144;
@@ -81,6 +80,8 @@ import legend.game.combat.ui.CombatItem02;
 import legend.game.combat.ui.CombatMenua4;
 import legend.game.combat.ui.FloatingNumberC4;
 import legend.game.fmv.Fmv;
+import legend.game.inventory.Equipment;
+import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.BattleEndedEvent;
@@ -147,6 +148,8 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_80021520;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.animateModel;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
+import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
+import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.renderModel;
@@ -174,11 +177,12 @@ import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
 import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
+import static legend.game.Scus94491BpeSegment_800b.equipmentOverflow;
 import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920;
-import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemiesCount_800bc978;
+import static legend.game.Scus94491BpeSegment_800b.itemOverflow;
 import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928;
 import static legend.game.Scus94491BpeSegment_800b.livingCharCount_800bc97c;
 import static legend.game.Scus94491BpeSegment_800b.livingCharIds_800bc968;
@@ -357,7 +361,7 @@ public final class Bttl_800c {
   public static BattleMenuStruct58 battleMenu_800c6c34;
   /** Only ever set to 1. 0 will set it to the top of the screen. */
   public static final IntRef battleHudYOffsetIndex_800c6c38 = MEMORY.ref(4, 0x800c6c38L, IntRef::new);
-  public static final IntList usedRepeatItems_800c6c3c = new IntArrayList();
+  public static final List<Item> usedRepeatItems_800c6c3c = new ArrayList<>();
 
   public static final ArrayRef<BattleHudCharacterDisplay3c> activePartyBattleHudCharacterDisplays_800c6c40 = MEMORY.ref(2, 0x800c6c40L, ArrayRef.of(BattleHudCharacterDisplay3c.class, 3, 0x3c, BattleHudCharacterDisplay3c::new));
 
@@ -997,7 +1001,9 @@ public final class Bttl_800c {
     totalXpFromCombat_800bc95c.set(0);
     _800bc960.set(0);
     postBattleActionIndex_800bc974.set(0);
-    itemsDroppedByEnemiesCount_800bc978.set(0);
+    itemsDroppedByEnemies_800bc928.clear();
+    itemOverflow.clear();
+    equipmentOverflow.clear();
 
     int charIndex = gameState_800babc8.charIds_88[1];
     if(charIndex < 0) {
@@ -3496,9 +3502,13 @@ public final class Bttl_800c {
           if((flags & 0x2000) == 0) { // Hasn't already dropped loot
             for(final CombatantStruct1a8.ItemDrop drop : enemyCombatant.drops) {
               if(simpleRand() * 100 >> 16 < drop.chance()) {
-                itemsDroppedByEnemies_800bc928.get(itemsDroppedByEnemiesCount_800bc978.get()).set(drop.item());
-                itemsDroppedByEnemiesCount_800bc978.incr();
-                flags = flags | 0x2000;
+                if(drop.item() instanceof final Equipment equipment) {
+                  itemsDroppedByEnemies_800bc928.add(new EnemyDrop(equipment.getIcon(), equipment.getName(), () -> giveEquipment(equipment), () -> equipmentOverflow.add(equipment)));
+                } else if(drop.item() instanceof final Item item) {
+                  itemsDroppedByEnemies_800bc928.add(new EnemyDrop(item.getIcon(), item.getName(), () -> giveItem(item), () -> itemOverflow.add(item)));
+                }
+
+                flags |= 0x2000;
               }
             }
           }

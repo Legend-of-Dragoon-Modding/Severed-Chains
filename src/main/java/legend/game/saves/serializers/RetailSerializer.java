@@ -3,6 +3,7 @@ package legend.game.saves.serializers;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.SavedGame;
 import legend.game.types.CharacterData2c;
+import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 
@@ -89,7 +90,7 @@ public final class RetailSerializer {
         break;
       }
 
-      state.equipment_1e8.add(id);
+      state.equipmentIds_1e8.add(id);
     }
 
     for(int i = 0; i < 64; i++) {
@@ -99,7 +100,7 @@ public final class RetailSerializer {
         break;
       }
 
-      state.items_2e9.add(id);
+      state.itemIds_2e9.add(id);
     }
 
     for(int charSlot = 0; charSlot < 9; charSlot++) {
@@ -117,7 +118,7 @@ public final class RetailSerializer {
       charData.dlevel_13 = charSlice.readUByte(0x13);
 
       for(int i = 0; i < 5; i++) {
-        charData.equipment_14[i] = charSlice.readUByte(0x14 + i);
+        charData.equipmentIds_14.put(EquipmentSlot.fromLegacy(i), charSlice.readUByte(0x14 + i));
       }
 
       charData.selectedAddition_19 = charSlice.readByte(0x19);

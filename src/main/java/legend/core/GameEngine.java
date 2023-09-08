@@ -26,6 +26,7 @@ import legend.game.saves.serializers.RetailSerializer;
 import legend.game.saves.serializers.V1Serializer;
 import legend.game.saves.serializers.V2Serializer;
 import legend.game.saves.serializers.V3Serializer;
+import legend.game.saves.serializers.V4Serializer;
 import legend.game.scripting.ScriptManager;
 import legend.game.sound.Sequencer;
 import legend.game.unpacker.FileData;
@@ -85,7 +86,7 @@ public final class GameEngine {
   public static final Sequencer SEQUENCER = new Sequencer();
 
   public static final ConfigCollection CONFIG = new ConfigCollection();
-  public static final SaveManager SAVES = new SaveManager(V3Serializer.MAGIC_V3, V3Serializer::toV3);
+  public static final SaveManager SAVES = new SaveManager(V4Serializer.MAGIC_V4, V4Serializer::toV4);
 
   public static final RenderEngine RENDERER = new RenderEngine();
   public static final ScreenStack SCREENS = new ScreenStack();
@@ -182,6 +183,7 @@ public final class GameEngine {
         SAVES.registerDeserializer(V1Serializer::fromV1Matcher, V1Serializer::fromV1);
         SAVES.registerDeserializer(V2Serializer::fromV2Matcher, V2Serializer::fromV2);
         SAVES.registerDeserializer(V3Serializer::fromV3Matcher, V3Serializer::fromV3);
+        SAVES.registerDeserializer(V4Serializer::fromV4Matcher, V4Serializer::fromV4);
 
         synchronized(LOCK) {
           Unpacker.setStatusListener(status -> {

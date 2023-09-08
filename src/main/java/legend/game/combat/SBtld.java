@@ -22,12 +22,14 @@ import legend.game.scripting.ScriptState;
 import legend.game.types.LodString;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
+import legend.lodmod.LodMod;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.MEMORY;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
@@ -234,7 +236,7 @@ public class SBtld {
 
     combatant.drops.clear();
     if(rewards.itemDrop_05.get() != 0xff) {
-      combatant.drops.add(new CombatantStruct1a8.ItemDrop(rewards.itemChance_04.get(), rewards.itemDrop_05.get()));
+      combatant.drops.add(new CombatantStruct1a8.ItemDrop(rewards.itemChance_04.get(), rewards.itemDrop_05.get() < 192 ? REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(rewards.itemDrop_05.get())).get() : REGISTRIES.items.getEntry(LodMod.itemIdMap.get(rewards.itemDrop_05.get() - 192)).get()));
     }
 
     final EnemyRewardsEvent event = EVENTS.postEvent(new EnemyRewardsEvent(enemyId, rewards.xp_00.get(), rewards.gold_02.get(), combatant.drops));

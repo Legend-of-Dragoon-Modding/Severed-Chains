@@ -11,7 +11,7 @@ public class ItemStats0c {
   /**
    * <ul>
    *   <li>0x2 - target all</li>
-   *   <li>0x4 - target all</li>
+   *   <li>0x4 - target monsters</li>
    *   <li>0x10 - can be used in menu</li>
    * </ul>
    *

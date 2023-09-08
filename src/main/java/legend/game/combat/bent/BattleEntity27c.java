@@ -52,7 +52,7 @@ public abstract class BattleEntity27c extends BattleObject {
    * </ul>
    */
   public int specialEffectFlag_14;
-  public int equipmentType_16;
+//  public int equipmentType_16;
   public int equipment_02_18;
   public int equipmentEquipableFlags_1a;
 
@@ -253,7 +253,7 @@ public abstract class BattleEntity27c extends BattleObject {
       case 6 -> this.stats.getStat(CoreMod.HP_STAT.get()).getMax();
 
       case 8 -> this.specialEffectFlag_14;
-      case 9 -> this.equipmentType_16;
+//      case 9 -> this.equipmentType_16;
       case 10 -> this.equipment_02_18;
       case 11 -> this.equipmentEquipableFlags_1a;
       case 13 -> this.equipment_05_1e;
@@ -350,7 +350,7 @@ public abstract class BattleEntity27c extends BattleObject {
       case 5 -> this.status_0e = value;
 
       case 8 -> this.specialEffectFlag_14 = value;
-      case 9 -> this.equipmentType_16 = value;
+//      case 9 -> this.equipmentType_16 = value;
       case 10 -> this.equipment_02_18 = value;
       case 11 -> this.equipmentEquipableFlags_1a = value;
 

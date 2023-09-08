@@ -2,8 +2,15 @@ package legend.game.types;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import legend.core.GameEngine;
+import legend.game.inventory.Equipment;
+import legend.game.inventory.Item;
+import legend.lodmod.LodMod;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class GameState52c {
   public String campaignName;
@@ -49,8 +56,17 @@ public class GameState52c {
   public final int[] chestFlags_1c4 = new int[8];
 //  public final ShortRef equipmentCount_1e4;
 //  public final ShortRef itemCount_1e6;
-  public final IntList equipment_1e8 = new IntArrayList();
-  public final IntList items_2e9 = new IntArrayList();
+  public final List<Equipment> equipment_1e8 = new ArrayList<>();
+  public final List<Item> items_2e9 = new ArrayList<>();
+
+  /** Only used during loading */
+  public final IntList equipmentIds_1e8 = new IntArrayList();
+  /** Only used during loading */
+  public final List<RegistryId> equipmentRegistryIds_1e8 = new ArrayList<>();
+  /** Only used during loading */
+  public final IntList itemIds_2e9 = new IntArrayList();
+  /** Only used during loading */
+  public final List<RegistryId> itemRegistryIds_2e9 = new ArrayList<>();
 
   public final CharacterData2c[] charData_32c = new CharacterData2c[9];
 //  public final int[] _4b8 = new int[8];
@@ -72,5 +88,40 @@ public class GameState52c {
 
   public GameState52c() {
     Arrays.setAll(this.charData_32c, i -> new CharacterData2c());
+  }
+
+  public void syncIds() {
+    this.equipment_1e8.clear();
+    this.items_2e9.clear();
+
+    for(final int id : this.equipmentIds_1e8) {
+      this.equipment_1e8.add(GameEngine.REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(id)).get());
+    }
+
+    for(final RegistryId id : this.equipmentRegistryIds_1e8) {
+      this.equipment_1e8.add(GameEngine.REGISTRIES.equipment.getEntry(id).get());
+    }
+
+    for(final CharacterData2c charData : this.charData_32c) {
+      charData.equipment_14.clear();
+
+      for(final EquipmentSlot slot : EquipmentSlot.values()) {
+        if(charData.equipmentIds_14.containsKey(slot)) {
+          charData.equipment_14.put(slot, GameEngine.REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(charData.equipmentIds_14.getInt(slot))).get());
+        }
+
+        if(charData.equipmentRegistryIds_14.containsKey(slot)) {
+          charData.equipment_14.put(slot, GameEngine.REGISTRIES.equipment.getEntry(charData.equipmentRegistryIds_14.get(slot)).get());
+        }
+      }
+    }
+
+    for(final int id : this.itemIds_2e9) {
+      this.items_2e9.add(GameEngine.REGISTRIES.items.getEntry(LodMod.itemIdMap.get(id - 192)).get());
+    }
+
+    for(final RegistryId id : this.itemRegistryIds_2e9) {
+      this.items_2e9.add(GameEngine.REGISTRIES.items.getEntry(id).get());
+    }
   }
 }

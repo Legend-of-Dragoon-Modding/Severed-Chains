@@ -5,6 +5,7 @@ import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.SavedGame;
 import legend.game.types.CharacterData2c;
+import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 
@@ -110,12 +111,12 @@ public final class V2Serializer {
     offset += 2;
 
     for(int i = 0; i < equipmentCount; i++) {
-      state.equipment_1e8.add(data.readUByte(offset));
+      state.equipmentIds_1e8.add(data.readUByte(offset));
       offset++;
     }
 
     for(int i = 0; i < itemCount; i++) {
-      state.items_2e9.add(data.readUByte(offset));
+      state.itemIds_2e9.add(data.readUByte(offset));
       offset++;
     }
 
@@ -142,8 +143,8 @@ public final class V2Serializer {
       charData.dlevel_13 = data.readUShort(offset);
       offset += 2;
 
-      for(int i = 0; i < charData.equipment_14.length; i++) {
-        charData.equipment_14[i] = data.readUByte(offset);
+      for(int i = 0; i < 5; i++) {
+        charData.equipmentIds_14.put(EquipmentSlot.fromLegacy(i), data.readUByte(offset));
         offset++;
       }
 

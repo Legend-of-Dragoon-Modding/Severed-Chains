@@ -1,6 +1,10 @@
 package legend.game.types;
 
 import legend.game.characters.ElementSet;
+import legend.game.inventory.Equipment;
+
+import java.util.EnumMap;
+import java.util.Map;
 
 public class ActiveStatsa0 {
   public int xp_00;
@@ -20,7 +24,7 @@ public class ActiveStatsa0 {
   public int dlevel_0f;
 
   /** ubyte */
-  public final int[] equipment_30 = new int[5];
+  public final Map<EquipmentSlot, Equipment> equipment_30 = new EnumMap<>(EquipmentSlot.class);
   /** Absolute addition index into the table of every addition for every character (byte) */
   public int selectedAddition_35;
   /** ubyte */
@@ -88,7 +92,7 @@ public class ActiveStatsa0 {
   /** ubyte */
   public int specialEffectFlag_76;
   /** ubyte */
-  public int equipmentType_77;
+//  public int equipmentType_77;
   /** ubyte */
   public int equipment_02_78;
   /** ubyte */
@@ -158,7 +162,8 @@ public class ActiveStatsa0 {
     this.flags_0c = other.flags_0c;
     this.level_0e = other.level_0e;
     this.dlevel_0f = other.dlevel_0f;
-    System.arraycopy(other.equipment_30, 0, this.equipment_30, 0, this.equipment_30.length);
+    this.equipment_30.clear();
+    this.equipment_30.putAll(other.equipment_30);
     this.selectedAddition_35 = other.selectedAddition_35;
     System.arraycopy(other.additionLevels_36, 0, this.additionLevels_36, 0, this.additionLevels_36.length);
     System.arraycopy(other.additionXp_3e, 0, this.additionXp_3e, 0, this.additionXp_3e.length);
@@ -193,7 +198,7 @@ public class ActiveStatsa0 {
     this.dragoonDefence_74 = other.dragoonDefence_74;
     this.dragoonMagicDefence_75 = other.dragoonMagicDefence_75;
     this.specialEffectFlag_76 = other.specialEffectFlag_76;
-    this.equipmentType_77 = other.equipmentType_77;
+//    this.equipmentType_77 = other.equipmentType_77;
     this.equipment_02_78 = other.equipment_02_78;
     this.equipmentEquipableFlags_79 = other.equipmentEquipableFlags_79;
     this.equipmentAttackElements_7a.set(other.equipmentAttackElements_7a);

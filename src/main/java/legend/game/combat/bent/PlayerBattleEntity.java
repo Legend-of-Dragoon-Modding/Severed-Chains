@@ -4,8 +4,14 @@ import legend.core.Latch;
 import legend.core.memory.Method;
 import legend.game.characters.Element;
 import legend.game.characters.ElementSet;
+import legend.game.inventory.Equipment;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptState;
+import legend.game.types.EquipmentSlot;
+import legend.lodmod.LodMod;
+
+import java.util.EnumMap;
+import java.util.Map;
 
 import static java.lang.Math.round;
 import static legend.core.GameEngine.CONFIG;
@@ -44,11 +50,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
   public int _118;
   public int additionSpMultiplier_11a;
   public int additionDamageMultiplier_11c;
-  public int equipment0_11e;
-  public int equipment1_120;
-  public int equipment2_122;
-  public int equipment3_124;
-  public int equipment4_126;
+  public final Map<EquipmentSlot, Equipment> equipment_11e = new EnumMap<>(EquipmentSlot.class);
   public int spMultiplier_128;
   public int spPerPhysicalHit_12a;
   public int mpPerPhysicalHit_12c;
@@ -217,11 +219,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
       case 138 -> this._118;
       case 139 -> this.additionSpMultiplier_11a;
       case 140 -> this.additionDamageMultiplier_11c;
-      case 141 -> this.equipment0_11e;
-      case 142 -> this.equipment1_120;
-      case 143 -> this.equipment2_122;
-      case 144 -> this.equipment3_124;
-      case 145 -> this.equipment4_126;
+      case 141, 142, 143, 144, 145 -> LodMod.idEquipmentMap.getInt(this.equipment_11e.get(EquipmentSlot.fromLegacy(statIndex - 141))); //TODO
       case 146 -> this.spMultiplier_128;
       case 147 -> this.spPerPhysicalHit_12a;
       case 148 -> this.mpPerPhysicalHit_12c;
@@ -276,11 +274,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
       case 138 -> this._118 = value;
       case 139 -> this.additionSpMultiplier_11a = value;
       case 140 -> this.additionDamageMultiplier_11c = value;
-      case 141 -> this.equipment0_11e = value;
-      case 142 -> this.equipment1_120 = value;
-      case 143 -> this.equipment2_122 = value;
-      case 144 -> this.equipment3_124 = value;
-      case 145 -> this.equipment4_126 = value;
+//      case 141, 142, 143, 144, 145 -> this.equipment_11e.put(EquipmentSlot.fromLegacy(statIndex - 141), value); //TODO
       case 146 -> this.spMultiplier_128 = value;
       case 147 -> this.spPerPhysicalHit_12a = value;
       case 148 -> this.mpPerPhysicalHit_12c = value;
