@@ -45,8 +45,8 @@ import legend.game.types.LodString;
 import legend.game.types.MagicStuff08;
 import legend.game.types.MenuAdditionInfo;
 import legend.game.types.MenuEntries;
-import legend.game.types.MenuGlyph06;
 import legend.game.types.MenuEntryStruct04;
+import legend.game.types.MenuGlyph06;
 import legend.game.types.MenuStatus08;
 import legend.game.types.MessageBox20;
 import legend.game.types.MessageBoxResult;
@@ -96,7 +96,6 @@ import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
-import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
 import static legend.game.Scus94491BpeSegment_8005.combatants_8005e398;
 import static legend.game.Scus94491BpeSegment_8005.standingInSavePoint_8005a368;
@@ -1549,22 +1548,14 @@ public final class SItem {
     //LAB_8010905c
   }
 
-  public static String getItemName(final int itemId) {
-    if(itemId < 0xc0) {
-      return equipmentStats_80111ff0[itemId].name;
-    }
-
-    return itemStats_8004f2ac[itemId - 0xc0].name;
-  }
-
-  public static String getItemDescription(final int itemId) {
-    if(itemId < 0xc0) {
-      return equipmentStats_80111ff0[itemId].description;
-    }
-
-    return itemStats_8004f2ac[itemId - 0xc0].description;
-  }
-
+  /**
+   * String types:
+   * <ul>
+   *   <li>0 - item descriptions (removed)</li>
+   *   <li>1 - ?</li>
+   *   <li>2 - Dabas</li>
+   * </ul>
+   */
   @Method(0x80109074L)
   public static void renderString(final int stringType, final int x, final int y, final int stringIndex, final boolean allocate) {
     if(allocate) {
@@ -1574,12 +1565,7 @@ public final class SItem {
     //LAB_801090e0
     LodString s0 = null;
     if(stringType == 0) {
-      //LAB_80109118
-      if(stringIndex == 0xff) {
-        return;
-      }
-
-      s0 = new LodString(getItemDescription(stringIndex));
+      throw new RuntimeException("Use renderString overload");
     } else if(stringType == 1) {
       //LAB_8010912c
       if(stringIndex >= 0xff) {

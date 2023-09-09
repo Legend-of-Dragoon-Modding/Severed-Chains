@@ -17,6 +17,7 @@ import legend.game.types.ItemStats0c;
 import legend.game.types.SpellStats0c;
 import legend.game.unpacker.Unpacker;
 import legend.lodmod.items.CharmPotionItem;
+import legend.lodmod.items.FileBasedItem;
 import org.legendofdragoon.modloader.Mod;
 import org.legendofdragoon.modloader.events.EventListener;
 import org.legendofdragoon.modloader.registries.RegistryId;
@@ -64,7 +65,7 @@ public class LodMod {
 
       final Item item;
       if(itemId != 0x1f) { // Charm Potion
-        item = Item.fromFile(name, itemDescriptions_80117a10.get(itemId + 0xc0).deref().get(), itemCombatDescriptions_80051758.get(itemId).deref().get(), itemPrices_80114310.get(itemId + 192).get(), Unpacker.loadFile("items/%d.ditm".formatted(itemId)));
+        item = FileBasedItem.fromFile(name, itemDescriptions_80117a10.get(itemId + 0xc0).deref().get(), itemCombatDescriptions_80051758.get(itemId).deref().get(), itemPrices_80114310.get(itemId + 192).get(), Unpacker.loadFile("items/%d.ditm".formatted(itemId)));
       } else {
         item = new CharmPotionItem(name, itemDescriptions_80117a10.get(itemId + 0xc0).deref().get(), itemCombatDescriptions_80051758.get(itemId).deref().get(), itemPrices_80114310.get(itemId + 192).get());
       }

@@ -4,15 +4,13 @@ import legend.game.inventory.Item;
 import legend.game.inventory.UseItemResponse;
 import legend.game.types.EngineState;
 
-import java.util.EnumSet;
-
 import static legend.game.SMap.encounterAccumulator_800c6ae8;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_800b.hasNoEncounters_800bed58;
 
 public class CharmPotionItem extends Item {
   public CharmPotionItem(final String name, final String description, final String combatDescription, final int price) {
-    super(name, description, combatDescription, price, EnumSet.noneOf(TargetType.class), EnumSet.noneOf(UsageLocation.class), null, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, false, 0, 0, 0, 0, 0, 0, 0, 45, 0, 0, 0, 0);
+    super(name, description, combatDescription, 45, price);
   }
 
   @Override

@@ -89,7 +89,6 @@ import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.SItem.cacheCharacterSlots;
-import static legend.game.SItem.equipmentStats_80111ff0;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.SItem.menuAssetsLoaded;
@@ -142,7 +141,6 @@ import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.freeSequence;
-import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 import static legend.game.Scus94491BpeSegment_8004.stopMusicSequence;
 import static legend.game.Scus94491BpeSegment_8005._8005027c;
 import static legend.game.Scus94491BpeSegment_8005._8005039c;
@@ -1117,25 +1115,6 @@ public final class Scus94491BpeSegment_8002 {
     }
   }
 
-  @Method(0x80022898L)
-  public static boolean itemCantBeDiscarded(final int itemId) {
-    if(itemId >= 0xc0) {
-      return false;
-    }
-
-    return (equipmentStats_80111ff0[itemId].flags_00 & 0x4) != 0;
-  }
-
-  @Method(0x800228d0L)
-  public static int getItemIcon(final int itemId) {
-    if(itemId >= 0xc0) {
-      return itemStats_8004f2ac[itemId - 0xc0].icon_07;
-    }
-
-    //LAB_80022908
-    return equipmentStats_80111ff0[itemId].icon_0e;
-  }
-
   @Method(0x80022928L)
   public static int getUnlockedDragoonSpells(final byte[] spellIndicesOut, final int charIndex) {
     //LAB_80022940
@@ -1217,23 +1196,6 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80022aec
-  }
-
-  @Method(0x80022afcL)
-  public static int itemCanBeUsedInMenu(final int itemId) {
-    if(itemId < 0xc0 || itemId == 0xff) {
-      return 0;
-    }
-
-    final int target = itemStats_8004f2ac[itemId - 0xc0].target_00;
-
-    if((target & 0x10) == 0) {
-      //LAB_80022b40
-      return 0;
-    }
-
-    //LAB_80022b48
-    return target & 0x12;
   }
 
   /**

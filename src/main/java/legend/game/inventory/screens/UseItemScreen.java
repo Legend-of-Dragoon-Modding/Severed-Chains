@@ -154,7 +154,7 @@ public class UseItemScreen extends MenuScreen {
     renderMenuItems(16, 10, this.menuItems, slotScroll, 5, saveListUpArrow_800bdb94, saveListDownArrow_800bdb98);
 
     if(selectedSlot + slotScroll < this.menuItems.size()) {
-      renderString(194, 16, this.menuItems.get(selectedSlot + slotScroll).item_00.description, allocate);
+      renderString(194, 16, this.menuItems.get(selectedSlot + slotScroll).item_00.getDescription(), allocate);
     }
   }
 
@@ -187,11 +187,6 @@ public class UseItemScreen extends MenuScreen {
   }
 
   private int getUsableItemsInMenu() {
-    int allStatus = 0;
-    for(int i = 0; i < characterCount_8011d7c4.get(); i++) {
-      allStatus |= gameState_800babc8.charData_32c[characterIndices_800bdbb8.get(i).get()].status_10;
-    }
-
     this.menuItems.clear();
 
     for(int i = 0; i < gameState_800babc8.items_2e9.size(); i++) {
@@ -201,7 +196,7 @@ public class UseItemScreen extends MenuScreen {
         final MenuEntryStruct04<Item> menuEntry = MenuEntryStruct04.make(item);
         menuEntry.flags_02 = 0;
 
-        if(item.type_0b == 0x8 && (item.status_08 & allStatus) == 0) {
+        if(!item.canBeUsedNow(Item.UsageLocation.MENU)) {
           menuEntry.flags_02 = 0x4000;
         }
 

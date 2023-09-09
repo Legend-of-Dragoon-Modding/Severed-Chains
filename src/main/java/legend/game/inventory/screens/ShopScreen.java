@@ -239,7 +239,7 @@ public class ShopScreen extends MenuScreen {
           count = gameState_800babc8.items_2e9.size();
 
           if(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0 < count) {
-            renderString(193, 122, gameState_800babc8.items_2e9.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).description, false);
+            renderString(193, 122, gameState_800babc8.items_2e9.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).getDescription(), false);
           }
         } else {
           renderText(Which_weapon_do_you_want_to_sell_8011c524, 16, 128, TextColour.BROWN);
@@ -413,8 +413,8 @@ public class ShopScreen extends MenuScreen {
       int i;
       for(i = 0; firstItem + i < gameState_800babc8.items_2e9.size() && i < 6; i++) {
         final Item item = gameState_800babc8.items_2e9.get(firstItem + i);
-        renderItemIcon(item.icon_07, 151, this.menuEntryY(i), 0x8L);
-        renderText(new LodString(item.name), 168, this.menuEntryY(i) + 2, TextColour.BROWN);
+        renderItemIcon(item.getIcon(), 151, this.menuEntryY(i), 0x8L);
+        renderText(new LodString(item.getName()), 168, this.menuEntryY(i) + 2, TextColour.BROWN);
 
         final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4.get(), item, item.getPrice()));
         this.FUN_801069d0(324, this.menuEntryY(i) + 4, event.price);
