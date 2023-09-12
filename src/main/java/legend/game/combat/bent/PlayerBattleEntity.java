@@ -7,6 +7,7 @@ import legend.game.characters.ElementSet;
 import legend.game.inventory.Equipment;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptState;
+import legend.game.types.ActiveStatsa0;
 import legend.game.types.EquipmentSlot;
 import legend.lodmod.LodMod;
 
@@ -17,6 +18,7 @@ import static java.lang.Math.round;
 import static legend.core.GameEngine.CONFIG;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
+import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.combat.Bttl_800c.getHitProperty;
 import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
 
@@ -181,9 +183,47 @@ public class PlayerBattleEntity extends BattleEntity27c {
   }
 
   @Override
-  public int getStat(final int statIndex) {
+  public void turnFinished() {
+    this.tickTemporaryStatMod(this, BattleEntityStat.TEMP_SP_PER_PHYSICAL_HIT);
+    this.tickTemporaryStatMod(this, BattleEntityStat.TEMP_MP_PER_PHYSICAL_HIT);
+    this.tickTemporaryStatMod(this, BattleEntityStat.TEMP_SP_PER_MAGICAL_HIT);
+    this.tickTemporaryStatMod(this, BattleEntityStat.TEMP_MP_PER_MAGICAL_HIT);
+
+    super.turnFinished();
+  }
+
+  @Override
+  public void recalculateSpeedAndPerHitStats() {
+    super.recalculateSpeedAndPerHitStats();
+
+    final ActiveStatsa0 stats = stats_800be5f8[this.charId_272];
+
+    this.spPerPhysicalHit_12a = stats.equipmentSpPerPhysicalHit_4e;
+    this.mpPerPhysicalHit_12c = stats.equipmentMpPerPhysicalHit_50;
+    this.spPerMagicalHit_12e = stats.equipmentSpPerMagicalHit_52;
+    this.mpPerMagicalHit_130 = stats.equipmentMpPerMagicalHit_54;
+
+    if(this.tempSpPerPhysicalHitTurns_cd != 0) {
+      this.spPerPhysicalHit_12a += this.tempSpPerPhysicalHit_cc;
+    }
+
+    if(this.tempMpPerPhysicalHitTurns_cf != 0) {
+      this.mpPerPhysicalHit_12c += this.tempMpPerPhysicalHit_ce;
+    }
+
+    if(this.tempSpPerMagicalHitTurns_d1 != 0) {
+      this.spPerMagicalHit_12e += this.tempSpPerMagicalHit_d0;
+    }
+
+    if(this.tempMpPerMagicalHitTurns_d3 != 0) {
+      this.mpPerMagicalHit_130 += this.tempMpPerMagicalHit_d2;
+    }
+  }
+
+  @Override
+  public int getStat(final BattleEntityStat statIndex) {
     int disableStatusFlag = 0x0;
-    if(statIndex == 5 || statIndex == 16) {
+    if(statIndex == BattleEntityStat.STATUS || statIndex == BattleEntityStat.EQUIPMENT_STATUS_RESIST) {
       disableStatusFlag = CONFIG.getConfig(CoreMod.DISABLE_STATUS_EFFECTS_CONFIG.get()) ? 0xff : 0x0;
       if(disableStatusFlag == 0xff) {
         this.status_0e &= 0xff00;
@@ -191,102 +231,106 @@ public class PlayerBattleEntity extends BattleEntity27c {
     }
 
     return switch(statIndex) {
-      case 0 -> this.level_04;
-      case 1 -> this.dlevel_06;
+      case LEVEL -> this.level_04;
+      case DLEVEL -> this.dlevel_06;
 
-      case 3 -> this.stats.getStat(CoreMod.SP_STAT.get()).getCurrent();
-      case 4 -> this.stats.getStat(CoreMod.MP_STAT.get()).getCurrent();
+      case CURRENT_SP -> this.stats.getStat(CoreMod.SP_STAT.get()).getCurrent();
+      case CURRENT_MP -> this.stats.getStat(CoreMod.MP_STAT.get()).getCurrent();
 
-      case 7 -> this.stats.getStat(CoreMod.MP_STAT.get()).getMax();
+      case MAX_MP -> this.stats.getStat(CoreMod.MP_STAT.get()).getMax();
 
-      case 12 -> this.equipmentAttackElements_1c.pack();
+      case EQUIPMENT_ATTACK_ELEMENT_OR_MONSTER_DISPLAY_ELEMENT -> this.equipmentAttackElements_1c.pack();
 
-      case 16 -> this.equipmentStatusResist_24 | disableStatusFlag;
+      case EQUIPMENT_STATUS_RESIST -> this.equipmentStatusResist_24 | disableStatusFlag;
 
-      case 41 -> this.additionHits_56;
-      case 42 -> this.selectedAddition_58;
+      case ADDITION_HITS -> this.additionHits_56;
+      case SELECTED_ADDITION -> this.selectedAddition_58;
 
-      case 84 -> this.dragoonAttack_ac;
-      case 85 -> this.dragoonMagic_ae;
-      case 86 -> this.dragoonDefence_b0;
-      case 87 -> this.dragoonMagicDefence_b2;
+      case DRAGOON_ATTACK -> this.dragoonAttack_ac;
+      case DRAGOON_MAGIC -> this.dragoonMagic_ae;
+      case DRAGOON_DEFENCE -> this.dragoonDefence_b0;
+      case DRAGOON_MAGIC_DEFENCE -> this.dragoonMagicDefence_b2;
 
-      case 100 -> (this.tempSpPerPhysicalHitTurns_cd & 0xff) << 8 | this.tempSpPerPhysicalHit_cc & 0xff;
-      case 101 -> (this.tempMpPerPhysicalHitTurns_cf & 0xff) << 8 | this.tempMpPerPhysicalHit_ce & 0xff;
-      case 102 -> (this.tempSpPerMagicalHitTurns_d1 & 0xff) << 8 | this.tempSpPerMagicalHit_d0 & 0xff;
-      case 103 -> (this.tempMpPerMagicalHitTurns_d3 & 0xff) << 8 | this.tempMpPerMagicalHit_d2 & 0xff;
+      case TEMP_SP_PER_PHYSICAL_HIT -> (this.tempSpPerPhysicalHitTurns_cd & 0xff) << 8 | this.tempSpPerPhysicalHit_cc & 0xff;
+      case TEMP_MP_PER_PHYSICAL_HIT -> (this.tempMpPerPhysicalHitTurns_cf & 0xff) << 8 | this.tempMpPerPhysicalHit_ce & 0xff;
+      case TEMP_SP_PER_MAGICAL_HIT -> (this.tempSpPerMagicalHitTurns_d1 & 0xff) << 8 | this.tempSpPerMagicalHit_d0 & 0xff;
+      case TEMP_MP_PER_MAGICAL_HIT -> (this.tempMpPerMagicalHitTurns_d3 & 0xff) << 8 | this.tempMpPerMagicalHit_d2 & 0xff;
 
-      case 138 -> this._118;
-      case 139 -> this.additionSpMultiplier_11a;
-      case 140 -> this.additionDamageMultiplier_11c;
-      case 141, 142, 143, 144, 145 -> LodMod.idEquipmentMap.getInt(this.equipment_11e.get(EquipmentSlot.fromLegacy(statIndex - 141))); //TODO
-      case 146 -> this.spMultiplier_128;
-      case 147 -> this.spPerPhysicalHit_12a;
-      case 148 -> this.mpPerPhysicalHit_12c;
-      case 149 -> this.spPerMagicalHit_12e;
-      case 150 -> this.mpPerMagicalHit_130;
-      case 151 -> this._132;
-      case 152 -> this.hpRegen_134;
-      case 153 -> this.mpRegen_136;
-      case 154 -> this.spRegen_138;
-      case 155 -> this.revive_13a;
-      case 156 -> this.hpMulti_13c;
-      case 157 -> this.mpMulti_13e;
+      case _138 -> this._118;
+      case ADDITION_SP_MULTIPLIER -> this.additionSpMultiplier_11a;
+      case ADDITION_DAMAGE_MULTIPLIER -> this.additionDamageMultiplier_11c;
+      case EQUIPMENT_WEAPON_SLOT -> LodMod.idEquipmentMap.getInt(this.equipment_11e.get(EquipmentSlot.WEAPON)); //TODO
+      case EQUIPMENT_HELMET_SLOT -> LodMod.idEquipmentMap.getInt(this.equipment_11e.get(EquipmentSlot.HELMET));
+      case EQUIPMENT_ARMOUR_SLOT -> LodMod.idEquipmentMap.getInt(this.equipment_11e.get(EquipmentSlot.ARMOUR));
+      case EQUIPMENT_BOOTS_SLOT -> LodMod.idEquipmentMap.getInt(this.equipment_11e.get(EquipmentSlot.BOOTS));
+      case EQUIPMENT_ACCESSORY_SLOT -> LodMod.idEquipmentMap.getInt(this.equipment_11e.get(EquipmentSlot.ACCESSORY));
+      case SP_MULTIPLIER -> this.spMultiplier_128;
+      case SP_PER_PHYSICAL_HIT -> this.spPerPhysicalHit_12a;
+      case MP_PER_PHYSICAL_HIT -> this.mpPerPhysicalHit_12c;
+      case SP_PER_MAGICAL_HIT -> this.spPerMagicalHit_12e;
+      case MP_PER_MAGICAL_HIT -> this.mpPerMagicalHit_130;
+      case _151 -> this._132;
+      case HP_REGEN -> this.hpRegen_134;
+      case MP_REGEN -> this.mpRegen_136;
+      case SP_REGEN -> this.spRegen_138;
+      case REVIVE -> this.revive_13a;
+      case HP_MULTI -> this.hpMulti_13c;
+      case MP_MULTI -> this.mpMulti_13e;
 
       default -> super.getStat(statIndex);
     };
   }
 
   @Override
-  public void setStat(final int statIndex, final int value) {
+  public void setStat(final BattleEntityStat statIndex, final int value) {
     switch(statIndex) {
-      case 0 -> this.level_04 = value;
-      case 1 -> this.dlevel_06 = value;
+      case LEVEL -> this.level_04 = value;
+      case DLEVEL -> this.dlevel_06 = value;
 
-      case 3 -> this.stats.getStat(CoreMod.SP_STAT.get()).setCurrent(value);
-      case 4 -> this.stats.getStat(CoreMod.MP_STAT.get()).setCurrent(value);
+      case CURRENT_SP -> this.stats.getStat(CoreMod.SP_STAT.get()).setCurrent(value);
+      case CURRENT_MP -> this.stats.getStat(CoreMod.MP_STAT.get()).setCurrent(value);
 
-      case 41 -> this.additionHits_56 = value;
-      case 42 -> this.selectedAddition_58 = value;
+      case ADDITION_HITS -> this.additionHits_56 = value;
+      case SELECTED_ADDITION -> this.selectedAddition_58 = value;
 
-      case 84 -> this.dragoonAttack_ac = value;
-      case 85 -> this.dragoonMagic_ae = value;
-      case 86 -> this.dragoonDefence_b0 = value;
-      case 87 -> this.dragoonMagicDefence_b2 = value;
+      case DRAGOON_ATTACK -> this.dragoonAttack_ac = value;
+      case DRAGOON_MAGIC -> this.dragoonMagic_ae = value;
+      case DRAGOON_DEFENCE -> this.dragoonDefence_b0 = value;
+      case DRAGOON_MAGIC_DEFENCE -> this.dragoonMagicDefence_b2 = value;
 
-      case 100 -> {
+      case TEMP_SP_PER_PHYSICAL_HIT -> {
         this.tempSpPerPhysicalHit_cc = value & 0xff;
         this.tempSpPerPhysicalHitTurns_cd = value >>> 8 & 0xff;
       }
-      case 101 -> {
+      case TEMP_MP_PER_PHYSICAL_HIT -> {
         this.tempMpPerPhysicalHit_ce = value & 0xff;
         this.tempMpPerPhysicalHitTurns_cf = value >>> 8 & 0xff;
       }
-      case 102 -> {
+      case TEMP_SP_PER_MAGICAL_HIT -> {
         this.tempSpPerMagicalHit_d0 = value & 0xff;
         this.tempSpPerMagicalHitTurns_d1 = value >>> 8 & 0xff;
       }
-      case 103 -> {
+      case TEMP_MP_PER_MAGICAL_HIT -> {
         this.tempMpPerMagicalHit_d2 = value & 0xff;
         this.tempMpPerMagicalHitTurns_d3 = value >>> 8 & 0xff;
       }
 
-      case 138 -> this._118 = value;
-      case 139 -> this.additionSpMultiplier_11a = value;
-      case 140 -> this.additionDamageMultiplier_11c = value;
+      case _138 -> this._118 = value;
+      case ADDITION_SP_MULTIPLIER -> this.additionSpMultiplier_11a = value;
+      case ADDITION_DAMAGE_MULTIPLIER -> this.additionDamageMultiplier_11c = value;
 //      case 141, 142, 143, 144, 145 -> this.equipment_11e.put(EquipmentSlot.fromLegacy(statIndex - 141), value); //TODO
-      case 146 -> this.spMultiplier_128 = value;
-      case 147 -> this.spPerPhysicalHit_12a = value;
-      case 148 -> this.mpPerPhysicalHit_12c = value;
-      case 149 -> this.spPerMagicalHit_12e = value;
-      case 150 -> this.mpPerMagicalHit_130 = value;
-      case 151 -> this._132 = value;
-      case 152 -> this.hpRegen_134 = value;
-      case 153 -> this.mpRegen_136 = value;
-      case 154 -> this.spRegen_138 = value;
-      case 155 -> this.revive_13a = value;
-      case 156 -> this.hpMulti_13c = value;
-      case 157 -> this.mpMulti_13e = value;
+      case SP_MULTIPLIER -> this.spMultiplier_128 = value;
+      case SP_PER_PHYSICAL_HIT -> this.spPerPhysicalHit_12a = value;
+      case MP_PER_PHYSICAL_HIT -> this.mpPerPhysicalHit_12c = value;
+      case SP_PER_MAGICAL_HIT -> this.spPerMagicalHit_12e = value;
+      case MP_PER_MAGICAL_HIT -> this.mpPerMagicalHit_130 = value;
+      case _151 -> this._132 = value;
+      case HP_REGEN -> this.hpRegen_134 = value;
+      case MP_REGEN -> this.mpRegen_136 = value;
+      case SP_REGEN -> this.spRegen_138 = value;
+      case REVIVE -> this.revive_13a = value;
+      case HP_MULTI -> this.hpMulti_13c = value;
+      case MP_MULTI -> this.mpMulti_13e = value;
 
       default -> super.setStat(statIndex, value);
     }

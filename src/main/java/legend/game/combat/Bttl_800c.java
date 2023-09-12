@@ -28,6 +28,7 @@ import legend.game.SItem;
 import legend.game.Scus94491BpeSegment_8005;
 import legend.game.characters.Element;
 import legend.game.combat.bent.BattleEntity27c;
+import legend.game.combat.bent.BattleEntityStat;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.deff.BattleStruct24_2;
@@ -91,6 +92,7 @@ import legend.game.scripting.FlowControl;
 import legend.game.scripting.IntParam;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
+import legend.game.scripting.ScriptEnum;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptParam;
 import legend.game.scripting.ScriptState;
@@ -428,8 +430,6 @@ public final class Bttl_800c {
 
   /** Different sets of bents for different target types (chars, monsters, all) */
   public static ScriptState<BattleEntity27c>[][] targetBents_800c71f0;
-
-  public static final ArrayRef<IntRef> buffDebuffStatIndices_800c723c = MEMORY.ref(4, 0x800c723cL, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
 
   public static final ArrayRef<UnsignedShortRef> protectedItems_800c72cc = MEMORY.ref(2, 0x800c72ccL, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
 
@@ -3411,7 +3411,8 @@ public final class Bttl_800c {
   @ScriptDescription("Sets a stat value of a battle entity (doesn't allow setting negative HP)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "value", description = "The new stat value")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "statIndex", description = "The stat index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.ENUM, name = "statIndex", description = "The stat index")
+  @ScriptEnum(BattleEntityStat.class)
   @Method(0x800ccd34L)
   public static FlowControl scriptSetBentStat(final RunningScript<?> script) {
     int value = script.params_20[1].get();
@@ -3421,40 +3422,43 @@ public final class Bttl_800c {
 
     //LAB_800ccd8c
     final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bent.setStat(script.params_20[2].get(), value);
+    bent.setStat(BattleEntityStat.fromLegacy(script.params_20[2].get()), value);
     return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Sets a stat value of a battle entity")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "value", description = "The new stat value")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "statIndex", description = "The stat index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.ENUM, name = "statIndex", description = "The stat index")
+  @ScriptEnum(BattleEntityStat.class)
   @Method(0x800ccda0L)
   public static FlowControl scriptSetBentRawStat(final RunningScript<?> script) {
     final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bent.setStat(Math.max(0, script.params_20[2].get()), script.params_20[1].get());
+    bent.setStat(BattleEntityStat.fromLegacy(Math.max(0, script.params_20[2].get())), script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Gets a stat value of a battle entity")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "statIndex", description = "The stat index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.ENUM, name = "statIndex", description = "The stat index")
+  @ScriptEnum(BattleEntityStat.class)
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The stat value")
   @Method(0x800cce04L)
   public static FlowControl scriptGetBentStat(final RunningScript<?> script) {
     final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[2].set(bent.getStat(script.params_20[1].get()));
+    script.params_20[2].set(bent.getStat(BattleEntityStat.fromLegacy(script.params_20[1].get())));
     return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Gets a stat value of a battle entity")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "statIndex", description = "The stat index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.ENUM, name = "statIndex", description = "The stat index")
+  @ScriptEnum(BattleEntityStat.class)
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The stat value")
   @Method(0x800cce70L)
   public static FlowControl scriptGetBentStat2(final RunningScript<?> script) {
     final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[2].set(bent.getStat(script.params_20[1].get()));
+    script.params_20[2].set(bent.getStat(BattleEntityStat.fromLegacy(script.params_20[1].get())));
     return FlowControl.CONTINUE;
   }
 

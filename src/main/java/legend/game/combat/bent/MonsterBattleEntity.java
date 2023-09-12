@@ -96,34 +96,34 @@ public class MonsterBattleEntity extends BattleEntity27c {
   }
 
   @Override
-  public int getStat(final int statIndex) {
+  public int getStat(final BattleEntityStat statIndex) {
     return switch(statIndex) {
-      case 12 -> this.displayElement_1c.flag;
+      case EQUIPMENT_ATTACK_ELEMENT_OR_MONSTER_DISPLAY_ELEMENT -> this.displayElement_1c.flag;
 
-      case 53 -> this.damageReductionFlags_6e;
-      case 54 -> this._70;
-      case 55 -> this.monsterElement_72.flag;
-      case 56 -> this.monsterElementalImmunity_74.pack();
-      case 57 -> this.monsterStatusResistFlag_76;
-      case 58 -> this.targetArrowPos_78.getX();
-      case 59 -> this.targetArrowPos_78.getY();
-      case 60 -> this.targetArrowPos_78.getZ();
+      case MONSTER_DAMAGE_REDUCTION -> this.damageReductionFlags_6e;
+      case _54 -> this._70;
+      case MONSTER_ELEMENT -> this.monsterElement_72.flag;
+      case MONSTER_ELEMENTAL_IMMUNITY -> this.monsterElementalImmunity_74.pack();
+      case MONSTER_STATUS_RESIST_FLAGS -> this.monsterStatusResistFlag_76;
+      case MONSTER_TARGET_ARROW_POSITION_X -> this.targetArrowPos_78.getX();
+      case MONSTER_TARGET_ARROW_POSITION_Y -> this.targetArrowPos_78.getY();
+      case MONSTER_TARGET_ARROW_POSITION_Z -> this.targetArrowPos_78.getZ();
 
       default -> super.getStat(statIndex);
     };
   }
 
   @Override
-  public void setStat(final int statIndex, final int value) {
+  public void setStat(final BattleEntityStat statIndex, final int value) {
     switch(statIndex) {
-      case 53 -> this.damageReductionFlags_6e = value;
-      case 54 -> this._70 = value;
-      case 55 -> this.monsterElement_72 = Element.fromFlag(value);
-      case 56 -> this.monsterElementalImmunity_74.unpack(value);
-      case 57 -> this.monsterStatusResistFlag_76 = value;
-      case 58 -> this.targetArrowPos_78.setX((short)value);
-      case 59 -> this.targetArrowPos_78.setY((short)value);
-      case 60 -> this.targetArrowPos_78.setZ((short)value);
+      case MONSTER_DAMAGE_REDUCTION -> this.damageReductionFlags_6e = value;
+      case _54 -> this._70 = value;
+      case MONSTER_ELEMENT -> this.monsterElement_72 = Element.fromFlag(value);
+      case MONSTER_ELEMENTAL_IMMUNITY -> this.monsterElementalImmunity_74.unpack(value);
+      case MONSTER_STATUS_RESIST_FLAGS -> this.monsterStatusResistFlag_76 = value;
+      case MONSTER_TARGET_ARROW_POSITION_X -> this.targetArrowPos_78.setX((short)value);
+      case MONSTER_TARGET_ARROW_POSITION_Y -> this.targetArrowPos_78.setY((short)value);
+      case MONSTER_TARGET_ARROW_POSITION_Z -> this.targetArrowPos_78.setZ((short)value);
 
       default -> super.setStat(statIndex, value);
     }

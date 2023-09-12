@@ -387,19 +387,19 @@ public class ScriptState<T> {
             final int storage1 = this.storage_44[cmd1];
             final int storage2 = this.storage_44[cmd2];
             this.context.params_20[paramIndex] = new GameVarArrayParam(cmd0 + storage1, storage2);
-          } else if(paramType == 0x9) { // Push (commandStart + (cmd0 | cmd1 << 8) * 4)
+          } else if(paramType == 0x9) { // INLINE_1 Push (commandStart + (cmd0 | cmd1 << 8) * 4)
             //LAB_80016328
             this.context.params_20[paramIndex] = new ScriptInlineParam(this, this.context.opOffset_08 + (short)childCommand);
-          } else if(paramType == 0xa) { // Push (commandStart + (script[this].storage[cmd2] + (cmd0 | cmd1 << 8)) * 4)
+          } else if(paramType == 0xa) { // INLINE_2 Push (commandStart + (script[this].storage[cmd2] + (cmd0 | cmd1 << 8)) * 4)
             //LAB_80016118
             //LAB_80016334
             final int storage = this.storage_44[cmd2];
             this.context.params_20[paramIndex] = new ScriptInlineParam(this, this.context.opOffset_08 + ((short)childCommand + storage));
-          } else if(paramType == 0xb) { // Push (commandStart + (deref(commandStart + (script[this].storage[cmd2] + (cmd0 | cmd1 << 8)) * 4) + (cmd0 | cmd1 << 8)) * 4)
+          } else if(paramType == 0xb) { // INLINE_TABLE_1 Push (commandStart[commandStart[script[this].storage[cmd2] + (cmd0 | cmd1 << 8)] + (cmd0 | cmd1 << 8)])
             //LAB_80016360
             final int storage = this.storage_44[cmd2];
             this.context.params_20[paramIndex] = new ScriptInlineParam(this, this.context.opOffset_08).array((short)childCommand + new ScriptInlineParam(this, this.context.opOffset_08).array((short)childCommand + storage).get());
-          } else if(paramType == 0xc) { // Push commandStart[commandStart[script[this].storage[cmd0]] + script[this].storage[cmd1]]
+          } else if(paramType == 0xc) { // INLINE_TABLE_2 Push commandStart[commandStart[script[this].storage[cmd0]] + script[this].storage[cmd1]]
             //LAB_800163a0
             this.context.params_20[paramIndex] = new ScriptInlineParam(this, this.context.commandOffset_0c).array(new ScriptInlineParam(this, this.context.commandOffset_0c).array(this.storage_44[cmd0]).get() + this.storage_44[cmd1]);
             this.context.commandOffset_0c++;
@@ -423,10 +423,10 @@ public class ScriptState<T> {
             //LAB_80016138
             //LAB_8001648c
             assert false;
-          } else if(paramType == 0x13) {
+          } else if(paramType == 0x13) { // INLINE_3
             //LAB_800164a4
             this.context.params_20[paramIndex] = new ScriptInlineParam(this, this.context.opOffset_08).array((short)childCommand + cmd2);
-          } else if(paramType == 0x14) { // Push commandStart[(cmd0 | cmd1 << 8) + commandStart[(cmd0 | cmd1 << 8) + cmd2]]
+          } else if(paramType == 0x14) { // INLINE_TABLE_3 Push commandStart[(cmd0 | cmd1 << 8) + commandStart[(cmd0 | cmd1 << 8) + cmd2]]
             //LAB_800164b4
             //LAB_800164cc
             //LAB_800164d4
@@ -441,7 +441,7 @@ public class ScriptState<T> {
             //LAB_80016518
             this.context.params_20[paramIndex] = new ScriptInlineParam(this, new ScriptInlineParam(this, this.context.commandOffset_0c).array(cmd0).get() + this.storage_44[cmd1]);
             this.context.commandOffset_0c++;
-          } else if(paramType == 0x17) {
+          } else if(paramType == 0x17) { // INLINE_TABLE_4
             //LAB_800161d4
             //LAB_8001654c
             this.context.params_20[paramIndex] = new ScriptInlineParam(this, this.context.commandOffset_0c).array(new ScriptInlineParam(this, this.context.commandOffset_0c).array(cmd0).get() + cmd1);
