@@ -140,7 +140,21 @@ public final class Unpacker {
     }
   }
 
-  public static List<FileData> loadDirectory(final String name) {
+  public static void loadFile(final String name, final Consumer<FileData> onCompletion) {
+    loadingCount.incrementAndGet();
+
+    LOGGER.info("Loading file %s", name);
+
+    try {
+      onCompletion.accept(new FileData(Files.readAllBytes(ROOT.resolve(fixPath(name)))));
+    } catch(final IOException e) {
+      throw new RuntimeException("Failed to load file " + name, e);
+    } finally {
+      loadingCount.decrementAndGet();
+    }
+  }
+
+  public static void loadDirectory(final String name, final Consumer<List<FileData>> onCompletion) {
     loadingCount.incrementAndGet();
 
     LOGGER.info("Loading directory %s", name);
@@ -208,7 +222,7 @@ public final class Unpacker {
           }
         }
 
-        return files;
+        onCompletion.accept(files);
       } catch(final IOException e) {
         throw new RuntimeException("Failed to load directory " + name, e);
       } finally {
@@ -238,7 +252,7 @@ public final class Unpacker {
             }
           });
 
-        return files;
+        onCompletion.accept(files);
       } catch(final IOException e) {
         throw new RuntimeException("Failed to load directory " + name, e);
       } finally {
