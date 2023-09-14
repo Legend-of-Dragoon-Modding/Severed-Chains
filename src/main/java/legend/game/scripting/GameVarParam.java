@@ -74,7 +74,7 @@ public class GameVarParam extends Param {
       case 44 -> Bttl_800c._800c6748.get();
 //      case 45 -> Scus94491BpeSegment_8006._8006e398._180.get(0);
 //      case 46 -> Bttl_800c.intRef_800c6718.get();
-      case 47 -> Scus94491BpeSegment_800b.combatStage_800bb0f4.get();
+      case 47 -> Scus94491BpeSegment_800b.battleStage_800bb0f4.get();
       case 48 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveBents_e78[0] != null ? Scus94491BpeSegment_8006.battleState_8006e398.aliveBents_e78[0].index : -1;
       case 49 -> Bttl_800c.aliveBentCount_800c669c.get();
       case 50 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveCharBents_eac[0] != null ? Scus94491BpeSegment_8006.battleState_8006e398.aliveCharBents_eac[0].index : -1;
@@ -85,7 +85,7 @@ public class GameVarParam extends Param {
       case 55 -> Scus94491BpeSegment_800b.gameState_800babc8._b4;
       case 56 -> Scus94491BpeSegment_800b.gameState_800babc8._b8;
       case 57 -> Scus94491BpeSegment_800b.postBattleActionIndex_800bc974.get();
-      case 58 -> Scus94491BpeSegment_800b._800bc960.get();
+      case 58 -> Scus94491BpeSegment_800b.battleFlags_800bc960.get();
       case 59 -> Bttl_800c.currentTurnBent_800c66c8 != null ? Bttl_800c.currentTurnBent_800c66c8.index : -1;
       case 60 -> Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920.get();
       case 61 -> Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c.get();
@@ -204,10 +204,10 @@ public class GameVarParam extends Param {
       case 44 -> Bttl_800c._800c6748.set(val);
 //      case 45 -> Scus94491BpeSegment_8006._8006e398._180.get(0);
 //      case 46 -> Bttl_800c.intRef_800c6718.set(val);
-      case 47 -> Scus94491BpeSegment_800b.combatStage_800bb0f4.set(val);
+      case 47 -> Scus94491BpeSegment_800b.battleStage_800bb0f4.set(val);
       case 48 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveBents_e78[0] = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[val];
       case 49 -> Bttl_800c.aliveBentCount_800c669c.set(val);
-      case 50 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveCharBents_eac[0] = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[val];
+      case 50 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveCharBents_eac[0] = (ScriptState<PlayerBattleEntity>)scriptStatePtrArr_800bc1c0[val];
       case 51 -> Bttl_800c.aliveCharCount_800c6760.set(val);
       case 52 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveMonsterBents_ebc[0] = (ScriptState<MonsterBattleEntity>)scriptStatePtrArr_800bc1c0[val];
       case 53 -> Bttl_800c.aliveMonsterCount_800c6758.set(val);
@@ -215,7 +215,7 @@ public class GameVarParam extends Param {
       case 55 -> Scus94491BpeSegment_800b.gameState_800babc8._b4 = val;
       case 56 -> Scus94491BpeSegment_800b.gameState_800babc8._b8 = val;
       case 57 -> Scus94491BpeSegment_800b.postBattleActionIndex_800bc974.set(val);
-      case 58 -> Scus94491BpeSegment_800b._800bc960.set(val);
+      case 58 -> Scus94491BpeSegment_800b.battleFlags_800bc960.set(val);
       case 59 -> Bttl_800c.currentTurnBent_800c66c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[val];
       case 60 -> Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920.set(val);
       case 61 -> Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c.set(val);

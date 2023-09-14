@@ -94,10 +94,10 @@ public class BattleStateEf4 {
    */
   public int counterAttackStage_288;
   public int _28c;
+  /** Used in player combat script */
   public int _290;
-  public int _294;
-  public int _298;
-  public int _29c;
+  /** Indexed by char slot */
+  public final int[] _294 = new int[3];
   public int _2a0;
   public int _2a4;
   public int _2a8;
@@ -116,6 +116,7 @@ public class BattleStateEf4 {
    * </ul>
    */
   public int specialFlag_2b0;
+  /** Used in player combat script */
   public int _2b4;
   public int _2b8;
   public int _2bc;
@@ -129,9 +130,8 @@ public class BattleStateEf4 {
   public int _2dc;
   public int _2e0;
   public int _2e4;
-  public int _2e8;
-  public int _2ec;
-  public int _2f0;
+  /** Indexed by char slot */
+  public final int[] _2e8 = new int[3];
   public int _2f4;
   public int _2f8;
   public int _2fc;
@@ -158,16 +158,15 @@ public class BattleStateEf4 {
   public int _328;
   public int _32c;
   public int _330;
-  public int _334;
-  public int _338;
-  public int _33c;
+  /** Pretty sure this is character index loading (boolean) */
+  public final int[] _334 = new int[3];
   public int _340;
   public int _344;
   public int _348;
-  public int _34c;
-  public int _350;
-  public int _354;
-  public int _358;
+  /** Indexed by char slot */
+  public final int[] _34c = new int[3];
+  /** Sequence volume is stored in here when player combat script is initialized */
+  public int sequenceVolume_358;
   public int _35c;
   public int _360;
   public int _364;
@@ -225,11 +224,13 @@ public class BattleStateEf4 {
   public int _450;
   public int _454;
   public int _458;
+  /** Briefly a bitset of which battle entities have status afflictions, maybe a flag that says this character's status effects forked script hasn't finished yet */
   public int _45c;
-  public int _460;
-  public int _464;
-  public int _468;
+  /** Indexed by char slot, something to do with bewitched (set to -1 if not bewitched) */
+  public final int[] _460 = new int[3];
+  /** Combat stage ID is stored here when player combat script is initialized */
   public int _46c;
+  /** Used in player combat script */
   public int _470;
   public final AdditionExtra04[] additionExtra_474 = new AdditionExtra04[8];
   public int _494;
@@ -254,12 +255,18 @@ public class BattleStateEf4 {
   public int _4e0;
   public int _4e4;
   public int _4e8;
+  /** Used in player combat script */
   public int _4ec;
+  /** Used in player combat script */
   public int _4f0;
+  /** Used in player combat script */
   public int _4f4;
+  /** Used in player combat script */
   public int _4f8;
+  /** Used in player combat script */
   public int _4fc;
   public int damageDealt_500;
+  /** Used in player combat script */
   public int _504;
   public int _508;
   public int _50c;
@@ -280,6 +287,7 @@ public class BattleStateEf4 {
   public int _548;
   public int _54c;
   public int dragonBlockStaff_550;
+  /** Flag 0x1 causes the player combat script to rewind and yield in its main loop */
   public int _554;
   /** Bit set specifying which bent indices are being targeted */
   public int attackTargets_558;
@@ -301,7 +309,7 @@ public class BattleStateEf4 {
   public final ScriptState<PlayerBattleEntity>[] charBents_e40 = new ScriptState[4];
   public final ScriptState<MonsterBattleEntity>[] monsterBents_e50 = new ScriptState[10];
   public final ScriptState<? extends BattleEntity27c>[] aliveBents_e78 = new ScriptState[13];
-  public final ScriptState<? extends BattleEntity27c>[] aliveCharBents_eac = new ScriptState[4];
+  public final ScriptState<PlayerBattleEntity>[] aliveCharBents_eac = new ScriptState[4];
   public final ScriptState<MonsterBattleEntity>[] aliveMonsterBents_ebc = new ScriptState[10];
   // Reads directly from gameState now
 //  public TransformationMode morphMode_ee4;

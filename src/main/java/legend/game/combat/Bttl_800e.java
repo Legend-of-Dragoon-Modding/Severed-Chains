@@ -1988,11 +1988,6 @@ public final class Bttl_800e {
     loadSupportOverlay(1, SBtld::loadStageAmbiance);
   }
 
-  @Method(0x800e9100L)
-  public static void loadBattleHudDeff_() {
-    loadBattleHudDeff();
-  }
-
   @Method(0x800e9120L)
   public static void deallocateLightingControllerAndDeffManager() {
     scriptStatePtrArr_800bc1c0[1].deallocateWithChildren();
@@ -3027,7 +3022,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ebd34L)
-  public static void FUN_800ebd34(final BattleStage struct, final int index) {
+  public static void applyBattleStageTextureAnimations(final BattleStage struct, final int index) {
     final short[] v0 = struct._5f0[index];
 
     if(v0 == null) {
@@ -3162,11 +3157,11 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ec51cL)
-  public static void FUN_800ec51c(final BattleStage stage) {
+  public static void renderBattleStage(final BattleStage stage) {
     //LAB_800ec548
     for(int i = 0; i < 10; i++) {
       if(stage._618[i] != 0) {
-        FUN_800ebd34(stage, i);
+        applyBattleStageTextureAnimations(stage, i);
       }
 
       //LAB_800ec560
@@ -3511,7 +3506,7 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, sets shadow type to 3")
+  @ScriptDescription("Unknown, sets shadow type to 3, used when player combat script is initialized, second param is based on char ID")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "modelPartAttachmentIndex", description = "The model part index to attach the shadow to")
   @Method(0x800ee3c0L)

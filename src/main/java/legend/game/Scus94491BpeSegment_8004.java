@@ -6,6 +6,7 @@ import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
+import legend.core.memory.types.IntRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.core.spu.Voice;
@@ -390,7 +391,7 @@ public final class Scus94491BpeSegment_8004 {
 
     scriptSubFunctions_8004e29c[320] = Bttl_800c::scriptEnableBentTextureAnimation;
     scriptSubFunctions_8004e29c[321] = Scus94491BpeSegment::scriptRewindAndPause2;
-    scriptSubFunctions_8004e29c[322] = Bttl_800c::FUN_800cb84c;
+    scriptSubFunctions_8004e29c[322] = Bttl_800c::scriptSetCurrentBentAnimationIndex;
     scriptSubFunctions_8004e29c[323] = Bttl_800c::FUN_800cb95c;
     scriptSubFunctions_8004e29c[324] = Scus94491BpeSegment::scriptRewindAndPause2;
 
@@ -761,14 +762,14 @@ public final class Scus94491BpeSegment_8004 {
   /**
    * <ol start="0">
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
-   *   <li>{@link Bttl_800c#FUN_800c7524}</li>
+   *   <li>{@link Bttl_800c#initBattle}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
-   *   <li>{@link Bttl_800c#FUN_800c7648}</li>
-   *   <li>{@link Bttl_800c#FUN_800c76a0}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_80018998}</li>
+   *   <li>{@link Bttl_800c#loadStageAndControllerScripts}</li>
+   *   <li>{@link Bttl_800c#initializeViewportAndCamera}</li>
+   *   <li>{@link Scus94491BpeSegment#nextLoadingStage}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_80018998}</li>
+   *   <li>{@link Scus94491BpeSegment#nextLoadingStage}</li>
    *   <li>{@link Bttl_800c#battleInitiateAndPreload_800c772c}</li>
    *   <li>{@link Bttl_800c#deferAllocateEnemyBattleEntities()}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
@@ -776,19 +777,19 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link Bttl_800c#deferLoadEncounterAssets}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
-   *   <li>{@link Bttl_800c#FUN_800c7964}</li>
+   *   <li>{@link Bttl_800c#loadHudAndAttackAnimations}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link Bttl_800c#FUN_800c79f0}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link Bttl_800c#deferDoNothing}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
-   *   <li>{@link Bttl_800c#FUN_800c7a80}</li>
+   *   <li>{@link Bttl_800c#calculateInitialTurnValues}</li>
    *   <li>{@link Bttl_800c#battleTick}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link Bttl_800c#performPostBattleAction}</li>
    *   <li>{@link Bttl_800c#deallocateCombat}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_80018998}</li>
+   *   <li>{@link Scus94491BpeSegment#nextLoadingStage}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_80018508}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_800189b0}</li>
    * </ol>
@@ -796,14 +797,14 @@ public final class Scus94491BpeSegment_8004 {
   public static final Runnable[] _8004f5d4 = new Runnable[31];
   static {
     _8004f5d4[0] = Scus94491BpeSegment::waitForFilesToLoad;
-    _8004f5d4[1] = Bttl_800c::FUN_800c7524;
+    _8004f5d4[1] = Bttl_800c::initBattle;
     _8004f5d4[2] = Scus94491BpeSegment::waitForFilesToLoad;
     _8004f5d4[3] = Scus94491BpeSegment::waitForFilesToLoad;
-    _8004f5d4[4] = Bttl_800c::FUN_800c7648;
-    _8004f5d4[5] = Bttl_800c::FUN_800c76a0;
-    _8004f5d4[6] = Scus94491BpeSegment::FUN_80018998;
+    _8004f5d4[4] = Bttl_800c::loadStageAndControllerScripts;
+    _8004f5d4[5] = Bttl_800c::initializeViewportAndCamera;
+    _8004f5d4[6] = Scus94491BpeSegment::nextLoadingStage;
     _8004f5d4[7] = Scus94491BpeSegment::waitForFilesToLoad;
-    _8004f5d4[8] = Scus94491BpeSegment::FUN_80018998;
+    _8004f5d4[8] = Scus94491BpeSegment::nextLoadingStage;
     _8004f5d4[9] = Bttl_800c::battleInitiateAndPreload_800c772c;
     _8004f5d4[10] = Bttl_800c::deferAllocateEnemyBattleEntities;
     _8004f5d4[11] = Scus94491BpeSegment::waitForFilesToLoad;
@@ -811,19 +812,19 @@ public final class Scus94491BpeSegment_8004 {
     _8004f5d4[13] = Scus94491BpeSegment::waitForFilesToLoad;
     _8004f5d4[14] = Bttl_800c::deferLoadEncounterAssets;
     _8004f5d4[15] = Scus94491BpeSegment::waitForFilesToLoad;
-    _8004f5d4[16] = Bttl_800c::FUN_800c7964;
+    _8004f5d4[16] = Bttl_800c::loadHudAndAttackAnimations;
     _8004f5d4[17] = Scus94491BpeSegment::waitForFilesToLoad;
     _8004f5d4[18] = Bttl_800c::FUN_800c79f0;
     _8004f5d4[19] = Scus94491BpeSegment::waitForFilesToLoad;
     _8004f5d4[20] = Bttl_800c::deferDoNothing;
     _8004f5d4[21] = Scus94491BpeSegment::waitForFilesToLoad;
-    _8004f5d4[22] = Bttl_800c::FUN_800c7a80;
+    _8004f5d4[22] = Bttl_800c::calculateInitialTurnValues;
     _8004f5d4[23] = Bttl_800c::battleTick;
     _8004f5d4[24] = Scus94491BpeSegment::waitForFilesToLoad;
     _8004f5d4[25] = Bttl_800c::performPostBattleAction;
     _8004f5d4[26] = Bttl_800c::deallocateCombat;
     _8004f5d4[27] = Scus94491BpeSegment::waitForFilesToLoad;
-    _8004f5d4[28] = Scus94491BpeSegment::FUN_80018998;
+    _8004f5d4[28] = Scus94491BpeSegment::nextLoadingStage;
     _8004f5d4[29] = Scus94491BpeSegment::FUN_80018508;
     _8004f5d4[30] = Scus94491BpeSegment::FUN_800189b0;
   }
@@ -833,7 +834,7 @@ public final class Scus94491BpeSegment_8004 {
 
   public static final Value _8004f6e4 = MEMORY.ref(4, 0x8004f6e4L);
   public static final Value _8004f6e8 = MEMORY.ref(4, 0x8004f6e8L);
-  public static final Value _8004f6ec = MEMORY.ref(4, 0x8004f6ecL);
+  public static final IntRef battleStartDelayTicks_8004f6ec = MEMORY.ref(4, 0x8004f6ecL, IntRef::new);
 
   public static final ArrayRef<SubmapMusic08> _8004fa98 = MEMORY.ref(1, 0x8004fa98L, ArrayRef.of(SubmapMusic08.class, 13, 8, SubmapMusic08::new));
   public static final ArrayRef<SubmapMusic08> _8004fb00 = MEMORY.ref(1, 0x8004fb00L, ArrayRef.of(SubmapMusic08.class, 130, 8, SubmapMusic08::new));

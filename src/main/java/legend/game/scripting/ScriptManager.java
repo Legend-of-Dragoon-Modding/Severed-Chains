@@ -151,7 +151,7 @@ public class ScriptManager {
           final RunningScript<?> context = state.context;
 
           LOGGER.error("Script %d crashed!", index);
-          LOGGER.error("File %s[%d]", state.scriptPtr_14.name, state.offset_18);
+          LOGGER.error("File %s[addr 0x%x]", state.scriptPtr_14.name, state.offset_18 * 4);
           LOGGER.error("Parameters:");
           LOGGER.error("  Op param: 0x%x", context.opParam_18);
           for(int i = 0; i < context.paramCount_14; i++) {

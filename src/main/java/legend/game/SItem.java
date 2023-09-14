@@ -100,7 +100,7 @@ import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
 import static legend.game.Scus94491BpeSegment_8005.combatants_8005e398;
 import static legend.game.Scus94491BpeSegment_8005.standingInSavePoint_8005a368;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
-import static legend.game.Scus94491BpeSegment_800b._800bc960;
+import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
 import static legend.game.Scus94491BpeSegment_800b._800bdc2c;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.confirmDest_800bdc30;
@@ -360,7 +360,7 @@ public final class SItem {
     //LAB_800fc104
     loadSupportOverlay(2, SItem::deferLoadPartyTims);
     loadSupportOverlay(2, SItem::deferLoadPartyTmdAndAnims);
-    _800bc960.or(0x400);
+    battleFlags_800bc960.or(0x400);
   }
 
   @Method(0x800fc210L)
@@ -372,7 +372,7 @@ public final class SItem {
     combatantTmdAndAnimLoadedCallback(files, data.combatantIndex_26c, false);
 
     //LAB_800fc34c
-    _800bc960.or(0x4);
+    battleFlags_800bc960.or(0x4);
   }
 
   @Method(0x800fc3c0L)
