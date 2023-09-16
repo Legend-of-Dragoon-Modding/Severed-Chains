@@ -2166,6 +2166,7 @@ public final class Bttl_800e {
   }
 
   @ScriptDescription("Allocates an unknown model effect")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0", description = "Unused")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @Method(0x800e9854L)
   public static FlowControl FUN_800e9854(final RunningScript<? extends BattleObject> script) {
