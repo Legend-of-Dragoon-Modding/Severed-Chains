@@ -59,11 +59,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -97,7 +94,6 @@ import static legend.game.Scus94491BpeSegment_8003.GsSwapDispBuff;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.setDrawOffset;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8004.stopSoundsAndSequences;
 import static legend.game.Scus94491BpeSegment_8004._8004dd0c;
 import static legend.game.Scus94491BpeSegment_8004._8004dd48;
 import static legend.game.Scus94491BpeSegment_8004._8004f2a8;
@@ -141,6 +137,7 @@ import static legend.game.Scus94491BpeSegment_8004.startRegularSound;
 import static legend.game.Scus94491BpeSegment_8004.startSequenceAndChangeVolumeOverTime;
 import static legend.game.Scus94491BpeSegment_8004.stopMusicSequence;
 import static legend.game.Scus94491BpeSegment_8004.stopSoundSequence;
+import static legend.game.Scus94491BpeSegment_8004.stopSoundsAndSequences;
 import static legend.game.Scus94491BpeSegment_8004.supportOverlays_8004db88;
 import static legend.game.Scus94491BpeSegment_8004.swapDisplayBuffer_8004dd40;
 import static legend.game.Scus94491BpeSegment_8004.syncFrame_8004dd3c;
@@ -214,8 +211,6 @@ public final class Scus94491BpeSegment {
   private Scus94491BpeSegment() { }
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Scus94491BpeSegment.class);
-
-  private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
   public static final IntRef orderingTableBits_1f8003c0 = MEMORY.ref(4, 0x1f8003c0L, IntRef::new);
   public static final IntRef zShift_1f8003c4 = MEMORY.ref(4, 0x1f8003c4L, IntRef::new);
@@ -453,7 +448,7 @@ public final class Scus94491BpeSegment {
     });
 
     RENDERER.events().onShutdown(() -> {
-      EXECUTOR.shutdown();
+      Unpacker.shutdownLoader();
       stopSound();
       SPU.stop();
       Platform.exit();
@@ -867,8 +862,7 @@ public final class Scus94491BpeSegment {
   public static void loadOverlay(final String name, final long fileTransferDest, final Runnable onCompletion) {
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
 
-    EXECUTOR.execute(() -> {
-      final FileData data = Unpacker.loadFile(name);
+    Unpacker.loadFile(name, data -> {
       LOGGER.info("Loading overlay %s, size %d, dest %08x from %s.%s(%s:%d)", name, data.size(), fileTransferDest, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
       MEMORY.setBytes(fileTransferDest, data.getBytes());
       onCompletion.run();
@@ -891,7 +885,7 @@ public final class Scus94491BpeSegment {
 
     LOGGER.info("Loading file %s from %s.%s(%s:%d)", file, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    EXECUTOR.execute(() -> onCompletion.accept(Unpacker.loadFile(file)));
+    Unpacker.loadFile(file, onCompletion);
   }
 
   public static void loadDir(final String dir, final Consumer<List<FileData>> onCompletion) {
@@ -902,7 +896,7 @@ public final class Scus94491BpeSegment {
 
     LOGGER.info("Loading dir %s from %s.%s(%s:%d)", dir, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    EXECUTOR.execute(() -> onCompletion.accept(Unpacker.loadDirectory(dir)));
+    Unpacker.loadDirectory(dir, onCompletion);
   }
 
   public static void loadDrgnFiles(int drgnBinIndex, final Consumer<List<FileData>> onCompletion, final String... files) {
@@ -913,17 +907,12 @@ public final class Scus94491BpeSegment {
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading DRGN%d %s from %s.%s(%s:%d)", drgnBinIndex, String.join(", ", files), frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    final int finalDrgnBinIndex = drgnBinIndex;
-    EXECUTOR.execute(() -> {
-      final List<FileData> fileData = new ArrayList<>();
-      for(final String file : files) {
-        final String path = "SECT/DRGN%d.BIN/%s".formatted(finalDrgnBinIndex, file);
-        final FileData data = Unpacker.loadFile(path);
-        fileData.add(data);
-      }
+    final String[] paths = new String[files.length];
+    for(int i = 0; i < files.length; i++) {
+      paths[i] = "SECT/DRGN%d.BIN/%s".formatted(drgnBinIndex, files[i]);
+    }
 
-      onCompletion.accept(fileData);
-    });
+    Unpacker.loadFiles(onCompletion, paths);
   }
 
   public static void loadDrgnFile(final int drgnBinIndex, final int file, final Consumer<FileData> onCompletion) {
@@ -942,8 +931,7 @@ public final class Scus94491BpeSegment {
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading DRGN%d %s from %s.%s(%s:%d)", drgnBinIndex, file, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    final int finalDrgnBinIndex = drgnBinIndex;
-    EXECUTOR.execute(() -> onCompletion.accept(Unpacker.loadFile("SECT/DRGN%d.BIN/%s".formatted(finalDrgnBinIndex, file))));
+    Unpacker.loadFile("SECT/DRGN%d.BIN/%s".formatted(drgnBinIndex, file), onCompletion);
   }
 
   public static void loadDrgnFileSync(int drgnBinIndex, final String file, final Consumer<FileData> onCompletion) {
@@ -954,8 +942,7 @@ public final class Scus94491BpeSegment {
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading DRGN%d %s from %s.%s(%s:%d)", drgnBinIndex, file, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    final int finalDrgnBinIndex = drgnBinIndex;
-    onCompletion.accept(Unpacker.loadFile("SECT/DRGN%d.BIN/%s".formatted(finalDrgnBinIndex, file)));
+    onCompletion.accept(Unpacker.loadFile("SECT/DRGN%d.BIN/%s".formatted(drgnBinIndex, file)));
   }
 
   public static void loadDrgnDir(int drgnBinIndex, final int directory, final Consumer<List<FileData>> onCompletion) {
@@ -966,8 +953,7 @@ public final class Scus94491BpeSegment {
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading DRGN%d dir %d from %s.%s(%s:%d)", drgnBinIndex, directory, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    final int finalDrgnBinIndex = drgnBinIndex;
-    EXECUTOR.execute(() -> onCompletion.accept(Unpacker.loadDirectory("SECT/DRGN%d.BIN/%d".formatted(finalDrgnBinIndex, directory))));
+    Unpacker.loadDirectory("SECT/DRGN%d.BIN/%d".formatted(drgnBinIndex, directory), onCompletion);
   }
 
   public static void loadDrgnDir(int drgnBinIndex, final String directory, final Consumer<List<FileData>> onCompletion) {
@@ -978,8 +964,7 @@ public final class Scus94491BpeSegment {
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading DRGN%d dir %s from %s.%s(%s:%d)", drgnBinIndex, directory, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    final int finalDrgnBinIndex = drgnBinIndex;
-    EXECUTOR.execute(() -> onCompletion.accept(Unpacker.loadDirectory("SECT/DRGN%d.BIN/%s".formatted(finalDrgnBinIndex, directory))));
+    Unpacker.loadDirectory("SECT/DRGN%d.BIN/%s".formatted(drgnBinIndex, directory), onCompletion);
   }
 
   @Method(0x800156f4L)
@@ -1098,7 +1083,15 @@ public final class Scus94491BpeSegment {
   @Method(0x80017564L)
   @ScriptDescription("Rewinds if there are files currently loading; pauses otherwise")
   public static FlowControl scriptWaitForFilesToLoad(final RunningScript<?> script) {
-    return Unpacker.getLoadingFileCount() == 0 ? FlowControl.PAUSE : FlowControl.PAUSE_AND_REWIND;
+    final int loadingCount = Unpacker.getLoadingFileCount();
+
+    if(loadingCount != 0) {
+      LOGGER.info("%d files still loading; pausing and rewinding", loadingCount);
+      return FlowControl.PAUSE_AND_REWIND;
+    }
+
+    LOGGER.info("No files loading");
+    return FlowControl.PAUSE;
   }
 
   @ScriptDescription("Something related to rumble")
