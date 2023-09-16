@@ -1146,10 +1146,14 @@ public final class Bttl_800e {
 
     //LAB_800e67b0
     loadDrgnDir(0, 4139 + index * 2, Bttl_800e::uploadTims);
-    loadDrgnDir(0, 4140 + index * 2 + "/0", files -> Bttl_800e.loadDeffPackage(files, battle24.managerState_18));
-    loadDrgnFile(0, 4140 + index * 2 + "/1", file -> {
-      LOGGER.info(DEFF, "Loading DEFF script");
-      _800c6938.script_14 = new ScriptFile(4140 + index * 2 + "/1", file.getBytes());
+    loadDrgnDir(0, 4140 + index * 2 + "/0", files -> {
+      Bttl_800e.loadDeffPackage(files, battle24.managerState_18);
+
+      // We don't want the script to load before the DEFF package, so queueing this file inside of the DEFF package callback forces serialization
+      loadDrgnFile(0, 4140 + index * 2 + "/1", file -> {
+        LOGGER.info(DEFF, "Loading DEFF script");
+        _800c6938.script_14 = new ScriptFile(4140 + index * 2 + "/1", file.getBytes());
+      });
     });
     deffLoadingStage_800fafe8.set(1);
   }
