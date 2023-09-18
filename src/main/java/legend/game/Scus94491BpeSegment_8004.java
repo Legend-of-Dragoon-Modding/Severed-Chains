@@ -252,7 +252,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[140] = Bttl_800c::FUN_800cb6bc;
     scriptSubFunctions_8004e29c[141] = Bttl_800c::FUN_800cb764;
     scriptSubFunctions_8004e29c[142] = Bttl_800c::FUN_800cb76c;
-    scriptSubFunctions_8004e29c[143] = Bttl_800c::FUN_800cb9b0;
+    scriptSubFunctions_8004e29c[143] = Bttl_800c::scriptGetLoadingBentAnimationIndex;
     scriptSubFunctions_8004e29c[144] = Bttl_800c::scriptPauseAnimation;
     scriptSubFunctions_8004e29c[145] = Bttl_800c::scriptResumeAnimation;
     scriptSubFunctions_8004e29c[146] = Bttl_800c::scriptSetBentAnimationLoopState;
@@ -391,7 +391,7 @@ public final class Scus94491BpeSegment_8004 {
 
     scriptSubFunctions_8004e29c[320] = Bttl_800c::scriptEnableBentTextureAnimation;
     scriptSubFunctions_8004e29c[321] = Scus94491BpeSegment::scriptRewindAndPause2;
-    scriptSubFunctions_8004e29c[322] = Bttl_800c::scriptSetCurrentBentAnimationIndex;
+    scriptSubFunctions_8004e29c[322] = Bttl_800c::scriptSetLoadingBentAnimationIndex;
     scriptSubFunctions_8004e29c[323] = Bttl_800c::FUN_800cb95c;
     scriptSubFunctions_8004e29c[324] = Scus94491BpeSegment::scriptRewindAndPause2;
 

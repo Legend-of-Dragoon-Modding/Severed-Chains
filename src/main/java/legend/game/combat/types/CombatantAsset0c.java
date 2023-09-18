@@ -4,7 +4,7 @@ import legend.game.types.TmdAnimationFile;
 import legend.game.unpacker.FileData;
 
 /** A union type, see type property to tell which type it is */
-public abstract class CombatantAsset_c {
+public abstract class CombatantAsset0c {
   public int BttlStruct08_index_04;
   public int BattleStructEf4Sub08_index_06;
   public int _08;
@@ -24,7 +24,7 @@ public abstract class CombatantAsset_c {
   public boolean isLoaded_0b;
 
   /** Type 1/2 */
-  public static class AnimType extends CombatantAsset_c {
+  public static class AnimType extends CombatantAsset0c {
     public final TmdAnimationFile anim_00;
 
     public AnimType(final TmdAnimationFile anim) {
@@ -33,7 +33,7 @@ public abstract class CombatantAsset_c {
   }
 
   /** Type 3 */
-  public static class IndexType extends CombatantAsset_c {
+  public static class IndexType extends CombatantAsset0c {
     public final int index_00;
 
     public IndexType(final int index) {
@@ -42,7 +42,7 @@ public abstract class CombatantAsset_c {
   }
 
   /** Type 4/5 */
-  public static class BpeType extends CombatantAsset_c {
+  public static class BpeType extends CombatantAsset0c {
     public final FileData bpe_00;
 
     public BpeType(final FileData bpe) {
@@ -51,7 +51,7 @@ public abstract class CombatantAsset_c {
   }
 
   /** Type 6 */
-  public static class TimType extends CombatantAsset_c {
+  public static class TimType extends CombatantAsset0c {
     public final FileData data;
 
     public TimType(final FileData data) {

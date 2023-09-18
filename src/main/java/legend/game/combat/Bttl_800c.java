@@ -68,7 +68,7 @@ import legend.game.combat.types.BattleHudStatLabelMetrics0c;
 import legend.game.combat.types.BattleObject;
 import legend.game.combat.types.BattleStateEf4;
 import legend.game.combat.types.BttlStruct08;
-import legend.game.combat.types.CombatantAsset_c;
+import legend.game.combat.types.CombatantAsset0c;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.DragoonSpells09;
 import legend.game.combat.types.EnemyDrop;
@@ -1964,7 +1964,7 @@ public final class Bttl_800c {
    */
   @Method(0x800c9a80L)
   public static void FUN_800c9a80(final FileData data, final int type, final int a3, final int combatantIndex, final int animIndex) {
-    CombatantAsset_c s3 = combatants_8005e398[combatantIndex].assets_14[animIndex];
+    CombatantAsset0c s3 = combatants_8005e398[combatantIndex].assets_14[animIndex];
 
     if(s3 != null) {
       FUN_800c9c7c(combatantIndex, animIndex);
@@ -1974,13 +1974,13 @@ public final class Bttl_800c {
     if(type == 1) {
       //LAB_800c9b68
       if(data.readInt(0x4) == 0x1a45_5042) { // BPE
-        final CombatantAsset_c.BpeType bpe = new CombatantAsset_c.BpeType(data);
+        final CombatantAsset0c.BpeType bpe = new CombatantAsset0c.BpeType(data);
         bpe._08 = a3;
         bpe.type_0a = 4;
         bpe.isLoaded_0b = false;
         s3 = bpe;
       } else {
-        final CombatantAsset_c.AnimType anim = new CombatantAsset_c.AnimType(new TmdAnimationFile(data));
+        final CombatantAsset0c.AnimType anim = new CombatantAsset0c.AnimType(new TmdAnimationFile(data));
         anim._08 = a3;
         anim.type_0a = 1;
         anim.isLoaded_0b = false;
@@ -1991,13 +1991,13 @@ public final class Bttl_800c {
       //LAB_800c9b98
       if(data.readInt(0x4) == 0x1a45_5042) { // BPE
         //LAB_800c9b88
-        final CombatantAsset_c.BpeType bpe = new CombatantAsset_c.BpeType(data);
+        final CombatantAsset0c.BpeType bpe = new CombatantAsset0c.BpeType(data);
         bpe._08 = a3;
         bpe.type_0a = 5;
         bpe.isLoaded_0b = false;
         s3 = bpe;
       } else {
-        final CombatantAsset_c.AnimType anim = new CombatantAsset_c.AnimType(new TmdAnimationFile(data));
+        final CombatantAsset0c.AnimType anim = new CombatantAsset0c.AnimType(new TmdAnimationFile(data));
         anim._08 = a3;
         anim.type_0a = 2;
         anim.isLoaded_0b = false;
@@ -2006,14 +2006,14 @@ public final class Bttl_800c {
       //LAB_800c9b4c
     } else if(type == 3) {
       //LAB_800c9bb0
-      final CombatantAsset_c.IndexType index = new CombatantAsset_c.IndexType(a3);
+      final CombatantAsset0c.IndexType index = new CombatantAsset0c.IndexType(a3);
       index._08 = -1;
       index.type_0a = 3;
       index.isLoaded_0b = true;
       s3 = index;
     } else if(type == 6) {
       //LAB_800c9bcc
-      final CombatantAsset_c.TimType tim = new CombatantAsset_c.TimType(data);
+      final CombatantAsset0c.TimType tim = new CombatantAsset0c.TimType(data);
       tim._08 = -1;
       tim.type_0a = 6;
       tim.isLoaded_0b = false;
@@ -2034,7 +2034,7 @@ public final class Bttl_800c {
 
   @Method(0x800c9c7cL)
   public static void FUN_800c9c7c(final int combatantIndex, final int animIndex) {
-    final CombatantAsset_c s0 = combatants_8005e398[combatantIndex].assets_14[animIndex];
+    final CombatantAsset0c s0 = combatants_8005e398[combatantIndex].assets_14[animIndex];
 
     if(s0 != null) {
       //LAB_800c9cec
@@ -2043,9 +2043,9 @@ public final class Bttl_800c {
       }
 
       //LAB_800c9d04
-      if(s0 instanceof final CombatantAsset_c.IndexType index) {
+      if(s0 instanceof final CombatantAsset0c.IndexType index) {
         FUN_800cad64(index.index_00);
-      } else if(s0 instanceof final CombatantAsset_c.BpeType bpe) {
+      } else if(s0 instanceof final CombatantAsset0c.BpeType bpe) {
         if(bpe.isLoaded_0b) {
           final int a0 = bpe.BttlStruct08_index_04;
           if(a0 >= 0) {
@@ -2072,17 +2072,17 @@ public final class Bttl_800c {
 
   @Method(0x800c9e10L)
   public static boolean FUN_800c9e10(final int combatantIndex, final int animIndex) {
-    final CombatantAsset_c s0 = combatants_8005e398[combatantIndex].assets_14[animIndex];
+    final CombatantAsset0c s0 = combatants_8005e398[combatantIndex].assets_14[animIndex];
 
-    if(s0 instanceof final CombatantAsset_c.AnimType animType) {
+    if(s0 instanceof final CombatantAsset0c.AnimType animType) {
       return animType.anim_00 != null;
     }
 
-    if(s0 instanceof final CombatantAsset_c.IndexType indexType) {
+    if(s0 instanceof final CombatantAsset0c.IndexType indexType) {
       return indexType.index_00 >= 0;
     }
 
-    if(s0 instanceof final CombatantAsset_c.BpeType bpeType) {
+    if(s0 instanceof final CombatantAsset0c.BpeType bpeType) {
       if(!bpeType.isLoaded_0b) {
         final int a3 = _800c66ac.get() + 1 & 0xffff_fff0;
         _800c66ac.set((short)a3);
@@ -2097,9 +2097,9 @@ public final class Bttl_800c {
       return true;
     }
 
-    if(s0 instanceof final CombatantAsset_c.TimType timType) {
+    if(s0 instanceof final CombatantAsset0c.TimType timType) {
       if(!timType.isLoaded_0b) {
-        s0.BttlStruct08_index_04 = FUN_800caae4(timType.data, 3, 0, 0);
+        s0.BttlStruct08_index_04 = FUN_800caae4(timType.data, 3);
         s0.isLoaded_0b = true;
       }
 
@@ -2112,10 +2112,10 @@ public final class Bttl_800c {
 
   @Method(0x800c9fccL)
   public static void FUN_800c9fcc(final FileData data, final int param) {
-    final CombatantAsset_c s0 = battleState_8006e398._d8c[param]._00;
+    final CombatantAsset0c s0 = battleState_8006e398._d8c[param]._00;
 
     if(s0.isLoaded_0b && battleState_8006e398._d8c[param].used_04) {
-      s0.BttlStruct08_index_04 = FUN_800caae4(data, 3, 0, 0);
+      s0.BttlStruct08_index_04 = FUN_800caae4(data, 3);
       s0.BattleStructEf4Sub08_index_06 = -1;
       battleState_8006e398._d8c[param].used_04 = false;
     }
@@ -2125,13 +2125,13 @@ public final class Bttl_800c {
 
   @Method(0x800ca054L)
   public static boolean isCombatantAssetLoaded(final int combatantIndex, final int assetIndex) {
-    final CombatantAsset_c asset = combatants_8005e398[combatantIndex].assets_14[assetIndex];
+    final CombatantAsset0c asset = combatants_8005e398[combatantIndex].assets_14[assetIndex];
 
-    if(asset instanceof CombatantAsset_c.AnimType || asset instanceof CombatantAsset_c.IndexType) {
+    if(asset instanceof CombatantAsset0c.AnimType || asset instanceof CombatantAsset0c.IndexType) {
       return true;
     }
 
-    if(asset instanceof CombatantAsset_c.BpeType || asset instanceof CombatantAsset_c.TimType) {
+    if(asset instanceof CombatantAsset0c.BpeType || asset instanceof CombatantAsset0c.TimType) {
       return asset.isLoaded_0b && asset.BttlStruct08_index_04 >= 0;
     }
 
@@ -2147,7 +2147,7 @@ public final class Bttl_800c {
 
   @Method(0x800ca194L)
   public static boolean FUN_800ca194(final int combatantIndex, final int animIndex) {
-    final CombatantAsset_c s0 = combatants_8005e398[combatantIndex].assets_14[animIndex];
+    final CombatantAsset0c s0 = combatants_8005e398[combatantIndex].assets_14[animIndex];
 
     if(s0 != null) {
       if(s0._09 > 0) {
@@ -2201,19 +2201,19 @@ public final class Bttl_800c {
 
   @Method(0x800ca31cL)
   public static TmdAnimationFile FUN_800ca31c(final int combatantIndex, final int animIndex) {
-    final CombatantAsset_c a0_0 = combatants_8005e398[combatantIndex].assets_14[animIndex];
+    final CombatantAsset0c a0_0 = combatants_8005e398[combatantIndex].assets_14[animIndex];
 
-    if(a0_0 instanceof final CombatantAsset_c.AnimType animType) {
+    if(a0_0 instanceof final CombatantAsset0c.AnimType animType) {
       return animType.anim_00;
     }
 
-    if(a0_0 instanceof final CombatantAsset_c.IndexType indexType) {
+    if(a0_0 instanceof final CombatantAsset0c.IndexType indexType) {
       final int s0 = indexType.index_00;
 
       return new TmdAnimationFile(FUN_800cad34(s0));
     }
 
-    if(a0_0 instanceof CombatantAsset_c.BpeType || a0_0 instanceof CombatantAsset_c.TimType) {
+    if(a0_0 instanceof CombatantAsset0c.BpeType || a0_0 instanceof CombatantAsset0c.TimType) {
       if(a0_0.isLoaded_0b) {
         final int s0 = a0_0.BttlStruct08_index_04;
 
@@ -2234,7 +2234,7 @@ public final class Bttl_800c {
     //LAB_800ca488
     //LAB_800ca494
     for(int i = 0; i < 32; i++) {
-      if(combatant.assets_14[i] instanceof CombatantAsset_c.AnimType && combatant.assets_14[i].type_0a == 2 || combatant.assets_14[i] instanceof CombatantAsset_c.TimType) {
+      if(combatant.assets_14[i] instanceof CombatantAsset0c.AnimType && combatant.assets_14[i].type_0a == 2 || combatant.assets_14[i] instanceof CombatantAsset0c.TimType) {
         //LAB_800ca4c0
         FUN_800c9c7c(index, i);
       }
@@ -2437,14 +2437,12 @@ public final class Bttl_800c {
   }
 
   @Method(0x800caae4L)
-  public static int FUN_800caae4(final FileData fileData, final int a1, final int a2, final int a3) {
+  public static int FUN_800caae4(final FileData fileData, final int a1) {
     final int index = FUN_800caa20();
 
     final BttlStruct08 a0 = battleState_8006e398._580[index];
     a0.data_00 = fileData;
     a0._04 = a1;
-    a0._05 = a2;
-    a0._06 = a3;
 
     //LAB_800cab3c
     return index;
@@ -2826,11 +2824,11 @@ public final class Bttl_800c {
     return FlowControl.PAUSE_AND_REWIND;
   }
 
-  @ScriptDescription("Sets a battle entity's animation")
+  @ScriptDescription("Sets a battle entity's loading animation")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "animIndex", description = "The animation index")
   @Method(0x800cb84cL)
-  public static FlowControl scriptSetCurrentBentAnimationIndex(final RunningScript<?> script) {
+  public static FlowControl scriptSetLoadingBentAnimationIndex(final RunningScript<?> script) {
     final ScriptState<?> s2 = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
     final BattleEntity27c s0 = (BattleEntity27c)s2.innerStruct_00;
 
@@ -2875,11 +2873,11 @@ public final class Bttl_800c {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Gets a battle entity's animIndex_26e")
+  @ScriptDescription("Gets a battle entity's loading animation")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "animationIndex", description = "The animation index")
   @Method(0x800cb9b0L)
-  public static FlowControl FUN_800cb9b0(final RunningScript<?> script) {
+  public static FlowControl scriptGetLoadingBentAnimationIndex(final RunningScript<?> script) {
     final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     script.params_20[1].set(bent.loadingAnimIndex_26e);
     return FlowControl.CONTINUE;

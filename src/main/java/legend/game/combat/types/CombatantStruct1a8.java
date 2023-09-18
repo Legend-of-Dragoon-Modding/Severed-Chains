@@ -15,7 +15,7 @@ public class CombatantStruct1a8 {
   public CContainer tmd_08;
 
   public ScriptFile scriptPtr_10;
-  public final CombatantAsset_c[] assets_14 = new CombatantAsset_c[32];
+  public final CombatantAsset0c[] assets_14 = new CombatantAsset0c[32];
   public int xp_194;
   public int gold_196;
   public final List<ItemDrop> drops = new ArrayList<>();
