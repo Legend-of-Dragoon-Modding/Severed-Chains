@@ -1144,10 +1144,14 @@ public final class Bttl_800e {
 
     //LAB_800e67b0
     loadDrgnDir(0, 4139 + index * 2, Bttl_800e::uploadTims);
-    loadDrgnDir(0, 4140 + index * 2 + "/0", files -> Bttl_800e.loadDeffPackage(files, battle24.managerState_18));
-    loadDrgnFile(0, 4140 + index * 2 + "/1", file -> {
-      LOGGER.info(DEFF, "Loading DEFF script");
-      _800c6938.script_14 = new ScriptFile(4140 + index * 2 + "/1", file.getBytes());
+    loadDrgnDir(0, 4140 + index * 2 + "/0", files -> {
+      Bttl_800e.loadDeffPackage(files, battle24.managerState_18);
+
+      // We don't want the script to load before the DEFF package, so queueing this file inside of the DEFF package callback forces serialization
+      loadDrgnFile(0, 4140 + index * 2 + "/1", file -> {
+        LOGGER.info(DEFF, "Loading DEFF script");
+        _800c6938.script_14 = new ScriptFile(4140 + index * 2 + "/1", file.getBytes());
+      });
     });
     deffLoadingStage_800fafe8.set(1);
   }
@@ -1988,11 +1992,6 @@ public final class Bttl_800e {
     loadSupportOverlay(1, SBtld::loadStageAmbiance);
   }
 
-  @Method(0x800e9100L)
-  public static void loadBattleHudDeff_() {
-    loadBattleHudDeff();
-  }
-
   @Method(0x800e9120L)
   public static void deallocateLightingControllerAndDeffManager() {
     scriptStatePtrArr_800bc1c0[1].deallocateWithChildren();
@@ -2171,6 +2170,7 @@ public final class Bttl_800e {
   }
 
   @ScriptDescription("Allocates an unknown model effect")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0", description = "Unused")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @Method(0x800e9854L)
   public static FlowControl FUN_800e9854(final RunningScript<? extends BattleObject> script) {
@@ -3027,7 +3027,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ebd34L)
-  public static void FUN_800ebd34(final BattleStage struct, final int index) {
+  public static void applyBattleStageTextureAnimations(final BattleStage struct, final int index) {
     final short[] v0 = struct._5f0[index];
 
     if(v0 == null) {
@@ -3162,11 +3162,11 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ec51cL)
-  public static void FUN_800ec51c(final BattleStage stage) {
+  public static void renderBattleStage(final BattleStage stage) {
     //LAB_800ec548
     for(int i = 0; i < 10; i++) {
       if(stage._618[i] != 0) {
-        FUN_800ebd34(stage, i);
+        applyBattleStageTextureAnimations(stage, i);
       }
 
       //LAB_800ec560
@@ -3511,7 +3511,7 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, sets shadow type to 3")
+  @ScriptDescription("Unknown, sets shadow type to 3, used when player combat script is initialized, second param is based on char ID")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "modelPartAttachmentIndex", description = "The model part index to attach the shadow to")
   @Method(0x800ee3c0L)

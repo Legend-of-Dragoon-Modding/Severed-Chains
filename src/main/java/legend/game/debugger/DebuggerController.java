@@ -27,7 +27,7 @@ import static legend.game.SMap.smapLoadingStage_800cb430;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
+import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
@@ -312,21 +312,21 @@ public class DebuggerController {
 
     if(engineState_8004dd20 == EngineState.SUBMAP_05) {
       if(Config.combatStage()) {
-        combatStage_800bb0f4.set(Config.getCombatStage());
+        battleStage_800bb0f4.set(Config.getCombatStage());
       } else {
-        combatStage_800bb0f4.set(encounterData_800f64c4.get(submapCut_80052c30.get()).stage_03.get());
+        battleStage_800bb0f4.set(encounterData_800f64c4.get(submapCut_80052c30.get()).stage_03.get());
       }
       mapTransition(-1, 0);
     } else if(engineState_8004dd20 == EngineState.WORLD_MAP_08) {
       final AreaData08 area = areaData_800f2248.get(mapState_800c6798.areaIndex_12);
 
       if(Config.combatStage()) {
-        combatStage_800bb0f4.set(Config.getCombatStage());
+        battleStage_800bb0f4.set(Config.getCombatStage());
       } else {
         if(area.stage_04.get() == -1) {
-          combatStage_800bb0f4.set(1);
+          battleStage_800bb0f4.set(1);
         } else {
-          combatStage_800bb0f4.set(area.stage_04.get());
+          battleStage_800bb0f4.set(area.stage_04.get());
         }
       }
 
@@ -472,7 +472,7 @@ public class DebuggerController {
 
   @FXML
   private void getCombatStageId(final ActionEvent event) {
-    this.combatStageId.getValueFactory().setValue(combatStage_800bb0f4.get());
+    this.combatStageId.getValueFactory().setValue(battleStage_800bb0f4.get());
   }
 
   @FXML

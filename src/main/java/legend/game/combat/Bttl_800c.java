@@ -68,8 +68,8 @@ import legend.game.combat.types.BattleHudStatLabelMetrics0c;
 import legend.game.combat.types.BattleObject;
 import legend.game.combat.types.BattleStateEf4;
 import legend.game.combat.types.BttlStruct08;
+import legend.game.combat.types.CombatantAsset0c;
 import legend.game.combat.types.CombatantStruct1a8;
-import legend.game.combat.types.CombatantStruct1a8_c;
 import legend.game.combat.types.DragoonSpells09;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.combat.types.MersenneTwisterSeed;
@@ -172,12 +172,12 @@ import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_8007.clearRed_8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b._800bc960;
 import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
+import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
 import static legend.game.Scus94491BpeSegment_800b.battleLoaded_800bc94c;
 import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
 import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
-import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
+import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.equipmentOverflow;
 import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
@@ -201,7 +201,6 @@ import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800d.calculateXAngleFromRefpointToViewpoint;
 import static legend.game.combat.Bttl_800d.calculateYAngleFromRefpointToViewpoint;
 import static legend.game.combat.Bttl_800d.resetCameraMovement;
-import static legend.game.combat.Bttl_800e.FUN_800ec51c;
 import static legend.game.combat.Bttl_800e.FUN_800ec744;
 import static legend.game.combat.Bttl_800e.FUN_800ee610;
 import static legend.game.combat.Bttl_800e.FUN_800ef9e4;
@@ -212,8 +211,9 @@ import static legend.game.combat.Bttl_800e.backupStageClut;
 import static legend.game.combat.Bttl_800e.deallocateLightingControllerAndDeffManager;
 import static legend.game.combat.Bttl_800e.deallocateStageDarkeningStorage;
 import static legend.game.combat.Bttl_800e.drawUiElements;
-import static legend.game.combat.Bttl_800e.loadBattleHudDeff_;
+import static legend.game.combat.Bttl_800e.loadBattleHudDeff;
 import static legend.game.combat.Bttl_800e.loadStageTmd;
+import static legend.game.combat.Bttl_800e.renderBattleStage;
 import static legend.game.combat.Bttl_800e.updateGameStateAndDeallocateMenu;
 import static legend.game.combat.Bttl_800f.FUN_800f1a00;
 import static legend.game.combat.Bttl_800f.FUN_800f417c;
@@ -987,7 +987,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c7524L)
-  public static void FUN_800c7524() {
+  public static void initBattle() {
     FUN_800c8624();
 
     gameState_800babc8._b4++;
@@ -999,7 +999,7 @@ public final class Bttl_800c {
     spGained_800bc950.get(2).set(0);
 
     totalXpFromCombat_800bc95c.set(0);
-    _800bc960.set(0);
+    battleFlags_800bc960.set(0);
     postBattleActionIndex_800bc974.set(0);
     itemsDroppedByEnemies_800bc928.clear();
     itemOverflow.clear();
@@ -1033,19 +1033,19 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c7648L)
-  public static void FUN_800c7648() {
-    loadStage(combatStage_800bb0f4.get());
-    loadSupportOverlay(1, SBtld::FUN_80109050);
+  public static void loadStageAndControllerScripts() {
+    loadStage(battleStage_800bb0f4.get());
+    loadSupportOverlay(1, SBtld::loadStageDataAndControllerScripts);
     pregameLoadingStage_800bb10c.incr();
   }
 
   @Method(0x800c76a0L)
-  public static void FUN_800c76a0() {
-    if((_800bc960.get() & 0x3) == 0x3) {
+  public static void initializeViewportAndCamera() {
+    if((battleFlags_800bc960.get() & 0x3) == 0x3) {
       resizeDisplay(320, 240);
       setDepthResolution(12);
       vsyncMode_8007a3b8 = 3;
-      _800bc960.or(0x40);
+      battleFlags_800bc960.or(0x40);
       setProjectionPlaneDistance(320);
       resetCameraMovement();
       pregameLoadingStage_800bb10c.incr();
@@ -1062,7 +1062,7 @@ public final class Bttl_800c {
 
     startFadeEffect(4, 30);
 
-    _800bc960.or(0x20);
+    battleFlags_800bc960.or(0x20);
     battleState_8006e398.stageProgression_eec = 0;
 
     FUN_800ca980();
@@ -1107,11 +1107,11 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c7964L)
-  public static void FUN_800c7964() {
-    _800bc960.or(0xc);
+  public static void loadHudAndAttackAnimations() {
+    battleFlags_800bc960.or(0xc);
 
     loadBattleHudTextures();
-    loadBattleHudDeff_();
+    loadBattleHudDeff();
 
     //LAB_800c79a8
     for(int combatantIndex = 0; combatantIndex < combatantCount_800c66a0.get(); combatantIndex++) {
@@ -1139,9 +1139,9 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c7a80L)
-  public static void FUN_800c7a80() {
+  public static void calculateInitialTurnValues() {
     if(_800c66a8.get() != 0) {
-      _800bc960.or(0x10);
+      battleFlags_800bc960.or(0x10);
 
       //LAB_800c7ae4
       for(int i = 0; i < allBentCount_800c66d0.get(); i++) {
@@ -1496,7 +1496,7 @@ public final class Bttl_800c {
 
   @Method(0x800c882cL)
   public static void FUN_800c882c() {
-    if(shouldRenderMcq_800c6764.get() == 0 || !shouldRenderMcq_800c66d4.get() || (_800bc960.get() & 0x80) == 0) {
+    if(shouldRenderMcq_800c6764.get() == 0 || !shouldRenderMcq_800c66d4.get() || (battleFlags_800bc960.get() & 0x80) == 0) {
       //LAB_800c8ad8
       //LAB_800c8adc
       clearBlue_800babc0.set(0);
@@ -1579,9 +1579,9 @@ public final class Bttl_800c {
 
   @Method(0x800c8cf0L)
   public static void FUN_800c8cf0() {
-    if(stageHasModel_800c66b8.get() && _800c6754.get() != 0 && (_800bc960.get() & 0x20) != 0) {
+    if(stageHasModel_800c66b8.get() && _800c6754.get() != 0 && (battleFlags_800bc960.get() & 0x20) != 0) {
       FUN_800ec744(battlePreloadedEntities_1f8003f4.stage_963c);
-      FUN_800ec51c(battlePreloadedEntities_1f8003f4.stage_963c);
+      renderBattleStage(battlePreloadedEntities_1f8003f4.stage_963c);
     }
 
     //LAB_800c8d50
@@ -1590,7 +1590,7 @@ public final class Bttl_800c {
   @Method(0x800c8d64L)
   public static void loadStageMcq(final McqHeader mcq) {
     final long x;
-    if((_800bc960.get() & 0x80) != 0) {
+    if((battleFlags_800bc960.get() & 0x80) != 0) {
       x = 320;
       shouldRenderMcq_800c6764.set(1);
     } else {
@@ -1610,11 +1610,11 @@ public final class Bttl_800c {
 
   @Method(0x800c8e48L)
   public static void FUN_800c8e48() {
-    if(shouldRenderMcq_800c66d4.get() && (_800bc960.get() & 0x80) == 0) {
+    if(shouldRenderMcq_800c66d4.get() && (battleFlags_800bc960.get() & 0x80) == 0) {
       final RECT sp0x10 = new RECT((short)512, (short)0, (short)battlePreloadedEntities_1f8003f4.stageMcq_9cb0.vramWidth_08, (short)256);
       MoveImage(sp0x10, 320, 0);
       shouldRenderMcq_800c6764.set(1);
-      _800bc960.or(0x80);
+      battleFlags_800bc960.or(0x80);
     }
     //LAB_800c8ec8
   }
@@ -1705,15 +1705,11 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c90b0L)
-  public static long FUN_800c90b0(final int combatantIndex) {
+  public static boolean isCombatantModelLoaded(final int combatantIndex) {
     //LAB_800c9114
-    if((combatants_8005e398[combatantIndex]._1a4 >= 0 || combatants_8005e398[combatantIndex].mrg_00 != null && combatants_8005e398[combatantIndex].mrg_00.get(32).hasVirtualSize()) && FUN_800ca054(combatantIndex, 0) != 0) {
-      return 0x1L;
-    }
-
     //LAB_800c9128
     //LAB_800c912c
-    return 0;
+    return (combatants_8005e398[combatantIndex]._1a4 >= 0 || combatants_8005e398[combatantIndex].mrg_00 != null && combatants_8005e398[combatantIndex].mrg_00.get(32).hasVirtualSize()) && isCombatantAssetLoaded(combatantIndex, 0);
   }
 
   @Method(0x800c913cL)
@@ -1747,7 +1743,7 @@ public final class Bttl_800c {
     //LAB_800c9234
     //LAB_800c9238
     for(int i = 0; i < 32; i++) {
-      if(combatant._14[i] != null && combatant._14[i]._09 != 0) {
+      if(combatant.assets_14[i] != null && combatant.assets_14[i]._09 != 0) {
         FUN_800c9c7c(combatantIndex, i);
       }
 
@@ -1801,7 +1797,7 @@ public final class Bttl_800c {
     combatant.flags_19e &= 0xffdf;
 
     if(!isMonster) {
-      _800bc960.or(0x4);
+      battleFlags_800bc960.or(0x4);
     }
 
     //LAB_800c947c
@@ -1874,7 +1870,7 @@ public final class Bttl_800c {
     }
 
     //LAB_800c9680
-    s0._14[0]._09++;
+    s0.assets_14[0]._09++;
   }
 
   @Method(0x800c9708L)
@@ -1926,7 +1922,7 @@ public final class Bttl_800c {
         //LAB_800c9940
         for(int animIndex = 0; animIndex < 32; animIndex++) {
           if(files.get(32 + animIndex).hasVirtualSize()) {
-            if(combatant._14[animIndex] != null && combatant._14[animIndex]._09 != 0) {
+            if(combatant.assets_14[animIndex] != null && combatant.assets_14[animIndex]._09 != 0) {
               FUN_800c9c7c(combatantIndex, animIndex);
             }
 
@@ -1943,7 +1939,7 @@ public final class Bttl_800c {
       //LAB_800c99e8
       for(int animIndex = 0; animIndex < 32; animIndex++) {
         if(files.get(animIndex).hasVirtualSize()) {
-          if(combatant._14[animIndex] != null && combatant._14[animIndex]._09 != 0) {
+          if(combatant.assets_14[animIndex] != null && combatant.assets_14[animIndex]._09 != 0) {
             FUN_800c9c7c(combatantIndex, animIndex);
           }
 
@@ -1968,7 +1964,7 @@ public final class Bttl_800c {
    */
   @Method(0x800c9a80L)
   public static void FUN_800c9a80(final FileData data, final int type, final int a3, final int combatantIndex, final int animIndex) {
-    CombatantStruct1a8_c s3 = combatants_8005e398[combatantIndex]._14[animIndex];
+    CombatantAsset0c s3 = combatants_8005e398[combatantIndex].assets_14[animIndex];
 
     if(s3 != null) {
       FUN_800c9c7c(combatantIndex, animIndex);
@@ -1978,16 +1974,16 @@ public final class Bttl_800c {
     if(type == 1) {
       //LAB_800c9b68
       if(data.readInt(0x4) == 0x1a45_5042) { // BPE
-        final CombatantStruct1a8_c.BpeType bpe = new CombatantStruct1a8_c.BpeType(data);
+        final CombatantAsset0c.BpeType bpe = new CombatantAsset0c.BpeType(data);
         bpe._08 = a3;
         bpe.type_0a = 4;
-        bpe.isLoaded_0b = 0;
+        bpe.isLoaded_0b = false;
         s3 = bpe;
       } else {
-        final CombatantStruct1a8_c.AnimType anim = new CombatantStruct1a8_c.AnimType(new TmdAnimationFile(data));
+        final CombatantAsset0c.AnimType anim = new CombatantAsset0c.AnimType(new TmdAnimationFile(data));
         anim._08 = a3;
         anim.type_0a = 1;
-        anim.isLoaded_0b = 0;
+        anim.isLoaded_0b = false;
         s3 = anim;
       }
     } else if(type == 2) {
@@ -1995,32 +1991,32 @@ public final class Bttl_800c {
       //LAB_800c9b98
       if(data.readInt(0x4) == 0x1a45_5042) { // BPE
         //LAB_800c9b88
-        final CombatantStruct1a8_c.BpeType bpe = new CombatantStruct1a8_c.BpeType(data);
+        final CombatantAsset0c.BpeType bpe = new CombatantAsset0c.BpeType(data);
         bpe._08 = a3;
         bpe.type_0a = 5;
-        bpe.isLoaded_0b = 0;
+        bpe.isLoaded_0b = false;
         s3 = bpe;
       } else {
-        final CombatantStruct1a8_c.AnimType anim = new CombatantStruct1a8_c.AnimType(new TmdAnimationFile(data));
+        final CombatantAsset0c.AnimType anim = new CombatantAsset0c.AnimType(new TmdAnimationFile(data));
         anim._08 = a3;
         anim.type_0a = 2;
-        anim.isLoaded_0b = 0;
+        anim.isLoaded_0b = false;
         s3 = anim;
       }
       //LAB_800c9b4c
     } else if(type == 3) {
       //LAB_800c9bb0
-      final CombatantStruct1a8_c.IndexType index = new CombatantStruct1a8_c.IndexType(a3);
+      final CombatantAsset0c.IndexType index = new CombatantAsset0c.IndexType(a3);
       index._08 = -1;
       index.type_0a = 3;
-      index.isLoaded_0b = 1;
+      index.isLoaded_0b = true;
       s3 = index;
     } else if(type == 6) {
       //LAB_800c9bcc
-      final CombatantStruct1a8_c.TimType tim = new CombatantStruct1a8_c.TimType(data);
+      final CombatantAsset0c.TimType tim = new CombatantAsset0c.TimType(data);
       tim._08 = -1;
       tim.type_0a = 6;
-      tim.isLoaded_0b = 0;
+      tim.isLoaded_0b = false;
       s3 = tim;
     } else {
       return;
@@ -2031,14 +2027,14 @@ public final class Bttl_800c {
     s3.BattleStructEf4Sub08_index_06 = -1;
     s3._09 = 0;
 
-    combatants_8005e398[combatantIndex]._14[animIndex] = s3;
+    combatants_8005e398[combatantIndex].assets_14[animIndex] = s3;
 
     //LAB_800c9c54
   }
 
   @Method(0x800c9c7cL)
   public static void FUN_800c9c7c(final int combatantIndex, final int animIndex) {
-    final CombatantStruct1a8_c s0 = combatants_8005e398[combatantIndex]._14[animIndex];
+    final CombatantAsset0c s0 = combatants_8005e398[combatantIndex].assets_14[animIndex];
 
     if(s0 != null) {
       //LAB_800c9cec
@@ -2047,10 +2043,10 @@ public final class Bttl_800c {
       }
 
       //LAB_800c9d04
-      if(s0 instanceof final CombatantStruct1a8_c.IndexType index) {
+      if(s0 instanceof final CombatantAsset0c.IndexType index) {
         FUN_800cad64(index.index_00);
-      } else if(s0 instanceof final CombatantStruct1a8_c.BpeType bpe) {
-        if(bpe.isLoaded_0b != 0) {
+      } else if(s0 instanceof final CombatantAsset0c.BpeType bpe) {
+        if(bpe.isLoaded_0b) {
           final int a0 = bpe.BttlStruct08_index_04;
           if(a0 >= 0) {
             //LAB_800c9d78
@@ -2062,7 +2058,7 @@ public final class Bttl_800c {
       }
 
       //LAB_800c9d84
-      combatants_8005e398[combatantIndex]._14[animIndex] = null;
+      combatants_8005e398[combatantIndex].assets_14[animIndex] = null;
     }
 
     //LAB_800c9da0
@@ -2076,23 +2072,23 @@ public final class Bttl_800c {
 
   @Method(0x800c9e10L)
   public static boolean FUN_800c9e10(final int combatantIndex, final int animIndex) {
-    final CombatantStruct1a8_c s0 = combatants_8005e398[combatantIndex]._14[animIndex];
+    final CombatantAsset0c s0 = combatants_8005e398[combatantIndex].assets_14[animIndex];
 
-    if(s0 instanceof final CombatantStruct1a8_c.AnimType animType) {
+    if(s0 instanceof final CombatantAsset0c.AnimType animType) {
       return animType.anim_00 != null;
     }
 
-    if(s0 instanceof final CombatantStruct1a8_c.IndexType indexType) {
+    if(s0 instanceof final CombatantAsset0c.IndexType indexType) {
       return indexType.index_00 >= 0;
     }
 
-    if(s0 instanceof final CombatantStruct1a8_c.BpeType bpeType) {
-      if(bpeType.isLoaded_0b == 0) {
+    if(s0 instanceof final CombatantAsset0c.BpeType bpeType) {
+      if(!bpeType.isLoaded_0b) {
         final int a3 = _800c66ac.get() + 1 & 0xffff_fff0;
         _800c66ac.set((short)a3);
         battleState_8006e398._d8c[a3]._00 = bpeType;
         battleState_8006e398._d8c[a3].used_04 = true;
-        bpeType.isLoaded_0b = 1;
+        bpeType.isLoaded_0b = true;
         bpeType.BattleStructEf4Sub08_index_06 = a3;
 
         FUN_800c9fcc(new FileData(Unpacker.decompress(bpeType.bpe_00)), a3);
@@ -2101,10 +2097,10 @@ public final class Bttl_800c {
       return true;
     }
 
-    if(s0 instanceof final CombatantStruct1a8_c.TimType timType) {
-      if(timType.isLoaded_0b == 0) {
-        s0.BttlStruct08_index_04 = FUN_800caae4(timType.data, 3, 0, 0);
-        s0.isLoaded_0b = 1;
+    if(s0 instanceof final CombatantAsset0c.TimType timType) {
+      if(!timType.isLoaded_0b) {
+        s0.BttlStruct08_index_04 = FUN_800caae4(timType.data, 3);
+        s0.isLoaded_0b = true;
       }
 
       //LAB_800c9fb4
@@ -2116,10 +2112,10 @@ public final class Bttl_800c {
 
   @Method(0x800c9fccL)
   public static void FUN_800c9fcc(final FileData data, final int param) {
-    final CombatantStruct1a8_c s0 = battleState_8006e398._d8c[param]._00;
+    final CombatantAsset0c s0 = battleState_8006e398._d8c[param]._00;
 
-    if(s0.isLoaded_0b != 0 && battleState_8006e398._d8c[param].used_04) {
-      s0.BttlStruct08_index_04 = FUN_800caae4(data, 3, 0, 0);
+    if(s0.isLoaded_0b && battleState_8006e398._d8c[param].used_04) {
+      s0.BttlStruct08_index_04 = FUN_800caae4(data, 3);
       s0.BattleStructEf4Sub08_index_06 = -1;
       battleState_8006e398._d8c[param].used_04 = false;
     }
@@ -2128,32 +2124,30 @@ public final class Bttl_800c {
   }
 
   @Method(0x800ca054L)
-  public static long FUN_800ca054(final int combatantIndex, final int animIndex) {
-    final CombatantStruct1a8_c struct = combatants_8005e398[combatantIndex]._14[animIndex];
+  public static boolean isCombatantAssetLoaded(final int combatantIndex, final int assetIndex) {
+    final CombatantAsset0c asset = combatants_8005e398[combatantIndex].assets_14[assetIndex];
 
-    if(struct instanceof CombatantStruct1a8_c.AnimType || struct instanceof CombatantStruct1a8_c.IndexType) {
-      return 1;
+    if(asset instanceof CombatantAsset0c.AnimType || asset instanceof CombatantAsset0c.IndexType) {
+      return true;
     }
 
-    if(struct instanceof CombatantStruct1a8_c.BpeType || struct instanceof CombatantStruct1a8_c.TimType) {
-      if(struct.isLoaded_0b != 0 && struct.BttlStruct08_index_04 >= 0) {
-        return 1;
-      }
+    if(asset instanceof CombatantAsset0c.BpeType || asset instanceof CombatantAsset0c.TimType) {
+      return asset.isLoaded_0b && asset.BttlStruct08_index_04 >= 0;
     }
 
     //LAB_800ca0f8
-    return 0;
+    return false;
   }
 
   @Method(0x800ca100L)
   public static void FUN_800ca100(final Model124 model, final int combatantIndex, final int animIndex) {
     loadModelStandardAnimation(model, FUN_800ca31c(combatantIndex, animIndex));
-    combatants_8005e398[combatantIndex]._14[0]._09++;
+    combatants_8005e398[combatantIndex].assets_14[0]._09++;
   }
 
   @Method(0x800ca194L)
   public static boolean FUN_800ca194(final int combatantIndex, final int animIndex) {
-    final CombatantStruct1a8_c s0 = combatants_8005e398[combatantIndex]._14[animIndex];
+    final CombatantAsset0c s0 = combatants_8005e398[combatantIndex].assets_14[animIndex];
 
     if(s0 != null) {
       if(s0._09 > 0) {
@@ -2175,7 +2169,7 @@ public final class Bttl_800c {
         //LAB_800ca240
         s0.BttlStruct08_index_04 = -1;
         s0.BattleStructEf4Sub08_index_06 = -1;
-        s0.isLoaded_0b = 0;
+        s0.isLoaded_0b = false;
       }
     }
 
@@ -2191,7 +2185,7 @@ public final class Bttl_800c {
     //LAB_800ca2bc
     boolean s3 = true;
     for(int i = 0; i < 32; i++) {
-      if(combatant._14[i] != null && combatant._14[i]._09 == 0) {
+      if(combatant.assets_14[i] != null && combatant.assets_14[i]._09 == 0) {
         if(FUN_800ca194(combatantIndex, i)) {
           s3 = !s3;
         } else {
@@ -2207,20 +2201,20 @@ public final class Bttl_800c {
 
   @Method(0x800ca31cL)
   public static TmdAnimationFile FUN_800ca31c(final int combatantIndex, final int animIndex) {
-    final CombatantStruct1a8_c a0_0 = combatants_8005e398[combatantIndex]._14[animIndex];
+    final CombatantAsset0c a0_0 = combatants_8005e398[combatantIndex].assets_14[animIndex];
 
-    if(a0_0 instanceof final CombatantStruct1a8_c.AnimType animType) {
+    if(a0_0 instanceof final CombatantAsset0c.AnimType animType) {
       return animType.anim_00;
     }
 
-    if(a0_0 instanceof final CombatantStruct1a8_c.IndexType indexType) {
+    if(a0_0 instanceof final CombatantAsset0c.IndexType indexType) {
       final int s0 = indexType.index_00;
 
       return new TmdAnimationFile(FUN_800cad34(s0));
     }
 
-    if(a0_0 instanceof CombatantStruct1a8_c.BpeType || a0_0 instanceof CombatantStruct1a8_c.TimType) {
-      if(a0_0.isLoaded_0b != 0) {
+    if(a0_0 instanceof CombatantAsset0c.BpeType || a0_0 instanceof CombatantAsset0c.TimType) {
+      if(a0_0.isLoaded_0b) {
         final int s0 = a0_0.BttlStruct08_index_04;
 
         if(s0 >= 0) {
@@ -2240,7 +2234,7 @@ public final class Bttl_800c {
     //LAB_800ca488
     //LAB_800ca494
     for(int i = 0; i < 32; i++) {
-      if(combatant._14[i] instanceof CombatantStruct1a8_c.AnimType && combatant._14[i].type_0a == 2 || combatant._14[i] instanceof CombatantStruct1a8_c.TimType) {
+      if(combatant.assets_14[i] instanceof CombatantAsset0c.AnimType && combatant.assets_14[i].type_0a == 2 || combatant.assets_14[i] instanceof CombatantAsset0c.TimType) {
         //LAB_800ca4c0
         FUN_800c9c7c(index, i);
       }
@@ -2443,14 +2437,12 @@ public final class Bttl_800c {
   }
 
   @Method(0x800caae4L)
-  public static int FUN_800caae4(final FileData fileData, final int a1, final int a2, final int a3) {
+  public static int FUN_800caae4(final FileData fileData, final int a1) {
     final int index = FUN_800caa20();
 
     final BttlStruct08 a0 = battleState_8006e398._580[index];
     a0.data_00 = fileData;
     a0._04 = a1;
-    a0._05 = a2;
-    a0._06 = a3;
 
     //LAB_800cab3c
     return index;
@@ -2511,19 +2503,19 @@ public final class Bttl_800c {
 
     final int v1;
     if((state.storage_44[7] & 0x4) != 0) {
-      v1 = _800bc960.get() & 0x110;
+      v1 = battleFlags_800bc960.get() & 0x110;
     } else {
       //LAB_800cae94
-      v1 = _800bc960.get() & 0x210;
+      v1 = battleFlags_800bc960.get() & 0x210;
     }
 
     //LAB_800cae98
-    if(v1 != 0 && FUN_800c90b0(bent.combatantIndex_26c) != 0) {
+    if(v1 != 0 && isCombatantModelLoaded(bent.combatantIndex_26c)) {
       bent.model_148.colourMap_9d = getCombatantColourMap(bent.combatantIndex_26c);
-      bent.animIndex_26e = 0;
+      bent.loadingAnimIndex_26e = 0;
       FUN_800c952c(bent.model_148, bent.combatantIndex_26c);
       bent._278 = 1;
-      bent.animIndex_270 = -1;
+      bent.currentAnimIndex_270 = -1;
 
       if((state.storage_44[7] & 0x800) == 0) {
         final ScriptFile script;
@@ -2578,7 +2570,7 @@ public final class Bttl_800c {
   @Method(0x800cb058L)
   public static void bentDestructor(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
     //LAB_800cb088
-    FUN_800ca194(bent.combatantIndex_26c, bent.animIndex_26e);
+    FUN_800ca194(bent.combatantIndex_26c, bent.loadingAnimIndex_26e);
 
     allBentCount_800c66d0.decr();
 
@@ -2780,15 +2772,15 @@ public final class Bttl_800c {
     final BattleEntity27c bent = (BattleEntity27c)state.innerStruct_00;
     final int animIndex = a0.params_20[1].get();
 
-    if(bent.animIndex_270 < 0) {
+    if(bent.currentAnimIndex_270 < 0) {
       FUN_800c9e10(bent.combatantIndex_26c, animIndex);
-      bent.animIndex_270 = animIndex;
-    } else if(bent.animIndex_270 != animIndex) {
-      FUN_800ca194(bent.combatantIndex_26c, bent.animIndex_270);
+      bent.currentAnimIndex_270 = animIndex;
+    } else if(bent.currentAnimIndex_270 != animIndex) {
+      FUN_800ca194(bent.combatantIndex_26c, bent.currentAnimIndex_270);
 
       //LAB_800cb73c
       FUN_800c9e10(bent.combatantIndex_26c, animIndex);
-      bent.animIndex_270 = animIndex;
+      bent.currentAnimIndex_270 = animIndex;
     }
 
     //LAB_800cb750
@@ -2809,20 +2801,20 @@ public final class Bttl_800c {
     final ScriptState<?> s2 = scriptStatePtrArr_800bc1c0[a0.params_20[0].get()];
     final BattleEntity27c s0 = (BattleEntity27c)s2.innerStruct_00;
     if((s2.storage_44[7] & 0x1) == 0) {
-      int animIndex = s0.animIndex_270;
+      int animIndex = s0.currentAnimIndex_270;
 
       if(animIndex < 0) {
         animIndex = 0;
       }
 
       //LAB_800cb7d0
-      if(FUN_800ca054(s0.combatantIndex_26c, animIndex) != 0) {
-        FUN_800ca194(s0.combatantIndex_26c, s0.animIndex_26e);
+      if(isCombatantAssetLoaded(s0.combatantIndex_26c, animIndex)) {
+        FUN_800ca194(s0.combatantIndex_26c, s0.loadingAnimIndex_26e);
         FUN_800ca100(s0.model_148, s0.combatantIndex_26c, animIndex);
         s2.storage_44[7] &= 0xffff_ff6f;
         s0.model_148.animationState_9c = 1;
-        s0.animIndex_26e = animIndex;
-        s0.animIndex_270 = -1;
+        s0.loadingAnimIndex_26e = animIndex;
+        s0.currentAnimIndex_270 = -1;
         return FlowControl.CONTINUE;
       }
     }
@@ -2832,17 +2824,17 @@ public final class Bttl_800c {
     return FlowControl.PAUSE_AND_REWIND;
   }
 
-  @ScriptDescription("Something related battle entity animation")
+  @ScriptDescription("Sets a battle entity's loading animation")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "animIndex", description = "The animation index")
   @Method(0x800cb84cL)
-  public static FlowControl FUN_800cb84c(final RunningScript<?> script) {
+  public static FlowControl scriptSetLoadingBentAnimationIndex(final RunningScript<?> script) {
     final ScriptState<?> s2 = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
     final BattleEntity27c s0 = (BattleEntity27c)s2.innerStruct_00;
 
     if((s2.storage_44[7] & 0x1) == 0) {
       final int newAnim = script.params_20[1].get();
-      final int currentAnim = s0.animIndex_270;
+      final int currentAnim = s0.currentAnimIndex_270;
 
       if(currentAnim >= 0) {
         if(currentAnim != newAnim) {
@@ -2850,17 +2842,17 @@ public final class Bttl_800c {
         }
 
         //LAB_800cb8d0
-        s0.animIndex_270 = -1;
+        s0.currentAnimIndex_270 = -1;
       }
 
       //LAB_800cb8d4
-      if(FUN_800ca054(s0.combatantIndex_26c, newAnim) != 0) {
-        FUN_800ca194(s0.combatantIndex_26c, s0.animIndex_26e);
+      if(isCombatantAssetLoaded(s0.combatantIndex_26c, newAnim)) {
+        FUN_800ca194(s0.combatantIndex_26c, s0.loadingAnimIndex_26e);
         FUN_800ca100(s0.model_148, s0.combatantIndex_26c, newAnim);
         s2.storage_44[7] &= 0xffff_ff6f;
         s0.model_148.animationState_9c = 1;
-        s0.animIndex_26e = newAnim;
-        s0.animIndex_270 = -1;
+        s0.loadingAnimIndex_26e = newAnim;
+        s0.currentAnimIndex_270 = -1;
         return FlowControl.CONTINUE;
       }
 
@@ -2881,13 +2873,13 @@ public final class Bttl_800c {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Gets a battle entity's animIndex_26e")
+  @ScriptDescription("Gets a battle entity's loading animation")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "animationIndex", description = "The animation index")
   @Method(0x800cb9b0L)
-  public static FlowControl FUN_800cb9b0(final RunningScript<?> script) {
+  public static FlowControl scriptGetLoadingBentAnimationIndex(final RunningScript<?> script) {
     final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[1].set(bent.animIndex_26e);
+    script.params_20[1].set(bent.loadingAnimIndex_26e);
     return FlowControl.CONTINUE;
   }
 
@@ -3366,8 +3358,8 @@ public final class Bttl_800c {
     final int combatantIndex = bent.combatantIndex_26c;
 
     if((state.storage_44[7] & 0x1) == 0) {
-      if(bent.animIndex_270 >= 0) {
-        FUN_800ca194(combatantIndex, bent.animIndex_270);
+      if(bent.currentAnimIndex_270 >= 0) {
+        FUN_800ca194(combatantIndex, bent.currentAnimIndex_270);
       }
 
       //LAB_800ccc24
@@ -3388,8 +3380,8 @@ public final class Bttl_800c {
       //LAB_800ccc94
     } else if((combatant.flags_19e & 0x20) == 0) {
       FUN_800c952c(bent.model_148, combatantIndex);
-      bent.animIndex_26e = 0;
-      bent.animIndex_270 = -1;
+      bent.loadingAnimIndex_26e = 0;
+      bent.currentAnimIndex_270 = -1;
       state.storage_44[7] &= 0xffff_fffe;
       return FlowControl.CONTINUE;
     }
@@ -3864,7 +3856,7 @@ public final class Bttl_800c {
   public static FlowControl FUN_800cda78(final RunningScript<?> script) {
     final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
 
-    if(FUN_800c90b0(bent.combatantIndex_26c) == 0) {
+    if(!isCombatantModelLoaded(bent.combatantIndex_26c)) {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
@@ -3872,7 +3864,7 @@ public final class Bttl_800c {
     bent.combatant_144.charIndex_1a2 = -1;
 
     //LAB_800cdaf4
-    bent.animIndex_26e = 0;
+    bent.loadingAnimIndex_26e = 0;
     FUN_800c952c(bent.model_148, bent.combatantIndex_26c);
 
     //LAB_800cdb08

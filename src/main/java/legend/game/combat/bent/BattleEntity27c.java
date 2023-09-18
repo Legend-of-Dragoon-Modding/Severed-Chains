@@ -162,8 +162,10 @@ public abstract class BattleEntity27c extends BattleObject {
   public CombatantStruct1a8 combatant_144;
   public final Model124 model_148;
   public int combatantIndex_26c;
-  public int animIndex_26e;
-  public int animIndex_270;
+  /** Not 100% sure on this name */
+  public int loadingAnimIndex_26e;
+  /** Not 100% sure on this name */
+  public int currentAnimIndex_270;
   /** Also monster ID */
   public int charId_272;
   public int bentSlot_274;

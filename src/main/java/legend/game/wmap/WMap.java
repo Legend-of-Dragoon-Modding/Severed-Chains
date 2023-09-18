@@ -118,7 +118,7 @@ import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.analogMagnitude_800beeb4;
 import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
 import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
-import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
+import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -4571,10 +4571,10 @@ public final class WMap {
       encounterAccumulator_800c6ae8.set(0);
 
       if(area.stage_04.get() == -1) {
-        combatStage_800bb0f4.set(1);
+        battleStage_800bb0f4.set(1);
       } else {
         //LAB_800e386c
-        combatStage_800bb0f4.set(area.stage_04.get());
+        battleStage_800bb0f4.set(area.stage_04.get());
       }
 
       //LAB_800e3894

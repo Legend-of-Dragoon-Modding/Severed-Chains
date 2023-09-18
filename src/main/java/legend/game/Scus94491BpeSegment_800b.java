@@ -11,6 +11,7 @@ import legend.core.memory.types.IntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.combat.environment.BattleStage;
 import legend.game.combat.types.EnemyDrop;
+import legend.game.combat.ui.BattleDissolveDarkeningMetrics10;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
@@ -55,7 +56,7 @@ public final class Scus94491BpeSegment_800b {
 
   // End of game state 800bb0f4
 
-  public static final IntRef combatStage_800bb0f4 = MEMORY.ref(4, 0x800bb0f4L, IntRef::new);
+  public static final IntRef battleStage_800bb0f4 = MEMORY.ref(4, 0x800bb0f4L, IntRef::new);
   public static final IntRef encounterId_800bb0f8 = MEMORY.ref(4, 0x800bb0f8L, IntRef::new);
   public static final IntRef tickCount_800bb0fc = MEMORY.ref(4, 0x800bb0fcL, IntRef::new);
 
@@ -79,7 +80,21 @@ public final class Scus94491BpeSegment_800b {
   public static final BoolRef battleLoaded_800bc94c = MEMORY.ref(4, 0x800bc94cL, BoolRef::new);
   public static final ArrayRef<IntRef> spGained_800bc950 = MEMORY.ref(4, 0x800bc950L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
   public static final IntRef totalXpFromCombat_800bc95c = MEMORY.ref(4, 0x800bc95cL, IntRef::new);
-  public static final IntRef _800bc960 = MEMORY.ref(4, 0x800bc960L, IntRef::new);
+  /**
+   * <ul>
+   *   <li>0x1 - battle start delay period has elapsed</li>
+   *   <li>0x2 - combat controller script loaded</li>
+   *   <li>0x4 - monster models loaded</li>
+   *   <li>0x8 - character models loaded</li>
+   *   <li>0x10 - initial turn values calculated</li>
+   *   <li>0x40 - viewport/camera initialized</li>
+   *   <li>0x80 - something related to skybox MCQ</li>
+   *   <li>0x100 - possibly set by a script to signify monsters are fully loaded</li>
+   *   <li>0x200 - possibly set by a script to signify characters are fully loaded</li>
+   *   <li>0x400 - encounter assets have been requested from the filesystem (may still be loading)</li>
+   * </ul>
+   */
+  public static final IntRef battleFlags_800bc960 = MEMORY.ref(4, 0x800bc960L, IntRef::new);
 
   public static final ArrayRef<IntRef> livingCharIds_800bc968 = MEMORY.ref(4, 0x800bc968L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
   /**
@@ -131,12 +146,10 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bd6f8 = MEMORY.ref(4, 0x800bd6f8L);
 
-  public static final Value _800bd700 = MEMORY.ref(1, 0x800bd700L);
-  public static final Value _800bd704 = MEMORY.ref(4, 0x800bd704L);
-  public static final Value _800bd708 = MEMORY.ref(4, 0x800bd708L);
-  public static final Value _800bd70c = MEMORY.ref(4, 0x800bd70cL);
+  public static final BattleDissolveDarkeningMetrics10 dissolveDarkening_800bd700 = new BattleDissolveDarkeningMetrics10();
   public static final Value _800bd710 = MEMORY.ref(4, 0x800bd710L);
   public static final Value _800bd714 = MEMORY.ref(4, 0x800bd714L);
+  public static int battleDissolveTicks;
 
   public static final Value _800bd740 = MEMORY.ref(4, 0x800bd740L);
 
