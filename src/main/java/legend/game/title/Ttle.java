@@ -69,8 +69,6 @@ import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
-import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
@@ -485,9 +483,7 @@ public final class Ttle {
         removeInputHandlers();
         deallocateFire();
 
-        fmvIndex_800bf0dc = 2;
-        afterFmvLoadingStage_800bf0ec = EngineState.TRANSITION_TO_NEW_GAME_03;
-        Fmv.playCurrentFmv();
+        Fmv.playCurrentFmv(2, EngineState.TRANSITION_TO_NEW_GAME_03);
 
         pregameLoadingStage_800bb10c.set(0);
         return;
@@ -616,9 +612,7 @@ public final class Ttle {
       removeInputHandlers();
       deallocateFire();
 
-      fmvIndex_800bf0dc = 0;
-      afterFmvLoadingStage_800bf0ec = EngineState.TITLE_02;
-      Fmv.playCurrentFmv();
+      Fmv.playCurrentFmv(0, EngineState.TITLE_02);
 
       pregameLoadingStage_800bb10c.set(0);
     }

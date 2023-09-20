@@ -302,11 +302,4 @@ public final class Scus94491BpeSegment_800b {
   public static final IntRef continentIndex_800bf0b0 = MEMORY.ref(4, 0x800bf0b0L, IntRef::new);
 
   public static final Value _800bf0cf = MEMORY.ref(1, 0x800bf0cfL);
-  public static final Value _800bf0d0 = MEMORY.ref(1, 0x800bf0d0L);
-
-  public static final Value fmvStage_800bf0d8 = MEMORY.ref(4, 0x800bf0d8L);
-
-  public static int fmvIndex_800bf0dc;
-
-  public static EngineState afterFmvLoadingStage_800bf0ec = EngineState.PRELOAD_00;
 }

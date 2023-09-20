@@ -46,13 +46,9 @@ import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd2
 import static legend.game.Scus94491BpeSegment_8007.clearRed_8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
-import static legend.game.Scus94491BpeSegment_800b._800bf0d0;
-import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
 import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
-import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
-import static legend.game.Scus94491BpeSegment_800b.fmvStage_800bf0d8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
@@ -123,10 +119,6 @@ public final class Scus94491BpeSegment_800e {
 
     //LAB_800e600c
     loadBasicUiTexturesAndSomethingElse();
-
-    //LAB_800e6040
-    fmvIndex_800bf0dc = 0;
-    afterFmvLoadingStage_800bf0ec = EngineState.TITLE_02;
   }
 
   @Method(0x800e6524L)
@@ -222,7 +214,5 @@ public final class Scus94491BpeSegment_800e {
   @Method(0x800e6e6cL)
   public static void initFmvs() {
     _800bf0cf.setu(0);
-    _800bf0d0.setu(0);
-    fmvStage_800bf0d8.setu(0);
   }
 }

@@ -168,13 +168,11 @@ import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_8007.clearRed_8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bc960;
-import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.battleLoaded_800bc94c;
 import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
 import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
 import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
-import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920;
@@ -1420,11 +1418,7 @@ public final class Bttl_800c {
           }
         }
 
-        case 4 -> {
-          fmvIndex_800bf0dc = 16;
-          afterFmvLoadingStage_800bf0ec = EngineState.CREDITS_11;
-          Fmv.playCurrentFmv();
-        }
+        case 4 -> Fmv.playCurrentFmv(16, EngineState.CREDITS_11);
       }
 
       //LAB_800c8558
