@@ -198,11 +198,9 @@ import static legend.game.Scus94491BpeSegment_800b._800bd7b4;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b8;
 import static legend.game.Scus94491BpeSegment_800b._800bda08;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
-import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
-import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.hasNoEncounters_800bed58;
@@ -228,6 +226,10 @@ public final class SMap {
   private SMap() { }
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(SMap.class);
+
+  private static int fmvIndex_800bf0dc;
+
+  private static EngineState afterFmvLoadingStage_800bf0ec = EngineState.PRELOAD_00;
 
   public static final GsF_LIGHT GsF_LIGHT_0_800c66d8 = new GsF_LIGHT();
   public static final GsF_LIGHT GsF_LIGHT_1_800c66e8 = new GsF_LIGHT();
@@ -697,11 +699,9 @@ public final class SMap {
     pregameLoadingStage_800bb10c.incr();
 
     if(pregameLoadingStage_800bb10c.get() > 94) {
-      fmvIndex_800bf0dc = 17;
-      afterFmvLoadingStage_800bf0ec = EngineState.THE_END_04;
       pregameLoadingStage_800bb10c.set(0);
       vsyncMode_8007a3b8 = 2;
-      Fmv.playCurrentFmv();
+      Fmv.playCurrentFmv(17, EngineState.THE_END_04);
     }
 
     //LAB_800d9e5c
@@ -4164,7 +4164,9 @@ public final class SMap {
     return sobjs_800c6880[index] != null;
   }
 
-  /** Also does things like open menus using special values */
+  /**
+   * Also does things like open menus using special values. If cut >= 0x800, plays FMV (cut - 0x800) and transitions to engine state newScene once FMV is finished.
+   */
   @Method(0x800e5534L)
   public static long mapTransition(final int newCut, final int newScene) {
     if(smapLoadingStage_800cb430.get() != 0xcL) {
@@ -4175,7 +4177,7 @@ public final class SMap {
       return 0;
     }
 
-    if(_800f7e4c.get() == 0x1L || (loadedDrgnFiles_800bcf78.get() & 0x82L) != 0) {
+    if(_800f7e4c.get() == 0x1L || (loadedDrgnFiles_800bcf78.get() & 0x82) != 0) {
       return 0;
     }
 
@@ -4681,7 +4683,7 @@ public final class SMap {
         //LAB_800e63b0
         if(a0) {
           _80052c44.setu(0x5L);
-          Fmv.playCurrentFmv();
+          Fmv.playCurrentFmv(fmvIndex_800bf0dc, afterFmvLoadingStage_800bf0ec);
           pregameLoadingStage_800bb10c.set(0);
           _800f7e4c.setu(0);
           SCRIPTS.resume();

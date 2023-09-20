@@ -10,6 +10,7 @@ import legend.core.opengl.Window;
 import legend.core.spu.XaAdpcm;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
+import legend.game.types.EngineState;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
@@ -27,10 +28,7 @@ import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8005._80052d6c;
 import static legend.game.Scus94491BpeSegment_8005.diskFmvs_80052d7c;
-import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
-import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
-import static legend.game.Scus94491BpeSegment_800b.fmvStage_800bf0d8;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
@@ -206,14 +204,13 @@ public final class Fmv {
   private static Mesh fullScrenMesh;
   private static Texture displayTexture;
 
-  public static void playCurrentFmv() {
+  public static void playCurrentFmv(final int fmvIndex, final EngineState afterFmvState) {
     sssqResetStuff();
 
     submapId_800bd808.set(-1);
 
-    Fmv.play(diskFmvs_80052d7c[drgnBinIndex_800bc058 - 1][fmvIndex_800bf0dc - _80052d6c.get(drgnBinIndex_800bc058 - 1).get()], true);
-    fmvStage_800bf0d8.setu(0);
-    engineStateOnceLoaded_8004dd24 = afterFmvLoadingStage_800bf0ec;
+    Fmv.play(diskFmvs_80052d7c[drgnBinIndex_800bc058 - 1][fmvIndex - _80052d6c.get(drgnBinIndex_800bc058 - 1).get()], true);
+    engineStateOnceLoaded_8004dd24 = afterFmvState;
   }
 
   public static void play(final String file, final boolean doubleSpeed) {
