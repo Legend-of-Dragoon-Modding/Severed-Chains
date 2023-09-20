@@ -97,7 +97,7 @@ import static legend.game.Scus94491BpeSegment_8003.setDrawOffset;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004._8004dd48;
 import static legend.game.Scus94491BpeSegment_8004._8004f2a8;
-import static legend.game.Scus94491BpeSegment_8004._8004f5d4;
+import static legend.game.Scus94491BpeSegment_8004.battleLoadingStage_8004f5d4;
 import static legend.game.Scus94491BpeSegment_8004._8004f658;
 import static legend.game.Scus94491BpeSegment_8004._8004f6e4;
 import static legend.game.Scus94491BpeSegment_8004._8004f6e8;
@@ -421,7 +421,7 @@ public final class Scus94491BpeSegment {
       RENDERER.window().setFpsLimit((60 / frames) * Config.getGameSpeedMultiplier());
 
       loadQueuedOverlay();
-      gameStateOverlays_8004dbc0[engineState_8004dd20.ordinal()].callback_00.run();
+      gameStateOverlays_8004dbc0.get(engineState_8004dd20).callback_00.run();
 
       SCREENS.render(RENDERER, matrixStack, scissorStack);
 
@@ -516,7 +516,7 @@ public final class Scus94491BpeSegment {
   public static void loadGameStateOverlay(final EngineState engineState) {
     LOGGER.info("Loading game state overlay %s", engineState);
 
-    final OverlayStruct overlay = gameStateOverlays_8004dbc0[engineState.ordinal()];
+    final OverlayStruct overlay = gameStateOverlays_8004dbc0.get(engineState);
     final String file = overlay.file_04;
 
     if(file == null || file.equals(currentGameStateOverlay_8004dd04)) {
@@ -1283,23 +1283,18 @@ public final class Scus94491BpeSegment {
     //LAB_80018644
   }
 
-  @Method(0x80018658L)
-  public static void FUN_80018658() {
-    FUN_800186a0();
-  }
-
   @Method(0x800186a0L)
-  public static void FUN_800186a0() {
+  public static void tickBattle() {
     if(battleLoaded_800bc94c.get()) {
       checkIfCharacterAndMonsterModelsAreLoadedAndCacheLivingBents();
-      _8004f5d4[pregameLoadingStage_800bb10c.get()].run();
+      battleLoadingStage_8004f5d4[pregameLoadingStage_800bb10c.get()].run();
 
       if(battleLoaded_800bc94c.get()) {
         renderBattleEnvironment();
       }
     } else {
       //LAB_8001870c
-      _8004f5d4[pregameLoadingStage_800bb10c.get()].run();
+      battleLoadingStage_8004f5d4[pregameLoadingStage_800bb10c.get()].run();
     }
 
     //LAB_80018734

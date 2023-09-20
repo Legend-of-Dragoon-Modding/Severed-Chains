@@ -699,8 +699,6 @@ public final class SMap {
     pregameLoadingStage_800bb10c.incr();
 
     if(pregameLoadingStage_800bb10c.get() > 94) {
-      pregameLoadingStage_800bb10c.set(0);
-      vsyncMode_8007a3b8 = 2;
       Fmv.playCurrentFmv(17, EngineState.THE_END_04);
     }
 

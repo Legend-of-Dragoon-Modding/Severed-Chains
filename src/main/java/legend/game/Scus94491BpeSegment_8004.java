@@ -30,10 +30,10 @@ import legend.game.sound.Sssqish;
 import legend.game.sound.VolumeRamp;
 import legend.game.title.GameOver;
 import legend.game.title.Ttle;
-import legend.game.types.OverlayStruct;
 import legend.game.types.EngineState;
 import legend.game.types.ItemStats0c;
 import legend.game.types.MoonMusic08;
+import legend.game.types.OverlayStruct;
 import legend.game.types.Struct10;
 import legend.game.types.SubmapMusic08;
 import legend.game.unpacker.FileData;
@@ -47,6 +47,8 @@ import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.MEMORY;
@@ -87,7 +89,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Ttle#executeTtleUnloadingStage()}</li>
    *   <li>{@link SMap#theEnd}</li>
    *   <li>{@link SMap#executeSmapLoadingStage()} Sets up rendering and loads scene</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_80018658()}</li>
+   *   <li>{@link Scus94491BpeSegment#tickBattle()}</li>
    *   <li>{@link GameOver#gameOver()}</li>
    *   <li>{@link WMap#executeWmapState()}</li>
    *   <li>startFmvLoadingStage</li>
@@ -103,28 +105,17 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>null</li>
    * </ol>
    */
-  public static final OverlayStruct[] gameStateOverlays_8004dbc0 = new OverlayStruct[20];
+  public static final Map<EngineState, OverlayStruct> gameStateOverlays_8004dbc0 = new EnumMap<>(EngineState.class);
   static {
-    gameStateOverlays_8004dbc0[0] = new OverlayStruct(Scus94491BpeSegment_800e::preload);
-//    gameStateCallbacks_8004dbc0[1] = new CallbackStruct(finalizePregameLoading);
-    gameStateOverlays_8004dbc0[2] = new OverlayStruct(Ttle::executeTtleLoadingStage);
-    gameStateOverlays_8004dbc0[3] = new OverlayStruct(Ttle::executeTtleUnloadingStage);
-    gameStateOverlays_8004dbc0[4] = new OverlayStruct(SMap::theEnd, "\\OVL\\SMAP.OV_", 0x800c6690L, 0xf9f0);
-    gameStateOverlays_8004dbc0[5] = new OverlayStruct(SMap::executeSmapLoadingStage, "\\OVL\\SMAP.OV_", 0x800c6690L, 0xf9f0);
-    gameStateOverlays_8004dbc0[6] = new OverlayStruct(Scus94491BpeSegment::FUN_80018658, "\\OVL\\BTTL.OV_", 0x800c6690L, 0x668);
-    gameStateOverlays_8004dbc0[7] = new OverlayStruct(GameOver::gameOver);
-    gameStateOverlays_8004dbc0[8] = new OverlayStruct(WMap::executeWmapState, "\\OVL\\WMAP.OV_", 0x800c6690L, 0x2070);
-//    gameStateOverlays_8004dbc0[9] = new OverlayStruct(SMap::startFmvLoadingStage);
-//    gameStateCallbacks_8004dbc0[10] = new CallbackStruct(swapDiskLoadingStage);
-    gameStateOverlays_8004dbc0[11] = new OverlayStruct(SMap::playFinalFmv);
-//    gameStateCallbacks_8004dbc0[12] = new CallbackStruct(0x800c6eb8);
-//    gameStateCallbacks_8004dbc0[13] = new CallbackStruct(0x800cab8c);
-//    gameStateCallbacks_8004dbc0[14] = new CallbackStruct(null);
-//    gameStateCallbacks_8004dbc0[15] = new CallbackStruct(0x800c6978);
-//    gameStateCallbacks_8004dbc0[16] = new CallbackStruct(null);
-//    gameStateCallbacks_8004dbc0[17] = new CallbackStruct(0x800cdcdc);
-//    gameStateCallbacks_8004dbc0[18] = new CallbackStruct(0x800cabd4);
-//    gameStateCallbacks_8004dbc0[19] = new CallbackStruct(null);
+    gameStateOverlays_8004dbc0.put(EngineState.PRELOAD_00, new OverlayStruct(Scus94491BpeSegment_800e::preload));
+    gameStateOverlays_8004dbc0.put(EngineState.TITLE_02, new OverlayStruct(Ttle::executeTtleLoadingStage));
+    gameStateOverlays_8004dbc0.put(EngineState.TRANSITION_TO_NEW_GAME_03, new OverlayStruct(Ttle::executeTtleUnloadingStage));
+    gameStateOverlays_8004dbc0.put(EngineState.THE_END_04, new OverlayStruct(SMap::theEnd, "\\OVL\\SMAP.OV_", 0x800c6690L, 0xf9f0));
+    gameStateOverlays_8004dbc0.put(EngineState.SUBMAP_05, new OverlayStruct(SMap::executeSmapLoadingStage, "\\OVL\\SMAP.OV_", 0x800c6690L, 0xf9f0));
+    gameStateOverlays_8004dbc0.put(EngineState.COMBAT_06, new OverlayStruct(Scus94491BpeSegment::tickBattle, "\\OVL\\BTTL.OV_", 0x800c6690L, 0x668));
+    gameStateOverlays_8004dbc0.put(EngineState.GAME_OVER_07, new OverlayStruct(GameOver::gameOver));
+    gameStateOverlays_8004dbc0.put(EngineState.WORLD_MAP_08, new OverlayStruct(WMap::executeWmapState, "\\OVL\\WMAP.OV_", 0x800c6690L, 0x2070));
+    gameStateOverlays_8004dbc0.put(EngineState.CREDITS_11, new OverlayStruct(SMap::playFinalFmv));
   }
 
   public static String currentGameStateOverlay_8004dd04;
@@ -794,39 +785,39 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Scus94491BpeSegment#FUN_800189b0}</li>
    * </ol>
    */
-  public static final Runnable[] _8004f5d4 = new Runnable[31];
+  public static final Runnable[] battleLoadingStage_8004f5d4 = new Runnable[31];
   static {
-    _8004f5d4[0] = Scus94491BpeSegment::waitForFilesToLoad;
-    _8004f5d4[1] = Bttl_800c::initBattle;
-    _8004f5d4[2] = Scus94491BpeSegment::waitForFilesToLoad;
-    _8004f5d4[3] = Scus94491BpeSegment::waitForFilesToLoad;
-    _8004f5d4[4] = Bttl_800c::loadStageAndControllerScripts;
-    _8004f5d4[5] = Bttl_800c::initializeViewportAndCamera;
-    _8004f5d4[6] = Scus94491BpeSegment::nextLoadingStage;
-    _8004f5d4[7] = Scus94491BpeSegment::waitForFilesToLoad;
-    _8004f5d4[8] = Scus94491BpeSegment::nextLoadingStage;
-    _8004f5d4[9] = Bttl_800c::battleInitiateAndPreload_800c772c;
-    _8004f5d4[10] = Bttl_800c::deferAllocateEnemyBattleEntities;
-    _8004f5d4[11] = Scus94491BpeSegment::waitForFilesToLoad;
-    _8004f5d4[12] = Bttl_800c::deferAllocatePlayerBattleEntities;
-    _8004f5d4[13] = Scus94491BpeSegment::waitForFilesToLoad;
-    _8004f5d4[14] = Bttl_800c::deferLoadEncounterAssets;
-    _8004f5d4[15] = Scus94491BpeSegment::waitForFilesToLoad;
-    _8004f5d4[16] = Bttl_800c::loadHudAndAttackAnimations;
-    _8004f5d4[17] = Scus94491BpeSegment::waitForFilesToLoad;
-    _8004f5d4[18] = Bttl_800c::FUN_800c79f0;
-    _8004f5d4[19] = Scus94491BpeSegment::waitForFilesToLoad;
-    _8004f5d4[20] = Bttl_800c::deferDoNothing;
-    _8004f5d4[21] = Scus94491BpeSegment::waitForFilesToLoad;
-    _8004f5d4[22] = Bttl_800c::calculateInitialTurnValues;
-    _8004f5d4[23] = Bttl_800c::battleTick;
-    _8004f5d4[24] = Scus94491BpeSegment::waitForFilesToLoad;
-    _8004f5d4[25] = Bttl_800c::performPostBattleAction;
-    _8004f5d4[26] = Bttl_800c::deallocateCombat;
-    _8004f5d4[27] = Scus94491BpeSegment::waitForFilesToLoad;
-    _8004f5d4[28] = Scus94491BpeSegment::nextLoadingStage;
-    _8004f5d4[29] = Scus94491BpeSegment::FUN_80018508;
-    _8004f5d4[30] = Scus94491BpeSegment::FUN_800189b0;
+    battleLoadingStage_8004f5d4[0] = Scus94491BpeSegment::waitForFilesToLoad;
+    battleLoadingStage_8004f5d4[1] = Bttl_800c::initBattle;
+    battleLoadingStage_8004f5d4[2] = Scus94491BpeSegment::waitForFilesToLoad;
+    battleLoadingStage_8004f5d4[3] = Scus94491BpeSegment::waitForFilesToLoad;
+    battleLoadingStage_8004f5d4[4] = Bttl_800c::loadStageAndControllerScripts;
+    battleLoadingStage_8004f5d4[5] = Bttl_800c::initializeViewportAndCamera;
+    battleLoadingStage_8004f5d4[6] = Scus94491BpeSegment::nextLoadingStage;
+    battleLoadingStage_8004f5d4[7] = Scus94491BpeSegment::waitForFilesToLoad;
+    battleLoadingStage_8004f5d4[8] = Scus94491BpeSegment::nextLoadingStage;
+    battleLoadingStage_8004f5d4[9] = Bttl_800c::battleInitiateAndPreload_800c772c;
+    battleLoadingStage_8004f5d4[10] = Bttl_800c::deferAllocateEnemyBattleEntities;
+    battleLoadingStage_8004f5d4[11] = Scus94491BpeSegment::waitForFilesToLoad;
+    battleLoadingStage_8004f5d4[12] = Bttl_800c::deferAllocatePlayerBattleEntities;
+    battleLoadingStage_8004f5d4[13] = Scus94491BpeSegment::waitForFilesToLoad;
+    battleLoadingStage_8004f5d4[14] = Bttl_800c::deferLoadEncounterAssets;
+    battleLoadingStage_8004f5d4[15] = Scus94491BpeSegment::waitForFilesToLoad;
+    battleLoadingStage_8004f5d4[16] = Bttl_800c::loadHudAndAttackAnimations;
+    battleLoadingStage_8004f5d4[17] = Scus94491BpeSegment::waitForFilesToLoad;
+    battleLoadingStage_8004f5d4[18] = Bttl_800c::FUN_800c79f0;
+    battleLoadingStage_8004f5d4[19] = Scus94491BpeSegment::waitForFilesToLoad;
+    battleLoadingStage_8004f5d4[20] = Bttl_800c::deferDoNothing;
+    battleLoadingStage_8004f5d4[21] = Scus94491BpeSegment::waitForFilesToLoad;
+    battleLoadingStage_8004f5d4[22] = Bttl_800c::calculateInitialTurnValues;
+    battleLoadingStage_8004f5d4[23] = Bttl_800c::battleTick;
+    battleLoadingStage_8004f5d4[24] = Scus94491BpeSegment::waitForFilesToLoad;
+    battleLoadingStage_8004f5d4[25] = Bttl_800c::performPostBattleAction;
+    battleLoadingStage_8004f5d4[26] = Bttl_800c::deallocateCombat;
+    battleLoadingStage_8004f5d4[27] = Scus94491BpeSegment::waitForFilesToLoad;
+    battleLoadingStage_8004f5d4[28] = Scus94491BpeSegment::nextLoadingStage;
+    battleLoadingStage_8004f5d4[29] = Scus94491BpeSegment::FUN_80018508;
+    battleLoadingStage_8004f5d4[30] = Scus94491BpeSegment::FUN_800189b0;
   }
 
   public static final ScriptFile doNothingScript_8004f650 = new ScriptFile("Do nothing", new int[] {0x4, 0x1});
