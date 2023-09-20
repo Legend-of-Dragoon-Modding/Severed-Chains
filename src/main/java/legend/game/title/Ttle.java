@@ -129,19 +129,7 @@ public final class Ttle {
   private static boolean fireLoaded;
   private static boolean renderablesLoaded;
 
-  public static final int[][] startingEquipment_800ce6fc = {
-    { 0, 76, 46, 93, 152},
-    {20, 77, 47, 93, 152},
-    {27, 82, 62, 96, 152},
-    {13, 82, 63, 96, 152},
-    {40, 78, 57, 94, 152},
-    {20, 77, 47, 93, 152},
-    {34, 84, 64, 97, 152},
-    { 8, 78, 53, 94, 152},
-    {27, 82, 62, 96, 152},
-  };
   public static final int[] startingAddition_800ce758 = {0, 8, -1, 14, 29, 8, 23, 19, -1};
-  public static final int[] startingItems_800ce76c = {195, 203, 203};
 
   public static final int[] _800ce7b0 = {255, 1, 255, 255};
   public static final int[] _800ce7f8 = {195, 131, 128, 80, 0, 64, 16, 56, 32, 64, 48, 96, 64, 80, 80, 32, 96, 32};
@@ -193,21 +181,9 @@ public final class Ttle {
 
       //LAB_800c730c
       charData.selectedAddition_19 = startingAddition_800ce758[charIndex];
-
-      //LAB_800c7334
-      System.arraycopy(startingEquipment_800ce6fc[charIndex], 0, charData.equipment_14, 0, 5);
     }
 
     gameState_800babc8.charData_32c[0].partyFlags_04 = 0x3;
-
-    //LAB_800c7398
-    //LAB_800c73d8
-    for(final int itemId : startingItems_800ce76c) {
-      gameState_800babc8.items_2e9.add(itemId);
-    }
-
-    //LAB_800c7404
-    gameState_800babc8.gold_94 = 20;
   }
 
   @Method(0x800c7424L)

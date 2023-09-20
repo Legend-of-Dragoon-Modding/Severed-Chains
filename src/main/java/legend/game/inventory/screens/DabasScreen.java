@@ -3,19 +3,23 @@ package legend.game.inventory.screens;
 import legend.core.MathHelper;
 import legend.game.DabasManager;
 import legend.game.input.InputAction;
+import legend.game.inventory.Equipment;
+import legend.game.inventory.InventoryEntry;
+import legend.game.inventory.Item;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.types.DabasData100;
 import legend.game.types.LodString;
-import legend.game.types.MenuItemStruct04;
+import legend.game.types.MenuEntries;
+import legend.game.types.MenuEntryStruct04;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Renderable58;
 import legend.game.unpacker.FileData;
+import legend.lodmod.LodMod;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.SItem.AcquiredGold_8011cdd4;
 import static legend.game.SItem.AcquiredItems_8011d050;
 import static legend.game.SItem.DigDabas_8011d04c;
@@ -26,7 +30,6 @@ import static legend.game.SItem.SpecialItem_8011d054;
 import static legend.game.SItem.Take_8011d058;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.dabasMenuGlyphs_80114228;
-import static legend.game.SItem.getItemName;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.messageBox;
 import static legend.game.SItem.messageBox_8011dc90;
@@ -42,7 +45,7 @@ import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.getItemIcon;
+import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
@@ -68,8 +71,8 @@ public class DabasScreen extends MenuScreen {
 
   private final Runnable unload;
 
-  private final List<MenuItemStruct04> menuItems = new ArrayList<>();
-  private MenuItemStruct04 specialItem;
+  private final MenuEntries<InventoryEntry> menuItems = new MenuEntries<>();
+  private MenuEntryStruct04<Equipment> specialItem;
 
   public DabasScreen(final Runnable unload) {
     this.unload = unload;
@@ -113,19 +116,20 @@ public class DabasScreen extends MenuScreen {
           final int itemId = dabasData.items_14[i];
 
           if(itemId != 0) {
-            final MenuItemStruct04 item = new MenuItemStruct04();
-            item.itemId_00 = itemId;
-            this.menuItems.add(item);
+            if(itemId > 192) {
+              this.menuItems.add(MenuEntryStruct04.make(REGISTRIES.items.getEntry(LodMod.itemIdMap.get(itemId - 192)).get()));
+            } else {
+              this.menuItems.add(MenuEntryStruct04.make(REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(itemId)).get()));
+            }
+
             this.hasItems = true;
           }
         }
 
         final int specialItemId = dabasData.specialItem_2c;
         if(specialItemId != 0) {
+          this.specialItem = MenuEntryStruct04.make(REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(specialItemId)).get());
           this.hasItems = true;
-
-          this.specialItem = new MenuItemStruct04();
-          this.specialItem.itemId_00 = specialItemId;
         }
 
         this.gold = dabasData.gold_34;
@@ -232,9 +236,9 @@ public class DabasScreen extends MenuScreen {
     int itemCount = 0;
     dabasData.gold_34 = 0;
 
-    for(final MenuItemStruct04 item : this.menuItems) {
+    for(final MenuEntryStruct04<? extends InventoryEntry> item : this.menuItems) {
       if(item != null) {
-        if(item.itemId_00 < 0xc0) {
+        if(item.item_00 instanceof Equipment) {
           equipmentCount++;
         } else {
           itemCount++;
@@ -253,14 +257,16 @@ public class DabasScreen extends MenuScreen {
 
     this.hasItems = false;
 
-    for(final MenuItemStruct04 item : this.menuItems) {
-      if(item != null) {
-        giveItem(item.itemId_00);
+    for(final MenuEntryStruct04<? extends InventoryEntry> entry : this.menuItems) {
+      if(entry.item_00 instanceof final Item item) {
+        giveItem(item);
+      } else if(entry.item_00 instanceof final Equipment equipment) {
+        giveEquipment(equipment);
       }
     }
 
     if(this.specialItem != null) {
-      giveItem(this.specialItem.itemId_00);
+      giveEquipment(this.specialItem.item_00);
     }
 
     this.menuItems.clear();
@@ -600,8 +606,8 @@ public class DabasScreen extends MenuScreen {
     renderEightDigitNumber(100, 147, this.gold, 0x2);
 
     if(this.specialItem != null) {
-      renderItemIcon(getItemIcon(this.specialItem.itemId_00), 198, 192, 0x8L);
-      renderText(new LodString(getItemName(this.specialItem.itemId_00)), 214, 194, TextColour.BROWN);
+      renderItemIcon(this.specialItem.getIcon(), 198, 192, 0x8L);
+      renderText(new LodString(this.specialItem.getName()), 214, 194, TextColour.BROWN);
     }
 
     //LAB_80103390

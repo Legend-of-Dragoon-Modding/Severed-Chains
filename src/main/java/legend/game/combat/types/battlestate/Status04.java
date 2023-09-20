@@ -5,7 +5,11 @@ package legend.game.combat.types.battlestate;
  */
 public class Status04 {
   /**
-   * Bunch of flags. Somehow monster/ally turn matters.
+   * <ul>
+   *   <li>0-8 (bits 0x7) - status effect index</li>
+   *   <li>0x40 - unknown</li>
+   *   <li>0x80 - unknown</li>
+   * </ul>
    */
   public int statusEffect_00;
   /**

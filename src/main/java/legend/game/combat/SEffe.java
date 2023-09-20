@@ -8495,8 +8495,8 @@ public final class SEffe {
 
   @ScriptDescription("Replaces an existing script state's script")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The script index to replace the script for")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "entrypoint", description = "The script entrypoint at which to start")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "deffScriptIndex", description = "The DEFF script index to load (or -1 to use this script's script)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "entrypoint", description = "The script entrypoint at which to start")
   @Method(0x80115608L)
   public static FlowControl scriptSetScriptScript(final RunningScript<?> script) {
     final int scriptIndex = script.params_20[0].get();

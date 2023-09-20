@@ -3,7 +3,10 @@ package legend.game.types;
 /** Main menu renderable? */
 public class Renderable58 {
   /**
-   * 0x4 - start and end glyph is the same - no transition
+   * <ul>
+   *   <li>0x4 - start and end glyph is the same - no transition</li>
+   *   <li>0x40 - invisible</li>
+   * </ul>
    */
   public int flags_00;
   public int glyph_04;
@@ -28,4 +31,14 @@ public class Renderable58 {
   public Renderable58 parent_54;
 
   public int heightCut;
+
+  public Renderable58 setVisible(final boolean visible) {
+    if(visible) {
+      this.flags_00 &= ~0x40;
+    } else {
+      this.flags_00 |= 0x40;
+    }
+
+    return this;
+  }
 }

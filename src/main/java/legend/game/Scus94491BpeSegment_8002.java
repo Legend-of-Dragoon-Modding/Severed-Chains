@@ -1,6 +1,5 @@
 package legend.game;
 
-import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
@@ -15,12 +14,12 @@ import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.Transforms;
 import legend.core.memory.Method;
-import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.IntRef;
+import legend.game.combat.types.EnemyDrop;
 import legend.game.fmv.Fmv;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
-import legend.game.inventory.UseItemResponse;
+import legend.game.inventory.Equipment;
+import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.CampaignSelectionScreen;
 import legend.game.inventory.screens.CharSwapScreen;
@@ -48,10 +47,9 @@ import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EngineState;
 import legend.game.types.InventoryMenuState;
-import legend.game.types.ItemStats0c;
 import legend.game.types.LodString;
 import legend.game.types.MagicStuff08;
-import legend.game.types.MenuItemStruct04;
+import legend.game.types.MenuEntryStruct04;
 import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms0c;
 import legend.game.types.Renderable58;
@@ -67,6 +65,7 @@ import legend.game.types.UiPart;
 import legend.game.types.UiType;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
+import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Math;
@@ -76,6 +75,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
@@ -86,9 +86,9 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.SItem.cacheCharacterSlots;
-import static legend.game.SItem.equipmentStats_80111ff0;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.SItem.menuAssetsLoaded;
@@ -108,7 +108,6 @@ import static legend.game.SMap.FUN_800e8e50;
 import static legend.game.SMap.FUN_800ea4c8;
 import static legend.game.SMap._800c68e8;
 import static legend.game.SMap.adjustSmapUvs;
-import static legend.game.SMap.encounterAccumulator_800c6ae8;
 import static legend.game.SMap.getCollisionAndTransitionInfo;
 import static legend.game.SMap.handleEncounters;
 import static legend.game.SMap.mapTransition;
@@ -142,7 +141,6 @@ import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.freeSequence;
-import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 import static legend.game.Scus94491BpeSegment_8004.stopMusicSequence;
 import static legend.game.Scus94491BpeSegment_8005._8005027c;
 import static legend.game.Scus94491BpeSegment_8005._8005039c;
@@ -181,7 +179,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bed28;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.encounterSoundEffects_800bd610;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.hasNoEncounters_800bed58;
 import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
 import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
@@ -1118,25 +1115,6 @@ public final class Scus94491BpeSegment_8002 {
     }
   }
 
-  @Method(0x80022898L)
-  public static boolean itemCantBeDiscarded(final int itemId) {
-    if(itemId >= 0xc0) {
-      return false;
-    }
-
-    return (equipmentStats_80111ff0[itemId].flags_00 & 0x4) != 0;
-  }
-
-  @Method(0x800228d0L)
-  public static int getItemIcon(final int itemId) {
-    if(itemId >= 0xc0) {
-      return itemStats_8004f2ac[itemId - 0xc0].icon_07;
-    }
-
-    //LAB_80022908
-    return equipmentStats_80111ff0[itemId].icon_0e;
-  }
-
   @Method(0x80022928L)
   public static int getUnlockedDragoonSpells(final byte[] spellIndicesOut, final int charIndex) {
     //LAB_80022940
@@ -1220,23 +1198,6 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80022aec
   }
 
-  @Method(0x80022afcL)
-  public static int itemCanBeUsedInMenu(final int itemId) {
-    if(itemId < 0xc0 || itemId == 0xff) {
-      return 0;
-    }
-
-    final int target = itemStats_8004f2ac[itemId - 0xc0].target_00;
-
-    if((target & 0x10L) == 0) {
-      //LAB_80022b40
-      return 0;
-    }
-
-    //LAB_80022b48
-    return target & 0x12;
-  }
-
   /**
    * @param amount Amount of HP to restore, -1 restores all hP
    * @return The amount of HP restored, -1 if all HP is restored, or -2 if HP was already full
@@ -1317,111 +1278,8 @@ public final class Scus94491BpeSegment_8002 {
     return 0;
   }
 
-  @Method(0x80022d88L)
-  public static UseItemResponse useItemInMenu(final UseItemResponse response, final int itemId, final int charIndex) {
-    response._00 = 0;
-    response.value_04 = 0;
-
-    if(itemCanBeUsedInMenu(itemId) == 0) {
-      //LAB_80022dd8
-      return response;
-    }
-
-    //LAB_80022e0c
-    response._00 = 1;
-
-    if(itemId == 0xdf) { // Charm potion
-      if(engineState_8004dd20 == EngineState.WORLD_MAP_08 || hasNoEncounters_800bed58.get() == 0) {
-        //LAB_80022e40
-        response._00 = 8;
-        encounterAccumulator_800c6ae8.set(0);
-      } else {
-        //LAB_80022e50
-        response._00 = 9;
-      }
-
-      //LAB_80022e54
-      //LAB_80022e60
-      return response;
-    }
-
-    //LAB_80022e94
-    final ItemStats0c itemStats = itemStats_8004f2ac[itemId - 0xc0];
-    final int percentage = itemStats.percentage_09;
-    if((itemStats.type_0b & 0x80) != 0) {
-      //LAB_80022edc
-      response._00 = (itemStats.target_00 & 0x2) == 0 ? 2 : 3;
-
-      final int amount;
-      if(percentage == 100) {
-        amount = -1;
-      } else {
-        //LAB_80022ef0
-        amount = stats_800be5f8[charIndex].maxHp_66 * percentage / 100;
-      }
-
-      //LAB_80022f3c
-      response.value_04 = addHp(charIndex, amount);
-    }
-
-    //LAB_80022f50
-    if((itemStats.type_0b & 0x40) != 0) {
-      //LAB_80022f98
-      response._00 = (itemStats.target_00 & 0x2) == 0 ? 4 : 5;
-
-      final int amount;
-      if(percentage == 100) {
-        amount = -1;
-      } else {
-        //LAB_80022fac
-        amount = stats_800be5f8[charIndex].maxMp_6e * percentage / 100;
-      }
-
-      //LAB_80022ff8
-      response.value_04 = addMp(charIndex, amount);
-    }
-
-    //LAB_8002300c
-    if((itemStats.type_0b & 0x20) != 0) {
-      response._00 = 6;
-
-      final int amount;
-      if(percentage == 100) {
-        amount = -1;
-      } else {
-        amount = percentage;
-      }
-
-      //LAB_80023050
-      response.value_04 = addSp(charIndex, amount);
-    }
-
-    //LAB_80023068
-    if((itemStats.type_0b & 0x8) != 0) {
-      final int status = gameState_800babc8.charData_32c[charIndex].status_10;
-
-      if((itemStats.status_08 & status) != 0) {
-        response.value_04 = status;
-        gameState_800babc8.charData_32c[charIndex].status_10 &= ~status;
-      }
-
-      //LAB_800230ec
-      response._00 = 7;
-    }
-
-    //LAB_800230f0
-    //LAB_800230fc
-    //LAB_8002312c
-    return response;
-  }
-
-  @Method(0x80023264L)
-  public static void checkForPsychBombX() {
-    gameState_800babc8.scriptFlags2_bc.set(13, 18, gameState_800babc8.items_2e9.contains(0xfa)); // Psych Bomb X
-  }
-
-  public static int takeItemId(final int itemId) {
-    final int itemSlot = gameState_800babc8.items_2e9.indexOf(itemId);
+  public static int takeItemId(final Item item) {
+    final int itemSlot = gameState_800babc8.items_2e9.indexOf(item);
 
     if(itemSlot != -1) {
       return takeItem(itemSlot);
@@ -1437,19 +1295,19 @@ public final class Scus94491BpeSegment_8002 {
       return 0xff;
     }
 
-    final int itemId = gameState_800babc8.items_2e9.getInt(itemSlot);
+    final Item item = gameState_800babc8.items_2e9.get(itemSlot);
 
-    final TakeItemEvent takeItemEvent = EVENTS.postEvent(new TakeItemEvent(itemId, true));
+    final TakeItemEvent takeItemEvent = EVENTS.postEvent(new TakeItemEvent(item, true));
 
     if(takeItemEvent.takeItem) {
-      gameState_800babc8.items_2e9.removeInt(itemSlot);
+      gameState_800babc8.items_2e9.remove(itemSlot);
     }
 
     return 0;
   }
 
-  public static int takeEquipmentId(final int equipmentId) {
-    final int equipmentSlot = gameState_800babc8.equipment_1e8.indexOf(equipmentId);
+  public static int takeEquipmentId(final Equipment equipment) {
+    final int equipmentSlot = gameState_800babc8.equipment_1e8.indexOf(equipment);
 
     if(equipmentSlot != 0xff) {
       return takeEquipment(equipmentSlot);
@@ -1465,67 +1323,47 @@ public final class Scus94491BpeSegment_8002 {
       return 0xff;
     }
 
-    gameState_800babc8.equipment_1e8.removeInt(equipmentIndex);
+    gameState_800babc8.equipment_1e8.remove(equipmentIndex);
 
     return 0;
   }
 
   @Method(0x80023484L)
-  public static int giveItem(final int itemId) {
-    if(itemId == 0xff) {
-      return 0xff;
+  public static boolean giveItem(final Item item) {
+    if(gameState_800babc8.items_2e9.size() >= CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get())) {
+      return false;
     }
 
-    if(itemId >= 0x100) {
-      return 0;
+    gameState_800babc8.items_2e9.add(item);
+    return true;
+  }
+
+  @Method(0x80023484L)
+  public static boolean giveEquipment(final Equipment equipment) {
+    if(gameState_800babc8.equipment_1e8.size() >= 255) {
+      return false;
     }
 
-    if(itemId < 0xc0) {
-      final int count = gameState_800babc8.equipment_1e8.size();
-
-      if(count >= 255) {
-        return 0xff;
-      }
-
-      gameState_800babc8.equipment_1e8.add(itemId);
-      return 0;
-    }
-
-    //LAB_800234f4
-    final int count = gameState_800babc8.items_2e9.size();
-
-    if(count >= CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get())) {
-      //LAB_8002350c
-      return 0xff;
-    }
-
-    //LAB_80023514
-    gameState_800babc8.items_2e9.add(itemId);
-
-    //LAB_80023530
-    //LAB_80023534
-    return 0;
+    gameState_800babc8.equipment_1e8.add(equipment);
+    return true;
   }
 
   @Method(0x80023544L)
-  public static int giveItems(final ArrayRef<IntRef> items, final IntRef itemCount) {
+  public static int giveItems(final List<EnemyDrop> items) {
     int count = 0;
+
     //LAB_80023580
-    for(int itemSlot = 0; itemSlot < itemCount.get(); itemSlot++) {
-      if(giveItem(items.get(itemSlot).get()) != 0) {
+    final Iterator<EnemyDrop> it = items.iterator();
+    while(it.hasNext()) {
+      final EnemyDrop drop = it.next();
+
+      if(drop.performDrop()) {
         count++;
       } else {
         //LAB_800235a4
         //LAB_800235c0
-        int i;
-        for(i = itemSlot; i < itemCount.get() - 1; i++) {
-          items.get(i).set(items.get(i + 1).get());
-        }
-
-        //LAB_800235e4
-        items.get(i).set(0xff);
-        itemCount.decr();
-        itemSlot--;
+        drop.overflow();
+        it.remove();
       }
 
       //LAB_80023604
@@ -1647,37 +1485,35 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x800239e0L)
-  public static void setInventoryFromDisplay(final List<MenuItemStruct04> display, final IntList out, final int count) {
+  public static <T> void setInventoryFromDisplay(final List<MenuEntryStruct04<T>> display, final List<T> out, final int count) {
     out.clear();
 
     //LAB_800239ec
     for(int i = 0; i < count; i++) {
       if((display.get(i).flags_02 & 0x1000) == 0) {
-        out.add(display.get(i).itemId_00);
+        out.add(display.get(i).item_00);
       }
     }
   }
 
   @Method(0x80023a2cL)
-  public static void sortItems(final List<MenuItemStruct04> display, final IntList items, final int count) {
+  public static <T> void sortItems(final List<MenuEntryStruct04<T>> display, final List<T> items, final int count) {
     display.sort(menuItemComparator());
     setInventoryFromDisplay(display, items, count);
   }
 
-  public static Comparator<MenuItemStruct04> menuItemComparator() {
+  public static <T> Comparator<MenuEntryStruct04<T>> menuItemComparator() {
     return Comparator
-      .comparingInt((MenuItemStruct04 item) -> getItemIcon(item.itemId_00))
-      .thenComparingInt(item -> item.itemId_00);
+      .comparingInt((MenuEntryStruct04<T> item) -> item.getIcon())
+      .thenComparing(MenuEntryStruct04::getName);
   }
 
   @Method(0x80023a88L)
   public static void FUN_80023a88() {
-    final List<MenuItemStruct04> items = new ArrayList<>();
+    final List<MenuEntryStruct04<Item>> items = new ArrayList<>();
 
-    for(int i = 0; i < gameState_800babc8.items_2e9.size(); i++) {
-      final MenuItemStruct04 item = new MenuItemStruct04();
-      item.itemId_00 = gameState_800babc8.items_2e9.getInt(i);
-      items.add(item);
+    for(final Item item : gameState_800babc8.items_2e9) {
+      items.add(MenuEntryStruct04.make(item));
     }
 
     sortItems(items, gameState_800babc8.items_2e9, gameState_800babc8.items_2e9.size());
@@ -2016,7 +1852,15 @@ public final class Scus94491BpeSegment_8002 {
       case 0xfd -> addGold(100);
       case 0xfe -> addGold(200);
       case 0xff -> 0xff;
-      default -> giveItem(script.params_20[0].get());
+      default -> {
+        final int itemId = script.params_20[0].get();
+
+        if(itemId < 0xc0) {
+          yield takeEquipmentId(REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(itemId)).get());
+        } else {
+          yield takeItemId(REGISTRIES.items.getEntry(LodMod.itemIdMap.get(itemId - 192)).get());
+        }
+      }
     };
 
     //LAB_80024574
@@ -2034,9 +1878,9 @@ public final class Scus94491BpeSegment_8002 {
     final int itemId = script.params_20[0].get() & 0xff;
 
     if(itemId < 0xc0) {
-      script.params_20[1].set(takeEquipmentId(itemId));
+      script.params_20[1].set(takeEquipmentId(REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(itemId)).get()));
     } else {
-      script.params_20[1].set(takeItemId(itemId));
+      script.params_20[1].set(takeItemId(REGISTRIES.items.getEntry(LodMod.itemIdMap.get(itemId - 192)).get()));
     }
 
     return FlowControl.CONTINUE;
@@ -4600,12 +4444,7 @@ public final class Scus94491BpeSegment_8002 {
       stats.flags_0c = 0;
       stats.level_0e = 0;
       stats.dlevel_0f = 0;
-
-      //LAB_8002a758
-      for(int i = 0; i < 5; i++) {
-        stats.equipment_30[i] = 0xff;
-      }
-
+      stats.equipment_30.clear();
       stats.selectedAddition_35 = 0;
 
       //LAB_8002a780;
@@ -4660,7 +4499,7 @@ public final class Scus94491BpeSegment_8002 {
     final ActiveStatsa0 stats = stats_800be5f8[charIndex];
 
     stats.specialEffectFlag_76 = 0;
-    stats.equipmentType_77 = 0;
+//    stats.equipmentType_77 = 0;
     stats.equipment_02_78 = 0;
     stats.equipmentEquipableFlags_79 = 0;
     stats.equipmentAttackElements_7a.clear();

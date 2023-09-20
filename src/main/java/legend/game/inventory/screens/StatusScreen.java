@@ -90,7 +90,7 @@ public class StatusScreen extends MenuScreen {
   }
 
   private void renderStatusMenu(final int charSlot, final long a1) {
-    renderCharacterStats(characterIndices_800bdbb8.get(charSlot).get(), 0xff, a1 == 0xff);
+    renderCharacterStats(characterIndices_800bdbb8.get(charSlot).get(), null, a1 == 0xff);
     renderCharacterSlot(16, 21, characterIndices_800bdbb8.get(charSlot).get(), a1 == 0xff, false);
     renderCharacterEquipment(characterIndices_800bdbb8.get(charSlot).get(), a1 == 0xff);
     this.renderCharacterSpells(characterIndices_800bdbb8.get(charSlot).get(), a1 == 0xff);

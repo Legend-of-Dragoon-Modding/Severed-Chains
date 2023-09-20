@@ -1,17 +1,19 @@
 package legend.game.combat.types;
 
+import legend.game.combat.bent.BattleEntityStat;
+
 public enum AttackType {
-  PHYSICAL(92, 94, 73, 0x4),
-  DRAGOON_MAGIC_STATUS_ITEMS(93, 95, 73, 0x4),
-  ITEM_MAGIC(93, 95, 115, 0xe0),
+  PHYSICAL(BattleEntityStat.TEMP_ATTACK_HIT, BattleEntityStat.TEMP_ATTACK_AVOID, BattleEntityStat.SPELL_FLAGS, 0x4),
+  DRAGOON_MAGIC_STATUS_ITEMS(BattleEntityStat.TEMP_MAGIC_HIT, BattleEntityStat.TEMP_MAGIC_AVOID, BattleEntityStat.SPELL_FLAGS, 0x4),
+  ITEM_MAGIC(BattleEntityStat.TEMP_MAGIC_HIT, BattleEntityStat.TEMP_MAGIC_AVOID, BattleEntityStat.ITEM_TYPE, 0xe0),
   ;
 
-  public final int tempHitStat;
-  public final int tempAvoidStat;
-  public final int alwaysHitStat;
+  public final BattleEntityStat tempHitStat;
+  public final BattleEntityStat tempAvoidStat;
+  public final BattleEntityStat alwaysHitStat;
   public final int alwaysHitMask;
 
-  AttackType(final int tempHitStat, final int tempAvoidStat, final int alwaysHitStat, final int alwaysHitMask) {
+  AttackType(final BattleEntityStat tempHitStat, final BattleEntityStat tempAvoidStat, final BattleEntityStat alwaysHitStat, final int alwaysHitMask) {
     this.tempHitStat = tempHitStat;
     this.tempAvoidStat = tempAvoidStat;
     this.alwaysHitStat = alwaysHitStat;

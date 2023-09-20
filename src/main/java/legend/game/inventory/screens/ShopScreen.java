@@ -1,28 +1,40 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
+import legend.core.memory.Method;
 import legend.game.input.InputAction;
+import legend.game.inventory.EquipItemResult;
+import legend.game.inventory.Equipment;
+import legend.game.inventory.InventoryEntry;
+import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.inventory.ShopEquipmentEvent;
 import legend.game.modding.events.inventory.ShopItemEvent;
 import legend.game.modding.events.inventory.ShopSellPriceEvent;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.EngineState;
+import legend.game.types.EquipmentSlot;
 import legend.game.types.LodString;
-import legend.game.types.MenuItemStruct04;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Renderable58;
+import legend.lodmod.LodMod;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
-import java.util.Arrays;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.SItem.Buy_8011c6a4;
 import static legend.game.SItem.Cannot_be_armed_with_8011c6d4;
 import static legend.game.SItem.Carried_8011c6b8;
 import static legend.game.SItem.FUN_80104b60;
-import static legend.game.SItem.FUN_8010a808;
 import static legend.game.SItem.Leave_8011c6c8;
 import static legend.game.SItem.Not_enough_money_8011c468;
 import static legend.game.SItem.Number_kept_8011c7f4;
@@ -35,11 +47,9 @@ import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.canEquip;
 import static legend.game.SItem.characterCount_8011d7c4;
 import static legend.game.SItem.equipItem;
-import static legend.game.SItem.getItemName;
 import static legend.game.SItem.glyph_801142d4;
 import static legend.game.SItem.glyphs_80114510;
 import static legend.game.SItem.initGlyph;
-import static legend.game.SItem.itemPrices_80114310;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderCentredText;
@@ -58,10 +68,9 @@ import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.addGold;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.getItemIcon;
+import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.intToStr;
-import static legend.game.Scus94491BpeSegment_8002.itemCantBeDiscarded;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.takeEquipment;
 import static legend.game.Scus94491BpeSegment_8002.takeItem;
@@ -90,9 +99,8 @@ public class ShopScreen extends MenuScreen {
   private Renderable58 selectedMenuOptionRenderablePtr_800bdbe4;
   private Renderable58 charHighlight;
 
-  private final MenuItemStruct04[] menuItems = new MenuItemStruct04[17];
+  private final List<ShopEntry<? extends InventoryEntry>> inv = new ArrayList<>();
 
-  private int itemCount;
   /**
    * <ul>
    *   <li>0 - Item Shop</li>
@@ -118,7 +126,7 @@ public class ShopScreen extends MenuScreen {
   protected void render() {
     switch(this.menuState) {
       case INIT_0 -> {
-        Arrays.setAll(this.menuItems, i -> new MenuItemStruct04());
+        this.inv.clear();
         loadCharacterStats();
         this.menuIndex_8011e0dc = 0;
         this.menuIndex_8011e0e0 = 0;
@@ -138,36 +146,47 @@ public class ShopScreen extends MenuScreen {
         renderGlyphs(glyphs_80114510, 0, 0);
         this.selectedMenuOptionRenderablePtr_800bdbe0 = allocateUiElement(0x7a, 0x7a, 49, this.getShopMenuYOffset(this.menuIndex_8011e0dc));
         FUN_80104b60(this.selectedMenuOptionRenderablePtr_800bdbe0);
-        this.itemCount = 0;
 
-        for(int i = 0; i < 16; i++) {
-          final int menuItemIndex = this.itemCount;
-          final int itemId = shops_800f4930.get(shopId_8007a3b4.get()).item_00.get(menuItemIndex).id_01.get();
+        this.shopType = shops_800f4930.get(shopId_8007a3b4.get()).shopType_00.get() & 1;
 
-          final ShopItemEvent event = EVENTS.postEvent(new ShopItemEvent(shopId_8007a3b4.get(), menuItemIndex, itemId, itemId == 0xff ? 0 : itemPrices_80114310.get(itemId).get() * 2));
+        if(this.shopType == 0) {
+          final List<ShopEntry<Equipment>> shopEntries = new ArrayList<>();
 
-          if(event.itemId != 0xff) {
-            final MenuItemStruct04 menuItem = this.menuItems[menuItemIndex];
-            menuItem.itemId_00 = event.itemId;
-            menuItem.flags_02 = event.price;
-            this.itemCount++;
-          } else {
-            final MenuItemStruct04 menuItem = this.menuItems[i];
-            menuItem.itemId_00 = 0xff;
-            menuItem.flags_02 = 0;
+          for(int i = 0; i < 16; i++) {
+            final int id = shops_800f4930.get(shopId_8007a3b4.get()).item_00.get(i).id_01.get();
+
+            if(id != 0xff) {
+              final RegistryId registryId = LodMod.equipmentIdMap.get(id);
+              final Equipment equipment = REGISTRIES.equipment.getEntry(registryId).get();
+              shopEntries.add(new ShopEntry<>(equipment, equipment.getPrice()));
+            }
           }
+
+          final ShopEquipmentEvent event = EVENTS.postEvent(new ShopEquipmentEvent(shopId_8007a3b4.get(), shopEntries));
+          this.inv.addAll(event.equipment);
+        } else {
+          final List<ShopEntry<Item>> shopEntries = new ArrayList<>();
+
+          for(int i = 0; i < 16; i++) {
+            final int id = shops_800f4930.get(shopId_8007a3b4.get()).item_00.get(i).id_01.get();
+
+            if(id != 0xff) {
+              final RegistryId registryId = LodMod.itemIdMap.get(id - 192);
+              final Item item = REGISTRIES.items.getEntry(registryId).get();
+              shopEntries.add(new ShopEntry<>(item, item.getPrice()));
+            }
+          }
+
+          final ShopItemEvent event = EVENTS.postEvent(new ShopItemEvent(shopId_8007a3b4.get(), shopEntries));
+          this.inv.addAll(event.items);
         }
 
-        final MenuItemStruct04 menuItem = this.menuItems[16];
-        menuItem.itemId_00 = 0xff;
-        menuItem.flags_02 = 0;
         cacheCharacterSlots();
 
         for(int charSlot = 0; charSlot < characterCount_8011d7c4.get(); charSlot++) {
           this.charRenderables[charSlot] = this.allocateCharRenderable(this.FUN_8010a818(charSlot), 174, characterIndices_800bdbb8.get(charSlot).get());
         }
 
-        this.shopType = shops_800f4930.get(shopId_8007a3b4.get()).shopType_00.get() & 1;
         this.renderShopMenu(this.menuIndex_8011e0dc, this.shopType);
         this.menuState = MenuState.RENDER_3;
       }
@@ -175,13 +194,15 @@ public class ShopScreen extends MenuScreen {
       case RENDER_3 -> this.renderShopMenu(this.menuIndex_8011e0dc, this.shopType);
 
       case BUY_4 -> {
+        final ShopEntry<? extends InventoryEntry> entry = this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0);
+
         if(this.shopType == 0) {
-          this.renderEquipmentStatChange(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00, characterIndices_800bdbb8.get(this.equipCharIndex).get());
+          this.renderEquipmentStatChange((Equipment)entry.item, characterIndices_800bdbb8.get(this.equipCharIndex).get());
         } else {
-          this.renderNumberOfItems(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00);
+          this.renderNumberOfItems((Item)entry.item);
         }
 
-        renderString(0, 16, 122, this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00, false);
+        renderString(16, 122, entry.item.getDescription(), false);
 
         if(this.scrollAccumulator >= 1.0d) {
           this.scrollAccumulator -= 1.0d;
@@ -194,19 +215,20 @@ public class ShopScreen extends MenuScreen {
         if(this.scrollAccumulator <= -1.0d) {
           this.scrollAccumulator += 1.0d;
 
-          if(this.menuScroll_8011e0e4 < this.itemCount - 6 && MathHelper.inBox(this.mouseX, this.mouseY, 138, 16, 220, 104)) {
+          if(this.menuScroll_8011e0e4 < this.inv.size() - 6 && MathHelper.inBox(this.mouseX, this.mouseY, 138, 16, 220, 104)) {
             this.scroll(this.menuScroll_8011e0e4 + 1);
           }
         }
 
-        this.FUN_8010c458(this.menuScroll_8011e0e4, this.renderable_8011e0f0, this.renderable_8011e0f4);
+        this.renderMenuEntries(this.inv, this.menuScroll_8011e0e4, this.renderable_8011e0f0, this.renderable_8011e0f4);
         this.renderShopMenu(this.menuIndex_8011e0dc, this.shopType);
       }
 
       case BUY_SELECT_CHAR_5 -> {
-        this.renderEquipmentStatChange(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00, characterIndices_800bdbb8.get(this.equipCharIndex).get());
-        renderString(0, 16, 122, this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00, false);
-        this.FUN_8010c458(this.menuScroll_8011e0e4, this.renderable_8011e0f0, this.renderable_8011e0f4);
+        final ShopEntry<? extends InventoryEntry> equipment = this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0);
+        this.renderEquipmentStatChange((Equipment)equipment.item, characterIndices_800bdbb8.get(this.equipCharIndex).get());
+        renderString(16, 122, equipment.item.getDescription(), false);
+        this.renderMenuEntries(this.inv, this.menuScroll_8011e0e4, this.renderable_8011e0f0, this.renderable_8011e0f4);
         this.renderShopMenu(this.menuIndex_8011e0dc, this.shopType);
       }
 
@@ -217,14 +239,14 @@ public class ShopScreen extends MenuScreen {
           count = gameState_800babc8.items_2e9.size();
 
           if(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0 < count) {
-            renderString(0, 193, 122, gameState_800babc8.items_2e9.getInt(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0), false);
+            renderString(193, 122, gameState_800babc8.items_2e9.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).getDescription(), false);
           }
         } else {
           renderText(Which_weapon_do_you_want_to_sell_8011c524, 16, 128, TextColour.BROWN);
           count = gameState_800babc8.equipment_1e8.size();
 
           if(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0 < count) {
-            renderString(0, 193, 122, gameState_800babc8.equipment_1e8.getInt(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0), false);
+            renderString(193, 122, gameState_800babc8.equipment_1e8.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).description, false);
           }
         }
 
@@ -236,10 +258,10 @@ public class ShopScreen extends MenuScreen {
             this.menuScroll_8011e0e4--;
 
             if(this.shopType2 == 0) {
-              this.FUN_8010a864(gameState_800babc8.equipment_1e8.getInt(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0));
+              this.FUN_8010a864(gameState_800babc8.equipment_1e8.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0));
             }
 
-            this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = FUN_8010a808(this.menuIndex_8011e0e0);
+            this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.menuIndex_8011e0e0);
           }
         }
 
@@ -251,10 +273,10 @@ public class ShopScreen extends MenuScreen {
             this.menuScroll_8011e0e4++;
 
             if(this.shopType2 == 0) {
-              this.FUN_8010a864(gameState_800babc8.equipment_1e8.getInt(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0));
+              this.FUN_8010a864(gameState_800babc8.equipment_1e8.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0));
             }
 
-            this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = FUN_8010a808(this.menuIndex_8011e0e0);
+            this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.menuIndex_8011e0e0);
           }
         }
 
@@ -293,15 +315,15 @@ public class ShopScreen extends MenuScreen {
     this.menuScroll_8011e0e4 = scroll;
   }
 
-  private int FUN_8010a864(final int equipmentId) {
+  private int FUN_8010a864(@Nullable final Equipment equipment) {
     int s3 = -1;
 
     for(int i = 0; i < 7; i++) {
       if(characterIndices_800bdbb8.get(i).get() != -1) {
         this.charRenderables[i].y_44 = 174;
 
-        if(equipmentId != 0xff) {
-          if(!canEquip(equipmentId, characterIndices_800bdbb8.get(i).get())) {
+        if(equipment != null) {
+          if(!canEquip(equipment, characterIndices_800bdbb8.get(i).get())) {
             this.charRenderables[i].y_44 = 250;
           } else if(s3 == -1) {
             s3 = i;
@@ -336,13 +358,13 @@ public class ShopScreen extends MenuScreen {
     renderEightDigitNumber(87, 24, gameState_800babc8.gold_94, 0x2);
   }
 
-  private void renderEquipmentStatChange(final int equipmentId, final int charIndex) {
+  private void renderEquipmentStatChange(final Equipment equipment, final int charIndex) {
     if(charIndex != -1) {
       final ActiveStatsa0 oldStats = new ActiveStatsa0(stats_800be5f8[charIndex]);
 
-      final int[] oldEquipment = Arrays.copyOf(gameState_800babc8.charData_32c[charIndex].equipment_14, 5);
+      final Map<EquipmentSlot, Equipment> oldEquipment = new EnumMap<>(gameState_800babc8.charData_32c[charIndex].equipment_14);
 
-      if(equipItem(equipmentId, charIndex) != 0xff) {
+      if(equipItem(equipment, charIndex).success) {
         allocateOneFrameGlyph(0x67, 210, 127);
         allocateOneFrameGlyph(0x68, 210, 137);
         allocateOneFrameGlyph(0x69, 210, 147);
@@ -365,98 +387,72 @@ public class ShopScreen extends MenuScreen {
         renderText(Cannot_be_armed_with_8011c6d4, 228, 137, TextColour.BROWN);
       }
 
-      System.arraycopy(oldEquipment, 0, gameState_800babc8.charData_32c[charIndex].equipment_14, 0, 5);
+      gameState_800babc8.charData_32c[charIndex].equipment_14.clear();
+      gameState_800babc8.charData_32c[charIndex].equipment_14.putAll(oldEquipment);
 
       loadCharacterStats();
     }
   }
 
-  private void renderNumberOfItems(final int itemId) {
-    if(itemId != 0xff) {
-      int count = 0;
-      for(int i = 0; i < gameState_800babc8.items_2e9.size(); i++) {
-        if(gameState_800babc8.items_2e9.getInt(i) == itemId) {
-          count++;
-        }
+  private void renderNumberOfItems(final Item item) {
+    int count = 0;
+    for(int i = 0; i < gameState_800babc8.items_2e9.size(); i++) {
+      if(gameState_800babc8.items_2e9.get(i) == item) {
+        count++;
       }
-
-      final LodString num = new LodString(11);
-      intToStr(count, num);
-      renderText(Number_kept_8011c7f4, 228, 137, TextColour.BROWN);
-      renderText(num, 274, 137, TextColour.BROWN);
     }
+
+    final LodString num = new LodString(11);
+    intToStr(count, num);
+    renderText(Number_kept_8011c7f4, 228, 137, TextColour.BROWN);
+    renderText(num, 274, 137, TextColour.BROWN);
   }
 
   private void renderItemList(final int firstItem, final int isItemMenu, final Renderable58 upArrow, final Renderable58 downArrow) {
     if(isItemMenu != 0) {
       int i;
       for(i = 0; firstItem + i < gameState_800babc8.items_2e9.size() && i < 6; i++) {
-        final int itemId = gameState_800babc8.items_2e9.getInt(firstItem + i);
-        renderItemIcon(getItemIcon(itemId), 151, FUN_8010a808(i), 0x8L);
-        renderText(new LodString(getItemName(itemId)), 168, FUN_8010a808(i) + 2, !itemCantBeDiscarded(itemId) ? TextColour.BROWN : TextColour.MIDDLE_BROWN);
+        final Item item = gameState_800babc8.items_2e9.get(firstItem + i);
+        renderItemIcon(item.getIcon(), 151, this.menuEntryY(i), 0x8L);
+        renderText(new LodString(item.getName()), 168, this.menuEntryY(i) + 2, TextColour.BROWN);
 
-        final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4.get(), itemId, itemPrices_80114310.get(itemId).get()));
-        this.FUN_801069d0(324, FUN_8010a808(i) + 4, event.price);
+        final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4.get(), item, item.getPrice()));
+        this.FUN_801069d0(324, this.menuEntryY(i) + 4, event.price);
       }
 
-      if(firstItem + 6 > gameState_800babc8.items_2e9.size() - 1) {
-        downArrow.flags_00 |= 0x40;
-      } else {
-        downArrow.flags_00 &= 0xffff_ffbf;
-      }
+      downArrow.setVisible(firstItem + 6 <= gameState_800babc8.items_2e9.size() - 1);
     } else {
       int i;
       for(i = 0; firstItem + i < gameState_800babc8.equipment_1e8.size() && i < 6; i++) {
-        final int itemId = gameState_800babc8.equipment_1e8.getInt(firstItem + i);
-        renderItemIcon(getItemIcon(itemId), 151, FUN_8010a808(i), 0x8L);
-        renderText(new LodString(getItemName(itemId)), 168, FUN_8010a808(i) + 2, !itemCantBeDiscarded(itemId) ? TextColour.BROWN : TextColour.MIDDLE_BROWN);
+        final Equipment equipment = gameState_800babc8.equipment_1e8.get(firstItem + i);
+        renderItemIcon(equipment.icon_0e, 151, this.menuEntryY(i), 0x8L);
+        renderText(new LodString(equipment.name), 168, this.menuEntryY(i) + 2, equipment.canBeDiscarded() ? TextColour.BROWN : TextColour.MIDDLE_BROWN);
 
-        if(itemCantBeDiscarded(itemId)) {
-          renderItemIcon(58, 330, FUN_8010a808(i), 0x8L).clut_30 = 0x7eaa;
+        if(equipment.canBeDiscarded()) {
+          final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4.get(), equipment, equipment.getPrice()));
+          renderFiveDigitNumber(322, this.menuEntryY(i) + 4, event.price);
         } else {
-          final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4.get(), itemId, itemPrices_80114310.get(itemId).get()));
-          renderFiveDigitNumber(322, FUN_8010a808(i) + 4, event.price);
+          renderItemIcon(58, 330, this.menuEntryY(i), 0x8L).clut_30 = 0x7eaa;
         }
       }
 
-      if(firstItem + 6 > gameState_800babc8.equipment_1e8.size() - 1) {
-        downArrow.flags_00 |= 0x40;
-      } else {
-        downArrow.flags_00 &= 0xffff_ffbf;
-      }
+      downArrow.setVisible(firstItem + 6 <= gameState_800babc8.equipment_1e8.size() - 1);
     }
 
-    if(firstItem == 0) {
-      upArrow.flags_00 |= 0x40;
-    } else {
-      upArrow.flags_00 &= 0xffff_ffbf;
-    }
+    upArrow.setVisible(firstItem != 0);
   }
 
-  private void FUN_8010c458(final int startItemIndex, final Renderable58 a2, final Renderable58 a3) {
+  private void renderMenuEntries(final List<ShopEntry<? extends InventoryEntry>> list, final int startItemIndex, final Renderable58 upArrow, final Renderable58 downArrow) {
     int i;
-    for(i = 0; this.menuItems[startItemIndex + i].itemId_00 != 0xff; i++) {
-      if(i >= 6) {
-        break;
-      }
-
-      final MenuItemStruct04 item = this.menuItems[startItemIndex + i];
-      renderText(new LodString(getItemName(item.itemId_00)), 168, FUN_8010a808(i) + 2, TextColour.BROWN);
-      renderFiveDigitNumber(324, FUN_8010a808(i) + 4, item.flags_02);
-      renderItemIcon(getItemIcon(item.itemId_00), 151, FUN_8010a808(i), 0x8L);
+    for(i = 0; i < Math.min(6, list.size() - startItemIndex); i++) {
+      final ShopEntry<? extends InventoryEntry> item = list.get(startItemIndex + i);
+      renderText(new LodString(item.item.getName()), 168, this.menuEntryY(i) + 2, TextColour.BROWN);
+      renderFiveDigitNumber(324, this.menuEntryY(i) + 4, item.price);
+      renderItemIcon(item.item.getIcon(), 151, this.menuEntryY(i), 0x8L);
     }
 
-    if(startItemIndex != 0) {
-      a2.flags_00 &= 0xffff_ffbf;
-    } else {
-      a2.flags_00 |= 0x40;
-    }
-
-    if(this.menuItems[i + startItemIndex].itemId_00 != 0xff) {
-      a3.flags_00 &= 0xffff_ffbf;
-    } else {
-      a3.flags_00 |= 0x40;
-    }
+    upArrow.setVisible(startItemIndex != 0);
+    downArrow.setVisible(i + startItemIndex < list.size());
   }
 
   private Renderable58 allocateCharRenderable(final int x, final int y, final int glyph) {
@@ -493,6 +489,11 @@ public class ShopScreen extends MenuScreen {
     this.confirmDest = nextMenuState;
   }
 
+  @Method(0x8010a808L)
+  public int menuEntryY(final int index) {
+    return index * 17 + 18;
+  }
+
   @Override
   protected InputPropagation mouseMove(final int x, final int y) {
     if(super.mouseMove(x, y) == InputPropagation.HANDLED) {
@@ -515,14 +516,14 @@ public class ShopScreen extends MenuScreen {
         }
       }
     } else if(this.menuState == MenuState.BUY_4) {
-      for(int i = 0; i < 6; i++) {
-        if(this.menuIndex_8011e0e0 != i && MathHelper.inBox(this.mouseX, this.mouseY, 138, FUN_8010a808(i) - 2, 220, 17)) {
+      for(int i = 0; i < Math.min(6, this.inv.size() - this.menuScroll_8011e0e4); i++) {
+        if(this.menuIndex_8011e0e0 != i && MathHelper.inBox(this.mouseX, this.mouseY, 138, this.menuEntryY(i) - 2, 220, 17)) {
           playSound(1);
           this.menuIndex_8011e0e0 = i;
-          this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = FUN_8010a808(i);
+          this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(i);
 
           if(this.shopType == 0) {
-            this.equipCharIndex = this.FUN_8010a864(this.menuItems[this.menuScroll_8011e0e4 + i].itemId_00);
+            this.equipCharIndex = this.FUN_8010a864((Equipment)this.inv.get(this.menuScroll_8011e0e4 + i).item);
           }
 
           return InputPropagation.HANDLED;
@@ -541,10 +542,10 @@ public class ShopScreen extends MenuScreen {
       final int count = this.shopType2 != 0 ? gameState_800babc8.items_2e9.size() : gameState_800babc8.equipment_1e8.size();
 
       for(int i = 0; i < Math.min(count, 6); i++) {
-        if(this.menuIndex_8011e0e0 != i && MathHelper.inBox(this.mouseX, this.mouseY, 138, FUN_8010a808(i), 220, 17)) {
+        if(this.menuIndex_8011e0e0 != i && MathHelper.inBox(this.mouseX, this.mouseY, 138, this.menuEntryY(i), 220, 17)) {
           playSound(1);
           this.menuIndex_8011e0e0 = i;
-          this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = FUN_8010a808(i);
+          this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(i);
           return InputPropagation.HANDLED;
         }
       }
@@ -575,44 +576,40 @@ public class ShopScreen extends MenuScreen {
       }
     } else if(this.menuState == MenuState.BUY_4) {
       for(int i = 0; i < 6; i++) {
-        if(MathHelper.inBox(this.mouseX, this.mouseY, 138, FUN_8010a808(i) - 2, 220, 17)) {
+        if(MathHelper.inBox(this.mouseX, this.mouseY, 138, this.menuEntryY(i) - 2, 220, 17)) {
           playSound(2);
           this.menuIndex_8011e0e0 = i;
-          this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = FUN_8010a808(i);
+          this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(i);
 
           if(this.shopType == 0) {
-            this.equipCharIndex = this.FUN_8010a864(this.menuItems[this.menuScroll_8011e0e4 + i].itemId_00);
+            this.equipCharIndex = this.FUN_8010a864((Equipment)this.inv.get(this.menuScroll_8011e0e4 + i).item);
           }
 
-          if(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00 == 0xff) {
-            playSound(40);
+          playSound(2);
+
+          final boolean hasSpace;
+          if(this.shopType == 0) {
+            hasSpace = gameState_800babc8.equipment_1e8.size() < 255;
           } else {
-            playSound(2);
+            hasSpace = gameState_800babc8.items_2e9.size() < CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get());
+          }
 
-            final boolean hasSpace;
-            if(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00 < 0xc0) {
-              hasSpace = gameState_800babc8.equipment_1e8.size() < 255;
+          if(!hasSpace) {
+            menuStack.pushScreen(new MessageBoxScreen(new LodString("Cannot carry any more"), 0, result -> { }));
+          } else if(gameState_800babc8.gold_94 < this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).price) {
+            menuStack.pushScreen(new MessageBoxScreen(Not_enough_money_8011c468, 0, result -> { }));
+          } else {
+            if(this.shopType != 0) {
+              menuStack.pushScreen(new MessageBoxScreen(new LodString("Buy item?"), 2, result -> {
+                if(result == MessageBoxResult.YES) {
+                  gameState_800babc8.gold_94 -= this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).price;
+                  giveItem((Item)this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).item);
+                }
+              }));
             } else {
-              hasSpace = gameState_800babc8.items_2e9.size() < CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get());
-            }
-
-            if(!hasSpace) {
-              menuStack.pushScreen(new MessageBoxScreen(new LodString("Cannot carry anymore"), 0, result -> { }));
-            } else if(gameState_800babc8.gold_94 < this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].flags_02) {
-              menuStack.pushScreen(new MessageBoxScreen(Not_enough_money_8011c468, 0, result -> { }));
-            } else {
-              if(this.shopType != 0) {
-                menuStack.pushScreen(new MessageBoxScreen(new LodString("Buy item?"), 2, result -> {
-                  if(result == MessageBoxResult.YES) {
-                    gameState_800babc8.gold_94 -= this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].flags_02;
-                    giveItem(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00);
-                  }
-                }));
-              } else {
-                this.charHighlight = allocateUiElement(0x83, 0x83, this.FUN_8010a818(this.equipCharIndex), 174);
-                FUN_80104b60(this.charHighlight);
-                this.menuState = MenuState.BUY_SELECT_CHAR_5;
-              }
+              this.charHighlight = allocateUiElement(0x83, 0x83, this.FUN_8010a818(this.equipCharIndex), 174);
+              FUN_80104b60(this.charHighlight);
+              this.menuState = MenuState.BUY_SELECT_CHAR_5;
             }
           }
 
@@ -628,13 +625,17 @@ public class ShopScreen extends MenuScreen {
 
           menuStack.pushScreen(new MessageBoxScreen(new LodString("Buy item?"), 2, result -> {
             if(result == MessageBoxResult.YES) {
-              gameState_800babc8.gold_94 -= this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].flags_02;
+              gameState_800babc8.gold_94 -= this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).price;
 
               menuStack.pushScreen(new MessageBoxScreen(new LodString("Equip item?"), 2, result1 -> {
-                if(result1 == MessageBoxResult.YES && canEquip(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00, characterIndices_800bdbb8.get(this.equipCharIndex).get())) {
-                  giveItem(equipItem(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00, characterIndices_800bdbb8.get(this.equipCharIndex).get()));
+                if(result1 == MessageBoxResult.YES && canEquip((Equipment)this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).item, characterIndices_800bdbb8.get(this.equipCharIndex).get())) {
+                  final EquipItemResult equipResult = equipItem((Equipment)this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).item, characterIndices_800bdbb8.get(this.equipCharIndex).get());
+
+                  if(equipResult.previousEquipment != null) {
+                    giveEquipment(equipResult.previousEquipment);
+                  }
                 } else {
-                  giveItem(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00);
+                  giveEquipment((Equipment)this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).item);
                 }
 
                 this.menuState = MenuState.BUY_4;
@@ -651,31 +652,31 @@ public class ShopScreen extends MenuScreen {
       final int count = this.shopType2 != 0 ? gameState_800babc8.items_2e9.size() : gameState_800babc8.equipment_1e8.size();
 
       for(int i = 0; i < Math.min(count, 6); i++) {
-        if(MathHelper.inBox(this.mouseX, this.mouseY, 138, FUN_8010a808(i), 220, 17)) {
+        if(MathHelper.inBox(this.mouseX, this.mouseY, 138, this.menuEntryY(i), 220, 17)) {
           playSound(2);
           this.menuIndex_8011e0e0 = i;
-          this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = FUN_8010a808(i);
+          this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(i);
 
           final int slot = this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0;
-          if(this.shopType2 != 0 && slot >= gameState_800babc8.items_2e9.size() || this.shopType2 == 0 && (slot >= gameState_800babc8.equipment_1e8.size() || itemCantBeDiscarded(gameState_800babc8.equipment_1e8.getInt(slot)))) {
+          if(this.shopType2 != 0 && slot >= gameState_800babc8.items_2e9.size() || this.shopType2 == 0 && (slot >= gameState_800babc8.equipment_1e8.size() || !gameState_800babc8.equipment_1e8.get(slot).canBeDiscarded())) {
             playSound(40);
           } else {
             playSound(2);
 
             menuStack.pushScreen(new MessageBoxScreen(new LodString("Sell item?"), 2, result -> {
               if(Objects.requireNonNull(result) == MessageBoxResult.YES) {
-                final int itemId;
+                final InventoryEntry inv;
                 final int v0;
                 if(this.shopType2 != 0) {
-                  itemId = gameState_800babc8.items_2e9.getInt(slot);
+                  inv = gameState_800babc8.items_2e9.get(slot);
                   v0 = takeItem(slot);
                 } else {
-                  itemId = gameState_800babc8.equipment_1e8.getInt(slot);
+                  inv = gameState_800babc8.equipment_1e8.get(slot);
                   v0 = takeEquipment(slot);
                 }
 
                 if(v0 == 0) {
-                  final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4.get(), itemId, itemPrices_80114310.get(itemId).get()));
+                  final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4.get(), inv, inv.getPrice()));
                   addGold(event.price);
 
                   if(this.menuScroll_8011e0e4 > 0 && this.menuScroll_8011e0e4 + 6 > count - 1) {
@@ -684,7 +685,7 @@ public class ShopScreen extends MenuScreen {
 
                   if(this.menuIndex_8011e0e0 != 0 && this.menuIndex_8011e0e0 > count - 2) {
                     this.menuIndex_8011e0e0--;
-                    this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = FUN_8010a808(this.menuIndex_8011e0e0);
+                    this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.menuIndex_8011e0e0);
                   }
                 }
               }
@@ -702,20 +703,19 @@ public class ShopScreen extends MenuScreen {
   protected void handleSelectedMenu(final int i) {
     switch(i) {
       case 0 -> { // Buy
-        this.selectedMenuOptionRenderablePtr_800bdbe4 = allocateUiElement(0x7b, 0x7b, 170, FUN_8010a808(this.menuIndex_8011e0e0));
+        this.selectedMenuOptionRenderablePtr_800bdbe4 = allocateUiElement(0x7b, 0x7b, 170, this.menuEntryY(this.menuIndex_8011e0e0));
         FUN_80104b60(this.selectedMenuOptionRenderablePtr_800bdbe4);
 
         if(this.shopType == 0) {
-          this.equipCharIndex = this.FUN_8010a864(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00);
+          this.equipCharIndex = this.FUN_8010a864((Equipment)this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).item);
         }
 
-        this.renderable_8011e0f0 = allocateUiElement(0x3d, 0x44, 358, FUN_8010a808(0));
-        this.renderable_8011e0f4 = allocateUiElement(0x35, 0x3c, 358, FUN_8010a808(5));
+        this.renderable_8011e0f0 = allocateUiElement(0x3d, 0x44, 358, this.menuEntryY(0));
+        this.renderable_8011e0f4 = allocateUiElement(0x35, 0x3c, 358, this.menuEntryY(5));
         this.menuState = MenuState.BUY_4;
       }
 
-      case 1 -> { // Sell
-
+      case 1 -> // Sell
         menuStack.pushScreen(new MessageBoxScreen(new LodString("What do you want to sell?"), new LodString("Armed"), new LodString("Items"), 2, result -> {
           switch(result) {
             case YES -> {
@@ -725,11 +725,11 @@ public class ShopScreen extends MenuScreen {
 
               if(!gameState_800babc8.equipment_1e8.isEmpty()) {
                 this.menuState = MenuState.SELL_10;
-                this.selectedMenuOptionRenderablePtr_800bdbe4 = allocateUiElement(0x7b, 0x7b, 170, FUN_8010a808(0));
-                this.renderable_8011e0f0 = allocateUiElement(0x3d, 0x44, 358, FUN_8010a808(0));
-                this.renderable_8011e0f4 = allocateUiElement(0x35, 0x3c, 358, FUN_8010a808(5));
+                this.selectedMenuOptionRenderablePtr_800bdbe4 = allocateUiElement(0x7b, 0x7b, 170, this.menuEntryY(0));
+                this.renderable_8011e0f0 = allocateUiElement(0x3d, 0x44, 358, this.menuEntryY(0));
+                this.renderable_8011e0f4 = allocateUiElement(0x35, 0x3c, 358, this.menuEntryY(5));
                 FUN_80104b60(this.selectedMenuOptionRenderablePtr_800bdbe4);
-                this.FUN_8010a864(gameState_800babc8.equipment_1e8.getInt(0));
+                this.FUN_8010a864(gameState_800babc8.equipment_1e8.get(0));
               } else {
                 menuStack.pushScreen(new MessageBoxScreen(new LodString("You have no equipment\nto sell"), 0, result1 -> {}));
               }
@@ -742,9 +742,9 @@ public class ShopScreen extends MenuScreen {
 
               if(!gameState_800babc8.items_2e9.isEmpty()) {
                 this.menuState = MenuState.SELL_10;
-                this.renderable_8011e0f0 = allocateUiElement(0x3d, 0x44, 358, FUN_8010a808(0));
-                this.renderable_8011e0f4 = allocateUiElement(0x35, 0x3c, 358, FUN_8010a808(5));
-                this.selectedMenuOptionRenderablePtr_800bdbe4 = allocateUiElement(0x7b, 0x7b, 170, FUN_8010a808(0));
+                this.renderable_8011e0f0 = allocateUiElement(0x3d, 0x44, 358, this.menuEntryY(0));
+                this.renderable_8011e0f4 = allocateUiElement(0x35, 0x3c, 358, this.menuEntryY(5));
+                this.selectedMenuOptionRenderablePtr_800bdbe4 = allocateUiElement(0x7b, 0x7b, 170, this.menuEntryY(0));
                 FUN_80104b60(this.selectedMenuOptionRenderablePtr_800bdbe4);
               } else {
                 menuStack.pushScreen(new MessageBoxScreen(new LodString("You have no items\nto sell"), 0, result1 -> {
@@ -753,7 +753,6 @@ public class ShopScreen extends MenuScreen {
             }
           }
         }));
-      }
 
       case 2 -> // Carried
         menuStack.pushScreen(new ItemListScreen(() -> {
@@ -825,34 +824,30 @@ public class ShopScreen extends MenuScreen {
   }
 
   private void menuBuy4Select() {
-    if(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00 == 0xff) {
-      playSound(40);
+    playSound(2);
+
+    final boolean hasSpace;
+    if(this.shopType == 0) {
+      hasSpace = gameState_800babc8.equipment_1e8.size() < 255;
     } else {
-      playSound(2);
+      hasSpace = gameState_800babc8.items_2e9.size() < CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get());
+    }
 
-      final boolean hasSpace;
-      if(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00 < 0xc0) {
-        hasSpace = gameState_800babc8.equipment_1e8.size() < 255;
-      } else {
-        hasSpace = gameState_800babc8.items_2e9.size() < CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get());
-      }
-
-      if(!hasSpace) {
-        menuStack.pushScreen(new MessageBoxScreen(new LodString("Cannot carry anymore"), 0, result -> { }));
-      } else if(gameState_800babc8.gold_94 < this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].flags_02) {
-        menuStack.pushScreen(new MessageBoxScreen(Not_enough_money_8011c468, 0, result -> { }));
-      } else if(this.shopType != 0) {
-        menuStack.pushScreen(new MessageBoxScreen(new LodString("Buy item?"), 2, result -> {
-          if(result == MessageBoxResult.YES) {
-            gameState_800babc8.gold_94 -= this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].flags_02;
-            giveItem(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00);
-          }
-        }));
-      } else {
-        this.charHighlight = allocateUiElement(0x83, 0x83, this.FUN_8010a818(this.equipCharIndex), 174);
-        FUN_80104b60(this.charHighlight);
-        this.menuState = MenuState.BUY_SELECT_CHAR_5;
-      }
+    if(!hasSpace) {
+      menuStack.pushScreen(new MessageBoxScreen(new LodString("Cannot carry anymore"), 0, result -> { }));
+    } else if(gameState_800babc8.gold_94 < this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).price) {
+      menuStack.pushScreen(new MessageBoxScreen(Not_enough_money_8011c468, 0, result -> { }));
+    } else if(this.shopType != 0) {
+      menuStack.pushScreen(new MessageBoxScreen(new LodString("Buy item?"), 2, result -> {
+        if(result == MessageBoxResult.YES) {
+          gameState_800babc8.gold_94 -= this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).price;
+          giveItem((Item)this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).item);
+        }
+      }));
+    } else {
+      this.charHighlight = allocateUiElement(0x83, 0x83, this.FUN_8010a818(this.equipCharIndex), 174);
+      FUN_80104b60(this.charHighlight);
+      this.menuState = MenuState.BUY_SELECT_CHAR_5;
     }
   }
 
@@ -865,31 +860,31 @@ public class ShopScreen extends MenuScreen {
       this.menuScroll_8011e0e4--;
     }
 
-    this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = FUN_8010a808(this.menuIndex_8011e0e0);
+    this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.menuIndex_8011e0e0);
 
     if(this.shopType == 0) {
-      this.equipCharIndex = this.FUN_8010a864(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00);
+      this.equipCharIndex = this.FUN_8010a864((Equipment)this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).item);
     }
   }
 
   private void menuBuy4NavigateDown() {
     playSound(1);
 
-    if(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00 == 0xff) {
+    if(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0 >= this.inv.size()) {
       playSound(40);
       return;
     }
 
-    if(this.menuIndex_8011e0e0 < 5 && this.menuIndex_8011e0e0 < this.itemCount - 1) {
+    if(this.menuIndex_8011e0e0 < 5 && this.menuIndex_8011e0e0 < this.inv.size() - 1) {
       this.menuIndex_8011e0e0++;
-    } else if((this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0) < this.itemCount - 1) {
+    } else if((this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0) < this.inv.size() - 1) {
       this.menuScroll_8011e0e4++;
     }
 
-    this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = FUN_8010a808(this.menuIndex_8011e0e0);
+    this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.menuIndex_8011e0e0);
 
     if(this.shopType == 0) {
-      this.equipCharIndex = this.FUN_8010a864(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00);
+      this.equipCharIndex = this.FUN_8010a864((Equipment)this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).item);
     }
   }
 
@@ -903,13 +898,17 @@ public class ShopScreen extends MenuScreen {
   private void menuSelectChar5Select() {
     menuStack.pushScreen(new MessageBoxScreen(new LodString("Buy item?"), 2, result -> {
       if(result == MessageBoxResult.YES) {
-        gameState_800babc8.gold_94 -= this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].flags_02;
+        gameState_800babc8.gold_94 -= this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).price;
 
         menuStack.pushScreen(new MessageBoxScreen(new LodString("Equip item?"), 2, result1 -> {
-          if(result1 == MessageBoxResult.YES && canEquip(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00, characterIndices_800bdbb8.get(this.equipCharIndex).get())) {
-            giveItem(equipItem(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00, characterIndices_800bdbb8.get(this.equipCharIndex).get()));
+          if(result1 == MessageBoxResult.YES && canEquip((Equipment)this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).item, characterIndices_800bdbb8.get(this.equipCharIndex).get())) {
+            final EquipItemResult equipResult = equipItem((Equipment)this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).item, characterIndices_800bdbb8.get(this.equipCharIndex).get());
+
+            if(equipResult.previousEquipment != null) {
+              giveEquipment(equipResult.previousEquipment);
+            }
           } else {
-            giveItem(this.menuItems[this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0].itemId_00);
+            giveEquipment((Equipment)this.inv.get(this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0).item);
           }
 
           this.menuState = MenuState.BUY_4;
@@ -948,28 +947,28 @@ public class ShopScreen extends MenuScreen {
 
   private void menuSell10Select() {
     final int slot = this.menuScroll_8011e0e4 + this.menuIndex_8011e0e0;
-    if(this.shopType2 != 0 && slot >= gameState_800babc8.items_2e9.size() || this.shopType2 == 0 && (slot >= gameState_800babc8.equipment_1e8.size() || itemCantBeDiscarded(gameState_800babc8.equipment_1e8.getInt(slot)))) {
+    if(this.shopType2 != 0 && slot >= gameState_800babc8.items_2e9.size() || this.shopType2 == 0 && (slot >= gameState_800babc8.equipment_1e8.size() || !gameState_800babc8.equipment_1e8.get(slot).canBeDiscarded())) {
       playSound(40);
     } else {
       playSound(2);
 
       menuStack.pushScreen(new MessageBoxScreen(new LodString("Sell item?"), 2, result -> {
         if(Objects.requireNonNull(result) == MessageBoxResult.YES) {
-          final int itemId;
+          final InventoryEntry inv;
           final int v0;
           final int count;
           if(this.shopType2 != 0) {
-            itemId = gameState_800babc8.items_2e9.getInt(slot);
+            inv = gameState_800babc8.items_2e9.get(slot);
             v0 = takeItem(slot);
             count = gameState_800babc8.items_2e9.size();
           } else {
-            itemId = gameState_800babc8.equipment_1e8.getInt(slot);
+            inv = gameState_800babc8.equipment_1e8.get(slot);
             v0 = takeEquipment(slot);
             count = gameState_800babc8.equipment_1e8.size();
           }
 
           if(v0 == 0) {
-            final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4.get(), itemId, itemPrices_80114310.get(itemId).get()));
+            final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4.get(), inv, inv.getPrice()));
             addGold(event.price);
 
             if(this.menuScroll_8011e0e4 > 0 && this.menuScroll_8011e0e4 + 6 > count) {
@@ -978,7 +977,7 @@ public class ShopScreen extends MenuScreen {
 
             if(this.menuIndex_8011e0e0 != 0 && this.menuIndex_8011e0e0 > count - 1) {
               this.menuIndex_8011e0e0--;
-              this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = FUN_8010a808(this.menuIndex_8011e0e0);
+              this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.menuIndex_8011e0e0);
             }
           }
         }
@@ -995,7 +994,7 @@ public class ShopScreen extends MenuScreen {
       this.menuScroll_8011e0e4--;
     }
 
-    this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = FUN_8010a808(this.menuIndex_8011e0e0);
+    this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.menuIndex_8011e0e0);
 
   }
 
@@ -1017,7 +1016,7 @@ public class ShopScreen extends MenuScreen {
       playSound(40);
     }
 
-    this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = FUN_8010a808(this.menuIndex_8011e0e0);
+    this.selectedMenuOptionRenderablePtr_800bdbe4.y_44 = this.menuEntryY(this.menuIndex_8011e0e0);
   }
 
   @Override
@@ -1134,6 +1133,16 @@ public class ShopScreen extends MenuScreen {
     }
 
     return InputPropagation.PROPAGATE;
+  }
+
+  public static class ShopEntry<T extends InventoryEntry> {
+    public final T item;
+    public final int price;
+
+    public ShopEntry(final T item, final int price) {
+      this.item = item;
+      this.price = price;
+    }
   }
 
   public enum MenuState {

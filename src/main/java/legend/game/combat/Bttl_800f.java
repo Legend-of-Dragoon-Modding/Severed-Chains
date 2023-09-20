@@ -13,6 +13,7 @@ import legend.game.characters.TurnBasedPercentileBuff;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bent.AttackEvent;
 import legend.game.combat.bent.BattleEntity27c;
+import legend.game.combat.bent.BattleEntityStat;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.environment.BattleHudBorderMetrics14;
@@ -30,19 +31,21 @@ import legend.game.combat.ui.CombatItem02;
 import legend.game.combat.ui.CombatMenua4;
 import legend.game.combat.ui.FloatingNumberC4;
 import legend.game.combat.ui.FloatingNumberC4Sub20;
+import legend.game.inventory.Item;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.BattleDescriptionEvent;
 import legend.game.modding.events.battle.SpellStatsEvent;
+import legend.game.modding.events.inventory.RepeatItemReturnEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
 import legend.game.scripting.ScriptParam;
 import legend.game.scripting.ScriptState;
-import legend.game.types.ActiveStatsa0;
 import legend.game.types.LodString;
 import legend.game.types.SpellStats0c;
 import legend.game.types.Translucency;
+import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -53,18 +56,19 @@ import java.util.List;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.simpleRand;
+import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.intToStr;
 import static legend.game.Scus94491BpeSegment_8002.takeItemId;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
-import static legend.game.Scus94491BpeSegment_8005._80050ae8;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800be5d0;
@@ -73,7 +77,6 @@ import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
 import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
-import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.combat.Bttl_800c._800c6748;
 import static legend.game.combat.Bttl_800c._800c697c;
@@ -95,7 +98,6 @@ import static legend.game.combat.Bttl_800c.battleMenuIconVOffsets_800fb6f4;
 import static legend.game.combat.Bttl_800c.battleMenuTextMetrics_800fb72c;
 import static legend.game.combat.Bttl_800c.battleMenu_800c6c34;
 import static legend.game.combat.Bttl_800c.battleUiElementClutVramXy_800c7114;
-import static legend.game.combat.Bttl_800c.buffDebuffStatIndices_800c723c;
 import static legend.game.combat.Bttl_800c.cameraPositionIndicesIndices_800c6c30;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c.combatItems_800c6988;
@@ -119,11 +121,13 @@ import static legend.game.combat.Bttl_800c.itemTargetType_800c6b68;
 import static legend.game.combat.Bttl_800c.melbuMonsterNames_800c6ba8;
 import static legend.game.combat.Bttl_800c.melbuStageToMonsterNameIndices_800c6f30;
 import static legend.game.combat.Bttl_800c.protectedItems_800c72cc;
+import static legend.game.combat.Bttl_800c.repeatItemIds_800c6e34;
 import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
 import static legend.game.combat.Bttl_800c.targetAllItemIds_800c7124;
 import static legend.game.combat.Bttl_800c.targetBents_800c71f0;
 import static legend.game.combat.Bttl_800c.textboxColours_800c6fec;
 import static legend.game.combat.Bttl_800c.uiTextureElementBrightness_800c71ec;
+import static legend.game.combat.Bttl_800c.usedRepeatItems_800c6c3c;
 import static legend.game.combat.Bttl_800e.initializeBattleHudCharacterDisplay;
 import static legend.game.combat.Bttl_800e.perspectiveTransformXyz;
 
@@ -610,34 +614,6 @@ public final class Bttl_800f {
     script.params_20[4].set(determineAttackSpecialEffects(attacker, defender, AttackType.ITEM_MAGIC));
     applyItemSpecialEffects(attacker, defender);
     return FlowControl.CONTINUE;
-  }
-
-  @Method(0x800f3204L)
-  public static void recalculateSpeedAndPerHitStats(final BattleEntity27c bent) {
-    if(bent instanceof final PlayerBattleEntity player) {
-      final ActiveStatsa0 stats = stats_800be5f8[bent.charId_272];
-
-      player.spPerPhysicalHit_12a = stats.equipmentSpPerPhysicalHit_4e;
-      player.mpPerPhysicalHit_12c = stats.equipmentMpPerPhysicalHit_50;
-      player.spPerMagicalHit_12e = stats.equipmentSpPerMagicalHit_52;
-      player.mpPerMagicalHit_130 = stats.equipmentMpPerMagicalHit_54;
-
-      if(player.tempSpPerPhysicalHitTurns_cd != 0) {
-        player.spPerPhysicalHit_12a += player.tempSpPerPhysicalHit_cc;
-      }
-
-      if(player.tempMpPerPhysicalHitTurns_cf != 0) {
-        player.mpPerPhysicalHit_12c += player.tempMpPerPhysicalHit_ce;
-      }
-
-      if(player.tempSpPerMagicalHitTurns_d1 != 0) {
-        player.spPerMagicalHit_12e += player.tempSpPerMagicalHit_d0;
-      }
-
-      if(player.tempMpPerMagicalHitTurns_d3 != 0) {
-        player.mpPerMagicalHit_130 += player.tempMpPerMagicalHit_d2;
-      }
-    }
   }
 
   @Method(0x800f3354L)
@@ -1678,7 +1654,27 @@ public final class Bttl_800f {
         final int ret = FUN_800f7768(targetType, targetAll);
         if(ret == 1) { // Pressed X
           if(combatMenu.menuType_0a == 0) {
-            takeItemId(combatMenu.itemOrSpellId_1c + 192);
+            final int itemId = combatMenu.itemOrSpellId_1c + 192;
+            final Item item = REGISTRIES.items.getEntry(LodMod.itemIdMap.get(combatMenu.itemOrSpellId_1c)).get(); //TODO
+            takeItemId(item);
+
+            boolean returnItem = false;
+            for(int repeatItemIndex = 0; repeatItemIndex < 9; repeatItemIndex++) {
+              if(itemId == repeatItemIds_800c6e34.get(repeatItemIndex).get()) {
+                returnItem = true;
+                break;
+              }
+            }
+
+            if(itemId == 0xfa) { // Psych Bomb X
+              returnItem = true;
+            }
+
+            final RepeatItemReturnEvent repeatItemReturnEvent = EVENTS.postEvent(new RepeatItemReturnEvent(itemId, returnItem));
+
+            if(repeatItemReturnEvent.returnItem) {
+              usedRepeatItems_800c6c3c.add(item);
+            }
           }
 
           //LAB_800f545c
@@ -1770,7 +1766,7 @@ public final class Bttl_800f {
 
     if(menuType == 0) {
       //LAB_800f56f0
-      return combatItems_800c6988.get(combatMenu.listScroll_24 + combatMenu.listIndex_1e).itemId - 0xc0;
+      return LodMod.idItemMap.getInt(combatItems_800c6988.get(combatMenu.listScroll_24 + combatMenu.listIndex_1e).item.getRegistryId());
     }
 
     if(menuType == 1) {
@@ -1845,7 +1841,7 @@ public final class Bttl_800f {
       final LodString name;
       if(type == 0) {
         //LAB_800f5918
-        name = _80050ae8.get(combatItems_800c6988.get(sp7c).itemId - 0xc0).deref();
+        name = new LodString(combatItems_800c6988.get(sp7c).item.getName());
         intToStr(combatItems_800c6988.get(sp7c).count, itemCount);
 
         //LAB_800f5968
@@ -2814,9 +2810,9 @@ public final class Bttl_800f {
 
   @Method(0x800f7c5cL)
   public static int determineAttackSpecialEffects(final BattleEntity27c attacker, final BattleEntity27c defender, final AttackType attackType) {
-    final int[] statusEffectChances = {32, 79, 32, 79, 79, 32}; // onHitStatusChance, statusChance, onHitStatusChance, statusChance, statusChance, onHitStatusChance
-    final int[] statusEffectStats = {35, 81, 112, 81, 81, 112}; // onHitStatus, statusType, itemStatus, statusType, statusType, itemStatus
-    final int[] specialEffectStats = {8, 73, 104, 73, 73, 104}; // specialEffectFlag, spellFlags, itemTarget, spellFlags, spellFlags, itemTarget
+    final BattleEntityStat[] statusEffectChances = {BattleEntityStat.ON_HIT_STATUS_CHANCE, BattleEntityStat.SPELL_STATUS_CHANCE, BattleEntityStat.ON_HIT_STATUS_CHANCE, BattleEntityStat.SPELL_STATUS_CHANCE, BattleEntityStat.SPELL_STATUS_CHANCE, BattleEntityStat.ON_HIT_STATUS_CHANCE}; // onHitStatusChance, statusChance, onHitStatusChance, statusChance, statusChance, onHitStatusChance
+    final BattleEntityStat[] statusEffectStats = {BattleEntityStat.EQUIPMENT_ON_HIT_STATUS, BattleEntityStat.SPELL_STATUS_TYPE, BattleEntityStat.ITEM_STATUS, BattleEntityStat.SPELL_STATUS_TYPE, BattleEntityStat.SPELL_STATUS_TYPE, BattleEntityStat.ITEM_STATUS}; // onHitStatus, statusType, itemStatus, statusType, statusType, itemStatus
+    final BattleEntityStat[] specialEffectStats = {BattleEntityStat.SPECIAL_EFFECT_FLAGS, BattleEntityStat.SPELL_FLAGS, BattleEntityStat.ITEM_TARGET, BattleEntityStat.SPELL_FLAGS, BattleEntityStat.SPELL_FLAGS, BattleEntityStat.ITEM_TARGET}; // specialEffectFlag, spellFlags, itemTarget, spellFlags, spellFlags, itemTarget
     final int[] specialEffectMasks = {0x40, 0xf0, 0x80, 0xf0, 0xf0, 0x80};
 
     final boolean isAttackerMonster = attacker instanceof MonsterBattleEntity;
@@ -2878,13 +2874,13 @@ public final class Bttl_800f {
 
     //LAB_800f8420
     for(int itemSlot1 = 0; itemSlot1 < gameState_800babc8.items_2e9.size(); itemSlot1++) {
-      final int itemId1 = gameState_800babc8.items_2e9.getInt(itemSlot1);
+      final Item item = gameState_800babc8.items_2e9.get(itemSlot1);
 
       boolean found = false;
 
       //LAB_800f843c
       for(final CombatItem02 combatItem : combatItems_800c6988) {
-        if(combatItem.itemId == itemId1) {
+        if(combatItem.item == item) {
           found = true;
           combatItem.count++;
           break;
@@ -2892,7 +2888,7 @@ public final class Bttl_800f {
       }
 
       if(!found) {
-        combatItems_800c6988.add(new CombatItem02(itemId1));
+        combatItems_800c6988.add(new CombatItem02(item));
       }
     }
   }
@@ -3016,7 +3012,7 @@ public final class Bttl_800f {
       }
     }
 
-    recalculateSpeedAndPerHitStats(defender);
+    defender.recalculateSpeedAndPerHitStats();
   }
 
   @Method(0x800f89f4L)
@@ -3178,13 +3174,15 @@ public final class Bttl_800f {
 
   @Method(0x800f9380L)
   public static void applyBuffOrDebuff(final BattleEntity27c attacker, final BattleEntity27c defender) {
+    final BattleEntityStat[] stats = {BattleEntityStat.POWER_DEFENCE, BattleEntityStat.POWER_MAGIC_DEFENCE, BattleEntityStat.POWER_ATTACK, BattleEntityStat.POWER_MAGIC_ATTACK};
+
     for(int i = 0; i < 8; i++) {
       // This has been intentionally changed to attacker.buffType. Defender.buffType was always set to attacker.buffType anyway.
       if((attacker.spell_94.buffType_0a & (0x80 >> i)) != 0) {
         final int turnCount = attacker.charId_272 != defender.charId_272 ? 3 : 4;
         final int amount = i < 4 ? 50 : -50;
 
-        defender.setStat(buffDebuffStatIndices_800c723c.get(i % 4).get(), turnCount << 8 | (amount & 0xff));
+        defender.setStat(stats[i % 4], turnCount << 8 | (amount & 0xff));
       }
     }
   }
@@ -3364,13 +3362,16 @@ public final class Bttl_800f {
       return FlowControl.CONTINUE;
     }
 
+    Item item = null;
     if(itemId == -1) {
-      itemId = gameState_800babc8.items_2e9.getInt((simpleRand() * gameState_800babc8.items_2e9.size()) >> 16);
+      item = gameState_800babc8.items_2e9.get((simpleRand() * gameState_800babc8.items_2e9.size()) >> 16);
+      itemId = LodMod.idItemMap.getInt(item.getRegistryId());
 
       //LAB_800f996c
       for(int i = 0; i < 10; i++) {
         if(itemId == protectedItems_800c72cc.get(i).get()) {
           //LAB_800f999c
+          item = null;
           itemId = -1;
           break;
         }
@@ -3379,7 +3380,7 @@ public final class Bttl_800f {
 
     //LAB_800f9988
     //LAB_800f99a4
-    if(itemId != -1 && takeItemId(itemId) != 0) {
+    if(item != null && takeItemId(item) != 0) {
       itemId = -1;
     }
 
@@ -3394,8 +3395,17 @@ public final class Bttl_800f {
   @Method(0x800f99ecL)
   public static FlowControl scriptGiveItem(final RunningScript<?> script) {
     final int givenItem;
-    if(giveItem(script.params_20[0].get()) == 0) {
-      givenItem = script.params_20[0].get();
+
+    final int itemId = script.params_20[0].get();
+    final boolean given;
+    if(itemId < 192) {
+      given = giveEquipment(REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(itemId)).get());
+    } else {
+      given = giveItem(REGISTRIES.items.getEntry(LodMod.itemIdMap.get(itemId)).get());
+    }
+
+    if(given) {
+      givenItem = itemId;
     } else {
       givenItem = -1;
     }
@@ -3572,32 +3582,9 @@ public final class Bttl_800f {
     final int bentIndex = script.params_20[0].get();
     final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[bentIndex].innerStruct_00;
 
-    // Temporary power stats
-    for(int statIndex = 88; statIndex <= 97; statIndex++) {
-      scriptTickTemporaryStatMod(bent, statIndex);
-    }
-
-    if(bent instanceof PlayerBattleEntity) {
-      // Temp MP/SP per hit stats
-      for(int statIndex = 100; statIndex <= 103; statIndex++) {
-        scriptTickTemporaryStatMod(bent, statIndex);
-      }
-    }
-
     bent.turnFinished();
-
-    recalculateSpeedAndPerHitStats(bent);
+    bent.recalculateSpeedAndPerHitStats();
     return FlowControl.CONTINUE;
-  }
-
-  private static void scriptTickTemporaryStatMod(final BattleEntity27c bent, final int statIndex) {
-    if(bent.getStat(statIndex) != 0) {
-      if((bent.getStat(statIndex) & 0xff00) < 0x200) { // Turns is stored in upper byte
-        bent.setStat(statIndex, 0);
-      } else {
-        bent.setStat(statIndex, bent.getStat(statIndex) - 0x100); // Subtract one turn
-      }
-    }
   }
 
   @Method(0x800f9e10L)

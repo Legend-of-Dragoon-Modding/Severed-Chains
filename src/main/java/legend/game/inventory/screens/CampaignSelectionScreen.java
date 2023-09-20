@@ -80,6 +80,7 @@ public class CampaignSelectionScreen extends MenuScreen {
       final GameLoadedEvent event = EVENTS.postEvent(new GameLoadedEvent(save.state()));
 
       gameState_800babc8 = event.gameState;
+      gameState_800babc8.syncIds();
 
       savedGameSelected_800bdc34.set(true);
       whichMenu_800bdc38 = WhichMenu.UNLOAD_CAMPAIGN_SELECTION_MENU;

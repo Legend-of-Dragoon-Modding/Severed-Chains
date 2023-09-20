@@ -1,17 +1,17 @@
 package legend.game.modding.events.inventory;
 
+import legend.game.inventory.Item;
+import legend.game.inventory.screens.ShopScreen;
 import org.legendofdragoon.modloader.events.Event;
+
+import java.util.List;
 
 public class ShopItemEvent extends Event {
   public final int shopId;
-  public final int slotId;
-  public int itemId;
-  public int price;
+  public final List<ShopScreen.ShopEntry<Item>> items;
 
-  public ShopItemEvent(final int shopId, final int slotId, final int itemId, final int price) {
+  public ShopItemEvent(final int shopId, final List<ShopScreen.ShopEntry<Item>> items) {
     this.shopId = shopId;
-    this.slotId = slotId;
-    this.itemId = itemId;
-    this.price = price;
+    this.items = items;
   }
 }

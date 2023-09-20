@@ -22,12 +22,14 @@ import legend.game.scripting.ScriptState;
 import legend.game.types.LodString;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
+import legend.lodmod.LodMod;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.MEMORY;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
@@ -35,8 +37,8 @@ import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
-import static legend.game.Scus94491BpeSegment_800b._800bc960;
-import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
+import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
+import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.combat.Bttl_800c._800c6748;
@@ -74,7 +76,7 @@ public class SBtld {
   public static final Value _8011517c = MEMORY.ref(2, 0x8011517cL);
 
   @Method(0x80109050L)
-  public static void FUN_80109050() {
+  public static void loadStageDataAndControllerScripts() {
     final StageData10 stageData = stageData_80109a98.get(encounterId_800bb0f8.get());
     currentStageData_800c6718._00 = stageData._00.get();
     currentStageData_800c6718.musicIndex_04 = stageData.musicIndex_01.get();
@@ -90,11 +92,11 @@ public class SBtld {
 
     script_800c66fc = new ScriptFile("player_combat_script", Unpacker.loadFile("player_combat_script").getBytes());
 
-    loadDrgnFile(1, "401", SBtld::FUN_80109170);
+    loadDrgnFile(1, "401", SBtld::combatControllerScriptLoaded);
   }
 
   @Method(0x80109170L)
-  public static void FUN_80109170(final FileData file) {
+  public static void combatControllerScriptLoaded(final FileData file) {
     scriptState_800c674c = SCRIPTS.allocateScriptState(5, "DRGN1.401", 0, null);
     scriptState_800c674c.loadScriptFile(new ScriptFile("DRGN1.401", file.getBytes()));
 
@@ -109,7 +111,7 @@ public class SBtld {
     _800c6748.set(v1 + 1);
     currentCameraPositionIndicesIndex_800c66b0.set(simpleRand() & 3);
     currentCameraIndex_800c6780.set(currentStageData_800c6718.get(currentCameraPositionIndicesIndex_800c66b0.get() + 6));
-    _800bc960.or(0x2);
+    battleFlags_800bc960.or(0x2);
   }
 
   @Method(0x80109250L)
@@ -234,7 +236,7 @@ public class SBtld {
 
     combatant.drops.clear();
     if(rewards.itemDrop_05.get() != 0xff) {
-      combatant.drops.add(new CombatantStruct1a8.ItemDrop(rewards.itemChance_04.get(), rewards.itemDrop_05.get()));
+      combatant.drops.add(new CombatantStruct1a8.ItemDrop(rewards.itemChance_04.get(), rewards.itemDrop_05.get() < 192 ? REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(rewards.itemDrop_05.get())).get() : REGISTRIES.items.getEntry(LodMod.itemIdMap.get(rewards.itemDrop_05.get() - 192)).get()));
     }
 
     final EnemyRewardsEvent event = EVENTS.postEvent(new EnemyRewardsEvent(enemyId, rewards.xp_00.get(), rewards.gold_02.get(), combatant.drops));
@@ -254,7 +256,7 @@ public class SBtld {
   @Method(0x801098f4L)
   public static void loadStageAmbiance() {
     final DeffManager7cc deffManager = deffManager_800c693c;
-    final int stage = Math.max(0, combatStage_800bb0f4.get());
+    final int stage = Math.max(0, battleStage_800bb0f4.get());
 
     //LAB_8010993c
     //LAB_80109954
@@ -268,9 +270,9 @@ public class SBtld {
       deffManager.dragoonSpaceAmbiance_98[i].set(buffer);
     }
 
-    deffManager._00._00 = (int)_8011517c.offset(combatStage_800bb0f4.get() * 0x8L).offset(2, 0x00L).get();
-    deffManager._00._02 = (int)_8011517c.offset(combatStage_800bb0f4.get() * 0x8L).offset(2, 0x02L).get();
-    deffManager._00._04 = (int)_8011517c.offset(combatStage_800bb0f4.get() * 0x8L).offset(2, 0x04L).get();
+    deffManager._00._00 = (int)_8011517c.offset(battleStage_800bb0f4.get() * 0x8L).offset(2, 0x00L).get();
+    deffManager._00._02 = (int)_8011517c.offset(battleStage_800bb0f4.get() * 0x8L).offset(2, 0x02L).get();
+    deffManager._00._04 = (int)_8011517c.offset(battleStage_800bb0f4.get() * 0x8L).offset(2, 0x04L).get();
 
     //LAB_80109a30
     for(int i = 0; melbuStageIndices_800fb064.get(i).get() != -1; i++) {
