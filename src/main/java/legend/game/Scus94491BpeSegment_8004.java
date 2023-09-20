@@ -30,7 +30,7 @@ import legend.game.sound.Sssqish;
 import legend.game.sound.VolumeRamp;
 import legend.game.title.GameOver;
 import legend.game.title.Ttle;
-import legend.game.types.CallbackStruct;
+import legend.game.types.OverlayStruct;
 import legend.game.types.EngineState;
 import legend.game.types.ItemStats0c;
 import legend.game.types.MoonMusic08;
@@ -90,9 +90,9 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Scus94491BpeSegment#FUN_80018658()}</li>
    *   <li>{@link GameOver#gameOver()}</li>
    *   <li>{@link WMap#executeWmapState()}</li>
-   *   <li>{@link SMap#startFmvLoadingStage()}</li>
+   *   <li>startFmvLoadingStage</li>
    *   <li>swapDiskLoadingStage</li>
-   *   <li>{@link SMap#FUN_800d9e08()}</li>
+   *   <li>{@link SMap#playFinalFmv()}</li>
    *   <li>0x800c6eb8 (TODO)</li>
    *   <li>0x800cab8c (TODO)</li>
    *   <li>null</li>
@@ -103,20 +103,20 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>null</li>
    * </ol>
    */
-  public static final CallbackStruct[] gameStateCallbacks_8004dbc0 = new CallbackStruct[20];
+  public static final OverlayStruct[] gameStateOverlays_8004dbc0 = new OverlayStruct[20];
   static {
-    gameStateCallbacks_8004dbc0[0] = new CallbackStruct(Scus94491BpeSegment_800e::preload, null, 0, 0);
+    gameStateOverlays_8004dbc0[0] = new OverlayStruct(Scus94491BpeSegment_800e::preload);
 //    gameStateCallbacks_8004dbc0[1] = new CallbackStruct(finalizePregameLoading);
-    gameStateCallbacks_8004dbc0[2] = new CallbackStruct(Ttle::executeTtleLoadingStage, "\\OVL\\TTLE.OV_", 0x800c6690L, 0xf0);
-    gameStateCallbacks_8004dbc0[3] = new CallbackStruct(Ttle::executeTtleUnloadingStage, "\\OVL\\TTLE.OV_", 0x800c6690L, 0xf0);
-    gameStateCallbacks_8004dbc0[4] = new CallbackStruct(SMap::theEnd, "\\OVL\\SMAP.OV_", 0x800c6690L, 0xf9f0);
-    gameStateCallbacks_8004dbc0[5] = new CallbackStruct(SMap::executeSmapLoadingStage, "\\OVL\\SMAP.OV_", 0x800c6690L, 0xf9f0);
-    gameStateCallbacks_8004dbc0[6] = new CallbackStruct(Scus94491BpeSegment::FUN_80018658, "\\OVL\\BTTL.OV_", 0x800c6690L, 0x668);
-    gameStateCallbacks_8004dbc0[7] = new CallbackStruct(GameOver::gameOver, "\\OVL\\TTLE.OV_", 0x800c6690L, 0xf0);
-    gameStateCallbacks_8004dbc0[8] = new CallbackStruct(WMap::executeWmapState, "\\OVL\\WMAP.OV_", 0x800c6690L, 0x2070);
-    gameStateCallbacks_8004dbc0[9] = new CallbackStruct(SMap::startFmvLoadingStage, "\\OVL\\SMAP.OV_", 0x800c6690L, 0xf9f0);
+    gameStateOverlays_8004dbc0[2] = new OverlayStruct(Ttle::executeTtleLoadingStage);
+    gameStateOverlays_8004dbc0[3] = new OverlayStruct(Ttle::executeTtleUnloadingStage);
+    gameStateOverlays_8004dbc0[4] = new OverlayStruct(SMap::theEnd, "\\OVL\\SMAP.OV_", 0x800c6690L, 0xf9f0);
+    gameStateOverlays_8004dbc0[5] = new OverlayStruct(SMap::executeSmapLoadingStage, "\\OVL\\SMAP.OV_", 0x800c6690L, 0xf9f0);
+    gameStateOverlays_8004dbc0[6] = new OverlayStruct(Scus94491BpeSegment::FUN_80018658, "\\OVL\\BTTL.OV_", 0x800c6690L, 0x668);
+    gameStateOverlays_8004dbc0[7] = new OverlayStruct(GameOver::gameOver);
+    gameStateOverlays_8004dbc0[8] = new OverlayStruct(WMap::executeWmapState, "\\OVL\\WMAP.OV_", 0x800c6690L, 0x2070);
+//    gameStateOverlays_8004dbc0[9] = new OverlayStruct(SMap::startFmvLoadingStage);
 //    gameStateCallbacks_8004dbc0[10] = new CallbackStruct(swapDiskLoadingStage);
-    gameStateCallbacks_8004dbc0[11] = new CallbackStruct(SMap::FUN_800d9e08, "\\OVL\\SMAP.OV_", 0x800c6690L, 0xf9f0);
+    gameStateOverlays_8004dbc0[11] = new OverlayStruct(SMap::playFinalFmv);
 //    gameStateCallbacks_8004dbc0[12] = new CallbackStruct(0x800c6eb8);
 //    gameStateCallbacks_8004dbc0[13] = new CallbackStruct(0x800cab8c);
 //    gameStateCallbacks_8004dbc0[14] = new CallbackStruct(null);
@@ -127,8 +127,8 @@ public final class Scus94491BpeSegment_8004 {
 //    gameStateCallbacks_8004dbc0[19] = new CallbackStruct(null);
   }
 
-  public static String currentlyLoadingFileEntry_8004dd04;
-  public static final Value _8004dd0c = MEMORY.ref(4, 0x8004dd0cL);
+  public static String currentGameStateOverlay_8004dd04;
+  public static boolean dontZeroMemoryOnOverlayLoad_8004dd0c;
   public static int loadedOverlayIndex_8004dd10;
 
   /**

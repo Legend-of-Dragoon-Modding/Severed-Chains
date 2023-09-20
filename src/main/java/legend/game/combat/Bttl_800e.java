@@ -3215,7 +3215,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ec744L)
-  public static void FUN_800ec744(final BattleStage stage) {
+  public static void rotateBattleStage(final BattleStage stage) {
     RotMatrix_Xyz(stage.param_5a8.rotate, stage.coord2_558.coord);
     stage.coord2_558.flg = 0;
   }

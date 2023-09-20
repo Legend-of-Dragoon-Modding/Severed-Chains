@@ -695,7 +695,7 @@ public final class SMap {
   }
 
   @Method(0x800d9e08L)
-  public static void FUN_800d9e08() {
+  public static void playFinalFmv() {
     pregameLoadingStage_800bb10c.incr();
 
     if(pregameLoadingStage_800bb10c.get() > 94) {
@@ -6902,11 +6902,6 @@ public final class SMap {
       .uv(3, u + tw, v + th);
 
     GPU.queueCommand(z, cmd);
-  }
-
-  @Method(0x800ed5b0L)
-  public static void startFmvLoadingStage() {
-    throw new RuntimeException("No longer used");
   }
 
   @Method(0x800eddb4L)

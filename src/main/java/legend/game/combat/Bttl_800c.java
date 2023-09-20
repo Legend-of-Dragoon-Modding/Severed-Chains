@@ -199,7 +199,6 @@ import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800d.calculateXAngleFromRefpointToViewpoint;
 import static legend.game.combat.Bttl_800d.calculateYAngleFromRefpointToViewpoint;
 import static legend.game.combat.Bttl_800d.resetCameraMovement;
-import static legend.game.combat.Bttl_800e.FUN_800ec744;
 import static legend.game.combat.Bttl_800e.FUN_800ee610;
 import static legend.game.combat.Bttl_800e.FUN_800ef9e4;
 import static legend.game.combat.Bttl_800e.allocateDeffManager;
@@ -212,6 +211,7 @@ import static legend.game.combat.Bttl_800e.drawUiElements;
 import static legend.game.combat.Bttl_800e.loadBattleHudDeff;
 import static legend.game.combat.Bttl_800e.loadStageTmd;
 import static legend.game.combat.Bttl_800e.renderBattleStage;
+import static legend.game.combat.Bttl_800e.rotateBattleStage;
 import static legend.game.combat.Bttl_800e.updateGameStateAndDeallocateMenu;
 import static legend.game.combat.Bttl_800f.FUN_800f1a00;
 import static legend.game.combat.Bttl_800f.FUN_800f417c;
@@ -1489,7 +1489,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c882cL)
-  public static void FUN_800c882c() {
+  public static void renderSkybox() {
     if(shouldRenderMcq_800c6764.get() == 0 || !shouldRenderMcq_800c66d4.get() || (battleFlags_800bc960.get() & 0x80) == 0) {
       //LAB_800c8ad8
       //LAB_800c8adc
@@ -1572,9 +1572,9 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c8cf0L)
-  public static void FUN_800c8cf0() {
+  public static void rotateAndRenderBattleStage() {
     if(stageHasModel_800c66b8.get() && _800c6754.get() != 0 && (battleFlags_800bc960.get() & 0x20) != 0) {
-      FUN_800ec744(battlePreloadedEntities_1f8003f4.stage_963c);
+      rotateBattleStage(battlePreloadedEntities_1f8003f4.stage_963c);
       renderBattleStage(battlePreloadedEntities_1f8003f4.stage_963c);
     }
 

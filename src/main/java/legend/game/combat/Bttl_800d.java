@@ -2493,7 +2493,7 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d8f10L)
-  public static void FUN_800d8f10() {
+  public static void updateBattleCamera() {
     final BattleCamera cam = camera_800c67f0;
 
     if((cam.flags_11c & UPDATE_VIEWPOINT) != 0) {
