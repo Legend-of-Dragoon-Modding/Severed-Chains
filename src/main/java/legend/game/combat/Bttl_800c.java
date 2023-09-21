@@ -24,6 +24,7 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.game.EngineStateEnum;
 import legend.game.SItem;
 import legend.game.Scus94491BpeSegment_8005;
 import legend.game.characters.Element;
@@ -99,7 +100,6 @@ import legend.game.scripting.ScriptState;
 import legend.game.tim.Tim;
 import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
-import legend.game.EngineStateEnum;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.LodString;
 import legend.game.types.McqHeader;
@@ -154,7 +154,6 @@ import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
-import static legend.game.Scus94491BpeSegment_8002.renderModel;
 import static legend.game.Scus94491BpeSegment_8002.scriptDeallocateAllTextboxes;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
@@ -211,6 +210,7 @@ import static legend.game.combat.Bttl_800e.drawUiElements;
 import static legend.game.combat.Bttl_800e.loadBattleHudDeff;
 import static legend.game.combat.Bttl_800e.loadStageTmd;
 import static legend.game.combat.Bttl_800e.renderBattleStage;
+import static legend.game.combat.Bttl_800e.renderBttlModel;
 import static legend.game.combat.Bttl_800e.rotateBattleStage;
 import static legend.game.combat.Bttl_800e.updateGameStateAndDeallocateMenu;
 import static legend.game.combat.Bttl_800f.FUN_800f1a00;
@@ -2555,7 +2555,7 @@ public final class Bttl_800c {
   @Method(0x800cb024L)
   public static void FUN_800cb024(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
     if((state.storage_44[7] & 0x211) == 0) {
-      renderModel(bent.model_148);
+      renderBttlModel(bent.model_148);
     }
 
     //LAB_800cb048

@@ -43,16 +43,23 @@ import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptParam;
 import legend.game.scripting.ScriptState;
 import legend.game.scripting.ScriptStorageParam;
+import legend.game.submap.DustRenderData54;
 import legend.game.submap.EncounterRateMode;
 import legend.game.submap.EnvironmentFile;
 import legend.game.submap.EnvironmentForegroundTextureMetrics;
 import legend.game.submap.EnvironmentRenderingMetrics24;
 import legend.game.submap.EnvironmentStruct;
 import legend.game.submap.IndicatorMode;
+import legend.game.submap.SMapStruct3c;
+import legend.game.submap.SavePointRenderData44;
+import legend.game.submap.SnowEffect;
 import legend.game.submap.SobjPos14;
 import legend.game.submap.SubmapAssets;
+import legend.game.submap.SubmapCutInfo;
+import legend.game.submap.SubmapEncounterData_04;
 import legend.game.submap.SubmapObject;
 import legend.game.submap.SubmapObject210;
+import legend.game.submap.SubmapStruct80;
 import legend.game.submap.TriangleIndicator140;
 import legend.game.submap.TriangleIndicator44;
 import legend.game.tim.Tim;
@@ -65,7 +72,6 @@ import legend.game.types.AnmSpriteMetrics14;
 import legend.game.types.BigSubStruct;
 import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
-import legend.game.submap.DustRenderData54;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.MediumStruct;
@@ -73,11 +79,8 @@ import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms0c;
 import legend.game.types.MrgFile;
 import legend.game.types.NewRootStruct;
-import legend.game.submap.SMapStruct3c;
-import legend.game.submap.SavePointRenderData44;
 import legend.game.types.ShopStruct40;
 import legend.game.types.SmallerStruct;
-import legend.game.submap.SnowEffect;
 import legend.game.types.SomethingStruct;
 import legend.game.types.SomethingStructSub0c_1;
 import legend.game.types.SomethingStructSub0c_2;
@@ -87,9 +90,6 @@ import legend.game.types.Struct20;
 import legend.game.types.Struct34;
 import legend.game.types.Struct34_2;
 import legend.game.types.Structb0;
-import legend.game.submap.SubmapCutInfo;
-import legend.game.submap.SubmapEncounterData_04;
-import legend.game.submap.SubmapStruct80;
 import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.TmdSubExtension;
@@ -154,7 +154,6 @@ import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.renderDobj2;
-import static legend.game.Scus94491BpeSegment_8002.renderModel;
 import static legend.game.Scus94491BpeSegment_8002.scriptDeallocateAllTextboxes;
 import static legend.game.Scus94491BpeSegment_8002.srand;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
@@ -217,9 +216,7 @@ import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 
-public final class SMap {
-  private SMap() { }
-
+public class SMap extends EngineState {
   private static final Logger LOGGER = LogManager.getFormatterLogger(SMap.class);
 
   private static int fmvIndex_800bf0dc;
@@ -652,18 +649,6 @@ public final class SMap {
   public static void restoreVitalsAndSp(final int charIndex) {
     gameState_800babc8.charData_32c[charIndex].sp_0c = 500;
     restoreCharDataVitals(-1);
-  }
-
-  /** Plays the final cutscene tying everything up */
-  @Method(0x800d9e08L)
-  public static void playFinalFmv() {
-    pregameLoadingStage_800bb10c.incr();
-
-    if(pregameLoadingStage_800bb10c.get() > 94) {
-      Fmv.playCurrentFmv(17, EngineStateEnum.CREDITS_04);
-    }
-
-    //LAB_800d9e5c
   }
 
   @Method(0x800d9e64L)
@@ -2651,7 +2636,7 @@ public final class SMap {
       }
 
       //LAB_800e1334
-      renderModel(sobj.model_00);
+      renderSmapModel(sobj.model_00);
 
       if(sobj.flatLightingEnabled_1c4) {
         GsSetFlatLight(0, GsF_LIGHT_0_800c66d8);
@@ -4264,9 +4249,15 @@ public final class SMap {
     return 1;
   }
 
+  @Override
   @Method(0x800e5914L)
-  public static void executeSmapLoadingStage() {
+  public void tick() {
     executeSmapLoadingStage_2();
+  }
+
+  @Override
+  public void adjustModelPartUvs(final Model124 model, final ModelPart10 part) {
+    adjustSmapUvs(part, model.colourMap_9d);
   }
 
   @Method(0x800e5934L)
@@ -7029,7 +7020,7 @@ public final class SMap {
         dustModel_800d4d40.coord2_14.transforms.scale.set(s0.scale_08, s0.scale_08, s0.scale_08);
 
         applyModelRotationAndScale(dustModel_800d4d40);
-        renderModel(dustModel_800d4d40);
+        renderSmapModel(dustModel_800d4d40);
 
         dustModel_800d4d40.remainingFrames_9e = 0;
         dustModel_800d4d40.interpolationFrameIndex = 0;
@@ -8410,7 +8401,7 @@ public final class SMap {
 
     applyModelRotationAndScale(model);
     animateModel(model);
-    renderModel(model);
+    renderSmapModel(model);
 
     GPU.queueCommand(1, new GpuCommandCopyVramToVram(984, 288 + (short)_800f9ea0.get(), 992, 288, 8, 64 - (short)_800f9ea0.get()));
     GPU.queueCommand(1, new GpuCommandCopyVramToVram(984, 288, 992, 352 - (short)_800f9ea0.getSigned(), 8, (short)_800f9ea0.get()));

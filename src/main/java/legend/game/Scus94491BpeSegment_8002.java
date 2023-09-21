@@ -40,6 +40,7 @@ import legend.game.scripting.ScriptParam;
 import legend.game.sound.EncounterSoundEffects10;
 import legend.game.sound.QueuedSound28;
 import legend.game.sound.SoundFile;
+import legend.game.submap.SubmapStruct80;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
@@ -53,7 +54,6 @@ import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms0c;
 import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
-import legend.game.submap.SubmapStruct80;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
 import legend.game.types.TextboxChar08;
@@ -106,14 +106,11 @@ import static legend.game.SMap.FUN_800e828c;
 import static legend.game.SMap.FUN_800e8e50;
 import static legend.game.SMap.FUN_800ea4c8;
 import static legend.game.SMap._800c68e8;
-import static legend.game.SMap.adjustSmapUvs;
 import static legend.game.SMap.getCollisionAndTransitionInfo;
 import static legend.game.SMap.handleEncounters;
 import static legend.game.SMap.mapTransition;
 import static legend.game.SMap.positionTextboxAtSobj;
 import static legend.game.SMap.renderEnvironment;
-import static legend.game.SMap.renderSmapModel;
-import static legend.game.SMap.renderSmapShadow;
 import static legend.game.SMap.submapFlags_800f7e54;
 import static legend.game.SMap.unloadSmap;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
@@ -138,6 +135,7 @@ import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.freeSequence;
 import static legend.game.Scus94491BpeSegment_8004.stopMusicSequence;
@@ -201,11 +199,6 @@ import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800e.main;
-import static legend.game.combat.Bttl_800e.renderBttlModel;
-import static legend.game.combat.Bttl_800e.renderBttlShadow;
-import static legend.game.wmap.WMap.adjustWmapUvs;
-import static legend.game.wmap.WMap.renderWmapModel;
-import static legend.game.wmap.WMap.renderWmapShadow;
 
 public final class Scus94491BpeSegment_8002 {
   private Scus94491BpeSegment_8002() { }
@@ -322,7 +315,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80020468L)
-  public static void adjustCombatUvs(final ModelPart10 dobj2, final int colourMap) {
+  public static void adjustPartUvs(final ModelPart10 dobj2, final int colourMap) {
     final TmdObjTable1c objTable = dobj2.tmd_08;
 
     for(final TmdObjTable1c.Primitive primitive : objTable.primitives_10) {
@@ -617,23 +610,6 @@ public final class Scus94491BpeSegment_8002 {
     }
   }
 
-  @Method(0x800211d8L)
-  public static void renderModel(final Model124 model) {
-    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
-      //LAB_80021230
-      renderSmapModel(model);
-    } else if(engineState_8004dd20 == EngineStateEnum.COMBAT_06) {
-      //LAB_80021220
-      renderBttlModel(model);
-    } else if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {
-      //LAB_8002120c
-      //LAB_80021240
-      renderWmapModel(model);
-    }
-
-    //LAB_80021248
-  }
-
   @Method(0x80021258L)
   public static void renderDobj2(final ModelPart10 dobj2) {
     if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
@@ -749,32 +725,9 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021628L)
   public static void adjustModelUvs(final Model124 model) {
-    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
-      for(final ModelPart10 dobj2 : model.modelParts_00) {
-        adjustSmapUvs(dobj2, model.colourMap_9d);
-      }
-    } else if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {
-      for(final ModelPart10 dobj2 : model.modelParts_00) {
-        adjustWmapUvs(dobj2, model.colourMap_9d);
-      }
-    } else {
-      for(final ModelPart10 dobj2 : model.modelParts_00) {
-        adjustCombatUvs(dobj2, model.colourMap_9d);
-      }
+    for(final ModelPart10 dobj2 : model.modelParts_00) {
+      currentEngineState_8004dd04.adjustModelPartUvs(model, dobj2);
     }
-  }
-
-  @Method(0x80021724L)
-  public static void renderShadow(final Model124 model) {
-    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
-      renderSmapShadow(model);
-    } else if(engineState_8004dd20 == EngineStateEnum.COMBAT_06) {
-      renderBttlShadow(model);
-    } else if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {
-      renderWmapShadow(model);
-    }
-
-    //LAB_80021794
   }
 
   @Method(0x800217a4L)

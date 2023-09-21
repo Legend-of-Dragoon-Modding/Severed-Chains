@@ -96,7 +96,6 @@ import static legend.game.Scus94491BpeSegment_8003.setDrawOffset;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004._8004dd48;
 import static legend.game.Scus94491BpeSegment_8004._8004f2a8;
-import static legend.game.Scus94491BpeSegment_8004.battleLoadingStage_8004f5d4;
 import static legend.game.Scus94491BpeSegment_8004._8004f658;
 import static legend.game.Scus94491BpeSegment_8004._8004f6e4;
 import static legend.game.Scus94491BpeSegment_8004._8004f6e8;
@@ -104,7 +103,7 @@ import static legend.game.Scus94491BpeSegment_8004._8004fa98;
 import static legend.game.Scus94491BpeSegment_8004._8004fb00;
 import static legend.game.Scus94491BpeSegment_8004.battleStartDelayTicks_8004f6ec;
 import static legend.game.Scus94491BpeSegment_8004.changeSequenceVolumeOverTime;
-import static legend.game.Scus94491BpeSegment_8004.currentGameStateOverlay_8004dd04;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.dontZeroMemoryOnOverlayLoad_8004dd0c;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
@@ -165,7 +164,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bd740;
 import static legend.game.Scus94491BpeSegment_800b._800bd774;
 import static legend.game.Scus94491BpeSegment_800b.battleDissolveTicks;
 import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
-import static legend.game.Scus94491BpeSegment_800b.battleLoaded_800bc94c;
 import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
 import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
 import static legend.game.Scus94491BpeSegment_800b.currentSequenceData_800bd0f8;
@@ -420,7 +418,10 @@ public final class Scus94491BpeSegment {
       RENDERER.window().setFpsLimit((60 / frames) * Config.getGameSpeedMultiplier());
 
       loadQueuedOverlay();
-      gameStateOverlays_8004dbc0.get(engineState_8004dd20).callback_00.run();
+
+      if(currentEngineState_8004dd04 != null) {
+        currentEngineState_8004dd04.tick();
+      }
 
       SCREENS.render(RENDERER, matrixStack, scissorStack);
 
@@ -513,12 +514,12 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80012a84L)
   public static void loadGameStateOverlay(final EngineStateEnum engineState) {
-    LOGGER.info("Loading game state overlay %s", engineState);
+    LOGGER.info("Transitioning to engine state %s", engineState);
 
     final OverlayStruct overlay = gameStateOverlays_8004dbc0.get(engineState);
     final String file = overlay.file_04;
 
-    if(file == null || file.equals(currentGameStateOverlay_8004dd04)) {
+    if(overlay.class_00.isInstance(currentEngineState_8004dd04)) {
       if(!dontZeroMemoryOnOverlayLoad_8004dd0c && overlay.addressToClear_08 != 0) {
         MEMORY.memfill(overlay.addressToClear_08, overlay.clearSize, 0);
       }
@@ -528,8 +529,11 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_80012ad8
-    currentGameStateOverlay_8004dd04 = file;
-    loadOverlaySync(file, _80010000.get());
+    currentEngineState_8004dd04 = overlay.constructor_00.get();
+
+    if(file != null) {
+      loadOverlaySync(file, _80010000.get());
+    }
   }
 
   /**
@@ -1280,23 +1284,6 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_80018644
-  }
-
-  @Method(0x800186a0L)
-  public static void tickBattle() {
-    if(battleLoaded_800bc94c.get()) {
-      checkIfCharacterAndMonsterModelsAreLoadedAndCacheLivingBents();
-      battleLoadingStage_8004f5d4[pregameLoadingStage_800bb10c.get()].run();
-
-      if(battleLoaded_800bc94c.get()) {
-        renderBattleEnvironment();
-      }
-    } else {
-      //LAB_8001870c
-      battleLoadingStage_8004f5d4[pregameLoadingStage_800bb10c.get()].run();
-    }
-
-    //LAB_80018734
   }
 
   @Method(0x80018744L)

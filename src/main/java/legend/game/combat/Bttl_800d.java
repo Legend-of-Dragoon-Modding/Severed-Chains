@@ -87,7 +87,6 @@ import static legend.game.Scus94491BpeSegment_8002.applyInterpolationFrame;
 import static legend.game.Scus94491BpeSegment_8002.applyModelPartTransforms;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
-import static legend.game.Scus94491BpeSegment_8002.renderShadow;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
@@ -103,7 +102,6 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
-import static legend.game.combat.Bttl_800c.getRelativeOffset;
 import static legend.game.combat.Bttl_800c.FUN_800cfb14;
 import static legend.game.combat.Bttl_800c.ZERO;
 import static legend.game.combat.Bttl_800c._800faa90;
@@ -136,6 +134,7 @@ import static legend.game.combat.Bttl_800c.currentAddition_800c6790;
 import static legend.game.combat.Bttl_800c.deffManager_800c693c;
 import static legend.game.combat.Bttl_800c.framesUntilWobble_800c67d4;
 import static legend.game.combat.Bttl_800c.getModelObjectTranslation;
+import static legend.game.combat.Bttl_800c.getRelativeOffset;
 import static legend.game.combat.Bttl_800c.guardEffectMetrics_800fa76c;
 import static legend.game.combat.Bttl_800c.radialGradientEffectRenderers_800fa758;
 import static legend.game.combat.Bttl_800c.refpointComponentMethods_800fad7c;
@@ -155,6 +154,7 @@ import static legend.game.combat.Bttl_800c.viewpointComponentMethods_800fad9c;
 import static legend.game.combat.Bttl_800c.viewpointSetFromScriptMethods_800fabbc;
 import static legend.game.combat.Bttl_800c.wobbleFramesRemaining_800c67c4;
 import static legend.game.combat.Bttl_800e.allocateEffectManager;
+import static legend.game.combat.Bttl_800e.renderBttlShadow;
 import static legend.game.combat.Bttl_800e.renderGenericSpriteAtZOffset0;
 import static legend.game.combat.environment.BattleCamera.UPDATE_REFPOINT;
 import static legend.game.combat.environment.BattleCamera.UPDATE_VIEWPOINT;
@@ -4766,7 +4766,7 @@ public final class Bttl_800d {
     }
 
     if(model.shadowType_cc != 0) {
-      renderShadow(model);
+      renderBttlShadow(model);
     }
 
     //LAB_800dda98
