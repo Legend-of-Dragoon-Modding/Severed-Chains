@@ -40,7 +40,7 @@ public class GameVarArrayParam extends Param {
       case 50 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveCharBents_eac[this.arrIndex] != null ? Scus94491BpeSegment_8006.battleState_8006e398.aliveCharBents_eac[this.arrIndex].index : -1;
       case 52 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveMonsterBents_ebc[this.arrIndex] != null ? Scus94491BpeSegment_8006.battleState_8006e398.aliveMonsterBents_ebc[this.arrIndex].index : -1;
       case 64 -> SMap.sobjs_800c6880[this.arrIndex] != null ? SMap.sobjs_800c6880[this.arrIndex].index : 0;
-      case 73 -> SMap._800c6970.get(this.arrIndex).get();
+      case 73 -> SMap.indicatorTickCountArray_800c6970.get(this.arrIndex).get();
       case 112 -> Scus94491BpeSegment_800b.gameState_800babc8.wmapFlags_15c.getRaw(this.arrIndex);
       case 113 -> Scus94491BpeSegment_800b.gameState_800babc8._17c.getRaw(this.arrIndex);
       case 114 -> Scus94491BpeSegment_800b.gameState_800babc8.goods_19c[this.arrIndex];
@@ -76,7 +76,7 @@ public class GameVarArrayParam extends Param {
       case 50 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveCharBents_eac[this.arrIndex] = SCRIPTS.getState(val, PlayerBattleEntity.class);
       case 52 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveMonsterBents_ebc[this.arrIndex] = SCRIPTS.getState(val, MonsterBattleEntity.class);
       case 64 -> SMap.sobjs_800c6880[this.arrIndex] = SCRIPTS.getState(val, SubmapObject210.class);
-      case 73 -> SMap._800c6970.get(this.arrIndex).set(val);
+      case 73 -> SMap.indicatorTickCountArray_800c6970.get(this.arrIndex).set(val);
       case 112 -> Scus94491BpeSegment_800b.gameState_800babc8.wmapFlags_15c.setRaw(this.arrIndex, val);
       case 113 -> Scus94491BpeSegment_800b.gameState_800babc8._17c.setRaw(this.arrIndex, val);
       case 114 -> Scus94491BpeSegment_800b.gameState_800babc8.goods_19c[this.arrIndex] = val;
