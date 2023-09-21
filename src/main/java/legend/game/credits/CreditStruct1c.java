@@ -1,4 +1,4 @@
-package legend.game.types;
+package legend.game.credits;
 
 import legend.core.gte.COLOUR;
 import legend.core.memory.Value;
@@ -18,7 +18,7 @@ public class CreditStruct1c implements MemoryRef {
   public final UnsignedShortRef width_0e;
   public final UnsignedShortRef height_10;
   public final UnsignedShortRef scroll_12;
-  public final UnsignedShortRef _14;
+  public final UnsignedShortRef brightnessAngle_14;
   /**
    * <ul>
    *   <li>0 - load</li>
@@ -38,7 +38,7 @@ public class CreditStruct1c implements MemoryRef {
     this.width_0e = ref.offset(2, 0x0eL).cast(UnsignedShortRef::new);
     this.height_10 = ref.offset(2, 0x10L).cast(UnsignedShortRef::new);
     this.scroll_12 = ref.offset(2, 0x12L).cast(UnsignedShortRef::new);
-    this._14 = ref.offset(2, 0x14L).cast(UnsignedShortRef::new);
+    this.brightnessAngle_14 = ref.offset(2, 0x14L).cast(UnsignedShortRef::new);
     this.state_16 = ref.offset(1, 0x16L).cast(UnsignedByteRef::new);
   }
 

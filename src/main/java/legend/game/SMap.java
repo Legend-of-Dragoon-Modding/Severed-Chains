@@ -30,6 +30,8 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.combat.types.Ptr;
+import legend.game.credits.CreditStruct1c;
+import legend.game.credits.CreditType08;
 import legend.game.fmv.Fmv;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
@@ -65,7 +67,6 @@ import legend.game.types.AnmSpriteMetrics14;
 import legend.game.types.BigSubStruct;
 import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
-import legend.game.types.CreditStruct1c;
 import legend.game.types.DustRenderData54;
 import legend.game.types.EngineState;
 import legend.game.types.GsF_LIGHT;
@@ -197,7 +198,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b4;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b8;
 import static legend.game.Scus94491BpeSegment_800b._800bda08;
-import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
@@ -553,11 +553,8 @@ public final class SMap {
   /**
    * <ol start="0">
    *   <li>{@link SMap#initCredits}</li>
-   *   <li>{@link SMap#loadCredits}</li>
    *   <li>{@link SMap#waitForCreditsToLoadAndPlaySong}</li>
-   *   <li>{@link SMap#fadeInCredits}</li>
    *   <li>{@link SMap#renderCredits}</li>
-   *   <li>{@link SMap#fadeOutCredits}</li>
    *   <li>{@link SMap#waitForCreditsFadeOut}</li>
    *   <li>{@link SMap#deallocateCreditsAndReturnToMenu}</li>
    * </ol>
@@ -565,17 +562,13 @@ public final class SMap {
   public static final Runnable[] theEndStates_800f9378 = new Runnable[8];
   static {
     theEndStates_800f9378[0] = SMap::initCredits;
-    theEndStates_800f9378[1] = SMap::loadCredits;
-    theEndStates_800f9378[2] = SMap::waitForCreditsToLoadAndPlaySong;
-    theEndStates_800f9378[3] = SMap::fadeInCredits;
-    theEndStates_800f9378[4] = SMap::renderCredits;
-    theEndStates_800f9378[5] = SMap::fadeOutCredits;
-    theEndStates_800f9378[6] = SMap::waitForCreditsFadeOut;
-    theEndStates_800f9378[7] = SMap::deallocateCreditsAndReturnToMenu;
+    theEndStates_800f9378[1] = SMap::waitForCreditsToLoadAndPlaySong;
+    theEndStates_800f9378[2] = SMap::renderCredits;
+    theEndStates_800f9378[3] = SMap::waitForCreditsFadeOut;
+    theEndStates_800f9378[4] = SMap::deallocateCreditsAndReturnToMenu;
   }
 
-  public static final Value _800f93b0 = MEMORY.ref(4, 0x800f93b0L);
-
+  public static final ArrayRef<CreditType08> creditTypes_800f93b0 = MEMORY.ref(4, 0x800f93b0L, ArrayRef.of(CreditType08.class, 87, 0x8, CreditType08::new));
   public static final ArrayRef<DVECTOR> creditPos_800f9670 = MEMORY.ref(2, 0x800f9670L, ArrayRef.of(DVECTOR.class, 16, 4, DVECTOR::new));
 
   public static final UnboundedArrayRef<ShortRef> smapFileIndices_800f982c = MEMORY.ref(2, 0x800f982cL, UnboundedArrayRef.of(2, ShortRef::new));
@@ -6383,7 +6376,7 @@ public final class SMap {
       //LAB_800eab1c
       credit.colour_00.set(0x80, 0x80, 0x80);
       credit.scroll_12.set(0);
-      credit._14.set(0);
+      credit.brightnessAngle_14.set(0);
       credit.state_16.set(0);
     }
 
@@ -6400,7 +6393,10 @@ public final class SMap {
     fadeOutTicks_800d1ae4.set(0);
     creditsPassed_800d1aec.set(0);
     creditIndex_800d1af0.set(0);
-    pregameLoadingStage_800bb10c.set(1);
+
+    creditTimsLoaded_800d1ae8.set(false);
+    loadDrgnDir(0, 5720, SMap::creditsLoaded);
+    pregameLoadingStage_800bb10c.incr();
   }
 
   @Method(0x800eacc8L)
@@ -6409,50 +6405,28 @@ public final class SMap {
     creditTimsLoaded_800d1ae8.set(true);
   }
 
-  @Method(0x800eacfcL)
-  public static void loadCredits() {
-    creditTimsLoaded_800d1ae8.set(false);
-    loadDrgnDir(0, 5720, SMap::creditsLoaded);
-    pregameLoadingStage_800bb10c.set(2);
-  }
-
   @Method(0x800ead58L)
   public static void waitForCreditsToLoadAndPlaySong() {
     if(creditTimsLoaded_800d1ae8.get()) {
       //LAB_800ead7c
       playXaAudio(3, 3, 1);
-      pregameLoadingStage_800bb10c.set(3);
+      startFadeEffect(2, 15);
+      pregameLoadingStage_800bb10c.incr();
     }
 
     //LAB_800ead9c
-  }
-
-  @Method(0x800eadacL)
-  public static void fadeInCredits() {
-    if(_800bf0cf.get() == 4) {
-      //LAB_800eadd0
-      startFadeEffect(2, 15);
-      pregameLoadingStage_800bb10c.set(4);
-    }
-
-    //LAB_800eadec
   }
 
   @Method(0x800eadfcL)
   public static void renderCredits() {
     renderCreditsGradient();
 
-    if(loadAndRenderCredits() != 0) {
-      pregameLoadingStage_800bb10c.set(5);
+    if(loadAndRenderCredits()) {
+      startFadeEffect(1, 15);
+      pregameLoadingStage_800bb10c.incr();
     }
 
     //LAB_800eae28
-  }
-
-  @Method(0x800eae38L)
-  public static void fadeOutCredits() {
-    startFadeEffect(1, 15);
-    pregameLoadingStage_800bb10c.set(6);
   }
 
   @Method(0x800eae6cL)
@@ -6461,7 +6435,7 @@ public final class SMap {
 
     if(fadeOutTicks_800d1ae4.get() >= 16) {
       //LAB_800eaea0
-      pregameLoadingStage_800bb10c.set(7);
+      pregameLoadingStage_800bb10c.incr();
     }
 
     //LAB_800eaeac
@@ -6473,7 +6447,6 @@ public final class SMap {
     creditTims_800d1ae0 = null;
     engineStateOnceLoaded_8004dd24 = EngineState.SUBMAP_05;
     pregameLoadingStage_800bb10c.set(0);
-    vsyncMode_8007a3b8 = 2;
 
     //LAB_800eaf14
   }
@@ -6506,13 +6479,13 @@ public final class SMap {
   }
 
   @Method(0x800eb304L)
-  public static int loadAndRenderCredits() {
+  public static boolean loadAndRenderCredits() {
     //LAB_800eb318
     //LAB_800ebc0c
     for(int creditSlot = 0; creditSlot < 16; creditSlot++) {
       //LAB_800eb334
       if(creditsPassed_800d1aec.get() >= 357) {
-        return 1;
+        return true;
       }
 
       final CreditStruct1c credit = credits_800d1af8.get(creditSlot);
@@ -6521,7 +6494,7 @@ public final class SMap {
       final int state = credit.state_16.get();
       if(state == 0) {
         //LAB_800eb3b8
-        if(shouldLoadNewCredit(creditSlot) != 0) {
+        if(shouldLoadNewCredit(creditSlot)) {
           credit.state_16.set(2);
           loadCreditTims(creditSlot);
         }
@@ -6553,7 +6526,7 @@ public final class SMap {
         //LAB_800ebabc
         if(credits_800d1af8.get((creditSlot + 1) % 16).state_16.get() != 0) {
           credit.scroll_12.set(0);
-          credit._14.set(0);
+          credit.brightnessAngle_14.set(0);
           credit.state_16.set(0);
         } else {
           //LAB_800ebb84
@@ -6563,29 +6536,20 @@ public final class SMap {
     }
 
     //LAB_800ebc18
-    return 0;
+    return false;
   }
 
   @Method(0x800ebc2cL)
-  public static int shouldLoadNewCredit(final int creditSlot) {
-    if(creditIndex_800d1af0.get() >= 357) {
-      return 0;
-    }
-
+  public static boolean shouldLoadNewCredit(final int creditSlot) {
     //LAB_800ebc5c
-    boolean sp4 = false;
+    boolean found = false;
 
     //LAB_800ebc64
     int i;
-    for(i = 0; i < 357; i++) {
-      if(_800f93b0.offset(i * 0x8L).getSigned() == -1) {
-        //LAB_800ebca8
-        break;
-      }
-
+    for(i = 0; i < creditTypes_800f93b0.length(); i++) {
       //LAB_800ebcb0
-      if(_800f93b0.offset(i * 0x8L).get() == creditIndex_800d1af0.get()) {
-        sp4 = true;
+      if(creditTypes_800f93b0.get(i).creditIndex_00.get() == creditIndex_800d1af0.get()) {
+        found = true;
         break;
       }
     }
@@ -6593,8 +6557,8 @@ public final class SMap {
     final CreditStruct1c credit = credits_800d1af8.get(creditSlot);
 
     //LAB_800ebd08
-    if(sp4) {
-      credit.type_08.set((int)_800f93b0.offset((i * 2 + 1) * 0x4L).get());
+    if(found) {
+      credit.type_08.set(creditTypes_800f93b0.get(i).type_04.get());
     } else {
       //LAB_800ebd6c
       credit.type_08.set(2);
@@ -6602,7 +6566,7 @@ public final class SMap {
 
     //LAB_800ebd94
     if(creditIndex_800d1af0.get() == 0) {
-      return 1;
+      return true;
     }
 
     //LAB_800ebdb4
@@ -6610,7 +6574,7 @@ public final class SMap {
     final CreditStruct1c prevCredit = credits_800d1af8.get(prevCreditSlot);
 
     if(prevCredit.state_16.get() == 0) {
-      return 0;
+      return false;
     }
 
     //LAB_800ebe1c
@@ -6621,14 +6585,14 @@ public final class SMap {
         if(type == 0 || type == 1 || type == 2) {
           //LAB_800ebee4
           if(prevCredit.scroll_12.get() >= 66) {
-            return 1;
+            return true;
           }
 
           //LAB_800ebf24
         } else if(type == 3) {
           //LAB_800ebf2c
           if(prevCredit.scroll_12.get() >= 64) {
-            return 1;
+            return true;
           }
 
           //LAB_800ebf6c
@@ -6636,7 +6600,7 @@ public final class SMap {
         } else if(type == 4) {
           //LAB_800ebf74
           if(prevCredit.scroll_12.get() >= 144) {
-            return 1;
+            return true;
           }
 
           //LAB_800ebfb4
@@ -6651,14 +6615,14 @@ public final class SMap {
         if(type == 0 || type == 1 || type == 2) {
           //LAB_800ec024
           if(prevCredit.scroll_12.get() >= 36) {
-            return 1;
+            return true;
           }
 
           //LAB_800ec064
         } else if(type == 3) {
           //LAB_800ec06c
           if(prevCredit.scroll_12.get() >= 64) {
-            return 1;
+            return true;
           }
 
           //LAB_800ec0ac
@@ -6666,7 +6630,7 @@ public final class SMap {
         } else if(type == 4) {
           //LAB_800ec0b4
           if(prevCredit.scroll_12.get() >= 144) {
-            return 1;
+            return true;
           }
 
           //LAB_800ec0f4
@@ -6679,28 +6643,28 @@ public final class SMap {
         switch(prevCredit.type_08.get()) {
           case 0, 1 -> {
             if(prevCredit.scroll_12.get() >= 27) {
-              return 1;
+              return true;
             }
           }
 
           //LAB_800ec1ac
           case 2 -> {
             if(prevCredit.scroll_12.get() >= 23) {
-              return 1;
+              return true;
             }
           }
 
           //LAB_800ec1f4
           case 3 -> {
             if(prevCredit.scroll_12.get() >= 80) {
-              return 1;
+              return true;
             }
           }
 
           //LAB_800ec23c
           case 4 -> {
             if(prevCredit.scroll_12.get() >= 144) {
-              return 1;
+              return true;
             }
           }
 
@@ -6712,12 +6676,12 @@ public final class SMap {
 
       case 3 -> {
         if(prevCredit.type_08.get() == 3) {
-          return 1;
+          return true;
         }
 
         //LAB_800ec2d0
         if(prevCredit.scroll_12.get() > 16) {
-          return 1;
+          return true;
         }
 
         //LAB_800ec310
@@ -6725,7 +6689,7 @@ public final class SMap {
 
       case 4 -> {
         if(prevCredit.scroll_12.get() >= 130) {
-          return 1;
+          return true;
         }
 
         //LAB_800ec358
@@ -6734,7 +6698,7 @@ public final class SMap {
 
     //LAB_800ec360
     //LAB_800ec36c
-    return 0;
+    return false;
   }
 
   @Method(0x800ec37cL)
@@ -6787,9 +6751,9 @@ public final class SMap {
           //LAB_800eca68
         } else {
           //LAB_800eca70
-          credit._14.incr();
+          credit.brightnessAngle_14.incr();
 
-          final int sp14 = credit._14.get();
+          final int sp14 = credit.brightnessAngle_14.get();
           if(prevCredit.type_08.get() == 3) {
             credit.y_0c.set((short)(-credit.height_10.get() / 2 - sp14 + 13));
             credit.colour_00.set(118, 107, 195);
@@ -6810,13 +6774,13 @@ public final class SMap {
       //LAB_800ecd90
       case 4 -> {
         if(credit.y_0c.get() < -credit.height_10.get() / 2 && scroll != 0) {
-          credit._14.add(6);
-          final int sp14 = credit._14.get();
-          credit.colour_00.setR(rcos(sp14) * 128 >> 12);
-          credit.colour_00.setG(rcos(sp14) * 128 >> 12);
-          credit.colour_00.setB(rcos(sp14) * 128 >> 12);
+          credit.brightnessAngle_14.add(6);
+          final int brightnessAngle = credit.brightnessAngle_14.get();
+          credit.colour_00.setR(rcos(brightnessAngle) * 128 >> 12);
+          credit.colour_00.setG(rcos(brightnessAngle) * 128 >> 12);
+          credit.colour_00.setB(rcos(brightnessAngle) * 128 >> 12);
 
-          if(sp14 > 0x400) {
+          if(brightnessAngle > 0x400) {
             credit.colour_00.set(0, 0, 0);
             credit.state_16.set(3);
             creditsPassed_800d1aec.incr();
