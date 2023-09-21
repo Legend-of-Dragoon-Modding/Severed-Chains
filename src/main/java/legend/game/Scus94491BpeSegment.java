@@ -1723,7 +1723,7 @@ public final class Scus94491BpeSegment {
         }
       }
 
-      case THE_END_04, GAME_OVER_07, WORLD_MAP_08, FMV_09, CREDITS_11 ->
+      case CREDITS_04, GAME_OVER_07, WORLD_MAP_08, FMV_09, FINAL_FMV_11 ->
         sssqResetStuff();
     }
 

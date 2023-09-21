@@ -1424,7 +1424,7 @@ public final class Bttl_800c {
           }
         }
 
-        case 4 -> Fmv.playCurrentFmv(16, EngineState.CREDITS_11);
+        case 4 -> Fmv.playCurrentFmv(16, EngineState.FINAL_FMV_11);
       }
 
       //LAB_800c8558

@@ -187,11 +187,9 @@ public final class Ttle {
   }
 
   @Method(0x800c7424L)
-  public static void executeTtleUnloadingStage() {
+  public static void transitionToNewGame() {
     loadSItemAndSetUpNewGameData();
     engineStateOnceLoaded_8004dd24 = EngineState.SUBMAP_05;
-    vsyncMode_8007a3b8 = 2;
-    pregameLoadingStage_800bb10c.set(0);
   }
 
   @Method(0x800c7524L)

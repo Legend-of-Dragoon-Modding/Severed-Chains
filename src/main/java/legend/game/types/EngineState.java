@@ -5,14 +5,14 @@ public enum EngineState {
   UNUSED_01,
   TITLE_02,
   TRANSITION_TO_NEW_GAME_03,
-  THE_END_04,
+  CREDITS_04,
   SUBMAP_05,
   COMBAT_06,
   GAME_OVER_07,
   WORLD_MAP_08,
   FMV_09,
   DISK_SWAP_10,
-  CREDITS_11,
+  FINAL_FMV_11,
   ;
 
   public boolean isInGame() {
