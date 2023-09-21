@@ -21,7 +21,7 @@ import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.tim.Tim;
 import legend.game.types.CharacterData2c;
-import legend.game.types.EngineState;
+import legend.game.EngineStateEnum;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
@@ -189,7 +189,7 @@ public final class Ttle {
   @Method(0x800c7424L)
   public static void transitionToNewGame() {
     loadSItemAndSetUpNewGameData();
-    engineStateOnceLoaded_8004dd24 = EngineState.SUBMAP_05;
+    engineStateOnceLoaded_8004dd24 = EngineStateEnum.SUBMAP_05;
   }
 
   @Method(0x800c7524L)
@@ -457,14 +457,14 @@ public final class Ttle {
         removeInputHandlers();
         deallocateFire();
 
-        Fmv.playCurrentFmv(2, EngineState.TRANSITION_TO_NEW_GAME_03);
+        Fmv.playCurrentFmv(2, EngineStateEnum.TRANSITION_TO_NEW_GAME_03);
 
         pregameLoadingStage_800bb10c.set(0);
         return;
       }
 
       if(_800c6728 == 3) {
-        engineStateOnceLoaded_8004dd24 = EngineState.TITLE_02;
+        engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;
         pregameLoadingStage_800bb10c.set(0);
         vsyncMode_8007a3b8 = 2;
       } else {
@@ -500,7 +500,7 @@ public final class Ttle {
     if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
       if(_800c6728 == 3) {
         ConfigStorage.saveConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
-        engineStateOnceLoaded_8004dd24 = EngineState.TITLE_02;
+        engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;
         pregameLoadingStage_800bb10c.set(0);
         vsyncMode_8007a3b8 = 2;
       } else {
@@ -537,10 +537,10 @@ public final class Ttle {
     if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
       if(savedGameSelected_800bdc34.get()) {
         if(gameState_800babc8.isOnWorldMap_4e4) {
-          engineStateOnceLoaded_8004dd24 = EngineState.WORLD_MAP_08;
+          engineStateOnceLoaded_8004dd24 = EngineStateEnum.WORLD_MAP_08;
         } else {
           //LAB_800c80a4
-          engineStateOnceLoaded_8004dd24 = EngineState.SUBMAP_05;
+          engineStateOnceLoaded_8004dd24 = EngineStateEnum.SUBMAP_05;
         }
 
         pregameLoadingStage_800bb10c.set(0);
@@ -552,7 +552,7 @@ public final class Ttle {
 
       //LAB_800c80cc
       if(_800c6728 == 3) {
-        engineStateOnceLoaded_8004dd24 = EngineState.TITLE_02;
+        engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;
         pregameLoadingStage_800bb10c.set(0);
         vsyncMode_8007a3b8 = 2;
       } else {
@@ -586,7 +586,7 @@ public final class Ttle {
       removeInputHandlers();
       deallocateFire();
 
-      Fmv.playCurrentFmv(0, EngineState.TITLE_02);
+      Fmv.playCurrentFmv(0, EngineStateEnum.TITLE_02);
 
       pregameLoadingStage_800bb10c.set(0);
     }

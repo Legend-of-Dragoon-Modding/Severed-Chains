@@ -99,7 +99,7 @@ import legend.game.scripting.ScriptState;
 import legend.game.tim.Tim;
 import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
-import legend.game.types.EngineState;
+import legend.game.EngineStateEnum;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.LodString;
 import legend.game.types.McqHeader;
@@ -1406,9 +1406,9 @@ public final class Bttl_800c {
       deallocateStageDarkeningStorage();
       FUN_800c8748();
 
-      EngineState postCombatMainCallbackIndex = previousEngineState_8004dd28;
-      if(postCombatMainCallbackIndex == EngineState.FMV_09) {
-        postCombatMainCallbackIndex = EngineState.SUBMAP_05;
+      EngineStateEnum postCombatMainCallbackIndex = previousEngineState_8004dd28;
+      if(postCombatMainCallbackIndex == EngineStateEnum.FMV_09) {
+        postCombatMainCallbackIndex = EngineStateEnum.SUBMAP_05;
       }
 
       //LAB_800c84b4
@@ -1420,11 +1420,11 @@ public final class Bttl_800c {
             gameState_800babc8.scriptFlags2_bc.set(29, 27, true); // Died in arena fight
           } else {
             //LAB_800c8534
-            postCombatMainCallbackIndex = EngineState.GAME_OVER_07;
+            postCombatMainCallbackIndex = EngineStateEnum.GAME_OVER_07;
           }
         }
 
-        case 4 -> Fmv.playCurrentFmv(16, EngineState.FINAL_FMV_11);
+        case 4 -> Fmv.playCurrentFmv(16, EngineStateEnum.FINAL_FMV_11);
       }
 
       //LAB_800c8558

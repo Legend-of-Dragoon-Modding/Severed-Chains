@@ -1,4 +1,4 @@
-package legend.game.types;
+package legend.game.submap;
 
 public class SMapStruct3c {
   public short _02;

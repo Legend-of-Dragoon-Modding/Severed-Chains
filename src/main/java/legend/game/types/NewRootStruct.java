@@ -1,5 +1,6 @@
 package legend.game.types;
 
+import legend.game.submap.SubmapCutInfo;
 import legend.game.unpacker.FileData;
 
 import java.util.Arrays;

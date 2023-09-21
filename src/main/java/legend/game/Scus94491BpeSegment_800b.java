@@ -23,7 +23,6 @@ import legend.game.sound.SoundFile;
 import legend.game.sound.SpuStruct08;
 import legend.game.submap.SobjPos14;
 import legend.game.types.ActiveStatsa0;
-import legend.game.types.EngineState;
 import legend.game.types.FullScreenEffect;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
@@ -71,7 +70,7 @@ public final class Scus94491BpeSegment_800b {
   public static final ScriptState<?>[] scriptStatePtrArr_800bc1c0 = new ScriptState[72];
 
   public static final boolean[] unlockedUltimateAddition_800bc910 = new boolean[3];
-  public static EngineState postCombatMainCallbackIndex_800bc91c = EngineState.PRELOAD_00;
+  public static EngineStateEnum postCombatMainCallbackIndex_800bc91c = EngineStateEnum.PRELOAD_00;
   public static final IntRef goldGainedFromCombat_800bc920 = MEMORY.ref(4, 0x800bc920L, IntRef::new);
 
   public static final List<EnemyDrop> itemsDroppedByEnemies_800bc928 = new ArrayList<>();
@@ -179,7 +178,7 @@ public final class Scus94491BpeSegment_800b {
   public static BattleStage stage_800bda0c;
   public static final Model124 shadowModel_800bda10 = new Model124("Shadow");
 
-  public static EngineState _800bdb88 = EngineState.PRELOAD_00;
+  public static EngineStateEnum _800bdb88 = EngineStateEnum.PRELOAD_00;
 
   public static Renderable58 saveListUpArrow_800bdb94;
   public static Renderable58 saveListDownArrow_800bdb98;

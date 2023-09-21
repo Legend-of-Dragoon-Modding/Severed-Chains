@@ -15,7 +15,7 @@ import legend.game.combat.SEffe;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.config.ConfigLoadedEvent;
 import legend.game.modding.events.config.ConfigUpdatedEvent;
-import legend.game.types.EngineState;
+import legend.game.EngineStateEnum;
 import legend.game.wmap.AreaData08;
 import org.legendofdragoon.modloader.events.EventListener;
 
@@ -310,14 +310,14 @@ public class DebuggerController {
   private void startEncounter(final ActionEvent event) {
     encounterId_800bb0f8.set(this.encounterId.getValue());
 
-    if(engineState_8004dd20 == EngineState.SUBMAP_05) {
+    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
       if(Config.combatStage()) {
         battleStage_800bb0f4.set(Config.getCombatStage());
       } else {
         battleStage_800bb0f4.set(encounterData_800f64c4.get(submapCut_80052c30.get()).stage_03.get());
       }
       mapTransition(-1, 0);
-    } else if(engineState_8004dd20 == EngineState.WORLD_MAP_08) {
+    } else if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {
       final AreaData08 area = areaData_800f2248.get(mapState_800c6798.areaIndex_12);
 
       if(Config.combatStage()) {

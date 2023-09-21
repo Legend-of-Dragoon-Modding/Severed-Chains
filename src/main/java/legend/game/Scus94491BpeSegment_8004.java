@@ -31,12 +31,11 @@ import legend.game.sound.Sssqish;
 import legend.game.sound.VolumeRamp;
 import legend.game.title.GameOver;
 import legend.game.title.Ttle;
-import legend.game.types.EngineState;
 import legend.game.types.ItemStats0c;
 import legend.game.types.MoonMusic08;
 import legend.game.types.OverlayStruct;
 import legend.game.types.Struct10;
-import legend.game.types.SubmapMusic08;
+import legend.game.submap.SubmapMusic08;
 import legend.game.unpacker.FileData;
 import legend.game.wmap.WMap;
 import org.apache.logging.log4j.LogManager;
@@ -106,17 +105,17 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>null</li>
    * </ol>
    */
-  public static final Map<EngineState, OverlayStruct> gameStateOverlays_8004dbc0 = new EnumMap<>(EngineState.class);
+  public static final Map<EngineStateEnum, OverlayStruct> gameStateOverlays_8004dbc0 = new EnumMap<>(EngineStateEnum.class);
   static {
-    gameStateOverlays_8004dbc0.put(EngineState.PRELOAD_00, new OverlayStruct(Scus94491BpeSegment_800e::preload));
-    gameStateOverlays_8004dbc0.put(EngineState.TITLE_02, new OverlayStruct(Ttle::executeTtleLoadingStage));
-    gameStateOverlays_8004dbc0.put(EngineState.TRANSITION_TO_NEW_GAME_03, new OverlayStruct(Ttle::transitionToNewGame));
-    gameStateOverlays_8004dbc0.put(EngineState.CREDITS_04, new OverlayStruct(Credits::tickCredits, "\\OVL\\SMAP.OV_", 0x800c6690L, 0xf9f0));
-    gameStateOverlays_8004dbc0.put(EngineState.SUBMAP_05, new OverlayStruct(SMap::executeSmapLoadingStage, "\\OVL\\SMAP.OV_", 0x800c6690L, 0xf9f0));
-    gameStateOverlays_8004dbc0.put(EngineState.COMBAT_06, new OverlayStruct(Scus94491BpeSegment::tickBattle, "\\OVL\\BTTL.OV_", 0x800c6690L, 0x668));
-    gameStateOverlays_8004dbc0.put(EngineState.GAME_OVER_07, new OverlayStruct(GameOver::gameOver));
-    gameStateOverlays_8004dbc0.put(EngineState.WORLD_MAP_08, new OverlayStruct(WMap::executeWmapState, "\\OVL\\WMAP.OV_", 0x800c6690L, 0x2070));
-    gameStateOverlays_8004dbc0.put(EngineState.FINAL_FMV_11, new OverlayStruct(SMap::playFinalFmv));
+    gameStateOverlays_8004dbc0.put(EngineStateEnum.PRELOAD_00, new OverlayStruct(Scus94491BpeSegment_800e::preload));
+    gameStateOverlays_8004dbc0.put(EngineStateEnum.TITLE_02, new OverlayStruct(Ttle::executeTtleLoadingStage));
+    gameStateOverlays_8004dbc0.put(EngineStateEnum.TRANSITION_TO_NEW_GAME_03, new OverlayStruct(Ttle::transitionToNewGame));
+    gameStateOverlays_8004dbc0.put(EngineStateEnum.CREDITS_04, new OverlayStruct(Credits::tickCredits, "\\OVL\\SMAP.OV_", 0x800c6690L, 0xf9f0));
+    gameStateOverlays_8004dbc0.put(EngineStateEnum.SUBMAP_05, new OverlayStruct(SMap::executeSmapLoadingStage, "\\OVL\\SMAP.OV_", 0x800c6690L, 0xf9f0));
+    gameStateOverlays_8004dbc0.put(EngineStateEnum.COMBAT_06, new OverlayStruct(Scus94491BpeSegment::tickBattle, "\\OVL\\BTTL.OV_", 0x800c6690L, 0x668));
+    gameStateOverlays_8004dbc0.put(EngineStateEnum.GAME_OVER_07, new OverlayStruct(GameOver::gameOver));
+    gameStateOverlays_8004dbc0.put(EngineStateEnum.WORLD_MAP_08, new OverlayStruct(WMap::executeWmapState, "\\OVL\\WMAP.OV_", 0x800c6690L, 0x2070));
+    gameStateOverlays_8004dbc0.put(EngineStateEnum.FINAL_FMV_11, new OverlayStruct(SMap::playFinalFmv));
   }
 
   public static String currentGameStateOverlay_8004dd04;
@@ -133,11 +132,11 @@ public final class Scus94491BpeSegment_8004 {
    *   <li value="11">Credits?</li>
    * </ol>
    */
-  public static EngineState engineState_8004dd20 = EngineState.PRELOAD_00;
+  public static EngineStateEnum engineState_8004dd20 = EngineStateEnum.PRELOAD_00;
   /** When the overlay finishes loading, switch to this */
-  public static EngineState engineStateOnceLoaded_8004dd24 = EngineState.PRELOAD_00;
+  public static EngineStateEnum engineStateOnceLoaded_8004dd24 = EngineStateEnum.PRELOAD_00;
   /** The previous state before the file finished loading */
-  public static EngineState previousEngineState_8004dd28;
+  public static EngineStateEnum previousEngineState_8004dd28;
 
   public static int width_8004dd34 = 320;
   public static int height_8004dd34 = 240;

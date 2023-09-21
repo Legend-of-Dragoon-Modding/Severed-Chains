@@ -45,7 +45,6 @@ import legend.game.tmd.Renderer;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
-import legend.game.types.EngineState;
 import legend.game.types.InventoryMenuState;
 import legend.game.types.LodString;
 import legend.game.types.MagicStuff08;
@@ -54,7 +53,7 @@ import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms0c;
 import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
-import legend.game.types.SubmapStruct80;
+import legend.game.submap.SubmapStruct80;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
 import legend.game.types.TextboxChar08;
@@ -355,7 +354,7 @@ public final class Scus94491BpeSegment_8002 {
       model.animateTextures_ec[i] = false;
     }
 
-    if(engineState_8004dd20 == EngineState.SUBMAP_05) {
+    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
       FUN_800de004(model, cContainer);
     }
 
@@ -419,7 +418,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   public static void animateModel(final Model124 model, final int interpolationFrameCount) {
-    if(engineState_8004dd20 == EngineState.SUBMAP_05) {
+    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
       FUN_800da114(model);
       return;
     }
@@ -531,7 +530,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80020ed8L)
   public static void FUN_80020ed8() {
-    if(_800bdb88 == EngineState.SUBMAP_05) {
+    if(_800bdb88 == EngineStateEnum.SUBMAP_05) {
       if(_800bd7b4.get() == 0x1L) {
         FUN_800e4708();
       }
@@ -543,27 +542,27 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80020f30
     //LAB_80020f34
-    final EngineState a0 = _800bdb88;
+    final EngineStateEnum a0 = _800bdb88;
     _800bd7b4.setu(0);
     if(a0 != engineState_8004dd20) {
       _800bdb88 = engineState_8004dd20;
 
-      if(engineState_8004dd20 == EngineState.SUBMAP_05) {
+      if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
         _800bd7b0.set(2);
         _800bd7b8.setu(0);
 
-        if(a0 == EngineState.TITLE_02) {
+        if(a0 == EngineStateEnum.TITLE_02) {
           _800bd7b0.set(9);
         }
 
         //LAB_80020f84
-        if(a0 == EngineState.COMBAT_06) {
+        if(a0 == EngineStateEnum.COMBAT_06) {
           _800bd7b0.set(-4);
           _800bd7b8.setu(0x1L);
         }
 
         //LAB_80020fa4
-        if(a0 == EngineState.WORLD_MAP_08) {
+        if(a0 == EngineStateEnum.WORLD_MAP_08) {
           _800bd7b0.set(3);
         }
       }
@@ -571,7 +570,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80020fb4
     //LAB_80020fb8
-    if(_800bdb88 == EngineState.TITLE_02) {
+    if(_800bdb88 == EngineStateEnum.TITLE_02) {
       _800bd7ac.setu(0x1L);
     }
 
@@ -620,13 +619,13 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800211d8L)
   public static void renderModel(final Model124 model) {
-    if(engineState_8004dd20 == EngineState.SUBMAP_05) {
+    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
       //LAB_80021230
       renderSmapModel(model);
-    } else if(engineState_8004dd20 == EngineState.COMBAT_06) {
+    } else if(engineState_8004dd20 == EngineStateEnum.COMBAT_06) {
       //LAB_80021220
       renderBttlModel(model);
-    } else if(engineState_8004dd20 == EngineState.WORLD_MAP_08) {
+    } else if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {
       //LAB_8002120c
       //LAB_80021240
       renderWmapModel(model);
@@ -637,20 +636,20 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021258L)
   public static void renderDobj2(final ModelPart10 dobj2) {
-    if(engineState_8004dd20 == EngineState.SUBMAP_05) {
+    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
       //LAB_800212b0
       Renderer.renderDobj2(dobj2, false, 0);
       return;
     }
 
-    if(engineState_8004dd20 == EngineState.COMBAT_06) {
+    if(engineState_8004dd20 == EngineStateEnum.COMBAT_06) {
       //LAB_800212a0
       Renderer.renderDobj2(dobj2, true, 0);
       return;
     }
 
     //LAB_8002128c
-    if(engineState_8004dd20 == EngineState.WORLD_MAP_08) {
+    if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {
       //LAB_800212c0
       Renderer.renderDobj2(dobj2, false, 0);
     }
@@ -750,11 +749,11 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021628L)
   public static void adjustModelUvs(final Model124 model) {
-    if(engineState_8004dd20 == EngineState.SUBMAP_05) {
+    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
       for(final ModelPart10 dobj2 : model.modelParts_00) {
         adjustSmapUvs(dobj2, model.colourMap_9d);
       }
-    } else if(engineState_8004dd20 == EngineState.WORLD_MAP_08) {
+    } else if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {
       for(final ModelPart10 dobj2 : model.modelParts_00) {
         adjustWmapUvs(dobj2, model.colourMap_9d);
       }
@@ -767,11 +766,11 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021724L)
   public static void renderShadow(final Model124 model) {
-    if(engineState_8004dd20 == EngineState.SUBMAP_05) {
+    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
       renderSmapShadow(model);
-    } else if(engineState_8004dd20 == EngineState.COMBAT_06) {
+    } else if(engineState_8004dd20 == EngineStateEnum.COMBAT_06) {
       renderBttlShadow(model);
-    } else if(engineState_8004dd20 == EngineState.WORLD_MAP_08) {
+    } else if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {
       renderWmapShadow(model);
     }
 
@@ -1095,7 +1094,7 @@ public final class Scus94491BpeSegment_8002 {
 
         startFadeEffect(2, 10);
 
-        if(engineState_8004dd20 == EngineState.SUBMAP_05) {
+        if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
           FUN_800e3fac();
         }
 
@@ -3460,7 +3459,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80027d74L)
   public static void calculateAppropriateTextboxBounds(final int textboxIndex, final int x, final int y) {
     final int maxX;
-    if(engineState_8004dd20 == EngineState.SUBMAP_05) {
+    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
       maxX = 350;
     } else {
       maxX = 310;
@@ -3717,7 +3716,7 @@ public final class Scus94491BpeSegment_8002 {
     final int textHeight = textbox.lines_1a * 6;
 
     final int width;
-    if(engineState_8004dd20 != EngineState.SUBMAP_05) {
+    if(engineState_8004dd20 != EngineStateEnum.SUBMAP_05) {
       width = 320;
     } else {
       width = 360;
@@ -3860,7 +3859,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80028f20L)
   public static boolean textboxFits(final int textboxIndex, final int x, final int y) {
     final int maxX;
-    if(engineState_8004dd20 == EngineState.SUBMAP_05) {
+    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
       maxX = 350;
     } else {
       maxX = 310;

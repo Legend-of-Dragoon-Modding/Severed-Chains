@@ -34,15 +34,13 @@ import legend.game.submap.EncounterRateMode;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.types.CContainer;
-import legend.game.types.CoolonWarpDestination20;
-import legend.game.types.EngineState;
+import legend.game.EngineStateEnum;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.LodString;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
-import legend.game.types.WmapSmokeCloudInstance60;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import org.joml.Math;
@@ -637,7 +635,7 @@ public final class WMap {
     deallocate();
 
     _80052c6c.setu(0);
-    engineStateOnceLoaded_8004dd24 = EngineState.SUBMAP_05;
+    engineStateOnceLoaded_8004dd24 = EngineStateEnum.SUBMAP_05;
     pregameLoadingStage_800bb10c.set(0);
     vsyncMode_8007a3b8 = 2;
   }
@@ -654,7 +652,7 @@ public final class WMap {
     deallocate();
 
     _80052c6c.setu(0);
-    engineStateOnceLoaded_8004dd24 = EngineState.COMBAT_06;
+    engineStateOnceLoaded_8004dd24 = EngineStateEnum.COMBAT_06;
     pregameLoadingStage_800bb10c.set(0);
     vsyncMode_8007a3b8 = 2;
   }
@@ -5674,7 +5672,7 @@ public final class WMap {
 
     mapState_800c6798._d8 = 0;
 
-    boolean sp2c = previousEngineState_8004dd28 == EngineState.COMBAT_06 && mapState_800c6798.submapCut_c4 != 999;
+    boolean sp2c = previousEngineState_8004dd28 == EngineStateEnum.COMBAT_06 && mapState_800c6798.submapCut_c4 != 999;
 
     //LAB_800e7e2c
     if(mapState_800c6798.submapScene_c6 == 31 && mapState_800c6798.submapCut_c4 == 279) { // Ship (maybe when you watch the ship moving on the world map while Puler sails?)
@@ -5757,7 +5755,7 @@ public final class WMap {
     }
 
     //LAB_800e8464
-    if(previousEngineState_8004dd28 == EngineState.COMBAT_06 && mapState_800c6798.submapCut_c4 == 999) {
+    if(previousEngineState_8004dd28 == EngineStateEnum.COMBAT_06 && mapState_800c6798.submapCut_c4 == 999) {
       submapCut_80052c30.set(0);
     }
 

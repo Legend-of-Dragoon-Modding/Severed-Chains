@@ -1,4 +1,4 @@
-package legend.game.types;
+package legend.game.submap;
 
 import legend.core.gte.VECTOR;
 

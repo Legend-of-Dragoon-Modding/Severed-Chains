@@ -1,4 +1,4 @@
-package legend.game.types;
+package legend.game.wmap;
 
 import legend.core.gte.VECTOR;
 import legend.core.memory.Value;
@@ -7,6 +7,7 @@ import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedByteRef;
+import legend.game.types.LodString;
 
 public class CoolonWarpDestination20 implements MemoryRef {
   private final Value ref;

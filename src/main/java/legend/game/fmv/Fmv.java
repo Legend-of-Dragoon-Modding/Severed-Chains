@@ -10,7 +10,7 @@ import legend.core.opengl.Window;
 import legend.core.spu.XaAdpcm;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
-import legend.game.types.EngineState;
+import legend.game.EngineStateEnum;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
@@ -204,7 +204,7 @@ public final class Fmv {
   private static Mesh fullScrenMesh;
   private static Texture displayTexture;
 
-  public static void playCurrentFmv(final int fmvIndex, final EngineState afterFmvState) {
+  public static void playCurrentFmv(final int fmvIndex, final EngineStateEnum afterFmvState) {
     sssqResetStuff();
 
     submapId_800bd808.set(-1);

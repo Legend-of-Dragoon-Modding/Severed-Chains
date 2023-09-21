@@ -8,7 +8,7 @@ import legend.game.inventory.screens.controls.DragoonSpirits;
 import legend.game.inventory.screens.controls.Glyph;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
-import legend.game.types.EngineState;
+import legend.game.EngineStateEnum;
 import legend.game.types.LodString;
 
 import javax.annotation.Nullable;
@@ -216,7 +216,7 @@ public class MainMenuScreen extends MenuScreen {
     renderCentredText(chapterNames_80114248.get(gameState_800babc8.chapterIndex_98).deref(), 94, 24, TextColour.BROWN);
 
     final LodString name;
-    if(engineState_8004dd20 == EngineState.SUBMAP_05) {
+    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
       name = submapNames_8011c108.get(submapId_800bd808.get()).deref();
     } else {
       name = worldMapNames_8011c1ec.get(continentIndex_800bf0b0.get()).deref();

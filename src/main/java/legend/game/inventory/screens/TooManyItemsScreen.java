@@ -6,7 +6,7 @@ import legend.game.inventory.Equipment;
 import legend.game.inventory.InventoryEntry;
 import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
-import legend.game.types.EngineState;
+import legend.game.EngineStateEnum;
 import legend.game.types.LodString;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
@@ -193,7 +193,7 @@ public class TooManyItemsScreen extends MenuScreen {
           uiFile_800bdc3c = null;
           whichMenu_800bdc38 = WhichMenu.UNLOAD_TOO_MANY_ITEMS_MENU_35;
 
-          if(engineState_8004dd20 == EngineState.SUBMAP_05) {
+          if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
             FUN_800e3fac();
           }
 

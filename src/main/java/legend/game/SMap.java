@@ -65,8 +65,7 @@ import legend.game.types.AnmSpriteMetrics14;
 import legend.game.types.BigSubStruct;
 import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
-import legend.game.types.DustRenderData54;
-import legend.game.types.EngineState;
+import legend.game.submap.DustRenderData54;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.MediumStruct;
@@ -74,11 +73,11 @@ import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms0c;
 import legend.game.types.MrgFile;
 import legend.game.types.NewRootStruct;
-import legend.game.types.SMapStruct3c;
-import legend.game.types.SavePointRenderData44;
+import legend.game.submap.SMapStruct3c;
+import legend.game.submap.SavePointRenderData44;
 import legend.game.types.ShopStruct40;
 import legend.game.types.SmallerStruct;
-import legend.game.types.SnowEffect;
+import legend.game.submap.SnowEffect;
 import legend.game.types.SomethingStruct;
 import legend.game.types.SomethingStructSub0c_1;
 import legend.game.types.SomethingStructSub0c_2;
@@ -88,9 +87,9 @@ import legend.game.types.Struct20;
 import legend.game.types.Struct34;
 import legend.game.types.Struct34_2;
 import legend.game.types.Structb0;
-import legend.game.types.SubmapCutInfo;
-import legend.game.types.SubmapEncounterData_04;
-import legend.game.types.SubmapStruct80;
+import legend.game.submap.SubmapCutInfo;
+import legend.game.submap.SubmapEncounterData_04;
+import legend.game.submap.SubmapStruct80;
 import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.TmdSubExtension;
@@ -225,7 +224,7 @@ public final class SMap {
 
   private static int fmvIndex_800bf0dc;
 
-  private static EngineState afterFmvLoadingStage_800bf0ec = EngineState.PRELOAD_00;
+  private static EngineStateEnum afterFmvLoadingStage_800bf0ec = EngineStateEnum.PRELOAD_00;
 
   public static final GsF_LIGHT GsF_LIGHT_0_800c66d8 = new GsF_LIGHT();
   public static final GsF_LIGHT GsF_LIGHT_1_800c66e8 = new GsF_LIGHT();
@@ -661,7 +660,7 @@ public final class SMap {
     pregameLoadingStage_800bb10c.incr();
 
     if(pregameLoadingStage_800bb10c.get() > 94) {
-      Fmv.playCurrentFmv(17, EngineState.CREDITS_04);
+      Fmv.playCurrentFmv(17, EngineStateEnum.CREDITS_04);
     }
 
     //LAB_800d9e5c
@@ -4160,7 +4159,7 @@ public final class SMap {
 
     if(newCut > 0x7ff) {
       fmvIndex_800bf0dc = newCut - 0x800;
-      afterFmvLoadingStage_800bf0ec = EngineState.values()[newScene];
+      afterFmvLoadingStage_800bf0ec = EngineStateEnum.values()[newScene];
       smapLoadingStage_800cb430.setu(0x15L);
       _800f7e4c.setu(0x1L);
       return 1;
@@ -4575,7 +4574,7 @@ public final class SMap {
 
         //LAB_800e62cc
         if(a0) {
-          engineStateOnceLoaded_8004dd24 = EngineState.WORLD_MAP_08;
+          engineStateOnceLoaded_8004dd24 = EngineStateEnum.WORLD_MAP_08;
           pregameLoadingStage_800bb10c.set(0);
           vsyncMode_8007a3b8 = 2;
           _80052c44.setu(0x5L);
@@ -4587,7 +4586,7 @@ public final class SMap {
       case 0x13 -> {
         FUN_800e5104(_800caaf8.get(), _800cab24);
         _80052c44.setu(0x5L);
-        engineStateOnceLoaded_8004dd24 = EngineState.COMBAT_06;
+        engineStateOnceLoaded_8004dd24 = EngineStateEnum.COMBAT_06;
         pregameLoadingStage_800bb10c.set(0);
         vsyncMode_8007a3b8 = 2;
         _800f7e4c.setu(0);
@@ -4612,7 +4611,7 @@ public final class SMap {
         //LAB_800e6458
         if(a0) {
           FUN_8002a9c0();
-          engineStateOnceLoaded_8004dd24 = EngineState.TITLE_02;
+          engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;
           vsyncMode_8007a3b8 = 2;
           pregameLoadingStage_800bb10c.set(0);
 
@@ -4651,7 +4650,7 @@ public final class SMap {
       }
 
       case 0x17 -> {
-        engineStateOnceLoaded_8004dd24 = EngineState.TITLE_02;
+        engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;
         vsyncMode_8007a3b8 = 2;
         pregameLoadingStage_800bb10c.set(0);
       }

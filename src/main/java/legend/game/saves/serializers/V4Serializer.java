@@ -9,7 +9,7 @@ import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.SavedGame;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
-import legend.game.types.EngineState;
+import legend.game.EngineStateEnum;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
@@ -232,7 +232,7 @@ public final class V4Serializer {
   public static int toV4(final String name, final FileData data, final GameState52c state, final ActiveStatsa0[] activeStats) {
     final int locationType;
     final int locationIndex;
-    if(engineState_8004dd20 == EngineState.WORLD_MAP_08) {
+    if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {
       locationType = 1;
       locationIndex = continentIndex_800bf0b0.get();
       //LAB_80103c98

@@ -6,7 +6,6 @@ import legend.core.gpu.TimHeader;
 import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
 import legend.game.types.CContainer;
-import legend.game.types.EngineState;
 import legend.game.types.Model124;
 import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
@@ -86,7 +85,7 @@ public final class Scus94491BpeSegment_800e {
     setProjectionPlaneDistance(640);
     initSound();
 
-    engineStateOnceLoaded_8004dd24 = EngineState.PRELOAD_00;
+    engineStateOnceLoaded_8004dd24 = EngineStateEnum.PRELOAD_00;
     pregameLoadingStage_800bb10c.set(0);
     vsyncMode_8007a3b8 = 2;
     tickCount_800bb0fc.set(0);

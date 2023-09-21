@@ -12,7 +12,7 @@ import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.effects.TransformationMode;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.types.EngineState;
+import legend.game.EngineStateEnum;
 import legend.game.submap.SubmapObject210;
 
 import static legend.core.GameEngine.CONFIG;
@@ -159,7 +159,7 @@ public class GameVarParam extends Param {
   @Override
   public Param set(final int val) {
     switch(this.index) {
-      case 0 -> Scus94491BpeSegment_8004.engineState_8004dd20 = EngineState.values()[val];
+      case 0 -> Scus94491BpeSegment_8004.engineState_8004dd20 = EngineStateEnum.values()[val];
       case 1 -> Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c.set(val);
       case 2 -> Scus94491BpeSegment_800b.tickCount_800bb0fc.set(val);
       case 3 -> Scus94491BpeSegment_800b.input_800bee90.set(val);

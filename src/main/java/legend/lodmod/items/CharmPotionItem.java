@@ -2,7 +2,7 @@ package legend.lodmod.items;
 
 import legend.game.inventory.Item;
 import legend.game.inventory.UseItemResponse;
-import legend.game.types.EngineState;
+import legend.game.EngineStateEnum;
 
 import static legend.game.SMap.encounterAccumulator_800c6ae8;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
@@ -25,7 +25,7 @@ public class CharmPotionItem extends Item {
 
   @Override
   public void useItemInMenu(final UseItemResponse response, final int charIndex) {
-    if(engineState_8004dd20 == EngineState.WORLD_MAP_08 || hasNoEncounters_800bed58.get() == 0) {
+    if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08 || hasNoEncounters_800bed58.get() == 0) {
       //LAB_80022e40
       response._00 = 8;
       encounterAccumulator_800c6ae8.set(0);

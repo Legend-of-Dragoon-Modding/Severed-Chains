@@ -36,7 +36,6 @@ import legend.game.modding.events.characters.XpToLevelEvent;
 import legend.game.scripting.ScriptState;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
-import legend.game.types.EngineState;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.EquipmentStats1c;
 import legend.game.types.InventoryMenuState;
@@ -505,7 +504,7 @@ public final class SItem {
         messageBox_8011dc90.state_0c = 0;
         loadCharacterStats();
 
-        if(engineState_8004dd20 == EngineState.WORLD_MAP_08) {
+        if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {
           gameState_800babc8.isOnWorldMap_4e4 = true;
           canSave_8011dc88.set(true);
         } else {
@@ -558,7 +557,7 @@ public final class SItem {
           }
         }
 
-        if(engineState_8004dd20 == EngineState.SUBMAP_05) {
+        if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
           FUN_800e3fac();
         }
 

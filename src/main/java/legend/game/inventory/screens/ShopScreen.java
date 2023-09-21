@@ -13,7 +13,7 @@ import legend.game.modding.events.inventory.ShopEquipmentEvent;
 import legend.game.modding.events.inventory.ShopItemEvent;
 import legend.game.modding.events.inventory.ShopSellPriceEvent;
 import legend.game.types.ActiveStatsa0;
-import legend.game.types.EngineState;
+import legend.game.EngineStateEnum;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.LodString;
 import legend.game.types.MessageBoxResult;
@@ -301,7 +301,7 @@ public class ShopScreen extends MenuScreen {
         startFadeEffect(2, 10);
         deallocateRenderables(0xff);
 
-        if(engineState_8004dd20 == EngineState.SUBMAP_05) {
+        if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
           FUN_800e3fac();
         }
 

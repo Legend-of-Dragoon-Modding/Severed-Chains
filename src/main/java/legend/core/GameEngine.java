@@ -29,7 +29,7 @@ import legend.game.saves.serializers.V3Serializer;
 import legend.game.saves.serializers.V4Serializer;
 import legend.game.scripting.ScriptManager;
 import legend.game.sound.Sequencer;
-import legend.game.types.EngineState;
+import legend.game.EngineStateEnum;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import legend.game.unpacker.UnpackerException;
@@ -394,7 +394,7 @@ public final class GameEngine {
 
       startSound();
       gameLoop();
-      Fmv.playCurrentFmv(0, EngineState.TITLE_02);
+      Fmv.playCurrentFmv(0, EngineStateEnum.TITLE_02);
     }
   }
 

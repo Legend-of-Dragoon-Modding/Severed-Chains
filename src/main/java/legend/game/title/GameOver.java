@@ -5,7 +5,7 @@ import legend.core.memory.Method;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
-import legend.game.types.EngineState;
+import legend.game.EngineStateEnum;
 import legend.game.types.McqHeader;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
@@ -92,7 +92,7 @@ public final class GameOver {
         deallocateRenderables(0xff);
         uiFile_800bdc3c = null;
         gameOverMcq_800bdc3c = null;
-        engineStateOnceLoaded_8004dd24 = EngineState.TITLE_02;
+        engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;
         pregameLoadingStage_800bb10c.set(0);
         vsyncMode_8007a3b8 = 2;
       }

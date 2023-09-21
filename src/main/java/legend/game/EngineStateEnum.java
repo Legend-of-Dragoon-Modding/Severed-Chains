@@ -1,6 +1,6 @@
-package legend.game.types;
+package legend.game;
 
-public enum EngineState {
+public enum EngineStateEnum {
   PRELOAD_00,
   UNUSED_01,
   TITLE_02,

@@ -9,7 +9,7 @@ import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.IntRef;
 import legend.game.tim.Tim;
-import legend.game.types.EngineState;
+import legend.game.EngineStateEnum;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 
@@ -147,7 +147,7 @@ public final class Credits {
   private static void deallocateCreditsAndTransitionToTheEndSubmap() {
     //LAB_800eaedc
     creditTims_800d1ae0 = null;
-    engineStateOnceLoaded_8004dd24 = EngineState.SUBMAP_05;
+    engineStateOnceLoaded_8004dd24 = EngineStateEnum.SUBMAP_05;
     pregameLoadingStage_800bb10c.set(0);
 
     //LAB_800eaf14
