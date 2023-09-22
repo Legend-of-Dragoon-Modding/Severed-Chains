@@ -1,7 +1,6 @@
 package legend.game.submap;
 
 import legend.core.gte.VECTOR;
-import legend.game.types.BigSubStruct;
 import legend.game.types.Model124;
 import org.joml.Vector3f;
 

@@ -34,6 +34,7 @@ import legend.game.modding.coremod.CoreMod;
 import legend.game.submap.EncounterRateMode;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
+import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.CContainer;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.LodString;
@@ -189,7 +190,7 @@ public class WMap extends EngineState {
   private final COLOUR locationMenuSelectorBaseColour_800c87f4 = new COLOUR().set(0xff, 0, 0);
   private final RECT locationMenuSelectorRect_800c87f8 = new RECT((short)176, (short)150, (short)128, (short)24);
 
-  private static final ArrayRef<WmapUvAdjustmentMetrics14> tmdUvAdjustmentMetrics_800eee48 = MEMORY.ref(4, 0x800eee48L, ArrayRef.of(WmapUvAdjustmentMetrics14.class, 22, 20, WmapUvAdjustmentMetrics14::new));
+  private static final ArrayRef<UvAdjustmentMetrics14> tmdUvAdjustmentMetrics_800eee48 = MEMORY.ref(4, 0x800eee48L, ArrayRef.of(UvAdjustmentMetrics14.class, 22, 20, UvAdjustmentMetrics14::new));
 
   /**
    * <ol start="0">
@@ -385,7 +386,7 @@ public class WMap extends EngineState {
 
   @Method(0x800c9004L)
   private void adjustWmapTriPrimitiveUvs(final TmdObjTable1c.Primitive primitive, final int colourMap) {
-    final WmapUvAdjustmentMetrics14 metrics = tmdUvAdjustmentMetrics_800eee48.get(colourMap);
+    final UvAdjustmentMetrics14 metrics = tmdUvAdjustmentMetrics_800eee48.get(colourMap);
 
     //LAB_800c9024
     for(final byte[] data : primitive.data()) {
@@ -397,7 +398,7 @@ public class WMap extends EngineState {
 
   @Method(0x800c9090L)
   private void adjustWmapQuadPrimitiveUvs(final TmdObjTable1c.Primitive primitive, final int colourMap) {
-    final WmapUvAdjustmentMetrics14 metrics = tmdUvAdjustmentMetrics_800eee48.get(colourMap);
+    final UvAdjustmentMetrics14 metrics = tmdUvAdjustmentMetrics_800eee48.get(colourMap);
 
     //LAB_800c90b0
     for(final byte[] data : primitive.data()) {

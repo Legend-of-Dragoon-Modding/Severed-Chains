@@ -1,10 +1,10 @@
-package legend.game.wmap;
+package legend.game.tmd;
 
 import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
 
-public class WmapUvAdjustmentMetrics14 implements MemoryRef {
+public class UvAdjustmentMetrics14 implements MemoryRef {
   public final Value ref;
 
   public final IntRef clutMaskOff_00;
@@ -13,7 +13,7 @@ public class WmapUvAdjustmentMetrics14 implements MemoryRef {
   public final IntRef tpageMaskOn_0c;
   public final IntRef uvOffset_10;
 
-  public WmapUvAdjustmentMetrics14(final Value ref) {
+  public UvAdjustmentMetrics14(final Value ref) {
     this.ref = ref;
 
     this.clutMaskOff_00 = ref.offset(4, 0x00).cast(IntRef::new);

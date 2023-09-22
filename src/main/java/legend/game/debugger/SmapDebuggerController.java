@@ -17,7 +17,7 @@ import javafx.scene.control.cell.TextFieldListCell;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import legend.core.MathHelper;
-import legend.game.SMap;
+import legend.game.submap.SMap;
 import legend.game.scripting.ScriptState;
 import legend.game.submap.SubmapObject210;
 

@@ -1,6 +1,6 @@
 package legend.game.scripting;
 
-import legend.game.SMap;
+import legend.game.submap.SMap;
 import legend.game.Scus94491BpeSegment_8004;
 import legend.game.Scus94491BpeSegment_8005;
 import legend.game.Scus94491BpeSegment_8006;

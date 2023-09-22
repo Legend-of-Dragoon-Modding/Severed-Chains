@@ -1,6 +1,6 @@
 package legend.lodmod.items;
 
-import legend.game.SMap;
+import legend.game.submap.SMap;
 import legend.game.inventory.Item;
 import legend.game.inventory.UseItemResponse;
 import legend.game.wmap.WMap;

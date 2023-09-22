@@ -1,4 +1,4 @@
-package legend.game.types;
+package legend.game.submap;
 
 public class Structb0 {
   public short _00;

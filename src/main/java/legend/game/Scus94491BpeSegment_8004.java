@@ -31,6 +31,7 @@ import legend.game.sound.Sssq;
 import legend.game.sound.SssqReader;
 import legend.game.sound.Sssqish;
 import legend.game.sound.VolumeRamp;
+import legend.game.submap.SMap;
 import legend.game.title.GameOver;
 import legend.game.title.NewGame;
 import legend.game.title.Ttle;
