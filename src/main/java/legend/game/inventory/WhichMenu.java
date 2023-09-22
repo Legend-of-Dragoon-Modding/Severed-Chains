@@ -44,4 +44,6 @@ public enum WhichMenu {
   INIT_OPTIONS_MENU,
   RENDER_OPTIONS_MENU,
   UNLOAD_OPTIONS_MENU,
+
+  QUIT,
 }

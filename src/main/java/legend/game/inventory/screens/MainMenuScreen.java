@@ -1,6 +1,8 @@
 package legend.game.inventory.screens;
 
+import legend.game.EngineStateEnum;
 import legend.game.input.InputAction;
+import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Button;
 import legend.game.inventory.screens.controls.CharacterCard;
@@ -8,7 +10,6 @@ import legend.game.inventory.screens.controls.DragoonSpirits;
 import legend.game.inventory.screens.controls.Glyph;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
-import legend.game.EngineStateEnum;
 import legend.game.types.LodString;
 
 import javax.annotation.Nullable;
@@ -41,6 +42,7 @@ import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
+import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
 public class MainMenuScreen extends MenuScreen {
@@ -67,11 +69,16 @@ public class MainMenuScreen extends MenuScreen {
     this.addButton("Inventory", this::showItemListScreen);
     this.addButton("Goods", this::showGoodsScreen);
     this.addButton("Diiig", this::showDabasScreen);
+    this.addButton("", () -> { }).hide();
     this.addButton("Status", this::showStatusScreen);
     this.addButton("Addition", this::showAdditionsScreen);
     this.addButton("Replace", this::showCharSwapScreen);
     this.addButton("Options", this::showOptionsScreen);
     this.addButton("Save", this::showSaveScreen).setDisabled(!canSave_8011dc88.get());
+    this.addButton("Quit", () -> {
+      this.menuEscape();
+      whichMenu_800bdc38 = WhichMenu.QUIT;
+    });
 
     for(int i = 0; i < 3; i++) {
       this.addCharCard(i);
@@ -84,7 +91,7 @@ public class MainMenuScreen extends MenuScreen {
     final int index = this.menuButtons.size();
 
     final Button button = this.addControl(new Button(text));
-    button.setPos(30 + index / 5 * 65, 93 + (index % 5) * 13);
+    button.setPos(30 + index / 6 * 65, 92 + (index % 6) * 13);
 
     button.onHoverIn(() -> this.setFocus(button));
 

@@ -207,24 +207,25 @@ public class WMap extends EngineState {
    *   <li>{@link WMap#FUN_800ccecc}</li>
    *   <li>{@link WMap#FUN_800ccbd8}</li>
    *   <li>{@link WMap#FUN_800ccef4}</li>
+   *   <li>{@link WMap#transitionToTitle}</li>
    * </ol>
    */
-  private final Runnable[] wmapStates_800ef000 = new Runnable[13];
-  {
-    this.wmapStates_800ef000[0] = this::initWmap;
-    this.wmapStates_800ef000[1] = this::waitForWmapMusicToLoad;
-    this.wmapStates_800ef000[2] = this::initWmap2;
-    this.wmapStates_800ef000[3] = this::handleAndRenderWmap;
-    this.wmapStates_800ef000[4] = this::transitionToScreens;
-    this.wmapStates_800ef000[5] = this::renderWmapScreens;
-    this.wmapStates_800ef000[6] = this::restoreMapOnExitMainMenu;
-    this.wmapStates_800ef000[7] = this::transitionToSubmap;
-    this.wmapStates_800ef000[8] = this::transitionToCombat;
-    this.wmapStates_800ef000[9] = this::FUN_800cce9c;
-    this.wmapStates_800ef000[10] = this::FUN_800ccecc;
-    this.wmapStates_800ef000[11] = this::FUN_800ccbd8;
-    this.wmapStates_800ef000[12] = this::FUN_800ccef4;
-  }
+  private final Runnable[] wmapStates_800ef000 = {
+    this::initWmap,
+    this::waitForWmapMusicToLoad,
+    this::initWmap2,
+    this::handleAndRenderWmap,
+    this::transitionToScreens,
+    this::renderWmapScreens,
+    this::restoreMapOnExitMainMenu,
+    this::transitionToSubmap,
+    this::transitionToCombat,
+    this::FUN_800cce9c,
+    this::FUN_800ccecc,
+    this::FUN_800ccbd8,
+    this::FUN_800ccef4,
+    this::transitionToTitle,
+  };
   /** Only seems to use element at index 1, but not positive */
   private static final ArrayRef<WmapLocationThumbnailMetrics08> locationThumbnailMetrics_800ef0cc = MEMORY.ref(2, 0x800ef0ccL, ArrayRef.of(WmapLocationThumbnailMetrics08.class, 7, 8, WmapLocationThumbnailMetrics08::new));
   private static final ArrayRef<WmapRectMetrics06> zoomUiMetrics_800ef104 = MEMORY.ref(1, 0x800ef104L, ArrayRef.of(WmapRectMetrics06.class, 7, 6, WmapRectMetrics06::new));
@@ -470,6 +471,8 @@ public class WMap extends EngineState {
       }
 
       //LAB_800cc828
+    } else if(whichMenu_800bdc38 == WhichMenu.QUIT) {
+      pregameLoadingStage_800bb10c.set(13);
     }
 
     //LAB_800cc82c
@@ -677,6 +680,16 @@ public class WMap extends EngineState {
   @Method(0x800ccef4L)
   private void FUN_800ccef4() {
     pregameLoadingStage_800bb10c.set(6);
+  }
+
+  private void transitionToTitle() {
+    this.handleAndRenderMapAndPlayer();
+    this.deallocate();
+
+    _80052c6c.setu(0);
+    engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;
+    pregameLoadingStage_800bb10c.set(0);
+    vsyncMode_8007a3b8 = 2;
   }
 
   @Method(0x800ccf04L)

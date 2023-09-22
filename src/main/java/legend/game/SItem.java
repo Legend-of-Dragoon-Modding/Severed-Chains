@@ -551,6 +551,8 @@ public final class SItem {
             whichMenu_800bdc38 = WhichMenu.UNLOAD_CHAR_SWAP_MENU_25;
           }
 
+          case QUIT -> startFadeEffect(2, 10);
+
           default -> {
             startFadeEffect(2, 10);
             whichMenu_800bdc38 = WhichMenu.UNLOAD_INVENTORY_MENU_5;

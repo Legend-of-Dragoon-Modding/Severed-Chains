@@ -4743,10 +4743,6 @@ public class SMap extends EngineState {
       this.smapLoadingStage_800cb430 = SubmapState.INIT_0;
     }
 
-    //LAB_80020f20
-    this.FUN_8002aae8();
-    this.setIndicatorStatusAndResetIndicatorTickCountOnReenable();
-
     //LAB_800e5ac4
     switch(this.smapLoadingStage_800cb430) {
       case INIT_0 -> {
@@ -4884,8 +4880,16 @@ public class SMap extends EngineState {
       case RENDER_MENU_14 -> {
         final WhichMenu menu = whichMenu_800bdc38; // copy menu state since some of these functions may change it
         submapEnvState_80052c44.set(2);
+
         if(whichMenu_800bdc38 != WhichMenu.NONE_0) {
           loadAndRenderMenus();
+
+          if(whichMenu_800bdc38 == WhichMenu.QUIT) {
+            this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
+            this._800f7e4c = false;
+            this.mapTransition(-1, 0x3fb);
+            break;
+          }
 
           if(whichMenu_800bdc38 != WhichMenu.NONE_0) {
             break;
@@ -4914,6 +4918,7 @@ public class SMap extends EngineState {
             this._800f7e4c = false;
             this.mapTransition(this._800f7e2c.get(gameState_800babc8.chapterIndex_98)._00.get(), this._800f7e2c.get(gameState_800babc8.chapterIndex_98)._00.get());
             index_80052c38.set(this._800f7e2c.get(0)._04.get());
+            break;
         }
       }
 
@@ -5063,7 +5068,9 @@ public class SMap extends EngineState {
       }
     }
 
-    //caseD_5
+    //LAB_80020f20
+    this.FUN_8002aae8();
+    this.setIndicatorStatusAndResetIndicatorTickCountOnReenable();
   }
 
   @Method(0x800e6504L)
