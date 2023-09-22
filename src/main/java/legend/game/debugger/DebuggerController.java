@@ -10,12 +10,13 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.stage.Stage;
 import legend.core.Config;
-import legend.game.EngineStateEnum;
+import legend.game.SMap;
 import legend.game.combat.AdditionMode;
 import legend.game.combat.SEffe;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.config.ConfigLoadedEvent;
 import legend.game.modding.events.config.ConfigUpdatedEvent;
+import legend.game.submap.SubmapState;
 import legend.game.wmap.AreaData08;
 import legend.game.wmap.WMap;
 import org.legendofdragoon.modloader.events.EventListener;
@@ -23,10 +24,7 @@ import org.legendofdragoon.modloader.events.EventListener;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.game.SMap.encounterData_800f64c4;
-import static legend.game.SMap.mapTransition;
-import static legend.game.SMap.smapLoadingStage_800cb430;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
-import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
@@ -311,13 +309,14 @@ public class DebuggerController {
   private void startEncounter(final ActionEvent event) {
     encounterId_800bb0f8.set(this.encounterId.getValue());
 
-    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
+    if(currentEngineState_8004dd04 instanceof final SMap smap) {
       if(Config.combatStage()) {
         battleStage_800bb0f4.set(Config.getCombatStage());
       } else {
         battleStage_800bb0f4.set(encounterData_800f64c4.get(submapCut_80052c30.get()).stage_03.get());
       }
-      mapTransition(-1, 0);
+
+      smap.mapTransition(-1, 0);
     } else if(currentEngineState_8004dd04 instanceof final WMap wmap) {
       final AreaData08 area = areaData_800f2248.get(wmap.mapState_800c6798.areaIndex_12);
 
@@ -348,7 +347,7 @@ public class DebuggerController {
   @FXML
   private void warpToMap(final ActionEvent event) {
     submapCut_80052c30.set(this.mapId.getValue());
-    smapLoadingStage_800cb430.set(0x4);
+    ((SMap)currentEngineState_8004dd04).smapLoadingStage_800cb430 = SubmapState.CHANGE_SUBMAP_4;
   }
 
   @FXML

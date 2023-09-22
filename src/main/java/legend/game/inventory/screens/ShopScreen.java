@@ -13,7 +13,6 @@ import legend.game.modding.events.inventory.ShopEquipmentEvent;
 import legend.game.modding.events.inventory.ShopItemEvent;
 import legend.game.modding.events.inventory.ShopSellPriceEvent;
 import legend.game.types.ActiveStatsa0;
-import legend.game.EngineStateEnum;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.LodString;
 import legend.game.types.MessageBoxResult;
@@ -62,7 +61,6 @@ import static legend.game.SItem.renderText;
 import static legend.game.SItem.renderThreeDigitNumber;
 import static legend.game.SItem.renderThreeDigitNumberComparison;
 import static legend.game.SItem.renderTwoDigitNumber;
-import static legend.game.SMap.FUN_800e3fac;
 import static legend.game.SMap.shops_800f4930;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.addGold;
@@ -75,7 +73,7 @@ import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.takeEquipment;
 import static legend.game.Scus94491BpeSegment_8002.takeItem;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
-import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8007.shopId_8007a3b4;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
@@ -301,9 +299,7 @@ public class ShopScreen extends MenuScreen {
         startFadeEffect(2, 10);
         deallocateRenderables(0xff);
 
-        if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
-          FUN_800e3fac();
-        }
+        currentEngineState_8004dd04.menuClosed();
 
         whichMenu_800bdc38 = WhichMenu.UNLOAD_SHOP_MENU_10;
         textZ_800bdf00.set(13);

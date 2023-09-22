@@ -21,8 +21,7 @@ import legend.game.SMap;
 import legend.game.scripting.ScriptState;
 import legend.game.submap.SubmapObject210;
 
-import static legend.game.SMap.sobjCount_800c6730;
-import static legend.game.SMap.sobjs_800c6880;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 
 public class SmapDebuggerController {
   @FXML
@@ -79,7 +78,7 @@ public class SmapDebuggerController {
   private SubmapObject210 sobj;
 
   public void initialize() {
-    for(int i = 0; i < sobjCount_800c6730; i++) {
+    for(int i = 0; i < ((SMap)currentEngineState_8004dd04).sobjCount_800c6730; i++) {
       this.sobjs.add(new ListItem(this::getSobjName, i));
     }
 
@@ -121,7 +120,7 @@ public class SmapDebuggerController {
   }
 
   private String getSobjName(final int index) {
-    final ScriptState<SubmapObject210> state = sobjs_800c6880[index];
+    final ScriptState<SubmapObject210> state = ((SMap)currentEngineState_8004dd04).sobjs_800c6880[index];
 
     if(state == null) {
       return "unused";
@@ -135,7 +134,7 @@ public class SmapDebuggerController {
   }
 
   private void displayStats(final int index) {
-    final ScriptState<SubmapObject210> state = sobjs_800c6880[index];
+    final ScriptState<SubmapObject210> state = ((SMap)currentEngineState_8004dd04).sobjs_800c6880[index];
 
     if(state == null) {
       return;
@@ -173,7 +172,7 @@ public class SmapDebuggerController {
       return;
     }
 
-    final ScriptState<SubmapObject210> state = sobjs_800c6880[this.sobjList.getSelectionModel().getSelectedIndex()];
+    final ScriptState<SubmapObject210> state = ((SMap)currentEngineState_8004dd04).sobjs_800c6880[this.sobjList.getSelectionModel().getSelectedIndex()];
 
     final ScriptDebugger scriptDebugger = new ScriptDebugger();
     scriptDebugger.preselectScript(state.index).start(new Stage());

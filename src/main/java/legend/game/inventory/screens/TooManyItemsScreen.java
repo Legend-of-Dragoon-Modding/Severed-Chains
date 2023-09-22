@@ -6,7 +6,6 @@ import legend.game.inventory.Equipment;
 import legend.game.inventory.InventoryEntry;
 import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
-import legend.game.EngineStateEnum;
 import legend.game.types.LodString;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
@@ -29,14 +28,13 @@ import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderMenuItems;
 import static legend.game.SItem.renderString;
 import static legend.game.SItem.renderText;
-import static legend.game.SMap.FUN_800e3fac;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.setInventoryFromDisplay;
 import static legend.game.Scus94491BpeSegment_8002.sortItems;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
-import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_800b.equipmentOverflow;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -193,9 +191,7 @@ public class TooManyItemsScreen extends MenuScreen {
           uiFile_800bdc3c = null;
           whichMenu_800bdc38 = WhichMenu.UNLOAD_TOO_MANY_ITEMS_MENU_35;
 
-          if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
-            FUN_800e3fac();
-          }
+          currentEngineState_8004dd04.menuClosed();
 
           textZ_800bdf00.set(13);
         }

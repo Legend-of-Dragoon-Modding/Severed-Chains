@@ -158,11 +158,11 @@ public final class Scus94491BpeSegment_800b {
   public static boolean melbuMusicLoaded_800bd781;
   public static boolean musicLoaded_800bd782;
 
-  public static final Value _800bd7ac = MEMORY.ref(4, 0x800bd7acL);
+  public static final BoolRef _800bd7ac = MEMORY.ref(4, 0x800bd7acL, BoolRef::new);
   public static final IntRef _800bd7b0 = MEMORY.ref(4, 0x800bd7b0L, IntRef::new);
-  public static final Value _800bd7b4 = MEMORY.ref(2, 0x800bd7b4L);
+  public static final BoolRef submapFullyLoaded_800bd7b4 = MEMORY.ref(2, 0x800bd7b4L, BoolRef::new);
 
-  public static final Value _800bd7b8 = MEMORY.ref(4, 0x800bd7b8L);
+  public static final BoolRef transitioningFromCombatToSubmap_800bd7b8 = MEMORY.ref(4, 0x800bd7b8L, BoolRef::new);
 
   public static final GsRVIEW2 rview2_800bd7e8 = new GsRVIEW2();
   public static final IntRef submapId_800bd808 = MEMORY.ref(4, 0x800bd808L, IntRef::new);
@@ -178,7 +178,7 @@ public final class Scus94491BpeSegment_800b {
   public static BattleStage stage_800bda0c;
   public static final Model124 shadowModel_800bda10 = new Model124("Shadow");
 
-  public static EngineStateEnum _800bdb88 = EngineStateEnum.PRELOAD_00;
+  public static EngineStateEnum previousEngineState_800bdb88 = EngineStateEnum.PRELOAD_00;
 
   public static Renderable58 saveListUpArrow_800bdb94;
   public static Renderable58 saveListDownArrow_800bdb98;
@@ -246,8 +246,6 @@ public final class Scus94491BpeSegment_800b {
   static {
     Arrays.setAll(stats_800be5f8, i -> new ActiveStatsa0());
   }
-
-  public static final Value _800bed28 = MEMORY.ref(4, 0x800bed28L);
 
   public static final MATRIX matrix_800bed30 = new MATRIX();
   public static final IntRef screenOffsetX_800bed50 = MEMORY.ref(4, 0x800bed50L, IntRef::new);

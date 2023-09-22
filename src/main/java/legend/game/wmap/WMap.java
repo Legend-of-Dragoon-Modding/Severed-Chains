@@ -162,7 +162,7 @@ public class WMap extends EngineState {
   private int mapTransitionState_800c68a4;
   private boolean startLocationLabelsActive_800c68a8;
 
-  private static final IntRef encounterAccumulator_800c6ae8 = MEMORY.ref(4, 0x800c6ae8L, IntRef::new);
+  public int encounterAccumulator_800c6ae8;
 
   private static final ArrayRef<VECTOR> smokeTranslationVectors_800c74b8 = MEMORY.ref(4, 0x800c74b8L, ArrayRef.of(VECTOR.class, 0x101, 0x10, VECTOR::new));
   private static final ArrayRef<ShortRef> locationsIndices_800c84c8 = MEMORY.ref(2, 0x800c84c8L, ArrayRef.of(ShortRef.class, 0x101, 2, ShortRef::new));
@@ -4550,10 +4550,10 @@ public class WMap extends EngineState {
     //LAB_800e3780
     //LAB_800e3794
     final AreaData08 area = areaData_800f2248.get(this.mapState_800c6798.areaIndex_12);
-    encounterAccumulator_800c6ae8.add(Math.round(area.encounterRate_03.get() * encounterRateMultiplier * 70 / (3.0f / vsyncMode_8007a3b8)));
+    this.encounterAccumulator_800c6ae8 += Math.round(area.encounterRate_03.get() * encounterRateMultiplier * 70 / (3.0f / vsyncMode_8007a3b8));
 
-    if(encounterAccumulator_800c6ae8.get() >= 5120) {
-      encounterAccumulator_800c6ae8.set(0);
+    if(this.encounterAccumulator_800c6ae8 >= 5120) {
+      this.encounterAccumulator_800c6ae8 = 0;
 
       if(area.stage_04.get() == -1) {
         battleStage_800bb0f4.set(1);

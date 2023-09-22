@@ -17,7 +17,6 @@ import java.util.Arrays;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
-import static legend.game.SMap.loadTimImage;
 import static legend.game.Scus94491BpeSegment.initSound;
 import static legend.game.Scus94491BpeSegment.loadMenuSounds;
 import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
@@ -148,6 +147,17 @@ public final class Scus94491BpeSegment_800e {
     shadowModel_800bda10.coord2_14.transforms.rotate.zero();
     shadowModel_800bda10.colourMap_9d = 0;
     shadowModel_800bda10.shadowType_cc = 0;
+  }
+
+  /** Pulled from SMAP */
+  @Method(0x800e3cc8L)
+  public static void loadTimImage(final long address) {
+    final TimHeader header = parseTimHeader(MEMORY.ref(4, address).offset(0x4L));
+    LoadImage(header.imageRect, header.imageAddress);
+
+    if(header.hasClut()) {
+      LoadImage(header.clutRect, header.clutAddress);
+    }
   }
 
   /** Very similar to {@link Scus94491BpeSegment_8002#FUN_80020718(Model124, CContainer, TmdAnimationFile)} */

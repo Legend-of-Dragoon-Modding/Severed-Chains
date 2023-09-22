@@ -44,6 +44,7 @@ import legend.game.sound.SoundFileIndices;
 import legend.game.sound.SpuStruct08;
 import legend.game.sound.Sshd;
 import legend.game.sound.Sssq;
+import legend.game.submap.SubmapMusic08;
 import legend.game.types.CharacterData2c;
 import legend.game.types.Flags;
 import legend.game.types.McqHeader;
@@ -51,7 +52,6 @@ import legend.game.types.MoonMusic08;
 import legend.game.types.OverlayStruct;
 import legend.game.types.Struct0e;
 import legend.game.types.Struct10;
-import legend.game.submap.SubmapMusic08;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
@@ -72,8 +72,6 @@ import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.GameEngine.SEQUENCER;
 import static legend.core.GameEngine.SPU;
 import static legend.core.GameEngine.legacyUi;
-import static legend.game.SMap.FUN_800e5934;
-import static legend.game.SMap.chapterTitleCardMrg_800c6710;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020ed8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a058;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bb38;
@@ -95,7 +93,6 @@ import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.setDrawOffset;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004._8004dd48;
-import static legend.game.Scus94491BpeSegment_8004._8004f2a8;
 import static legend.game.Scus94491BpeSegment_8004._8004f658;
 import static legend.game.Scus94491BpeSegment_8004._8004f6e4;
 import static legend.game.Scus94491BpeSegment_8004._8004f6e8;
@@ -178,7 +175,6 @@ import static legend.game.Scus94491BpeSegment_800b.melbuMusicLoaded_800bd781;
 import static legend.game.Scus94491BpeSegment_800b.melbuSoundsLoaded_800bd780;
 import static legend.game.Scus94491BpeSegment_800b.musicLoaded_800bd782;
 import static legend.game.Scus94491BpeSegment_800b.playingSoundsBackup_800bca78;
-import static legend.game.Scus94491BpeSegment_800b.postBattleActionIndex_800bc974;
 import static legend.game.Scus94491BpeSegment_800b.postCombatMainCallbackIndex_800bc91c;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.queuedSounds_800bd110;
@@ -1241,47 +1237,15 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80018508L)
-  public static void FUN_80018508() {
+  public static void renderPostCombatScreen() {
     if(whichMenu_800bdc38 != WhichMenu.NONE_0) {
       loadAndRenderMenus();
     }
 
+    // There used to be code to preload SMAP while the post-combat screen is still up. I removed it because it only takes a few milliseconds to load in SC.
+
     //LAB_8001852c
-    if(postCombatMainCallbackIndex_800bc91c != EngineStateEnum.SUBMAP_05 || postBattleActionIndex_800bc974.get() == 3) {
-      //LAB_80018550
-      if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
-        pregameLoadingStage_800bb10c.incr();
-      }
-    } else {
-      //LAB_80018574
-      final long v1 = _8004f2a8.get();
-
-      if(v1 == 0xaL) {
-        //LAB_800185a8
-        loadGameStateOverlay(EngineStateEnum.SUBMAP_05);
-        _8004f2a8.addu(0x1L);
-      } else if(v1 == 0xbL) {
-        //LAB_800185c4
-        _8004f2a8.setu(0xcL);
-      } else if(v1 == 0xcL) {
-        //LAB_800185e0
-        FUN_800e5934();
-
-        if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
-          dontZeroMemoryOnOverlayLoad_8004dd0c = true;
-          _8004f2a8.setu(0);
-          pregameLoadingStage_800bb10c.incr();
-        }
-      } else {
-        //LAB_80018618
-        //LAB_80018630
-        if(Unpacker.getLoadingFileCount() == 0) {
-          _8004f2a8.addu(0x1L);
-        } else {
-          _8004f2a8.setu(0);
-        }
-      }
-    }
+    pregameLoadingStage_800bb10c.incr();
 
     //LAB_80018644
   }
@@ -1353,16 +1317,14 @@ public final class Scus94491BpeSegment {
 
   @Method(0x800189b0L)
   public static void FUN_800189b0() {
-    if(Unpacker.getLoadingFileCount() == 0 && postCombatMainCallbackIndex_800bc91c == EngineStateEnum.SUBMAP_05 && postBattleActionIndex_800bc974.get() != 3) {
-      FUN_800e5934();
+    if(Unpacker.getLoadingFileCount() == 0) {
+      //LAB_800189e4
+      //LAB_800189e8
+      unloadEncounterSoundEffects();
+      pregameLoadingStage_800bb10c.set(0);
+      vsyncMode_8007a3b8 = 2;
+      engineStateOnceLoaded_8004dd24 = postCombatMainCallbackIndex_800bc91c;
     }
-
-    //LAB_800189e4
-    //LAB_800189e8
-    unloadEncounterSoundEffects();
-    pregameLoadingStage_800bb10c.set(0);
-    vsyncMode_8007a3b8 = 2;
-    engineStateOnceLoaded_8004dd24 = postCombatMainCallbackIndex_800bc91c;
 
     //LAB_80018a4c
   }
@@ -2525,7 +2487,6 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001c4ecL)
   public static void clearCombatVars() {
-    chapterTitleCardMrg_800c6710 = null;
     battleStartDelayTicks_8004f6ec.set(0);
     playSound(0, 16, 0, 0, (short)0, (short)0);
     vsyncMode_8007a3b8 = 1;

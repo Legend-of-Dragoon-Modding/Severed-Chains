@@ -1,11 +1,11 @@
 package legend.lodmod.items;
 
+import legend.game.SMap;
 import legend.game.inventory.Item;
 import legend.game.inventory.UseItemResponse;
-import legend.game.EngineStateEnum;
+import legend.game.wmap.WMap;
 
-import static legend.game.SMap.encounterAccumulator_800c6ae8;
-import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_800b.hasNoEncounters_800bed58;
 
 public class CharmPotionItem extends Item {
@@ -25,10 +25,13 @@ public class CharmPotionItem extends Item {
 
   @Override
   public void useItemInMenu(final UseItemResponse response, final int charIndex) {
-    if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08 || hasNoEncounters_800bed58.get() == 0) {
+    if(currentEngineState_8004dd04 instanceof final WMap wmap) {
       //LAB_80022e40
       response._00 = 8;
-      encounterAccumulator_800c6ae8.set(0);
+      wmap.encounterAccumulator_800c6ae8 = 0;
+    } else if(currentEngineState_8004dd04 instanceof final SMap smap && hasNoEncounters_800bed58.get() == 0) {
+      response._00 = 8;
+      smap.encounterAccumulator_800c6ae8 = 0;
     } else {
       //LAB_80022e50
       response._00 = 9;

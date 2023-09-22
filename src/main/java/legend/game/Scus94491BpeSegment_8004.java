@@ -170,14 +170,9 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[9] = Scus94491BpeSegment::scriptSetFlag;
     scriptSubFunctions_8004e29c[10] = Scus94491BpeSegment::scriptReadFlag;
     scriptSubFunctions_8004e29c[11] = Scus94491BpeSegment::FUN_80017688;
-    scriptSubFunctions_8004e29c[12] = SMap::scriptRestoreCharDataVitals;
-    scriptSubFunctions_8004e29c[13] = SMap::scriptClearStatusEffects;
-    scriptSubFunctions_8004e29c[14] = SMap::scriptCloneCharacterData;
-    scriptSubFunctions_8004e29c[15] = SMap::scriptSetCharAddition;
+
     scriptSubFunctions_8004e29c[16] = Scus94491BpeSegment::FUN_800176c0;
     scriptSubFunctions_8004e29c[17] = Scus94491BpeSegment::FUN_800176ec;
-    scriptSubFunctions_8004e29c[18] = SMap::scriptGetCharAddition;
-    scriptSubFunctions_8004e29c[19] = SMap::scriptMaxOutDartDragoon;
 
     scriptSubFunctions_8004e29c[32] = Bttl_800d::scriptResetCameraMovement;
     scriptSubFunctions_8004e29c[33] = Bttl_800d::FUN_800dac20;
@@ -198,39 +193,6 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[48] = Bttl_800d::scriptSetCameraProjectionPlaneDistance;
     scriptSubFunctions_8004e29c[49] = Bttl_800d::scriptGetProjectionPlaneDistance;
     scriptSubFunctions_8004e29c[50] = Bttl_800d::scriptMoveCameraProjectionPlane;
-
-    scriptSubFunctions_8004e29c[96] = SMap::scriptSelfLoadSobjModelAndAnimation;
-    scriptSubFunctions_8004e29c[97] = SMap::scriptSelfLoadSobjAnimation;
-    scriptSubFunctions_8004e29c[98] = SMap::scriptSelfGetSobjAnimation;
-    scriptSubFunctions_8004e29c[99] = SMap::FUN_800df1f8;
-    scriptSubFunctions_8004e29c[100] = SMap::FUN_800df228;
-    scriptSubFunctions_8004e29c[101] = SMap::scriptSetModelPosition;
-    scriptSubFunctions_8004e29c[102] = SMap::scriptReadModelPosition;
-    scriptSubFunctions_8004e29c[103] = SMap::scriptSetModelRotate;
-    scriptSubFunctions_8004e29c[104] = SMap::scriptReadModelRotate;
-    scriptSubFunctions_8004e29c[105] = SMap::scriptSelfFacePoint;
-    scriptSubFunctions_8004e29c[106] = SMap::FUN_800df410;
-    scriptSubFunctions_8004e29c[107] = SMap::FUN_800df440;
-    scriptSubFunctions_8004e29c[108] = SMap::FUN_800df488;
-    scriptSubFunctions_8004e29c[109] = SMap::FUN_800df4d0;
-    scriptSubFunctions_8004e29c[110] = SMap::FUN_800df500;
-    scriptSubFunctions_8004e29c[111] = SMap::FUN_800df530;
-    scriptSubFunctions_8004e29c[112] = SMap::FUN_800df560;
-    scriptSubFunctions_8004e29c[113] = SMap::scriptSelfEnableTextureAnimation;
-    scriptSubFunctions_8004e29c[114] = SMap::FUN_800df590;
-    scriptSubFunctions_8004e29c[115] = SMap::scriptSelfDisableTextureAnimation;
-    scriptSubFunctions_8004e29c[116] = SMap::FUN_800df620;
-    scriptSubFunctions_8004e29c[117] = SMap::scriptSelfAttachCameraToSobj;
-    scriptSubFunctions_8004e29c[118] = SMap::scriptSelfIsCameraAttached;
-    scriptSubFunctions_8004e29c[119] = SMap::scriptSetCameraPos;
-    scriptSubFunctions_8004e29c[120] = SMap::scriptRotateSobj;
-    scriptSubFunctions_8004e29c[121] = SMap::scriptRotateSobjAbsolute;
-    scriptSubFunctions_8004e29c[122] = SMap::FUN_800df904;
-    scriptSubFunctions_8004e29c[123] = SMap::scriptMovePlayer;
-    scriptSubFunctions_8004e29c[124] = SMap::scriptFacePlayer;
-    scriptSubFunctions_8004e29c[125] = SMap::FUN_800df9a8;
-    scriptSubFunctions_8004e29c[126] = SMap::scriptGetCurrentSubmapId;
-    scriptSubFunctions_8004e29c[127] = SMap::scriptSelfGetSobjNobj;
 
     scriptSubFunctions_8004e29c[128] = Bttl_800c::scriptSetBentPos;
     scriptSubFunctions_8004e29c[129] = Bttl_800c::scriptGetBentPos;
@@ -290,7 +252,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[195] = Scus94491BpeSegment_8002::FUN_80029c98;
     scriptSubFunctions_8004e29c[196] = Scus94491BpeSegment_8002::FUN_80029cf4;
     scriptSubFunctions_8004e29c[197] = Scus94491BpeSegment_8002::FUN_80029d34;
-    scriptSubFunctions_8004e29c[198] = Scus94491BpeSegment_8002::scriptAddSobjTextbox;
+
     scriptSubFunctions_8004e29c[199] = Scus94491BpeSegment_8002::scriptSetTextboxVariable;
     scriptSubFunctions_8004e29c[200] = Scus94491BpeSegment_8002::scriptAddTextbox;
     scriptSubFunctions_8004e29c[201] = Scus94491BpeSegment_8002::scriptDeallocateTextbox;
@@ -333,56 +295,6 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[253] = Scus94491BpeSegment::scriptSetSequenceVolume;
     scriptSubFunctions_8004e29c[254] = Scus94491BpeSegment::scriptSetAllSoundSequenceVolumes;
     scriptSubFunctions_8004e29c[255] = Scus94491BpeSegment::scriptSssqFadeIn;
-
-    scriptSubFunctions_8004e29c[256] = SMap::scriptMapTransition;
-    scriptSubFunctions_8004e29c[257] = SMap::scriptGetCameraOffset;
-    scriptSubFunctions_8004e29c[258] = SMap::scriptSetCameraOffset;
-    scriptSubFunctions_8004e29c[259] = SMap::scriptGetCollisionAndTransitionInfo;
-    scriptSubFunctions_8004e29c[260] = SMap::FUN_800e69e8;
-    scriptSubFunctions_8004e29c[261] = SMap::FUN_800e69f0;
-    scriptSubFunctions_8004e29c[262] = SMap::FUN_800e6a28;
-    scriptSubFunctions_8004e29c[263] = SMap::scriptSetEnvForegroundPosition;
-    scriptSubFunctions_8004e29c[264] = SMap::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject;
-    scriptSubFunctions_8004e29c[265] = SMap::scriptGetSetEncountersDisabled;
-    scriptSubFunctions_8004e29c[266] = SMap::FUN_800e6aa0;
-    scriptSubFunctions_8004e29c[267] = SMap::FUN_800e6b64;
-    scriptSubFunctions_8004e29c[268] = SMap::FUN_800e6bd8;
-    scriptSubFunctions_8004e29c[269] = SMap::FUN_800e6be0;
-    scriptSubFunctions_8004e29c[270] = SMap::FUN_800e6cac;
-    scriptSubFunctions_8004e29c[271] = SMap::scriptStartFmv;
-
-    scriptSubFunctions_8004e29c[288] = SMap::scriptSelfHideModelPart;
-    scriptSubFunctions_8004e29c[289] = SMap::scriptSelfShowModelPart;
-    scriptSubFunctions_8004e29c[290] = SMap::scriptSelfFaceCamera;
-    scriptSubFunctions_8004e29c[291] = SMap::scriptScaleXyz;
-    scriptSubFunctions_8004e29c[292] = SMap::scriptScaleUniform;
-    scriptSubFunctions_8004e29c[293] = SMap::scriptSetModelZOffset;
-    scriptSubFunctions_8004e29c[294] = SMap::scriptSelfSetSobjFlag;
-    scriptSubFunctions_8004e29c[295] = SMap::FUN_800dfd10;
-    scriptSubFunctions_8004e29c[296] = SMap::FUN_800de334;
-    scriptSubFunctions_8004e29c[297] = SMap::FUN_800de4b4;
-    scriptSubFunctions_8004e29c[298] = SMap::scriptShowAlertIndicator;
-    scriptSubFunctions_8004e29c[299] = SMap::scriptHideAlertIndicator;
-    scriptSubFunctions_8004e29c[300] = SMap::FUN_800dfd48;
-    scriptSubFunctions_8004e29c[301] = SMap::FUN_800e05c8;
-    scriptSubFunctions_8004e29c[302] = SMap::FUN_800e05f0;
-    scriptSubFunctions_8004e29c[303] = SMap::scriptEnableSobjFlatLight;
-    scriptSubFunctions_8004e29c[304] = SMap::scriptDisableSobjFlatLight;
-    scriptSubFunctions_8004e29c[305] = SMap::scriptSetSobjCollision1;
-    scriptSubFunctions_8004e29c[306] = SMap::scriptGetSobjCollidedWith1;
-    scriptSubFunctions_8004e29c[307] = SMap::scriptSetSobjCollision2;
-    scriptSubFunctions_8004e29c[308] = SMap::scriptGetSobjCollidedWith2;
-    scriptSubFunctions_8004e29c[309] = SMap::scriptSetAmbientColour;
-    scriptSubFunctions_8004e29c[310] = SMap::scriptResetAmbientColour;
-    scriptSubFunctions_8004e29c[311] = SMap::scriptEnableShadow;
-    scriptSubFunctions_8004e29c[312] = SMap::scriptDisableShadow;
-    scriptSubFunctions_8004e29c[313] = SMap::scriptSetShadowSize;
-    scriptSubFunctions_8004e29c[314] = SMap::scriptSetShadowOffset;
-    scriptSubFunctions_8004e29c[315] = SMap::scriptCheckPlayerCollision;
-    scriptSubFunctions_8004e29c[316] = SMap::scriptGetPlayerMovement;
-    scriptSubFunctions_8004e29c[317] = SMap::scriptSwapShadowTexture;
-    scriptSubFunctions_8004e29c[318] = SMap::scriptSetSobjPlayerCollisionMetrics;
-    scriptSubFunctions_8004e29c[319] = SMap::FUN_800e0cb8;
 
     scriptSubFunctions_8004e29c[320] = Bttl_800c::scriptEnableBentTextureAnimation;
     scriptSubFunctions_8004e29c[321] = Scus94491BpeSegment::scriptRewindAndPause2;
@@ -602,39 +514,6 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[650] = SEffe::FUN_801154f4;
     scriptSubFunctions_8004e29c[651] = SEffe::scriptConsolidateEffectMemory;
 
-    scriptSubFunctions_8004e29c[672] = SMap::scriptLoadSobjModelAndAnimation;
-    scriptSubFunctions_8004e29c[673] = SMap::scriptLoadSobjAnimation;
-    scriptSubFunctions_8004e29c[674] = SMap::scriptGetSobjAnimation;
-    scriptSubFunctions_8004e29c[675] = SMap::FUN_800dffa4;
-    scriptSubFunctions_8004e29c[676] = SMap::FUN_800dffdc;
-    scriptSubFunctions_8004e29c[677] = SMap::scriptFacePoint;
-    scriptSubFunctions_8004e29c[678] = SMap::FUN_800e0094;
-    scriptSubFunctions_8004e29c[679] = SMap::FUN_800de668;
-    scriptSubFunctions_8004e29c[680] = SMap::FUN_800de944;
-    scriptSubFunctions_8004e29c[681] = SMap::FUN_800e00cc;
-    scriptSubFunctions_8004e29c[682] = SMap::FUN_800e0148;
-    scriptSubFunctions_8004e29c[683] = SMap::FUN_800e01bc;
-    scriptSubFunctions_8004e29c[684] = SMap::scriptEnableTextureAnimation;
-    scriptSubFunctions_8004e29c[685] = SMap::FUN_800e0204;
-    scriptSubFunctions_8004e29c[686] = SMap::scriptDisableTextureAnimation;
-    scriptSubFunctions_8004e29c[687] = SMap::FUN_800e02c0;
-    scriptSubFunctions_8004e29c[688] = SMap::scriptAttachCameraToSobj;
-    scriptSubFunctions_8004e29c[689] = SMap::FUN_800deba0;
-    scriptSubFunctions_8004e29c[690] = SMap::scriptGetSobjNobj;
-    scriptSubFunctions_8004e29c[691] = SMap::scriptHideModelPart;
-    scriptSubFunctions_8004e29c[692] = SMap::scriptShowModelPart;
-    scriptSubFunctions_8004e29c[693] = SMap::scriptFaceCamera;
-    scriptSubFunctions_8004e29c[694] = SMap::scriptSetSobjFlag;
-    scriptSubFunctions_8004e29c[695] = SMap::scriptGetSobjFlag;
-    scriptSubFunctions_8004e29c[696] = SMap::loadInterpolatedSobjAnimation;
-    scriptSubFunctions_8004e29c[697] = SMap::loadUninterpolatedSobjAnimation;
-    scriptSubFunctions_8004e29c[698] = SMap::FUN_800e0184;
-    scriptSubFunctions_8004e29c[699] = SMap::scriptSetChapterTitleCardReadyToRender;
-    scriptSubFunctions_8004e29c[700] = SMap::scriptGetChapterTitleCardAnimationComplete;
-    scriptSubFunctions_8004e29c[701] = SMap::scriptLoadChapterTitleCard;
-    scriptSubFunctions_8004e29c[702] = SMap::scriptIsChapterTitleCardLoaded;
-    scriptSubFunctions_8004e29c[703] = SMap::scriptSetTitleCardAnimationPauseTicks;
-
     scriptSubFunctions_8004e29c[704] = Scus94491BpeSegment::scriptStartSequenceAndChangeVolumeOverTime;
     scriptSubFunctions_8004e29c[705] = Scus94491BpeSegment::scriptSssqFadeOut;
     scriptSubFunctions_8004e29c[706] = Scus94491BpeSegment::scriptChangeSequenceVolumeOverTime;
@@ -684,30 +563,6 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[766] = Bttl_800d::scriptAllocateSpTextEffect;
     scriptSubFunctions_8004e29c[767] = Bttl_800d::scriptAllocateAdditionNameEffect;
 
-    scriptSubFunctions_8004e29c[768] = SMap::FUN_800f2048;
-    scriptSubFunctions_8004e29c[769] = SMap::FUN_800f1f9c;
-    scriptSubFunctions_8004e29c[770] = SMap::FUN_800f1060;
-    scriptSubFunctions_8004e29c[771] = SMap::FUN_800f2264;
-    scriptSubFunctions_8004e29c[772] = SMap::scriptAddSavePoint;
-    scriptSubFunctions_8004e29c[773] = SMap::FUN_800f23ec;
-    scriptSubFunctions_8004e29c[774] = SMap::FUN_800f2780;
-    scriptSubFunctions_8004e29c[775] = SMap::FUN_800f2090;
-    scriptSubFunctions_8004e29c[776] = SMap::FUN_800f2198;
-    scriptSubFunctions_8004e29c[777] = SMap::FUN_800f1eb8;
-    scriptSubFunctions_8004e29c[778] = SMap::scriptAllocateTriangleIndicatorArray;
-    scriptSubFunctions_8004e29c[779] = SMap::FUN_800f1b64;
-    scriptSubFunctions_8004e29c[780] = SMap::FUN_800f26c8;
-    scriptSubFunctions_8004e29c[781] = SMap::FUN_800f1d0c;
-    scriptSubFunctions_8004e29c[782] = SMap::FUN_800f14f0;
-    scriptSubFunctions_8004e29c[783] = SMap::FUN_800f24d8;
-    scriptSubFunctions_8004e29c[784] = SMap::FUN_800f24b0;
-    scriptSubFunctions_8004e29c[785] = SMap::FUN_800f23a0;
-    scriptSubFunctions_8004e29c[786] = SMap::FUN_800f1634;
-    scriptSubFunctions_8004e29c[787] = SMap::FUN_800f22c4;
-    scriptSubFunctions_8004e29c[788] = SMap::FUN_800f2554;
-    scriptSubFunctions_8004e29c[789] = SMap::FUN_800f25a8;
-    scriptSubFunctions_8004e29c[790] = SMap::FUN_800f1274;
-
     scriptSubFunctions_8004e29c[800] = SEffe::scriptAllocateLensFlareEffect;
     scriptSubFunctions_8004e29c[801] = SEffe::scriptAllocateWsDragoonTransformationFeathersEffect;
     scriptSubFunctions_8004e29c[802] = SEffe::scriptAllocateGoldDragoonTransformEffect;
@@ -750,7 +605,7 @@ public final class Scus94491BpeSegment_8004 {
   }
   // 8004f29c end of jump table
 
-  public static final Value _8004f2a8 = MEMORY.ref(4, 0x8004f2a8L);
+  public static final IntRef _8004f2a8 = MEMORY.ref(4, 0x8004f2a8L, IntRef::new);
   public static final ItemStats0c[] itemStats_8004f2ac = new ItemStats0c[64];
   public static final ArrayRef<ShortRef> additionOffsets_8004f5ac = MEMORY.ref(2, 0x8004f5acL, ArrayRef.of(ShortRef.class, 10, 0x2, ShortRef::new));
   public static final ArrayRef<ShortRef> additionCounts_8004f5c0 = MEMORY.ref(2, 0x8004f5c0L, ArrayRef.of(ShortRef.class, 10, 0x2, ShortRef::new));
@@ -785,7 +640,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Bttl_800c#deallocateCombat}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link Scus94491BpeSegment#nextLoadingStage}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_80018508}</li>
+   *   <li>{@link Scus94491BpeSegment#renderPostCombatScreen}</li>
    *   <li>{@link Scus94491BpeSegment#FUN_800189b0}</li>
    * </ol>
    */
@@ -820,7 +675,7 @@ public final class Scus94491BpeSegment_8004 {
     battleLoadingStage_8004f5d4[26] = Bttl_800c::deallocateCombat;
     battleLoadingStage_8004f5d4[27] = Scus94491BpeSegment::waitForFilesToLoad;
     battleLoadingStage_8004f5d4[28] = Scus94491BpeSegment::nextLoadingStage;
-    battleLoadingStage_8004f5d4[29] = Scus94491BpeSegment::FUN_80018508;
+    battleLoadingStage_8004f5d4[29] = Scus94491BpeSegment::renderPostCombatScreen;
     battleLoadingStage_8004f5d4[30] = Scus94491BpeSegment::FUN_800189b0;
   }
 
