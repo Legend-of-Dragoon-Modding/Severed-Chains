@@ -165,6 +165,8 @@ public class ItemListScreen extends MenuScreen {
     playSound(2);
     this.itemList.sort(menuItemComparator());
     this.equipmentList.sort(menuItemComparator());
+    setInventoryFromDisplay(this.itemList.getItems(), gameState_800babc8.items_2e9, this.itemList.getItems().size());
+    setInventoryFromDisplay(this.equipmentList.getItems(), gameState_800babc8.equipment_1e8, this.equipmentList.getItems().size());
   }
 
   @Override
