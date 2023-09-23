@@ -3834,7 +3834,7 @@ public class SMap extends EngineState {
         this.chapterTitleNumberOffsetY_800c6718 = 0;
         this.chapterTitleNumberOffsetX_800c6714 = 0;
         this.chapterTitleBrightness_800c6728 = 128;
-        this.chapterTitleAnimationTicksRemaining_800c670a = 1;
+        this.chapterTitleAnimationTicksRemaining_800c670a++;
         this.chapterTitleDropShadowOffsetX_800c670c = 1;
         this.chapterTitleDropShadowOffsetY_800c670e = 0;
       } else if((int)currentTick > 0) {
