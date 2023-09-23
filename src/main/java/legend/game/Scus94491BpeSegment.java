@@ -1245,7 +1245,9 @@ public final class Scus94491BpeSegment {
     // There used to be code to preload SMAP while the post-combat screen is still up. I removed it because it only takes a few milliseconds to load in SC.
 
     //LAB_8001852c
-    pregameLoadingStage_800bb10c.incr();
+    if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
+      pregameLoadingStage_800bb10c.incr();
+    }
 
     //LAB_80018644
   }
