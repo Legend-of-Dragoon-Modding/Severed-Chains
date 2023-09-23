@@ -1215,7 +1215,7 @@ public final class Scus94491BpeSegment_8002 {
   public static int takeEquipmentId(final Equipment equipment) {
     final int equipmentSlot = gameState_800babc8.equipment_1e8.indexOf(equipment);
 
-    if(equipmentSlot != 0xff) {
+    if(equipmentSlot != -1) {
       return takeEquipment(equipmentSlot);
     }
 
