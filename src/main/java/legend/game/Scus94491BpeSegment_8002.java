@@ -1765,9 +1765,9 @@ public final class Scus94491BpeSegment_8002 {
         final int itemId = script.params_20[0].get();
 
         if(itemId < 0xc0) {
-          yield takeEquipmentId(REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(itemId)).get());
+          yield giveEquipment(REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(itemId)).get()) ? 0 : 0xff;
         } else {
-          yield takeItemId(REGISTRIES.items.getEntry(LodMod.itemIdMap.get(itemId - 192)).get());
+          yield giveItem(REGISTRIES.items.getEntry(LodMod.itemIdMap.get(itemId - 192)).get()) ? 0 : 0xff;
         }
       }
     };
