@@ -11,6 +11,7 @@ import legend.game.inventory.screens.controls.Glyph;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.types.LodString;
+import legend.game.types.MessageBoxResult;
 
 import javax.annotation.Nullable;
 import java.nio.file.Path;
@@ -76,8 +77,12 @@ public class MainMenuScreen extends MenuScreen {
     this.addButton("Options", this::showOptionsScreen);
     this.addButton("Save", this::showSaveScreen).setDisabled(!canSave_8011dc88.get());
     this.addButton("Quit", () -> {
-      this.menuEscape();
-      whichMenu_800bdc38 = WhichMenu.QUIT;
+      menuStack.pushScreen(new MessageBoxScreen(new LodString("Quit to main menu?"), 2, result -> {
+        if(result == MessageBoxResult.YES) {
+          this.menuEscape();
+          whichMenu_800bdc38 = WhichMenu.QUIT;
+        }
+      }));
     });
 
     for(int i = 0; i < 3; i++) {
