@@ -1254,6 +1254,10 @@ public final class Scus94491BpeSegment_8002 {
     return true;
   }
 
+  /**
+   * @param items the items to give
+   * @return the number of items that could not be given
+   */
   @Method(0x80023544L)
   public static int giveItems(final List<EnemyDrop> items) {
     int count = 0;
@@ -1263,13 +1267,12 @@ public final class Scus94491BpeSegment_8002 {
     while(it.hasNext()) {
       final EnemyDrop drop = it.next();
 
-      if(drop.performDrop()) {
-        count++;
-      } else {
+      if(!drop.performDrop()) {
         //LAB_800235a4
         //LAB_800235c0
         drop.overflow();
         it.remove();
+        count++;
       }
 
       //LAB_80023604
