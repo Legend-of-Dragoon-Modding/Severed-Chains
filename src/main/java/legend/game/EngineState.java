@@ -9,7 +9,12 @@ import legend.game.types.Model124;
 import static legend.game.Scus94491BpeSegment_8002.adjustPartUvs;
 
 public abstract class EngineState {
+  /** Runs before scripts are ticked */
   public abstract void tick();
+  /** Runs after scripts are ticked */
+  public void postScriptTick() {
+
+  }
 
   public FlowControl executeScriptFunction(final int index, final RunningScript<?> script) {
     return null;

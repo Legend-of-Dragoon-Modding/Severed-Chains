@@ -423,6 +423,10 @@ public final class Scus94491BpeSegment {
 
       SCRIPTS.tick();
 
+      if(currentEngineState_8004dd04 != null) {
+        currentEngineState_8004dd04.postScriptTick();
+      }
+
       tickAndRenderTransitionIntoBattle();
       handleFullScreenEffects();
 

@@ -5067,7 +5067,11 @@ public class SMap extends EngineState {
         SCRIPTS.resume();
       }
     }
+  }
 
+  /** Has to be done after scripts are ticked since the camera is attached to a sobj and it would use the position from the previous frame */
+  @Override
+  public void postScriptTick() {
     //LAB_80020f20
     this.FUN_8002aae8();
     this.setIndicatorStatusAndResetIndicatorTickCountOnReenable();
