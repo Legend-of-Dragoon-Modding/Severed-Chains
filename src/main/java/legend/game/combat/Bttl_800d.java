@@ -3367,6 +3367,7 @@ public final class Bttl_800d {
     cam.viewpointCallbackIndex_120 = 7;
   }
 
+  /** Note: sometimes nonsense values are passed for the script index (assassin cock passes -2 during yell attack) */
   @ScriptDescription("Related to battle camera movement")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "How the camera moves")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
