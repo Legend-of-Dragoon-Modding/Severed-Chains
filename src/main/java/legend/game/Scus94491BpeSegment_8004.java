@@ -645,40 +645,40 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Scus94491BpeSegment#FUN_800189b0}</li>
    * </ol>
    */
-  public static final Runnable[] battleLoadingStage_8004f5d4 = new Runnable[31];
-  static {
-    battleLoadingStage_8004f5d4[0] = Scus94491BpeSegment::waitForFilesToLoad;
-    battleLoadingStage_8004f5d4[1] = Bttl_800c::initBattle;
-    battleLoadingStage_8004f5d4[2] = Scus94491BpeSegment::waitForFilesToLoad;
-    battleLoadingStage_8004f5d4[3] = Scus94491BpeSegment::waitForFilesToLoad;
-    battleLoadingStage_8004f5d4[4] = Bttl_800c::loadStageAndControllerScripts;
-    battleLoadingStage_8004f5d4[5] = Bttl_800c::initializeViewportAndCamera;
-    battleLoadingStage_8004f5d4[6] = Scus94491BpeSegment::nextLoadingStage;
-    battleLoadingStage_8004f5d4[7] = Scus94491BpeSegment::waitForFilesToLoad;
-    battleLoadingStage_8004f5d4[8] = Scus94491BpeSegment::nextLoadingStage;
-    battleLoadingStage_8004f5d4[9] = Bttl_800c::battleInitiateAndPreload_800c772c;
-    battleLoadingStage_8004f5d4[10] = Bttl_800c::deferAllocateEnemyBattleEntities;
-    battleLoadingStage_8004f5d4[11] = Scus94491BpeSegment::waitForFilesToLoad;
-    battleLoadingStage_8004f5d4[12] = Bttl_800c::allocatePlayerBattleEntities;
-    battleLoadingStage_8004f5d4[13] = Scus94491BpeSegment::waitForFilesToLoad;
-    battleLoadingStage_8004f5d4[14] = Bttl_800c::loadEncounterAssets;
-    battleLoadingStage_8004f5d4[15] = Scus94491BpeSegment::waitForFilesToLoad;
-    battleLoadingStage_8004f5d4[16] = Bttl_800c::loadHudAndAttackAnimations;
-    battleLoadingStage_8004f5d4[17] = Scus94491BpeSegment::waitForFilesToLoad;
-    battleLoadingStage_8004f5d4[18] = Bttl_800c::FUN_800c79f0;
-    battleLoadingStage_8004f5d4[19] = Scus94491BpeSegment::waitForFilesToLoad;
-    battleLoadingStage_8004f5d4[20] = Bttl_800c::loadSEffe;
-    battleLoadingStage_8004f5d4[21] = Scus94491BpeSegment::waitForFilesToLoad;
-    battleLoadingStage_8004f5d4[22] = Bttl_800c::calculateInitialTurnValues;
-    battleLoadingStage_8004f5d4[23] = Bttl_800c::battleTick;
-    battleLoadingStage_8004f5d4[24] = Scus94491BpeSegment::waitForFilesToLoad;
-    battleLoadingStage_8004f5d4[25] = Bttl_800c::performPostBattleAction;
-    battleLoadingStage_8004f5d4[26] = Bttl_800c::deallocateCombat;
-    battleLoadingStage_8004f5d4[27] = Scus94491BpeSegment::waitForFilesToLoad;
-    battleLoadingStage_8004f5d4[28] = Scus94491BpeSegment::nextLoadingStage;
-    battleLoadingStage_8004f5d4[29] = Scus94491BpeSegment::renderPostCombatScreen;
-    battleLoadingStage_8004f5d4[30] = Scus94491BpeSegment::FUN_800189b0;
-  }
+  public static final Runnable[] battleLoadingStage_8004f5d4 = {
+    Scus94491BpeSegment::waitForFilesToLoad,
+    Bttl_800c::initBattle,
+    Scus94491BpeSegment::waitForFilesToLoad,
+    Scus94491BpeSegment::waitForFilesToLoad,
+    Bttl_800c::loadStageAndControllerScripts,
+    Bttl_800c::initializeViewportAndCamera,
+    Scus94491BpeSegment::nextLoadingStage,
+    Scus94491BpeSegment::waitForFilesToLoad,
+    Scus94491BpeSegment::nextLoadingStage,
+    Bttl_800c::battleInitiateAndPreload_800c772c,
+    Scus94491BpeSegment::waitForFilesToLoad,
+    Bttl_800c::deferAllocateEnemyBattleEntities,
+    Scus94491BpeSegment::waitForFilesToLoad,
+    Bttl_800c::allocatePlayerBattleEntities,
+    Scus94491BpeSegment::waitForFilesToLoad,
+    Bttl_800c::loadEncounterAssets,
+    Scus94491BpeSegment::waitForFilesToLoad,
+    Bttl_800c::loadHudAndAttackAnimations,
+    Scus94491BpeSegment::waitForFilesToLoad,
+    Bttl_800c::FUN_800c79f0,
+    Scus94491BpeSegment::waitForFilesToLoad,
+    Bttl_800c::loadSEffe,
+    Scus94491BpeSegment::waitForFilesToLoad,
+    Bttl_800c::calculateInitialTurnValues,
+    Bttl_800c::battleTick,
+    Scus94491BpeSegment::waitForFilesToLoad,
+    Bttl_800c::performPostBattleAction,
+    Bttl_800c::deallocateCombat,
+    Scus94491BpeSegment::waitForFilesToLoad,
+    Scus94491BpeSegment::nextLoadingStage,
+    Scus94491BpeSegment::renderPostCombatScreen,
+    Scus94491BpeSegment::FUN_800189b0,
+  };
 
   public static final ScriptFile doNothingScript_8004f650 = new ScriptFile("Do nothing", new int[] {0x4, 0x1});
   public static Struct10 _8004f658;
