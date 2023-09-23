@@ -624,15 +624,15 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Bttl_800c#battleInitiateAndPreload_800c772c}</li>
    *   <li>{@link Bttl_800c#deferAllocateEnemyBattleEntities()}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
-   *   <li>{@link Bttl_800c#deferAllocatePlayerBattleEntities()}</li>
+   *   <li>{@link Bttl_800c#allocatePlayerBattleEntities()}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
-   *   <li>{@link Bttl_800c#deferLoadEncounterAssets}</li>
+   *   <li>{@link Bttl_800c#loadEncounterAssets}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link Bttl_800c#loadHudAndAttackAnimations}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link Bttl_800c#FUN_800c79f0}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
-   *   <li>{@link Bttl_800c#deferDoNothing}</li>
+   *   <li>{@link Bttl_800c#loadSEffe}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link Bttl_800c#calculateInitialTurnValues}</li>
    *   <li>{@link Bttl_800c#battleTick}</li>
@@ -659,15 +659,15 @@ public final class Scus94491BpeSegment_8004 {
     battleLoadingStage_8004f5d4[9] = Bttl_800c::battleInitiateAndPreload_800c772c;
     battleLoadingStage_8004f5d4[10] = Bttl_800c::deferAllocateEnemyBattleEntities;
     battleLoadingStage_8004f5d4[11] = Scus94491BpeSegment::waitForFilesToLoad;
-    battleLoadingStage_8004f5d4[12] = Bttl_800c::deferAllocatePlayerBattleEntities;
+    battleLoadingStage_8004f5d4[12] = Bttl_800c::allocatePlayerBattleEntities;
     battleLoadingStage_8004f5d4[13] = Scus94491BpeSegment::waitForFilesToLoad;
-    battleLoadingStage_8004f5d4[14] = Bttl_800c::deferLoadEncounterAssets;
+    battleLoadingStage_8004f5d4[14] = Bttl_800c::loadEncounterAssets;
     battleLoadingStage_8004f5d4[15] = Scus94491BpeSegment::waitForFilesToLoad;
     battleLoadingStage_8004f5d4[16] = Bttl_800c::loadHudAndAttackAnimations;
     battleLoadingStage_8004f5d4[17] = Scus94491BpeSegment::waitForFilesToLoad;
     battleLoadingStage_8004f5d4[18] = Bttl_800c::FUN_800c79f0;
     battleLoadingStage_8004f5d4[19] = Scus94491BpeSegment::waitForFilesToLoad;
-    battleLoadingStage_8004f5d4[20] = Bttl_800c::deferDoNothing;
+    battleLoadingStage_8004f5d4[20] = Bttl_800c::loadSEffe;
     battleLoadingStage_8004f5d4[21] = Scus94491BpeSegment::waitForFilesToLoad;
     battleLoadingStage_8004f5d4[22] = Bttl_800c::calculateInitialTurnValues;
     battleLoadingStage_8004f5d4[23] = Bttl_800c::battleTick;
