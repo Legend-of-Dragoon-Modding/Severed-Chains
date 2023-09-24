@@ -433,7 +433,7 @@ public final class Scus94491BpeSegment_8002 {
           final GsCOORDINATE2 coord2 = model.modelParts_00[i].coord2_04;
           final Transforms params = coord2.transforms;
 
-          final float interpolationScale = (model.interpolationFrameIndex + 1) / (float)interpolationFrameCount;
+          final float interpolationScale = (model.interpolationFrameIndex + 1.0f) / (interpolationFrameCount + 1.0f);
 
           RotMatrix_Zyx(params.rotate, coord2.coord);
           params.trans.set(
