@@ -214,7 +214,7 @@ public class SMap extends EngineState {
   private int chapterTitleAnimationTicksRemaining_800c670a;
   private int chapterTitleDropShadowOffsetX_800c670c;
   private int chapterTitleDropShadowOffsetY_800c670e;
-  private static List<FileData> chapterTitleCardMrg_800c6710;
+  private List<FileData> chapterTitleCardMrg_800c6710;
   private int chapterTitleNumberOffsetX_800c6714;
   private int chapterTitleNumberOffsetY_800c6718;
   private int chapterTitleNameOffsetX_800c671c;
@@ -485,7 +485,7 @@ public class SMap extends EngineState {
   public static final ArrayRef<ShopStruct40> shops_800f4930 = MEMORY.ref(4, 0x800f4930L, ArrayRef.of(ShopStruct40.class, 64, 0x40, ShopStruct40::new));
 
   private final ArrayRef<UvAdjustmentMetrics14> uvAdjustments_800f5930 = MEMORY.ref(4, 0x800f5930L, ArrayRef.of(UvAdjustmentMetrics14.class, 20, 0x14, UvAdjustmentMetrics14::new));
-  private final ArrayRef<IntRef> _800f5ac0 = MEMORY.ref(4, 0x800f5ac0L, ArrayRef.of(IntRef.class, 5, 4, IntRef::new));
+  private final int[] _800f5ac0 = {5, 6, 7, 8, 9};
   /**
    * 65 - {@link SMap#handleAndRenderSubmapModel()}
    *
@@ -1716,7 +1716,7 @@ public class SMap extends EngineState {
     sobj.vec_138.setZ(script.params_20[3].get());
     final int a3 = script.params_20[4].get();
     sobj.i_144 = a3;
-    sobj.ui_18c = this._800f5ac0.get(script.params_20[5].get()).get();
+    sobj.ui_18c = this._800f5ac0[script.params_20[5].get()];
     sobj.vec_148.setX((sobj.vec_138.getX() - sobj.model_00.coord2_14.coord.transfer.getX()) / a3);
     sobj.vec_148.setZ((sobj.vec_138.getZ() - sobj.model_00.coord2_14.coord.transfer.getZ()) / a3);
 
@@ -3495,7 +3495,7 @@ public class SMap extends EngineState {
         this.chapterTitleAnimationTicksRemaining_800c670a = 0;
         this.chapterTitleDropShadowOffsetX_800c670c = 0;
         this.chapterTitleDropShadowOffsetY_800c670e = 0;
-        chapterTitleCardMrg_800c6710 = null;
+        this.chapterTitleCardMrg_800c6710 = null;
         this.chapterTitleNumberOffsetX_800c6714 = 0;
         this.chapterTitleNumberOffsetY_800c6718 = 0;
         this.chapterTitleNameOffsetX_800c671c = 0;
@@ -3648,8 +3648,8 @@ public class SMap extends EngineState {
   private void unloadSmap() {
     this.submapControllerState_800c6740.deallocateWithChildren();
 
-    if(chapterTitleCardMrg_800c6710 != null) {
-      chapterTitleCardMrg_800c6710 = null;
+    if(this.chapterTitleCardMrg_800c6710 != null) {
+      this.chapterTitleCardMrg_800c6710 = null;
     }
 
     //LAB_800e226c
@@ -3767,8 +3767,8 @@ public class SMap extends EngineState {
       //LAB_800e284c
       if(currentTick == 0) {
         //LAB_800e2860
-        new Tim(chapterTitleCardMrg_800c6710.get(5)).uploadToGpu();
-        new Tim(chapterTitleCardMrg_800c6710.get(13)).uploadToGpu();
+        new Tim(this.chapterTitleCardMrg_800c6710.get(5)).uploadToGpu();
+        new Tim(this.chapterTitleCardMrg_800c6710.get(13)).uploadToGpu();
 
         //LAB_800e2980
         this.chapterTitleBrightness_800c6728 = 0;
@@ -3795,7 +3795,7 @@ public class SMap extends EngineState {
         }
       } else if(currentTick == 233) {
         //LAB_800e376c
-        chapterTitleCardMrg_800c6710 = null;
+        this.chapterTitleCardMrg_800c6710 = null;
         this.chapterTitleState_800c6708++;
       } else if(currentTick >= 35) {
         //LAB_800e2828
@@ -3803,32 +3803,32 @@ public class SMap extends EngineState {
           if(currentTick >= 201) {
             //LAB_800e311c
             if(currentTick == 212) {
-              new Tim(chapterTitleCardMrg_800c6710.get(1)).uploadToGpu();
-              new Tim(chapterTitleCardMrg_800c6710.get(9)).uploadToGpu();
+              new Tim(this.chapterTitleCardMrg_800c6710.get(1)).uploadToGpu();
+              new Tim(this.chapterTitleCardMrg_800c6710.get(9)).uploadToGpu();
 
               //LAB_800e3248
               //LAB_800e3254
             } else if(currentTick == 216) {
-              new Tim(chapterTitleCardMrg_800c6710.get(2)).uploadToGpu();
-              new Tim(chapterTitleCardMrg_800c6710.get(10)).uploadToGpu();
+              new Tim(this.chapterTitleCardMrg_800c6710.get(2)).uploadToGpu();
+              new Tim(this.chapterTitleCardMrg_800c6710.get(10)).uploadToGpu();
 
               //LAB_800e3384
               //LAB_800e3390
             } else if(currentTick == 220) {
-              new Tim(chapterTitleCardMrg_800c6710.get(3)).uploadToGpu();
-              new Tim(chapterTitleCardMrg_800c6710.get(11)).uploadToGpu();
+              new Tim(this.chapterTitleCardMrg_800c6710.get(3)).uploadToGpu();
+              new Tim(this.chapterTitleCardMrg_800c6710.get(11)).uploadToGpu();
 
               //LAB_800e34c0
               //LAB_800e34cc
             } else if(currentTick == 224) {
-              new Tim(chapterTitleCardMrg_800c6710.get(4)).uploadToGpu();
-              new Tim(chapterTitleCardMrg_800c6710.get(12)).uploadToGpu();
+              new Tim(this.chapterTitleCardMrg_800c6710.get(4)).uploadToGpu();
+              new Tim(this.chapterTitleCardMrg_800c6710.get(12)).uploadToGpu();
 
               //LAB_800e35fc
               //LAB_800e3608
             } else if(currentTick == 228) {
-              new Tim(chapterTitleCardMrg_800c6710.get(5)).uploadToGpu();
-              new Tim(chapterTitleCardMrg_800c6710.get(13)).uploadToGpu();
+              new Tim(this.chapterTitleCardMrg_800c6710.get(5)).uploadToGpu();
+              new Tim(this.chapterTitleCardMrg_800c6710.get(13)).uploadToGpu();
             }
 
             //LAB_800e3744
@@ -3853,32 +3853,32 @@ public class SMap extends EngineState {
       } else if((int)currentTick > 0) {
         //LAB_800e29d4
         if(currentTick == 4) {
-          new Tim(chapterTitleCardMrg_800c6710.get(4)).uploadToGpu();
-          new Tim(chapterTitleCardMrg_800c6710.get(12)).uploadToGpu();
+          new Tim(this.chapterTitleCardMrg_800c6710.get(4)).uploadToGpu();
+          new Tim(this.chapterTitleCardMrg_800c6710.get(12)).uploadToGpu();
 
           //LAB_800e2afc
           //LAB_800e2b08
         } else if(currentTick == 8) {
-          new Tim(chapterTitleCardMrg_800c6710.get(3)).uploadToGpu();
-          new Tim(chapterTitleCardMrg_800c6710.get(11)).uploadToGpu();
+          new Tim(this.chapterTitleCardMrg_800c6710.get(3)).uploadToGpu();
+          new Tim(this.chapterTitleCardMrg_800c6710.get(11)).uploadToGpu();
 
           //LAB_800e2c38
           //LAB_800e2c44
         } else if(currentTick == 12) {
-          new Tim(chapterTitleCardMrg_800c6710.get(2)).uploadToGpu();
-          new Tim(chapterTitleCardMrg_800c6710.get(10)).uploadToGpu();
+          new Tim(this.chapterTitleCardMrg_800c6710.get(2)).uploadToGpu();
+          new Tim(this.chapterTitleCardMrg_800c6710.get(10)).uploadToGpu();
 
           //LAB_800e2d74
           //LAB_800e2d80
         } else if(currentTick == 16) {
-          new Tim(chapterTitleCardMrg_800c6710.get(1)).uploadToGpu();
-          new Tim(chapterTitleCardMrg_800c6710.get(9)).uploadToGpu();
+          new Tim(this.chapterTitleCardMrg_800c6710.get(1)).uploadToGpu();
+          new Tim(this.chapterTitleCardMrg_800c6710.get(9)).uploadToGpu();
 
           //LAB_800e2eb0
           //LAB_800e2ebc
         } else if(currentTick == 20) {
-          new Tim(chapterTitleCardMrg_800c6710.get(0)).uploadToGpu();
-          new Tim(chapterTitleCardMrg_800c6710.get(8)).uploadToGpu();
+          new Tim(this.chapterTitleCardMrg_800c6710.get(0)).uploadToGpu();
+          new Tim(this.chapterTitleCardMrg_800c6710.get(8)).uploadToGpu();
 
           //LAB_800e2fec
         }
@@ -4058,7 +4058,7 @@ public class SMap extends EngineState {
       // Chapter title cards
       case 0x10 -> {
         this.chapterTitleCardLoaded_800c68e0 = true;
-        chapterTitleCardMrg_800c6710 = files;
+        this.chapterTitleCardMrg_800c6710 = files;
       }
     }
   }
