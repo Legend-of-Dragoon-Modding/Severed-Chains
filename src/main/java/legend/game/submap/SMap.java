@@ -1786,8 +1786,8 @@ public class SMap extends EngineState {
 
     //LAB_800def28
     this._800c68e8.playerMovement_0c.set(movement).add(model.coord2_14.coord.transfer);
-    final int reachX = (int)(MathHelper.sin(angle) * -sobj.playerCollisionReach_1c0 / MathHelper.TWO_PI);
-    final int reachZ = (int)(MathHelper.cos(angle) * -sobj.playerCollisionReach_1c0 / MathHelper.TWO_PI);
+    final int reachX = Math.round(MathHelper.sin(angle) * -sobj.playerCollisionReach_1c0);
+    final int reachZ = Math.round(MathHelper.cos(angle) * -sobj.playerCollisionReach_1c0);
     final int colliderMinY = movement.getY() - sobj.playerCollisionSizeVertical_1bc;
     final int colliderMaxY = movement.getY() + sobj.playerCollisionSizeVertical_1bc;
 
@@ -3046,8 +3046,8 @@ public class SMap extends EngineState {
     final int reachX;
     final int reachZ;
     if(reach != 0) {
-      reachX = (int)(MathHelper.sin(model.coord2_14.transforms.rotate.y) * -reach);
-      reachZ = (int)(MathHelper.cos(model.coord2_14.transforms.rotate.y) * -reach);
+      reachX = Math.round(MathHelper.sin(model.coord2_14.transforms.rotate.y) * -reach);
+      reachZ = Math.round(MathHelper.cos(model.coord2_14.transforms.rotate.y) * -reach);
     } else {
       reachX = 0;
       reachZ = 0;
@@ -4195,8 +4195,8 @@ public class SMap extends EngineState {
 
     sobj.collidedWithSobjIndex_1a8 = -1;
 
-    final int reachX = (int)(MathHelper.sin(model.coord2_14.transforms.rotate.y) * -sobj.collisionReach_1b4);
-    final int reachZ = (int)(MathHelper.cos(model.coord2_14.transforms.rotate.y) * -sobj.collisionReach_1b4);
+    final int reachX = Math.round(MathHelper.sin(model.coord2_14.transforms.rotate.y) * -sobj.collisionReach_1b4);
+    final int reachZ = Math.round(MathHelper.cos(model.coord2_14.transforms.rotate.y) * -sobj.collisionReach_1b4);
     final int colliderMinY = model.coord2_14.coord.transfer.getY() - sobj.collisionSizeVertical_1b0;
     final int colliderMaxY = model.coord2_14.coord.transfer.getY() + sobj.collisionSizeVertical_1b0;
 
