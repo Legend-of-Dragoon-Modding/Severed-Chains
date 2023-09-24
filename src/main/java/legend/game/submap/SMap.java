@@ -25,7 +25,6 @@ import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
-import legend.core.memory.types.EnumRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.RelativePointer;
 import legend.core.memory.types.ShortRef;
@@ -418,32 +417,46 @@ public class SMap extends EngineState {
 
   private final RECT _800d6b48 = new RECT((short)576, (short)368, (short)16, (short)1);
 
-  private final ArrayRef<SVECTOR> _800d6b7c = MEMORY.ref(4, 0x800d6b7cL, ArrayRef.of(SVECTOR.class, 12, 8, SVECTOR::new));
-  private final ArrayRef<IntRef> _800d6bdc = MEMORY.ref(4, 0x800d6bdcL, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
-  private final ArrayRef<IntRef> smokeTextureWidths_800d6bec = MEMORY.ref(4, 0x800d6becL, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
-  private final ArrayRef<IntRef> smokeTextureHeights_800d6bfc = MEMORY.ref(4, 0x800d6bfcL, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
-  private final ArrayRef<ShortRef> _800d6c0c = MEMORY.ref(2, 0x800d6c0cL, ArrayRef.of(ShortRef.class, 4, 2, 4, ShortRef::new));
-  private final SVECTOR _800d6c18 = MEMORY.ref(4, 0x800d6c18L, SVECTOR::new);
-  private final SVECTOR _800d6c20 = MEMORY.ref(4, 0x800d6c20L, SVECTOR::new);
-  private final SVECTOR savePointV0_800d6c28 = MEMORY.ref(4, 0x800d6c28L, SVECTOR::new);
-  private final SVECTOR savePointV1_800d6c30 = MEMORY.ref(4, 0x800d6c30L, SVECTOR::new);
-  private final SVECTOR savePointV2_800d6c38 = MEMORY.ref(4, 0x800d6c38L, SVECTOR::new);
-  private final SVECTOR savePointV3_800d6c40 = MEMORY.ref(4, 0x800d6c40L, SVECTOR::new);
-  private final SVECTOR _800d6c48 = MEMORY.ref(4, 0x800d6c48L, SVECTOR::new);
-  private final SVECTOR _800d6c50 = MEMORY.ref(4, 0x800d6c50L, SVECTOR::new);
-  private final ArrayRef<IntRef> _800d6c58 = MEMORY.ref(4, 0x800d6c58L, ArrayRef.of(IntRef.class, 8, 4, IntRef::new));
-  private final ArrayRef<ShortRef> _800d6c78 = MEMORY.ref(2, 0x800d6c78L, ArrayRef.of(ShortRef.class, 8, 2, ShortRef::new));
-  private final ArrayRef<IntRef> savePointFloatiesRotations_800d6c88 = MEMORY.ref(4, 0x800d6c88L, ArrayRef.of(IntRef.class, 8, 4, IntRef::new));
-  private final IntRef dartArrowU_800d6ca8 = MEMORY.ref(4, 0x800d6ca8L, IntRef::new);
-  private final IntRef dartArrowV_800d6cac = MEMORY.ref(4, 0x800d6cacL, IntRef::new);
-  private final IntRef doorArrowU_800d6cb0 = MEMORY.ref(4, 0x800d6cb0L, IntRef::new);
-  private final IntRef doorArrowV_800d6cb4 = MEMORY.ref(4, 0x800d6cb4L, IntRef::new);
-  private final SVECTOR bottom_800d6cb8 = MEMORY.ref(4, 0x800d6cb8L, SVECTOR::new);
-  private final SVECTOR top_800d6cc0 = MEMORY.ref(4, 0x800d6cc0L, SVECTOR::new);
-  private final ArrayRef<IntRef> _800d6cc8 = MEMORY.ref(4, 0x800d6cc8L, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
-  private final ArrayRef<IntRef> _800d6cd8 = MEMORY.ref(4, 0x800d6cd8L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
-  private final ArrayRef<IntRef> _800d6ce4 = MEMORY.ref(4, 0x800d6ce4L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
-  private final ArrayRef<EnumRef<Translucency>> miscTextureTransModes_800d6cf0 = MEMORY.ref(4, 0x800d6cf0L, ArrayRef.of(EnumRef.classFor(Translucency.class), 11, 4, EnumRef.of(Translucency.values())));
+  private final SVECTOR[] _800d6b7c = {
+    new SVECTOR().set((short)-10, (short)0, (short)-22),
+    new SVECTOR().set((short) 10, (short)0, (short)-22),
+    new SVECTOR().set((short)-10, (short)0, (short) 22),
+    new SVECTOR().set((short) 10, (short)0, (short) 22),
+    new SVECTOR().set((short)-12, (short)0, (short)- 8),
+    new SVECTOR().set((short)- 2, (short)0, (short)- 8),
+    new SVECTOR().set((short)-12, (short)0, (short)  8),
+    new SVECTOR().set((short)- 2, (short)0, (short)  8),
+    new SVECTOR().set((short)  2, (short)0, (short)- 8),
+    new SVECTOR().set((short) 12, (short)0, (short)- 8),
+    new SVECTOR().set((short)  2, (short)0, (short)  8),
+    new SVECTOR().set((short) 12, (short)0, (short)  8),
+  };
+  private final int[] _800d6bdc = {96, 112, 64, 0};
+  private final int[] smokeTextureWidths_800d6bec = {15, 15, 31, 23};
+  private final int[] smokeTextureHeights_800d6bfc = {31, 31, 31, 23};
+  private final int[] _800d6c0c = {120, 0, 0, 0};
+
+  private final SVECTOR _800d6c18 = new SVECTOR().set((short)-8, (short)0, (short)0);
+  private final SVECTOR _800d6c20 = new SVECTOR().set((short)8, (short)0, (short)0);
+  private final SVECTOR savePointV0_800d6c28 = new SVECTOR().set((short)-24, (short)-32, (short)24);
+  private final SVECTOR savePointV1_800d6c30 = new SVECTOR().set((short)24, (short)-32, (short)24);
+  private final SVECTOR savePointV2_800d6c38 = new SVECTOR().set((short)-24, (short)-32, (short)-24);
+  private final SVECTOR savePointV3_800d6c40 = new SVECTOR().set((short)24, (short)-32, (short)-24);
+  private final SVECTOR _800d6c48 = new SVECTOR().set((short)0, (short)-24, (short)0);
+  private final SVECTOR _800d6c50 = new SVECTOR().set((short)0, (short)24, (short)0);
+  private final int[] _800d6c58 = {0x200, 0x800, 0x400, 0x800, 0x100, 0x61c, 0x960, 0xe10};
+  private final int[] _800d6c78 = {6, 4, 5, 3, 5, 7, 5, 6};
+  private final int[] savePointFloatiesRotations_800d6c88 = {-14, -55, 22, 16, -28, -14, 24, 27};
+  private final int dartArrowU_800d6ca8 = 0;
+  private final int dartArrowV_800d6cac = 96;
+  private final int doorArrowU_800d6cb0 = 128;
+  private final int doorArrowV_800d6cb4 = 0;
+  private final SVECTOR bottom_800d6cb8 = new SVECTOR();
+  private final SVECTOR top_800d6cc0 = new SVECTOR().set((short)0, (short)40, (short)0);
+  private final int[] _800d6cc8 = {206, 206, 207, 208};
+  private final int[] _800d6cd8 = {992, 992, 976};
+  private final int[] _800d6ce4 = {208, 207, 8};
+  private final Translucency[] miscTextureTransModes_800d6cf0 = {Translucency.B_PLUS_F, Translucency.B_PLUS_F, Translucency.B_PLUS_F, Translucency.B_PLUS_F, Translucency.B_PLUS_QUARTER_F, Translucency.B_PLUS_F, Translucency.B_PLUS_F, Translucency.B_MINUS_F, Translucency.B_MINUS_F, Translucency.B_PLUS_F, Translucency.B_PLUS_F};
   /**
    * Savepoint MRG (0x904 bytes)
    * <ol start="0">
@@ -521,7 +534,7 @@ public class SMap extends EngineState {
 
   private boolean _800f7f14;
 
-  private final ArrayRef<ShortRef> _800f7f6c = MEMORY.ref(2, 0x800f7f6cL, ArrayRef.of(ShortRef.class, 4, 2, ShortRef::new));
+  private final int[] _800f7f6c = new int[4];
   private final ArrayRef<Struct14_2> _800f7f74 = MEMORY.ref(4, 0x800f7f74L, ArrayRef.of(Struct14_2.class, 256, 0x14, Struct14_2::new));
 
   private final UnboundedArrayRef<ShortRef> smapFileIndices_800f982c = MEMORY.ref(2, 0x800f982cL, UnboundedArrayRef.of(2, ShortRef::new));
@@ -6627,7 +6640,7 @@ public class SMap extends EngineState {
 
     final int s1 = (this._800c6ae0 - 1) % 4;
     final int s2 = this._800c6ae0 % 4;
-    int s0 = this._800f7f6c.get(s1).get() - this._800d1a84;
+    int s0 = this._800f7f6c[s1] - this._800d1a84;
 
     final boolean _800cbda4;
     if(Math.abs(s0) > 0x800) {
@@ -6645,7 +6658,7 @@ public class SMap extends EngineState {
     }
 
     //LAB_800ea66c
-    final int v1 = this._800f7f6c.get(s1).get();
+    final int v1 = this._800f7f6c[s1];
 
     final int v0;
     if(!_800cbda4) {
@@ -6656,7 +6669,7 @@ public class SMap extends EngineState {
     }
 
     //LAB_800ea6a4
-    this._800f7f6c.get(s2).set((short)v0);
+    this._800f7f6c[s2] = v0;
 
     //LAB_800ea6dc
     return (short)v0;
@@ -7331,15 +7344,15 @@ public class SMap extends EngineState {
           final int type = dust.textureIndex_02;
           if(type == 0) {
             //LAB_800ef4b4
-            dust.z_4c = RotTransPers4(this._800d6b7c.get( 4), this._800d6b7c.get( 5), this._800d6b7c.get( 6), this._800d6b7c.get( 7), dust.v0_20, dust.v1_28, dust.v2_30, dust.v3_38);
+            dust.z_4c = RotTransPers4(this._800d6b7c[4], this._800d6b7c[5], this._800d6b7c[6], this._800d6b7c[7], dust.v0_20, dust.v1_28, dust.v2_30, dust.v3_38);
           } else if(type == 1) {
             //LAB_800ef484
             //LAB_800ef4b4
-            dust.z_4c = RotTransPers4(this._800d6b7c.get( 8), this._800d6b7c.get( 9), this._800d6b7c.get(10), this._800d6b7c.get(11), dust.v0_20, dust.v1_28, dust.v2_30, dust.v3_38);
+            dust.z_4c = RotTransPers4(this._800d6b7c[8], this._800d6b7c[9], this._800d6b7c[10], this._800d6b7c[11], dust.v0_20, dust.v1_28, dust.v2_30, dust.v3_38);
           } else if(type == 3) {
             //LAB_800ef4a0
             //LAB_800ef4b4
-            dust.z_4c = RotTransPers4(this._800d6b7c.get( 0), this._800d6b7c.get( 1), this._800d6b7c.get( 2), this._800d6b7c.get( 3), dust.v0_20, dust.v1_28, dust.v2_30, dust.v3_38);
+            dust.z_4c = RotTransPers4(this._800d6b7c[0], this._800d6b7c[1], this._800d6b7c[2], this._800d6b7c[3], dust.v0_20, dust.v1_28, dust.v2_30, dust.v3_38);
           }
 
           //LAB_800ef4ec
@@ -7452,9 +7465,7 @@ public class SMap extends EngineState {
   @Method(0x800ef8acL)
   private void renderDust() {
     final int[] u = new int[4];
-    for(int i = 0; i < 4; i++) {
-      u[i] = this._800d6bdc.get(i).get();
-    }
+    System.arraycopy(this._800d6bdc, 0, u, 0, 4);
 
     final int[] v = new int[4];
     v[3] = 64; // Other values are 0
@@ -7524,7 +7535,7 @@ public class SMap extends EngineState {
         }
 
         //LAB_800efc64
-        if(s0._04 >= this._800d6c0c.get(s0.renderMode_00).get()) {
+        if(s0._04 >= this._800d6c0c[s0.renderMode_00]) {
           s0.colourAccumulator_44 -= s0.colourStep_40;
 
           final int colour = s0.colourAccumulator_44 >>> 16;
@@ -7539,9 +7550,9 @@ public class SMap extends EngineState {
         cmd
           .monochrome(s0.colour_48)
           .uv(0, u[s0.textureIndex_02], v[s0.textureIndex_02])
-          .uv(1, u[s0.textureIndex_02] + this.smokeTextureWidths_800d6bec.get(s0.textureIndex_02).get(), v[s0.textureIndex_02])
-          .uv(2, u[s0.textureIndex_02], v[s0.textureIndex_02] + this.smokeTextureHeights_800d6bfc.get(s0.textureIndex_02).get())
-          .uv(3, u[s0.textureIndex_02] + this.smokeTextureWidths_800d6bec.get(s0.textureIndex_02).get(), v[s0.textureIndex_02] + this.smokeTextureHeights_800d6bfc.get(s0.textureIndex_02).get());
+          .uv(1, u[s0.textureIndex_02] + this.smokeTextureWidths_800d6bec[s0.textureIndex_02], v[s0.textureIndex_02])
+          .uv(2, u[s0.textureIndex_02], v[s0.textureIndex_02] + this.smokeTextureHeights_800d6bfc[s0.textureIndex_02])
+          .uv(3, u[s0.textureIndex_02] + this.smokeTextureWidths_800d6bec[s0.textureIndex_02], v[s0.textureIndex_02] + this.smokeTextureHeights_800d6bfc[s0.textureIndex_02]);
 
         GPU.queueCommand(s0.z_4c, cmd);
 
@@ -8793,7 +8804,7 @@ public class SMap extends EngineState {
       struct0.colour_34 = 0.5f;
       struct0.fadeAmount_2c = 0.0078f;
       struct0.fadeState_38 = 0;
-      struct0.rotation_28 = MathHelper.psxDegToRad(this._800d6c58.get(i).get());
+      struct0.rotation_28 = MathHelper.psxDegToRad(this._800d6c58[i]);
       struct1.colour_34 = 0.375f;
       struct2.colour_34 = struct0.colour_34 - 0.25f;
       struct3.colour_34 = struct0.colour_34 - 0.375f;
@@ -8903,8 +8914,8 @@ public class SMap extends EngineState {
       struct2.vert0_00.setY(struct1.vert0_00.getY());
       struct1.vert0_00.setX(struct0.vert0_00.getX());
       struct1.vert0_00.setY(struct0.vert0_00.getY());
-      struct0.vert0_00.setX((short)(sp68 + (sp80 + this._800d6c78.get(fp).get()) * MathHelper.sin(struct0.rotation_28)));
-      struct0.vert0_00.setY((short)(sp6a + (sp78 + this._800d6c78.get(fp).get()) * MathHelper.cos(struct0.rotation_28)));
+      struct0.vert0_00.setX((short)(sp68 + (sp80 + this._800d6c78[fp]) * MathHelper.sin(struct0.rotation_28)));
+      struct0.vert0_00.setY((short)(sp6a + (sp78 + this._800d6c78[fp]) * MathHelper.cos(struct0.rotation_28)));
 
       if(struct0.fadeState_38 != 0) {
         struct0.colour_34 -= struct0.fadeAmount_2c;
@@ -8958,7 +8969,7 @@ public class SMap extends EngineState {
         GPU.queueCommand(41, cmd);
       }
 
-      struct0.rotation_28 += MathHelper.psxDegToRad(this.savePointFloatiesRotations_800d6c88.get(fp).get());
+      struct0.rotation_28 += MathHelper.psxDegToRad(this.savePointFloatiesRotations_800d6c88[fp]);
       struct0.rotation_28 %= MathHelper.TWO_PI;
     }
   }
@@ -9126,14 +9137,14 @@ public class SMap extends EngineState {
 
         if(indicatorIndex == 0) { // Player indicator
           final int triangleIndex = this.getEncounterTriangleColour();
-          cmd.clut(this._800d6cd8.get(triangleIndex).get() & 0x3f0, (sprite.cba_04.get() >>> 6 & 0x1ff) - this._800d6ce4.get(triangleIndex).get());
+          cmd.clut(this._800d6cd8[triangleIndex] & 0x3f0, (sprite.cba_04.get() >>> 6 & 0x1ff) - this._800d6ce4[triangleIndex]);
         } else { // Door indicators
           //LAB_800f3884
           if((sprite.cba_04.get() & 0x8000L) != 0) {
             cmd.translucent(Translucency.of(tpage >>> 5 & 0b11));
           }
 
-          cmd.clut(992, (sprite.cba_04.get() >>> 6 & 0x1ff) - this._800d6cc8.get(indicator._18[indicatorIndex - 1]).get());
+          cmd.clut(992, (sprite.cba_04.get() >>> 6 & 0x1ff) - this._800d6cc8[indicator._18[indicatorIndex - 1]]);
         }
 
         //LAB_800f38b0
@@ -9203,15 +9214,15 @@ public class SMap extends EngineState {
       if(i == 0) {
         t2.tpage_18 = this.texPages_800d6050[0];
         t2.clut_1a = this.cluts_800d6068[0];
-        t2.u_1c = this.dartArrowU_800d6ca8.get();
-        t2.v_20 = this.dartArrowV_800d6cac.get();
+        t2.u_1c = this.dartArrowU_800d6ca8;
+        t2.v_20 = this.dartArrowV_800d6cac;
         anm = anm1;
       } else {
         //LAB_800f3bfc
         t2.tpage_18 = this.texPages_800d6050[1];
         t2.clut_1a = this.cluts_800d6068[1];
-        t2.u_1c = this.doorArrowU_800d6cb0.get();
-        t2.v_20 = this.doorArrowV_800d6cb4.get();
+        t2.u_1c = this.doorArrowU_800d6cb0;
+        t2.v_20 = this.doorArrowV_800d6cb4;
         anm = anm2;
       }
 
@@ -9484,7 +9495,7 @@ public class SMap extends EngineState {
       final TimHeader header = parseTimHeader(this.miscTextures_800f9eb0[textureIndex].offset(0x4L));
       LoadImage(header.imageRect, header.imageAddress);
 
-      this.texPages_800d6050[textureIndex] = texPages_800bb110.get(Bpp.values()[header.flags & 0b11]).get(this.miscTextureTransModes_800d6cf0.get(textureIndex).get()).get(TexPageY.fromY(header.imageRect.y.get())).get() | (header.imageRect.x.get() & 0x3c0) >>> 6;
+      this.texPages_800d6050[textureIndex] = texPages_800bb110.get(Bpp.values()[header.flags & 0b11]).get(this.miscTextureTransModes_800d6cf0[textureIndex]).get(TexPageY.fromY(header.imageRect.y.get())).get() | (header.imageRect.x.get() & 0x3c0) >>> 6;
       this.cluts_800d6068[textureIndex] = header.clutRect.y.get() << 6 | (header.clutRect.x.get() & 0x3f0) >>> 4;
 
       LoadImage(header.clutRect, header.clutAddress);
