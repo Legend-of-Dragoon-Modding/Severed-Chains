@@ -6,10 +6,9 @@ import legend.core.gpu.RECT;
 import legend.core.gte.DVECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.BoolRef;
-import legend.core.memory.types.IntRef;
-import legend.game.tim.Tim;
+import legend.game.EngineState;
 import legend.game.EngineStateEnum;
+import legend.game.tim.Tim;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 
@@ -29,14 +28,12 @@ import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd2
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 
-public final class Credits {
-  private Credits() { }
-
-  private static List<FileData> creditTims_800d1ae0;
-  private static final IntRef fadeOutTicks_800d1ae4 = MEMORY.ref(4, 0x800d1ae4L, IntRef::new);
-  private static final BoolRef creditTimsLoaded_800d1ae8 = MEMORY.ref(4, 0x800d1ae8L, BoolRef::new);
-  private static final IntRef creditsPassed_800d1aec = MEMORY.ref(4, 0x800d1aecL, IntRef::new);
-  private static final IntRef creditIndex_800d1af0 = MEMORY.ref(4, 0x800d1af0L, IntRef::new);
+public class Credits extends EngineState {
+  private List<FileData> creditTims_800d1ae0;
+  private int fadeOutTicks_800d1ae4;
+  private boolean creditTimsLoaded_800d1ae8;
+  private int creditsPassed_800d1aec;
+  private int creditIndex_800d1af0;
 
   private static final ArrayRef<CreditStruct1c> credits_800d1af8 = MEMORY.ref(4, 0x800d1af8L, ArrayRef.of(CreditStruct1c.class, 16, 0x1c, CreditStruct1c::new));
 
@@ -49,25 +46,26 @@ public final class Credits {
    *   <li>{@link Credits#deallocateCreditsAndTransitionToTheEndSubmap}</li>
    * </ol>
    */
-  private static final Runnable[] creditsStates_800f9378 = new Runnable[8];
-  static {
-    creditsStates_800f9378[0] = Credits::initCredits;
-    creditsStates_800f9378[1] = Credits::waitForCreditsToLoadAndPlaySong;
-    creditsStates_800f9378[2] = Credits::renderCredits;
-    creditsStates_800f9378[3] = Credits::waitForCreditsFadeOut;
-    creditsStates_800f9378[4] = Credits::deallocateCreditsAndTransitionToTheEndSubmap;
+  private final Runnable[] creditsStates_800f9378 = new Runnable[8];
+  {
+    this.creditsStates_800f9378[0] = this::initCredits;
+    this.creditsStates_800f9378[1] = this::waitForCreditsToLoadAndPlaySong;
+    this.creditsStates_800f9378[2] = this::renderCredits;
+    this.creditsStates_800f9378[3] = this::waitForCreditsFadeOut;
+    this.creditsStates_800f9378[4] = this::deallocateCreditsAndTransitionToTheEndSubmap;
   }
 
   private static final ArrayRef<CreditType08> creditTypes_800f93b0 = MEMORY.ref(4, 0x800f93b0L, ArrayRef.of(CreditType08.class, 87, 0x8, CreditType08::new));
   private static final ArrayRef<DVECTOR> creditPos_800f9670 = MEMORY.ref(2, 0x800f9670L, ArrayRef.of(DVECTOR.class, 16, 4, DVECTOR::new));
 
+  @Override
   @Method(0x800eaa88L)
-  public static void tickCredits() {
-    creditsStates_800f9378[pregameLoadingStage_800bb10c.get()].run();
+  public void tick() {
+    this.creditsStates_800f9378[pregameLoadingStage_800bb10c.get()].run();
   }
 
   @Method(0x800eaad4L)
-  private static void initCredits() {
+  private void initCredits() {
     resizeDisplay(384, 240);
     vsyncMode_8007a3b8 = 2;
 
@@ -92,24 +90,24 @@ public final class Credits {
     }
 
     //LAB_800eac84
-    fadeOutTicks_800d1ae4.set(0);
-    creditsPassed_800d1aec.set(0);
-    creditIndex_800d1af0.set(0);
+    this.fadeOutTicks_800d1ae4 = 0;
+    this.creditsPassed_800d1aec = 0;
+    this.creditIndex_800d1af0 = 0;
 
-    creditTimsLoaded_800d1ae8.set(false);
-    loadDrgnDir(0, 5720, Credits::creditsLoaded);
+    this.creditTimsLoaded_800d1ae8 = false;
+    loadDrgnDir(0, 5720, this::creditsLoaded);
     pregameLoadingStage_800bb10c.incr();
   }
 
   @Method(0x800eacc8L)
-  private static void creditsLoaded(final List<FileData> files) {
-    creditTims_800d1ae0 = files;
-    creditTimsLoaded_800d1ae8.set(true);
+  private void creditsLoaded(final List<FileData> files) {
+    this.creditTims_800d1ae0 = files;
+    this.creditTimsLoaded_800d1ae8 = true;
   }
 
   @Method(0x800ead58L)
-  private static void waitForCreditsToLoadAndPlaySong() {
-    if(creditTimsLoaded_800d1ae8.get()) {
+  private void waitForCreditsToLoadAndPlaySong() {
+    if(this.creditTimsLoaded_800d1ae8) {
       //LAB_800ead7c
       playXaAudio(3, 3, 1);
       startFadeEffect(2, 15);
@@ -120,10 +118,10 @@ public final class Credits {
   }
 
   @Method(0x800eadfcL)
-  private static void renderCredits() {
-    renderCreditsGradient();
+  private void renderCredits() {
+    this.renderCreditsGradient();
 
-    if(loadAndRenderCredits()) {
+    if(this.loadAndRenderCredits()) {
       startFadeEffect(1, 15);
       pregameLoadingStage_800bb10c.incr();
     }
@@ -132,10 +130,10 @@ public final class Credits {
   }
 
   @Method(0x800eae6cL)
-  private static void waitForCreditsFadeOut() {
-    fadeOutTicks_800d1ae4.incr();
+  private void waitForCreditsFadeOut() {
+    this.fadeOutTicks_800d1ae4++;
 
-    if(fadeOutTicks_800d1ae4.get() >= 16) {
+    if(this.fadeOutTicks_800d1ae4 >= 16) {
       //LAB_800eaea0
       pregameLoadingStage_800bb10c.incr();
     }
@@ -144,9 +142,9 @@ public final class Credits {
   }
 
   @Method(0x800eaeb8L)
-  private static void deallocateCreditsAndTransitionToTheEndSubmap() {
+  private void deallocateCreditsAndTransitionToTheEndSubmap() {
     //LAB_800eaedc
-    creditTims_800d1ae0 = null;
+    this.creditTims_800d1ae0 = null;
     engineStateOnceLoaded_8004dd24 = EngineStateEnum.SUBMAP_05;
     pregameLoadingStage_800bb10c.set(0);
 
@@ -154,7 +152,7 @@ public final class Credits {
   }
 
   @Method(0x800eaf24L)
-  private static void renderCreditsGradient() {
+  private void renderCreditsGradient() {
     GPU.queueCommand(10, new GpuCommandPoly(4)
       .translucent(Translucency.B_MINUS_F)
       .monochrome(0, 0xff)
@@ -181,12 +179,12 @@ public final class Credits {
   }
 
   @Method(0x800eb304L)
-  private static boolean loadAndRenderCredits() {
+  private boolean loadAndRenderCredits() {
     //LAB_800eb318
     //LAB_800ebc0c
     for(int creditSlot = 0; creditSlot < 16; creditSlot++) {
       //LAB_800eb334
-      if(creditsPassed_800d1aec.get() >= 357) {
+      if(this.creditsPassed_800d1aec >= 357) {
         return true;
       }
 
@@ -196,13 +194,13 @@ public final class Credits {
       final int state = credit.state_16.get();
       if(state == 0) {
         //LAB_800eb3b8
-        if(shouldLoadNewCredit(creditSlot)) {
+        if(this.shouldLoadNewCredit(creditSlot)) {
           credit.state_16.set(2);
-          loadCreditTims(creditSlot);
+          this.loadCreditTims(creditSlot);
         }
       } else if(state == 2) {
         //LAB_800eb408
-        moveCredits(creditSlot);
+        this.moveCredits(creditSlot);
 
         final int w = credit.width_0e.get() * 4;
         final int h = credit.height_10.get();
@@ -211,7 +209,7 @@ public final class Credits {
         final int clut = creditSlot << 6 | 0x38;
 
         //LAB_800eb8e8
-        renderQuad(
+        this.renderQuad(
           Bpp.BITS_4, creditSlot / 8 * 128 + 512 & 0x3c0, 0, clut,
           credit.colour_00.getR(), credit.colour_00.getG(), credit.colour_00.getB(),
           0, creditSlot % 8 * 64,
@@ -242,7 +240,7 @@ public final class Credits {
   }
 
   @Method(0x800ebc2cL)
-  private static boolean shouldLoadNewCredit(final int creditSlot) {
+  private boolean shouldLoadNewCredit(final int creditSlot) {
     //LAB_800ebc5c
     boolean found = false;
 
@@ -250,7 +248,7 @@ public final class Credits {
     int i;
     for(i = 0; i < creditTypes_800f93b0.length(); i++) {
       //LAB_800ebcb0
-      if(creditTypes_800f93b0.get(i).creditIndex_00.get() == creditIndex_800d1af0.get()) {
+      if(creditTypes_800f93b0.get(i).creditIndex_00.get() == this.creditIndex_800d1af0) {
         found = true;
         break;
       }
@@ -267,7 +265,7 @@ public final class Credits {
     }
 
     //LAB_800ebd94
-    if(creditIndex_800d1af0.get() == 0) {
+    if(this.creditIndex_800d1af0 == 0) {
       return true;
     }
 
@@ -404,7 +402,7 @@ public final class Credits {
   }
 
   @Method(0x800ec37cL)
-  private static void moveCredits(final int creditSlot) {
+  private void moveCredits(final int creditSlot) {
     final CreditStruct1c credit = credits_800d1af8.get(creditSlot);
 
     final int scroll = credit.scroll_12.get();
@@ -416,7 +414,7 @@ public final class Credits {
 
         if(scroll > 304) {
           credit.state_16.set(3);
-          creditsPassed_800d1aec.incr();
+          this.creditsPassed_800d1aec++;
         }
       }
 
@@ -427,7 +425,7 @@ public final class Credits {
 
         if(scroll > 304) {
           credit.state_16.set(3);
-          creditsPassed_800d1aec.incr();
+          this.creditsPassed_800d1aec++;
         }
       }
 
@@ -468,7 +466,7 @@ public final class Credits {
           //LAB_800ecd1c
           if(credit.y_0c.get() < -184) {
             credit.state_16.set(3);
-            creditsPassed_800d1aec.incr();
+            this.creditsPassed_800d1aec++;
           }
         }
       }
@@ -485,7 +483,7 @@ public final class Credits {
           if(brightnessAngle > 0x400) {
             credit.colour_00.set(0, 0, 0);
             credit.state_16.set(3);
-            creditsPassed_800d1aec.incr();
+            this.creditsPassed_800d1aec++;
           }
 
           //LAB_800ecff8
@@ -503,12 +501,12 @@ public final class Credits {
   }
 
   @Method(0x800ed0c4L)
-  private static void loadCreditTims(final int creditSlot) {
-    if(creditIndex_800d1af0.get() < creditTims_800d1ae0.size()) {
+  private void loadCreditTims(final int creditSlot) {
+    if(this.creditIndex_800d1af0 < this.creditTims_800d1ae0.size()) {
       //LAB_800ed100
-      if(creditTims_800d1ae0.get(creditIndex_800d1af0.get()).size() != 0) {
+      if(this.creditTims_800d1ae0.get(this.creditIndex_800d1af0).size() != 0) {
         //LAB_800ed138
-        loadCreditTim(creditSlot);
+        this.loadCreditTim(creditSlot);
       }
     }
 
@@ -516,13 +514,13 @@ public final class Credits {
   }
 
   @Method(0x800ed160L)
-  private static void loadCreditTim(final int creditSlot) {
-    final Tim tim = new Tim(creditTims_800d1ae0.get(creditIndex_800d1af0.get()));
+  private void loadCreditTim(final int creditSlot) {
+    final Tim tim = new Tim(this.creditTims_800d1ae0.get(this.creditIndex_800d1af0));
 
-    creditIndex_800d1af0.incr();
+    this.creditIndex_800d1af0++;
 
-    if(creditIndex_800d1af0.get() > 357) {
-      creditIndex_800d1af0.set(357);
+    if(this.creditIndex_800d1af0 > 357) {
+      this.creditIndex_800d1af0 = 357;
     }
 
     final CreditStruct1c credit = credits_800d1af8.get(creditSlot);
@@ -550,7 +548,7 @@ public final class Credits {
   }
 
   @Method(0x800ed3b0L)
-  private static void renderQuad(final Bpp bpp, final int vramX, final int vramY, final int clut, final int r, final int g, final int b, final int u, final int v, final int tw, final int th, final int x, final int y, final int w, final int h, final int z) {
+  private void renderQuad(final Bpp bpp, final int vramX, final int vramY, final int clut, final int r, final int g, final int b, final int u, final int v, final int tw, final int th, final int x, final int y, final int w, final int h, final int z) {
     final GpuCommandPoly cmd = new GpuCommandPoly(4)
       .bpp(bpp)
       .clut((clut & 0b111111) * 16, clut >>> 6)

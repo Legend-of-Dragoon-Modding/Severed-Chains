@@ -10,21 +10,21 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.stage.Stage;
 import legend.core.Config;
+import legend.game.submap.SMap;
 import legend.game.combat.AdditionMode;
 import legend.game.combat.SEffe;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.config.ConfigLoadedEvent;
 import legend.game.modding.events.config.ConfigUpdatedEvent;
-import legend.game.EngineStateEnum;
+import legend.game.submap.SubmapState;
 import legend.game.wmap.AreaData08;
+import legend.game.wmap.WMap;
 import org.legendofdragoon.modloader.events.EventListener;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
-import static legend.game.SMap.encounterData_800f64c4;
-import static legend.game.SMap.mapTransition;
-import static legend.game.SMap.smapLoadingStage_800cb430;
-import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
+import static legend.game.submap.SMap.encounterData_800f64c4;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
@@ -32,7 +32,6 @@ import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.wmap.WMap.areaData_800f2248;
-import static legend.game.wmap.WMap.mapState_800c6798;
 
 public class DebuggerController {
   @FXML
@@ -310,15 +309,16 @@ public class DebuggerController {
   private void startEncounter(final ActionEvent event) {
     encounterId_800bb0f8.set(this.encounterId.getValue());
 
-    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
+    if(currentEngineState_8004dd04 instanceof final SMap smap) {
       if(Config.combatStage()) {
         battleStage_800bb0f4.set(Config.getCombatStage());
       } else {
         battleStage_800bb0f4.set(encounterData_800f64c4.get(submapCut_80052c30.get()).stage_03.get());
       }
-      mapTransition(-1, 0);
-    } else if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {
-      final AreaData08 area = areaData_800f2248.get(mapState_800c6798.areaIndex_12);
+
+      smap.mapTransition(-1, 0);
+    } else if(currentEngineState_8004dd04 instanceof final WMap wmap) {
+      final AreaData08 area = areaData_800f2248.get(wmap.mapState_800c6798.areaIndex_12);
 
       if(Config.combatStage()) {
         battleStage_800bb0f4.set(Config.getCombatStage());
@@ -330,11 +330,11 @@ public class DebuggerController {
         }
       }
 
-      gameState_800babc8.areaIndex_4de = mapState_800c6798.areaIndex_12;
-      gameState_800babc8.pathIndex_4d8 = mapState_800c6798.pathIndex_14;
-      gameState_800babc8.dotIndex_4da = mapState_800c6798.dotIndex_16;
-      gameState_800babc8.dotOffset_4dc = mapState_800c6798.dotOffset_18;
-      gameState_800babc8.facing_4dd = mapState_800c6798.facing_1c;
+      gameState_800babc8.areaIndex_4de = wmap.mapState_800c6798.areaIndex_12;
+      gameState_800babc8.pathIndex_4d8 = wmap.mapState_800c6798.pathIndex_14;
+      gameState_800babc8.dotIndex_4da = wmap.mapState_800c6798.dotIndex_16;
+      gameState_800babc8.dotOffset_4dc = wmap.mapState_800c6798.dotOffset_18;
+      gameState_800babc8.facing_4dd = wmap.mapState_800c6798.facing_1c;
       pregameLoadingStage_800bb10c.set(8);
     }
   }
@@ -347,7 +347,7 @@ public class DebuggerController {
   @FXML
   private void warpToMap(final ActionEvent event) {
     submapCut_80052c30.set(this.mapId.getValue());
-    smapLoadingStage_800cb430.set(0x4);
+    ((SMap)currentEngineState_8004dd04).smapLoadingStage_800cb430 = SubmapState.CHANGE_SUBMAP_4;
   }
 
   @FXML

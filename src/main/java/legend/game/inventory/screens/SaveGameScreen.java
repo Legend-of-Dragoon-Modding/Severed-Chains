@@ -18,11 +18,11 @@ import javax.annotation.Nullable;
 import static legend.core.GameEngine.SAVES;
 import static legend.game.SItem.Overwrite_save_8011c9e8;
 import static legend.game.SItem.menuStack;
-import static legend.game.SMap._800cb450;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
+import static legend.game.Scus94491BpeSegment_8005.submapCutForSave_800cb450;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 
@@ -83,7 +83,7 @@ public class SaveGameScreen extends MenuScreen {
       }
 
       gameState_800babc8.submapScene_a4 = index_80052c38.get();
-      gameState_800babc8.submapCut_a8 = (int)_800cb450.get();
+      gameState_800babc8.submapCut_a8 = submapCutForSave_800cb450;
 
       try {
         SAVES.newSave(name, gameState_800babc8, stats_800be5f8);
@@ -98,7 +98,7 @@ public class SaveGameScreen extends MenuScreen {
   private void onOverwriteResult(final MessageBoxResult result, final SavedGame save) {
     if(result == MessageBoxResult.YES) {
       gameState_800babc8.submapScene_a4 = index_80052c38.get();
-      gameState_800babc8.submapCut_a8 = (int)_800cb450.get();
+      gameState_800babc8.submapCut_a8 = submapCutForSave_800cb450;
 
       try {
         SAVES.overwriteSave(save.fileName(), save.saveName(), gameState_800babc8, stats_800be5f8);

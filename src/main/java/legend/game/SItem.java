@@ -13,12 +13,6 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
-import legend.game.combat.Bttl_800c;
-import legend.game.combat.bent.BattleEntity27c;
-import legend.game.combat.bent.PlayerBattleEntity;
-import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
-import legend.game.combat.types.BattleObject;
-import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.inventory.EquipItemResult;
 import legend.game.inventory.Equipment;
@@ -33,7 +27,6 @@ import legend.game.modding.events.characters.AdditionHitMultiplierEvent;
 import legend.game.modding.events.characters.AdditionUnlockEvent;
 import legend.game.modding.events.characters.CharacterStatsEvent;
 import legend.game.modding.events.characters.XpToLevelEvent;
-import legend.game.scripting.ScriptState;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
 import legend.game.types.EquipmentSlot;
@@ -64,19 +57,11 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
-import static legend.core.GameEngine.SCRIPTS;
-import static legend.game.SMap.FUN_800e3fac;
 import static legend.game.Scus94491BpeSegment.FUN_80018e84;
 import static legend.game.Scus94491BpeSegment.FUN_800192d8;
 import static legend.game.Scus94491BpeSegment.FUN_80019470;
-import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
-import static legend.game.Scus94491BpeSegment.getCharacterName;
-import static legend.game.Scus94491BpeSegment.loadDir;
-import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
-import static legend.game.Scus94491BpeSegment.loadFile;
-import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
@@ -94,16 +79,13 @@ import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
-import static legend.game.Scus94491BpeSegment_8005.combatants_8005e398;
 import static legend.game.Scus94491BpeSegment_8005.standingInSavePoint_8005a368;
-import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
-import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
 import static legend.game.Scus94491BpeSegment_800b._800bdc2c;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.confirmDest_800bdc30;
-import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920;
@@ -126,17 +108,7 @@ import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.unlockedUltimateAddition_800bc910;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static legend.game.combat.Bttl_800c.addCombatant;
-import static legend.game.combat.Bttl_800c.allBentCount_800c66d0;
-import static legend.game.combat.Bttl_800c.charCount_800c677c;
-import static legend.game.combat.Bttl_800c.characterElements_800c706c;
-import static legend.game.combat.Bttl_800c.combatantCount_800c66a0;
-import static legend.game.combat.Bttl_800c.combatantTmdAndAnimLoadedCallback;
-import static legend.game.combat.Bttl_800c.getCombatant;
-import static legend.game.combat.Bttl_800c.loadCombatantTim;
-import static legend.game.combat.Bttl_800c.loadCombatantTmdAndAnims;
 import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
-import static legend.game.combat.Bttl_800f.FUN_800f863c;
 
 public final class SItem {
   private SItem() { }
@@ -164,8 +136,6 @@ public final class SItem {
 
   public static final ArrayRef<Pointer<ArrayRef<LevelStuff08>>> levelStuff_80111cfc = MEMORY.ref(4, 0x80111cfcL, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(LevelStuff08.class)), 9, 4, Pointer.deferred(4, ArrayRef.of(LevelStuff08.class, 61, 8, LevelStuff08::new))));
   public static final ArrayRef<Pointer<ArrayRef<MagicStuff08>>> magicStuff_80111d20 = MEMORY.ref(4, 0x80111d20L, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(MagicStuff08.class)), 9, 4, Pointer.deferred(4, ArrayRef.of(MagicStuff08.class, 6, 8, MagicStuff08::new))));
-
-  public static final Value _80111d38 = MEMORY.ref(4, 0x80111d38L);
 
   public static final EquipmentStats1c[] equipmentStats_80111ff0 = new EquipmentStats1c[192];
   public static final int[] kongolXpTable_801134f0 = new int[61];
@@ -286,147 +256,6 @@ public final class SItem {
   public static final Value _8011e1d8 = MEMORY.ref(1, 0x8011e1d8L);
 
   public static final EnumRef<MessageBoxResult> msgboxResult_8011e1e8 = MEMORY.ref(4, 0x8011e1e8L, EnumRef.of(MessageBoxResult.values()));
-
-  @Method(0x800fbd78L)
-  public static void allocatePlayerBattleEntities() {
-    //LAB_800fbdb8
-    for(charCount_800c677c.set(0); charCount_800c677c.get() < 3; charCount_800c677c.incr()) {
-      if(gameState_800babc8.charIds_88[charCount_800c677c.get()] < 0) {
-        break;
-      }
-    }
-
-    //LAB_800fbde8
-    final long fp = _80111d38.offset(charCount_800c677c.get() * 0xcL).getAddress();
-    final int[] charIndices = new int[charCount_800c677c.get()];
-
-    //LAB_800fbe18
-    for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      charIndices[charSlot] = addCombatant(0x200 + gameState_800babc8.charIds_88[charSlot] * 2, charSlot);
-    }
-
-    //LAB_800fbe4c
-    //LAB_800fbe70
-    for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      final int charIndex = gameState_800babc8.charIds_88[charSlot];
-      final String name = "Char ID " + charIndex + " (bent + " + (charSlot + 6) + ')';
-      final ScriptState<PlayerBattleEntity> state = SCRIPTS.allocateScriptState(charSlot + 6, name, 0, new PlayerBattleEntity(name, charSlot + 6));
-      state.setTicker(Bttl_800c::bentTicker);
-      state.setDestructor(Bttl_800c::bentDestructor);
-      battleState_8006e398.allBents_e0c[allBentCount_800c66d0.get()] = state;
-      battleState_8006e398.charBents_e40[charSlot] = state;
-      final PlayerBattleEntity bent = state.innerStruct_00;
-      bent.magic_00 = BattleObject.BOBJ;
-      bent.element = characterElements_800c706c[charIndex].get();
-      bent.combatant_144 = getCombatant((short)charIndices[charSlot]);
-      bent.charId_272 = charIndex;
-      bent.bentSlot_274 = allBentCount_800c66d0.get();
-      bent.charSlot_276 = charSlot;
-      bent.combatantIndex_26c = charIndices[charSlot];
-      bent.model_148.coord2_14.coord.transfer.setX((int)MEMORY.ref(2, fp).offset(charSlot * 0x4L).offset(0x0L).getSigned());
-      bent.model_148.coord2_14.coord.transfer.setY(0);
-      bent.model_148.coord2_14.coord.transfer.setZ((int)MEMORY.ref(2, fp).offset(charSlot * 0x4L).offset(0x2L).getSigned());
-      bent.model_148.coord2_14.transforms.rotate.zero();
-      allBentCount_800c66d0.incr();
-    }
-
-    //LAB_800fbf6c
-    battleState_8006e398.allBents_e0c[allBentCount_800c66d0.get()] = null;
-    battleState_8006e398.charBents_e40[charCount_800c677c.get()] = null;
-
-    FUN_800f863c();
-  }
-
-  @Method(0x800fbfe0L)
-  public static void loadEncounterAssets() {
-    loadSupportOverlay(2, () -> SItem.loadEnemyTextures(2625 + encounterId_800bb0f8.get()));
-
-    //LAB_800fc030
-    for(int i = 0; i < combatantCount_800c66a0.get(); i++) {
-      if(getCombatant(i).charSlot_19c < 0) { // I think this means it's not a player
-        loadCombatantTmdAndAnims(i);
-      }
-
-      //LAB_800fc050
-    }
-
-    //LAB_800fc064
-    //LAB_800fc09c
-    for(int i = 0; i < charCount_800c677c.get(); i++) {
-      combatants_8005e398[battleState_8006e398.charBents_e40[i].innerStruct_00.combatantIndex_26c].flags_19e |= 0x2a;
-    }
-
-    //LAB_800fc104
-    loadSupportOverlay(2, SItem::deferLoadPartyTims);
-    loadSupportOverlay(2, SItem::deferLoadPartyTmdAndAnims);
-    battleFlags_800bc960.or(0x400);
-  }
-
-  @Method(0x800fc210L)
-  public static void loadCharTmdAndAnims(final List<FileData> files, final int charSlot) {
-    //LAB_800fc260
-    final BattleEntity27c data = battleState_8006e398.charBents_e40[charSlot].innerStruct_00;
-
-    //LAB_800fc298
-    combatantTmdAndAnimLoadedCallback(files, data.combatantIndex_26c, false);
-
-    //LAB_800fc34c
-    battleFlags_800bc960.or(0x4);
-  }
-
-  @Method(0x800fc3c0L)
-  public static void loadEnemyTextures(final int fileIndex) {
-    // Example file: 2856
-    loadDrgnDir(0, fileIndex, SItem::enemyTexturesLoadedCallback);
-  }
-
-  @Method(0x800fc404L)
-  public static void enemyTexturesLoadedCallback(final List<FileData> files) {
-    final BattlePreloadedEntities_18cb0 s2 = battlePreloadedEntities_1f8003f4;
-
-    //LAB_800fc434
-    for(int i = 0; i < combatantCount_800c66a0.get(); i++) {
-      final CombatantStruct1a8 a0 = getCombatant(i);
-
-      if(a0.charSlot_19c < 0) {
-        final int enemyIndex = a0.charIndex_1a2 & 0x1ff;
-
-        //LAB_800fc464
-        for(int enemySlot = 0; enemySlot < 3; enemySlot++) {
-          if((s2.encounterData_00.enemyIndices_00[enemySlot] & 0x1ff) == enemyIndex && files.get(enemySlot).hasVirtualSize()) {
-            loadCombatantTim(i, files.get(enemySlot));
-            break;
-          }
-        }
-      }
-    }
-  }
-
-  @Method(0x800fc504L)
-  public static void deferLoadPartyTims() {
-    for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      final int charId = gameState_800babc8.charIds_88[charSlot];
-      final String name = getCharacterName(charId).toLowerCase();
-      final int finalCharSlot = charSlot;
-      loadFile("characters/%s/textures/combat".formatted(name), files -> SItem.loadCharacterTim(files, finalCharSlot));
-    }
-  }
-
-  @Method(0x800fc548L)
-  public static void loadCharacterTim(final FileData file, final int charSlot) {
-    final BattleEntity27c bent = battleState_8006e398.charBents_e40[charSlot].innerStruct_00;
-    loadCombatantTim(bent.combatantIndex_26c, file);
-  }
-
-  @Method(0x800fc654L)
-  public static void deferLoadPartyTmdAndAnims() {
-    for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      final int charId = gameState_800babc8.charIds_88[charSlot];
-      final String name = getCharacterName(charId).toLowerCase();
-      final int finalCharSlot = charSlot;
-      loadDir("characters/%s/models/combat".formatted(name), files -> SItem.loadCharTmdAndAnims(files, finalCharSlot));
-    }
-  }
 
   @Method(0x800fc698L)
   public static int getXpToNextLevel(final int charIndex) {
@@ -551,15 +380,15 @@ public final class SItem {
             whichMenu_800bdc38 = WhichMenu.UNLOAD_CHAR_SWAP_MENU_25;
           }
 
+          case QUIT -> startFadeEffect(2, 10);
+
           default -> {
             startFadeEffect(2, 10);
             whichMenu_800bdc38 = WhichMenu.UNLOAD_INVENTORY_MENU_5;
           }
         }
 
-        if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
-          FUN_800e3fac();
-        }
+        currentEngineState_8004dd04.menuClosed();
 
         textZ_800bdf00.set(13);
       }

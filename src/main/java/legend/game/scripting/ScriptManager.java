@@ -100,7 +100,7 @@ public class ScriptManager {
   }
 
   public <T> T getObject(final int index, final Class<T> type) {
-    if(index == -1 || scriptStatePtrArr_800bc1c0[index] == null) {
+    if(index < 0 || scriptStatePtrArr_800bc1c0[index] == null) {
       return null;
     }
 

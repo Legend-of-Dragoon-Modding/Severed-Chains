@@ -1179,10 +1179,14 @@ public final class Bttl_800e {
 
     t0.type_00 |= 0x200_0000;
     loadDrgnDir(0, 4307 + s0, Bttl_800e::uploadTims);
-    loadDrgnDir(0, 4308 + s0 + "/0", files -> Bttl_800e.loadDeffPackage(files, t0.managerState_18));
-    loadDrgnFile(0, 4308 + s0 + "/1", file -> {
-      LOGGER.info(DEFF, "Loading DEFF script");
-      _800c6938.script_14 = new ScriptFile(4308 + s0 + "/1", file.getBytes());
+    loadDrgnDir(0, 4308 + s0 + "/0", files -> {
+      Bttl_800e.loadDeffPackage(files, t0.managerState_18);
+
+      // We don't want the script to load before the DEFF package, so queueing this file inside of the DEFF package callback forces serialization
+      loadDrgnFile(0, 4308 + s0 + "/1", file -> {
+        LOGGER.info(DEFF, "Loading DEFF script");
+        _800c6938.script_14 = new ScriptFile(4308 + s0 + "/1", file.getBytes());
+      });
     });
     deffLoadingStage_800fafe8.set(1);
   }
@@ -1218,12 +1222,16 @@ public final class Bttl_800e {
     v1.type_00 |= 0x300_0000;
 
     if(monsterIndex < 256) {
+      final int finalMonsterIndex = monsterIndex;
       loadDrgnDir(0, 4433 + monsterIndex * 2, Bttl_800e::uploadTims);
-      loadDrgnDir(0, 4434 + monsterIndex * 2 + "/0", files -> Bttl_800e.loadDeffPackage(files, v1.managerState_18));
-      final int finalSp2 = monsterIndex;
-      loadDrgnFile(0, 4434 + monsterIndex * 2 + "/1", file -> {
-        LOGGER.info(DEFF, "Loading DEFF script");
-        _800c6938.script_14 = new ScriptFile(4434 + finalSp2 * 2 + "/1", file.getBytes());
+      loadDrgnDir(0, 4434 + monsterIndex * 2 + "/0", files -> {
+        Bttl_800e.loadDeffPackage(files, v1.managerState_18);
+
+        // We don't want the script to load before the DEFF package, so queueing this file inside of the DEFF package callback forces serialization
+        loadDrgnFile(0, 4434 + finalMonsterIndex * 2 + "/1", file -> {
+          LOGGER.info(DEFF, "Loading DEFF script");
+          _800c6938.script_14 = new ScriptFile(4434 + finalMonsterIndex * 2 + "/1", file.getBytes());
+        });
       });
     } else {
       //LAB_800e6a30
@@ -1235,12 +1243,17 @@ public final class Bttl_800e {
 
       //LAB_800e6a60
       fileIndex = (fileIndex - 1) * 2;
-      loadDrgnDir(0, 4945 + fileIndex, Bttl_800e::uploadTims);
-      loadDrgnDir(0, 4946 + fileIndex + "/0", files -> Bttl_800e.loadDeffPackage(files, v1.managerState_18));
       final int finalFileIndex = fileIndex;
-      loadDrgnFile(0, 4946 + fileIndex + "/1", file -> {
-        LOGGER.info(DEFF, "Loading DEFF script");
-        _800c6938.script_14 = new ScriptFile(4946 + finalFileIndex + "/1", file.getBytes());
+
+      loadDrgnDir(0, 4945 + fileIndex, Bttl_800e::uploadTims);
+      loadDrgnDir(0, 4946 + fileIndex + "/0", files -> {
+        Bttl_800e.loadDeffPackage(files, v1.managerState_18);
+
+        // We don't want the script to load before the DEFF package, so queueing this file inside of the DEFF package callback forces serialization
+        loadDrgnFile(0, 4946 + finalFileIndex + "/1", file -> {
+          LOGGER.info(DEFF, "Loading DEFF script");
+          _800c6938.script_14 = new ScriptFile(4946 + finalFileIndex + "/1", file.getBytes());
+        });
       });
     }
 
@@ -1283,10 +1296,14 @@ public final class Bttl_800e {
 
     //LAB_800e6bd4
     loadDrgnDir(0, 5511 + cutsceneIndex * 2, Bttl_800e::uploadTims);
-    loadDrgnDir(0, 5512 + cutsceneIndex * 2 + "/0", files -> Bttl_800e.loadDeffPackage(files, a0_0.managerState_18));
-    loadDrgnFile(0, 5512 + cutsceneIndex * 2 + "/1", file -> {
-      LOGGER.info(DEFF, "Loading DEFF script");
-      _800c6938.script_14 = new ScriptFile(5512 + cutsceneIndex * 2 + "/1", file.getBytes());
+    loadDrgnDir(0, 5512 + cutsceneIndex * 2 + "/0", files -> {
+      Bttl_800e.loadDeffPackage(files, a0_0.managerState_18);
+
+      // We don't want the script to load before the DEFF package, so queueing this file inside of the DEFF package callback forces serialization
+      loadDrgnFile(0, 5512 + cutsceneIndex * 2 + "/1", file -> {
+        LOGGER.info(DEFF, "Loading DEFF script");
+        _800c6938.script_14 = new ScriptFile(5512 + cutsceneIndex * 2 + "/1", file.getBytes());
+      });
     });
 
     //LAB_800e6d7c

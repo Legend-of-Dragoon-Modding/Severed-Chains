@@ -13,7 +13,6 @@ import legend.game.modding.events.inventory.ShopEquipmentEvent;
 import legend.game.modding.events.inventory.ShopItemEvent;
 import legend.game.modding.events.inventory.ShopSellPriceEvent;
 import legend.game.types.ActiveStatsa0;
-import legend.game.EngineStateEnum;
 import legend.game.types.EquipmentSlot;
 import legend.game.types.LodString;
 import legend.game.types.MessageBoxResult;
@@ -62,8 +61,6 @@ import static legend.game.SItem.renderText;
 import static legend.game.SItem.renderThreeDigitNumber;
 import static legend.game.SItem.renderThreeDigitNumberComparison;
 import static legend.game.SItem.renderTwoDigitNumber;
-import static legend.game.SMap.FUN_800e3fac;
-import static legend.game.SMap.shops_800f4930;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.addGold;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
@@ -75,7 +72,7 @@ import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.takeEquipment;
 import static legend.game.Scus94491BpeSegment_8002.takeItem;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
-import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8007.shopId_8007a3b4;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
@@ -84,6 +81,7 @@ import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
+import static legend.game.submap.SMap.shops_800f4930;
 
 public class ShopScreen extends MenuScreen {
   private MenuState menuState = MenuState.INIT_0;
@@ -131,21 +129,15 @@ public class ShopScreen extends MenuScreen {
         this.menuIndex_8011e0dc = 0;
         this.menuIndex_8011e0e0 = 0;
         this.menuScroll_8011e0e4 = 0;
-        this.menuState = MenuState.AWAIT_INIT_1;
+        this.menuState = MenuState.LOAD_ITEMS_1;
       }
 
-      case AWAIT_INIT_1 -> {
-        if(uiFile_800bdc3c != null) {
-          startFadeEffect(2, 10);
-          this.menuState = MenuState.INIT_2;
+      case LOAD_ITEMS_1 -> {
+        if(uiFile_800bdc3c == null) {
+          return;
         }
-      }
 
-      case INIT_2 -> {
-        deallocateRenderables(0xff);
-        renderGlyphs(glyphs_80114510, 0, 0);
-        this.selectedMenuOptionRenderablePtr_800bdbe0 = allocateUiElement(0x7a, 0x7a, 49, this.getShopMenuYOffset(this.menuIndex_8011e0dc));
-        FUN_80104b60(this.selectedMenuOptionRenderablePtr_800bdbe0);
+        startFadeEffect(2, 10);
 
         this.shopType = shops_800f4930.get(shopId_8007a3b4.get()).shopType_00.get() & 1;
 
@@ -158,7 +150,7 @@ public class ShopScreen extends MenuScreen {
             if(id != 0xff) {
               final RegistryId registryId = LodMod.equipmentIdMap.get(id);
               final Equipment equipment = REGISTRIES.equipment.getEntry(registryId).get();
-              shopEntries.add(new ShopEntry<>(equipment, equipment.getPrice()));
+              shopEntries.add(new ShopEntry<>(equipment, equipment.getPrice() * 2));
             }
           }
 
@@ -173,7 +165,7 @@ public class ShopScreen extends MenuScreen {
             if(id != 0xff) {
               final RegistryId registryId = LodMod.itemIdMap.get(id - 192);
               final Item item = REGISTRIES.items.getEntry(registryId).get();
-              shopEntries.add(new ShopEntry<>(item, item.getPrice()));
+              shopEntries.add(new ShopEntry<>(item, item.getPrice() * 2));
             }
           }
 
@@ -182,6 +174,15 @@ public class ShopScreen extends MenuScreen {
         }
 
         cacheCharacterSlots();
+
+        this.menuState = MenuState.INIT_2;
+      }
+
+      case INIT_2 -> {
+        deallocateRenderables(0xff);
+        renderGlyphs(glyphs_80114510, 0, 0);
+        this.selectedMenuOptionRenderablePtr_800bdbe0 = allocateUiElement(0x7a, 0x7a, 49, this.getShopMenuYOffset(this.menuIndex_8011e0dc));
+        FUN_80104b60(this.selectedMenuOptionRenderablePtr_800bdbe0);
 
         for(int charSlot = 0; charSlot < characterCount_8011d7c4.get(); charSlot++) {
           this.charRenderables[charSlot] = this.allocateCharRenderable(this.FUN_8010a818(charSlot), 174, characterIndices_800bdbb8.get(charSlot).get());
@@ -301,9 +302,7 @@ public class ShopScreen extends MenuScreen {
         startFadeEffect(2, 10);
         deallocateRenderables(0xff);
 
-        if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
-          FUN_800e3fac();
-        }
+        currentEngineState_8004dd04.menuClosed();
 
         whichMenu_800bdc38 = WhichMenu.UNLOAD_SHOP_MENU_10;
         textZ_800bdf00.set(13);
@@ -575,7 +574,7 @@ public class ShopScreen extends MenuScreen {
         }
       }
     } else if(this.menuState == MenuState.BUY_4) {
-      for(int i = 0; i < 6; i++) {
+      for(int i = 0; i < Math.min(6, this.inv.size() - this.menuScroll_8011e0e4); i++) {
         if(MathHelper.inBox(this.mouseX, this.mouseY, 138, this.menuEntryY(i) - 2, 220, 17)) {
           playSound(2);
           this.menuIndex_8011e0e0 = i;
@@ -1147,7 +1146,7 @@ public class ShopScreen extends MenuScreen {
 
   public enum MenuState {
     INIT_0,
-    AWAIT_INIT_1,
+    LOAD_ITEMS_1,
     INIT_2,
     RENDER_3,
     BUY_4,

@@ -24,7 +24,7 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
-import legend.game.SItem;
+import legend.game.EngineStateEnum;
 import legend.game.Scus94491BpeSegment_8005;
 import legend.game.characters.Element;
 import legend.game.combat.bent.BattleEntity27c;
@@ -99,7 +99,6 @@ import legend.game.scripting.ScriptState;
 import legend.game.tim.Tim;
 import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
-import legend.game.EngineStateEnum;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.LodString;
 import legend.game.types.McqHeader;
@@ -154,7 +153,6 @@ import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
-import static legend.game.Scus94491BpeSegment_8002.renderModel;
 import static legend.game.Scus94491BpeSegment_8002.scriptDeallocateAllTextboxes;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
@@ -211,12 +209,14 @@ import static legend.game.combat.Bttl_800e.drawUiElements;
 import static legend.game.combat.Bttl_800e.loadBattleHudDeff;
 import static legend.game.combat.Bttl_800e.loadStageTmd;
 import static legend.game.combat.Bttl_800e.renderBattleStage;
+import static legend.game.combat.Bttl_800e.renderBttlModel;
 import static legend.game.combat.Bttl_800e.rotateBattleStage;
 import static legend.game.combat.Bttl_800e.updateGameStateAndDeallocateMenu;
 import static legend.game.combat.Bttl_800f.FUN_800f1a00;
 import static legend.game.combat.Bttl_800f.FUN_800f417c;
 import static legend.game.combat.Bttl_800f.FUN_800f60ac;
 import static legend.game.combat.Bttl_800f.FUN_800f84c0;
+import static legend.game.combat.Bttl_800f.FUN_800f863c;
 import static legend.game.combat.Bttl_800f.addFloatingNumberForBent;
 import static legend.game.combat.Bttl_800f.handleCombatMenu;
 import static legend.game.combat.Bttl_800f.initializeCombatMenuIcons;
@@ -1093,15 +1093,154 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c78d4L)
-  public static void deferAllocatePlayerBattleEntities() {
-    loadSupportOverlay(2, SItem::allocatePlayerBattleEntities);
+  public static void allocatePlayerBattleEntities() {
+    //LAB_800fbdb8
+    for(charCount_800c677c.set(0); charCount_800c677c.get() < 3; charCount_800c677c.incr()) {
+      if(gameState_800babc8.charIds_88[charCount_800c677c.get()] < 0) {
+        break;
+      }
+    }
+
+    //LAB_800fbde8
+    final int[] charIndices = new int[charCount_800c677c.get()];
+
+    //LAB_800fbe18
+    for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
+      charIndices[charSlot] = addCombatant(0x200 + gameState_800babc8.charIds_88[charSlot] * 2, charSlot);
+    }
+
+    //LAB_800fbe4c
+    //LAB_800fbe70
+    for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
+      final int charIndex = gameState_800babc8.charIds_88[charSlot];
+      final String name = "Char ID " + charIndex + " (bent + " + (charSlot + 6) + ')';
+      final ScriptState<PlayerBattleEntity> state = SCRIPTS.allocateScriptState(charSlot + 6, name, 0, new PlayerBattleEntity(name, charSlot + 6));
+      state.setTicker(Bttl_800c::bentTicker);
+      state.setDestructor(Bttl_800c::bentDestructor);
+      battleState_8006e398.allBents_e0c[allBentCount_800c66d0.get()] = state;
+      battleState_8006e398.charBents_e40[charSlot] = state;
+      final PlayerBattleEntity bent = state.innerStruct_00;
+      bent.magic_00 = BattleObject.BOBJ;
+      bent.element = characterElements_800c706c[charIndex].get();
+      bent.combatant_144 = getCombatant((short)charIndices[charSlot]);
+      bent.charId_272 = charIndex;
+      bent.bentSlot_274 = allBentCount_800c66d0.get();
+      bent.charSlot_276 = charSlot;
+      bent.combatantIndex_26c = charIndices[charSlot];
+      bent.model_148.coord2_14.coord.transfer.setX(charCount_800c677c.get() > 2 && charSlot == 0 ? 0x900 : 0xa00);
+      bent.model_148.coord2_14.coord.transfer.setY(0);
+      // Alternates placing characters to the right and left of the main character (offsets by -0x400 for even character counts)
+      bent.model_148.coord2_14.coord.transfer.setZ(0x800 * ((charSlot + 1) / 2) * (charSlot % 2 * 2 - 1) + (charCount_800c677c.get() % 2 - 1) * 0x400);
+      bent.model_148.coord2_14.transforms.rotate.zero();
+      allBentCount_800c66d0.incr();
+    }
+
+    //LAB_800fbf6c
+    battleState_8006e398.allBents_e0c[allBentCount_800c66d0.get()] = null;
+    battleState_8006e398.charBents_e40[charCount_800c677c.get()] = null;
+
+    FUN_800f863c();
+
     pregameLoadingStage_800bb10c.incr();
   }
 
   @Method(0x800c791cL)
-  public static void deferLoadEncounterAssets() {
-    loadSupportOverlay(2, SItem::loadEncounterAssets);
+  public static void loadEncounterAssets() {
+    loadEnemyTextures(2625 + encounterId_800bb0f8.get());
+
+    //LAB_800fc030
+    for(int i = 0; i < combatantCount_800c66a0.get(); i++) {
+      if(getCombatant(i).charSlot_19c < 0) { // I think this means it's not a player
+        loadCombatantTmdAndAnims(i);
+      }
+
+      //LAB_800fc050
+    }
+
+    //LAB_800fc064
+    //LAB_800fc09c
+    for(int i = 0; i < charCount_800c677c.get(); i++) {
+      combatants_8005e398[battleState_8006e398.charBents_e40[i].innerStruct_00.combatantIndex_26c].flags_19e |= 0x2a;
+    }
+
+    //LAB_800fc104
+    loadPartyTims();
+    loadPartyTmdAndAnims();
+    battleFlags_800bc960.or(0x400);
+
     pregameLoadingStage_800bb10c.incr();
+  }
+
+  /** Pulled from S_ITEM */
+  @Method(0x800fc210L)
+  public static void loadCharTmdAndAnims(final List<FileData> files, final int charSlot) {
+    //LAB_800fc260
+    final BattleEntity27c data = battleState_8006e398.charBents_e40[charSlot].innerStruct_00;
+
+    //LAB_800fc298
+    combatantTmdAndAnimLoadedCallback(files, data.combatantIndex_26c, false);
+
+    //LAB_800fc34c
+    battleFlags_800bc960.or(0x4);
+  }
+
+  /** Pulled from S_ITEM */
+  @Method(0x800fc3c0L)
+  public static void loadEnemyTextures(final int fileIndex) {
+    // Example file: 2856
+    loadDrgnDir(0, fileIndex, Bttl_800c::enemyTexturesLoadedCallback);
+  }
+
+  /** Pulled from S_ITEM */
+  @Method(0x800fc404L)
+  public static void enemyTexturesLoadedCallback(final List<FileData> files) {
+    final BattlePreloadedEntities_18cb0 s2 = battlePreloadedEntities_1f8003f4;
+
+    //LAB_800fc434
+    for(int i = 0; i < combatantCount_800c66a0.get(); i++) {
+      final CombatantStruct1a8 a0 = getCombatant(i);
+
+      if(a0.charSlot_19c < 0) {
+        final int enemyIndex = a0.charIndex_1a2 & 0x1ff;
+
+        //LAB_800fc464
+        for(int enemySlot = 0; enemySlot < 3; enemySlot++) {
+          if((s2.encounterData_00.enemyIndices_00[enemySlot] & 0x1ff) == enemyIndex && files.get(enemySlot).hasVirtualSize()) {
+            loadCombatantTim(i, files.get(enemySlot));
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  /** Pulled from S_ITEM */
+  @Method(0x800fc504L)
+  public static void loadPartyTims() {
+    for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
+      final int charId = gameState_800babc8.charIds_88[charSlot];
+      final String name = getCharacterName(charId).toLowerCase();
+      final int finalCharSlot = charSlot;
+      loadFile("characters/%s/textures/combat".formatted(name), files -> loadCharacterTim(files, finalCharSlot));
+    }
+  }
+
+  /** Pulled from S_ITEM */
+  @Method(0x800fc548L)
+  public static void loadCharacterTim(final FileData file, final int charSlot) {
+    final BattleEntity27c bent = battleState_8006e398.charBents_e40[charSlot].innerStruct_00;
+    loadCombatantTim(bent.combatantIndex_26c, file);
+  }
+
+  /** Pulled from S_ITEM */
+  @Method(0x800fc654L)
+  public static void loadPartyTmdAndAnims() {
+    for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
+      final int charId = gameState_800babc8.charIds_88[charSlot];
+      final String name = getCharacterName(charId).toLowerCase();
+      final int finalCharSlot = charSlot;
+      loadDir("characters/%s/models/combat".formatted(name), files -> loadCharTmdAndAnims(files, finalCharSlot));
+    }
   }
 
   @Method(0x800c7964L)
@@ -1131,7 +1270,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c7a30L)
-  public static void deferDoNothing() {
+  public static void loadSEffe() {
     loadSupportOverlay(3, () -> { });
     pregameLoadingStage_800bb10c.incr();
   }
@@ -2265,19 +2404,14 @@ public final class Bttl_800c {
         }
 
         final String charName = getCharacterName(fileIndex).toLowerCase();
-        loadFile("characters/%s/textures/dragoon".formatted(charName), files -> Bttl_800c.FUN_800ca65c(files, combatantIndex));
+        loadFile("characters/%s/textures/dragoon".formatted(charName), files -> Bttl_800c.loadCombatantTim(combatantIndex, files));
       } else {
         final String charName = getCharacterName(fileIndex).toLowerCase();
-        loadFile("characters/%s/textures/combat".formatted(charName), files -> Bttl_800c.FUN_800ca65c(files, combatantIndex));
+        loadFile("characters/%s/textures/combat".formatted(charName), files -> Bttl_800c.loadCombatantTim(combatantIndex, files));
       }
     }
 
     //LAB_800ca64c
-  }
-
-  @Method(0x800ca65cL)
-  public static void FUN_800ca65c(final FileData data, final int combatantIndex) {
-    loadCombatantTim(combatantIndex, data);
   }
 
   @Method(0x800ca75cL)
@@ -2555,7 +2689,7 @@ public final class Bttl_800c {
   @Method(0x800cb024L)
   public static void FUN_800cb024(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
     if((state.storage_44[7] & 0x211) == 0) {
-      renderModel(bent.model_148);
+      renderBttlModel(bent.model_148);
     }
 
     //LAB_800cb048

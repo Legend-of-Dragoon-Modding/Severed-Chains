@@ -175,7 +175,6 @@ public final class V4Serializer {
         final EquipmentSlot slot = EquipmentSlot.valueOf(slotName);
 
         charData.equipmentRegistryIds_14.put(slot, equipmentId);
-        offset++;
       }
 
       charData.selectedAddition_19 = data.readShort(offset);

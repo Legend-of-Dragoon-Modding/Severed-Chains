@@ -1,4 +1,4 @@
-package legend.game.types;
+package legend.game.submap;
 
 import java.util.Arrays;
 import java.util.function.Consumer;

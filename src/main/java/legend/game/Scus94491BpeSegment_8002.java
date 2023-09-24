@@ -53,7 +53,6 @@ import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms0c;
 import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
-import legend.game.submap.SubmapStruct80;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
 import legend.game.types.TextboxChar08;
@@ -95,27 +94,6 @@ import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderMenus;
 import static legend.game.SItem.renderPostCombatReport;
 import static legend.game.SItem.textLength;
-import static legend.game.SMap.FUN_800da114;
-import static legend.game.SMap.FUN_800de004;
-import static legend.game.SMap.FUN_800e3fac;
-import static legend.game.SMap.FUN_800e4018;
-import static legend.game.SMap.FUN_800e4708;
-import static legend.game.SMap.FUN_800e4e5c;
-import static legend.game.SMap.FUN_800e4f8c;
-import static legend.game.SMap.FUN_800e828c;
-import static legend.game.SMap.FUN_800e8e50;
-import static legend.game.SMap.FUN_800ea4c8;
-import static legend.game.SMap._800c68e8;
-import static legend.game.SMap.adjustSmapUvs;
-import static legend.game.SMap.getCollisionAndTransitionInfo;
-import static legend.game.SMap.handleEncounters;
-import static legend.game.SMap.mapTransition;
-import static legend.game.SMap.positionTextboxAtSobj;
-import static legend.game.SMap.renderEnvironment;
-import static legend.game.SMap.renderSmapModel;
-import static legend.game.SMap.renderSmapShadow;
-import static legend.game.SMap.submapFlags_800f7e54;
-import static legend.game.SMap.unloadSmap;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
 import static legend.game.Scus94491BpeSegment.FUN_8001d51c;
 import static legend.game.Scus94491BpeSegment.FUN_8001e010;
@@ -138,6 +116,7 @@ import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.freeSequence;
 import static legend.game.Scus94491BpeSegment_8004.stopMusicSequence;
@@ -155,26 +134,22 @@ import static legend.game.Scus94491BpeSegment_8005._80052ba8;
 import static legend.game.Scus94491BpeSegment_8005._80052baa;
 import static legend.game.Scus94491BpeSegment_8005._80052c20;
 import static legend.game.Scus94491BpeSegment_8005._80052c40;
-import static legend.game.Scus94491BpeSegment_8005._80052c44;
 import static legend.game.Scus94491BpeSegment_8005._8005a1d8;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.monsterSoundFileIndices_800500e8;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c3c;
+import static legend.game.Scus94491BpeSegment_8005.submapEnvState_80052c44;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8005.textboxVramX_80052bc8;
 import static legend.game.Scus94491BpeSegment_8005.textboxVramY_80052bf4;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bd7ac;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
-import static legend.game.Scus94491BpeSegment_800b._800bd7b4;
-import static legend.game.Scus94491BpeSegment_800b._800bd7b8;
-import static legend.game.Scus94491BpeSegment_800b._800bdb88;
 import static legend.game.Scus94491BpeSegment_800b._800bdc58;
 import static legend.game.Scus94491BpeSegment_800b._800bdf04;
 import static legend.game.Scus94491BpeSegment_800b._800bdf08;
 import static legend.game.Scus94491BpeSegment_800b._800be5d0;
-import static legend.game.Scus94491BpeSegment_800b._800bed28;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.encounterSoundEffects_800bd610;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -182,6 +157,7 @@ import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
 import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
+import static legend.game.Scus94491BpeSegment_800b.previousEngineState_800bdb88;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
@@ -190,6 +166,7 @@ import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.soundFiles_800bcf80;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
+import static legend.game.Scus94491BpeSegment_800b.submapFullyLoaded_800bd7b4;
 import static legend.game.Scus94491BpeSegment_800b.textU_800be5c0;
 import static legend.game.Scus94491BpeSegment_800b.textV_800be5c8;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
@@ -198,14 +175,10 @@ import static legend.game.Scus94491BpeSegment_800b.textboxText_800bdf38;
 import static legend.game.Scus94491BpeSegment_800b.textboxVariables_800bdf10;
 import static legend.game.Scus94491BpeSegment_800b.textboxes_800be358;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
+import static legend.game.Scus94491BpeSegment_800b.transitioningFromCombatToSubmap_800bd7b8;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800e.main;
-import static legend.game.combat.Bttl_800e.renderBttlModel;
-import static legend.game.combat.Bttl_800e.renderBttlShadow;
-import static legend.game.wmap.WMap.adjustWmapUvs;
-import static legend.game.wmap.WMap.renderWmapModel;
-import static legend.game.wmap.WMap.renderWmapShadow;
 
 public final class Scus94491BpeSegment_8002 {
   private Scus94491BpeSegment_8002() { }
@@ -322,7 +295,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80020468L)
-  public static void adjustCombatUvs(final ModelPart10 dobj2, final int colourMap) {
+  public static void adjustPartUvs(final ModelPart10 dobj2, final int colourMap) {
     final TmdObjTable1c objTable = dobj2.tmd_08;
 
     for(final TmdObjTable1c.Primitive primitive : objTable.primitives_10) {
@@ -354,9 +327,7 @@ public final class Scus94491BpeSegment_8002 {
       model.animateTextures_ec[i] = false;
     }
 
-    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
-      FUN_800de004(model, cContainer);
-    }
+    currentEngineState_8004dd04.modelLoaded(model, cContainer);
 
     //LAB_8002079c
     model.tpage_108 = (int)((cContainer.tmdPtr_00.id & 0xffff_0000L) >>> 11); // LOD uses the upper 16 bits of TMD IDs as tpage (sans VRAM X/Y)
@@ -418,11 +389,6 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   public static void animateModel(final Model124 model, final int interpolationFrameCount) {
-    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
-      FUN_800da114(model);
-      return;
-    }
-
     //LAB_80020be8
     //LAB_80020bf0
     for(int i = 0; i < 7; i++) {
@@ -530,39 +496,30 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80020ed8L)
   public static void FUN_80020ed8() {
-    if(_800bdb88 == EngineStateEnum.SUBMAP_05) {
-      if(_800bd7b4.get() == 0x1L) {
-        FUN_800e4708();
-      }
-
-      //LAB_80020f20
-      FUN_8002aae8();
-      FUN_800e4018();
-    }
-
     //LAB_80020f30
     //LAB_80020f34
-    final EngineStateEnum a0 = _800bdb88;
-    _800bd7b4.setu(0);
-    if(a0 != engineState_8004dd20) {
-      _800bdb88 = engineState_8004dd20;
+    submapFullyLoaded_800bd7b4.set(false);
+
+    final EngineStateEnum previousState = previousEngineState_800bdb88;
+    if(previousState != engineState_8004dd20) {
+      previousEngineState_800bdb88 = engineState_8004dd20;
 
       if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
         _800bd7b0.set(2);
-        _800bd7b8.setu(0);
+        transitioningFromCombatToSubmap_800bd7b8.set(false);
 
-        if(a0 == EngineStateEnum.TITLE_02) {
+        if(previousState == EngineStateEnum.TITLE_02) {
           _800bd7b0.set(9);
         }
 
         //LAB_80020f84
-        if(a0 == EngineStateEnum.COMBAT_06) {
+        if(previousState == EngineStateEnum.COMBAT_06) {
           _800bd7b0.set(-4);
-          _800bd7b8.setu(0x1L);
+          transitioningFromCombatToSubmap_800bd7b8.set(true);
         }
 
         //LAB_80020fa4
-        if(a0 == EngineStateEnum.WORLD_MAP_08) {
+        if(previousState == EngineStateEnum.WORLD_MAP_08) {
           _800bd7b0.set(3);
         }
       }
@@ -570,8 +527,8 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80020fb4
     //LAB_80020fb8
-    if(_800bdb88 == EngineStateEnum.TITLE_02) {
-      _800bd7ac.setu(0x1L);
+    if(previousEngineState_800bdb88 == EngineStateEnum.TITLE_02) {
+      _800bd7ac.set(true);
     }
 
     //LAB_80020fd0
@@ -615,23 +572,6 @@ public final class Scus94491BpeSegment_8002 {
       MathHelper.set(data, 0x0, 4, MathHelper.get(data, 0x0, 4) & (int)MEMORY.ref(4, a3).offset(0xcL).get() | (int)MEMORY.ref(4, a3).offset(0x8L).get());
       MathHelper.set(data, 0x4, 4, MathHelper.get(data, 0x4, 4) & (int)MEMORY.ref(4, a3).offset(0x4L).get() | (int)MEMORY.ref(4, a3).offset(0x0L).get());
     }
-  }
-
-  @Method(0x800211d8L)
-  public static void renderModel(final Model124 model) {
-    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
-      //LAB_80021230
-      renderSmapModel(model);
-    } else if(engineState_8004dd20 == EngineStateEnum.COMBAT_06) {
-      //LAB_80021220
-      renderBttlModel(model);
-    } else if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {
-      //LAB_8002120c
-      //LAB_80021240
-      renderWmapModel(model);
-    }
-
-    //LAB_80021248
   }
 
   @Method(0x80021258L)
@@ -749,47 +689,16 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021628L)
   public static void adjustModelUvs(final Model124 model) {
-    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
-      for(final ModelPart10 dobj2 : model.modelParts_00) {
-        adjustSmapUvs(dobj2, model.colourMap_9d);
-      }
-    } else if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {
-      for(final ModelPart10 dobj2 : model.modelParts_00) {
-        adjustWmapUvs(dobj2, model.colourMap_9d);
-      }
-    } else {
-      for(final ModelPart10 dobj2 : model.modelParts_00) {
-        adjustCombatUvs(dobj2, model.colourMap_9d);
-      }
+    for(final ModelPart10 dobj2 : model.modelParts_00) {
+      currentEngineState_8004dd04.adjustModelPartUvs(model, dobj2);
     }
-  }
-
-  @Method(0x80021724L)
-  public static void renderShadow(final Model124 model) {
-    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
-      renderSmapShadow(model);
-    } else if(engineState_8004dd20 == EngineStateEnum.COMBAT_06) {
-      renderBttlShadow(model);
-    } else if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {
-      renderWmapShadow(model);
-    }
-
-    //LAB_80021794
-  }
-
-  @Method(0x800217a4L)
-  public static void FUN_800217a4(final Model124 model) {
-    model.coord2_14.transforms.rotate.y = MathHelper.psxDegToRad(FUN_800ea4c8(MathHelper.radToPsxDeg(model.coord2_14.transforms.rotate.y)));
-    RotMatrix_Xyz(model.coord2_14.transforms.rotate, model.coord2_14.coord);
-    model.coord2_14.coord.scale(model.coord2_14.transforms.scale);
-    model.coord2_14.flg = 0;
   }
 
   @Method(0x800218f0L)
   public static void FUN_800218f0() {
-    if(_800bd7ac.get() == 1) {
+    if(_800bd7ac.get()) {
       _800bd7b0.set(9);
-      _800bd7ac.setu(0);
+      _800bd7ac.set(false);
     }
   }
 
@@ -1094,9 +1003,7 @@ public final class Scus94491BpeSegment_8002 {
 
         startFadeEffect(2, 10);
 
-        if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
-          FUN_800e3fac();
-        }
+        currentEngineState_8004dd04.menuClosed();
 
         textZ_800bdf00.set(13);
       }
@@ -1308,7 +1215,7 @@ public final class Scus94491BpeSegment_8002 {
   public static int takeEquipmentId(final Equipment equipment) {
     final int equipmentSlot = gameState_800babc8.equipment_1e8.indexOf(equipment);
 
-    if(equipmentSlot != 0xff) {
+    if(equipmentSlot != -1) {
       return takeEquipment(equipmentSlot);
     }
 
@@ -1347,6 +1254,10 @@ public final class Scus94491BpeSegment_8002 {
     return true;
   }
 
+  /**
+   * @param items the items to give
+   * @return the number of items that could not be given
+   */
   @Method(0x80023544L)
   public static int giveItems(final List<EnemyDrop> items) {
     int count = 0;
@@ -1356,13 +1267,12 @@ public final class Scus94491BpeSegment_8002 {
     while(it.hasNext()) {
       final EnemyDrop drop = it.next();
 
-      if(drop.performDrop()) {
-        count++;
-      } else {
+      if(!drop.performDrop()) {
         //LAB_800235a4
         //LAB_800235c0
         drop.overflow();
         it.remove();
+        count++;
       }
 
       //LAB_80023604
@@ -1855,9 +1765,9 @@ public final class Scus94491BpeSegment_8002 {
         final int itemId = script.params_20[0].get();
 
         if(itemId < 0xc0) {
-          yield takeEquipmentId(REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(itemId)).get());
+          yield giveEquipment(REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(itemId)).get()) ? 0 : 0xff;
         } else {
-          yield takeItemId(REGISTRIES.items.getEntry(LodMod.itemIdMap.get(itemId - 192)).get());
+          yield giveItem(REGISTRIES.items.getEntry(LodMod.itemIdMap.get(itemId - 192)).get()) ? 0 : 0xff;
         }
       }
     };
@@ -1994,70 +1904,6 @@ public final class Scus94491BpeSegment_8002 {
     textboxText.chars_58 = new TextboxChar08[textboxText.chars_1c * (textboxText.lines_1e + 1)];
     Arrays.setAll(textboxText.chars_58, i -> new TextboxChar08());
     calculateAppropriateTextboxBounds(textboxIndex, textboxText.x_14, textboxText.y_16);
-    return FlowControl.CONTINUE;
-  }
-
-  @ScriptDescription("Adds a textbox to a submap object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The textbox index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "submapObjectIndex", description = "The submap object, but may also have the flag 0x1000 set (unknown meaning)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "packedData", description = "Unknown data, 3 nibbles")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "width", description = "The textbox width")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "height", description = "The textbox height")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.STRING, name = "text", description = "The textbox text")
-  @Method(0x80025218L)
-  public static FlowControl scriptAddSobjTextbox(final RunningScript<?> script) {
-    if(script.params_20[2].get() == 0) {
-      return FlowControl.CONTINUE;
-    }
-
-    final int textboxIndex = script.params_20[0].get();
-    final int type = (int)_80052ba8.offset(((script.params_20[2].get() & 0xf00) >>> 8) * 0x2L).get();
-    clearTextbox(textboxIndex);
-
-    final Textbox4c textbox = textboxes_800be358[textboxIndex];
-    textbox._04 = (short)_80052b88.offset(((script.params_20[2].get() & 0xf0) >>> 4) * 0x2L).get();
-    textbox._06 = (short)_80052b68.offset((script.params_20[2].get() & 0xf) * 0x2L).get();
-    textbox.x_14 = 0;
-    textbox.y_16 = 0;
-    textbox.chars_18 = script.params_20[3].get() + 1;
-    textbox.lines_1a = script.params_20[4].get() + 1;
-    clearTextboxText(textboxIndex);
-
-    final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
-    textboxText.type_04 = type;
-    textboxText.str_24 = LodString.fromParam(script.params_20[5]);
-
-    if(type == 1 && (script.params_20[1].get() & 0x1000) > 0) {
-      textboxText.flags_08 |= 0x20;
-    }
-
-    //LAB_80025370
-    //LAB_80025374
-    if(type == 3) {
-      textboxText._6c = -1;
-    }
-
-    //LAB_800253a4
-    if(type == 4) {
-      textboxText.flags_08 |= 0x200;
-    }
-
-    //LAB_800253d4
-    textboxText.flags_08 |= 0x1000;
-    textboxText.chars_58 = new TextboxChar08[textboxText.chars_1c * (textboxText.lines_1e + 1)];
-    Arrays.setAll(textboxText.chars_58, i -> new TextboxChar08());
-    positionSobjTextbox(textboxIndex, script.params_20[1].get());
-
-    if(type == 2) {
-      textbox._38 = textbox.x_14;
-      textbox._3c = textbox.y_16;
-      textbox.x_14 = textbox._28;
-      textbox.y_16 = textbox._2c;
-      textbox._08 |= 0x2;
-    }
-
-    //LAB_80025494
-    //LAB_80025498
     return FlowControl.CONTINUE;
   }
 
@@ -3698,164 +3544,6 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80028928
   }
 
-  /** Calculates a good position to place a textbox for a specific sobj */
-  @Method(0x80028938L)
-  public static void positionSobjTextbox(final int textboxIndex, final int sobjIndex) {
-    final Textbox4c textbox = textboxes_800be358[textboxIndex];
-    final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
-
-    positionTextboxAtSobj(sobjIndex);
-    final SubmapStruct80 struct = _800c68e8;
-    final int s4 = struct.x2_70;
-    textbox._28 = s4;
-    final int sp10 = (struct.y2_74 - struct.y3_7c) / 2;
-    final int sp18 = struct.y2_74 - sp10;
-    textbox._2c = sp18;
-    final int sp14 = textbox._28 - struct.x1_68;
-    final int textWidth = textbox.chars_18 * 9 / 2;
-    final int textHeight = textbox.lines_1a * 6;
-
-    final int width;
-    if(engineState_8004dd20 != EngineStateEnum.SUBMAP_05) {
-      width = 320;
-    } else {
-      width = 360;
-    }
-
-    //LAB_80028a20
-    if(textboxText.chars_1c >= 17) {
-      if(sp18 >= 121) {
-        //LAB_80028acc
-        final int x = width / 2;
-        final int y = sp18 - sp10 - textHeight;
-        textbox.x_14 = x;
-        textbox.y_16 = y;
-        textbox._48 = 8;
-
-        textboxText.x_14 = x;
-        textboxText.y_16 = y;
-        textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 9 / 2;
-        textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6;
-        return;
-      }
-
-      final int x = width / 2;
-      final int y = sp18 + sp10 + textHeight;
-      textbox.x_14 = x;
-      textbox.y_16 = y;
-      textbox._48 = 7;
-
-      textboxText.x_14 = x;
-      textboxText.y_16 = y;
-      textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 9 / 2;
-      textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6;
-      return;
-    }
-
-    //LAB_80028b38
-    int y = sp18 - sp10 - textHeight;
-    if(textboxFits(textboxIndex, (short)s4, (short)y)) {
-      textbox.x_14 = s4;
-      textbox.y_16 = y;
-      textbox._48 = 0;
-
-      textboxText.x_14 = s4;
-      textboxText.y_16 = y;
-      textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 9 / 2;
-      textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6;
-      return;
-    }
-
-    //LAB_80028bc4
-    y = sp18 + sp10 + textHeight;
-    if(textboxFits(textboxIndex, (short)s4, (short)y)) {
-      textbox.x_14 = s4;
-      textbox.y_16 = y;
-      textbox._48 = 1;
-
-      textboxText.x_14 = s4;
-      textboxText.y_16 = y;
-      textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 9 / 2;
-      textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6;
-      return;
-    }
-
-    //LAB_80028c44
-    if(width / 2 < s4) {
-      //LAB_80028d58
-      final int s2 = s4 - sp14 - textWidth;
-      y = sp18 - sp10 - textHeight / 2;
-      if(textboxFits(textboxIndex, (short)s2, (short)y)) {
-        textbox.x_14 = s2;
-        textbox.y_16 = y;
-        textbox._48 = 4;
-
-        textboxText.x_14 = s2;
-        textboxText.y_16 = y;
-        textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 9 / 2;
-        textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6;
-        return;
-      }
-
-      //LAB_80028df0
-      y = sp18 + sp10 + textHeight / 2;
-      if(textboxFits(textboxIndex, (short)s2, (short)y)) {
-        textbox.x_14 = s2;
-        textbox.y_16 = y;
-        textbox._48 = 5;
-
-        textboxText.x_14 = s2;
-        textboxText.y_16 = y;
-        textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 9 / 2;
-        textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6;
-        return;
-      }
-    } else {
-      final int s2 = s4 + sp14 + textWidth;
-      y = sp18 - sp10 - textHeight / 2;
-      if(textboxFits(textboxIndex, (short)s2, (short)y)) {
-        textbox.x_14 = s2;
-        textbox.y_16 = y;
-        textbox._48 = 2;
-
-        textboxText.x_14 = s2;
-        textboxText.y_16 = y;
-        textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 9 / 2;
-        textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6;
-        return;
-      }
-
-      //LAB_80028ce4
-      y = sp18 + sp10 + textHeight / 2;
-      if(textboxFits(textboxIndex, (short)s2, (short)y)) {
-        textbox.x_14 = s2;
-        textbox.y_16 = y;
-        textbox._48 = 3;
-
-        textboxText.x_14 = s2;
-        textboxText.y_16 = y;
-        textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 9 / 2;
-        textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6;
-        return;
-      }
-    }
-
-    //LAB_80028e68
-    final int x;
-    if(width / 2 >= s4) {
-      x = s4 + sp14 + textWidth;
-    } else {
-      //LAB_80028e8c
-      x = s4 - sp14 - textWidth;
-    }
-
-    //LAB_80028e9c
-    calculateAppropriateTextboxBounds(textboxIndex, (short)x, (short)(sp18 + sp10 + textHeight));
-    textboxes_800be358[textboxIndex]._48 = 6;
-
-    //LAB_80028ef0
-  }
-
   @Method(0x80028f20L)
   public static boolean textboxFits(final int textboxIndex, final int x, final int y) {
     final int maxX;
@@ -4532,71 +4220,8 @@ public final class Scus94491BpeSegment_8002 {
     submapScene_80052c34.set(4);
     index_80052c38.set(0);
     submapCut_80052c3c.set(-1);
-    _80052c40.setu(0);
-    _80052c44.setu(0x2L);
-  }
-
-  @Method(0x8002aa04L)
-  public static void FUN_8002aa04() {
-    _800bed28.setu(0);
-  }
-
-  @Method(0x8002aae8L)
-  public static long FUN_8002aae8() {
-    long s0 = 0;
-    switch((int)_80052c44.get()) {
-      case 0x1:
-      case 0x2:
-        return 0;
-
-      case 0x5:
-        renderEnvironment();
-        FUN_800e8e50();
-        FUN_800e828c();
-        FUN_800e4f8c();
-        unloadSmap();
-
-        _80052c44.setu(0x2L);
-        break;
-
-      case 0x4:
-        renderEnvironment();
-
-      case 0x3:
-        FUN_800e8e50();
-        FUN_800e828c();
-        FUN_800e4f8c();
-        unloadSmap();
-        FUN_800e4e5c();
-
-        //LAB_8002ab98
-        _80052c44.setu(0x2L);
-        break;
-
-      case 0x0:
-        s0 = 0x1L;
-        renderEnvironment();
-        break;
-    }
-
-    //caseD_6
-    if((submapFlags_800f7e54 & 0x1) == 0) {
-      // If an encounter should start
-      if(handleEncounters() != 0) {
-        mapTransition(-1, 0);
-      }
-    }
-
-    //LAB_8002abdc
-    //LAB_8002abe0
-    final int collisionAndTransitionInfo = getCollisionAndTransitionInfo(index_80052c38.get());
-    if((collisionAndTransitionInfo & 0x10) != 0) {
-      mapTransition(collisionAndTransitionInfo >>> 22, collisionAndTransitionInfo >>> 16 & 0x3f);
-    }
-
-    //LAB_8002ac10
-    //LAB_8002ac14
-    return s0;
+    _80052c40.set(false);
+    submapEnvState_80052c44.set(2);
   }
 
   @Method(0x8002bb38L)

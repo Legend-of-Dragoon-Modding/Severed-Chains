@@ -70,9 +70,11 @@ public final class Scus94491BpeSegment_8005 {
   public static final IntRef submapScene_80052c34 = MEMORY.ref(4, 0x80052c34L, IntRef::new);
   public static final IntRef index_80052c38 = MEMORY.ref(4, 0x80052c38L, IntRef::new);
   public static final IntRef submapCut_80052c3c = MEMORY.ref(4, 0x80052c3cL, IntRef::new);
-  public static final Value _80052c40 = MEMORY.ref(4, 0x80052c40L);
-  public static final Value _80052c44 = MEMORY.ref(4, 0x80052c44L);
-  public static final Value _80052c48 = MEMORY.ref(4, 0x80052c48L);
+  /** Moved from SMAP since it's referenced unconditionally when saving the game */
+  public static int submapCutForSave_800cb450;
+  /** Something related to submap camera and map transitioning */
+  public static final BoolRef _80052c40 = MEMORY.ref(4, 0x80052c40L, BoolRef::new);
+  public static final IntRef submapEnvState_80052c44 = MEMORY.ref(4, 0x80052c44L, IntRef::new);
 
   public static final Value _80052c6c = MEMORY.ref(4, 0x80052c6cL);
 

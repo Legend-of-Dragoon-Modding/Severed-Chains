@@ -6,7 +6,6 @@ import legend.game.inventory.Equipment;
 import legend.game.inventory.InventoryEntry;
 import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
-import legend.game.EngineStateEnum;
 import legend.game.types.LodString;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
@@ -29,19 +28,17 @@ import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderMenuItems;
 import static legend.game.SItem.renderString;
 import static legend.game.SItem.renderText;
-import static legend.game.SMap.FUN_800e3fac;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.setInventoryFromDisplay;
 import static legend.game.Scus94491BpeSegment_8002.sortItems;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
-import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_800b.equipmentOverflow;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.itemOverflow;
-import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928;
 import static legend.game.Scus94491BpeSegment_800b.saveListDownArrow_800bdb98;
 import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
@@ -193,9 +190,7 @@ public class TooManyItemsScreen extends MenuScreen {
           uiFile_800bdc3c = null;
           whichMenu_800bdc38 = WhichMenu.UNLOAD_TOO_MANY_ITEMS_MENU_35;
 
-          if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
-            FUN_800e3fac();
-          }
+          currentEngineState_8004dd04.menuClosed();
 
           textZ_800bdf00.set(13);
         }
@@ -210,7 +205,7 @@ public class TooManyItemsScreen extends MenuScreen {
       saveListDownArrow_800bdb98 = allocateUiElement(53, 60, 358, this.FUN_8010f178(6));
     }
 
-    renderMenuItems(16, 33, this.droppedItems, 0, Math.min(5, itemsDroppedByEnemies_800bc928.size()), saveListUpArrow_800bdb94, saveListDownArrow_800bdb98);
+    renderMenuItems(16, 33, this.droppedItems, 0, Math.min(5, this.droppedItems.size()), saveListUpArrow_800bdb94, saveListDownArrow_800bdb98);
 
     if((a4 & 0x1) != 0 && !allocate) {
       renderString(16, 164, inv.getDescription(), false);
@@ -263,7 +258,7 @@ public class TooManyItemsScreen extends MenuScreen {
     this.mouseY = y;
 
     if(this.menuState == MenuState._8) {
-      for(int i = 0; i < itemsDroppedByEnemies_800bc928.size(); i++) {
+      for(int i = 0; i < this.droppedItems.size(); i++) {
         if(this.dropIndex != i && MathHelper.inBox(x, y, 9, this.FUN_8010f178(i), 171, 17)) {
           playSound(1);
           this.dropIndex = i;
@@ -292,7 +287,7 @@ public class TooManyItemsScreen extends MenuScreen {
     }
 
     if(this.menuState == MenuState._8) {
-      for(int i = 0; i < itemsDroppedByEnemies_800bc928.size(); i++) {
+      for(int i = 0; i < this.droppedItems.size(); i++) {
         if(MathHelper.inBox(x, y, 9, this.FUN_8010f178(i), 171, 17)) {
           playSound(2);
           this.dropIndex = i;
@@ -338,13 +333,13 @@ public class TooManyItemsScreen extends MenuScreen {
 
   private void droppedNavigateDown() {
     playSound(1);
-    this.dropIndex = this.dropIndex < itemsDroppedByEnemies_800bc928.size() - 1 ? ++this.dropIndex : 0;
+    this.dropIndex = this.dropIndex < this.droppedItems.size() - 1 ? ++this.dropIndex : 0;
     this.renderable_8011e200.y_44 = this.FUN_8010f178(this.dropIndex);
   }
 
   private void droppedNavigateUp() {
     playSound(1);
-    this.dropIndex = this.dropIndex > 0 ? --this.dropIndex : itemsDroppedByEnemies_800bc928.size() - 1;
+    this.dropIndex = this.dropIndex > 0 ? --this.dropIndex : this.droppedItems.size() - 1;
     this.renderable_8011e200.y_44 = this.FUN_8010f178(this.dropIndex);
   }
 
@@ -419,12 +414,12 @@ public class TooManyItemsScreen extends MenuScreen {
       playSound(40);
     } else {
       if(isItem) {
-        this.items.set(this.invIndex + this.invScroll, (MenuEntryStruct04<Item>)(MenuEntryStruct04)newItem);
         this.droppedItems.set(this.dropIndex, (MenuEntryStruct04<InventoryEntry>)(MenuEntryStruct04)this.items.get(this.invIndex + this.invScroll));
+        this.items.set(this.invIndex + this.invScroll, (MenuEntryStruct04<Item>)(MenuEntryStruct04)newItem);
         setInventoryFromDisplay(this.items, gameState_800babc8.items_2e9, gameState_800babc8.items_2e9.size());
       } else {
-        this.equipment.set(this.invIndex + this.invScroll, (MenuEntryStruct04<Equipment>)(MenuEntryStruct04)newItem);
         this.droppedItems.set(this.dropIndex, (MenuEntryStruct04<InventoryEntry>)(MenuEntryStruct04)this.equipment.get(this.invIndex + this.invScroll));
+        this.equipment.set(this.invIndex + this.invScroll, (MenuEntryStruct04<Equipment>)(MenuEntryStruct04)newItem);
         setInventoryFromDisplay(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipment_1e8.size());
       }
 

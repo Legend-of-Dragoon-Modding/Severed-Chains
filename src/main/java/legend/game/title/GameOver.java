@@ -2,6 +2,7 @@ package legend.game.title;
 
 import legend.core.gpu.RECT;
 import legend.core.memory.Method;
+import legend.game.EngineState;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
@@ -26,11 +27,9 @@ import static legend.game.Scus94491BpeSegment_800b.gameOverMcq_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 
-public final class GameOver {
-  private GameOver() { }
-
+public class GameOver extends EngineState {
   @Method(0x800c7558L)
-  public static void gameOverLoaded(final FileData data) {
+  private void gameOverLoaded(final FileData data) {
     final McqHeader mcq = new McqHeader(data);
 
     final RECT rect = new RECT().set((short)640, (short)0, (short)mcq.vramWidth_08, (short)mcq.vramHeight_0a);
@@ -40,12 +39,13 @@ public final class GameOver {
   }
 
   @Method(0x800c75b4L)
-  public static void renderGameOver() {
+  private void renderGameOver() {
     renderMcq(gameOverMcq_800bdc3c, 640, 0, -320, -108, 36, 128);
   }
 
+  @Override
   @Method(0x800c75fcL)
-  public static void gameOver() {
+  public void tick() {
     switch(pregameLoadingStage_800bb10c.get()) {
       case 0 -> {
         if(Unpacker.getLoadingFileCount() == 0) {
@@ -59,7 +59,7 @@ public final class GameOver {
 
       case 1 -> {
         pregameLoadingStage_800bb10c.set(2);
-        loadDrgnFile(0, 6667, GameOver::gameOverLoaded);
+        loadDrgnFile(0, 6667, this::gameOverLoaded);
       }
 
       case 3 -> {
@@ -76,7 +76,7 @@ public final class GameOver {
           startFadeEffect(1, 10);
         }
 
-        renderGameOver();
+        this.renderGameOver();
       }
 
       case 5 -> {
@@ -85,7 +85,7 @@ public final class GameOver {
         }
 
         //LAB_800c7740
-        renderGameOver();
+        this.renderGameOver();
       }
 
       case 6 -> {

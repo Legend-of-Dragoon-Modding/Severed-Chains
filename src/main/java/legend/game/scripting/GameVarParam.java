@@ -1,6 +1,6 @@
 package legend.game.scripting;
 
-import legend.game.SMap;
+import legend.game.submap.SMap;
 import legend.game.Scus94491BpeSegment_8004;
 import legend.game.Scus94491BpeSegment_8005;
 import legend.game.Scus94491BpeSegment_8006;
@@ -16,6 +16,7 @@ import legend.game.EngineStateEnum;
 import legend.game.submap.SubmapObject210;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 
 public class GameVarParam extends Param {
@@ -90,16 +91,16 @@ public class GameVarParam extends Param {
       case 60 -> Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920.get();
       case 61 -> Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c.get();
 
-      case 64 -> SMap.sobjs_800c6880[0].index;
-      case 65 -> SMap.submapControllerState_800c6740.index;
-      case 66 -> SMap.sobjCount_800c6730;
+      case 64 -> ((SMap)currentEngineState_8004dd04).sobjs_800c6880[0].index;
+      case 65 -> ((SMap)currentEngineState_8004dd04).submapControllerState_800c6740.index;
+      case 66 -> ((SMap)currentEngineState_8004dd04).sobjCount_800c6730;
       case 67 -> Scus94491BpeSegment_800b._800bd7b0.get();
       case 68 -> Scus94491BpeSegment_800b._800bda08.get();
       case 69 -> Scus94491BpeSegment_8005.submapCut_80052c30.get();
       case 70 -> Scus94491BpeSegment_8005.submapScene_80052c34.get();
 //      case 71 -> SMap._800cb44c;
-      case 72 -> SMap.encounterAccumulator_800c6ae8.get();
-      case 73 -> SMap._800c6970.get(0).get();
+      case 72 -> ((SMap)currentEngineState_8004dd04).encounterAccumulator_800c6ae8;
+      case 73 -> ((SMap)currentEngineState_8004dd04).indicatorTickCountArray_800c6970[0];
 //      case 74 -> Scus94491BpeSegment_8004._8004de54;
 //      case 75 -> Scus94491BpeSegment_8004._8004de50;
 
@@ -220,16 +221,16 @@ public class GameVarParam extends Param {
       case 60 -> Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920.set(val);
       case 61 -> Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c.set(val);
 
-      case 64 -> SMap.sobjs_800c6880[0] = (ScriptState<SubmapObject210>)scriptStatePtrArr_800bc1c0[val];
-      case 65 -> SMap.submapControllerState_800c6740 = (ScriptState<Void>)scriptStatePtrArr_800bc1c0[val];
-      case 66 -> SMap.sobjCount_800c6730 = val;
+      case 64 -> ((SMap)currentEngineState_8004dd04).sobjs_800c6880[0] = (ScriptState<SubmapObject210>)scriptStatePtrArr_800bc1c0[val];
+      case 65 -> ((SMap)currentEngineState_8004dd04).submapControllerState_800c6740 = (ScriptState<Void>)scriptStatePtrArr_800bc1c0[val];
+      case 66 -> ((SMap)currentEngineState_8004dd04).sobjCount_800c6730 = val;
       case 67 -> Scus94491BpeSegment_800b._800bd7b0.set(val);
       case 68 -> Scus94491BpeSegment_800b._800bda08.set(val);
       case 69 -> Scus94491BpeSegment_8005.submapCut_80052c30.set(val);
       case 70 -> Scus94491BpeSegment_8005.submapScene_80052c34.set(val);
 //      case 71 -> SMap._800cb44c;
-      case 72 -> SMap.encounterAccumulator_800c6ae8.set(val);
-      case 73 -> SMap._800c6970.get(0).set(val);
+      case 72 -> ((SMap)currentEngineState_8004dd04).encounterAccumulator_800c6ae8 = val;
+      case 73 -> ((SMap)currentEngineState_8004dd04).indicatorTickCountArray_800c6970[0] = val;
 //      case 74 -> Scus94491BpeSegment_8004._8004de54;
 //      case 75 -> Scus94491BpeSegment_8004._8004de50;
 

@@ -1,4 +1,4 @@
-package legend.game.types;
+package legend.game.submap;
 
 public class Struct18 {
   public int _00;

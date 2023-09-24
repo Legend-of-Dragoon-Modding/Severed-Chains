@@ -3401,7 +3401,7 @@ public final class Bttl_800f {
     if(itemId < 192) {
       given = giveEquipment(REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(itemId)).get());
     } else {
-      given = giveItem(REGISTRIES.items.getEntry(LodMod.itemIdMap.get(itemId)).get());
+      given = giveItem(REGISTRIES.items.getEntry(LodMod.itemIdMap.get(itemId - 192)).get());
     }
 
     if(given) {

@@ -23,6 +23,7 @@ import static legend.game.Scus94491BpeSegment.scriptFunctionDescriptions;
 import static legend.game.Scus94491BpeSegment.scriptLog;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8004.scriptSubFunctions_8004e29c;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
@@ -398,6 +399,11 @@ public class ScriptState<T> {
           } else if(paramType == 0xb) { // INLINE_TABLE_1 Push (commandStart[commandStart[script[this].storage[cmd2] + (cmd0 | cmd1 << 8)] + (cmd0 | cmd1 << 8)])
             //LAB_80016360
             final int storage = this.storage_44[cmd2];
+
+            if(this.context.opOffset_08 == 514 && this.index == 10) {
+              System.out.println();
+            }
+
             this.context.params_20[paramIndex] = new ScriptInlineParam(this, this.context.opOffset_08).array((short)childCommand + new ScriptInlineParam(this, this.context.opOffset_08).array((short)childCommand + storage).get());
           } else if(paramType == 0xc) { // INLINE_TABLE_2 Push commandStart[commandStart[script[this].storage[cmd0]] + script[this].storage[cmd1]]
             //LAB_800163a0
@@ -533,9 +539,9 @@ public class ScriptState<T> {
       case 35, 43 -> this.scriptMod();
       case 36, 44 -> this.scriptMod2();
 
-      case 40 -> this.FUN_80016b2c();
-      case 41 -> this.FUN_80016b5c();
-      case 42 -> this.FUN_80016b8c();
+      case 40 -> this.scriptMultiply12();
+      case 41 -> this.scriptDivide12();
+      case 42 -> this.scriptDivide2_12();
 
       case 48 -> this.scriptSquareRoot();
       case 49 -> this.scriptRandom();
@@ -848,20 +854,23 @@ public class ScriptState<T> {
     return FlowControl.CONTINUE;
   }
 
+  /** Note: reduces likelihood of overflow at cost of precision */
   @Method(0x80016b2cL)
-  public FlowControl FUN_80016b2c() {
+  public FlowControl scriptMultiply12() {
     this.context.params_20[1].set((this.context.params_20[1].get() >> 4) * (this.context.params_20[0].get() >> 4) >> 4);
     return FlowControl.CONTINUE;
   }
 
+  /** Note: reduces likelihood of overflow at cost of precision */
   @Method(0x80016b5cL)
-  public FlowControl FUN_80016b5c() {
+  public FlowControl scriptDivide12() {
     this.context.params_20[1].set(((this.context.params_20[1].get() << 4) / this.context.params_20[0].get()) << 8);
     return FlowControl.CONTINUE;
   }
 
+  /** Note: reduces likelihood of overflow at cost of precision */
   @Method(0x80016b8cL)
-  public FlowControl FUN_80016b8c() {
+  public FlowControl scriptDivide2_12() {
     this.context.params_20[1].set(((this.context.params_20[0].get() << 4) / this.context.params_20[1].get()) << 8);
     return FlowControl.CONTINUE;
   }
@@ -907,6 +916,12 @@ public class ScriptState<T> {
   @Method(0x80016cfcL)
   public FlowControl scriptExecuteSubFunc() {
     try {
+      final FlowControl result = currentEngineState_8004dd04.executeScriptFunction(this.context.opParam_18, this.context);
+
+      if(result != null) {
+        return result;
+      }
+
       return scriptSubFunctions_8004e29c[this.context.opParam_18].apply(this.context);
     } catch(final UnsupportedOperationException e) {
       throw new RuntimeException("Script subfunc %d error".formatted(this.context.opParam_18), e);
