@@ -2,19 +2,10 @@ package legend.core.gte;
 
 import legend.core.MathHelper;
 import org.joml.Matrix3f;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 public class Gte {
-  private static class Vector2 {
-    public float x;
-    public float y;
-
-    public void set(final Vector2 other) {
-      this.x = other.x;
-      this.y = other.y;
-    }
-  }
-
   private static class Color {
     public int r;
     public int g;
@@ -36,9 +27,9 @@ public class Gte {
   //Data Registers
   private final Vector3f[] V = {new Vector3f(), new Vector3f(), new Vector3f()};   //R0-1 R2-3 R4-5 s16
   private final Color RGBC = new Color();                     //R6
-  private short OTZ;                     //R7
-  private final Vector2[] SXY = {new Vector2(), new Vector2(), new Vector2(), new Vector2()}; //R12-15 FIFO
-  private final int[] SZ = new int[4];    //R16-19 FIFO
+  private float OTZ;                     //R7
+  private final Vector2f[] SXY = {new Vector2f(), new Vector2f(), new Vector2f(), new Vector2f()}; //R12-15 FIFO
+  private final float[] SZ = new float[4];    //R16-19 FIFO
   private int MAC0;                       //R24
 
   //Control Registers
@@ -52,19 +43,11 @@ public class Gte {
   private long FLAG;                  //R63
 
   private void AVSZ3() {
-    //MAC0 = ZSF3 * (SZ1 + SZ2 + SZ3); for AVSZ3
-    //OTZ = MAC0 / 1000h;for both(saturated to 0..FFFFh)
-    final long avsz3 = (long)0x155 * (this.SZ[1] + this.SZ[2] + this.SZ[3]); // 1/3
-    this.MAC0 = (int)this.setMAC0(avsz3);
-    this.OTZ = this.setSZ3(avsz3 >> 12);
+    this.OTZ = this.setSZ3((this.SZ[1] + this.SZ[2] + this.SZ[3]) / 3);
   }
 
   private void AVSZ4() {
-    //MAC0 = ZSF4 * (SZ0 + SZ1 + SZ2 + SZ3);for AVSZ4
-    //OTZ = MAC0 / 1000h;for both(saturated to 0..FFFFh)
-    final long avsz4 = (long)0x100 * (this.SZ[0] + this.SZ[1] + this.SZ[2] + this.SZ[3]); // 1/4
-    this.MAC0 = (int)this.setMAC0(avsz4);
-    this.OTZ = this.setSZ3(avsz4 >> 12);
+    this.OTZ = this.setSZ3((this.SZ[0] + this.SZ[1] + this.SZ[2] + this.SZ[3]) / 4);
   }
 
   private void NCLIP() { //Normal clipping
@@ -94,10 +77,10 @@ public class Gte {
     this.SZ[0] = this.SZ[1];
     this.SZ[1] = this.SZ[2];
     this.SZ[2] = this.SZ[3];
-    this.SZ[3] = (int)this.positionTemp.z;
+    this.SZ[3] = this.positionTemp.z;
 
     final float n;
-    if(this.SZ[3] == 0) {
+    if(this.SZ[3] == 0.0f) {
       n = 1.0f;
       this.FLAG |= 0x1 << 17;
     } else {
@@ -127,18 +110,18 @@ public class Gte {
     return value;
   }
 
-  private short setSZ3(final long value) {
-    if(value < 0) {
+  private float setSZ3(final float value) {
+    if(value < 0.0f) {
       this.FLAG |= 0x4_0000L; // SZ3 or OTZ saturated to +0000h..+FFFFh
       return 0;
     }
 
     if(value > 0xffff) {
       this.FLAG |= 0x4_0000L; // SZ3 or OTZ saturated to +0000h..+FFFFh
-      return (short)0xffff;
+      return 0xffff;
     }
 
-    return (short)value;
+    return value;
   }
 
   private long setMAC0(final long value) {
@@ -172,22 +155,22 @@ public class Gte {
 
   /** Data register 7 OTZ */
   public short getAverageZ() {
-    return this.OTZ;
+    return (short)Math.round(this.OTZ);
   }
 
   /** Data register 12, 13, 14, 15 */
   public short getScreenX(final int index) {
-    return (short)this.SXY[index].x;
+    return (short)Math.round(this.SXY[index].x);
   }
 
   /** Data register 12, 13, 14, 15 */
   public short getScreenY(final int index) {
-    return (short)this.SXY[index].y;
+    return (short)Math.round(this.SXY[index].y);
   }
 
   /** Data register 16, 17, 18, 19 */
   public int getScreenZ(final int index) {
-    return this.SZ[index];
+    return (short)Math.round(this.SZ[index]);
   }
 
   /** Data register 24 */
@@ -197,15 +180,15 @@ public class Gte {
 
   /** Control register 0-4 */
   public void getRotationMatrix(final MATRIX matrix) {
-    matrix.set(0, (short)(this.RT.m00 * 4096.0f));
-    matrix.set(1, (short)(this.RT.m01 * 4096.0f));
-    matrix.set(2, (short)(this.RT.m02 * 4096.0f));
-    matrix.set(3, (short)(this.RT.m10 * 4096.0f));
-    matrix.set(4, (short)(this.RT.m11 * 4096.0f));
-    matrix.set(5, (short)(this.RT.m12 * 4096.0f));
-    matrix.set(6, (short)(this.RT.m20 * 4096.0f));
-    matrix.set(7, (short)(this.RT.m21 * 4096.0f));
-    matrix.set(8, (short)(this.RT.m22 * 4096.0f));
+    matrix.set(0, (short)Math.round(this.RT.m00 * 4096.0f));
+    matrix.set(1, (short)Math.round(this.RT.m01 * 4096.0f));
+    matrix.set(2, (short)Math.round(this.RT.m02 * 4096.0f));
+    matrix.set(3, (short)Math.round(this.RT.m10 * 4096.0f));
+    matrix.set(4, (short)Math.round(this.RT.m11 * 4096.0f));
+    matrix.set(5, (short)Math.round(this.RT.m12 * 4096.0f));
+    matrix.set(6, (short)Math.round(this.RT.m20 * 4096.0f));
+    matrix.set(7, (short)Math.round(this.RT.m21 * 4096.0f));
+    matrix.set(8, (short)Math.round(this.RT.m22 * 4096.0f));
   }
 
   /** Control register 0-4 */
@@ -234,9 +217,9 @@ public class Gte {
 
   /** Control register 5-7 */
   public void getTranslationVector(final VECTOR vector) {
-    vector.setX((int)this.translation.x);
-    vector.setY((int)this.translation.y);
-    vector.setZ((int)this.translation.z);
+    vector.setX(Math.round(this.translation.x));
+    vector.setY(Math.round(this.translation.y));
+    vector.setZ(Math.round(this.translation.z));
   }
 
   /** Control register 5-7 */
