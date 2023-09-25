@@ -469,7 +469,6 @@ public class SMap extends EngineState {
    * </ol>
    */
   private final MrgFile mrg_800d6d1c = MEMORY.ref(4, 0x800d6d1cL, MrgFile::new);
-
   private final Value tim_800d7620 = MEMORY.ref(4, 0x800d7620L);
   private final Value tim_800d7c60 = MEMORY.ref(4, 0x800d7c60L);
   private final Value tim_800d7ee0 = MEMORY.ref(4, 0x800d7ee0L);
@@ -537,8 +536,8 @@ public class SMap extends EngineState {
   private final int[] _800f7f6c = new int[4];
   private final ArrayRef<Struct14_2> _800f7f74 = MEMORY.ref(4, 0x800f7f74L, ArrayRef.of(Struct14_2.class, 256, 0x14, Struct14_2::new));
 
-  private final UnboundedArrayRef<ShortRef> smapFileIndices_800f982c = MEMORY.ref(2, 0x800f982cL, UnboundedArrayRef.of(2, ShortRef::new));
-
+  /** Seems to be missing one element at the end, there are 792 cuts */
+  private final ArrayRef<ShortRef> smapFileIndices_800f982c = MEMORY.ref(2, 0x800f982cL, ArrayRef.of(ShortRef.class, 791, 2, ShortRef::new));
   private int submapModelLoadingStage_800f9e5a;
   private final UnsignedShortRef tpage_800f9e5c = new UnsignedShortRef();
   private final UnsignedShortRef clut_800f9e5e = new UnsignedShortRef();
