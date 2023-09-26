@@ -1,11 +1,11 @@
 package legend.game.wmap;
 
 import legend.core.gte.GsCOORDINATE2;
-import legend.core.gte.SVECTOR;
+import org.joml.Vector3f;
 
 public class WMapAtmosphericEffectInstance60 {
   public final GsCOORDINATE2 coord2_00 = new GsCOORDINATE2();
-  public final SVECTOR rotation_50 = new SVECTOR();
+  public final Vector3f rotation_50 = new Vector3f();
   /** short */
   public int x_58;
   /** short */

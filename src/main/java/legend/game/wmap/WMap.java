@@ -9,7 +9,6 @@ import legend.core.gpu.RECT;
 import legend.core.gte.COLOUR;
 import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORDINATE2;
-import legend.core.gte.MATRIX;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.gte.SVECTOR;
@@ -77,7 +76,6 @@ import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a3ec;
-import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.animateModel;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.clearTextbox;
@@ -98,13 +96,11 @@ import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
-import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
 import static legend.game.Scus94491BpeSegment_8003.StoreImage;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransformTriple;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.previousEngineState_8004dd28;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
@@ -1596,9 +1592,9 @@ public class WMap extends EngineState {
   @Method(0x800d1db8L)
   private void calculateDistancesToPlaces() {
     final WMapStruct258 v0 = this.wmapStruct258_800c66a8;
-    final int x = v0.coord2_34.coord.transfer.getX();
-    final int y = v0.coord2_34.coord.transfer.getY();
-    final int z = v0.coord2_34.coord.transfer.getZ();
+    final float x = v0.coord2_34.coord.transfer.x;
+    final float y = v0.coord2_34.coord.transfer.y;
+    final float z = v0.coord2_34.coord.transfer.z;
 
     //LAB_800d1e14
     int count = 0;
@@ -2035,10 +2031,10 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d41f8
-    final MATRIX wmapRotation = new MATRIX();
+    final MV wmapRotation = new MV();
     this.rotateCoord2(this.wmapStruct258_800c66a8.tmdRendering_08.rotations_08[0], this.wmapStruct258_800c66a8.tmdRendering_08.coord2s_04[0]);
     GsGetLs(this.wmapStruct258_800c66a8.tmdRendering_08.coord2s_04[0], wmapRotation);
-    setRotTransMatrix(wmapRotation);
+    GTE.setTransforms(wmapRotation);
 
     final SVECTOR playerTranslation = new SVECTOR().set(this.wmapStruct258_800c66a8.coord2_34.coord.transfer);
     final DVECTOR playerArrowXy = new DVECTOR(); // sxy2
@@ -2161,10 +2157,10 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d4d64
-    final VECTOR transfer = this.wmapStruct258_800c66a8.coord2_34.coord.transfer;
-    struct.vec_a4.x = transfer.getX() / 6.0f;
-    struct.vec_a4.y = transfer.getY() / 6.0f;
-    struct.vec_a4.z = transfer.getZ() / 6.0f;
+    final Vector3f transfer = this.wmapStruct258_800c66a8.coord2_34.coord.transfer;
+    struct.vec_a4.x = transfer.x / 6.0f;
+    struct.vec_a4.y = transfer.y / 6.0f;
+    struct.vec_a4.z = transfer.z / 6.0f;
     struct.vec_b4.zero();
 
     if(Math.abs(sp14) < Math.abs(sp10)) {
@@ -2781,7 +2777,7 @@ public class WMap extends EngineState {
       intersectionSymbolIndex = 0; //TODO this was uninitialized in the code
     }
 
-    final MATRIX lsTransform = new MATRIX();
+    final MV lsTransform = new MV();
     final Vector3f intersectionPoint = new Vector3f();
 
     //LAB_800d7b84
@@ -2792,13 +2788,13 @@ public class WMap extends EngineState {
     final int w = pathIntersectionSymbolMetrics_800ef170.get(intersectionSymbolIndex).get(intersectionStateIndex).w_02.get();
     final int h = pathIntersectionSymbolMetrics_800ef170.get(intersectionSymbolIndex).get(intersectionStateIndex).h_03.get();
 
-    final int x = this.wmapStruct258_800c66a8.coord2_34.coord.transfer.getX();
-    final int y = this.wmapStruct258_800c66a8.coord2_34.coord.transfer.getY();
-    final int z = this.wmapStruct258_800c66a8.coord2_34.coord.transfer.getZ();
+    final float x = this.wmapStruct258_800c66a8.coord2_34.coord.transfer.x;
+    final float y = this.wmapStruct258_800c66a8.coord2_34.coord.transfer.y;
+    final float z = this.wmapStruct258_800c66a8.coord2_34.coord.transfer.z;
 
     this.rotateCoord2(this.wmapStruct258_800c66a8.tmdRendering_08.rotations_08[0], this.wmapStruct258_800c66a8.tmdRendering_08.coord2s_04[0]);
     GsGetLs(this.wmapStruct258_800c66a8.tmdRendering_08.coord2s_04[0], lsTransform);
-    setRotTransMatrix(lsTransform);
+    GTE.setTransforms(lsTransform);
 
     //LAB_800d7d6c
     for(int i = 0; i < this.mapState_800c6798.locationCount_08; i++) {
@@ -2900,13 +2896,13 @@ public class WMap extends EngineState {
                   .vramPos(640, 256);
 
                 if(zoomState == 0) {
-                  final int dx = x - pathPoint.getX();
-                  final int dy = y - pathPoint.getY();
-                  final int dz = z - pathPoint.getZ();
-                  final int sp90 = Math.max(0, 0x200 - SquareRoot0(dx * dx + dy * dy + dz * dz)) / 2;
+                  final float dx = x - pathPoint.getX();
+                  final float dy = y - pathPoint.getY();
+                  final float dz = z - pathPoint.getZ();
+                  final float sp90 = Math.max(0, 0x200 - Math.sqrt(dx * dx + dy * dy + dz * dz)) / 2.0f;
 
                   cmd
-                    .rgb(sp90 * 47 / 256, sp90 * 39 / 256, 0)
+                    .rgb(Math.round(sp90 * 47 / 256), Math.round(sp90 * 39 / 256), 0)
                     .pos(0, sx - 2, sy - 2)
                     .pos(1, sx + 2, sy - 2)
                     .pos(2, sx - 2, sy + 2)
@@ -2998,8 +2994,8 @@ public class WMap extends EngineState {
 
   @Method(0x800d9044L)
   private void renderWorldMap() {
-    final MATRIX lightMatrix = new MATRIX();
-    final MATRIX rotTransMatrix = new MATRIX();
+    final MV lightMatrix = new MV();
+    final MV rotTransMatrix = new MV();
 
     this.renderAndHandleWorldMap();
     this.FUN_800da248();
@@ -3040,10 +3036,10 @@ public class WMap extends EngineState {
           //LAB_800d9294
           final float sin = MathHelper.sin(this.wmapStruct258_800c66a8.tmdRendering_08.angles_10[i]) * 0x20;
           if((i & 0x1) != 0) {
-            coord2.coord.transfer.setY((int)sin);
+            coord2.coord.transfer.y = sin;
           } else {
             //LAB_800d92d8
-            coord2.coord.transfer.setY((int)-sin);
+            coord2.coord.transfer.y = -sin;
           }
 
           //LAB_800d9304
@@ -3054,7 +3050,7 @@ public class WMap extends EngineState {
       //LAB_800d9320
       GsGetLws(dobj2.coord2_04, lightMatrix, rotTransMatrix);
       GsSetLightMatrix(lightMatrix);
-      setRotTransMatrix(rotTransMatrix);
+      GTE.setTransforms(rotTransMatrix);
 
       if(this.mapState_800c6798.continentIndex_00 < 9 && i == 0) {
         this.tempZ_800c66d8 = orderingTableSize_1f8003c8.get() - 3;
@@ -3137,7 +3133,8 @@ public class WMap extends EngineState {
         this.wmapStruct258_800c66a8._1f9++;
 
         if(this.wmapStruct258_800c66a8._1f9 >= 18 / vsyncMode_8007a3b8) {
-          this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(mapPositions_800ef1a8.get(this.mapState_800c6798.continentIndex_00));
+          final VECTOR vec = mapPositions_800ef1a8.get(this.mapState_800c6798.continentIndex_00);
+          this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(vec.getX(), vec.getY(), vec.getZ());
           this.wmapStruct258_800c66a8.zoomState_1f8 = 3;
 
           //LAB_800d97bc
@@ -3211,7 +3208,8 @@ public class WMap extends EngineState {
         this.wmapStruct258_800c66a8._1f9++;
 
         if(this.wmapStruct258_800c66a8._1f9 >= 18 / vsyncMode_8007a3b8) {
-          this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(this.wmapStruct258_800c66a8.svec_1e8);
+          final SVECTOR vec = this.wmapStruct258_800c66a8.svec_1e8;
+          this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(vec.getX(), vec.getY(), vec.getZ());
           this.wmapStruct258_800c66a8.zoomState_1f8 = 6;
         }
 
@@ -3240,7 +3238,8 @@ public class WMap extends EngineState {
 
   @Method(0x800d9eb0L)
   private void FUN_800d9eb0() {
-    this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.add(this.wmapStruct258_800c66a8.svec_1f0);
+    final SVECTOR vec = this.wmapStruct258_800c66a8.svec_1f0;
+    this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.add(vec.getX(), vec.getY(), vec.getZ());
   }
 
   /** Handles Coolon fast travel, Queen Fury overlay, probably other things */
@@ -3370,10 +3369,10 @@ public class WMap extends EngineState {
         struct258.models_0c[2].coord2_14.transforms.scale.set(struct258.models_0c[2].coord2_14.transforms.scale.x);
         struct258.vec_94.y -= 96.0f / (3.0f / vsyncMode_8007a3b8);
 
-        this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.y.sub((int)(96 / (3.0f / vsyncMode_8007a3b8)));
+        this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.y -= 96.0f / (3.0f / vsyncMode_8007a3b8);
 
-        if(this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.getY() < -1500) {
-          this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.setY(-1500);
+        if(this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.y < -1500) {
+          this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.y = -1500;
         }
 
         //LAB_800daab8
@@ -3383,7 +3382,7 @@ public class WMap extends EngineState {
 
         //LAB_800daaf0
         if(struct258.vec_94.y <= -2500.0f) {
-          if(this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.getY() <= -1500) {
+          if(this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.y <= -1500) {
             struct258._220 = 2;
           }
         }
@@ -3593,8 +3592,9 @@ public class WMap extends EngineState {
         break;
 
       case 0xb:
-        this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(struct258.svec_200);
-        this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.setY(-1500);
+        final SVECTOR vec = struct258.svec_200;
+        this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(vec.getX(), vec.getY(), vec.getZ());
+        this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.y = -1500;
         struct258.vec_94.x = struct258.svec_208.getX();
         struct258.vec_94.y = struct258.svec_208.getY();
         struct258.vec_94.z = struct258.svec_208.getZ();
@@ -3612,14 +3612,14 @@ public class WMap extends EngineState {
       case 0xc:
         this.renderWinglyTeleportScreenEffect();
 
-        this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.y.add((int)(112 / (3.0f / vsyncMode_8007a3b8)));
+        this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.y += 112.0f / (3.0f / vsyncMode_8007a3b8);
 
-        if(this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.getY() < struct258.svec_200.getY()) {
-          this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.setY(struct258.svec_200.getY());
+        if(this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.y < struct258.svec_200.getY()) {
+          this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.y = struct258.svec_200.getY();
         }
 
         //LAB_800dbd6c
-        if(this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.getY() >= struct258.svec_200.getY()) {
+        if(this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.y >= struct258.svec_200.getY()) {
           struct258._220 = 12;
           struct258.vec_94.y = -0.09765625f / (3.0f / vsyncMode_8007a3b8); // 100/1024
         }
@@ -3668,7 +3668,8 @@ public class WMap extends EngineState {
       case 0:
         mcqBrightness_800ef1a4 = 0.0f;
 
-        this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(struct258.svec_200);
+        final SVECTOR vec1 = struct258.svec_200;
+        this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(vec1.getX(), vec1.getY(), vec1.getZ());
 
         struct258.vec_94.set(
           struct258.svec_208.getX(),
@@ -3840,21 +3841,11 @@ public class WMap extends EngineState {
   }
 
   @Method(0x800dce64L)
-  private void rotateCoord2(final SVECTOR rotation, final GsCOORDINATE2 coord2) {
-    final MATRIX mat = new MATRIX().identity();
-    mat.transfer.set(coord2.coord.transfer);
-
-    RotMatrix_Xyz(rotation, mat);
-
-    coord2.flg = 0;
-    coord2.coord.set(mat);
-  }
-
   private void rotateCoord2(final Vector3f rotation, final GsCOORDINATE2 coord2) {
-    final MATRIX mat = new MATRIX().identity();
+    final MV mat = new MV();
     mat.transfer.set(coord2.coord.transfer);
 
-    RotMatrix_Xyz(rotation, mat);
+    mat.rotationXYZ(rotation);
 
     coord2.flg = 0;
     coord2.coord.set(mat);
@@ -3946,9 +3937,7 @@ public class WMap extends EngineState {
   @Method(0x800dfbd8L)
   private void initPlayerModelAndAnimation() {
     final WMapStruct258 struct258 = this.wmapStruct258_800c66a8;
-    struct258.vec_94.x = struct258.coord2_34.coord.transfer.getX();
-    struct258.vec_94.y = struct258.coord2_34.coord.transfer.getY();
-    struct258.vec_94.z = struct258.coord2_34.coord.transfer.getZ();
+    struct258.vec_94.set(struct258.coord2_34.coord.transfer);
     struct258.vec_84.set(struct258.vec_94);
 
     //LAB_800dfca4
@@ -4259,7 +4248,7 @@ public class WMap extends EngineState {
 
   @Method(0x800e1740L)
   private void renderDartShadow() {
-    final MATRIX sp0x28 = new MATRIX();
+    final MV sp0x28 = new MV();
     final SVECTOR vert0 = new SVECTOR();
     final SVECTOR vert1 = new SVECTOR();
     final SVECTOR vert2 = new SVECTOR();
@@ -4268,7 +4257,7 @@ public class WMap extends EngineState {
     final DVECTOR sxy2 = new DVECTOR();
 
     GsGetLs(this.wmapStruct258_800c66a8.models_0c[this.wmapStruct258_800c66a8.modelIndex_1e4].coord2_14, sp0x28);
-    setRotTransMatrix(sp0x28);
+    GTE.setTransforms(sp0x28);
 
     //LAB_800e17b4
     for(int i = 0; i < 8; i++) {
@@ -4300,7 +4289,7 @@ public class WMap extends EngineState {
 
   @Method(0x800e1ac4L)
   private void renderQueenFuryWake() {
-    final MATRIX sp0x28 = new MATRIX();
+    final MV sp0x28 = new MV();
     final SVECTOR sp0x48 = new SVECTOR();
     final SVECTOR sp0x50 = new SVECTOR();
     final SVECTOR sp0x58 = new SVECTOR();
@@ -4320,7 +4309,7 @@ public class WMap extends EngineState {
     this.FUN_800e2ae4(delta, this.wmapStruct258_800c66a8.vec_94);
     this.rotateCoord2(this.wmapStruct258_800c66a8.tmdRendering_08.rotations_08[0], this.wmapStruct258_800c66a8.tmdRendering_08.coord2s_04[0]);
     GsGetLs(this.wmapStruct258_800c66a8.tmdRendering_08.coord2s_04[0], sp0x28);
-    setRotTransMatrix(sp0x28);
+    GTE.setTransforms(sp0x28);
 
     //LAB_800e1ccc
     for(int i = 0; i < 39; i++) {
@@ -4788,9 +4777,7 @@ public class WMap extends EngineState {
 
         this.FUN_800d4bc8(1);
 
-        this.wmapStruct19c0_800c66b0.vec_a4.x = this.wmapStruct258_800c66a8.coord2_34.coord.transfer.getX() / 30.0f;
-        this.wmapStruct19c0_800c66b0.vec_a4.y = this.wmapStruct258_800c66a8.coord2_34.coord.transfer.getY() / 30.0f;
-        this.wmapStruct19c0_800c66b0.vec_a4.z = this.wmapStruct258_800c66a8.coord2_34.coord.transfer.getZ() / 30.0f;
+        this.wmapStruct19c0_800c66b0.vec_a4.set(this.wmapStruct258_800c66a8.coord2_34.coord.transfer).div(30.0f);
 
         this.wmapStruct19c0_800c66b0._c4 = 0;
         this.wmapStruct258_800c66a8.zoomState_1f8 = 0;
@@ -5454,13 +5441,13 @@ public class WMap extends EngineState {
     final List<WmapLocationLabelMetrics0c> labelList = new ArrayList<>();
 
     //LAB_800e6c38
-    final MATRIX sp0x38 = new MATRIX();
+    final MV sp0x38 = new MV();
     for(int i = 0; i < this.placeCount_800c86cc; i++) {
       //LAB_800e6c5c
       if(!places_800f0234.get(locations_800f0e34.get(locationsIndices_800c84c8.get(i).get()).placeIndex_02.get()).name_00.isNull()) {
         //LAB_800e6ccc
         GsGetLs(this.wmapStruct258_800c66a8.tmdRendering_08.coord2s_04[0], sp0x38);
-        setRotTransMatrix(sp0x38);
+        GTE.setTransforms(sp0x38);
 
         GTE.perspectiveTransform(smokeTranslationVectors_800c74b8.get(i));
         final short sx = GTE.getScreenX(2);
@@ -5772,7 +5759,7 @@ public class WMap extends EngineState {
     this.weightedAvg(4.0f - this.mapState_800c6798.dotOffset_18, this.mapState_800c6798.dotOffset_18, avg, playerPos, nextPathPos);
 
     this.wmapStruct258_800c66a8.coord2_34.coord.transfer.set(avg);
-    this.wmapStruct258_800c66a8.coord2_34.coord.transfer.y.sub(2);
+    this.wmapStruct258_800c66a8.coord2_34.coord.transfer.y -= 2.0f;
 
     if(this.mapState_800c6798.submapCut_c4 == 242 && this.mapState_800c6798.submapScene_c6 == 3) { // Donau
       if(gameState_800babc8.scriptFlags2_bc.get(0x8f)) {
@@ -6639,7 +6626,7 @@ public class WMap extends EngineState {
     struct._24 = new WMapAtmosphericEffectInstance60[24];
 
     //LAB_800ebbb4
-    final VECTOR translation = new VECTOR();
+    final Vector3f translation = new Vector3f();
     for(int i = 0; i < 12; i++) {
       final WMapAtmosphericEffectInstance60 cloud = new WMapAtmosphericEffectInstance60();
       struct._24[i] = cloud;
@@ -6665,7 +6652,7 @@ public class WMap extends EngineState {
       }
 
       //LAB_800ebe24
-      cloud.rotation_50.set((short)0, (short)0, (short)0);
+      cloud.rotation_50.set(0.0f, 0.0f, 0.0f);
       cloud.x_58 = (288 - rand() % 64) / 2;
       cloud.y_5a = ( 80 - rand() % 32) / 2;
       cloud.brightness_5c = 0.0f;
@@ -6678,7 +6665,7 @@ public class WMap extends EngineState {
       final WMapAtmosphericEffectInstance60 cloud = new WMapAtmosphericEffectInstance60();
       struct._24[i + 12] = cloud;
       cloud.set(struct._24[i]);
-      cloud.coord2_00.coord.transfer.setY(0);
+      cloud.coord2_00.coord.transfer.y = 0.0f;
     }
   }
 
@@ -6707,13 +6694,13 @@ public class WMap extends EngineState {
       cloud.z_5e++;
 
       if(cloud.z_5e >> i % 3 + 4 != 0) {
-        cloud.coord2_00.coord.transfer.x.incr();
+        cloud.coord2_00.coord.transfer.x++;
         cloud.z_5e = 0;
       }
 
       //LAB_800ec288
-      if(cloud.coord2_00.coord.transfer.getX() > 700) {
-        cloud.coord2_00.coord.transfer.setX(-700);
+      if(cloud.coord2_00.coord.transfer.x > 700) {
+        cloud.coord2_00.coord.transfer.x = -700;
       }
 
       //LAB_800ec2b0
@@ -6744,10 +6731,10 @@ public class WMap extends EngineState {
       //LAB_800ec3a8
       if(!MathHelper.flEq(cloud.brightness_5c, 0.0f)) {
         //LAB_800ec3c8
-        final MATRIX lsMatrix = new MATRIX();
+        final MV lsMatrix = new MV();
         GsGetLs(cloud.coord2_00, lsMatrix);
         lsMatrix.identity(); // NOTE: does not clear translation
-        setRotTransMatrix(lsMatrix);
+        GTE.setTransforms(lsMatrix);
         GTE.perspectiveTransform(-cloud.x_58, -cloud.y_5a, 0);
         final short sx0 = GTE.getScreenX(2);
         final short sy0 = GTE.getScreenY(2);
@@ -6849,12 +6836,10 @@ public class WMap extends EngineState {
 
       //LAB_800ecab0
       GsInitCoordinate2(null, snowflake.coord2_00);
-      snowflake.coord2_00.coord.transfer.setX(500 - rand() % 1000);
-      snowflake.coord2_00.coord.transfer.setY(    - rand() %  200);
-      snowflake.coord2_00.coord.transfer.setZ(500 - rand() % 1000);
-      snowflake.rotation_50.setX((short)0);
-      snowflake.rotation_50.setY((short)0);
-      snowflake.rotation_50.setZ((short)(rand() % 12));
+      snowflake.coord2_00.coord.transfer.x = 500 - rand() % 1000;
+      snowflake.coord2_00.coord.transfer.y =     - rand() %  200;
+      snowflake.coord2_00.coord.transfer.z = 500 - rand() % 1000;
+      snowflake.rotation_50.set(0.0f, 0.0f, rand() % 12);
       snowflake.x_58 = rand() % 2 - 1;
       snowflake.y_5a = rand() % 2 + 1;
       snowflake.brightness_5c = 0.0f;
@@ -6865,7 +6850,7 @@ public class WMap extends EngineState {
 
   @Method(0x800ecd10L)
   private void renderSnow() {
-    final MATRIX lsMatrix = new MATRIX();
+    final MV lsMatrix = new MV();
     final Vector3f rotation = new Vector3f();
 
     //LAB_800ecdb4
@@ -6900,21 +6885,21 @@ public class WMap extends EngineState {
       //LAB_800ed164
       if(!MathHelper.flEq(snowflake.brightness_5c, 0.0f)) {
         //LAB_800ed184
-        snowflake.coord2_00.coord.transfer.x.add(snowflake.x_58);
-        snowflake.coord2_00.coord.transfer.y.add(snowflake.y_5a);
-        snowflake.coord2_00.coord.transfer.z.add(snowflake.z_5e);
+        snowflake.coord2_00.coord.transfer.x += snowflake.x_58;
+        snowflake.coord2_00.coord.transfer.y += snowflake.y_5a;
+        snowflake.coord2_00.coord.transfer.z += snowflake.z_5e;
 
-        if(snowflake.coord2_00.coord.transfer.getY() > 0) {
-          snowflake.coord2_00.coord.transfer.setX(500 - rand() % 1000);
-          snowflake.coord2_00.coord.transfer.setY(-200);
-          snowflake.coord2_00.coord.transfer.setZ(500 - rand() % 1000);
+        if(snowflake.coord2_00.coord.transfer.y > 0.0f) {
+          snowflake.coord2_00.coord.transfer.x =  500 - rand() % 1000;
+          snowflake.coord2_00.coord.transfer.y = -200;
+          snowflake.coord2_00.coord.transfer.z =  500 - rand() % 1000;
         }
 
         //LAB_800ed2bc
         this.rotateCoord2(rotation, snowflake.coord2_00);
         GsGetLs(snowflake.coord2_00, lsMatrix);
         lsMatrix.identity(); // NOTE: does not clear translation
-        setRotTransMatrix(lsMatrix);
+        GTE.setTransforms(lsMatrix);
         GTE.perspectiveTransform(-2, -2, 0);
 
         final short sx0 = GTE.getScreenX(2);
@@ -6955,8 +6940,8 @@ public class WMap extends EngineState {
                       //LAB_800ed5a4
                       if(sy3 - sy1 <= 0x200) {
                         //LAB_800ed5d8
-                        snowflake.rotation_50.setZ((short)((snowflake.rotation_50.getZ() + 1) % 12));
-                        final int index = snowflake.rotation_50.getZ() / 2;
+                        snowflake.rotation_50.z = (snowflake.rotation_50.z + 1) % 12;
+                        final int index = (int)(snowflake.rotation_50.z / 2.0f);
 
                         final int u = snowUvs_800f65c8.get(index).get(0).get();
                         final int v = snowUvs_800f65c8.get(index).get(1).get();
@@ -7043,7 +7028,7 @@ public class WMap extends EngineState {
   @Method(0x800edbc0L)
   private void renderSmoke() {
     final Vector3f rotation = new Vector3f(); // Just (0, 0, 0)
-    final MATRIX ls = new MATRIX();
+    final MV ls = new MV();
 
     if((this.filesLoadedFlags_800c66b8.get() & 0x1000) == 0) {
       return;
@@ -7101,22 +7086,22 @@ public class WMap extends EngineState {
 
               //LAB_800edebc
               //LAB_800edf88
-              smoke.coord2_00.coord.transfer.setX((int)(smokeTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.getX() * smoke.scaleAndColourFade_50 / 16));
-              smoke.coord2_00.coord.transfer.setY((int)(smokeTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.getY() * smoke.scaleAndColourFade_50 / 4));
-              smoke.coord2_00.coord.transfer.setZ((int)(smokeTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.getZ() * smoke.scaleAndColourFade_50 / 16));
+              smoke.coord2_00.coord.transfer.x = smokeTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.getX() * smoke.scaleAndColourFade_50 / 16;
+              smoke.coord2_00.coord.transfer.y = smokeTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.getY() * smoke.scaleAndColourFade_50 / 4;
+              smoke.coord2_00.coord.transfer.z = smokeTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.getZ() * smoke.scaleAndColourFade_50 / 16;
 
               if(this.mapState_800c6798.continentIndex_00 == 0) {
                 if(mode == 4) {
                   //LAB_800ee0e4
-                  smoke.coord2_00.coord.transfer.setX((int)(smokeTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.getX() * smoke.scaleAndColourFade_50 / 16));
-                  smoke.coord2_00.coord.transfer.setY((int)(smokeTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.getY() * smoke.scaleAndColourFade_50 / 4));
-                  smoke.coord2_00.coord.transfer.setZ((int)(smokeTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.getZ() * smoke.scaleAndColourFade_50 / 16 + 80));
+                  smoke.coord2_00.coord.transfer.x = smokeTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.getX() * smoke.scaleAndColourFade_50 / 16;
+                  smoke.coord2_00.coord.transfer.y = smokeTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.getY() * smoke.scaleAndColourFade_50 / 4;
+                  smoke.coord2_00.coord.transfer.z = smokeTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.getZ() * smoke.scaleAndColourFade_50 / 16 + 80;
                   //LAB_800ee1dc
                 } else if(mode == 8) {
                   //LAB_800ee238
-                  smoke.coord2_00.coord.transfer.setX((int)(smokeTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.getX() * smoke.scaleAndColourFade_50 / 16 + 48));
-                  smoke.coord2_00.coord.transfer.setY((int)(smokeTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.getY() * smoke.scaleAndColourFade_50 / 4));
-                  smoke.coord2_00.coord.transfer.setZ((int)(smokeTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.getZ() * smoke.scaleAndColourFade_50 / 16 + 48));
+                  smoke.coord2_00.coord.transfer.x = smokeTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.getX() * smoke.scaleAndColourFade_50 / 16 + 48;
+                  smoke.coord2_00.coord.transfer.y = smokeTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.getY() * smoke.scaleAndColourFade_50 / 4;
+                  smoke.coord2_00.coord.transfer.z = smokeTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.getZ() * smoke.scaleAndColourFade_50 / 16 + 48;
                 }
 
                 //LAB_800ee32c
@@ -7124,15 +7109,15 @@ public class WMap extends EngineState {
               } else if(this.mapState_800c6798.continentIndex_00 == 1) {
                 if(mode == 4) {
                   //LAB_800ee3a4
-                  smoke.coord2_00.coord.transfer.setX((int)(smokeTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.getX() * smoke.scaleAndColourFade_50 / 16));
-                  smoke.coord2_00.coord.transfer.setY((int)(smokeTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.getY() * smoke.scaleAndColourFade_50 / 4 + 48));
-                  smoke.coord2_00.coord.transfer.setZ((int)(smokeTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.getZ() * smoke.scaleAndColourFade_50 / 16 - 100));
+                  smoke.coord2_00.coord.transfer.x = smokeTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.getX() * smoke.scaleAndColourFade_50 / 16;
+                  smoke.coord2_00.coord.transfer.y = smokeTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.getY() * smoke.scaleAndColourFade_50 / 4 + 48;
+                  smoke.coord2_00.coord.transfer.z = smokeTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.getZ() * smoke.scaleAndColourFade_50 / 16 - 100;
                   //LAB_800ee4a0
                 } else if(mode == 8) {
                   //LAB_800ee4fc
-                  smoke.coord2_00.coord.transfer.setX((int)(smokeTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.getX() * smoke.scaleAndColourFade_50 / 16 - 48));
-                  smoke.coord2_00.coord.transfer.setY((int)(smokeTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.getY() * smoke.scaleAndColourFade_50 / 4));
-                  smoke.coord2_00.coord.transfer.setZ((int)(smokeTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.getZ() * smoke.scaleAndColourFade_50 / 16 + 32));
+                  smoke.coord2_00.coord.transfer.x = smokeTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.getX() * smoke.scaleAndColourFade_50 / 16 - 48;
+                  smoke.coord2_00.coord.transfer.y = smokeTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.getY() * smoke.scaleAndColourFade_50 / 4;
+                  smoke.coord2_00.coord.transfer.z = smokeTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.getZ() * smoke.scaleAndColourFade_50 / 16 + 32;
                 }
               }
 
@@ -7140,7 +7125,7 @@ public class WMap extends EngineState {
               this.rotateCoord2(rotation, smoke.coord2_00);
               GsGetLs(smoke.coord2_00, ls);
               ls.identity(); // NOTE: does not clear translation
-              setRotTransMatrix(ls);
+              GTE.setTransforms(ls);
 
               final GpuCommandPoly cmd = new GpuCommandPoly(4)
                 .bpp(Bpp.BITS_4)

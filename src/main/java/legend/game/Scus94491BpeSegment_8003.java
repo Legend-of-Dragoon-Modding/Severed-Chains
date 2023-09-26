@@ -454,7 +454,7 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x8003d550L)
   public static void GsMulCoord2(final MV matrix1, final MV matrix2) {
     matrix2.transfer.mul(matrix1);
-    matrix2.mul(matrix1);
+    matrix1.mul(matrix2, matrix2);
     matrix2.transfer.add(matrix1.transfer);
   }
 
