@@ -1,10 +1,11 @@
 package legend.game.submap;
 
 import legend.core.gte.VECTOR;
+import org.joml.Vector3f;
 
 public class SubmapStruct80 {
   public final VECTOR playerPos_00 = new VECTOR();
-  public final VECTOR playerMovement_0c = new VECTOR();
+  public final Vector3f playerMovement_0c = new Vector3f();
 
   public int x0_60;
   public int y0_64;

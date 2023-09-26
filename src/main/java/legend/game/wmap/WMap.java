@@ -10,6 +10,7 @@ import legend.core.gte.COLOUR;
 import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MATRIX;
+import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
@@ -420,12 +421,11 @@ public class WMap extends EngineState {
       final ModelPart10 dobj2 = model.modelParts_00[i];
 
       if((model.partInvisible_f4 & 1L << i) == 0) {
-        final MATRIX ls = new MATRIX();
-        final MATRIX lw = new MATRIX();
+        final MV ls = new MV();
+        final MV lw = new MV();
         GsGetLws(dobj2.coord2_04, lw, ls);
         GsSetLightMatrix(lw);
-        GTE.setRotationMatrix(ls);
-        GTE.setTranslationVector(ls.transfer);
+        GTE.setTransforms(ls);
         Renderer.renderDobj2(dobj2, false, 0);
       }
     }

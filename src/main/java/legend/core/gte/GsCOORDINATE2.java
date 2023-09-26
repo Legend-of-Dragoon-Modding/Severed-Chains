@@ -2,8 +2,8 @@ package legend.core.gte;
 
 public class GsCOORDINATE2 {
   public int flg;
-  public final MATRIX coord = new MATRIX();
-  public final MATRIX workm = new MATRIX();
+  public final MV coord = new MV();
+  public final MV workm = new MV();
   public Transforms transforms = new Transforms();
   public GsCOORDINATE2 super_;
   public GsCOORDINATE2 sub;

@@ -4624,8 +4624,7 @@ public final class Bttl_800c {
     final VECTOR sp0x10 = new VECTOR().set(translation1);
     sp0x10.mul(worldToScreenMatrix_800c3548);
 
-    GTE.setRotationMatrix(worldToScreenMatrix_800c3548);
-    GTE.setTranslationVector(worldToScreenMatrix_800c3548.transfer);
+    GTE.setTransforms(worldToScreenMatrix_800c3548);
 
     final MATRIX sp0x38 = new MATRIX();
     GTE.getRotationMatrix(sp0x38);

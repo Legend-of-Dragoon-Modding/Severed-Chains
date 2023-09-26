@@ -215,6 +215,11 @@ public class Gte {
     this.RT.set(matrix);
   }
 
+  public void setTransforms(final MV mv) {
+    this.setRotationMatrix(mv);
+    this.setTranslationVector(mv.transfer);
+  }
+
   /** Control register 5-7 */
   public void getTranslationVector(final VECTOR vector) {
     vector.setX(Math.round(this.translation.x));

@@ -2,7 +2,7 @@ package legend.game;
 
 import legend.core.gpu.RECT;
 import legend.core.gte.GsCOORDINATE2;
-import legend.core.gte.MATRIX;
+import legend.core.gte.MV;
 import legend.core.memory.Value;
 import legend.game.sound.Instrument;
 import legend.game.sound.InstrumentLayer10;
@@ -37,9 +37,9 @@ public final class Scus94491BpeSegment_800c {
   public static final Matrix3f lightDirectionMatrix_800c34e8 = new Matrix3f();
   public static final Matrix3f lightColourMatrix_800c3508 = new Matrix3f();
 
-  public static final MATRIX worldToScreenMatrix_800c3548 = new MATRIX();
+  public static final MV worldToScreenMatrix_800c3548 = new MV();
   /** Includes aspect scale */
-  public static final MATRIX identityAspectMatrix_800c3588 = new MATRIX();
+  public static final MV identityAspectMatrix_800c3588 = new MV();
 
   public static final GsCOORDINATE2[] coord2s_800c35a8 = new GsCOORDINATE2[31];
 

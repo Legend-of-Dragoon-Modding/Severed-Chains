@@ -163,9 +163,9 @@ public final class Scus94491BpeSegment_800e {
   /** Very similar to {@link Scus94491BpeSegment_8002#FUN_80020718(Model124, CContainer, TmdAnimationFile)} */
   @Method(0x800e6b3cL)
   public static void FUN_800e6b3c(final Model124 model, final CContainer cContainer, final TmdAnimationFile tmdAnimFile) {
-    final int x = model.coord2_14.coord.transfer.getX();
-    final int y = model.coord2_14.coord.transfer.getY();
-    final int z = model.coord2_14.coord.transfer.getZ();
+    final float x = model.coord2_14.coord.transfer.x;
+    final float y = model.coord2_14.coord.transfer.y;
+    final float z = model.coord2_14.coord.transfer.z;
 
     //LAB_800e6b7c
     for(int i = 0; i < 7; i++) {
@@ -212,7 +212,7 @@ public final class Scus94491BpeSegment_800e {
     model.shadowType_cc = 0;
     model.coord2_14.transforms.scale.set(1.0f, 1.0f, 1.0f);
     model.shadowSize_10c.set(1.0f, 1.0f, 1.0f);
-    model.shadowOffset_118.set(0, 0, 0);
+    model.shadowOffset_118.zero();
   }
 
   @Method(0x800e6d60L)

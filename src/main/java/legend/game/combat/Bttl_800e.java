@@ -2295,7 +2295,7 @@ public final class Bttl_800e {
     model.coord2_14.transforms.scale.set(1.0f, 1.0f, 1.0f);
     model.tpage_108 = 0;
     model.shadowSize_10c.set(1.0f, 1.0f, 1.0f);
-    model.shadowOffset_118.set(0, 0, 0);
+    model.shadowOffset_118.zero();
     model.shadowType_cc = 0;
     model.modelPartWithShadowIndex_cd = 0;
 
@@ -3128,21 +3128,21 @@ public final class Bttl_800e {
 
     if(model.shadowType_cc == 3) {
       //LAB_800ec2ec
-      shadow.coord2_14.coord.transfer.setX(model.shadowOffset_118.getX() + model.modelParts_00[model.modelPartWithShadowIndex_cd].coord2_04.coord.transfer.getX());
-      shadow.coord2_14.coord.transfer.setY(model.shadowOffset_118.getY() - MathHelper.safeDiv(model.coord2_14.coord.transfer.getY(), model.coord2_14.transforms.scale.y));
-      shadow.coord2_14.coord.transfer.setZ(model.shadowOffset_118.getZ() + model.modelParts_00[model.modelPartWithShadowIndex_cd].coord2_04.coord.transfer.getZ());
+      shadow.coord2_14.coord.transfer.x = model.shadowOffset_118.x + model.modelParts_00[model.modelPartWithShadowIndex_cd].coord2_04.coord.transfer.x;
+      shadow.coord2_14.coord.transfer.y = model.shadowOffset_118.y - MathHelper.safeDiv(model.coord2_14.coord.transfer.y, model.coord2_14.transforms.scale.y);
+      shadow.coord2_14.coord.transfer.z = model.shadowOffset_118.z + model.modelParts_00[model.modelPartWithShadowIndex_cd].coord2_04.coord.transfer.z;
     } else {
-      shadow.coord2_14.coord.transfer.setX(model.shadowOffset_118.getX());
+      shadow.coord2_14.coord.transfer.x = model.shadowOffset_118.x;
 
       if(model.shadowType_cc == 1) {
-        shadow.coord2_14.coord.transfer.setY(model.shadowOffset_118.getY());
+        shadow.coord2_14.coord.transfer.y = model.shadowOffset_118.y;
       } else {
         //LAB_800ec2bc
-        shadow.coord2_14.coord.transfer.setY(model.shadowOffset_118.getY() - MathHelper.safeDiv(model.coord2_14.coord.transfer.getY(), model.coord2_14.transforms.scale.y));
+        shadow.coord2_14.coord.transfer.y = model.shadowOffset_118.y - MathHelper.safeDiv(model.coord2_14.coord.transfer.y, model.coord2_14.transforms.scale.y);
       }
 
       //LAB_800ec2e0
-      shadow.coord2_14.coord.transfer.setZ(model.shadowOffset_118.getZ());
+      shadow.coord2_14.coord.transfer.z = model.shadowOffset_118.z;
     }
 
     //LAB_800ec370

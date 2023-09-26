@@ -2,7 +2,6 @@ package legend.game.types;
 
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.VECTOR;
 import legend.game.combat.deff.Cmb;
 import legend.game.combat.deff.Lmb;
 import org.joml.Vector3f;
@@ -90,7 +89,7 @@ public class Model124 {
   /** Pretty sure this doesn't include VRAM X/Y */
   public int tpage_108;
   public final Vector3f shadowSize_10c = new Vector3f();
-  public final VECTOR shadowOffset_118 = new VECTOR();
+  public final Vector3f shadowOffset_118 = new Vector3f();
 
   public Model124(final String name) {
     this.name = name;

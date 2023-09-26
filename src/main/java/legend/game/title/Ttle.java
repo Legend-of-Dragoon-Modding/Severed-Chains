@@ -8,7 +8,7 @@ import legend.core.gpu.Rect4i;
 import legend.core.gpu.Renderable;
 import legend.core.gpu.VramTexture;
 import legend.core.gte.GsCOORDINATE2;
-import legend.core.gte.MATRIX;
+import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.gte.TmdWithId;
 import legend.core.memory.Method;
@@ -36,6 +36,7 @@ import java.util.List;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SAVES;
 import static legend.core.gpu.VramTextureLoader.palettesFromTim;
@@ -59,9 +60,7 @@ import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
-import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -950,15 +949,15 @@ public class Ttle extends EngineState {
 
     //LAB_800cb834
     for(int i = 0; i < this._800c66d0.count_08; i++) {
-      final MATRIX sp10 = new MATRIX();
-      final MATRIX sp30 = new MATRIX();
+      final MV sp10 = new MV();
+      final MV sp30 = new MV();
 
       //LAB_800cb85c
       this.FUN_800cc26c(rotation, coord2s[i]);
       GsGetLws(dobj2s[i].coord2_04, sp10, sp30);
       GsSetLightMatrix(sp10);
-      sp30.scaleL(scale);
-      setRotTransMatrix(sp30);
+      sp30.scaleLocal(scale);
+      GTE.setTransforms(sp30);
       zOffset_1f8003e8.set(100);
       fireRenderable[i]
         .colourMultiplier(this.flameColour)
@@ -1069,10 +1068,10 @@ public class Ttle extends EngineState {
   }
 
   @Method(0x800cc26cL)
-  private void FUN_800cc26c(final Vector3f a0, final GsCOORDINATE2 a1) {
-    final MATRIX m = new MATRIX().identity();
+  private void FUN_800cc26c(final Vector3f rotation, final GsCOORDINATE2 a1) {
+    final MV m = new MV();
     m.transfer.set(a1.coord.transfer);
-    RotMatrix_Xyz(a0, m);
+    m.rotationXYZ(rotation);
     a1.coord.set(m);
     a1.flg = 0;
   }

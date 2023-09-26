@@ -2,6 +2,7 @@ package legend.game;
 
 import legend.core.gpu.Bpp;
 import legend.core.gte.MATRIX;
+import legend.core.gte.MV;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
@@ -247,7 +248,7 @@ public final class Scus94491BpeSegment_800b {
     Arrays.setAll(stats_800be5f8, i -> new ActiveStatsa0());
   }
 
-  public static final MATRIX matrix_800bed30 = new MATRIX();
+  public static final MV matrix_800bed30 = new MV();
   public static final IntRef screenOffsetX_800bed50 = MEMORY.ref(4, 0x800bed50L, IntRef::new);
   public static final IntRef screenOffsetY_800bed54 = MEMORY.ref(4, 0x800bed54L, IntRef::new);
   public static final Value hasNoEncounters_800bed58 = MEMORY.ref(4, 0x800bed58L);

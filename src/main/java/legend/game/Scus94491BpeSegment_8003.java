@@ -8,8 +8,8 @@ import legend.core.gpu.TimHeader;
 import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MATRIX;
+import legend.core.gte.MV;
 import legend.core.gte.SVECTOR;
-import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;
@@ -33,8 +33,6 @@ import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
-import static legend.game.Scus94491BpeSegment.rcos;
-import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment_8002.SetColorMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8002.SetLightMatrix;
@@ -192,11 +190,11 @@ public final class Scus94491BpeSegment_8003 {
     displayWidth_1f8003e0.set(displayWidth);
     displayHeight_1f8003e4.set(displayHeight);
 
-    final int aspect = (displayHeight << 14) / displayWidth / 3;
+    final float aspect = (float)displayHeight / displayWidth * 4.0f / 3.0f;
 
     identityAspectMatrix_800c3588.identity();
-    identityAspectMatrix_800c3588.set(1, 1, (short)aspect);
-    identityAspectMatrix_800c3588.transfer.set(0, 0, 0);
+    identityAspectMatrix_800c3588.set(1, 1, aspect);
+    identityAspectMatrix_800c3588.transfer.zero();
 
     lightDirectionMatrix_800c34e8.zero();
     lightColourMatrix_800c3508.zero();
@@ -427,25 +425,23 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003cee0L)
-  public static void FUN_8003cee0(final MATRIX matrix, final short sin, final short cos, final int type) {
+  public static void FUN_8003cee0(final MV matrix, final float sin, final float cos, final int type) {
     matrix.identity();
-    matrix.transfer.set(0, 0, 0);
-
-    //TODO this is weird... these are the positions for rotation matrices, but if they were transposed
+    matrix.transfer.zero();
 
     switch(type) {
-      case 0 -> {
-        matrix.set(1, 1, cos);
-        matrix.set(1, 2, (short)-sin);
-        matrix.set(2, 1, sin);
-        matrix.set(2, 2, cos);
+      case 0 -> { // x
+        matrix.m11(cos);
+        matrix.m12(sin);
+        matrix.m21(-sin);
+        matrix.m22(cos);
       }
 
-      case 1 -> {
-        matrix.set(0, 0, cos);
-        matrix.set(0, 2, sin);
-        matrix.set(2, 0, (short)-sin);
-        matrix.set(2, 2, cos);
+      case 1 -> { // y
+        matrix.m00(cos);
+        matrix.m02(-sin);
+        matrix.m20(sin);
+        matrix.m22(cos);
       }
     }
   }
@@ -456,30 +452,33 @@ public final class Scus94491BpeSegment_8003 {
    * m2 = m1 x m2
    */
   @Method(0x8003d550L)
-  public static void GsMulCoord2(final MATRIX matrix1, final MATRIX matrix2) {
+  public static void GsMulCoord2(final MV matrix1, final MV matrix2) {
     matrix2.transfer.mul(matrix1);
     matrix2.mul(matrix1);
     matrix2.transfer.add(matrix1.transfer);
   }
 
   @Method(0x8003d5d0L)
-  public static void FUN_8003d5d0(final MATRIX matrix, final int angle) {
+  public static void FUN_8003d5d0(final MV matrix, final int angle) {
     if(angle != 0) {
-      final short cos = rcos(angle / 360);
-      final short sin = rsin(angle / 360);
+      // Almost normal rotateZ except the sin is negated for some reason
+      final float rads = MathHelper.psxDegToRad(angle / 360.0f);
+      final float sin = -MathHelper.sin(rads);
+      final float cos = MathHelper.cosFromSin(-sin, rads);
 
-      final MATRIX rot = new MATRIX();
+      //TODO this is probably transposed since psy-q matrices are row-major
+      final Matrix3f rot = new Matrix3f();
       rot.set(0, 0, cos);
-      rot.set(0, 1, (short)-sin);
-      rot.set(0, 2, (short)0);
       rot.set(1, 0, sin);
+      rot.set(2, 0, 0.0f);
+      rot.set(0, 1, -sin);
       rot.set(1, 1, cos);
-      rot.set(1, 2, (short)0);
-      rot.set(2, 0, (short)0);
-      rot.set(2, 1, (short)0);
-      rot.set(2, 2, (short)0x1000);
+      rot.set(2, 1, 0.0f);
+      rot.set(0, 2, 0.0f);
+      rot.set(1, 2, 0.0f);
+      rot.set(2, 2, 1.0f);
 
-      rot.mul(matrix, matrix);
+      matrix.mul(rot);
     }
   }
 
@@ -499,58 +498,57 @@ public final class Scus94491BpeSegment_8003 {
    * @param matrix Pointer to matrix
    */
   @Method(0x8003d690L)
-  public static void GsGetLw(final GsCOORDINATE2 coord, final MATRIX matrix) {
-    GsCOORDINATE2 a3 = coord;
-    int s1 = 0;
+  public static void GsGetLw(final GsCOORDINATE2 coord, final MV matrix) {
+    GsCOORDINATE2 current = coord;
+    int count = 0;
     int a1_0 = 100;
 
     //LAB_8003d6c0
     do {
-      coord2s_800c35a8[s1] = a3;
+      coord2s_800c35a8[count] = current;
 
-      if(a3.super_ == null) {
-        if(a3.flg == 0 || a3.flg == PSDCNT_800c34d0) {
+      if(current.super_ == null) {
+        if(current.flg == 0 || current.flg == PSDCNT_800c34d0) { // Root coord2
           //LAB_8003d6fc
-          a3.workm.set(a3.coord);
-          matrix.set(a3.workm);
-          a3.flg = PSDCNT_800c34d0;
+          current.workm.set(current.coord);
+          matrix.set(current.workm);
+          current.flg = PSDCNT_800c34d0;
           break;
         }
 
         //LAB_8003d78c
         if(a1_0 == 100) {
           matrix.set(coord2s_800c35a8[0].workm);
-          s1 = 0;
+          count = 0;
           break;
         }
 
         //LAB_8003d7e8
-        s1 = a1_0 + 1;
-        matrix.set(coord2s_800c35a8[s1].workm);
+        count = a1_0 + 1;
+        matrix.set(coord2s_800c35a8[count].workm);
         break;
       }
 
       //LAB_8003d83c
-      if(a3.flg == PSDCNT_800c34d0) {
-        matrix.set(a3.workm);
+      if(current.flg == PSDCNT_800c34d0) {
+        matrix.set(current.workm);
         break;
       }
 
       //LAB_8003d898
-      if(a3.flg == 0) {
-        a1_0 = s1;
+      if(current.flg == 0) {
+        a1_0 = count;
       }
 
       //LAB_8003d8a4
-      a3 = a3.super_;
-      s1++;
+      current = current.super_;
+      count++;
     } while(true);
 
     //LAB_8003d8ac
     //LAB_8003d8c0
-    while(s1 > 0) {
-      s1--;
-      final GsCOORDINATE2 coord2 = coord2s_800c35a8[s1];
+    for(int i = count - 1; i >= 0; i--) {
+      final GsCOORDINATE2 coord2 = coord2s_800c35a8[i];
       GsMulCoord3(matrix, coord2.coord);
       coord2.workm.set(matrix);
       coord2.flg = PSDCNT_800c34d0;
@@ -565,10 +563,10 @@ public final class Scus94491BpeSegment_8003 {
    * m1 = m1 x m2
    */
   @Method(0x8003d950L)
-  public static void GsMulCoord3(final MATRIX m1, final MATRIX m2) {
-    final VECTOR out = new VECTOR();
+  public static void GsMulCoord3(final MV m1, final MV m2) {
+    final Vector3f out = new Vector3f();
     m2.transfer.mul(m1, out);
-    m2.mul(m1, m1);
+    m1.mul(m2);
     m1.transfer.add(out);
   }
 
@@ -588,58 +586,57 @@ public final class Scus94491BpeSegment_8003 {
    * @param matrix Pointer to matrix
    */
   @Method(0x8003d9d0L)
-  public static void GsGetLs(final GsCOORDINATE2 coord, final MATRIX matrix) {
-    GsCOORDINATE2 a3 = coord;
-    int s1 = 0;
+  public static void GsGetLs(final GsCOORDINATE2 coord, final MV matrix) {
+    GsCOORDINATE2 current = coord;
+    int count = 0;
     int a1 = 100;
 
     //LAB_8003da00
     do {
-      coord2s_800c35a8[s1] = a3;
-      if(a3.super_ == null) {
-        if(a3.flg == 0 || a3.flg == PSDCNT_800c34d0) {
+      coord2s_800c35a8[count] = current;
+      if(current.super_ == null) {
+        if(current.flg == 0 || current.flg == PSDCNT_800c34d0) {
           //LAB_8003da3c
-          a3.workm.set(a3.coord);
-          matrix.set(a3.workm);
-          a3.flg = PSDCNT_800c34d0;
+          current.workm.set(current.coord);
+          matrix.set(current.workm);
+          current.flg = PSDCNT_800c34d0;
           break;
         }
 
         //LAB_8003dacc
-        s1 = a1 + 1;
+        count = a1 + 1;
 
         if(a1 == 100) {
           matrix.set(coord2s_800c35a8[0].workm);
-          s1 = 0;
+          count = 0;
           break;
         }
 
         //LAB_8003db28
-        matrix.set(coord2s_800c35a8[s1].workm);
+        matrix.set(coord2s_800c35a8[count].workm);
         break;
       }
 
       //LAB_8003db7c
-      if(a3.flg == PSDCNT_800c34d0) {
-        matrix.set(a3.workm);
+      if(current.flg == PSDCNT_800c34d0) {
+        matrix.set(current.workm);
         break;
       }
 
       //LAB_8003dbd8
-      if(a3.flg == 0) {
-        a1 = s1;
+      if(current.flg == 0) {
+        a1 = count;
       }
 
       //LAB_8003dbe4
-      a3 = a3.super_;
-      s1++;
+      current = current.super_;
+      count++;
     } while(true);
 
     //LAB_8003dbec
     //LAB_8003dc00
-    while(s1 > 0) {
-      s1--;
-      final GsCOORDINATE2 coord2 = coord2s_800c35a8[s1];
+    for(int i = count - 1; i >= 0; i--) {
+      final GsCOORDINATE2 coord2 = coord2s_800c35a8[i];
       GsMulCoord3(matrix, coord2.coord);
       coord2.workm.set(matrix);
       coord2.flg = PSDCNT_800c34d0;
@@ -660,13 +657,13 @@ public final class Scus94491BpeSegment_8003 {
    * @param ls Pointer to matrix that stores the local screen coordinates
    */
   @Method(0x8003dca0L)
-  public static void GsGetLws(GsCOORDINATE2 coord, final MATRIX lw, final MATRIX ls) {
-    int s1 = 0;
+  public static void GsGetLws(GsCOORDINATE2 coord, final MV lw, final MV ls) {
+    int count = 0;
     int a = 100;
 
     //LAB_8003dcd8
     do {
-      coord2s_800c35a8[s1] = coord;
+      coord2s_800c35a8[count] = coord;
 
       if(coord.super_ == null) { // If top level coord2...
         if(coord.flg == PSDCNT_800c34d0 || coord.flg == 0) { // ...and not initialized (or initialized this frame - maybe prevents loops?)
@@ -680,13 +677,13 @@ public final class Scus94491BpeSegment_8003 {
         //LAB_8003dda4
         if(a == 100) { // ...and this is the only coord2
           lw.set(coord2s_800c35a8[0].workm);
-          s1 = 0;
+          count = 0;
           break;
         }
 
         //LAB_8003de00
-        s1 = a + 1;
-        lw.set(coord2s_800c35a8[s1].workm);
+        count = a + 1;
+        lw.set(coord2s_800c35a8[count].workm);
         break;
       }
 
@@ -698,19 +695,18 @@ public final class Scus94491BpeSegment_8003 {
 
       //LAB_8003deb0
       if(coord.flg == 0) {
-        a = s1;
+        a = count;
       }
 
       //LAB_8003debc
       coord = coord.super_;
-      s1++;
+      count++;
     } while(true);
 
     //LAB_8003dec4
     //LAB_8003ded8
-    while(s1 > 0) {
-      s1--;
-      final GsCOORDINATE2 c = coord2s_800c35a8[s1];
+    for(int i = count - 1; i >= 0; i--) {
+      final GsCOORDINATE2 c = coord2s_800c35a8[i];
 
       GsMulCoord3(lw, c.coord);
 
@@ -750,34 +746,34 @@ public final class Scus94491BpeSegment_8003 {
       return;
     }
 
-    final float vectorLength = Math.max(1.0f, Math.sqrt(vectorLengthSquared));
+    final float vectorLength = Math.sqrt(vectorLengthSquared);
 
-    final float normalizedY = deltaY * 0x1000 / vectorLength;
+    final float normalizedY = deltaY / vectorLength;
 
     final float horizontalLength = Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
-    final float normalizedHypotenuse = horizontalLength * 0x1000 / vectorLength;
+    final float normalizedHypotenuse = horizontalLength / vectorLength;
 
     //LAB_8003e230
-    final MATRIX sp0x30 = new MATRIX();
-    FUN_8003cee0(sp0x30, (short)normalizedY, (short)normalizedHypotenuse, 0);
-    sp0x30.mul(worldToScreenMatrix_800c3548, worldToScreenMatrix_800c3548);
+    final MV sp0x30 = new MV();
+    FUN_8003cee0(sp0x30, normalizedY, normalizedHypotenuse, 0);
+    worldToScreenMatrix_800c3548.mul(sp0x30);
 
     if(horizontalLength != 0) {
-      final float normalizedX = deltaX * -0x1000 / horizontalLength;
-      final float normalizedZ = deltaZ * 0x1000 / horizontalLength;
+      final float normalizedX = -deltaX / horizontalLength;
+      final float normalizedZ = deltaZ / horizontalLength;
 
-      FUN_8003cee0(sp0x30, (short)normalizedX, (short)normalizedZ, 1);
-      sp0x30.mul(worldToScreenMatrix_800c3548, worldToScreenMatrix_800c3548);
+      FUN_8003cee0(sp0x30, normalizedX, normalizedZ, 1);
+      worldToScreenMatrix_800c3548.mul(sp0x30);
     }
 
     //LAB_8003e474
-    new VECTOR().set(s2.viewpoint_00).negate().mul(worldToScreenMatrix_800c3548, worldToScreenMatrix_800c3548.transfer);
+    worldToScreenMatrix_800c3548.transfer.set(s2.viewpoint_00).negate().mul(worldToScreenMatrix_800c3548);
 
     if(s2.super_1c != null) {
-      final MATRIX lw = new MATRIX();
+      final MV lw = new MV();
       GsGetLw(s2.super_1c, lw);
 
-      final MATRIX transposedLw = new MATRIX();
+      final MV transposedLw = new MV();
       lw.transpose(transposedLw);
       lw.transfer.mul(transposedLw, transposedLw.transfer);
       transposedLw.transfer.negate();

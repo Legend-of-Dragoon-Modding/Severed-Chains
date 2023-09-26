@@ -9,6 +9,7 @@ import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MATRIX;
+import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable1c;
@@ -114,8 +115,6 @@ import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
-import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
-import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.freeSequence;
@@ -318,9 +317,9 @@ public final class Scus94491BpeSegment_8002 {
   public static void FUN_80020718(final Model124 model, final CContainer cContainer, final TmdAnimationFile tmdAnimFile) {
     LOGGER.info("Loading scripted TMD %s (animation %s)", cContainer, tmdAnimFile);
 
-    final int transferX = model.coord2_14.coord.transfer.getX();
-    final int transferY = model.coord2_14.coord.transfer.getY();
-    final int transferZ = model.coord2_14.coord.transfer.getZ();
+    final float transferX = model.coord2_14.coord.transfer.x;
+    final float transferY = model.coord2_14.coord.transfer.y;
+    final float transferZ = model.coord2_14.coord.transfer.z;
 
     //LAB_80020760
     for(int i = 0; i < 7; i++) {
@@ -371,7 +370,7 @@ public final class Scus94491BpeSegment_8002 {
     model.modelPartWithShadowIndex_cd = -2;
     model.coord2_14.transforms.scale.set(1.0f, 1.0f, 1.0f);
     model.shadowSize_10c.set(1.0f, 1.0f, 1.0f);
-    model.shadowOffset_118.set(0, 0, 0);
+    model.shadowOffset_118.zero();
   }
 
   @Method(0x80020a00L)
@@ -435,13 +434,14 @@ public final class Scus94491BpeSegment_8002 {
 
           final float interpolationScale = (model.interpolationFrameIndex + 1.0f) / (interpolationFrameCount + 1.0f);
 
-          RotMatrix_Zyx(params.rotate, coord2.coord);
           params.trans.set(
             Math.lerp(params.trans.x, transforms[0][i].translate_06.x, interpolationScale),
             Math.lerp(params.trans.y, transforms[0][i].translate_06.y, interpolationScale),
             Math.lerp(params.trans.z, transforms[0][i].translate_06.z, interpolationScale)
           );
+
           coord2.coord.transfer.set(params.trans);
+          coord2.coord.rotationZYX(params.rotate);
         }
 
         //LAB_80020d6c
@@ -453,10 +453,9 @@ public final class Scus94491BpeSegment_8002 {
           final Transforms params = coord2.transforms;
 
           params.rotate.set(transforms[0][i].rotate_00);
-          RotMatrix_Zyx(params.rotate, coord2.coord);
-
           params.trans.set(transforms[0][i].translate_06);
           coord2.coord.transfer.set(params.trans);
+          coord2.coord.rotationZYX(params.rotate);
         }
 
         //LAB_80020dfc
@@ -477,7 +476,7 @@ public final class Scus94491BpeSegment_8002 {
         final Transforms params = coord2.transforms;
 
         params.rotate.set(transforms[0][i].rotate_00);
-        RotMatrix_Zyx(params.rotate, coord2.coord);
+        coord2.coord.rotationZYX(params.rotate);
 
         params.trans.set(transforms[0][i].translate_06);
         coord2.coord.transfer.set(params.trans);
@@ -611,12 +610,12 @@ public final class Scus94491BpeSegment_8002 {
 
       final GsCOORDINATE2 coord2 = obj2.coord2_04;
       final Transforms params = coord2.transforms;
-      final MATRIX matrix = coord2.coord;
+      final MV matrix = coord2.coord;
 
       params.rotate.set(transforms[0][i].rotate_00);
       params.trans.set(transforms[0][i].translate_06);
 
-      RotMatrix_Zyx(params.rotate, matrix);
+      matrix.rotationZYX(params.rotate);
       matrix.transfer.set(params.trans);
     }
 
@@ -630,9 +629,9 @@ public final class Scus94491BpeSegment_8002 {
     for(int i = 0; i < model.modelParts_00.length; i++) {
       final ModelPartTransforms0c transforms = model.partTransforms_94[0][i];
       final GsCOORDINATE2 coord2 = model.modelParts_00[i].coord2_04;
-      final MATRIX coord = coord2.coord;
+      final MV coord = coord2.coord;
       final Transforms params = coord2.transforms;
-      RotMatrix_Zyx(params.rotate, coord);
+      coord.rotationZYX(params.rotate);
       params.trans.x = (params.trans.x + transforms.translate_06.x) / 2.0f;
       params.trans.y = (params.trans.y + transforms.translate_06.y) / 2.0f;
       params.trans.z = (params.trans.z + transforms.translate_06.z) / 2.0f;
@@ -645,7 +644,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800214bcL)
   public static void applyModelRotationAndScale(final Model124 model) {
-    RotMatrix_Xyz(model.coord2_14.transforms.rotate, model.coord2_14.coord);
+    model.coord2_14.coord.rotationXYZ(model.coord2_14.transforms.rotate);
     model.coord2_14.coord.scale(model.coord2_14.transforms.scale);
     model.coord2_14.flg = 0;
   }
@@ -746,8 +745,8 @@ public final class Scus94491BpeSegment_8002 {
       dobj2.coord2_04.transforms.scale.set(1.0f, 1.0f, 1.0f);
       dobj2.coord2_04.transforms.trans.set(1.0f, 1.0f, 1.0f);
 
-      RotMatrix_Xyz(dobj2.coord2_04.transforms.rotate, dobj2.coord2_04.coord);
-      dobj2.coord2_04.coord.scaleL(dobj2.coord2_04.transforms.scale);
+      dobj2.coord2_04.coord.rotationXYZ(dobj2.coord2_04.transforms.rotate);
+      dobj2.coord2_04.coord.scaleLocal(dobj2.coord2_04.transforms.scale);
       dobj2.coord2_04.coord.transfer.set(dobj2.coord2_04.transforms.trans);
     }
 
