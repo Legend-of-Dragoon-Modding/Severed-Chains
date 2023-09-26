@@ -106,15 +106,15 @@ public class SmapDebuggerController {
 
     this.renderCollision.setSelected(SMap.enableCollisionDebug);
 
-    this.posX.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0f, Float.MAX_VALUE));
-    this.posY.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0f, Float.MAX_VALUE));
-    this.posZ.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0f, Float.MAX_VALUE));
-    this.rotX.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0f, Float.MAX_VALUE));
-    this.rotY.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0f, Float.MAX_VALUE));
-    this.rotZ.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0f, Float.MAX_VALUE));
-    this.scaleX.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0f, Float.MAX_VALUE));
-    this.scaleY.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0f, Float.MAX_VALUE));
-    this.scaleZ.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0f, Float.MAX_VALUE));
+    this.posX.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE));
+    this.posY.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE));
+    this.posZ.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE));
+    this.rotX.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE));
+    this.rotY.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE));
+    this.rotZ.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE));
+    this.scaleX.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE));
+    this.scaleY.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE));
+    this.scaleZ.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE));
 
     this.sobjList.getSelectionModel().select(0);
   }

@@ -155,7 +155,7 @@ public class Gte {
 
   /** Data register 7 OTZ */
   public short getAverageZ() {
-    return (short)Math.round(this.OTZ);
+    return (short)Math.round(this.OTZ / 4.0f);
   }
 
   /** Data register 12, 13, 14, 15 */

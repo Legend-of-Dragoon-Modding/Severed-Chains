@@ -302,11 +302,11 @@ public class SMap extends EngineState {
     Arrays.setAll(this.envRenderMetrics_800cb710, i -> new EnvironmentRenderingMetrics24());
   }
 
-  private final SVECTOR[] _800cbb90 = new SVECTOR[32];
+  private final Vector3f[] _800cbb90 = new Vector3f[32];
   {
-    Arrays.setAll(this._800cbb90, i -> new SVECTOR());
+    Arrays.setAll(this._800cbb90, i -> new Vector3f());
   }
-  private final int[] _800cbc90 = new int[32];
+  private final float[] _800cbc90 = new float[32];
 
   private final GsRVIEW2 rview2_800cbd10 = new GsRVIEW2();
   private int _800cbd30;
@@ -5312,8 +5312,7 @@ public class SMap extends EngineState {
   @Method(0x800e6be0L)
   private FlowControl FUN_800e6be0(final RunningScript<?> script) {
     final MV coord = this.sobjs_800c6880[script.params_20[0].get()].innerStruct_00.model_00.coord2_14.coord;
-    //TODO are these transposed
-    script.params_20[1].set(Math.round((worldToScreenMatrix_800c3548.m20 * coord.transfer.x + worldToScreenMatrix_800c3548.m21 * coord.transfer.y + worldToScreenMatrix_800c3548.m22 * coord.transfer.z + worldToScreenMatrix_800c3548.transfer.z) / (1 << 16 - orderingTableBits_1f8003c0.get())));
+    script.params_20[1].set(Math.round((worldToScreenMatrix_800c3548.m02 * coord.transfer.x + worldToScreenMatrix_800c3548.m12 * coord.transfer.y + worldToScreenMatrix_800c3548.m22 * coord.transfer.z + worldToScreenMatrix_800c3548.transfer.z) / (1 << 16 - orderingTableBits_1f8003c0.get())));
     return FlowControl.CONTINUE;
   }
 
@@ -5417,8 +5416,8 @@ public class SMap extends EngineState {
         }
       } else { // It's a foreground texture
         //LAB_800e7010
-        this._800cbb90[i - this.envBackgroundTextureCount_800cb57c].set(s0.svec_14);
-        this._800cbc90[i - this.envBackgroundTextureCount_800cb57c] = s0.ui_1c;
+        this._800cbb90[i - this.envBackgroundTextureCount_800cb57c].set(s0.svec_14.getX(), s0.svec_14.getY(), s0.svec_14.getZ()).div(0x1000);
+        this._800cbc90[i - this.envBackgroundTextureCount_800cb57c] = s0.ui_1c / (float)0x1000;
       }
 
       //LAB_800e7004
@@ -5446,8 +5445,8 @@ public class SMap extends EngineState {
       } else {
         //LAB_800e7194
         float a0 =
-          worldToScreenMatrix_800c3548.m20 * s0.svec_00.getX() +
-          worldToScreenMatrix_800c3548.m21 * s0.svec_00.getY() +
+          worldToScreenMatrix_800c3548.m02 * s0.svec_00.getX() +
+          worldToScreenMatrix_800c3548.m12 * s0.svec_00.getY() +
           worldToScreenMatrix_800c3548.m22 * s0.svec_00.getZ();
         a0 += worldToScreenMatrix_800c3548.transfer.z;
         a0 /= 1 << 16 - orderingTableBits_1f8003c0.get();
@@ -5636,8 +5635,8 @@ public class SMap extends EngineState {
     //LAB_800e7a60
     //LAB_800e7a7c
     for(int i = 0; i < sobjCount; i++) {
-      sobjZs[i] = (worldToScreenMatrix_800c3548.m20 * sobjMatrices[i].transfer.x +
-        worldToScreenMatrix_800c3548.m21 * sobjMatrices[i].transfer.y +
+      sobjZs[i] = (worldToScreenMatrix_800c3548.m02 * sobjMatrices[i].transfer.x +
+        worldToScreenMatrix_800c3548.m12 * sobjMatrices[i].transfer.y +
         worldToScreenMatrix_800c3548.m22 * sobjMatrices[i].transfer.z + worldToScreenMatrix_800c3548.transfer.z) / (1 << 16 - orderingTableBits_1f8003c0.get());
     }
 
@@ -5647,73 +5646,69 @@ public class SMap extends EngineState {
       final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[this.envBackgroundTextureCount_800cb57c + i];
 
       final int flags = (metrics.flags_22 & 0xc000) >> 14;
-      if(flags != 0x1) {
-        if(flags == 0x2) {
-          envZs[i] = metrics.flags_22 & 0x3fff;
+      if(flags == 0x1) {
+        //LAB_800e7bb4
+        float minZ = Float.MAX_VALUE;
+        float maxZ = 0;
+
+        //LAB_800e7bbc
+        int positiveZCount = 0;
+        int negativeZCount = 0;
+
+        //LAB_800e7c0c
+        for(int sobjIndex = this.maxSobj_800cbd64 - 1; sobjIndex >= this.minSobj_800cbd60; sobjIndex--) {
+          final float v1_0 = this._800cbc90[i] +
+            this._800cbb90[i].x * sobjMatrices[sobjIndex].transfer.x +
+            this._800cbb90[i].y * sobjMatrices[sobjIndex].transfer.y +
+            this._800cbb90[i].z * sobjMatrices[sobjIndex].transfer.z;
+          final float sobjZ = sobjZs[sobjIndex];
+
+          if(sobjZ != 0xfffb) {
+            if(v1_0 < 0) {
+              negativeZCount++;
+              if(minZ > sobjZ) {
+                minZ = sobjZ;
+              }
+            } else {
+              //LAB_800e7cac
+              positiveZCount++;
+              if(maxZ < sobjZ) {
+                maxZ = sobjZ;
+              }
+            }
+          }
+        }
+
+        //LAB_800e7cd8
+        if(positiveZCount == 0) {
+          //LAB_800e7cf8
+          envZs[i] = Math.max(maxZ - 50, 40);
+          continue;
+        }
+
+        //LAB_800e7d00
+        if(negativeZCount == 0) {
+          //LAB_800e7d3c
+          envZs[i] = Math.min(maxZ + 50, (1 << orderingTableBits_1f8003c0.get()) - 1);
+          continue;
+        }
+
+        //LAB_800e7d50
+        if(maxZ > metrics.z_20 || minZ < metrics.z_20) {
+          //LAB_800e7d64
+          envZs[i] = (maxZ + minZ) / 2;
         } else {
           //LAB_800e7d78
           envZs[i] = metrics.z_20;
         }
 
-        continue;
-      }
-
-      //LAB_800e7bb4
-      float minZ = Float.MAX_VALUE;
-      float maxZ = 0;
-
-      //LAB_800e7bbc
-      int positiveZCount = 0;
-      int negativeZCount = 0;
-
-      //LAB_800e7c0c
-      for(int sobjIndex = this.maxSobj_800cbd64 - 1; sobjIndex >= this.minSobj_800cbd60; sobjIndex--) {
-        final float v1_0 = this._800cbc90[i] +
-          this._800cbb90[i].getX() * sobjMatrices[sobjIndex].transfer.x +
-          this._800cbb90[i].getY() * sobjMatrices[sobjIndex].transfer.y +
-          this._800cbb90[i].getZ() * sobjMatrices[sobjIndex].transfer.z;
-        final float sobjZ = sobjZs[sobjIndex];
-
-        if(sobjZ != 0xfffb) {
-          if(v1_0 < 0) {
-            negativeZCount++;
-            if(minZ > sobjZ) {
-              minZ = sobjZ;
-            }
-          } else {
-            //LAB_800e7cac
-            positiveZCount++;
-            if(maxZ < sobjZ) {
-              maxZ = sobjZ;
-            }
-          }
-        }
-      }
-
-      //LAB_800e7cd8
-      if(positiveZCount == 0) {
-        //LAB_800e7cf8
-        envZs[i] = Math.max(maxZ - 50, 40);
-        continue;
-      }
-
-      //LAB_800e7d00
-      if(negativeZCount == 0) {
-        //LAB_800e7d3c
-        envZs[i] = Math.min(maxZ + 50, (1 << orderingTableBits_1f8003c0.get()) - 1);
-        continue;
-      }
-
-      //LAB_800e7d50
-      if(maxZ > metrics.z_20 || minZ < metrics.z_20) {
-        //LAB_800e7d64
-        envZs[i] = (maxZ + minZ) / 2;
+        //LAB_800e7d80
+      } else if(flags == 0x2) {
+        envZs[i] = metrics.flags_22 & 0x3fff;
       } else {
         //LAB_800e7d78
         envZs[i] = metrics.z_20;
       }
-
-      //LAB_800e7d80
     }
 
     //LAB_800e7d9c
