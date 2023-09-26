@@ -1,6 +1,6 @@
 package legend.game.combat.effects;
 
-import legend.core.gte.VECTOR;
+import org.joml.Vector3f;
 
 public class MonsterDeathEffectObjectDestructor30 {
   public final int index;
@@ -14,7 +14,7 @@ public class MonsterDeathEffectObjectDestructor30 {
   public float scaleModifierVelocity_08;
   public float angleModifier_0c;
   public float angleModifierVelocity_10;
-  public final VECTOR translation_14 = new VECTOR();
+  public final Vector3f translation_14 = new Vector3f();
 
   /** shorts */
   public int r_24;

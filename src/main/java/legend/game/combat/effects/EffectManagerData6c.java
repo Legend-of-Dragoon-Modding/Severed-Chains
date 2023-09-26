@@ -1,7 +1,6 @@
 package legend.game.combat.effects;
 
 import legend.core.gte.USCOLOUR;
-import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.game.combat.types.BattleObject;
 import legend.game.scripting.ScriptState;
@@ -59,7 +58,7 @@ public class EffectManagerData6c<T extends EffectManagerData6cInner<T>> extends 
   }
 
   @Override
-  public VECTOR getPosition() {
+  public Vector3f getPosition() {
     return this._10.trans_04;
   }
 

@@ -8,8 +8,8 @@ public class GoldDragoonTransformEffectInstance84 {
   public boolean used_00;
 
   public int counter_04;
-  public final VECTOR trans_08 = new VECTOR();
-  public final VECTOR transStep_28 = new VECTOR();
+  public final Vector3f trans_08 = new Vector3f();
+  public final Vector3f transStep_28 = new Vector3f();
   public final Vector3f rot_38 = new Vector3f();
   public final Vector3f rotStep_48 = new Vector3f();
   public byte _68;

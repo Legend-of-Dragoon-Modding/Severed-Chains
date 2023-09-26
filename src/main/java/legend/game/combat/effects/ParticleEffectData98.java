@@ -1,10 +1,10 @@
 package legend.game.combat.effects;
 
 import legend.core.gte.TmdObjTable1c;
-import legend.core.gte.VECTOR;
 import legend.core.memory.types.QuadConsumer;
 import legend.core.memory.types.TriConsumer;
 import legend.game.scripting.ScriptState;
+import org.joml.Vector3f;
 
 import java.util.Arrays;
 
@@ -48,7 +48,7 @@ public class ParticleEffectData98 implements Effect {
   public ParticleEffectInstance94[] particleArray_68;
   public boolean scaleOrUseEffectAcceleration_6c;
 
-  public final VECTOR effectAcceleration_70 = new VECTOR();
+  public final Vector3f effectAcceleration_70 = new Vector3f();
   public int scaleParticleAcceleration_80;
   public TriConsumer<EffectManagerData6c<EffectManagerData6cInner.ParticleType>, ParticleEffectData98, ParticleEffectInstance94> particleInstancePrerenderCallback_84;
   public QuadConsumer<ScriptState<EffectManagerData6c<EffectManagerData6cInner.ParticleType>>, EffectManagerData6c<EffectManagerData6cInner.ParticleType>, ParticleEffectData98, ParticleEffectInstance94> particleInstanceTickCallback_88;

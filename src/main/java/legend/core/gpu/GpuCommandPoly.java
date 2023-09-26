@@ -4,6 +4,7 @@ import legend.core.gte.COLOUR;
 import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Math;
 
 import java.util.Arrays;
 
@@ -134,6 +135,10 @@ public class GpuCommandPoly extends GpuCommand {
 
   public GpuCommandPoly monochrome(final int vertex, final int colour) {
     return this.rgb(vertex, colour, colour, colour);
+  }
+
+  public GpuCommandPoly pos(final int vertex, final float x, final float y) {
+    return this.pos(vertex, Math.round(x), Math.round(y));
   }
 
   public GpuCommandPoly pos(final int vertex, final int x, final int y) {

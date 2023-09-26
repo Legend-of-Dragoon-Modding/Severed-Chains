@@ -178,36 +178,14 @@ public class Gte {
     return this.MAC0;
   }
 
-  /** Control register 0-4 */
-  public void getRotationMatrix(final MATRIX matrix) {
-    matrix.set(0, (short)Math.round(this.RT.m00 * 4096.0f));
-    matrix.set(1, (short)Math.round(this.RT.m01 * 4096.0f));
-    matrix.set(2, (short)Math.round(this.RT.m02 * 4096.0f));
-    matrix.set(3, (short)Math.round(this.RT.m10 * 4096.0f));
-    matrix.set(4, (short)Math.round(this.RT.m11 * 4096.0f));
-    matrix.set(5, (short)Math.round(this.RT.m12 * 4096.0f));
-    matrix.set(6, (short)Math.round(this.RT.m20 * 4096.0f));
-    matrix.set(7, (short)Math.round(this.RT.m21 * 4096.0f));
-    matrix.set(8, (short)Math.round(this.RT.m22 * 4096.0f));
+  public void getTransforms(final MV mv) {
+    this.getRotationMatrix(mv);
+    this.getTranslationVector(mv.transfer);
   }
 
   /** Control register 0-4 */
   public void getRotationMatrix(final Matrix3f matrix) {
     matrix.set(this.RT);
-  }
-
-  /** Control register 0-4 */
-  public void setRotationMatrix(final MATRIX matrix) {
-    this.RT.m00 = matrix.get(0) / 4096.0f;
-    this.RT.m01 = matrix.get(1) / 4096.0f;
-    this.RT.m02 = matrix.get(2) / 4096.0f;
-    this.RT.m10 = matrix.get(3) / 4096.0f;
-    this.RT.m11 = matrix.get(4) / 4096.0f;
-    this.RT.m12 = matrix.get(5) / 4096.0f;
-    this.RT.m20 = matrix.get(6) / 4096.0f;
-    this.RT.m21 = matrix.get(7) / 4096.0f;
-    this.RT.m22 = matrix.get(8) / 4096.0f;
-    this.RT.transpose();
   }
 
   /** Control register 0-4 */
@@ -221,22 +199,8 @@ public class Gte {
   }
 
   /** Control register 5-7 */
-  public void getTranslationVector(final VECTOR vector) {
-    vector.setX(Math.round(this.translation.x));
-    vector.setY(Math.round(this.translation.y));
-    vector.setZ(Math.round(this.translation.z));
-  }
-
-  /** Control register 5-7 */
   public void getTranslationVector(final Vector3f vector) {
     vector.set(this.translation);
-  }
-
-  /** Control register 5-7 */
-  public void setTranslationVector(final VECTOR vector) {
-    this.translation.x = vector.getX();
-    this.translation.y = vector.getY();
-    this.translation.z = vector.getZ();
   }
 
   /** Control register 5-7 */

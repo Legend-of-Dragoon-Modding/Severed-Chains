@@ -10,7 +10,7 @@ public class ParticleEffectData98Inner24 {
 
   public short _14;
 
-  public short _18; // Used in calculations for X, Y, and Z values; is used to modify effect velocity during initialization; entirely scripted
+  public float _18; // Used in calculations for X, Y, and Z values; is used to modify effect velocity during initialization; entirely scripted
 
   /**
    * Not a finalized name, still unsure of exact purpose. Seems like packed value containing

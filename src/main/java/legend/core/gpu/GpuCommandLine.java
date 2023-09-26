@@ -3,6 +3,7 @@ package legend.core.gpu;
 import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Math;
 
 public class GpuCommandLine extends GpuCommand {
   private static final Logger LOGGER = LogManager.getFormatterLogger(GpuCommandLine.class);
@@ -69,6 +70,10 @@ public class GpuCommandLine extends GpuCommand {
 
   public GpuCommandLine monochrome(final int colour) {
     return this.rgb(colour, colour, colour);
+  }
+
+  public GpuCommandLine pos(final int vertex, final float x, final float y) {
+    return this.pos(vertex, Math.round(x), Math.round(y));
   }
 
   public GpuCommandLine pos(final int vertex, final int x, final int y) {

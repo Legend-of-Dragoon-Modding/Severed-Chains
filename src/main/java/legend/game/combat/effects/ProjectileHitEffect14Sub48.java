@@ -1,15 +1,14 @@
 package legend.game.combat.effects;
 
-import legend.core.gte.SVECTOR;
-import legend.core.gte.VECTOR;
+import org.joml.Vector3f;
 
 import java.util.Arrays;
 
 public class ProjectileHitEffect14Sub48 {
   public boolean used_00;
 
-  public final VECTOR[] _04 = new VECTOR[16];
-  public final SVECTOR[] _24 = new SVECTOR[8];
+  public final Vector3f[] _04 = new Vector3f[16];
+  public final Vector3f[] _24 = new Vector3f[8];
   public int r_34;
   public int g_36;
   public int b_38;
@@ -25,7 +24,7 @@ public class ProjectileHitEffect14Sub48 {
   public int frames_44;
 
   public ProjectileHitEffect14Sub48() {
-    Arrays.setAll(this._04, i -> new VECTOR());
-    Arrays.setAll(this._24, i -> new SVECTOR());
+    Arrays.setAll(this._04, i -> new Vector3f());
+    Arrays.setAll(this._24, i -> new Vector3f());
   }
 }

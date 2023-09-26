@@ -367,6 +367,10 @@ public class Gpu {
     }
   }
 
+  public void queueCommand(final float z, final GpuCommand command) {
+    this.queueCommand(Math.round(z), command);
+  }
+
   public void queueCommand(final int z, final GpuCommand command) {
     this.zQueues[z].add(command);
   }

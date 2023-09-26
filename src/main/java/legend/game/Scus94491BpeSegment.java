@@ -656,7 +656,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80013404L)
-  public static int FUN_80013404(final int a0, final int a1, final int a2) {
+  public static float FUN_80013404(final float a0, final float a1, final int a2) {
     if(a2 == 0) {
       return 0;
     }

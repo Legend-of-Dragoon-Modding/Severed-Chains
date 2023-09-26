@@ -36,11 +36,8 @@ import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment_8002.SetColorMatrix;
 import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8002.SetLightMatrix;
-import static legend.game.Scus94491BpeSegment_8002.SetRotMatrix;
-import static legend.game.Scus94491BpeSegment_8002.SetTransMatrix;
 import static legend.game.Scus94491BpeSegment_8005.matrixStackIndex_80054a08;
 import static legend.game.Scus94491BpeSegment_8005.matrixStack_80054a0c;
-import static legend.game.Scus94491BpeSegment_8005.vectorStack_80054a0c;
 import static legend.game.Scus94491BpeSegment_8005.vramHeight_800546c2;
 import static legend.game.Scus94491BpeSegment_8005.vramWidth_800546c0;
 import static legend.game.Scus94491BpeSegment_800c.PSDCNT_800c34d0;
@@ -280,12 +277,6 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_8003c468
-  }
-
-  @Method(0x8003c470L)
-  public static void setRotTransMatrix(final MATRIX matrix) {
-    SetRotMatrix(matrix);
-    SetTransMatrix(matrix);
   }
 
   @Method(0x8003c4a0L)
@@ -910,8 +901,7 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_8003efc0
-    GTE.getRotationMatrix(matrixStack_80054a0c[matrixStackIndex_80054a08]);
-    GTE.getTranslationVector(vectorStack_80054a0c[matrixStackIndex_80054a08]);
+    GTE.getTransforms(matrixStack_80054a0c[matrixStackIndex_80054a08]);
 
     matrixStackIndex_80054a08++;
   }
@@ -925,8 +915,7 @@ public final class Scus94491BpeSegment_8003 {
     //LAB_8003f060
     matrixStackIndex_80054a08--;
 
-    GTE.setRotationMatrix(matrixStack_80054a0c[matrixStackIndex_80054a08]);
-    GTE.setTranslationVector(vectorStack_80054a0c[matrixStackIndex_80054a08]);
+    GTE.setTransforms(matrixStack_80054a0c[matrixStackIndex_80054a08]);
   }
 
   @Method(0x8003f8a0L)
@@ -996,16 +985,7 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003faf0L)
-  public static void RotMatrix_Xyz(final SVECTOR rotation, final MATRIX matrixOut) {
-    matrixOut.set(new Matrix4f().rotateXYZ(MathHelper.psxDegToRad(rotation.getX()), MathHelper.psxDegToRad(rotation.getY()), MathHelper.psxDegToRad(rotation.getZ())));
-  }
-
   public static void RotMatrix_Xyz(final Vector3f rotation, final MATRIX matrixOut) {
     matrixOut.set(new Matrix4f().rotateXYZ(rotation.x, rotation.y, rotation.z));
-  }
-
-  @Method(0x8003fd80L)
-  public static void RotMatrix_Yxz(final Vector3f rotation, final MATRIX matrixOut) {
-    matrixOut.set(new Matrix4f().rotateYXZ(rotation.y, rotation.x, rotation.z));
   }
 }

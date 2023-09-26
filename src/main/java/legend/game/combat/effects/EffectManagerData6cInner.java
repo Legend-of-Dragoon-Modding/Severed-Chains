@@ -1,12 +1,11 @@
 package legend.game.combat.effects;
 
 import legend.core.gte.USCOLOUR;
-import legend.core.gte.VECTOR;
 import org.joml.Vector3f;
 
 public abstract class EffectManagerData6cInner<T extends EffectManagerData6cInner<T>> {
   public int flags_00;
-  public final VECTOR trans_04 = new VECTOR();
+  public final Vector3f trans_04 = new Vector3f();
   public final Vector3f rot_10 = new Vector3f();
   public final Vector3f scale_16 = new Vector3f();
   public final USCOLOUR colour_1c = new USCOLOUR();

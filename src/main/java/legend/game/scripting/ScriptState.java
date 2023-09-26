@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -115,16 +116,13 @@ public class ScriptState<T> {
   public final int[] storage_44 = new int[33];
   public ScriptState<BattleEntity27c> scriptState_c8;
   public int ticks_cc;
-  public int _d0;
-  public int _d4;
-  public int _d8;
-  public int _dc;
-  public int _e0;
-  public int _e4;
-  public int _e8;
-  public int _ec;
-  public int _f0;
-  public int _f4;
+  /** Was .8 */
+  public final Vector3f _d0 = new Vector3f();
+  /** Was .8 */
+  public final Vector3f _dc = new Vector3f();
+  public final Vector3f _e8 = new Vector3f();
+  /** Was .8 */
+  public float _f4;
   public int ui_fc;
 
   public static <T> Class<ScriptState<T>> classFor(final Class<T> cls) {

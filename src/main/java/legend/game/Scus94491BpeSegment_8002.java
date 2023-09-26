@@ -753,11 +753,6 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80021db4
   }
 
-  @Method(0x80021edcL)
-  public static void SetRotMatrix(final MATRIX m) {
-    GTE.setRotationMatrix(m);
-  }
-
   @Method(0x80021f0cL)
   public static void SetLightMatrix(final Matrix3f m) {
     GTE.setLightSourceMatrix(m);
@@ -766,11 +761,6 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80021f3cL)
   public static void SetColorMatrix(final Matrix3f m) {
     GTE.setLightColourMatrix(m);
-  }
-
-  @Method(0x80021f6cL)
-  public static void SetTransMatrix(final MATRIX m) {
-    GTE.setTranslationVector(m.transfer);
   }
 
   @Method(0x80021facL)

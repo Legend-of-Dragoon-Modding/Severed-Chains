@@ -1,6 +1,6 @@
 package legend.game.combat.effects;
 
-import legend.core.gte.SVECTOR;
+import org.joml.Vector3f;
 
 public class MoonlightStarsEffectInstance3c {
   public final int index;
@@ -11,7 +11,7 @@ public class MoonlightStarsEffectInstance3c {
   /** ubyte */
   public boolean renderStars_03;
   /** 3 shorts */
-  public SVECTOR translation_04 = new SVECTOR();
+  public Vector3f translation_04 = new Vector3f();
 
   public int maxToggleFrameThreshold_36;
   public int toggleOffFrameThreshold_38;

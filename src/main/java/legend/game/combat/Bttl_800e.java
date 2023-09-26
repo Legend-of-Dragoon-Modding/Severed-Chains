@@ -10,12 +10,11 @@ import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
 import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORDINATE2;
-import legend.core.gte.MATRIX;
+import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdWithId;
 import legend.core.gte.Transforms;
-import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
@@ -89,6 +88,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.joml.Matrix3f;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
@@ -129,11 +129,8 @@ import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
-import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
-import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
-import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
@@ -1654,15 +1651,14 @@ public final class Bttl_800e {
 
   /** Used in Astral Drain (ground glow) */
   @Method(0x800e75acL)
-  public static void FUN_800e75ac(final GenericSpriteEffect24 spriteEffect, final MATRIX transformMatrix) {
-    final MATRIX finalTransform = new MATRIX();
+  public static void FUN_800e75ac(final GenericSpriteEffect24 spriteEffect, final MV transformMatrix) {
+    final MV finalTransform = new MV();
     transformMatrix.compose(worldToScreenMatrix_800c3548, finalTransform);
-    final int z = Math.min(0x3ff8, zOffset_1f8003e8.get() + finalTransform.transfer.getZ() / 4);
+    final float z = Math.min(0x3ff8, zOffset_1f8003e8.get() + finalTransform.transfer.z / 4.0f);
 
     if(z >= 40) {
       //LAB_800e7610
-      GTE.setRotationMatrix(finalTransform);
-      GTE.setTranslationVector(finalTransform.transfer);
+      GTE.setTransforms(finalTransform);
 
       GTE.setVertex(0, spriteEffect.x_04 * 64, spriteEffect.y_06 * 64, 0);
       GTE.setVertex(1, (spriteEffect.x_04 + spriteEffect.w_08) * 64, spriteEffect.y_06 * 64, 0);
@@ -1696,7 +1692,7 @@ public final class Bttl_800e {
         cmd.translucent(Translucency.of((int)spriteEffect.flags_00 >>> 28 & 0b11));
       }
 
-      GPU.queueCommand(z >> 2, cmd);
+      GPU.queueCommand(z / 4.0f, cmd);
     }
     //LAB_800e7930
   }
@@ -1706,24 +1702,24 @@ public final class Bttl_800e {
    * Used for example for sprite effect overlays on red glow in Death Dimension.
    */
   @Method(0x800e7944L)
-  public static void FUN_800e7944(final GenericSpriteEffect24 spriteEffect, final VECTOR translation, final int zMod) {
+  public static void FUN_800e7944(final GenericSpriteEffect24 spriteEffect, final Vector3f translation, final int zMod) {
     if((int)spriteEffect.flags_00 >= 0) { // No errors
-      final VECTOR finalTranslation = new VECTOR();
+      final Vector3f finalTranslation = new Vector3f();
       translation.mul(worldToScreenMatrix_800c3548, finalTranslation);
       finalTranslation.add(worldToScreenMatrix_800c3548.transfer);
 
-      final int x0 = MathHelper.safeDiv(finalTranslation.getX() * projectionPlaneDistance_1f8003f8.get(), finalTranslation.getZ());
-      final int y0 = MathHelper.safeDiv(finalTranslation.getY() * projectionPlaneDistance_1f8003f8.get(), finalTranslation.getZ());
+      final float x0 = MathHelper.safeDiv(finalTranslation.x * projectionPlaneDistance_1f8003f8.get(), finalTranslation.z);
+      final float y0 = MathHelper.safeDiv(finalTranslation.y * projectionPlaneDistance_1f8003f8.get(), finalTranslation.z);
 
       // zMod needs to be ignored in z check or poly positions will overflow at low z values
-      int z = zMod + (finalTranslation.getZ() >> 2);
-      if(finalTranslation.getZ() >> 2 >= 0x28 && z >= 0x28) {
+      float z = zMod + finalTranslation.z / 4.0f;
+      if(finalTranslation.z / 4.0f >= 40 && z >= 40) {
         if(z > 0x3ff8) {
           z = 0x3ff8;
         }
 
         //LAB_800e7a38
-        final int zDepth = MathHelper.safeDiv(projectionPlaneDistance_1f8003f8.get() << 10, finalTranslation.getZ() >> 2);
+        final int zDepth = MathHelper.safeDiv(projectionPlaneDistance_1f8003f8.get() << 10, finalTranslation.z / 4.0f);
         final int x1 = (int)(spriteEffect.x_04 * spriteEffect.scaleX_1c / 8 * zDepth / 8);
         final int x2 = x1 + (int)(spriteEffect.w_08 * spriteEffect.scaleX_1c / 8 * zDepth / 8);
         final int y1 = (int)(spriteEffect.y_06 * spriteEffect.scaleY_1e / 8 * zDepth / 8);
@@ -1748,7 +1744,7 @@ public final class Bttl_800e {
           cmd.translucent(Translucency.of((int)spriteEffect.flags_00 >>> 28 & 0b11));
         }
 
-        GPU.queueCommand(z >> 2, cmd);
+        GPU.queueCommand(z / 4.0f, cmd);
       }
     }
 
@@ -1756,15 +1752,15 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e7dbcL)
-  public static int transformToScreenSpace(final DVECTOR out, final VECTOR translation) {
-    final VECTOR transformed = new VECTOR();
+  public static float transformToScreenSpace(final Vector2f out, final Vector3f translation) {
+    final Vector3f transformed = new Vector3f();
     translation.mul(worldToScreenMatrix_800c3548, transformed);
     transformed.add(worldToScreenMatrix_800c3548.transfer);
 
-    if(transformed.getZ() >= 160) {
-      out.setX((short)(transformed.getX() * projectionPlaneDistance_1f8003f8.get() / transformed.getZ()));
-      out.setY((short)(transformed.getY() * projectionPlaneDistance_1f8003f8.get() / transformed.getZ()));
-      return transformed.getZ() >> 2;
+    if(transformed.z >= 160) {
+      out.x = transformed.x * projectionPlaneDistance_1f8003f8.get() / transformed.z;
+      out.y = transformed.y * projectionPlaneDistance_1f8003f8.get() / transformed.z;
+      return transformed.z / 4.0f;
     }
 
     //LAB_800e7e8c
@@ -1773,7 +1769,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e7ea4L)
-  public static void renderGenericSpriteAtZOffset0(final GenericSpriteEffect24 spriteEffect, final VECTOR translation) {
+  public static void renderGenericSpriteAtZOffset0(final GenericSpriteEffect24 spriteEffect, final Vector3f translation) {
     FUN_800e7944(spriteEffect, translation, 0);
   }
 
@@ -1881,10 +1877,10 @@ public final class Bttl_800e {
 
   /** Considers all parents */
   @Method(0x800e8594L)
-  public static void calculateEffectTransforms(final MATRIX transformMatrix, final EffectManagerData6c<?> manager) {
-    RotMatrix_Xyz(manager._10.rot_10, transformMatrix);
+  public static void calculateEffectTransforms(final MV transformMatrix, final EffectManagerData6c<?> manager) {
+    transformMatrix.rotationXYZ(manager._10.rot_10);
     transformMatrix.transfer.set(manager._10.trans_04);
-    transformMatrix.scaleL(manager._10.scale_16);
+    transformMatrix.scaleLocal(manager._10.scale_16);
 
     EffectManagerData6c<?> currentManager = manager;
     int scriptIndex = manager.scriptIndex_0c;
@@ -1894,7 +1890,7 @@ public final class Bttl_800e {
       final ScriptState<?> state = scriptStatePtrArr_800bc1c0[scriptIndex];
       if(state == null) { // error, parent no longer exists
         manager._10.flags_00 |= 0x8000_0000;
-        transformMatrix.transfer.setZ(-0x7fff);
+        transformMatrix.transfer.z = -0x7fff;
         scriptIndex = -2;
         break;
       }
@@ -1902,10 +1898,10 @@ public final class Bttl_800e {
       final BattleObject base = (BattleObject)state.innerStruct_00;
       if(BattleObject.EM__.equals(base.magic_00)) {
         final EffectManagerData6c<?> baseManager = (EffectManagerData6c<?>)base;
-        final MATRIX baseTransformMatrix = new MATRIX();
-        RotMatrix_Xyz(baseManager._10.rot_10, baseTransformMatrix);
+        final MV baseTransformMatrix = new MV();
+        baseTransformMatrix.rotationXYZ(baseManager._10.rot_10);
         baseTransformMatrix.transfer.set(baseManager._10.trans_04);
-        baseTransformMatrix.scaleL(baseManager._10.scale_16);
+        baseTransformMatrix.scaleLocal(baseManager._10.scale_16);
 
         if(currentManager.coord2Index_0d != -1) {
           //LAB_800e866c
@@ -1923,7 +1919,7 @@ public final class Bttl_800e {
         applyModelRotationAndScale(s1);
         final int coord2Index = currentManager.coord2Index_0d;
 
-        final MATRIX sp0x10 = new MATRIX();
+        final MV sp0x10 = new MV();
         if(coord2Index == -1) {
           sp0x10.set(s1.coord2_14.coord);
         } else {
@@ -1940,7 +1936,7 @@ public final class Bttl_800e {
         //LAB_800e878c
         //LAB_800e8790
         manager._10.flags_00 |= 0x8000_0000;
-        transformMatrix.transfer.setZ(-0x7fff);
+        transformMatrix.transfer.z = -0x7fff;
         scriptIndex = -2;
         break;
       }
@@ -1948,8 +1944,8 @@ public final class Bttl_800e {
 
     //LAB_800e87b4
     if(scriptIndex == -2) { // error
-      final MATRIX transposedWs = new MATRIX();
-      final VECTOR transposedTranslation = new VECTOR();
+      final MV transposedWs = new MV();
+      final Vector3f transposedTranslation = new Vector3f();
       worldToScreenMatrix_800c3548.transpose(transposedWs);
       transposedTranslation.set(worldToScreenMatrix_800c3548.transfer).negate();
       transposedTranslation.mul(transposedWs, transposedWs.transfer);
@@ -2064,7 +2060,7 @@ public final class Bttl_800e {
 
   /** Has some relation to rendering of certain effect sprites, like ones from HUD DEFF */
   @Method(0x800e9428L)
-  public static void renderBillboardSpriteEffect_(final SpriteMetrics08 metrics, final EffectManagerData6cInner<?> managerInner, final MATRIX transformMatrix) {
+  public static void renderBillboardSpriteEffect_(final SpriteMetrics08 metrics, final EffectManagerData6cInner<?> managerInner, final MV transformMatrix) {
     if(managerInner.flags_00 >= 0) { // No errors
       final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24();
       spriteEffect.flags_00 = managerInner.flags_00 & 0xffff_ffffL;
@@ -2097,7 +2093,7 @@ public final class Bttl_800e {
 
   @Method(0x800e9590L)
   public static void renderBillboardSpriteEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
-    final MATRIX transformMatrix = new MATRIX();
+    final MV transformMatrix = new MV();
     calculateEffectTransforms(transformMatrix, manager);
     renderBillboardSpriteEffect_(((BillboardSpriteEffect0c)manager.effect_44).metrics_04, manager._10, transformMatrix);
   }
@@ -2488,7 +2484,7 @@ public final class Bttl_800e {
 
   @Method(0x800ea3f8L)
   public static void FUN_800ea3f8(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.AnimType>> state, final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager) {
-    final MATRIX sp0x10 = new MATRIX();
+    final MV sp0x10 = new MV();
     calculateEffectTransforms(sp0x10, manager);
 
     final ModelEffect13c effect = (ModelEffect13c)manager.effect_44;
@@ -2970,9 +2966,9 @@ public final class Bttl_800e {
 
   @Method(0x800eb9acL)
   public static void loadStageTmd(final BattleStage stage, final CContainer extTmd, final TmdAnimationFile tmdAnim) {
-    final int x = stage.coord2_558.coord.transfer.getX();
-    final int y = stage.coord2_558.coord.transfer.getY();
-    final int z = stage.coord2_558.coord.transfer.getZ();
+    final float x = stage.coord2_558.coord.transfer.x;
+    final float y = stage.coord2_558.coord.transfer.y;
+    final float z = stage.coord2_558.coord.transfer.z;
 
     stage_800bda0c = stage;
 
@@ -3148,22 +3144,21 @@ public final class Bttl_800e {
     //LAB_800ec370
     shadow.zOffset_a0 = model.zOffset_a0 + 16;
     shadow.coord2_14.transforms.scale.set(model.shadowSize_10c.x).div(4.0f);
-    RotMatrix_Xyz(shadow.coord2_14.transforms.rotate, shadow.coord2_14.coord);
-    shadow.coord2_14.coord.scaleL(shadow.coord2_14.transforms.scale);
+    shadow.coord2_14.coord.rotationXYZ(shadow.coord2_14.transforms.rotate);
+    shadow.coord2_14.coord.scaleLocal(shadow.coord2_14.transforms.scale);
     shadow.coord2_14.flg = 0;
     final GsCOORDINATE2 v0 = shadow.modelParts_00[0].coord2_04;
     final Transforms s0 = v0.transforms;
     s0.rotate.zero();
-    RotMatrix_Zyx(s0.rotate, v0.coord);
+    v0.coord.rotationZYX(s0.rotate);
     s0.trans.zero();
     v0.coord.transfer.set(s0.trans);
 
-    final MATRIX sp0x30 = new MATRIX();
-    final MATRIX sp0x10 = new MATRIX();
+    final MV sp0x30 = new MV();
+    final MV sp0x10 = new MV();
     GsGetLws(shadow.modelParts_00[0].coord2_04, sp0x30, sp0x10);
     GsSetLightMatrix(sp0x30);
-    GTE.setRotationMatrix(sp0x10);
-    GTE.setTranslationVector(sp0x10.transfer);
+    GTE.setTransforms(sp0x10);
     Renderer.renderDobj2(shadow.modelParts_00[0], true, 0);
     shadow.modelParts_00[0].coord2_04.flg--;
   }
@@ -3196,12 +3191,11 @@ public final class Bttl_800e {
     int part = 0x1;
     for(final ModelPart10 dobj2 : stage.dobj2s_00) {
       if((part & stage.flags_5e4) == 0) {
-        final MATRIX ls = new MATRIX();
-        final MATRIX lw = new MATRIX();
+        final MV ls = new MV();
+        final MV lw = new MV();
         GsGetLws(dobj2.coord2_04, lw, ls);
         GsSetLightMatrix(lw);
-        GTE.setRotationMatrix(ls);
-        GTE.setTranslationVector(ls.transfer);
+        GTE.setTransforms(ls);
         Renderer.renderDobj2(dobj2, true, 0);
       }
 
@@ -3221,7 +3215,7 @@ public final class Bttl_800e {
       final Transforms param = coord2.transforms;
 
       param.rotate.set(rotTrans.rotate_00);
-      RotMatrix_Zyx(param.rotate, coord2.coord);
+      coord2.coord.rotationZYX(param.rotate);
 
       param.trans.set(rotTrans.translate_06);
       coord2.coord.transfer.set(param.trans);
@@ -3233,7 +3227,7 @@ public final class Bttl_800e {
 
   @Method(0x800ec744L)
   public static void rotateBattleStage(final BattleStage stage) {
-    RotMatrix_Xyz(stage.param_5a8.rotate, stage.coord2_558.coord);
+    stage.coord2_558.coord.rotationXYZ(stage.param_5a8.rotate);
     stage.coord2_558.flg = 0;
   }
 
@@ -3252,9 +3246,9 @@ public final class Bttl_800e {
 
   @Method(0x800ec7e4L)
   public static DVECTOR perspectiveTransformXyz(final Model124 model, final short x, final short y, final short z) {
-    final MATRIX ls = new MATRIX();
+    final MV ls = new MV();
     GsGetLs(model.coord2_14, ls);
-    setRotTransMatrix(ls);
+    GTE.setTransforms(ls);
 
     final DVECTOR screenCoords = new DVECTOR();
     perspectiveTransform(new SVECTOR().set(x, y, z), screenCoords);
@@ -3314,12 +3308,11 @@ public final class Bttl_800e {
     for(int i = 0; i < model.modelParts_00.length; i++) {
       if((model.partInvisible_f4 & 1L << i) == 0) {
         final ModelPart10 s2 = model.modelParts_00[i];
-        final MATRIX sp0x30 = new MATRIX();
-        final MATRIX sp0x10 = new MATRIX();
+        final MV sp0x30 = new MV();
+        final MV sp0x10 = new MV();
         GsGetLws(s2.coord2_04, sp0x30, sp0x10);
         GsSetLightMatrix(sp0x30);
-        GTE.setRotationMatrix(sp0x10);
-        GTE.setTranslationVector(sp0x10.transfer);
+        GTE.setTransforms(sp0x10);
         Renderer.renderDobj2(s2, true, 0);
       }
     }

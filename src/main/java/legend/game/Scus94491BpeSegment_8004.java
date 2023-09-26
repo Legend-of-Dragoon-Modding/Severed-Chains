@@ -1,7 +1,6 @@
 package legend.game;
 
 import legend.core.MathHelper;
-import legend.core.gte.MATRIX;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
@@ -32,6 +31,7 @@ import legend.game.sound.SssqReader;
 import legend.game.sound.Sssqish;
 import legend.game.sound.VolumeRamp;
 import legend.game.submap.SMap;
+import legend.game.submap.SubmapMusic08;
 import legend.game.title.GameOver;
 import legend.game.title.NewGame;
 import legend.game.title.Ttle;
@@ -39,15 +39,12 @@ import legend.game.types.ItemStats0c;
 import legend.game.types.MoonMusic08;
 import legend.game.types.OverlayStruct;
 import legend.game.types.Struct10;
-import legend.game.submap.SubmapMusic08;
 import legend.game.unpacker.FileData;
 import legend.game.wmap.WMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -690,14 +687,6 @@ public final class Scus94491BpeSegment_8004 {
   public static final ArrayRef<SubmapMusic08> _8004fa98 = MEMORY.ref(1, 0x8004fa98L, ArrayRef.of(SubmapMusic08.class, 13, 8, SubmapMusic08::new));
   public static final ArrayRef<SubmapMusic08> _8004fb00 = MEMORY.ref(1, 0x8004fb00L, ArrayRef.of(SubmapMusic08.class, 130, 8, SubmapMusic08::new));
   public static final ArrayRef<MoonMusic08> moonMusic_8004ff10 = MEMORY.ref(4, 0x8004ff10L, ArrayRef.of(MoonMusic08.class, 43, 8, MoonMusic08::new));
-
-  @Method(0x80040010L)
-  public static void RotMatrix_Zyx(final Vector3f rotation, final MATRIX matrixOut) {
-    matrixOut.set(new Matrix4f()
-      .rotateZ(rotation.z)
-      .rotateY(rotation.y)
-      .rotateX(rotation.x));
-  }
 
   /**
    * Uses PlayStation format (4096 = 360 degrees = 2pi) to finish the x/y arctan function (-180 degrees and +180 degrees, -pi...pi).

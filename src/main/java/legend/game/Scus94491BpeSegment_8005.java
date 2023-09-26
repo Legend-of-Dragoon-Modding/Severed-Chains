@@ -1,5 +1,6 @@
 package legend.game;
 
+import legend.core.gte.MV;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
@@ -12,8 +13,6 @@ import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.sound.ReverbConfigAndLocation;
 import legend.game.types.AdditionData0e;
 import legend.game.types.LodString;
-import org.joml.Matrix3f;
-import org.joml.Vector3f;
 
 import java.util.Arrays;
 
@@ -90,11 +89,9 @@ public final class Scus94491BpeSegment_8005 {
   public static final int vramHeight_800546c2 = 512;
 
   public static int matrixStackIndex_80054a08;
-  public static final Matrix3f[] matrixStack_80054a0c = new Matrix3f[20];
-  public static final Vector3f[] vectorStack_80054a0c = new Vector3f[20];
+  public static final MV[] matrixStack_80054a0c = new MV[20];
   static {
-    Arrays.setAll(matrixStack_80054a0c, i -> new Matrix3f());
-    Arrays.setAll(vectorStack_80054a0c, i -> new Vector3f());
+    Arrays.setAll(matrixStack_80054a0c, i -> new MV());
   }
 
   /** Precomputed sin/cos table */

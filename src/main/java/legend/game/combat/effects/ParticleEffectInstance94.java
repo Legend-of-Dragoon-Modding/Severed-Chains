@@ -1,7 +1,5 @@
 package legend.game.combat.effects;
 
-import legend.core.gte.SVECTOR;
-import legend.core.gte.VECTOR;
 import org.joml.Vector3f;
 
 public class ParticleEffectInstance94 {
@@ -25,19 +23,19 @@ public class ParticleEffectInstance94 {
   public short _14; // position x // Monoxide: not sure what these are, they're set to x/y/z at one point, but definitely not used as a position
   public short _16; // position y // Monoxide: actually, maybe multipurpose, depending on effect? Sometimes used as angles, sometimes seem to be used as position modifiers
   public short _18; // position z
-  public final SVECTOR _1a = new SVECTOR(); // position noise velocity?
+  public final Vector3f _1a = new Vector3f(); // position noise velocity?
   public short verticalPositionScale_20;
   public short ticksUntilMovementModeChanges_22; // Once this ticks down to 0, it looks like the particle movement changes (starts to accelerate, ???)
   public float angleAcceleration_24;
 
-  public final VECTOR managerTranslation_2c = new VECTOR();
-  public final SVECTOR particlePositionCopy1 = new SVECTOR();
-  public SVECTOR[] subParticlePositionsArray_44;
-  public final SVECTOR particlePositionCopy2_48 = new SVECTOR();
+  public final Vector3f managerTranslation_2c = new Vector3f();
+  public final Vector3f particlePositionCopy1 = new Vector3f();
+  public Vector3f[] subParticlePositionsArray_44;
+  public final Vector3f particlePositionCopy2_48 = new Vector3f();
   /** Translation of an attached model object? */
-  public final SVECTOR particlePosition_50 = new SVECTOR();
-  public final SVECTOR particleVelocity_58 = new SVECTOR();
-  public final SVECTOR particleAcceleration_60 = new SVECTOR();
+  public final Vector3f particlePosition_50 = new Vector3f();
+  public final Vector3f particleVelocity_58 = new Vector3f();
+  public final Vector3f particleAcceleration_60 = new Vector3f();
   /** particle rotation copied from effect manager */
   public final Vector3f managerRotation_68 = new Vector3f();
   public final Vector3f spriteRotation_70 = new Vector3f();

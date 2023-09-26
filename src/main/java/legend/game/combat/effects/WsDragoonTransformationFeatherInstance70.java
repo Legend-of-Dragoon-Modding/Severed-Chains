@@ -1,6 +1,6 @@
 package legend.game.combat.effects;
 
-import legend.core.gte.VECTOR;
+import org.joml.Vector3f;
 
 public class WsDragoonTransformationFeatherInstance70 {
   public final int index;
@@ -12,7 +12,7 @@ public class WsDragoonTransformationFeatherInstance70 {
   public int callbackIndex_02;
   public int currentFrame_04;
 
-  public final VECTOR translation_08 = new VECTOR();
+  public final Vector3f translation_08 = new Vector3f();
 
   public int velocityTranslationMagnitudeY_1c;
 

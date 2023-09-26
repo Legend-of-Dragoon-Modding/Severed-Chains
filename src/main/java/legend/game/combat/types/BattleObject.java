@@ -1,13 +1,10 @@
 package legend.game.combat.types;
 
 import legend.core.MathHelper;
-import legend.core.gte.MATRIX;
+import legend.core.gte.MV;
 import legend.core.gte.USCOLOUR;
-import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import org.joml.Vector3f;
-
-import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 
 public abstract class BattleObject {
   public static String EM__ = "EM  ";
@@ -15,40 +12,40 @@ public abstract class BattleObject {
 
   public String magic_00;
 
-  public abstract VECTOR getPosition();
+  public abstract Vector3f getPosition();
   public abstract Vector3f getRotation();
   public abstract Vector3f getScale();
   public abstract USCOLOUR getColour();
 
   /** Translates a position relative to this BattleObject's local coordinate system */
   @Method(0x801105ccL)
-  public void getRelativePosition(final VECTOR in, final VECTOR out) {
-    final MATRIX parentRotationMatrix = new MATRIX();
-    RotMatrix_Xyz(this.getRotation(), parentRotationMatrix);
+  public void getRelativePosition(final Vector3f in, final Vector3f out) {
+    final MV parentRotationMatrix = new MV();
+    parentRotationMatrix.rotationXYZ(this.getRotation());
     in.mul(parentRotationMatrix, out).add(this.getPosition());
   }
 
   /** Translates a position relative to this BattleObject's local coordinate system */
   @Method(0x801105ccL)
-  public void getRelativePosition(final VECTOR inOut) {
+  public void getRelativePosition(final Vector3f inOut) {
     this.getRelativePosition(inOut, inOut);
   }
 
   /** Returns the relative position from a parent BattleObject's local coordinate system */
-  public VECTOR getRelativePositionTo(final BattleObject child, final VECTOR out) {
+  public Vector3f getRelativePositionTo(final BattleObject child, final Vector3f out) {
     return getRelativePositionBetween(child, this, out);
   }
 
   /** Returns the relative position from a parent BattleObject's local coordinate system */
   @Method(0x8011035cL)
-  public VECTOR getRelativePositionFrom(final BattleObject parent, final VECTOR out) {
+  public Vector3f getRelativePositionFrom(final BattleObject parent, final Vector3f out) {
     return getRelativePositionBetween(this, parent, out);
   }
 
-  private static VECTOR getRelativePositionBetween(final BattleObject child, final BattleObject parent, final VECTOR out) {
-    final VECTOR deltaPosition = new VECTOR().set(child.getPosition()).sub(parent.getPosition());
-    final MATRIX parentRotationMatrix = new MATRIX();
-    RotMatrix_Xyz(parent.getRotation(), parentRotationMatrix);
+  private static Vector3f getRelativePositionBetween(final BattleObject child, final BattleObject parent, final Vector3f out) {
+    final Vector3f deltaPosition = new Vector3f().set(child.getPosition()).sub(parent.getPosition());
+    final MV parentRotationMatrix = new MV();
+    parentRotationMatrix.rotationXYZ(parent.getRotation());
 
     parentRotationMatrix.transpose();
     deltaPosition.mul(parentRotationMatrix, out);

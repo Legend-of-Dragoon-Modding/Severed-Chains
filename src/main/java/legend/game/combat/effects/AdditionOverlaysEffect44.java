@@ -1,13 +1,13 @@
 package legend.game.combat.effects;
 
-import legend.core.gte.VECTOR;
+import org.joml.Vector3f;
 
 public class AdditionOverlaysEffect44 implements Effect {
   public int attackerScriptIndex_00;
   public int targetScriptIndex_04;
 
-  public final VECTOR attackerStartingPosition_10 = new VECTOR();
-  public final VECTOR distancePerFrame_20 = new VECTOR();
+  public final Vector3f attackerStartingPosition_10 = new Vector3f();
+  public final Vector3f distancePerFrame_20 = new Vector3f();
 
   /** ubyte */
   public int count_30;

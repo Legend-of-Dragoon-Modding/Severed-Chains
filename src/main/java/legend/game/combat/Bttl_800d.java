@@ -6,8 +6,8 @@ import legend.core.gpu.GpuCommandLine;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.COLOUR;
 import legend.core.gte.MATRIX;
+import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.SVECTOR;
 import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
@@ -16,8 +16,6 @@ import legend.core.memory.Method;
 import legend.core.memory.types.CString;
 import legend.core.memory.types.ComponentFunction;
 import legend.core.memory.types.FloatRef;
-import legend.core.memory.types.IntRef;
-import legend.core.memory.types.ShortRef;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.deff.Anim;
 import legend.game.combat.deff.Cmb;
@@ -62,6 +60,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.joml.Math;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
@@ -95,8 +94,6 @@ import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.getScreenOffset;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8003.setRotTransMatrix;
-import static legend.game.Scus94491BpeSegment_8004.RotMatrix_Zyx;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
@@ -219,23 +216,22 @@ public final class Bttl_800d {
         s4.b_38 -= s4.fadeB_3e;
 
         //LAB_800d0254
-        final ShortRef[] x = {new ShortRef(), new ShortRef()};
-        final ShortRef[] y = {new ShortRef(), new ShortRef()};
+        final Vector2f[] screenVert = {new Vector2f(), new Vector2f()};
         for(int s3 = 0; s3 < 2; s3++) {
-          final VECTOR s1 = s4._04[s3];
-          final SVECTOR a1 = s4._24[s3];
-          a0 = FUN_800cfb14(data, s1, x[s3], y[s3]);
+          final Vector3f s1 = s4._04[s3];
+          final Vector3f a1 = s4._24[s3];
+          a0 = FUN_800cfb14(data, s1, screenVert[s3]);
           s1.add(a1);
-          a1.y.add((short)25);
+          a1.y += 25.0f;
 
-          if(a1.getX() > 10) {
-            a1.x.sub((short)10);
+          if(a1.x > 10.0f) {
+            a1.x -= 10.0f;
           }
 
           //LAB_800d0308
-          if(s1.getY() + data._10.trans_04.getY() >= 0) {
-            s1.setY(-data._10.trans_04.getY());
-            a1.y.neg();
+          if(s1.y + data._10.trans_04.y >= 0) {
+            s1.y = -data._10.trans_04.y;
+            a1.y = -a1.y;
           }
 
           //LAB_800d033c
@@ -260,8 +256,8 @@ public final class Bttl_800d {
               .translucent(Translucency.B_PLUS_F)
               .monochrome(0, 0)
               .rgb(1, s4.r_34 >>> 8, s4.g_36 >>> 8, s4.b_38 >>> 8)
-              .pos(0, x[0].get(), y[0].get())
-              .pos(1, x[1].get(), y[1].get())
+              .pos(0, screenVert[0].x, screenVert[0].y)
+              .pos(1, screenVert[1].x, screenVert[1].y)
             );
           }
 
@@ -310,13 +306,13 @@ public final class Bttl_800d {
       struct._24[0].set(x, y, z);
       struct._24[1].set(x, y, z);
 
-      struct._04[0].setX(0);
-      struct._04[0].setY((int)(seed_800fa754.advance().get() % 101 - 50));
-      struct._04[0].setZ((int)(seed_800fa754.advance().get() % 101 - 50));
+      struct._04[0].x = 0.0f;
+      struct._04[0].y = seed_800fa754.advance().get() % 101 - 50;
+      struct._04[0].z = seed_800fa754.advance().get() % 101 - 50;
       struct.frames_44 = (int)(seed_800fa754.advance().get() % 9 + 7);
 
       struct._40 = 0;
-      struct._24[1].y.add((short)25);
+      struct._24[1].y += 25.0f;
       struct._04[1].set(struct._04[0]).add(struct._24[0]);
       struct.fadeR_3a = struct.r_34 / struct.frames_44;
       struct.fadeG_3c = struct.g_36 / struct.frames_44;
@@ -346,7 +342,7 @@ public final class Bttl_800d {
     final AdditionSparksEffect08 s6 = (AdditionSparksEffect08)data.effect_44;
 
     //LAB_800d0a7c
-    int s7 = 0;
+    float s7 = 0;
     for(int i = 0; i < s6.count_00; i++) {
       final AdditionSparksEffectInstance4c inst = s6.instances_04[i];
 
@@ -362,27 +358,25 @@ public final class Bttl_800d {
         inst.ticksExisted_00++;
         inst.ticksRemaining_05--;
         inst.startPos_08.add(inst.speed_28);
-        final IntRef startX = new IntRef();
-        final IntRef startY = new IntRef();
-        final IntRef endX = new IntRef();
-        final IntRef endY = new IntRef();
-        final int s1 = transformWorldspaceToScreenspace(inst.startPos_08, startX, startY);
-        transformWorldspaceToScreenspace(inst.endPos_18, endX, endY);
+        final Vector2f start = new Vector2f();
+        final Vector2f end = new Vector2f();
+        final float instZ = transformWorldspaceToScreenspace(inst.startPos_08, start);
+        transformWorldspaceToScreenspace(inst.endPos_18, end);
 
         if(i == 0) {
-          s7 = (short)s1 >> 2;
+          s7 = instZ / 4.0f;
         }
 
         //LAB_800d0b3c
         inst.speed_28.add(inst.acceleration_38);
 
-        if(inst.startPos_08.getY() > 0) {
-          inst.speed_28.setY(-inst.speed_28.getY() / 2);
+        if(inst.startPos_08.y > 0.0f) {
+          inst.speed_28.y = -inst.speed_28.y / 2.0f;
         }
 
         //LAB_800d0b88
-        int a3 = data._10.z_22;
-        final int v1 = s7 + a3;
+        float a3 = data._10.z_22;
+        final float v1 = s7 + a3;
         if(v1 >= 0xa0) {
           if(v1 >= 0xffe) {
             a3 = 0xffe - s7;
@@ -392,11 +386,11 @@ public final class Bttl_800d {
             .translucent(Translucency.B_PLUS_F)
             .rgb(0, inst.r_40 >>> 8, inst.g_42 >>> 8, inst.b_44 >>> 8)
             .rgb(1, inst.r_40 >>> 9, inst.g_42 >>> 9, inst.b_44 >>> 9)
-            .pos(0, startX.get(), startY.get())
-            .pos(1, endX.get(), endY.get());
+            .pos(0, start.x, start.y)
+            .pos(1, end.x, end.y);
 
           //LAB_800d0c84
-          GPU.queueCommand(s7 + a3 >> 2, cmd);
+          GPU.queueCommand((s7 + a3) / 4.0f, cmd);
         }
 
         //LAB_800d0ca0
@@ -453,7 +447,7 @@ public final class Bttl_800d {
       inst.startPos_08.set(inst.delay_04 * s1, 0, 0);
       inst.endPos_18.set(0, 0, 0);
       inst.speed_28.set((int)seed_800fa754.advance().get() % 201, (int)seed_800fa754.advance().get() % 201 - 100, (int)seed_800fa754.advance().get() % 201 - 100);
-      inst.acceleration_38.set((short)0, (short)15, (short)0);
+      inst.acceleration_38.set(0.0f, 15.0f, 0.0f);
 
       inst.r_40 = script.params_20[2].get() << 8;
       inst.g_42 = script.params_20[3].get() << 8;
@@ -471,16 +465,15 @@ public final class Bttl_800d {
 
   /** If a secondary script is specified, modifies the translations of the starburst rays by the secondary script's translation. */
   @Method(0x800d1194L)
-  public static void modifyAdditionStarburstTranslation(final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager, final AdditionStarburstEffect10 starburstEffect, final IntRef[] outTranslations) {
+  public static void modifyAdditionStarburstTranslation(final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager, final AdditionStarburstEffect10 starburstEffect, final Vector2f outTranslation) {
     if(starburstEffect.parentIndex_00 == -1) {
-      outTranslations[0].set(0);
-      outTranslations[1].set(0);
+      outTranslation.zero();
     } else {
       //LAB_800d11c4
-      final VECTOR scriptTranslation = new VECTOR();
+      final Vector3f scriptTranslation = new Vector3f();
       scriptGetScriptedObjectPos(starburstEffect.parentIndex_00, scriptTranslation);
       scriptTranslation.add(manager._10.trans_04);
-      transformWorldspaceToScreenspace(scriptTranslation, outTranslations[0], outTranslations[1]);
+      transformWorldspaceToScreenspace(scriptTranslation, outTranslation);
     }
 
     //LAB_800d120c
@@ -499,22 +492,22 @@ public final class Bttl_800d {
         for(int i = 0; i < 2; i++) {
           int angleModifier = baseAngle[i] + (int)rayArray[rayNum].angleModifier_0a;
           int translationScale = 30 + (int)rayArray[rayNum].endpointTranslationMagnitude_06;
-          int x2 = rcos(rayArray[rayNum].angle_02 + angleModifier) * translationScale >> 12;
-          int y2 = rsin(rayArray[rayNum].angle_02 + angleModifier) * translationScale >> 12;
-          int x3 = rcos(rayArray[rayNum].angle_02) * translationScale >> 12;
-          int y3 = rsin(rayArray[rayNum].angle_02) * translationScale >> 12;
+          float x2 = rcos(rayArray[rayNum].angle_02 + angleModifier) * translationScale >> 12;
+          float y2 = rsin(rayArray[rayNum].angle_02 + angleModifier) * translationScale >> 12;
+          float x3 = rcos(rayArray[rayNum].angle_02) * translationScale >> 12;
+          float y3 = rsin(rayArray[rayNum].angle_02) * translationScale >> 12;
           angleModifier = baseAngle[i] + (int)rayArray[rayNum].angleModifier_0a;
           translationScale = 210 + (int)rayArray[rayNum].endpointTranslationMagnitude_06;
           final int x0 = rcos(rayArray[rayNum].angle_02 + angleModifier) * translationScale >> 12;
           final int y0 = rsin(rayArray[rayNum].angle_02 + angleModifier) * translationScale >> 12;
           final int x1 = rcos(rayArray[rayNum].angle_02) * translationScale >> 12;
           final int y1 = rsin(rayArray[rayNum].angle_02) * translationScale >> 12;
-          final IntRef[] translationRefs = {new IntRef(), new IntRef()};
-          modifyAdditionStarburstTranslation(manager, starburstEffect, translationRefs);
-          x2 = x2 + translationRefs[0].get();
-          y2 = y2 + translationRefs[1].get();
-          x3 = x3 + translationRefs[0].get();
-          y3 = y3 + translationRefs[1].get();
+          final Vector2f translation = new Vector2f();
+          modifyAdditionStarburstTranslation(manager, starburstEffect, translation);
+          x2 = x2 + translation.x;
+          y2 = y2 + translation.y;
+          x3 = x3 + translation.x;
+          y3 = y3 + translation.y;
 
           GPU.queueCommand(30, new GpuCommandPoly(4)
             .translucent(Translucency.B_PLUS_F)
@@ -539,8 +532,8 @@ public final class Bttl_800d {
     final AdditionStarburstEffect10 starburstEffect = (AdditionStarburstEffect10)manager.effect_44;
     final AdditionStarburstEffectRay10[] rayArray = starburstEffect.rayArray_0c;
 
-    final int[] xArray = new int[3];
-    final int[] yArray = new int[3];
+    final float[] xArray = new float[3];
+    final float[] yArray = new float[3];
 
     //LAB_800d16fc
     for(int rayNum = 0; rayNum < starburstEffect.rayCount_04; rayNum++) {
@@ -549,8 +542,8 @@ public final class Bttl_800d {
 
         //LAB_800d1728
         for(int i = 0; i < 4; i++) {
-          final IntRef[] translationRefs = {new IntRef(), new IntRef()};
-          modifyAdditionStarburstTranslation(manager, starburstEffect, translationRefs);
+          final Vector2f translation = new Vector2f();
+          modifyAdditionStarburstTranslation(manager, starburstEffect, translation);
 
           //LAB_800d174c
           for(int j = 0; j < 3; j++) {
@@ -558,8 +551,8 @@ public final class Bttl_800d {
 
             //LAB_800d1784
             final int angleModifier = completedAdditionStarburstAngleModifiers_800c6dac.get(i).get(j);
-            xArray[j] = (rcos(rayArray[rayNum].angle_02 + angleModifier) * translationScale >> 12) + translationRefs[0].get();
-            yArray[j] = (rsin(rayArray[rayNum].angle_02 + angleModifier) * translationScale >> 12) + translationRefs[1].get();
+            xArray[j] = (rcos(rayArray[rayNum].angle_02 + angleModifier) * translationScale >> 12) + translation.x;
+            yArray[j] = (rsin(rayArray[rayNum].angle_02 + angleModifier) * translationScale >> 12) + translation.y;
           }
 
           GPU.queueCommand(30, new GpuCommandPoly(3)
@@ -636,16 +629,16 @@ public final class Bttl_800d {
 
   /** Renders things like the two-tone disc at the start of Detonating Arrow */
   @Method(0x800d1d3cL)
-  public static void renderDiscGradientEffect(final EffectManagerData6c<EffectManagerData6cInner.RadialGradientType> manager, final int angle, final short[] vertices, final RadialGradientEffect14 effect, final Translucency translucency) {
+  public static void renderDiscGradientEffect(final EffectManagerData6c<EffectManagerData6cInner.RadialGradientType> manager, final int angle, final Vector2f[] vertices, final RadialGradientEffect14 effect, final Translucency translucency) {
     if(manager._10.flags_00 >= 0) {
       GPU.queueCommand(effect.z_04 + manager._10.z_22 >> 2, new GpuCommandPoly(3)
         .translucent(translucency)
         .rgb(0, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
         .rgb(1, effect.r_0c, effect.g_0d, effect.b_0e)
         .rgb(2, effect.r_0c, effect.g_0d, effect.b_0e)
-        .pos(0, vertices[0], vertices[1])
-        .pos(1, vertices[2], vertices[3])
-        .pos(2, vertices[4], vertices[5])
+        .pos(0, vertices[0].x, vertices[0].y)
+        .pos(1, vertices[1].x, vertices[1].y)
+        .pos(2, vertices[2].x, vertices[2].y)
       );
     }
 
@@ -653,33 +646,33 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d1e80L)
-  public static void FUN_800d1e80(final EffectManagerData6c<EffectManagerData6cInner.RadialGradientType> manager, final int angle, final short[] vertices, final RadialGradientEffect14 effect, final Translucency translucency) {
+  public static void FUN_800d1e80(final EffectManagerData6c<EffectManagerData6cInner.RadialGradientType> manager, final int angle, final Vector2f[] vertices, final RadialGradientEffect14 effect, final Translucency translucency) {
     throw new RuntimeException("Not implemented");
   }
 
   /** Renders things like the ring effect when using a healing potion */
   @Method(0x800d21b8L)
-  public static void renderRingGradientEffect(final EffectManagerData6c<EffectManagerData6cInner.RadialGradientType> manager, final int angle, final short[] vertices, final RadialGradientEffect14 effect, final Translucency translucency) {
+  public static void renderRingGradientEffect(final EffectManagerData6c<EffectManagerData6cInner.RadialGradientType> manager, final int angle, final Vector2f[] vertices, final RadialGradientEffect14 effect, final Translucency translucency) {
     if(manager._10.flags_00 >= 0) {
-      final VECTOR sp0x20 = new VECTOR().set(
-        (int)(rcos(angle) * (manager._10.scale_16.x / effect.scaleModifier_01 + (manager._10.size_28 >> 12))),
-        (int)(rsin(angle) * (manager._10.scale_16.y / effect.scaleModifier_01 + (manager._10.size_28 >> 12))),
+      //TODO why does rsin/rcos not have to be >> 12?
+      final Vector3f sp0x20 = new Vector3f(
+        rcos(angle) * (manager._10.scale_16.x / effect.scaleModifier_01 + (manager._10.size_28 >> 12)),
+        rsin(angle) * (manager._10.scale_16.y / effect.scaleModifier_01 + (manager._10.size_28 >> 12)),
         manager._10.z_2c
       );
 
-      final ShortRef x0 = new ShortRef();
-      final ShortRef y0 = new ShortRef();
-      FUN_800cfb14(manager, sp0x20, x0, y0);
+      final Vector2f screenVert0 = new Vector2f();
+      FUN_800cfb14(manager, sp0x20, screenVert0);
 
-      final VECTOR sp0x30 = new VECTOR().set(
-        (int)(rcos(angle + effect.angleStep_08) * (manager._10.scale_16.x / effect.scaleModifier_01 + (manager._10.size_28 >> 12))),
-        (int)(rsin(angle + effect.angleStep_08) * (manager._10.scale_16.y / effect.scaleModifier_01 + (manager._10.size_28 >> 12))),
+      //TODO why does rsin/rcos not have to be >> 12?
+      final Vector3f sp0x30 = new Vector3f(
+        rcos(angle + effect.angleStep_08) * (manager._10.scale_16.x / effect.scaleModifier_01 + (manager._10.size_28 >> 12)),
+        rsin(angle + effect.angleStep_08) * (manager._10.scale_16.y / effect.scaleModifier_01 + (manager._10.size_28 >> 12)),
         manager._10.z_2c
       );
 
-      final ShortRef x1 = new ShortRef();
-      final ShortRef y1 = new ShortRef();
-      FUN_800cfb14(manager, sp0x30, x1, y1);
+      final Vector2f screenVert1 = new Vector2f();
+      FUN_800cfb14(manager, sp0x30, screenVert1);
 
       GPU.queueCommand(effect.z_04 + manager._10.z_22 >> 2, new GpuCommandPoly(4)
         .translucent(translucency)
@@ -687,10 +680,10 @@ public final class Bttl_800d {
         .rgb(1, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
         .rgb(2, effect.r_0c, effect.g_0d, effect.b_0e)
         .rgb(3, effect.r_0c, effect.g_0d, effect.b_0e)
-        .pos(0, x0.get(), y0.get())
-        .pos(1, x1.get(), y1.get())
-        .pos(2, vertices[2], vertices[3])
-        .pos(3, vertices[4], vertices[5])
+        .pos(0, screenVert0.x, screenVert0.y)
+        .pos(1, screenVert1.x, screenVert1.y)
+        .pos(2, vertices[1].x, vertices[1].y)
+        .pos(3, vertices[2].x, vertices[2].y)
       );
     }
 
@@ -702,9 +695,8 @@ public final class Bttl_800d {
     final RadialGradientEffect14 effect = (RadialGradientEffect14)manager.effect_44;
     effect.angleStep_08 = 0x1000 / (0x4 << effect.circleSubdivisionModifier_00);
 
-    final ShortRef refX0 = new ShortRef();
-    final ShortRef refY0 = new ShortRef();
-    effect.z_04 = FUN_800cfb14(manager, new VECTOR(), refX0, refY0) >> 2;
+    final Vector2f screenVert0 = new Vector2f();
+    effect.z_04 = FUN_800cfb14(manager, new Vector3f(), screenVert0) >> 2;
 
     final int z = effect.z_04 + manager._10.z_22;
     if(z >= 0xa0) {
@@ -713,23 +705,22 @@ public final class Bttl_800d {
       }
 
       //LAB_800d2510
-      final VECTOR sp0x38 = new VECTOR().set(
+      //TODO these are .12, why does this not have to be scaled down? Why is scale so small?
+      final Vector3f sp0x38 = new Vector3f().set(
         (int)(rcos(0) * (manager._10.scale_16.x / effect.scaleModifier_01)),
         (int)(rsin(0) * (manager._10.scale_16.y / effect.scaleModifier_01)),
         0
       );
 
-      final ShortRef refX2 = new ShortRef();
-      final ShortRef refY2 = new ShortRef();
-      FUN_800cfb14(manager, sp0x38, refX2, refY2);
+      final Vector2f screenVert2 = new Vector2f();
+      FUN_800cfb14(manager, sp0x38, screenVert2);
       effect.r_0c = manager._10.colour_24 >>> 16 & 0xff;
       effect.g_0d = manager._10.colour_24 >>>  8 & 0xff;
       effect.b_0e = manager._10.colour_24 & 0xff;
 
       //LAB_800d25b4
       for(int angle = 0; angle < 0x1000; ) {
-        final ShortRef refX1 = new ShortRef().set(refX2.get());
-        final ShortRef refY1 = new ShortRef().set(refY2.get());
+        final Vector2f screenVert1 = new Vector2f(screenVert2);
 
         sp0x38.set(
           (int)(rcos(angle + effect.angleStep_08) * (manager._10.scale_16.x / effect.scaleModifier_01)),
@@ -737,8 +728,8 @@ public final class Bttl_800d {
           0
         );
 
-        FUN_800cfb14(manager, sp0x38, refX2, refY2);
-        effect.renderer_10.accept(manager, angle, new short[] {refX0.get(), refY0.get(), refX1.get(), refY1.get(), refX2.get(), refY2.get()}, effect, (manager._10.flags_00 & 0x1000_0000) != 0 ? Translucency.B_PLUS_F : Translucency.B_MINUS_F);
+        FUN_800cfb14(manager, sp0x38, screenVert2);
+        effect.renderer_10.accept(manager, angle, new Vector2f[] {screenVert0, screenVert1, screenVert2}, effect, (manager._10.flags_00 & 0x1000_0000) != 0 ? Translucency.B_PLUS_F : Translucency.B_MINUS_F);
         angle += effect.angleStep_08;
       }
     }
@@ -780,12 +771,10 @@ public final class Bttl_800d {
 
   @Method(0x800d2810L)
   public static void renderGuardEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
-    final VECTOR translation = new VECTOR();
-    final IntRef[] refXArray = new IntRef[7];
-    final IntRef[] refYArray = new IntRef[7];
+    final Vector3f translation = new Vector3f();
+    final Vector2f[] pos = new Vector2f[7];
 
-    Arrays.setAll(refXArray, i -> new IntRef());
-    Arrays.setAll(refYArray, i -> new IntRef());
+    Arrays.setAll(pos, i -> new Vector2f());
 
     final GuardEffect06 effect = (GuardEffect06)manager.effect_44;
     effect._02++;
@@ -793,17 +782,17 @@ public final class Bttl_800d {
 
     //LAB_800d2888
     GuardEffectMetrics04 guardEffectMetrics;
-    int effectZ = 0;
+    float effectZ = 0;
     for(int i = 6; i >= 0; i--) {
       //LAB_800d289c
       guardEffectMetrics = guardEffectMetrics_800fa76c.get(i);
-      translation.setX(manager._10.trans_04.getX() + (int)(i != 0 ? manager._10.scale_16.x * 0x1000 / 4 : 0));
-      translation.setY(manager._10.trans_04.getY() + (int)(guardEffectMetrics.y_02.get() * manager._10.scale_16.y));
-      translation.setZ(manager._10.trans_04.getZ() + (int)(guardEffectMetrics.z_00.get() * manager._10.scale_16.z));
-      effectZ = transformWorldspaceToScreenspace(translation, refXArray[i], refYArray[i]);
+      translation.x = manager._10.trans_04.x + (i != 0 ? manager._10.scale_16.x * 0x1000 / 4 : 0);
+      translation.y = manager._10.trans_04.y + guardEffectMetrics.y_02.get() * manager._10.scale_16.y;
+      translation.z = manager._10.trans_04.z + guardEffectMetrics.z_00.get() * manager._10.scale_16.z;
+      effectZ = transformWorldspaceToScreenspace(translation, pos[i]);
     }
 
-    effectZ = effectZ >> 2;
+    effectZ /= 4.0f;
     int r = MathHelper.clamp(manager._10.colour_1c.getX() - 1 << 8, 0, 0x8000) >>> 7;
     int g = MathHelper.clamp(manager._10.colour_1c.getY() - 1 << 8, 0, 0x8000) >>> 7;
     int b = MathHelper.clamp(manager._10.colour_1c.getZ() - 1 << 8, 0, 0x8000) >>> 7;
@@ -812,8 +801,8 @@ public final class Bttl_800d {
     //LAB_800d2a80
     //LAB_800d2a9c
     for(int i = 0; i < 5; i++) {
-      int managerZ = manager._10.z_22;
-      final int totalZ = effectZ + managerZ;
+      float managerZ = manager._10.z_22;
+      final float totalZ = effectZ + managerZ;
       if(totalZ >= 0xa0) {
         if(totalZ >= 0xffe) {
           managerZ = 0xffe - effectZ;
@@ -821,11 +810,11 @@ public final class Bttl_800d {
 
         //LAB_800d2bc0
         // Main part of shield effect
-        GPU.queueCommand(effectZ + managerZ >> 2, new GpuCommandPoly(3)
+        GPU.queueCommand((effectZ + managerZ) / 4.0f, new GpuCommandPoly(3)
           .translucent(Translucency.B_PLUS_F)
-          .pos(0, refXArray[i + 1].get(), refYArray[i + 1].get())
-          .pos(1, refXArray[i + 2].get(), refYArray[i + 2].get())
-          .pos(2, refXArray[0    ].get(), refYArray[0    ].get())
+          .pos(0, pos[i + 1].x, pos[i + 1].y)
+          .pos(1, pos[i + 2].x, pos[i + 2].y)
+          .pos(2, pos[0    ].x, pos[0    ].y)
           .rgb(0, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
           .rgb(1, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
           .monochrome(2, r)
@@ -854,16 +843,16 @@ public final class Bttl_800d {
       //LAB_800d2d4c
       for(int n = 1; n < 7; n++) {
         guardEffectMetrics = guardEffectMetrics_800fa76c.get(n);
-        translation.setX(baseX + manager._10.trans_04.getX());
-        translation.setY(((int)(guardEffectMetrics.y_02.get() * manager._10.scale_16.y * s6) >> 12) + manager._10.trans_04.getY());
-        translation.setZ(((int)(guardEffectMetrics.z_00.get() * manager._10.scale_16.z * s6) >> 12) + manager._10.trans_04.getZ());
-        effectZ = transformWorldspaceToScreenspace(translation, refXArray[n], refYArray[n]) >> 2;
+        translation.x = baseX + manager._10.trans_04.x;
+        translation.y = guardEffectMetrics.y_02.get() * manager._10.scale_16.y * s6 / 0x1000 + manager._10.trans_04.y;
+        translation.z = guardEffectMetrics.z_00.get() * manager._10.scale_16.z * s6 / 0x1000 + manager._10.trans_04.z;
+        effectZ = transformWorldspaceToScreenspace(translation, pos[n]) / 4.0f;
       }
 
       //LAB_800d2e20
       for(int n = 0; n < 5; n++) {
-        int managerZ = manager._10.z_22;
-        final int totalZ = effectZ + managerZ;
+        float managerZ = manager._10.z_22;
+        final float totalZ = effectZ + managerZ;
         if(totalZ >= 0xa0) {
           if(totalZ >= 0xffe) {
             managerZ = 0xffe - effectZ;
@@ -871,10 +860,10 @@ public final class Bttl_800d {
 
           //LAB_800d2ee8
           // Radiant lines of shield effect
-          GPU.queueCommand(effectZ + managerZ >> 2, new GpuCommandLine()
+          GPU.queueCommand((effectZ + managerZ) / 4.0f, new GpuCommandLine()
             .translucent(Translucency.B_PLUS_F)
-            .pos(0, refXArray[n + 1].get(), refYArray[n + 1].get())
-            .pos(1, refXArray[n + 2].get(), refYArray[n + 2].get())
+            .pos(0, pos[n + 1].x, pos[n + 1].y)
+            .pos(1, pos[n + 2].x, pos[n + 2].y)
             .rgb(r, g, b)
           );
         }
@@ -1000,7 +989,7 @@ public final class Bttl_800d {
           objArray[objIndex].stepR_2a = objArray[objIndex].r_24 / objArray[objIndex].stepCount_01;
           objArray[objIndex].stepG_2c = objArray[objIndex].g_26 / objArray[objIndex].stepCount_01;
           objArray[objIndex].stepB_2e = objArray[objIndex].b_28 / objArray[objIndex].stepCount_01;
-          final VECTOR translation = new VECTOR();
+          final Vector3f translation = new Vector3f();
           getModelObjectTranslation(deathEffect.scriptIndex_08, translation, objIndex);
           objArray[objIndex].translation_14.set(translation);
           setModelObjectVisibility(deathEffect.scriptIndex_08, objIndex, false);
@@ -2627,12 +2616,12 @@ public final class Bttl_800d {
     cam.viewpointBaseTranslation_94.y += cam.stepY_bc;
     cam.viewpointBaseTranslation_94.z += cam.stepZ_c8;
 
-    final VECTOR pos = cam.viewpointBobj_f4.getPosition();
+    final Vector3f pos = cam.viewpointBobj_f4.getPosition();
 
     setViewpoint(
-      pos.getX() + cam.viewpointBaseTranslation_94.x,
-      pos.getY() + cam.viewpointBaseTranslation_94.y,
-      pos.getZ() + cam.viewpointBaseTranslation_94.z
+      pos.x + cam.viewpointBaseTranslation_94.x,
+      pos.y + cam.viewpointBaseTranslation_94.y,
+      pos.z + cam.viewpointBaseTranslation_94.z
     );
 
     cam.viewpointTicksRemaining_d0--;
@@ -2796,8 +2785,8 @@ public final class Bttl_800d {
     cam.viewpointBaseTranslation_94.y = cam.viewpointTargetTranslation_e8.y - temp2_800faba8.x;
     cam.viewpointBaseTranslation_94.z = cam.viewpointTargetTranslation_e8.z + temp2_800faba8.y;
 
-    final VECTOR pos = cam.viewpointBobj_f4.getPosition();
-    setViewpoint(pos.getX() + cam.viewpointBaseTranslation_94.x, pos.getY() + cam.viewpointBaseTranslation_94.y, pos.getZ() + cam.viewpointBaseTranslation_94.z);
+    final Vector3f pos = cam.viewpointBobj_f4.getPosition();
+    setViewpoint(pos.x + cam.viewpointBaseTranslation_94.x, pos.y + cam.viewpointBaseTranslation_94.y, pos.z + cam.viewpointBaseTranslation_94.z);
 
     cam.viewpointTicksRemaining_d0--;
     if(cam.viewpointTicksRemaining_d0 <= 0) {
@@ -2819,8 +2808,8 @@ public final class Bttl_800d {
     ref.y = ref.z + cam.viewpointTargetTranslation_e8.y;
     ref.z = cam.viewpointDeltaMagnitude_a0;
     FUN_800dcc94(ZERO, ref);
-    final VECTOR pos = cam.viewpointBobj_f4.getPosition();
-    setViewpoint(pos.getX() + ref.x, pos.getY() + ref.y, pos.getZ() + ref.z);
+    final Vector3f pos = cam.viewpointBobj_f4.getPosition();
+    setViewpoint(pos.x + ref.x, pos.y + ref.y, pos.z + ref.z);
     cam.stepZ_e0 += cam.stepZAcceleration_e4;
     cam.vec_d4.z -= cam.stepZ_e0;
 
@@ -2922,8 +2911,8 @@ public final class Bttl_800d {
     cam.refpointBaseTranslation_20.y += cam.stepY_48;
     cam.refpointBaseTranslation_20.z += cam.stepZ_54;
 
-    final VECTOR pos = cam.refpointBobj_80.getPosition();
-    setRefpoint(pos.getX() + cam.refpointBaseTranslation_20.x, pos.getY() + cam.refpointBaseTranslation_20.y, pos.getZ() + cam.refpointBaseTranslation_20.z);
+    final Vector3f pos = cam.refpointBobj_80.getPosition();
+    setRefpoint(pos.x + cam.refpointBaseTranslation_20.x, pos.y + cam.refpointBaseTranslation_20.y, pos.z + cam.refpointBaseTranslation_20.z);
 
     cam.refpointTicksRemaining_5c--;
     if(cam.refpointTicksRemaining_5c <= 0) {
@@ -3095,11 +3084,11 @@ public final class Bttl_800d {
     cam.refpointBaseTranslation_20.y = cam.refpointTargetTranslation_74.y - temp2_800faba8.x;
     cam.refpointBaseTranslation_20.z = cam.refpointTargetTranslation_74.z + temp2_800faba8.y;
 
-    final VECTOR pos = cam.refpointBobj_80.getPosition();
+    final Vector3f pos = cam.refpointBobj_80.getPosition();
     setRefpoint(
-      pos.getX() + cam.refpointBaseTranslation_20.x,
-      pos.getY() + cam.refpointBaseTranslation_20.y,
-      pos.getZ() + cam.refpointBaseTranslation_20.z
+      pos.x + cam.refpointBaseTranslation_20.x,
+      pos.y + cam.refpointBaseTranslation_20.y,
+      pos.z + cam.refpointBaseTranslation_20.z
     );
 
     cam.refpointTicksRemaining_5c--;
@@ -3123,8 +3112,8 @@ public final class Bttl_800d {
     ref.z = cam.refpointDeltaMagnitude_2c;
     FUN_800dcc94(ZERO, ref);
 
-    final VECTOR pos = cam.refpointBobj_80.getPosition();
-    setRefpoint(pos.getX() + ref.x, pos.getY() + ref.y, pos.getZ() + ref.z);
+    final Vector3f pos = cam.refpointBobj_80.getPosition();
+    setRefpoint(pos.x + ref.x, pos.y + ref.y, pos.z + ref.z);
 
     cam.stepZ_6c += cam.stepZAcceleration_70;
     cam.vec_60.z -= cam.stepZ_6c;
@@ -3335,12 +3324,12 @@ public final class Bttl_800d {
     final BattleCamera cam = camera_800c67f0;
     cam.viewpointBaseTranslation_94.set(x, y, z);
 
-    final VECTOR v0 = bobj.getPosition();
+    final Vector3f v0 = bobj.getPosition();
 
     setViewpoint(
-      v0.getX() + cam.viewpointBaseTranslation_94.x,
-      v0.getY() + cam.viewpointBaseTranslation_94.y,
-      v0.getZ() + cam.viewpointBaseTranslation_94.z
+      v0.x + cam.viewpointBaseTranslation_94.x,
+      v0.y + cam.viewpointBaseTranslation_94.y,
+      v0.z + cam.viewpointBaseTranslation_94.z
     );
 
     cam.viewpointBobj_f4 = bobj;
@@ -3499,11 +3488,11 @@ public final class Bttl_800d {
     final BattleCamera cam = camera_800c67f0;
     cam.refpointBaseTranslation_20.set(x, y, z);
 
-    final VECTOR v0 = bobj.getPosition();
+    final Vector3f v0 = bobj.getPosition();
     setRefpoint(
-      v0.getX() + x,
-      v0.getY() + y,
-      v0.getZ() + z
+      v0.x + x,
+      v0.y + y,
+      v0.z + z
     );
 
     cam.refpointBobj_80 = bobj;
@@ -3968,8 +3957,8 @@ public final class Bttl_800d {
     final BattleCamera cam = camera_800c67f0;
     cam.viewpointMoving_122 = false;
 
-    final VECTOR v0 = cam.viewpointBobj_f4.getPosition();
-    setViewpoint(v0.getX() + cam.viewpointBaseTranslation_94.x, v0.getY() + cam.viewpointBaseTranslation_94.y, v0.getZ() + cam.viewpointBaseTranslation_94.z);
+    final Vector3f v0 = cam.viewpointBobj_f4.getPosition();
+    setViewpoint(v0.x + cam.viewpointBaseTranslation_94.x, v0.y + cam.viewpointBaseTranslation_94.y, v0.z + cam.viewpointBaseTranslation_94.z);
   }
 
   @Method(0x800dbfd4L)
@@ -4053,11 +4042,11 @@ public final class Bttl_800d {
     final BattleCamera cam = camera_800c67f0;
     cam.refpointMoving_123 = false;
 
-    final VECTOR v0 = cam.refpointBobj_80.getPosition();
+    final Vector3f v0 = cam.refpointBobj_80.getPosition();
     setRefpoint(
-      v0.getX() + cam.refpointBaseTranslation_20.x,
-      v0.getY() + cam.refpointBaseTranslation_20.y,
-      v0.getZ() + cam.refpointBaseTranslation_20.z
+      v0.x + cam.refpointBaseTranslation_20.x,
+      v0.y + cam.refpointBaseTranslation_20.y,
+      v0.z + cam.refpointBaseTranslation_20.z
     );
   }
 
@@ -4201,18 +4190,18 @@ public final class Bttl_800d {
 
   @Method(0x800dc630L)
   public static float refpointDeltaFromScriptedObjToComponent(final int component, final BattleObject bobj, final Vector3f point) {
-    final VECTOR vec = bobj.getPosition();
+    final Vector3f vec = bobj.getPosition();
 
     if(component == 0) {
-      return point.x - vec.getX();
+      return point.x - vec.x;
     }
 
     if(component == 1) {
-      return point.y - vec.getY();
+      return point.y - vec.y;
     }
 
     if(component == 2) {
-      return point.z - vec.getZ();
+      return point.z - vec.z;
     }
 
     throw new IllegalArgumentException("Illegal component " + component);
@@ -4281,18 +4270,18 @@ public final class Bttl_800d {
 
   @Method(0x800dc9c0L)
   public static float viewpointDeltaFromScriptedObjToComponent(final int component, final BattleObject bobj, final Vector3f point) {
-    final VECTOR objPos = bobj.getPosition();
+    final Vector3f objPos = bobj.getPosition();
 
     if(component == 0) {
-      return point.x - objPos.getX();
+      return point.x - objPos.x;
     }
 
     if(component == 1) {
-      return point.y - objPos.getY();
+      return point.y - objPos.y;
     }
 
     if(component == 2) {
-      return point.z - objPos.getZ();
+      return point.z - objPos.z;
     }
 
     throw new IllegalArgumentException("Illegal component " + component);
@@ -4403,29 +4392,12 @@ public final class Bttl_800d {
   }
 
   /**
-   * @return Component 0/1 are angles, 2 is the magnitude of the delta vector
-   */
-  public static float calculate3dAngleOrMagnitude(final VECTOR pos0, final Vector3f pos1, final int component) {
-    final float dx = pos0.x.get() - pos1.x;
-    final float dy = pos0.y.get() - pos1.y;
-    final float dz = pos0.z.get() - pos1.z;
-    final float horizontalHypotenuse = Math.sqrt(dx * dx + dz * dz);
-
-    return switch(component) {
-      case 0 -> MathHelper.floorMod(MathHelper.atan2(dz, dx), MathHelper.TWO_PI); // Angle between vector and +X axis
-      case 1 -> MathHelper.floorMod(MathHelper.atan2(dy, horizontalHypotenuse), MathHelper.TWO_PI); // Angle between vector and +Y axis
-      case 2 -> Math.sqrt(dx * dx + dy * dy + dz * dz); // Angle between vector and +Z axis?
-      default -> throw new IllegalStateException("Illegal component " + component);
-    };
-  }
-
-  /**
    * @param pos1 Returned x/y are angles, z is the magnitude of the delta vector
    */
-  public static void calculate3dAngleOrMagnitude(final VECTOR pos0, final Vector3f pos1, final Vector3f out) {
-    final float dx = pos0.x.get() - pos1.x;
-    final float dy = pos0.y.get() - pos1.y;
-    final float dz = pos0.z.get() - pos1.z;
+  public static void calculate3dAngleOrMagnitude(final Vector3f pos0, final Vector3f pos1, final Vector3f out) {
+    final float dx = pos0.x - pos1.x;
+    final float dy = pos0.y - pos1.y;
+    final float dz = pos0.z - pos1.z;
     final float horizontalHypotenuse = Math.sqrt(dx * dx + dz * dz);
 
     out.x = MathHelper.floorMod(MathHelper.atan2(dz, dx), MathHelper.TWO_PI); // Angle between vector and +X axis
@@ -4540,38 +4512,13 @@ public final class Bttl_800d {
   }
 
   @Method(0x800dd15cL)
-  public static MATRIX lerp(final MATRIX a0, final MATRIX a1, final int ratio) {
+  public static MV lerp(final MV a0, final MV a1, final float ratio) {
     if(ratio > 0) {
-      if(ratio != 0x800) {
-        final int v1 = 0x1000 - ratio;
-        a0.set(0, (short)(a0.get(0) * v1 + a1.get(0) * ratio >> 12));
-        a0.set(1, (short)(a0.get(1) * v1 + a1.get(1) * ratio >> 12));
-        a0.set(2, (short)(a0.get(2) * v1 + a1.get(2) * ratio >> 12));
-        a0.set(3, (short)(a0.get(3) * v1 + a1.get(3) * ratio >> 12));
-        a0.set(4, (short)(a0.get(4) * v1 + a1.get(4) * ratio >> 12));
-        a0.set(5, (short)(a0.get(5) * v1 + a1.get(5) * ratio >> 12));
-        a0.set(6, (short)(a0.get(6) * v1 + a1.get(6) * ratio >> 12));
-        a0.set(7, (short)(a0.get(7) * v1 + a1.get(7) * ratio >> 12));
-        a0.set(8, (short)(a0.get(8) * v1 + a1.get(8) * ratio >> 12));
-        a0.transfer.setX(a0.transfer.getX() * v1 + a1.transfer.getX() * ratio >> 12);
-        a0.transfer.setY(a0.transfer.getY() * v1 + a1.transfer.getY() * ratio >> 12);
-        a0.transfer.setZ(a0.transfer.getZ() * v1 + a1.transfer.getZ() * ratio >> 12);
-      } else {
-        //LAB_800dd394
-        a0.set(0, (short)(a0.get(0) + a1.get(0) >> 1));
-        a0.set(1, (short)(a0.get(1) + a1.get(1) >> 1));
-        a0.set(2, (short)(a0.get(2) + a1.get(2) >> 1));
-        a0.set(3, (short)(a0.get(3) + a1.get(3) >> 1));
-        a0.set(4, (short)(a0.get(4) + a1.get(4) >> 1));
-        a0.set(5, (short)(a0.get(5) + a1.get(5) >> 1));
-        a0.set(6, (short)(a0.get(6) + a1.get(6) >> 1));
-        a0.set(7, (short)(a0.get(7) + a1.get(7) >> 1));
-        a0.set(8, (short)(a0.get(8) + a1.get(8) >> 1));
-        a0.transfer.setX(a0.transfer.getX() + a1.transfer.getX() >> 1);
-        a0.transfer.setY(a0.transfer.getY() + a1.transfer.getY() >> 1);
-        a0.transfer.setZ(a0.transfer.getZ() + a1.transfer.getZ() >> 1);
-        a0.normalize();
-      }
+      final float v1 = 1.0f - ratio;
+      a0.lerp(a1, ratio);
+      a0.transfer.x = a0.transfer.x * v1 + a1.transfer.x * ratio;
+      a0.transfer.y = a0.transfer.y * v1 + a1.transfer.y * ratio;
+      a0.transfer.z = a0.transfer.z * v1 + a1.transfer.z * ratio;
     }
 
     //LAB_800dd4b8
@@ -4660,9 +4607,9 @@ public final class Bttl_800d {
     //LAB_800dd720
     for(int i = 0; i < count; i++) {
       final LmbTransforms14 transforms = lmb._08[i]._08[a0_0];
-      final MATRIX matrix = model.modelParts_00[i].coord2_04.coord;
+      final MV matrix = model.modelParts_00[i].coord2_04.coord;
 
-      final VECTOR trans = new VECTOR();
+      final Vector3f trans = new Vector3f();
       trans.set(transforms.trans_06);
 
       if(isInterpolationFrame != 0) { // Interpolation frame
@@ -4676,16 +4623,16 @@ public final class Bttl_800d {
 
         //LAB_800dd7d0
         trans.set(
-          (trans.getX() + nextFrame.trans_06.getX()) / 2,
-          (trans.getY() + nextFrame.trans_06.getY()) / 2,
-          (trans.getZ() + nextFrame.trans_06.getZ()) / 2
+          (trans.x + nextFrame.trans_06.x) / 2,
+          (trans.y + nextFrame.trans_06.y) / 2,
+          (trans.z + nextFrame.trans_06.z) / 2
         );
       }
 
       //LAB_800dd818
-      RotMatrix_Zyx(transforms.rot_0c, matrix);
+      matrix.rotationZYX(transforms.rot_0c);
       matrix.transfer.set(trans);
-      matrix.scaleL(transforms.scale_00);
+      matrix.scaleLocal(transforms.scale_00);
     }
 
     //LAB_800dd84c
@@ -4722,20 +4669,19 @@ public final class Bttl_800d {
 
       //LAB_800dd940
       if((model.partInvisible_f4 & 1L << i) == 0) {
-        final MATRIX lw = new MATRIX();
-        final MATRIX ls = new MATRIX();
+        final MV lw = new MV();
+        final MV ls = new MV();
         GsGetLws(s2.coord2_04, lw, ls);
 
-        if((s6 & (ls.transfer.getZ() ^ tickCount_800bb0fc.get())) == 0 || ls.transfer.getZ() - ls.transfer.getX() >= -0x800 && ls.transfer.getZ() + ls.transfer.getX() >= -0x800 && ls.transfer.getZ() - ls.transfer.getY() >= -0x800 && ls.transfer.getZ() + ls.transfer.getY() >= -0x800) {
+        if((s6 & ((int)ls.transfer.z ^ tickCount_800bb0fc.get())) == 0 || ls.transfer.z - ls.transfer.x >= -0x800 && ls.transfer.z + ls.transfer.x >= -0x800 && ls.transfer.z - ls.transfer.y >= -0x800 && ls.transfer.z + ls.transfer.y >= -0x800) {
           //LAB_800dd9bc
           if((newAttribute & 0x8) != 0) {
-            lw.normalize();
+            lw.normal();
           }
 
           //LAB_800dd9d8
           GsSetLightMatrix(lw);
-          GTE.setRotationMatrix(ls);
-          GTE.setTranslationVector(ls.transfer);
+          GTE.setTransforms(ls);
 
           final int oldAttrib = s2.attribute_00;
           s2.attribute_00 = newAttribute;
@@ -4775,7 +4721,7 @@ public final class Bttl_800d {
 
   @Method(0x800ddac8L)
   public static void loadModelTmd(final Model124 model, final CContainer extTmd) {
-    final VECTOR sp0x18 = new VECTOR().set(model.coord2_14.coord.transfer);
+    final Vector3f sp0x18 = new Vector3f(model.coord2_14.coord.transfer);
 
     //LAB_800ddb18
     for(int i = 0; i < 7; i++) {
@@ -4916,29 +4862,25 @@ public final class Bttl_800d {
         final Cmb.SubTransforms08 subTransforms = cmb.subTransforms[a1_0][i];
         final ModelPartTransforms0c modelTransforms = cmbAnim.transforms_08[i];
 
-        final MATRIX modelPartMatrix = model.modelParts_00[i].coord2_04.coord;
-        RotMatrix_Zyx(modelTransforms.rotate_00, modelPartMatrix);
+        final MV modelPartMatrix = model.modelParts_00[i].coord2_04.coord;
+        modelPartMatrix.rotationZYX(modelTransforms.rotate_00);
         modelPartMatrix.transfer.set(modelTransforms.translate_06);
 
         final Vector3f rotation = new Vector3f();
         rotation.set(modelTransforms.rotate_00).add(subTransforms.rot_01);
 
-        final MATRIX translation = new MATRIX();
-        RotMatrix_Zyx(rotation, translation);
-        translation.transfer.set(
-          (int)(modelTransforms.translate_06.x + subTransforms.trans_05.x),
-          (int)(modelTransforms.translate_06.y + subTransforms.trans_05.y),
-          (int)(modelTransforms.translate_06.z + subTransforms.trans_05.z)
-        );
+        final MV translation = new MV();
+        translation.rotationZYX(rotation);
+        translation.transfer.set(modelTransforms.translate_06).add(subTransforms.trans_05);
 
-        lerp(modelPartMatrix, translation, 0x800);
+        lerp(modelPartMatrix, translation, 0.5f);
       }
     } else {
       //LAB_800de164
       for(int i = 0; i < count; i++) {
         final ModelPartTransforms0c modelTransforms = cmbAnim.transforms_08[i];
-        final MATRIX modelPartMatrix = model.modelParts_00[i].coord2_04.coord;
-        RotMatrix_Zyx(modelTransforms.rotate_00, modelPartMatrix);
+        final MV modelPartMatrix = model.modelParts_00[i].coord2_04.coord;
+        modelPartMatrix.rotationZYX(modelTransforms.rotate_00);
         modelPartMatrix.transfer.set(modelTransforms.translate_06);
       }
     }
@@ -5032,12 +4974,12 @@ public final class Bttl_800d {
 
   /** used renderCtmd */
   @Method(0x800de3f4L)
-  public static void renderTmdSpriteEffect(final TmdObjTable1c a0, final EffectManagerData6cInner<?> a1, final MATRIX a2) {
+  public static void renderTmdSpriteEffect(final TmdObjTable1c a0, final EffectManagerData6cInner<?> a1, final MV a2) {
     final int s0 = deffManager_800c693c.flags_20 & 0x4;
 
-    final MATRIX sp0x10 = new MATRIX();
+    final MV sp0x10 = new MV();
     if((a1.flags_00 & 0x8) != 0) {
-      a2.normalize(sp0x10);
+      a2.normal(sp0x10);
       GsSetLightMatrix(sp0x10);
     } else {
       //LAB_800de458
@@ -5048,14 +4990,14 @@ public final class Bttl_800d {
     a2.compose(worldToScreenMatrix_800c3548, sp0x10);
 
     if((a1.flags_00 & 0x400_0000) == 0) {
-      RotMatrix_Xyz(a1.rot_10, sp0x10);
-      sp0x10.scaleL(a1.scale_16);
+      sp0x10.rotationXYZ(a1.rot_10);
+      sp0x10.scaleLocal(a1.scale_16);
     }
 
     //LAB_800de4a8
-    if(((s0 >> 1 | s0 >> 2) & (sp0x10.transfer.getZ() ^ tickCount_800bb0fc.get())) == 0 || sp0x10.transfer.getZ() - sp0x10.transfer.getX() >= -0x800 && sp0x10.transfer.getZ() + sp0x10.transfer.getX() >= -0x800 && sp0x10.transfer.getZ() - sp0x10.transfer.getY() >= -0x800 && sp0x10.transfer.getZ() + sp0x10.transfer.getY() >= -0x800) {
+    if(((s0 >> 1 | s0 >> 2) & ((int)sp0x10.transfer.z ^ tickCount_800bb0fc.get())) == 0 || sp0x10.transfer.z - sp0x10.transfer.x >= -0x800 && sp0x10.transfer.z + sp0x10.transfer.x >= -0x800 && sp0x10.transfer.z - sp0x10.transfer.y >= -0x800 && sp0x10.transfer.z + sp0x10.transfer.y >= -0x800) {
       //LAB_800de50c
-      setRotTransMatrix(sp0x10);
+      GTE.setTransforms(sp0x10);
 
       final ModelPart10 dobj2 = new ModelPart10();
       dobj2.attribute_00 = a1.flags_00;
@@ -5077,26 +5019,26 @@ public final class Bttl_800d {
   }
 
   @Method(0x800de544L)
-  public static Vector3f getRotationFromTransforms(final Vector3f rotOut, final MATRIX transforms) {
-    final MATRIX mat = new MATRIX().set(transforms);
-    rotOut.x = MathHelper.atan2(-mat.get(5), mat.get(8));
+  public static Vector3f getRotationFromTransforms(final Vector3f rotOut, final MV transforms) {
+    final MV mat = new MV(transforms);
+    rotOut.x = MathHelper.atan2(-mat.m21, mat.m22);
     mat.rotateX(-rotOut.x);
-    rotOut.y = MathHelper.atan2(mat.get(2), mat.get(8));
+    rotOut.y = MathHelper.atan2(mat.m20, mat.m22);
     mat.rotateY(-rotOut.y);
-    rotOut.z = MathHelper.atan2(mat.get(3), mat.get(0));
+    rotOut.z = MathHelper.atan2(mat.m01, mat.m00);
     return rotOut;
   }
 
   @Method(0x800de618L)
-  public static void getRotationAndScaleFromTransforms(final Vector3f rotOut, final Vector3f scaleOut, final MATRIX transforms) {
-    final MATRIX mat = new MATRIX().set(transforms);
-    rotOut.x = MathHelper.atan2(-mat.get(5), mat.get(8));
+  public static void getRotationAndScaleFromTransforms(final Vector3f rotOut, final Vector3f scaleOut, final MV transforms) {
+    final MV mat = new MV().set(transforms);
+    rotOut.x = MathHelper.atan2(-mat.m21, mat.m22);
     mat.rotateX(-rotOut.x);
-    rotOut.y = MathHelper.atan2(mat.get(2), mat.get(8));
+    rotOut.y = MathHelper.atan2(mat.m20, mat.m22);
     mat.rotateY(-rotOut.y);
-    rotOut.z = MathHelper.atan2(mat.get(3), mat.get(0));
+    rotOut.z = MathHelper.atan2(mat.m01, mat.m00);
     mat.rotateZ(-rotOut.z);
-    scaleOut.set(mat.get(0) / (float)0x1000, mat.get(4) / (float)0x1000, mat.get(8) / (float)0x1000);
+    scaleOut.set(mat.m00 / (float)0x1000, mat.m11 / (float)0x1000, mat.m22 / (float)0x1000);
   }
 
   @Method(0x800de76cL)

@@ -1,17 +1,16 @@
 package legend.game.combat.effects;
 
-import legend.core.gte.SVECTOR;
-import legend.core.gte.VECTOR;
+import org.joml.Vector3f;
 
 public class AdditionSparksEffectInstance4c {
   public int ticksExisted_00;
   public byte delay_04;
   public byte ticksRemaining_05;
 
-  public final VECTOR startPos_08 = new VECTOR();
-  public final VECTOR endPos_18 = new VECTOR();
-  public final VECTOR speed_28 = new VECTOR();
-  public final SVECTOR acceleration_38 = new SVECTOR();
+  public final Vector3f startPos_08 = new Vector3f();
+  public final Vector3f endPos_18 = new Vector3f();
+  public final Vector3f speed_28 = new Vector3f();
+  public final Vector3f acceleration_38 = new Vector3f();
   public int r_40;
   public int g_42;
   public int b_44;

@@ -1,7 +1,6 @@
 package legend.game.combat.bent;
 
 import legend.core.gte.USCOLOUR;
-import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.game.characters.Element;
 import legend.game.characters.ElementSet;
@@ -477,7 +476,7 @@ public abstract class BattleEntity27c extends BattleObject {
   }
 
   @Override
-  public VECTOR getPosition() {
+  public Vector3f getPosition() {
     return this.model_148.coord2_14.coord.transfer;
   }
 

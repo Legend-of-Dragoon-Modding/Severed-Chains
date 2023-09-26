@@ -6,6 +6,7 @@ import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
 import legend.core.gte.DVECTOR;
 import legend.core.gte.MATRIX;
+import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
@@ -108,6 +109,8 @@ import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
+import org.joml.Math;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
@@ -146,7 +149,6 @@ import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020308;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021520;
-import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8002.animateModel;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
@@ -157,7 +159,6 @@ import static legend.game.Scus94491BpeSegment_8002.scriptDeallocateAllTextboxes;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.MoveImage;
-import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
@@ -456,7 +457,7 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#renderRingGradientEffect}</li>
    * </ol>
    */
-  public static final QuintConsumer<EffectManagerData6c<EffectManagerData6cInner.RadialGradientType>, Integer, short[], RadialGradientEffect14, Translucency>[] radialGradientEffectRenderers_800fa758 = new QuintConsumer[5];
+  public static final QuintConsumer<EffectManagerData6c<EffectManagerData6cInner.RadialGradientType>, Integer, Vector2f[], RadialGradientEffect14, Translucency>[] radialGradientEffectRenderers_800fa758 = new QuintConsumer[5];
   static {
     radialGradientEffectRenderers_800fa758[0] = Bttl_800d::renderDiscGradientEffect;
     radialGradientEffectRenderers_800fa758[1] = Bttl_800d::FUN_800d1e80; // Not implemented
@@ -1127,10 +1128,10 @@ public final class Bttl_800c {
       bent.bentSlot_274 = allBentCount_800c66d0.get();
       bent.charSlot_276 = charSlot;
       bent.combatantIndex_26c = charIndices[charSlot];
-      bent.model_148.coord2_14.coord.transfer.setX(charCount_800c677c.get() > 2 && charSlot == 0 ? 0x900 : 0xa00);
-      bent.model_148.coord2_14.coord.transfer.setY(0);
+      bent.model_148.coord2_14.coord.transfer.x = charCount_800c677c.get() > 2 && charSlot == 0 ? 0x900 : 0xa00;
+      bent.model_148.coord2_14.coord.transfer.y = 0.0f;
       // Alternates placing characters to the right and left of the main character (offsets by -0x400 for even character counts)
-      bent.model_148.coord2_14.coord.transfer.setZ(0x800 * ((charSlot + 1) / 2) * (charSlot % 2 * 2 - 1) + (charCount_800c677c.get() % 2 - 1) * 0x400);
+      bent.model_148.coord2_14.coord.transfer.z = 0x800 * ((charSlot + 1) / 2) * (charSlot % 2 * 2 - 1) + (charCount_800c677c.get() % 2 - 1) * 0x400;
       bent.model_148.coord2_14.transforms.rotate.zero();
       allBentCount_800c66d0.incr();
     }
@@ -2733,28 +2734,26 @@ public final class Bttl_800c {
 
   @Method(0x800cb250L)
   public static boolean FUN_800cb250(final ScriptState<BattleEntity27c> state, final BattleEntity27c data) {
-    int x = state._e8;
-    int y = state._ec;
-    int z = state._f0;
+    float x = state._e8.x;
+    float y = state._e8.y;
+    float z = state._e8.z;
 
     if(state.scriptState_c8 != null) {
       final BattleEntity27c data2 = state.scriptState_c8.innerStruct_00;
 
-      x += data2.model_148.coord2_14.coord.transfer.getX();
-      y += data2.model_148.coord2_14.coord.transfer.getY();
-      z += data2.model_148.coord2_14.coord.transfer.getZ();
+      x += data2.model_148.coord2_14.coord.transfer.x;
+      y += data2.model_148.coord2_14.coord.transfer.y;
+      z += data2.model_148.coord2_14.coord.transfer.z;
     }
 
     //LAB_800cb2ac
     state.ticks_cc--;
     if(state.ticks_cc > 0) {
-      state._d0 -= state._dc;
-      state._d4 -= state._e0;
-      state._d8 -= state._e4;
-      data.model_148.coord2_14.coord.transfer.setX(x - (state._d0 >> 8));
-      data.model_148.coord2_14.coord.transfer.setY(y - (state._d4 >> 8));
-      data.model_148.coord2_14.coord.transfer.setZ(z - (state._d8 >> 8));
-      state._e0 += state._f4;
+      state._d0.sub(state._dc);
+      data.model_148.coord2_14.coord.transfer.x = x - state._d0.x;
+      data.model_148.coord2_14.coord.transfer.y = y - state._d0.y;
+      data.model_148.coord2_14.coord.transfer.z = z - state._d0.z;
+      state._dc.y += state._f4;
       return false;
     }
 
@@ -2766,13 +2765,13 @@ public final class Bttl_800c {
   @Method(0x800cb34cL)
   public static boolean FUN_800cb34c(final ScriptState<BattleEntity27c> state, final BattleEntity27c data) {
     final BattleEntity27c bent = state.scriptState_c8.innerStruct_00;
-    final VECTOR vec = bent.model_148.coord2_14.coord.transfer;
-    final float angle = MathHelper.atan2(vec.getX() - data.model_148.coord2_14.coord.transfer.getX(), vec.getZ() - data.model_148.coord2_14.coord.transfer.getZ()) + MathHelper.PI;
+    final Vector3f vec = bent.model_148.coord2_14.coord.transfer;
+    final float angle = MathHelper.atan2(vec.x - data.model_148.coord2_14.coord.transfer.x, vec.z - data.model_148.coord2_14.coord.transfer.z) + MathHelper.PI;
 
     state.ticks_cc--;
     if(state.ticks_cc > 0) {
-      state._d0 -= state._d4;
-      data.model_148.coord2_14.transforms.rotate.y = angle + MathHelper.psxDegToRad(state._d0);
+      state._d0.x -= state._d0.y; // This is correct, sometimes this vec is used as (angle, step)
+      data.model_148.coord2_14.transforms.rotate.y = angle + state._d0.x;
       return false;
     }
 
@@ -2791,9 +2790,9 @@ public final class Bttl_800c {
   @Method(0x800cb3fcL)
   public static FlowControl scriptSetBentPos(final RunningScript<?> script) {
     final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    bent.model_148.coord2_14.coord.transfer.setX(script.params_20[1].get());
-    bent.model_148.coord2_14.coord.transfer.setY(script.params_20[2].get());
-    bent.model_148.coord2_14.coord.transfer.setZ(script.params_20[3].get());
+    bent.model_148.coord2_14.coord.transfer.x = script.params_20[1].get();
+    bent.model_148.coord2_14.coord.transfer.y = script.params_20[2].get();
+    bent.model_148.coord2_14.coord.transfer.z = script.params_20[3].get();
     return FlowControl.CONTINUE;
   }
 
@@ -2805,9 +2804,9 @@ public final class Bttl_800c {
   @Method(0x800cb468L)
   public static FlowControl scriptGetBentPos(final RunningScript<?> script) {
     final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[1].set(bent.model_148.coord2_14.coord.transfer.getX());
-    script.params_20[2].set(bent.model_148.coord2_14.coord.transfer.getY());
-    script.params_20[3].set(bent.model_148.coord2_14.coord.transfer.getZ());
+    script.params_20[1].set(Math.round(bent.model_148.coord2_14.coord.transfer.x));
+    script.params_20[2].set(Math.round(bent.model_148.coord2_14.coord.transfer.y));
+    script.params_20[3].set(Math.round(bent.model_148.coord2_14.coord.transfer.z));
     return FlowControl.CONTINUE;
   }
 
@@ -3068,17 +3067,17 @@ public final class Bttl_800c {
     final ScriptState<BattleEntity27c> state = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex];
     BattleEntity27c v1 = state.innerStruct_00;
 
-    int x = v1.model_148.coord2_14.coord.transfer.getX();
-    int y = v1.model_148.coord2_14.coord.transfer.getY();
-    int z = v1.model_148.coord2_14.coord.transfer.getZ();
+    float x = v1.model_148.coord2_14.coord.transfer.x;
+    float y = v1.model_148.coord2_14.coord.transfer.y;
+    float z = v1.model_148.coord2_14.coord.transfer.z;
 
     final int t0 = script.params_20[1].get();
     if(t0 >= 0) {
       state.scriptState_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[t0];
       v1 = state.scriptState_c8.innerStruct_00;
-      x -= v1.model_148.coord2_14.coord.transfer.getX();
-      y -= v1.model_148.coord2_14.coord.transfer.getY();
-      z -= v1.model_148.coord2_14.coord.transfer.getZ();
+      x -= v1.model_148.coord2_14.coord.transfer.x;
+      y -= v1.model_148.coord2_14.coord.transfer.y;
+      z -= v1.model_148.coord2_14.coord.transfer.z;
     } else {
       state.scriptState_c8 = null;
     }
@@ -3101,7 +3100,7 @@ public final class Bttl_800c {
     final int scriptIndex1 = script.params_20[0].get();
     final ScriptState<BattleEntity27c> state = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
     final BattleEntity27c bent1 = state.innerStruct_00;
-    final VECTOR vec = new VECTOR().set(bent1.model_148.coord2_14.coord.transfer);
+    final Vector3f vec = new Vector3f(bent1.model_148.coord2_14.coord.transfer);
     final int scriptIndex2 = script.params_20[1].get();
 
     if(scriptIndex2 >= 0) {
@@ -3113,10 +3112,10 @@ public final class Bttl_800c {
     }
 
     //LAB_800cbcc4
-    final int x = script.params_20[3].get() - vec.getX();
-    final int y = script.params_20[4].get() - vec.getY();
-    final int z = script.params_20[5].get() - vec.getZ();
-    FUN_800cdc1c(state, vec.getX(), vec.getY(), vec.getZ(), x, y, z, 0, SquareRoot0(x * x + y * y + z * z) / script.params_20[2].get());
+    final float x = script.params_20[3].get() - vec.x;
+    final float y = script.params_20[4].get() - vec.y;
+    final float z = script.params_20[5].get() - vec.z;
+    FUN_800cdc1c(state, vec.x, vec.y, vec.z, x, y, z, 0, Math.round(Math.sqrt(x * x + y * y + z * z) / script.params_20[2].get()));
     state.setTempTicker(Bttl_800c::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
@@ -3132,16 +3131,16 @@ public final class Bttl_800c {
   public static FlowControl FUN_800cbde0(final RunningScript<?> script) {
     final ScriptState<BattleEntity27c> state = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
     BattleEntity27c bent = state.innerStruct_00;
-    int x = bent.model_148.coord2_14.coord.transfer.getX();
-    int y = bent.model_148.coord2_14.coord.transfer.getY();
-    int z = bent.model_148.coord2_14.coord.transfer.getZ();
+    float x = bent.model_148.coord2_14.coord.transfer.x;
+    float y = bent.model_148.coord2_14.coord.transfer.y;
+    float z = bent.model_148.coord2_14.coord.transfer.z;
 
     if(script.params_20[1].get() >= 0) {
       state.scriptState_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[script.params_20[1].get()];
       bent = state.scriptState_c8.innerStruct_00;
-      x -= bent.model_148.coord2_14.coord.transfer.getX();
-      y -= bent.model_148.coord2_14.coord.transfer.getY();
-      z -= bent.model_148.coord2_14.coord.transfer.getZ();
+      x -= bent.model_148.coord2_14.coord.transfer.x;
+      y -= bent.model_148.coord2_14.coord.transfer.y;
+      z -= bent.model_148.coord2_14.coord.transfer.z;
     } else {
       state.scriptState_c8 = null;
     }
@@ -3165,7 +3164,7 @@ public final class Bttl_800c {
     final int scriptIndex2 = state.params_20[1].get();
     final ScriptState<BattleEntity27c> s5 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
     final BattleEntity27c bent1 = s5.innerStruct_00;
-    final VECTOR vec = new VECTOR().set(bent1.model_148.coord2_14.coord.transfer);
+    final Vector3f vec = new Vector3f(bent1.model_148.coord2_14.coord.transfer);
 
     if(scriptIndex2 >= 0) {
       s5.scriptState_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex2];
@@ -3176,10 +3175,10 @@ public final class Bttl_800c {
     }
 
     //LAB_800cbfa8
-    final int x = state.params_20[3].get() - vec.getX();
-    final int y = state.params_20[4].get() - vec.getY();
-    final int z = state.params_20[5].get() - vec.getZ();
-    FUN_800cdc1c(s5, vec.getX(), vec.getY(), vec.getZ(), state.params_20[3].get(), state.params_20[4].get(), state.params_20[5].get(), 0x20, SquareRoot0(x * x + y * y + z * z) / state.params_20[2].get());
+    final float x = state.params_20[3].get() - vec.x;
+    final float y = state.params_20[4].get() - vec.y;
+    final float z = state.params_20[5].get() - vec.z;
+    FUN_800cdc1c(s5, vec.x, vec.y, vec.z, state.params_20[3].get(), state.params_20[4].get(), state.params_20[5].get(), 0x20, Math.round(Math.sqrt(x * x + y * y + z * z) / state.params_20[2].get()));
     s5.setTempTicker(Bttl_800c::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
@@ -3194,7 +3193,7 @@ public final class Bttl_800c {
   public static FlowControl FUN_800cc0c8(final RunningScript<?> script) {
     final int s0 = script.params_20[0].get();
     final ScriptState<BattleEntity27c> a0 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[s0];
-    final VECTOR a1 = new VECTOR().set(a0.innerStruct_00.model_148.coord2_14.coord.transfer);
+    final Vector3f a1 = new Vector3f(a0.innerStruct_00.model_148.coord2_14.coord.transfer);
     final int t0 = script.params_20[1].get();
 
     if(t0 >= 0) {
@@ -3205,7 +3204,7 @@ public final class Bttl_800c {
     }
 
     //LAB_800cc160
-    FUN_800cdc1c(a0, a1.getX(), a1.getY(), a1.getZ(), script.params_20[3].get(), a1.getY(), script.params_20[4].get(), 0, script.params_20[2].get());
+    FUN_800cdc1c(a0, a1.x, a1.y, a1.z, script.params_20[3].get(), a1.y, script.params_20[4].get(), 0, script.params_20[2].get());
     a0.setTempTicker(Bttl_800c::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
@@ -3222,7 +3221,7 @@ public final class Bttl_800c {
     final int scriptIndex2 = script.params_20[1].get();
     final ScriptState<BattleEntity27c> state1 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
     final BattleEntity27c bent1 = state1.innerStruct_00;
-    final VECTOR vec = new VECTOR().set(bent1.model_148.coord2_14.coord.transfer);
+    final Vector3f vec = new Vector3f(bent1.model_148.coord2_14.coord.transfer);
 
     if(scriptIndex2 >= 0) {
       state1.scriptState_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex2];
@@ -3233,9 +3232,9 @@ public final class Bttl_800c {
     }
 
     //LAB_800cc27c
-    final int x = script.params_20[3].get() - vec.getX();
-    final int z = script.params_20[4].get() - vec.getZ();
-    FUN_800cdc1c(state1, vec.getX(), vec.getY(), vec.getZ(), script.params_20[3].get(), vec.getY(), script.params_20[4].get(), 0, SquareRoot0(x * x + z * z) / script.params_20[2].get());
+    final float x = script.params_20[3].get() - vec.x;
+    final float z = script.params_20[4].get() - vec.z;
+    FUN_800cdc1c(state1, vec.x, vec.y, vec.z, script.params_20[3].get(), vec.y, script.params_20[4].get(), 0, Math.round(Math.sqrt(x * x + z * z) / script.params_20[2].get()));
     state1.setTempTicker(Bttl_800c::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
@@ -3252,7 +3251,7 @@ public final class Bttl_800c {
     final int scriptIndex2 = script.params_20[1].get();
     final ScriptState<BattleEntity27c> state1 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
     final BattleEntity27c bent1 = state1.innerStruct_00;
-    final VECTOR vec = new VECTOR().set(bent1.model_148.coord2_14.coord.transfer);
+    final Vector3f vec = new Vector3f(bent1.model_148.coord2_14.coord.transfer);
 
     if(scriptIndex2 >= 0) {
       state1.scriptState_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex2];
@@ -3263,7 +3262,7 @@ public final class Bttl_800c {
     }
 
     //LAB_800cc3fc
-    FUN_800cdc1c(state1, vec.getX(), vec.getY(), vec.getZ(), script.params_20[3].get(), vec.getY(), script.params_20[4].get(), 0x20, script.params_20[2].get());
+    FUN_800cdc1c(state1, vec.x, vec.y, vec.z, script.params_20[3].get(), vec.y, script.params_20[4].get(), 0x20, script.params_20[2].get());
     state1.setTempTicker(Bttl_800c::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
@@ -3280,7 +3279,7 @@ public final class Bttl_800c {
     final int scriptIndex2 = script.params_20[1].get();
     final ScriptState<BattleEntity27c> s5 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex1];
     final BattleEntity27c bent1 = s5.innerStruct_00;
-    final VECTOR vec = new VECTOR().set(bent1.model_148.coord2_14.coord.transfer);
+    final Vector3f vec = new Vector3f(bent1.model_148.coord2_14.coord.transfer);
 
     if(scriptIndex2 >= 0) {
       s5.scriptState_c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex2];
@@ -3291,9 +3290,9 @@ public final class Bttl_800c {
     }
 
     //LAB_800cc51c
-    final int x = script.params_20[3].get() - vec.getX();
-    final int z = script.params_20[4].get() - vec.getZ();
-    FUN_800cdc1c(s5, vec.getX(), vec.getY(), vec.getZ(), script.params_20[3].get(), vec.getY(), script.params_20[4].get(), 0x20, SquareRoot0(x * x + z * z) / script.params_20[2].get());
+    final float x = script.params_20[3].get() - vec.x;
+    final float z = script.params_20[4].get() - vec.z;
+    FUN_800cdc1c(s5, vec.x, vec.y, vec.z, script.params_20[3].get(), vec.y, script.params_20[4].get(), 0x20, Math.round(Math.sqrt(x * x + z * z) / script.params_20[2].get()));
     s5.setTempTicker(Bttl_800c::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
@@ -3306,7 +3305,7 @@ public final class Bttl_800c {
     final BattleEntity27c s0 = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final BattleEntity27c v0 = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
 
-    s0.model_148.coord2_14.transforms.rotate.y = MathHelper.atan2(v0.model_148.coord2_14.coord.transfer.getX() - s0.model_148.coord2_14.coord.transfer.getX(), v0.model_148.coord2_14.coord.transfer.getZ() - s0.model_148.coord2_14.coord.transfer.getZ()) + MathHelper.PI;
+    s0.model_148.coord2_14.transforms.rotate.y = MathHelper.atan2(v0.model_148.coord2_14.coord.transfer.x - s0.model_148.coord2_14.coord.transfer.x, v0.model_148.coord2_14.coord.transfer.z - s0.model_148.coord2_14.coord.transfer.z) + MathHelper.PI;
     return FlowControl.CONTINUE;
   }
 
@@ -3323,11 +3322,11 @@ public final class Bttl_800c {
     final BattleEntity27c bent1 = state1.innerStruct_00;
     final BattleEntity27c bent2 = state2.innerStruct_00;
     final int ticks = script.params_20[2].get();
-    final float v0 = MathHelper.floorMod(MathHelper.atan2(bent2.model_148.coord2_14.coord.transfer.getX() - bent1.model_148.coord2_14.coord.transfer.getX(), bent2.model_148.coord2_14.coord.transfer.getZ() - bent1.model_148.coord2_14.coord.transfer.getZ()) - bent1.model_148.coord2_14.transforms.rotate.y, MathHelper.TWO_PI) - MathHelper.PI;
+    final float v0 = MathHelper.floorMod(MathHelper.atan2(bent2.model_148.coord2_14.coord.transfer.x - bent1.model_148.coord2_14.coord.transfer.x, bent2.model_148.coord2_14.coord.transfer.z - bent1.model_148.coord2_14.coord.transfer.z) - bent1.model_148.coord2_14.transforms.rotate.y, MathHelper.TWO_PI) - MathHelper.PI;
     state1.scriptState_c8 = state2;
     state1.ticks_cc = ticks;
-    state1._d0 = MathHelper.radToPsxDeg(v0);
-    state1._d4 = MathHelper.radToPsxDeg(v0 / ticks);
+    state1._d0.x = v0;
+    state1._d0.y = v0 / ticks;
     state1.setTempTicker(Bttl_800c::FUN_800cb34c);
     return FlowControl.CONTINUE;
   }
@@ -4033,35 +4032,28 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cdc1cL)
-  public static void FUN_800cdc1c(final ScriptState<BattleEntity27c> s1, final int x0, final int y0, final int z0, final int x1, final int y1, final int z1, final int a7, final int ticks) {
-    final int dx = x1 - x0 << 8;
-    final int dy = y1 - y0 << 8;
-    final int dz = z1 - z0 << 8;
-    final int s3 = a7 << 8;
+  public static void FUN_800cdc1c(final ScriptState<BattleEntity27c> s1, final float x0, final float y0, final float z0, final float x1, final float y1, final float z1, final float a7, final int ticks) {
+    final float dx = x1 - x0;
+    final float dy = y1 - y0;
+    final float dz = z1 - z0;
 
     s1.ticks_cc = ticks;
-    s1._e8 = x1;
-    s1._ec = y1;
-    s1._f0 = z1;
-    s1._d0 = dx;
-    s1._d4 = dy;
-    s1._d8 = dz;
+    s1._e8.set(x1, y1, z1);
+    s1._d0.set(dx, dy, dz);
 
     // Fix for retail /0 bug
     if(ticks > 0) {
-      s1._dc = dx / ticks;
-      s1._e4 = dz / ticks;
+      s1._dc.set(dx / ticks, 0.0f, dz / ticks);
     } else {
-      s1._dc = dx >= 0 ? -1 : 1;
-      s1._e4 = dz >= 0 ? -1 : 1;
+      s1._dc.zero();
     }
 
-    s1._e0 = FUN_80013404(s3, dy, ticks);
-    s1._f4 = s3;
+    s1._dc.y = FUN_80013404(a7, dy, ticks);
+    s1._f4 = a7;
   }
 
   @Method(0x800cdcecL)
-  public static void getVertexMinMaxByComponent(final Model124 model, final int dobjIndex, final VECTOR smallestVertRef, final VECTOR largestVertRef, final EffectManagerData6c<EffectManagerData6cInner.WeaponTrailType> manager, final IntRef smallestIndexRef, final IntRef largestIndexRef) {
+  public static void getVertexMinMaxByComponent(final Model124 model, final int dobjIndex, final Vector3f smallestVertRef, final Vector3f largestVertRef, final EffectManagerData6c<EffectManagerData6cInner.WeaponTrailType> manager, final IntRef smallestIndexRef, final IntRef largestIndexRef) {
     short largest = -1;
     short smallest = 0x7fff;
     int largestIndex = 0;
@@ -4077,12 +4069,12 @@ public final class Bttl_800c {
       if(val >= largest) {
         largest = component.get();
         largestIndex = i;
-        largestVertRef.set(vert);
+        largestVertRef.set(vert.getX(), vert.getY(), vert.getZ());
         //LAB_800cdd7c
       } else if(val <= smallest) {
         smallest = component.get();
         smallestIndex = i;
-        smallestVertRef.set(vert);
+        smallestVertRef.set(vert.getX(), vert.getY(), vert.getZ());
       }
       //LAB_800cddbc
     }
@@ -4144,34 +4136,30 @@ public final class Bttl_800c {
       final VECTOR colourStep = new VECTOR().set(colour).div(trail.segmentCount_0e);
       WeaponTrailEffectSegment2c segment = trail.currentSegment_38;
 
-      final IntRef x0 = new IntRef();
-      final IntRef y0 = new IntRef();
-      transformWorldspaceToScreenspace(segment.endpointCoords_04[0], x0, y0);
-      renderCoordThresholdExceeded = Math.abs(x0.get()) > renderCoordThreshold || Math.abs(y0.get()) > renderCoordThreshold;
+      final Vector2f v0 = new Vector2f();
+      transformWorldspaceToScreenspace(segment.endpointCoords_04[0], v0);
+      renderCoordThresholdExceeded = Math.abs(v0.x) > renderCoordThreshold || Math.abs(v0.y) > renderCoordThreshold;
 
-      final IntRef x2 = new IntRef();
-      final IntRef y2 = new IntRef();
-      final int z = transformWorldspaceToScreenspace(segment.endpointCoords_04[1], x2, y2) >> 2;
-      renderCoordThresholdExceeded = renderCoordThresholdExceeded || Math.abs(x2.get()) > renderCoordThreshold || Math.abs(y2.get()) > renderCoordThreshold;
+      final Vector2f v2 = new Vector2f();
+      final float z = transformWorldspaceToScreenspace(segment.endpointCoords_04[1], v2) / 4.0f;
+      renderCoordThresholdExceeded = renderCoordThresholdExceeded || Math.abs(v2.x) > renderCoordThreshold || Math.abs(v2.y) > renderCoordThreshold;
 
       //LAB_800cdf94
       segment = segment.previousSegmentRef_24;
       for(int i = 0; i < trail.segmentCount_0e && segment != null; i++) {
-        final IntRef x1 = new IntRef();
-        final IntRef y1 = new IntRef();
-        transformWorldspaceToScreenspace(segment.endpointCoords_04[0], x1, y1);
-        renderCoordThresholdExceeded = renderCoordThresholdExceeded || Math.abs(x1.get()) > renderCoordThreshold || Math.abs(y1.get()) > renderCoordThreshold;
-        final IntRef x3 = new IntRef();
-        final IntRef y3 = new IntRef();
-        transformWorldspaceToScreenspace(segment.endpointCoords_04[1], x3, y3);
-        renderCoordThresholdExceeded = renderCoordThresholdExceeded || Math.abs(x3.get()) > renderCoordThreshold || Math.abs(y3.get()) > renderCoordThreshold;
+        final Vector2f v1 = new Vector2f();
+        transformWorldspaceToScreenspace(segment.endpointCoords_04[0], v1);
+        renderCoordThresholdExceeded = renderCoordThresholdExceeded || Math.abs(v1.x) > renderCoordThreshold || Math.abs(v1.y) > renderCoordThreshold;
+        final Vector2f v3 = new Vector2f();
+        transformWorldspaceToScreenspace(segment.endpointCoords_04[1], v3);
+        renderCoordThresholdExceeded = renderCoordThresholdExceeded || Math.abs(v3.x) > renderCoordThreshold || Math.abs(v3.y) > renderCoordThreshold;
 
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
           .translucent(Translucency.B_PLUS_F)
-          .pos(0, x0.get(), y0.get())
-          .pos(1, x1.get(), y1.get())
-          .pos(2, x2.get(), y2.get())
-          .pos(3, x3.get(), y3.get())
+          .pos(0, v0.x, v0.y)
+          .pos(1, v1.x, v1.y)
+          .pos(2, v2.x, v2.y)
+          .pos(3, v3.x, v3.y)
           .monochrome(0, 0)
           .monochrome(1, 0)
           .rgb(2, colour.getX() >>> 8, colour.getY() >>> 8, colour.getZ() >>> 8);
@@ -4180,28 +4168,27 @@ public final class Bttl_800c {
 
         cmd.rgb(3, colour.getX() >>> 8, colour.getY() >>> 8, colour.getZ() >>> 8);
 
-        int zFinal = z + data._10.z_22;
+        float zFinal = z + data._10.z_22;
         if(zFinal >= 0xa0 && !renderCoordThresholdExceeded) {
           if(zFinal >= 0xffe) {
             zFinal = 0xffe;
           }
 
           //LAB_800ce138
-          GPU.queueCommand(zFinal >> 2, cmd);
+          GPU.queueCommand(zFinal / 4.0f, cmd);
         }
 
         //LAB_800ce14c
-        x0.set(x1.get());
-        y0.set(y1.get());
-        x2.set(x3.get());
-        y2.set(y3.get());
+        v0.x = v1.x;
+        v0.y = v1.y;
+        v2.x = v3.x;
+        v2.y = v3.y;
         segment = segment.previousSegmentRef_24;
-        renderCoordThresholdExceeded = (
-          Math.abs(x0.get()) > renderCoordThreshold ||
-            Math.abs(y0.get()) > renderCoordThreshold ||
-            Math.abs(x2.get()) > renderCoordThreshold ||
-            Math.abs(y2.get()) > renderCoordThreshold
-        );
+        renderCoordThresholdExceeded =
+          Math.abs(v0.x) > renderCoordThreshold ||
+          Math.abs(v0.y) > renderCoordThreshold ||
+          Math.abs(v2.x) > renderCoordThreshold ||
+          Math.abs(v2.y) > renderCoordThreshold;
       }
 
       //LAB_800ce1a0
@@ -4242,7 +4229,7 @@ public final class Bttl_800c {
 
     //LAB_800ce320
     for(int i = 0; i < 2; i++) {
-      final MATRIX perspectiveTransformMatrix = new MATRIX();
+      final MV perspectiveTransformMatrix = new MV();
       GsGetLw(trail.parentModel_30.modelParts_00[trail.dobjIndex_08].coord2_04, perspectiveTransformMatrix);
       (i == 0 ? trail.smallestVertex_20 : trail.largestVertex_10).mul(perspectiveTransformMatrix, segment.endpointCoords_04[i]); // Yes, I hate me for this syntax too
       segment.endpointCoords_04[i].add(perspectiveTransformMatrix.transfer);
@@ -4251,7 +4238,7 @@ public final class Bttl_800c {
     //LAB_800ce3e0
     segment = trail.currentSegment_38;
     while(segment != null) {
-      applyWeaponTrailScaling(segment.endpointCoords_04[1], segment.endpointCoords_04[0], 0x1000, 0x400);
+      applyWeaponTrailScaling(segment.endpointCoords_04[1], segment.endpointCoords_04[0], 1.0f, 0.25f);
       segment = segment.previousSegmentRef_24;
     }
 
@@ -4371,23 +4358,23 @@ public final class Bttl_800c {
   }
 
   @Method(0x800ce880L)
-  public static void applyWeaponTrailScaling(final VECTOR largestVertex, final VECTOR smallestVertex, final int largestVertexDiffScale, final int smallestVertexDiffScale) {
-    final VECTOR vertexDiff = new VECTOR();
-    final VECTOR scaledVertexDiff = new VECTOR();
+  public static void applyWeaponTrailScaling(final Vector3f largestVertex, final Vector3f smallestVertex, final float largestVertexDiffScale, final float smallestVertexDiffScale) {
+    final Vector3f vertexDiff = new Vector3f();
+    final Vector3f scaledVertexDiff = new Vector3f();
     vertexDiff.set(largestVertex).sub(smallestVertex);
 
     scaledVertexDiff.set(
-      vertexDiff.getX() * largestVertexDiffScale >> 12,
-      vertexDiff.getY() * largestVertexDiffScale >> 12,
-      vertexDiff.getZ() * largestVertexDiffScale >> 12
+      vertexDiff.x * largestVertexDiffScale,
+      vertexDiff.y * largestVertexDiffScale,
+      vertexDiff.z * largestVertexDiffScale
     );
 
     largestVertex.set(smallestVertex).add(scaledVertexDiff);
 
     scaledVertexDiff.set(
-      vertexDiff.getX() * smallestVertexDiffScale >> 12,
-      vertexDiff.getY() * smallestVertexDiffScale >> 12,
-      vertexDiff.getZ() * smallestVertexDiffScale >> 12
+      vertexDiff.x * smallestVertexDiffScale,
+      vertexDiff.y * smallestVertexDiffScale,
+      vertexDiff.z * smallestVertexDiffScale
     );
 
     smallestVertex.add(scaledVertexDiff);
@@ -4401,12 +4388,12 @@ public final class Bttl_800c {
   public static FlowControl scriptApplyWeaponTrailScaling(final RunningScript<?> script) {
     final EffectManagerData6c<EffectManagerData6cInner.WeaponTrailType> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.classFor(EffectManagerData6cInner.WeaponTrailType.class));
     final WeaponTrailEffect3c trail = (WeaponTrailEffect3c)manager.effect_44;
-    applyWeaponTrailScaling(trail.largestVertex_10, trail.smallestVertex_20, script.params_20[2].get(), script.params_20[1].get());
+    applyWeaponTrailScaling(trail.largestVertex_10, trail.smallestVertex_20, script.params_20[2].get() / (float)0x1000, script.params_20[1].get() / (float)0x1000);
     return FlowControl.CONTINUE;
   }
 
   @Method(0x800cea1cL)
-  public static void scriptGetScriptedObjectPos(final int scriptIndex, final VECTOR posOut) {
+  public static void scriptGetScriptedObjectPos(final int scriptIndex, final Vector3f posOut) {
     final BattleObject bobj = (BattleObject)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
     posOut.set(bobj.getPosition());
   }
@@ -4451,9 +4438,9 @@ public final class Bttl_800c {
     final int r = script.params_20[1].get() << 8;
     final int g = script.params_20[2].get() << 8;
     final int b = script.params_20[3].get() << 8;
-    final int fullR = (script.params_20[4].get() << 8) & 0xffff; // Retail bug in violet dragon - overflow
-    final int fullG = (script.params_20[5].get() << 8) & 0xffff; //
-    final int fullB = (script.params_20[6].get() << 8) & 0xffff; //
+    final int fullR = script.params_20[4].get() << 8 & 0xffff; // Retail bug in violet dragon - overflow
+    final int fullG = script.params_20[5].get() << 8 & 0xffff; //
+    final int fullB = script.params_20[6].get() << 8 & 0xffff; //
     final int ticks = script.params_20[7].get() & 0xffff;
 
     final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
@@ -4520,9 +4507,9 @@ public final class Bttl_800c {
 
   @Method(0x800cf03cL)
   public static int FUN_800cf03c(final EffectManagerData6c<?> manager, final Attachment18 attachment) {
-    manager._10.trans_04.x.add(attachment._0c.getX() * attachment.direction_14);
-    manager._10.trans_04.y.add(attachment._0c.getY() * attachment.direction_14);
-    manager._10.trans_04.z.add(attachment._0c.getZ() * attachment.direction_14);
+    manager._10.trans_04.x += attachment._0c.getX() * attachment.direction_14;
+    manager._10.trans_04.y += attachment._0c.getY() * attachment.direction_14;
+    manager._10.trans_04.z += attachment._0c.getZ() * attachment.direction_14;
     attachment.direction_14 = (byte)-attachment.direction_14;
     return 1;
   }
@@ -4564,17 +4551,17 @@ public final class Bttl_800c {
 
   /** @return Z */
   @Method(0x800cf244L)
-  public static int transformWorldspaceToScreenspace(final VECTOR pos, final IntRef outX, final IntRef outY) {
-    final VECTOR sp0x10 = new VECTOR();
+  public static float transformWorldspaceToScreenspace(final Vector3f pos, final Vector2f out) {
+    final Vector3f sp0x10 = new Vector3f();
     pos.mul(worldToScreenMatrix_800c3548, sp0x10);
     sp0x10.add(worldToScreenMatrix_800c3548.transfer);
-    outX.set(MathHelper.safeDiv(getProjectionPlaneDistance() * sp0x10.getX(), sp0x10.getZ()));
-    outY.set(MathHelper.safeDiv(getProjectionPlaneDistance() * sp0x10.getY(), sp0x10.getZ()));
-    return sp0x10.getZ();
+    out.x = MathHelper.safeDiv(getProjectionPlaneDistance() * sp0x10.x, sp0x10.z);
+    out.y = MathHelper.safeDiv(getProjectionPlaneDistance() * sp0x10.y, sp0x10.z);
+    return sp0x10.z;
   }
 
   @Method(0x800cf37cL)
-  public static void rotateAndTranslateEffect(final EffectManagerData6c<?> manager, @Nullable final Vector3f extraRotation, final VECTOR vertex, final VECTOR out) {
+  public static void rotateAndTranslateEffect(final EffectManagerData6c<?> manager, @Nullable final Vector3f extraRotation, final Vector3f vertex, final Vector3f out) {
     final Vector3f rotations = new Vector3f(manager._10.rot_10);
 
     if(extraRotation != null) {
@@ -4583,16 +4570,16 @@ public final class Bttl_800c {
     }
 
     //LAB_800cf400
-    final MATRIX transforms = new MATRIX();
-    RotMatrix_Xyz(rotations, transforms);
+    final MV transforms = new MV();
+    transforms.rotationXYZ(rotations);
 
     vertex.mul(transforms, out);
     out.add(transforms.transfer);
   }
 
   @Method(0x800cf4f4L)
-  public static void getRelativeOffset(final EffectManagerData6c<?> manager, @Nullable final Vector3f extraRotation, final VECTOR in, final VECTOR out) {
-    final MATRIX sp0x28 = new MATRIX();
+  public static void getRelativeOffset(final EffectManagerData6c<?> manager, @Nullable final Vector3f extraRotation, final Vector3f in, final Vector3f out) {
+    final MV sp0x28 = new MV();
 
     final Vector3f sp0x20 = new Vector3f(manager.getRotation());
 
@@ -4602,7 +4589,7 @@ public final class Bttl_800c {
     }
 
     //LAB_800cf578
-    RotMatrix_Xyz(sp0x20, sp0x28);
+    sp0x28.rotationXYZ(sp0x20);
     sp0x28.transfer.set(manager.getPosition());
 
     in.mul(sp0x28, out);
@@ -4610,9 +4597,9 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cf684L)
-  public static void FUN_800cf684(final Vector3f rotation, final VECTOR translation, final VECTOR vector, final VECTOR out) {
-    final MATRIX transforms = new MATRIX();
-    RotMatrix_Xyz(rotation, transforms);
+  public static void FUN_800cf684(final Vector3f rotation, final Vector3f translation, final Vector3f vector, final Vector3f out) {
+    final MV transforms = new MV();
+    transforms.rotationXYZ(rotation);
     transforms.transfer.set(translation);
     vector.mul(transforms, out);
     out.add(transforms.transfer);
@@ -4620,47 +4607,44 @@ public final class Bttl_800c {
 
   /** @return Z */
   @Method(0x800cf7d4L)
-  public static int FUN_800cf7d4(final Vector3f rotation, final VECTOR translation1, final VECTOR translation2, final ShortRef outX, final ShortRef outY) {
-    final VECTOR sp0x10 = new VECTOR().set(translation1);
+  public static int FUN_800cf7d4(final Vector3f rotation, final Vector3f translation1, final Vector3f translation2, final Vector2f out) {
+    final Vector3f sp0x10 = new Vector3f(translation1);
     sp0x10.mul(worldToScreenMatrix_800c3548);
 
     GTE.setTransforms(worldToScreenMatrix_800c3548);
 
-    final MATRIX sp0x38 = new MATRIX();
-    GTE.getRotationMatrix(sp0x38);
-    GTE.getTranslationVector(sp0x38.transfer);
+    final MV oldTransforms = new MV();
+    GTE.getTransforms(oldTransforms);
 
-    final MATRIX sp0x58 = new MATRIX();
-    RotMatrix_Xyz(rotation, sp0x58);
-    sp0x58.mul(sp0x38, sp0x38);
-    sp0x38.transfer.add(sp0x10);
+    final MV sp0x58 = new MV();
+    sp0x58.rotationXYZ(rotation);
+    oldTransforms.mul(sp0x58);
+    oldTransforms.transfer.add(sp0x10);
 
-    GTE.setRotationMatrix(sp0x38);
-    GTE.setTranslationVector(sp0x38.transfer);
+    GTE.setTransforms(oldTransforms);
     GTE.perspectiveTransform(translation2);
 
-    outX.set(GTE.getScreenX(2));
-    outY.set(GTE.getScreenY(2));
+    out.set(GTE.getScreenX(2), GTE.getScreenY(2));
     return GTE.getScreenZ(3);
   }
 
   /** @return Z */
   @Method(0x800cfb14L)
-  public static int FUN_800cfb14(final EffectManagerData6c<?> manager, final VECTOR translation, final ShortRef outX, final ShortRef outY) {
-    return FUN_800cf7d4(manager._10.rot_10, manager._10.trans_04, translation, outX, outY);
+  public static int FUN_800cfb14(final EffectManagerData6c<?> manager, final Vector3f translation, final Vector2f out) {
+    return FUN_800cf7d4(manager._10.rot_10, manager._10.trans_04, translation, out);
   }
 
   /** @return Z */
   @Method(0x800cfb94L)
-  public static int FUN_800cfb94(final EffectManagerData6c<?> manager, final Vector3f rotation, final VECTOR translation, final ShortRef outX, final ShortRef outY) {
+  public static int FUN_800cfb94(final EffectManagerData6c<?> manager, final Vector3f rotation, final Vector3f translation, final Vector2f out) {
     final Vector3f tempRotation = new Vector3f(manager._10.rot_10).add(rotation);
-    return FUN_800cf7d4(tempRotation, manager._10.trans_04, translation, outX, outY);
+    return FUN_800cf7d4(tempRotation, manager._10.trans_04, translation, out);
   }
 
   /** @return Z */
   @Method(0x800cfc20L)
-  public static int FUN_800cfc20(final Vector3f managerRotation, final VECTOR managerTranslation, final VECTOR translation, final ShortRef outX, final ShortRef outY) {
-    return FUN_800cf7d4(managerRotation, managerTranslation, translation, outX, outY);
+  public static int FUN_800cfc20(final Vector3f managerRotation, final Vector3f managerTranslation, final Vector3f translation, final Vector2f out) {
+    return FUN_800cf7d4(managerRotation, managerTranslation, translation, out);
   }
 
   @ScriptDescription("Gets a battle object's local world matrix translation")
@@ -4682,12 +4666,12 @@ public final class Bttl_800c {
     }
 
     //LAB_800cfd40
-    final MATRIX lw = new MATRIX();
+    final MV lw = new MV();
     GsGetLw(model.modelParts_00[script.params_20[1].get()].coord2_04, lw);
     // This was multiplying vector (0, 0, 0) so I removed it
-    script.params_20[2].set(lw.transfer.getX());
-    script.params_20[3].set(lw.transfer.getY());
-    script.params_20[4].set(lw.transfer.getZ());
+    script.params_20[2].set(Math.round(lw.transfer.x));
+    script.params_20[3].set(Math.round(lw.transfer.y));
+    script.params_20[4].set(Math.round(lw.transfer.z));
     return FlowControl.CONTINUE;
   }
 
@@ -4701,10 +4685,10 @@ public final class Bttl_800c {
     final int componentIndex = script.params_20[1].get();
 
     //LAB_800cfe54
-    int largest = 0x8000_0001;
-    int smallest = 0x7fff_ffff;
+    float largest = -Float.MAX_VALUE;
+    float smallest = Float.MAX_VALUE;
     for(int animIndex = bent.model_148.partCount_98 - 1; animIndex >= 0; animIndex--) {
-      final int component = bent.model_148.modelParts_00[animIndex].coord2_04.coord.transfer.get(componentIndex);
+      final float component = bent.model_148.modelParts_00[animIndex].coord2_04.coord.transfer.get(componentIndex);
 
       if(largest < component) {
         largest = component;
@@ -4717,7 +4701,7 @@ public final class Bttl_800c {
     }
 
     //LAB_800cfe9c
-    script.params_20[2].set(largest - smallest);
+    script.params_20[2].set(Math.round(largest - smallest));
     return FlowControl.CONTINUE;
   }
 
@@ -4761,8 +4745,8 @@ public final class Bttl_800c {
 
   /** Sets translation vector to position of individual part of model associated with scriptIndex */
   @Method(0x800cffd8L)
-  public static void getModelObjectTranslation(final int scriptIndex, final VECTOR translation, final int objIndex) {
-    final MATRIX transformMatrix = new MATRIX();
+  public static void getModelObjectTranslation(final int scriptIndex, final Vector3f translation, final int objIndex) {
+    final MV transformMatrix = new MV();
     GsGetLw(((BattleEntity27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00).model_148.modelParts_00[objIndex].coord2_04, transformMatrix);
     // Does nothing? Changed line below to set //ApplyMatrixLV(transformMatrix, new VECTOR(), translation);
     translation.set(transformMatrix.transfer);

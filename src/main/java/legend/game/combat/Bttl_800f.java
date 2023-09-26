@@ -3294,9 +3294,9 @@ public final class Bttl_800f {
   @Method(0x800f96d4L)
   public static FlowControl scriptGetBentPos(final RunningScript<?> script) {
     final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[1].set(bent.model_148.coord2_14.coord.transfer.getX());
-    script.params_20[2].set(bent.model_148.coord2_14.coord.transfer.getY());
-    script.params_20[3].set(bent.model_148.coord2_14.coord.transfer.getZ());
+    script.params_20[1].set(Math.round(bent.model_148.coord2_14.coord.transfer.x));
+    script.params_20[2].set(Math.round(bent.model_148.coord2_14.coord.transfer.y));
+    script.params_20[3].set(Math.round(bent.model_148.coord2_14.coord.transfer.z));
     return FlowControl.CONTINUE;
   }
 

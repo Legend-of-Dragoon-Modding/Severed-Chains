@@ -1,12 +1,12 @@
 package legend.game.combat.effects;
 
 import legend.core.gte.USCOLOUR;
-import legend.core.gte.VECTOR;
+import org.joml.Vector3f;
 
 public class LightningBoltEffectSegment30 {
   public final int index;
 
-  public final VECTOR origin_00 = new VECTOR();
+  public final Vector3f origin_00 = new Vector3f();
   /** Narrower gradient of bolt effect, renders below outer */
   public final USCOLOUR innerColour_10 = new USCOLOUR();
   /** Wider gradient of bolt effect, renders above inner */
