@@ -637,6 +637,8 @@ public class Gpu {
     final int maxXi = Math.round(maxX);
     final int maxYi = Math.round(maxY);
 
+    final float areaInv = 1.0f / area;
+
     // Rasterize
     for(int y = minYi; y < maxYi; y++) {
       // Barycentric coordinates at start of row
@@ -666,12 +668,12 @@ public class Gpu {
           int colour = c0;
 
           if(isShaded) {
-            colour = this.getShadedColor(w0, w1, w2, c0, c1, c2, area);
+            colour = this.getShadedColor(w0, w1, w2, c0, c1, c2, areaInv);
           }
 
           if(isTextured) {
-            final int texelX = (int)(interpolateCoords(w0, w1, w2, tu0, tu1, tu2, area));
-            final int texelY = (int)(interpolateCoords(w0, w1, w2, tv0, tv1, tv2, area));
+            final int texelX = (int)(interpolateCoords(w0, w1, w2, tu0, tu1, tu2, areaInv));
+            final int texelY = (int)(interpolateCoords(w0, w1, w2, tv0, tv1, tv2, areaInv));
 
             int texel;
             if(texture == null) {
@@ -703,9 +705,9 @@ public class Gpu {
             }
 
             if(texel == 0) {
-              w0 += A12;
-              w1 += A20;
-              w2 += A01;
+//              w0 += A12;
+//              w1 += A20;
+//              w2 += A01;
               continue;
             }
 
@@ -726,15 +728,15 @@ public class Gpu {
         }
 
         // One step right
-        w0 += A12;
-        w1 += A20;
-        w2 += A01;
+//        w0 += A12;
+//        w1 += A20;
+//        w2 += A01;
       }
 
       // One step down
-      w0_row += B12;
-      w1_row += B20;
-      w2_row += B01;
+//      w0_row += B12;
+//      w1_row += B20;
+//      w2_row += B01;
     }
   }
 
@@ -870,9 +872,9 @@ public class Gpu {
     this.vram15[index] = pixel15;
   }
 
-  public static float interpolateCoords(final float w0, final float w1, final float w2, final int t0, final int t1, final int t2, final float area) {
+  public static float interpolateCoords(final float w0, final float w1, final float w2, final int t0, final int t1, final int t2, final float areaInv) {
     //https://codeplea.com/triangular-interpolation
-    return (t0 * w0 + t1 * w1 + t2 * w2) / area;
+    return (t0 * w0 + t1 * w1 + t2 * w2) * areaInv;
   }
 
   private static int interpolateColours(final int c1, final int c2, final float ratio) {
@@ -994,10 +996,10 @@ public class Gpu {
     return tp << 24 | b << 16 | g << 8 | r;
   }
 
-  public int getShadedColor(final float w0, final float w1, final float w2, final int c0, final int c1, final int c2, final float area) {
-    final float r = ((c0        & 0xff) * w0 + (c1        & 0xff) * w1 + (c2        & 0xff) * w2) / area;
-    final float g = ((c0 >>>  8 & 0xff) * w0 + (c1 >>>  8 & 0xff) * w1 + (c2 >>>  8 & 0xff) * w2) / area;
-    final float b = ((c0 >>> 16 & 0xff) * w0 + (c1 >>> 16 & 0xff) * w1 + (c2 >>> 16 & 0xff) * w2) / area;
+  public int getShadedColor(final float w0, final float w1, final float w2, final int c0, final int c1, final int c2, final float areaInv) {
+    final float r = ((c0        & 0xff) * w0 + (c1        & 0xff) * w1 + (c2        & 0xff) * w2) * areaInv;
+    final float g = ((c0 >>>  8 & 0xff) * w0 + (c1 >>>  8 & 0xff) * w1 + (c2 >>>  8 & 0xff) * w2) * areaInv;
+    final float b = ((c0 >>> 16 & 0xff) * w0 + (c1 >>> 16 & 0xff) * w1 + (c2 >>> 16 & 0xff) * w2) * areaInv;
 
     return (int)b << 16 | (int)g << 8 | (int)r;
   }
