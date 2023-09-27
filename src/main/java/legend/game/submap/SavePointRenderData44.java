@@ -1,12 +1,12 @@
 package legend.game.submap;
 
-import legend.core.gte.SVECTOR;
+import org.joml.Vector2f;
 
 public class SavePointRenderData44 {
-  public final SVECTOR vert0_00 = new SVECTOR();
-  public final SVECTOR vert1_08 = new SVECTOR();
-  public final SVECTOR vert2_10 = new SVECTOR();
-  public final SVECTOR vert3_18 = new SVECTOR();
+  public final Vector2f vert0_00 = new Vector2f();
+  public final Vector2f vert1_08 = new Vector2f();
+  public final Vector2f vert2_10 = new Vector2f();
+  public final Vector2f vert3_18 = new Vector2f();
   public int screenOffsetX_20;
   public int screenOffsetY_24;
   public float rotation_28;
@@ -17,5 +17,5 @@ public class SavePointRenderData44 {
   /** 0: fade in, 1: fade out */
   public short fadeState_38;
 
-  public int z_40;
+  public float z_40;
 }

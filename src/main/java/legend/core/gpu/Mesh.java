@@ -2,6 +2,7 @@ package legend.core.gpu;
 
 import legend.core.gte.SVECTOR;
 import legend.game.types.Translucency;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
@@ -80,7 +81,7 @@ public record Mesh(Segment[] segments) {
     public void render(final Renderable renderable, final int offsetZ) {
       outer:
       for(final Mesh.Poly3d poly : this.polys) {
-        final Vec2i[] vertices = new Vec2i[this.vertexCount];
+        final Vector2f[] vertices = new Vector2f[this.vertexCount];
         final Vec2i[] uvs = new Vec2i[this.vertexCount];
         final int[] colours = new int[this.vertexCount];
         Translucency translucency = null;
@@ -97,7 +98,7 @@ public record Mesh(Segment[] segments) {
             continue outer;
           }
 
-          vertices[vertexIndex] = new Vec2i(GTE.getScreenX(2), GTE.getScreenY(2));
+          vertices[vertexIndex] = new Vector2f(GTE.getScreenX(2), GTE.getScreenY(2));
 
           if(this.textured) {
             uvs[vertexIndex] = new Vec2i(poly.vertices()[vertexIndex].u(), poly.vertices()[vertexIndex].v());
@@ -114,8 +115,8 @@ public record Mesh(Segment[] segments) {
         }
 
         // Average Z
-        final int averageZ = this.vertexCount == 3 ? GTE.averageZ3() : GTE.averageZ4();
-        final int z = Math.min(averageZ + zOffset_1f8003e8.get() >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
+        final float averageZ = this.vertexCount == 3 ? GTE.averageZ3() : GTE.averageZ4();
+        final float z = Math.min((averageZ + zOffset_1f8003e8.get()) / (1 << zShift_1f8003c4.get()), zMax_1f8003cc.get());
 
         if(z < zMin) {
           continue;
@@ -151,7 +152,7 @@ public record Mesh(Segment[] segments) {
     public final boolean textured;
     public final boolean translucent;
 
-    private final Vec2i[][] positions;
+    private final Vector2f[][] positions;
     private final Vec2i[][] uvs;
     private final int[][] colours;
 
@@ -163,7 +164,7 @@ public record Mesh(Segment[] segments) {
       this.textured = textured;
       this.translucent = translucent;
 
-      this.positions = new Vec2i[polys.length][this.vertexCount];
+      this.positions = new Vector2f[polys.length][this.vertexCount];
       this.uvs = new Vec2i[polys.length][this.vertexCount];
       this.colours = new int[polys.length][this.vertexCount];
 
@@ -220,5 +221,5 @@ public record Mesh(Segment[] segments) {
   }
 
   public record Poly2d(Vertex2d[] vertices, int paletteBase, int pageX, int pageY, @Nullable Translucency translucency) { }
-  public record Vertex2d(Vec2i pos, Vec2i uv, int colour) { }
+  public record Vertex2d(Vector2f pos, Vec2i uv, int colour) { }
 }

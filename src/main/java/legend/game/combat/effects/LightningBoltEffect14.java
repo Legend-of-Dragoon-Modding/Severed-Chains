@@ -14,7 +14,7 @@ public class LightningBoltEffect14 {
   public float angle_02;
   public final Vector3f rotation_04 = new Vector3f();
   /** Average z-index */
-  public int sz3_0c;
+  public float sz3_0c;
   public LightningBoltEffectSegment30[] boltSegments_10;
 
   public LightningBoltEffect14(final int index, final int count) {

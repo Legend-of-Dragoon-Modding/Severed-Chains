@@ -168,8 +168,8 @@ public final class Renderer {
         }
       }
 
-      final int screenZ = quad ? GTE.averageZ4() : GTE.averageZ3();
-      final int z = Math.min(screenZ + zOffset_1f8003e8.get() >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
+      final float screenZ = quad ? GTE.averageZ4() : GTE.averageZ3();
+      final float z = Math.min((screenZ + zOffset_1f8003e8.get()) / (1 << zShift_1f8003c4.get()), zMax_1f8003cc.get());
 
       if(z < zMin) {
         continue;

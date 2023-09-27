@@ -12,10 +12,10 @@ public class TextboxText84 {
   public int flags_08;
   public int z_0c;
   public int _10;
-  public int x_14;
-  public int y_16;
-  public int _18;
-  public int _1a;
+  public float x_14;
+  public float y_16;
+  public float _18;
+  public float _1a;
   public int chars_1c;
   public int lines_1e;
   public int _20;

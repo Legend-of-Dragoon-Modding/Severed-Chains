@@ -8,9 +8,9 @@ public class SMapStruct3c {
   public short x_0c;
   public short y_0e;
   /** 16.16 fixed-point */
-  public int _10;
+  public float _10;
   /** 16.16 fixed-point */
-  public int _14;
+  public float _14;
 
   /** 16.16 fixed-point */
   public int _1c;
@@ -24,6 +24,6 @@ public class SMapStruct3c {
   public int _2c;
   /** 16.16 fixed-point */
   public int _30;
-  public int z_34;
+  public float z_34;
   public SMapStruct3c parent_38;
 }

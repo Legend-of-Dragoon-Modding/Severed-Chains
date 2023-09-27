@@ -7,7 +7,6 @@ import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
 import legend.core.gte.COLOUR;
-import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
@@ -45,6 +44,7 @@ import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import org.joml.Math;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
@@ -2036,9 +2036,8 @@ public class WMap extends EngineState {
     GsGetLs(this.wmapStruct258_800c66a8.tmdRendering_08.coord2s_04[0], wmapRotation);
     GTE.setTransforms(wmapRotation);
 
-    final SVECTOR playerTranslation = new SVECTOR().set(this.wmapStruct258_800c66a8.coord2_34.coord.transfer);
-    final DVECTOR playerArrowXy = new DVECTOR(); // sxy2
-    perspectiveTransform(playerTranslation, playerArrowXy);
+    final Vector2f playerArrowXy = new Vector2f(); // sxy2
+    perspectiveTransform(this.wmapStruct258_800c66a8.coord2_34.coord.transfer, playerArrowXy);
 
     // Player arrow on map
     GPU.queueCommand(25, new GpuCommandQuad()
@@ -2046,7 +2045,7 @@ public class WMap extends EngineState {
       .clut(640, 496)
       .vramPos(640, 256)
       .rgb(0x55, 0, 0)
-      .pos(playerArrowXy.getX() - size / 2, playerArrowXy.getY() - size, size, size)
+      .pos(playerArrowXy.x - size / 2.0f, playerArrowXy.y - size, size, size)
       .uv(((int)(tickCount_800bb0fc.get() / (3.0f / vsyncMode_8007a3b8)) & 0x7) * size, v)
     );
 
@@ -2747,8 +2746,8 @@ public class WMap extends EngineState {
 
   @Method(0x800d7a34L)
   private void renderPath() {
-    int sx = 0;
-    int sy = 0;
+    float sx = 0.0f;
+    float sy = 0.0f;
 
     if(this.worldMapState_800c6698 < 4 || this.playerState_800c669c < 4) {
       return;
@@ -2807,7 +2806,7 @@ public class WMap extends EngineState {
 
           sx = GTE.getScreenX(2);
           sy = GTE.getScreenY(2);
-          final int sz = GTE.getScreenZ(3) >> 2;
+          final float sz = GTE.getScreenZ(3) / 4.0f;
 
           if(sz >= 4 && sz < orderingTableSize_1f8003c8.get()) {
             final GpuCommandPoly cmd = new GpuCommandPoly(4)
@@ -2828,8 +2827,8 @@ public class WMap extends EngineState {
             }
 
             //LAB_800d806c
-            final int leftX = sx - (w >>> 2);
-            final int bottomY = sy - (h >>> 2);
+            final float leftX = sx - (w >>> 2);
+            final float bottomY = sy - (h >>> 2);
             cmd
               .uv(0, u, v)
               .uv(1, u + w, v)
@@ -2884,9 +2883,9 @@ public class WMap extends EngineState {
               //LAB_800d87fc
               GTE.perspectiveTransform(pathPoint);
 
-              final int sx2 = GTE.getScreenX(2);
-              final int sy2 = GTE.getScreenY(2);
-              final int screenZ = GTE.getScreenZ(3) >> 2;
+              final float sx2 = GTE.getScreenX(2);
+              final float sy2 = GTE.getScreenY(2);
+              final float screenZ = GTE.getScreenZ(3) / 4.0f;
 
               if(screenZ >= 4 && screenZ < orderingTableSize_1f8003c8.get()) {
                 final GpuCommandPoly cmd = new GpuCommandPoly(4)
@@ -4252,9 +4251,9 @@ public class WMap extends EngineState {
     final SVECTOR vert0 = new SVECTOR();
     final SVECTOR vert1 = new SVECTOR();
     final SVECTOR vert2 = new SVECTOR();
-    final DVECTOR sxy0 = new DVECTOR();
-    final DVECTOR sxy1 = new DVECTOR();
-    final DVECTOR sxy2 = new DVECTOR();
+    final Vector2f sxy0 = new Vector2f();
+    final Vector2f sxy1 = new Vector2f();
+    final Vector2f sxy2 = new Vector2f();
 
     GsGetLs(this.wmapStruct258_800c66a8.models_0c[this.wmapStruct258_800c66a8.modelIndex_1e4].coord2_14, sp0x28);
     GTE.setTransforms(sp0x28);
@@ -4265,7 +4264,7 @@ public class WMap extends EngineState {
       vert1.set((short)this.wmapStruct258_800c66a8._1c4[ i            * 2], (short)0, (short)this.wmapStruct258_800c66a8._1c4[ i            * 2 + 1]);
       vert2.set((short)this.wmapStruct258_800c66a8._1c4[(i + 1 & 0x7) * 2], (short)0, (short)this.wmapStruct258_800c66a8._1c4[(i + 1 & 0x7) * 2 + 1]);
 
-      final int z = perspectiveTransformTriple(vert0, vert1, vert2, sxy0, sxy1, sxy2);
+      final float z = perspectiveTransformTriple(vert0, vert1, vert2, sxy0, sxy1, sxy2);
 
       if(z >= 3 && z < orderingTableSize_1f8003c8.get()) {
         final GpuCommandPoly cmd = new GpuCommandPoly(3)
@@ -4274,9 +4273,9 @@ public class WMap extends EngineState {
           .monochrome(0, 0x80)
           .monochrome(1, 0)
           .monochrome(2, 0)
-          .pos(0, sxy0.getX(), sxy0.getY())
-          .pos(1, sxy1.getX(), sxy1.getY())
-          .pos(2, sxy2.getX(), sxy2.getY());
+          .pos(0, sxy0.x, sxy0.y)
+          .pos(1, sxy1.x, sxy1.y)
+          .pos(2, sxy2.x, sxy2.y);
 
         GPU.queueCommand(78 + z, cmd);
       }
@@ -4290,10 +4289,10 @@ public class WMap extends EngineState {
   @Method(0x800e1ac4L)
   private void renderQueenFuryWake() {
     final MV sp0x28 = new MV();
-    final SVECTOR sp0x48 = new SVECTOR();
-    final SVECTOR sp0x50 = new SVECTOR();
-    final SVECTOR sp0x58 = new SVECTOR();
-    final SVECTOR sp0x60 = new SVECTOR();
+    final Vector3f sp0x48 = new Vector3f();
+    final Vector3f sp0x50 = new Vector3f();
+    final Vector3f sp0x58 = new Vector3f();
+    final Vector3f sp0x60 = new Vector3f();
 
     final IntRef sp0x70 = new IntRef();
     final IntRef sp0x74 = new IntRef();
@@ -4321,12 +4320,12 @@ public class WMap extends EngineState {
       final float spd8 = -spc8;
       final float spdc = -spcc;
       final float spe0 = -spd0;
-      sp0x48.setX((short)(spc8 + sp0x98.x));
-      sp0x48.setY((short)(spcc + sp0x98.y));
-      sp0x48.setZ((short)(spd0 + sp0x98.z));
-      sp0x50.setX((short)sp0x98.x);
-      sp0x50.setY((short)sp0x98.y);
-      sp0x50.setZ((short)sp0x98.z);
+      sp0x48.x = spc8 + sp0x98.x;
+      sp0x48.y = spcc + sp0x98.y;
+      sp0x48.z = spd0 + sp0x98.z;
+      sp0x50.x = sp0x98.x;
+      sp0x50.y = sp0x98.y;
+      sp0x50.z = sp0x98.z;
 
       this.FUN_800e2e1c(i + 1, sp0x88, sp0xa8, sp0x74, sp0x70);
       spc8 = sp0x88.x * sp0x70.get();
@@ -4335,9 +4334,9 @@ public class WMap extends EngineState {
       final float spe8 = -spc8;
       final float spec = -spcc;
       final float spf0 = -spd0;
-      sp0x58.setX((short)(spc8 + sp0xa8.x));
-      sp0x58.setY((short)(spcc + sp0xa8.y));
-      sp0x58.setZ((short)(spd0 + sp0xa8.z));
+      sp0x58.x = spc8 + sp0xa8.x;
+      sp0x58.y = spcc + sp0xa8.y;
+      sp0x58.z = spd0 + sp0xa8.z;
       sp0x60.set(sp0xa8);
 
       int sp78 = 256 - sp0x74.get() * 256 / 40;
@@ -4356,12 +4355,12 @@ public class WMap extends EngineState {
       final int g3 = sp78 / 8;
       final int b3 = sp78 * 96 / 256;
 
-      final SVECTOR sxyz0 = new SVECTOR();
-      final SVECTOR sxyz1 = new SVECTOR();
-      final SVECTOR sxyz2 = new SVECTOR();
-      final SVECTOR sxyz3 = new SVECTOR();
+      final Vector2f sxyz0 = new Vector2f();
+      final Vector2f sxyz1 = new Vector2f();
+      final Vector2f sxyz2 = new Vector2f();
+      final Vector2f sxyz3 = new Vector2f();
 
-      int z = RotTransPers4(sp0x48, sp0x50, sp0x58, sp0x60, sxyz0, sxyz1, sxyz2, sxyz3);
+      float z = RotTransPers4(sp0x48, sp0x50, sp0x58, sp0x60, sxyz0, sxyz1, sxyz2, sxyz3);
 
       if(z >= 3 && z < orderingTableSize_1f8003c8.get()) {
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
@@ -4377,21 +4376,21 @@ public class WMap extends EngineState {
           .uv(1, 63,  0)
           .uv(2,  0, 63)
           .uv(3, 63, 63)
-          .pos(0, sxyz0.getX(), sxyz0.getY())
-          .pos(1, sxyz1.getX(), sxyz1.getY())
-          .pos(2, sxyz2.getX(), sxyz2.getY())
-          .pos(3, sxyz3.getX(), sxyz3.getY());
+          .pos(0, sxyz0.x, sxyz0.y)
+          .pos(1, sxyz1.x, sxyz1.y)
+          .pos(2, sxyz2.x, sxyz2.y)
+          .pos(3, sxyz3.x, sxyz3.y);
 
         GPU.queueCommand(orderingTableSize_1f8003c8.get() - 4, cmd); // ship starboard wake
       }
 
       //LAB_800e2440
-      sp0x48.setX((short)(spd8 + sp0x98.x));
-      sp0x48.setY((short)(spdc + sp0x98.y));
-      sp0x48.setZ((short)(spe0 + sp0x98.z));
-      sp0x58.setX((short)(spe8 + sp0xa8.x));
-      sp0x58.setY((short)(spec + sp0xa8.y));
-      sp0x58.setZ((short)(spf0 + sp0xa8.z));
+      sp0x48.x = spd8 + sp0x98.x;
+      sp0x48.y = spdc + sp0x98.y;
+      sp0x48.z = spe0 + sp0x98.z;
+      sp0x58.x = spe8 + sp0xa8.x;
+      sp0x58.y = spec + sp0xa8.y;
+      sp0x58.z = spf0 + sp0xa8.z;
       z = RotTransPers4(sp0x48, sp0x50, sp0x58, sp0x60, sxyz0, sxyz1, sxyz2, sxyz3);
 
       if(z >= 3 && z < orderingTableSize_1f8003c8.get()) {
@@ -4408,10 +4407,10 @@ public class WMap extends EngineState {
           .uv(1, 63,  0)
           .uv(2,  0, 63)
           .uv(3, 63, 63)
-          .pos(0, sxyz0.getX(), sxyz0.getY())
-          .pos(1, sxyz1.getX(), sxyz1.getY())
-          .pos(2, sxyz2.getX(), sxyz2.getY())
-          .pos(3, sxyz3.getX(), sxyz3.getY());
+          .pos(0, sxyz0.x, sxyz0.y)
+          .pos(1, sxyz1.x, sxyz1.y)
+          .pos(2, sxyz2.x, sxyz2.y)
+          .pos(3, sxyz3.x, sxyz3.y);
 
         GPU.queueCommand(orderingTableSize_1f8003c8.get() - 4, cmd); // ship port wake
       }
@@ -5450,11 +5449,11 @@ public class WMap extends EngineState {
         GTE.setTransforms(sp0x38);
 
         GTE.perspectiveTransform(smokeTranslationVectors_800c74b8.get(i));
-        final short sx = GTE.getScreenX(2);
-        final short sy = GTE.getScreenY(2);
-        final int z = GTE.getScreenZ(3) >> 2;
-        final short x = (short)(sx + 160);
-        final short y = (short)(sy + 104);
+        final float sx = GTE.getScreenX(2);
+        final float sy = GTE.getScreenY(2);
+        final float z = GTE.getScreenZ(3) / 4.0f;
+        final float x = sx + 160;
+        final float y = sy + 104;
 
         //LAB_800e6e24
         if(x >= -32 && x < 353) {
@@ -5477,7 +5476,7 @@ public class WMap extends EngineState {
     // Render world map place names when start is held down
 
     //LAB_800e6f54
-    labelList.sort(Comparator.comparingInt(o -> o.z_00));
+    labelList.sort(Comparator.comparingDouble(o -> o.z_00));
 
     //LAB_800e6fa0
     int i;
@@ -5487,8 +5486,8 @@ public class WMap extends EngineState {
       //LAB_800e6fec
       //LAB_800e6fec
       //LAB_800e6ff4
-      final int x = label.xy_08.getX() + 160;
-      final int y = label.xy_08.getY() + 104;
+      final float x = label.xy_08.x + 160;
+      final float y = label.xy_08.y + 104;
       final int place = locations_800f0e34.get(label.locationIndex_04).placeIndex_02.get();
 
       if(!places_800f0234.get(place).name_00.isNull()) {
@@ -5573,7 +5572,7 @@ public class WMap extends EngineState {
   }
 
   @Method(0x800e774cL)
-  private void renderCenteredShadowedText(final LodString text, final int x, final int y, final TextColour colour, final int trim) {
+  private void renderCenteredShadowedText(final LodString text, final float x, final float y, final TextColour colour, final int trim) {
     final String[] split = text.get().split("\\n");
 
     for(int i = 0; i < split.length; i++) {
@@ -6736,28 +6735,28 @@ public class WMap extends EngineState {
         lsMatrix.identity(); // NOTE: does not clear translation
         GTE.setTransforms(lsMatrix);
         GTE.perspectiveTransform(-cloud.x_58, -cloud.y_5a, 0);
-        final short sx0 = GTE.getScreenX(2);
-        final short sy0 = GTE.getScreenY(2);
+        final float sx0 = GTE.getScreenX(2);
+        final float sy0 = GTE.getScreenY(2);
         cmd.pos(0, sx0, sy0);
-        int z = GTE.getScreenZ(3) >> 2;
+        float z = GTE.getScreenZ(3) / 4.0f;
 
         if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
           //LAB_800ec534
           GTE.perspectiveTransform(cloud.x_58, -cloud.y_5a, 0);
-          final short sx1 = GTE.getScreenX(2);
-          final short sy1 = GTE.getScreenY(2);
+          final float sx1 = GTE.getScreenX(2);
+          final float sy1 = GTE.getScreenY(2);
           cmd.pos(1, sx1, sy1);
-          z = GTE.getScreenZ(3) >> 2;
+          z = GTE.getScreenZ(3) / 4.0f;
 
           if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
             //LAB_800ec5b8
             if(sx1 - sx0 <= 0x400) {
               //LAB_800ec5ec
               GTE.perspectiveTransform(-cloud.x_58, cloud.y_5a, 0);
-              final short sx2 = GTE.getScreenX(2);
-              final short sy2 = GTE.getScreenY(2);
+              final float sx2 = GTE.getScreenX(2);
+              final float sy2 = GTE.getScreenY(2);
               cmd.pos(2, sx2, sy2);
-              z = GTE.getScreenZ(3) >> 2;
+              z = GTE.getScreenZ(3) / 4.0f;
 
               if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
                 //LAB_800ec670
@@ -6791,10 +6790,10 @@ public class WMap extends EngineState {
                   if(!MathHelper.flEq(cloud.brightness_5c, 0.0f)) {
                     //LAB_800ec7b8
                     GTE.perspectiveTransform(cloud.x_58, cloud.y_5a, 0);
-                    final short sx3 = GTE.getScreenX(2);
-                    final short sy3 = GTE.getScreenY(2);
+                    final float sx3 = GTE.getScreenX(2);
+                    final float sy3 = GTE.getScreenY(2);
                     cmd.pos(3, sx3, sy3);
-                    z = GTE.getScreenZ(3) >> 2;
+                    z = GTE.getScreenZ(3) / 4.0f;
 
                     if(z >= 5 && orderingTableSize_1f8003c8.get() - 3 < z) {
                       //LAB_800ec83c
@@ -6902,17 +6901,17 @@ public class WMap extends EngineState {
         GTE.setTransforms(lsMatrix);
         GTE.perspectiveTransform(-2, -2, 0);
 
-        final short sx0 = GTE.getScreenX(2);
-        final short sy0 = GTE.getScreenY(2);
-        int z = GTE.getScreenZ(3) >> 2;
+        final float sx0 = GTE.getScreenX(2);
+        final float sy0 = GTE.getScreenY(2);
+        float z = GTE.getScreenZ(3) / 4.0f;
 
         if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
           //LAB_800ed37c
           GTE.perspectiveTransform(2, -2, 0);
 
-          final short sx1 = GTE.getScreenX(2);
-          final short sy1 = GTE.getScreenY(2);
-          z = GTE.getScreenZ(3) >> 2;
+          final float sx1 = GTE.getScreenX(2);
+          final float sy1 = GTE.getScreenY(2);
+          z = GTE.getScreenZ(3) / 4.0f;
 
           if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
             //LAB_800ed400
@@ -6920,9 +6919,9 @@ public class WMap extends EngineState {
               //LAB_800ed434
               GTE.perspectiveTransform(-2, 2, 0);
 
-              final short sx2 = GTE.getScreenX(2);
-              final short sy2 = GTE.getScreenY(2);
-              z = GTE.getScreenZ(3) >> 2;
+              final float sx2 = GTE.getScreenX(2);
+              final float sy2 = GTE.getScreenY(2);
+              z = GTE.getScreenZ(3) / 4.0f;
 
               if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
                 //LAB_800ed4b8
@@ -6930,9 +6929,9 @@ public class WMap extends EngineState {
                   //LAB_800ed4ec
                   GTE.perspectiveTransform(2, 2, 0);
 
-                  final short sx3 = GTE.getScreenX(2);
-                  final short sy3 = GTE.getScreenY(2);
-                  z = GTE.getScreenZ(3) >> 2;
+                  final float sx3 = GTE.getScreenX(2);
+                  final float sy3 = GTE.getScreenY(2);
+                  z = GTE.getScreenZ(3) / 4.0f;
 
                   if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
                     //LAB_800ed570
@@ -7132,9 +7131,9 @@ public class WMap extends EngineState {
                 .vramPos(640, 256);
 
               GTE.perspectiveTransform(-size, -size, 0);
-              final short sx0 = GTE.getScreenX(2);
-              final short sy0 = GTE.getScreenY(2);
-              int z = GTE.getScreenZ(3) >> 2;
+              final float sx0 = GTE.getScreenX(2);
+              final float sy0 = GTE.getScreenY(2);
+              float z = GTE.getScreenZ(3) / 4.0f;
 
               cmd.pos(0, sx0, sy0);
 
@@ -7142,9 +7141,9 @@ public class WMap extends EngineState {
               if(z >= 5 || z < orderingTableSize_1f8003c8.get() - 3) {
                 //LAB_800ee6d4
                 GTE.perspectiveTransform(size, -size, 0);
-                final short sx1 = GTE.getScreenX(2);
-                final short sy1 = GTE.getScreenY(2);
-                z = GTE.getScreenZ(3) >> 2;
+                final float sx1 = GTE.getScreenX(2);
+                final float sy1 = GTE.getScreenY(2);
+                z = GTE.getScreenZ(3) / 4.0f;
 
                 cmd.pos(1, sx1, sy1);
 
@@ -7154,9 +7153,9 @@ public class WMap extends EngineState {
                   if(sx1 - sx0 <= 0x400) {
                     //LAB_800ee78c
                     GTE.perspectiveTransform(-size, size, 0);
-                    final short sx2 = GTE.getScreenX(2);
-                    final short sy2 = GTE.getScreenY(2);
-                    z = GTE.getScreenZ(3) >> 2;
+                    final float sx2 = GTE.getScreenX(2);
+                    final float sy2 = GTE.getScreenY(2);
+                    z = GTE.getScreenZ(3) / 4.0f;
 
                     cmd.pos(2, sx2, sy2);
 
@@ -7166,9 +7165,9 @@ public class WMap extends EngineState {
                       if(sy2 - sy0 <= 0x200) {
                         //LAB_800ee844
                         GTE.perspectiveTransform(size, size, 0);
-                        final short sx3 = GTE.getScreenX(2);
-                        final short sy3 = GTE.getScreenY(2);
-                        z = GTE.getScreenZ(3) >> 2;
+                        final float sx3 = GTE.getScreenX(2);
+                        final float sy3 = GTE.getScreenY(2);
+                        z = GTE.getScreenZ(3) / 4.0f;
 
                         cmd.pos(3, sx3, sy3);
 

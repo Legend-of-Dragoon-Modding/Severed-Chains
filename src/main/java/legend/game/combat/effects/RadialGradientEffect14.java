@@ -8,7 +8,7 @@ public class RadialGradientEffect14 implements Effect {
   public int circleSubdivisionModifier_00;
   public float scaleModifier_01;
 
-  public int z_04;
+  public float z_04;
   public int angleStep_08;
   public int r_0c;
   public int g_0d;

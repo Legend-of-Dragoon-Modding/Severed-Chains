@@ -10,7 +10,7 @@ public class Struct34_2 {
   public int rAccumulator_14;
   public int gAccumulator_18;
   public int bAccumulator_1c;
-  public int z_20;
+  public float z_20;
   public Struct14 _24;
   public Struct14 _28;
   public Struct18 _2c;

@@ -12,7 +12,6 @@ import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
 import legend.core.gpu.Rect4i;
 import legend.core.gpu.TimHeader;
-import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
@@ -76,6 +75,7 @@ import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Math;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import java.util.Arrays;
@@ -411,19 +411,19 @@ public class SMap extends EngineState {
 
   private final RECT _800d6b48 = new RECT((short)576, (short)368, (short)16, (short)1);
 
-  private final SVECTOR[] _800d6b7c = {
-    new SVECTOR().set((short)-10, (short)0, (short)-22),
-    new SVECTOR().set((short) 10, (short)0, (short)-22),
-    new SVECTOR().set((short)-10, (short)0, (short) 22),
-    new SVECTOR().set((short) 10, (short)0, (short) 22),
-    new SVECTOR().set((short)-12, (short)0, (short)- 8),
-    new SVECTOR().set((short)- 2, (short)0, (short)- 8),
-    new SVECTOR().set((short)-12, (short)0, (short)  8),
-    new SVECTOR().set((short)- 2, (short)0, (short)  8),
-    new SVECTOR().set((short)  2, (short)0, (short)- 8),
-    new SVECTOR().set((short) 12, (short)0, (short)- 8),
-    new SVECTOR().set((short)  2, (short)0, (short)  8),
-    new SVECTOR().set((short) 12, (short)0, (short)  8),
+  private final Vector3f[] _800d6b7c = {
+    new Vector3f(-10.0f, 0.0f, -22.0f),
+    new Vector3f( 10.0f, 0.0f, -22.0f),
+    new Vector3f(-10.0f, 0.0f,  22.0f),
+    new Vector3f( 10.0f, 0.0f,  22.0f),
+    new Vector3f(-12.0f, 0.0f, - 8.0f),
+    new Vector3f(- 2.0f, 0.0f, - 8.0f),
+    new Vector3f(-12.0f, 0.0f,   8.0f),
+    new Vector3f(- 2.0f, 0.0f,   8.0f),
+    new Vector3f(  2.0f, 0.0f, - 8.0f),
+    new Vector3f( 12.0f, 0.0f, - 8.0f),
+    new Vector3f(  2.0f, 0.0f,   8.0f),
+    new Vector3f( 12.0f, 0.0f,   8.0f),
   };
   private final int[] _800d6bdc = {96, 112, 64, 0};
   private final int[] smokeTextureWidths_800d6bec = {15, 15, 31, 23};
@@ -432,12 +432,12 @@ public class SMap extends EngineState {
 
   private final SVECTOR _800d6c18 = new SVECTOR().set((short)-8, (short)0, (short)0);
   private final SVECTOR _800d6c20 = new SVECTOR().set((short)8, (short)0, (short)0);
-  private final SVECTOR savePointV0_800d6c28 = new SVECTOR().set((short)-24, (short)-32, (short)24);
-  private final SVECTOR savePointV1_800d6c30 = new SVECTOR().set((short)24, (short)-32, (short)24);
-  private final SVECTOR savePointV2_800d6c38 = new SVECTOR().set((short)-24, (short)-32, (short)-24);
-  private final SVECTOR savePointV3_800d6c40 = new SVECTOR().set((short)24, (short)-32, (short)-24);
-  private final SVECTOR _800d6c48 = new SVECTOR().set((short)0, (short)-24, (short)0);
-  private final SVECTOR _800d6c50 = new SVECTOR().set((short)0, (short)24, (short)0);
+  private final Vector3f savePointV0_800d6c28 = new Vector3f(-24.0f, -32.0f,  24.0f);
+  private final Vector3f savePointV1_800d6c30 = new Vector3f( 24.0f, -32.0f,  24.0f);
+  private final Vector3f savePointV2_800d6c38 = new Vector3f(-24.0f, -32.0f, -24.0f);
+  private final Vector3f savePointV3_800d6c40 = new Vector3f( 24.0f, -32.0f, -24.0f);
+  private final Vector3f _800d6c48 = new Vector3f(0.0f, -24.0f, 0.0f);
+  private final Vector3f _800d6c50 = new Vector3f(0.0f,  24.0f, 0.0f);
   private final int[] _800d6c58 = {0x200, 0x800, 0x400, 0x800, 0x100, 0x61c, 0x960, 0xe10};
   private final int[] _800d6c78 = {6, 4, 5, 3, 5, 7, 5, 6};
   private final int[] savePointFloatiesRotations_800d6c88 = {-14, -55, 22, 16, -28, -14, 24, 27};
@@ -814,12 +814,12 @@ public class SMap extends EngineState {
 
     this.positionTextboxAtSobj(sobjIndex);
     final SubmapStruct80 struct = this._800c68e8;
-    final int s4 = struct.x2_70;
+    final float s4 = struct.x2_70;
     textbox._28 = s4;
-    final int sp10 = (struct.y2_74 - struct.y3_7c) / 2;
-    final int sp18 = struct.y2_74 - sp10;
+    final float sp10 = (struct.y2_74 - struct.y3_7c) / 2;
+    final float sp18 = struct.y2_74 - sp10;
     textbox._2c = sp18;
-    final int sp14 = textbox._28 - struct.x1_68;
+    final float sp14 = textbox._28 - struct.x1_68;
     final int textWidth = textbox.chars_18 * 9 / 2;
     final int textHeight = textbox.lines_1a * 6;
 
@@ -835,122 +835,122 @@ public class SMap extends EngineState {
       if(sp18 >= 121) {
         //LAB_80028acc
         final int x = width / 2;
-        final int y = sp18 - sp10 - textHeight;
+        final float y = sp18 - sp10 - textHeight;
         textbox.x_14 = x;
         textbox.y_16 = y;
         textbox._48 = 8;
 
         textboxText.x_14 = x;
         textboxText.y_16 = y;
-        textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 9 / 2;
-        textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6;
+        textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 4.5f;
+        textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6.0f;
         return;
       }
 
       final int x = width / 2;
-      final int y = sp18 + sp10 + textHeight;
+      final float y = sp18 + sp10 + textHeight;
       textbox.x_14 = x;
       textbox.y_16 = y;
       textbox._48 = 7;
 
       textboxText.x_14 = x;
       textboxText.y_16 = y;
-      textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 9 / 2;
-      textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6;
+      textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 4.5f;
+      textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6.0f;
       return;
     }
 
     //LAB_80028b38
-    int y = sp18 - sp10 - textHeight;
-    if(textboxFits(textboxIndex, (short)s4, (short)y)) {
+    float y = sp18 - sp10 - textHeight;
+    if(textboxFits(textboxIndex, s4, y)) {
       textbox.x_14 = s4;
       textbox.y_16 = y;
       textbox._48 = 0;
 
       textboxText.x_14 = s4;
       textboxText.y_16 = y;
-      textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 9 / 2;
-      textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6;
+      textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 4.5f;
+      textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6.0f;
       return;
     }
 
     //LAB_80028bc4
     y = sp18 + sp10 + textHeight;
-    if(textboxFits(textboxIndex, (short)s4, (short)y)) {
+    if(textboxFits(textboxIndex, s4, y)) {
       textbox.x_14 = s4;
       textbox.y_16 = y;
       textbox._48 = 1;
 
       textboxText.x_14 = s4;
       textboxText.y_16 = y;
-      textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 9 / 2;
-      textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6;
+      textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 4.5f;
+      textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6.0f;
       return;
     }
 
     //LAB_80028c44
-    if(width / 2 < s4) {
+    if(width / 2.0f < s4) {
       //LAB_80028d58
-      final int s2 = s4 - sp14 - textWidth;
-      y = sp18 - sp10 - textHeight / 2;
-      if(textboxFits(textboxIndex, (short)s2, (short)y)) {
+      final float s2 = s4 - sp14 - textWidth;
+      y = sp18 - sp10 - textHeight / 2.0f;
+      if(textboxFits(textboxIndex, s2, y)) {
         textbox.x_14 = s2;
         textbox.y_16 = y;
         textbox._48 = 4;
 
         textboxText.x_14 = s2;
         textboxText.y_16 = y;
-        textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 9 / 2;
-        textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6;
+        textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 4.5f;
+        textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6.0f;
         return;
       }
 
       //LAB_80028df0
-      y = sp18 + sp10 + textHeight / 2;
-      if(textboxFits(textboxIndex, (short)s2, (short)y)) {
+      y = sp18 + sp10 + textHeight / 2.0f;
+      if(textboxFits(textboxIndex, s2, y)) {
         textbox.x_14 = s2;
         textbox.y_16 = y;
         textbox._48 = 5;
 
         textboxText.x_14 = s2;
         textboxText.y_16 = y;
-        textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 9 / 2;
-        textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6;
+        textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 4.5f;
+        textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6.0f;
         return;
       }
     } else {
-      final int s2 = s4 + sp14 + textWidth;
-      y = sp18 - sp10 - textHeight / 2;
-      if(textboxFits(textboxIndex, (short)s2, (short)y)) {
+      final float s2 = s4 + sp14 + textWidth;
+      y = sp18 - sp10 - textHeight / 2.0f;
+      if(textboxFits(textboxIndex, s2, y)) {
         textbox.x_14 = s2;
         textbox.y_16 = y;
         textbox._48 = 2;
 
         textboxText.x_14 = s2;
         textboxText.y_16 = y;
-        textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 9 / 2;
-        textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6;
+        textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 4.5f;
+        textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6.0f;
         return;
       }
 
       //LAB_80028ce4
-      y = sp18 + sp10 + textHeight / 2;
-      if(textboxFits(textboxIndex, (short)s2, (short)y)) {
+      y = sp18 + sp10 + textHeight / 2.0f;
+      if(textboxFits(textboxIndex, s2, y)) {
         textbox.x_14 = s2;
         textbox.y_16 = y;
         textbox._48 = 3;
 
         textboxText.x_14 = s2;
         textboxText.y_16 = y;
-        textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 9 / 2;
-        textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6;
+        textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 4.5f;
+        textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6.0f;
         return;
       }
     }
 
     //LAB_80028e68
-    final int x;
-    if(width / 2 >= s4) {
+    final float x;
+    if(width / 2.0f >= s4) {
       x = s4 + sp14 + textWidth;
     } else {
       //LAB_80028e8c
@@ -958,7 +958,7 @@ public class SMap extends EngineState {
     }
 
     //LAB_80028e9c
-    calculateAppropriateTextboxBounds(textboxIndex, (short)x, (short)(sp18 + sp10 + textHeight));
+    calculateAppropriateTextboxBounds(textboxIndex, x, sp18 + sp10 + textHeight);
     textboxes_800be358[textboxIndex]._48 = 6;
 
     //LAB_80028ef0
@@ -1495,8 +1495,8 @@ public class SMap extends EngineState {
     GsGetLws(this.playerModel_800c6748.coord2_14, lw, ls);
     GTE.setTransforms(ls);
     GTE.perspectiveTransform(0, 0, 0);
-    final short x = GTE.getScreenX(2);
-    final short y = GTE.getScreenY(2);
+    final float x = GTE.getScreenX(2);
+    final float y = GTE.getScreenY(2);
 
     //LAB_800de438
     final TriangleIndicator140 indicator = this.triangleIndicator_800c69fc;
@@ -1534,8 +1534,8 @@ public class SMap extends EngineState {
       GsGetLws(this.playerModel_800c6748.coord2_14, sp0x48, sp0x28);
       GTE.setTransforms(sp0x28);
       GTE.perspectiveTransform(0, 0, 0);
-      final short x = GTE.getScreenX(2);
-      final short y = GTE.getScreenY(2);
+      final float x = GTE.getScreenX(2);
+      final float y = GTE.getScreenY(2);
 
       //LAB_800de5d4
       for(int i = 0; i < 20; i++) {
@@ -2159,7 +2159,7 @@ public class SMap extends EngineState {
   @Method(0x800df954L)
   private FlowControl scriptFacePlayer(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)script.scriptState_04.innerStruct_00;
-    sobj.model_00.coord2_14.transforms.rotate.y = MathHelper.positiveAtan2(this._800c68e8.playerPos_00.getZ(), this._800c68e8.playerPos_00.getX());
+    sobj.model_00.coord2_14.transforms.rotate.y = MathHelper.positiveAtan2(this._800c68e8.playerPos_00.z, this._800c68e8.playerPos_00.x);
     sobj.rotationFrames_188 = 0;
     return FlowControl.CONTINUE;
   }
@@ -2180,12 +2180,12 @@ public class SMap extends EngineState {
 
     GTE.setTransforms(ls);
     GTE.perspectiveTransform(0, 0, 0);
-    script.params_20[1].set(GTE.getScreenX(2) + 192);
-    script.params_20[2].set(GTE.getScreenY(2) + 128);
+    script.params_20[1].set(Math.round(GTE.getScreenX(2) + 192));
+    script.params_20[2].set(Math.round(GTE.getScreenY(2) + 128));
 
     GTE.perspectiveTransform(0, -130, 0);
-    script.params_20[3].set(GTE.getScreenX(2) + 192);
-    script.params_20[4].set(GTE.getScreenY(2) + 128);
+    script.params_20[3].set(Math.round(GTE.getScreenX(2) + 192));
+    script.params_20[4].set(Math.round(GTE.getScreenY(2) + 128));
     return FlowControl.CONTINUE;
   }
 
@@ -3015,28 +3015,26 @@ public class SMap extends EngineState {
 
     GTE.setTransforms(worldToScreenMatrix_800c3548);
 
-    final IntRef x0 = new IntRef();
-    final IntRef y0 = new IntRef();
-    final IntRef x1 = new IntRef();
-    final IntRef y1 = new IntRef();
+    final Vector2f v0 = new Vector2f();
+    final Vector2f v1 = new Vector2f();
 
     if((sobj.flags_190 & 0x200_0000) != 0 || (sobj.flags_190 & 0x800_0000) != 0) {
-      this.transformCollisionVertices(model, sobj.collisionSizeHorizontal_1a0, 0, x0, y0, x1, y1);
-      this.queueCollisionRectPacket(x0.get(), y0.get(), x1.get(), y1.get(), 0x80_0000);
+      this.transformCollisionVertices(model, sobj.collisionSizeHorizontal_1a0, 0, v0, v1);
+      this.queueCollisionRectPacket(v0, v1, 0x80_0000);
     }
 
     if((sobj.flags_190 & 0x20_0000) != 0 || (sobj.flags_190 & 0x80_0000) != 0) {
-      this.transformCollisionVertices(model, sobj.collisionSizeHorizontal_1ac, sobj.collisionReach_1b4, x0, y0, x1, y1);
-      this.queueCollisionRectPacket(x0.get(), y0.get(), x1.get(), y1.get(), 0x8000);
+      this.transformCollisionVertices(model, sobj.collisionSizeHorizontal_1ac, sobj.collisionReach_1b4, v0, v1);
+      this.queueCollisionRectPacket(v0, v1, 0x8000);
     }
 
     if(this.sobjs_800c6880[0] == state) {
-      this.transformCollisionVertices(model, sobj.playerCollisionSizeHorizontal_1b8, sobj.playerCollisionReach_1c0, x0, y0, x1, y1);
-      this.queueCollisionRectPacket(x0.get(), y0.get(), x1.get(), y1.get(), 0x80);
+      this.transformCollisionVertices(model, sobj.playerCollisionSizeHorizontal_1b8, sobj.playerCollisionReach_1c0, v0, v1);
+      this.queueCollisionRectPacket(v0, v1, 0x80);
     }
   }
 
-  private void transformCollisionVertices(final Model124 model, final int size, final int reach, final IntRef x0, final IntRef y0, final IntRef x1, final IntRef y1) {
+  private void transformCollisionVertices(final Model124 model, final int size, final int reach, final Vector2f v0, final Vector2f v1) {
     final float reachX;
     final float reachZ;
     if(reach != 0) {
@@ -3048,18 +3046,18 @@ public class SMap extends EngineState {
     }
 
     final Vector3f coord = new Vector3f().set(model.coord2_14.coord.transfer).add(reachX, 0.0f, reachZ);
-    this.transformVertex(x0, y0, coord.sub(size / 2.0f, 0.0f, size / 2.0f));
-    this.transformVertex(x1, y1, coord.add(size, 0.0f, size));
+    this.transformVertex(v0, coord.sub(size / 2.0f, 0.0f, size / 2.0f));
+    this.transformVertex(v1, coord.add(size, 0.0f, size));
   }
 
-  private void queueCollisionRectPacket(final int x0, final int y0, final int x1, final int y1, final int colour) {
+  private void queueCollisionRectPacket(final Vector2f v0, final Vector2f v1, final int colour) {
     GPU.queueCommand(37, new GpuCommandPoly(4)
       .translucent(Translucency.B_PLUS_F)
       .rgb(colour)
-      .pos(0, x0, y0)
-      .pos(1, x1, y0)
-      .pos(2, x0, y1)
-      .pos(3, x1, y1)
+      .pos(0, v0.x, v0.y)
+      .pos(1, v1.x, v1.y)
+      .pos(2, v0.x, v1.y)
+      .pos(3, v1.x, v1.y)
     );
   }
 
@@ -4241,8 +4239,8 @@ public class SMap extends EngineState {
     GsGetLws(parent.coord2_14, lw, ls);
     GTE.setTransforms(ls);
     GTE.perspectiveTransform(0, y - 64, 0);
-    final short sx = GTE.getScreenX(2);
-    final short sy = GTE.getScreenY(2);
+    final float sx = GTE.getScreenX(2);
+    final float sy = GTE.getScreenY(2);
 
     final GpuCommandPoly cmd = new GpuCommandPoly(4)
       .bpp(Bpp.BITS_4)
@@ -4294,7 +4292,7 @@ public class SMap extends EngineState {
     //LAB_800e4a4c
     final EncounterRateMode mode = CONFIG.getConfig(CoreMod.ENCOUNTER_RATE_CONFIG.get());
 
-    final float dist = mode.modifyDistance((this.prevPlayerPos_800c6ab0.x - mat.transfer.x) + (this.prevPlayerPos_800c6ab0.z - mat.transfer.z));
+    final float dist = mode.modifyDistance(this.prevPlayerPos_800c6ab0.x - mat.transfer.x + (this.prevPlayerPos_800c6ab0.z - mat.transfer.z));
 
     if(dist < 9.0f) {
       //LAB_800e4a98
@@ -5740,14 +5738,13 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800e7f00L)
-  private void transformVertex(final IntRef outX, final IntRef outY, final Vector3f v0) {
+  private void transformVertex(final Vector2f out, final Vector3f v0) {
     GTE.perspectiveTransform(v0);
-    outX.set(GTE.getScreenX(2));
-    outY.set(GTE.getScreenY(2));
+    out.set(GTE.getScreenX(2), GTE.getScreenY(2));
   }
 
   @Method(0x800e7f68L)
-  private void calcGoodScreenOffset(final int x, final int y) {
+  private void calcGoodScreenOffset(final float x, final float y) {
     if(x < -80) {
       this.screenOffsetX_800cb568 -= 80 + x;
       //LAB_800e7f80
@@ -5828,10 +5825,9 @@ public class SMap extends EngineState {
     if(!this._800cbd38._00) {
       this._800cbd38._00 = true;
 
-      final IntRef transformedX = new IntRef();
-      final IntRef transformedY = new IntRef();
-      this.transformVertex(transformedX, transformedY, cameraPos);
-      this.calcGoodScreenOffset(transformedX.get(), transformedY.get());
+      final Vector2f transformed = new Vector2f();
+      this.transformVertex(transformed, cameraPos);
+      this.calcGoodScreenOffset(transformed.x, transformed.y);
     }
 
     //LAB_800e8164
@@ -7359,10 +7355,10 @@ public class SMap extends EngineState {
           dust.x_18 = this.screenOffsetX_800cb568;
           dust.y_1c = this.screenOffsetY_800cb56c;
 
-          final SVECTOR vert0 = new SVECTOR().set((short)-a1.size_28, (short)0, (short)-a1.size_28);
-          final SVECTOR vert1 = new SVECTOR().set((short) a1.size_28, (short)0, (short)-a1.size_28);
-          final SVECTOR vert2 = new SVECTOR().set((short)-a1.size_28, (short)0, (short) a1.size_28);
-          final SVECTOR vert3 = new SVECTOR().set((short) a1.size_28, (short)0, (short) a1.size_28);
+          final Vector3f vert0 = new Vector3f(-a1.size_28, 0.0f, -a1.size_28);
+          final Vector3f vert1 = new Vector3f( a1.size_28, 0.0f, -a1.size_28);
+          final Vector3f vert2 = new Vector3f(-a1.size_28, 0.0f,  a1.size_28);
+          final Vector3f vert3 = new Vector3f( a1.size_28, 0.0f,  a1.size_28);
 
           dust._04 = 0;
           dust._06 = (short)a1._38;
@@ -7379,13 +7375,13 @@ public class SMap extends EngineState {
           }
 
           //LAB_800ef6a0
-          final int a0_0 = dust.v3_38.getX() - dust.v0_20.getX() >> 1 << 16;
+          final float a0_0 = (dust.v3_38.x - dust.v0_20.x) / 2.0f;
           dust._08 = a0_0;
           dust._0c = a0_0 / a1._38;
           dust._10 = 0;
 
-          dust.v0_20.setZ((short)((dust.v3_38.getX() + dust.v0_20.getX()) / 2));
-          dust.v1_28.setZ((short)((dust.v3_38.getY() + dust.v0_20.getY()) / 2));
+          dust.z0_26 = (dust.v3_38.x + dust.v0_20.x) / 2.0f;
+          dust.z1_2e = (dust.v3_38.y + dust.v0_20.y) / 2.0f;
 
           dust.colourStep_40 = 0x80_0000 / a1._38;
           dust.colourAccumulator_44 = 0x80_0000;
@@ -7470,10 +7466,10 @@ public class SMap extends EngineState {
           final int offsetY = this.screenOffsetY_800cb56c - s0.y_1c;
 
           cmd
-            .pos(0, offsetX + s0.v0_20.getX(), offsetY + s0.v0_20.getY())
-            .pos(1, offsetX + s0.v1_28.getX(), offsetY + s0.v1_28.getY())
-            .pos(2, offsetX + s0.v2_30.getX(), offsetY + s0.v2_30.getY())
-            .pos(3, offsetX + s0.v3_38.getX(), offsetY + s0.v3_38.getY());
+            .pos(0, offsetX + s0.v0_20.x, offsetY + s0.v0_20.y)
+            .pos(1, offsetX + s0.v1_28.x, offsetY + s0.v1_28.y)
+            .pos(2, offsetX + s0.v2_30.x, offsetY + s0.v2_30.y)
+            .pos(3, offsetX + s0.v3_38.x, offsetY + s0.v3_38.y);
 
           if(mode == 2) {
             cmd
@@ -7492,11 +7488,11 @@ public class SMap extends EngineState {
         } else if(mode == 1) {
           //LAB_800efb7c
           s0._08 += s0._0c;
-          s0._10 = s0._08 >> 16;
-          s0.v0_20.setX((short)(s0.v0_20.getZ() - (s0._08 >> 17)));
-          s0.v0_20.setY((short)(s0.v1_28.getZ() - (s0._08 >> 17)));
-          final int x = this.screenOffsetX_800cb568 - s0.x_18 + s0.v0_20.getX();
-          final int y = this.screenOffsetY_800cb56c - s0.y_1c + s0.v0_20.getY();
+          s0._10 = s0._08;
+          s0.v0_20.x = s0.z0_26 - s0._08 / 2.0f;
+          s0.v0_20.y = s0.z1_2e - s0._08 / 2.0f;
+          final float x = this.screenOffsetX_800cb568 - s0.x_18 + s0.v0_20.x;
+          final float y = this.screenOffsetY_800cb56c - s0.y_1c + s0.v0_20.y;
 
           cmd
             .pos(0, x, y)
@@ -7505,7 +7501,7 @@ public class SMap extends EngineState {
             .pos(3, x + s0._10, y + s0._10);
 
           if((s0._04 & 0x3) == 0) {
-            s0.v1_28.z.decr();
+            s0.z1_2e--;
           }
 
           //LAB_800efc4c
@@ -7571,8 +7567,8 @@ public class SMap extends EngineState {
         final int clut = this.cluts_800d6068[6];
         final int tpage = this.texPages_800d6050[6];
 
-        final int x = this.screenOffsetX_800cb568 - s0.x_0c + (s0._10 & 0xffff);
-        final int y = this.screenOffsetY_800cb56c - s0.y_0e + (s0._14 >> 16) - (s0._24 >> 16);
+        final float x = this.screenOffsetX_800cb568 - s0.x_0c + s0._10 % 0x1_0000;
+        final float y = this.screenOffsetY_800cb56c - s0.y_0e + s0._14 / 0x1_0000 - (s0._24 >> 16);
 
         //LAB_800eff7c
         GPU.queueCommand(40, new GpuCommandPoly(4)
@@ -7616,7 +7612,7 @@ public class SMap extends EngineState {
               s0.x_0c = (short)this.screenOffsetX_800cb568;
               s0.y_0e = (short)this.screenOffsetY_800cb56c;
               s0._10 = s1.x_1c + (simpleRand() * s1._18 >> 16);
-              s0._14 = s1.y_20 << 16;
+              s0._14 = s1.y_20 * 0x1_0000;
               s0._1c = -s1._0c;
               s0._20 = s1._14;
               s0._24 = s1._10;
@@ -7806,23 +7802,23 @@ public class SMap extends EngineState {
         PushMatrix();
         GTE.setTransforms(sp0x20);
         GTE.perspectiveTransform(-s2.width_08, this._800d6c18.getY(), this._800d6c18.getZ());
-        s1.vert0_00.setX(GTE.getScreenX(2));
-        s1.vert0_00.setY(GTE.getScreenY(2));
-        s3.z_20 = GTE.getScreenZ(3) >> 2;
+        s1.vert0_00.x = GTE.getScreenX(2);
+        s1.vert0_00.y = GTE.getScreenY(2);
+        s3.z_20 = GTE.getScreenZ(3) / 4.0f;
 
         GTE.perspectiveTransform(s2.width_08, this._800d6c20.getY(), this._800d6c20.getZ());
-        s1.vert1_08.setX(GTE.getScreenX(2));
-        s1.vert1_08.setY(GTE.getScreenY(2));
-        s3.z_20 = GTE.getScreenZ(3) >> 2;
+        s1.vert1_08.x = GTE.getScreenX(2);
+        s1.vert1_08.y = GTE.getScreenY(2);
+        s3.z_20 = GTE.getScreenZ(3) / 4.0f;
         PopMatrix();
 
         s3._00 = 0;
         s3.tpage_04 = GetTPage(Bpp.BITS_4, Translucency.of(s2.translucency_0c), 972, 320);
         this.FUN_800f0df0(s2, s3);
-        s1.vert0_00.x.sub((short)this.screenOffsetX_800cb568);
-        s1.vert0_00.y.sub((short)this.screenOffsetY_800cb56c);
-        s1.vert1_08.x.sub((short)this.screenOffsetX_800cb568);
-        s1.vert1_08.y.sub((short)this.screenOffsetY_800cb56c);
+        s1.vert0_00.x -= this.screenOffsetX_800cb568;
+        s1.vert0_00.y -= this.screenOffsetY_800cb56c;
+        s1.vert1_08.x -= this.screenOffsetX_800cb568;
+        s1.vert1_08.y -= this.screenOffsetY_800cb56c;
 
         if(s2._01 == 0) {
           s2._14 = s1;
@@ -7861,10 +7857,10 @@ public class SMap extends EngineState {
         //LAB_800f0b04
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
           .translucent(Translucency.of(tpage >>> 5 & 0b11))
-          .pos(0, this.screenOffsetX_800cb568 + s1._24.vert0_00.getX(), this.screenOffsetY_800cb56c + s1._24.vert0_00.getY())
-          .pos(1, this.screenOffsetX_800cb568 + s1._24.vert1_08.getX(), this.screenOffsetY_800cb56c + s1._24.vert1_08.getY())
-          .pos(2, this.screenOffsetX_800cb568 + s1._28.vert0_00.getX(), this.screenOffsetY_800cb56c + s1._28.vert0_00.getY())
-          .pos(3, this.screenOffsetX_800cb568 + s1._28.vert1_08.getX(), this.screenOffsetY_800cb56c + s1._28.vert1_08.getY());
+          .pos(0, this.screenOffsetX_800cb568 + s1._24.vert0_00.x, this.screenOffsetY_800cb56c + s1._24.vert0_00.y)
+          .pos(1, this.screenOffsetX_800cb568 + s1._24.vert1_08.x, this.screenOffsetY_800cb56c + s1._24.vert1_08.y)
+          .pos(2, this.screenOffsetX_800cb568 + s1._28.vert0_00.x, this.screenOffsetY_800cb56c + s1._28.vert0_00.y)
+          .pos(3, this.screenOffsetX_800cb568 + s1._28.vert1_08.x, this.screenOffsetY_800cb56c + s1._28.vert1_08.y);
 
         final int r;
         final int g;
@@ -8068,10 +8064,10 @@ public class SMap extends EngineState {
       PushMatrix();
       GTE.setTransforms(sp0x20);
       GTE.perspectiveTransform(0, 0, 0);
-      final short sx = GTE.getScreenX(2);
-      final short sy = GTE.getScreenY(2);
+      final float sx = GTE.getScreenX(2);
+      final float sy = GTE.getScreenY(2);
 
-      struct.sz3_2c = GTE.getScreenZ(3) >> 2;
+      struct.sz3_2c = GTE.getScreenZ(3) / 4.0f;
       PopMatrix();
 
       struct._02 = 0;
@@ -8127,9 +8123,9 @@ public class SMap extends EngineState {
     GTE.setTransforms(sp0x28);
     GTE.perspectiveTransform(0, 0, 0);
 
-    final short sx = GTE.getScreenX(2);
-    final short sy = GTE.getScreenY(2);
-    final int sz = GTE.getScreenZ(3) >> 2;
+    final float sx = GTE.getScreenX(2);
+    final float sy = GTE.getScreenY(2);
+    final float sz = GTE.getScreenZ(3) / 4.0f;
     PopMatrix();
 
     if(script.params_20[2].get() < script.params_20[1].get()) {
@@ -8255,8 +8251,8 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z position")
   @Method(0x800f179cL)
   private FlowControl scriptAddSavePoint(final RunningScript<?> script) {
-    final DVECTOR sp0x48 = new DVECTOR();
-    final DVECTOR sp0x50 = new DVECTOR();
+    final Vector2f sp0x48 = new Vector2f();
+    final Vector2f sp0x50 = new Vector2f();
     final GsCOORDINATE2 coord2 = new GsCOORDINATE2();
 
     this.hasSavePoint_800d5620 = script.params_20[0].get() != 0;
@@ -8281,26 +8277,26 @@ public class SMap extends EngineState {
         perspectiveTransform(this._800d6c48, sp0x48);
         perspectiveTransform(this._800d6c50, sp0x50);
 
-        sp0x48.setX((short)(sp0x50.getY() - sp0x48.getY()));
+        sp0x48.x = sp0x50.y - sp0x48.y;
       }
 
       //LAB_800f1a34
-      final int a3 = (struct.vert0_00.getX() + struct.vert3_18.getX()) / 2;
-      final int t0 = (struct.vert0_00.getY() + struct.vert3_18.getY()) / 2;
-      final int a2 = (struct.vert0_00.getX() - struct.vert3_18.getX()) / 2;
+      final float a3 = (struct.vert0_00.x + struct.vert3_18.x) / 2.0f;
+      final float t0 = (struct.vert0_00.y + struct.vert3_18.y) / 2.0f;
+      final float a2 = (struct.vert0_00.x - struct.vert3_18.x) / 2.0f;
 
-      final int x0 = a3 - a2;
-      struct.vert0_00.setX((short)x0);
-      struct.vert2_10.setX((short)x0);
-      final int y0 = t0 - a2 - sp0x48.getX();
-      struct.vert0_00.setY((short)y0);
-      struct.vert1_08.setY((short)y0);
-      final int x1 = a3 + a2;
-      struct.vert1_08.setX((short)x1);
-      struct.vert3_18.setX((short)x1);
-      final int y1 = t0 + a2 - sp0x48.getX();
-      struct.vert2_10.setY((short)y1);
-      struct.vert3_18.setY((short)y1);
+      final float x0 = a3 - a2;
+      struct.vert0_00.x = x0;
+      struct.vert2_10.x = x0;
+      final float y0 = t0 - a2 - sp0x48.x;
+      struct.vert0_00.y = y0;
+      struct.vert1_08.y = y0;
+      final float x1 = a3 + a2;
+      struct.vert1_08.x = x1;
+      struct.vert3_18.x = x1;
+      final float y1 = t0 + a2 - sp0x48.x;
+      struct.vert2_10.y = y1;
+      struct.vert3_18.y = y1;
 
       //LAB_800f1b04
       struct.screenOffsetX_20 = this.screenOffsetX_800cb568;
@@ -8336,13 +8332,13 @@ public class SMap extends EngineState {
       PushMatrix();
       GTE.setTransforms(sp0x70);
       GTE.perspectiveTransform(0, 0, 0);
-      final short sx = GTE.getScreenX(2);
-      final short sy = GTE.getScreenY(2);
+      final float sx = GTE.getScreenX(2);
+      final float sy = GTE.getScreenY(2);
       PopMatrix();
 
       indicator._18[i] = (short)ints.array(s0++).get();
-      indicator.x_40[i] = (short)(sx + ints.array(s0++).get());
-      indicator.y_68[i] = (short)(sy + ints.array(s0++).get());
+      indicator.x_40[i] = sx + ints.array(s0++).get();
+      indicator.y_68[i] = sy + ints.array(s0++).get();
       indicator.screenOffsetX_90[i] = this.screenOffsetX_800cb568;
       indicator.screenOffsetY_e0[i] = this.screenOffsetY_800cb56c;
     }
@@ -8369,8 +8365,8 @@ public class SMap extends EngineState {
     PushMatrix();
     GTE.setTransforms(sp0x20);
     GTE.perspectiveTransform(0, 0, 0);
-    final short sx = GTE.getScreenX(2);
-    final short sy = GTE.getScreenY(2);
+    final float sx = GTE.getScreenX(2);
+    final float sy = GTE.getScreenY(2);
     PopMatrix();
 
     //LAB_800f1e20
@@ -8379,8 +8375,8 @@ public class SMap extends EngineState {
 
       if(indicator._18[i] == -1) {
         indicator._18[i] = (short)script.params_20[1].get();
-        indicator.x_40[i] = (short)(sx + script.params_20[2].get());
-        indicator.y_68[i] = (short)(sy + script.params_20[3].get());
+        indicator.x_40[i] = sx + script.params_20[2].get();
+        indicator.y_68[i] = sy + script.params_20[3].get();
         indicator.screenOffsetX_90[i] = this.screenOffsetX_800cb568;
         indicator.screenOffsetY_e0[i] = this.screenOffsetY_800cb56c;
         break;
@@ -8736,8 +8732,8 @@ public class SMap extends EngineState {
     final Param a0 = script.params_20[0];
     for(int a1 = 0; a0.array(i).get() != -1; a1++) {
       indicator._18[a1] = (short)a0.array(i++).get();
-      indicator.x_40[a1] = (short)(a0.array(i++).get() + this.screenOffsetX_800cb568);
-      indicator.y_68[a1] = (short)(a0.array(i++).get() + this.screenOffsetY_800cb56c);
+      indicator.x_40[a1] = a0.array(i++).get() + this.screenOffsetX_800cb568;
+      indicator.y_68[a1] = a0.array(i++).get() + this.screenOffsetY_800cb56c;
       indicator.screenOffsetX_90[a1] = this.screenOffsetX_800cb568;
       indicator.screenOffsetY_e0[a1] = this.screenOffsetY_800cb56c;
     }
@@ -8789,10 +8785,10 @@ public class SMap extends EngineState {
 
   @Method(0x800f28d8L)
   private void renderSavePoint() {
-    int minX = 0;
-    int maxX = 0;
-    int minY = 0;
-    int maxY = 0;
+    float minX = 0.0f;
+    float maxX = 0.0f;
+    float minY = 0.0f;
+    float maxY = 0.0f;
 
     final Model124 model = this.savePointModel_800d5eb0;
     model.coord2_14.transforms.scale.set(1.5f, 3.0f, 1.5f);
@@ -8815,14 +8811,14 @@ public class SMap extends EngineState {
       final int offsetX = this.screenOffsetX_800cb568 - s0.screenOffsetX_20;
       final int offsetY = this.screenOffsetY_800cb56c - s0.screenOffsetY_24;
 
-      final int x0 = offsetX + s0.vert0_00.getX();
-      final int y0 = offsetY + s0.vert0_00.getY();
-      final int x1 = offsetX + s0.vert1_08.getX();
-      final int y1 = offsetY + s0.vert1_08.getY();
-      final int x2 = offsetX + s0.vert2_10.getX();
-      final int y2 = offsetY + s0.vert2_10.getY();
-      final int x3 = offsetX + s0.vert3_18.getX();
-      final int y3 = offsetY + s0.vert3_18.getY();
+      final float x0 = offsetX + s0.vert0_00.x;
+      final float y0 = offsetY + s0.vert0_00.y;
+      final float x1 = offsetX + s0.vert1_08.x;
+      final float y1 = offsetY + s0.vert1_08.y;
+      final float x2 = offsetX + s0.vert2_10.x;
+      final float y2 = offsetY + s0.vert2_10.y;
+      final float x3 = offsetX + s0.vert3_18.x;
+      final float y3 = offsetY + s0.vert3_18.y;
 
       if(i == 0) {
         minX = x0;
@@ -8873,10 +8869,10 @@ public class SMap extends EngineState {
       );
     }
 
-    final int sp80 = ((short)minX - (short)maxX) / 2;
-    final int sp68 = ((short)minX + (short)maxX) / 2;
-    final int sp78 = ((short)maxY - (short)minY) / 2;
-    final int sp6a = ((short)maxY + (short)minY) / 2;
+    final float sp80 = (minX - maxX) / 2.0f;
+    final float sp68 = (minX + maxX) / 2.0f;
+    final float sp78 = (maxY - minY) / 2.0f;
+    final float sp6a = (maxY + minY) / 2.0f;
 
     //LAB_800f2de8
     for(int fp = 0; fp < 8; fp++) {
@@ -8884,14 +8880,14 @@ public class SMap extends EngineState {
       final SavePointRenderData44 struct1 = this.savePoint_800d5630[fp * 4 + 1];
       final SavePointRenderData44 struct2 = this.savePoint_800d5630[fp * 4 + 2];
       final SavePointRenderData44 struct3 = this.savePoint_800d5630[fp * 4 + 3];
-      struct3.vert0_00.setX(struct2.vert0_00.getX());
-      struct3.vert0_00.setY(struct2.vert0_00.getY());
-      struct2.vert0_00.setX(struct1.vert0_00.getX());
-      struct2.vert0_00.setY(struct1.vert0_00.getY());
-      struct1.vert0_00.setX(struct0.vert0_00.getX());
-      struct1.vert0_00.setY(struct0.vert0_00.getY());
-      struct0.vert0_00.setX((short)(sp68 + (sp80 + this._800d6c78[fp]) * MathHelper.sin(struct0.rotation_28)));
-      struct0.vert0_00.setY((short)(sp6a + (sp78 + this._800d6c78[fp]) * MathHelper.cos(struct0.rotation_28)));
+      struct3.vert0_00.x = struct2.vert0_00.x;
+      struct3.vert0_00.y = struct2.vert0_00.y;
+      struct2.vert0_00.x = struct1.vert0_00.x;
+      struct2.vert0_00.y = struct1.vert0_00.y;
+      struct1.vert0_00.x = struct0.vert0_00.x;
+      struct1.vert0_00.y = struct0.vert0_00.y;
+      struct0.vert0_00.x = sp68 + (sp80 + this._800d6c78[fp]) * MathHelper.sin(struct0.rotation_28);
+      struct0.vert0_00.y = sp6a + (sp78 + this._800d6c78[fp]) * MathHelper.cos(struct0.rotation_28);
 
       if(struct0.fadeState_38 != 0) {
         struct0.colour_34 -= struct0.fadeAmount_2c;
@@ -8922,10 +8918,10 @@ public class SMap extends EngineState {
           .monochrome((int)(struct.colour_34 * 255.0f))
           .clut((this.cluts_800d6068[4] & 0b111111) * 16, this.cluts_800d6068[4] >>> 6)
           .vramPos((this.texPages_800d6050[4] & 0b1111) * 64, (this.texPages_800d6050[4] & 0b10000) != 0 ? 256 : 0)
-          .pos(0, struct.vert0_00.getX(), struct.vert0_00.getY())
-          .pos(1, struct.vert0_00.getX() + 6, struct.vert0_00.getY())
-          .pos(2, struct.vert0_00.getX(), struct.vert0_00.getY() + 6)
-          .pos(3, struct.vert0_00.getX() + 6, struct.vert0_00.getY() + 6);
+          .pos(0, struct.vert0_00.x, struct.vert0_00.y)
+          .pos(1, struct.vert0_00.x + 6.0f, struct.vert0_00.y)
+          .pos(2, struct.vert0_00.x, struct.vert0_00.y + 6.0f)
+          .pos(3, struct.vert0_00.x + 6.0f, struct.vert0_00.y + 6.0f);
 
         if(s4 % 3 == 0) {
           //LAB_800f30d8
@@ -9010,10 +9006,10 @@ public class SMap extends EngineState {
     GTE.setTransforms(ls);
 
     GTE.perspectiveTransform(this.bottom_800d6cb8);
-    final short bottomY = GTE.getScreenY(2);
+    final float bottomY = GTE.getScreenY(2);
 
     GTE.perspectiveTransform(this.top_800d6cc0);
-    final short topY = GTE.getScreenY(2);
+    final float topY = GTE.getScreenY(2);
 
     GTE.perspectiveTransform(0, -(topY - bottomY) - 48, 0);
     this.triangleIndicator_800c69fc.playerX_08 = GTE.getScreenX(2);
@@ -9091,8 +9087,8 @@ public class SMap extends EngineState {
       for(int s6 = count - 1; s6 >= 0; s6--) {
         final AnmSpriteMetrics14 sprite = group.metrics_04.get(s6);
 
-        final int x = s1.x_34 - sprite.w_08.get() / 2;
-        final int y = s1.y_38;
+        final float x = s1.x_34 - sprite.w_08.get() / 2.0f;
+        final float y = s1.y_38;
         final int u = s1.u_1c + sprite.u_00.get();
         final int v = s1.v_20 + sprite.v_01.get();
         final int tpage = s1.tpage_18 | sprite.flag_06.get() & 0x60;
@@ -9216,8 +9212,8 @@ public class SMap extends EngineState {
       t2._28 = 0x1000;
       t2._2c = 0x1000;
       t2._30 = 0;
-      t2.x_34 = 0;
-      t2.y_38 = 0;
+      t2.x_34 = 0.0f;
+      t2.y_38 = 0.0f;
       t2._3c = 0;
     }
   }
@@ -9247,8 +9243,8 @@ public class SMap extends EngineState {
           s0._06 = s1._06;
           s0.x_0c = (short)s1.screenOffsetX_24;
           s0.y_0e = (short)s1.screenOffsetY_28;
-          s0._10 = (s1.x_1c << 16) - simpleRand() * s1._18;
-          s0._14 = s1.y_20 << 16;
+          s0._10 = s1.x_1c * 0x1_0000 - simpleRand() * s1._18;
+          s0._14 = s1.y_20 * 0x1_0000;
           s0._1c = 0x8_0000 / s1._0c;
           s0._20 = (s1._14 << 16) / s1._06;
           s0._24 = s1._10 << 16;
@@ -9273,8 +9269,8 @@ public class SMap extends EngineState {
             s0._06 = s1._06;
             s0.x_0c = (short)s1.screenOffsetX_24;
             s0.y_0e = (short)s1.screenOffsetY_28;
-            s0._10 = (s1.x_1c << 16) - simpleRand() * s1._18;
-            s0._14 = s1.y_20 << 16;
+            s0._10 = s1.x_1c * 0x1_0000 - simpleRand() * s1._18;
+            s0._14 = s1.y_20 * 0x1_0000;
             s0._1c = 0x8_0000 / s1._0c;
             s0._20 = (s1._14 << 16) / s1._06;
             s0._24 = s1._10 << 16;
@@ -9316,13 +9312,13 @@ public class SMap extends EngineState {
         s0._14 -= s0._1c;
         s0._30 -= s0._2c;
         s0.size_28 = (short)(s0._24 >> 16);
-        final int x = this.screenOffsetX_800cb568 - s0.x_0c + (s0._10 >> 16);
-        final int y = this.screenOffsetY_800cb56c - s0.y_0e + (s0._14 >> 16);
+        final float x = this.screenOffsetX_800cb568 - s0.x_0c + s0._10 / 0x1_0000;
+        final float y = this.screenOffsetY_800cb56c - s0.y_0e + s0._14 / 0x1_0000;
         final int size = s0.size_28 / 2;
-        final int left = x - size;
-        final int right = x + size;
-        final int top = y - size;
-        final int bottom = y + size;
+        final float left = x - size;
+        final float right = x + size;
+        final float top = y - size;
+        final float bottom = y + size;
         final int v0 = s0._30 >> 16;
         final int colour = v0 > 0x80 ? 0 : v0;
 

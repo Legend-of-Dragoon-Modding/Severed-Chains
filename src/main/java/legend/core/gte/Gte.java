@@ -153,24 +153,29 @@ public class Gte {
     this.setVertex(index, vert.getX(), vert.getY(), vert.getZ());
   }
 
+  /** Data register 0/1, 2/3, 4/5 */
+  public void setVertex(final int index, final Vector3f vert) {
+    this.setVertex(index, vert.x, vert.y, vert.z);
+  }
+
   /** Data register 7 OTZ */
-  public short getAverageZ() {
-    return (short)Math.round(this.OTZ / 4.0f);
+  public float getAverageZ() {
+    return this.OTZ / 4.0f;
   }
 
   /** Data register 12, 13, 14, 15 */
-  public short getScreenX(final int index) {
-    return (short)Math.round(this.SXY[index].x);
+  public float getScreenX(final int index) {
+    return this.SXY[index].x;
   }
 
   /** Data register 12, 13, 14, 15 */
-  public short getScreenY(final int index) {
-    return (short)Math.round(this.SXY[index].y);
+  public float getScreenY(final int index) {
+    return this.SXY[index].y;
   }
 
   /** Data register 16, 17, 18, 19 */
-  public int getScreenZ(final int index) {
-    return (short)Math.round(this.SZ[index]);
+  public float getScreenZ(final int index) {
+    return this.SZ[index];
   }
 
   /** Data register 24 */
@@ -352,7 +357,7 @@ public class Gte {
    *
    * @return average Z
    */
-  public int averageZ3() {
+  public float averageZ3() {
     this.startCommand();
     this.AVSZ3();
     this.endCommand();
@@ -364,7 +369,7 @@ public class Gte {
    *
    * @return average Z
    */
-  public int averageZ4() {
+  public float averageZ4() {
     this.startCommand();
     this.AVSZ4();
     this.endCommand();
@@ -380,6 +385,17 @@ public class Gte {
 
   /** 0x30 RTPT - perspective transform triple, 12-bit fraction */
   public void perspectiveTransformTriangle(final SVECTOR v0, final SVECTOR v1, final SVECTOR v2) {
+    this.setVertex(0, v0);
+    this.setVertex(1, v1);
+    this.setVertex(2, v2);
+
+    this.startCommand();
+    this.RTPT();
+    this.endCommand();
+  }
+
+  /** 0x30 RTPT - perspective transform triple, 12-bit fraction */
+  public void perspectiveTransformTriangle(final Vector3f v0, final Vector3f v1, final Vector3f v2) {
     this.setVertex(0, v0);
     this.setVertex(1, v1);
     this.setVertex(2, v2);

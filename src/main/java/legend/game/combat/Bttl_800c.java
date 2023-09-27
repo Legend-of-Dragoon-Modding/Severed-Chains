@@ -4607,7 +4607,7 @@ public final class Bttl_800c {
 
   /** @return Z */
   @Method(0x800cf7d4L)
-  public static int FUN_800cf7d4(final Vector3f rotation, final Vector3f translation1, final Vector3f translation2, final Vector2f out) {
+  public static float FUN_800cf7d4(final Vector3f rotation, final Vector3f translation1, final Vector3f translation2, final Vector2f out) {
     final Vector3f sp0x10 = new Vector3f(translation1);
     sp0x10.mul(worldToScreenMatrix_800c3548);
 
@@ -4630,20 +4630,20 @@ public final class Bttl_800c {
 
   /** @return Z */
   @Method(0x800cfb14L)
-  public static int FUN_800cfb14(final EffectManagerData6c<?> manager, final Vector3f translation, final Vector2f out) {
+  public static float FUN_800cfb14(final EffectManagerData6c<?> manager, final Vector3f translation, final Vector2f out) {
     return FUN_800cf7d4(manager._10.rot_10, manager._10.trans_04, translation, out);
   }
 
   /** @return Z */
   @Method(0x800cfb94L)
-  public static int FUN_800cfb94(final EffectManagerData6c<?> manager, final Vector3f rotation, final Vector3f translation, final Vector2f out) {
+  public static float FUN_800cfb94(final EffectManagerData6c<?> manager, final Vector3f rotation, final Vector3f translation, final Vector2f out) {
     final Vector3f tempRotation = new Vector3f(manager._10.rot_10).add(rotation);
     return FUN_800cf7d4(tempRotation, manager._10.trans_04, translation, out);
   }
 
   /** @return Z */
   @Method(0x800cfc20L)
-  public static int FUN_800cfc20(final Vector3f managerRotation, final Vector3f managerTranslation, final Vector3f translation, final Vector2f out) {
+  public static float FUN_800cfc20(final Vector3f managerRotation, final Vector3f managerTranslation, final Vector3f translation, final Vector2f out) {
     return FUN_800cf7d4(managerRotation, managerTranslation, translation, out);
   }
 

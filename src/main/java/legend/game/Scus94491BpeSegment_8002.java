@@ -8,7 +8,6 @@ import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
 import legend.core.gte.GsCOORDINATE2;
-import legend.core.gte.MATRIX;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.gte.Tmd;
@@ -2202,8 +2201,8 @@ public final class Scus94491BpeSegment_8002 {
 
     if(textbox._04 != 0) {
       if(textbox.state_00 != 1) {
-        final int x = textbox.x_14 - centreScreenX_1f8003dc.get();
-        final int y = textbox.y_16 - centreScreenY_1f8003de.get();
+        final float x = textbox.x_14 - centreScreenX_1f8003dc.get();
+        final float y = textbox.y_16 - centreScreenY_1f8003de.get();
 
         if(Config.textBoxColour()) {
           if(Config.getTextBoxColourMode() == 0) {
@@ -2290,19 +2289,19 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x800261c0L)
-  public static void renderTextboxBorder(final int textboxIndex, final int boxLeft, final int boxTop, final int boxRight, final int boxBottom) {
-    final short[] sp0x10 = new short[4];
-    final short[] sp0x18 = new short[4];
-    short v0 = (short)(boxLeft + 4);
+  public static void renderTextboxBorder(final int textboxIndex, final float boxLeft, final float boxTop, final float boxRight, final float boxBottom) {
+    final float[] sp0x10 = new float[4];
+    final float[] sp0x18 = new float[4];
+    float v0 = boxLeft + 4;
     sp0x10[0] = v0;
     sp0x10[2] = v0;
-    v0 = (short)(boxRight - 4);
+    v0 = boxRight - 4;
     sp0x10[1] = v0;
     sp0x10[3] = v0;
-    v0 = (short)(boxTop + 5);
+    v0 = boxTop + 5;
     sp0x18[0] = v0;
     sp0x18[1] = v0;
-    v0 = (short)(boxBottom - 5);
+    v0 = boxBottom - 5;
     sp0x18[2] = v0;
     sp0x18[3] = v0;
 
@@ -2320,10 +2319,10 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_8002637c
       final int u = (int)_800108b0.offset(s3 * 0xcL).offset(1, 0x4L).get();
       final int v = (int)_800108b0.offset(s3 * 0xcL).offset(1, 0x6L).get();
-      final int left = sp0x10[(int)_800108b0.offset(s3 * 0xcL).offset(2, 0x0L).get()] - a0;
-      final int right = sp0x10[(int)_800108b0.offset(s3 * 0xcL).offset(2, 0x2L).get()] + a0;
-      final int top = sp0x18[(int)_800108b0.offset(s3 * 0xcL).offset(2, 0x0L).get()] - a1;
-      final int bottom = sp0x18[(int)_800108b0.offset(s3 * 0xcL).offset(2, 0x2L).get()] + a1;
+      final float left = sp0x10[(int)_800108b0.offset(s3 * 0xcL).offset(2, 0x0L).get()] - a0;
+      final float right = sp0x10[(int)_800108b0.offset(s3 * 0xcL).offset(2, 0x2L).get()] + a0;
+      final float top = sp0x18[(int)_800108b0.offset(s3 * 0xcL).offset(2, 0x0L).get()] - a1;
+      final float bottom = sp0x18[(int)_800108b0.offset(s3 * 0xcL).offset(2, 0x2L).get()] + a1;
 
       GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
         .bpp(Bpp.BITS_4)
@@ -3292,7 +3291,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80027d74L)
-  public static void calculateAppropriateTextboxBounds(final int textboxIndex, final int x, final int y) {
+  public static void calculateAppropriateTextboxBounds(final int textboxIndex, final float x, final float y) {
     final int maxX;
     if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
       maxX = 350;
@@ -3304,11 +3303,11 @@ public final class Scus94491BpeSegment_8002 {
     final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
     final int width = textboxText.chars_1c * 9 / 2;
     final int height = textboxText.lines_1e * 6;
-    final int v1 = x - width;
-    final int t4 = y - height;
+    final float v1 = x - width;
+    final float t4 = y - height;
 
-    int t2 = x;
-    if((short)v1 < 10) {
+    float t2 = x;
+    if(v1 < 10) {
       t2 = width + 10;
     }
 
@@ -3318,8 +3317,8 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80027e14
-    int t3 = y;
-    if((short)t4 < 18) {
+    float t3 = y;
+    if(t4 < 18) {
       t3 = height + 18;
     }
 
@@ -3459,8 +3458,8 @@ public final class Scus94491BpeSegment_8002 {
           final GpuCommandQuad cmd = new GpuCommandQuad()
             .monochrome(0x80);
 
-          final int x = textboxText._18 + chr.x_00 * 9 - centreScreenX_1f8003dc.get() - sp38;
-          final int y;
+          final float x = textboxText._18 + chr.x_00 * 9 - centreScreenX_1f8003dc.get() - sp38;
+          final float y;
 
           if((textboxText.flags_08 & 0x200) != 0 && i < textboxText.chars_1c) {
             y = textboxText._1a + chr.y_02 * 12 - centreScreenY_1f8003de.get() - s1;
@@ -3534,7 +3533,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80028f20L)
-  public static boolean textboxFits(final int textboxIndex, final int x, final int y) {
+  public static boolean textboxFits(final int textboxIndex, final float x, final float y) {
     final int maxX;
     if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
       maxX = 350;
@@ -3547,10 +3546,10 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80028fc0
     //LAB_80028fd4
     return
-      x - textboxes_800be358[textboxIndex].chars_18 * 9 / 2 >= 10 &&
-      x + textboxes_800be358[textboxIndex].chars_18 * 9 / 2 <= maxX &&
-      y - textboxes_800be358[textboxIndex].lines_1a * 6 >= 18 &&
-      y + textboxes_800be358[textboxIndex].lines_1a * 6 <= 222;
+      x - textboxes_800be358[textboxIndex].chars_18 * 4.5f >= 10 &&
+      x + textboxes_800be358[textboxIndex].chars_18 * 4.5f <= maxX &&
+      y - textboxes_800be358[textboxIndex].lines_1a * 6.0f >= 18 &&
+      y + textboxes_800be358[textboxIndex].lines_1a * 6.0f <= 222;
 
     //LAB_80028ff0
   }
@@ -3588,13 +3587,13 @@ public final class Scus94491BpeSegment_8002 {
   public static void renderTextboxSelection(final int textboxIndex, final short a1) {
     final Textbox4c s0 = textboxes_800be358[textboxIndex];
     final int width = (s0.chars_18 - 1) * 9;
-    final int x = s0.x_14 - centreScreenX_1f8003dc.get();
-    final int y = s0.y_16 - centreScreenY_1f8003de.get() + a1 * 12 - (s0.lines_1a - 1) * 6;
+    final float x = s0.x_14 - centreScreenX_1f8003dc.get();
+    final float y = s0.y_16 - centreScreenY_1f8003de.get() + a1 * 12 - (s0.lines_1a - 1) * 6;
 
     GPU.queueCommand(s0.z_0c, new GpuCommandQuad()
       .translucent(Translucency.HALF_B_PLUS_HALF_F)
       .rgb(0x80, 0x32, 0x64)
-      .pos(x - width / 2, y, width, 12)
+      .pos(x - width / 2.0f, y, width, 12)
     );
   }
 
@@ -3602,7 +3601,7 @@ public final class Scus94491BpeSegment_8002 {
    * @param trim Positive trims top, negative trims bottom
    */
   @Method(0x80029300L)
-  public static void renderText(final LodString text, final int x, int y, final TextColour colour, int trim) {
+  public static void renderText(final LodString text, final float x, float y, final TextColour colour, int trim) {
     final int length = textLength(text);
 
     trim = MathHelper.clamp(trim, -12, 12);
@@ -3722,10 +3721,10 @@ public final class Scus94491BpeSegment_8002 {
     if((arrow._00 & 0x1) != 0) {
       final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
       if((textboxText.flags_08 & 0x1000) != 0) {
-        final int left = arrow.x_04 - centreScreenX_1f8003dc.get() - 8;
-        final int right = arrow.x_04 - centreScreenX_1f8003dc.get() + 8;
-        final int top = arrow.y_06 - centreScreenY_1f8003de.get() - 6;
-        final int bottom = arrow.y_06 - centreScreenY_1f8003de.get() + 8;
+        final float left = arrow.x_04 - centreScreenX_1f8003dc.get() - 8.0f;
+        final float right = arrow.x_04 - centreScreenX_1f8003dc.get() + 8.0f;
+        final float top = arrow.y_06 - centreScreenY_1f8003de.get() - 6.0f;
+        final float bottom = arrow.y_06 - centreScreenY_1f8003de.get() + 8.0f;
         final int leftU = 64 + arrow.spriteIndex_08 * 16;
         final int rightU = 80 + arrow.spriteIndex_08 * 16;
 
@@ -4012,7 +4011,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002a32cL)
-  public static void initTextbox(final int textboxIndex, final int a1, final int x, final int y, final int chars, final int lines) {
+  public static void initTextbox(final int textboxIndex, final int a1, final float x, final float y, final int chars, final int lines) {
     clearTextbox(textboxIndex);
 
     final Textbox4c struct = textboxes_800be358[textboxIndex];

@@ -13,7 +13,6 @@ import legend.core.gpu.GpuCommandSetMaskBit;
 import legend.core.gpu.RECT;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.COLOUR;
-import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
@@ -1000,9 +999,9 @@ public final class SEffe {
 
   /** Returns Z */
   @Method(0x800fca78L)
-  public static int FUN_800fca78(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final Vector3f translation, final GpuCommandPoly cmd) {
+  public static float FUN_800fca78(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final Vector3f translation, final GpuCommandPoly cmd) {
     final Vector2f ref = new Vector2f();
-    final int z = FUN_800cfc20(particle.managerRotation_68, particle.managerTranslation_2c, translation, ref);
+    final float z = FUN_800cfc20(particle.managerRotation_68, particle.managerTranslation_2c, translation, ref);
     if(z >= 40) {
       final float zScale = (float)0x5000 / z;
       final float horizontalScale = zScale * (manager._10.scale_16.x + particle.scaleHorizontal_06);
@@ -1054,7 +1053,7 @@ public final class SEffe {
   @Method(0x800fce10L)
   public static void renderLineParticles(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleMetrics48 particleMetrics) {
     if(particleMetrics.flags_00 >= 0) {
-      GPU.queueCommand(particleMetrics.z_04 + manager._10.z_22 >> 2, new GpuCommandLine()
+      GPU.queueCommand((particleMetrics.z_04 + manager._10.z_22) / 4.0f, new GpuCommandLine()
         .translucent(Translucency.B_PLUS_F)
         .rgb(0, (int)(particleMetrics.colour0_40.x * 0xff), (int)(particleMetrics.colour0_40.y * 0xff), (int)(particleMetrics.colour0_40.z * 0xff))
         .rgb(1, (int)(particleMetrics.colour1_44.x * 0xff), (int)(particleMetrics.colour1_44.y * 0xff), (int)(particleMetrics.colour1_44.z * 0xff))
@@ -1360,7 +1359,7 @@ public final class SEffe {
           stepColour.set(colour).div(effect.countParticleSub_54);
 
           final Vector2f ref1 = new Vector2f();
-          int z = FUN_800cfc20(particle.managerRotation_68, particle.managerTranslation_2c, particle.subParticlePositionsArray_44[0], ref1) / 4;
+          float z = FUN_800cfc20(particle.managerRotation_68, particle.managerTranslation_2c, particle.subParticlePositionsArray_44[0], ref1) / 4;
           particleMetrics.x0_08 = ref1.x;
           particleMetrics.y0_10 = ref1.y;
 
@@ -1422,8 +1421,8 @@ public final class SEffe {
 
         final Vector2f ref = new Vector2f();
 
-        int z = FUN_800cfc20(particle.managerRotation_68, particle.managerTranslation_2c, particle.particlePosition_50, ref) >> 2;
-        final int zCombined = z + manager._10.z_22;
+        float z = FUN_800cfc20(particle.managerRotation_68, particle.managerTranslation_2c, particle.particlePosition_50, ref) / 4.0f;
+        final float zCombined = z + manager._10.z_22;
         if(zCombined >= 0xa0) {
           if(zCombined >= 0xffe) {
             z = 0xffe - manager._10.z_22;
@@ -1431,7 +1430,7 @@ public final class SEffe {
 
           //LAB_800fdf44
           // gp0 command 68h, which is an opaque dot (1x1)
-          GPU.queueCommand(z + manager._10.z_22 >> 2, new GpuCommandQuad()
+          GPU.queueCommand((z + manager._10.z_22) / 4.0f, new GpuCommandQuad()
             .rgb((int)(colour.x * 0xff), (int)(colour.y * 0xff), (int)(colour.z * 0xff))
             .pos(ref.x, ref.y, 1, 1)
           );
@@ -1508,15 +1507,15 @@ public final class SEffe {
           cmd1.translucent(Translucency.of(manager._10.flags_00 >>> 28 & 0b11));
         }
 
-        final int instZ = FUN_800fca78(manager, effect, particle, particle.particlePosition_50, cmd1) >> 2;
-        int effectZ = manager._10.z_22;
+        final float instZ = FUN_800fca78(manager, effect, particle, particle.particlePosition_50, cmd1) / 4.0f;
+        float effectZ = manager._10.z_22;
         if(effectZ + instZ >= 160) {
           if(effectZ + instZ >= 4094) {
             effectZ = 4094 - instZ;
           }
 
           //LAB_800fe548
-          GPU.queueCommand(instZ + effectZ >> 2, cmd1);
+          GPU.queueCommand((instZ + effectZ) / 4.0f, cmd1);
         }
 
         //LAB_800fe564
@@ -1556,7 +1555,7 @@ public final class SEffe {
                 .pos(3, particleSub.x3_0c, particleSub.y3_0e);
 
               //LAB_800fe78c
-              GPU.queueCommand(instZ + effectZ >> 2, cmd2);
+              GPU.queueCommand((instZ + effectZ) / 4.0f, cmd2);
             }
 
             colour.sub(colourStep);
@@ -2714,7 +2713,7 @@ public final class SEffe {
    * @param xy 4 vertices (note: data was originally passed in as ints so you need to change the calling code)
    */
   @Method(0x80102f7cL)
-  public static void renderSegmentGradient(final USCOLOUR colour1, final USCOLOUR colour2, final Vector2f[] xy, final int a3, final int a4, final Translucency translucency) {
+  public static void renderSegmentGradient(final USCOLOUR colour1, final USCOLOUR colour2, final Vector2f[] xy, final float a3, final int a4, final Translucency translucency) {
     final GpuCommandPoly cmd = new GpuCommandPoly(4)
       .translucent(translucency)
       .pos(0, xy[0].x, xy[0].y)
@@ -2726,7 +2725,7 @@ public final class SEffe {
       .monochrome(2, 0)
       .rgb(3, colour1.getX() >>> 8, colour1.getY() >>> 8, colour1.getZ() >>> 8);
 
-    GPU.queueCommand(a3 + a4 >> 2, cmd);
+    GPU.queueCommand((a3 + a4) / 4.0f, cmd);
   }
 
   /**
@@ -2779,7 +2778,7 @@ public final class SEffe {
       //LAB_8010324c
       electricEffect.callback_2c.accept(manager, electricEffect, bolt, boltNum);
       bolt.angle_02 -= electricEffect.boltAngleStep_10 / 2.0f;
-      int zMod = FUN_800cfb94(manager, bolt.rotation_04, bolt.boltSegments_10[0].origin_00, refOuterOriginA) >> 2;
+      float zMod = FUN_800cfb94(manager, bolt.rotation_04, bolt.boltSegments_10[0].origin_00, refOuterOriginA) / 4.0f;
       FUN_800cfb94(manager, bolt.rotation_04, bolt.boltSegments_10[electricEffect.boltSegmentCount_28 - 1].origin_00, lastSegmentRef);
       final float boltLengthX = lastSegmentRef.x - refOuterOriginA.x;
       final float boltLengthY = lastSegmentRef.y - refOuterOriginA.y;
@@ -2810,7 +2809,7 @@ public final class SEffe {
 
       //LAB_80103538
       if(effectShouldRender) {
-        final int z = manager._10.z_22 + zMod;
+        final float z = manager._10.z_22 + zMod;
         if(z >= 0xa0) {
           if(z >= 0xffe) {
             zMod = 0xffe - manager._10.z_22;
@@ -2859,7 +2858,7 @@ public final class SEffe {
                 .monochrome(1, baseColour >>> 8)
                 .monochrome(2, baseColour >>> 9);
 
-              GPU.queueCommand(manager._10.z_22 + zMod >> 2, cmd);
+              GPU.queueCommand((manager._10.z_22 + zMod) / 4.0f, cmd);
             }
 
             //LAB_80103994
@@ -2975,7 +2974,7 @@ public final class SEffe {
         if(effectShouldRender) {
           final Translucency translucency = Translucency.of(manager._10.flags_00 >>> 28 & 3);
 
-          final int z = manager._10.z_22 + bolt.sz3_0c;
+          final float z = manager._10.z_22 + bolt.sz3_0c;
           if(z >= 0xa0) {
             if(z >= 0xffe) {
               bolt.sz3_0c = 0xffe - manager._10.z_22;
@@ -3410,7 +3409,7 @@ public final class SEffe {
         final LightningBoltEffectSegment30 s0 = struct14.boltSegments_10[s4];
         struct1e.size_1c = (byte)(s0.scaleMultiplier_28 * manager._10.scale_16.x);
 
-        final int z = FUN_800cfb94(manager, struct14.rotation_04, s0.origin_00, ref) >> 2;
+        final float z = FUN_800cfb94(manager, struct14.rotation_04, s0.origin_00, ref) / 4.0f;
         effect.z_14 = z;
         if(z < 0x140) {
           effect._04 = 0;
@@ -5101,14 +5100,14 @@ public final class SEffe {
   /** Used in Rose transform */
   @Method(0x8010a860L)
   public static void renderGradientRay(final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager, final GradientRaysEffectInstance04 gradientRay) {
-    final SVECTOR sp0x38 = new SVECTOR();
-    final SVECTOR sp0x40 = new SVECTOR();
-    final SVECTOR sp0x48 = new SVECTOR();
-    final SVECTOR sp0x50 = new SVECTOR();
-    final SVECTOR xy0 = new SVECTOR();
-    final SVECTOR xy1 = new SVECTOR();
-    final SVECTOR xy2 = new SVECTOR();
-    final SVECTOR xy3 = new SVECTOR();
+    final Vector3f sp0x38 = new Vector3f();
+    final Vector3f sp0x40 = new Vector3f();
+    final Vector3f sp0x48 = new Vector3f();
+    final Vector3f sp0x50 = new Vector3f();
+    final Vector2f xy0 = new Vector2f();
+    final Vector2f xy1 = new Vector2f();
+    final Vector2f xy2 = new Vector2f();
+    final Vector2f xy3 = new Vector2f();
 
     final MV sp0x80 = new MV();
     final MV sp0xa0 = new MV();
@@ -5119,19 +5118,19 @@ public final class SEffe {
     //LAB_8010a968
     if((effect.flags_18 & 0x4) == 0) {
       if(effect._10 * 2 < gradientRay._02 * effect._08) {
-        sp0x40.setY((short)-effect._10);
-        sp0x48.setY((short)-effect._10);
-        sp0x50.setY((short)(-effect._10 * 2));
+        sp0x40.y = -effect._10;
+        sp0x48.y = -effect._10;
+        sp0x50.y = -effect._10 * 2.0f;
       } else {
         //LAB_8010a9ec
-        sp0x40.setY((short)(gradientRay._02 * -effect._08 / 2));
-        sp0x48.setY((short)(gradientRay._02 * -effect._08 / 2));
-        sp0x50.setY((short)(gradientRay._02 * -effect._08));
+        sp0x40.y = gradientRay._02 * -effect._08 / 2.0f;
+        sp0x48.y = gradientRay._02 * -effect._08 / 2.0f;
+        sp0x50.y = gradientRay._02 * -effect._08;
       }
 
       //LAB_8010aa34
-      sp0x40.setZ((short)effect._0c);
-      sp0x48.setZ((short)-effect._0c);
+      sp0x40.z = effect._0c;
+      sp0x48.z = -effect._0c;
     }
 
     //LAB_8010aa54
@@ -5155,7 +5154,7 @@ public final class SEffe {
     }
 
     //LAB_8010ab34
-    final int z = RotTransPers4(sp0x38, sp0x40, sp0x48, sp0x50, xy0, xy1, xy2, xy3);
+    final float z = RotTransPers4(sp0x38, sp0x40, sp0x48, sp0x50, xy0, xy1, xy2, xy3);
     if(z >= effect.projectionPlaneDistanceDiv4_20) {
       final GpuCommandPoly cmd = new GpuCommandPoly(4)
         .translucent(Translucency.B_PLUS_F);
@@ -5186,12 +5185,12 @@ public final class SEffe {
       //LAB_8010ad68
       //LAB_8010ad6c
       cmd
-        .pos(0, xy0.getX(), xy0.getY())
-        .pos(1, xy1.getX(), xy1.getY())
-        .pos(2, xy2.getX(), xy2.getY())
-        .pos(3, xy3.getX(), xy3.getY());
+        .pos(0, xy0.x, xy0.y)
+        .pos(1, xy1.x, xy1.y)
+        .pos(2, xy2.x, xy2.y)
+        .pos(3, xy3.x, xy3.y);
 
-      GPU.queueCommand(z >> 2, cmd);
+      GPU.queueCommand(z / 4.0f, cmd);
     }
 
     //LAB_8010ae18
@@ -5377,9 +5376,9 @@ public final class SEffe {
           final SVECTOR vert0 = new SVECTOR();
           final SVECTOR vert1 = new SVECTOR();
           final SVECTOR vert2 = new SVECTOR();
-          final DVECTOR sxy0 = new DVECTOR();
-          final DVECTOR sxy1 = new DVECTOR();
-          final DVECTOR sxy2 = new DVECTOR();
+          final Vector2f sxy0 = new Vector2f();
+          final Vector2f sxy1 = new Vector2f();
+          final Vector2f sxy2 = new Vector2f();
 
           //LAB_8010b80c
           if(i == 1 || i == 4) {
@@ -5427,14 +5426,14 @@ public final class SEffe {
           }
 
           //LAB_8010b9a4
-          final int z = perspectiveTransformTriple(vert0, vert1, vert2, sxy0, sxy1, sxy2);
+          final float z = perspectiveTransformTriple(vert0, vert1, vert2, sxy0, sxy1, sxy2);
 
           if(effect.screenspaceW_10 == 0) {
             //LAB_8010b638
             final int sp8c = getProjectionPlaneDistance();
-            final long zShift = (z << 12) * 4; // Must be long or the calc will overflow
-            effect.screenspaceW_10 = (int)(effect.captureW_04 * zShift / sp8c >>> 12);
-            effect.screenspaceH_14 = (int)(effect.captureH_08 * zShift / sp8c >>> 12);
+            final float zShift = z * 4;
+            effect.screenspaceW_10 = (int)(effect.captureW_04 * zShift / sp8c);
+            effect.screenspaceH_14 = (int)(effect.captureH_08 * zShift / sp8c);
             break;
           }
 
@@ -5443,47 +5442,47 @@ public final class SEffe {
           cmd
             .bpp(Bpp.BITS_15)
             .vramPos(metrics.u_00 & 0x3c0, (metrics.v_02 & 0x1) == 0 ? 0 : 256)
-            .pos(0, sxy0.getX(), sxy0.getY())
-            .pos(1, sxy1.getX(), sxy1.getY())
-            .pos(2, sxy2.getX(), sxy2.getY());
+            .pos(0, sxy0.x, sxy0.y)
+            .pos(1, sxy1.x, sxy1.y)
+            .pos(2, sxy2.x, sxy2.y);
 
-          GPU.queueCommand(z >> 2, cmd);
+          GPU.queueCommand(z / 4.0f, cmd);
         }
 
         case 5, 6 -> {
-          final SVECTOR vert0 = new SVECTOR();
-          final SVECTOR vert1 = new SVECTOR();
-          final SVECTOR vert2 = new SVECTOR();
-          final SVECTOR vert3 = new SVECTOR();
-          final SVECTOR sxy0 = new SVECTOR();
-          final SVECTOR sxy1 = new SVECTOR();
-          final SVECTOR sxy2 = new SVECTOR();
-          final SVECTOR sxy3 = new SVECTOR();
+          final Vector3f vert0 = new Vector3f();
+          final Vector3f vert1 = new Vector3f();
+          final Vector3f vert2 = new Vector3f();
+          final Vector3f vert3 = new Vector3f();
+          final Vector2f sxy0 = new Vector2f();
+          final Vector2f sxy1 = new Vector2f();
+          final Vector2f sxy2 = new Vector2f();
+          final Vector2f sxy3 = new Vector2f();
 
           a0 = i & 0x3;
           a1 = i >> 2;
           v0 = (a0 - 2) * effect.screenspaceW_10 / 4;
-          vert2.setZ((short)v0);
-          vert0.setZ((short)v0);
+          vert2.z = v0;
+          vert0.z = v0;
           v0 = (a1 - 1) * effect.screenspaceH_14 / 2;
-          vert1.setY((short)v0);
-          vert0.setY((short)v0);
+          vert1.y = v0;
+          vert0.y = v0;
           v0 = (a0 - 1) * effect.screenspaceW_10 / 4;
-          vert3.setZ((short)v0);
-          vert1.setZ((short)v0);
+          vert3.z = v0;
+          vert1.z = v0;
           v0 = a1 * effect.screenspaceH_14 / 2;
-          vert3.setY((short)v0);
-          vert2.setY((short)v0);
-          final int z = RotTransPers4(vert0, vert1, vert2, vert3, sxy0, sxy1, sxy2, sxy3);
+          vert3.y = v0;
+          vert2.y = v0;
+          final float z = RotTransPers4(vert0, vert1, vert2, vert3, sxy0, sxy1, sxy2, sxy3);
 
           if(effect.screenspaceW_10 == 0) {
             //LAB_8010b664
             final int sp90 = getProjectionPlaneDistance();
-            a1 = (z << 12) * 4;
+            final float z2 = z * 4.0f;
 
             //LAB_8010b688
-            effect.screenspaceW_10 = effect.captureW_04 * a1 / sp90 >>> 12;
-            effect.screenspaceH_14 = effect.captureH_08 * a1 / sp90 >>> 12;
+            effect.screenspaceW_10 = (int)(effect.captureW_04 * z2 / sp90);
+            effect.screenspaceH_14 = (int)(effect.captureH_08 * z2 / sp90);
             break;
           }
 
@@ -5491,14 +5490,14 @@ public final class SEffe {
           final int v = (i >> 1) * 64;
           final ScreenCaptureEffectMetrics8 metrics = effect.metrics_00;
 
-          GPU.queueCommand(z >> 2, new GpuCommandPoly(4)
+          GPU.queueCommand(z / 4.0f, new GpuCommandPoly(4)
             .bpp(Bpp.BITS_15)
             .vramPos(metrics.u_00 & 0x3c0, (metrics.v_02 & 0x1) != 0 ? 256 : 0)
             .rgb(rgb.getR(), rgb.getG(), rgb.getB())
-            .pos(0, sxy0.getX(), sxy0.getY())
-            .pos(1, sxy1.getX(), sxy1.getY())
-            .pos(2, sxy2.getX(), sxy2.getY())
-            .pos(3, sxy3.getX(), sxy3.getY())
+            .pos(0, sxy0.x, sxy0.y)
+            .pos(1, sxy1.x, sxy1.y)
+            .pos(2, sxy2.x, sxy2.y)
+            .pos(3, sxy3.x, sxy3.y)
             .uv(0, u, v)
             .uv(1, u + effect.captureW_04 / 4 - 1, v)
             .uv(2, u, v + effect.captureH_08 / 2 - 1)
@@ -5532,45 +5531,45 @@ public final class SEffe {
 
     //LAB_8010be14
     for(int s0 = 0; s0 < 15; s0++) {
-      final SVECTOR sp0x28 = new SVECTOR();
-      final SVECTOR sp0x30 = new SVECTOR();
-      final SVECTOR sp0x38 = new SVECTOR();
-      final SVECTOR sp0x40 = new SVECTOR();
+      final Vector3f sp0x28 = new Vector3f();
+      final Vector3f sp0x30 = new Vector3f();
+      final Vector3f sp0x38 = new Vector3f();
+      final Vector3f sp0x40 = new Vector3f();
 
       final int a0 = s0 % 5;
       int v1 = effect.screenspaceW_10;
       int v0 = a0 * v1 / 5 - v1 / 2;
-      sp0x28.setZ((short)v0);
-      sp0x38.setZ((short)v0);
+      sp0x28.z = v0;
+      sp0x38.z = v0;
 
       final int a1 = s0 / 5;
       v1 = effect.screenspaceH_14;
       v0 = a1 * v1 / 3 - v1 / 2;
-      sp0x28.setY((short)v0);
-      sp0x30.setY((short)v0);
+      sp0x28.y = v0;
+      sp0x30.y = v0;
 
       v1 = effect.screenspaceW_10;
       v0 = (a0 + 1) * v1 / 5 - v1 / 2;
-      sp0x30.setZ((short)v0);
-      sp0x40.setZ((short)v0);
+      sp0x30.z = v0;
+      sp0x40.z = v0;
 
       v1 = effect.screenspaceH_14;
       v0 = (a1 + 1) * v1 / 3 - v1 / 2;
-      sp0x38.setY((short)v0);
-      sp0x40.setY((short)v0);
+      sp0x38.y = v0;
+      sp0x40.y = v0;
 
-      final SVECTOR sxy0 = new SVECTOR();
-      final SVECTOR sxy1 = new SVECTOR();
-      final SVECTOR sxy2 = new SVECTOR();
-      final SVECTOR sxy3 = new SVECTOR();
-      final int z = RotTransPers4(sp0x28, sp0x30, sp0x38, sp0x40, sxy0, sxy1, sxy2, sxy3);
+      final Vector2f sxy0 = new Vector2f();
+      final Vector2f sxy1 = new Vector2f();
+      final Vector2f sxy2 = new Vector2f();
+      final Vector2f sxy3 = new Vector2f();
+      final float z = RotTransPers4(sp0x28, sp0x30, sp0x38, sp0x40, sxy0, sxy1, sxy2, sxy3);
 
       if(effect.screenspaceW_10 == 0) {
         //LAB_8010bd08
         final int sp8c = getProjectionPlaneDistance();
-        final long zShift = z << 14; // Must be long or the calc will overflow
-        effect.screenspaceW_10 = (int)(effect.captureW_04 * zShift / sp8c >>> 12);
-        effect.screenspaceH_14 = (int)(effect.captureH_08 * zShift / sp8c >>> 12);
+        final float zShift = z * 4.0f;
+        effect.screenspaceW_10 = (int)(effect.captureW_04 * zShift / sp8c);
+        effect.screenspaceH_14 = (int)(effect.captureH_08 * zShift / sp8c);
         break;
       }
 
@@ -5581,14 +5580,14 @@ public final class SEffe {
 
       final ScreenCaptureEffectMetrics8 metrics = effect.metrics_00;
 
-      GPU.queueCommand(z >> 2, new GpuCommandPoly(4)
+      GPU.queueCommand(z / 4.0f, new GpuCommandPoly(4)
         .bpp(Bpp.BITS_15)
         .vramPos(metrics.u_00 & 0x3c0, (metrics.v_02 & 0x1) != 0 ? 256 : 0)
         .rgb(rgb.getR(), rgb.getG(), rgb.getB())
-        .pos(0, sxy0.getX(), sxy0.getY())
-        .pos(1, sxy1.getX(), sxy1.getY())
-        .pos(2, sxy2.getX(), sxy2.getY())
-        .pos(3, sxy3.getX(), sxy3.getY())
+        .pos(0, sxy0.x, sxy0.y)
+        .pos(1, sxy1.x, sxy1.y)
+        .pos(2, sxy2.x, sxy2.y)
+        .pos(3, sxy3.x, sxy3.y)
         .uv(0, leftU, topV)
         .uv(1, rightU, topV)
         .uv(2, leftU, bottomV)
@@ -5722,24 +5721,24 @@ public final class SEffe {
     effect.shouldRender_4a = (short)(rand() % 30);
 
     if(effect.shouldRender_4a != 0) {
-      final DVECTOR screenCoords = perspectiveTransformXyz(((BattleEntity27c)scriptStatePtrArr_800bc1c0[effect.bentIndex_3c].innerStruct_00).model_148, effect.x_40, effect.y_42, effect.z_44);
-      final int x = (int)-(screenCoords.getX() * 2.5f);
-      final int y = (int)-(screenCoords.getY() * 2.5f);
+      final Vector2f screenCoords = perspectiveTransformXyz(((BattleEntity27c)scriptStatePtrArr_800bc1c0[effect.bentIndex_3c].innerStruct_00).model_148, effect.x_40, effect.y_42, effect.z_44);
+      final float x = -(screenCoords.x * 2.5f);
+      final float y = -(screenCoords.y * 2.5f);
 
       //LAB_8010c7c0
       for(int i = 0; i < 5; i++) {
         final LensFlareEffectInstance3c inst = effect.instances_38[i];
         final int dispW = displayWidth_1f8003e0.get();
         final int dispH = displayHeight_1f8003e4.get();
-        inst.x_04 = (short)(screenCoords.getX() + dispW / 2);
-        inst.y_06 = (short)(screenCoords.getY() + dispH / 2);
+        inst.x_04 = screenCoords.x + dispW / 2.0f;
+        inst.y_06 = screenCoords.y + dispH / 2.0f;
 
         if(inst.x_04 > 0 && inst.x_04 < dispW && inst.y_06 > 0 && inst.y_06 < dispH) {
           inst.onScreen_03 = true;
 
           final int scale = lensFlareGlowScales_800fb8fc.get(i).get();
-          inst.x_04 += (short)(x * scale >> 8);
-          inst.y_06 += (short)(y * scale >> 8);
+          inst.x_04 += x * scale / 0x100;
+          inst.y_06 += y * scale / 0x100;
         } else {
           //LAB_8010c870
           inst.onScreen_03 = false;
@@ -5748,14 +5747,14 @@ public final class SEffe {
       }
 
       // Adjust brightness based on X position
-      int screenX = Math.abs(screenCoords.getX());
+      float screenX = Math.abs(screenCoords.x);
       final int screenWidth = displayWidth_1f8003e0.get() / 2;
       if(screenX > screenWidth) {
         screenX = screenWidth;
       }
 
       //LAB_8010c8b8
-      effect.brightness_48 = (short)(0xff - (0xff00 / screenWidth * screenX >> 8));
+      effect.brightness_48 = (short)(255.0f - 255.0f / screenWidth * screenX);
     }
     //LAB_8010c8e0
   }
@@ -5790,7 +5789,7 @@ public final class SEffe {
               final int y = (inst.heightScale_30 * h >> 12) * lensFlareTranslationMagnitudeFactors_800fb910.get(j).get(1).get();
               final int halfW = displayWidth_1f8003e0.get() / 2;
               final int halfH = displayHeight_1f8003e4.get() / 2;
-              final int[][] sp0x48 = new int[4][2];
+              final float[][] sp0x48 = new float[4][2];
               sp0x48[0][0] = inst.x_04 - halfW + x;
               sp0x48[0][1] = inst.y_06 - halfH + y;
               sp0x48[1][0] = inst.x_04 - halfW + x + (w * inst.widthScale_2e >> 12);
@@ -5824,8 +5823,8 @@ public final class SEffe {
             //LAB_8010ceec
             final int halfW = displayWidth_1f8003e0.get() / 2;
             final int halfH = displayHeight_1f8003e4.get() / 2;
-            final int x = inst.x_04 - halfW - (inst.widthScale_2e * w >> 12) / 2;
-            final int y = inst.y_06 - halfH - (inst.heightScale_30 * h >> 12) / 2;
+            final float x = inst.x_04 - halfW - (inst.widthScale_2e * w >> 12) / 2.0f;
+            final float y = inst.y_06 - halfH - (inst.heightScale_30 * h >> 12) / 2.0f;
             final int w2 = w * inst.widthScale_2e >> 12;
             final int h2 = h * inst.heightScale_30 >> 12;
 
@@ -8875,39 +8874,39 @@ public final class SEffe {
       final int clut = effect.metrics_54.clut_06;
 
       //LAB_8011633c
-      final SVECTOR sp0x58 = new SVECTOR();
+      final Vector3f sp0x58 = new Vector3f();
       final MV sp0x60 = new MV();
-      final DVECTOR sp0x80 = new DVECTOR();
+      final Vector2f sp0x80 = new Vector2f();
       sp0x10.compose(worldToScreenMatrix_800c3548, sp0x60);
       GTE.setTransforms(sp0x60);
 
-      final int z = perspectiveTransform(sp0x58, sp0x80);
+      final float z = perspectiveTransform(sp0x58, sp0x80);
       if(z >= 0x50) {
         //LAB_801163c4
         final float a1 = projectionPlaneDistance_1f8003f8.get() * 2.0f / z * manager._10.scale_16.z;
-        final int l = (int)(-w / 2.0f * a1);
-        final int r = (int)(w / 2.0f * a1);
-        final int t = (int)(-h / 2.0f * a1);
-        final int b = (int)(h / 2.0f * a1);
+        final float l = -w / 2.0f * a1;
+        final float r = w / 2.0f * a1;
+        final float t = -h / 2.0f * a1;
+        final float b = h / 2.0f * a1;
         final float sin = MathHelper.sin(manager._10.rot_10.z);
         final float cos = MathHelper.cos(manager._10.rot_10.z);
-        final int sinL = (int)(l * sin);
-        final int cosL = (int)(l * cos);
-        final int sinR = (int)(r * sin);
-        final int cosR = (int)(r * cos);
-        final int sinT = (int)(t * sin);
-        final int cosT = (int)(t * cos);
-        final int sinB = (int)(b * sin);
-        final int cosB = (int)(b * cos);
+        final float sinL = l * sin;
+        final float cosL = l * cos;
+        final float sinR = r * sin;
+        final float cosR = r * cos;
+        final float sinT = t * sin;
+        final float cosT = t * cos;
+        final float sinB = b * sin;
+        final float cosB = b * cos;
 
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
           .clut((clut & 0b111111) * 16, clut >>> 6)
           .vramPos(effect.metrics_54.u_00 & 0x3c0, (effect.metrics_54.v_02 & 0x100) != 0 ? 256 : 0)
           .rgb(manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
-          .pos(0, sp0x80.getX() + cosL - sinT, sp0x80.getY() + sinL + cosT)
-          .pos(1, sp0x80.getX() + cosR - sinT, sp0x80.getY() + sinR + cosT)
-          .pos(2, sp0x80.getX() + cosL - sinB, sp0x80.getY() + sinL + cosB)
-          .pos(3, sp0x80.getX() + cosR - sinB, sp0x80.getY() + sinR + cosB)
+          .pos(0, sp0x80.x + cosL - sinT, sp0x80.y + sinL + cosT)
+          .pos(1, sp0x80.x + cosR - sinT, sp0x80.y + sinR + cosT)
+          .pos(2, sp0x80.x + cosL - sinB, sp0x80.y + sinL + cosB)
+          .pos(3, sp0x80.x + cosR - sinB, sp0x80.y + sinR + cosB)
           .uv(0, u, v)
           .uv(1, u + w - 1, v)
           .uv(2, u, v + h - 1)
@@ -8917,7 +8916,7 @@ public final class SEffe {
           cmd.translucent(Translucency.of(manager._10.flags_00 >>> 28 & 0b11));
         }
 
-        GPU.queueCommand(z >> 2, cmd);
+        GPU.queueCommand(z / 4.0f, cmd);
       }
     } else {
       //LAB_80116790

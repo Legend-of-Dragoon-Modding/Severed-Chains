@@ -195,7 +195,7 @@ public final class Bttl_800d {
 
   @Method(0x800d019cL)
   public static void renderProjectileHitEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> data) {
-    int a0 = 0;
+    float a0 = 0.0f;
     final ProjectileHitEffect14 effect = (ProjectileHitEffect14)data.effect_44;
 
     //LAB_800d01ec
@@ -237,22 +237,22 @@ public final class Bttl_800d {
           //LAB_800d033c
         }
 
-        int s1_0 = a0 >> 2;
+        float s1_0 = a0 / 4.0f;
         if(s1_0 >= 0x140) {
           if(s1_0 >= 0xffe) {
             s1_0 = 0xffe;
           }
 
           //LAB_800d037c
-          int a2_0 = data._10.z_22;
-          final int v1 = s1_0 + a2_0;
+          float a2_0 = data._10.z_22;
+          final float v1 = s1_0 + a2_0;
           if(v1 >= 0xa0) {
             if(v1 >= 0xffe) {
               a2_0 = 0xffe - s1_0;
             }
 
             //LAB_800d0444
-            GPU.queueCommand(s1_0 + a2_0 >> 2, new GpuCommandLine()
+            GPU.queueCommand((s1_0 + a2_0) / 4.0f, new GpuCommandLine()
               .translucent(Translucency.B_PLUS_F)
               .monochrome(0, 0)
               .rgb(1, s4.r_34 >>> 8, s4.g_36 >>> 8, s4.b_38 >>> 8)
@@ -631,7 +631,7 @@ public final class Bttl_800d {
   @Method(0x800d1d3cL)
   public static void renderDiscGradientEffect(final EffectManagerData6c<EffectManagerData6cInner.RadialGradientType> manager, final int angle, final Vector2f[] vertices, final RadialGradientEffect14 effect, final Translucency translucency) {
     if(manager._10.flags_00 >= 0) {
-      GPU.queueCommand(effect.z_04 + manager._10.z_22 >> 2, new GpuCommandPoly(3)
+      GPU.queueCommand((effect.z_04 + manager._10.z_22) / 4.0f, new GpuCommandPoly(3)
         .translucent(translucency)
         .rgb(0, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
         .rgb(1, effect.r_0c, effect.g_0d, effect.b_0e)
@@ -674,7 +674,7 @@ public final class Bttl_800d {
       final Vector2f screenVert1 = new Vector2f();
       FUN_800cfb14(manager, sp0x30, screenVert1);
 
-      GPU.queueCommand(effect.z_04 + manager._10.z_22 >> 2, new GpuCommandPoly(4)
+      GPU.queueCommand((effect.z_04 + manager._10.z_22) / 4.0f, new GpuCommandPoly(4)
         .translucent(translucency)
         .rgb(0, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
         .rgb(1, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
@@ -696,9 +696,9 @@ public final class Bttl_800d {
     effect.angleStep_08 = 0x1000 / (0x4 << effect.circleSubdivisionModifier_00);
 
     final Vector2f screenVert0 = new Vector2f();
-    effect.z_04 = FUN_800cfb14(manager, new Vector3f(), screenVert0) >> 2;
+    effect.z_04 = FUN_800cfb14(manager, new Vector3f(), screenVert0) / 4.0f;
 
-    final int z = effect.z_04 + manager._10.z_22;
+    final float z = effect.z_04 + manager._10.z_22;
     if(z >= 0xa0) {
       if(z >= 0xffe) {
         effect.z_04 = 0xffe - manager._10.z_22;

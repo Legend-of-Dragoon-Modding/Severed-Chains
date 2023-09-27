@@ -12,10 +12,10 @@ public class Struct34 {
   public int _14;
   public short _18;
 
-  public int x_1c;
-  public int y_20;
+  public float x_1c;
+  public float y_20;
   public int screenOffsetX_24;
   public int screenOffsetY_28;
-  public int sz3_2c;
+  public float sz3_2c;
   public Struct34 parent_30;
 }

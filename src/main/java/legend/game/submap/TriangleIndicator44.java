@@ -18,7 +18,7 @@ public class TriangleIndicator44 {
   public int _28;
   public int _2c;
   public int _30;
-  public int x_34;
-  public int y_38;
+  public float x_34;
+  public float y_38;
   public int _3c;
 }

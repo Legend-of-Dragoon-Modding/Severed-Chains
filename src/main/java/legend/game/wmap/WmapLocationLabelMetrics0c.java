@@ -1,9 +1,9 @@
 package legend.game.wmap;
 
-import legend.core.gte.DVECTOR;
+import org.joml.Vector2f;
 
 public class WmapLocationLabelMetrics0c {
-  public int z_00;
+  public float z_00;
   public int locationIndex_04;
-  public final DVECTOR xy_08 = new DVECTOR();
+  public final Vector2f xy_08 = new Vector2f();
 }

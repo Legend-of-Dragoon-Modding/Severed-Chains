@@ -4,7 +4,7 @@ import org.joml.Vector3f;
 
 public class ParticleMetrics48 {
   public int flags_00;
-  public int z_04;
+  public float z_04;
   public float x0_08;
   public float x1_0c;
   public float y0_10;

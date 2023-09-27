@@ -5,7 +5,6 @@ import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandLine;
 import legend.core.gpu.GpuCommandPoly;
-import legend.core.gte.DVECTOR;
 import legend.core.memory.Method;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.characters.Element;
@@ -48,6 +47,7 @@ import legend.game.types.Translucency;
 import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Vector2f;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -617,7 +617,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f3354L)
-  public static void addFloatingNumber(final int numIndex, final long onHitTextType, final long onHitClutCol, final int number, final int x, final int y, int a6, final long onHitClutRow) {
+  public static void addFloatingNumber(final int numIndex, final long onHitTextType, final long onHitClutCol, final int number, final float x, final float y, int a6, final long onHitClutRow) {
     final FloatingNumberC4 num = floatingNumbers_800c6b5c[numIndex];
     final short[] damageDigits = new short[num.digits_24.length];
 
@@ -796,9 +796,9 @@ public final class Bttl_800f {
             }
 
             //LAB_800f3a44
-            final DVECTOR screenCoords = perspectiveTransformXyz(bent.model_148, x, y, z);
-            num.x_1c = clampX(screenCoords.getX() + centreScreenX_1f8003dc.get());
-            num.y_20 = clampY(screenCoords.getY() + centreScreenY_1f8003de.get());
+            final Vector2f screenCoords = perspectiveTransformXyz(bent.model_148, x, y, z);
+            num.x_1c = clampX(screenCoords.x + centreScreenX_1f8003dc.get());
+            num.y_20 = clampY(screenCoords.y + centreScreenY_1f8003de.get());
           }
 
           //LAB_800f3ac8
@@ -944,12 +944,12 @@ public final class Bttl_800f {
             if((digit.flags_00 & 0x8000) != 0) {
               //LAB_800f3ec0
               for(int j = 1; j < 3; j++) {
-                final int a1 = num.x_1c - centreScreenX_1f8003dc.get();
-                final int a2 = num.y_20 - centreScreenY_1f8003de.get();
-                final int left = digit.x_0e + a1;
-                final int right = digit.x_0e + digit.texW_16 + a1;
-                final int top = digit.y_10 + a2;
-                final int bottom = digit.y_10 + digit.texH_18 + a2;
+                final float a1 = num.x_1c - centreScreenX_1f8003dc.get();
+                final float a2 = num.y_20 - centreScreenY_1f8003de.get();
+                final float left = digit.x_0e + a1;
+                final float right = digit.x_0e + digit.texW_16 + a1;
+                final float top = digit.y_10 + a2;
+                final float bottom = digit.y_10 + digit.texH_18 + a2;
                 final int leftU = digit.u_12;
                 final int rightU = digit.u_12 + digit.texW_16;
                 final int topV = digit.v_14;
@@ -1061,10 +1061,10 @@ public final class Bttl_800f {
     }
 
     //LAB_800f4320
-    final DVECTOR screenCoords = perspectiveTransformXyz(bent.model_148, x, y, z);
+    final Vector2f screenCoords = perspectiveTransformXyz(bent.model_148, x, y, z);
 
     //LAB_800f4394
-    FUN_800f89f4(bentIndex, 0, 0x2L, damage, clampX(screenCoords.getX() + centreScreenX_1f8003dc.get()), clampY(screenCoords.getY() + centreScreenY_1f8003de.get()), 60 / vsyncMode_8007a3b8 / 4, s4);
+    FUN_800f89f4(bentIndex, 0, 0x2L, damage, clampX(screenCoords.x + centreScreenX_1f8003dc.get()), clampY(screenCoords.y + centreScreenY_1f8003de.get()), 60 / vsyncMode_8007a3b8 / 4, s4);
   }
 
   @ScriptDescription("Gives SP to a battle entity")
@@ -3016,7 +3016,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f89f4L)
-  public static long FUN_800f89f4(final int bentIndex, final long a1, final long a2, final int rawDamage, final int x, final int y, final int a6, final long a7) {
+  public static long FUN_800f89f4(final int bentIndex, final long a1, final long a2, final int rawDamage, final float x, final float y, final int a6, final long a7) {
     //LAB_800f8a30
     for(int i = 0; i < floatingNumbers_800c6b5c.length; i++) {
       final FloatingNumberC4 num = floatingNumbers_800c6b5c[i];
@@ -3629,12 +3629,12 @@ public final class Bttl_800f {
   }
 
   @Method(0x800fa068L)
-  public static int clampX(final int x) {
-    return MathHelper.clamp(x, 20, 300);
+  public static float clampX(final float x) {
+    return MathHelper.clamp(x, 20.0f, 300.0f);
   }
 
   @Method(0x800fa090L)
-  public static int clampY(final int y) {
-    return MathHelper.clamp(y, 20, 220);
+  public static float clampY(final float y) {
+    return MathHelper.clamp(y, 20.0f, 220.0f);
   }
 }

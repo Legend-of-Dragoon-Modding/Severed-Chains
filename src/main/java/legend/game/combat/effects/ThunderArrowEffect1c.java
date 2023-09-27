@@ -6,6 +6,6 @@ public class ThunderArrowEffect1c {
   public int _08;
   public int count_0c;
   public int _10;
-  public int z_14;
+  public float z_14;
   public ThunderArrowEffectBolt1e[][] _18;
 }

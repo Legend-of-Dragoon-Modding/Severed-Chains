@@ -18,8 +18,8 @@ public class FloatingNumberC4 {
   public int _10;
   public int _14;
   public int _18;
-  public int x_1c;
-  public int y_20;
+  public float x_1c;
+  public float y_20;
   public final FloatingNumberC4Sub20[] digits_24 = new FloatingNumberC4Sub20[10];
 
   public FloatingNumberC4() {

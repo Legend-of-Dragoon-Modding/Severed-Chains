@@ -1,11 +1,11 @@
 package legend.game.submap;
 
-import legend.core.gte.DVECTOR;
+import org.joml.Vector2f;
 
 public class Struct14 {
-  public final DVECTOR vert0_00 = new DVECTOR();
+  public final Vector2f vert0_00 = new Vector2f();
 
-  public final DVECTOR vert1_08 = new DVECTOR();
+  public final Vector2f vert1_08 = new Vector2f();
 
   public Struct14 next_10;
 }

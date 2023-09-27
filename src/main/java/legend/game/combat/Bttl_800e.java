@@ -12,7 +12,6 @@ import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdWithId;
 import legend.core.gte.Transforms;
 import legend.core.memory.Method;
@@ -130,7 +129,6 @@ import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
@@ -1664,16 +1662,16 @@ public final class Bttl_800e {
       GTE.setVertex(1, (spriteEffect.x_04 + spriteEffect.w_08) * 64, spriteEffect.y_06 * 64, 0);
       GTE.setVertex(2, spriteEffect.x_04 * 64, (spriteEffect.y_06 + spriteEffect.h_0a) * 64, 0);
       GTE.perspectiveTransformTriangle();
-      final short sx0 = GTE.getScreenX(0);
-      final short sy0 = GTE.getScreenY(0);
-      final short sx1 = GTE.getScreenX(1);
-      final short sy1 = GTE.getScreenY(1);
-      final short sx2 = GTE.getScreenX(2);
-      final short sy2 = GTE.getScreenY(2);
+      final float sx0 = GTE.getScreenX(0);
+      final float sy0 = GTE.getScreenY(0);
+      final float sx1 = GTE.getScreenX(1);
+      final float sy1 = GTE.getScreenY(1);
+      final float sx2 = GTE.getScreenX(2);
+      final float sy2 = GTE.getScreenY(2);
 
       GTE.perspectiveTransform((spriteEffect.x_04 + spriteEffect.w_08) * 64, (spriteEffect.y_06 + spriteEffect.h_0a) * 64, 0);
-      final short sx3 = GTE.getScreenX(2);
-      final short sy3 = GTE.getScreenY(2);
+      final float sx3 = GTE.getScreenX(2);
+      final float sy3 = GTE.getScreenY(2);
 
       final GpuCommandPoly cmd = new GpuCommandPoly(4)
         .clut(spriteEffect.clutX_10, spriteEffect.clutY_12)
@@ -3245,14 +3243,13 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ec7e4L)
-  public static DVECTOR perspectiveTransformXyz(final Model124 model, final short x, final short y, final short z) {
+  public static Vector2f perspectiveTransformXyz(final Model124 model, final float x, final float y, final float z) {
     final MV ls = new MV();
     GsGetLs(model.coord2_14, ls);
     GTE.setTransforms(ls);
 
-    final DVECTOR screenCoords = new DVECTOR();
-    perspectiveTransform(new SVECTOR().set(x, y, z), screenCoords);
-    return screenCoords;
+    GTE.perspectiveTransform(x, y, z);
+    return new Vector2f(GTE.getScreenX(2), GTE.getScreenY(2));
   }
 
   @Method(0x800ec86cL)
@@ -3438,14 +3435,14 @@ public final class Bttl_800e {
     }
 
     //LAB_800ecdac
-    final DVECTOR screenCoords = perspectiveTransformXyz(model, (short)x, (short)y, (short)z);
+    final Vector2f screenCoords = perspectiveTransformXyz(model, x, y, z);
 
     final GpuCommandQuad cmd = new GpuCommandQuad()
       .bpp(Bpp.BITS_4)
       .translucent(Translucency.HALF_B_PLUS_HALF_F)
       .vramPos(704, 256)
       .monochrome(0x80)
-      .pos(screenCoords.getX() - 8, screenCoords.getY() + targetArrowOffsetY_800fb188.get(tickCount_800bb0fc.get() & 0x7).get(), 16, 24)
+      .pos(screenCoords.x - 8, screenCoords.y + targetArrowOffsetY_800fb188.get(tickCount_800bb0fc.get() & 0x7).get(), 16, 24)
       .uv(240, 0);
 
     if(textEffect == 0) {

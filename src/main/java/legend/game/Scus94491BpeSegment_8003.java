@@ -5,7 +5,6 @@ import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandFillVram;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
-import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MATRIX;
 import legend.core.gte.MV;
@@ -22,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 import org.joml.Math;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
@@ -936,21 +936,21 @@ public final class Scus94491BpeSegment_8003 {
 
   /** Returns Z */
   @Method(0x8003f900L)
-  public static int perspectiveTransform(final SVECTOR worldCoords, final DVECTOR screenCoords) {
+  public static float perspectiveTransform(final Vector3f worldCoords, final Vector2f screenCoords) {
     GTE.perspectiveTransform(worldCoords);
     screenCoords.set(GTE.getScreenX(2), GTE.getScreenY(2));
-    return GTE.getScreenZ(3) >> 2;
+    return GTE.getScreenZ(3) / 4.0f;
   }
 
   @Method(0x8003f930L)
-  public static int perspectiveTransformTriple(final SVECTOR world0, final SVECTOR world1, final SVECTOR world2, final DVECTOR screen0, final DVECTOR screen1, final DVECTOR screen2) {
+  public static float perspectiveTransformTriple(final SVECTOR world0, final SVECTOR world1, final SVECTOR world2, final Vector2f screen0, final Vector2f screen1, final Vector2f screen2) {
     GTE.perspectiveTransformTriangle(world0, world1, world2);
 
     screen0.set(GTE.getScreenX(0), GTE.getScreenY(0));
     screen1.set(GTE.getScreenX(1), GTE.getScreenY(1));
     screen2.set(GTE.getScreenX(2), GTE.getScreenY(2));
 
-    return GTE.getScreenZ(3) >> 2;
+    return GTE.getScreenZ(3) / 4.0f;
   }
 
   /**
@@ -972,16 +972,16 @@ public final class Scus94491BpeSegment_8003 {
    * @return 1/4 of the Z component sz of the screen coordinates corresponding to v3.
    */
   @Method(0x8003f9c0L)
-  public static int RotTransPers4(final SVECTOR v0, final SVECTOR v1, final SVECTOR v2, final SVECTOR v3, final SVECTOR sxy0, final SVECTOR sxy1, final SVECTOR sxy2, final SVECTOR sxy3) {
+  public static float RotTransPers4(final Vector3f v0, final Vector3f v1, final Vector3f v2, final Vector3f v3, final Vector2f sxy0, final Vector2f sxy1, final Vector2f sxy2, final Vector2f sxy3) {
     GTE.perspectiveTransformTriangle(v0, v1, v2);
-    sxy0.set(GTE.getScreenX(0), GTE.getScreenY(0), (short)0);
-    sxy1.set(GTE.getScreenX(1), GTE.getScreenY(1), (short)0);
-    sxy2.set(GTE.getScreenX(2), GTE.getScreenY(2), (short)0);
+    sxy0.set(GTE.getScreenX(0), GTE.getScreenY(0));
+    sxy1.set(GTE.getScreenX(1), GTE.getScreenY(1));
+    sxy2.set(GTE.getScreenX(2), GTE.getScreenY(2));
 
     GTE.perspectiveTransform(v3);
-    sxy3.set(GTE.getScreenX(2), GTE.getScreenY(2), (short)0);
+    sxy3.set(GTE.getScreenX(2), GTE.getScreenY(2));
 
-    return GTE.getScreenZ(3) >> 2;
+    return GTE.getScreenZ(3) / 4.0f;
   }
 
   @Method(0x8003faf0L)

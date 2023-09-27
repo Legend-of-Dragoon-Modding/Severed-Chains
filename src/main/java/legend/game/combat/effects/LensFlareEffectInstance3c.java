@@ -3,8 +3,8 @@ package legend.game.combat.effects;
 public class LensFlareEffectInstance3c {
   public boolean enabled_02;
   public boolean onScreen_03;
-  public short x_04;
-  public short y_06;
+  public float x_04;
+  public float y_06;
   public int _08;
 
   public int _0c;
