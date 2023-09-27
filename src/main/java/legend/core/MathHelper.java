@@ -163,9 +163,13 @@ public final class MathHelper {
     return floorMod(-(float)org.joml.Math.atan2((double)y, x) + 0.75f * MathHelper.TWO_PI, MathHelper.TWO_PI);
   }
 
-  public static float atan2(final float y, final float x) {
+  public static float atan2(float y, final float x) {
     if(y == 0.0f && x == 0.0f) {
       return 0.0f;
+    }
+
+    if(flEq(y, -0.0f)) {
+      y = 0.0f;
     }
 
     return (float)org.joml.Math.atan2((double)y, x);

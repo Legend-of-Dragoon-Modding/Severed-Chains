@@ -490,24 +490,24 @@ public final class Bttl_800d {
       if(rayArray[rayNum].renderRay_00) {
         //LAB_800d12a4
         for(int i = 0; i < 2; i++) {
-          int angleModifier = baseAngle[i] + (int)rayArray[rayNum].angleModifier_0a;
-          int translationScale = 30 + (int)rayArray[rayNum].endpointTranslationMagnitude_06;
+          int angleModifier = baseAngle[i] + rayArray[rayNum].angleModifier_0a;
+          int translationScale = 30 + rayArray[rayNum].endpointTranslationMagnitude_06;
           float x2 = rcos(rayArray[rayNum].angle_02 + angleModifier) * translationScale >> 12;
           float y2 = rsin(rayArray[rayNum].angle_02 + angleModifier) * translationScale >> 12;
           float x3 = rcos(rayArray[rayNum].angle_02) * translationScale >> 12;
           float y3 = rsin(rayArray[rayNum].angle_02) * translationScale >> 12;
-          angleModifier = baseAngle[i] + (int)rayArray[rayNum].angleModifier_0a;
-          translationScale = 210 + (int)rayArray[rayNum].endpointTranslationMagnitude_06;
+          angleModifier = baseAngle[i] + rayArray[rayNum].angleModifier_0a;
+          translationScale = 210 + rayArray[rayNum].endpointTranslationMagnitude_06;
           final int x0 = rcos(rayArray[rayNum].angle_02 + angleModifier) * translationScale >> 12;
           final int y0 = rsin(rayArray[rayNum].angle_02 + angleModifier) * translationScale >> 12;
           final int x1 = rcos(rayArray[rayNum].angle_02) * translationScale >> 12;
           final int y1 = rsin(rayArray[rayNum].angle_02) * translationScale >> 12;
           final Vector2f translation = new Vector2f();
           modifyAdditionStarburstTranslation(manager, starburstEffect, translation);
-          x2 = x2 + translation.x;
-          y2 = y2 + translation.y;
-          x3 = x3 + translation.x;
-          y3 = y3 + translation.y;
+          x2 += translation.x;
+          y2 += translation.y;
+          x3 += translation.x;
+          y3 += translation.y;
 
           GPU.queueCommand(30, new GpuCommandPoly(4)
             .translucent(Translucency.B_PLUS_F)
@@ -707,8 +707,8 @@ public final class Bttl_800d {
       //LAB_800d2510
       //TODO these are .12, why does this not have to be scaled down? Why is scale so small?
       final Vector3f sp0x38 = new Vector3f().set(
-        (int)(rcos(0) * (manager._10.scale_16.x / effect.scaleModifier_01)),
-        (int)(rsin(0) * (manager._10.scale_16.y / effect.scaleModifier_01)),
+        rcos(0) * (manager._10.scale_16.x / effect.scaleModifier_01),
+        rsin(0) * (manager._10.scale_16.y / effect.scaleModifier_01),
         0
       );
 
@@ -723,8 +723,8 @@ public final class Bttl_800d {
         final Vector2f screenVert1 = new Vector2f(screenVert2);
 
         sp0x38.set(
-          (int)(rcos(angle + effect.angleStep_08) * (manager._10.scale_16.x / effect.scaleModifier_01)),
-          (int)(rsin(angle + effect.angleStep_08) * (manager._10.scale_16.y / effect.scaleModifier_01)),
+          rcos(angle + effect.angleStep_08) * (manager._10.scale_16.x / effect.scaleModifier_01),
+          rsin(angle + effect.angleStep_08) * (manager._10.scale_16.y / effect.scaleModifier_01),
           0
         );
 
@@ -4676,6 +4676,7 @@ public final class Bttl_800d {
         if((s6 & ((int)ls.transfer.z ^ tickCount_800bb0fc.get())) == 0 || ls.transfer.z - ls.transfer.x >= -0x800 && ls.transfer.z + ls.transfer.x >= -0x800 && ls.transfer.z - ls.transfer.y >= -0x800 && ls.transfer.z + ls.transfer.y >= -0x800) {
           //LAB_800dd9bc
           if((newAttribute & 0x8) != 0) {
+            //TODO pretty sure this is not equivalent to MATRIX#normalize
             lw.normal();
           }
 
@@ -4979,6 +4980,7 @@ public final class Bttl_800d {
 
     final MV sp0x10 = new MV();
     if((a1.flags_00 & 0x8) != 0) {
+      //TODO pretty sure this isn't equivalent to MATRIX#normalize
       a2.normal(sp0x10);
       GsSetLightMatrix(sp0x10);
     } else {
@@ -5022,9 +5024,9 @@ public final class Bttl_800d {
   public static Vector3f getRotationFromTransforms(final Vector3f rotOut, final MV transforms) {
     final MV mat = new MV(transforms);
     rotOut.x = MathHelper.atan2(-mat.m21, mat.m22);
-    mat.rotateX(-rotOut.x);
+    mat.rotateLocalX(-rotOut.x);
     rotOut.y = MathHelper.atan2(mat.m20, mat.m22);
-    mat.rotateY(-rotOut.y);
+    mat.rotateLocalY(-rotOut.y);
     rotOut.z = MathHelper.atan2(mat.m01, mat.m00);
     return rotOut;
   }
@@ -5033,12 +5035,12 @@ public final class Bttl_800d {
   public static void getRotationAndScaleFromTransforms(final Vector3f rotOut, final Vector3f scaleOut, final MV transforms) {
     final MV mat = new MV().set(transforms);
     rotOut.x = MathHelper.atan2(-mat.m21, mat.m22);
-    mat.rotateX(-rotOut.x);
+    mat.rotateLocalX(-rotOut.x);
     rotOut.y = MathHelper.atan2(mat.m20, mat.m22);
-    mat.rotateY(-rotOut.y);
+    mat.rotateLocalY(-rotOut.y);
     rotOut.z = MathHelper.atan2(mat.m01, mat.m00);
-    mat.rotateZ(-rotOut.z);
-    scaleOut.set(mat.m00 / (float)0x1000, mat.m11 / (float)0x1000, mat.m22 / (float)0x1000);
+    mat.rotateLocalZ(-rotOut.z);
+    scaleOut.set(mat.m00, mat.m11, mat.m22);
   }
 
   @Method(0x800de76cL)
