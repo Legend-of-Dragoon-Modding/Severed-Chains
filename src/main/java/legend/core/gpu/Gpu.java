@@ -569,7 +569,7 @@ public class Gpu {
     }
   }
 
-  void rasterizeTriangle(float vx0, float vy0, float vx1, float vy1, float vx2, float vy2, final int tu0, final int tv0, int tu1, int tv1, int tu2, int tv2, final int c0, int c1, int c2, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY, final Bpp bpp, final boolean isTextured, final boolean isShaded, final boolean isTranslucent, final boolean isRaw, final Translucency translucencyMode, @Nullable final VramTexture texture, @Nullable final VramTexture[] palettes) {
+  void rasterizeTriangle(float vx0, float vy0, float vx1, float vy1, float vx2, float vy2, final int tu0, final int tv0, int tu1, int tv1, int tu2, int tv2, final int c0, int c1, int c2, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY, final Bpp bpp, final boolean isTextured, final boolean isShaded, final boolean isTranslucent, final boolean isRaw, final Translucency translucencyMode, final boolean bias, @Nullable final VramTexture texture, @Nullable final VramTexture[] palettes) {
     vx0 *= this.scale;
     vy0 *= this.scale;
     vx1 *= this.scale;
@@ -624,11 +624,13 @@ public class Gpu {
     final float B12 = vx2 - vx1;
     final float A20 = vy2 - vy0;
     final float B20 = vx0 - vx2;
+*/
 
     final int bias0 = isTopLeft(vx1, vy1, vx2, vy2) ? 0 : -1;
     final int bias1 = isTopLeft(vx2, vy2, vx0, vy0) ? 0 : -1;
     final int bias2 = isTopLeft(vx0, vy0, vx1, vy1) ? 0 : -1;
 
+/*
     float w0_row = orient2d(vx1, vy1, vx2, vy2, minX + 0.5f, minY + 0.5f);
     float w1_row = orient2d(vx2, vy2, vx0, vy0, minX + 0.5f, minY + 0.5f);
     float w2_row = orient2d(vx0, vy0, vx1, vy1, minX + 0.5f, minY + 0.5f);
@@ -654,7 +656,7 @@ public class Gpu {
         w2 = orient2d(vx0, vy0, vx1, vy1, x + 0.5f, y + 0.5f);
 
         // If p is on or inside all edges, render pixel
-        if(w0 /*+ bias0*/ >= 0 && w1 /*+ bias1*/ >= 0 && w2 /*+ bias2*/ >= 0) {
+        if(bias && w0 + bias0 >= 0 && w1 + bias1 >= 0 && w2 + bias2 >= 0 || (!bias && w0 >= 0 && w1 >= 0 && w2>= 0)) {
 //          w0 /= area;
 //          w1 /= area;
 //          w2 /= area;

@@ -126,6 +126,7 @@ public class Renderable {
         0, this.paletteBase + Renderable.this.palette,
         this.pageX, 0, Bpp.BITS_4,
         this.segment.textured(), this.segment.shaded(), this.segment.translucent(), this.segment.raw(), this.translucency,
+        false,
         Renderable.this.texture, Renderable.this.palettes
       );
 
@@ -141,6 +142,7 @@ public class Renderable {
           0, this.paletteBase + Renderable.this.palette,
           this.pageX, 0, Bpp.BITS_4,
           this.segment.textured(), this.segment.shaded(), this.segment.translucent(), this.segment.raw(), this.translucency,
+          false,
           Renderable.this.texture, Renderable.this.palettes
         );
       }

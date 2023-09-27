@@ -1564,6 +1564,7 @@ public final class Scus94491BpeSegment_8002 {
           final RenderableMetrics14 metrics = metricses[i];
 
           final GpuCommandPoly cmd = new GpuCommandPoly(4)
+            .bias()
             .monochrome(0x80);
 
           final int x1;
