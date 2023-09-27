@@ -457,17 +457,16 @@ public final class Scus94491BpeSegment_8003 {
       final float sin = -MathHelper.sin(rads);
       final float cos = MathHelper.cosFromSin(-sin, rads);
 
-      //TODO this is probably transposed since psy-q matrices are row-major
       final Matrix3f rot = new Matrix3f();
-      rot.set(0, 0, cos);
-      rot.set(1, 0, sin);
-      rot.set(2, 0, 0.0f);
-      rot.set(0, 1, -sin);
-      rot.set(1, 1, cos);
-      rot.set(2, 1, 0.0f);
-      rot.set(0, 2, 0.0f);
-      rot.set(1, 2, 0.0f);
-      rot.set(2, 2, 1.0f);
+      rot.m00 = cos;
+      rot.m10 = sin;
+      rot.m20 = 0.0f;
+      rot.m01 = -sin;
+      rot.m11 = cos;
+      rot.m21 = 0.0f;
+      rot.m02 = 0.0f;
+      rot.m12 = 0.0f;
+      rot.m22 = 1.0f;
 
       matrix.mul(rot);
     }

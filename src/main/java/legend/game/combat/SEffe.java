@@ -7569,13 +7569,12 @@ public final class SEffe {
     v0.parent_30 = null;
     v0.ticksRemaining_32 = -1;
     v0.value_0c.set(manager._10.rot_10);
-    //TODO check if these are .12
-    v0.velocity_18.x = script.params_20[2].get() / (float)0x1000;
-    v0.velocity_18.y = script.params_20[3].get() / (float)0x1000;
-    v0.velocity_18.z = script.params_20[4].get() / (float)0x1000;
-    v0.acceleration_24.x = script.params_20[5].get() / (float)0x1000;
-    v0.acceleration_24.y = script.params_20[6].get() / (float)0x1000;
-    v0.acceleration_24.z = script.params_20[7].get() / (float)0x1000;
+    v0.velocity_18.x = MathHelper.psxDegToRad(script.params_20[2].get());
+    v0.velocity_18.y = MathHelper.psxDegToRad(script.params_20[3].get());
+    v0.velocity_18.z = MathHelper.psxDegToRad(script.params_20[4].get());
+    v0.acceleration_24.x = MathHelper.psxDegToRad(script.params_20[5].get());
+    v0.acceleration_24.y = MathHelper.psxDegToRad(script.params_20[6].get());
+    v0.acceleration_24.z = MathHelper.psxDegToRad(script.params_20[7].get());
     return FlowControl.CONTINUE;
   }
 
@@ -7632,15 +7631,13 @@ public final class SEffe {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentIndex", description = "The parent index (or -1 if none)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "distancePerTick", description = "The amount to rotate per frame until the rotation finishes")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The new X rotation (PSX degrees)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The new Y rotation (PSX degrees)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The new Z rotation (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "angle", description = "The new rotation (PSX degrees)")
   @Method(0x80112e00L)
   public static FlowControl scriptAddRotationScalerAttachmentDistance(final RunningScript<?> script) {
     final EffectManagerData6c<?> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
     final BattleObject parent = SCRIPTS.getObject(script.params_20[1].get(), BattleObject.class);
     final int distancePerTick = script.params_20[2].get();
-    final int angle = script.params_20[3].get();
+    final float angle = MathHelper.psxDegToRad(script.params_20[3].get());
 
     if(manager.hasAttachment(2)) {
       manager.removeAttachment(2);
@@ -7686,9 +7683,9 @@ public final class SEffe {
   @Method(0x8011306cL)
   public static FlowControl scriptAddRotationScalerAttachmentTowardsPointTicks(final RunningScript<?> script) {
     final int ticks = script.params_20[2].get();
-    final int x = script.params_20[3].get();
-    final int y = script.params_20[4].get();
-    final int z = script.params_20[5].get();
+    final float x = MathHelper.psxDegToRad(script.params_20[3].get());
+    final float y = MathHelper.psxDegToRad(script.params_20[4].get());
+    final float z = MathHelper.psxDegToRad(script.params_20[5].get());
 
     if(ticks >= 0) {
       final EffectManagerData6c<?> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
@@ -7736,9 +7733,9 @@ public final class SEffe {
     final EffectManagerData6c<?> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
     final BattleObject parent = SCRIPTS.getObject(script.params_20[1].get(), BattleObject.class);
     final int distancePerTick = script.params_20[2].get();
-    final int x = script.params_20[3].get();
-    final int y = script.params_20[4].get();
-    final int z = script.params_20[5].get();
+    final float x = MathHelper.psxDegToRad(script.params_20[3].get());
+    final float y = MathHelper.psxDegToRad(script.params_20[4].get());
+    final float z = MathHelper.psxDegToRad(script.params_20[5].get());
 
     if(manager.hasAttachment(2)) {
       manager.removeAttachment(2);
