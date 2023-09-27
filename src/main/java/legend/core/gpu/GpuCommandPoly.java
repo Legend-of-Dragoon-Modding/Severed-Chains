@@ -19,8 +19,8 @@ public class GpuCommandPoly extends GpuCommand {
   private boolean raw;
   private boolean textured;
 
-  private final int[] x;
-  private final int[] y;
+  private final float[] x;
+  private final float[] y;
   private final int[] u;
   private final int[] v;
   private final int[] colour;
@@ -35,8 +35,8 @@ public class GpuCommandPoly extends GpuCommand {
 
   public GpuCommandPoly(final int vertexCount) {
     this.vertexCount = vertexCount;
-    this.x = new int[vertexCount];
-    this.y = new int[vertexCount];
+    this.x = new float[vertexCount];
+    this.y = new float[vertexCount];
     this.u = new int[vertexCount];
     this.v = new int[vertexCount];
     this.colour = new int[vertexCount];
@@ -138,12 +138,8 @@ public class GpuCommandPoly extends GpuCommand {
   }
 
   public GpuCommandPoly pos(final int vertex, final float x, final float y) {
-    return this.pos(vertex, Math.round(x), Math.round(y));
-  }
-
-  public GpuCommandPoly pos(final int vertex, final int x, final int y) {
     if(vertex == 2 && Math.abs(x - this.x[0]) >= 3000 || vertex == 3 && Math.abs(y - this.y[1]) >= 1500) {
-      System.err.println("BAD COORD %d, %d".formatted(x, y));
+      System.err.printf("BAD COORD %.3f, %.3f%n", x, y);
       new Throwable().printStackTrace();
     }
 
@@ -152,11 +148,11 @@ public class GpuCommandPoly extends GpuCommand {
     return this;
   }
 
-  public int getX(final int vertex) {
+  public float getX(final int vertex) {
     return this.x[vertex];
   }
 
-  public int getY(final int vertex) {
+  public float getY(final int vertex) {
     return this.y[vertex];
   }
 

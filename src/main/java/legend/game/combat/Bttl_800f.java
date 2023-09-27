@@ -146,9 +146,9 @@ public final class Bttl_800f {
     }
 
     //LAB_800f1014
-    final int[] xs = new int[4];
-    final int[] ys = new int[4];
-    int position = parentCommand.getX(0) + 1;
+    final float[] xs = new float[4];
+    final float[] ys = new float[4];
+    float position = parentCommand.getX(0) + 1;
     xs[0] = position;
     xs[2] = position;
     position = parentCommand.getX(1) - 1;
@@ -163,12 +163,12 @@ public final class Bttl_800f {
 
     //LAB_800f1060
     for(int i = 0; i < 8; i++) {
-      final int leftX;
-      final int rightX;
+      final float leftX;
+      final float rightX;
       final int leftU;
       final int rightU;
-      final int topY = ys[borderMetrics[i].indexXy0_00.get()] - borderMetrics[i].offsetY_0a.get();
-      final int bottomY = ys[borderMetrics[i].indexXy1_02.get()] + borderMetrics[i].offsetY_0a.get();
+      final float topY = ys[borderMetrics[i].indexXy0_00.get()] - borderMetrics[i].offsetY_0a.get();
+      final float bottomY = ys[borderMetrics[i].indexXy1_02.get()] + borderMetrics[i].offsetY_0a.get();
       final int topV = borderMetrics[i].v_06.get();
       final int bottomV = topV + borderMetrics[i].h_0e.get();
 

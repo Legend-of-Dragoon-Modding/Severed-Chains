@@ -1,14 +1,14 @@
 package legend.game.combat.effects;
 
 public class ParticleEffectInstance94Sub10 {
-  public int x0_00;
-  public int y0_02;
-  public int x1_04;
-  public int y1_06;
-  public int x2_08;
-  public int y2_0a;
-  public int x3_0c;
-  public int y3_0e;
+  public float x0_00;
+  public float y0_02;
+  public float x1_04;
+  public float y1_06;
+  public float x2_08;
+  public float y2_0a;
+  public float x3_0c;
+  public float y3_0e;
 
   public void copy(final ParticleEffectInstance94Sub10 other) {
     this.x0_00 = other.x0_00;

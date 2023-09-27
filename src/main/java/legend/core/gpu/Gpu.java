@@ -26,6 +26,7 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.colour24To15;
+import static legend.core.MathHelper.flEq;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_EQUAL;
@@ -568,7 +569,7 @@ public class Gpu {
     }
   }
 
-  void rasterizeTriangle(int vx0, int vy0, int vx1, int vy1, int vx2, int vy2, final int tu0, final int tv0, int tu1, int tv1, int tu2, int tv2, final int c0, int c1, int c2, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY, final Bpp bpp, final boolean isTextured, final boolean isShaded, final boolean isTranslucent, final boolean isRaw, final Translucency translucencyMode, @Nullable final VramTexture texture, @Nullable final VramTexture[] palettes) {
+  void rasterizeTriangle(float vx0, float vy0, float vx1, float vy1, float vx2, float vy2, final int tu0, final int tv0, int tu1, int tv1, int tu2, int tv2, final int c0, int c1, int c2, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY, final Bpp bpp, final boolean isTextured, final boolean isShaded, final boolean isTranslucent, final boolean isRaw, final Translucency translucencyMode, @Nullable final VramTexture texture, @Nullable final VramTexture[] palettes) {
     vx0 *= this.scale;
     vy0 *= this.scale;
     vx1 *= this.scale;
@@ -576,15 +577,15 @@ public class Gpu {
     vx2 *= this.scale;
     vy2 *= this.scale;
 
-    int area = orient2d(vx0, vy0, vx1, vy1, vx2, vy2);
-    if(area == 0) {
+    float area = orient2d(vx0, vy0, vx1, vy1, vx2, vy2);
+    if(flEq(area, 0)) {
       return;
     }
 
     // Reorient triangle so it has clockwise winding
     if(area < 0) {
-      final int tempVX = vx1;
-      final int tempVY = vy1;
+      final float tempVX = vx1;
+      final float tempVY = vy1;
       vx1 = vx2;
       vy1 = vy2;
       vx2 = tempVX;
@@ -605,48 +606,58 @@ public class Gpu {
     }
 
     /*boundingBox*/
-    int minX = Math.min(vx0, Math.min(vx1, vx2));
-    int minY = Math.min(vy0, Math.min(vy1, vy2));
-    int maxX = Math.max(vx0, Math.max(vx1, vx2));
-    int maxY = Math.max(vy0, Math.max(vy1, vy2));
+    float minX = Math.min(vx0, Math.min(vx1, vx2));
+    float minY = Math.min(vy0, Math.min(vy1, vy2));
+    float maxX = Math.max(vx0, Math.max(vx1, vx2));
+    float maxY = Math.max(vy0, Math.max(vy1, vy2));
 
     /*clip*/
-    minX = (short)Math.max(minX, this.scaledDrawingArea.x.get());
-    minY = (short)Math.max(minY, this.scaledDrawingArea.y.get());
-    maxX = (short)Math.min(maxX, this.scaledDrawingArea.x.get() + this.scaledDrawingArea.w.get());
-    maxY = (short)Math.min(maxY, this.scaledDrawingArea.y.get() + this.scaledDrawingArea.h.get());
+    minX = Math.max(minX, this.scaledDrawingArea.x.get());
+    minY = Math.max(minY, this.scaledDrawingArea.y.get());
+    maxX = Math.min(maxX, this.scaledDrawingArea.x.get() + this.scaledDrawingArea.w.get());
+    maxY = Math.min(maxY, this.scaledDrawingArea.y.get() + this.scaledDrawingArea.h.get());
 
-    final int A01 = vy0 - vy1;
-    final int B01 = vx1 - vx0;
-    final int A12 = vy1 - vy2;
-    final int B12 = vx2 - vx1;
-    final int A20 = vy2 - vy0;
-    final int B20 = vx0 - vx2;
+    final float A01 = vy0 - vy1;
+    final float B01 = vx1 - vx0;
+    final float A12 = vy1 - vy2;
+    final float B12 = vx2 - vx1;
+    final float A20 = vy2 - vy0;
+    final float B20 = vx0 - vx2;
 
     final int bias0 = isTopLeft(vx1, vy1, vx2, vy2) ? 0 : -1;
     final int bias1 = isTopLeft(vx2, vy2, vx0, vy0) ? 0 : -1;
     final int bias2 = isTopLeft(vx0, vy0, vx1, vy1) ? 0 : -1;
 
-    int w0_row = orient2d(vx1, vy1, vx2, vy2, minX, minY);
-    int w1_row = orient2d(vx2, vy2, vx0, vy0, minX, minY);
-    int w2_row = orient2d(vx0, vy0, vx1, vy1, minX, minY);
+    float w0_row = orient2d(vx1, vy1, vx2, vy2, minX + 0.5f, minY + 0.5f);
+    float w1_row = orient2d(vx2, vy2, vx0, vy0, minX + 0.5f, minY + 0.5f);
+    float w2_row = orient2d(vx0, vy0, vx1, vy1, minX + 0.5f, minY + 0.5f);
+
+    final int minXi = Math.round(minX);
+    final int minYi = Math.round(minY);
+    final int maxXi = Math.round(maxX);
+    final int maxYi = Math.round(maxY);
 
     // Rasterize
-    for(int y = minY; y < maxY; y++) {
+    for(int y = minYi; y < maxYi; y++) {
       // Barycentric coordinates at start of row
-      int w0 = w0_row;
-      int w1 = w1_row;
-      int w2 = w2_row;
+      float w0 = w0_row;
+      float w1 = w1_row;
+      float w2 = w2_row;
 
-      for(int x = minX; x < maxX; x++) {
+      for(int x = minXi; x < maxXi; x++) {
+        w0 = orient2d(vx1, vy1, vx2, vy2, x + 0.5f, y + 0.5f);
+        w1 = orient2d(vx2, vy2, vx0, vy0, x + 0.5f, y + 0.5f);
+        w2 = orient2d(vx0, vy0, vx1, vy1, x + 0.5f, y + 0.5f);
+
         // If p is on or inside all edges, render pixel
-        if((w0 + bias0 | w1 + bias1 | w2 + bias2) >= 0) {
+        if(w0 /*+ bias0*/ >= 0 && w1 /*+ bias1*/ >= 0 && w2 /*+ bias2*/ >= 0) {
+//          w0 /= area;
+//          w1 /= area;
+//          w2 /= area;
+
           // Check background mask
           if(this.status.drawPixels == DRAW_PIXELS.NOT_TO_MASKED_AREAS) {
-            if((this.getPixel(x, y) & 0xff00_0000L) != 0) {
-              w0 += A12;
-              w1 += A20;
-              w2 += A01;
+            if((this.getPixel(x, y) & 0xff00_0000) != 0) {
               continue;
             }
           }
@@ -659,8 +670,8 @@ public class Gpu {
           }
 
           if(isTextured) {
-            final int texelX = interpolateCoords(w0, w1, w2, tu0, tu1, tu2, area);
-            final int texelY = interpolateCoords(w0, w1, w2, tv0, tv1, tv2, area);
+            final int texelX = (int)(interpolateCoords(w0, w1, w2, tu0, tu1, tu2, area));
+            final int texelY = (int)(interpolateCoords(w0, w1, w2, tv0, tv1, tv2, area));
 
             int texel;
             if(texture == null) {
@@ -859,9 +870,9 @@ public class Gpu {
     this.vram15[index] = pixel15;
   }
 
-  public static int interpolateCoords(final long w0, final long w1, final long w2, final int t0, final int t1, final int t2, final long area) {
+  public static float interpolateCoords(final float w0, final float w1, final float w2, final int t0, final int t1, final int t2, final float area) {
     //https://codeplea.com/triangular-interpolation
-    return (int)((t0 * w0 + t1 * w1 + t2 * w2) / area);
+    return (t0 * w0 + t1 * w1 + t2 * w2) / area;
   }
 
   private static int interpolateColours(final int c1, final int c2, final float ratio) {
@@ -876,10 +887,10 @@ public class Gpu {
     final byte g = (byte)(c2G * ratio + c1G * (1 - ratio));
     final byte r = (byte)(c2R * ratio + c1R * (1 - ratio));
 
-    return (r & 0xff) << 16 | (g & 0xff) << 8 | (b & 0xff);
+    return (r & 0xff) << 16 | (g & 0xff) << 8 | b & 0xff;
   }
 
-  public static boolean isTopLeft(final int ax, final int ay, final int bx, final int by) {
+  public static boolean isTopLeft(final float ax, final float ay, final float bx, final float by) {
     return ay == by && bx > ax || by < ay;
   }
 
@@ -892,7 +903,7 @@ public class Gpu {
   /**
    * Returns positive value for clockwise winding, negative value for counter-clockwise. 0 if vertices are collinear. Value is roughly twice the area of the triangle.
    */
-  public static int orient2d(final int ax, final int ay, final int bx, final int by, final int cx, final int cy) {
+  public static float orient2d(final float ax, final float ay, final float bx, final float by, final float cx, final float cy) {
     return (bx - ax) * (cy - ay) - (by - ay) * (cx - ax);
   }
 
@@ -983,12 +994,12 @@ public class Gpu {
     return tp << 24 | b << 16 | g << 8 | r;
   }
 
-  public int getShadedColor(final int w0, final int w1, final int w2, final int c0, final int c1, final int c2, final int area) {
-    final int r = ((c0        & 0xff) * w0 + (c1        & 0xff) * w1 + (c2        & 0xff) * w2) / area;
-    final int g = ((c0 >>>  8 & 0xff) * w0 + (c1 >>>  8 & 0xff) * w1 + (c2 >>>  8 & 0xff) * w2) / area;
-    final int b = ((c0 >>> 16 & 0xff) * w0 + (c1 >>> 16 & 0xff) * w1 + (c2 >>> 16 & 0xff) * w2) / area;
+  public int getShadedColor(final float w0, final float w1, final float w2, final int c0, final int c1, final int c2, final float area) {
+    final float r = ((c0        & 0xff) * w0 + (c1        & 0xff) * w1 + (c2        & 0xff) * w2) / area;
+    final float g = ((c0 >>>  8 & 0xff) * w0 + (c1 >>>  8 & 0xff) * w1 + (c2 >>>  8 & 0xff) * w2) / area;
+    final float b = ((c0 >>> 16 & 0xff) * w0 + (c1 >>> 16 & 0xff) * w1 + (c2 >>> 16 & 0xff) * w2) / area;
 
-    return b << 16 | g << 8 | r;
+    return (int)b << 16 | (int)g << 8 | (int)r;
   }
 
   public static class Status {
