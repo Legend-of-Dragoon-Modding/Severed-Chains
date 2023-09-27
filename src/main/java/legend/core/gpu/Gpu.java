@@ -617,6 +617,7 @@ public class Gpu {
     maxX = Math.min(maxX, this.scaledDrawingArea.x.get() + this.scaledDrawingArea.w.get());
     maxY = Math.min(maxY, this.scaledDrawingArea.y.get() + this.scaledDrawingArea.h.get());
 
+/*
     final float A01 = vy0 - vy1;
     final float B01 = vx1 - vx0;
     final float A12 = vy1 - vy2;
@@ -631,6 +632,7 @@ public class Gpu {
     float w0_row = orient2d(vx1, vy1, vx2, vy2, minX + 0.5f, minY + 0.5f);
     float w1_row = orient2d(vx2, vy2, vx0, vy0, minX + 0.5f, minY + 0.5f);
     float w2_row = orient2d(vx0, vy0, vx1, vy1, minX + 0.5f, minY + 0.5f);
+*/
 
     final int minXi = Math.round(minX);
     final int minYi = Math.round(minY);
@@ -642,9 +644,9 @@ public class Gpu {
     // Rasterize
     for(int y = minYi; y < maxYi; y++) {
       // Barycentric coordinates at start of row
-      float w0 = w0_row;
-      float w1 = w1_row;
-      float w2 = w2_row;
+      float w0/* = w0_row*/;
+      float w1/* = w1_row*/;
+      float w2/* = w2_row*/;
 
       for(int x = minXi; x < maxXi; x++) {
         w0 = orient2d(vx1, vy1, vx2, vy2, x + 0.5f, y + 0.5f);
