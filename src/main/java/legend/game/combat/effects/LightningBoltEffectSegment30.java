@@ -19,9 +19,9 @@ public class LightningBoltEffectSegment30 {
   /** short; Incremented while rendering, but never used for anything. */
   public float unused_2a;
   /** short */
-  public int originTranslationMagnitude_2c;
-  /** short */
-  public int baseVertexTranslationScale_2e;
+  public float originTranslationMagnitude_2c;
+  /** Was 8-bit fixed-point short */
+  public float baseVertexTranslationScale_2e;
 
   public LightningBoltEffectSegment30(final int index) {
     this.index = index;

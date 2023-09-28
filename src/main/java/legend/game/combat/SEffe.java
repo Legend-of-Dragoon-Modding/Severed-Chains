@@ -2584,8 +2584,8 @@ public final class SEffe {
         final LightningBoltEffectSegment30 boltSegment = boltEffect.boltSegments_10[i];
         boltSegment.origin_00.set(newOrigin);
 
-        newOrigin.x += (seed_800fa754.advance().get() % 257 - 128) * electricEffect.segmentOriginTranslationModifier_26 >>> 7;
-        newOrigin.z += (seed_800fa754.advance().get() % 257 - 128) * electricEffect.segmentOriginTranslationModifier_26 >>> 7;
+        newOrigin.x += (seed_800fa754.advance().get() % 257 - 128) * electricEffect.segmentOriginTranslationModifier_26 >> 7;
+        newOrigin.z += (seed_800fa754.advance().get() % 257 - 128) * electricEffect.segmentOriginTranslationModifier_26 >> 7;
         newOrigin.add(secondaryScriptTranslation);
       }
     }
@@ -2675,26 +2675,26 @@ public final class SEffe {
 
   @Method(0x80102bfcL)
   public static void initializeElectricityNodes(final EffectManagerData6c<EffectManagerData6cInner.ElectricityType> manager, final ElectricityEffect38 electricEffect, final LightningBoltEffect14 bolt) {
-    short segmentOriginX = 0;
-    final int segmentOriginY = -(short)(electricEffect.boltAngleRangeCutoff_1c / electricEffect.boltSegmentCount_28);
-    short segmentOriginZ = 0;
+    float segmentOriginX = 0;
+    final float segmentOriginY = -(electricEffect.boltAngleRangeCutoff_1c / (float)electricEffect.boltSegmentCount_28);
+    float segmentOriginZ = 0;
 
     //LAB_80102c58
     for(int i = 0; i < electricEffect.boltSegmentCount_28; i++) {
       final LightningBoltEffectSegment30 segment = bolt.boltSegments_10[i];
       segment.origin_00.set(segmentOriginX, segmentOriginY * i, segmentOriginZ);
-      segment.scaleMultiplier_28 = (int)(seed_800fa754.advance().get() % 7 + 5);
+      segment.scaleMultiplier_28 = seed_800fa754.advance().get() % 7 + 5;
       segment.unused_2a = 0;
-      segment.originTranslationMagnitude_2c = segmentOriginX >> 4;
-      segment.baseVertexTranslationScale_2e = (int)(seed_800fa754.advance().get() % 193 + 64);
+      segment.originTranslationMagnitude_2c = segmentOriginX / 16.0f;
+      segment.baseVertexTranslationScale_2e = (seed_800fa754.advance().get() % 193 + 64) / (float)0x100;
 
       if(electricEffect.addSuccessiveSegmentOriginTranslations_14) {
-        segmentOriginX += (seed_800fa754.advance().get() % 257 - 128) * electricEffect.segmentOriginTranslationModifier_26 >>> 7;
-        segmentOriginZ += (seed_800fa754.advance().get() % 257 - 128) * electricEffect.segmentOriginTranslationModifier_26 >>> 7;
+        segmentOriginX += (seed_800fa754.advance().get() % 257 - 128) * electricEffect.segmentOriginTranslationModifier_26 >> 7;
+        segmentOriginZ += (seed_800fa754.advance().get() % 257 - 128) * electricEffect.segmentOriginTranslationModifier_26 >> 7;
         //LAB_80102e58
       } else if(i < electricEffect.boltSegmentCount_28 - 2) {
-        segmentOriginX = (short)((seed_800fa754.advance().get() % 257 - 128) * electricEffect.segmentOriginTranslationModifier_26 >>> 7);
-        segmentOriginZ = (short)((seed_800fa754.advance().get() % 257 - 128) * electricEffect.segmentOriginTranslationModifier_26 >>> 7);
+        segmentOriginX = (seed_800fa754.advance().get() % 257 - 128) * electricEffect.segmentOriginTranslationModifier_26 >> 7;
+        segmentOriginZ = (seed_800fa754.advance().get() % 257 - 128) * electricEffect.segmentOriginTranslationModifier_26 >> 7;
       } else {
         //LAB_80102f44
         segmentOriginX = 0;
@@ -2843,7 +2843,7 @@ public final class SEffe {
               final float baseY2 = (centerLineEndpointY - centerLineOriginY) * currentSegment.baseVertexTranslationScale_2e + centerLineOriginY;
 
               //LAB_80103808
-              int baseColour = currentSegment.innerColour_10.getX() + Math.abs(currentSegment.originTranslationMagnitude_2c - nextSegment.originTranslationMagnitude_2c) * 8;
+              int baseColour = (int)(currentSegment.innerColour_10.getX() + Math.abs(currentSegment.originTranslationMagnitude_2c - nextSegment.originTranslationMagnitude_2c) * 8);
               if((baseColour & 0xffff) > 0xff00) {
                 baseColour = 0xff00;
               }
@@ -7139,17 +7139,17 @@ public final class SEffe {
     final int bobjIndex = script.params_20[0].get();
     final int parentIndex = script.params_20[1].get();
 
-    final BattleObject bobj = (BattleObject)scriptStatePtrArr_800bc1c0[bobjIndex].innerStruct_00;
+    final BattleObject bobj = SCRIPTS.getObject(bobjIndex, BattleObject.class);
 
-    if(BattleObject.EM__.equals(bobj.magic_00) && ((EffectManagerData6c<?>)bobj).hasAttachment(1)) {
-      ((EffectManagerData6c<?>)bobj).removeAttachment(1);
+    if(bobj instanceof final EffectManagerData6c<?> manager && manager.hasAttachment(1)) {
+      manager.removeAttachment(1);
     }
 
     //LAB_801106dc
     if(parentIndex == -1) {
       bobj.getPosition().set(translation);
     } else {
-      final BattleObject parent = (BattleObject)scriptStatePtrArr_800bc1c0[parentIndex].innerStruct_00;
+      final BattleObject parent = SCRIPTS.getObject(parentIndex, BattleObject.class);
       parent.getRelativePosition(translation, bobj.getPosition());
     }
 
@@ -7182,38 +7182,38 @@ public final class SEffe {
   @ScriptDescription("Adds a position scaler attachment to an effect (relative to a battle object if specified)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentIndex", description = "The parent index (or -1 for none)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityX", description = "The X velocity")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityY", description = "The Y velocity")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityZ", description = "The Z velocity")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationX", description = "The X acceleration")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationY", description = "The Y acceleration")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationZ", description = "The Z acceleration")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityX", description = "The X velocity (8-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityY", description = "The Y velocity (8-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityZ", description = "The Z velocity (8-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationX", description = "The X acceleration (8-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationY", description = "The Y acceleration (8-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationZ", description = "The Z acceleration (8-bit fixed-point)")
   @Method(0x80111c2cL)
   public static FlowControl scriptAddPositionScalerAttachment(final RunningScript<?> script) {
-    addPositionScalerAttachment(SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class), SCRIPTS.getObject(script.params_20[1].get(), BattleObject.class), script.params_20[2].get() / (float)0x1000, script.params_20[3].get() / (float)0x1000, script.params_20[4].get() / (float)0x1000, script.params_20[5].get() / (float)0x1000, script.params_20[6].get() / (float)0x1000, script.params_20[7].get() / (float)0x1000);
+    addPositionScalerAttachment(SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class), SCRIPTS.getObject(script.params_20[1].get(), BattleObject.class), script.params_20[2].get() / (float)0x100, script.params_20[3].get() / (float)0x100, script.params_20[4].get() / (float)0x100, script.params_20[5].get() / (float)0x100, script.params_20[6].get() / (float)0x100, script.params_20[7].get() / (float)0x100);
     return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Adds or updates a position scaler attachment to an effect (relative to a battle object if specified)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentIndex", description = "The parent index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityX", description = "The X velocity")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityY", description = "The Y velocity")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityZ", description = "The Z velocity")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationX", description = "The X acceleration")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationY", description = "The Y acceleration")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationZ", description = "The Z acceleration")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityX", description = "The X velocity (8-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityY", description = "The Y velocity (8-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityZ", description = "The Z velocity (8-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationX", description = "The X acceleration (8-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationY", description = "The Y acceleration (8-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationZ", description = "The Z acceleration (8-bit fixed-point)")
   @Method(0x80111cc4L)
   public static FlowControl scriptAddOrUpdatePositionScalerAttachment(final RunningScript<?> script) {
     final EffectManagerData6c<?> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
     final BattleObject bobj = SCRIPTS.getObject(script.params_20[1].get(), BattleObject.class);
 
-    float velocityX = script.params_20[2].get() / (float)0x1000;
-    float velocityY = script.params_20[3].get() / (float)0x1000;
-    float velocityZ = script.params_20[4].get() / (float)0x1000;
-    float accelerationX = script.params_20[5].get() / (float)0x1000;
-    float accelerationY = script.params_20[6].get() / (float)0x1000;
-    float accelerationZ = script.params_20[7].get() / (float)0x1000;
+    float velocityX = script.params_20[2].get() / (float)0x100;
+    float velocityY = script.params_20[3].get() / (float)0x100;
+    float velocityZ = script.params_20[4].get() / (float)0x100;
+    float accelerationX = script.params_20[5].get() / (float)0x100;
+    float accelerationY = script.params_20[6].get() / (float)0x100;
+    float accelerationZ = script.params_20[7].get() / (float)0x100;
 
     if(!manager.hasAttachment(1)) {
       addPositionScalerAttachment(manager, bobj, velocityX, velocityY, velocityZ, accelerationX, accelerationY, accelerationZ);
@@ -7275,10 +7275,10 @@ public final class SEffe {
         final MV rotMatrix = new MV();
         rotMatrix.rotationZYX(rotation);
 
-        final Vector3f acceleration = new Vector3f().set(
-          script.params_20[2].get(),
-          script.params_20[3].get(),
-          script.params_20[4].get()
+        final Vector3f acceleration = new Vector3f(
+          script.params_20[2].get() / (float)0x100,
+          script.params_20[3].get() / (float)0x100,
+          script.params_20[4].get() / (float)0x100
         ).mul(rotMatrix);
 
         ticksRemaining++;
@@ -7357,13 +7357,13 @@ public final class SEffe {
   @ScriptDescription("Gets the position scaler attachment velocity")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X velocity")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y velocity")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z velocity")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X velocity (8-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y velocity (8-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z velocity (8-bit fixed-point)")
   @Method(0x80112398L)
   public static FlowControl scriptGetPositionScalerAttachmentVelocity(final RunningScript<?> script) {
     final EffectManagerData6c<?> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
-    final VECTOR velocity = new VECTOR();
+    final Vector3f velocity = new Vector3f();
 
     if(manager.hasAttachment(1)) {
       final TransformScalerAttachment34 attachment = (TransformScalerAttachment34)manager.findAttachment(1);
@@ -7374,9 +7374,9 @@ public final class SEffe {
     }
 
     //LAB_80112430
-    script.params_20[2].set(velocity.getX());
-    script.params_20[3].set(velocity.getY());
-    script.params_20[4].set(velocity.getZ());
+    script.params_20[2].set(Math.round(velocity.x * 0x100));
+    script.params_20[3].set(Math.round(velocity.y * 0x100));
+    script.params_20[4].set(Math.round(velocity.z * 0x100));
     return FlowControl.CONTINUE;
   }
 
@@ -7550,12 +7550,12 @@ public final class SEffe {
   @ScriptDescription("Adds a rotation scaler attachment to an effect")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityX", description = "The X rotation velocity")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityY", description = "The Y rotation velocity")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityZ", description = "The Z rotation velocity")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationX", description = "The X rotation acceleration")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationY", description = "The Y rotation acceleration")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationZ", description = "The Z rotation acceleration")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityX", description = "The X rotation velocity (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityY", description = "The Y rotation velocity (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityZ", description = "The Z rotation velocity (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationX", description = "The X rotation acceleration (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationY", description = "The Y rotation acceleration (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationZ", description = "The Z rotation acceleration (PSX degrees)")
   @Method(0x80112aa4L)
   public static FlowControl scriptAddRotationScalerAttachment(final RunningScript<?> script) {
     final EffectManagerData6c<?> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
@@ -7733,9 +7733,9 @@ public final class SEffe {
     final EffectManagerData6c<?> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
     final BattleObject parent = SCRIPTS.getObject(script.params_20[1].get(), BattleObject.class);
     final int distancePerTick = script.params_20[2].get();
-    final float x = MathHelper.psxDegToRad(script.params_20[3].get());
-    final float y = MathHelper.psxDegToRad(script.params_20[4].get());
-    final float z = MathHelper.psxDegToRad(script.params_20[5].get());
+    final float x = script.params_20[3].get();
+    final float y = script.params_20[4].get();
+    final float z = script.params_20[5].get();
 
     if(manager.hasAttachment(2)) {
       manager.removeAttachment(2);
@@ -7777,12 +7777,12 @@ public final class SEffe {
 
   @ScriptDescription("Converts a YXZ rotation to a XYZ rotation")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "yxzX", description = "The YXZ X rotation")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "yxzY", description = "The YXZ Y rotation")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "yxzZ", description = "The YXZ Z rotation")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "xyzX", description = "The XYZ X rotation")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "xyzY", description = "The XYZ Y rotation")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "xyzZ", description = "The XYZ Z rotation")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "yxzX", description = "The YXZ X rotation (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "yxzY", description = "The YXZ Y rotation (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "yxzZ", description = "The YXZ Z rotation (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "xyzX", description = "The XYZ X rotation (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "xyzY", description = "The XYZ Y rotation (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "xyzZ", description = "The XYZ Z rotation (PSX degrees)")
   @Method(0x8011357cL)
   public static FlowControl scriptConvertRotationYxzToXyz(final RunningScript<?> script) {
     final Vector3f rot = new Vector3f(
@@ -7819,18 +7819,18 @@ public final class SEffe {
       scale = bobj1.getScaleRatio(bobj2, new Vector3f());
     }
 
-    script.params_20[2].set((int)(scale.x * 0x1000));
-    script.params_20[3].set((int)(scale.y * 0x1000));
-    script.params_20[4].set((int)(scale.z * 0x1000));
+    script.params_20[2].set(Math.round(scale.x * 0x1000));
+    script.params_20[3].set(Math.round(scale.y * 0x1000));
+    script.params_20[4].set(Math.round(scale.z * 0x1000));
     return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Sets the relative scale between two battle objects (or from the origin if the second is -1)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex1", description = "The battle object 1")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex2", description = "The battle object 2 (or -1 for none)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X rotation (PSX degrees)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y rotation (PSX degrees)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z rotation (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X rotation (12-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y rotation (12-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z rotation (12-bit fixed-point)")
   @Method(0x801139d0L)
   public static FlowControl scriptSetRelativeScale(final RunningScript<?> script) {
     final BattleObject data1 = SCRIPTS.getObject(script.params_20[0].get(), BattleObject.class);
@@ -7876,12 +7876,12 @@ public final class SEffe {
   /** Set scale value and rate of change factors */
   @ScriptDescription("Adds a scale scaler attachment towards a point to an effect (relative to a parent battle object if one is specified)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityX", description = "The X velocity")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityY", description = "The Y velocity")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityZ", description = "The Z velocity")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationX", description = "The X acceleration")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationY", description = "The Y acceleration")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationZ", description = "The Z acceleration")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityX", description = "The X velocity (12-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityY", description = "The Y velocity (12-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityZ", description = "The Z velocity (12-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationX", description = "The X acceleration (12-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationY", description = "The Y acceleration (12-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationZ", description = "The Z acceleration (12-bit fixed-point)")
   @Method(0x80113c6cL)
   public static FlowControl scriptAddScaleScalerAttachment(final RunningScript<?> script) {
     final EffectManagerData6c<?> scalerManager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
@@ -8068,22 +8068,22 @@ public final class SEffe {
 
   @ScriptDescription("Adds a colour scaler attachment to an effect (lasts until removed)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityX", description = "The X velocity")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityY", description = "The Y velocity")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityZ", description = "The Z velocity")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationX", description = "The X acceleration")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationY", description = "The Y acceleration")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationZ", description = "The Z acceleration")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityX", description = "The X velocity (8-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityY", description = "The Y velocity (8-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "velocityZ", description = "The Z velocity (8-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationX", description = "The X acceleration (8-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationY", description = "The Y acceleration (8-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "accelerationZ", description = "The Z acceleration (8-bit fixed-point)")
   @Method(0x801147c8L)
   public static FlowControl scriptAddColourScalerAttachment(final RunningScript<?> script) {
     final int effectIndex = script.params_20[0].get();
-    //TODO is this .12
-    final float velocityX = script.params_20[1].get() / (float)0x1000;
-    final float velocityY = script.params_20[2].get() / (float)0x1000;
-    final float velocityZ = script.params_20[3].get() / (float)0x1000;
-    final float accelerationX = script.params_20[4].get() / (float)0x1000;
-    final float accelerationY = script.params_20[5].get() / (float)0x1000;
-    final float accelerationZ = script.params_20[6].get() / (float)0x1000;
+    //TODO .8?
+    final float velocityX = script.params_20[1].get() / (float)0x100;
+    final float velocityY = script.params_20[2].get() / (float)0x100;
+    final float velocityZ = script.params_20[3].get() / (float)0x100;
+    final float accelerationX = script.params_20[4].get() / (float)0x100;
+    final float accelerationY = script.params_20[5].get() / (float)0x100;
+    final float accelerationZ = script.params_20[6].get() / (float)0x100;
     final EffectManagerData6c<?> manager = SCRIPTS.getObject(effectIndex, EffectManagerData6c.class);
 
     if(manager.hasAttachment(4)) {
@@ -8128,6 +8128,7 @@ public final class SEffe {
         colour = manager.getColourDifference(other, new USCOLOUR());
       }
 
+      // .8?
       final Vector3f velocityVec = new Vector3f().set(
         script.params_20[3].get(),
         script.params_20[4].get(),
@@ -9411,8 +9412,8 @@ public final class SEffe {
 
       //LAB_80117ac0
       //LAB_80117acc
-      final EffectManagerData6c<EffectManagerData6cInner.AnimType> sp0x10 = new EffectManagerData6c<>("Temp 2", new EffectManagerData6cInner.AnimType());
-      sp0x10.set(manager);
+      final EffectManagerData6c<EffectManagerData6cInner.AnimType> anim = new EffectManagerData6c<>("Temp 2", new EffectManagerData6cInner.AnimType());
+      anim.set(manager);
 
       final MV sp0x80 = new MV();
       calculateEffectTransforms(sp0x80, manager);
@@ -9430,61 +9431,61 @@ public final class SEffe {
       }
 
       //LAB_80117b8c
-      final int s4 = effect._38;
+      final int steps = effect._38;
 
-      if(s4 >= 2) {
+      if(steps >= 2) {
         final int spe4 = effect._3c;
-        int s5;
-        int s6;
-        int s7;
-        final int spd0;
-        final int spd4;
-        final int spd8;
+        int accumulatorR;
+        int accumulatorG;
+        int accumulatorB;
+        final int stepR;
+        final int stepG;
+        final int stepB;
         if((effect._34 & 0x4) != 0) {
           final int v0 = effect._40 - 0x1000;
-          spd0 = sp0x10._10.colour_1c.getX() * v0 / s4;
-          spd4 = sp0x10._10.colour_1c.getY() * v0 / s4;
-          spd8 = sp0x10._10.colour_1c.getZ() * v0 / s4;
-          s5 = sp0x10._10.colour_1c.getX() << 12;
-          s6 = sp0x10._10.colour_1c.getY() << 12;
-          s7 = sp0x10._10.colour_1c.getZ() << 12;
+          stepR = anim._10.colour_1c.getX() * v0 / steps;
+          stepG = anim._10.colour_1c.getY() * v0 / steps;
+          stepB = anim._10.colour_1c.getZ() * v0 / steps;
+          accumulatorR = anim._10.colour_1c.getX() << 12;
+          accumulatorG = anim._10.colour_1c.getY() << 12;
+          accumulatorB = anim._10.colour_1c.getZ() << 12;
         } else {
           //LAB_80117c30
-          s5 = 0;
-          s6 = 0;
-          s7 = 0;
-          spd0 = 0;
-          spd4 = 0;
-          spd8 = 0;
+          accumulatorR = 0;
+          accumulatorG = 0;
+          accumulatorB = 0;
+          stepR = 0;
+          stepG = 0;
+          stepB = 0;
         }
 
         //LAB_80117c48
-        int spdc = 0;
-        int spe0 = 0;
+        int accumulatorScale = 0;
+        int stepScale = 0;
         if((effect._34 & 0x8) != 0) {
-          final int t4 = sp0x10._10.scale_28 * (effect._40 - 0x1000);
-          spdc = sp0x10._10.scale_28 << 12;
-          spe0 = t4 / s4;
+          final int t4 = anim._10.scale_28 * (effect._40 - 0x1000);
+          accumulatorScale = anim._10.scale_28 << 12;
+          stepScale = t4 / steps;
         }
 
         //LAB_80117c88
         s1 -= spe4;
 
         //LAB_80117ca0
-        for(int i = 1; i < s4 && s1 >= 0; i++) {
+        for(int i = 1; i < steps && s1 >= 0; i++) {
           if((effect._34 & 0x4) != 0) {
-            s5 = s5 + spd0;
-            s6 = s6 + spd4;
-            s7 = s7 + spd8;
-            manager._10.colour_1c.setX(s5 >> 12);
-            manager._10.colour_1c.setY(s6 >> 12);
-            manager._10.colour_1c.setZ(s7 >> 12);
+            accumulatorR += stepR;
+            accumulatorG += stepG;
+            accumulatorB += stepB;
+            manager._10.colour_1c.setX(accumulatorR >> 12);
+            manager._10.colour_1c.setY(accumulatorG >> 12);
+            manager._10.colour_1c.setZ(accumulatorB >> 12);
           }
 
           //LAB_80117d1c
           if((effect._34 & 0x8) != 0) {
-            spdc = spdc + spe0;
-            manager._10.scale_28 = spdc >> 12;
+            accumulatorScale += stepScale;
+            manager._10.scale_28 = accumulatorScale >> 12;
           }
 
           //LAB_80117d54
@@ -9506,7 +9507,7 @@ public final class SEffe {
 
       //LAB_80117e14
       //LAB_80117e20
-      manager.set(sp0x10);
+      manager.set(anim);
 
       if((manager._10.flags_00 & 0x40) == 0) {
         FUN_800e62a8();

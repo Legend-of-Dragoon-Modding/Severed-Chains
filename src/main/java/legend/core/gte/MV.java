@@ -54,7 +54,7 @@ public class MV extends Matrix3f {
     this.transfer.mul(other, out.transfer);
     out.transfer.add(vx, vy, vz);
 
-    this.mul(other, out);
+    other.mul(this, out);
     return this;
   }
 

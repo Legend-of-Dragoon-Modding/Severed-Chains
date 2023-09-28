@@ -70,20 +70,18 @@ public class MainMenuScreen extends MenuScreen {
     this.addButton("Inventory", this::showItemListScreen);
     this.addButton("Goods", this::showGoodsScreen);
     this.addButton("Diiig", this::showDabasScreen);
-    this.addButton("", () -> { }).hide();
+    this.addButton("Quit", () -> menuStack.pushScreen(new MessageBoxScreen(new LodString("Quit to main menu?"), 2, result -> {
+      if(result == MessageBoxResult.YES) {
+        this.menuEscape();
+        whichMenu_800bdc38 = WhichMenu.QUIT;
+      }
+    })));
     this.addButton("Status", this::showStatusScreen);
     this.addButton("Addition", this::showAdditionsScreen);
     this.addButton("Replace", this::showCharSwapScreen);
     this.addButton("Options", this::showOptionsScreen);
+    this.addButton("", () -> { }).hide();
     this.addButton("Save", this::showSaveScreen).setDisabled(!canSave_8011dc88.get());
-    this.addButton("Quit", () -> {
-      menuStack.pushScreen(new MessageBoxScreen(new LodString("Quit to main menu?"), 2, result -> {
-        if(result == MessageBoxResult.YES) {
-          this.menuEscape();
-          whichMenu_800bdc38 = WhichMenu.QUIT;
-        }
-      }));
-    });
 
     for(int i = 0; i < 3; i++) {
       this.addCharCard(i);
@@ -118,7 +116,7 @@ public class MainMenuScreen extends MenuScreen {
           for(int i = 1; i < this.menuButtons.size(); i++) {
             final Button otherButton = this.menuButtons.get(Math.floorMod(index + i, this.menuButtons.size()));
 
-            if(!otherButton.isDisabled()) {
+            if(!otherButton.isDisabled() && otherButton.isVisible()) {
               this.setFocus(otherButton);
               break;
             }
@@ -128,7 +126,7 @@ public class MainMenuScreen extends MenuScreen {
           for(int i = 1; i < this.menuButtons.size(); i++) {
             final Button otherButton = this.menuButtons.get(Math.floorMod(index - i, this.menuButtons.size()));
 
-            if(!otherButton.isDisabled()) {
+            if(!otherButton.isDisabled() && otherButton.isVisible()) {
               this.setFocus(otherButton);
               break;
             }
