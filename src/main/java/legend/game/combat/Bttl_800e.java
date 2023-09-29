@@ -499,9 +499,9 @@ public final class Bttl_800e {
 
   @ScriptDescription("Unknown, must change battle light over time")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z (PSX degrees)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks", description = "The number of ticks for the change")
   @Method(0x800e4ea0L)
   public static FlowControl FUN_800e4ea0(final RunningScript<?> script) {
@@ -511,7 +511,7 @@ public final class Bttl_800e {
 
     t0._00 = 0;
     t0.angleAndColour_04.set(light.light_00.direction_00);
-    t0.vec_28.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    t0.vec_28.set(MathHelper.psxDegToRad(script.params_20[1].get()), MathHelper.psxDegToRad(script.params_20[2].get()), MathHelper.psxDegToRad(script.params_20[3].get()));
     t0.ticksRemaining_34 = ticks;
 
     if(ticks > 0) {
@@ -694,7 +694,7 @@ public final class Bttl_800e {
     t0.angleAndColour_04.x = light.light_00.r_0c;
     t0.angleAndColour_04.y = light.light_00.g_0d;
     t0.angleAndColour_04.z = light.light_00.b_0e;
-    t0.vec_28.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    t0.vec_28.set(script.params_20[1].get() / (float)0x80, script.params_20[2].get() / (float)0x80, script.params_20[3].get() / (float)0x80);
     t0.ticksRemaining_34 = ticks;
 
     if(ticks > 0) {
