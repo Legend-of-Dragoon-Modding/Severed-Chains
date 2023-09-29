@@ -1,7 +1,6 @@
 package legend.game;
 
 import legend.core.gpu.Bpp;
-import legend.core.gte.MATRIX;
 import legend.core.gte.MV;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;

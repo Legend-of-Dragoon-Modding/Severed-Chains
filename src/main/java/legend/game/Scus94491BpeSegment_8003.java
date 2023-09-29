@@ -6,7 +6,6 @@ import legend.core.gpu.GpuCommandFillVram;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.GsCOORDINATE2;
-import legend.core.gte.MATRIX;
 import legend.core.gte.MV;
 import legend.core.gte.SVECTOR;
 import legend.core.memory.Method;
@@ -20,7 +19,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Math;
 import org.joml.Matrix3f;
-import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -977,10 +975,5 @@ public final class Scus94491BpeSegment_8003 {
     sxy3.set(GTE.getScreenX(2), GTE.getScreenY(2));
 
     return GTE.getScreenZ(3) / 4.0f;
-  }
-
-  @Method(0x8003faf0L)
-  public static void RotMatrix_Xyz(final Vector3f rotation, final MATRIX matrixOut) {
-    matrixOut.set(new Matrix4f().rotateXYZ(rotation.x, rotation.y, rotation.z));
   }
 }

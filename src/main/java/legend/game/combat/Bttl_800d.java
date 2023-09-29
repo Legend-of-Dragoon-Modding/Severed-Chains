@@ -5,13 +5,11 @@ import legend.core.MathHelper;
 import legend.core.gpu.GpuCommandLine;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.COLOUR;
-import legend.core.gte.MATRIX;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
-import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.types.CString;
 import legend.core.memory.types.ComponentFunction;
@@ -90,7 +88,6 @@ import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
-import static legend.game.Scus94491BpeSegment_8003.RotMatrix_Xyz;
 import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.getScreenOffset;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
@@ -2658,15 +2655,11 @@ public final class Bttl_800d {
     cameraRotationVector_800fab98.x = cam.vec_d4.x;
     cameraRotationVector_800fab98.y = cam.vec_d4.y;
     cameraRotationVector_800fab98.z = 0.0f;
-    RotMatrix_Xyz(cameraRotationVector_800fab98, cameraTransformMatrix_800c6798);
+    cameraTransformMatrix_800c6798.rotationXYZ(cameraRotationVector_800fab98);
     cam.stepZ_a4 += cam.stepZAcceleration_b4;
     cam.vec_d4.z -= cam.stepZ_a4;
-    MATRIX.mul(temp1_800faba0.set(0.0f, 0.0f, cam.vec_d4.z), cameraTransformMatrix_800c6798, temp2_800faba8);
-    temp2_800faba8.add(
-      cameraTransformMatrix_800c6798.transfer.getX(),
-      cameraTransformMatrix_800c6798.transfer.getY(),
-      cameraTransformMatrix_800c6798.transfer.getZ()
-    );
+    temp1_800faba0.set(0.0f, 0.0f, cam.vec_d4.z).mul(cameraTransformMatrix_800c6798, temp2_800faba8);
+    temp2_800faba8.add(cameraTransformMatrix_800c6798.transfer);
     cam.viewpointBaseTranslation_94.x = cam.viewpointTargetTranslation_e8.x - temp2_800faba8.z;
     cam.viewpointBaseTranslation_94.y = cam.viewpointTargetTranslation_e8.y - temp2_800faba8.x;
     cam.viewpointBaseTranslation_94.z = cam.viewpointTargetTranslation_e8.z + temp2_800faba8.y;
@@ -2711,15 +2704,11 @@ public final class Bttl_800d {
     cameraRotationVector_800fab98.x = cam.vec_d4.x;
     cameraRotationVector_800fab98.y = cam.vec_d4.y;
     cameraRotationVector_800fab98.z = 0.0f;
-    RotMatrix_Xyz(cameraRotationVector_800fab98, cameraTransformMatrix_800c6798);
+    cameraTransformMatrix_800c6798.rotationXYZ(cameraRotationVector_800fab98);
     cam.stepZ_a4 += cam.stepZAcceleration_b4;
     cam.vec_d4.z -= cam.stepZ_a4;
-    MATRIX.mul(temp1_800faba0.set(0.0f, 0.0f, cam.vec_d4.z), cameraTransformMatrix_800c6798, temp2_800faba8);
-    temp2_800faba8.add(
-      cameraTransformMatrix_800c6798.transfer.getX(),
-      cameraTransformMatrix_800c6798.transfer.getY(),
-      cameraTransformMatrix_800c6798.transfer.getZ()
-    );
+    temp1_800faba0.set(0.0f, 0.0f, cam.vec_d4.z).mul(cameraTransformMatrix_800c6798, temp2_800faba8);
+    temp2_800faba8.add(cameraTransformMatrix_800c6798.transfer);
 
     cam.viewpointBaseTranslation_94.x = cam.viewpointTargetTranslation_e8.x - temp2_800faba8.z;
     cam.viewpointBaseTranslation_94.y = cam.viewpointTargetTranslation_e8.y - temp2_800faba8.x;
@@ -2772,15 +2761,11 @@ public final class Bttl_800d {
     cameraRotationVector_800fab98.x = cam.vec_d4.x;
     cameraRotationVector_800fab98.y = cam.vec_d4.y;
     cameraRotationVector_800fab98.z = 0.0f;
-    RotMatrix_Xyz(cameraRotationVector_800fab98, cameraTransformMatrix_800c6798);
+    cameraTransformMatrix_800c6798.rotationXYZ(cameraRotationVector_800fab98);
     cam.stepZ_a4 += cam.stepZAcceleration_b4;
     cam.vec_d4.z -= cam.stepZ_a4;
-    MATRIX.mul(temp1_800faba0.set(0.0f, 0.0f, cam.vec_d4.z), cameraTransformMatrix_800c6798, temp2_800faba8);
-    temp2_800faba8.add(
-      cameraTransformMatrix_800c6798.transfer.getX(),
-      cameraTransformMatrix_800c6798.transfer.getY(),
-      cameraTransformMatrix_800c6798.transfer.getZ()
-    );
+    temp1_800faba0.set(0.0f, 0.0f, cam.vec_d4.z).mul(cameraTransformMatrix_800c6798, temp2_800faba8);
+    temp2_800faba8.add(cameraTransformMatrix_800c6798.transfer);
     cam.viewpointBaseTranslation_94.x = cam.viewpointTargetTranslation_e8.x - temp2_800faba8.z;
     cam.viewpointBaseTranslation_94.y = cam.viewpointTargetTranslation_e8.y - temp2_800faba8.x;
     cam.viewpointBaseTranslation_94.z = cam.viewpointTargetTranslation_e8.z + temp2_800faba8.y;
@@ -2949,15 +2934,11 @@ public final class Bttl_800d {
     cameraRotationVector_800fab98.x = cam.vec_60.x;
     cameraRotationVector_800fab98.y = cam.vec_60.y;
     cameraRotationVector_800fab98.z = 0.0f;
-    RotMatrix_Xyz(cameraRotationVector_800fab98, cameraTransformMatrix_800c6798);
+    cameraTransformMatrix_800c6798.rotationXYZ(cameraRotationVector_800fab98);
     cam.stepZ_30 += cam.stepZAcceleration_40;
     cam.vec_60.z -= cam.stepZ_30;
-    MATRIX.mul(temp1_800faba0.set(0.0f, 0.0f, cam.vec_60.z), cameraTransformMatrix_800c6798, temp2_800faba8);
-    temp2_800faba8.add(
-      cameraTransformMatrix_800c6798.transfer.getX(),
-      cameraTransformMatrix_800c6798.transfer.getY(),
-      cameraTransformMatrix_800c6798.transfer.getZ()
-    );
+    temp1_800faba0.set(0.0f, 0.0f, cam.vec_60.z).mul(cameraTransformMatrix_800c6798, temp2_800faba8);
+    temp2_800faba8.add(cameraTransformMatrix_800c6798.transfer);
     cam.refpointBaseTranslation_20.x = cam.refpointTargetTranslation_74.x - temp2_800faba8.z;
     cam.refpointBaseTranslation_20.y = cam.refpointTargetTranslation_74.y - temp2_800faba8.x;
     cam.refpointBaseTranslation_20.z = cam.refpointTargetTranslation_74.z + temp2_800faba8.y;
@@ -3003,16 +2984,12 @@ public final class Bttl_800d {
     cameraRotationVector_800fab98.y = cam.vec_60.y;
     cameraRotationVector_800fab98.z = 0.0f;
 
-    RotMatrix_Xyz(cameraRotationVector_800fab98, cameraTransformMatrix_800c6798);
+    cameraTransformMatrix_800c6798.rotationXYZ(cameraRotationVector_800fab98);
 
     cam.stepZ_30 += cam.stepZAcceleration_40;
     cam.vec_60.z -= cam.stepZ_30;
-    MATRIX.mul(temp1_800faba0.set(0.0f, 0.0f, cam.vec_60.z), cameraTransformMatrix_800c6798, temp2_800faba8);
-    temp2_800faba8.add(
-      cameraTransformMatrix_800c6798.transfer.getX(),
-      cameraTransformMatrix_800c6798.transfer.getY(),
-      cameraTransformMatrix_800c6798.transfer.getZ()
-    );
+    temp1_800faba0.set(0.0f, 0.0f, cam.vec_60.z).mul(cameraTransformMatrix_800c6798, temp2_800faba8);
+    temp2_800faba8.add(cameraTransformMatrix_800c6798.transfer);
 
     cam.refpointBaseTranslation_20.x = cam.refpointTargetTranslation_74.x - temp2_800faba8.z;
     cam.refpointBaseTranslation_20.y = cam.refpointTargetTranslation_74.y - temp2_800faba8.x;
@@ -3071,14 +3048,10 @@ public final class Bttl_800d {
     cameraRotationVector_800fab98.y = cam.vec_60.y;
     cameraRotationVector_800fab98.z = 0.0f;
 
-    RotMatrix_Xyz(cameraRotationVector_800fab98, cameraTransformMatrix_800c6798);
+    cameraTransformMatrix_800c6798.rotationXYZ(cameraRotationVector_800fab98);
 
-    MATRIX.mul(temp1_800faba0.set(0.0f, 0.0f, cam.vec_60.z), cameraTransformMatrix_800c6798, temp2_800faba8);
-    temp2_800faba8.add(
-      cameraTransformMatrix_800c6798.transfer.getX(),
-      cameraTransformMatrix_800c6798.transfer.getY(),
-      cameraTransformMatrix_800c6798.transfer.getZ()
-    );
+    temp1_800faba0.set(0.0f, 0.0f, cam.vec_60.z).mul(cameraTransformMatrix_800c6798, temp2_800faba8);
+    temp2_800faba8.add(cameraTransformMatrix_800c6798.transfer);
 
     cam.refpointBaseTranslation_20.x = cam.refpointTargetTranslation_74.x - temp2_800faba8.z;
     cam.refpointBaseTranslation_20.y = cam.refpointTargetTranslation_74.y - temp2_800faba8.x;
@@ -4347,30 +4320,12 @@ public final class Bttl_800d {
   @Method(0x800dcc94L)
   public static void FUN_800dcc94(final Vector3f v0, final Vector3f v1) {
     cameraRotationVector_800fab98.set(v1.x, v1.y, 0.0f);
-    RotMatrix_Xyz(cameraRotationVector_800fab98, cameraTransformMatrix_800c6798);
-    MATRIX.mul(temp1_800faba0.set(0.0f, 0.0f, v1.z), cameraTransformMatrix_800c6798, temp2_800faba8);
-    temp2_800faba8.add(
-      cameraTransformMatrix_800c6798.transfer.getX(),
-      cameraTransformMatrix_800c6798.transfer.getY(),
-      cameraTransformMatrix_800c6798.transfer.getZ()
-    );
+    cameraTransformMatrix_800c6798.rotationXYZ(cameraRotationVector_800fab98);
+    temp1_800faba0.set(0.0f, 0.0f, v1.z).mul(cameraTransformMatrix_800c6798, temp2_800faba8);
+    temp2_800faba8.add(cameraTransformMatrix_800c6798.transfer);
     v1.x = v0.x - temp2_800faba8.z;
     v1.y = v0.y - temp2_800faba8.x;
     v1.z = v0.z + temp2_800faba8.y;
-  }
-
-  public static void FUN_800dcc94(final VECTOR v0, final Vector3f v1) {
-    cameraRotationVector_800fab98.set(v1.x, v1.y, 0.0f);
-    RotMatrix_Xyz(cameraRotationVector_800fab98, cameraTransformMatrix_800c6798);
-    MATRIX.mul(temp1_800faba0.set(0.0f, 0.0f, v1.z), cameraTransformMatrix_800c6798, temp2_800faba8);
-    temp2_800faba8.add(
-      cameraTransformMatrix_800c6798.transfer.getX(),
-      cameraTransformMatrix_800c6798.transfer.getY(),
-      cameraTransformMatrix_800c6798.transfer.getZ()
-    );
-    v1.x = v0.x.get() - temp2_800faba8.z;
-    v1.y = v0.y.get() - temp2_800faba8.x;
-    v1.z = v0.z.get() + temp2_800faba8.y;
   }
 
   /**
