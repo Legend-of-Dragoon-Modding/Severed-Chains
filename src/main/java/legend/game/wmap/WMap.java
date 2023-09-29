@@ -115,6 +115,7 @@ import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
 import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
 import static legend.game.Scus94491BpeSegment_800b.continentIndex_800bf0b0;
+import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
@@ -686,6 +687,7 @@ public class WMap extends EngineState {
     engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;
     pregameLoadingStage_800bb10c.set(0);
     vsyncMode_8007a3b8 = 2;
+    drgnBinIndex_800bc058 = 1;
   }
 
   @Method(0x800ccf04L)

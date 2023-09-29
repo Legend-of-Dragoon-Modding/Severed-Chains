@@ -4877,6 +4877,7 @@ public class SMap extends EngineState {
             this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
             this._800f7e4c = false;
             this.mapTransition(-1, 0x3fb);
+            drgnBinIndex_800bc058 = 1;
             break;
           }
 
