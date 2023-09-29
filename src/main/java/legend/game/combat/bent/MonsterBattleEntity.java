@@ -1,11 +1,11 @@
 package legend.game.combat.bent;
 
-import legend.core.gte.SVECTOR;
 import legend.core.memory.Method;
 import legend.game.characters.Element;
 import legend.game.characters.ElementSet;
 import legend.game.combat.types.AttackType;
 import legend.game.modding.coremod.CoreMod;
+import org.joml.Vector3f;
 
 import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
 import static legend.game.combat.Bttl_800f.applyBuffOrDebuff;
@@ -27,7 +27,7 @@ public class MonsterBattleEntity extends BattleEntity27c {
   public Element monsterElement_72;
   public final ElementSet monsterElementalImmunity_74 = new ElementSet();
   public int monsterStatusResistFlag_76;
-  public final SVECTOR targetArrowPos_78 = new SVECTOR();
+  public final Vector3f targetArrowPos_78 = new Vector3f();
 
   public MonsterBattleEntity(final String name) {
     super(CoreMod.MONSTER_TYPE.get(), name);
@@ -105,9 +105,9 @@ public class MonsterBattleEntity extends BattleEntity27c {
       case MONSTER_ELEMENT -> this.monsterElement_72.flag;
       case MONSTER_ELEMENTAL_IMMUNITY -> this.monsterElementalImmunity_74.pack();
       case MONSTER_STATUS_RESIST_FLAGS -> this.monsterStatusResistFlag_76;
-      case MONSTER_TARGET_ARROW_POSITION_X -> this.targetArrowPos_78.getX();
-      case MONSTER_TARGET_ARROW_POSITION_Y -> this.targetArrowPos_78.getY();
-      case MONSTER_TARGET_ARROW_POSITION_Z -> this.targetArrowPos_78.getZ();
+      case MONSTER_TARGET_ARROW_POSITION_X -> Math.round(this.targetArrowPos_78.x);
+      case MONSTER_TARGET_ARROW_POSITION_Y -> Math.round(this.targetArrowPos_78.y);
+      case MONSTER_TARGET_ARROW_POSITION_Z -> Math.round(this.targetArrowPos_78.z);
 
       default -> super.getStat(statIndex);
     };
@@ -121,9 +121,9 @@ public class MonsterBattleEntity extends BattleEntity27c {
       case MONSTER_ELEMENT -> this.monsterElement_72 = Element.fromFlag(value);
       case MONSTER_ELEMENTAL_IMMUNITY -> this.monsterElementalImmunity_74.unpack(value);
       case MONSTER_STATUS_RESIST_FLAGS -> this.monsterStatusResistFlag_76 = value;
-      case MONSTER_TARGET_ARROW_POSITION_X -> this.targetArrowPos_78.setX((short)value);
-      case MONSTER_TARGET_ARROW_POSITION_Y -> this.targetArrowPos_78.setY((short)value);
-      case MONSTER_TARGET_ARROW_POSITION_Z -> this.targetArrowPos_78.setZ((short)value);
+      case MONSTER_TARGET_ARROW_POSITION_X -> this.targetArrowPos_78.x = value;
+      case MONSTER_TARGET_ARROW_POSITION_Y -> this.targetArrowPos_78.y = value;
+      case MONSTER_TARGET_ARROW_POSITION_Z -> this.targetArrowPos_78.z = value;
 
       default -> super.setStat(statIndex, value);
     }

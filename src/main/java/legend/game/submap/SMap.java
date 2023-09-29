@@ -430,8 +430,8 @@ public class SMap extends EngineState {
   private final int[] smokeTextureHeights_800d6bfc = {31, 31, 31, 23};
   private final int[] _800d6c0c = {120, 0, 0, 0};
 
-  private final SVECTOR _800d6c18 = new SVECTOR().set((short)-8, (short)0, (short)0);
-  private final SVECTOR _800d6c20 = new SVECTOR().set((short)8, (short)0, (short)0);
+  private final Vector3f _800d6c18 = new Vector3f(-8.0f, 0.0f, 0.0f);
+  private final Vector3f _800d6c20 = new Vector3f( 8.0f, 0.0f, 0.0f);
   private final Vector3f savePointV0_800d6c28 = new Vector3f(-24.0f, -32.0f,  24.0f);
   private final Vector3f savePointV1_800d6c30 = new Vector3f( 24.0f, -32.0f,  24.0f);
   private final Vector3f savePointV2_800d6c38 = new Vector3f(-24.0f, -32.0f, -24.0f);
@@ -445,8 +445,8 @@ public class SMap extends EngineState {
   private final int dartArrowV_800d6cac = 96;
   private final int doorArrowU_800d6cb0 = 128;
   private final int doorArrowV_800d6cb4 = 0;
-  private final SVECTOR bottom_800d6cb8 = new SVECTOR();
-  private final SVECTOR top_800d6cc0 = new SVECTOR().set((short)0, (short)40, (short)0);
+  private final Vector3f bottom_800d6cb8 = new Vector3f();
+  private final Vector3f top_800d6cc0 = new Vector3f(0.0f, 40.0f, 0.0f);
   private final int[] _800d6cc8 = {206, 206, 207, 208};
   private final int[] _800d6cd8 = {992, 992, 976};
   private final int[] _800d6ce4 = {208, 207, 8};
@@ -5415,8 +5415,8 @@ public class SMap extends EngineState {
         }
       } else { // It's a foreground texture
         //LAB_800e7010
-        this._800cbb90[i - this.envBackgroundTextureCount_800cb57c].set(s0.svec_14.getX(), s0.svec_14.getY(), s0.svec_14.getZ()).div(0x1000);
-        this._800cbc90[i - this.envBackgroundTextureCount_800cb57c] = s0.ui_1c / (float)0x1000;
+        this._800cbb90[i - this.envBackgroundTextureCount_800cb57c].set(s0.svec_14);
+        this._800cbc90[i - this.envBackgroundTextureCount_800cb57c] = s0.ui_1c;
       }
 
       //LAB_800e7004
@@ -5444,9 +5444,9 @@ public class SMap extends EngineState {
       } else {
         //LAB_800e7194
         float a0 =
-          worldToScreenMatrix_800c3548.m02 * s0.svec_00.getX() +
-          worldToScreenMatrix_800c3548.m12 * s0.svec_00.getY() +
-          worldToScreenMatrix_800c3548.m22 * s0.svec_00.getZ();
+          worldToScreenMatrix_800c3548.m02 * s0.svec_00.x +
+          worldToScreenMatrix_800c3548.m12 * s0.svec_00.y +
+          worldToScreenMatrix_800c3548.m22 * s0.svec_00.z;
         a0 += worldToScreenMatrix_800c3548.transfer.z;
         a0 /= 1 << 16 - orderingTableBits_1f8003c0.get();
 
@@ -7258,7 +7258,7 @@ public class SMap extends EngineState {
 
   @Method(0x800ef0f8L)
   private void FUN_800ef0f8(final Model124 model, final BigSubStruct a1) {
-    if(!flEq(a1._1e.getX(), model.coord2_14.coord.transfer.x) || !flEq(a1._1e.getY(), model.coord2_14.coord.transfer.y) || !flEq(a1._1e.getZ(), model.coord2_14.coord.transfer.z)) {
+    if(!flEq(a1._1e.x, model.coord2_14.coord.transfer.x) || !flEq(a1._1e.y, model.coord2_14.coord.transfer.y) || !flEq(a1._1e.z, model.coord2_14.coord.transfer.z)) {
       //LAB_800ef154
       if(a1._04 != 0) {
         if(a1._00 % a1._30 == 0) {
@@ -7718,7 +7718,7 @@ public class SMap extends EngineState {
     a0._10 = 0;
     a0._18 = 0;
     a0._1c = 0;
-    a0._1e.set((short)0, (short)0, (short)0);
+    a0._1e.zero();
     a0.size_28 = 0;
     a0._2c = 0;
     a0._30 = 0;
@@ -7802,12 +7802,12 @@ public class SMap extends EngineState {
 
         PushMatrix();
         GTE.setTransforms(sp0x20);
-        GTE.perspectiveTransform(-s2.width_08, this._800d6c18.getY(), this._800d6c18.getZ());
+        GTE.perspectiveTransform(-s2.width_08, this._800d6c18.y, this._800d6c18.z);
         s1.vert0_00.x = GTE.getScreenX(2);
         s1.vert0_00.y = GTE.getScreenY(2);
         s3.z_20 = GTE.getScreenZ(3) / 4.0f;
 
-        GTE.perspectiveTransform(s2.width_08, this._800d6c20.getY(), this._800d6c20.getZ());
+        GTE.perspectiveTransform(s2.width_08, this._800d6c20.y, this._800d6c20.z);
         s1.vert1_08.x = GTE.getScreenX(2);
         s1.vert1_08.y = GTE.getScreenY(2);
         s3.z_20 = GTE.getScreenZ(3) / 4.0f;
@@ -8416,7 +8416,7 @@ public class SMap extends EngineState {
 
     //LAB_800f2018
     if(sobj._1d0._04 != 1) {
-      sobj._1d0._1e.set((short)0, (short)0, (short)0);
+      sobj._1d0._1e.zero();
       sobj._1d0.size_28 = 1;
       sobj._1d0._30 = 0;
       sobj._1d0._38 = 0;
@@ -8595,7 +8595,7 @@ public class SMap extends EngineState {
     //LAB_800f2374
     if(a0._1d0._10 >= 2) {
       a0._1d0._08 = 0;
-      a0._1d0._1e.set((short)0, (short)0, (short)0);
+      a0._1d0._1e.zero();
     }
 
     //LAB_800f2398
@@ -8651,7 +8651,7 @@ public class SMap extends EngineState {
     //LAB_800f2488
     if(a1._1d0._0c != 1) {
       a1._1d0._0c = 0;
-      a1._1d0._1e.set((short)0, (short)0, (short)0);
+      a1._1d0._1e.zero();
     }
 
     //LAB_800f24a8

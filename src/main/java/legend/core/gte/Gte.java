@@ -254,8 +254,8 @@ public class Gte {
   }
 
   /** Control register 26 projection plane distance (H) */
-  public int getProjectionPlaneDistance() {
-    return (int)this.H;
+  public float getProjectionPlaneDistance() {
+    return this.H;
   }
 
   /** Control register 26 projection plane distance (H) */

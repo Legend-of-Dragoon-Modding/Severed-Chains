@@ -3876,7 +3876,7 @@ public final class Bttl_800d {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "distance", description = "The projection plane distance")
   @Method(0x800dbcfcL)
   public static FlowControl scriptGetProjectionPlaneDistance(final RunningScript<?> script) {
-    script.params_20[0].set(getProjectionPlaneDistance());
+    script.params_20[0].set(Math.round(getProjectionPlaneDistance()));
     return FlowControl.CONTINUE;
   }
 

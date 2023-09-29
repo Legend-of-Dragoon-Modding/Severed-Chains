@@ -219,7 +219,7 @@ public final class Scus94491BpeSegment {
   public static final UnsignedShortRef tmdGp0CommandId_1f8003ee = MEMORY.ref(2, 0x1f8003eeL, UnsignedShortRef::new);
 
   public static BattlePreloadedEntities_18cb0 battlePreloadedEntities_1f8003f4;
-  public static final IntRef projectionPlaneDistance_1f8003f8 = MEMORY.ref(4, 0x1f8003f8L, IntRef::new);
+  public static float projectionPlaneDistance_1f8003f8;
 
   public static final Value _80010000 = MEMORY.ref(4, 0x80010000L);
   public static final Value _80010004 = MEMORY.ref(4, 0x80010004L);

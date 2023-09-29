@@ -11,6 +11,6 @@ public class ScreenCaptureEffect1c implements Effect {
   /**
    * Capture width and height scaled by depth into scene and projection plane distance
    */
-  public int screenspaceW_10;
-  public int screenspaceH_14;
+  public float screenspaceW_10;
+  public float screenspaceH_14;
 }

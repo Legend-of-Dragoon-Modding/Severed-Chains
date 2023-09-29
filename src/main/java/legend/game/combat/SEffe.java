@@ -44,7 +44,6 @@ import legend.game.combat.effects.AdditionOverlaysBorder0e;
 import legend.game.combat.effects.AdditionOverlaysEffect44;
 import legend.game.combat.effects.AdditionOverlaysHit20;
 import legend.game.combat.effects.BillboardSpriteEffect0c;
-import legend.game.combat.effects.LmbAnimationEffect5c;
 import legend.game.combat.effects.DeffTmdRenderer14;
 import legend.game.combat.effects.Effect;
 import legend.game.combat.effects.EffectManagerData6c;
@@ -62,6 +61,7 @@ import legend.game.combat.effects.LensFlareEffectInstance3c;
 import legend.game.combat.effects.LightningBoltEffect14;
 import legend.game.combat.effects.LightningBoltEffectSegment30;
 import legend.game.combat.effects.LightningBoltEffectSegmentOrigin08;
+import legend.game.combat.effects.LmbAnimationEffect5c;
 import legend.game.combat.effects.ModelEffect13c;
 import legend.game.combat.effects.MoonlightStarsEffect18;
 import legend.game.combat.effects.MoonlightStarsEffectInstance3c;
@@ -5066,7 +5066,7 @@ public final class SEffe {
     effect._14 = script.params_20[5].get();
     effect.flags_18 = script.params_20[6].get();
     effect.type_1c = script.params_20[7].get();
-    effect.projectionPlaneDistanceDiv4_20 = getProjectionPlaneDistance() >> 2;
+    effect.projectionPlaneDistanceDiv4_20 = getProjectionPlaneDistance() / 4.0f;
 
     //LAB_8010a754
     for(int i = 0; i < effect.count_04; i++) {
@@ -5344,7 +5344,6 @@ public final class SEffe {
   /** TODO This is the second screen capture function, usage currently unknown */
   @Method(0x8010b594L)
   public static void FUN_8010b594(final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager, final ScreenCaptureEffect1c effect, final MV transforms) {
-    int v0;
     int v1;
     int a0;
     int a1;
@@ -5373,9 +5372,9 @@ public final class SEffe {
 
       switch(i) {
         case 1, 2, 4, 7 -> {
-          final SVECTOR vert0 = new SVECTOR();
-          final SVECTOR vert1 = new SVECTOR();
-          final SVECTOR vert2 = new SVECTOR();
+          final Vector3f vert0 = new Vector3f();
+          final Vector3f vert1 = new Vector3f();
+          final Vector3f vert2 = new Vector3f();
           final Vector2f sxy0 = new Vector2f();
           final Vector2f sxy1 = new Vector2f();
           final Vector2f sxy2 = new Vector2f();
@@ -5384,17 +5383,13 @@ public final class SEffe {
           if(i == 1 || i == 4) {
             //LAB_8010b828
             a0 = i & 0x3;
-            v0 = (a0 - 2) * effect.screenspaceW_10 / 4;
-            vert1.setZ((short)v0);
-            v0 = (a0 - 1) * effect.screenspaceW_10 / 4;
-            vert0.setZ((short)v0);
-            vert2.setZ((short)v0);
+            vert1.z = (a0 - 2) * effect.screenspaceW_10 / 4.0f;
+            vert0.z = (a0 - 1) * effect.screenspaceW_10 / 4.0f;
+            vert2.z = vert0.z;
             a0 = i >> 2;
-            v0 = (a0 - 1) * effect.screenspaceH_14 / 2;
-            vert0.setY((short)v0);
-            v0 = a0 * effect.screenspaceH_14 / 2;
-            vert1.setY((short)v0);
-            vert2.setY((short)v0);
+            vert0.y = (a0 - 1) * effect.screenspaceH_14 / 2.0f;
+            vert1.y = a0 * effect.screenspaceH_14 / 2.0f;
+            vert2.y = vert1.y;
             a0 = (i >> 1) * 64;
             v1 = (i & 0x1) * 32;
 
@@ -5405,19 +5400,15 @@ public final class SEffe {
           } else {
             //LAB_8010b8c8
             a0 = i & 0x3;
-            v0 = (a0 - 2) * effect.screenspaceW_10 / 4;
-            vert1.setZ((short)v0);
-            vert0.setZ((short)v0);
-            v0 = (a0 - 1) * effect.screenspaceW_10 / 4;
-            vert2.setZ((short)v0);
+            vert1.z = (a0 - 2) * effect.screenspaceW_10 / 4.0f;
+            vert0.z = vert1.z;
+            vert2.z = (a0 - 1) * effect.screenspaceW_10 / 4.0f;
             a0 = i >> 2;
-            v0 = (a0 - 1) * effect.screenspaceH_14 / 2;
-            vert0.setY((short)v0);
+            vert0.y = (a0 - 1) * effect.screenspaceH_14 / 2.0f;
             v1 = (i & 1) * 32;
             a0 = (i >> 1) * 64;
-            v0 = a0 * effect.screenspaceH_14 / 2;
-            vert2.setY((short)v0);
-            vert1.setY((short)v0);
+            vert2.y = a0 * effect.screenspaceH_14 / 2.0f;
+            vert1.y = vert2.y;
 
             cmd
               .uv(0, v1, a0)
@@ -5430,10 +5421,10 @@ public final class SEffe {
 
           if(effect.screenspaceW_10 == 0) {
             //LAB_8010b638
-            final int sp8c = getProjectionPlaneDistance();
+            final float sp8c = getProjectionPlaneDistance();
             final float zShift = z * 4;
-            effect.screenspaceW_10 = (int)(effect.captureW_04 * zShift / sp8c);
-            effect.screenspaceH_14 = (int)(effect.captureH_08 * zShift / sp8c);
+            effect.screenspaceW_10 = effect.captureW_04 * zShift / sp8c;
+            effect.screenspaceH_14 = effect.captureH_08 * zShift / sp8c;
             break;
           }
 
@@ -5461,28 +5452,24 @@ public final class SEffe {
 
           a0 = i & 0x3;
           a1 = i >> 2;
-          v0 = (a0 - 2) * effect.screenspaceW_10 / 4;
-          vert2.z = v0;
-          vert0.z = v0;
-          v0 = (a1 - 1) * effect.screenspaceH_14 / 2;
-          vert1.y = v0;
-          vert0.y = v0;
-          v0 = (a0 - 1) * effect.screenspaceW_10 / 4;
-          vert3.z = v0;
-          vert1.z = v0;
-          v0 = a1 * effect.screenspaceH_14 / 2;
-          vert3.y = v0;
-          vert2.y = v0;
+          vert2.z = (a0 - 2) * effect.screenspaceW_10 / 4.0f;
+          vert0.z = vert2.z;
+          vert1.y = (a1 - 1) * effect.screenspaceH_14 / 2.0f;
+          vert0.y = vert1.y;
+          vert3.z = (a0 - 1) * effect.screenspaceW_10 / 4.0f;
+          vert1.z = vert3.z;
+          vert3.y = a1 * effect.screenspaceH_14 / 2.0f;
+          vert2.y = vert3.y;
           final float z = RotTransPers4(vert0, vert1, vert2, vert3, sxy0, sxy1, sxy2, sxy3);
 
           if(effect.screenspaceW_10 == 0) {
             //LAB_8010b664
-            final int sp90 = getProjectionPlaneDistance();
+            final float sp90 = getProjectionPlaneDistance();
             final float z2 = z * 4.0f;
 
             //LAB_8010b688
-            effect.screenspaceW_10 = (int)(effect.captureW_04 * z2 / sp90);
-            effect.screenspaceH_14 = (int)(effect.captureH_08 * z2 / sp90);
+            effect.screenspaceW_10 = effect.captureW_04 * z2 / sp90;
+            effect.screenspaceH_14 = effect.captureH_08 * z2 / sp90;
             break;
           }
 
@@ -5537,8 +5524,8 @@ public final class SEffe {
       final Vector3f sp0x40 = new Vector3f();
 
       final int a0 = s0 % 5;
-      int v1 = effect.screenspaceW_10;
-      int v0 = a0 * v1 / 5 - v1 / 2;
+      float v1 = effect.screenspaceW_10;
+      float v0 = a0 * v1 / 5 - v1 / 2;
       sp0x28.z = v0;
       sp0x38.z = v0;
 
@@ -5566,10 +5553,10 @@ public final class SEffe {
 
       if(effect.screenspaceW_10 == 0) {
         //LAB_8010bd08
-        final int sp8c = getProjectionPlaneDistance();
+        final float sp8c = getProjectionPlaneDistance();
         final float zShift = z * 4.0f;
-        effect.screenspaceW_10 = (int)(effect.captureW_04 * zShift / sp8c);
-        effect.screenspaceH_14 = (int)(effect.captureH_08 * zShift / sp8c);
+        effect.screenspaceW_10 = effect.captureW_04 * zShift / sp8c;
+        effect.screenspaceH_14 = effect.captureH_08 * zShift / sp8c;
         break;
       }
 
@@ -8881,7 +8868,7 @@ public final class SEffe {
       final float z = perspectiveTransform(sp0x58, sp0x80);
       if(z >= 0x50) {
         //LAB_801163c4
-        final float a1 = projectionPlaneDistance_1f8003f8.get() * 2.0f / z * manager._10.scale_16.z;
+        final float a1 = projectionPlaneDistance_1f8003f8 * 2.0f / z * manager._10.scale_16.z;
         final float l = -w / 2.0f * a1;
         final float r = w / 2.0f * a1;
         final float t = -h / 2.0f * a1;
@@ -9648,7 +9635,7 @@ public final class SEffe {
       //LAB_80118314
       if(data.scriptIndex_0c < -2) {
         if(data.scriptIndex_0c == -4) {
-          sp0x10.transfer.z = projectionPlaneDistance_1f8003f8.get();
+          sp0x10.transfer.z = projectionPlaneDistance_1f8003f8;
         }
 
         //LAB_8011833c
