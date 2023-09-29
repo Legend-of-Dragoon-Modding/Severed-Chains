@@ -9,5 +9,5 @@ public class DeffTmdRenderer14 implements Effect {
   public TmdObjTable1c tmd_08;
 
   /** ushort */
-  public int _10;
+  public int tpage_10;
 }

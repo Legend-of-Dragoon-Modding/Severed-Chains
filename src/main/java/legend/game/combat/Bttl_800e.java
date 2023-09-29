@@ -526,17 +526,18 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  /** Used in gates of heaven */
   @ScriptDescription("Unknown, must change battle light over time")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x rotation (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y rotation (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z rotation (PSX degrees)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks", description = "The number of ticks for the change")
   @Method(0x800e4fa0L)
   public static FlowControl FUN_800e4fa0(final RunningScript<?> script) {
-    final int x = script.params_20[1].get();
-    final int y = script.params_20[2].get();
-    final int z = script.params_20[3].get();
+    final float x = MathHelper.psxDegToRad(script.params_20[1].get());
+    final float y = MathHelper.psxDegToRad(script.params_20[2].get());
+    final float z = MathHelper.psxDegToRad(script.params_20[3].get());
     final int ticks = script.params_20[4].get();
 
     final BttlLightStruct84 light = lights_800c692c[script.params_20[0].get()];

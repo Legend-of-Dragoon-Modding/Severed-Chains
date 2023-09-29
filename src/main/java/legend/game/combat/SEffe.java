@@ -44,7 +44,7 @@ import legend.game.combat.effects.AdditionOverlaysBorder0e;
 import legend.game.combat.effects.AdditionOverlaysEffect44;
 import legend.game.combat.effects.AdditionOverlaysHit20;
 import legend.game.combat.effects.BillboardSpriteEffect0c;
-import legend.game.combat.effects.BttlScriptData6cSub5c;
+import legend.game.combat.effects.LmbAnimationEffect5c;
 import legend.game.combat.effects.DeffTmdRenderer14;
 import legend.game.combat.effects.Effect;
 import legend.game.combat.effects.EffectManagerData6c;
@@ -7058,29 +7058,29 @@ public final class SEffe {
         coord2.flg = 0;
       } else if(type == 0) {
         //LAB_80111778
-        final BttlScriptData6cSub5c a2_0 = (BttlScriptData6cSub5c)effects.effect_44;
+        final LmbAnimationEffect5c a2_0 = (LmbAnimationEffect5c)effects.effect_44;
 
         if((a2_0.lmbType_00 & 0x7) == 0) {
           final LmbType0 lmb = (LmbType0)a2_0.lmb_0c;
 
           //LAB_801117ac
-          final int a0_0 = Math.max(0, effects._10.ticks_24) % (a2_0._08 * 2);
-          final int a1_0 = a0_0 / 2;
-          final LmbTransforms14 lmbTransforms = lmb._08[partIndex]._08[a1_0];
+          final int frameIndex = Math.max(0, effects._10.ticks_24) % (a2_0.keyframeCount_08 * 2);
+          final int keyframeIndex = frameIndex / 2;
+          final LmbTransforms14 lmbTransforms = lmb.partAnimations_08[partIndex].keyframes_08[keyframeIndex];
           scale.set(lmbTransforms.scale_00);
           trans.set(lmbTransforms.trans_06);
 
-          if((a0_0 & 0x1) != 0) {
-            int v1 = a1_0 + 1;
+          if((frameIndex & 0x1) != 0) {
+            int nextKeyframeIndex = keyframeIndex + 1;
 
-            if(v1 == a2_0._08) {
-              v1 = 0;
+            if(nextKeyframeIndex == a2_0.keyframeCount_08) {
+              nextKeyframeIndex = 0;
             }
 
             //LAB_8011188c
-            final LmbTransforms14 a0_1 = lmb._08[partIndex]._08[v1];
-            scale.add(a0_1.scale_00).div(2);
-            trans.add(a0_1.trans_06).div(2);
+            final LmbTransforms14 nextKeyframe = lmb.partAnimations_08[partIndex].keyframes_08[nextKeyframeIndex];
+            scale.add(nextKeyframe.scale_00).div(2);
+            trans.add(nextKeyframe.trans_06).div(2);
           }
 
           //LAB_80111958
@@ -8819,7 +8819,7 @@ public final class SEffe {
    *   Uses CTMD render pipeline if type == 0x300_0000
    */
   @Method(0x8011619cL)
-  public static void FUN_8011619c(final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager, final BttlScriptData6cSub5c effect, final int deffFlags, final MV matrix) {
+  public static void FUN_8011619c(final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager, final LmbAnimationEffect5c effect, final int deffFlags, final MV matrix) {
     final MV sp0x10 = new MV();
     sp0x10.rotationZYX(manager._10.rot_10);
     sp0x10.transfer.set(manager._10.trans_04);
@@ -8946,19 +8946,19 @@ public final class SEffe {
   }
 
   @Method(0x801168e8L)
-  public static void processLmbType0(final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager, final BttlScriptData6cSub5c effect, final int a2, final MV matrix) {
+  public static void processLmbType0(final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager, final LmbAnimationEffect5c effect, final int a2, final MV matrix) {
     final LmbType0 lmb = (LmbType0)effect.lmb_0c;
     final int s6 = a2 / 0x2000;
     final int v1 = s6 + 1;
     final int s0 = a2 & 0x1fff;
     final int s1 = 0x2000 - s0;
-    final int fp = v1 % lmb._08[0].count_04;
+    final int fp = v1 % lmb.partAnimations_08[0].count_04;
 
     //LAB_80116960
     for(int i = 0; i < lmb.objectCount_04; i++) {
-      if(effect._14[lmb._08[i]._00] != 0) {
-        final LmbTransforms14 a1 = lmb._08[i]._08[s6];
-        final LmbTransforms14 a0 = lmb._08[i]._08[fp];
+      if(effect._14[lmb.partAnimations_08[i]._00] != 0) {
+        final LmbTransforms14 a1 = lmb.partAnimations_08[i].keyframes_08[s6];
+        final LmbTransforms14 a0 = lmb.partAnimations_08[i].keyframes_08[fp];
         manager._10.rot_10.set(a1.rot_0c);
         manager._10.trans_04.x = (a1.trans_06.x * s1 + a0.trans_06.x * s0) / 0x2000;
         manager._10.trans_04.y = (a1.trans_06.y * s1 + a0.trans_06.y * s0) / 0x2000;
@@ -8966,22 +8966,19 @@ public final class SEffe {
         manager._10.scale_16.x = (a1.scale_00.x * s1 + a0.scale_00.x * s0) / 0x2000;
         manager._10.scale_16.y = (a1.scale_00.y * s1 + a0.scale_00.y * s0) / 0x2000;
         manager._10.scale_16.z = (a1.scale_00.z * s1 + a0.scale_00.z * s0) / 0x2000;
-        FUN_8011619c(manager, effect, effect._14[lmb._08[i]._00], matrix);
+        FUN_8011619c(manager, effect, effect._14[lmb.partAnimations_08[i]._00], matrix);
       }
     }
   }
 
   @Method(0x80116b7cL)
-  public static void processLmbType1(final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager, final BttlScriptData6cSub5c effect, final int t0, final MV matrix) {
+  public static void processLmbType1(final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager, final LmbAnimationEffect5c effect, final int t0, final MV matrix) {
     final LmbType1 lmb = (LmbType1)effect.lmb_0c;
     int a0 = t0 >> 13;
-    int s0 = t0 & 0x1fff;
-    int s5 = (a0 + 1) % lmb._0a;
+    float lerpScale = (t0 & 0x1fff) / (float)0x2000;
+    int s5 = (a0 + 1) % lmb.keyframeCount_0a;
     final LmbTransforms14[] s7 = effect.lmbTransforms_10;
-    int s1;
     if(effect._04 != t0) {
-      s1 = 0x2000 - s0;
-
       if(s5 == 0) {
         if(a0 == 0) {
           return;
@@ -8989,8 +8986,7 @@ public final class SEffe {
 
         s5 = a0;
         a0 = 0;
-        s0 = s1;
-        s1 = 0x2000 - s0;
+        lerpScale = 1.0f - lerpScale;
       }
 
       //LAB_80116c20
@@ -9007,55 +9003,55 @@ public final class SEffe {
           final LmbTransforms14 transforms = s7[i];
           final LmbType1.Sub04 v1 = lmb._0c[i];
 
-          if((v1._00 & 0x8000) == 0) {
+          if((v1.transformsType_00 & 0x8000) == 0) {
             transforms.scale_00.x = lmb._14[a0_0];
             a0_0++;
           }
 
           //LAB_80116ca0
-          if((v1._00 & 0x4000) == 0) {
+          if((v1.transformsType_00 & 0x4000) == 0) {
             transforms.scale_00.y = lmb._14[a0_0];
             a0_0++;
           }
 
           //LAB_80116cc0
-          if((v1._00 & 0x2000) == 0) {
+          if((v1.transformsType_00 & 0x2000) == 0) {
             transforms.scale_00.z = lmb._14[a0_0];
             a0_0++;
           }
 
           //LAB_80116ce0
-          if((v1._00 & 0x1000) == 0) {
+          if((v1.transformsType_00 & 0x1000) == 0) {
             transforms.trans_06.x = lmb._14[a0_0];
             a0_0++;
           }
 
           //LAB_80116d00
-          if((v1._00 & 0x800) == 0) {
+          if((v1.transformsType_00 & 0x800) == 0) {
             transforms.trans_06.y = lmb._14[a0_0];
             a0_0++;
           }
 
           //LAB_80116d20
-          if((v1._00 & 0x400) == 0) {
+          if((v1.transformsType_00 & 0x400) == 0) {
             transforms.trans_06.z = lmb._14[a0_0];
             a0_0++;
           }
 
           //LAB_80116d40
-          if((v1._00 & 0x200) == 0) {
+          if((v1.transformsType_00 & 0x200) == 0) {
             transforms.rot_0c.x = MathHelper.psxDegToRad(lmb._14[a0_0]);
             a0_0++;
           }
 
           //LAB_80116d60
-          if((v1._00 & 0x100) == 0) {
+          if((v1.transformsType_00 & 0x100) == 0) {
             transforms.rot_0c.y = MathHelper.psxDegToRad(lmb._14[a0_0]);
             a0_0++;
           }
 
           //LAB_80116d80
-          if((v1._00 & 0x80) == 0) {
+          if((v1.transformsType_00 & 0x80) == 0) {
             transforms.rot_0c.z = MathHelper.psxDegToRad(lmb._14[a0_0]);
             a0_0++;
           }
@@ -9070,53 +9066,53 @@ public final class SEffe {
         final LmbTransforms14 transforms = s7[i];
         final LmbType1.Sub04 a2 = lmb._0c[i];
 
-        if((a2._00 & 0x8000) == 0) {
-          transforms.scale_00.x = (transforms.scale_00.x * s1 + lmb._14[a0_0] * s0) / 0x2000;
+        if((a2.transformsType_00 & 0x8000) == 0) {
+          transforms.scale_00.x = Math.lerp(lmb._14[a0_0], transforms.scale_00.x, lerpScale);
           a0_0++;
         }
 
         //LAB_80116e34
-        if((a2._00 & 0x4000) == 0) {
-          transforms.scale_00.y = (transforms.scale_00.y * s1 + lmb._14[a0_0] * s0) / 0x2000;
+        if((a2.transformsType_00 & 0x4000) == 0) {
+          transforms.scale_00.y = Math.lerp(lmb._14[a0_0], transforms.scale_00.y, lerpScale);
           a0_0++;
         }
 
         //LAB_80116e80
-        if((a2._00 & 0x2000) == 0) {
-          transforms.scale_00.z = (transforms.scale_00.z * s1 + lmb._14[a0_0] * s0) / 0x2000;
+        if((a2.transformsType_00 & 0x2000) == 0) {
+          transforms.scale_00.z = Math.lerp(lmb._14[a0_0], transforms.scale_00.z, lerpScale);
           a0_0++;
         }
 
         //LAB_80116ecc
-        if((a2._00 & 0x1000) == 0) {
-          transforms.trans_06.x = (transforms.trans_06.x * s1 + lmb._14[a0_0] * s0) / 0x2000;
+        if((a2.transformsType_00 & 0x1000) == 0) {
+          transforms.trans_06.x = Math.lerp(lmb._14[a0_0], transforms.trans_06.x, lerpScale);
           a0_0++;
         }
 
         //LAB_80116f18
-        if((a2._00 & 0x800) == 0) {
-          transforms.trans_06.y = (transforms.trans_06.y * s1 + lmb._14[a0_0] * s0) / 0x2000;
+        if((a2.transformsType_00 & 0x800) == 0) {
+          transforms.trans_06.y = Math.lerp(lmb._14[a0_0], transforms.trans_06.y, lerpScale);
           a0_0++;
         }
 
         //LAB_80116f64
-        if((a2._00 & 0x400) == 0) {
-          transforms.trans_06.z = (transforms.trans_06.z * s1 + lmb._14[a0_0] * s0) / 0x2000;
+        if((a2.transformsType_00 & 0x400) == 0) {
+          transforms.trans_06.z = Math.lerp(lmb._14[a0_0], transforms.trans_06.z, lerpScale);
           a0_0++;
         }
 
         //LAB_80116fb0
-        if((a2._00 & 0x200) == 0) {
+        if((a2.transformsType_00 & 0x200) == 0) {
           a0_0++;
         }
 
         //LAB_80116fc8
-        if((a2._00 & 0x100) == 0) {
+        if((a2.transformsType_00 & 0x100) == 0) {
           a0_0++;
         }
 
         //LAB_80116fd4
-        if((a2._00 & 0x80) == 0) {
+        if((a2.transformsType_00 & 0x80) == 0) {
           a0_0++;
         }
       }
@@ -9144,24 +9140,23 @@ public final class SEffe {
   }
 
   @Method(0x80117104L)
-  public static void processLmbType2(final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager, final BttlScriptData6cSub5c effect, final int t5, final MV matrix) {
+  public static void processLmbType2(final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager, final LmbAnimationEffect5c effect, final int t5, final MV matrix) {
     final LmbType2 lmb = (LmbType2)effect.lmb_0c;
     final LmbTransforms14[] originalTransforms = lmb.initialTransforms_10;
-    final int s6 = t5 / 0x2000;
-    final int s0 = t5 & 0x1fff;
-    final int s2 = 0x2000 - s0;
+    final int keyframeIndex = t5 / 0x2000;
+    final float lerpScale = (t5 & 0x1fff) / (float)0x2000;
     final LmbTransforms14[] transformsLo = effect.lmbTransforms_10;
     final LmbTransforms14[] transformsHi = Arrays.copyOfRange(transformsLo, lmb.objectCount_04, transformsLo.length);
-    final int fp = (s6 + 1) % lmb._0a;
+    final int nextKeyframeIndex = (keyframeIndex + 1) % lmb.keyframeCount_0a;
     if(effect._04 != t5) {
       int s1 = effect._04 / 0x2000;
 
-      if(fp == 0 && s6 == 0) {
+      if(nextKeyframeIndex == 0 && keyframeIndex == 0) {
         return;
       }
 
       //LAB_801171c8
-      if(s6 < s1) {
+      if(s1 > keyframeIndex) {
         s1 = 0;
 
         for(int i = 0; i < lmb.objectCount_04; i++) {
@@ -9173,7 +9168,7 @@ public final class SEffe {
 
       //LAB_801171f8
       //LAB_8011720c
-      for(; s1 < s6; s1++) {
+      for(; s1 < keyframeIndex; s1++) {
         int a0 = s1 * lmb.transformDataPairCount_08;
 
         //LAB_80117234
@@ -9252,7 +9247,7 @@ public final class SEffe {
       }
 
       //LAB_80117438
-      if(fp == 0) {
+      if(nextKeyframeIndex == 0) {
         //LAB_801176c0
         //LAB_801176e0
         for(int i = 0; i < lmb.objectCount_04; i++) {
@@ -9263,36 +9258,36 @@ public final class SEffe {
           final int flags = lmb.flags_0c[i];
 
           if((flags & 0x8000) == 0) {
-            transformHi.scale_00.x = (transformLo.scale_00.x * s2 + originalTransform.scale_00.x * s0) / 0x2000;
+            transformHi.scale_00.x = Math.lerp(originalTransform.scale_00.x, transformLo.scale_00.x, lerpScale);
           }
 
           //LAB_80117730
           if((flags & 0x4000) == 0) {
-            transformHi.scale_00.y = (transformLo.scale_00.y * s2 + originalTransform.scale_00.y * s0) / 0x2000;
+            transformHi.scale_00.y = Math.lerp(originalTransform.scale_00.y, transformLo.scale_00.y, lerpScale);
           }
 
           //LAB_80117774
           if((flags & 0x2000) == 0) {
-            transformHi.scale_00.z = (transformLo.scale_00.z * s2 + originalTransform.scale_00.z * s0) / 0x2000;
+            transformHi.scale_00.z = Math.lerp(originalTransform.scale_00.z, transformLo.scale_00.z, lerpScale);
           }
 
           //LAB_801177b8
           if((flags & 0x1000) == 0) {
-            transformHi.trans_06.x = (transformLo.trans_06.x * s2 + originalTransform.trans_06.x * s0) / 0x2000;
+            transformHi.trans_06.x = Math.lerp(originalTransform.trans_06.x, transformLo.trans_06.x, lerpScale);
           }
 
           //LAB_801177fc
           if((flags & 0x800) == 0) {
-            transformHi.trans_06.y = (transformLo.trans_06.y * s2 + originalTransform.trans_06.y * s0) / 0x2000;
+            transformHi.trans_06.y = Math.lerp(originalTransform.trans_06.y, transformLo.trans_06.y, lerpScale);
           }
 
           //LAB_80117840
           if((flags & 0x400) == 0) {
-            transformHi.trans_06.z = (transformLo.trans_06.z * s2 + originalTransform.trans_06.z * s0) / 0x2000;
+            transformHi.trans_06.z = Math.lerp(originalTransform.trans_06.z, transformLo.trans_06.z, lerpScale);
           }
         }
       } else {
-        int a0 = (fp - 1) * lmb.transformDataPairCount_08;
+        int a0 = (nextKeyframeIndex - 1) * lmb.transformDataPairCount_08;
 
         //LAB_80117470
         for(int i = 0; i < lmb.transformDataPairCount_08 * 2; i += 2) {
@@ -9314,17 +9309,17 @@ public final class SEffe {
             final int shift = lmbType2TransformationData_8011a048.get(index++).get() & 0xf;
 
             if((flags & 0x8000) == 0) {
-              transformHi.scale_00.x = transformLo.scale_00.x + (lmbType2TransformationData_8011a048.get(index++).get() << shift) * s0 / (float)0x2000;
+              transformHi.scale_00.x = transformLo.scale_00.x + (lmbType2TransformationData_8011a048.get(index++).get() << shift) * lerpScale;
             }
 
             //LAB_80117524
             if((flags & 0x4000) == 0) {
-              transformHi.scale_00.y = transformLo.scale_00.y + (lmbType2TransformationData_8011a048.get(index++).get() << shift) * s0 / (float)0x2000;
+              transformHi.scale_00.y = transformLo.scale_00.y + (lmbType2TransformationData_8011a048.get(index++).get() << shift) * lerpScale;
             }
 
             //LAB_80117564
             if((flags & 0x2000) == 0) {
-              transformHi.scale_00.z = transformLo.scale_00.z + (lmbType2TransformationData_8011a048.get(index++).get() << shift) * s0 / (float)0x2000;
+              transformHi.scale_00.z = transformLo.scale_00.z + (lmbType2TransformationData_8011a048.get(index++).get() << shift) * lerpScale;
             }
           }
 
@@ -9334,17 +9329,17 @@ public final class SEffe {
             final int shift = lmbType2TransformationData_8011a048.get(index++).get() & 0xf;
 
             if((flags & 0x1000) == 0) {
-              transformHi.trans_06.x = transformLo.trans_06.x + (lmbType2TransformationData_8011a048.get(index++).get() << shift) * s0 / (float)0x2000;
+              transformHi.trans_06.x = transformLo.trans_06.x + (lmbType2TransformationData_8011a048.get(index++).get() << shift) * lerpScale;
             }
 
             //LAB_801175ec
             if((flags & 0x800) == 0) {
-              transformHi.trans_06.y = transformLo.trans_06.y + (lmbType2TransformationData_8011a048.get(index++).get() << shift) * s0 / (float)0x2000;
+              transformHi.trans_06.y = transformLo.trans_06.y + (lmbType2TransformationData_8011a048.get(index++).get() << shift) * lerpScale;
             }
 
             //LAB_8011762c
             if((flags & 0x400) == 0) {
-              transformHi.trans_06.z = transformLo.trans_06.z + (lmbType2TransformationData_8011a048.get(index++).get() << shift) * s0 / (float)0x2000;
+              transformHi.trans_06.z = transformLo.trans_06.z + (lmbType2TransformationData_8011a048.get(index++).get() << shift) * lerpScale;
             }
           }
 
@@ -9399,12 +9394,12 @@ public final class SEffe {
   }
 
   @Method(0x801179f0L)
-  public static void FUN_801179f0(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.AnimType>> state, final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager) {
+  public static void lmbAnimationRenderer(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.AnimType>> state, final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager) {
     final int flags = manager._10.flags_00;
-    final BttlScriptData6cSub5c effect = (BttlScriptData6cSub5c)manager.effect_44;
-    if(flags >= 0) {
-      int s1 = Math.max(0, manager._10.ticks_24) % (effect._08 * 2) << 12;
-      tmdGp0Tpage_1f8003ec.set(flags >>> 23 & 0x60);
+    final LmbAnimationEffect5c effect = (LmbAnimationEffect5c)manager.effect_44;
+    if(flags >= 0) { // No errors
+      int s1 = Math.max(0, manager._10.ticks_24) % (effect.keyframeCount_08 * 2) << 12;
+      tmdGp0Tpage_1f8003ec.set(flags >>> 23 & 0x60); // tpage
       zOffset_1f8003e8.set(manager._10.z_22);
       if((manager._10.flags_00 & 0x40) == 0) {
         FUN_800e61e4(manager._10.colour_1c.getX() / 128.0f, manager._10.colour_1c.getY() / 128.0f, manager._10.colour_1c.getZ() / 128.0f);
@@ -9441,7 +9436,7 @@ public final class SEffe {
         final int stepR;
         final int stepG;
         final int stepB;
-        if((effect._34 & 0x4) != 0) {
+        if((effect.flags_34 & 0x4) != 0) {
           final int v0 = effect._40 - 0x1000;
           stepR = anim._10.colour_1c.getX() * v0 / steps;
           stepG = anim._10.colour_1c.getY() * v0 / steps;
@@ -9462,7 +9457,7 @@ public final class SEffe {
         //LAB_80117c48
         int accumulatorScale = 0;
         int stepScale = 0;
-        if((effect._34 & 0x8) != 0) {
+        if((effect.flags_34 & 0x8) != 0) {
           final int t4 = anim._10.scale_28 * (effect._40 - 0x1000);
           accumulatorScale = anim._10.scale_28 << 12;
           stepScale = t4 / steps;
@@ -9473,7 +9468,7 @@ public final class SEffe {
 
         //LAB_80117ca0
         for(int i = 1; i < steps && s1 >= 0; i++) {
-          if((effect._34 & 0x4) != 0) {
+          if((effect.flags_34 & 0x4) != 0) {
             accumulatorR += stepR;
             accumulatorG += stepG;
             accumulatorB += stepB;
@@ -9483,7 +9478,7 @@ public final class SEffe {
           }
 
           //LAB_80117d1c
-          if((effect._34 & 0x8) != 0) {
+          if((effect.flags_34 & 0x8) != 0) {
             accumulatorScale += stepScale;
             manager._10.scale_28 = accumulatorScale >> 12;
           }
@@ -9517,19 +9512,20 @@ public final class SEffe {
     //LAB_80117e80
   }
 
-  @ScriptDescription("Allocates an unknown effect used by down burst and night raid")
+  /** Used by down burst and night raid */
+  @ScriptDescription("Allocates an LMB animation")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lmbFlags", description = "Unknown, selects which LMB to use")
   @Method(0x80117eb0L)
-  public static FlowControl FUN_80117eb0(final RunningScript<? extends BattleObject> script) {
+  public static FlowControl scriptAllocateLmbAnimation(final RunningScript<? extends BattleObject> script) {
     final int param1 = script.params_20[1].get();
     final ScriptState<EffectManagerData6c<EffectManagerData6cInner.AnimType>> state = allocateEffectManager(
-      "BttlScriptData6cSub5c",
+      "LMB animation",
       script.scriptState_04,
       null,
-      SEffe::FUN_801179f0,
+      SEffe::lmbAnimationRenderer,
       null,
-      new BttlScriptData6cSub5c(),
+      new LmbAnimationEffect5c(),
       new EffectManagerData6cInner.AnimType()
     );
 
@@ -9545,7 +9541,7 @@ public final class SEffe {
     }
 
     //LAB_80117f68
-    final BttlScriptData6cSub5c effect = (BttlScriptData6cSub5c)manager.effect_44;
+    final LmbAnimationEffect5c effect = (LmbAnimationEffect5c)manager.effect_44;
     effect.lmbType_00 = lmbType.type_04;
     effect._04 = 0;
     effect.lmb_0c = lmbType.lmb_08;
@@ -9564,11 +9560,11 @@ public final class SEffe {
     if(type == 0) {
       //LAB_80118004
       final LmbType0 lmb = (LmbType0)effect.lmb_0c;
-      effect._08 = lmb._08[0].count_04;
+      effect.keyframeCount_08 = lmb.partAnimations_08[0].count_04;
     } else if(type == 1) {
       //LAB_80118018
       final LmbType1 lmb = (LmbType1)effect.lmb_0c;
-      effect._08 = lmb._0a;
+      effect.keyframeCount_08 = lmb.keyframeCount_0a;
       effect.lmbTransforms_10 = new LmbTransforms14[lmb.objectCount_04];
 
       for(int i = 0; i < lmb.objectCount_04; i++) {
@@ -9577,7 +9573,7 @@ public final class SEffe {
     } else if(type == 2) {
       //LAB_80118068
       final LmbType2 lmb = (LmbType2)effect.lmb_0c;
-      effect._08 = lmb._0a;
+      effect.keyframeCount_08 = lmb.keyframeCount_0a;
       effect.lmbTransforms_10 = new LmbTransforms14[lmb.objectCount_04 * 2];
 
       for(int i = 0; i < lmb.objectCount_04; i++) {
@@ -9589,7 +9585,7 @@ public final class SEffe {
     //LAB_801180e0
     //LAB_801180e8
     manager._10.ticks_24 = -1;
-    manager._10.flags_00 |= 0x5000_0000;
+    manager._10.flags_00 |= 0x5000_0000; // force B+F translucency
     addGenericAttachment(manager, 0, 0x100, 0);
     manager._10.scale_28 = 0x1000;
     script.params_20[0].set(state.index);
@@ -9603,7 +9599,7 @@ public final class SEffe {
   @Method(0x801181a8L)
   public static FlowControl FUN_801181a8(final RunningScript<?> script) {
     final EffectManagerData6c<?> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
-    ((BttlScriptData6cSub5c)manager.effect_44)._14[script.params_20[1].get()] = script.params_20[2].get();
+    ((LmbAnimationEffect5c)manager.effect_44)._14[script.params_20[1].get()] = script.params_20[2].get();
     return FlowControl.CONTINUE;
   }
 
@@ -9615,10 +9611,10 @@ public final class SEffe {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p4")
   @Method(0x801181f0L)
   public static FlowControl FUN_801181f0(final RunningScript<?> script) {
-    final BttlScriptData6cSub5c effect = (BttlScriptData6cSub5c)SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class).effect_44;
+    final LmbAnimationEffect5c effect = (LmbAnimationEffect5c)SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class).effect_44;
 
     final int v1 = script.params_20[3].get() + 1;
-    effect._34 = script.params_20[1].get();
+    effect.flags_34 = script.params_20[1].get();
     effect._38 = script.params_20[2].get() * v1;
     effect._3c = 0x1000 / v1;
     effect._40 = script.params_20[4].get();
@@ -9628,7 +9624,7 @@ public final class SEffe {
   /** TODO renders other effects too? Burnout, more? Uses CTMD render pipeline */
   @Method(0x8011826cL)
   public static void renderDeffTmd(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> data) {
-    final DeffTmdRenderer14 s1 = (DeffTmdRenderer14)data.effect_44;
+    final DeffTmdRenderer14 deffEffect = (DeffTmdRenderer14)data.effect_44;
 
     if(data._10.flags_00 >= 0) {
       final MV sp0x10 = new MV();
@@ -9637,7 +9633,7 @@ public final class SEffe {
         tmdGp0Tpage_1f8003ec.set(data._10.flags_00 >>> 23 & 0x60);
       } else {
         //LAB_801182bc
-        tmdGp0Tpage_1f8003ec.set(s1._10);
+        tmdGp0Tpage_1f8003ec.set(deffEffect.tpage_10);
       }
 
       //LAB_801182c8
@@ -9661,7 +9657,7 @@ public final class SEffe {
 
         final ModelPart10 dobj2 = new ModelPart10();
         dobj2.attribute_00 = data._10.flags_00;
-        dobj2.tmd_08 = s1.tmd_08;
+        dobj2.tmd_08 = deffEffect.tmd_08;
 
         final int oldZShift = zShift_1f8003c4.get();
         final int oldZMax = zMax_1f8003cc.get();
@@ -9675,7 +9671,7 @@ public final class SEffe {
         zMin = oldZMin;
       } else {
         //LAB_80118370
-        renderTmdSpriteEffect(s1.tmd_08, data._10, sp0x10);
+        renderTmdSpriteEffect(deffEffect.tmd_08, data._10, sp0x10);
       }
 
       //LAB_80118380
@@ -9723,14 +9719,14 @@ public final class SEffe {
     if((s1 & 0xf_ff00) == 0xf_ff00) {
       effect.tmdType_04 = null;
       effect.tmd_08 = deffManager_800c693c.tmds_2f8[s1 & 0xff];
-      effect._10 = 0x20;
+      effect.tpage_10 = 0x20;
     } else {
       //LAB_8011847c
       final DeffPart.TmdType tmdType = (DeffPart.TmdType)getDeffPart(s1 | 0x300_0000);
       final TmdWithId tmdWithId = tmdType.tmd_0c.tmdPtr_00;
       effect.tmdType_04 = tmdType;
       effect.tmd_08 = tmdWithId.tmd.objTable[0];
-      effect._10 = (int)((tmdWithId.id & 0xffff_0000L) >>> 11);
+      effect.tpage_10 = (int)((tmdWithId.id & 0xffff_0000L) >>> 11);
     }
 
     //LAB_801184ac
@@ -9796,7 +9792,7 @@ public final class SEffe {
     s4.flags_04 = 0x300_0000;
 
     final DeffTmdRenderer14 s0 = (DeffTmdRenderer14)s4.effect_44;
-    s0._10 = 0x20;
+    s0.tpage_10 = 0x20;
     s0._00 = 0x300_0000;
     s0.tmdType_04 = null;
     s0.tmd_08 = objTable;
@@ -9872,7 +9868,7 @@ public final class SEffe {
     final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager = state.innerStruct_00;
     manager.flags_04 = 0x600_0000;
     manager._10.scale_16.set(0.25f, 0.25f, 0.25f);
-    manager._10.flags_00 = 0x6400_0040;
+    manager._10.flags_00 = 0x6400_0040; // B-F, vram X 256, use light colour
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }

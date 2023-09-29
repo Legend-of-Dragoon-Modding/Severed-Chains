@@ -4606,7 +4606,7 @@ public final class Bttl_800d {
 
     //LAB_800dd720
     for(int i = 0; i < count; i++) {
-      final LmbTransforms14 transforms = lmb._08[i]._08[a0_0];
+      final LmbTransforms14 transforms = lmb.partAnimations_08[i].keyframes_08[a0_0];
       final MV matrix = model.modelParts_00[i].coord2_04.coord;
 
       final Vector3f trans = new Vector3f();
@@ -4615,10 +4615,10 @@ public final class Bttl_800d {
       if(isInterpolationFrame != 0) { // Interpolation frame
         final LmbTransforms14 nextFrame;
         if(animationTicks == model.totalFrames_9a - 1) {
-          nextFrame = lmb._08[i]._08[0]; // Wrap around to frame 0
+          nextFrame = lmb.partAnimations_08[i].keyframes_08[0]; // Wrap around to frame 0
         } else {
           //LAB_800dd7cc
-          nextFrame = lmb._08[i]._08[a0_0 + 1];
+          nextFrame = lmb.partAnimations_08[i].keyframes_08[a0_0 + 1];
         }
 
         //LAB_800dd7d0
@@ -4961,9 +4961,9 @@ public final class Bttl_800d {
       model.animType_90 = 1;
       model.lmbUnknown_94 = 0;
       model.partCount_98 = lmb.objectCount_04;
-      model.totalFrames_9a = lmb._08[0].count_04 * 2;
+      model.totalFrames_9a = lmb.partAnimations_08[0].count_04 * 2;
       model.animationState_9c = 1;
-      model.remainingFrames_9e = lmb._08[0].count_04 * 2;
+      model.remainingFrames_9e = lmb.partAnimations_08[0].count_04 * 2;
       model.interpolationFrameIndex = 0;
     } else {
       //LAB_800de3dc
