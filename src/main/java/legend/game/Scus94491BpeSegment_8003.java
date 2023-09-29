@@ -286,10 +286,6 @@ public final class Scus94491BpeSegment_8003 {
     SetLightMatrix(lightDirection);
   }
 
-  public static void GsSetLightMatrix(final MATRIX mp) {
-    GsSetLightMatrix(mp.toMat3f());
-  }
-
   @Method(0x8003c5e0L)
   public static void setDrawOffset() {
     centreScreenX_1f8003dc.set((short)(displayWidth_1f8003e0.get() / 2));
