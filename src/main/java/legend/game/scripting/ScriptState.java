@@ -397,11 +397,6 @@ public class ScriptState<T> {
           } else if(paramType == 0xb) { // INLINE_TABLE_1 Push (commandStart[commandStart[script[this].storage[cmd2] + (cmd0 | cmd1 << 8)] + (cmd0 | cmd1 << 8)])
             //LAB_80016360
             final int storage = this.storage_44[cmd2];
-
-            if(this.context.opOffset_08 == 514 && this.index == 10) {
-              System.out.println();
-            }
-
             this.context.params_20[paramIndex] = new ScriptInlineParam(this, this.context.opOffset_08).array((short)childCommand + new ScriptInlineParam(this, this.context.opOffset_08).array((short)childCommand + storage).get());
           } else if(paramType == 0xc) { // INLINE_TABLE_2 Push commandStart[commandStart[script[this].storage[cmd0]] + script[this].storage[cmd1]]
             //LAB_800163a0
