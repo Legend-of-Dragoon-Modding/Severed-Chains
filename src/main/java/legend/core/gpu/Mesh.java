@@ -1,6 +1,5 @@
 package legend.core.gpu;
 
-import legend.core.gte.SVECTOR;
 import legend.game.types.Translucency;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -91,7 +90,7 @@ public record Mesh(Segment[] segments) {
         }
 
         for(int vertexIndex = 0; vertexIndex < this.vertexCount; vertexIndex++) {
-          final SVECTOR vert = poly.vertices()[vertexIndex].pos();
+          final Vector3f vert = poly.vertices()[vertexIndex].pos();
           GTE.perspectiveTransform(vert);
 
           if(GTE.hasError()) {
@@ -142,7 +141,7 @@ public record Mesh(Segment[] segments) {
   }
 
   public record Poly3d(Vertex3d[] vertices, int paletteBase, int pageX, int pageY, @Nullable Translucency translucency) { }
-  public record Vertex3d(SVECTOR pos, Vector3f normals, int u, int v, int colour) { }
+  public record Vertex3d(Vector3f pos, Vector3f normals, int u, int v, int colour) { }
 
   public static final class Segment2d implements Segment {
     public final String name;

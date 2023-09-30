@@ -15,7 +15,6 @@ import legend.core.gpu.TimHeader;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
 import legend.core.gte.Transforms;
@@ -5874,7 +5873,7 @@ public class SMap extends EngineState {
   private void FUN_800e866c() {
     //LAB_800e86a4
     for(int i = 0; i < this.SomethingStructPtr_800d1a88.count_0c; i++) {
-      final int y = Math.abs(this.SomethingStructPtr_800d1a88.normals_08[i].getY());
+      final float y = Math.abs(this.SomethingStructPtr_800d1a88.normals_08[i].y);
       this.SomethingStructPtr_800d1a88.ptr_14[i].bool_01 = y > 0x400;
     }
 
@@ -5906,7 +5905,7 @@ public class SMap extends EngineState {
 
   @Method(0x800e8990L)
   private int FUN_800e8990(final float x, final float z) {
-    final SVECTOR vec = new SVECTOR();
+    final Vector3f vec = new Vector3f();
 
     int farthestIndex = 0;
     float farthest = Float.MAX_VALUE;
@@ -5914,7 +5913,7 @@ public class SMap extends EngineState {
 
     //LAB_800e89b8
     for(int i = 0; i < struct.count_0c; i++) {
-      vec.set((short)0, (short)0, (short)0);
+      vec.zero();
 
       //LAB_800e89e0
       if(this._800f7f14) {
@@ -5936,8 +5935,8 @@ public class SMap extends EngineState {
       }
 
       //LAB_800e8ae4
-      final float dx = x - vec.getX();
-      final float dz = z - vec.getZ();
+      final float dx = x - vec.x;
+      final float dz = z - vec.z;
       final float distSqr = dx * dx + dz * dz;
       if(distSqr < farthest) {
         farthest = distSqr;
@@ -5974,8 +5973,8 @@ public class SMap extends EngineState {
   private void FUN_800e8bd8(final SomethingStruct a0) {
     final TmdObjTable1c objTable = a0.objTableArrPtr_00[0];
     a0.verts_04 = objTable.vert_top_00;
-    a0.normals_08 = new SVECTOR[objTable.normal_top_08.length];
-    Arrays.setAll(a0.normals_08, i -> new SVECTOR().set((short)(objTable.normal_top_08[i].x * 4096.0f), (short)(objTable.normal_top_08[i].y * 4096.0f), (short)(objTable.normal_top_08[i].z * 4096.0f)));
+    a0.normals_08 = new Vector3f[objTable.normal_top_08.length];
+    Arrays.setAll(a0.normals_08, i -> new Vector3f(objTable.normal_top_08[i].x * 4096.0f, objTable.normal_top_08[i].y * 4096.0f, objTable.normal_top_08[i].z * 4096.0f));
     a0.count_0c = objTable.n_primitive_14;
     a0.primitives_10 = objTable.primitives_10;
   }
@@ -6072,17 +6071,17 @@ public class SMap extends EngineState {
     //LAB_800e9134
     float t0 = Float.MAX_VALUE;
     int t3 = -1;
-    final SVECTOR[] normals = this.SomethingStructPtr_800d1a88.normals_08;
+    final Vector3f[] normals = this.SomethingStructPtr_800d1a88.normals_08;
 
     //LAB_800e9164
     for(int i = 0; i < t2; i++) {
       final int a3_0 = this.collisionPrimitiveIndices_800cbe48[i];
       final SomethingStructSub0c_1 t5 = this.SomethingStructPtr_800d1a88.ptr_14[a3_0];
 
-      float v1 = -normals[a3_0].getX() * x - normals[a3_0].getZ() * z - t5._08;
+      float v1 = -normals[a3_0].x * x - normals[a3_0].z * z - t5._08;
 
-      if(normals[a3_0].getY() != 0) {
-        v1 = v1 / normals[a3_0].getY();
+      if(normals[a3_0].y != 0) {
+        v1 = v1 / normals[a3_0].y;
       } else {
         v1 = 0;
       }
@@ -6131,8 +6130,7 @@ public class SMap extends EngineState {
 
     //LAB_800e937c
     for(int i = 0; i < count; i++) {
-      final SVECTOR vert = ss.verts_04[IoHelper.readUShort(packet, remainder + 2 + i * 2)];
-      out.add(vert.getX(), vert.getY(), vert.getZ());
+      out.add(ss.verts_04[IoHelper.readUShort(packet, remainder + 2 + i * 2)]);
     }
 
     //LAB_800e93e0
@@ -6147,7 +6145,7 @@ public class SMap extends EngineState {
     int s1;
     int s2;
     final int s4;
-    final SVECTOR sp0x28 = new SVECTOR();
+    final Vector3f sp0x28 = new Vector3f();
 
     if(this.smapLoadingStage_800cb430 != SubmapState.RENDER_SUBMAP_12) {
       return -1;
@@ -6212,8 +6210,8 @@ public class SMap extends EngineState {
       //LAB_800e965c
       for(int i = 0; i < t0; i++) {
         final int primitiveIndex = this.collisionPrimitiveIndices_800cbe48[i];
-        final SVECTOR normal = this.SomethingStructPtr_800d1a88.normals_08[primitiveIndex];
-        final float v1 = (-normal.getX() * x - normal.getZ() * z - this.SomethingStructPtr_800d1a88.ptr_14[primitiveIndex]._08) / normal.getY() - t6;
+        final Vector3f normal = this.SomethingStructPtr_800d1a88.normals_08[primitiveIndex];
+        final float v1 = (-normal.x * x - normal.z * z - this.SomethingStructPtr_800d1a88.ptr_14[primitiveIndex]._08) / normal.y - t6;
 
         if(v1 > 0 && v1 < t1) {
           t2 = primitiveIndex;
@@ -6240,7 +6238,7 @@ public class SMap extends EngineState {
 
       //LAB_800e975c
       //LAB_800e9764
-      sp0x28.set((short)0, (short)0, (short)0);
+      sp0x28.zero();
 
       if(!this._800f7f14 || primitiveIndex < 0 || primitiveIndex >= this.SomethingStructPtr_800d1a88.count_0c) {
         //LAB_800e9774
@@ -6261,11 +6259,11 @@ public class SMap extends EngineState {
       }
 
       //LAB_800e9870
-      playerMovement.x = Math.round(sp0x28.getX() - x);
-      playerMovement.z = Math.round(sp0x28.getZ() - z);
+      playerMovement.x = Math.round(sp0x28.x - x);
+      playerMovement.z = Math.round(sp0x28.z - z);
 
-      final SVECTOR normal = this.SomethingStructPtr_800d1a88.normals_08[primitiveIndex];
-      playerMovement.y = (-normal.getX() * sp0x28.getX() - normal.getZ() * sp0x28.getZ() - this.SomethingStructPtr_800d1a88.ptr_14[primitiveIndex]._08) / (float)normal.getY();
+      final Vector3f normal = this.SomethingStructPtr_800d1a88.normals_08[primitiveIndex];
+      playerMovement.y = (-normal.x * sp0x28.x - normal.z * sp0x28.z - this.SomethingStructPtr_800d1a88.ptr_14[primitiveIndex]._08) / normal.y;
     } else {
       //LAB_800e990c
       t0 = 0;
@@ -6307,9 +6305,9 @@ public class SMap extends EngineState {
         //LAB_800e9a4c
         for(int n = 0; n < t0; n++) {
           final int primitiveIndex = this.collisionPrimitiveIndices_800cbe48[n];
-          final SVECTOR normal = this.SomethingStructPtr_800d1a88.normals_08[primitiveIndex];
+          final Vector3f normal = this.SomethingStructPtr_800d1a88.normals_08[primitiveIndex];
 
-          final float v1 = (-normal.getX() * endX - normal.getZ() * endZ - this.SomethingStructPtr_800d1a88.ptr_14[primitiveIndex]._08) / normal.getY() - t6;
+          final float v1 = (-normal.x * endX - normal.z * endZ - this.SomethingStructPtr_800d1a88.ptr_14[primitiveIndex]._08) / normal.y - t6;
           if(v1 > 0 && v1 < t1) {
             t2 = primitiveIndex;
             t1 = v1;
@@ -6347,12 +6345,12 @@ public class SMap extends EngineState {
       //LAB_800e9bbc
       //LAB_800e9bc0
       if(s3 >= 0 && v0 < 0) {
-        final SVECTOR normal = this.SomethingStructPtr_800d1a88.normals_08[s3];
+        final Vector3f normal = this.SomethingStructPtr_800d1a88.normals_08[s3];
         final SomethingStructSub0c_1 struct = this.SomethingStructPtr_800d1a88.ptr_14[s3];
 
-        if(Math.abs(y - (-normal.getX() * endX - normal.getZ() * endZ - struct._08) / normal.getY()) < 50) {
+        if(Math.abs(y - (-normal.x * endX - normal.z * endZ - struct._08) / normal.y) < 50) {
           //LAB_800e9e64
-          playerMovement.y = (-normal.getX() * (x + playerMovement.x) - normal.getZ() * (z + playerMovement.z) - struct._08) / normal.getY();
+          playerMovement.y = (-normal.x * (x + playerMovement.x) - normal.z * (z + playerMovement.z) - struct._08) / normal.y;
 
           //LAB_800ea390
           if(!this._800d1a8c._00) {
@@ -6511,9 +6509,9 @@ public class SMap extends EngineState {
             //LAB_800ea17c
             for(int i = 0; i < t0; i++) {
               final int primitiveIndex = this.collisionPrimitiveIndices_800cbe48[i];
-              final SVECTOR normal = this.SomethingStructPtr_800d1a88.normals_08[primitiveIndex];
+              final Vector3f normal = this.SomethingStructPtr_800d1a88.normals_08[primitiveIndex];
 
-              final float v1_0 = (-normal.getX() * offsetX - normal.getZ() * offsetZ - this.SomethingStructPtr_800d1a88.ptr_14[primitiveIndex]._08) / normal.getY() - t6;
+              final float v1_0 = (-normal.x * offsetX - normal.z * offsetZ - this.SomethingStructPtr_800d1a88.ptr_14[primitiveIndex]._08) / normal.y - t6;
               if(v1_0 > 0 && v1_0 < t1) {
                 t2 = primitiveIndex;
                 t1 = v1_0;
@@ -6540,13 +6538,13 @@ public class SMap extends EngineState {
         }
 
         //LAB_800ea234
-        final SVECTOR normal = this.SomethingStructPtr_800d1a88.normals_08[s2];
+        final Vector3f normal = this.SomethingStructPtr_800d1a88.normals_08[s2];
 
-        if(Math.abs(y - (-normal.getX() * offsetX - normal.getZ() * offsetZ - this.SomethingStructPtr_800d1a88.ptr_14[s2]._08) / normal.getY()) >= 50) {
+        if(Math.abs(y - (-normal.x * offsetX - normal.z * offsetZ - this.SomethingStructPtr_800d1a88.ptr_14[s2]._08) / normal.y) >= 50) {
           return -1;
         }
 
-        playerMovement.y = (-normal.getX() * offsetX - normal.getZ() * offsetZ - this.SomethingStructPtr_800d1a88.ptr_14[s2]._08) / normal.getY();
+        playerMovement.y = (-normal.x * offsetX - normal.z * offsetZ - this.SomethingStructPtr_800d1a88.ptr_14[s2]._08) / normal.y;
         playerMovement.x = offsetX - x;
         playerMovement.z = offsetZ - z;
 
@@ -6557,9 +6555,9 @@ public class SMap extends EngineState {
         return -1;
       }
 
-      final SVECTOR normal = this.SomethingStructPtr_800d1a88.normals_08[s3];
+      final Vector3f normal = this.SomethingStructPtr_800d1a88.normals_08[s3];
 
-      if(Math.abs(y - (-normal.getX() * endX - normal.getZ() * endZ - this.SomethingStructPtr_800d1a88.ptr_14[s3]._08) / normal.getY()) >= 50) {
+      if(Math.abs(y - (-normal.x * endX - normal.z * endZ - this.SomethingStructPtr_800d1a88.ptr_14[s3]._08) / normal.y) >= 50) {
         return -1;
       }
 
@@ -6567,7 +6565,7 @@ public class SMap extends EngineState {
       final SomethingStructSub0c_1 struct = this.SomethingStructPtr_800d1a88.ptr_14[s3];
 
       //LAB_800e9e64
-      playerMovement.y = (-normal.getX() * (x + playerMovement.x) - normal.getZ() * (z + playerMovement.z) - struct._08) / normal.getY();
+      playerMovement.y = (-normal.x * (x + playerMovement.x) - normal.z * (z + playerMovement.z) - struct._08) / normal.y;
     }
 
     //LAB_800ea390

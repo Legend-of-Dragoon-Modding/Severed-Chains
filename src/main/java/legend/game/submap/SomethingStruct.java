@@ -2,14 +2,14 @@ package legend.game.submap;
 
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
+import org.joml.Vector3f;
 
 public class SomethingStruct {
   public TmdObjTable1c[] objTableArrPtr_00;
-  public SVECTOR[] verts_04;
-  public SVECTOR[] normals_08;
+  public Vector3f[] verts_04;
+  public Vector3f[] normals_08;
   public int count_0c;
   public TmdObjTable1c.Primitive[] primitives_10;
   public SomethingStructSub0c_1[] ptr_14;

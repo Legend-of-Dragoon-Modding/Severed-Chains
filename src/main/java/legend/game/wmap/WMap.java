@@ -10,7 +10,6 @@ import legend.core.gte.COLOUR;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
 import legend.core.gte.VECTOR;
@@ -46,6 +45,7 @@ import legend.game.unpacker.Unpacker;
 import org.joml.Math;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -272,7 +272,14 @@ public class WMap extends EngineState {
    */
   private static final ArrayRef<ByteRef> playerAvatarColourMapOffsets_800ef694 = MEMORY.ref(1, 0x800ef694L, ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new));
   private static final ArrayRef<TeleportationEndpoints08> teleportationEndpoints_800ef698 = MEMORY.ref(4, 0x800ef698L, ArrayRef.of(TeleportationEndpoints08.class, 6, 0x8, TeleportationEndpoints08::new));
-  private static final ArrayRef<TeleportationLocation0c> teleportationLocations_800ef6c8 = MEMORY.ref(4, 0x800ef6c8L, ArrayRef.of(TeleportationLocation0c.class, 6, 0xc, TeleportationLocation0c::new));
+  private static final TeleportationLocation0c[] teleportationLocations_800ef6c8 = {
+    new TeleportationLocation0c(0x48, new Vector3i(- 825, -112,  921)),
+    new TeleportationLocation0c(0x49, new Vector3i(- 825, -112,  825)),
+    new TeleportationLocation0c(0x4a, new Vector3i(-  75, -  7,  187)),
+    new TeleportationLocation0c(0x4b, new Vector3i(-  75, -  7,  187)),
+    new TeleportationLocation0c(0x4c, new Vector3i(-1012,    0, - 75)),
+    new TeleportationLocation0c(0x4d, new Vector3i(- 825, -112,  825)),
+  };
 
   private static final LodString No_800effa4 = MEMORY.ref(4, 0x800effa4L, LodString::new);
   private static final LodString Yes_800effb0 = MEMORY.ref(4, 0x800effb0L, LodString::new);
@@ -3844,7 +3851,7 @@ public class WMap extends EngineState {
   /** Don't really know what makes it special. Seems to use a fixed Z value and doesn't check if the triangles are on screen. Used for water. */
   @Method(0x800dd05cL)
   private void renderSpecialDobj2(final ModelPart10 dobj2) {
-    final SVECTOR[] vertices = dobj2.tmd_08.vert_top_00;
+    final Vector3f[] vertices = dobj2.tmd_08.vert_top_00;
 
     for(final TmdObjTable1c.Primitive primitive : dobj2.tmd_08.primitives_10) {
       final int command = primitive.header() & 0xff04_0000;
@@ -3858,7 +3865,7 @@ public class WMap extends EngineState {
   }
 
   @Method(0x800deeacL)
-  private void FUN_800deeac(final TmdObjTable1c.Primitive primitive, final SVECTOR[] vertices) {
+  private void FUN_800deeac(final TmdObjTable1c.Primitive primitive, final Vector3f[] vertices) {
     //LAB_800deee8
     for(final byte[] data : primitive.data()) {
       final int tpage = IoHelper.readUShort(data, 0x6);
@@ -3873,9 +3880,9 @@ public class WMap extends EngineState {
         .uv(3, IoHelper.readUByte(data, 0xc), IoHelper.readUByte(data, 0xd));
 
       //LAB_800def00
-      final SVECTOR vert0 = vertices[IoHelper.readUShort(data, 0x20)];
-      final SVECTOR vert1 = vertices[IoHelper.readUShort(data, 0x22)];
-      final SVECTOR vert2 = vertices[IoHelper.readUShort(data, 0x24)];
+      final Vector3f vert0 = vertices[IoHelper.readUShort(data, 0x20)];
+      final Vector3f vert1 = vertices[IoHelper.readUShort(data, 0x22)];
+      final Vector3f vert2 = vertices[IoHelper.readUShort(data, 0x24)];
       GTE.perspectiveTransformTriangle(vert0, vert1, vert2);
 
       if(!GTE.hasError()) {
@@ -4133,13 +4140,11 @@ public class WMap extends EngineState {
   private void getTeleportationLocationTranslation(final int locationIndex, final Vector3f translation) {
     //LAB_800e0d84
     for(int i = 0; i < 6; i++) {
+      final TeleportationLocation0c location = teleportationLocations_800ef6c8[i];
+
       //LAB_800e0da0
-      if(locationIndex == teleportationLocations_800ef6c8.get(i).locationIndex_00.get()) {
-        translation.set(
-          teleportationLocations_800ef6c8.get(i).translation_04.getX(),
-          teleportationLocations_800ef6c8.get(i).translation_04.getY(),
-          teleportationLocations_800ef6c8.get(i).translation_04.getZ()
-        );
+      if(locationIndex == location.locationIndex_00) {
+        translation.set(location.translation_04);
         break;
       }
     }

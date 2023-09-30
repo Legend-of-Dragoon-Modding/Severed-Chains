@@ -16,7 +16,6 @@ import legend.core.gte.COLOUR;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.SVECTOR;
 import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
@@ -4895,16 +4894,16 @@ public final class SEffe {
     //LAB_80109b7c
     //LAB_80109b90
     for(int i = 0; i < animation.vertexCount_08; i++) {
-      final SVECTOR source = animation.sourceVertices_0c[i];
+      final Vector3f source = animation.sourceVertices_0c[i];
       final VECTOR current = animation.currentState_10[i];
       final VECTOR previous = animation.previousState_14[i];
       previous.add(current);
       current.setX(current.getX() + (current.getX() * animation.embiggener_04 >> 8));
       current.setY(current.getY() + (current.getY() * animation.embiggener_04 >> 8));
       current.setZ(current.getZ() + (current.getZ() * animation.embiggener_04 >> 8));
-      source.setX((short)(previous.getX() >> 8));
-      source.setY((short)(previous.getY() >> 8));
-      source.setZ((short)(previous.getZ() >> 8));
+      source.x = previous.getX() >> 8;
+      source.y = previous.getY() >> 8;
+      source.z = previous.getZ() >> 8;
     }
 
     //LAB_80109ce0
@@ -4945,19 +4944,19 @@ public final class SEffe {
 
     //LAB_80109e78
     for(int i = 0; i < sourceModel.n_vert_04; i++) {
-      final SVECTOR sourceVertex = sourceModel.vert_top_00[i];
+      final Vector3f sourceVertex = sourceModel.vert_top_00[i];
       animation.previousState_14[i].set(sourceVertex).shl(8);
     }
 
     //LAB_80109ecc
     //LAB_80109ee4
     for(int i = 0; i < animation.vertexCount_08; i++) {
-      final SVECTOR diffVertex = diffModel.vert_top_00[i];
+      final Vector3f diffVertex = diffModel.vert_top_00[i];
       final VECTOR previous = animation.previousState_14[i];
       final VECTOR current = animation.currentState_10[i];
-      current.setX(((diffVertex.getX() << 8) - previous.getX()) / ticksRemaining);
-      current.setY(((diffVertex.getY() << 8) - previous.getY()) / ticksRemaining);
-      current.setZ(((diffVertex.getZ() << 8) - previous.getZ()) / ticksRemaining);
+      current.setX(Math.round(diffVertex.x * 0x100 - previous.getX()) / ticksRemaining);
+      current.setY(Math.round(diffVertex.y * 0x100 - previous.getY()) / ticksRemaining);
+      current.setZ(Math.round(diffVertex.z * 0x100 - previous.getZ()) / ticksRemaining);
     }
 
     //LAB_80109f90
@@ -4985,8 +4984,8 @@ public final class SEffe {
           break outer;
         }
 
-        final SVECTOR sp0x10 = new SVECTOR().set(effect.verticesCopy_1c[s1]);
-        sp0x10.y.add((short)(rsin(s4) * (manager._10._28 << 10 >> 8) >> 12));
+        final Vector3f sp0x10 = new Vector3f(effect.verticesCopy_1c[s1]);
+        sp0x10.y += rsin(s4) * (manager._10._28 << 10 >> 8) >> 12;
         effect.vertices_0c[s1].set(sp0x10);
         s4 += 0x1000 / effect._18 / manager._10._2c >> 8;
         s1++;

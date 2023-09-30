@@ -1,6 +1,6 @@
 package legend.game.unpacker;
 
-import legend.core.gte.SVECTOR;
+import org.joml.Vector3i;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +38,8 @@ public class Ctmd {
     public final int scale_18;
 
     public final List<PrimitiveGroup> unpackedPrimitives = new ArrayList<>();
-    public SVECTOR[] unpackedVertices;
-    public final SVECTOR[] unpackedNormals;
+    public Vector3i[] unpackedVertices;
+    public final Vector3i[] unpackedNormals;
 
     public ObjTable(final int vertices, final int vertexCount, final int normals, final int normalCount, final int primitives, final int primitiveCount, final int scale18) {
       this.vertices_00 = vertices;
@@ -50,7 +50,7 @@ public class Ctmd {
       this.primitiveCount_14 = primitiveCount;
       this.scale_18 = scale18;
 
-      this.unpackedNormals = new SVECTOR[normalCount];
+      this.unpackedNormals = new Vector3i[normalCount];
     }
   }
 

@@ -22,16 +22,6 @@ public class VECTOR implements MemoryRef {
     this.z = new IntRef();
   }
 
-  public VECTOR(final int x, final int y, final int z) {
-    this();
-    this.set(x, y, z);
-  }
-
-  public VECTOR(final Vector3f other) {
-    this();
-    this.set(other);
-  }
-
   public VECTOR(final Value ref) {
     this.ref = ref;
     this.x = new IntRef(ref.offset(4, 0x0L));
@@ -49,14 +39,6 @@ public class VECTOR implements MemoryRef {
 
   /** NOTE: does NOT set pad */
   public VECTOR set(final VECTOR other) {
-    this.setX(other.getX());
-    this.setY(other.getY());
-    this.setZ(other.getZ());
-    return this;
-  }
-
-  /** NOTE: does NOT set pad */
-  public VECTOR set(final SVECTOR other) {
     this.setX(other.getX());
     this.setY(other.getY());
     this.setZ(other.getZ());
@@ -140,13 +122,6 @@ public class VECTOR implements MemoryRef {
     return this;
   }
 
-  public VECTOR add(final SVECTOR other) {
-    this.x.add(other.x.get());
-    this.y.add(other.y.get());
-    this.z.add(other.z.get());
-    return this;
-  }
-
   public VECTOR add(final int value) {
     this.x.add(value);
     this.y.add(value);
@@ -172,13 +147,6 @@ public class VECTOR implements MemoryRef {
     this.x.sub((int)other.x);
     this.y.sub((int)other.y);
     this.z.sub((int)other.z);
-    return this;
-  }
-
-  public VECTOR sub(final SVECTOR other) {
-    this.x.sub(other.x.get());
-    this.y.sub(other.y.get());
-    this.z.sub(other.z.get());
     return this;
   }
 
@@ -210,13 +178,6 @@ public class VECTOR implements MemoryRef {
     return this;
   }
 
-  public VECTOR mul(final SVECTOR value) {
-    this.x.mul(value.x.get());
-    this.y.mul(value.y.get());
-    this.z.mul(value.z.get());
-    return this;
-  }
-
   public VECTOR mul(final int value) {
     this.x.mul(value);
     this.y.mul(value);
@@ -238,13 +199,6 @@ public class VECTOR implements MemoryRef {
     return this;
   }
 
-  public VECTOR div(final SVECTOR divisor) {
-    this.x.div(divisor.x.get());
-    this.y.div(divisor.y.get());
-    this.z.div(divisor.z.get());
-    return this;
-  }
-
   public VECTOR div(final int divisor) {
     this.x.div(divisor);
     this.y.div(divisor);
@@ -263,13 +217,6 @@ public class VECTOR implements MemoryRef {
     this.x.mod(divisor.x);
     this.y.mod(divisor.y);
     this.z.mod(divisor.z);
-    return this;
-  }
-
-  public VECTOR mod(final SVECTOR divisor) {
-    this.x.mod(divisor.x.get());
-    this.y.mod(divisor.y.get());
-    this.z.mod(divisor.z.get());
     return this;
   }
 
