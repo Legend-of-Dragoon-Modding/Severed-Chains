@@ -7,6 +7,7 @@ import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
+import legend.core.gpu.GpuCommandLine;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
@@ -477,7 +478,7 @@ public class SMap extends EngineState {
   public static final ArrayRef<ShopStruct40> shops_800f4930 = MEMORY.ref(4, 0x800f4930L, ArrayRef.of(ShopStruct40.class, 64, 0x40, ShopStruct40::new));
 
   private final ArrayRef<UvAdjustmentMetrics14> uvAdjustments_800f5930 = MEMORY.ref(4, 0x800f5930L, ArrayRef.of(UvAdjustmentMetrics14.class, 20, 0x14, UvAdjustmentMetrics14::new));
-  private final int[] _800f5ac0 = {5, 6, 7, 8, 9};
+
   /**
    * 65 - {@link SMap#handleAndRenderSubmapModel()}
    *
@@ -1567,64 +1568,44 @@ public class SMap extends EngineState {
   private FlowControl FUN_800de668(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
-    sobj.vec_138.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
-    sobj.i_144 = script.params_20[4].get();
+    sobj.movementDestination_138.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    sobj.movementTicks_144 = script.params_20[4].get();
 
     sobj.us_170 = 1;
 
-    if(sobj.i_144 != 0) {
-      sobj.vec_148.set(sobj.vec_138).sub(model.coord2_14.coord.transfer).div(sobj.i_144);
+    if(sobj.movementTicks_144 != 0) {
+      sobj.movementStep_148.set(sobj.movementDestination_138).sub(model.coord2_14.coord.transfer).div(sobj.movementTicks_144);
     } else {
-      sobj.vec_148.set(0, 0, 0);
+      sobj.movementStep_148.set(0, 0, 0);
     }
 
-    if(sobj.vec_148.getX() == 0) {
-      if(sobj.vec_138.getX() < model.coord2_14.coord.transfer.x) {
-        sobj.vec_148.setX(0x8000_0000);
-      }
+    if(sobj.movementStep_148.getX() == 0 && sobj.movementDestination_138.getX() < model.coord2_14.coord.transfer.x) {
+      sobj.movementStep_148.setX(0x8000_0000);
     }
 
     //LAB_800de750
-    if(sobj.vec_148.getY() == 0) {
-      if(sobj.vec_138.getY() < model.coord2_14.coord.transfer.y) {
-        sobj.vec_148.setY(0x8000_0000);
-      }
+    if(sobj.movementStep_148.getY() == 0 && sobj.movementDestination_138.getY() < model.coord2_14.coord.transfer.y) {
+      sobj.movementStep_148.setY(0x8000_0000);
     }
 
     //LAB_800de77c
-    if(sobj.vec_148.getZ() == 0) {
-      if(sobj.vec_138.getZ() < model.coord2_14.coord.transfer.z) {
-        sobj.vec_148.setZ(0x8000_0000);
-      }
+    if(sobj.movementStep_148.getZ() == 0 && sobj.movementDestination_138.getZ() < model.coord2_14.coord.transfer.z) {
+      sobj.movementStep_148.setZ(0x8000_0000);
     }
 
     //LAB_800de7a8
     int x = 0;
     int y = 0;
     int z = 0;
-    if(sobj.i_144 != 0) {
-      x = (sobj.vec_138.getX() - Math.round(model.coord2_14.coord.transfer.x) << 16) / sobj.i_144;
-      if(sobj.vec_148.getX() < 0) {
-        //LAB_800de7e0
-        x = ~x + 1;
-      }
-
-      y = (sobj.vec_138.getY() - Math.round(model.coord2_14.coord.transfer.y) << 16) / sobj.i_144;
-      if(sobj.vec_148.getY() < 0) {
-        //LAB_800de84c
-        y = ~y + 1;
-      }
-
-      z = (sobj.vec_138.getZ() - Math.round(model.coord2_14.coord.transfer.z) << 16) / sobj.i_144;
-      if(sobj.vec_148.getZ() < 0) {
-        //LAB_800de8b8
-        z = ~z + 1;
-      }
+    if(sobj.movementTicks_144 != 0) {
+      x = Math.round(Math.abs(((sobj.movementDestination_138.getX() - model.coord2_14.coord.transfer.x) * 0x1_0000) / sobj.movementTicks_144));
+      y = Math.round(Math.abs(((sobj.movementDestination_138.getY() - model.coord2_14.coord.transfer.y) * 0x1_0000) / sobj.movementTicks_144));
+      z = Math.round(Math.abs(((sobj.movementDestination_138.getZ() - model.coord2_14.coord.transfer.z) * 0x1_0000) / sobj.movementTicks_144));
     }
 
     //LAB_800de8e8
-    sobj.vec_154.set(x & 0xffff, y & 0xffff, z & 0xffff);
-    sobj.vec_160.set(0, 0, 0);
+    sobj.movementStep12_154.set(x & 0xffff, y & 0xffff, z & 0xffff);
+    sobj.movementDistanceMoved12_160.set(0, 0, 0);
 
     this.sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(this::FUN_800e1f90);
 
@@ -1634,114 +1615,80 @@ public class SMap extends EngineState {
 
   @ScriptDescription("Something to do with forced movement")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "Possibly movement destination X")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "Possibly movement destination Y")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "Possibly movement destination Z")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "i_144", description = "Possibly movement frames")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "Movement destination X")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "Movement destination Y")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "Movement destination Z")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks", description = "Movement ticks")
   @Method(0x800de944L)
   private FlowControl FUN_800de944(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
-    sobj.vec_138.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
-    final int a3 = script.params_20[4].get();
-    sobj.i_144 = a3;
+    sobj.movementDestination_138.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    sobj.movementTicks_144 = script.params_20[4].get();
 
-    sobj.vec_148.setX((sobj.vec_138.getX() - Math.round(model.coord2_14.coord.transfer.x)) / a3);
-    sobj.vec_148.setZ((sobj.vec_138.getZ() - Math.round(model.coord2_14.coord.transfer.z)) / a3);
+    sobj.movementStep_148.setX(Math.round((sobj.movementDestination_138.getX() - model.coord2_14.coord.transfer.x) / sobj.movementTicks_144));
+    sobj.movementStep_148.setZ(Math.round((sobj.movementDestination_138.getZ() - model.coord2_14.coord.transfer.z) / sobj.movementTicks_144));
 
-    if(sobj.vec_148.getX() == 0 && sobj.vec_138.getX() < model.coord2_14.coord.transfer.x) {
-      sobj.vec_148.setX(0x8000_0000);
+    if(sobj.movementStep_148.getX() == 0 && sobj.movementDestination_138.getX() < model.coord2_14.coord.transfer.x) {
+      sobj.movementStep_148.setX(0x8000_0000);
     }
 
     //LAB_800dea08
-    if(sobj.vec_148.getZ() == 0 && sobj.vec_138.getZ() < model.coord2_14.coord.transfer.z) {
-      sobj.vec_148.setZ(0x8000_0000);
+    if(sobj.movementStep_148.getZ() == 0 && sobj.movementDestination_138.getZ() < model.coord2_14.coord.transfer.z) {
+      sobj.movementStep_148.setZ(0x8000_0000);
     }
 
     //LAB_800dea34
-    int x = (sobj.vec_138.getX() - Math.round(model.coord2_14.coord.transfer.x) << 16) / sobj.i_144;
-    if(sobj.vec_148.getX() < 0) {
-      //LAB_800dea6c
-      x = ~x + 1;
-    }
+    sobj.movementStep12_154.setX(Math.round(Math.abs((sobj.movementDestination_138.getX() - model.coord2_14.coord.transfer.x) * 0x1_0000 / sobj.movementTicks_144)) & 0xffff);
+    sobj.movementStep12_154.setZ(Math.round(Math.abs((sobj.movementDestination_138.getZ() - model.coord2_14.coord.transfer.z) * 0x1_0000 / sobj.movementTicks_144)) & 0xffff);
 
-    //LAB_800dea9c
-    sobj.vec_154.setX(x & 0xffff);
-
-    int z = (sobj.vec_138.getZ() - Math.round(model.coord2_14.coord.transfer.z) << 16) / sobj.i_144;
-    if(sobj.vec_148.getZ() < 0) {
-      //LAB_800dead8
-      z = ~z + 1;
-    }
-
-    //LAB_800deb08
-    sobj.vec_154.setZ(z & 0xffff);
-
-    sobj.s_134 = Math.round(((sobj.vec_138.getY() - model.coord2_14.coord.transfer.y) * 2 - a3 * 7 * (a3 - 1)) / (a3 * 2));
-    sobj.vec_160.setX(0);
-    sobj.vec_160.setZ(0);
+    sobj.movementStepY_134 = Math.round(((sobj.movementDestination_138.getY() - model.coord2_14.coord.transfer.y) * 2 - sobj.movementTicks_144 * 7 * (sobj.movementTicks_144 - 1)) / (sobj.movementTicks_144 * 2));
+    sobj.movementDistanceMoved12_160.setX(0);
+    sobj.movementDistanceMoved12_160.setZ(0);
     sobj.us_170 = 2;
     sobj.s_172 = 1;
-    sobj.ui_18c = 7;
-    this.sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(this::FUN_800e3e74);
+    sobj.movementStepAccelerationY_18c = 7;
+    this.sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(this::tickSobjMovement);
     return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Something to do with forced movement")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "Possibly movement destination X")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "Possibly movement destination Y")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "Possibly movement destination Z")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "i_144", description = "Possibly movement frames")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ui_18c", description = "Use unknown")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "Movement destination X")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "Movement destination Y")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "Movement destination Z")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks", description = "Movement ticks")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepAccelerationY", description = "Y step acceleration")
   @Method(0x800deba0L)
   private FlowControl FUN_800deba0(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    sobj.vec_138.setX(script.params_20[1].get());
-    sobj.vec_138.setY(script.params_20[2].get());
-    sobj.vec_138.setZ(script.params_20[3].get());
-    final int a3 = script.params_20[4].get();
-    sobj.i_144 = a3;
-    sobj.ui_18c = this._800f5ac0[script.params_20[5].get()];
-    sobj.vec_148.setX((sobj.vec_138.getX() - Math.round(sobj.model_00.coord2_14.coord.transfer.x)) / a3);
-    sobj.vec_148.setZ((sobj.vec_138.getZ() - Math.round(sobj.model_00.coord2_14.coord.transfer.y)) / a3);
+    sobj.movementDestination_138.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    sobj.movementTicks_144 = script.params_20[4].get();
+    sobj.movementStepAccelerationY_18c = script.params_20[5].get() + 5;
+    sobj.movementStep_148.setX(Math.round((sobj.movementDestination_138.getX() - sobj.model_00.coord2_14.coord.transfer.x) / sobj.movementTicks_144));
+    sobj.movementStep_148.setZ(Math.round((sobj.movementDestination_138.getZ() - sobj.model_00.coord2_14.coord.transfer.z) / sobj.movementTicks_144));
 
-    if(sobj.vec_148.getX() == 0 && sobj.vec_138.getX() < sobj.model_00.coord2_14.coord.transfer.x) {
-      sobj.vec_148.setX(0x8000_0000);
+    if(sobj.movementStep_148.getX() == 0 && sobj.movementDestination_138.getX() < sobj.model_00.coord2_14.coord.transfer.x) {
+      sobj.movementStep_148.setX(0x8000_0000);
     }
 
     //LAB_800dec90
-    if(sobj.vec_148.getZ() == 0 && sobj.vec_138.getZ() < sobj.model_00.coord2_14.coord.transfer.z) {
-      sobj.vec_148.setZ(0x8000_0000);
+    if(sobj.movementStep_148.getZ() == 0 && sobj.movementDestination_138.getZ() < sobj.model_00.coord2_14.coord.transfer.z) {
+      sobj.movementStep_148.setZ(0x8000_0000);
     }
 
     //LAB_800decbc
-    int x = (sobj.vec_138.getX() - Math.round(sobj.model_00.coord2_14.coord.transfer.x) << 16) / sobj.i_144;
-    if(sobj.vec_148.getX() < 0) {
-      //LAB_800decf4
-      x = ~x + 1;
-    }
-
-    //LAB_800ded24
-    sobj.vec_154.setX(x & 0xffff);
-
-    int z = (sobj.vec_138.getZ() - Math.round(sobj.model_00.coord2_14.coord.transfer.z) << 16) / sobj.i_144;
-    if(sobj.vec_148.getZ() < 0) {
-      //LAB_800ded60
-      z = ~z + 1;
-    }
-
-    //LAB_800ded90
-    sobj.vec_154.setZ(z & 0xffff);
+    sobj.movementStep12_154.setX(Math.round(Math.abs((sobj.movementDestination_138.getX() - sobj.model_00.coord2_14.coord.transfer.x) * 0x1_0000 / sobj.movementTicks_144)) & 0xffff);
+    sobj.movementStep12_154.setZ(Math.round(Math.abs((sobj.movementDestination_138.getZ() - sobj.model_00.coord2_14.coord.transfer.z) * 0x1_0000 / sobj.movementTicks_144)) & 0xffff);
 
     sobj.s_174 = sobj.s_172;
     sobj.s_172 = 1;
     sobj.us_170 = 2;
-    sobj.vec_160.setX(0);
-    sobj.vec_160.setZ(0);
-    sobj.s_134 = Math.round(((sobj.vec_138.getY() - sobj.model_00.coord2_14.coord.transfer.y) * 2 - a3 * sobj.ui_18c * (a3 - 1)) / (a3 * 2));
-    this.sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(this::FUN_800e3e74);
+    sobj.movementDistanceMoved12_160.setX(0);
+    sobj.movementDistanceMoved12_160.setZ(0);
+    sobj.movementStepY_134 = Math.round(((sobj.movementDestination_138.getY() - sobj.model_00.coord2_14.coord.transfer.y) * 2 - sobj.movementTicks_144 * sobj.movementStepAccelerationY_18c * (sobj.movementTicks_144 - 1)) / (sobj.movementTicks_144 * 2));
+    this.sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(this::tickSobjMovement);
     return FlowControl.CONTINUE;
   }
 
@@ -3019,7 +2966,7 @@ public class SMap extends EngineState {
 
     if((sobj.flags_190 & 0x200_0000) != 0 || (sobj.flags_190 & 0x800_0000) != 0) {
       this.transformCollisionVertices(model, sobj.collisionSizeHorizontal_1a0, 0, v0, v1);
-      this.queueCollisionRectPacket(v0, v1, 0x80_0000);
+      this.queueCollisionRectPacket(v0, v1, 0x800000);
     }
 
     if((sobj.flags_190 & 0x20_0000) != 0 || (sobj.flags_190 & 0x80_0000) != 0) {
@@ -3030,6 +2977,12 @@ public class SMap extends EngineState {
     if(this.sobjs_800c6880[0] == state) {
       this.transformCollisionVertices(model, sobj.playerCollisionSizeHorizontal_1b8, sobj.playerCollisionReach_1c0, v0, v1);
       this.queueCollisionRectPacket(v0, v1, 0x80);
+    }
+
+    if(sobj.us_170 != 0) {
+      this.transformVertex(v0, sobj.model_00.coord2_14.coord.transfer);
+      this.transformVertex(v1, sobj.movementDestination_138.toVec3());
+      this.queueMovementLinePacket(v0, v1, 0x800080);
     }
   }
 
@@ -3054,9 +3007,18 @@ public class SMap extends EngineState {
       .translucent(Translucency.B_PLUS_F)
       .rgb(colour)
       .pos(0, v0.x, v0.y)
-      .pos(1, v1.x, v1.y)
+      .pos(1, v1.x, v0.y)
       .pos(2, v0.x, v1.y)
       .pos(3, v1.x, v1.y)
+    );
+  }
+
+  private void queueMovementLinePacket(final Vector2f v0, final Vector2f v1, final int colour) {
+    GPU.queueCommand(37, new GpuCommandLine()
+      .translucent(Translucency.B_PLUS_F)
+      .rgb(colour)
+      .pos(0, v0.x, v0.y)
+      .pos(1, v1.x, v1.y)
     );
   }
 
@@ -3427,8 +3389,8 @@ public class SMap extends EngineState {
           state.innerStruct_00.sobjIndex_12e = i;
           state.innerStruct_00.sobjIndex_130 = i;
           state.innerStruct_00.animIndex_132 = 0;
-          state.innerStruct_00.s_134 = 0;
-          state.innerStruct_00.i_144 = 0;
+          state.innerStruct_00.movementStepY_134 = 0;
+          state.innerStruct_00.movementTicks_144 = 0;
           state.innerStruct_00.ui_16c = -1;
           state.innerStruct_00.us_170 = 0;
           state.innerStruct_00.s_172 = 0;
@@ -3456,7 +3418,7 @@ public class SMap extends EngineState {
           model.coord2_14.coord.transfer.set(pos.pos_00);
           model.coord2_14.transforms.rotate.set(pos.rot_0c);
 
-          state.innerStruct_00.ui_18c = 7;
+          state.innerStruct_00.movementStepAccelerationY_18c = 7;
           state.innerStruct_00.flags_190 = 0;
 
           if(i == 0) {
@@ -3524,29 +3486,29 @@ public class SMap extends EngineState {
     }
 
     int x = 0;
-    if((sobj.vec_148.getX() & 0x7fff_ffff) != 0) {
-      x = sobj.vec_148.getX();
+    if((sobj.movementStep_148.getX() & 0x7fff_ffff) != 0) {
+      x = sobj.movementStep_148.getX();
     }
 
     //LAB_800e1fe4
     int y = 0;
-    if((sobj.vec_148.getY() & 0x7fff_ffff) != 0) {
-      y = sobj.vec_148.getY();
+    if((sobj.movementStep_148.getY() & 0x7fff_ffff) != 0) {
+      y = sobj.movementStep_148.getY();
     }
 
     //LAB_800e1ffc
     int z = 0;
-    if((sobj.vec_148.getZ() & 0x7fff_ffff) != 0) {
-      z = sobj.vec_148.getZ();
+    if((sobj.movementStep_148.getZ() & 0x7fff_ffff) != 0) {
+      z = sobj.movementStep_148.getZ();
     }
 
     //LAB_800e2014
-    sobj.vec_160.add(sobj.vec_154);
+    sobj.movementDistanceMoved12_160.add(sobj.movementStep12_154);
 
-    if((sobj.vec_160.getX() & 0x1_0000) != 0) {
-      sobj.vec_160.x.and(0xffff);
+    if((sobj.movementDistanceMoved12_160.getX() & 0x1_0000) != 0) {
+      sobj.movementDistanceMoved12_160.x.and(0xffff);
 
-      if(sobj.vec_148.getX() >= 0) {
+      if(sobj.movementStep_148.getX() >= 0) {
         x++;
       } else {
         x--;
@@ -3554,10 +3516,10 @@ public class SMap extends EngineState {
     }
 
     //LAB_800e2078
-    if((sobj.vec_160.getY() & 0x1_0000) != 0) {
-      sobj.vec_160.y.and(0xffff);
+    if((sobj.movementDistanceMoved12_160.getY() & 0x1_0000) != 0) {
+      sobj.movementDistanceMoved12_160.y.and(0xffff);
 
-      if(sobj.vec_148.getY() >= 0) {
+      if(sobj.movementStep_148.getY() >= 0) {
         y++;
       } else {
         y--;
@@ -3565,10 +3527,10 @@ public class SMap extends EngineState {
     }
 
     //LAB_800e20a8
-    if((sobj.vec_160.getZ() & 0x1_0000) != 0) {
-      sobj.vec_160.z.and(0xffff);
+    if((sobj.movementDistanceMoved12_160.getZ() & 0x1_0000) != 0) {
+      sobj.movementDistanceMoved12_160.z.and(0xffff);
 
-      if(sobj.vec_148.getZ() >= 0) {
+      if(sobj.movementStep_148.getZ() >= 0) {
         z++;
       } else {
         z--;
@@ -3576,7 +3538,7 @@ public class SMap extends EngineState {
     }
 
     //LAB_800e20d8
-    sobj.i_144--;
+    sobj.movementTicks_144--;
 
     if(sobj.s_172 == 0) {
       final Vector3f sp0x20 = new Vector3f();
@@ -3593,12 +3555,10 @@ public class SMap extends EngineState {
 
       //LAB_800e2140
       final int s3 = this.FUN_800e88a0(sobj.sobjIndex_12e, model.coord2_14.coord.transfer, sp0x20);
-      if(s3 >= 0) {
-        if(this.FUN_800e6798(s3) != 0) {
-          model.coord2_14.coord.transfer.x += sp0x20.x;
-          model.coord2_14.coord.transfer.y = sp0x20.y;
-          model.coord2_14.coord.transfer.z += sp0x20.z;
-        }
+      if(s3 >= 0 && this.FUN_800e6798(s3) != 0) {
+        model.coord2_14.coord.transfer.x += sp0x20.x;
+        model.coord2_14.coord.transfer.y = sp0x20.y;
+        model.coord2_14.coord.transfer.z += sp0x20.z;
       }
 
       //LAB_800e21bc
@@ -3609,7 +3569,7 @@ public class SMap extends EngineState {
     }
 
     //LAB_800e21e8
-    if(sobj.i_144 != 0) {
+    if(sobj.movementTicks_144 != 0) {
       //LAB_800e21f8
       return false;
     }
@@ -4061,30 +4021,30 @@ public class SMap extends EngineState {
 
   /** Used in teleporter just before Melbu */
   @Method(0x800e3e74L)
-  private boolean FUN_800e3e74(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
+  private boolean tickSobjMovement(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
     final Model124 model = sobj.model_00;
 
-    model.coord2_14.coord.transfer.y += sobj.s_134;
+    model.coord2_14.coord.transfer.y += sobj.movementStepY_134;
 
     int x = 0;
-    if((sobj.vec_148.getX() & 0x7fff_ffff) != 0) {
-      x = sobj.vec_148.getX();
+    if((sobj.movementStep_148.getX() & 0x7fff_ffff) != 0) {
+      x = sobj.movementStep_148.getX();
     }
 
     //LAB_800e3ea8
     int z = 0;
-    if((sobj.vec_148.getZ() & 0x7fff_ffff) != 0) {
-      z = sobj.vec_148.getZ();
+    if((sobj.movementStep_148.getZ() & 0x7fff_ffff) != 0) {
+      z = sobj.movementStep_148.getZ();
     }
 
     //LAB_800e3ec0
-    sobj.vec_160.x.add(sobj.vec_154.getX());
-    sobj.vec_160.z.add(sobj.vec_154.getZ());
+    sobj.movementDistanceMoved12_160.x.add(sobj.movementStep12_154.getX());
+    sobj.movementDistanceMoved12_160.z.add(sobj.movementStep12_154.getZ());
 
-    if((sobj.vec_160.getX() & 0x1_0000) != 0) {
-      sobj.vec_160.x.and(0xffff);
+    if((sobj.movementDistanceMoved12_160.getX() & 0x1_0000) != 0) {
+      sobj.movementDistanceMoved12_160.x.and(0xffff);
 
-      if(sobj.vec_148.getX() >= 0) {
+      if(sobj.movementStep_148.getX() >= 0) {
         x++;
       } else {
         //LAB_800e3f08
@@ -4093,10 +4053,10 @@ public class SMap extends EngineState {
     }
 
     //LAB_800e3f0c
-    if((sobj.vec_160.getZ() & 0x1_0000) != 0) {
-      sobj.vec_160.z.and(0xffff);
+    if((sobj.movementDistanceMoved12_160.getZ() & 0x1_0000) != 0) {
+      sobj.movementDistanceMoved12_160.z.and(0xffff);
 
-      if(sobj.vec_148.getZ() >= 0) {
+      if(sobj.movementStep_148.getZ() >= 0) {
         z++;
       } else {
         //LAB_800e3f38
@@ -4107,16 +4067,16 @@ public class SMap extends EngineState {
     //LAB_800e3f3c
     model.coord2_14.coord.transfer.x += x;
     model.coord2_14.coord.transfer.z += z;
-    sobj.s_134 += sobj.ui_18c;
-    sobj.i_144--;
-    if(sobj.i_144 != 0) {
+    sobj.movementStepY_134 += sobj.movementStepAccelerationY_18c;
+    sobj.movementTicks_144--;
+    if(sobj.movementTicks_144 != 0) {
       return false;
     }
 
     //LAB_800e3f7c
     sobj.us_170 = 0;
-    sobj.s_134 = 0;
-    model.coord2_14.coord.transfer.set(sobj.vec_138.getX(), sobj.vec_138.getY(), sobj.vec_138.getZ());
+    sobj.movementStepY_134 = 0;
+    model.coord2_14.coord.transfer.set(sobj.movementDestination_138.getX(), sobj.movementDestination_138.getY(), sobj.movementDestination_138.getZ());
     sobj.s_172 = sobj.s_174;
     return true;
   }

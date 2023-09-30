@@ -14,16 +14,18 @@ public class SubmapObject210 {
   /** The script index of this sobj */
   public int sobjIndex_130;
   public int animIndex_132;
-  public int s_134;
-
-  /** Movement destination? */
-  public final VECTOR vec_138 = new VECTOR();
-  /** Number of frames for movement? */
-  public int i_144;
-  /** Movement step? */
-  public final VECTOR vec_148 = new VECTOR();
-  public final VECTOR vec_154 = new VECTOR();
-  public final VECTOR vec_160 = new VECTOR();
+  /** Forced movement Y step */
+  public int movementStepY_134;
+  /** Forced movement destination */
+  public final VECTOR movementDestination_138 = new VECTOR();
+  /** Number of frames for forced movement */
+  public int movementTicks_144;
+  /** Forced movement step */
+  public final VECTOR movementStep_148 = new VECTOR();
+  /** Same as {@link #movementStep_148} but .12 */
+  public final VECTOR movementStep12_154 = new VECTOR();
+  /** The total distance moved (.12) */
+  public final VECTOR movementDistanceMoved12_160 = new VECTOR();
   public int ui_16c;
   public int us_170;
   public int s_172;
@@ -36,7 +38,7 @@ public class SubmapObject210 {
   public final Vector3f rotationAmount_17c = new Vector3f();
   /** Number of frames to apply rotation for */
   public int rotationFrames_188;
-  public int ui_18c;
+  public int movementStepAccelerationY_18c;
   /**
    * Example flags for the player sobj - 0x120_0001
    *
@@ -55,7 +57,8 @@ public class SubmapObject210 {
    *   <li>0x1000_0000 - collidee something</li>
    *   <li>0x2000_0000 - ?</li>
    *   <li>0x4000_0000 - ?</li>
-   *   <li>0x8000_0000 - ?</li>
+   *   <li>0x8000_0000 - doesn't seem to be set anywhere, looks like it disables forced movement or something like that
+   *   </li>
    * </ul>
    */
   public int flags_190;
