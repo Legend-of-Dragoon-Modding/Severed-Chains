@@ -4895,15 +4895,13 @@ public final class SEffe {
     //LAB_80109b90
     for(int i = 0; i < animation.vertexCount_08; i++) {
       final Vector3f source = animation.sourceVertices_0c[i];
-      final VECTOR current = animation.currentState_10[i];
-      final VECTOR previous = animation.previousState_14[i];
+      final Vector3f current = animation.currentState_10[i];
+      final Vector3f previous = animation.previousState_14[i];
       previous.add(current);
-      current.setX(current.getX() + (current.getX() * animation.embiggener_04 >> 8));
-      current.setY(current.getY() + (current.getY() * animation.embiggener_04 >> 8));
-      current.setZ(current.getZ() + (current.getZ() * animation.embiggener_04 >> 8));
-      source.x = previous.getX() >> 8;
-      source.y = previous.getY() >> 8;
-      source.z = previous.getZ() >> 8;
+      current.x += current.x * animation.embiggener_04;
+      current.y += current.y * animation.embiggener_04;
+      current.z += current.z * animation.embiggener_04;
+      source.set(previous);
     }
 
     //LAB_80109ce0
@@ -4918,17 +4916,17 @@ public final class SEffe {
   @Method(0x80109d30L)
   public static FlowControl scriptAllocateVertexDifferenceAnimation(final RunningScript<?> script) {
     final int ticksRemaining = script.params_20[2].get();
-    final int embiggener = script.params_20[3].get();
+    final float embiggener = script.params_20[3].get() / (float)0x100;
 
-    final ScriptState<EffectManagerData6c<?>> sourceState = (ScriptState<EffectManagerData6c<?>>)scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
-    final ScriptState<EffectManagerData6c<?>> diffState = (ScriptState<EffectManagerData6c<?>>)scriptStatePtrArr_800bc1c0[script.params_20[1].get()];
+    final EffectManagerData6c<?> sourceState = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
+    final EffectManagerData6c<?> diffState = SCRIPTS.getObject(script.params_20[1].get(), EffectManagerData6c.class);
 
-    final ScriptState<VertexDifferenceAnimation18> state = SCRIPTS.allocateScriptState("Vertex difference animation source %d (%s), diff %d (%s)".formatted(sourceState.index, sourceState.name, diffState.index, diffState.name), new VertexDifferenceAnimation18());
+    final ScriptState<VertexDifferenceAnimation18> state = SCRIPTS.allocateScriptState("Vertex difference animation source %d (%s), diff %d (%s)".formatted(sourceState.myScriptState_0e.index, sourceState.name, diffState.myScriptState_0e.index, diffState.name), new VertexDifferenceAnimation18());
 
     state.loadScriptFile(doNothingScript_8004f650);
     state.setTicker(SEffe::applyVertexDifferenceAnimation);
-    final DeffTmdRenderer14 source = (DeffTmdRenderer14)sourceState.innerStruct_00.effect_44;
-    final DeffTmdRenderer14 diff = (DeffTmdRenderer14)diffState.innerStruct_00.effect_44;
+    final DeffTmdRenderer14 source = (DeffTmdRenderer14)sourceState.effect_44;
+    final DeffTmdRenderer14 diff = (DeffTmdRenderer14)diffState.effect_44;
     final TmdObjTable1c sourceModel = source.tmd_08;
     final TmdObjTable1c diffModel = diff.tmd_08;
     final VertexDifferenceAnimation18 animation = state.innerStruct_00;
@@ -4936,27 +4934,27 @@ public final class SEffe {
     animation.embiggener_04 = embiggener;
     animation.vertexCount_08 = sourceModel.n_vert_04;
     animation.sourceVertices_0c = sourceModel.vert_top_00;
-    animation.currentState_10 = new VECTOR[sourceModel.n_vert_04];
-    animation.previousState_14 = new VECTOR[sourceModel.n_vert_04];
-    Arrays.setAll(animation.currentState_10, i -> new VECTOR());
-    Arrays.setAll(animation.previousState_14, i -> new VECTOR());
+    animation.currentState_10 = new Vector3f[sourceModel.n_vert_04];
+    animation.previousState_14 = new Vector3f[sourceModel.n_vert_04];
+    Arrays.setAll(animation.currentState_10, i -> new Vector3f());
+    Arrays.setAll(animation.previousState_14, i -> new Vector3f());
     // Set unused static _8011a030 to 1
 
     //LAB_80109e78
     for(int i = 0; i < sourceModel.n_vert_04; i++) {
       final Vector3f sourceVertex = sourceModel.vert_top_00[i];
-      animation.previousState_14[i].set(sourceVertex).shl(8);
+      animation.previousState_14[i].set(sourceVertex);
     }
 
     //LAB_80109ecc
     //LAB_80109ee4
     for(int i = 0; i < animation.vertexCount_08; i++) {
       final Vector3f diffVertex = diffModel.vert_top_00[i];
-      final VECTOR previous = animation.previousState_14[i];
-      final VECTOR current = animation.currentState_10[i];
-      current.setX(Math.round(diffVertex.x * 0x100 - previous.getX()) / ticksRemaining);
-      current.setY(Math.round(diffVertex.y * 0x100 - previous.getY()) / ticksRemaining);
-      current.setZ(Math.round(diffVertex.z * 0x100 - previous.getZ()) / ticksRemaining);
+      final Vector3f previous = animation.previousState_14[i];
+      final Vector3f current = animation.currentState_10[i];
+      current.x = (diffVertex.x - previous.x) / ticksRemaining;
+      current.y = (diffVertex.y - previous.y) / ticksRemaining;
+      current.z = (diffVertex.z - previous.z) / ticksRemaining;
     }
 
     //LAB_80109f90
