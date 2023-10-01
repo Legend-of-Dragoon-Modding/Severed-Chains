@@ -77,7 +77,6 @@ import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zMin;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
-import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8002.adjustModelUvs;
 import static legend.game.Scus94491BpeSegment_8002.animateModelTextures;
 import static legend.game.Scus94491BpeSegment_8002.applyInterpolationFrame;
@@ -3154,12 +3153,12 @@ public final class Bttl_800d {
 
       //LAB_800dab70
       //LAB_800dab78
-      SetGeomOffset(screenOffsetX_800c67bc.get() + x, screenOffsetY_800c67c0.get() + y);
+      GTE.setScreenOffset(screenOffsetX_800c67bc.get() + x, screenOffsetY_800c67c0.get() + y);
 
       wobbleFramesRemaining_800c67c4.sub(1);
       if(wobbleFramesRemaining_800c67c4.get() <= 0) {
         useCameraWobble_800fabb8.set(false);
-        SetGeomOffset(screenOffsetX_800c67bc.get(), screenOffsetY_800c67c0.get());
+        GTE.setScreenOffset(screenOffsetX_800c67bc.get(), screenOffsetY_800c67c0.get());
       }
     }
 

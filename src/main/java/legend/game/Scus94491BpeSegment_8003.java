@@ -30,9 +30,6 @@ import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
-import static legend.game.Scus94491BpeSegment_8002.SetColorMatrix;
-import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
-import static legend.game.Scus94491BpeSegment_8002.SetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8005.matrixStackIndex_80054a08;
 import static legend.game.Scus94491BpeSegment_8005.matrixStack_80054a0c;
 import static legend.game.Scus94491BpeSegment_8005.vramHeight_800546c2;
@@ -280,7 +277,7 @@ public final class Scus94491BpeSegment_8003 {
   public static void GsSetLightMatrix(final Matrix3f mp) {
     final Matrix3f lightDirection = new Matrix3f();
     lightDirectionMatrix_800c34e8.mul(mp, lightDirection);
-    SetLightMatrix(lightDirection);
+    GTE.setLightSourceMatrix(lightDirection);
   }
 
   @Method(0x8003c5e0L)
@@ -347,7 +344,7 @@ public final class Scus94491BpeSegment_8003 {
     }
 
     //LAB_8003cb34
-    SetColorMatrix(lightColourMatrix_800c3508);
+    GTE.setLightColourMatrix(lightColourMatrix_800c3508);
 
     //LAB_8003cb88
     return 0;
@@ -364,7 +361,7 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x8003cda0L)
   public static void GsInit3D() {
     InitGeom();
-    SetGeomOffset(0, 0);
+    GTE.setScreenOffset(0, 0);
   }
 
   @Method(0x8003cdf0L)

@@ -113,7 +113,6 @@ import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800218f0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a9c0;
-import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8002.animateModelTextures;
 import static legend.game.Scus94491BpeSegment_8002.applyModelPartTransforms;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
@@ -5480,7 +5479,7 @@ public class SMap extends EngineState {
   private void setGeomOffsetIfNotSet(final int x, final int y) {
     if(!this._800cbd3c._00) {
       this._800cbd3c._00 = true;
-      SetGeomOffset(x, y);
+      GTE.setScreenOffset(x, y);
     }
   }
 
