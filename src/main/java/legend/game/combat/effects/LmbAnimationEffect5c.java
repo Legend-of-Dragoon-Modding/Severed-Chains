@@ -4,15 +4,21 @@ import legend.core.gte.TmdObjTable1c;
 import legend.game.combat.deff.Lmb;
 import legend.game.combat.deff.LmbTransforms14;
 
-public class BttlScriptData6cSub5c implements Effect {
+public class LmbAnimationEffect5c implements Effect {
   public int lmbType_00;
   public int _04;
-  public int _08;
+  public int keyframeCount_08;
   public Lmb lmb_0c;
   /** May have two copies of the LMB table for some reason */
   public LmbTransforms14[] lmbTransforms_10;
   public final int[] _14 = new int[8];
-  public int _34;
+  /**
+   * <ul>
+   *   <li>0x4 - colour</li>
+   *   <li>0x8 - scale</li>
+   * </ul>
+   */
+  public int flags_34;
   public int _38;
   public int _3c;
   public int _40;

@@ -14,7 +14,7 @@ import java.util.List;
 public class TmdObjTable1c {
   public final String name;
 
-  public final SVECTOR[] vert_top_00;
+  public final Vector3f[] vert_top_00;
   public final int n_vert_04;
   public final Vector3f[] normal_top_08;
   public final int n_normal_0c;
@@ -34,8 +34,8 @@ public class TmdObjTable1c {
     this.n_normal_0c = data.readInt(0xc);
     this.n_primitive_14 = data.readInt(0x14);
 
-    this.vert_top_00 = new SVECTOR[this.n_vert_04];
-    Arrays.setAll(this.vert_top_00, i -> verts.readSvec3(i * 0x8, new SVECTOR()));
+    this.vert_top_00 = new Vector3f[this.n_vert_04];
+    Arrays.setAll(this.vert_top_00, i -> verts.readSvec3_0(i * 0x8, new Vector3f()));
 
     this.normal_top_08 = new Vector3f[this.n_normal_0c];
     Arrays.setAll(this.normal_top_08, i -> normals.readSvec3_12(i * 0x8, new Vector3f()));

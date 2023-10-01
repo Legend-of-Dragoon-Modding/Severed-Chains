@@ -1,7 +1,6 @@
 package legend.game.wmap;
 
 import legend.core.gte.GsCOORDINATE2;
-import legend.core.gte.SVECTOR;
 import legend.game.types.Model124;
 import legend.game.unpacker.FileData;
 import org.joml.Vector3f;
@@ -34,16 +33,16 @@ public class WMapStruct258 {
   /** short */
   public final int[] _1c4 = new int[16];
   public int modelIndex_1e4;
-  public final SVECTOR svec_1e8 = new SVECTOR();
-  public final SVECTOR svec_1f0 = new SVECTOR();
+  public final Vector3f svec_1e8 = new Vector3f();
+  public final Vector3f svec_1f0 = new Vector3f();
   /** ubyte */
   public int zoomState_1f8;
   /** ubyte */
   public int _1f9;
 
   public WmapMenuTextHighlight40 coolonTravelMenuSelectorHighlight_1fc;
-  public final SVECTOR svec_200 = new SVECTOR();
-  public final SVECTOR svec_208 = new SVECTOR();
+  public final Vector3f svec_200 = new Vector3f();
+  public final Vector3f svec_208 = new Vector3f();
 
   public int _218;
   /** ushort */

@@ -6,12 +6,12 @@ public class AdditionStarburstEffectRay10 {
   /** byte */
   public boolean renderRay_00;
 
-  public short angle_02;
+  public float angle_02;
   /** short; Set to 0x10 and never used */
   public int unused_04;
   public short endpointTranslationMagnitude_06;
   public short endpointTranslationMagnitudeVelocity_08;
-  public short angleModifier_0a;
+  public float angleModifier_0a;
   /** Set to 0 and never used */
   public int unused_0c;
 

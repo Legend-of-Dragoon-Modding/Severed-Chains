@@ -5,10 +5,8 @@ import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
 import legend.core.gte.DVECTOR;
-import legend.core.gte.MATRIX;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
@@ -112,6 +110,7 @@ import legend.game.unpacker.Unpacker;
 import org.joml.Math;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
 import javax.annotation.Nullable;
@@ -287,7 +286,7 @@ public final class Bttl_800c {
 
   public static final Pointer<CString> currentAddition_800c6790 = MEMORY.ref(4, 0x800c6790L, Pointer.deferred(1, CString.maxLength(30)));
 
-  public static final MATRIX cameraTransformMatrix_800c6798 = new MATRIX();
+  public static final MV cameraTransformMatrix_800c6798 = new MV();
   // public static final UnsignedIntRef flags_800c67b8 = MEMORY.ref(4, 0x800c67b8L, UnsignedIntRef::new);
   public static final IntRef screenOffsetX_800c67bc = MEMORY.ref(4, 0x800c67bcL, IntRef::new);
   public static final IntRef screenOffsetY_800c67c0 = MEMORY.ref(4, 0x800c67c0L, IntRef::new);
@@ -297,8 +296,7 @@ public final class Bttl_800c {
   public static final IntRef _800c67d0 = MEMORY.ref(4, 0x800c67d0L, IntRef::new);
 
   public static final IntRef framesUntilWobble_800c67d4 = MEMORY.ref(4, 0x800c67d4L, IntRef::new);
-  /** Set to vec_94 in one camera method, but never used */
-  public static final VECTOR unused_800c67d8 = new VECTOR();
+
   public static final IntRef cameraWobbleOffsetX_800c67e4 = MEMORY.ref(4, 0x800c67e4L, IntRef::new);
   public static final IntRef cameraWobbleOffsetY_800c67e8 = MEMORY.ref(4, 0x800c67e8L, IntRef::new);
 
@@ -368,8 +366,18 @@ public final class Bttl_800c {
 
   public static final IntRef countCombatUiFilesLoaded_800c6cf4 = MEMORY.ref(4, 0x800c6cf4L, IntRef::new);
 
-  public static final ArrayRef<SVECTOR> completedAdditionStarburstTranslationMagnitudes_800c6d94 = MEMORY.ref(2, 0x800c6d94L, ArrayRef.of(SVECTOR.class, 4, 6, SVECTOR::new));
-  public static final ArrayRef<SVECTOR> completedAdditionStarburstAngleModifiers_800c6dac = MEMORY.ref(2, 0x800c6dacL, ArrayRef.of(SVECTOR.class, 4, 6, SVECTOR::new));
+  public static final Vector3i[] completedAdditionStarburstTranslationMagnitudes_800c6d94 = {
+    new Vector3i(360, 210, 210),
+    new Vector3i(210,  60, 210),
+    new Vector3i(360, 210, 210),
+    new Vector3i( 60, 210, 210),
+  };
+  public static final Vector3f[] completedAdditionStarburstAngleModifiers_800c6dac = {
+    new Vector3f(0, MathHelper.psxDegToRad(-16), 0),
+    new Vector3f(MathHelper.psxDegToRad(-16), 0, 0),
+    new Vector3f(0, MathHelper.psxDegToRad(16), 0),
+    new Vector3f(0, MathHelper.psxDegToRad(16), 0),
+  };
 
   /**
    * <ol start="0">
@@ -4054,27 +4062,26 @@ public final class Bttl_800c {
 
   @Method(0x800cdcecL)
   public static void getVertexMinMaxByComponent(final Model124 model, final int dobjIndex, final Vector3f smallestVertRef, final Vector3f largestVertRef, final EffectManagerData6c<EffectManagerData6cInner.WeaponTrailType> manager, final IntRef smallestIndexRef, final IntRef largestIndexRef) {
-    short largest = -1;
-    short smallest = 0x7fff;
+    float largest = -Float.MAX_VALUE;
+    float smallest = Float.MAX_VALUE;
     int largestIndex = 0;
     int smallestIndex = 0;
     final TmdObjTable1c tmd = model.modelParts_00[dobjIndex].tmd_08;
 
     //LAB_800cdd24
     for(int i = 0; i < tmd.n_vert_04; i++) {
-      final SVECTOR vert = tmd.vert_top_00[i];
-      final ShortRef component = vert.component(manager._10.vertexComponent_24);
-      final short val = component.get();
+      final Vector3f vert = tmd.vert_top_00[i];
+      final float val = vert.get(manager._10.vertexComponent_24);
 
       if(val >= largest) {
-        largest = component.get();
+        largest = val;
         largestIndex = i;
-        largestVertRef.set(vert.getX(), vert.getY(), vert.getZ());
+        largestVertRef.set(vert);
         //LAB_800cdd7c
       } else if(val <= smallest) {
-        smallest = component.get();
+        smallest = val;
         smallestIndex = i;
-        smallestVertRef.set(vert.getX(), vert.getY(), vert.getZ());
+        smallestVertRef.set(vert);
       }
       //LAB_800cddbc
     }
@@ -4507,9 +4514,9 @@ public final class Bttl_800c {
 
   @Method(0x800cf03cL)
   public static int FUN_800cf03c(final EffectManagerData6c<?> manager, final Attachment18 attachment) {
-    manager._10.trans_04.x += attachment._0c.getX() * attachment.direction_14;
-    manager._10.trans_04.y += attachment._0c.getY() * attachment.direction_14;
-    manager._10.trans_04.z += attachment._0c.getZ() * attachment.direction_14;
+    manager._10.trans_04.x += attachment._0c.x * attachment.direction_14;
+    manager._10.trans_04.y += attachment._0c.y * attachment.direction_14;
+    manager._10.trans_04.z += attachment._0c.z * attachment.direction_14;
     attachment.direction_14 = (byte)-attachment.direction_14;
     return 1;
   }
@@ -4532,12 +4539,12 @@ public final class Bttl_800c {
       scriptGetPositionScalerAttachmentVelocity(script);
 
       final int p1 = script.params_20[1].get();
-      attachment._0c.setX((short)(p1 * script.params_20[2].get() >> 16));
-      attachment._0c.setY((short)(p1 * script.params_20[3].get() >> 16));
-      attachment._0c.setZ((short)(p1 * script.params_20[4].get() >> 16));
+      attachment._0c.x = p1 * script.params_20[2].get() >> 16;
+      attachment._0c.y = p1 * script.params_20[3].get() >> 16;
+      attachment._0c.z = p1 * script.params_20[4].get() >> 16;
     } else {
       //LAB_800cf1e0
-      attachment._0c.set((short)script.params_20[1].get(), (short)script.params_20[2].get(), (short)script.params_20[3].get());
+      attachment._0c.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     }
 
     //LAB_800cf1f8

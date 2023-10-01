@@ -11,7 +11,7 @@ public class GradientRaysEffect24 implements Effect {
   public int _14;
   public int flags_18;
   public int type_1c;
-  public int projectionPlaneDistanceDiv4_20;
+  public float projectionPlaneDistanceDiv4_20;
 
   public GradientRaysEffect24(final int count) {
     this.rays_00 = new GradientRaysEffectInstance04[count];

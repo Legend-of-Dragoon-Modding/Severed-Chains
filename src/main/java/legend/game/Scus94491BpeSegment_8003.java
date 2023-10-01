@@ -6,9 +6,7 @@ import legend.core.gpu.GpuCommandFillVram;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.GsCOORDINATE2;
-import legend.core.gte.MATRIX;
 import legend.core.gte.MV;
-import legend.core.gte.SVECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;
@@ -20,7 +18,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Math;
 import org.joml.Matrix3f;
-import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -284,10 +281,6 @@ public final class Scus94491BpeSegment_8003 {
     final Matrix3f lightDirection = new Matrix3f();
     lightDirectionMatrix_800c34e8.mul(mp, lightDirection);
     SetLightMatrix(lightDirection);
-  }
-
-  public static void GsSetLightMatrix(final MATRIX mp) {
-    GsSetLightMatrix(mp.toMat3f());
   }
 
   @Method(0x8003c5e0L)
@@ -924,7 +917,7 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003f8c0L)
-  public static int getProjectionPlaneDistance() {
+  public static float getProjectionPlaneDistance() {
     return GTE.getProjectionPlaneDistance();
   }
 
@@ -942,7 +935,7 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003f930L)
-  public static float perspectiveTransformTriple(final SVECTOR world0, final SVECTOR world1, final SVECTOR world2, final Vector2f screen0, final Vector2f screen1, final Vector2f screen2) {
+  public static float perspectiveTransformTriple(final Vector3f world0, final Vector3f world1, final Vector3f world2, final Vector2f screen0, final Vector2f screen1, final Vector2f screen2) {
     GTE.perspectiveTransformTriangle(world0, world1, world2);
 
     screen0.set(GTE.getScreenX(0), GTE.getScreenY(0));
@@ -981,10 +974,5 @@ public final class Scus94491BpeSegment_8003 {
     sxy3.set(GTE.getScreenX(2), GTE.getScreenY(2));
 
     return GTE.getScreenZ(3) / 4.0f;
-  }
-
-  @Method(0x8003faf0L)
-  public static void RotMatrix_Xyz(final Vector3f rotation, final MATRIX matrixOut) {
-    matrixOut.set(new Matrix4f().rotateXYZ(rotation.x, rotation.y, rotation.z));
   }
 }

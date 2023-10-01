@@ -1,6 +1,6 @@
 package legend.game.submap;
 
-import legend.core.gte.SVECTOR;
+import org.joml.Vector3f;
 
 public class BigSubStruct {
   public int _00;
@@ -11,7 +11,7 @@ public class BigSubStruct {
 
   public int _18;
   public int _1c;
-  public final SVECTOR _1e = new SVECTOR();
+  public final Vector3f _1e = new Vector3f();
 
   public int size_28;
   public int _2c;

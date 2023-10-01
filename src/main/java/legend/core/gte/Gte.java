@@ -149,11 +149,6 @@ public class Gte {
   }
 
   /** Data register 0/1, 2/3, 4/5 */
-  public void setVertex(final int index, final SVECTOR vert) {
-    this.setVertex(index, vert.getX(), vert.getY(), vert.getZ());
-  }
-
-  /** Data register 0/1, 2/3, 4/5 */
   public void setVertex(final int index, final Vector3f vert) {
     this.setVertex(index, vert.x, vert.y, vert.z);
   }
@@ -254,8 +249,8 @@ public class Gte {
   }
 
   /** Control register 26 projection plane distance (H) */
-  public int getProjectionPlaneDistance() {
-    return (int)this.H;
+  public float getProjectionPlaneDistance() {
+    return this.H;
   }
 
   /** Control register 26 projection plane distance (H) */
@@ -290,11 +285,6 @@ public class Gte {
     this.startCommand();
     this.RTPS(0);
     this.endCommand();
-  }
-
-  /** 0x1 RTPS - perspective transform single, 12-bit fraction */
-  public void perspectiveTransform(final SVECTOR v0) {
-    this.perspectiveTransform(v0.getX(), v0.getY(), v0.getZ());
   }
 
   /** 0x1 RTPS - perspective transform single, 12-bit fraction */
@@ -378,17 +368,6 @@ public class Gte {
 
   /** 0x30 RTPT - perspective transform triple, 12-bit fraction */
   public void perspectiveTransformTriangle() {
-    this.startCommand();
-    this.RTPT();
-    this.endCommand();
-  }
-
-  /** 0x30 RTPT - perspective transform triple, 12-bit fraction */
-  public void perspectiveTransformTriangle(final SVECTOR v0, final SVECTOR v1, final SVECTOR v2) {
-    this.setVertex(0, v0);
-    this.setVertex(1, v1);
-    this.setVertex(2, v2);
-
     this.startCommand();
     this.RTPT();
     this.endCommand();

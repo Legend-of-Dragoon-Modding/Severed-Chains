@@ -4,7 +4,6 @@ import legend.core.MathHelper;
 import legend.core.gpu.RECT;
 import legend.core.gte.BVEC4;
 import legend.core.gte.COLOUR;
-import legend.core.gte.SVECTOR;
 import org.joml.Vector3f;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
@@ -149,11 +148,6 @@ public record FileData(byte[] data, int offset, int size, int virtualSize, int r
   public BVEC4 readBvec3(final int offset, final BVEC4 bvec) {
     this.checkBounds(offset, 3);
     return bvec.set(this.readByte(offset), this.readByte(offset + 0x1), this.readByte(offset + 0x2));
-  }
-
-  public SVECTOR readSvec3(final int offset, final SVECTOR svec) {
-    this.checkBounds(offset, 6);
-    return svec.set(this.readShort(offset), this.readShort(offset + 0x2), this.readShort(offset + 0x4));
   }
 
   public Vector3f readSvec3_0(final int offset, final Vector3f svec) {

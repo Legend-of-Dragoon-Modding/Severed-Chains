@@ -781,13 +781,13 @@ public final class Bttl_800f {
             final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bentIndex];
             final BattleEntity27c bent = (BattleEntity27c)state.innerStruct_00;
 
-            final short x;
-            final short y;
-            final short z;
+            final float x;
+            final float y;
+            final float z;
             if(bent instanceof final MonsterBattleEntity monster) {
-              x = (short)(-monster.targetArrowPos_78.getZ() * 100);
-              y = (short)(-monster.targetArrowPos_78.getY() * 100);
-              z = (short)(-monster.targetArrowPos_78.getX() * 100);
+              x = -monster.targetArrowPos_78.x * 100.0f;
+              y = -monster.targetArrowPos_78.y * 100.0f;
+              z = -monster.targetArrowPos_78.z * 100.0f;
             } else {
               //LAB_800f3a3c
               x = 0;
@@ -1046,13 +1046,14 @@ public final class Bttl_800f {
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bentIndex];
     final BattleEntity27c bent = (BattleEntity27c)state.innerStruct_00;
 
-    final short x;
-    final short y;
-    final short z;
+    final float x;
+    final float y;
+    final float z;
     if(bent instanceof final MonsterBattleEntity monster) {
-      x = (short)(-monster.targetArrowPos_78.getZ() * 100);
-      y = (short)(-monster.targetArrowPos_78.getY() * 100);
-      z = (short)(-monster.targetArrowPos_78.getX() * 100);
+      // ZYX is the correct order
+      x = -monster.targetArrowPos_78.z * 100.0f;
+      y = -monster.targetArrowPos_78.y * 100.0f;
+      z = -monster.targetArrowPos_78.x * 100.0f;
     } else {
       //LAB_800f4314
       x = 0;

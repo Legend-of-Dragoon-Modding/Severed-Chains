@@ -462,7 +462,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[602] = Bttl_800e::FUN_800e9854;
     // scriptSubFunctions_8004e29c[603] = Temp::FUN_800ca648;
 
-    scriptSubFunctions_8004e29c[605] = SEffe::FUN_80117eb0;
+    scriptSubFunctions_8004e29c[605] = SEffe::scriptAllocateLmbAnimation;
     scriptSubFunctions_8004e29c[606] = SEffe::allocateDeffTmd;
     scriptSubFunctions_8004e29c[607] = Bttl_800e::FUN_800e99bc;
 

@@ -1,7 +1,6 @@
 package legend.game.combat.effects;
 
 import legend.core.gte.TmdObjTable1c;
-import legend.core.gte.VECTOR;
 import org.joml.Vector3f;
 
 public class GoldDragoonTransformEffectInstance84 {

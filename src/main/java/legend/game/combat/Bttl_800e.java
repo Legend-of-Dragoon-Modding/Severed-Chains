@@ -526,17 +526,18 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  /** Used in gates of heaven */
   @ScriptDescription("Unknown, must change battle light over time")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x rotation (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y rotation (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z rotation (PSX degrees)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks", description = "The number of ticks for the change")
   @Method(0x800e4fa0L)
   public static FlowControl FUN_800e4fa0(final RunningScript<?> script) {
-    final int x = script.params_20[1].get();
-    final int y = script.params_20[2].get();
-    final int z = script.params_20[3].get();
+    final float x = MathHelper.psxDegToRad(script.params_20[1].get());
+    final float y = MathHelper.psxDegToRad(script.params_20[2].get());
+    final float z = MathHelper.psxDegToRad(script.params_20[3].get());
     final int ticks = script.params_20[4].get();
 
     final BttlLightStruct84 light = lights_800c692c[script.params_20[0].get()];
@@ -909,7 +910,7 @@ public final class Bttl_800e {
         lights_800c692c[i].light_00.b_0e = s0.angleAndColour_04.z;
       } else if(v1 == 3) {
         //LAB_800e5ed0
-        final float theta = MathHelper.cos(((lightTicks_800c6928.get() / (float)0x1000 + s0.vec_28.x) % s0.vec_28.y) / s0.vec_28.y);
+        final float theta = MathHelper.cos((lightTicks_800c6928.get() / (float)0x1000 + s0.vec_28.x) % s0.vec_28.y / s0.vec_28.y);
         final float ratioA = 1.0f + theta;
         final float ratioB = 1.0f - theta;
         lights_800c692c[i].light_00.r_0c = (s0.angleAndColour_04.x * ratioA + s0.vec_10.x * ratioB) / 2.0f;
@@ -931,7 +932,7 @@ public final class Bttl_800e {
 
     final BattleLightStruct64 v0 = _800c6930;
     GTE.setBackgroundColour(v0.colour_00.x, v0.colour_00.y, v0.colour_00.z);
-    projectionPlaneDistance_1f8003f8.set(getProjectionPlaneDistance());
+    projectionPlaneDistance_1f8003f8 = getProjectionPlaneDistance();
   }
 
   @Method(0x800e6070L)
@@ -1706,8 +1707,8 @@ public final class Bttl_800e {
       translation.mul(worldToScreenMatrix_800c3548, finalTranslation);
       finalTranslation.add(worldToScreenMatrix_800c3548.transfer);
 
-      final float x0 = MathHelper.safeDiv(finalTranslation.x * projectionPlaneDistance_1f8003f8.get(), finalTranslation.z);
-      final float y0 = MathHelper.safeDiv(finalTranslation.y * projectionPlaneDistance_1f8003f8.get(), finalTranslation.z);
+      final float x0 = MathHelper.safeDiv(finalTranslation.x * projectionPlaneDistance_1f8003f8, finalTranslation.z);
+      final float y0 = MathHelper.safeDiv(finalTranslation.y * projectionPlaneDistance_1f8003f8, finalTranslation.z);
 
       // zMod needs to be ignored in z check or poly positions will overflow at low z values
       float z = zMod + finalTranslation.z / 4.0f;
@@ -1717,11 +1718,11 @@ public final class Bttl_800e {
         }
 
         //LAB_800e7a38
-        final int zDepth = MathHelper.safeDiv(projectionPlaneDistance_1f8003f8.get() << 10, finalTranslation.z / 4.0f);
-        final int x1 = (int)(spriteEffect.x_04 * spriteEffect.scaleX_1c / 8 * zDepth / 8);
-        final int x2 = x1 + (int)(spriteEffect.w_08 * spriteEffect.scaleX_1c / 8 * zDepth / 8);
-        final int y1 = (int)(spriteEffect.y_06 * spriteEffect.scaleY_1e / 8 * zDepth / 8);
-        final int y2 = y1 + (int)(spriteEffect.h_0a * spriteEffect.scaleY_1e / 8 * zDepth / 8);
+        final float zDepth = MathHelper.safeDiv(projectionPlaneDistance_1f8003f8 * 0x1000 / 4.0f, finalTranslation.z / 4.0f);
+        final float x1 = spriteEffect.x_04 * spriteEffect.scaleX_1c / 8 * zDepth / 8;
+        final float x2 = x1 + spriteEffect.w_08 * spriteEffect.scaleX_1c / 8 * zDepth / 8;
+        final float y1 = spriteEffect.y_06 * spriteEffect.scaleY_1e / 8 * zDepth / 8;
+        final float y2 = y1 + spriteEffect.h_0a * spriteEffect.scaleY_1e / 8 * zDepth / 8;
         final float sin = MathHelper.sin(spriteEffect.angle_20);
         final float cos = MathHelper.cos(spriteEffect.angle_20);
 
@@ -1729,10 +1730,10 @@ public final class Bttl_800e {
           .clut(spriteEffect.clutX_10, spriteEffect.clutY_12)
           .vramPos((spriteEffect.tpage_0c & 0b1111) * 64, (spriteEffect.tpage_0c & 0b10000) != 0 ? 256 : 0)
           .rgb(spriteEffect.r_14, spriteEffect.g_15, spriteEffect.b_16)
-          .pos(0, (int)(x0 + x1 * cos - y1 * sin), (int)(y0 + x1 * sin + y1 * cos))
-          .pos(1, (int)(x0 + x2 * cos - y1 * sin), (int)(y0 + x2 * sin + y1 * cos))
-          .pos(2, (int)(x0 + x1 * cos - y2 * sin), (int)(y0 + x1 * sin + y2 * cos))
-          .pos(3, (int)(x0 + x2 * cos - y2 * sin), (int)(y0 + x2 * sin + y2 * cos))
+          .pos(0, x0 + x1 * cos - y1 * sin, y0 + x1 * sin + y1 * cos)
+          .pos(1, x0 + x2 * cos - y1 * sin, y0 + x2 * sin + y1 * cos)
+          .pos(2, x0 + x1 * cos - y2 * sin, y0 + x1 * sin + y2 * cos)
+          .pos(3, x0 + x2 * cos - y2 * sin, y0 + x2 * sin + y2 * cos)
           .uv(0, spriteEffect.u_0e, spriteEffect.v_0f)
           .uv(1, spriteEffect.w_08 + spriteEffect.u_0e - 1, spriteEffect.v_0f)
           .uv(2, spriteEffect.u_0e, spriteEffect.h_0a + spriteEffect.v_0f - 1)
@@ -1756,8 +1757,8 @@ public final class Bttl_800e {
     transformed.add(worldToScreenMatrix_800c3548.transfer);
 
     if(transformed.z >= 160) {
-      out.x = transformed.x * projectionPlaneDistance_1f8003f8.get() / transformed.z;
-      out.y = transformed.y * projectionPlaneDistance_1f8003f8.get() / transformed.z;
+      out.x = transformed.x * projectionPlaneDistance_1f8003f8 / transformed.z;
+      out.y = transformed.y * projectionPlaneDistance_1f8003f8 / transformed.z;
       return transformed.z / 4.0f;
     }
 
@@ -3412,14 +3413,14 @@ public final class Bttl_800e {
 
   @Method(0x800eccfcL)
   public static void drawTargetArrow(final Model124 model, final int textEffect, final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
-    final int x;
-    final int y;
-    final int z;
+    final float x;
+    final float y;
+    final float z;
     if(bent instanceof final MonsterBattleEntity monster) {
       // X and Z are swapped
-      x = -monster.targetArrowPos_78.getZ() * 100;
-      y = -monster.targetArrowPos_78.getY() * 100;
-      z = -monster.targetArrowPos_78.getX() * 100;
+      x = -monster.targetArrowPos_78.z * 100.0f;
+      y = -monster.targetArrowPos_78.y * 100.0f;
+      z = -monster.targetArrowPos_78.x * 100.0f;
     } else {
       //LAB_800ecd90
       if(bent instanceof final PlayerBattleEntity player && player.isDragoon()) {
