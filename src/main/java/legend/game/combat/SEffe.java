@@ -6421,14 +6421,16 @@ public final class SEffe {
       impact.renderShockwave_01 = false;
       impact.startingFrame_04 = rand() % maxStartingFrame + 1;
       final int translationMagnitude = rand() % (maxTranslationMagnitude + 1);
-      final int angle = rand() % 4096;
+      final float angle = MathHelper.psxDegToRad(rand() % 4096);
+      final float sin = MathHelper.sin(angle);
+      final float cos = MathHelper.cosFromSin(sin, angle);
       impact.unused_08 = rand() % maxStartingFrame + 1;
-      impact.translation_0c[0].setX((rcos(angle) - rsin(angle)) * translationMagnitude >> 12);
-      impact.translation_0c[0].setY(0);
-      impact.translation_0c[0].setZ((rcos(angle) + rsin(angle)) * translationMagnitude >> 12);
-      impact.translation_0c[1].setX(impact.translation_0c[0].getX());
-      impact.translation_0c[1].setY(impact.translation_0c[0].getY() - 0x100);
-      impact.translation_0c[1].setZ(impact.translation_0c[0].getZ());
+      impact.translation_0c[0].x = (cos - sin) * translationMagnitude;
+      impact.translation_0c[0].y = 0;
+      impact.translation_0c[0].z = (cos + sin) * translationMagnitude;
+      impact.translation_0c[1].x = impact.translation_0c[0].x;
+      impact.translation_0c[1].y = impact.translation_0c[0].y - 0x100;
+      impact.translation_0c[1].z = impact.translation_0c[0].z;
       impact.rotation_2c[0].set(0.0f, MathHelper.psxDegToRad(rand() % 4096), 0.0f);
       impact.rotation_2c[1].set(0.0f, MathHelper.psxDegToRad(rand() % 4096), 0.0f);
       impact.scale_6c[0].zero();
@@ -6482,7 +6484,7 @@ public final class SEffe {
             impact.opacity_8c[0].b.sub(23);
           } else { // Stage 1
             if(currentAnimFrame == 9) {
-              impact.translation_0c[0].setY(-0x800);
+              impact.translation_0c[0].y = -0x800;
               impact.scale_6c[0].x = 6.5f;
               impact.scale_6c[0].z = 6.5f;
             }
@@ -6537,9 +6539,7 @@ public final class SEffe {
         if(impact.renderImpact_00) {
           calculateEffectTransforms(transformMatrix0, manager);
           final int stageNum = impact.animationFrame_a2 >= 10 ? 1 : 0;
-          translation.x = impact.translation_0c[stageNum].getX() + manager._10.trans_04.x;
-          translation.y = impact.translation_0c[stageNum].getY() + manager._10.trans_04.y;
-          translation.z = impact.translation_0c[stageNum].getZ() + manager._10.trans_04.z;
+          translation.set(impact.translation_0c[stageNum]).add(manager._10.trans_04);
           final float scaleX = impact.scale_6c[stageNum].x * manager._10.scale_16.x;
           final float scaleY = impact.scale_6c[stageNum].y * manager._10.scale_16.y;
           final float scaleZ = impact.scale_6c[stageNum].z * manager._10.scale_16.z;
@@ -10037,12 +10037,12 @@ public final class SEffe {
         //LAB_80119130
         //LAB_8011914c
         for(int i = 1; i < effect.countCopies_08 && i < effect.translationIndexBase_14; i++) {
-          final VECTOR instTranslation = effect.instanceTranslations_18[(effect.translationIndexBase_14 - i - 1) % effect.countCopies_08];
+          final Vector3f instTranslation = effect.instanceTranslations_18[(effect.translationIndexBase_14 - i - 1) % effect.countCopies_08];
 
           final int steps = effect.countTransformSteps_0c + 1;
-          final float stepX = (instTranslation.getX() - transformMatrix.transfer.x) / steps;
-          final float stepY = (instTranslation.getY() - transformMatrix.transfer.y) / steps;
-          final float stepZ = (instTranslation.getZ() - transformMatrix.transfer.z) / steps;
+          final float stepX = (instTranslation.x - transformMatrix.transfer.x) / steps;
+          final float stepY = (instTranslation.y - transformMatrix.transfer.y) / steps;
+          final float stepZ = (instTranslation.z - transformMatrix.transfer.z) / steps;
 
           float x = transformMatrix.transfer.x;
           float y = transformMatrix.transfer.y;
