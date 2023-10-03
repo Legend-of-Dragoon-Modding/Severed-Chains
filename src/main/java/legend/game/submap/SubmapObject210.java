@@ -1,6 +1,5 @@
 package legend.game.submap;
 
-import legend.core.gte.VECTOR;
 import legend.game.types.Model124;
 import org.joml.Vector3f;
 
@@ -15,17 +14,17 @@ public class SubmapObject210 {
   public int sobjIndex_130;
   public int animIndex_132;
   /** Forced movement Y step */
-  public int movementStepY_134;
+  public float movementStepY_134;
   /** Forced movement destination */
-  public final VECTOR movementDestination_138 = new VECTOR();
+  public final Vector3f movementDestination_138 = new Vector3f();
   /** Number of frames for forced movement */
   public int movementTicks_144;
   /** Forced movement step */
-  public final VECTOR movementStep_148 = new VECTOR();
-  /** Same as {@link #movementStep_148} but .12 */
-  public final VECTOR movementStep12_154 = new VECTOR();
-  /** The total distance moved (.12) */
-  public final VECTOR movementDistanceMoved12_160 = new VECTOR();
+  public final Vector3f movementStep_148 = new Vector3f();
+  /** Same as {@link #movementStep_148} but .16 */
+  public final Vector3f movementStep12_154 = new Vector3f();
+  /** The total distance moved (.16) */
+  public final Vector3f movementDistanceMoved12_160 = new Vector3f();
   public int ui_16c;
   public int us_170;
   public int s_172;

@@ -67,7 +67,6 @@ import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Math;
-import org.joml.Matrix3f;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -82,7 +81,6 @@ import java.util.function.Supplier;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
-import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.SCRIPTS;
@@ -750,26 +748,6 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80021db4
-  }
-
-  @Method(0x80021f0cL)
-  public static void SetLightMatrix(final Matrix3f m) {
-    GTE.setLightSourceMatrix(m);
-  }
-
-  @Method(0x80021f3cL)
-  public static void SetColorMatrix(final Matrix3f m) {
-    GTE.setLightColourMatrix(m);
-  }
-
-  @Method(0x80021facL)
-  public static void SetGeomOffset(final int x, final int y) {
-    GTE.setScreenOffset(x, y);
-  }
-
-  @Method(0x80021fc4L)
-  public static int SquareRoot0(final long n) {
-    return (int)Math.sqrt(n);
   }
 
   /**

@@ -77,7 +77,6 @@ import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zMin;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
-import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8002.adjustModelUvs;
 import static legend.game.Scus94491BpeSegment_8002.animateModelTextures;
 import static legend.game.Scus94491BpeSegment_8002.applyInterpolationFrame;
@@ -525,7 +524,7 @@ public final class Bttl_800d {
           GPU.queueCommand(30, new GpuCommandPoly(4)
             .translucent(Translucency.B_PLUS_F)
             .monochrome(0, 0)
-            .rgb(1, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
+            .rgb(1, manager._10.colour_1c)
             .monochrome(2, 0)
             .rgb(3, 0)
             .pos(0, x0, y0)
@@ -575,7 +574,7 @@ public final class Bttl_800d {
             .translucent(Translucency.B_PLUS_F)
             .monochrome(0, 0)
             .monochrome(1, 0)
-            .rgb(2, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
+            .rgb(2, manager._10.colour_1c)
             .pos(0, xArray[0], yArray[0])
             .pos(1, xArray[1], yArray[1])
             .pos(2, xArray[2], yArray[2])
@@ -649,7 +648,7 @@ public final class Bttl_800d {
     if(manager._10.flags_00 >= 0) {
       GPU.queueCommand((effect.z_04 + manager._10.z_22) / 4.0f, new GpuCommandPoly(3)
         .translucent(translucency)
-        .rgb(0, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
+        .rgb(0, manager._10.colour_1c)
         .rgb(1, effect.r_0c, effect.g_0d, effect.b_0e)
         .rgb(2, effect.r_0c, effect.g_0d, effect.b_0e)
         .pos(0, vertices[0].x, vertices[0].y)
@@ -692,8 +691,8 @@ public final class Bttl_800d {
 
       GPU.queueCommand((effect.z_04 + manager._10.z_22) / 4.0f, new GpuCommandPoly(4)
         .translucent(translucency)
-        .rgb(0, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
-        .rgb(1, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
+        .rgb(0, manager._10.colour_1c)
+        .rgb(1, manager._10.colour_1c)
         .rgb(2, effect.r_0c, effect.g_0d, effect.b_0e)
         .rgb(3, effect.r_0c, effect.g_0d, effect.b_0e)
         .pos(0, screenVert0.x, screenVert0.y)
@@ -809,9 +808,9 @@ public final class Bttl_800d {
     }
 
     effectZ /= 4.0f;
-    int r = MathHelper.clamp(manager._10.colour_1c.getX() - 1 << 8, 0, 0x8000) >>> 7;
-    int g = MathHelper.clamp(manager._10.colour_1c.getY() - 1 << 8, 0, 0x8000) >>> 7;
-    int b = MathHelper.clamp(manager._10.colour_1c.getZ() - 1 << 8, 0, 0x8000) >>> 7;
+    int r = MathHelper.clamp(manager._10.colour_1c.x - 1 << 8, 0, 0x8000) >>> 7;
+    int g = MathHelper.clamp(manager._10.colour_1c.y - 1 << 8, 0, 0x8000) >>> 7;
+    int b = MathHelper.clamp(manager._10.colour_1c.z - 1 << 8, 0, 0x8000) >>> 7;
     r = Math.min((r + g + b) / 3 * 2, 0xff);
 
     //LAB_800d2a80
@@ -831,8 +830,8 @@ public final class Bttl_800d {
           .pos(0, pos[i + 1].x, pos[i + 1].y)
           .pos(1, pos[i + 2].x, pos[i + 2].y)
           .pos(2, pos[0    ].x, pos[0    ].y)
-          .rgb(0, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
-          .rgb(1, manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
+          .rgb(0, manager._10.colour_1c)
+          .rgb(1, manager._10.colour_1c)
           .monochrome(2, r)
         );
       }
@@ -840,9 +839,9 @@ public final class Bttl_800d {
 
     //LAB_800d2c78
     int s6 = 0x1000;
-    r = manager._10.colour_1c.getX();
-    g = manager._10.colour_1c.getY();
-    b = manager._10.colour_1c.getZ();
+    r = manager._10.colour_1c.x;
+    g = manager._10.colour_1c.y;
+    b = manager._10.colour_1c.z;
     final int stepR = r >>> 2;
     final int stepG = g >>> 2;
     final int stepB = b >>> 2;
@@ -999,9 +998,9 @@ public final class Bttl_800d {
           objArray[objIndex].scaleModifierVelocity_08 = (int)(seed_800fa754.advance().get() % 49 + 104) / (float)0x1000;
           objArray[objIndex].angleModifier_0c = MathHelper.psxDegToRad((int)(seed_800fa754.advance().get() % 4097));
           objArray[objIndex].angleModifierVelocity_10 = 0;
-          objArray[objIndex].r_24 = manager._10.colour_1c.getX() << 8;
-          objArray[objIndex].g_26 = manager._10.colour_1c.getY() << 8;
-          objArray[objIndex].b_28 = manager._10.colour_1c.getZ() << 8;
+          objArray[objIndex].r_24 = manager._10.colour_1c.x << 8;
+          objArray[objIndex].g_26 = manager._10.colour_1c.y << 8;
+          objArray[objIndex].b_28 = manager._10.colour_1c.z << 8;
           objArray[objIndex].stepR_2a = objArray[objIndex].r_24 / objArray[objIndex].stepCount_01;
           objArray[objIndex].stepG_2c = objArray[objIndex].g_26 / objArray[objIndex].stepCount_01;
           objArray[objIndex].stepB_2e = objArray[objIndex].b_28 / objArray[objIndex].stepCount_01;
@@ -3154,12 +3153,12 @@ public final class Bttl_800d {
 
       //LAB_800dab70
       //LAB_800dab78
-      SetGeomOffset(screenOffsetX_800c67bc.get() + x, screenOffsetY_800c67c0.get() + y);
+      GTE.setScreenOffset(screenOffsetX_800c67bc.get() + x, screenOffsetY_800c67c0.get() + y);
 
       wobbleFramesRemaining_800c67c4.sub(1);
       if(wobbleFramesRemaining_800c67c4.get() <= 0) {
         useCameraWobble_800fabb8.set(false);
-        SetGeomOffset(screenOffsetX_800c67bc.get(), screenOffsetY_800c67c0.get());
+        GTE.setScreenOffset(screenOffsetX_800c67bc.get(), screenOffsetY_800c67c0.get());
       }
     }
 

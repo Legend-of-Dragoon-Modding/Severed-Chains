@@ -4,11 +4,9 @@ import legend.core.MathHelper;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
-import legend.core.gte.DVECTOR;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.gte.TmdObjTable1c;
-import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
@@ -72,7 +70,6 @@ import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.DragoonSpells09;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.combat.types.MersenneTwisterSeed;
-import legend.game.combat.types.Vec2;
 import legend.game.combat.ui.BattleDisplayStats144;
 import legend.game.combat.ui.BattleHudCharacterDisplay3c;
 import legend.game.combat.ui.BattleMenuStruct58;
@@ -109,6 +106,7 @@ import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import org.joml.Math;
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
@@ -397,9 +395,16 @@ public final class Bttl_800c {
 
   public static final ArrayRef<UnsignedShortRef> repeatItemIds_800c6e34 = MEMORY.ref(2, 0x800c6e34L, ArrayRef.of(UnsignedShortRef.class, 9, 2, UnsignedShortRef::new));
 
-  public static final ArrayRef<DVECTOR> combatUiElementRectDimensions_800c6e48 = MEMORY.ref(2, 0x800c6e48L, ArrayRef.of(DVECTOR.class, 6, 4, DVECTOR::new));
-  public static final ArrayRef<ShortRef> battleHudTextureVramXOffsets_800c6e60 = MEMORY.ref(2, 0x800c6e60L, ArrayRef.of(ShortRef.class, 4, 2, ShortRef::new));
-
+  public static final Vector2i[] combatUiElementRectDimensions_800c6e48 = {
+    new Vector2i(16, 16),
+    new Vector2i(16, 16),
+    new Vector2i(16, 16),
+    new Vector2i(16, 16),
+    new Vector2i(16, 16),
+    new Vector2i(16, 16),
+  };
+  /** Note: retail overlay doesn't have the last two elements, but the method that uses this copies the array and adds new elements */
+  public static final int[] battleHudTextureVramXOffsets_800c6e60 = {0, 0x10, 0x20, 0x30, 0, 0x10};
   public static final ArrayRef<UnsignedIntRef> characterDragoonIndices_800c6e68 = MEMORY.ref(4, 0x800c6e68L, ArrayRef.of(UnsignedIntRef.class, 10, 4, UnsignedIntRef::new));
 
   public static final ArrayRef<IntRef> melbuMonsterNameIndices = MEMORY.ref(4, 0x800c6e90L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
@@ -423,8 +428,10 @@ public final class Bttl_800c {
 
   public static final ArrayRef<ShortRef> floatingTextDigitClutOffsets_800c70f4 = MEMORY.ref(2, 0x800c70f4L, ArrayRef.of(ShortRef.class, 15, 2, ShortRef::new));
 
-  public static final ArrayRef<Vec2> battleUiElementClutVramXy_800c7114 = MEMORY.ref(4, 0x800c7114L, ArrayRef.of(Vec2.class, 2, 8, Vec2::new));
-
+  public static final Vector2i[] battleUiElementClutVramXy_800c7114 = {
+    new Vector2i(0x2c0, 0x1f0),
+    new Vector2i(0x380, 0x130),
+  };
   public static final ArrayRef<UnsignedShortRef> targetAllItemIds_800c7124 = MEMORY.ref(2, 0x800c7124L, ArrayRef.of(UnsignedShortRef.class, 17, 2, UnsignedShortRef::new));
 
   public static final BattleMenuBackgroundUvMetrics04 battleItemMenuScrollArrowUvMetrics_800c7190 = MEMORY.ref(1, 0x800c7190L, BattleMenuBackgroundUvMetrics04::new);
@@ -4139,8 +4146,8 @@ public final class Bttl_800c {
     final WeaponTrailEffect3c trail = (WeaponTrailEffect3c)data.effect_44;
 
     if(trail.currentSegment_38 != null) {
-      final VECTOR colour = new VECTOR().set(data._10.colour_1c).shl(8).and(0xffff);
-      final VECTOR colourStep = new VECTOR().set(colour).div(trail.segmentCount_0e);
+      final Vector3i colour = new Vector3i(data._10.colour_1c).mul(0x100);
+      final Vector3i colourStep = new Vector3i(colour).div(trail.segmentCount_0e);
       WeaponTrailEffectSegment2c segment = trail.currentSegment_38;
 
       final Vector2f v0 = new Vector2f();
@@ -4169,11 +4176,11 @@ public final class Bttl_800c {
           .pos(3, v3.x, v3.y)
           .monochrome(0, 0)
           .monochrome(1, 0)
-          .rgb(2, colour.getX() >>> 8, colour.getY() >>> 8, colour.getZ() >>> 8);
+          .rgb(2, colour.x >>> 8, colour.y >>> 8, colour.z >>> 8);
 
         colour.sub(colourStep);
 
-        cmd.rgb(3, colour.getX() >>> 8, colour.getY() >>> 8, colour.getZ() >>> 8);
+        cmd.rgb(3, colour.x >>> 8, colour.y >>> 8, colour.z >>> 8);
 
         float zFinal = z + data._10.z_22;
         if(zFinal >= 0xa0 && !renderCoordThresholdExceeded) {

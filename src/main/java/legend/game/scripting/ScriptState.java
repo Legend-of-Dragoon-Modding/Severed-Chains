@@ -23,7 +23,6 @@ import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.scriptFunctionDescriptions;
 import static legend.game.Scus94491BpeSegment.scriptLog;
 import static legend.game.Scus94491BpeSegment.simpleRand;
-import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8004.scriptSubFunctions_8004e29c;
@@ -873,7 +872,7 @@ public class ScriptState<T> {
    */
   @Method(0x80016bbcL)
   public FlowControl scriptSquareRoot() {
-    this.context.params_20[1].set(SquareRoot0(this.context.params_20[0].get()));
+    this.context.params_20[1].set((int)Math.sqrt(this.context.params_20[0].get()));
     return FlowControl.CONTINUE;
   }
 

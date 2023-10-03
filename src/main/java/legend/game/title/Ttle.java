@@ -54,7 +54,6 @@ import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
@@ -186,7 +185,7 @@ public class Ttle extends EngineState {
     }
 
     startFadeEffect(2, 15);
-    SetGeomOffset(0, 0);
+    GTE.setScreenOffset(0, 0);
     pregameLoadingStage_800bb10c.set(3);
 
     this.addInputHandlers();

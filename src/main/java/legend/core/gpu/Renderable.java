@@ -3,6 +3,7 @@ package legend.core.gpu;
 import legend.game.types.Translucency;
 import org.joml.Math;
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -74,14 +75,14 @@ public class Renderable {
     public final String name;
     private final Mesh.Segment segment;
     private final Vector2f[] vertices;
-    private final Vec2i[] uvs;
+    private final Vector2i[] uvs;
     private final int[] colours;
     private final Translucency translucency;
     private final int paletteBase;
     private final int pageX;
     private final int pageY;
 
-    public Command(final String name, final Mesh.Segment segment, final Vector2f[] vertices, final Vec2i[] uvs, final int[] colours, @Nullable final Translucency translucency, final int paletteBase, final int pageX, final int pageY) {
+    public Command(final String name, final Mesh.Segment segment, final Vector2f[] vertices, final Vector2i[] uvs, final int[] colours, @Nullable final Translucency translucency, final int paletteBase, final int pageX, final int pageY) {
       this.name = name;
       this.segment = segment;
       this.vertices = vertices;

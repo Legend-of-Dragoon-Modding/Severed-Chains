@@ -103,7 +103,6 @@ import static legend.game.Scus94491BpeSegment_8003.perspectiveTransformTriple;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.previousEngineState_8004dd28;
-import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8005._80052c6c;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
@@ -230,8 +229,8 @@ public class WMap extends EngineState {
 
   private static final ArrayRef<WmapRectMetrics04> coolonIconMetricsArray_800ef130 = MEMORY.ref(1, 0x800ef130L, ArrayRef.of(WmapRectMetrics04.class, 4, 4, WmapRectMetrics04::new));
   private static final ArrayRef<WmapRectMetrics04> queenFuryIconMetricsArray_800ef140 = MEMORY.ref(1, 0x800ef140L, ArrayRef.of(WmapRectMetrics04.class, 5, 4, WmapRectMetrics04::new));
-  private static final ArrayRef<ByteRef> coolonIconStateIndices_800ef154 = MEMORY.ref(1, 0x800ef154L, ArrayRef.of(ByteRef.class, 5, 1, ByteRef::new));
-  private static final ArrayRef<ByteRef> queenFuryIconStateIndices_800ef158 = MEMORY.ref(1, 0x800ef158L, ArrayRef.of(ByteRef.class, 15, 1, ByteRef::new));
+  private static final int[] coolonIconStateIndices_800ef154 = {0, 1, 2, 3, 0};
+  private static final int[] queenFuryIconStateIndices_800ef158 = {0, 0, 0, 0, 1, 2, 3, 4, 4, 4, 4, 3, 2, 1, 0};
 
   private static final ArrayRef<ByteRef> squareButtonUs_800ef168 = MEMORY.ref(1, 0x800ef168L, ArrayRef.of(ByteRef.class, 7, 1, ByteRef::new));
 
@@ -242,8 +241,27 @@ public class WMap extends EngineState {
 
   private static float mcqBrightness_800ef1a4;
   /** These are where the 3D map disappears towards when you fully zoom out */
-  private static final ArrayRef<VECTOR> mapPositions_800ef1a8 = MEMORY.ref(4, 0x800ef1a8L, ArrayRef.of(VECTOR.class, 8, 0x10, VECTOR::new));
-  private static final ArrayRef<CoolonWarpDestination20> coolonWarpDest_800ef228 = MEMORY.ref(4, 0x800ef228L, ArrayRef.of(CoolonWarpDestination20.class, 9, 0x20, CoolonWarpDestination20::new));
+  private static final Vector3i[] mapPositions_800ef1a8 = {
+    new Vector3i(-1550, - 8000,   900),
+    new Vector3i(-2800, -20000, -1200),
+    new Vector3i(- 750, -13000, - 450),
+    new Vector3i(-1000, -24000, -2500),
+    new Vector3i(  190, - 8600, -1640),
+    new Vector3i( 1700, -10000, -1950),
+    new Vector3i(  780, -10000, - 200),
+    new Vector3i(   80, - 1700, -  80),
+  };
+  private static final CoolonWarpDestination20[] coolonWarpDest_800ef228 = {
+    new CoolonWarpDestination20(new Vector3f( 72.0f,    6.0f, 4040.0f), 25, 2, 50, 52, new LodString("Commercial\nTown of Lohan")),
+    new CoolonWarpDestination20(new Vector3f( 87.0f, -400.0f, 4040.0f), 13, 3, 84, -6, new LodString("Indels Castle\nCapital Bale")),
+    new CoolonWarpDestination20(new Vector3f( 60.0f, -224.0f, 4040.0f), 28, 0, 26, 16, new LodString("Twin Castle\nin Fletz")),
+    new CoolonWarpDestination20(new Vector3f( 66.0f, -400.0f, 4040.0f), 35, 2, 40, -4, new LodString("Donau the\nWater City")),
+    new CoolonWarpDestination20(new Vector3f(950.0f, -380.0f, 4040.0f), 48, 5, 20, -4, new LodString("City of Fueno")),
+    new CoolonWarpDestination20(new Vector3f( 46.0f, -544.0f, 4040.0f), 51, 4, -4, -22, new LodString("Furni the\nWater City")),
+    new CoolonWarpDestination20(new Vector3f( 39.0f, -720.0f, 4040.0f), 60, 8, -18, -48, new LodString("Crystal Palace\nin Deningrad")),
+    new CoolonWarpDestination20(new Vector3f( 31.0f, -272.0f, 4040.0f), 70, 5, -34, 10, new LodString("Spring Breath\nTown, Ulara")),
+    new CoolonWarpDestination20(new Vector3f( 10.0f, -928.0f, 4040.0f), 83, 6, -82, -76, new LodString("Law Capital\nZenebatos")),
+  };
   private static final ArrayRef<ShortRef> waterClutYs_800ef348 = MEMORY.ref(2, 0x800ef348L, ArrayRef.of(ShortRef.class, 14, 2, ShortRef::new));
   private static final ArrayRef<ArrayRef<UnsignedShortRef>> encounterIds_800ef364 = MEMORY.ref(2, 0x800ef364L, ArrayRef.of(ArrayRef.classFor(UnsignedShortRef.class), 100, 8, ArrayRef.of(UnsignedShortRef.class, 4, 2, UnsignedShortRef::new)));
   /**
@@ -254,14 +272,12 @@ public class WMap extends EngineState {
    *   <li>{@link WMap#renderNoOp}</li>
    * </ul>
    */
-  private final Runnable[] shadowRenderers_800ef684 = new Runnable[4];
-  {
-    this.shadowRenderers_800ef684[0] = this::renderDartShadow;
-    this.shadowRenderers_800ef684[1] = this::renderQueenFuryWake;
-    this.shadowRenderers_800ef684[2] = this::renderNoOp; // Coolon
-    this.shadowRenderers_800ef684[3] = this::renderNoOp; // Teleporter
-  }
-
+  private final Runnable[] shadowRenderers_800ef684 = {
+    this::renderDartShadow,
+    this::renderQueenFuryWake,
+    this::renderNoOp, // Coolon
+    this::renderNoOp, // Teleporter
+  };
   /**
    * <ol start="0">
    *   <li>Dart</li>
@@ -2705,7 +2721,7 @@ public class WMap extends EngineState {
     );
 
     if(uiMode == 0) {
-      final int iconStateIndex = coolonIconStateIndices_800ef154.get((int)(tickCount_800bb0fc.get() / 2 / (3.0f / vsyncMode_8007a3b8) % 5)).get();
+      final int iconStateIndex = coolonIconStateIndices_800ef154[(int)(tickCount_800bb0fc.get() / 2 / (3.0f / vsyncMode_8007a3b8) % 5)];
       final int u = coolonIconMetricsArray_800ef130.get(iconStateIndex).u_00.get();
       final int v = coolonIconMetricsArray_800ef130.get(iconStateIndex).v_01.get();
       final int w = coolonIconMetricsArray_800ef130.get(iconStateIndex).w_02.get();
@@ -2728,7 +2744,7 @@ public class WMap extends EngineState {
       );
     } else {
       //LAB_800d7734
-      final int iconStateIndex = queenFuryIconStateIndices_800ef158.get((int)(tickCount_800bb0fc.get() / 3 / (3.0f / vsyncMode_8007a3b8) % 15)).get();
+      final int iconStateIndex = queenFuryIconStateIndices_800ef158[(int)(tickCount_800bb0fc.get() / 3 / (3.0f / vsyncMode_8007a3b8) % 15)];
       final int u = queenFuryIconMetricsArray_800ef140.get(iconStateIndex).u_00.get();
       final int v = queenFuryIconMetricsArray_800ef140.get(iconStateIndex).v_01.get();
       final int w = queenFuryIconMetricsArray_800ef140.get(iconStateIndex).w_02.get();
@@ -3141,8 +3157,7 @@ public class WMap extends EngineState {
         this.wmapStruct258_800c66a8._1f9++;
 
         if(this.wmapStruct258_800c66a8._1f9 >= 18 / vsyncMode_8007a3b8) {
-          final VECTOR vec = mapPositions_800ef1a8.get(this.mapState_800c6798.continentIndex_00);
-          this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(vec.getX(), vec.getY(), vec.getZ());
+          this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(mapPositions_800ef1a8[this.mapState_800c6798.continentIndex_00]);
           this.wmapStruct258_800c66a8.zoomState_1f8 = 3;
 
           //LAB_800d97bc
@@ -3235,11 +3250,11 @@ public class WMap extends EngineState {
    */
   @Method(0x800d9d24L)
   private void FUN_800d9d24(final int zoomDirection) {
-    final VECTOR vec = mapPositions_800ef1a8.get(this.mapState_800c6798.continentIndex_00);
+    final Vector3i vec = mapPositions_800ef1a8[this.mapState_800c6798.continentIndex_00];
     final WMapStruct258 wmap = this.wmapStruct258_800c66a8;
-    wmap.svec_1f0.x = (vec.getX() - wmap.svec_1e8.x) * zoomDirection / 6.0f / (3.0f / vsyncMode_8007a3b8);
-    wmap.svec_1f0.y = (vec.getY() - wmap.svec_1e8.y) * zoomDirection / 6.0f / (3.0f / vsyncMode_8007a3b8);
-    wmap.svec_1f0.z = (vec.getZ() - wmap.svec_1e8.z) * zoomDirection / 6.0f / (3.0f / vsyncMode_8007a3b8);
+    wmap.svec_1f0.x = (vec.x - wmap.svec_1e8.x) * zoomDirection / 6.0f / (3.0f / vsyncMode_8007a3b8);
+    wmap.svec_1f0.y = (vec.y - wmap.svec_1e8.y) * zoomDirection / 6.0f / (3.0f / vsyncMode_8007a3b8);
+    wmap.svec_1f0.z = (vec.z - wmap.svec_1e8.z) * zoomDirection / 6.0f / (3.0f / vsyncMode_8007a3b8);
     wmap._1f9 = 0;
   }
 
@@ -3415,7 +3430,7 @@ public class WMap extends EngineState {
         boolean sp24 = false;
         for(int i = 0; i < 9; i++) {
           //LAB_800dac9c
-          if(locations_800f0e34.get(coolonWarpDest_800ef228.get(i)._10.get()).continentNumber_0e.get() == this.mapState_800c6798.continentIndex_00 + 1) {
+          if(locations_800f0e34.get(coolonWarpDest_800ef228[i].locationIndex_10).continentNumber_0e.get() == this.mapState_800c6798.continentIndex_00 + 1) {
             struct258.coolonWarpIndex_221 = i;
             sp24 = true;
             break;
@@ -3440,10 +3455,9 @@ public class WMap extends EngineState {
         }
 
         //LAB_800dadac
-        struct258.coolonWarpIndex_222 = coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_221)._14.get();
+        struct258.coolonWarpIndex_222 = coolonWarpDest_800ef228[struct258.coolonWarpIndex_221]._14;
         struct258._220 = 3;
-        coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_221).vec_00.get(struct258.vec_94);
-        struct258.vec_94.div(4096.0f);
+        struct258.vec_94.set(coolonWarpDest_800ef228[struct258.coolonWarpIndex_221].vec_00);
         break;
 
       case 4:
@@ -3556,7 +3570,7 @@ public class WMap extends EngineState {
         }
 
         //LAB_800db698
-        this.lerp(struct258.vec_94, coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_221).vec_00.toVec3().div(4096.0f), coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222).vec_00.toVec3().div(4096.0f), 36.0f / vsyncMode_8007a3b8 / struct258._218);
+        this.lerp(struct258.vec_94, coolonWarpDest_800ef228[struct258.coolonWarpIndex_221].vec_00, coolonWarpDest_800ef228[struct258.coolonWarpIndex_222].vec_00, 36.0f / vsyncMode_8007a3b8 / struct258._218);
 
         struct258.models_0c[2].coord2_14.transforms.scale.x -= 0.041503906f / (3.0f / vsyncMode_8007a3b8); // ~1/24
 
@@ -3574,17 +3588,17 @@ public class WMap extends EngineState {
         stopSound(soundFiles_800bcf80[12], 1, 1);
 
         if(struct258.coolonWarpIndex_222 == 8) {
-          gameState_800babc8._17c.set(coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222)._10.get(), true);
+          gameState_800babc8._17c.set(coolonWarpDest_800ef228[struct258.coolonWarpIndex_222].locationIndex_10, true);
 
           //LAB_800db8f4
-          this.mapState_800c6798.submapCut_c8 = locations_800f0e34.get(coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222)._10.get()).submapCut_08.get();
-          this.mapState_800c6798.submapScene_ca = locations_800f0e34.get(coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222)._10.get()).submapScene_0a.get();
+          this.mapState_800c6798.submapCut_c8 = locations_800f0e34.get(coolonWarpDest_800ef228[struct258.coolonWarpIndex_222].locationIndex_10).submapCut_08.get();
+          this.mapState_800c6798.submapScene_ca = locations_800f0e34.get(coolonWarpDest_800ef228[struct258.coolonWarpIndex_222].locationIndex_10).submapScene_0a.get();
           submapCut_80052c30.set(this.mapState_800c6798.submapCut_c8);
           submapScene_80052c34.set(this.mapState_800c6798.submapScene_ca);
         } else {
           //LAB_800db9bc
-          this.mapState_800c6798.submapCut_c8 = locations_800f0e34.get(coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222)._10.get()).submapCut_04.get();
-          this.mapState_800c6798.submapScene_ca = locations_800f0e34.get(coolonWarpDest_800ef228.get(struct258.coolonWarpIndex_222)._10.get()).submapScene_06.get();
+          this.mapState_800c6798.submapCut_c8 = locations_800f0e34.get(coolonWarpDest_800ef228[struct258.coolonWarpIndex_222].locationIndex_10).submapCut_04.get();
+          this.mapState_800c6798.submapScene_ca = locations_800f0e34.get(coolonWarpDest_800ef228[struct258.coolonWarpIndex_222].locationIndex_10).submapScene_06.get();
           submapCut_80052c30.set(this.mapState_800c6798.submapCut_c8);
           index_80052c38.set(this.mapState_800c6798.submapScene_ca);
           struct258._250 = 3;
@@ -3693,11 +3707,11 @@ public class WMap extends EngineState {
   private void renderCoolonMap(final boolean enableInput, final long a1) {
     final WMapStruct258 struct = this.wmapStruct258_800c66a8;
 
-    final CoolonWarpDestination20 warp1 = coolonWarpDest_800ef228.get(struct.coolonWarpIndex_221);
-    final CoolonWarpDestination20 warp2 = coolonWarpDest_800ef228.get(struct.coolonWarpIndex_222);
+    final CoolonWarpDestination20 warp1 = coolonWarpDest_800ef228[struct.coolonWarpIndex_221];
+    final CoolonWarpDestination20 warp2 = coolonWarpDest_800ef228[struct.coolonWarpIndex_222];
 
-    short x = (short)(warp1.x_18.get() - warp2.x_18.get());
-    short y = (short)(warp1.y_1a.get() - warp2.y_1a.get());
+    int x = warp1.x_18 - warp2.x_18;
+    int y = warp1.y_1a - warp2.y_1a;
 
     struct.rotation_a4.y = MathHelper.floorMod(MathHelper.atan2(y, x) + MathHelper.PI / 2.0f, MathHelper.TWO_PI);
     struct.models_0c[2].coord2_14.transforms.rotate.y += (struct.rotation_a4.y - struct.models_0c[2].coord2_14.transforms.rotate.y) / 8 / (3.0f / vsyncMode_8007a3b8);
@@ -3730,8 +3744,8 @@ public class WMap extends EngineState {
     //LAB_800dc468
     for(int sp1c = 0; sp1c < 9; sp1c++) {
       //LAB_800dc484
-      final int left = coolonWarpDest_800ef228.get(sp1c).x_18.get();
-      final int top = coolonWarpDest_800ef228.get(sp1c).y_1a.get();
+      final int left = coolonWarpDest_800ef228[sp1c].x_18;
+      final int top = coolonWarpDest_800ef228[sp1c].y_1a;
 
       GPU.queueCommand(orderingTableSize_1f8003c8.get() - 4, new GpuCommandPoly(4)
         .bpp(Bpp.BITS_4)
@@ -3751,8 +3765,8 @@ public class WMap extends EngineState {
     }
 
     //LAB_800dc734
-    x = (short)(coolonWarpDest_800ef228.get(struct.coolonWarpIndex_222).x_18.get() - 2);
-    y = (short)(coolonWarpDest_800ef228.get(struct.coolonWarpIndex_222).y_1a.get() - 12);
+    x = coolonWarpDest_800ef228[struct.coolonWarpIndex_222].x_18 - 2;
+    y = coolonWarpDest_800ef228[struct.coolonWarpIndex_222].y_1a - 12;
 
     // Selection arrow
     GPU.queueCommand(17, new GpuCommandQuad()
@@ -3774,7 +3788,7 @@ public class WMap extends EngineState {
 
       final IntRef widthRef = new IntRef();
       final IntRef linesRef = new IntRef();
-      this.measureText(coolonWarpDest_800ef228.get(struct.coolonWarpIndex_222).placeName_1c.deref(), widthRef, linesRef);
+      this.measureText(coolonWarpDest_800ef228[struct.coolonWarpIndex_222].placeName_1c, widthRef, linesRef);
       final int width = widthRef.get();
       final int lines = linesRef.get();
 
@@ -3810,7 +3824,7 @@ public class WMap extends EngineState {
       //LAB_800dcb48
       textZ_800bdf00.set(18);
       textboxes_800be358[7].z_0c = 18;
-      this.renderCenteredShadowedText(coolonWarpDest_800ef228.get(struct.coolonWarpIndex_222).placeName_1c.deref(), x, y - lines * 7 + 1, TextColour.WHITE, 0);
+      this.renderCenteredShadowedText(coolonWarpDest_800ef228[struct.coolonWarpIndex_222].placeName_1c, x, y - lines * 7 + 1, TextColour.WHITE, 0);
     }
 
     //LAB_800dcc0c
@@ -6134,12 +6148,12 @@ public class WMap extends EngineState {
               dots.get(0).get(nextPathPos);
 
               if(pos.x == playerPos.x && pos.y == playerPos.y && pos.z == playerPos.z) {
-                this.mapState_800c6798._40[sp4c].set(dots.get(dotIndex - 2));
+                dots.get(dotIndex - 2).get(this.mapState_800c6798._40[sp4c]);
                 this.mapState_800c6798._dc[sp4c] = areaIndex;
                 sp4c++;
                 //LAB_800e9bd8
               } else if(pos.x == nextPathPos.x && pos.y == nextPathPos.y && pos.z == nextPathPos.z) {
-                this.mapState_800c6798._40[sp4c].set(dots.get(1));
+                dots.get(1).get(this.mapState_800c6798._40[sp4c]);
                 this.mapState_800c6798._dc[sp4c] = areaIndex;
                 sp4c++;
               }
@@ -6170,7 +6184,7 @@ public class WMap extends EngineState {
       return;
     }
 
-    final VECTOR sp0xb0 = new VECTOR();
+    final Vector3f sp0xb0 = new Vector3f();
     final short[] sp0xc8 = new short[7];
 
     int sp18 = 0;
@@ -6206,9 +6220,9 @@ public class WMap extends EngineState {
       }
 
       //LAB_800e9edc
-      sp0xb0.set(this.wmapStruct258_800c66a8.vec_94).sub(this.mapState_800c6798._40[i]);
+      sp0xb0.set(this.wmapStruct258_800c66a8.vec_94).sub(this.mapState_800c6798._40[i].x, this.mapState_800c6798._40[i].y, this.mapState_800c6798._40[i].z);
 
-      sp0xc8[i] = (short)(MathHelper.radToPsxDeg(this.wmapStruct19c0_800c66b0.mapRotation_70.y) - ratan2(sp0xb0.getX(), sp0xb0.getZ()) + 0x800 & 0xfff);
+      sp0xc8[i] = (short)(MathHelper.radToPsxDeg(this.wmapStruct19c0_800c66b0.mapRotation_70.y - MathHelper.atan2(sp0xb0.x, sp0xb0.z) + MathHelper.PI) & 0xfff);
 
       final int v0 = (sp0xc8[i] + 0x100 & 0xfff) >> 9;
       if((movementInput & positiveDirectionMovementMask_800f0204.get(v0).get()) != 0) {

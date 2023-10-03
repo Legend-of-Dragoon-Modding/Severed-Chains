@@ -1,13 +1,13 @@
 package legend.game.combat.effects;
 
-import legend.core.gte.USCOLOUR;
+import org.joml.Vector3i;
 
 public class ThunderArrowEffectBolt1e {
   public float x_00;
   public float y_02;
-  public final USCOLOUR colour_04 = new USCOLOUR();
-  public final USCOLOUR colour_0a = new USCOLOUR();
-  public final USCOLOUR svec_10 = new USCOLOUR();
-  public final USCOLOUR svec_16 = new USCOLOUR();
+  public final Vector3i colour_04 = new Vector3i();
+  public final Vector3i colour_0a = new Vector3i();
+  public final Vector3i svec_10 = new Vector3i();
+  public final Vector3i svec_16 = new Vector3i();
   public byte size_1c;
 }

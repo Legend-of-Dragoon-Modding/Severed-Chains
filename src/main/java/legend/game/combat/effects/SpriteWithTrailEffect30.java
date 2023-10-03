@@ -1,6 +1,6 @@
 package legend.game.combat.effects;
 
-import legend.core.gte.VECTOR;
+import org.joml.Vector3f;
 
 import java.util.Arrays;
 
@@ -18,14 +18,14 @@ public class SpriteWithTrailEffect30 implements Effect {
   public int colourAndScaleTransformModifier_10;
   /** This value is always modified when indexing to remain within the range of count */
   public int translationIndexBase_14;
-  public VECTOR[] instanceTranslations_18;
+  public Vector3f[] instanceTranslations_18;
   public Sub subEffect_1c;
 
   public SpriteWithTrailEffect30(final int count) {
     this.countCopies_08 = count;
     if(count != 0) {
-      this.instanceTranslations_18 = new VECTOR[count];
-      Arrays.setAll(this.instanceTranslations_18, i -> new VECTOR());
+      this.instanceTranslations_18 = new Vector3f[count];
+      Arrays.setAll(this.instanceTranslations_18, i -> new Vector3f());
     } else {
       this.instanceTranslations_18 = null;
     }

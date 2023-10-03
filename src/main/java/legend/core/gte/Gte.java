@@ -214,13 +214,6 @@ public class Gte {
   }
 
   /** Control register 13-15 background colour */
-  public void setBackgroundColour(final int r, final int g, final int b) {
-    this.backgroundColour.x = r / 4096.0f;
-    this.backgroundColour.y = g / 4096.0f;
-    this.backgroundColour.z = b / 4096.0f;
-  }
-
-  /** Control register 13-15 background colour */
   public void setBackgroundColour(final float r, final float g, final float b) {
     this.backgroundColour.x = r;
     this.backgroundColour.y = g;
@@ -295,12 +288,6 @@ public class Gte {
   /** 0x1 RTPS - perspective transform single, 12-bit fraction */
   public void perspectiveTransform(final Vector3f v0) {
     this.perspectiveTransform(v0.x, v0.y, v0.z);
-  }
-
-  /** 0x1 RTPS - perspective transform single, 12-bit fraction */
-  public void perspectiveTransform(final int x, final int y, final int z) {
-    this.setVertex(0, x, y, z);
-    this.perspectiveTransform();
   }
 
   /** 0x1 RTPS - perspective transform single, 12-bit fraction */

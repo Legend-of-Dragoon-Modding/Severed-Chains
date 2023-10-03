@@ -113,7 +113,6 @@ import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800218f0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a9c0;
-import static legend.game.Scus94491BpeSegment_8002.SetGeomOffset;
 import static legend.game.Scus94491BpeSegment_8002.animateModelTextures;
 import static legend.game.Scus94491BpeSegment_8002.applyModelPartTransforms;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
@@ -1576,36 +1575,22 @@ public class SMap extends EngineState {
     if(sobj.movementTicks_144 != 0) {
       sobj.movementStep_148.set(sobj.movementDestination_138).sub(model.coord2_14.coord.transfer).div(sobj.movementTicks_144);
     } else {
-      sobj.movementStep_148.set(0, 0, 0);
-    }
-
-    if(sobj.movementStep_148.getX() == 0 && sobj.movementDestination_138.getX() < model.coord2_14.coord.transfer.x) {
-      sobj.movementStep_148.setX(0x8000_0000);
-    }
-
-    //LAB_800de750
-    if(sobj.movementStep_148.getY() == 0 && sobj.movementDestination_138.getY() < model.coord2_14.coord.transfer.y) {
-      sobj.movementStep_148.setY(0x8000_0000);
-    }
-
-    //LAB_800de77c
-    if(sobj.movementStep_148.getZ() == 0 && sobj.movementDestination_138.getZ() < model.coord2_14.coord.transfer.z) {
-      sobj.movementStep_148.setZ(0x8000_0000);
+      sobj.movementStep_148.zero();
     }
 
     //LAB_800de7a8
-    int x = 0;
-    int y = 0;
-    int z = 0;
+    float x = 0.0f;
+    float y = 0.0f;
+    float z = 0.0f;
     if(sobj.movementTicks_144 != 0) {
-      x = Math.round(Math.abs(((sobj.movementDestination_138.getX() - model.coord2_14.coord.transfer.x) * 0x1_0000) / sobj.movementTicks_144));
-      y = Math.round(Math.abs(((sobj.movementDestination_138.getY() - model.coord2_14.coord.transfer.y) * 0x1_0000) / sobj.movementTicks_144));
-      z = Math.round(Math.abs(((sobj.movementDestination_138.getZ() - model.coord2_14.coord.transfer.z) * 0x1_0000) / sobj.movementTicks_144));
+      x = Math.abs((sobj.movementDestination_138.x - model.coord2_14.coord.transfer.x) / sobj.movementTicks_144);
+      y = Math.abs((sobj.movementDestination_138.y - model.coord2_14.coord.transfer.y) / sobj.movementTicks_144);
+      z = Math.abs((sobj.movementDestination_138.z - model.coord2_14.coord.transfer.z) / sobj.movementTicks_144);
     }
 
     //LAB_800de8e8
-    sobj.movementStep12_154.set(x & 0xffff, y & 0xffff, z & 0xffff);
-    sobj.movementDistanceMoved12_160.set(0, 0, 0);
+    sobj.movementStep12_154.set(x, y, z);
+    sobj.movementDistanceMoved12_160.zero();
 
     this.sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(this::FUN_800e1f90);
 
@@ -1627,25 +1612,16 @@ public class SMap extends EngineState {
     sobj.movementDestination_138.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     sobj.movementTicks_144 = script.params_20[4].get();
 
-    sobj.movementStep_148.setX(Math.round((sobj.movementDestination_138.getX() - model.coord2_14.coord.transfer.x) / sobj.movementTicks_144));
-    sobj.movementStep_148.setZ(Math.round((sobj.movementDestination_138.getZ() - model.coord2_14.coord.transfer.z) / sobj.movementTicks_144));
-
-    if(sobj.movementStep_148.getX() == 0 && sobj.movementDestination_138.getX() < model.coord2_14.coord.transfer.x) {
-      sobj.movementStep_148.setX(0x8000_0000);
-    }
-
-    //LAB_800dea08
-    if(sobj.movementStep_148.getZ() == 0 && sobj.movementDestination_138.getZ() < model.coord2_14.coord.transfer.z) {
-      sobj.movementStep_148.setZ(0x8000_0000);
-    }
+    sobj.movementStep_148.x = (sobj.movementDestination_138.x - model.coord2_14.coord.transfer.x) / sobj.movementTicks_144;
+    sobj.movementStep_148.z = (sobj.movementDestination_138.z - model.coord2_14.coord.transfer.z) / sobj.movementTicks_144;
 
     //LAB_800dea34
-    sobj.movementStep12_154.setX(Math.round(Math.abs((sobj.movementDestination_138.getX() - model.coord2_14.coord.transfer.x) * 0x1_0000 / sobj.movementTicks_144)) & 0xffff);
-    sobj.movementStep12_154.setZ(Math.round(Math.abs((sobj.movementDestination_138.getZ() - model.coord2_14.coord.transfer.z) * 0x1_0000 / sobj.movementTicks_144)) & 0xffff);
+    sobj.movementStep12_154.x = Math.abs((sobj.movementDestination_138.x - model.coord2_14.coord.transfer.x) / sobj.movementTicks_144);
+    sobj.movementStep12_154.z = Math.abs((sobj.movementDestination_138.z - model.coord2_14.coord.transfer.z) / sobj.movementTicks_144);
 
-    sobj.movementStepY_134 = Math.round(((sobj.movementDestination_138.getY() - model.coord2_14.coord.transfer.y) * 2 - sobj.movementTicks_144 * 7 * (sobj.movementTicks_144 - 1)) / (sobj.movementTicks_144 * 2));
-    sobj.movementDistanceMoved12_160.setX(0);
-    sobj.movementDistanceMoved12_160.setZ(0);
+    sobj.movementStepY_134 = ((sobj.movementDestination_138.y - model.coord2_14.coord.transfer.y) * 2 - sobj.movementTicks_144 * 7 * (sobj.movementTicks_144 - 1)) / (sobj.movementTicks_144 * 2);
+    sobj.movementDistanceMoved12_160.x = 0;
+    sobj.movementDistanceMoved12_160.z = 0;
     sobj.us_170 = 2;
     sobj.s_172 = 1;
     sobj.movementStepAccelerationY_18c = 7;
@@ -1666,28 +1642,19 @@ public class SMap extends EngineState {
     sobj.movementDestination_138.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     sobj.movementTicks_144 = script.params_20[4].get();
     sobj.movementStepAccelerationY_18c = script.params_20[5].get() + 5;
-    sobj.movementStep_148.setX(Math.round((sobj.movementDestination_138.getX() - sobj.model_00.coord2_14.coord.transfer.x) / sobj.movementTicks_144));
-    sobj.movementStep_148.setZ(Math.round((sobj.movementDestination_138.getZ() - sobj.model_00.coord2_14.coord.transfer.z) / sobj.movementTicks_144));
-
-    if(sobj.movementStep_148.getX() == 0 && sobj.movementDestination_138.getX() < sobj.model_00.coord2_14.coord.transfer.x) {
-      sobj.movementStep_148.setX(0x8000_0000);
-    }
-
-    //LAB_800dec90
-    if(sobj.movementStep_148.getZ() == 0 && sobj.movementDestination_138.getZ() < sobj.model_00.coord2_14.coord.transfer.z) {
-      sobj.movementStep_148.setZ(0x8000_0000);
-    }
+    sobj.movementStep_148.x = (sobj.movementDestination_138.x - sobj.model_00.coord2_14.coord.transfer.x) / sobj.movementTicks_144;
+    sobj.movementStep_148.z = (sobj.movementDestination_138.z - sobj.model_00.coord2_14.coord.transfer.z) / sobj.movementTicks_144;
 
     //LAB_800decbc
-    sobj.movementStep12_154.setX(Math.round(Math.abs((sobj.movementDestination_138.getX() - sobj.model_00.coord2_14.coord.transfer.x) * 0x1_0000 / sobj.movementTicks_144)) & 0xffff);
-    sobj.movementStep12_154.setZ(Math.round(Math.abs((sobj.movementDestination_138.getZ() - sobj.model_00.coord2_14.coord.transfer.z) * 0x1_0000 / sobj.movementTicks_144)) & 0xffff);
+    sobj.movementStep12_154.x = Math.abs((sobj.movementDestination_138.x - sobj.model_00.coord2_14.coord.transfer.x) / sobj.movementTicks_144);
+    sobj.movementStep12_154.z = Math.abs((sobj.movementDestination_138.z - sobj.model_00.coord2_14.coord.transfer.z) / sobj.movementTicks_144);
 
     sobj.s_174 = sobj.s_172;
     sobj.s_172 = 1;
     sobj.us_170 = 2;
-    sobj.movementDistanceMoved12_160.setX(0);
-    sobj.movementDistanceMoved12_160.setZ(0);
-    sobj.movementStepY_134 = Math.round(((sobj.movementDestination_138.getY() - sobj.model_00.coord2_14.coord.transfer.y) * 2 - sobj.movementTicks_144 * sobj.movementStepAccelerationY_18c * (sobj.movementTicks_144 - 1)) / (sobj.movementTicks_144 * 2));
+    sobj.movementDistanceMoved12_160.x = 0;
+    sobj.movementDistanceMoved12_160.z = 0;
+    sobj.movementStepY_134 = ((sobj.movementDestination_138.y - sobj.model_00.coord2_14.coord.transfer.y) * 2 - sobj.movementTicks_144 * sobj.movementStepAccelerationY_18c * (sobj.movementTicks_144 - 1)) / (sobj.movementTicks_144 * 2);
     this.sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(this::tickSobjMovement);
     return FlowControl.CONTINUE;
   }
@@ -2981,7 +2948,7 @@ public class SMap extends EngineState {
 
     if(sobj.us_170 != 0) {
       this.transformVertex(v0, sobj.model_00.coord2_14.coord.transfer);
-      this.transformVertex(v1, sobj.movementDestination_138.toVec3());
+      this.transformVertex(v1, sobj.movementDestination_138);
       this.queueMovementLinePacket(v0, v1, 0x800080);
     }
   }
@@ -3389,7 +3356,7 @@ public class SMap extends EngineState {
           state.innerStruct_00.sobjIndex_12e = i;
           state.innerStruct_00.sobjIndex_130 = i;
           state.innerStruct_00.animIndex_132 = 0;
-          state.innerStruct_00.movementStepY_134 = 0;
+          state.innerStruct_00.movementStepY_134 = 0.0f;
           state.innerStruct_00.movementTicks_144 = 0;
           state.innerStruct_00.ui_16c = -1;
           state.innerStruct_00.us_170 = 0;
@@ -3485,57 +3452,8 @@ public class SMap extends EngineState {
       return false;
     }
 
-    int x = 0;
-    if((sobj.movementStep_148.getX() & 0x7fff_ffff) != 0) {
-      x = sobj.movementStep_148.getX();
-    }
-
-    //LAB_800e1fe4
-    int y = 0;
-    if((sobj.movementStep_148.getY() & 0x7fff_ffff) != 0) {
-      y = sobj.movementStep_148.getY();
-    }
-
-    //LAB_800e1ffc
-    int z = 0;
-    if((sobj.movementStep_148.getZ() & 0x7fff_ffff) != 0) {
-      z = sobj.movementStep_148.getZ();
-    }
-
     //LAB_800e2014
     sobj.movementDistanceMoved12_160.add(sobj.movementStep12_154);
-
-    if((sobj.movementDistanceMoved12_160.getX() & 0x1_0000) != 0) {
-      sobj.movementDistanceMoved12_160.x.and(0xffff);
-
-      if(sobj.movementStep_148.getX() >= 0) {
-        x++;
-      } else {
-        x--;
-      }
-    }
-
-    //LAB_800e2078
-    if((sobj.movementDistanceMoved12_160.getY() & 0x1_0000) != 0) {
-      sobj.movementDistanceMoved12_160.y.and(0xffff);
-
-      if(sobj.movementStep_148.getY() >= 0) {
-        y++;
-      } else {
-        y--;
-      }
-    }
-
-    //LAB_800e20a8
-    if((sobj.movementDistanceMoved12_160.getZ() & 0x1_0000) != 0) {
-      sobj.movementDistanceMoved12_160.z.and(0xffff);
-
-      if(sobj.movementStep_148.getZ() >= 0) {
-        z++;
-      } else {
-        z--;
-      }
-    }
 
     //LAB_800e20d8
     sobj.movementTicks_144--;
@@ -3545,12 +3463,12 @@ public class SMap extends EngineState {
 
       if((sobj.flags_190 & 0x1) != 0) { // Is player
         final Vector3f sp0x18 = new Vector3f();
-        sp0x18.set(x, y, z);
+        sp0x18.set(sobj.movementStep_148);
         GTE.setTransforms(worldToScreenMatrix_800c3548);
         this.transformToWorldspace(sp0x20, sp0x18);
       } else {
         //LAB_800e2134
-        sp0x20.set(x, y, z);
+        sp0x20.set(sobj.movementStep_148);
       }
 
       //LAB_800e2140
@@ -3565,7 +3483,7 @@ public class SMap extends EngineState {
       sobj.ui_16c = s3;
     } else {
       //LAB_800e21c4
-      model.coord2_14.coord.transfer.add(x, y, z);
+      model.coord2_14.coord.transfer.add(sobj.movementStep_148);
     }
 
     //LAB_800e21e8
@@ -4026,47 +3944,13 @@ public class SMap extends EngineState {
 
     model.coord2_14.coord.transfer.y += sobj.movementStepY_134;
 
-    int x = 0;
-    if((sobj.movementStep_148.getX() & 0x7fff_ffff) != 0) {
-      x = sobj.movementStep_148.getX();
-    }
-
-    //LAB_800e3ea8
-    int z = 0;
-    if((sobj.movementStep_148.getZ() & 0x7fff_ffff) != 0) {
-      z = sobj.movementStep_148.getZ();
-    }
-
     //LAB_800e3ec0
-    sobj.movementDistanceMoved12_160.x.add(sobj.movementStep12_154.getX());
-    sobj.movementDistanceMoved12_160.z.add(sobj.movementStep12_154.getZ());
-
-    if((sobj.movementDistanceMoved12_160.getX() & 0x1_0000) != 0) {
-      sobj.movementDistanceMoved12_160.x.and(0xffff);
-
-      if(sobj.movementStep_148.getX() >= 0) {
-        x++;
-      } else {
-        //LAB_800e3f08
-        x--;
-      }
-    }
-
-    //LAB_800e3f0c
-    if((sobj.movementDistanceMoved12_160.getZ() & 0x1_0000) != 0) {
-      sobj.movementDistanceMoved12_160.z.and(0xffff);
-
-      if(sobj.movementStep_148.getZ() >= 0) {
-        z++;
-      } else {
-        //LAB_800e3f38
-        z--;
-      }
-    }
+    sobj.movementDistanceMoved12_160.x += sobj.movementStep12_154.x;
+    sobj.movementDistanceMoved12_160.z += sobj.movementStep12_154.z;
 
     //LAB_800e3f3c
-    model.coord2_14.coord.transfer.x += x;
-    model.coord2_14.coord.transfer.z += z;
+    model.coord2_14.coord.transfer.x += sobj.movementStep_148.x;
+    model.coord2_14.coord.transfer.z += sobj.movementStep_148.z;
     sobj.movementStepY_134 += sobj.movementStepAccelerationY_18c;
     sobj.movementTicks_144--;
     if(sobj.movementTicks_144 != 0) {
@@ -4076,7 +3960,7 @@ public class SMap extends EngineState {
     //LAB_800e3f7c
     sobj.us_170 = 0;
     sobj.movementStepY_134 = 0;
-    model.coord2_14.coord.transfer.set(sobj.movementDestination_138.getX(), sobj.movementDestination_138.getY(), sobj.movementDestination_138.getZ());
+    model.coord2_14.coord.transfer.set(sobj.movementDestination_138);
     sobj.s_172 = sobj.s_174;
     return true;
   }
@@ -5480,7 +5364,7 @@ public class SMap extends EngineState {
   private void setGeomOffsetIfNotSet(final int x, final int y) {
     if(!this._800cbd3c._00) {
       this._800cbd3c._00 = true;
-      SetGeomOffset(x, y);
+      GTE.setScreenOffset(x, y);
     }
   }
 
