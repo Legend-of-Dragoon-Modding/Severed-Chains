@@ -2,6 +2,7 @@ package legend.core.gpu;
 
 import legend.game.types.Translucency;
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
@@ -81,7 +82,7 @@ public record Mesh(Segment[] segments) {
       outer:
       for(final Mesh.Poly3d poly : this.polys) {
         final Vector2f[] vertices = new Vector2f[this.vertexCount];
-        final Vec2i[] uvs = new Vec2i[this.vertexCount];
+        final Vector2i[] uvs = new Vector2i[this.vertexCount];
         final int[] colours = new int[this.vertexCount];
         Translucency translucency = null;
 
@@ -100,7 +101,7 @@ public record Mesh(Segment[] segments) {
           vertices[vertexIndex] = new Vector2f(GTE.getScreenX(2), GTE.getScreenY(2));
 
           if(this.textured) {
-            uvs[vertexIndex] = new Vec2i(poly.vertices()[vertexIndex].u(), poly.vertices()[vertexIndex].v());
+            uvs[vertexIndex] = new Vector2i(poly.vertices()[vertexIndex].u(), poly.vertices()[vertexIndex].v());
           }
 
           // Back-face culling
@@ -152,7 +153,7 @@ public record Mesh(Segment[] segments) {
     public final boolean translucent;
 
     private final Vector2f[][] positions;
-    private final Vec2i[][] uvs;
+    private final Vector2i[][] uvs;
     private final int[][] colours;
 
     public Segment2d(final String name, final Poly2d[] polys, final int vertexCount, final int z, final boolean textured, final boolean translucent) {
@@ -164,7 +165,7 @@ public record Mesh(Segment[] segments) {
       this.translucent = translucent;
 
       this.positions = new Vector2f[polys.length][this.vertexCount];
-      this.uvs = new Vec2i[polys.length][this.vertexCount];
+      this.uvs = new Vector2i[polys.length][this.vertexCount];
       this.colours = new int[polys.length][this.vertexCount];
 
       for(int polyIndex = 0; polyIndex < this.polys.length; polyIndex++) {
@@ -220,5 +221,5 @@ public record Mesh(Segment[] segments) {
   }
 
   public record Poly2d(Vertex2d[] vertices, int paletteBase, int pageX, int pageY, @Nullable Translucency translucency) { }
-  public record Vertex2d(Vector2f pos, Vec2i uv, int colour) { }
+  public record Vertex2d(Vector2f pos, Vector2i uv, int colour) { }
 }

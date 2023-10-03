@@ -1,6 +1,6 @@
 package legend.game.wmap;
 
-import legend.core.gte.VECTOR;
+import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 import java.util.Arrays;
@@ -44,7 +44,7 @@ public class MapState100 {
   /** 800c67c8 */
   public final Vector3f nextDotPos_30 = new Vector3f();
   /** 800c67d8 */
-  public final VECTOR[] _40 = new VECTOR[7];
+  public final Vector2i[] _40 = new Vector2i[7];
   /** 800c6848 */
   public final Vector3f _b0 = new Vector3f();
   /** 800c6858 */
@@ -74,6 +74,6 @@ public class MapState100 {
   public int _fc;
 
   public MapState100() {
-    Arrays.setAll(this._40, i -> new VECTOR());
+    Arrays.setAll(this._40, i -> new Vector2i());
   }
 }

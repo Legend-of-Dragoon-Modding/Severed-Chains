@@ -5,6 +5,7 @@ import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Math;
+import org.joml.Vector3i;
 
 import java.util.Arrays;
 
@@ -76,6 +77,14 @@ public class GpuCommandPoly extends GpuCommand {
   public final GpuCommandPoly noTextureBlending() {
     this.raw = true;
     return this;
+  }
+
+  public GpuCommandPoly rgb(final Vector3i colour) {
+    return this.rgb(colour.x, colour.y, colour.z);
+  }
+
+  public GpuCommandPoly rgb(final int vertex, final Vector3i colour) {
+    return this.rgb(vertex, colour.x, colour.y, colour.z);
   }
 
   public GpuCommandPoly rgb(final int colour) {

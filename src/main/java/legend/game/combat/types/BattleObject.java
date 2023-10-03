@@ -2,9 +2,9 @@ package legend.game.combat.types;
 
 import legend.core.MathHelper;
 import legend.core.gte.MV;
-import legend.core.gte.USCOLOUR;
 import legend.core.memory.Method;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 
 public abstract class BattleObject {
   public static String EM__ = "EM  ";
@@ -15,7 +15,7 @@ public abstract class BattleObject {
   public abstract Vector3f getPosition();
   public abstract Vector3f getRotation();
   public abstract Vector3f getScale();
-  public abstract USCOLOUR getColour();
+  public abstract Vector3i getColour();
 
   /** Translates a position relative to this BattleObject's local coordinate system */
   @Method(0x801105ccL)
@@ -89,7 +89,7 @@ public abstract class BattleObject {
   }
 
   @Method(0x8011441cL)
-  public USCOLOUR getColourDifference(final BattleObject other, final USCOLOUR outColour) {
+  public Vector3i getColourDifference(final BattleObject other, final Vector3i outColour) {
     return outColour.set(this.getColour()).sub(other.getColour());
   }
 }

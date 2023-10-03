@@ -8,7 +8,6 @@ import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
-import legend.core.gte.DVECTOR;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
@@ -88,6 +87,7 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.joml.Matrix3f;
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
@@ -2072,9 +2072,9 @@ public final class Bttl_800e {
       spriteEffect.v_0f = metrics.v_02;
       spriteEffect.clutX_10 = metrics.clut_06 << 4 & 0x3ff;
       spriteEffect.clutY_12 = metrics.clut_06 >>> 6 & 0x1ff;
-      spriteEffect.r_14 = managerInner.colour_1c.getX() & 0xff;
-      spriteEffect.g_15 = managerInner.colour_1c.getY() & 0xff;
-      spriteEffect.b_16 = managerInner.colour_1c.getZ() & 0xff;
+      spriteEffect.r_14 = managerInner.colour_1c.x & 0xff;
+      spriteEffect.g_15 = managerInner.colour_1c.y & 0xff;
+      spriteEffect.b_16 = managerInner.colour_1c.z & 0xff;
       spriteEffect.scaleX_1c = managerInner.scale_16.x;
       spriteEffect.scaleY_1e = managerInner.scale_16.y;
       spriteEffect.angle_20 = managerInner.rot_10.z;
@@ -2506,7 +2506,7 @@ public final class Bttl_800e {
     final ModelEffect13c effect = (ModelEffect13c)manager.effect_44;
     if(manager._10.flags_00 >= 0) {
       if((manager._10.flags_00 & 0x40) == 0) {
-        FUN_800e61e4(manager._10.colour_1c.getX() / 128.0f, manager._10.colour_1c.getY() / 128.0f, manager._10.colour_1c.getZ() / 128.0f);
+        FUN_800e61e4(manager._10.colour_1c.x / 128.0f, manager._10.colour_1c.y / 128.0f, manager._10.colour_1c.z / 128.0f);
       } else {
         //LAB_800ea564
         FUN_800e60e0(1.0f, 1.0f, 1.0f);
@@ -2900,10 +2900,10 @@ public final class Bttl_800e {
 
   /** Used in Dart transform */
   @Method(0x800eb554L)
-  public static void applyRedEyeDragoonTransformationFlameArmorEffectTextureAnimations(final RECT a0, final DVECTOR a1, final int height) {
-    GPU.queueCommand(1, new GpuCommandCopyVramToVram(960, 256, a1.getX(), a1.getY() + a0.h.get() - height, a0.w.get(), height));
-    GPU.queueCommand(1, new GpuCommandCopyVramToVram(a1.getX(), a1.getY() + height, a1.getX(), a1.getY(), a0.w.get(), a0.h.get() - height));
-    GPU.queueCommand(1, new GpuCommandCopyVramToVram(a1.getX(), a1.getY(), a0.x.get(), a0.y.get() + a0.h.get() - height, a0.w.get(), height));
+  public static void applyRedEyeDragoonTransformationFlameArmorEffectTextureAnimations(final RECT a0, final Vector2i a1, final int height) {
+    GPU.queueCommand(1, new GpuCommandCopyVramToVram(960, 256, a1.x, a1.y + a0.h.get() - height, a0.w.get(), height));
+    GPU.queueCommand(1, new GpuCommandCopyVramToVram(a1.x, a1.y + height, a1.x, a1.y, a0.w.get(), a0.h.get() - height));
+    GPU.queueCommand(1, new GpuCommandCopyVramToVram(a1.x, a1.y, a0.x.get(), a0.y.get() + a0.h.get() - height, a0.w.get(), height));
     GPU.queueCommand(1, new GpuCommandCopyVramToVram(a0.x.get(), a0.y.get() + height, a0.x.get(), a0.y.get(), a0.w.get(), a0.h.get() - height));
     GPU.queueCommand(1, new GpuCommandCopyVramToVram(a0.x.get(), a0.y.get(), 960, 256, a0.w.get(), height));
   }
@@ -2958,8 +2958,8 @@ public final class Bttl_800e {
     attachment.rect_0c.set(textureInfo1.vramPos_00);
     attachment.accumulator_14 = 0;
     attachment.step_18 = script.params_20[3].get();
-    attachment._1c.setX(textureInfo2.vramPos_00.x.get());
-    attachment._1c.setY(textureInfo2.vramPos_00.y.get());
+    attachment._1c.x = textureInfo2.vramPos_00.x.get();
+    attachment._1c.y = textureInfo2.vramPos_00.y.get();
     return FlowControl.CONTINUE;
   }
 
@@ -3681,14 +3681,6 @@ public final class Bttl_800e {
 
   @Method(0x800ee8c4L)
   public static void battleHudTexturesLoadedCallback(final List<FileData> files) {
-    final short[] vramX = new short[6];
-    for(int i = 0; i < 4; i++) {
-      vramX[i] = battleHudTextureVramXOffsets_800c6e60.get(i).get();
-    }
-
-    vramX[4] = 0;
-    vramX[5] = 16;
-
     //LAB_800ee9c0
     for(int fileIndex = 0; fileIndex < files.size(); fileIndex++) {
       if(files.get(fileIndex).hasVirtualSize()) {
@@ -3701,17 +3693,17 @@ public final class Bttl_800e {
         //LAB_800eea20
         final RECT rect = new RECT();
         if(fileIndex < 4) {
-          rect.x.set((short)(vramX[fileIndex] + 704));
+          rect.x.set((short)(battleHudTextureVramXOffsets_800c6e60[fileIndex] + 704));
           rect.y.set((short)496);
         } else {
           //LAB_800eea3c
-          rect.x.set((short)(vramX[fileIndex] + 896));
+          rect.x.set((short)(battleHudTextureVramXOffsets_800c6e60[fileIndex] + 896));
           rect.y.set((short)304);
         }
 
         //LAB_800eea50
-        rect.w.set(combatUiElementRectDimensions_800c6e48.get(fileIndex).getX());
-        rect.h.set(combatUiElementRectDimensions_800c6e48.get(fileIndex).getY());
+        rect.w.set((short)combatUiElementRectDimensions_800c6e48[fileIndex].x);
+        rect.h.set((short)combatUiElementRectDimensions_800c6e48[fileIndex].y);
         GPU.uploadData(rect, tim.getClutData());
         countCombatUiFilesLoaded_800c6cf4.add(1);
       }

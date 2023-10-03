@@ -3,7 +3,9 @@ package legend.core.gte;
 import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
+import org.joml.Vector2i;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 
 import javax.annotation.Nullable;
 
@@ -46,14 +48,6 @@ public class VECTOR implements MemoryRef {
   }
 
   /** NOTE: does NOT set pad */
-  public VECTOR set(final USCOLOUR other) {
-    this.setX(other.getX());
-    this.setY(other.getY());
-    this.setZ(other.getZ());
-    return this;
-  }
-
-  /** NOTE: does NOT set pad */
   public VECTOR set(final BVEC4 other) {
     this.setX(other.getX());
     this.setY(other.getY());
@@ -79,6 +73,14 @@ public class VECTOR implements MemoryRef {
   }
 
   public void get(final Vector3f dest) {
+    dest.set(this.getX(), this.getY(), this.getZ());
+  }
+
+  public void get(final Vector2i dest) {
+    dest.set(this.getX(), this.getY());
+  }
+
+  public void get(final Vector3i dest) {
     dest.set(this.getX(), this.getY(), this.getZ());
   }
 
@@ -150,10 +152,16 @@ public class VECTOR implements MemoryRef {
     return this;
   }
 
-  public VECTOR sub(final USCOLOUR other) {
-    this.x.sub(other.x.get());
-    this.y.sub(other.y.get());
-    this.z.sub(other.z.get());
+  public VECTOR sub(final Vector3i other) {
+    this.x.sub(other.x);
+    this.y.sub(other.y);
+    this.z.sub(other.z);
+    return this;
+  }
+
+  public VECTOR sub(final Vector2i other) {
+    this.x.sub(other.x);
+    this.y.sub(other.y);
     return this;
   }
 

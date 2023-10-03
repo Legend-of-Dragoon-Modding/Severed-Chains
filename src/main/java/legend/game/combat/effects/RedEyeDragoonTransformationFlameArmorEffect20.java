@@ -1,7 +1,7 @@
 package legend.game.combat.effects;
 
-import legend.core.gte.DVECTOR;
+import org.joml.Vector2i;
 
 public class RedEyeDragoonTransformationFlameArmorEffect20 extends TextureAnimationAttachment1c {
-  public final DVECTOR _1c = new DVECTOR();
+  public final Vector2i _1c = new Vector2i();
 }

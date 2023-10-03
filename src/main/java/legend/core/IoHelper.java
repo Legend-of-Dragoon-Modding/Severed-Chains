@@ -2,7 +2,6 @@ package legend.core;
 
 import legend.core.gpu.RECT;
 import legend.core.gte.BVEC4;
-import legend.core.gte.USCOLOUR;
 import legend.core.memory.Value;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -231,9 +230,5 @@ public final class IoHelper {
 
   public static Vector3f readColour(final ByteBuffer stream, final Vector3f colour) {
     return colour.set(readUShort(stream) / 4096.0f, readUShort(stream) / 4096.0f, readUShort(stream) / 4096.0f);
-  }
-
-  public static USCOLOUR readColour(final byte[] data, final int offset, final USCOLOUR colour) {
-    return colour.set(readUShort(data, offset), readUShort(data, offset), readUShort(data, offset));
   }
 }

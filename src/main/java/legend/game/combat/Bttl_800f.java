@@ -968,8 +968,8 @@ public final class Bttl_800f {
                   clutOffset = baseClutOffset;
                 }
 
-                final int clutY = battleUiElementClutVramXy_800c7114.get(clutIndex).y_04.get() + clutOffset % 16;
-                final int clutX = battleUiElementClutVramXy_800c7114.get(clutIndex).x_00.get() + clutOffset / 16 * 16 & 0x3f0;
+                final int clutX = battleUiElementClutVramXy_800c7114[clutIndex].x + clutOffset / 16 * 16 & 0x3f0;
+                final int clutY = battleUiElementClutVramXy_800c7114[clutIndex].y + clutOffset % 16;
 
                 final GpuCommandPoly cmd = new GpuCommandPoly(4)
                   .bpp(Bpp.BITS_4)
@@ -3158,8 +3158,8 @@ public final class Bttl_800f {
     //LAB_800f9088
     //LAB_800f9098
     //LAB_800f90a8
-    final int clutY = battleUiElementClutVramXy_800c7114.get(clutIndex).y_04.get() + clutOffset % 16;
-    final int clutX = battleUiElementClutVramXy_800c7114.get(clutIndex).x_00.get() + clutOffset / 16 * 16 & 0x3f0;
+    final int clutX = battleUiElementClutVramXy_800c7114[clutIndex].x + clutOffset / 16 * 16 & 0x3f0;
+    final int clutY = battleUiElementClutVramXy_800c7114[clutIndex].y + clutOffset % 16;
 
     cmd
       .bpp(Bpp.BITS_4)

@@ -4,6 +4,7 @@ import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Math;
+import org.joml.Vector3i;
 
 public class GpuCommandQuad extends GpuCommand {
   private static final Logger LOGGER = LogManager.getFormatterLogger(GpuCommandQuad.class);
@@ -48,6 +49,10 @@ public class GpuCommandQuad extends GpuCommand {
   public GpuCommandQuad rgb(final int colour) {
     this.colour = colour;
     return this;
+  }
+
+  public GpuCommandQuad rgb(final Vector3i colour) {
+    return this.rgb(colour.x, colour.y, colour.z);
   }
 
   public GpuCommandQuad rgb(final int r, final int g, final int b) {

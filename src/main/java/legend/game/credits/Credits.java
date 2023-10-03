@@ -3,7 +3,6 @@ package legend.game.credits;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.RECT;
-import legend.core.gte.DVECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.types.ArrayRef;
 import legend.game.EngineState;
@@ -11,6 +10,7 @@ import legend.game.EngineStateEnum;
 import legend.game.tim.Tim;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
+import org.joml.Vector2i;
 
 import java.util.List;
 
@@ -56,7 +56,24 @@ public class Credits extends EngineState {
   }
 
   private static final ArrayRef<CreditType08> creditTypes_800f93b0 = MEMORY.ref(4, 0x800f93b0L, ArrayRef.of(CreditType08.class, 87, 0x8, CreditType08::new));
-  private static final ArrayRef<DVECTOR> creditPos_800f9670 = MEMORY.ref(2, 0x800f9670L, ArrayRef.of(DVECTOR.class, 16, 4, DVECTOR::new));
+  private static final Vector2i[] creditPos_800f9670 = {
+    new Vector2i(0x200, 0),
+    new Vector2i(0x200, 0x40),
+    new Vector2i(0x200, 0x80),
+    new Vector2i(0x200, 0xc0),
+    new Vector2i(0x200, 0x100),
+    new Vector2i(0x200, 0x140),
+    new Vector2i(0x200, 0x180),
+    new Vector2i(0x200, 0x1c0),
+    new Vector2i(0x280, 0),
+    new Vector2i(0x280, 0x40),
+    new Vector2i(0x280, 0x80),
+    new Vector2i(0x280, 0xc0),
+    new Vector2i(0x280, 0x100),
+    new Vector2i(0x280, 0x140),
+    new Vector2i(0x280, 0x180),
+    new Vector2i(0x280, 0x1c0),
+  };
 
   @Override
   @Method(0x800eaa88L)
@@ -529,8 +546,8 @@ public class Credits extends EngineState {
     final RECT imageRect = tim.getImageRect();
 
     final RECT rect = new RECT(
-      creditPos_800f9670.get(creditSlot).getX(),
-      creditPos_800f9670.get(creditSlot).getY(),
+      (short)creditPos_800f9670[creditSlot].x,
+      (short)creditPos_800f9670[creditSlot].y,
       imageRect.w.get(),
       imageRect.h.get()
     );

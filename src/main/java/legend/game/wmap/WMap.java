@@ -6134,12 +6134,12 @@ public class WMap extends EngineState {
               dots.get(0).get(nextPathPos);
 
               if(pos.x == playerPos.x && pos.y == playerPos.y && pos.z == playerPos.z) {
-                this.mapState_800c6798._40[sp4c].set(dots.get(dotIndex - 2));
+                dots.get(dotIndex - 2).get(this.mapState_800c6798._40[sp4c]);
                 this.mapState_800c6798._dc[sp4c] = areaIndex;
                 sp4c++;
                 //LAB_800e9bd8
               } else if(pos.x == nextPathPos.x && pos.y == nextPathPos.y && pos.z == nextPathPos.z) {
-                this.mapState_800c6798._40[sp4c].set(dots.get(1));
+                dots.get(1).get(this.mapState_800c6798._40[sp4c]);
                 this.mapState_800c6798._dc[sp4c] = areaIndex;
                 sp4c++;
               }

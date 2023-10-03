@@ -1,10 +1,10 @@
 package legend.game.combat.effects;
 
-import legend.core.gte.USCOLOUR;
 import legend.core.memory.Method;
 import legend.game.combat.types.BattleObject;
 import legend.game.scripting.ScriptState;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -73,7 +73,7 @@ public class EffectManagerData6c<T extends EffectManagerData6cInner<T>> extends 
   }
 
   @Override
-  public USCOLOUR getColour() {
+  public Vector3i getColour() {
     return this._10.colour_1c;
   }
 

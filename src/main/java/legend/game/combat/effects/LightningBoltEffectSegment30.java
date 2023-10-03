@@ -1,18 +1,18 @@
 package legend.game.combat.effects;
 
-import legend.core.gte.USCOLOUR;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 
 public class LightningBoltEffectSegment30 {
   public final int index;
 
   public final Vector3f origin_00 = new Vector3f();
   /** Narrower gradient of bolt effect, renders below outer */
-  public final USCOLOUR innerColour_10 = new USCOLOUR();
+  public final Vector3i innerColour_10 = new Vector3i();
   /** Wider gradient of bolt effect, renders above inner */
-  public final USCOLOUR outerColour_16 = new USCOLOUR();
-  public final USCOLOUR innerColourFadeStep_1c = new USCOLOUR();
-  public final USCOLOUR outerColourFadeStep_22 = new USCOLOUR();
+  public final Vector3i outerColour_16 = new Vector3i();
+  public final Vector3i innerColourFadeStep_1c = new Vector3i();
+  public final Vector3i outerColourFadeStep_22 = new Vector3i();
   /** ubyte */
   public float scaleMultiplier_28;
 

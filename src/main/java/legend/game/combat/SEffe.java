@@ -19,8 +19,6 @@ import legend.core.gte.ModelPart10;
 import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
-import legend.core.gte.USCOLOUR;
-import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.ByteRef;
@@ -111,6 +109,7 @@ import org.apache.logging.log4j.Logger;
 import org.joml.Math;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -227,8 +226,6 @@ public final class SEffe {
   private static final ArrayRef<IntRef> lensFlareGlowScales_800fb8fc = MEMORY.ref(4, 0x800fb8fcL, ArrayRef.of(IntRef.class, 5, 4, IntRef::new));
   private static final ArrayRef<ArrayRef<IntRef>> lensFlareTranslationMagnitudeFactors_800fb910 = MEMORY.ref(4, 0x800fb910L, ArrayRef.of(ArrayRef.classFor(IntRef.class), 4, 8, ArrayRef.of(IntRef.class, 2, 4, IntRef::new)));
   private static final ArrayRef<ArrayRef<ByteRef>> lensFlareVertexIndices_800fb930 = MEMORY.ref(1, 0x800fb930L, ArrayRef.of(ArrayRef.classFor(ByteRef.class), 4, 4, ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new)));
-
-  private static final USCOLOUR defaultEffectColour_800fb94c = MEMORY.ref(2, 0x800fb94cL, USCOLOUR::new);
 
   /**
    * <ol start="0">
@@ -1134,9 +1131,9 @@ public final class SEffe {
     }
 
     if((effect.effectInner_08.particleInnerStuff_1c & 0x400_0000) != 0) {
-      particle.r_84 = manager._10.colour_1c.getX() / (float)0xff;
-      particle.g_86 = manager._10.colour_1c.getY() / (float)0xff;
-      particle.b_88 = manager._10.colour_1c.getZ() / (float)0xff;
+      particle.r_84 = manager._10.colour_1c.x / (float)0xff;
+      particle.g_86 = manager._10.colour_1c.y / (float)0xff;
+      particle.b_88 = manager._10.colour_1c.z / (float)0xff;
 
       if((manager._10.flags_24 & 0x1) == 0) {
         particle.stepR_8a = 0;
@@ -1163,9 +1160,9 @@ public final class SEffe {
       particle.g_86 -= particle.stepG_8c;
       particle.b_88 -= particle.stepB_8e;
     } else {
-      particle.r_84 = manager._10.colour_1c.getX() / (float)0xff;
-      particle.g_86 = manager._10.colour_1c.getY() / (float)0xff;
-      particle.b_88 = manager._10.colour_1c.getZ() / (float)0xff;
+      particle.r_84 = manager._10.colour_1c.x / (float)0xff;
+      particle.g_86 = manager._10.colour_1c.y / (float)0xff;
+      particle.b_88 = manager._10.colour_1c.z / (float)0xff;
     }
 
     //LAB_800fd26c
@@ -2610,13 +2607,13 @@ public final class SEffe {
     for(int boltNum = 0; boltNum < electricEffect.boltCount_00; boltNum++) {
       final LightningBoltEffect14 bolt = electricEffect.bolts_34[boltNum];
 
-      outerColourR = manager._10.colour_1c.getX() << 8;
-      outerColourG = manager._10.colour_1c.getY() << 8;
-      outerColourB = manager._10.colour_1c.getZ() << 8;
+      outerColourR = manager._10.colour_1c.x << 8;
+      outerColourG = manager._10.colour_1c.y << 8;
+      outerColourB = manager._10.colour_1c.z << 8;
 
-      final int managerR = manager._10.colour_1c.getX();
-      int managerG = manager._10.colour_1c.getY();
-      int managerB = manager._10.colour_1c.getZ();
+      final int managerR = manager._10.colour_1c.x;
+      int managerG = manager._10.colour_1c.y;
+      int managerB = manager._10.colour_1c.z;
 
       if(managerG < managerR) {
         managerG = managerR;
@@ -2712,7 +2709,7 @@ public final class SEffe {
    * @param xy 4 vertices (note: data was originally passed in as ints so you need to change the calling code)
    */
   @Method(0x80102f7cL)
-  public static void renderSegmentGradient(final USCOLOUR colour1, final USCOLOUR colour2, final Vector2f[] xy, final float a3, final int a4, final Translucency translucency) {
+  public static void renderSegmentGradient(final Vector3i colour1, final Vector3i colour2, final Vector2f[] xy, final float a3, final int a4, final Translucency translucency) {
     final GpuCommandPoly cmd = new GpuCommandPoly(4)
       .translucent(translucency)
       .pos(0, xy[0].x, xy[0].y)
@@ -2720,9 +2717,9 @@ public final class SEffe {
       .pos(2, xy[2].x, xy[2].y)
       .pos(3, xy[3].x, xy[3].y)
       .monochrome(0, 0)
-      .rgb(1, colour2.getX() >>> 8, colour2.getY() >>> 8, colour2.getZ() >>> 8)
+      .rgb(1, colour2.x >>> 8, colour2.y >>> 8, colour2.z >>> 8)
       .monochrome(2, 0)
-      .rgb(3, colour1.getX() >>> 8, colour1.getY() >>> 8, colour1.getZ() >>> 8);
+      .rgb(3, colour1.x >>> 8, colour1.y >>> 8, colour1.z >>> 8);
 
     GPU.queueCommand((a3 + a4) / 4.0f, cmd);
   }
@@ -2842,7 +2839,7 @@ public final class SEffe {
               final float baseY2 = (centerLineEndpointY - centerLineOriginY) * currentSegment.baseVertexTranslationScale_2e + centerLineOriginY;
 
               //LAB_80103808
-              int baseColour = (int)(currentSegment.innerColour_10.getX() + Math.abs(currentSegment.originTranslationMagnitude_2c - nextSegment.originTranslationMagnitude_2c) * 8);
+              int baseColour = (int)(currentSegment.innerColour_10.x + Math.abs(currentSegment.originTranslationMagnitude_2c - nextSegment.originTranslationMagnitude_2c) * 8);
               if((baseColour & 0xffff) > 0xff00) {
                 baseColour = 0xff00;
               }
@@ -4723,7 +4720,7 @@ public final class SEffe {
         GPU.queueCommand(30, new GpuCommandLine()
           .translucent(Translucency.of(data._10.flags_00 >>> 28 & 3))
           .monochrome(0, 0)
-          .rgb(1, data._10.colour_1c.getX(), data._10.colour_1c.getY(), data._10.colour_1c.getZ())
+          .rgb(1, data._10.colour_1c.x, data._10.colour_1c.y, data._10.colour_1c.z)
           .pos(0, rainArray[i].x1_06 - 256, rainArray[i].y1_08 - 128)
           .pos(1, rainArray[i].x0_02 - 256, rainArray[i].y0_04 - 128)
         );
@@ -4818,7 +4815,7 @@ public final class SEffe {
           GPU.queueCommand(30, new GpuCommandQuad()
             .bpp(Bpp.BITS_15)
             .translucent(Translucency.of(data._10.flags_00 >>> 28 & 3))
-            .rgb(data._10.colour_1c.getX(), data._10.colour_1c.getY(), data._10.colour_1c.getZ())
+            .rgb(data._10.colour_1c)
             .pos(-160 - x, y, 320, 1)
             .uv(0, sp40)
             .texture(GPU.getDisplayBuffer())
@@ -4840,7 +4837,7 @@ public final class SEffe {
     GPU.queueCommand(30, new GpuCommandQuad()
       .bpp(Bpp.BITS_15)
       .translucent(Translucency.of(data._10.flags_00 >>> 28 & 3))
-      .rgb(data._10.colour_1c.getX(), data._10.colour_1c.getY(), data._10.colour_1c.getZ())
+      .rgb(data._10.colour_1c)
       .pos(-160, -120, 320, 240)
       .texture(GPU.getDisplayBuffer())
     );
@@ -5158,7 +5155,7 @@ public final class SEffe {
 
       if(effect.type_1c == 1) {
         //LAB_8010abf4
-        final int v0 = (0x80 - gradientRay._02) * manager._10.colour_1c.getX() / 0x80;
+        final int v0 = (0x80 - gradientRay._02) * manager._10.colour_1c.x / 0x80;
         final int v1 = (short)v0 / 2;
 
         cmd
@@ -5168,9 +5165,9 @@ public final class SEffe {
           .rgb(3, v0, v1, v1);
       } else if(effect.type_1c == 2) {
         //LAB_8010ac68
-        final short s3 = (short)(FUN_8010b058(gradientRay._02) * manager._10.colour_1c.getX() * 8 / 0x80);
-        final short s2 = (short)(FUN_8010b0dc(gradientRay._02) * manager._10.colour_1c.getY() * 8 / 0x80);
-        final short a2 = (short)(FUN_8010b160(gradientRay._02) * manager._10.colour_1c.getZ() * 8 / 0x80);
+        final short s3 = (short)(FUN_8010b058(gradientRay._02) * manager._10.colour_1c.x * 8 / 0x80);
+        final short s2 = (short)(FUN_8010b0dc(gradientRay._02) * manager._10.colour_1c.y * 8 / 0x80);
+        final short a2 = (short)(FUN_8010b160(gradientRay._02) * manager._10.colour_1c.z * 8 / 0x80);
 
         cmd
           .monochrome(0, 0)
@@ -5358,9 +5355,9 @@ public final class SEffe {
     }
 
     //LAB_8010b6d8
-    rgb.setR(rgb.getR() * manager._10.colour_1c.getX() / 128);
-    rgb.setG(rgb.getG() * manager._10.colour_1c.getY() / 128);
-    rgb.setB(rgb.getB() * manager._10.colour_1c.getZ() / 128);
+    rgb.setR(rgb.getR() * manager._10.colour_1c.x / 128);
+    rgb.setG(rgb.getG() * manager._10.colour_1c.y / 128);
+    rgb.setB(rgb.getB() * manager._10.colour_1c.z / 128);
 
     //LAB_8010b764
     for(int i = 0; i < 8; i++) {
@@ -5509,9 +5506,9 @@ public final class SEffe {
     }
 
     //LAB_8010bd7c
-    rgb.setR(rgb.getR() * manager._10.colour_1c.getX() / 128);
-    rgb.setG(rgb.getG() * manager._10.colour_1c.getY() / 128);
-    rgb.setB(rgb.getB() * manager._10.colour_1c.getZ() / 128);
+    rgb.setR(rgb.getR() * manager._10.colour_1c.x / 128);
+    rgb.setG(rgb.getG() * manager._10.colour_1c.y / 128);
+    rgb.setB(rgb.getB() * manager._10.colour_1c.z / 128);
 
     //LAB_8010be14
     for(int s0 = 0; s0 < 15; s0++) {
@@ -5763,9 +5760,9 @@ public final class SEffe {
           final int v = effect.v_0e[i] & 0xff;
           final int clutX = effect.clut_2c[i] << 4 & 0x3ff;
           final int clutY = effect.clut_2c[i] >>> 6 & 0x1ff;
-          final int r = manager._10.colour_1c.getX() * effect.brightness_48 >> 8;
-          final int g = manager._10.colour_1c.getY() * effect.brightness_48 >> 8;
-          final int b = manager._10.colour_1c.getZ() * effect.brightness_48 >> 8;
+          final int r = manager._10.colour_1c.x * effect.brightness_48 >> 8;
+          final int g = manager._10.colour_1c.y * effect.brightness_48 >> 8;
+          final int b = manager._10.colour_1c.z * effect.brightness_48 >> 8;
 
           if(i == 0) {
             for(int j = 0; j < 4; j++) {
@@ -5954,9 +5951,9 @@ public final class SEffe {
 
       if(feather.renderFeather_00) {
         if(feather.r_38 == 0x7f && feather.g_39 == 0x7f && feather.b_3a == 0x7f) {
-          spriteEffect.r_14 = manager._10.colour_1c.getX();
-          spriteEffect.g_15 = manager._10.colour_1c.getY();
-          spriteEffect.b_16 = manager._10.colour_1c.getZ();
+          spriteEffect.r_14 = manager._10.colour_1c.x;
+          spriteEffect.g_15 = manager._10.colour_1c.y;
+          spriteEffect.b_16 = manager._10.colour_1c.z;
         } else {
           //LAB_8010d718
           spriteEffect.r_14 = feather.r_38;
@@ -6216,9 +6213,9 @@ public final class SEffe {
     final int topV = bottomV + meteorEffect.metrics_04.h_05;
     final int clutX = meteorEffect.metrics_04.clut_06 << 4 & 0x3ff;
     final int clutY = meteorEffect.metrics_04.clut_06 >>> 6 & 0x1ff;
-    final int r = manager._10.colour_1c.getX();
-    final int g = manager._10.colour_1c.getY();
-    final int b = manager._10.colour_1c.getZ();
+    final int r = manager._10.colour_1c.x;
+    final int g = manager._10.colour_1c.y;
+    final int b = manager._10.colour_1c.z;
     final StarChildrenMeteorEffectInstance10[] meteorArray = meteorEffect.meteorArray_0c;
 
     //LAB_8010e414
@@ -6377,9 +6374,9 @@ public final class SEffe {
         break;
       }
 
-      spriteEffect.r_14 = manager._10.colour_1c.getX();
-      spriteEffect.g_15 = manager._10.colour_1c.getY();
-      spriteEffect.b_16 = manager._10.colour_1c.getZ();
+      spriteEffect.r_14 = manager._10.colour_1c.x;
+      spriteEffect.g_15 = manager._10.colour_1c.y;
+      spriteEffect.b_16 = manager._10.colour_1c.z;
       spriteEffect.scaleX_1c = manager._10.scale_16.x;
       spriteEffect.scaleY_1e = manager._10.scale_16.y;
       spriteEffect.angle_20 = manager._10.rot_10.x;
@@ -6543,9 +6540,9 @@ public final class SEffe {
           final float scaleX = impact.scale_6c[stageNum].x * manager._10.scale_16.x;
           final float scaleY = impact.scale_6c[stageNum].y * manager._10.scale_16.y;
           final float scaleZ = impact.scale_6c[stageNum].z * manager._10.scale_16.z;
-          final int r = impact.opacity_8c[stageNum].getR() * manager._10.colour_1c.getX() >> 8;
-          final int g = impact.opacity_8c[stageNum].getG() * manager._10.colour_1c.getY() >> 8;
-          final int b = impact.opacity_8c[stageNum].getB() * manager._10.colour_1c.getZ() >> 8;
+          final int r = impact.opacity_8c[stageNum].getR() * manager._10.colour_1c.x >> 8;
+          final int g = impact.opacity_8c[stageNum].getG() * manager._10.colour_1c.y >> 8;
+          final int b = impact.opacity_8c[stageNum].getB() * manager._10.colour_1c.z >> 8;
 
           if((manager._10.flags_00 & 0x40) == 0) {
             FUN_800e61e4(r / 128.0f, g / 128.0f, b / 128.0f);
@@ -7983,16 +7980,16 @@ public final class SEffe {
     final BattleObject bobj1 = SCRIPTS.getObject(script.params_20[0].get(), BattleObject.class);
     final BattleObject bobj2 = SCRIPTS.getObject(script.params_20[1].get(), BattleObject.class);
 
-    final USCOLOUR colour;
+    final Vector3i colour;
     if(bobj2 == null) {
       colour = bobj1.getColour();
     } else {
-      colour = bobj1.getColourDifference(bobj2, new USCOLOUR());
+      colour = bobj1.getColourDifference(bobj2, new Vector3i());
     }
 
-    script.params_20[2].set(colour.getX());
-    script.params_20[3].set(colour.getY());
-    script.params_20[4].set(colour.getZ());
+    script.params_20[2].set(colour.x);
+    script.params_20[3].set(colour.y);
+    script.params_20[4].set(colour.z);
     return FlowControl.CONTINUE;
   }
 
@@ -8007,21 +8004,21 @@ public final class SEffe {
     final BattleObject bobj1 = SCRIPTS.getObject(script.params_20[0].get(), BattleObject.class);
     final BattleObject bobj2 = SCRIPTS.getObject(script.params_20[1].get(), BattleObject.class);
 
-    final USCOLOUR colour1 = bobj1.getColour();
+    final Vector3i colour1 = bobj1.getColour();
 
     //LAB_80114614
     if(bobj2 == null) {
-      colour1.setX(script.params_20[2].get() & 0xffff);
-      colour1.setY(script.params_20[3].get() & 0xffff);
-      colour1.setZ(script.params_20[4].get() & 0xffff);
+      colour1.x = script.params_20[2].get() & 0xffff;
+      colour1.y = script.params_20[3].get() & 0xffff;
+      colour1.z = script.params_20[4].get() & 0xffff;
     } else {
       //LAB_80114668
-      final USCOLOUR colour2 = bobj2.getColour();
+      final Vector3i colour2 = bobj2.getColour();
 
       //LAB_8011469c
-      colour1.setX((script.params_20[2].get() & 0xffff) + colour2.getX());
-      colour1.setY((script.params_20[3].get() & 0xffff) + colour2.getY());
-      colour1.setZ((script.params_20[4].get() & 0xffff) + colour2.getZ());
+      colour1.x = (script.params_20[2].get() & 0xffff) + colour2.x;
+      colour1.y = (script.params_20[3].get() & 0xffff) + colour2.y;
+      colour1.z = (script.params_20[4].get() & 0xffff) + colour2.z;
     }
 
     //LAB_801146f0
@@ -8033,9 +8030,9 @@ public final class SEffe {
   public static int tickColourScalerAttachment(final EffectManagerData6c<?> manager, final TransformScalerAttachment34 scaler) {
     scaler.velocity_18.add(scaler.acceleration_24);
     scaler.value_0c.add(scaler.velocity_18);
-    manager._10.colour_1c.setX((int)scaler.value_0c.x & 0xff);
-    manager._10.colour_1c.setY((int)scaler.value_0c.y & 0xff);
-    manager._10.colour_1c.setZ((int)scaler.value_0c.z & 0xff);
+    manager._10.colour_1c.x = (int)scaler.value_0c.x & 0xff;
+    manager._10.colour_1c.y = (int)scaler.value_0c.y & 0xff;
+    manager._10.colour_1c.z = (int)scaler.value_0c.z & 0xff;
 
     if(scaler.ticksRemaining_32 != -1) {
       scaler.ticksRemaining_32--;
@@ -8078,7 +8075,7 @@ public final class SEffe {
     final TransformScalerAttachment34 attachment = manager.addAttachment(4, 0, SEffe::tickColourScalerAttachment, new TransformScalerAttachment34());
     attachment.parent_30 = null;
     attachment.ticksRemaining_32 = -1;
-    attachment.value_0c.set(manager.getColour().getX(), manager.getColour().getY(), manager.getColour().getZ());
+    attachment.value_0c.set(manager.getColour());
     attachment.velocity_18.set(velocityX, velocityY, velocityZ);
     attachment.acceleration_24.set(accelerationX, accelerationY, accelerationZ);
     return FlowControl.CONTINUE;
@@ -8105,11 +8102,11 @@ public final class SEffe {
 
       //LAB_801149d0
       final TransformScalerAttachment34 colorScaler = manager.addAttachment(4, 0, SEffe::tickColourScalerAttachment, new TransformScalerAttachment34());
-      final USCOLOUR colour;
+      final Vector3i colour;
       if(other == null) {
         colour = manager.getColour();
       } else {
-        colour = manager.getColourDifference(other, new USCOLOUR());
+        colour = manager.getColourDifference(other, new Vector3i());
       }
 
       // .8?
@@ -8121,8 +8118,8 @@ public final class SEffe {
 
       colorScaler.parent_30 = null;
       colorScaler.ticksRemaining_32 = ticks;
-      colorScaler.value_0c.set(manager.getColour().getX(), manager.getColour().getY(), manager.getColour().getZ());
-      colorScaler.velocity_18.set(velocityVec).sub(colour.getX(), colour.getY(), colour.getZ()).div(ticks);
+      colorScaler.value_0c.set(manager.getColour());
+      colorScaler.velocity_18.set(velocityVec).sub(colour.x, colour.y, colour.z).div(ticks);
       colorScaler.acceleration_24.zero();
     }
 
@@ -8884,7 +8881,7 @@ public final class SEffe {
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
           .clut((clut & 0b111111) * 16, clut >>> 6)
           .vramPos(effect.metrics_54.u_00 & 0x3c0, (effect.metrics_54.v_02 & 0x100) != 0 ? 256 : 0)
-          .rgb(manager._10.colour_1c.getX(), manager._10.colour_1c.getY(), manager._10.colour_1c.getZ())
+          .rgb(manager._10.colour_1c)
           .pos(0, sp0x80.x + cosL - sinT, sp0x80.y + sinL + cosT)
           .pos(1, sp0x80.x + cosR - sinT, sp0x80.y + sinR + cosT)
           .pos(2, sp0x80.x + cosL - sinB, sp0x80.y + sinL + cosB)
@@ -8911,17 +8908,17 @@ public final class SEffe {
       final int oldCoord2Index = manager2.coord2Index_0d;
       manager2.scriptIndex_0c = manager.myScriptState_0e.index;
       manager2.coord2Index_0d = -1;
-      final int r = manager2._10.colour_1c.getX();
-      final int g = manager2._10.colour_1c.getY();
-      final int b = manager2._10.colour_1c.getZ();
+      final int r = manager2._10.colour_1c.x;
+      final int g = manager2._10.colour_1c.y;
+      final int b = manager2._10.colour_1c.z;
       // As far as I can tell, using R for each of these is right...
-      manager2._10.colour_1c.setX(manager._10.colour_1c.getX() * manager2._10.colour_1c.getX() / 128);
-      manager2._10.colour_1c.setY(manager._10.colour_1c.getX() * manager2._10.colour_1c.getY() / 128);
-      manager2._10.colour_1c.setZ(manager._10.colour_1c.getX() * manager2._10.colour_1c.getZ() / 128);
+      manager2._10.colour_1c.x = manager._10.colour_1c.x * manager2._10.colour_1c.x / 128;
+      manager2._10.colour_1c.y = manager._10.colour_1c.x * manager2._10.colour_1c.y / 128;
+      manager2._10.colour_1c.z = manager._10.colour_1c.x * manager2._10.colour_1c.z / 128;
       state.renderer_08.accept(state, manager2);
-      manager2._10.colour_1c.setX(r);
-      manager2._10.colour_1c.setY(g);
-      manager2._10.colour_1c.setZ(b);
+      manager2._10.colour_1c.x = r;
+      manager2._10.colour_1c.y = g;
+      manager2._10.colour_1c.z = b;
       manager2.scriptIndex_0c = oldScriptIndex;
       manager2.coord2Index_0d = oldCoord2Index;
     }
@@ -9386,7 +9383,7 @@ public final class SEffe {
       tmdGp0Tpage_1f8003ec.set(flags >>> 23 & 0x60); // tpage
       zOffset_1f8003e8.set(manager._10.z_22);
       if((manager._10.flags_00 & 0x40) == 0) {
-        FUN_800e61e4(manager._10.colour_1c.getX() / 128.0f, manager._10.colour_1c.getY() / 128.0f, manager._10.colour_1c.getZ() / 128.0f);
+        FUN_800e61e4(manager._10.colour_1c.x / 128.0f, manager._10.colour_1c.y / 128.0f, manager._10.colour_1c.z / 128.0f);
       }
 
       //LAB_80117ac0
@@ -9422,12 +9419,12 @@ public final class SEffe {
         final int stepB;
         if((effect.flags_34 & 0x4) != 0) {
           final int v0 = effect._40 - 0x1000;
-          stepR = anim._10.colour_1c.getX() * v0 / steps;
-          stepG = anim._10.colour_1c.getY() * v0 / steps;
-          stepB = anim._10.colour_1c.getZ() * v0 / steps;
-          accumulatorR = anim._10.colour_1c.getX() << 12;
-          accumulatorG = anim._10.colour_1c.getY() << 12;
-          accumulatorB = anim._10.colour_1c.getZ() << 12;
+          stepR = anim._10.colour_1c.x * v0 / steps;
+          stepG = anim._10.colour_1c.y * v0 / steps;
+          stepB = anim._10.colour_1c.z * v0 / steps;
+          accumulatorR = anim._10.colour_1c.x << 12;
+          accumulatorG = anim._10.colour_1c.y << 12;
+          accumulatorB = anim._10.colour_1c.z << 12;
         } else {
           //LAB_80117c30
           accumulatorR = 0;
@@ -9456,9 +9453,9 @@ public final class SEffe {
             accumulatorR += stepR;
             accumulatorG += stepG;
             accumulatorB += stepB;
-            manager._10.colour_1c.setX(accumulatorR >> 12);
-            manager._10.colour_1c.setY(accumulatorG >> 12);
-            manager._10.colour_1c.setZ(accumulatorB >> 12);
+            manager._10.colour_1c.x = accumulatorR >> 12;
+            manager._10.colour_1c.y = accumulatorG >> 12;
+            manager._10.colour_1c.z = accumulatorB >> 12;
           }
 
           //LAB_80117d1c
@@ -9623,7 +9620,7 @@ public final class SEffe {
       //LAB_801182c8
       zOffset_1f8003e8.set(data._10.z_22);
       if((data._10.flags_00 & 0x40) == 0) {
-        FUN_800e61e4(data._10.colour_1c.getX() / 128.0f, data._10.colour_1c.getY() / 128.0f, data._10.colour_1c.getZ() / 128.0f);
+        FUN_800e61e4(data._10.colour_1c.x / 128.0f, data._10.colour_1c.y / 128.0f, data._10.colour_1c.z / 128.0f);
       } else {
         //LAB_80118304
         FUN_800e60e0(1.0f, 1.0f, 1.0f);
@@ -9828,7 +9825,7 @@ public final class SEffe {
       sp0x10.m21 = 0.0f;
       tmdGp0Tpage_1f8003ec.set(manager._10.flags_00 >>> 23 & 0x60);
       zOffset_1f8003e8.set(manager._10.z_22);
-      FUN_800e60e0(manager._10.colour_1c.getX() / 128.0f, manager._10.colour_1c.getY() / 128.0f, manager._10.colour_1c.getZ() / 128.0f);
+      FUN_800e60e0(manager._10.colour_1c.x / 128.0f, manager._10.colour_1c.y / 128.0f, manager._10.colour_1c.z / 128.0f);
       renderTmdSpriteEffect(shadowModel_800bda10.modelParts_00[0].tmd_08, manager._10, sp0x10);
       FUN_800e6170();
     }
@@ -9996,7 +9993,7 @@ public final class SEffe {
         zOffset_1f8003e8.set(manager._10.z_22);
 
         if((manager._10.flags_00 & 0x40) == 0) {
-          FUN_800e61e4(manager._10.colour_1c.getX() / 128.0f, manager._10.colour_1c.getY() / 128.0f, manager._10.colour_1c.getZ() / 128.0f);
+          FUN_800e61e4(manager._10.colour_1c.x / 128.0f, manager._10.colour_1c.y / 128.0f, manager._10.colour_1c.z / 128.0f);
         }
 
         //LAB_80118f9c
@@ -10009,7 +10006,7 @@ public final class SEffe {
       //LAB_80118fac
       if(effect.countCopies_08 != 0) {
         final EffectManagerData6cInner.ColourType managerInner = new EffectManagerData6cInner.ColourType();
-        final VECTOR colour = new VECTOR();
+        final Vector3i colour = new Vector3i();
         final Vector3f stepScale = new Vector3f();
 
         //LAB_80118fc4
@@ -10018,12 +10015,12 @@ public final class SEffe {
         final int combinedSteps = effect.countCopies_08 * (effect.countTransformSteps_0c + 1);
         if((effect.colourAndScaleFlags_00 & 0x4) != 0) {
           final int brightness = effect.colourAndScaleTransformModifier_10 - 0x1000;
-          managerInner.r_28 = managerInner.colour_1c.getX() << 12;
-          managerInner.g_2c = managerInner.colour_1c.getY() << 12;
-          managerInner.b_30 = managerInner.colour_1c.getZ() << 12;
-          colour.setX(managerInner.colour_1c.getX() * brightness / combinedSteps);
-          colour.setY(managerInner.colour_1c.getY() * brightness / combinedSteps);
-          colour.setZ(managerInner.colour_1c.getZ() * brightness / combinedSteps);
+          managerInner.r_28 = managerInner.colour_1c.x << 12;
+          managerInner.g_2c = managerInner.colour_1c.y << 12;
+          managerInner.b_30 = managerInner.colour_1c.z << 12;
+          colour.x = managerInner.colour_1c.x * brightness / combinedSteps;
+          colour.y = managerInner.colour_1c.y * brightness / combinedSteps;
+          colour.z = managerInner.colour_1c.z * brightness / combinedSteps;
         }
 
         //LAB_801190a8
@@ -10051,15 +10048,15 @@ public final class SEffe {
           //LAB_80119204
           for(int j = effect.countTransformSteps_0c; j >= 0; j--) {
             if((effect.colourAndScaleFlags_00 & 0x4) != 0) {
-              managerInner.r_28 += colour.getX();
-              managerInner.g_2c += colour.getY();
-              managerInner.b_30 += colour.getZ();
+              managerInner.r_28 += colour.x;
+              managerInner.g_2c += colour.y;
+              managerInner.b_30 += colour.z;
               //LAB_80119254
               //LAB_80119270
               //LAB_8011928c
-              managerInner.colour_1c.setX(managerInner.r_28 >> 12);
-              managerInner.colour_1c.setY(managerInner.g_2c >> 12);
-              managerInner.colour_1c.setZ(managerInner.b_30 >> 12);
+              managerInner.colour_1c.x = managerInner.r_28 >> 12;
+              managerInner.colour_1c.y = managerInner.g_2c >> 12;
+              managerInner.colour_1c.z = managerInner.b_30 >> 12;
             }
 
             //LAB_80119294

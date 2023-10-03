@@ -1,6 +1,5 @@
 package legend.game.combat.bent;
 
-import legend.core.gte.USCOLOUR;
 import legend.core.memory.Method;
 import legend.game.characters.Element;
 import legend.game.characters.ElementSet;
@@ -15,6 +14,7 @@ import legend.game.types.ItemStats0c;
 import legend.game.types.Model124;
 import legend.game.types.SpellStats0c;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -172,7 +172,7 @@ public abstract class BattleEntity27c extends BattleObject {
   /** Has model? Used to be used to free model, no longer used since it's managed by java */
   public int _278;
 
-  private final USCOLOUR colour = new USCOLOUR().set(0x80, 0x80, 0x80);
+  private final Vector3i colour = new Vector3i(0x80, 0x80, 0x80);
 
   public BattleEntity27c(final BattleEntityType type, final String name) {
     this.type = type;
@@ -491,7 +491,7 @@ public abstract class BattleEntity27c extends BattleObject {
   }
 
   @Override
-  public USCOLOUR getColour() {
+  public Vector3i getColour() {
     return this.colour; // defaultEffectColour_800fb94c;
   }
 }
