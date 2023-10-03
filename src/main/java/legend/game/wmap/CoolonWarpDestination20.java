@@ -1,41 +1,23 @@
 package legend.game.wmap;
 
-import legend.core.gte.VECTOR;
-import legend.core.memory.Value;
-import legend.core.memory.types.IntRef;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.Pointer;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnsignedByteRef;
 import legend.game.types.LodString;
+import org.joml.Vector3f;
 
-public class CoolonWarpDestination20 implements MemoryRef {
-  private final Value ref;
-
+public class CoolonWarpDestination20 {
   /** 12-bit fixed-point */
-  public final VECTOR vec_00;
-  public final IntRef _10;
-  public final UnsignedByteRef _14;
+  public final Vector3f vec_00;
+  public final int locationIndex_10;
+  public final int _14;
+  public final int x_18;
+  public final int y_1a;
+  public final LodString placeName_1c;
 
-  public final ShortRef x_18;
-  public final ShortRef y_1a;
-  public final Pointer<LodString> placeName_1c;
-
-  public CoolonWarpDestination20(final Value ref) {
-    this.ref = ref;
-
-    this.vec_00 = ref.offset(4, 0x00L).cast(VECTOR::new);
-    this._10 = ref.offset(4, 0x10L).cast(IntRef::new);
-    this._14 = ref.offset(1, 0x14L).cast(UnsignedByteRef::new);
-
-    this.x_18 = ref.offset(2, 0x18L).cast(ShortRef::new);
-    this.y_1a = ref.offset(2, 0x1aL).cast(ShortRef::new);
-
-    this.placeName_1c = ref.offset(4, 0x1cL).cast(Pointer.deferred(4, LodString::new));
-  }
-
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+  public CoolonWarpDestination20(final Vector3f vec, final int locationIndex, final int _14, final int x, final int y, final LodString placeName) {
+    this.vec_00 = vec;
+    this.locationIndex_10 = locationIndex;
+    this._14 = _14;
+    this.x_18 = x;
+    this.y_1a = y;
+    this.placeName_1c = placeName;
   }
 }
