@@ -6220,7 +6220,7 @@ public class WMap extends EngineState {
       }
 
       //LAB_800e9edc
-      sp0xb0.set(this.wmapStruct258_800c66a8.vec_94).sub(this.mapState_800c6798._40[i].x, this.mapState_800c6798._40[i].y, 0);
+      sp0xb0.set(this.wmapStruct258_800c66a8.vec_94).sub(this.mapState_800c6798._40[i].x, this.mapState_800c6798._40[i].y, this.mapState_800c6798._40[i].z);
 
       sp0xc8[i] = (short)(MathHelper.radToPsxDeg(this.wmapStruct19c0_800c66b0.mapRotation_70.y - MathHelper.atan2(sp0xb0.x, sp0xb0.z) + MathHelper.PI) & 0xfff);
 
