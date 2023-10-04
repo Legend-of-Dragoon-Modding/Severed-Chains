@@ -2310,13 +2310,20 @@ public class SMap extends EngineState {
   @ScriptDescription("Rotates a submap object to face a point in 3D space")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X position to face")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y position to face")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y position to face (unused)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z position to face")
   @Method(0x800e0018L)
   private FlowControl scriptFacePoint(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
-    model.coord2_14.transforms.rotate.y = MathHelper.positiveAtan2(script.params_20[3].get() - model.coord2_14.coord.transfer.z, script.params_20[1].get() - model.coord2_14.coord.transfer.x);
+
+    final float deltaX = script.params_20[1].get() - model.coord2_14.coord.transfer.x;
+    final float deltaZ = script.params_20[3].get() - model.coord2_14.coord.transfer.z;
+
+    if(deltaX != 0.0f && deltaZ != 0.0f) {
+      model.coord2_14.transforms.rotate.y = MathHelper.positiveAtan2(deltaZ, deltaX);
+    }
+
     sobj.rotationFrames_188 = 0;
     return FlowControl.CONTINUE;
   }
