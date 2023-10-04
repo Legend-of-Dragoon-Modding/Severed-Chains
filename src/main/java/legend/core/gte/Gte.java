@@ -4,6 +4,7 @@ import legend.core.MathHelper;
 import org.joml.Matrix3f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 
 public class Gte {
   private static class Color {
@@ -281,8 +282,8 @@ public class Gte {
   }
 
   /** 0x1 RTPS - perspective transform single, 12-bit fraction */
-  public void perspectiveTransform(final VECTOR v0) {
-    this.perspectiveTransform(v0.getX(), v0.getY(), v0.getZ());
+  public void perspectiveTransform(final Vector3i v0) {
+    this.perspectiveTransform(v0.x, v0.y, v0.z);
   }
 
   /** 0x1 RTPS - perspective transform single, 12-bit fraction */

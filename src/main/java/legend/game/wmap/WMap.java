@@ -12,7 +12,6 @@ import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
-import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.ByteRef;
@@ -58,6 +57,7 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
+import static legend.core.MathHelper.flEq;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
@@ -162,7 +162,10 @@ public class WMap extends EngineState {
 
   public int encounterAccumulator_800c6ae8;
 
-  private static final ArrayRef<VECTOR> smokeTranslationVectors_800c74b8 = MEMORY.ref(4, 0x800c74b8L, ArrayRef.of(VECTOR.class, 0x101, 0x10, VECTOR::new));
+  private final Vector3f[] smokeTranslationVectors_800c74b8 = new Vector3f[0x101];
+  {
+    Arrays.setAll(this.smokeTranslationVectors_800c74b8, i -> new Vector3f());
+  }
   private static final ArrayRef<ShortRef> locationsIndices_800c84c8 = MEMORY.ref(2, 0x800c84c8L, ArrayRef.of(ShortRef.class, 0x101, 2, ShortRef::new));
 
   private int placeCount_800c86cc;
@@ -170,8 +173,7 @@ public class WMap extends EngineState {
   private float locationThumbnailBrightness_800c86d0;
   private int menuSelectorOptionIndex_800c86d2;
 
-  private final int[] startButtonLabelStages_800c86d4 = new int[8];
-
+  private final int[] startButtonLabelStages_800c86d4 = new int[7];
   private int destinationLabelStage_800c86f0;
 
   private WmapSmokeCloudInstance60[] smokeCloudInstances_800c86f8;
@@ -325,9 +327,1002 @@ public class WMap extends EngineState {
   private static final ArrayRef<Location14> locations_800f0e34 = MEMORY.ref(2, 0x800f0e34L, ArrayRef.of(Location14.class, 0x100, 0x14, Location14::new));
   public static final ArrayRef<AreaData08> areaData_800f2248 = MEMORY.ref(2, 0x800f2248L, ArrayRef.of(AreaData08.class, 133, 8, AreaData08::new));
 
+  private final Vector3i[] _800f2670 = {
+    new Vector3i(720, -6, 628),
+    new Vector3i(693, -6, 613),
+    new Vector3i(667, -6, 598),
+    new Vector3i(641, -6, 583),
+    new Vector3i(615, -6, 568),
+  };
+  private final Vector3i[] _800f26c0 = {
+    new Vector3i(510, -6, 508),
+    new Vector3i(480, -6, 478),
+    new Vector3i(461, -6, 459),
+    new Vector3i(442, -6, 440),
+    new Vector3i(423, -6, 422),
+    new Vector3i(405, -6, 403),
+  };
+  private final Vector3i[] _800f2720 = {
+    new Vector3i(300, -6, 328),
+    new Vector3i(270, -6, 328),
+    new Vector3i(240, -6, 328),
+    new Vector3i(210, -6, 328),
+    new Vector3i(180, -6, 322),
+    new Vector3i(150, -6, 315),
+    new Vector3i(120, -6, 298),
+    new Vector3i(90, -6, 274),
+  };
+  private final Vector3i[] _800f27a0 = {
+    new Vector3i(90, -6, 274),
+    new Vector3i(49, -6, 238),
+    new Vector3i(20, -6, 204),
+    new Vector3i(3, -6, 166),
+    new Vector3i(-7, -6, 118),
+    new Vector3i(-27, -6, 88),
+    new Vector3i(-51, -6, 58),
+  };
+  private final Vector3i[] _800f2810 = {
+    new Vector3i(-51, -6, 58),
+    new Vector3i(-28, -6, 32),
+    new Vector3i(-12, -6, -1),
+    new Vector3i(0, -6, -31),
+    new Vector3i(5, -6, -61),
+    new Vector3i(10, -6, -90),
+    new Vector3i(18, -6, -121),
+    new Vector3i(21, -6, -151),
+    new Vector3i(27, -6, -174),
+    new Vector3i(36, -6, -196),
+    new Vector3i(54, -6, -219),
+    new Vector3i(70, -6, -241),
+  };
+  private final Vector3i[] _800f28d0 = {
+    new Vector3i(90, -6, 274),
+    new Vector3i(102, -6, 316),
+    new Vector3i(120, -6, 358),
+    new Vector3i(147, -6, 388),
+    new Vector3i(180, -6, 418),
+    new Vector3i(197, -6, 448),
+    new Vector3i(210, -6, 478),
+    new Vector3i(210, -6, 508),
+    new Vector3i(210, -6, 538),
+    new Vector3i(210, -6, 568),
+    new Vector3i(215, -6, 598),
+    new Vector3i(223, -6, 628),
+    new Vector3i(232, -6, 658),
+    new Vector3i(252, -6, 688),
+    new Vector3i(275, -6, 710),
+    new Vector3i(301, -6, 731),
+  };
+  private final Vector3i[] _800f29d0 = {
+    new Vector3i(360, -6, 448),
+    new Vector3i(360, -6, 478),
+    new Vector3i(371, -6, 508),
+    new Vector3i(390, -6, 538),
+    new Vector3i(420, -6, 568),
+    new Vector3i(450, -6, 598),
+    new Vector3i(468, -6, 628),
+    new Vector3i(480, -6, 658),
+    new Vector3i(480, -6, 688),
+    new Vector3i(468, -6, 718),
+    new Vector3i(450, -6, 748),
+  };
+  private final Vector3i[] _800f2a80 = {
+    new Vector3i(-240, -25, 307),
+    new Vector3i(-203, -15, 305),
+    new Vector3i(-166, -6, 304),
+    new Vector3i(-158, -17, 335),
+    new Vector3i(-150, -29, 366),
+    new Vector3i(-142, -41, 397),
+    new Vector3i(-134, -53, 428),
+    new Vector3i(-119, -63, 453),
+    new Vector3i(-104, -73, 478),
+    new Vector3i(-87, -54, 492),
+    new Vector3i(-71, -35, 506),
+    new Vector3i(-65, -30, 526),
+    new Vector3i(-59, -25, 546),
+    new Vector3i(-52, -6, 553),
+    new Vector3i(-33, -17, 559),
+    new Vector3i(-13, -29, 565),
+    new Vector3i(0, -53, 589),
+    new Vector3i(0, -35, 615),
+    new Vector3i(0, -42, 643),
+    new Vector3i(0, -49, 672),
+    new Vector3i(0, -35, 697),
+  };
+  private final Vector3i[] _800f2bd0 = {
+    new Vector3i(-296, -6, 387),
+    new Vector3i(-277, -15, 404),
+    new Vector3i(-257, -25, 404),
+    new Vector3i(-248, -20, 440),
+    new Vector3i(-240, -16, 458),
+    new Vector3i(-230, -11, 478),
+    new Vector3i(-219, -6, 501),
+    new Vector3i(-201, -6, 523),
+  };
+  private final Vector3i[] _800f2c50 = {
+    new Vector3i(-468, -6, 350),
+    new Vector3i(-442, -6, 343),
+    new Vector3i(-412, -6, 342),
+    new Vector3i(-383, -6, 336),
+  };
+  private final Vector3i[] _800f2c90 = {
+    new Vector3i(-469, -6, 232),
+    new Vector3i(-468, -6, 266),
+    new Vector3i(-468, -6, 296),
+    new Vector3i(-468, -6, 326),
+    new Vector3i(-468, -6, 350),
+  };
+  private final Vector3i[] _800f2ce0 = {
+    new Vector3i(-469, -6, 232),
+    new Vector3i(-499, -6, 232),
+    new Vector3i(-529, -6, 232),
+  };
+  private final Vector3i[] _800f2d10 = {
+    new Vector3i(-360, -6, -1),
+    new Vector3i(-390, -6, 28),
+    new Vector3i(-414, -6, 58),
+    new Vector3i(-420, -6, 88),
+    new Vector3i(-420, -6, 118),
+    new Vector3i(-420, -6, 148),
+    new Vector3i(-425, -6, 178),
+    new Vector3i(-450, -6, 208),
+    new Vector3i(-469, -6, 232),
+  };
+  private final Vector3i[] _800f2da0 = {
+    new Vector3i(-51, -6, 58),
+    new Vector3i(-84, -6, 58),
+    new Vector3i(-120, -6, 58),
+    new Vector3i(-150, -6, 58),
+    new Vector3i(-180, -6, 52),
+    new Vector3i(-210, -6, 43),
+    new Vector3i(-240, -6, 28),
+    new Vector3i(-270, -6, 13),
+    new Vector3i(-300, -6, 4),
+    new Vector3i(-330, -6, -1),
+    new Vector3i(-360, -6, -1),
+  };
+  private final Vector3i[] _800f2e50 = {
+    new Vector3i(-360, -6, -1),
+    new Vector3i(-360, -6, -31),
+    new Vector3i(-360, -6, -61),
+    new Vector3i(-360, -6, -91),
+    new Vector3i(-354, -6, -121),
+    new Vector3i(-345, -6, -151),
+  };
+  private final Vector3i[] _800f2eb0 = {
+    new Vector3i(-468, -6, 350),
+    new Vector3i(-488, -6, 375),
+    new Vector3i(-501, -6, 405),
+    new Vector3i(-502, -6, 436),
+    new Vector3i(-501, -6, 468),
+    new Vector3i(-495, -6, 498),
+    new Vector3i(-477, -6, 528),
+    new Vector3i(-456, -6, 560),
+    new Vector3i(-444, -6, 592),
+  };
+  private final Vector3i[] _800f2f40 = {
+    new Vector3i(617, -6, -750),
+    new Vector3i(617, -6, -720),
+    new Vector3i(617, -6, -690),
+    new Vector3i(617, -6, -659),
+    new Vector3i(617, -6, -630),
+    new Vector3i(621, -6, -599),
+    new Vector3i(635, -6, -570),
+    new Vector3i(657, -6, -540),
+    new Vector3i(670, -6, -509),
+    new Vector3i(677, -6, -480),
+    new Vector3i(677, -6, -449),
+    new Vector3i(677, -6, -419),
+    new Vector3i(677, -6, -390),
+    new Vector3i(668, -6, -359),
+    new Vector3i(660, -6, -330),
+    new Vector3i(637, -6, -299),
+    new Vector3i(612, -6, -269),
+    new Vector3i(570, -6, -240),
+  };
+  private final Vector3i[] _800f3060 = {
+    new Vector3i(409, -6, 98),
+    new Vector3i(404, -6, 129),
+    new Vector3i(398, -6, 159),
+    new Vector3i(387, -6, 191),
+    new Vector3i(367, -6, 216),
+    new Vector3i(342, -6, 240),
+    new Vector3i(310, -6, 259),
+    new Vector3i(277, -6, 264),
+    new Vector3i(233, -6, 266),
+    new Vector3i(191, -6, 267),
+    new Vector3i(150, -6, 272),
+    new Vector3i(112, -6, 287),
+    new Vector3i(94, -6, 308),
+  };
+  private final Vector3i[] _800f3130 = {
+    new Vector3i(94, -6, 308),
+    new Vector3i(104, -6, 347),
+    new Vector3i(135, -6, 375),
+    new Vector3i(171, -6, 404),
+    new Vector3i(202, -6, 430),
+    new Vector3i(233, -6, 455),
+    new Vector3i(264, -6, 480),
+    new Vector3i(300, -6, 501),
+    new Vector3i(330, -6, 509),
+  };
+  private final Vector3i[] _800f31c0 = {
+    new Vector3i(94, -6, 308),
+    new Vector3i(66, -6, 294),
+    new Vector3i(50, -6, 270),
+    new Vector3i(33, -6, 243),
+    new Vector3i(14, -6, 213),
+    new Vector3i(-3, -6, 181),
+    new Vector3i(-17, -6, 150),
+    new Vector3i(-33, -6, 119),
+    new Vector3i(-58, -6, 90),
+    new Vector3i(-81, -6, 65),
+    new Vector3i(-105, -6, 40),
+    new Vector3i(-134, -6, 19),
+    new Vector3i(-165, -6, 0),
+    new Vector3i(-198, -6, -17),
+    new Vector3i(-228, -6, -31),
+    new Vector3i(-249, -6, -57),
+  };
+  private final Vector3i[] _800f32c0 = {
+    new Vector3i(-249, -6, -57),
+    new Vector3i(-279, -6, -48),
+    new Vector3i(-308, -6, -57),
+    new Vector3i(-335, -6, -69),
+    new Vector3i(-364, -6, -80),
+    new Vector3i(-394, -6, -93),
+    new Vector3i(-426, -6, -108),
+    new Vector3i(-459, -6, -125),
+    new Vector3i(-491, -6, -142),
+    new Vector3i(-520, -6, -162),
+    new Vector3i(-544, -6, -190),
+    new Vector3i(-567, -6, -216),
+    new Vector3i(-590, -6, -242),
+    new Vector3i(-611, -6, -271),
+    new Vector3i(-635, -6, -301),
+    new Vector3i(-652, -6, -330),
+    new Vector3i(-667, -6, -354),
+    new Vector3i(-674, -6, -382),
+    new Vector3i(-686, -6, -406),
+    new Vector3i(-704, -6, -426),
+  };
+  private final Vector3i[] _800f3400 = {
+    new Vector3i(-704, -6, -426),
+    new Vector3i(-726, -6, -427),
+    new Vector3i(-753, -6, -419),
+    new Vector3i(-777, -6, -403),
+  };
+  private final Vector3i[] _800f3440 = {
+    new Vector3i(-704, -6, -426),
+    new Vector3i(-689, -6, -451),
+    new Vector3i(-686, -6, -480),
+    new Vector3i(-700, -6, -511),
+    new Vector3i(-721, -6, -536),
+    new Vector3i(-749, -6, -562),
+    new Vector3i(-771, -6, -593),
+    new Vector3i(-791, -6, -624),
+    new Vector3i(-805, -6, -659),
+    new Vector3i(-819, -6, -694),
+    new Vector3i(-830, -6, -730),
+    new Vector3i(-840, -6, -762),
+    new Vector3i(-847, -6, -794),
+    new Vector3i(-854, -6, -827),
+    new Vector3i(-858, -6, -855),
+    new Vector3i(-864, -6, -892),
+  };
+  private final Vector3i[] _800f3540 = {
+    new Vector3i(-249, -6, -57),
+    new Vector3i(-249, -6, -95),
+    new Vector3i(-249, -6, -130),
+    new Vector3i(-249, -6, -166),
+    new Vector3i(-249, -6, -200),
+    new Vector3i(-249, -6, -230),
+    new Vector3i(-249, -6, -260),
+  };
+  private final Vector3i[] _800f35b0 = {
+    new Vector3i(-240, -6, -464),
+    new Vector3i(-240, -18, -480),
+    new Vector3i(-240, -27, -498),
+    new Vector3i(-240, -35, -517),
+    new Vector3i(-240, -43, -536),
+    new Vector3i(-240, -52, -555),
+    new Vector3i(-240, -57, -577),
+    new Vector3i(-240, -62, -599),
+    new Vector3i(-240, -69, -621),
+    new Vector3i(-240, -76, -643),
+    new Vector3i(-240, -73, -668),
+  };
+  private final Vector3i[] _800f3660 = {
+    new Vector3i(674, -6, -684),
+    new Vector3i(662, -6, -664),
+    new Vector3i(652, -6, -633),
+    new Vector3i(645, -6, -600),
+    new Vector3i(641, -6, -569),
+    new Vector3i(639, -6, -540),
+    new Vector3i(638, -6, -510),
+    new Vector3i(638, -6, -479),
+    new Vector3i(640, -6, -449),
+    new Vector3i(644, -6, -419),
+    new Vector3i(649, -6, -389),
+    new Vector3i(654, -6, -360),
+    new Vector3i(660, -6, -330),
+    new Vector3i(663, -6, -299),
+    new Vector3i(665, -6, -269),
+    new Vector3i(663, -6, -240),
+    new Vector3i(660, -6, -209),
+    new Vector3i(655, -6, -180),
+    new Vector3i(650, -6, -150),
+    new Vector3i(641, -6, -119),
+    new Vector3i(630, -6, -96),
+    new Vector3i(611, -6, -74),
+    new Vector3i(594, -6, -55),
+    new Vector3i(572, -6, -37),
+    new Vector3i(547, -6, -18),
+    new Vector3i(519, -6, -5),
+    new Vector3i(487, -6, 7),
+  };
+  private final Vector3i[] _800f3810 = {
+    new Vector3i(487, -6, 7),
+    new Vector3i(456, -6, 5),
+    new Vector3i(426, -6, -4),
+    new Vector3i(401, -6, -19),
+  };
+  private final Vector3i[] _800f3850 = {
+    new Vector3i(487, -6, 7),
+    new Vector3i(500, -6, 22),
+    new Vector3i(506, -6, 48),
+    new Vector3i(509, -6, 87),
+    new Vector3i(508, -6, 121),
+    new Vector3i(505, -6, 150),
+    new Vector3i(499, -6, 181),
+    new Vector3i(490, -6, 210),
+  };
+  private final Vector3i[] _800f38d0 = {
+    new Vector3i(476, -6, 375),
+    new Vector3i(480, -6, 405),
+    new Vector3i(485, -6, 435),
+    new Vector3i(492, -6, 465),
+    new Vector3i(502, -6, 494),
+    new Vector3i(512, -6, 525),
+    new Vector3i(529, -6, 555),
+  };
+  private final Vector3i[] _800f3940 = {
+    new Vector3i(370, -6, 293),
+    new Vector3i(345, -6, 296),
+    new Vector3i(320, -6, 300),
+    new Vector3i(293, -6, 304),
+    new Vector3i(267, -6, 307),
+    new Vector3i(241, -6, 309),
+    new Vector3i(219, -6, 308),
+    new Vector3i(193, -6, 305),
+    new Vector3i(169, -6, 306),
+    new Vector3i(147, -26, 307),
+    new Vector3i(126, -46, 307),
+    new Vector3i(112, -26, 294),
+    new Vector3i(98, -6, 282),
+    new Vector3i(80, -19, 280),
+    new Vector3i(62, -33, 277),
+    new Vector3i(52, -19, 284),
+    new Vector3i(42, -6, 290),
+    new Vector3i(28, -6, 287),
+    new Vector3i(14, -19, 287),
+    new Vector3i(0, -33, 287),
+    new Vector3i(-6, -28, 277),
+    new Vector3i(-13, -23, 268),
+    new Vector3i(-26, -28, 265),
+    new Vector3i(-39, -33, 263),
+    new Vector3i(-47, -28, 251),
+    new Vector3i(-55, -23, 240),
+    new Vector3i(-71, -33, 240),
+    new Vector3i(-81, -28, 230),
+    new Vector3i(-92, -23, 221),
+    new Vector3i(-103, -33, 212),
+    new Vector3i(-118, -19, 215),
+    new Vector3i(-133, -6, 219),
+    new Vector3i(-145, -26, 221),
+    new Vector3i(-158, -46, 223),
+    new Vector3i(-171, -36, 216),
+    new Vector3i(-185, -26, 209),
+    new Vector3i(-199, -16, 203),
+    new Vector3i(-213, -6, 196),
+  };
+  private final Vector3i[] _800f3ba0 = {
+    new Vector3i(-291, -33, 263),
+    new Vector3i(-299, -20, 240),
+    new Vector3i(-308, -6, 211),
+    new Vector3i(-328, -6, 186),
+    new Vector3i(-347, -6, 160),
+    new Vector3i(-369, -6, 132),
+    new Vector3i(-392, -6, 104),
+    new Vector3i(-417, -6, 79),
+    new Vector3i(-445, -6, 60),
+    new Vector3i(-475, -6, 46),
+    new Vector3i(-505, -6, 38),
+    new Vector3i(-535, -6, 37),
+    new Vector3i(-565, -6, 37),
+    new Vector3i(-595, -6, 39),
+    new Vector3i(-625, -6, 43),
+    new Vector3i(-655, -6, 51),
+    new Vector3i(-685, -6, 65),
+  };
+  private final Vector3i[] _800f3cb0 = {
+    new Vector3i(480, 0, -480),
+    new Vector3i(448, 0, -480),
+    new Vector3i(413, 0, -480),
+    new Vector3i(382, 0, -480),
+    new Vector3i(345, 0, -492),
+    new Vector3i(311, 0, -512),
+    new Vector3i(277, 0, -543),
+    new Vector3i(243, 0, -564),
+    new Vector3i(210, 0, -579),
+    new Vector3i(176, 0, -587),
+    new Vector3i(142, 0, -591),
+    new Vector3i(108, 0, -591),
+    new Vector3i(75, 0, -591),
+    new Vector3i(41, 0, -591),
+    new Vector3i(7, 0, -588),
+    new Vector3i(-26, 0, -579),
+    new Vector3i(-60, 0, -565),
+    new Vector3i(-93, 0, -543),
+  };
+  private final Vector3i[] _800f3dd0 = {
+    new Vector3i(-93, 0, -543),
+    new Vector3i(-127, 0, -513),
+    new Vector3i(-161, 0, -493),
+    new Vector3i(-194, 0, -480),
+    new Vector3i(-228, 0, -480),
+    new Vector3i(-262, 0, -480),
+    new Vector3i(-296, 0, -480),
+    new Vector3i(-331, 0, -475),
+    new Vector3i(-365, 0, -463),
+    new Vector3i(-399, 0, -446),
+    new Vector3i(-426, 0, -423),
+    new Vector3i(-448, 0, -391),
+    new Vector3i(-464, 0, -362),
+    new Vector3i(-475, 0, -326),
+    new Vector3i(-482, 0, -285),
+    new Vector3i(-494, 0, -251),
+    new Vector3i(-512, 0, -222),
+    new Vector3i(-536, 0, -194),
+    new Vector3i(-556, 0, -171),
+    new Vector3i(-576, 0, -146),
+    new Vector3i(-600, 0, -120),
+  };
+  private final Vector3i[] _800f3f20 = {
+    new Vector3i(-93, 0, -543),
+    new Vector3i(-108, 0, -506),
+    new Vector3i(-116, 0, -470),
+    new Vector3i(-120, 0, -433),
+    new Vector3i(-120, 0, -396),
+  };
+  private final Vector3i[] _800f3f70 = {
+    new Vector3i(-38, -6, -270),
+    new Vector3i(-10, -6, -265),
+    new Vector3i(11, -6, -256),
+    new Vector3i(30, -6, -245),
+    new Vector3i(47, -6, -234),
+    new Vector3i(65, -6, -221),
+    new Vector3i(83, -6, -206),
+    new Vector3i(99, -6, -189),
+    new Vector3i(117, -6, -169),
+    new Vector3i(134, -6, -149),
+    new Vector3i(150, -6, -123),
+    new Vector3i(164, -6, -95),
+    new Vector3i(174, -6, -60),
+  };
+  private final Vector3i[] _800f4040 = {
+    new Vector3i(174, -6, -60),
+    new Vector3i(179, -6, -22),
+    new Vector3i(181, -6, 12),
+    new Vector3i(185, -6, 43),
+    new Vector3i(193, -6, 79),
+    new Vector3i(206, -6, 110),
+    new Vector3i(222, -6, 137),
+    new Vector3i(240, -6, 165),
+  };
+  private final Vector3i[] _800f40c0 = {
+    new Vector3i(600, 0, 401),
+    new Vector3i(618, 0, 424),
+    new Vector3i(636, 0, 445),
+    new Vector3i(660, 0, 467),
+    new Vector3i(687, 0, 479),
+    new Vector3i(715, 0, 482),
+  };
+  private final Vector3i[] _800f4120 = {
+    new Vector3i(200, -6, -639),
+    new Vector3i(172, -6, -616),
+    new Vector3i(158, -6, -587),
+    new Vector3i(149, -6, -553),
+    new Vector3i(149, -6, -525),
+    new Vector3i(149, -6, -496),
+    new Vector3i(139, -6, -460),
+    new Vector3i(125, -6, -432),
+    new Vector3i(93, -6, -410),
+  };
+  private final Vector3i[] _800f41b0 = {
+    new Vector3i(-60, -6, -300),
+    new Vector3i(-90, -6, -300),
+    new Vector3i(-120, -6, -300),
+    new Vector3i(-151, -6, -300),
+    new Vector3i(-181, -6, -300),
+    new Vector3i(-206, -6, -285),
+    new Vector3i(-216, -6, -258),
+  };
+  private final Vector3i[] _800f4220 = {
+    new Vector3i(-216, -6, -258),
+    new Vector3i(-216, -6, -220),
+    new Vector3i(-203, -6, -181),
+    new Vector3i(-180, -6, -147),
+    new Vector3i(-166, -6, -107),
+    new Vector3i(-166, -6, -73),
+    new Vector3i(-174, -6, -42),
+    new Vector3i(-187, -6, -19),
+    new Vector3i(-208, -6, 5),
+  };
+  private final Vector3i[] _800f42b0 = {
+    new Vector3i(-216, -6, -258),
+    new Vector3i(-241, -6, -236),
+    new Vector3i(-270, -6, -217),
+    new Vector3i(-302, -6, -207),
+    new Vector3i(-336, -6, -204),
+    new Vector3i(-369, -6, -205),
+    new Vector3i(-399, -6, -197),
+    new Vector3i(-425, -6, -186),
+    new Vector3i(-446, -6, -166),
+    new Vector3i(-465, -6, -141),
+    new Vector3i(-480, -6, -119),
+    new Vector3i(-494, -6, -101),
+    new Vector3i(-508, -6, -83),
+    new Vector3i(-533, -6, -68),
+    new Vector3i(-557, -6, -53),
+    new Vector3i(-571, -6, -27),
+    new Vector3i(-586, -6, -10),
+  };
+  private final Vector3i[] _800f43c0 = {
+    new Vector3i(180, -6, -300),
+    new Vector3i(208, -6, -300),
+    new Vector3i(236, -6, -300),
+    new Vector3i(265, -6, -293),
+    new Vector3i(290, -6, -274),
+    new Vector3i(316, -6, -248),
+    new Vector3i(339, -6, -223),
+    new Vector3i(360, -6, -191),
+    new Vector3i(377, -6, -165),
+    new Vector3i(394, -6, -136),
+    new Vector3i(413, -6, -105),
+    new Vector3i(434, -6, -82),
+    new Vector3i(463, -6, -65),
+    new Vector3i(491, -6, -60),
+    new Vector3i(519, -6, -60),
+    new Vector3i(547, -6, -60),
+    new Vector3i(576, -6, -60),
+    new Vector3i(604, -6, -60),
+    new Vector3i(633, -6, -60),
+  };
+  private final Vector3i[] _800f44f0 = {
+    new Vector3i(147, -6, -216),
+    new Vector3i(173, -6, -199),
+    new Vector3i(195, -6, -173),
+    new Vector3i(211, -6, -142),
+    new Vector3i(217, -6, -108),
+    new Vector3i(221, -6, -70),
+    new Vector3i(230, -6, -37),
+    new Vector3i(249, -6, -5),
+    new Vector3i(273, -6, 22),
+    new Vector3i(297, -6, 51),
+  };
+  private final Vector3i[] _800f4590 = {
+    new Vector3i(60, -6, -180),
+    new Vector3i(60, -6, -157),
+    new Vector3i(60, -6, -134),
+    new Vector3i(63, -6, -112),
+    new Vector3i(70, -6, -89),
+    new Vector3i(81, -6, -67),
+    new Vector3i(97, -6, -45),
+    new Vector3i(114, -6, -22),
+    new Vector3i(119, -6, 0),
+    new Vector3i(119, -16, 15),
+    new Vector3i(119, -27, 31),
+    new Vector3i(115, -22, 53),
+    new Vector3i(110, -16, 75),
+    new Vector3i(106, -11, 96),
+    new Vector3i(101, -6, 118),
+    new Vector3i(111, -6, 140),
+    new Vector3i(105, -39, 165),
+    new Vector3i(124, -27, 186),
+    new Vector3i(126, -40, 213),
+    new Vector3i(127, -53, 240),
+    new Vector3i(129, -29, 267),
+    new Vector3i(130, -6, 295),
+    new Vector3i(121, -6, 320),
+    new Vector3i(114, -6, 345),
+    new Vector3i(112, -6, 369),
+    new Vector3i(112, -6, 394),
+  };
+  private final Vector3i[] _800f4730 = {
+    new Vector3i(690, -6, -60),
+    new Vector3i(660, -6, -60),
+    new Vector3i(630, -6, -60),
+    new Vector3i(600, -6, -60),
+    new Vector3i(570, -6, -60),
+    new Vector3i(540, -6, -60),
+    new Vector3i(510, -6, -60),
+    new Vector3i(480, -6, -60),
+    new Vector3i(450, -6, -60),
+    new Vector3i(420, -6, -60),
+    new Vector3i(390, -6, -60),
+    new Vector3i(360, -6, -60),
+    new Vector3i(330, -6, -60),
+    new Vector3i(300, -6, -60),
+    new Vector3i(270, -6, -60),
+    new Vector3i(240, -6, -60),
+    new Vector3i(210, -6, -60),
+    new Vector3i(180, -6, -53),
+    new Vector3i(150, -6, -41),
+    new Vector3i(120, -6, -26),
+    new Vector3i(90, -6, 0),
+  };
+  private final Vector3i[] _800f4880 = {
+    new Vector3i(-90, -6, 0),
+    new Vector3i(-119, -6, 9),
+    new Vector3i(-141, -6, 30),
+    new Vector3i(-154, -6, 58),
+    new Vector3i(-179, -6, 77),
+    new Vector3i(-210, -6, 84),
+    new Vector3i(-243, -6, 84),
+    new Vector3i(-273, -6, 94),
+    new Vector3i(-300, -6, 120),
+  };
+  private final Vector3i[] _800f4910 = {
+    new Vector3i(0, 0, 630),
+    new Vector3i(0, 0, 600),
+    new Vector3i(0, 0, 570),
+    new Vector3i(0, 0, 540),
+    new Vector3i(0, 0, 510),
+    new Vector3i(0, 0, 480),
+    new Vector3i(0, 0, 450),
+    new Vector3i(-12, 0, 420),
+    new Vector3i(-30, 0, 390),
+    new Vector3i(-60, 0, 360),
+    new Vector3i(-90, 0, 330),
+    new Vector3i(-107, 0, 300),
+    new Vector3i(-120, 0, 270),
+    new Vector3i(-120, 0, 240),
+    new Vector3i(-120, 0, 210),
+  };
+  private final Vector3i[] _800f4a00 = {
+    new Vector3i(-30, 0, 120),
+    new Vector3i(0, 0, 120),
+    new Vector3i(30, 0, 120),
+    new Vector3i(60, 0, 120),
+    new Vector3i(90, 0, 120),
+    new Vector3i(120, 0, 120),
+    new Vector3i(150, 0, 132),
+    new Vector3i(180, 0, 150),
+    new Vector3i(210, 0, 180),
+    new Vector3i(240, 0, 210),
+    new Vector3i(270, 0, 240),
+    new Vector3i(300, 0, 270),
+    new Vector3i(330, 0, 300),
+    new Vector3i(360, 0, 330),
+    new Vector3i(390, 0, 348),
+    new Vector3i(420, 0, 360),
+    new Vector3i(450, 0, 360),
+    new Vector3i(480, 0, 360),
+    new Vector3i(510, 0, 360),
+  };
+  private final Vector3i[] _800f4b30 = {
+    new Vector3i(487, 0, -262),
+    new Vector3i(450, 0, -300),
+    new Vector3i(412, 0, -337),
+    new Vector3i(375, 0, -375),
+    new Vector3i(337, 0, -412),
+    new Vector3i(300, 0, -450),
+    new Vector3i(262, 0, -487),
+    new Vector3i(225, 0, -525),
+    new Vector3i(187, 0, -562),
+    new Vector3i(150, 0, -600),
+    new Vector3i(112, 0, -637),
+    new Vector3i(75, 0, -675),
+    new Vector3i(37, 0, -712),
+    new Vector3i(0, 0, -735),
+    new Vector3i(-37, 0, -750),
+    new Vector3i(-75, 0, -764),
+    new Vector3i(-112, 0, -779),
+    new Vector3i(-150, 0, -795),
+    new Vector3i(-187, 0, -802),
+    new Vector3i(-225, 0, -810),
+    new Vector3i(-262, 0, -817),
+    new Vector3i(-300, 0, -825),
+    new Vector3i(-337, 0, -825),
+    new Vector3i(-375, 0, -825),
+    new Vector3i(-412, 0, -825),
+    new Vector3i(-450, 0, -825),
+    new Vector3i(-487, 0, -825),
+    new Vector3i(-525, 0, -825),
+    new Vector3i(-562, 0, -810),
+    new Vector3i(-600, 0, -787),
+    new Vector3i(-637, 0, -750),
+    new Vector3i(-675, 0, -712),
+    new Vector3i(-712, 0, -675),
+    new Vector3i(-735, 0, -637),
+    new Vector3i(-750, 0, -600),
+    new Vector3i(-750, 0, -562),
+    new Vector3i(-750, 0, -525),
+    new Vector3i(-750, 0, -487),
+    new Vector3i(-750, 0, -450),
+    new Vector3i(-764, 0, -412),
+    new Vector3i(-787, 0, -375),
+    new Vector3i(-825, 0, -337),
+    new Vector3i(-862, 0, -314),
+    new Vector3i(-900, 0, -300),
+    new Vector3i(-937, 0, -300),
+    new Vector3i(-975, 0, -300),
+  };
+  private final Vector3i[] _800f4e10 = {
+    new Vector3i(-825, -112, 862),
+    new Vector3i(-825, -115, 850),
+    new Vector3i(-825, -119, 832),
+    new Vector3i(-825, -132, 777),
+    new Vector3i(-815, -137, 750),
+    new Vector3i(-789, -144, 722),
+    new Vector3i(-743, -150, 707),
+    new Vector3i(-690, -150, 694),
+    new Vector3i(-642, -150, 673),
+    new Vector3i(-605, -150, 638),
+    new Vector3i(-582, -150, 593),
+    new Vector3i(-555, -150, 556),
+    new Vector3i(-525, -150, 525),
+  };
+  private final Vector3i[] _800f4ee0 = {
+    new Vector3i(-525, -150, 525),
+    new Vector3i(-474, -150, 537),
+    new Vector3i(-429, -150, 543),
+    new Vector3i(-384, -150, 534),
+    new Vector3i(-346, -150, 511),
+    new Vector3i(-304, -150, 498),
+    new Vector3i(-252, -146, 498),
+    new Vector3i(-208, -138, 498),
+    new Vector3i(-177, -129, 499),
+    new Vector3i(-155, -110, 503),
+    new Vector3i(-133, -75, 510),
+    new Vector3i(-113, -45, 521),
+    new Vector3i(-98, -26, 531),
+    new Vector3i(-88, -17, 542),
+    new Vector3i(-80, -11, 552),
+    new Vector3i(-75, -7, 562),
+  };
+  private final Vector3i[] _800f4fe0 = {
+    new Vector3i(-525, -150, 525),
+    new Vector3i(-536, -150, 479),
+    new Vector3i(-529, -150, 430),
+    new Vector3i(-512, -150, 392),
+    new Vector3i(-476, -150, 351),
+    new Vector3i(-447, -150, 310),
+    new Vector3i(-415, -150, 268),
+    new Vector3i(-392, -150, 224),
+    new Vector3i(-367, -150, 187),
+    new Vector3i(-324, -150, 161),
+    new Vector3i(-274, -150, 149),
+    new Vector3i(-225, -150, 150),
+  };
+  private final Vector3i[] _800f50a0 = {
+    new Vector3i(-225, -150, 150),
+    new Vector3i(-202, -150, 191),
+    new Vector3i(-175, -150, 223),
+    new Vector3i(-143, -150, 253),
+    new Vector3i(-114, -150, 275),
+    new Vector3i(-85, -150, 292),
+    new Vector3i(-57, -150, 307),
+    new Vector3i(-33, -145, 320),
+    new Vector3i(-11, -129, 328),
+    new Vector3i(13, -103, 330),
+    new Vector3i(35, -57, 327),
+    new Vector3i(53, -26, 318),
+    new Vector3i(66, -14, 309),
+    new Vector3i(75, -7, 300),
+  };
+  private final Vector3i[] _800f5180 = {
+    new Vector3i(-225, -150, 150),
+    new Vector3i(-205, -150, 115),
+    new Vector3i(-172, -150, 96),
+    new Vector3i(-131, -150, 88),
+    new Vector3i(-94, -150, 88),
+    new Vector3i(-59, -150, 80),
+    new Vector3i(-29, -150, 64),
+    new Vector3i(-10, -150, 36),
+    new Vector3i(0, -150, 0),
+  };
+  private final Vector3i[] _800f5210 = {
+    new Vector3i(0, -150, 0),
+    new Vector3i(-27, -150, -27),
+    new Vector3i(-65, -150, -51),
+    new Vector3i(-107, -150, -63),
+    new Vector3i(-153, -145, -65),
+    new Vector3i(-187, -137, -70),
+    new Vector3i(-219, -121, -77),
+    new Vector3i(-248, -93, -87),
+    new Vector3i(-277, -46, -92),
+    new Vector3i(-301, -25, -95),
+    new Vector3i(-317, -16, -95),
+    new Vector3i(-331, -7, -95),
+  };
+  private final Vector3i[] _800f52d0 = {
+    new Vector3i(0, -150, 0),
+    new Vector3i(40, -150, -10),
+    new Vector3i(79, -150, -19),
+    new Vector3i(127, -150, -25),
+    new Vector3i(162, -150, -25),
+    new Vector3i(197, -150, -15),
+    new Vector3i(225, -150, 0),
+  };
+  private final Vector3i[] _800f5340 = {
+    new Vector3i(225, -150, 0),
+    new Vector3i(225, -150, 37),
+    new Vector3i(229, -141, 70),
+    new Vector3i(237, -119, 97),
+    new Vector3i(244, -71, 117),
+    new Vector3i(251, -26, 133),
+    new Vector3i(257, -11, 144),
+    new Vector3i(262, -7, 150),
+  };
+  private final Vector3i[] _800f53c0 = {
+    new Vector3i(225, -150, 0),
+    new Vector3i(253, -150, -17),
+    new Vector3i(290, -150, -27),
+    new Vector3i(338, -150, -30),
+    new Vector3i(381, -150, -38),
+    new Vector3i(417, -150, -55),
+    new Vector3i(450, -150, -75),
+  };
+  private final Vector3i[] _800f5430 = {
+    new Vector3i(450, -150, -75),
+    new Vector3i(449, -142, -93),
+    new Vector3i(449, -129, -110),
+    new Vector3i(452, -99, -133),
+    new Vector3i(462, -59, -145),
+    new Vector3i(475, -21, -150),
+    new Vector3i(487, -7, -150),
+  };
+  private final Vector3i[] _800f54a0 = {
+    new Vector3i(450, -150, -75),
+    new Vector3i(477, -150, -59),
+    new Vector3i(503, -150, -53),
+    new Vector3i(528, -150, -62),
+    new Vector3i(548, -150, -79),
+    new Vector3i(572, -150, -81),
+    new Vector3i(600, -150, -75),
+  };
+  private final Vector3i[] _800f5510 = {
+    new Vector3i(600, -150, -75),
+    new Vector3i(605, -140, -53),
+    new Vector3i(615, -122, -32),
+    new Vector3i(629, -85, -16),
+    new Vector3i(634, -47, 0),
+    new Vector3i(636, -26, 14),
+    new Vector3i(637, -13, 28),
+    new Vector3i(637, -7, 37),
+  };
+  private final Vector3i[] _800f5590 = {
+    new Vector3i(600, -150, -75),
+    new Vector3i(619, -150, -97),
+    new Vector3i(645, -150, -112),
+    new Vector3i(672, -150, -118),
+    new Vector3i(700, -150, -119),
+    new Vector3i(724, -150, -131),
+    new Vector3i(750, -150, -150),
+  };
+  private final Vector3i[] _800f5600 = {
+    new Vector3i(750, -150, -150),
+    new Vector3i(744, -150, -197),
+    new Vector3i(724, -150, -243),
+    new Vector3i(714, -150, -290),
+    new Vector3i(708, -144, -337),
+    new Vector3i(711, -131, -375),
+    new Vector3i(721, -110, -413),
+    new Vector3i(720, -90, -439),
+    new Vector3i(715, -63, -463),
+    new Vector3i(707, -38, -485),
+    new Vector3i(697, -22, -503),
+    new Vector3i(685, -13, -516),
+    new Vector3i(675, -7, -525),
+  };
+  private final Vector3i[] _800f56d0 = {
+    new Vector3i(750, -150, -150),
+    new Vector3i(785, -150, -135),
+    new Vector3i(820, -150, -121),
+    new Vector3i(853, -150, -103),
+    new Vector3i(888, -150, -82),
+    new Vector3i(916, -150, -63),
+    new Vector3i(948, -150, -49),
+    new Vector3i(973, -150, -40),
+    new Vector3i(998, -145, -31),
+    new Vector3i(1018, -137, -17),
+    new Vector3i(1035, -116, -2),
+    new Vector3i(1044, -76, 18),
+    new Vector3i(1047, -44, 39),
+    new Vector3i(1049, -25, 55),
+    new Vector3i(1049, -14, 67),
+    new Vector3i(1050, -7, 75),
+  };
+  private final Vector3i[] _800f57d0 = {
+    new Vector3i(-1012, 0, -75),
+    new Vector3i(-825, -112, 825),
+  };
+  private final Vector3i[] _800f57f0 = {
+    new Vector3i(-825, -112, 825),
+    new Vector3i(-75, -7, 187),
+  };
   private static final ArrayRef<IntRef> pathSegmentLengths_800f5810 = MEMORY.ref(4, 0x800f5810L, ArrayRef.of(IntRef.class, 0x43, 4, IntRef::new));
 
-  private static final ArrayRef<Pointer<UnboundedArrayRef<VECTOR>>> pathDotPosPtrArr_800f591c = MEMORY.ref(4, 0x800f591cL, ArrayRef.of(Pointer.classFor(UnboundedArrayRef.classFor(VECTOR.class)), 66, 4, Pointer.deferred(4, UnboundedArrayRef.of(0x10, VECTOR::new))));
+  private final Vector3i[][] pathDotPosPtrArr_800f591c = {
+    this._800f2670,
+    this._800f26c0,
+    this._800f2720,
+    this._800f27a0,
+    this._800f2810,
+    this._800f28d0,
+    this._800f29d0,
+    this._800f2a80,
+    this._800f2bd0,
+    this._800f2c50,
+    this._800f2c90,
+    this._800f2ce0,
+    this._800f2d10,
+    this._800f2da0,
+    this._800f2e50,
+    this._800f2eb0,
+    this._800f2f40,
+    this._800f3060,
+    this._800f3130,
+    this._800f31c0,
+    this._800f32c0,
+    this._800f3400,
+    this._800f3440,
+    this._800f3540,
+    this._800f35b0,
+    this._800f3660,
+    this._800f3810,
+    this._800f3850,
+    this._800f38d0,
+    this._800f3940,
+    this._800f3ba0,
+    this._800f3cb0,
+    this._800f3dd0,
+    this._800f3f20,
+    this._800f3f70,
+    this._800f4040,
+    this._800f40c0,
+    this._800f4120,
+    this._800f41b0,
+    this._800f4220,
+    this._800f42b0,
+    this._800f43c0,
+    this._800f44f0,
+    this._800f4590,
+    this._800f4730,
+    this._800f4880,
+    this._800f4910,
+    this._800f4a00,
+    this._800f4b30,
+    this._800f4e10,
+    this._800f4ee0,
+    this._800f4fe0,
+    this._800f50a0,
+    this._800f5180,
+    this._800f5210,
+    this._800f52d0,
+    this._800f5340,
+    this._800f53c0,
+    this._800f5430,
+    this._800f54a0,
+    this._800f5510,
+    this._800f5590,
+    this._800f5600,
+    this._800f56d0,
+    this._800f57d0,
+    this._800f57f0,
+  };
 
   private static final ArrayRef<WMapDestinationMarker2c> wmapDestinationMarkers_800f5a6c = MEMORY.ref(2, 0x800f5a6cL, ArrayRef.of(WMapDestinationMarker2c.class, 0x40, 0x2c, WMapDestinationMarker2c::new));
   private int currentWmapEffect_800f6598;
@@ -1007,7 +2002,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800cea7c
-    if(MathHelper.flEq(highlight.currentBrightness_34, highlight.previousBrightness_36)) {
+    if(flEq(highlight.currentBrightness_34, highlight.previousBrightness_36)) {
       return;
     }
 
@@ -2890,19 +3885,19 @@ public class WMap extends EngineState {
             pathSegmentsRendered[pathSegmentIndex] = true;
             final int pathPointCount = pathSegmentLengths_800f5810.get(pathSegmentIndex).get() - 1;
 
-            final UnboundedArrayRef<VECTOR> pathPoints = pathDotPosPtrArr_800f591c.get(pathSegmentIndex).deref();
+            final Vector3i[] pathPoints = this.pathDotPosPtrArr_800f591c[pathSegmentIndex];
             final int pathPointIndexBase = sp88 >= 0 ? 0 : pathPointCount - 1;
 
             //LAB_800d86d0
             //LAB_800d86d4
             for(int pathPointIndex = 0; pathPointIndex < pathPointCount; pathPointIndex++) {
               //LAB_800d86f4
-              final VECTOR pathPoint;
+              final Vector3i pathPoint;
               if(sp88 > 0) {
-                pathPoint = pathPoints.get(pathPointIndexBase + pathPointIndex);
+                pathPoint = pathPoints[pathPointIndexBase + pathPointIndex];
               } else {
                 //LAB_800d8784
-                pathPoint = pathPoints.get(pathPointIndexBase - pathPointIndex);
+                pathPoint = pathPoints[pathPointIndexBase - pathPointIndex];
               }
 
               //LAB_800d87fc
@@ -2920,9 +3915,9 @@ public class WMap extends EngineState {
                   .vramPos(640, 256);
 
                 if(zoomState == 0) {
-                  final float dx = x - pathPoint.getX();
-                  final float dy = y - pathPoint.getY();
-                  final float dz = z - pathPoint.getZ();
+                  final float dx = x - pathPoint.x;
+                  final float dy = y - pathPoint.y;
+                  final float dz = z - pathPoint.z;
                   final float sp90 = Math.max(0, 0x200 - Math.sqrt(dx * dx + dy * dy + dz * dz)) / 2.0f;
 
                   cmd
@@ -4188,7 +5183,7 @@ public class WMap extends EngineState {
 
     struct.currentAnimIndex_ac = struct.animIndex_b0;
 
-    if(!MathHelper.flEq(struct.vec_84.x, struct.vec_94.x) || !MathHelper.flEq(struct.vec_84.y, struct.vec_94.y) || !MathHelper.flEq(struct.vec_84.z, struct.vec_94.z)) {
+    if(!flEq(struct.vec_84.x, struct.vec_94.x) || !flEq(struct.vec_84.y, struct.vec_94.y) || !flEq(struct.vec_84.z, struct.vec_94.z)) {
       final EncounterRateMode mode = CONFIG.getConfig(CoreMod.ENCOUNTER_RATE_CONFIG.get());
 
       //LAB_800e117c
@@ -5304,7 +6299,7 @@ public class WMap extends EngineState {
 
         this.renderLocationMenuTextHighlight(this.locationMenuNameShadow_800c6898);
 
-        if(textboxes_800be358[6].state_00 == 0 && textboxes_800be358[7].state_00 == 0 && MathHelper.flEq(this.locationMenuNameShadow_800c6898.currentBrightness_34, 0.0f)) {
+        if(textboxes_800be358[6].state_00 == 0 && textboxes_800be358[7].state_00 == 0 && flEq(this.locationMenuNameShadow_800c6898.currentBrightness_34, 0.0f)) {
           this.mapTransitionState_800c68a4 = 9;
         }
 
@@ -5312,7 +6307,7 @@ public class WMap extends EngineState {
         break;
 
       case 6:
-        if(!MathHelper.flEq(this.mapState_800c6798.playerDestAngle_c0, 0.0f)) {
+        if(!flEq(this.mapState_800c6798.playerDestAngle_c0, 0.0f)) {
           this.mapState_800c6798.playerDestAngle_c0 = 0.0f;
           this.mapState_800c6798.facing_1c = 1;
         } else {
@@ -5458,7 +6453,7 @@ public class WMap extends EngineState {
         GsGetLs(this.wmapStruct258_800c66a8.tmdRendering_08.coord2s_04[0], sp0x38);
         GTE.setTransforms(sp0x38);
 
-        GTE.perspectiveTransform(smokeTranslationVectors_800c74b8.get(i));
+        GTE.perspectiveTransform(this.smokeTranslationVectors_800c74b8[i]);
         final float sx = GTE.getScreenX(2);
         final float sy = GTE.getScreenY(2);
         final float z = GTE.getScreenZ(3) / 4.0f;
@@ -5719,24 +6714,24 @@ public class WMap extends EngineState {
 
       //LAB_800e8064
       //LAB_800e8068
-      final UnboundedArrayRef<VECTOR> sp48 = pathDotPosPtrArr_800f591c.get(this.mapState_800c6798.pathIndex_14).deref();
+      final Vector3i[] sp48 = this.pathDotPosPtrArr_800f591c[this.mapState_800c6798.pathIndex_14];
 
       final int dx;
       final int dz;
       if(area._00.get() >= 0) {
-        this.wmapStruct258_800c66a8.coord2_34.coord.transfer.set(sp48.get(0).getX(), sp48.get(0).getY() - 2, sp48.get(0).getZ());
+        this.wmapStruct258_800c66a8.coord2_34.coord.transfer.set(sp48[0].x, sp48[0].y - 2, sp48[0].z);
 
-        dx = sp48.get(0).getX() - sp48.get(1).getX();
-        dz = sp48.get(0).getZ() - sp48.get(1).getZ();
+        dx = sp48[0].x - sp48[1].x;
+        dz = sp48[0].z - sp48[1].z;
 
         this.mapState_800c6798.playerDestAngle_c0 = 0.0f;
       } else {
         //LAB_800e8190
         final int index = pathSegmentLengths_800f5810.get(Math.abs(area._00.get()) - 1).get() - 1;
-        dx = sp48.get(index).getX() - sp48.get(index - 1).getX();
-        dz = sp48.get(index).getZ() - sp48.get(index - 1).getZ();
+        dx = sp48[index].x - sp48[index - 1].x;
+        dz = sp48[index].z - sp48[index - 1].z;
 
-        this.wmapStruct258_800c66a8.coord2_34.coord.transfer.set(sp48.get(index).getX(), sp48.get(index).getY() - 2, sp48.get(index).getZ());
+        this.wmapStruct258_800c66a8.coord2_34.coord.transfer.set(sp48[index].x, sp48[index].y - 2, sp48[index].z);
 
         this.mapState_800c6798.playerDestAngle_c0 = MathHelper.PI;
       }
@@ -5811,7 +6806,7 @@ public class WMap extends EngineState {
     this.startLocationLabelsActive_800c68a8 = false;
 
     //LAB_800e89a4
-    for(int i = 0; i < 8; i++) {
+    for(int i = 0; i < 7; i++) {
       //LAB_800e89c0
       this.startButtonLabelStages_800c86d4[i] = 0;
     }
@@ -6077,9 +7072,9 @@ public class WMap extends EngineState {
 
   @Method(0x800e9418L)
   private void getPathPositions(final Vector3f playerPos, final Vector3f nextPathPos) {
-    final UnboundedArrayRef<VECTOR> dots = pathDotPosPtrArr_800f591c.get(this.mapState_800c6798.pathIndex_14).deref();
-    dots.get(this.mapState_800c6798.dotIndex_16).get(playerPos);
-    dots.get(this.mapState_800c6798.dotIndex_16 + 1).get(nextPathPos);
+    final Vector3i[] dots = this.pathDotPosPtrArr_800f591c[this.mapState_800c6798.pathIndex_14];
+    playerPos.set(dots[this.mapState_800c6798.dotIndex_16]);
+    nextPathPos.set(dots[this.mapState_800c6798.dotIndex_16 + 1]);
   }
 
   @Method(0x800e94f0L)
@@ -6143,17 +7138,17 @@ public class WMap extends EngineState {
               //LAB_800e9988
               final int pathIndex = Math.abs(sp50) - 1;
               final int dotIndex = pathSegmentLengths_800f5810.get(pathIndex).get();
-              final UnboundedArrayRef<VECTOR> dots = pathDotPosPtrArr_800f591c.get(pathIndex).deref();
-              dots.get(dotIndex - 1).get(playerPos);
-              dots.get(0).get(nextPathPos);
+              final Vector3i[] dots = this.pathDotPosPtrArr_800f591c[pathIndex];
+              playerPos.set(dots[dotIndex - 1]);
+              nextPathPos.set(dots[0]);
 
               if(pos.x == playerPos.x && pos.y == playerPos.y && pos.z == playerPos.z) {
-                dots.get(dotIndex - 2).get(this.mapState_800c6798._40[sp4c]);
+                this.mapState_800c6798._40[sp4c].set(dots[dotIndex - 2]);
                 this.mapState_800c6798._dc[sp4c] = areaIndex;
                 sp4c++;
                 //LAB_800e9bd8
               } else if(pos.x == nextPathPos.x && pos.y == nextPathPos.y && pos.z == nextPathPos.z) {
-                dots.get(1).get(this.mapState_800c6798._40[sp4c]);
+                this.mapState_800c6798._40[sp4c].set(dots[1]);
                 this.mapState_800c6798._dc[sp4c] = areaIndex;
                 sp4c++;
               }
@@ -6258,18 +7253,18 @@ public class WMap extends EngineState {
     final AreaData08 area = areaData_800f2248.get(this.mapState_800c6798.areaIndex_12);
 
     //LAB_800ea1dc
-    final UnboundedArrayRef<VECTOR> dots = pathDotPosPtrArr_800f591c.get(this.mapState_800c6798.pathIndex_14).deref();
+    final Vector3i[] dots = this.pathDotPosPtrArr_800f591c[this.mapState_800c6798.pathIndex_14];
 
-    final VECTOR dot;
+    final Vector3i dot;
     if(area._00.get() >= 0) {
-      dot = dots.get(0);
+      dot = dots[0];
     } else {
       //LAB_800ea248
-      dot = dots.get(pathSegmentLengths_800f5810.get(this.mapState_800c6798.pathIndex_14).get() - 1);
+      dot = dots[pathSegmentLengths_800f5810.get(this.mapState_800c6798.pathIndex_14).get() - 1];
     }
 
     //LAB_800ea2a8
-    if(this.mapState_800c6798._b0.x != dot.getX() || this.mapState_800c6798._b0.y != dot.getY() || this.mapState_800c6798._b0.z != dot.getZ()) {
+    if(!flEq(this.mapState_800c6798._b0.x, dot.x) || !flEq(this.mapState_800c6798._b0.y, dot.y) || !flEq(this.mapState_800c6798._b0.z, dot.z)) {
       //LAB_800ea2f8
       if(area._00.get() >= 0) {
         this.mapState_800c6798.dotIndex_16 = (short)(pathSegmentLengths_800f5810.get(Math.abs(area._00.get()) - 1).get() - 2);
@@ -6354,15 +7349,15 @@ public class WMap extends EngineState {
 
     //LAB_800ea790
     final WMapStruct258 struct258 = this.wmapStruct258_800c66a8;
-    final UnboundedArrayRef<VECTOR> dots = pathDotPosPtrArr_800f591c.get(this.mapState_800c6798.pathIndex_14).deref();
+    final Vector3i[] dots = this.pathDotPosPtrArr_800f591c[this.mapState_800c6798.pathIndex_14];
 
     final int dx;
     final int dz;
     if(area._00.get() >= 0) {
-      struct258.coord2_34.coord.transfer.set(dots.get(0).getX(), dots.get(0).getY() - 2, dots.get(0).getZ());
+      struct258.coord2_34.coord.transfer.set(dots[0].x, dots[0].y - 2, dots[0].z);
 
-      dx = dots.get(0).getX() - dots.get(1).getX();
-      dz = dots.get(0).getZ() - dots.get(1).getZ();
+      dx = dots[0].x - dots[1].x;
+      dz = dots[0].z - dots[1].z;
 
       this.mapState_800c6798.dotIndex_16 = 0;
       this.mapState_800c6798.dotOffset_18 = 0.0f;
@@ -6371,10 +7366,10 @@ public class WMap extends EngineState {
     } else {
       //LAB_800ea8d4
       final int dotIndex = pathSegmentLengths_800f5810.get(Math.abs(area._00.get()) - 1).get() - 1;
-      dx = dots.get(dotIndex).getX() - dots.get(dotIndex - 1).getX();
-      dz = dots.get(dotIndex).getZ() - dots.get(dotIndex - 1).getZ();
+      dx = dots[dotIndex].x - dots[dotIndex - 1].x;
+      dz = dots[dotIndex].z - dots[dotIndex - 1].z;
 
-      struct258.coord2_34.coord.transfer.set(dots.get(dotIndex).getX(), dots.get(dotIndex).getY() - 2, dots.get(dotIndex).getZ());
+      struct258.coord2_34.coord.transfer.set(dots[dotIndex].x, dots[dotIndex].y - 2, dots[dotIndex].z);
 
       this.mapState_800c6798.dotIndex_16 = dotIndex - 1;
       this.mapState_800c6798.dotOffset_18 = 3.0f;
@@ -6416,26 +7411,26 @@ public class WMap extends EngineState {
     this.mapState_800c6798.pathIndex_14 = Math.abs(areaData._00.get()) - 1;
 
     final WMapStruct258 struct258 = this.wmapStruct258_800c66a8;
-    final UnboundedArrayRef<VECTOR> dots = pathDotPosPtrArr_800f591c.get(this.mapState_800c6798.pathIndex_14).deref();
+    final Vector3i[] dots = this.pathDotPosPtrArr_800f591c[this.mapState_800c6798.pathIndex_14];
 
     final int dx;
     final int dz;
     if(this.mapState_800c6798.facing_1c > 0) {
       final int dotIndex = pathSegmentLengths_800f5810.get(Math.abs(areaData._00.get()) - 1).get() - 1;
-      struct258.coord2_34.coord.transfer.set(dots.get(dotIndex).getX(), dots.get(dotIndex).getY() - 2, dots.get(dotIndex).getZ());
+      struct258.coord2_34.coord.transfer.set(dots[dotIndex].x, dots[dotIndex].y - 2, dots[dotIndex].z);
       this.mapState_800c6798.dotIndex_16 = dotIndex - 1;
       this.mapState_800c6798.dotOffset_18 = 3.0f;
       this.mapState_800c6798.playerDestAngle_c0 = 0.0f;
-      dx = dots.get(dotIndex).getX() - dots.get(dotIndex - 1).getX();
-      dz = dots.get(dotIndex).getZ() - dots.get(dotIndex - 1).getZ();
+      dx = dots[dotIndex].x - dots[dotIndex - 1].x;
+      dz = dots[dotIndex].z - dots[dotIndex - 1].z;
     } else {
       //LAB_800eaf14
-      struct258.coord2_34.coord.transfer.set(dots.get(0).getX(), dots.get(0).getY() - 2, dots.get(0).getZ());
+      struct258.coord2_34.coord.transfer.set(dots[0].x, dots[0].y - 2, dots[0].z);
       this.mapState_800c6798.dotIndex_16 = 0;
       this.mapState_800c6798.dotOffset_18 = 0.0f;
       this.mapState_800c6798.playerDestAngle_c0 = MathHelper.PI;
-      dx = dots.get(0).getX() - dots.get(1).getX();
-      dz = dots.get(0).getZ() - dots.get(1).getZ();
+      dx = dots[0].x - dots[1].x;
+      dz = dots[0].z - dots[1].z;
     }
 
     //LAB_800eb00c
@@ -6482,13 +7477,13 @@ public class WMap extends EngineState {
 
     //LAB_800eb264
     final int sp18 = Math.abs(sp14) - 1;
-    final UnboundedArrayRef<VECTOR> v1 = pathDotPosPtrArr_800f591c.get(sp18).deref();
+    final Vector3i[] v1 = this.pathDotPosPtrArr_800f591c[sp18];
 
     if(sp14 > 0) {
-      v1.get(0).get(vec);
+      vec.set(v1[0]);
     } else {
       //LAB_800eb2fc
-      v1.get(pathSegmentLengths_800f5810.get(sp18).get() - 1).get(vec);
+      vec.set(v1[pathSegmentLengths_800f5810.get(sp18).get() - 1]);
     }
 
     //LAB_800eb3a8
@@ -6552,7 +7547,7 @@ public class WMap extends EngineState {
 
           //LAB_800eb694
           if(sp20 == 1) {
-            smokeTranslationVectors_800c74b8.get(effectCount).set(sp0x60[0]);
+            this.smokeTranslationVectors_800c74b8[effectCount].set(sp0x60[0]);
           } else {
             //LAB_800eb724
             sp0x30.set(sp0x60[0]);
@@ -6566,7 +7561,7 @@ public class WMap extends EngineState {
             }
 
             //LAB_800eb828
-            smokeTranslationVectors_800c74b8.get(effectCount).set(sp0x50);
+            this.smokeTranslationVectors_800c74b8[effectCount].set(sp0x50);
           }
 
           //LAB_800eb8ac
@@ -6738,7 +7733,7 @@ public class WMap extends EngineState {
       }
 
       //LAB_800ec3a8
-      if(!MathHelper.flEq(cloud.brightness_5c, 0.0f)) {
+      if(!flEq(cloud.brightness_5c, 0.0f)) {
         //LAB_800ec3c8
         final MV lsMatrix = new MV();
         GsGetLs(cloud.coord2_00, lsMatrix);
@@ -6797,7 +7792,7 @@ public class WMap extends EngineState {
                   }
 
                   //LAB_800ec798
-                  if(!MathHelper.flEq(cloud.brightness_5c, 0.0f)) {
+                  if(!flEq(cloud.brightness_5c, 0.0f)) {
                     //LAB_800ec7b8
                     GTE.perspectiveTransform(cloud.x_58, cloud.y_5a, 0);
                     final float sx3 = GTE.getScreenX(2);
@@ -6892,7 +7887,7 @@ public class WMap extends EngineState {
       }
 
       //LAB_800ed164
-      if(!MathHelper.flEq(snowflake.brightness_5c, 0.0f)) {
+      if(!flEq(snowflake.brightness_5c, 0.0f)) {
         //LAB_800ed184
         snowflake.coord2_00.coord.transfer.x += snowflake.x_58;
         snowflake.coord2_00.coord.transfer.y += snowflake.y_5a;
@@ -7095,22 +8090,22 @@ public class WMap extends EngineState {
 
               //LAB_800edebc
               //LAB_800edf88
-              smoke.coord2_00.coord.transfer.x = smokeTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
-              smoke.coord2_00.coord.transfer.y = smokeTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
-              smoke.coord2_00.coord.transfer.z = smokeTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16;
+              smoke.coord2_00.coord.transfer.x = this.smokeTranslationVectors_800c74b8[i].x + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
+              smoke.coord2_00.coord.transfer.y = this.smokeTranslationVectors_800c74b8[i].y + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
+              smoke.coord2_00.coord.transfer.z = this.smokeTranslationVectors_800c74b8[i].z + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16;
 
               if(this.mapState_800c6798.continentIndex_00 == 0) {
                 if(mode == 4) {
                   //LAB_800ee0e4
-                  smoke.coord2_00.coord.transfer.x = smokeTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
-                  smoke.coord2_00.coord.transfer.y = smokeTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
-                  smoke.coord2_00.coord.transfer.z = smokeTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 + 80;
+                  smoke.coord2_00.coord.transfer.x = this.smokeTranslationVectors_800c74b8[i].x + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
+                  smoke.coord2_00.coord.transfer.y = this.smokeTranslationVectors_800c74b8[i].y + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
+                  smoke.coord2_00.coord.transfer.z = this.smokeTranslationVectors_800c74b8[i].z + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 + 80;
                   //LAB_800ee1dc
                 } else if(mode == 8) {
                   //LAB_800ee238
-                  smoke.coord2_00.coord.transfer.x = smokeTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16 + 48;
-                  smoke.coord2_00.coord.transfer.y = smokeTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
-                  smoke.coord2_00.coord.transfer.z = smokeTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 + 48;
+                  smoke.coord2_00.coord.transfer.x = this.smokeTranslationVectors_800c74b8[i].x + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16 + 48;
+                  smoke.coord2_00.coord.transfer.y = this.smokeTranslationVectors_800c74b8[i].y + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
+                  smoke.coord2_00.coord.transfer.z = this.smokeTranslationVectors_800c74b8[i].z + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 + 48;
                 }
 
                 //LAB_800ee32c
@@ -7118,15 +8113,15 @@ public class WMap extends EngineState {
               } else if(this.mapState_800c6798.continentIndex_00 == 1) {
                 if(mode == 4) {
                   //LAB_800ee3a4
-                  smoke.coord2_00.coord.transfer.x = smokeTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
-                  smoke.coord2_00.coord.transfer.y = smokeTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4 + 48;
-                  smoke.coord2_00.coord.transfer.z = smokeTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 - 100;
+                  smoke.coord2_00.coord.transfer.x = this.smokeTranslationVectors_800c74b8[i].x + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
+                  smoke.coord2_00.coord.transfer.y = this.smokeTranslationVectors_800c74b8[i].y + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4 + 48;
+                  smoke.coord2_00.coord.transfer.z = this.smokeTranslationVectors_800c74b8[i].z + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 - 100;
                   //LAB_800ee4a0
                 } else if(mode == 8) {
                   //LAB_800ee4fc
-                  smoke.coord2_00.coord.transfer.x = smokeTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16 - 48;
-                  smoke.coord2_00.coord.transfer.y = smokeTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
-                  smoke.coord2_00.coord.transfer.z = smokeTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 + 32;
+                  smoke.coord2_00.coord.transfer.x = this.smokeTranslationVectors_800c74b8[i].x + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16 - 48;
+                  smoke.coord2_00.coord.transfer.y = this.smokeTranslationVectors_800c74b8[i].y + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
+                  smoke.coord2_00.coord.transfer.z = this.smokeTranslationVectors_800c74b8[i].z + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 + 32;
                 }
               }
 

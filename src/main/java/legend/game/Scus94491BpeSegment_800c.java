@@ -30,7 +30,7 @@ import static legend.core.GameEngine.SPU;
 public final class Scus94491BpeSegment_800c {
   private Scus94491BpeSegment_800c() { }
 
-  public static final RECT displayRect_800c34c8 = MEMORY.ref(8, 0x800c34c8L, RECT::new);
+  public static final RECT displayRect_800c34c8 = new RECT();
   /** Incremented with each frame - overflows to 1 */
   public static int PSDCNT_800c34d0;
 

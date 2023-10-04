@@ -36,11 +36,6 @@ public class RECT implements MemoryRef {
     this.h = new ShortRef(ref.offset(2, 0x6L));
   }
 
-  public RECT(final Value ref, final short x, final short y, final short w, final short h) {
-    this(ref);
-    this.set(x, y, w, h);
-  }
-
   public RECT set(final short x, final short y, final short w, final short h) {
     this.x.set(x);
     this.y.set(y);
