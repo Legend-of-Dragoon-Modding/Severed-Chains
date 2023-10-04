@@ -159,8 +159,7 @@ public final class MathHelper {
 
   /** LOD uses this a lot */
   public static float positiveAtan2(final float y, final float x) {
-    // Cast to double to use joml's fast atan2
-    return floorMod(-(float)org.joml.Math.atan2((double)y, x) + 0.75f * MathHelper.TWO_PI, MathHelper.TWO_PI);
+    return floorMod(-atan2(y, x) + 0.75f * MathHelper.TWO_PI, MathHelper.TWO_PI);
   }
 
   public static float atan2(float y, final float x) {
