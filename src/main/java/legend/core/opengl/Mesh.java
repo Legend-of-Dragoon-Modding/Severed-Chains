@@ -25,7 +25,7 @@ public class Mesh {
   private final int mode;
   private final boolean useIndices;
 
-  public Mesh(final int mode, final float[] vertices, final int[] indices) {
+  public Mesh(final int mode, final float[] vertexData, final int[] indices) {
     this.count = indices.length;
     this.mode = mode;
     this.useIndices = true;
@@ -35,7 +35,7 @@ public class Mesh {
 
     this.vbo = glGenBuffers();
     glBindBuffer(GL_ARRAY_BUFFER, this.vbo);
-    glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertexData, GL_STATIC_DRAW);
 
     this.ebo = glGenBuffers();
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this.ebo);
@@ -44,8 +44,8 @@ public class Mesh {
     glBindVertexArray(0);
   }
 
-  public Mesh(final int mode, final float[] vertices, final int count) {
-    this.count = count;
+  public Mesh(final int mode, final float[] vertexData, final int vertexCount) {
+    this.count = vertexCount;
     this.mode = mode;
     this.useIndices = false;
 
@@ -54,7 +54,7 @@ public class Mesh {
 
     this.vbo = glGenBuffers();
     glBindBuffer(GL_ARRAY_BUFFER, this.vbo);
-    glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertexData, GL_STATIC_DRAW);
 
     this.ebo = -1;
 

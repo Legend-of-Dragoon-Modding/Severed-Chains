@@ -15,8 +15,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,8 +31,10 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_MINUS;
 import static org.lwjgl.glfw.GLFW.GLFW_MOD_CONTROL;
 import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
+import static org.lwjgl.opengl.GL11C.GL_RGBA;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 import static org.lwjgl.opengl.GL11C.glDisable;
+import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8_REV;
 
 public class Gpu {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
@@ -53,6 +53,8 @@ public class Gpu {
 
   private final int[] vram24 = new int[this.vramWidth * this.vramHeight];
   private final int[] vram15 = new int[this.vramWidth * this.vramHeight];
+
+  private Texture vramTexture;
 
   private Shader vramShader;
   private Shader.UniformVec4 vramShaderColour;
@@ -139,10 +141,19 @@ public class Gpu {
     this.vramShader = ShaderManager.getShader("simple");
     this.vramShaderColour = this.vramShader.new UniformVec4("recolour");
 
+    this.vramTexture = Texture.create(builder -> {
+      builder.size(1024, 512);
+      builder.internalFormat(GL_RGBA);
+      builder.dataFormat(GL_RGBA);
+      builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
+    });
+
     this.displaySize(320, 240);
   }
 
   public void startFrame() {
+    this.vramTexture.data(0, 0, 1024, 512, this.vram24);
+
     if(this.zMax != orderingTableSize_1f8003c8.get()) {
       this.updateOrderingTableSize(orderingTableSize_1f8003c8.get());
     }
@@ -193,7 +204,8 @@ public class Gpu {
     }
 
     this.displayTexture.data(0, 0, this.displayTexture.width, this.displayTexture.height, this.getDisplayBuffer().getData());
-    this.drawMesh();
+//    this.drawMesh();
+    this.vramTexture.use();
 
     if(this.zQueues != null) {
       for(int z = this.zQueues.length - 1; z >= 0; z--) {
@@ -435,20 +447,6 @@ public class Gpu {
   public void drawingOffset(final int x, final int y) {
     this.offsetX = (short)x;
     this.offsetY = (short)y;
-  }
-
-  private Shader loadShader(final Path vsh, final Path fsh) {
-    final Shader shader;
-
-    try {
-      shader = new Shader(vsh, fsh);
-    } catch(final IOException e) {
-      throw new RuntimeException("Failed to load vram shader", e);
-    }
-
-    shader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
-    shader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
-    return shader;
   }
 
   public void updateOrderingTableSize(final int size) {

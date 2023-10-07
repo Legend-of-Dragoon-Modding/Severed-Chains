@@ -22,14 +22,13 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_M;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_TAB;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
-import static org.lwjgl.opengl.GL11C.GL_CCW;
 import static org.lwjgl.opengl.GL11C.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11C.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11C.GL_CW;
 import static org.lwjgl.opengl.GL11C.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11C.GL_DEPTH_TEST;
 import static org.lwjgl.opengl.GL11C.GL_FILL;
@@ -39,14 +38,13 @@ import static org.lwjgl.opengl.GL11C.glClear;
 import static org.lwjgl.opengl.GL11C.glClearColor;
 import static org.lwjgl.opengl.GL11C.glDisable;
 import static org.lwjgl.opengl.GL11C.glEnable;
-import static org.lwjgl.opengl.GL11C.glFrontFace;
 import static org.lwjgl.opengl.GL11C.glPolygonMode;
 import static org.lwjgl.opengl.GL11C.glViewport;
 
 public class RenderEngine {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
 
-  private static final float FOV = (float)(Math.PI / 4.0f);
+  private static final float FOV = (float)Math.toRadians(45.0f);
 
   private Camera camera2d;
   private Camera camera3d;
@@ -67,7 +65,7 @@ public class RenderEngine {
 
   private Runnable renderCallback = () -> { };
 
-  private static final float MOVE_SPEED = 0.16f;
+  private static final float MOVE_SPEED = 0.96f;
   private static final float MOUSE_SPEED = 0.00175f;
 
   private boolean firstMouse = true;
@@ -75,6 +73,8 @@ public class RenderEngine {
   private double lastY = Config.windowHeight() / 2.0f;
   private float yaw;
   private float pitch;
+
+  private boolean allowMovement;
 
   private boolean movingLeft;
   private boolean movingRight;
@@ -123,6 +123,10 @@ public class RenderEngine {
     return oldCallback;
   }
 
+  public void delete() {
+    ShaderManager.delete();
+  }
+
   public void init() {
     this.camera2d = new BasicCamera(0.0f, 0.0f);
     this.camera3d = new QuaternionCamera(0.0f, 0.0f, 0.0f);
@@ -131,10 +135,9 @@ public class RenderEngine {
 
     this.window.events.onResize(this::onResize);
 
-//    this.window.events.onMouseMove(this::onMouseMove);
-//    this.window.events.onKeyPress(this::onKeyPress);
-//    this.window.events.onKeyRelease(this::onKeyRelease);
-//    this.window.hideCursor();
+    this.window.events.onMouseMove(this::onMouseMove);
+    this.window.events.onKeyPress(this::onKeyPress);
+    this.window.events.onKeyRelease(this::onKeyRelease);
 
     try {
       final Shader simpleShader = new Shader(Paths.get("gfx/shaders/simple.vsh"), Paths.get("gfx/shaders/simple.fsh"));
@@ -143,6 +146,15 @@ public class RenderEngine {
       ShaderManager.addShader("simple", simpleShader);
     } catch(final IOException e) {
       throw new RuntimeException("Failed to load simple shader", e);
+    }
+
+    try {
+      final Shader simpleShader = new Shader(Paths.get("gfx/shaders/tmd.vsh"), Paths.get("gfx/shaders/tmd.fsh"));
+      simpleShader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
+      simpleShader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
+      ShaderManager.addShader("tmd", simpleShader);
+    } catch(final IOException e) {
+      throw new RuntimeException("Failed to load TMD shader", e);
     }
 
     try {
@@ -186,11 +198,11 @@ public class RenderEngine {
       }
 
       if(this.movingForward) {
-        this.camera3d.move(-MOVE_SPEED);
+        this.camera3d.move(MOVE_SPEED);
       }
 
       if(this.movingBackward) {
-        this.camera3d.move(MOVE_SPEED);
+        this.camera3d.move(-MOVE_SPEED);
       }
 
       if(this.movingUp) {
@@ -206,14 +218,12 @@ public class RenderEngine {
   public void setProjectionMode(final ProjectionMode projectionMode) {
     switch(projectionMode) {
       case _2D -> {
-        glFrontFace(GL_CCW);
         glDisable(GL_CULL_FACE);
         glDisable(GL_DEPTH_TEST);
         this.setTransforms(this.camera2d, this.orthographicProjection);
       }
 
       case _3D -> {
-        glFrontFace(GL_CW);
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
         this.setTransforms(this.camera3d, this.perspectiveProjection);
@@ -258,7 +268,7 @@ public class RenderEngine {
       return;
     }
 
-    this.perspectiveProjection.setPerspectiveLH(FOV, (float)width / height, 0.1f, 500.0f);
+    this.perspectiveProjection.setPerspective(FOV, (float)width / height, 0.1f, 1500.0f);
     this.orthographicProjection.setOrtho2D(0.0f, width, height, 0.0f);
 
     this.width = width;
@@ -272,41 +282,58 @@ public class RenderEngine {
       this.firstMouse = false;
     }
 
-    this.yaw   += (x - this.lastX) * MOUSE_SPEED;
-    this.pitch += (this.lastY - y) * MOUSE_SPEED;
+    if(this.allowMovement) {
+      this.yaw += (x - this.lastX) * MOUSE_SPEED;
+      this.pitch += (this.lastY - y) * MOUSE_SPEED;
 
-    this.pitch = (float)Math.max(-Math.PI / 2, Math.min(this.pitch, Math.PI / 2));
+      this.pitch = MathHelper.clamp(this.pitch, -MathHelper.PI / 2, MathHelper.PI / 2);
 
-    this.lastX = x;
-    this.lastY = y;
+      this.lastX = x;
+      this.lastY = y;
 
-    this.camera3d.look(-this.yaw, this.pitch);
+      this.camera3d.look(this.yaw, -this.pitch);
+    }
   }
 
   private void onKeyPress(final Window window, final int key, final int scancode, final int mods) {
-    switch(key) {
-      case GLFW_KEY_W -> this.movingForward = true;
-      case GLFW_KEY_S -> this.movingBackward = true;
-      case GLFW_KEY_A -> this.movingLeft = true;
-      case GLFW_KEY_D -> this.movingRight = true;
-      case GLFW_KEY_SPACE -> this.movingUp = true;
-      case GLFW_KEY_LEFT_SHIFT -> this.movingDown = true;
-      case GLFW_KEY_ESCAPE -> this.window.close();
-      case GLFW_KEY_TAB -> {
-        this.wireframeMode = !this.wireframeMode;
-        glPolygonMode(GL_FRONT_AND_BACK, this.wireframeMode ? GL_LINE : GL_FILL);
+    if(this.allowMovement) {
+      switch(key) {
+        case GLFW_KEY_W -> this.movingForward = true;
+        case GLFW_KEY_S -> this.movingBackward = true;
+        case GLFW_KEY_A -> this.movingLeft = true;
+        case GLFW_KEY_D -> this.movingRight = true;
+        case GLFW_KEY_SPACE -> this.movingUp = true;
+        case GLFW_KEY_LEFT_SHIFT -> this.movingDown = true;
+        case GLFW_KEY_ESCAPE -> this.window.close();
+        case GLFW_KEY_TAB -> {
+          this.wireframeMode = !this.wireframeMode;
+          glPolygonMode(GL_FRONT_AND_BACK, this.wireframeMode ? GL_LINE : GL_FILL);
+        }
+      }
+    }
+
+    if(key == GLFW_KEY_M) {
+      this.allowMovement = !this.allowMovement;
+      LOGGER.info("Allow movement: %b", this.allowMovement);
+
+      if(this.allowMovement) {
+        this.window.hideCursor();
+      } else {
+        this.window.showCursor();
       }
     }
   }
 
   private void onKeyRelease(final Window window, final int key, final int scancode, final int mods) {
-    switch(key) {
-      case GLFW_KEY_W -> this.movingForward = false;
-      case GLFW_KEY_S -> this.movingBackward = false;
-      case GLFW_KEY_A -> this.movingLeft = false;
-      case GLFW_KEY_D -> this.movingRight = false;
-      case GLFW_KEY_SPACE -> this.movingUp = false;
-      case GLFW_KEY_LEFT_SHIFT -> this.movingDown = false;
+    if(this.allowMovement) {
+      switch(key) {
+        case GLFW_KEY_W -> this.movingForward = false;
+        case GLFW_KEY_S -> this.movingBackward = false;
+        case GLFW_KEY_A -> this.movingLeft = false;
+        case GLFW_KEY_D -> this.movingRight = false;
+        case GLFW_KEY_SPACE -> this.movingUp = false;
+        case GLFW_KEY_LEFT_SHIFT -> this.movingDown = false;
+      }
     }
   }
 }

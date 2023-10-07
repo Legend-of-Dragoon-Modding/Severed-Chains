@@ -2,6 +2,7 @@ package legend.game.wmap;
 
 import legend.core.IoHelper;
 import legend.core.MathHelper;
+import legend.core.ProjectionMode;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
@@ -22,6 +23,8 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.core.opengl.Obj;
+import legend.core.opengl.ObjLoader;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
 import legend.game.input.Input;
@@ -58,6 +61,7 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
+import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
@@ -754,6 +758,10 @@ public class WMap extends EngineState {
     switch(this.worldMapState_800c6698) {
       case 2 -> {
         if((this.filesLoadedFlags_800c66b8.get() & 0x2) != 0 && (this.filesLoadedFlags_800c66b8.get() & 0x4) != 0) { // World map textures and mesh loaded
+//          final VramTexture textures = VramTextureLoader.stitch(this.wmapStruct258_800c66a8.mapTims.stream().map(VramTextureLoader::textureFromTim).toArray(VramTexture[]::new));
+//          final VramTexture[][] palettes = this.wmapStruct258_800c66a8.mapTims.stream().map(VramTextureLoader::palettesFromTim).toArray(VramTexture[][]::new);
+
+          this.wmapStruct258_800c66a8.mapObjs = ObjLoader.fromTmd(this.wmapStruct258_800c66a8.tmdRendering_08.tmd_14.tmd, 0);
           this.worldMapState_800c6698 = 3;
         }
       }
@@ -765,10 +773,24 @@ public class WMap extends EngineState {
       }
 
       case 4 -> this.worldMapState_800c6698 = 5;
-      case 5 -> this.renderWorldMap();
+      case 5 -> {
+        this.renderWorldMap();
+
+        RENDERER.setProjectionMode(ProjectionMode._3D);
+
+        for(final Obj obj : this.wmapStruct258_800c66a8.mapObjs) {
+          obj.render();
+        }
+
+        RENDERER.setProjectionMode(ProjectionMode._2D);
+      }
       case 6 -> this.worldMapState_800c6698 = 7;
 
       case 7 -> {
+        for(final Obj obj : this.wmapStruct258_800c66a8.mapObjs) {
+          obj.delete();
+        }
+
         this.deallocateWorldMap();
         this.worldMapState_800c6698 = 0;
       }
@@ -2349,8 +2371,13 @@ public class WMap extends EngineState {
     //LAB_800d5848
   }
 
-  @Method(0x800d5858L) //TODO loads general world map stuff (location text, doors, buttons, etc.), several blobs that may be smoke?, tons of terrain and terrain sprites
+  /** Loads general world map stuff (location text, doors, buttons, etc.), several blobs that may be smoke?, tons of terrain and terrain sprites */
+  @Method(0x800d5858L)
   private void timsLoaded(final List<FileData> files, final int fileFlag) {
+    if(fileFlag == 0x2) {
+      this.wmapStruct258_800c66a8.mapTims = files.stream().map(Tim::new).toList();
+    }
+
     //LAB_800d5874
     for(final FileData file : files) {
       //LAB_800d5898
@@ -2996,7 +3023,7 @@ public class WMap extends EngineState {
   private void loadMapModelAndTexture(final int index) {
     this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & 0xffff_fffd);
     loadDrgnDir(0, 5697 + index, files -> this.timsLoaded(files, 0x2));
-    loadDrgnFile(0, 5705 + index, files -> this.loadTmdCallback("DRGN0/" + (5705 + index), files));
+    loadDrgnFile(0, 5705 + index, files -> this.loadTmdCallback("Map model DRGN0/" + (5705 + index), files));
   }
 
   @Method(0x800d8efcL)
@@ -3364,7 +3391,7 @@ public class WMap extends EngineState {
 
         //LAB_800da8ec
         //LAB_800da8f0
-        for(int i = 0; i < 8; i++) {
+        for(int i = 0; i < 7; i++) {
           //LAB_800da90c
           this.startButtonLabelStages_800c86d4[i] = 0;
         }

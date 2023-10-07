@@ -63,6 +63,18 @@ public final class MathHelper {
     return (m & 0xff) << 15 | (b & 0xff) << 10 | (g & 0xff) << 5 | r & 0xff;
   }
 
+  public static void colourToFloat(final int colour, final float[] data, int offset) {
+    final int m = colour >>> 24 & 0xff;
+    final int b = colour >>> 16 & 0xff;
+    final int g = colour >>>  8 & 0xff;
+    final int r = colour & 0xff;
+
+    data[offset++] = r / 128.0f;
+    data[offset++] = g / 128.0f;
+    data[offset++] = b / 128.0f;
+    data[offset  ] = m / 128.0f;
+  }
+
   public static int leadingZeroBits(final short num) {
     for(int i = 0; i < 16; i++) {
       if((num & 1 << 15 - i) != 0) {
@@ -187,7 +199,7 @@ public final class MathHelper {
   }
 
   public static float floorMod(final float numerator, final float denominator) {
-    return (numerator - org.joml.Math.floor(numerator / denominator) * denominator);
+    return numerator - org.joml.Math.floor(numerator / denominator) * denominator;
   }
 
   public static void floorMod(final Vector3f numerator, final float denominator) {
@@ -246,7 +258,7 @@ public final class MathHelper {
     if(shr == 0 || val == 0) {
       return val;
     }
-    final long i = (val >> (shr - 1)) & 1;
+    final long i = val >> shr - 1 & 1;
     return (val >> shr) + i;
   }
 

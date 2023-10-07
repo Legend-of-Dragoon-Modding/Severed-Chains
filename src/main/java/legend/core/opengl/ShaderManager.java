@@ -26,4 +26,13 @@ public final class ShaderManager {
     uniformBuffers.put(name, uniformBuffer);
     return uniformBuffer;
   }
+
+  public static void delete() {
+    for(final Shader shader : shaders.values()) {
+      shader.delete();
+    }
+
+    shaders.clear();
+    uniformBuffers.clear();
+  }
 }

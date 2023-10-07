@@ -1,5 +1,6 @@
 package legend.core.opengl;
 
+import legend.core.MathHelper;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -72,11 +73,16 @@ public class QuaternionCamera implements Camera {
     //TODO: not really sure why this is necessary.  Without this, movement is rotated by Pi/2 radians (i.e. right is backwards).
     final float adjustedYaw = yaw - PiD2;
 
-    this.front.set((float)Math.cos(adjustedYaw), 0.0f, (float)Math.sin(adjustedYaw)).normalize();
+    final float sinYaw = MathHelper.sin(yaw);
+    final float cosYaw = MathHelper.cosFromSin(sinYaw, yaw);
+    final float sinAdjustedYaw = MathHelper.sin(adjustedYaw);
+    final float cosAdjustedYaw = MathHelper.cosFromSin(sinAdjustedYaw, adjustedYaw);
+
+    this.front.set(cosAdjustedYaw, 0.0f, sinAdjustedYaw).normalize();
     this.front.cross(UP, this.right).normalize();
 
     this.yaw.fromAxisAngleRad(0.0f, 1.0f, 0.0f, yaw);
-    this.pitch.fromAxisAngleRad((float)Math.cos(yaw), 0.0f, (float)Math.sin(yaw), pitch);
+    this.pitch.fromAxisAngleRad(cosYaw, 0.0f, sinYaw, pitch);
     this.yaw.mul(this.pitch);
     this.update();
   }

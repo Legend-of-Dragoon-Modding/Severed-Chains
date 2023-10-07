@@ -228,6 +228,8 @@ public final class GameEngine {
     RENDERER.init();
     GPU.init();
     RENDERER.run();
+
+    RENDERER.delete();
   }
 
   /** Returns missing mod IDs, if any */
