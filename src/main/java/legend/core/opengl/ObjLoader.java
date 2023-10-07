@@ -6,7 +6,11 @@ import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable1c;
 import legend.game.tmd.Polygon;
 import legend.game.tmd.Vertex;
+import legend.game.types.Translucency;
 import org.joml.Vector3f;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static legend.game.Scus94491BpeSegment.tmdGp0CommandId_1f8003ee;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
@@ -22,20 +26,34 @@ public final class ObjLoader {
   private static final int TPAGE_SIZE = 2;
   private static final int CLUT_SIZE = 2;
   private static final int BPP_SIZE = 1;
-  private static final int TRANSLUCENCY_SIZE = 1;
+  private static final int FLAGS_SIZE = 1;
+
+  private static final int LIT_FLAG = 0x1;
+  private static final int TEXTURED_FLAG = 0x2;
+  private static final int COLOURED_FLAG = 0x4;
+  private static final int TRANSLUCENCY_FLAG = 0x8;
 
   public static Obj[] fromTmd(final Tmd tmd, final int specialFlags) {
     final Shader shader = ShaderManager.getShader("tmd");
-    final Shader.UniformInt shaderLit = shader.new UniformInt("lit");
-    final Shader.UniformInt shaderTextured = shader.new UniformInt("textured");
-    final Shader.UniformInt shaderColoured = shader.new UniformInt("coloured");
 
     final Obj[] objs = new Obj[tmd.objTable.length];
 
     for(int objIndex = 0; objIndex < tmd.objTable.length; objIndex++) {
       final TmdObjTable1c objTable = tmd.objTable[objIndex];
-      final Mesh[] meshes = new Mesh[objTable.primitives_10.length];
-      final Runnable[] shaderSetup = new Runnable[objTable.primitives_10.length];
+
+      final int translucencyCount = Translucency.values().length + 1;
+      final float[][] allVertices = new float[translucencyCount][];
+      final int[][] allIndices = new int[translucencyCount][];
+      getTranslucencySizes(objTable, specialFlags, allVertices, allIndices);
+      final int[] vertexIndices = new int[translucencyCount];
+      final int[] vertexOffsets = new int[translucencyCount];
+      final int[] indexOffsets = new int[translucencyCount];
+
+      int vertexSize = POS_SIZE;
+      vertexSize += NORM_SIZE;
+      vertexSize += UV_SIZE + TPAGE_SIZE + CLUT_SIZE + BPP_SIZE;
+      vertexSize += COLOUR_SIZE;
+      vertexSize += FLAGS_SIZE;
 
       for(int primitiveIndex = 0; primitiveIndex < objTable.primitives_10.length; primitiveIndex++) {
         final TmdObjTable1c.Primitive primitive = objTable.primitives_10[primitiveIndex];
@@ -72,29 +90,13 @@ public final class ObjLoader {
 
         final boolean coloured = shaded || !lit || !textured;
 
-        int vertexSize = POS_SIZE;
-
-//        if(lit) { //TODO enable if we move to modular shaders
-          vertexSize += NORM_SIZE;
-//        }
-
-//        if(textured) { //TODO enable if we move to modular shaders
-          vertexSize += UV_SIZE + TPAGE_SIZE + CLUT_SIZE + BPP_SIZE + TRANSLUCENCY_SIZE;
-//        }
-
-//        if(coloured) { //TODO enable if we move to modular shaders
-          vertexSize += COLOUR_SIZE;
-//        }
-
-        final float[] vertices = new float[vertexSize * vertexCount * primitive.data().length];
-        final int[] indices = new int[(quad ? 6 : 3) * primitive.data().length];
-        int vertexIndex = 0;
-        int vertexOffset = 0;
-        int indexOffset = 0;
-
         final Polygon poly = new Polygon(vertexCount);
 
         for(final byte[] data : primitive.data()) {
+          float[] vertices = allVertices[0];
+          int[] indices = allIndices[0];
+          int translucencyIndex = 0;
+
           // Read data from TMD ---
           int primitivesOffset = 0;
 
@@ -107,6 +109,12 @@ public final class ObjLoader {
                 poly.clut = IoHelper.readUShort(data, primitivesOffset);
               } else if(tmdVertexIndex == 1) {
                 poly.tpage = IoHelper.readUShort(data, primitivesOffset);
+
+                if(translucent) {
+                  translucencyIndex = (poly.tpage >>> 5 & 0b11) + 1;
+                  vertices = allVertices[translucencyIndex];
+                  indices = allIndices[translucencyIndex];
+                }
               }
 
               primitivesOffset += 2;
@@ -142,29 +150,29 @@ public final class ObjLoader {
           }
           // ---
 
-          indices[indexOffset++] = vertexIndex + 2;
-          indices[indexOffset++] = vertexIndex + 1;
-          indices[indexOffset++] = vertexIndex;
+          indices[indexOffsets[translucencyIndex]++] = vertexIndices[translucencyIndex] + 2;
+          indices[indexOffsets[translucencyIndex]++] = vertexIndices[translucencyIndex] + 1;
+          indices[indexOffsets[translucencyIndex]++] = vertexIndices[translucencyIndex];
 
           if(quad) {
-            indices[indexOffset++] = vertexIndex + 1;
-            indices[indexOffset++] = vertexIndex + 2;
-            indices[indexOffset++] = vertexIndex + 3;
+            indices[indexOffsets[translucencyIndex]++] = vertexIndices[translucencyIndex] + 1;
+            indices[indexOffsets[translucencyIndex]++] = vertexIndices[translucencyIndex] + 2;
+            indices[indexOffsets[translucencyIndex]++] = vertexIndices[translucencyIndex] + 3;
           }
 
           for(final Vertex vertex : poly.vertices) {
             final Vector3f pos = objTable.vert_top_00[vertex.vertexIndex];
-            vertices[vertexOffset++] = -pos.x;
-            vertices[vertexOffset++] = -pos.y;
-            vertices[vertexOffset++] = pos.z;
+            vertices[vertexOffsets[translucencyIndex]++] = -pos.x;
+            vertices[vertexOffsets[translucencyIndex]++] = -pos.y;
+            vertices[vertexOffsets[translucencyIndex]++] = pos.z;
 
             if(lit) {
               final Vector3f normal = objTable.normal_top_08[vertex.normalIndex];
-              vertices[vertexOffset++] = normal.x;
-              vertices[vertexOffset++] = normal.y;
-              vertices[vertexOffset++] = normal.z;
+              vertices[vertexOffsets[translucencyIndex]++] = normal.x;
+              vertices[vertexOffsets[translucencyIndex]++] = normal.y;
+              vertices[vertexOffsets[translucencyIndex]++] = normal.z;
             } else {
-              vertexOffset += NORM_SIZE; //TODO remove if we switch to modular shaders
+              vertexOffsets[translucencyIndex] += NORM_SIZE;
             }
 
             if(textured) {
@@ -180,43 +188,64 @@ public final class ObjLoader {
                 throw new RuntimeException("Only 0/1 translucency supported");
               }
 
-              vertices[vertexOffset++] = vertex.u;
-              vertices[vertexOffset++] = vertex.v;
-              vertices[vertexOffset++] = (poly.tpage & 0b1111) * 64;
-              vertices[vertexOffset++] = (poly.tpage & 0b10000) != 0 ? 256 : 0;
-              vertices[vertexOffset++] = (poly.clut & 0b111111) * 16;
-              vertices[vertexOffset++] = poly.clut >>> 6;
-              vertices[vertexOffset++] = bpp;
-              vertices[vertexOffset++] = translucency;
+              vertices[vertexOffsets[translucencyIndex]++] = vertex.u;
+              vertices[vertexOffsets[translucencyIndex]++] = vertex.v;
+              vertices[vertexOffsets[translucencyIndex]++] = (poly.tpage & 0b1111) * 64;
+              vertices[vertexOffsets[translucencyIndex]++] = (poly.tpage & 0b10000) != 0 ? 256 : 0;
+              vertices[vertexOffsets[translucencyIndex]++] = (poly.clut & 0b111111) * 16;
+              vertices[vertexOffsets[translucencyIndex]++] = poly.clut >>> 6;
+              vertices[vertexOffsets[translucencyIndex]++] = bpp;
             } else {
-              vertexOffset += UV_SIZE + TPAGE_SIZE + CLUT_SIZE + BPP_SIZE + TRANSLUCENCY_SIZE; //TODO remove if we switch to modular shaders
+              vertexOffsets[translucencyIndex] += UV_SIZE + TPAGE_SIZE + CLUT_SIZE + BPP_SIZE;
             }
 
             if(coloured) {
-              MathHelper.colourToFloat(vertex.colour, vertices, vertexOffset);
-              vertexOffset += COLOUR_SIZE;
-            } else {
-              vertexOffset += COLOUR_SIZE; //TODO remove if we switch to modular shaders
+              MathHelper.colourToFloat(vertex.colour, vertices, vertexOffsets[translucencyIndex]);
             }
+
+            vertexOffsets[translucencyIndex] += COLOUR_SIZE;
+
+            int flags = 0;
+
+            if(lit) {
+              flags |= LIT_FLAG;
+            }
+
+            if(textured) {
+              flags |= TEXTURED_FLAG;
+            }
+
+            if(coloured) {
+              flags |= COLOURED_FLAG;
+            }
+
+            if(translucent) {
+              flags |= TRANSLUCENCY_FLAG << (poly.tpage >>> 5 & 0b11);
+            }
+
+            vertices[vertexOffsets[translucencyIndex]++] = flags;
           }
 
-          vertexIndex += vertexCount;
+          vertexIndices[translucencyIndex] += vertexCount;
         }
+      }
 
-        final Mesh mesh = new Mesh(GL_TRIANGLES, vertices, indices);
+      final List<Mesh> meshes = new ArrayList<>();
+      final List<Translucency> translucencies = new ArrayList<>();
 
-        mesh.attribute(0, 0L, 3, vertexSize);
+      for(int i = 0; i < translucencyCount; i++) {
+        if(vertexOffsets[i] != 0) {
+          final Mesh mesh = new Mesh(GL_TRIANGLES, allVertices[i], allIndices[i]);
 
-        int meshIndex = 1;
-        int meshOffset = 3;
+          mesh.attribute(0, 0L, 3, vertexSize);
 
-//        if(lit) { //TODO enable if we move to modular shaders
+          int meshIndex = 1;
+          int meshOffset = 3;
+
           mesh.attribute(meshIndex, meshOffset, NORM_SIZE, vertexSize);
           meshIndex++;
           meshOffset += NORM_SIZE;
-//        }
 
-//        if(textured) { //TODO enable if we move to modular shaders
           mesh.attribute(meshIndex, meshOffset, UV_SIZE, vertexSize);
           meshIndex++;
           meshOffset += UV_SIZE;
@@ -229,35 +258,75 @@ public final class ObjLoader {
           meshIndex++;
           meshOffset += CLUT_SIZE;
 
-        mesh.attribute(meshIndex, meshOffset, BPP_SIZE, vertexSize);
-        meshIndex++;
-        meshOffset += BPP_SIZE;
+          mesh.attribute(meshIndex, meshOffset, BPP_SIZE, vertexSize);
+          meshIndex++;
+          meshOffset += BPP_SIZE;
 
-        mesh.attribute(meshIndex, meshOffset, TRANSLUCENCY_SIZE, vertexSize);
-        meshIndex++;
-        meshOffset += TRANSLUCENCY_SIZE;
-//        }
-
-//        if(coloured) { //TODO enable if we move to modular shaders
           mesh.attribute(meshIndex, meshOffset, COLOUR_SIZE, vertexSize);
-//        }
+          meshIndex++;
+          meshOffset += COLOUR_SIZE;
 
-        meshes[primitiveIndex] = mesh;
+          mesh.attribute(meshIndex, meshOffset, FLAGS_SIZE, vertexSize);
 
-        final int litInt = lit ? 1 : 0;
-        final int texturedInt = textured ? 1 : 0;
-        final int colouredInt = coloured ? 1 : 0;
+          meshes.add(mesh);
 
-        shaderSetup[primitiveIndex] = () -> {
-          shaderLit.set(litInt);
-          shaderTextured.set(texturedInt);
-          shaderColoured.set(colouredInt);
-        };
+          if(i == 0) {
+            translucencies.add(null);
+          } else {
+            translucencies.add(Translucency.of(i - 1));
+          }
+        }
       }
 
-      objs[objIndex] = new Obj(shader, meshes, shaderSetup); //TODO update if we move to modular shaders
+      objs[objIndex] = new Obj(shader, meshes.toArray(Mesh[]::new), translucencies.toArray(Translucency[]::new));
     }
 
     return objs;
+  }
+
+  private static void getTranslucencySizes(final TmdObjTable1c objTable, final int specialFlags, final float[][] vertices, final int[][] indices) {
+    // Extra element 0 means none
+    final int translucencyCount = Translucency.values().length + 1;
+    final int[] vertexSizes = new int[translucencyCount];
+    final int[] indexSizes = new int[translucencyCount];
+
+    for(int primitiveIndex = 0; primitiveIndex < objTable.primitives_10.length; primitiveIndex++) {
+      final TmdObjTable1c.Primitive primitive = objTable.primitives_10[primitiveIndex];
+
+      final int command = (primitive.header() | specialFlags) & 0xff04_0000;
+      final int primitiveId = command >>> 24;
+
+      final boolean quad = (primitiveId & 0b1000) != 0;
+      final boolean textured = (primitiveId & 0b100) != 0;
+      final boolean translucent = ((primitiveId | specialFlags) & 0b10) != 0;
+
+      final int vertexCount = quad ? 4 : 3;
+
+      int vertexSize = POS_SIZE;
+      vertexSize += NORM_SIZE;
+      vertexSize += UV_SIZE + TPAGE_SIZE + CLUT_SIZE + BPP_SIZE;
+      vertexSize += COLOUR_SIZE;
+      vertexSize += FLAGS_SIZE;
+
+      for(final byte[] data : primitive.data()) {
+        if(!translucent || !textured) {
+          vertexSizes[0] += vertexSize * vertexCount;
+          indexSizes[0] += quad ? 6 : 3;
+        } else {
+          final int tpage = IoHelper.readUShort(data, 6);
+          final int translucency = tpage >>> 5 & 0b11;
+
+          vertexSizes[translucency + 1] += vertexSize * vertexCount;
+          indexSizes[translucency + 1] += quad ? 6 : 3;
+        }
+      }
+    }
+
+    for(int i = 0; i < vertexSizes.length; i++) {
+      if(vertexSizes[i] != 0) {
+        vertices[i] = new float[vertexSizes[i]];
+        indices[i] = new int[indexSizes[i]];
+      }
+    }
   }
 }

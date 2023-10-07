@@ -6,15 +6,15 @@ layout(location = 2) in vec2 inUv;
 layout(location = 3) in vec2 inTpage;
 layout(location = 4) in vec2 inClut;
 layout(location = 5) in float inBpp;
-layout(location = 6) in float inTranslucency;
-layout(location = 7) in vec4 inColour;
+layout(location = 6) in vec4 inColour;
+layout(location = 7) in float inFlags;
 
 smooth out vec2 vertUv;
 smooth out vec2 vertTpage;
 smooth out vec2 vertClut;
 flat out float vertBpp;
-flat out float vertTranslucency;
 smooth out vec4 vertColour;
+flat out float vertFlags;
 
 layout(std140) uniform transforms {
   mat4 camera;
@@ -33,6 +33,6 @@ void main() {
   vertTpage = inTpage;
   vertClut = inClut;
   vertBpp = inBpp;
-  vertTranslucency = inTranslucency;
   vertColour = inColour;
+  vertFlags = inFlags;
 }
