@@ -157,8 +157,8 @@ public final class ObjLoader {
 
           for(final Vertex vertex : poly.vertices) {
             final Vector3f pos = objTable.vert_top_00[vertex.vertexIndex];
-            vertices[vertexOffsets[translucencyIndex]++] = -pos.x;
-            vertices[vertexOffsets[translucencyIndex]++] = -pos.y;
+            vertices[vertexOffsets[translucencyIndex]++] = pos.x;
+            vertices[vertexOffsets[translucencyIndex]++] = pos.y;
             vertices[vertexOffsets[translucencyIndex]++] = pos.z;
 
             if(lit) {

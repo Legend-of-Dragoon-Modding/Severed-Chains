@@ -701,6 +701,8 @@ public final class Scus94491BpeSegment_8003 {
     GsMulCoord2(worldToScreenMatrix_800c3548, ls);
   }
 
+  private static final Matrix4f cameraParent = new Matrix4f();
+
   /**
    * Calculates GsWSMATRIX using the viewpoint information in pv. GsWSMATRIX doesn’t change unless the
    * viewpoint is moved, so this function should be called every frame only if the viewpoint is moved, in order for
@@ -709,15 +711,10 @@ public final class Scus94491BpeSegment_8003 {
    * It should also be called every frame if the GsRVIEW2 member super is set to anything other than WORLD,
    * because even if the other parameters are not changed, if the parameters of the superior coordinate system
    * are changed, the viewpoint will have moved.
-   *
-   * Compared to GsSetRefView2(), GsSetRefView2L() has higher precision: viewpoint wobbling caused by
-   * insufficient precision is improved. However, its execution time is doubled
    */
   @Method(0x8003dfc0L)
   public static void GsSetRefView2L(final GsRVIEW2 s2) {
-    //TODO handle super_1c
-    RENDERER.camera().moveTo(-s2.viewpoint_00.x, -s2.viewpoint_00.y, s2.viewpoint_00.z);
-    RENDERER.camera().lookAt(-s2.refpoint_0c.x, -s2.refpoint_0c.y, s2.refpoint_0c.z);
+    RENDERER.camera().lookAt(s2.viewpoint_00, s2.refpoint_0c);
 
     worldToScreenMatrix_800c3548.set(identityAspectMatrix_800c3588);
     FUN_8003d5d0(worldToScreenMatrix_800c3548, -s2.viewpointTwist_18);
@@ -766,7 +763,8 @@ public final class Scus94491BpeSegment_8003 {
       GsMulCoord2(worldToScreenMatrix_800c3548, transposedLw);
       worldToScreenMatrix_800c3548.set(transposedLw);
 
-      RENDERER.camera().getView().mul(new Matrix4f(lw).translate(lw.transfer.x, lw.transfer.y, -lw.transfer.z));
+      cameraParent.set(lw).translate(-lw.transfer.x, -lw.transfer.y, -lw.transfer.z);
+      RENDERER.camera().getView().mul(cameraParent);
     }
   }
 

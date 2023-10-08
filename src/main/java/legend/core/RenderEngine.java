@@ -374,19 +374,19 @@ public class RenderEngine {
       }
 
       if(this.movingForward) {
-        this.camera3d.move(MOVE_SPEED);
-      }
-
-      if(this.movingBackward) {
         this.camera3d.move(-MOVE_SPEED);
       }
 
+      if(this.movingBackward) {
+        this.camera3d.move(MOVE_SPEED);
+      }
+
       if(this.movingUp) {
-        this.camera3d.jump(MOVE_SPEED);
+        this.camera3d.jump(-MOVE_SPEED);
       }
 
       if(this.movingDown) {
-        this.camera3d.jump(-MOVE_SPEED);
+        this.camera3d.jump(MOVE_SPEED);
       }
     });
   }
@@ -452,7 +452,9 @@ public class RenderEngine {
     this.height = height;
 
     // Projections
-    this.perspectiveProjection.setPerspective(FOV, (float)width / height, 0.1f, 1500.0f);
+    // LOD uses a left-handed projection with a negated Y axis because reasons
+    this.perspectiveProjection.setPerspectiveLH(FOV, (float)width / height, 0.1f, 1500.0f);
+    this.perspectiveProjection.negateY();
     this.orthographicProjection.setOrtho2D(0.0f, width, height, 0.0f);
 
     // Order-independent translucency
@@ -534,7 +536,7 @@ public class RenderEngine {
       this.lastX = x;
       this.lastY = y;
 
-      this.camera3d.look(this.yaw, -this.pitch);
+      this.camera3d.look(-this.yaw, -this.pitch);
     }
   }
 

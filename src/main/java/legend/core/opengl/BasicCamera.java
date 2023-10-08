@@ -1,6 +1,5 @@
 package legend.core.opengl;
 
-import legend.core.gte.MV;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
@@ -61,7 +60,7 @@ public class BasicCamera implements Camera {
   }
 
   @Override
-  public void lookAt(final float x, final float y, final float z) {
+  public void lookAt(final Vector3f position, final Vector3f reference) {
 
   }
 
@@ -78,14 +77,6 @@ public class BasicCamera implements Camera {
   @Override
   public void get(final int index, final FloatBuffer buffer) {
 
-  }
-
-  @Override
-  public void set(final MV view) {
-    this.view.set(view);
-    this.view.m30(view.transfer.x);
-    this.view.m31(view.transfer.y);
-    this.view.m32(view.transfer.z);
   }
 
   @Override
