@@ -60,6 +60,11 @@ public class BasicCamera implements Camera {
   }
 
   @Override
+  public void lookAt(final float x, final float y, final float z) {
+
+  }
+
+  @Override
   public void get(final Shader.UniformMat4 uniform) {
 
   }

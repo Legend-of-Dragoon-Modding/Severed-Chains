@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
+import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
@@ -713,6 +714,10 @@ public final class Scus94491BpeSegment_8003 {
    */
   @Method(0x8003dfc0L)
   public static void GsSetRefView2L(final GsRVIEW2 s2) {
+    //TODO handle super_1c
+    RENDERER.camera().moveTo(-s2.viewpoint_00.x, -s2.viewpoint_00.y, s2.viewpoint_00.z);
+    RENDERER.camera().lookAt(-s2.refpoint_0c.x, -s2.refpoint_0c.y, s2.refpoint_0c.z);
+
     worldToScreenMatrix_800c3548.set(identityAspectMatrix_800c3588);
     FUN_8003d5d0(worldToScreenMatrix_800c3548, -s2.viewpointTwist_18);
 

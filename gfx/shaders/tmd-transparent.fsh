@@ -39,7 +39,6 @@ void main() {
 
   // Discard if (0, 0, 0)
   if(colour.r == 0 && colour.g == 0 && colour.b == 0) {
-    reveal = 1.0f;
     discard;
   }
 

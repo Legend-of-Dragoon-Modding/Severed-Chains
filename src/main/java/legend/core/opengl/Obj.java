@@ -17,6 +17,10 @@ public class Obj {
         this.meshes[0].draw();
       }
     } else if(this.meshes[translucency.ordinal() + 1] != null) {
+      if(translucency != Translucency.B_PLUS_F) {
+        throw new RuntimeException("Need to implement " + translucency);
+      }
+
       this.meshes[translucency.ordinal() + 1].draw();
     }
   }

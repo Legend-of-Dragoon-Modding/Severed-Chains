@@ -87,6 +87,11 @@ public class QuaternionCamera implements Camera {
     this.update();
   }
 
+  @Override
+  public void lookAt(final float x, final float y, final float z) {
+    this.view.setLookAt(this.pos.x, this.pos.y, this.pos.z, x, y, z, UP.x, UP.y, UP.z);
+  }
+
   private void update() {
     this.pos.negate(this.center);
     this.view.rotation(this.yaw);
