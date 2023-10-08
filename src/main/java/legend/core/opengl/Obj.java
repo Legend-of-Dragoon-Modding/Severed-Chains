@@ -2,60 +2,30 @@ package legend.core.opengl;
 
 import legend.game.types.Translucency;
 
-import static org.lwjgl.opengl.GL11C.GL_BLEND;
-import static org.lwjgl.opengl.GL11C.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11C.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11C.GL_ONE;
-import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11C.glBlendFunc;
-import static org.lwjgl.opengl.GL11C.glDisable;
-import static org.lwjgl.opengl.GL11C.glEnable;
+import javax.annotation.Nullable;
 
 public class Obj {
-  private final Shader shader;
   private final Mesh[] meshes;
-  private final Translucency[] translucencies;
 
-  public Obj(final Shader shader, final Mesh[] meshes, final Translucency[] translucencies) {
-    this.shader = shader;
+  public Obj(final Mesh[] meshes) {
     this.meshes = meshes;
-    this.translucencies = translucencies;
   }
 
-  public void render() {
-    this.shader.use();
-
-    for(int i = 0; i < this.meshes.length; i++) {
-      final Translucency translucency = this.translucencies[i];
-
-      if(translucency == null) {
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_CULL_FACE);
-        glDisable(GL_BLEND);
-      } else {
-        glDisable(GL_DEPTH_TEST);
-        glDisable(GL_CULL_FACE);
-        glEnable(GL_BLEND);
-
-//        glBlendEquation(GL_FUNC_SUBTRACT);
-
-        switch(translucency) {
-          case HALF_B_PLUS_HALF_F ->
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-          case B_PLUS_F ->
-            glBlendFunc(GL_ONE, GL_ONE);
-        }
+  public void render(@Nullable final Translucency translucency) {
+    if(translucency == null) {
+      if(this.meshes[0] != null) {
+        this.meshes[0].draw();
       }
-
-      this.meshes[i].draw();
+    } else if(this.meshes[translucency.ordinal() + 1] != null) {
+      this.meshes[translucency.ordinal() + 1].draw();
     }
   }
 
   public void delete() {
     for(final Mesh mesh : this.meshes) {
-      mesh.delete();
+      if(mesh != null) {
+        mesh.delete();
+      }
     }
   }
 }

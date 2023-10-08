@@ -2,7 +2,6 @@ package legend.game.wmap;
 
 import legend.core.IoHelper;
 import legend.core.MathHelper;
-import legend.core.ProjectionMode;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
@@ -758,9 +757,6 @@ public class WMap extends EngineState {
     switch(this.worldMapState_800c6698) {
       case 2 -> {
         if((this.filesLoadedFlags_800c66b8.get() & 0x2) != 0 && (this.filesLoadedFlags_800c66b8.get() & 0x4) != 0) { // World map textures and mesh loaded
-//          final VramTexture textures = VramTextureLoader.stitch(this.wmapStruct258_800c66a8.mapTims.stream().map(VramTextureLoader::textureFromTim).toArray(VramTexture[]::new));
-//          final VramTexture[][] palettes = this.wmapStruct258_800c66a8.mapTims.stream().map(VramTextureLoader::palettesFromTim).toArray(VramTexture[][]::new);
-
           this.wmapStruct258_800c66a8.mapObjs = ObjLoader.fromTmd(this.wmapStruct258_800c66a8.tmdRendering_08.tmd_14.tmd, 0);
           this.worldMapState_800c6698 = 3;
         }
@@ -776,13 +772,9 @@ public class WMap extends EngineState {
       case 5 -> {
         this.renderWorldMap();
 
-        RENDERER.setProjectionMode(ProjectionMode._3D);
-
         for(final Obj obj : this.wmapStruct258_800c66a8.mapObjs) {
-          obj.render();
+          RENDERER.queueObject(obj);
         }
-
-        RENDERER.setProjectionMode(ProjectionMode._2D);
       }
       case 6 -> this.worldMapState_800c6698 = 7;
 

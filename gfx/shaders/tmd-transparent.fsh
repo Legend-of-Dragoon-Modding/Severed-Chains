@@ -7,7 +7,8 @@ flat in float vertBpp;
 smooth in vec4 vertColour;
 flat in float vertFlags;
 
-layout(location = 0) out vec4 outColour;
+layout(location = 0) out vec4 accum;
+layout(location = 1) out float reveal;
 
 uniform sampler2D tex;
 
@@ -34,21 +35,31 @@ void main() {
   vec2 clutUv = vec2((vertClut.x + p) / 1024.0, vertClut.y / 512.0);
 
   // Pull actual pixel colour from CLUT
-  outColour = texture(tex, clutUv);
+  vec4 colour = texture(tex, clutUv);
 
   // Discard if (0, 0, 0)
-  if(outColour.r == 0 && outColour.g == 0 && outColour.b == 0) {
+  if(colour.r == 0 && colour.g == 0 && colour.b == 0) {
+    reveal = 1.0f;
     discard;
   }
 
   // Vertex colour
   if((flags & 0x4) != 0) {
-    outColour *= vertColour;
+    colour *= vertColour;
   }
 
   if((flags & 0x8) != 0) { // (B+F)/2 translucency
-    outColour.a = 0.5;
+    colour.a = 0.5;
   } else {
-    outColour.a = 1.0;
+    colour.a = 1.0;
   }
+
+  // weight function
+  float weight = clamp(pow(min(1.0, colour.a * 10.0) + 0.01, 3.0) * 1e8 * pow(1.0 - gl_FragCoord.z * 0.9, 3.0), 1e-2, 3e3);
+
+  // store pixel color accumulation
+  accum = vec4(colour.rgb * colour.a, colour.a) * weight;
+
+  // store pixel revealage threshold
+  reveal = colour.a;
 }

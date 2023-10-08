@@ -164,6 +164,14 @@ public class Gpu {
     RENDERER.window().setTitle("Legend of Dragoon - FPS: %.2f/%d scale: %d res: %dx%d".formatted(RENDERER.getFps(), RENDERER.window().getFpsLimit(), this.scale, this.displayTexture.width, this.displayTexture.height));
   }
 
+  public void useVramTexture() {
+    this.vramTexture.use();
+  }
+
+  public void useVramTexture(final int activeTexture) {
+    this.vramTexture.use(activeTexture);
+  }
+
   private void updateDisplayTexture(final int width, final int height) {
     this.windowWidth = width;
     this.windowHeight = height;
@@ -205,7 +213,7 @@ public class Gpu {
 
     this.displayTexture.data(0, 0, this.displayTexture.width, this.displayTexture.height, this.getDisplayBuffer().getData());
 //    this.drawMesh();
-    this.vramTexture.use();
+    this.useVramTexture();
 
     if(this.zQueues != null) {
       for(int z = this.zQueues.length - 1; z >= 0; z--) {

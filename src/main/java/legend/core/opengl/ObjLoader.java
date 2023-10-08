@@ -9,9 +9,6 @@ import legend.game.tmd.Vertex;
 import legend.game.types.Translucency;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static legend.game.Scus94491BpeSegment.tmdGp0CommandId_1f8003ee;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
@@ -34,8 +31,6 @@ public final class ObjLoader {
   private static final int TRANSLUCENCY_FLAG = 0x8;
 
   public static Obj[] fromTmd(final Tmd tmd, final int specialFlags) {
-    final Shader shader = ShaderManager.getShader("tmd");
-
     final Obj[] objs = new Obj[tmd.objTable.length];
 
     for(int objIndex = 0; objIndex < tmd.objTable.length; objIndex++) {
@@ -230,8 +225,7 @@ public final class ObjLoader {
         }
       }
 
-      final List<Mesh> meshes = new ArrayList<>();
-      final List<Translucency> translucencies = new ArrayList<>();
+      final Mesh[] meshes = new Mesh[translucencyCount];
 
       for(int i = 0; i < translucencyCount; i++) {
         if(vertexOffsets[i] != 0) {
@@ -268,17 +262,11 @@ public final class ObjLoader {
 
           mesh.attribute(meshIndex, meshOffset, FLAGS_SIZE, vertexSize);
 
-          meshes.add(mesh);
-
-          if(i == 0) {
-            translucencies.add(null);
-          } else {
-            translucencies.add(Translucency.of(i - 1));
-          }
+          meshes[i] = mesh;
         }
       }
 
-      objs[objIndex] = new Obj(shader, meshes.toArray(Mesh[]::new), translucencies.toArray(Translucency[]::new));
+      objs[objIndex] = new Obj(meshes);
     }
 
     return objs;
