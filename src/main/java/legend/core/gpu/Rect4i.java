@@ -37,6 +37,14 @@ public record Rect4i(int x, int y, int w, int h) {
     return new Rect4i(minX, minY, maxX - minX, maxY - minY);
   }
 
+  public int right() {
+    return this.x + this.w;
+  }
+
+  public int bottom() {
+    return this.y + this.h;
+  }
+
   public boolean contains(final int x, final int y) {
     if(x < this.x || y < this.y) {
       return false;

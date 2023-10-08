@@ -1,7 +1,7 @@
 package legend.game.saves;
 
 import legend.game.modding.events.config.ConfigUpdatedEvent;
-import legend.game.modding.registries.RegistryId;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.HashMap;
 import java.util.Map;

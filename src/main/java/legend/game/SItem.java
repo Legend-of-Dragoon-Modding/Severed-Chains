@@ -13,12 +13,10 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
-import legend.game.combat.Bttl_800c;
-import legend.game.combat.bobj.BattleObject27c;
-import legend.game.combat.bobj.PlayerBattleObject;
-import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
-import legend.game.combat.types.BattleScriptDataBase;
-import legend.game.combat.types.CombatantStruct1a8;
+import legend.game.combat.types.EnemyDrop;
+import legend.game.inventory.EquipItemResult;
+import legend.game.inventory.Equipment;
+import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
 import legend.game.inventory.screens.MainMenuScreen;
 import legend.game.inventory.screens.MenuStack;
@@ -29,18 +27,18 @@ import legend.game.modding.events.characters.AdditionHitMultiplierEvent;
 import legend.game.modding.events.characters.AdditionUnlockEvent;
 import legend.game.modding.events.characters.CharacterStatsEvent;
 import legend.game.modding.events.characters.XpToLevelEvent;
-import legend.game.modding.events.inventory.EquipmentStatsEvent;
-import legend.game.scripting.ScriptState;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CharacterData2c;
+import legend.game.types.EquipmentSlot;
 import legend.game.types.EquipmentStats1c;
 import legend.game.types.InventoryMenuState;
 import legend.game.types.LevelStuff08;
 import legend.game.types.LodString;
 import legend.game.types.MagicStuff08;
 import legend.game.types.MenuAdditionInfo;
+import legend.game.types.MenuEntries;
+import legend.game.types.MenuEntryStruct04;
 import legend.game.types.MenuGlyph06;
-import legend.game.types.MenuItemStruct04;
 import legend.game.types.MenuStatus08;
 import legend.game.types.MessageBox20;
 import legend.game.types.MessageBoxResult;
@@ -51,69 +49,52 @@ import legend.game.unpacker.FileData;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
-import static legend.core.GameEngine.SCRIPTS;
-import static legend.game.SMap.FUN_800e3fac;
 import static legend.game.Scus94491BpeSegment.FUN_80018e84;
 import static legend.game.Scus94491BpeSegment.FUN_800192d8;
 import static legend.game.Scus94491BpeSegment.FUN_80019470;
-import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
-import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
-import static legend.game.Scus94491BpeSegment.getCharacterName;
-import static legend.game.Scus94491BpeSegment.loadDir;
-import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
-import static legend.game.Scus94491BpeSegment.loadFile;
-import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
-import static legend.game.Scus94491BpeSegment.scriptStartEffect;
 import static legend.game.Scus94491BpeSegment.simpleRand;
+import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80022a94;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
 import static legend.game.Scus94491BpeSegment_8002.clearCharacterStats;
 import static legend.game.Scus94491BpeSegment_8002.clearEquipmentStats;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.getItemIcon;
 import static legend.game.Scus94491BpeSegment_8002.getJoypadInputByPriority;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
 import static legend.game.Scus94491BpeSegment_8002.giveItems;
-import static legend.game.Scus94491BpeSegment_8002.itemCantBeDiscarded;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
-import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
-import static legend.game.Scus94491BpeSegment_8004.loadingGameStateOverlay_8004dd08;
-import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndex_8004dd20;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
-import static legend.game.Scus94491BpeSegment_8005.combatants_8005e398;
 import static legend.game.Scus94491BpeSegment_8005.standingInSavePoint_8005a368;
-import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
-import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
-import static legend.game.Scus94491BpeSegment_800b._800bb168;
-import static legend.game.Scus94491BpeSegment_800b._800bc910;
-import static legend.game.Scus94491BpeSegment_800b._800bc960;
-import static legend.game.Scus94491BpeSegment_800b._800bc968;
-import static legend.game.Scus94491BpeSegment_800b._800bc97c;
 import static legend.game.Scus94491BpeSegment_800b._800bdc2c;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.confirmDest_800bdc30;
-import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
+import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920;
 import static legend.game.Scus94491BpeSegment_800b.inventoryJoypadInput_800bdc44;
 import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
-import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemiesCount_800bc978;
 import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928;
+import static legend.game.Scus94491BpeSegment_800b.livingCharCount_800bc97c;
+import static legend.game.Scus94491BpeSegment_800b.livingCharIds_800bc968;
+import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
@@ -125,18 +106,9 @@ import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
+import static legend.game.Scus94491BpeSegment_800b.unlockedUltimateAddition_800bc910;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static legend.game.combat.Bttl_800c.addCombatant;
-import static legend.game.combat.Bttl_800c.allBobjCount_800c66d0;
-import static legend.game.combat.Bttl_800c.charCount_800c677c;
-import static legend.game.combat.Bttl_800c.characterElements_800c706c;
-import static legend.game.combat.Bttl_800c.combatantCount_800c66a0;
-import static legend.game.combat.Bttl_800c.combatantTmdAndAnimLoadedCallback;
-import static legend.game.combat.Bttl_800c.getCombatant;
-import static legend.game.combat.Bttl_800c.loadCombatantTim;
-import static legend.game.combat.Bttl_800c.loadCombatantTmdAndAnims;
 import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
-import static legend.game.combat.Bttl_800f.FUN_800f863c;
 
 public final class SItem {
   private SItem() { }
@@ -164,8 +136,6 @@ public final class SItem {
 
   public static final ArrayRef<Pointer<ArrayRef<LevelStuff08>>> levelStuff_80111cfc = MEMORY.ref(4, 0x80111cfcL, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(LevelStuff08.class)), 9, 4, Pointer.deferred(4, ArrayRef.of(LevelStuff08.class, 61, 8, LevelStuff08::new))));
   public static final ArrayRef<Pointer<ArrayRef<MagicStuff08>>> magicStuff_80111d20 = MEMORY.ref(4, 0x80111d20L, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(MagicStuff08.class)), 9, 4, Pointer.deferred(4, ArrayRef.of(MagicStuff08.class, 6, 8, MagicStuff08::new))));
-
-  public static final Value _80111d38 = MEMORY.ref(4, 0x80111d38L);
 
   public static final EquipmentStats1c[] equipmentStats_80111ff0 = new EquipmentStats1c[192];
   public static final int[] kongolXpTable_801134f0 = new int[61];
@@ -204,7 +174,7 @@ public final class SItem {
 
   public static final ArrayRef<Pointer<LodString>> itemDescriptions_80117a10 = MEMORY.ref(4, 0x80117a10L, ArrayRef.of(Pointer.classFor(LodString.class), 256, 4, Pointer.deferred(4, LodString::new)));
 
-  public static final ArrayRef<Pointer<LodString>> equipment_8011972c = MEMORY.ref(4, 0x8011972cL, ArrayRef.of(Pointer.classFor(LodString.class), 256, 4, Pointer.deferred(4, LodString::new)));
+  public static final ArrayRef<Pointer<LodString>> itemNames_8011972c = MEMORY.ref(4, 0x8011972cL, ArrayRef.of(Pointer.classFor(LodString.class), 256, 4, Pointer.deferred(4, LodString::new)));
 
   public static final ArrayRef<Pointer<LodString>> additions_8011a064 = MEMORY.ref(4, 0x8011a064L, ArrayRef.of(Pointer.classFor(LodString.class), 43, 4, Pointer.deferred(4, LodString::new)));
 
@@ -287,155 +257,6 @@ public final class SItem {
 
   public static final EnumRef<MessageBoxResult> msgboxResult_8011e1e8 = MEMORY.ref(4, 0x8011e1e8L, EnumRef.of(MessageBoxResult.values()));
 
-  @Method(0x800fbd78L)
-  public static void allocatePlayerBattleObjects() {
-    //LAB_800fbdb8
-    for(charCount_800c677c.set(0); charCount_800c677c.get() < 3; charCount_800c677c.incr()) {
-      if(gameState_800babc8.charIds_88[charCount_800c677c.get()] < 0) {
-        break;
-      }
-    }
-
-    //LAB_800fbde8
-    final long fp = _80111d38.offset(charCount_800c677c.get() * 0xcL).getAddress();
-    final int[] charIndices = new int[charCount_800c677c.get()];
-
-    //LAB_800fbe18
-    for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      charIndices[charSlot] = addCombatant(0x200 + gameState_800babc8.charIds_88[charSlot] * 2, charSlot);
-    }
-
-    //LAB_800fbe4c
-    //LAB_800fbe70
-    for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      final int charIndex = gameState_800babc8.charIds_88[charSlot];
-      final String name = "Char ID " + charIndex + " (bobj + " + (charSlot + 6) + ')';
-      final ScriptState<PlayerBattleObject> state = SCRIPTS.allocateScriptState(charSlot + 6, name, 0, new PlayerBattleObject(name, charSlot + 6));
-      state.setTicker(Bttl_800c::bobjTicker);
-      state.setDestructor(Bttl_800c::bobjDestructor);
-      battleState_8006e398.allBobjs_e0c[allBobjCount_800c66d0.get()] = state;
-      battleState_8006e398.charBobjs_e40[charSlot] = state;
-      final PlayerBattleObject bobj = state.innerStruct_00;
-      bobj.magic_00 = BattleScriptDataBase.BOBJ;
-      bobj.element = characterElements_800c706c[charIndex].get();
-      bobj.combatant_144 = getCombatant((short)charIndices[charSlot]);
-      bobj.charId_272 = charIndex;
-      bobj.bobjIndex_274 = allBobjCount_800c66d0.get();
-      bobj.charSlot_276 = charSlot;
-      bobj.combatantIndex_26c = charIndices[charSlot];
-      bobj.model_148.coord2_14.coord.transfer.setX((int)MEMORY.ref(2, fp).offset(charSlot * 0x4L).offset(0x0L).getSigned());
-      bobj.model_148.coord2_14.coord.transfer.setY(0);
-      bobj.model_148.coord2_14.coord.transfer.setZ((int)MEMORY.ref(2, fp).offset(charSlot * 0x4L).offset(0x2L).getSigned());
-      bobj.model_148.coord2Param_64.rotate.set((short)0, (short)0x400, (short)0);
-      allBobjCount_800c66d0.incr();
-    }
-
-    //LAB_800fbf6c
-    battleState_8006e398.allBobjs_e0c[allBobjCount_800c66d0.get()] = null;
-    battleState_8006e398.charBobjs_e40[charCount_800c677c.get()] = null;
-
-    FUN_800f863c();
-    decrementOverlayCount();
-  }
-
-  @Method(0x800fbfe0L)
-  public static void loadEncounterAssets() {
-    loadSupportOverlay(2, () -> SItem.loadEnemyTextures(2625 + encounterId_800bb0f8.get()));
-
-    //LAB_800fc030
-    for(int i = 0; i < combatantCount_800c66a0.get(); i++) {
-      if(getCombatant(i).charSlot_19c < 0) { // I think this means it's not a player
-        loadCombatantTmdAndAnims(i);
-      }
-
-      //LAB_800fc050
-    }
-
-    //LAB_800fc064
-    //LAB_800fc09c
-    for(int i = 0; i < charCount_800c677c.get(); i++) {
-      combatants_8005e398[battleState_8006e398.charBobjs_e40[i].innerStruct_00.combatantIndex_26c].flags_19e |= 0x2a;
-    }
-
-    //LAB_800fc104
-    loadSupportOverlay(2, SItem::deferLoadPartyTims);
-    loadSupportOverlay(2, SItem::deferLoadPartyTmdAndAnims);
-    _800bc960.or(0x400);
-    decrementOverlayCount();
-  }
-
-  @Method(0x800fc210L)
-  public static void loadCharTmdAndAnims(final List<FileData> files, final int charSlot) {
-    //LAB_800fc260
-    final BattleObject27c data = battleState_8006e398.charBobjs_e40[charSlot].innerStruct_00;
-
-    //LAB_800fc298
-    combatantTmdAndAnimLoadedCallback(files, data.combatantIndex_26c, false);
-
-    //LAB_800fc34c
-    _800bc960.or(0x4);
-    decrementOverlayCount();
-  }
-
-  @Method(0x800fc3c0L)
-  public static void loadEnemyTextures(final int fileIndex) {
-    // Example file: 2856
-    loadDrgnDir(0, fileIndex, SItem::enemyTexturesLoadedCallback);
-  }
-
-  @Method(0x800fc404L)
-  public static void enemyTexturesLoadedCallback(final List<FileData> files) {
-    final BattlePreloadedEntities_18cb0 s2 = battlePreloadedEntities_1f8003f4;
-
-    //LAB_800fc434
-    for(int i = 0; i < combatantCount_800c66a0.get(); i++) {
-      final CombatantStruct1a8 a0 = getCombatant(i);
-
-      if(a0.charSlot_19c < 0) {
-        final int enemyIndex = a0.charIndex_1a2 & 0x1ff;
-
-        //LAB_800fc464
-        for(int enemySlot = 0; enemySlot < 3; enemySlot++) {
-          if((s2.encounterData_00.enemyIndices_00[enemySlot] & 0x1ff) == enemyIndex && files.get(enemySlot).hasVirtualSize()) {
-            loadCombatantTim(i, files.get(enemySlot));
-            break;
-          }
-        }
-      }
-    }
-
-    //LAB_800fc4cc
-    decrementOverlayCount();
-  }
-
-  @Method(0x800fc504L)
-  public static void deferLoadPartyTims() {
-    for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      final int charId = gameState_800babc8.charIds_88[charSlot];
-      final String name = getCharacterName(charId).toLowerCase();
-      final int finalCharSlot = charSlot;
-      loadFile("characters/%s/textures/combat".formatted(name), files -> SItem.loadCharacterTim(files, finalCharSlot));
-    }
-  }
-
-  @Method(0x800fc548L)
-  public static void loadCharacterTim(final FileData file, final int charSlot) {
-    final BattleObject27c bobj = battleState_8006e398.charBobjs_e40[charSlot].innerStruct_00;
-    loadCombatantTim(bobj.combatantIndex_26c, file);
-
-    decrementOverlayCount();
-  }
-
-  @Method(0x800fc654L)
-  public static void deferLoadPartyTmdAndAnims() {
-    for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      final int charId = gameState_800babc8.charIds_88[charSlot];
-      final String name = getCharacterName(charId).toLowerCase();
-      final int finalCharSlot = charSlot;
-      loadDir("characters/%s/models/combat".formatted(name), files -> SItem.loadCharTmdAndAnims(files, finalCharSlot));
-    }
-  }
-
   @Method(0x800fc698L)
   public static int getXpToNextLevel(final int charIndex) {
     if(charIndex == -1 || charIndex > 8) {
@@ -512,7 +333,7 @@ public final class SItem {
         messageBox_8011dc90.state_0c = 0;
         loadCharacterStats();
 
-        if(mainCallbackIndex_8004dd20.get() == 8) {
+        if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {
           gameState_800babc8.isOnWorldMap_4e4 = true;
           canSave_8011dc88.set(true);
         } else {
@@ -555,19 +376,19 @@ public final class SItem {
             whichMenu_800bdc38 = WhichMenu.UNLOAD_SAVE_GAME_MENU_20;
 
           case RENDER_CHAR_SWAP_MENU_24 -> {
-            scriptStartEffect(2, 10);
+            startFadeEffect(2, 10);
             whichMenu_800bdc38 = WhichMenu.UNLOAD_CHAR_SWAP_MENU_25;
           }
 
+          case QUIT -> startFadeEffect(2, 10);
+
           default -> {
-            scriptStartEffect(2, 10);
+            startFadeEffect(2, 10);
             whichMenu_800bdc38 = WhichMenu.UNLOAD_INVENTORY_MENU_5;
           }
         }
 
-        if(mainCallbackIndex_8004dd20.get() == 5 && loadingGameStateOverlay_8004dd08.get() == 0) {
-          FUN_800e3fac();
-        }
+        currentEngineState_8004dd04.menuClosed();
 
         textZ_800bdf00.set(13);
       }
@@ -711,60 +532,27 @@ public final class SItem {
   }
 
   @Method(0x801039a0L)
-  public static boolean canEquip(final int equipmentId, final int charIndex) {
-    return charIndex != -1 && equipmentId < 0xc0 && (characterValidEquipment_80114284.offset(charIndex).get() & equipmentStats_80111ff0[equipmentId].equipableFlags_03) != 0;
-  }
-
-  @Method(0x801039f8L)
-  public static int getEquipmentSlot(final int itemId) {
-    if(itemId < 0xc0) {
-      final int type = equipmentStats_80111ff0[itemId].type_01;
-
-      //LAB_80103a2c
-      for(int i = 0; i < 5; i++) {
-        if((type & 0x80 >> i) != 0) {
-          return i;
-        }
-
-        //LAB_80103a44
-      }
-    }
-
-    //LAB_80103a54
-    return -1;
+  public static boolean canEquip(final Equipment equipment, final int charIndex) {
+    return (characterValidEquipment_80114284.offset(charIndex).get() & equipment.equipableFlags_03) != 0;
   }
 
   /**
    * @return Item ID of previously-equipped item, 0xff if invalid, 0x100 if no item was equipped
    */
   @Method(0x80103a5cL)
-  public static int equipItem(final int equipmentId, final int charIndex) {
-    if(charIndex == -1) {
-      return 0xff;
-    }
-
-    if((!canEquip(equipmentId, charIndex))) {
-      return 0xff;
-    }
-
-    final int slot = getEquipmentSlot(equipmentId);
-    if(slot == -1) {
-      //LAB_80103ab8
-      return 0xff;
+  public static EquipItemResult equipItem(final Equipment equipment, final int charIndex) {
+    if((!canEquip(equipment, charIndex))) {
+      return EquipItemResult.failure();
     }
 
     //LAB_80103ac0
     final CharacterData2c charData = gameState_800babc8.charData_32c[charIndex];
-    int previousId = charData.equipment_14[slot];
-    charData.equipment_14[slot] = equipmentId;
-
-    if(previousId == 0xff) {
-      previousId = 0x100;
-    }
+    final Equipment previousEquipment = charData.equipment_14.get(equipment.slot);
+    charData.equipment_14.put(equipment.slot, equipment);
 
     //LAB_80103af4
     //LAB_80103af8
-    return previousId;
+    return EquipItemResult.success(previousEquipment);
   }
 
   @Method(0x80103b10L)
@@ -839,50 +627,47 @@ public final class SItem {
   }
 
   @Method(0x80104738L)
-  public static int loadItemsAndEquipmentForDisplay(final List<MenuItemStruct04> equipment, final List<MenuItemStruct04> items, final long a0) {
-    equipment.clear();
-    items.clear();
+  public static void loadItemsAndEquipmentForDisplay(@Nullable final MenuEntries<Equipment> equipments, @Nullable final MenuEntries<Item> items, final long a0) {
+    if(items != null) {
+      items.clear();
 
-    for(int i = 0; i < gameState_800babc8.items_2e9.size(); i++) {
-      final MenuItemStruct04 item = new MenuItemStruct04();
-      item.itemId_00 = gameState_800babc8.items_2e9.getInt(i);
-      item.flags_02 = 0;
-      items.add(item);
+      for(int i = 0; i < gameState_800babc8.items_2e9.size(); i++) {
+        final Item item = gameState_800babc8.items_2e9.get(i);
+        final MenuEntryStruct04<Item> menuEntry = MenuEntryStruct04.make(item);
+        items.add(menuEntry);
+      }
     }
 
-    int equipmentIndex;
-    for(equipmentIndex = 0; equipmentIndex < gameState_800babc8.equipment_1e8.size(); equipmentIndex++) {
-      final MenuItemStruct04 item = new MenuItemStruct04();
+    if(equipments != null) {
+      equipments.clear();
 
-      item.itemId_00 = gameState_800babc8.equipment_1e8.getInt(equipmentIndex);
-      item.flags_02 = 0;
+      int equipmentIndex;
+      for(equipmentIndex = 0; equipmentIndex < gameState_800babc8.equipment_1e8.size(); equipmentIndex++) {
+        final Equipment equipment = gameState_800babc8.equipment_1e8.get(equipmentIndex);
+        final MenuEntryStruct04<Equipment> menuEntry = MenuEntryStruct04.make(equipment);
 
-      if(a0 != 0 && itemCantBeDiscarded(gameState_800babc8.equipment_1e8.getInt(equipmentIndex))) {
-        item.flags_02 |= 0x2000;
+        if(a0 != 0 && !gameState_800babc8.equipment_1e8.get(equipmentIndex).canBeDiscarded()) {
+          menuEntry.flags_02 = 0x2000;
+        }
+
+        equipments.add(menuEntry);
       }
 
-      equipment.add(item);
-    }
+      if(a0 == 0) {
+        for(int i = 0; i < characterCount_8011d7c4.get(); i++) {
+          for(final EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
+            if(gameState_800babc8.charData_32c[characterIndices_800bdbb8.get(i).get()].equipment_14.get(equipmentSlot) != null) {
+              final Equipment equipment = gameState_800babc8.charData_32c[characterIndices_800bdbb8.get(i).get()].equipment_14.get(equipmentSlot);
+              final MenuEntryStruct04<Equipment> menuEntry = MenuEntryStruct04.make(equipment);
+              menuEntry.flags_02 = 0x3000 | characterIndices_800bdbb8.get(i).get();
+              equipments.add(menuEntry);
 
-    int equippedItemsCount = 0;
-
-    if(a0 == 0) {
-      for(int i = 0; i < characterCount_8011d7c4.get(); i++) {
-        for(int equipmentSlot = 0; equipmentSlot < 5; equipmentSlot++) {
-          if(gameState_800babc8.charData_32c[characterIndices_800bdbb8.get(i).get()].equipment_14[equipmentSlot] != 0xff) {
-            final MenuItemStruct04 item = new MenuItemStruct04();
-            item.itemId_00 = gameState_800babc8.charData_32c[characterIndices_800bdbb8.get(i).get()].equipment_14[equipmentSlot];
-            item.flags_02 = 0x3000 | characterIndices_800bdbb8.get(i).get();
-            equipment.add(item);
-
-            equippedItemsCount++;
-            equipmentIndex++;
+              equipmentIndex++;
+            }
           }
         }
       }
     }
-
-    return equippedItemsCount;
   }
 
   public static int loadAdditions(final int charIndex, @Nullable final MenuAdditionInfo[] additions) {
@@ -1478,22 +1263,23 @@ public final class SItem {
   }
 
   @Method(0x801085e0L)
-  public static void renderCharacterStats(final int charIndex, final int equipmentId, final boolean allocate) {
+  public static void renderCharacterStats(final int charIndex, @Nullable final Equipment equipment, final boolean allocate) {
     if(charIndex != -1) {
       final ActiveStatsa0 statsTmp;
 
-      if(equipmentId != 0xff) {
-        final int[] oldEquipment = Arrays.copyOf(gameState_800babc8.charData_32c[charIndex].equipment_14, 5);
+      if(equipment != null) {
+        final Map<EquipmentSlot, Equipment> oldEquipment = new EnumMap<>(gameState_800babc8.charData_32c[charIndex].equipment_14);
 
         //LAB_80108638
-        equipItem(equipmentId, charIndex);
+        equipItem(equipment, charIndex);
         loadCharacterStats();
 
         //LAB_80108694
         statsTmp = new ActiveStatsa0(stats_800be5f8[charIndex]);
 
         //LAB_801086e8
-        System.arraycopy(oldEquipment, 0, gameState_800babc8.charData_32c[charIndex].equipment_14, 0, 5);
+        gameState_800babc8.charData_32c[charIndex].equipment_14.clear();
+        gameState_800babc8.charData_32c[charIndex].equipment_14.putAll(oldEquipment);
 
         loadCharacterStats();
       } else {
@@ -1572,58 +1358,32 @@ public final class SItem {
     if(allocate) {
       allocateUiElement(0x59, 0x59, 194, 16);
 
-      if(charData.equipment_14[0] != 0xff) {
-        renderItemIcon(getItemIcon(charData.equipment_14[0]), 202, 17, 0);
-      }
-
-      //LAB_80108ee4
-      if(charData.equipment_14[1] != 0xff) {
-        renderItemIcon(getItemIcon(charData.equipment_14[1]), 202, 31, 0);
-      }
-
-      //LAB_80108f10
-      if(charData.equipment_14[2] != 0xff) {
-        renderItemIcon(getItemIcon(charData.equipment_14[2]), 202, 45, 0);
-      }
-
-      //LAB_80108f3c
-      if(charData.equipment_14[3] != 0xff) {
-        renderItemIcon(getItemIcon(charData.equipment_14[3]), 202, 59, 0);
-      }
-
-      //LAB_80108f68
-      if(charData.equipment_14[4] != 0xff) {
-        renderItemIcon(getItemIcon(charData.equipment_14[4]), 202, 73, 0);
+      for(final EquipmentSlot slot : EquipmentSlot.values()) {
+        if(charData.equipment_14.get(slot) != null) {
+          renderItemIcon(charData.equipment_14.get(slot).icon_0e, 202, 17 + 14 * slot.ordinal(), 0);
+        }
       }
     }
 
     //LAB_80108f94
     //LAB_80108f98
-    renderText(new LodString(getItemName(charData.equipment_14[0])), 220, 19, TextColour.BROWN);
-    renderText(new LodString(getItemName(charData.equipment_14[1])), 220, 33, TextColour.BROWN);
-    renderText(new LodString(getItemName(charData.equipment_14[2])), 220, 47, TextColour.BROWN);
-    renderText(new LodString(getItemName(charData.equipment_14[3])), 220, 61, TextColour.BROWN);
-    renderText(new LodString(getItemName(charData.equipment_14[4])), 220, 75, TextColour.BROWN);
+    for(final EquipmentSlot slot : EquipmentSlot.values()) {
+      if(charData.equipment_14.get(slot) != null) {
+        renderText(new LodString(charData.equipment_14.get(slot).name), 220, 19 + slot.ordinal() * 14, TextColour.BROWN);
+      }
+    }
 
     //LAB_8010905c
   }
 
-  public static String getItemName(final int itemId) {
-    if(itemId < 0xc0) {
-      return equipmentStats_80111ff0[itemId].name;
-    }
-
-    return itemStats_8004f2ac[itemId - 0xc0].name;
-  }
-
-  public static String getItemDescription(final int itemId) {
-    if(itemId < 0xc0) {
-      return equipmentStats_80111ff0[itemId].description;
-    }
-
-    return itemStats_8004f2ac[itemId - 0xc0].description;
-  }
-
+  /**
+   * String types:
+   * <ul>
+   *   <li>0 - item descriptions (removed)</li>
+   *   <li>1 - ?</li>
+   *   <li>2 - Dabas</li>
+   * </ul>
+   */
   @Method(0x80109074L)
   public static void renderString(final int stringType, final int x, final int y, final int stringIndex, final boolean allocate) {
     if(allocate) {
@@ -1633,12 +1393,7 @@ public final class SItem {
     //LAB_801090e0
     LodString s0 = null;
     if(stringType == 0) {
-      //LAB_80109118
-      if(stringIndex == 0xff) {
-        return;
-      }
-
-      s0 = new LodString(getItemDescription(stringIndex));
+      throw new RuntimeException("Use renderString overload");
     } else if(stringType == 1) {
       //LAB_8010912c
       if(stringIndex >= 0xff) {
@@ -1697,18 +1452,65 @@ public final class SItem {
     //LAB_80109284
   }
 
+  @Method(0x80109074L)
+  public static void renderString(final int x, final int y, final String string, final boolean allocate) {
+    if(allocate) {
+      allocateUiElement(0x5b, 0x5b, x, y);
+    }
+
+    //LAB_801090e0
+    LodString s0 = new LodString(string);
+
+    //LAB_80109160
+    //LAB_80109168
+    //LAB_80109188
+    for(int i = 0; i < 4; i++) {
+      int s4 = 0;
+      final int len = Math.min(textLength(s0), 20);
+      final LodString s3 = new LodString(len + 1);
+
+      //LAB_801091bc
+      //LAB_801091cc
+      int a1;
+      for(a1 = 0; a1 < len; a1++) {
+        if(s0.charAt(a1) == 0xa1ffL) {
+          //LAB_8010924c
+          s4 = 1;
+          break;
+        }
+
+        s3.charAt(a1, s0.charAt(a1));
+      }
+
+      //LAB_801091fc
+      s3.charAt(a1, 0xa0ff);
+
+      renderText(s3, x + 2, y + i * 14 + 4, TextColour.BROWN);
+
+      if(textLength(s3) > len) {
+        //LAB_80109270
+        break;
+      }
+
+      //LAB_80109254
+      s0 = s0.slice(textLength(s3) + s4);
+    }
+
+    //LAB_80109284
+  }
+
   @Method(0x80109410L)
-  public static void renderMenuItems(final int x, final int y, final List<MenuItemStruct04> menuItems, final int slotScroll, final int itemCount, @Nullable final Renderable58 a5, @Nullable final Renderable58 a6) {
+  public static void renderMenuItems(final int x, final int y, final MenuEntries<?> menuItems, final int slotScroll, final int itemCount, @Nullable final Renderable58 a5, @Nullable final Renderable58 a6) {
     int s3 = slotScroll;
 
     //LAB_8010947c
     int i;
     for(i = 0; i < itemCount && s3 < menuItems.size(); i++) {
-      final MenuItemStruct04 menuItem = menuItems.get(s3);
+      final MenuEntryStruct04<?> menuItem = menuItems.get(s3);
 
       //LAB_801094ac
-      renderText(new LodString(getItemName(menuItem.itemId_00)), x + 21, y + FUN_800fc814(i) + 2, (menuItem.flags_02 & 0x6000) == 0 ? TextColour.BROWN : TextColour.MIDDLE_BROWN);
-      renderItemIcon(getItemIcon(menuItem.itemId_00), x + 4, y + FUN_800fc814(i), 0x8L);
+      renderText(new LodString(menuItem.getName()), x + 21, y + FUN_800fc814(i) + 2, (menuItem.flags_02 & 0x6000) == 0 ? TextColour.BROWN : TextColour.MIDDLE_BROWN);
+      renderItemIcon(menuItem.getIcon(), x + 4, y + FUN_800fc814(i), 0x8L);
 
       final int s0 = menuItem.flags_02;
       if((s0 & 0x1000) != 0) {
@@ -1744,11 +1546,6 @@ public final class SItem {
     }
   }
 
-  @Method(0x8010a808L)
-  public static int FUN_8010a808(final int index) {
-    return index * 17 + 18;
-  }
-
   /**
    * @return True if there is remaining XP to give
    */
@@ -1767,7 +1564,7 @@ public final class SItem {
 
     //LAB_8010cc70
     final int cappedPendingXp;
-    if((joypadPress_8007a398.get() & 0x20L) != 0 || pendingXp < 10) {
+    if((press_800bee94.get() & 0x20) != 0 || pendingXp < 10) {
       cappedPendingXp = pendingXp;
     } else {
       cappedPendingXp = 10;
@@ -1961,8 +1758,8 @@ public final class SItem {
 
     if(charIndex != -1) {
       //LAB_8010d36c
-      for(int i = 0; i < _800bc97c.get(); i++) {
-        if(_800bc968.offset(i * 0x4L).get() == charIndex) {
+      for(int i = 0; i < livingCharCount_800bc97c.get(); i++) {
+        if(livingCharIds_800bc968.get(i).get() == charIndex) {
           return true;
         }
 
@@ -2001,26 +1798,26 @@ public final class SItem {
   }
 
   @Method(0x8010d598L)
-  public static int FUN_8010d598(final int charSlot) {
+  public static int getUltimateAdditionIdIfUnlocked(final int charSlot) {
     final int charIndex = gameState_800babc8.charIds_88[charSlot];
 
     if(charIndex == -1) {
       return 0;
     }
 
-    if(_800bc910.offset(charSlot * 0x4L).get() == 0) {
+    if(!unlockedUltimateAddition_800bc910[charSlot]) {
       //LAB_8010d5d0
       return 0;
     }
 
     //LAB_8010d5d8
-    final int a0 = additionOffsets_8004f5ac.get(charIndex).get() + additionCounts_8004f5c0.get(charIndex).get();
-    if(a0 == -1) {
+    final int additionId = additionOffsets_8004f5ac.get(charIndex).get() + additionCounts_8004f5c0.get(charIndex).get();
+    if(additionId == -1) {
       return 0;
     }
 
     //LAB_8010d60c
-    return a0;
+    return additionId;
   }
 
   @Method(0x8010d614L)
@@ -2040,14 +1837,14 @@ public final class SItem {
 
       case AWAIT_INIT_1:
         if(uiFile_800bdc3c != null) {
-          scriptStartEffect(2, 10);
+          startFadeEffect(2, 10);
           inventoryMenuState_800bdc28.set(InventoryMenuState._2);
         }
         break;
 
       case _2:
-        if(_800bb168.get() == 0) {
-          deallocateRenderables(0xffL);
+        if(fullScreenEffect_800bb140.currentColour_28 == 0) {
+          deallocateRenderables(0xff);
           Renderable58 glyph = FUN_8010cfa0(0, 0, 165, 21, 720, 497);
           glyph._34 = 0;
           glyph._38 = 0;
@@ -2062,15 +1859,6 @@ public final class SItem {
           FUN_8010cfa0(0x3d, 0x3d, 24, 40, 736, 497);
           FUN_8010cfa0(0x40, 0x40, 24, 52, 736, 497);
 
-          //LAB_8010d81c
-          for(int i = 0; i < 6; i++) {
-            if(i >= itemsDroppedByEnemiesCount_800bc978.get()) {
-              itemsDroppedByEnemies_800bc928.get(i).set(0xff);
-            }
-
-            //LAB_8010d830
-          }
-
           cacheCharacterSlots();
 
           //LAB_8010d87c
@@ -2082,9 +1870,9 @@ public final class SItem {
             pendingXp_8011e180.get(i).set(0);
           }
 
-          additionsUnlocked_8011e1b8.get(0).set(FUN_8010d598(0));
-          additionsUnlocked_8011e1b8.get(1).set(FUN_8010d598(1));
-          additionsUnlocked_8011e1b8.get(2).set(FUN_8010d598(2));
+          additionsUnlocked_8011e1b8.get(0).set(getUltimateAdditionIdIfUnlocked(0));
+          additionsUnlocked_8011e1b8.get(1).set(getUltimateAdditionIdIfUnlocked(1));
+          additionsUnlocked_8011e1b8.get(2).set(getUltimateAdditionIdIfUnlocked(2));
 
           xpDivisor_8011e174.set(0);
           for(int charSlot = 0; charSlot < 3; charSlot++) {
@@ -2118,7 +1906,7 @@ public final class SItem {
         break;
 
       case INIT_MAIN_MENU_3:
-        if((joypadPress_8007a398.get() & 0x20L) != 0) {
+        if((press_800bee94.get() & 0x20) != 0) {
           //LAB_8010da84
           if(goldGainedFromCombat_800bc920.get() == 0) {
             inventoryMenuState_800bdc28.set(InventoryMenuState._5);
@@ -2132,7 +1920,7 @@ public final class SItem {
 
       case MAIN_MENU_4:
         final int goldTick;
-        if((joypadPress_8007a398.get() & 0x20L) != 0) {
+        if((press_800bee94.get() & 0x20) != 0) {
           goldTick = goldGainedFromCombat_800bc920.get();
         } else {
           //LAB_8010dab4
@@ -2194,7 +1982,7 @@ public final class SItem {
           if(additionsUnlocked_8011e1b8.get(0).get() + additionsUnlocked_8011e1b8.get(1).get() + additionsUnlocked_8011e1b8.get(2).get() == 0) {
             //LAB_8010dc9c
             inventoryMenuState_800bdc28.set(InventoryMenuState.REPLACE_INIT_8);
-          } else if((joypadPress_8007a398.get() & 0x20L) != 0) {
+          } else if((press_800bee94.get() & 0x20) != 0) {
             playSound(0x2L);
             _8011e178.setu(0);
             inventoryMenuState_800bdc28.set(InventoryMenuState.CONFIG_6);
@@ -2209,7 +1997,7 @@ public final class SItem {
           _8011e178.addu(0x2L);
         } else {
           //LAB_8010dcc8
-          if((joypadPress_8007a398.get() & 0x20L) != 0) {
+          if((press_800bee94.get() & 0x20) != 0) {
             playSound(0x2L);
 
             //LAB_8010dcf0
@@ -2240,8 +2028,8 @@ public final class SItem {
           //LAB_8010dd90
           inventoryMenuState_800bdc28.set(InventoryMenuState.REPLACE_MENU_10);
         } else if(_8011e1c8.offset(_8011e170.get()).get() != 0) {
-          FUN_800192d8(-0x50L, 0x2cL);
-          playSound(0x9L);
+          FUN_800192d8(-80, 44);
+          playSound(9);
           inventoryMenuState_800bdc28.set(InventoryMenuState._9);
         } else {
           //LAB_8010dd88
@@ -2254,7 +2042,7 @@ public final class SItem {
       case _9:
         FUN_8010e708(24, 152, secondaryCharIndices_800bdbf8.get((int)(_8011e170.get() - 3)).get());
 
-        if((joypadPress_8007a398.get() & 0x60L) != 0) {
+        if((press_800bee94.get() & 0x60) != 0) {
           playSound(0x2L);
           _8011e1c8.offset(_8011e170.get()).setu(0);
           inventoryMenuState_800bdc28.set(InventoryMenuState.REPLACE_INIT_8);
@@ -2283,7 +2071,7 @@ public final class SItem {
         break;
 
       case _11:
-        if((joypadPress_8007a398.get() & 0x20L) != 0) {
+        if((press_800bee94.get() & 0x20) != 0) {
           _8011e178.setu(0);
           playSound(0x2L);
 
@@ -2299,7 +2087,7 @@ public final class SItem {
           _8011e178.addu(0x2L);
         } else {
           //LAB_8010def4
-          if((joypadPress_8007a398.get() & 0x20L) != 0) {
+          if((press_800bee94.get() & 0x20) != 0) {
             playSound(0x2L);
 
             //LAB_8010df1c
@@ -2329,10 +2117,10 @@ public final class SItem {
         break;
 
       case _14:
-        if((joypadPress_8007a398.get() & 0x60L) != 0) {
+        if((press_800bee94.get() & 0x60) != 0) {
           playSound(3);
 
-          if(itemsDroppedByEnemiesCount_800bc978.get() == 0 || (giveItems(itemsDroppedByEnemies_800bc928, itemsDroppedByEnemiesCount_800bc978) & 0xff) == 0) {
+          if(itemsDroppedByEnemies_800bc928.isEmpty() || giveItems(itemsDroppedByEnemies_800bc928) == 0) {
             //LAB_8010dfac
             // No items remaining
             FUN_8010d050(InventoryMenuState._18, 0x1L);
@@ -2351,13 +2139,13 @@ public final class SItem {
         break;
 
       case LIST_INIT_16:
-        scriptStartEffect(1, 10);
+        startFadeEffect(1, 10);
         inventoryMenuState_800bdc28.set(InventoryMenuState._17);
 
       case _17:
         FUN_8010e9a8(0);
 
-        if(_800bb168.get() >= 0xff) {
+        if(fullScreenEffect_800bb140.currentColour_28 >= 0xff) {
           inventoryMenuState_800bdc28.set(confirmDest_800bdc30.get());
           FUN_80019470();
         }
@@ -2365,8 +2153,8 @@ public final class SItem {
         break;
 
       case _18:
-        scriptStartEffect(2, 10);
-        deallocateRenderables(0xffL);
+        startFadeEffect(2, 10);
+        deallocateRenderables(0xff);
         uiFile_800bdc3c = null;
         whichMenu_800bdc38 = WhichMenu.UNLOAD_POST_COMBAT_REPORT_30;
         textZ_800bdf00.set(13);
@@ -2567,11 +2355,9 @@ public final class SItem {
     y2 = 64;
 
     //LAB_8010eae0
-    for(int i = 0; i < itemsDroppedByEnemiesCount_800bc978.get(); i++) {
-      if(itemsDroppedByEnemies_800bc928.get(i).get() != 0xff) {
-        renderItemIcon(getItemIcon(itemsDroppedByEnemies_800bc928.get(i).get()), 18, y1, 0x8L);
-        renderText(new LodString(getItemName(itemsDroppedByEnemies_800bc928.get(i).get())), 28, y2, TextColour.WHITE);
-      }
+    for(final EnemyDrop enemyDrop : itemsDroppedByEnemies_800bc928) {
+      renderItemIcon(enemyDrop.icon, 18, y1, 0x8L);
+      renderText(new LodString(enemyDrop.name), 28, y2, TextColour.WHITE);
 
       //LAB_8010eb38
       y2 += 16;
@@ -2776,7 +2562,8 @@ public final class SItem {
       stats.dlevel_0f = statsEvent.dlevel;
 
       //LAB_801101e4
-      System.arraycopy(charData.equipment_14, 0, stats.equipment_30, 0, 5);
+      stats.equipment_30.clear();
+      stats.equipment_30.putAll(charData.equipment_14);
 
       stats.selectedAddition_35 = charData.selectedAddition_19;
 
@@ -2894,67 +2681,68 @@ public final class SItem {
     final ActiveStatsa0 characterStats = stats_800be5f8[charId];
 
     //LAB_801108b0
-    for(int equipmentSlot = 0; equipmentSlot < 5; equipmentSlot++) {
-      final int equipmentId = stats_800be5f8[charId].equipment_30[equipmentSlot];
+    for(final EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
+      final Equipment equipment = stats_800be5f8[charId].equipment_30.get(equipmentSlot);
 
-      if(equipmentId != 0xff) {
-        final EquipmentStatsEvent event = EVENTS.postEvent(new EquipmentStatsEvent(charId, equipmentId, equipmentStats_80111ff0[equipmentId]));
+      if(equipment != null) {
+        //TODO
+//        final EquipmentStatsEvent event = EVENTS.postEvent(new EquipmentStatsEvent(charId, equipment, equipmentStats_80111ff0[equipment]));
 
-        characterStats.specialEffectFlag_76 |= event.equipment.flags_00;
-        characterStats.equipmentType_77 |= event.equipment.type_01;
-        characterStats.equipment_02_78 |= event.equipment._02;
-        characterStats.equipmentEquipableFlags_79 |= event.equipment.equipableFlags_03;
-        characterStats.equipmentAttackElements_7a.addAll(event.equipment.attackElement_04);
-        characterStats.equipment_05_7b |= event.equipment._05;
-        characterStats.equipmentElementalResistance_7c.addAll(event.equipment.elementalResistance_06);
-        characterStats.equipmentElementalImmunity_7d.addAll(event.equipment.elementalImmunity_07);
-        characterStats.equipmentStatusResist_7e |= event.equipment.statusResist_08;
-        characterStats.equipment_09_7f |= event.equipment._09;
-        characterStats.equipmentAttack1_80 += event.equipment.attack1_0a;
-        characterStats.equipmentIcon_84 += event.equipment.icon_0e;
-        characterStats.equipmentSpeed_86 += event.equipment.speed_0f;
-        characterStats.equipmentAttack_88 += event.equipment.attack2_10 + event.equipment.attack1_0a;
-        characterStats.equipmentMagicAttack_8a += event.equipment.magicAttack_11;
-        characterStats.equipmentDefence_8c += event.equipment.defence_12;
-        characterStats.equipmentMagicDefence_8e += event.equipment.magicDefence_13;
-        characterStats.equipmentAttackHit_90 += event.equipment.attackHit_14;
-        characterStats.equipmentMagicHit_92 += event.equipment.magicHit_15;
-        characterStats.equipmentAttackAvoid_94 += event.equipment.attackAvoid_16;
-        characterStats.equipmentMagicAvoid_96 += event.equipment.magicAvoid_17;
-        characterStats.equipmentOnHitStatusChance_98 += event.equipment.onHitStatusChance_18;
-        characterStats.equipment_19_99 += event.equipment._19;
-        characterStats.equipment_1a_9a += event.equipment._1a;
-        characterStats.equipmentOnHitStatus_9b |= event.equipment.onHitStatus_1b;
+        characterStats.specialEffectFlag_76 |= equipment.flags_00;
+//        characterStats.equipmentType_77 |= equipment.type_01;
+        characterStats.equipment_02_78 |= equipment._02;
+        characterStats.equipmentEquipableFlags_79 |= equipment.equipableFlags_03;
+        characterStats.equipmentAttackElements_7a.addAll(equipment.attackElement_04);
+        characterStats.equipment_05_7b |= equipment._05;
+        characterStats.equipmentElementalResistance_7c.addAll(equipment.elementalResistance_06);
+        characterStats.equipmentElementalImmunity_7d.addAll(equipment.elementalImmunity_07);
+        characterStats.equipmentStatusResist_7e |= equipment.statusResist_08;
+        characterStats.equipment_09_7f |= equipment._09;
+        characterStats.equipmentAttack1_80 += equipment.attack1_0a;
+        characterStats.equipmentIcon_84 += equipment.icon_0e;
+        characterStats.equipmentSpeed_86 += equipment.speed_0f;
+        characterStats.equipmentAttack_88 += equipment.attack2_10 + equipment.attack1_0a;
+        characterStats.equipmentMagicAttack_8a += equipment.magicAttack_11;
+        characterStats.equipmentDefence_8c += equipment.defence_12;
+        characterStats.equipmentMagicDefence_8e += equipment.magicDefence_13;
+        characterStats.equipmentAttackHit_90 += equipment.attackHit_14;
+        characterStats.equipmentMagicHit_92 += equipment.magicHit_15;
+        characterStats.equipmentAttackAvoid_94 += equipment.attackAvoid_16;
+        characterStats.equipmentMagicAvoid_96 += equipment.magicAvoid_17;
+        characterStats.equipmentOnHitStatusChance_98 += equipment.onHitStatusChance_18;
+        characterStats.equipment_19_99 += equipment._19;
+        characterStats.equipment_1a_9a += equipment._1a;
+        characterStats.equipmentOnHitStatus_9b |= equipment.onHitStatus_1b;
 
-        characterStats.equipmentMpPerMagicalHit_54 += event.equipment.mpPerMagicalHit;
-        characterStats.equipmentSpPerMagicalHit_52 += event.equipment.spPerMagicalHit;
-        characterStats.equipmentMpPerPhysicalHit_50 += event.equipment.mpPerPhysicalHit;
-        characterStats.equipmentSpPerPhysicalHit_4e += event.equipment.spPerPhysicalHit;
-        characterStats.equipmentHpMulti_62 += event.equipment.hpMultiplier;
-        characterStats.equipmentMpMulti_64 += event.equipment.mpMultiplier;
-        characterStats.equipmentSpMultiplier_4c += event.equipment.spMultiplier;
+        characterStats.equipmentMpPerMagicalHit_54 += equipment.mpPerMagicalHit;
+        characterStats.equipmentSpPerMagicalHit_52 += equipment.spPerMagicalHit;
+        characterStats.equipmentMpPerPhysicalHit_50 += equipment.mpPerPhysicalHit;
+        characterStats.equipmentSpPerPhysicalHit_4e += equipment.spPerPhysicalHit;
+        characterStats.equipmentHpMulti_62 += equipment.hpMultiplier;
+        characterStats.equipmentMpMulti_64 += equipment.mpMultiplier;
+        characterStats.equipmentSpMultiplier_4c += equipment.spMultiplier;
 
-        if(event.equipment.magicalResistance) {
+        if(equipment.magicalResistance) {
           characterStats.equipmentMagicalResistance_60 = true;
         }
 
-        if(event.equipment.physicalResistance) {
+        if(equipment.physicalResistance) {
           characterStats.equipmentPhysicalResistance_4a = true;
         }
 
-        if(event.equipment.magicalImmunity) {
+        if(equipment.magicalImmunity) {
           characterStats.equipmentMagicalImmunity_48 = true;
         }
 
-        if(event.equipment.physicalImmunity) {
+        if(equipment.physicalImmunity) {
           characterStats.equipmentPhysicalImmunity_46 = true;
         }
 
-        characterStats.equipmentRevive_5e += event.equipment.revive;
-        characterStats.equipmentHpRegen_58 += event.equipment.hpRegen;
-        characterStats.equipmentMpRegen_5a += event.equipment.mpRegen;
-        characterStats.equipmentSpRegen_5c += event.equipment.spRegen;
-        characterStats.equipmentSpecial2Flag80_56 += event.equipment.special2Flag80;
+        characterStats.equipmentRevive_5e += equipment.revive;
+        characterStats.equipmentHpRegen_58 += equipment.hpRegen;
+        characterStats.equipmentMpRegen_5a += equipment.mpRegen;
+        characterStats.equipmentSpRegen_5c += equipment.spRegen;
+        characterStats.equipmentSpecial2Flag80_56 += equipment.special2Flag80;
       }
     }
   }

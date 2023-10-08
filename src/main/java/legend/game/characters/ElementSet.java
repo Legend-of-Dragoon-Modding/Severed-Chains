@@ -1,7 +1,7 @@
 package legend.game.characters;
 
 import legend.core.GameEngine;
-import legend.game.modding.registries.RegistryId;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.HashSet;
 import java.util.Iterator;

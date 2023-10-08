@@ -1,6 +1,6 @@
 package legend.game.modding.events.characters;
 
-import legend.game.modding.events.Event;
+import org.legendofdragoon.modloader.events.Event;
 
 public class XpToLevelEvent extends Event {
   public int charId;

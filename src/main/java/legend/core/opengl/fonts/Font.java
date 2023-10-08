@@ -125,7 +125,7 @@ public class Font {
     for(int i = 0; i < text.length(); i++) {
       stbtt_GetPackedQuad(this.charData, BITMAP_W, BITMAP_H, text.charAt(i), this.xb, this.yb, this.q, font == 0 && this.integerAlign);
 
-      final float scale = GameEngine.GPU.window().getScale();
+      final float scale = GameEngine.RENDERER.window().getScale();
 
       System.arraycopy(new float[] {
         this.q.x0() / scale, (this.q.y1() + 12.0f) / scale, 0.0f, this.q.s0(), this.q.t1(),

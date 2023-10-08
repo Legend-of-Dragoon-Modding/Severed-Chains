@@ -1,42 +1,48 @@
 package legend.game;
 
 import legend.core.gpu.Bpp;
-import legend.core.gte.MATRIX;
+import legend.core.gte.MV;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.EnumMapRef;
 import legend.core.memory.types.EnumRef;
 import legend.core.memory.types.IntRef;
-import legend.core.memory.types.Pointer;
-import legend.core.memory.types.UnsignedByteRef;
-import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.combat.environment.BattleStage;
+import legend.game.combat.types.EnemyDrop;
+import legend.game.combat.ui.BattleDissolveDarkeningMetrics10;
+import legend.game.inventory.Equipment;
+import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
 import legend.game.scripting.ScriptState;
+import legend.game.sound.EncounterSoundEffects10;
 import legend.game.sound.QueuedSound28;
 import legend.game.sound.SequenceData124;
 import legend.game.sound.SoundFile;
 import legend.game.sound.SpuStruct08;
-import legend.game.sound.EncounterSoundEffects10;
+import legend.game.submap.SobjPos14;
 import legend.game.types.ActiveStatsa0;
+import legend.game.types.FullScreenEffect;
 import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.InventoryMenuState;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
 import legend.game.types.Renderable58;
-import legend.game.types.ScriptEffectStruct;
-import legend.game.types.SobjPos14;
-import legend.game.types.Struct84;
 import legend.game.types.TexPageY;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
+import legend.game.types.TextboxText84;
 import legend.game.types.Translucency;
 import legend.game.types.UiFile;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static legend.core.GameEngine.MEMORY;
 
@@ -49,7 +55,7 @@ public final class Scus94491BpeSegment_800b {
 
   // End of game state 800bb0f4
 
-  public static final IntRef combatStage_800bb0f4 = MEMORY.ref(4, 0x800bb0f4L, IntRef::new);
+  public static final IntRef battleStage_800bb0f4 = MEMORY.ref(4, 0x800bb0f4L, IntRef::new);
   public static final IntRef encounterId_800bb0f8 = MEMORY.ref(4, 0x800bb0f8L, IntRef::new);
   public static final IntRef tickCount_800bb0fc = MEMORY.ref(4, 0x800bb0fcL, IntRef::new);
 
@@ -57,35 +63,39 @@ public final class Scus94491BpeSegment_800b {
 
   public static final IntRef pregameLoadingStage_800bb10c = MEMORY.ref(4, 0x800bb10cL, IntRef::new);
   public static final EnumMapRef<Bpp, EnumMapRef<Translucency, EnumMapRef<TexPageY, UnsignedShortRef>>> texPages_800bb110 = MEMORY.ref(2, 0x800bb110L, EnumMapRef.of(Bpp.class, EnumMapRef.classFor(EnumMapRef.classFor(UnsignedShortRef.class)), Bpp.values().length, 0x10, EnumMapRef.of(Translucency.class, EnumMapRef.classFor(UnsignedShortRef.class), Translucency.values().length, 4, EnumMapRef.of(TexPageY.class, UnsignedShortRef.class, 2, 2, UnsignedShortRef::new))));
-  public static final ScriptEffectStruct scriptEffect_800bb140 = MEMORY.ref(4, 0x800bb140L, ScriptEffectStruct::new);
-  public static final IntRef _800bb168 = MEMORY.ref(4, 0x800bb168L, IntRef::new); //TODO is this part of the previous struct?
+  public static final FullScreenEffect fullScreenEffect_800bb140 = new FullScreenEffect();
 
-  public static final ArrayRef<UnsignedIntRef> array_800bb198 = MEMORY.ref(4, 0x800bb198L, ArrayRef.of(UnsignedIntRef.class, 36, 4, UnsignedIntRef::new));
-
-  public static final Value _800bb228 = MEMORY.ref(4, 0x800bb228L);
-
-  public static final Value _800bb348 = MEMORY.ref(4, 0x800bb348L);
-
-  public static final IntRef drgnBinIndex_800bc058 = MEMORY.ref(4, 0x800bc058L, IntRef::new);
-  public static final IntRef _800bc05c = MEMORY.ref(4, 0x800bc05cL, IntRef::new);
+  public static int drgnBinIndex_800bc058;
 
   public static final ScriptState<?>[] scriptStatePtrArr_800bc1c0 = new ScriptState[72];
 
-  /** TODO vec3 or maybe 3 values indexed by char slot? */
-  public static final Value _800bc910 = MEMORY.ref(4, 0x800bc910L);
-  public static final Value _800bc914 = MEMORY.ref(4, 0x800bc914L);
-  public static final Value _800bc918 = MEMORY.ref(4, 0x800bc918L);
-  public static final IntRef postCombatMainCallbackIndex_800bc91c = MEMORY.ref(4, 0x800bc91cL, IntRef::new);
+  public static final boolean[] unlockedUltimateAddition_800bc910 = new boolean[3];
+  public static EngineStateEnum postCombatMainCallbackIndex_800bc91c = EngineStateEnum.PRELOAD_00;
   public static final IntRef goldGainedFromCombat_800bc920 = MEMORY.ref(4, 0x800bc920L, IntRef::new);
 
-  public static final ArrayRef<IntRef> itemsDroppedByEnemies_800bc928 = MEMORY.ref(4, 0x800bc928L, ArrayRef.of(IntRef.class, 9, 4, IntRef::new));
-  public static final Value _800bc94c = MEMORY.ref(4, 0x800bc94cL);
+  public static final List<EnemyDrop> itemsDroppedByEnemies_800bc928 = new ArrayList<>();
+  public static final List<Item> itemOverflow = new ArrayList<>();
+  public static final List<Equipment> equipmentOverflow = new ArrayList<>();
+  public static final BoolRef battleLoaded_800bc94c = MEMORY.ref(4, 0x800bc94cL, BoolRef::new);
   public static final ArrayRef<IntRef> spGained_800bc950 = MEMORY.ref(4, 0x800bc950L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
   public static final IntRef totalXpFromCombat_800bc95c = MEMORY.ref(4, 0x800bc95cL, IntRef::new);
-  public static final IntRef _800bc960 = MEMORY.ref(4, 0x800bc960L, IntRef::new);
+  /**
+   * <ul>
+   *   <li>0x1 - battle start delay period has elapsed</li>
+   *   <li>0x2 - combat controller script loaded</li>
+   *   <li>0x4 - monster models loaded</li>
+   *   <li>0x8 - character models loaded</li>
+   *   <li>0x10 - initial turn values calculated</li>
+   *   <li>0x40 - viewport/camera initialized</li>
+   *   <li>0x80 - something related to skybox MCQ</li>
+   *   <li>0x100 - possibly set by a script to signify monsters are fully loaded</li>
+   *   <li>0x200 - possibly set by a script to signify characters are fully loaded</li>
+   *   <li>0x400 - encounter assets have been requested from the filesystem (may still be loading)</li>
+   * </ul>
+   */
+  public static final IntRef battleFlags_800bc960 = MEMORY.ref(4, 0x800bc960L, IntRef::new);
 
-  public static final Value _800bc968 = MEMORY.ref(4, 0x800bc968L);
-
+  public static final ArrayRef<IntRef> livingCharIds_800bc968 = MEMORY.ref(4, 0x800bc968L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
   /**
    * <ol>
    *   <li value="1">Combat victory</li>
@@ -93,9 +103,9 @@ public final class Scus94491BpeSegment_800b {
    *   <li value="4">FMV</li>
    * </ol>
    */
-  public static final IntRef postBattleAction_800bc974 = MEMORY.ref(4, 0x800bc974L, IntRef::new);
-  public static final IntRef itemsDroppedByEnemiesCount_800bc978 = MEMORY.ref(4, 0x800bc978L, IntRef::new);
-  public static final Value _800bc97c = MEMORY.ref(4, 0x800bc97cL);
+  public static final IntRef postBattleActionIndex_800bc974 = MEMORY.ref(4, 0x800bc974L, IntRef::new);
+
+  public static final IntRef livingCharCount_800bc97c = MEMORY.ref(4, 0x800bc97cL, IntRef::new);
 
   /** One per voice */
   public static final SpuStruct08[] _800bc9a8 = new SpuStruct08[24];
@@ -107,16 +117,13 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bca6c = MEMORY.ref(4, 0x800bca6cL);
 
-  public static final QueuedSound28[] playingSoundsBackup_800bca78 = new QueuedSound28[32];
-  static {
-    Arrays.setAll(playingSoundsBackup_800bca78, i -> new QueuedSound28());
-  }
+  public static final Queue<QueuedSound28> playingSoundsBackup_800bca78 = new LinkedList<>();
 
   /**
    * Bits:
    * 0 - MRG @ 62802 - audio
    */
-  public static final Value loadedDrgnFiles_800bcf78 = MEMORY.ref(4, 0x800bcf78L);
+  public static final AtomicInteger loadedDrgnFiles_800bcf78 = new AtomicInteger();
 
   public static final SoundFile[] soundFiles_800bcf80 = new SoundFile[13];
   static {
@@ -128,52 +135,50 @@ public final class Scus94491BpeSegment_800b {
   public static SequenceData124 currentSequenceData_800bd0f8;
 
   public static final Value _800bd0fc = MEMORY.ref(4, 0x800bd0fcL);
-  public static final IntRef sssqTempoScale_800bd100 = MEMORY.ref(4, 0x800bd100L, IntRef::new);
-  public static final IntRef sssqTempo_800bd104 = MEMORY.ref(4, 0x800bd104L, IntRef::new);
-  public static final Value sequenceVolume_800bd108 = MEMORY.ref(2, 0x800bd108L);
+  public static int sssqTempoScale_800bd100;
+  public static int sssqTempo_800bd104;
+  public static int sequenceVolume_800bd108;
 
-  public static final QueuedSound28[] queuedSounds_800bd110 = new QueuedSound28[32];
-  static {
-    Arrays.setAll(queuedSounds_800bd110, i -> new QueuedSound28());
-  }
+  public static final Queue<QueuedSound28> queuedSounds_800bd110 = new LinkedList<>();
   /** NOTE: this used to be an array, but only the 6th element was used */
   public static final EncounterSoundEffects10 encounterSoundEffects_800bd610 = new EncounterSoundEffects10();
 
   public static final Value _800bd6f8 = MEMORY.ref(4, 0x800bd6f8L);
 
-  public static final Value _800bd700 = MEMORY.ref(1, 0x800bd700L);
-  public static final Value _800bd704 = MEMORY.ref(4, 0x800bd704L);
-  public static final Value _800bd708 = MEMORY.ref(4, 0x800bd708L);
-  public static final Value _800bd70c = MEMORY.ref(4, 0x800bd70cL);
+  public static final BattleDissolveDarkeningMetrics10 dissolveDarkening_800bd700 = new BattleDissolveDarkeningMetrics10();
   public static final Value _800bd710 = MEMORY.ref(4, 0x800bd710L);
   public static final Value _800bd714 = MEMORY.ref(4, 0x800bd714L);
+  public static int battleDissolveTicks;
 
   public static final Value _800bd740 = MEMORY.ref(4, 0x800bd740L);
 
   public static final Value _800bd774 = MEMORY.ref(4, 0x800bd774L);
 
-  public static final BoolRef melbuSoundsLoaded_800bd780 = MEMORY.ref(1, 0x800bd780L, BoolRef::new);
-  public static final BoolRef melbuMusicLoaded_800bd781 = MEMORY.ref(1, 0x800bd781L, BoolRef::new);
-  public static final UnsignedByteRef musicLoaded_800bd782 = MEMORY.ref(1, 0x800bd782L, UnsignedByteRef::new);
+  public static boolean melbuSoundsLoaded_800bd780;
+  public static boolean melbuMusicLoaded_800bd781;
+  public static boolean musicLoaded_800bd782;
 
-  public static final Value _800bd7ac = MEMORY.ref(4, 0x800bd7acL);
+  public static final BoolRef _800bd7ac = MEMORY.ref(4, 0x800bd7acL, BoolRef::new);
   public static final IntRef _800bd7b0 = MEMORY.ref(4, 0x800bd7b0L, IntRef::new);
-  public static final Value _800bd7b4 = MEMORY.ref(2, 0x800bd7b4L);
+  public static final BoolRef submapFullyLoaded_800bd7b4 = MEMORY.ref(2, 0x800bd7b4L, BoolRef::new);
 
-  public static final Value _800bd7b8 = MEMORY.ref(4, 0x800bd7b8L);
+  public static final BoolRef transitioningFromCombatToSubmap_800bd7b8 = MEMORY.ref(4, 0x800bd7b8L, BoolRef::new);
 
   public static final GsRVIEW2 rview2_800bd7e8 = new GsRVIEW2();
-  public static final IntRef submapIndex_800bd808 = MEMORY.ref(4, 0x800bd808L, IntRef::new);
-  public static final Value _800bd80c = MEMORY.ref(4, 0x800bd80cL);
+  public static final IntRef submapId_800bd808 = MEMORY.ref(4, 0x800bd808L, IntRef::new);
+
   public static final Value projectionPlaneDistance_800bd810 = MEMORY.ref(4, 0x800bd810L);
 
-  public static final ArrayRef<SobjPos14> sobjPositions_800bd818 = MEMORY.ref(4, 0x800bd818L, ArrayRef.of(SobjPos14.class, 24, 0x14, SobjPos14::new));
+  public static final SobjPos14[] sobjPositions_800bd818 = new SobjPos14[24];
+  static {
+    Arrays.setAll(sobjPositions_800bd818, i -> new SobjPos14());
+  }
 
   public static final IntRef _800bda08 = MEMORY.ref(4, 0x800bda08L, IntRef::new);
   public static BattleStage stage_800bda0c;
-  public static final Model124 model_800bda10 = new Model124("Oval blob");
+  public static final Model124 shadowModel_800bda10 = new Model124("Shadow");
 
-  public static final IntRef _800bdb88 = MEMORY.ref(4, 0x800bdb88L, IntRef::new);
+  public static EngineStateEnum previousEngineState_800bdb88 = EngineStateEnum.PRELOAD_00;
 
   public static Renderable58 saveListUpArrow_800bdb94;
   public static Renderable58 saveListDownArrow_800bdb98;
@@ -229,11 +234,8 @@ public final class Scus94491BpeSegment_800b {
   public static final Value _800bdf04 = MEMORY.ref(4, 0x800bdf04L);
   public static final Value _800bdf08 = MEMORY.ref(4, 0x800bdf08L);
 
-  public static final Value _800bdf10 = MEMORY.ref(4, 0x800bdf10L);
-
-  public static final Value _800bdf18 = MEMORY.ref(4, 0x800bdf18L);
-
-  public static final Struct84[] _800bdf38 = new Struct84[8];
+  public static final ArrayRef<IntRef> textboxVariables_800bdf10 = MEMORY.ref(4, 0x800bdf10L, ArrayRef.of(IntRef.class, 10, 0x4, IntRef::new));
+  public static final TextboxText84[] textboxText_800bdf38 = new TextboxText84[8];
   public static final Textbox4c[] textboxes_800be358 = new Textbox4c[8];
   public static final Value textU_800be5c0 = MEMORY.ref(4, 0x800be5c0L);
   public static final Value textV_800be5c8 = MEMORY.ref(4, 0x800be5c8L);
@@ -245,10 +247,7 @@ public final class Scus94491BpeSegment_800b {
     Arrays.setAll(stats_800be5f8, i -> new ActiveStatsa0());
   }
 
-  public static final Value _800beb98 = MEMORY.ref(4, 0x800beb98L);
-  public static final Value _800bed28 = MEMORY.ref(4, 0x800bed28L);
-
-  public static final MATRIX matrix_800bed30 = MEMORY.ref(4, 0x800bed30L, MATRIX::new);
+  public static final MV matrix_800bed30 = new MV();
   public static final IntRef screenOffsetX_800bed50 = MEMORY.ref(4, 0x800bed50L, IntRef::new);
   public static final IntRef screenOffsetY_800bed54 = MEMORY.ref(4, 0x800bed54L, IntRef::new);
   public static final Value hasNoEncounters_800bed58 = MEMORY.ref(4, 0x800bed58L);
@@ -320,11 +319,4 @@ public final class Scus94491BpeSegment_800b {
   public static final IntRef continentIndex_800bf0b0 = MEMORY.ref(4, 0x800bf0b0L, IntRef::new);
 
   public static final Value _800bf0cf = MEMORY.ref(1, 0x800bf0cfL);
-  public static final Value _800bf0d0 = MEMORY.ref(1, 0x800bf0d0L);
-
-  public static final Value fmvStage_800bf0d8 = MEMORY.ref(4, 0x800bf0d8L);
-
-  public static final Value fmvIndex_800bf0dc = MEMORY.ref(4, 0x800bf0dcL);
-
-  public static final IntRef afterFmvLoadingStage_800bf0ec = MEMORY.ref(4, 0x800bf0ecL, IntRef::new);
 }

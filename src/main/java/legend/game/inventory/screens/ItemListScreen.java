@@ -1,25 +1,25 @@
 package legend.game.inventory.screens;
 
-import it.unimi.dsi.fastutil.ints.IntList;
 import legend.game.input.InputAction;
+import legend.game.inventory.Equipment;
+import legend.game.inventory.Item;
 import legend.game.inventory.screens.controls.Background;
 import legend.game.inventory.screens.controls.Glyph;
 import legend.game.inventory.screens.controls.ItemList;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.types.LodString;
-import legend.game.types.MenuItemStruct04;
+import legend.game.types.MenuEntries;
+import legend.game.types.MenuEntryStruct04;
 import legend.game.types.MessageBoxResult;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.game.SItem.getItemDescription;
 import static legend.game.SItem.loadItemsAndEquipmentForDisplay;
 import static legend.game.SItem.menuStack;
-import static legend.game.Scus94491BpeSegment.scriptStartEffect;
+import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.menuItemComparator;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
@@ -29,13 +29,13 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 public class ItemListScreen extends MenuScreen {
   private final Runnable unload;
 
-  private final ItemList itemList = new ItemList();
-  private final ItemList equipmentList = new ItemList();
+  private final ItemList<Item> itemList = new ItemList<>();
+  private final ItemList<Equipment> equipmentList = new ItemList<>();
   private final Label description = new Label("");
 
   public ItemListScreen(final Runnable unload) {
     deallocateRenderables(0xff);
-    scriptStartEffect(2, 10);
+    startFadeEffect(2, 10);
 
     this.unload = unload;
 
@@ -101,28 +101,28 @@ public class ItemListScreen extends MenuScreen {
 
     this.setFocus(this.itemList);
 
-    final List<MenuItemStruct04> items = new ArrayList<>();
-    final List<MenuItemStruct04> equipment = new ArrayList<>();
+    final MenuEntries<Item> items = new MenuEntries<>();
+    final MenuEntries<Equipment> equipment = new MenuEntries<>();
     loadItemsAndEquipmentForDisplay(equipment, items, 0);
 
-    for(final MenuItemStruct04 item : items) {
+    for(final MenuEntryStruct04<Item> item : items) {
       this.itemList.add(item);
     }
 
-    for(final MenuItemStruct04 item : equipment) {
+    for(final MenuEntryStruct04<Equipment> item : equipment) {
       this.equipmentList.add(item);
     }
 
     this.updateDescription(this.itemList.getSelectedItem());
   }
 
-  private void updateDescription(@Nullable final MenuItemStruct04 item) {
+  private void updateDescription(@Nullable final MenuEntryStruct04<?> item) {
     if(item == null) {
       this.description.setText("");
       return;
     }
 
-    this.description.setText(getItemDescription(item.itemId_00));
+    this.description.setText(item.getDescription());
   }
 
   @Override
@@ -130,7 +130,7 @@ public class ItemListScreen extends MenuScreen {
 
   }
 
-  private void showDiscardMenu(final ItemList list, final IntList inv) {
+  private <T> void showDiscardMenu(final ItemList<T> list, final List<T> inv) {
     if(((list.getSelectedItem().flags_02 & 0x2000) != 0)) {
       playSound(40);
     } else {
@@ -139,10 +139,10 @@ public class ItemListScreen extends MenuScreen {
     }
   }
 
-  private void discard(final MessageBoxResult result, final ItemList list, final IntList inv) {
+  private <T> void discard(final MessageBoxResult result, final ItemList<T> list, final List<T> inv) {
     if(result == MessageBoxResult.YES) {
       list.remove(list.getSelectedItem());
-      final List<MenuItemStruct04> items = list.getItems();
+      final List<MenuEntryStruct04<T>> items = list.getItems();
       setInventoryFromDisplay(items, inv, items.size());
     }
   }
@@ -165,6 +165,8 @@ public class ItemListScreen extends MenuScreen {
     playSound(2);
     this.itemList.sort(menuItemComparator());
     this.equipmentList.sort(menuItemComparator());
+    setInventoryFromDisplay(this.itemList.getItems(), gameState_800babc8.items_2e9, this.itemList.getItems().size());
+    setInventoryFromDisplay(this.equipmentList.getItems(), gameState_800babc8.equipment_1e8, this.equipmentList.getItems().size());
   }
 
   @Override

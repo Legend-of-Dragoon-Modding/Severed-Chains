@@ -2,54 +2,48 @@ package legend.core.gpu;
 
 import legend.core.Config;
 import legend.core.MathHelper;
-import legend.core.opengl.Camera;
-import legend.core.opengl.Context;
+import legend.core.ProjectionMode;
 import legend.core.opengl.Mesh;
 import legend.core.opengl.Shader;
 import legend.core.opengl.ShaderManager;
 import legend.core.opengl.Texture;
-import legend.core.opengl.Window;
-import legend.core.opengl.fonts.Font;
-import legend.core.opengl.fonts.FontManager;
+import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.coremod.config.RenderScaleConfigEntry;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joml.Matrix4f;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.system.MemoryUtil;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.List;
 
+import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
+import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.colour24To15;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_TAB;
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_EQUAL;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_MINUS;
+import static org.lwjgl.glfw.GLFW.GLFW_MOD_CONTROL;
 import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
+import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
+import static org.lwjgl.opengl.GL11C.glDisable;
 
 public class Gpu {
-  private static final Logger LOGGER = LogManager.getFormatterLogger(Gpu.class);
+  private static final Logger LOGGER = LogManager.getFormatterLogger();
 
   private static final int STANDARD_VRAM_WIDTH = 1024;
   private static final int STANDARD_VRAM_HEIGHT = 512;
 
   public final int vramWidth = STANDARD_VRAM_WIDTH;
   public final int vramHeight = STANDARD_VRAM_HEIGHT;
-
-  private Camera camera;
-  private Window window;
-  private Context ctx;
-  private Shader.UniformBuffer transforms2;
-  private final Matrix4f transforms = new Matrix4f();
 
   private final VramTextureSingle[] renderBuffers = new VramTextureSingle[2];
   private int drawBufferIndex;
@@ -60,11 +54,8 @@ public class Gpu {
   private final int[] vram24 = new int[this.vramWidth * this.vramHeight];
   private final int[] vram15 = new int[this.vramWidth * this.vramHeight];
 
-  private boolean isVramViewer;
-
   private Shader vramShader;
-  private Texture vramTexture;
-  private Mesh vramMesh;
+  private Shader.UniformVec4 vramShaderColour;
 
   private Texture displayTexture;
   private Mesh displayMesh;
@@ -80,27 +71,9 @@ public class Gpu {
   private short offsetY;
 
   private int zMax;
-  private LinkedList<GpuCommand>[] zQueues;
+  private List<GpuCommand>[] zQueues;
 
   private boolean displayChanged;
-
-  private boolean ready;
-  private double vsyncCount;
-  private long lastFrame;
-  public Runnable mainRenderer;
-  public Runnable subRenderer = () -> { };
-
-  public Window.Events events() {
-    return this.window.events;
-  }
-
-  public Window window() {
-    return this.window;
-  }
-
-  public int getVsyncCount() {
-    return (int)this.vsyncCount;
-  }
 
   public int getDrawBufferIndex() {
     return this.drawBufferIndex;
@@ -130,183 +103,107 @@ public class Gpu {
     this.drawingArea(this.drawingArea.x.get(), this.drawingArea.y.get(), this.drawingArea.w.get(), this.drawingArea.h.get());
   }
 
-  public boolean isReady() {
-    return this.ready;
-  }
+  public void init() {
+    RENDERER.events().onResize((window1, width, height) -> this.updateDisplayTexture(width, height));
 
-  public void run() {
-    this.init();
+    RENDERER.events().onKeyPress((window, key, scancode, mods) -> {
+      if(key == GLFW_KEY_EQUAL) {
+        if(mods == 0) {
+          Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() + 1);
+        } else if((mods & GLFW_MOD_CONTROL) != 0 && gameState_800babc8 != null) {
+          final RenderScaleConfigEntry config = CoreMod.RENDER_SCALE_CONFIG.get();
+          final int scale = CONFIG.getConfig(config) + 1;
 
-    this.window.show();
-
-    this.ready = true;
-    this.lastFrame = System.nanoTime();
-
-    try {
-      this.window.run();
-    } catch(final Throwable t) {
-      LOGGER.error("Shutting down due to GPU exception:", t);
-      this.window.close();
-    } finally {
-      FontManager.free();
-      Window.free();
-    }
-  }
-
-  private void init() {
-    this.camera = new Camera(0.0f, 0.0f);
-    this.window = new Window("Legend of Dragoon", Config.windowWidth(), Config.windowHeight());
-    this.window.setFpsLimit(60);
-    this.ctx = new Context(this.window, this.camera);
-
-    this.window.events.onKeyPress((window, key, scancode, mods) -> {
-      if(mods != 0) {
-        return;
+          if(scale <= RenderScaleConfigEntry.MAX) {
+            CONFIG.setConfig(config, scale);
+            GPU.rescale(scale);
+          }
+        }
       }
 
-      if(key == GLFW_KEY_TAB) {
-        this.isVramViewer = !this.isVramViewer;
+      if(key == GLFW_KEY_MINUS) {
+        if(mods == 0) {
+          Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() - 1);
+        } else if((mods & GLFW_MOD_CONTROL) != 0 && gameState_800babc8 != null) {
+          final RenderScaleConfigEntry config = CoreMod.RENDER_SCALE_CONFIG.get();
+          final int scale = CONFIG.getConfig(config) - 1;
 
-        if(this.isVramViewer) {
-          this.window.resize(this.vramTexture.width, this.vramTexture.height);
-        } else {
-          this.window.resize(this.windowWidth, this.windowHeight);
+          if(scale >= 1) {
+            CONFIG.setConfig(config, scale);
+            GPU.rescale(scale);
+          }
         }
       }
     });
 
-    this.window.events.onResize((window1, width, height) -> this.updateDisplayTexture((int)(width / window1.getScale()), (int)(height / window1.getScale())));
-
-    try {
-      final Shader fontShader = new Shader(Paths.get("gfx/shaders/font.vsh"), Paths.get("gfx/shaders/font.fsh"));
-      fontShader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
-      fontShader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
-      fontShader.use();
-      fontShader.bindUniform("colour");
-      ShaderManager.addShader("font", fontShader);
-
-      FontManager.add("default", new Font(Paths.get("gfx/fonts/consolas.ttf")));
-    } catch(final IOException e) {
-      throw new RuntimeException("Failed to load font", e);
-    }
-
-    final FloatBuffer transform2Buffer = BufferUtils.createFloatBuffer(4 * 4);
-    this.transforms2 = ShaderManager.addUniformBuffer("transforms2", new Shader.UniformBuffer((long)transform2Buffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM2));
-
-    final int hr = this.vramWidth;
-    final int vr = this.vramHeight;
-
-    this.vramShader = this.loadShader(Paths.get("gfx", "shaders", "vram.vsh"), Paths.get("gfx", "shaders", "vram.fsh"));
-    this.vramTexture = Texture.empty(hr, vr);
-
-    this.vramMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
-      0,   0, 0, 0,
-      0,  vr, 0, 1,
-      hr,  0, 1, 0,
-      hr, vr, 1, 1,
-    }, 4);
-    this.vramMesh.attribute(0, 0L, 2, 4);
-    this.vramMesh.attribute(1, 2L, 2, 4);
+    this.vramShader = ShaderManager.getShader("simple");
+    this.vramShaderColour = this.vramShader.new UniformVec4("recolour");
 
     this.displaySize(320, 240);
+  }
 
-    if(this.mainRenderer == null) {
-      this.setStandardRenderer();
+  public void startFrame() {
+    if(this.zMax != orderingTableSize_1f8003c8.get()) {
+      this.updateOrderingTableSize(orderingTableSize_1f8003c8.get());
     }
+  }
 
-    this.ctx.onDraw(() -> {
-      // Restore model buffer to identity
-      this.transforms.identity();
-      this.transforms2.set(this.transforms);
-
-      this.mainRenderer.run();
-
-      final float fps = 1.0f / ((System.nanoTime() - this.lastFrame) / (1_000_000_000 / 30.0f)) * 30.0f;
-      this.window.setTitle("Legend of Dragoon - FPS: %.2f/%d scale: %d res: %dx%d".formatted(fps, this.window.getFpsLimit(), this.scale, this.displayTexture.width, this.displayTexture.height));
-      this.lastFrame = System.nanoTime();
-      this.vsyncCount += 60.0d * Config.getGameSpeedMultiplier() / this.window.getFpsLimit();
-    });
+  public void endFrame() {
+    this.tick();
+    RENDERER.window().setTitle("Legend of Dragoon - FPS: %.2f/%d scale: %d res: %dx%d".formatted(RENDERER.getFps(), RENDERER.window().getFpsLimit(), this.scale, this.displayTexture.width, this.displayTexture.height));
   }
 
   private void updateDisplayTexture(final int width, final int height) {
-    if(!this.isVramViewer) {
-      this.windowWidth = width;
-      this.windowHeight = height;
+    this.windowWidth = width;
+    this.windowHeight = height;
 
-      if(this.displayMesh != null) {
-        this.displayMesh.delete();
-      }
-
-      final float aspect = (float)this.displayTexture.width / this.displayTexture.height;
-
-      float w = width;
-      float h = w / aspect;
-
-      if(h > height) {
-        h = height;
-        w = h * aspect;
-      }
-
-      final float l = (width - w) / 2;
-      final float t = (height - h) / 2;
-      final float r = l + w;
-      final float b = t + h;
-
-      this.displayMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
-        l, t, 0, 0,
-        l, b, 0, 1,
-        r, t, 1, 0,
-        r, b, 1, 1,
-      }, 4);
-      this.displayMesh.attribute(0, 0L, 2, 4);
-      this.displayMesh.attribute(1, 2L, 2, 4);
+    if(this.displayMesh != null) {
+      this.displayMesh.delete();
     }
+
+    final float aspect = 4.0f / 3.0f;
+
+    float w = width;
+    float h = w / aspect;
+
+    if(h > height) {
+      h = height;
+      w = h * aspect;
+    }
+
+    final float l = (width - w) / 2;
+    final float t = (height - h) / 2;
+    final float r = l + w;
+    final float b = t + h;
+
+    this.displayMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
+      l, t, 1.0f, 0, 0,
+      l, b, 1.0f, 0, 1,
+      r, t, 1.0f, 1, 0,
+      r, b, 1.0f, 1, 1,
+    }, 4);
+    this.displayMesh.attribute(0, 0L, 3, 5);
+    this.displayMesh.attribute(1, 3L, 2, 5);
   }
 
-  public void setStandardRenderer() {
-    this.mainRenderer = () -> {
-      if(this.zMax != orderingTableSize_1f8003c8.get()) {
-        this.updateOrderingTableSize(orderingTableSize_1f8003c8.get());
-      }
-
-      this.subRenderer.run();
-      this.tick();
-    };
-  }
-
-  public void tick() {
+  private void tick() {
     if(this.displayChanged) {
       this.displaySize(this.status.horizontalResolution, this.status.verticalResolution);
       this.displayChanged = false;
     }
 
-    if(this.isVramViewer) {
-      final int size = this.vramWidth * this.vramHeight;
-      final ByteBuffer pixels = MemoryUtil.memAlloc(size * 4);
-      final IntBuffer intPixels = pixels.asIntBuffer();
-      intPixels.put(this.vram24);
-
-      pixels.flip();
-
-      this.vramTexture.data(0, 0, this.vramWidth, this.vramHeight, pixels);
-
-      this.vramShader.use();
-      this.vramTexture.use();
-      this.vramMesh.draw();
-
-      MemoryUtil.memFree(pixels);
-    } else { // 15bpp
-      this.displayTexture.data(0, 0, this.displayTexture.width, this.displayTexture.height, this.getDisplayBuffer().getData());
-      this.drawMesh();
-    }
+    this.displayTexture.data(0, 0, this.displayTexture.width, this.displayTexture.height, this.getDisplayBuffer().getData());
+    this.drawMesh();
 
     if(this.zQueues != null) {
       for(int z = this.zQueues.length - 1; z >= 0; z--) {
-        for(final GpuCommand command : this.zQueues[z]) {
-          command.render(this);
+        final List<GpuCommand> queue = this.zQueues[z];
+
+        for(int i = queue.size() - 1; i >= 0; i--) {
+          queue.get(i).render(this);
         }
 
-        this.zQueues[z].clear();
+        queue.clear();
       }
     }
 
@@ -386,6 +283,26 @@ public class Gpu {
     }
   }
 
+  public void uploadData(final RECT rect, final short[] data) {
+    final int rectX = rect.x.get();
+    final int rectY = rect.y.get();
+    final int rectW = rect.w.get();
+    final int rectH = rect.h.get();
+
+    assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
+    assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
+
+    LOGGER.debug("Copying (%d, %d, %d, %d) from CPU to VRAM", rectX, rectY, rectW, rectH);
+
+    int i = 0;
+    for(int y = rectY; y < rectY + rectH; y++) {
+      for(int x = rectX; x < rectX + rectW; x++) {
+        this.setVramPixel(x, y, MathHelper.colour15To24(data[i]), data[i]);
+        i++;
+      }
+    }
+  }
+
   public void uploadData(final Rect4i rect, final int[] data) {
     final int rectX = rect.x();
     final int rectY = rect.y();
@@ -404,30 +321,6 @@ public class Gpu {
         i++;
       }
     }
-  }
-
-  public void commandC0CopyRectFromVramToCpu(final RECT rect, final long address) {
-    assert address != 0;
-
-    final int rectX = rect.x.get();
-    final int rectY = rect.y.get();
-    final int rectW = rect.w.get();
-    final int rectH = rect.h.get();
-
-    assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
-    assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
-
-    LOGGER.debug("Copying (%d, %d, %d, %d) from VRAM to CPU (address: %08x)", rectX, rectY, rectW, rectH, address);
-
-    MEMORY.waitForLock(() -> {
-      int i = 0;
-      for(int y = rectY; y < rectY + rectH; y++) {
-        for(int x = rectX; x < rectX + rectW; x++) {
-          MEMORY.set(address + i, 2, this.getPixel15(x, y));
-          i += 2;
-        }
-      }
-    });
   }
 
   public void commandC0CopyRectFromVramToCpu(final RECT rect, final FileData out) {
@@ -474,8 +367,12 @@ public class Gpu {
     }
   }
 
+  public void queueCommand(final float z, final GpuCommand command) {
+    this.queueCommand(Math.round(z), command);
+  }
+
   public void queueCommand(final int z, final GpuCommand command) {
-    this.zQueues[z].addFirst(command);
+    this.zQueues[z].add(command);
   }
 
   /**
@@ -526,10 +423,6 @@ public class Gpu {
     this.updateDisplayTexture(this.windowWidth, this.windowHeight);
   }
 
-  public void displayTexture(final int[] pixels) {
-    this.displayTexture.data(0, 0, this.displayTexture.width, this.displayTexture.height, pixels);
-  }
-
   public void drawingArea(final int left, final int top, int width, final int height) {
     if(width == 384) {
       width = 368;
@@ -559,15 +452,20 @@ public class Gpu {
   }
 
   public void updateOrderingTableSize(final int size) {
-    final LinkedList<GpuCommand>[] list = new LinkedList[size];
-    Arrays.setAll(list, key -> new LinkedList<>());
+    final List<GpuCommand>[] list = new ArrayList[size];
+    Arrays.setAll(list, key -> new ArrayList<>());
 
     this.zMax = size;
     this.zQueues = list;
   }
 
   public void drawMesh() {
+    RENDERER.setProjectionMode(ProjectionMode._2D);
+
+    glDisable(GL_BLEND);
+
     this.vramShader.use();
+    this.vramShaderColour.set(1.0f, 1.0f, 1.0f, 1.0f);
     this.displayTexture.use();
     this.displayMesh.draw();
   }
@@ -947,40 +845,23 @@ public class Gpu {
   }
 
   public int getPixel(final int x, final int y) {
-    if(x < this.drawingArea.x.get() + this.drawingArea.w.get()) {
-      throw new IllegalArgumentException("Use render buffer textures instead of double buffer VRAM region (%d, %d)".formatted(x, y));
-    }
-
     return this.vram24[y * this.vramWidth + x];
   }
 
   public int getPixel15(final int x, final int y) {
-    if(x < this.drawingArea.x.get() + this.drawingArea.w.get()) {
-      throw new IllegalArgumentException("Use render buffer textures instead of double buffer VRAM region (%d, %d)".formatted(x, y));
-    }
-
     final int index = y * this.vramWidth + x;
-
-    if(index < 0 || index >= this.vram15.length) {
-      throw new IndexOutOfBoundsException("Index %d out of bounds for length %d".formatted(index, this.vram15.length));
-    }
-
     return this.vram15[index];
   }
 
   private void setVramPixel(final int x, final int y, final int pixel24, final int pixel15) {
-    if(x < this.drawingArea.x.get() + this.drawingArea.w.get()) {
-      throw new IllegalArgumentException("Use render buffer textures instead of double buffer VRAM region (%d, %d)".formatted(x, y));
-    }
-
     final int index = y * this.vramWidth + x;
     this.vram24[index] = pixel24;
     this.vram15[index] = pixel15;
   }
 
-  public static int interpolateCoords(final int w0, final int w1, final int w2, final int t0, final int t1, final int t2, final int area) {
+  public static int interpolateCoords(final long w0, final long w1, final long w2, final int t0, final int t1, final int t2, final long area) {
     //https://codeplea.com/triangular-interpolation
-    return (t0 * w0 + t1 * w1 + t2 * w2) / area;
+    return (int)((t0 * w0 + t1 * w1 + t2 * w2) / area);
   }
 
   private static int interpolateColours(final int c1, final int c2, final float ratio) {
@@ -1003,31 +884,9 @@ public class Gpu {
   }
 
   public int getTexel(final int x, final int y, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY, final Bpp depth) {
-    if(depth == Bpp.BITS_4) {
-      return this.get4bppTexel(x, y, clutX, clutY, textureBaseX, textureBaseY);
-    }
-
-    if(depth == Bpp.BITS_8) {
-      return this.get8bppTexel(x, y, clutX, clutY, textureBaseX, textureBaseY);
-    }
-
-    return this.get16bppTexel(x, y, textureBaseX, textureBaseY);
-  }
-
-  private int get4bppTexel(final int x, final int y, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY) {
-    final int index = this.getPixel15(x / 4 + textureBaseX, y + textureBaseY);
-    final int p = index >> (x & 3) * 4 & 0xf;
+    final int index = this.getPixel15(x / depth.widthDivisor + textureBaseX, y + textureBaseY);
+    final int p = index >> ((x & depth.widthMask) << depth.indexShift) & depth.indexMask;
     return this.getPixel(clutX + p, clutY);
-  }
-
-  private int get8bppTexel(final int x, final int y, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY) {
-    final int index = this.getPixel15(x / 2 + textureBaseX, y + textureBaseY);
-    final int p = index >> (x & 1) * 8 & 0xff;
-    return this.getPixel(clutX + p, clutY);
-  }
-
-  private int get16bppTexel(final int x, final int y, final int textureBaseX, final int textureBaseY) {
-    return this.getPixel(x + textureBaseX, y + textureBaseY);
   }
 
   /**

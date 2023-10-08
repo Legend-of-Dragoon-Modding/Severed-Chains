@@ -21,28 +21,28 @@ public class VramTextureSingle extends VramTexture {
 
   @Override
   public int getTexel(final int pageX, final int x, final int y) {
-    final int textureOffset = (this.rect.x() - pageX) * this.bpp.widthScale;
+    final int textureOffset = (this.rect.x() - pageX) * this.bpp.widthDivisor;
     final int textureX = x - textureOffset;
 
-    this.checkBounds(textureX, y);
+//    this.checkBounds(textureX, y);
     return this.getPixel(textureX, y);
   }
 
   @Override
   public int getPixel(final int x, final int y) {
-    this.checkBounds(x, y);
+//    this.checkBounds(x, y);
     return this.data[y * this.rect.w() + x];
   }
 
   @Override
   public void setPixel(final int x, final int y, final int colour) {
-    this.checkBounds(x, y);
+//    this.checkBounds(x, y);
     this.data[y * this.rect.w() + x] = colour;
   }
 
   @Override
   public void copyRow(final int y, final int[] dest, final int destOffset) {
-    this.checkBounds(0, y);
+//    this.checkBounds(0, y);
     System.arraycopy(this.data, y * this.rect.w(), dest, destOffset, this.rect.w());
   }
 

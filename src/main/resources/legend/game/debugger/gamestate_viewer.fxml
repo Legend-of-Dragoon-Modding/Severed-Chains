@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Spinner?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="400.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="legend.game.debugger.GameStateViewerController">
+<VBox prefHeight="400.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="legend.game.debugger.GameStateViewerController">
     <AnchorPane VBox.vgrow="ALWAYS">
         <HBox prefHeight="400.0" prefWidth="150.0">
             <VBox>
@@ -52,38 +48,38 @@
         <HBox layoutX="150.0" prefHeight="400.0" prefWidth="150.0">
             <VBox>
                 <children>
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData0" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData1" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData2" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData3" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData4" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData5" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData6" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData7" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData8" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData9" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData10" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData11" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData12" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData13" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData14" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData15" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData16" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData17" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData18" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData19" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData20" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData21" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData22" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData23" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData24" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData25" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData26" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData27" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData28" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData29" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData30" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptData31" />
+                    <Label fx:id="scriptData0" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData1" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData2" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData3" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData4" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData5" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData6" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData7" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData8" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData9" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData10" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData11" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData12" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData13" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData14" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData15" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData16" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData17" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData18" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData19" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData20" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData21" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData22" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData23" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData24" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData25" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData26" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData27" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData28" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData29" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData30" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptData31" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
                 </children>
             </VBox>
         </HBox>
@@ -128,38 +124,38 @@
         <HBox layoutX="450.0" prefHeight="400.0" prefWidth="150.0">
             <VBox>
                 <children>
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI0" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI1" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI2" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI3" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI4" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI5" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI6" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI7" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI8" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI9" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI10" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI11" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI12" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI13" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI14" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI15" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI16" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI17" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI18" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI19" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI20" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI21" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI22" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI23" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI24" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI25" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI26" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI27" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI28" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI29" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI30" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetI31" />
+                    <Label fx:id="scriptFlagsetI0" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI1" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI2" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI3" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI4" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI5" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI6" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI7" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI8" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI9" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI10" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI11" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI12" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI13" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI14" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI15" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI16" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI17" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI18" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI19" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI20" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI21" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI22" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI23" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI24" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI25" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI26" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI27" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI28" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI29" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI30" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetI31" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
                 </children>
             </VBox>
         </HBox>
@@ -204,52 +200,44 @@
         <HBox layoutX="750.0" prefHeight="400.0" prefWidth="150.0">
             <VBox>
                 <children>
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetII0" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetII1" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetII2" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetII3" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetII4" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetII5" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetII6" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptFlagsetII7" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataII0" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataII1" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataII2" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataII3" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataII4" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataII5" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataII6" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataII7" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataIII0" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataIII1" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataIII2" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataIII3" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataIII4" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataIII5" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataIII6" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataIII7" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataIV0" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataIV1" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataIV2" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataIV3" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataIV4" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataIV5" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataIV6" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataIV7" />
+                    <Label fx:id="scriptFlagsetII0" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetII1" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetII2" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetII3" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetII4" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetII5" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetII6" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptFlagsetII7" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="dataII0" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="dataII1" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="dataII2" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="dataII3" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="dataII4" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="dataII5" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="dataII6" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="dataII7" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="dataIII0" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="dataIII1" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="dataIII2" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="dataIII3" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="dataIII4" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="dataIII5" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="dataIII6" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="dataIII7" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="dataIV0" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="dataIV1" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="dataIV2" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="dataIV3" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="dataIV4" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="dataIV5" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="dataIV6" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="dataIV7" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
                 </children>
             </VBox>
         </HBox>
         <HBox layoutX="900.0" prefHeight="400.0" prefWidth="150.0">
             <VBox>
                 <children>
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" text="Data V [0]" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" text="Data V [1]" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" text="Data V [2]" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" text="Data V [3]" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" text="Data V [4]" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" text="Data V [5]" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" text="Data V [6]" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" text="Data V [7]" />
                     <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" text="Data I" />
                     <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" text="Party I" />
                     <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" text="Party II" />
@@ -284,42 +272,34 @@
         <HBox layoutX="1050.0" prefHeight="400.0" prefWidth="150.0">
             <VBox>
                 <children>
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataV0" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataV1" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataV2" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataV3" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataV4" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataV5" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataV6" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataV7" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dataI" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="partyI" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="partyII" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="partyIII" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="gold" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="chapter" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="stardust" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="timestamp" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="goodsI" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="goodsII" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="chestFlags0" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="chestFlags1" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="chestFlags2" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="chestFlags3" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="chestFlags4" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="chestFlags5" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="chestFlags6" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="chestFlags7" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="submapScene" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="submapCut" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptEngineValueI" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptEngineValueII" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="scriptEngineValueIII" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="pathIndex" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dotIndex" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="dotOffset" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="facing" />
-                    <Label alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" fx:id="areaIndex" />
+                    <Label fx:id="dataI" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="partyI" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="partyII" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="partyIII" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="gold" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="chapter" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="stardust" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="timestamp" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="goodsI" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="goodsII" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="chestFlags0" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="chestFlags1" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="chestFlags2" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="chestFlags3" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="chestFlags4" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="chestFlags5" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="chestFlags6" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="chestFlags7" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="submapScene" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="submapCut" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptEngineValueI" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptEngineValueII" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="scriptEngineValueIII" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="pathIndex" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="dotIndex" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="dotOffset" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="facing" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
+                    <Label fx:id="areaIndex" alignment="BASELINE_LEFT" minHeight="25.0" minWidth="150.0" />
                 </children>
             </VBox>
         </HBox>

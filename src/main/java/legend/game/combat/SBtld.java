@@ -1,50 +1,52 @@
 package legend.game.combat;
 
+import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.Pointer;
-import legend.game.combat.bobj.BattleObject27c;
-import legend.game.combat.bobj.MonsterBattleObject;
+import legend.game.combat.bent.BattleEntity27c;
+import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
 import legend.game.combat.environment.EncounterData38;
 import legend.game.combat.environment.StageData10;
-import legend.game.combat.types.BattleScriptDataBase;
+import legend.game.combat.types.BattleObject;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.EnemyRewards08;
 import legend.game.combat.types.MonsterStats1c;
-import legend.game.modding.events.characters.BattleMapActiveAdditionHitPropertiesEvent;
 import legend.game.modding.events.battle.EnemyRewardsEvent;
+import legend.game.modding.events.characters.BattleMapActiveAdditionHitPropertiesEvent;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
 import legend.game.types.LodString;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
+import legend.lodmod.LodMod;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.MEMORY;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
-import static legend.game.Scus94491BpeSegment.decrementOverlayCount;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
-import static legend.game.Scus94491BpeSegment_800b._800bc960;
-import static legend.game.Scus94491BpeSegment_800b.combatStage_800bb0f4;
+import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
+import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.combat.Bttl_800c._800c66b0;
-import static legend.game.combat.Bttl_800c.allBobjCount_800c66d0;
-import static legend.game.combat.Bttl_800c._800c6718;
 import static legend.game.combat.Bttl_800c._800c6748;
-import static legend.game.combat.Bttl_800c._800c6780;
 import static legend.game.combat.Bttl_800c.addCombatant;
+import static legend.game.combat.Bttl_800c.allBentCount_800c66d0;
+import static legend.game.combat.Bttl_800c.currentCameraIndex_800c6780;
+import static legend.game.combat.Bttl_800c.currentCameraPositionIndicesIndex_800c66b0;
+import static legend.game.combat.Bttl_800c.currentStageData_800c6718;
 import static legend.game.combat.Bttl_800c.deffManager_800c693c;
 import static legend.game.combat.Bttl_800c.getCombatant;
 import static legend.game.combat.Bttl_800c.getCombatantIndex;
@@ -52,7 +54,6 @@ import static legend.game.combat.Bttl_800c.melbuStageIndices_800fb064;
 import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800c.scriptState_800c674c;
 import static legend.game.combat.Bttl_800c.script_800c66fc;
-import static legend.game.combat.Bttl_800c.uniqueMonsterCount_800c6698;
 import static legend.game.combat.Bttl_800e.applyStageAmbiance;
 import static legend.game.combat.Bttl_800f.loadMonster;
 
@@ -75,43 +76,42 @@ public class SBtld {
   public static final Value _8011517c = MEMORY.ref(2, 0x8011517cL);
 
   @Method(0x80109050L)
-  public static void FUN_80109050() {
+  public static void loadStageDataAndControllerScripts() {
     final StageData10 stageData = stageData_80109a98.get(encounterId_800bb0f8.get());
-    _800c6718.offset(0x00L).setu(stageData._00.get());
-    _800c6718.offset(0x04L).setu(stageData.musicIndex_01.get());
-    _800c6718.offset(0x08L).setu(stageData._02.get());
-    _800c6718.offset(0x0cL).setu(stageData._03.get());
-    _800c6718.offset(0x10L).setu(stageData._04.get());
-    _800c6718.offset(0x14L).setu(stageData._05.get());
-    _800c6718.offset(0x18L).setu(stageData._06.get());
-    _800c6718.offset(0x1cL).setu(stageData._08.get());
-    _800c6718.offset(0x20L).setu(stageData._0a.get());
-    _800c6718.offset(0x24L).setu(stageData._0c.get());
-    _800c6718.offset(0x28L).setu(stageData._0e.get());
+    currentStageData_800c6718._00 = stageData._00.get();
+    currentStageData_800c6718.musicIndex_04 = stageData.musicIndex_01.get();
+    currentStageData_800c6718._08 = stageData._02.get();
+    currentStageData_800c6718.postCombatSubmapStage_0c = stageData.postCombatSubmapStage_03.get();
+    currentStageData_800c6718._10 = stageData._04.get();
+    currentStageData_800c6718._14 = stageData._05.get();
+    currentStageData_800c6718.cameraPosIndex0_18 = stageData.cameraPosIndex0_06.get();
+    currentStageData_800c6718.cameraPosIndex1_1c = stageData.cameraPosIndex1_08.get();
+    currentStageData_800c6718.cameraPosIndex2_20 = stageData.cameraPosIndex2_0a.get();
+    currentStageData_800c6718.cameraPosIndex3_24 = stageData.cameraPosIndex3_0c.get();
+    currentStageData_800c6718.postCombatSubmapCut_28 = stageData.postCombatSubmapCut_0e.get();
 
     script_800c66fc = new ScriptFile("player_combat_script", Unpacker.loadFile("player_combat_script").getBytes());
 
-    loadDrgnFile(1, "401", SBtld::FUN_80109170);
+    loadDrgnFile(1, "401", SBtld::combatControllerScriptLoaded);
   }
 
   @Method(0x80109170L)
-  public static void FUN_80109170(final FileData file) {
+  public static void combatControllerScriptLoaded(final FileData file) {
     scriptState_800c674c = SCRIPTS.allocateScriptState(5, "DRGN1.401", 0, null);
     scriptState_800c674c.loadScriptFile(new ScriptFile("DRGN1.401", file.getBytes()));
 
-    final long v1;
+    final int v1;
     if((simpleRand() & 0x8000L) == 0) {
-      v1 = 0x14L;
+      v1 = currentStageData_800c6718._14;
     } else {
-      v1 = 0x10L;
+      v1 = currentStageData_800c6718._10;
     }
 
     //LAB_801091dc
-    _800c6748.set((int)_800c6718.offset(v1).get() + 1);
-    _800c66b0.set(simpleRand() & 3);
-    _800c6780.set((int)_800c6718.offset((_800c66b0.get() + 6) * 0x4L).get());
-    _800bc960.or(0x2);
-    decrementOverlayCount();
+    _800c6748.set(v1 + 1);
+    currentCameraPositionIndicesIndex_800c66b0.set(simpleRand() & 3);
+    currentCameraIndex_800c6780.set(currentStageData_800c6718.get(currentCameraPositionIndicesIndex_800c66b0.get() + 6));
+    battleFlags_800bc960.or(0x2);
   }
 
   @Method(0x80109250L)
@@ -154,8 +154,6 @@ public class SBtld {
     }
 
     loadFile("encounters", file -> battlePreloadedEntities_1f8003f4.encounterData_00 = new EncounterData38(file.getBytes(), encounterId_800bb0f8.get() * 0x38));
-
-    decrementOverlayCount();
   }
 
   @Method(0x80109454L)
@@ -176,7 +174,7 @@ public class SBtld {
   }
 
   @Method(0x8010955cL)
-  public static void allocateEnemyBattleObjects() {
+  public static void allocateEnemyBattleEntities() {
     final BattlePreloadedEntities_18cb0 fp = battlePreloadedEntities_1f8003f4;
 
     //LAB_801095a0
@@ -186,7 +184,7 @@ public class SBtld {
         break;
       }
 
-      loadSupportOverlay(1, () -> SBtld.FUN_80109808((addCombatant(enemyIndex, -1) << 16) + enemyIndex));
+      loadSupportOverlay(1, () -> loadEnemyDropsAndScript((addCombatant(enemyIndex, -1) << 16) + enemyIndex));
     }
 
     //LAB_801095ec
@@ -200,40 +198,37 @@ public class SBtld {
 
       final int combatantIndex = getCombatantIndex(charIndex);
       final String name = "Enemy combatant index " + combatantIndex;
-      final ScriptState<MonsterBattleObject> state = SCRIPTS.allocateScriptState(name, new MonsterBattleObject(name));
-      state.setTicker(Bttl_800c::bobjTicker);
-      state.setDestructor(Bttl_800c::bobjDestructor);
-      battleState_8006e398.allBobjs_e0c[allBobjCount_800c66d0.get()] = state;
-      battleState_8006e398.monsterBobjs_e50[monsterCount_800c6768.get()] = state;
-      final BattleObject27c data = state.innerStruct_00;
-      data.magic_00 = BattleScriptDataBase.BOBJ;
+      final ScriptState<MonsterBattleEntity> state = SCRIPTS.allocateScriptState(name, new MonsterBattleEntity(name));
+      state.setTicker(Bttl_800c::bentTicker);
+      state.setDestructor(Bttl_800c::bentDestructor);
+      battleState_8006e398.allBents_e0c[allBentCount_800c66d0.get()] = state;
+      battleState_8006e398.monsterBents_e50[monsterCount_800c6768.get()] = state;
+      final BattleEntity27c data = state.innerStruct_00;
+      data.magic_00 = BattleObject.BOBJ;
       data.charId_272 = charIndex;
-      data.bobjIndex_274 = allBobjCount_800c66d0.get();
+      data.bentSlot_274 = allBentCount_800c66d0.get();
       data.charSlot_276 = monsterCount_800c6768.get();
       data.combatant_144 = getCombatant(combatantIndex);
       data.combatantIndex_26c = combatantIndex;
       data.model_148.coord2_14.coord.transfer.set(s5.pos_02);
-      data.model_148.coord2Param_64.rotate.set((short)0, (short)0xc01, (short)0);
+      data.model_148.coord2_14.transforms.rotate.set(0.0f, MathHelper.TWO_PI * 0.75f, 0.0f);
       state.storage_44[7] |= 0x4;
-      allBobjCount_800c66d0.incr();
+      allBentCount_800c66d0.incr();
       monsterCount_800c6768.incr();
     }
 
     //LAB_8010975c
-    battleState_8006e398.allBobjs_e0c[allBobjCount_800c66d0.get()] = null;
-    battleState_8006e398.monsterBobjs_e50[monsterCount_800c6768.get()] = null;
+    battleState_8006e398.allBents_e0c[allBentCount_800c66d0.get()] = null;
+    battleState_8006e398.monsterBents_e50[monsterCount_800c6768.get()] = null;
 
     //LAB_801097ac
     for(int i = 0; i < monsterCount_800c6768.get(); i++) {
-      loadMonster(battleState_8006e398.monsterBobjs_e50[i]);
+      loadMonster(battleState_8006e398.monsterBents_e50[i]);
     }
-
-    //LAB_801097d0
-    decrementOverlayCount();
   }
 
   @Method(0x80109808L)
-  public static void FUN_80109808(final int enemyAndCombatantId) {
+  public static void loadEnemyDropsAndScript(final int enemyAndCombatantId) {
     final int enemyId = enemyAndCombatantId & 0xffff;
     final int combatantIndex = enemyAndCombatantId >>> 16;
     final CombatantStruct1a8 combatant = getCombatant(combatantIndex);
@@ -241,7 +236,7 @@ public class SBtld {
 
     combatant.drops.clear();
     if(rewards.itemDrop_05.get() != 0xff) {
-      combatant.drops.add(new CombatantStruct1a8.ItemDrop(rewards.itemChance_04.get(), rewards.itemDrop_05.get()));
+      combatant.drops.add(new CombatantStruct1a8.ItemDrop(rewards.itemChance_04.get(), rewards.itemDrop_05.get() < 192 ? REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(rewards.itemDrop_05.get())).get() : REGISTRIES.items.getEntry(LodMod.itemIdMap.get(rewards.itemDrop_05.get() - 192)).get()));
     }
 
     final EnemyRewardsEvent event = EVENTS.postEvent(new EnemyRewardsEvent(enemyId, rewards.xp_00.get(), rewards.gold_02.get(), combatant.drops));
@@ -250,20 +245,18 @@ public class SBtld {
     combatant.gold_196 = event.gold;
     combatant._19a = rewards._06.get();
 
-    loadDrgnFile(1, Integer.toString(enemyId + 1), file -> FUN_8010989c(file.getBytes(), combatantIndex));
+    loadDrgnFile(1, Integer.toString(enemyId + 1), file -> loadCombatantScript(file.getBytes(), combatantIndex));
   }
 
   @Method(0x8010989cL)
-  public static void FUN_8010989c(final byte[] file, final int index) {
+  public static void loadCombatantScript(final byte[] file, final int index) {
     getCombatant(index).scriptPtr_10 = new ScriptFile("Combatant " + index, file);
-    uniqueMonsterCount_800c6698.add(1);
-    decrementOverlayCount();
   }
 
   @Method(0x801098f4L)
   public static void loadStageAmbiance() {
     final DeffManager7cc deffManager = deffManager_800c693c;
-    final int stage = Math.max(0, combatStage_800bb0f4.get());
+    final int stage = Math.max(0, battleStage_800bb0f4.get());
 
     //LAB_8010993c
     //LAB_80109954
@@ -277,17 +270,14 @@ public class SBtld {
       deffManager.dragoonSpaceAmbiance_98[i].set(buffer);
     }
 
-    deffManager._00._00 = (int)_8011517c.offset(combatStage_800bb0f4.get() * 0x8L).offset(2, 0x00L).get();
-    deffManager._00._02 = (int)_8011517c.offset(combatStage_800bb0f4.get() * 0x8L).offset(2, 0x02L).get();
-    deffManager._00._04 = (int)_8011517c.offset(combatStage_800bb0f4.get() * 0x8L).offset(2, 0x04L).get();
+    deffManager._00._00 = (int)_8011517c.offset(battleStage_800bb0f4.get() * 0x8L).offset(2, 0x00L).get();
+    deffManager._00._02 = (int)_8011517c.offset(battleStage_800bb0f4.get() * 0x8L).offset(2, 0x02L).get();
+    deffManager._00._04 = (int)_8011517c.offset(battleStage_800bb0f4.get() * 0x8L).offset(2, 0x04L).get();
 
     //LAB_80109a30
     for(int i = 0; melbuStageIndices_800fb064.get(i).get() != -1; i++) {
       deffManager._08[i]._00 = (int)_8011517c.offset(melbuStageIndices_800fb064.get(i).get() * 0x8L).offset(2, 0x00L).get();
       deffManager._08[i]._02 = (int)_8011517c.offset(melbuStageIndices_800fb064.get(i).get() * 0x8L).offset(2, 0x02L).get();
     }
-
-    //LAB_80109a80
-    decrementOverlayCount();
   }
 }

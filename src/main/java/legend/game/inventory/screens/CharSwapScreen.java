@@ -15,7 +15,7 @@ import static legend.game.SItem.initGlyph;
 import static legend.game.SItem.renderCharacterSlot;
 import static legend.game.SItem.renderFourDigitNumber;
 import static legend.game.SItem.renderGlyphs;
-import static legend.game.Scus94491BpeSegment.scriptStartEffect;
+import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
@@ -42,7 +42,7 @@ public class CharSwapScreen extends MenuScreen {
   protected void render() {
     switch(this.loadingStage) {
       case 0 -> {
-        scriptStartEffect(2, 10);
+        startFadeEffect(2, 10);
         this.primaryCharIndex = 0;
         this.secondaryCharIndex = 0;
         this.loadingStage++;

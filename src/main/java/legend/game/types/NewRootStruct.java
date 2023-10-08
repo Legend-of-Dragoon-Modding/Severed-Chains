@@ -1,25 +1,32 @@
 package legend.game.types;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.UnsignedIntRef;
+import legend.game.submap.SubmapCutInfo;
+import legend.game.unpacker.FileData;
 
-public class NewRootStruct implements MemoryRef {
-  private final Value ref;
+import java.util.Arrays;
 
-  public final ArrayRef<NewRootEntryStruct> entries_0000;
-  public final ArrayRef<UnsignedIntRef> uia_2000;
+public class NewRootStruct {
+  public final SubmapCutInfo[] submapCutInfo_0000 = new SubmapCutInfo[0x400];
+  /**
+   * A bunch of packed values, related to map transitions/collision
+   * <ul>
+   *   <li>0 (0x0): ?</li>
+   *   <li>1 (0x2): ?</li>
+   *   <li>2 (0x4): ?</li>
+   *   <li>3 (0x8): ?</li>
+   *   <li>4 (0x10): Has map transition (see bits 16-21, 22-32)</li>
+   *   <li>5 (0x20): Might disable a kind of collision</li>
+   *   <li>6 (0x40): ?</li>
+   *   <li>7 (0x80): ?</li>
+   *   <li>8-15: Used as index into arr_800cb460 (divided by 4)</li>
+   *   <li>16-21: Map transition scene</li>
+   *   <li>22-32: Map transition cut</li>
+   * </ul>
+   */
+  public final int[] collisionAndTransitions_2000 = new int[0x63c];
 
-  public NewRootStruct(final Value ref) {
-    this.ref = ref;
-
-    this.entries_0000 = ref.offset(4, 0x0000L).cast(ArrayRef.of(NewRootEntryStruct.class, 0x400, 8, NewRootEntryStruct::new));
-    this.uia_2000 = ref.offset(4, 0x2000L).cast(ArrayRef.of(UnsignedIntRef.class, 0x63c, 4, UnsignedIntRef::new));
-  }
-
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+  public NewRootStruct(final FileData data) {
+    Arrays.setAll(this.submapCutInfo_0000, i -> new SubmapCutInfo(data.slice(i * 0x8, 0x8)));
+    Arrays.setAll(this.collisionAndTransitions_2000, i -> data.readInt(0x2000 + i * 0x4));
   }
 }

@@ -81,6 +81,10 @@ public class ByteRef implements MemoryRef {
     return this.set(~this.get());
   }
 
+  public ByteRef xor(final int val) {
+    return this.set(this.get() ^ val);
+  }
+
   @Override
   public long getAddress() {
     return this.ref != null ? this.ref.getAddress() : 0;

@@ -1,9 +1,9 @@
 package legend.game.modding.events.characters;
 
-import legend.game.modding.events.Event;
 import legend.game.types.CharacterData2c;
 import legend.game.types.LevelStuff08;
 import legend.game.types.MagicStuff08;
+import org.legendofdragoon.modloader.events.Event;
 
 import static legend.game.SItem.levelStuff_800fbd30;
 import static legend.game.SItem.magicStuff_800fbd54;

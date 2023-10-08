@@ -17,11 +17,11 @@ import javafx.scene.control.cell.TextFieldListCell;
 import javafx.util.StringConverter;
 import legend.core.GameEngine;
 import legend.game.Scus94491BpeSegment;
-import legend.game.modding.events.EventListener;
 import legend.game.modding.events.scripting.ScriptAllocatedEvent;
 import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
 import legend.game.modding.events.scripting.ScriptTickEvent;
 import legend.game.scripting.ScriptState;
+import org.legendofdragoon.modloader.events.EventListener;
 
 import java.util.HashSet;
 import java.util.Set;

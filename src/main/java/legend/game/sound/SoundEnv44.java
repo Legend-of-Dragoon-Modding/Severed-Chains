@@ -20,9 +20,9 @@ public class SoundEnv44 {
   /** May be -1 (short) */
   public int voiceIndex_10;
   /** Was two ushorts */
-  public int reverbMode_12;
+  public long reverbMode_12;
   /** Was two ushorts */
-  public int noiseMode_16;
+  public long noiseMode_16;
 
 //  /** No longer used */
 //  public int eventSpuIrq_1c;
@@ -53,14 +53,14 @@ public class SoundEnv44 {
   public int reverbType_34;
 //  /** ushort */
 //  public boolean mono_36;
-  /** ubyte */
-  public boolean hasCallback_38;
+//  /** ubyte */
+//  public boolean hasCallback_38;
 //  /** No longer used */
 //  public int dmaIndex_39;
   /** Was two ushorts */
-  public int keyOn_3a;
+  public long keyOn_3a;
   /** Was two ushorts */
-  public int keyOff_3e;
+  public long keyOff_3e;
   /** I think this is ticks per second (ushort) */
   public int ticksPerSecond_42;
 }

@@ -1,6 +1,7 @@
 package legend.game;
 
 import legend.core.MathHelper;
+import legend.game.unpacker.FileData;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -20,7 +21,7 @@ public final class DabasManager {
     return Files.exists(dir.resolve(getFilename()));
   }
 
-  public static byte[] loadSave() {
+  public static FileData loadSave() {
     final Path file = dir.resolve(getFilename());
 
     if(!Files.exists(file)) {
@@ -35,10 +36,10 @@ public final class DabasManager {
     }
 
     //LAB_80109e38
-    if(MathHelper.get(data, 0x52, 4) != 0x3058_434dL) {
+    if(MathHelper.get(data, 0x52, 4) != 0x3058_434dL) { // MCX0
       throw new RuntimeException("Invalid diiig data");
     }
 
-    return data;
+    return new FileData(data, 0x580, 0x80);
   }
 }

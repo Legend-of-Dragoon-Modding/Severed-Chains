@@ -3,6 +3,7 @@ package legend.game.saves.serializers;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.SavedGame;
 import legend.game.types.CharacterData2c;
+import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 
@@ -55,19 +56,19 @@ public final class RetailSerializer {
     state._b8 = data.readInt(0xb8);
 
     for(int i = 0; i < 0x20; i++) {
-      state.scriptFlags2_bc[i] = data.readInt(0xbc + i * 0x4);
+      state.scriptFlags2_bc.setRaw(i, data.readInt(0xbc + i * 0x4));
     }
 
     for(int i = 0; i < 8; i++) {
-      state.scriptFlags1_13c[i] = data.readInt(0x13c + i * 0x4);
+      state.scriptFlags1_13c.setRaw(i, data.readInt(0x13c + i * 0x4));
     }
 
     for(int i = 0; i < 8; i++) {
-      state._15c[i] = data.readInt(0x15c + i * 0x4);
+      state.wmapFlags_15c.setRaw(i, data.readInt(0x15c + i * 0x4));
     }
 
     for(int i = 0; i < 8; i++) {
-      state._17c[i] = data.readInt(0x17c + i * 0x4);
+      state._17c.setRaw(i, data.readInt(0x17c + i * 0x4));
     }
 
     for(int i = 0; i < 2; i++) {
@@ -89,7 +90,7 @@ public final class RetailSerializer {
         break;
       }
 
-      state.equipment_1e8.add(id);
+      state.equipmentIds_1e8.add(id);
     }
 
     for(int i = 0; i < 64; i++) {
@@ -99,7 +100,7 @@ public final class RetailSerializer {
         break;
       }
 
-      state.items_2e9.add(id);
+      state.itemIds_2e9.add(id);
     }
 
     for(int charSlot = 0; charSlot < 9; charSlot++) {
@@ -117,7 +118,7 @@ public final class RetailSerializer {
       charData.dlevel_13 = charSlice.readUByte(0x13);
 
       for(int i = 0; i < 5; i++) {
-        charData.equipment_14[i] = charSlice.readUByte(0x14 + i);
+        charData.equipmentIds_14.put(EquipmentSlot.fromLegacy(i), charSlice.readUByte(0x14 + i));
       }
 
       charData.selectedAddition_19 = charSlice.readByte(0x19);
@@ -128,9 +129,9 @@ public final class RetailSerializer {
       }
     }
 
-    for(int i = 0; i < 8; i++) {
-      state._4b8[i] = data.readInt(0x4b8 + i * 0x4);
-    }
+//    for(int i = 0; i < 8; i++) {
+//      state._4b8[i] = data.readInt(0x4b8 + i * 0x4);
+//    }
 
     state.pathIndex_4d8 = data.readUShort(0x4d8);
     state.dotIndex_4da = data.readUShort(0x4da);

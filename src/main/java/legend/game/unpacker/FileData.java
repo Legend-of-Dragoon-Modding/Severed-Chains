@@ -4,8 +4,8 @@ import legend.core.MathHelper;
 import legend.core.gpu.RECT;
 import legend.core.gte.BVEC4;
 import legend.core.gte.COLOUR;
-import legend.core.gte.SVECTOR;
-import legend.game.modding.registries.RegistryId;
+import org.joml.Vector3f;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -150,9 +150,19 @@ public record FileData(byte[] data, int offset, int size, int virtualSize, int r
     return bvec.set(this.readByte(offset), this.readByte(offset + 0x1), this.readByte(offset + 0x2));
   }
 
-  public SVECTOR readSvec3(final int offset, final SVECTOR svec) {
+  public Vector3f readSvec3_0(final int offset, final Vector3f svec) {
     this.checkBounds(offset, 6);
     return svec.set(this.readShort(offset), this.readShort(offset + 0x2), this.readShort(offset + 0x4));
+  }
+
+  public Vector3f readSvec3_12(final int offset, final Vector3f svec) {
+    this.checkBounds(offset, 6);
+    return svec.set(this.readShort(offset) / 4096.0f, this.readShort(offset + 0x2) / 4096.0f, this.readShort(offset + 0x4) / 4096.0f);
+  }
+
+  public Vector3f readSvec3Rotation(final int offset, final Vector3f svec) {
+    this.checkBounds(offset, 6);
+    return svec.set(MathHelper.psxDegToRad(this.readShort(offset)), MathHelper.psxDegToRad(this.readShort(offset + 0x2)), MathHelper.psxDegToRad(this.readShort(offset + 0x4)));
   }
 
   public COLOUR readColour(final int offset, final COLOUR colour) {

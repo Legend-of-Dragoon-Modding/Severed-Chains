@@ -1,0 +1,149 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a package using Gradle and then publish it to GitHub packages when a release is created
+# For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#Publishing-using-gradle
+
+name: Gradle Package (RC)
+
+on:
+  push:
+    branches:
+    - rc
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Build Windows x64 with Gradle
+      run: ./gradlew build -Pos=windows -Parch=x86_64
+
+    - name: Write ISOs help file
+      run: mkdir ./build/libs/isos && echo "Place your ISOs or BINs in this folder" > ./build/libs/isos/help.txt
+
+    - name: ZIP Windows x64 Build
+      uses: thedoctor0/zip-release@main
+      with:
+        type: 'zip'
+        filename: '../Severed_Chains_Windows.zip'
+        directory: 'build/libs'
+        exclusions: '*.zip* *.tar.gz*'
+
+    - name: Clean up Windows x64
+      run: 'rm build/libs/launch.bat'
+
+    - name: Build Windows ARM64 with Gradle
+      run: ./gradlew build -Pos=windows -Parch=aarch64
+
+    - name: ZIP Windows ARM64 Build
+      uses: thedoctor0/zip-release@main
+      with:
+        type: 'zip'
+        filename: '../Severed_Chains_Windows_ARM64.zip'
+        directory: 'build/libs'
+        exclusions: '*.zip* *.tar.gz*'
+
+    - name: Clean up Windows ARM64
+      run: 'rm build/libs/launch.bat'
+
+    - name: Build Steam Deck x64 with Gradle
+      run: ./gradlew build -Pos=linux -Parch=x86_64 -Psteamdeck=true
+
+    - name: ZIP Steam Deck x64 Build
+      uses: thedoctor0/zip-release@main
+      with:
+        type: 'tar'
+        filename: '../Severed_Chains_Steam_Deck.tar.gz'
+        directory: 'build/libs'
+        exclusions: '*.zip* *.tar.gz*'
+
+    - name: Clean up Steam Deck x64
+      run: 'rm build/libs/launch build/libs/download-java'
+
+    - name: Build Linux x64 with Gradle
+      run: ./gradlew build -Pos=linux -Parch=x86_64
+
+    - name: ZIP Linux x64 Build
+      uses: thedoctor0/zip-release@main
+      with:
+        type: 'tar'
+        filename: '../Severed_Chains_Linux.tar.gz'
+        directory: 'build/libs'
+        exclusions: '*.zip* *.tar.gz*'
+
+    - name: Clean up Linux x64
+      run: 'rm build/libs/launch build/libs/download-java'
+
+    - name: Build Linux ARM64 with Gradle
+      run: ./gradlew build -Pos=linux -Parch=aarch64
+
+    - name: ZIP Linux ARM64 Build
+      uses: thedoctor0/zip-release@main
+      with:
+        type: 'tar'
+        filename: '../Severed_Chains_Linux_ARM64.tar.gz'
+        directory: 'build/libs'
+        exclusions: '*.zip* *.tar.gz*'
+
+    - name: Clean up Linux ARM64
+      run: 'rm build/libs/launch build/libs/download-java'
+
+    - name: Build MacOS x64 with Gradle
+      run: ./gradlew build -Pos=osx -Parch=x86_64
+
+    - name: ZIP MacOS x64 Build
+      uses: thedoctor0/zip-release@main
+      with:
+        type: 'tar'
+        filename: '../Severed_Chains_MacOS_Intel.tar.gz'
+        directory: 'build/libs'
+        exclusions: '*.zip* *.tar.gz*'
+
+    - name: Clean up MacOS x64
+      run: 'rm build/libs/launch build/libs/download-java'
+
+    - name: Build MacOS ARM64 with Gradle
+      run: ./gradlew build -Pos=osx -Parch=aarch64
+
+    - name: ZIP MacOS ARM64 Build
+      uses: thedoctor0/zip-release@main
+      with:
+        type: 'tar'
+        filename: '../Severed_Chains_MacOS_M1.tar.gz'
+        directory: 'build/libs'
+        exclusions: '*.zip* *.tar.gz*'
+
+    - name: Clean up MacOS ARM64 x64
+      run: 'rm build/libs/launch build/libs/download-java'
+
+    - name: Delete Tag and Release
+      uses: dev-drprasad/delete-tag-and-release@v0.2.1
+      with:
+        delete_release: 'true'
+        tag_name: 'release-candidate'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload Release
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: 'build/*.zip,build/*.tar.gz'
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit: ${{ github.sha }}
+        name: 'Latest Release Candidate Build'
+        allowUpdates: 'true'
+        prerelease: 'true'
+        tag: 'release-candidate'

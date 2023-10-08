@@ -1,7 +1,7 @@
 package legend.game.modding.events.input;
 
 import legend.game.input.InputAction;
-import legend.game.modding.events.Event;
+import org.legendofdragoon.modloader.events.Event;
 
 public class InputEvent extends Event {
   public final InputAction inputAction;

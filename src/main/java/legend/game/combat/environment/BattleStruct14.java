@@ -1,14 +1,14 @@
 package legend.game.combat.environment;
 
 import legend.core.gte.COLOUR;
-import legend.core.gte.SVECTOR;
+import org.joml.Vector3f;
 
 public class BattleStruct14 {
-  public final SVECTOR lightDirection_00 = new SVECTOR();
-  public int _06;
-  public int _08;
+  public final Vector3f lightDirection_00 = new Vector3f();
+  public float x_06;
+  public float y_08;
   public final COLOUR lightColour_0a = new COLOUR();
   public final COLOUR _0d = new COLOUR();
-  public int _10;
-  public int _12;
+  public float x_10;
+  public float y_12;
 }

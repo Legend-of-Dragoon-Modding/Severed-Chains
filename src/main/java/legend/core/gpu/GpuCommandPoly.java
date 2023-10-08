@@ -1,8 +1,11 @@
 package legend.core.gpu;
 
+import legend.core.gte.COLOUR;
 import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Math;
+import org.joml.Vector3i;
 
 import java.util.Arrays;
 
@@ -76,6 +79,14 @@ public class GpuCommandPoly extends GpuCommand {
     return this;
   }
 
+  public GpuCommandPoly rgb(final Vector3i colour) {
+    return this.rgb(colour.x, colour.y, colour.z);
+  }
+
+  public GpuCommandPoly rgb(final int vertex, final Vector3i colour) {
+    return this.rgb(vertex, colour.x, colour.y, colour.z);
+  }
+
   public GpuCommandPoly rgb(final int colour) {
     Arrays.fill(this.colour, colour);
     return this;
@@ -101,10 +112,18 @@ public class GpuCommandPoly extends GpuCommand {
     return this.rgb(colour, colour, colour);
   }
 
+  public GpuCommandPoly monochrome(final float colour) {
+    return this.monochrome((int)(colour * 0x100));
+  }
+
   public GpuCommandPoly rgb(final int vertex, final int colour) {
     this.shaded = true;
     this.colour[vertex] = colour;
     return this;
+  }
+
+  public GpuCommandPoly rgb(final int vertex, final COLOUR colour) {
+    return this.rgb(vertex, colour.getR(), colour.getG(), colour.getB());
   }
 
   public GpuCommandPoly rgb(final int vertex, final int r, final int g, final int b) {
@@ -125,6 +144,10 @@ public class GpuCommandPoly extends GpuCommand {
 
   public GpuCommandPoly monochrome(final int vertex, final int colour) {
     return this.rgb(vertex, colour, colour, colour);
+  }
+
+  public GpuCommandPoly pos(final int vertex, final float x, final float y) {
+    return this.pos(vertex, Math.round(x), Math.round(y));
   }
 
   public GpuCommandPoly pos(final int vertex, final int x, final int y) {
@@ -155,7 +178,7 @@ public class GpuCommandPoly extends GpuCommand {
 
   public GpuCommandPoly clut(final int x, final int y) {
     if(y > 511) {
-      throw new IllegalArgumentException("Invalid y");
+      throw new IllegalArgumentException("Invalid y " + y);
     }
 
     this.clutX = x;

@@ -3,7 +3,7 @@ package legend.game.modding.events.battle;
 import legend.game.characters.Element;
 import legend.game.characters.ElementSet;
 import legend.game.combat.types.MonsterStats1c;
-import legend.game.modding.events.Event;
+import org.legendofdragoon.modloader.events.Event;
 
 import static legend.game.combat.SBtld.monsterStats_8010ba98;
 

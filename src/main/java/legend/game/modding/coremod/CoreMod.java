@@ -7,12 +7,11 @@ import legend.game.characters.StatType;
 import legend.game.characters.StatTypeRegistryEvent;
 import legend.game.characters.UnaryStat;
 import legend.game.characters.VitalsStat;
-import legend.game.combat.bobj.BattleObjectType;
-import legend.game.combat.bobj.BattleObjectTypeRegistryEvent;
+import legend.game.combat.bent.BattleEntityType;
+import legend.game.combat.bent.BattleEntityTypeRegistryEvent;
 import legend.game.combat.formula.Formula;
 import legend.game.combat.formula.PhysicalDamageFormula;
 import legend.game.input.InputAction;
-import legend.game.modding.Mod;
 import legend.game.modding.coremod.config.AdditionModeConfigEntry;
 import legend.game.modding.coremod.config.AdditionOverlayConfigEntry;
 import legend.game.modding.coremod.config.ControllerConfigEntry;
@@ -34,16 +33,17 @@ import legend.game.modding.coremod.elements.NoElement;
 import legend.game.modding.coremod.elements.ThunderElement;
 import legend.game.modding.coremod.elements.WaterElement;
 import legend.game.modding.coremod.elements.WindElement;
-import legend.game.modding.events.EventListener;
-import legend.game.modding.events.battle.RegisterBattleObjectStatsEvent;
+import legend.game.modding.events.battle.RegisterBattleEntityStatsEvent;
 import legend.game.modding.events.config.ConfigLoadedEvent;
-import legend.game.modding.registries.Registrar;
-import legend.game.modding.registries.RegistryDelegate;
-import legend.game.modding.registries.RegistryId;
 import legend.game.saves.BoolConfigEntry;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigRegistryEvent;
 import legend.game.saves.ConfigStorageLocation;
+import org.legendofdragoon.modloader.Mod;
+import org.legendofdragoon.modloader.events.EventListener;
+import org.legendofdragoon.modloader.registries.Registrar;
+import org.legendofdragoon.modloader.registries.RegistryDelegate;
+import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -92,9 +92,9 @@ public class CoreMod {
   public static final RegistryDelegate<Element> WIND_ELEMENT = ELEMENT_REGISTRAR.register("wind", WindElement::new);
   public static final RegistryDelegate<Element> FIRE_ELEMENT = ELEMENT_REGISTRAR.register("fire", FireElement::new);
 
-  private static final Registrar<BattleObjectType, BattleObjectTypeRegistryEvent> BOBJ_TYPE_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.battleObjectTypes, MOD_ID);
-  public static final RegistryDelegate<BattleObjectType> PLAYER_TYPE = BOBJ_TYPE_REGISTRAR.register("player", BattleObjectType::new);
-  public static final RegistryDelegate<BattleObjectType> MONSTER_TYPE = BOBJ_TYPE_REGISTRAR.register("monster", BattleObjectType::new);
+  private static final Registrar<BattleEntityType, BattleEntityTypeRegistryEvent> BENT_TYPE_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.battleEntityTypes, MOD_ID);
+  public static final RegistryDelegate<BattleEntityType> PLAYER_TYPE = BENT_TYPE_REGISTRAR.register("player", BattleEntityType::new);
+  public static final RegistryDelegate<BattleEntityType> MONSTER_TYPE = BENT_TYPE_REGISTRAR.register("monster", BattleEntityType::new);
 
   private static final Registrar<ConfigEntry<?>, ConfigRegistryEvent> CONFIG_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.config, MOD_ID);
 
@@ -173,12 +173,12 @@ public class CoreMod {
   }
 
   @EventListener
-  public static void registerBobjTypes(final BattleObjectTypeRegistryEvent event) {
-    BOBJ_TYPE_REGISTRAR.registryEvent(event);
+  public static void registerBentTypes(final BattleEntityTypeRegistryEvent event) {
+    BENT_TYPE_REGISTRAR.registryEvent(event);
   }
 
   @EventListener
-  public static void registerBobjStats(final RegisterBattleObjectStatsEvent event) {
+  public static void registerBentStats(final RegisterBattleEntityStatsEvent event) {
     event.addStat(HP_STAT.get());
 
     if(event.type == PLAYER_TYPE.get()) {

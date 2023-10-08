@@ -31,6 +31,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -63,7 +66,8 @@ public final class Unpacker {
 
   private static final FileData EMPTY_DIRECTORY_SENTINEL = new FileData(new byte[0]);
 
-  private static final Object IO_LOCK = new Object();
+  private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+  private static final AtomicInteger loadingCount = new AtomicInteger();
 
   /**
    * Note: the transformation pipeline is recursive and after a transformation, the file will be placed back into the transformation queue
@@ -125,130 +129,167 @@ public final class Unpacker {
     statusListener = listener;
   }
 
+  public static void shutdownLoader() {
+    EXECUTOR.shutdown();
+  }
+
   public static FileData loadFile(final String name) {
     LOGGER.info("Loading file %s", name);
 
-    synchronized(IO_LOCK) {
-      try {
-        return new FileData(Files.readAllBytes(ROOT.resolve(fixPath(name))));
-      } catch(final IOException e) {
-        throw new RuntimeException("Failed to load file " + name, e);
-      }
+    try {
+      return new FileData(Files.readAllBytes(ROOT.resolve(fixPath(name))));
+    } catch(final IOException e) {
+      throw new RuntimeException("Failed to load file " + name, e);
     }
+  }
+
+  public static void loadFile(final String name, final Consumer<FileData> onCompletion) {
+    final int total = loadingCount.incrementAndGet();
+    LOGGER.info("Queueing file %s (total queued: %d)", name, total);
+    EXECUTOR.execute(() -> {
+      onCompletion.accept(loadFile(name));
+      final int remaining = loadingCount.decrementAndGet();
+      LOGGER.info("File %s loaded (remaining queued: %d)", name, remaining);
+    });
+  }
+
+  public static void loadFiles(final Consumer<List<FileData>> onCompletion, final String... files) {
+    final int total = loadingCount.updateAndGet(i -> i + files.length);
+    LOGGER.info("Queueing files %s (total queued: %d)", Arrays.toString(files), total);
+
+    EXECUTOR.execute(() -> {
+      final List<FileData> fileData = new ArrayList<>();
+      for(final String file : files) {
+        final FileData data = Unpacker.loadFile(file);
+        fileData.add(data);
+      }
+
+      onCompletion.accept(fileData);
+      final int remaining = loadingCount.updateAndGet(i -> i - files.length);
+      LOGGER.info("Files %s loaded (remaining queued: %d)", Arrays.toString(files), remaining);
+    });
+  }
+
+  public static void loadDirectory(final String name, final Consumer<List<FileData>> onCompletion) {
+    final int total = loadingCount.incrementAndGet();
+    LOGGER.info("Queueing directory %s (total queued: %d)", name, total);
+    EXECUTOR.execute(() -> {
+      onCompletion.accept(loadDirectory(name));
+      final int remaining = loadingCount.decrementAndGet();
+      LOGGER.info("Directory %s loaded (remaining queued: %d)", name, remaining);
+    });
   }
 
   public static List<FileData> loadDirectory(final String name) {
     LOGGER.info("Loading directory %s", name);
 
-    synchronized(IO_LOCK) {
-      final Path dir = ROOT.resolve(fixPath(name));
-      final Path mrg = dir.resolve("mrg");
+    final Path dir = ROOT.resolve(fixPath(name));
+    final Path mrg = dir.resolve("mrg");
 
-      if(Files.exists(mrg)) {
-        try(final BufferedReader reader = Files.newBufferedReader(mrg)) {
-          final Int2IntMap fileMap = new Int2IntArrayMap();
-          final Int2IntMap virtualSizeMap = new Int2IntArrayMap();
+    if(Files.exists(mrg)) {
+      try(final BufferedReader reader = Files.newBufferedReader(mrg)) {
+        final Int2IntMap fileMap = new Int2IntArrayMap();
+        final Int2IntMap virtualSizeMap = new Int2IntArrayMap();
 
-          reader.lines().forEach(line -> {
-            final String[] parts = MRG_ENTRY.split(line);
+        reader.lines().forEach(line -> {
+          final String[] parts = MRG_ENTRY.split(line);
 
-            if(parts.length != 3) {
-              throw new RuntimeException("Invalid MRG entry! " + line);
+          if(parts.length != 3) {
+            throw new RuntimeException("Invalid MRG entry! " + line);
+          }
+
+          final int virtual = Integer.parseInt(parts[0]);
+          final int real = Integer.parseInt(parts[1]);
+          fileMap.put(virtual, real);
+          virtualSizeMap.put(virtual, Integer.parseInt(parts[2]));
+        });
+
+        final List<FileData> files = new ArrayList<>();
+
+        // Add real files
+        for(final var entry : fileMap.int2IntEntrySet()) {
+          final int virtual = entry.getIntKey();
+          final int real = entry.getIntValue();
+
+          try {
+            final Path file = dir.resolve(String.valueOf(real));
+            if(Files.isRegularFile(file)) {
+              if(virtual == real) {
+                files.add(new FileData(Files.readAllBytes(file)));
+              } else {
+                files.add(null);
+              }
             }
+          } catch(final IOException e) {
+            throw new RuntimeException("Failed to load directory " + name, e);
+          }
+        }
 
-            final int virtual = Integer.parseInt(parts[0]);
-            final int real = Integer.parseInt(parts[1]);
-            fileMap.put(virtual, real);
-            virtualSizeMap.put(virtual, Integer.parseInt(parts[2]));
-          });
+        // Add virtual files
+        for(final var entry : fileMap.int2IntEntrySet()) {
+          final int virtual = entry.getIntKey();
+          int real = entry.getIntValue();
 
-          final List<FileData> files = new ArrayList<>();
+          if(virtual == real) {
+            continue;
+          }
 
-          // Add real files
-          for(final var entry : fileMap.int2IntEntrySet()) {
-            final int virtual = entry.getIntKey();
-            final int real = entry.getIntValue();
+          // Resolve to the realest file
+          while(fileMap.get(real) != real) {
+            real = fileMap.get(real);
+          }
+
+          final Path file = dir.resolve(String.valueOf(real));
+          if(Files.isRegularFile(file)) {
+            files.set(virtual, FileData.virtual(files.get(real), virtualSizeMap.get(virtual), real));
+          }
+        }
+
+        return files;
+      } catch(final IOException e) {
+        throw new RuntimeException("Failed to load directory " + name, e);
+      }
+    } else {
+      try(final DirectoryStream<Path> ds = Files.newDirectoryStream(ROOT.resolve(fixPath(name)))) {
+        final List<FileData> files = new ArrayList<>();
+
+        StreamSupport.stream(ds.spliterator(), false)
+          .filter(Files::isRegularFile)
+          .sorted((path1, path2) -> {
+            final String filename1 = path1.getFileName().toString();
+            final String filename2 = path2.getFileName().toString();
 
             try {
-              final Path file = dir.resolve(String.valueOf(real));
-              if(Files.isRegularFile(file)) {
-                if(virtual == real) {
-                  files.add(new FileData(Files.readAllBytes(file)));
-                } else {
-                  files.add(null);
-                }
-              }
+              return Integer.compare(Integer.parseInt(filename1), Integer.parseInt(filename2));
+            } catch(final NumberFormatException ignored) { }
+
+            return String.CASE_INSENSITIVE_ORDER.compare(filename1, filename2);
+          })
+          .forEach(child -> {
+            try {
+              files.add(new FileData(Files.readAllBytes(child)));
             } catch(final IOException e) {
               throw new RuntimeException("Failed to load directory " + name, e);
             }
-          }
+          });
 
-          // Add virtual files
-          for(final var entry : fileMap.int2IntEntrySet()) {
-            final int virtual = entry.getIntKey();
-            int real = entry.getIntValue();
-
-            if(virtual == real) {
-              continue;
-            }
-
-            // Resolve to the realest file
-            while(fileMap.get(real) != real) {
-              real = fileMap.get(real);
-            }
-
-            final Path file = dir.resolve(String.valueOf(real));
-            if(Files.isRegularFile(file)) {
-              files.set(virtual, FileData.virtual(files.get(real), virtualSizeMap.get(virtual), real));
-            }
-          }
-
-          return files;
-        } catch(final IOException e) {
-          throw new RuntimeException("Failed to load directory " + name, e);
-        }
-      } else {
-        try(final DirectoryStream<Path> ds = Files.newDirectoryStream(ROOT.resolve(fixPath(name)))) {
-          final List<FileData> files = new ArrayList<>();
-
-          StreamSupport.stream(ds.spliterator(), false)
-            .filter(Files::isRegularFile)
-            .sorted((path1, path2) -> {
-              final String filename1 = path1.getFileName().toString();
-              final String filename2 = path2.getFileName().toString();
-
-              try {
-                return Integer.compare(Integer.parseInt(filename1), Integer.parseInt(filename2));
-              } catch(final NumberFormatException ignored) { }
-
-              return String.CASE_INSENSITIVE_ORDER.compare(filename1, filename2);
-            })
-            .forEach(child -> {
-              try {
-                files.add(new FileData(Files.readAllBytes(child)));
-              } catch(final IOException e) {
-                throw new RuntimeException("Failed to load directory " + name, e);
-              }
-            });
-
-          return files;
-        } catch(final IOException e) {
-          throw new RuntimeException("Failed to load directory " + name, e);
-        }
+        return files;
+      } catch(final IOException e) {
+        throw new RuntimeException("Failed to load directory " + name, e);
       }
     }
   }
 
+  public static int getLoadingFileCount() {
+    return loadingCount.get();
+  }
+
   public static boolean exists(final String name) {
-    synchronized(IO_LOCK) {
-      return Files.exists(ROOT.resolve(fixPath(name)));
-    }
+    return Files.exists(ROOT.resolve(fixPath(name)));
   }
 
   public static boolean isDirectory(final String name) {
-    synchronized(IO_LOCK) {
-      return Files.isDirectory(ROOT.resolve(fixPath(name)));
-    }
+    return Files.isDirectory(ROOT.resolve(fixPath(name)));
   }
 
   private static String fixPath(String name) {
@@ -264,97 +305,98 @@ public final class Unpacker {
   }
 
   public static void unpack() throws UnpackerException {
-    synchronized(IO_LOCK) {
-      try {
-        Files.createDirectories(ROOT);
+    try {
+      Files.createDirectories(ROOT);
+      Files.createDirectories(Path.of("./isos"));
 
-        if(getUnpackVersion() != VERSION) {
-          final long start = System.nanoTime();
-
-          statusListener.accept("Deleting old unpacked files...");
-          final Path gitIgnore = ROOT.resolve(".gitignore");
-
-          try(final Stream<Path> files = Files.walk(ROOT)) {
-            files
-              .sorted(Comparator.reverseOrder())
-              .filter(path -> {
-                try {
-                  return !Files.isSameFile(path, gitIgnore);
-                } catch(final IOException ignored) {
-                  return true;
-                }
-              })
-              .forEach(path -> {
-                try {
-                  if(!Files.isSameFile(path, ROOT)) {
-                    Files.delete(path);
-                  }
-                } catch(final IOException e) {
-                  throw new UnpackerException("Failed to delete old unpacked files", e);
-                }
-              });
-          }
-
-          LOGGER.info("Files deleted in %d seconds", (System.nanoTime() - start) / 1_000_000_000L);
-        }
-
+      if(getUnpackVersion() != VERSION) {
         final long start = System.nanoTime();
 
-        final IsoReader[] readers = new IsoReader[4];
-        int diskCount = 0;
+        statusListener.accept("Deleting old unpacked files...");
+        final Path gitIgnore = ROOT.resolve(".gitignore");
 
-        try(final DirectoryStream<Path> children = Files.newDirectoryStream(Path.of("isos"))) {
-          for(final Path child : children) {
-            final Tuple<IsoReader, Integer> tuple = getIsoReader(child);
-
-            if(tuple != null) {
-              final int diskNum = tuple.b();
-
-              if(readers[diskNum] != null) {
-                LOGGER.warn("Found duplicate disk %d: %s", diskNum + 1, child);
-                continue;
+        try(final Stream<Path> files = Files.walk(ROOT)) {
+          files
+            .sorted(Comparator.reverseOrder())
+            .filter(path -> {
+              try {
+                return !Files.isSameFile(path, gitIgnore);
+              } catch(final IOException ignored) {
+                return true;
               }
-
-              LOGGER.info("Found disk %d: %s", diskNum + 1, child);
-              readers[diskNum] = tuple.a();
-              diskCount++;
-            }
-          }
+            })
+            .forEach(path -> {
+              try {
+                if(!Files.isSameFile(path, ROOT)) {
+                  Files.delete(path);
+                }
+              } catch(final IOException e) {
+                throw new UnpackerException("Failed to delete old unpacked files", e);
+              }
+            });
         }
 
-        if(diskCount < 4) {
-          for(int i = 0; i < readers.length; i++) {
-            if(readers[i] == null) {
-              LOGGER.error("Failed to find disk %d!", i + 1);
-            }
-          }
-
-          throw new UnpackerException("Failed to locate disk images");
-        }
-
-        final DirectoryEntry[] roots = new DirectoryEntry[4];
-        final DirectoryEntry root = loadRoot(readers[3], null);
-
-        for(int i = 0; i < roots.length - 1; i++) {
-          loadRoot(readers[i], root);
-        }
-
-        final Map<String, DirectoryEntry> files = new HashMap<>();
-        getFiles(root, "", files);
-
-        files.entrySet()
-          .stream()
-          .filter(entry -> !Files.exists(ROOT.resolve(entry.getKey())))
-          .map(Unpacker::readFile)
-          .map(e -> transform(e.a(), e.b(), new HashSet<>()))
-          .forEach(Unpacker::writeFiles);
-
-        Files.writeString(ROOT.resolve("version"), Integer.toString(VERSION));
-
-        LOGGER.info("Files unpacked in %d seconds", (System.nanoTime() - start) / 1_000_000_000L);
-      } catch(final Throwable e) {
-        throw new UnpackerException(e);
+        LOGGER.info("Files deleted in %d seconds", (System.nanoTime() - start) / 1_000_000_000L);
       }
+
+      final long start = System.nanoTime();
+
+      final IsoReader[] readers = new IsoReader[4];
+      int diskCount = 0;
+
+      try(final DirectoryStream<Path> children = Files.newDirectoryStream(Path.of("isos"))) {
+        for(final Path child : children) {
+          final Tuple<IsoReader, Integer> tuple = getIsoReader(child);
+
+          if(tuple != null) {
+            final int diskNum = tuple.b();
+
+            if(readers[diskNum] != null) {
+              LOGGER.warn("Found duplicate disk %d: %s", diskNum + 1, child);
+              continue;
+            }
+
+            LOGGER.info("Found disk %d: %s", diskNum + 1, child);
+            readers[diskNum] = tuple.a();
+            diskCount++;
+          }
+        }
+      }
+
+      if(diskCount < 4) {
+        for(int i = 0; i < readers.length; i++) {
+          if(readers[i] == null) {
+            LOGGER.error("Failed to find disk %d!", i + 1);
+          }
+        }
+
+        throw new UnpackerException("Failed to locate disk images");
+      }
+
+      final DirectoryEntry[] roots = new DirectoryEntry[4];
+      final DirectoryEntry root = loadRoot(readers[3], null);
+
+      for(int i = 0; i < roots.length - 1; i++) {
+        loadRoot(readers[i], root);
+      }
+
+      final Map<String, DirectoryEntry> files = new HashMap<>();
+      getFiles(root, "", files);
+
+      files.entrySet()
+        .stream()
+        .filter(entry -> !Files.exists(ROOT.resolve(entry.getKey())))
+        .map(Unpacker::readFile)
+        .map(e -> transform(e.a(), e.b(), new HashSet<>()))
+        .forEach(Unpacker::writeFiles);
+
+      Files.writeString(ROOT.resolve("version"), Integer.toString(VERSION));
+
+      LOGGER.info("Files unpacked in %d seconds", (System.nanoTime() - start) / 1_000_000_000L);
+    } catch(final UnpackerException e) {
+      throw e;
+    } catch(final Throwable e) {
+      throw new UnpackerException(e);
     }
   }
 

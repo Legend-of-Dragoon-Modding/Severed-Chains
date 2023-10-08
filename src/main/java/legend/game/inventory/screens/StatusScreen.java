@@ -16,7 +16,7 @@ import static legend.game.SItem.renderCharacterStats;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderText;
 import static legend.game.SItem.renderThreeDigitNumber;
-import static legend.game.Scus94491BpeSegment.scriptStartEffect;
+import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedSpellCount;
@@ -42,7 +42,7 @@ public class StatusScreen extends MenuScreen {
   protected void render() {
     switch(this.loadingStage) {
       case 0 -> {
-        scriptStartEffect(2, 10);
+        startFadeEffect(2, 10);
         this.loadingStage++;
       }
 
@@ -90,7 +90,7 @@ public class StatusScreen extends MenuScreen {
   }
 
   private void renderStatusMenu(final int charSlot, final long a1) {
-    renderCharacterStats(characterIndices_800bdbb8.get(charSlot).get(), 0xff, a1 == 0xff);
+    renderCharacterStats(characterIndices_800bdbb8.get(charSlot).get(), null, a1 == 0xff);
     renderCharacterSlot(16, 21, characterIndices_800bdbb8.get(charSlot).get(), a1 == 0xff, false);
     renderCharacterEquipment(characterIndices_800bdbb8.get(charSlot).get(), a1 == 0xff);
     this.renderCharacterSpells(characterIndices_800bdbb8.get(charSlot).get(), a1 == 0xff);

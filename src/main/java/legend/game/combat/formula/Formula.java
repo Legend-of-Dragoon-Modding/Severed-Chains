@@ -1,6 +1,6 @@
 package legend.game.combat.formula;
 
-import legend.game.combat.bobj.BattleObject27c;
+import legend.game.combat.bent.BattleEntity27c;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -18,7 +18,7 @@ public class Formula<InitialType, TerminalType> {
     this.root = root;
   }
 
-  public TerminalType[] calculate(final BattleObject27c attacker, final List<BattleObject27c> defenders) {
+  public TerminalType[] calculate(final BattleEntity27c attacker, final List<BattleEntity27c> defenders) {
     final State[] states = new State[defenders.size()];
 
     for(int i = 0; i < states.length; i++) {
@@ -44,7 +44,7 @@ public class Formula<InitialType, TerminalType> {
     return results;
   }
 
-  public TerminalType calculate(final BattleObject27c attacker, final BattleObject27c defender) {
+  public TerminalType calculate(final BattleEntity27c attacker, final BattleEntity27c defender) {
     return this.calculate(attacker, List.of(defender))[0];
   }
 }

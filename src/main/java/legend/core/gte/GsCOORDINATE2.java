@@ -2,9 +2,9 @@ package legend.core.gte;
 
 public class GsCOORDINATE2 {
   public int flg;
-  public final MATRIX coord = new MATRIX();
-  public final MATRIX workm = new MATRIX();
-  public GsCOORD2PARAM param;
+  public final MV coord = new MV();
+  public final MV workm = new MV();
+  public Transforms transforms = new Transforms();
   public GsCOORDINATE2 super_;
   public GsCOORDINATE2 sub;
 
@@ -12,7 +12,7 @@ public class GsCOORDINATE2 {
     this.flg = other.flg;
     this.coord.set(other.coord);
     this.workm.set(other.workm);
-    this.param = other.param;
+    this.transforms = other.transforms;
     this.super_ = other.super_;
     this.sub = other.sub;
     return this;

@@ -83,6 +83,30 @@ public class ScriptManager {
     throw new RuntimeException("Ran out of script states");
   }
 
+  public ScriptState<?> getState(final int index) {
+    if(index == -1) {
+      return null;
+    }
+
+    return scriptStatePtrArr_800bc1c0[index];
+  }
+
+  public <T> ScriptState<T> getState(final int index, final Class<T> type) {
+    if(index == -1) {
+      return null;
+    }
+
+    return ScriptState.classFor(type).cast(scriptStatePtrArr_800bc1c0[index]);
+  }
+
+  public <T> T getObject(final int index, final Class<T> type) {
+    if(index < 0 || scriptStatePtrArr_800bc1c0[index] == null) {
+      return null;
+    }
+
+    return type.cast(scriptStatePtrArr_800bc1c0[index].innerStruct_00);
+  }
+
   public <T> ScriptState<T> allocateScriptState(final String name, @Nullable final T type) {
     return this.allocateScriptState(this.findFreeScriptState(), name, 0, type);
   }
@@ -127,7 +151,7 @@ public class ScriptManager {
           final RunningScript<?> context = state.context;
 
           LOGGER.error("Script %d crashed!", index);
-          LOGGER.error("File %s[%d]", state.scriptPtr_14.name, state.offset_18);
+          LOGGER.error("File %s[addr 0x%x]", state.scriptPtr_14.name, state.offset_18 * 4);
           LOGGER.error("Parameters:");
           LOGGER.error("  Op param: 0x%x", context.opParam_18);
           for(int i = 0; i < context.paramCount_14; i++) {

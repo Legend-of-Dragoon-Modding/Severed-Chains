@@ -6,14 +6,12 @@ import legend.game.inventory.screens.controls.Glyph;
 import legend.game.inventory.screens.controls.ItemList;
 import legend.game.inventory.screens.controls.Label;
 import legend.game.inventory.screens.controls.ListBox;
-import legend.game.types.MenuItemStruct04;
-
-import java.util.function.Function;
+import legend.game.types.MenuEntryStruct04;
 
 import static legend.core.IoHelper.getPackedFlag;
 import static legend.game.SItem._8011b75c;
 import static legend.game.SItem.goodsItemNames_8011c008;
-import static legend.game.Scus94491BpeSegment.scriptStartEffect;
+import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -21,24 +19,23 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 public class GoodsScreen extends MenuScreen {
   private final Runnable unload;
 
-  private final ItemList leftList;
-  private final ItemList rightList;
+  private final ItemList<Integer> leftList;
+  private final ItemList<Integer> rightList;
   private final Label description = new Label("");
 
   public GoodsScreen(final Runnable unload) {
     deallocateRenderables(0xff);
-    scriptStartEffect(2, 10);
+    startFadeEffect(2, 10);
 
     this.unload = unload;
 
-    final Function<MenuItemStruct04, String> getItemName = item -> goodsItemNames_8011c008.get(item.itemId_00).deref().get();
-    final ListBox.Highlight<MenuItemStruct04> description = item -> this.description.setText(item.itemId_00 >= 0xff ? "" : _8011b75c.get(item.itemId_00).deref().get());
+    final ListBox.Highlight<MenuEntryStruct04<Integer>> description = item -> this.description.setText(item.item_00 >= 0xff ? "" : _8011b75c.get(item.item_00).deref().get());
 
-    this.leftList = new ItemList(getItemName, null, null, null);
+    this.leftList = new ItemList<>(MenuEntryStruct04::getName, null, null, null);
     this.leftList.setPos(8, 15);
     this.leftList.setTitle("Goods");
 
-    this.rightList = new ItemList(getItemName, null, null, null);
+    this.rightList = new ItemList<>(MenuEntryStruct04::getName, null, null, null);
     this.rightList.setPos(188, 15);
     this.rightList.setTitle("Goods");
 
@@ -86,8 +83,7 @@ public class GoodsScreen extends MenuScreen {
 
     for(int i = 0, listIndex = 0; i < 64; i++) {
       if(getPackedFlag(gameState_800babc8.goods_19c, i)) {
-        final MenuItemStruct04 item = new MenuItemStruct04();
-        item.itemId_00 = i;
+        final MenuEntryStruct04<Integer> item = new MenuEntryStruct04<>(goodsIndex -> goodsItemNames_8011c008.get(goodsIndex).deref().get(), null, null, i);
 
         if(listIndex % 2 == 0) {
           this.leftList.add(item);

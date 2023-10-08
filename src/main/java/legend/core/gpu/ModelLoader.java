@@ -1,9 +1,11 @@
 package legend.core.gpu;
 
 import legend.core.IoHelper;
-import legend.core.gte.SVECTOR;
 import legend.core.gte.TmdObjTable1c;
 import legend.game.types.Translucency;
+import org.joml.Vector2f;
+import org.joml.Vector2i;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -15,10 +17,10 @@ public class ModelLoader {
     final int colour = b << 16 | g << 8 | r;
 
     final Mesh.Vertex2d[] vertices = new Mesh.Vertex2d[4];
-    vertices[0] = new Mesh.Vertex2d(new Vec2i(x, y), new Vec2i(u, v), colour);
-    vertices[1] = new Mesh.Vertex2d(new Vec2i(x + w, y), new Vec2i(u + tw, v), colour);
-    vertices[2] = new Mesh.Vertex2d(new Vec2i(x, y + h), new Vec2i(u, v + th), colour);
-    vertices[3] = new Mesh.Vertex2d(new Vec2i(x + w, y + h), new Vec2i(u + tw, v + th), colour);
+    vertices[0] = new Mesh.Vertex2d(new Vector2f(x, y), new Vector2i(u, v), colour);
+    vertices[1] = new Mesh.Vertex2d(new Vector2f(x + w, y), new Vector2i(u + tw, v), colour);
+    vertices[2] = new Mesh.Vertex2d(new Vector2f(x, y + h), new Vector2i(u, v + th), colour);
+    vertices[3] = new Mesh.Vertex2d(new Vector2f(x + w, y + h), new Vector2i(u + tw, v + th), colour);
 
     final Mesh.Poly2d[] polys = {new Mesh.Poly2d(vertices, paletteBase, pageX, pageY, translucency)};
     final Mesh.Segment2d[] segments = {new Mesh.Segment2d("Quad " + name, polys, 4, z, true, translucency != null)};
@@ -60,8 +62,8 @@ public class ModelLoader {
       // ---
 
       final Mesh.Poly3d[] polys = new Mesh.Poly3d[primitive.data().length];
-      final SVECTOR[] positions = new SVECTOR[vertexCount];
-      final SVECTOR[] normals = new SVECTOR[vertexCount];
+      final Vector3f[] positions = new Vector3f[vertexCount];
+      final Vector3f[] normals = new Vector3f[vertexCount];
       final int[] us = new int[vertexCount];
       final int[] vs = new int[vertexCount];
       final int[] colours = new int[vertexCount];

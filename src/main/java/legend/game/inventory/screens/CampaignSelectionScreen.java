@@ -24,7 +24,7 @@ import static legend.core.GameEngine.MODS;
 import static legend.core.GameEngine.SAVES;
 import static legend.core.GameEngine.bootMods;
 import static legend.game.SItem.menuStack;
-import static legend.game.Scus94491BpeSegment.scriptStartEffect;
+import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
@@ -37,7 +37,7 @@ import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 public class CampaignSelectionScreen extends MenuScreen {
   public CampaignSelectionScreen() {
     deallocateRenderables(0xff);
-    scriptStartEffect(2, 10);
+    startFadeEffect(2, 10);
 
     this.addControl(new Background());
 
@@ -80,6 +80,7 @@ public class CampaignSelectionScreen extends MenuScreen {
       final GameLoadedEvent event = EVENTS.postEvent(new GameLoadedEvent(save.state()));
 
       gameState_800babc8 = event.gameState;
+      gameState_800babc8.syncIds();
 
       savedGameSelected_800bdc34.set(true);
       whichMenu_800bdc38 = WhichMenu.UNLOAD_CAMPAIGN_SELECTION_MENU;
@@ -93,7 +94,7 @@ public class CampaignSelectionScreen extends MenuScreen {
       }
     }, () -> {
       menuStack.popScreen();
-      scriptStartEffect(2, 10);
+      startFadeEffect(2, 10);
     }, campaign));
 
     if(missingMods.isEmpty()) {

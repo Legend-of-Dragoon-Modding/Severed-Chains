@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static legend.game.Scus94491BpeSegment.scriptStartEffect;
+import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_9;
@@ -76,7 +76,7 @@ public class KeybindsScreen extends VerticalLayoutScreen {
     this.addKey(GLFW_KEY_END, "END");
 
     deallocateRenderables(0xff);
-    scriptStartEffect(2, 10);
+    startFadeEffect(2, 10);
 
     this.config = config;
     this.unload = unload;

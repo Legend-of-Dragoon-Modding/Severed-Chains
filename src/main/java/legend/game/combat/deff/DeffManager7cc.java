@@ -2,10 +2,11 @@ package legend.game.combat.deff;
 
 import legend.core.gte.TmdObjTable1c;
 import legend.game.combat.effects.EffectManagerData6c;
+import legend.game.combat.effects.EffectManagerData6cInner;
+import legend.game.combat.effects.SpriteMetrics08;
 import legend.game.combat.environment.BattleLightStruct64;
 import legend.game.combat.environment.BttlLightStruct84;
 import legend.game.combat.environment.StageAmbiance4c;
-import legend.game.combat.types.SpriteMetrics08;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
 
@@ -14,7 +15,7 @@ import java.util.Arrays;
 public class DeffManager7cc {
   public Struct08 _00 = new Struct08();
   public final Struct04[] _08 = {new Struct04(), new Struct04(), new Struct04(), new Struct04(), new Struct04()};
-  public ScriptState<EffectManagerData6c> scriptState_1c;
+  public ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> scriptState_1c;
   /**
    * <ul>
    *   <li>0x4_0000 - Has sounds?</li>
@@ -29,8 +30,8 @@ public class DeffManager7cc {
 //  public final Value _28;
   //TODO sub-structs from here down?
   public ScriptFile[] scripts_2c;
-  public long ptr_30;
-  public long ptr_34;
+//  public long ptr_30;
+//  public long ptr_34;
 
   public final StageAmbiance4c stageAmbiance_4c = new StageAmbiance4c();
   /** One instance for each dragoon */

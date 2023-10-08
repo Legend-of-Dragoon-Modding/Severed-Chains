@@ -3,10 +3,7 @@ package legend.game;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
-import legend.core.gte.GsCOORD2PARAM;
-import legend.core.gte.GsCOORDINATE2;
-import legend.core.gte.GsDOBJ2;
-import legend.core.gte.Tmd;
+import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
 import legend.game.types.CContainer;
 import legend.game.types.Model124;
@@ -20,17 +17,14 @@ import java.util.Arrays;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
-import static legend.game.Scus94491BpeSegment._1f8003fc;
-import static legend.game.Scus94491BpeSegment.allocateHeap;
-import static legend.game.Scus94491BpeSegment.extendedTmd_800103d0;
-import static legend.game.Scus94491BpeSegment.heap_8011e210;
 import static legend.game.Scus94491BpeSegment.initSound;
 import static legend.game.Scus94491BpeSegment.loadMenuSounds;
 import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
-import static legend.game.Scus94491BpeSegment.ovalBlobTimHeader_80010548;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
-import static legend.game.Scus94491BpeSegment.tmdAnimFile_8001051c;
+import static legend.game.Scus94491BpeSegment.shadowAnimation_8001051c;
+import static legend.game.Scus94491BpeSegment.shadowCContainer_800103d0;
+import static legend.game.Scus94491BpeSegment.shadowTimFile_80010544;
 import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
@@ -46,24 +40,17 @@ import static legend.game.Scus94491BpeSegment_8003.ResetGraph;
 import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setDrawOffset;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8004.mainCallbackIndexOnceLoaded_8004dd24;
+import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8007.clearRed_8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b._800bb228;
-import static legend.game.Scus94491BpeSegment_800b._800bb348;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
-import static legend.game.Scus94491BpeSegment_800b._800bf0d0;
-import static legend.game.Scus94491BpeSegment_800b.afterFmvLoadingStage_800bf0ec;
-import static legend.game.Scus94491BpeSegment_800b.array_800bb198;
 import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
 import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
-import static legend.game.Scus94491BpeSegment_800b.fmvIndex_800bf0dc;
-import static legend.game.Scus94491BpeSegment_800b.fmvStage_800bf0d8;
-import static legend.game.Scus94491BpeSegment_800b.model_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
-import static legend.game.Scus94491BpeSegment_800b.submapIndex_800bd808;
+import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
+import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800c.timHeader_800c6748;
@@ -97,23 +84,17 @@ public final class Scus94491BpeSegment_800e {
     setProjectionPlaneDistance(640);
     initSound();
 
-    mainCallbackIndexOnceLoaded_8004dd24.set(0);
+    engineStateOnceLoaded_8004dd24 = EngineStateEnum.PRELOAD_00;
     pregameLoadingStage_800bb10c.set(0);
-    vsyncMode_8007a3b8.set(2);
+    vsyncMode_8007a3b8 = 2;
     tickCount_800bb0fc.set(0);
 
     precalculateTpages();
     loadSystemFont();
     SCRIPTS.clear();
-    allocateHeap(heap_8011e210.getAddress(), 0x7d_edf0);
-    loadOvalBlobTexture();
+    loadShadow();
     FUN_800e6d60();
     initFmvs();
-  }
-
-  @Method(0x800e5fc0L)
-  public static void finalizePregameLoading() {
-    throw new RuntimeException("No longer used");
   }
 
   @Method(0x800e60d8L)
@@ -128,18 +109,14 @@ public final class Scus94491BpeSegment_800e {
 
   @Method(0x800e6184L)
   public static void preload() {
-    drgnBinIndex_800bc058.set(1);
+    drgnBinIndex_800bc058 = 1;
 
     loadMenuSounds();
     resizeDisplay(320, 240);
-    vsyncMode_8007a3b8.set(2);
+    vsyncMode_8007a3b8 = 2;
 
     //LAB_800e600c
     loadBasicUiTexturesAndSomethingElse();
-
-    //LAB_800e6040
-    fmvIndex_800bf0dc.setu(0);
-    afterFmvLoadingStage_800bf0ec.set(2);
   }
 
   @Method(0x800e6524L)
@@ -149,78 +126,56 @@ public final class Scus94491BpeSegment_800e {
     final RECT imageRect = new RECT((short)832, (short)424, (short)64, (short)56);
     LoadImage(imageRect, header.getImageAddress());
 
-    _800bb348.setu(texPages_800bb110.get(Bpp.BITS_4).get(Translucency.HALF_B_PLUS_HALF_F).get(TexPageY.Y_256).get()).oru(0xdL);
-
     if(header.hasClut()) {
       final RECT clutRect = new RECT((short)832, (short)422, (short)32, (short)1);
       LoadImage(clutRect, header.getClutAddress());
     }
-
-    //LAB_800e65c4
-    _1f8003fc.setu(_800bb228.getAddress());
-
-    //LAB_800e65e8
-    for(int i = 2; i < 37; i++) {
-      long v1 = 0xffff_ffffL;
-      long a1 = 0x1L;
-
-      //LAB_800e65fc
-      while(v1 >= i) {
-        a1 *= i;
-        v1 /= i;
-      }
-
-      //LAB_800e6620
-      array_800bb198.get(i - 2).set(a1);
-    }
   }
 
   @Method(0x800e6998L)
-  public static void loadOvalBlobTexture() {
-    submapIndex_800bd808.set(0);
+  public static void loadShadow() {
+    submapId_800bd808.set(0);
 
-    final TimHeader header = parseTimHeader(ovalBlobTimHeader_80010548);
-    LoadImage(header.getImageRect(), header.getImageAddress());
-
-    if(header.hasClut()) {
-      LoadImage(header.getClutRect(), header.getClutAddress());
-    }
+    loadTimImage(shadowTimFile_80010544.getAddress());
 
     //LAB_800e6af0
-    final CContainer container = new CContainer("Oval blob", new FileData(MEMORY.getBytes(extendedTmd_800103d0.getAddress(), 0x14c)));
-    final TmdAnimationFile animation = new TmdAnimationFile(new FileData(MEMORY.getBytes(tmdAnimFile_8001051c.getAddress(), 0x28)));
+    final CContainer container = new CContainer("Shadow", new FileData(MEMORY.getBytes(shadowCContainer_800103d0.getAddress(), 0x14c)));
+    final TmdAnimationFile animation = new TmdAnimationFile(new FileData(MEMORY.getBytes(shadowAnimation_8001051c.getAddress(), 0x28)));
 
-    FUN_800e6b3c(model_800bda10, container, animation);
+    FUN_800e6b3c(shadowModel_800bda10, container, animation);
 
-    model_800bda10.coord2Param_64.rotate.set((short)0, (short)0, (short)0);
-    model_800bda10.colourMap_9d = 0;
-    model_800bda10.movementType_cc = 0;
+    shadowModel_800bda10.coord2_14.transforms.rotate.zero();
+    shadowModel_800bda10.colourMap_9d = 0;
+    shadowModel_800bda10.shadowType_cc = 0;
+  }
+
+  /** Pulled from SMAP */
+  @Method(0x800e3cc8L)
+  public static void loadTimImage(final long address) {
+    final TimHeader header = parseTimHeader(MEMORY.ref(4, address).offset(0x4L));
+    LoadImage(header.imageRect, header.imageAddress);
+
+    if(header.hasClut()) {
+      LoadImage(header.clutRect, header.clutAddress);
+    }
   }
 
   /** Very similar to {@link Scus94491BpeSegment_8002#FUN_80020718(Model124, CContainer, TmdAnimationFile)} */
   @Method(0x800e6b3cL)
   public static void FUN_800e6b3c(final Model124 model, final CContainer cContainer, final TmdAnimationFile tmdAnimFile) {
-    final int x = model.coord2_14.coord.transfer.getX();
-    final int y = model.coord2_14.coord.transfer.getY();
-    final int z = model.coord2_14.coord.transfer.getZ();
+    final float x = model.coord2_14.coord.transfer.x;
+    final float y = model.coord2_14.coord.transfer.y;
+    final float z = model.coord2_14.coord.transfer.z;
 
     //LAB_800e6b7c
     for(int i = 0; i < 7; i++) {
       model.animateTextures_ec[i] = false;
     }
 
-    model.dobj2ArrPtr_00 = new GsDOBJ2[tmdAnimFile.modelPartCount_0c];
-    model.coord2ArrPtr_04 = new GsCOORDINATE2[tmdAnimFile.modelPartCount_0c];
-    model.coord2ParamArrPtr_08 = new GsCOORD2PARAM[tmdAnimFile.modelPartCount_0c];
-    model.count_c8 = tmdAnimFile.modelPartCount_0c;
+    model.modelParts_00 = new ModelPart10[tmdAnimFile.modelPartCount_0c];
 
-    Arrays.setAll(model.dobj2ArrPtr_00, i -> new GsDOBJ2());
-    Arrays.setAll(model.coord2ArrPtr_04, i -> new GsCOORDINATE2());
-    Arrays.setAll(model.coord2ParamArrPtr_08, i -> new GsCOORD2PARAM());
+    Arrays.setAll(model.modelParts_00, i -> new ModelPart10());
 
-    final Tmd tmd = cContainer.tmdPtr_00.tmd;
-    model.tmd_8c = tmd;
-    model.tmdNobj_ca = tmd.header.nobj;
     model.tpage_108 = (int)((cContainer.tmdPtr_00.id & 0xffff0000L) >>> 11);
 
     if(cContainer.ptr_08 != null) {
@@ -242,23 +197,22 @@ public final class Scus94491BpeSegment_800e {
     }
 
     //LAB_800e6c64
-    initObjTable2(model.ObjTable_0c, model.dobj2ArrPtr_00, model.coord2ArrPtr_04, model.coord2ParamArrPtr_08, model.count_c8);
-    model.coord2_14.param = model.coord2Param_64;
+    initObjTable2(model.modelParts_00);
     GsInitCoordinate2(null, model.coord2_14);
-    prepareObjTable2(model.ObjTable_0c, model.tmd_8c, model.coord2_14, model.count_c8, model.tmdNobj_ca + 1);
+    prepareObjTable2(model.modelParts_00, cContainer.tmdPtr_00.tmd, model.coord2_14);
 
     model.zOffset_a0 = 0;
-    model.ub_a2 = 0;
+    model.disableInterpolation_a2 = false;
     model.ub_a3 = 0;
     model.partInvisible_f4 = 0;
 
     loadModelStandardAnimation(model, tmdAnimFile);
 
     model.coord2_14.coord.transfer.set(x, y, z);
-    model.movementType_cc = 0;
-    model.scaleVector_fc.set(0x1000, 0x1000, 0x1000);
-    model.vector_10c.set(0x1000, 0x1000, 0x1000);
-    model.vector_118.set(0, 0, 0);
+    model.shadowType_cc = 0;
+    model.coord2_14.transforms.scale.set(1.0f, 1.0f, 1.0f);
+    model.shadowSize_10c.set(1.0f, 1.0f, 1.0f);
+    model.shadowOffset_118.zero();
   }
 
   @Method(0x800e6d60L)
@@ -269,7 +223,5 @@ public final class Scus94491BpeSegment_800e {
   @Method(0x800e6e6cL)
   public static void initFmvs() {
     _800bf0cf.setu(0);
-    _800bf0d0.setu(0);
-    fmvStage_800bf0d8.setu(0);
   }
 }

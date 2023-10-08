@@ -4,26 +4,28 @@ import legend.core.DebugHelper;
 import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.game.Scus94491BpeSegment_8004;
-import legend.game.combat.bobj.BattleObject27c;
+import legend.game.combat.bent.BattleEntity27c;
 import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
 import legend.game.modding.events.scripting.ScriptTickEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
 
 import static legend.core.GameEngine.EVENTS;
+import static legend.game.Scus94491BpeSegment.rcos;
+import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.scriptFunctionDescriptions;
 import static legend.game.Scus94491BpeSegment.scriptLog;
 import static legend.game.Scus94491BpeSegment.simpleRand;
-import static legend.game.Scus94491BpeSegment_8002.SquareRoot0;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8004.scriptSubFunctions_8004e29c;
-import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 
 /** Holds persistent data for scripts */
@@ -51,6 +53,7 @@ public class ScriptState<T> {
   public final int[] callStack_1c = new int[10];
   /**
    * <ul>
+   *   <li>0 - my script index</li>
    *   <li>5 - parent script index</li>
    *   <li>6 - child script index</li>
    *   <li>
@@ -80,14 +83,14 @@ public class ScriptState<T> {
    *       <li>0x2 - dragoon</li>
    *       <li>0x4 - monster</li>
    *       <li>0x8 - it is this character's turn</li>
-   *       <li>0x10 - don't animate or render bobj?</li>
+   *       <li>0x10 - don't animate or render bent?</li>
    *       <li>0x20 - forced turn, probably bosses who have reaction attacks</li>
    *       <li>0x40 - dead</li>
    *       <li>0x80 - finish the current animation and then stop animating</li>
    *       <li>0x100 - ?</li>
    *       <li>0x200 - ?</li>
    *       <li>0x400 - ?</li>
-   *       <li>0x800 - don't load script (used by cutscene bobjs controlled by other scripts)</li>
+   *       <li>0x800 - don't load script (used by cutscene bents controlled by other scripts)</li>
    *       <li>0x1000 - ?</li>
    *       <li>0x2000 - don't drop loot (set when monster has died to prevent duplicate drops)</li>
    *       <li>0x4000 - cannot target</li>
@@ -110,19 +113,20 @@ public class ScriptState<T> {
    * </ul>
    */
   public final int[] storage_44 = new int[33];
-  public ScriptState<BattleObject27c> scriptState_c8;
-  public int _cc;
-  public int _d0;
-  public int _d4;
-  public int _d8;
-  public int _dc;
-  public int _e0;
-  public int _e4;
-  public int _e8;
-  public int _ec;
-  public int _f0;
-  public int _f4;
+  public ScriptState<BattleEntity27c> scriptState_c8;
+  public int ticks_cc;
+  /** Was .8 */
+  public final Vector3f _d0 = new Vector3f();
+  /** Was .8 */
+  public final Vector3f _dc = new Vector3f();
+  public final Vector3f _e8 = new Vector3f();
+  /** Was .8 */
+  public float _f4;
   public int ui_fc;
+
+  public static <T> Class<ScriptState<T>> classFor(final Class<T> cls) {
+    return (Class<ScriptState<T>>)(Class<?>)ScriptState.class;
+  }
 
   public ScriptState(final ScriptManager manager, final int index, final String name, @Nullable final T innerStruct) {
     this.manager = manager;
@@ -195,12 +199,12 @@ public class ScriptState<T> {
     this.loadScriptFile(script, 0);
   }
 
-  public void loadScriptFile(@Nullable final ScriptFile script, final int offsetIndex) {
+  public void loadScriptFile(@Nullable final ScriptFile script, final int entrypointIndex) {
     if(script != null) {
-      LOGGER.info(SCRIPT_MARKER, "Loading script %s into index %d (entry point 0x%x)", script.name, this.index, offsetIndex);
+      LOGGER.info(SCRIPT_MARKER, "Loading script %s into index %d (entry point 0x%x)", script.name, this.index, entrypointIndex);
 
       this.scriptPtr_14 = script;
-      this.offset_18 = script.getEntry(offsetIndex);
+      this.offset_18 = script.getEntry(entrypointIndex);
       this.storage_44[7] &= 0xfffd_ffff;
     } else {
       LOGGER.info(SCRIPT_MARKER, "Clearing script index %d", this.index);
@@ -381,19 +385,19 @@ public class ScriptState<T> {
             final int storage1 = this.storage_44[cmd1];
             final int storage2 = this.storage_44[cmd2];
             this.context.params_20[paramIndex] = new GameVarArrayParam(cmd0 + storage1, storage2);
-          } else if(paramType == 0x9) { // Push (commandStart + (cmd0 | cmd1 << 8) * 4)
+          } else if(paramType == 0x9) { // INLINE_1 Push (commandStart + (cmd0 | cmd1 << 8) * 4)
             //LAB_80016328
             this.context.params_20[paramIndex] = new ScriptInlineParam(this, this.context.opOffset_08 + (short)childCommand);
-          } else if(paramType == 0xa) { // Push (commandStart + (script[this].storage[cmd2] + (cmd0 | cmd1 << 8)) * 4)
+          } else if(paramType == 0xa) { // INLINE_2 Push (commandStart + (script[this].storage[cmd2] + (cmd0 | cmd1 << 8)) * 4)
             //LAB_80016118
             //LAB_80016334
             final int storage = this.storage_44[cmd2];
             this.context.params_20[paramIndex] = new ScriptInlineParam(this, this.context.opOffset_08 + ((short)childCommand + storage));
-          } else if(paramType == 0xb) { // Push (commandStart + (deref(commandStart + (script[this].storage[cmd2] + (cmd0 | cmd1 << 8)) * 4) + (cmd0 | cmd1 << 8)) * 4)
+          } else if(paramType == 0xb) { // INLINE_TABLE_1 Push (commandStart[commandStart[script[this].storage[cmd2] + (cmd0 | cmd1 << 8)] + (cmd0 | cmd1 << 8)])
             //LAB_80016360
             final int storage = this.storage_44[cmd2];
             this.context.params_20[paramIndex] = new ScriptInlineParam(this, this.context.opOffset_08).array((short)childCommand + new ScriptInlineParam(this, this.context.opOffset_08).array((short)childCommand + storage).get());
-          } else if(paramType == 0xc) { // Push commandStart[commandStart[script[this].storage[cmd0]] + script[this].storage[cmd1]]
+          } else if(paramType == 0xc) { // INLINE_TABLE_2 Push commandStart[commandStart[script[this].storage[cmd0]] + script[this].storage[cmd1]]
             //LAB_800163a0
             this.context.params_20[paramIndex] = new ScriptInlineParam(this, this.context.commandOffset_0c).array(new ScriptInlineParam(this, this.context.commandOffset_0c).array(this.storage_44[cmd0]).get() + this.storage_44[cmd1]);
             this.context.commandOffset_0c++;
@@ -417,10 +421,10 @@ public class ScriptState<T> {
             //LAB_80016138
             //LAB_8001648c
             assert false;
-          } else if(paramType == 0x13) {
+          } else if(paramType == 0x13) { // INLINE_3
             //LAB_800164a4
             this.context.params_20[paramIndex] = new ScriptInlineParam(this, this.context.opOffset_08).array((short)childCommand + cmd2);
-          } else if(paramType == 0x14) { // Push commandStart[(cmd0 | cmd1 << 8) + commandStart[(cmd0 | cmd1 << 8) + cmd2]]
+          } else if(paramType == 0x14) { // INLINE_TABLE_3 Push commandStart[(cmd0 | cmd1 << 8) + commandStart[(cmd0 | cmd1 << 8) + cmd2]]
             //LAB_800164b4
             //LAB_800164cc
             //LAB_800164d4
@@ -435,7 +439,7 @@ public class ScriptState<T> {
             //LAB_80016518
             this.context.params_20[paramIndex] = new ScriptInlineParam(this, new ScriptInlineParam(this, this.context.commandOffset_0c).array(cmd0).get() + this.storage_44[cmd1]);
             this.context.commandOffset_0c++;
-          } else if(paramType == 0x17) {
+          } else if(paramType == 0x17) { // INLINE_TABLE_4
             //LAB_800161d4
             //LAB_8001654c
             this.context.params_20[paramIndex] = new ScriptInlineParam(this, this.context.commandOffset_0c).array(new ScriptInlineParam(this, this.context.commandOffset_0c).array(cmd0).get() + cmd1);
@@ -527,9 +531,9 @@ public class ScriptState<T> {
       case 35, 43 -> this.scriptMod();
       case 36, 44 -> this.scriptMod2();
 
-      case 40 -> this.FUN_80016b2c();
-      case 41 -> this.FUN_80016b5c();
-      case 42 -> this.FUN_80016b8c();
+      case 40 -> this.scriptMultiply12();
+      case 41 -> this.scriptDivide12();
+      case 42 -> this.scriptDivide2_12();
 
       case 48 -> this.scriptSquareRoot();
       case 49 -> this.scriptRandom();
@@ -842,20 +846,23 @@ public class ScriptState<T> {
     return FlowControl.CONTINUE;
   }
 
+  /** Note: reduces likelihood of overflow at cost of precision */
   @Method(0x80016b2cL)
-  public FlowControl FUN_80016b2c() {
+  public FlowControl scriptMultiply12() {
     this.context.params_20[1].set((this.context.params_20[1].get() >> 4) * (this.context.params_20[0].get() >> 4) >> 4);
     return FlowControl.CONTINUE;
   }
 
+  /** Note: reduces likelihood of overflow at cost of precision */
   @Method(0x80016b5cL)
-  public FlowControl FUN_80016b5c() {
+  public FlowControl scriptDivide12() {
     this.context.params_20[1].set(((this.context.params_20[1].get() << 4) / this.context.params_20[0].get()) << 8);
     return FlowControl.CONTINUE;
   }
 
+  /** Note: reduces likelihood of overflow at cost of precision */
   @Method(0x80016b8cL)
-  public FlowControl FUN_80016b8c() {
+  public FlowControl scriptDivide2_12() {
     this.context.params_20[1].set(((this.context.params_20[0].get() << 4) / this.context.params_20[1].get()) << 8);
     return FlowControl.CONTINUE;
   }
@@ -865,7 +872,7 @@ public class ScriptState<T> {
    */
   @Method(0x80016bbcL)
   public FlowControl scriptSquareRoot() {
-    this.context.params_20[1].set(SquareRoot0(this.context.params_20[0].get()));
+    this.context.params_20[1].set((int)Math.sqrt(this.context.params_20[0].get()));
     return FlowControl.CONTINUE;
   }
 
@@ -877,13 +884,13 @@ public class ScriptState<T> {
 
   @Method(0x80016c4cL)
   public FlowControl scriptSin() {
-    this.context.params_20[1].set((int)sin_cos_80054d0c.offset(2, (this.context.params_20[0].get() & 0xfff) * 0x4L).getSigned());
+    this.context.params_20[1].set(rsin(this.context.params_20[0].get()));
     return FlowControl.CONTINUE;
   }
 
   @Method(0x80016c80L)
   public FlowControl scriptCos() {
-    this.context.params_20[1].set((int)sin_cos_80054d0c.offset(2, (this.context.params_20[0].get() & 0xfff) * 0x4L).offset(0x2L).getSigned());
+    this.context.params_20[1].set(rcos(this.context.params_20[0].get()));
     return FlowControl.CONTINUE;
   }
 
@@ -901,6 +908,12 @@ public class ScriptState<T> {
   @Method(0x80016cfcL)
   public FlowControl scriptExecuteSubFunc() {
     try {
+      final FlowControl result = currentEngineState_8004dd04.executeScriptFunction(this.context.opParam_18, this.context);
+
+      if(result != null) {
+        return result;
+      }
+
       return scriptSubFunctions_8004e29c[this.context.opParam_18].apply(this.context);
     } catch(final UnsupportedOperationException e) {
       throw new RuntimeException("Script subfunc %d error".formatted(this.context.opParam_18), e);

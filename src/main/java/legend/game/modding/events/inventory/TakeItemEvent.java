@@ -1,13 +1,14 @@
 package legend.game.modding.events.inventory;
 
-import legend.game.modding.events.Event;
+import legend.game.inventory.Item;
+import org.legendofdragoon.modloader.events.Event;
 
 public class TakeItemEvent extends Event {
-  public final int itemId;
+  public final Item item;
   public boolean takeItem;
 
-  public TakeItemEvent(final int itemId, final boolean takeItem) {
-    this.itemId = itemId;
+  public TakeItemEvent(final Item item, final boolean takeItem) {
+    this.item = item;
     this.takeItem = takeItem;
   }
 }

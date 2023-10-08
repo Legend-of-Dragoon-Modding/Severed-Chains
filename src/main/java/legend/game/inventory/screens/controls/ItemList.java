@@ -4,23 +4,23 @@ import legend.game.input.InputAction;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.InputPropagation;
 import legend.game.types.LodString;
-import legend.game.types.MenuItemStruct04;
+import legend.game.types.MenuEntryStruct04;
 import legend.game.types.Renderable58;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.ToIntFunction;
 
 import static legend.game.SItem.allocateUiElement;
-import static legend.game.SItem.getItemName;
 import static legend.game.Scus94491BpeSegment_8002.allocateManualRenderable;
-import static legend.game.Scus94491BpeSegment_8002.getItemIcon;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderable;
 
-public class ItemList extends Control {
-  private final ListBox<MenuItemStruct04> items;
+public class ItemList<T> extends Control {
+  private final ListBox<MenuEntryStruct04<T>> items;
   private final Renderable58 background;
   private final Label titleLabel;
   private final Label maxLabel;
@@ -28,14 +28,14 @@ public class ItemList extends Control {
 
   public ItemList() {
     this(
-      menuItem -> new LodString(getItemName(menuItem.itemId_00)).get(),
-      menuItem -> getItemIcon(menuItem.itemId_00),
+      menuItem -> new LodString(menuItem.getName()).get(),
+      MenuEntryStruct04::getIcon,
       menuItem -> (menuItem.flags_02 & 0x1000) != 0 ? menuItem.flags_02 & 0xf : -1,
       menuItem -> (menuItem.flags_02 & 0x1000) != 0
     );
   }
 
-  public ItemList(final Function<MenuItemStruct04, String> getItemName, @Nullable final Function<MenuItemStruct04, Integer> getItemIcon, @Nullable final Function<MenuItemStruct04, Integer> getFaceIcon, @Nullable final Function<MenuItemStruct04, Boolean> isDisabled) {
+  public ItemList(final Function<MenuEntryStruct04<T>, String> getItemName, @Nullable final ToIntFunction<MenuEntryStruct04<T>> getItemIcon, @Nullable final ToIntFunction<MenuEntryStruct04<T>> getFaceIcon, @Nullable final Predicate<MenuEntryStruct04<T>> isDisabled) {
     this.setSize(173, 147);
 
     this.items = new ListBox<>(getItemName, getItemIcon, getFaceIcon, isDisabled);
@@ -88,20 +88,20 @@ public class ItemList extends Control {
     return this.items.isEmpty();
   }
 
-  public MenuItemStruct04 getSelectedItem() {
+  public MenuEntryStruct04<T> getSelectedItem() {
     return this.items.getSelectedEntry();
   }
 
-  public List<MenuItemStruct04> getItems() {
+  public List<MenuEntryStruct04<T>> getItems() {
     return this.items.getEntries();
   }
 
-  public void add(final MenuItemStruct04 item) {
+  public void add(final MenuEntryStruct04<T> item) {
     this.items.add(item);
     this.updateMaxLabel();
   }
 
-  public void remove(final MenuItemStruct04 item) {
+  public void remove(final MenuEntryStruct04<T> item) {
     this.items.remove(item);
     this.updateMaxLabel();
   }
@@ -111,15 +111,15 @@ public class ItemList extends Control {
     this.updateMaxLabel();
   }
 
-  public void sort(final Comparator<MenuItemStruct04> comparator) {
+  public void sort(final Comparator<MenuEntryStruct04<T>> comparator) {
     this.items.sort(comparator);
   }
 
-  public void onHighlight(final ListBox.Highlight<MenuItemStruct04> handler) {
+  public void onHighlight(final ListBox.Highlight<MenuEntryStruct04<T>> handler) {
     this.items.onHighlight(handler);
   }
 
-  public void onSelection(final ListBox.Selection<MenuItemStruct04> handler) {
+  public void onSelection(final ListBox.Selection<MenuEntryStruct04<T>> handler) {
     this.items.onSelection(handler);
   }
 

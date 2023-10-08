@@ -1,6 +1,6 @@
 package legend.game.characters;
 
-import legend.game.modding.registries.RegistryEntry;
+import org.legendofdragoon.modloader.registries.RegistryEntry;
 
 import java.util.function.BiFunction;
 

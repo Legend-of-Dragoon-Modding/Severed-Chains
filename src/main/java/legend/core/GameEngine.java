@@ -1,6 +1,7 @@
 package legend.core;
 
 import legend.core.gpu.Gpu;
+import legend.core.gte.Gte;
 import legend.core.memory.Memory;
 import legend.core.memory.Value;
 import legend.core.memory.segments.RamSegment;
@@ -13,16 +14,10 @@ import legend.core.opengl.fonts.Font;
 import legend.core.opengl.fonts.FontManager;
 import legend.core.opengl.fonts.TextStream;
 import legend.core.spu.Spu;
-import legend.game.Scus94491BpeSegment;
+import legend.core.ui.ScreenStack;
 import legend.game.Scus94491BpeSegment_8002;
-import legend.game.Scus94491BpeSegment_8003;
-import legend.game.Scus94491BpeSegment_8004;
-import legend.game.Scus94491BpeSegment_800e;
 import legend.game.fmv.Fmv;
-import legend.game.i18n.LangManager;
-import legend.game.modding.ModManager;
-import legend.game.modding.events.EventManager;
-import legend.game.modding.registries.Registries;
+import legend.game.input.Input;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
@@ -31,8 +26,10 @@ import legend.game.saves.serializers.RetailSerializer;
 import legend.game.saves.serializers.V1Serializer;
 import legend.game.saves.serializers.V2Serializer;
 import legend.game.saves.serializers.V3Serializer;
+import legend.game.saves.serializers.V4Serializer;
 import legend.game.scripting.ScriptManager;
 import legend.game.sound.Sequencer;
+import legend.game.EngineStateEnum;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import legend.game.unpacker.UnpackerException;
@@ -40,6 +37,9 @@ import legend.game.unpacker.UnpackerStoppedRuntimeException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4f;
+import org.legendofdragoon.modloader.ModManager;
+import org.legendofdragoon.modloader.events.EventManager;
+import org.legendofdragoon.modloader.i18n.LangManager;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -58,6 +58,7 @@ import static legend.game.SItem.mirandaXpTable_80113aa8;
 import static legend.game.SItem.roseXpTable_801139b4;
 import static legend.game.SItem.shanaXpTable_80113aa8;
 import static legend.game.Scus94491BpeSegment.gameLoop;
+import static legend.game.Scus94491BpeSegment.startSound;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
@@ -80,20 +81,25 @@ public final class GameEngine {
   public static final ModManager MODS = new ModManager(access -> MOD_ACCESS = access);
   public static final LangManager LANG = new LangManager(access -> LANG_ACCESS = access);
   public static final EventManager EVENTS = new EventManager(access -> EVENT_ACCESS = access);
-  public static final Registries REGISTRIES = new Registries(access -> REGISTRY_ACCESS = access);
+  public static final Registries REGISTRIES = new Registries(EVENTS, access -> REGISTRY_ACCESS = access);
 
   public static final ScriptManager SCRIPTS = new ScriptManager();
   public static final Sequencer SEQUENCER = new Sequencer();
 
   public static final ConfigCollection CONFIG = new ConfigCollection();
-  public static final SaveManager SAVES = new SaveManager(V3Serializer.MAGIC_V3, V3Serializer::toV3);
+  public static final SaveManager SAVES = new SaveManager(V4Serializer.MAGIC_V4, V4Serializer::toV4);
 
-  public static final Cpu CPU;
+  public static final RenderEngine RENDERER = new RenderEngine();
+  public static final ScreenStack SCREENS = new ScreenStack();
+
+  public static final Gte GTE;
   public static final Gpu GPU;
   public static final Spu SPU;
 
   public static final Thread hardwareThread;
   public static final Thread spuThread;
+
+  public static boolean legacyUi;
 
   static {
     try {
@@ -111,7 +117,7 @@ public final class GameEngine {
     MEMORY.addSegment(new RamSegment(0x0001_0000L, 0x8f_0000));
     MEMORY.addSegment(new RamSegment(0x1f80_0000L, 0x400));
 
-    CPU = new Cpu();
+    GTE = new Gte();
     GPU = new Gpu();
     SPU = new Spu();
 
@@ -154,10 +160,16 @@ public final class GameEngine {
 
   private static Shader.UniformBuffer transforms2;
   private static final Matrix4f identity = new Matrix4f();
+  private static final Matrix4f backgroundTransforms = new Matrix4f();
+  private static final Matrix4f textTransforms = new Matrix4f();
   private static final Matrix4f eyeTransforms = new Matrix4f();
   private static final Matrix4f loadingTransforms = new Matrix4f();
 
   private static boolean loading;
+
+  public static boolean isLoading() {
+    return loading;
+  }
 
   public static void start() throws IOException {
     final Thread thread = new Thread(() -> {
@@ -165,13 +177,14 @@ public final class GameEngine {
         LOGGER.info("--- Legend start ---");
 
         loading = true;
-        GPU.mainRenderer = GameEngine::loadGfx;
+        RENDERER.setRenderCallback(GameEngine::loadGfx);
 
         Files.createDirectories(Path.of("saves"));
         SAVES.registerDeserializer(RetailSerializer::fromRetailMatcher, RetailSerializer::fromRetail);
         SAVES.registerDeserializer(V1Serializer::fromV1Matcher, V1Serializer::fromV1);
         SAVES.registerDeserializer(V2Serializer::fromV2Matcher, V2Serializer::fromV2);
         SAVES.registerDeserializer(V3Serializer::fromV3Matcher, V3Serializer::fromV3);
+        SAVES.registerDeserializer(V4Serializer::fromV4Matcher, V4Serializer::fromV4);
 
         synchronized(LOCK) {
           Unpacker.setStatusListener(status -> {
@@ -194,12 +207,6 @@ public final class GameEngine {
 
           MEMORY.setBytes(_80010000.getAddress(), Unpacker.loadFile("lod_engine").getBytes());
 
-          MEMORY.addFunctions(Scus94491BpeSegment.class);
-          MEMORY.addFunctions(Scus94491BpeSegment_8002.class);
-          MEMORY.addFunctions(Scus94491BpeSegment_8003.class);
-          MEMORY.addFunctions(Scus94491BpeSegment_8004.class);
-          MEMORY.addFunctions(Scus94491BpeSegment_800e.class);
-
           loadXpTables();
 
           // Find and load all mods so their global config can be shown in the title screen options menu
@@ -218,7 +225,9 @@ public final class GameEngine {
 
     time = System.nanoTime();
     thread.start();
-    GPU.run();
+    RENDERER.init();
+    GPU.init();
+    RENDERER.run();
   }
 
   public static boolean isLoading() {
@@ -239,13 +248,15 @@ public final class GameEngine {
     final Set<String> missingMods = MOD_ACCESS.loadMods(modIds);
 
     // Initialize language
-    LANG_ACCESS.initialize(Locale.getDefault());
+    LANG_ACCESS.initialize(MODS, Locale.getDefault());
 
     // Initialize event bus and find all event handlers
-    EVENT_ACCESS.initialize();
+    EVENT_ACCESS.initialize(MODS);
 
     // Initialize config registry and fire off config registry events
     REGISTRY_ACCESS.initialize(REGISTRIES.config);
+
+    MOD_ACCESS.loadingComplete();
 
     return missingMods;
   }
@@ -361,45 +372,49 @@ public final class GameEngine {
     }
 
     if(onResize != null) {
-      GPU.window().events.removeOnResize(onResize);
+      RENDERER.events().removeOnResize(onResize);
       onResize = null;
     }
 
     if(onKeyPress != null) {
-      GPU.window().events.removeKeyPress(onKeyPress);
+      RENDERER.events().removeKeyPress(onKeyPress);
       onKeyPress = null;
     }
 
     if(onMouseRelease != null) {
-      GPU.window().events.removeMouseRelease(onMouseRelease);
+      RENDERER.events().removeMouseRelease(onMouseRelease);
       onMouseRelease = null;
     }
 
     if(onShutdown != null) {
-      GPU.window().events.removeShutdown(onShutdown);
+      RENDERER.events().removeShutdown(onShutdown);
       onShutdown = null;
     }
 
     spuThread.start();
-    GPU.setStandardRenderer();
 
     synchronized(LOCK) {
-      Fmv.playCurrentFmv();
+      Input.init();
+
+      startSound();
       gameLoop();
+      Fmv.playCurrentFmv(0, EngineStateEnum.TITLE_02);
     }
   }
 
   private static void loadGfx() {
+    RENDERER.camera().moveTo(0.0f, 0.0f, -2.0f);
+
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    final Path vsh = Paths.get("gfx", "shaders", "vram.vsh");
+    final Path vsh = Paths.get("gfx", "shaders", "simple.vsh");
     shader = loadShader(vsh, Paths.get("gfx", "shaders", "title.fsh"));
     shader.use();
     shaderAlpha = shader.new UniformFloat("alpha");
 
-    title1Texture = Texture.png(Path.of(".", "gfx", "textures", "intro", "title1.png"));
-    title2Texture = Texture.png(Path.of(".", "gfx", "textures", "intro", "title2.png"));
+    title1Texture = Texture.filteredPng(Path.of(".", "gfx", "textures", "intro", "title1.png"));
+    title2Texture = Texture.filteredPng(Path.of(".", "gfx", "textures", "intro", "title2.png"));
     loadingTexture = Texture.png(Path.of(".", "gfx", "textures", "intro", "loading.png"));
     eye = Texture.png(Path.of(".", "gfx", "textures", "loading.png"));
 
@@ -409,35 +424,35 @@ public final class GameEngine {
     eyeShaderTicks = eyeShader.new UniformFloat("ticks");
 
     eyeMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
-       0,  0, 0, 0,
-       0, 32, 0, 1,
-      32,  0, 1, 0,
-      32, 32, 1, 1,
+      0.0f, 0.0f, 0, 0, 0,
+      0.0f, 0.1f, 0, 0, 1,
+      0.1f, 0.0f, 0, 1, 0,
+      0.1f, 0.1f, 0, 1, 1,
     }, 4);
-    eyeMesh.attribute(0, 0L, 2, 4);
-    eyeMesh.attribute(1, 2L, 2, 4);
+    eyeMesh.attribute(0, 0L, 3, 5);
+    eyeMesh.attribute(1, 3L, 2, 5);
 
     loadingMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
-        0,  0, 0, 0,
-        0, 32, 0, 1,
-      130,  0, 1, 0,
-      130, 32, 1, 1,
+          0.0f, 0.0f, 0, 0, 0,
+          0.0f, 0.1f, 0, 0, 1,
+      0.40625f, 0.0f, 0, 1, 0,
+      0.40625f, 0.1f, 0, 1, 1,
     }, 4);
-    loadingMesh.attribute(0, 0L, 2, 4);
-    loadingMesh.attribute(1, 2L, 2, 4);
+    loadingMesh.attribute(0, 0L, 3, 5);
+    loadingMesh.attribute(1, 3L, 2, 5);
 
     transforms2 = ShaderManager.getUniformBuffer("transforms2");
     identity.identity();
 
     font = FontManager.get("default");
 
-    onResize = GPU.window().events.onResize(GameEngine::windowResize);
-    windowResize(GPU.window(), (int)(GPU.window().getWidth() * GPU.window().getScale()), (int)(GPU.window().getHeight() * GPU.window().getScale()));
-    GPU.mainRenderer = GameEngine::renderIntro;
+    onResize = RENDERER.events().onResize(GameEngine::windowResize);
+    windowResize(RENDERER.window(), (int)(RENDERER.window().getWidth() * RENDERER.window().getScale()), (int)(RENDERER.window().getHeight() * RENDERER.window().getScale()));
+    RENDERER.setRenderCallback(GameEngine::renderIntro);
 
-    onKeyPress = GPU.window().events.onKeyPress((window, key, scancode, mods) -> skip());
-    onMouseRelease = GPU.window().events.onMouseRelease((window, x, y, button, mods) -> skip());
-    onShutdown = GPU.window().events.onShutdown(Unpacker::stop);
+    onKeyPress = RENDERER.events().onKeyPress((window, key, scancode, mods) -> skip());
+    onMouseRelease = RENDERER.events().onMouseRelease((window, x, y, button, mods) -> skip());
+    onShutdown = RENDERER.events().onShutdown(Unpacker::stop);
   }
 
   private static void skip() {
@@ -493,11 +508,12 @@ public final class GameEngine {
 
     shader.use();
 
-    transforms2.set(identity);
+    transforms2.set(backgroundTransforms);
     shaderAlpha.set(fade1 * fade1 * fade1);
     title1Texture.use();
     fullScrenMesh.draw();
 
+    transforms2.set(textTransforms);
     shaderAlpha.set(fade2 * fade2 * fade2);
     title2Texture.use();
     fullScrenMesh.draw();
@@ -536,42 +552,36 @@ public final class GameEngine {
   }
 
   private static void windowResize(final Window window, final int width, final int height) {
-    final float windowScale = window.getScale();
-    final float unscaledWidth = width / windowScale;
-    final float unscaledHeight = height / windowScale;
-
     if(fullScrenMesh != null) {
       fullScrenMesh.delete();
     }
 
-    final float aspect = (float)4 / 3;
+    final float aspect = (float)width / height;
 
-    float w = unscaledWidth;
+    float w = width;
     float h = w / aspect;
 
-    if(h > unscaledHeight) {
-      h = unscaledHeight;
+    if(h > height) {
+      h = height;
       w = h * aspect;
     }
 
     screenWidth = w;
 
-    final float l = (unscaledWidth - w) / 2;
-    final float t = (unscaledHeight - h) / 2;
-    final float r = l + w;
-    final float b = t + h;
-
+    final float textureWidth = (float)title1Texture.width / title1Texture.height;
     fullScrenMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
-      l, t, 0, 0,
-      l, b, 0, 1,
-      r, t, 1, 0,
-      r, b, 1, 1,
+      -textureWidth, -1.0f, 0.0f, 0, 0,
+      -textureWidth,  1.0f, 0.0f, 0, 1,
+       textureWidth, -1.0f, 0.0f, 1, 0,
+       textureWidth,  1.0f, 0.0f, 1, 1,
     }, 4);
-    fullScrenMesh.attribute(0, 0L, 2, 4);
-    fullScrenMesh.attribute(1, 2L, 2, 4);
+    fullScrenMesh.attribute(0, 0L, 3, 5);
+    fullScrenMesh.attribute(1, 3L, 2, 5);
 
-    eyeTransforms.translation(10.0f, unscaledHeight - 42.0f, 0.0f);
-    loadingTransforms.translation(46.0f, unscaledHeight - 42.0f, 0.0f);
+    backgroundTransforms.translation(0.0f, 0.0f, 0.4f);
+    textTransforms.translation(0.0f, 0.0f, 0.3f);
+    loadingTransforms.translation(-0.85f * aspect + 0.075f, -0.88f, 0.2f);
+    eyeTransforms.translation(-0.85f * aspect, -0.85f, 0.1f);
   }
 
   private static Shader loadShader(final Path vsh, final Path fsh) {

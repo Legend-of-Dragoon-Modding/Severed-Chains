@@ -1,45 +1,28 @@
 package legend.game.combat.effects;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.ByteRef;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnsignedByteRef;
+public class AdditionOverlaysBorder0e {
+  public final int index;
 
-public class AdditionOverlaysBorder0e implements MemoryRef {
-  private final Value ref;
+  /** byte */
+  public boolean isVisible_00;
 
-  public final ByteRef isVisible_00;
+  /** short; 0x200 is unrotated square */
+  public int angleModifier_02;
+  /** ubytes */
+  public int r_04;
+  public int g_05;
+  public int b_06;
 
-  /** 0x200 is unrotated square */
-  public final ShortRef angleModifier_02;
-  public final UnsignedByteRef r_04;
-  public final UnsignedByteRef g_05;
-  public final UnsignedByteRef b_06;
+  /** short */
+  public int size_08;
+  /** short; Counts from start of addition, not hit */
+  public int framesUntilRender_0a;
+  /** byte */
+  public int countFramesVisible_0c;
+  /** byte; -1 = no translucency, 0 = no translucency + shadow, 1+ = no side effect */
+  public int sideEffects_0d;
 
-  public final ShortRef size_08;
-  /** Counts from start of addition, not hit */
-  public final ShortRef framesUntilRender_0a;
-  public final ByteRef countFramesVisible_0c;
-  /** -1 = no translucency, 0 = no translucency + shadow, 1+ = no side effect */
-  public final ByteRef sideEffects_0d;
-
-  public AdditionOverlaysBorder0e(final Value ref) {
-    this.ref = ref;
-
-    this.isVisible_00 = ref.offset(1, 0x00L).cast(ByteRef::new);
-
-    this.angleModifier_02 = ref.offset(2, 0x02L).cast(ShortRef::new);
-    this.r_04 = ref.offset(1, 0x04L).cast(UnsignedByteRef::new);
-    this.g_05 = ref.offset(1, 0x05L).cast(UnsignedByteRef::new);
-    this.b_06 = ref.offset(1, 0x06L).cast(UnsignedByteRef::new);
-
-    this.size_08 = ref.offset(2, 0x08L).cast(ShortRef::new);
-    this.framesUntilRender_0a = ref.offset(2, 0x0aL).cast(ShortRef::new);
-    this.countFramesVisible_0c = ref.offset(1, 0x0cL).cast(ByteRef::new);
-    this.sideEffects_0d = ref.offset(1, 0x0dL).cast(ByteRef::new);
+  public AdditionOverlaysBorder0e(final int index) {
+    this.index = index;
   }
-
-  @Override
-  public long getAddress() { return this.ref.getAddress(); }
 }

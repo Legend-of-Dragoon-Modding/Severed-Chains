@@ -2,11 +2,11 @@ package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
 import legend.game.input.InputAction;
-import legend.game.types.MenuItemStruct04;
+import legend.game.inventory.EquipItemResult;
+import legend.game.inventory.Equipment;
+import legend.game.types.MenuEntries;
+import legend.game.types.MenuEntryStruct04;
 import legend.game.types.Renderable58;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static legend.game.SItem.FUN_800fc824;
 import static legend.game.SItem.FUN_801034cc;
@@ -16,7 +16,6 @@ import static legend.game.SItem.canEquip;
 import static legend.game.SItem.characterCount_8011d7c4;
 import static legend.game.SItem.equipItem;
 import static legend.game.SItem.equipmentGlyphs_80114180;
-import static legend.game.SItem.getEquipmentSlot;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.SItem.loadItemsAndEquipmentForDisplay;
 import static legend.game.SItem.renderCharacterEquipment;
@@ -25,13 +24,13 @@ import static legend.game.SItem.renderCharacterStats;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderMenuItems;
 import static legend.game.SItem.renderString;
-import static legend.game.Scus94491BpeSegment.scriptStartEffect;
+import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.addHp;
 import static legend.game.Scus94491BpeSegment_8002.addMp;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
-import static legend.game.Scus94491BpeSegment_8002.giveItem;
+import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
-import static legend.game.Scus94491BpeSegment_8002.sortItems;
+import static legend.game.Scus94491BpeSegment_8002.setInventoryFromDisplay;
 import static legend.game.Scus94491BpeSegment_8002.takeEquipment;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -49,9 +48,7 @@ public class EquipmentScreen extends MenuScreen {
   private Renderable58 _800bdb9c;
   private Renderable58 _800bdba0;
 
-  private final List<MenuItemStruct04> equipment = new ArrayList<>();
-  private final List<MenuItemStruct04> items = new ArrayList<>();
-  private final List<MenuItemStruct04> menuItems = new ArrayList<>();
+  private final MenuEntries<Equipment> menuItems = new MenuEntries<>();
 
   public EquipmentScreen(final Runnable unload) {
     this.unload = unload;
@@ -61,7 +58,7 @@ public class EquipmentScreen extends MenuScreen {
   protected void render() {
     switch(this.loadingStage) {
       case 0:
-        scriptStartEffect(2, 10);
+        startFadeEffect(2, 10);
         deallocateRenderables(0xff);
         this.loadingStage++;
 
@@ -125,17 +122,12 @@ public class EquipmentScreen extends MenuScreen {
     this.menuItems.clear();
 
     for(int equipmentSlot = 0; equipmentSlot < gameState_800babc8.equipment_1e8.size(); equipmentSlot++) {
-      final int equipmentId = gameState_800babc8.equipment_1e8.getInt(equipmentSlot);
-      if(canEquip(equipmentId, charIndex)) {
-        final int equipmentSlot2 = getEquipmentSlot(equipmentId);
-
-        if(equipmentSlot2 != 0xff) {
-          if(equipmentId != gameState_800babc8.charData_32c[charIndex].equipment_14[equipmentSlot2]) {
-            final MenuItemStruct04 item = new MenuItemStruct04();
-            item.itemId_00 = equipmentId;
-            item.itemSlot_01 = equipmentSlot;
-            this.menuItems.add(item);
-          }
+      final Equipment equipment = gameState_800babc8.equipment_1e8.get(equipmentSlot);
+      if(canEquip(equipment, charIndex)) {
+        if(equipment != gameState_800babc8.charData_32c[charIndex].equipment_14.get(equipment.slot)) {
+          final MenuEntryStruct04<Equipment> menuEntry = MenuEntryStruct04.make(equipment);
+          menuEntry.itemSlot_01 = equipmentSlot;
+          this.menuItems.add(menuEntry);
         }
       }
     }
@@ -147,7 +139,7 @@ public class EquipmentScreen extends MenuScreen {
     final boolean allocate = a3 == 0xff;
 
     renderCharacterSlot(16, 21, characterIndices_800bdbb8.get(charSlot).get(), allocate, false);
-    renderCharacterStats(characterIndices_800bdbb8.get(charSlot).get(), slotIndex + slotScroll >= this.menuItems.size() ? 0xff : this.menuItems.get(slotIndex + slotScroll).itemId_00, allocate);
+    renderCharacterStats(characterIndices_800bdbb8.get(charSlot).get(), slotIndex + slotScroll >= this.menuItems.size() ? null : this.menuItems.get(slotIndex + slotScroll).item_00, allocate);
     renderCharacterEquipment(characterIndices_800bdbb8.get(charSlot).get(), allocate);
 
     if(allocate) {
@@ -159,7 +151,7 @@ public class EquipmentScreen extends MenuScreen {
     renderMenuItems(194, 92, this.menuItems, slotScroll, 4, this._800bdb9c, this._800bdba0);
 
     if(slotIndex + slotScroll < this.menuItems.size()) {
-      renderString(0, 194, 178, this.menuItems.get(slotIndex + slotScroll).itemId_00, allocate);
+      renderString(194, 178, this.menuItems.get(slotIndex + slotScroll).item_00.description, allocate);
     }
   }
 
@@ -205,20 +197,20 @@ public class EquipmentScreen extends MenuScreen {
         this.itemHighlight.y_44 = this.FUN_800fc804(slot);
 
         final int itemIndex = this.selectedSlot + this.slotScroll;
-        if(itemIndex < gameState_800babc8.equipment_1e8.size()) {
-          final int equipmentId = this.menuItems.get(itemIndex).itemId_00;
-          if(equipmentId != 0xff) {
-            final int previousEquipmentId = equipItem(equipmentId, characterIndices_800bdbb8.get(this.charSlot).get());
-            takeEquipment(this.menuItems.get(itemIndex).itemSlot_01);
-            giveItem(previousEquipmentId);
-            playSound(2);
-            loadCharacterStats();
-            addHp(characterIndices_800bdbb8.get(this.charSlot).get(), 0);
-            addMp(characterIndices_800bdbb8.get(this.charSlot).get(), 0);
-            this.loadingStage = 2;
-          } else {
-            playSound(40);
+        if(itemIndex < this.menuItems.size()) {
+          final Equipment equipment = this.menuItems.get(itemIndex).item_00;
+          final EquipItemResult previousEquipment = equipItem(equipment, characterIndices_800bdbb8.get(this.charSlot).get());
+          takeEquipment(this.menuItems.get(itemIndex).itemSlot_01);
+
+          if(previousEquipment.previousEquipment != null) {
+            giveEquipment(previousEquipment.previousEquipment);
           }
+
+          playSound(2);
+          loadCharacterStats();
+          addHp(characterIndices_800bdbb8.get(this.charSlot).get(), 0);
+          addMp(characterIndices_800bdbb8.get(this.charSlot).get(), 0);
+          this.loadingStage = 2;
         }
 
         return InputPropagation.HANDLED;
@@ -294,28 +286,29 @@ public class EquipmentScreen extends MenuScreen {
 
     final int itemIndex = this.selectedSlot + this.slotScroll;
 
-    if(itemIndex < gameState_800babc8.equipment_1e8.size()) {
-      final int equipmentId = this.menuItems.get(itemIndex).itemId_00;
+    if(itemIndex < this.menuItems.size()) {
+      final Equipment equipment = this.menuItems.get(itemIndex).item_00;
+      final EquipItemResult previousEquipment = equipItem(equipment, characterIndices_800bdbb8.get(this.charSlot).get());
+      takeEquipment(this.menuItems.get(itemIndex).itemSlot_01);
 
-      if(equipmentId != 0xff) {
-        final int previousEquipmentId = equipItem(equipmentId, characterIndices_800bdbb8.get(this.charSlot).get());
-        takeEquipment(this.menuItems.get(itemIndex).itemSlot_01);
-        giveItem(previousEquipmentId);
-        playSound(2);
-        loadCharacterStats();
-        addHp(characterIndices_800bdbb8.get(this.charSlot).get(), 0);
-        addMp(characterIndices_800bdbb8.get(this.charSlot).get(), 0);
-        this.loadingStage = 2;
-      } else {
-        playSound(40);
+      if(previousEquipment.previousEquipment != null) {
+        giveEquipment(previousEquipment.previousEquipment);
       }
+
+      playSound(2);
+      loadCharacterStats();
+      addHp(characterIndices_800bdbb8.get(this.charSlot).get(), 0);
+      addMp(characterIndices_800bdbb8.get(this.charSlot).get(), 0);
+      this.loadingStage = 2;
     }
   }
 
   private void menuItemSort() {
     playSound(2);
-    loadItemsAndEquipmentForDisplay(this.equipment, this.items, 1);
-    sortItems(this.equipment, gameState_800babc8.equipment_1e8, gameState_800babc8.equipment_1e8.size());
+    final MenuEntries<Equipment> equipment = new MenuEntries<>();
+    loadItemsAndEquipmentForDisplay(equipment, null, 1);
+    equipment.sort();
+    setInventoryFromDisplay(equipment, gameState_800babc8.equipment_1e8, equipment.size());
     this.loadingStage = 2;
   }
 

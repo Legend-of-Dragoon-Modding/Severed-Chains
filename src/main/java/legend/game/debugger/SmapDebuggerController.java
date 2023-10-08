@@ -16,12 +16,12 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import legend.game.SMap;
+import legend.core.MathHelper;
+import legend.game.submap.SMap;
 import legend.game.scripting.ScriptState;
-import legend.game.types.SubmapObject210;
+import legend.game.submap.SubmapObject210;
 
-import static legend.game.SMap.sobjCount_800c6730;
-import static legend.game.SMap.sobjs_800c6880;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 
 public class SmapDebuggerController {
   @FXML
@@ -35,23 +35,23 @@ public class SmapDebuggerController {
   public CheckBox renderCollision;
 
   @FXML
-  public Spinner<Integer> posX;
+  public Spinner<Double> posX;
   @FXML
-  public Spinner<Integer> posY;
+  public Spinner<Double> posY;
   @FXML
-  public Spinner<Integer> posZ;
+  public Spinner<Double> posZ;
   @FXML
-  public Spinner<Integer> rotX;
+  public Spinner<Double> rotX;
   @FXML
-  public Spinner<Integer> rotY;
+  public Spinner<Double> rotY;
   @FXML
-  public Spinner<Integer> rotZ;
+  public Spinner<Double> rotZ;
   @FXML
-  public Spinner<Integer> scaleX;
+  public Spinner<Double> scaleX;
   @FXML
-  public Spinner<Integer> scaleY;
+  public Spinner<Double> scaleY;
   @FXML
-  public Spinner<Integer> scaleZ;
+  public Spinner<Double> scaleZ;
 
   @FXML
   public CheckBox collideByPlayer;
@@ -78,7 +78,7 @@ public class SmapDebuggerController {
   private SubmapObject210 sobj;
 
   public void initialize() {
-    for(int i = 0; i < sobjCount_800c6730.get(); i++) {
+    for(int i = 0; i < ((SMap)currentEngineState_8004dd04).sobjCount_800c6730; i++) {
       this.sobjs.add(new ListItem(this::getSobjName, i));
     }
 
@@ -106,21 +106,21 @@ public class SmapDebuggerController {
 
     this.renderCollision.setSelected(SMap.enableCollisionDebug);
 
-    this.posX.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE));
-    this.posY.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE));
-    this.posZ.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE));
-    this.rotX.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(Short.MIN_VALUE, Short.MAX_VALUE));
-    this.rotY.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(Short.MIN_VALUE, Short.MAX_VALUE));
-    this.rotZ.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(Short.MIN_VALUE, Short.MAX_VALUE));
-    this.scaleX.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE));
-    this.scaleY.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE));
-    this.scaleZ.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(Integer.MIN_VALUE, Integer.MAX_VALUE));
+    this.posX.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE));
+    this.posY.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE));
+    this.posZ.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE));
+    this.rotX.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE));
+    this.rotY.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE));
+    this.rotZ.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE));
+    this.scaleX.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE));
+    this.scaleY.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE));
+    this.scaleZ.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(-Float.MAX_VALUE, Float.MAX_VALUE));
 
     this.sobjList.getSelectionModel().select(0);
   }
 
   private String getSobjName(final int index) {
-    final ScriptState<SubmapObject210> state = sobjs_800c6880[index];
+    final ScriptState<SubmapObject210> state = ((SMap)currentEngineState_8004dd04).sobjs_800c6880[index];
 
     if(state == null) {
       return "unused";
@@ -134,7 +134,7 @@ public class SmapDebuggerController {
   }
 
   private void displayStats(final int index) {
-    final ScriptState<SubmapObject210> state = sobjs_800c6880[index];
+    final ScriptState<SubmapObject210> state = ((SMap)currentEngineState_8004dd04).sobjs_800c6880[index];
 
     if(state == null) {
       return;
@@ -144,15 +144,15 @@ public class SmapDebuggerController {
 
     this.sobj = state.innerStruct_00;
 
-    this.posX.getValueFactory().setValue(this.sobj.model_00.coord2_14.coord.transfer.getX());
-    this.posY.getValueFactory().setValue(this.sobj.model_00.coord2_14.coord.transfer.getY());
-    this.posZ.getValueFactory().setValue(this.sobj.model_00.coord2_14.coord.transfer.getZ());
-    this.rotX.getValueFactory().setValue((int)this.sobj.model_00.coord2Param_64.rotate.getX());
-    this.rotY.getValueFactory().setValue((int)this.sobj.model_00.coord2Param_64.rotate.getY());
-    this.rotZ.getValueFactory().setValue((int)this.sobj.model_00.coord2Param_64.rotate.getZ());
-    this.scaleX.getValueFactory().setValue(this.sobj.model_00.scaleVector_fc.getX());
-    this.scaleY.getValueFactory().setValue(this.sobj.model_00.scaleVector_fc.getY());
-    this.scaleZ.getValueFactory().setValue(this.sobj.model_00.scaleVector_fc.getZ());
+    this.posX.getValueFactory().setValue((double)this.sobj.model_00.coord2_14.coord.transfer.x);
+    this.posY.getValueFactory().setValue((double)this.sobj.model_00.coord2_14.coord.transfer.y);
+    this.posZ.getValueFactory().setValue((double)this.sobj.model_00.coord2_14.coord.transfer.z);
+    this.rotX.getValueFactory().setValue((double)(this.sobj.model_00.coord2_14.transforms.rotate.x));
+    this.rotY.getValueFactory().setValue((double)(this.sobj.model_00.coord2_14.transforms.rotate.y));
+    this.rotZ.getValueFactory().setValue((double)(this.sobj.model_00.coord2_14.transforms.rotate.z));
+    this.scaleX.getValueFactory().setValue((double)(this.sobj.model_00.coord2_14.transforms.scale.x));
+    this.scaleY.getValueFactory().setValue((double)(this.sobj.model_00.coord2_14.transforms.scale.y));
+    this.scaleZ.getValueFactory().setValue((double)(this.sobj.model_00.coord2_14.transforms.scale.z));
 
     this.collideByPlayer.setSelected((this.sobj.flags_190 & 0x10_0000) != 0);
     this.collide20.setSelected((this.sobj.flags_190 & 0x20_0000) != 0);
@@ -172,7 +172,7 @@ public class SmapDebuggerController {
       return;
     }
 
-    final ScriptState<SubmapObject210> state = sobjs_800c6880[this.sobjList.getSelectionModel().getSelectedIndex()];
+    final ScriptState<SubmapObject210> state = ((SMap)currentEngineState_8004dd04).sobjs_800c6880[this.sobjList.getSelectionModel().getSelectedIndex()];
 
     final ScriptDebugger scriptDebugger = new ScriptDebugger();
     scriptDebugger.preselectScript(state.index).start(new Stage());
@@ -184,25 +184,25 @@ public class SmapDebuggerController {
 
   public void updatePos(final ActionEvent event) {
     if(this.sobj != null) {
-      this.sobj.model_00.coord2_14.coord.transfer.setX(this.posX.getValueFactory().getValue());
-      this.sobj.model_00.coord2_14.coord.transfer.setY(this.posY.getValueFactory().getValue());
-      this.sobj.model_00.coord2_14.coord.transfer.setZ(this.posZ.getValueFactory().getValue());
+      this.sobj.model_00.coord2_14.coord.transfer.x = this.posX.getValueFactory().getValue().floatValue();
+      this.sobj.model_00.coord2_14.coord.transfer.y = this.posY.getValueFactory().getValue().floatValue();
+      this.sobj.model_00.coord2_14.coord.transfer.z = this.posZ.getValueFactory().getValue().floatValue();
     }
   }
 
   public void updateRot(final ActionEvent event) {
     if(this.sobj != null) {
-      this.sobj.model_00.coord2Param_64.rotate.setX(this.rotX.getValueFactory().getValue().shortValue());
-      this.sobj.model_00.coord2Param_64.rotate.setY(this.rotY.getValueFactory().getValue().shortValue());
-      this.sobj.model_00.coord2Param_64.rotate.setZ(this.rotZ.getValueFactory().getValue().shortValue());
+      this.sobj.model_00.coord2_14.transforms.rotate.x = MathHelper.psxDegToRad(this.rotX.getValueFactory().getValue().shortValue());
+      this.sobj.model_00.coord2_14.transforms.rotate.y = MathHelper.psxDegToRad(this.rotY.getValueFactory().getValue().shortValue());
+      this.sobj.model_00.coord2_14.transforms.rotate.z = MathHelper.psxDegToRad(this.rotZ.getValueFactory().getValue().shortValue());
     }
   }
 
   public void updateScale(final ActionEvent event) {
     if(this.sobj != null) {
-      this.sobj.model_00.scaleVector_fc.setX(this.scaleX.getValueFactory().getValue());
-      this.sobj.model_00.scaleVector_fc.setY(this.scaleY.getValueFactory().getValue());
-      this.sobj.model_00.scaleVector_fc.setZ(this.scaleZ.getValueFactory().getValue());
+      this.sobj.model_00.coord2_14.transforms.scale.x = this.scaleX.getValueFactory().getValue().floatValue();
+      this.sobj.model_00.coord2_14.transforms.scale.y = this.scaleY.getValueFactory().getValue().floatValue();
+      this.sobj.model_00.coord2_14.transforms.scale.z = this.scaleZ.getValueFactory().getValue().floatValue();
     }
   }
 

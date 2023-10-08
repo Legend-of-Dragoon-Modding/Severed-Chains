@@ -10,15 +10,15 @@ public final class PhysicalDamageFormula {
   private PhysicalDamageFormula() { }
 
   public static int calculatePhysicalDamage(final State<Integer> state) {
-    return state.bobjs.get(Side.ATTACKER).calculatePhysicalDamage(state.bobjs.get(Side.DEFENDER));
+    return state.bents.get(Side.ATTACKER).calculatePhysicalDamage(state.bents.get(Side.DEFENDER));
   }
 
   public static int applyElementalInteractions(final State<Integer> state) {
     int damage = state.value();
 
-    final Element defendElement = state.bobjs.get(Side.DEFENDER).getElement();
+    final Element defendElement = state.bents.get(Side.DEFENDER).getElement();
 
-    for(final Element attackElement : state.bobjs.get(Side.ATTACKER).getAttackElements()) {
+    for(final Element attackElement : state.bents.get(Side.ATTACKER).getAttackElements()) {
       damage = attackElement.adjustAttackingElementalDamage(AttackType.PHYSICAL, damage, defendElement);
       damage = defendElement.adjustDefendingElementalDamage(AttackType.PHYSICAL, damage, attackElement);
     }
@@ -27,14 +27,14 @@ public final class PhysicalDamageFormula {
   }
 
   public static int applyPower(final State<Integer> state) {
-    return adjustDamageForPower(state.value(), state.bobjs.get(Side.ATTACKER).powerAttack_b4, state.bobjs.get(Side.DEFENDER).powerDefence_b8);
+    return adjustDamageForPower(state.value(), state.bents.get(Side.ATTACKER).powerAttack_b4, state.bents.get(Side.DEFENDER).powerDefence_b8);
   }
 
   public static int applyDragoonSpace(final State<Integer> state) {
     int damage = state.value();
 
     if(dragoonSpaceElement_800c6b64 != null) {
-      for(final Element attackElement : state.bobjs.get(Side.ATTACKER).getAttackElements()) {
+      for(final Element attackElement : state.bents.get(Side.ATTACKER).getAttackElements()) {
         damage = dragoonSpaceElement_800c6b64.adjustDragoonSpaceDamage(AttackType.PHYSICAL, damage, attackElement);
       }
     }
@@ -43,23 +43,23 @@ public final class PhysicalDamageFormula {
   }
 
   public static int applyDamageMultipliers(final State<Integer> state) {
-    return state.bobjs.get(Side.ATTACKER).applyPhysicalDamageMultipliers(state.value());
+    return state.bents.get(Side.ATTACKER).applyPhysicalDamageMultipliers(state.value());
   }
 
   public static int applyAttackEffects(final State<Integer> state) {
-    state.bobjs.get(Side.ATTACKER).applyAttackEffects();
+    state.bents.get(Side.ATTACKER).applyAttackEffects();
     return state.value();
   }
 
   public static int applyResistanceAndImmunity(final State<Integer> state) {
-    return state.bobjs.get(Side.DEFENDER).applyDamageResistanceAndImmunity(state.value(), AttackType.PHYSICAL);
+    return state.bents.get(Side.DEFENDER).applyDamageResistanceAndImmunity(state.value(), AttackType.PHYSICAL);
   }
 
   public static int applyElementalResistanceAndImmunity(final State<Integer> state) {
     int damage = state.value();
 
-    for(final Element attackElement : state.bobjs.get(Side.ATTACKER).getAttackElements()) {
-      damage = state.bobjs.get(Side.DEFENDER).applyElementalResistanceAndImmunity(damage, attackElement);
+    for(final Element attackElement : state.bents.get(Side.ATTACKER).getAttackElements()) {
+      damage = state.bents.get(Side.DEFENDER).applyElementalResistanceAndImmunity(damage, attackElement);
     }
 
     return damage;

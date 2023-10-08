@@ -13,7 +13,7 @@ public class TmdSubExtension {
 
     final ShortList shorts = new ShortArrayList();
     for(int i = 0; ; i++) {
-      final short val = data.readShort(0x2 + i * 0x2);
+      final short val = data.readShort(0x4 + i * 0x2);
       shorts.add(val);
 
       if(val == -1) {

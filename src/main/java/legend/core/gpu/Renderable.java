@@ -1,6 +1,9 @@
 package legend.core.gpu;
 
 import legend.game.types.Translucency;
+import org.joml.Math;
+import org.joml.Vector2f;
+import org.joml.Vector2i;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -71,15 +74,15 @@ public class Renderable {
   public class Command extends GpuCommand {
     public final String name;
     private final Mesh.Segment segment;
-    private final Vec2i[] vertices;
-    private final Vec2i[] uvs;
+    private final Vector2f[] vertices;
+    private final Vector2i[] uvs;
     private final int[] colours;
     private final Translucency translucency;
     private final int paletteBase;
     private final int pageX;
     private final int pageY;
 
-    public Command(final String name, final Mesh.Segment segment, final Vec2i[] vertices, final Vec2i[] uvs, final int[] colours, @Nullable final Translucency translucency, final int paletteBase, final int pageX, final int pageY) {
+    public Command(final String name, final Mesh.Segment segment, final Vector2f[] vertices, final Vector2i[] uvs, final int[] colours, @Nullable final Translucency translucency, final int paletteBase, final int pageX, final int pageY) {
       this.name = name;
       this.segment = segment;
       this.vertices = vertices;
@@ -114,9 +117,9 @@ public class Renderable {
       }
 
       gpu.rasterizeTriangle(
-        this.vertices[0].x() + gpu.getOffsetX() + Renderable.this.translateX, this.vertices[0].y() + gpu.getOffsetY() + Renderable.this.translateY,
-        this.vertices[1].x() + gpu.getOffsetX() + Renderable.this.translateX, this.vertices[1].y() + gpu.getOffsetY() + Renderable.this.translateY,
-        this.vertices[2].x() + gpu.getOffsetX() + Renderable.this.translateX, this.vertices[2].y() + gpu.getOffsetY() + Renderable.this.translateY,
+        Math.round(this.vertices[0].x + gpu.getOffsetX() + Renderable.this.translateX), Math.round(this.vertices[0].y + gpu.getOffsetY() + Renderable.this.translateY),
+        Math.round(this.vertices[1].x + gpu.getOffsetX() + Renderable.this.translateX), Math.round(this.vertices[1].y + gpu.getOffsetY() + Renderable.this.translateY),
+        Math.round(this.vertices[2].x + gpu.getOffsetX() + Renderable.this.translateX), Math.round(this.vertices[2].y + gpu.getOffsetY() + Renderable.this.translateY),
         this.uvs[0].x(), this.uvs[0].y(),
         this.uvs[1].x(), this.uvs[1].y(),
         this.uvs[2].x(), this.uvs[2].y(),
@@ -129,9 +132,9 @@ public class Renderable {
 
       if(this.segment.vertexCount() == 4) {
         gpu.rasterizeTriangle(
-          this.vertices[1].x() + gpu.getOffsetX() + Renderable.this.translateX, this.vertices[1].y() + gpu.getOffsetY() + Renderable.this.translateY,
-          this.vertices[2].x() + gpu.getOffsetX() + Renderable.this.translateX, this.vertices[2].y() + gpu.getOffsetY() + Renderable.this.translateY,
-          this.vertices[3].x() + gpu.getOffsetX() + Renderable.this.translateX, this.vertices[3].y() + gpu.getOffsetY() + Renderable.this.translateY,
+          Math.round(this.vertices[1].x + gpu.getOffsetX() + Renderable.this.translateX), Math.round(this.vertices[1].y + gpu.getOffsetY() + Renderable.this.translateY),
+          Math.round(this.vertices[2].x + gpu.getOffsetX() + Renderable.this.translateX), Math.round(this.vertices[2].y + gpu.getOffsetY() + Renderable.this.translateY),
+          Math.round(this.vertices[3].x + gpu.getOffsetX() + Renderable.this.translateX), Math.round(this.vertices[3].y + gpu.getOffsetY() + Renderable.this.translateY),
           this.uvs[1].x(), this.uvs[1].y(),
           this.uvs[2].x(), this.uvs[2].y(),
           this.uvs[3].x(), this.uvs[3].y(),

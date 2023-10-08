@@ -62,6 +62,7 @@ public class DeffPart {
   public static class TmdType extends DeffPart {
     public final String name;
 
+    /** Pairs of texture, CLUT */
     public final TextureInfo[] textureInfo_08;
     public final CContainer tmd_0c;
 

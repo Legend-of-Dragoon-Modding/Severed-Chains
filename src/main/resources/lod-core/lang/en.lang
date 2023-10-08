@@ -1,3 +1,6 @@
+# Mod metadata
+lod-core.name=Legend of Dragoon (core)
+
 # Global config
 lod-core.config.render_scale.label=Render Scale
 lod-core.config.controller.label=Controller

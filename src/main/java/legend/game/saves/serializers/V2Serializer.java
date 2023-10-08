@@ -5,6 +5,7 @@ import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.saves.SavedGame;
 import legend.game.types.CharacterData2c;
+import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 
@@ -69,23 +70,23 @@ public final class V2Serializer {
     state._b8 = data.readInt(offset);
     offset += 4;
 
-    for(int i = 0; i < state.scriptFlags2_bc.length; i++) {
-      state.scriptFlags2_bc[i] = data.readInt(offset);
+    for(int i = 0; i < state.scriptFlags2_bc.count(); i++) {
+      state.scriptFlags2_bc.setRaw(i, data.readInt(offset));
       offset += 4;
     }
 
-    for(int i = 0; i < state.scriptFlags1_13c.length; i++) {
-      state.scriptFlags1_13c[i] = data.readInt(offset);
+    for(int i = 0; i < state.scriptFlags1_13c.count(); i++) {
+      state.scriptFlags1_13c.setRaw(i, data.readInt(offset));
       offset += 4;
     }
 
-    for(int i = 0; i < state._15c.length; i++) {
-      state._15c[i] = data.readInt(offset);
+    for(int i = 0; i < state.wmapFlags_15c.count(); i++) {
+      state.wmapFlags_15c.setRaw(i, data.readInt(offset));
       offset += 4;
     }
 
-    for(int i = 0; i < state._17c.length; i++) {
-      state._17c[i] = data.readInt(i);
+    for(int i = 0; i < state._17c.count(); i++) {
+      state._17c.setRaw(i, data.readInt(i));
       offset += 4;
     }
 
@@ -110,12 +111,12 @@ public final class V2Serializer {
     offset += 2;
 
     for(int i = 0; i < equipmentCount; i++) {
-      state.equipment_1e8.add(data.readUByte(offset));
+      state.equipmentIds_1e8.add(data.readUByte(offset));
       offset++;
     }
 
     for(int i = 0; i < itemCount; i++) {
-      state.items_2e9.add(data.readUByte(offset));
+      state.itemIds_2e9.add(data.readUByte(offset));
       offset++;
     }
 
@@ -142,8 +143,8 @@ public final class V2Serializer {
       charData.dlevel_13 = data.readUShort(offset);
       offset += 2;
 
-      for(int i = 0; i < charData.equipment_14.length; i++) {
-        charData.equipment_14[i] = data.readUByte(offset);
+      for(int i = 0; i < 5; i++) {
+        charData.equipmentIds_14.put(EquipmentSlot.fromLegacy(i), data.readUByte(offset));
         offset++;
       }
 
@@ -161,8 +162,8 @@ public final class V2Serializer {
       }
     }
 
-    for(int i = 0; i < state._4b8.length; i++) {
-      state._4b8[i] = data.readInt(offset);
+    for(int i = 0; i < 8; i++) {
+//      state._4b8[i] = data.readInt(offset);
       offset += 4;
     }
 

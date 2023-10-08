@@ -5,39 +5,49 @@ import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandLine;
 import legend.core.gpu.GpuCommandPoly;
-import legend.core.gte.DVECTOR;
 import legend.core.memory.Method;
-import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.ShortRef;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.characters.Element;
 import legend.game.characters.TurnBasedPercentileBuff;
 import legend.game.characters.VitalsStat;
-import legend.game.combat.bobj.AttackEvent;
-import legend.game.combat.bobj.BattleObject27c;
-import legend.game.combat.bobj.MonsterBattleObject;
-import legend.game.combat.bobj.PlayerBattleObject;
+import legend.game.combat.bent.AttackEvent;
+import legend.game.combat.bent.BattleEntity27c;
+import legend.game.combat.bent.BattleEntityStat;
+import legend.game.combat.bent.MonsterBattleEntity;
+import legend.game.combat.bent.PlayerBattleEntity;
+import legend.game.combat.environment.BattleHudBorderMetrics14;
+import legend.game.combat.environment.BattleMenuBackgroundDisplayMetrics0c;
+import legend.game.combat.environment.BattleMenuBackgroundUvMetrics04;
+import legend.game.combat.environment.BattleMenuHighlightMetrics12;
+import legend.game.combat.environment.BattleMenuIconMetrics08;
+import legend.game.combat.environment.BattleMenuTextMetrics08;
 import legend.game.combat.types.AttackType;
 import legend.game.combat.ui.BattleDisplayStats144;
-import legend.game.combat.ui.BattleDisplayStats144Sub10;
+import legend.game.combat.ui.BattleDisplayStatsDigit10;
+import legend.game.combat.ui.BattleHudCharacterDisplay3c;
 import legend.game.combat.ui.BattleMenuStruct58;
-import legend.game.combat.ui.BattleStruct3c;
 import legend.game.combat.ui.CombatItem02;
 import legend.game.combat.ui.CombatMenua4;
 import legend.game.combat.ui.FloatingNumberC4;
 import legend.game.combat.ui.FloatingNumberC4Sub20;
+import legend.game.inventory.Item;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.BattleDescriptionEvent;
 import legend.game.modding.events.battle.SpellStatsEvent;
+import legend.game.modding.events.inventory.RepeatItemReturnEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
+import legend.game.scripting.ScriptDescription;
+import legend.game.scripting.ScriptParam;
 import legend.game.scripting.ScriptState;
-import legend.game.types.ActiveStatsa0;
 import legend.game.types.LodString;
+import legend.game.types.SpellStats0c;
 import legend.game.types.Translucency;
+import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Vector2f;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -46,83 +56,79 @@ import java.util.List;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
-import static legend.core.GameEngine.MEMORY;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.simpleRand;
+import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.intToStr;
 import static legend.game.Scus94491BpeSegment_8002.takeItemId;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
-import static legend.game.Scus94491BpeSegment_8005._80050ae8;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
-import static legend.game.Scus94491BpeSegment_8007.joypadInput_8007a39c;
-import static legend.game.Scus94491BpeSegment_8007.joypadPress_8007a398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800be5d0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
+import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
-import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
-import static legend.game.combat.Bttl_800c._800c66b0;
 import static legend.game.combat.Bttl_800c._800c6748;
 import static legend.game.combat.Bttl_800c._800c697c;
 import static legend.game.combat.Bttl_800c._800c697e;
 import static legend.game.combat.Bttl_800c._800c6980;
-import static legend.game.combat.Bttl_800c._800c6b6c;
-import static legend.game.combat.Bttl_800c._800c6ba1;
-import static legend.game.combat.Bttl_800c._800c6c40;
-import static legend.game.combat.Bttl_800c._800c6f4c;
-import static legend.game.combat.Bttl_800c._800c70e0;
-import static legend.game.combat.Bttl_800c._800c70f4;
-import static legend.game.combat.Bttl_800c._800c7114;
-import static legend.game.combat.Bttl_800c._800c7190;
-import static legend.game.combat.Bttl_800c._800c7192;
-import static legend.game.combat.Bttl_800c._800c7193;
-import static legend.game.combat.Bttl_800c._800c7194;
-import static legend.game.combat.Bttl_800c._800c71bc;
-import static legend.game.combat.Bttl_800c._800c71d0;
-import static legend.game.combat.Bttl_800c._800c71e4;
-import static legend.game.combat.Bttl_800c._800c71ec;
-import static legend.game.combat.Bttl_800c._800c723c;
-import static legend.game.combat.Bttl_800c._800d66b0;
-import static legend.game.combat.Bttl_800c._800fb5dc;
-import static legend.game.combat.Bttl_800c._800fb614;
-import static legend.game.combat.Bttl_800c._800fb674;
-import static legend.game.combat.Bttl_800c._800fb6bc;
-import static legend.game.combat.Bttl_800c._800fb6f4;
-import static legend.game.combat.Bttl_800c._800fb72c;
-import static legend.game.combat.Bttl_800c.aliveBobjCount_800c669c;
+import static legend.game.combat.Bttl_800c.activePartyBattleHudCharacterDisplays_800c6c40;
+import static legend.game.combat.Bttl_800c.aliveBentCount_800c669c;
 import static legend.game.combat.Bttl_800c.aliveMonsterCount_800c6758;
 import static legend.game.combat.Bttl_800c.allText_800fb3c0;
+import static legend.game.combat.Bttl_800c.battleHudBorderMetrics_800c6f4c;
+import static legend.game.combat.Bttl_800c.battleItemMenuScrollArrowUvMetrics_800c7190;
+import static legend.game.combat.Bttl_800c.battleMenuBackgroundDisplayMetrics_800fb614;
+import static legend.game.combat.Bttl_800c.battleMenuBackgroundMetrics_800fb5dc;
+import static legend.game.combat.Bttl_800c.battleMenuHighlightMetrics_800c71bc;
+import static legend.game.combat.Bttl_800c.battleMenuIconHeights_800fb6bc;
+import static legend.game.combat.Bttl_800c.battleMenuIconMetrics_800fb674;
+import static legend.game.combat.Bttl_800c.battleMenuIconStates_800c71e4;
+import static legend.game.combat.Bttl_800c.battleMenuIconVOffsets_800fb6f4;
+import static legend.game.combat.Bttl_800c.battleMenuTextMetrics_800fb72c;
 import static legend.game.combat.Bttl_800c.battleMenu_800c6c34;
-import static legend.game.combat.Bttl_800c.cameraPositionIndicesIndex_800c6ba0;
-import static legend.game.combat.Bttl_800c.cameraPositionIndices_800c6c30;
+import static legend.game.combat.Bttl_800c.battleUiElementClutVramXy_800c7114;
+import static legend.game.combat.Bttl_800c.cameraPositionIndicesIndices_800c6c30;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c.combatItems_800c6988;
 import static legend.game.combat.Bttl_800c.combatMenu_800c6b60;
+import static legend.game.combat.Bttl_800c.countCameraPositionIndicesIndices_800c6ba0;
+import static legend.game.combat.Bttl_800c.currentCameraPositionIndicesIndex_800c66b0;
+import static legend.game.combat.Bttl_800c.currentCameraPositionIndicesIndicesIndex_800c6ba1;
+import static legend.game.combat.Bttl_800c.currentStageData_800c6718;
 import static legend.game.combat.Bttl_800c.digitOffsetXy_800c7014;
-import static legend.game.combat.Bttl_800c.digitU_800c7028;
 import static legend.game.combat.Bttl_800c.displayStats_800c6c2c;
 import static legend.game.combat.Bttl_800c.dragoonSpaceElement_800c6b64;
 import static legend.game.combat.Bttl_800c.dragoonSpells_800c6960;
+import static legend.game.combat.Bttl_800c.dragoonSpiritIconClutOffsets_800c71d0;
 import static legend.game.combat.Bttl_800c.floatingNumbers_800c6b5c;
-import static legend.game.combat.Bttl_800c.intRef_800c6718;
+import static legend.game.combat.Bttl_800c.floatingTextDigitClutOffsets_800c70f4;
+import static legend.game.combat.Bttl_800c.floatingTextType1DigitUs_800c7028;
+import static legend.game.combat.Bttl_800c.floatingTextType3DigitUs_800c70e0;
+import static legend.game.combat.Bttl_800c.iconFlags_800c7194;
 import static legend.game.combat.Bttl_800c.itemTargetAll_800c69c8;
 import static legend.game.combat.Bttl_800c.itemTargetType_800c6b68;
 import static legend.game.combat.Bttl_800c.melbuMonsterNames_800c6ba8;
 import static legend.game.combat.Bttl_800c.melbuStageToMonsterNameIndices_800c6f30;
 import static legend.game.combat.Bttl_800c.protectedItems_800c72cc;
+import static legend.game.combat.Bttl_800c.repeatItemIds_800c6e34;
 import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
 import static legend.game.combat.Bttl_800c.targetAllItemIds_800c7124;
-import static legend.game.combat.Bttl_800c.targetBobjs_800c71f0;
+import static legend.game.combat.Bttl_800c.targetBents_800c71f0;
 import static legend.game.combat.Bttl_800c.textboxColours_800c6fec;
-import static legend.game.combat.Bttl_800e.FUN_800ef8d8;
+import static legend.game.combat.Bttl_800c.uiTextureElementBrightness_800c71ec;
+import static legend.game.combat.Bttl_800c.usedRepeatItems_800c6c3c;
+import static legend.game.combat.Bttl_800e.initializeBattleHudCharacterDisplay;
 import static legend.game.combat.Bttl_800e.perspectiveTransformXyz;
 
 public final class Bttl_800f {
@@ -131,53 +137,53 @@ public final class Bttl_800f {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Bttl_800f.class);
 
   @Method(0x800f0f5cL)
-  public static void FUN_800f0f5c(final GpuCommandPoly parentCommand) {
+  public static void renderBattleHudBorder(final GpuCommandPoly parentCommand) {
     //LAB_800f0fe4
     //LAB_800f0fe8
-    final int[] sp0x20 = new int[80];
-    for(int i = 0; i < sp0x20.length; i++) {
-      sp0x20[i] = (int)_800c6f4c.offset(i * 0x2L).get();
+    final BattleHudBorderMetrics14[] borderMetrics = new BattleHudBorderMetrics14[8];
+    for(int i = 0; i < borderMetrics.length; i++) {
+      borderMetrics[i] = battleHudBorderMetrics_800c6f4c.get(i);
     }
 
     //LAB_800f1014
-    final int[] sp0x10 = new int[4];
-    final int[] sp0x18 = new int[4];
-    int v0 = parentCommand.getX(0) + 1;
-    sp0x10[0] = v0;
-    sp0x10[2] = v0;
-    v0 = parentCommand.getX(1) - 1;
-    sp0x10[1] = v0;
-    sp0x10[3] = v0;
-    v0 = parentCommand.getY(0);
-    sp0x18[0] = v0;
-    sp0x18[1] = v0;
-    v0 = parentCommand.getY(2);
-    sp0x18[2] = v0;
-    sp0x18[3] = v0;
+    final int[] xs = new int[4];
+    final int[] ys = new int[4];
+    int position = parentCommand.getX(0) + 1;
+    xs[0] = position;
+    xs[2] = position;
+    position = parentCommand.getX(1) - 1;
+    xs[1] = position;
+    xs[3] = position;
+    position = parentCommand.getY(0);
+    ys[0] = position;
+    ys[1] = position;
+    position = parentCommand.getY(2);
+    ys[2] = position;
+    ys[3] = position;
 
     //LAB_800f1060
     for(int i = 0; i < 8; i++) {
-      final int left;
-      final int right;
+      final int leftX;
+      final int rightX;
       final int leftU;
       final int rightU;
-      final int top = sp0x18[sp0x20[i * 10]] - sp0x20[i * 10 + 5];
-      final int bottom = sp0x18[sp0x20[i * 10 + 1]] + sp0x20[i * 10 + 5];
-      final int topV = sp0x20[i * 10 + 3];
-      final int bottomV = topV + sp0x20[i * 10 + 7];
+      final int topY = ys[borderMetrics[i].indexXy0_00.get()] - borderMetrics[i].offsetY_0a.get();
+      final int bottomY = ys[borderMetrics[i].indexXy1_02.get()] + borderMetrics[i].offsetY_0a.get();
+      final int topV = borderMetrics[i].v_06.get();
+      final int bottomV = topV + borderMetrics[i].h_0e.get();
 
       if(i == 5 || i == 7) {
         //LAB_800f10ac
-        left = sp0x10[sp0x20[i * 10 + 1]] + sp0x20[i * 10 + 4];
-        right = sp0x10[sp0x20[i * 10]] - sp0x20[i * 10 + 4];
-        rightU = sp0x20[i * 10 + 2];
-        leftU = rightU + sp0x20[i * 10 + 6] - 1;
+        leftX = xs[borderMetrics[i].indexXy1_02.get()] + borderMetrics[i].offsetX_08.get();
+        rightX = xs[borderMetrics[i].indexXy0_00.get()] - borderMetrics[i].offsetX_08.get();
+        rightU = borderMetrics[i].u0_04.get();
+        leftU = rightU + borderMetrics[i].u1_0c.get() - 1;
       } else {
         //LAB_800f1128
-        left = sp0x10[sp0x20[i * 10]] - sp0x20[i * 10 + 4];
-        right = sp0x10[sp0x20[i * 10 + 1]] + sp0x20[i * 10 + 4];
-        leftU = sp0x20[i * 10 + 2];
-        rightU = leftU + sp0x20[i * 10 + 6];
+        leftX = xs[borderMetrics[i].indexXy0_00.get()] - borderMetrics[i].offsetX_08.get();
+        rightX = xs[borderMetrics[i].indexXy1_02.get()] + borderMetrics[i].offsetX_08.get();
+        leftU = borderMetrics[i].u0_04.get();
+        rightU = leftU + borderMetrics[i].u1_0c.get();
       }
 
       final GpuCommandPoly cmd = new GpuCommandPoly(4)
@@ -185,10 +191,10 @@ public final class Bttl_800f {
         .clut(720, 497)
         .vramPos(704, 256)
         .monochrome(0x80)
-        .pos(0, left, top)
-        .pos(1, right, top)
-        .pos(2, left, bottom)
-        .pos(3, right, bottom)
+        .pos(0, leftX, topY)
+        .pos(1, rightX, topY)
+        .pos(2, leftX, bottomY)
+        .pos(3, rightX, bottomY)
         .uv(0, leftU, topV)
         .uv(1, rightU, topV)
         .uv(2, leftU, bottomV)
@@ -199,7 +205,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f1268L)
-  public static void renderTextBoxBackground(final int x, final int y, final int width, final int height, int colour) {
+  public static void renderBattleHudBackground(final int x, final int y, final int width, final int height, final int colour) {
     //LAB_800f1340
     final int left = x - centreScreenX_1f8003dc.get();
     final int top = y - centreScreenY_1f8003de.get();
@@ -207,6 +213,7 @@ public final class Bttl_800f {
     final int g = colour >> 8 & 0xff;
     final int r = colour >> 16 & 0xff;
 
+    // Gradient
     final GpuCommandPoly cmd1 = new GpuCommandPoly(4)
       .translucent(Translucency.HALF_B_PLUS_HALF_F)
       .monochrome(0, 0)
@@ -218,10 +225,11 @@ public final class Bttl_800f {
       .pos(2, left, top + height)
       .pos(3, left + width, top + height);
 
-    FUN_800f0f5c(cmd1);
+    renderBattleHudBorder(cmd1);
 
     GPU.queueCommand(31, cmd1);
 
+    // Darkening overlay
     final GpuCommandPoly cmd2 = new GpuCommandPoly(4)
       .translucent(Translucency.HALF_B_PLUS_HALF_F)
       .monochrome(0)
@@ -272,7 +280,7 @@ public final class Bttl_800f {
     //LAB_800f184c
     //LAB_800f18cc
     for(int i = 0; i < digitCount; i++) {
-      final BattleDisplayStats144Sub10 struct = displayStats._04[a1][i];
+      final BattleDisplayStatsDigit10 struct = displayStats._04[a1][i];
 
       if(a1 == 1 || a1 == 3 || a1 == 4) {
         //LAB_800f18f0
@@ -283,7 +291,7 @@ public final class Bttl_800f {
 
       //LAB_800f1920
       struct.y_04 = digitOffsetXy_800c7014.get(a1 * 2 + 1).get();
-      struct.u_06 = digitU_800c7028.get(digits[i]).get();
+      struct.u_06 = floatingTextType1DigitUs_800c7028.get(digits[i]).get();
       struct.v_08 = 0x20;
       struct.w_0a = 0x8;
       struct.h_0c = 0x8;
@@ -303,7 +311,7 @@ public final class Bttl_800f {
       }
 
       //LAB_800f1998
-      struct._0e = v0;
+      struct.clutOffset_0e = v0;
 
       //LAB_800f199c
       struct.digitValue_00 = digits[i];
@@ -318,7 +326,7 @@ public final class Bttl_800f {
       //LAB_800f1a10
       //LAB_800f1a28
       for(int i = 0; i < 3; i++) {
-        final BattleStruct3c v1 = _800c6c40.get(i);
+        final BattleHudCharacterDisplay3c v1 = activePartyBattleHudCharacterDisplays_800c6c40.get(i);
 
         if(v1.charIndex_00.get() != -1) {
           v1._14.get(2).set(0);
@@ -334,7 +342,7 @@ public final class Bttl_800f {
     //LAB_800f1a64
     //LAB_800f1a70
     for(int i = 0; i < 3; i++) {
-      final BattleStruct3c v1 = _800c6c40.get(i);
+      final BattleHudCharacterDisplay3c v1 = activePartyBattleHudCharacterDisplays_800c6c40.get(i);
       if(v1.charIndex_00.get() != -1) {
         v1._14.get(2).set(0);
         v1.flags_06.or(0x3);
@@ -346,9 +354,9 @@ public final class Bttl_800f {
 
   @Method(0x800f1aa8L)
   public static boolean checkHit(final int attackerIndex, final int defenderIndex, final AttackType attackType) {
-    final BattleObject27c attacker = (BattleObject27c)scriptStatePtrArr_800bc1c0[attackerIndex].innerStruct_00;
-    final BattleObject27c defender = (BattleObject27c)scriptStatePtrArr_800bc1c0[defenderIndex].innerStruct_00;
-    final boolean isMonster = attacker instanceof MonsterBattleObject;
+    final BattleEntity27c attacker = (BattleEntity27c)scriptStatePtrArr_800bc1c0[attackerIndex].innerStruct_00;
+    final BattleEntity27c defender = (BattleEntity27c)scriptStatePtrArr_800bc1c0[defenderIndex].innerStruct_00;
+    final boolean isMonster = attacker instanceof MonsterBattleEntity;
 
     int effectAccuracy;
     if(attackType == AttackType.PHYSICAL) {
@@ -429,7 +437,7 @@ public final class Bttl_800f {
    * @param magicType item (0), spell (1)
    */
   @Method(0x800f204cL)
-  public static int calculateMagicDamage(final BattleObject27c attacker, final BattleObject27c defender, final int magicType) {
+  public static int calculateMagicDamage(final BattleEntity27c attacker, final BattleEntity27c defender, final int magicType) {
     // Stat mod item
     if(magicType == 0 && attacker.item_d4.type_0b != 0) {
       //LAB_800f2404
@@ -476,22 +484,22 @@ public final class Bttl_800f {
     if(attacker.spell_94 != null && (attacker.spell_94.flags_01 & 0x4) != 0) {
       damage = defender.stats.getStat(CoreMod.HP_STAT.get()).getMax() * attacker.spell_94.multi_04 / 100;
 
-      final List<BattleObject27c> targets = new ArrayList<>();
+      final List<BattleEntity27c> targets = new ArrayList<>();
       if((attacker.spell_94.targetType_00 & 0x8) != 0) { // Attack all
-        if(attacker instanceof PlayerBattleObject) {
+        if(attacker instanceof PlayerBattleEntity) {
           for(int i = 0; i < charCount_800c677c.get(); i++) {
-            targets.add(battleState_8006e398.charBobjs_e40[i].innerStruct_00);
+            targets.add(battleState_8006e398.charBents_e40[i].innerStruct_00);
           }
         } else {
           for(int i = 0; i < aliveMonsterCount_800c6758.get(); i++) {
-            targets.add(battleState_8006e398.aliveMonsterBobjs_ebc[i].innerStruct_00);
+            targets.add(battleState_8006e398.aliveMonsterBents_ebc[i].innerStruct_00);
           }
         }
       } else { // Attack single
         targets.add(defender);
       }
 
-      for(final BattleObject27c target : targets) {
+      for(final BattleEntity27c target : targets) {
         applyBuffOrDebuff(attacker, target);
       }
 
@@ -521,10 +529,15 @@ public final class Bttl_800f {
     return damage;
   }
 
+  @ScriptDescription("Perform a battle entity's physical attack against another battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attackerIndex", description = "The BattleEntity27c attacker script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "defenderIndex", description = "The BattleEntity27c defender script index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "damage", description = "The amount of damage done")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "specialEffects", description = "Status effect bitset (or -1 for none)")
   @Method(0x800f2500L)
   public static FlowControl scriptPhysicalAttack(final RunningScript<?> script) {
-    final BattleObject27c attacker = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    final BattleObject27c defender = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
+    final BattleEntity27c attacker = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c defender = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
 
     final int damage = EVENTS.postEvent(new AttackEvent(attacker, defender, AttackType.PHYSICAL, CoreMod.PHYSICAL_DAMAGE_FORMULA.calculate(attacker, defender))).damage;
 
@@ -533,10 +546,16 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Perform a battle entity's magic or status attack against another battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attackerIndex", description = "The BattleEntity27c attacker script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "defenderIndex", description = "The BattleEntity27c defender script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "spellId", description = "The attacker's spell ID")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "damage", description = "The amount of damage done")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "specialEffects", description = "Status effect bitset (or -1 for none)")
   @Method(0x800f2694L)
   public static FlowControl scriptDragoonMagicStatusItemAttack(final RunningScript<?> script) {
-    final BattleObject27c attacker = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    final BattleObject27c defender = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
+    final BattleEntity27c attacker = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c defender = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
 
     attacker.spellId_4e = script.params_20[2].get();
 
@@ -563,10 +582,15 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Perform a battle entity's item attack against another battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attackerIndex", description = "The BattleEntity27c attacker script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "defenderIndex", description = "The BattleEntity27c defender script index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "damage", description = "The amount of damage done")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "specialEffects", description = "Status effect bitset (or -1 for none)")
   @Method(0x800f2838L)
   public static FlowControl scriptItemMagicAttack(final RunningScript<?> script) {
-    final BattleObject27c attacker = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    final BattleObject27c defender = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
+    final BattleEntity27c attacker = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final BattleEntity27c defender = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
 
     clearTempWeaponAndSpellStats(attacker);
     setTempItemMagicStats(attacker);
@@ -592,36 +616,8 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
-  @Method(0x800f3204L)
-  public static void recalculateSpeedAndPerHitStats(final BattleObject27c bobj) {
-    if(bobj instanceof final PlayerBattleObject player) {
-      final ActiveStatsa0 stats = stats_800be5f8[bobj.charId_272];
-
-      player.spPerPhysicalHit_12a = stats.equipmentSpPerPhysicalHit_4e;
-      player.mpPerPhysicalHit_12c = stats.equipmentMpPerPhysicalHit_50;
-      player.spPerMagicalHit_12e = stats.equipmentSpPerMagicalHit_52;
-      player.mpPerMagicalHit_130 = stats.equipmentMpPerMagicalHit_54;
-
-      if(player.tempSpPerPhysicalHitTurns_cd != 0) {
-        player.spPerPhysicalHit_12a += player.tempSpPerPhysicalHit_cc;
-      }
-
-      if(player.tempMpPerPhysicalHitTurns_cf != 0) {
-        player.mpPerPhysicalHit_12c += player.tempMpPerPhysicalHit_ce;
-      }
-
-      if(player.tempSpPerMagicalHitTurns_d1 != 0) {
-        player.spPerMagicalHit_12e += player.tempSpPerMagicalHit_d0;
-      }
-
-      if(player.tempMpPerMagicalHitTurns_d3 != 0) {
-        player.mpPerMagicalHit_130 += player.tempMpPerMagicalHit_d2;
-      }
-    }
-  }
-
   @Method(0x800f3354L)
-  public static void addFloatingNumber(final int numIndex, final long onHitTextType, final long onHitClutCol, final int number, final int x, final int y, int a6, final long onHitClutRow) {
+  public static void addFloatingNumber(final int numIndex, final long onHitTextType, final long onHitClutCol, final int number, final float x, final float y, int a6, final long onHitClutRow) {
     final FloatingNumberC4 num = floatingNumbers_800c6b5c[numIndex];
     final short[] damageDigits = new short[num.digits_24.length];
 
@@ -640,7 +636,7 @@ public final class Bttl_800f {
 
     //LAB_800f34d4
     num.flags_02 = 0;
-    num.bobjIndex_04 = -1;
+    num.bentIndex_04 = -1;
     num.translucent_08 = false;
     num.b_0c = 0x80;
     num.g_0d = 0x80;
@@ -650,11 +646,11 @@ public final class Bttl_800f {
 
     //LAB_800f3528
     for(int i = 0; i < num.digits_24.length; i++) {
-      num.digits_24[i]._00 = 0;
+      num.digits_24[i].flags_00 = 0;
       num.digits_24[i]._04 = 0;
       num.digits_24[i]._08 = 0;
       num.digits_24[i].digit_0c = -1;
-      num.digits_24[i]._1c = 0;
+      num.digits_24[i].unused_1c = 0;
     }
 
     num.state_00 = 1;
@@ -667,7 +663,7 @@ public final class Bttl_800f {
     num._10 = clutCol;
 
     if(clutCol == 2 && a6 == 0) {
-      a6 = 60 / vsyncMode_8007a3b8.get() * 2;
+      a6 = 60 / vsyncMode_8007a3b8 * 2;
     }
 
     //LAB_800f35dc
@@ -724,11 +720,11 @@ public final class Bttl_800f {
     int digitStructIdx;
     for(digitStructIdx = 0; digitStructIdx < num.digits_24.length && digitIdx < num.digits_24.length; digitStructIdx++) {
       final FloatingNumberC4Sub20 digitStruct = num.digits_24[digitStructIdx];
-      digitStruct._00 = 0x8000;
+      digitStruct.flags_00 = 0x8000;
       digitStruct.y_10 = 0;
 
       if(clutCol == 2) {
-        digitStruct._00 = 0;
+        digitStruct.flags_00 = 0;
         digitStruct._04 = digitStructIdx;
         digitStruct._08 = 0;
       }
@@ -737,7 +733,7 @@ public final class Bttl_800f {
       if(floatingTextType == 1) {
         //LAB_800f382c
         digitStruct.x_0e = displayPosX;
-        digitStruct.u_12 = digitU_800c7028.get(damageDigits[digitIdx]).get();
+        digitStruct.u_12 = floatingTextType1DigitUs_800c7028.get(damageDigits[digitIdx]).get();
         digitStruct.v_14 = 32;
         digitStruct.texW_16 = 8;
         digitStruct.texH_18 = 8;
@@ -753,7 +749,7 @@ public final class Bttl_800f {
       } else {
         //LAB_800f37f4
         digitStruct.x_0e = displayPosX;
-        digitStruct.u_12 = (int)_800c70e0.offset(damageDigits[digitIdx] * 2).get();
+        digitStruct.u_12 = floatingTextType3DigitUs_800c70e0.get(damageDigits[digitIdx]).get();
         digitStruct.v_14 = 40;
         digitStruct.texW_16 = 8;
         digitStruct.texH_18 = 16;
@@ -762,8 +758,8 @@ public final class Bttl_800f {
 
       //LAB_800f3898
       digitStruct.digit_0c = damageDigits[digitIdx];
-      digitStruct._1a = (short)_800c70f4.offset(clutRow * 2).get();
-      digitStruct._1c = 0x1000;
+      digitStruct.baseClutOffset_1a = floatingTextDigitClutOffsets_800c70f4.get(clutRow).get();
+      digitStruct.unused_1c = 0x1000;
 
       digitIdx++;
     }
@@ -779,19 +775,19 @@ public final class Bttl_800f {
     for(final FloatingNumberC4 num : floatingNumbers_800c6b5c) {
       if((num.flags_02 & 0x8000) != 0) {
         if(num.state_00 != 0) {
-          final int bobjIndex = num.bobjIndex_04;
+          final int bentIndex = num.bentIndex_04;
 
-          if(bobjIndex != -1) {
-            final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bobjIndex];
-            final BattleObject27c bobj = (BattleObject27c)state.innerStruct_00;
+          if(bentIndex != -1) {
+            final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bentIndex];
+            final BattleEntity27c bent = (BattleEntity27c)state.innerStruct_00;
 
-            final short x;
-            final short y;
-            final short z;
-            if(bobj instanceof final MonsterBattleObject monster) {
-              x = (short)(-monster.targetArrowPos_78.getZ() * 100);
-              y = (short)(-monster.targetArrowPos_78.getY() * 100);
-              z = (short)(-monster.targetArrowPos_78.getX() * 100);
+            final float x;
+            final float y;
+            final float z;
+            if(bent instanceof final MonsterBattleEntity monster) {
+              x = -monster.targetArrowPos_78.x * 100.0f;
+              y = -monster.targetArrowPos_78.y * 100.0f;
+              z = -monster.targetArrowPos_78.z * 100.0f;
             } else {
               //LAB_800f3a3c
               x = 0;
@@ -800,9 +796,9 @@ public final class Bttl_800f {
             }
 
             //LAB_800f3a44
-            final DVECTOR screenCoords = perspectiveTransformXyz(bobj.model_148, x, y, z);
-            num.x_1c = clampX(screenCoords.getX() + centreScreenX_1f8003dc.get());
-            num.y_20 = clampY(screenCoords.getY() + centreScreenY_1f8003de.get());
+            final Vector2f screenCoords = perspectiveTransformXyz(bent.model_148, x, y, z);
+            num.x_1c = clampX(screenCoords.x + centreScreenX_1f8003dc.get());
+            num.y_20 = clampY(screenCoords.y + centreScreenY_1f8003de.get());
           }
 
           //LAB_800f3ac8
@@ -825,7 +821,7 @@ public final class Bttl_800f {
                 break;
               }
 
-              final int a0 = a1._00;
+              final int a0 = a1.flags_00;
 
               if((a0 & 0x1) != 0) {
                 if((a0 & 0x2) != 0) {
@@ -835,14 +831,14 @@ public final class Bttl_800f {
                   }
                 } else {
                   //LAB_800f3bb0
-                  a1._00 |= 0x8002;
+                  a1.flags_00 |= 0x8002;
                   a1._04 = a1.y_10;
                   a1._08 = -4;
                 }
               } else {
                 //LAB_800f3bc8
                 if(a1._08 == a1._04) {
-                  a1._00 |= 0x1;
+                  a1.flags_00 |= 0x1;
                 }
 
                 //LAB_800f3be0
@@ -874,7 +870,7 @@ public final class Bttl_800f {
             //LAB_800f3d38
             num.state_00 = 0;
             num.flags_02 = 0;
-            num.bobjIndex_04 = -1;
+            num.bentIndex_04 = -1;
             num.translucent_08 = false;
             num.b_0c = 0x80;
             num.g_0d = 0x80;
@@ -885,11 +881,11 @@ public final class Bttl_800f {
             //LAB_800f3d60
             for(int n = 0; n < num.digits_24.length; n++) {
               final FloatingNumberC4Sub20 v1 = num.digits_24[n];
-              v1._00 = 0;
+              v1.flags_00 = 0;
               v1._04 = 0;
               v1._08 = 0;
               v1.digit_0c = -1;
-              v1._1c = 0;
+              v1.unused_1c = 0;
             }
             //LAB_800f3b04
           } else if(state < 99) {
@@ -910,7 +906,7 @@ public final class Bttl_800f {
                   num.g_0d = 0x60;
                   num.r_0e = 0x60;
 
-                  final int a2 = 60 / vsyncMode_8007a3b8.get() / 2;
+                  final int a2 = 60 / vsyncMode_8007a3b8 / 2;
                   num._14 = a2;
                   num._18 = 96 / a2;
                 } else {
@@ -938,42 +934,42 @@ public final class Bttl_800f {
           final int b = num.b_0c;
 
           //LAB_800f3e80
-          for(int s7 = 0; s7 < num.digits_24.length; s7++) {
-            final FloatingNumberC4Sub20 digit = num.digits_24[s7];
+          for(int i = 0; i < num.digits_24.length; i++) {
+            final FloatingNumberC4Sub20 digit = num.digits_24[i];
 
             if(digit.digit_0c == -1) {
               break;
             }
 
-            if((digit._00 & 0x8000) != 0) {
+            if((digit.flags_00 & 0x8000) != 0) {
               //LAB_800f3ec0
-              for(int s3 = 1; s3 < 3; s3++) {
-                final int a1 = num.x_1c - centreScreenX_1f8003dc.get();
-                final int a2 = num.y_20 - centreScreenY_1f8003de.get();
-                final int left = digit.x_0e + a1;
-                final int right = digit.x_0e + digit.texW_16 + a1;
-                final int top = digit.y_10 + a2;
-                final int bottom = digit.y_10 + digit.texH_18 + a2;
+              for(int j = 1; j < 3; j++) {
+                final float a1 = num.x_1c - centreScreenX_1f8003dc.get();
+                final float a2 = num.y_20 - centreScreenY_1f8003de.get();
+                final float left = digit.x_0e + a1;
+                final float right = digit.x_0e + digit.texW_16 + a1;
+                final float top = digit.y_10 + a2;
+                final float bottom = digit.y_10 + digit.texH_18 + a2;
                 final int leftU = digit.u_12;
                 final int rightU = digit.u_12 + digit.texW_16;
                 final int topV = digit.v_14;
                 final int bottomV = digit.v_14 + digit.texH_18;
-                final int v1 = digit._1a;
+                final int baseClutOffset = digit.baseClutOffset_1a;
 
-                final int t1;
-                final int t0;
-                if(v1 >= 0x80) {
-                  t1 = 1;
-                  t0 = v1 - 0x80;
+                final int clutIndex;
+                final int clutOffset;
+                if(baseClutOffset >= 0x80) {
+                  clutIndex = 1;
+                  clutOffset = baseClutOffset - 0x80;
                 } else {
-                  t1 = 0;
+                  clutIndex = 0;
 
                   //LAB_800f4044
-                  t0 = v1;
+                  clutOffset = baseClutOffset;
                 }
 
-                final int clutY = (int)_800c7114.offset(2, (t1 * 2 + 1) * 0x4L).get() + t0 % 16;
-                final int clutX = (int)_800c7114.offset(2, t1 * 2 * 0x4L).get() + t0 / 16 * 16 & 0x3f0;
+                final int clutX = battleUiElementClutVramXy_800c7114[clutIndex].x + clutOffset / 16 * 16 & 0x3f0;
+                final int clutY = battleUiElementClutVramXy_800c7114[clutIndex].y + clutOffset % 16;
 
                 final GpuCommandPoly cmd = new GpuCommandPoly(4)
                   .bpp(Bpp.BITS_4)
@@ -990,7 +986,7 @@ public final class Bttl_800f {
                   .uv(3, rightU, bottomV);
 
                 if(translucent) {
-                  cmd.translucent(Translucency.of(s3));
+                  cmd.translucent(Translucency.of(j));
                 }
 
                 //LAB_800f4048
@@ -1017,10 +1013,10 @@ public final class Bttl_800f {
   public static void FUN_800f417c() {
     //LAB_800f41ac
     for(int i = 0; i < charCount_800c677c.get(); i++) {
-      final BattleStruct3c s1 = _800c6c40.get(i);
+      final BattleHudCharacterDisplay3c s1 = activePartyBattleHudCharacterDisplays_800c6c40.get(i);
 
       if(s1.charIndex_00.get() == -1 && _800be5d0.get() == 1) {
-        FUN_800ef8d8(i);
+        initializeBattleHudCharacterDisplay(i);
       }
 
       //LAB_800f41dc
@@ -1033,7 +1029,7 @@ public final class Bttl_800f {
     //LAB_800f4220
     for(int charSlot = 0; charSlot < 3; charSlot++) {
       final BattleDisplayStats144 displayStats = displayStats_800c6c2c[charSlot];
-      final BattleStruct3c v1 = _800c6c40.get(charSlot);
+      final BattleHudCharacterDisplay3c v1 = activePartyBattleHudCharacterDisplays_800c6c40.get(charSlot);
 
       if(v1.charIndex_00.get() != -1) {
         v1.x_08.set(x);
@@ -1046,17 +1042,18 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f4268L)
-  public static void addFloatingNumberForBobj(final int bobjIndex, final int damage, final long s4) {
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bobjIndex];
-    final BattleObject27c bobj = (BattleObject27c)state.innerStruct_00;
+  public static void addFloatingNumberForBent(final int bentIndex, final int damage, final long s4) {
+    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bentIndex];
+    final BattleEntity27c bent = (BattleEntity27c)state.innerStruct_00;
 
-    final short x;
-    final short y;
-    final short z;
-    if(bobj instanceof final MonsterBattleObject monster) {
-      x = (short)(-monster.targetArrowPos_78.getZ() * 100);
-      y = (short)(-monster.targetArrowPos_78.getY() * 100);
-      z = (short)(-monster.targetArrowPos_78.getX() * 100);
+    final float x;
+    final float y;
+    final float z;
+    if(bent instanceof final MonsterBattleEntity monster) {
+      // ZYX is the correct order
+      x = -monster.targetArrowPos_78.z * 100.0f;
+      y = -monster.targetArrowPos_78.y * 100.0f;
+      z = -monster.targetArrowPos_78.x * 100.0f;
     } else {
       //LAB_800f4314
       x = 0;
@@ -1065,25 +1062,29 @@ public final class Bttl_800f {
     }
 
     //LAB_800f4320
-    final DVECTOR screenCoords = perspectiveTransformXyz(bobj.model_148, x, y, z);
+    final Vector2f screenCoords = perspectiveTransformXyz(bent.model_148, x, y, z);
 
     //LAB_800f4394
-    FUN_800f89f4(bobjIndex, 0, 0x2L, damage, clampX(screenCoords.getX() + centreScreenX_1f8003dc.get()), clampY(screenCoords.getY() + centreScreenY_1f8003de.get()), 60 / vsyncMode_8007a3b8.get() / 4, s4);
+    FUN_800f89f4(bentIndex, 0, 0x2L, damage, clampX(screenCoords.x + centreScreenX_1f8003dc.get()), clampY(screenCoords.y + centreScreenY_1f8003de.get()), 60 / vsyncMode_8007a3b8 / 4, s4);
   }
 
+  @ScriptDescription("Gives SP to a battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "amount", description = "The amount of SP to add")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "total", description = "The total SP after adding the amount requested")
   @Method(0x800f43dcL)
   public static FlowControl scriptGiveSp(final RunningScript<?> script) {
     //LAB_800f43f8
     //LAB_800f4410
     int charSlot;
     for(charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      if(battleState_8006e398.charBobjs_e40[charSlot].index == script.params_20[0].get()) {
+      if(battleState_8006e398.charBents_e40[charSlot].index == script.params_20[0].get()) {
         break;
       }
     }
 
     //LAB_800f4430
-    final PlayerBattleObject player = (PlayerBattleObject)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final PlayerBattleEntity player = (PlayerBattleEntity)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final VitalsStat sp = player.stats.getStat(CoreMod.SP_STAT.get());
 
     sp.setCurrent(sp.getCurrent() + script.params_20[1].get());
@@ -1094,40 +1095,48 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Consumes SP from a battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused", description = "Unused")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "amount", description = "The amount of SP to take away")
   @Method(0x800f4518L)
   public static FlowControl scriptConsumeSp(final RunningScript<?> script) {
     //LAB_800f4534
     //LAB_800f454c
     int i;
     for(i = 0; i < charCount_800c677c.get(); i++) {
-      if(battleState_8006e398.charBobjs_e40[i].index == script.params_20[0].get()) {
+      if(battleState_8006e398.charBents_e40[i].index == script.params_20[0].get()) {
         break;
       }
     }
 
     //LAB_800f456c
-    final BattleStruct3c a2 = _800c6c40.get(i);
-    a2._0c.set((short)0);
-    a2._0e.set((short)script.params_20[1].get());
+    final BattleHudCharacterDisplay3c charDisplay = activePartyBattleHudCharacterDisplays_800c6c40.get(i);
+    charDisplay.unused_0c.set((short)0);
+    charDisplay.unused_0e.set((short)script.params_20[1].get());
 
-    final PlayerBattleObject player = (PlayerBattleObject)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final PlayerBattleEntity player = (PlayerBattleEntity)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final VitalsStat sp = player.stats.getStat(CoreMod.SP_STAT.get());
 
     sp.setCurrent(sp.getCurrent() - script.params_20[2].get());
 
     if(sp.getCurrent() == 0) {
-      a2.flags_06.and(0xfff3);
+      charDisplay.flags_06.and(0xfff3);
     }
 
     //LAB_800f45f8
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, this might handle players selecting an attack target")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "targetBentIndex", description = "The targeted BattleEntity27c script index (or -1 if attack all)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "itemOrSpellId", description = "The item or spell ID selected")
   @Method(0x800f4600L)
   public static FlowControl FUN_800f4600(final RunningScript<?> script) {
-    final CombatMenua4 combatMenu = combatMenu_800c6b60.deref();
-    int itemOrSpellId = combatMenu.itemOrSpellId_1c.get();
-    if(combatMenu.charIndex_08.get() == 8 && combatMenu.menuType_0a.get() == 1) {
+    final CombatMenua4 combatMenu = combatMenu_800c6b60;
+    int itemOrSpellId = combatMenu.itemOrSpellId_1c;
+    if(combatMenu.charIndex_08 == 8 && combatMenu.menuType_0a == 1) {
       if(itemOrSpellId == 10) {
         itemOrSpellId = 65;
       }
@@ -1145,24 +1154,24 @@ public final class Bttl_800f {
 
     //LAB_800f4704
     //LAB_800f4708
-    script.params_20[0].set(combatMenu._a0.get());
-    script.params_20[1].set(battleMenu_800c6c34.deref().target_48.get());
+    script.params_20[0].set(combatMenu._a0);
+    script.params_20[1].set(battleMenu_800c6c34.target_48);
     script.params_20[2].set(itemOrSpellId);
 
     //LAB_800f4770
-    PlayerBattleObject playerBobj = null;
+    PlayerBattleEntity playerBent = null;
     for(int i = 0; i < charCount_800c677c.get(); i++) {
-      playerBobj = battleState_8006e398.charBobjs_e40[i].innerStruct_00;
+      playerBent = battleState_8006e398.charBents_e40[i].innerStruct_00;
 
-      if(playerBobj.charId_272 == combatMenu_800c6b60.deref().charIndex_08.get()) {
+      if(playerBent.charId_272 == combatMenu.charIndex_08) {
         break;
       }
     }
 
     //LAB_800f47ac
-    playerBobj.spellId_4e = itemOrSpellId;
+    playerBent.spellId_4e = itemOrSpellId;
 
-    if(combatMenu._a0.get() == 1 && combatMenu.menuType_0a.get() == 0) {
+    if(combatMenu._a0 == 1 && combatMenu.menuType_0a == 0) {
       //LAB_800f47e4
       for(int i = 0; i < 17; i++) {
         if(targetAllItemIds_800c7124.get(i).get() == itemOrSpellId + 0xc0) {
@@ -1178,20 +1187,23 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Gets the item/spell attack target")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "targetMode")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "targetBentIndex", description = "The targeted BattleEntity27c script index (or -1 if attack all)")
   @Method(0x800f480cL)
-  public static FlowControl FUN_800f480c(final RunningScript<?> script) {
-    BattleObject27c a1 = null;
+  public static FlowControl scriptGetItemOrSpellAttackTarget(final RunningScript<?> script) {
+    BattleEntity27c a1 = null;
     final int[] sp0x10 = {0, 0, 1, 0, 2, 1, 1, 1};
 
     int targetMode = script.params_20[0].get();
 
-    final BattleMenuStruct58 struct58 = battleMenu_800c6c34.deref();
+    final BattleMenuStruct58 menu = battleMenu_800c6c34;
 
     //LAB_800f489c
     for(int a0 = 0; a0 < charCount_800c677c.get(); a0++) {
-      a1 = battleState_8006e398.charBobjs_e40[a0].innerStruct_00;
+      a1 = battleState_8006e398.charBents_e40[a0].innerStruct_00;
 
-      if(struct58.charIndex_04.get() == a1.charId_272) {
+      if(menu.charIndex_04 == a1.charId_272) {
         break;
       }
     }
@@ -1209,7 +1221,7 @@ public final class Bttl_800f {
 
     if(ret == 1) { // Pressed X
       //LAB_800f4930
-      ret = struct58.target_48.get();
+      ret = menu.target_48;
     } else { // Pressed O
       //LAB_800f4944
       //LAB_800f4948
@@ -1224,58 +1236,58 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f4964L)
-  public static void resetCombatMenu() {
-    final CombatMenua4 combatMenu = combatMenu_800c6b60.deref();
-    combatMenu.menuState_00.set((short)0);
-    combatMenu._02.set(0);
-    combatMenu.x_04.set(0);
-    combatMenu.y_06.set(0);
-    combatMenu.charIndex_08.set((short)0);
-    combatMenu.menuType_0a.set((short)0);
-    combatMenu._0c.set(0);
-    combatMenu._0e.set(0);
-    combatMenu._10.set(0);
-    combatMenu._12.set(0);
-    combatMenu._14.set(0);
-    combatMenu._16.set(0x1000);
-    combatMenu.textX_18.set((short)0);
-    combatMenu._1a.set((short)0);
-    combatMenu.itemOrSpellId_1c.set((short)-1);
-    combatMenu.count_22.set((short)0);
-    combatMenu.listScroll_24.set((short)0);
+  public static void resetBattleMenu() {
+    final CombatMenua4 combatMenu = combatMenu_800c6b60;
+    combatMenu.menuState_00 = 0;
+    combatMenu._02 = 0;
+    combatMenu.x_04 = 0;
+    combatMenu.y_06 = 0;
+    combatMenu.charIndex_08 = 0;
+    combatMenu.menuType_0a = 0;
+    combatMenu._0c = 0;
+    combatMenu._0e = 0;
+    combatMenu._10 = 0;
+    combatMenu._12 = 0;
+    combatMenu._14 = 0;
+    combatMenu._16 = 0x1000;
+    combatMenu.textX_18 = 0;
+    combatMenu._1a = 0;
+    combatMenu.itemOrSpellId_1c = -1;
+    combatMenu.count_22 = 0;
+    combatMenu.listScroll_24 = 0;
   }
 
   @Method(0x800f49bcL)
-  public static void initCombatMenu(final int charIndex, final int menuType) {
-    final CombatMenua4 combatMenu = combatMenu_800c6b60.deref();
-    combatMenu.menuState_00.set((short)1);
-    combatMenu.x_04.set(160);
-    combatMenu.y_06.set(144);
-    combatMenu.charIndex_08.set((short)charIndex);
-    combatMenu.menuType_0a.set((short)(menuType & 1));
-    combatMenu._0c.set(0x20);
-    combatMenu._0e.set(0x2b);
-    combatMenu._10.set(0);
-    combatMenu._12.set(0);
-    combatMenu._14.set(0x1);
-    combatMenu._16.set(0x1000);
-    combatMenu.textX_18.set((short)0);
-    combatMenu._1a.set((short)0);
-    combatMenu.itemOrSpellId_1c.set((short)-1);
-    combatMenu.listIndex_1e.set((short)0);
-    combatMenu._20.set((short)0);
+  public static void initBattleMenu(final int charIndex, final int menuType) {
+    final CombatMenua4 combatMenu = combatMenu_800c6b60;
+    combatMenu.menuState_00 = 1;
+    combatMenu.x_04 = 160;
+    combatMenu.y_06 = 144;
+    combatMenu.charIndex_08 = (short)charIndex;
+    combatMenu.menuType_0a = (short)(menuType & 0x1);
+    combatMenu._0c = 0x20;
+    combatMenu._0e = 0x2b;
+    combatMenu._10 = 0;
+    combatMenu._12 = 0;
+    combatMenu._14 = 0x1;
+    combatMenu._16 = 0x1000;
+    combatMenu.textX_18 = 0;
+    combatMenu._1a = 0;
+    combatMenu.itemOrSpellId_1c = -1;
+    combatMenu.listIndex_1e = 0;
+    combatMenu._20 = 0;
 
     //LAB_800f4a58
     if(menuType == 0) {
       //LAB_800f4a9c
       prepareItemList();
-      combatMenu.count_22.set((short)combatItems_800c6988.size());
+      combatMenu.count_22 = (short)combatItems_800c6988.size();
     } else if(menuType == 1) {
       //LAB_800f4abc
       //LAB_800f4ae0
       int charSlot;
       for(charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-        if(dragoonSpells_800c6960.get(charSlot).charIndex_00.get() == combatMenu.charIndex_08.get()) {
+        if(dragoonSpells_800c6960.get(charSlot).charIndex_00.get() == combatMenu.charIndex_08) {
           break;
         }
       }
@@ -1290,31 +1302,31 @@ public final class Bttl_800f {
       }
 
       //LAB_800f4b3c
-      combatMenu.count_22.set(spellIndex);
+      combatMenu.count_22 = spellIndex;
     } else if(menuType == 2) {
       //LAB_800f4b4c
-      combatMenu.count_22.set((short)0);
+      combatMenu.count_22 = 0;
     }
 
     //LAB_800f4b50
     //LAB_800f4b54
     //LAB_800f4b60
-    combatMenu._7c.set(0);
-    combatMenu._80.set(0);
-    combatMenu._84.set(0);
-    combatMenu._88.set(0);
-    combatMenu._8c.set(0);
-    combatMenu._90.set(0);
-    combatMenu._94.set(0);
-    combatMenu._98.set(0);
-    combatMenu._9c.set(0);
-    combatMenu._a0.set(0);
+    combatMenu._7c = 0;
+    combatMenu._80 = 0;
+    combatMenu._84 = 0;
+    combatMenu._88 = 0;
+    combatMenu._8c = 0;
+    combatMenu._90 = 0;
+    combatMenu._94 = 0;
+    combatMenu._98 = 0;
+    combatMenu._9c = 0;
+    combatMenu._a0 = 0;
   }
 
   @Method(0x800f4b80L)
   public static void FUN_800f4b80() {
-    final CombatMenua4 combatMenu = combatMenu_800c6b60.deref();
-    if(combatMenu.menuState_00.get() == 0) {
+    final CombatMenua4 combatMenu = combatMenu_800c6b60;
+    if(combatMenu.menuState_00 == 0) {
       return;
     }
 
@@ -1323,53 +1335,53 @@ public final class Bttl_800f {
     int s0;
 
     //LAB_800f4bc0
-    switch(combatMenu.menuState_00.get()) {
+    switch(combatMenu.menuState_00) {
       case 1 -> {
-        combatMenu._90.set(0);
-        combatMenu._a0.set(0);
-        combatMenu._12.set(0);
-        combatMenu._10.set(0);
+        combatMenu._90 = 0;
+        combatMenu._a0 = 0;
+        combatMenu._12 = 0;
+        combatMenu._10 = 0;
 
-        if(combatMenu.menuType_0a.get() == 0) {
-          combatMenu.listScroll_24.set(combatMenu._26.get());
-          combatMenu._02.or(0x20);
-          combatMenu.listIndex_1e.set(combatMenu._28.get());
-          combatMenu._20.set(combatMenu._2a.get());
-          combatMenu._94.set(combatMenu._2c.get());
+        if(combatMenu.menuType_0a == 0) {
+          combatMenu.listScroll_24 = combatMenu._26;
+          combatMenu._02 |= 0x20;
+          combatMenu.listIndex_1e = combatMenu._28;
+          combatMenu._20 = combatMenu._2a;
+          combatMenu._94 = combatMenu._2c;
 
-          if(combatMenu.count_22.get() - 1 < combatMenu.listScroll_24.get() + combatMenu.listIndex_1e.get()) {
-            combatMenu.listScroll_24.decr();
+          if(combatMenu.count_22 - 1 < combatMenu.listScroll_24 + combatMenu.listIndex_1e) {
+            combatMenu.listScroll_24--;
 
-            if(combatMenu.listScroll_24.get() < 0) {
-              combatMenu.listScroll_24.set((short)0);
-              combatMenu.listIndex_1e.set((short)0);
-              combatMenu._20.set(combatMenu._1a.get());
-              combatMenu._94.set(0); // This was a3.1a - a3.1a
+            if(combatMenu.listScroll_24 < 0) {
+              combatMenu.listScroll_24 = 0;
+              combatMenu.listIndex_1e = 0;
+              combatMenu._20 = combatMenu._1a;
+              combatMenu._94 = 0; // This was a3.1a - a3.1a
             }
           }
         } else {
           //LAB_800f4ca0
-          combatMenu.listIndex_1e.set((short)0);
-          combatMenu._20.set((short)0);
-          combatMenu._94.set(0);
-          combatMenu.listScroll_24.set(combatMenu._30.get());
+          combatMenu.listIndex_1e = 0;
+          combatMenu._20 = 0;
+          combatMenu._94 = 0;
+          combatMenu.listScroll_24 = combatMenu._30;
         }
 
         //LAB_800f4cb4
-        combatMenu.itemOrSpellId_1c.set((short)getItemOrSpellId());
-        combatMenu.menuState_00.set((short)7);
-        combatMenu._02.or(0x40);
+        combatMenu.itemOrSpellId_1c = (short)getItemOrSpellId();
+        combatMenu.menuState_00 = 7;
+        combatMenu._02 |= 0x40;
       }
 
       case 2 -> {
-        combatMenu._02.and(0xfcff);
-        combatMenu.itemOrSpellId_1c.set((short)getItemOrSpellId());
+        combatMenu._02 &= 0xfcff;
+        combatMenu.itemOrSpellId_1c = (short)getItemOrSpellId();
 
-        if((joypadPress_8007a398.get() & 0x4) != 0) { // L1
-          if(combatMenu.listScroll_24.get() != 0) {
-            combatMenu._88.set(2);
-            combatMenu.listScroll_24.set((short)0);
-            combatMenu.menuState_00.set((short)5);
+        if((press_800bee94.get() & 0x4) != 0) { // L1
+          if(combatMenu.listScroll_24 != 0) {
+            combatMenu._88 = 2;
+            combatMenu.listScroll_24 = 0;
+            combatMenu.menuState_00 = 5;
             playSound(0, 1, 0, 0, (short)0, (short)0);
           }
 
@@ -1377,21 +1389,21 @@ public final class Bttl_800f {
         }
 
         //LAB_800f4d54
-        if((joypadPress_8007a398.get() & 0x1) != 0) { // L2
-          s0 = combatMenu.listScroll_24.get();
+        if((press_800bee94.get() & 0x1) != 0) { // L2
+          s0 = combatMenu.listScroll_24;
 
-          if(combatMenu.count_22.get() - 1 >= combatMenu.listIndex_1e.get() + 6) {
-            combatMenu.listScroll_24.set((short)6);
+          if(combatMenu.count_22 - 1 >= combatMenu.listIndex_1e + 6) {
+            combatMenu.listScroll_24 = 6;
           } else {
             //LAB_800f4d8c
-            combatMenu.listScroll_24.set((short)(combatMenu.count_22.get() - (combatMenu.listIndex_1e.get() + 1)));
+            combatMenu.listScroll_24 = (short)(combatMenu.count_22 - (combatMenu.listIndex_1e + 1));
           }
 
           //LAB_800f4d90
-          combatMenu._88.set(2);
-          combatMenu.menuState_00.set((short)5);
+          combatMenu._88 = 2;
+          combatMenu.menuState_00 = 5;
 
-          if(s0 != combatMenu.listScroll_24.get()) {
+          if(s0 != combatMenu.listScroll_24) {
             playSound(0, 1, 0, 0, (short)0, (short)0);
           }
 
@@ -1399,68 +1411,68 @@ public final class Bttl_800f {
         }
 
         //LAB_800f4dc4
-        if((joypadPress_8007a398.get() & 0x8) != 0) { // R1
-          if(combatMenu.listIndex_1e.get() == 0) {
+        if((press_800bee94.get() & 0x8) != 0) { // R1
+          if(combatMenu.listIndex_1e == 0) {
             break;
           }
 
-          if(combatMenu.listIndex_1e.get() < 7) {
-            combatMenu.listScroll_24.set((short)0);
-            combatMenu.listIndex_1e.set((short)0);
-            combatMenu._20.set(combatMenu._1a.get());
+          if(combatMenu.listIndex_1e < 7) {
+            combatMenu.listScroll_24 = 0;
+            combatMenu.listIndex_1e = 0;
+            combatMenu._20 = combatMenu._1a;
           } else {
             //LAB_800f4df4
-            combatMenu.listIndex_1e.sub((short)7);
-            combatMenu._20.add((short)98);
+            combatMenu.listIndex_1e -= 7;
+            combatMenu._20 += 98;
           }
 
           //LAB_800f4e00
-          combatMenu._88.set(2);
-          combatMenu.menuState_00.set((short)5);
-          combatMenu._94.set(combatMenu._1a.get() - combatMenu._20.get());
+          combatMenu._88 = 2;
+          combatMenu.menuState_00 = 5;
+          combatMenu._94 = combatMenu._1a - combatMenu._20;
           playSound(0, 1, 0, 0, (short)0, (short)0);
           break;
         }
 
         //LAB_800f4e40
-        if((joypadPress_8007a398.get() & 0x2) != 0) { // R2
-          if(combatMenu.listIndex_1e.get() + 6 >= combatMenu.count_22.get() - 1) {
+        if((press_800bee94.get() & 0x2) != 0) { // R2
+          if(combatMenu.listIndex_1e + 6 >= combatMenu.count_22 - 1) {
             break;
           }
 
-          combatMenu.listIndex_1e.add((short)7);
-          combatMenu._20.sub((short)98);
+          combatMenu.listIndex_1e += 7;
+          combatMenu._20 -= 98;
 
-          if(combatMenu.listIndex_1e.get() + 6 >= combatMenu.count_22.get() - 1) {
-            combatMenu.listScroll_24.set((short)0);
+          if(combatMenu.listIndex_1e + 6 >= combatMenu.count_22 - 1) {
+            combatMenu.listScroll_24 = 0;
           }
 
           //LAB_800f4e98
-          combatMenu._88.set(2);
-          combatMenu.menuState_00.set((short)5);
-          combatMenu._94.set(combatMenu._1a.get() - combatMenu._20.get());
+          combatMenu._88 = 2;
+          combatMenu.menuState_00 = 5;
+          combatMenu._94 = combatMenu._1a - combatMenu._20;
           playSound(0, 1, 0, 0, (short)0, (short)0);
           break;
         }
 
         //LAB_800f4ecc
-        if((joypadInput_8007a39c.get() & 0x1000) != 0) { // Up
-          if(combatMenu.listScroll_24.get() != 0) {
-            combatMenu.menuState_00.set((short)5);
-            combatMenu.listScroll_24.decr();
-            combatMenu._88.set(2);
+        if((input_800bee90.get() & 0x1000) != 0) { // Up
+          if(combatMenu.listScroll_24 != 0) {
+            combatMenu.menuState_00 = 5;
+            combatMenu.listScroll_24--;
+            combatMenu._88 = 2;
           } else {
             //LAB_800f4f18
-            if(combatMenu.listIndex_1e.get() == 0) {
+            if(combatMenu.listIndex_1e == 0) {
               break;
             }
 
-            combatMenu.menuState_00.set((short)3);
-            combatMenu._02.or(0x200);
-            combatMenu._80.set(5);
-            combatMenu._7c.set(combatMenu._20.get());
-            combatMenu._20.add((short)5);
-            combatMenu.listIndex_1e.decr();
+            combatMenu.menuState_00 = 3;
+            combatMenu._02 |= 0x200;
+            combatMenu._80 = 5;
+            combatMenu._7c = combatMenu._20;
+            combatMenu._20 += 5;
+            combatMenu.listIndex_1e--;
           }
 
           playSound(0, 1, 0, 0, (short)0, (short)0);
@@ -1468,23 +1480,23 @@ public final class Bttl_800f {
         }
 
         //LAB_800f4f74
-        if((joypadInput_8007a39c.get() & 0x4000) != 0) { // Down
-          if(combatMenu.listScroll_24.get() != combatMenu.count_22.get() - 1) {
-            if(combatMenu.listIndex_1e.get() + combatMenu.listScroll_24.get() + 1 < combatMenu.count_22.get()) {
+        if((input_800bee90.get() & 0x4000) != 0) { // Down
+          if(combatMenu.listScroll_24 != combatMenu.count_22 - 1) {
+            if(combatMenu.listIndex_1e + combatMenu.listScroll_24 + 1 < combatMenu.count_22) {
               playSound(0, 1, 0, 0, (short)0, (short)0);
 
-              if(combatMenu.listScroll_24.get() != 6) {
-                combatMenu.listScroll_24.incr();
-                combatMenu._88.set(2);
-                combatMenu.menuState_00.set((short)5);
+              if(combatMenu.listScroll_24 != 6) {
+                combatMenu.listScroll_24++;
+                combatMenu._88 = 2;
+                combatMenu.menuState_00 = 5;
               } else {
                 //LAB_800f4ff8
-                combatMenu._80.set(-5);
-                combatMenu.menuState_00.set((short)4);
-                combatMenu._7c.set(combatMenu._20.get());
-                combatMenu._20.sub((short)5);
-                combatMenu.listIndex_1e.incr();
-                combatMenu._02.or(0x100);
+                combatMenu._80 = -5;
+                combatMenu.menuState_00 = 4;
+                combatMenu._7c = combatMenu._20;
+                combatMenu._20 -= 5;
+                combatMenu.listIndex_1e++;
+                combatMenu._02 |= 0x100;
               }
             }
           }
@@ -1493,25 +1505,25 @@ public final class Bttl_800f {
         }
 
         //LAB_800f5044
-        combatMenu._90.set(0);
+        combatMenu._90 = 0;
 
-        if((joypadPress_8007a398.get() & 0x20) != 0) { // X
+        if((press_800bee94.get() & 0x20) != 0) { // X
           //LAB_800f5078
-          PlayerBattleObject player = null;
+          PlayerBattleEntity player = null;
 
           for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-            player = battleState_8006e398.charBobjs_e40[charSlot].innerStruct_00;
+            player = battleState_8006e398.charBents_e40[charSlot].innerStruct_00;
 
-            if(combatMenu.charIndex_08.get() == player.charId_272) {
+            if(combatMenu.charIndex_08 == player.charId_272) {
               //LAB_800f503c
-              _800c6980.setu(charSlot);
+              _800c6980.set((short)charSlot);
               break;
             }
           }
 
           //LAB_800f50b8
-          if(combatMenu.menuType_0a.get() == 0) {
-            player.itemId_52 = combatMenu.itemOrSpellId_1c.get();
+          if(combatMenu.menuType_0a == 0) {
+            player.itemId_52 = combatMenu.itemOrSpellId_1c;
             setTempItemMagicStats(player);
 
             if((player.item_d4.target_00 & 0x4) != 0) {
@@ -1526,7 +1538,7 @@ public final class Bttl_800f {
             itemTargetAll_800c69c8.set((player.item_d4.target_00 & 0x2) != 0);
           } else {
             //LAB_800f5134
-            final PlayerBattleObject caster = setActiveCharacterSpell(combatMenu.itemOrSpellId_1c.get());
+            final PlayerBattleEntity caster = setActiveCharacterSpell(combatMenu.itemOrSpellId_1c);
 
             if(caster.stats.getStat(CoreMod.MP_STAT.get()).getCurrent() < caster.spell_94.mp_06) {
               //LAB_800f5160
@@ -1543,83 +1555,83 @@ public final class Bttl_800f {
 
           //LAB_800f5190
           playSound(0, 2, 0, 0, (short)0, (short)0);
-          combatMenu._8c.set(0);
-          combatMenu._02.or(0x4);
-          if(combatMenu.menuType_0a.get() == 0) {
-            combatMenu._94.set(combatMenu._1a.get() - combatMenu._20.get());
+          combatMenu._8c = 0;
+          combatMenu._02 |= 0x4;
+          if(combatMenu.menuType_0a == 0) {
+            combatMenu._94 = combatMenu._1a - combatMenu._20;
           }
 
           //LAB_800f51e8
-          combatMenu.menuState_00.set((short)6);
-          combatMenu._02.and(0xfffd);
+          combatMenu.menuState_00 = 6;
+          combatMenu._02 &= 0xfffd;
           break;
         }
 
         //LAB_800f5208
-        if((joypadPress_8007a398.get() & 0x40) != 0) { // O
+        if((press_800bee94.get() & 0x40) != 0) { // O
           playSound(0, 3, 0, 0, (short)0, (short)0);
-          combatMenu.menuState_00.set((short)8);
-          combatMenu._02.and(0xfff7);
+          combatMenu.menuState_00 = 8;
+          combatMenu._02 &= 0xfff7;
         }
       }
 
       case 3 -> {
-        s0 = combatMenu._80.get();
-        combatMenu._90.incr();
-        if(combatMenu._90.get() >= 0x3L) {
-          s0 = s0 * 2;
+        s0 = combatMenu._80;
+        combatMenu._90++;
+        if(combatMenu._90 >= 3) {
+          s0 *= 2;
         }
 
         //LAB_800f5278
-        a1 = combatMenu._7c.get() + 14;
-        combatMenu._20.add((short)s0);
-        if(combatMenu._20.get() >= a1) {
-          combatMenu._20.set((short)a1);
-          combatMenu.menuState_00.set((short)2);
+        a1 = combatMenu._7c + 14;
+        combatMenu._20 += s0;
+        if(combatMenu._20 >= a1) {
+          combatMenu._20 = (short)a1;
+          combatMenu.menuState_00 = 2;
         }
       }
 
       case 4 -> {
-        s0 = combatMenu._80.get();
-        combatMenu._90.incr();
-        if(combatMenu._90.get() >= 3) {
+        s0 = combatMenu._80;
+        combatMenu._90++;
+        if(combatMenu._90 >= 3) {
           s0 = s0 * 2;
         }
 
         //LAB_800f52d4
-        a1 = combatMenu._7c.get() - 14;
-        combatMenu._20.add((short)s0);
-        if(combatMenu._20.get() <= a1) {
+        a1 = combatMenu._7c - 14;
+        combatMenu._20 += s0;
+        if(combatMenu._20 <= a1) {
           //LAB_800f5300
-          combatMenu._20.set((short)a1);
-          combatMenu.menuState_00.set((short)2);
+          combatMenu._20 = (short)a1;
+          combatMenu.menuState_00 = 2;
         }
       }
 
       case 5 -> {
-        s0 = combatMenu._88.get();
-        combatMenu._90.incr();
-        if(combatMenu._90.get() >= 3) {
+        s0 = combatMenu._88;
+        combatMenu._90++;
+        if(combatMenu._90 >= 3) {
           s0 = s0 / 2;
         }
 
         //LAB_800f5338
         if(s0 <= 1) {
-          combatMenu.menuState_00.set((short)2);
+          combatMenu.menuState_00 = 2;
         }
       }
 
       case 6 -> {
-        combatMenu._a0.set(0);
-        combatMenu.itemOrSpellId_1c.set((short)getItemOrSpellId());
-        PlayerBattleObject player;
+        combatMenu._a0 = 0;
+        combatMenu.itemOrSpellId_1c = (short)getItemOrSpellId();
+        PlayerBattleEntity player;
 
         //LAB_800f538c
         int charSlot = 0;
         do {
-          player = battleState_8006e398.charBobjs_e40[charSlot].innerStruct_00;
+          player = battleState_8006e398.charBents_e40[charSlot].innerStruct_00;
 
-          if(combatMenu.charIndex_08.get() == player.charId_272) {
+          if(combatMenu.charIndex_08 == player.charId_272) {
             break;
           }
 
@@ -1629,7 +1641,7 @@ public final class Bttl_800f {
         //LAB_800f53c8
         final int targetType;
         final boolean targetAll;
-        if(combatMenu.menuType_0a.get() == 0) { // Items
+        if(combatMenu.menuType_0a == 0) { // Items
           targetType = itemTargetType_800c6b68.get();
           targetAll = itemTargetAll_800c69c8.get();
         } else { // Spells
@@ -1642,99 +1654,120 @@ public final class Bttl_800f {
         //LAB_800f5410
         final int ret = FUN_800f7768(targetType, targetAll);
         if(ret == 1) { // Pressed X
-          if(combatMenu.menuType_0a.get() == 0) {
-            takeItemId(combatMenu.itemOrSpellId_1c.get() + 192);
+          if(combatMenu.menuType_0a == 0) {
+            final int itemId = combatMenu.itemOrSpellId_1c + 192;
+            final Item item = REGISTRIES.items.getEntry(LodMod.itemIdMap.get(combatMenu.itemOrSpellId_1c)).get(); //TODO
+            takeItemId(item);
+
+            boolean returnItem = false;
+            for(int repeatItemIndex = 0; repeatItemIndex < 9; repeatItemIndex++) {
+              if(itemId == repeatItemIds_800c6e34.get(repeatItemIndex).get()) {
+                returnItem = true;
+                break;
+              }
+            }
+
+            if(itemId == 0xfa) { // Psych Bomb X
+              returnItem = true;
+            }
+
+            final RepeatItemReturnEvent repeatItemReturnEvent = EVENTS.postEvent(new RepeatItemReturnEvent(itemId, returnItem));
+
+            if(repeatItemReturnEvent.returnItem) {
+              usedRepeatItems_800c6c3c.add(item);
+            }
           }
 
           //LAB_800f545c
-          if(combatMenu.menuType_0a.get() == 1) {
+          if(combatMenu.menuType_0a == 1) {
             final VitalsStat mp = player.stats.getStat(CoreMod.MP_STAT.get());
             mp.setCurrent(mp.getCurrent() - player.spell_94.mp_06);
           }
 
           //LAB_800f5488
           playSound(0, 2, 0, 0, (short)0, (short)0);
-          combatMenu._a0.set(1);
-          combatMenu.menuState_00.set((short)9);
+          combatMenu._a0 = 1;
+          combatMenu.menuState_00 = 9;
         } else if(ret == -1) { // Pressed O
           //LAB_800f54b4
           playSound(0, 0, 3, 0, (short)0, (short)0);
-          combatMenu.menuState_00.set((short)7);
-          combatMenu._02.and(0xfffb).or(0x20);
+          combatMenu.menuState_00 = 7;
+          combatMenu._02 &= 0xfffb;
+          combatMenu._02 |= 0x20;
         }
       }
 
       case 7 -> {
-        if(combatMenu.menuType_0a.get() != 0) {
+        if(combatMenu.menuType_0a != 0) {
           s0 = 0x80;
         } else {
           s0 = 0xba;
         }
 
-        combatMenu.menuState_00.set((short)2);
+        combatMenu.menuState_00 = 2;
         playSound(0, 4, 0, 0, (short)0, (short)0);
-        combatMenu._12.set(0x52);
-        combatMenu._10.set(s0);
-        combatMenu.textX_18.set((short)(combatMenu.x_04.get() - s0 / 2 + 9));
-        v0 = (combatMenu.y_06.get() - combatMenu._12.get()) - 16;
-        combatMenu._1a.set((short)v0);
-        combatMenu._20.set((short)v0);
-        combatMenu._02.or(0xb);
-        if((combatMenu._02.get() & 0x20L) != 0) {
-          v0 = v0 - combatMenu._94.get();
-          combatMenu._20.set((short)v0);
+        combatMenu._12 = 0x52;
+        combatMenu._10 = s0;
+        combatMenu.textX_18 = (short)(combatMenu.x_04 - s0 / 2 + 9);
+        v0 = (combatMenu.y_06 - combatMenu._12) - 16;
+        combatMenu._1a = (short)v0;
+        combatMenu._20 = (short)v0;
+        combatMenu._02 |= 0xb;
+        if((combatMenu._02 & 0x20) != 0) {
+          v0 = v0 - combatMenu._94;
+          combatMenu._20 = (short)v0;
         }
 
         //LAB_800f5588
-        if(combatMenu.menuType_0a.get() != 0) {
-          combatMenu.itemOrSpellId_1c.set((short)getItemOrSpellId());
-          addFloatingNumber(0, 0x1L, 0, setActiveCharacterSpell(combatMenu.itemOrSpellId_1c.get()).spell_94.mp_06, 280, 135, 0, 0x1L);
+        if(combatMenu.menuType_0a != 0) {
+          combatMenu.itemOrSpellId_1c = (short)getItemOrSpellId();
+          addFloatingNumber(0, 0x1L, 0, setActiveCharacterSpell(combatMenu.itemOrSpellId_1c).spell_94.mp_06, 280, 135, 0, 0x1L);
         }
       }
 
       case 8 -> {
         itemTargetAll_800c69c8.set(false);
         itemTargetType_800c6b68.set(0);
-        combatMenu._a0.set(-1);
-        combatMenu.menuState_00.set((short)9);
-        combatMenu._12.set(0);
-        combatMenu._10.set(0);
-        combatMenu._02.and(0xfffc);
+        combatMenu._a0 = -1;
+        combatMenu.menuState_00 = 9;
+        combatMenu._12 = 0;
+        combatMenu._10 = 0;
+        combatMenu._02 &= 0xfffc;
         final FloatingNumberC4 num = floatingNumbers_800c6b5c[0];
         num.state_00 = 0;
         num.flags_02 = 0;
       }
 
       case 9 -> {
-        if(combatMenu.menuType_0a.get() == 0) {
-          v0 = combatMenu._1a.get() - combatMenu._20.get();
-          combatMenu._26.set(combatMenu.listScroll_24.get());
-          combatMenu._28.set(combatMenu.listIndex_1e.get());
-          combatMenu._2a.set(combatMenu._20.get());
-          combatMenu._94.set(v0);
-          combatMenu._2c.set(v0);
+        if(combatMenu.menuType_0a == 0) {
+          v0 = combatMenu._1a - combatMenu._20;
+          combatMenu._26 = combatMenu.listScroll_24;
+          combatMenu._28 = combatMenu.listIndex_1e;
+          combatMenu._2a = combatMenu._20;
+          combatMenu._94 = v0;
+          combatMenu._2c = v0;
         }
 
         //LAB_800f568c
-        resetCombatMenu();
+        resetBattleMenu();
       }
     }
 
     //LAB_800f5694
     //LAB_800f5698
-    combatMenu._84.set(tickCount_800bb0fc.get() & 0x7);
+    combatMenu._84 = tickCount_800bb0fc.get() & 0x7;
 
     //LAB_800f56ac
   }
 
   @Method(0x800f56c4L)
   public static int getItemOrSpellId() {
-    final CombatMenua4 combatMenu = combatMenu_800c6b60.deref();
-    final short menuType = combatMenu.menuType_0a.get();
+    final CombatMenua4 combatMenu = combatMenu_800c6b60;
+    final short menuType = combatMenu.menuType_0a;
 
     if(menuType == 0) {
       //LAB_800f56f0
-      return combatItems_800c6988.get(combatMenu.listScroll_24.get() + combatMenu.listIndex_1e.get()).itemId - 0xc0;
+      return LodMod.idItemMap.getInt(combatItems_800c6988.get(combatMenu.listScroll_24 + combatMenu.listIndex_1e).item.getRegistryId());
     }
 
     if(menuType == 1) {
@@ -1742,14 +1775,14 @@ public final class Bttl_800f {
       //LAB_800f5740
       int charSlot;
       for(charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-        if(dragoonSpells_800c6960.get(charSlot).charIndex_00.get() == combatMenu.charIndex_08.get()) {
+        if(dragoonSpells_800c6960.get(charSlot).charIndex_00.get() == combatMenu.charIndex_08) {
           break;
         }
       }
 
       //LAB_800f5778
-      int spellIndex = dragoonSpells_800c6960.get(charSlot).spellIndex_01.get(combatMenu.listScroll_24.get() + combatMenu.listIndex_1e.get()).get();
-      if(combatMenu.charIndex_08.get() == 8) {
+      int spellIndex = dragoonSpells_800c6960.get(charSlot).spellIndex_01.get(combatMenu.listScroll_24 + combatMenu.listIndex_1e).get();
+      if(combatMenu.charIndex_08 == 8) {
         if(spellIndex == 65) {
           spellIndex = 10;
         }
@@ -1778,16 +1811,16 @@ public final class Bttl_800f {
   public static void renderList(final int type) {
     int trim;
 
-    final CombatMenua4 combatMenu = combatMenu_800c6b60.deref();
+    final CombatMenua4 combatMenu = combatMenu_800c6b60;
 
-    int y1 = combatMenu._20.get();
-    final int y2 = combatMenu._1a.get();
-    final int sp68 = combatMenu.y_06.get();
+    int y1 = combatMenu._20;
+    final int y2 = combatMenu._1a;
+    final int sp68 = combatMenu.y_06;
 
     //LAB_800f5860
     int charSlot;
     for(charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      if(dragoonSpells_800c6960.get(charSlot).charIndex_00.get() == combatMenu.charIndex_08.get()) {
+      if(dragoonSpells_800c6960.get(charSlot).charIndex_00.get() == combatMenu.charIndex_08) {
         break;
       }
     }
@@ -1800,7 +1833,7 @@ public final class Bttl_800f {
     final LodString itemCount = new LodString(12);
 
     //LAB_800f58e0
-    for(int spellSlot = 0; spellSlot < combatMenu.count_22.get(); spellSlot++) {
+    for(int spellSlot = 0; spellSlot < combatMenu.count_22; spellSlot++) {
       if(y1 >= sp68) {
         break;
       }
@@ -1809,7 +1842,7 @@ public final class Bttl_800f {
       final LodString name;
       if(type == 0) {
         //LAB_800f5918
-        name = _80050ae8.get(combatItems_800c6988.get(sp7c).itemId - 0xc0).deref();
+        name = new LodString(combatItems_800c6988.get(sp7c).item.getName());
         intToStr(combatItems_800c6988.get(sp7c).count, itemCount);
 
         //LAB_800f5968
@@ -1855,7 +1888,7 @@ public final class Bttl_800f {
         int spellId = dragoonSpells_800c6960.get(charSlot).spellIndex_01.get(spellSlot).get();
         name = new LodString(spellStats_800fa0b8[spellId].name);
 
-        if(combatMenu.charIndex_08.get() == 8) {
+        if(combatMenu.charIndex_08 == 8) {
           if(spellId == 65) {
             spellId = 10;
           }
@@ -1872,10 +1905,10 @@ public final class Bttl_800f {
         }
 
         //LAB_800f5acc
-        final PlayerBattleObject bobj = setActiveCharacterSpell(spellId);
+        final PlayerBattleEntity bent = setActiveCharacterSpell(spellId);
 
         // Not enough MP for spell
-        if(bobj.stats.getStat(CoreMod.MP_STAT.get()).getCurrent() < bobj.spell_94.mp_06) {
+        if(bent.stats.getStat(CoreMod.MP_STAT.get()).getCurrent() < bent.spell_94.mp_06) {
           textColour = TextColour.GREY;
         }
       } else {
@@ -1892,28 +1925,28 @@ public final class Bttl_800f {
         }
 
         //LAB_800f5bb4
-        if((combatMenu._02.get() & 0x4) != 0) {
-          trim = (short)combatMenu._8c.get();
+        if((combatMenu._02 & 0x4) != 0) {
+          trim = (short)combatMenu._8c;
         }
 
         //LAB_800f5bd8
-        Scus94491BpeSegment_8002.renderText(name, combatMenu.textX_18.get(), y1, textColour, trim);
+        Scus94491BpeSegment_8002.renderText(name, combatMenu.textX_18, y1, textColour, trim);
 
         if(type == 0) {
-          Scus94491BpeSegment_8002.renderText(sp0x40, combatMenu.textX_18.get() + 128, y1, textColour, trim);
+          Scus94491BpeSegment_8002.renderText(sp0x40, combatMenu.textX_18 + 128, y1, textColour, trim);
         }
       } else if(y2 < y1 + 12) {
-        if((combatMenu._02.get() & 0x4) != 0) {
-          trim = combatMenu._8c.get();
+        if((combatMenu._02 & 0x4) != 0) {
+          trim = combatMenu._8c;
         } else {
           trim = y1 - y2;
         }
 
         //LAB_800f5b40
-        Scus94491BpeSegment_8002.renderText(name, combatMenu.textX_18.get(), y2, textColour, trim);
+        Scus94491BpeSegment_8002.renderText(name, combatMenu.textX_18, y2, textColour, trim);
 
         if(type == 0) {
-          Scus94491BpeSegment_8002.renderText(sp0x40, combatMenu.textX_18.get() + 128, y2, textColour, trim);
+          Scus94491BpeSegment_8002.renderText(sp0x40, combatMenu.textX_18 + 128, y2, textColour, trim);
         }
       }
 
@@ -1932,19 +1965,19 @@ public final class Bttl_800f {
    *   - Dragoon magic MP cost background and normal text (excluding the number value) */
   @Method(0x800f5c94L)
   public static void drawItemMenuElements() {
-    final CombatMenua4 structa4 = combatMenu_800c6b60.deref();
+    final CombatMenua4 structa4 = combatMenu_800c6b60;
 
-    if(structa4.menuState_00.get() != 0 && (structa4._02.get() & 0x1L) != 0) {
-      if((structa4._02.get() & 0x2L) != 0) {
-        renderList(structa4.menuType_0a.get());
+    if(structa4.menuState_00 != 0 && (structa4._02 & 0x1) != 0) {
+      if((structa4._02 & 0x2) != 0) {
+        renderList(structa4.menuType_0a);
 
-        if((structa4._02.get() & 0x8L) != 0) {
+        if((structa4._02 & 0x8) != 0) {
           //LAB_800f5d78
           //LAB_800f5d90
-          FUN_800f8cd8(structa4.textX_18.get() - centreScreenX_1f8003dc.get() - 16, structa4._1a.get() - centreScreenY_1f8003de.get() + structa4.listScroll_24.get() * 14 + 2, structa4._84.get() % 4 * 16 + 192 & 0xf0, structa4._84.get() / 4 * 8 + 32 & 0xf8, 15, 8, 0xd, Translucency.B_PLUS_F);
+          renderBattleMenuElement(structa4.textX_18 - centreScreenX_1f8003dc.get() - 16, structa4._1a - centreScreenY_1f8003de.get() + structa4.listScroll_24 * 14 + 2, structa4._84 % 4 * 16 + 192 & 0xf0, structa4._84 / 4 * 8 + 32 & 0xf8, 15, 8, 0xd, Translucency.B_PLUS_F);
 
           final int s0;
-          if(structa4.menuType_0a.get() != 0) {
+          if(structa4.menuType_0a != 0) {
             s0 = 0;
           } else {
             s0 = 26;
@@ -1952,7 +1985,7 @@ public final class Bttl_800f {
 
           //LAB_800f5e00
           final int s1;
-          if((structa4._02.get() & 0x100L) != 0) {
+          if((structa4._02 & 0x100) != 0) {
             s1 = 2;
           } else {
             s1 = 0;
@@ -1960,44 +1993,44 @@ public final class Bttl_800f {
 
           //LAB_800f5e18
           final int t0;
-          if((structa4._02.get() & 0x200L) != 0) {
+          if((structa4._02 & 0x200) != 0) {
             t0 = -2;
           } else {
             t0 = 0;
           }
 
           //LAB_800f5e24
-          if(structa4.listIndex_1e.get() > 0) {
-            FUN_800f74f4(_800c7190.getAddress(), structa4.x_04.get() + s0 + 56, structa4.y_06.get() + t0 - 100, (int)_800c7192.get(), (int)_800c7193.get(), 0xdL, null, (short)0);
+          if(structa4.listIndex_1e > 0) {
+            renderBattleMenuBackground(battleItemMenuScrollArrowUvMetrics_800c7190, structa4.x_04 + s0 + 56, structa4.y_06 + t0 - 100, battleItemMenuScrollArrowUvMetrics_800c7190.w_02.get(), battleItemMenuScrollArrowUvMetrics_800c7190.h_03.get(), 0xd, null, (short)0);
           }
 
           //LAB_800f5e7c
-          if(structa4.listIndex_1e.get() + 6 < structa4.count_22.get() - 1) {
-            FUN_800f74f4(_800c7190.getAddress(), structa4.x_04.get() + s0 + 56, structa4.y_06.get() + s1 - 7, (int)_800c7192.get(), (int)_800c7193.get(), 0xdL, null, (short)1);
+          if(structa4.listIndex_1e + 6 < structa4.count_22 - 1) {
+            renderBattleMenuBackground(battleItemMenuScrollArrowUvMetrics_800c7190, structa4.x_04 + s0 + 56, structa4.y_06 + s1 - 7, battleItemMenuScrollArrowUvMetrics_800c7190.w_02.get(), battleItemMenuScrollArrowUvMetrics_800c7190.h_03.get(), 0xd, null, (short)1);
           }
         }
 
         //LAB_800f5ee8
         //Item menu
-        final int a2 = structa4._10.get() + 6;
-        final int a3 = structa4._12.get() + 17;
-        renderTextBoxBackground(structa4.x_04.get() - a2 / 2, structa4.y_06.get() - a3, a2, a3, Config.changeBattleRgb() ? Config.getBattleRgb() : 0x00299f);
+        final int a2 = structa4._10 + 6;
+        final int a3 = structa4._12 + 17;
+        renderBattleHudBackground(structa4.x_04 - a2 / 2, structa4.y_06 - a3, a2, a3, Config.changeBattleRgb() ? Config.getBattleRgb() : 0x00299f);
       }
 
       //LAB_800f5f50
-      if((structa4._02.get() & 0x40) != 0) {
+      if((structa4._02 & 0x40) != 0) {
         final int textType;
-        if(structa4.menuType_0a.get() == 0) { // Item
+        if(structa4.menuType_0a == 0) { // Item
           //LAB_800f5f8c
           textType = 4;
-        } else if(structa4.menuType_0a.get() == 1) { // Spell
+        } else if(structa4.menuType_0a == 1) { // Spell
           //LAB_800f5f94
           textType = 5;
-          if((structa4._02.get() & 0x2L) != 0) {
-            final BattleObject27c bobj = setActiveCharacterSpell(structa4.itemOrSpellId_1c.get());
-            addFloatingNumber(0, 0x1L, 0, bobj.spell_94.mp_06, 280, 135, 0, structa4.menuType_0a.get());
-            FUN_800f8cd8(236 - centreScreenX_1f8003dc.get(), 130 - centreScreenY_1f8003de.get(), 16, 128, 24, 16, 0x2c, null);
-            renderTextBoxBackground(236, 130, 64, 14, Config.changeBattleRgb() ? Config.getBattleRgb() : 0x00299f);
+          if((structa4._02 & 0x2) != 0) {
+            final BattleEntity27c bent = setActiveCharacterSpell(structa4.itemOrSpellId_1c);
+            addFloatingNumber(0, 0x1L, 0, bent.spell_94.mp_06, 280, 135, 0, structa4.menuType_0a);
+            renderBattleMenuElement(236 - centreScreenX_1f8003dc.get(), 130 - centreScreenY_1f8003de.get(), 16, 128, 24, 16, 0x2c, null);
+            renderBattleHudBackground(236, 130, 64, 14, Config.changeBattleRgb() ? Config.getBattleRgb() : 0x00299f);
           }
         } else {
           throw new RuntimeException("Undefined s1");
@@ -2006,8 +2039,8 @@ public final class Bttl_800f {
         //LAB_800f604c
         //LAB_800f6050
         //Selected item description
-        renderTextBoxBackground(44, 156, 232, 14, Config.changeBattleRgb() ? Config.getBattleRgb() : 0x00299f);
-        renderText(textType, structa4.itemOrSpellId_1c.get(), 160, 163);
+        renderBattleHudBackground(44, 156, 232, 14, Config.changeBattleRgb() ? Config.getBattleRgb() : 0x00299f);
+        renderText(textType, structa4.itemOrSpellId_1c, 160, 163);
       }
     }
 
@@ -2016,257 +2049,282 @@ public final class Bttl_800f {
 
   @Method(0x800f60acL)
   public static void FUN_800f60ac() {
-    final BattleMenuStruct58 v0 = battleMenu_800c6c34.deref();
-    v0._00.set((short)0);
-    v0._02.set(0);
-    v0.charIndex_04.set((short)0xff);
-    v0.x_06.set((short)0);
-    v0.y_08.set((short)0);
-    v0._0a.set((short)0);
-    v0._0c.set((short)0);
-    v0.iconCount_0e.set((short)0);
-    v0.selectedIcon_22.set((short)0);
-    v0._24.set((short)0);
-    v0._26.set((short)0);
-    v0._28.set((short)0);
-    v0._2a.set((short)0);
-    v0.colour_2c.set((short)0);
+    final BattleMenuStruct58 menu = battleMenu_800c6c34;
+    menu.state_00 = 0;
+    menu.highlightState_02 = 0;
+    menu.charIndex_04 = 0xff;
+    menu.x_06 = 0;
+    menu.y_08 = 0;
+    menu.xShiftOffset_0a = 0;
+    menu.unused_0c = 0;
+    menu.iconCount_0e = 0;
+    menu.selectedIcon_22 = 0;
+    menu.currentIconStateTick_24 = 0;
+    menu.iconStateIndex_26 = 0;
+    menu.highlightX0_28 = 0;
+    menu.highlightY_2a = 0;
+    menu.colour_2c = 0;
 
     //LAB_800f60fc
     for(int i = 0; i < 9; i++) {
-      v0.iconFlags_10.get(i).set((short)-1);
+      menu.iconFlags_10[i] = -1;
     }
 
     //LAB_800f611c
-    for(int i = 0; i < 10; i++) {
-      v0.all_30.get(i).set(0);
-    }
+    menu.countHighlightMovementStep_30 = 0;
+    menu.highlightMovementDistance_34 = 0;
+    menu.currentHighlightMovementStep_38 = 0;
+    menu.highlightX1_3c = 0;
+    menu.renderSelectedIconText_40 = false;
+    menu.cameraPositionSwitchTicksRemaining_44 = 0;
+    menu.target_48 = 0;
+    menu.displayTargetArrowAndName_4c = false;
+    menu.targetType_50 = 0;
+    menu.combatantIndex_54 = 0;
   }
 
   @Method(0x800f6134L)
-  public static void FUN_800f6134(final ScriptState<? extends BattleObject27c> bobjState, final long a1, final long a2) {
-    final BattleMenuStruct58 v0 = battleMenu_800c6c34.deref();
-    v0._00.set((short)1);
-    v0._02.set(2);
-    v0.x_06.set((short)160);
-    v0.y_08.set((short)172);
-    v0.selectedIcon_22.set((short)0);
-    v0._24.set((short)0);
-    v0._26.set((short)0);
-    v0._28.set((short)0);
-    v0._2a.set((short)0);
-    v0.colour_2c.set((short)128);
+  public static void initializeCombatMenuIcons(final ScriptState<? extends BattleEntity27c> bentState, final int displayedIconsBitset, final int disabledIconsBitset) {
+    final BattleMenuStruct58 menu = battleMenu_800c6c34;
+    menu.state_00 = 1;
+    menu.highlightState_02 = 2;
+    menu.x_06 = 160;
+    menu.y_08 = 172;
+    menu.selectedIcon_22 = 0;
+    menu.currentIconStateTick_24 = 0;
+    menu.iconStateIndex_26 = 0;
+    menu.highlightX0_28 = 0;
+    menu.highlightY_2a = 0;
+    menu.colour_2c = 128;
 
     //LAB_800f61d8
     for(int i = 0; i < 9; i++) {
-      v0.iconFlags_10.get(i).set((short)-1);
+      menu.iconFlags_10[i] = -1;
     }
 
     //LAB_800f61f8
-    for(int i = 0; i < 10; i++) {
-      v0.all_30.get(i).set(0);
-    }
+    menu.countHighlightMovementStep_30 = 0;
+    menu.highlightMovementDistance_34 = 0;
+    menu.currentHighlightMovementStep_38 = 0;
+    menu.highlightX1_3c = 0;
+    menu.renderSelectedIconText_40 = false;
+    menu.cameraPositionSwitchTicksRemaining_44 = 0;
+    menu.target_48 = 0;
+    menu.displayTargetArrowAndName_4c = false;
+    menu.targetType_50 = 0;
+    menu.combatantIndex_54 = 0;
 
     //LAB_800f6224
     //LAB_800f6234
-    int a3;
-    for(a3 = 0; a3 < charCount_800c677c.get(); a3++) {
-      if(battleState_8006e398.charBobjs_e40[a3] == bobjState) {
+    int bentIndex;
+    for(bentIndex = 0; bentIndex < charCount_800c677c.get(); bentIndex++) {
+      if(battleState_8006e398.charBents_e40[bentIndex] == bentState) {
         break;
       }
     }
 
     //LAB_800f6254
-    v0.iconCount_0e.set((short)0);
-    v0.charIndex_04.set((short)battleState_8006e398.charBobjs_e40[a3].innerStruct_00.charId_272);
+    menu.iconCount_0e = 0;
+    menu.charIndex_04 = (short)battleState_8006e398.charBents_e40[bentIndex].innerStruct_00.charId_272;
 
     //LAB_800f62a4
     for(int i = 0, used = 0; i < 8; i++) {
-      if((a1 & 1 << i) != 0) {
-        v0.iconFlags_10.get(used++).set(_800c7194.get(i).get());
-        v0.iconCount_0e.incr();
+      if((displayedIconsBitset & 0x1 << i) != 0) {
+        menu.iconFlags_10[used++] = iconFlags_800c7194.get(i).get();
+        menu.iconCount_0e++;
       }
-
       //LAB_800f62d0
     }
 
-    v0._0c.set((short)0);
-    v0._0a.set((short)((v0.iconCount_0e.get() * 19 - 3) / 2));
-    FUN_800f8b74(a2);
+    menu.unused_0c = 0;
+    menu.xShiftOffset_0a = (short)((menu.iconCount_0e * 19 - 3) / 2);
+    setCombatMenuIconsDisabled(disabledIconsBitset);
   }
 
+  /** Handles the various combat menu actions and then renders the menu:
+   * <ol>
+   *   <li>0 -> Set up camera positions</li>
+   *   <li>1 -> Check for and handle input</li>
+   *   <li>2 -> Cycle selector to adjacent icons</li>
+   *   <li>3 -> Wrap selector to other end of menu</li>
+   *   <li>4 -> Count down camera movement ticks</li>
+   * </ol>
+   */
   @Method(0x800f6330L)
-  public static int FUN_800f6330() {
-    long v1;
-    long a0;
-    long a1;
-    int cameraPositionIndicesIndex;
-    long s1;
-    final BattleMenuStruct58 struct58 = battleMenu_800c6c34.deref();
+  public static int handleCombatMenu() {
+    final BattleMenuStruct58 menu = battleMenu_800c6c34;
 
-    if(struct58._00.get() == 0) {
+    if(menu.state_00 == 0) {
       return 0;
     }
 
-    s1 = 0;
+    int selectedAction = 0;
 
-    switch(struct58._00.get() - 1) {
+    switch(menu.state_00 - 1) {
       case 0 -> {  // Set up camera position list at battle start or camera reset (like dragoon or after trying to run)
-        struct58._00.set((short)2);
-        struct58._28.set((short)(struct58.x_06.get() - struct58._0a.get() + struct58.selectedIcon_22.get() * 19 - 4));
-        struct58._2a.set((short)(struct58.y_08.get() - 22));
+        menu.state_00 = 2;
+        menu.highlightX0_28 = (short)(menu.x_06 - menu.xShiftOffset_0a + menu.selectedIcon_22 * 19 - 4);
+        menu.highlightY_2a = (short)(menu.y_08 - 22);
 
         //LAB_800f63e8
-        for(int i = 0; i < 10; i++) {
-          struct58.all_30.get(i).set(0);
-        }
+        menu.countHighlightMovementStep_30 = 0;
+        menu.highlightMovementDistance_34 = 0;
+        menu.currentHighlightMovementStep_38 = 0;
+        menu.highlightX1_3c = 0;
+        menu.renderSelectedIconText_40 = false;
+        menu.cameraPositionSwitchTicksRemaining_44 = 0;
+        menu.target_48 = 0;
+        menu.displayTargetArrowAndName_4c = false;
+        menu.targetType_50 = 0;
+        menu.combatantIndex_54 = 0;
 
-        _800c697c.setu(0);
-        _800c6ba1.setu(0);
-        cameraPositionIndicesIndex_800c6ba0.setu(0);
+        _800c697c.set((short)0);
+        currentCameraPositionIndicesIndicesIndex_800c6ba1.set(0);
+        countCameraPositionIndicesIndices_800c6ba0.set(0);
 
         //LAB_800f6424
-        final long[] sp0x18 = new long[4];
+        final int[] previousIndicesList = new int[4];
         for(int i = 0; i < 4; i++) {
-          sp0x18[i] = 0xffL;
-          cameraPositionIndices_800c6c30.get(i).set(0);
+          previousIndicesList[i] = 0xff;
+          cameraPositionIndicesIndices_800c6c30.get(i).set(0);
         }
 
         //LAB_800f6458
+        int cameraPositionIndicesIndex;
+        boolean addCameraPositionIndex;
+        int cameraPositionIndex;
         for(cameraPositionIndicesIndex = 0; cameraPositionIndicesIndex < 4; cameraPositionIndicesIndex++) {
-          a0 = 0;
-          a1 = intRef_800c6718.get(6 + cameraPositionIndicesIndex).get();
+          addCameraPositionIndex = true;
+          cameraPositionIndex = currentStageData_800c6718.get(6 + cameraPositionIndicesIndex);
 
           //LAB_800f646c
-          for(int i = 0; i < 4; i++) {
-            if(sp0x18[i] == a1) {
-              a0 = 0x1L;
+          for(int i = 0; i < 4; i++) { // don't add duplicate indices
+            if(previousIndicesList[i] == cameraPositionIndex) {
+              addCameraPositionIndex = false;
               break;
             }
-
             //LAB_800f6480
           }
 
-          if(a0 == 0) {
-            sp0x18[(int)cameraPositionIndicesIndex_800c6ba0.get()] = intRef_800c6718.get(6 + cameraPositionIndicesIndex).get();
-            cameraPositionIndices_800c6c30.get((int)cameraPositionIndicesIndex_800c6ba0.get()).set(cameraPositionIndicesIndex);
+          if(addCameraPositionIndex) {
+            previousIndicesList[countCameraPositionIndicesIndices_800c6ba0.get()] = currentStageData_800c6718.get(6 + cameraPositionIndicesIndex);
+            cameraPositionIndicesIndices_800c6c30.get(countCameraPositionIndicesIndices_800c6ba0.get()).set(cameraPositionIndicesIndex);
 
-            if(_800d66b0.get() == cameraPositionIndicesIndex) {
-              _800c6ba1.setu(cameraPositionIndicesIndex_800c6ba0.get());
+            if(currentCameraPositionIndicesIndex_800c66b0.get() == cameraPositionIndicesIndex) {
+              currentCameraPositionIndicesIndicesIndex_800c6ba1.set(countCameraPositionIndicesIndices_800c6ba0.get());
             }
 
             //LAB_800f64dc
-            cameraPositionIndicesIndex_800c6ba0.addu(0x1L);
+            countCameraPositionIndicesIndices_800c6ba0.add(1);
           }
-
           //LAB_800f64ec
         }
       }
 
       case 1 -> {  // Checking for input
-        a0 = cameraPositionIndicesIndex_800c6ba0.get();
-        struct58._40.set(0);
-        struct58._44.set(0);
+        final int countCameraPositionIndicesIndices = countCameraPositionIndicesIndices_800c6ba0.get();
+        menu.renderSelectedIconText_40 = false;
+        menu.cameraPositionSwitchTicksRemaining_44 = 0;
 
         // Input for changing camera angles
-        if(a0 >= 0x2L && (joypadInput_8007a39c.get() & 0x2L) != 0) {
-          _800c6ba1.addu(0x1L);
-          if(_800c6ba1.get() >= a0) {
-            _800c6ba1.setu(0);
+        if(countCameraPositionIndicesIndices >= 2 && (input_800bee90.get() & 0x2) != 0) {
+          currentCameraPositionIndicesIndicesIndex_800c6ba1.add(1);
+          if(currentCameraPositionIndicesIndicesIndex_800c6ba1.get() >= countCameraPositionIndicesIndices) {
+            currentCameraPositionIndicesIndicesIndex_800c6ba1.set(0);
           }
 
           //LAB_800f6560
-          _800c6748.set(0x21);
-          struct58._00.set((short)5);
-          _800c66b0.set(cameraPositionIndices_800c6c30.get((int)_800c6ba1.get()).get());
-          struct58._44.set(60 / vsyncMode_8007a3b8.get() + 2);
-          FUN_800f8c38(0);
+          _800c6748.set(33);
+          menu.state_00 = 5;
+          currentCameraPositionIndicesIndex_800c66b0.set(cameraPositionIndicesIndices_800c6c30.get(currentCameraPositionIndicesIndicesIndex_800c6ba1.get()).get());
+          menu.cameraPositionSwitchTicksRemaining_44 = 60 / vsyncMode_8007a3b8 + 2;
+          toggleBattleMenuSelectorRendering(false);
           break;
         }
 
         // Input for cycling right on menu bar
         //LAB_800f65b8
-        if((joypadInput_8007a39c.get() & 0x2000L) != 0) {
+        if((input_800bee90.get() & 0x2000) != 0) {
           playSound(0, 1, 0, 0, (short)0, (short)0);
 
-          if(struct58.selectedIcon_22.get() < struct58.iconCount_0e.get() - 1) {
+          if(menu.selectedIcon_22 < menu.iconCount_0e - 1) {
             //LAB_800f6640
-            struct58.selectedIcon_22.incr();
-            struct58._00.set((short)3);
+            menu.selectedIcon_22++;
+            menu.state_00 = 3;
 
             //LAB_800f664c
-            struct58._30.set(3);
-            struct58._34.set(19);
-            struct58._38.set(0);
-            struct58._26.set((short)0);
+            menu.countHighlightMovementStep_30 = 3;
+            menu.highlightMovementDistance_34 = 19;
+            menu.currentHighlightMovementStep_38 = 0;
+            menu.iconStateIndex_26 = 0;
             break;
           }
 
-          struct58._00.set((short)4);
-          struct58._02.or(1);
-          struct58.selectedIcon_22.set((short)0);
-          struct58._26.set((short)0);
-          struct58._30.set(3);
-          struct58._34.set(19);
-          struct58._38.set(0);
-          struct58._3c.set(struct58.x_06.get() - struct58._0a.get() - 23);
+          menu.state_00 = 4;
+          menu.highlightState_02 |= 1;
+          menu.selectedIcon_22 = 0;
+          menu.iconStateIndex_26 = 0;
+          menu.countHighlightMovementStep_30 = 3;
+          menu.highlightMovementDistance_34 = 19;
+          menu.currentHighlightMovementStep_38 = 0;
+          menu.highlightX1_3c = menu.x_06 - menu.xShiftOffset_0a - 23;
           break;
         }
 
         // Input for cycling left on menu bar
         //LAB_800f6664
-        if((joypadInput_8007a39c.get() & 0x8000L) != 0) {
+        if((input_800bee90.get() & 0x8000) != 0) {
           playSound(0, 1, 0, 0, (short)0, (short)0);
 
-          if(struct58.selectedIcon_22.get() != 0) {
+          if(menu.selectedIcon_22 != 0) {
             //LAB_800f66f0
-            struct58.selectedIcon_22.decr();
-            struct58._00.set((short)3);
+            menu.selectedIcon_22--;
+            menu.state_00 = 3;
 
             //LAB_800f66fc
-            struct58._30.set(3);
-            struct58._34.set(-19);
+            menu.countHighlightMovementStep_30 = 3;
+            menu.highlightMovementDistance_34 = -19;
 
             //LAB_800f6710
-            struct58._38.set(0);
-            struct58._26.set((short)0);
+            menu.currentHighlightMovementStep_38 = 0;
+            menu.iconStateIndex_26 = 0;
             break;
           }
 
-          struct58._00.set((short)4);
-          struct58._02.or(1);
-          struct58.selectedIcon_22.set((short)(struct58.iconCount_0e.get() - 1));
-          struct58._3c.set(struct58.x_06.get() - struct58._0a.get() + struct58.iconCount_0e.get() * 19 - 4);
-          struct58._30.set(3);
-          struct58._34.set(-19);
-          struct58._38.set(0);
-          struct58._26.set((short)0);
+          menu.state_00 = 4;
+          menu.highlightState_02 |= 1;
+          menu.selectedIcon_22 = (short)(menu.iconCount_0e - 1);
+          menu.highlightX1_3c = menu.x_06 - menu.xShiftOffset_0a + menu.iconCount_0e * 19 - 4;
+          menu.countHighlightMovementStep_30 = 3;
+          menu.highlightMovementDistance_34 = -19;
+          menu.currentHighlightMovementStep_38 = 0;
+          menu.iconStateIndex_26 = 0;
           break;
         }
 
         // Input for pressing X on menu bar
         //LAB_800f671c
-        if((joypadPress_8007a398.get() & 0x20L) != 0) {
-          v1 = struct58.iconFlags_10.get(struct58.selectedIcon_22.get()).get();
-          if((v1 & 0x80L) != 0) {
+        if((press_800bee94.get() & 0x20) != 0) {
+          int selectedIconFlag = menu.iconFlags_10[menu.selectedIcon_22];
+          if((selectedIconFlag & 0x80) != 0) {
             playSound(0, 3, 0, 0, (short)0, (short)0);
           } else {
-            v1 = v1 & 0xfL;
-            if(v1 == 0x5L) {
+            selectedIconFlag = selectedIconFlag & 0xf;
+            if(selectedIconFlag == 0x5) {
               prepareItemList();
 
               if(combatItems_800c6988.isEmpty()) {
                 playSound(0, 3, 0, 0, (short)0, (short)0);
               } else {
                 playSound(0, 2, 0, 0, (short)0, (short)0);
-                s1 = struct58.iconFlags_10.get(struct58.selectedIcon_22.get()).get() & 0xfL;
+                selectedAction = menu.iconFlags_10[menu.selectedIcon_22] & 0xf;
               }
               //LAB_800f6790
-            } else if(v1 == 0x3L) {
+            } else if(selectedIconFlag == 0x3L) {
               //LAB_800f67b8
               int charSlot;
               for(charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-                if(dragoonSpells_800c6960.get(charSlot).charIndex_00.get() == struct58.charIndex_04.get()) {
+                if(dragoonSpells_800c6960.get(charSlot).charIndex_00.get() == menu.charIndex_04) {
                   break;
                 }
               }
@@ -2285,18 +2343,18 @@ public final class Bttl_800f {
                 playSound(0, 3, 0, 0, (short)0, (short)0);
               } else {
                 playSound(0, 2, 0, 0, (short)0, (short)0);
-                s1 = struct58.iconFlags_10.get(struct58.selectedIcon_22.get()).get() & 0xfL;
+                selectedAction = menu.iconFlags_10[menu.selectedIcon_22] & 0xf;
               }
             } else {
               //LAB_800f6858
               //LAB_800f6860
               playSound(0, 2, 0, 0, (short)0, (short)0);
-              s1 = struct58.iconFlags_10.get(struct58.selectedIcon_22.get()).get() & 0xfL;
+              selectedAction = menu.iconFlags_10[menu.selectedIcon_22] & 0xf;
             }
           }
           //LAB_800f6898
           // Input for pressing circle on menu bar
-        } else if((joypadPress_8007a398.get() & 0x40L) != 0) {
+        } else if((press_800bee94.get() & 0x40) != 0) {
           //LAB_800f68a4
           //LAB_800f68bc
           playSound(0, 3, 0, 0, (short)0, (short)0);
@@ -2304,204 +2362,190 @@ public final class Bttl_800f {
 
         //LAB_800f68c4
         //LAB_800f68c8
-        struct58._40.set(0x1L);
+        menu.renderSelectedIconText_40 = true;
       }
 
       case 2 -> {  // Cycle to adjacent menu bar icon
-        struct58._38.incr();
-        struct58._28.add((short)(struct58._34.get() / struct58._30.get()));
+        menu.currentHighlightMovementStep_38++;
+        menu.highlightX0_28 += (short)(menu.highlightMovementDistance_34 / menu.countHighlightMovementStep_30);
 
-        if(struct58._38.get() >= struct58._30.get()) {
-          struct58._00.set((short)2);
-          struct58._30.set(0);
-          struct58._34.set(0);
-          struct58._38.set(0);
-          struct58._28.set((short)(struct58.x_06.get() - struct58._0a.get() + struct58.selectedIcon_22.get() * 19 - 4));
-          struct58._2a.set((short)(struct58.y_08.get() - 22));
+        if(menu.currentHighlightMovementStep_38 >= menu.countHighlightMovementStep_30) {
+          menu.state_00 = 2;
+          menu.countHighlightMovementStep_30 = 0;
+          menu.highlightMovementDistance_34 = 0;
+          menu.currentHighlightMovementStep_38 = 0;
+          menu.highlightX0_28 = (short)(menu.x_06 - menu.xShiftOffset_0a + menu.selectedIcon_22 * 19 - 4);
+          menu.highlightY_2a = (short)(menu.y_08 - 22);
         }
       }
 
       case 3 -> {  // Wrap menu bar icon
-        struct58._38.incr();
-        struct58._28.add((short)(struct58._34.get() / struct58._30.get()));
-        struct58._3c.add(struct58._34.get() / struct58._30.get());
-        struct58.colour_2c.add((short)(0x80 / struct58._30.get()));
+        menu.currentHighlightMovementStep_38++;
+        menu.highlightX0_28 += (short)(menu.highlightMovementDistance_34 / menu.countHighlightMovementStep_30);
+        menu.highlightX1_3c += menu.highlightMovementDistance_34 / menu.countHighlightMovementStep_30;
+        menu.colour_2c += (short)(0x80 / menu.countHighlightMovementStep_30);
 
-        if(struct58._38.get() >= struct58._30.get()) {
-          struct58._00.set((short)2);
-          struct58.colour_2c.set((short)0x80);
-          struct58._38.set(0);
-          struct58._34.set(0);
-          struct58._30.set(0);
-          struct58._28.set((short)(struct58.x_06.get() - struct58._0a.get() + struct58.selectedIcon_22.get() * 19 - 4));
-          struct58._2a.set((short)(struct58.y_08.get() - 22));
-          struct58._02.and(0xfffe);
+        if(menu.currentHighlightMovementStep_38 >= menu.countHighlightMovementStep_30) {
+          menu.state_00 = 2;
+          menu.colour_2c = 0x80;
+          menu.currentHighlightMovementStep_38 = 0;
+          menu.highlightMovementDistance_34 = 0;
+          menu.countHighlightMovementStep_30 = 0;
+          menu.highlightX0_28 = (short)(menu.x_06 - menu.xShiftOffset_0a + menu.selectedIcon_22 * 19 - 4);
+          menu.highlightY_2a = (short)(menu.y_08 - 22);
+          menu.highlightState_02 &= 0xfffe;
         }
       }
 
       case 4 -> {  // Seems to be related to switching camera views
-        struct58._44.decr();
-        if(struct58._44.get() == 1) {
-          FUN_800f8c38(0x1L);
-          struct58._00.set((short)2);
+        menu.cameraPositionSwitchTicksRemaining_44--;
+        if(menu.cameraPositionSwitchTicksRemaining_44 == 1) {
+          toggleBattleMenuSelectorRendering(true);
+          menu.state_00 = 2;
         }
       }
     }
 
     //LAB_800f6a88
     //LAB_800f6a8c
-    struct58._24.incr();
-    if(struct58._24.get() >= 4) {
-      struct58._24.set((short)0);
-      struct58._26.incr();
-      if(struct58._26.get() >= 4) {
-        struct58._26.set((short)0);
+    menu.currentIconStateTick_24++;
+    if(menu.currentIconStateTick_24 >= 4) {
+      menu.currentIconStateTick_24 = 0;
+      menu.iconStateIndex_26++;
+      if(menu.iconStateIndex_26 >= 4) {
+        menu.iconStateIndex_26 = 0;
       }
     }
 
     //LAB_800f6ae0
-    FUN_800f6b04();
+    renderCombatActionMenu();
 
     //LAB_800f6aec
-    return (int)s1;
+    return selectedAction;
   }
 
   @Method(0x800f6b04L)
-  public static void FUN_800f6b04() {
-    long v1;
-    long a1;
-    long a2;
-    long a3;
-    long t0;
-    long t1;
-    long t2;
-    long s0;
-    long s1;
-    final long s2;
-    int s3;
-    int s4;
-    long s6;
-    final long s7;
-    long fp;
-
-    final BattleMenuStruct58 menu = battleMenu_800c6c34.deref();
-    if(menu._00.get() != 0 && (menu._02.get() & 0x2L) != 0) {
+  public static void renderCombatActionMenu() {
+    final BattleMenuStruct58 menu = battleMenu_800c6c34;
+    if(menu.state_00 != 0 && (menu.highlightState_02 & 0x2) != 0) {
       //LAB_800f6c48
-      for(int iconIndex = 0; iconIndex < menu.iconCount_0e.get(); iconIndex++) {
-        fp = (menu.iconFlags_10.get(iconIndex).get() & 0xfL) - 0x1L;
-        if(menu.selectedIcon_22.get() == iconIndex) {
-          s6 = _800c71e4.get(menu._26.get()).get();
+      int menuElementBaseX;
+      int menuElementBaseY;
+      int iconState;
+      int iconClutOffset;
+      int iconH;
+      int vOffset;
+      BattleMenuIconMetrics08 iconMetrics;
+      BattleMenuTextMetrics08 textMetrics;
+      for(int iconIndex = 0; iconIndex < menu.iconCount_0e; iconIndex++) {
+        final int iconId = (menu.iconFlags_10[iconIndex] & 0xf) - 1;
+        if(menu.selectedIcon_22 == iconIndex) {
+          iconState = battleMenuIconStates_800c71e4.get(menu.iconStateIndex_26).get();
         } else {
           //LAB_800f6c88
-          s6 = 0;
+          iconState = 0;
         }
 
         //LAB_800f6c90
-        s3 = menu.x_06.get() - menu._0a.get() + iconIndex * 19 - centreScreenX_1f8003dc.get();
-        s4 = menu.y_08.get() - (int)_800fb6bc.offset(2, fp * 6 + s6 * 2).get() - centreScreenY_1f8003de.get();
-        if((menu.iconFlags_10.get(iconIndex).get() & 0x80L) != 0) {
+        menuElementBaseX = menu.x_06 - menu.xShiftOffset_0a + iconIndex * 19 - centreScreenX_1f8003dc.get();
+        menuElementBaseY = menu.y_08 - battleMenuIconHeights_800fb6bc.get(iconId).get(iconState).get() - centreScreenY_1f8003de.get();
+        if((menu.iconFlags_10[iconIndex] & 0x80) != 0) {
           // "X" icon over attack icon if attack is disabled
-          FUN_800f8cd8(s3, menu.y_08.get() - (centreScreenY_1f8003de.get() + 16), 96, 112, 16, 16, 0x19, null);
+          renderBattleMenuElement(menuElementBaseX, menu.y_08 - (centreScreenY_1f8003de.get() + 16), 96, 112, 16, 16, 0x19, null);
         }
 
         //LAB_800f6d70
-        if((menu.iconFlags_10.get(iconIndex).get() & 0xfL) != 0x2L) {
+        if((menu.iconFlags_10[iconIndex] & 0xf) != 0x2) {
           //LAB_800f6e24
-          s0 = _800fb674.offset(fp * 0x8L).offset(2, 0x4L).get();
-        } else if(menu.charIndex_04.get() == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {
-          s0 = _800c71d0.get(9).get();
-          if(s6 != 0) {
+          iconClutOffset = battleMenuIconMetrics_800fb674.get(iconId).clutOffset_04.get();
+        } else if(menu.charIndex_04 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {
+          iconClutOffset = dragoonSpiritIconClutOffsets_800c71d0.get(9).get();
+          if(iconState != 0) {
             //LAB_800f6de0
-            FUN_800f8cd8(s3 + 4, s4, s6 != 1 ? 88 : 80, 112, 8, 16, 0x98, Translucency.B_PLUS_F);
+            renderBattleMenuElement(menuElementBaseX + 4, menuElementBaseY, iconState != 1 ? 88 : 80, 112, 8, 16, 0x98, Translucency.B_PLUS_F);
           }
         } else {
-          s0 = _800c71d0.get(menu.charIndex_04.get()).get();
+          iconClutOffset = dragoonSpiritIconClutOffsets_800c71d0.get(menu.charIndex_04).get();
         }
 
         //LAB_800f6e34
         //LAB_800f6e38
         //LAB_800f6e3c
-        t1 = _800fb674.offset(fp * 8).getAddress();
-        v1 = s6 * 0x2L + fp * 0x6L;
-        t0 = _800fb6f4.offset(v1).getAddress();
-        v1 = _800fb6bc.offset(v1).getAddress();
+        iconMetrics = battleMenuIconMetrics_800fb674.get(iconId);
+        vOffset = battleMenuIconVOffsets_800fb6f4.get(iconId).get(iconState).get();
+        iconH = battleMenuIconHeights_800fb6bc.get(iconId).get(iconState).get();
         // Combat menu icons
-        FUN_800f8cd8(s3, s4, (int)MEMORY.ref(1, t1).offset(0x0L).get(), (int)(MEMORY.ref(1, t1).offset(0x2L).get() + MEMORY.ref(1, t0).offset(0x0L).get()) & 0xff, 16, (int)MEMORY.ref(2, v1).getSigned(), (int)s0, Translucency.of((int)MEMORY.ref(2, t1).offset(0x6L).getSigned()));
+        renderBattleMenuElement(menuElementBaseX, menuElementBaseY, iconMetrics.u_00.get(), iconMetrics.v_02.get() + vOffset & 0xff, 16, iconH, iconClutOffset, Translucency.of(iconMetrics.translucencyMode_06.get()));
 
-        if(menu.selectedIcon_22.get() == iconIndex && menu._40.get() == 0x1L) {
-          t1 = _800fb72c.offset(fp * 8).getAddress();
+        if(menu.selectedIcon_22 == iconIndex && menu.renderSelectedIconText_40) {
+          textMetrics = battleMenuTextMetrics_800fb72c.get(iconId);
           // Selected combat menu icon text
-          FUN_800f8cd8(menu.x_06.get() - menu._0a.get() + iconIndex * 19 - centreScreenX_1f8003dc.get() - (int)MEMORY.ref(2, t1).offset(0x4L).get() / 2 + 8, menu.y_08.get() - centreScreenY_1f8003de.get() - 24, (int)MEMORY.ref(1, t1).offset(0x0L).get(), (int)MEMORY.ref(1, t1).offset(0x2L).get(), (int)MEMORY.ref(2, t1).offset(0x4L).get(), 8, (int)MEMORY.ref(2, t1).offset(0x6L).getSigned(), null);
+          renderBattleMenuElement(menu.x_06 - menu.xShiftOffset_0a + iconIndex * 19 - centreScreenX_1f8003dc.get() - textMetrics.w_04.get() / 2 + 8, menu.y_08 - centreScreenY_1f8003de.get() - 24, textMetrics.u_00.get(), textMetrics.v_02.get(), textMetrics.w_04.get(), 8, textMetrics.clutOffset_06.get(), null);
         }
-
         //LAB_800f6fa4
       }
 
       //LAB_800f6fc8
       // Draw red glow underneath selected menu item
-      FUN_800f7210(menu._28.get(), menu._2a.get(), _800c71bc, 31, 0xc, Translucency.B_PLUS_F, menu.colour_2c.get());
+      renderBattleMenuSelectionHighlight(menu.highlightX0_28, menu.highlightY_2a, battleMenuHighlightMetrics_800c71bc, 31, 0xc, Translucency.B_PLUS_F, menu.colour_2c);
 
-      if((menu._02.get() & 0x1L) != 0) {
-        FUN_800f7210(menu._3c.get(), menu._2a.get(), _800c71bc, 31, 0xc, Translucency.B_PLUS_F, Math.max(0, 0x80 - menu.colour_2c.get()));
+      if((menu.highlightState_02 & 0x1) != 0) {
+        renderBattleMenuSelectionHighlight(menu.highlightX1_3c, menu.highlightY_2a, battleMenuHighlightMetrics_800c71bc, 31, 0xc, Translucency.B_PLUS_F, Math.max(0, 0x80 - menu.colour_2c));
       }
 
       //LAB_800f704c
-      s0 = menu.iconCount_0e.get() * 19 + 1;
-      s1 = menu.x_06.get() - s0 / 2;
-      s2 = menu.y_08.get() - 10;
-      FUN_800f74f4(_800fb5dc.getAddress(), (int)s1, (int)s2, (int)s0, 2, 0x2bL, Translucency.B_PLUS_F, (short)_800fb5dc.offset(1, 0x4L).get());
+      final int variableW = menu.iconCount_0e * 19 + 1;
+      int x = menu.x_06 - variableW / 2;
+      int y = menu.y_08 - 10;
+      renderBattleMenuBackground(battleMenuBackgroundMetrics_800fb5dc.get(0), x, y, variableW, 2, 0x2b, Translucency.B_PLUS_F, battleMenuBackgroundMetrics_800fb5dc.get(0).uvShiftType_04.get());
 
-      final long[] sp0x20 = new long[4];
-      final long[] sp0x28 = new long[4];
+      final int[][] battleMenuBaseCoords = new int[4][2];
 
-      sp0x20[0] = s1;
-      sp0x20[2] = s1;
-      s1 = s1 + s0;
-      s3 = menu.y_08.get() - 8;
-      sp0x20[1] = s1;
-      sp0x20[3] = s1;
-      sp0x28[0] = s2;
-      sp0x28[1] = s2;
-      sp0x28[2] = s3;
-      sp0x28[3] = s3;
+      battleMenuBaseCoords[0][0] = x;
+      battleMenuBaseCoords[2][0] = x;
+      x = x + variableW;
+      battleMenuBaseCoords[1][0] = x;
+      battleMenuBaseCoords[3][0] = x;
+      battleMenuBaseCoords[0][1] = y;
+      battleMenuBaseCoords[1][1] = y;
+      y = menu.y_08 - 8;
+      battleMenuBaseCoords[2][1] = y;
+      battleMenuBaseCoords[3][1] = y;
 
       //LAB_800f710c
-      s7 = _800fb5dc.getAddress();
-      fp = _800fb5dc.getAddress() + 0x6L;
-      s6 = _800fb614.getAddress();
+      int w, h;
+      BattleMenuBackgroundDisplayMetrics0c displayMetrics;
       for(int i = 0; i < 8; i++) {
-        t0 = s6 + i * 0xcL;
-        a2 = MEMORY.ref(2, t0).offset(0x6L).getSigned();
-        a1 = sp0x20[(int)MEMORY.ref(2, t0).getSigned()] + MEMORY.ref(2, t0).offset(0x2L).get();
-        t2 = sp0x28[(int)MEMORY.ref(2, t0).getSigned()] + MEMORY.ref(2, t0).offset(0x4L).get();
-        if(a2 != 0) {
-          a3 = a2;
+        displayMetrics = battleMenuBackgroundDisplayMetrics_800fb614.get(i);
+        x = battleMenuBaseCoords[displayMetrics.vertexBaseOffsetIndex_00.get()][0] + displayMetrics.vertexXMod_02.get();
+        y = battleMenuBaseCoords[displayMetrics.vertexBaseOffsetIndex_00.get()][1] + displayMetrics.vertexYMod_04.get();
+        if(displayMetrics.w_06.get() != 0) {
+          w = displayMetrics.w_06.get();
         } else {
-          a3 = s0;
+          w = variableW;
         }
 
         //LAB_800f7158
-        if(MEMORY.ref(2, t0).offset(0x8L).getSigned() == 0) {
-          v1 = 0x2L;
+        if(displayMetrics.h_08.get() == 0) {
+          h = 2;
         } else {
-          v1 = MEMORY.ref(2, t0).offset(0x8L).get();
+          h = displayMetrics.h_08.get();
         }
 
         //LAB_800f716c
-        FUN_800f74f4(fp + i * 0x6L, (short)a1, (short)t2, (short)a3, (short)v1, 0x2bL, Translucency.B_PLUS_F, (short)MEMORY.ref(1, s7).offset((i + 0x1L) * 0x6L).offset(0x4L).get());
+        renderBattleMenuBackground(battleMenuBackgroundMetrics_800fb5dc.get(i + 1), x, y, w, h, 0x2b, Translucency.B_PLUS_F, battleMenuBackgroundMetrics_800fb5dc.get(i + 1).uvShiftType_04.get());
       }
     }
-
     //LAB_800f71e0
   }
 
   @Method(0x800f7210L)
-  public static void FUN_800f7210(final int x, final int y, final ArrayRef<ShortRef> a2, final int z, final int a4, @Nullable final Translucency transparencyMode, final int colour) {
+  public static void renderBattleMenuSelectionHighlight(final int x, final int y, final BattleMenuHighlightMetrics12 highlightMetrics, final int z, final int clutOffset, @Nullable final Translucency transparencyMode, final int colour) {
     //LAB_800f7294
-    final int left = a2.get(0).get() + x - centreScreenX_1f8003dc.get();
-    final int right = left + a2.get(2).get();
-    final int top = a2.get(1).get() + y - centreScreenY_1f8003de.get();
-    final int bottom = top + a2.get(3).get();
+    final int left = highlightMetrics.xBase.get() + x - centreScreenX_1f8003dc.get();
+    final int right = left + highlightMetrics.w_04.get();
+    final int top = highlightMetrics.yBase_02.get() + y - centreScreenY_1f8003de.get();
+    final int bottom = top + highlightMetrics.h_06.get();
 
     final GpuCommandPoly cmd = new GpuCommandPoly(4)
       .monochrome(colour)
@@ -2510,20 +2554,20 @@ public final class Bttl_800f {
       .pos(2, left, bottom)
       .pos(3, right, bottom);
 
-    final int leftU = a2.get(4).get();
-    final int rightU = leftU + a2.get(6).get();
-    final int topV = a2.get(5).get();
-    final int bottomV = topV + a2.get(7).get();
+    final int leftU = highlightMetrics.u_08.get();
+    final int rightU = leftU + highlightMetrics.uvW_0c.get();
+    final int topV = highlightMetrics.v_0a.get();
+    final int bottomV = topV + highlightMetrics.uvH_0e.get();
 
-    final int v1 = a2.get(8).get();
-    if(v1 == 0) {
+    final int uvShiftType = highlightMetrics.uvShiftType_10.get();
+    if(uvShiftType == 0) {
       //LAB_800f7360
       cmd
         .uv(0, leftU, topV)
         .uv(1, rightU, topV)
         .uv(2, leftU, bottomV)
         .uv(3, rightU, bottomV);
-    } else if(v1 == 1) {
+    } else if(uvShiftType == 1) {
       //LAB_800f738c
       cmd
         .uv(0, leftU, topV - 1)
@@ -2531,14 +2575,14 @@ public final class Bttl_800f {
         .uv(2, leftU, bottomV - 1)
         .uv(3, rightU, bottomV - 1);
       //LAB_800f7344
-    } else if(v1 == 2) {
+    } else if(uvShiftType == 2) {
       //LAB_800f73b8
       cmd
         .uv(0, leftU - 1, topV)
         .uv(1, rightU - 1, topV)
         .uv(2, leftU - 1, bottomV)
         .uv(3, rightU - 1, bottomV);
-    } else if(v1 == 3) {
+    } else if(uvShiftType == 3) {
       //LAB_800f740c
       cmd
         .uv(0, leftU - 1, topV - 1)
@@ -2550,8 +2594,8 @@ public final class Bttl_800f {
     //LAB_800f745c
     //LAB_800f7460
     //LAB_800f746c
-    final int clutX = 704 + a4 / 16 * 16 & 0x3f0;
-    final int clutY = 496 + a4 % 16;
+    final int clutX = 704 + clutOffset / 16 * 16 & 0x3f0;
+    final int clutY = 496 + clutOffset % 16;
 
     cmd
       .bpp(Bpp.BITS_4)
@@ -2567,51 +2611,52 @@ public final class Bttl_800f {
 
   /** Background of battle menu icons */
   @Method(0x800f74f4L)
-  public static void FUN_800f74f4(final long a0, final int x, final int y, final int w, final int h, final long a5, @Nullable final Translucency transMode, final short a7) {
+  public static void renderBattleMenuBackground(final BattleMenuBackgroundUvMetrics04 menuBackgroundMetrics, final int x, final int y, final int w, final int h, final int baseClutOffset, @Nullable final Translucency transMode, final short uvShiftType) {
     final GpuCommandPoly cmd = new GpuCommandPoly(4)
       .monochrome(0x80);
 
     setGpuPacketParams(cmd, x - centreScreenX_1f8003dc.get(), y - centreScreenY_1f8003de.get(), 0, 0, w, h, false);
 
-    final int leftU = (int)MEMORY.ref(1, a0).offset(0x0L).get();
-    final int rightU = leftU + (int)MEMORY.ref(1, a0).offset(0x2L).get();
-    final int topV = (int)MEMORY.ref(1, a0).offset(0x1L).get();
-    final int bottomV = topV + (int)MEMORY.ref(1, a0).offset(0x3L).get();
+    final int leftU = menuBackgroundMetrics.u_00.get();
+    final int rightU = leftU + menuBackgroundMetrics.w_02.get();
+    final int topV = menuBackgroundMetrics.v_01.get();
+    final int bottomV = topV + menuBackgroundMetrics.h_03.get();
 
-    if(a7 == 0) {
+    // Modified 1 and 3 from retail to properly align bottom row of pixels
+    if(uvShiftType == 0) {
       //LAB_800f7628
       cmd
         .uv(0, leftU, topV)
         .uv(1, rightU, topV)
         .uv(2, leftU, bottomV)
         .uv(3, rightU, bottomV);
-    } else if(a7 == 1) {
+    } else if(uvShiftType == 1) {
       //LAB_800f7654
       cmd
-        .uv(0, leftU, bottomV - 1)
-        .uv(1, rightU, bottomV - 1)
-        .uv(2, leftU, topV - 1)
-        .uv(3, rightU, topV - 1);
+        .uv(0, leftU, bottomV)
+        .uv(1, rightU, bottomV)
+        .uv(2, leftU, topV)
+        .uv(3, rightU, topV);
       //LAB_800f7610
-    } else if(a7 == 2) {
+    } else if(uvShiftType == 2) {
       //LAB_800f7680
       cmd
         .uv(0, rightU - 1, topV)
         .uv(1, leftU - 1, topV)
         .uv(2, rightU - 1, bottomV)
         .uv(3, leftU - 1, bottomV);
-    } else if(a7 == 3) {
+    } else if(uvShiftType == 3) {
       //LAB_800f76d4
       cmd
-        .uv(0, rightU - 1, bottomV - 1)
-        .uv(1, leftU - 1, bottomV - 1)
-        .uv(2, rightU - 1, topV - 1)
-        .uv(3, leftU - 1, topV - 1);
+        .uv(0, rightU - 1, bottomV)
+        .uv(1, leftU - 1, bottomV)
+        .uv(2, rightU - 1, topV)
+        .uv(3, leftU - 1, topV);
     }
 
     //LAB_800f7724
     //LAB_800f772c
-    setGpuPacketClutAndTpageAndQueue(cmd, (short)a5, transMode);
+    setGpuPacketClutAndTpageAndQueue(cmd, baseClutOffset, transMode);
   }
 
   /**
@@ -2620,73 +2665,73 @@ public final class Bttl_800f {
   @Method(0x800f7768L)
   public static int FUN_800f7768(final int targetType, final boolean targetAll) {
     final int count;
-    long t3 = 0x1L;
+    short t3 = 1;
 
-    final BattleMenuStruct58 battleMenu = battleMenu_800c6c34.deref();
+    final BattleMenuStruct58 menu = battleMenu_800c6c34;
 
     if(targetType == 1) {
-      battleMenu._4c.set(0x1L);
+      menu.displayTargetArrowAndName_4c = true;
       //LAB_800f77d4
       count = aliveMonsterCount_800c6758.get();
 
       //LAB_800f77e8
-      _800c697c.setu(_800c697e.get());
+      _800c697c.set(_800c697e.get());
     } else {
-      battleMenu._4c.set(0x1L);
+      menu.displayTargetArrowAndName_4c = true;
       if(targetType == 0) {
-        _800c697c.setu(_800c6980.get());
+        _800c697c.set(_800c6980.get());
         count = charCount_800c677c.get();
       } else {
         //LAB_800f77f0
-        count = aliveBobjCount_800c669c.get();
+        count = aliveBentCount_800c669c.get();
       }
     }
 
     //LAB_800f77f4
-    if((joypadPress_8007a398.get() & 0x3000) != 0) {
-      _800c697c.addu(0x1L);
-      if(_800c697c.getSigned() >= count) {
-        _800c697c.setu(0);
+    if((press_800bee94.get() & 0x3000) != 0) {
+      _800c697c.add((short)1);
+      if(_800c697c.get() >= count) {
+        _800c697c.set((short)0);
       }
     }
 
     //LAB_800f7830
-    if((joypadPress_8007a398.get() & 0xc000L) != 0) {
-      _800c697c.subu(0x1L);
-      if(_800c697c.getSigned() < 0) {
-        _800c697c.setu(count - 1);
+    if((press_800bee94.get() & 0xc000) != 0) {
+      _800c697c.sub((short)1);
+      if(_800c697c.get() < 0) {
+        _800c697c.set((short)(count - 1));
       }
-      t3 = -0x1L;
+      t3 = -1;
     }
 
     //LAB_800f786c
     //LAB_800f7880
-    if(_800c697c.getSigned() < 0 || _800c697c.getSigned() >= count) {
+    if(_800c697c.get() < 0 || _800c697c.get() >= count) {
       //LAB_800f78a0
-      _800c697c.setu(0);
-      t3 = 0x1L;
+      _800c697c.set((short)0);
+      t3 = 1;
     }
 
     //LAB_800f78ac
     //LAB_800f78d4
     int v1;
-    ScriptState<BattleObject27c> target = null;
+    ScriptState<BattleEntity27c> target = null;
     for(v1 = 0; v1 < count; v1++) {
-      target = targetBobjs_800c71f0[targetType][(int)_800c697c.getSigned()];
+      target = targetBents_800c71f0[targetType][_800c697c.get()];
 
       if(target != null && (target.storage_44[7] & 0x4000) == 0) {
         break;
       }
 
-      _800c697c.addu(t3);
+      _800c697c.add(t3);
 
       if(_800c697c.get() >= count) {
-        _800c697c.setu(0);
+        _800c697c.set((short)0);
       }
 
       //LAB_800f792c
-      if(_800c697c.getSigned() < 0) {
-        _800c697c.setu(count - 1);
+      if(_800c697c.get() < 0) {
+        _800c697c.set((short)(count - 1));
       }
 
       //LAB_800f7948
@@ -2694,44 +2739,44 @@ public final class Bttl_800f {
 
     //LAB_800f7960
     if(v1 == count) {
-      target = targetBobjs_800c71f0[targetType][(int)_800c697c.getSigned()];
-      _800c697c.setu(0);
+      target = targetBents_800c71f0[targetType][_800c697c.get()];
+      _800c697c.set((short)0);
     }
 
     //LAB_800f7998
-    battleMenu.targetType_50.set(targetType);
+    menu.targetType_50 = targetType;
     if(!targetAll) {
-      battleMenu.combatantIndex.set((int)_800c697c.getSigned());
+      menu.combatantIndex_54 = _800c697c.get();
     } else {
       //LAB_800f79b4
-      battleMenu.combatantIndex.set(-1);
+      menu.combatantIndex_54 = -1;
     }
 
     //LAB_800f79bc
-    battleMenu.target_48.set(target.index);
+    menu.target_48 = target.index;
 
     if(targetType == 1) {
       //LAB_800f79fc
-      _800c697e.setu(_800c697c.get());
+      _800c697e.set(_800c697c.get());
     } else if(targetType == 0) {
-      _800c6980.setu(_800c697c.get());
+      _800c6980.set(_800c697c.get());
     }
 
     //LAB_800f7a0c
     //LAB_800f7a10
     int ret = 0;
-    if((joypadPress_8007a398.get() & 0x20) != 0) { // Cross
+    if((press_800bee94.get() & 0x20) != 0) { // Cross
       ret = 1;
-      _800c697c.setu(0);
-      battleMenu._4c.set(0);
+      _800c697c.set((short)0);
+      menu.displayTargetArrowAndName_4c = false;
     }
 
     //LAB_800f7a38
-    if((joypadPress_8007a398.get() & 0x40L) != 0) { // Circle
+    if((press_800bee94.get() & 0x40) != 0) { // Circle
       ret = -1;
-      _800c697c.setu(0);
-      battleMenu.target_48.set(-1);
-      battleMenu._4c.set(0);
+      _800c697c.set((short)0);
+      menu.target_48 = -1;
+      menu.displayTargetArrowAndName_4c = false;
     }
 
     //LAB_800f7a68
@@ -2739,39 +2784,39 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f7a74L)
-  public static void setTempItemMagicStats(final BattleObject27c bobj) {
+  public static void setTempItemMagicStats(final BattleEntity27c bent) {
     //LAB_800f7a98
-    bobj.item_d4 = itemStats_8004f2ac[bobj.itemId_52];
-    bobj._ec = 0;
-    bobj._ee = 0;
-    bobj._f0 = 0;
-    bobj._f2 = 0;
+    bent.item_d4 = itemStats_8004f2ac[bent.itemId_52];
+    bent._ec = 0;
+    bent._ee = 0;
+    bent._f0 = 0;
+    bent._f2 = 0;
   }
 
   @Method(0x800f7b68L)
-  public static void setTempSpellStats(final BattleObject27c bobj) {
+  public static void setTempSpellStats(final BattleEntity27c bent) {
     //LAB_800f7b8c
-    if(bobj.spellId_4e != -1 && bobj.spellId_4e <= 127) {
-      bobj.spell_94 = EVENTS.postEvent(new SpellStatsEvent(bobj.spellId_4e, spellStats_800fa0b8[bobj.spellId_4e])).spell;
+    if(bent.spellId_4e != -1 && bent.spellId_4e <= 127) {
+      bent.spell_94 = EVENTS.postEvent(new SpellStatsEvent(bent.spellId_4e, spellStats_800fa0b8[bent.spellId_4e])).spell;
     } else {
-      if(bobj.spellId_4e > 127) {
-        LOGGER.error("Retail bug: spell index out of bounds (%d). This is known to happen during Shana/Miranda's dragoon attack.", bobj.spellId_4e);
+      if(bent.spellId_4e > 127) {
+        LOGGER.error("Retail bug: spell index out of bounds (%d). This is known to happen during Shana/Miranda's dragoon attack.", bent.spellId_4e);
       }
 
-      bobj.spell_94 = null;
+      bent.spell_94 = new SpellStats0c();
     }
 
     //LAB_800f7c54
   }
 
   @Method(0x800f7c5cL)
-  public static int determineAttackSpecialEffects(final BattleObject27c attacker, final BattleObject27c defender, final AttackType attackType) {
-    final int[] statusEffectChances = {32, 79, 32, 79, 79, 32}; // onHitStatusChance, statusChance, onHitStatusChance, statusChance, statusChance, onHitStatusChance
-    final int[] statusEffectStats = {35, 81, 112, 81, 81, 112}; // onHitStatus, statusType, itemStatus, statusType, statusType, itemStatus
-    final int[] specialEffectStats = {8, 73, 104, 73, 73, 104}; // specialEffectFlag, spellFlags, itemTarget, spellFlags, spellFlags, itemTarget
+  public static int determineAttackSpecialEffects(final BattleEntity27c attacker, final BattleEntity27c defender, final AttackType attackType) {
+    final BattleEntityStat[] statusEffectChances = {BattleEntityStat.ON_HIT_STATUS_CHANCE, BattleEntityStat.SPELL_STATUS_CHANCE, BattleEntityStat.ON_HIT_STATUS_CHANCE, BattleEntityStat.SPELL_STATUS_CHANCE, BattleEntityStat.SPELL_STATUS_CHANCE, BattleEntityStat.ON_HIT_STATUS_CHANCE}; // onHitStatusChance, statusChance, onHitStatusChance, statusChance, statusChance, onHitStatusChance
+    final BattleEntityStat[] statusEffectStats = {BattleEntityStat.EQUIPMENT_ON_HIT_STATUS, BattleEntityStat.SPELL_STATUS_TYPE, BattleEntityStat.ITEM_STATUS, BattleEntityStat.SPELL_STATUS_TYPE, BattleEntityStat.SPELL_STATUS_TYPE, BattleEntityStat.ITEM_STATUS}; // onHitStatus, statusType, itemStatus, statusType, statusType, itemStatus
+    final BattleEntityStat[] specialEffectStats = {BattleEntityStat.SPECIAL_EFFECT_FLAGS, BattleEntityStat.SPELL_FLAGS, BattleEntityStat.ITEM_TARGET, BattleEntityStat.SPELL_FLAGS, BattleEntityStat.SPELL_FLAGS, BattleEntityStat.ITEM_TARGET}; // specialEffectFlag, spellFlags, itemTarget, spellFlags, spellFlags, itemTarget
     final int[] specialEffectMasks = {0x40, 0xf0, 0x80, 0xf0, 0xf0, 0x80};
 
-    final boolean isAttackerMonster = attacker instanceof MonsterBattleObject;
+    final boolean isAttackerMonster = attacker instanceof MonsterBattleEntity;
 
     final int index = (!isAttackerMonster ? 0 : 3) + attackType.ordinal(); //TODO
 
@@ -2830,13 +2875,13 @@ public final class Bttl_800f {
 
     //LAB_800f8420
     for(int itemSlot1 = 0; itemSlot1 < gameState_800babc8.items_2e9.size(); itemSlot1++) {
-      final int itemId1 = gameState_800babc8.items_2e9.getInt(itemSlot1);
+      final Item item = gameState_800babc8.items_2e9.get(itemSlot1);
 
       boolean found = false;
 
       //LAB_800f843c
       for(final CombatItem02 combatItem : combatItems_800c6988) {
-        if(combatItem.itemId == itemId1) {
+        if(combatItem.item == item) {
           found = true;
           combatItem.count++;
           break;
@@ -2844,7 +2889,7 @@ public final class Bttl_800f {
       }
 
       if(!found) {
-        combatItems_800c6988.add(new CombatItem02(itemId1));
+        combatItems_800c6988.add(new CombatItem02(item));
       }
     }
   }
@@ -2860,7 +2905,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f8568L)
-  public static LodString getTargetEnemyName(final BattleObject27c target, final LodString targetName) {
+  public static LodString getTargetEnemyName(final BattleEntity27c target, final LodString targetName) {
     // Seems to be special-case handling to replace Tentacle, since the Melbu fight has more enemies than the engine can handle
     if(target.charId_272 == 0x185) {
       final int stageProgression = battleState_8006e398.stageProgression_eec;
@@ -2878,12 +2923,12 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f8670L)
-  public static void loadMonster(final ScriptState<MonsterBattleObject> state) {
+  public static void loadMonster(final ScriptState<MonsterBattleEntity> state) {
     loadSupportOverlay(1, () -> Bttl_800e.loadMonster(state));
   }
 
   @Method(0x800f8854L)
-  public static void applyItemSpecialEffects(final BattleObject27c attacker, final BattleObject27c defender) {
+  public static void applyItemSpecialEffects(final BattleEntity27c attacker, final BattleEntity27c defender) {
     setTempItemMagicStats(attacker);
 
     final int turnCount = attacker != defender ? 3 : 4;
@@ -2946,7 +2991,7 @@ public final class Bttl_800f {
       defender.stats.getStat(CoreMod.SPEED_STAT.get()).addMod(new TurnBasedPercentileBuff(attacker.item_d4.speedUp, turnCount));
     }
 
-    if(defender instanceof final PlayerBattleObject playerDefender) {
+    if(defender instanceof final PlayerBattleEntity playerDefender) {
       if(attacker.item_d4.spPerPhysicalHit != 0) {
         playerDefender.tempSpPerPhysicalHit_cc = attacker.item_d4.spPerPhysicalHit;
         playerDefender.tempSpPerPhysicalHitTurns_cd = turnCount;
@@ -2968,18 +3013,18 @@ public final class Bttl_800f {
       }
     }
 
-    recalculateSpeedAndPerHitStats(defender);
+    defender.recalculateSpeedAndPerHitStats();
   }
 
   @Method(0x800f89f4L)
-  public static long FUN_800f89f4(final int bobjIndex, final long a1, final long a2, final int rawDamage, final int x, final int y, final int a6, final long a7) {
+  public static long FUN_800f89f4(final int bentIndex, final long a1, final long a2, final int rawDamage, final float x, final float y, final int a6, final long a7) {
     //LAB_800f8a30
     for(int i = 0; i < floatingNumbers_800c6b5c.length; i++) {
       final FloatingNumberC4 num = floatingNumbers_800c6b5c[i];
 
       if(num.state_00 == 0) {
         addFloatingNumber(i, a1, a2, rawDamage, x, y, a6, a7);
-        num.bobjIndex_04 = bobjIndex;
+        num.bentIndex_04 = bentIndex;
         return 0x1L;
       }
 
@@ -2991,8 +3036,8 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f8aa4L)
-  public static void renderDamage(final int bobjIndex, final int damage) {
-    addFloatingNumberForBobj(bobjIndex, damage, 0x8L);
+  public static void renderDamage(final int bentIndex, final int damage) {
+    addFloatingNumberForBent(bentIndex, damage, 0x8L);
   }
 
   /**
@@ -3021,16 +3066,16 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f8b74L)
-  public static void FUN_800f8b74(final long a0) {
-    final BattleMenuStruct58 struct58 = battleMenu_800c6c34.deref();
+  public static void setCombatMenuIconsDisabled(final int disabledIconBitset) {
+    final BattleMenuStruct58 menu = battleMenu_800c6c34;
 
     //LAB_800f8bd8
-    for(int t1 = 0; t1 < 8; t1++) {
-      if((a0 & 0x1L << t1) != 0) {
+    for(int i = 0; i < 8; i++) {
+      if((disabledIconBitset & 0x1 << i) != 0) {
         //LAB_800f8bf4
-        for(int a3 = 0; a3 < 8; a3++) {
-          if((struct58.iconFlags_10.get(a3).get() & 0xfL) == _800c7194.get(t1).get()) {
-            struct58.iconFlags_10.get(a3).or(0x80);
+        for(int j = 0; j < 8; j++) {
+          if((menu.iconFlags_10[j] & 0xf) == iconFlags_800c7194.get(i).get()) {
+            menu.iconFlags_10[j] |= 0x80;
             break;
           }
         }
@@ -3039,69 +3084,43 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f8c38L)
-  public static void FUN_800f8c38(final long a0) {
-    final BattleMenuStruct58 struct58 = battleMenu_800c6c34.deref();
+  public static void toggleBattleMenuSelectorRendering(final boolean render) {
+    final BattleMenuStruct58 menu = battleMenu_800c6c34;
 
-    if(struct58._00.get() != 0) {
+    if(menu.state_00 != 0) {
       //LAB_800f8c78
-      if(a0 != 0x1L || struct58._44.get() != 0) {
+      if(!render || menu.cameraPositionSwitchTicksRemaining_44 != 0) {
         //LAB_800f8c64
-        struct58._02.and(0xfffd);
+        menu.highlightState_02 &= 0xfffd;
       } else {
-        struct58._02.or(0x2);
+        menu.highlightState_02 |= 0x2;
       }
     }
-
     //LAB_800f8c98
   }
 
-  @Method(0x800f8ca0L)
-  public static int getFirstSetBitIndex(final int bitset) {
-    //LAB_800f8cac
-    int bitIndex = -1;
-    for(int i = 0; i < 32; i++) {
-      if((bitset & 1 << i) != 0) {
-        bitIndex = i;
-        break;
-      }
-
-      //LAB_800f8cc0
-    }
-
-    //LAB_800f8cd0
-    return bitIndex;
-  }
-
   @Method(0x800f8cd8L)
-  public static void FUN_800f8cd8(final int x, final int y, final int u, final int v, final int w, final int h, final int a6, @Nullable final Translucency transMode) {
+  public static void renderBattleMenuElement(final int x, final int y, final int u, final int v, final int w, final int h, final int clutOffset, @Nullable final Translucency transMode) {
     final GpuCommandPoly cmd = new GpuCommandPoly(4)
       .monochrome(0x80);
 
     setGpuPacketParams(cmd, x, y, u, v, w, h, true);
-    setGpuPacketClutAndTpageAndQueue(cmd, a6, transMode);
+    setGpuPacketClutAndTpageAndQueue(cmd, clutOffset, transMode);
   }
 
   @Method(0x800f8dfcL)
-  public static void drawUiTextureElement(final int x, final int y, final int u, final int v, final int w, final int h, final int a6, final int a7, final int a8) {
-    final long t3 = _800c71ec.getAddress();
-
-    final byte[] sp0x20 = {
-      (byte)MEMORY.ref(1, t3).offset(0x0L).getSigned(),
-      (byte)MEMORY.ref(1, t3).offset(0x1L).getSigned(),
-      (byte)MEMORY.ref(1, t3).offset(0x2L).getSigned(),
-    };
-
+  public static void drawUiTextureElement(final int x, final int y, final int u, final int v, final int w, final int h, final int clutOffset, final int brightnessIndex, final int portraitDimmingModifier) {
     final GpuCommandPoly cmd = new GpuCommandPoly(4);
 
-    if(a8 < 6) {
-      cmd.monochrome((byte)(sp0x20[a7] + 0x80) / 6 * a8 - 0x80 & 0xff);
+    if(portraitDimmingModifier < 6) {
+      cmd.monochrome((byte)(uiTextureElementBrightness_800c71ec.get(brightnessIndex).get() + 0x80) / 6 * portraitDimmingModifier - 0x80 & 0xff);
     } else {
       //LAB_800f8ef4
-      cmd.monochrome(sp0x20[a7] & 0xff);
+      cmd.monochrome(uiTextureElementBrightness_800c71ec.get(brightnessIndex).get() & 0xff);
     }
 
     setGpuPacketParams(cmd, x, y, u, v, w, h, true);
-    setGpuPacketClutAndTpageAndQueue(cmd, a6, null);
+    setGpuPacketClutAndTpageAndQueue(cmd, clutOffset, null);
   }
 
   @Method(0x800f8facL)
@@ -3124,23 +3143,23 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f9024L)
-  public static void setGpuPacketClutAndTpageAndQueue(final GpuCommandPoly cmd, final int a1, @Nullable final Translucency transparencyMode) {
-    final int t0;
-    final int t1;
-    if(a1 >= 0x80) {
-      t1 = 1;
-      t0 = a1 - 0x80;
+  public static void setGpuPacketClutAndTpageAndQueue(final GpuCommandPoly cmd, final int baseClutOffset, @Nullable final Translucency transparencyMode) {
+    final int clutOffset;
+    final int clutIndex;
+    if(baseClutOffset >= 0x80) {
+      clutIndex = 1;
+      clutOffset = baseClutOffset - 0x80;
     } else {
       //LAB_800f9080
-      t1 = 0;
-      t0 = a1;
+      clutIndex = 0;
+      clutOffset = baseClutOffset;
     }
 
     //LAB_800f9088
     //LAB_800f9098
     //LAB_800f90a8
-    final int clutY = (int)_800c7114.offset(2, t1 * 0x8L + 0x4L).get() + t0 % 16;
-    final int clutX = (int)_800c7114.offset(2, t1 * 0x8L).get() + t0 / 16 * 16 & 0x3f0;
+    final int clutX = battleUiElementClutVramXy_800c7114[clutIndex].x + clutOffset / 16 * 16 & 0x3f0;
+    final int clutY = battleUiElementClutVramXy_800c7114[clutIndex].y + clutOffset % 16;
 
     cmd
       .bpp(Bpp.BITS_4)
@@ -3155,14 +3174,16 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f9380L)
-  public static void applyBuffOrDebuff(final BattleObject27c attacker, final BattleObject27c defender) {
+  public static void applyBuffOrDebuff(final BattleEntity27c attacker, final BattleEntity27c defender) {
+    final BattleEntityStat[] stats = {BattleEntityStat.POWER_DEFENCE, BattleEntityStat.POWER_MAGIC_DEFENCE, BattleEntityStat.POWER_ATTACK, BattleEntityStat.POWER_MAGIC_ATTACK};
+
     for(int i = 0; i < 8; i++) {
       // This has been intentionally changed to attacker.buffType. Defender.buffType was always set to attacker.buffType anyway.
       if((attacker.spell_94.buffType_0a & (0x80 >> i)) != 0) {
         final int turnCount = attacker.charId_272 != defender.charId_272 ? 3 : 4;
         final int amount = i < 4 ? 50 : -50;
 
-        defender.setStat(_800c723c.get(i % 4).get(), turnCount << 8 | (amount & 0xff));
+        defender.setStat(stats[i % 4], turnCount << 8 | (amount & 0xff));
       }
     }
   }
@@ -3171,7 +3192,7 @@ public final class Bttl_800f {
    * @param magicType spell (0), item (1)
    */
   @Method(0x800f946cL)
-  public static int applyMagicDamageMultiplier(final BattleObject27c attacker, final int damage, final int magicType) {
+  public static int applyMagicDamageMultiplier(final BattleEntity27c attacker, final int damage, final int magicType) {
     final int damageMultiplier;
     if(magicType == 0) {
       damageMultiplier = spellStats_800fa0b8[attacker.spellId_4e].damageMultiplier_03;
@@ -3228,58 +3249,62 @@ public final class Bttl_800f {
     return damage;
   }
 
-  @Method(0x800f9584L)
-  public static void FUN_800f9584() {
-    final long v0 = _800c6b6c.get();
-    MEMORY.ref(2, v0).offset(0x00L).setu(0);
-    MEMORY.ref(2, v0).offset(0x02L).setu(0);
-    MEMORY.ref(2, v0).offset(0x04L).setu(0);
-    MEMORY.ref(2, v0).offset(0x06L).setu(0);
-    MEMORY.ref(2, v0).offset(0x08L).setu(0);
-    MEMORY.ref(2, v0).offset(0x0aL).setu(0);
-    MEMORY.ref(2, v0).offset(0x0cL).setu(0);
-    MEMORY.ref(2, v0).offset(0x0eL).setu(0);
-    MEMORY.ref(2, v0).offset(0x10L).setu(0);
-
-    //LAB_800f95b8
-    for(int i = 0; i < 10; i++) {
-      MEMORY.ref(4, v0).offset(0x14L).offset(i * 0x4L).setu(0);
-    }
-  }
-
+  @ScriptDescription("Checks if a battle entity's physical attack hits another battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attackerIndex", description = "The BattleEntity27c attacker script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "defenderIndex", description = "The BattleEntity27c defender script index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "hit", description = "True if attack hit, false otherwise")
   @Method(0x800f95d0L)
   public static FlowControl scriptCheckPhysicalHit(final RunningScript<?> script) {
     script.params_20[2].set(checkHit(script.params_20[0].get(), script.params_20[1].get(), AttackType.PHYSICAL) ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Checks if a battle entity's spell or status attack hits another battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attackerIndex", description = "The BattleEntity27c attacker script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "defenderIndex", description = "The BattleEntity27c defender script index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "hit", description = "True if attack hit, false otherwise")
   @Method(0x800f9618L)
   public static FlowControl scriptCheckSpellOrStatusHit(final RunningScript<?> script) {
     script.params_20[2].set(checkHit(script.params_20[0].get(), script.params_20[1].get(), AttackType.DRAGOON_MAGIC_STATUS_ITEMS) ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Checks if a battle entity's item magic attack hits another battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attackerIndex", description = "The BattleEntity27c attacker script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "defenderIndex", description = "The BattleEntity27c defender script index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "hit", description = "True if attack hit, false otherwise")
   @Method(0x800f9660L)
   public static FlowControl scriptCheckItemHit(final RunningScript<?> script) {
     script.params_20[2].set(checkHit(script.params_20[0].get(), script.params_20[1].get(), AttackType.ITEM_MAGIC) ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Caches selected spell's stats on a battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800f96a8L)
   public static FlowControl scriptSetTempSpellStats(final RunningScript<?> script) {
-    setTempSpellStats((BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00);
+    setTempSpellStats((BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Gets a battle entity's position")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "attackerIndex", description = "The BattleEntity27c attacker script index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X position")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y position")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z position")
   @Method(0x800f96d4L)
-  public static FlowControl scriptGetBobjPos(final RunningScript<?> script) {
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[1].set(bobj.model_148.coord2_14.coord.transfer.getX());
-    script.params_20[2].set(bobj.model_148.coord2_14.coord.transfer.getY());
-    script.params_20[3].set(bobj.model_148.coord2_14.coord.transfer.getZ());
+  public static FlowControl scriptGetBentPos(final RunningScript<?> script) {
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    script.params_20[1].set(Math.round(bent.model_148.coord2_14.coord.transfer.x));
+    script.params_20[2].set(Math.round(bent.model_148.coord2_14.coord.transfer.y));
+    script.params_20[3].set(Math.round(bent.model_148.coord2_14.coord.transfer.z));
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Adds a floating number")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "number", description = "The number")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X coordinate")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y coordinate")
   @Method(0x800f9730L)
   public static FlowControl scriptAddFloatingNumber(final RunningScript<?> script) {
     //LAB_800f9758
@@ -3287,7 +3312,7 @@ public final class Bttl_800f {
       final FloatingNumberC4 num = floatingNumbers_800c6b5c[i];
 
       if(num.state_00 == 0) {
-        addFloatingNumber(i, 0, 0, script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), 60 / vsyncMode_8007a3b8.get() * 5, 0);
+        addFloatingNumber(i, 0, 0, script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), 60 / vsyncMode_8007a3b8 * 5, 0);
         break;
       }
 
@@ -3298,26 +3323,37 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Initialized the battle menu for a battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "menuType", description = "0 = items, 1 = spells, 2 = ?")
   @Method(0x800f97d8L)
-  public static FlowControl scriptInitCombatMenu(final RunningScript<?> script) {
-    resetCombatMenu();
-    initCombatMenu(((BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).charId_272, (short)script.params_20[1].get());
+  public static FlowControl scriptInitBattleMenu(final RunningScript<?> script) {
+    resetBattleMenu();
+    initBattleMenu(((BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00).charId_272, (short)script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Render recovery amount for a battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "amount", description = "The amount recovered")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "colourIndex", description = "Which colour to use (indices are unknown)")
   @Method(0x800f984cL)
   public static FlowControl scriptRenderRecover(final RunningScript<?> script) {
-    addFloatingNumberForBobj(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
+    addFloatingNumberForBent(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Caches selected spell's stats on a battle entity")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800f9884L)
   public static FlowControl scriptSetTempItemMagicStats(final RunningScript<?> script) {
-    setTempItemMagicStats((BattleObject27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00);
+    setTempItemMagicStats((BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00);
     return FlowControl.CONTINUE;
   }
 
-  /** If param 0 is -1 then a random item is taken */
+  @ScriptDescription("Takes a specific (or random) item from the player")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "itemId", description = "The item ID (or -1 to take a random item)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "itemTaken", description = "The item ID that was taken (or -1 if none could be taken)")
   @Method(0x800f98b0L)
   public static FlowControl scriptTakeItem(final RunningScript<?> script) {
     int itemId = script.params_20[0].get();
@@ -3327,13 +3363,16 @@ public final class Bttl_800f {
       return FlowControl.CONTINUE;
     }
 
+    Item item = null;
     if(itemId == -1) {
-      itemId = gameState_800babc8.items_2e9.getInt((simpleRand() * gameState_800babc8.items_2e9.size()) >> 16);
+      item = gameState_800babc8.items_2e9.get((simpleRand() * gameState_800babc8.items_2e9.size()) >> 16);
+      itemId = LodMod.idItemMap.getInt(item.getRegistryId());
 
       //LAB_800f996c
       for(int i = 0; i < 10; i++) {
         if(itemId == protectedItems_800c72cc.get(i).get()) {
           //LAB_800f999c
+          item = null;
           itemId = -1;
           break;
         }
@@ -3342,7 +3381,7 @@ public final class Bttl_800f {
 
     //LAB_800f9988
     //LAB_800f99a4
-    if(itemId != -1 && takeItemId(itemId) != 0) {
+    if(item != null && takeItemId(item) != 0) {
       itemId = -1;
     }
 
@@ -3351,49 +3390,64 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Gives a specific item to the player")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "itemId", description = "The item ID")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "itemGiven", description = "The item ID that was given (or -1 if none could be given)")
   @Method(0x800f99ecL)
   public static FlowControl scriptGiveItem(final RunningScript<?> script) {
-    final int s1;
-    if(giveItem(script.params_20[0].get()) == 0) {
-      s1 = script.params_20[0].get();
+    final int givenItem;
+
+    final int itemId = script.params_20[0].get();
+    final boolean given;
+    if(itemId < 192) {
+      given = giveEquipment(REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(itemId)).get());
     } else {
-      s1 = -1;
+      given = giveItem(REGISTRIES.items.getEntry(LodMod.itemIdMap.get(itemId - 192)).get());
+    }
+
+    if(given) {
+      givenItem = itemId;
+    } else {
+      givenItem = -1;
     }
 
     //LAB_800f9a2c
-    script.params_20[1].set(s1);
+    script.params_20[1].set(givenItem);
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to targeting")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "targetType", description = "0 = characters, 1 = monsters, 2 = any")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "targetBentIndex", description = "The targeted BattleEntity27c script index")
   @Method(0x800f9a50L)
   public static FlowControl FUN_800f9a50(final RunningScript<?> script) {
     final int targetType = script.params_20[0].get();
-    final int targetBobj = script.params_20[1].get();
+    final int targetBent = script.params_20[1].get();
 
-    final ScriptState<? extends BattleObject27c>[] bobjs;
+    final ScriptState<? extends BattleEntity27c>[] bents;
     final int count;
     if(targetType == 0) {
-      bobjs = battleState_8006e398.charBobjs_e40;
+      bents = battleState_8006e398.charBents_e40;
       count = charCount_800c677c.get();
     } else if(targetType == 1) {
       //LAB_800f9a94
-      bobjs = battleState_8006e398.aliveMonsterBobjs_ebc;
+      bents = battleState_8006e398.aliveMonsterBents_ebc;
       count = aliveMonsterCount_800c6758.get();
     } else {
       //LAB_800f9aac
-      bobjs = battleState_8006e398.aliveBobjs_e78;
-      count = aliveBobjCount_800c669c.get();
+      bents = battleState_8006e398.aliveBents_e78;
+      count = aliveBentCount_800c669c.get();
     }
 
     //LAB_800f9abc
     //LAB_800f9adc
     for(int i = 0; i < count; i++) {
-      if(targetBobj == bobjs[i].index) {
+      if(targetBent == bents[i].index) {
         if(targetType == 0) {
-          _800c6980.setu(i);
+          _800c6980.set((short)i);
         } else if(targetType == 1) {
           //LAB_800f9b0c
-          _800c697e.setu(i);
+          _800c697e.set((short)i);
         }
 
         break;
@@ -3406,6 +3460,8 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Checks if any floating number is on the screen")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "onScreen", description = "True if any floating number is on screen, false otherwise")
   @Method(0x800f9b2cL)
   public static FlowControl scriptIsFloatingNumberOnScreen(final RunningScript<?> script) {
     //LAB_800f9b3c
@@ -3424,6 +3480,8 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Sets the active dragoon space element")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "charId", description = "The character ID whose element should be used")
   @Method(0x800f9b78L)
   public static FlowControl scriptSetDragoonSpaceElementIndex(final RunningScript<?> script) {
     final int characterId = script.params_20[0].get();
@@ -3435,8 +3493,8 @@ public final class Bttl_800f {
         dragoonSpaceElement_800c6b64 = CoreMod.DIVINE_ELEMENT.get();
       } else {
         for(int i = 0; i < charCount_800c677c.get(); i++) {
-          if(battleState_8006e398.charBobjs_e40[i].innerStruct_00.charId_272 == characterId) {
-            dragoonSpaceElement_800c6b64 = battleState_8006e398.charBobjs_e40[i].innerStruct_00.element;
+          if(battleState_8006e398.charBents_e40[i].innerStruct_00.charId_272 == characterId) {
+            dragoonSpaceElement_800c6b64 = battleState_8006e398.charBents_e40[i].innerStruct_00.element;
             break;
           }
         }
@@ -3446,38 +3504,45 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to menu")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
   @Method(0x800f9b94L)
   public static FlowControl FUN_800f9b94(final RunningScript<?> script) {
-    final long v1 = _800c6b6c.get();
-    MEMORY.ref(2, v1).offset(0x0L).setu(0x1L);
-    MEMORY.ref(2, v1).offset(0x6L).setu(script.params_20[0].get());
-    MEMORY.ref(2, v1).offset(0x8L).setu(script.params_20[1].get());
+    // Unused menu-related code
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to menu")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
   @Method(0x800f9bd4L)
   public static FlowControl FUN_800f9bd4(final RunningScript<?> script) {
-    final long v1 = _800c6b6c.get();
-    MEMORY.ref(2, v1).offset(0x0L).setu(0x4L);
-    MEMORY.ref(2, v1).offset(0x8L).setu(script.params_20[0].get());
+    // Unused menu-related code
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, related to menu")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
   @Method(0x800f9c00L)
   public static FlowControl FUN_800f9c00(final RunningScript<?> script) {
-    FUN_800fa018(script.params_20[0].get());
+    // Unused menu-related code
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Renders the battle HUD background")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X position (centre)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y position (centre)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "width", description = "The width")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "height", description = "The height")
   @Method(0x800f9c2cL)
-  public static FlowControl FUN_800f9c2c(final RunningScript<?> script) {
+  public static FlowControl scriptRenderBattleHudBackground(final RunningScript<?> script) {
     final int colourIndex = script.params_20[4].get();
     final int r = textboxColours_800c6fec.get(colourIndex).get(0).get();
     final int g = textboxColours_800c6fec.get(colourIndex).get(1).get();
     final int b = textboxColours_800c6fec.get(colourIndex).get(2).get();
-    final int colour = b << 16 | g << 8 | b;
+    final int colour = r << 16 | g << 8 | b;
 
-    renderTextBoxBackground(
+    renderBattleHudBackground(
       (short)script.params_20[0].get() - script.params_20[2].get() / 2,
       (short)script.params_20[1].get() - script.params_20[3].get() / 2,
       (short)script.params_20[2].get(),
@@ -3488,18 +3553,20 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
+  @ScriptDescription("Unknown, disables menu icons if certain flags are set")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "iconIndicesBitset", description = "The icons to disable if their flag matches a certain value (unknown)")
   @Method(0x800f9cacL)
   public static FlowControl FUN_800f9cac(final RunningScript<?> script) {
-    final BattleMenuStruct58 menu = battleMenu_800c6c34.deref();
-    final int t2 = script.params_20[0].get();
+    final BattleMenuStruct58 menu = battleMenu_800c6c34;
+    final int iconIndicesBitset = script.params_20[0].get();
 
     //LAB_800f9d18
-    for(int t0 = 0; t0 < 8; t0++) {
-      if((t2 & 1 << t0) != 0) {
+    for(int i = 0; i < 8; i++) {
+      if((iconIndicesBitset & 0x1 << i) != 0) {
         //LAB_800f9d34
         for(int icon = 0; icon < 8; icon++) {
-          if((menu.iconFlags_10.get(icon).get() & 0xf) == _800c7194.get(t0).get()) {
-            menu.iconFlags_10.get(icon).or(0x80);
+          if((menu.iconFlags_10[icon] & 0xf) == iconFlags_800c7194.get(i).get()) {
+            menu.iconFlags_10[icon] |= 0x80;
             break;
           }
         }
@@ -3509,54 +3576,32 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
-  /** Called after any bobj finishes its turn */
+  @ScriptDescription("Called after any battle entity finishes its turn, ticks temporary stats and calls turnFinished on custom battle entities")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800f9d7cL)
-  public static FlowControl scriptFinishBobjTurn(final RunningScript<?> script) {
-    final int bobjIndex = script.params_20[0].get();
-    final BattleObject27c bobj = (BattleObject27c)scriptStatePtrArr_800bc1c0[bobjIndex].innerStruct_00;
+  public static FlowControl scriptFinishBentTurn(final RunningScript<?> script) {
+    final int bentIndex = script.params_20[0].get();
+    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[bentIndex].innerStruct_00;
 
-    // Temporary power stats
-    for(int statIndex = 88; statIndex <= 97; statIndex++) {
-      scriptTickTemporaryStatMod(bobj, statIndex);
-    }
-
-    if(bobj instanceof PlayerBattleObject) {
-      // Temp MP/SP per hit stats
-      for(int statIndex = 100; statIndex <= 103; statIndex++) {
-        scriptTickTemporaryStatMod(bobj, statIndex);
-      }
-    }
-
-    bobj.turnFinished();
-
-    recalculateSpeedAndPerHitStats(bobj);
+    bent.turnFinished();
+    bent.recalculateSpeedAndPerHitStats();
     return FlowControl.CONTINUE;
   }
 
-  private static void scriptTickTemporaryStatMod(final BattleObject27c bobj, final int statIndex) {
-    if(bobj.getStat(statIndex) != 0) {
-      if((bobj.getStat(statIndex) & 0xff00) < 0x200) { // Turns is stored in upper byte
-        bobj.setStat(statIndex, 0);
-      } else {
-        bobj.setStat(statIndex, bobj.getStat(statIndex) - 0x100); // Subtract one turn
-      }
-    }
-  }
-
   @Method(0x800f9e10L)
-  public static void clearTempWeaponAndSpellStats(final BattleObject27c a0) {
+  public static void clearTempWeaponAndSpellStats(final BattleEntity27c a0) {
     a0.item_d4 = null;
     a0.spell_94 = null;
   }
 
   @Method(0x800f9e50L)
-  public static PlayerBattleObject setActiveCharacterSpell(final int spellId) {
-    final int charIndex = combatMenu_800c6b60.deref().charIndex_08.get();
+  public static PlayerBattleEntity setActiveCharacterSpell(final int spellId) {
+    final int charIndex = combatMenu_800c6b60.charIndex_08;
 
     //LAB_800f9e8c
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      final ScriptState<PlayerBattleObject> playerState = battleState_8006e398.charBobjs_e40[charSlot];
-      final PlayerBattleObject player = playerState.innerStruct_00;
+      final ScriptState<PlayerBattleEntity> playerState = battleState_8006e398.charBents_e40[charSlot];
+      final PlayerBattleEntity player = playerState.innerStruct_00;
 
       if(charIndex == player.charId_272) {
         //LAB_800f9ec8
@@ -3584,29 +3629,13 @@ public final class Bttl_800f {
     GPU.queueCommand(31, cmd);
   }
 
-  @Method(0x800fa018L)
-  public static void FUN_800fa018(final long a0) {
-    final long v1 = _800c6b6c.get();
-
-    if(MEMORY.ref(2, v1).offset(0x0L).getSigned() != 0) {
-      if(a0 == 0x1L) {
-        MEMORY.ref(2, v1).offset(0x2L).oru(0x1L);
-      } else {
-        //LAB_800fa050
-        MEMORY.ref(2, v1).offset(0x2L).and(0xfffeL);
-      }
-    }
-
-    //LAB_800fa060
-  }
-
   @Method(0x800fa068L)
-  public static int clampX(final int x) {
-    return MathHelper.clamp(x, 20, 300);
+  public static float clampX(final float x) {
+    return MathHelper.clamp(x, 20.0f, 300.0f);
   }
 
   @Method(0x800fa090L)
-  public static int clampY(final int y) {
-    return MathHelper.clamp(y, 20, 220);
+  public static float clampY(final float y) {
+    return MathHelper.clamp(y, 20.0f, 220.0f);
   }
 }

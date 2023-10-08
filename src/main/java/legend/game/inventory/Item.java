@@ -1,16 +1,69 @@
 package legend.game.inventory;
 
-import legend.game.modding.registries.RegistryEntry;
-import legend.game.types.ItemStats0c;
+import legend.core.memory.Method;
+import org.legendofdragoon.modloader.registries.RegistryEntry;
 
-public class Item extends RegistryEntry {
-  public final String name;
+public abstract class Item extends RegistryEntry implements InventoryEntry {
+  private final String name;
+  private final String description;
+  private final String combatDescription;
+  private final int icon;
+  private final int price;
 
-  public Item(final String name, final ItemStats0c stats) {
-    this(name);
+  public Item(final String name, final String description, final String combatDescription, final int icon, final int price) {
+    this.name = name;
+    this.description = description;
+    this.combatDescription = combatDescription;
+    this.icon = icon;
+    this.price = price;
   }
 
-  public Item(final String name) {
-    this.name = name;
+  @Override
+  public int getIcon() {
+    return this.icon;
+  }
+
+  @Override
+  public String getName() {
+    return this.name;
+  }
+
+  @Override
+  public String getDescription() {
+    return this.description;
+  }
+
+  public String getCombatDescription() {
+    return this.combatDescription;
+  }
+
+  @Override
+  public int getPrice() {
+    return this.price;
+  }
+
+  /** Check if an item can ever be used in this location */
+  public abstract boolean canBeUsed(final UsageLocation location);
+
+  /** Check if an item can be used in this location right now */
+  public boolean canBeUsedNow(final UsageLocation location) {
+    return this.canBeUsed(location);
+  }
+
+  public abstract boolean canTarget(final TargetType type);
+
+  /** TODO refactor, use UsageLocation */
+  @Method(0x80022d88L)
+  public abstract void useItemInMenu(final UseItemResponse response, final int charIndex);
+
+  public enum UsageLocation {
+    MENU,
+    BATTLE,
+  }
+
+  public enum TargetType {
+    ALLIES,
+    ENEMIES,
+    ALL,
   }
 }

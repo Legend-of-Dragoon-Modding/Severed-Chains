@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.ToIntFunction;
 
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.renderItemIcon;
@@ -21,11 +23,11 @@ import static legend.game.Scus94491BpeSegment_8002.playSound;
 public class ListBox<T> extends Control {
   private final Function<T, String> entryToString;
   @Nullable
-  private final Function<T, Integer> entryToIcon;
+  private final ToIntFunction<T> entryToIcon;
   @Nullable
-  private final Function<T, Integer> entryToRightIcon;
+  private final ToIntFunction<T> entryToRightIcon;
   @Nullable
-  private final Function<T, Boolean> isDisabled;
+  private final Predicate<T> isDisabled;
   private final List<Entry> entries = new ArrayList<>();
   private final int entryHeight = 17;
   private int maxVisibleEntries;
@@ -39,7 +41,7 @@ public class ListBox<T> extends Control {
   private final Glyph upArrow;
   private final Glyph downArrow;
 
-  public ListBox(final Function<T, String> entryToString, @Nullable final Function<T, Integer> entryToIcon, @Nullable final Function<T, Integer> entryToRightIcon, @Nullable final Function<T, Boolean> isDisabled) {
+  public ListBox(final Function<T, String> entryToString, @Nullable final ToIntFunction<T> entryToIcon, @Nullable final ToIntFunction<T> entryToRightIcon, @Nullable final Predicate<T> isDisabled) {
     this.entryToString = entryToString;
     this.entryToIcon = entryToIcon;
     this.entryToRightIcon = entryToRightIcon;
@@ -168,7 +170,7 @@ public class ListBox<T> extends Control {
 
       if(i >= this.scroll && i < this.scroll + this.maxVisibleEntries) {
         if(this.isDisabled != null) {
-          if(this.isDisabled.apply(entry.data)) {
+          if(this.isDisabled.test(entry.data)) {
             entry.updateText(TextColour.LIGHT_BROWN);
           } else {
             entry.updateText(TextColour.BROWN);
@@ -230,7 +232,7 @@ public class ListBox<T> extends Control {
       if(MathHelper.inBox(x, y, 0, i * this.entryHeight + 1, this.getWidth(), this.entryHeight)) {
         this.select(i);
 
-        if(this.isDisabled != null && this.isDisabled.apply(this.getSelectedEntry())) {
+        if(this.isDisabled != null && this.isDisabled.test(this.getSelectedEntry())) {
           return InputPropagation.HANDLED;
         }
 
@@ -266,7 +268,7 @@ public class ListBox<T> extends Control {
     }
 
     if(inputAction == InputAction.BUTTON_SOUTH) {
-      if(this.isDisabled != null && this.isDisabled.apply(this.getSelectedEntry())) {
+      if(this.isDisabled != null && this.isDisabled.test(this.getSelectedEntry())) {
         return InputPropagation.HANDLED;
       }
 
@@ -376,11 +378,11 @@ public class ListBox<T> extends Control {
       this.textRenderable.render(x + 28, y + 3, this.getZ() - 1);
 
       if(ListBox.this.entryToIcon != null) {
-        renderItemIcon(ListBox.this.entryToIcon.apply(this.data), x + 13, y + 1, 0x8L);
+        renderItemIcon(ListBox.this.entryToIcon.applyAsInt(this.data), x + 13, y + 1, 0x8L);
       }
 
       if(ListBox.this.entryToRightIcon != null) {
-        final int icon = ListBox.this.entryToRightIcon.apply(this.data);
+        final int icon = ListBox.this.entryToRightIcon.applyAsInt(this.data);
 
         if(icon != -1) {
           renderItemIcon(48 | icon, x + this.getWidth() - 20, y + 1, 0x8L).clut_30 = (500 + icon & 0x1ff) << 6 | 0x2b;

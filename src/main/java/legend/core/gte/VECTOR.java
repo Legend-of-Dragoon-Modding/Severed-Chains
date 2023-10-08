@@ -3,6 +3,9 @@ package legend.core.gte;
 import legend.core.memory.Value;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.MemoryRef;
+import org.joml.Vector2i;
+import org.joml.Vector3f;
+import org.joml.Vector3i;
 
 import javax.annotation.Nullable;
 
@@ -13,14 +16,12 @@ public class VECTOR implements MemoryRef {
   public final IntRef x;
   public final IntRef y;
   public final IntRef z;
-  public final IntRef pad;
 
   public VECTOR() {
     this.ref = null;
     this.x = new IntRef();
     this.y = new IntRef();
     this.z = new IntRef();
-    this.pad = new IntRef();
   }
 
   public VECTOR(final Value ref) {
@@ -28,7 +29,14 @@ public class VECTOR implements MemoryRef {
     this.x = new IntRef(ref.offset(4, 0x0L));
     this.y = new IntRef(ref.offset(4, 0x4L));
     this.z = new IntRef(ref.offset(4, 0x8L));
-    this.pad = new IntRef(ref.offset(4, 0xcL));
+  }
+
+  /** NOTE: does NOT set pad */
+  public VECTOR set(final Vector3f other) {
+    this.setX((int)other.x);
+    this.setY((int)other.y);
+    this.setZ((int)other.z);
+    return this;
   }
 
   /** NOTE: does NOT set pad */
@@ -40,15 +48,7 @@ public class VECTOR implements MemoryRef {
   }
 
   /** NOTE: does NOT set pad */
-  public VECTOR set(final SVECTOR other) {
-    this.setX(other.getX());
-    this.setY(other.getY());
-    this.setZ(other.getZ());
-    return this;
-  }
-
-  /** NOTE: does NOT set pad */
-  public VECTOR set(final USCOLOUR other) {
+  public VECTOR set(final BVEC4 other) {
     this.setX(other.getX());
     this.setY(other.getY());
     this.setZ(other.getZ());
@@ -70,6 +70,18 @@ public class VECTOR implements MemoryRef {
       case 2 -> this.getZ();
       default -> throw new IllegalArgumentException("Invalid element");
     };
+  }
+
+  public void get(final Vector3f dest) {
+    dest.set(this.getX(), this.getY(), this.getZ());
+  }
+
+  public void get(final Vector2i dest) {
+    dest.set(this.getX(), this.getY());
+  }
+
+  public void get(final Vector3i dest) {
+    dest.set(this.getX(), this.getY(), this.getZ());
   }
 
   public IntRef component(final int element) {
@@ -105,25 +117,10 @@ public class VECTOR implements MemoryRef {
     this.z.set(z);
   }
 
-  public int getPad() {
-    return this.pad.get();
-  }
-
-  public void setPad(final int pad) {
-    this.pad.set(pad);
-  }
-
   public VECTOR add(final VECTOR other) {
     this.x.add(other.x);
     this.y.add(other.y);
     this.z.add(other.z);
-    return this;
-  }
-
-  public VECTOR add(final SVECTOR other) {
-    this.x.add(other.x.get());
-    this.y.add(other.y.get());
-    this.z.add(other.z.get());
     return this;
   }
 
@@ -148,17 +145,23 @@ public class VECTOR implements MemoryRef {
     return this;
   }
 
-  public VECTOR sub(final SVECTOR other) {
-    this.x.sub(other.x.get());
-    this.y.sub(other.y.get());
-    this.z.sub(other.z.get());
+  public VECTOR sub(final Vector3f other) {
+    this.x.sub((int)other.x);
+    this.y.sub((int)other.y);
+    this.z.sub((int)other.z);
     return this;
   }
 
-  public VECTOR sub(final USCOLOUR other) {
-    this.x.sub(other.x.get());
-    this.y.sub(other.y.get());
-    this.z.sub(other.z.get());
+  public VECTOR sub(final Vector3i other) {
+    this.x.sub(other.x);
+    this.y.sub(other.y);
+    this.z.sub(other.z);
+    return this;
+  }
+
+  public VECTOR sub(final Vector2i other) {
+    this.x.sub(other.x);
+    this.y.sub(other.y);
     return this;
   }
 
@@ -183,13 +186,6 @@ public class VECTOR implements MemoryRef {
     return this;
   }
 
-  public VECTOR mul(final SVECTOR value) {
-    this.x.mul(value.x.get());
-    this.y.mul(value.y.get());
-    this.z.mul(value.z.get());
-    return this;
-  }
-
   public VECTOR mul(final int value) {
     this.x.mul(value);
     this.y.mul(value);
@@ -211,13 +207,6 @@ public class VECTOR implements MemoryRef {
     return this;
   }
 
-  public VECTOR div(final SVECTOR divisor) {
-    this.x.div(divisor.x.get());
-    this.y.div(divisor.y.get());
-    this.z.div(divisor.z.get());
-    return this;
-  }
-
   public VECTOR div(final int divisor) {
     this.x.div(divisor);
     this.y.div(divisor);
@@ -236,13 +225,6 @@ public class VECTOR implements MemoryRef {
     this.x.mod(divisor.x);
     this.y.mod(divisor.y);
     this.z.mod(divisor.z);
-    return this;
-  }
-
-  public VECTOR mod(final SVECTOR divisor) {
-    this.x.mod(divisor.x.get());
-    this.y.mod(divisor.y.get());
-    this.z.mod(divisor.z.get());
     return this;
   }
 
@@ -286,6 +268,41 @@ public class VECTOR implements MemoryRef {
     this.y.and(val);
     this.z.and(val);
     return this;
+  }
+
+  public int length() {
+    return (int)Math.sqrt(this.lengthSquared());
+  }
+
+  public long lengthSquared() {
+    return (long)this.getX() * this.getX() + this.getY() * this.getY() + this.getZ() * this.getZ();
+  }
+
+  public VECTOR normalize() {
+    if(this.getX() == 0 && this.getY() == 0 && this.getZ() == 0) {
+      return this;
+    }
+
+    final int length = this.length();
+    return this.shl(12).div(length);
+  }
+
+  public VECTOR cross(final VECTOR right, final VECTOR out) {
+    out.set(
+      this.getZ() * right.getY() - this.getY() * right.getZ() >> 12,
+      this.getX() * right.getZ() - this.getZ() * right.getX() >> 12,
+      this.getY() * right.getX() - this.getX() * right.getY() >> 12
+    );
+
+    return out;
+  }
+
+  public VECTOR cross(final VECTOR right) {
+    return this.cross(right, this);
+  }
+
+  public Vector3f toVec3() {
+    return new Vector3f(this.getX(), this.getY(), this.getZ());
   }
 
   @Override

@@ -2,8 +2,8 @@ package legend.game.unpacker;
 
 import legend.core.MathHelper;
 import legend.core.gte.BVEC4;
-import legend.core.gte.SVECTOR;
 import legend.core.memory.Method;
+import org.joml.Vector3i;
 
 import java.util.Map;
 import java.util.Set;
@@ -113,27 +113,27 @@ public final class CtmdTransformer {
       final Ctmd.ObjTable objTable = ctmd.objTables[objTableIndex];
 
       final int vertexCount = getVertexCount(objTable);
-      objTable.unpackedVertices = new SVECTOR[vertexCount];
+      objTable.unpackedVertices = new Vector3i[vertexCount];
 
       final FileData vertices = ctmdData.slice(0xc + objTable.vertices_00);
       for(int i = 0; i < vertexCount; i++) {
         final BVEC4 lo = new BVEC4().set(vertices.readByte(i * 4), vertices.readByte(i * 4 + 1), vertices.readByte(i * 4 + 2), vertices.readByte(i * 4 + 3));
         final int hiIndex = lo.getW() & 0xff;
         final BVEC4 hi = new BVEC4().set(vertices.readByte(hiIndex * 4), vertices.readByte(hiIndex * 4 + 1), vertices.readByte(hiIndex * 4 + 2), vertices.readByte(hiIndex * 4 + 3));
-        final SVECTOR vert = new SVECTOR();
-        vert.setX((short)(lo.getX() + ((hi.getX() & 0xff) << 8)));
-        vert.setY((short)(lo.getY() + ((hi.getY() & 0xff) << 8)));
-        vert.setZ((short)(lo.getZ() + ((hi.getZ() & 0xff) << 8)));
+        final Vector3i vert = new Vector3i();
+        vert.x = lo.getX() + ((hi.getX() & 0xff) << 8);
+        vert.y = lo.getY() + ((hi.getY() & 0xff) << 8);
+        vert.z = lo.getZ() + ((hi.getZ() & 0xff) << 8);
         objTable.unpackedVertices[i] = vert;
       }
 
       final FileData normals = ctmdData.slice(0xc + objTable.normals_08);
       for(int i = 0; i < objTable.normalCount_0c; i++) {
         final int packed = normals.readInt(i * 4);
-        final SVECTOR norm = new SVECTOR();
-        norm.setX((short)(packed << 20 >> 19 & 0xffff_fff8));
-        norm.setY((short)(packed << 10 >> 19 & 0xffff_fff8));
-        norm.setZ((short)(packed >> 19 & 0xffff_fff8));
+        final Vector3i norm = new Vector3i();
+        norm.x = packed << 20 >> 19 & 0xffff_fff8;
+        norm.y = packed << 10 >> 19 & 0xffff_fff8;
+        norm.z = packed >> 19 & 0xffff_fff8;
         objTable.unpackedNormals[i] = norm;
       }
     }
@@ -187,10 +187,10 @@ public final class CtmdTransformer {
       MathHelper.set(tmdData, 0xc + i * 0x1c + 0x4, 4, objTable.unpackedVertices.length);
 
       for(int vertIndex = 0; vertIndex < objTable.unpackedVertices.length; vertIndex++) {
-        final SVECTOR vertex = objTable.unpackedVertices[vertIndex];
-        MathHelper.set(tmdData, verticesOffset, 2, vertex.getX());
-        MathHelper.set(tmdData, verticesOffset + 0x2, 2, vertex.getY());
-        MathHelper.set(tmdData, verticesOffset + 0x4, 2, vertex.getZ());
+        final Vector3i vertex = objTable.unpackedVertices[vertIndex];
+        MathHelper.set(tmdData, verticesOffset, 2, vertex.x);
+        MathHelper.set(tmdData, verticesOffset + 0x2, 2, vertex.y);
+        MathHelper.set(tmdData, verticesOffset + 0x4, 2, vertex.z);
         verticesOffset += 0x8;
       }
     }
@@ -203,10 +203,10 @@ public final class CtmdTransformer {
       MathHelper.set(tmdData, 0xc + i * 0x1c + 0xc, 4, objTable.normalCount_0c);
 
       for(int normIndex = 0; normIndex  < objTable.normalCount_0c; normIndex++) {
-        final SVECTOR norm = objTable.unpackedNormals[normIndex];
-        MathHelper.set(tmdData, normalsOffset, 2, norm.getX());
-        MathHelper.set(tmdData, normalsOffset + 0x2, 2, norm.getY());
-        MathHelper.set(tmdData, normalsOffset + 0x4, 2, norm.getZ());
+        final Vector3i norm = objTable.unpackedNormals[normIndex];
+        MathHelper.set(tmdData, normalsOffset, 2, norm.x);
+        MathHelper.set(tmdData, normalsOffset + 0x2, 2, norm.y);
+        MathHelper.set(tmdData, normalsOffset + 0x4, 2, norm.z);
         normalsOffset += 0x8;
       }
     }

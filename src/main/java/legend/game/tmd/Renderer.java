@@ -3,15 +3,14 @@ package legend.game.tmd;
 import legend.core.IoHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
-import legend.core.gte.DVECTOR;
-import legend.core.gte.GsDOBJ2;
-import legend.core.gte.SVECTOR;
+import legend.core.gte.ModelPart10;
 import legend.core.gte.TmdObjTable1c;
 import legend.game.combat.environment.BattleLightStruct64;
 import legend.game.types.Translucency;
+import org.joml.Vector3f;
 
-import static legend.core.GameEngine.CPU;
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.GTE;
 import static legend.game.Scus94491BpeSegment.tmdGp0CommandId_1f8003ee;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
@@ -26,10 +25,10 @@ public final class Renderer {
   /**
    * @param useSpecialTranslucency Used in battle, some TMDs have translucency info in the upper 16 bits of their ID. Also enables backside culling.
    */
-  public static void renderDobj2(final GsDOBJ2 dobj2, final boolean useSpecialTranslucency, final int ctmdFlag) {
+  public static void renderDobj2(final ModelPart10 dobj2, final boolean useSpecialTranslucency, final int ctmdFlag) {
     final TmdObjTable1c objTable = dobj2.tmd_08;
-    final SVECTOR[] vertices = objTable.vert_top_00;
-    final SVECTOR[] normals = objTable.normal_top_08;
+    final Vector3f[] vertices = objTable.vert_top_00;
+    final Vector3f[] normals = objTable.normal_top_08;
 
     // CTMD flag and scripted "uniform lighting" + transparency flag for STMDs in DEFFs
     final int specialFlags = ctmdFlag | ((dobj2.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0);
@@ -40,7 +39,14 @@ public final class Renderer {
     }
   }
 
-  public static void renderTmdPrimitive(final TmdObjTable1c.Primitive primitive, final SVECTOR[] vertices, final SVECTOR[] normals, final boolean useSpecialTranslucency, final int specialFlags) {
+  public static void renderTmdPrimitive(final TmdObjTable1c.Primitive primitive, final Vector3f[] vertices, final Vector3f[] normals, final int attribute) {
+    final int specialFlags = (attribute & 0x4000_0000) != 0 ? 0x12 : 0x0;
+    renderTmdPrimitive(primitive, vertices, normals, false, specialFlags);
+  }
+
+  private static final Vector3f ZERO = new Vector3f();
+
+  public static void renderTmdPrimitive(final TmdObjTable1c.Primitive primitive, final Vector3f[] vertices, final Vector3f[] normals, final boolean useSpecialTranslucency, final int specialFlags) {
     // Read type info from command ---
     final int command = (primitive.header() | specialFlags) & 0xff04_0000;
     final int primitiveId = command >>> 24;
@@ -51,6 +57,7 @@ public final class Renderer {
     final boolean ctmd = (specialFlags & 0x20) != 0;
     final boolean uniformLit = (specialFlags & 0x10) != 0;
     final boolean shaded = (command & 0x4_0000) != 0;
+    final boolean gourad = (primitiveId & 0b1_0000) != 0;
     final boolean quad = (primitiveId & 0b1000) != 0;
     final boolean textured = (primitiveId & 0b100) != 0;
     final boolean translucent = ((primitiveId & 0b10) != 0) || ((specialFlags & 0x2) != 0);
@@ -108,8 +115,12 @@ public final class Renderer {
 
       for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
         if(lit) {
-          poly.vertices[vertexIndex].normalIndex = IoHelper.readUShort(data, primitivesOffset);
-          primitivesOffset += 2;
+          if(gourad || vertexIndex == 0) {
+            poly.vertices[vertexIndex].normalIndex = IoHelper.readUShort(data, primitivesOffset);
+            primitivesOffset += 2;
+          } else {
+            poly.vertices[vertexIndex].normalIndex = poly.vertices[0].normalIndex;
+          }
         }
 
         poly.vertices[vertexIndex].vertexIndex = IoHelper.readUShort(data, primitivesOffset);
@@ -130,18 +141,13 @@ public final class Renderer {
       }
 
       for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
-        final SVECTOR vert = vertices[poly.vertices[vertexIndex].vertexIndex];
-        CPU.MTC2(vert.getXY(), 0);
-        CPU.MTC2(vert.getZ(),  1);
-        CPU.COP2(0x18_0001L); // Perspective transform single
+        GTE.perspectiveTransform(vertices[poly.vertices[vertexIndex].vertexIndex]);
 
-        if((int)CPU.CFC2(31) < 0) { // Errors
+        if(GTE.hasError()) {
           continue outer;
         }
 
-        final DVECTOR xy = new DVECTOR().setXY(CPU.MFC2(14));
-
-        cmd.pos(vertexIndex, xy.getX(), xy.getY());
+        cmd.pos(vertexIndex, GTE.getScreenX(2), GTE.getScreenY(2));
 
         if(textured) {
           cmd.uv(vertexIndex, poly.vertices[vertexIndex].u, poly.vertices[vertexIndex].v);
@@ -153,8 +159,7 @@ public final class Renderer {
 
         // Back-face culling
         if(vertexIndex == 2) {
-          CPU.COP2(0x140_0006L); // Normal clipping
-          final long winding = CPU.MFC2(24);
+          final int winding = GTE.normalClipping();
 
           if(!translucent && winding <= 0 || translucent && winding == 0) {
             continue outer;
@@ -162,14 +167,8 @@ public final class Renderer {
         }
       }
 
-      // Average Z
-      if(quad) {
-        CPU.COP2(0x168_002eL);
-      } else {
-        CPU.COP2(0x168_002dL);
-      }
-
-      final int z = (int)Math.min(CPU.MFC2(7) + zOffset_1f8003e8.get() >> zShift_1f8003c4.get(), zMax_1f8003cc.get());
+      final float screenZ = quad ? GTE.averageZ4() : GTE.averageZ3();
+      final float z = Math.min((screenZ + zOffset_1f8003e8.get()) / (1 << zShift_1f8003c4.get()), zMax_1f8003cc.get());
 
       if(z < zMin) {
         continue;
@@ -177,33 +176,22 @@ public final class Renderer {
 
       if(textured && translucent && !lit && (ctmd || uniformLit)) {
         final BattleLightStruct64 bkLight = _800c6930;
-        final int rbk = bkLight.colour_00.getX();
-        final int gbk = bkLight.colour_00.getY();
-        final int bbk = bkLight.colour_00.getZ();
 
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
           int rgb = poly.vertices[vertexIndex].colour;
-          final int r = (((rgb & 0xff) * rbk >> 12) & 0xff);
-          final int g = ((((rgb >>> 8) & 0xff) * gbk >> 12) & 0xff);
-          final int b = ((((rgb >>> 16) & 0xff) * bbk >> 12) & 0xff);
+          final int r = (int)((rgb        & 0xff) * bkLight.colour_00.x) & 0xff;
+          final int g = (int)((rgb >>>  8 & 0xff) * bkLight.colour_00.y) & 0xff;
+          final int b = (int)((rgb >>> 16 & 0xff) * bkLight.colour_00.z) & 0xff;
           rgb = b << 16 | g << 8 | r;
           cmd.rgb(vertexIndex, rgb);
         }
       } else if(!textured || lit) {
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
-          CPU.MTC2(poly.vertices[vertexIndex].colour, 6);
-
-          final SVECTOR norm;
           if(poly.vertices[vertexIndex].normalIndex < normals.length) {
-            norm = normals[poly.vertices[vertexIndex].normalIndex];
+            cmd.rgb(vertexIndex, GTE.normalColour(normals[poly.vertices[vertexIndex].normalIndex], poly.vertices[vertexIndex].colour));
           } else {
-            norm = new SVECTOR();
+            cmd.rgb(vertexIndex, GTE.normalColour(ZERO, poly.vertices[vertexIndex].colour));
           }
-
-          CPU.MTC2(norm.getXY(), 0);
-          CPU.MTC2(norm.getZ(), 1);
-          CPU.COP2(0x108_041bL); // Normal colour colour single vector
-          cmd.rgb(vertexIndex, (int)CPU.MFC2(22));
         }
       } else {
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {

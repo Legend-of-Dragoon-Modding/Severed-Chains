@@ -1,6 +1,6 @@
 package legend.game.modding.events.battle;
 
-import legend.game.combat.bobj.BattleEvent;
+import legend.game.combat.bent.BattleEvent;
 import legend.game.types.LodString;
 
 /**

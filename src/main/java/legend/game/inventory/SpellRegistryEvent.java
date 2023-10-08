@@ -1,7 +1,7 @@
 package legend.game.inventory;
 
-import legend.game.modding.events.registries.RegistryEvent;
-import legend.game.modding.registries.MutableRegistry;
+import org.legendofdragoon.modloader.events.registries.RegistryEvent;
+import org.legendofdragoon.modloader.registries.MutableRegistry;
 
 public class SpellRegistryEvent extends RegistryEvent.Register<Spell> {
   public SpellRegistryEvent(final MutableRegistry<Spell> registry) {
