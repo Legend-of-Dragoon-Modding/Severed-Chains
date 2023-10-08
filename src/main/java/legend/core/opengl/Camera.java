@@ -1,5 +1,7 @@
 package legend.core.opengl;
 
+import legend.core.gte.MV;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
@@ -18,6 +20,8 @@ public interface Camera {
   void get(final Shader.UniformMat4 uniform);
   void get(final FloatBuffer buffer);
   void get(final int index, final FloatBuffer buffer);
+  void set(final MV view);
+  Matrix4f getView();
   Vector3fc getPos();
   void getPos(final FloatBuffer buffer);
   void getPos(final int index, final FloatBuffer buffer);

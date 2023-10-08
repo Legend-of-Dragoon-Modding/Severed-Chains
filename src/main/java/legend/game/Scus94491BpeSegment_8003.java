@@ -18,6 +18,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Math;
 import org.joml.Matrix3f;
+import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -764,6 +765,8 @@ public final class Scus94491BpeSegment_8003 {
       transposedLw.transfer.negate();
       GsMulCoord2(worldToScreenMatrix_800c3548, transposedLw);
       worldToScreenMatrix_800c3548.set(transposedLw);
+
+      RENDERER.camera().getView().mul(new Matrix4f(lw).translate(lw.transfer.x, lw.transfer.y, -lw.transfer.z));
     }
   }
 

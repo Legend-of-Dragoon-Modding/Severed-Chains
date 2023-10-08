@@ -1,6 +1,7 @@
 package legend.core.opengl;
 
 import legend.core.MathHelper;
+import legend.core.gte.MV;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -89,6 +90,7 @@ public class QuaternionCamera implements Camera {
 
   @Override
   public void lookAt(final float x, final float y, final float z) {
+    //TODO this isn't updating yaw so movement will cause the camera to snap back
     this.view.setLookAt(this.pos.x, this.pos.y, this.pos.z, x, y, z, UP.x, UP.y, UP.z);
   }
 
@@ -111,6 +113,19 @@ public class QuaternionCamera implements Camera {
   @Override
   public void get(final int index, final FloatBuffer buffer) {
     this.view.get(index, buffer);
+  }
+
+  @Override
+  public void set(final MV view) {
+    this.view.set(view);
+    this.view.translateLocal(view.transfer.x, view.transfer.y, -view.transfer.z);
+    this.view.negateX().negateZ();
+    this.view.determineProperties();
+  }
+
+  @Override
+  public Matrix4f getView() {
+    return this.view;
   }
 
   @Override
