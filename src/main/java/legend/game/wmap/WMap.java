@@ -446,10 +446,15 @@ public class WMap extends EngineState {
       if((model.partInvisible_f4 & 1L << i) == 0) {
         final MV ls = new MV();
         final MV lw = new MV();
+
         GsGetLws(dobj2.coord2_04, lw, ls);
         GsSetLightMatrix(lw);
         GTE.setTransforms(ls);
         Renderer.renderDobj2(dobj2, false, 0);
+
+        if(dobj2.obj != null) {
+          RENDERER.queueModel(dobj2.obj, lw);
+        }
       }
     }
 
@@ -757,7 +762,7 @@ public class WMap extends EngineState {
     switch(this.worldMapState_800c6698) {
       case 2 -> {
         if((this.filesLoadedFlags_800c66b8.get() & 0x2) != 0 && (this.filesLoadedFlags_800c66b8.get() & 0x4) != 0) { // World map textures and mesh loaded
-          this.wmapStruct258_800c66a8.mapObjs = ObjLoader.fromTmd(this.wmapStruct258_800c66a8.tmdRendering_08.tmd_14.tmd, 0);
+          this.wmapStruct258_800c66a8.mapObjs = ObjLoader.fromTmd(this.wmapStruct258_800c66a8.tmdRendering_08.tmd_14.tmd);
           this.worldMapState_800c6698 = 3;
         }
       }
@@ -769,13 +774,15 @@ public class WMap extends EngineState {
       }
 
       case 4 -> this.worldMapState_800c6698 = 5;
+
       case 5 -> {
         this.renderWorldMap();
 
         for(final Obj obj : this.wmapStruct258_800c66a8.mapObjs) {
-          RENDERER.queueObject(obj);
+          RENDERER.queueModel(obj);
         }
       }
+
       case 6 -> this.worldMapState_800c6698 = 7;
 
       case 7 -> {
@@ -802,6 +809,14 @@ public class WMap extends EngineState {
       case 3 -> {
         if(loadWait-- > 30 / vsyncMode_8007a3b8) break;
         this.initPlayerModelAndAnimation();
+
+        // Init OpenGL models
+        for(int i = 0; i < 4; i++) {
+          for(final ModelPart10 part : this.wmapStruct258_800c66a8.models_0c[i].modelParts_00) {
+            part.obj = ObjLoader.fromObjTable(part.tmd_08);
+          }
+        }
+
         this.playerState_800c669c = 4;
       }
 
@@ -814,6 +829,12 @@ public class WMap extends EngineState {
       case 6 -> this.playerState_800c669c = 7;
 
       case 7 -> {
+        for(final Model124 model : this.wmapStruct258_800c66a8.models_0c) {
+          for(final ModelPart10 part : model.modelParts_00) {
+            part.obj.delete();
+          }
+        }
+
         this.unloadWmapPlayerModels();
         this.playerState_800c669c = 0;
       }

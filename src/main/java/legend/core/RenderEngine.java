@@ -1,5 +1,6 @@
 package legend.core;
 
+import legend.core.gte.MV;
 import legend.core.opengl.BasicCamera;
 import legend.core.opengl.Camera;
 import legend.core.opengl.FrameBuffer;
@@ -129,7 +130,7 @@ public class RenderEngine {
 
   private boolean wireframeMode;
 
-  private final List<Obj> objects = new ArrayList<>();
+  private final QueuePool modelPool = new QueuePool();
 
   public Window.Events events() {
     return this.window.events;
@@ -288,8 +289,10 @@ public class RenderEngine {
       tmdShader.use();
       GPU.useVramTexture();
 
-      for(final Obj object : this.objects) {
-        object.render(null);
+      for(int i = 0; i < this.modelPool.size(); i++) {
+        final QueuedModel entry = this.modelPool.get(i);
+        this.transforms2Uniform.set(entry.transforms);
+        entry.obj.render(null);
       }
 
       glDisable(GL_CULL_FACE);
@@ -316,8 +319,10 @@ public class RenderEngine {
 //            glBlendFunc(GL_ONE, GL_ONE);
 //        }
 
-        for(final Obj object : this.objects) {
-          object.render(translucency);
+        for(int i = 0; i < this.modelPool.size(); i++) {
+          final QueuedModel entry = this.modelPool.get(i);
+          this.transforms2Uniform.set(entry.transforms);
+          entry.obj.render(translucency);
         }
       }
 
@@ -359,7 +364,7 @@ public class RenderEngine {
 
       RENDERER.setProjectionMode(ProjectionMode._2D);
 
-      this.objects.clear();
+      this.modelPool.reset();
 
       this.fps = 1.0f / ((System.nanoTime() - this.lastFrame) / (1_000_000_000 / 30.0f)) * 30.0f;
       this.lastFrame = System.nanoTime();
@@ -413,8 +418,17 @@ public class RenderEngine {
     this.transformsUniform.set(this.transformsBuffer);
   }
 
-  public void queueObject(final Obj object) {
-    this.objects.add(object);
+  public void queueModel(final Obj obj) {
+    final QueuedModel entry = this.modelPool.acquire();
+    entry.obj = obj;
+    entry.transforms.identity();
+  }
+
+  public void queueModel(final Obj obj, final MV mv) {
+    final QueuedModel entry = this.modelPool.acquire();
+    entry.obj = obj;
+    entry.transforms.set(mv);
+    entry.transforms.setTranslation(mv.transfer);
   }
 
   private void pre() {
@@ -453,7 +467,7 @@ public class RenderEngine {
 
     // Projections
     // LOD uses a left-handed projection with a negated Y axis because reasons
-    this.perspectiveProjection.setPerspectiveLH(FOV, (float)width / height, 0.1f, 1500.0f);
+    this.perspectiveProjection.setPerspectiveLH(FOV, (float)width / height, 0.1f, 3000.0f);
     this.perspectiveProjection.negateY();
     this.orthographicProjection.setOrtho2D(0.0f, width, height, 0.0f);
 
@@ -579,6 +593,39 @@ public class RenderEngine {
         case GLFW_KEY_SPACE -> this.movingUp = false;
         case GLFW_KEY_LEFT_SHIFT -> this.movingDown = false;
       }
+    }
+  }
+
+  private static class QueuedModel {
+    public Obj obj;
+    public final Matrix4f transforms = new Matrix4f();
+  }
+
+  private static class QueuePool {
+    private final List<QueuedModel> queue = new ArrayList<>();
+    private int index;
+
+    public QueuedModel get(final int index) {
+      return this.queue.get(index);
+    }
+
+    public int size() {
+      return this.queue.size();
+    }
+
+    public QueuedModel acquire() {
+      if(this.index >= this.queue.size()) {
+        final QueuedModel entry = new QueuedModel();
+        this.queue.add(entry);
+        this.index++;
+        return entry;
+      }
+
+      return this.queue.get(this.index++);
+    }
+
+    public void reset() {
+      this.index = 0;
     }
   }
 }

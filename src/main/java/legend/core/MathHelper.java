@@ -69,10 +69,10 @@ public final class MathHelper {
     final int g = colour >>>  8 & 0xff;
     final int r = colour & 0xff;
 
-    data[offset++] = r / 128.0f;
-    data[offset++] = g / 128.0f;
-    data[offset++] = b / 128.0f;
-    data[offset  ] = m / 128.0f;
+    data[offset++] = r / 255.0f;
+    data[offset++] = g / 255.0f;
+    data[offset++] = b / 255.0f;
+    data[offset  ] = m / 255.0f;
   }
 
   public static int leadingZeroBits(final short num) {
