@@ -37,7 +37,7 @@ public class Gte {
   private final Matrix3f lightDirection = new Matrix3f();
   private final Matrix3f lightColour = new Matrix3f();
   private final Vector3f translation = new Vector3f();          //R37-39
-  private final Vector3f backgroundColour = new Vector3f();          //R45-47
+  public final Vector3f backgroundColour = new Vector3f();          //R45-47
   private int OFX, OFY;          //R56 57 60
   private float H;                   //R58
   private long FLAG;                  //R63

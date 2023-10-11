@@ -25,14 +25,25 @@ layout(std140) uniform transforms2 {
   mat4 model;
 };
 
+layout(std140) uniform lighting {
+  mat4 lightDirection;
+  mat4 lightColour;
+  vec4 backgroundColour;
+};
+
 void main() {
   vec4 pos = vec4(inPos, 1.0);
+
+  vertColour = inColour;
+
+  if((int(inFlags) & 0x1) != 0) {
+    vertColour *= (max(vec4(inNorm, 1.0) * lightDirection, 0.0) * lightColour + backgroundColour);
+  }
 
   gl_Position = projection * camera * model * pos;
   vertUv = inUv;
   vertTpage = inTpage;
   vertClut = inClut;
   vertBpp = inBpp;
-  vertColour = inColour;
   vertFlags = inFlags;
 }

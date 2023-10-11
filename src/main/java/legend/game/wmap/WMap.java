@@ -129,6 +129,8 @@ import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.textboxes_800be358;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
+import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
+import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 
 public class WMap extends EngineState {
   private int tickMainMenuOpenTransition_800c6690;
@@ -453,7 +455,10 @@ public class WMap extends EngineState {
         Renderer.renderDobj2(dobj2, false, 0); //TODO remove
 
         if(dobj2.obj != null) {
-          RENDERER.queueModel(dobj2.obj, lw);
+          RENDERER.queueModel(dobj2.obj, lw)
+            .lightDirection(lightDirectionMatrix_800c34e8)
+            .lightColour(lightColourMatrix_800c3508)
+            .backgroundColour(GTE.backgroundColour);
         }
       }
     }

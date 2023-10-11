@@ -138,6 +138,7 @@ public class Shader {
   public static class UniformBuffer {
     public static final int TRANSFORM = 0;
     public static final int TRANSFORM2 = 1;
+    public static final int LIGHTING = 2;
 
     private final int id;
 

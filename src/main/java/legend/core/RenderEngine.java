@@ -16,8 +16,10 @@ import legend.core.opengl.fonts.FontManager;
 import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
@@ -89,10 +91,12 @@ public class RenderEngine {
   private Window window;
   private Shader.UniformBuffer transformsUniform;
   private Shader.UniformBuffer transforms2Uniform;
+  private Shader.UniformBuffer lightUniform;
   private final Matrix4f perspectiveProjection = new Matrix4f();
   private final Matrix4f orthographicProjection = new Matrix4f();
   private final Matrix4f transforms = new Matrix4f();
   private final FloatBuffer transformsBuffer = BufferUtils.createFloatBuffer(4 * 4 * 2);
+  private final FloatBuffer lightBuffer = BufferUtils.createFloatBuffer(4 * 4 * 2 + 4);
 
   // Order-independent translucency
   private Shader tmdShader;
@@ -211,6 +215,7 @@ public class RenderEngine {
       this.tmdShader = new Shader(Paths.get("gfx/shaders/tmd.vsh"), Paths.get("gfx/shaders/tmd.fsh"));
       this.tmdShader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
       this.tmdShader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
+      this.tmdShader.bindUniformBlock("lighting", Shader.UniformBuffer.LIGHTING);
 
       this.tmdShader.use();
       this.tmdShaderColour = this.tmdShader.new UniformVec3("recolour");
@@ -224,6 +229,7 @@ public class RenderEngine {
       this.tmdShaderTransparent = new Shader(Paths.get("gfx/shaders/tmd.vsh"), Paths.get("gfx/shaders/tmd-transparent.fsh"));
       this.tmdShaderTransparent.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
       this.tmdShaderTransparent.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
+      this.tmdShaderTransparent.bindUniformBlock("lighting", Shader.UniformBuffer.LIGHTING);
       ShaderManager.addShader("tmd-transparent", this.tmdShaderTransparent);
     } catch(final IOException e) {
       throw new RuntimeException("Failed to load TMD shader", e);
@@ -242,9 +248,12 @@ public class RenderEngine {
       throw new RuntimeException("Failed to load font", e);
     }
 
-    final FloatBuffer transform2Buffer = BufferUtils.createFloatBuffer(4 * 4);
     this.transformsUniform = new Shader.UniformBuffer((long)this.transformsBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM);
+
+    final FloatBuffer transform2Buffer = BufferUtils.createFloatBuffer(4 * 4);
     this.transforms2Uniform = ShaderManager.addUniformBuffer("transforms2", new Shader.UniformBuffer((long)transform2Buffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM2));
+
+    this.lightUniform = ShaderManager.addUniformBuffer("lighting", new Shader.UniformBuffer((long)this.lightBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.LIGHTING));
 
     final Shader compositeShader;
     try {
@@ -339,6 +348,11 @@ public class RenderEngine {
         this.transforms2Uniform.set(entry.transforms);
         this.tmdShaderColour.set(entry.colour);
 
+        entry.lightDirection.get(this.lightBuffer);
+        entry.lightColour.get(16, this.lightBuffer);
+        entry.backgroundColour.get(32, this.lightBuffer);
+        this.lightUniform.set(this.lightBuffer);
+
         entry.obj.render(null);
 
         for(final Translucency translucency : Translucency.FOR_RENDERING) {
@@ -393,6 +407,12 @@ public class RenderEngine {
       final QueuedModel entry = pool.get(i);
       this.transforms2Uniform.set(entry.transforms);
       this.tmdShaderColour.set(entry.colour);
+
+      entry.lightDirection.get(this.lightBuffer);
+      entry.lightColour.get(16, this.lightBuffer);
+      entry.backgroundColour.get(32, this.lightBuffer);
+      this.lightUniform.set(this.lightBuffer);
+
       entry.obj.render(null);
     }
 
@@ -421,6 +441,12 @@ public class RenderEngine {
         final QueuedModel entry = pool.get(i);
         this.transforms2Uniform.set(entry.transforms);
         this.tmdShaderColour.set(entry.colour);
+
+        entry.lightDirection.get(this.lightBuffer);
+        entry.lightColour.get(16, this.lightBuffer);
+        entry.backgroundColour.get(32, this.lightBuffer);
+        this.lightUniform.set(this.lightBuffer);
+
         entry.obj.render(translucency);
       }
     }
@@ -654,6 +680,10 @@ public class RenderEngine {
     private final Matrix4f transforms = new Matrix4f();
     private final Vector3f colour = new Vector3f();
 
+    private final Matrix4f lightDirection = new Matrix4f();
+    private final Matrix4f lightColour = new Matrix4f();
+    private final Vector4f backgroundColour = new Vector4f();
+
     public QueuedModel colour(final Vector3f colour) {
       this.colour.set(colour);
       return this;
@@ -666,6 +696,21 @@ public class RenderEngine {
 
     public QueuedModel monochrome(final float shade) {
       this.colour.set(shade);
+      return this;
+    }
+
+    public QueuedModel lightDirection(final Matrix3f lightDirection) {
+      this.lightDirection.set(lightDirection);
+      return this;
+    }
+
+    public QueuedModel lightColour(final Matrix3f lightColour) {
+      this.lightColour.set(lightColour);
+      return this;
+    }
+
+    public QueuedModel backgroundColour(final Vector3f backgroundColour) {
+      this.backgroundColour.set(backgroundColour, 0.0f);
       return this;
     }
   }
