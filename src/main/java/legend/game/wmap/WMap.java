@@ -97,6 +97,7 @@ import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
+import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
 import static legend.game.Scus94491BpeSegment_8003.StoreImage;
@@ -1804,7 +1805,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d2ec4
-//    GsSetRefView2L(struct.rview2_00);
+    GsSetRefView2L(struct.rview2_00);
     this.FUN_800d2fa8();
     this.FUN_800d3fc8();
 
