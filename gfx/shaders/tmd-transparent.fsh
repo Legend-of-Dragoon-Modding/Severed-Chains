@@ -7,10 +7,11 @@ flat in float vertBpp;
 smooth in vec4 vertColour;
 flat in float vertFlags;
 
+uniform vec3 recolour;
+uniform sampler2D tex;
+
 layout(location = 0) out vec4 accum;
 layout(location = 1) out float reveal;
-
-uniform sampler2D tex;
 
 //TODO handle more flags
 
@@ -54,10 +55,7 @@ void main() {
     colour *= texColour;
   }
 
-  // Vertex colour
-  if((flags & 0x4) != 0) {
-    colour *= vertColour;
-  }
+  colour.rgb *= recolour;
 
   if((flags & 0x8) != 0) { // (B+F)/2 translucency
     colour.a = 0.5;

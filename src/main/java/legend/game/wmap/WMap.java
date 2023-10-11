@@ -2,6 +2,7 @@ package legend.game.wmap;
 
 import legend.core.IoHelper;
 import legend.core.MathHelper;
+import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
@@ -22,8 +23,8 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedShortRef;
-import legend.core.opengl.Obj;
 import legend.core.opengl.ObjLoader;
+import legend.core.opengl.QuadBuilder;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
 import legend.game.input.Input;
@@ -450,7 +451,7 @@ public class WMap extends EngineState {
         GsGetLws(dobj2.coord2_04, lw, ls);
         GsSetLightMatrix(lw);
         GTE.setTransforms(ls);
-        Renderer.renderDobj2(dobj2, false, 0);
+        Renderer.renderDobj2(dobj2, false, 0); //TODO remove
 
         if(dobj2.obj != null) {
           RENDERER.queueModel(dobj2.obj, lw);
@@ -546,7 +547,7 @@ public class WMap extends EngineState {
       }
 
       //LAB_800cc970
-      this.wmapStruct258_800c66a8.colour_20 -= 0x20 / (3.0f / vsyncMode_8007a3b8);
+      this.wmapStruct258_800c66a8.colour_20 -= 0.25f / (3.0f / vsyncMode_8007a3b8);
       if(this.wmapStruct258_800c66a8.colour_20 < 0.0f) {
         this.wmapStruct258_800c66a8.colour_20 = 0.0f;
       }
@@ -762,7 +763,12 @@ public class WMap extends EngineState {
     switch(this.worldMapState_800c6698) {
       case 2 -> {
         if((this.filesLoadedFlags_800c66b8.get() & 0x2) != 0 && (this.filesLoadedFlags_800c66b8.get() & 0x4) != 0) { // World map textures and mesh loaded
-          this.wmapStruct258_800c66a8.mapObjs = ObjLoader.fromTmd(this.wmapStruct258_800c66a8.tmdRendering_08.tmd_14.tmd);
+          for(int i = 0; i < this.wmapStruct258_800c66a8.tmdRendering_08.dobj2s_00.length; i++) {
+            //LAB_800e3d44
+            this.wmapStruct258_800c66a8.tmdRendering_08.dobj2s_00[i].tmd_08 = this.wmapStruct258_800c66a8.tmdRendering_08.tmd_14.tmd.objTable[i];
+            this.wmapStruct258_800c66a8.tmdRendering_08.dobj2s_00[i].obj = ObjLoader.fromObjTable(this.wmapStruct258_800c66a8.tmdRendering_08.dobj2s_00[i].tmd_08);
+          }
+
           this.worldMapState_800c6698 = 3;
         }
       }
@@ -775,21 +781,11 @@ public class WMap extends EngineState {
 
       case 4 -> this.worldMapState_800c6698 = 5;
 
-      case 5 -> {
-        this.renderWorldMap();
-
-        for(final Obj obj : this.wmapStruct258_800c66a8.mapObjs) {
-          RENDERER.queueModel(obj);
-        }
-      }
+      case 5 -> this.renderWorldMap();
 
       case 6 -> this.worldMapState_800c6698 = 7;
 
       case 7 -> {
-        for(final Obj obj : this.wmapStruct258_800c66a8.mapObjs) {
-          obj.delete();
-        }
-
         this.deallocateWorldMap();
         this.worldMapState_800c6698 = 0;
       }
@@ -848,6 +844,20 @@ public class WMap extends EngineState {
 
   @Method(0x800cd278L)
   private void deallocate() {
+    if(this.wmapStruct258_800c66a8.mapOverlayObj != null) {
+      this.wmapStruct258_800c66a8.mapOverlayObj.delete();
+    }
+
+    for(int intersectionSymbolIndex = 0; intersectionSymbolIndex < 3; intersectionSymbolIndex++) {
+      for(int intersectionStateIndex = 0; intersectionStateIndex < 3; intersectionStateIndex++) {
+        if(this.mapState_800c6798.pathBigDotObjs[intersectionStateIndex][intersectionStateIndex] != null) {
+          this.mapState_800c6798.pathBigDotObjs[intersectionStateIndex][intersectionStateIndex].delete();
+        }
+      }
+    }
+
+    this.mapState_800c6798.pathSmallDotObj.delete();
+
     this.deallocateWorldMap();
     this.unloadWmapPlayerModels();
     this.FUN_800e7888();
@@ -2387,10 +2397,6 @@ public class WMap extends EngineState {
   /** Loads general world map stuff (location text, doors, buttons, etc.), several blobs that may be smoke?, tons of terrain and terrain sprites */
   @Method(0x800d5858L)
   private void timsLoaded(final List<FileData> files, final int fileFlag) {
-    if(fileFlag == 0x2) {
-      this.wmapStruct258_800c66a8.mapTims = files.stream().map(Tim::new).toList();
-    }
-
     //LAB_800d5874
     for(final FileData file : files) {
       //LAB_800d5898
@@ -2662,21 +2668,28 @@ public class WMap extends EngineState {
       return;
     }
 
+    if(this.wmapStruct258_800c66a8.mapOverlayObj == null) {
+      this.wmapStruct258_800c66a8.mapOverlayObj = new QuadBuilder()
+        .bpp(Bpp.BITS_4)
+        .clut(640, 497)
+        .vramPos(640, 256)
+        .pos(GPU.getOffsetX() - 144.0f, GPU.getOffsetY() - 104.0f, 0.0f)
+        .size(128.0f, 24.0f)
+        .uv(128.0f, this.mapState_800c6798.continentIndex_00 * 24.0f)
+        .build();
+    }
+
     //LAB_800d6950
     // Continent name
-    GPU.queueCommand(13, new GpuCommandQuad()
-      .bpp(Bpp.BITS_4)
-      .monochrome(this.wmapStruct258_800c66a8.colour_20)
-      .clut(640, 497)
-      .vramPos(640, 256)
-      .pos(-144, -104, 128, 24)
-      .uv(128, this.mapState_800c6798.continentIndex_00 * 24)
-    );
+    final float scale = RENDERER.window().getWidth() / 420.0f;
+    this.wmapStruct258_800c66a8.mapOverlayTransforms.scaling(scale, scale, 1.0f);
+    RENDERER.queueOrthoModel(this.wmapStruct258_800c66a8.mapOverlayObj, this.wmapStruct258_800c66a8.mapOverlayTransforms)
+      .monochrome(this.wmapStruct258_800c66a8.colour_20);
 
-    this.wmapStruct258_800c66a8.colour_20 += 0.125f / (3.0f / vsyncMode_8007a3b8);
+    this.wmapStruct258_800c66a8.colour_20 += 0.25f / (3.0f / vsyncMode_8007a3b8);
 
-    if(this.wmapStruct258_800c66a8.colour_20 > 0.5f) {
-      this.wmapStruct258_800c66a8.colour_20 = 0.5f;
+    if(this.wmapStruct258_800c66a8.colour_20 > 1.0f) {
+      this.wmapStruct258_800c66a8.colour_20 = 1.0f;
     }
 
     //LAB_800d6b5c
@@ -2811,10 +2824,11 @@ public class WMap extends EngineState {
 
   @Method(0x800d7a34L)
   private void renderPath() {
-    float sx = 0.0f;
-    float sy = 0.0f;
-
     if(this.worldMapState_800c6698 < 4 || this.playerState_800c669c < 4) {
+      return;
+    }
+
+    if(this.mapState_800c6798.locationCount_08 == 0) {
       return;
     }
 
@@ -2841,24 +2855,23 @@ public class WMap extends EngineState {
       intersectionSymbolIndex = 0; //TODO this was uninitialized in the code
     }
 
-    final MV lsTransform = new MV();
     final Vector3f intersectionPoint = new Vector3f();
 
     //LAB_800d7b84
     final int intersectionStateIndex = (int)(tickCount_800bb0fc.get() / 5 / (3.0f / vsyncMode_8007a3b8) % 3);
-
-    final int u = pathIntersectionSymbolMetrics_800ef170.get(intersectionSymbolIndex).get(intersectionStateIndex).u_00.get();
-    final int v = pathIntersectionSymbolMetrics_800ef170.get(intersectionSymbolIndex).get(intersectionStateIndex).v_01.get();
-    final int w = pathIntersectionSymbolMetrics_800ef170.get(intersectionSymbolIndex).get(intersectionStateIndex).w_02.get();
-    final int h = pathIntersectionSymbolMetrics_800ef170.get(intersectionSymbolIndex).get(intersectionStateIndex).h_03.get();
 
     final float x = this.wmapStruct258_800c66a8.coord2_34.coord.transfer.x;
     final float y = this.wmapStruct258_800c66a8.coord2_34.coord.transfer.y;
     final float z = this.wmapStruct258_800c66a8.coord2_34.coord.transfer.z;
 
     this.rotateCoord2(this.wmapStruct258_800c66a8.tmdRendering_08.rotations_08[0], this.wmapStruct258_800c66a8.tmdRendering_08.coord2s_04[0]);
-    GsGetLs(this.wmapStruct258_800c66a8.tmdRendering_08.coord2s_04[0], lsTransform);
-    GTE.setTransforms(lsTransform);
+
+    final MV lw = new MV();
+    final MV ls = new MV();
+    GsGetLws(this.wmapStruct258_800c66a8.tmdRendering_08.coord2s_04[0], lw, ls);
+    GTE.setTransforms(ls);
+
+    final MV transforms = new MV();
 
     //LAB_800d7d6c
     for(int i = 0; i < this.mapState_800c6798.locationCount_08; i++) {
@@ -2866,47 +2879,25 @@ public class WMap extends EngineState {
       if(this.FUN_800eb09c(i, 1, intersectionPoint) == 0) {
         //LAB_800d7db4
         if(this.mapState_800c6798.continentIndex_00 != 7 || i == 31 || i == 78) {
+          transforms.set(lw)
+            .rotateLocalX(-MathHelper.PI / 2.0f)
+            .scale(0.5f);
+          transforms.transfer.add(intersectionPoint).y -= 1.0f;
+
+          final RenderEngine.QueuedModel model = RENDERER.queueModel(this.mapState_800c6798.pathBigDotObjs[intersectionSymbolIndex][intersectionStateIndex], transforms);
+
           //LAB_800d7df0
-          GTE.perspectiveTransform(intersectionPoint);
+          if(this.wmapStruct258_800c66a8.zoomState_1f8 == 0) {
+            final float dx = x - intersectionPoint.x;
+            final float dy = y - intersectionPoint.y;
+            final float dz = z - intersectionPoint.z;
+            final float sp90 = Math.max(0, 0x200 - Math.sqrt(dx * dx + dy * dy + dz * dz)) / 2;
 
-          sx = GTE.getScreenX(2);
-          sy = GTE.getScreenY(2);
-          final float sz = GTE.getScreenZ(3) / 4.0f;
-
-          if(sz >= 4 && sz < orderingTableSize_1f8003c8.get()) {
-            final GpuCommandPoly cmd = new GpuCommandPoly(4)
-              .bpp(Bpp.BITS_4)
-              .translucent(Translucency.B_PLUS_F)
-              .clut(640, 496)
-              .vramPos(640, 256);
-
-            if(this.wmapStruct258_800c66a8.zoomState_1f8 == 0) {
-              final float dx = x - intersectionPoint.x;
-              final float dy = y - intersectionPoint.y;
-              final float dz = z - intersectionPoint.z;
-              final float sp90 = Math.max(0, 0x200 - Math.sqrt(dx * dx + dy * dy + dz * dz)) / 2;
-              cmd.rgb((int)(sp90 * 31 / 256), (int)(sp90 * 63 / 256), 0);
-            } else {
-              //LAB_800d8048
-              cmd.rgb(31, 63, 0);
-            }
-
-            //LAB_800d806c
-            final float leftX = sx - (w >>> 2);
-            final float bottomY = sy - (h >>> 2);
-            cmd
-              .uv(0, u, v)
-              .uv(1, u + w, v)
-              .uv(2, u, v + h)
-              .uv(3, u + w, v + h)
-              .pos(0, leftX, bottomY)
-              .pos(1, leftX + (w >>> 1), bottomY)
-              .pos(2, leftX, bottomY + (h >>> 1))
-              .pos(3, leftX + (w >>> 1), bottomY + (h >>> 1));
-
-            GPU.queueCommand(10 + sz, cmd);
+            model.colour(sp90 * 31 / 256 / 64.0f, sp90 * 63 / 256 / 64.0f, 0.0f);
+          } else {
+            //LAB_800d8048
+            model.colour(31 / 64.0f, 63 / 64.0f, 0.0f);
           }
-          //LAB_800d84b0
         }
       }
       //LAB_800d84c0
@@ -2945,57 +2936,25 @@ public class WMap extends EngineState {
                 pathPoint = pathPoints.get(pathPointIndexBase - pathPointIndex);
               }
 
+              transforms.set(lw)
+                .rotateLocalX(-MathHelper.PI / 2.0f)
+                .scale(0.25f);
+              transforms.transfer.add(pathPoint.getX(), pathPoint.getY(), pathPoint.getZ()).y -= 1.0f;
+
+              final RenderEngine.QueuedModel model = RENDERER.queueModel(this.mapState_800c6798.pathSmallDotObj, transforms);
+
               //LAB_800d87fc
-              GTE.perspectiveTransform(pathPoint);
+              if(zoomState == 0) {
+                final float dx = x - pathPoint.getX();
+                final float dy = y - pathPoint.getY();
+                final float dz = z - pathPoint.getZ();
+                final float sp90 = Math.max(0, 0x200 - Math.sqrt(dx * dx + dy * dy + dz * dz)) / 2.0f;
 
-              final float sx2 = GTE.getScreenX(2);
-              final float sy2 = GTE.getScreenY(2);
-              final float screenZ = GTE.getScreenZ(3) / 4.0f;
-
-              if(screenZ >= 4 && screenZ < orderingTableSize_1f8003c8.get()) {
-                final GpuCommandPoly cmd = new GpuCommandPoly(4)
-                  .bpp(Bpp.BITS_4)
-                  .translucent(Translucency.B_PLUS_F)
-                  .clut(640, 496)
-                  .vramPos(640, 256);
-
-                if(zoomState == 0) {
-                  final float dx = x - pathPoint.getX();
-                  final float dy = y - pathPoint.getY();
-                  final float dz = z - pathPoint.getZ();
-                  final float sp90 = Math.max(0, 0x200 - Math.sqrt(dx * dx + dy * dy + dz * dz)) / 2.0f;
-
-                  cmd
-                    .rgb(Math.round(sp90 * 47 / 256), Math.round(sp90 * 39 / 256), 0)
-                    .pos(0, sx - 2, sy - 2)
-                    .pos(1, sx + 2, sy - 2)
-                    .pos(2, sx - 2, sy + 2)
-                    .pos(3, sx + 2, sy + 2)
-                    .uv(0, 48, 0)
-                    .uv(1, 63, 0)
-                    .uv(2, 48, 15)
-                    .uv(3, 63, 15);
-                } else {
-                  //LAB_800d8b40
-                  cmd
-                    .rgb(0x2f, 0x27, 0)
-                    .pos(0, sx - 1, sy - 1)
-                    .pos(1, sx + 2, sy - 2)
-                    .pos(2, sx - 1, sy + 2)
-                    .pos(3, sx + 2, sy + 2)
-                    .uv(0, 16, 24)
-                    .uv(1, 23, 24)
-                    .uv(2, 16, 31)
-                    .uv(3, 23, 31);
-                }
-
-                //LAB_800d8c64
-                sx = sx2;
-                sy = sy2;
-
-                GPU.queueCommand(10 + screenZ, cmd);
+                model.colour(sp90 * 47 / 256 / 64.0f, sp90 * 39 / 256 / 64.0f, 0.0f);
+              } else {
+                //LAB_800d8b40
+                model.colour(0x2f / 64.0f, 0x27 / 64.0f, 0.0f);
               }
-              //LAB_800d8cb8
             }
           }
         }
@@ -3116,6 +3075,7 @@ public class WMap extends EngineState {
       GsSetLightMatrix(lightMatrix);
       GTE.setTransforms(rotTransMatrix);
 
+      //TODO remove
       if(this.mapState_800c6798.continentIndex_00 < 9 && i == 0) {
         this.tempZ_800c66d8 = orderingTableSize_1f8003c8.get() - 3;
         this.renderSpecialDobj2(dobj2); // water
@@ -3126,6 +3086,8 @@ public class WMap extends EngineState {
         //LAB_800d93c8
         renderDobj2(dobj2);
       }
+
+      RENDERER.queueModel(dobj2.obj, lightMatrix);
 
       //LAB_800d93d4
     }
@@ -3889,6 +3851,10 @@ public class WMap extends EngineState {
   @Method(0x800dcde8L)
   private void deallocateWorldMap() {
     this.wmapStruct258_800c66a8.coolonTravelMenuSelectorHighlight_1fc = null;
+
+    for(final ModelPart10 part : this.wmapStruct258_800c66a8.tmdRendering_08.dobj2s_00) {
+      part.obj.delete();
+    }
   }
 
   @Method(0x800dce64L)
@@ -5685,6 +5651,35 @@ public class WMap extends EngineState {
       this.mapState_800c6798.submapScene_c6 = 17;
       locationIndex = 5;
     }
+
+    for(int intersectionSymbolIndex = 0; intersectionSymbolIndex < 3; intersectionSymbolIndex++) {
+      for(int intersectionStateIndex = 0; intersectionStateIndex < 3; intersectionStateIndex++) {
+        final int u = pathIntersectionSymbolMetrics_800ef170.get(intersectionSymbolIndex).get(intersectionStateIndex).u_00.get();
+        final int v = pathIntersectionSymbolMetrics_800ef170.get(intersectionSymbolIndex).get(intersectionStateIndex).v_01.get();
+        final int w = pathIntersectionSymbolMetrics_800ef170.get(intersectionSymbolIndex).get(intersectionStateIndex).w_02.get();
+        final int h = pathIntersectionSymbolMetrics_800ef170.get(intersectionSymbolIndex).get(intersectionStateIndex).h_03.get();
+
+        this.mapState_800c6798.pathBigDotObjs[intersectionSymbolIndex][intersectionStateIndex] = new QuadBuilder()
+          .bpp(Bpp.BITS_4)
+          .translucency(Translucency.B_PLUS_F)
+          .clut(640, 496)
+          .vramPos(640, 256)
+          .pos(-w / 2.0f, -h / 2.0f, 0.0f)
+          .size(w, h)
+          .uv(u, v)
+          .build();
+      }
+    }
+
+    this.mapState_800c6798.pathSmallDotObj = new QuadBuilder()
+      .bpp(Bpp.BITS_4)
+      .translucency(Translucency.B_PLUS_F)
+      .clut(640, 496)
+      .vramPos(640, 256)
+      .pos(-8.0f, -8.0f, 0.0f)
+      .size(16.0f, 16.0f)
+      .uv(48.0f, 0.0f)
+      .build();
 
     //LAB_800e7cb8
     //LAB_800e7cbc

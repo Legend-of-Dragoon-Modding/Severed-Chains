@@ -19,20 +19,20 @@ public final class ObjLoader {
 
   private static final Logger LOGGER = LogManager.getFormatterLogger();
 
-  private static final int POS_SIZE = 3;
-  private static final int NORM_SIZE = 3;
-  private static final int UV_SIZE = 2;
-  private static final int COLOUR_SIZE = 4;
+  public static final int POS_SIZE = 3;
+  public static final int NORM_SIZE = 3;
+  public static final int UV_SIZE = 2;
+  public static final int COLOUR_SIZE = 4;
   //TODO this isn't great, clut/tpage is only set per face, but we're uploading it per vertex
-  private static final int TPAGE_SIZE = 2;
-  private static final int CLUT_SIZE = 2;
-  private static final int BPP_SIZE = 1;
-  private static final int FLAGS_SIZE = 1;
+  public static final int TPAGE_SIZE = 2;
+  public static final int CLUT_SIZE = 2;
+  public static final int BPP_SIZE = 1;
+  public static final int FLAGS_SIZE = 1;
 
-  private static final int LIT_FLAG = 0x1;
-  private static final int TEXTURED_FLAG = 0x2;
-  private static final int COLOURED_FLAG = 0x4;
-  private static final int TRANSLUCENCY_FLAG = 0x8;
+  public static final int LIT_FLAG = 0x1;
+  public static final int TEXTURED_FLAG = 0x2;
+  public static final int COLOURED_FLAG = 0x4;
+  public static final int TRANSLUCENCY_FLAG = 0x8;
 
   public static Obj[] fromTmd(final Tmd tmd) {
     return fromTmd(tmd, 0);

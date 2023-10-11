@@ -1,13 +1,11 @@
 package legend.game.wmap;
 
 import legend.core.gte.GsCOORDINATE2;
+import legend.core.gte.MV;
 import legend.core.opengl.Obj;
-import legend.game.tim.Tim;
 import legend.game.types.Model124;
 import legend.game.unpacker.FileData;
 import org.joml.Vector3f;
-
-import java.util.List;
 
 public class WMapStruct258 {
   public int _00;
@@ -17,12 +15,12 @@ public class WMapStruct258 {
   public int _05;
 
   public WMapTmdRenderingStruct18 tmdRendering_08;
-  public Obj[] mapObjs;
-  public List<Tim> mapTims;
   public final Model124[] models_0c = new Model124[4];
   public TextureAnimation20 textureAnimation_1c;
   /** short */
   public float colour_20;
+  public Obj mapOverlayObj;
+  public final MV mapOverlayTransforms = new MV();
 
   public WMapAtmosphericEffectInstance60[] _24;
   public float clutYIndex_28;

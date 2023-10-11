@@ -1,5 +1,6 @@
 package legend.game.wmap;
 
+import legend.core.opengl.Obj;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
@@ -36,6 +37,9 @@ public class MapState100 {
   public int dotIndex_16;
   /** The distance the player is from the dot (range: 0-3) (800c67b0) */
   public float dotOffset_18;
+
+  public final Obj[][] pathBigDotObjs = new Obj[3][3];
+  public Obj pathSmallDotObj;
 
   /** +1 - left, -1 - right (800c67b4) */
   public int facing_1c;
