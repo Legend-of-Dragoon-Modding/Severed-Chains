@@ -1,6 +1,6 @@
 package legend.core.gte;
 
-import legend.core.opengl.Obj;
+import legend.core.opengl.MeshObj;
 
 public class ModelPart10 {
   /** perspective, translation, rotate, display */
@@ -8,7 +8,7 @@ public class ModelPart10 {
   /** local dmatrix */
   public GsCOORDINATE2 coord2_04;
   public TmdObjTable1c tmd_08;
-  public Obj obj;
+  public MeshObj obj;
 
   public ModelPart10 set(final ModelPart10 other) {
     this.attribute_00 = other.attribute_00;

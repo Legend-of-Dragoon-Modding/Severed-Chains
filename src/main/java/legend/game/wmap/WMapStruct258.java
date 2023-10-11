@@ -2,7 +2,7 @@ package legend.game.wmap;
 
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
-import legend.core.opengl.Obj;
+import legend.core.opengl.MeshObj;
 import legend.game.types.Model124;
 import legend.game.unpacker.FileData;
 import org.joml.Vector3f;
@@ -19,7 +19,7 @@ public class WMapStruct258 {
   public TextureAnimation20 textureAnimation_1c;
   /** short */
   public float colour_20;
-  public Obj mapOverlayObj;
+  public MeshObj mapOverlayObj;
   public final MV mapOverlayTransforms = new MV();
 
   public WMapAtmosphericEffectInstance60[] _24;

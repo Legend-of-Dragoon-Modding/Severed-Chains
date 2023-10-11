@@ -341,7 +341,7 @@ public class RenderEngine {
 
         entry.obj.render(null);
 
-        for(final Translucency translucency : Translucency.values()) {
+        for(final Translucency translucency : Translucency.FOR_RENDERING) {
           entry.obj.render(translucency);
         }
       }
@@ -408,7 +408,7 @@ public class RenderEngine {
     this.tmdShaderTransparent.use();
     GPU.useVramTexture();
 
-    for(final Translucency translucency : Translucency.values()) {
+    for(final Translucency translucency : Translucency.FOR_RENDERING) {
 //        switch(translucency) {
 //          case HALF_B_PLUS_HALF_F ->
 //            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

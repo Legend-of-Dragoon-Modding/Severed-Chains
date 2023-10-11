@@ -6,14 +6,14 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
-import static legend.core.opengl.ObjLoader.BPP_SIZE;
-import static legend.core.opengl.ObjLoader.CLUT_SIZE;
-import static legend.core.opengl.ObjLoader.COLOUR_SIZE;
-import static legend.core.opengl.ObjLoader.FLAGS_SIZE;
-import static legend.core.opengl.ObjLoader.NORM_SIZE;
-import static legend.core.opengl.ObjLoader.POS_SIZE;
-import static legend.core.opengl.ObjLoader.TPAGE_SIZE;
-import static legend.core.opengl.ObjLoader.UV_SIZE;
+import static legend.core.opengl.TmdObjLoader.BPP_SIZE;
+import static legend.core.opengl.TmdObjLoader.CLUT_SIZE;
+import static legend.core.opengl.TmdObjLoader.COLOUR_SIZE;
+import static legend.core.opengl.TmdObjLoader.FLAGS_SIZE;
+import static legend.core.opengl.TmdObjLoader.NORM_SIZE;
+import static legend.core.opengl.TmdObjLoader.POS_SIZE;
+import static legend.core.opengl.TmdObjLoader.TPAGE_SIZE;
+import static legend.core.opengl.TmdObjLoader.UV_SIZE;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class QuadBuilder {
@@ -50,71 +50,71 @@ public class QuadBuilder {
 
   public QuadBuilder uv(final Vector2f uv) {
     this.uv.set(uv);
-    this.flags |= ObjLoader.TEXTURED_FLAG;
+    this.flags |= TmdObjLoader.TEXTURED_FLAG;
     return this;
   }
 
   public QuadBuilder uv(final float u, final float v) {
     this.uv.set(u, v);
-    this.flags |= ObjLoader.TEXTURED_FLAG;
+    this.flags |= TmdObjLoader.TEXTURED_FLAG;
     return this;
   }
 
   public QuadBuilder vramPos(final Vector2i vramPos) {
     this.vramPos.set(vramPos);
-    this.flags |= ObjLoader.TEXTURED_FLAG;
+    this.flags |= TmdObjLoader.TEXTURED_FLAG;
     return this;
   }
 
   public QuadBuilder vramPos(final int x, final int y) {
     this.vramPos.set(x, y);
-    this.flags |= ObjLoader.TEXTURED_FLAG;
+    this.flags |= TmdObjLoader.TEXTURED_FLAG;
     return this;
   }
 
   public QuadBuilder clut(final Vector2i clut) {
     this.clut.set(clut);
-    this.flags |= ObjLoader.TEXTURED_FLAG;
+    this.flags |= TmdObjLoader.TEXTURED_FLAG;
     return this;
   }
 
   public QuadBuilder clut(final int x, final int y) {
     this.clut.set(x, y);
-    this.flags |= ObjLoader.TEXTURED_FLAG;
+    this.flags |= TmdObjLoader.TEXTURED_FLAG;
     return this;
   }
 
   public QuadBuilder rgb(final Vector3f colour) {
     this.colour.set(colour);
-    this.flags |= ObjLoader.COLOURED_FLAG;
+    this.flags |= TmdObjLoader.COLOURED_FLAG;
     return this;
   }
 
   public QuadBuilder rgb(final float r, final float g, final float b) {
     this.colour.set(r, g, b);
-    this.flags |= ObjLoader.COLOURED_FLAG;
+    this.flags |= TmdObjLoader.COLOURED_FLAG;
     return this;
   }
 
   public QuadBuilder monochrome(final float shade) {
     this.colour.set(shade);
-    this.flags |= ObjLoader.COLOURED_FLAG;
+    this.flags |= TmdObjLoader.COLOURED_FLAG;
     return this;
   }
 
   public QuadBuilder bpp(final Bpp bpp) {
     this.bpp = bpp;
-    this.flags |= ObjLoader.TEXTURED_FLAG;
+    this.flags |= TmdObjLoader.TEXTURED_FLAG;
     return this;
   }
 
   public QuadBuilder translucency(final Translucency translucency) {
     this.translucency = translucency;
-    this.flags |= ObjLoader.TRANSLUCENCY_FLAG << translucency.ordinal();
+    this.flags |= TmdObjLoader.TRANSLUCENCY_FLAG << translucency.ordinal();
     return this;
   }
 
-  public Obj build() {
+  public MeshObj build() {
     final float x0 = this.pos.x;
     final float y0 = this.pos.y;
     final float x1 = x0 + this.size.x;
@@ -188,6 +188,6 @@ public class QuadBuilder {
       meshes[this.translucency.ordinal() + 1] = mesh;
     }
 
-    return new Obj(meshes);
+    return new MeshObj(meshes);
   }
 }

@@ -55,6 +55,7 @@ public class Gpu {
   private final int[] vram15 = new int[this.vramWidth * this.vramHeight];
 
   private Texture vramTexture;
+  private boolean vramDirty;
 
   private Shader vramShader;
   private Shader.UniformVec4 vramShaderColour;
@@ -152,7 +153,10 @@ public class Gpu {
   }
 
   public void startFrame() {
-    this.vramTexture.data(0, 0, 1024, 512, this.vram24);
+    if(this.vramDirty) {
+      this.vramTexture.data(0, 0, 1024, 512, this.vram24);
+      this.vramDirty = false;
+    }
 
     if(this.zMax != orderingTableSize_1f8003c8.get()) {
       this.updateOrderingTableSize(orderingTableSize_1f8003c8.get());
@@ -271,6 +275,8 @@ public class Gpu {
           i += 2;
         }
       }
+
+      this.vramDirty = true;
     });
   }
 
@@ -301,6 +307,8 @@ public class Gpu {
         i += 2;
       }
     }
+
+    this.vramDirty = true;
   }
 
   public void uploadData(final RECT rect, final short[] data) {
@@ -321,6 +329,8 @@ public class Gpu {
         i++;
       }
     }
+
+    this.vramDirty = true;
   }
 
   public void uploadData(final Rect4i rect, final int[] data) {
@@ -341,6 +351,8 @@ public class Gpu {
         i++;
       }
     }
+
+    this.vramDirty = true;
   }
 
   public void commandC0CopyRectFromVramToCpu(final RECT rect, final FileData out) {
@@ -385,6 +397,8 @@ public class Gpu {
         this.setVramPixel(destX + x, destY + y, colour24, colour15);
       }
     }
+
+    this.vramDirty = true;
   }
 
   public void queueCommand(final float z, final GpuCommand command) {

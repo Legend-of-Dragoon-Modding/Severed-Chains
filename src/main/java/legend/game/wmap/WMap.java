@@ -23,8 +23,8 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedShortRef;
-import legend.core.opengl.ObjLoader;
 import legend.core.opengl.QuadBuilder;
+import legend.core.opengl.TmdObjLoader;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
 import legend.game.input.Input;
@@ -89,7 +89,6 @@ import static legend.game.Scus94491BpeSegment_8002.isTextboxInState6;
 import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.rand;
-import static legend.game.Scus94491BpeSegment_8002.renderDobj2;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.strcmp;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
@@ -98,7 +97,6 @@ import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
-import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
 import static legend.game.Scus94491BpeSegment_8003.StoreImage;
@@ -766,7 +764,7 @@ public class WMap extends EngineState {
           for(int i = 0; i < this.wmapStruct258_800c66a8.tmdRendering_08.dobj2s_00.length; i++) {
             //LAB_800e3d44
             this.wmapStruct258_800c66a8.tmdRendering_08.dobj2s_00[i].tmd_08 = this.wmapStruct258_800c66a8.tmdRendering_08.tmd_14.tmd.objTable[i];
-            this.wmapStruct258_800c66a8.tmdRendering_08.dobj2s_00[i].obj = ObjLoader.fromObjTable(this.wmapStruct258_800c66a8.tmdRendering_08.dobj2s_00[i].tmd_08);
+            this.wmapStruct258_800c66a8.tmdRendering_08.dobj2s_00[i].obj = TmdObjLoader.fromObjTable(this.wmapStruct258_800c66a8.tmdRendering_08.dobj2s_00[i].tmd_08);
           }
 
           this.worldMapState_800c6698 = 3;
@@ -809,7 +807,7 @@ public class WMap extends EngineState {
         // Init OpenGL models
         for(int i = 0; i < 4; i++) {
           for(final ModelPart10 part : this.wmapStruct258_800c66a8.models_0c[i].modelParts_00) {
-            part.obj = ObjLoader.fromObjTable(part.tmd_08);
+            part.obj = TmdObjLoader.fromObjTable(part.tmd_08);
           }
         }
 
@@ -1806,7 +1804,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d2ec4
-    GsSetRefView2L(struct.rview2_00);
+//    GsSetRefView2L(struct.rview2_00);
     this.FUN_800d2fa8();
     this.FUN_800d3fc8();
 
@@ -3084,7 +3082,7 @@ public class WMap extends EngineState {
       } else {
         //LAB_800d93b4
         //LAB_800d93c8
-        renderDobj2(dobj2);
+//        renderDobj2(dobj2);
       }
 
       RENDERER.queueModel(dobj2.obj, lightMatrix);

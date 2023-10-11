@@ -27,6 +27,8 @@ public enum Translucency {
   TQUARTER_B_TQUARTER_F,
   ;
 
+  public static final Translucency[] FOR_RENDERING = {HALF_B_PLUS_HALF_F, B_PLUS_F, B_MINUS_F};
+
   /** NOTE: returns null if value is -1 */
   @Nonnull
   public static Translucency of(final int value) {

@@ -14,8 +14,8 @@ import org.joml.Vector3f;
 import static legend.game.Scus94491BpeSegment.tmdGp0CommandId_1f8003ee;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
-public final class ObjLoader {
-  private ObjLoader() { }
+public final class TmdObjLoader {
+  private TmdObjLoader() { }
 
   private static final Logger LOGGER = LogManager.getFormatterLogger();
 
@@ -48,11 +48,11 @@ public final class ObjLoader {
     return objs;
   }
 
-  public static Obj fromObjTable(final TmdObjTable1c objTable) {
+  public static MeshObj fromObjTable(final TmdObjTable1c objTable) {
     return fromObjTable(objTable, 0);
   }
 
-  public static Obj fromObjTable(final TmdObjTable1c objTable, final int specialFlags) {
+  public static MeshObj fromObjTable(final TmdObjTable1c objTable, final int specialFlags) {
     final int translucencyCount = Translucency.values().length + 1;
     final float[][] allVertices = new float[translucencyCount][];
     final int[][] allIndices = new int[translucencyCount][];
@@ -283,7 +283,7 @@ public final class ObjLoader {
       }
     }
 
-    return new Obj(meshes);
+    return new MeshObj(meshes);
   }
 
   private static void getTranslucencySizes(final TmdObjTable1c objTable, final int specialFlags, final float[][] vertices, final int[][] indices) {
