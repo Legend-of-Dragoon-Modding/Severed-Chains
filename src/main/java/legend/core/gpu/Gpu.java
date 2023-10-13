@@ -33,8 +33,11 @@ import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_RGBA;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
+import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11C.glDisable;
 import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8_REV;
+import static org.lwjgl.opengl.GL30C.GL_R32UI;
+import static org.lwjgl.opengl.GL30C.GL_RED_INTEGER;
 
 public class Gpu {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
@@ -54,7 +57,8 @@ public class Gpu {
   private final int[] vram24 = new int[this.vramWidth * this.vramHeight];
   private final int[] vram15 = new int[this.vramWidth * this.vramHeight];
 
-  private Texture vramTexture;
+  private Texture vramTexture15;
+  private Texture vramTexture24;
   private boolean vramDirty;
 
   private Shader vramShader;
@@ -142,7 +146,14 @@ public class Gpu {
     this.vramShader = ShaderManager.getShader("simple");
     this.vramShaderColour = this.vramShader.new UniformVec4("recolour");
 
-    this.vramTexture = Texture.create(builder -> {
+    this.vramTexture15 = Texture.create(builder -> {
+      builder.size(1024, 512);
+      builder.internalFormat(GL_R32UI);
+      builder.dataFormat(GL_RED_INTEGER);
+      builder.dataType(GL_UNSIGNED_INT);
+    });
+
+    this.vramTexture24 = Texture.create(builder -> {
       builder.size(1024, 512);
       builder.internalFormat(GL_RGBA);
       builder.dataFormat(GL_RGBA);
@@ -154,7 +165,8 @@ public class Gpu {
 
   public void startFrame() {
     if(this.vramDirty) {
-      this.vramTexture.data(0, 0, 1024, 512, this.vram24);
+      this.vramTexture15.dataInt(0, 0, 1024, 512, this.vram15);
+      this.vramTexture24.data(0, 0, 1024, 512, this.vram24);
       this.vramDirty = false;
     }
 
@@ -169,11 +181,8 @@ public class Gpu {
   }
 
   public void useVramTexture() {
-    this.vramTexture.use();
-  }
-
-  public void useVramTexture(final int activeTexture) {
-    this.vramTexture.use(activeTexture);
+    this.vramTexture24.use(0);
+    this.vramTexture15.use(1);
   }
 
   private void updateDisplayTexture(final int width, final int height) {

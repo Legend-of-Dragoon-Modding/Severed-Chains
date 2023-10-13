@@ -102,6 +102,7 @@ public class RenderEngine {
   private Shader tmdShader;
   private Shader tmdShaderTransparent;
   private Shader.UniformVec3 tmdShaderColour;
+  private Shader.UniformVec3 tmdShaderTransparentColour;
   private FrameBuffer opaqueFrameBuffer;
   private FrameBuffer transparentFrameBuffer;
   private Texture opaqueTexture;
@@ -218,6 +219,8 @@ public class RenderEngine {
       this.tmdShader.bindUniformBlock("lighting", Shader.UniformBuffer.LIGHTING);
 
       this.tmdShader.use();
+      this.tmdShader.new UniformInt("tex24").set(0);
+      this.tmdShader.new UniformInt("tex15").set(1);
       this.tmdShaderColour = this.tmdShader.new UniformVec3("recolour");
 
       ShaderManager.addShader("tmd", this.tmdShader);
@@ -230,6 +233,12 @@ public class RenderEngine {
       this.tmdShaderTransparent.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
       this.tmdShaderTransparent.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
       this.tmdShaderTransparent.bindUniformBlock("lighting", Shader.UniformBuffer.LIGHTING);
+
+      this.tmdShaderTransparent.use();
+      this.tmdShaderTransparent.new UniformInt("tex24").set(0);
+      this.tmdShaderTransparent.new UniformInt("tex15").set(1);
+      this.tmdShaderTransparentColour = this.tmdShaderTransparent.new UniformVec3("recolour");
+
       ShaderManager.addShader("tmd-transparent", this.tmdShaderTransparent);
     } catch(final IOException e) {
       throw new RuntimeException("Failed to load TMD shader", e);
@@ -440,7 +449,7 @@ public class RenderEngine {
       for(int i = 0; i < pool.size(); i++) {
         final QueuedModel entry = pool.get(i);
         this.transforms2Uniform.set(entry.transforms);
-        this.tmdShaderColour.set(entry.colour);
+        this.tmdShaderTransparentColour.set(entry.colour);
 
         entry.lightDirection.get(this.lightBuffer);
         entry.lightColour.get(16, this.lightBuffer);

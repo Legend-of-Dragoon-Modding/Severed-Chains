@@ -26,6 +26,7 @@ import static org.lwjgl.opengl.GL11C.GL_TEXTURE_MIN_FILTER;
 import static org.lwjgl.opengl.GL11C.GL_TEXTURE_WRAP_S;
 import static org.lwjgl.opengl.GL11C.GL_TEXTURE_WRAP_T;
 import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_BYTE;
+import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11C.glBindTexture;
 import static org.lwjgl.opengl.GL11C.glDeleteTextures;
 import static org.lwjgl.opengl.GL11C.glGenTextures;
@@ -145,6 +146,16 @@ public final class Texture {
   public void data(final int x, final int y, final int w, final int h, final int[] data) {
     this.use();
     glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, this.dataFormat, GL_UNSIGNED_INT_8_8_8_8_REV, data);
+
+    final int error = glGetError();
+    if(error != GL_NO_ERROR) {
+      throw new RuntimeException("Failed to upload data, rect: (" + x + ", " + y + ", " + w + ", " + h + "), glError: " + Long.toString(error, 16));
+    }
+  }
+
+  public void dataInt(final int x, final int y, final int w, final int h, final int[] data) {
+    this.use();
+    glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, this.dataFormat, GL_UNSIGNED_INT, data);
 
     final int error = glGetError();
     if(error != GL_NO_ERROR) {

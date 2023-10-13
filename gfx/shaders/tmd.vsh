@@ -10,8 +10,8 @@ layout(location = 6) in vec4 inColour;
 layout(location = 7) in float inFlags;
 
 smooth out vec2 vertUv;
-smooth out vec2 vertTpage;
-smooth out vec2 vertClut;
+flat out vec2 vertTpage;
+flat out vec2 vertClut;
 flat out float vertBpp;
 smooth out vec4 vertColour;
 flat out float vertFlags;

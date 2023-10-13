@@ -1,14 +1,15 @@
 #version 330 core
 
 smooth in vec2 vertUv;
-smooth in vec2 vertTpage;
-smooth in vec2 vertClut;
+flat in vec2 vertTpage;
+flat in vec2 vertClut;
 flat in float vertBpp;
 smooth in vec4 vertColour;
 flat in float vertFlags;
 
 uniform vec3 recolour;
-uniform sampler2D tex;
+uniform sampler2D tex24;
+uniform usampler2D tex15;
 
 layout(location = 0) out vec4 outColour;
 
@@ -39,17 +40,12 @@ void main() {
 
     // Calculate CLUT index
     ivec2 uv = ivec2(vertTpage.x + vertUv.x / widthDivisor, vertTpage.y + vertUv.y);
-    vec4 indexVec = texelFetch(tex, uv, 0);
-    int r = int(indexVec.r * 31.875);
-    int g = int(indexVec.g * 31.875);
-    int b = int(indexVec.b * 31.875);
-    int a = int(indexVec.a * 0xff);
-    int index = a << 15 | b << 10 | g << 5 | r;
-    int p = (index >> ((int(vertTpage.x + vertUv.x) & widthMask) << indexShift)) & indexMask;
+    ivec4 indexVec = ivec4(texelFetch(tex15, uv, 0));
+    int p = (indexVec.r >> ((int(vertTpage.x + vertUv.x) & widthMask) << indexShift)) & indexMask;
     ivec2 clutUv = ivec2(vertClut.x + p, vertClut.y);
 
     // Pull actual pixel colour from CLUT
-    vec4 texColour = texelFetch(tex, clutUv, 0);
+    vec4 texColour = texelFetch(tex24, clutUv, 0);
 
     // Discard if (0, 0, 0)
     if(texColour.r == 0 && texColour.g == 0 && texColour.b == 0) {
