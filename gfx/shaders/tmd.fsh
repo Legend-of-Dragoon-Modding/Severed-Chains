@@ -38,18 +38,18 @@ void main() {
     int indexMask = int(pow(16, vertBpp + 1) - 1);
 
     // Calculate CLUT index
-    vec2 uv = vec2((vertTpage.x + vertUv.x / widthDivisor) / 1024.0, (vertTpage.y + vertUv.y) / 512.0);
-    vec4 indexVec = texture(tex, uv);
+    ivec2 uv = ivec2(vertTpage.x + vertUv.x / widthDivisor, vertTpage.y + vertUv.y);
+    vec4 indexVec = texelFetch(tex, uv, 0);
     int r = int(indexVec.r * 31.875);
     int g = int(indexVec.g * 31.875);
     int b = int(indexVec.b * 31.875);
     int a = int(indexVec.a * 0xff);
     int index = a << 15 | b << 10 | g << 5 | r;
     int p = (index >> ((int(vertTpage.x + vertUv.x) & widthMask) << indexShift)) & indexMask;
-    vec2 clutUv = vec2((vertClut.x + p) / 1024.0, vertClut.y / 512.0);
+    ivec2 clutUv = ivec2(vertClut.x + p, vertClut.y);
 
     // Pull actual pixel colour from CLUT
-    vec4 texColour = texture(tex, clutUv);
+    vec4 texColour = texelFetch(tex, clutUv, 0);
 
     // Discard if (0, 0, 0)
     if(texColour.r == 0 && texColour.g == 0 && texColour.b == 0) {
