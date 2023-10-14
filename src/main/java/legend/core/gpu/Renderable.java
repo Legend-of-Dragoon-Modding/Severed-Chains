@@ -58,8 +58,8 @@ public class Renderable {
     this.translateX = x;
     this.translateY = y;
 
-    for(final Mesh.Segment segment : this.mesh.segments()) {
-      segment.render(this, z);
+    for(int i = 0; i < this.mesh.segments().length; i++) {
+      this.mesh.segments()[i].render(this, z);
     }
   }
 

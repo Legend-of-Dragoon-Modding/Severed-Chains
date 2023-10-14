@@ -80,7 +80,8 @@ public record Mesh(Segment[] segments) {
     @Override
     public void render(final Renderable renderable, final int offsetZ) {
       outer:
-      for(final Mesh.Poly3d poly : this.polys) {
+      for(int i = 0; i < this.polys.length; i++) {
+        final Poly3d poly = this.polys[i];
         final Vector2f[] vertices = new Vector2f[this.vertexCount];
         final Vector2i[] uvs = new Vector2i[this.vertexCount];
         final int[] colours = new int[this.vertexCount];

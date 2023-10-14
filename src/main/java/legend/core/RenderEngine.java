@@ -96,6 +96,7 @@ public class RenderEngine {
   private final Matrix4f orthographicProjection = new Matrix4f();
   private final Matrix4f transforms = new Matrix4f();
   private final FloatBuffer transformsBuffer = BufferUtils.createFloatBuffer(4 * 4 * 2);
+  private final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer(4 * 4);
   private final FloatBuffer lightBuffer = BufferUtils.createFloatBuffer(4 * 4 * 2 + 4);
 
   // Order-independent translucency
@@ -259,8 +260,7 @@ public class RenderEngine {
 
     this.transformsUniform = new Shader.UniformBuffer((long)this.transformsBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM);
 
-    final FloatBuffer transform2Buffer = BufferUtils.createFloatBuffer(4 * 4);
-    this.transforms2Uniform = ShaderManager.addUniformBuffer("transforms2", new Shader.UniformBuffer((long)transform2Buffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM2));
+    this.transforms2Uniform = ShaderManager.addUniformBuffer("transforms2", new Shader.UniformBuffer((long)this.transforms2Buffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM2));
 
     this.lightUniform = ShaderManager.addUniformBuffer("lighting", new Shader.UniformBuffer((long)this.lightBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.LIGHTING));
 
@@ -354,7 +354,8 @@ public class RenderEngine {
 
       for(int i = 0; i < this.orthoPool.size(); i++) {
         final QueuedModel entry = this.orthoPool.get(i);
-        this.transforms2Uniform.set(entry.transforms);
+        entry.transforms.get(this.transforms2Buffer);
+        this.transforms2Uniform.set(this.transforms2Buffer);
         this.tmdShaderColour.set(entry.colour);
 
         entry.lightDirection.get(this.lightBuffer);
@@ -364,8 +365,8 @@ public class RenderEngine {
 
         entry.obj.render(null);
 
-        for(final Translucency translucency : Translucency.FOR_RENDERING) {
-          entry.obj.render(translucency);
+        for(int translucencyIndex = 0; translucencyIndex < Translucency.FOR_RENDERING.length; translucencyIndex++) {
+          entry.obj.render(Translucency.FOR_RENDERING[translucencyIndex]);
         }
       }
 
@@ -414,7 +415,8 @@ public class RenderEngine {
 
     for(int i = 0; i < pool.size(); i++) {
       final QueuedModel entry = pool.get(i);
-      this.transforms2Uniform.set(entry.transforms);
+      entry.transforms.get(this.transforms2Buffer);
+      this.transforms2Uniform.set(this.transforms2Buffer);
       this.tmdShaderColour.set(entry.colour);
 
       entry.lightDirection.get(this.lightBuffer);
@@ -437,7 +439,9 @@ public class RenderEngine {
     this.tmdShaderTransparent.use();
     GPU.useVramTexture();
 
-    for(final Translucency translucency : Translucency.FOR_RENDERING) {
+    for(int translucencyIndex = 0; translucencyIndex < Translucency.FOR_RENDERING.length; translucencyIndex++) {
+      final Translucency translucency = Translucency.FOR_RENDERING[translucencyIndex];
+
 //        switch(translucency) {
 //          case HALF_B_PLUS_HALF_F ->
 //            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -448,7 +452,8 @@ public class RenderEngine {
 
       for(int i = 0; i < pool.size(); i++) {
         final QueuedModel entry = pool.get(i);
-        this.transforms2Uniform.set(entry.transforms);
+        entry.transforms.get(this.transforms2Buffer);
+        this.transforms2Uniform.set(this.transforms2Buffer);
         this.tmdShaderTransparentColour.set(entry.colour);
 
         entry.lightDirection.get(this.lightBuffer);
