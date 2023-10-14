@@ -42,10 +42,6 @@ public abstract class Segment {
     throw new UnsupportedOperationException("This memory segment does not support direct writes (address: " + Long.toHexString(this.getAddress() + offset) + ')');
   }
 
-  public void memcpy(final int dest, final int src, final int length) {
-    throw new UnsupportedOperationException("This memory segment does not support memcpy (address: " + Long.toHexString(this.getAddress() + dest) + ')');
-  }
-
   public void memfill(final int addr, final int length, final int value) {
     throw new UnsupportedOperationException("This memory segment does not support memcpy (address: " + Long.toHexString(this.getAddress() + addr) + ')');
   }

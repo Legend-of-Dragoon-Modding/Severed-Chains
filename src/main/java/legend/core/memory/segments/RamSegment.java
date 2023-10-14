@@ -67,11 +67,6 @@ public class RamSegment extends Segment {
   }
 
   @Override
-  public void memcpy(final int dest, final int src, final int length) {
-    System.arraycopy(this.data, src, this.data, dest, length);
-  }
-
-  @Override
   public void memfill(final int addr, final int length, final int value) {
     Arrays.fill(this.data, addr, addr + length, (byte)value);
   }

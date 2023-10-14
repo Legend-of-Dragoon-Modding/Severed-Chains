@@ -72,7 +72,9 @@ public class Memory {
   private Segment getSegment(final long address) {
     final long masked = this.maskAddress(address);
 
-    for(final Segment segment : this.segments) {
+    for(int i = 0; i < this.segments.size(); i++) {
+      final Segment segment = this.segments.get(i);
+
       if(segment.accepts(masked)) {
         return segment;
       }
@@ -171,41 +173,6 @@ public class Memory {
       if(watch >= (address & 0xffffff) && watch < (address & 0xffffff) + size) {
         LOGGER.error("%08x set to %x", address & 0xff00_0000L | watch, this.get(address & 0xff00_0000L | watch, 4));
         LOGGER.error(new Throwable());
-      }
-    }
-  }
-
-  public void memcpy(final long dest, final long src, final int length) {
-    if(dest == src || length == 0) {
-      return;
-    }
-
-    synchronized(this.lock) {
-      final Segment srcSegment = this.getSegment(src);
-      Segment destSegment = this.getSegment(dest);
-
-      if(destSegment == srcSegment) {
-        srcSegment.memcpy((int)(this.maskAddress(dest) - srcSegment.getAddress()), (int)(this.maskAddress(src) - srcSegment.getAddress()), length);
-      } else {
-        final byte[] data = srcSegment.getBytes((int)(this.maskAddress(src) - srcSegment.getAddress()), length);
-
-        int offset = 0;
-        while(offset < data.length) {
-          final int copyLen = Math.min(data.length, destSegment.getLength());
-          destSegment.setBytes((int)(this.maskAddress(dest + offset) - destSegment.getAddress()), data, offset, copyLen);
-          offset += copyLen;
-
-          if(offset < data.length) {
-            destSegment = this.getSegment(dest + offset);
-          }
-        }
-      }
-
-      for(final int watch : watches) {
-        if(watch >= (dest & 0xffffff) && watch < (dest & 0xffffff) + length) {
-          LOGGER.error("%08x set to %x", dest & 0xff00_0000L | watch, this.get(dest & 0xff00_0000L | watch, 4));
-          LOGGER.error(new Throwable());
-        }
       }
     }
   }
