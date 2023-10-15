@@ -52,6 +52,7 @@ import legend.game.types.MoonMusic08;
 import legend.game.types.OverlayStruct;
 import legend.game.types.Struct0e;
 import legend.game.types.Struct10;
+import legend.game.types.TextboxBorderMetrics0c;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
@@ -238,8 +239,7 @@ public final class Scus94491BpeSegment {
 
   public static final Value _80010868 = MEMORY.ref(4, 0x80010868L);
 
-  /** TODO 0x60-byte struct */
-  public static final Value _800108b0 = MEMORY.ref(4, 0x800108b0L);
+  public static final ArrayRef<TextboxBorderMetrics0c> textboxBorderMetrics_800108b0 = MEMORY.ref(4, 0x800108b0L, ArrayRef.of(TextboxBorderMetrics0c.class, 8, 0xc, TextboxBorderMetrics0c::new));
 
   public static boolean[] scriptLog = new boolean[0x48];
 

@@ -778,16 +778,16 @@ public class SMap extends EngineState {
     //LAB_80025370
     //LAB_80025374
     if(type == 3) {
-      textboxText._6c = -1;
+      textboxText.selectionIndex_6c = -1;
     }
 
     //LAB_800253a4
     if(type == 4) {
-      textboxText.flags_08 |= 0x200;
+      textboxText.flags_08 |= TextboxText84.HAS_NAME;
     }
 
     //LAB_800253d4
-    textboxText.flags_08 |= 0x1000;
+    textboxText.flags_08 |= TextboxText84.SHOW_ARROW;
     textboxText.chars_58 = new TextboxChar08[textboxText.chars_1c * (textboxText.lines_1e + 1)];
     Arrays.setAll(textboxText.chars_58, i -> new TextboxChar08());
     this.positionSobjTextbox(textboxIndex, script.params_20[1].get());
@@ -797,7 +797,7 @@ public class SMap extends EngineState {
       textbox._3c = textbox.y_16;
       textbox.x_14 = textbox._28;
       textbox.y_16 = textbox._2c;
-      textbox._08 |= 0x2;
+      textbox.flags_08 |= 0x2;
     }
 
     //LAB_80025494
