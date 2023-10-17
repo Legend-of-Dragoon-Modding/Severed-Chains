@@ -74,7 +74,7 @@ import static legend.core.GameEngine.SEQUENCER;
 import static legend.core.GameEngine.SPU;
 import static legend.core.GameEngine.legacyUi;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020ed8;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002a058;
+import static legend.game.Scus94491BpeSegment_8002.handleTextboxAndText;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bb38;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002c178;
@@ -236,8 +236,6 @@ public final class Scus94491BpeSegment {
   public static final Value shadowTimFile_80010544 = MEMORY.ref(4, 0x80010544L);
 
   public static final ArrayRef<RECT> rectArray28_80010770 = MEMORY.ref(4, 0x80010770L, ArrayRef.of(RECT.class, 28, 8, RECT::new));
-
-  public static final Value _80010868 = MEMORY.ref(4, 0x80010868L);
 
   public static final ArrayRef<TextboxBorderMetrics0c> textboxBorderMetrics_800108b0 = MEMORY.ref(4, 0x800108b0L, ArrayRef.of(TextboxBorderMetrics0c.class, 8, 0xc, TextboxBorderMetrics0c::new));
 
@@ -433,8 +431,8 @@ public final class Scus94491BpeSegment {
       // SPU stuff
       startQueuedSounds();
 
-      // Textboxes? Other things?
-      FUN_8002a058();
+      // Textboxes
+      handleTextboxAndText();
       renderTextboxes();
 
       FUN_80020ed8();

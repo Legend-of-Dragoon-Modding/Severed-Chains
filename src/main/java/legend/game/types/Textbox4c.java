@@ -2,16 +2,24 @@ package legend.game.types;
 
 public class Textbox4c {
   public static final int ANIMATING = 0x1;
+  public static final int NO_ANIMATE_OUT = 0x4;
   public static final int RENDER_BACKGROUND = 0x8000_0000;
 
-  public int state_00;
-  public int _04;
-  public int _06;
+  public TextboxState state_00;
+  /**
+   * <ul>
+   *   <li>0 - no background</li>
+   *   <li>1 - normal</li>
+   *   <li>2 - animate in/out</li>
+   * </ul>
+   */
+  public TextboxType type_04 = TextboxType.NO_BACKGROUND;
+  public boolean renderBorder_06;
   /**
    * <ul>
    *   <li>0x1 - animating</li>
    *   <li>0x2 - ?</li>
-   *   <li>0x4 - ?</li>
+   *   <li>0x4 - do not animate out</li>
    *   <li>0x8000_0000 - render background</li>
    * </ul>
    */
@@ -30,13 +38,10 @@ public class Textbox4c {
   public int animationHeight_22;
   /** total number of ticks for animation */
   public int animationTicks_24;
-  public float _28;
-  public float _2c;
-  public float _30;
-  public float _34;
+  public float currentX_28;
+  public float currentY_2c;
+  public float stepX_30;
+  public float stepY_34;
   public float _38;
   public float _3c;
-  public int _40;
-  public int _44;
-  public int _48;
 }

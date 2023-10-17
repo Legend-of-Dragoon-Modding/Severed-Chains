@@ -51,19 +51,11 @@ public final class Scus94491BpeSegment_8005 {
   public static final ArrayRef<AdditionData0e> additionData_80052884 = MEMORY.ref(1, 0x80052884L, ArrayRef.of(AdditionData0e.class, 43, 0xe, AdditionData0e::new));
 
   public static final ArrayRef<Pointer<LodString>> digits_80052b40 = MEMORY.ref(4, 0x80052b40L, ArrayRef.of(Pointer.classFor(LodString.class), 10, 4, Pointer.deferred(2, LodString::new)));
+  public static final ArrayRef<BoolRef> renderBorder_80052b68 = MEMORY.ref(2, 0x80052b68L, ArrayRef.of(BoolRef.class, 0x10, 2, BoolRef::new));
+  public static final ArrayRef<ShortRef> textboxMode_80052b88 = MEMORY.ref(2, 0x80052b88L, ArrayRef.of(ShortRef.class, 0x10, 2, ShortRef::new));
+  public static final ArrayRef<ShortRef> textboxTextType_80052ba8 = MEMORY.ref(2, 0x80052ba8L, ArrayRef.of(ShortRef.class, 0x10, 2, ShortRef::new));
 
-  public static final Value _80052b68 = MEMORY.ref(2, 0x80052ba8L);
-
-  public static final Value _80052b88 = MEMORY.ref(2, 0x80052ba8L);
-
-  public static final Value _80052b8c = MEMORY.ref(2, 0x80052bacL);
-
-  public static final Value _80052ba8 = MEMORY.ref(2, 0x80052ba8L);
-
-  public static final Value _80052baa = MEMORY.ref(2, 0x80052baaL);
-
-  public static final ArrayRef<IntRef> textboxVramX_80052bc8 = MEMORY.ref(4, 0x80052bc8L, ArrayRef.of(IntRef.class, 11, 4, IntRef::new));
-  public static final ArrayRef<IntRef> textboxVramY_80052bf4 = MEMORY.ref(4, 0x80052bf4L, ArrayRef.of(IntRef.class, 11, 4, IntRef::new));
+  /** Unknown what this is supposed to be, it's a bunch of chars that are way out of range, even for JP, but it does start with a control char and end with an a0ff */
   public static final LodString _80052c20 = MEMORY.ref(2, 0x80052c20L, LodString::new);
   public static final IntRef submapCut_80052c30 = MEMORY.ref(4, 0x80052c30L, IntRef::new);
   public static final IntRef submapScene_80052c34 = MEMORY.ref(4, 0x80052c34L, IntRef::new);
