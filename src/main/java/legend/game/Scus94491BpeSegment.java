@@ -103,6 +103,7 @@ import static legend.game.Scus94491BpeSegment_8004.battleStartDelayTicks_8004f6e
 import static legend.game.Scus94491BpeSegment_8004.changeSequenceVolumeOverTime;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.dontZeroMemoryOnOverlayLoad_8004dd0c;
+import static legend.game.Scus94491BpeSegment_8004.engineStateFunctions_8004e29c;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.freeSequence;
@@ -531,6 +532,7 @@ public final class Scus94491BpeSegment {
 
     if(file != null) {
       loadOverlaySync(file, _80010000.get());
+      engineStateFunctions_8004e29c = currentEngineState_8004dd04.getScriptFunctions();
     }
   }
 
