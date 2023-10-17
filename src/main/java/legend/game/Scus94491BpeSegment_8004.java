@@ -247,9 +247,9 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[192] = Scus94491BpeSegment_8002::scriptGetFreeTextboxIndex;
     scriptSubFunctions_8004e29c[193] = Scus94491BpeSegment_8002::scriptInitTextbox;
     scriptSubFunctions_8004e29c[194] = Scus94491BpeSegment_8002::scriptSetTextboxContents;
-    scriptSubFunctions_8004e29c[195] = Scus94491BpeSegment_8002::FUN_80029c98;
-    scriptSubFunctions_8004e29c[196] = Scus94491BpeSegment_8002::FUN_80029cf4;
-    scriptSubFunctions_8004e29c[197] = Scus94491BpeSegment_8002::FUN_80029d34;
+    scriptSubFunctions_8004e29c[195] = Scus94491BpeSegment_8002::scriptIsTextboxInitialized;
+    scriptSubFunctions_8004e29c[196] = Scus94491BpeSegment_8002::scriptGetTextboxState;
+    scriptSubFunctions_8004e29c[197] = Scus94491BpeSegment_8002::scriptGetTextboxTextState;
 
     scriptSubFunctions_8004e29c[199] = Scus94491BpeSegment_8002::scriptSetTextboxVariable;
     scriptSubFunctions_8004e29c[200] = Scus94491BpeSegment_8002::scriptAddTextbox;

@@ -1,7 +1,7 @@
 package legend.game.types;
 
 public enum TextboxTextState {
-  _0,
+  UNINITIALIZED_0,
   _1,
   _2,
   _3,

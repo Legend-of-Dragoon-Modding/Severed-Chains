@@ -67,6 +67,7 @@ import legend.game.types.TexPageY;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxChar08;
 import legend.game.types.TextboxText84;
+import legend.game.types.TextboxType;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.TmdSubExtension;
 import legend.game.types.Translucency;
@@ -151,9 +152,9 @@ import static legend.game.Scus94491BpeSegment_8004.sssqFadeIn;
 import static legend.game.Scus94491BpeSegment_8005._80050274;
 import static legend.game.Scus94491BpeSegment_8005._800503f8;
 import static legend.game.Scus94491BpeSegment_8005._80050424;
-import static legend.game.Scus94491BpeSegment_8005._80052b68;
-import static legend.game.Scus94491BpeSegment_8005._80052b88;
-import static legend.game.Scus94491BpeSegment_8005._80052ba8;
+import static legend.game.Scus94491BpeSegment_8005.renderBorder_80052b68;
+import static legend.game.Scus94491BpeSegment_8005.textboxMode_80052b88;
+import static legend.game.Scus94491BpeSegment_8005.textboxTextType_80052ba8;
 import static legend.game.Scus94491BpeSegment_8005._80052c40;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCutForSave_800cb450;
@@ -246,7 +247,7 @@ public class SMap extends EngineState {
   private boolean chapterTitleCardLoaded_800c68e0;
 
   private SubmapMediaState mediaLoadingStage_800c68e4;
-  private final SubmapStruct80 _800c68e8 = new SubmapStruct80();
+  private final SubmapCaches80 caches_800c68e8 = new SubmapCaches80();
   private int submapType_800c6968;
   /** Index 31 tracks the current tick since indicator last enabled. Have not yet seen other elements set to anything but -1 */
   public final int[] indicatorTickCountArray_800c6970 = new int[32];
@@ -755,12 +756,12 @@ public class SMap extends EngineState {
     }
 
     final int textboxIndex = script.params_20[0].get();
-    final int type = (int)_80052ba8.offset(((script.params_20[2].get() & 0xf00) >>> 8) * 0x2L).get();
+    final int textType = textboxTextType_80052ba8.get(script.params_20[2].get() >>> 8 & 0xf).get();
     clearTextbox(textboxIndex);
 
     final Textbox4c textbox = textboxes_800be358[textboxIndex];
-    textbox._04 = (short)_80052b88.offset(((script.params_20[2].get() & 0xf0) >>> 4) * 0x2L).get();
-    textbox._06 = (short)_80052b68.offset((script.params_20[2].get() & 0xf) * 0x2L).get();
+    textbox.type_04 = TextboxType.fromInt(textboxMode_80052b88.get(script.params_20[2].get() >>> 4 & 0xf).get());
+    textbox.renderBorder_06 = renderBorder_80052b68.get(script.params_20[2].get() & 0xf).get();
     textbox.x_14 = 0;
     textbox.y_16 = 0;
     textbox.chars_18 = script.params_20[3].get() + 1;
@@ -768,21 +769,21 @@ public class SMap extends EngineState {
     clearTextboxText(textboxIndex);
 
     final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
-    textboxText.type_04 = type;
+    textboxText.type_04 = textType;
     textboxText.str_24 = LodString.fromParam(script.params_20[5]);
 
-    if(type == 1 && (script.params_20[1].get() & 0x1000) > 0) {
+    if(textType == 1 && (script.params_20[1].get() & 0x1000) > 0) {
       textboxText.flags_08 |= 0x20;
     }
 
     //LAB_80025370
     //LAB_80025374
-    if(type == 3) {
+    if(textType == 3) {
       textboxText.selectionIndex_6c = -1;
     }
 
     //LAB_800253a4
-    if(type == 4) {
+    if(textType == 4) {
       textboxText.flags_08 |= TextboxText84.HAS_NAME;
     }
 
@@ -792,11 +793,11 @@ public class SMap extends EngineState {
     Arrays.setAll(textboxText.chars_58, i -> new TextboxChar08());
     this.positionSobjTextbox(textboxIndex, script.params_20[1].get());
 
-    if(type == 2) {
+    if(textType == 2) {
       textbox._38 = textbox.x_14;
       textbox._3c = textbox.y_16;
-      textbox.x_14 = textbox._28;
-      textbox.y_16 = textbox._2c;
+      textbox.x_14 = textbox.currentX_28;
+      textbox.y_16 = textbox.currentY_2c;
       textbox.flags_08 |= 0x2;
     }
 
@@ -811,14 +812,12 @@ public class SMap extends EngineState {
     final Textbox4c textbox = textboxes_800be358[textboxIndex];
     final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
 
-    this.positionTextboxAtSobj(sobjIndex);
-    final SubmapStruct80 struct = this._800c68e8;
-    final float s4 = struct.x2_70;
-    textbox._28 = s4;
-    final float sp10 = (struct.y2_74 - struct.y3_7c) / 2;
-    final float sp18 = struct.y2_74 - sp10;
-    textbox._2c = sp18;
-    final float sp14 = textbox._28 - struct.x1_68;
+    this.cacheSobjScreenBounds(sobjIndex);
+    final SubmapCaches80 caches = this.caches_800c68e8;
+    final float offsetX = caches.bottomMiddle_70.x - caches.bottomLeft_68.x;
+    final float offsetY = (caches.bottomMiddle_70.y - caches.topMiddle_78.y) / 2;
+    textbox.currentX_28 = caches.bottomMiddle_70.x;
+    textbox.currentY_2c = caches.bottomMiddle_70.y - offsetY;
     final int textWidth = textbox.chars_18 * 9 / 2;
     final int textHeight = textbox.lines_1a * 6;
 
@@ -831,13 +830,12 @@ public class SMap extends EngineState {
 
     //LAB_80028a20
     if(textboxText.chars_1c >= 17) {
-      if(sp18 >= 121) {
+      if(textbox.currentY_2c >= 121) {
         //LAB_80028acc
         final int x = width / 2;
-        final float y = sp18 - sp10 - textHeight;
+        final float y = textbox.currentY_2c - offsetY - textHeight;
         textbox.x_14 = x;
         textbox.y_16 = y;
-        textbox._48 = 8;
 
         textboxText.x_14 = x;
         textboxText.y_16 = y;
@@ -847,10 +845,9 @@ public class SMap extends EngineState {
       }
 
       final int x = width / 2;
-      final float y = sp18 + sp10 + textHeight;
+      final float y = textbox.currentY_2c + offsetY + textHeight;
       textbox.x_14 = x;
       textbox.y_16 = y;
-      textbox._48 = 7;
 
       textboxText.x_14 = x;
       textboxText.y_16 = y;
@@ -860,13 +857,12 @@ public class SMap extends EngineState {
     }
 
     //LAB_80028b38
-    float y = sp18 - sp10 - textHeight;
-    if(textboxFits(textboxIndex, s4, y)) {
-      textbox.x_14 = s4;
+    float y = textbox.currentY_2c - offsetY - textHeight;
+    if(textboxFits(textboxIndex, textbox.currentX_28, y)) {
+      textbox.x_14 = textbox.currentX_28;
       textbox.y_16 = y;
-      textbox._48 = 0;
 
-      textboxText.x_14 = s4;
+      textboxText.x_14 = textbox.currentX_28;
       textboxText.y_16 = y;
       textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 4.5f;
       textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6.0f;
@@ -874,13 +870,12 @@ public class SMap extends EngineState {
     }
 
     //LAB_80028bc4
-    y = sp18 + sp10 + textHeight;
-    if(textboxFits(textboxIndex, s4, y)) {
-      textbox.x_14 = s4;
+    y = textbox.currentY_2c + offsetY + textHeight;
+    if(textboxFits(textboxIndex, textbox.currentX_28, y)) {
+      textbox.x_14 = textbox.currentX_28;
       textbox.y_16 = y;
-      textbox._48 = 1;
 
-      textboxText.x_14 = s4;
+      textboxText.x_14 = textbox.currentX_28;
       textboxText.y_16 = y;
       textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 4.5f;
       textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6.0f;
@@ -888,16 +883,15 @@ public class SMap extends EngineState {
     }
 
     //LAB_80028c44
-    if(width / 2.0f < s4) {
+    if(width / 2.0f < textbox.currentX_28) {
       //LAB_80028d58
-      final float s2 = s4 - sp14 - textWidth;
-      y = sp18 - sp10 - textHeight / 2.0f;
-      if(textboxFits(textboxIndex, s2, y)) {
-        textbox.x_14 = s2;
+      final float x = textbox.currentX_28 - offsetX - textWidth;
+      y = textbox.currentY_2c - offsetY - textHeight / 2.0f;
+      if(textboxFits(textboxIndex, x, y)) {
+        textbox.x_14 = x;
         textbox.y_16 = y;
-        textbox._48 = 4;
 
-        textboxText.x_14 = s2;
+        textboxText.x_14 = x;
         textboxText.y_16 = y;
         textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 4.5f;
         textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6.0f;
@@ -905,27 +899,25 @@ public class SMap extends EngineState {
       }
 
       //LAB_80028df0
-      y = sp18 + sp10 + textHeight / 2.0f;
-      if(textboxFits(textboxIndex, s2, y)) {
-        textbox.x_14 = s2;
+      y = textbox.currentY_2c + offsetY + textHeight / 2.0f;
+      if(textboxFits(textboxIndex, x, y)) {
+        textbox.x_14 = x;
         textbox.y_16 = y;
-        textbox._48 = 5;
 
-        textboxText.x_14 = s2;
+        textboxText.x_14 = x;
         textboxText.y_16 = y;
         textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 4.5f;
         textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6.0f;
         return;
       }
     } else {
-      final float s2 = s4 + sp14 + textWidth;
-      y = sp18 - sp10 - textHeight / 2.0f;
-      if(textboxFits(textboxIndex, s2, y)) {
-        textbox.x_14 = s2;
+      final float x = textbox.currentX_28 + offsetX + textWidth;
+      y = textbox.currentY_2c - offsetY - textHeight / 2.0f;
+      if(textboxFits(textboxIndex, x, y)) {
+        textbox.x_14 = x;
         textbox.y_16 = y;
-        textbox._48 = 2;
 
-        textboxText.x_14 = s2;
+        textboxText.x_14 = x;
         textboxText.y_16 = y;
         textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 4.5f;
         textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6.0f;
@@ -933,13 +925,12 @@ public class SMap extends EngineState {
       }
 
       //LAB_80028ce4
-      y = sp18 + sp10 + textHeight / 2.0f;
-      if(textboxFits(textboxIndex, s2, y)) {
-        textbox.x_14 = s2;
+      y = textbox.currentY_2c + offsetY + textHeight / 2.0f;
+      if(textboxFits(textboxIndex, x, y)) {
+        textbox.x_14 = x;
         textbox.y_16 = y;
-        textbox._48 = 3;
 
-        textboxText.x_14 = s2;
+        textboxText.x_14 = x;
         textboxText.y_16 = y;
         textboxText._18 = textboxText.x_14 - textboxText.chars_1c * 4.5f;
         textboxText._1a = textboxText.y_16 - textboxText.lines_1e * 6.0f;
@@ -949,16 +940,15 @@ public class SMap extends EngineState {
 
     //LAB_80028e68
     final float x;
-    if(width / 2.0f >= s4) {
-      x = s4 + sp14 + textWidth;
+    if(width / 2.0f >= textbox.currentX_28) {
+      x = textbox.currentX_28 + offsetX + textWidth;
     } else {
       //LAB_80028e8c
-      x = s4 - sp14 - textWidth;
+      x = textbox.currentX_28 - offsetX - textWidth;
     }
 
     //LAB_80028e9c
-    calculateAppropriateTextboxBounds(textboxIndex, x, sp18 + sp10 + textHeight);
-    textboxes_800be358[textboxIndex]._48 = 6;
+    calculateAppropriateTextboxBounds(textboxIndex, x, textbox.currentY_2c + offsetY + textHeight);
 
     //LAB_80028ef0
   }
@@ -1474,7 +1464,7 @@ public class SMap extends EngineState {
       //LAB_800de2cc
       player.us_170 = 0;
       this.sobjs_800c6880[player.sobjIndex_130].setTempTicker(this::FUN_800e3e60);
-      this._800c68e8.playerPos_00.set(worldspaceDeltaMovement);
+      this.caches_800c68e8.playerPos_00.set(worldspaceDeltaMovement);
     }
 
     //LAB_800de318
@@ -1698,7 +1688,7 @@ public class SMap extends EngineState {
     }
 
     //LAB_800def28
-    this._800c68e8.playerMovement_0c.set(movement).add(model.coord2_14.coord.transfer);
+    this.caches_800c68e8.playerMovement_0c.set(movement).add(model.coord2_14.coord.transfer);
     final int reachX = Math.round(MathHelper.sin(angle) * -sobj.playerCollisionReach_1c0);
     final int reachZ = Math.round(MathHelper.cos(angle) * -sobj.playerCollisionReach_1c0);
     final float colliderMinY = movement.y - sobj.playerCollisionSizeVertical_1bc;
@@ -2072,7 +2062,7 @@ public class SMap extends EngineState {
   @Method(0x800df954L)
   private FlowControl scriptFacePlayer(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)script.scriptState_04.innerStruct_00;
-    sobj.model_00.coord2_14.transforms.rotate.y = MathHelper.positiveAtan2(this._800c68e8.playerPos_00.z, this._800c68e8.playerPos_00.x);
+    sobj.model_00.coord2_14.transforms.rotate.y = MathHelper.positiveAtan2(this.caches_800c68e8.playerPos_00.z, this.caches_800c68e8.playerPos_00.x);
     sobj.rotationFrames_188 = 0;
     return FlowControl.CONTINUE;
   }
@@ -2698,15 +2688,15 @@ public class SMap extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Gets the movement vector of this submap object")
+  @ScriptDescription("Gets the movement vector of the player submap object")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X movement")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y movement")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z movement")
   @Method(0x800e0af4L)
   private FlowControl scriptGetPlayerMovement(final RunningScript<?> script) {
-    script.params_20[0].set(Math.round(this._800c68e8.playerMovement_0c.x));
-    script.params_20[1].set(Math.round(this._800c68e8.playerMovement_0c.y));
-    script.params_20[2].set(Math.round(this._800c68e8.playerMovement_0c.z));
+    script.params_20[0].set(Math.round(this.caches_800c68e8.playerMovement_0c.x));
+    script.params_20[1].set(Math.round(this.caches_800c68e8.playerMovement_0c.y));
+    script.params_20[2].set(Math.round(this.caches_800c68e8.playerMovement_0c.z));
     return FlowControl.CONTINUE;
   }
 
@@ -3554,30 +3544,25 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800e2428L)
-  private void positionTextboxAtSobj(final int sobjIndex) {
+  private void cacheSobjScreenBounds(final int sobjIndex) {
     final MV ls = new MV();
-    final MV lw = new MV();
 
-    final SubmapStruct80 a0 = this._800c68e8;
+    final SubmapCaches80 caches = this.caches_800c68e8;
 
-    GsGetLws(((SubmapObject210)scriptStatePtrArr_800bc1c0[sobjIndex].innerStruct_00).model_00.coord2_14, lw, ls);
+    GsGetLs(SCRIPTS.getObject(sobjIndex, SubmapObject210.class).model_00.coord2_14, ls);
     GTE.setTransforms(ls);
 
     GTE.perspectiveTransform(0, 0, 0);
-    a0.x2_70 = GTE.getScreenX(2) + 192;
-    a0.y2_74 = GTE.getScreenY(2) + 128;
+    caches.bottomMiddle_70.set(GTE.getScreenX(2) + 192, GTE.getScreenY(2) + 128);
 
     GTE.perspectiveTransform(0, -130, 0);
-    a0.x3_78 = GTE.getScreenX(2) + 192;
-    a0.y3_7c = GTE.getScreenY(2) + 128;
+    caches.topMiddle_78.set(GTE.getScreenX(2) + 192, GTE.getScreenY(2) + 128);
 
     GTE.perspectiveTransform(-20, 0, 0);
-    a0.x1_68 = GTE.getScreenX(2) + 192;
-    a0.y1_6c = GTE.getScreenY(2) + 128;
+    caches.bottomLeft_68.set(GTE.getScreenX(2) + 192, GTE.getScreenY(2) + 128);
 
     GTE.perspectiveTransform(20, 0, 0);
-    a0.x0_60 = GTE.getScreenX(2) + 192;
-    a0.y0_64 = GTE.getScreenY(2) + 128;
+    caches.bottomRight_60.set(GTE.getScreenX(2) + 192, GTE.getScreenY(2) + 128);
   }
 
   @Method(0x800e2648L)

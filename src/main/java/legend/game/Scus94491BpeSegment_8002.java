@@ -1,6 +1,5 @@
 package legend.game;
 
-import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
@@ -57,8 +56,10 @@ import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
 import legend.game.types.TextboxBorderMetrics0c;
 import legend.game.types.TextboxChar08;
+import legend.game.types.TextboxState;
 import legend.game.types.TextboxText84;
 import legend.game.types.TextboxTextState;
+import legend.game.types.TextboxType;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.types.UiPart;
@@ -97,8 +98,6 @@ import static legend.game.SItem.textLength;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
 import static legend.game.Scus94491BpeSegment.FUN_8001d51c;
 import static legend.game.Scus94491BpeSegment.FUN_8001e010;
-import static legend.game.Scus94491BpeSegment._80010868;
-import static legend.game.Scus94491BpeSegment.textboxBorderMetrics_800108b0;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
@@ -111,6 +110,7 @@ import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.soundBufferOffset;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
+import static legend.game.Scus94491BpeSegment.textboxBorderMetrics_800108b0;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
@@ -124,23 +124,19 @@ import static legend.game.Scus94491BpeSegment_8005._800503b0;
 import static legend.game.Scus94491BpeSegment_8005._800503d4;
 import static legend.game.Scus94491BpeSegment_8005._800503f8;
 import static legend.game.Scus94491BpeSegment_8005._80050424;
-import static legend.game.Scus94491BpeSegment_8005.digits_80052b40;
-import static legend.game.Scus94491BpeSegment_8005._80052b68;
-import static legend.game.Scus94491BpeSegment_8005._80052b88;
-import static legend.game.Scus94491BpeSegment_8005._80052b8c;
-import static legend.game.Scus94491BpeSegment_8005._80052ba8;
-import static legend.game.Scus94491BpeSegment_8005._80052baa;
 import static legend.game.Scus94491BpeSegment_8005._80052c20;
 import static legend.game.Scus94491BpeSegment_8005._80052c40;
 import static legend.game.Scus94491BpeSegment_8005._8005a1d8;
+import static legend.game.Scus94491BpeSegment_8005.digits_80052b40;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.monsterSoundFileIndices_800500e8;
+import static legend.game.Scus94491BpeSegment_8005.renderBorder_80052b68;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c3c;
 import static legend.game.Scus94491BpeSegment_8005.submapEnvState_80052c44;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
-import static legend.game.Scus94491BpeSegment_8005.textboxVramX_80052bc8;
-import static legend.game.Scus94491BpeSegment_8005.textboxVramY_80052bf4;
+import static legend.game.Scus94491BpeSegment_8005.textboxMode_80052b88;
+import static legend.game.Scus94491BpeSegment_8005.textboxTextType_80052ba8;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bd7ac;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
@@ -1837,10 +1833,10 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_800250ec
     for(int i = 0; i < 8; i++) {
       textboxes_800be358[i] = new Textbox4c();
-      textboxes_800be358[i].state_00 = 0;
+      textboxes_800be358[i].state_00 = TextboxState.UNINITIALIZED_0;
 
       textboxText_800bdf38[i] = new TextboxText84();
-      textboxText_800bdf38[i].state_00 = TextboxTextState._0;
+      textboxText_800bdf38[i].state_00 = TextboxTextState.UNINITIALIZED_0;
 
       textboxArrows_800bdea0[i] = new TextboxArrow0c();
 
@@ -1878,7 +1874,7 @@ public final class Scus94491BpeSegment_8002 {
   /** Allocate textbox used in yellow-name textboxes and combat effect popups, maybe others */
   @ScriptDescription("Adds a textbox to a submap object")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The textbox index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "packedData", description = "Unknown data, 3 nibbles")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "packedData", description = "Unknown data, 3 nibbles, boolean in 12th bit")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The textbox x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The textbox y")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "width", description = "The textbox width")
@@ -1890,16 +1886,16 @@ public final class Scus94491BpeSegment_8002 {
 
     if(script.params_20[1].get() != 0) {
       final int a2 = script.params_20[1].get();
-      final short s0 = (short)_80052b88.offset((a2 & 0xf0) >>> 3).get();
-      final short s1 = (short)_80052b68.offset((a2 & 0xf) * 0x2L).get();
-      final short type = (short)_80052ba8.offset((a2 & 0xf00) >>> 7).get();
+      final TextboxType mode = TextboxType.fromInt(textboxMode_80052b88.get(a2 >>> 4 & 0xf).get());
+      final boolean renderBorder = renderBorder_80052b68.get(a2 & 0xf).get();
+      final short type = textboxTextType_80052ba8.get(a2 >>> 8 & 0xf).get();
       clearTextbox(textboxIndex);
 
       final Textbox4c textbox = textboxes_800be358[textboxIndex];
       final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
 
-      textbox._04 = s0;
-      textbox._06 = s1;
+      textbox.type_04 = mode;
+      textbox.renderBorder_06 = renderBorder;
       textbox.x_14 = script.params_20[2].get();
       textbox.y_16 = script.params_20[3].get();
       textbox.chars_18 = script.params_20[4].get() + 1;
@@ -1914,7 +1910,7 @@ public final class Scus94491BpeSegment_8002 {
 
       clearTextboxText(textboxIndex);
 
-      if(type == 1 && (a2 & 0x1000) > 0) {
+      if(type == 1 && (a2 & 0x1000) != 0) {
         textboxText.flags_08 |= 0x20;
       }
 
@@ -1967,15 +1963,15 @@ public final class Scus94491BpeSegment_8002 {
   /** Deallocate textbox used in yellow-name textboxes and combat effect popups, maybe others */
   @Method(0x800257e0L)
   public static void clearTextbox(final int textboxIndex) {
-    if(textboxText_800bdf38[textboxIndex].state_00 != TextboxTextState._0) {
+    if(textboxText_800bdf38[textboxIndex].state_00 != TextboxTextState.UNINITIALIZED_0) {
       textboxText_800bdf38[textboxIndex].chars_58 = null;
     }
 
     //LAB_80025824
     final Textbox4c textbox = textboxes_800be358[textboxIndex];
 
-    textbox.state_00 = 1;
-    textbox._06 = 0;
+    textbox.state_00 = TextboxState._1;
+    textbox.renderBorder_06 = false;
     textbox.flags_08 = 0;
     textbox.z_0c = 14;
     textbox.currentTicks_10 = 0;
@@ -1984,15 +1980,12 @@ public final class Scus94491BpeSegment_8002 {
     textbox.animationWidth_20 = 0x1000;
     textbox.animationHeight_22 = 0x1000;
     textbox.animationTicks_24 = 0;
-    textbox._28 = 0;
-    textbox._2c = 0;
-    textbox._30 = 0;
-    textbox._34 = 0;
+    textbox.currentX_28 = 0;
+    textbox.currentY_2c = 0;
+    textbox.stepX_30 = 0;
+    textbox.stepY_34 = 0;
     textbox._38 = 0;
     textbox._3c = 0;
-    textbox._40 = 0;
-    textbox._44 = 0;
-    textbox._48 = 0;
   }
 
   @Method(0x800258a8L)
@@ -2027,61 +2020,66 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_800259e4
-    textboxText._5c = TextboxTextState._0;
+    textboxText._5c = TextboxTextState.UNINITIALIZED_0;
     textboxText.selectionLine_60 = 0;
     textboxText.ticksUntilStateTransition_64 = 0;
     textboxText.selectionLine_68 = 0;
     textboxText.selectionIndex_6c = 0;
     textboxText.maxSelectionLine_70 = 0;
     textboxText.minSelectionLine_72 = 0;
-    textboxText.stateAfterTransition_78 = TextboxTextState._0;
+    textboxText.stateAfterTransition_78 = TextboxTextState.UNINITIALIZED_0;
     textboxText.element_7c = 0;
     textboxText.digitIndex_80 = 0;
   }
 
   @Method(0x80025a04L)
-  public static void FUN_80025a04(final int textboxIndex) {
+  public static void handleTextbox(final int textboxIndex) {
     final Textbox4c textbox = textboxes_800be358[textboxIndex];
 
     switch(textbox.state_00) {
-      case 1 -> {
-        if(textbox._04 == 0) {
-          //LAB_80025ab8
-          textbox.state_00 = 4;
-          textbox.flags_08 ^= Textbox4c.RENDER_BACKGROUND;
-          break;
-          //LAB_80025aa8
-        } else if(textbox._04 == 2) {
-          //LAB_80025ad4
-          textbox.state_00 = 2;
-          textbox.flags_08 |= Textbox4c.ANIMATING;
-          textbox.currentTicks_10 = 0;
-          textbox.animationTicks_24 = 60 / vsyncMode_8007a3b8 / 4;
-
-          if((textbox.flags_08 & 0x2) != 0) {
-            textbox._30 = (textbox._28 - textbox._38) / textbox.animationTicks_24;
-            textbox._34 = (textbox._2c - textbox._3c) / textbox.animationTicks_24;
+      case _1 -> {
+        switch(textbox.type_04) {
+          case NO_BACKGROUND -> {
+            //LAB_80025ab8
+            textbox.state_00 = TextboxState._4;
+            textbox.flags_08 ^= Textbox4c.RENDER_BACKGROUND;
           }
-          break;
-        }
 
-        //LAB_80025b54
-        //LAB_80025b5c
-        textbox.state_00 = 5;
-        textbox.width_1c = textbox.chars_18 * 9 / 2;
-        textbox.height_1e = textbox.lines_1a * 6;
-        if((textbox.flags_08 & 0x4) != 0) {
-          textbox.state_00 = 6;
-        }
+          case NORMAL -> {
+            //LAB_80025b54
+            //LAB_80025b5c
+            textbox.width_1c = textbox.chars_18 * 9 / 2;
+            textbox.height_1e = textbox.lines_1a * 6;
 
-        //LAB_80025bc0
-        textbox.flags_08 |= Textbox4c.RENDER_BACKGROUND;
+            if((textbox.flags_08 & Textbox4c.NO_ANIMATE_OUT) == 0) {
+              textbox.state_00 = TextboxState._5;
+            } else {
+              textbox.state_00 = TextboxState._6;
+            }
+
+            //LAB_80025bc0
+            textbox.flags_08 |= Textbox4c.RENDER_BACKGROUND;
+          }
+
+          case ANIMATE_IN_OUT -> {
+            //LAB_80025ad4
+            textbox.state_00 = TextboxState._2;
+            textbox.flags_08 |= Textbox4c.ANIMATING;
+            textbox.currentTicks_10 = 0;
+            textbox.animationTicks_24 = 60 / vsyncMode_8007a3b8 / 4;
+
+            if((textbox.flags_08 & 0x2) != 0) {
+              textbox.stepX_30 = (textbox.currentX_28 - textbox._38) / textbox.animationTicks_24;
+              textbox.stepY_34 = (textbox.currentY_2c - textbox._3c) / textbox.animationTicks_24;
+            }
+          }
+        }
       }
 
-      case 2 -> {
+      case _2 -> {
         textbox.flags_08 |= Textbox4c.RENDER_BACKGROUND;
 
-        if(textbox._04 == 2) {
+        if(textbox.type_04 == TextboxType.ANIMATE_IN_OUT) {
           textbox.animationWidth_20 = (textbox.currentTicks_10 << 12) / textbox.animationTicks_24;
           textbox.animationHeight_22 = (textbox.currentTicks_10 << 12) / textbox.animationTicks_24;
           textbox.width_1c = textbox.chars_18 * 9 / 2 * textbox.animationWidth_20 >> 12;
@@ -2089,21 +2087,22 @@ public final class Scus94491BpeSegment_8002 {
           textbox.currentTicks_10++;
 
           if((textbox.flags_08 & 0x2) != 0) {
-            textbox._28 -= textbox._30;
-            textbox._2c -= textbox._34;
-            textbox.x_14 = textbox._28;
-            textbox.y_16 = textbox._2c;
+            textbox.currentX_28 -= textbox.stepX_30;
+            textbox.currentY_2c -= textbox.stepY_34;
+            textbox.x_14 = textbox.currentX_28;
+            textbox.y_16 = textbox.currentY_2c;
           }
 
           //LAB_80025cf0
           if(textbox.currentTicks_10 >= textbox.animationTicks_24) {
-            textbox.state_00 = 5;
             textbox.flags_08 ^= Textbox4c.ANIMATING;
             textbox.width_1c = textbox.chars_18 * 9 / 2;
             textbox.height_1e = textbox.lines_1a * 6;
 
-            if((textbox.flags_08 & 0x4) != 0) {
-              textbox.state_00 = 6;
+            if((textbox.flags_08 & Textbox4c.NO_ANIMATE_OUT) == 0) {
+              textbox.state_00 = TextboxState._5;
+            } else {
+              textbox.state_00 = TextboxState._6;
             }
 
             //LAB_80025d5c
@@ -2117,15 +2116,15 @@ public final class Scus94491BpeSegment_8002 {
         }
 
         //LAB_80025d84
-        textbox.state_00 = 5;
-
-        if((textbox.flags_08 & 0x4) != 0) {
-          textbox.state_00 = 6;
+        if((textbox.flags_08 & Textbox4c.NO_ANIMATE_OUT) == 0) {
+          textbox.state_00 = TextboxState._5;
+        } else {
+          textbox.state_00 = TextboxState._6;
         }
       }
 
-      case 3 -> {
-        if(textbox._04 == 2) {
+      case _3 -> {
+        if(textbox.type_04 == TextboxType.ANIMATE_IN_OUT) {
           textbox.animationWidth_20 = (textbox.currentTicks_10 << 12) / textbox.animationTicks_24;
           textbox.animationHeight_22 = (textbox.currentTicks_10 << 12) / textbox.animationTicks_24;
           textbox.width_1c = textbox.chars_18 * 9 / 2 * textbox.animationWidth_20 >> 12;
@@ -2135,20 +2134,21 @@ public final class Scus94491BpeSegment_8002 {
           if(textbox.currentTicks_10 <= 0) {
             textbox.width_1c = 0;
             textbox.height_1e = 0;
-            textbox.state_00 = 0;
+            textbox.state_00 = TextboxState.UNINITIALIZED_0;
             textbox.flags_08 ^= Textbox4c.ANIMATING;
           }
+
           break;
         }
 
         //LAB_80025e94
-        textbox.state_00 = 0;
+        textbox.state_00 = TextboxState.UNINITIALIZED_0;
       }
 
-      case 4, 5 -> {
-        if(textboxText_800bdf38[textboxIndex].state_00 == TextboxTextState._0) {
-          if(textbox._04 == 2) {
-            textbox.state_00 = 3;
+      case _4, _5 -> {
+        if(textboxText_800bdf38[textboxIndex].state_00 == TextboxTextState.UNINITIALIZED_0) {
+          if(textbox.type_04 == TextboxType.ANIMATE_IN_OUT) {
+            textbox.state_00 = TextboxState._3;
             textbox.flags_08 |= Textbox4c.ANIMATING;
 
             final int ticks = 60 / vsyncMode_8007a3b8 / 4;
@@ -2156,7 +2156,7 @@ public final class Scus94491BpeSegment_8002 {
             textbox.animationTicks_24 = ticks;
           } else {
             //LAB_80025f30
-            textbox.state_00 = 0;
+            textbox.state_00 = TextboxState.UNINITIALIZED_0;
           }
 
           //LAB_80025f34
@@ -2173,87 +2173,24 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80025f7c
     final Textbox4c textbox = textboxes_800be358[textboxIndex];
 
-    if(textbox._04 != 0) {
-      if(textbox.state_00 != 1) {
+    if(textbox.type_04 != TextboxType.NO_BACKGROUND) {
+      if(textbox.state_00 != TextboxState._1) {
         final float x = textbox.x_14 - centreScreenX_1f8003dc.get();
         final float y = textbox.y_16 - centreScreenY_1f8003de.get();
 
-        if(Config.textBoxColour()) {
-          if(Config.getTextBoxColourMode() == 0) {
-            GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
-              .translucent(Translucency.of(Config.getTextBoxTransparencyMode()))
-              .rgb(0, Config.getTextBoxRgb(0))
-              .pos(0, x - textbox.width_1c, y - textbox.height_1e)
-              .rgb(1, Config.getTextBoxRgb(1))
-              .pos(1, x + textbox.width_1c, y - textbox.height_1e)
-              .rgb(2, Config.getTextBoxRgb(2))
-              .pos(2, x - textbox.width_1c, y + textbox.height_1e)
-              .rgb(3, Config.getTextBoxRgb(3))
-              .pos(3, x + textbox.width_1c, y + textbox.height_1e)
-            );
-          } else if(Config.getTextBoxColourMode() == 1) {
-            GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
-              .translucent(Translucency.of(Config.getTextBoxTransparencyMode()))
-              .rgb(0, Config.getTextBoxRgb(0))
-              .pos(0, x - textbox.width_1c, y - textbox.height_1e)
-              .rgb(1, Config.getTextBoxRgb(1))
-              .pos(1, x, y - textbox.height_1e)
-              .rgb(2, Config.getTextBoxRgb(2))
-              .pos(2, x - textbox.width_1c, y + textbox.height_1e)
-              .rgb(3, Config.getTextBoxRgb(3))
-              .pos(3, x, y + textbox.height_1e)
-            );
-            GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
-              .translucent(Translucency.of(Config.getTextBoxTransparencyMode()))
-              .rgb(0, Config.getTextBoxRgb(4))
-              .pos(0, x, y - textbox.height_1e)
-              .rgb(1, Config.getTextBoxRgb(5))
-              .pos(1, x + textbox.width_1c, y - textbox.height_1e)
-              .rgb(2, Config.getTextBoxRgb(6))
-              .pos(2, x, y + textbox.height_1e)
-              .rgb(3, Config.getTextBoxRgb(7))
-              .pos(3, x + textbox.width_1c, y + textbox.height_1e)
-            );
-          } else if(Config.getTextBoxColourMode() == 2) {
-            GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
-              .translucent(Translucency.of(Config.getTextBoxTransparencyMode()))
-              .rgb(0, Config.getTextBoxRgb(0))
-              .pos(0, x - textbox.width_1c, y - textbox.height_1e)
-              .rgb(1, Config.getTextBoxRgb(1))
-              .pos(1, x + textbox.width_1c, y - textbox.height_1e)
-              .rgb(2, Config.getTextBoxRgb(2))
-              .pos(2, x - textbox.width_1c, y)
-              .rgb(3, Config.getTextBoxRgb(3))
-              .pos(3, x + textbox.width_1c, y)
-            );
+        GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
+          .translucent(Translucency.HALF_B_PLUS_HALF_F)
+          .monochrome(0, 0)
+          .pos(0, x - textbox.width_1c, y - textbox.height_1e)
+          .rgb(1, 0, 41, 159)
+          .pos(1, x + textbox.width_1c, y - textbox.height_1e)
+          .rgb(2, 0, 41, 159)
+          .pos(2, x - textbox.width_1c, y + textbox.height_1e)
+          .monochrome(3, 0)
+          .pos(3, x + textbox.width_1c, y + textbox.height_1e)
+        );
 
-            GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
-              .translucent(Translucency.of(Config.getTextBoxTransparencyMode()))
-              .rgb(0, Config.getTextBoxRgb(4))
-              .pos(0, x - textbox.width_1c, y)
-              .rgb(1, Config.getTextBoxRgb(5))
-              .pos(1, x + textbox.width_1c, y)
-              .rgb(2, Config.getTextBoxRgb(6))
-              .pos(2, x - textbox.width_1c, y + textbox.height_1e)
-              .rgb(3, Config.getTextBoxRgb(7))
-              .pos(3, x + textbox.width_1c, y + textbox.height_1e)
-            );
-          }
-        } else {
-          GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
-            .translucent(Translucency.HALF_B_PLUS_HALF_F)
-            .monochrome(0, 0)
-            .pos(0, x - textbox.width_1c, y - textbox.height_1e)
-            .rgb(1, (int)_80010868.offset(0x0L).get(), (int)_80010868.offset(0x4L).get(), (int)_80010868.offset(0x8L).get())
-            .pos(1, x + textbox.width_1c, y - textbox.height_1e)
-            .rgb(2, (int)_80010868.offset(0x0L).get(), (int)_80010868.offset(0x4L).get(), (int)_80010868.offset(0x8L).get())
-            .pos(2, x - textbox.width_1c, y + textbox.height_1e)
-            .monochrome(3, 0)
-            .pos(3, x + textbox.width_1c, y + textbox.height_1e)
-          );
-        }
-
-        if(textbox._06 != 0) {
+        if(textbox.renderBorder_06) {
           renderTextboxBorder(textboxIndex, x - textbox.width_1c, y - textbox.height_1e, x + textbox.width_1c, y + textbox.height_1e);
         }
       }
@@ -2294,10 +2231,10 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_8002637c
       final int u = border.u_04.get();
       final int v = border.v_06.get();
-      final float left = xs[border._00.get()] - w;
-      final float right = xs[border._02.get()] + w;
-      final float top = ys[border._00.get()] - h;
-      final float bottom = ys[border._02.get()] + h;
+      final float left = xs[border.topLeftVertexIndex_00.get()] - w;
+      final float right = xs[border.bottomRightVertexIndex_02.get()] + w;
+      final float top = ys[border.topLeftVertexIndex_00.get()] - h;
+      final float bottom = ys[border.bottomRightVertexIndex_02.get()] + h;
 
       GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
         .bpp(Bpp.BITS_4)
@@ -2318,7 +2255,7 @@ public final class Scus94491BpeSegment_8002 {
 
   /** I think this method handles textboxes */
   @Method(0x800264b0L)
-  public static void FUN_800264b0(final int textboxIndex) {
+  public static void handleTextboxText(final int textboxIndex) {
     final Textbox4c struct4c = textboxes_800be358[textboxIndex];
     final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
 
@@ -2432,7 +2369,7 @@ public final class Scus94491BpeSegment_8002 {
             for(int lineIndex = 0; lineIndex < 4; lineIndex++) {
               processTextboxLine(textboxIndex);
 
-              if(textboxText.state_00 == TextboxTextState._0 || textboxText.state_00 == TextboxTextState._1 || textboxText.state_00 == TextboxTextState._2 || textboxText.state_00 == TextboxTextState._3 || textboxText.state_00 == TextboxTextState._4 || textboxText.state_00 == TextboxTextState._5 || textboxText.state_00 == TextboxTextState._6 || textboxText.state_00 == TextboxTextState._15 || textboxText.state_00 == TextboxTextState._11 || textboxText.state_00 == TextboxTextState._13) {
+              if(textboxText.state_00 == TextboxTextState.UNINITIALIZED_0 || textboxText.state_00 == TextboxTextState._1 || textboxText.state_00 == TextboxTextState._2 || textboxText.state_00 == TextboxTextState._3 || textboxText.state_00 == TextboxTextState._4 || textboxText.state_00 == TextboxTextState._5 || textboxText.state_00 == TextboxTextState._6 || textboxText.state_00 == TextboxTextState._15 || textboxText.state_00 == TextboxTextState._11 || textboxText.state_00 == TextboxTextState._13) {
                 //LAB_8002698c
                 found = true;
                 break;
@@ -2492,7 +2429,7 @@ public final class Scus94491BpeSegment_8002 {
 
             if(textboxText._3a >= textboxText.lines_1e + 1) {
               textboxText.chars_58 = null;
-              textboxText.state_00 = TextboxTextState._0;
+              textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
             }
           }
         }
@@ -2518,9 +2455,9 @@ public final class Scus94491BpeSegment_8002 {
 
       case _12 -> {
         //LAB_80026af0
-        if(struct4c.state_00 == 0) {
+        if(struct4c.state_00 == TextboxState.UNINITIALIZED_0) {
           textboxText.chars_58 = null;
-          textboxText.state_00 = TextboxTextState._0;
+          textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
         }
       }
 
@@ -2583,7 +2520,7 @@ public final class Scus94491BpeSegment_8002 {
               //LAB_80026c98
               //LAB_80026c9c
               textboxText.chars_58 = null;
-              textboxText.state_00 = TextboxTextState._0;
+              textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
             }
           }
         }
@@ -2597,7 +2534,7 @@ public final class Scus94491BpeSegment_8002 {
           //LAB_80026cd0
           if((press_800bee94.get() & 0x20) != 0 || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
             textboxText.chars_58 = null;
-            textboxText.state_00 = TextboxTextState._0;
+            textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
             setTextboxArrowPosition(textboxIndex, false);
           }
         }
@@ -2609,7 +2546,7 @@ public final class Scus94491BpeSegment_8002 {
         //LAB_80026ce8
         if((textboxText.flags_08 & 0x40) != 0) {
           textboxText.chars_58 = null;
-          textboxText.state_00 = TextboxTextState._0;
+          textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
           setTextboxArrowPosition(textboxIndex, false);
         }
       }
@@ -2649,7 +2586,7 @@ public final class Scus94491BpeSegment_8002 {
         if((press_800bee94.get() & 0x20) != 0) {
           Scus94491BpeSegment.playSound(0, 2, 0, 0, (short)0, (short)0);
           textboxText.chars_58 = null;
-          textboxText.state_00 = TextboxTextState._0;
+          textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
           textboxText.selectionIndex_6c = textboxText.selectionLine_68;
         } else {
           //LAB_80026df0
@@ -2695,7 +2632,7 @@ public final class Scus94491BpeSegment_8002 {
                   } else {
                     //LAB_80027044
                     textboxText._2c = 12;
-                    FUN_800280d4(textboxIndex);
+                    rewindTextbox(textboxIndex);
 
                     final LodString str = textboxText.str_24;
 
@@ -2786,7 +2723,7 @@ public final class Scus94491BpeSegment_8002 {
                     } else {
                       //LAB_80027044
                       textboxText._2c = 12;
-                      FUN_800280d4(textboxIndex);
+                      rewindTextbox(textboxIndex);
 
                       final LodString str = textboxText.str_24;
 
@@ -2859,7 +2796,7 @@ public final class Scus94491BpeSegment_8002 {
         textboxText._2c += 4;
 
         if(textboxText._2c >= 12) {
-          FUN_80027eb4(textboxIndex);
+          advanceTextbox(textboxIndex);
           textboxText.flags_08 |= 0x4;
           textboxText._2c -= 12;
           textboxText.charY_36 = textboxText.lines_1e;
@@ -2886,7 +2823,7 @@ public final class Scus94491BpeSegment_8002 {
 
             if(textboxText._3a >= textboxText.lines_1e + 1) {
               textboxText.chars_58 = null;
-              textboxText.state_00 = TextboxTextState._0;
+              textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
             }
           }
 
@@ -2944,7 +2881,7 @@ public final class Scus94491BpeSegment_8002 {
         if((press_800bee94.get() & 0x20) != 0) {
           Scus94491BpeSegment.playSound(0, 2, 0, 0, (short)0, (short)0);
           textboxText.chars_58 = null;
-          textboxText.state_00 = TextboxTextState._0;
+          textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
           textboxText.selectionIndex_6c = textboxText.selectionLine_68 - textboxText.minSelectionLine_72;
         } else {
           //LAB_800273bc
@@ -3323,17 +3260,17 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80027e40
-    final Textbox4c v0 = textboxes_800be358[textboxIndex];
-    v0.x_14 = newX;
+    final Textbox4c textbox = textboxes_800be358[textboxIndex];
+    textbox.x_14 = newX;
+    textbox.y_16 = newY;
     textboxText.x_14 = newX;
-    v0.y_16 = newY;
     textboxText.y_16 = newY;
     textboxText._18 = newX - width;
     textboxText._1a = newY - height;
   }
 
   @Method(0x80027eb4L)
-  public static void FUN_80027eb4(final int textboxIndex) {
+  public static void advanceTextbox(final int textboxIndex) {
     final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
 
     //LAB_80027efc
@@ -3363,19 +3300,19 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x800280d4L)
-  public static void FUN_800280d4(final int textboxIndex) {
+  public static void rewindTextbox(final int textboxIndex) {
     final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
 
     //LAB_8002810c
     for(int lineIndex = textboxText.lines_1e; lineIndex > 0; lineIndex--) {
       //LAB_80028128
       for(int charIndex = 0; charIndex < textboxText.chars_1c; charIndex++) {
-        final TextboxChar08 v0 = textboxText.chars_58[(lineIndex - 1) * textboxText.chars_1c + charIndex];
-        final TextboxChar08 v1 = textboxText.chars_58[lineIndex * textboxText.chars_1c + charIndex];
-        v1.x_00 = v0.x_00;
-        v1.y_02 = v0.y_02 + 1;
-        v1.colour_04 = v0.colour_04;
-        v1.char_06 = v0.char_06;
+        final TextboxChar08 previousLine = textboxText.chars_58[(lineIndex - 1) * textboxText.chars_1c + charIndex];
+        final TextboxChar08 currentLine = textboxText.chars_58[lineIndex * textboxText.chars_1c + charIndex];
+        currentLine.x_00 = previousLine.x_00;
+        currentLine.y_02 = previousLine.y_02 + 1;
+        currentLine.colour_04 = previousLine.colour_04;
+        currentLine.char_06 = previousLine.char_06;
       }
     }
 
@@ -3473,14 +3410,14 @@ public final class Scus94491BpeSegment_8002 {
           final int height = 12 - s3;
           cmd.pos(x, y, 8, height);
           cmd.bpp(Bpp.BITS_4);
-          cmd.vramPos(textboxVramX_80052bc8.get(0).get(), textboxVramY_80052bf4.get(0).get() < 256 ? 0 : 256);
+          cmd.vramPos(832, 256);
           GPU.queueCommand(textboxText.z_0c, cmd);
 
           GPU.queueCommand(textboxText.z_0c + 1, new GpuCommandQuad()
             .bpp(Bpp.BITS_4)
             .monochrome(0x80)
             .clut(976, 480)
-            .vramPos(textboxVramX_80052bc8.get(0).get(), textboxVramY_80052bf4.get(0).get() < 256 ? 0 : 256)
+            .vramPos(832, 256)
             .pos(x + 1, y + 1, 8, height)
             .uv(u, v)
           );
@@ -3494,13 +3431,13 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80028828L)
-  public static void FUN_80028828(final int a0) {
-    final TextboxText84 textboxText = textboxText_800bdf38[a0];
+  public static void FUN_80028828(final int textboxIndex) {
+    final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
 
     textboxText._2c += textboxText._2a;
 
     if(textboxText._2c >= 12) {
-      FUN_80027eb4(a0);
+      advanceTextbox(textboxIndex);
       textboxText.state_00 = TextboxTextState._4;
       textboxText._2c = 0;
       textboxText.charY_36--;
@@ -3517,7 +3454,7 @@ public final class Scus94491BpeSegment_8002 {
       textboxText._2c += textboxText._2a & 0x7;
 
       if(textboxText._2c >= 12) {
-        FUN_80027eb4(textboxIndex);
+        advanceTextbox(textboxIndex);
         textboxText.flags_08 |= 0x4;
         textboxText._2c -= 12;
         textboxText.charY_36 = textboxText.lines_1e;
@@ -3549,14 +3486,14 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80028ff0
   }
 
-  @ScriptDescription("Unknown, sets textbox 0 to hardcoded values")
+  @ScriptDescription("Unknown, sets textbox 0 to hardcoded values (garbage text? unused?")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "ret", description = "Always set to 0")
   @Method(0x80028ff8L)
   public static FlowControl FUN_80028ff8(final RunningScript<?> script) {
     clearTextbox(0);
 
     final Textbox4c struct4c = textboxes_800be358[0];
-    struct4c._04 = (int)_80052b8c.get();
+    struct4c.type_04 = TextboxType.fromInt(textboxMode_80052b88.get(2).get());
     struct4c.x_14 = 260;
     struct4c.y_16 = 120;
     struct4c.chars_18 = 6;
@@ -3564,7 +3501,7 @@ public final class Scus94491BpeSegment_8002 {
     clearTextboxText(0);
 
     final TextboxText84 textboxText = textboxText_800bdf38[0];
-    textboxText.type_04 = (int)_80052baa.get();
+    textboxText.type_04 = textboxTextType_80052ba8.get(1).get();
     textboxText.str_24 = _80052c20;
     textboxText.flags_08 |= 0x40;
 
@@ -3636,7 +3573,7 @@ public final class Scus94491BpeSegment_8002 {
           .pos(x - centreScreenX_1f8003dc.get() + lineIndex * 8 - glyphNudge, y - centreScreenY_1f8003de.get(), 8, h)
           .uv(textU * 16, v)
           .clut(832, 480)
-          .vramPos(textboxVramX_80052bc8.get(0).get(), textboxVramY_80052bf4.get(0).get() < 256 ? 0 : 256)
+          .vramPos(832, 256)
           .rgb(colour.r, colour.g, colour.b)
         );
 
@@ -3750,7 +3687,7 @@ public final class Scus94491BpeSegment_8002 {
   public static FlowControl scriptGetFreeTextboxIndex(final RunningScript<?> script) {
     //LAB_80029b7c
     for(int i = 0; i < 8; i++) {
-      if(textboxes_800be358[i].state_00 == 0 && textboxText_800bdf38[i].state_00 == TextboxTextState._0) {
+      if(textboxes_800be358[i].state_00 == TextboxState.UNINITIALIZED_0 && textboxText_800bdf38[i].state_00 == TextboxTextState.UNINITIALIZED_0) {
         script.params_20[0].set(i);
         return FlowControl.CONTINUE;
       }
@@ -3776,7 +3713,7 @@ public final class Scus94491BpeSegment_8002 {
     clearTextbox(textboxIndex);
 
     final Textbox4c struct4c = textboxes_800be358[textboxIndex];
-    struct4c._04 = script.params_20[1].get();
+    struct4c.type_04 = TextboxType.fromInt(script.params_20[1].get());
     struct4c.x_14 = script.params_20[2].get();
     struct4c.y_16 = script.params_20[3].get();
     struct4c.chars_18 = script.params_20[4].get() + 1;
@@ -3784,30 +3721,30 @@ public final class Scus94491BpeSegment_8002 {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, gets textbox value")
+  @ScriptDescription("Returns whether or not a textbox is initialized")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The textbox index")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The return value")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "initialized", description = "0 for false, non-zero for true")
   @Method(0x80029c98L)
-  public static FlowControl FUN_80029c98(final RunningScript<?> script) {
+  public static FlowControl scriptIsTextboxInitialized(final RunningScript<?> script) {
     final int textboxIndex = script.params_20[0].get();
-    script.params_20[1].set(textboxes_800be358[textboxIndex].state_00 | textboxText_800bdf38[textboxIndex].state_00.ordinal());
+    script.params_20[1].set(textboxes_800be358[textboxIndex].state_00.ordinal() | textboxText_800bdf38[textboxIndex].state_00.ordinal());
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, gets textbox value")
+  @ScriptDescription("Gets the textbox state")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The textbox index")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The return value")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "state", description = "The textbox state")
   @Method(0x80029cf4L)
-  public static FlowControl FUN_80029cf4(final RunningScript<?> script) {
-    script.params_20[1].set(textboxes_800be358[script.params_20[0].get()].state_00);
+  public static FlowControl scriptGetTextboxState(final RunningScript<?> script) {
+    script.params_20[1].set(textboxes_800be358[script.params_20[0].get()].state_00.ordinal());
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, gets textbox value")
+  @ScriptDescription("Gets the textbox text state")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The textbox index")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The return value")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "state", description = "The textbox text state")
   @Method(0x80029d34L)
-  public static FlowControl FUN_80029d34(final RunningScript<?> script) {
+  public static FlowControl scriptGetTextboxTextState(final RunningScript<?> script) {
     script.params_20[1].set(textboxText_800bdf38[script.params_20[0].get()].state_00.ordinal());
     return FlowControl.CONTINUE;
   }
@@ -3819,13 +3756,13 @@ public final class Scus94491BpeSegment_8002 {
     final int textboxIndex = script.params_20[0].get();
     final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
 
-    if(textboxText.state_00 != TextboxTextState._0) {
+    if(textboxText.state_00 != TextboxTextState.UNINITIALIZED_0) {
       textboxText.chars_58 = null;
     }
 
     //LAB_80029db8
-    textboxText.state_00 = TextboxTextState._0;
-    textboxes_800be358[textboxIndex].state_00 = 0;
+    textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
+    textboxes_800be358[textboxIndex].state_00 = TextboxState.UNINITIALIZED_0;
     setTextboxArrowPosition(textboxIndex, false);
     return FlowControl.CONTINUE;
   }
@@ -3838,13 +3775,13 @@ public final class Scus94491BpeSegment_8002 {
       final Textbox4c s2 = textboxes_800be358[i];
       final TextboxText84 textboxText = textboxText_800bdf38[i];
 
-      if(textboxText.state_00 != TextboxTextState._0) {
+      if(textboxText.state_00 != TextboxTextState.UNINITIALIZED_0) {
         textboxText.chars_58 = null;
       }
 
       //LAB_80029e48
-      textboxText.state_00 = TextboxTextState._0;
-      s2.state_00 = 0;
+      textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
+      s2.state_00 = TextboxState.UNINITIALIZED_0;
       setTextboxArrowPosition(i, false);
     }
 
@@ -3894,16 +3831,16 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002a058L)
-  public static void FUN_8002a058() {
+  public static void handleTextboxAndText() {
     //LAB_8002a080
     for(int i = 0; i < 8; i++) {
-      if(textboxes_800be358[i].state_00 != 0) {
-        FUN_80025a04(i);
+      if(textboxes_800be358[i].state_00 != TextboxState.UNINITIALIZED_0) {
+        handleTextbox(i);
       }
 
       //LAB_8002a098
-      if(textboxText_800bdf38[i].state_00 != TextboxTextState._0) {
-        FUN_800264b0(i); // Animates the textbox arrow
+      if(textboxText_800bdf38[i].state_00 != TextboxTextState.UNINITIALIZED_0) {
+        handleTextboxText(i); // Animates the textbox arrow
       }
     }
   }
@@ -3914,12 +3851,12 @@ public final class Scus94491BpeSegment_8002 {
     for(int i = 0; i < 8; i++) {
       final Textbox4c struct4c = textboxes_800be358[i];
 
-      if(struct4c.state_00 != 0 && (struct4c.flags_08 & Textbox4c.RENDER_BACKGROUND) != 0) {
+      if(struct4c.state_00 != TextboxState.UNINITIALIZED_0 && (struct4c.flags_08 & Textbox4c.RENDER_BACKGROUND) != 0) {
         renderTextboxBackground(i);
       }
 
       //LAB_8002a134
-      if(textboxText_800bdf38[i].state_00 != TextboxTextState._0) {
+      if(textboxText_800bdf38[i].state_00 != TextboxTextState.UNINITIALIZED_0) {
         renderTextboxText(i);
         renderTextboxArrow(i);
       }
@@ -4000,13 +3937,13 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002a32cL)
-  public static void initTextbox(final int textboxIndex, final int a1, final float x, final float y, final int chars, final int lines) {
+  public static void initTextbox(final int textboxIndex, final boolean animateInOut, final float x, final float y, final int chars, final int lines) {
     clearTextbox(textboxIndex);
 
     final Textbox4c struct = textboxes_800be358[textboxIndex];
-    struct._04 = (a1 & 1) + 1;
-    struct._06 = 1;
-    struct.flags_08 |= 0x4;
+    struct.type_04 = animateInOut ? TextboxType.ANIMATE_IN_OUT : TextboxType.NORMAL;
+    struct.renderBorder_06 = true;
+    struct.flags_08 |= Textbox4c.NO_ANIMATE_OUT;
 
     struct.x_14 = x;
     struct.y_16 = y;
@@ -4018,18 +3955,18 @@ public final class Scus94491BpeSegment_8002 {
   public static void FUN_8002a3ec(final int textboxIndex, final int mode) {
     if(mode == 0) {
       //LAB_8002a40c
-      textboxText_800bdf38[textboxIndex].state_00 = TextboxTextState._0;
-      textboxes_800be358[textboxIndex].state_00 = 0;
+      textboxText_800bdf38[textboxIndex].state_00 = TextboxTextState.UNINITIALIZED_0;
+      textboxes_800be358[textboxIndex].state_00 = TextboxState.UNINITIALIZED_0;
     } else {
       //LAB_8002a458
-      textboxes_800be358[textboxIndex].state_00 = 3;
+      textboxes_800be358[textboxIndex].state_00 = TextboxState._3;
     }
   }
 
   /** Too bad I don't know what state 6 is */
   @Method(0x8002a488L)
   public static boolean isTextboxInState6(final int textboxIndex) {
-    return textboxes_800be358[textboxIndex].state_00 == 6;
+    return textboxes_800be358[textboxIndex].state_00 == TextboxState._6;
   }
 
   @Method(0x8002a4c4L)
