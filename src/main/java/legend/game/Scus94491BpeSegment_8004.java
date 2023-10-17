@@ -257,9 +257,9 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[202] = Scus94491BpeSegment_8002::scriptDeallocateAllTextboxes;
     scriptSubFunctions_8004e29c[203] = Scus94491BpeSegment_8002::FUN_80029ecc;
     scriptSubFunctions_8004e29c[204] = Scus94491BpeSegment_8002::FUN_80028ff8;
-    scriptSubFunctions_8004e29c[205] = Scus94491BpeSegment_8002::FUN_80029f48;
-    scriptSubFunctions_8004e29c[206] = Scus94491BpeSegment_8002::FUN_80029f80;
-    scriptSubFunctions_8004e29c[207] = Scus94491BpeSegment_8002::FUN_80025718;
+    scriptSubFunctions_8004e29c[205] = Scus94491BpeSegment_8002::scriptGetTextboxSelectionIndex;
+    scriptSubFunctions_8004e29c[206] = Scus94491BpeSegment_8002::scriptGetTextboxElement;
+    scriptSubFunctions_8004e29c[207] = Scus94491BpeSegment_8002::scriptAddSelectionTextbox;
 
     scriptSubFunctions_8004e29c[224] = Scus94491BpeSegment::scriptLoadMenuSounds;
     scriptSubFunctions_8004e29c[225] = Scus94491BpeSegment::FUN_8001e918;
