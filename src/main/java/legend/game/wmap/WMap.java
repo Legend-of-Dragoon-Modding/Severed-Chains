@@ -41,6 +41,7 @@ import legend.game.types.GsF_LIGHT;
 import legend.game.types.LodString;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
+import legend.game.types.TextboxState;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
@@ -2165,7 +2166,7 @@ public class WMap extends EngineState {
           //LAB_800d4974
           if(labelStage == 0) {
             //LAB_800d4988
-            initTextbox(7, 0, x, y, width.get() - 1, lines.get() - 1);
+            initTextbox(7, false, x, y, width.get() - 1, lines.get() - 1);
 
             //LAB_800d49e4
             this.destinationLabelStage_800c86f0 = 2;
@@ -3496,7 +3497,7 @@ public class WMap extends EngineState {
         //LAB_800db00c
         if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
           playSound(0, 2, 0, 0, (short)0, (short)0);
-          initTextbox(6, 1, 240, 64, 9, 4);
+          initTextbox(6, true, 240, 64, 9, 4);
           struct258._220 = 4;
         }
 
@@ -3801,7 +3802,7 @@ public class WMap extends EngineState {
       final int destStage = this.destinationLabelStage_800c86f0;
       if(destStage == 0) {
         //LAB_800dc9e4
-        initTextbox(7, 0, x, y, width - 1, lines - 1);
+        initTextbox(7, false, x, y, width - 1, lines - 1);
         this.destinationLabelStage_800c86f0 = 1;
 
         //LAB_800dca40
@@ -5068,7 +5069,7 @@ public class WMap extends EngineState {
         this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & 0xffff_f7ff);
 
         loadDrgnFileSync(0, 5655 + places_800f0234.get(locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).placeIndex_02.get()).fileIndex_04.get(), data -> this.loadLocationThumbnailImage(new Tim(data), 1));
-        initTextbox(7, 1, 240, 120, 14, 16);
+        initTextbox(7, true, 240, 120, 14, 16);
 
         this.mapTransitionState_800c68a4 = 2;
 
@@ -5091,7 +5092,7 @@ public class WMap extends EngineState {
 
       case 2:
         if(isTextboxInState6(7)) {
-          initTextbox(6, 0, 240, 70, 13, 7);
+          initTextbox(6, false, 240, 70, 13, 7);
           this.mapTransitionState_800c68a4 = 3;
         }
 
@@ -5314,7 +5315,7 @@ public class WMap extends EngineState {
 
         this.renderLocationMenuTextHighlight(this.locationMenuNameShadow_800c6898);
 
-        if(textboxes_800be358[6].state_00 == 0 && textboxes_800be358[7].state_00 == 0 && MathHelper.flEq(this.locationMenuNameShadow_800c6898.currentBrightness_34, 0.0f)) {
+        if(textboxes_800be358[6].state_00 == TextboxState.UNINITIALIZED_0 && textboxes_800be358[7].state_00 == TextboxState.UNINITIALIZED_0 && MathHelper.flEq(this.locationMenuNameShadow_800c6898.currentBrightness_34, 0.0f)) {
           this.mapTransitionState_800c68a4 = 9;
         }
 
@@ -5520,7 +5521,7 @@ public class WMap extends EngineState {
         final int labelStage = this.startButtonLabelStages_800c86d4[i];
         if(labelStage == 0) {
           //LAB_800e7168
-          initTextbox(i, 0, x, y, width.get() - 1, lines.get() - 1);
+          initTextbox(i, false, x, y, width.get() - 1, lines.get() - 1);
 
           //LAB_800e71d8
           textboxes_800be358[i].z_0c = i + 14;
