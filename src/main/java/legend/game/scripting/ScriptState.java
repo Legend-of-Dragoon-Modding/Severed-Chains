@@ -23,7 +23,7 @@ import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.scriptFunctionDescriptions;
 import static legend.game.Scus94491BpeSegment.scriptLog;
 import static legend.game.Scus94491BpeSegment.simpleRand;
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.Scus94491BpeSegment_8004.engineStateFunctions_8004e29c;
 import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8004.scriptSubFunctions_8004e29c;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
@@ -908,10 +908,8 @@ public class ScriptState<T> {
   @Method(0x80016cfcL)
   public FlowControl scriptExecuteSubFunc() {
     try {
-      final FlowControl result = currentEngineState_8004dd04.executeScriptFunction(this.context.opParam_18, this.context);
-
-      if(result != null) {
-        return result;
+      if(engineStateFunctions_8004e29c[this.context.opParam_18] != null) {
+        return engineStateFunctions_8004e29c[this.context.opParam_18].apply(this.context);
       }
 
       return scriptSubFunctions_8004e29c[this.context.opParam_18].apply(this.context);

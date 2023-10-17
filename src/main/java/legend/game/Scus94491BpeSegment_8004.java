@@ -153,6 +153,7 @@ public final class Scus94491BpeSegment_8004 {
   public static final BoolRef preloadingAudioAssets_8004ddcc = MEMORY.ref(1, 0x8004ddccL, BoolRef::new);
 
   public static final Function<RunningScript, FlowControl>[] scriptSubFunctions_8004e29c = new Function[1024];
+  public static Function<RunningScript, FlowControl>[] engineStateFunctions_8004e29c = new Function[1024];
   static {
     Arrays.setAll(scriptSubFunctions_8004e29c, i -> Scus94491BpeSegment::scriptRewindAndPause2);
 
