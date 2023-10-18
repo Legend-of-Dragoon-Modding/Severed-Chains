@@ -6,6 +6,8 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
+import java.util.Arrays;
+
 import static legend.core.opengl.TmdObjLoader.BPP_SIZE;
 import static legend.core.opengl.TmdObjLoader.CLUT_SIZE;
 import static legend.core.opengl.TmdObjLoader.COLOUR_SIZE;
@@ -22,7 +24,7 @@ public class QuadBuilder {
   private final Vector2f uv = new Vector2f();
   private final Vector2i vramPos = new Vector2i();
   private final Vector2i clut = new Vector2i();
-  private final Vector3f colour = new Vector3f();
+  private final Vector3f[] colour = {new Vector3f(), new Vector3f(), new Vector3f(), new Vector3f()};
   private Bpp bpp;
   private Translucency translucency;
 
@@ -85,19 +87,43 @@ public class QuadBuilder {
   }
 
   public QuadBuilder rgb(final Vector3f colour) {
-    this.colour.set(colour);
+    Arrays.fill(this.colour, colour);
+    this.flags |= TmdObjLoader.COLOURED_FLAG;
+    return this;
+  }
+
+  public QuadBuilder rgb(final int vertex, final Vector3f colour) {
+    this.colour[vertex].set(colour);
     this.flags |= TmdObjLoader.COLOURED_FLAG;
     return this;
   }
 
   public QuadBuilder rgb(final float r, final float g, final float b) {
-    this.colour.set(r, g, b);
+    for(int i = 0; i < this.colour.length; i++) {
+      this.colour[i].set(r, g, b);
+    }
+
+    this.flags |= TmdObjLoader.COLOURED_FLAG;
+    return this;
+  }
+
+  public QuadBuilder rgb(final int vertex, final float r, final float g, final float b) {
+    this.colour[vertex].set(r, g, b);
     this.flags |= TmdObjLoader.COLOURED_FLAG;
     return this;
   }
 
   public QuadBuilder monochrome(final float shade) {
-    this.colour.set(shade);
+    for(int i = 0; i < this.colour.length; i++) {
+      this.colour[i].set(shade);
+    }
+
+    this.flags |= TmdObjLoader.COLOURED_FLAG;
+    return this;
+  }
+
+  public QuadBuilder monochrome(final int vertex, final float shade) {
+    this.colour[vertex].set(shade);
     this.flags |= TmdObjLoader.COLOURED_FLAG;
     return this;
   }
@@ -129,16 +155,13 @@ public class QuadBuilder {
     final float clx = this.clut.x;
     final float cly = this.clut.y;
     final float bpp = this.bpp != null ? this.bpp.ordinal() : 0;
-    final float cr = this.colour.x;
-    final float cg = this.colour.y;
-    final float cb = this.colour.z;
 
     // x y z nx ny nz u v tpx tpy clx cly bpp r g b m flags
     final float[] vertices = {
-      x0, y0, z, 0, 0, 0, u0, v0, tpx, tpy, clx, cly, bpp, cr, cg, cb, 0, this.flags,
-      x0, y1, z, 0, 0, 0, u0, v1, tpx, tpy, clx, cly, bpp, cr, cg, cb, 0, this.flags,
-      x1, y0, z, 0, 0, 0, u1, v0, tpx, tpy, clx, cly, bpp, cr, cg, cb, 0, this.flags,
-      x1, y1, z, 0, 0, 0, u1, v1, tpx, tpy, clx, cly, bpp, cr, cg, cb, 0, this.flags,
+      x0, y0, z, 0, 0, 0, u0, v0, tpx, tpy, clx, cly, bpp, this.colour[0].x, this.colour[0].y, this.colour[0].z, 0, this.flags,
+      x0, y1, z, 0, 0, 0, u0, v1, tpx, tpy, clx, cly, bpp, this.colour[1].x, this.colour[1].y, this.colour[1].z, 0, this.flags,
+      x1, y0, z, 0, 0, 0, u1, v0, tpx, tpy, clx, cly, bpp, this.colour[2].x, this.colour[2].y, this.colour[2].z, 0, this.flags,
+      x1, y1, z, 0, 0, 0, u1, v1, tpx, tpy, clx, cly, bpp, this.colour[3].x, this.colour[3].y, this.colour[3].z, 0, this.flags,
     };
 
     final Mesh mesh = new Mesh(GL_TRIANGLE_STRIP, vertices, 4);

@@ -13,6 +13,7 @@ import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.Transforms;
 import legend.core.memory.Method;
+import legend.core.opengl.QuadBuilder;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.fmv.Fmv;
 import legend.game.input.Input;
@@ -86,6 +87,7 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.REGISTRIES;
+import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.loadCharacterStats;
@@ -1986,6 +1988,8 @@ public final class Scus94491BpeSegment_8002 {
     textbox.stepY_34 = 0;
     textbox._38 = 0;
     textbox._3c = 0;
+
+    textbox.delete();
   }
 
   @Method(0x800258a8L)
@@ -2168,6 +2172,10 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80025f3c
   }
 
+  private static float getWindowScale() {
+    return RENDERER.window().getWidth() / 320.0f;
+  }
+
   @Method(0x80025f4cL)
   public static void renderTextboxBackground(final int textboxIndex) {
     //LAB_80025f7c
@@ -2175,23 +2183,33 @@ public final class Scus94491BpeSegment_8002 {
 
     if(textbox.type_04 != TextboxType.NO_BACKGROUND) {
       if(textbox.state_00 != TextboxState._1) {
-        final float x = textbox.x_14 - centreScreenX_1f8003dc.get();
-        final float y = textbox.y_16 - centreScreenY_1f8003de.get();
+        if(textbox.backgroundObj == null || textbox.x_14 != textbox.oldX || textbox.y_16 != textbox.oldY || textbox.width_1c != textbox.oldW || textbox.height_1e != textbox.oldH) {
+          if(textbox.backgroundObj != null) {
+            textbox.delete();
+          }
 
-        GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
-          .translucent(Translucency.HALF_B_PLUS_HALF_F)
-          .monochrome(0, 0)
-          .pos(0, x - textbox.width_1c, y - textbox.height_1e)
-          .rgb(1, 0, 41, 159)
-          .pos(1, x + textbox.width_1c, y - textbox.height_1e)
-          .rgb(2, 0, 41, 159)
-          .pos(2, x - textbox.width_1c, y + textbox.height_1e)
-          .monochrome(3, 0)
-          .pos(3, x + textbox.width_1c, y + textbox.height_1e)
-        );
+          textbox.backgroundObj = new QuadBuilder()
+            .translucency(Translucency.HALF_B_PLUS_HALF_F)
+            .pos(textbox.x_14 - textbox.width_1c, textbox.y_16 - textbox.height_1e, 0.0f)
+            .size(textbox.width_1c * 2.0f, textbox.height_1e * 2.0f)
+            .rgb(0.0f, 41.0f / 255.0f, 159.0f / 255.0f)
+            .monochrome(0, 0.0f)
+            .monochrome(3, 0.0f)
+            .build();
+
+          textbox.backgroundTransforms.scaling(getWindowScale());
+
+          textbox.oldX = textbox.x_14;
+          textbox.oldY = textbox.y_16;
+          textbox.oldW = textbox.width_1c;
+          textbox.oldH = textbox.height_1e;
+          textbox.updateBorder = true;
+        }
+
+        RENDERER.queueOrthoModel(textbox.backgroundObj, textbox.backgroundTransforms);
 
         if(textbox.renderBorder_06) {
-          renderTextboxBorder(textboxIndex, x - textbox.width_1c, y - textbox.height_1e, x + textbox.width_1c, y + textbox.height_1e);
+          renderTextboxBorder(textboxIndex, textbox.x_14 - textbox.width_1c, textbox.y_16 - textbox.height_1e, textbox.x_14 + textbox.width_1c, textbox.y_16 + textbox.height_1e);
         }
       }
     }
@@ -2217,40 +2235,57 @@ public final class Scus94491BpeSegment_8002 {
 
     final Textbox4c textbox = textboxes_800be358[textboxIndex];
 
+    if(textbox.animationWidth_20 != textbox.oldScaleW || textbox.animationHeight_22 != textbox.oldScaleH) {
+      textbox.updateBorder = true;
+    }
+
     //LAB_800262e4
     for(int borderIndex = 0; borderIndex < 8; borderIndex++) {
-      final TextboxBorderMetrics0c border = textboxBorderMetrics_800108b0.get(borderIndex);
+      final TextboxBorderMetrics0c borderMetrics = textboxBorderMetrics_800108b0.get(borderIndex);
 
-      int w = border.w_08.get();
-      int h = border.h_0a.get();
+      int w = borderMetrics.w_08.get();
+      int h = borderMetrics.h_0a.get();
       if((textbox.flags_08 & Textbox4c.ANIMATING) != 0) {
         w = w * textbox.animationWidth_20 >> 12;
         h = h * textbox.animationHeight_22 >> 12;
       }
 
       //LAB_8002637c
-      final int u = border.u_04.get();
-      final int v = border.v_06.get();
-      final float left = xs[border.topLeftVertexIndex_00.get()] - w;
-      final float right = xs[border.bottomRightVertexIndex_02.get()] + w;
-      final float top = ys[border.topLeftVertexIndex_00.get()] - h;
-      final float bottom = ys[border.bottomRightVertexIndex_02.get()] + h;
+      final int u = borderMetrics.u_04.get();
+      final int v = borderMetrics.v_06.get();
+      final float left = xs[borderMetrics.topLeftVertexIndex_00.get()] - w;
+      final float right = xs[borderMetrics.bottomRightVertexIndex_02.get()] + w;
+      final float top = ys[borderMetrics.topLeftVertexIndex_00.get()] - h;
+      final float bottom = ys[borderMetrics.bottomRightVertexIndex_02.get()] + h;
 
-      GPU.queueCommand(textbox.z_0c, new GpuCommandPoly(4)
-        .bpp(Bpp.BITS_4)
-        .monochrome(0x80)
-        .clut(832, 484)
-        .vramPos(896, 256)
-        .pos(0, left, top)
-        .uv(0, u, v)
-        .pos(1, right, top)
-        .uv(1, u + 16, v)
-        .pos(2, left, bottom)
-        .uv(2, u, v + 16)
-        .pos(3, right, bottom)
-        .uv(3, u + 16, v + 16)
-      );
+      if(textbox.updateBorder) {
+        if(textbox.borderObjs[borderIndex] != null) {
+          textbox.borderObjs[borderIndex].delete();
+        }
+
+        textbox.borderObjs[borderIndex] = new QuadBuilder()
+          .bpp(Bpp.BITS_4)
+          .clut(832, 484)
+          .vramPos(896, 256)
+          .pos(0.0f, 0.0f, 0.0f)
+          .size(16, 16)
+          .uv(u, v)
+          .build();
+
+        final float scale = getWindowScale();
+
+        textbox.borderTransforms[borderIndex]
+          .scaling((right - left) / 16.0f, (bottom - top) / 16.0f, 0.0f)
+          .scale(scale);
+        textbox.borderTransforms[borderIndex].transfer.set(left * scale, top * scale, 0.0f);
+      }
+
+      RENDERER.queueOrthoModel(textbox.borderObjs[borderIndex], textbox.borderTransforms[borderIndex]);
     }
+
+    textbox.oldScaleW = textbox.animationWidth_20;
+    textbox.oldScaleH = textbox.animationHeight_22;
+    textbox.updateBorder = false;
   }
 
   /** I think this method handles textboxes */
@@ -3279,21 +3314,14 @@ public final class Scus94491BpeSegment_8002 {
       for(int charIndex = 0; charIndex < textboxText.chars_1c; charIndex++) {
         final TextboxChar08 nextLine = textboxText.chars_58[(lineIndex + 1) * textboxText.chars_1c + charIndex];
         final TextboxChar08 currentLine = textboxText.chars_58[lineIndex * textboxText.chars_1c + charIndex];
-        currentLine.x_00 = nextLine.x_00;
-        currentLine.y_02 = nextLine.y_02 - 1;
-        currentLine.colour_04 = nextLine.colour_04;
-        currentLine.char_06 = nextLine.char_06;
+        currentLine.set(nextLine);
       }
     }
 
     //LAB_8002804c
     //LAB_80028098
     for(int i = textboxText.chars_1c * textboxText.lines_1e; i < textboxText.chars_1c * (textboxText.lines_1e + 1); i++) {
-      final TextboxChar08 chr = textboxText.chars_58[i];
-      chr.x_00 = 0;
-      chr.y_02 = 0;
-      chr.colour_04 = 0;
-      chr.char_06 = 0;
+      textboxText.chars_58[i].clear();
     }
 
     //LAB_800280cc
@@ -3309,21 +3337,14 @@ public final class Scus94491BpeSegment_8002 {
       for(int charIndex = 0; charIndex < textboxText.chars_1c; charIndex++) {
         final TextboxChar08 previousLine = textboxText.chars_58[(lineIndex - 1) * textboxText.chars_1c + charIndex];
         final TextboxChar08 currentLine = textboxText.chars_58[lineIndex * textboxText.chars_1c + charIndex];
-        currentLine.x_00 = previousLine.x_00;
-        currentLine.y_02 = previousLine.y_02 + 1;
-        currentLine.colour_04 = previousLine.colour_04;
-        currentLine.char_06 = previousLine.char_06;
+        currentLine.set(previousLine);
       }
     }
 
     //LAB_80028254
     //LAB_80028280
     for(int charIndex = 0; charIndex < textboxText.chars_1c; charIndex++) {
-      final TextboxChar08 chr = textboxText.chars_58[charIndex];
-      chr.x_00 = 0;
-      chr.y_02 = 0;
-      chr.colour_04 = 0;
-      chr.char_06 = 0;
+      textboxText.chars_58[charIndex].clear();
     }
 
     //LAB_800282a4
@@ -3754,6 +3775,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80029d6cL)
   public static FlowControl scriptDeallocateTextbox(final RunningScript<?> script) {
     final int textboxIndex = script.params_20[0].get();
+    final Textbox4c textbox = textboxes_800be358[textboxIndex];
     final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
 
     if(textboxText.state_00 != TextboxTextState.UNINITIALIZED_0) {
@@ -3762,7 +3784,10 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80029db8
     textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
-    textboxes_800be358[textboxIndex].state_00 = TextboxState.UNINITIALIZED_0;
+    textbox.state_00 = TextboxState.UNINITIALIZED_0;
+
+    textbox.delete();
+
     setTextboxArrowPosition(textboxIndex, false);
     return FlowControl.CONTINUE;
   }
@@ -3772,7 +3797,7 @@ public final class Scus94491BpeSegment_8002 {
   public static FlowControl scriptDeallocateAllTextboxes(final RunningScript<?> script) {
     //LAB_80029e2c
     for(int i = 0; i < 8; i++) {
-      final Textbox4c s2 = textboxes_800be358[i];
+      final Textbox4c textbox = textboxes_800be358[i];
       final TextboxText84 textboxText = textboxText_800bdf38[i];
 
       if(textboxText.state_00 != TextboxTextState.UNINITIALIZED_0) {
@@ -3781,7 +3806,10 @@ public final class Scus94491BpeSegment_8002 {
 
       //LAB_80029e48
       textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
-      s2.state_00 = TextboxState.UNINITIALIZED_0;
+      textbox.state_00 = TextboxState.UNINITIALIZED_0;
+
+      textbox.delete();
+
       setTextboxArrowPosition(i, false);
     }
 
@@ -3926,11 +3954,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_8002a2f0
     for(int charIndex = 0; charIndex < textboxText.chars_1c * (textboxText.lines_1e + 1); charIndex++) {
-      final TextboxChar08 chr = textboxText.chars_58[charIndex];
-      chr.x_00 = 0;
-      chr.y_02 = 0;
-      chr.colour_04 = 0;
-      chr.char_06 = 0;
+      textboxText.chars_58[charIndex].clear();
     }
 
     //LAB_8002a324

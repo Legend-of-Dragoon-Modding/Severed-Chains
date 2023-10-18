@@ -315,6 +315,7 @@ public class RenderEngine {
       // set render states
       glDepthFunc(GL_ALWAYS);
       glEnable(GL_BLEND);
+      glBlendEquation(GL_FUNC_ADD);
       glBlendFunc(GL_ONE, GL_ONE); //TODO this is only for B+F
 
       // bind opaque framebuffer
@@ -363,10 +364,16 @@ public class RenderEngine {
         entry.backgroundColour.get(32, this.lightBuffer);
         this.lightUniform.set(this.lightBuffer);
 
+        glDisable(GL_BLEND);
+
         entry.obj.render(null);
 
+        glEnable(GL_BLEND);
+
         for(int translucencyIndex = 0; translucencyIndex < Translucency.FOR_RENDERING.length; translucencyIndex++) {
-          entry.obj.render(Translucency.FOR_RENDERING[translucencyIndex]);
+          final Translucency translucency = Translucency.FOR_RENDERING[translucencyIndex];
+          translucency.setGlState();
+          entry.obj.render(translucency);
         }
       }
 
@@ -508,6 +515,10 @@ public class RenderEngine {
   }
 
   public QueuedModel queueOrthoModel(final Obj obj) {
+    if(obj == null) {
+      throw new IllegalArgumentException("obj is null");
+    }
+
     final QueuedModel entry = this.orthoPool.acquire();
     entry.obj = obj;
     entry.transforms.identity();
@@ -516,6 +527,10 @@ public class RenderEngine {
   }
 
   public QueuedModel queueOrthoModel(final Obj obj, final MV mv) {
+    if(obj == null) {
+      throw new IllegalArgumentException("obj is null");
+    }
+
     final QueuedModel entry = this.orthoPool.acquire();
     entry.obj = obj;
     entry.transforms.set(mv);
@@ -738,7 +753,7 @@ public class RenderEngine {
     }
 
     public int size() {
-      return this.queue.size();
+      return this.index;
     }
 
     public QueuedModel acquire() {

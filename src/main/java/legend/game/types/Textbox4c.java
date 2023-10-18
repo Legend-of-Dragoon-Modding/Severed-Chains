@@ -1,5 +1,10 @@
 package legend.game.types;
 
+import legend.core.gte.MV;
+import legend.core.opengl.Obj;
+
+import java.util.Arrays;
+
 public class Textbox4c {
   public static final int ANIMATING = 0x1;
   public static final int NO_ANIMATE_OUT = 0x4;
@@ -44,4 +49,34 @@ public class Textbox4c {
   public float stepY_34;
   public float _38;
   public float _3c;
+
+  public Obj backgroundObj;
+  public final MV backgroundTransforms = new MV();
+  public final Obj[] borderObjs = new Obj[8];
+  public final MV[] borderTransforms = new MV[8];
+  public float oldX;
+  public float oldY;
+  public float oldW;
+  public float oldH;
+  public int oldScaleW;
+  public int oldScaleH;
+  public boolean updateBorder;
+
+  public Textbox4c() {
+    Arrays.setAll(this.borderTransforms, i -> new MV());
+  }
+
+  public void delete() {
+    if(this.backgroundObj != null) {
+      this.backgroundObj.delete();
+      this.backgroundObj = null;
+    }
+
+    for(int i = 0; i < this.borderObjs.length; i++) {
+      if(this.borderObjs[i] != null) {
+        this.borderObjs[i].delete();
+        this.borderObjs[i] = null;
+      }
+    }
+  }
 }

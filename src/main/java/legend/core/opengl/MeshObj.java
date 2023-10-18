@@ -18,7 +18,7 @@ public class MeshObj implements Obj {
         this.meshes[0].draw();
       }
     } else if(this.meshes[translucency.ordinal() + 1] != null) {
-      if(translucency != Translucency.B_PLUS_F) {
+      if(translucency != Translucency.B_PLUS_F && translucency != Translucency.HALF_B_PLUS_HALF_F) {
         throw new RuntimeException("Need to implement " + translucency);
       }
 
@@ -26,6 +26,7 @@ public class MeshObj implements Obj {
     }
   }
 
+  @Override
   public void delete() {
     for(final Mesh mesh : this.meshes) {
       if(mesh != null) {

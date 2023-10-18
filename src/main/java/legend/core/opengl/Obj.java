@@ -6,4 +6,5 @@ import javax.annotation.Nullable;
 
 public interface Obj {
   void render(@Nullable final Translucency translucency);
+  void delete();
 }
