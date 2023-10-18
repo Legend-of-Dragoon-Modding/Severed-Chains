@@ -237,8 +237,8 @@ public final class Scus94491BpeSegment_800b {
   public static final ArrayRef<IntRef> textboxVariables_800bdf10 = MEMORY.ref(4, 0x800bdf10L, ArrayRef.of(IntRef.class, 10, 0x4, IntRef::new));
   public static final TextboxText84[] textboxText_800bdf38 = new TextboxText84[8];
   public static final Textbox4c[] textboxes_800be358 = new Textbox4c[8];
-  public static final Value textU_800be5c0 = MEMORY.ref(4, 0x800be5c0L);
-  public static final Value textV_800be5c8 = MEMORY.ref(4, 0x800be5c8L);
+  public static int textCol_800be5c0;
+  public static int textRow_800be5c8;
 
   public static final Value _800be5d0 = MEMORY.ref(4, 0x800be5d0L);
 

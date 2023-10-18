@@ -7,7 +7,7 @@ import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11C.glBlendFunc;
 import static org.lwjgl.opengl.GL14C.GL_FUNC_ADD;
-import static org.lwjgl.opengl.GL14C.GL_FUNC_SUBTRACT;
+import static org.lwjgl.opengl.GL14C.GL_FUNC_REVERSE_SUBTRACT;
 import static org.lwjgl.opengl.GL14C.glBlendEquation;
 
 public enum Translucency {
@@ -60,7 +60,7 @@ public enum Translucency {
       }
 
       case B_MINUS_F -> {
-        glBlendEquation(GL_FUNC_SUBTRACT);
+        glBlendEquation(GL_FUNC_REVERSE_SUBTRACT);
         glBlendFunc(GL_ONE, GL_ONE);
       }
 

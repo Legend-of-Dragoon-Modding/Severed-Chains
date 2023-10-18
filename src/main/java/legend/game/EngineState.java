@@ -15,8 +15,14 @@ public abstract class EngineState {
 
   /** Runs before scripts are ticked */
   public abstract void tick();
+
   /** Runs after scripts are ticked */
   public void postScriptTick() {
+
+  }
+
+  /** Runs after everything else is rendered */
+  public void overlayTick() {
 
   }
 

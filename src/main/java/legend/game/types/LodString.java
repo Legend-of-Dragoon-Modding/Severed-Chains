@@ -61,9 +61,9 @@ public class LodString implements MemoryRef {
     final StringBuilder sb = new StringBuilder();
 
     for(int i = 0; i < (this.chars != null ? this.chars.length : 500); i++) {
-      final long c = this.charAt(i);
+      final int c = this.charAt(i);
 
-      if(c == 0xa0ffL || c == 0xffffL) {
+      if(c == 0xa0ff || c == 0xffff) {
         break;
       }
 

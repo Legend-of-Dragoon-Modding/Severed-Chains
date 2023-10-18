@@ -1,5 +1,7 @@
 package legend.game.types;
 
+import legend.core.gte.MV;
+
 public class TextboxText84 {
   public static final int END = 0xa0;
   public static final int LINE = 0xa1;
@@ -62,8 +64,9 @@ public class TextboxText84 {
 
   public int textColour_28;
 
-  public int _2a;
-  public int _2c;
+  public int scrollSpeed_2a;
+  /** Adjusts the Y value of the text as the box is scrolling */
+  public int scrollAmount_2c;
 
   public int charIndex_30;
 
@@ -95,4 +98,16 @@ public class TextboxText84 {
   public TextboxTextState stateAfterTransition_78;
   public int element_7c;
   public int digitIndex_80;
+
+  public final MV transforms = new MV();
+
+  public void delete() {
+    if(this.chars_58 != null) {
+      for(final TextboxChar08 chr : this.chars_58) {
+        chr.delete();
+      }
+
+      this.chars_58 = null;
+    }
+  }
 }

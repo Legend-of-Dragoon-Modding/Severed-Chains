@@ -12,13 +12,20 @@ public class MeshObj implements Obj {
   }
 
   @Override
+  public boolean shouldRender(@Nullable final Translucency translucency) {
+    if(translucency == null) {
+      return this.meshes[0] != null;
+    }
+
+    return this.meshes[translucency.ordinal() + 1] != null;
+  }
+
+  @Override
   public void render(@Nullable final Translucency translucency) {
     if(translucency == null) {
-      if(this.meshes[0] != null) {
-        this.meshes[0].draw();
-      }
-    } else if(this.meshes[translucency.ordinal() + 1] != null) {
-      if(translucency != Translucency.B_PLUS_F && translucency != Translucency.HALF_B_PLUS_HALF_F) {
+      this.meshes[0].draw();
+    } else {
+      if(translucency != Translucency.HALF_B_PLUS_HALF_F && translucency != Translucency.B_PLUS_F && translucency != Translucency.B_MINUS_F) {
         throw new RuntimeException("Need to implement " + translucency);
       }
 

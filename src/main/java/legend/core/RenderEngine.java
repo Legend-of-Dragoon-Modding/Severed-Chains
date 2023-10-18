@@ -364,16 +364,19 @@ public class RenderEngine {
         entry.backgroundColour.get(32, this.lightBuffer);
         this.lightUniform.set(this.lightBuffer);
 
-        glDisable(GL_BLEND);
-
-        entry.obj.render(null);
+        if(entry.obj.shouldRender(null)) {
+          glDisable(GL_BLEND);
+          entry.obj.render(null);
+        }
 
         glEnable(GL_BLEND);
-
         for(int translucencyIndex = 0; translucencyIndex < Translucency.FOR_RENDERING.length; translucencyIndex++) {
           final Translucency translucency = Translucency.FOR_RENDERING[translucencyIndex];
-          translucency.setGlState();
-          entry.obj.render(translucency);
+
+          if(entry.obj.shouldRender(translucency)) {
+            translucency.setGlState();
+            entry.obj.render(translucency);
+          }
         }
       }
 
@@ -422,16 +425,19 @@ public class RenderEngine {
 
     for(int i = 0; i < pool.size(); i++) {
       final QueuedModel entry = pool.get(i);
-      entry.transforms.get(this.transforms2Buffer);
-      this.transforms2Uniform.set(this.transforms2Buffer);
-      this.tmdShaderColour.set(entry.colour);
 
-      entry.lightDirection.get(this.lightBuffer);
-      entry.lightColour.get(16, this.lightBuffer);
-      entry.backgroundColour.get(32, this.lightBuffer);
-      this.lightUniform.set(this.lightBuffer);
+      if(entry.obj.shouldRender(null)) {
+        entry.transforms.get(this.transforms2Buffer);
+        this.transforms2Uniform.set(this.transforms2Buffer);
+        this.tmdShaderColour.set(entry.colour);
 
-      entry.obj.render(null);
+        entry.lightDirection.get(this.lightBuffer);
+        entry.lightColour.get(16, this.lightBuffer);
+        entry.backgroundColour.get(32, this.lightBuffer);
+        this.lightUniform.set(this.lightBuffer);
+
+        entry.obj.render(null);
+      }
     }
 
     glDisable(GL_CULL_FACE);
@@ -459,16 +465,19 @@ public class RenderEngine {
 
       for(int i = 0; i < pool.size(); i++) {
         final QueuedModel entry = pool.get(i);
-        entry.transforms.get(this.transforms2Buffer);
-        this.transforms2Uniform.set(this.transforms2Buffer);
-        this.tmdShaderTransparentColour.set(entry.colour);
 
-        entry.lightDirection.get(this.lightBuffer);
-        entry.lightColour.get(16, this.lightBuffer);
-        entry.backgroundColour.get(32, this.lightBuffer);
-        this.lightUniform.set(this.lightBuffer);
+        if(entry.obj.shouldRender(translucency)) {
+          entry.transforms.get(this.transforms2Buffer);
+          this.transforms2Uniform.set(this.transforms2Buffer);
+          this.tmdShaderTransparentColour.set(entry.colour);
 
-        entry.obj.render(translucency);
+          entry.lightDirection.get(this.lightBuffer);
+          entry.lightColour.get(16, this.lightBuffer);
+          entry.backgroundColour.get(32, this.lightBuffer);
+          this.lightUniform.set(this.lightBuffer);
+
+          entry.obj.render(translucency);
+        }
       }
     }
 

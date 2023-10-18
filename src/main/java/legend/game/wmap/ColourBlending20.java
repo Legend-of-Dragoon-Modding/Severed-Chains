@@ -1,12 +1,12 @@
 package legend.game.wmap;
 
-import legend.core.gte.COLOUR;
+import org.joml.Vector3i;
 
 public class ColourBlending20 {
-  public COLOUR colour0Start_00;
-  public COLOUR colour0End_04;
-  public COLOUR colour1Start_08;
-  public COLOUR colour1End_0c;
+  public Vector3i colour0Start_00;
+  public Vector3i colour0End_04;
+  public Vector3i colour1Start_08;
+  public Vector3i colour1End_0c;
   public int colourEndRatio_10;
   public int colourStartRatio_14;
   public int colour1Ratio_18;
