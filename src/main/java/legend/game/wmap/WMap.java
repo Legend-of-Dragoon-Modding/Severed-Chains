@@ -564,7 +564,7 @@ public class WMap extends EngineState {
       }
 
       //LAB_800cc970
-      this.wmapStruct258_800c66a8.colour_20 -= 0.25f / (3.0f / vsyncMode_8007a3b8);
+      this.wmapStruct258_800c66a8.colour_20 -= 0.5f / (3.0f / vsyncMode_8007a3b8);
       if(this.wmapStruct258_800c66a8.colour_20 < 0.0f) {
         this.wmapStruct258_800c66a8.colour_20 = 0.0f;
       }
@@ -4794,7 +4794,7 @@ public class WMap extends EngineState {
       //LAB_800e46dc
     } else if(this.wmapStruct258_800c66a8._04 == 2) {
       //LAB_800e47d0
-      this.wmapStruct258_800c66a8.colour_20 -= 0.25f / (3.0f / vsyncMode_8007a3b8);
+      this.wmapStruct258_800c66a8.colour_20 -= 0.50f / (3.0f / vsyncMode_8007a3b8);
 
       if(this.wmapStruct258_800c66a8.colour_20 < 0.0f) {
         this.wmapStruct258_800c66a8.colour_20 = 0.0f;
