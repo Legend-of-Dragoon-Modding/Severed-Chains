@@ -148,6 +148,7 @@ public final class MathHelper {
 
   public static final float PI = (float)Math.PI;
   public static final float TWO_PI = (float)(Math.PI * 2);
+  public static final float HALF_PI = (float)(Math.PI / 2);
 
   private static final float PSX_DEG_TO_DEG = 360.0f / 4096.0f;
   private static final float DEG_TO_RAD = (float)(Math.PI / 180.0f);

@@ -437,6 +437,8 @@ public class Gpu {
       width = 368;
     }
 
+    RENDERER.setProjectionSize(width, height);
+
     this.status.horizontalResolution = width;
     this.status.verticalResolution = height;
 

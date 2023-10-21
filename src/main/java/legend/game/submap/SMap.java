@@ -28,6 +28,7 @@ import legend.core.memory.types.RelativePointer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.EngineState;
@@ -202,6 +203,8 @@ import static legend.game.Scus94491BpeSegment_800e.loadTimImage;
 
 public class SMap extends EngineState {
   private static final Logger LOGGER = LogManager.getFormatterLogger(SMap.class);
+
+  private static final float SUBMAP_SCALE = 320.0f / 368.0f;
 
   private int fmvIndex_800bf0dc;
 
@@ -1329,8 +1332,9 @@ public class SMap extends EngineState {
         Renderer.renderDobj2(dobj2, false, 0);
 
         if(dobj2.obj != null) {
+//          lw.scaleLocal(1/SUBMAP_SCALE, 1.0f, 1.0f);
           RENDERER.queueModel(dobj2.obj, lw)
-            .screenspaceOffset(new Vector2f((GPU.getOffsetX() + this.screenOffsetX_800cb568) / 384.0f, (GPU.getOffsetY() + this.screenOffsetY_800cb56c) / 240.0f))
+            .screenspaceOffset(this.screenOffsetX_800cb568 / 160.0f * SUBMAP_SCALE, GPU.getOffsetY() / 120.0f)
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
             .backgroundColour(GTE.backgroundColour);
@@ -4346,8 +4350,12 @@ public class SMap extends EngineState {
       GsSetLightMatrix(lw);
       GTE.setTransforms(ls);
       Renderer.renderDobj2(this.SomethingStructPtr_800d1a88.dobj2Ptr_20, false, 0);
+
+//      lw.scaleLocal(SUBMAP_SCALE, 1.0f, 1.0f);
       RENDERER.queueModel(this.SomethingStruct_800cbe08.dobj2Ptr_20.obj, lw)
-        .screenspaceOffset(new Vector2f((GPU.getOffsetX() + this.screenOffsetX_800cb568) / 384.0f, (GPU.getOffsetY() + this.screenOffsetY_800cb56c) / 240.0f));
+//        .screenspaceOffset((GPU.getOffsetX() + this.screenOffsetX_800cb568) / 160.0f * SUBMAP_SCALE, (GPU.getOffsetY() + this.screenOffsetY_800cb56c) / 120.0f)
+        .screenspaceOffset((this.screenOffsetX_800cb568 + 8) / 160.0f/* * SUBMAP_SCALE*/, (-this.screenOffsetY_800cb56c) / 120.0f)
+      ;
     } else if(this.SomethingStruct_800cbe08.dobj2Ptr_20.obj != null) {
       this.SomethingStruct_800cbe08.dobj2Ptr_20.obj.delete();
       this.SomethingStruct_800cbe08.dobj2Ptr_20.obj = null;
@@ -5482,10 +5490,28 @@ public class SMap extends EngineState {
     return this.envRenderMetrics_800cb710[textureIndex].z_20;
   }
 
+  private Obj foregroundQuad;
+  private Obj worldQuad;
+
   @Method(0x800e7954L)
   private void renderEnvironment(final MV[] sobjMatrices, final int sobjCount) {
     final float[] sobjZs = new float[sobjCount];
     final float[] envZs = new float[this.envForegroundTextureCount_800cb580];
+
+/*
+    if(this.backgroundQuad == null) {
+      this.backgroundQuad = new QuadBuilder()
+        .monochrome(1.0f)
+        .size(174 - (384 - 368) / 2, 110)
+        .build();
+    }
+
+    final MV transforms = new MV();
+    transforms.scaling(SUBMAP_SCALE, 1.0f, 1.0f);
+    RENDERER.queueOrthoModel(this.backgroundQuad, transforms)
+      .screenspaceOffset(new Vector2f(GPU.getOffsetX() / 160.0f * SUBMAP_SCALE, -GPU.getOffsetY() / 120.0f))
+    ;
+*/
 
     //LAB_800e79b8
     // Render background
@@ -5503,7 +5529,8 @@ public class SMap extends EngineState {
           .build();
       }
 
-      metrics.transforms.transfer.set(GPU.getOffsetX() + this.submapOffsetX_800cb560 + this.screenOffsetX_800cb568, GPU.getOffsetY() + this.submapOffsetY_800cb564 + this.screenOffsetY_800cb56c, 0.0f);
+      metrics.transforms.scaling(SUBMAP_SCALE, 1.0f, 1.0f);
+      metrics.transforms.transfer.set((GPU.getOffsetX() + this.submapOffsetX_800cb560 + this.screenOffsetX_800cb568) * SUBMAP_SCALE, GPU.getOffsetY() + this.submapOffsetY_800cb564 + this.screenOffsetY_800cb56c, 0.0f);
       RENDERER.queueOrthoModel(metrics.obj, metrics.transforms);
     }
 
@@ -5610,8 +5637,9 @@ public class SMap extends EngineState {
           continue;
         }
 
-        metrics.transforms.transfer.set(this.submapOffsetX_800cb560 + this.screenOffsetX_800cb568 + this.envForegroundMetrics_800cb590[i].x_00, this.submapOffsetY_800cb564 + this.screenOffsetY_800cb56c + this.envForegroundMetrics_800cb590[i].y_04, 0.0f);
-        RENDERER.queueOrthoOverlayModel(metrics.obj, metrics.transforms);
+        metrics.transforms.scaling(SUBMAP_SCALE, 1.0f, 1.0f);
+        metrics.transforms.transfer.set((GPU.getOffsetX() + this.submapOffsetX_800cb560 + this.screenOffsetX_800cb568 + this.envForegroundMetrics_800cb590[i].x_00) * SUBMAP_SCALE, GPU.getOffsetY() + this.submapOffsetY_800cb564 + this.screenOffsetY_800cb56c + this.envForegroundMetrics_800cb590[i].y_04, 0.0f);
+//        RENDERER.queueOrthoOverlayModel(metrics.obj, metrics.transforms);
       }
     }
 

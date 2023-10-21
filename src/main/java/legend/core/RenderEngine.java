@@ -85,8 +85,6 @@ import static org.lwjgl.opengl.GL40C.glBlendFunci;
 public class RenderEngine {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
 
-  private static final float FOV = (float)Math.toRadians(17.0f);
-
   private Camera camera2d;
   private Camera camera3d;
   private Window window;
@@ -146,6 +144,30 @@ public class RenderEngine {
   private final QueuePool modelPool = new QueuePool();
   private final QueuePool orthoPool = new QueuePool();
   private final QueuePool orthoOverlayPool = new QueuePool();
+
+  private float projectionWidth;
+  private float projectionHeight;
+  private float projectionDepth;
+  private float aspectRatio;
+  private float fieldOfView;
+
+  public void setProjectionSize(final float width, final float height) {
+    this.projectionWidth = width;
+    this.projectionHeight = height;
+    this.updateFieldOfView();
+  }
+
+  public void setProjectionDepth(final float depth) {
+    this.projectionDepth = depth;
+    this.updateFieldOfView();
+  }
+
+  private void updateFieldOfView() {
+    this.aspectRatio = this.projectionWidth / this.projectionHeight;
+    final float halfWidth = this.projectionWidth / 2.0f;
+    this.fieldOfView = (float)(Math.atan(halfWidth / this.projectionDepth) * 2.0f / this.aspectRatio);
+    this.updateProjections();
+  }
 
   public Window.Events events() {
     return this.window.events;
@@ -649,6 +671,13 @@ public class RenderEngine {
     }
   }
 
+  private void updateProjections() {
+    // LOD uses a left-handed projection with a negated Y axis because reasons
+    this.perspectiveProjection.setPerspectiveLH(this.fieldOfView, this.aspectRatio, 0.1f, 10000.0f); //TODO un-jank the world map so we can lower this ridiculousness
+    this.perspectiveProjection.negateY();
+    this.orthographicProjection.setOrthoLH(0.0f, this.width, this.height, 0.0f, 0.0f, 1000000.0f);
+  }
+
   private void onResize(final Window window, final int width, final int height) {
     if(width == 0 && height == 0) {
       return;
@@ -658,10 +687,7 @@ public class RenderEngine {
     this.height = height;
 
     // Projections
-    // LOD uses a left-handed projection with a negated Y axis because reasons
-    this.perspectiveProjection.setPerspectiveLH(FOV, (float)width / height, 0.1f, 10000.0f); //TODO un-jank the world map so we can lower this ridiculousness
-    this.perspectiveProjection.negateY();
-    this.orthographicProjection.setOrthoLH(0.0f, width, height, 0.0f, 0.0f, 1000000.0f);
+    this.updateProjections();
 
     // Order-independent translucency
     if(this.opaqueTexture != null) {
@@ -800,6 +826,11 @@ public class RenderEngine {
 
     public QueuedModel screenspaceOffset(final Vector2f offset) {
       this.screenspaceOffset.set(offset);
+      return this;
+    }
+
+    public QueuedModel screenspaceOffset(final float x, final float y) {
+      this.screenspaceOffset.set(x, y);
       return this;
     }
 
