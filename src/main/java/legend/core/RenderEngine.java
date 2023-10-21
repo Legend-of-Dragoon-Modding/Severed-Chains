@@ -18,6 +18,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
@@ -84,7 +85,7 @@ import static org.lwjgl.opengl.GL40C.glBlendFunci;
 public class RenderEngine {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
 
-  private static final float FOV = (float)Math.toRadians(45.0f);
+  private static final float FOV = (float)Math.toRadians(17.0f);
 
   private Camera camera2d;
   private Camera camera3d;
@@ -96,7 +97,7 @@ public class RenderEngine {
   private final Matrix4f orthographicProjection = new Matrix4f();
   private final Matrix4f transforms = new Matrix4f();
   private final FloatBuffer transformsBuffer = BufferUtils.createFloatBuffer(4 * 4 * 2);
-  private final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer(4 * 4);
+  private final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer(4 * 4 + 2);
   private final FloatBuffer lightBuffer = BufferUtils.createFloatBuffer(4 * 4 * 2 + 4);
 
   // Order-independent translucency
@@ -144,6 +145,7 @@ public class RenderEngine {
 
   private final QueuePool modelPool = new QueuePool();
   private final QueuePool orthoPool = new QueuePool();
+  private final QueuePool orthoOverlayPool = new QueuePool();
 
   public Window.Events events() {
     return this.window.events;
@@ -179,6 +181,10 @@ public class RenderEngine {
 
   public void clearColour() {
     glClear(GL_COLOR_BUFFER_BIT);
+  }
+
+  public void clearDepth() {
+    glClear(GL_DEPTH_BUFFER_BIT);
   }
 
   public Runnable setRenderCallback(final Runnable renderCallback) {
@@ -309,6 +315,41 @@ public class RenderEngine {
       glClearBufferfv(GL_COLOR, 0, this.clear0);
       glClearBufferfv(GL_COLOR, 1, this.clear1);
 
+      this.opaqueFrameBuffer.bind();
+
+      RENDERER.setProjectionMode(ProjectionMode._2D);
+      for(int i = 0; i < this.orthoPool.size(); i++) {
+        final QueuedModel entry = this.orthoPool.get(i);
+        entry.transforms.get(this.transforms2Buffer);
+        entry.screenspaceOffset.get(16, this.transforms2Buffer);
+        this.transforms2Uniform.set(this.transforms2Buffer);
+        this.tmdShaderColour.set(entry.colour);
+
+        entry.lightDirection.get(this.lightBuffer);
+        entry.lightColour.get(16, this.lightBuffer);
+        entry.backgroundColour.get(32, this.lightBuffer);
+        this.lightUniform.set(this.lightBuffer);
+
+        if(entry.obj.shouldRender(null)) {
+          glDisable(GL_BLEND);
+          entry.obj.render(null);
+        }
+
+        glEnable(GL_BLEND);
+        for(int translucencyIndex = 0; translucencyIndex < Translucency.FOR_RENDERING.length; translucencyIndex++) {
+          final Translucency translucency = Translucency.FOR_RENDERING[translucencyIndex];
+
+          if(entry.obj.shouldRender(translucency)) {
+            translucency.setGlState();
+            entry.obj.render(translucency);
+          }
+        }
+      }
+
+      this.orthoPool.reset();
+
+      this.clearDepth();
+
       RENDERER.setProjectionMode(ProjectionMode._3D);
       this.renderPool(this.modelPool);
 
@@ -353,9 +394,10 @@ public class RenderEngine {
       this.tmdShader.use();
       GPU.useVramTexture();
 
-      for(int i = 0; i < this.orthoPool.size(); i++) {
-        final QueuedModel entry = this.orthoPool.get(i);
+      for(int i = 0; i < this.orthoOverlayPool.size(); i++) {
+        final QueuedModel entry = this.orthoOverlayPool.get(i);
         entry.transforms.get(this.transforms2Buffer);
+        entry.screenspaceOffset.get(16, this.transforms2Buffer);
         this.transforms2Uniform.set(this.transforms2Buffer);
         this.tmdShaderColour.set(entry.colour);
 
@@ -380,7 +422,7 @@ public class RenderEngine {
         }
       }
 
-      this.orthoPool.reset();
+      this.orthoOverlayPool.reset();
 
       this.fps = 1.0f / ((System.nanoTime() - this.lastFrame) / (1_000_000_000 / 30.0f)) * 30.0f;
       this.lastFrame = System.nanoTime();
@@ -428,6 +470,7 @@ public class RenderEngine {
 
       if(entry.obj.shouldRender(null)) {
         entry.transforms.get(this.transforms2Buffer);
+        entry.screenspaceOffset.get(16, this.transforms2Buffer);
         this.transforms2Uniform.set(this.transforms2Buffer);
         this.tmdShaderColour.set(entry.colour);
 
@@ -468,6 +511,7 @@ public class RenderEngine {
 
         if(entry.obj.shouldRender(translucency)) {
           entry.transforms.get(this.transforms2Buffer);
+          entry.screenspaceOffset.get(16, this.transforms2Buffer);
           this.transforms2Uniform.set(this.transforms2Buffer);
           this.tmdShaderTransparentColour.set(entry.colour);
 
@@ -510,6 +554,7 @@ public class RenderEngine {
     final QueuedModel entry = this.modelPool.acquire();
     entry.obj = obj;
     entry.transforms.identity();
+    entry.screenspaceOffset.zero();
     entry.colour.set(1.0f, 1.0f, 1.0f);
     return entry;
   }
@@ -518,6 +563,7 @@ public class RenderEngine {
     final QueuedModel entry = this.modelPool.acquire();
     entry.obj = obj;
     entry.transforms.set(mv);
+    entry.screenspaceOffset.zero();
     entry.transforms.setTranslation(mv.transfer);
     entry.colour.set(1.0f, 1.0f, 1.0f);
     return entry;
@@ -530,6 +576,7 @@ public class RenderEngine {
 
     final QueuedModel entry = this.orthoPool.acquire();
     entry.obj = obj;
+    entry.screenspaceOffset.zero();
     entry.transforms.identity();
     entry.colour.set(1.0f, 1.0f, 1.0f);
     return entry;
@@ -543,6 +590,34 @@ public class RenderEngine {
     final QueuedModel entry = this.orthoPool.acquire();
     entry.obj = obj;
     entry.transforms.set(mv);
+    entry.screenspaceOffset.zero();
+    entry.transforms.setTranslation(mv.transfer);
+    entry.colour.set(1.0f, 1.0f, 1.0f);
+    return entry;
+  }
+
+  public QueuedModel queueOrthoOverlayModel(final Obj obj) {
+    if(obj == null) {
+      throw new IllegalArgumentException("obj is null");
+    }
+
+    final QueuedModel entry = this.orthoOverlayPool.acquire();
+    entry.obj = obj;
+    entry.screenspaceOffset.zero();
+    entry.transforms.identity();
+    entry.colour.set(1.0f, 1.0f, 1.0f);
+    return entry;
+  }
+
+  public QueuedModel queueOrthoOverlayModel(final Obj obj, final MV mv) {
+    if(obj == null) {
+      throw new IllegalArgumentException("obj is null");
+    }
+
+    final QueuedModel entry = this.orthoOverlayPool.acquire();
+    entry.obj = obj;
+    entry.transforms.set(mv);
+    entry.screenspaceOffset.zero();
     entry.transforms.setTranslation(mv.transfer);
     entry.colour.set(1.0f, 1.0f, 1.0f);
     return entry;
@@ -586,7 +661,7 @@ public class RenderEngine {
     // LOD uses a left-handed projection with a negated Y axis because reasons
     this.perspectiveProjection.setPerspectiveLH(FOV, (float)width / height, 0.1f, 10000.0f); //TODO un-jank the world map so we can lower this ridiculousness
     this.perspectiveProjection.negateY();
-    this.orthographicProjection.setOrtho2D(0.0f, width, height, 0.0f);
+    this.orthographicProjection.setOrthoLH(0.0f, width, height, 0.0f, 0.0f, 1000000.0f);
 
     // Order-independent translucency
     if(this.opaqueTexture != null) {
@@ -716,11 +791,17 @@ public class RenderEngine {
   public static class QueuedModel {
     private Obj obj;
     private final Matrix4f transforms = new Matrix4f();
+    private final Vector2f screenspaceOffset = new Vector2f();
     private final Vector3f colour = new Vector3f();
 
     private final Matrix4f lightDirection = new Matrix4f();
     private final Matrix4f lightColour = new Matrix4f();
     private final Vector4f backgroundColour = new Vector4f();
+
+    public QueuedModel screenspaceOffset(final Vector2f offset) {
+      this.screenspaceOffset.set(offset);
+      return this;
+    }
 
     public QueuedModel colour(final Vector3f colour) {
       this.colour.set(colour);

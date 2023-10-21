@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 
 public class MeshObj implements Obj {
   private final Mesh[] meshes;
+  private boolean deleted;
 
   public MeshObj(final Mesh[] meshes) {
     this.meshes = meshes;
@@ -13,6 +14,10 @@ public class MeshObj implements Obj {
 
   @Override
   public boolean shouldRender(@Nullable final Translucency translucency) {
+    if(this.deleted) {
+      return false;
+    }
+
     if(translucency == null) {
       return this.meshes[0] != null;
     }
@@ -35,6 +40,8 @@ public class MeshObj implements Obj {
 
   @Override
   public void delete() {
+    this.deleted = true;
+
     for(final Mesh mesh : this.meshes) {
       if(mesh != null) {
         mesh.delete();

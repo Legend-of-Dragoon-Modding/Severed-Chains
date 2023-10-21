@@ -998,7 +998,7 @@ public class WMap extends EngineState {
       //LAB_800ce5c8
       highlight.transforms.scaling(scale);
       highlight.transforms.transfer.set(x, y, 0.0f);
-      RENDERER.queueOrthoModel(highlight.objs[i], highlight.transforms);
+      RENDERER.queueOrthoOverlayModel(highlight.objs[i], highlight.transforms);
     }
   }
 
@@ -2649,7 +2649,7 @@ public class WMap extends EngineState {
     // Continent name
     final float scale = RENDERER.window().getWidth() / 420.0f;
     this.wmapStruct258_800c66a8.mapOverlayTransforms.scaling(scale, scale, 1.0f);
-    RENDERER.queueOrthoModel(this.wmapStruct258_800c66a8.mapOverlayObj, this.wmapStruct258_800c66a8.mapOverlayTransforms)
+    RENDERER.queueOrthoOverlayModel(this.wmapStruct258_800c66a8.mapOverlayObj, this.wmapStruct258_800c66a8.mapOverlayTransforms)
       .monochrome(this.wmapStruct258_800c66a8.colour_20);
 
     this.wmapStruct258_800c66a8.colour_20 += 0.25f / (3.0f / vsyncMode_8007a3b8);
@@ -5115,7 +5115,7 @@ public class WMap extends EngineState {
           final int sp3c = this.mapState_800c6798.submapScene_ca & 0xf;
 
           this.textTransforms.transfer.set(240.0f * scale, 164.0f * scale, 0.0f);
-          RENDERER.queueOrthoModel(this.dontEnter, this.textTransforms);
+          RENDERER.queueOrthoOverlayModel(this.dontEnter, this.textTransforms);
 
           this.renderCenteredShadowedText(regions_800f01ec.get(sp38).deref(), 240, 182, TextColour.WHITE, 0);
           this.renderCenteredShadowedText(regions_800f01ec.get(sp3c).deref(), 240, 200, TextColour.WHITE, 0);
@@ -5148,10 +5148,10 @@ public class WMap extends EngineState {
         } else { // Entering a town, etc.
           //LAB_800e5a18
           this.textTransforms.transfer.set(240.0f * scale, 170.0f * scale, 0.0f);
-          RENDERER.queueOrthoModel(this.dontEnter, this.textTransforms);
+          RENDERER.queueOrthoOverlayModel(this.dontEnter, this.textTransforms);
 
           this.textTransforms.transfer.set(240.0f * scale, 190.0f * scale, 0.0f);
-          RENDERER.queueOrthoModel(this.enter, this.textTransforms);
+          RENDERER.queueOrthoOverlayModel(this.enter, this.textTransforms);
 
           // World Map Location Menu (No Entry,Enter)
           if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.DPAD_DOWN) ||
@@ -5173,7 +5173,7 @@ public class WMap extends EngineState {
         final IntRef lines = new IntRef();
         this.measureText(places_800f0234.get(placeIndex).name_00.deref(), width, lines);
         this.textTransforms.transfer.set(240.0f * scale, (140.0f - lines.get() * 7) * scale, 0.0f);
-        RENDERER.queueOrthoModel(this.placeName, this.textTransforms);
+        RENDERER.queueOrthoOverlayModel(this.placeName, this.textTransforms);
 
         if((this.filesLoadedFlags_800c66b8.get() & 0x800) != 0) {
           if(this.placeImage == null) {
@@ -5202,7 +5202,7 @@ public class WMap extends EngineState {
           }
 
           this.textTransforms.transfer.zero();
-          RENDERER.queueOrthoModel(this.placeImage, this.textTransforms);
+          RENDERER.queueOrthoOverlayModel(this.placeImage, this.textTransforms);
 
           if(Input.pressedThisFrame(InputAction.BUTTON_WEST) && this.mapState_800c6798.submapCut_c8 != 999) { // Square
             playSound(0, 2, 0, 0, (short)0, (short)0);

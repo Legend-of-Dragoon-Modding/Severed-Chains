@@ -10,6 +10,7 @@ import java.util.Arrays;
 
 public class WMapStruct19c0 {
   public final GsRVIEW2 rview2_00 = new GsRVIEW2();
+  /** Parent coordinate system of camera; controls movement */
   public final GsCOORDINATE2 coord2_20 = new GsCOORDINATE2();
   public final Vector3f mapRotation_70 = new Vector3f();
   /** short */

@@ -28,6 +28,8 @@ import legend.core.memory.types.RelativePointer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.core.opengl.QuadBuilder;
+import legend.core.opengl.TmdObjLoader;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
 import legend.game.combat.types.Ptr;
@@ -87,6 +89,7 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
+import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.MathHelper.flEq;
 import static legend.game.SItem.loadCharacterStats;
@@ -192,6 +195,8 @@ import static legend.game.Scus94491BpeSegment_800b.textboxText_800bdf38;
 import static legend.game.Scus94491BpeSegment_800b.textboxes_800be358;
 import static legend.game.Scus94491BpeSegment_800b.transitioningFromCombatToSubmap_800bd7b8;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
+import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
+import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.Scus94491BpeSegment_800e.loadTimImage;
 
@@ -314,7 +319,7 @@ public class SMap extends EngineState {
   private int _800cbd34;
   private UnknownStruct2 _800cbd38;
   private UnknownStruct2 _800cbd3c;
-  private final MV transposedWorldToScreenMatrix_800cbd40 = new MV();
+  private final MV screenToWorldMatrix_800cbd40 = new MV();
   private int minSobj_800cbd60;
   private int maxSobj_800cbd64;
   /** A copy of the WS matrix */
@@ -1322,6 +1327,14 @@ public class SMap extends EngineState {
         GsSetLightMatrix(lw);
         GTE.setTransforms(ls);
         Renderer.renderDobj2(dobj2, false, 0);
+
+        if(dobj2.obj != null) {
+          RENDERER.queueModel(dobj2.obj, lw)
+            .screenspaceOffset(new Vector2f((GPU.getOffsetX() + this.screenOffsetX_800cb568) / 384.0f, (GPU.getOffsetY() + this.screenOffsetY_800cb56c) / 240.0f))
+            .lightDirection(lightDirectionMatrix_800c34e8)
+            .lightColour(lightColourMatrix_800c3508)
+            .backgroundColour(GTE.backgroundColour);
+        }
       }
     }
 
@@ -3391,6 +3404,10 @@ public class SMap extends EngineState {
 
           //LAB_800e1d60
           this.FUN_800f04ac(state.innerStruct_00._1d0);
+
+          for(final ModelPart10 part : model.modelParts_00) {
+            part.obj = TmdObjLoader.fromObjTable(part.tmd_08);
+          }
         }
 
         //LAB_800e1d88
@@ -3498,6 +3515,13 @@ public class SMap extends EngineState {
   @Method(0x800e2220L)
   private void unloadSmap() {
     this.submapControllerState_800c6740.deallocateWithChildren();
+
+    for(final EnvironmentRenderingMetrics24 environmentRenderingMetrics24 : this.envRenderMetrics_800cb710) {
+      if(environmentRenderingMetrics24.obj != null) {
+        environmentRenderingMetrics24.obj.delete();
+        environmentRenderingMetrics24.obj = null;
+      }
+    }
 
     if(this.chapterTitleCardMrg_800c6710 != null) {
       this.chapterTitleCardMrg_800c6710 = null;
@@ -3919,6 +3943,10 @@ public class SMap extends EngineState {
       //LAB_800e3e38
     }
 
+    for(final ModelPart10 part : sobj.model_00.modelParts_00) {
+      part.obj.delete();
+    }
+
     //LAB_800e3e48
   }
 
@@ -4308,12 +4336,21 @@ public class SMap extends EngineState {
     this.renderEnvironment(matrices, this.sobjCount_800c6730);
 
     if(enableCollisionDebug) {
+      if(this.SomethingStruct_800cbe08.dobj2Ptr_20.obj == null) {
+        this.SomethingStruct_800cbe08.dobj2Ptr_20.obj = TmdObjLoader.fromObjTable(this.SomethingStruct_800cbe08.dobj2Ptr_20.tmd_08);
+      }
+
       final MV lw = new MV();
       final MV ls = new MV();
       GsGetLws(this.SomethingStructPtr_800d1a88.dobj2Ptr_20.coord2_04, lw, ls);
       GsSetLightMatrix(lw);
       GTE.setTransforms(ls);
       Renderer.renderDobj2(this.SomethingStructPtr_800d1a88.dobj2Ptr_20, false, 0);
+      RENDERER.queueModel(this.SomethingStruct_800cbe08.dobj2Ptr_20.obj, lw)
+        .screenspaceOffset(new Vector2f((GPU.getOffsetX() + this.screenOffsetX_800cb568) / 384.0f, (GPU.getOffsetY() + this.screenOffsetY_800cb56c) / 240.0f));
+    } else if(this.SomethingStruct_800cbe08.dobj2Ptr_20.obj != null) {
+      this.SomethingStruct_800cbe08.dobj2Ptr_20.obj.delete();
+      this.SomethingStruct_800cbe08.dobj2Ptr_20.obj = null;
     }
   }
 
@@ -5256,6 +5293,24 @@ public class SMap extends EngineState {
       //LAB_800e7004
       //LAB_800e7074
       final EnvironmentRenderingMetrics24 renderPacket = this.envRenderMetrics_800cb710[i];
+
+      float z;
+      if(s0.s_06 == 0x4e) {
+        //LAB_800e7148
+        z = (0x1 << orderingTableBits_1f8003c0.get()) - 1;
+      } else if(s0.s_06 == 0x4f) {
+        z = 40;
+      } else {
+        //LAB_800e7194
+        z =
+          worldToScreenMatrix_800c3548.m02 * s0.svec_00.x +
+            worldToScreenMatrix_800c3548.m12 * s0.svec_00.y +
+            worldToScreenMatrix_800c3548.m22 * s0.svec_00.z;
+        z += worldToScreenMatrix_800c3548.transfer.z;
+        z /= 1 << 16 - orderingTableBits_1f8003c0.get();
+      }
+
+      renderPacket.z_20 = Math.round(z);
       renderPacket.tpage_04 = s0.tpage_20;
       renderPacket.r_0c = 0x80;
       renderPacket.g_0d = 0x80;
@@ -5269,23 +5324,6 @@ public class SMap extends EngineState {
       //LAB_800e70ec
       renderPacket.offsetX_1c = s0.textureOffsetX_10;
       renderPacket.offsetY_1e = s0.textureOffsetY_12;
-
-      if(s0.s_06 == 0x4e) {
-        //LAB_800e7148
-        renderPacket.z_20 = (0x1 << orderingTableBits_1f8003c0.get()) - 1;
-      } else if(s0.s_06 == 0x4f) {
-        renderPacket.z_20 = 40;
-      } else {
-        //LAB_800e7194
-        float a0 =
-          worldToScreenMatrix_800c3548.m02 * s0.svec_00.x +
-          worldToScreenMatrix_800c3548.m12 * s0.svec_00.y +
-          worldToScreenMatrix_800c3548.m22 * s0.svec_00.z;
-        a0 += worldToScreenMatrix_800c3548.transfer.z;
-        a0 /= 1 << 16 - orderingTableBits_1f8003c0.get();
-
-        renderPacket.z_20 = Math.round(a0);
-      }
 
       //LAB_800e7210
       renderPacket.flags_22 &= 0x3fff;
@@ -5316,7 +5354,7 @@ public class SMap extends EngineState {
     GsSetRefView2L(this.rview2_800cbd10);
     this.clearSmallValuesFromMatrix(worldToScreenMatrix_800c3548);
     this.worldToScreenMatrix_800cbd68.set(worldToScreenMatrix_800c3548);
-    this.worldToScreenMatrix_800cbd68.transpose(this.transposedWorldToScreenMatrix_800cbd40);
+    this.worldToScreenMatrix_800cbd68.transpose(this.screenToWorldMatrix_800cbd40);
     rview2_800bd7e8.set(this.rview2_800cbd10);
   }
 
@@ -5453,16 +5491,20 @@ public class SMap extends EngineState {
     // Render background
     for(int i = 0; i < this.envBackgroundTextureCount_800cb57c; i++) {
       final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[i];
-      metrics.x_10 = this.submapOffsetX_800cb560 + this.screenOffsetX_800cb568 + metrics.offsetX_1c;
-      metrics.y_12 = this.submapOffsetY_800cb564 + this.screenOffsetY_800cb56c + metrics.offsetY_1e;
 
-      GPU.queueCommand(metrics.z_20, new GpuCommandQuad()
-        .rgb(metrics.r_0c, metrics.g_0d, metrics.b_0e)
-        .pos(metrics.x_10, metrics.y_12, metrics.w_18, metrics.h_1a)
-        .uv(metrics.u_14, metrics.v_15)
-        .clut((metrics.clut_16 & 0b111111) * 16, metrics.clut_16 >>> 6)
-        .vramPos((metrics.tpage_04 & 0b1111) * 64, (metrics.tpage_04 & 0b10000) != 0 ? 256 : 0)
-        .bpp(Bpp.of(metrics.tpage_04 >>> 7 & 0b11)));
+      if(metrics.obj == null) {
+        metrics.obj = new QuadBuilder()
+          .bpp(Bpp.of(metrics.tpage_04 >>> 7 & 0b11))
+          .clut(768, metrics.clut_16 >>> 6)
+          .vramPos((metrics.tpage_04 & 0b1111) * 64, (metrics.tpage_04 & 0b10000) != 0 ? 256 : 0)
+          .pos(metrics.offsetX_1c, metrics.offsetY_1e, metrics.z_20 * 4.0f)
+          .uv(metrics.u_14, metrics.v_15)
+          .size(metrics.w_18, metrics.h_1a)
+          .build();
+      }
+
+      metrics.transforms.transfer.set(GPU.getOffsetX() + this.submapOffsetX_800cb560 + this.screenOffsetX_800cb568, GPU.getOffsetY() + this.submapOffsetY_800cb564 + this.screenOffsetY_800cb56c, 0.0f);
+      RENDERER.queueOrthoModel(metrics.obj, metrics.transforms);
     }
 
     //LAB_800e7a60
@@ -5550,8 +5592,17 @@ public class SMap extends EngineState {
     for(int i = 0; i < this.envForegroundTextureCount_800cb580; i++) {
       if(!this.envForegroundMetrics_800cb590[i].hidden_08) {
         final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[this.envBackgroundTextureCount_800cb57c + i];
-        metrics.x_10 = this.submapOffsetX_800cb560 + this.screenOffsetX_800cb568 + metrics.offsetX_1c + this.envForegroundMetrics_800cb590[i].x_00;
-        metrics.y_12 = this.submapOffsetY_800cb564 + this.screenOffsetY_800cb56c + metrics.offsetY_1e + this.envForegroundMetrics_800cb590[i].y_04;
+
+        if(metrics.obj == null) {
+          metrics.obj = new QuadBuilder()
+            .bpp(Bpp.of(metrics.tpage_04 >>> 7 & 0b11))
+            .clut(768, metrics.clut_16 >>> 6)
+            .vramPos((metrics.tpage_04 & 0b1111) * 64, (metrics.tpage_04 & 0b10000) != 0 ? 256 : 0)
+            .pos(metrics.offsetX_1c, metrics.offsetY_1e, 0.0f/*metrics.z_20 * 4.0f*/)
+            .uv(metrics.u_14, metrics.v_15)
+            .size(metrics.w_18, metrics.h_1a)
+            .build();
+        }
 
         // This was causing a problem when moving left from the room before Zackwell. Not sure if this is a retail issue or SC-specific. GH#332
         final float z = envZs[i];
@@ -5559,13 +5610,8 @@ public class SMap extends EngineState {
           continue;
         }
 
-        GPU.queueCommand(Math.round(z), new GpuCommandQuad()
-          .rgb(metrics.r_0c, metrics.g_0d, metrics.b_0e)
-          .pos(metrics.x_10, metrics.y_12, metrics.w_18, metrics.h_1a)
-          .uv(metrics.u_14, metrics.v_15)
-          .clut((metrics.clut_16 & 0b111111) * 16, metrics.clut_16 >>> 6)
-          .vramPos((metrics.tpage_04 & 0b1111) * 64, (metrics.tpage_04 & 0b10000) != 0 ? 256 : 0)
-          .bpp(Bpp.of(metrics.tpage_04 >>> 7 & 0b11)));
+        metrics.transforms.transfer.set(this.submapOffsetX_800cb560 + this.screenOffsetX_800cb568 + this.envForegroundMetrics_800cb590[i].x_00, this.submapOffsetY_800cb564 + this.screenOffsetY_800cb56c + this.envForegroundMetrics_800cb590[i].y_04, 0.0f);
+        RENDERER.queueOrthoOverlayModel(metrics.obj, metrics.transforms);
       }
     }
 
@@ -5694,11 +5740,11 @@ public class SMap extends EngineState {
   @Method(0x800e82ccL)
   private void transformToWorldspace(final Vector3f out, final Vector3f in) {
     //TODO does this need to be transposed?
-    if(this.transposedWorldToScreenMatrix_800cbd40.m02 == 0.0f) {
+    if(this.screenToWorldMatrix_800cbd40.m02 == 0.0f) {
       out.set(in);
     } else {
       //LAB_800e8318
-      in.mul(this.transposedWorldToScreenMatrix_800cbd40, out);
+      in.mul(this.screenToWorldMatrix_800cbd40, out);
     }
 
     //LAB_800e833c

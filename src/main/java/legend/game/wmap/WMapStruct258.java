@@ -26,6 +26,7 @@ public class WMapStruct258 {
   public float clutYIndex_28;
   public FileData imageData_2c;
   public FileData imageData_30;
+  /** Used as the camera position, only translation is used */
   public final GsCOORDINATE2 coord2_34 = new GsCOORDINATE2();
   public final Vector3f vec_84 = new Vector3f();
   public final Vector3f vec_94 = new Vector3f();

@@ -40,7 +40,6 @@ import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 import static org.lwjgl.glfw.GLFW.GLFW_REPEAT;
 import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
-import static org.lwjgl.glfw.GLFW.GLFW_SCALE_TO_MONITOR;
 import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
 import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
@@ -129,7 +128,7 @@ public class Window {
 
     glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-    glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
+//    glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
 
     if("true".equals(System.getenv("opengl_debug"))) {
       glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
@@ -350,7 +349,7 @@ public class Window {
           final FloatBuffer x = stack.mallocFloat(1);
           final FloatBuffer y = stack.mallocFloat(1);
           glfwGetWindowContentScale(window, x, y);
-          this.window.scale = x.get(0);
+//          this.window.scale = x.get(0);
         }
 
         this.window.width = (int)(width / this.window.scale);

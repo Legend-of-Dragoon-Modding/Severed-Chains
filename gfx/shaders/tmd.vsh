@@ -23,6 +23,7 @@ layout(std140) uniform transforms {
 
 layout(std140) uniform transforms2 {
   mat4 model;
+  vec2 screenOffset;
 };
 
 layout(std140) uniform lighting {
@@ -41,6 +42,7 @@ void main() {
   }
 
   gl_Position = projection * camera * model * pos;
+  gl_Position.xy += screenOffset * gl_Position.w;
   vertUv = inUv;
   vertTpage = inTpage;
   vertClut = inClut;

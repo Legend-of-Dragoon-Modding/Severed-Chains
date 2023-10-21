@@ -2173,6 +2173,10 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   public static float getWindowScale() {
+    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
+      return RENDERER.window().getWidth() / 368.0f;
+    }
+
     return RENDERER.window().getWidth() / 320.0f;
   }
 
@@ -2206,7 +2210,7 @@ public final class Scus94491BpeSegment_8002 {
           textbox.updateBorder = true;
         }
 
-        RENDERER.queueOrthoModel(textbox.backgroundObj, textbox.backgroundTransforms);
+        RENDERER.queueOrthoOverlayModel(textbox.backgroundObj, textbox.backgroundTransforms);
 
         if(textbox.renderBorder_06) {
           renderTextboxBorder(textboxIndex, textbox.x_14 - textbox.width_1c, textbox.y_16 - textbox.height_1e, textbox.x_14 + textbox.width_1c, textbox.y_16 + textbox.height_1e);
@@ -2280,7 +2284,7 @@ public final class Scus94491BpeSegment_8002 {
         textbox.borderTransforms[borderIndex].transfer.set(left * scale, top * scale, 0.0f);
       }
 
-      RENDERER.queueOrthoModel(textbox.borderObjs[borderIndex], textbox.borderTransforms[borderIndex]);
+      RENDERER.queueOrthoOverlayModel(textbox.borderObjs[borderIndex], textbox.borderTransforms[borderIndex]);
     }
 
     textbox.oldScaleW = textbox.animationWidth_20;
@@ -3429,7 +3433,7 @@ public final class Scus94491BpeSegment_8002 {
 
           textboxText.transforms.identity();
           textboxText.transforms.transfer.set(x, y, 0.0f);
-          RENDERER.queueOrthoModel(chr.obj, textboxText.transforms);
+          RENDERER.queueOrthoOverlayModel(chr.obj, textboxText.transforms);
 
           GPU.queueCommand(textboxText.z_0c + 1, new GpuCommandQuad()
             .bpp(Bpp.BITS_4)
