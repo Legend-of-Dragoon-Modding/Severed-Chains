@@ -163,7 +163,7 @@ public class RenderEngine {
   }
 
   private void updateFieldOfView() {
-    this.aspectRatio = this.projectionWidth / this.projectionHeight;
+    this.aspectRatio = 320.0f / this.projectionHeight;
     final float halfWidth = this.projectionWidth / 2.0f;
     this.fieldOfView = (float)(Math.atan(halfWidth / this.projectionDepth) * 2.0f / this.aspectRatio);
     this.updateProjections();

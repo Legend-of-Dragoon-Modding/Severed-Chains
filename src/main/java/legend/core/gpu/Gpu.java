@@ -433,11 +433,11 @@ public class Gpu {
    * GP1(08h) - Display Mode
    */
   public void displayMode(int width, final int height) {
+    RENDERER.setProjectionSize(width, height);
+
     if(width == 384) {
       width = 368;
     }
-
-    RENDERER.setProjectionSize(width, height);
 
     this.status.horizontalResolution = width;
     this.status.verticalResolution = height;

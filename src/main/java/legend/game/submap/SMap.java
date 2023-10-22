@@ -1332,9 +1332,9 @@ public class SMap extends EngineState {
         Renderer.renderDobj2(dobj2, false, 0);
 
         if(dobj2.obj != null) {
-//          lw.scaleLocal(1/SUBMAP_SCALE, 1.0f, 1.0f);
+//          lw.scaleLocal(SUBMAP_SCALE, 1.0f, 1.0f);
           RENDERER.queueModel(dobj2.obj, lw)
-            .screenspaceOffset(this.screenOffsetX_800cb568 / 160.0f * SUBMAP_SCALE, GPU.getOffsetY() / 120.0f)
+            .screenspaceOffset((this.screenOffsetX_800cb568 + 8) / 160.0f * SUBMAP_SCALE, -this.screenOffsetY_800cb56c / 120.0f)
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
             .backgroundColour(GTE.backgroundColour);
@@ -4354,7 +4354,7 @@ public class SMap extends EngineState {
 //      lw.scaleLocal(SUBMAP_SCALE, 1.0f, 1.0f);
       RENDERER.queueModel(this.SomethingStruct_800cbe08.dobj2Ptr_20.obj, lw)
 //        .screenspaceOffset((GPU.getOffsetX() + this.screenOffsetX_800cb568) / 160.0f * SUBMAP_SCALE, (GPU.getOffsetY() + this.screenOffsetY_800cb56c) / 120.0f)
-        .screenspaceOffset((this.screenOffsetX_800cb568 + 8) / 160.0f/* * SUBMAP_SCALE*/, (-this.screenOffsetY_800cb56c) / 120.0f)
+        .screenspaceOffset((this.screenOffsetX_800cb568 + 8) / 160.0f * SUBMAP_SCALE, (-this.screenOffsetY_800cb56c) / 120.0f)
       ;
     } else if(this.SomethingStruct_800cbe08.dobj2Ptr_20.obj != null) {
       this.SomethingStruct_800cbe08.dobj2Ptr_20.obj.delete();
@@ -5639,7 +5639,7 @@ public class SMap extends EngineState {
 
         metrics.transforms.scaling(SUBMAP_SCALE, 1.0f, 1.0f);
         metrics.transforms.transfer.set((GPU.getOffsetX() + this.submapOffsetX_800cb560 + this.screenOffsetX_800cb568 + this.envForegroundMetrics_800cb590[i].x_00) * SUBMAP_SCALE, GPU.getOffsetY() + this.submapOffsetY_800cb564 + this.screenOffsetY_800cb56c + this.envForegroundMetrics_800cb590[i].y_04, 0.0f);
-//        RENDERER.queueOrthoOverlayModel(metrics.obj, metrics.transforms);
+        RENDERER.queueOrthoOverlayModel(metrics.obj, metrics.transforms);
       }
     }
 
