@@ -1332,9 +1332,8 @@ public class SMap extends EngineState {
         Renderer.renderDobj2(dobj2, false, 0);
 
         if(dobj2.obj != null) {
-//          lw.scaleLocal(SUBMAP_SCALE, 1.0f, 1.0f);
           RENDERER.queueModel(dobj2.obj, lw)
-            .screenspaceOffset((this.screenOffsetX_800cb568 + 8) / 160.0f * SUBMAP_SCALE, -this.screenOffsetY_800cb56c / 120.0f)
+            .screenspaceOffset(this.screenOffsetX_800cb568 + 8, -this.screenOffsetY_800cb56c)
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
             .backgroundColour(GTE.backgroundColour);
@@ -4351,10 +4350,8 @@ public class SMap extends EngineState {
       GTE.setTransforms(ls);
       Renderer.renderDobj2(this.SomethingStructPtr_800d1a88.dobj2Ptr_20, false, 0);
 
-//      lw.scaleLocal(SUBMAP_SCALE, 1.0f, 1.0f);
       RENDERER.queueModel(this.SomethingStruct_800cbe08.dobj2Ptr_20.obj, lw)
-//        .screenspaceOffset((GPU.getOffsetX() + this.screenOffsetX_800cb568) / 160.0f * SUBMAP_SCALE, (GPU.getOffsetY() + this.screenOffsetY_800cb56c) / 120.0f)
-        .screenspaceOffset((this.screenOffsetX_800cb568 + 8) / 160.0f * SUBMAP_SCALE, (-this.screenOffsetY_800cb56c) / 120.0f)
+        .screenspaceOffset(this.screenOffsetX_800cb568 + 8, -this.screenOffsetY_800cb56c)
       ;
     } else if(this.SomethingStruct_800cbe08.dobj2Ptr_20.obj != null) {
       this.SomethingStruct_800cbe08.dobj2Ptr_20.obj.delete();

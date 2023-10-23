@@ -150,10 +150,14 @@ public class RenderEngine {
   private float projectionDepth;
   private float aspectRatio;
   private float fieldOfView;
+  private float halfWidthInv;
+  private float halfHeightInv;
 
   public void setProjectionSize(final float width, final float height) {
     this.projectionWidth = width;
     this.projectionHeight = height;
+    this.halfWidthInv = 1.0f / (width / 2.0f);
+    this.halfHeightInv = 1.0f / (height / 2.0f);
     this.updateFieldOfView();
   }
 
@@ -814,7 +818,7 @@ public class RenderEngine {
     }
   }
 
-  public static class QueuedModel {
+  public class QueuedModel {
     private Obj obj;
     private final Matrix4f transforms = new Matrix4f();
     private final Vector2f screenspaceOffset = new Vector2f();
@@ -830,7 +834,7 @@ public class RenderEngine {
     }
 
     public QueuedModel screenspaceOffset(final float x, final float y) {
-      this.screenspaceOffset.set(x, y);
+      this.screenspaceOffset.set(x * RenderEngine.this.halfWidthInv, y * RenderEngine.this.halfHeightInv);
       return this;
     }
 
@@ -865,7 +869,7 @@ public class RenderEngine {
     }
   }
 
-  private static class QueuePool {
+  private class QueuePool {
     private final List<QueuedModel> queue = new ArrayList<>();
     private int index;
 

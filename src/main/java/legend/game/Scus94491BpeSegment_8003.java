@@ -717,6 +717,10 @@ public final class Scus94491BpeSegment_8003 {
     RENDERER.camera().lookAt(s2.viewpoint_00, s2.refpoint_0c);
 
     worldToScreenMatrix_800c3548.set(identityAspectMatrix_800c3588);
+
+    // Use a Y scale of 1.0 minus half the ratio between 320 and the actual width. I don't know why this is necessary. I don't even know why I thought to try this.
+    worldToScreenMatrix_800c3548.m11 = 1.0f - (1.0f - 320.0f / GPU.drawingArea.w.get()) / 2.0f;
+
     FUN_8003d5d0(worldToScreenMatrix_800c3548, -s2.viewpointTwist_18);
 
     final float deltaX = s2.refpoint_0c.x - s2.viewpoint_00.x;
@@ -766,6 +770,8 @@ public final class Scus94491BpeSegment_8003 {
       cameraParent.set(lw).translate(-lw.transfer.x, -lw.transfer.y, -lw.transfer.z);
       RENDERER.camera().getView().mul(cameraParent);
     }
+
+    RENDERER.camera().getView().set(worldToScreenMatrix_800c3548).setTranslation(worldToScreenMatrix_800c3548.transfer);
   }
 
   /**
