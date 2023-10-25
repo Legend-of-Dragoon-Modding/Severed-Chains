@@ -763,6 +763,61 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   /**
+   * This method is the same as GsSetRefView2L, except that internally the math is performed
+   * on integers prior to normalization. This is done so that sobj and collision placements
+   * match retail, as higher precision math was causing noticeable shifts.
+   */
+  public static void GsSetSmapRefView2L(final GsRVIEW2 s2) {
+    worldToScreenMatrix_800c3548.set(identityAspectMatrix_800c3588);
+    FUN_8003d5d0(worldToScreenMatrix_800c3548, -s2.viewpointTwist_18);
+
+    final int deltaX = (int)(s2.refpoint_0c.x - s2.viewpoint_00.x);
+    final int deltaY = (int)(s2.refpoint_0c.y - s2.viewpoint_00.y);
+    final int deltaZ = (int)(s2.refpoint_0c.z - s2.viewpoint_00.z);
+
+    final int vectorLengthSquared = deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ;
+
+    if(vectorLengthSquared == 0) {
+      return;
+    }
+
+    final int vectorLength = (int)Math.sqrt(vectorLengthSquared);
+
+    final float normalizedY = (float)(deltaY * 0x1000 / vectorLength) / 0x1000;
+
+    final int horizontalLength = (int)Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
+    final float normalizedHypotenuse = (float)(horizontalLength * 0x1000 / vectorLength) / 0x1000;
+
+    //LAB_8003e230
+    final MV sp0x30 = new MV();
+    FUN_8003cee0(sp0x30, normalizedY, normalizedHypotenuse, 0);
+    worldToScreenMatrix_800c3548.mul(sp0x30);
+
+    if(horizontalLength != 0) {
+      final float normalizedX = (float)(-deltaX * 0x1000 / horizontalLength) / 0x1000;
+      final float normalizedZ = (float)(deltaZ * 0x1000 / horizontalLength) / 0x1000;
+
+      FUN_8003cee0(sp0x30, normalizedX, normalizedZ, 1);
+      worldToScreenMatrix_800c3548.mul(sp0x30);
+    }
+
+    //LAB_8003e474
+    worldToScreenMatrix_800c3548.transfer.set(s2.viewpoint_00).negate().mul(worldToScreenMatrix_800c3548);
+
+    if(s2.super_1c != null) {
+      final MV lw = new MV();
+      GsGetLw(s2.super_1c, lw);
+
+      final MV transposedLw = new MV();
+      lw.transpose(transposedLw);
+      lw.transfer.mul(transposedLw, transposedLw.transfer);
+      transposedLw.transfer.negate();
+      GsMulCoord2(worldToScreenMatrix_800c3548, transposedLw);
+      worldToScreenMatrix_800c3548.set(transposedLw);
+    }
+  }
+
+  /**
    * I think this method reads through all the packets and sort of "combines" ones that have the same MODE and FLAG for efficiency
    */
   @Method(0x8003e5d0L)
