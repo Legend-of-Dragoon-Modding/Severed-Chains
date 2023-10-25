@@ -86,7 +86,6 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_8002a3ec;
 import static legend.game.Scus94491BpeSegment_8002.animateModel;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.clearTextbox;
-import static legend.game.Scus94491BpeSegment_8002.getWindowScale;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.initTextbox;
 import static legend.game.Scus94491BpeSegment_8002.isTextboxInState6;
@@ -987,16 +986,15 @@ public class WMap extends EngineState {
   private void renderLocationMenuTextHighlight(final WmapMenuTextHighlight40 highlight) {
     this.setRenderColours(highlight);
 
-    final float scale = getWindowScale();
-    final float x = (highlight.x_38 + GPU.getOffsetX()) * scale;
-    final float y = (highlight.y_3a + GPU.getOffsetY()) * scale;
+    final float x = highlight.x_38 + GPU.getOffsetX();
+    final float y = highlight.y_3a + GPU.getOffsetY();
 
     //LAB_800ce538
     //LAB_800ce5a0
     //LAB_800ce5a4
     for(int i = 0; i < highlight.subRectCount_30; i++) {
       //LAB_800ce5c8
-      highlight.transforms.scaling(scale);
+      highlight.transforms.identity();
       highlight.transforms.transfer.set(x, y, 0.0f);
       RENDERER.queueOrthoOverlayModel(highlight.objs[i], highlight.transforms);
     }
@@ -2647,8 +2645,7 @@ public class WMap extends EngineState {
 
     //LAB_800d6950
     // Continent name
-    final float scale = RENDERER.window().getWidth() / 420.0f;
-    this.wmapStruct258_800c66a8.mapOverlayTransforms.scaling(scale, scale, 1.0f);
+    this.wmapStruct258_800c66a8.mapOverlayTransforms.identity();
     RENDERER.queueOrthoOverlayModel(this.wmapStruct258_800c66a8.mapOverlayObj, this.wmapStruct258_800c66a8.mapOverlayTransforms)
       .monochrome(this.wmapStruct258_800c66a8.colour_20);
 
@@ -5107,14 +5104,13 @@ public class WMap extends EngineState {
 
         this.renderLocationMenuTextHighlight(this.locationMenuNameShadow_800c6898);
 
-        final float scale = getWindowScale();
-        this.textTransforms.scaling(scale);
+        this.textTransforms.identity();
 
         if(this.mapState_800c6798.submapCut_c8 == 999) { // Going to a different region
           final int sp38 = this.mapState_800c6798.submapScene_ca >>> 4 & 0xffff;
           final int sp3c = this.mapState_800c6798.submapScene_ca & 0xf;
 
-          this.textTransforms.transfer.set(240.0f * scale, 164.0f * scale, 0.0f);
+          this.textTransforms.transfer.set(240.0f, 164.0f, 0.0f);
           RENDERER.queueOrthoOverlayModel(this.dontEnter, this.textTransforms);
 
           this.renderCenteredShadowedText(regions_800f01ec.get(sp38).deref(), 240, 182, TextColour.WHITE, 0);
@@ -5147,10 +5143,10 @@ public class WMap extends EngineState {
           this.locationMenuSelectorHighlight_800c689c.y_3a = this.menuSelectorOptionIndex_800c86d2 * 18 + 8;
         } else { // Entering a town, etc.
           //LAB_800e5a18
-          this.textTransforms.transfer.set(240.0f * scale, 170.0f * scale, 0.0f);
+          this.textTransforms.transfer.set(240.0f, 170.0f, 0.0f);
           RENDERER.queueOrthoOverlayModel(this.dontEnter, this.textTransforms);
 
-          this.textTransforms.transfer.set(240.0f * scale, 190.0f * scale, 0.0f);
+          this.textTransforms.transfer.set(240.0f, 190.0f, 0.0f);
           RENDERER.queueOrthoOverlayModel(this.enter, this.textTransforms);
 
           // World Map Location Menu (No Entry,Enter)
@@ -5172,7 +5168,7 @@ public class WMap extends EngineState {
         final IntRef width = new IntRef();
         final IntRef lines = new IntRef();
         this.measureText(places_800f0234.get(placeIndex).name_00.deref(), width, lines);
-        this.textTransforms.transfer.set(240.0f * scale, (140.0f - lines.get() * 7) * scale, 0.0f);
+        this.textTransforms.transfer.set(240.0f, 140.0f - lines.get() * 7, 0.0f);
         RENDERER.queueOrthoOverlayModel(this.placeName, this.textTransforms);
 
         if((this.filesLoadedFlags_800c66b8.get() & 0x800) != 0) {

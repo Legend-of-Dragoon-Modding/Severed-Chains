@@ -2172,14 +2172,6 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80025f3c
   }
 
-  public static float getWindowScale() {
-    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
-      return RENDERER.window().getWidth() / 368.0f;
-    }
-
-    return RENDERER.window().getWidth() / 320.0f;
-  }
-
   @Method(0x80025f4cL)
   public static void renderTextboxBackground(final int textboxIndex) {
     //LAB_80025f7c
@@ -2201,7 +2193,7 @@ public final class Scus94491BpeSegment_8002 {
             .monochrome(3, 0.0f)
             .build();
 
-          textbox.backgroundTransforms.scaling(getWindowScale());
+          textbox.backgroundTransforms.identity();
 
           textbox.oldX = textbox.x_14;
           textbox.oldY = textbox.y_16;
@@ -2276,12 +2268,9 @@ public final class Scus94491BpeSegment_8002 {
           .uv(u, v)
           .build();
 
-        final float scale = getWindowScale();
-
         textbox.borderTransforms[borderIndex]
-          .scaling((right - left) / 16.0f, (bottom - top) / 16.0f, 0.0f)
-          .scale(scale);
-        textbox.borderTransforms[borderIndex].transfer.set(left * scale, top * scale, 0.0f);
+          .scaling((right - left) / 16.0f, (bottom - top) / 16.0f, 0.0f);
+        textbox.borderTransforms[borderIndex].transfer.set(left, top, 0.0f);
       }
 
       RENDERER.queueOrthoOverlayModel(textbox.borderObjs[borderIndex], textbox.borderTransforms[borderIndex]);
