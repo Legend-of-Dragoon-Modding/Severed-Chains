@@ -142,7 +142,7 @@ import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
-import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
+import static legend.game.Scus94491BpeSegment_8003.GsSetSmapRefView2L;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.PopMatrix;
 import static legend.game.Scus94491BpeSegment_8003.PushMatrix;
@@ -5356,7 +5356,7 @@ public class SMap extends EngineState {
   @Method(0x800e7328L)
   private void updateCamera() {
     setProjectionPlaneDistance((int)projectionPlaneDistance_800bd810.get());
-    GsSetRefView2L(this.rview2_800cbd10);
+    GsSetSmapRefView2L(this.rview2_800cbd10);
     this.clearSmallValuesFromMatrix(worldToScreenMatrix_800c3548);
     this.worldToScreenMatrix_800cbd68.set(worldToScreenMatrix_800c3548);
     this.worldToScreenMatrix_800cbd68.transpose(this.screenToWorldMatrix_800cbd40);
