@@ -29,7 +29,7 @@ void main() {
   if((flags & 0x2) != 0) {
     // Texture recolouring uses an RGB range of 0..128 or 0.0..0.5 so we multiply by 2
     if((flags & 0x4) != 0) {
-      outColour *= 2.0;
+      outColour.rgb *= 2.0;
     }
 
     //NOTE: these only work for 4/8 bpp
@@ -48,7 +48,12 @@ void main() {
     vec4 texColour = texelFetch(tex24, clutUv, 0);
 
     // Discard if (0, 0, 0)
-    if(texColour.r == 0 && texColour.g == 0 && texColour.b == 0) {
+    if(texColour.a == 0 && texColour.r == 0 && texColour.g == 0 && texColour.b == 0) {
+      discard;
+    }
+
+    // If translucent primitive and texture pixel translucency bit is set, pixel is translucent so we defer rendering
+    if((flags & ~0x7) != 0 && texColour.a != 0) {
       discard;
     }
 

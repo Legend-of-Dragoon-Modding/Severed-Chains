@@ -346,15 +346,7 @@ public class RenderEngine {
       RENDERER.setProjectionMode(ProjectionMode._2D);
       for(int i = 0; i < this.orthoPool.size(); i++) {
         final QueuedModel entry = this.orthoPool.get(i);
-        entry.transforms.get(this.transforms2Buffer);
-        entry.screenspaceOffset.get(16, this.transforms2Buffer);
-        this.transforms2Uniform.set(this.transforms2Buffer);
-        this.tmdShaderColour.set(entry.colour);
-
-        entry.lightDirection.get(this.lightBuffer);
-        entry.lightColour.get(16, this.lightBuffer);
-        entry.backgroundColour.get(32, this.lightBuffer);
-        this.lightUniform.set(this.lightBuffer);
+        entry.updateTransforms();
 
         if(entry.obj.shouldRender(null)) {
           glDisable(GL_BLEND);
@@ -422,15 +414,7 @@ public class RenderEngine {
 
       for(int i = 0; i < this.orthoOverlayPool.size(); i++) {
         final QueuedModel entry = this.orthoOverlayPool.get(i);
-        entry.transforms.get(this.transforms2Buffer);
-        entry.screenspaceOffset.get(16, this.transforms2Buffer);
-        this.transforms2Uniform.set(this.transforms2Buffer);
-        this.tmdShaderColour.set(entry.colour);
-
-        entry.lightDirection.get(this.lightBuffer);
-        entry.lightColour.get(16, this.lightBuffer);
-        entry.backgroundColour.get(32, this.lightBuffer);
-        this.lightUniform.set(this.lightBuffer);
+        entry.updateTransforms();
 
         if(entry.obj.shouldRender(null)) {
           glDisable(GL_BLEND);
@@ -493,19 +477,26 @@ public class RenderEngine {
 
     for(int i = 0; i < pool.size(); i++) {
       final QueuedModel entry = pool.get(i);
+      boolean updated = false;
 
       if(entry.obj.shouldRender(null)) {
-        entry.transforms.get(this.transforms2Buffer);
-        entry.screenspaceOffset.get(16, this.transforms2Buffer);
-        this.transforms2Uniform.set(this.transforms2Buffer);
-        this.tmdShaderColour.set(entry.colour);
-
-        entry.lightDirection.get(this.lightBuffer);
-        entry.lightColour.get(16, this.lightBuffer);
-        entry.backgroundColour.get(32, this.lightBuffer);
-        this.lightUniform.set(this.lightBuffer);
-
+        updated = true;
+        entry.updateTransforms();
         entry.obj.render(null);
+      }
+
+      // First pass of translucency rendering - renders opaque pixels with translucency bit not set for translucent primitives
+      for(int translucencyIndex = 0; translucencyIndex < Translucency.FOR_RENDERING.length; translucencyIndex++) {
+        final Translucency translucency = Translucency.FOR_RENDERING[translucencyIndex];
+
+        if(entry.obj.shouldRender(translucency)) {
+          if(!updated) {
+            updated = true;
+            entry.updateTransforms();
+          }
+
+          entry.obj.render(translucency);
+        }
       }
     }
 
@@ -536,16 +527,7 @@ public class RenderEngine {
         final QueuedModel entry = pool.get(i);
 
         if(entry.obj.shouldRender(translucency)) {
-          entry.transforms.get(this.transforms2Buffer);
-          entry.screenspaceOffset.get(16, this.transforms2Buffer);
-          this.transforms2Uniform.set(this.transforms2Buffer);
-          this.tmdShaderTransparentColour.set(entry.colour);
-
-          entry.lightDirection.get(this.lightBuffer);
-          entry.lightColour.get(16, this.lightBuffer);
-          entry.backgroundColour.get(32, this.lightBuffer);
-          this.lightUniform.set(this.lightBuffer);
-
+          entry.updateTransforms();
           entry.obj.render(translucency);
         }
       }
@@ -866,6 +848,18 @@ public class RenderEngine {
     public QueuedModel backgroundColour(final Vector3f backgroundColour) {
       this.backgroundColour.set(backgroundColour, 0.0f);
       return this;
+    }
+
+    private void updateTransforms() {
+      this.transforms.get(RenderEngine.this.transforms2Buffer);
+      this.screenspaceOffset.get(16, RenderEngine.this.transforms2Buffer);
+      RenderEngine.this.transforms2Uniform.set(RenderEngine.this.transforms2Buffer);
+      RenderEngine.this.tmdShaderColour.set(this.colour);
+
+      this.lightDirection.get(RenderEngine.this.lightBuffer);
+      this.lightColour.get(16, RenderEngine.this.lightBuffer);
+      this.backgroundColour.get(32, RenderEngine.this.lightBuffer);
+      RenderEngine.this.lightUniform.set(RenderEngine.this.lightBuffer);
     }
   }
 

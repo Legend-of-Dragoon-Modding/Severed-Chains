@@ -48,8 +48,8 @@ void main() {
     // Pull actual pixel colour from CLUT
     vec4 texColour = texelFetch(tex24, clutUv, 0);
 
-    // Discard if (0, 0, 0)
-    if(texColour.r == 0 && texColour.g == 0 && texColour.b == 0) {
+    // If texture pixel translucency bit is not set, pixel is opaque and we've already rendered it
+    if(texColour.a == 0) {
       discard;
     }
 
