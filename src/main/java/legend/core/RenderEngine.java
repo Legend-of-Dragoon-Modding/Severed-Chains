@@ -91,12 +91,14 @@ public class RenderEngine {
   private Shader.UniformBuffer transformsUniform;
   private Shader.UniformBuffer transforms2Uniform;
   private Shader.UniformBuffer lightUniform;
+  private Shader.UniformBuffer projectionUniform;
   private final Matrix4f perspectiveProjection = new Matrix4f();
   private final Matrix4f orthographicProjection = new Matrix4f();
   private final Matrix4f transforms = new Matrix4f();
   private final FloatBuffer transformsBuffer = BufferUtils.createFloatBuffer(4 * 4 * 2);
   private final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer(4 * 4 + 2);
   private final FloatBuffer lightBuffer = BufferUtils.createFloatBuffer(4 * 4 * 2 + 4);
+  private final FloatBuffer projectionBuffer = BufferUtils.createFloatBuffer(3);
 
   // Order-independent translucency
   private Shader tmdShader;
@@ -250,6 +252,7 @@ public class RenderEngine {
       this.tmdShader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
       this.tmdShader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
       this.tmdShader.bindUniformBlock("lighting", Shader.UniformBuffer.LIGHTING);
+      this.tmdShader.bindUniformBlock("projectionInfo", Shader.UniformBuffer.PROJECTION_INFO);
 
       this.tmdShader.use();
       this.tmdShader.new UniformInt("tex24").set(0);
@@ -266,6 +269,7 @@ public class RenderEngine {
       this.tmdShaderTransparent.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
       this.tmdShaderTransparent.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
       this.tmdShaderTransparent.bindUniformBlock("lighting", Shader.UniformBuffer.LIGHTING);
+      this.tmdShaderTransparent.bindUniformBlock("projectionInfo", Shader.UniformBuffer.PROJECTION_INFO);
 
       this.tmdShaderTransparent.use();
       this.tmdShaderTransparent.new UniformInt("tex24").set(0);
@@ -291,10 +295,9 @@ public class RenderEngine {
     }
 
     this.transformsUniform = new Shader.UniformBuffer((long)this.transformsBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM);
-
     this.transforms2Uniform = ShaderManager.addUniformBuffer("transforms2", new Shader.UniformBuffer((long)this.transforms2Buffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM2));
-
     this.lightUniform = ShaderManager.addUniformBuffer("lighting", new Shader.UniformBuffer((long)this.lightBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.LIGHTING));
+    this.projectionUniform = ShaderManager.addUniformBuffer("projectionInfo", new Shader.UniformBuffer((long)this.projectionBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.PROJECTION_INFO));
 
     final Shader compositeShader;
     try {
@@ -334,39 +337,15 @@ public class RenderEngine {
 
       this.renderCallback.run();
 
-      this.opaqueFrameBuffer.bind();
-      this.clear();
-
       this.transparentFrameBuffer.bind();
       glClearBufferfv(GL_COLOR, 0, this.clear0);
       glClearBufferfv(GL_COLOR, 1, this.clear1);
 
       this.opaqueFrameBuffer.bind();
+      this.clear();
 
       RENDERER.setProjectionMode(ProjectionMode._2D);
-      for(int i = 0; i < this.orthoPool.size(); i++) {
-        final QueuedModel entry = this.orthoPool.get(i);
-        entry.updateTransforms();
-
-        if(entry.obj.shouldRender(null)) {
-          glDisable(GL_BLEND);
-          entry.obj.render(null);
-        }
-
-        glEnable(GL_BLEND);
-        for(int translucencyIndex = 0; translucencyIndex < Translucency.FOR_RENDERING.length; translucencyIndex++) {
-          final Translucency translucency = Translucency.FOR_RENDERING[translucencyIndex];
-
-          if(entry.obj.shouldRender(translucency)) {
-            translucency.setGlState();
-            entry.obj.render(translucency);
-          }
-        }
-      }
-
-      this.orthoPool.reset();
-
-      this.clearDepth();
+      this.renderPool(this.orthoPool);
 
       RENDERER.setProjectionMode(ProjectionMode._3D);
       this.renderPool(this.modelPool);
@@ -412,6 +391,7 @@ public class RenderEngine {
       this.tmdShader.use();
       GPU.useVramTexture();
 
+      glDisable(GL_DEPTH_TEST);
       for(int i = 0; i < this.orthoOverlayPool.size(); i++) {
         final QueuedModel entry = this.orthoOverlayPool.get(i);
         entry.updateTransforms();
@@ -537,19 +517,24 @@ public class RenderEngine {
   }
 
   public void setProjectionMode(final ProjectionMode projectionMode) {
+    this.projectionBuffer.put(0, 0.0f);
+    this.projectionBuffer.put(1, 1000000.0f);
+
     switch(projectionMode) {
       case _2D -> {
         glDisable(GL_CULL_FACE);
-        glDisable(GL_DEPTH_TEST);
         this.setTransforms(this.camera2d, this.orthographicProjection);
+        this.projectionBuffer.put(2, 1.0f);
       }
 
       case _3D -> {
         glEnable(GL_CULL_FACE);
-        glEnable(GL_DEPTH_TEST);
         this.setTransforms(this.camera3d, this.perspectiveProjection);
+        this.projectionBuffer.put(2, 0.0f);
       }
     }
+
+    this.projectionUniform.set(this.projectionBuffer);
   }
 
   private void setTransforms(final Camera camera, final Matrix4f projection) {
@@ -659,9 +644,9 @@ public class RenderEngine {
 
   private void updateProjections() {
     // LOD uses a left-handed projection with a negated Y axis because reasons
-    this.perspectiveProjection.setPerspectiveLH(this.fieldOfView, this.aspectRatio, 0.1f, 10000.0f); //TODO un-jank the world map so we can lower this ridiculousness
+    this.perspectiveProjection.setPerspectiveLH(this.fieldOfView, this.aspectRatio, 0.1f, 1000000.0f); //TODO un-jank the world map so we can lower this ridiculousness
     this.perspectiveProjection.negateY();
-    this.orthographicProjection.setOrthoLH(0.0f, 320, 240, 0.0f, 0.0f, 1000000.0f);
+    this.orthographicProjection.setOrthoLH(0.0f, 320, 240, 0.0f, 0.1f, 1000000.0f);
   }
 
   private void onResize(final Window window, final int width, final int height) {
@@ -855,6 +840,7 @@ public class RenderEngine {
       this.screenspaceOffset.get(16, RenderEngine.this.transforms2Buffer);
       RenderEngine.this.transforms2Uniform.set(RenderEngine.this.transforms2Buffer);
       RenderEngine.this.tmdShaderColour.set(this.colour);
+      RenderEngine.this.tmdShaderTransparentColour.set(this.colour);
 
       this.lightDirection.get(RenderEngine.this.lightBuffer);
       this.lightColour.get(16, RenderEngine.this.lightBuffer);

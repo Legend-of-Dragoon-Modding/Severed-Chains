@@ -139,6 +139,7 @@ public class Shader {
     public static final int TRANSFORM = 0;
     public static final int TRANSFORM2 = 1;
     public static final int LIGHTING = 2;
+    public static final int PROJECTION_INFO = 3;
 
     private final int id;
 

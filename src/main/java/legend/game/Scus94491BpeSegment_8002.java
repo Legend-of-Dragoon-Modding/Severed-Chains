@@ -2186,7 +2186,7 @@ public final class Scus94491BpeSegment_8002 {
 
           textbox.backgroundObj = new QuadBuilder()
             .translucency(Translucency.HALF_B_PLUS_HALF_F)
-            .pos(textbox.x_14 - textbox.width_1c, textbox.y_16 - textbox.height_1e, 0.0f)
+            .pos(textbox.x_14 - textbox.width_1c, textbox.y_16 - textbox.height_1e, textbox.z_0c * 4.0f)
             .size(textbox.width_1c * 2.0f, textbox.height_1e * 2.0f)
             .rgb(0.0f, 41.0f / 255.0f, 159.0f / 255.0f)
             .monochrome(0, 0.0f)
@@ -2263,13 +2263,13 @@ public final class Scus94491BpeSegment_8002 {
           .bpp(Bpp.BITS_4)
           .clut(832, 484)
           .vramPos(896, 256)
-          .pos(0.0f, 0.0f, 0.0f)
+          .pos(0.0f, 0.0f, textbox.z_0c * 4.0f)
           .size(16, 16)
           .uv(u, v)
           .build();
 
         textbox.borderTransforms[borderIndex]
-          .scaling((right - left) / 16.0f, (bottom - top) / 16.0f, 0.0f);
+          .scaling((right - left) / 16.0f, (bottom - top) / 16.0f, 1.0f);
         textbox.borderTransforms[borderIndex].transfer.set(left, top, 0.0f);
       }
 
@@ -3421,7 +3421,7 @@ public final class Scus94491BpeSegment_8002 {
           GPU.queueCommand(textboxText.z_0c, cmd);
 
           textboxText.transforms.identity();
-          textboxText.transforms.transfer.set(x, y, 0.0f);
+          textboxText.transforms.transfer.set(x, y, textboxText.z_0c * 4.0f);
           RENDERER.queueOrthoOverlayModel(chr.obj, textboxText.transforms);
 
           GPU.queueCommand(textboxText.z_0c + 1, new GpuCommandQuad()

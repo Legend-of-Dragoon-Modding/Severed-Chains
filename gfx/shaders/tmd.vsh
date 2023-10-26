@@ -16,6 +16,8 @@ flat out float vertBpp;
 smooth out vec4 vertColour;
 flat out float vertFlags;
 
+smooth out float depth;
+
 layout(std140) uniform transforms {
   mat4 camera;
   mat4 projection;
@@ -48,4 +50,6 @@ void main() {
   vertClut = inClut;
   vertBpp = inBpp;
   vertFlags = inFlags;
+
+  depth = gl_Position.z;
 }

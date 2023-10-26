@@ -28,7 +28,6 @@ import legend.core.memory.types.RelativePointer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedShortRef;
-import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.EngineState;
@@ -5487,28 +5486,10 @@ public class SMap extends EngineState {
     return this.envRenderMetrics_800cb710[textureIndex].z_20;
   }
 
-  private Obj foregroundQuad;
-  private Obj worldQuad;
-
   @Method(0x800e7954L)
   private void renderEnvironment(final MV[] sobjMatrices, final int sobjCount) {
     final float[] sobjZs = new float[sobjCount];
     final float[] envZs = new float[this.envForegroundTextureCount_800cb580];
-
-/*
-    if(this.backgroundQuad == null) {
-      this.backgroundQuad = new QuadBuilder()
-        .monochrome(1.0f)
-        .size(174 - (384 - 368) / 2, 110)
-        .build();
-    }
-
-    final MV transforms = new MV();
-    transforms.scaling(SUBMAP_SCALE, 1.0f, 1.0f);
-    RENDERER.queueOrthoModel(this.backgroundQuad, transforms)
-      .screenspaceOffset(new Vector2f(GPU.getOffsetX() / 160.0f * SUBMAP_SCALE, -GPU.getOffsetY() / 120.0f))
-    ;
-*/
 
     //LAB_800e79b8
     // Render background
@@ -5622,7 +5603,7 @@ public class SMap extends EngineState {
             .bpp(Bpp.of(metrics.tpage_04 >>> 7 & 0b11))
             .clut(768, metrics.clut_16 >>> 6)
             .vramPos((metrics.tpage_04 & 0b1111) * 64, (metrics.tpage_04 & 0b10000) != 0 ? 256 : 0)
-            .pos(metrics.offsetX_1c, metrics.offsetY_1e, 0.0f/*metrics.z_20 * 4.0f*/)
+            .pos(metrics.offsetX_1c, metrics.offsetY_1e, metrics.z_20 * 4.0f)
             .uv(metrics.u_14, metrics.v_15)
             .size(metrics.w_18, metrics.h_1a)
             .build();
@@ -5636,7 +5617,7 @@ public class SMap extends EngineState {
 
         metrics.transforms.scaling(SUBMAP_SCALE, 1.0f, 1.0f);
         metrics.transforms.transfer.set((GPU.getOffsetX() + this.submapOffsetX_800cb560 + this.screenOffsetX_800cb568 + this.envForegroundMetrics_800cb590[i].x_00) * SUBMAP_SCALE, GPU.getOffsetY() + this.submapOffsetY_800cb564 + this.screenOffsetY_800cb56c + this.envForegroundMetrics_800cb590[i].y_04, 0.0f);
-        RENDERER.queueOrthoOverlayModel(metrics.obj, metrics.transforms);
+        RENDERER.queueOrthoModel(metrics.obj, metrics.transforms);
       }
     }
 

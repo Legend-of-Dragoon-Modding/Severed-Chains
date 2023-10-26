@@ -892,7 +892,7 @@ public class WMap extends EngineState {
   }
 
   @Method(0x800cd3c8L)
-  private WmapMenuTextHighlight40 initializeWmapMenuTextHighlight(final int brightness, final Vector3i colour0, final Vector3i colour1, final Vector3i colour2, final Vector3i colour3, final Vector3i baseColour, final RECT fullRect, final int columnCount, final int rowCount, final int type, final boolean transparency, final Translucency transparencyMode) {
+  private WmapMenuTextHighlight40 initializeWmapMenuTextHighlight(final int brightness, final Vector3i colour0, final Vector3i colour1, final Vector3i colour2, final Vector3i colour3, final Vector3i baseColour, final RECT fullRect, final int columnCount, final int rowCount, final int type, final boolean transparency, final Translucency transparencyMode, final int z) {
     int horizontalRectIndex = 0;
     int verticalRectIndex = 0;
     short x;
@@ -907,6 +907,7 @@ public class WMap extends EngineState {
     highlight.x_38 = 0;
     highlight.y_3a = 0;
     highlight.transparency_3c = transparency;
+    highlight.z_3e = z;
 
     highlight.objs = new Obj[highlight.subRectCount_30];
 
@@ -995,7 +996,7 @@ public class WMap extends EngineState {
     for(int i = 0; i < highlight.subRectCount_30; i++) {
       //LAB_800ce5c8
       highlight.transforms.identity();
-      highlight.transforms.transfer.set(x, y, 0.0f);
+      highlight.transforms.transfer.set(x, y, highlight.z_3e);
       RENDERER.queueOrthoOverlayModel(highlight.objs[i], highlight.transforms);
     }
   }
@@ -2637,7 +2638,7 @@ public class WMap extends EngineState {
         .bpp(Bpp.BITS_4)
         .clut(640, 497)
         .vramPos(640, 256)
-        .pos(GPU.getOffsetX() - 144.0f, GPU.getOffsetY() - 104.0f, 0.0f)
+        .pos(GPU.getOffsetX() - 144.0f, GPU.getOffsetY() - 104.0f, 54.0f)
         .size(128.0f, 24.0f)
         .uv(128.0f, this.mapState_800c6798.continentIndex_00 * 24.0f)
         .build();
@@ -2949,7 +2950,8 @@ public class WMap extends EngineState {
       2,
       2,
       true,
-      Translucency.B_PLUS_F
+      Translucency.B_PLUS_F,
+      52
     );
   }
 
@@ -4923,7 +4925,8 @@ public class WMap extends EngineState {
       8,
       4,
       true,
-      Translucency.B_MINUS_F
+      Translucency.B_MINUS_F,
+      56
     );
 
     final Vector3i rgbHighlight = new Vector3i();
@@ -4939,7 +4942,8 @@ public class WMap extends EngineState {
       2,
       2,
       true,
-      Translucency.B_PLUS_F
+      Translucency.B_PLUS_F,
+      52
     );
   }
 
@@ -5110,7 +5114,7 @@ public class WMap extends EngineState {
           final int sp38 = this.mapState_800c6798.submapScene_ca >>> 4 & 0xffff;
           final int sp3c = this.mapState_800c6798.submapScene_ca & 0xf;
 
-          this.textTransforms.transfer.set(240.0f, 164.0f, 0.0f);
+          this.textTransforms.transfer.set(240.0f, 164.0f, textZ_800bdf00.get() * 4.0f);
           RENDERER.queueOrthoOverlayModel(this.dontEnter, this.textTransforms);
 
           this.renderCenteredShadowedText(regions_800f01ec.get(sp38).deref(), 240, 182, TextColour.WHITE, 0);
@@ -5143,10 +5147,10 @@ public class WMap extends EngineState {
           this.locationMenuSelectorHighlight_800c689c.y_3a = this.menuSelectorOptionIndex_800c86d2 * 18 + 8;
         } else { // Entering a town, etc.
           //LAB_800e5a18
-          this.textTransforms.transfer.set(240.0f, 170.0f, 0.0f);
+          this.textTransforms.transfer.set(240.0f, 170.0f, textZ_800bdf00.get() * 4.0f);
           RENDERER.queueOrthoOverlayModel(this.dontEnter, this.textTransforms);
 
-          this.textTransforms.transfer.set(240.0f, 190.0f, 0.0f);
+          this.textTransforms.transfer.set(240.0f, 190.0f, textZ_800bdf00.get() * 4.0f);
           RENDERER.queueOrthoOverlayModel(this.enter, this.textTransforms);
 
           // World Map Location Menu (No Entry,Enter)
@@ -5168,7 +5172,7 @@ public class WMap extends EngineState {
         final IntRef width = new IntRef();
         final IntRef lines = new IntRef();
         this.measureText(places_800f0234.get(placeIndex).name_00.deref(), width, lines);
-        this.textTransforms.transfer.set(240.0f, 140.0f - lines.get() * 7, 0.0f);
+        this.textTransforms.transfer.set(240.0f, 140.0f - lines.get() * 7, textZ_800bdf00.get() * 4.0f);
         RENDERER.queueOrthoOverlayModel(this.placeName, this.textTransforms);
 
         if((this.filesLoadedFlags_800c66b8.get() & 0x800) != 0) {
@@ -5197,7 +5201,7 @@ public class WMap extends EngineState {
             this.placeImage = builder.build();
           }
 
-          this.textTransforms.transfer.zero();
+          this.textTransforms.transfer.set(0.0f, 0.0f, 56.0f);
           RENDERER.queueOrthoOverlayModel(this.placeImage, this.textTransforms);
 
           if(Input.pressedThisFrame(InputAction.BUTTON_WEST) && this.mapState_800c6798.submapCut_c8 != 999) { // Square

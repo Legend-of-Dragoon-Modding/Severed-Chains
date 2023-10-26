@@ -7,6 +7,14 @@ flat in float vertBpp;
 smooth in vec4 vertColour;
 flat in float vertFlags;
 
+smooth in float depth;
+
+layout(std140) uniform projectionInfo {
+  float znear;
+  float zfar;
+  float orthographic;
+};
+
 uniform vec3 recolour;
 uniform sampler2D tex24;
 uniform usampler2D tex15;
@@ -17,6 +25,13 @@ layout(location = 1) out float reveal;
 //TODO handle more flags
 
 void main() {
+  // Linearize depth for perspective transforms so that we can render ortho models at specific depths
+  if(orthographic == 0) {
+    gl_FragDepth = (depth - znear) / (zfar - znear);
+  } else {
+    gl_FragDepth = gl_FragCoord.z;
+  }
+
   int flags = int(vertFlags);
 
   vec4 colour = vec4(1.0, 1.0, 1.0, 1.0);

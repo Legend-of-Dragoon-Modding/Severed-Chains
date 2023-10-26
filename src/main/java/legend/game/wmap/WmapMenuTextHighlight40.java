@@ -20,6 +20,7 @@ public class WmapMenuTextHighlight40 {
   public int x_38;
   public int y_3a;
   public boolean transparency_3c;
+  public int z_3e;
 
   public Obj[] objs;
   public final MV transforms = new MV();
