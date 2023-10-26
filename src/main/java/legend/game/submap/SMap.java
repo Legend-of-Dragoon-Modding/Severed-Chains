@@ -2255,6 +2255,10 @@ public class SMap extends EngineState {
 
     this.loadModelAndAnimation(model, this.submapAssets.objects.get(index).model, this.submapAssets.objects.get(index).animations.get(0));
 
+    for(final ModelPart10 part : model.modelParts_00) {
+      part.obj = TmdObjLoader.fromObjTable(part.tmd_08);
+    }
+
     sobj.us_12c = 0;
     sobj.rotationFrames_188 = 0;
 
