@@ -2309,7 +2309,7 @@ public class SMap extends EngineState {
     final float deltaX = script.params_20[1].get() - model.coord2_14.coord.transfer.x;
     final float deltaZ = script.params_20[3].get() - model.coord2_14.coord.transfer.z;
 
-    if(deltaX != 0.0f && deltaZ != 0.0f) {
+    if(deltaX != 0.0f || deltaZ != 0.0f) {
       model.coord2_14.transforms.rotate.y = MathHelper.positiveAtan2(deltaZ, deltaX);
     }
 
