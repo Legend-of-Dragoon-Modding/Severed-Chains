@@ -3394,9 +3394,6 @@ public final class Scus94491BpeSegment_8002 {
         //LAB_8002840c
         setCharMetrics(chr.char_06);
         if(scrollH < 13) {
-          final GpuCommandQuad cmd = new GpuCommandQuad()
-            .monochrome(0x80);
-
           final float x = textboxText._18 + chr.x_00 * 9 - centreScreenX_1f8003dc.get() - nudgeX;
           final float y;
 
@@ -3410,18 +3407,10 @@ public final class Scus94491BpeSegment_8002 {
           //LAB_80028564
           final int u = textCol_800be5c0 * 16;
           final int v = textRow_800be5c8 * 12 - scrollV;
-
-          cmd.uv(u, v);
-          cmd.clut(832 + chr.colour_04 * 16, 480);
-
           final int height = 12 - scrollH;
-          cmd.pos(x, y, 8, height);
-          cmd.bpp(Bpp.BITS_4);
-          cmd.vramPos(832, 256);
-          GPU.queueCommand(textboxText.z_0c, cmd);
 
           textboxText.transforms.identity();
-          textboxText.transforms.transfer.set(x, y, textboxText.z_0c * 4.0f);
+          textboxText.transforms.transfer.set(GPU.getOffsetX() + x, GPU.getOffsetY() + y, textboxText.z_0c * 4.0f);
           RENDERER.queueOrthoOverlayModel(chr.obj, textboxText.transforms);
 
           GPU.queueCommand(textboxText.z_0c + 1, new GpuCommandQuad()
@@ -3872,7 +3861,9 @@ public final class Scus94491BpeSegment_8002 {
       if(struct4c.state_00 != TextboxState.UNINITIALIZED_0 && (struct4c.flags_08 & Textbox4c.RENDER_BACKGROUND) != 0) {
         renderTextboxBackground(i);
       }
+    }
 
+    for(int i = 0; i < 8; i++) {
       //LAB_8002a134
       if(textboxText_800bdf38[i].state_00 != TextboxTextState.UNINITIALIZED_0) {
         renderTextboxText(i);
