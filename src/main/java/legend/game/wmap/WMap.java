@@ -4951,6 +4951,7 @@ public class WMap extends EngineState {
   private TextObj dontEnter;
   private TextObj enter;
   private TextObj placeName;
+  private TextObj[] destPlaceNames = new TextObj[regions_800f01ec.length()];
   private Obj placeImage;
 
   private void deallocatePlaceText() {
@@ -5077,6 +5078,13 @@ public class WMap extends EngineState {
             this.dontEnter.delete();
           }
 
+          final int placeIndex = locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).placeIndex_02.get();
+          this.placeName = new TextBuilder()
+            .text(places_800f0234.get(placeIndex).name_00.deref().get())
+            .centred()
+            .shadowed()
+            .build();
+
           this.dontEnter = new TextBuilder()
             .text("Don't enter")
             .centred()
@@ -5084,16 +5092,16 @@ public class WMap extends EngineState {
             .build();
 
           if(this.mapState_800c6798.submapCut_c8 == 999) { // Going to a different region
+            for(int i = 0; i < regions_800f01ec.length(); i++) {
+              this.destPlaceNames[i] = new TextBuilder()
+                .text(regions_800f01ec.get(i).deref().get())
+                .centred()
+                .shadowed()
+                .build();
+            }
           } else {
             this.enter = new TextBuilder()
               .text("Enter")
-              .centred()
-              .shadowed()
-              .build();
-
-            final int placeIndex = locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).placeIndex_02.get();
-            this.placeName = new TextBuilder()
-              .text(places_800f0234.get(placeIndex).name_00.deref().get())
               .centred()
               .shadowed()
               .build();
@@ -5107,18 +5115,20 @@ public class WMap extends EngineState {
         this.locationMenuNameShadow_800c6898.currentBrightness_34 += 0.125f / (3.0f / vsyncMode_8007a3b8);
 
         this.renderLocationMenuTextHighlight(this.locationMenuNameShadow_800c6898);
+        this.renderLocationMenuTextHighlight(this.locationMenuSelectorHighlight_800c689c);
 
         this.textTransforms.identity();
 
         if(this.mapState_800c6798.submapCut_c8 == 999) { // Going to a different region
-          final int sp38 = this.mapState_800c6798.submapScene_ca >>> 4 & 0xffff;
-          final int sp3c = this.mapState_800c6798.submapScene_ca & 0xf;
+          final int dest1 = this.mapState_800c6798.submapScene_ca >>> 4 & 0xffff;
+          final int dest2 = this.mapState_800c6798.submapScene_ca & 0xf;
 
           this.textTransforms.transfer.set(240.0f, 164.0f, textZ_800bdf00.get() * 4.0f);
           RENDERER.queueOrthoOverlayModel(this.dontEnter, this.textTransforms);
-
-          this.renderCenteredShadowedText(regions_800f01ec.get(sp38).deref(), 240, 182, TextColour.WHITE, 0);
-          this.renderCenteredShadowedText(regions_800f01ec.get(sp3c).deref(), 240, 200, TextColour.WHITE, 0);
+          this.textTransforms.transfer.setComponent(1, 182.0f);
+          RENDERER.queueOrthoOverlayModel(this.destPlaceNames[dest1], this.textTransforms);
+          this.textTransforms.transfer.setComponent(1, 200.0f);
+          RENDERER.queueOrthoOverlayModel(this.destPlaceNames[dest2], this.textTransforms);
 
           if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
             this.menuSelectorOptionIndex_800c86d2--;
@@ -5166,8 +5176,6 @@ public class WMap extends EngineState {
         }
 
         //LAB_800e5b68
-        this.renderLocationMenuTextHighlight(this.locationMenuSelectorHighlight_800c689c);
-
         final int placeIndex = locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).placeIndex_02.get();
         final IntRef width = new IntRef();
         final IntRef lines = new IntRef();
