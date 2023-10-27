@@ -102,8 +102,8 @@ public final class V4Serializer {
       offset += 4;
     }
 
-    for(int i = 0; i < state._17c.count(); i++) {
-      state._17c.setRaw(i, data.readInt(i));
+    for(int i = 0; i < state.visitedLocations_17c.count(); i++) {
+      state.visitedLocations_17c.setRaw(i, data.readInt(i));
       offset += 4;
     }
 
@@ -317,8 +317,8 @@ public final class V4Serializer {
       offset += 4;
     }
 
-    for(int i = 0; i < state._17c.count(); i++) {
-      data.writeInt(offset, state._17c.getRaw(i));
+    for(int i = 0; i < state.visitedLocations_17c.count(); i++) {
+      data.writeInt(offset, state.visitedLocations_17c.getRaw(i));
       offset += 4;
     }
 
