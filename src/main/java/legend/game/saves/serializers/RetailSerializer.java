@@ -68,7 +68,7 @@ public final class RetailSerializer {
     }
 
     for(int i = 0; i < 8; i++) {
-      state._17c.setRaw(i, data.readInt(0x17c + i * 0x4));
+      state.visitedLocations_17c.setRaw(i, data.readInt(0x17c + i * 0x4));
     }
 
     for(int i = 0; i < 2; i++) {

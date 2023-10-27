@@ -349,12 +349,12 @@ public class GameStateEditorController {
 
   @FXML
   public void getData3() {
-    this.textData3.setText(String.valueOf(gameState_800babc8._17c.getRaw(this.getData3.getSelectionModel().getSelectedIndex())));
+    this.textData3.setText(String.valueOf(gameState_800babc8.visitedLocations_17c.getRaw(this.getData3.getSelectionModel().getSelectedIndex())));
   }
 
   @FXML
   public void setData3() {
-    gameState_800babc8._17c.setRaw(this.getData3.getSelectionModel().getSelectedIndex(), Integer.parseInt(this.textData3.getText()));
+    gameState_800babc8.visitedLocations_17c.setRaw(this.getData3.getSelectionModel().getSelectedIndex(), Integer.parseInt(this.textData3.getText()));
   }
 
   @FXML

@@ -3554,7 +3554,7 @@ public class WMap extends EngineState {
         stopSound(soundFiles_800bcf80[12], 1, 1);
 
         if(struct258.coolonWarpIndex_222 == 8) {
-          gameState_800babc8._17c.set(coolonWarpDest_800ef228[struct258.coolonWarpIndex_222].locationIndex_10, true);
+          gameState_800babc8.visitedLocations_17c.set(coolonWarpDest_800ef228[struct258.coolonWarpIndex_222].locationIndex_10, true);
 
           //LAB_800db8f4
           this.mapState_800c6798.submapCut_c8 = locations_800f0e34.get(coolonWarpDest_800ef228[struct258.coolonWarpIndex_222].locationIndex_10).submapCut_08.get();
@@ -4085,7 +4085,7 @@ public class WMap extends EngineState {
         this.wmapStruct258_800c66a8.rotation_a4.y = this.wmapStruct19c0_800c66b0.mapRotation_70.y;
       } else if(this.wmapStruct258_800c66a8._248 == 2) {
         //LAB_800e0a6c
-        gameState_800babc8._17c.set(locationIndex, true);
+        gameState_800babc8.visitedLocations_17c.set(locationIndex, true);
 
         //LAB_800e0b64
         this.mapState_800c6798.submapCut_c8 = locations_800f0e34.get(locationIndex).submapCut_08.get();
@@ -5185,17 +5185,17 @@ public class WMap extends EngineState {
               .uv(0, 0)
               .size(120, 90);
 
-            if(gameState_800babc8._17c.get(this.mapState_800c6798.locationIndex_10)) {
+            if(gameState_800babc8.visitedLocations_17c.get(this.mapState_800c6798.locationIndex_10)) {
               //LAB_800e5e98
-              builder.monochrome(this.locationThumbnailBrightness_800c86d0 / 2.0f);
+              builder.monochrome(this.locationThumbnailBrightness_800c86d0 * 0.5f);
             } else {
               //LAB_800e5e18
-              builder.monochrome(this.locationThumbnailBrightness_800c86d0 * 48.0f);
+              builder.monochrome(this.locationThumbnailBrightness_800c86d0 * 0.1875f);
             }
 
             //LAB_800e5f04
             if(locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).thumbnailShouldUseFullBrightness_10.get()) {
-              builder.monochrome(this.locationThumbnailBrightness_800c86d0 / 2.0f);
+              builder.monochrome(this.locationThumbnailBrightness_800c86d0 * 0.5f);
             }
 
             this.placeImage = builder.build();
@@ -5376,7 +5376,7 @@ public class WMap extends EngineState {
         break;
 
       case 9:
-        gameState_800babc8._17c.set(this.mapState_800c6798.locationIndex_10, true);
+        gameState_800babc8.visitedLocations_17c.set(this.mapState_800c6798.locationIndex_10, true);
 
         //LAB_800e6900
         if(this.mapState_800c6798.submapCut_c8 != 999) {
@@ -5857,7 +5857,7 @@ public class WMap extends EngineState {
     } else if(this.mapState_800c6798.submapCut_c4 == 529 && this.mapState_800c6798.submapScene_c6 == 41) {
       this.wmapStruct258_800c66a8._250 = 2;
       this.wmapStruct258_800c66a8._254 = 1;
-      gameState_800babc8._17c.set(this.mapState_800c6798.locationIndex_10, true);
+      gameState_800babc8.visitedLocations_17c.set(this.mapState_800c6798.locationIndex_10, true);
     }
 
     //LAB_800e8990
