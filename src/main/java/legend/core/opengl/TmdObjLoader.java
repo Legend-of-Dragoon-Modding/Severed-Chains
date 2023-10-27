@@ -213,9 +213,13 @@ public final class TmdObjLoader {
 
           if(coloured) {
             MathHelper.colourToFloat(vertex.colour, vertices, vertexOffsets[translucencyIndex]);
+            vertexOffsets[translucencyIndex] += COLOUR_SIZE;
+          } else {
+            vertices[vertexOffsets[translucencyIndex]++] = 1.0f;
+            vertices[vertexOffsets[translucencyIndex]++] = 1.0f;
+            vertices[vertexOffsets[translucencyIndex]++] = 1.0f;
+            vertices[vertexOffsets[translucencyIndex]++] = 1.0f;
           }
-
-          vertexOffsets[translucencyIndex] += COLOUR_SIZE;
 
           int flags = 0;
 

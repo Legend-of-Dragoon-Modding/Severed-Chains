@@ -39,8 +39,9 @@ void main() {
 
   vertColour = inColour;
 
+  // Lit
   if((int(inFlags) & 0x1) != 0) {
-    vertColour *= (max(vec4(inNorm, 1.0) * lightDirection, 0.0) * lightColour + backgroundColour);
+    vertColour = min((lightColour * max(lightDirection * vec4(inNorm, 1.0), 0.0) + backgroundColour) * vertColour, 1.0);
   }
 
   gl_Position = projection * camera * model * pos;

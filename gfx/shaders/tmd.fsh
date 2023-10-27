@@ -35,8 +35,8 @@ void main() {
 
   outColour = vec4(1.0, 1.0, 1.0, 1.0);
 
-  // Vertex colour
-  if((flags & 0x4) != 0) {
+  // Vertex colour or lit
+  if((flags & 0x5) != 0) {
     outColour = vertColour;
   }
 
