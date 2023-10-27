@@ -85,8 +85,8 @@ public final class V2Serializer {
       offset += 4;
     }
 
-    for(int i = 0; i < state._17c.count(); i++) {
-      state._17c.setRaw(i, data.readInt(i));
+    for(int i = 0; i < state.visitedLocations_17c.count(); i++) {
+      state.visitedLocations_17c.setRaw(i, data.readInt(i));
       offset += 4;
     }
 
