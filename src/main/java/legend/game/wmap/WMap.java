@@ -22,6 +22,7 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.core.opengl.MeshObj;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.TextBuilder;
@@ -862,6 +863,12 @@ public class WMap extends EngineState {
   private void deallocate() {
     if(this.wmapStruct258_800c66a8.mapOverlayObj != null) {
       this.wmapStruct258_800c66a8.mapOverlayObj.delete();
+    }
+
+    for(final MeshObj obj : this.wmapStruct258_800c66a8.zoomLevelObjs) {
+      if(obj != null) {
+        obj.delete();
+      }
     }
 
     for(int intersectionSymbolIndex = 0; intersectionSymbolIndex < 3; intersectionSymbolIndex++) {
@@ -2680,38 +2687,45 @@ public class WMap extends EngineState {
 
     //LAB_800d6c10
     //LAB_800d6c14
-    for(int i = 0; i < 7; i++) {
+    for(int i = 6; i >=0; i--) {
       //LAB_800d6c30
       //LAB_800d6d14
-      final GpuCommandQuad cmd = new GpuCommandQuad()
-        .bpp(Bpp.BITS_4)
-        .clut(640, i < 5 ? 502 : 503)
-        .vramPos(640, 256);
+      if(this.wmapStruct258_800c66a8.zoomLevelObjs[i] == null) {
+        final QuadBuilder builder = new QuadBuilder()
+          .bpp(Bpp.BITS_4)
+          .clut(640, i < 5 ? 502 : 503)
+          .vramPos(640, 256);
 
-      if(i < 2) {
-        cmd.translucent(Translucency.HALF_B_PLUS_HALF_F);
+        if(i < 2) {
+          builder.translucency(Translucency.HALF_B_PLUS_HALF_F);
+        }
+
+        //LAB_800d6d44
+        //LAB_800d6d84
+        //LAB_800d6da8
+        if(i < 2 || i >= 5) {
+          //LAB_800d6f34
+          builder.monochrome(1.0f);
+        } else if(i == currentZoomLevel) {
+          builder.monochrome(2.0f);
+        } else {
+          //LAB_800d6ec0
+          builder.monochrome(0.5f);
+        }
+
+        //LAB_800d6f2c
+        //LAB_800d6fa0
+        builder
+          .pos(GPU.getOffsetX() + zoomUiMetrics_800ef104.get(i).x_00.get() + 88.0f, GPU.getOffsetY() + zoomUiMetrics_800ef104.get(i).y_01.get() - 96.0f, 20.0f)
+          .size(zoomUiMetrics_800ef104.get(i).w_04.get(), zoomUiMetrics_800ef104.get(i).h_05.get())
+          .uv(zoomUiMetrics_800ef104.get(i).u_02.get(), zoomUiMetrics_800ef104.get(i).v_03.get());
+
+        this.wmapStruct258_800c66a8.zoomLevelObjs[i] = builder.build();
       }
 
-      //LAB_800d6d44
-      //LAB_800d6d84
-      //LAB_800d6da8
-      if(i < 2 || i >= 5) {
-        //LAB_800d6f34
-        cmd.monochrome(0x80);
-      } else if(i == currentZoomLevel) {
-        cmd.monochrome(0xff);
-      } else {
-        //LAB_800d6ec0
-        cmd.monochrome(0x40);
-      }
-
-      //LAB_800d6f2c
-      //LAB_800d6fa0
-      cmd
-        .pos(zoomUiMetrics_800ef104.get(i).x_00.get() + 88, zoomUiMetrics_800ef104.get(i).y_01.get() - 96, zoomUiMetrics_800ef104.get(i).w_04.get(), zoomUiMetrics_800ef104.get(i).h_05.get())
-        .uv(zoomUiMetrics_800ef104.get(i).u_02.get(), zoomUiMetrics_800ef104.get(i).v_03.get());
-
-      GPU.queueCommand(20, cmd);
+      this.wmapStruct258_800c66a8.mapOverlayTransforms.identity();
+      this.wmapStruct258_800c66a8.mapOverlayTransforms.transfer.setComponent(2, 20.0f);
+      RENDERER.queueOrthoOverlayModel(this.wmapStruct258_800c66a8.zoomLevelObjs[i], this.wmapStruct258_800c66a8.mapOverlayTransforms);
     }
     //LAB_800d71f4
   }
