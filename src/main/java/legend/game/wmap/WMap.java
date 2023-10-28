@@ -4951,30 +4951,33 @@ public class WMap extends EngineState {
   private TextObj dontEnter;
   private TextObj enter;
   private TextObj placeName;
-  private TextObj[] destPlaceNames = new TextObj[regions_800f01ec.length()];
+  private TextObj[] destPlaceNames;
   private Obj placeImage;
 
   private void deallocatePlaceText() {
+    if(this.placeName != null) {
+      this.placeName.delete();
+      this.placeName = null;
+    }
+
     if(this.dontEnter != null) {
       this.dontEnter.delete();
       this.dontEnter = null;
     }
 
+    if(this.placeImage != null) {
+      this.placeImage.delete();
+      this.placeImage = null;
+    }
+
     if(this.mapState_800c6798.submapCut_c8 == 999) { // Going to a different region
+      if(this.destPlaceNames != null) {
+        this.destPlaceNames = null;
+      }
     } else {
       if(this.enter != null) {
         this.enter.delete();
         this.enter = null;
-      }
-
-      if(this.placeName != null) {
-        this.placeName.delete();
-        this.placeName = null;
-      }
-
-      if(this.placeImage != null) {
-        this.placeImage.delete();
-        this.placeImage = null;
       }
     }
   }
@@ -5092,13 +5095,15 @@ public class WMap extends EngineState {
             .build();
 
           if(this.mapState_800c6798.submapCut_c8 == 999) { // Going to a different region
-            for(int i = 0; i < regions_800f01ec.length(); i++) {
-              this.destPlaceNames[i] = new TextBuilder()
-                .text(regions_800f01ec.get(i).deref().get())
-                .centred()
-                .shadowed()
-                .build();
-            }
+            this.destPlaceNames = new TextObj[regions_800f01ec.length()];
+            Arrays.setAll(
+              this.destPlaceNames,
+              i -> new TextBuilder()
+              .text(regions_800f01ec.get(i).deref().get())
+              .centred()
+              .shadowed()
+              .build()
+            );
           } else {
             this.enter = new TextBuilder()
               .text("Enter")
