@@ -4951,7 +4951,8 @@ public class WMap extends EngineState {
   private TextObj dontEnter;
   private TextObj enter;
   private TextObj placeName;
-  private TextObj[] destPlaceNames;
+  private TextObj dest1PlaceName;
+  private TextObj dest2PlaceName;
   private Obj placeImage;
 
   private void deallocatePlaceText() {
@@ -4971,8 +4972,14 @@ public class WMap extends EngineState {
     }
 
     if(this.mapState_800c6798.submapCut_c8 == 999) { // Going to a different region
-      if(this.destPlaceNames != null) {
-        this.destPlaceNames = null;
+      if(this.dest1PlaceName != null) {
+        this.dest1PlaceName.delete();
+        this.dest1PlaceName = null;
+      }
+
+      if(this.dest2PlaceName != null) {
+        this.dest2PlaceName.delete();
+        this.dest2PlaceName = null;
       }
     } else {
       if(this.enter != null) {
@@ -5095,15 +5102,19 @@ public class WMap extends EngineState {
             .build();
 
           if(this.mapState_800c6798.submapCut_c8 == 999) { // Going to a different region
-            this.destPlaceNames = new TextObj[regions_800f01ec.length()];
-            Arrays.setAll(
-              this.destPlaceNames,
-              i -> new TextBuilder()
-              .text(regions_800f01ec.get(i).deref().get())
+            final String dest1 = regions_800f01ec.get(this.mapState_800c6798.submapScene_ca >>> 4 & 0xffff).deref().get();
+            final String dest2 = regions_800f01ec.get(this.mapState_800c6798.submapScene_ca & 0xf).deref().get();
+
+            this.dest1PlaceName = new TextBuilder()
+              .text(dest1)
               .centred()
               .shadowed()
-              .build()
-            );
+              .build();
+            this.dest2PlaceName = new TextBuilder()
+              .text(dest2)
+              .centred()
+              .shadowed()
+              .build();
           } else {
             this.enter = new TextBuilder()
               .text("Enter")
@@ -5125,15 +5136,12 @@ public class WMap extends EngineState {
         this.textTransforms.identity();
 
         if(this.mapState_800c6798.submapCut_c8 == 999) { // Going to a different region
-          final int dest1 = this.mapState_800c6798.submapScene_ca >>> 4 & 0xffff;
-          final int dest2 = this.mapState_800c6798.submapScene_ca & 0xf;
-
           this.textTransforms.transfer.set(240.0f, 164.0f, textZ_800bdf00.get() * 4.0f);
           RENDERER.queueOrthoOverlayModel(this.dontEnter, this.textTransforms);
-          this.textTransforms.transfer.setComponent(1, 182.0f);
-          RENDERER.queueOrthoOverlayModel(this.destPlaceNames[dest1], this.textTransforms);
-          this.textTransforms.transfer.setComponent(1, 200.0f);
-          RENDERER.queueOrthoOverlayModel(this.destPlaceNames[dest2], this.textTransforms);
+          this.textTransforms.transfer.y = 182.0f;
+          RENDERER.queueOrthoOverlayModel(this.dest1PlaceName, this.textTransforms);
+          this.textTransforms.transfer.y = 200.0f;
+          RENDERER.queueOrthoOverlayModel(this.dest2PlaceName, this.textTransforms);
 
           if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
             this.menuSelectorOptionIndex_800c86d2--;
