@@ -2687,7 +2687,7 @@ public class WMap extends EngineState {
 
     //LAB_800d6c10
     //LAB_800d6c14
-    for(int i = 6; i >=0; i--) {
+    for(int i = 6; i >= 0; i--) {
       //LAB_800d6c30
       //LAB_800d6d14
       if(this.wmapStruct258_800c66a8.zoomLevelObjs[i] == null) {
