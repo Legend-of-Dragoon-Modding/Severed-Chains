@@ -36,7 +36,6 @@ import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.submap.EncounterRateMode;
 import legend.game.tim.Tim;
-import legend.game.tmd.Renderer;
 import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.CContainer;
 import legend.game.types.GsF_LIGHT;
@@ -96,6 +95,7 @@ import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.strcmp;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
+import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
@@ -449,20 +449,13 @@ public class WMap extends EngineState {
       final ModelPart10 dobj2 = model.modelParts_00[i];
 
       if((model.partInvisible_f4 & 1L << i) == 0) {
-        final MV ls = new MV();
         final MV lw = new MV();
+        GsGetLw(dobj2.coord2_04, lw);
 
-        GsGetLws(dobj2.coord2_04, lw, ls);
-        GsSetLightMatrix(lw);
-        GTE.setTransforms(ls);
-        Renderer.renderDobj2(dobj2, false, 0); //TODO remove
-
-        if(dobj2.obj != null) {
-          RENDERER.queueModel(dobj2.obj, lw)
-            .lightDirection(lightDirectionMatrix_800c34e8)
-            .lightColour(lightColourMatrix_800c3508)
-            .backgroundColour(GTE.backgroundColour);
-        }
+        RENDERER.queueModel(dobj2.obj, lw)
+          .lightDirection(lightDirectionMatrix_800c34e8)
+          .lightColour(lightColourMatrix_800c3508)
+          .backgroundColour(GTE.backgroundColour);
       }
     }
 
