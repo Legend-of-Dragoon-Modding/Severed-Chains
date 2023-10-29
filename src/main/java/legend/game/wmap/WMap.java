@@ -858,7 +858,7 @@ public class WMap extends EngineState {
       this.wmapStruct258_800c66a8.mapOverlayObj.delete();
     }
 
-    for(final MeshObj obj : this.wmapStruct258_800c66a8.zoomLevelObjs) {
+    for(final MeshObj obj : this.wmapStruct258_800c66a8.zoomOverlayObjs) {
       if(obj != null) {
         obj.delete();
       }
@@ -2677,12 +2677,23 @@ public class WMap extends EngineState {
       default -> 0;
     };
 
+    if(currentZoomLevel != this.wmapStruct258_800c66a8.previousZoomLevel) {
+      for(int i = 2; i < 5; i++) {
+        if(this.wmapStruct258_800c66a8.zoomOverlayObjs[i] != null) {
+          this.wmapStruct258_800c66a8.zoomOverlayObjs[i].delete();
+          this.wmapStruct258_800c66a8.zoomOverlayObjs[i] = null;
+        }
+      }
+
+      this.wmapStruct258_800c66a8.previousZoomLevel = currentZoomLevel;
+    }
+
     //LAB_800d6c10
     //LAB_800d6c14
     for(int i = 6; i >= 0; i--) {
       //LAB_800d6c30
       //LAB_800d6d14
-      if(this.wmapStruct258_800c66a8.zoomLevelObjs[i] == null) {
+      if(this.wmapStruct258_800c66a8.zoomOverlayObjs[i] == null) {
         final QuadBuilder builder = new QuadBuilder()
           .bpp(Bpp.BITS_4)
           .clut(640, i < 5 ? 502 : 503)
@@ -2712,12 +2723,12 @@ public class WMap extends EngineState {
           .size(zoomUiMetrics_800ef104.get(i).w_04.get(), zoomUiMetrics_800ef104.get(i).h_05.get())
           .uv(zoomUiMetrics_800ef104.get(i).u_02.get(), zoomUiMetrics_800ef104.get(i).v_03.get());
 
-        this.wmapStruct258_800c66a8.zoomLevelObjs[i] = builder.build();
+        this.wmapStruct258_800c66a8.zoomOverlayObjs[i] = builder.build();
       }
 
       this.wmapStruct258_800c66a8.mapOverlayTransforms.identity();
       this.wmapStruct258_800c66a8.mapOverlayTransforms.transfer.setComponent(2, 20.0f);
-      RENDERER.queueOrthoOverlayModel(this.wmapStruct258_800c66a8.zoomLevelObjs[i], this.wmapStruct258_800c66a8.mapOverlayTransforms);
+      RENDERER.queueOrthoOverlayModel(this.wmapStruct258_800c66a8.zoomOverlayObjs[i], this.wmapStruct258_800c66a8.mapOverlayTransforms);
     }
     //LAB_800d71f4
   }
@@ -2940,6 +2951,7 @@ public class WMap extends EngineState {
     this.loadMapModelAndTexture(this.mapState_800c6798.continentIndex_00);
 
     this.wmapStruct258_800c66a8.zoomState_1f8 = 0;
+    this.wmapStruct258_800c66a8.previousZoomLevel = 2;
     this.wmapStruct258_800c66a8._220 = 0;
 
     final Vector3i rgb = new Vector3i();

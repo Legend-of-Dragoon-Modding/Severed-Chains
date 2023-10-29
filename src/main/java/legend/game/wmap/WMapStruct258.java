@@ -20,7 +20,7 @@ public class WMapStruct258 {
   /** short */
   public float colour_20;
   public MeshObj mapOverlayObj;
-  public MeshObj zoomLevelObjs[] = new MeshObj[7];
+  public MeshObj zoomOverlayObjs[] = new MeshObj[7];
   public final MV mapOverlayTransforms = new MV();
 
   public WMapAtmosphericEffectInstance60[] _24;
@@ -43,6 +43,8 @@ public class WMapStruct258 {
   public final Vector3f svec_1f0 = new Vector3f();
   /** ubyte */
   public int zoomState_1f8;
+  /** Not in retail */
+  public int previousZoomLevel;
   /** ubyte */
   public int _1f9;
 
