@@ -37,7 +37,6 @@ import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.submap.EncounterRateMode;
 import legend.game.tim.Tim;
-import legend.game.tmd.Renderer;
 import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.CContainer;
 import legend.game.types.GsF_LIGHT;
@@ -97,6 +96,7 @@ import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.strcmp;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
+import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
@@ -450,20 +450,13 @@ public class WMap extends EngineState {
       final ModelPart10 dobj2 = model.modelParts_00[i];
 
       if((model.partInvisible_f4 & 1L << i) == 0) {
-        final MV ls = new MV();
         final MV lw = new MV();
+        GsGetLw(dobj2.coord2_04, lw);
 
-        GsGetLws(dobj2.coord2_04, lw, ls);
-        GsSetLightMatrix(lw);
-        GTE.setTransforms(ls);
-        Renderer.renderDobj2(dobj2, false, 0); //TODO remove
-
-        if(dobj2.obj != null) {
-          RENDERER.queueModel(dobj2.obj, lw)
-            .lightDirection(lightDirectionMatrix_800c34e8)
-            .lightColour(lightColourMatrix_800c3508)
-            .backgroundColour(GTE.backgroundColour);
-        }
+        RENDERER.queueModel(dobj2.obj, lw)
+          .lightDirection(lightDirectionMatrix_800c34e8)
+          .lightColour(lightColourMatrix_800c3508)
+          .backgroundColour(GTE.backgroundColour);
       }
     }
 
@@ -1710,9 +1703,9 @@ public class WMap extends EngineState {
           //LAB_800d2464
           //LAB_800d24d0
           //LAB_800d253c
-          light.r_0c = this.wmapStruct19c0_800c66b0.colour_8c[i].getR() * this.wmapStruct19c0_800c66b0.brightness_84;
-          light.g_0d = this.wmapStruct19c0_800c66b0.colour_8c[i].getG() * this.wmapStruct19c0_800c66b0.brightness_84;
-          light.b_0e = this.wmapStruct19c0_800c66b0.colour_8c[i].getB() * this.wmapStruct19c0_800c66b0.brightness_84;
+          light.r_0c = this.wmapStruct19c0_800c66b0.colour_8c[i].getR() * this.wmapStruct19c0_800c66b0.brightness_84 / 0x100;
+          light.g_0d = this.wmapStruct19c0_800c66b0.colour_8c[i].getG() * this.wmapStruct19c0_800c66b0.brightness_84 / 0x100;
+          light.b_0e = this.wmapStruct19c0_800c66b0.colour_8c[i].getB() * this.wmapStruct19c0_800c66b0.brightness_84 / 0x100;
           GsSetFlatLight(i, this.wmapStruct19c0_800c66b0.lights_11c[i]);
         }
       }
@@ -1748,13 +1741,12 @@ public class WMap extends EngineState {
         //LAB_800d2710
         //LAB_800d277c
         //LAB_800d27e8
-        light.r_0c = this.wmapStruct19c0_800c66b0.colour_8c[i].getR() * this.wmapStruct19c0_800c66b0.brightness_84;
-        light.g_0d = this.wmapStruct19c0_800c66b0.colour_8c[i].getG() * this.wmapStruct19c0_800c66b0.brightness_84;
-        light.b_0e = this.wmapStruct19c0_800c66b0.colour_8c[i].getB() * this.wmapStruct19c0_800c66b0.brightness_84;
+        light.r_0c = this.wmapStruct19c0_800c66b0.colour_8c[i].getR() * this.wmapStruct19c0_800c66b0.brightness_84 / 0x100;
+        light.g_0d = this.wmapStruct19c0_800c66b0.colour_8c[i].getG() * this.wmapStruct19c0_800c66b0.brightness_84 / 0x100;
+        light.b_0e = this.wmapStruct19c0_800c66b0.colour_8c[i].getB() * this.wmapStruct19c0_800c66b0.brightness_84 / 0x100;
         GsSetFlatLight(i, this.wmapStruct19c0_800c66b0.lights_11c[i]);
       }
     }
-
     //LAB_800d283c
     //LAB_800d2844
   }
@@ -4965,29 +4957,40 @@ public class WMap extends EngineState {
   private TextObj dontEnter;
   private TextObj enter;
   private TextObj placeName;
+  private TextObj dest1PlaceName;
+  private TextObj dest2PlaceName;
   private Obj placeImage;
 
   private void deallocatePlaceText() {
+    if(this.placeName != null) {
+      this.placeName.delete();
+      this.placeName = null;
+    }
+
     if(this.dontEnter != null) {
       this.dontEnter.delete();
       this.dontEnter = null;
     }
 
+    if(this.placeImage != null) {
+      this.placeImage.delete();
+      this.placeImage = null;
+    }
+
     if(this.mapState_800c6798.submapCut_c8 == 999) { // Going to a different region
+      if(this.dest1PlaceName != null) {
+        this.dest1PlaceName.delete();
+        this.dest1PlaceName = null;
+      }
+
+      if(this.dest2PlaceName != null) {
+        this.dest2PlaceName.delete();
+        this.dest2PlaceName = null;
+      }
     } else {
       if(this.enter != null) {
         this.enter.delete();
         this.enter = null;
-      }
-
-      if(this.placeName != null) {
-        this.placeName.delete();
-        this.placeName = null;
-      }
-
-      if(this.placeImage != null) {
-        this.placeImage.delete();
-        this.placeImage = null;
       }
     }
   }
@@ -5091,6 +5094,13 @@ public class WMap extends EngineState {
             this.dontEnter.delete();
           }
 
+          final int placeIndex = locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).placeIndex_02.get();
+          this.placeName = new TextBuilder()
+            .text(places_800f0234.get(placeIndex).name_00.deref().get())
+            .centred()
+            .shadowed()
+            .build();
+
           this.dontEnter = new TextBuilder()
             .text("Don't enter")
             .centred()
@@ -5098,16 +5108,22 @@ public class WMap extends EngineState {
             .build();
 
           if(this.mapState_800c6798.submapCut_c8 == 999) { // Going to a different region
-          } else {
-            this.enter = new TextBuilder()
-              .text("Enter")
+            final String dest1 = regions_800f01ec.get(this.mapState_800c6798.submapScene_ca >>> 4 & 0xffff).deref().get();
+            final String dest2 = regions_800f01ec.get(this.mapState_800c6798.submapScene_ca & 0xf).deref().get();
+
+            this.dest1PlaceName = new TextBuilder()
+              .text(dest1)
               .centred()
               .shadowed()
               .build();
-
-            final int placeIndex = locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).placeIndex_02.get();
-            this.placeName = new TextBuilder()
-              .text(places_800f0234.get(placeIndex).name_00.deref().get())
+            this.dest2PlaceName = new TextBuilder()
+              .text(dest2)
+              .centred()
+              .shadowed()
+              .build();
+          } else {
+            this.enter = new TextBuilder()
+              .text("Enter")
               .centred()
               .shadowed()
               .build();
@@ -5121,18 +5137,17 @@ public class WMap extends EngineState {
         this.locationMenuNameShadow_800c6898.currentBrightness_34 += 0.125f / (3.0f / vsyncMode_8007a3b8);
 
         this.renderLocationMenuTextHighlight(this.locationMenuNameShadow_800c6898);
+        this.renderLocationMenuTextHighlight(this.locationMenuSelectorHighlight_800c689c);
 
         this.textTransforms.identity();
 
         if(this.mapState_800c6798.submapCut_c8 == 999) { // Going to a different region
-          final int sp38 = this.mapState_800c6798.submapScene_ca >>> 4 & 0xffff;
-          final int sp3c = this.mapState_800c6798.submapScene_ca & 0xf;
-
           this.textTransforms.transfer.set(240.0f, 164.0f, textZ_800bdf00.get() * 4.0f);
           RENDERER.queueOrthoOverlayModel(this.dontEnter, this.textTransforms);
-
-          this.renderCenteredShadowedText(regions_800f01ec.get(sp38).deref(), 240, 182, TextColour.WHITE, 0);
-          this.renderCenteredShadowedText(regions_800f01ec.get(sp3c).deref(), 240, 200, TextColour.WHITE, 0);
+          this.textTransforms.transfer.y = 182.0f;
+          RENDERER.queueOrthoOverlayModel(this.dest1PlaceName, this.textTransforms);
+          this.textTransforms.transfer.y = 200.0f;
+          RENDERER.queueOrthoOverlayModel(this.dest2PlaceName, this.textTransforms);
 
           if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
             this.menuSelectorOptionIndex_800c86d2--;
@@ -5180,8 +5195,6 @@ public class WMap extends EngineState {
         }
 
         //LAB_800e5b68
-        this.renderLocationMenuTextHighlight(this.locationMenuSelectorHighlight_800c689c);
-
         final int placeIndex = locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).placeIndex_02.get();
         final IntRef width = new IntRef();
         final IntRef lines = new IntRef();

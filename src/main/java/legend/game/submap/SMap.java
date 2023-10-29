@@ -5511,8 +5511,8 @@ public class SMap extends EngineState {
           .build();
       }
 
-      metrics.transforms.scaling(SUBMAP_SCALE, 1.0f, 1.0f);
-      metrics.transforms.transfer.set((GPU.getOffsetX() + this.submapOffsetX_800cb560 + this.screenOffsetX_800cb568) * SUBMAP_SCALE, GPU.getOffsetY() + this.submapOffsetY_800cb564 + this.screenOffsetY_800cb56c, 0.0f);
+      metrics.transforms.identity();
+      metrics.transforms.transfer.set(GPU.getOffsetX() + this.submapOffsetX_800cb560 + this.screenOffsetX_800cb568, GPU.getOffsetY() + this.submapOffsetY_800cb564 + this.screenOffsetY_800cb56c, 0.0f);
       RENDERER.queueOrthoModel(metrics.obj, metrics.transforms);
     }
 
@@ -5619,8 +5619,8 @@ public class SMap extends EngineState {
           continue;
         }
 
-        metrics.transforms.scaling(SUBMAP_SCALE, 1.0f, 1.0f);
-        metrics.transforms.transfer.set((GPU.getOffsetX() + this.submapOffsetX_800cb560 + this.screenOffsetX_800cb568 + this.envForegroundMetrics_800cb590[i].x_00) * SUBMAP_SCALE, GPU.getOffsetY() + this.submapOffsetY_800cb564 + this.screenOffsetY_800cb56c + this.envForegroundMetrics_800cb590[i].y_04, 0.0f);
+        metrics.transforms.identity();
+        metrics.transforms.transfer.set(GPU.getOffsetX() + this.submapOffsetX_800cb560 + this.screenOffsetX_800cb568 + this.envForegroundMetrics_800cb590[i].x_00, GPU.getOffsetY() + this.submapOffsetY_800cb564 + this.screenOffsetY_800cb56c + this.envForegroundMetrics_800cb590[i].y_04, 0.0f);
         RENDERER.queueOrthoModel(metrics.obj, metrics.transforms);
       }
     }

@@ -654,7 +654,7 @@ public class RenderEngine {
     // LOD uses a left-handed projection with a negated Y axis because reasons
     this.perspectiveProjection.setPerspectiveLH(this.fieldOfView, this.aspectRatio, 0.1f, 1000000.0f); //TODO un-jank the world map so we can lower this ridiculousness
     this.perspectiveProjection.negateY();
-    this.orthographicProjection.setOrthoLH(0.0f, 320, 240, 0.0f, 0.1f, 1000000.0f);
+    this.orthographicProjection.setOrthoLH(0.0f, this.projectionWidth, this.projectionHeight, 0.0f, 0.1f, 1000000.0f);
   }
 
   private void onResize(final Window window, final int width, final int height) {

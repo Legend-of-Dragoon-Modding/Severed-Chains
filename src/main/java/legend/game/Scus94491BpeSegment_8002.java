@@ -13,6 +13,7 @@ import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.Transforms;
 import legend.core.memory.Method;
+import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.fmv.Fmv;
@@ -180,6 +181,13 @@ public final class Scus94491BpeSegment_8002 {
   private Scus94491BpeSegment_8002() { }
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Scus94491BpeSegment_8002.class);
+
+  /** One per animation frame */
+  private static final Obj[] textboxArrowObjs = new Obj[7];
+  private static final MV textboxArrowTransforms = new MV();
+
+  private static Obj textboxSelectionObj;
+  private static final MV textboxSelectionTransforms = new MV();
 
   @Method(0x80020008L)
   public static void sssqResetStuff() {
@@ -1962,6 +1970,26 @@ public final class Scus94491BpeSegment_8002 {
     return FlowControl.CONTINUE;
   }
 
+  public static void initTextboxes() {
+    for(int i = 0; i < textboxArrowObjs.length; i++) {
+      textboxArrowObjs[i] = new QuadBuilder()
+        .bpp(Bpp.BITS_4)
+        .monochrome(1.0f)
+        .clut(1008, 484)
+        .vramPos(896, 256)
+        .pos(-8.0f, -6.0f, 0.0f)
+        .size(16.0f, 14.0f)
+        .uv(64.0f + i * 16.0f, 0.0f)
+        .build();
+    }
+
+    textboxSelectionObj = new QuadBuilder()
+      .translucency(Translucency.HALF_B_PLUS_HALF_F)
+      .rgb(0.5f, 0.19607843f, 0.39215687f)
+      .size(1.0f, 12.0f)
+      .build();
+  }
+
   /** Deallocate textbox used in yellow-name textboxes and combat effect popups, maybe others */
   @Method(0x800257e0L)
   public static void clearTextbox(final int textboxIndex) {
@@ -3517,16 +3545,14 @@ public final class Scus94491BpeSegment_8002 {
   /** The purple bar used in inn dialogs, etc. */
   @Method(0x80029140L)
   public static void renderTextboxSelection(final int textboxIndex, final int selectionLine) {
-    final Textbox4c s0 = textboxes_800be358[textboxIndex];
-    final int width = (s0.chars_18 - 1) * 9;
-    final float x = s0.x_14 - centreScreenX_1f8003dc.get();
-    final float y = s0.y_16 - centreScreenY_1f8003de.get() + selectionLine * 12 - (s0.lines_1a - 1) * 6;
+    final Textbox4c textbox = textboxes_800be358[textboxIndex];
+    final int width = (textbox.chars_18 - 1) * 9;
+    final float x = textbox.x_14;
+    final float y = textbox.y_16 + selectionLine * 12 - (textbox.lines_1a - 1) * 6;
 
-    GPU.queueCommand(s0.z_0c, new GpuCommandQuad()
-      .translucent(Translucency.HALF_B_PLUS_HALF_F)
-      .rgb(0x80, 0x32, 0x64)
-      .pos(x - width / 2.0f, y, width, 12)
-    );
+    textboxSelectionTransforms.scaling(width, 1.0f, 1.0f);
+    textboxSelectionTransforms.transfer.set(x - width / 2.0f, y, textbox.z_0c);
+    RENDERER.queueOrthoOverlayModel(textboxSelectionObj, textboxSelectionTransforms);
   }
 
   /**
@@ -3653,28 +3679,9 @@ public final class Scus94491BpeSegment_8002 {
     if((arrow.flags_00 & TextboxArrow0c.ARROW_VISIBLE) != 0) {
       final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
       if((textboxText.flags_08 & TextboxText84.SHOW_ARROW) != 0) {
-        final float left = arrow.x_04 - centreScreenX_1f8003dc.get() - 8.0f;
-        final float right = arrow.x_04 - centreScreenX_1f8003dc.get() + 8.0f;
-        final float top = arrow.y_06 - centreScreenY_1f8003de.get() - 6.0f;
-        final float bottom = arrow.y_06 - centreScreenY_1f8003de.get() + 8.0f;
-        final int leftU = 64 + arrow.spriteIndex_08 * 16;
-        final int rightU = 80 + arrow.spriteIndex_08 * 16;
-
-        GPU.queueCommand(textboxText.z_0c, new GpuCommandPoly(4)
-          .bpp(Bpp.BITS_4)
-          .translucent(Translucency.HALF_B_PLUS_HALF_F)
-          .monochrome(0x80)
-          .clut(1008, 484)
-          .vramPos(896, 256)
-          .pos(0, left, top)
-          .uv(0, leftU, 0)
-          .pos(1, right, top)
-          .uv(1, rightU, 0)
-          .pos(2, left, bottom)
-          .uv(2, leftU, 14)
-          .pos(3, right, bottom)
-          .uv(3, rightU, 14)
-        );
+        textboxArrowTransforms.scaling(1.0f, 0.875f, 1.0f);
+        textboxArrowTransforms.transfer.set(arrow.x_04, arrow.y_06,  textboxText.z_0c);
+        RENDERER.queueOrthoOverlayModel(textboxArrowObjs[arrow.spriteIndex_08], textboxArrowTransforms);
       }
     }
 
@@ -3864,8 +3871,15 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     for(int i = 0; i < 8; i++) {
+      final TextboxText84 text = textboxText_800bdf38[i];
+
       //LAB_8002a134
-      if(textboxText_800bdf38[i].state_00 != TextboxTextState.UNINITIALIZED_0) {
+      if(text.state_00 != TextboxTextState.UNINITIALIZED_0) {
+        switch(text.state_00) {
+          case _18 -> renderTextboxSelection(i, text.selectionLine_60);
+          case _19, SELECTION_22 -> renderTextboxSelection(i, text.selectionLine_68);
+        }
+
         renderTextboxText(i);
         renderTextboxArrow(i);
       }
@@ -3998,7 +4012,7 @@ public final class Scus94491BpeSegment_8002 {
         }
 
         //LAB_8002a53c
-        if(arrow.spriteIndex_08 >= 7) {
+        if(arrow.spriteIndex_08 > 6) {
           arrow.spriteIndex_08 = 0;
         }
       }
