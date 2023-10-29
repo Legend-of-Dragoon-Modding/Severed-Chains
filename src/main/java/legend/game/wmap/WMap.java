@@ -2705,12 +2705,12 @@ public class WMap extends EngineState {
         //LAB_800d6da8
         if(i < 2 || i >= 5) {
           //LAB_800d6f34
-          builder.monochrome(1.0f);
+          builder.monochrome(0.5f);
         } else if(i == currentZoomLevel) {
-          builder.monochrome(2.0f);
+          builder.monochrome(1.0f);
         } else {
           //LAB_800d6ec0
-          builder.monochrome(0.5f);
+          builder.monochrome(0.25f);
         }
 
         //LAB_800d6f2c
