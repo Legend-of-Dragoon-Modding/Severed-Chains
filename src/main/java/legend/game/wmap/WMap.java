@@ -4971,6 +4971,8 @@ public class WMap extends EngineState {
   private TextObj placeName;
   private TextObj dest1PlaceName;
   private TextObj dest2PlaceName;
+  private TextObj noFacilities;
+  private final TextObj[] services = new TextObj[5];
   private Obj placeImage;
 
   private void deallocatePlaceText() {
@@ -5003,6 +5005,18 @@ public class WMap extends EngineState {
       if(this.enter != null) {
         this.enter.delete();
         this.enter = null;
+      }
+    }
+
+    if(this.noFacilities != null) {
+      this.noFacilities.delete();
+      this.noFacilities = null;
+    }
+
+    for(int i = 0; i < this.services.length; i++) {
+      if(this.services[i] != null) {
+        this.services[i].delete();
+        this.services[i] = null;
       }
     }
   }
@@ -5140,6 +5154,25 @@ public class WMap extends EngineState {
               .shadowed()
               .build();
           }
+
+          final int services = places_800f0234.get(placeIndex).services_05.get();
+          for(int i = 0; i < 5; i++) {
+            if((services & 0x1 << i) != 0 && this.services[i] == null) {
+              this.services[i] = new TextBuilder()
+                .text(services_800f01cc.get(i).deref().get())
+                .centred()
+                .shadowed()
+                .build();
+            }
+          }
+
+          if(this.noFacilities == null) {
+            this.noFacilities = new TextBuilder()
+              .text("No facilities")
+              .centred()
+              .shadowed()
+              .build();
+          }
         }
 
         //LAB_800e5700
@@ -5256,23 +5289,23 @@ public class WMap extends EngineState {
             }
 
             //LAB_800e6138
-            final int services = places_800f0234.get(placeIndex).services_05.get();
-
             //LAB_800e619c
             int servicesCount = 0;
+            this.textTransforms.identity();
             for(int i = 0; i < 5; i++) {
               //LAB_800e61b8
-              if((services & 0x1 << i) != 0) {
-                this.renderCenteredShadowedText(services_800f01cc.get(i).deref(), 240, servicesCount * 16 + 30, TextColour.WHITE, 0);
+              if(this.services[i] != null) {
+                this.textTransforms.transfer.set(240, servicesCount * 16 + 30, textZ_800bdf00.get());
+                RENDERER.queueOrthoOverlayModel(this.services[i], this.textTransforms);
                 servicesCount++;
               }
-
               //LAB_800e6248
             }
 
             //LAB_800e6260
             if(servicesCount == 0) {
-              this.renderCenteredShadowedText(No_Facilities_800f01e0.deref(), 240, 62, TextColour.WHITE, 0);
+              this.textTransforms.transfer.set(240, 62, textZ_800bdf00.get());
+              RENDERER.queueOrthoOverlayModel(this.noFacilities, this.textTransforms);
             }
 
             //LAB_800e6290
