@@ -177,6 +177,7 @@ public class WMap extends EngineState {
   private int placeCount_800c86cc;
 
   private float locationThumbnailBrightness_800c86d0;
+  private float previousLocationThumbnailBrightness;
   private int menuSelectorOptionIndex_800c86d2;
 
   private final int[] startButtonLabelStages_800c86d4 = new int[8];
@@ -5248,6 +5249,10 @@ public class WMap extends EngineState {
         RENDERER.queueOrthoOverlayModel(this.placeName, this.textTransforms);
 
         if((this.filesLoadedFlags_800c66b8.get() & 0x800) != 0) {
+          if(this.placeImage != null && this.locationThumbnailBrightness_800c86d0 != this.previousLocationThumbnailBrightness) {
+            this.placeImage.delete();
+            this.placeImage = null;
+          }
           if(this.placeImage == null) {
             final QuadBuilder builder = new QuadBuilder()
               .bpp(Bpp.BITS_8)
