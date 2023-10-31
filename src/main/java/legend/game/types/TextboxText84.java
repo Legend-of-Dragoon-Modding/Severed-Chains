@@ -28,6 +28,7 @@ public class TextboxText84 {
   public TextboxTextState state_00;
   /**
    * <ul>
+   *   <li>2 - I think this scrolls up instead of down</li>
    *   <li>4 - named textbox</li>
    * </ul>
    */

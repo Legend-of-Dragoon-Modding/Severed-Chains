@@ -1,7 +1,32 @@
 package legend.core.gpu;
 
-public record Rect4i(int x, int y, int w, int h) {
-  /** Calculate the minimum bounding box that contains other rects */
+import java.util.Objects;
+
+public final class Rect4i {
+  public int x;
+  public int y;
+  public int w;
+  public int h;
+
+  public Rect4i() {
+
+  }
+
+  public Rect4i(final int x, final int y, final int w, final int h) {
+    this.set(x, y, w, h);
+  }
+
+  public Rect4i set(final int x, final int y, final int w, final int h) {
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    return this;
+  }
+
+  /**
+   * Calculate the minimum bounding box that contains other rects
+   */
   public static Rect4i bound(final Rect4i... rects) {
     if(rects.length == 0) {
       return new Rect4i(0, 0, 0, 0);
@@ -52,4 +77,50 @@ public record Rect4i(int x, int y, int w, int h) {
 
     return x < this.x + this.w && y < this.y + this.h;
   }
+
+  public int x() {
+    return this.x;
+  }
+
+  public int y() {
+    return this.y;
+  }
+
+  public int w() {
+    return this.w;
+  }
+
+  public int h() {
+    return this.h;
+  }
+
+  @Override
+  public boolean equals(final Object obj) {
+    if(obj == this) {
+      return true;
+    }
+    if(obj == null || obj.getClass() != this.getClass()) {
+      return false;
+    }
+    final var that = (Rect4i)obj;
+    return this.x == that.x &&
+      this.y == that.y &&
+      this.w == that.w &&
+      this.h == that.h;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(this.x, this.y, this.w, this.h);
+  }
+
+  @Override
+  public String toString() {
+    return "Rect4i[" +
+      "x=" + this.x + ", " +
+      "y=" + this.y + ", " +
+      "w=" + this.w + ", " +
+      "h=" + this.h + ']';
+  }
+
 }

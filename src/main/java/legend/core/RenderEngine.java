@@ -1,5 +1,6 @@
 package legend.core;
 
+import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
 import legend.core.opengl.BasicCamera;
 import legend.core.opengl.Camera;
@@ -59,6 +60,7 @@ import static org.lwjgl.opengl.GL11C.GL_ONE;
 import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_COLOR;
 import static org.lwjgl.opengl.GL11C.GL_RED;
 import static org.lwjgl.opengl.GL11C.GL_RGBA;
+import static org.lwjgl.opengl.GL11C.GL_SCISSOR_TEST;
 import static org.lwjgl.opengl.GL11C.GL_STENCIL_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11C.GL_ZERO;
@@ -70,6 +72,7 @@ import static org.lwjgl.opengl.GL11C.glDepthMask;
 import static org.lwjgl.opengl.GL11C.glDisable;
 import static org.lwjgl.opengl.GL11C.glEnable;
 import static org.lwjgl.opengl.GL11C.glPolygonMode;
+import static org.lwjgl.opengl.GL11C.glScissor;
 import static org.lwjgl.opengl.GL11C.glViewport;
 import static org.lwjgl.opengl.GL14C.GL_FUNC_ADD;
 import static org.lwjgl.opengl.GL14C.glBlendEquation;
@@ -391,10 +394,18 @@ public class RenderEngine {
       this.tmdShader.use();
       GPU.useVramTexture();
 
+      final float widthScale = this.window.getWidth() / this.projectionWidth;
+      final float heightScale = this.window.getHeight() / this.projectionHeight;
+
       glDisable(GL_DEPTH_TEST);
       for(int i = 0; i < this.orthoOverlayPool.size(); i++) {
         final QueuedModel entry = this.orthoOverlayPool.get(i);
         entry.updateTransforms();
+
+        if(entry.scissor.w != 0) {
+          glEnable(GL_SCISSOR_TEST);
+          glScissor((int)(entry.scissor.x * widthScale), this.window.getHeight() - (int)(entry.scissor.y * heightScale), (int)(entry.scissor.w * widthScale), (int)(entry.scissor.h * heightScale));
+        }
 
         if(entry.obj.shouldRender(null)) {
           glDisable(GL_BLEND);
@@ -409,6 +420,10 @@ public class RenderEngine {
             translucency.setGlState();
             entry.obj.render(translucency);
           }
+        }
+
+        if(entry.scissor.w != 0) {
+          glDisable(GL_SCISSOR_TEST);
         }
       }
 
@@ -549,6 +564,7 @@ public class RenderEngine {
     entry.transforms.identity();
     entry.screenspaceOffset.zero();
     entry.colour.set(1.0f, 1.0f, 1.0f);
+    entry.scissor.set(0, 0, 0, 0);
     return entry;
   }
 
@@ -556,9 +572,10 @@ public class RenderEngine {
     final QueuedModel entry = this.modelPool.acquire();
     entry.obj = obj;
     entry.transforms.set(mv);
-    entry.screenspaceOffset.zero();
     entry.transforms.setTranslation(mv.transfer);
+    entry.screenspaceOffset.zero();
     entry.colour.set(1.0f, 1.0f, 1.0f);
+    entry.scissor.set(0, 0, 0, 0);
     return entry;
   }
 
@@ -569,9 +586,10 @@ public class RenderEngine {
 
     final QueuedModel entry = this.orthoPool.acquire();
     entry.obj = obj;
-    entry.screenspaceOffset.zero();
     entry.transforms.identity();
+    entry.screenspaceOffset.zero();
     entry.colour.set(1.0f, 1.0f, 1.0f);
+    entry.scissor.set(0, 0, 0, 0);
     return entry;
   }
 
@@ -583,9 +601,10 @@ public class RenderEngine {
     final QueuedModel entry = this.orthoPool.acquire();
     entry.obj = obj;
     entry.transforms.set(mv);
-    entry.screenspaceOffset.zero();
     entry.transforms.setTranslation(mv.transfer);
+    entry.screenspaceOffset.zero();
     entry.colour.set(1.0f, 1.0f, 1.0f);
+    entry.scissor.set(0, 0, 0, 0);
     return entry;
   }
 
@@ -596,9 +615,10 @@ public class RenderEngine {
 
     final QueuedModel entry = this.orthoOverlayPool.acquire();
     entry.obj = obj;
-    entry.screenspaceOffset.zero();
     entry.transforms.identity();
+    entry.screenspaceOffset.zero();
     entry.colour.set(1.0f, 1.0f, 1.0f);
+    entry.scissor.set(0, 0, 0, 0);
     return entry;
   }
 
@@ -610,9 +630,10 @@ public class RenderEngine {
     final QueuedModel entry = this.orthoOverlayPool.acquire();
     entry.obj = obj;
     entry.transforms.set(mv);
-    entry.screenspaceOffset.zero();
     entry.transforms.setTranslation(mv.transfer);
+    entry.screenspaceOffset.zero();
     entry.colour.set(1.0f, 1.0f, 1.0f);
+    entry.scissor.set(0, 0, 0, 0);
     return entry;
   }
 
@@ -795,6 +816,8 @@ public class RenderEngine {
     private final Matrix4f lightColour = new Matrix4f();
     private final Vector4f backgroundColour = new Vector4f();
 
+    private final Rect4i scissor = new Rect4i();
+
     public QueuedModel screenspaceOffset(final Vector2f offset) {
       this.screenspaceOffset.set(offset);
       return this;
@@ -832,6 +855,11 @@ public class RenderEngine {
 
     public QueuedModel backgroundColour(final Vector3f backgroundColour) {
       this.backgroundColour.set(backgroundColour, 0.0f);
+      return this;
+    }
+
+    public QueuedModel scissor(final int x, final int y, final int w, final int h) {
+      this.scissor.set(x, y, w, h);
       return this;
     }
 
