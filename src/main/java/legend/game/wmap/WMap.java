@@ -4964,7 +4964,7 @@ public class WMap extends EngineState {
     );
   }
 
-  private MapTransitionPopup mapTransitionPopup;
+  private WmapPopup wmapPromptPopup;
 
   @Method(0x800e5150L)
   private void handleMapTransitions() {
@@ -4988,19 +4988,20 @@ public class WMap extends EngineState {
     }
 
     //LAB_800e5248
-    int sp28;
-    final int sp2c;
+    int areaIndex;
+    final int currentAreaIndex;
+    final int placeIndex = locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).placeIndex_02.get();
     switch(this.mapTransitionState_800c68a4) {
       case 0:
-        sp2c = -areaData_800f2248.get(this.mapState_800c6798._dc[0])._00.get();
+        currentAreaIndex = -areaData_800f2248.get(this.mapState_800c6798._dc[0])._00.get();
 
         //LAB_800e52cc
-        for(sp28 = 0; sp28 < this.mapState_800c6798.areaCount_0c && areaData_800f2248.get(sp28)._00.get() != sp2c; sp28++) {
+        for(areaIndex = 0; areaIndex < this.mapState_800c6798.areaCount_0c && areaData_800f2248.get(areaIndex)._00.get() != currentAreaIndex; areaIndex++) {
           // intentionally empty
         }
 
         //LAB_800e533c
-        this.FUN_800ea4dc(sp28);
+        this.FUN_800ea4dc(areaIndex);
 
         this.mapState_800c6798.facing_1c = -this.mapState_800c6798.facing_1c;
 
@@ -5027,7 +5028,6 @@ public class WMap extends EngineState {
 
         //LAB_800e54c4
         this.locationMenuNameShadow_800c6898.currentBrightness_34 = 0.0f;
-        this.locationThumbnailBrightness_800c86d0 = 1.0f;
         this.menuSelectorOptionIndex_800c86d2 = 0;
         break;
 
@@ -5057,41 +5057,38 @@ public class WMap extends EngineState {
         break;
 
       case 2:
-        if(isTextboxInState6(7)) {
+        if(isTextboxInState6(7) && (this.filesLoadedFlags_800c66b8.get() & 0x800) != 0) {
           initTextbox(6, false, 240, 70, 13, 7);
           this.mapTransitionState_800c68a4 = 3;
-          this.mapTransitionPopup = new MapTransitionPopup();
-
 
           // Build Objs
-          final int placeIndex = locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).placeIndex_02.get();
-
-          this.mapTransitionPopup
-            .addText("placeName", places_800f0234.get(placeIndex).name_00.deref().get(), null)
-            .addText("dontEnter", "Don't enter", null);
+          this.wmapPromptPopup = new WmapPopup(places_800f0234.get(placeIndex).name_00.deref().get(), textZ_800bdf00.get() * 4.0f)
+            .addOptionText("Don't enter");
 
           if(this.mapState_800c6798.submapCut_c8 == 999) { // Going to a different region
             final String dest1 = regions_800f01ec.get(this.mapState_800c6798.submapScene_ca >>> 4 & 0xffff).deref().get();
             final String dest2 = regions_800f01ec.get(this.mapState_800c6798.submapScene_ca & 0xf).deref().get();
 
-            this.mapTransitionPopup
-              .addText("dest1PlaceName", dest1, null)
-              .addText("dest2PlaceName", dest2, null);
+            this.wmapPromptPopup
+              .addOptionText(dest1)
+              .addOptionText(dest2);
+            this.wmapPromptPopup.setTranslation(WmapPopup.ObjFields.OPTIONS, 240.0f, 164.0f, textZ_800bdf00.get() * 4.0f);
           } else {
-            this.mapTransitionPopup.addText("enter", "Enter", null);
+            this.wmapPromptPopup.addOptionText("Enter");
           }
 
           final int services = places_800f0234.get(placeIndex).services_05.get();
           int servicesCount = 0;
           for(int i = 0; i < 5; i++) {
-            if((services & 0x1 << i) != 0 && this.mapTransitionPopup.services.get(i) == null) {
-              this.mapTransitionPopup.addText("services", services_800f01cc.get(i).deref().get(), i);
+            if((services & 0x1 << i) != 0) {
+              this.wmapPromptPopup.addAltText(services_800f01cc.get(i).deref().get());
               servicesCount++;
             }
           }
 
           if(servicesCount == 0) {
-            this.mapTransitionPopup.addText("noFacilities", "No facilities", null);
+            this.wmapPromptPopup.addAltText("No facilities");
+            this.wmapPromptPopup.setTranslation(WmapPopup.ObjFields.ALT_TEXT, 240.0f, 62.0f, textZ_800bdf00.get());
           }
         }
 
@@ -5104,13 +5101,7 @@ public class WMap extends EngineState {
         this.renderLocationMenuTextHighlight(this.locationMenuNameShadow_800c6898);
         this.renderLocationMenuTextHighlight(this.locationMenuSelectorHighlight_800c689c);
 
-        this.mapTransitionPopup.transforms.identity();
-
         if(this.mapState_800c6798.submapCut_c8 == 999) { // Going to a different region
-          this.mapTransitionPopup.render("dontEnter", null, 240.0f, 164.0f, textZ_800bdf00.get() * 4.0f);
-          this.mapTransitionPopup.render("dest1PlaceName", null, 240.0f, 182.0f, textZ_800bdf00.get() * 4.0f);
-          this.mapTransitionPopup.render("dest2PlaceName", null, 240.0f, 200.0f, textZ_800bdf00.get() * 4.0f);
-
           if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
             this.menuSelectorOptionIndex_800c86d2--;
 
@@ -5138,9 +5129,6 @@ public class WMap extends EngineState {
           this.locationMenuSelectorHighlight_800c689c.y_3a = this.menuSelectorOptionIndex_800c86d2 * 18 + 8;
         } else { // Entering a town, etc.
           //LAB_800e5a18
-          this.mapTransitionPopup.render("dontEnter", null, 240.0f, 170.0f, textZ_800bdf00.get() * 4.0f);
-          this.mapTransitionPopup.render("enter", null, 240.0f, 190.0f, textZ_800bdf00.get() * 4.0f);
-
           // World Map Location Menu (No Entry,Enter)
           if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.DPAD_DOWN) ||
             Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
@@ -5154,71 +5142,63 @@ public class WMap extends EngineState {
         }
 
         //LAB_800e5b68
-        final int placeIndex = locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).placeIndex_02.get();
-        final IntRef width = new IntRef();
-        final IntRef lines = new IntRef();
-        this.measureText(places_800f0234.get(placeIndex).name_00.deref(), width, lines);
-        this.mapTransitionPopup.render("placeName", null, 240.0f, 140.0f - lines.get() * 7, textZ_800bdf00.get() * 4.0f);
+        final float brightness;
+        if(
+          gameState_800babc8.visitedLocations_17c.get(this.mapState_800c6798.locationIndex_10) ||
+            locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).thumbnailShouldUseFullBrightness_10.get()
+        ) {
+          //LAB_800e5e98
+          brightness = this.locationThumbnailBrightness_800c86d0 * 0.5f;
+        } else {
+          //LAB_800e5e18
+          brightness = this.locationThumbnailBrightness_800c86d0 * 0.1875f;
+        }
 
-        if((this.filesLoadedFlags_800c66b8.get() & 0x800) != 0) {
-          final float brightness;
-          if(
-            gameState_800babc8.visitedLocations_17c.get(this.mapState_800c6798.locationIndex_10) ||
-              locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).thumbnailShouldUseFullBrightness_10.get()
-          ) {
-            //LAB_800e5e98
-            brightness = this.locationThumbnailBrightness_800c86d0 * 0.5f;
-          } else {
-            //LAB_800e5e18
-            brightness = this.locationThumbnailBrightness_800c86d0 * 0.1875f;
+        //LAB_800e5f04
+        this.wmapPromptPopup.setImage(
+          locationThumbnailMetrics_800ef0cc.get(1).clutX_04.get(),
+          locationThumbnailMetrics_800ef0cc.get(1).clutY_06.get(),
+          locationThumbnailMetrics_800ef0cc.get(1).imageX_00.get(),
+          locationThumbnailMetrics_800ef0cc.get(1).imageY_02.get(),
+          GPU.getOffsetX() + 21,
+          GPU.getOffsetY() - 96,
+          120,
+          90,
+          0,
+          0,
+          brightness
+        );
+
+        this.wmapPromptPopup.previousThumbnailBrightness = this.locationThumbnailBrightness_800c86d0;
+
+        if(Input.pressedThisFrame(InputAction.BUTTON_WEST) && this.mapState_800c6798.submapCut_c8 != 999) { // Square
+          playSound(0, 2, 0, 0, (short)0, (short)0);
+        }
+
+        //LAB_800e60d0
+        if(Input.getButtonState(InputAction.BUTTON_WEST) && this.mapState_800c6798.submapCut_c8 != 999) { // Square
+          this.locationThumbnailBrightness_800c86d0 -= 0.5f / (3.0f / vsyncMode_8007a3b8);
+
+          if(this.locationThumbnailBrightness_800c86d0 < 0.5f) {
+            this.locationThumbnailBrightness_800c86d0 = 0.25f;
           }
 
-          if(this.locationThumbnailBrightness_800c86d0 != this.mapTransitionPopup.previousThumbnailBrightness) {
-            this.mapTransitionPopup.deleteField("placeImage", null);
-          }
-          //LAB_800e5f04
-          if(this.mapTransitionPopup.placeImage == null) {
-            this.mapTransitionPopup.setImage(
-              locationThumbnailMetrics_800ef0cc.get(1).clutX_04.get(),
-              locationThumbnailMetrics_800ef0cc.get(1).clutY_06.get(),
-              locationThumbnailMetrics_800ef0cc.get(1).imageX_00.get(),
-              locationThumbnailMetrics_800ef0cc.get(1).imageY_02.get(),
-              GPU.getOffsetX() + 21,
-              GPU.getOffsetY() - 96,
-              brightness
-            );
-          }
+          //LAB_800e6138
+          //LAB_800e619c
+          this.wmapPromptPopup.setShowAltText(true);
 
-          this.mapTransitionPopup.render("placeImage", null, 0.0f, 0.0f, 56.0f);
+          //LAB_800e6290
+        } else {
+          //LAB_800e6298
+          this.wmapPromptPopup.setShowAltText(false);
+          this.locationThumbnailBrightness_800c86d0 += 0.25f / (3.0f / vsyncMode_8007a3b8);
 
-          this.mapTransitionPopup.previousThumbnailBrightness = this.locationThumbnailBrightness_800c86d0;
-
-          if(Input.pressedThisFrame(InputAction.BUTTON_WEST) && this.mapState_800c6798.submapCut_c8 != 999) { // Square
-            playSound(0, 2, 0, 0, (short)0, (short)0);
-          }
-
-          //LAB_800e60d0
-          if(Input.getButtonState(InputAction.BUTTON_WEST) && this.mapState_800c6798.submapCut_c8 != 999) { // Square
-            this.locationThumbnailBrightness_800c86d0 -= 0.5f / (3.0f / vsyncMode_8007a3b8);
-
-            if(this.locationThumbnailBrightness_800c86d0 < 0.5f) {
-              this.locationThumbnailBrightness_800c86d0 = 0.25f;
-            }
-
-            //LAB_800e6138
-            //LAB_800e619c
-            this.mapTransitionPopup.renderServices(textZ_800bdf00.get());
-
-            //LAB_800e6290
-          } else {
-            //LAB_800e6298
-            this.locationThumbnailBrightness_800c86d0 += 0.25f / (3.0f / vsyncMode_8007a3b8);
-
-            if(this.locationThumbnailBrightness_800c86d0 > 1.0f) {
-              this.locationThumbnailBrightness_800c86d0 = 1.0f;
-            }
+          if(this.locationThumbnailBrightness_800c86d0 > 1.0f) {
+            this.locationThumbnailBrightness_800c86d0 = 1.0f;
           }
         }
+
+        this.wmapPromptPopup.render();
 
         //LAB_800e62d4
         if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
@@ -5259,7 +5239,6 @@ public class WMap extends EngineState {
               if(soundIndex > 0) {
                 stopSound(soundFiles_800bcf80[12], soundIndex, 1);
               }
-
               //LAB_800e6504
             }
           }
@@ -5298,7 +5277,7 @@ public class WMap extends EngineState {
         this.renderLocationMenuTextHighlight(this.locationMenuNameShadow_800c6898);
 
         if(textboxes_800be358[6].state_00 == TextboxState.UNINITIALIZED_0 && textboxes_800be358[7].state_00 == TextboxState.UNINITIALIZED_0 && MathHelper.flEq(this.locationMenuNameShadow_800c6898.currentBrightness_34, 0.0f)) {
-          mapTransitionPopup.deallocatePlaceText(this.mapState_800c6798.submapCut_c8 == 999);
+          this.wmapPromptPopup.deallocatePlaceText();
           this.mapTransitionState_800c68a4 = 9;
         }
 
@@ -5306,7 +5285,7 @@ public class WMap extends EngineState {
         break;
 
       case 6:
-        mapTransitionPopup.deallocatePlaceText(this.mapState_800c6798.submapCut_c8 == 999);
+        this.wmapPromptPopup.deallocatePlaceText();
 
         if(!MathHelper.flEq(this.mapState_800c6798.playerDestAngle_c0, 0.0f)) {
           this.mapState_800c6798.playerDestAngle_c0 = 0.0f;
