@@ -14,6 +14,7 @@ import legend.core.memory.Method;
 import legend.core.memory.types.CString;
 import legend.core.memory.types.ComponentFunction;
 import legend.core.memory.types.FloatRef;
+import legend.core.opengl.TmdObjLoader;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.deff.Anim;
 import legend.game.combat.deff.Cmb;
@@ -4748,6 +4749,10 @@ public final class Bttl_800d {
     model.shadowType_cc = 0;
     model.shadowSize_10c.set(1.0f, 1.0f, 1.0f);
     model.shadowOffset_118.zero();
+
+    for(int i = 0; i < model.modelParts_00.length; i++) {
+      model.modelParts_00[i].obj = TmdObjLoader.fromObjTable(tmd.objTable[i]);
+    }
   }
 
   @Method(0x800ddd3cL)

@@ -99,6 +99,7 @@ import java.util.function.BiFunction;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
+import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
@@ -140,6 +141,8 @@ import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
+import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
+import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800c.FUN_800ca418;
 import static legend.game.combat.Bttl_800c._800c6930;
@@ -3187,19 +3190,28 @@ public final class Bttl_800e {
     zOffset_1f8003e8.set(stage.z_5e8);
 
     //LAB_800ec5a0
-    int part = 0x1;
-    for(final ModelPart10 dobj2 : stage.dobj2s_00) {
-      if((part & stage.flags_5e4) == 0) {
+    int partBit = 0x1;
+    for(int i = 0; i < stage.dobj2s_00.length; i++) {
+      final ModelPart10 part = stage.dobj2s_00[i];
+
+      if((partBit & stage.flags_5e4) == 0) {
         final MV ls = new MV();
         final MV lw = new MV();
-        GsGetLws(dobj2.coord2_04, lw, ls);
+        GsGetLws(part.coord2_04, lw, ls);
         GsSetLightMatrix(lw);
         GTE.setTransforms(ls);
-        Renderer.renderDobj2(dobj2, true, 0);
+        Renderer.renderDobj2(part, true, 0);
+
+        if(part.obj != null) {
+          RENDERER.queueModel(part.obj, lw)
+            .lightDirection(lightDirectionMatrix_800c34e8)
+            .lightColour(lightColourMatrix_800c3508)
+            .backgroundColour(GTE.backgroundColour);
+        }
       }
 
       //LAB_800ec608
-      part <<= 1;
+      partBit <<= 1;
     }
 
     //LAB_800ec618
@@ -3306,12 +3318,19 @@ public final class Bttl_800e {
     for(int i = 0; i < model.modelParts_00.length; i++) {
       if((model.partInvisible_f4 & 1L << i) == 0) {
         final ModelPart10 s2 = model.modelParts_00[i];
-        final MV sp0x30 = new MV();
-        final MV sp0x10 = new MV();
-        GsGetLws(s2.coord2_04, sp0x30, sp0x10);
-        GsSetLightMatrix(sp0x30);
-        GTE.setTransforms(sp0x10);
+        final MV lw = new MV();
+        final MV ls = new MV();
+        GsGetLws(s2.coord2_04, lw, ls);
+        GsSetLightMatrix(lw);
+        GTE.setTransforms(ls);
         Renderer.renderDobj2(s2, true, 0);
+
+        if(model.modelParts_00[i].obj != null) {
+          RENDERER.queueModel(model.modelParts_00[i].obj, lw)
+            .lightDirection(lightDirectionMatrix_800c34e8)
+            .lightColour(lightColourMatrix_800c3508)
+            .backgroundColour(GTE.backgroundColour);
+        }
       }
     }
 
