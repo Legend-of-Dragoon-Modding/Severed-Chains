@@ -4960,7 +4960,7 @@ public class WMap extends EngineState {
     );
   }
 
-  private WmapPopup wmapPromptPopup;
+  private WmapPromptPopup wmapLocationPromptPopup;
 
   @Method(0x800e5150L)
   private void handleMapTransitions() {
@@ -5058,34 +5058,34 @@ public class WMap extends EngineState {
           this.mapTransitionState_800c68a4 = 3;
 
           // Build Objs
-          this.wmapPromptPopup = new WmapPopup(places_800f0234.get(placeIndex).name_00.deref().get(), textZ_800bdf00.get() * 4.0f)
+          this.wmapLocationPromptPopup = new WmapPromptPopup(places_800f0234.get(placeIndex).name_00.deref().get(), textZ_800bdf00.get() * 4.0f)
             .addOptionText("Don't enter");
 
           if(this.mapState_800c6798.submapCut_c8 == 999) { // Going to a different region
             final String dest1 = regions_800f01ec.get(this.mapState_800c6798.submapScene_ca >>> 4 & 0xffff).deref().get();
             final String dest2 = regions_800f01ec.get(this.mapState_800c6798.submapScene_ca & 0xf).deref().get();
 
-            this.wmapPromptPopup
+            this.wmapLocationPromptPopup
               .addOptionText(dest1)
               .addOptionText(dest2);
-            this.wmapPromptPopup.setOptionSpacing(18.0f);
-            this.wmapPromptPopup.setTranslation(WmapPopup.ObjFields.OPTIONS, 240.0f, 164.0f, textZ_800bdf00.get() * 4.0f);
+            this.wmapLocationPromptPopup.setOptionSpacing(18.0f);
+            this.wmapLocationPromptPopup.setTranslation(WmapPromptPopup.ObjFields.OPTIONS, 240.0f, 164.0f, textZ_800bdf00.get() * 4.0f);
           } else {
-            this.wmapPromptPopup.addOptionText("Enter");
+            this.wmapLocationPromptPopup.addOptionText("Enter");
           }
 
           final int services = places_800f0234.get(placeIndex).services_05.get();
           int servicesCount = 0;
           for(int i = 0; i < 5; i++) {
             if((services & 0x1 << i) != 0) {
-              this.wmapPromptPopup.addAltText(services_800f01cc.get(i).deref().get());
+              this.wmapLocationPromptPopup.addAltText(services_800f01cc.get(i).deref().get());
               servicesCount++;
             }
           }
 
           if(servicesCount == 0) {
-            this.wmapPromptPopup.addAltText("No facilities");
-            this.wmapPromptPopup.setTranslation(WmapPopup.ObjFields.ALT_TEXT, 240.0f, 62.0f, textZ_800bdf00.get());
+            this.wmapLocationPromptPopup.addAltText("No facilities");
+            this.wmapLocationPromptPopup.setTranslation(WmapPromptPopup.ObjFields.ALT_TEXT, 240.0f, 62.0f, textZ_800bdf00.get());
           }
         }
 
@@ -5140,7 +5140,7 @@ public class WMap extends EngineState {
 
         //LAB_800e5b68
         float newBrightness;
-        final float currentBrightness = this.wmapPromptPopup.getThumbnailBrightness();
+        final float currentBrightness = this.wmapLocationPromptPopup.getThumbnailBrightness();
         if(
           gameState_800babc8.visitedLocations_17c.get(this.mapState_800c6798.locationIndex_10) ||
             locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).thumbnailShouldUseFullBrightness_10.get()
@@ -5153,7 +5153,7 @@ public class WMap extends EngineState {
         }
 
         //LAB_800e5f04
-        this.wmapPromptPopup.setImage(
+        this.wmapLocationPromptPopup.setImage(
           locationThumbnailMetrics_800ef0cc.get(1).clutX_04.get(),
           locationThumbnailMetrics_800ef0cc.get(1).clutY_06.get(),
           locationThumbnailMetrics_800ef0cc.get(1).imageX_00.get(),
@@ -5181,12 +5181,12 @@ public class WMap extends EngineState {
 
           //LAB_800e6138
           //LAB_800e619c
-          this.wmapPromptPopup.setShowAltText(true);
+          this.wmapLocationPromptPopup.setShowAltText(true);
 
           //LAB_800e6290
         } else {
           //LAB_800e6298
-          this.wmapPromptPopup.setShowAltText(false);
+          this.wmapLocationPromptPopup.setShowAltText(false);
           newBrightness = currentBrightness + 0.25f / (3.0f / vsyncMode_8007a3b8);
 
           if(newBrightness > 1.0f) {
@@ -5194,8 +5194,8 @@ public class WMap extends EngineState {
           }
         }
 
-        this.wmapPromptPopup.setThumbnailBrightness(newBrightness);
-        this.wmapPromptPopup.render();
+        this.wmapLocationPromptPopup.setThumbnailBrightness(newBrightness);
+        this.wmapLocationPromptPopup.render();
 
         //LAB_800e62d4
         if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
@@ -5274,7 +5274,7 @@ public class WMap extends EngineState {
         this.renderLocationMenuTextHighlight(this.locationMenuNameShadow_800c6898);
 
         if(textboxes_800be358[6].state_00 == TextboxState.UNINITIALIZED_0 && textboxes_800be358[7].state_00 == TextboxState.UNINITIALIZED_0 && MathHelper.flEq(this.locationMenuNameShadow_800c6898.currentBrightness_34, 0.0f)) {
-          this.wmapPromptPopup.deallocatePlaceText();
+          this.wmapLocationPromptPopup.deallocatePlaceText();
           this.mapTransitionState_800c68a4 = 9;
         }
 
@@ -5282,7 +5282,7 @@ public class WMap extends EngineState {
         break;
 
       case 6:
-        this.wmapPromptPopup.deallocatePlaceText();
+        this.wmapLocationPromptPopup.deallocatePlaceText();
 
         if(!MathHelper.flEq(this.mapState_800c6798.playerDestAngle_c0, 0.0f)) {
           this.mapState_800c6798.playerDestAngle_c0 = 0.0f;

@@ -13,7 +13,7 @@ import java.util.List;
 
 import static legend.core.GameEngine.RENDERER;
 
-public class WmapPopup {
+public class WmapPromptPopup {
   public enum ObjFields {
     PROMPT,
     OPTIONS,
@@ -40,10 +40,10 @@ public class WmapPopup {
   private float currentThumbnailBrightness;
   private float previousThumbnailBrightness;
 
-  public WmapPopup() {
+  public WmapPromptPopup() {
   }
 
-  public WmapPopup(final String prompt, final float textZ) {
+  public WmapPromptPopup(final String prompt, final float textZ) {
     this.prompt = this.buildText(prompt);
     final int lines = (int)prompt.lines().count();
     this.promptTranslation.set(240.0f, 140.0f - lines * 7, textZ);
@@ -93,17 +93,17 @@ public class WmapPopup {
       .build();
   }
 
-  public WmapPopup addOptionText(final String text) {
+  public WmapPromptPopup addOptionText(final String text) {
     this.options.add(this.buildText(text));
     return this;
   }
 
-  public WmapPopup addAltText(final String text) {
+  public WmapPromptPopup addAltText(final String text) {
     this.altText.add(this.buildText(text));
     return this;
   }
 
-  public WmapPopup setImage(final short clutX, final short clutY, final short vramX, final short vramY, final float posX, final float posY, final float w, final float h, final int u, final int v, final float brightness) {
+  public WmapPromptPopup setImage(final short clutX, final short clutY, final short vramX, final short vramY, final float posX, final float posY, final float w, final float h, final int u, final int v, final float brightness) {
     if(this.thumbnail != null && this.currentThumbnailBrightness != this.previousThumbnailBrightness) {
       this.thumbnail.delete();
       this.thumbnail = null;
@@ -125,6 +125,11 @@ public class WmapPopup {
   }
 
   public void render() {
+    if(this.thumbnail != null) {
+      this.transforms.transfer.set(this.thumbnailTranslation);
+      RENDERER.queueOrthoOverlayModel(this.thumbnail, this.transforms);
+    }
+
     if(this.prompt != null) {
       this.transforms.transfer.set(this.promptTranslation);
       RENDERER.queueOrthoOverlayModel(this.prompt, this.transforms);
@@ -140,11 +145,6 @@ public class WmapPopup {
           RENDERER.queueOrthoOverlayModel(option, this.transforms);
         }
       }
-    }
-
-    if(this.thumbnail != null) {
-      this.transforms.transfer.set(this.thumbnailTranslation);
-      RENDERER.queueOrthoOverlayModel(this.thumbnail, this.transforms);
     }
 
     if(this.renderAltText && !this.altText.isEmpty()) {
