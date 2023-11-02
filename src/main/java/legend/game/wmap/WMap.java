@@ -174,8 +174,6 @@ public class WMap extends EngineState {
 
   private int placeCount_800c86cc;
 
-  private float locationThumbnailBrightness_800c86d0;
-  private float previousLocationThumbnailBrightness;
   private int menuSelectorOptionIndex_800c86d2;
 
   private final int[] startButtonLabelStages_800c86d4 = new int[8];
@@ -311,9 +309,7 @@ public class WMap extends EngineState {
   private static final LodString Move_800f00e8 = MEMORY.ref(4, 0x800f00e8L, LodString::new);
 
   private static final ArrayRef<Pointer<LodString>> services_800f01cc = MEMORY.ref(4, 0x800f01ccL, ArrayRef.of(Pointer.classFor(LodString.class), 5, 4, Pointer.deferred(4, LodString::new)));
-  private static final Pointer<LodString> No_Facilities_800f01e0 = MEMORY.ref(4, 0x800f01e0L, Pointer.deferred(4, LodString::new));
-  private static final Pointer<LodString> No_Entry_800f01e4 = MEMORY.ref(4, 0x800f01e4L, Pointer.deferred(4, LodString::new));
-  private static final Pointer<LodString> Enter_800f01e8 = MEMORY.ref(4, 0x800f01e8L, Pointer.deferred(4, LodString::new));
+
   private static final ArrayRef<Pointer<LodString>> regions_800f01ec = MEMORY.ref(4, 0x800f01ecL, ArrayRef.of(Pointer.classFor(LodString.class), 3, 4, Pointer.deferred(4, LodString::new)));
 
   private final Runnable[] _800f01fc = new Runnable[2];
@@ -5072,6 +5068,7 @@ public class WMap extends EngineState {
             this.wmapPromptPopup
               .addOptionText(dest1)
               .addOptionText(dest2);
+            this.wmapPromptPopup.setOptionSpacing(18.0f);
             this.wmapPromptPopup.setTranslation(WmapPopup.ObjFields.OPTIONS, 240.0f, 164.0f, textZ_800bdf00.get() * 4.0f);
           } else {
             this.wmapPromptPopup.addOptionText("Enter");
@@ -5142,16 +5139,17 @@ public class WMap extends EngineState {
         }
 
         //LAB_800e5b68
-        final float brightness;
+        float newBrightness;
+        final float currentBrightness = this.wmapPromptPopup.getThumbnailBrightness();
         if(
           gameState_800babc8.visitedLocations_17c.get(this.mapState_800c6798.locationIndex_10) ||
             locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).thumbnailShouldUseFullBrightness_10.get()
         ) {
           //LAB_800e5e98
-          brightness = this.locationThumbnailBrightness_800c86d0 * 0.5f;
+          newBrightness = currentBrightness * 0.5f;
         } else {
           //LAB_800e5e18
-          brightness = this.locationThumbnailBrightness_800c86d0 * 0.1875f;
+          newBrightness = currentBrightness * 0.1875f;
         }
 
         //LAB_800e5f04
@@ -5166,10 +5164,8 @@ public class WMap extends EngineState {
           90,
           0,
           0,
-          brightness
+          newBrightness
         );
-
-        this.wmapPromptPopup.previousThumbnailBrightness = this.locationThumbnailBrightness_800c86d0;
 
         if(Input.pressedThisFrame(InputAction.BUTTON_WEST) && this.mapState_800c6798.submapCut_c8 != 999) { // Square
           playSound(0, 2, 0, 0, (short)0, (short)0);
@@ -5177,10 +5173,10 @@ public class WMap extends EngineState {
 
         //LAB_800e60d0
         if(Input.getButtonState(InputAction.BUTTON_WEST) && this.mapState_800c6798.submapCut_c8 != 999) { // Square
-          this.locationThumbnailBrightness_800c86d0 -= 0.5f / (3.0f / vsyncMode_8007a3b8);
+          newBrightness = currentBrightness - 0.5f / (3.0f / vsyncMode_8007a3b8);
 
-          if(this.locationThumbnailBrightness_800c86d0 < 0.5f) {
-            this.locationThumbnailBrightness_800c86d0 = 0.25f;
+          if(newBrightness < 0.5f) {
+            newBrightness = 0.25f;
           }
 
           //LAB_800e6138
@@ -5191,13 +5187,14 @@ public class WMap extends EngineState {
         } else {
           //LAB_800e6298
           this.wmapPromptPopup.setShowAltText(false);
-          this.locationThumbnailBrightness_800c86d0 += 0.25f / (3.0f / vsyncMode_8007a3b8);
+          newBrightness = currentBrightness + 0.25f / (3.0f / vsyncMode_8007a3b8);
 
-          if(this.locationThumbnailBrightness_800c86d0 > 1.0f) {
-            this.locationThumbnailBrightness_800c86d0 = 1.0f;
+          if(newBrightness > 1.0f) {
+            newBrightness = 1.0f;
           }
         }
 
+        this.wmapPromptPopup.setThumbnailBrightness(newBrightness);
         this.wmapPromptPopup.render();
 
         //LAB_800e62d4

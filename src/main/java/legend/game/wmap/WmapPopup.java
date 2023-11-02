@@ -21,29 +21,35 @@ public class WmapPopup {
     THUMBNAIL
   }
 
-  public float currentThumbnailBrightness;
-  public float previousThumbnailBrightness;
   private final MV transforms = new MV();
+
   private TextObj prompt;
   final private Vector3f promptTranslation = new Vector3f();
+
   final private List<TextObj> options = new ArrayList<>();
+  private float optionSpacing = 20.0f;
   final private Vector3f optionsTranslation = new Vector3f();
+
   private boolean renderAltText;
   final private List<TextObj> altText = new ArrayList<>();
+  private float altTextSpacing = 16.0f;
   final private Vector3f altTextTranslation = new Vector3f();
+
   private MeshObj thumbnail;
   final private Vector3f thumbnailTranslation = new Vector3f();
+  private float currentThumbnailBrightness;
+  private float previousThumbnailBrightness;
 
   public WmapPopup() {
   }
 
-  public WmapPopup(final String prompt, final float z) {
+  public WmapPopup(final String prompt, final float textZ) {
     this.prompt = this.buildText(prompt);
     final int lines = (int)prompt.lines().count();
-    this.promptTranslation.set(240.0f, 140.0f - lines * 7, z);
-    this.optionsTranslation.set(240.0f, 170.0f, z);
-    this.altTextTranslation.set(240.0f, 30.0f, z);
-    this.thumbnailTranslation.set(0.0f, 0.0f, 56.0f);
+    this.promptTranslation.set(240.0f, 140.0f - lines * 7, textZ);
+    this.optionsTranslation.set(240.0f, 170.0f, textZ);
+    this.altTextTranslation.set(240.0f, 30.0f, textZ);
+    this.thumbnailTranslation.set(0.0f, 0.0f, textZ + 4.0f);
     this.currentThumbnailBrightness = 1.0f;
     this.previousThumbnailBrightness = 0.0f;
     this.transforms.identity();
@@ -58,8 +64,25 @@ public class WmapPopup {
     }
   }
 
+  public void setOptionSpacing(final float spacing) {
+    this.optionSpacing = spacing;
+  }
+
+  public void setAltTextSpacing(final float spacing) {
+    this.altTextSpacing = spacing;
+  }
+
   public void setShowAltText(final boolean renderAltText) {
     this.renderAltText = renderAltText;
+  }
+
+  public float getThumbnailBrightness() {
+    return this.currentThumbnailBrightness;
+  }
+
+  public void setThumbnailBrightness(final float brightness) {
+    this.previousThumbnailBrightness = this.currentThumbnailBrightness;
+    this.currentThumbnailBrightness = brightness;
   }
 
   private TextObj buildText(final String text) {
@@ -113,7 +136,7 @@ public class WmapPopup {
         option = this.options.get(i);
         if(option != null) {
           this.transforms.transfer.set(this.optionsTranslation);
-          this.transforms.transfer.y += i * 18.0f;
+          this.transforms.transfer.y += i * this.optionSpacing;
           RENDERER.queueOrthoOverlayModel(option, this.transforms);
         }
       }
@@ -130,7 +153,7 @@ public class WmapPopup {
         altText = this.altText.get(i);
         if(altText != null) {
           this.transforms.transfer.set(this.altTextTranslation);
-          this.transforms.transfer.y += i * 16.0f;
+          this.transforms.transfer.y += i * this.altTextSpacing;
           RENDERER.queueOrthoOverlayModel(altText, this.transforms);
         }
       }
