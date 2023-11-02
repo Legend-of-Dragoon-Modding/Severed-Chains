@@ -844,7 +844,7 @@ public class RenderEngine {
     }
 
     public QueuedModel lightDirection(final Matrix3f lightDirection) {
-      this.lightDirection.set(lightDirection);
+      this.lightDirection.set(lightDirection).mul(this.transforms).setTranslation(0.0f, 0.0f, 0.0f);
       return this;
     }
 
