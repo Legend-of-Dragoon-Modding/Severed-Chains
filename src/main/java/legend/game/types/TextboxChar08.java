@@ -11,7 +11,6 @@ public class TextboxChar08 {
   public Obj obj;
 
   public void set(final TextboxChar08 other) {
-    this.delete();
     this.x_00 = other.x_00;
     this.y_02 = other.y_02;
     this.colour_04 = other.colour_04;

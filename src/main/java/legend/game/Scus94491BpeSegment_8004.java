@@ -615,6 +615,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link Bttl_800c#loadStageAndControllerScripts}</li>
+   *   <li>{@link Bttl_800c#uploadBattleStageToGpu}</li>
    *   <li>{@link Bttl_800c#initializeViewportAndCamera}</li>
    *   <li>{@link Scus94491BpeSegment#nextLoadingStage}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
@@ -649,6 +650,7 @@ public final class Scus94491BpeSegment_8004 {
     Scus94491BpeSegment::waitForFilesToLoad,
     Scus94491BpeSegment::waitForFilesToLoad,
     Bttl_800c::loadStageAndControllerScripts,
+    Bttl_800c::uploadBattleStageToGpu,
     Bttl_800c::initializeViewportAndCamera,
     Scus94491BpeSegment::nextLoadingStage,
     Scus94491BpeSegment::waitForFilesToLoad,

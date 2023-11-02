@@ -2323,7 +2323,7 @@ public final class Scus94491BpeSegment_8002 {
             case 0 -> textboxText.state_00 = TextboxTextState._12;
 
             case 2 -> {
-              textboxText.state_00 = TextboxTextState._10;
+              textboxText.state_00 = TextboxTextState.SCROLL_TEXT_UP_10;
               textboxText.flags_08 |= 0x1;
               textboxText.scrollSpeed_2a = 1;
               textboxText.charX_34 = 0;
@@ -2352,19 +2352,19 @@ public final class Scus94491BpeSegment_8002 {
 
             default ->
               //LAB_800267a0
-              textboxText.state_00 = TextboxTextState._4;
+              textboxText.state_00 = TextboxTextState.PROCESS_TEXT_4;
           }
         }
       }
 
-      case _2 -> textboxText.state_00 = TextboxTextState._4;
+      case _2 -> textboxText.state_00 = TextboxTextState.PROCESS_TEXT_4;
 
       //LAB_80026538
-      case _4 ->
+      case PROCESS_TEXT_4 ->
         //LAB_800267c4
         processTextboxLine(textboxIndex);
 
-      case _5 -> {
+      case SCROLL_TEXT_5 -> {
         //LAB_800267d4
         if((textboxText.flags_08 & 0x1) != 0) {
           //LAB_800267f4
@@ -2374,13 +2374,13 @@ public final class Scus94491BpeSegment_8002 {
             setTextboxArrowPosition(textboxIndex, true);
           } else {
             //LAB_80026828
-            textboxText.state_00 = TextboxTextState._9;
+            textboxText.state_00 = TextboxTextState.SCROLL_TEXT_DOWN_9;
             textboxText._3a++;
             scrollTextboxDown(textboxIndex);
           }
           //LAB_8002684c
         } else if((textboxText.flags_08 & 0x20) != 0) {
-          textboxText.state_00 = TextboxTextState._9;
+          textboxText.state_00 = TextboxTextState.SCROLL_TEXT_DOWN_9;
           textboxText.flags_08 |= 0x1;
         } else {
           //LAB_8002686c
@@ -2389,13 +2389,13 @@ public final class Scus94491BpeSegment_8002 {
 
             if(textboxText.type_04 == 1 || textboxText.type_04 == 4) {
               //LAB_800268b4
-              textboxText.state_00 = TextboxTextState._9;
+              textboxText.state_00 = TextboxTextState.SCROLL_TEXT_DOWN_9;
               textboxText.flags_08 |= 0x1;
             }
 
             if(textboxText.type_04 == 2) {
               //LAB_800268d0
-              textboxText.state_00 = TextboxTextState._10;
+              textboxText.state_00 = TextboxTextState.SCROLL_TEXT_UP_10;
             }
           }
         }
@@ -2404,7 +2404,7 @@ public final class Scus94491BpeSegment_8002 {
       case _6 -> {
         //LAB_800268dc
         if((press_800bee94.get() & 0x20) != 0 || CONFIG.getConfig(CoreMod.AUTO_TEXT_CONFIG.get())) {
-          textboxText.state_00 = TextboxTextState._4;
+          textboxText.state_00 = TextboxTextState.PROCESS_TEXT_4;
         }
       }
 
@@ -2413,7 +2413,7 @@ public final class Scus94491BpeSegment_8002 {
         textboxText._40++;
         if(textboxText._40 >= textboxText._3e) {
           textboxText._40 = 0;
-          textboxText.state_00 = TextboxTextState._4;
+          textboxText.state_00 = TextboxTextState.PROCESS_TEXT_4;
         }
 
         //LAB_80026928
@@ -2425,7 +2425,7 @@ public final class Scus94491BpeSegment_8002 {
             for(int lineIndex = 0; lineIndex < 4; lineIndex++) {
               processTextboxLine(textboxIndex);
 
-              if(textboxText.state_00 == TextboxTextState.UNINITIALIZED_0 || textboxText.state_00 == TextboxTextState._1 || textboxText.state_00 == TextboxTextState._2 || textboxText.state_00 == TextboxTextState._3 || textboxText.state_00 == TextboxTextState._4 || textboxText.state_00 == TextboxTextState._5 || textboxText.state_00 == TextboxTextState._6 || textboxText.state_00 == TextboxTextState._15 || textboxText.state_00 == TextboxTextState._11 || textboxText.state_00 == TextboxTextState._13) {
+              if(textboxText.state_00 == TextboxTextState.UNINITIALIZED_0 || textboxText.state_00 == TextboxTextState._1 || textboxText.state_00 == TextboxTextState._2 || textboxText.state_00 == TextboxTextState._3 || textboxText.state_00 == TextboxTextState.PROCESS_TEXT_4 || textboxText.state_00 == TextboxTextState.SCROLL_TEXT_5 || textboxText.state_00 == TextboxTextState._6 || textboxText.state_00 == TextboxTextState._15 || textboxText.state_00 == TextboxTextState._11 || textboxText.state_00 == TextboxTextState._13) {
                 //LAB_8002698c
                 found = true;
                 break;
@@ -2437,7 +2437,7 @@ public final class Scus94491BpeSegment_8002 {
             //LAB_800269a0
             if(!found) {
               textboxText._40 = 0;
-              textboxText.state_00 = TextboxTextState._4;
+              textboxText.state_00 = TextboxTextState.PROCESS_TEXT_4;
             }
           }
         }
@@ -2450,17 +2450,17 @@ public final class Scus94491BpeSegment_8002 {
           textboxText._44--;
         } else {
           //LAB_800269e0
-          textboxText.state_00 = TextboxTextState._4;
+          textboxText.state_00 = TextboxTextState.PROCESS_TEXT_4;
         }
       }
 
       //LAB_80026554
-      case _9 ->
+      case SCROLL_TEXT_DOWN_9 ->
         //LAB_800269f0
         scrollTextboxDown(textboxIndex);
 
       //LAB_80026580
-      case _10 -> {
+      case SCROLL_TEXT_UP_10 -> {
         //LAB_80026a00
         scrollTextboxUp(textboxIndex);
 
@@ -2476,10 +2476,10 @@ public final class Scus94491BpeSegment_8002 {
                 textboxText._3a = 0;
                 textboxText.flags_08 |= 0x2;
               }
-            } while(textboxText.state_00 != TextboxTextState._5 && textboxText.state_00 != TextboxTextState._15);
+            } while(textboxText.state_00 != TextboxTextState.SCROLL_TEXT_5 && textboxText.state_00 != TextboxTextState._15);
 
             //LAB_80026a8c
-            textboxText.state_00 = TextboxTextState._10;
+            textboxText.state_00 = TextboxTextState.SCROLL_TEXT_UP_10;
           } else {
             textboxText._3a++;
 
@@ -2497,7 +2497,7 @@ public final class Scus94491BpeSegment_8002 {
           setTextboxArrowPosition(textboxIndex, false);
           clearTextboxChars(textboxIndex);
 
-          textboxText.state_00 = TextboxTextState._4;
+          textboxText.state_00 = TextboxTextState.PROCESS_TEXT_4;
           textboxText.flags_08 ^= 0x1;
           textboxText.charX_34 = 0;
           textboxText.charY_36 = 0;
@@ -2526,7 +2526,7 @@ public final class Scus94491BpeSegment_8002 {
         do {
           processTextboxLine(textboxIndex);
 
-          if(textboxText.state_00 == TextboxTextState._5) {
+          if(textboxText.state_00 == TextboxTextState.SCROLL_TEXT_5) {
             //LAB_80026b28
             textboxText.state_00 = TextboxTextState._11;
             break;
@@ -2615,7 +2615,7 @@ public final class Scus94491BpeSegment_8002 {
         do {
           processTextboxLine(textboxIndex);
 
-          if(textboxText.state_00 == TextboxTextState._5) {
+          if(textboxText.state_00 == TextboxTextState.SCROLL_TEXT_5) {
             //LAB_80026d14
             textboxText.state_00 = TextboxTextState._18;
             break;
@@ -2715,7 +2715,7 @@ public final class Scus94491BpeSegment_8002 {
                     //LAB_800270dc
                     do {
                       processTextboxLine(textboxIndex);
-                    } while(textboxText.charY_36 == 0 && textboxText.state_00 != TextboxTextState._5);
+                    } while(textboxText.charY_36 == 0 && textboxText.state_00 != TextboxTextState.SCROLL_TEXT_5);
 
                     //LAB_80027104
                     textboxText.state_00 = TextboxTextState._21;
@@ -2806,7 +2806,7 @@ public final class Scus94491BpeSegment_8002 {
                       //LAB_800270dc
                       do {
                         processTextboxLine(textboxIndex);
-                      } while(textboxText.charY_36 == 0 && textboxText.state_00 != TextboxTextState._5);
+                      } while(textboxText.charY_36 == 0 && textboxText.state_00 != TextboxTextState.SCROLL_TEXT_5);
 
                       //LAB_80027104
                       textboxText.state_00 = TextboxTextState._21;
@@ -2818,7 +2818,7 @@ public final class Scus94491BpeSegment_8002 {
             } else {
               textboxText.selectionLine_60 = textboxText_800bdf38[textboxIndex].lines_1e - 1;
               textboxText.state_00 = TextboxTextState._20;
-              textboxText.scrollAmount_2c = (short)0;
+              textboxText.scrollAmount_2c = 0;
 
               if(textboxText._3a == 1) {
                 textboxText.state_00 = TextboxTextState._18;
@@ -2873,7 +2873,7 @@ public final class Scus94491BpeSegment_8002 {
                 textboxText.flags_08 |= 0x2;
                 break;
               }
-            } while(textboxText.state_00 != TextboxTextState._5);
+            } while(textboxText.state_00 != TextboxTextState.SCROLL_TEXT_5);
           } else {
             textboxText._3a++;
 
@@ -3007,7 +3007,7 @@ public final class Scus94491BpeSegment_8002 {
         }
       } else if(textboxText.charY_36 >= textboxText.lines_1e - 1) {
         if(textboxText.digits_46[digitIndex + 1] != -1) {
-          textboxText.state_00 = TextboxTextState._5;
+          textboxText.state_00 = TextboxTextState.SCROLL_TEXT_5;
           textboxText.charX_34 = 0;
           textboxText.charY_36++;
           setTextboxArrowPosition(textboxIndex, true);
@@ -3034,7 +3034,7 @@ public final class Scus94491BpeSegment_8002 {
         }
 
         //LAB_8002764c
-        textboxText.state_00 = TextboxTextState._5;
+        textboxText.state_00 = TextboxTextState.SCROLL_TEXT_5;
         textboxText.charX_34 = 0;
         textboxText.charY_36++;
 
@@ -3096,7 +3096,7 @@ public final class Scus94491BpeSegment_8002 {
 
           if(textboxText.charY_36 >= textboxText.lines_1e || (textboxText.flags_08 & 0x80) != 0) {
             //LAB_80027880
-            textboxText.state_00 = TextboxTextState._5;
+            textboxText.state_00 = TextboxTextState.SCROLL_TEXT_5;
 
             if((textboxText.flags_08 & 0x1) == 0) {
               setTextboxArrowPosition(textboxIndex, true);
@@ -3245,7 +3245,7 @@ public final class Scus94491BpeSegment_8002 {
               }
 
               //LAB_80027c9c
-              textboxText.state_00 = TextboxTextState._5;
+              textboxText.state_00 = TextboxTextState.SCROLL_TEXT_5;
               textboxText.flags_08 |= TextboxText84.PROCESSED_NEW_LINE;
               textboxText.charX_34 = 0;
               textboxText.charY_36++;
@@ -3329,13 +3329,24 @@ public final class Scus94491BpeSegment_8002 {
   public static void advanceTextbox(final int textboxIndex) {
     final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
 
+    if((textboxText.flags_08 & TextboxText84.HAS_NAME) == 0) {
+      for(int charIndex = 0; charIndex < textboxText.chars_1c; charIndex++) {
+        textboxText.chars_58[charIndex].delete();
+      }
+    } else {
+      for(int charIndex = textboxText.chars_1c; charIndex < textboxText.chars_1c * 2; charIndex++) {
+        textboxText.chars_58[charIndex].delete();
+      }
+    }
+
     //LAB_80027efc
     for(int lineIndex = (textboxText.flags_08 & TextboxText84.HAS_NAME) != 0 ? 1 : 0; lineIndex < textboxText.lines_1e; lineIndex++) {
       //LAB_80027f18
       for(int charIndex = 0; charIndex < textboxText.chars_1c; charIndex++) {
-        final TextboxChar08 nextLine = textboxText.chars_58[(lineIndex + 1) * textboxText.chars_1c + charIndex];
         final TextboxChar08 currentLine = textboxText.chars_58[lineIndex * textboxText.chars_1c + charIndex];
+        final TextboxChar08 nextLine = textboxText.chars_58[(lineIndex + 1) * textboxText.chars_1c + charIndex];
         currentLine.set(nextLine);
+        currentLine.y_02--;
       }
     }
 
@@ -3350,6 +3361,8 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800280d4L)
   public static void rewindTextbox(final int textboxIndex) {
+    assert false : "This won't delete Objs from the removed line";
+
     final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
 
     //LAB_8002810c
@@ -3359,6 +3372,7 @@ public final class Scus94491BpeSegment_8002 {
         final TextboxChar08 previousLine = textboxText.chars_58[(lineIndex - 1) * textboxText.chars_1c + charIndex];
         final TextboxChar08 currentLine = textboxText.chars_58[lineIndex * textboxText.chars_1c + charIndex];
         currentLine.set(previousLine);
+        currentLine.y_02++;
       }
     }
 
@@ -3438,8 +3452,9 @@ public final class Scus94491BpeSegment_8002 {
           final int height = 12 - scrollH;
 
           textboxText.transforms.identity();
-          textboxText.transforms.transfer.set(GPU.getOffsetX() + x, GPU.getOffsetY() + y, textboxText.z_0c * 4.0f);
-          RENDERER.queueOrthoOverlayModel(chr.obj, textboxText.transforms);
+          textboxText.transforms.transfer.set(GPU.getOffsetX() + x, GPU.getOffsetY() + y - scrollH, textboxText.z_0c * 4.0f);
+          RENDERER.queueOrthoOverlayModel(chr.obj, textboxText.transforms)
+            .scissor(GPU.getOffsetX() + (int)x, GPU.getOffsetY() + (int)y + height, 8, height);
 
           GPU.queueCommand(textboxText.z_0c + 1, new GpuCommandQuad()
             .bpp(Bpp.BITS_4)
@@ -3466,7 +3481,7 @@ public final class Scus94491BpeSegment_8002 {
 
     if(textboxText.scrollAmount_2c >= 12) {
       advanceTextbox(textboxIndex);
-      textboxText.state_00 = TextboxTextState._4;
+      textboxText.state_00 = TextboxTextState.PROCESS_TEXT_4;
       textboxText.scrollAmount_2c = 0;
       textboxText.charY_36--;
     }

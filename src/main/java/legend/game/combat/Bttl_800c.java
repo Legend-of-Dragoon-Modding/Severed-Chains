@@ -21,6 +21,7 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.core.opengl.TmdObjLoader;
 import legend.game.EngineStateEnum;
 import legend.game.Scus94491BpeSegment_8005;
 import legend.game.characters.Element;
@@ -1053,6 +1054,18 @@ public final class Bttl_800c {
     pregameLoadingStage_800bb10c.incr();
   }
 
+  public static void uploadBattleStageToGpu() {
+    if(stageHasModel_800c66b8.get()) {
+      final BattleStage stage = battlePreloadedEntities_1f8003f4.stage_963c;
+
+      for(int i = 0; i < stage.dobj2s_00.length; i++) {
+        stage.dobj2s_00[i].obj = TmdObjLoader.fromObjTable(stage.tmd_5d0.objTable[i]);
+      }
+
+      pregameLoadingStage_800bb10c.incr();
+    }
+  }
+
   @Method(0x800c76a0L)
   public static void initializeViewportAndCamera() {
     if((battleFlags_800bc960.get() & 0x3) == 0x3) {
@@ -1519,6 +1532,11 @@ public final class Bttl_800c {
     if(fullScreenEffect_800bb140.currentColour_28 == 0xff) {
       updateGameStateAndDeallocateMenu();
       setStageHasNoModel();
+
+      for(int i = 0; i < battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00.length; i++) {
+        battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].obj.delete();
+      }
+
 
       script_800c66fc = null;
 
@@ -2016,6 +2034,10 @@ public final class Bttl_800c {
     } else {
       //LAB_800c9664
       initModel(model, tmd, anim);
+    }
+
+    for(int i = 0; i < model.modelParts_00.length; i++) {
+      model.modelParts_00[i].obj = TmdObjLoader.fromObjTable(tmd.tmdPtr_00.tmd.objTable[i]);
     }
 
     //LAB_800c9680
@@ -2742,6 +2764,10 @@ public final class Bttl_800c {
         battleState_8006e398.charBents_e40[i] = battleState_8006e398.charBents_e40[i + 1];
         battleState_8006e398.charBents_e40[i].innerStruct_00.charSlot_276 = i;
       }
+    }
+
+    for(int i = 0; i < bent.model_148.modelParts_00.length; i++) {
+      bent.model_148.modelParts_00[i].obj.delete();
     }
 
     //LAB_800cb23c
