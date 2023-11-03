@@ -859,6 +859,8 @@ public class WMap extends EngineState {
       }
     }
 
+    this.coolonQueenFuryOverlay.deallocate();
+
     for(int intersectionSymbolIndex = 0; intersectionSymbolIndex < 3; intersectionSymbolIndex++) {
       for(int intersectionStateIndex = 0; intersectionStateIndex < 3; intersectionStateIndex++) {
         if(this.mapState_800c6798.pathBigDotObjs[intersectionStateIndex][intersectionStateIndex] != null) {
@@ -2731,52 +2733,39 @@ public class WMap extends EngineState {
   /** The "press square to enter Queen Fury/Coolon" overlay (square button and door/Coolon icons) */
   @Method(0x800d7208L)
   private void renderQueenFuryCoolonUi(final int uiMode) {
-    final int squareButtonOffsetU = squareButtonUs_800ef168[(int)(tickCount_800bb0fc.get() / 2 / (3.0f / vsyncMode_8007a3b8) % 7)] * 16;
+    final int buttonState = squareButtonUs_800ef168[(int)(tickCount_800bb0fc.get() / 2 / (3.0f / vsyncMode_8007a3b8) % 7)];
+    if(buttonState != this.coolonQueenFuryOverlay.getPreviousButtonState()) {
+      this.coolonQueenFuryOverlay.buildButton(buttonState * 16);
+      this.coolonQueenFuryOverlay.setPreviousButtonState(buttonState);
+    }
 
-    // Square button
-    final MeshObj button = new QuadBuilder()
-      .bpp(Bpp.BITS_4)
-      .clut(640, 508)
-      .vramPos(640, 256)
-      .monochrome(0.5f)
-      .pos(GPU.getOffsetX() + 86.0f, GPU.getOffsetY() + 88.0f, 52.0f)
-      .size(16.0f, 16.0f)
-      .uv(64.0f + squareButtonOffsetU, 168)
-      .build();
-    RENDERER.queueOrthoOverlayModel(button);
-
-    final int clutY;
+    final int iconState;
     final int u;
     final int v;
     final int w;
     final int h;
     if(uiMode == 0) {  // Coolon
-      final int iconStateIndex = coolonIconStateIndices_800ef154[(int)(tickCount_800bb0fc.get() / 2 / (3.0f / vsyncMode_8007a3b8) % 5)];
-      clutY = 506;
-      u = coolonIconMetricsArray_800ef130.get(iconStateIndex).u_00.get();
-      v = coolonIconMetricsArray_800ef130.get(iconStateIndex).v_01.get();
-      w = coolonIconMetricsArray_800ef130.get(iconStateIndex).w_02.get();
-      h = coolonIconMetricsArray_800ef130.get(iconStateIndex).h_03.get();
+      iconState = coolonIconStateIndices_800ef154[(int)(tickCount_800bb0fc.get() / 2 / (3.0f / vsyncMode_8007a3b8) % 5)];
+      u = coolonIconMetricsArray_800ef130.get(iconState).u_00.get();
+      v = coolonIconMetricsArray_800ef130.get(iconState).v_01.get();
+      w = coolonIconMetricsArray_800ef130.get(iconState).w_02.get();
+      h = coolonIconMetricsArray_800ef130.get(iconState).h_03.get();
     } else {  // Queen Fury door
       //LAB_800d7734
-      final int iconStateIndex = queenFuryIconStateIndices_800ef158[(int)(tickCount_800bb0fc.get() / 3 / (3.0f / vsyncMode_8007a3b8) % 15)];
-      clutY = 507;
-      u = queenFuryIconMetricsArray_800ef140.get(iconStateIndex).u_00.get();
-      v = queenFuryIconMetricsArray_800ef140.get(iconStateIndex).v_01.get();
-      w = queenFuryIconMetricsArray_800ef140.get(iconStateIndex).w_02.get();
-      h = queenFuryIconMetricsArray_800ef140.get(iconStateIndex).h_03.get();
+      iconState = queenFuryIconStateIndices_800ef158[(int)(tickCount_800bb0fc.get() / 3 / (3.0f / vsyncMode_8007a3b8) % 15)];
+      u = queenFuryIconMetricsArray_800ef140.get(iconState).u_00.get();
+      v = queenFuryIconMetricsArray_800ef140.get(iconState).v_01.get();
+      w = queenFuryIconMetricsArray_800ef140.get(iconState).w_02.get();
+      h = queenFuryIconMetricsArray_800ef140.get(iconState).h_03.get();
     }
+
+    if(iconState != this.coolonQueenFuryOverlay.getPreviousIconState()) {
+      this.coolonQueenFuryOverlay.buildIcon(uiMode, u, v, w, h);
+      this.coolonQueenFuryOverlay.setPreviousIconState(iconState);
+    }
+
     //LAB_800d7a18
-    final MeshObj icon = new QuadBuilder()
-      .bpp(Bpp.BITS_4)
-      .clut(640, clutY)
-      .vramPos(640, 256)
-      .monochrome(0.5f)
-      .pos(GPU.getOffsetX() + 106.0f, GPU.getOffsetY() + 80.0f, 52.0f)
-      .size(w, h)
-      .uv(u, v)
-      .build();
-    RENDERER.queueOrthoOverlayModel(icon);
+    this.coolonQueenFuryOverlay.render();
   }
 
   @Method(0x800d7a34L)
@@ -3222,6 +3211,8 @@ public class WMap extends EngineState {
   private void FUN_800d9eb0() {
     this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.add(this.wmapStruct258_800c66a8.svec_1f0);
   }
+
+  private final CoolonQueenFuryOverlay coolonQueenFuryOverlay = new CoolonQueenFuryOverlay();
 
   /** Handles Coolon fast travel, Queen Fury overlay, probably other things */
   @Method(0x800da248L)
