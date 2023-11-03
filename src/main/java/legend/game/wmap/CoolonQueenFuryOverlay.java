@@ -35,6 +35,11 @@ public class CoolonQueenFuryOverlay {
   }
 
   public CoolonQueenFuryOverlay buildButton(final float offsetU) {
+    if(this.button != null) {
+      this.button.delete();
+      this.button = null;
+    }
+
     this.button = new QuadBuilder()
       .bpp(Bpp.BITS_4)
       .clut(640, 508)
@@ -49,6 +54,11 @@ public class CoolonQueenFuryOverlay {
   }
 
   public CoolonQueenFuryOverlay buildIcon(final int mode, final float u, final float v, final float w, final float h) {
+    if(this.icon != null) {
+      this.icon.delete();
+      this.icon = null;
+    }
+
     final int clutY = 506 + mode;
     this.icon = new QuadBuilder()
       .bpp(Bpp.BITS_4)
