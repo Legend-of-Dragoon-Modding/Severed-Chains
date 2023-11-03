@@ -2714,16 +2714,14 @@ public class WMap extends EngineState {
         //LAB_800d6f2c
         //LAB_800d6fa0
         builder
-          .pos(GPU.getOffsetX() + zoomUiMetrics_800ef104.get(i).x_00.get() + 88.0f, GPU.getOffsetY() + zoomUiMetrics_800ef104.get(i).y_01.get() - 96.0f, 20.0f)
+          .pos(GPU.getOffsetX() + zoomUiMetrics_800ef104.get(i).x_00.get() + 88.0f, GPU.getOffsetY() + zoomUiMetrics_800ef104.get(i).y_01.get() - 96.0f, 80.0f)
           .size(zoomUiMetrics_800ef104.get(i).w_04.get(), zoomUiMetrics_800ef104.get(i).h_05.get())
           .uv(zoomUiMetrics_800ef104.get(i).u_02.get(), zoomUiMetrics_800ef104.get(i).v_03.get());
 
         this.wmapStruct258_800c66a8.zoomOverlayObjs[i] = builder.build();
       }
 
-      this.wmapStruct258_800c66a8.mapOverlayTransforms.identity();
-      this.wmapStruct258_800c66a8.mapOverlayTransforms.transfer.setComponent(2, 20.0f);
-      RENDERER.queueOrthoOverlayModel(this.wmapStruct258_800c66a8.zoomOverlayObjs[i], this.wmapStruct258_800c66a8.mapOverlayTransforms);
+      RENDERER.queueOrthoOverlayModel(this.wmapStruct258_800c66a8.zoomOverlayObjs[i]);
     }
     //LAB_800d71f4
   }
@@ -5085,7 +5083,7 @@ public class WMap extends EngineState {
 
           if(servicesCount == 0) {
             this.wmapLocationPromptPopup.addAltText("No facilities");
-            this.wmapLocationPromptPopup.setTranslation(WmapPromptPopup.ObjFields.ALT_TEXT, 240.0f, 62.0f, textZ_800bdf00.get());
+            this.wmapLocationPromptPopup.setTranslation(WmapPromptPopup.ObjFields.ALT_TEXT, 240.0f, 62.0f, textZ_800bdf00.get() * 4.0f);
           }
         }
 
