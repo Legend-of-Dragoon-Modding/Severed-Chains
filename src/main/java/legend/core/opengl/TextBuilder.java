@@ -37,14 +37,33 @@ public class TextBuilder {
   }
 
   public TextBuilder text(final String text) {
+    int currentLineWidth = 0;
+    int charWidth;
     for(int i = 0; i < text.length(); i++) {
       final char chr = text.charAt(i);
 
       if(chr == '\n') {
+        int spacesTrimmed = 0;
+        for(int j = this.chars.size() - 1; j >= 0; j--) {
+          if(this.chars.getInt(j) != 0) {
+            break;
+          }
+
+          spacesTrimmed++;
+        }
+
+        if(spacesTrimmed > 0) {
+          this.chars.removeElements(this.chars.size() - spacesTrimmed, this.chars.size());
+          this.addToWidth(-8 * spacesTrimmed);
+        }
+
         this.newLine();
-      } else {
-        this.chars.add(LodString.toLodChar(chr));
-        this.widths.set(this.widths.size() - 1, this.widths.getInt(this.widths.size() - 1) + charWidth(chr));
+        currentLineWidth = 0;
+      } else if(chr != ' ' || currentLineWidth != 0) {
+          this.chars.add(LodString.toLodChar(chr));
+          charWidth = charWidth(chr);
+          this.addToWidth(charWidth);
+          currentLineWidth += charWidth;
       }
     }
 
@@ -56,6 +75,10 @@ public class TextBuilder {
     this.chars.add(0xa1ff);
     this.widths.add(0);
     return this;
+  }
+
+  private void addToWidth(final int amount) {
+    this.widths.set(this.widths.size() - 1, this.widths.getInt(this.widths.size() - 1) + amount);
   }
 
   public TextBuilder trim(final int trim) {

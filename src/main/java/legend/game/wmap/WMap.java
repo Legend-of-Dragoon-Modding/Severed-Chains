@@ -22,10 +22,9 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.core.opengl.MeshObj;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
-import legend.core.opengl.TextBuilder;
-import legend.core.opengl.TextObj;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
@@ -175,7 +174,6 @@ public class WMap extends EngineState {
 
   private int placeCount_800c86cc;
 
-  private float locationThumbnailBrightness_800c86d0;
   private int menuSelectorOptionIndex_800c86d2;
 
   private final int[] startButtonLabelStages_800c86d4 = new int[8];
@@ -311,9 +309,7 @@ public class WMap extends EngineState {
   private static final LodString Move_800f00e8 = MEMORY.ref(4, 0x800f00e8L, LodString::new);
 
   private static final ArrayRef<Pointer<LodString>> services_800f01cc = MEMORY.ref(4, 0x800f01ccL, ArrayRef.of(Pointer.classFor(LodString.class), 5, 4, Pointer.deferred(4, LodString::new)));
-  private static final Pointer<LodString> No_Facilities_800f01e0 = MEMORY.ref(4, 0x800f01e0L, Pointer.deferred(4, LodString::new));
-  private static final Pointer<LodString> No_Entry_800f01e4 = MEMORY.ref(4, 0x800f01e4L, Pointer.deferred(4, LodString::new));
-  private static final Pointer<LodString> Enter_800f01e8 = MEMORY.ref(4, 0x800f01e8L, Pointer.deferred(4, LodString::new));
+
   private static final ArrayRef<Pointer<LodString>> regions_800f01ec = MEMORY.ref(4, 0x800f01ecL, ArrayRef.of(Pointer.classFor(LodString.class), 3, 4, Pointer.deferred(4, LodString::new)));
 
   private final Runnable[] _800f01fc = new Runnable[2];
@@ -855,6 +851,12 @@ public class WMap extends EngineState {
   private void deallocate() {
     if(this.wmapStruct258_800c66a8.mapOverlayObj != null) {
       this.wmapStruct258_800c66a8.mapOverlayObj.delete();
+    }
+
+    for(final MeshObj obj : this.wmapStruct258_800c66a8.zoomOverlayObjs) {
+      if(obj != null) {
+        obj.delete();
+      }
     }
 
     for(int intersectionSymbolIndex = 0; intersectionSymbolIndex < 3; intersectionSymbolIndex++) {
@@ -2670,40 +2672,56 @@ public class WMap extends EngineState {
       default -> 0;
     };
 
+    if(currentZoomLevel != this.wmapStruct258_800c66a8.previousZoomLevel) {
+      for(int i = 2; i < 5; i++) {
+        if(this.wmapStruct258_800c66a8.zoomOverlayObjs[i] != null) {
+          this.wmapStruct258_800c66a8.zoomOverlayObjs[i].delete();
+          this.wmapStruct258_800c66a8.zoomOverlayObjs[i] = null;
+        }
+      }
+
+      this.wmapStruct258_800c66a8.previousZoomLevel = currentZoomLevel;
+    }
+
     //LAB_800d6c10
     //LAB_800d6c14
-    for(int i = 0; i < 7; i++) {
+    for(int i = 6; i >= 0; i--) {
       //LAB_800d6c30
       //LAB_800d6d14
-      final GpuCommandQuad cmd = new GpuCommandQuad()
-        .bpp(Bpp.BITS_4)
-        .clut(640, i < 5 ? 502 : 503)
-        .vramPos(640, 256);
+      if(this.wmapStruct258_800c66a8.zoomOverlayObjs[i] == null) {
+        final QuadBuilder builder = new QuadBuilder()
+          .bpp(Bpp.BITS_4)
+          .clut(640, i < 5 ? 502 : 503)
+          .vramPos(640, 256);
 
-      if(i < 2) {
-        cmd.translucent(Translucency.HALF_B_PLUS_HALF_F);
+        if(i < 2) {
+          builder.translucency(Translucency.HALF_B_PLUS_HALF_F);
+        }
+
+        //LAB_800d6d44
+        //LAB_800d6d84
+        //LAB_800d6da8
+        if(i < 2 || i >= 5) {
+          //LAB_800d6f34
+          builder.monochrome(0.5f);
+        } else if(i == currentZoomLevel) {
+          builder.monochrome(1.0f);
+        } else {
+          //LAB_800d6ec0
+          builder.monochrome(0.25f);
+        }
+
+        //LAB_800d6f2c
+        //LAB_800d6fa0
+        builder
+          .pos(GPU.getOffsetX() + zoomUiMetrics_800ef104.get(i).x_00.get() + 88.0f, GPU.getOffsetY() + zoomUiMetrics_800ef104.get(i).y_01.get() - 96.0f, 80.0f)
+          .size(zoomUiMetrics_800ef104.get(i).w_04.get(), zoomUiMetrics_800ef104.get(i).h_05.get())
+          .uv(zoomUiMetrics_800ef104.get(i).u_02.get(), zoomUiMetrics_800ef104.get(i).v_03.get());
+
+        this.wmapStruct258_800c66a8.zoomOverlayObjs[i] = builder.build();
       }
 
-      //LAB_800d6d44
-      //LAB_800d6d84
-      //LAB_800d6da8
-      if(i < 2 || i >= 5) {
-        //LAB_800d6f34
-        cmd.monochrome(0x80);
-      } else if(i == currentZoomLevel) {
-        cmd.monochrome(0xff);
-      } else {
-        //LAB_800d6ec0
-        cmd.monochrome(0x40);
-      }
-
-      //LAB_800d6f2c
-      //LAB_800d6fa0
-      cmd
-        .pos(zoomUiMetrics_800ef104.get(i).x_00.get() + 88, zoomUiMetrics_800ef104.get(i).y_01.get() - 96, zoomUiMetrics_800ef104.get(i).w_04.get(), zoomUiMetrics_800ef104.get(i).h_05.get())
-        .uv(zoomUiMetrics_800ef104.get(i).u_02.get(), zoomUiMetrics_800ef104.get(i).v_03.get());
-
-      GPU.queueCommand(20, cmd);
+      RENDERER.queueOrthoOverlayModel(this.wmapStruct258_800c66a8.zoomOverlayObjs[i]);
     }
     //LAB_800d71f4
   }
@@ -2926,6 +2944,7 @@ public class WMap extends EngineState {
     this.loadMapModelAndTexture(this.mapState_800c6798.continentIndex_00);
 
     this.wmapStruct258_800c66a8.zoomState_1f8 = 0;
+    this.wmapStruct258_800c66a8.previousZoomLevel = 2;
     this.wmapStruct258_800c66a8._220 = 0;
 
     final Vector3i rgb = new Vector3i();
@@ -4939,47 +4958,7 @@ public class WMap extends EngineState {
     );
   }
 
-  private final MV textTransforms = new MV();
-  private TextObj dontEnter;
-  private TextObj enter;
-  private TextObj placeName;
-  private TextObj dest1PlaceName;
-  private TextObj dest2PlaceName;
-  private Obj placeImage;
-
-  private void deallocatePlaceText() {
-    if(this.placeName != null) {
-      this.placeName.delete();
-      this.placeName = null;
-    }
-
-    if(this.dontEnter != null) {
-      this.dontEnter.delete();
-      this.dontEnter = null;
-    }
-
-    if(this.placeImage != null) {
-      this.placeImage.delete();
-      this.placeImage = null;
-    }
-
-    if(this.mapState_800c6798.submapCut_c8 == 999) { // Going to a different region
-      if(this.dest1PlaceName != null) {
-        this.dest1PlaceName.delete();
-        this.dest1PlaceName = null;
-      }
-
-      if(this.dest2PlaceName != null) {
-        this.dest2PlaceName.delete();
-        this.dest2PlaceName = null;
-      }
-    } else {
-      if(this.enter != null) {
-        this.enter.delete();
-        this.enter = null;
-      }
-    }
-  }
+  private WmapPromptPopup wmapLocationPromptPopup;
 
   @Method(0x800e5150L)
   private void handleMapTransitions() {
@@ -5003,19 +4982,20 @@ public class WMap extends EngineState {
     }
 
     //LAB_800e5248
-    int sp28;
-    final int sp2c;
+    int areaIndex;
+    final int currentAreaIndex;
+    final int placeIndex = locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).placeIndex_02.get();
     switch(this.mapTransitionState_800c68a4) {
       case 0:
-        sp2c = -areaData_800f2248.get(this.mapState_800c6798._dc[0])._00.get();
+        currentAreaIndex = -areaData_800f2248.get(this.mapState_800c6798._dc[0])._00.get();
 
         //LAB_800e52cc
-        for(sp28 = 0; sp28 < this.mapState_800c6798.areaCount_0c && areaData_800f2248.get(sp28)._00.get() != sp2c; sp28++) {
+        for(areaIndex = 0; areaIndex < this.mapState_800c6798.areaCount_0c && areaData_800f2248.get(areaIndex)._00.get() != currentAreaIndex; areaIndex++) {
           // intentionally empty
         }
 
         //LAB_800e533c
-        this.FUN_800ea4dc(sp28);
+        this.FUN_800ea4dc(areaIndex);
 
         this.mapState_800c6798.facing_1c = -this.mapState_800c6798.facing_1c;
 
@@ -5042,7 +5022,6 @@ public class WMap extends EngineState {
 
         //LAB_800e54c4
         this.locationMenuNameShadow_800c6898.currentBrightness_34 = 0.0f;
-        this.locationThumbnailBrightness_800c86d0 = 1.0f;
         this.menuSelectorOptionIndex_800c86d2 = 0;
         break;
 
@@ -5072,47 +5051,39 @@ public class WMap extends EngineState {
         break;
 
       case 2:
-        if(isTextboxInState6(7)) {
+        if(isTextboxInState6(7) && (this.filesLoadedFlags_800c66b8.get() & 0x800) != 0) {
           initTextbox(6, false, 240, 70, 13, 7);
           this.mapTransitionState_800c68a4 = 3;
 
-          if(this.dontEnter != null) {
-            this.dontEnter.delete();
-          }
-
-          final int placeIndex = locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).placeIndex_02.get();
-          this.placeName = new TextBuilder("PopupPlaceName")
-            .text(places_800f0234.get(placeIndex).name_00.deref().get())
-            .centred()
-            .shadowed()
-            .build();
-
-          this.dontEnter = new TextBuilder("PopupDontEnter")
-            .text("Don't enter")
-            .centred()
-            .shadowed()
-            .build();
+          // Build Objs
+          this.wmapLocationPromptPopup = new WmapPromptPopup(places_800f0234.get(placeIndex).name_00.deref().get(), textZ_800bdf00.get() * 4.0f)
+            .addOptionText("Don't enter");
 
           if(this.mapState_800c6798.submapCut_c8 == 999) { // Going to a different region
             final String dest1 = regions_800f01ec.get(this.mapState_800c6798.submapScene_ca >>> 4 & 0xffff).deref().get();
             final String dest2 = regions_800f01ec.get(this.mapState_800c6798.submapScene_ca & 0xf).deref().get();
 
-            this.dest1PlaceName = new TextBuilder("PopupDest1PlaceName")
-              .text(dest1)
-              .centred()
-              .shadowed()
-              .build();
-            this.dest2PlaceName = new TextBuilder("PopupDest2PlaceName")
-              .text(dest2)
-              .centred()
-              .shadowed()
-              .build();
+            this.wmapLocationPromptPopup
+              .addOptionText(dest1)
+              .addOptionText(dest2);
+            this.wmapLocationPromptPopup.setOptionSpacing(18.0f);
+            this.wmapLocationPromptPopup.setTranslation(WmapPromptPopup.ObjFields.OPTIONS, 240.0f, 164.0f, textZ_800bdf00.get() * 4.0f);
           } else {
-            this.enter = new TextBuilder("PopupEnter")
-              .text("Enter")
-              .centred()
-              .shadowed()
-              .build();
+            this.wmapLocationPromptPopup.addOptionText("Enter");
+          }
+
+          final int services = places_800f0234.get(placeIndex).services_05.get();
+          int servicesCount = 0;
+          for(int i = 0; i < 5; i++) {
+            if((services & 0x1 << i) != 0) {
+              this.wmapLocationPromptPopup.addAltText(services_800f01cc.get(i).deref().get());
+              servicesCount++;
+            }
+          }
+
+          if(servicesCount == 0) {
+            this.wmapLocationPromptPopup.addAltText("No facilities");
+            this.wmapLocationPromptPopup.setTranslation(WmapPromptPopup.ObjFields.ALT_TEXT, 240.0f, 62.0f, textZ_800bdf00.get() * 4.0f);
           }
         }
 
@@ -5125,16 +5096,7 @@ public class WMap extends EngineState {
         this.renderLocationMenuTextHighlight(this.locationMenuNameShadow_800c6898);
         this.renderLocationMenuTextHighlight(this.locationMenuSelectorHighlight_800c689c);
 
-        this.textTransforms.identity();
-
         if(this.mapState_800c6798.submapCut_c8 == 999) { // Going to a different region
-          this.textTransforms.transfer.set(240.0f, 164.0f, textZ_800bdf00.get() * 4.0f);
-          RENDERER.queueOrthoOverlayModel(this.dontEnter, this.textTransforms);
-          this.textTransforms.transfer.y = 182.0f;
-          RENDERER.queueOrthoOverlayModel(this.dest1PlaceName, this.textTransforms);
-          this.textTransforms.transfer.y = 200.0f;
-          RENDERER.queueOrthoOverlayModel(this.dest2PlaceName, this.textTransforms);
-
           if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
             this.menuSelectorOptionIndex_800c86d2--;
 
@@ -5162,12 +5124,6 @@ public class WMap extends EngineState {
           this.locationMenuSelectorHighlight_800c689c.y_3a = this.menuSelectorOptionIndex_800c86d2 * 18 + 8;
         } else { // Entering a town, etc.
           //LAB_800e5a18
-          this.textTransforms.transfer.set(240.0f, 170.0f, textZ_800bdf00.get() * 4.0f);
-          RENDERER.queueOrthoOverlayModel(this.dontEnter, this.textTransforms);
-
-          this.textTransforms.transfer.set(240.0f, 190.0f, textZ_800bdf00.get() * 4.0f);
-          RENDERER.queueOrthoOverlayModel(this.enter, this.textTransforms);
-
           // World Map Location Menu (No Entry,Enter)
           if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.DPAD_DOWN) ||
             Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
@@ -5181,84 +5137,63 @@ public class WMap extends EngineState {
         }
 
         //LAB_800e5b68
-        final int placeIndex = locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).placeIndex_02.get();
-        final IntRef width = new IntRef();
-        final IntRef lines = new IntRef();
-        this.measureText(places_800f0234.get(placeIndex).name_00.deref(), width, lines);
-        this.textTransforms.transfer.set(240.0f, 140.0f - lines.get() * 7, textZ_800bdf00.get() * 4.0f);
-        RENDERER.queueOrthoOverlayModel(this.placeName, this.textTransforms);
+        float newBrightness;
+        final float currentBrightness = this.wmapLocationPromptPopup.getThumbnailBrightness();
+        if(
+          gameState_800babc8.visitedLocations_17c.get(this.mapState_800c6798.locationIndex_10) ||
+            locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).thumbnailShouldUseFullBrightness_10.get()
+        ) {
+          //LAB_800e5e98
+          newBrightness = currentBrightness * 0.5f;
+        } else {
+          //LAB_800e5e18
+          newBrightness = currentBrightness * 0.1875f;
+        }
 
-        if((this.filesLoadedFlags_800c66b8.get() & 0x800) != 0) {
-          if(this.placeImage == null) {
-            final QuadBuilder builder = new QuadBuilder("PopupPlaceImage")
-              .bpp(Bpp.BITS_8)
-              .clut(locationThumbnailMetrics_800ef0cc.get(1).clutX_04.get(), locationThumbnailMetrics_800ef0cc.get(1).clutY_06.get())
-              .vramPos(locationThumbnailMetrics_800ef0cc.get(1).imageX_00.get(), locationThumbnailMetrics_800ef0cc.get(1).imageY_02.get())
-              .pos(GPU.getOffsetX() + 21, GPU.getOffsetY() - 96, 0)
-              .uv(0, 0)
-              .size(120, 90);
+        //LAB_800e5f04
+        this.wmapLocationPromptPopup.setImage(
+          locationThumbnailMetrics_800ef0cc.get(1).clutX_04.get(),
+          locationThumbnailMetrics_800ef0cc.get(1).clutY_06.get(),
+          locationThumbnailMetrics_800ef0cc.get(1).imageX_00.get(),
+          locationThumbnailMetrics_800ef0cc.get(1).imageY_02.get(),
+          GPU.getOffsetX() + 21,
+          GPU.getOffsetY() - 96,
+          120,
+          90,
+          0,
+          0,
+          newBrightness
+        );
 
-            if(gameState_800babc8.visitedLocations_17c.get(this.mapState_800c6798.locationIndex_10)) {
-              //LAB_800e5e98
-              builder.monochrome(this.locationThumbnailBrightness_800c86d0 * 0.5f);
-            } else {
-              //LAB_800e5e18
-              builder.monochrome(this.locationThumbnailBrightness_800c86d0 * 0.1875f);
-            }
+        if(Input.pressedThisFrame(InputAction.BUTTON_WEST) && this.mapState_800c6798.submapCut_c8 != 999) { // Square
+          playSound(0, 2, 0, 0, (short)0, (short)0);
+        }
 
-            //LAB_800e5f04
-            if(locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).thumbnailShouldUseFullBrightness_10.get()) {
-              builder.monochrome(this.locationThumbnailBrightness_800c86d0 * 0.5f);
-            }
+        //LAB_800e60d0
+        if(Input.getButtonState(InputAction.BUTTON_WEST) && this.mapState_800c6798.submapCut_c8 != 999) { // Square
+          newBrightness = currentBrightness - 0.5f / (3.0f / vsyncMode_8007a3b8);
 
-            this.placeImage = builder.build();
+          if(newBrightness < 0.5f) {
+            newBrightness = 0.25f;
           }
 
-          this.textTransforms.transfer.set(0.0f, 0.0f, 56.0f);
-          RENDERER.queueOrthoOverlayModel(this.placeImage, this.textTransforms);
+          //LAB_800e6138
+          //LAB_800e619c
+          this.wmapLocationPromptPopup.setShowAltText(true);
 
-          if(Input.pressedThisFrame(InputAction.BUTTON_WEST) && this.mapState_800c6798.submapCut_c8 != 999) { // Square
-            playSound(0, 2, 0, 0, (short)0, (short)0);
-          }
+          //LAB_800e6290
+        } else {
+          //LAB_800e6298
+          this.wmapLocationPromptPopup.setShowAltText(false);
+          newBrightness = currentBrightness + 0.25f / (3.0f / vsyncMode_8007a3b8);
 
-          //LAB_800e60d0
-          if(Input.getButtonState(InputAction.BUTTON_WEST) && this.mapState_800c6798.submapCut_c8 != 999) { // Square
-            this.locationThumbnailBrightness_800c86d0 -= 0.5f / (3.0f / vsyncMode_8007a3b8);
-
-            if(this.locationThumbnailBrightness_800c86d0 < 0.5f) {
-              this.locationThumbnailBrightness_800c86d0 = 0.25f;
-            }
-
-            //LAB_800e6138
-            final int services = places_800f0234.get(placeIndex).services_05.get();
-
-            //LAB_800e619c
-            int servicesCount = 0;
-            for(int i = 0; i < 5; i++) {
-              //LAB_800e61b8
-              if((services & 0x1 << i) != 0) {
-                this.renderCenteredShadowedText(services_800f01cc.get(i).deref(), 240, servicesCount * 16 + 30, TextColour.WHITE, 0);
-                servicesCount++;
-              }
-
-              //LAB_800e6248
-            }
-
-            //LAB_800e6260
-            if(servicesCount == 0) {
-              this.renderCenteredShadowedText(No_Facilities_800f01e0.deref(), 240, 62, TextColour.WHITE, 0);
-            }
-
-            //LAB_800e6290
-          } else {
-            //LAB_800e6298
-            this.locationThumbnailBrightness_800c86d0 += 0.25f / (3.0f / vsyncMode_8007a3b8);
-
-            if(this.locationThumbnailBrightness_800c86d0 > 1.0f) {
-              this.locationThumbnailBrightness_800c86d0 = 1.0f;
-            }
+          if(newBrightness > 1.0f) {
+            newBrightness = 1.0f;
           }
         }
+
+        this.wmapLocationPromptPopup.setThumbnailBrightness(newBrightness);
+        this.wmapLocationPromptPopup.render();
 
         //LAB_800e62d4
         if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
@@ -5299,7 +5234,6 @@ public class WMap extends EngineState {
               if(soundIndex > 0) {
                 stopSound(soundFiles_800bcf80[12], soundIndex, 1);
               }
-
               //LAB_800e6504
             }
           }
@@ -5338,7 +5272,7 @@ public class WMap extends EngineState {
         this.renderLocationMenuTextHighlight(this.locationMenuNameShadow_800c6898);
 
         if(textboxes_800be358[6].state_00 == TextboxState.UNINITIALIZED_0 && textboxes_800be358[7].state_00 == TextboxState.UNINITIALIZED_0 && MathHelper.flEq(this.locationMenuNameShadow_800c6898.currentBrightness_34, 0.0f)) {
-          this.deallocatePlaceText();
+          this.wmapLocationPromptPopup.deallocatePlaceText();
           this.mapTransitionState_800c68a4 = 9;
         }
 
@@ -5346,7 +5280,7 @@ public class WMap extends EngineState {
         break;
 
       case 6:
-        this.deallocatePlaceText();
+        this.wmapLocationPromptPopup.deallocatePlaceText();
 
         if(!MathHelper.flEq(this.mapState_800c6798.playerDestAngle_c0, 0.0f)) {
           this.mapState_800c6798.playerDestAngle_c0 = 0.0f;
