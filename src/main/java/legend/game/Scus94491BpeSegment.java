@@ -22,6 +22,7 @@ import legend.core.memory.types.IntRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.core.opengl.MatrixStack;
+import legend.core.opengl.Obj;
 import legend.core.opengl.ScissorStack;
 import legend.core.spu.Voice;
 import legend.game.combat.bent.BattleEntity27c;
@@ -74,12 +75,12 @@ import static legend.core.GameEngine.SEQUENCER;
 import static legend.core.GameEngine.SPU;
 import static legend.core.GameEngine.legacyUi;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020ed8;
-import static legend.game.Scus94491BpeSegment_8002.handleTextboxAndText;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bb38;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002bda4;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002c178;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002c184;
 import static legend.game.Scus94491BpeSegment_8002.copyPlayingSounds;
+import static legend.game.Scus94491BpeSegment_8002.handleTextboxAndText;
 import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.renderTextboxes;
@@ -530,6 +531,8 @@ public final class Scus94491BpeSegment {
       dontZeroMemoryOnOverlayLoad_8004dd0c = false;
       return;
     }
+
+    Obj.clearObjList();
 
     //LAB_80012ad8
     currentEngineState_8004dd04 = overlay.constructor_00.get();

@@ -24,19 +24,19 @@ public class WmapPromptPopup {
   private final MV transforms = new MV();
 
   private TextObj prompt;
-  final private Vector3f promptTranslation = new Vector3f();
+  private final Vector3f promptTranslation = new Vector3f();
 
-  final private List<TextObj> options = new ArrayList<>();
+  private final List<TextObj> options = new ArrayList<>();
   private float optionSpacing = 20.0f;
-  final private Vector3f optionsTranslation = new Vector3f();
+  private final Vector3f optionsTranslation = new Vector3f();
 
   private boolean renderAltText;
-  final private List<TextObj> altText = new ArrayList<>();
+  private final List<TextObj> altText = new ArrayList<>();
   private float altTextSpacing = 16.0f;
-  final private Vector3f altTextTranslation = new Vector3f();
+  private final Vector3f altTextTranslation = new Vector3f();
 
   private MeshObj thumbnail;
-  final private Vector3f thumbnailTranslation = new Vector3f();
+  private final Vector3f thumbnailTranslation = new Vector3f();
   private float currentThumbnailBrightness;
   private float previousThumbnailBrightness;
 
@@ -86,7 +86,7 @@ public class WmapPromptPopup {
   }
 
   private TextObj buildText(final String text) {
-    return new TextBuilder()
+    return new TextBuilder(text)
       .text(text)
       .centred()
       .shadowed()
@@ -110,7 +110,7 @@ public class WmapPromptPopup {
     }
 
     if(this.thumbnail == null) {
-      this.thumbnail = new QuadBuilder()
+      this.thumbnail = new QuadBuilder("PopupThumbnail")
         .bpp(Bpp.BITS_8)
         .clut(clutX, clutY)
         .vramPos(vramX, vramY)
@@ -137,24 +137,24 @@ public class WmapPromptPopup {
 
     if(!this.options.isEmpty()) {
       TextObj option;
+      this.transforms.transfer.set(this.optionsTranslation);
       for(int i = 0; i < this.options.size(); i++) {
         option = this.options.get(i);
         if(option != null) {
-          this.transforms.transfer.set(this.optionsTranslation);
-          this.transforms.transfer.y += i * this.optionSpacing;
           RENDERER.queueOrthoOverlayModel(option, this.transforms);
+          this.transforms.transfer.y += this.optionSpacing;
         }
       }
     }
 
     if(this.renderAltText && !this.altText.isEmpty()) {
       TextObj altText;
+      this.transforms.transfer.set(this.altTextTranslation);
       for(int i = 0; i < this.altText.size(); i++) {
         altText = this.altText.get(i);
         if(altText != null) {
-          this.transforms.transfer.set(this.altTextTranslation);
-          this.transforms.transfer.y += i * this.altTextSpacing;
           RENDERER.queueOrthoOverlayModel(altText, this.transforms);
+          this.transforms.transfer.y += this.altTextSpacing;
         }
       }
     }
@@ -170,18 +170,20 @@ public class WmapPromptPopup {
       for(int i = 0; i < this.options.size(); i++) {
         if(this.options.get(i) != null) {
           this.options.get(i).delete();
-          this.options.set(i, null);
         }
       }
+
+      this.options.clear();
     }
 
     if(!this.altText.isEmpty()) {
       for(int i = 0; i < this.altText.size(); i++) {
         if(this.altText.get(i) != null) {
           this.altText.get(i).delete();
-          this.altText.set(i, null);
         }
       }
+
+      this.altText.clear();
     }
 
     if(this.thumbnail != null) {

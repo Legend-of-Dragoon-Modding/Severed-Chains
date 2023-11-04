@@ -771,7 +771,7 @@ public class WMap extends EngineState {
           for(int i = 0; i < this.wmapStruct258_800c66a8.tmdRendering_08.dobj2s_00.length; i++) {
             //LAB_800e3d44
             this.wmapStruct258_800c66a8.tmdRendering_08.dobj2s_00[i].tmd_08 = this.wmapStruct258_800c66a8.tmdRendering_08.tmd_14.tmd.objTable[i];
-            this.wmapStruct258_800c66a8.tmdRendering_08.dobj2s_00[i].obj = TmdObjLoader.fromObjTable(this.wmapStruct258_800c66a8.tmdRendering_08.dobj2s_00[i].tmd_08);
+            this.wmapStruct258_800c66a8.tmdRendering_08.dobj2s_00[i].obj = TmdObjLoader.fromObjTable("WmapModel (obj " + i + ')', this.wmapStruct258_800c66a8.tmdRendering_08.dobj2s_00[i].tmd_08);
           }
 
           this.worldMapState_800c6698 = 3;
@@ -814,7 +814,7 @@ public class WMap extends EngineState {
         // Init OpenGL models
         for(int i = 0; i < 4; i++) {
           for(final ModelPart10 part : this.wmapStruct258_800c66a8.models_0c[i].modelParts_00) {
-            part.obj = TmdObjLoader.fromObjTable(part.tmd_08);
+            part.obj = TmdObjLoader.fromObjTable("WmapEntityModel (index " + i + ')', part.tmd_08);
           }
         }
 
@@ -1040,7 +1040,7 @@ public class WMap extends EngineState {
 
       final RECT rect = highlight.rects_1c[i];
 
-      final QuadBuilder builder = new QuadBuilder()
+      final QuadBuilder builder = new QuadBuilder("MenuHighlight")
         .rgb(0, r0 / 255.0f, g0 / 255.0f, b0 / 255.0f)
         .rgb(1, r2 / 255.0f, g2 / 255.0f, b2 / 255.0f)
         .rgb(2, r1 / 255.0f, g1 / 255.0f, b1 / 255.0f)
@@ -2630,7 +2630,7 @@ public class WMap extends EngineState {
     }
 
     if(this.wmapStruct258_800c66a8.mapOverlayObj == null) {
-      this.wmapStruct258_800c66a8.mapOverlayObj = new QuadBuilder()
+      this.wmapStruct258_800c66a8.mapOverlayObj = new QuadBuilder("WmapName")
         .bpp(Bpp.BITS_4)
         .clut(640, 497)
         .vramPos(640, 256)
@@ -2691,7 +2691,7 @@ public class WMap extends EngineState {
       //LAB_800d6c30
       //LAB_800d6d14
       if(this.wmapStruct258_800c66a8.zoomOverlayObjs[i] == null) {
-        final QuadBuilder builder = new QuadBuilder()
+        final QuadBuilder builder = new QuadBuilder("ZoomOverlay (obj " + i + ')')
           .bpp(Bpp.BITS_4)
           .clut(640, i < 5 ? 502 : 503)
           .vramPos(640, 256);
@@ -2716,16 +2716,14 @@ public class WMap extends EngineState {
         //LAB_800d6f2c
         //LAB_800d6fa0
         builder
-          .pos(GPU.getOffsetX() + zoomUiMetrics_800ef104.get(i).x_00.get() + 88.0f, GPU.getOffsetY() + zoomUiMetrics_800ef104.get(i).y_01.get() - 96.0f, 20.0f)
+          .pos(GPU.getOffsetX() + zoomUiMetrics_800ef104.get(i).x_00.get() + 88.0f, GPU.getOffsetY() + zoomUiMetrics_800ef104.get(i).y_01.get() - 96.0f, 80.0f)
           .size(zoomUiMetrics_800ef104.get(i).w_04.get(), zoomUiMetrics_800ef104.get(i).h_05.get())
           .uv(zoomUiMetrics_800ef104.get(i).u_02.get(), zoomUiMetrics_800ef104.get(i).v_03.get());
 
         this.wmapStruct258_800c66a8.zoomOverlayObjs[i] = builder.build();
       }
 
-      this.wmapStruct258_800c66a8.mapOverlayTransforms.identity();
-      this.wmapStruct258_800c66a8.mapOverlayTransforms.transfer.setComponent(2, 20.0f);
-      RENDERER.queueOrthoOverlayModel(this.wmapStruct258_800c66a8.zoomOverlayObjs[i], this.wmapStruct258_800c66a8.mapOverlayTransforms);
+      RENDERER.queueOrthoOverlayModel(this.wmapStruct258_800c66a8.zoomOverlayObjs[i]);
     }
     //LAB_800d71f4
   }
@@ -5057,7 +5055,7 @@ public class WMap extends EngineState {
 
           if(servicesCount == 0) {
             this.wmapLocationPromptPopup.addAltText("No facilities");
-            this.wmapLocationPromptPopup.setTranslation(WmapPromptPopup.ObjFields.ALT_TEXT, 240.0f, 62.0f, textZ_800bdf00.get());
+            this.wmapLocationPromptPopup.setTranslation(WmapPromptPopup.ObjFields.ALT_TEXT, 240.0f, 62.0f, textZ_800bdf00.get() * 4.0f);
           }
         }
 
@@ -5599,7 +5597,7 @@ public class WMap extends EngineState {
         final int w = pathIntersectionSymbolMetrics_800ef170.get(intersectionSymbolIndex).get(intersectionStateIndex).w_02.get();
         final int h = pathIntersectionSymbolMetrics_800ef170.get(intersectionSymbolIndex).get(intersectionStateIndex).h_03.get();
 
-        this.mapState_800c6798.pathBigDotObjs[intersectionSymbolIndex][intersectionStateIndex] = new QuadBuilder()
+        this.mapState_800c6798.pathBigDotObjs[intersectionSymbolIndex][intersectionStateIndex] = new QuadBuilder("PathBigDot")
           .bpp(Bpp.BITS_4)
           .translucency(Translucency.B_PLUS_F)
           .clut(640, 496)
@@ -5611,7 +5609,7 @@ public class WMap extends EngineState {
       }
     }
 
-    this.mapState_800c6798.pathSmallDotObj = new QuadBuilder()
+    this.mapState_800c6798.pathSmallDotObj = new QuadBuilder("PathSmallDot")
       .bpp(Bpp.BITS_4)
       .translucency(Translucency.B_PLUS_F)
       .clut(640, 496)

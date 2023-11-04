@@ -19,6 +19,7 @@ import static legend.core.opengl.TmdObjLoader.UV_SIZE;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class QuadBuilder {
+  private final String name;
   private final Vector3f pos = new Vector3f();
   private final Vector2f size = new Vector2f();
   private final Vector2f uv = new Vector2f();
@@ -29,6 +30,10 @@ public class QuadBuilder {
   private Translucency translucency;
 
   private int flags;
+
+  public QuadBuilder(final String name) {
+    this.name = name;
+  }
 
   public QuadBuilder pos(final Vector3f pos) {
     this.pos.set(pos);
@@ -211,6 +216,6 @@ public class QuadBuilder {
       meshes[this.translucency.ordinal() + 1] = mesh;
     }
 
-    return new MeshObj(meshes);
+    return new MeshObj(this.name, meshes);
   }
 }
