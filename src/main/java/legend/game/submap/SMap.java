@@ -126,6 +126,7 @@ import static legend.game.Scus94491BpeSegment_8002.clearTextbox;
 import static legend.game.Scus94491BpeSegment_8002.clearTextboxText;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
+import static legend.game.Scus94491BpeSegment_8002.initTextboxArrowsAndSelection;
 import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
@@ -4616,6 +4617,7 @@ public class SMap extends EngineState {
       case INIT_0 -> {
         srand((int)System.nanoTime());
         resizeDisplay(384, 240);
+        initTextboxArrowsAndSelection();
 
         //LAB_800e5b2c
         submapEnvState_80052c44.set(2);

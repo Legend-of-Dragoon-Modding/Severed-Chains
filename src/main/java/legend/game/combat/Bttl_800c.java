@@ -152,6 +152,7 @@ import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
+import static legend.game.Scus94491BpeSegment_8002.initTextboxArrowsAndSelection;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.scriptDeallocateAllTextboxes;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
@@ -1043,6 +1044,7 @@ public final class Bttl_800c {
     //LAB_800c760c
     allocateStageDarkeningStorage();
     btldLoadEncounterSoundEffectsAndMusic();
+    initTextboxArrowsAndSelection();
 
     pregameLoadingStage_800bb10c.incr();
   }

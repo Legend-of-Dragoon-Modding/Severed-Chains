@@ -81,7 +81,6 @@ import static legend.game.Scus94491BpeSegment_8002.FUN_8002c178;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002c184;
 import static legend.game.Scus94491BpeSegment_8002.copyPlayingSounds;
 import static legend.game.Scus94491BpeSegment_8002.handleTextboxAndText;
-import static legend.game.Scus94491BpeSegment_8002.initTextboxArrowsAndSelection;
 import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.renderTextboxes;
@@ -513,9 +512,6 @@ public final class Scus94491BpeSegment {
 
       if(engineState_8004dd20 == EngineStateEnum.COMBAT_06) { // Starting combat
         clearCombatVars();
-        initTextboxArrowsAndSelection();
-      } else if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
-        initTextboxArrowsAndSelection();
       }
     }
   }
