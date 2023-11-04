@@ -40,7 +40,7 @@ public class CoolonQueenFuryOverlay {
       this.button = null;
     }
 
-    this.button = new QuadBuilder()
+    this.button = new QuadBuilder("CoolonQfButton")
       .bpp(Bpp.BITS_4)
       .clut(640, 508)
       .vramPos(640, 256)
@@ -60,7 +60,7 @@ public class CoolonQueenFuryOverlay {
     }
 
     final int clutY = 506 + mode;
-    this.icon = new QuadBuilder()
+    this.icon = new QuadBuilder("CoolonQfIcon")
       .bpp(Bpp.BITS_4)
       .clut(640, clutY)
       .vramPos(640, 256)
