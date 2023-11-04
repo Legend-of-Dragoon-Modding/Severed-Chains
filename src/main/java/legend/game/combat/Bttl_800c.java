@@ -2037,7 +2037,10 @@ public final class Bttl_800c {
     }
 
     for(int i = 0; i < model.modelParts_00.length; i++) {
-      model.modelParts_00[i].obj = TmdObjLoader.fromObjTable("CombatantModel (part " + s0.charSlot_19c + ')', tmd.tmdPtr_00.tmd.objTable[i]);
+      model.modelParts_00[i].obj = TmdObjLoader.fromObjTable(
+        "CombatantModel (index " + s0.charSlot_19c + ')' + " (part " + i + ')',
+        tmd.tmdPtr_00.tmd.objTable[i]
+      );
     }
 
     //LAB_800c9680
