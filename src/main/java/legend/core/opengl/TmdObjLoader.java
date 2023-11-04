@@ -34,25 +34,25 @@ public final class TmdObjLoader {
   public static final int COLOURED_FLAG = 0x4;
   public static final int TRANSLUCENCY_FLAG = 0x8;
 
-  public static Obj[] fromTmd(final Tmd tmd) {
-    return fromTmd(tmd, 0);
+  public static Obj[] fromTmd(final String name, final Tmd tmd) {
+    return fromTmd(name, tmd, 0);
   }
 
-  public static Obj[] fromTmd(final Tmd tmd, final int specialFlags) {
+  public static Obj[] fromTmd(final String name, final Tmd tmd, final int specialFlags) {
     final Obj[] objs = new Obj[tmd.objTable.length];
 
     for(int objIndex = 0; objIndex < tmd.objTable.length; objIndex++) {
-      objs[objIndex] = fromObjTable(tmd.objTable[objIndex], specialFlags);
+      objs[objIndex] = fromObjTable(name, tmd.objTable[objIndex], specialFlags);
     }
 
     return objs;
   }
 
-  public static MeshObj fromObjTable(final TmdObjTable1c objTable) {
-    return fromObjTable(objTable, 0);
+  public static MeshObj fromObjTable(final String name, final TmdObjTable1c objTable) {
+    return fromObjTable(name, objTable, 0);
   }
 
-  public static MeshObj fromObjTable(final TmdObjTable1c objTable, final int specialFlags) {
+  public static MeshObj fromObjTable(final String name, final TmdObjTable1c objTable, final int specialFlags) {
     final int translucencyCount = Translucency.values().length + 1;
     final float[][] allVertices = new float[translucencyCount][];
     final int[][] allIndices = new int[translucencyCount][];
@@ -287,7 +287,7 @@ public final class TmdObjLoader {
       }
     }
 
-    return new MeshObj(meshes);
+    return new MeshObj(name, meshes);
   }
 
   private static void getTranslucencySizes(final TmdObjTable1c objTable, final int specialFlags, final float[][] vertices, final int[][] indices) {

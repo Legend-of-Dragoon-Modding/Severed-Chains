@@ -152,6 +152,7 @@ import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
+import static legend.game.Scus94491BpeSegment_8002.initTextboxArrowsAndSelection;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.scriptDeallocateAllTextboxes;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
@@ -1043,6 +1044,7 @@ public final class Bttl_800c {
     //LAB_800c760c
     allocateStageDarkeningStorage();
     btldLoadEncounterSoundEffectsAndMusic();
+    initTextboxArrowsAndSelection();
 
     pregameLoadingStage_800bb10c.incr();
   }
@@ -1059,7 +1061,7 @@ public final class Bttl_800c {
       final BattleStage stage = battlePreloadedEntities_1f8003f4.stage_963c;
 
       for(int i = 0; i < stage.dobj2s_00.length; i++) {
-        stage.dobj2s_00[i].obj = TmdObjLoader.fromObjTable(stage.tmd_5d0.objTable[i]);
+        stage.dobj2s_00[i].obj = TmdObjLoader.fromObjTable("BattleStage (obj " + i + ')', stage.tmd_5d0.objTable[i]);
       }
 
       pregameLoadingStage_800bb10c.incr();
@@ -1536,7 +1538,6 @@ public final class Bttl_800c {
       for(int i = 0; i < battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00.length; i++) {
         battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].obj.delete();
       }
-
 
       script_800c66fc = null;
 
@@ -2037,7 +2038,10 @@ public final class Bttl_800c {
     }
 
     for(int i = 0; i < model.modelParts_00.length; i++) {
-      model.modelParts_00[i].obj = TmdObjLoader.fromObjTable(tmd.tmdPtr_00.tmd.objTable[i]);
+      model.modelParts_00[i].obj = TmdObjLoader.fromObjTable(
+        "CombatantModel (index " + s0.charSlot_19c + ')' + " (part " + i + ')',
+        tmd.tmdPtr_00.tmd.objTable[i]
+      );
     }
 
     //LAB_800c9680
