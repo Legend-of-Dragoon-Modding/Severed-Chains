@@ -16,6 +16,7 @@ layout(std140) uniform projectionInfo {
 };
 
 uniform vec3 recolour;
+uniform float discardTranslucency;
 uniform sampler2D tex24;
 uniform usampler2D tex15;
 
@@ -68,7 +69,7 @@ void main() {
     }
 
     // If translucent primitive and texture pixel translucency bit is set, pixel is translucent so we defer rendering
-    if((flags & ~0x7) != 0 && texColour.a != 0) {
+    if(discardTranslucency != 0 && (flags & ~0x7) != 0 && texColour.a != 0) {
       discard;
     }
 

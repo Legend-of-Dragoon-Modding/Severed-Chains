@@ -108,6 +108,7 @@ public class RenderEngine {
   private Shader tmdShaderTransparent;
   private Shader.UniformVec3 tmdShaderColour;
   private Shader.UniformVec3 tmdShaderTransparentColour;
+  private Shader.UniformFloat tmdShaderDiscardTranslucency;
   private FrameBuffer opaqueFrameBuffer;
   private FrameBuffer transparentFrameBuffer;
   private Texture opaqueTexture;
@@ -261,6 +262,8 @@ public class RenderEngine {
       this.tmdShader.new UniformInt("tex24").set(0);
       this.tmdShader.new UniformInt("tex15").set(1);
       this.tmdShaderColour = this.tmdShader.new UniformVec3("recolour");
+      this.tmdShaderDiscardTranslucency = this.tmdShader.new UniformFloat("discardTranslucency");
+      this.tmdShaderDiscardTranslucency.set(1.0f);
 
       ShaderManager.addShader("tmd", this.tmdShader);
     } catch(final IOException e) {
@@ -392,6 +395,7 @@ public class RenderEngine {
 
       RENDERER.setProjectionMode(ProjectionMode._2D);
       this.tmdShader.use();
+      this.tmdShaderDiscardTranslucency.set(0.0f);
       GPU.useVramTexture();
 
       final float widthScale = this.window.getWidth() / this.projectionWidth;
@@ -401,6 +405,7 @@ public class RenderEngine {
       for(int i = 0; i < this.orthoOverlayPool.size(); i++) {
         final QueuedModel entry = this.orthoOverlayPool.get(i);
         entry.updateTransforms();
+        this.tmdShaderColour.set(entry.colour);
 
         if(entry.scissor.w != 0) {
           glEnable(GL_SCISSOR_TEST);
@@ -468,10 +473,12 @@ public class RenderEngine {
 
     this.opaqueFrameBuffer.bind();
     this.tmdShader.use();
+    this.tmdShaderDiscardTranslucency.set(1.0f);
     GPU.useVramTexture();
 
     for(int i = 0; i < pool.size(); i++) {
       final QueuedModel entry = pool.get(i);
+      this.tmdShaderColour.set(entry.colour);
       boolean updated = false;
 
       if(entry.obj.shouldRender(null)) {
@@ -523,6 +530,7 @@ public class RenderEngine {
 
         if(entry.obj.shouldRender(translucency)) {
           entry.updateTransforms();
+          this.tmdShaderTransparentColour.set(entry.colour);
           entry.obj.render(translucency);
         }
       }
@@ -867,8 +875,6 @@ public class RenderEngine {
       this.transforms.get(RenderEngine.this.transforms2Buffer);
       this.screenspaceOffset.get(16, RenderEngine.this.transforms2Buffer);
       RenderEngine.this.transforms2Uniform.set(RenderEngine.this.transforms2Buffer);
-      RenderEngine.this.tmdShaderColour.set(this.colour);
-      RenderEngine.this.tmdShaderTransparentColour.set(this.colour);
 
       this.lightDirection.get(RenderEngine.this.lightBuffer);
       this.lightColour.get(16, RenderEngine.this.lightBuffer);
