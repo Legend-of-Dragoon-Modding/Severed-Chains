@@ -227,6 +227,7 @@ public class RenderEngine {
 
   public void delete() {
     ShaderManager.delete();
+    Obj.setShouldLog(false);
     Obj.clearObjList();
   }
 

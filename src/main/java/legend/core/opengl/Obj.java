@@ -10,10 +10,15 @@ import java.util.List;
 
 public abstract class Obj {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static boolean shouldLog = true;
 
   private static final List<Obj> objList = new ArrayList<>();
   private final String name;
   protected boolean deleted;
+
+  public static void setShouldLog(final boolean shouldLog) {
+    Obj.shouldLog = shouldLog;
+  }
 
   public Obj(final String name) {
     this.name = name;
@@ -27,7 +32,9 @@ public abstract class Obj {
 
   public static void clearObjList() {
     for(int i = objList.size() - 1; i >= 0; i--) {
-      LOGGER.info("Leaked: %s", objList.get(i).name);
+      if(shouldLog) {
+        LOGGER.info("Leaked: %s", objList.get(i).name);
+      }
       objList.get(i).delete();
     }
   }
