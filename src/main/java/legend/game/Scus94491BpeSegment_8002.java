@@ -1974,7 +1974,7 @@ public final class Scus94491BpeSegment_8002 {
     for(int i = 0; i < textboxArrowObjs.length; i++) {
       textboxArrowObjs[i] = new QuadBuilder("TextboxArrow")
         .bpp(Bpp.BITS_4)
-        .monochrome(1.0f)
+        .monochrome(0.5f)
         .clut(1008, 484)
         .vramPos(896, 256)
         .pos(-8.0f, -6.0f, 0.0f)
