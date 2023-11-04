@@ -1970,7 +1970,7 @@ public final class Scus94491BpeSegment_8002 {
     return FlowControl.CONTINUE;
   }
 
-  public static void initTextboxes() {
+  public static void initTextboxArrowsAndSelection() {
     for(int i = 0; i < textboxArrowObjs.length; i++) {
       textboxArrowObjs[i] = new QuadBuilder("TextboxArrow")
         .bpp(Bpp.BITS_4)
