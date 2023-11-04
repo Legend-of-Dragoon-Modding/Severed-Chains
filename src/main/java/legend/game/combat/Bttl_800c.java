@@ -1059,7 +1059,7 @@ public final class Bttl_800c {
       final BattleStage stage = battlePreloadedEntities_1f8003f4.stage_963c;
 
       for(int i = 0; i < stage.dobj2s_00.length; i++) {
-        stage.dobj2s_00[i].obj = TmdObjLoader.fromObjTable("BattleStage", stage.tmd_5d0.objTable[i]);
+        stage.dobj2s_00[i].obj = TmdObjLoader.fromObjTable("BattleStage (obj " + i + ')', stage.tmd_5d0.objTable[i]);
       }
 
       pregameLoadingStage_800bb10c.incr();
@@ -2037,7 +2037,7 @@ public final class Bttl_800c {
     }
 
     for(int i = 0; i < model.modelParts_00.length; i++) {
-      model.modelParts_00[i].obj = TmdObjLoader.fromObjTable("CombatantModel (index " + s0.charSlot_19c + ')', tmd.tmdPtr_00.tmd.objTable[i]);
+      model.modelParts_00[i].obj = TmdObjLoader.fromObjTable("CombatantModel (part " + s0.charSlot_19c + ')', tmd.tmdPtr_00.tmd.objTable[i]);
     }
 
     //LAB_800c9680

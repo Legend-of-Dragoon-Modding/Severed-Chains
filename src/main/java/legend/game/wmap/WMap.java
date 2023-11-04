@@ -775,7 +775,7 @@ public class WMap extends EngineState {
           for(int i = 0; i < this.wmapStruct258_800c66a8.tmdRendering_08.dobj2s_00.length; i++) {
             //LAB_800e3d44
             this.wmapStruct258_800c66a8.tmdRendering_08.dobj2s_00[i].tmd_08 = this.wmapStruct258_800c66a8.tmdRendering_08.tmd_14.tmd.objTable[i];
-            this.wmapStruct258_800c66a8.tmdRendering_08.dobj2s_00[i].obj = TmdObjLoader.fromObjTable("WmapModel (index " + i + ')', this.wmapStruct258_800c66a8.tmdRendering_08.dobj2s_00[i].tmd_08);
+            this.wmapStruct258_800c66a8.tmdRendering_08.dobj2s_00[i].obj = TmdObjLoader.fromObjTable("WmapModel (obj " + i + ')', this.wmapStruct258_800c66a8.tmdRendering_08.dobj2s_00[i].tmd_08);
           }
 
           this.worldMapState_800c6698 = 3;
@@ -818,7 +818,7 @@ public class WMap extends EngineState {
         // Init OpenGL models
         for(int i = 0; i < 4; i++) {
           for(final ModelPart10 part : this.wmapStruct258_800c66a8.models_0c[i].modelParts_00) {
-            part.obj = TmdObjLoader.fromObjTable("WmapEntityModel (index " + i + ')', part.tmd_08);
+            part.obj = TmdObjLoader.fromObjTable("WmapEntityModel (part " + i + ')', part.tmd_08);
           }
         }
 

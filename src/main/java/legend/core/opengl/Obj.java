@@ -11,23 +11,27 @@ import java.util.List;
 public abstract class Obj {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
 
-  protected static final List<Obj> objList = new ArrayList<>();
+  private static final List<Obj> objList = new ArrayList<>();
   private final String name;
+  protected boolean deleted;
 
   public Obj(final String name) {
     this.name = name;
     objList.add(this);
   }
 
-  public static void reportLeaks() {
-    if(!Obj.objList.isEmpty()) {
-      for(final Obj obj : Obj.objList) {
-        LOGGER.info(obj.name);
-      }
+  public void delete() {
+    this.deleted = true;
+    objList.remove(this);
+  };
+
+  public static void clearObjList() {
+    for(int i = objList.size() - 1; i >= 0; i--) {
+      LOGGER.info(objList.get(i).name);
+      objList.get(i).delete();
     }
   }
 
   public abstract boolean shouldRender(@Nullable final Translucency translucency);
   public abstract void render(@Nullable final Translucency translucency);
-  public abstract void delete();
 }

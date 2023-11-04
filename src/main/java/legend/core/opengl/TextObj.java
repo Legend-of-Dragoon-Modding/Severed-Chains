@@ -6,7 +6,6 @@ import javax.annotation.Nullable;
 
 public class TextObj extends Obj {
   private final Mesh mesh;
-  private boolean deleted;
 
   public TextObj(final String name, final Mesh mesh) {
     super(name);
@@ -25,8 +24,7 @@ public class TextObj extends Obj {
 
   @Override
   public void delete() {
-    this.deleted = true;
+    super.delete();
     this.mesh.delete();
-    Obj.objList.remove(this);
   }
 }

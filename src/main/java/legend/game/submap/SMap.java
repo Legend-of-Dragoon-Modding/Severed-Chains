@@ -2256,7 +2256,7 @@ public class SMap extends EngineState {
     this.loadModelAndAnimation(model, this.submapAssets.objects.get(index).model, this.submapAssets.objects.get(index).animations.get(0));
 
     for(final ModelPart10 part : model.modelParts_00) {
-      part.obj = TmdObjLoader.fromObjTable("SobjModelPart (index " + index + ')', part.tmd_08);
+      part.obj = TmdObjLoader.fromObjTable("SobjModel (part " + index + ')', part.tmd_08);
     }
 
     sobj.us_12c = 0;
@@ -3412,7 +3412,7 @@ public class SMap extends EngineState {
           this.FUN_800f04ac(state.innerStruct_00._1d0);
 
           for(final ModelPart10 part : model.modelParts_00) {
-            part.obj = TmdObjLoader.fromObjTable("SobjModelPart (index " + i + ')', part.tmd_08);
+            part.obj = TmdObjLoader.fromObjTable("SobjModel (part " + i + ')', part.tmd_08);
           }
         }
 
