@@ -12,7 +12,7 @@ public abstract class Obj {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
 
   protected static final List<Obj> objList = new ArrayList<>();
-  protected String name;
+  private final String name;
 
   public Obj(final String name) {
     this.name = name;
