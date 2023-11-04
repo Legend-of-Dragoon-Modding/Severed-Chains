@@ -33,7 +33,7 @@ public abstract class Obj {
   public static void clearObjList() {
     for(int i = objList.size() - 1; i >= 0; i--) {
       if(shouldLog) {
-        LOGGER.info("Leaked: %s", objList.get(i).name);
+        LOGGER.warn("Leaked: %s", objList.get(i).name);
       }
       objList.get(i).delete();
     }

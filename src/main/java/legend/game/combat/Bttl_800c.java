@@ -1539,7 +1539,6 @@ public final class Bttl_800c {
         battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].obj.delete();
       }
 
-
       script_800c66fc = null;
 
       //LAB_800c8314
