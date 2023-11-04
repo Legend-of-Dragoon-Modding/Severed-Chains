@@ -86,7 +86,7 @@ public class WmapPromptPopup {
   }
 
   private TextObj buildText(final String text) {
-    return new TextBuilder()
+    return new TextBuilder(text)
       .text(text)
       .centred()
       .shadowed()
@@ -110,7 +110,7 @@ public class WmapPromptPopup {
     }
 
     if(this.thumbnail == null) {
-      this.thumbnail = new QuadBuilder()
+      this.thumbnail = new QuadBuilder("PopupThumbnail")
         .bpp(Bpp.BITS_8)
         .clut(clutX, clutY)
         .vramPos(vramX, vramY)

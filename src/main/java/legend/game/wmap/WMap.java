@@ -2689,7 +2689,7 @@ public class WMap extends EngineState {
       //LAB_800d6c30
       //LAB_800d6d14
       if(this.wmapStruct258_800c66a8.zoomOverlayObjs[i] == null) {
-        final QuadBuilder builder = new QuadBuilder()
+        final QuadBuilder builder = new QuadBuilder("ZoomOverlay (obj " + i + ')')
           .bpp(Bpp.BITS_4)
           .clut(640, i < 5 ? 502 : 503)
           .vramPos(640, 256);
