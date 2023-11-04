@@ -226,6 +226,7 @@ public class RenderEngine {
 
   public void delete() {
     ShaderManager.delete();
+    Obj.reportLeaks();
   }
 
   public void init() {

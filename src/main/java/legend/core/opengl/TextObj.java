@@ -4,11 +4,12 @@ import legend.game.types.Translucency;
 
 import javax.annotation.Nullable;
 
-public class TextObj implements Obj {
+public class TextObj extends Obj {
   private final Mesh mesh;
   private boolean deleted;
 
-  public TextObj(final Mesh mesh) {
+  public TextObj(final String name, final Mesh mesh) {
+    super(name);
     this.mesh = mesh;
   }
 
@@ -26,5 +27,6 @@ public class TextObj implements Obj {
   public void delete() {
     this.deleted = true;
     this.mesh.delete();
+    Obj.objList.remove(this);
   }
 }

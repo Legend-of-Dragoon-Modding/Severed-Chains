@@ -1972,7 +1972,7 @@ public final class Scus94491BpeSegment_8002 {
 
   public static void initTextboxes() {
     for(int i = 0; i < textboxArrowObjs.length; i++) {
-      textboxArrowObjs[i] = new QuadBuilder()
+      textboxArrowObjs[i] = new QuadBuilder("TextboxArrow")
         .bpp(Bpp.BITS_4)
         .monochrome(1.0f)
         .clut(1008, 484)
@@ -1983,7 +1983,7 @@ public final class Scus94491BpeSegment_8002 {
         .build();
     }
 
-    textboxSelectionObj = new QuadBuilder()
+    textboxSelectionObj = new QuadBuilder("TextboxSelection")
       .translucency(Translucency.HALF_B_PLUS_HALF_F)
       .rgb(0.5f, 0.19607843f, 0.39215687f)
       .size(1.0f, 12.0f)
@@ -2212,7 +2212,7 @@ public final class Scus94491BpeSegment_8002 {
             textbox.delete();
           }
 
-          textbox.backgroundObj = new QuadBuilder()
+          textbox.backgroundObj = new QuadBuilder("TextboxBackground")
             .translucency(Translucency.HALF_B_PLUS_HALF_F)
             .pos(textbox.x_14 - textbox.width_1c, textbox.y_16 - textbox.height_1e, textbox.z_0c * 4.0f)
             .size(textbox.width_1c * 2.0f, textbox.height_1e * 2.0f)
@@ -2287,7 +2287,7 @@ public final class Scus94491BpeSegment_8002 {
           textbox.borderObjs[borderIndex].delete();
         }
 
-        textbox.borderObjs[borderIndex] = new QuadBuilder()
+        textbox.borderObjs[borderIndex] = new QuadBuilder("TextboxBorder")
           .bpp(Bpp.BITS_4)
           .clut(832, 484)
           .vramPos(896, 256)
@@ -3931,7 +3931,7 @@ public final class Scus94491BpeSegment_8002 {
     final int u = textCol_800be5c0 * 16;
     final int v = textRow_800be5c8 * 12;
 
-    chr.obj = new QuadBuilder()
+    chr.obj = new QuadBuilder("TextChar")
       .bpp(Bpp.BITS_4)
       .clut(832 + chr.colour_04 * 16, 480)
       .vramPos(832, 256)

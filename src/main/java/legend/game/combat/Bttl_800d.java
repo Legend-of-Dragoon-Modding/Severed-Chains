@@ -4751,7 +4751,7 @@ public final class Bttl_800d {
     model.shadowOffset_118.zero();
 
     for(int i = 0; i < model.modelParts_00.length; i++) {
-      model.modelParts_00[i].obj = TmdObjLoader.fromObjTable(tmd.objTable[i]);
+      model.modelParts_00[i].obj = TmdObjLoader.fromObjTable("BattleModel", tmd.objTable[i]);
     }
   }
 

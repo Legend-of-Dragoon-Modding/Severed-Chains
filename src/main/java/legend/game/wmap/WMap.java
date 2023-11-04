@@ -775,7 +775,7 @@ public class WMap extends EngineState {
           for(int i = 0; i < this.wmapStruct258_800c66a8.tmdRendering_08.dobj2s_00.length; i++) {
             //LAB_800e3d44
             this.wmapStruct258_800c66a8.tmdRendering_08.dobj2s_00[i].tmd_08 = this.wmapStruct258_800c66a8.tmdRendering_08.tmd_14.tmd.objTable[i];
-            this.wmapStruct258_800c66a8.tmdRendering_08.dobj2s_00[i].obj = TmdObjLoader.fromObjTable(this.wmapStruct258_800c66a8.tmdRendering_08.dobj2s_00[i].tmd_08);
+            this.wmapStruct258_800c66a8.tmdRendering_08.dobj2s_00[i].obj = TmdObjLoader.fromObjTable("WmapModel (index " + i + ')', this.wmapStruct258_800c66a8.tmdRendering_08.dobj2s_00[i].tmd_08);
           }
 
           this.worldMapState_800c6698 = 3;
@@ -818,7 +818,7 @@ public class WMap extends EngineState {
         // Init OpenGL models
         for(int i = 0; i < 4; i++) {
           for(final ModelPart10 part : this.wmapStruct258_800c66a8.models_0c[i].modelParts_00) {
-            part.obj = TmdObjLoader.fromObjTable(part.tmd_08);
+            part.obj = TmdObjLoader.fromObjTable("WmapEntityModel (index " + i + ')', part.tmd_08);
           }
         }
 
@@ -1036,7 +1036,7 @@ public class WMap extends EngineState {
 
       final RECT rect = highlight.rects_1c[i];
 
-      final QuadBuilder builder = new QuadBuilder()
+      final QuadBuilder builder = new QuadBuilder("MenuHighlight")
         .rgb(0, r0 / 255.0f, g0 / 255.0f, b0 / 255.0f)
         .rgb(1, r2 / 255.0f, g2 / 255.0f, b2 / 255.0f)
         .rgb(2, r1 / 255.0f, g1 / 255.0f, b1 / 255.0f)
@@ -2626,7 +2626,7 @@ public class WMap extends EngineState {
     }
 
     if(this.wmapStruct258_800c66a8.mapOverlayObj == null) {
-      this.wmapStruct258_800c66a8.mapOverlayObj = new QuadBuilder()
+      this.wmapStruct258_800c66a8.mapOverlayObj = new QuadBuilder("WmapName")
         .bpp(Bpp.BITS_4)
         .clut(640, 497)
         .vramPos(640, 256)
@@ -5081,13 +5081,13 @@ public class WMap extends EngineState {
           }
 
           final int placeIndex = locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).placeIndex_02.get();
-          this.placeName = new TextBuilder()
+          this.placeName = new TextBuilder("PopupPlaceName")
             .text(places_800f0234.get(placeIndex).name_00.deref().get())
             .centred()
             .shadowed()
             .build();
 
-          this.dontEnter = new TextBuilder()
+          this.dontEnter = new TextBuilder("PopupDontEnter")
             .text("Don't enter")
             .centred()
             .shadowed()
@@ -5097,18 +5097,18 @@ public class WMap extends EngineState {
             final String dest1 = regions_800f01ec.get(this.mapState_800c6798.submapScene_ca >>> 4 & 0xffff).deref().get();
             final String dest2 = regions_800f01ec.get(this.mapState_800c6798.submapScene_ca & 0xf).deref().get();
 
-            this.dest1PlaceName = new TextBuilder()
+            this.dest1PlaceName = new TextBuilder("PopupDest1PlaceName")
               .text(dest1)
               .centred()
               .shadowed()
               .build();
-            this.dest2PlaceName = new TextBuilder()
+            this.dest2PlaceName = new TextBuilder("PopupDest2PlaceName")
               .text(dest2)
               .centred()
               .shadowed()
               .build();
           } else {
-            this.enter = new TextBuilder()
+            this.enter = new TextBuilder("PopupEnter")
               .text("Enter")
               .centred()
               .shadowed()
@@ -5190,7 +5190,7 @@ public class WMap extends EngineState {
 
         if((this.filesLoadedFlags_800c66b8.get() & 0x800) != 0) {
           if(this.placeImage == null) {
-            final QuadBuilder builder = new QuadBuilder()
+            final QuadBuilder builder = new QuadBuilder("PopupPlaceImage")
               .bpp(Bpp.BITS_8)
               .clut(locationThumbnailMetrics_800ef0cc.get(1).clutX_04.get(), locationThumbnailMetrics_800ef0cc.get(1).clutY_06.get())
               .vramPos(locationThumbnailMetrics_800ef0cc.get(1).imageX_00.get(), locationThumbnailMetrics_800ef0cc.get(1).imageY_02.get())
@@ -5691,7 +5691,7 @@ public class WMap extends EngineState {
         final int w = pathIntersectionSymbolMetrics_800ef170.get(intersectionSymbolIndex).get(intersectionStateIndex).w_02.get();
         final int h = pathIntersectionSymbolMetrics_800ef170.get(intersectionSymbolIndex).get(intersectionStateIndex).h_03.get();
 
-        this.mapState_800c6798.pathBigDotObjs[intersectionSymbolIndex][intersectionStateIndex] = new QuadBuilder()
+        this.mapState_800c6798.pathBigDotObjs[intersectionSymbolIndex][intersectionStateIndex] = new QuadBuilder("PathBigDot")
           .bpp(Bpp.BITS_4)
           .translucency(Translucency.B_PLUS_F)
           .clut(640, 496)
@@ -5703,7 +5703,7 @@ public class WMap extends EngineState {
       }
     }
 
-    this.mapState_800c6798.pathSmallDotObj = new QuadBuilder()
+    this.mapState_800c6798.pathSmallDotObj = new QuadBuilder("PathSmallDot")
       .bpp(Bpp.BITS_4)
       .translucency(Translucency.B_PLUS_F)
       .clut(640, 496)

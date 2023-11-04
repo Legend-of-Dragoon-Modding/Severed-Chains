@@ -17,6 +17,7 @@ import static legend.game.Scus94491BpeSegment_8002.charWidth;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
 public class TextBuilder {
+  private final String name;
   private final IntList chars = new IntArrayList();
   private final IntList widths = new IntArrayList();
   private int totalSize;
@@ -30,7 +31,8 @@ public class TextBuilder {
 
   private final int flags = TmdObjLoader.TEXTURED_FLAG | TmdObjLoader.COLOURED_FLAG;
 
-  public TextBuilder() {
+  public TextBuilder(final String name) {
+    this.name = name;
     this.widths.add(0);
   }
 
@@ -195,7 +197,7 @@ public class TextBuilder {
 
     mesh.attribute(meshIndex, meshOffset, FLAGS_SIZE, vertexSize);
 
-    return new TextObj(mesh);
+    return new TextObj(this.name, mesh);
   }
 
   private int setVertices(final float[] vertices, int offset, final float x, final float y, final float u, final float v, final float w, final float h, final float r, final float g, final float b) {

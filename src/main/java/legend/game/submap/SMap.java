@@ -2256,7 +2256,7 @@ public class SMap extends EngineState {
     this.loadModelAndAnimation(model, this.submapAssets.objects.get(index).model, this.submapAssets.objects.get(index).animations.get(0));
 
     for(final ModelPart10 part : model.modelParts_00) {
-      part.obj = TmdObjLoader.fromObjTable(part.tmd_08);
+      part.obj = TmdObjLoader.fromObjTable("SobjModelPart (index " + index + ')', part.tmd_08);
     }
 
     sobj.us_12c = 0;
@@ -3412,7 +3412,7 @@ public class SMap extends EngineState {
           this.FUN_800f04ac(state.innerStruct_00._1d0);
 
           for(final ModelPart10 part : model.modelParts_00) {
-            part.obj = TmdObjLoader.fromObjTable(part.tmd_08);
+            part.obj = TmdObjLoader.fromObjTable("SobjModelPart (index " + i + ')', part.tmd_08);
           }
         }
 
@@ -4343,7 +4343,7 @@ public class SMap extends EngineState {
 
     if(enableCollisionDebug) {
       if(this.SomethingStruct_800cbe08.dobj2Ptr_20.obj == null) {
-        this.SomethingStruct_800cbe08.dobj2Ptr_20.obj = TmdObjLoader.fromObjTable(this.SomethingStruct_800cbe08.dobj2Ptr_20.tmd_08);
+        this.SomethingStruct_800cbe08.dobj2Ptr_20.obj = TmdObjLoader.fromObjTable("EnvironmentSomethingModel", this.SomethingStruct_800cbe08.dobj2Ptr_20.tmd_08);
       }
 
       final MV lw = new MV();
@@ -5501,7 +5501,7 @@ public class SMap extends EngineState {
       final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[i];
 
       if(metrics.obj == null) {
-        metrics.obj = new QuadBuilder()
+        metrics.obj = new QuadBuilder("BackgroundTexture (index " + i + ')')
           .bpp(Bpp.of(metrics.tpage_04 >>> 7 & 0b11))
           .clut(768, metrics.clut_16 >>> 6)
           .vramPos((metrics.tpage_04 & 0b1111) * 64, (metrics.tpage_04 & 0b10000) != 0 ? 256 : 0)
@@ -5603,7 +5603,7 @@ public class SMap extends EngineState {
         final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[this.envBackgroundTextureCount_800cb57c + i];
 
         if(metrics.obj == null) {
-          metrics.obj = new QuadBuilder()
+          metrics.obj = new QuadBuilder("CutoutTexture (index " + i + ')')
             .bpp(Bpp.of(metrics.tpage_04 >>> 7 & 0b11))
             .clut(768, metrics.clut_16 >>> 6)
             .vramPos((metrics.tpage_04 & 0b1111) * 64, (metrics.tpage_04 & 0b10000) != 0 ? 256 : 0)
