@@ -16,6 +16,7 @@ import legend.core.gte.Transforms;
 import legend.core.memory.Method;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
+import legend.core.opengl.Obj;
 import legend.game.characters.Element;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bent.BattleEntity27c;
@@ -211,6 +212,7 @@ import static legend.game.combat.Bttl_800d.optimisePacketsIfNecessary;
 import static legend.game.combat.Bttl_800f.FUN_800f3940;
 import static legend.game.combat.Bttl_800f.FUN_800f4b80;
 import static legend.game.combat.Bttl_800f.FUN_800f60ac;
+import static legend.game.combat.Bttl_800f.buildUiTextureElement;
 import static legend.game.combat.Bttl_800f.drawFloatingNumbers;
 import static legend.game.combat.Bttl_800f.drawItemMenuElements;
 import static legend.game.combat.Bttl_800f.drawLine;
@@ -4124,6 +4126,11 @@ public final class Bttl_800e {
     //LAB_800efd10
   }
 
+  private static final Obj[] names = new Obj[3];
+  private static final Obj[] portraits = new Obj[3];
+  private static final Obj[][] stats = new Obj[3][3];
+  private static final MV uiTransforms = new MV();
+
   @Method(0x800efd34L)
   public static void drawUiElements() {
     int spBarIndex = 0;
@@ -4191,30 +4198,32 @@ public final class Bttl_800e {
           final NameAndPortraitDisplayMetrics0c namePortraitMetrics = hudNameAndPortraitMetrics_800fb444.get(player.charId_272).deref();
 
           // Names
-          drawUiTextureElement(
-            displayStats.x_00 - centreScreenX_1f8003dc.get() + 1,
-            displayStats.y_02 - centreScreenY_1f8003de.get() - 25,
-            namePortraitMetrics.nameU_00.get(),
-            namePortraitMetrics.nameV_01.get(),
-            namePortraitMetrics.nameW_02.get(),
-            namePortraitMetrics.nameH_03.get(),
-            0x2c,
-            brightnessIndex0,
-            charDisplay._14.get(2).get()
-          );
+          if(names[charSlot] == null) {
+            names[charSlot] = buildUiTextureElement(
+              "Name " + charSlot,
+              namePortraitMetrics.nameU_00.get(), namePortraitMetrics.nameV_01.get(),
+              namePortraitMetrics.nameW_02.get(), namePortraitMetrics.nameH_03.get(),
+              0x2c,
+              brightnessIndex0, charDisplay._14.get(2).get()
+            );
+          }
+
+          uiTransforms.transfer.set(displayStats.x_00 + 1, displayStats.y_02 - 25, 124.0f);
+          RENDERER.queueOrthoOverlayModel(names[charSlot], uiTransforms);
 
           // Portraits
-          drawUiTextureElement(
-            displayStats.x_00 - centreScreenX_1f8003dc.get() - 44,
-            displayStats.y_02 - centreScreenY_1f8003de.get() - 22,
-            namePortraitMetrics.portraitU_04.get(),
-            namePortraitMetrics.portraitV_05.get(),
-            namePortraitMetrics.portraitW_06.get(),
-            namePortraitMetrics.portraitH_07.get(),
-            namePortraitMetrics.portraitClutOffset_08.get(),
-            brightnessIndex1,
-            charDisplay._14.get(2).get()
-          );
+          if(portraits[charSlot] == null) {
+            portraits[charSlot] = buildUiTextureElement(
+              "Portrait " + charSlot,
+              namePortraitMetrics.portraitU_04.get(), namePortraitMetrics.portraitV_05.get(),
+              namePortraitMetrics.portraitW_06.get(), namePortraitMetrics.portraitH_07.get(),
+              namePortraitMetrics.portraitClutOffset_08.get(),
+              brightnessIndex1, charDisplay._14.get(2).get()
+            );
+          }
+
+          uiTransforms.transfer.set(displayStats.x_00 - 44, displayStats.y_02 - 22, 124.0f);
+          RENDERER.queueOrthoOverlayModel(portraits[charSlot], uiTransforms);
 
           if(brightnessIndex0 != 0) {
             final int v1_0 = (6 - charDisplay._14.get(2).get()) * 8 + 100;
@@ -4286,17 +4295,21 @@ public final class Bttl_800e {
 
             // HP: /  MP: /  SP:
             //LAB_800f0610
-            drawUiTextureElement(
-              labelMetrics.x_00.get() + displayStats.x_00 - centreScreenX_1f8003dc.get(),
-              labelMetrics.y_02.get() + displayStats.y_02 - centreScreenY_1f8003de.get(),
-              labelMetrics.u_04.get(),
-              labelMetrics.v_06.get(),
-              labelMetrics.w_08.get(),
-              labelMetrics.h_0a.get() + eraseSpHeight,
-              0x2c,
-              brightnessIndex0,
-              charDisplay._14.get(2).get()
-            );
+            if(stats[charSlot][i] == null) {
+              stats[charSlot][i] = buildUiTextureElement(
+                "Stats " + charSlot + ' ' + i,
+                labelMetrics.u_04.get(),
+                labelMetrics.v_06.get(),
+                labelMetrics.w_08.get(),
+                labelMetrics.h_0a.get() + eraseSpHeight,
+                0x2c,
+                brightnessIndex0,
+                charDisplay._14.get(2).get()
+              );
+            }
+
+            uiTransforms.transfer.set(displayStats.x_00 + labelMetrics.x_00.get(), displayStats.y_02 + labelMetrics.y_02.get(), 124.0f);
+            RENDERER.queueOrthoOverlayModel(stats[charSlot][i], uiTransforms);
           }
 
           if(canTransform) {
@@ -4306,9 +4319,9 @@ public final class Bttl_800e {
 
             //SP bars
             //LAB_800f0714
-            for(eraseSpHeight = 0; eraseSpHeight < 2; eraseSpHeight++) {
+            for(int i = 0; i < 2; i++) {
               int spBarW;
-              if(eraseSpHeight == 0) {
+              if(i == 0) {
                 spBarW = partialSp;
                 spBarIndex = fullLevels + 1;
                 //LAB_800f0728

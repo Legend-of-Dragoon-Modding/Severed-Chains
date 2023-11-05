@@ -6,6 +6,8 @@ import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandLine;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.memory.Method;
+import legend.core.opengl.Obj;
+import legend.core.opengl.QuadBuilder;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.characters.Element;
 import legend.game.characters.TurnBasedPercentileBuff;
@@ -3121,6 +3123,39 @@ public final class Bttl_800f {
 
     setGpuPacketParams(cmd, x, y, u, v, w, h, true);
     setGpuPacketClutAndTpageAndQueue(cmd, clutOffset, null);
+  }
+
+  public static Obj buildUiTextureElement(final String name, final int u, final int v, final int w, final int h, int clutOffset, final int brightnessIndex, final int portraitDimmingModifier) {
+    final int clutIndex;
+    if(clutOffset >= 0x80) {
+      clutIndex = 1;
+      clutOffset = clutOffset - 0x80;
+    } else {
+      //LAB_800f9080
+      clutIndex = 0;
+    }
+
+    //LAB_800f9088
+    //LAB_800f9098
+    //LAB_800f90a8
+    final int clutX = battleUiElementClutVramXy_800c7114[clutIndex].x + clutOffset / 16 * 16 & 0x3f0;
+    final int clutY = battleUiElementClutVramXy_800c7114[clutIndex].y + clutOffset % 16;
+
+    final QuadBuilder builder = new QuadBuilder(name)
+      .bpp(Bpp.BITS_4)
+      .clut(clutX, clutY)
+      .vramPos(704, 256)
+      .size(w, h)
+      .uv(u, v);
+
+    if(portraitDimmingModifier < 6) {
+      builder.monochrome(((byte)(uiTextureElementBrightness_800c71ec.get(brightnessIndex).get() + 0x80) / 6 * portraitDimmingModifier - 0x80 & 0xff) / 255.0f);
+    } else {
+      //LAB_800f8ef4
+      builder.monochrome(uiTextureElementBrightness_800c71ec.get(brightnessIndex).get() & 0xff);
+    }
+
+    return builder.build();
   }
 
   @Method(0x800f8facL)
