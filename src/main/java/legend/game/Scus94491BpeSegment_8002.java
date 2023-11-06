@@ -1392,7 +1392,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80023a88L)
-  public static void FUN_80023a88() {
+  public static void sortItems() {
     final List<MenuEntryStruct04<Item>> items = new ArrayList<>();
 
     for(final Item item : gameState_800babc8.items_2e9) {

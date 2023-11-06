@@ -1,7 +1,6 @@
 package legend.game.combat.ui;
 
-/** Used for rendering the spell menu, maybe other stuff? */
-public class CombatMenua4 {
+public class SpellAndItemMenuA4 {
   public short menuState_00;
   /** ushort */
   public int _02;

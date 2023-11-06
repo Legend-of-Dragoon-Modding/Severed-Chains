@@ -21,6 +21,7 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.core.opengl.Obj;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.EngineStateEnum;
 import legend.game.Scus94491BpeSegment_8005;
@@ -75,8 +76,8 @@ import legend.game.combat.ui.BattleDisplayStats144;
 import legend.game.combat.ui.BattleHudCharacterDisplay3c;
 import legend.game.combat.ui.BattleMenuStruct58;
 import legend.game.combat.ui.CombatItem02;
-import legend.game.combat.ui.CombatMenua4;
 import legend.game.combat.ui.FloatingNumberC4;
+import legend.game.combat.ui.SpellAndItemMenuA4;
 import legend.game.fmv.Fmv;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
@@ -197,8 +198,6 @@ import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800d.calculateXAngleFromRefpointToViewpoint;
 import static legend.game.combat.Bttl_800d.calculateYAngleFromRefpointToViewpoint;
 import static legend.game.combat.Bttl_800d.resetCameraMovement;
-import static legend.game.combat.Bttl_800e.FUN_800ee610;
-import static legend.game.combat.Bttl_800e.FUN_800ef9e4;
 import static legend.game.combat.Bttl_800e.allocateDeffManager;
 import static legend.game.combat.Bttl_800e.allocateEffectManager;
 import static legend.game.combat.Bttl_800e.allocateStageDarkeningStorage;
@@ -206,6 +205,8 @@ import static legend.game.combat.Bttl_800e.backupStageClut;
 import static legend.game.combat.Bttl_800e.deallocateLightingControllerAndDeffManager;
 import static legend.game.combat.Bttl_800e.deallocateStageDarkeningStorage;
 import static legend.game.combat.Bttl_800e.drawUiElements;
+import static legend.game.combat.Bttl_800e.drawUiText;
+import static legend.game.combat.Bttl_800e.initBattleMenu;
 import static legend.game.combat.Bttl_800e.loadBattleHudDeff;
 import static legend.game.combat.Bttl_800e.loadStageTmd;
 import static legend.game.combat.Bttl_800e.renderBattleStage;
@@ -214,8 +215,6 @@ import static legend.game.combat.Bttl_800e.rotateBattleStage;
 import static legend.game.combat.Bttl_800e.updateGameStateAndDeallocateMenu;
 import static legend.game.combat.Bttl_800f.FUN_800f1a00;
 import static legend.game.combat.Bttl_800f.FUN_800f417c;
-import static legend.game.combat.Bttl_800f.FUN_800f60ac;
-import static legend.game.combat.Bttl_800f.FUN_800f84c0;
 import static legend.game.combat.Bttl_800f.FUN_800f863c;
 import static legend.game.combat.Bttl_800f.addFloatingNumberForBent;
 import static legend.game.combat.Bttl_800f.handleCombatMenu;
@@ -247,9 +246,6 @@ public final class Bttl_800c {
   public static final BoolRef combatDisabled_800c66b9 = MEMORY.ref(1, 0x800c66b9L, BoolRef::new);
 
   public static ScriptState<? extends BattleEntity27c> forcedTurnBent_800c66bc;
-  /** These two bools are set but never used */
-  public static final BoolRef unused_800c66c0 = MEMORY.ref(1, 0x800c66c0L, BoolRef::new);
-  public static final BoolRef unused_800c66c1 = MEMORY.ref(1, 0x800c66c1L, BoolRef::new);
 
   public static final IntRef _800c66c4 = MEMORY.ref(4, 0x800c66c4L, IntRef::new);
   public static ScriptState<? extends BattleEntity27c> currentTurnBent_800c66c8;
@@ -335,7 +331,7 @@ public final class Bttl_800c {
   static {
     Arrays.setAll(floatingNumbers_800c6b5c, i -> new FloatingNumberC4());
   }
-  public static CombatMenua4 combatMenu_800c6b60;
+  public static SpellAndItemMenuA4 spellAndItemMenu_800c6b60;
   public static Element dragoonSpaceElement_800c6b64;
   public static final IntRef itemTargetType_800c6b68 = MEMORY.ref(4, 0x800c6b68L, IntRef::new);
 
@@ -420,8 +416,10 @@ public final class Bttl_800c {
   public static final ArrayRef<BattleHudBorderMetrics14> battleHudBorderMetrics_800c6f4c = MEMORY.ref(2, 0x800c6f4cL, ArrayRef.of(BattleHudBorderMetrics14.class, 8, 20, BattleHudBorderMetrics14::new));
   public static final ArrayRef<ArrayRef<UnsignedByteRef>> textboxColours_800c6fec = MEMORY.ref(1, 0x800c6fecL, ArrayRef.of(ArrayRef.classFor(UnsignedByteRef.class), 9, 3, ArrayRef.of(UnsignedByteRef.class, 3, 1, UnsignedByteRef::new)));
 
-  public static final ArrayRef<ShortRef> digitOffsetXy_800c7014 = MEMORY.ref(2, 0x800c7014L, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
-  public static final ArrayRef<UnsignedShortRef> floatingTextType1DigitUs_800c7028 = MEMORY.ref(2, 0x800c7028L, ArrayRef.of(UnsignedShortRef.class, 10, 2, UnsignedShortRef::new));
+  public static final int[] digitOffsetX_800c7014 = {0, 27, 0, 27, 42};
+  public static final int[] digitOffsetY_800c7014 = {-15, -15, -5, -5, 6};
+  public static final int[] floatingTextType1DigitUs_800c7028 = {88, 16, 24, 32, 40, 48, 56, 64, 72, 80};
+  public static final Obj[] floatingTextType1Digits = new Obj[10];
 
   @SuppressWarnings("unchecked")
   public static final RegistryDelegate<Element>[] characterElements_800c706c = new RegistryDelegate[] {CoreMod.FIRE_ELEMENT, CoreMod.WIND_ELEMENT, CoreMod.LIGHT_ELEMENT, CoreMod.DARK_ELEMENT, CoreMod.THUNDER_ELEMENT, CoreMod.WIND_ELEMENT, CoreMod.WATER_ELEMENT, CoreMod.EARTH_ELEMENT, CoreMod.LIGHT_ELEMENT};
@@ -1094,9 +1092,8 @@ public final class Bttl_800c {
     battleFlags_800bc960.or(0x20);
     battleState_8006e398.stageProgression_eec = 0;
 
-    FUN_800ca980();
-    FUN_800c8ee4();
-    FUN_800cae44();
+    clearCombatants();
+    clearCurrentDisplayableItems();
 
     allBentCount_800c66d0.set(0);
     monsterCount_800c6768.set(0);
@@ -1109,9 +1106,7 @@ public final class Bttl_800c {
       battleState_8006e398.allBents_e0c[i] = null;
     }
 
-    FUN_800ee610();
-    FUN_800f84c0();
-    FUN_800f60ac();
+    initBattleMenu();
     allocateDeffManager();
 
     pregameLoadingStage_800bb10c.incr();
@@ -1335,7 +1330,7 @@ public final class Bttl_800c {
 
   @Method(0x800c7bb8L)
   public static void battleTick() {
-    FUN_800ef9e4();
+    drawUiText();
     drawUiElements();
 
     if(postBattleActionIndex_800bc974.get() != 0) {
@@ -1575,7 +1570,6 @@ public final class Bttl_800c {
       }
 
       //LAB_800c847c
-      FUN_800c8f18();
       FUN_800ca9b4();
       deallocateStageDarkeningStorage();
       FUN_800c8748();
@@ -1793,17 +1787,10 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c8ee4L)
-  public static void FUN_800c8ee4() {
+  public static void clearCombatants() {
     //LAB_800c8ef4
     //NOTE: zeroes 0x50 bytes after this array of structs ends
     Arrays.fill(combatants_8005e398, null);
-
-    unused_800c66c0.set(true);
-  }
-
-  @Method(0x800c8f18L)
-  public static void FUN_800c8f18() {
-    unused_800c66c0.set(false);
   }
 
   @Method(0x800c8f24L)
@@ -2549,15 +2536,8 @@ public final class Bttl_800c {
     return colourMaps_800fa730.get(combatants_8005e398[combatantIndex].colourMap_1a0).get();
   }
 
-  @Method(0x800ca980L)
-  public static void FUN_800ca980() {
-    unused_800c66c1.set(true);
-  }
-
   @Method(0x800ca9b4L)
   public static void FUN_800ca9b4() {
-    unused_800c66c1.set(false);
-
     //LAB_800ca9d8
     for(int s1 = 0; s1 < 0x100; s1++) {
       final BttlStruct08 s0 = battleState_8006e398._580[s1];
@@ -2663,7 +2643,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800cae44L)
-  public static void FUN_800cae44() {
+  public static void clearCurrentDisplayableItems() {
     currentDisplayableIconsBitset_800c675c.set(0);
   }
 

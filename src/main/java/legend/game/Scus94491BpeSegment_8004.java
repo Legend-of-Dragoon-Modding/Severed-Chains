@@ -363,7 +363,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[486] = Bttl_800f::scriptCheckPhysicalHit;
     scriptSubFunctions_8004e29c[487] = Bttl_800f::scriptGiveSp;
     scriptSubFunctions_8004e29c[488] = Bttl_800f::scriptConsumeSp;
-    scriptSubFunctions_8004e29c[489] = Bttl_800f::scriptInitBattleMenu;
+    scriptSubFunctions_8004e29c[489] = Bttl_800f::scriptInitSpellAndItemMenu;
     scriptSubFunctions_8004e29c[490] = Bttl_800f::FUN_800f4600;
     scriptSubFunctions_8004e29c[491] = Bttl_800f::scriptGetItemOrSpellAttackTarget;
     scriptSubFunctions_8004e29c[492] = Bttl_800f::scriptDragoonMagicStatusItemAttack;

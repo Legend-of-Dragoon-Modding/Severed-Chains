@@ -55,7 +55,7 @@ import legend.game.combat.ui.BattleDisplayStats144;
 import legend.game.combat.ui.BattleDisplayStatsDigit10;
 import legend.game.combat.ui.BattleHudCharacterDisplay3c;
 import legend.game.combat.ui.BattleMenuStruct58;
-import legend.game.combat.ui.CombatMenua4;
+import legend.game.combat.ui.SpellAndItemMenuA4;
 import legend.game.combat.ui.FloatingNumberC4;
 import legend.game.combat.ui.FloatingNumberC4Sub20;
 import legend.game.inventory.Item;
@@ -115,7 +115,7 @@ import static legend.game.Scus94491BpeSegment.projectionPlaneDistance_1f8003f8;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment_8002.FUN_80023a88;
+import static legend.game.Scus94491BpeSegment_8002.sortItems;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
@@ -161,7 +161,7 @@ import static legend.game.combat.Bttl_800c.battleHudYOffsets_800fb198;
 import static legend.game.combat.Bttl_800c.battleMenu_800c6c34;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c.characterDragoonIndices_800c6e68;
-import static legend.game.combat.Bttl_800c.combatMenu_800c6b60;
+import static legend.game.combat.Bttl_800c.spellAndItemMenu_800c6b60;
 import static legend.game.combat.Bttl_800c.combatPortraitBorderVertexCoords_800c6e9c;
 import static legend.game.combat.Bttl_800c.combatUiElementRectDimensions_800c6e48;
 import static legend.game.combat.Bttl_800c.combatantCount_800c66a0;
@@ -179,6 +179,7 @@ import static legend.game.combat.Bttl_800c.dragoonSpaceElement_800c6b64;
 import static legend.game.combat.Bttl_800c.dragoonSpells_800c6960;
 import static legend.game.combat.Bttl_800c.enemyDeffFileIndices_800faec4;
 import static legend.game.combat.Bttl_800c.floatingNumbers_800c6b5c;
+import static legend.game.combat.Bttl_800c.floatingTextType1Digits;
 import static legend.game.combat.Bttl_800c.getCombatant;
 import static legend.game.combat.Bttl_800c.hudNameAndPortraitMetrics_800fb444;
 import static legend.game.combat.Bttl_800c.itemTargetAll_800c69c8;
@@ -210,18 +211,17 @@ import static legend.game.combat.Bttl_800d.loadModelAnim;
 import static legend.game.combat.Bttl_800d.loadModelTmd;
 import static legend.game.combat.Bttl_800d.optimisePacketsIfNecessary;
 import static legend.game.combat.Bttl_800f.FUN_800f3940;
-import static legend.game.combat.Bttl_800f.FUN_800f4b80;
-import static legend.game.combat.Bttl_800f.FUN_800f60ac;
+import static legend.game.combat.Bttl_800f.clearBattleMenu;
 import static legend.game.combat.Bttl_800f.buildUiTextureElement;
 import static legend.game.combat.Bttl_800f.drawFloatingNumbers;
 import static legend.game.combat.Bttl_800f.drawItemMenuElements;
 import static legend.game.combat.Bttl_800f.drawLine;
-import static legend.game.combat.Bttl_800f.drawUiTextureElement;
 import static legend.game.combat.Bttl_800f.getTargetEnemyName;
+import static legend.game.combat.Bttl_800f.handleSpellAndItemMenu;
 import static legend.game.combat.Bttl_800f.prepareItemList;
 import static legend.game.combat.Bttl_800f.renderBattleHudBackground;
 import static legend.game.combat.Bttl_800f.renderNumber;
-import static legend.game.combat.Bttl_800f.resetBattleMenu;
+import static legend.game.combat.Bttl_800f.clearSpellAndItemMenu;
 import static legend.game.combat.SBtld.monsterNames_80112068;
 import static legend.game.combat.SBtld.monsterStats_8010ba98;
 import static legend.game.combat.SEffe.addGenericAttachment;
@@ -3645,23 +3645,15 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ee610L)
-  public static void FUN_800ee610() {
+  public static void initBattleMenu() {
     countCombatUiFilesLoaded_800c6cf4.set(0);
     battleHudYOffsetIndex_800c6c38.set(1);
-    combatMenu_800c6b60 = new CombatMenua4();
+    spellAndItemMenu_800c6b60 = new SpellAndItemMenuA4();
     battleMenu_800c6c34 = new BattleMenuStruct58();
 
     clearBattleHudDisplay();
-    resetBattleMenu();
-
-    final CombatMenua4 v0 = combatMenu_800c6b60;
-    v0._26 = 0;
-    v0._28 = 0;
-    v0._2a = 0;
-    v0._2c = 0;
-    v0._30 = 0;
-
-    FUN_800f60ac();
+    clearSpellAndItemMenu();
+    clearBattleMenu();
 
     monsterCount_800c6b9c.set(0);
     itemTargetAll_800c69c8.set(false);
@@ -3696,7 +3688,7 @@ public final class Bttl_800e {
       spGained_800bc950.get(charSlot).set(0);
     }
 
-    FUN_80023a88();
+    sortItems();
     prepareItemList();
   }
 
@@ -3765,7 +3757,7 @@ public final class Bttl_800e {
 
     usedRepeatItems_800c6c3c.clear();
 
-    combatMenu_800c6b60 = null;
+    spellAndItemMenu_800c6b60 = null;
     battleMenu_800c6c34 = null;
   }
 
@@ -3988,10 +3980,10 @@ public final class Bttl_800e {
       final BattleDisplayStats144 displayStats = displayStats_800c6c2c[charSlot];
 
       //LAB_800ef820
-      for(int i = 0; i < displayStats._04.length; i++) {
+      for(int i = 0; i < displayStats.digits_04.length; i++) {
         //LAB_800ef828
-        for(int j = 0; j < displayStats._04[i].length; j++) {
-          displayStats._04[i][j].digitValue_00 = -1;
+        for(int j = 0; j < displayStats.digits_04[i].length; j++) {
+          displayStats.digits_04[i][j].digitValue_00 = -1;
         }
       }
     }
@@ -4043,7 +4035,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ef9e4L)
-  public static void FUN_800ef9e4() {
+  public static void drawUiText() {
     if(countCombatUiFilesLoaded_800c6cf4.get() == 6) {
       final int charCount = charCount_800c677c.get();
 
@@ -4068,19 +4060,19 @@ public final class Bttl_800e {
           final VitalsStat playerMp = player.stats.getStat(CoreMod.MP_STAT.get());
           final VitalsStat playerSp = player.stats.getStat(CoreMod.SP_STAT.get());
 
-          final int textEffect;
+          final int colour;
           if(playerHp.getCurrent() > playerHp.getMax() / 2) {
-            textEffect = 1;
+            colour = 1;
           } else if(playerHp.getCurrent() > playerHp.getMax() / 4) {
-            textEffect = 2;
+            colour = 2;
           } else {
-            textEffect = 3;
+            colour = 3;
           }
 
           //LAB_800efb30
           //LAB_800efb40
           //LAB_800efb54
-          renderNumber(charSlot, 0, playerHp.getCurrent(), textEffect);
+          renderNumber(charSlot, 0, playerHp.getCurrent(), colour);
           renderNumber(charSlot, 1, playerHp.getMax(), 1);
           renderNumber(charSlot, 2, playerMp.getCurrent(), 1);
           renderNumber(charSlot, 3, playerMp.getMax(), 1);
@@ -4121,7 +4113,7 @@ public final class Bttl_800e {
 
       //LAB_800efd00
       FUN_800f3940();
-      FUN_800f4b80();
+      handleSpellAndItemMenu();
     }
     //LAB_800efd10
   }
@@ -4172,24 +4164,17 @@ public final class Bttl_800e {
           //LAB_800f0128
           for(int i = 0; i < count; i++) {
             //LAB_800f0134
-            for(int n = 0; n < displayStats._04[i].length; n++) {
-              final BattleDisplayStatsDigit10 digit = displayStats._04[i][n];
+            for(int n = 0; n < displayStats.digits_04[i].length; n++) {
+              final BattleDisplayStatsDigit10 digit = displayStats.digits_04[i][n];
               if(digit.digitValue_00 == -1) {
                 break;
               }
 
               // Numbers
-              drawUiTextureElement(
-                displayStats.x_00 + digit.x_02 - centreScreenX_1f8003dc.get(),
-                displayStats.y_02 + digit.y_04 - centreScreenY_1f8003de.get(),
-                digit.u_06,
-                digit.v_08,
-                digit.w_0a,
-                digit.h_0c,
-                digit.clutOffset_0e,
-                brightnessIndex0,
-                charDisplay._14.get(2).get()
-              );
+              //TODO drawUiTextureElement last two params: brightnessIndex0, charDisplay._14.get(2).get()
+              uiTransforms.transfer.set(displayStats.x_00 + digit.x_02, displayStats.y_02 + digit.y_04, 124.0f);
+              RENDERER.queueOrthoOverlayModel(floatingTextType1Digits[digit.digitValue_00], uiTransforms)
+                .colour(digit.colour);
             }
             //LAB_800f01e0
           }
