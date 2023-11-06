@@ -69,6 +69,7 @@ public class CoolonQueenFuryOverlay {
     }
   }
 
+  /** @param mode 0: Coolon icon, 1: Queen Fury icon */
   public void render(final int mode) {
     final int buttonState = buttonStates[(int)(tickCount_800bb0fc.get() / 2 / (3.0f / vsyncMode_8007a3b8) % 7)];
     final MeshObj button = this.buttonSprites[buttonState];
