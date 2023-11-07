@@ -93,6 +93,15 @@ public class WmapPromptPopup {
       .build();
   }
 
+  public WmapPromptPopup setPrompt(final String text) {
+    this.prompt = new TextBuilder(text)
+      .text(text)
+      .centred()
+      .shadowed()
+      .build();
+    return this;
+  }
+
   public WmapPromptPopup addOptionText(final String text) {
     this.options.add(this.buildText(text));
     return this;
@@ -160,7 +169,7 @@ public class WmapPromptPopup {
     }
   }
 
-  public void deallocatePlaceText() {
+  public void deallocate() {
     if(this.prompt != null) {
       this.prompt.delete();
       this.prompt = null;

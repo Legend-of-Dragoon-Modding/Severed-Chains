@@ -377,6 +377,9 @@ public class WMap extends EngineState {
   private static final ArrayRef<ArrayRef<UnsignedByteRef>> snowUvs_800f65c8 = MEMORY.ref(1, 0x800f65c8L, ArrayRef.of(ArrayRef.classFor(UnsignedByteRef.class), 6, 2, ArrayRef.of(UnsignedByteRef.class, 2, 1, UnsignedByteRef::new)));
   private static final ArrayRef<ArrayRef<UnsignedByteRef>> smokeUvs_800f65d4 = MEMORY.ref(1, 0x800f65d4L, ArrayRef.of(ArrayRef.classFor(UnsignedByteRef.class), 4, 2, ArrayRef.of(UnsignedByteRef.class, 2, 1, UnsignedByteRef::new)));
 
+  private WmapPromptPopup wmapLocationPromptPopup;
+  private WmapPromptPopup coolonPromptPopup;
+
   @Method(0x800c8844L)
   private void adjustWmapUvs(final ModelPart10 dobj2, final int colourMapIndex) {
     for(final TmdObjTable1c.Primitive primitive : dobj2.tmd_08.primitives_10) {
@@ -468,6 +471,9 @@ public class WMap extends EngineState {
   public void overlayTick() {
     if(pregameLoadingStage_800bb10c.get() == 3) {
       if(this.worldMapState_800c6698 >= 4 && this.playerState_800c669c >= 4) {
+        if(this.wmapStruct258_800c66a8._220 == 5) {
+          this.coolonPromptPopup.render();
+        }
         this.handleMapTransitions();
       }
     }
@@ -722,6 +728,18 @@ public class WMap extends EngineState {
     drgnBinIndex_800bc058 = 1;
   }
 
+  private void initCoolonMovePrompt() {
+    if(gameState_800babc8.scriptFlags2_bc.get(0x15a)) {
+      this.coolonPromptPopup = new WmapPromptPopup()
+        .setPrompt("Move?")
+        .addOptionText("No")
+        .addOptionText("Yes");
+      this.coolonPromptPopup.setTranslation(WmapPromptPopup.ObjFields.PROMPT, 240.0f, 41.0f, textZ_800bdf00.get() * 4.0f);
+      this.coolonPromptPopup.setTranslation(WmapPromptPopup.ObjFields.OPTIONS, 240.0f, 57.0f, textZ_800bdf00.get() * 4.0f);
+      this.coolonPromptPopup.setOptionSpacing(16.0f);
+    }
+  }
+
   @Method(0x800ccf04L)
   private void FUN_800ccf04() {
     this.worldMapState_800c6698 = 2;
@@ -743,6 +761,7 @@ public class WMap extends EngineState {
     this.allocateSmoke();
     this.loadMapMcq();
     this.coolonQueenFuryOverlay = new CoolonQueenFuryOverlay();
+    this.initCoolonMovePrompt();
 
     if(this.mapState_800c6798.continentIndex_00 < 3) { // South Serdio, North Serdio, Tiberoa
       loadLocationMenuSoundEffects(1);
@@ -868,6 +887,7 @@ public class WMap extends EngineState {
 
     this.mapState_800c6798.pathSmallDotObj.delete();
 
+    this.coolonPromptPopup.deallocate();
     this.deallocateWorldMap();
     this.unloadWmapPlayerModels();
     this.FUN_800e7888();
@@ -3229,6 +3249,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800da468
+    //Flag for Coolon usable
     if(!gameState_800babc8.scriptFlags2_bc.get(0x15a)) {
       return;
     }
@@ -3429,9 +3450,6 @@ public class WMap extends EngineState {
       case 6:
         textboxes_800be358[6].z_0c = 18;
 
-        this.renderCenteredShadowedText(Move_800f00e8, 240, 41, TextColour.WHITE, 0);
-        this.renderCenteredShadowedText(No_800effa4, 240, 57, TextColour.WHITE, 0);
-        this.renderCenteredShadowedText(Yes_800effb0, 240, 73, TextColour.WHITE, 0);
         this.renderCoolonMap(false, 0);
 
         if(Input.pressedThisFrame(InputAction.BUTTON_EAST)) {
@@ -4887,8 +4905,6 @@ public class WMap extends EngineState {
     );
   }
 
-  private WmapPromptPopup wmapLocationPromptPopup;
-
   @Method(0x800e5150L)
   private void handleMapTransitions() {
     if(Unpacker.getLoadingFileCount() != 0 || this.tickMainMenuOpenTransition_800c6690 != 0) {
@@ -5201,7 +5217,7 @@ public class WMap extends EngineState {
         this.renderLocationMenuTextHighlight(this.locationMenuNameShadow_800c6898);
 
         if(textboxes_800be358[6].state_00 == TextboxState.UNINITIALIZED_0 && textboxes_800be358[7].state_00 == TextboxState.UNINITIALIZED_0 && MathHelper.flEq(this.locationMenuNameShadow_800c6898.currentBrightness_34, 0.0f)) {
-          this.wmapLocationPromptPopup.deallocatePlaceText();
+          this.wmapLocationPromptPopup.deallocate();
           this.mapTransitionState_800c68a4 = 9;
         }
 
@@ -5209,7 +5225,7 @@ public class WMap extends EngineState {
         break;
 
       case 6:
-        this.wmapLocationPromptPopup.deallocatePlaceText();
+        this.wmapLocationPromptPopup.deallocate();
 
         if(!MathHelper.flEq(this.mapState_800c6798.playerDestAngle_c0, 0.0f)) {
           this.mapState_800c6798.playerDestAngle_c0 = 0.0f;
