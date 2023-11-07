@@ -171,8 +171,6 @@ public class WMap extends EngineState {
 
   private int placeCount_800c86cc;
 
-  private int menuSelectorOptionIndex_800c86d2;
-
   private final int[] startButtonLabelStages_800c86d4 = new int[8];
 
   private int destinationLabelStage_800c86f0;
@@ -181,14 +179,8 @@ public class WMap extends EngineState {
   /** This doesn't seem to have any effect, since the only time it's used is checking whether to turn it off */
   private boolean renderAtmosphericEffect_800c86fc;
   private final RECT storedEffectsRect_800c8700 = new RECT((short)576, (short)256, (short)128, (short)256);
-  private final Vector3i coolonMenuSelectorBaseColour_800c8778 = new Vector3i(0xff, 0, 0);
-  private final RECT coolonMenuSelectorRect_800c877c = new RECT((short)198, (short)54, (short)88, (short)16);
 
   private final Vector3f _800c87d8 = new Vector3f(0.0f, 1.0f, 0.0f);
-  private final Vector3i locationMenuNameShadowBaseColour_800c87e8 = new Vector3i(0x80, 0x80, 0x80);
-  private final RECT locationMenuNameShadowRect_800c87ec = new RECT((short)176, (short)120, (short)128, (short)40);
-  private final Vector3i locationMenuSelectorBaseColour_800c87f4 = new Vector3i(0xff, 0, 0);
-  private final RECT locationMenuSelectorRect_800c87f8 = new RECT((short)176, (short)150, (short)128, (short)24);
 
   private static final ArrayRef<UvAdjustmentMetrics14> tmdUvAdjustmentMetrics_800eee48 = MEMORY.ref(4, 0x800eee48L, ArrayRef.of(UvAdjustmentMetrics14.class, 22, 20, UvAdjustmentMetrics14::new));
 
@@ -730,8 +722,8 @@ public class WMap extends EngineState {
           WmapPromptPopup.HighlightMode.SELECTOR,
           new WmapMenuTextHighlight40(
             0x80,
-            this.coolonMenuSelectorBaseColour_800c8778,
-            this.coolonMenuSelectorRect_800c877c,
+            new Vector3i(255, 0, 0),
+            new RECT((short)198, (short)54, (short)84, (short)16),
             1,
             2,
             2,
@@ -4257,8 +4249,6 @@ public class WMap extends EngineState {
         }
 
         //LAB_800e54c4
-        // TODO add this to prompt as well
-        this.menuSelectorOptionIndex_800c86d2 = 0;
         break;
 
       case 1:
@@ -4327,8 +4317,8 @@ public class WMap extends EngineState {
             WmapPromptPopup.HighlightMode.SHADOW,
             new WmapMenuTextHighlight40(
               0,
-              this.locationMenuNameShadowBaseColour_800c87e8,
-              this.locationMenuNameShadowRect_800c87ec,
+              new Vector3i(128, 128, 128),
+              new RECT((short)176, (short)120, (short)128, (short)40),
               8,
               8,
               4,
@@ -4341,8 +4331,8 @@ public class WMap extends EngineState {
             WmapPromptPopup.HighlightMode.SELECTOR,
             new WmapMenuTextHighlight40(
               0x80,
-              this.locationMenuSelectorBaseColour_800c87f4,
-              this.locationMenuSelectorRect_800c87f8,
+              new Vector3i(255, 0, 0),
+              new RECT((short)176, (short)150, (short)128, (short)24),
               1,
               2,
               2,
@@ -4361,11 +4351,7 @@ public class WMap extends EngineState {
 
         if(this.mapState_800c6798.submapCut_c8 == 999) { // Going to a different region
           if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
-            this.menuSelectorOptionIndex_800c86d2--;
-
-            if(this.menuSelectorOptionIndex_800c86d2 < 0) {
-              this.menuSelectorOptionIndex_800c86d2 = 2;
-            }
+            this.wmapLocationPromptPopup.decrMenuSelectorOptionIndex();
 
             //LAB_800e5950
             playSound(0, 1, 0, 0, (short)0, (short)0);
@@ -4373,30 +4359,26 @@ public class WMap extends EngineState {
 
           //LAB_800e5970
           if(Input.pressedThisFrame(InputAction.DPAD_DOWN) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
-            this.menuSelectorOptionIndex_800c86d2++;
-
-            if(this.menuSelectorOptionIndex_800c86d2 >= 3) {
-              this.menuSelectorOptionIndex_800c86d2 = 0;
-            }
+            this.wmapLocationPromptPopup.incrMenuSelectorOptionIndex();
 
             //LAB_800e59c0
             playSound(0, 1, 0, 0, (short)0, (short)0);
           }
 
           //LAB_800e59e0
-          this.wmapLocationPromptPopup.getSelector().y_3a = this.menuSelectorOptionIndex_800c86d2 * 18 + 8;
+          this.wmapLocationPromptPopup.getSelector().y_3a = this.wmapLocationPromptPopup.getMenuSelectorOptionIndex() * 18 + 8;
         } else { // Entering a town, etc.
           //LAB_800e5a18
           // World Map Location Menu (No Entry,Enter)
           if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.DPAD_DOWN) ||
             Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
-            this.menuSelectorOptionIndex_800c86d2 ^= 0x1;
+            this.wmapLocationPromptPopup.setMenuSelectorOptionIndex(this.wmapLocationPromptPopup.getMenuSelectorOptionIndex() ^ 0x1);
 
             playSound(0, 1, 0, 0, (short)0, (short)0);
           }
 
           //LAB_800e5b38
-          this.wmapLocationPromptPopup.getSelector().y_3a = this.menuSelectorOptionIndex_800c86d2 * 20 + 14;
+          this.wmapLocationPromptPopup.getSelector().y_3a = this.wmapLocationPromptPopup.getMenuSelectorOptionIndex() * 20 + 14;
         }
 
         //LAB_800e5b68
@@ -4460,7 +4442,7 @@ public class WMap extends EngineState {
 
         //LAB_800e62d4
         if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
-          if(this.menuSelectorOptionIndex_800c86d2 == 0) {
+          if(this.wmapLocationPromptPopup.getMenuSelectorOptionIndex() == 0) {
             FUN_8002a3ec(6, 0);
             FUN_8002a3ec(7, 1);
             this.mapTransitionState_800c68a4 = 6;
@@ -4595,7 +4577,7 @@ public class WMap extends EngineState {
           submapCut_80052c30.set(locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).submapCut_04.get());
 
           final int sp20;
-          if(this.menuSelectorOptionIndex_800c86d2 == 1) {
+          if(this.wmapLocationPromptPopup.getMenuSelectorOptionIndex() == 1) {
             sp20 = this.mapState_800c6798.submapScene_ca >>> 4 & 0xffff;
           } else {
             //LAB_800e69a0

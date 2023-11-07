@@ -38,6 +38,7 @@ public class WmapPromptPopup {
   private final Vector3f promptTranslation = new Vector3f();
 
   private final List<TextObj> options = new ArrayList<>();
+  private int menuSelectorOptionIndex = 0;
   private float optionSpacing = 20.0f;
   private final Vector3f optionsTranslation = new Vector3f();
 
@@ -75,6 +76,28 @@ public class WmapPromptPopup {
       case OPTIONS -> this.optionsTranslation.set(x, y, z);
       case ALT_TEXT -> this.altTextTranslation.set(x, y, z);
       case THUMBNAIL -> this.thumbnailTranslation.set(x, y, z);
+    }
+  }
+
+  public int getMenuSelectorOptionIndex() {
+    return this.menuSelectorOptionIndex;
+  }
+
+  public void setMenuSelectorOptionIndex(final int menuSelectorOptionIndex) {
+    this.menuSelectorOptionIndex = menuSelectorOptionIndex;
+  }
+
+  public void incrMenuSelectorOptionIndex() {
+    this.menuSelectorOptionIndex++;
+    if(this.menuSelectorOptionIndex >= this.options.size()) {
+      this.setMenuSelectorOptionIndex(0);
+    }
+  }
+
+  public void decrMenuSelectorOptionIndex() {
+    this.menuSelectorOptionIndex--;
+    if(this.menuSelectorOptionIndex < 0) {
+      this.setMenuSelectorOptionIndex(this.options.size() - 1);
     }
   }
 
