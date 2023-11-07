@@ -4958,7 +4958,7 @@ public class WMap extends EngineState {
         this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & 0xffff_f7ff);
 
         loadDrgnFileSync(0, 5655 + places_800f0234.get(locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).placeIndex_02.get()).fileIndex_04.get(), data -> this.loadLocationThumbnailImage(new Tim(data), 1));
-        initTextbox(7, true, 240, 120, 14, 16);
+        initTextbox(6, true, 240, 120, 14, 16);
 
         this.mapTransitionState_800c68a4 = 2;
 
@@ -4980,8 +4980,8 @@ public class WMap extends EngineState {
         break;
 
       case 2:
-        if(isTextboxInState6(7) && (this.filesLoadedFlags_800c66b8.get() & 0x800) != 0) {
-          initTextbox(6, false, 240, 70, 13, 7);
+        if(isTextboxInState6(6) && (this.filesLoadedFlags_800c66b8.get() & 0x800) != 0) {
+          initTextbox(7, false, 240, 71, 13, 7);
           this.mapTransitionState_800c68a4 = 3;
 
           // Build Objs
@@ -5012,7 +5012,7 @@ public class WMap extends EngineState {
 
           if(servicesCount == 0) {
             this.wmapLocationPromptPopup.addAltText("No facilities");
-            this.wmapLocationPromptPopup.setTranslation(WmapPromptPopup.ObjFields.ALT_TEXT, 240.0f, 62.0f, textZ_800bdf00.get() * 4.0f);
+            this.wmapLocationPromptPopup.setTranslation(WmapPromptPopup.ObjFields.ALT_TEXT, 240.0f, 63.0f, textZ_800bdf00.get() * 4.0f);
           }
         }
 
@@ -5085,8 +5085,8 @@ public class WMap extends EngineState {
           locationThumbnailMetrics_800ef0cc.get(1).clutY_06.get(),
           locationThumbnailMetrics_800ef0cc.get(1).imageX_00.get(),
           locationThumbnailMetrics_800ef0cc.get(1).imageY_02.get(),
-          GPU.getOffsetX() + 21,
-          GPU.getOffsetY() - 96,
+          GPU.getOffsetX() + 20,
+          GPU.getOffsetY() - 95,
           120,
           90,
           0,
