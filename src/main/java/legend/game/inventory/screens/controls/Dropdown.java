@@ -8,9 +8,13 @@ import legend.game.inventory.screens.MenuScreen;
 import legend.game.inventory.screens.TextColour;
 import legend.game.inventory.screens.TextRenderable;
 import legend.game.inventory.screens.TextRenderer;
+import legend.game.types.LodString;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static legend.game.SItem.renderText;
+import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 
 public class Dropdown extends Control {
   private final Panel background;
@@ -19,9 +23,9 @@ public class Dropdown extends Control {
   private final Brackets highlight;
 
   private final List<String> options = new ArrayList<>();
+  private final List<LodString> optionsLod = new ArrayList<>();
   private int hoverIndex;
   private int selectedIndex = -1;
-  private TextRenderable selectedTextRenderable;
 
   public Dropdown() {
     this.background = this.addControl(Panel.subtle());
@@ -66,12 +70,14 @@ public class Dropdown extends Control {
 
   public void clearOptions() {
     this.options.clear();
+    this.optionsLod.clear();
     this.panel.setHeight(18);
     this.selectedIndex = -1;
   }
 
   public void addOption(final String option) {
     this.options.add(option);
+    this.optionsLod.add(new LodString(option));
     this.panel.setHeight(18 + this.options.size() * 16);
 
     if(this.selectedIndex == -1) {
@@ -81,7 +87,6 @@ public class Dropdown extends Control {
 
   public void setSelectedIndex(final int index) {
     this.selectedIndex = index;
-    this.selectedTextRenderable = TextRenderer.prepareShadowText(this.options.get(index), 0, 0, TextColour.BROWN);
   }
 
   public int getSelectedIndex() {
@@ -153,7 +158,10 @@ public class Dropdown extends Control {
   @Override
   protected void render(final int x, final int y) {
     if(!this.options.isEmpty()) {
-      this.selectedTextRenderable.render(x + 4, y + (this.getHeight() - 11) / 2 + 1, this.background.getZ() - 1);
+      final int oldZ = textZ_800bdf00.get();
+      textZ_800bdf00.set(this.background.getZ() - 1);
+      renderText(this.optionsLod.get(this.selectedIndex), x + 4, y + (this.getHeight() - 11) / 2 + 1, TextColour.BROWN);
+      textZ_800bdf00.set(oldZ);
     }
   }
 

@@ -5,8 +5,7 @@ import legend.game.input.InputAction;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.InputPropagation;
 import legend.game.inventory.screens.TextColour;
-import legend.game.inventory.screens.TextRenderable;
-import legend.game.inventory.screens.TextRenderer;
+import legend.game.types.LodString;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -18,7 +17,9 @@ import java.util.function.ToIntFunction;
 
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.renderItemIcon;
+import static legend.game.SItem.renderText;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
+import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 
 public class ListBox<T> extends Control {
   private final Function<T, String> entryToString;
@@ -362,7 +363,8 @@ public class ListBox<T> extends Control {
 
   public class Entry extends Control {
     public final T data;
-    private TextRenderable textRenderable;
+    private LodString lodString;
+    private TextColour colour;
 
     public Entry(final T data) {
       this.data = data;
@@ -370,12 +372,16 @@ public class ListBox<T> extends Control {
     }
 
     private void updateText(final TextColour colour) {
-      this.textRenderable = TextRenderer.prepareShadowText(ListBox.this.entryToString.apply(this.data), 0, 0, colour);
+      this.lodString = new LodString(ListBox.this.entryToString.apply(this.data));
+      this.colour = colour;
     }
 
     @Override
     protected void render(final int x, final int y) {
-      this.textRenderable.render(x + 28, y + 3, this.getZ() - 1);
+      final int oldZ = textZ_800bdf00.get();
+      textZ_800bdf00.set(this.getZ() - 1);
+      renderText(this.lodString, x + 28, y + 3, this.colour);
+      textZ_800bdf00.set(oldZ);
 
       if(ListBox.this.entryToIcon != null) {
         renderItemIcon(ListBox.this.entryToIcon.applyAsInt(this.data), x + 13, y + 1, 0x8L);
