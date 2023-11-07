@@ -532,7 +532,7 @@ public final class Scus94491BpeSegment {
       return;
     }
 
-    Obj.clearObjList();
+    Obj.clearObjList(false);
 
     //LAB_80012ad8
     currentEngineState_8004dd04 = overlay.constructor_00.get();
