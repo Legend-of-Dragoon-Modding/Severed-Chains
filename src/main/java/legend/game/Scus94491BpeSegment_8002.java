@@ -3570,6 +3570,8 @@ public final class Scus94491BpeSegment_8002 {
     RENDERER.queueOrthoOverlayModel(textboxSelectionObj, textboxSelectionTransforms);
   }
 
+  private static final MV textTransforms = new MV();
+
   /**
    * @param trim Positive trims top, negative trims bottom
    */
@@ -3578,6 +3580,10 @@ public final class Scus94491BpeSegment_8002 {
     final int length = textLength(text);
 
     trim = MathHelper.clamp(trim, -12, 12);
+
+    if(trim != 0) {
+      throw new RuntimeException("Trim not supported yet");
+    }
 
     int lineIndex = 0;
     int glyphNudge = 0;
@@ -3602,21 +3608,9 @@ public final class Scus94491BpeSegment_8002 {
           glyphNudge -= 3;
         }
 
-        final int textU = c & 0xf;
-        final int textV = c / 16;
-        final int v1 = textV * 12;
-        final int v = trim >= 0 ? v1 : v1 - trim;
-        final int h = trim >= 0 ? 12 - trim : 12 + trim;
-
-        GPU.queueCommand(textZ_800bdf00.get(), new GpuCommandQuad()
-          .bpp(Bpp.BITS_4)
-          .monochrome(0x80)
-          .pos(x - centreScreenX_1f8003dc.get() + lineIndex * 8 - glyphNudge, y - centreScreenY_1f8003de.get(), 8, h)
-          .uv(textU * 16, v)
-          .clut(832, 480)
-          .vramPos(832, 256)
-          .rgb(colour.r, colour.g, colour.b)
-        );
+        textTransforms.transfer.set(x + lineIndex * 8 - glyphNudge, y, textZ_800bdf00.get() * 4.0f);
+        RENDERER.queueOrthoOverlayModel(RENDERER.chars[c], textTransforms)
+          .colour(colour.r / 255.0f, colour.g / 255.0f, colour.b / 255.0f);
 
         glyphNudge += switch(c) {
           case 0x5, 0x23, 0x24, 0x2a, 0x37, 0x38, 0x3a, 0x3b, 0x3c, 0x3d, 0x3f, 0x40, 0x43, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b, 0x4d, 0x4e, 0x51, 0x52 -> 1;
@@ -4070,6 +4064,10 @@ public final class Scus94491BpeSegment_8002 {
     };
 
     return 8 - nudge;
+  }
+
+  public static int textHeight(final String text) {
+    return 12;
   }
 
   @Method(0x8002a63cL)
