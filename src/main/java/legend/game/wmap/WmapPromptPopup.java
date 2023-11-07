@@ -1,7 +1,10 @@
 package legend.game.wmap;
 
+import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
+import legend.core.gpu.RECT;
 import legend.core.gte.MV;
+import legend.core.memory.Method;
 import legend.core.opengl.MeshObj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.TextBuilder;
@@ -11,6 +14,7 @@ import org.joml.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
 
+import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 
 public class WmapPromptPopup {
@@ -18,7 +22,14 @@ public class WmapPromptPopup {
     PROMPT,
     OPTIONS,
     ALT_TEXT,
-    THUMBNAIL
+    THUMBNAIL,
+    SHADOW,
+    SELECTOR
+  }
+
+  public enum HighlightMode {
+    SHADOW,
+    SELECTOR
   }
 
   private final MV transforms = new MV();
@@ -39,6 +50,9 @@ public class WmapPromptPopup {
   private final Vector3f thumbnailTranslation = new Vector3f();
   private float currentThumbnailBrightness;
   private float previousThumbnailBrightness;
+
+  private WmapMenuTextHighlight40 shadow;
+  private WmapMenuTextHighlight40 selector;
 
   public WmapPromptPopup() {
   }
@@ -83,6 +97,14 @@ public class WmapPromptPopup {
   public void setThumbnailBrightness(final float brightness) {
     this.previousThumbnailBrightness = this.currentThumbnailBrightness;
     this.currentThumbnailBrightness = brightness;
+  }
+
+  public WmapMenuTextHighlight40 getShadow() {
+    return this.shadow;
+  }
+
+  public WmapMenuTextHighlight40 getSelector() {
+    return this.selector;
   }
 
   private TextObj buildText(final String text) {
@@ -133,7 +155,106 @@ public class WmapPromptPopup {
     return this;
   }
 
+  public WmapPromptPopup setHighlight(final HighlightMode mode, final WmapMenuTextHighlight40 highlight) {
+    switch(mode) {
+      case SHADOW -> this.shadow = highlight;
+      case SELECTOR -> this.selector = highlight;
+    }
+
+    return this;
+  }
+
+  @Method(0x800cea1cL)
+  private void setRenderColours(final WmapMenuTextHighlight40 highlight) {
+    if(highlight.currentBrightness_34 < 0.0f) {
+      highlight.currentBrightness_34 = 0.0f;
+      //LAB_800cea54
+    } else if(highlight.currentBrightness_34 > 0.5f) {
+      highlight.currentBrightness_34 = 0.5f;
+    }
+
+    //LAB_800cea7c
+    if(MathHelper.flEq(highlight.currentBrightness_34, highlight.previousBrightness_36)) {
+      return;
+    }
+
+    highlight.delete();
+
+    //LAB_800ceaa0
+    //LAB_800ceacc
+    //LAB_800ceb38
+    int n = 0;
+    for(int i = 0; i < highlight.subRectCount_30; i++) {
+      final WMapTextHighlightSubRectVertexColours10 colours = highlight.subRectVertexColoursArray_00[n];
+
+      final int r0 = (int)(colours.topLeft_00.x * highlight.currentBrightness_34);
+      final int g0 = (int)(colours.topLeft_00.y * highlight.currentBrightness_34);
+      final int b0 = (int)(colours.topLeft_00.z * highlight.currentBrightness_34);
+      final int r1 = (int)(colours.topRight_04.x * highlight.currentBrightness_34);
+      final int g1 = (int)(colours.topRight_04.y * highlight.currentBrightness_34);
+      final int b1 = (int)(colours.topRight_04.z * highlight.currentBrightness_34);
+      final int r2 = (int)(colours.bottomLeft_08.x * highlight.currentBrightness_34);
+      final int g2 = (int)(colours.bottomLeft_08.y * highlight.currentBrightness_34);
+      final int b2 = (int)(colours.bottomLeft_08.z * highlight.currentBrightness_34);
+      final int r3 = (int)(colours.bottomRight_0c.x * highlight.currentBrightness_34);
+      final int g3 = (int)(colours.bottomRight_0c.y * highlight.currentBrightness_34);
+      final int b3 = (int)(colours.bottomRight_0c.z * highlight.currentBrightness_34);
+
+      if(highlight.type_3f != 0) {
+        n++;
+      }
+
+      final RECT rect = highlight.rects_1c[i];
+
+      final QuadBuilder builder = new QuadBuilder("MenuHighlight")
+        .rgb(0, r0 / 255.0f, g0 / 255.0f, b0 / 255.0f)
+        .rgb(1, r2 / 255.0f, g2 / 255.0f, b2 / 255.0f)
+        .rgb(2, r1 / 255.0f, g1 / 255.0f, b1 / 255.0f)
+        .rgb(3, r3 / 255.0f, g3 / 255.0f, b3 / 255.0f)
+        .pos(rect.x.get(), rect.y.get(), 0.0f)
+        .size(rect.w.get(), rect.h.get());
+
+      if(highlight.transparency_3c) {
+        builder.translucency(highlight.tpagePacket_04[i]);
+      }
+
+      highlight.objs[i] = builder.build();
+    }
+
+    //LAB_800cf1dc
+    //LAB_800cf1e4
+    highlight.previousBrightness_36 = highlight.currentBrightness_34;
+
+    //LAB_800cf1fc
+  }
+
+  public void renderHighlight(final HighlightMode mode) {
+    final WmapMenuTextHighlight40 highlight = mode == HighlightMode.SELECTOR ? this.selector : this.shadow;
+    this.setRenderColours(highlight);
+
+    final float x = highlight.x_38 + GPU.getOffsetX();
+    final float y = highlight.y_3a + GPU.getOffsetY();
+
+    //LAB_800ce538
+    //LAB_800ce5a0
+    //LAB_800ce5a4
+    for(int i = 0; i < highlight.subRectCount_30; i++) {
+      //LAB_800ce5c8
+      highlight.transforms.identity();
+      highlight.transforms.transfer.set(x, y, highlight.z_3e);
+      RENDERER.queueOrthoOverlayModel(highlight.objs[i], highlight.transforms);
+    }
+  }
+
   public void render() {
+    if(this.shadow != null) {
+      this.renderHighlight(HighlightMode.SHADOW);
+    }
+
+    if(this.selector != null) {
+      this.renderHighlight(HighlightMode.SELECTOR);
+    }
+
     if(this.thumbnail != null) {
       this.transforms.transfer.set(this.thumbnailTranslation);
       RENDERER.queueOrthoOverlayModel(this.thumbnail, this.transforms);
@@ -198,6 +319,16 @@ public class WmapPromptPopup {
     if(this.thumbnail != null) {
       this.thumbnail.delete();
       this.thumbnail = null;
+    }
+
+    if(this.shadow != null) {
+      this.shadow.delete();
+      this.shadow = null;
+    }
+
+    if(this.selector != null) {
+      this.selector.delete();
+      this.selector = null;
     }
   }
 }

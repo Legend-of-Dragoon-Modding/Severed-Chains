@@ -23,7 +23,6 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.core.opengl.MeshObj;
-import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.EngineState;
@@ -161,8 +160,6 @@ public class WMap extends EngineState {
 
   public final MapState100 mapState_800c6798 = new MapState100();
 
-  private WmapMenuTextHighlight40 locationMenuNameShadow_800c6898;
-  private WmapMenuTextHighlight40 locationMenuSelectorHighlight_800c689c;
   private int cancelLocationEntryDelayTick_800c68a0;
   private int mapTransitionState_800c68a4;
   private boolean startLocationLabelsActive_800c68a8;
@@ -297,11 +294,6 @@ public class WMap extends EngineState {
     new TeleportationLocation0c(0x4c, new Vector3i(-1012,    0, - 75)),
     new TeleportationLocation0c(0x4d, new Vector3i(- 825, -112,  825)),
   };
-
-  private static final LodString No_800effa4 = MEMORY.ref(4, 0x800effa4L, LodString::new);
-  private static final LodString Yes_800effb0 = MEMORY.ref(4, 0x800effb0L, LodString::new);
-  /** "Move?" */
-  private static final LodString Move_800f00e8 = MEMORY.ref(4, 0x800f00e8L, LodString::new);
 
   private static final ArrayRef<Pointer<LodString>> services_800f01cc = MEMORY.ref(4, 0x800f01ccL, ArrayRef.of(Pointer.classFor(LodString.class), 5, 4, Pointer.deferred(4, LodString::new)));
 
@@ -733,7 +725,21 @@ public class WMap extends EngineState {
       this.coolonPromptPopup = new WmapPromptPopup()
         .setPrompt("Move?")
         .addOptionText("No")
-        .addOptionText("Yes");
+        .addOptionText("Yes")
+        .setHighlight(
+          WmapPromptPopup.HighlightMode.SELECTOR,
+          new WmapMenuTextHighlight40(
+            0x80,
+            this.coolonMenuSelectorBaseColour_800c8778,
+            this.coolonMenuSelectorRect_800c877c,
+            1,
+            2,
+            2,
+            true,
+            Translucency.B_PLUS_F,
+            52
+          )
+        );
       this.coolonPromptPopup.setTranslation(WmapPromptPopup.ObjFields.PROMPT, 240.0f, 41.0f, textZ_800bdf00.get() * 4.0f);
       this.coolonPromptPopup.setTranslation(WmapPromptPopup.ObjFields.OPTIONS, 240.0f, 57.0f, textZ_800bdf00.get() * 4.0f);
       this.coolonPromptPopup.setOptionSpacing(16.0f);
@@ -755,9 +761,8 @@ public class WMap extends EngineState {
     this.FUN_800e78c0();
     this.loadWmapTextures();
     this.initCameraAndLight();
-    this.loadMapModelAssetsAndInitializeCoolonMenuSelector();
+    this.loadMapModelAssets();
     this.loadPlayerAvatarTextureAndModelFiles();
-    this.initializeLocationMenuTextHighlightEffects();
     this.allocateSmoke();
     this.loadMapMcq();
     this.coolonQueenFuryOverlay = new CoolonQueenFuryOverlay();
@@ -887,10 +892,12 @@ public class WMap extends EngineState {
 
     this.mapState_800c6798.pathSmallDotObj.delete();
 
-    this.coolonPromptPopup.deallocate();
+    if(this.coolonPromptPopup != null) {
+      this.coolonPromptPopup.deallocate();
+    }
+
     this.deallocateWorldMap();
     this.unloadWmapPlayerModels();
-    this.FUN_800e7888();
     this.deallocateSmoke();
     textZ_800bdf00.set(13);
 
@@ -903,665 +910,6 @@ public class WMap extends EngineState {
 
     //LAB_800cd32c
     vsyncMode_8007a3b8 = 2;
-  }
-
-  @Method(0x800cd3c8L)
-  private WmapMenuTextHighlight40 initializeWmapMenuTextHighlight(final int brightness, final Vector3i colour0, final Vector3i colour1, final Vector3i colour2, final Vector3i colour3, final Vector3i baseColour, final RECT fullRect, final int columnCount, final int rowCount, final int type, final boolean transparency, final Translucency transparencyMode, final int z) {
-    int horizontalRectIndex = 0;
-    int verticalRectIndex = 0;
-    short x;
-    short y;
-
-    final WmapMenuTextHighlight40 highlight = new WmapMenuTextHighlight40();
-
-    highlight.columnCount_28 = columnCount;
-    highlight.rowCount_2c = rowCount;
-    highlight.subRectCount_30 = columnCount * rowCount;
-    highlight.currentBrightness_34 = brightness;
-    highlight.x_38 = 0;
-    highlight.y_3a = 0;
-    highlight.transparency_3c = transparency;
-    highlight.z_3e = z;
-
-    highlight.objs = new Obj[highlight.subRectCount_30];
-
-    // Types 2 and 4 are the only ones used by retail; 0 would be a single-color rect
-    if(type == 0) {
-      highlight.subRectVertexColoursArray_00 = new WMapTextHighlightSubRectVertexColours10[] { new WMapTextHighlightSubRectVertexColours10() };
-    } else {
-      //LAB_800cd4fc
-      highlight.subRectVertexColoursArray_00 = new WMapTextHighlightSubRectVertexColours10[highlight.subRectCount_30];
-      Arrays.setAll(highlight.subRectVertexColoursArray_00, i -> new WMapTextHighlightSubRectVertexColours10());
-    }
-
-    //LAB_800cd534
-    this.initializeWmapTextHighlightTypeAndColour(highlight, type, colour0, colour1, colour2, colour3, baseColour);
-
-    //LAB_800cd578
-    //LAB_800cd594
-    highlight.tpagePacket_04 = null;
-
-    //LAB_800cd600
-    highlight.rects_1c = new RECT[highlight.subRectCount_30];
-    Arrays.setAll(highlight.rects_1c, i -> new RECT());
-
-    final short w = (short)(fullRect.w.get() / columnCount);
-    final short h = (short)(fullRect.h.get() / rowCount);
-
-    //LAB_800cd6b8
-    if(transparency) {
-      //LAB_800cd6cc
-      //LAB_800cd6e8
-      highlight.tpagePacket_04 = new Translucency[highlight.subRectCount_30];
-    }
-
-    //LAB_800cd748
-    //LAB_800cd74c
-    //LAB_800cd768
-    //LAB_800cd7d0
-    //LAB_800cd82c
-    for(int i = 0; i < highlight.subRectCount_30; i++) {
-      //LAB_800cd850
-      if(transparency) {
-        highlight.tpagePacket_04[i] = transparencyMode;
-      }
-
-      //LAB_800cd8e8
-      x = (short)(fullRect.x.get() + w * horizontalRectIndex - 160);
-      y = (short)(fullRect.y.get() + h * verticalRectIndex - 120);
-
-      highlight.rects_1c[i].set(x, y, w, h);
-
-      if(horizontalRectIndex < columnCount - 1) {
-        //LAB_800cdb6c
-        horizontalRectIndex++;
-      } else {
-        horizontalRectIndex = 0;
-
-        if(verticalRectIndex < rowCount - 1) {
-          verticalRectIndex++;
-        }
-      }
-    }
-
-    //LAB_800ce094
-    //LAB_800ce0a8
-    return highlight;
-  }
-
-  @Method(0x800ce0bcL)
-  private void initializeWmapTextHighlightTypeAndColour(final WmapMenuTextHighlight40 highlight, final int type, final Vector3i colour0, final Vector3i colour1, final Vector3i colour2, final Vector3i colour3, final Vector3i baseColour) {
-    highlight.type_3f = type;
-    this.shadeWmapTextHighlightSubRectVertices(highlight.subRectVertexColoursArray_00, type, highlight.columnCount_28, highlight.rowCount_2c, colour0, colour1, colour2, colour3, baseColour);
-    highlight.previousBrightness_36 = -1;
-  }
-
-  /** Renders shadow and selector in location menu (and Coolon move confirmation) */
-  @Method(0x800ce4dcL)
-  private void renderLocationMenuTextHighlight(final WmapMenuTextHighlight40 highlight) {
-    this.setRenderColours(highlight);
-
-    final float x = highlight.x_38 + GPU.getOffsetX();
-    final float y = highlight.y_3a + GPU.getOffsetY();
-
-    //LAB_800ce538
-    //LAB_800ce5a0
-    //LAB_800ce5a4
-    for(int i = 0; i < highlight.subRectCount_30; i++) {
-      //LAB_800ce5c8
-      highlight.transforms.identity();
-      highlight.transforms.transfer.set(x, y, highlight.z_3e);
-      RENDERER.queueOrthoOverlayModel(highlight.objs[i], highlight.transforms);
-    }
-  }
-
-  @Method(0x800cea1cL)
-  private void setRenderColours(final WmapMenuTextHighlight40 highlight) {
-    if(highlight.currentBrightness_34 < 0.0f) {
-      highlight.currentBrightness_34 = 0.0f;
-      //LAB_800cea54
-    } else if(highlight.currentBrightness_34 > 0.5f) {
-      highlight.currentBrightness_34 = 0.5f;
-    }
-
-    //LAB_800cea7c
-    if(MathHelper.flEq(highlight.currentBrightness_34, highlight.previousBrightness_36)) {
-      return;
-    }
-
-    highlight.delete();
-
-    //LAB_800ceaa0
-    //LAB_800ceacc
-    //LAB_800ceb38
-    int n = 0;
-    for(int i = 0; i < highlight.subRectCount_30; i++) {
-      final WMapTextHighlightSubRectVertexColours10 colours = highlight.subRectVertexColoursArray_00[n];
-
-      final int r0 = (int)(colours.topLeft_00.x * highlight.currentBrightness_34);
-      final int g0 = (int)(colours.topLeft_00.y * highlight.currentBrightness_34);
-      final int b0 = (int)(colours.topLeft_00.z * highlight.currentBrightness_34);
-      final int r1 = (int)(colours.topRight_04.x * highlight.currentBrightness_34);
-      final int g1 = (int)(colours.topRight_04.y * highlight.currentBrightness_34);
-      final int b1 = (int)(colours.topRight_04.z * highlight.currentBrightness_34);
-      final int r2 = (int)(colours.bottomLeft_08.x * highlight.currentBrightness_34);
-      final int g2 = (int)(colours.bottomLeft_08.y * highlight.currentBrightness_34);
-      final int b2 = (int)(colours.bottomLeft_08.z * highlight.currentBrightness_34);
-      final int r3 = (int)(colours.bottomRight_0c.x * highlight.currentBrightness_34);
-      final int g3 = (int)(colours.bottomRight_0c.y * highlight.currentBrightness_34);
-      final int b3 = (int)(colours.bottomRight_0c.z * highlight.currentBrightness_34);
-
-      if(highlight.type_3f != 0) {
-        n++;
-      }
-
-      final RECT rect = highlight.rects_1c[i];
-
-      final QuadBuilder builder = new QuadBuilder("MenuHighlight")
-        .rgb(0, r0 / 255.0f, g0 / 255.0f, b0 / 255.0f)
-        .rgb(1, r2 / 255.0f, g2 / 255.0f, b2 / 255.0f)
-        .rgb(2, r1 / 255.0f, g1 / 255.0f, b1 / 255.0f)
-        .rgb(3, r3 / 255.0f, g3 / 255.0f, b3 / 255.0f)
-        .pos(rect.x.get(), rect.y.get(), 0.0f)
-        .size(rect.w.get(), rect.h.get());
-
-      if(highlight.transparency_3c) {
-        builder.translucency(highlight.tpagePacket_04[i]);
-      }
-
-      highlight.objs[i] = builder.build();
-    }
-
-    //LAB_800cf1dc
-    //LAB_800cf1e4
-    highlight.previousBrightness_36 = highlight.currentBrightness_34;
-
-    //LAB_800cf1fc
-  }
-
-  /**
-   * Only types 2 and 4 are used by retail
-   * <ol start="0">
-   *   <li>Flat, single sub-rect</li>
-   *   <li>Flat, multiple sub-rects</li>
-   *   <li>Gradient, horizontal, multiple sub-rects</li>
-   *   <li>Gradient, vertical, multiple sub-rects</li>
-   *   <li>Gradient, free-form blob, multiple sub-rects</li>
-   * </ol>
-   */
-  @Method(0x800cf20cL)
-  private void shadeWmapTextHighlightSubRectVertices(final WMapTextHighlightSubRectVertexColours10[] subRectArray, final int type, final int horizontalRectCount, final int verticalRectCount, final Vector3i colour0, final Vector3i colour1, final Vector3i colour2, final Vector3i colour3, final Vector3i baseColour) {
-    int subRectIndex;
-    final ColourBlending20 blending = new ColourBlending20();
-
-    switch(type) {
-      case 0 -> {
-        subRectArray[0].topLeft_00.set(colour0);
-        subRectArray[0].topRight_04.set(colour1);
-        subRectArray[0].bottomLeft_08.set(colour2);
-        subRectArray[0].bottomRight_0c.set(colour3);
-      }
-
-      case 1 -> {
-        blending.colour0Start_00 = colour0;
-        blending.colour0End_04 = colour1;
-        blending.colour1Start_08 = colour2;
-        blending.colour1End_0c = colour3;
-        subRectIndex = 0;
-
-        //LAB_800cf32c
-        for(int i = 0; i < verticalRectCount; i++) {
-          //LAB_800cf34c
-          //LAB_800cf350
-          for(int j = 0; j < horizontalRectCount; j++) {
-            final WMapTextHighlightSubRectVertexColours10 subRect = subRectArray[subRectIndex];
-
-            //LAB_800cf370
-            blending.colourEndRatio_10 = j;
-            blending.colourStartRatio_14 = horizontalRectCount - j;
-            blending.colour1Ratio_18 = i;
-            blending.colour0Ratio_1c = verticalRectCount - i;
-            this.blendColours(blending, subRect.topLeft_00);
-
-            blending.colourEndRatio_10 = j + 1;
-            blending.colourStartRatio_14 = horizontalRectCount - 1 - j;
-            blending.colour1Ratio_18 = i;
-            blending.colour0Ratio_1c = verticalRectCount - i;
-            this.blendColours(blending, subRect.topRight_04);
-
-            blending.colourEndRatio_10 = j;
-            blending.colourStartRatio_14 = horizontalRectCount - j;
-            blending.colour1Ratio_18 = i + 1;
-            blending.colour0Ratio_1c = verticalRectCount - 1 - i;
-            this.blendColours(blending, subRect.bottomLeft_08);
-
-            blending.colourEndRatio_10 = j + 1;
-            blending.colourStartRatio_14 = horizontalRectCount - 1 - j;
-            blending.colour1Ratio_18 = i + 1;
-            blending.colour0Ratio_1c = verticalRectCount - 1 - i;
-            this.blendColours(blending, subRect.bottomRight_0c);
-
-            subRectIndex++;
-          }
-          //LAB_800cf54c
-        }
-      }
-
-      //LAB_800cf564
-      case 2 -> {
-        blending.colour0Start_00 = colour0;
-        blending.colour0End_04 = colour1;
-        blending.colour1Start_08 = baseColour;
-        blending.colour1End_0c = baseColour;
-        subRectIndex = 0;
-
-        //LAB_800cf5a4
-        for(int i = 0; i < verticalRectCount / 2; i++) {
-          //LAB_800cf5d8
-          //LAB_800cf5dc
-          for(int j = 0; j < horizontalRectCount; j++) {
-            final WMapTextHighlightSubRectVertexColours10 subRect = subRectArray[subRectIndex];
-
-            //LAB_800cf5fc
-            blending.colourEndRatio_10 = j;
-            blending.colourStartRatio_14 = horizontalRectCount - j;
-            blending.colour1Ratio_18 = i;
-            blending.colour0Ratio_1c = verticalRectCount / 2 - i;
-            this.blendColours(blending, subRect.topLeft_00);
-
-            blending.colourEndRatio_10 = j + 1;
-            blending.colourStartRatio_14 = horizontalRectCount - 1 - j;
-            blending.colour1Ratio_18 = i;
-            blending.colour0Ratio_1c = verticalRectCount / 2 - i;
-            this.blendColours(blending, subRect.topRight_04);
-
-            blending.colourEndRatio_10 = j;
-            blending.colourStartRatio_14 = horizontalRectCount - j;
-            blending.colour1Ratio_18 = i + 1;
-            blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
-            this.blendColours(blending, subRect.bottomLeft_08);
-
-            blending.colourEndRatio_10 = j + 1;
-            blending.colourStartRatio_14 = horizontalRectCount - 1 - j;
-            blending.colour1Ratio_18 = i + 1;
-            blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
-            this.blendColours(blending, subRect.bottomRight_0c);
-
-            subRectIndex++;
-          }
-          //LAB_800cf820
-        }
-
-        //LAB_800cf838
-        blending.colour0Start_00 = baseColour;
-        blending.colour0End_04 = baseColour;
-        blending.colour1Start_08 = colour2;
-        blending.colour1End_0c = colour3;
-
-        //LAB_800cf870
-        for(int i = 0; i < verticalRectCount / 2; i++) {
-          //LAB_800cf8a4
-          //LAB_800cf8a8
-          for(int j = 0; j < horizontalRectCount; j++) {
-            final WMapTextHighlightSubRectVertexColours10 subRect = subRectArray[subRectIndex];
-
-            //LAB_800cf8c8
-            blending.colourEndRatio_10 = j;
-            blending.colourStartRatio_14 = horizontalRectCount - j;
-            blending.colour1Ratio_18 = i;
-            blending.colour0Ratio_1c = verticalRectCount / 2 - i;
-            this.blendColours(blending, subRect.topLeft_00);
-
-            blending.colourEndRatio_10 = j + 1;
-            blending.colourStartRatio_14 = horizontalRectCount - 1 - j;
-            blending.colour1Ratio_18 = i;
-            blending.colour0Ratio_1c = verticalRectCount / 2 - i;
-            this.blendColours(blending, subRect.topRight_04);
-
-            blending.colourEndRatio_10 = j;
-            blending.colourStartRatio_14 = horizontalRectCount - j;
-            blending.colour1Ratio_18 = i + 1;
-            blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
-            this.blendColours(blending, subRect.bottomLeft_08);
-
-            blending.colourEndRatio_10 = j + 1;
-            blending.colourStartRatio_14 = horizontalRectCount - 1 - j;
-            blending.colour1Ratio_18 = i + 1;
-            blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
-            this.blendColours(blending, subRect.bottomRight_0c);
-
-            subRectIndex++;
-          }
-          //LAB_800cfaec
-        }
-      }
-
-      //LAB_800cfb04
-      case 3 -> {
-        blending.colour0Start_00 = colour0;
-        blending.colour0End_04 = baseColour;
-        blending.colour1Start_08 = colour2;
-        blending.colour1End_0c = baseColour;
-        subRectIndex = 0;
-
-        //LAB_800cfb50
-        for(int i = 0; i < verticalRectCount; i++) {
-          //LAB_800cfb70
-          //LAB_800cfb74
-          for(int j = 0; j < horizontalRectCount / 2; j++) {
-            final WMapTextHighlightSubRectVertexColours10 subRect = subRectArray[subRectIndex];
-
-            //LAB_800cfba8
-            blending.colourEndRatio_10 = j;
-            blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
-            blending.colour1Ratio_18 = i;
-            blending.colour0Ratio_1c = verticalRectCount - i;
-            this.blendColours(blending, subRect.topLeft_00);
-
-            blending.colourEndRatio_10 = j + 1;
-            blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
-            blending.colour1Ratio_18 = i;
-            blending.colour0Ratio_1c = verticalRectCount - i;
-            this.blendColours(blending, subRect.topRight_04);
-
-            blending.colourEndRatio_10 = j;
-            blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
-            blending.colour1Ratio_18 = i + 1;
-            blending.colour0Ratio_1c = verticalRectCount - 1 - i;
-            this.blendColours(blending, subRect.bottomLeft_08);
-
-            blending.colourEndRatio_10 = j + 1;
-            blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
-            blending.colour1Ratio_18 = i + 1;
-            blending.colour0Ratio_1c = verticalRectCount - 1 - i;
-            this.blendColours(blending, subRect.bottomRight_0c);
-
-            subRectIndex++;
-          }
-
-          //LAB_800cfdcc
-          subRectIndex += horizontalRectCount / 2;
-        }
-
-        //LAB_800cfe14
-        blending.colour0Start_00 = baseColour;
-        blending.colour0End_04 = colour1;
-        blending.colour1Start_08 = baseColour;
-        blending.colour1End_0c = colour3;
-        subRectIndex = horizontalRectCount / 2;
-
-        //LAB_800cfe7c
-        for(int i = 0; i < verticalRectCount; i++) {
-          //LAB_800cfe9c
-          //LAB_800cfea0
-          for(int j = 0; j < horizontalRectCount / 2; j++) {
-            final WMapTextHighlightSubRectVertexColours10 subRect = subRectArray[subRectIndex];
-
-            //LAB_800cfed4
-            blending.colourEndRatio_10 = j;
-            blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
-            blending.colour1Ratio_18 = i;
-            blending.colour0Ratio_1c = verticalRectCount - i;
-            this.blendColours(blending, subRect.topLeft_00);
-
-            blending.colourEndRatio_10 = j + 1;
-            blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
-            blending.colour1Ratio_18 = i;
-            blending.colour0Ratio_1c = verticalRectCount - i;
-            this.blendColours(blending, subRect.topRight_04);
-
-            blending.colourEndRatio_10 = j;
-            blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
-            blending.colour1Ratio_18 = i + 1;
-            blending.colour0Ratio_1c = verticalRectCount - 1 - i;
-            this.blendColours(blending, subRect.bottomLeft_08);
-
-            blending.colourEndRatio_10 = j + 1;
-            blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
-            blending.colour1Ratio_18 = i + 1;
-            blending.colour0Ratio_1c = verticalRectCount - 1 - i;
-            this.blendColours(blending, subRect.bottomRight_0c);
-
-            subRectIndex++;
-          }
-
-          //LAB_800d00f8
-          subRectIndex += horizontalRectCount / 2;
-        }
-      }
-
-      //LAB_800d0140
-      case 4 -> {
-        final Vector3i blendedColour0 = new Vector3i();
-        final Vector3i blendedColour1 = new Vector3i();
-        final Vector3i blendedColour2 = new Vector3i();
-        final Vector3i blendedColour3 = new Vector3i();
-        blending.colour0Start_00 = colour0;
-        blending.colour0End_04 = colour1;
-        blending.colour1Start_08 = colour2;
-        blending.colour1End_0c = colour3;
-        blending.colourEndRatio_10 = horizontalRectCount / 2;
-        blending.colourStartRatio_14 = horizontalRectCount / 2;
-        blending.colour1Ratio_18 = 0;
-        blending.colour0Ratio_1c = verticalRectCount;
-        this.blendColours(blending, blendedColour0);
-        blending.colourEndRatio_10 = 0;
-        blending.colourStartRatio_14 = horizontalRectCount;
-        blending.colour1Ratio_18 = verticalRectCount / 2;
-        blending.colour0Ratio_1c = verticalRectCount / 2;
-        this.blendColours(blending, blendedColour1);
-        blending.colourEndRatio_10 = horizontalRectCount;
-        blending.colourStartRatio_14 = 0;
-        blending.colour1Ratio_18 = verticalRectCount / 2;
-        blending.colour0Ratio_1c = verticalRectCount / 2;
-        this.blendColours(blending, blendedColour2);
-        blending.colourEndRatio_10 = horizontalRectCount / 2;
-        blending.colourStartRatio_14 = horizontalRectCount / 2;
-        blending.colour1Ratio_18 = verticalRectCount;
-        blending.colour0Ratio_1c = 0;
-        this.blendColours(blending, blendedColour3);
-
-        blending.colour0Start_00 = colour0;
-        blending.colour0End_04 = blendedColour0;
-        blending.colour1Start_08 = blendedColour1;
-        blending.colour1End_0c = baseColour;
-        subRectIndex = 0;
-
-        //LAB_800d0334
-        for(int i = 0; i < verticalRectCount / 2; i++) {
-          //LAB_800d0368
-          //LAB_800d036c
-          for(int j = 0; j < horizontalRectCount / 2; j++) {
-            final WMapTextHighlightSubRectVertexColours10 subRect = subRectArray[subRectIndex];
-
-            //LAB_800d03a0
-            blending.colourEndRatio_10 = j;
-            blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
-            blending.colour1Ratio_18 = i;
-            blending.colour0Ratio_1c = verticalRectCount / 2 - i;
-            this.blendColours(blending, subRect.topLeft_00);
-
-            blending.colourEndRatio_10 = j + 1;
-            blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
-            blending.colour1Ratio_18 = i;
-            blending.colour0Ratio_1c = verticalRectCount / 2 - i;
-            this.blendColours(blending, subRect.topRight_04);
-
-            blending.colourEndRatio_10 = j;
-            blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
-            blending.colour1Ratio_18 = i + 1;
-            blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
-            this.blendColours(blending, subRect.bottomLeft_08);
-
-            blending.colourEndRatio_10 = j + 1;
-            blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
-            blending.colour1Ratio_18 = i + 1;
-            blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
-            this.blendColours(blending, subRect.bottomRight_0c);
-
-            subRectIndex++;
-          }
-
-          //LAB_800d060c
-          subRectIndex += horizontalRectCount / 2;
-        }
-
-        //LAB_800d0654
-        blending.colour0Start_00 = blendedColour0;
-        blending.colour0End_04 = colour1;
-        blending.colour1Start_08 = baseColour;
-        blending.colour1End_0c = blendedColour2;
-        subRectIndex = horizontalRectCount / 2;
-
-        //LAB_800d06b4
-        for(int i = 0; i < verticalRectCount / 2; i++) {
-          //LAB_800d06e8
-          //LAB_800d06ec
-          for(int j = 0; j < horizontalRectCount / 2; j++) {
-            final WMapTextHighlightSubRectVertexColours10 subRect = subRectArray[subRectIndex];
-
-            //LAB_800d0720
-            blending.colourEndRatio_10 = j;
-            blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
-            blending.colour1Ratio_18 = i;
-            blending.colour0Ratio_1c = verticalRectCount / 2 - i;
-            this.blendColours(blending, subRect.topLeft_00);
-
-            blending.colourEndRatio_10 = j + 1;
-            blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
-            blending.colour1Ratio_18 = i;
-            blending.colour0Ratio_1c = verticalRectCount / 2 - i;
-            this.blendColours(blending, subRect.topRight_04);
-
-            blending.colourEndRatio_10 = j;
-            blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
-            blending.colour1Ratio_18 = i + 1;
-            blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
-            this.blendColours(blending, subRect.bottomLeft_08);
-
-            blending.colourEndRatio_10 = j + 1;
-            blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
-            blending.colour1Ratio_18 = i + 1;
-            blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
-            this.blendColours(blending, subRect.bottomRight_0c);
-
-            subRectIndex++;
-          }
-
-          //LAB_800d098c
-          subRectIndex += horizontalRectCount / 2;
-        }
-
-        //LAB_800d09d4
-        blending.colour0Start_00 = blendedColour1;
-        blending.colour0End_04 = baseColour;
-        blending.colour1Start_08 = colour2;
-        blending.colour1End_0c = blendedColour3;
-        subRectIndex = horizontalRectCount * verticalRectCount / 2;
-
-        //LAB_800d0a40
-        for(int i = 0; i < verticalRectCount / 2; i++) {
-          //LAB_800d0a74
-          //LAB_800d0a78
-          for(int j = 0; j < horizontalRectCount / 2; j++) {
-            final WMapTextHighlightSubRectVertexColours10 subRect = subRectArray[subRectIndex];
-
-            //LAB_800d0aac
-            blending.colourEndRatio_10 = j;
-            blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
-            blending.colour1Ratio_18 = i;
-            blending.colour0Ratio_1c = verticalRectCount / 2 - i;
-            this.blendColours(blending, subRect.topLeft_00);
-
-            blending.colourEndRatio_10 = j + 1;
-            blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
-            blending.colour1Ratio_18 = i;
-            blending.colour0Ratio_1c = verticalRectCount / 2 - i;
-            this.blendColours(blending, subRect.topRight_04);
-
-            blending.colourEndRatio_10 = j;
-            blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
-            blending.colour1Ratio_18 = i + 1;
-            blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
-            this.blendColours(blending, subRect.bottomLeft_08);
-
-            blending.colourEndRatio_10 = j + 1;
-            blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
-            blending.colour1Ratio_18 = i + 1;
-            blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
-            this.blendColours(blending, subRect.bottomRight_0c);
-
-            subRectIndex++;
-          }
-
-          //LAB_800d0d18
-          subRectIndex += horizontalRectCount / 2;
-        }
-
-        //LAB_800d0d60
-        blending.colour0Start_00 = baseColour;
-        blending.colour0End_04 = blendedColour2;
-        blending.colour1Start_08 = blendedColour3;
-        blending.colour1End_0c = colour3;
-        subRectIndex = horizontalRectCount * verticalRectCount / 2 + horizontalRectCount / 2;
-
-        //LAB_800d0df0
-        for(int i = 0; i < verticalRectCount / 2; i++) {
-          //LAB_800d0e24
-          //LAB_800d0e28
-          for(int j = 0; j < horizontalRectCount / 2; j++) {
-            final WMapTextHighlightSubRectVertexColours10 subRect = subRectArray[subRectIndex];
-
-            //LAB_800d0e5c
-            blending.colourEndRatio_10 = j;
-            blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
-            blending.colour1Ratio_18 = i;
-            blending.colour0Ratio_1c = verticalRectCount / 2 - i;
-            this.blendColours(blending, subRect.topLeft_00);
-
-            blending.colourEndRatio_10 = j + 1;
-            blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
-            blending.colour1Ratio_18 = i;
-            blending.colour0Ratio_1c = verticalRectCount / 2 - i;
-            this.blendColours(blending, subRect.topRight_04);
-
-            blending.colourEndRatio_10 = j;
-            blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
-            blending.colour1Ratio_18 = i + 1;
-            blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
-            this.blendColours(blending, subRect.bottomLeft_08);
-
-            blending.colourEndRatio_10 = j + 1;
-            blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
-            blending.colour1Ratio_18 = i + 1;
-            blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
-            this.blendColours(blending, subRect.bottomRight_0c);
-
-            subRectIndex++;
-          }
-
-          //LAB_800d10c8
-          subRectIndex += horizontalRectCount / 2;
-        }
-      }
-      //LAB_800d1110
-    }
-    //LAB_800d1118
-  }
-
-  @Method(0x800d112cL)
-  private void blendColours(final ColourBlending20 blending, final Vector3i out) {
-    final int r0 = (blending.colour0End_04.x * blending.colourEndRatio_10 + blending.colour0Start_00.x * blending.colourStartRatio_14) / (blending.colourEndRatio_10 + blending.colourStartRatio_14);
-    final int g0 = (blending.colour0End_04.y * blending.colourEndRatio_10 + blending.colour0Start_00.y * blending.colourStartRatio_14) / (blending.colourEndRatio_10 + blending.colourStartRatio_14);
-    final int b0 = (blending.colour0End_04.z * blending.colourEndRatio_10 + blending.colour0Start_00.z * blending.colourStartRatio_14) / (blending.colourEndRatio_10 + blending.colourStartRatio_14);
-
-    final int r1 = (blending.colour1End_0c.x * blending.colourEndRatio_10 + blending.colour1Start_08.x * blending.colourStartRatio_14) / (blending.colourEndRatio_10 + blending.colourStartRatio_14);
-    final int g1 = (blending.colour1End_0c.y * blending.colourEndRatio_10 + blending.colour1Start_08.y * blending.colourStartRatio_14) / (blending.colourEndRatio_10 + blending.colourStartRatio_14);
-    final int b1 = (blending.colour1End_0c.z * blending.colourEndRatio_10 + blending.colour1Start_08.z * blending.colourStartRatio_14) / (blending.colourEndRatio_10 + blending.colourStartRatio_14);
-
-    out.x = (blending.colour1Ratio_18 * r1 + blending.colour0Ratio_1c * r0) / (blending.colour1Ratio_18 + blending.colour0Ratio_1c);
-    out.y = (blending.colour1Ratio_18 * g1 + blending.colour0Ratio_1c * g0) / (blending.colour1Ratio_18 + blending.colour0Ratio_1c);
-    out.z = (blending.colour1Ratio_18 * b1 + blending.colour0Ratio_1c * b0) / (blending.colour1Ratio_18 + blending.colour0Ratio_1c);
   }
 
   @Method(0x800d177cL)
@@ -2888,31 +2236,14 @@ public class WMap extends EngineState {
     //LAB_800d8d04
   }
 
+  /** Used to initialize Coolon move prompt selector as well */
   @Method(0x800d8d18L)
-  private void loadMapModelAssetsAndInitializeCoolonMenuSelector() {
+  private void loadMapModelAssets() {
     this.loadMapModelAndTexture(this.mapState_800c6798.continentIndex_00);
 
     this.wmapStruct258_800c66a8.zoomState_1f8 = 0;
     this.wmapStruct258_800c66a8.previousZoomLevel = 2;
     this.wmapStruct258_800c66a8._220 = 0;
-
-    final Vector3i rgb = new Vector3i();
-
-    this.wmapStruct258_800c66a8.coolonTravelMenuSelectorHighlight_1fc = this.initializeWmapMenuTextHighlight(
-      0x80,
-      rgb,
-      rgb,
-      rgb,
-      rgb,
-      this.coolonMenuSelectorBaseColour_800c8778,
-      this.coolonMenuSelectorRect_800c877c,
-      1,
-      2,
-      2,
-      true,
-      Translucency.B_PLUS_F,
-      52
-    );
   }
 
   @Method(0x800d8e4cL)
@@ -3480,9 +2811,8 @@ public class WMap extends EngineState {
         }
 
         //LAB_800db4b4
-        struct258.coolonTravelMenuSelectorHighlight_1fc.y_3a = struct258._223 * 0x10;
+        this.coolonPromptPopup.getSelector().y_3a = struct258._223 * 0x10;
 
-        this.renderLocationMenuTextHighlight(struct258.coolonTravelMenuSelectorHighlight_1fc);
         break;
 
       case 7:
@@ -3772,8 +3102,6 @@ public class WMap extends EngineState {
 
   @Method(0x800dcde8L)
   private void deallocateWorldMap() {
-    this.wmapStruct258_800c66a8.coolonTravelMenuSelectorHighlight_1fc = null;
-
     for(final ModelPart10 part : this.wmapStruct258_800c66a8.tmdRendering_08.dobj2s_00) {
       part.obj.delete();
     }
@@ -4868,43 +4196,6 @@ public class WMap extends EngineState {
     //LAB_800e4f50
   }
 
-  @Method(0x800e4f60L)
-  private void initializeLocationMenuTextHighlightEffects() {
-    final Vector3i rgbShadow = new Vector3i();
-    this.locationMenuNameShadow_800c6898 = this.initializeWmapMenuTextHighlight(
-      0,
-      rgbShadow,
-      rgbShadow,
-      rgbShadow,
-      rgbShadow,
-      this.locationMenuNameShadowBaseColour_800c87e8,
-      this.locationMenuNameShadowRect_800c87ec,
-      8,
-      8,
-      4,
-      true,
-      Translucency.B_MINUS_F,
-      56
-    );
-
-    final Vector3i rgbHighlight = new Vector3i();
-    this.locationMenuSelectorHighlight_800c689c = this.initializeWmapMenuTextHighlight(
-      0x80,
-      rgbHighlight,
-      rgbHighlight,
-      rgbHighlight,
-      rgbHighlight,
-      this.locationMenuSelectorBaseColour_800c87f4,
-      this.locationMenuSelectorRect_800c87f8,
-      1,
-      2,
-      2,
-      true,
-      Translucency.B_PLUS_F,
-      52
-    );
-  }
-
   @Method(0x800e5150L)
   private void handleMapTransitions() {
     if(Unpacker.getLoadingFileCount() != 0 || this.tickMainMenuOpenTransition_800c6690 != 0) {
@@ -4966,7 +4257,7 @@ public class WMap extends EngineState {
         }
 
         //LAB_800e54c4
-        this.locationMenuNameShadow_800c6898.currentBrightness_34 = 0.0f;
+        // TODO add this to prompt as well
         this.menuSelectorOptionIndex_800c86d2 = 0;
         break;
 
@@ -5030,16 +4321,43 @@ public class WMap extends EngineState {
             this.wmapLocationPromptPopup.addAltText("No facilities");
             this.wmapLocationPromptPopup.setTranslation(WmapPromptPopup.ObjFields.ALT_TEXT, 240.0f, 62.0f, textZ_800bdf00.get() * 4.0f);
           }
+
+
+          this.wmapLocationPromptPopup.setHighlight(
+            WmapPromptPopup.HighlightMode.SHADOW,
+            new WmapMenuTextHighlight40(
+              0,
+              this.locationMenuNameShadowBaseColour_800c87e8,
+              this.locationMenuNameShadowRect_800c87ec,
+              8,
+              8,
+              4,
+              true,
+              Translucency.B_MINUS_F,
+              56
+            )
+          );
+          this.wmapLocationPromptPopup.setHighlight(
+            WmapPromptPopup.HighlightMode.SELECTOR,
+            new WmapMenuTextHighlight40(
+              0x80,
+              this.locationMenuSelectorBaseColour_800c87f4,
+              this.locationMenuSelectorRect_800c87f8,
+              1,
+              2,
+              2,
+              true,
+              Translucency.B_PLUS_F,
+              52
+            )
+          );
         }
 
         //LAB_800e5700
         break;
 
       case 3: // Trying to enter an area
-        this.locationMenuNameShadow_800c6898.currentBrightness_34 += 0.125f / (3.0f / vsyncMode_8007a3b8);
-
-        this.renderLocationMenuTextHighlight(this.locationMenuNameShadow_800c6898);
-        this.renderLocationMenuTextHighlight(this.locationMenuSelectorHighlight_800c689c);
+        this.wmapLocationPromptPopup.getShadow().currentBrightness_34 += 0.125f / (3.0f / vsyncMode_8007a3b8);
 
         if(this.mapState_800c6798.submapCut_c8 == 999) { // Going to a different region
           if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
@@ -5066,7 +4384,7 @@ public class WMap extends EngineState {
           }
 
           //LAB_800e59e0
-          this.locationMenuSelectorHighlight_800c689c.y_3a = this.menuSelectorOptionIndex_800c86d2 * 18 + 8;
+          this.wmapLocationPromptPopup.getSelector().y_3a = this.menuSelectorOptionIndex_800c86d2 * 18 + 8;
         } else { // Entering a town, etc.
           //LAB_800e5a18
           // World Map Location Menu (No Entry,Enter)
@@ -5078,7 +4396,7 @@ public class WMap extends EngineState {
           }
 
           //LAB_800e5b38
-          this.locationMenuSelectorHighlight_800c689c.y_3a = this.menuSelectorOptionIndex_800c86d2 * 20 + 14;
+          this.wmapLocationPromptPopup.getSelector().y_3a = this.menuSelectorOptionIndex_800c86d2 * 20 + 14;
         }
 
         //LAB_800e5b68
@@ -5197,7 +4515,6 @@ public class WMap extends EngineState {
               if(soundIndex > 0) {
                 stopSound(soundFiles_800bcf80[12], soundIndex, 1);
               }
-
               //LAB_800e65fc
             }
 
@@ -5212,11 +4529,10 @@ public class WMap extends EngineState {
         break;
 
       case 5:
-        this.locationMenuNameShadow_800c6898.currentBrightness_34 -= 0.25f / (3.0f / vsyncMode_8007a3b8);
+        this.wmapLocationPromptPopup.getShadow().currentBrightness_34 -= 0.25f / (3.0f / vsyncMode_8007a3b8);
+        this.wmapLocationPromptPopup.renderHighlight(WmapPromptPopup.HighlightMode.SHADOW);
 
-        this.renderLocationMenuTextHighlight(this.locationMenuNameShadow_800c6898);
-
-        if(textboxes_800be358[6].state_00 == TextboxState.UNINITIALIZED_0 && textboxes_800be358[7].state_00 == TextboxState.UNINITIALIZED_0 && MathHelper.flEq(this.locationMenuNameShadow_800c6898.currentBrightness_34, 0.0f)) {
+        if(textboxes_800be358[6].state_00 == TextboxState.UNINITIALIZED_0 && textboxes_800be358[7].state_00 == TextboxState.UNINITIALIZED_0 && MathHelper.flEq(this.wmapLocationPromptPopup.getShadow().currentBrightness_34, 0.0f)) {
           this.wmapLocationPromptPopup.deallocate();
           this.mapTransitionState_800c68a4 = 9;
         }
@@ -5506,14 +4822,6 @@ public class WMap extends EngineState {
       renderText(part, x - textWidth / 2, y + i * 12, colour, trim);
       renderText(part, x - textWidth / 2 + 1, y + i * 12 + 1, TextColour.BLACK, trim);
     }
-  }
-
-  @Method(0x800e7888L)
-  private void FUN_800e7888() {
-    this.locationMenuNameShadow_800c6898.delete();
-    this.locationMenuNameShadow_800c6898 = null;
-    this.locationMenuSelectorHighlight_800c689c.delete();
-    this.locationMenuSelectorHighlight_800c689c = null;
   }
 
   @Method(0x800e78c0L)
