@@ -363,6 +363,9 @@ public class WMap extends EngineState {
 
   private WmapPromptPopup wmapLocationPromptPopup;
   private WmapPromptPopup coolonPromptPopup;
+  /** Temporary solution until text refactoring */
+  private final Object[] destLabelMetrics = new Object[3];
+  private boolean shouldSetDestLabelMetrics;
 
   @Method(0x800c8844L)
   private void adjustWmapUvs(final ModelPart10 dobj2, final int colourMapIndex) {
@@ -457,6 +460,9 @@ public class WMap extends EngineState {
       if(this.worldMapState_800c6698 >= 4 && this.playerState_800c669c >= 4) {
         if(this.wmapStruct258_800c66a8._220 == 5) {
           this.coolonPromptPopup.render();
+        }
+        if(this.destLabelMetrics[0] != null) {
+          this.renderCenteredShadowedText((LodString)this.destLabelMetrics[0], (int)this.destLabelMetrics[1], (int)this.destLabelMetrics[2], TextColour.WHITE, 0);
         }
         this.handleMapTransitions();
       }
@@ -1386,6 +1392,8 @@ public class WMap extends EngineState {
       //LAB_800d4170
       if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_LEFT_2)) { // L2
         FUN_8002a3ec(7, 0);
+        this.shouldSetDestLabelMetrics = false;
+        Arrays.fill(this.destLabelMetrics, null);
       }
 
       //LAB_800d4198
@@ -1490,7 +1498,7 @@ public class WMap extends EngineState {
             //LAB_800d4a40
             //LAB_800d4a6c
             textboxes_800be358[7].width_1c = textboxes_800be358[7].chars_18 * 9 / 2;
-            textboxes_800be358[7].height_1e = textboxes_800be358[7].lines_1a * 6;
+            textboxes_800be358[7].height_1e = textboxes_800be358[7].lines_1a * 7;
             textboxes_800be358[7].x_14 = x;
             textboxes_800be358[7].y_16 = y;
           }
@@ -1499,7 +1507,12 @@ public class WMap extends EngineState {
           textZ_800bdf00.set(26);
           textboxes_800be358[7].z_0c = 26;
 
-          this.renderCenteredShadowedText(places_800f0234.get(wmapDestinationMarkers_800f5a6c.get(destinationIndex).placeIndex_28.get()).name_00.deref(), x, y - lines.get() * 7 + 1, TextColour.WHITE, 0);
+          if(this.shouldSetDestLabelMetrics) {
+            this.shouldSetDestLabelMetrics = false;
+            this.destLabelMetrics[0] = places_800f0234.get(wmapDestinationMarkers_800f5a6c.get(destinationIndex).placeIndex_28.get()).name_00.deref();
+            this.destLabelMetrics[1] = x;
+            this.destLabelMetrics[2] = y - lines.get() * 7 + 1;
+          }
         }
       }
     }
@@ -2380,6 +2393,7 @@ public class WMap extends EngineState {
       case 1, 6:
         if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_2)) { // Zoom out
           playSound(0, 4, 0, 0, (short)0, (short)0);
+          this.shouldSetDestLabelMetrics = true;
 
           this.wmapStruct258_800c66a8.svec_1e8.set(this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer);
 
