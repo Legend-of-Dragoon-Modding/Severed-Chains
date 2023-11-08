@@ -4726,7 +4726,7 @@ public class WMap extends EngineState {
         textboxes_800be358[i].chars_18 = Math.max(width.get(), 4);
         textboxes_800be358[i].lines_1a = lines.get();
         textboxes_800be358[i].width_1c = textboxes_800be358[i].chars_18 * 9 / 2;
-        textboxes_800be358[i].height_1e = textboxes_800be358[i].lines_1a * 6;
+        textboxes_800be358[i].height_1e = textboxes_800be358[i].lines_1a * 7;
         textboxes_800be358[i].x_14 = x;
         textboxes_800be358[i].y_16 = y;
 
@@ -4789,8 +4789,8 @@ public class WMap extends EngineState {
     for(int i = 0; i < split.length; i++) {
       final LodString part = new LodString(split[i]);
       final int textWidth = textWidth(part);
-      renderText(part, x - textWidth / 2, y + i * 12, colour, trim);
-      renderText(part, x - textWidth / 2 + 1, y + i * 12 + 1, TextColour.BLACK, trim);
+      renderText(part, x - textWidth / 2.0f + 1, y + i * 12 + 1, TextColour.BLACK, trim);
+      renderText(part, x - textWidth / 2.0f, y + i * 12, colour, trim);
     }
   }
 
