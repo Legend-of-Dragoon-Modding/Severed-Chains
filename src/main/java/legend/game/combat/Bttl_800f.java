@@ -1860,7 +1860,6 @@ public final class Bttl_800f {
     //LAB_800f5c64
   }
 
-  //TODO delete
   private static UiBox battleUiItemSpellList;
   private static UiBox battleUiSpellList;
   private static UiBox battleUiItemDescription;

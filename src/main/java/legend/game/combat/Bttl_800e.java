@@ -4123,7 +4123,6 @@ public final class Bttl_800e {
     //LAB_800efd10
   }
 
-  //TODO delete all of these
   private static UiBox battleUiBackground;
   private static UiBox battleUiName;
   private static final Obj[] names = new Obj[3];
