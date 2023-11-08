@@ -876,8 +876,8 @@ public class WMap extends EngineState {
 
     for(int intersectionSymbolIndex = 0; intersectionSymbolIndex < 3; intersectionSymbolIndex++) {
       for(int intersectionStateIndex = 0; intersectionStateIndex < 3; intersectionStateIndex++) {
-        if(this.mapState_800c6798.pathBigDotObjs[intersectionStateIndex][intersectionStateIndex] != null) {
-          this.mapState_800c6798.pathBigDotObjs[intersectionStateIndex][intersectionStateIndex].delete();
+        if(this.mapState_800c6798.pathBigDotObjs[intersectionSymbolIndex][intersectionStateIndex] != null) {
+          this.mapState_800c6798.pathBigDotObjs[intersectionSymbolIndex][intersectionStateIndex].delete();
         }
       }
     }
@@ -3309,6 +3309,7 @@ public class WMap extends EngineState {
     //LAB_800e05d8
     for(int i = 0; i < 4; i++) {
       //LAB_800e05f4
+      this.wmapStruct258_800c66a8.models_0c[i].deleteModelParts();
       this.wmapStruct258_800c66a8.models_0c[i] = null;
     }
   }

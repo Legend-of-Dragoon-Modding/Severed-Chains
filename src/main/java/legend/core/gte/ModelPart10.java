@@ -17,4 +17,10 @@ public class ModelPart10 {
     this.obj = other.obj;
     return this;
   }
+
+  public void delete() {
+    if(this.obj != null) {
+      this.obj.delete();
+    }
+  }
 }
