@@ -192,8 +192,8 @@ public class WmapPromptPopup {
     if(highlight.currentBrightness_34 < 0.0f) {
       highlight.currentBrightness_34 = 0.0f;
       //LAB_800cea54
-    } else if(highlight.currentBrightness_34 > 0.5f) {
-      highlight.currentBrightness_34 = 0.5f;
+    } else if(highlight.currentBrightness_34 > 1.0f) {
+      highlight.currentBrightness_34 = 1.0f;
     }
 
     //LAB_800cea7c
@@ -210,19 +210,18 @@ public class WmapPromptPopup {
     for(int i = 0; i < highlight.subRectCount_30; i++) {
       final WMapTextHighlightSubRectVertexColours10 colours = highlight.subRectVertexColoursArray_00[n];
 
-      final int r0 = (int)(colours.topLeft_00.x * highlight.currentBrightness_34);
-      final int g0 = (int)(colours.topLeft_00.y * highlight.currentBrightness_34);
-      final int b0 = (int)(colours.topLeft_00.z * highlight.currentBrightness_34);
-      final int r1 = (int)(colours.topRight_04.x * highlight.currentBrightness_34);
-      final int g1 = (int)(colours.topRight_04.y * highlight.currentBrightness_34);
-      final int b1 = (int)(colours.topRight_04.z * highlight.currentBrightness_34);
-      final int r2 = (int)(colours.bottomLeft_08.x * highlight.currentBrightness_34);
-      final int g2 = (int)(colours.bottomLeft_08.y * highlight.currentBrightness_34);
-      final int b2 = (int)(colours.bottomLeft_08.z * highlight.currentBrightness_34);
-      final int r3 = (int)(colours.bottomRight_0c.x * highlight.currentBrightness_34);
-      final int g3 = (int)(colours.bottomRight_0c.y * highlight.currentBrightness_34);
-      final int b3 = (int)(colours.bottomRight_0c.z * highlight.currentBrightness_34);
-
+      final float r0 = colours.topLeft_00.x * highlight.currentBrightness_34;
+      final float g0 = colours.topLeft_00.y * highlight.currentBrightness_34;
+      final float b0 = colours.topLeft_00.z * highlight.currentBrightness_34;
+      final float r1 = colours.topRight_04.x * highlight.currentBrightness_34;
+      final float g1 = colours.topRight_04.y * highlight.currentBrightness_34;
+      final float b1 = colours.topRight_04.z * highlight.currentBrightness_34;
+      final float r2 = colours.bottomLeft_08.x * highlight.currentBrightness_34;
+      final float g2 = colours.bottomLeft_08.y * highlight.currentBrightness_34;
+      final float b2 = colours.bottomLeft_08.z * highlight.currentBrightness_34;
+      final float r3 = colours.bottomRight_0c.x * highlight.currentBrightness_34;
+      final float g3 = colours.bottomRight_0c.y * highlight.currentBrightness_34;
+      final float b3 = colours.bottomRight_0c.z * highlight.currentBrightness_34;
       if(highlight.type_3f != 0) {
         n++;
       }
@@ -230,10 +229,10 @@ public class WmapPromptPopup {
       final RECT rect = highlight.rects_1c[i];
 
       final QuadBuilder builder = new QuadBuilder("MenuHighlight")
-        .rgb(0, r0 / 255.0f, g0 / 255.0f, b0 / 255.0f)
-        .rgb(1, r2 / 255.0f, g2 / 255.0f, b2 / 255.0f)
-        .rgb(2, r1 / 255.0f, g1 / 255.0f, b1 / 255.0f)
-        .rgb(3, r3 / 255.0f, g3 / 255.0f, b3 / 255.0f)
+        .rgb(0, r0, g0, b0)
+        .rgb(1, r2, g2, b2)
+        .rgb(2, r1, g1, b1)
+        .rgb(3, r3, g3, b3)
         .pos(rect.x.get(), rect.y.get(), 0.0f)
         .size(rect.w.get(), rect.h.get());
 

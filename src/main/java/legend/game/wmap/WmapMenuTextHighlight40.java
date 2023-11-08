@@ -4,7 +4,7 @@ import legend.core.gpu.RECT;
 import legend.core.gte.MV;
 import legend.core.opengl.Obj;
 import legend.game.types.Translucency;
-import org.joml.Vector3i;
+import org.joml.Vector3f;
 
 import java.util.Arrays;
 
@@ -23,14 +23,14 @@ public class WmapMenuTextHighlight40 {
   public int x_38;
   public int y_3a;
   public boolean transparency_3c;
-  public int z_3e;
+  public float z_3e;
 
   public Obj[] objs;
   public final MV transforms = new MV();
 
   public int type_3f;
 
-  public WmapMenuTextHighlight40(final int brightness, final Vector3i baseColour, final RECT fullRect, final int columnCount, final int rowCount, final int type, final boolean transparency, final Translucency transparencyMode, final int z) {
+  public WmapMenuTextHighlight40(final float brightness, final Vector3f baseColour, final RECT fullRect, final int columnCount, final int rowCount, final int type, final boolean transparency, final Translucency transparencyMode, final float z) {
     int horizontalRectIndex = 0;
     int verticalRectIndex = 0;
     short x;
@@ -113,7 +113,7 @@ public class WmapMenuTextHighlight40 {
     this.currentBrightness_34 = brightness;
   }
 
-  private void initializeWmapTextHighlightTypeAndColour(final WmapMenuTextHighlight40 highlight, final int type, final Vector3i baseColour) {
+  private void initializeWmapTextHighlightTypeAndColour(final WmapMenuTextHighlight40 highlight, final int type, final Vector3f baseColour) {
     highlight.type_3f = type;
     highlight.shadeWmapTextHighlightSubRectVertices(type, highlight.columnCount_28, highlight.rowCount_2c, baseColour);
     highlight.previousBrightness_36 = -1;
@@ -129,12 +129,12 @@ public class WmapMenuTextHighlight40 {
    *   <li>Gradient, free-form blob, multiple sub-rects</li>
    * </ol>
    */
-  public void shadeWmapTextHighlightSubRectVertices(final int type, final int horizontalRectCount, final int verticalRectCount, final Vector3i baseColour) {
+  public void shadeWmapTextHighlightSubRectVertices(final int type, final int horizontalRectCount, final int verticalRectCount, final Vector3f baseColour) {
     int subRectIndex;
-    final Vector3i colour0 = new Vector3i();
-    final Vector3i colour1 = new Vector3i();
-    final Vector3i colour2 = new Vector3i();
-    final Vector3i colour3 = new Vector3i();
+    final Vector3f colour0 = new Vector3f();
+    final Vector3f colour1 = new Vector3f();
+    final Vector3f colour2 = new Vector3f();
+    final Vector3f colour3 = new Vector3f();
     final ColourBlending20 blending = new ColourBlending20();
 
     switch(type) {
@@ -375,10 +375,10 @@ public class WmapMenuTextHighlight40 {
 
       //LAB_800d0140
       case 4 -> {
-        final Vector3i blendedColour0 = new Vector3i();
-        final Vector3i blendedColour1 = new Vector3i();
-        final Vector3i blendedColour2 = new Vector3i();
-        final Vector3i blendedColour3 = new Vector3i();
+        final Vector3f blendedColour0 = new Vector3f();
+        final Vector3f blendedColour1 = new Vector3f();
+        final Vector3f blendedColour2 = new Vector3f();
+        final Vector3f blendedColour3 = new Vector3f();
         blending.colour0Start_00 = colour0;
         blending.colour0End_04 = colour1;
         blending.colour1Start_08 = colour2;

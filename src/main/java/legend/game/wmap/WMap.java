@@ -721,15 +721,15 @@ public class WMap extends EngineState {
         .setHighlight(
           WmapPromptPopup.HighlightMode.SELECTOR,
           new WmapMenuTextHighlight40(
-            0x80,
-            new Vector3i(255, 0, 0),
+            0.5f,
+            new Vector3f(1.0f, 0.0f, 0.0f),
             new RECT((short)198, (short)54, (short)84, (short)16),
             1,
             2,
             2,
             true,
             Translucency.B_PLUS_F,
-            52
+            52.0f
           )
         );
       this.coolonPromptPopup.setTranslation(WmapPromptPopup.ObjFields.PROMPT, 240.0f, 41.0f, textZ_800bdf00.get() * 4.0f);
@@ -4316,29 +4316,29 @@ public class WMap extends EngineState {
           this.wmapLocationPromptPopup.setHighlight(
             WmapPromptPopup.HighlightMode.SHADOW,
             new WmapMenuTextHighlight40(
-              0,
-              new Vector3i(128, 128, 128),
+              0.0f,
+              new Vector3f(0.5f),
               new RECT((short)176, (short)120, (short)128, (short)40),
               8,
               8,
               4,
               true,
               Translucency.B_MINUS_F,
-              56
+              56.0f
             )
           );
           this.wmapLocationPromptPopup.setHighlight(
             WmapPromptPopup.HighlightMode.SELECTOR,
             new WmapMenuTextHighlight40(
-              0x80,
-              new Vector3i(255, 0, 0),
+              0.5f,
+              new Vector3f(1.0f, 0.0f, 0.0f),
               new RECT((short)176, (short)150, (short)128, (short)24),
               1,
               2,
               2,
               true,
               Translucency.B_PLUS_F,
-              52
+              52.0f
             )
           );
         }
@@ -4347,7 +4347,7 @@ public class WMap extends EngineState {
         break;
 
       case 3: // Trying to enter an area
-        this.wmapLocationPromptPopup.getShadow().currentBrightness_34 += 0.125f / (3.0f / vsyncMode_8007a3b8);
+        this.wmapLocationPromptPopup.getShadow().currentBrightness_34 += 0.25f / (3.0f / vsyncMode_8007a3b8);
 
         if(this.mapState_800c6798.submapCut_c8 == 999) { // Going to a different region
           if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
@@ -4511,7 +4511,7 @@ public class WMap extends EngineState {
         break;
 
       case 5:
-        this.wmapLocationPromptPopup.getShadow().currentBrightness_34 -= 0.25f / (3.0f / vsyncMode_8007a3b8);
+        this.wmapLocationPromptPopup.getShadow().currentBrightness_34 -= 0.5f / (3.0f / vsyncMode_8007a3b8);
         this.wmapLocationPromptPopup.renderHighlight(WmapPromptPopup.HighlightMode.SHADOW);
 
         if(textboxes_800be358[6].state_00 == TextboxState.UNINITIALIZED_0 && textboxes_800be358[7].state_00 == TextboxState.UNINITIALIZED_0 && MathHelper.flEq(this.wmapLocationPromptPopup.getShadow().currentBrightness_34, 0.0f)) {
