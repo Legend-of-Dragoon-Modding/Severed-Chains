@@ -47,8 +47,8 @@ public class WMapStruct258 {
   public int previousZoomLevel;
   /** ubyte */
   public int _1f9;
-
-  public WmapMenuTextHighlight40 coolonTravelMenuSelectorHighlight_1fc;
+  /** Highlight refactored into WmapPromptPopup */
+  // public WmapMenuTextHighlight40 coolonTravelMenuSelectorHighlight_1fc;
   public final Vector3f svec_200 = new Vector3f();
   public final Vector3f svec_208 = new Vector3f();
 
