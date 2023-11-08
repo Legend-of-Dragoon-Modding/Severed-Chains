@@ -55,9 +55,10 @@ import legend.game.combat.ui.BattleDisplayStats144;
 import legend.game.combat.ui.BattleDisplayStatsDigit10;
 import legend.game.combat.ui.BattleHudCharacterDisplay3c;
 import legend.game.combat.ui.BattleMenuStruct58;
-import legend.game.combat.ui.SpellAndItemMenuA4;
 import legend.game.combat.ui.FloatingNumberC4;
 import legend.game.combat.ui.FloatingNumberC4Sub20;
+import legend.game.combat.ui.SpellAndItemMenuA4;
+import legend.game.combat.ui.UiBox;
 import legend.game.inventory.Item;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
@@ -115,13 +116,13 @@ import static legend.game.Scus94491BpeSegment.projectionPlaneDistance_1f8003f8;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment_8002.sortItems;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
+import static legend.game.Scus94491BpeSegment_8002.sortItems;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
@@ -161,7 +162,6 @@ import static legend.game.combat.Bttl_800c.battleHudYOffsets_800fb198;
 import static legend.game.combat.Bttl_800c.battleMenu_800c6c34;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c.characterDragoonIndices_800c6e68;
-import static legend.game.combat.Bttl_800c.spellAndItemMenu_800c6b60;
 import static legend.game.combat.Bttl_800c.combatPortraitBorderVertexCoords_800c6e9c;
 import static legend.game.combat.Bttl_800c.combatUiElementRectDimensions_800c6e48;
 import static legend.game.combat.Bttl_800c.combatantCount_800c66a0;
@@ -198,6 +198,7 @@ import static legend.game.combat.Bttl_800c.playerNames_800fb378;
 import static legend.game.combat.Bttl_800c.spBarBorderMetrics_800fb46c;
 import static legend.game.combat.Bttl_800c.spBarColours_800c6f04;
 import static legend.game.combat.Bttl_800c.spBarFlashingBorderMetrics_800fb47c;
+import static legend.game.combat.Bttl_800c.spellAndItemMenu_800c6b60;
 import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
 import static legend.game.combat.Bttl_800c.stageDarkeningClutWidth_800c695c;
 import static legend.game.combat.Bttl_800c.stageDarkening_800c6958;
@@ -211,17 +212,17 @@ import static legend.game.combat.Bttl_800d.loadModelAnim;
 import static legend.game.combat.Bttl_800d.loadModelTmd;
 import static legend.game.combat.Bttl_800d.optimisePacketsIfNecessary;
 import static legend.game.combat.Bttl_800f.FUN_800f3940;
-import static legend.game.combat.Bttl_800f.clearBattleMenu;
 import static legend.game.combat.Bttl_800f.buildUiTextureElement;
+import static legend.game.combat.Bttl_800f.clearBattleMenu;
+import static legend.game.combat.Bttl_800f.clearSpellAndItemMenu;
+import static legend.game.combat.Bttl_800f.deleteFloatingTextDigits;
 import static legend.game.combat.Bttl_800f.drawFloatingNumbers;
 import static legend.game.combat.Bttl_800f.drawItemMenuElements;
 import static legend.game.combat.Bttl_800f.drawLine;
 import static legend.game.combat.Bttl_800f.getTargetEnemyName;
 import static legend.game.combat.Bttl_800f.handleSpellAndItemMenu;
 import static legend.game.combat.Bttl_800f.prepareItemList;
-import static legend.game.combat.Bttl_800f.renderBattleHudBackground;
 import static legend.game.combat.Bttl_800f.renderNumber;
-import static legend.game.combat.Bttl_800f.clearSpellAndItemMenu;
 import static legend.game.combat.SBtld.monsterNames_80112068;
 import static legend.game.combat.SBtld.monsterStats_8010ba98;
 import static legend.game.combat.SEffe.addGenericAttachment;
@@ -3757,8 +3758,12 @@ public final class Bttl_800e {
 
     usedRepeatItems_800c6c3c.clear();
 
+    spellAndItemMenu_800c6b60.delete();
     spellAndItemMenu_800c6b60 = null;
+    battleMenu_800c6c34.delete();
     battleMenu_800c6c34 = null;
+    deleteUiElements();
+    deleteFloatingTextDigits();
   }
 
   @Method(0x800eee80L)
@@ -4118,6 +4123,9 @@ public final class Bttl_800e {
     //LAB_800efd10
   }
 
+  //TODO delete all of these
+  private static UiBox battleUiBackground;
+  private static UiBox battleUiName;
   private static final Obj[] names = new Obj[3];
   private static final Obj[] portraits = new Obj[3];
   private static final Obj[][] stats = new Obj[3][3];
@@ -4133,6 +4141,16 @@ public final class Bttl_800e {
     //LAB_800eff70
     //LAB_800effa0
     if(countCombatUiFilesLoaded_800c6cf4.get() >= 6) {
+      //LAB_800f0ad4
+      // Background
+      if(activePartyBattleHudCharacterDisplays_800c6c40.get(0).charIndex_00.get() != -1 && (activePartyBattleHudCharacterDisplays_800c6c40.get(0).flags_06.get() & 0x1) != 0) {
+        if(battleUiBackground == null) {
+          battleUiBackground = new UiBox("Battle UI Background", 16, battleHudYOffsets_800fb198.get(battleHudYOffsetIndex_800c6c38.get()).get() - 26, 288, 40);
+        }
+
+        battleUiBackground.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
+      }
+
       //LAB_800f0000
       //LAB_800f0074
       for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
@@ -4366,12 +4384,6 @@ public final class Bttl_800e {
         }
       }
 
-      //LAB_800f0ad4
-      // Background
-      if(activePartyBattleHudCharacterDisplays_800c6c40.get(0).charIndex_00.get() != -1 && (activePartyBattleHudCharacterDisplays_800c6c40.get(0).flags_06.get() & 0x1) != 0) {
-        renderBattleHudBackground(16, battleHudYOffsets_800fb198.get(battleHudYOffsetIndex_800c6c38.get()).get() - 26, 288, 40, Config.changeBattleRgb() ? Config.getBattleRgb() : 0x00299f);
-      }
-
       //LAB_800f0b3c
       drawFloatingNumbers();
 
@@ -4465,10 +4477,45 @@ public final class Bttl_800e {
 
         //LAB_800f0ed8
         //Character name
-        renderBattleHudBackground(44, 23, 232, 14, element.colour);
+        if(battleUiName == null) {
+          battleUiName = new UiBox("Battle UI Name", 44, 23, 232, 14);
+        }
+
+        battleUiName.render(element.colour);
         renderText(str, 160 - textWidth(str) / 2, 24, TextColour.WHITE, 0);
       }
     }
     //LAB_800f0f2c
+  }
+
+  private static void deleteUiElements() {
+    if(battleUiBackground != null) {
+      battleUiBackground.delete();
+      battleUiBackground = null;
+    }
+
+    if(battleUiName != null) {
+      battleUiName.delete();
+      battleUiName = null;
+    }
+
+    for(int i = 0; i < names.length; i++) {
+      if(names[i] != null) {
+        names[i].delete();
+        names[i] = null;
+      }
+
+      if(portraits[i] != null) {
+        portraits[i].delete();
+        portraits[i] = null;
+      }
+
+      for(int j = 0; j < stats[i].length; j++) {
+        if(stats[i][j] != null) {
+          stats[i][j].delete();
+          stats[i][j] = null;
+        }
+      }
+    }
   }
 }

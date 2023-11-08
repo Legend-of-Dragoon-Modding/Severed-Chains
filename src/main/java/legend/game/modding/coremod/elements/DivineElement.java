@@ -2,10 +2,11 @@ package legend.game.modding.coremod.elements;
 
 import legend.game.characters.Element;
 import legend.game.combat.types.AttackType;
+import org.joml.Vector3f;
 
 public class DivineElement extends Element {
   public DivineElement() {
-    super(0x8, 0x808080);
+    super(0x8, new Vector3f(0.5f, 0.5f, 0.5f));
   }
 
   @Override

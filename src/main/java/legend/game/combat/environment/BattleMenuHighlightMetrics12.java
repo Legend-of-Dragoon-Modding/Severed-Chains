@@ -7,7 +7,7 @@ import legend.core.memory.types.ShortRef;
 public class BattleMenuHighlightMetrics12 implements MemoryRef {
   public final Value ref;
 
-  public final ShortRef xBase;
+  public final ShortRef xBase_00;
   public final ShortRef yBase_02;
   public final ShortRef w_04;
   public final ShortRef h_06;
@@ -20,7 +20,7 @@ public class BattleMenuHighlightMetrics12 implements MemoryRef {
   public BattleMenuHighlightMetrics12(final Value ref) {
     this.ref = ref;
 
-    this.xBase = ref.offset(2, 0x00).cast(ShortRef::new);
+    this.xBase_00 = ref.offset(2, 0x00).cast(ShortRef::new);
     this.yBase_02 = ref.offset(2, 0x02).cast(ShortRef::new);
     this.w_04 = ref.offset(2, 0x04).cast(ShortRef::new);
     this.h_06 = ref.offset(2, 0x06).cast(ShortRef::new);

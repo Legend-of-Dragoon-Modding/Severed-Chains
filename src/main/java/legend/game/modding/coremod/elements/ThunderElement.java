@@ -2,10 +2,11 @@ package legend.game.modding.coremod.elements;
 
 import legend.game.characters.Element;
 import legend.game.combat.types.AttackType;
+import org.joml.Vector3f;
 
 public class ThunderElement extends Element {
   public ThunderElement() {
-    super(0x10, 0x8109ec);
+    super(0x10, new Vector3f(0x81 / 255.0f, 0x9 / 255.0f, 0xec / 255.0f));
   }
 
   @Override

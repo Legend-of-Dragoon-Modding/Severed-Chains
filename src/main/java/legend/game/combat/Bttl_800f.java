@@ -17,21 +17,19 @@ import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.BattleEntityStat;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
-import legend.game.combat.environment.BattleHudBorderMetrics14;
 import legend.game.combat.environment.BattleMenuBackgroundDisplayMetrics0c;
 import legend.game.combat.environment.BattleMenuBackgroundUvMetrics04;
 import legend.game.combat.environment.BattleMenuHighlightMetrics12;
-import legend.game.combat.environment.BattleMenuIconMetrics08;
-import legend.game.combat.environment.BattleMenuTextMetrics08;
 import legend.game.combat.types.AttackType;
 import legend.game.combat.ui.BattleDisplayStats144;
 import legend.game.combat.ui.BattleDisplayStatsDigit10;
 import legend.game.combat.ui.BattleHudCharacterDisplay3c;
 import legend.game.combat.ui.BattleMenuStruct58;
 import legend.game.combat.ui.CombatItem02;
-import legend.game.combat.ui.SpellAndItemMenuA4;
 import legend.game.combat.ui.FloatingNumberC4;
 import legend.game.combat.ui.FloatingNumberC4Sub20;
+import legend.game.combat.ui.SpellAndItemMenuA4;
+import legend.game.combat.ui.UiBox;
 import legend.game.inventory.Item;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
@@ -59,6 +57,7 @@ import java.util.List;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.REGISTRIES;
+import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
@@ -88,22 +87,14 @@ import static legend.game.combat.Bttl_800c.activePartyBattleHudCharacterDisplays
 import static legend.game.combat.Bttl_800c.aliveBentCount_800c669c;
 import static legend.game.combat.Bttl_800c.aliveMonsterCount_800c6758;
 import static legend.game.combat.Bttl_800c.allText_800fb3c0;
-import static legend.game.combat.Bttl_800c.battleHudBorderMetrics_800c6f4c;
-import static legend.game.combat.Bttl_800c.battleItemMenuScrollArrowUvMetrics_800c7190;
 import static legend.game.combat.Bttl_800c.battleMenuBackgroundDisplayMetrics_800fb614;
-import static legend.game.combat.Bttl_800c.battleMenuBackgroundMetrics_800fb5dc;
-import static legend.game.combat.Bttl_800c.battleMenuHighlightMetrics_800c71bc;
 import static legend.game.combat.Bttl_800c.battleMenuIconHeights_800fb6bc;
-import static legend.game.combat.Bttl_800c.battleMenuIconMetrics_800fb674;
 import static legend.game.combat.Bttl_800c.battleMenuIconStates_800c71e4;
-import static legend.game.combat.Bttl_800c.battleMenuIconVOffsets_800fb6f4;
-import static legend.game.combat.Bttl_800c.battleMenuTextMetrics_800fb72c;
 import static legend.game.combat.Bttl_800c.battleMenu_800c6c34;
 import static legend.game.combat.Bttl_800c.battleUiElementClutVramXy_800c7114;
 import static legend.game.combat.Bttl_800c.cameraPositionIndicesIndices_800c6c30;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c.combatItems_800c6988;
-import static legend.game.combat.Bttl_800c.spellAndItemMenu_800c6b60;
 import static legend.game.combat.Bttl_800c.countCameraPositionIndicesIndices_800c6ba0;
 import static legend.game.combat.Bttl_800c.currentCameraPositionIndicesIndex_800c66b0;
 import static legend.game.combat.Bttl_800c.currentCameraPositionIndicesIndicesIndex_800c6ba1;
@@ -113,7 +104,6 @@ import static legend.game.combat.Bttl_800c.digitOffsetY_800c7014;
 import static legend.game.combat.Bttl_800c.displayStats_800c6c2c;
 import static legend.game.combat.Bttl_800c.dragoonSpaceElement_800c6b64;
 import static legend.game.combat.Bttl_800c.dragoonSpells_800c6960;
-import static legend.game.combat.Bttl_800c.dragoonSpiritIconClutOffsets_800c71d0;
 import static legend.game.combat.Bttl_800c.floatingNumbers_800c6b5c;
 import static legend.game.combat.Bttl_800c.floatingTextDigitClutOffsets_800c70f4;
 import static legend.game.combat.Bttl_800c.floatingTextType1DigitUs_800c7028;
@@ -126,6 +116,7 @@ import static legend.game.combat.Bttl_800c.melbuMonsterNames_800c6ba8;
 import static legend.game.combat.Bttl_800c.melbuStageToMonsterNameIndices_800c6f30;
 import static legend.game.combat.Bttl_800c.protectedItems_800c72cc;
 import static legend.game.combat.Bttl_800c.repeatItemIds_800c6e34;
+import static legend.game.combat.Bttl_800c.spellAndItemMenu_800c6b60;
 import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
 import static legend.game.combat.Bttl_800c.targetAllItemIds_800c7124;
 import static legend.game.combat.Bttl_800c.targetBents_800c71f0;
@@ -140,109 +131,13 @@ public final class Bttl_800f {
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Bttl_800f.class);
 
-  @Method(0x800f0f5cL)
-  public static void renderBattleHudBorder(final GpuCommandPoly parentCommand) {
-    //LAB_800f0fe4
-    //LAB_800f0fe8
-    final BattleHudBorderMetrics14[] borderMetrics = new BattleHudBorderMetrics14[8];
-    for(int i = 0; i < borderMetrics.length; i++) {
-      borderMetrics[i] = battleHudBorderMetrics_800c6f4c.get(i);
-    }
-
-    //LAB_800f1014
-    final int[] xs = new int[4];
-    final int[] ys = new int[4];
-    int position = parentCommand.getX(0) + 1;
-    xs[0] = position;
-    xs[2] = position;
-    position = parentCommand.getX(1) - 1;
-    xs[1] = position;
-    xs[3] = position;
-    position = parentCommand.getY(0);
-    ys[0] = position;
-    ys[1] = position;
-    position = parentCommand.getY(2);
-    ys[2] = position;
-    ys[3] = position;
-
-    //LAB_800f1060
-    for(int i = 0; i < 8; i++) {
-      final int leftX;
-      final int rightX;
-      final int leftU;
-      final int rightU;
-      final int topY = ys[borderMetrics[i].indexXy0_00.get()] - borderMetrics[i].offsetY_0a.get();
-      final int bottomY = ys[borderMetrics[i].indexXy1_02.get()] + borderMetrics[i].offsetY_0a.get();
-      final int topV = borderMetrics[i].v_06.get();
-      final int bottomV = topV + borderMetrics[i].h_0e.get();
-
-      if(i == 5 || i == 7) {
-        //LAB_800f10ac
-        leftX = xs[borderMetrics[i].indexXy1_02.get()] + borderMetrics[i].offsetX_08.get();
-        rightX = xs[borderMetrics[i].indexXy0_00.get()] - borderMetrics[i].offsetX_08.get();
-        rightU = borderMetrics[i].u0_04.get();
-        leftU = rightU + borderMetrics[i].u1_0c.get() - 1;
-      } else {
-        //LAB_800f1128
-        leftX = xs[borderMetrics[i].indexXy0_00.get()] - borderMetrics[i].offsetX_08.get();
-        rightX = xs[borderMetrics[i].indexXy1_02.get()] + borderMetrics[i].offsetX_08.get();
-        leftU = borderMetrics[i].u0_04.get();
-        rightU = leftU + borderMetrics[i].u1_0c.get();
+  public static void deleteFloatingTextDigits() {
+    for(int i = 0; i < floatingTextType1Digits.length; i++) {
+      if(floatingTextType1Digits[i] != null) {
+        floatingTextType1Digits[i].delete();
+        floatingTextType1Digits[i] = null;
       }
-
-      final GpuCommandPoly cmd = new GpuCommandPoly(4)
-        .bpp(Bpp.BITS_4)
-        .clut(720, 497)
-        .vramPos(704, 256)
-        .monochrome(0x80)
-        .pos(0, leftX, topY)
-        .pos(1, rightX, topY)
-        .pos(2, leftX, bottomY)
-        .pos(3, rightX, bottomY)
-        .uv(0, leftU, topV)
-        .uv(1, rightU, topV)
-        .uv(2, leftU, bottomV)
-        .uv(3, rightU, bottomV);
-
-      GPU.queueCommand(31, cmd);
     }
-  }
-
-  @Method(0x800f1268L)
-  public static void renderBattleHudBackground(final int x, final int y, final int width, final int height, final int colour) {
-    //LAB_800f1340
-    final int left = x - centreScreenX_1f8003dc.get();
-    final int top = y - centreScreenY_1f8003de.get();
-    final int b = colour & 0xff;
-    final int g = colour >> 8 & 0xff;
-    final int r = colour >> 16 & 0xff;
-
-    // Gradient
-    final GpuCommandPoly cmd1 = new GpuCommandPoly(4)
-      .translucent(Translucency.HALF_B_PLUS_HALF_F)
-      .monochrome(0, 0)
-      .rgb(1, r, g, b)
-      .rgb(2, r, g, b)
-      .monochrome(3, 0)
-      .pos(0, left, top)
-      .pos(1, left + width, top)
-      .pos(2, left, top + height)
-      .pos(3, left + width, top + height);
-
-    renderBattleHudBorder(cmd1);
-
-    GPU.queueCommand(31, cmd1);
-
-    // Darkening overlay
-    final GpuCommandPoly cmd2 = new GpuCommandPoly(4)
-      .translucent(Translucency.HALF_B_PLUS_HALF_F)
-      .monochrome(0)
-      .pos(0, left, top)
-      .pos(1, left + width, top)
-      .pos(2, left, top + height)
-      .pos(3, left + width, top + height);
-
-    GPU.queueCommand(31, cmd2);
   }
 
   /**
@@ -1965,6 +1860,11 @@ public final class Bttl_800f {
     //LAB_800f5c64
   }
 
+  //TODO delete
+  private static UiBox battleUiItemSpellList;
+  private static UiBox battleUiSpellList;
+  private static UiBox battleUiItemDescription;
+
   /** Draws most elements associated with item and dragoon magic menus.
    * This includes:
    *   - Item and Dragoon magic backgrounds, scroll arrows, and text
@@ -1973,15 +1873,29 @@ public final class Bttl_800f {
   @Method(0x800f5c94L)
   public static void drawItemMenuElements() {
     final SpellAndItemMenuA4 menu = spellAndItemMenu_800c6b60;
+    menu.init();
+    menu.transforms.identity();
 
     if(menu.menuState_00 != 0 && (menu._02 & 0x1) != 0) {
       if((menu._02 & 0x2) != 0) {
+        //LAB_800f5ee8
+        //Item menu
+        final int a2 = menu._10 + 6;
+        final int a3 = menu._12 + 17;
+
+        if(battleUiItemSpellList == null) {
+          battleUiItemSpellList = new UiBox("Battle UI Item/Spell List", menu.x_04 - a2 / 2, menu.y_06 - a3, a2, a3);
+        }
+
+        battleUiItemSpellList.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
+
         renderList(menu.menuType_0a);
 
         if((menu._02 & 0x8) != 0) {
           //LAB_800f5d78
           //LAB_800f5d90
-          renderBattleMenuElement(menu.textX_18 - centreScreenX_1f8003dc.get() - 16, menu._1a - centreScreenY_1f8003de.get() + menu.listScroll_24 * 14 + 2, menu._84 % 4 * 16 + 192 & 0xf0, menu._84 / 4 * 8 + 32 & 0xf8, 15, 8, 0xd, Translucency.B_PLUS_F);
+          menu.transforms.transfer.set(menu.textX_18 - 16, menu._1a + menu.listScroll_24 * 14 + 2, 124.0f);
+          RENDERER.queueOrthoOverlayModel(menu.unknownObj1[menu._84], menu.transforms);
 
           final int s0;
           if(menu.menuType_0a != 0) {
@@ -2008,20 +1922,16 @@ public final class Bttl_800f {
 
           //LAB_800f5e24
           if(menu.listIndex_1e > 0) {
-            renderBattleMenuBackground(battleItemMenuScrollArrowUvMetrics_800c7190, menu.x_04 + s0 + 56, menu.y_06 + t0 - 100, battleItemMenuScrollArrowUvMetrics_800c7190.w_02.get(), battleItemMenuScrollArrowUvMetrics_800c7190.h_03.get(), 0xd, null, (short)0);
+            menu.transforms.transfer.set(menu.x_04 + s0 + 56, menu.y_06 + t0 - 100, 124.0f);
+            RENDERER.queueOrthoOverlayModel(menu.upArrow, menu.transforms);
           }
 
           //LAB_800f5e7c
           if(menu.listIndex_1e + 6 < menu.count_22 - 1) {
-            renderBattleMenuBackground(battleItemMenuScrollArrowUvMetrics_800c7190, menu.x_04 + s0 + 56, menu.y_06 + s1 - 7, battleItemMenuScrollArrowUvMetrics_800c7190.w_02.get(), battleItemMenuScrollArrowUvMetrics_800c7190.h_03.get(), 0xd, null, (short)1);
+            menu.transforms.transfer.set(menu.x_04 + s0 + 56, menu.y_06 + s1 - 7, 124.0f);
+            RENDERER.queueOrthoOverlayModel(menu.downArrow, menu.transforms);
           }
         }
-
-        //LAB_800f5ee8
-        //Item menu
-        final int a2 = menu._10 + 6;
-        final int a3 = menu._12 + 17;
-        renderBattleHudBackground(menu.x_04 - a2 / 2, menu.y_06 - a3, a2, a3, Config.changeBattleRgb() ? Config.getBattleRgb() : 0x00299f);
       }
 
       //LAB_800f5f50
@@ -2036,8 +1946,15 @@ public final class Bttl_800f {
           if((menu._02 & 0x2) != 0) {
             final BattleEntity27c bent = setActiveCharacterSpell(menu.itemOrSpellId_1c);
             addFloatingNumber(0, 0x1L, 0, bent.spell_94.mp_06, 280, 135, 0, menu.menuType_0a);
-            renderBattleMenuElement(236 - centreScreenX_1f8003dc.get(), 130 - centreScreenY_1f8003de.get(), 16, 128, 24, 16, 0x2c, null);
-            renderBattleHudBackground(236, 130, 64, 14, Config.changeBattleRgb() ? Config.getBattleRgb() : 0x00299f);
+
+            menu.transforms.transfer.set(236 - centreScreenX_1f8003dc.get(), 130 - centreScreenY_1f8003de.get(), 124.0f);
+            RENDERER.queueOrthoOverlayModel(menu.unknownObj2, menu.transforms);
+
+            if(battleUiSpellList == null) {
+              battleUiSpellList = new UiBox("Battle UI Spell List", 236, 130, 64, 14);
+            }
+
+            battleUiSpellList.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
           }
         } else {
           throw new RuntimeException("Undefined s1");
@@ -2046,7 +1963,11 @@ public final class Bttl_800f {
         //LAB_800f604c
         //LAB_800f6050
         //Selected item description
-        renderBattleHudBackground(44, 156, 232, 14, Config.changeBattleRgb() ? Config.getBattleRgb() : 0x00299f);
+        if(battleUiItemDescription == null) {
+          battleUiItemDescription = new UiBox("Battle UI Item Description", 44, 156, 232, 14);
+        }
+
+        battleUiItemDescription.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
         renderText(textType, menu.itemOrSpellId_1c, 160, 163);
       }
     }
@@ -2063,7 +1984,6 @@ public final class Bttl_800f {
     menu.x_06 = 0;
     menu.y_08 = 0;
     menu.xShiftOffset_0a = 0;
-    menu.unused_0c = 0;
     menu.iconCount_0e = 0;
     menu.selectedIcon_22 = 0;
     menu.currentIconStateTick_24 = 0;
@@ -2093,6 +2013,8 @@ public final class Bttl_800f {
   @Method(0x800f6134L)
   public static void initializeCombatMenuIcons(final ScriptState<? extends BattleEntity27c> bentState, final int displayedIconsBitset, final int disabledIconsBitset) {
     final BattleMenuStruct58 menu = battleMenu_800c6c34;
+    menu.initIcons();
+
     menu.state_00 = 1;
     menu.highlightState_02 = 2;
     menu.x_06 = 160;
@@ -2143,7 +2065,6 @@ public final class Bttl_800f {
       //LAB_800f62d0
     }
 
-    menu.unused_0c = 0;
     menu.xShiftOffset_0a = (short)((menu.iconCount_0e * 19 - 3) / 2);
     setCombatMenuIconsDisabled(disabledIconsBitset);
   }
@@ -2434,77 +2355,15 @@ public final class Bttl_800f {
   @Method(0x800f6b04L)
   public static void renderCombatActionMenu() {
     final BattleMenuStruct58 menu = battleMenu_800c6c34;
+
     if(menu.state_00 != 0 && (menu.highlightState_02 & 0x2) != 0) {
-      //LAB_800f6c48
-      int menuElementBaseX;
-      int menuElementBaseY;
-      int iconState;
-      int iconClutOffset;
-      int iconH;
-      int vOffset;
-      BattleMenuIconMetrics08 iconMetrics;
-      BattleMenuTextMetrics08 textMetrics;
-      for(int iconIndex = 0; iconIndex < menu.iconCount_0e; iconIndex++) {
-        final int iconId = (menu.iconFlags_10[iconIndex] & 0xf) - 1;
-        if(menu.selectedIcon_22 == iconIndex) {
-          iconState = battleMenuIconStates_800c71e4.get(menu.iconStateIndex_26).get();
-        } else {
-          //LAB_800f6c88
-          iconState = 0;
-        }
-
-        //LAB_800f6c90
-        menuElementBaseX = menu.x_06 - menu.xShiftOffset_0a + iconIndex * 19 - centreScreenX_1f8003dc.get();
-        menuElementBaseY = menu.y_08 - battleMenuIconHeights_800fb6bc.get(iconId).get(iconState).get() - centreScreenY_1f8003de.get();
-        if((menu.iconFlags_10[iconIndex] & 0x80) != 0) {
-          // "X" icon over attack icon if attack is disabled
-          renderBattleMenuElement(menuElementBaseX, menu.y_08 - (centreScreenY_1f8003de.get() + 16), 96, 112, 16, 16, 0x19, null);
-        }
-
-        //LAB_800f6d70
-        if((menu.iconFlags_10[iconIndex] & 0xf) != 0x2) {
-          //LAB_800f6e24
-          iconClutOffset = battleMenuIconMetrics_800fb674.get(iconId).clutOffset_04.get();
-        } else if(menu.charIndex_04 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0) {
-          iconClutOffset = dragoonSpiritIconClutOffsets_800c71d0.get(9).get();
-          if(iconState != 0) {
-            //LAB_800f6de0
-            renderBattleMenuElement(menuElementBaseX + 4, menuElementBaseY, iconState != 1 ? 88 : 80, 112, 8, 16, 0x98, Translucency.B_PLUS_F);
-          }
-        } else {
-          iconClutOffset = dragoonSpiritIconClutOffsets_800c71d0.get(menu.charIndex_04).get();
-        }
-
-        //LAB_800f6e34
-        //LAB_800f6e38
-        //LAB_800f6e3c
-        iconMetrics = battleMenuIconMetrics_800fb674.get(iconId);
-        vOffset = battleMenuIconVOffsets_800fb6f4.get(iconId).get(iconState).get();
-        iconH = battleMenuIconHeights_800fb6bc.get(iconId).get(iconState).get();
-        // Combat menu icons
-        renderBattleMenuElement(menuElementBaseX, menuElementBaseY, iconMetrics.u_00.get(), iconMetrics.v_02.get() + vOffset & 0xff, 16, iconH, iconClutOffset, Translucency.of(iconMetrics.translucencyMode_06.get()));
-
-        if(menu.selectedIcon_22 == iconIndex && menu.renderSelectedIconText_40) {
-          textMetrics = battleMenuTextMetrics_800fb72c.get(iconId);
-          // Selected combat menu icon text
-          renderBattleMenuElement(menu.x_06 - menu.xShiftOffset_0a + iconIndex * 19 - centreScreenX_1f8003dc.get() - textMetrics.w_04.get() / 2 + 8, menu.y_08 - centreScreenY_1f8003de.get() - 24, textMetrics.u_00.get(), textMetrics.v_02.get(), textMetrics.w_04.get(), 8, textMetrics.clutOffset_06.get(), null);
-        }
-        //LAB_800f6fa4
-      }
-
-      //LAB_800f6fc8
-      // Draw red glow underneath selected menu item
-      renderBattleMenuSelectionHighlight(menu.highlightX0_28, menu.highlightY_2a, battleMenuHighlightMetrics_800c71bc, 31, 0xc, Translucency.B_PLUS_F, menu.colour_2c);
-
-      if((menu.highlightState_02 & 0x1) != 0) {
-        renderBattleMenuSelectionHighlight(menu.highlightX1_3c, menu.highlightY_2a, battleMenuHighlightMetrics_800c71bc, 31, 0xc, Translucency.B_PLUS_F, Math.max(0, 0x80 - menu.colour_2c));
-      }
-
       //LAB_800f704c
       final int variableW = menu.iconCount_0e * 19 + 1;
       int x = menu.x_06 - variableW / 2;
       int y = menu.y_08 - 10;
-      renderBattleMenuBackground(battleMenuBackgroundMetrics_800fb5dc.get(0), x, y, variableW, 2, 0x2b, Translucency.B_PLUS_F, battleMenuBackgroundMetrics_800fb5dc.get(0).uvShiftType_04.get());
+      menu.transforms.scaling(variableW, 1.0f, 1.0f);
+      menu.transforms.transfer.set(x, y, 124.0f);
+      RENDERER.queueOrthoOverlayModel(menu.actionMenuBackground[0], menu.transforms);
 
       final int[][] battleMenuBaseCoords = new int[4][2];
 
@@ -2520,12 +2379,12 @@ public final class Bttl_800f {
       battleMenuBaseCoords[3][1] = y;
 
       //LAB_800f710c
-      int w, h;
-      BattleMenuBackgroundDisplayMetrics0c displayMetrics;
       for(int i = 0; i < 8; i++) {
-        displayMetrics = battleMenuBackgroundDisplayMetrics_800fb614.get(i);
+        final BattleMenuBackgroundDisplayMetrics0c displayMetrics = battleMenuBackgroundDisplayMetrics_800fb614.get(i);
         x = battleMenuBaseCoords[displayMetrics.vertexBaseOffsetIndex_00.get()][0] + displayMetrics.vertexXMod_02.get();
         y = battleMenuBaseCoords[displayMetrics.vertexBaseOffsetIndex_00.get()][1] + displayMetrics.vertexYMod_04.get();
+
+        final int w;
         if(displayMetrics.w_06.get() != 0) {
           w = displayMetrics.w_06.get();
         } else {
@@ -2533,6 +2392,7 @@ public final class Bttl_800f {
         }
 
         //LAB_800f7158
+        final int h;
         if(displayMetrics.h_08.get() == 0) {
           h = 2;
         } else {
@@ -2540,130 +2400,159 @@ public final class Bttl_800f {
         }
 
         //LAB_800f716c
-        renderBattleMenuBackground(battleMenuBackgroundMetrics_800fb5dc.get(i + 1), x, y, w, h, 0x2b, Translucency.B_PLUS_F, battleMenuBackgroundMetrics_800fb5dc.get(i + 1).uvShiftType_04.get());
+        menu.transforms.scaling(w, h, 1.0f);
+        menu.transforms.transfer.set(x, y, 124.0f);
+        RENDERER.queueOrthoOverlayModel(menu.actionMenuBackground[i + 1], menu.transforms);
+      }
+
+      menu.transforms.identity();
+
+      //LAB_800f6fc8
+      // Draw red glow underneath selected menu item
+      menu.transforms.transfer.set(menu.highlightX0_28, menu.highlightY_2a, 124.0f);
+      RENDERER.queueOrthoOverlayModel(menu.highlight, menu.transforms)
+        .monochrome(menu.colour_2c / 255.0f);
+
+      if((menu.highlightState_02 & 0x1) != 0) {
+        menu.transforms.transfer.set(menu.highlightX1_3c, menu.highlightY_2a, 124.0f);
+        RENDERER.queueOrthoOverlayModel(menu.highlight, menu.transforms)
+          .monochrome(Math.max(0, (0x80 - menu.colour_2c) / 255.0f));
+      }
+
+      //LAB_800f6c48
+      for(int iconIndex = 0; iconIndex < menu.iconCount_0e; iconIndex++) {
+        final int iconId = (menu.iconFlags_10[iconIndex] & 0xf) - 1;
+        final int iconState;
+        if(menu.selectedIcon_22 == iconIndex) {
+          iconState = battleMenuIconStates_800c71e4.get(menu.iconStateIndex_26).get();
+        } else {
+          //LAB_800f6c88
+          iconState = 0;
+        }
+
+        //LAB_800f6c90
+        final int menuElementBaseX = menu.x_06 - menu.xShiftOffset_0a + iconIndex * 19;
+        final int menuElementBaseY = menu.y_08 - battleMenuIconHeights_800fb6bc.get(iconId).get(iconState).get();
+        if((menu.iconFlags_10[iconIndex] & 0x80) != 0) {
+          menu.transforms.transfer.set(menuElementBaseX, menu.y_08 - (centreScreenY_1f8003de.get() + 16), 124.0f);
+          RENDERER.queueOrthoOverlayModel(menu.actionDisabledObj, menu.transforms);
+        }
+
+        // Combat menu icons
+        //LAB_800f6d70
+        menu.transforms.transfer.set(menuElementBaseX, menuElementBaseY, 124.0f);
+
+        if((menu.iconFlags_10[iconIndex] & 0xf) != 0x2) {
+          RENDERER.queueOrthoOverlayModel(menu.actionIconObj[iconId][iconState], menu.transforms);
+        } else if(menu.charIndex_04 != 0 || (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 == 0) {
+          RENDERER.queueOrthoOverlayModel(menu.dragoonIconObj[menu.charIndex_04][iconState], menu.transforms);
+        } else {
+          RENDERER.queueOrthoOverlayModel(menu.dragoonIconObj[9][iconState], menu.transforms);
+
+          if(iconState != 0) {
+            // Divine dragoon spirit overlay
+            //LAB_800f6de0
+            RENDERER.queueOrthoOverlayModel(menu.divineSpiritOverlay[iconState - 1], menu.transforms);
+          }
+        }
+
+        if(menu.selectedIcon_22 == iconIndex && menu.renderSelectedIconText_40) {
+          // Selected combat menu icon text
+          menu.transforms.transfer.set(menuElementBaseX, menu.y_08, 124.0f);
+          RENDERER.queueOrthoOverlayModel(menu.actionIconTextObj[iconId], menu.transforms);
+        }
+        //LAB_800f6fa4
       }
     }
     //LAB_800f71e0
   }
 
   @Method(0x800f7210L)
-  public static void renderBattleMenuSelectionHighlight(final int x, final int y, final BattleMenuHighlightMetrics12 highlightMetrics, final int z, final int clutOffset, @Nullable final Translucency transparencyMode, final int colour) {
+  public static Obj buildBattleMenuSelectionHighlight(final String name, final BattleMenuHighlightMetrics12 highlightMetrics, final int clutOffset, @Nullable final Translucency transparencyMode, final float colour) {
     //LAB_800f7294
-    final int left = highlightMetrics.xBase.get() + x - centreScreenX_1f8003dc.get();
-    final int right = left + highlightMetrics.w_04.get();
-    final int top = highlightMetrics.yBase_02.get() + y - centreScreenY_1f8003de.get();
-    final int bottom = top + highlightMetrics.h_06.get();
-
-    final GpuCommandPoly cmd = new GpuCommandPoly(4)
+    final QuadBuilder builder = new QuadBuilder(name)
       .monochrome(colour)
-      .pos(0, left, top)
-      .pos(1, right, top)
-      .pos(2, left, bottom)
-      .pos(3, right, bottom);
-
-    final int leftU = highlightMetrics.u_08.get();
-    final int rightU = leftU + highlightMetrics.uvW_0c.get();
-    final int topV = highlightMetrics.v_0a.get();
-    final int bottomV = topV + highlightMetrics.uvH_0e.get();
+      .pos(highlightMetrics.xBase_00.get(), highlightMetrics.yBase_02.get(), 0.0f)
+      .posSize(highlightMetrics.w_04.get(), highlightMetrics.h_06.get());
 
     final int uvShiftType = highlightMetrics.uvShiftType_10.get();
     if(uvShiftType == 0) {
       //LAB_800f7360
-      cmd
-        .uv(0, leftU, topV)
-        .uv(1, rightU, topV)
-        .uv(2, leftU, bottomV)
-        .uv(3, rightU, bottomV);
+      builder
+        .uv(highlightMetrics.u_08.get(), highlightMetrics.v_0a.get())
+        .uvSize(highlightMetrics.uvW_0c.get(), highlightMetrics.uvH_0e.get());
     } else if(uvShiftType == 1) {
       //LAB_800f738c
-      cmd
-        .uv(0, leftU, topV - 1)
-        .uv(1, rightU, topV - 1)
-        .uv(2, leftU, bottomV - 1)
-        .uv(3, rightU, bottomV - 1);
+      builder
+        .uv(highlightMetrics.u_08.get(), highlightMetrics.v_0a.get() - 1)
+        .uvSize(highlightMetrics.uvW_0c.get(), highlightMetrics.uvH_0e.get());
       //LAB_800f7344
     } else if(uvShiftType == 2) {
       //LAB_800f73b8
-      cmd
-        .uv(0, leftU - 1, topV)
-        .uv(1, rightU - 1, topV)
-        .uv(2, leftU - 1, bottomV)
-        .uv(3, rightU - 1, bottomV);
+      builder
+        .uv(highlightMetrics.u_08.get() - 1, highlightMetrics.v_0a.get())
+        .uvSize(highlightMetrics.uvW_0c.get(), highlightMetrics.uvH_0e.get());
     } else if(uvShiftType == 3) {
       //LAB_800f740c
-      cmd
-        .uv(0, leftU - 1, topV - 1)
-        .uv(1, rightU - 1, topV - 1)
-        .uv(2, leftU - 1, bottomV - 1)
-        .uv(3, rightU - 1, bottomV - 1);
+      builder
+        .uv(highlightMetrics.u_08.get() - 1, highlightMetrics.v_0a.get() - 1)
+        .uvSize(highlightMetrics.uvW_0c.get(), highlightMetrics.uvH_0e.get());
     }
 
     //LAB_800f745c
     //LAB_800f7460
     //LAB_800f746c
-    final int clutX = 704 + clutOffset / 16 * 16 & 0x3f0;
+    final int clutX = 704 + clutOffset & 0x3f0;
     final int clutY = 496 + clutOffset % 16;
 
-    cmd
+    builder
       .bpp(Bpp.BITS_4)
       .clut(clutX, clutY)
       .vramPos(704, 256);
 
     if(transparencyMode != null) {
-      cmd.translucent(transparencyMode);
+      builder.translucency(transparencyMode);
     }
 
-    GPU.queueCommand(z, cmd);
+    return builder.build();
   }
 
   /** Background of battle menu icons */
   @Method(0x800f74f4L)
-  public static void renderBattleMenuBackground(final BattleMenuBackgroundUvMetrics04 menuBackgroundMetrics, final int x, final int y, final int w, final int h, final int baseClutOffset, @Nullable final Translucency transMode, final short uvShiftType) {
-    final GpuCommandPoly cmd = new GpuCommandPoly(4)
-      .monochrome(0x80);
+  public static Obj buildBattleMenuBackground(final String name, final BattleMenuBackgroundUvMetrics04 menuBackgroundMetrics, final int x, final int y, final int w, final int h, final int baseClutOffset, @Nullable final Translucency transMode, final short uvShiftType) {
+    final QuadBuilder builder = new QuadBuilder(name)
+      .monochrome(0.5f);
 
-    setGpuPacketParams(cmd, x - centreScreenX_1f8003dc.get(), y - centreScreenY_1f8003de.get(), 0, 0, w, h, false);
-
-    final int leftU = menuBackgroundMetrics.u_00.get();
-    final int rightU = leftU + menuBackgroundMetrics.w_02.get();
-    final int topV = menuBackgroundMetrics.v_01.get();
-    final int bottomV = topV + menuBackgroundMetrics.h_03.get();
+    setGpuPacketParams(builder, x, y, 0, 0, w, h, false);
 
     // Modified 1 and 3 from retail to properly align bottom row of pixels
     if(uvShiftType == 0) {
       //LAB_800f7628
-      cmd
-        .uv(0, leftU, topV)
-        .uv(1, rightU, topV)
-        .uv(2, leftU, bottomV)
-        .uv(3, rightU, bottomV);
+      builder
+        .uv(menuBackgroundMetrics.u_00.get(), menuBackgroundMetrics.v_01.get())
+        .uvSize(menuBackgroundMetrics.w_02.get(), menuBackgroundMetrics.h_03.get());
     } else if(uvShiftType == 1) {
       //LAB_800f7654
-      cmd
-        .uv(0, leftU, bottomV)
-        .uv(1, rightU, bottomV)
-        .uv(2, leftU, topV)
-        .uv(3, rightU, topV);
+      builder
+        .uv(menuBackgroundMetrics.u_00.get(), menuBackgroundMetrics.v_01.get() + menuBackgroundMetrics.h_03.get())
+        .uvSize(menuBackgroundMetrics.w_02.get(), -menuBackgroundMetrics.h_03.get());
       //LAB_800f7610
     } else if(uvShiftType == 2) {
       //LAB_800f7680
-      cmd
-        .uv(0, rightU - 1, topV)
-        .uv(1, leftU - 1, topV)
-        .uv(2, rightU - 1, bottomV)
-        .uv(3, leftU - 1, bottomV);
+      builder
+        .uv(menuBackgroundMetrics.u_00.get() + menuBackgroundMetrics.w_02.get() - 1, menuBackgroundMetrics.v_01.get())
+        .uvSize(-menuBackgroundMetrics.w_02.get(), menuBackgroundMetrics.h_03.get());
     } else if(uvShiftType == 3) {
       //LAB_800f76d4
-      cmd
-        .uv(0, rightU - 1, bottomV)
-        .uv(1, leftU - 1, bottomV)
-        .uv(2, rightU - 1, topV)
-        .uv(3, leftU - 1, topV);
+      builder
+        .uv(menuBackgroundMetrics.u_00.get() + menuBackgroundMetrics.w_02.get() - 1, menuBackgroundMetrics.v_01.get() + menuBackgroundMetrics.h_03.get())
+        .uvSize(-menuBackgroundMetrics.w_02.get(), -menuBackgroundMetrics.h_03.get());
     }
 
     //LAB_800f7724
     //LAB_800f772c
-    setGpuPacketClutAndTpageAndQueue(cmd, baseClutOffset, transMode);
+    setGpuPacketClutAndTpageAndQueue(builder, baseClutOffset, transMode);
+    return builder.build();
   }
 
   /**
@@ -3102,51 +2991,23 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f8cd8L)
-  public static void renderBattleMenuElement(final int x, final int y, final int u, final int v, final int w, final int h, final int clut, @Nullable final Translucency transMode) {
-    final GpuCommandPoly cmd = new GpuCommandPoly(4)
-      .monochrome(0x80);
+  public static Obj buildBattleMenuElement(final String name, final int x, final int y, final int u, final int v, final int w, final int h, final int clut, @Nullable final Translucency transMode) {
+    final QuadBuilder builder = new QuadBuilder(name)
+      .monochrome(0.5f);
 
-    setGpuPacketParams(cmd, x, y, u, v, w, h, true);
-    setGpuPacketClutAndTpageAndQueue(cmd, clut, transMode);
+    setGpuPacketParams(builder, x, y, u, v, w, h, true);
+    setGpuPacketClutAndTpageAndQueue(builder, clut, transMode);
+
+    return builder.build();
   }
 
   @Method(0x800f8dfcL)
-  public static void drawUiTextureElement(final int x, final int y, final int u, final int v, final int w, final int h, final int clut, final int brightnessIndex, final int portraitDimmingModifier) {
-    final GpuCommandPoly cmd = new GpuCommandPoly(4);
-
-    if(portraitDimmingModifier < 6) {
-      cmd.monochrome((byte)(uiTextureElementBrightness_800c71ec.get(brightnessIndex).get() + 0x80) / 6 * portraitDimmingModifier - 0x80 & 0xff);
-    } else {
-      //LAB_800f8ef4
-      cmd.monochrome(uiTextureElementBrightness_800c71ec.get(brightnessIndex).get() & 0xff);
-    }
-
-    setGpuPacketParams(cmd, x, y, u, v, w, h, true);
-    setGpuPacketClutAndTpageAndQueue(cmd, clut, null);
-  }
-
-  public static Obj buildUiTextureElement(final String name, final int u, final int v, final int w, final int h, int clutOffset, final int brightnessIndex, final int portraitDimmingModifier) {
-    final int clutIndex;
-    if(clutOffset >= 0x80) {
-      clutIndex = 1;
-      clutOffset -= 0x80;
-    } else {
-      //LAB_800f9080
-      clutIndex = 0;
-    }
-
-    //LAB_800f9088
-    //LAB_800f9098
-    //LAB_800f90a8
-    final int clutX = battleUiElementClutVramXy_800c7114[clutIndex].x + clutOffset / 16 * 16 & 0x3f0;
-    final int clutY = battleUiElementClutVramXy_800c7114[clutIndex].y + clutOffset % 16;
-
+  public static Obj buildUiTextureElement(final String name, final int u, final int v, final int w, final int h, final int clut, final int brightnessIndex, final int portraitDimmingModifier) {
     final QuadBuilder builder = new QuadBuilder(name)
-      .bpp(Bpp.BITS_4)
-      .clut(clutX, clutY)
-      .vramPos(704, 256)
       .size(w, h)
       .uv(u, v);
+
+    setGpuPacketClutAndTpageAndQueue(builder, clut, null);
 
     if(portraitDimmingModifier < 6) {
       builder.monochrome(((byte)(uiTextureElementBrightness_800c71ec.get(brightnessIndex).get() + 0x80) / 6 * portraitDimmingModifier - 0x80 & 0xff) / 255.0f);
@@ -3159,26 +3020,21 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f8facL)
-  public static void setGpuPacketParams(final GpuCommandPoly cmd, final int x, final int y, final int u, final int v, final int w, final int h, final boolean textured) {
+  public static void setGpuPacketParams(final QuadBuilder cmd, final int x, final int y, final int u, final int v, final int w, final int h, final boolean textured) {
     cmd
-      .pos(0, x, y)
-      .pos(1, x + w, y)
-      .pos(2, x, y + h)
-      .pos(3, x + w, y + h);
+      .pos(x, y, 0.0f)
+      .size(w, h);
 
     if(textured) {
       cmd
-        .uv(0, u, v)
-        .uv(1, u + w, v)
-        .uv(2, u, v + h)
-        .uv(3, u + w, v + h);
+        .uv(u, v);
     }
 
     //LAB_800f901c
   }
 
   @Method(0x800f9024L)
-  public static void setGpuPacketClutAndTpageAndQueue(final GpuCommandPoly cmd, int clut, @Nullable final Translucency transparencyMode) {
+  public static void setGpuPacketClutAndTpageAndQueue(final QuadBuilder cmd, int clut, @Nullable final Translucency transparencyMode) {
     final int clutIndex;
     if(clut >= 0x80) {
       clutIndex = 1;
@@ -3200,10 +3056,8 @@ public final class Bttl_800f {
       .vramPos(704, 256);
 
     if(transparencyMode != null) {
-      cmd.translucent(transparencyMode);
+      cmd.translucency(transparencyMode);
     }
-
-    GPU.queueCommand(31, cmd);
   }
 
   @Method(0x800f9380L)
@@ -3562,6 +3416,8 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
+  private static UiBox scriptUi;
+
   @ScriptDescription("Renders the battle HUD background")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The X position (centre)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y position (centre)")
@@ -3573,15 +3429,23 @@ public final class Bttl_800f {
     final int r = textboxColours_800c6fec.get(colourIndex).get(0).get();
     final int g = textboxColours_800c6fec.get(colourIndex).get(1).get();
     final int b = textboxColours_800c6fec.get(colourIndex).get(2).get();
-    final int colour = r << 16 | g << 8 | b;
 
-    renderBattleHudBackground(
+    // This is kinda dumb since we'll have to upload a new box each frame, but there isn't a great
+    // way to deal with it. Maybe check to see if any of the params have changed before deleting?
+
+    if(scriptUi != null) {
+      scriptUi.delete();
+    }
+
+    scriptUi = new UiBox(
+      "Scripted Battle UI",
       (short)script.params_20[0].get() - script.params_20[2].get() / 2,
       (short)script.params_20[1].get() - script.params_20[3].get() / 2,
       (short)script.params_20[2].get(),
-      (short)script.params_20[3].get(),
-      colour
+      (short)script.params_20[3].get()
     );
+
+    scriptUi.render(r / 255.0f, g / 255.0f, b / 255.0f);
 
     return FlowControl.CONTINUE;
   }

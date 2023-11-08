@@ -2,12 +2,13 @@ package legend.game.modding.coremod.elements;
 
 import legend.game.characters.Element;
 import legend.game.combat.types.AttackType;
+import org.joml.Vector3f;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
 public class SimpleElement extends Element {
   private final RegistryDelegate<Element> opposed;
 
-  public SimpleElement(final int flag, final int colour, final RegistryDelegate<Element> opposed) {
+  public SimpleElement(final int flag, final Vector3f colour, final RegistryDelegate<Element> opposed) {
     super(flag, colour);
     this.opposed = opposed;
   }

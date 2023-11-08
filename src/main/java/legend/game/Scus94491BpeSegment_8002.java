@@ -3582,7 +3582,7 @@ public final class Scus94491BpeSegment_8002 {
     trim = MathHelper.clamp(trim, -12, 12);
 
     if(trim != 0) {
-      throw new RuntimeException("Trim not supported yet");
+      LOGGER.warn("Trim not supported yet");
     }
 
     int lineIndex = 0;
