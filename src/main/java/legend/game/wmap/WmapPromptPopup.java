@@ -101,6 +101,10 @@ public class WmapPromptPopup {
     }
   }
 
+  public float getOptionSpacing() {
+    return this.optionSpacing;
+  }
+
   public void setOptionSpacing(final float spacing) {
     this.optionSpacing = spacing;
   }

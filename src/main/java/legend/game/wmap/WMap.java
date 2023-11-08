@@ -4349,37 +4349,25 @@ public class WMap extends EngineState {
       case 3: // Trying to enter an area
         this.wmapLocationPromptPopup.getShadow().currentBrightness_34 += 0.25f / (3.0f / vsyncMode_8007a3b8);
 
-        if(this.mapState_800c6798.submapCut_c8 == 999) { // Going to a different region
-          if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
-            this.wmapLocationPromptPopup.decrMenuSelectorOptionIndex();
+        if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
+          this.wmapLocationPromptPopup.decrMenuSelectorOptionIndex();
 
-            //LAB_800e5950
-            playSound(0, 1, 0, 0, (short)0, (short)0);
-          }
-
-          //LAB_800e5970
-          if(Input.pressedThisFrame(InputAction.DPAD_DOWN) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
-            this.wmapLocationPromptPopup.incrMenuSelectorOptionIndex();
-
-            //LAB_800e59c0
-            playSound(0, 1, 0, 0, (short)0, (short)0);
-          }
-
-          //LAB_800e59e0
-          this.wmapLocationPromptPopup.getSelector().y_3a = this.wmapLocationPromptPopup.getMenuSelectorOptionIndex() * 18 + 8;
-        } else { // Entering a town, etc.
-          //LAB_800e5a18
-          // World Map Location Menu (No Entry,Enter)
-          if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.DPAD_DOWN) ||
-            Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
-            this.wmapLocationPromptPopup.setMenuSelectorOptionIndex(this.wmapLocationPromptPopup.getMenuSelectorOptionIndex() ^ 0x1);
-
-            playSound(0, 1, 0, 0, (short)0, (short)0);
-          }
-
-          //LAB_800e5b38
-          this.wmapLocationPromptPopup.getSelector().y_3a = this.wmapLocationPromptPopup.getMenuSelectorOptionIndex() * 20 + 14;
+          //LAB_800e5950
+          playSound(0, 1, 0, 0, (short)0, (short)0);
         }
+
+        //LAB_800e5970
+        if(Input.pressedThisFrame(InputAction.DPAD_DOWN) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
+          this.wmapLocationPromptPopup.incrMenuSelectorOptionIndex();
+
+          //LAB_800e59c0
+          playSound(0, 1, 0, 0, (short)0, (short)0);
+        }
+
+        //LAB_800e5b38
+        final float optionOffset = this.mapState_800c6798.submapCut_c8 == 999 ? 8.0f : 14.0f;
+        this.wmapLocationPromptPopup.getSelector().y_3a = this.wmapLocationPromptPopup.getMenuSelectorOptionIndex() * this.wmapLocationPromptPopup.getOptionSpacing() + optionOffset;
+
 
         //LAB_800e5b68
         float newBrightness;

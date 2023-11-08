@@ -20,8 +20,8 @@ public class WmapMenuTextHighlight40 {
   public int subRectCount_30;
   public float currentBrightness_34;
   public float previousBrightness_36;
-  public int x_38;
-  public int y_3a;
+  public float x_38;
+  public float y_3a;
   public boolean transparency_3c;
   public float z_3e;
 
@@ -164,25 +164,25 @@ public class WmapMenuTextHighlight40 {
             blending.colourStartRatio_14 = horizontalRectCount - j;
             blending.colour1Ratio_18 = i;
             blending.colour0Ratio_1c = verticalRectCount - i;
-            subRect.topLeft_00.set(blending.blendColours());
+            blending.blendColours(subRect.topLeft_00);
 
             blending.colourEndRatio_10 = j + 1;
             blending.colourStartRatio_14 = horizontalRectCount - 1 - j;
             blending.colour1Ratio_18 = i;
             blending.colour0Ratio_1c = verticalRectCount - i;
-            subRect.topRight_04.set(blending.blendColours());
+            blending.blendColours(subRect.topRight_04);
 
             blending.colourEndRatio_10 = j;
             blending.colourStartRatio_14 = horizontalRectCount - j;
             blending.colour1Ratio_18 = i + 1;
             blending.colour0Ratio_1c = verticalRectCount - 1 - i;
-            subRect.bottomLeft_08.set(blending.blendColours());
+            blending.blendColours(subRect.bottomLeft_08);
 
             blending.colourEndRatio_10 = j + 1;
             blending.colourStartRatio_14 = horizontalRectCount - 1 - j;
             blending.colour1Ratio_18 = i + 1;
             blending.colour0Ratio_1c = verticalRectCount - 1 - i;
-            subRect.bottomRight_0c.set(blending.blendColours());
+            blending.blendColours(subRect.bottomRight_0c);
 
             subRectIndex++;
           }
@@ -210,25 +210,25 @@ public class WmapMenuTextHighlight40 {
             blending.colourStartRatio_14 = horizontalRectCount - j;
             blending.colour1Ratio_18 = i;
             blending.colour0Ratio_1c = verticalRectCount / 2 - i;
-            subRect.topLeft_00.set(blending.blendColours());
+            blending.blendColours(subRect.topLeft_00);
 
             blending.colourEndRatio_10 = j + 1;
             blending.colourStartRatio_14 = horizontalRectCount - 1 - j;
             blending.colour1Ratio_18 = i;
             blending.colour0Ratio_1c = verticalRectCount / 2 - i;
-            subRect.topRight_04.set(blending.blendColours());
+            blending.blendColours(subRect.topRight_04);
 
             blending.colourEndRatio_10 = j;
             blending.colourStartRatio_14 = horizontalRectCount - j;
             blending.colour1Ratio_18 = i + 1;
             blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
-            subRect.bottomLeft_08.set(blending.blendColours());
+            blending.blendColours(subRect.bottomLeft_08);
 
             blending.colourEndRatio_10 = j + 1;
             blending.colourStartRatio_14 = horizontalRectCount - 1 - j;
             blending.colour1Ratio_18 = i + 1;
             blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
-            subRect.bottomRight_0c.set(blending.blendColours());
+            blending.blendColours(subRect.bottomRight_0c);
 
             subRectIndex++;
           }
@@ -253,25 +253,25 @@ public class WmapMenuTextHighlight40 {
             blending.colourStartRatio_14 = horizontalRectCount - j;
             blending.colour1Ratio_18 = i;
             blending.colour0Ratio_1c = verticalRectCount / 2 - i;
-            subRect.topLeft_00.set(blending.blendColours());
+            blending.blendColours(subRect.topLeft_00);
 
             blending.colourEndRatio_10 = j + 1;
             blending.colourStartRatio_14 = horizontalRectCount - 1 - j;
             blending.colour1Ratio_18 = i;
             blending.colour0Ratio_1c = verticalRectCount / 2 - i;
-            subRect.topRight_04.set(blending.blendColours());
+            blending.blendColours(subRect.topRight_04);
 
             blending.colourEndRatio_10 = j;
             blending.colourStartRatio_14 = horizontalRectCount - j;
             blending.colour1Ratio_18 = i + 1;
             blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
-            subRect.bottomLeft_08.set(blending.blendColours());
+            blending.blendColours(subRect.bottomLeft_08);
 
             blending.colourEndRatio_10 = j + 1;
             blending.colourStartRatio_14 = horizontalRectCount - 1 - j;
             blending.colour1Ratio_18 = i + 1;
             blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
-            subRect.bottomRight_0c.set(blending.blendColours());
+            blending.blendColours(subRect.bottomRight_0c);
 
             subRectIndex++;
           }
@@ -299,25 +299,25 @@ public class WmapMenuTextHighlight40 {
             blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
             blending.colour1Ratio_18 = i;
             blending.colour0Ratio_1c = verticalRectCount - i;
-            subRect.topLeft_00.set(blending.blendColours());
+            blending.blendColours(subRect.topLeft_00);
 
             blending.colourEndRatio_10 = j + 1;
             blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
             blending.colour1Ratio_18 = i;
             blending.colour0Ratio_1c = verticalRectCount - i;
-            subRect.topRight_04.set(blending.blendColours());
+            blending.blendColours(subRect.topRight_04);
 
             blending.colourEndRatio_10 = j;
             blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
             blending.colour1Ratio_18 = i + 1;
             blending.colour0Ratio_1c = verticalRectCount - 1 - i;
-            subRect.bottomLeft_08.set(blending.blendColours());
+            blending.blendColours(subRect.bottomLeft_08);
 
             blending.colourEndRatio_10 = j + 1;
             blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
             blending.colour1Ratio_18 = i + 1;
             blending.colour0Ratio_1c = verticalRectCount - 1 - i;
-            subRect.bottomRight_0c.set(blending.blendColours());
+            blending.blendColours(subRect.bottomRight_0c);
 
             subRectIndex++;
           }
@@ -345,25 +345,25 @@ public class WmapMenuTextHighlight40 {
             blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
             blending.colour1Ratio_18 = i;
             blending.colour0Ratio_1c = verticalRectCount - i;
-            subRect.topLeft_00.set(blending.blendColours());
+            blending.blendColours(subRect.topLeft_00);
 
             blending.colourEndRatio_10 = j + 1;
             blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
             blending.colour1Ratio_18 = i;
             blending.colour0Ratio_1c = verticalRectCount - i;
-            subRect.topRight_04.set(blending.blendColours());
+            blending.blendColours(subRect.topRight_04);
 
             blending.colourEndRatio_10 = j;
             blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
             blending.colour1Ratio_18 = i + 1;
             blending.colour0Ratio_1c = verticalRectCount - 1 - i;
-            subRect.bottomLeft_08.set(blending.blendColours());
+            blending.blendColours(subRect.bottomLeft_08);
 
             blending.colourEndRatio_10 = j + 1;
             blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
             blending.colour1Ratio_18 = i + 1;
             blending.colour0Ratio_1c = verticalRectCount - 1 - i;
-            subRect.bottomRight_0c.set(blending.blendColours());
+            blending.blendColours(subRect.bottomRight_0c);
 
             subRectIndex++;
           }
@@ -387,22 +387,22 @@ public class WmapMenuTextHighlight40 {
         blending.colourStartRatio_14 = horizontalRectCount / 2;
         blending.colour1Ratio_18 = 0;
         blending.colour0Ratio_1c = verticalRectCount;
-        blendedColour0.set(blending.blendColours());
+        blending.blendColours(blendedColour0);
         blending.colourEndRatio_10 = 0;
         blending.colourStartRatio_14 = horizontalRectCount;
         blending.colour1Ratio_18 = verticalRectCount / 2;
         blending.colour0Ratio_1c = verticalRectCount / 2;
-        blendedColour1.set(blending.blendColours());
+        blending.blendColours(blendedColour1);
         blending.colourEndRatio_10 = horizontalRectCount;
         blending.colourStartRatio_14 = 0;
         blending.colour1Ratio_18 = verticalRectCount / 2;
         blending.colour0Ratio_1c = verticalRectCount / 2;
-        blendedColour2.set(blending.blendColours());
+        blending.blendColours(blendedColour2);
         blending.colourEndRatio_10 = horizontalRectCount / 2;
         blending.colourStartRatio_14 = horizontalRectCount / 2;
         blending.colour1Ratio_18 = verticalRectCount;
         blending.colour0Ratio_1c = 0;
-        blendedColour3.set(blending.blendColours());
+        blending.blendColours(blendedColour3);
 
         blending.colour0Start_00 = colour0;
         blending.colour0End_04 = blendedColour0;
@@ -422,25 +422,25 @@ public class WmapMenuTextHighlight40 {
             blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
             blending.colour1Ratio_18 = i;
             blending.colour0Ratio_1c = verticalRectCount / 2 - i;
-            subRect.topLeft_00.set(blending.blendColours());
+            blending.blendColours(subRect.topLeft_00);
 
             blending.colourEndRatio_10 = j + 1;
             blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
             blending.colour1Ratio_18 = i;
             blending.colour0Ratio_1c = verticalRectCount / 2 - i;
-            subRect.topRight_04.set(blending.blendColours());
+            blending.blendColours(subRect.topRight_04);
 
             blending.colourEndRatio_10 = j;
             blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
             blending.colour1Ratio_18 = i + 1;
             blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
-            subRect.bottomLeft_08.set(blending.blendColours());
+            blending.blendColours(subRect.bottomLeft_08);
 
             blending.colourEndRatio_10 = j + 1;
             blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
             blending.colour1Ratio_18 = i + 1;
             blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
-            subRect.bottomRight_0c.set(blending.blendColours());
+            blending.blendColours(subRect.bottomRight_0c);
 
             subRectIndex++;
           }
@@ -468,25 +468,25 @@ public class WmapMenuTextHighlight40 {
             blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
             blending.colour1Ratio_18 = i;
             blending.colour0Ratio_1c = verticalRectCount / 2 - i;
-            subRect.topLeft_00.set(blending.blendColours());
+            blending.blendColours(subRect.topLeft_00);
 
             blending.colourEndRatio_10 = j + 1;
             blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
             blending.colour1Ratio_18 = i;
             blending.colour0Ratio_1c = verticalRectCount / 2 - i;
-            subRect.topRight_04.set(blending.blendColours());
+            blending.blendColours(subRect.topRight_04);
 
             blending.colourEndRatio_10 = j;
             blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
             blending.colour1Ratio_18 = i + 1;
             blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
-            subRect.bottomLeft_08.set(blending.blendColours());
+            blending.blendColours(subRect.bottomLeft_08);
 
             blending.colourEndRatio_10 = j + 1;
             blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
             blending.colour1Ratio_18 = i + 1;
             blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
-            subRect.bottomRight_0c.set(blending.blendColours());
+            blending.blendColours(subRect.bottomRight_0c);
 
             subRectIndex++;
           }
@@ -514,25 +514,25 @@ public class WmapMenuTextHighlight40 {
             blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
             blending.colour1Ratio_18 = i;
             blending.colour0Ratio_1c = verticalRectCount / 2 - i;
-            subRect.topLeft_00.set(blending.blendColours());
+            blending.blendColours(subRect.topLeft_00);
 
             blending.colourEndRatio_10 = j + 1;
             blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
             blending.colour1Ratio_18 = i;
             blending.colour0Ratio_1c = verticalRectCount / 2 - i;
-            subRect.topRight_04.set(blending.blendColours());
+            blending.blendColours(subRect.topRight_04);
 
             blending.colourEndRatio_10 = j;
             blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
             blending.colour1Ratio_18 = i + 1;
             blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
-            subRect.bottomLeft_08.set(blending.blendColours());
+            blending.blendColours(subRect.bottomLeft_08);
 
             blending.colourEndRatio_10 = j + 1;
             blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
             blending.colour1Ratio_18 = i + 1;
             blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
-            subRect.bottomRight_0c.set(blending.blendColours());
+            blending.blendColours(subRect.bottomRight_0c);
 
             subRectIndex++;
           }
@@ -560,25 +560,25 @@ public class WmapMenuTextHighlight40 {
             blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
             blending.colour1Ratio_18 = i;
             blending.colour0Ratio_1c = verticalRectCount / 2 - i;
-            subRect.topLeft_00.set(blending.blendColours());
+            blending.blendColours(subRect.topLeft_00);
 
             blending.colourEndRatio_10 = j + 1;
             blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
             blending.colour1Ratio_18 = i;
             blending.colour0Ratio_1c = verticalRectCount / 2 - i;
-            subRect.topRight_04.set(blending.blendColours());
+            blending.blendColours(subRect.topRight_04);
 
             blending.colourEndRatio_10 = j;
             blending.colourStartRatio_14 = horizontalRectCount / 2 - j;
             blending.colour1Ratio_18 = i + 1;
             blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
-            subRect.bottomLeft_08.set(blending.blendColours());
+            blending.blendColours(subRect.bottomLeft_08);
 
             blending.colourEndRatio_10 = j + 1;
             blending.colourStartRatio_14 = horizontalRectCount / 2 - 1 - j;
             blending.colour1Ratio_18 = i + 1;
             blending.colour0Ratio_1c = verticalRectCount / 2 - 1 - i;
-            subRect.bottomRight_0c.set(blending.blendColours());
+            blending.blendColours(subRect.bottomRight_0c);
 
             subRectIndex++;
           }
