@@ -1,5 +1,6 @@
 package legend.core;
 
+import legend.core.gpu.Bpp;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
 import legend.core.opengl.BasicCamera;
@@ -7,6 +8,7 @@ import legend.core.opengl.Camera;
 import legend.core.opengl.FrameBuffer;
 import legend.core.opengl.Mesh;
 import legend.core.opengl.Obj;
+import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.QuaternionCamera;
 import legend.core.opengl.Shader;
 import legend.core.opengl.ShaderManager;
@@ -118,6 +120,9 @@ public class RenderEngine {
   private final float[] clear0 = {0.0f, 0.0f, 0.0f, 0.0f};
   private final float[] clear1 = {1.0f, 1.0f, 1.0f, 1.0f};
 
+  // Text
+  public final Obj[] chars = new Obj[0x56];
+
   private int width;
   private int height;
 
@@ -228,7 +233,7 @@ public class RenderEngine {
   public void delete() {
     ShaderManager.delete();
     Obj.setShouldLog(false);
-    Obj.clearObjList();
+    Obj.clearObjList(true);
   }
 
   public void init() {
@@ -333,6 +338,23 @@ public class RenderEngine {
 
     postQuad.attribute(0, 0L, 2, 4);
     postQuad.attribute(1, 2L, 2, 4);
+
+    // Build text quads
+    for(int i = 0; i < this.chars.length; i++) {
+      final int textU = i & 0xf;
+      final int textV = i / 16;
+
+      this.chars[i] = new QuadBuilder("Char " + i)
+        .bpp(Bpp.BITS_4)
+        .monochrome(1.0f)
+        .size(8.0f, 12.0f)
+        .uv(textU * 16.0f, textV * 12.0f)
+        .clut(832, 480)
+        .vramPos(832, 256)
+        .build();
+
+      this.chars[i].persistent = true;
+    }
 
     this.window.events.onDraw(() -> {
       this.pre();

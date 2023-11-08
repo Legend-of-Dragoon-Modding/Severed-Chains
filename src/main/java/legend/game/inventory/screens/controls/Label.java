@@ -2,12 +2,18 @@ package legend.game.inventory.screens.controls;
 
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.TextColour;
-import legend.game.inventory.screens.TextRenderable;
-import legend.game.inventory.screens.TextRenderer;
+import legend.game.types.LodString;
+
+import static legend.game.SItem.renderText;
+import static legend.game.Scus94491BpeSegment_8002.textHeight;
+import static legend.game.Scus94491BpeSegment_8002.textWidth;
+import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 
 public class Label extends Control {
   private String text;
-  private TextRenderable textRenderable;
+  private LodString lodString;
+  private int textWidth;
+  private int textHeight;
   private HorizontalAlign horizontalAlign = HorizontalAlign.LEFT;
   private VerticalAlign verticalAlign = VerticalAlign.TOP;
   private boolean autoSize = true;
@@ -36,7 +42,7 @@ public class Label extends Control {
     this.autoSize = autoSize;
 
     if(this.autoSize) {
-      this.setSize(this.textRenderable.width, this.textRenderable.height);
+      this.setSize(this.textWidth, this.textHeight);
     }
   }
 
@@ -46,10 +52,12 @@ public class Label extends Control {
 
   public void setText(final String text) {
     this.text = text;
-    this.textRenderable = TextRenderer.prepareShadowText(text, 0, 0, TextColour.BROWN);
+    this.lodString = new LodString(text);
+    this.textWidth = textWidth(text);
+    this.textHeight = textHeight(text);
 
     if(this.autoSize) {
-      this.setSize(this.textRenderable.width, this.textRenderable.height);
+      this.setSize(this.textWidth, this.textHeight);
     }
   }
 
@@ -61,17 +69,20 @@ public class Label extends Control {
   protected void render(final int x, final int y) {
     final int offsetX = switch(this.horizontalAlign) {
       case LEFT -> 0;
-      case CENTRE -> (this.getWidth() - this.textRenderable.width) / 2;
-      case RIGHT -> this.getWidth() - this.textRenderable.width;
+      case CENTRE -> (this.getWidth() - this.textWidth) / 2;
+      case RIGHT -> this.getWidth() - this.textWidth;
     };
 
     final int offsetY = switch(this.verticalAlign) {
       case TOP -> 0;
-      case CENTRE -> (this.getHeight() - this.textRenderable.height) / 2;
-      case BOTTOM -> this.getHeight() - this.textRenderable.height;
+      case CENTRE -> (this.getHeight() - this.textHeight) / 2;
+      case BOTTOM -> this.getHeight() - this.textHeight;
     };
 
-    this.textRenderable.render(x + offsetX, y + offsetY, this.getZ() - 1);
+    final int oldZ = textZ_800bdf00.get();
+    textZ_800bdf00.set(this.getZ() - 1);
+    renderText(this.lodString, x + offsetX, y + offsetY, TextColour.BROWN);
+    textZ_800bdf00.set(oldZ);
   }
 
   public enum HorizontalAlign {

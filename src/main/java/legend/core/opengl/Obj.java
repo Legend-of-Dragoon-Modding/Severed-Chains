@@ -15,6 +15,8 @@ public abstract class Obj {
   private static final List<Obj> objList = new ArrayList<>();
   private final String name;
   protected boolean deleted;
+  /** This Obj won't be deleted on state transition */
+  public boolean persistent;
 
   public static void setShouldLog(final boolean shouldLog) {
     Obj.shouldLog = shouldLog;
@@ -28,14 +30,19 @@ public abstract class Obj {
   public void delete() {
     this.deleted = true;
     objList.remove(this);
-  };
+  }
 
-  public static void clearObjList() {
+  public static void clearObjList(final boolean clearPersistent) {
     for(int i = objList.size() - 1; i >= 0; i--) {
-      if(shouldLog) {
-        LOGGER.warn("Leaked: %s", objList.get(i).name);
+      final Obj obj = objList.get(i);
+
+      if(!obj.persistent || clearPersistent) {
+        if(shouldLog) {
+          LOGGER.warn("Leaked: %s", obj.name);
+        }
+
+        obj.delete();
       }
-      objList.get(i).delete();
     }
   }
 

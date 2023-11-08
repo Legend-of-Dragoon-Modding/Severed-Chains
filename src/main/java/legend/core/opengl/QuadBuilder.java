@@ -21,8 +21,9 @@ import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 public class QuadBuilder {
   private final String name;
   private final Vector3f pos = new Vector3f();
-  private final Vector2f size = new Vector2f();
+  private final Vector2f posSize = new Vector2f();
   private final Vector2f uv = new Vector2f();
+  private final Vector2f uvSize = new Vector2f();
   private final Vector2i vramPos = new Vector2i();
   private final Vector2i clut = new Vector2i();
   private final Vector3f[] colour = {new Vector3f(), new Vector3f(), new Vector3f(), new Vector3f()};
@@ -45,13 +46,37 @@ public class QuadBuilder {
     return this;
   }
 
+  /** Sets both position and UV size */
   public QuadBuilder size(final Vector2f size) {
-    this.size.set(size);
+    this.posSize.set(size);
+    this.uvSize.set(size);
     return this;
   }
 
+  /** Sets both position and UV size */
   public QuadBuilder size(final float w, final float h) {
-    this.size.set(w, h);
+    this.posSize.set(w, h);
+    this.uvSize.set(w, h);
+    return this;
+  }
+
+  public QuadBuilder posSize(final Vector2f size) {
+    this.posSize.set(size);
+    return this;
+  }
+
+  public QuadBuilder posSize(final float w, final float h) {
+    this.posSize.set(w, h);
+    return this;
+  }
+
+  public QuadBuilder uvSize(final Vector2f size) {
+    this.uvSize.set(size);
+    return this;
+  }
+
+  public QuadBuilder uvSize(final float w, final float h) {
+    this.uvSize.set(w, h);
     return this;
   }
 
@@ -148,13 +173,13 @@ public class QuadBuilder {
   public MeshObj build() {
     final float x0 = this.pos.x;
     final float y0 = this.pos.y;
-    final float x1 = x0 + this.size.x;
-    final float y1 = y0 + this.size.y;
+    final float x1 = x0 + this.posSize.x;
+    final float y1 = y0 + this.posSize.y;
     final float z = this.pos.z;
     final float u0 = this.uv.x;
     final float v0 = this.uv.y;
-    final float u1 = u0 + this.size.x;
-    final float v1 = v0 + this.size.y;
+    final float u1 = u0 + this.uvSize.x;
+    final float v1 = v0 + this.uvSize.y;
     final float tpx = this.vramPos.x;
     final float tpy = this.vramPos.y;
     final float clx = this.clut.x;
