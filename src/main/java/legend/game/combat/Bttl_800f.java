@@ -209,9 +209,9 @@ public final class Bttl_800f {
       if(colour == 1) {
         digit.colour.set(1.0f, 1.0f, 1.0f);
       } else if(colour == 2) {
-        digit.colour.set(1.0f, 1.0f, 0.0f);
+        digit.colour.set(248 / 240.0f, 224 / 240.0f, 72 / 240.0f);
       } else if(colour == 3) {
-        digit.colour.set(1.0f, 0.0f, 0.0f);
+        digit.colour.set(224 / 240.0f, 72 / 240.0f, 0.0f);
       }
 
       //LAB_800f1998
