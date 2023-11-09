@@ -2437,6 +2437,12 @@ public final class Bttl_800f {
           RENDERER.queueOrthoOverlayModel(menu.actionDisabledObj, menu.transforms);
         }
 
+        if(menu.selectedIcon_22 == iconIndex && menu.renderSelectedIconText_40) {
+          // Selected combat menu icon text
+          menu.transforms.transfer.set(menuElementBaseX, menu.y_08, 124.0f);
+          RENDERER.queueOrthoOverlayModel(menu.actionIconTextObj[iconId], menu.transforms);
+        }
+
         // Combat menu icons
         //LAB_800f6d70
         menu.transforms.transfer.set(menuElementBaseX, menuElementBaseY, 124.0f);
@@ -2455,11 +2461,6 @@ public final class Bttl_800f {
           }
         }
 
-        if(menu.selectedIcon_22 == iconIndex && menu.renderSelectedIconText_40) {
-          // Selected combat menu icon text
-          menu.transforms.transfer.set(menuElementBaseX, menu.y_08, 124.0f);
-          RENDERER.queueOrthoOverlayModel(menu.actionIconTextObj[iconId], menu.transforms);
-        }
         //LAB_800f6fa4
       }
     }
