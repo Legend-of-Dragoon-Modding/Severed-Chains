@@ -150,4 +150,10 @@ public class Model124 {
     this.shadowSize_10c.set(other.shadowSize_10c);
     this.shadowOffset_118.set(other.shadowOffset_118);
   }
+
+  public void deleteModelParts() {
+    for(final ModelPart10 part : this.modelParts_00) {
+      part.delete();
+    }
+  }
 }
