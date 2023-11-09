@@ -3870,19 +3870,15 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002a0e4L)
   public static void renderTextboxes() {
-    //LAB_8002a10c
     for(int i = 0; i < 8; i++) {
-      final Textbox4c struct4c = textboxes_800be358[i];
-
-      if(struct4c.state_00 != TextboxState.UNINITIALIZED_0 && (struct4c.flags_08 & Textbox4c.RENDER_BACKGROUND) != 0) {
+      //LAB_8002a10c
+      final Textbox4c textbox4c = textboxes_800be358[i];
+      if(textbox4c.state_00 != TextboxState.UNINITIALIZED_0 && (textbox4c.flags_08 & Textbox4c.RENDER_BACKGROUND) != 0) {
         renderTextboxBackground(i);
       }
-    }
-
-    for(int i = 0; i < 8; i++) {
-      final TextboxText84 text = textboxText_800bdf38[i];
 
       //LAB_8002a134
+      final TextboxText84 text = textboxText_800bdf38[i];
       if(text.state_00 != TextboxTextState.UNINITIALIZED_0) {
         switch(text.state_00) {
           case _18 -> renderTextboxSelection(i, text.selectionLine_60);
@@ -3892,7 +3888,6 @@ public final class Scus94491BpeSegment_8002 {
         renderTextboxText(i);
         renderTextboxArrow(i);
       }
-
       //LAB_8002a154
     }
   }
