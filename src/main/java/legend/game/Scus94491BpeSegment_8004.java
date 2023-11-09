@@ -604,7 +604,6 @@ public final class Scus94491BpeSegment_8004 {
   }
   // 8004f29c end of jump table
 
-  public static final IntRef _8004f2a8 = MEMORY.ref(4, 0x8004f2a8L, IntRef::new);
   public static final ItemStats0c[] itemStats_8004f2ac = new ItemStats0c[64];
   public static final ArrayRef<ShortRef> additionOffsets_8004f5ac = MEMORY.ref(2, 0x8004f5acL, ArrayRef.of(ShortRef.class, 10, 0x2, ShortRef::new));
   public static final ArrayRef<ShortRef> additionCounts_8004f5c0 = MEMORY.ref(2, 0x8004f5c0L, ArrayRef.of(ShortRef.class, 10, 0x2, ShortRef::new));
