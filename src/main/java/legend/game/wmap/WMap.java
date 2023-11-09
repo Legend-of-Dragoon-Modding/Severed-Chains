@@ -365,15 +365,15 @@ public class WMap extends EngineState {
   private WmapPromptPopup coolonPromptPopup;
   /** Temporary solution until text refactoring */
   private final LodString[] startLabelNames = new LodString[8];
-  private final Float[] startLabelXs = new Float[8];
-  private final Float[] startLabelYs = new Float[8];
+  private final float[] startLabelXs = new float[8];
+  private final float[] startLabelYs = new float[8];
   private LodString destLabelName;
-  private Integer destLabelX;
-  private Integer destLabelY;
+  private int destLabelX;
+  private int destLabelY;
   private boolean shouldSetDestLabelMetrics;
   private LodString coolonWarpDestLabelName;
-  private Integer coolonWarpDestLabelX;
-  private Integer coolonWarpDestLabelY;
+  private int coolonWarpDestLabelX;
+  private int coolonWarpDestLabelY;
   private boolean shouldSetCoolonWarpDestLabelMetrics;
 
   @Method(0x800c8844L)
@@ -1417,8 +1417,6 @@ public class WMap extends EngineState {
         FUN_8002a3ec(7, 0);
         this.shouldSetDestLabelMetrics = false;
         this.destLabelName = null;
-        this.destLabelX = null;
-        this.destLabelY = null;
       }
 
       //LAB_800d4198
@@ -2754,8 +2752,6 @@ public class WMap extends EngineState {
         if(Input.getButtonState(InputAction.BUTTON_EAST) || Input.getButtonState(InputAction.BUTTON_WEST)) {
           this.shouldSetCoolonWarpDestLabelMetrics = false;
           this.coolonWarpDestLabelName = null;
-          this.coolonWarpDestLabelX = null;
-          this.coolonWarpDestLabelY = null;
 
           playSound(0, 3, 0, 0, (short)0, (short)0);
 
@@ -4653,8 +4649,6 @@ public class WMap extends EngineState {
     // World Map Name Info
     if(this.startLocationLabelsActive_800c68a8) {
       Arrays.fill(this.startLabelNames, null);
-      Arrays.fill(this.startLabelXs, null);
-      Arrays.fill(this.startLabelYs, null);
 
       //LAB_800e6b04
       if(!Input.getButtonState(InputAction.BUTTON_CENTER_2)) {
