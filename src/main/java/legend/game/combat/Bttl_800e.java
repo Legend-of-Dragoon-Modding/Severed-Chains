@@ -6,7 +6,6 @@ import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.GpuCommandPoly;
-import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
@@ -3463,30 +3462,7 @@ public final class Bttl_800e {
     //LAB_800ecdac
     final Vector2f screenCoords = perspectiveTransformXyz(model, x, y, z);
 
-    final GpuCommandQuad cmd = new GpuCommandQuad()
-      .bpp(Bpp.BITS_4)
-      .translucent(Translucency.HALF_B_PLUS_HALF_F)
-      .vramPos(704, 256)
-      .monochrome(0x80)
-      .pos(screenCoords.x - 8, screenCoords.y + targetArrowOffsetY_800fb188.get(tickCount_800bb0fc.get() & 0x7).get(), 16, 24)
-      .uv(240, 0);
-
-    if(colour == 0) {
-      //LAB_800ece80
-      cmd.clut(720, 510);
-    } else if(colour == 1) {
-      //LAB_800ece88
-      cmd.clut(720, 511);
-      //LAB_800ece70
-    } else if(colour == 2) {
-      //LAB_800ece90
-      //LAB_800ece94
-      cmd.clut(736, 496);
-    }
-
     //LAB_800ece9c
-    GPU.queueCommand(28, cmd);
-
     battleMenu_800c6c34.transforms.identity();
     battleMenu_800c6c34.transforms.transfer.set(GPU.getOffsetX() + screenCoords.x - 8, GPU.getOffsetY() + screenCoords.y + targetArrowOffsetY_800fb188.get(tickCount_800bb0fc.get() & 0x7).get(), 112.0f);
     RENDERER.queueOrthoModel(battleMenu_800c6c34.targetArrows[colour], battleMenu_800c6c34.transforms);
