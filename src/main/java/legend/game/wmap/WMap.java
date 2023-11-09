@@ -628,6 +628,7 @@ public class WMap extends EngineState {
   private void loadBackgroundObj() {
     if((this.filesLoadedFlags_800c66b8.get() & 0x1) != 0) {
       this.mcqObj = new McqBuilder("World Map Background MCQ", this.mcqHeader_800c6768)
+        .translucency(Translucency.B_PLUS_F)
         .vramOffset(320, 0)
         .build();
 
@@ -2414,10 +2415,10 @@ public class WMap extends EngineState {
         break;
 
       case 2:
-        this.mcqBrightness_800ef1a4 += 0.0625f / (3.0f / vsyncMode_8007a3b8);
+        this.mcqBrightness_800ef1a4 += 0.125f / (3.0f / vsyncMode_8007a3b8);
 
-        if(this.mcqBrightness_800ef1a4 > 0.5f) {
-          this.mcqBrightness_800ef1a4 = 0.5f;
+        if(this.mcqBrightness_800ef1a4 > 1.0f) {
+          this.mcqBrightness_800ef1a4 = 1.0f;
         }
 
         //LAB_800d96b8
@@ -2488,7 +2489,7 @@ public class WMap extends EngineState {
         break;
 
       case 5:
-        this.mcqBrightness_800ef1a4 -= 0.0625f / (3.0f / vsyncMode_8007a3b8);
+        this.mcqBrightness_800ef1a4 -= 0.125f / (3.0f / vsyncMode_8007a3b8);
 
         if(this.mcqBrightness_800ef1a4 < 0.0f) {
           this.mcqBrightness_800ef1a4 = 0.0f;
@@ -2681,10 +2682,10 @@ public class WMap extends EngineState {
         }
 
         //LAB_800dab44
-        this.mcqBrightness_800ef1a4 += 0.00390625f / (3.0f / vsyncMode_8007a3b8);
+        this.mcqBrightness_800ef1a4 += 0.0078125f / (3.0f / vsyncMode_8007a3b8);
 
-        if(this.mcqBrightness_800ef1a4 > 0.125f) {
-          this.mcqBrightness_800ef1a4 = 0.125f;
+        if(this.mcqBrightness_800ef1a4 > 0.25f) {
+          this.mcqBrightness_800ef1a4 = 0.25f;
         }
 
         //LAB_800dab80
@@ -2910,7 +2911,7 @@ public class WMap extends EngineState {
         }
 
         //LAB_800dbdb8
-        this.mcqBrightness_800ef1a4 -= 0.00390625f / (3.0f / vsyncMode_8007a3b8);
+        this.mcqBrightness_800ef1a4 -= 0.0078125f / (3.0f / vsyncMode_8007a3b8);
 
         if(this.mcqBrightness_800ef1a4 < 0.0f) {
           this.mcqBrightness_800ef1a4 = 0.0f;
@@ -2941,7 +2942,7 @@ public class WMap extends EngineState {
         //LAB_800dbf28
         struct258.models_0c[2].coord2_14.transforms.scale.set(struct258.models_0c[2].coord2_14.transforms.scale.x);
 
-        this.mcqBrightness_800ef1a4 -= 0.00390625f / (3.0f / vsyncMode_8007a3b8);
+        this.mcqBrightness_800ef1a4 -= 0.0078125f / (3.0f / vsyncMode_8007a3b8);
 
         if(this.mcqBrightness_800ef1a4 < 0.0f) {
           this.mcqBrightness_800ef1a4 = 0.0f;

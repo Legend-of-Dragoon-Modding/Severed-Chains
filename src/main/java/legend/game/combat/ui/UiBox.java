@@ -103,8 +103,6 @@ public class UiBox {
           .uvSize(rightU - leftU, bottomV - topV)
           .build();
       }
-
-      RENDERER.queueOrthoOverlayModel(this.hudBackgroundBorders[i]);
     }
   }
 

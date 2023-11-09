@@ -178,8 +178,8 @@ public class DebuggerController {
     this.battleUiColour.setSelected(Config.changeBattleRgb());
     this.saveAnywhere.setSelected(CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get()));
     this.battleUiColourR.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (int)(Config.getBattleRgb().x * 255)));
-    this.battleUiColourB.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (int)(Config.getBattleRgb().z * 255)));
     this.battleUiColourG.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (int)(Config.getBattleRgb().y * 255)));
+    this.battleUiColourB.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (int)(Config.getBattleRgb().z * 255)));
     this.additionOverlayColour.setSelected(Config.changeAdditionOverlayRgb());
     this.additionOverlayR.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getAdditionOverlayRgb() & 0xff)));
     this.additionOverlayG.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getAdditionOverlayRgb() >> 8) & 0xff)));
