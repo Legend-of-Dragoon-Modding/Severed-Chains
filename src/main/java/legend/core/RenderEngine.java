@@ -154,6 +154,7 @@ public class RenderEngine {
 
   private final QueuePool modelPool = new QueuePool();
   private final QueuePool orthoPool = new QueuePool();
+  private final QueuePool orthoUnderlayPool = new QueuePool();
   private final QueuePool orthoOverlayPool = new QueuePool();
 
   private float projectionWidth;
@@ -374,6 +375,9 @@ public class RenderEngine {
       this.opaqueFrameBuffer.bind();
       this.clear();
 
+      this.render2dPool(this.orthoUnderlayPool);
+      this.clearDepth();
+
       RENDERER.setProjectionMode(ProjectionMode._2D);
       this.renderPool(this.orthoPool);
 
@@ -417,46 +421,7 @@ public class RenderEngine {
       this.opaqueTexture.use();
       postQuad.draw();
 
-      RENDERER.setProjectionMode(ProjectionMode._2D);
-      this.tmdShader.use();
-      this.tmdShaderDiscardTranslucency.set(0.0f);
-      GPU.useVramTexture();
-
-      final float widthScale = this.window.getWidth() / this.projectionWidth;
-      final float heightScale = this.window.getHeight() / this.projectionHeight;
-
-      glDisable(GL_DEPTH_TEST);
-      for(int i = 0; i < this.orthoOverlayPool.size(); i++) {
-        final QueuedModel entry = this.orthoOverlayPool.get(i);
-        entry.updateTransforms();
-        this.tmdShaderColour.set(entry.colour);
-
-        if(entry.scissor.w != 0) {
-          glEnable(GL_SCISSOR_TEST);
-          glScissor((int)(entry.scissor.x * widthScale), this.window.getHeight() - (int)(entry.scissor.y * heightScale), (int)(entry.scissor.w * widthScale), (int)(entry.scissor.h * heightScale));
-        }
-
-        if(entry.obj.shouldRender(null)) {
-          glDisable(GL_BLEND);
-          entry.obj.render(null);
-        }
-
-        glEnable(GL_BLEND);
-        for(int translucencyIndex = 0; translucencyIndex < Translucency.FOR_RENDERING.length; translucencyIndex++) {
-          final Translucency translucency = Translucency.FOR_RENDERING[translucencyIndex];
-
-          if(entry.obj.shouldRender(translucency)) {
-            translucency.setGlState();
-            entry.obj.render(translucency);
-          }
-        }
-
-        if(entry.scissor.w != 0) {
-          glDisable(GL_SCISSOR_TEST);
-        }
-      }
-
-      this.orthoOverlayPool.reset();
+      this.render2dPool(this.orthoOverlayPool);
 
       this.fps = 1.0f / ((System.nanoTime() - this.lastFrame) / (1_000_000_000 / 30.0f)) * 30.0f;
       this.lastFrame = System.nanoTime();
@@ -563,6 +528,49 @@ public class RenderEngine {
     pool.reset();
   }
 
+  private void render2dPool(final QueuePool pool) {
+    RENDERER.setProjectionMode(ProjectionMode._2D);
+    this.tmdShader.use();
+    this.tmdShaderDiscardTranslucency.set(0.0f);
+    GPU.useVramTexture();
+
+    final float widthScale = this.window.getWidth() / this.projectionWidth;
+    final float heightScale = this.window.getHeight() / this.projectionHeight;
+
+    glDisable(GL_DEPTH_TEST);
+    for(int i = 0; i < pool.size(); i++) {
+      final QueuedModel entry = pool.get(i);
+      entry.updateTransforms();
+      this.tmdShaderColour.set(entry.colour);
+
+      if(entry.scissor.w != 0) {
+        glEnable(GL_SCISSOR_TEST);
+        glScissor((int)(entry.scissor.x * widthScale), this.window.getHeight() - (int)(entry.scissor.y * heightScale), (int)(entry.scissor.w * widthScale), (int)(entry.scissor.h * heightScale));
+      }
+
+      if(entry.obj.shouldRender(null)) {
+        glDisable(GL_BLEND);
+        entry.obj.render(null);
+      }
+
+      glEnable(GL_BLEND);
+      for(int translucencyIndex = 0; translucencyIndex < Translucency.FOR_RENDERING.length; translucencyIndex++) {
+        final Translucency translucency = Translucency.FOR_RENDERING[translucencyIndex];
+
+        if(entry.obj.shouldRender(translucency)) {
+          translucency.setGlState();
+          entry.obj.render(translucency);
+        }
+      }
+
+      if(entry.scissor.w != 0) {
+        glDisable(GL_SCISSOR_TEST);
+      }
+    }
+
+    pool.reset();
+  }
+
   public void setProjectionMode(final ProjectionMode projectionMode) {
     this.projectionBuffer.put(0, 0.0f);
     this.projectionBuffer.put(1, 1000000.0f);
@@ -660,6 +668,35 @@ public class RenderEngine {
     }
 
     final QueuedModel entry = this.orthoOverlayPool.acquire();
+    entry.obj = obj;
+    entry.transforms.set(mv);
+    entry.transforms.setTranslation(mv.transfer);
+    entry.screenspaceOffset.zero();
+    entry.colour.set(1.0f, 1.0f, 1.0f);
+    entry.scissor.set(0, 0, 0, 0);
+    return entry;
+  }
+
+  public QueuedModel queueOrthoUnderlayModel(final Obj obj) {
+    if(obj == null) {
+      throw new IllegalArgumentException("obj is null");
+    }
+
+    final QueuedModel entry = this.orthoUnderlayPool.acquire();
+    entry.obj = obj;
+    entry.transforms.identity();
+    entry.screenspaceOffset.zero();
+    entry.colour.set(1.0f, 1.0f, 1.0f);
+    entry.scissor.set(0, 0, 0, 0);
+    return entry;
+  }
+
+  public QueuedModel queueOrthoUnderlayModel(final Obj obj, final MV mv) {
+    if(obj == null) {
+      throw new IllegalArgumentException("obj is null");
+    }
+
+    final QueuedModel entry = this.orthoUnderlayPool.acquire();
     entry.obj = obj;
     entry.transforms.set(mv);
     entry.transforms.setTranslation(mv.transfer);

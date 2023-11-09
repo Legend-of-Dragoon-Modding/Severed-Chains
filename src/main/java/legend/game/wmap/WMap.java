@@ -22,7 +22,9 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.core.opengl.McqBuilder;
 import legend.core.opengl.MeshObj;
+import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.EngineState;
@@ -2489,7 +2491,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d9ccc
-    this.renderMcq(this.mcqHeader_800c6768, 320, 0, -160, -120, 30, (int)(mcqBrightness_800ef1a4 * 0x100));
+    this.renderMcq(this.mcqHeader_800c6768, 320, 0, mcqBrightness_800ef1a4);
 
     //LAB_800d9d10
   }
@@ -2944,7 +2946,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800dc114
-    this.renderMcq(this.mcqHeader_800c6768, 320, 0, -160, -120, orderingTableSize_1f8003c8.get() - 4, (int)(mcqBrightness_800ef1a4 * 0x100));
+    this.renderMcq(this.mcqHeader_800c6768, 320, 0, mcqBrightness_800ef1a4);
 
     //LAB_800dc164
   }
@@ -4056,7 +4058,7 @@ public class WMap extends EngineState {
     } else if(this.wmapStruct258_800c66a8._04 == 1) {
       //LAB_800e4738
       this.wmapStruct19c0_800c66b0._110 = 2;
-      this.mcqColour_800c6794 -= 0.0625f / (3.0f / vsyncMode_8007a3b8);
+      this.mcqColour_800c6794 -= 0.125f / (3.0f / vsyncMode_8007a3b8);
 
       if(this.mcqColour_800c6794 < 0.0f) {
         this.mcqColour_800c6794 = 0.0f;
@@ -4108,57 +4110,20 @@ public class WMap extends EngineState {
     //LAB_800e4924
   }
 
+  private Obj backgroundMcqObj;
+  private final MV backgroundMcqTransforms = new MV();
+
   @Method(0x800e4934L)
-  private void renderMcq(final McqHeader mcq, final int vramOffsetX, final int vramOffsetY, final int x, final int y, final int z, final int colour) {
-    int clutX = vramOffsetX + mcq.clutX_0c;
-    int clutY = vramOffsetY + mcq.clutY_0e;
-    final int width = mcq.screenWidth_14;
-    final int height = mcq.screenHeight_16;
-    int u = vramOffsetX + mcq.u_10;
-    int v = vramOffsetY + mcq.v_12;
-    int vramX = u & 0x3c0;
-    final int vramY = v & 0x100;
-    u = u * 4 & 0xfc;
-
-    //LAB_800e4ad0
-    for(int chunkX = 0; chunkX < width; chunkX += 16) {
-      //LAB_800e4af0
-      //LAB_800e4af4
-      for(int chunkY = 0; chunkY < height; chunkY += 16) {
-        //LAB_800e4b14
-        GPU.queueCommand(z, new GpuCommandQuad()
-          .bpp(Bpp.BITS_4)
-          .translucent(Translucency.B_PLUS_F)
-          .clut(clutX, clutY)
-          .vramPos(vramX, vramY)
-          .monochrome(colour)
-          .pos(x + chunkX, y + chunkY, 16, 16)
-          .uv(u, v)
-        );
-
-        v = v + 16 & 0xf0;
-
-        if(v == 0) {
-          u = u + 16 & 0xfc;
-
-          if(u == 0) {
-            vramX = vramX + 64;
-          }
-        }
-
-        //LAB_800e4d18
-        clutY = clutY + 1 & 0xff;
-
-        if(clutY == 0) {
-          clutX = clutX + 16;
-        }
-
-        //LAB_800e4d4c
-        clutY = clutY | vramY;
-      }
-      //LAB_800e4d78
+  private void renderMcq(final McqHeader mcq, final int vramOffsetX, final int vramOffsetY, final float colour) {
+    if(this.backgroundMcqObj == null) {
+      this.backgroundMcqObj = new McqBuilder("WMAP Background", mcq)
+        .vramOffset(vramOffsetX, vramOffsetY)
+        .build();
     }
-    //LAB_800e4d90
+
+    this.backgroundMcqTransforms.transfer.set(0.0f, -8.0f, 10);
+    RENDERER.queueOrthoUnderlayModel(this.backgroundMcqObj, this.backgroundMcqTransforms)
+      .monochrome(colour);
   }
 
   @Method(0x800e4e1cL)
@@ -4176,15 +4141,15 @@ public class WMap extends EngineState {
 
     //LAB_800e4eac
     if(this.wmapStruct258_800c66a8._05 != 2) {
-      this.mcqColour_800c6794 += 0.0625f / (3.0f / vsyncMode_8007a3b8);
+      this.mcqColour_800c6794 += 0.125f / (3.0f / vsyncMode_8007a3b8);
 
-      if(this.mcqColour_800c6794 > 0.125f) {
-        this.mcqColour_800c6794 = 0.125f;
+      if(this.mcqColour_800c6794 > 0.25f) {
+        this.mcqColour_800c6794 = 0.25f;
       }
     }
 
     //LAB_800e4f04
-    this.renderMcq(this.mcqHeader_800c6768, 320, 0, -160, -120, orderingTableSize_1f8003c8.get() - 3, (int)(this.mcqColour_800c6794 * 0x100));
+    this.renderMcq(this.mcqHeader_800c6768, 320, 0, this.mcqColour_800c6794);
 
     //LAB_800e4f50
   }
