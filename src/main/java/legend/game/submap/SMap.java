@@ -3950,9 +3950,7 @@ public class SMap extends EngineState {
       //LAB_800e3e38
     }
 
-    for(final ModelPart10 part : sobj.model_00.modelParts_00) {
-      part.obj.delete();
-    }
+    sobj.model_00.deleteModelParts();
 
     //LAB_800e3e48
   }

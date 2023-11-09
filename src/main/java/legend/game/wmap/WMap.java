@@ -889,9 +889,7 @@ public class WMap extends EngineState {
 
       case 7 -> {
         for(final Model124 model : this.wmapStruct258_800c66a8.models_0c) {
-          for(final ModelPart10 part : model.modelParts_00) {
-            part.obj.delete();
-          }
+          model.deleteModelParts();
         }
 
         this.unloadWmapPlayerModels();
