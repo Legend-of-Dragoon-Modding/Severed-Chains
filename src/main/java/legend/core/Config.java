@@ -1,5 +1,7 @@
 package legend.core;
 
+import org.joml.Vector3f;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -20,6 +22,9 @@ public final class Config {
 
   private static final Path path = Paths.get(".", "config.conf");
   private static final SortedStoreProperties properties = new SortedStoreProperties();
+
+  private static final Vector3f uiColour = new Vector3f();
+  public static final Vector3f defaultUiColour = new Vector3f(0.0f, 0x29 / 255.0f, 0x9f / 255.0f);
 
   static {
     properties.setProperty("window_width", "640");
@@ -120,18 +125,12 @@ public final class Config {
     properties.setProperty("game_speed_multiplier", String.valueOf(id));
   }
 
-  public static int getBattleRgb() {
-    final int[] rgbArray = {
-      readInt("battle_ui_r", 0, 0, 255),
-      readInt("battle_ui_g", 0, 0, 255),
-      readInt("battle_ui_b", 0, 0, 255),
-    };
+  public static Vector3f getBattleRgb() {
+    final int r = readInt("battle_ui_r", 0, 0, 255);
+    final int g = readInt("battle_ui_g", 0, 0, 255);
+    final int b = readInt("battle_ui_b", 0, 0, 255);
 
-    return (
-      (0xff & rgbArray[2]) << 16 |
-      (0xff & rgbArray[1]) << 8  |
-       0xff & rgbArray[0]
-    );
+    return uiColour.set(r / 255.0f, g / 255.0f, b / 255.0f);
   }
 
   public static void setBattleRgb(final int rgb) {

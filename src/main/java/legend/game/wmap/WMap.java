@@ -22,7 +22,9 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.core.opengl.McqBuilder;
 import legend.core.opengl.MeshObj;
+import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.EngineState;
@@ -155,6 +157,8 @@ public class WMap extends EngineState {
   private int tempZ_800c66d8;
 
   private McqHeader mcqHeader_800c6768;
+  private final MV mcqTransforms = new MV();
+  private Obj mcqObj;
 
   private float mcqColour_800c6794;
 
@@ -200,6 +204,7 @@ public class WMap extends EngineState {
    *   <li>{@link WMap#FUN_800ccbd8}</li>
    *   <li>{@link WMap#FUN_800ccef4}</li>
    *   <li>{@link WMap#transitionToTitle}</li>
+   *   <li>{@link WMap#loadBackgroundObj}</li>
    * </ol>
    */
   private final Runnable[] wmapStates_800ef000 = {
@@ -217,6 +222,7 @@ public class WMap extends EngineState {
     this::FUN_800ccbd8,
     this::FUN_800ccef4,
     this::transitionToTitle,
+    this::loadBackgroundObj,
   };
   /** Only seems to use element at index 1, but not positive */
   private static final ArrayRef<WmapLocationThumbnailMetrics08> locationThumbnailMetrics_800ef0cc = MEMORY.ref(2, 0x800ef0ccL, ArrayRef.of(WmapLocationThumbnailMetrics08.class, 7, 8, WmapLocationThumbnailMetrics08::new));
@@ -229,7 +235,7 @@ public class WMap extends EngineState {
 
   private static final ArrayRef<ByteRef> mapFrameTmdIndices_800ef19c = MEMORY.ref(1, 0x800ef19cL, ArrayRef.of(ByteRef.class, 7, 1, ByteRef::new));
 
-  private static float mcqBrightness_800ef1a4;
+  private float mcqBrightness_800ef1a4;
   /** These are where the 3D map disappears towards when you fully zoom out */
   private static final Vector3i[] mapPositions_800ef1a8 = {
     new Vector3i(-1550, - 8000,   900),
@@ -645,7 +651,18 @@ public class WMap extends EngineState {
 
     this.FUN_800ccf04();
     this.tickMainMenuOpenTransition_800c6690 = 0;
-    pregameLoadingStage_800bb10c.set(3);
+    pregameLoadingStage_800bb10c.set(14);
+  }
+
+  private void loadBackgroundObj() {
+    if((this.filesLoadedFlags_800c66b8.get() & 0x1) != 0) {
+      this.mcqObj = new McqBuilder("World Map Background MCQ", this.mcqHeader_800c6768)
+        .translucency(Translucency.B_PLUS_F)
+        .vramOffset(320, 0)
+        .build();
+
+      pregameLoadingStage_800bb10c.set(3);
+    }
   }
 
   @Method(0x800cccbcL)
@@ -892,6 +909,10 @@ public class WMap extends EngineState {
   private void deallocate() {
     if(this.wmapStruct258_800c66a8.mapOverlayObj != null) {
       this.wmapStruct258_800c66a8.mapOverlayObj.delete();
+    }
+
+    if(this.mcqObj != null) {
+      this.mcqObj.delete();
     }
 
     for(final MeshObj obj : this.wmapStruct258_800c66a8.zoomOverlayObjs) {
@@ -2423,7 +2444,7 @@ public class WMap extends EngineState {
           this.FUN_800d9d24(1);
 
           this.wmapStruct258_800c66a8.zoomState_1f8 = 2;
-          mcqBrightness_800ef1a4 = 0.0f;
+          this.mcqBrightness_800ef1a4 = 0.0f;
         }
 
         //LAB_800d9674
@@ -2431,10 +2452,10 @@ public class WMap extends EngineState {
         break;
 
       case 2:
-        mcqBrightness_800ef1a4 += 0.0625f / (3.0f / vsyncMode_8007a3b8);
+        this.mcqBrightness_800ef1a4 += 0.125f / (3.0f / vsyncMode_8007a3b8);
 
-        if(mcqBrightness_800ef1a4 > 0.5f) {
-          mcqBrightness_800ef1a4 = 0.5f;
+        if(this.mcqBrightness_800ef1a4 > 1.0f) {
+          this.mcqBrightness_800ef1a4 = 1.0f;
         }
 
         //LAB_800d96b8
@@ -2505,10 +2526,10 @@ public class WMap extends EngineState {
         break;
 
       case 5:
-        mcqBrightness_800ef1a4 -= 0.0625f / (3.0f / vsyncMode_8007a3b8);
+        this.mcqBrightness_800ef1a4 -= 0.125f / (3.0f / vsyncMode_8007a3b8);
 
-        if(mcqBrightness_800ef1a4 < 0.0f) {
-          mcqBrightness_800ef1a4 = 0.0f;
+        if(this.mcqBrightness_800ef1a4 < 0.0f) {
+          this.mcqBrightness_800ef1a4 = 0.0f;
         }
 
         //LAB_800d9b18
@@ -2526,7 +2547,9 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d9ccc
-    this.renderMcq(this.mcqHeader_800c6768, 320, 0, -160, -120, 30, (int)(mcqBrightness_800ef1a4 * 0x100));
+    this.mcqTransforms.transfer.set(0.0f, -8.0f, 10);
+    RENDERER.queueOrthoUnderlayModel(this.mcqObj, this.mcqTransforms)
+      .monochrome(this.mcqBrightness_800ef1a4);
 
     //LAB_800d9d10
   }
@@ -2697,10 +2720,10 @@ public class WMap extends EngineState {
         }
 
         //LAB_800dab44
-        mcqBrightness_800ef1a4 += 0.00390625f / (3.0f / vsyncMode_8007a3b8);
+        this.mcqBrightness_800ef1a4 += 0.0078125f / (3.0f / vsyncMode_8007a3b8);
 
-        if(mcqBrightness_800ef1a4 > 0.125f) {
-          mcqBrightness_800ef1a4 = 0.125f;
+        if(this.mcqBrightness_800ef1a4 > 0.25f) {
+          this.mcqBrightness_800ef1a4 = 0.25f;
         }
 
         //LAB_800dab80
@@ -2929,10 +2952,10 @@ public class WMap extends EngineState {
         }
 
         //LAB_800dbdb8
-        mcqBrightness_800ef1a4 -= 0.00390625f / (3.0f / vsyncMode_8007a3b8);
+        this.mcqBrightness_800ef1a4 -= 0.0078125f / (3.0f / vsyncMode_8007a3b8);
 
-        if(mcqBrightness_800ef1a4 < 0.0f) {
-          mcqBrightness_800ef1a4 = 0.0f;
+        if(this.mcqBrightness_800ef1a4 < 0.0f) {
+          this.mcqBrightness_800ef1a4 = 0.0f;
         }
 
         //LAB_800dbdec
@@ -2960,17 +2983,17 @@ public class WMap extends EngineState {
         //LAB_800dbf28
         struct258.models_0c[2].coord2_14.transforms.scale.set(struct258.models_0c[2].coord2_14.transforms.scale.x);
 
-        mcqBrightness_800ef1a4 -= 0.00390625f / (3.0f / vsyncMode_8007a3b8);
+        this.mcqBrightness_800ef1a4 -= 0.0078125f / (3.0f / vsyncMode_8007a3b8);
 
-        if(mcqBrightness_800ef1a4 < 0.0f) {
-          mcqBrightness_800ef1a4 = 0.0f;
+        if(this.mcqBrightness_800ef1a4 < 0.0f) {
+          this.mcqBrightness_800ef1a4 = 0.0f;
         }
 
         //LAB_800dbfa0
         break;
 
       case 0:
-        mcqBrightness_800ef1a4 = 0.0f;
+        this.mcqBrightness_800ef1a4 = 0.0f;
 
         this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(struct258.svec_200);
 
@@ -2985,7 +3008,9 @@ public class WMap extends EngineState {
     }
 
     //LAB_800dc114
-    this.renderMcq(this.mcqHeader_800c6768, 320, 0, -160, -120, orderingTableSize_1f8003c8.get() - 4, (int)(mcqBrightness_800ef1a4 * 0x100));
+    this.mcqTransforms.transfer.set(0.0f, -8.0f, 10);
+    RENDERER.queueOrthoUnderlayModel(this.mcqObj, this.mcqTransforms)
+      .monochrome(this.mcqBrightness_800ef1a4);
 
     //LAB_800dc164
   }
@@ -4100,7 +4125,7 @@ public class WMap extends EngineState {
     } else if(this.wmapStruct258_800c66a8._04 == 1) {
       //LAB_800e4738
       this.wmapStruct19c0_800c66b0._110 = 2;
-      this.mcqColour_800c6794 -= 0.0625f / (3.0f / vsyncMode_8007a3b8);
+      this.mcqColour_800c6794 -= 0.125f / (3.0f / vsyncMode_8007a3b8);
 
       if(this.mcqColour_800c6794 < 0.0f) {
         this.mcqColour_800c6794 = 0.0f;
@@ -4152,59 +4177,6 @@ public class WMap extends EngineState {
     //LAB_800e4924
   }
 
-  @Method(0x800e4934L)
-  private void renderMcq(final McqHeader mcq, final int vramOffsetX, final int vramOffsetY, final int x, final int y, final int z, final int colour) {
-    int clutX = vramOffsetX + mcq.clutX_0c;
-    int clutY = vramOffsetY + mcq.clutY_0e;
-    final int width = mcq.screenWidth_14;
-    final int height = mcq.screenHeight_16;
-    int u = vramOffsetX + mcq.u_10;
-    int v = vramOffsetY + mcq.v_12;
-    int vramX = u & 0x3c0;
-    final int vramY = v & 0x100;
-    u = u * 4 & 0xfc;
-
-    //LAB_800e4ad0
-    for(int chunkX = 0; chunkX < width; chunkX += 16) {
-      //LAB_800e4af0
-      //LAB_800e4af4
-      for(int chunkY = 0; chunkY < height; chunkY += 16) {
-        //LAB_800e4b14
-        GPU.queueCommand(z, new GpuCommandQuad()
-          .bpp(Bpp.BITS_4)
-          .translucent(Translucency.B_PLUS_F)
-          .clut(clutX, clutY)
-          .vramPos(vramX, vramY)
-          .monochrome(colour)
-          .pos(x + chunkX, y + chunkY, 16, 16)
-          .uv(u, v)
-        );
-
-        v = v + 16 & 0xf0;
-
-        if(v == 0) {
-          u = u + 16 & 0xfc;
-
-          if(u == 0) {
-            vramX = vramX + 64;
-          }
-        }
-
-        //LAB_800e4d18
-        clutY = clutY + 1 & 0xff;
-
-        if(clutY == 0) {
-          clutX = clutX + 16;
-        }
-
-        //LAB_800e4d4c
-        clutY = clutY | vramY;
-      }
-      //LAB_800e4d78
-    }
-    //LAB_800e4d90
-  }
-
   @Method(0x800e4e1cL)
   private void loadMapMcq() {
     this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & 0xffff_fffe);
@@ -4220,15 +4192,17 @@ public class WMap extends EngineState {
 
     //LAB_800e4eac
     if(this.wmapStruct258_800c66a8._05 != 2) {
-      this.mcqColour_800c6794 += 0.0625f / (3.0f / vsyncMode_8007a3b8);
+      this.mcqColour_800c6794 += 0.125f / (3.0f / vsyncMode_8007a3b8);
 
-      if(this.mcqColour_800c6794 > 0.125f) {
-        this.mcqColour_800c6794 = 0.125f;
+      if(this.mcqColour_800c6794 > 0.25f) {
+        this.mcqColour_800c6794 = 0.25f;
       }
     }
 
     //LAB_800e4f04
-    this.renderMcq(this.mcqHeader_800c6768, 320, 0, -160, -120, orderingTableSize_1f8003c8.get() - 3, (int)(this.mcqColour_800c6794 * 0x100));
+    this.mcqTransforms.transfer.set(0.0f, -8.0f, 10);
+    RENDERER.queueOrthoUnderlayModel(this.mcqObj, this.mcqTransforms)
+      .monochrome(this.mcqColour_800c6794);
 
     //LAB_800e4f50
   }

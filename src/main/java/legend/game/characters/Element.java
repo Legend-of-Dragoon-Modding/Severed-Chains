@@ -3,6 +3,7 @@ package legend.game.characters;
 import legend.core.GameEngine;
 import legend.game.combat.types.AttackType;
 import legend.game.modding.coremod.CoreMod;
+import org.joml.Vector3f;
 import org.legendofdragoon.modloader.registries.RegistryEntry;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
@@ -11,7 +12,7 @@ public abstract class Element extends RegistryEntry {
   @Deprecated
   public final int flag;
 
-  public final int colour;
+  public final Vector3f colour;
 
   @Deprecated
   public static Element fromFlag(final int flag) {
@@ -30,7 +31,7 @@ public abstract class Element extends RegistryEntry {
     throw new IllegalArgumentException("Unknown element %x".formatted(flag));
   }
 
-  public Element(final int flag, final int colour) {
+  public Element(final int flag, final Vector3f colour) {
     this.flag = flag;
     this.colour = colour;
   }
