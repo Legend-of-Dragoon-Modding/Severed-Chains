@@ -3,6 +3,7 @@ package legend.core.gpu;
 import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.ProjectionMode;
+import legend.core.RenderEngine;
 import legend.core.opengl.Mesh;
 import legend.core.opengl.Shader;
 import legend.core.opengl.ShaderManager;
@@ -225,8 +226,11 @@ public class Gpu {
     }
 
     this.displayTexture.data(0, 0, this.displayTexture.width, this.displayTexture.height, this.getDisplayBuffer().getData());
-//    this.drawMesh();
-    this.useVramTexture();
+
+    if(RenderEngine.legacyMode) {
+      this.drawMesh();
+      this.useVramTexture();
+    }
 
     if(this.zQueues != null) {
       for(int z = this.zQueues.length - 1; z >= 0; z--) {
