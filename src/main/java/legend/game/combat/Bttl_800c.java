@@ -2750,9 +2750,7 @@ public final class Bttl_800c {
       }
     }
 
-    for(int i = 0; i < bent.model_148.modelParts_00.length; i++) {
-      bent.model_148.modelParts_00[i].obj.delete();
-    }
+    bent.model_148.deleteModelParts();
 
     //LAB_800cb23c
   }
