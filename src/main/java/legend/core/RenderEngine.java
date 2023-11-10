@@ -90,6 +90,8 @@ import static org.lwjgl.opengl.GL40C.glBlendFunci;
 public class RenderEngine {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
 
+  public static boolean legacyMode;
+
   private Camera camera2d;
   private Camera camera3d;
   private Window window;
@@ -368,60 +370,67 @@ public class RenderEngine {
 
       this.renderCallback.run();
 
-      this.transparentFrameBuffer.bind();
-      glClearBufferfv(GL_COLOR, 0, this.clear0);
-      glClearBufferfv(GL_COLOR, 1, this.clear1);
+      if(!legacyMode) {
+        this.transparentFrameBuffer.bind();
+        glClearBufferfv(GL_COLOR, 0, this.clear0);
+        glClearBufferfv(GL_COLOR, 1, this.clear1);
 
-      this.opaqueFrameBuffer.bind();
-      this.clear();
+        this.opaqueFrameBuffer.bind();
+        this.clear();
 
-      this.render2dPool(this.orthoUnderlayPool);
-      this.clearDepth();
+        this.render2dPool(this.orthoUnderlayPool);
+        this.clearDepth();
 
-      RENDERER.setProjectionMode(ProjectionMode._2D);
-      this.renderPool(this.orthoPool);
+        RENDERER.setProjectionMode(ProjectionMode._2D);
+        this.renderPool(this.orthoPool);
 
-      RENDERER.setProjectionMode(ProjectionMode._3D);
-      this.renderPool(this.modelPool);
+        RENDERER.setProjectionMode(ProjectionMode._3D);
+        this.renderPool(this.modelPool);
 
-      // set render states
-      glDepthFunc(GL_ALWAYS);
-      glEnable(GL_BLEND);
-      glBlendEquation(GL_FUNC_ADD);
-      glBlendFunc(GL_ONE, GL_ONE); //TODO this is only for B+F
+        // set render states
+        glDepthFunc(GL_ALWAYS);
+        glEnable(GL_BLEND);
+        glBlendEquation(GL_FUNC_ADD);
+        glBlendFunc(GL_ONE, GL_ONE); //TODO this is only for B+F
 
-      // bind opaque framebuffer
-      this.opaqueFrameBuffer.bind();
+        // bind opaque framebuffer
+        this.opaqueFrameBuffer.bind();
 
-      // use composite shader
-      compositeShader.use();
+        // use composite shader
+        compositeShader.use();
 
-      // draw screen quad
-      this.accumTexture.use(0);
-      this.revealTexture.use(1);
-      postQuad.draw();
+        // draw screen quad
+        this.accumTexture.use(0);
+        this.revealTexture.use(1);
+        postQuad.draw();
 
-      // draw to backbuffer (final pass)
-      // -----
+        // draw to backbuffer (final pass)
+        // -----
 
-      // set render states
-      glDisable(GL_DEPTH_TEST);
-      glDepthMask(true); // enable depth writes so glClear won't ignore clearing the depth buffer
-      glDisable(GL_BLEND);
+        // set render states
+        glDisable(GL_DEPTH_TEST);
+        glDepthMask(true); // enable depth writes so glClear won't ignore clearing the depth buffer
+        glDisable(GL_BLEND);
 
-      // bind backbuffer
-      FrameBuffer.unbind();
-      this.setClearColour(0.0f, 0.0f, 0.0f);
-      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        // bind backbuffer
+        FrameBuffer.unbind();
+        this.setClearColour(0.0f, 0.0f, 0.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-      // use screen shader
-      screenShader.use();
+        // use screen shader
+        screenShader.use();
 
-      // draw final screen quad
-      this.opaqueTexture.use();
-      postQuad.draw();
+        // draw final screen quad
+        this.opaqueTexture.use();
+        postQuad.draw();
 
-      this.render2dPool(this.orthoOverlayPool);
+        this.render2dPool(this.orthoOverlayPool);
+      } else {
+        this.orthoUnderlayPool.reset();
+        this.orthoOverlayPool.reset();
+        this.orthoPool.reset();
+        this.modelPool.reset();
+      }
 
       this.fps = 1.0f / ((System.nanoTime() - this.lastFrame) / (1_000_000_000 / 30.0f)) * 30.0f;
       this.lastFrame = System.nanoTime();
@@ -733,6 +742,12 @@ public class RenderEngine {
   }
 
   private void updateProjections() {
+    if(legacyMode) {
+      this.perspectiveProjection.setPerspectiveLH(MathHelper.PI / 4.0f, (float)this.width / this.height, 0.1f, 500.0f);
+      this.orthographicProjection.setOrtho2D(0.0f, this.width, this.height, 0.0f);
+      return;
+    }
+
     // LOD uses a left-handed projection with a negated Y axis because reasons
     this.perspectiveProjection.setPerspectiveLH(this.fieldOfView, this.aspectRatio, 0.1f, 1000000.0f); //TODO un-jank the world map so we can lower this ridiculousness
     this.perspectiveProjection.negateY();
@@ -859,6 +874,11 @@ public class RenderEngine {
       } else {
         this.window.showCursor();
       }
+    }
+
+    if(key == GLFW_KEY_TAB) {
+      legacyMode = !legacyMode;
+      this.updateProjections();
     }
   }
 
