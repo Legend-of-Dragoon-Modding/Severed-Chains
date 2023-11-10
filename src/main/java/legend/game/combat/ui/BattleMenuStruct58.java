@@ -1,7 +1,9 @@
 package legend.game.combat.ui;
 
+import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.opengl.Obj;
+import legend.core.opengl.QuadBuilder;
 import legend.game.combat.environment.BattleMenuIconMetrics08;
 import legend.game.combat.environment.BattleMenuTextMetrics08;
 import legend.game.types.Translucency;
@@ -59,6 +61,7 @@ public class BattleMenuStruct58 {
   public final Obj[] divineSpiritOverlay = new Obj[2];
   public final Obj[] actionMenuBackground = new Obj[9];
   public Obj highlight;
+  public final Obj[] targetArrows = new Obj[3];
 
   public void initIcons() {
     if(this.actionDisabledObj == null) {
@@ -101,16 +104,36 @@ public class BattleMenuStruct58 {
           this.dragoonIconObj[spiritId][iconState] = buildBattleMenuElement("Spirit Icon " + spiritId + " state " + iconState, 0, 0, iconMetrics.u_00.get(), iconMetrics.v_02.get() + vOffset & 0xff, 16, iconH, iconClutOffset, Translucency.of(iconMetrics.translucencyMode_06.get()));
         }
       }
+
+      this.actionMenuBackground[0] = buildBattleMenuBackground("Action Background 0", battleMenuBackgroundMetrics_800fb5dc.get(0), 0, 0, 1, 2, 0x2b, Translucency.B_PLUS_F, battleMenuBackgroundMetrics_800fb5dc.get(0).uvShiftType_04.get());
+
+      for(int i = 1; i < 9; i++) {
+        this.actionMenuBackground[i] = buildBattleMenuBackground("Action Background " + i, battleMenuBackgroundMetrics_800fb5dc.get(i), 0, 0, 1, 1, 0x2b, Translucency.B_PLUS_F, battleMenuBackgroundMetrics_800fb5dc.get(i).uvShiftType_04.get());
+      }
+
+      // Red glow underneath selected menu item
+      this.highlight = buildBattleMenuSelectionHighlight("Action UI Highlight", battleMenuHighlightMetrics_800c71bc, 0xc, Translucency.B_PLUS_F, 1.0f);
+
+      for(int i = 0; i < this.targetArrows.length; i++) {
+        final QuadBuilder builder = new QuadBuilder("Target Arrow " + i)
+          .bpp(Bpp.BITS_4)
+          .translucency(Translucency.HALF_B_PLUS_HALF_F)
+          .vramPos(704, 256)
+          .monochrome(0.5f)
+          .size(16, 24)
+          .uv(240, 0);
+
+        if(i == 0) {
+          builder.clut(720, 510);
+        } else if(i == 1) {
+          builder.clut(720, 511);
+        } else if(i == 2) {
+          builder.clut(736, 496);
+        }
+
+        this.targetArrows[i] = builder.build();
+      }
     }
-
-    this.actionMenuBackground[0] = buildBattleMenuBackground("Action Background 0", battleMenuBackgroundMetrics_800fb5dc.get(0), 0, 0, 1, 2, 0x2b, Translucency.B_PLUS_F, battleMenuBackgroundMetrics_800fb5dc.get(0).uvShiftType_04.get());
-
-    for(int i = 1; i < 9; i++) {
-      this.actionMenuBackground[i] = buildBattleMenuBackground("Action Background " + i, battleMenuBackgroundMetrics_800fb5dc.get(i), 0, 0, 1, 1, 0x2b, Translucency.B_PLUS_F, battleMenuBackgroundMetrics_800fb5dc.get(i).uvShiftType_04.get());
-    }
-
-    // Red glow underneath selected menu item
-    this.highlight = buildBattleMenuSelectionHighlight("Action UI Highlight", battleMenuHighlightMetrics_800c71bc, 0xc, Translucency.B_PLUS_F, 1.0f);
   }
 
   public void delete() {
@@ -136,5 +159,9 @@ public class BattleMenuStruct58 {
     }
 
     this.highlight.delete();
+
+    for(int i = 0; i < this.targetArrows.length; i++) {
+      this.targetArrows[i].delete();
+    }
   }
 }

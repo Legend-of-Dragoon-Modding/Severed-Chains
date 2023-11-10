@@ -6,7 +6,6 @@ import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.GpuCommandPoly;
-import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
@@ -3366,16 +3365,16 @@ public final class Bttl_800e {
       //LAB_800ecb50
       //LAB_800ecb54
       final BattleEntity27c target = targetState.innerStruct_00;
-      final int textEffect;
+      final int colour;
       final VitalsStat targetHp = target.stats.getStat(CoreMod.HP_STAT.get());
       if(targetHp.getCurrent() > targetHp.getMax() / 4) {
-        textEffect = targetHp.getCurrent() > targetHp.getMax() / 2 ? 0 : 1;
+        colour = targetHp.getCurrent() > targetHp.getMax() / 2 ? 0 : 1;
       } else {
-        textEffect = 2;
+        colour = 2;
       }
 
       //LAB_800ecb90
-      drawTargetArrow(target.model_148, textEffect, targetState, target);
+      drawTargetArrow(target.model_148, colour, targetState, target);
     } else {
       //LAB_800ecba4
       long count = 0;
@@ -3413,17 +3412,17 @@ public final class Bttl_800e {
         //LAB_800ecc78
         final BattleEntity27c target = targetBent.innerStruct_00;
 
-        final int textEffect;
+        final int colour;
         final VitalsStat targetHp = target.stats.getStat(CoreMod.HP_STAT.get());
         if(targetHp.getCurrent() > targetHp.getMax() / 4) {
-          textEffect = targetHp.getCurrent() > targetHp.getMax() / 2 ? 0 : 1;
+          colour = targetHp.getCurrent() > targetHp.getMax() / 2 ? 0 : 1;
         } else {
-          textEffect = 2;
+          colour = 2;
         }
 
         //LAB_800eccac
         if((targetBent.storage_44[7] & 0x4000) == 0) {
-          drawTargetArrow(target.model_148, textEffect, targetBent, target);
+          drawTargetArrow(target.model_148, colour, targetBent, target);
         }
 
         //LAB_800eccc8
@@ -3433,8 +3432,11 @@ public final class Bttl_800e {
     //LAB_800eccd8
   }
 
+  /**
+   * @param colour 0 = blue, 1 = yellow, 2 = red
+   */
   @Method(0x800eccfcL)
-  public static void drawTargetArrow(final Model124 model, final int textEffect, final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
+  public static void drawTargetArrow(final Model124 model, final int colour, final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
     final float x;
     final float y;
     final float z;
@@ -3460,29 +3462,10 @@ public final class Bttl_800e {
     //LAB_800ecdac
     final Vector2f screenCoords = perspectiveTransformXyz(model, x, y, z);
 
-    final GpuCommandQuad cmd = new GpuCommandQuad()
-      .bpp(Bpp.BITS_4)
-      .translucent(Translucency.HALF_B_PLUS_HALF_F)
-      .vramPos(704, 256)
-      .monochrome(0x80)
-      .pos(screenCoords.x - 8, screenCoords.y + targetArrowOffsetY_800fb188.get(tickCount_800bb0fc.get() & 0x7).get(), 16, 24)
-      .uv(240, 0);
-
-    if(textEffect == 0) {
-      //LAB_800ece80
-      cmd.clut(720, 510);
-    } else if(textEffect == 1) {
-      //LAB_800ece88
-      cmd.clut(720, 511);
-      //LAB_800ece70
-    } else if(textEffect == 2) {
-      //LAB_800ece90
-      //LAB_800ece94
-      cmd.clut(736, 496);
-    }
-
     //LAB_800ece9c
-    GPU.queueCommand(28, cmd);
+    battleMenu_800c6c34.transforms.identity();
+    battleMenu_800c6c34.transforms.transfer.set(GPU.getOffsetX() + screenCoords.x - 8, GPU.getOffsetY() + screenCoords.y + targetArrowOffsetY_800fb188.get(tickCount_800bb0fc.get() & 0x7).get(), 112.0f);
+    RENDERER.queueOrthoModel(battleMenu_800c6c34.targetArrows[colour], battleMenu_800c6c34.transforms);
   }
 
   @ScriptDescription("Copies a block of vram from one position to another")
