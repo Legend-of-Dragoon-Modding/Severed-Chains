@@ -6445,7 +6445,7 @@ public class WMap extends EngineState {
 
                                 //LAB_800ee9b0
                                 //LAB_800eea34
-                                final int index = Math.round(smoke.scaleAndColourFade_50 / 0x40);
+                                final int index = (int)(smoke.scaleAndColourFade_50 / 0x40);
 
                                 cmd
                                   .clut(640, 505)
