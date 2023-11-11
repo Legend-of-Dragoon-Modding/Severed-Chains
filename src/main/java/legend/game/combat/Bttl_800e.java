@@ -3,6 +3,7 @@ package legend.game.combat;
 import legend.core.Config;
 import legend.core.DebugHelper;
 import legend.core.MathHelper;
+import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.GpuCommandPoly;
@@ -204,6 +205,7 @@ import static legend.game.combat.Bttl_800c.stageDarkening_800c6958;
 import static legend.game.combat.Bttl_800c.targetArrowOffsetY_800fb188;
 import static legend.game.combat.Bttl_800c.targeting_800fb36c;
 import static legend.game.combat.Bttl_800c.tmds_800c6944;
+import static legend.game.combat.Bttl_800c.uiTextureElementBrightness_800c71ec;
 import static legend.game.combat.Bttl_800c.usedRepeatItems_800c6c3c;
 import static legend.game.combat.Bttl_800d.FUN_800dd89c;
 import static legend.game.combat.Bttl_800d.applyAnimation;
@@ -4112,6 +4114,7 @@ public final class Bttl_800e {
   private static final Obj[] portraits = new Obj[3];
   private static final Obj[][] stats = new Obj[3][3];
   private static final MV uiTransforms = new MV();
+  private static final Vector3f colourTemp = new Vector3f();
 
   @Method(0x800efd34L)
   public static void drawUiElements() {
@@ -4173,8 +4176,15 @@ public final class Bttl_800e {
               // Numbers
               //TODO drawUiTextureElement last two params: brightnessIndex0, charDisplay._14.get(2).get()
               uiTransforms.transfer.set(displayStats.x_00 + digit.x_02, displayStats.y_02 + digit.y_04, 124.0f);
-              RENDERER.queueOrthoOverlayModel(floatingTextType1Digits[digit.digitValue_00], uiTransforms)
-                .colour(digit.colour);
+              final RenderEngine.QueuedModel digitModel = RENDERER.queueOrthoOverlayModel(floatingTextType1Digits[digit.digitValue_00], uiTransforms);
+
+              if(charDisplay._14.get(2).get() < 6) {
+                digit.colour.mul(((byte)(uiTextureElementBrightness_800c71ec.get(brightnessIndex0).get() + 0x80) / 6 * charDisplay._14.get(2).get() - 0x80 & 0xff) / 128.0f, colourTemp);
+              } else {
+                digit.colour.mul((uiTextureElementBrightness_800c71ec.get(brightnessIndex0).get() & 0xff) / 128.0f, colourTemp);
+              }
+
+              digitModel.colour(colourTemp);
             }
             //LAB_800f01e0
           }
@@ -4188,13 +4198,12 @@ public final class Bttl_800e {
               "Name " + charSlot,
               namePortraitMetrics.nameU_00.get(), namePortraitMetrics.nameV_01.get(),
               namePortraitMetrics.nameW_02.get(), namePortraitMetrics.nameH_03.get(),
-              0x2c,
-              brightnessIndex0, charDisplay._14.get(2).get()
+              0x2c
             );
           }
 
           uiTransforms.transfer.set(displayStats.x_00 + 1, displayStats.y_02 - 25, 124.0f);
-          RENDERER.queueOrthoOverlayModel(names[charSlot], uiTransforms);
+          final RenderEngine.QueuedModel nameModel = RENDERER.queueOrthoOverlayModel(names[charSlot], uiTransforms);
 
           // Portraits
           if(portraits[charSlot] == null) {
@@ -4202,13 +4211,20 @@ public final class Bttl_800e {
               "Portrait " + charSlot,
               namePortraitMetrics.portraitU_04.get(), namePortraitMetrics.portraitV_05.get(),
               namePortraitMetrics.portraitW_06.get(), namePortraitMetrics.portraitH_07.get(),
-              namePortraitMetrics.portraitClutOffset_08.get(),
-              brightnessIndex1, charDisplay._14.get(2).get()
+              namePortraitMetrics.portraitClutOffset_08.get()
             );
           }
 
           uiTransforms.transfer.set(displayStats.x_00 - 44, displayStats.y_02 - 22, 124.0f);
-          RENDERER.queueOrthoOverlayModel(portraits[charSlot], uiTransforms);
+          final RenderEngine.QueuedModel portraitModel = RENDERER.queueOrthoOverlayModel(portraits[charSlot], uiTransforms);
+
+          if(charDisplay._14.get(2).get() < 6) {
+            nameModel.monochrome(((byte)(uiTextureElementBrightness_800c71ec.get(brightnessIndex0).get() + 0x80) / 6 * charDisplay._14.get(2).get() - 0x80 & 0xff) / 128.0f);
+            portraitModel.monochrome(((byte)(uiTextureElementBrightness_800c71ec.get(brightnessIndex1).get() + 0x80) / 6 * charDisplay._14.get(2).get() - 0x80 & 0xff) / 128.0f);
+          } else {
+            nameModel.monochrome((uiTextureElementBrightness_800c71ec.get(brightnessIndex0).get() & 0xff) / 128.0f);
+            portraitModel.monochrome((uiTextureElementBrightness_800c71ec.get(brightnessIndex1).get() & 0xff) / 128.0f);
+          }
 
           if(brightnessIndex0 != 0) {
             final int v1_0 = (6 - charDisplay._14.get(2).get()) * 8 + 100;
@@ -4283,18 +4299,20 @@ public final class Bttl_800e {
             if(stats[charSlot][i] == null) {
               stats[charSlot][i] = buildUiTextureElement(
                 "Stats " + charSlot + ' ' + i,
-                labelMetrics.u_04.get(),
-                labelMetrics.v_06.get(),
-                labelMetrics.w_08.get(),
-                labelMetrics.h_0a.get() + eraseSpHeight,
-                0x2c,
-                brightnessIndex0,
-                charDisplay._14.get(2).get()
+                labelMetrics.u_04.get(), labelMetrics.v_06.get(),
+                labelMetrics.w_08.get(), labelMetrics.h_0a.get() + eraseSpHeight,
+                0x2c
               );
             }
 
             uiTransforms.transfer.set(displayStats.x_00 + labelMetrics.x_00.get(), displayStats.y_02 + labelMetrics.y_02.get(), 124.0f);
-            RENDERER.queueOrthoOverlayModel(stats[charSlot][i], uiTransforms);
+            final RenderEngine.QueuedModel statsModel = RENDERER.queueOrthoOverlayModel(stats[charSlot][i], uiTransforms);
+
+            if(charDisplay._14.get(2).get() < 6) {
+              statsModel.monochrome(((byte)(uiTextureElementBrightness_800c71ec.get(brightnessIndex0).get() + 0x80) / 6 * charDisplay._14.get(2).get() - 0x80 & 0xff) / 128.0f);
+            } else {
+              statsModel.monochrome((uiTextureElementBrightness_800c71ec.get(brightnessIndex0).get() & 0xff) / 128.0f);
+            }
           }
 
           if(canTransform) {
