@@ -955,6 +955,17 @@ public final class Scus94491BpeSegment {
     Unpacker.loadDirectory("SECT/DRGN%d.BIN/%d".formatted(drgnBinIndex, directory), onCompletion);
   }
 
+  public static void loadDrgnDirSync(int drgnBinIndex, final int directory, final Consumer<List<FileData>> onCompletion) {
+    if(drgnBinIndex >= 2) {
+      drgnBinIndex = 20 + drgnBinIndex_800bc058;
+    }
+
+    final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
+    LOGGER.info("Loading DRGN%d dir %d from %s.%s(%s:%d)", drgnBinIndex, directory, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
+
+    onCompletion.accept(Unpacker.loadDirectory("SECT/DRGN%d.BIN/%d".formatted(drgnBinIndex, directory)));
+  }
+
   public static void loadDrgnDir(int drgnBinIndex, final String directory, final Consumer<List<FileData>> onCompletion) {
     if(drgnBinIndex >= 2) {
       drgnBinIndex = 20 + drgnBinIndex_800bc058;

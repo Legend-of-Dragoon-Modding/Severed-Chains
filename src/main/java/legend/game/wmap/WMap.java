@@ -66,6 +66,7 @@ import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
+import static legend.game.Scus94491BpeSegment.loadDrgnDirSync;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadDrgnFileSync;
 import static legend.game.Scus94491BpeSegment.loadLocationMenuSoundEffects;
@@ -2025,7 +2026,7 @@ public class WMap extends EngineState {
   @Method(0x800d6880L)
   private void loadWmapTextures() {
     this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & 0xffff_efff);
-    loadDrgnDir(0, 5695, files -> this.timsLoaded(files, 0x1_1000));
+    loadDrgnDirSync(0, 5695, files -> this.timsLoaded(files, 0x1_1000));
     this.wmapStruct258_800c66a8.colour_20 = 0.0f;
   }
 
@@ -2296,7 +2297,7 @@ public class WMap extends EngineState {
   @Method(0x800d8e4cL)
   private void loadMapModelAndTexture(final int index) {
     this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & 0xffff_fffd);
-    loadDrgnDir(0, 5697 + index, files -> this.timsLoaded(files, 0x2));
+    loadDrgnDirSync(0, 5697 + index, files -> this.timsLoaded(files, 0x2));
     loadDrgnFile(0, 5705 + index, files -> this.loadTmdCallback("Map model DRGN0/" + (5705 + index), files));
   }
 
@@ -3245,7 +3246,7 @@ public class WMap extends EngineState {
   private void loadPlayerAvatarTextureAndModelFiles() {
     this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & 0xffff_fd57);
 
-    loadDrgnDir(0, 5713, files -> this.timsLoaded(files, 0x2a8));
+    loadDrgnDirSync(0, 5713, files -> this.timsLoaded(files, 0x2a8));
 
     //LAB_800dfacc
     for(int i = 0; i < 4; i++) {
