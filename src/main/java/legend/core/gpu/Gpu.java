@@ -227,9 +227,10 @@ public class Gpu {
 
     this.displayTexture.data(0, 0, this.displayTexture.width, this.displayTexture.height, this.getDisplayBuffer().getData());
 
-    if(RenderEngine.legacyMode) {
-      this.drawMesh();
-      this.useVramTexture();
+    if(RenderEngine.legacyMode == 1) {
+      this.drawDisplay();
+    } else if(RenderEngine.legacyMode == 2) {
+      this.drawVram();
     }
 
     if(this.zQueues != null) {
@@ -494,7 +495,7 @@ public class Gpu {
     this.zQueues = list;
   }
 
-  public void drawMesh() {
+  public void drawDisplay() {
     RENDERER.setProjectionMode(ProjectionMode._2D);
 
     glDisable(GL_BLEND);
@@ -502,6 +503,17 @@ public class Gpu {
     this.vramShader.use();
     this.vramShaderColour.set(1.0f, 1.0f, 1.0f, 1.0f);
     this.displayTexture.use();
+    this.displayMesh.draw();
+  }
+
+  public void drawVram() {
+    RENDERER.setProjectionMode(ProjectionMode._2D);
+
+    glDisable(GL_BLEND);
+
+    this.vramShader.use();
+    this.vramShaderColour.set(1.0f, 1.0f, 1.0f, 1.0f);
+    this.vramTexture24.use();
     this.displayMesh.draw();
   }
 

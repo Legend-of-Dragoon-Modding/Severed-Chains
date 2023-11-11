@@ -90,7 +90,7 @@ import static org.lwjgl.opengl.GL40C.glBlendFunci;
 public class RenderEngine {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
 
-  public static boolean legacyMode;
+  public static int legacyMode;
 
   private Camera camera2d;
   private Camera camera3d;
@@ -370,7 +370,7 @@ public class RenderEngine {
 
       this.renderCallback.run();
 
-      if(!legacyMode) {
+      if(legacyMode == 0) {
         this.transparentFrameBuffer.bind();
         glClearBufferfv(GL_COLOR, 0, this.clear0);
         glClearBufferfv(GL_COLOR, 1, this.clear1);
@@ -742,7 +742,7 @@ public class RenderEngine {
   }
 
   private void updateProjections() {
-    if(legacyMode) {
+    if(legacyMode != 0) {
       this.perspectiveProjection.setPerspectiveLH(MathHelper.PI / 4.0f, (float)this.width / this.height, 0.1f, 500.0f);
       this.orthographicProjection.setOrtho2D(0.0f, this.width, this.height, 0.0f);
       return;
@@ -877,8 +877,14 @@ public class RenderEngine {
     }
 
     if(key == GLFW_KEY_TAB) {
-      legacyMode = !legacyMode;
+      legacyMode = (legacyMode + 1) % 3;
       this.updateProjections();
+
+      switch(legacyMode) {
+        case 0 -> System.out.println("Switched to OpenGL rendering");
+        case 1 -> System.out.println("Switched to legacy rendering");
+        case 2 -> System.out.println("Switched to VRAM rendering");
+      }
     }
   }
 
