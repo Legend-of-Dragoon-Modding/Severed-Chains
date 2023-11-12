@@ -56,7 +56,7 @@ import legend.game.combat.ui.BattleDisplayStatsDigit10;
 import legend.game.combat.ui.BattleHudCharacterDisplay3c;
 import legend.game.combat.ui.BattleMenuStruct58;
 import legend.game.combat.ui.FloatingNumberC4;
-import legend.game.combat.ui.FloatingNumberC4Sub20;
+import legend.game.combat.ui.FloatingNumberDigit20;
 import legend.game.combat.ui.SpellAndItemMenuA4;
 import legend.game.combat.ui.UiBox;
 import legend.game.inventory.Item;
@@ -3984,15 +3984,13 @@ public final class Bttl_800e {
       num.flags_02 = 0;
       num.bentIndex_04 = -1;
       num.translucent_08 = false;
-      num.b_0c = 0x80;
-      num.g_0d = 0x80;
-      num.r_0e = 0x80;
+      num.shade_0c = 0x80;
       num.ticksRemaining_14 = -1;
       num._18 = -1;
 
       //LAB_800ef89c
       for(int i = 0; i < num.digits_24.length; i++) {
-        final FloatingNumberC4Sub20 digit = num.digits_24[i];
+        final FloatingNumberDigit20 digit = num.digits_24[i];
         digit.flags_00 = 0;
         digit._04 = 0;
         digit._08 = 0;

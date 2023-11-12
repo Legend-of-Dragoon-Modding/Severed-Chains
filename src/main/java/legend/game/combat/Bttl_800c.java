@@ -426,8 +426,6 @@ public final class Bttl_800c {
 
   public static final ArrayRef<ShortRef> floatingTextType3DigitUs_800c70e0 = MEMORY.ref(2, 0x800c70e0L, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
 
-  public static final ArrayRef<ShortRef> floatingTextDigitClutOffsets_800c70f4 = MEMORY.ref(2, 0x800c70f4L, ArrayRef.of(ShortRef.class, 15, 2, ShortRef::new));
-
   public static final Vector2i[] battleUiElementClutVramXy_800c7114 = {
     new Vector2i(0x2c0, 0x1f0),
     new Vector2i(0x380, 0x130),
