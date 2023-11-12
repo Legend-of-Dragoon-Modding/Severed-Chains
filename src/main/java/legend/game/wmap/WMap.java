@@ -2387,7 +2387,7 @@ public class WMap extends EngineState {
       } else {
         //LAB_800d93b4
         //LAB_800d93c8
-//        renderDobj2(dobj2);
+        //renderDobj2(dobj2);
       }
 
       RENDERER.queueModel(dobj2.obj, lightMatrix);
@@ -6281,10 +6281,11 @@ public class WMap extends EngineState {
     //LAB_800edbac
   }
 
+  private final MeshObj[] smokeCloudMeshes = new MeshObj[6];
+
   @Method(0x800edbc0L)
   private void renderSmoke() {
     final Vector3f rotation = new Vector3f(); // Just (0, 0, 0)
-    final MV ls = new MV();
 
     if((this.filesLoadedFlags_800c66b8.get() & 0x1000) == 0) {
       return;
@@ -6313,158 +6314,151 @@ public class WMap extends EngineState {
     //LAB_800edc84
     //LAB_800edca8
     for(int i = 0; i < this.placeCount_800c86cc; i++) {
-      final WmapSmokeCloudInstance60 smoke = this.smokeCloudInstances_800c86f8[i];
-
       //LAB_800edccc
-      if(!places_800f0234.get(locations_800f0e34.get(locationsIndices_800c84c8.get(i).get()).placeIndex_02.get()).name_00.isNull()) {
-        //LAB_800edd3c
-        final int mode = locations_800f0e34.get(locationsIndices_800c84c8.get(i).get()).effectFlags_12.get() & 0xc;
+      if(places_800f0234.get(locations_800f0e34.get(locationsIndices_800c84c8.get(i).get()).placeIndex_02.get()).name_00.isNull()) {
+        continue;
+      }
 
-        if(mode != 0) {
-          //LAB_800edda0
-          if(locations_800f0e34.get(locationsIndices_800c84c8.get(i).get()).continentNumber_0e.get() == this.mapState_800c6798.continentIndex_00 + 1) {
-            //LAB_800eddfc
-            if(i >= 9) {
-              break;
-            }
+      //LAB_800edd3c
+      final int mode = locations_800f0e34.get(locationsIndices_800c84c8.get(i).get()).effectFlags_12.get() & 0xc;
+      if(mode == 0) {
+        continue;
+      }
 
-            //LAB_800ede18
-            //LAB_800ede1c
-            for(int j = 0; j < 6; j++) {
-              //LAB_800ede38
-              final float size;
-              if(mode == 8) {
-                size = smoke.scaleAndColourFade_50 / 5.0f;
-              } else {
-                //LAB_800ede88
-                size = smoke.scaleAndColourFade_50 / 3.0f;
-              }
+      //LAB_800edda0
+      if(locations_800f0e34.get(locationsIndices_800c84c8.get(i).get()).continentNumber_0e.get() == this.mapState_800c6798.continentIndex_00 + 1) {
+        //LAB_800eddfc
+        if(i >= 9) {
+          break;
+        }
 
-              //LAB_800edebc
-              //LAB_800edf88
+        //LAB_800ede18
+        //LAB_800ede1c
+        final WmapSmokeCloudInstance60 smoke = this.smokeCloudInstances_800c86f8[i];
+        for(int j = 0; j < 6; j++) {
+          //LAB_800ede38
+          final float size;
+          if(mode == 8) {
+            size = smoke.scaleAndColourFade_50 / 5.0f;
+          } else {
+            //LAB_800ede88
+            size = smoke.scaleAndColourFade_50 / 3.0f;
+          }
+
+          //LAB_800edebc
+          //LAB_800edf88
+          smoke.coord2_00.coord.transfer.x = smokeTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
+          smoke.coord2_00.coord.transfer.y = smokeTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
+          smoke.coord2_00.coord.transfer.z = smokeTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16;
+
+          if(this.mapState_800c6798.continentIndex_00 == 0) {
+            if(mode == 4) {
+              //LAB_800ee0e4
               smoke.coord2_00.coord.transfer.x = smokeTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
               smoke.coord2_00.coord.transfer.y = smokeTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
-              smoke.coord2_00.coord.transfer.z = smokeTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16;
+              smoke.coord2_00.coord.transfer.z = smokeTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 + 80;
+              //LAB_800ee1dc
+            } else if(mode == 8) {
+              //LAB_800ee238
+              smoke.coord2_00.coord.transfer.x = smokeTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16 + 48;
+              smoke.coord2_00.coord.transfer.y = smokeTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
+              smoke.coord2_00.coord.transfer.z = smokeTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 + 48;
+            }
 
-              if(this.mapState_800c6798.continentIndex_00 == 0) {
-                if(mode == 4) {
-                  //LAB_800ee0e4
-                  smoke.coord2_00.coord.transfer.x = smokeTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
-                  smoke.coord2_00.coord.transfer.y = smokeTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
-                  smoke.coord2_00.coord.transfer.z = smokeTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 + 80;
-                  //LAB_800ee1dc
-                } else if(mode == 8) {
-                  //LAB_800ee238
-                  smoke.coord2_00.coord.transfer.x = smokeTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16 + 48;
-                  smoke.coord2_00.coord.transfer.y = smokeTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
-                  smoke.coord2_00.coord.transfer.z = smokeTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 + 48;
-                }
+            //LAB_800ee32c
+            //LAB_800ee334
+          } else if(this.mapState_800c6798.continentIndex_00 == 1) {
+            if(mode == 4) {
+              //LAB_800ee3a4
+              smoke.coord2_00.coord.transfer.x = smokeTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
+              smoke.coord2_00.coord.transfer.y = smokeTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4 + 48;
+              smoke.coord2_00.coord.transfer.z = smokeTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 - 100;
+              //LAB_800ee4a0
+            } else if(mode == 8) {
+              //LAB_800ee4fc
+              smoke.coord2_00.coord.transfer.x = smokeTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16 - 48;
+              smoke.coord2_00.coord.transfer.y = smokeTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
+              smoke.coord2_00.coord.transfer.z = smokeTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 + 32;
+            }
+          }
 
-                //LAB_800ee32c
-                //LAB_800ee334
-              } else if(this.mapState_800c6798.continentIndex_00 == 1) {
-                if(mode == 4) {
-                  //LAB_800ee3a4
-                  smoke.coord2_00.coord.transfer.x = smokeTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
-                  smoke.coord2_00.coord.transfer.y = smokeTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4 + 48;
-                  smoke.coord2_00.coord.transfer.z = smokeTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 - 100;
-                  //LAB_800ee4a0
-                } else if(mode == 8) {
-                  //LAB_800ee4fc
-                  smoke.coord2_00.coord.transfer.x = smokeTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16 - 48;
-                  smoke.coord2_00.coord.transfer.y = smokeTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
-                  smoke.coord2_00.coord.transfer.z = smokeTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 + 32;
-                }
-              }
+          //LAB_800ee5f0
+          this.rotateCoord2(rotation, smoke.coord2_00);
+          GsGetLs(smoke.coord2_00, smoke.transforms);
+          smoke.transforms.identity(); // NOTE: does not clear translation
+          GTE.setTransforms(smoke.transforms);
 
-              //LAB_800ee5f0
-              this.rotateCoord2(rotation, smoke.coord2_00);
-              GsGetLs(smoke.coord2_00, ls);
-              ls.identity(); // NOTE: does not clear translation
-              GTE.setTransforms(ls);
+          GTE.perspectiveTransform(-size, -size, 0);
+          final float sx0 = GTE.getScreenX(2);
+          final float sy0 = GTE.getScreenY(2);
+          float z = GTE.getScreenZ(3) / 4.0f;
 
-              final GpuCommandPoly cmd = new GpuCommandPoly(4)
-                .bpp(Bpp.BITS_4)
-                .vramPos(640, 256);
+          //LAB_800ee6cc
+          if(z >= 5 || z < orderingTableSize_1f8003c8.get() - 3) {
+            //LAB_800ee6d4
+            GTE.perspectiveTransform(size, -size, 0);
+            final float sx1 = GTE.getScreenX(2);
+            final float sy1 = GTE.getScreenY(2);
+            z = GTE.getScreenZ(3) / 4.0f;
 
-              GTE.perspectiveTransform(-size, -size, 0);
-              final float sx0 = GTE.getScreenX(2);
-              final float sy0 = GTE.getScreenY(2);
-              float z = GTE.getScreenZ(3) / 4.0f;
+            final float transformedSize = sx1 - sx0;
 
-              cmd.pos(0, sx0, sy0);
-
-              //LAB_800ee6cc
-              if(z >= 5 || z < orderingTableSize_1f8003c8.get() - 3) {
-                //LAB_800ee6d4
-                GTE.perspectiveTransform(size, -size, 0);
-                final float sx1 = GTE.getScreenX(2);
-                final float sy1 = GTE.getScreenY(2);
+            //LAB_800ee750
+            if(z >= 5 || z < orderingTableSize_1f8003c8.get() - 3) {
+              //LAB_800ee758
+              if(sx1 - sx0 <= 0x400) {
+                //LAB_800ee78c
+                GTE.perspectiveTransform(-size, size, 0);
+                final float sx2 = GTE.getScreenX(2);
+                final float sy2 = GTE.getScreenY(2);
                 z = GTE.getScreenZ(3) / 4.0f;
 
-                cmd.pos(1, sx1, sy1);
-
-                //LAB_800ee750
-                if(z >= 5 || z < orderingTableSize_1f8003c8.get() - 3) {
-                  //LAB_800ee758
-                  if(sx1 - sx0 <= 0x400) {
-                    //LAB_800ee78c
-                    GTE.perspectiveTransform(-size, size, 0);
-                    final float sx2 = GTE.getScreenX(2);
-                    final float sy2 = GTE.getScreenY(2);
+                //LAB_800ee808
+                if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
+                  //LAB_800ee810
+                  if(sy2 - sy0 <= 0x200) {
+                    //LAB_800ee844
+                    GTE.perspectiveTransform(size, size, 0);
+                    final float sx3 = GTE.getScreenX(2);
+                    final float sy3 = GTE.getScreenY(2);
                     z = GTE.getScreenZ(3) / 4.0f;
 
-                    cmd.pos(2, sx2, sy2);
-
-                    //LAB_800ee808
+                    //LAB_800ee8c0
                     if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
-                      //LAB_800ee810
-                      if(sy2 - sy0 <= 0x200) {
-                        //LAB_800ee844
-                        GTE.perspectiveTransform(size, size, 0);
-                        final float sx3 = GTE.getScreenX(2);
-                        final float sy3 = GTE.getScreenY(2);
-                        z = GTE.getScreenZ(3) / 4.0f;
+                      //LAB_800ee8c8
+                      if(sx3 - sx2 <= 0x400) {
+                        //LAB_800ee8fc
+                        if(sy3 - sy1 <= 0x200) {
+                          //LAB_800ee930
+                          if(z >= 6 && z < orderingTableSize_1f8003c8.get() - 1) {
 
-                        cmd.pos(3, sx3, sy3);
+                            final Translucency translucency = mode == 8 ? Translucency.B_MINUS_F : Translucency.B_PLUS_F;
 
-                        //LAB_800ee8c0
-                        if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
-                          //LAB_800ee8c8
-                          if(sx3 - sx2 <= 0x400) {
-                            //LAB_800ee8fc
-                            if(sy3 - sy1 <= 0x200) {
-                              //LAB_800ee930
-                              if(z >= 6 && z < orderingTableSize_1f8003c8.get() - 1) {
-                                if(mode == 8) {
-                                  cmd.translucent(Translucency.B_MINUS_F);
-                                } else {
-                                  //LAB_800ee998
-                                  cmd.translucent(Translucency.B_PLUS_F);
-                                }
-
-                                //LAB_800ee9b0
-                                //LAB_800eea34
-                                final int index = (int)(smoke.scaleAndColourFade_50 / 0x40);
-
-                                cmd
-                                  .clut(640, 505)
-                                  .monochrome((int)(0x80 - smoke.scaleAndColourFade_50))
-                                  .uv(0, smokeUvs_800f65d4.get(index).get(0).get(), smokeUvs_800f65d4.get(index).get(1).get())
-                                  .uv(1, smokeUvs_800f65d4.get(index).get(0).get() + 31, smokeUvs_800f65d4.get(index).get(1).get())
-                                  .uv(2, smokeUvs_800f65d4.get(index).get(0).get(), smokeUvs_800f65d4.get(index).get(1).get() + 31)
-                                  .uv(3, smokeUvs_800f65d4.get(index).get(0).get() + 31, smokeUvs_800f65d4.get(index).get(1).get() + 31);
-
-                                GPU.queueCommand(100 + z, cmd);
-
-                                smoke.scaleAndColourFade_50 += 1.0f / (3.0f / vsyncMode_8007a3b8);
-
-                                if(smoke.scaleAndColourFade_50 >= 0x80) {
-                                  smoke.scaleAndColourFade_50 = 0;
-                                }
-                                //LAB_800eeccc
-                              }
+                            //LAB_800ee9b0
+                            //LAB_800eea34
+                            final int index = (int)(smoke.scaleAndColourFade_50 / 0x40);
+                            final QuadBuilder builder = new QuadBuilder("Cloud")
+                              .bpp(Bpp.BITS_4)
+                              .vramPos(640, 256)
+                              .pos(GPU.getOffsetX() + sx0, GPU.getOffsetY() + sy0, 100 + z)
+                              .size(transformedSize, transformedSize)
+                              .clut(640, 505)
+                              .monochrome((0x80 - smoke.scaleAndColourFade_50) / 255.0f)
+                              .uv(smokeUvs_800f65d4.get(index).get(0).get(), smokeUvs_800f65d4.get(index).get(1).get())
+                              .uvSize(31, 31)
+                              .translucency(translucency);
+                            if(this.smokeCloudMeshes[j] != null) {
+                              this.smokeCloudMeshes[j].delete();
                             }
+                            this.smokeCloudMeshes[j] = builder.build();
+                            RENDERER.queueOrthoModel(this.smokeCloudMeshes[j]);
+
+                            smoke.scaleAndColourFade_50 += 1.0f / (3.0f / vsyncMode_8007a3b8);
+
+                            if(smoke.scaleAndColourFade_50 >= 0x80) {
+                              smoke.scaleAndColourFade_50 = 0;
+                            }
+                            //LAB_800eeccc
                           }
                         }
                       }
