@@ -3493,7 +3493,7 @@ public final class Bttl_800c {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "value", description = "The number to show")
   @Method(0x800ccb70L)
   public static FlowControl scriptAddFloatingNumberForBent(final RunningScript<?> script) {
-    addFloatingNumberForBent(script.params_20[0].get(), script.params_20[1].get(), 0xdL);
+    addFloatingNumberForBent(script.params_20[0].get(), script.params_20[1].get(), 13);
     return FlowControl.CONTINUE;
   }
 

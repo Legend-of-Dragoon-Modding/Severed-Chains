@@ -210,7 +210,7 @@ import static legend.game.combat.Bttl_800d.applyAnimation;
 import static legend.game.combat.Bttl_800d.loadModelAnim;
 import static legend.game.combat.Bttl_800d.loadModelTmd;
 import static legend.game.combat.Bttl_800d.optimisePacketsIfNecessary;
-import static legend.game.combat.Bttl_800f.FUN_800f3940;
+import static legend.game.combat.Bttl_800f.tickFloatingNumbers;
 import static legend.game.combat.Bttl_800f.buildUiTextureElement;
 import static legend.game.combat.Bttl_800f.clearBattleMenu;
 import static legend.game.combat.Bttl_800f.clearSpellAndItemMenu;
@@ -3985,7 +3985,7 @@ public final class Bttl_800e {
       num.b_0c = 0x80;
       num.g_0d = 0x80;
       num.r_0e = 0x80;
-      num._14 = -1;
+      num.ticksRemaining_14 = -1;
       num._18 = -1;
 
       //LAB_800ef89c
@@ -3995,7 +3995,6 @@ public final class Bttl_800e {
         digit._04 = 0;
         digit._08 = 0;
         digit.digit_0c = -1;
-        digit.unused_1c = 0;
       }
     }
   }
@@ -4100,7 +4099,7 @@ public final class Bttl_800e {
       }
 
       //LAB_800efd00
-      FUN_800f3940();
+      tickFloatingNumbers();
       handleSpellAndItemMenu();
     }
     //LAB_800efd10

@@ -16,7 +16,7 @@ public class FloatingNumberC4 {
   public int r_0e;
 
   public int _10;
-  public int _14;
+  public int ticksRemaining_14;
   public int _18;
   public float x_1c;
   public float y_20;

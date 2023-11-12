@@ -12,5 +12,4 @@ public class FloatingNumberC4Sub20 {
   public int texW_16;
   public int texH_18;
   public int baseClutOffset_1a;
-  public int unused_1c;
 }

@@ -519,17 +519,17 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f3354L)
-  public static void addFloatingNumber(final int numIndex, final long onHitTextType, final long onHitClutCol, final int number, final float x, final float y, int a6, final long onHitClutRow) {
+  public static void addFloatingNumber(final int numIndex, final int onHitTextType, final int onHitClutCol, final int number, final float x, final float y, int ticks, final int onHitClutRow) {
     final FloatingNumberC4 num = floatingNumbers_800c6b5c[numIndex];
     final short[] damageDigits = new short[num.digits_24.length];
 
-    final byte floatingTextType;  // 0=floating numbers, 1=MP cost, 2=miss
-    final byte clutCol; //TODO: confirm this, it may not be this exactly
-    final byte clutRow; //TODO: confirm this, it may not be this exactly
+    final int floatingTextType;  // 0=floating numbers, 1=MP cost, 2=miss
+    final int clutCol; //TODO: confirm this, it may not be this exactly
+    final int clutRow; //TODO: confirm this, it may not be this exactly
     if(number != -1) {
-      floatingTextType = (byte)onHitTextType;
-      clutCol = (byte)onHitClutCol;
-      clutRow = (byte)onHitClutRow;
+      floatingTextType = onHitTextType;
+      clutCol = onHitClutCol;
+      clutRow = onHitClutRow;
     } else {
       floatingTextType = 2;
       clutCol = 2;
@@ -544,7 +544,7 @@ public final class Bttl_800f {
     num.g_0d = 0x80;
     num.r_0e = 0x80;
     num._18 = -1;
-    num._14 = -1;
+    num.ticksRemaining_14 = -1;
 
     //LAB_800f3528
     for(int i = 0; i < num.digits_24.length; i++) {
@@ -552,11 +552,10 @@ public final class Bttl_800f {
       num.digits_24[i]._04 = 0;
       num.digits_24[i]._08 = 0;
       num.digits_24[i].digit_0c = -1;
-      num.digits_24[i].unused_1c = 0;
     }
 
     num.state_00 = 1;
-    if(a6 == 0) {
+    if(ticks == 0) {
       num.flags_02 |= 0x1;
     }
 
@@ -564,8 +563,8 @@ public final class Bttl_800f {
     num.flags_02 |= 0x8000;
     num._10 = clutCol;
 
-    if(clutCol == 2 && a6 == 0) {
-      a6 = 60 / vsyncMode_8007a3b8 * 2;
+    if(clutCol == 2 && ticks == 0) {
+      ticks = 60 / vsyncMode_8007a3b8 * 2;
     }
 
     //LAB_800f35dc
@@ -623,6 +622,7 @@ public final class Bttl_800f {
     for(digitStructIdx = 0; digitStructIdx < num.digits_24.length && digitIdx < num.digits_24.length; digitStructIdx++) {
       final FloatingNumberC4Sub20 digitStruct = num.digits_24[digitStructIdx];
       digitStruct.flags_00 = 0x8000;
+      digitStruct.x_0e = displayPosX;
       digitStruct.y_10 = 0;
 
       if(clutCol == 2) {
@@ -634,7 +634,6 @@ public final class Bttl_800f {
       //LAB_800f37d8
       if(floatingTextType == 1) {
         //LAB_800f382c
-        digitStruct.x_0e = displayPosX;
         digitStruct.u_12 = floatingTextType1DigitUs_800c7028[damageDigits[digitIdx]];
         digitStruct.v_14 = 32;
         digitStruct.texW_16 = 8;
@@ -642,7 +641,6 @@ public final class Bttl_800f {
         displayPosX += 5;
       } else if(floatingTextType == 2) {
         //LAB_800f386c
-        digitStruct.x_0e = displayPosX;
         digitStruct.u_12 = 72;
         digitStruct.v_14 = 128;
         digitStruct.texW_16 = 36;
@@ -650,7 +648,6 @@ public final class Bttl_800f {
         displayPosX += 36;
       } else {
         //LAB_800f37f4
-        digitStruct.x_0e = displayPosX;
         digitStruct.u_12 = floatingTextType3DigitUs_800c70e0.get(damageDigits[digitIdx]).get();
         digitStruct.v_14 = 40;
         digitStruct.texW_16 = 8;
@@ -661,26 +658,23 @@ public final class Bttl_800f {
       //LAB_800f3898
       digitStruct.digit_0c = damageDigits[digitIdx];
       digitStruct.baseClutOffset_1a = floatingTextDigitClutOffsets_800c70f4.get(clutRow).get();
-      digitStruct.unused_1c = 0x1000;
 
       digitIdx++;
     }
 
     //LAB_800f38e8
-    num._14 = digitStructIdx + 12; //TODO: ID duration meaning
-    num._18 = a6 + 4; //TODO: ID duration meaning
+    num.ticksRemaining_14 = digitStructIdx + 12;
+    num._18 = ticks + 4; //TODO: ID duration meaning
   }
 
   @Method(0x800f3940L)
-  public static void FUN_800f3940() {
+  public static void tickFloatingNumbers() {
     //LAB_800f3978
     for(final FloatingNumberC4 num : floatingNumbers_800c6b5c) {
       if((num.flags_02 & 0x8000) != 0) {
         if(num.state_00 != 0) {
-          final int bentIndex = num.bentIndex_04;
-
-          if(bentIndex != -1) {
-            final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bentIndex];
+          if(num.bentIndex_04 != -1) {
+            final ScriptState<?> state = scriptStatePtrArr_800bc1c0[num.bentIndex_04];
             final BattleEntity27c bent = (BattleEntity27c)state.innerStruct_00;
 
             final float x;
@@ -704,9 +698,7 @@ public final class Bttl_800f {
           }
 
           //LAB_800f3ac8
-          final int state = num.state_00;
-
-          if(state == 1) {
+          if(num.state_00 == 1) {
             //LAB_800f3b24
             if(num._10 == 0x2) {
               num.state_00 = 2;
@@ -714,53 +706,51 @@ public final class Bttl_800f {
               //LAB_800f3b44
               num.state_00 = 98;
             }
-          } else if(state == 2) {
+          } else if(num.state_00 == 2) {
             //LAB_800f3b50
             for(int n = 0; n < num.digits_24.length; n++) {
-              final FloatingNumberC4Sub20 a1 = num.digits_24[n];
+              final FloatingNumberC4Sub20 digit = num.digits_24[n];
 
-              if(a1.digit_0c == -1) {
+              if(digit.digit_0c == -1) {
                 break;
               }
 
-              final int a0 = a1.flags_00;
-
-              if((a0 & 0x1) != 0) {
-                if((a0 & 0x2) != 0) {
-                  if(a1._08 < 5) {
-                    a1.y_10 += a1._08;
-                    a1._08++;
+              if((digit.flags_00 & 0x1) != 0) {
+                if((digit.flags_00 & 0x2) != 0) {
+                  if(digit._08 < 5) {
+                    digit.y_10 += digit._08;
+                    digit._08++;
                   }
                 } else {
                   //LAB_800f3bb0
-                  a1.flags_00 |= 0x8002;
-                  a1._04 = a1.y_10;
-                  a1._08 = -4;
+                  digit.flags_00 |= 0x8002;
+                  digit._04 = digit.y_10;
+                  digit._08 = -4;
                 }
               } else {
                 //LAB_800f3bc8
-                if(a1._08 == a1._04) {
-                  a1.flags_00 |= 0x1;
+                if(digit._08 == digit._04) {
+                  digit.flags_00 |= 0x1;
                 }
 
                 //LAB_800f3be0
-                a1._08++;
+                digit._08++;
               }
             }
 
             //LAB_800f3c00
-            num._14--;
-            if(num._14 <= 0) {
+            num.ticksRemaining_14--;
+            if(num.ticksRemaining_14 <= 0) {
               num.state_00 = 98;
-              num._14 = num._18;
+              num.ticksRemaining_14 = num._18;
             }
-          } else if(state == 97) {
+          } else if(num.state_00 == 97) {
             //LAB_800f3c34
-            if(num._14 <= 0) {
+            if(num.ticksRemaining_14 <= 0) {
               num.state_00 = 100;
             } else {
               //LAB_800f3c50
-              num._14--;
+              num.ticksRemaining_14--;
               // Monochromify
               final int b = num.b_0c;
               final int colour = (b - (num._18 & 0xff)) & 0xff;
@@ -768,7 +758,7 @@ public final class Bttl_800f {
               num.g_0d = colour;
               num.r_0e = colour;
             }
-          } else if(state == 100) {
+          } else if(num.state_00 == 100) {
             //LAB_800f3d38
             num.state_00 = 0;
             num.flags_02 = 0;
@@ -777,40 +767,37 @@ public final class Bttl_800f {
             num.b_0c = 0x80;
             num.g_0d = 0x80;
             num.r_0e = 0x80;
-            num._14 = -1;
+            num.ticksRemaining_14 = -1;
             num._18 = -1;
 
             //LAB_800f3d60
             for(int n = 0; n < num.digits_24.length; n++) {
-              final FloatingNumberC4Sub20 v1 = num.digits_24[n];
-              v1.flags_00 = 0;
-              v1._04 = 0;
-              v1._08 = 0;
-              v1.digit_0c = -1;
-              v1.unused_1c = 0;
+              final FloatingNumberC4Sub20 digit = num.digits_24[n];
+              digit.flags_00 = 0;
+              digit._04 = 0;
+              digit._08 = 0;
+              digit.digit_0c = -1;
             }
             //LAB_800f3b04
-          } else if(state < 99) {
+          } else if(num.state_00 < 99) {
             //LAB_800f3c88
             if((num.flags_02 & 0x1) != 0) {
               num.state_00 = 99;
             } else {
               //LAB_800f3ca4
-              num._14--;
+              num.ticksRemaining_14--;
 
-              if(num._14 <= 0) {
-                final int v1 = num._10;
-
-                if(v1 > 0 && v1 < 3) {
+              if(num.ticksRemaining_14 <= 0) {
+                if(num._10 > 0 && num._10 < 3) {
                   num.state_00 = 97;
                   num.translucent_08 = true;
                   num.b_0c = 0x60;
                   num.g_0d = 0x60;
                   num.r_0e = 0x60;
 
-                  final int a2 = 60 / vsyncMode_8007a3b8 / 2;
-                  num._14 = a2;
-                  num._18 = 96 / a2;
+                  final int ticksRemaining = 60 / vsyncMode_8007a3b8 / 2;
+                  num.ticksRemaining_14 = ticksRemaining;
+                  num._18 = 96 / ticksRemaining;
                 } else {
                   //LAB_800f3d24
                   //LAB_800f3d2c
@@ -944,7 +931,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f4268L)
-  public static void addFloatingNumberForBent(final int bentIndex, final int damage, final long s4) {
+  public static void addFloatingNumberForBent(final int bentIndex, final int damage, final int s4) {
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bentIndex];
     final BattleEntity27c bent = (BattleEntity27c)state.innerStruct_00;
 
@@ -967,7 +954,7 @@ public final class Bttl_800f {
     final Vector2f screenCoords = perspectiveTransformXyz(bent.model_148, x, y, z);
 
     //LAB_800f4394
-    FUN_800f89f4(bentIndex, 0, 0x2L, damage, clampX(screenCoords.x + centreScreenX_1f8003dc.get()), clampY(screenCoords.y + centreScreenY_1f8003de.get()), 60 / vsyncMode_8007a3b8 / 4, s4);
+    FUN_800f89f4(bentIndex, 0, 2, damage, clampX(screenCoords.x + centreScreenX_1f8003dc.get()), clampY(screenCoords.y + centreScreenY_1f8003de.get()), 60 / vsyncMode_8007a3b8 / 4, s4);
   }
 
   @ScriptDescription("Gives SP to a battle entity")
@@ -1623,7 +1610,7 @@ public final class Bttl_800f {
         //LAB_800f5588
         if(menu.menuType_0a != 0) {
           menu.itemOrSpellId_1c = (short)getItemOrSpellId();
-          addFloatingNumber(0, 0x1L, 0, setActiveCharacterSpell(menu.itemOrSpellId_1c).spell_94.mp_06, 280, 135, 0, 0x1L);
+          addFloatingNumber(0, 1, 0, setActiveCharacterSpell(menu.itemOrSpellId_1c).spell_94.mp_06, 280, 135, 0, 1);
         }
       }
 
@@ -1944,7 +1931,7 @@ public final class Bttl_800f {
           textType = 5;
           if((menu._02 & 0x2) != 0) {
             final BattleEntity27c bent = setActiveCharacterSpell(menu.itemOrSpellId_1c);
-            addFloatingNumber(0, 0x1L, 0, bent.spell_94.mp_06, 280, 135, 0, menu.menuType_0a);
+            addFloatingNumber(0, 1, 0, bent.spell_94.mp_06, 280, 135, 0, menu.menuType_0a);
 
             menu.transforms.transfer.set(236 - centreScreenX_1f8003dc.get(), 130 - centreScreenY_1f8003de.get(), 124.0f);
             RENDERER.queueOrthoOverlayModel(menu.unknownObj2, menu.transforms);
@@ -2908,7 +2895,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f89f4L)
-  public static long FUN_800f89f4(final int bentIndex, final long a1, final long a2, final int rawDamage, final float x, final float y, final int a6, final long a7) {
+  public static long FUN_800f89f4(final int bentIndex, final int a1, final int a2, final int rawDamage, final float x, final float y, final int a6, final int a7) {
     //LAB_800f8a30
     for(int i = 0; i < floatingNumbers_800c6b5c.length; i++) {
       final FloatingNumberC4 num = floatingNumbers_800c6b5c[i];
@@ -2928,7 +2915,7 @@ public final class Bttl_800f {
 
   @Method(0x800f8aa4L)
   public static void renderDamage(final int bentIndex, final int damage) {
-    addFloatingNumberForBent(bentIndex, damage, 0x8L);
+    addFloatingNumberForBent(bentIndex, damage, 8);
   }
 
   /**
