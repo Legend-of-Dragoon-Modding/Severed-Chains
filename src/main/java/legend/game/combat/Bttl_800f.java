@@ -121,7 +121,6 @@ import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
 import static legend.game.combat.Bttl_800c.targetAllItemIds_800c7124;
 import static legend.game.combat.Bttl_800c.targetBents_800c71f0;
 import static legend.game.combat.Bttl_800c.textboxColours_800c6fec;
-import static legend.game.combat.Bttl_800c.uiTextureElementBrightness_800c71ec;
 import static legend.game.combat.Bttl_800c.usedRepeatItems_800c6c3c;
 import static legend.game.combat.Bttl_800e.initializeBattleHudCharacterDisplay;
 import static legend.game.combat.Bttl_800e.perspectiveTransformXyz;
@@ -151,8 +150,7 @@ public final class Bttl_800f {
           "Floating text type 1 digit " + i,
           floatingTextType1DigitUs_800c7028[i], 32,
           8, 8,
-          0x80,
-          2, 1
+          0x80
         );
       }
     }
@@ -2989,19 +2987,12 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f8dfcL)
-  public static Obj buildUiTextureElement(final String name, final int u, final int v, final int w, final int h, final int clut, final int brightnessIndex, final int portraitDimmingModifier) {
+  public static Obj buildUiTextureElement(final String name, final int u, final int v, final int w, final int h, final int clut) {
     final QuadBuilder builder = new QuadBuilder(name)
       .size(w, h)
       .uv(u, v);
 
     setGpuPacketClutAndTpageAndQueue(builder, clut, null);
-
-    if(portraitDimmingModifier < 6) {
-      builder.monochrome(((byte)(uiTextureElementBrightness_800c71ec.get(brightnessIndex).get() + 0x80) / 6 * portraitDimmingModifier - 0x80 & 0xff) / 255.0f);
-    } else {
-      //LAB_800f8ef4
-      builder.monochrome(uiTextureElementBrightness_800c71ec.get(brightnessIndex).get() & 0xff);
-    }
 
     return builder.build();
   }
