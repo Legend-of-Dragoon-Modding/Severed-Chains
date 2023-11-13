@@ -6281,8 +6281,6 @@ public class WMap extends EngineState {
     //LAB_800edbac
   }
 
-  private final MeshObj[] smokeCloudMeshes = new MeshObj[6];
-
   @Method(0x800edbc0L)
   private void renderSmoke() {
     final Vector3f rotation = new Vector3f(); // Just (0, 0, 0)
@@ -6407,67 +6405,58 @@ public class WMap extends EngineState {
             final float transformedSize = sx1 - sx0;
 
             //LAB_800ee750
-            if(z >= 5 || z < orderingTableSize_1f8003c8.get() - 3) {
+            if(z >= 5 || z < orderingTableSize_1f8003c8.get() - 3 && sx1 - sx0 <= 0x400) {
               //LAB_800ee758
-              if(sx1 - sx0 <= 0x400) {
-                //LAB_800ee78c
-                GTE.perspectiveTransform(-size, size, 0);
-                final float sx2 = GTE.getScreenX(2);
-                final float sy2 = GTE.getScreenY(2);
+              //LAB_800ee78c
+              GTE.perspectiveTransform(-size, size, 0);
+              final float sx2 = GTE.getScreenX(2);
+              final float sy2 = GTE.getScreenY(2);
+              z = GTE.getScreenZ(3) / 4.0f;
+
+              //LAB_800ee808
+              if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3 && sy2 - sy0 <= 0x200) {
+                //LAB_800ee810
+                //LAB_800ee844
+                GTE.perspectiveTransform(size, size, 0);
+                final float sx3 = GTE.getScreenX(2);
+                final float sy3 = GTE.getScreenY(2);
                 z = GTE.getScreenZ(3) / 4.0f;
 
-                //LAB_800ee808
-                if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
-                  //LAB_800ee810
-                  if(sy2 - sy0 <= 0x200) {
-                    //LAB_800ee844
-                    GTE.perspectiveTransform(size, size, 0);
-                    final float sx3 = GTE.getScreenX(2);
-                    final float sy3 = GTE.getScreenY(2);
-                    z = GTE.getScreenZ(3) / 4.0f;
+                //LAB_800ee8c0
+                if(z >= 6 && z < orderingTableSize_1f8003c8.get() - 3 && sx3 - sx2 <= 0x400 && sy3 - sy1 <= 0x200) {
+                  //LAB_800ee8c8
+                  //LAB_800ee8fc
+                  //LAB_800ee930
+                  final Translucency translucency = mode == 8 ? Translucency.B_MINUS_F : Translucency.B_PLUS_F;
 
-                    //LAB_800ee8c0
-                    if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
-                      //LAB_800ee8c8
-                      if(sx3 - sx2 <= 0x400) {
-                        //LAB_800ee8fc
-                        if(sy3 - sy1 <= 0x200) {
-                          //LAB_800ee930
-                          if(z >= 6 && z < orderingTableSize_1f8003c8.get() - 1) {
+                  //LAB_800ee9b0
+                  //LAB_800eea34
+                  final int index = (int)(smoke.scaleAndColourFade_50 / 0x40);
+                  final QuadBuilder builder = new QuadBuilder("Smoke (index " + smokeIndex + ')')
+                    .bpp(Bpp.BITS_4)
+                    .vramPos(640, 256)
+                    .pos(GPU.getOffsetX() + sx0, GPU.getOffsetY() + sy0, z * 4.0f)
+                    .size(transformedSize, transformedSize)
+                    .clut(640, 505)
+                    .monochrome((0x80 - smoke.scaleAndColourFade_50) / 255.0f)
+                    .uv(smokeUvs_800f65d4.get(index).get(0).get(), smokeUvs_800f65d4.get(index).get(1).get())
+                    .uvSize(31, 31)
+                    .translucency(translucency);
 
-                            final Translucency translucency = mode == 8 ? Translucency.B_MINUS_F : Translucency.B_PLUS_F;
-
-                            //LAB_800ee9b0
-                            //LAB_800eea34
-                            final int index = (int)(smoke.scaleAndColourFade_50 / 0x40);
-                            final QuadBuilder builder = new QuadBuilder("Cloud")
-                              .bpp(Bpp.BITS_4)
-                              .vramPos(640, 256)
-                              .pos(GPU.getOffsetX() + sx0, GPU.getOffsetY() + sy0, z * 4.0f)
-                              .size(transformedSize, transformedSize)
-                              .clut(640, 505)
-                              .monochrome((0x80 - smoke.scaleAndColourFade_50) / 255.0f)
-                              .uv(smokeUvs_800f65d4.get(index).get(0).get(), smokeUvs_800f65d4.get(index).get(1).get())
-                              .uvSize(31, 31)
-                              .translucency(translucency);
-                            if(this.smokeCloudMeshes[j] != null) {
-                              this.smokeCloudMeshes[j].delete();
-                            }
-                            this.smokeCloudMeshes[j] = builder.build();
-                            RENDERER.queueOrthoModel(this.smokeCloudMeshes[j]);
-
-                            smoke.scaleAndColourFade_50 += 1.0f / (3.0f / vsyncMode_8007a3b8);
-
-                            if(smoke.scaleAndColourFade_50 >= 0x80) {
-                              smoke.scaleAndColourFade_50 = 0;
-                            }
-                            //LAB_800eeccc
-                            smokeIndex++;
-                          }
-                        }
-                      }
-                    }
+                  if(smoke.obj != null) {
+                    smoke.obj.delete();
                   }
+                  smoke.obj = builder.build();
+
+                  RENDERER.queueOrthoModel(smoke.obj);
+
+                  smoke.scaleAndColourFade_50 += 1.0f / (3.0f / vsyncMode_8007a3b8);
+
+                  if(smoke.scaleAndColourFade_50 >= 0x80) {
+                    smoke.scaleAndColourFade_50 = 0;
+                  }
+                  //LAB_800eeccc
+                  smokeIndex++;
                 }
               }
             }
@@ -6495,7 +6484,11 @@ public class WMap extends EngineState {
 
   @Method(0x800eede4L)
   private void deallocateSmoke() {
+    for(final WmapSmokeInstance60 smoke : this.smokeInstances_800c86f8) {
+      if(smoke.obj != null) {
+        smoke.obj.delete();
+      }
+    }
     this.smokeInstances_800c86f8 = null;
-    this.atmosphericEffectDeallocators_800f65bc[this.currentWmapEffect_800f6598].run();
   }
 }
