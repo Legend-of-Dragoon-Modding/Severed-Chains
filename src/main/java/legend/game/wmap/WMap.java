@@ -6440,7 +6440,7 @@ public class WMap extends EngineState {
                             final QuadBuilder builder = new QuadBuilder("Cloud")
                               .bpp(Bpp.BITS_4)
                               .vramPos(640, 256)
-                              .pos(GPU.getOffsetX() + sx0, GPU.getOffsetY() + sy0, 100 + z)
+                              .pos(GPU.getOffsetX() + sx0, GPU.getOffsetY() + sy0, z * 4.0f)
                               .size(transformedSize, transformedSize)
                               .clut(640, 505)
                               .monochrome((0x80 - smoke.scaleAndColourFade_50) / 255.0f)
