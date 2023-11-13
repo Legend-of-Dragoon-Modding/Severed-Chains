@@ -139,14 +139,17 @@ public final class Bttl_800f {
     for(int i = 0; i < 10; i++) {
       if(type1FloatingDigits[i] != null) {
         type1FloatingDigits[i].delete();
+        type1FloatingDigits[i] = null;
       }
 
       if(type3FloatingDigits[i] != null) {
         type3FloatingDigits[i].delete();
+        type3FloatingDigits[i] = null;
       }
 
       if(miss != null) {
         miss.delete();
+        miss = null;
       }
     }
   }
