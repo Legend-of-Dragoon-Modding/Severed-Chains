@@ -135,6 +135,20 @@ public final class Bttl_800f {
         floatingTextType1Digits[i] = null;
       }
     }
+
+    for(int i = 0; i < 10; i++) {
+      if(type1FloatingDigits[i] != null) {
+        type1FloatingDigits[i].delete();
+      }
+
+      if(type3FloatingDigits[i] != null) {
+        type3FloatingDigits[i].delete();
+      }
+
+      if(miss != null) {
+        miss.delete();
+      }
+    }
   }
 
   /**
@@ -520,37 +534,27 @@ public final class Bttl_800f {
 
   @Method(0x800f3354L)
   public static void addFloatingNumber(final int numIndex, final int onHitTextType, final int onHitClutCol, final int number, final float x, final float y, int ticks, int colour) {
-    for(int i = 0; i < 10; i++) {
-      if(type1FloatingDigits[i] != null) {
-        type1FloatingDigits[i].delete();
+    if(miss == null) {
+      for(int i = 0; i < 10; i++) {
+        final QuadBuilder builder1 = new QuadBuilder("Type 1 Floating Digit " + i)
+          .uv(floatingTextType1DigitUs_800c7028[i], 32)
+          .size(8.0f, 8.0f);
+        setGpuPacketClutAndTpageAndQueue(builder1, 0x80, null);
+        type1FloatingDigits[i] = builder1.build();
+
+        final QuadBuilder builder3 = new QuadBuilder("Type 3 Floating Digit " + i)
+          .uv(floatingTextType3DigitUs_800c70e0.get(i).get(), 40)
+          .size(8.0f, 16.0f);
+        setGpuPacketClutAndTpageAndQueue(builder3, 0x80, null);
+        type3FloatingDigits[i] = builder3.build();
       }
 
-      if(type3FloatingDigits[i] != null) {
-        type3FloatingDigits[i].delete();
-      }
-
-      if(miss != null) {
-        miss.delete();
-      }
-
-      final QuadBuilder builder1 = new QuadBuilder("Type 1 Floating Digit " + i)
-        .uv(floatingTextType1DigitUs_800c7028[i], 32)
-        .size(8.0f, 8.0f);
-      setGpuPacketClutAndTpageAndQueue(builder1, 0x80, null);
-      type1FloatingDigits[i] = builder1.build();
-
-      final QuadBuilder builder3 = new QuadBuilder("Type 3 Floating Digit " + i)
-        .uv(floatingTextType3DigitUs_800c70e0.get(i).get(), 40)
-        .size(8.0f, 16.0f);
-      setGpuPacketClutAndTpageAndQueue(builder3, 0x80, null);
-      type3FloatingDigits[i] = builder3.build();
+      final QuadBuilder builderMiss = new QuadBuilder("Miss Floating Digit")
+        .uv(72, 128)
+        .size(36.0f, 16.0f);
+      setGpuPacketClutAndTpageAndQueue(builderMiss, 0x80, null);
+      miss = builderMiss.build();
     }
-
-    final QuadBuilder builderMiss = new QuadBuilder("Miss Floating Digit")
-      .uv(72, 128)
-      .size(36.0f, 16.0f);
-    setGpuPacketClutAndTpageAndQueue(builderMiss, 0x80, null);
-    miss = builderMiss.build();
 
     final FloatingNumberC4 num = floatingNumbers_800c6b5c[numIndex];
     final int[] damageDigits = new int[num.digits_24.length];
