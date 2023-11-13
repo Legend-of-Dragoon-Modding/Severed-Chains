@@ -124,6 +124,9 @@ public class RenderEngine {
 
   // Text
   public final Obj[] chars = new Obj[0x56];
+  // Fullscren Fade Outs
+  public Obj fullscreenWhiteout;
+  public Obj fullscreenBlackout;
 
   private int width;
   private int height;
@@ -358,6 +361,21 @@ public class RenderEngine {
 
       this.chars[i].persistent = true;
     }
+
+    // Build fullscreen fade quads
+    fullscreenWhiteout = new QuadBuilder("FullscreenWhiteout")
+      .translucency(Translucency.B_PLUS_F)
+      .pos(0.0f, 0.0f, 999)
+      .size(384, 240)
+      .build();
+    fullscreenWhiteout.persistent = true;
+
+    fullscreenBlackout = new QuadBuilder("FullscreenBlackout")
+      .translucency(Translucency.B_MINUS_F)
+      .pos(0.0f, 0.0f, 999)
+      .size(384, 240)
+      .build();
+    fullscreenBlackout.persistent = true;
 
     this.window.events.onDraw(() -> {
       this.pre();
