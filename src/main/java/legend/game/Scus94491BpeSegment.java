@@ -796,11 +796,8 @@ public final class Scus94491BpeSegment {
     // This causes the bright flash of light from the lightning, etc.
     if(fullScreenEffect_800bb140.red0_20 != 0 || fullScreenEffect_800bb140.green0_1c != 0 || fullScreenEffect_800bb140.blue0_14 != 0) {
       //LAB_800139c4
-      GPU.queueCommand(39, new GpuCommandQuad()
-        .translucent(Translucency.B_PLUS_F)
-        .rgb(fullScreenEffect_800bb140.red0_20, fullScreenEffect_800bb140.green0_1c, fullScreenEffect_800bb140.blue0_14)
-        .pos(-centreScreenX_1f8003dc.get(), -centreScreenY_1f8003de.get(), displayWidth_1f8003e0.get() + 1, displayHeight_1f8003e4.get() + 1)
-      );
+      RENDERER.queueOrthoOverlayModel(RENDERER.fullscreenWhiteout)
+        .colour(fullScreenEffect_800bb140.red0_20 / 255.0f, fullScreenEffect_800bb140.green0_1c / 255.0f, fullScreenEffect_800bb140.blue0_14 / 255.0f);
     }
 
     //LAB_80013adc
@@ -808,11 +805,8 @@ public final class Scus94491BpeSegment {
     // This causes the screen darkening from the lightning, etc.
     if(fullScreenEffect_800bb140.red1_18 != 0 || fullScreenEffect_800bb140.green1_10 != 0 || fullScreenEffect_800bb140.blue1_0c != 0) {
       //LAB_80013b10
-      GPU.queueCommand(39, new GpuCommandQuad()
-        .translucent(Translucency.B_MINUS_F)
-        .rgb(fullScreenEffect_800bb140.red1_18, fullScreenEffect_800bb140.green1_10, fullScreenEffect_800bb140.blue1_0c)
-        .pos(-centreScreenX_1f8003dc.get(), -centreScreenY_1f8003de.get(), displayWidth_1f8003e0.get() + 1, displayHeight_1f8003e4.get() + 1)
-      );
+      RENDERER.queueOrthoOverlayModel(RENDERER.fullscreenBlackout)
+        .colour(fullScreenEffect_800bb140.red0_20 / 255.0f, fullScreenEffect_800bb140.green0_1c / 255.0f, fullScreenEffect_800bb140.blue0_14 / 255.0f);
     }
 
     //LAB_80013c20
