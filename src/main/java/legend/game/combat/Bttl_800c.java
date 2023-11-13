@@ -1069,7 +1069,8 @@ public final class Bttl_800c {
     if((battleFlags_800bc960.get() & 0x3) == 0x3) {
       resizeDisplay(320, 240);
       setDepthResolution(12);
-      vsyncMode_8007a3b8 = 3;
+      vsyncMode_8007a3b8 = 1;
+      SCRIPTS.setTpsDivisor(3);
       battleFlags_800bc960.or(0x40);
       setProjectionPlaneDistance(320);
       resetCameraMovement();
@@ -1337,7 +1338,8 @@ public final class Bttl_800c {
     }
 
     if(Unpacker.getLoadingFileCount() == 0 && allBentCount_800c66d0.get() > 0 && !combatDisabled_800c66b9.get() && FUN_800c7da8()) {
-      vsyncMode_8007a3b8 = 3;
+      vsyncMode_8007a3b8 = 1;
+      SCRIPTS.setTpsDivisor(3);
       mcqColour_800fa6dc.set(0x80);
       currentTurnBent_800c66c8.storage_44[7] &= 0xffff_efff;
 
@@ -2699,7 +2701,7 @@ public final class Bttl_800c {
 
       if((state.storage_44[7] & 0x80) == 0 || bent.model_148.remainingFrames_9e != 0) {
         //LAB_800cb004
-        animateModel(bent.model_148);
+        animateModel(bent.model_148, 6 - vsyncMode_8007a3b8);
       }
     }
 
@@ -3104,7 +3106,7 @@ public final class Bttl_800c {
     }
 
     //LAB_800cbb98
-    FUN_800cdc1c(state, x, y, z, script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), 0, script.params_20[2].get());
+    FUN_800cdc1c(state, x, y, z, script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), 0, script.params_20[2].get() * (4 - vsyncMode_8007a3b8));
     state.setTempTicker(Bttl_800c::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
@@ -3112,7 +3114,7 @@ public final class Bttl_800c {
   @ScriptDescription("Unknown")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex0", description = "A BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex1", description = "A BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "distancePerFrame")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
@@ -3136,7 +3138,7 @@ public final class Bttl_800c {
     final float x = script.params_20[3].get() - vec.x;
     final float y = script.params_20[4].get() - vec.y;
     final float z = script.params_20[5].get() - vec.z;
-    FUN_800cdc1c(state, vec.x, vec.y, vec.z, x, y, z, 0, Math.round(Math.sqrt(x * x + y * y + z * z) / script.params_20[2].get()));
+    FUN_800cdc1c(state, vec.x, vec.y, vec.z, x, y, z, 0, Math.round(Math.sqrt(x * x + y * y + z * z) / script.params_20[2].get() * (4 - vsyncMode_8007a3b8)));
     state.setTempTicker(Bttl_800c::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
@@ -3167,7 +3169,7 @@ public final class Bttl_800c {
     }
 
     //LAB_800cbe78
-    FUN_800cdc1c(state, x, y, z, script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), 0x20, script.params_20[2].get());
+    FUN_800cdc1c(state, x, y, z, script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), 0x20, script.params_20[2].get() * (4 - vsyncMode_8007a3b8));
     state.setTempTicker(Bttl_800c::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
@@ -3175,7 +3177,7 @@ public final class Bttl_800c {
   @ScriptDescription("Unknown")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex0", description = "A BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex1", description = "A BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "distancePerFrame")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
@@ -3199,7 +3201,7 @@ public final class Bttl_800c {
     final float x = state.params_20[3].get() - vec.x;
     final float y = state.params_20[4].get() - vec.y;
     final float z = state.params_20[5].get() - vec.z;
-    FUN_800cdc1c(s5, vec.x, vec.y, vec.z, state.params_20[3].get(), state.params_20[4].get(), state.params_20[5].get(), 0x20, Math.round(Math.sqrt(x * x + y * y + z * z) / state.params_20[2].get()));
+    FUN_800cdc1c(s5, vec.x, vec.y, vec.z, state.params_20[3].get(), state.params_20[4].get(), state.params_20[5].get(), 0x20, Math.round(Math.sqrt(x * x + y * y + z * z) / state.params_20[2].get() * (4 - vsyncMode_8007a3b8)));
     s5.setTempTicker(Bttl_800c::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
@@ -3225,7 +3227,7 @@ public final class Bttl_800c {
     }
 
     //LAB_800cc160
-    FUN_800cdc1c(a0, a1.x, a1.y, a1.z, script.params_20[3].get(), a1.y, script.params_20[4].get(), 0, script.params_20[2].get());
+    FUN_800cdc1c(a0, a1.x, a1.y, a1.z, script.params_20[3].get(), a1.y, script.params_20[4].get(), 0, script.params_20[2].get() * (4 - vsyncMode_8007a3b8));
     a0.setTempTicker(Bttl_800c::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
@@ -3233,7 +3235,7 @@ public final class Bttl_800c {
   @ScriptDescription("Unknown")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex0", description = "A BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex1", description = "A BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "distancePerFrame")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
   @Method(0x800cc1ccL)
@@ -3255,7 +3257,7 @@ public final class Bttl_800c {
     //LAB_800cc27c
     final float x = script.params_20[3].get() - vec.x;
     final float z = script.params_20[4].get() - vec.z;
-    FUN_800cdc1c(state1, vec.x, vec.y, vec.z, script.params_20[3].get(), vec.y, script.params_20[4].get(), 0, Math.round(Math.sqrt(x * x + z * z) / script.params_20[2].get()));
+    FUN_800cdc1c(state1, vec.x, vec.y, vec.z, script.params_20[3].get(), vec.y, script.params_20[4].get(), 0, Math.round(Math.sqrt(x * x + z * z) / script.params_20[2].get() * (4 - vsyncMode_8007a3b8)));
     state1.setTempTicker(Bttl_800c::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
@@ -3283,7 +3285,7 @@ public final class Bttl_800c {
     }
 
     //LAB_800cc3fc
-    FUN_800cdc1c(state1, vec.x, vec.y, vec.z, script.params_20[3].get(), vec.y, script.params_20[4].get(), 0x20, script.params_20[2].get());
+    FUN_800cdc1c(state1, vec.x, vec.y, vec.z, script.params_20[3].get(), vec.y, script.params_20[4].get(), 0x20, script.params_20[2].get() * (4 - vsyncMode_8007a3b8));
     state1.setTempTicker(Bttl_800c::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
@@ -3291,7 +3293,7 @@ public final class Bttl_800c {
   @ScriptDescription("Unknown")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex0", description = "A BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex1", description = "A BattleEntity27c script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "distancePerFrame")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
   @Method(0x800cc46cL)
@@ -3313,7 +3315,7 @@ public final class Bttl_800c {
     //LAB_800cc51c
     final float x = script.params_20[3].get() - vec.x;
     final float z = script.params_20[4].get() - vec.z;
-    FUN_800cdc1c(s5, vec.x, vec.y, vec.z, script.params_20[3].get(), vec.y, script.params_20[4].get(), 0x20, Math.round(Math.sqrt(x * x + z * z) / script.params_20[2].get()));
+    FUN_800cdc1c(s5, vec.x, vec.y, vec.z, script.params_20[3].get(), vec.y, script.params_20[4].get(), 0x20, Math.round(Math.sqrt(x * x + z * z) / script.params_20[2].get() * (4 - vsyncMode_8007a3b8)));
     s5.setTempTicker(Bttl_800c::FUN_800cb250);
     return FlowControl.CONTINUE;
   }
@@ -3342,7 +3344,7 @@ public final class Bttl_800c {
     final ScriptState<BattleEntity27c> state2 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[scriptIndex2];
     final BattleEntity27c bent1 = state1.innerStruct_00;
     final BattleEntity27c bent2 = state2.innerStruct_00;
-    final int ticks = script.params_20[2].get();
+    final int ticks = script.params_20[2].get() * (4 - vsyncMode_8007a3b8);
     final float v0 = MathHelper.floorMod(MathHelper.atan2(bent2.model_148.coord2_14.coord.transfer.x - bent1.model_148.coord2_14.coord.transfer.x, bent2.model_148.coord2_14.coord.transfer.z - bent1.model_148.coord2_14.coord.transfer.z) - bent1.model_148.coord2_14.transforms.rotate.y, MathHelper.TWO_PI) - MathHelper.PI;
     state1.scriptState_c8 = state2;
     state1.ticks_cc = ticks;

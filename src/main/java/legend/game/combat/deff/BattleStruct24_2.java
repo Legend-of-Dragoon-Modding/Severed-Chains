@@ -24,5 +24,4 @@ public class BattleStruct24_2 {
   public ScriptFile script_14;
   public ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> managerState_18;
   public boolean init_1c;
-  public int frameCount_20;
 }

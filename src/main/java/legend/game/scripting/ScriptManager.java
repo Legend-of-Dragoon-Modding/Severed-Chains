@@ -19,8 +19,20 @@ public class ScriptManager {
   private boolean paused;
   private int upperBound;
 
+  private int tpsDivisor = 1;
+  private int ticks;
+
+  public void setTpsDivisor(final int divisor) {
+    this.tpsDivisor = divisor;
+  }
+
   public void tick() {
-    this.executeScriptFrame();
+    // We need to tick the script engine at the expected TPS, otherwise scripts will run too fast
+    if(++this.ticks >= this.tpsDivisor) {
+      this.ticks = 0;
+      this.executeScriptFrame();
+    }
+
     this.executeScriptTickers();
     this.upperBound = 9;
     this.executeScriptRenderers();

@@ -520,6 +520,8 @@ public final class Scus94491BpeSegment {
   public static void loadGameStateOverlay(final EngineStateEnum engineState) {
     LOGGER.info("Transitioning to engine state %s", engineState);
 
+    SCRIPTS.setTpsDivisor(1);
+
     final OverlayStruct overlay = gameStateOverlays_8004dbc0.get(engineState);
     final String file = overlay.file_04;
 

@@ -438,12 +438,7 @@ public final class Scus94491BpeSegment_8002 {
           final Transforms params = coord2.transforms;
 
           final float interpolationScale = (model.interpolationFrameIndex + 1.0f) / (interpolationFrameCount + 1.0f);
-
-          params.trans.set(
-            Math.lerp(params.trans.x, transforms[0][i].translate_06.x, interpolationScale),
-            Math.lerp(params.trans.y, transforms[0][i].translate_06.y, interpolationScale),
-            Math.lerp(params.trans.z, transforms[0][i].translate_06.z, interpolationScale)
-          );
+          params.trans.lerp(transforms[0][i].translate_06, interpolationScale);
 
           coord2.coord.transfer.set(params.trans);
           coord2.coord.rotationZYX(params.rotate);
@@ -626,25 +621,6 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80021390
     model.partTransforms_94 = Arrays.copyOfRange(transforms, 1, transforms.length);
-  }
-
-  @Method(0x800213c4L)
-  public static void applyInterpolationFrame(final Model124 model) {
-    //LAB_80021404
-    for(int i = 0; i < model.modelParts_00.length; i++) {
-      final ModelPartTransforms0c transforms = model.partTransforms_94[0][i];
-      final GsCOORDINATE2 coord2 = model.modelParts_00[i].coord2_04;
-      final MV coord = coord2.coord;
-      final Transforms params = coord2.transforms;
-      coord.rotationZYX(params.rotate);
-      params.trans.x = (params.trans.x + transforms.translate_06.x) / 2.0f;
-      params.trans.y = (params.trans.y + transforms.translate_06.y) / 2.0f;
-      params.trans.z = (params.trans.z + transforms.translate_06.z) / 2.0f;
-      coord.transfer.set(params.trans);
-    }
-
-    //LAB_80021490
-    model.partTransforms_94 = Arrays.copyOfRange(model.partTransforms_94, 1, model.partTransforms_94.length);
   }
 
   @Method(0x800214bcL)

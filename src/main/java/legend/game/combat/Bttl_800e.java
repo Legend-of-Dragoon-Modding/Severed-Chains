@@ -513,7 +513,7 @@ public final class Bttl_800e {
   @Method(0x800e4ea0L)
   public static FlowControl FUN_800e4ea0(final RunningScript<?> script) {
     final BttlLightStruct84 light = lights_800c692c[script.params_20[0].get()];
-    final int ticks = script.params_20[4].get();
+    final int ticks = script.params_20[4].get() * (4 - vsyncMode_8007a3b8);
     final BttlLightStruct84Sub38 t0 = light._10;
 
     t0._00 = 0;
@@ -545,7 +545,7 @@ public final class Bttl_800e {
     final float x = MathHelper.psxDegToRad(script.params_20[1].get());
     final float y = MathHelper.psxDegToRad(script.params_20[2].get());
     final float z = MathHelper.psxDegToRad(script.params_20[3].get());
-    final int ticks = script.params_20[4].get();
+    final int ticks = script.params_20[4].get() * (4 - vsyncMode_8007a3b8);
 
     final BttlLightStruct84 light = lights_800c692c[script.params_20[0].get()];
     final Vector3f sp0x10 = new Vector3f();
@@ -584,7 +584,7 @@ public final class Bttl_800e {
     final int x = script.params_20[2].get();
     final int y = script.params_20[3].get();
     final int z = script.params_20[4].get();
-    final int ticks = script.params_20[5].get();
+    final int ticks = script.params_20[5].get() * (4 - vsyncMode_8007a3b8);
 
     final Vector3f sp0x10 = new Vector3f();
     FUN_800e45c0(sp0x10, lights_800c692c[lightIndex].light_00.direction_00);
@@ -695,7 +695,7 @@ public final class Bttl_800e {
   @Method(0x800e559cL)
   public static FlowControl FUN_800e559c(final RunningScript<?> script) {
     final BttlLightStruct84 light = lights_800c692c[script.params_20[0].get()];
-    final int ticks = script.params_20[4].get();
+    final int ticks = script.params_20[4].get() * (4 - vsyncMode_8007a3b8);
 
     final BttlLightStruct84Sub38 t0 = light._4c;
     t0._00 = 0;
@@ -829,11 +829,17 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
+  //TODO update lighting to 60 TPS
+  private static int lightTickTicks;
+
   @Method(0x800e5a78L)
   public static void tickLighting(final ScriptState<Void> state, final Void struct) {
     final BattleLightStruct64 light1 = _800c6930;
 
-    lightTicks_800c6928.incr();
+    if(++lightTickTicks >= 4 - vsyncMode_8007a3b8) {
+      lightTicks_800c6928.incr();
+      lightTickTicks = 0;
+    }
 
     if(light1._24 == 3) { // Dragoon space lighting is handled here, I think this is for flickering light
       final int angle = rcos(((lightTicks_800c6928.get() + light1._2c) % light1._2e << 12) / light1._2e);
@@ -1098,7 +1104,6 @@ public final class Bttl_800e {
     v0.scriptEntrypoint_10 = script.params_20[3].get() & 0xff;
     v0.managerState_18 = state;
     v0.init_1c = false;
-    v0.frameCount_20 = -1;
     // S_EFFE
     loadSupportOverlay(3, () -> v0.init_1c = true);
     return state;
@@ -1357,7 +1362,6 @@ public final class Bttl_800e {
           final BattleStruct24_2 struct24 = _800c6938;
           struct24.managerState_18.loadScriptFile(struct24.script_14, struct24.scriptEntrypoint_10);
           struct24.init_1c = false;
-          struct24.frameCount_20 = 0;
           deffLoadingStage_800fafe8.set(3);
           flow = FlowControl.CONTINUE;
         } else {
@@ -1464,10 +1468,6 @@ public final class Bttl_800e {
   public static void scriptDeffTicker(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> struct) {
     final BattleStruct24_2 a0 = _800c6938;
 
-    if(a0.frameCount_20 != -1) {
-      a0.frameCount_20 += vsyncMode_8007a3b8;
-    }
-
     //LAB_800e70fc
     if(a0.init_1c && a0.script_14 != null) {
       final DeffManager7cc struct7cc = deffManager_800c693c;
@@ -1486,7 +1486,6 @@ public final class Bttl_800e {
         //LAB_800e719c
         state.loadScriptFile(a0.script_14, a0.scriptEntrypoint_10);
         a0.init_1c = false;
-        a0.frameCount_20 = 0;
       }
     }
 
@@ -1644,11 +1643,6 @@ public final class Bttl_800e {
       if(struct24.init_1c && struct24.script_14 != null && ((deffManager_800c693c.flags_20 & 0x4_0000) == 0 || (getLoadedDrgnFiles() & 0x40) == 0)) {
         //LAB_800e756c
         deffLoadingStage_800fafe8.set(2);
-      }
-    } else if(deffStage == 3) {
-      //LAB_800e7574
-      if(struct24.frameCount_20 >= 0) {
-        struct24.frameCount_20 += vsyncMode_8007a3b8;
       }
     }
 
@@ -3179,6 +3173,8 @@ public final class Bttl_800e {
     stageDarkening_800c6958 = null;
   }
 
+  private static final MV stageLw = new MV();
+
   @Method(0x800ec51cL)
   public static void renderBattleStage(final BattleStage stage) {
     //LAB_800ec548
@@ -3198,20 +3194,13 @@ public final class Bttl_800e {
     for(int i = 0; i < stage.dobj2s_00.length; i++) {
       final ModelPart10 part = stage.dobj2s_00[i];
 
-      if((partBit & stage.flags_5e4) == 0) {
-        final MV ls = new MV();
-        final MV lw = new MV();
-        GsGetLws(part.coord2_04, lw, ls);
-        GsSetLightMatrix(lw);
-        GTE.setTransforms(ls);
-        Renderer.renderDobj2(part, true, 0);
+      if((stage.flags_5e4 & partBit) == 0) {
+        GsGetLw(part.coord2_04, stageLw);
 
-        if(part.obj != null) {
-          RENDERER.queueModel(part.obj, lw)
-            .lightDirection(lightDirectionMatrix_800c34e8)
-            .lightColour(lightColourMatrix_800c3508)
-            .backgroundColour(GTE.backgroundColour);
-        }
+        RENDERER.queueModel(part.obj, stageLw)
+          .lightDirection(lightDirectionMatrix_800c34e8)
+          .lightColour(lightColourMatrix_800c3508)
+          .backgroundColour(GTE.backgroundColour);
       }
 
       //LAB_800ec608
@@ -3313,6 +3302,8 @@ public final class Bttl_800e {
     }
   }
 
+  private static final MV modelLw = new MV();
+
   @Method(0x800ec974L)
   public static void renderBttlModel(final Model124 model) {
     tmdGp0Tpage_1f8003ec.set(model.tpage_108);
@@ -3321,20 +3312,13 @@ public final class Bttl_800e {
     //LAB_800ec9d0
     for(int i = 0; i < model.modelParts_00.length; i++) {
       if((model.partInvisible_f4 & 1L << i) == 0) {
-        final ModelPart10 s2 = model.modelParts_00[i];
-        final MV lw = new MV();
-        final MV ls = new MV();
-        GsGetLws(s2.coord2_04, lw, ls);
-        GsSetLightMatrix(lw);
-        GTE.setTransforms(ls);
-        Renderer.renderDobj2(s2, true, 0);
+        final ModelPart10 part = model.modelParts_00[i];
+        GsGetLw(part.coord2_04, modelLw);
 
-        if(model.modelParts_00[i].obj != null) {
-          RENDERER.queueModel(model.modelParts_00[i].obj, lw)
-            .lightDirection(lightDirectionMatrix_800c34e8)
-            .lightColour(lightColourMatrix_800c3508)
-            .backgroundColour(GTE.backgroundColour);
-        }
+        RENDERER.queueModel(model.modelParts_00[i].obj, modelLw)
+          .lightDirection(lightDirectionMatrix_800c34e8)
+          .lightColour(lightColourMatrix_800c3508)
+          .backgroundColour(GTE.backgroundColour);
       }
     }
 
@@ -3466,7 +3450,7 @@ public final class Bttl_800e {
 
     //LAB_800ece9c
     battleMenu_800c6c34.transforms.identity();
-    battleMenu_800c6c34.transforms.transfer.set(GPU.getOffsetX() + screenCoords.x - 8, GPU.getOffsetY() + screenCoords.y + targetArrowOffsetY_800fb188.get(tickCount_800bb0fc.get() & 0x7).get(), 112.0f);
+    battleMenu_800c6c34.transforms.transfer.set(GPU.getOffsetX() + screenCoords.x - 8, GPU.getOffsetY() + screenCoords.y + targetArrowOffsetY_800fb188.get(tickCount_800bb0fc.get() / (4 - vsyncMode_8007a3b8) & 0x7).get(), 112.0f);
     RENDERER.queueOrthoModel(battleMenu_800c6c34.targetArrows[colour], battleMenu_800c6c34.transforms);
   }
 

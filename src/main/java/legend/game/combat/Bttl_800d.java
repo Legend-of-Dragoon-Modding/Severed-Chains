@@ -5,11 +5,13 @@ import legend.core.MathHelper;
 import legend.core.gpu.GpuCommandLine;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.COLOUR;
+import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
+import legend.core.gte.Transforms;
 import legend.core.memory.Method;
 import legend.core.memory.types.CString;
 import legend.core.memory.types.ComponentFunction;
@@ -80,7 +82,6 @@ import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8002.adjustModelUvs;
 import static legend.game.Scus94491BpeSegment_8002.animateModelTextures;
-import static legend.game.Scus94491BpeSegment_8002.applyInterpolationFrame;
 import static legend.game.Scus94491BpeSegment_8002.applyModelPartTransforms;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
@@ -92,6 +93,7 @@ import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.getScreenOffset;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
+import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
@@ -1752,7 +1754,7 @@ public final class Bttl_800d {
     final float dz = z - camera_800c67f0.rview2_00.viewpoint_00.z;
     cam.vec_d4.z = Math.sqrt(dx * dx + dy * dy + dz * dz);
     cam.vec_d4.x = MathHelper.floorMod(MathHelper.atan2(dz, dx), MathHelper.TWO_PI);
-    final float ticks = cam.vec_d4.z * 2.0f / (finalStepZ + initialStepZ);
+    final float ticks = cam.vec_d4.z * 2.0f / (finalStepZ + initialStepZ) * (4 - vsyncMode_8007a3b8);
     final float zAccel = (finalStepZ - initialStepZ) / ticks;
     cam.vec_d4.y = MathHelper.floorMod(MathHelper.atan2(dy, Math.sqrt(dx * dx + dz * dz)), MathHelper.TWO_PI);
     cam.stepZ_a4 = initialStepZ;
@@ -2174,7 +2176,7 @@ public final class Bttl_800d {
     cam.refpointTargetTranslation_74.set(x, y, z);
     cam.flags_11c |= UPDATE_REFPOINT;
     cam.refpointCallbackIndex_121 = 16;
-    cam.refpointTicksRemaining_5c = (int)(cam.vec_60.z * 2.0f / (finalStepZ + initialStepZ));
+    cam.refpointTicksRemaining_5c = (int)(cam.vec_60.z * 2.0f / (finalStepZ + initialStepZ) * (4 - vsyncMode_8007a3b8));
 
     if(cam.refpointTicksRemaining_5c > 0) {
       cam.stepZAcceleration_40 = (finalStepZ - initialStepZ) / (float)cam.refpointTicksRemaining_5c;
@@ -2202,7 +2204,7 @@ public final class Bttl_800d {
     cam.vec_60.z = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
     cam.stepZ_6c = initialStepZ;
     cam.refpointTargetTranslation_74.set(x, y, z);
-    cam.refpointTicksRemaining_5c = (int)(cam.vec_60.z * 2.0f / (finalStepZ + initialStepZ));
+    cam.refpointTicksRemaining_5c = (int)(cam.vec_60.z * 2.0f / (finalStepZ + initialStepZ) * (4 - vsyncMode_8007a3b8));
     cam.refpointCallbackIndex_121 = 17;
     cam.flags_11c |= UPDATE_REFPOINT;
 
@@ -2237,7 +2239,7 @@ public final class Bttl_800d {
     cam.refpointTargetTranslation_74.set(x, y, z);
     cam.flags_11c |= UPDATE_REFPOINT;
     cam.refpointCallbackIndex_121 = 18;
-    cam.refpointTicksRemaining_5c = (int)(cam.vec_60.z * 2.0f / (finalStepZ + initialStepZ));
+    cam.refpointTicksRemaining_5c = (int)(cam.vec_60.z * 2.0f / (finalStepZ + initialStepZ) * (4 - vsyncMode_8007a3b8));
 
     if(cam.refpointTicksRemaining_5c > 0) {
       cam.stepZAcceleration_40 = (finalStepZ - initialStepZ) / (float)cam.refpointTicksRemaining_5c;
@@ -2263,7 +2265,7 @@ public final class Bttl_800d {
     cam.vec_60.x = MathHelper.floorMod(MathHelper.atan2(deltaY, deltaX), MathHelper.TWO_PI);
     cam.vec_60.y = 0.0f;
     cam.vec_60.z = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-    cam.refpointTicksRemaining_5c = (int)(cam.vec_60.z * 2.0f / (finalStepZ + initialStepZ));
+    cam.refpointTicksRemaining_5c = (int)(cam.vec_60.z * 2.0f / (finalStepZ + initialStepZ) * (4 - vsyncMode_8007a3b8));
     cam.stepZ_6c = initialStepZ;
     cam.refpointTargetTranslation_74.set(x, y, z);
     cam.flags_11c |= UPDATE_REFPOINT;
@@ -2460,7 +2462,7 @@ public final class Bttl_800d {
   public static FlowControl scriptMoveCameraProjectionPlane(final RunningScript<?> script) {
     final int mode = script.params_20[0].get();
     final float newProjectionPlaneDistance = script.params_20[1].get();
-    final int projectionPlaneChangeFrames = script.params_20[2].get();
+    final int projectionPlaneChangeFrames = script.params_20[2].get() * (4 - vsyncMode_8007a3b8);
     final int stepZ1 = script.params_20[3].get();
 
     LOGGER.info(CAMERA, "[CAMERA] scriptMoveCameraProjectionPlane mode=%d, new=%f, frames=%d, s4=%d", mode, newProjectionPlaneDistance, projectionPlaneChangeFrames, stepZ1);
@@ -3132,7 +3134,7 @@ public final class Bttl_800d {
       //LAB_800daabc
       final int x;
       final int y;
-      final int type = tickCount_800bb0fc.get() & 0x3;
+      final int type = tickCount_800bb0fc.get() / (4 - vsyncMode_8007a3b8) & 0x3;
       if(type == 0) {
         //LAB_800dab04
         x = cameraWobbleOffsetX_800c67e4.get();
@@ -3531,7 +3533,7 @@ public final class Bttl_800d {
       y = MathHelper.psxDegToRad(y);
     }
 
-    FUN_800db4ec(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), SCRIPTS.getObject(script.params_20[7].get(), BattleObject.class));
+    FUN_800db4ec(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get() * (4 - vsyncMode_8007a3b8), script.params_20[6].get(), SCRIPTS.getObject(script.params_20[7].get(), BattleObject.class));
     return FlowControl.CONTINUE;
   }
 
@@ -3590,7 +3592,7 @@ public final class Bttl_800d {
       y = MathHelper.psxDegToRad(y);
     }
 
-    FUN_800db600(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), SCRIPTS.getObject(script.params_20[7].get(), BattleObject.class));
+    FUN_800db600(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get() * (4 - vsyncMode_8007a3b8), script.params_20[6].get(), SCRIPTS.getObject(script.params_20[7].get(), BattleObject.class));
     return FlowControl.CONTINUE;
   }
 
@@ -3724,7 +3726,7 @@ public final class Bttl_800d {
       y = MathHelper.psxDegToRad(y);
     }
 
-    FUN_800db950(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get() / (float)0x100, script.params_20[7].get(), SCRIPTS.getObject(script.params_20[8].get(), BattleObject.class));
+    FUN_800db950(script.params_20[0].get(), x, y, z, script.params_20[4].get() * (4 - vsyncMode_8007a3b8), script.params_20[5].get(), script.params_20[6].get() / (float)0x100, script.params_20[7].get(), SCRIPTS.getObject(script.params_20[8].get(), BattleObject.class));
     return FlowControl.CONTINUE;
   }
 
@@ -3784,7 +3786,7 @@ public final class Bttl_800d {
       y = MathHelper.psxDegToRad(y);
     }
 
-    FUN_800dba80(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get() / (float)0x100, script.params_20[7].get(), SCRIPTS.getObject(script.params_20[8].get(), BattleObject.class));
+    FUN_800dba80(script.params_20[0].get(), x, y, z, script.params_20[4].get() * (4 - vsyncMode_8007a3b8), script.params_20[5].get(), script.params_20[6].get() / (float)0x100, script.params_20[7].get(), SCRIPTS.getObject(script.params_20[8].get(), BattleObject.class));
     return FlowControl.CONTINUE;
   }
 
@@ -4316,8 +4318,8 @@ public final class Bttl_800d {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "Wobble offset Y")
   @Method(0x800dcbecL)
   public static FlowControl scriptWobbleCamera(final RunningScript<?> script) {
-    wobbleFramesRemaining_800c67c4.set(script.params_20[0].get());
-    framesUntilWobble_800c67d4.set(script.params_20[1].get());
+    wobbleFramesRemaining_800c67c4.set(script.params_20[0].get() * (4 - vsyncMode_8007a3b8));
+    framesUntilWobble_800c67d4.set(script.params_20[1].get() * (4 - vsyncMode_8007a3b8));
     cameraWobbleOffsetX_800c67e4.set(script.params_20[2].get());
     cameraWobbleOffsetY_800c67e8.set(script.params_20[3].get());
     useCameraWobble_800fabb8.set(true);
@@ -4509,24 +4511,28 @@ public final class Bttl_800d {
     final int totalFrames;
     final int frame;
     if(model.disableInterpolation_a2) {
-      frame = animationTicks % (model.totalFrames_9a / 2);
+      totalFrames = model.totalFrames_9a / 2;
+      frame = animationTicks % totalFrames;
       model.partTransforms_94 = Arrays.copyOfRange(model.partTransforms_90, frame, model.partTransforms_90.length);
       applyModelPartTransforms(model);
-      totalFrames = (short)model.totalFrames_9a >> 1;
     } else {
       //LAB_800dd568
-      frame = animationTicks % model.totalFrames_9a;
+      totalFrames = model.totalFrames_9a;
+      frame = animationTicks % totalFrames;
       model.partTransforms_94 = Arrays.copyOfRange(model.partTransforms_90, frame / 2, model.partTransforms_90.length);
       applyModelPartTransforms(model);
 
-      if((frame & 0x1) != 0 && frame != model.totalFrames_9a - 1 && model.ub_a3 == 0) { // Interpolation frame
-        final ModelPartTransforms0c[][] original = model.partTransforms_94;
-        applyInterpolationFrame(model);
-        model.partTransforms_94 = original;
-      }
+      if((frame & 0x1) != 0 && frame != totalFrames - 1 && model.ub_a3 == 0) { // Interpolation frame
+        for(int i = 0; i < model.modelParts_00.length; i++) {
+          final GsCOORDINATE2 coord2 = model.modelParts_00[i].coord2_04;
+          final Transforms params = coord2.transforms;
 
-      //LAB_800dd5ec
-      totalFrames = model.totalFrames_9a;
+          params.trans.lerp(model.partTransforms_94[0][i].translate_06, 0.5f);
+
+          coord2.coord.transfer.set(params.trans);
+          coord2.coord.rotationZYX(params.rotate);
+        }
+      }
     }
 
     //LAB_800dd5f0
