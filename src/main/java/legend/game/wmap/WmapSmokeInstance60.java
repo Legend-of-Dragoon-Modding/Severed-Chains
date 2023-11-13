@@ -4,7 +4,7 @@ import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import org.joml.Vector3f;
 
-public class WmapSmokeCloudInstance60 {
+public class WmapSmokeInstance60 {
   public final MV transforms = new MV();
 
   public final GsCOORDINATE2 coord2_00 = new GsCOORDINATE2();

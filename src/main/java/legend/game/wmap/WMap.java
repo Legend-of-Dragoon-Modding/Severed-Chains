@@ -180,7 +180,7 @@ public class WMap extends EngineState {
 
   private int destinationLabelStage_800c86f0;
 
-  private WmapSmokeCloudInstance60[] smokeCloudInstances_800c86f8;
+  private WmapSmokeInstance60[] smokeInstances_800c86f8;
   /** This doesn't seem to have any effect, since the only time it's used is checking whether to turn it off */
   private boolean renderAtmosphericEffect_800c86fc;
   private final RECT storedEffectsRect_800c8700 = new RECT((short)576, (short)256, (short)128, (short)256);
@@ -5835,14 +5835,14 @@ public class WMap extends EngineState {
     this.currentWmapEffect_800f6598 = (locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).effectFlags_12.get() & 0x30) >>> 4;
     this.previousWmapEffect_800f659c = this.currentWmapEffect_800f6598;
 
-    this.smokeCloudInstances_800c86f8 = new WmapSmokeCloudInstance60[48];
+    this.smokeInstances_800c86f8 = new WmapSmokeInstance60[48];
     this.renderAtmosphericEffect_800c86fc = false;
 
-    Arrays.setAll(this.smokeCloudInstances_800c86f8, i -> new WmapSmokeCloudInstance60());
+    Arrays.setAll(this.smokeInstances_800c86f8, i -> new WmapSmokeInstance60());
 
     //LAB_800eb9b8
     for(int i = 0; i < 48; i++) {
-      final WmapSmokeCloudInstance60 smoke = this.smokeCloudInstances_800c86f8[i];
+      final WmapSmokeInstance60 smoke = this.smokeInstances_800c86f8[i];
 
       //LAB_800eb9d4
       GsInitCoordinate2(null, smoke.coord2_00);
@@ -6312,6 +6312,8 @@ public class WMap extends EngineState {
     }
 
     //LAB_800edc84
+    int smokeIndex = 0;
+
     //LAB_800edca8
     for(int i = 0; i < this.placeCount_800c86cc; i++) {
       //LAB_800edccc
@@ -6334,10 +6336,11 @@ public class WMap extends EngineState {
 
         //LAB_800ede18
         //LAB_800ede1c
-        final WmapSmokeCloudInstance60 smoke = this.smokeCloudInstances_800c86f8[i];
         for(int j = 0; j < 6; j++) {
           //LAB_800ede38
-          final float size;
+          final WmapSmokeInstance60 smoke = this.smokeInstances_800c86f8[smokeIndex];
+
+              final float size;
           if(mode == 8) {
             size = smoke.scaleAndColourFade_50 / 5.0f;
           } else {
@@ -6459,6 +6462,7 @@ public class WMap extends EngineState {
                               smoke.scaleAndColourFade_50 = 0;
                             }
                             //LAB_800eeccc
+                            smokeIndex++;
                           }
                         }
                       }
@@ -6491,7 +6495,7 @@ public class WMap extends EngineState {
 
   @Method(0x800eede4L)
   private void deallocateSmoke() {
-    this.smokeCloudInstances_800c86f8 = null;
+    this.smokeInstances_800c86f8 = null;
     this.atmosphericEffectDeallocators_800f65bc[this.currentWmapEffect_800f6598].run();
   }
 }

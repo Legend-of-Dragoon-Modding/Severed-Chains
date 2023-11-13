@@ -4,7 +4,6 @@ import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandLine;
-import legend.core.gpu.GpuCommandPoly;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
@@ -27,7 +26,7 @@ import legend.game.combat.ui.BattleHudCharacterDisplay3c;
 import legend.game.combat.ui.BattleMenuStruct58;
 import legend.game.combat.ui.CombatItem02;
 import legend.game.combat.ui.FloatingNumberC4;
-import legend.game.combat.ui.FloatingNumberC4Sub20;
+import legend.game.combat.ui.FloatingNumberDigit20;
 import legend.game.combat.ui.SpellAndItemMenuA4;
 import legend.game.combat.ui.UiBox;
 import legend.game.inventory.Item;
@@ -105,7 +104,6 @@ import static legend.game.combat.Bttl_800c.displayStats_800c6c2c;
 import static legend.game.combat.Bttl_800c.dragoonSpaceElement_800c6b64;
 import static legend.game.combat.Bttl_800c.dragoonSpells_800c6960;
 import static legend.game.combat.Bttl_800c.floatingNumbers_800c6b5c;
-import static legend.game.combat.Bttl_800c.floatingTextDigitClutOffsets_800c70f4;
 import static legend.game.combat.Bttl_800c.floatingTextType1DigitUs_800c7028;
 import static legend.game.combat.Bttl_800c.floatingTextType1Digits;
 import static legend.game.combat.Bttl_800c.floatingTextType3DigitUs_800c70e0;
@@ -121,7 +119,6 @@ import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
 import static legend.game.combat.Bttl_800c.targetAllItemIds_800c7124;
 import static legend.game.combat.Bttl_800c.targetBents_800c71f0;
 import static legend.game.combat.Bttl_800c.textboxColours_800c6fec;
-import static legend.game.combat.Bttl_800c.uiTextureElementBrightness_800c71ec;
 import static legend.game.combat.Bttl_800c.usedRepeatItems_800c6c3c;
 import static legend.game.combat.Bttl_800e.initializeBattleHudCharacterDisplay;
 import static legend.game.combat.Bttl_800e.perspectiveTransformXyz;
@@ -151,8 +148,7 @@ public final class Bttl_800f {
           "Floating text type 1 digit " + i,
           floatingTextType1DigitUs_800c7028[i], 32,
           8, 8,
-          0x80,
-          2, 1
+          0x80
         );
       }
     }
@@ -518,33 +514,76 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
-  @Method(0x800f3354L)
-  public static void addFloatingNumber(final int numIndex, final long onHitTextType, final long onHitClutCol, final int number, final float x, final float y, int a6, final long onHitClutRow) {
-    final FloatingNumberC4 num = floatingNumbers_800c6b5c[numIndex];
-    final short[] damageDigits = new short[num.digits_24.length];
+  private static final Obj[] type1FloatingDigits = new Obj[10];
+  private static final Obj[] type3FloatingDigits = new Obj[10];
+  private static Obj miss;
 
-    final byte floatingTextType;  // 0=floating numbers, 1=MP cost, 2=miss
-    final byte clutCol; //TODO: confirm this, it may not be this exactly
-    final byte clutRow; //TODO: confirm this, it may not be this exactly
+  @Method(0x800f3354L)
+  public static void addFloatingNumber(final int numIndex, final int onHitTextType, final int onHitClutCol, final int number, final float x, final float y, int ticks, int colour) {
+    for(int i = 0; i < 10; i++) {
+      if(type1FloatingDigits[i] != null) {
+        type1FloatingDigits[i].delete();
+      }
+
+      if(type3FloatingDigits[i] != null) {
+        type3FloatingDigits[i].delete();
+      }
+
+      if(miss != null) {
+        miss.delete();
+      }
+
+      final QuadBuilder builder1 = new QuadBuilder("Type 1 Floating Digit " + i)
+        .uv(floatingTextType1DigitUs_800c7028[i], 32)
+        .size(8.0f, 8.0f);
+      setGpuPacketClutAndTpageAndQueue(builder1, 0x80, null);
+      type1FloatingDigits[i] = builder1.build();
+
+      final QuadBuilder builder3 = new QuadBuilder("Type 3 Floating Digit " + i)
+        .uv(floatingTextType3DigitUs_800c70e0.get(i).get(), 40)
+        .size(8.0f, 16.0f);
+      setGpuPacketClutAndTpageAndQueue(builder3, 0x80, null);
+      type3FloatingDigits[i] = builder3.build();
+    }
+
+    final QuadBuilder builderMiss = new QuadBuilder("Miss Floating Digit")
+      .uv(72, 128)
+      .size(36.0f, 16.0f);
+    setGpuPacketClutAndTpageAndQueue(builderMiss, 0x80, null);
+    miss = builderMiss.build();
+
+    final FloatingNumberC4 num = floatingNumbers_800c6b5c[numIndex];
+    final int[] damageDigits = new int[num.digits_24.length];
+
+    final int floatingTextType;  // 0=floating numbers, 1=MP cost, 2=miss
+    final int clutCol; //TODO: confirm this, it may not be this exactly
     if(number != -1) {
-      floatingTextType = (byte)onHitTextType;
-      clutCol = (byte)onHitClutCol;
-      clutRow = (byte)onHitClutRow;
+      floatingTextType = onHitTextType;
+      clutCol = onHitClutCol;
     } else {
       floatingTextType = 2;
       clutCol = 2;
-      clutRow = 14;
+      colour = 14;
+    }
+
+    switch(colour) {
+      case 0 -> num.colour.set(1.0333333f, 0.6666667f, 0.0f); // Orange
+      case 1 -> num.colour.set(1.0f, 1.0f, 1.0f); // Whiter
+      case 2, 6 -> num.colour.set(1.0f, 1.0f, 1.0f); // White
+      case 3, 7 -> num.colour.set(0.4f, 0.93333334f, 1.0333333f); // Cyan
+      case 4, 8 -> num.colour.set(1.0333333f, 0.93333334f, 0.3f); // Yellow
+      case 5, 9, 14 -> num.colour.set(0.93333334f, 0.3f, 0.0f); // Red
+      case 10, 12 -> num.colour.set(0.56666666f, 0.53333336f, 1.0333333f); // Violet
+      case 11, 13 -> num.colour.set(0.3f, 1.0333333f, 0.3f); // Green
     }
 
     //LAB_800f34d4
     num.flags_02 = 0;
     num.bentIndex_04 = -1;
     num.translucent_08 = false;
-    num.b_0c = 0x80;
-    num.g_0d = 0x80;
-    num.r_0e = 0x80;
+    num.shade_0c = 0x80;
     num._18 = -1;
-    num._14 = -1;
+    num.ticksRemaining_14 = -1;
 
     //LAB_800f3528
     for(int i = 0; i < num.digits_24.length; i++) {
@@ -552,11 +591,11 @@ public final class Bttl_800f {
       num.digits_24[i]._04 = 0;
       num.digits_24[i]._08 = 0;
       num.digits_24[i].digit_0c = -1;
-      num.digits_24[i].unused_1c = 0;
     }
 
     num.state_00 = 1;
-    if(a6 == 0) {
+
+    if(ticks == 0) {
       num.flags_02 |= 0x1;
     }
 
@@ -564,8 +603,8 @@ public final class Bttl_800f {
     num.flags_02 |= 0x8000;
     num._10 = clutCol;
 
-    if(clutCol == 2 && a6 == 0) {
-      a6 = 60 / vsyncMode_8007a3b8 * 2;
+    if(clutCol == 2 && ticks == 0) {
+      ticks = 60 / vsyncMode_8007a3b8 * 2;
     }
 
     //LAB_800f35dc
@@ -586,12 +625,10 @@ public final class Bttl_800f {
     //LAB_800f36a0
     //Sets what places to render
     int currDigitPlace = (int)Math.pow(10, num.digits_24.length - 1);
-    int currDigit;
     for(int i = 0; i < num.digits_24.length; i++) {
-      currDigit = damage / currDigitPlace;
-      damage = damage % currDigitPlace;
-      damageDigits[i] = (short)currDigit;
-      currDigitPlace = currDigitPlace / 10;
+      damageDigits[i] = damage / currDigitPlace;
+      damage %= currDigitPlace;
+      currDigitPlace /= 10;
     }
 
     //LAB_800f36dc
@@ -621,66 +658,51 @@ public final class Bttl_800f {
     //LAB_800f37ac
     int digitStructIdx;
     for(digitStructIdx = 0; digitStructIdx < num.digits_24.length && digitIdx < num.digits_24.length; digitStructIdx++) {
-      final FloatingNumberC4Sub20 digitStruct = num.digits_24[digitStructIdx];
-      digitStruct.flags_00 = 0x8000;
-      digitStruct.y_10 = 0;
+      final FloatingNumberDigit20 digit = num.digits_24[digitStructIdx];
+      digit.flags_00 = 0x8000;
+      digit.x_0e = displayPosX;
+      digit.y_10 = 0;
 
       if(clutCol == 2) {
-        digitStruct.flags_00 = 0;
-        digitStruct._04 = digitStructIdx;
-        digitStruct._08 = 0;
+        digit.flags_00 = 0;
+        digit._04 = digitStructIdx;
+        digit._08 = 0;
       }
 
       //LAB_800f37d8
       if(floatingTextType == 1) {
         //LAB_800f382c
-        digitStruct.x_0e = displayPosX;
-        digitStruct.u_12 = floatingTextType1DigitUs_800c7028[damageDigits[digitIdx]];
-        digitStruct.v_14 = 32;
-        digitStruct.texW_16 = 8;
-        digitStruct.texH_18 = 8;
+        digit.obj = type1FloatingDigits[damageDigits[digitIdx]];
         displayPosX += 5;
       } else if(floatingTextType == 2) {
         //LAB_800f386c
-        digitStruct.x_0e = displayPosX;
-        digitStruct.u_12 = 72;
-        digitStruct.v_14 = 128;
-        digitStruct.texW_16 = 36;
-        digitStruct.texH_18 = 16;
+        digit.obj = miss;
         displayPosX += 36;
       } else {
         //LAB_800f37f4
-        digitStruct.x_0e = displayPosX;
-        digitStruct.u_12 = floatingTextType3DigitUs_800c70e0.get(damageDigits[digitIdx]).get();
-        digitStruct.v_14 = 40;
-        digitStruct.texW_16 = 8;
-        digitStruct.texH_18 = 16;
+        digit.obj = type3FloatingDigits[damageDigits[digitIdx]];
         displayPosX += 8;
       }
 
       //LAB_800f3898
-      digitStruct.digit_0c = damageDigits[digitIdx];
-      digitStruct.baseClutOffset_1a = floatingTextDigitClutOffsets_800c70f4.get(clutRow).get();
-      digitStruct.unused_1c = 0x1000;
+      digit.digit_0c = damageDigits[digitIdx];
 
       digitIdx++;
     }
 
     //LAB_800f38e8
-    num._14 = digitStructIdx + 12; //TODO: ID duration meaning
-    num._18 = a6 + 4; //TODO: ID duration meaning
+    num.ticksRemaining_14 = digitStructIdx + 12;
+    num._18 = ticks + 4; //TODO: ID duration meaning
   }
 
   @Method(0x800f3940L)
-  public static void FUN_800f3940() {
+  public static void tickFloatingNumbers() {
     //LAB_800f3978
     for(final FloatingNumberC4 num : floatingNumbers_800c6b5c) {
       if((num.flags_02 & 0x8000) != 0) {
         if(num.state_00 != 0) {
-          final int bentIndex = num.bentIndex_04;
-
-          if(bentIndex != -1) {
-            final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bentIndex];
+          if(num.bentIndex_04 != -1) {
+            final ScriptState<?> state = scriptStatePtrArr_800bc1c0[num.bentIndex_04];
             final BattleEntity27c bent = (BattleEntity27c)state.innerStruct_00;
 
             final float x;
@@ -704,9 +726,7 @@ public final class Bttl_800f {
           }
 
           //LAB_800f3ac8
-          final int state = num.state_00;
-
-          if(state == 1) {
+          if(num.state_00 == 1) {
             //LAB_800f3b24
             if(num._10 == 0x2) {
               num.state_00 = 2;
@@ -714,103 +734,89 @@ public final class Bttl_800f {
               //LAB_800f3b44
               num.state_00 = 98;
             }
-          } else if(state == 2) {
+          } else if(num.state_00 == 2) {
             //LAB_800f3b50
             for(int n = 0; n < num.digits_24.length; n++) {
-              final FloatingNumberC4Sub20 a1 = num.digits_24[n];
+              final FloatingNumberDigit20 digit = num.digits_24[n];
 
-              if(a1.digit_0c == -1) {
+              if(digit.digit_0c == -1) {
                 break;
               }
 
-              final int a0 = a1.flags_00;
-
-              if((a0 & 0x1) != 0) {
-                if((a0 & 0x2) != 0) {
-                  if(a1._08 < 5) {
-                    a1.y_10 += a1._08;
-                    a1._08++;
+              if((digit.flags_00 & 0x1) != 0) {
+                if((digit.flags_00 & 0x2) != 0) {
+                  if(digit._08 < 5) {
+                    digit.y_10 += digit._08;
+                    digit._08++;
                   }
                 } else {
                   //LAB_800f3bb0
-                  a1.flags_00 |= 0x8002;
-                  a1._04 = a1.y_10;
-                  a1._08 = -4;
+                  digit.flags_00 |= 0x8002;
+                  digit._04 = digit.y_10;
+                  digit._08 = -4;
                 }
               } else {
                 //LAB_800f3bc8
-                if(a1._08 == a1._04) {
-                  a1.flags_00 |= 0x1;
+                if(digit._08 == digit._04) {
+                  digit.flags_00 |= 0x1;
                 }
 
                 //LAB_800f3be0
-                a1._08++;
+                digit._08++;
               }
             }
 
             //LAB_800f3c00
-            num._14--;
-            if(num._14 <= 0) {
+            num.ticksRemaining_14--;
+            if(num.ticksRemaining_14 <= 0) {
               num.state_00 = 98;
-              num._14 = num._18;
+              num.ticksRemaining_14 = num._18;
             }
-          } else if(state == 97) {
+          } else if(num.state_00 == 97) {
             //LAB_800f3c34
-            if(num._14 <= 0) {
+            if(num.ticksRemaining_14 <= 0) {
               num.state_00 = 100;
             } else {
               //LAB_800f3c50
-              num._14--;
-              // Monochromify
-              final int b = num.b_0c;
-              final int colour = (b - (num._18 & 0xff)) & 0xff;
-              num.b_0c = colour;
-              num.g_0d = colour;
-              num.r_0e = colour;
+              num.ticksRemaining_14--;
+              num.shade_0c = (num.shade_0c - (num._18 & 0xff)) & 0xff;
             }
-          } else if(state == 100) {
+          } else if(num.state_00 == 100) {
             //LAB_800f3d38
             num.state_00 = 0;
             num.flags_02 = 0;
             num.bentIndex_04 = -1;
             num.translucent_08 = false;
-            num.b_0c = 0x80;
-            num.g_0d = 0x80;
-            num.r_0e = 0x80;
-            num._14 = -1;
+            num.shade_0c = 0x80;
+            num.ticksRemaining_14 = -1;
             num._18 = -1;
 
             //LAB_800f3d60
             for(int n = 0; n < num.digits_24.length; n++) {
-              final FloatingNumberC4Sub20 v1 = num.digits_24[n];
-              v1.flags_00 = 0;
-              v1._04 = 0;
-              v1._08 = 0;
-              v1.digit_0c = -1;
-              v1.unused_1c = 0;
+              final FloatingNumberDigit20 digit = num.digits_24[n];
+              digit.flags_00 = 0;
+              digit._04 = 0;
+              digit._08 = 0;
+              digit.digit_0c = -1;
             }
             //LAB_800f3b04
-          } else if(state < 99) {
+          } else if(num.state_00 < 99) {
             //LAB_800f3c88
             if((num.flags_02 & 0x1) != 0) {
               num.state_00 = 99;
             } else {
               //LAB_800f3ca4
-              num._14--;
+              num.ticksRemaining_14--;
 
-              if(num._14 <= 0) {
-                final int v1 = num._10;
-
-                if(v1 > 0 && v1 < 3) {
+              if(num.ticksRemaining_14 <= 0) {
+                if(num._10 > 0 && num._10 < 3) {
                   num.state_00 = 97;
                   num.translucent_08 = true;
-                  num.b_0c = 0x60;
-                  num.g_0d = 0x60;
-                  num.r_0e = 0x60;
+                  num.shade_0c = 0x60;
 
-                  final int a2 = 60 / vsyncMode_8007a3b8 / 2;
-                  num._14 = a2;
-                  num._18 = 96 / a2;
+                  final int ticksRemaining = 60 / vsyncMode_8007a3b8 / 2;
+                  num.ticksRemaining_14 = ticksRemaining;
+                  num._18 = 96 / ticksRemaining;
                 } else {
                   //LAB_800f3d24
                   //LAB_800f3d2c
@@ -830,14 +836,9 @@ public final class Bttl_800f {
     for(final FloatingNumberC4 num : floatingNumbers_800c6b5c) {
       if((num.flags_02 & 0x8000) != 0) {
         if(num.state_00 != 0) {
-          final boolean translucent = num.translucent_08;
-          final int r = num.r_0e;
-          final int g = num.g_0d;
-          final int b = num.b_0c;
-
           //LAB_800f3e80
           for(int i = 0; i < num.digits_24.length; i++) {
-            final FloatingNumberC4Sub20 digit = num.digits_24[i];
+            final FloatingNumberDigit20 digit = num.digits_24[i];
 
             if(digit.digit_0c == -1) {
               break;
@@ -845,64 +846,16 @@ public final class Bttl_800f {
 
             if((digit.flags_00 & 0x8000) != 0) {
               //LAB_800f3ec0
-              for(int j = 1; j < 3; j++) {
-                final float a1 = num.x_1c - centreScreenX_1f8003dc.get();
-                final float a2 = num.y_20 - centreScreenY_1f8003de.get();
-                final float left = digit.x_0e + a1;
-                final float right = digit.x_0e + digit.texW_16 + a1;
-                final float top = digit.y_10 + a2;
-                final float bottom = digit.y_10 + digit.texH_18 + a2;
-                final int leftU = digit.u_12;
-                final int rightU = digit.u_12 + digit.texW_16;
-                final int topV = digit.v_14;
-                final int bottomV = digit.v_14 + digit.texH_18;
-                final int baseClutOffset = digit.baseClutOffset_1a;
+              num.transforms.transfer.set(digit.x_0e + num.x_1c, digit.y_10 + num.y_20, 28.0f);
+              RENDERER.queueOrthoOverlayModel(digit.obj, num.transforms)
+                .colour(num.colour);
 
-                final int clutIndex;
-                final int clutOffset;
-                if(baseClutOffset >= 0x80) {
-                  clutIndex = 1;
-                  clutOffset = baseClutOffset - 0x80;
-                } else {
-                  clutIndex = 0;
-
-                  //LAB_800f4044
-                  clutOffset = baseClutOffset;
-                }
-
-                final int clutX = battleUiElementClutVramXy_800c7114[clutIndex].x + clutOffset / 16 * 16 & 0x3f0;
-                final int clutY = battleUiElementClutVramXy_800c7114[clutIndex].y + clutOffset % 16;
-
-                final GpuCommandPoly cmd = new GpuCommandPoly(4)
-                  .bpp(Bpp.BITS_4)
-                  .clut(clutX, clutY)
-                  .vramPos(704, 256)
-                  .rgb(r, g, b)
-                  .pos(0, left, top)
-                  .pos(1, right, top)
-                  .pos(2, left, bottom)
-                  .pos(3, right, bottom)
-                  .uv(0, leftU, topV)
-                  .uv(1, rightU, topV)
-                  .uv(2, leftU, bottomV)
-                  .uv(3, rightU, bottomV);
-
-                if(translucent) {
-                  cmd.translucent(Translucency.of(j));
-                }
-
-                //LAB_800f4048
-                //LAB_800f4058
-                //LAB_800f4068
-                GPU.queueCommand(7, cmd);
-
-                if((num.state_00 & 97) == 0) {
-                  //LAB_800f4118
-                  break;
-                }
-
-                //LAB_800f4110
+              if((num.state_00 & 97) == 0) {
+                //LAB_800f4118
+                break;
               }
+
+              //LAB_800f4110
             }
           }
         }
@@ -944,7 +897,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f4268L)
-  public static void addFloatingNumberForBent(final int bentIndex, final int damage, final long s4) {
+  public static void addFloatingNumberForBent(final int bentIndex, final int damage, final int s4) {
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bentIndex];
     final BattleEntity27c bent = (BattleEntity27c)state.innerStruct_00;
 
@@ -967,7 +920,7 @@ public final class Bttl_800f {
     final Vector2f screenCoords = perspectiveTransformXyz(bent.model_148, x, y, z);
 
     //LAB_800f4394
-    FUN_800f89f4(bentIndex, 0, 0x2L, damage, clampX(screenCoords.x + centreScreenX_1f8003dc.get()), clampY(screenCoords.y + centreScreenY_1f8003de.get()), 60 / vsyncMode_8007a3b8 / 4, s4);
+    FUN_800f89f4(bentIndex, 0, 2, damage, clampX(screenCoords.x + centreScreenX_1f8003dc.get()), clampY(screenCoords.y + centreScreenY_1f8003de.get()), 60 / vsyncMode_8007a3b8 / 4, s4);
   }
 
   @ScriptDescription("Gives SP to a battle entity")
@@ -1623,7 +1576,7 @@ public final class Bttl_800f {
         //LAB_800f5588
         if(menu.menuType_0a != 0) {
           menu.itemOrSpellId_1c = (short)getItemOrSpellId();
-          addFloatingNumber(0, 0x1L, 0, setActiveCharacterSpell(menu.itemOrSpellId_1c).spell_94.mp_06, 280, 135, 0, 0x1L);
+          addFloatingNumber(0, 1, 0, setActiveCharacterSpell(menu.itemOrSpellId_1c).spell_94.mp_06, 280, 135, 0, 1);
         }
       }
 
@@ -1944,7 +1897,7 @@ public final class Bttl_800f {
           textType = 5;
           if((menu._02 & 0x2) != 0) {
             final BattleEntity27c bent = setActiveCharacterSpell(menu.itemOrSpellId_1c);
-            addFloatingNumber(0, 0x1L, 0, bent.spell_94.mp_06, 280, 135, 0, menu.menuType_0a);
+            addFloatingNumber(0, 1, 0, bent.spell_94.mp_06, 280, 135, 0, 1);
 
             menu.transforms.transfer.set(236 - centreScreenX_1f8003dc.get(), 130 - centreScreenY_1f8003de.get(), 124.0f);
             RENDERER.queueOrthoOverlayModel(menu.unknownObj2, menu.transforms);
@@ -2908,7 +2861,7 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f89f4L)
-  public static long FUN_800f89f4(final int bentIndex, final long a1, final long a2, final int rawDamage, final float x, final float y, final int a6, final long a7) {
+  public static boolean FUN_800f89f4(final int bentIndex, final int a1, final int a2, final int rawDamage, final float x, final float y, final int a6, final int a7) {
     //LAB_800f8a30
     for(int i = 0; i < floatingNumbers_800c6b5c.length; i++) {
       final FloatingNumberC4 num = floatingNumbers_800c6b5c[i];
@@ -2916,19 +2869,19 @@ public final class Bttl_800f {
       if(num.state_00 == 0) {
         addFloatingNumber(i, a1, a2, rawDamage, x, y, a6, a7);
         num.bentIndex_04 = bentIndex;
-        return 0x1L;
+        return true;
       }
 
       //LAB_800f8a74
     }
 
     //LAB_800f8a84
-    return 0;
+    return false;
   }
 
   @Method(0x800f8aa4L)
   public static void renderDamage(final int bentIndex, final int damage) {
-    addFloatingNumberForBent(bentIndex, damage, 0x8L);
+    addFloatingNumberForBent(bentIndex, damage, 8);
   }
 
   /**
@@ -3002,19 +2955,12 @@ public final class Bttl_800f {
   }
 
   @Method(0x800f8dfcL)
-  public static Obj buildUiTextureElement(final String name, final int u, final int v, final int w, final int h, final int clut, final int brightnessIndex, final int portraitDimmingModifier) {
+  public static Obj buildUiTextureElement(final String name, final int u, final int v, final int w, final int h, final int clut) {
     final QuadBuilder builder = new QuadBuilder(name)
       .size(w, h)
       .uv(u, v);
 
     setGpuPacketClutAndTpageAndQueue(builder, clut, null);
-
-    if(portraitDimmingModifier < 6) {
-      builder.monochrome(((byte)(uiTextureElementBrightness_800c71ec.get(brightnessIndex).get() + 0x80) / 6 * portraitDimmingModifier - 0x80 & 0xff) / 255.0f);
-    } else {
-      //LAB_800f8ef4
-      builder.monochrome(uiTextureElementBrightness_800c71ec.get(brightnessIndex).get() & 0xff);
-    }
 
     return builder.build();
   }
