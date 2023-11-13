@@ -365,14 +365,15 @@ public class RenderEngine {
     // Build fullscreen fade quads
     fullscreenWhiteout = new QuadBuilder("FullscreenWhiteout")
       .translucency(Translucency.B_PLUS_F)
-      .pos(-192.0f, -120.0f, 999)
-      .size(384 * 4 + 1, 384 * 4 + 1)
+      .pos(0.0f, 0.0f, 999)
+      .size(384, 240)
       .build();
     fullscreenWhiteout.persistent = true;
+
     fullscreenBlackout = new QuadBuilder("FullscreenBlackout")
       .translucency(Translucency.B_MINUS_F)
-      .pos(-192.0f, -120.0f, 999)
-      .size(384 * 4 + 1, 384 * 4 + 1)
+      .pos(0.0f, 0.0f, 999)
+      .size(384, 240)
       .build();
     fullscreenBlackout.persistent = true;
 
