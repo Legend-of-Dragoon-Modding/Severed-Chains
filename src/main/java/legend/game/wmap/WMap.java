@@ -508,7 +508,7 @@ public class WMap extends EngineState {
           final WMapStruct19c0 v1 = this.wmapStruct19c0_800c66b0;
 
           if(v1._c5 == 0) {
-            if(v1._c4 == 0) {
+            if(!v1.hideAtmosphericEffect_c4) {
               final WMapStruct258 a0 = this.wmapStruct258_800c66a8;
 
               if(a0.zoomState_1f8 == 0) {
@@ -517,7 +517,7 @@ public class WMap extends EngineState {
                     //LAB_800cc900
                     if(Input.pressedThisFrame(InputAction.BUTTON_NORTH)) {
                       if(this.mapState_800c6798._fc != 1) {
-                        if(a0._05 == 0) {
+                        if(a0.wmapState_05 == WmapStateEnum.ACTIVE) {
                           if(this.mapState_800c6798._d8 == 0) {
                             if(a0._250 == 0) {
                               startFadeEffect(1, 15);
@@ -1603,7 +1603,7 @@ public class WMap extends EngineState {
     this.wmapStruct19c0_800c66b0.mapRotating_80 = false;
     this.wmapStruct19c0_800c66b0.mapRotationStep_7c = 0.0f;
     this.wmapStruct19c0_800c66b0._c5 = 0;
-    this.wmapStruct19c0_800c66b0._c4 = 0;
+    this.wmapStruct19c0_800c66b0.hideAtmosphericEffect_c4 = false;
 
     this.FUN_800d5018();
   }
@@ -1751,7 +1751,7 @@ public class WMap extends EngineState {
     this.rotateCoord2(struct.mapRotation_70, struct.coord2_20);
 
     if(struct._c5 == 0) {
-      if(struct._c4 == 0) {
+      if(!struct.hideAtmosphericEffect_c4) {
         if(this.wmapStruct258_800c66a8.zoomState_1f8 == 0) {
           if(this.wmapStruct258_800c66a8._220 == 0) {
             struct.coord2_20.coord.transfer.set(this.wmapStruct258_800c66a8.coord2_34.coord.transfer);
@@ -1776,7 +1776,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d2fd4
-    if(this.wmapStruct258_800c66a8._250 == 2 && this.wmapStruct258_800c66a8._05 == 0) {
+    if(this.wmapStruct258_800c66a8._250 == 2 && this.wmapStruct258_800c66a8.wmapState_05 == WmapStateEnum.ACTIVE) {
       return;
     }
 
@@ -1790,7 +1790,7 @@ public class WMap extends EngineState {
     //LAB_800d3040
     if(struct._110 == 0) {
       if(this.wmapStruct258_800c66a8.zoomState_1f8 == 0) {
-        if(struct._c4 == 0) {
+        if(!struct.hideAtmosphericEffect_c4) {
           if(this.mapState_800c6798.continentIndex_00 != 7) { // Not teleporting
             if(!struct.mapRotating_80) {
               //LAB_800d30d8
@@ -1881,7 +1881,7 @@ public class WMap extends EngineState {
         //LAB_800d36a8
         if(this.mapState_800c6798._fc != 1) {
           if(!this.wmapStruct19c0_800c66b0.mapRotating_80) {
-            if(this.wmapStruct258_800c66a8._05 == 0) {
+            if(this.wmapStruct258_800c66a8.wmapState_05 == WmapStateEnum.ACTIVE) {
               if(this.wmapStruct19c0_800c66b0._110 == 0) {
                 if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_2)) { // R2
                   if(this.wmapStruct258_800c66a8.zoomState_1f8 == 0) {
@@ -1891,7 +1891,7 @@ public class WMap extends EngineState {
                     this.wmapStruct19c0_800c66b0._11a = 1;
                     this.FUN_800d4bc8(0);
                     this.mapState_800c6798.disableInput_d0 = true;
-                    this.wmapStruct19c0_800c66b0._c4 = 1;
+                    this.wmapStruct19c0_800c66b0.hideAtmosphericEffect_c4 = true;
                   }
                 }
 
@@ -1904,7 +1904,7 @@ public class WMap extends EngineState {
                     this.wmapStruct19c0_800c66b0._9e = -300;
                     this.wmapStruct19c0_800c66b0._c5 = 2;
                     this.FUN_800d4bc8(1);
-                    this.wmapStruct19c0_800c66b0._c4 = 0;
+                    this.wmapStruct19c0_800c66b0.hideAtmosphericEffect_c4 = false;
                     this.wmapStruct258_800c66a8.zoomState_1f8 = 0;
                     //LAB_800d3898
                   } else if(this.wmapStruct258_800c66a8.zoomState_1f8 == 0) {
@@ -1943,7 +1943,7 @@ public class WMap extends EngineState {
       }
     } else if(v0 == 2) {
       //LAB_800d3bd8
-      if(this.wmapStruct258_800c66a8._05 == 0) {
+      if(this.wmapStruct258_800c66a8.wmapState_05 == WmapStateEnum.ACTIVE) {
         this.wmapStruct19c0_800c66b0.rview2_00.viewpoint_00.y += 1450.0f / (3.0f / vsyncMode_8007a3b8);
         this.wmapStruct19c0_800c66b0.rview2_00.refpoint_0c.y -= 1450.0f / (3.0f / vsyncMode_8007a3b8);
       } else {
@@ -1963,7 +1963,7 @@ public class WMap extends EngineState {
       this.wmapStruct19c0_800c66b0._a0 += 1.0f / (3.0f / vsyncMode_8007a3b8);
 
       boolean sp18 = false;
-      if(this.wmapStruct258_800c66a8._05 == 0) {
+      if(this.wmapStruct258_800c66a8.wmapState_05 == WmapStateEnum.ACTIVE) {
         if(this.wmapStruct19c0_800c66b0._a0 >= 6.0f) {
           sp18 = true;
         }
@@ -2004,7 +2004,7 @@ public class WMap extends EngineState {
   @Method(0x800d4058L)
   private void renderPlayerAndDestinationIndicators() {
     //LAB_800d4088
-    if(this.wmapStruct19c0_800c66b0._c4 == 0 || this.wmapStruct19c0_800c66b0._c5 != 0) {
+    if(!this.wmapStruct19c0_800c66b0.hideAtmosphericEffect_c4 || this.wmapStruct19c0_800c66b0._c5 != 0) {
       //LAB_800d41f0
       return;
     }
@@ -2253,7 +2253,7 @@ public class WMap extends EngineState {
       if(struct._154[0].distanceFromPlayer_04 < 90.0f) {
         struct._11a = 1;
         //LAB_800d52e8
-      } else if(this.wmapStruct258_800c66a8._05 == 0 || struct._c5 != 2) {
+      } else if(this.wmapStruct258_800c66a8.wmapState_05 == WmapStateEnum.ACTIVE || struct._c5 != 2) {
         //LAB_800d5328
         struct._11a = 3;
       } else {
@@ -2287,7 +2287,7 @@ public class WMap extends EngineState {
       }
     } else if(v0 == 3) {
       //LAB_800d5494
-      if(struct._c4 != 0) {
+      if(struct.hideAtmosphericEffect_c4) {
         struct._11a = 0;
         return;
       }
@@ -3273,7 +3273,7 @@ public class WMap extends EngineState {
     final WMapStruct258 struct258 = this.wmapStruct258_800c66a8;
 
     //LAB_800da270
-    if(struct258._05 != 0) {
+    if(struct258.wmapState_05 != WmapStateEnum.ACTIVE) {
       return;
     }
 
@@ -3293,7 +3293,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800da300
-    if(this.wmapStruct19c0_800c66b0._c4 != 0) {
+    if(this.wmapStruct19c0_800c66b0.hideAtmosphericEffect_c4) {
       return;
     }
 
@@ -4549,7 +4549,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800e3724
-    if(this.wmapStruct258_800c66a8._05 != 0) {
+    if(this.wmapStruct258_800c66a8.wmapState_05 != WmapStateEnum.ACTIVE) {
       return;
     }
 
@@ -4677,14 +4677,14 @@ public class WMap extends EngineState {
   private void FUN_800e3fac(final int a0) {
     this.wmapStruct258_800c66a8._00 = 0;
     this.wmapStruct258_800c66a8._04 = 0;
-    this.wmapStruct258_800c66a8._05 = a0 + 1;
+    this.wmapStruct258_800c66a8.wmapState_05 = WmapStateEnum.values()[a0 + 1];
   }
 
   @Method(0x800e3ff0L)
   private void FUN_800e3ff0() {
-    if(this.wmapStruct258_800c66a8._05 != 0) {
+    if(this.wmapStruct258_800c66a8.wmapState_05 != WmapStateEnum.ACTIVE) {
       //LAB_800e4020
-      this._800f01fc[this.wmapStruct258_800c66a8._05 - 1].run();
+      this._800f01fc[this.wmapStruct258_800c66a8.wmapState_05.ordinal() - 1].run();
     }
 
     //LAB_800e4058
@@ -4719,7 +4719,7 @@ public class WMap extends EngineState {
         //LAB_800e4624
         if(this.wmapStruct19c0_800c66b0._c5 == 0 && this.mapState_800c6798._d4 == 0) {
           this.mapState_800c6798.disableInput_d0 = false;
-          this.wmapStruct258_800c66a8._05 = 0;
+          this.wmapStruct258_800c66a8.wmapState_05 = WmapStateEnum.ACTIVE;
           this.wmapStruct258_800c66a8._04 = 2;
         }
         //LAB_800e4478
@@ -4734,7 +4734,7 @@ public class WMap extends EngineState {
 
         this.FUN_800d4bc8(1);
 
-        this.wmapStruct19c0_800c66b0._c4 = 0;
+        this.wmapStruct19c0_800c66b0.hideAtmosphericEffect_c4 = false;
         this.wmapStruct258_800c66a8.zoomState_1f8 = 0;
         this.wmapStruct258_800c66a8._04 = 1;
       }
@@ -4764,7 +4764,7 @@ public class WMap extends EngineState {
         //LAB_800e43c4
         if(this.wmapStruct19c0_800c66b0._c5 == 0 && this.mapState_800c6798._d4 == 0) {
           this.mapState_800c6798.disableInput_d0 = false;
-          this.wmapStruct258_800c66a8._05 = 0;
+          this.wmapStruct258_800c66a8.wmapState_05 = WmapStateEnum.ACTIVE;
           this.wmapStruct258_800c66a8._04 = 2;
         }
 
@@ -4788,7 +4788,7 @@ public class WMap extends EngineState {
 
         this.wmapStruct19c0_800c66b0.vec_a4.set(this.wmapStruct258_800c66a8.coord2_34.coord.transfer).div(30.0f);
 
-        this.wmapStruct19c0_800c66b0._c4 = 0;
+        this.wmapStruct19c0_800c66b0.hideAtmosphericEffect_c4 = false;
         this.wmapStruct258_800c66a8.zoomState_1f8 = 0;
         this.wmapStruct19c0_800c66b0._c5 = 2;
         this.wmapStruct258_800c66a8._04 = 1;
@@ -4834,7 +4834,7 @@ public class WMap extends EngineState {
 
       if(this.wmapStruct19c0_800c66b0._10e >= 16.0f) {
         if(this.wmapStruct258_800c66a8.colour_20 == 0.0f) {
-          this.wmapStruct258_800c66a8._05 = 0;
+          this.wmapStruct258_800c66a8.wmapState_05 = WmapStateEnum.ACTIVE;
 
           if(submapCut_80052c30.get() != 999) {
             pregameLoadingStage_800bb10c.set(7);
@@ -4926,7 +4926,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800e4eac
-    if(this.wmapStruct258_800c66a8._05 != 2) {
+    if(this.wmapStruct258_800c66a8.wmapState_05 != WmapStateEnum.TRANSITION_OUT) {
       this.mcqColour_800c6794 += 0.0625f / (3.0f / vsyncMode_8007a3b8);
 
       if(this.mcqColour_800c6794 > 0.125f) {
@@ -4996,7 +4996,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800e51dc
-    if(this.wmapStruct19c0_800c66b0._c4 != 0) {
+    if(this.wmapStruct19c0_800c66b0.hideAtmosphericEffect_c4) {
       return;
     }
 
@@ -5841,7 +5841,7 @@ public class WMap extends EngineState {
     if(this.mapState_800c6798._d8 != 0) {
       this.mapState_800c6798.disableInput_d0 = true;
 
-      if(this.wmapStruct258_800c66a8._05 != 0) {
+      if(this.wmapStruct258_800c66a8.wmapState_05 != WmapStateEnum.ACTIVE) {
         return;
       }
 
@@ -5960,30 +5960,28 @@ public class WMap extends EngineState {
         //LAB_800e8f48
         if(this.mapState_800c6798._d8 == 0) {
           //LAB_800e8f64
-          if(this.wmapStruct258_800c66a8._05 != 2) {
-            //LAB_800e8f88
-            if(this.wmapStruct258_800c66a8._05 == 0) {
-              //LAB_800e8fac
-              if(this.wmapStruct19c0_800c66b0._110 == 0) {
-                //LAB_800e8fd0
-                if(this.wmapStruct258_800c66a8.zoomState_1f8 == 0) {
-                  //LAB_800e8ff4
-                  if(this.wmapStruct19c0_800c66b0._c5 == 0) {
-                    //LAB_800e9018
-                    if(this.wmapStruct19c0_800c66b0._c4 == 0) {
-                      //LAB_800e903c
-                      if((this.filesLoadedFlags_800c66b8.get() & 0x1) != 0) {
-                        //LAB_800e905c
-                        if(this.tickMainMenuOpenTransition_800c6690 == 0) {
-                          //LAB_800e9078
-                          if(Input.pressedThisFrame(InputAction.BUTTON_WEST)) { // Square
-                            if(this.mapState_800c6798._fc != 1) {
-                              this.mapState_800c6798.submapCut_c8 = locations_800f0e34.get(93).submapCut_08.get();
-                              this.mapState_800c6798.submapScene_ca = locations_800f0e34.get(93).submapScene_0a.get();
-                              submapCut_80052c30.set(this.mapState_800c6798.submapCut_c8);
-                              submapScene_80052c34.set(this.mapState_800c6798.submapScene_ca);
-                              this.FUN_800e3fac(1);
-                            }
+          //LAB_800e8f88
+          if(this.wmapStruct258_800c66a8.wmapState_05 == WmapStateEnum.ACTIVE) {
+            //LAB_800e8fac
+            if(this.wmapStruct19c0_800c66b0._110 == 0) {
+              //LAB_800e8fd0
+              if(this.wmapStruct258_800c66a8.zoomState_1f8 == 0) {
+                //LAB_800e8ff4
+                if(this.wmapStruct19c0_800c66b0._c5 == 0) {
+                  //LAB_800e9018
+                  if(!this.wmapStruct19c0_800c66b0.hideAtmosphericEffect_c4) {
+                    //LAB_800e903c
+                    if((this.filesLoadedFlags_800c66b8.get() & 0x1) != 0) {
+                      //LAB_800e905c
+                      if(this.tickMainMenuOpenTransition_800c6690 == 0) {
+                        //LAB_800e9078
+                        if(Input.pressedThisFrame(InputAction.BUTTON_WEST)) { // Square
+                          if(this.mapState_800c6798._fc != 1) {
+                            this.mapState_800c6798.submapCut_c8 = locations_800f0e34.get(93).submapCut_08.get();
+                            this.mapState_800c6798.submapScene_ca = locations_800f0e34.get(93).submapScene_0a.get();
+                            submapCut_80052c30.set(this.mapState_800c6798.submapCut_c8);
+                            submapScene_80052c34.set(this.mapState_800c6798.submapScene_ca);
+                            this.FUN_800e3fac(1);
                           }
                         }
                       }
@@ -6003,7 +6001,7 @@ public class WMap extends EngineState {
   @Method(0x800e9104L)
   private void processInput() {
     //LAB_800e912c
-    if(Unpacker.getLoadingFileCount() != 0 || this.wmapStruct258_800c66a8._05 != 0) {
+    if(Unpacker.getLoadingFileCount() != 0 || this.wmapStruct258_800c66a8.wmapState_05 != WmapStateEnum.ACTIVE) {
       return;
     }
 
@@ -6632,13 +6630,13 @@ public class WMap extends EngineState {
     final WMapStruct258 struct = this.wmapStruct258_800c66a8;
 
     this.renderAtmosphericEffect_800c86fc = true;
-    struct._24 = new WMapAtmosphericEffectInstance60[24];
+    struct.atmosphericEffectInstances_24 = new WMapAtmosphericEffectInstance60[24];
 
     //LAB_800ebbb4
     final Vector3f translation = new Vector3f();
     for(int i = 0; i < 12; i++) {
       final WMapAtmosphericEffectInstance60 cloud = new WMapAtmosphericEffectInstance60();
-      struct._24[i] = cloud;
+      struct.atmosphericEffectInstances_24[i] = cloud;
 
       //LAB_800ebbd0
       GsInitCoordinate2(null, cloud.coord2_00);
@@ -6672,8 +6670,8 @@ public class WMap extends EngineState {
     //LAB_800ebf30
     for(int i = 0; i < 12; i++) {
       final WMapAtmosphericEffectInstance60 cloud = new WMapAtmosphericEffectInstance60();
-      struct._24[i + 12] = cloud;
-      cloud.set(struct._24[i]);
+      struct.atmosphericEffectInstances_24[i + 12] = cloud;
+      cloud.set(struct.atmosphericEffectInstances_24[i]);
       cloud.coord2_00.coord.transfer.y = 0.0f;
     }
   }
@@ -6681,13 +6679,13 @@ public class WMap extends EngineState {
   @Method(0x800ebfc0L)
   private void renderClouds() {
     final WMapStruct258 struct = this.wmapStruct258_800c66a8;
-    final WMapAtmosphericEffectInstance60 cloud0 = struct._24[0];
+    final WMapAtmosphericEffectInstance60 cloud0 = struct.atmosphericEffectInstances_24[0];
 
     this.rotateCoord2(cloud0.rotation_50, cloud0.coord2_00);
 
     //LAB_800ec028
     for(int i = 0; i < 24; i++) {
-      final WMapAtmosphericEffectInstance60 cloud = struct._24[i];
+      final WMapAtmosphericEffectInstance60 cloud = struct.atmosphericEffectInstances_24[i];
 
       //LAB_800ec044
       final GpuCommandPoly cmd = new GpuCommandPoly(4)
@@ -6713,7 +6711,7 @@ public class WMap extends EngineState {
       }
 
       //LAB_800ec2b0
-      if(this.wmapStruct19c0_800c66b0._c4 == 1) {
+      if(this.wmapStruct19c0_800c66b0.hideAtmosphericEffect_c4) {
         cloud.brightness_5c -= 0.125f / (3.0f / vsyncMode_8007a3b8);
 
         if(cloud.brightness_5c < 0.0f) {
@@ -6728,7 +6726,7 @@ public class WMap extends EngineState {
         }
 
         //LAB_800ec34c
-        if(this.wmapStruct258_800c66a8._05 != 0) {
+        if(this.wmapStruct258_800c66a8.wmapState_05 == WmapStateEnum.TRANSITION_OUT) {
           cloud.brightness_5c -= 0.0078125f / (3.0f / vsyncMode_8007a3b8);
 
           if(cloud.brightness_5c < 0.0f) {
@@ -6787,7 +6785,7 @@ public class WMap extends EngineState {
                     }
 
                     //LAB_800ec73c
-                    if(this.wmapStruct258_800c66a8._05 != 0) {
+                    if(this.wmapStruct258_800c66a8.wmapState_05 != WmapStateEnum.ACTIVE) {
                       cloud.brightness_5c -= 0.125f / (3.0f / vsyncMode_8007a3b8);
 
                       if(cloud.brightness_5c < 0.0f) {
@@ -6836,12 +6834,12 @@ public class WMap extends EngineState {
   @Method(0x800eca3cL)
   private void allocateSnow() {
     this.renderAtmosphericEffect_800c86fc = true;
-    this.wmapStruct258_800c66a8._24 = new WMapAtmosphericEffectInstance60[64];
+    this.wmapStruct258_800c66a8.atmosphericEffectInstances_24 = new WMapAtmosphericEffectInstance60[64];
 
     //LAB_800eca94
     for(int i = 0; i < 64; i++) {
       final WMapAtmosphericEffectInstance60 snowflake = new WMapAtmosphericEffectInstance60();
-      this.wmapStruct258_800c66a8._24[i] = snowflake;
+      this.wmapStruct258_800c66a8.atmosphericEffectInstances_24[i] = snowflake;
 
       //LAB_800ecab0
       GsInitCoordinate2(null, snowflake.coord2_00);
@@ -6864,10 +6862,10 @@ public class WMap extends EngineState {
 
     //LAB_800ecdb4
     for(int i = 0; i < 64; i++) {
-      final WMapAtmosphericEffectInstance60 snowflake = this.wmapStruct258_800c66a8._24[i];
+      final WMapAtmosphericEffectInstance60 snowflake = this.wmapStruct258_800c66a8.atmosphericEffectInstances_24[i];
 
       //LAB_800ecdd0
-      if(this.wmapStruct19c0_800c66b0._c4 == 1) {
+      if(this.wmapStruct19c0_800c66b0.hideAtmosphericEffect_c4) {
         snowflake.brightness_5c -= 0.125f / (3.0f / vsyncMode_8007a3b8);
 
         if(snowflake.brightness_5c < 0.0f) {
@@ -6882,7 +6880,7 @@ public class WMap extends EngineState {
         }
 
         //LAB_800ed108
-        if(this.wmapStruct258_800c66a8._05 != 0) {
+        if(this.wmapStruct258_800c66a8.wmapState_05 != WmapStateEnum.ACTIVE) {
           snowflake.brightness_5c -= 0.125f / (3.0f / vsyncMode_8007a3b8);
 
           if(snowflake.brightness_5c < 0.0f) {

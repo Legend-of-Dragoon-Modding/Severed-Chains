@@ -10,7 +10,7 @@ public class WMapStruct258 {
   /** ubyte */
   public int _04;
   /** ubyte */
-  public int _05;
+  public WmapStateEnum wmapState_05;
 
   public WMapTmdRenderingStruct18 tmdRendering_08;
   public final Model124[] models_0c = new Model124[4];
@@ -18,7 +18,7 @@ public class WMapStruct258 {
   /** short */
   public float colour_20;
 
-  public WMapAtmosphericEffectInstance60[] _24;
+  public WMapAtmosphericEffectInstance60[] atmosphericEffectInstances_24;
   public float clutYIndex_28;
   public FileData imageData_2c;
   public FileData imageData_30;
