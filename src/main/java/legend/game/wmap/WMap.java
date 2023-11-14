@@ -809,7 +809,7 @@ public class WMap extends EngineState {
     //LAB_800cd250
     this.renderMapBackground();
     this.renderMapOverlay();
-    this.handleSmokeEffect();
+    this.handleSmokeAndAtmosphericEffects();
   }
 
   @Method(0x800cd278L)
@@ -6727,7 +6727,7 @@ public class WMap extends EngineState {
 
         //LAB_800ec34c
         if(this.wmapStruct258_800c66a8.wmapState_05 == WmapStateEnum.TRANSITION_OUT) {
-          cloud.brightness_5c -= 0.0078125f / (3.0f / vsyncMode_8007a3b8);
+          cloud.brightness_5c -= 0.125f / (3.0f / vsyncMode_8007a3b8);
 
           if(cloud.brightness_5c < 0.0f) {
             cloud.brightness_5c = 0.0f;
@@ -6785,7 +6785,7 @@ public class WMap extends EngineState {
                     }
 
                     //LAB_800ec73c
-                    if(this.wmapStruct258_800c66a8.wmapState_05 != WmapStateEnum.ACTIVE) {
+                    if(this.wmapStruct258_800c66a8.wmapState_05 == WmapStateEnum.TRANSITION_OUT) {
                       cloud.brightness_5c -= 0.125f / (3.0f / vsyncMode_8007a3b8);
 
                       if(cloud.brightness_5c < 0.0f) {
@@ -6803,7 +6803,7 @@ public class WMap extends EngineState {
                     cmd.pos(3, sx3, sy3);
                     z = GTE.getScreenZ(3) / 4.0f;
 
-                    if(z >= 5 && orderingTableSize_1f8003c8.get() - 3 < z) {
+                    if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
                       //LAB_800ec83c
                       if(sx3 - sx2 <= 0x400) {
                         //LAB_800ec870
@@ -6982,7 +6982,7 @@ public class WMap extends EngineState {
   }
 
   @Method(0x800ed95cL)
-  private void handleSmokeEffect() {
+  private void handleSmokeAndAtmosphericEffects() {
     if(this.wmapStruct19c0_800c66b0._c5 == 2) {
       return;
     }
