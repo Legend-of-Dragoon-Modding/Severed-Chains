@@ -6756,70 +6756,60 @@ public class WMap extends EngineState {
           cmd.pos(1, sx1, sy1);
           z = GTE.getScreenZ(3) / 4.0f;
 
-          if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
-            //LAB_800ec5b8
-            if(sx1 - sx0 <= 0x400) {
-              //LAB_800ec5ec
-              GTE.perspectiveTransform(-cloud.x_58, cloud.y_5a, 0);
-              final float sx2 = GTE.getScreenX(2);
-              final float sy2 = GTE.getScreenY(2);
-              cmd.pos(2, sx2, sy2);
-              z = GTE.getScreenZ(3) / 4.0f;
+          if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3 && sx1 - sx0 <= 0x400) {
+            //LAB_800ec5ec
+            GTE.perspectiveTransform(-cloud.x_58, cloud.y_5a, 0);
+            final float sx2 = GTE.getScreenX(2);
+            final float sy2 = GTE.getScreenY(2);
+            cmd.pos(2, sx2, sy2);
+            z = GTE.getScreenZ(3) / 4.0f;
 
-              if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
-                //LAB_800ec670
-                if(sy2 - sy0 <= 0x200) {
-                  //LAB_800ec6a4
-                  if(sy2 > 0) {
-                    cloud.brightness_5c -= 0.125f / (3.0f / vsyncMode_8007a3b8);
+            if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3 && sy2 - sy0 <= 0x200) {
+              //LAB_800ec670
+              //LAB_800ec6a4
+              if(sy2 > 0) {
+                cloud.brightness_5c -= 0.125f / (3.0f / vsyncMode_8007a3b8);
 
-                    if(cloud.brightness_5c < 0.0f) {
-                      cloud.brightness_5c = 0.0f;
-                    }
+                if(cloud.brightness_5c < 0.0f) {
+                  cloud.brightness_5c = 0.0f;
+                }
+                //LAB_800ec6fc
+              } else {
+                //LAB_800ec704
+                if(cloud.brightness_5c < 0.375f) {
+                  cloud.brightness_5c += 0.0625f / (3.0f / vsyncMode_8007a3b8);
+                }
 
-                    //LAB_800ec6fc
-                  } else {
-                    //LAB_800ec704
-                    if(cloud.brightness_5c < 0.375f) {
-                      cloud.brightness_5c += 0.0625f / (3.0f / vsyncMode_8007a3b8);
-                    }
+                //LAB_800ec73c
+                if(this.wmapStruct258_800c66a8.wmapState_05 == WmapStateEnum.TRANSITION_OUT) {
+                  cloud.brightness_5c -= 0.125f / (3.0f / vsyncMode_8007a3b8);
 
-                    //LAB_800ec73c
-                    if(this.wmapStruct258_800c66a8.wmapState_05 == WmapStateEnum.TRANSITION_OUT) {
-                      cloud.brightness_5c -= 0.125f / (3.0f / vsyncMode_8007a3b8);
-
-                      if(cloud.brightness_5c < 0.0f) {
-                        cloud.brightness_5c = 0.0f;
-                      }
-                    }
+                  if(cloud.brightness_5c < 0.0f) {
+                    cloud.brightness_5c = 0.0f;
                   }
+                }
+              }
 
-                  //LAB_800ec798
-                  if(!MathHelper.flEq(cloud.brightness_5c, 0.0f)) {
-                    //LAB_800ec7b8
-                    GTE.perspectiveTransform(cloud.x_58, cloud.y_5a, 0);
-                    final float sx3 = GTE.getScreenX(2);
-                    final float sy3 = GTE.getScreenY(2);
-                    cmd.pos(3, sx3, sy3);
-                    z = GTE.getScreenZ(3) / 4.0f;
+              //LAB_800ec798
+              if(!MathHelper.flEq(cloud.brightness_5c, 0.0f)) {
+                //LAB_800ec7b8
+                GTE.perspectiveTransform(cloud.x_58, cloud.y_5a, 0);
+                final float sx3 = GTE.getScreenX(2);
+                final float sy3 = GTE.getScreenY(2);
+                cmd.pos(3, sx3, sy3);
+                z = GTE.getScreenZ(3) / 4.0f;
 
-                    if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
-                      //LAB_800ec83c
-                      if(sx3 - sx2 <= 0x400) {
-                        //LAB_800ec870
-                        if(sy3 - sy1 <= 0x200) {
-                          //LAB_800ec8a4
-                          if(i < 12) {
-                            cmd.monochrome(cloud.brightness_5c);
-                            GPU.queueCommand(139, cmd);
-                          } else {
-                            //LAB_800ec928
-                            cmd.monochrome(cloud.brightness_5c / 3.0f);
-                            GPU.queueCommand(orderingTableSize_1f8003c8.get() - 4, cmd);
-                          }
-                        }
-                      }
-                    }
+                if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3 && sx3 - sx2 <= 0x400 && sy3 - sy1 <= 0x200) {
+                  //LAB_800ec83c
+                  //LAB_800ec870
+                  //LAB_800ec8a4
+                  if(i < 12) {
+                    cmd.monochrome(cloud.brightness_5c);
+                    GPU.queueCommand(139, cmd);
+                  } else {
+                    //LAB_800ec928
+                    cmd.monochrome(cloud.brightness_5c / 3.0f);
+                    GPU.queueCommand(orderingTableSize_1f8003c8.get() - 4, cmd);
                   }
                 }
               }
