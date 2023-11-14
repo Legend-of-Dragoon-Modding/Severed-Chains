@@ -366,7 +366,6 @@ public class WMap extends EngineState {
     this.atmosphericEffectDeallocators_800f65bc[2] = this::deallocateSnow;
   }
   private static final ArrayRef<ArrayRef<UnsignedByteRef>> snowUvs_800f65c8 = MEMORY.ref(1, 0x800f65c8L, ArrayRef.of(ArrayRef.classFor(UnsignedByteRef.class), 6, 2, ArrayRef.of(UnsignedByteRef.class, 2, 1, UnsignedByteRef::new)));
-  private static final ArrayRef<ArrayRef<UnsignedByteRef>> smokeUvs_800f65d4 = MEMORY.ref(1, 0x800f65d4L, ArrayRef.of(ArrayRef.classFor(UnsignedByteRef.class), 4, 2, ArrayRef.of(UnsignedByteRef.class, 2, 1, UnsignedByteRef::new)));
 
   private WmapPromptPopup wmapLocationPromptPopup;
   private WmapPromptPopup coolonPromptPopup;
@@ -6430,23 +6429,24 @@ public class WMap extends EngineState {
                   //LAB_800ee9b0
                   //LAB_800eea34
                   final int index = (int)(smoke.scaleAndColourFade_50 / 0x40);
-                  final QuadBuilder builder = new QuadBuilder("Smoke (index " + smokeIndex + ')')
-                    .bpp(Bpp.BITS_4)
-                    .vramPos(640, 256)
-                    .pos(GPU.getOffsetX() + sx0, GPU.getOffsetY() + sy0, z * 4.0f)
-                    .size(transformedSize, transformedSize)
-                    .clut(640, 505)
-                    .monochrome((0x80 - smoke.scaleAndColourFade_50) / 255.0f)
-                    .uv(smokeUvs_800f65d4.get(index).get(0).get(), smokeUvs_800f65d4.get(index).get(1).get())
-                    .uvSize(31, 31)
-                    .translucency(translucency);
 
-                  if(smoke.obj != null) {
-                    smoke.obj.delete();
+                  if(smoke.objs[index] == null) {
+                    smoke.objs[index] = new QuadBuilder("Smoke sprite " + index + " (index " + smokeIndex + ')')
+                      .bpp(Bpp.BITS_4)
+                      .vramPos(640, 256)
+                      .pos(0.0f, 0.0f, 0.0f)
+                      .size(1.0f, 1.0f)
+                      .clut(640, 505)
+                      .uv(96, index == 0 ? 48 : 80)
+                      .uvSize(32, 32)
+                      .translucency(translucency)
+                      .build();
                   }
-                  smoke.obj = builder.build();
 
-                  RENDERER.queueOrthoModel(smoke.obj);
+                  smoke.transforms.scaling(transformedSize);
+                  smoke.transforms.transfer.set(GPU.getOffsetX() + sx0, GPU.getOffsetY() + sy0, z * 4.0f);
+                  RENDERER.queueOrthoModel(smoke.objs[index], smoke.transforms)
+                    .monochrome((0x80 - smoke.scaleAndColourFade_50) / 255.0f);
 
                   smoke.scaleAndColourFade_50 += 1.0f / (3.0f / vsyncMode_8007a3b8);
 
@@ -6483,10 +6483,15 @@ public class WMap extends EngineState {
   @Method(0x800eede4L)
   private void deallocateSmoke() {
     for(final WmapSmokeInstance60 smoke : this.smokeInstances_800c86f8) {
-      if(smoke.obj != null) {
-        smoke.obj.delete();
+      if(smoke.objs[0] != null) {
+        smoke.objs[0].delete();
+      }
+
+      if(smoke.objs[1] != null) {
+        smoke.objs[1].delete();
       }
     }
+
     this.smokeInstances_800c86f8 = null;
   }
 }
