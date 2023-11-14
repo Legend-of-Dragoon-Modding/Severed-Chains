@@ -6283,8 +6283,6 @@ public class WMap extends EngineState {
 
   @Method(0x800edbc0L)
   private void renderSmoke() {
-    final Vector3f rotation = new Vector3f(); // Just (0, 0, 0)
-
     if((this.filesLoadedFlags_800c66b8.get() & 0x1000) == 0) {
       return;
     }
@@ -6338,7 +6336,7 @@ public class WMap extends EngineState {
           //LAB_800ede38
           final WmapSmokeInstance60 smoke = this.smokeInstances_800c86f8[smokeIndex];
 
-              final float size;
+          final float size;
           if(mode == 8) {
             size = smoke.scaleAndColourFade_50 / 5.0f;
           } else {
@@ -6384,7 +6382,7 @@ public class WMap extends EngineState {
           }
 
           //LAB_800ee5f0
-          this.rotateCoord2(rotation, smoke.coord2_00);
+          smoke.coord2_00.flg = 0;
           GsGetLs(smoke.coord2_00, smoke.transforms);
           smoke.transforms.identity(); // NOTE: does not clear translation
           GTE.setTransforms(smoke.transforms);
