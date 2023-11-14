@@ -2,6 +2,7 @@ package legend.game.combat;
 
 import legend.core.Config;
 import legend.core.MathHelper;
+import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Gpu;
 import legend.core.gpu.GpuCommand;
@@ -29,6 +30,7 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.TriConsumer;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
+import legend.core.opengl.LineBuilder;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.deff.Anim;
 import legend.game.combat.deff.DeffManager7cc;
@@ -120,6 +122,7 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
+import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
@@ -3562,15 +3565,15 @@ public final class SEffe {
       int val = 16;
       for(int borderNum = 0; borderNum < 17; borderNum++) {
         final AdditionOverlaysBorder0e borderOverlay = borderArray[borderNum];
-        borderOverlay.size_08 = (short)((0x12 - val) * 0xa);
+        borderOverlay.size_08 = (18 - val) * 10;
         borderOverlay.isVisible_00 = true;
         //LAB_8010656c
         //LAB_80106574
-        borderOverlay.angleModifier_02 = (short)((0x10 - val) * 0x80 + 0x200);
+        borderOverlay.angleModifier_02 = Math.toRadians((16 - val) * 11.25f + 45.0f);
         borderOverlay.countFramesVisible_0c = 5;
         borderOverlay.sideEffects_0d = 0;
-        borderOverlay.framesUntilRender_0a = (short)(hitOverlay.frameSuccessLowerBound_10 + (hitOverlay.numSuccessFrames_0e - 0x1) / 2 + val - 0x11);
-        borderOverlay.r_04 = additionBorderColours_800fb7f0.get(hitOverlay.borderColoursArrayIndex_02 * 3).get()& 0xff;
+        borderOverlay.framesUntilRender_0a = (short)(hitOverlay.frameSuccessLowerBound_10 + (hitOverlay.numSuccessFrames_0e - 1) / 2 + val - 17);
+        borderOverlay.r_04 = additionBorderColours_800fb7f0.get(hitOverlay.borderColoursArrayIndex_02 * 3).get() & 0xff;
         borderOverlay.g_05 = additionBorderColours_800fb7f0.get(hitOverlay.borderColoursArrayIndex_02 * 3 + 1).get() & 0xff;
         borderOverlay.b_06 = additionBorderColours_800fb7f0.get(hitOverlay.borderColoursArrayIndex_02 * 3 + 2).get() & 0xff;
 
@@ -3581,10 +3584,10 @@ public final class SEffe {
       val = 0;
       for(int borderNum = 16; borderNum >= 14; borderNum--) {
         final AdditionOverlaysBorder0e borderOverlay = borderArray[borderNum];
-        borderOverlay.size_08 = (short)(0x14 - val * 0x2);
-        borderOverlay.angleModifier_02 = (short)0x200;
+        borderOverlay.size_08 = 20 - val * 2;
+        borderOverlay.angleModifier_02 = Math.toRadians(45.0f);
         borderOverlay.countFramesVisible_0c = 0x11;
-        borderOverlay.framesUntilRender_0a = (short)(hitOverlay.frameSuccessLowerBound_10 - 0x11);
+        borderOverlay.framesUntilRender_0a = hitOverlay.frameSuccessLowerBound_10 - 17;
 
         if(val != 0x1L) {
           borderOverlay.r_04 = 0x30;
@@ -3662,10 +3665,10 @@ public final class SEffe {
         final int squareSize = targetBorderArray[16].size_08 - targetBorderNum * 8;
 
         //LAB_80106874
-        final int[] vertexCoords = new int[8];
+        final float[] vertexCoords = new float[8];
         for(int i = 0; i < 4; i++) {
-          vertexCoords[i * 2] = rcos(targetBorderArray[16].angleModifier_02 + i * 0x400) * squareSize >> 12;
-          vertexCoords[i * 2 + 1] = (rsin(targetBorderArray[16].angleModifier_02 + i * 0x400) * squareSize >> 12) + 30;
+          vertexCoords[i * 2    ] = MathHelper.cos(targetBorderArray[16].angleModifier_02 + i * MathHelper.HALF_PI) * squareSize;
+          vertexCoords[i * 2 + 1] = MathHelper.sin(targetBorderArray[16].angleModifier_02 + i * MathHelper.HALF_PI) * squareSize + 30;
         }
 
         final GpuCommandPoly cmd = new GpuCommandPoly(4);
@@ -3702,18 +3705,18 @@ public final class SEffe {
 
   /** Renders the shadow on the inside of the innermost rotating border. */
   @Method(0x80106ac4L)
-  public static void renderAdditionBorderShadow(final AdditionOverlaysHit20 hitOverlay, final int angle0, final int borderSize) {
-    final int angle1 = angle0 + 0x400;
+  public static void renderAdditionBorderShadow(final AdditionOverlaysHit20 hitOverlay, final float angle0, final int borderSize) {
+    final float angle1 = angle0 + MathHelper.HALF_PI;
     final int offset0 = borderSize - 1;
     final int offset1 = borderSize - 11;
-    final int x0 = rcos(angle0) * offset0 >> 12;
-    final int x1 = rcos(angle1) * offset0 >> 12;
-    final int x2 = rcos(angle0) * offset1 >> 12;
-    final int x3 = rcos(angle1) * offset1 >> 12;
-    final int y0 = rsin(angle0) * offset0 >> 12;
-    final int y1 = rsin(angle1) * offset0 >> 12;
-    final int y2 = rsin(angle0) * offset1 >> 12;
-    final int y3 = rsin(angle1) * offset1 >> 12;
+    final float x0 = MathHelper.cos(angle0) * offset0;
+    final float x1 = MathHelper.cos(angle1) * offset0;
+    final float x2 = MathHelper.cos(angle0) * offset1;
+    final float x3 = MathHelper.cos(angle1) * offset1;
+    final float y0 = MathHelper.sin(angle0) * offset0;
+    final float y1 = MathHelper.sin(angle1) * offset0;
+    final float y2 = MathHelper.sin(angle0) * offset1;
+    final float y3 = MathHelper.sin(angle1) * offset1;
     final int colour = hitOverlay.shadowColour_08 * 4;
 
     final GpuCommandPoly cmd = new GpuCommandPoly(4)
@@ -3731,7 +3734,7 @@ public final class SEffe {
   }
 
   @Method(0x80106cccL)
-  public static void renderAdditionBorders(final int a0, final int hitNum, final AdditionOverlaysEffect44 effect, final AdditionOverlaysHit20[] hitArray, final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state) {
+  public static void renderAdditionBorders(final int hitNum, final AdditionOverlaysHit20[] hitArray) {
     final AdditionOverlaysBorder0e[] borderArray = hitArray[hitNum].borderArray_18;
     final byte currentHitCompletionState = additionHitCompletionState_8011a014[hitNum];
 
@@ -3740,63 +3743,54 @@ public final class SEffe {
       final AdditionOverlaysBorder0e borderOverlay = borderArray[borderNum];
       if(borderOverlay.isVisible_00) {
         if(borderOverlay.framesUntilRender_0a <= 0) {
-          final int borderSize = borderOverlay.size_08;
-          int x0 = rcos(borderOverlay.angleModifier_02) * borderSize >> 12;
-          int y0 = (rsin(borderOverlay.angleModifier_02) * borderSize >> 12) + 30;
+          final LineBuilder cmd = new LineBuilder("Reticle " + borderNum)
+            .closed();
+
+          //LAB_80106dc0
+          // Set translucent if button press is failure and border sideEffects_0d not innermost rotating border or target (15)
+          if(borderOverlay.sideEffects_0d != 0 && borderOverlay.sideEffects_0d != -1 || currentHitCompletionState < 0) {
+            //LAB_80106de8
+            cmd.translucency(Translucency.B_PLUS_F);
+          }
 
           //LAB_80106d80
-          int angleModifier = 0;
-          for(long lineNum = 0; lineNum < 4; lineNum++) {
-            final GpuCommandLine cmd = new GpuCommandLine();
-
-            final int sideEffects = borderOverlay.sideEffects_0d;
-
-            //LAB_80106dc0
-            // Set translucent if button press is failure and border sideEffects_0d not innermost rotating border or target (15)
-            if(sideEffects != 0 && sideEffects != -1 || currentHitCompletionState < 0) {
-              //LAB_80106de8
-              cmd.translucent(Translucency.B_PLUS_F);
-            }
-
-
-            if(hitArray[hitNum].isCounter_1c && borderNum != 0x10) {
-              if(Config.changeAdditionOverlayRgb()) {
-                final int rgb = Config.getCounterOverlayRgb();
-
-                // Hack to get around lack of separate counterattack color field until full dememulation
-                final float rFactor = borderArray[borderNum].r_04 / (float)additionBorderColours_800fb7f0.get(9).get();
-                final float gFactor = borderArray[borderNum].g_05 / (float)additionBorderColours_800fb7f0.get(10).get();
-                final float bFactor = borderArray[borderNum].b_06 / (float)additionBorderColours_800fb7f0.get(11).get();
-
-                cmd.rgb(Math.round((rgb & 0xff) * rFactor), Math.round((rgb >> 8 & 0xff) * gFactor), Math.round((rgb >> 16 & 0xff) * bFactor));
-              } else {
-                cmd.rgb(borderOverlay.r_04 * 3, borderOverlay.g_05, (borderOverlay.b_06 + 1) / 8);
-              }
-            } else {
-              //LAB_80106e58
-              cmd.rgb(borderOverlay.r_04, borderOverlay.g_05, borderOverlay.b_06);
-            }
-
+          float angleModifier = 0.0f;
+          for(int lineNum = 0; lineNum < 4; lineNum++) {
             //LAB_80106e74
-            angleModifier += 0x400;
-            final int x1 = rcos(borderOverlay.angleModifier_02 + angleModifier) * borderSize >> 12;
-            final int y1 = (rsin(borderOverlay.angleModifier_02 + angleModifier) * borderSize >> 12) + 30;
-            cmd
-              .pos(0, x0, y0)
-              .pos(1, x1, y1);
+            final float x1 = MathHelper.cos(borderOverlay.angleModifier_02 + angleModifier) * borderOverlay.size_08;
+            final float y1 = MathHelper.sin(borderOverlay.angleModifier_02 + angleModifier) * borderOverlay.size_08 + 30;
 
-            GPU.queueCommand(30, cmd);
+            cmd.pos(x1 + GPU.getOffsetX(), y1 + GPU.getOffsetY(), 120);
 
-            x0 = x1;
-            y0 = y1;
+            angleModifier += MathHelper.HALF_PI;
+          }
+
+          final RenderEngine.QueuedModel model = RENDERER.queueOrthoOverlayModel(cmd.build());
+
+          if(hitArray[hitNum].isCounter_1c && borderNum != 0x10) {
+            if(Config.changeAdditionOverlayRgb()) {
+              final int rgb = Config.getCounterOverlayRgb();
+
+              // Hack to get around lack of separate counterattack color field until full dememulation
+              final float rFactor = borderArray[borderNum].r_04 / (float)additionBorderColours_800fb7f0.get(9).get();
+              final float gFactor = borderArray[borderNum].g_05 / (float)additionBorderColours_800fb7f0.get(10).get();
+              final float bFactor = borderArray[borderNum].b_06 / (float)additionBorderColours_800fb7f0.get(11).get();
+
+              model.colour((rgb & 0xff) * rFactor / 255.0f, (rgb >> 8 & 0xff) * gFactor / 255.0f, (rgb >> 16 & 0xff) * bFactor / 255.0f);
+            } else {
+              model.colour(borderOverlay.r_04 * 3 / 255.0f, borderOverlay.g_05 / 255.0f, (borderOverlay.b_06 + 1) / 8.0f / 255.0f);
+            }
+          } else {
+            //LAB_80106e58
+            model.colour(borderOverlay.r_04 / 255.0f, borderOverlay.g_05 / 255.0f, borderOverlay.b_06 / 255.0f);
           }
 
           // Renders rotating shadow on innermost rotating border
           if(borderOverlay.sideEffects_0d == 0) {
-            renderAdditionBorderShadow(hitArray[hitNum], borderOverlay.angleModifier_02 + angleModifier, borderSize);
-            renderAdditionBorderShadow(hitArray[hitNum], borderOverlay.angleModifier_02 + angleModifier + 0x400, borderSize);
-            renderAdditionBorderShadow(hitArray[hitNum], borderOverlay.angleModifier_02 + angleModifier + 0x800, borderSize);
-            renderAdditionBorderShadow(hitArray[hitNum], borderOverlay.angleModifier_02 + angleModifier + 0xc00, borderSize);
+            renderAdditionBorderShadow(hitArray[hitNum], borderOverlay.angleModifier_02 + angleModifier, borderOverlay.size_08);
+            renderAdditionBorderShadow(hitArray[hitNum], borderOverlay.angleModifier_02 + angleModifier + MathHelper.HALF_PI, borderOverlay.size_08);
+            renderAdditionBorderShadow(hitArray[hitNum], borderOverlay.angleModifier_02 + angleModifier + MathHelper.PI, borderOverlay.size_08);
+            renderAdditionBorderShadow(hitArray[hitNum], borderOverlay.angleModifier_02 + angleModifier + MathHelper.PI + MathHelper.HALF_PI, borderOverlay.size_08);
           }
         }
       }
@@ -3901,7 +3895,7 @@ public final class SEffe {
         int hitNum;
         for(hitNum = 0; hitNum < effect.count_30; hitNum++) {
           if(CONFIG.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) == AdditionOverlayMode.FULL) {
-            renderAdditionBorders(hitArray[hitNum].borderColoursArrayIndex_02, hitNum, effect, hitArray, state);
+            renderAdditionBorders(hitNum, hitArray);
           }
         }
 

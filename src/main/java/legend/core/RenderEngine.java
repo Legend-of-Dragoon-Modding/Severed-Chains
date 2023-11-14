@@ -58,6 +58,7 @@ import static org.lwjgl.opengl.GL11C.GL_FRONT_AND_BACK;
 import static org.lwjgl.opengl.GL11C.GL_LESS;
 import static org.lwjgl.opengl.GL11C.GL_LINE;
 import static org.lwjgl.opengl.GL11C.GL_LINEAR;
+import static org.lwjgl.opengl.GL11C.GL_LINE_SMOOTH;
 import static org.lwjgl.opengl.GL11C.GL_ONE;
 import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_COLOR;
@@ -75,6 +76,7 @@ import static org.lwjgl.opengl.GL11C.glDepthFunc;
 import static org.lwjgl.opengl.GL11C.glDepthMask;
 import static org.lwjgl.opengl.GL11C.glDisable;
 import static org.lwjgl.opengl.GL11C.glEnable;
+import static org.lwjgl.opengl.GL11C.glLineWidth;
 import static org.lwjgl.opengl.GL11C.glPolygonMode;
 import static org.lwjgl.opengl.GL11C.glScissor;
 import static org.lwjgl.opengl.GL11C.glViewport;
@@ -250,6 +252,8 @@ public class RenderEngine {
     this.camera3d = new QuaternionCamera(0.0f, 0.0f, 0.0f);
     this.window = new Window("Legend of Dragoon", Config.windowWidth(), Config.windowHeight());
     this.window.setFpsLimit(60);
+
+    glEnable(GL_LINE_SMOOTH);
 
     this.window.events.onResize(this::onResize);
 
@@ -792,6 +796,8 @@ public class RenderEngine {
 
     this.width = width;
     this.height = height;
+
+    glLineWidth(height / 240.0f);
 
     // Projections
     this.updateProjections();

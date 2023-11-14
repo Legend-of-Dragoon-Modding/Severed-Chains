@@ -6,8 +6,8 @@ public class AdditionOverlaysBorder0e {
   /** byte */
   public boolean isVisible_00;
 
-  /** short; 0x200 is unrotated square */
-  public int angleModifier_02;
+  /** short; 0x200 (45 degrees) is unrotated square */
+  public float angleModifier_02;
   /** ubytes */
   public int r_04;
   public int g_05;
