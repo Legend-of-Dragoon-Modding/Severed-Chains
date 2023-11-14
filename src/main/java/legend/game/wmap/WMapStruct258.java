@@ -80,4 +80,12 @@ public class WMapStruct258 {
   public int _24c;
   public int _250;
   public int _254;
+
+  public void deleteAtmosphericEffectObjs() {
+    for(final WMapAtmosphericEffectInstance60 effect : this.atmosphericEffectInstances_24) {
+      if(effect.obj != null) {
+        effect.obj.delete();
+      }
+    }
+  }
 }
