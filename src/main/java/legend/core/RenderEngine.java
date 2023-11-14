@@ -59,10 +59,12 @@ import static org.lwjgl.opengl.GL11C.GL_LESS;
 import static org.lwjgl.opengl.GL11C.GL_LINE;
 import static org.lwjgl.opengl.GL11C.GL_LINEAR;
 import static org.lwjgl.opengl.GL11C.GL_ONE;
+import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_COLOR;
 import static org.lwjgl.opengl.GL11C.GL_RED;
 import static org.lwjgl.opengl.GL11C.GL_RGBA;
 import static org.lwjgl.opengl.GL11C.GL_SCISSOR_TEST;
+import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11C.GL_STENCIL_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11C.GL_ZERO;
@@ -161,6 +163,7 @@ public class RenderEngine {
   private final QueuePool orthoPool = new QueuePool();
   private final QueuePool orthoUnderlayPool = new QueuePool();
   private final QueuePool orthoOverlayPool = new QueuePool();
+  private final Vector3f tempColour = new Vector3f();
 
   private float projectionWidth;
   private float projectionHeight;
@@ -363,19 +366,19 @@ public class RenderEngine {
     }
 
     // Build fullscreen fade quads
-    fullscreenWhiteout = new QuadBuilder("FullscreenWhiteout")
+    this.fullscreenWhiteout = new QuadBuilder("FullscreenWhiteout")
       .translucency(Translucency.B_PLUS_F)
       .pos(0.0f, 0.0f, 999)
       .size(384, 240)
       .build();
-    fullscreenWhiteout.persistent = true;
+    this.fullscreenWhiteout.persistent = true;
 
-    fullscreenBlackout = new QuadBuilder("FullscreenBlackout")
+    this.fullscreenBlackout = new QuadBuilder("FullscreenBlackout")
       .translucency(Translucency.B_MINUS_F)
       .pos(0.0f, 0.0f, 999)
       .size(384, 240)
       .build();
-    fullscreenBlackout.persistent = true;
+    this.fullscreenBlackout.persistent = true;
 
     this.window.events.onDraw(() -> {
       this.pre();
@@ -396,20 +399,21 @@ public class RenderEngine {
         this.opaqueFrameBuffer.bind();
         this.clear();
 
+        RENDERER.setProjectionMode(ProjectionMode._2D);
         this.render2dPool(this.orthoUnderlayPool);
         this.clearDepth();
-
-        RENDERER.setProjectionMode(ProjectionMode._2D);
-        this.renderPool(this.orthoPool);
 
         RENDERER.setProjectionMode(ProjectionMode._3D);
         this.renderPool(this.modelPool);
 
+        RENDERER.setProjectionMode(ProjectionMode._2D);
+        this.renderPool(this.orthoPool);
+
         // set render states
+        RENDERER.setProjectionMode(ProjectionMode._3D);
         glDepthFunc(GL_ALWAYS);
         glEnable(GL_BLEND);
-        glBlendEquation(GL_FUNC_ADD);
-        glBlendFunc(GL_ONE, GL_ONE); //TODO this is only for B+F
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         // bind opaque framebuffer
         this.opaqueFrameBuffer.bind();
@@ -442,6 +446,7 @@ public class RenderEngine {
         this.opaqueTexture.use();
         postQuad.draw();
 
+        RENDERER.setProjectionMode(ProjectionMode._2D);
         this.render2dPool(this.orthoOverlayPool);
       } else {
         this.orthoUnderlayPool.reset();
@@ -518,37 +523,46 @@ public class RenderEngine {
       }
     }
 
-    glDisable(GL_CULL_FACE);
-
     glDepthMask(false);
+    glDisable(GL_CULL_FACE);
     glEnable(GL_BLEND);
+
+    // Render B+F (implicitly order-independent, because it's all addition)
+    // Also renders B-F by negating the colour value and rendering as B+F
+    this.tmdShaderDiscardTranslucency.set(2.0f);
+    Translucency.B_PLUS_F.setGlState();
+
+    for(int i = 0; i < pool.size(); i++) {
+      final QueuedModel entry = pool.get(i);
+
+      if(entry.obj.shouldRender(Translucency.B_PLUS_F)) {
+        this.tmdShaderColour.set(entry.colour);
+        entry.updateTransforms();
+        entry.obj.render(Translucency.B_PLUS_F);
+      }
+
+      if(entry.obj.shouldRender(Translucency.B_MINUS_F)) {
+        this.tmdShaderColour.set(entry.colour.mul(-1.0f, this.tempColour));
+        entry.updateTransforms();
+        entry.obj.render(Translucency.B_MINUS_F);
+      }
+    }
+
+    // Order-independent translucency for (B+F)/2
     glBlendFunci(0, GL_ONE, GL_ONE);
     glBlendFunci(1, GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
     glBlendEquation(GL_FUNC_ADD);
 
     this.transparentFrameBuffer.bind();
     this.tmdShaderTransparent.use();
-    GPU.useVramTexture();
 
-    for(int translucencyIndex = 0; translucencyIndex < Translucency.FOR_RENDERING.length; translucencyIndex++) {
-      final Translucency translucency = Translucency.FOR_RENDERING[translucencyIndex];
+    for(int i = 0; i < pool.size(); i++) {
+      final QueuedModel entry = pool.get(i);
 
-//        switch(translucency) {
-//          case HALF_B_PLUS_HALF_F ->
-//            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-//
-//          case B_PLUS_F ->
-//            glBlendFunc(GL_ONE, GL_ONE);
-//        }
-
-      for(int i = 0; i < pool.size(); i++) {
-        final QueuedModel entry = pool.get(i);
-
-        if(entry.obj.shouldRender(translucency)) {
-          entry.updateTransforms();
-          this.tmdShaderTransparentColour.set(entry.colour);
-          entry.obj.render(translucency);
-        }
+      if(entry.obj.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
+        entry.updateTransforms();
+        this.tmdShaderTransparentColour.set(entry.colour);
+        entry.obj.render(Translucency.HALF_B_PLUS_HALF_F);
       }
     }
 
@@ -556,7 +570,6 @@ public class RenderEngine {
   }
 
   private void render2dPool(final QueuePool pool) {
-    RENDERER.setProjectionMode(ProjectionMode._2D);
     this.tmdShader.use();
     this.tmdShaderDiscardTranslucency.set(0.0f);
     GPU.useVramTexture();

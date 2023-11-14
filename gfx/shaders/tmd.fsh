@@ -69,7 +69,7 @@ void main() {
     }
 
     // If translucent primitive and texture pixel translucency bit is set, pixel is translucent so we defer rendering
-    if(discardTranslucency != 0 && (flags & ~0x7) != 0 && texColour.a != 0) {
+    if(discardTranslucency == 1 && (flags & ~0x7) != 0 && texColour.a != 0 || discardTranslucency == 2 && ((flags & ~0x7) == 0 || texColour.a == 0)) {
       discard;
     }
 
