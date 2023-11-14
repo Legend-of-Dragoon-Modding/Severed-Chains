@@ -39,8 +39,8 @@ public class WMapStruct19c0 {
   public float _a0;
   public final Vector3f vec_a4 = new Vector3f();
   public final Vector3f vec_b4 = new Vector3f();
-  /** byte (bool?) */
-  public int _c4;
+  /** byte */
+  public boolean hideAtmosphericEffect_c4;
   /** ubyte */
   public int _c5;
 
