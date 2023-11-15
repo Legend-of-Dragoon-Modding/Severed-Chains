@@ -6,6 +6,7 @@ import legend.core.gte.MV;
 import legend.core.opengl.BasicCamera;
 import legend.core.opengl.Camera;
 import legend.core.opengl.FrameBuffer;
+import legend.core.opengl.LineBuilder;
 import legend.core.opengl.Mesh;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
@@ -128,9 +129,15 @@ public class RenderEngine {
 
   // Text
   public final Obj[] chars = new Obj[0x56];
-  // Fullscren Fade Outs
+  // Fullscreen quads
   public Obj fullscreenWhiteout;
   public Obj fullscreenBlackout;
+  // Simple quads
+  public Obj centredQuadBPlusF;
+  public Obj centredQuadBMinusF;
+  // Line box (reticles)
+  public Obj lineBox;
+  public Obj lineBoxBPlusF;
 
   private int width;
   private int height;
@@ -383,6 +390,41 @@ public class RenderEngine {
       .size(384, 240)
       .build();
     this.fullscreenBlackout.persistent = true;
+
+    this.centredQuadBPlusF = new QuadBuilder("Centred Quad B+F")
+      .translucency(Translucency.B_PLUS_F)
+      .monochrome(1.0f)
+      .pos(-0.5f, -0.5f, 0.0f)
+      .size(1.0f, 1.0f)
+      .build();
+    this.centredQuadBPlusF.persistent = true;
+
+    this.centredQuadBMinusF = new QuadBuilder("Centred Quad B-F")
+      .translucency(Translucency.B_MINUS_F)
+      .monochrome(1.0f)
+      .pos(-0.5f, -0.5f, 0.0f)
+      .size(1.0f, 1.0f)
+      .build();
+    this.centredQuadBMinusF.persistent = true;
+
+    this.lineBox = new LineBuilder("Line Box")
+      .pos(-0.5f, -0.5f, 0.0f)
+      .pos( 0.5f, -0.5f, 0.0f)
+      .pos( 0.5f,  0.5f, 0.0f)
+      .pos(-0.5f,  0.5f, 0.0f)
+      .closed()
+      .build();
+    this.lineBox.persistent = true;
+
+    this.lineBoxBPlusF = new LineBuilder("Line Box (B+F)")
+      .translucency(Translucency.B_PLUS_F)
+      .pos(-0.5f, -0.5f, 0.0f)
+      .pos( 0.5f, -0.5f, 0.0f)
+      .pos( 0.5f,  0.5f, 0.0f)
+      .pos(-0.5f,  0.5f, 0.0f)
+      .closed()
+      .build();
+    this.lineBoxBPlusF.persistent = true;
 
     this.window.events.onDraw(() -> {
       this.pre();

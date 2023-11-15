@@ -6,7 +6,7 @@ public class AdditionOverlaysBorder0e {
   /** byte */
   public boolean isVisible_00;
 
-  /** short; 0x200 (45 degrees) is unrotated square */
+  /** short; 0x200 (45 degrees) was unrotated square (because the first vertex in the box is diagonal from the centre, and it uses a line renderer) */
   public float angleModifier_02;
   /** ubytes */
   public int r_04;

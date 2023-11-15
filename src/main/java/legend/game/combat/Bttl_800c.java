@@ -87,7 +87,6 @@ import legend.game.modding.events.battle.BattleEndedEvent;
 import legend.game.modding.events.battle.BattleEntityTurnEvent;
 import legend.game.modding.events.battle.BattleStartedEvent;
 import legend.game.scripting.FlowControl;
-import legend.game.scripting.IntParam;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
 import legend.game.scripting.ScriptEnum;
@@ -118,7 +117,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
@@ -4742,25 +4740,6 @@ public final class Bttl_800c {
   public static FlowControl scriptSetMtSeed(final RunningScript<?> script) {
     setMtSeed(script.params_20[0].get());
     return FlowControl.CONTINUE;
-  }
-
-  /**
-   * Holy crap this method was complicated... the way the stack is set up, all params after a3 are part of the sp0x90 array. Count is the number of parameters.
-   * It's basically a variadic method so I'm changing the signature to that.
-   * <p>
-   * This method allows you to call a script function from the main game engine. Variadic params get passed in as the param array.
-   */
-  @Method(0x800cff54L)
-  public static void callScriptFunction(final Consumer<RunningScript<?>> func, final int... params) {
-    final RunningScript<Void> script = new RunningScript<>(null);
-
-    //LAB_800cff90
-    for(int i = 0; i < params.length; i++) {
-      script.params_20[i] = new IntParam(params[i]);
-    }
-
-    //LAB_800cffbc
-    func.accept(script);
   }
 
   /** Sets translation vector to position of individual part of model associated with scriptIndex */

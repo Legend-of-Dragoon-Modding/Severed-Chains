@@ -14,7 +14,6 @@ import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.GpuCommandSetMaskBit;
 import legend.core.gpu.GpuCommandUntexturedQuad;
 import legend.core.gpu.RECT;
-import legend.core.gte.COLOUR;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
@@ -229,7 +228,6 @@ public final class Scus94491BpeSegment {
 
   public static final Value _80010320 = MEMORY.ref(4, 0x80010320L);
 
-  public static final COLOUR colour_80010328 = MEMORY.ref(1, 0x80010328L, COLOUR::new);
   public static final Value _8001032c = MEMORY.ref(1, 0x8001032cL);
   public static final Value _80010334 = MEMORY.ref(1, 0x80010334L);
 
@@ -1348,30 +1346,30 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80018a5cL)
-  public static void renderButtonPressHudElement(final int x, final int y, final int leftU, final int topV, final int rightU, final int bottomV, final int clutOffset, @Nullable final Translucency transMode, final COLOUR colour, final int a9, final int a10) {
+  public static void renderButtonPressHudElement(final int x, final int y, final int leftU, final int topV, final int rightU, final int bottomV, final int clutOffset, @Nullable final Translucency transMode, final int brightness, final int widthStretch, final int heightStretch) {
     final int w = Math.abs(rightU - leftU);
     final int h = Math.abs(bottomV - topV);
 
     final GpuCommandPoly cmd = new GpuCommandPoly(4)
-      .rgb(colour.getR(), colour.getG(), colour.getB());
+      .monochrome(brightness);
 
     if(transMode != null) {
       cmd.translucent(transMode);
     }
 
     //LAB_80018b38
-    if((short)a9 != 0x1000 || (short)a10 != (short)a9) {
+    if(widthStretch != 0x1000 || heightStretch != 0x1000) {
       //LAB_80018b90
-      final int sp10 = x + (short)w / 2;
-      final int sp12 = y + (short)h / 2;
-      final int a2 = (short)w * (short)a9 >> 13;
-      final int a1 = (short)h * (short)a10 >> 13;
+      final int left = x + w / 2;
+      final int top = y + h / 2;
+      final int offsetX = w * widthStretch / 2 >> 12;
+      final int offsetY = h * heightStretch / 2 >> 12;
 
       cmd
-        .pos(0, sp10 - a2, sp12 - a1)
-        .pos(1, sp10 + a2, sp12 - a1)
-        .pos(2, sp10 - a2, sp12 + a1)
-        .pos(3, sp10 + a2, sp12 + a1);
+        .pos(0, left - offsetX, top - offsetY)
+        .pos(1, left + offsetX, top - offsetY)
+        .pos(2, left - offsetX, top + offsetY)
+        .pos(3, left + offsetX, top + offsetY);
     } else {
       //LAB_80018c38
       cmd
@@ -1410,13 +1408,13 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80018d60L)
-  public static void renderButtonPressHudTexturedRect(final int x, final int y, final int u, final int v, final int width, final int height, final int clutOffset, @Nullable final Translucency transMode, final COLOUR colour, final int a9) {
-    renderButtonPressHudElement((short)x, (short)y, u & 0xff, v & 0xff, u + width & 0xff, v + height & 0xff, clutOffset, transMode, colour, a9, a9);
+  public static void renderButtonPressHudTexturedRect(final int x, final int y, final int u, final int v, final int width, final int height, final int clutOffset, @Nullable final Translucency transMode, final int brightness, final int stretch) {
+    renderButtonPressHudElement(x, y, u, v, u + width, v + height, clutOffset, transMode, brightness, stretch, stretch);
   }
 
   @Method(0x80018decL)
-  public static void renderDivineDragoonAdditionPressIris(final int x, final int y, final int u, final int v, final int width, final int height, final int clutOffset, @Nullable final Translucency transMode, final COLOUR colour, final int a9, final int a10) {
-    renderButtonPressHudElement(x, y, u, v, u + width, v + height, clutOffset, transMode, colour, a9, a10);
+  public static void renderDivineDragoonAdditionPressIris(final int x, final int y, final int u, final int v, final int width, final int height, final int clutOffset, @Nullable final Translucency transMode, final int brightness, final int widthStretch, final int heightStretch) {
+    renderButtonPressHudElement(x, y, u, v, u + width, v + height, clutOffset, transMode, brightness, widthStretch, heightStretch);
   }
 
   @Method(0x80018e84L)
@@ -1537,7 +1535,7 @@ public final class Scus94491BpeSegment {
             79,
             s0.clutAndTranslucency_0c,
             Translucency.of((s0.clutAndTranslucency_0c >>> 12 & 0x7) - 1),
-            colour_80010328,
+            0xff,
             s0._04 + 0x1000,
             s0._06 + 0x1000
           );
