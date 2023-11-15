@@ -6040,7 +6040,6 @@ public class WMap extends EngineState {
                       .bpp(Bpp.BITS_4)
                       .clut(576, 496 + i % 3)
                       .vramPos(576, 256)
-                      .pos(0.0f, 0.0f, 1.0f)
                       .size(1.0f, 1.0f)
                       .uv(0, i % 3 * 64)
                       .uvSize(255, 64)
@@ -6048,7 +6047,7 @@ public class WMap extends EngineState {
                       .build();
                   }
 
-                  cloud.transforms.scaling(sx1 - sx0, sy2 - sy0, 0.0f);
+                  cloud.transforms.scaling(sx1 - sx0, sy2 - sy0, 1.0f);
                   cloud.transforms.transfer.set(GPU.getOffsetX() + sx0, GPU.getOffsetY() + sy0, cloud.queueZ);
                   RENDERER.queueOrthoModel(cloud.obj, cloud.transforms)
                     .monochrome(i < 12 ? cloud.brightness_5c : cloud.brightness_5c / 3.0f);
