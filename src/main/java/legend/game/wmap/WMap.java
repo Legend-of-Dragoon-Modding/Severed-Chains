@@ -938,6 +938,7 @@ public class WMap extends EngineState {
 
     this.deallocateWorldMap();
     this.unloadWmapPlayerModels();
+    this.atmosphericEffectDeallocators_800f65bc[this.currentWmapEffect_800f6598].run();
     this.deallocateSmoke();
     textZ_800bdf00.set(13);
 
@@ -5934,18 +5935,7 @@ public class WMap extends EngineState {
       final WMapAtmosphericEffectInstance60 cloud = struct.atmosphericEffectInstances_24[i];
 
       //LAB_800ec044
-      final GpuCommandPoly cmd = new GpuCommandPoly(4)
-        .bpp(Bpp.BITS_4)
-        .translucent(Translucency.B_PLUS_F)
-        .clut(576, 496 + i % 3)
-        .vramPos(576, 256)
-        .uv(0,   0, i % 3 * 64)
-        .uv(1, 255, i % 3 * 64)
-        .uv(2,   0, i % 3 * 64 + 63)
-        .uv(3, 255, i % 3 * 64 + 63);
-
       cloud.z_5e++;
-
       if(cloud.z_5e >> i % 3 + 4 != 0) {
         cloud.coord2_00.coord.transfer.x++;
         cloud.z_5e = 0;
@@ -5984,14 +5974,12 @@ public class WMap extends EngineState {
       //LAB_800ec3a8
       if(!MathHelper.flEq(cloud.brightness_5c, 0.0f)) {
         //LAB_800ec3c8
-        final MV lsMatrix = new MV();
-        GsGetLs(cloud.coord2_00, lsMatrix);
-        lsMatrix.identity(); // NOTE: does not clear translation
-        GTE.setTransforms(lsMatrix);
+        GsGetLs(cloud.coord2_00, cloud.transforms);
+        cloud.transforms.identity(); // NOTE: does not clear translation
+        GTE.setTransforms(cloud.transforms);
         GTE.perspectiveTransform(-cloud.x_58, -cloud.y_5a, 0);
         final float sx0 = GTE.getScreenX(2);
         final float sy0 = GTE.getScreenY(2);
-        cmd.pos(0, sx0, sy0);
         float z = GTE.getScreenZ(3) / 4.0f;
 
         if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
@@ -5999,7 +5987,6 @@ public class WMap extends EngineState {
           GTE.perspectiveTransform(cloud.x_58, -cloud.y_5a, 0);
           final float sx1 = GTE.getScreenX(2);
           final float sy1 = GTE.getScreenY(2);
-          cmd.pos(1, sx1, sy1);
           z = GTE.getScreenZ(3) / 4.0f;
 
           if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3 && sx1 - sx0 <= 0x400) {
@@ -6007,7 +5994,6 @@ public class WMap extends EngineState {
             GTE.perspectiveTransform(-cloud.x_58, cloud.y_5a, 0);
             final float sx2 = GTE.getScreenX(2);
             final float sy2 = GTE.getScreenY(2);
-            cmd.pos(2, sx2, sy2);
             z = GTE.getScreenZ(3) / 4.0f;
 
             if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3 && sy2 - sy0 <= 0x200) {
@@ -6042,21 +6028,29 @@ public class WMap extends EngineState {
                 GTE.perspectiveTransform(cloud.x_58, cloud.y_5a, 0);
                 final float sx3 = GTE.getScreenX(2);
                 final float sy3 = GTE.getScreenY(2);
-                cmd.pos(3, sx3, sy3);
                 z = GTE.getScreenZ(3) / 4.0f;
 
                 if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3 && sx3 - sx2 <= 0x400 && sy3 - sy1 <= 0x200) {
                   //LAB_800ec83c
                   //LAB_800ec870
                   //LAB_800ec8a4
-                  if(i < 12) {
-                    cmd.monochrome(cloud.brightness_5c);
-                    GPU.queueCommand(139, cmd);
-                  } else {
-                    //LAB_800ec928
-                    cmd.monochrome(cloud.brightness_5c / 3.0f);
-                    GPU.queueCommand(orderingTableSize_1f8003c8.get() - 4, cmd);
+                  if(cloud.obj == null) {
+                    cloud.queueZ = i < 12 ? 139.0f : orderingTableSize_1f8003c8.get() - 4.0f;
+                    cloud.obj = new QuadBuilder("Cloud (index " + i + ')')
+                      .bpp(Bpp.BITS_4)
+                      .clut(576, 496 + i % 3)
+                      .vramPos(576, 256)
+                      .size(1.0f, 1.0f)
+                      .uv(0, i % 3 * 64)
+                      .uvSize(255, 64)
+                      .translucency(Translucency.B_PLUS_F)
+                      .build();
                   }
+
+                  cloud.transforms.scaling(sx1 - sx0, sy2 - sy0, 1.0f);
+                  cloud.transforms.transfer.set(GPU.getOffsetX() + sx0, GPU.getOffsetY() + sy0, cloud.queueZ);
+                  RENDERER.queueOrthoModel(cloud.obj, cloud.transforms)
+                    .monochrome(i < 12 ? cloud.brightness_5c : cloud.brightness_5c / 3.0f);
                 }
               }
             }
@@ -6458,6 +6452,7 @@ public class WMap extends EngineState {
   private void deallocateClouds() {
     if(this.renderAtmosphericEffect_800c86fc) {
       this.renderAtmosphericEffect_800c86fc = false;
+      this.wmapStruct258_800c66a8.deleteAtmosphericEffectObjs();
     }
   }
 
