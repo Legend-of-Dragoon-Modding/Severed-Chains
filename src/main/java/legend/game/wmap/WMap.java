@@ -6870,7 +6870,7 @@ public class WMap extends EngineState {
         }
 
         //LAB_800ed108
-        if(this.wmapStruct258_800c66a8.wmapState_05 != WmapStateEnum.ACTIVE) {
+        if(this.wmapStruct258_800c66a8.wmapState_05 == WmapStateEnum.TRANSITION_OUT) {
           snowflake.brightness_5c -= 0.125f / (3.0f / vsyncMode_8007a3b8);
 
           if(snowflake.brightness_5c < 0.0f) {
@@ -6882,9 +6882,9 @@ public class WMap extends EngineState {
       //LAB_800ed164
       if(!MathHelper.flEq(snowflake.brightness_5c, 0.0f)) {
         //LAB_800ed184
-        snowflake.coord2_00.coord.transfer.x += snowflake.x_58;
-        snowflake.coord2_00.coord.transfer.y += snowflake.y_5a;
-        snowflake.coord2_00.coord.transfer.z += snowflake.z_5e;
+        snowflake.coord2_00.coord.transfer.x += snowflake.x_58 / (3.0f / vsyncMode_8007a3b8);
+        snowflake.coord2_00.coord.transfer.y += snowflake.y_5a / (3.0f / vsyncMode_8007a3b8);
+        snowflake.coord2_00.coord.transfer.z += snowflake.z_5e / (3.0f / vsyncMode_8007a3b8);
 
         if(snowflake.coord2_00.coord.transfer.y > 0.0f) {
           snowflake.coord2_00.coord.transfer.x =  500 - rand() % 1000;
@@ -6911,57 +6911,49 @@ public class WMap extends EngineState {
           final float sy1 = GTE.getScreenY(2);
           z = GTE.getScreenZ(3) / 4.0f;
 
-          if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
+          if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3 && sx1 - sx0 <= 0x400) {
             //LAB_800ed400
-            if(sx1 - sx0 <= 0x400) {
-              //LAB_800ed434
-              GTE.perspectiveTransform(-2, 2, 0);
+            //LAB_800ed434
+            GTE.perspectiveTransform(-2, 2, 0);
 
-              final float sx2 = GTE.getScreenX(2);
-              final float sy2 = GTE.getScreenY(2);
+            final float sx2 = GTE.getScreenX(2);
+            final float sy2 = GTE.getScreenY(2);
+            z = GTE.getScreenZ(3) / 4.0f;
+
+            if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3 && sy2 - sy0 <= 0x200) {
+              //LAB_800ed4b8
+              //LAB_800ed4ec
+              GTE.perspectiveTransform(2, 2, 0);
+
+              final float sx3 = GTE.getScreenX(2);
+              final float sy3 = GTE.getScreenY(2);
               z = GTE.getScreenZ(3) / 4.0f;
 
-              if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
-                //LAB_800ed4b8
-                if(sy2 - sy0 <= 0x200) {
-                  //LAB_800ed4ec
-                  GTE.perspectiveTransform(2, 2, 0);
+              if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3 && sx3 - sx2 <= 0x400 && sy3 - sy1 <= 0x200) {
+                //LAB_800ed570
+                //LAB_800ed5a4
+                //LAB_800ed5d8
+                snowflake.rotation_50.z = (snowflake.rotation_50.z + 1) % 12;
+                final int index = (int)(snowflake.rotation_50.z / 2.0f);
 
-                  final float sx3 = GTE.getScreenX(2);
-                  final float sy3 = GTE.getScreenY(2);
-                  z = GTE.getScreenZ(3) / 4.0f;
+                final int u = snowUvs_800f65c8.get(index).get(0).get();
+                final int v = snowUvs_800f65c8.get(index).get(1).get();
 
-                  if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
-                    //LAB_800ed570
-                    if(sx3 - sx2 <= 0x400) {
-                      //LAB_800ed5a4
-                      if(sy3 - sy1 <= 0x200) {
-                        //LAB_800ed5d8
-                        snowflake.rotation_50.z = (snowflake.rotation_50.z + 1) % 12;
-                        final int index = (int)(snowflake.rotation_50.z / 2.0f);
-
-                        final int u = snowUvs_800f65c8.get(index).get(0).get();
-                        final int v = snowUvs_800f65c8.get(index).get(1).get();
-
-                        GPU.queueCommand(139, new GpuCommandPoly(4)
-                          .bpp(Bpp.BITS_4)
-                          .translucent(Translucency.B_PLUS_F)
-                          .clut(640, 496)
-                          .vramPos(640, 256)
-                          .monochrome(snowflake.brightness_5c)
-                          .pos(0, sx0, sy0)
-                          .pos(1, sx1, sy1)
-                          .pos(2, sx2, sy2)
-                          .pos(3, sx3, sy3)
-                          .uv(0, u, v)
-                          .uv(1, u + 8, v)
-                          .uv(2, u, v + 8)
-                          .uv(3, u + 8, v + 8)
-                        );
-                      }
-                    }
-                  }
-                }
+                GPU.queueCommand(139, new GpuCommandPoly(4)
+                  .bpp(Bpp.BITS_4)
+                  .translucent(Translucency.B_PLUS_F)
+                  .clut(640, 496)
+                  .vramPos(640, 256)
+                  .monochrome(snowflake.brightness_5c)
+                  .pos(0, sx0, sy0)
+                  .pos(1, sx1, sy1)
+                  .pos(2, sx2, sy2)
+                  .pos(3, sx3, sy3)
+                  .uv(0, u, v)
+                  .uv(1, u + 8, v)
+                  .uv(2, u, v + 8)
+                  .uv(3, u + 8, v + 8)
+                );
               }
             }
           }
