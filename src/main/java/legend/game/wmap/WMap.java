@@ -365,7 +365,6 @@ public class WMap extends EngineState {
     this.atmosphericEffectDeallocators_800f65bc[1] = this::deallocateClouds;
     this.atmosphericEffectDeallocators_800f65bc[2] = this::deallocateSnow;
   }
-  private static final ArrayRef<ArrayRef<UnsignedByteRef>> snowUvs_800f65c8 = MEMORY.ref(1, 0x800f65c8L, ArrayRef.of(ArrayRef.classFor(UnsignedByteRef.class), 6, 2, ArrayRef.of(UnsignedByteRef.class, 2, 1, UnsignedByteRef::new)));
 
   private WmapPromptPopup wmapLocationPromptPopup;
   private WmapPromptPopup coolonPromptPopup;
@@ -5906,7 +5905,7 @@ public class WMap extends EngineState {
       }
 
       //LAB_800ebe24
-      cloud.rotation_50.set(0.0f, 0.0f, 0.0f);
+      cloud.snowUvIndex_50 = 0;
       cloud.x_58 = (288 - rand() % 64) / 2;
       cloud.y_5a = ( 80 - rand() % 32) / 2;
       cloud.brightness_5c = 0.0f;
@@ -5927,8 +5926,7 @@ public class WMap extends EngineState {
   private void renderClouds() {
     final WMapStruct258 struct = this.wmapStruct258_800c66a8;
     final WMapAtmosphericEffectInstance60 cloud0 = struct.atmosphericEffectInstances_24[0];
-
-    this.rotateCoord2(cloud0.rotation_50, cloud0.coord2_00);
+    cloud0.coord2_00.flg = 0;
 
     //LAB_800ec028
     for(int i = 0; i < 24; i++) {
@@ -6076,7 +6074,7 @@ public class WMap extends EngineState {
       snowflake.coord2_00.coord.transfer.x = 500 - rand() % 1000;
       snowflake.coord2_00.coord.transfer.y =     - rand() %  200;
       snowflake.coord2_00.coord.transfer.z = 500 - rand() % 1000;
-      snowflake.rotation_50.set(0.0f, 0.0f, rand() % 12);
+      snowflake.snowUvIndex_50 = rand() % 12;
       snowflake.x_58 = rand() % 2 - 1;
       snowflake.y_5a = rand() % 2 + 1;
       snowflake.brightness_5c = 0.0f;
@@ -6087,9 +6085,6 @@ public class WMap extends EngineState {
 
   @Method(0x800ecd10L)
   private void renderSnow() {
-    final MV lsMatrix = new MV();
-    final Vector3f rotation = new Vector3f();
-
     //LAB_800ecdb4
     for(int i = 0; i < 64; i++) {
       final WMapAtmosphericEffectInstance60 snowflake = this.wmapStruct258_800c66a8.atmosphericEffectInstances_24[i];
@@ -6133,10 +6128,10 @@ public class WMap extends EngineState {
         }
 
         //LAB_800ed2bc
-        this.rotateCoord2(rotation, snowflake.coord2_00);
-        GsGetLs(snowflake.coord2_00, lsMatrix);
-        lsMatrix.identity(); // NOTE: does not clear translation
-        GTE.setTransforms(lsMatrix);
+        snowflake.coord2_00.flg = 0;
+        GsGetLs(snowflake.coord2_00, snowflake.transforms);
+        snowflake.transforms.identity(); // NOTE: does not clear translation
+        GTE.setTransforms(snowflake.transforms);
         GTE.perspectiveTransform(-2, -2, 0);
 
         final float sx0 = GTE.getScreenX(2);
@@ -6173,27 +6168,23 @@ public class WMap extends EngineState {
                 //LAB_800ed570
                 //LAB_800ed5a4
                 //LAB_800ed5d8
-                snowflake.rotation_50.z = (snowflake.rotation_50.z + 1) % 12;
-                final int index = (int)(snowflake.rotation_50.z / 2.0f);
+                snowflake.snowUvIndex_50 = (snowflake.snowUvIndex_50 + 1) % 12;
+                final int index = (int)(snowflake.snowUvIndex_50 / 2.0f);
+                if(snowflake.obj == null ) {
+                  snowflake.obj = new QuadBuilder("Snowflake (index " + i + ')')
+                    .bpp(Bpp.BITS_4)
+                    .clut(640, 496)
+                    .vramPos(640, 256)
+                    .size(2.0f, 2.0f)
+                    .uv(WMapAtmosphericEffectInstance60.snowUs[index], WMapAtmosphericEffectInstance60.snowVs[index])
+                    .uvSize(8, 8)
+                    .translucency(Translucency.B_PLUS_F)
+                    .build();
+                }
 
-                final int u = snowUvs_800f65c8.get(index).get(0).get();
-                final int v = snowUvs_800f65c8.get(index).get(1).get();
-
-                GPU.queueCommand(139, new GpuCommandPoly(4)
-                  .bpp(Bpp.BITS_4)
-                  .translucent(Translucency.B_PLUS_F)
-                  .clut(640, 496)
-                  .vramPos(640, 256)
-                  .monochrome(snowflake.brightness_5c)
-                  .pos(0, sx0, sy0)
-                  .pos(1, sx1, sy1)
-                  .pos(2, sx2, sy2)
-                  .pos(3, sx3, sy3)
-                  .uv(0, u, v)
-                  .uv(1, u + 8, v)
-                  .uv(2, u, v + 8)
-                  .uv(3, u + 8, v + 8)
-                );
+                snowflake.transforms.transfer.set(GPU.getOffsetX() + sx0, GPU.getOffsetY() + sy0, 139.0f);
+                RENDERER.queueOrthoModel(snowflake.obj, snowflake.transforms)
+                  .monochrome(snowflake.brightness_5c);
               }
             }
           }
