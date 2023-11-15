@@ -3669,8 +3669,8 @@ public final class SEffe {
       for(int targetBorderNum = 0; targetBorderNum < 2; targetBorderNum++) {
         final int squareSize = targetBorderArray[16].size_08 - targetBorderNum * 8;
 
-        effect.transforms.scaling(squareSize, squareSize, 1.0f);
-        effect.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY() + 30.0f, 120.0f);
+        effect.transforms.scaling(squareSize * 2.0f, squareSize * 2.0f, 1.0f);
+        effect.transforms.transfer.set(GPU.getOffsetX() + squareSize, GPU.getOffsetY() + squareSize + 30.0f, 120.0f);
         final RenderEngine.QueuedModel model = RENDERER.queueOrthoOverlayModel(RENDERER.centredQuadBPlusF, effect.transforms);
 
         if(completionState == 1) {  // Success
@@ -3756,10 +3756,10 @@ public final class SEffe {
 
         // Renders rotating shadow on innermost rotating border
         if(borderOverlay.sideEffects_0d == 0) {
-          renderAdditionBorderShadow(effect, hitArray[hitNum], borderOverlay.angleModifier_02, borderOverlay.size_08);
-          renderAdditionBorderShadow(effect, hitArray[hitNum], borderOverlay.angleModifier_02 + MathHelper.HALF_PI, borderOverlay.size_08);
-          renderAdditionBorderShadow(effect, hitArray[hitNum], borderOverlay.angleModifier_02 + MathHelper.PI, borderOverlay.size_08);
-          renderAdditionBorderShadow(effect, hitArray[hitNum], borderOverlay.angleModifier_02 + MathHelper.PI + MathHelper.HALF_PI, borderOverlay.size_08);
+          renderAdditionBorderShadow(effect, hitArray[hitNum], borderOverlay.angleModifier_02, borderOverlay.size_08 * 2);
+          renderAdditionBorderShadow(effect, hitArray[hitNum], borderOverlay.angleModifier_02 + MathHelper.HALF_PI, borderOverlay.size_08 * 2);
+          renderAdditionBorderShadow(effect, hitArray[hitNum], borderOverlay.angleModifier_02 + MathHelper.PI, borderOverlay.size_08 * 2);
+          renderAdditionBorderShadow(effect, hitArray[hitNum], borderOverlay.angleModifier_02 + MathHelper.PI + MathHelper.HALF_PI, borderOverlay.size_08 * 2);
         }
       }
       //LAB_80106fac
