@@ -839,7 +839,7 @@ public class RenderEngine {
     this.width = width;
     this.height = height;
 
-    glLineWidth(height / 240.0f);
+    glLineWidth(Math.max(1, height / 480.0f));
 
     // Projections
     this.updateProjections();
