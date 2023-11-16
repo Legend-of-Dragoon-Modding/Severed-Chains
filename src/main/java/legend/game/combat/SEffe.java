@@ -9872,9 +9872,8 @@ public final class SEffe {
 
             //LAB_80118ce4
             if(buffPos.h.get() > 0) {
-              final int scale = GPU.getScale();
-              final int[] data = new int[buffPos.w.get() * scale * buffPos.h.get() * scale];
-              final Rect4i rect = new Rect4i(buffPos.x.get() * scale, buffPos.y.get() * scale, buffPos.w.get() * scale, buffPos.h.get() * scale);
+              final int[] data = new int[buffPos.w.get() * buffPos.h.get()];
+              final Rect4i rect = new Rect4i(buffPos.x.get(), buffPos.y.get(), buffPos.w.get(), buffPos.h.get());
 
               // Back up draw buffer data after background is rendered, but before models are rendered
               GPU.queueCommand(maxZ, new GpuCommand() {

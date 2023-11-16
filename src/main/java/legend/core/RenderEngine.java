@@ -45,6 +45,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_TAB;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
+import static org.lwjgl.glfw.GLFW.GLFW_MOD_SHIFT;
 import static org.lwjgl.opengl.GL11C.GL_ALWAYS;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_COLOR;
@@ -942,6 +943,20 @@ public class RenderEngine {
           glPolygonMode(GL_FRONT_AND_BACK, this.wireframeMode ? GL_LINE : GL_FILL);
         }
       }
+    } else if(key == GLFW_KEY_TAB) {
+      if((mods & GLFW_MOD_SHIFT) != 0) {
+        legacyMode = Math.floorMod(legacyMode - 1, 3);
+      } else {
+        legacyMode = (legacyMode + 1) % 3;
+      }
+
+      this.updateProjections();
+
+      switch(legacyMode) {
+        case 0 -> System.out.println("Switched to OpenGL rendering");
+        case 1 -> System.out.println("Switched to legacy rendering");
+        case 2 -> System.out.println("Switched to VRAM rendering");
+      }
     }
 
     if(key == GLFW_KEY_M) {
@@ -952,17 +967,6 @@ public class RenderEngine {
         this.window.hideCursor();
       } else {
         this.window.showCursor();
-      }
-    }
-
-    if(key == GLFW_KEY_TAB) {
-      legacyMode = (legacyMode + 1) % 3;
-      this.updateProjections();
-
-      switch(legacyMode) {
-        case 0 -> System.out.println("Switched to OpenGL rendering");
-        case 1 -> System.out.println("Switched to legacy rendering");
-        case 2 -> System.out.println("Switched to VRAM rendering");
       }
     }
   }

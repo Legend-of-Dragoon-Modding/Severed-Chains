@@ -22,7 +22,6 @@ import legend.game.modding.coremod.config.EnabledModsConfigEntry;
 import legend.game.modding.coremod.config.EncounterRateConfigEntry;
 import legend.game.modding.coremod.config.IndicatorModeConfigEntry;
 import legend.game.modding.coremod.config.InventorySizeConfigEntry;
-import legend.game.modding.coremod.config.RenderScaleConfigEntry;
 import legend.game.modding.coremod.config.TransformationModeConfigEntry;
 import legend.game.modding.coremod.elements.DarkElement;
 import legend.game.modding.coremod.elements.DivineElement;
@@ -34,7 +33,6 @@ import legend.game.modding.coremod.elements.ThunderElement;
 import legend.game.modding.coremod.elements.WaterElement;
 import legend.game.modding.coremod.elements.WindElement;
 import legend.game.modding.events.battle.RegisterBattleEntityStatsEvent;
-import legend.game.modding.events.config.ConfigLoadedEvent;
 import legend.game.saves.BoolConfigEntry;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigRegistryEvent;
@@ -48,8 +46,6 @@ import org.legendofdragoon.modloader.registries.RegistryId;
 import java.util.EnumMap;
 import java.util.Map;
 
-import static legend.core.GameEngine.CONFIG;
-import static legend.core.GameEngine.GPU;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_1;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_3;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
@@ -99,7 +95,6 @@ public class CoreMod {
   private static final Registrar<ConfigEntry<?>, ConfigRegistryEvent> CONFIG_REGISTRAR = new Registrar<>(GameEngine.REGISTRIES.config, MOD_ID);
 
   // Global config
-  public static final RegistryDelegate<RenderScaleConfigEntry> RENDER_SCALE_CONFIG = CONFIG_REGISTRAR.register("render_scale", RenderScaleConfigEntry::new);
   public static final RegistryDelegate<ControllerConfigEntry> CONTROLLER_CONFIG = CONFIG_REGISTRAR.register("controller", ControllerConfigEntry::new);
   public static final RegistryDelegate<ControllerDeadzoneConfigEntry> CONTROLLER_DEADZONE_CONFIG = CONFIG_REGISTRAR.register("controller_deadzone", ControllerDeadzoneConfigEntry::new);
   public static final RegistryDelegate<BoolConfigEntry> RECEIVE_INPUT_ON_INACTIVE_WINDOW_CONFIG = CONFIG_REGISTRAR.register("receive_input_on_inactive_window", () -> new BoolConfigEntry(false, ConfigStorageLocation.GLOBAL));
@@ -187,12 +182,5 @@ public class CoreMod {
     }
 
     event.addStat(SPEED_STAT.get());
-  }
-
-  @EventListener
-  public static void configLoaded(final ConfigLoadedEvent event) {
-    if(event.storageLocation == ConfigStorageLocation.GLOBAL) {
-      GPU.rescale(CONFIG.getConfig(RENDER_SCALE_CONFIG.get()));
-    }
   }
 }

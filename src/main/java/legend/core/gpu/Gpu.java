@@ -8,8 +8,6 @@ import legend.core.opengl.Mesh;
 import legend.core.opengl.Shader;
 import legend.core.opengl.ShaderManager;
 import legend.core.opengl.Texture;
-import legend.game.modding.coremod.CoreMod;
-import legend.game.modding.coremod.config.RenderScaleConfigEntry;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
@@ -20,16 +18,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static legend.core.GameEngine.CONFIG;
-import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.colour24To15;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
-import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_EQUAL;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_MINUS;
-import static org.lwjgl.glfw.GLFW.GLFW_MOD_CONTROL;
 import static org.lwjgl.glfw.GLFW.glfwGetCurrentContext;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_RGBA;
@@ -51,9 +45,6 @@ public class Gpu {
 
   private final VramTextureSingle[] renderBuffers = new VramTextureSingle[2];
   private int drawBufferIndex;
-
-  private int scale = 1;
-  private int newScale;
 
   private final int[] vram24 = new int[this.vramWidth * this.vramHeight];
   private final int[] vram15 = new int[this.vramWidth * this.vramHeight];
@@ -95,22 +86,6 @@ public class Gpu {
     return this.renderBuffers[this.drawBufferIndex];
   }
 
-  public int getScale() {
-    return this.scale;
-  }
-
-  /** Schedule a rescale when the current frame completes */
-  public void rescale(final int scale) {
-    this.newScale = scale;
-  }
-
-  /** Rescale immediately - may cause issues if commands are in the queue */
-  public void rescaleNow(final int scale) {
-    this.scale = scale;
-    this.displaySize(this.status.horizontalResolution, this.status.verticalResolution);
-    this.drawingArea(this.drawingArea.x.get(), this.drawingArea.y.get(), this.drawingArea.w.get(), this.drawingArea.h.get());
-  }
-
   public void init() {
     RENDERER.events().onResize((window1, width, height) -> this.updateDisplayTexture(width, height));
 
@@ -118,28 +93,12 @@ public class Gpu {
       if(key == GLFW_KEY_EQUAL) {
         if(mods == 0) {
           Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() + 1);
-        } else if((mods & GLFW_MOD_CONTROL) != 0 && gameState_800babc8 != null) {
-          final RenderScaleConfigEntry config = CoreMod.RENDER_SCALE_CONFIG.get();
-          final int scale = CONFIG.getConfig(config) + 1;
-
-          if(scale <= RenderScaleConfigEntry.MAX) {
-            CONFIG.setConfig(config, scale);
-            GPU.rescale(scale);
-          }
         }
       }
 
       if(key == GLFW_KEY_MINUS) {
         if(mods == 0) {
           Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() - 1);
-        } else if((mods & GLFW_MOD_CONTROL) != 0 && gameState_800babc8 != null) {
-          final RenderScaleConfigEntry config = CoreMod.RENDER_SCALE_CONFIG.get();
-          final int scale = CONFIG.getConfig(config) - 1;
-
-          if(scale >= 1) {
-            CONFIG.setConfig(config, scale);
-            GPU.rescale(scale);
-          }
         }
       }
     });
@@ -178,7 +137,7 @@ public class Gpu {
 
   public void endFrame() {
     this.tick();
-    RENDERER.window().setTitle("Legend of Dragoon - FPS: %.2f/%d scale: %d res: %dx%d".formatted(RENDERER.getFps(), RENDERER.window().getFpsLimit(), this.scale, this.displayTexture.width, this.displayTexture.height));
+    RENDERER.window().setTitle("Legend of Dragoon - FPS: %.2f/%d scale: %.2f res: %dx%d".formatted(RENDERER.getFps(), RENDERER.window().getFpsLimit(), RENDERER.window().getHeight() / 240.0f, this.displayTexture.width, this.displayTexture.height));
   }
 
   public void useVramTexture() {
@@ -243,11 +202,6 @@ public class Gpu {
 
         queue.clear();
       }
-    }
-
-    if(this.newScale != 0) {
-      this.rescaleNow(this.newScale);
-      this.newScale = 0;
     }
 
     this.drawBufferIndex ^= 1;
@@ -461,14 +415,11 @@ public class Gpu {
       this.displayTexture.delete();
     }
 
-    final int scaledWidth = horizontalRes * this.scale;
-    final int scaledHeight = verticalRes * this.scale;
-
     for(int i = 0; i < this.renderBuffers.length; i++) {
-      this.renderBuffers[i] = new VramTextureSingle(Bpp.BITS_24, new Rect4i(0, 0, scaledWidth, scaledHeight), new int[scaledWidth * scaledHeight]);
+      this.renderBuffers[i] = new VramTextureSingle(Bpp.BITS_24, new Rect4i(0, 0, horizontalRes, verticalRes), new int[horizontalRes * verticalRes]);
     }
 
-    this.displayTexture = Texture.empty(scaledWidth, scaledHeight);
+    this.displayTexture = Texture.empty(horizontalRes, verticalRes);
 
     this.updateDisplayTexture(this.windowWidth, this.windowHeight);
   }
@@ -479,7 +430,7 @@ public class Gpu {
     }
 
     this.drawingArea.set((short)left, (short)top, (short)width, (short)height);
-    this.scaledDrawingArea.set((short)(left * this.scale), (short)(top * this.scale), (short)(width * this.scale), (short)(height * this.scale));
+    this.scaledDrawingArea.set((short)left, (short)top, (short)width, (short)height);
   }
 
   public void drawingOffset(final int x, final int y) {
@@ -526,11 +477,11 @@ public class Gpu {
   }
 
   public int getDisplayTextureWidth() {
-    return this.displayTexture.width / this.scale;
+    return this.displayTexture.width;
   }
 
   public int getDisplayTextureHeight() {
-    return this.displayTexture.height / this.scale;
+    return this.displayTexture.height;
   }
 
   public void rasterizeLine(int x, int y, int x2, int y2, final int colour1, final int colour2, @Nullable final Translucency translucency) {
@@ -591,16 +542,12 @@ public class Gpu {
 
       if(this.drawingArea.contains(x, y)) {
         if(translucency != null) {
-          colour = this.handleTranslucence(x * this.scale, y * this.scale, colour, translucency);
+          colour = this.handleTranslucence(x, y, colour, translucency);
         }
 
         colour |= (this.status.setMaskBit ? 1 : 0) << 24;
 
-        for(int xx = 0; xx < this.scale; xx++) {
-          for(int yy = 0; yy < this.scale; yy++) {
-            this.getDrawBuffer().setPixel(x * this.scale + xx, y * this.scale + yy, colour);
-          }
-        }
+        this.getDrawBuffer().setPixel(x, y, colour);
       }
 
       numerator += shortest;
@@ -615,14 +562,7 @@ public class Gpu {
     }
   }
 
-  void rasterizeTriangle(int vx0, int vy0, int vx1, int vy1, int vx2, int vy2, final int tu0, final int tv0, int tu1, int tv1, int tu2, int tv2, final int c0, int c1, int c2, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY, final Bpp bpp, final boolean isTextured, final boolean isShaded, final boolean isTranslucent, final boolean isRaw, final Translucency translucencyMode, @Nullable final VramTexture texture, @Nullable final VramTexture[] palettes) {
-    vx0 *= this.scale;
-    vy0 *= this.scale;
-    vx1 *= this.scale;
-    vy1 *= this.scale;
-    vx2 *= this.scale;
-    vy2 *= this.scale;
-
+  void rasterizeTriangle(final int vx0, final int vy0, int vx1, int vy1, int vx2, int vy2, final int tu0, final int tv0, int tu1, int tv1, int tu2, int tv2, final int c0, int c1, int c2, final int clutX, final int clutY, final int textureBaseX, final int textureBaseY, final Bpp bpp, final boolean isTextured, final boolean isShaded, final boolean isTranslucent, final boolean isRaw, final Translucency translucencyMode, @Nullable final VramTexture texture, @Nullable final VramTexture[] palettes) {
     int area = orient2d(vx0, vy0, vx1, vy1, vx2, vy2);
     if(area == 0) {
       return;
@@ -717,7 +657,7 @@ public class Gpu {
               if(palettes == null) {
                 if(texture == this.getDisplayBuffer() || texture == this.getDrawBuffer()) {
                   if(texelX < this.drawingArea.x.get() + this.drawingArea.w.get() && texelY < this.drawingArea.y.get() + this.drawingArea.h.get()) {
-                    texel = texture.getPixel(texelX * this.scale, texelY * this.scale) & 0xffffff;
+                    texel = texture.getPixel(texelX, texelY) & 0xffffff;
                   }
                 } else {
                   texel = texture.getPixel(texelX, texelY) & 0xffffff;
@@ -774,27 +714,40 @@ public class Gpu {
     }
   }
 
-  void rasterizeQuad(int x1, int y1, int x2, int y2, final int colour, final boolean raw, final boolean textured, int u1, int v1, final int clutX, final int clutY, final int vramX, final int vramY, final Bpp bpp, @Nullable final Translucency translucency, @Nullable final VramTexture texture, @Nullable final VramTexture[] palettes) {
-    // If we're dealing with a render buffer texture we need to process the entire thing scaled. If we're doing
-    // a regular render, we only need to render at 1x and then duplicate the pixels `this.scale` times.
-    if(texture == this.getDrawBuffer() || texture == this.getDisplayBuffer()) {
-      x1 *= this.scale;
-      y1 *= this.scale;
-      x2 *= this.scale;
-      y2 *= this.scale;
-      u1 *= this.scale;
-      v1 *= this.scale;
+  void rasterizeQuad(final int x1, final int y1, final int x2, final int y2, final int colour, final boolean raw, final boolean textured, final int u1, final int v1, final int clutX, final int clutY, final int vramX, final int vramY, final Bpp bpp, @Nullable final Translucency translucency, @Nullable final VramTexture texture, @Nullable final VramTexture[] palettes) {
+    for(int y = y1, v = v1; y < y2; y++, v++) {
+      for(int x = x1, u = u1; x < x2; x++, u++) {
+        // Check background mask
+        if(this.status.drawPixels == DRAW_PIXELS.NOT_TO_MASKED_AREAS) {
+          if((this.getPixel(x, y) & 0xff00_0000L) != 0) {
+            continue;
+          }
+        }
 
-      for(int y = y1, v = v1; y < y2; y++, v++) {
-        for(int x = x1, u = u1; x < x2; x++, u++) {
-          // Check background mask
-          if(this.status.drawPixels == DRAW_PIXELS.NOT_TO_MASKED_AREAS) {
-            if((this.getPixel(x, y) & 0xff00_0000L) != 0) {
-              continue;
+        boolean handleTranslucence = false;
+        int texel;
+        if(textured) {
+          if(texture == null) {
+            texel = this.getTexel(u, v, clutX, clutY, vramX, vramY, bpp);
+          } else {
+            texel = 0;
+            if(palettes == null) {
+              texel = texture.getPixel(u, v);
+            } else {
+              boolean found = false;
+              for(final VramTexture palette : palettes) {
+                if(palette.rect.y() - clutY == 0) {
+                  texel = texture.getTexel(palette, vramX, u, v);
+                  found = true;
+                  break;
+                }
+              }
+
+              if(!found) {
+                throw new RuntimeException("Failed to find palette");
+              }
             }
           }
-
-          int texel = texture.getPixel(u, v);
 
           if(texel == 0) {
             continue;
@@ -805,79 +758,20 @@ public class Gpu {
           }
 
           if(translucency != null && (texel & 0xff00_0000) != 0) {
-            texel = this.handleTranslucence(x, y, texel, translucency);
+            handleTranslucence = true;
           }
+        } else {
+          texel = colour;
 
-          this.getDrawBuffer().setPixel(x, y, (this.status.setMaskBit ? 1 : 0) << 24 | texel);
+          if(translucency != null) {
+            handleTranslucence = true;
+          }
         }
-      }
-    } else {
-      for(int y = y1, v = v1; y < y2; y++, v++) {
-        for(int x = x1, u = u1; x < x2; x++, u++) {
-          // Check background mask
-          if(this.status.drawPixels == DRAW_PIXELS.NOT_TO_MASKED_AREAS) {
-            if((this.getPixel(x, y) & 0xff00_0000L) != 0) {
-              continue;
-            }
-          }
 
-          boolean handleTranslucence = false;
-          int texel = 0;
-          if(textured) {
-            if(texture == null) {
-              texel = this.getTexel(u, v, clutX, clutY, vramX, vramY, bpp);
-            } else {
-              texel = 0;
-              if(palettes == null) {
-                texel = texture.getPixel(u, v);
-              } else {
-                boolean found = false;
-                for(final VramTexture palette : palettes) {
-                  if(palette.rect.y() - clutY == 0) {
-                    texel = texture.getTexel(palette, vramX, u, v);
-                    found = true;
-                    break;
-                  }
-                }
-
-                if(!found) {
-                  throw new RuntimeException("Failed to find palette");
-                }
-              }
-            }
-
-            if(texel == 0) {
-              continue;
-            }
-
-            if(!raw) {
-              texel = applyBlending(colour, texel);
-            }
-
-            if(translucency != null && (texel & 0xff00_0000) != 0) {
-              handleTranslucence = true;
-            }
-          } else {
-            texel = colour;
-
-            if(translucency != null) {
-              handleTranslucence = true;
-            }
-          }
-
-          if(handleTranslucence) {
-            for(int xx = 0; xx < this.scale; xx++) {
-              for(int yy = 0; yy < this.scale; yy++) {
-                this.getDrawBuffer().setPixel(x * this.scale + xx, y * this.scale + yy, (this.status.setMaskBit ? 1 : 0) << 24 | this.handleTranslucence(x * this.scale + xx, y * this.scale + yy, texel, translucency));
-              }
-            }
-          } else {
-            for(int xx = 0; xx < this.scale; xx++) {
-              for(int yy = 0; yy < this.scale; yy++) {
-                this.getDrawBuffer().setPixel(x * this.scale + xx, y * this.scale + yy, (this.status.setMaskBit ? 1 : 0) << 24 | texel);
-              }
-            }
-          }
+        if(handleTranslucence) {
+          this.getDrawBuffer().setPixel(x, y, (this.status.setMaskBit ? 1 : 0) << 24 | this.handleTranslucence(x, y, texel, translucency));
+        } else {
+          this.getDrawBuffer().setPixel(x, y, (this.status.setMaskBit ? 1 : 0) << 24 | texel);
         }
       }
     }
@@ -923,7 +817,7 @@ public class Gpu {
     final byte g = (byte)(c2G * ratio + c1G * (1 - ratio));
     final byte r = (byte)(c2R * ratio + c1R * (1 - ratio));
 
-    return (r & 0xff) << 16 | (g & 0xff) << 8 | (b & 0xff);
+    return (r & 0xff) << 16 | (g & 0xff) << 8 | b & 0xff;
   }
 
   public static boolean isTopLeft(final int ax, final int ay, final int bx, final int by) {
