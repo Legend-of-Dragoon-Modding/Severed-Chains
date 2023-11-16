@@ -19,11 +19,14 @@ public class WMapStruct258 {
   public TextureAnimation20 textureAnimation_1c;
   /** short */
   public float colour_20;
+
   public MeshObj mapOverlayObj;
-  public MeshObj zoomOverlayObjs[] = new MeshObj[7];
+  public MeshObj[] zoomOverlayObjs = new MeshObj[7];
   public final MV mapOverlayTransforms = new MV();
 
   public WMapAtmosphericEffectInstance60[] atmosphericEffectInstances_24;
+  public MeshObj[] atmosphericEffectSprites;
+
   public float clutYIndex_28;
   public FileData imageData_2c;
   public FileData imageData_30;
@@ -82,9 +85,9 @@ public class WMapStruct258 {
   public int _254;
 
   public void deleteAtmosphericEffectObjs() {
-    for(final WMapAtmosphericEffectInstance60 effect : this.atmosphericEffectInstances_24) {
-      if(effect.obj != null) {
-        effect.obj.delete();
+    for(final MeshObj obj : this.atmosphericEffectSprites) {
+      if(obj != null) {
+        obj.delete();
       }
     }
   }

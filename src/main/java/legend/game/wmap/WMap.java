@@ -142,7 +142,7 @@ public class WMap extends EngineState {
   private int worldMapState_800c6698;
   private int playerState_800c669c;
 
-  private int smokeEffectStage_800c66a4;
+  private int atmosphericEffectStage_800c66a4;
   private final WMapStruct258 wmapStruct258_800c66a8 = new WMapStruct258();
 
   private final WMapStruct19c0 wmapStruct19c0_800c66b0 = new WMapStruct19c0();
@@ -181,8 +181,7 @@ public class WMap extends EngineState {
   private int destinationLabelStage_800c86f0;
 
   private WmapSmokeInstance60[] smokeInstances_800c86f8;
-  /** This doesn't seem to have any effect, since the only time it's used is checking whether to turn it off */
-  private boolean renderAtmosphericEffect_800c86fc;
+
   private final RECT storedEffectsRect_800c8700 = new RECT((short)576, (short)256, (short)128, (short)256);
 
   private final Vector3f _800c87d8 = new Vector3f(0.0f, 1.0f, 0.0f);
@@ -351,21 +350,6 @@ public class WMap extends EngineState {
     this.atmosphericEffectRenderers_800f65b0[1] = this::renderClouds;
     this.atmosphericEffectRenderers_800f65b0[2] = this::renderSnow;
   }
-  /**
-   * Probably originally for disabling rendering when leaving world map, but not used.
-   * <ol start="0">
-   *   <li>{@link WMap#noOpDeallocate}</li>
-   *   <li>{@link WMap#deallocateClouds}</li>
-   *   <li>{@link WMap#deallocateSnow}</li>
-   * </ol>
-   */
-  private final Runnable[] atmosphericEffectDeallocators_800f65bc = new Runnable[3];
-  {
-    this.atmosphericEffectDeallocators_800f65bc[0] = this::noOpDeallocate;
-    this.atmosphericEffectDeallocators_800f65bc[1] = this::deallocateClouds;
-    this.atmosphericEffectDeallocators_800f65bc[2] = this::deallocateSnow;
-  }
-  private static final ArrayRef<ArrayRef<UnsignedByteRef>> snowUvs_800f65c8 = MEMORY.ref(1, 0x800f65c8L, ArrayRef.of(ArrayRef.classFor(UnsignedByteRef.class), 6, 2, ArrayRef.of(UnsignedByteRef.class, 2, 1, UnsignedByteRef::new)));
 
   private WmapPromptPopup wmapLocationPromptPopup;
   private WmapPromptPopup coolonPromptPopup;
@@ -649,7 +633,7 @@ public class WMap extends EngineState {
       gameState_800babc8.scriptFlags1_13c.setRaw(i, 0);
     }
 
-    this.FUN_800ccf04();
+    this.initWmapAudioVisuals();
     this.tickMainMenuOpenTransition_800c6690 = 0;
     pregameLoadingStage_800bb10c.set(14);
   }
@@ -785,11 +769,11 @@ public class WMap extends EngineState {
   }
 
   @Method(0x800ccf04L)
-  private void FUN_800ccf04() {
+  private void initWmapAudioVisuals() {
     this.worldMapState_800c6698 = 2;
     this.playerState_800c669c = 2;
     loadWait = 60;
-    this.smokeEffectStage_800c66a4 = 2;
+    this.atmosphericEffectStage_800c66a4 = 2;
     this.filesLoadedFlags_800c66b8.set(0);
     zOffset_1f8003e8.set(0);
     tmdGp0Tpage_1f8003ec.set(0x20);
@@ -938,7 +922,7 @@ public class WMap extends EngineState {
 
     this.deallocateWorldMap();
     this.unloadWmapPlayerModels();
-    this.atmosphericEffectDeallocators_800f65bc[this.currentWmapEffect_800f6598].run();
+    this.deallocateAtmosphericEffect();
     this.deallocateSmoke();
     textZ_800bdf00.set(13);
 
@@ -5834,7 +5818,6 @@ public class WMap extends EngineState {
     this.previousWmapEffect_800f659c = this.currentWmapEffect_800f6598;
 
     this.smokeInstances_800c86f8 = new WmapSmokeInstance60[48];
-    this.renderAtmosphericEffect_800c86fc = false;
 
     Arrays.setAll(this.smokeInstances_800c86f8, i -> new WmapSmokeInstance60());
 
@@ -5867,16 +5850,11 @@ public class WMap extends EngineState {
     // No-op
   }
 
-  @Method(0x800ebb3cL)
-  private void noOpDeallocate() {
-    // No-op
-  }
-
   @Method(0x800ebb44L)
   private void allocateClouds() {
     final WMapStruct258 struct = this.wmapStruct258_800c66a8;
+    struct.atmosphericEffectSprites = WMapAtmosphericEffectInstance60.buildCloudSprites();
 
-    this.renderAtmosphericEffect_800c86fc = true;
     struct.atmosphericEffectInstances_24 = new WMapAtmosphericEffectInstance60[24];
 
     //LAB_800ebbb4
@@ -5906,11 +5884,9 @@ public class WMap extends EngineState {
       }
 
       //LAB_800ebe24
-      cloud.rotation_50.set(0.0f, 0.0f, 0.0f);
-      cloud.x_58 = (288 - rand() % 64) / 2;
-      cloud.y_5a = ( 80 - rand() % 32) / 2;
+      cloud.snowUvIndex_50 = 0;
+      cloud.translation_58.set((288 - rand() % 64) / 2, (80 - rand() % 32) / 2, 0);
       cloud.brightness_5c = 0.0f;
-      cloud.z_5e = 0;
     }
 
     //LAB_800ebf2c
@@ -5927,18 +5903,17 @@ public class WMap extends EngineState {
   private void renderClouds() {
     final WMapStruct258 struct = this.wmapStruct258_800c66a8;
     final WMapAtmosphericEffectInstance60 cloud0 = struct.atmosphericEffectInstances_24[0];
-
-    this.rotateCoord2(cloud0.rotation_50, cloud0.coord2_00);
+    cloud0.coord2_00.flg = 0;
 
     //LAB_800ec028
     for(int i = 0; i < 24; i++) {
       final WMapAtmosphericEffectInstance60 cloud = struct.atmosphericEffectInstances_24[i];
 
       //LAB_800ec044
-      cloud.z_5e++;
-      if(cloud.z_5e >> i % 3 + 4 != 0) {
+      cloud.translation_58.z++;
+      if(cloud.translation_58.z >> i % 3 + 4 != 0) {
         cloud.coord2_00.coord.transfer.x++;
-        cloud.z_5e = 0;
+        cloud.translation_58.z = 0;
       }
 
       //LAB_800ec288
@@ -5977,21 +5952,21 @@ public class WMap extends EngineState {
         GsGetLs(cloud.coord2_00, cloud.transforms);
         cloud.transforms.identity(); // NOTE: does not clear translation
         GTE.setTransforms(cloud.transforms);
-        GTE.perspectiveTransform(-cloud.x_58, -cloud.y_5a, 0);
+        GTE.perspectiveTransform(-cloud.translation_58.x, -cloud.translation_58.y, 0);
         final float sx0 = GTE.getScreenX(2);
         final float sy0 = GTE.getScreenY(2);
         float z = GTE.getScreenZ(3) / 4.0f;
 
         if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3) {
           //LAB_800ec534
-          GTE.perspectiveTransform(cloud.x_58, -cloud.y_5a, 0);
+          GTE.perspectiveTransform(cloud.translation_58.x, -cloud.translation_58.y, 0);
           final float sx1 = GTE.getScreenX(2);
           final float sy1 = GTE.getScreenY(2);
           z = GTE.getScreenZ(3) / 4.0f;
 
           if(z >= 5 && z < orderingTableSize_1f8003c8.get() - 3 && sx1 - sx0 <= 0x400) {
             //LAB_800ec5ec
-            GTE.perspectiveTransform(-cloud.x_58, cloud.y_5a, 0);
+            GTE.perspectiveTransform(-cloud.translation_58.x, cloud.translation_58.y, 0);
             final float sx2 = GTE.getScreenX(2);
             final float sy2 = GTE.getScreenY(2);
             z = GTE.getScreenZ(3) / 4.0f;
@@ -6025,7 +6000,7 @@ public class WMap extends EngineState {
               //LAB_800ec798
               if(!MathHelper.flEq(cloud.brightness_5c, 0.0f)) {
                 //LAB_800ec7b8
-                GTE.perspectiveTransform(cloud.x_58, cloud.y_5a, 0);
+                GTE.perspectiveTransform(cloud.translation_58.x, cloud.translation_58.y, 0);
                 final float sx3 = GTE.getScreenX(2);
                 final float sy3 = GTE.getScreenY(2);
                 z = GTE.getScreenZ(3) / 4.0f;
@@ -6034,22 +6009,10 @@ public class WMap extends EngineState {
                   //LAB_800ec83c
                   //LAB_800ec870
                   //LAB_800ec8a4
-                  if(cloud.obj == null) {
-                    cloud.queueZ = i < 12 ? 139.0f : orderingTableSize_1f8003c8.get() - 4.0f;
-                    cloud.obj = new QuadBuilder("Cloud (index " + i + ')')
-                      .bpp(Bpp.BITS_4)
-                      .clut(576, 496 + i % 3)
-                      .vramPos(576, 256)
-                      .size(1.0f, 1.0f)
-                      .uv(0, i % 3 * 64)
-                      .uvSize(255, 64)
-                      .translucency(Translucency.B_PLUS_F)
-                      .build();
-                  }
-
+                  cloud.queueZ = i < 12 ? 556.0f : (orderingTableSize_1f8003c8.get() - 4.0f) * 4.0f;
                   cloud.transforms.scaling(sx1 - sx0, sy2 - sy0, 1.0f);
                   cloud.transforms.transfer.set(GPU.getOffsetX() + sx0, GPU.getOffsetY() + sy0, cloud.queueZ);
-                  RENDERER.queueOrthoModel(cloud.obj, cloud.transforms)
+                  RENDERER.queueOrthoModel(this.wmapStruct258_800c66a8.atmosphericEffectSprites[i % 3], cloud.transforms)
                     .monochrome(i < 12 ? cloud.brightness_5c : cloud.brightness_5c / 3.0f);
                 }
               }
@@ -6063,33 +6026,30 @@ public class WMap extends EngineState {
 
   @Method(0x800eca3cL)
   private void allocateSnow() {
-    this.renderAtmosphericEffect_800c86fc = true;
-    this.wmapStruct258_800c66a8.atmosphericEffectInstances_24 = new WMapAtmosphericEffectInstance60[64];
+    final WMapStruct258 struct = this.wmapStruct258_800c66a8;
+    struct.atmosphericEffectSprites = WMapAtmosphericEffectInstance60.buildSnowSprites();
+
+    struct.atmosphericEffectInstances_24 = new WMapAtmosphericEffectInstance60[64];
 
     //LAB_800eca94
     for(int i = 0; i < 64; i++) {
       final WMapAtmosphericEffectInstance60 snowflake = new WMapAtmosphericEffectInstance60();
-      this.wmapStruct258_800c66a8.atmosphericEffectInstances_24[i] = snowflake;
+      struct.atmosphericEffectInstances_24[i] = snowflake;
 
       //LAB_800ecab0
       GsInitCoordinate2(null, snowflake.coord2_00);
       snowflake.coord2_00.coord.transfer.x = 500 - rand() % 1000;
       snowflake.coord2_00.coord.transfer.y =     - rand() %  200;
       snowflake.coord2_00.coord.transfer.z = 500 - rand() % 1000;
-      snowflake.rotation_50.set(0.0f, 0.0f, rand() % 12);
-      snowflake.x_58 = rand() % 2 - 1;
-      snowflake.y_5a = rand() % 2 + 1;
+      snowflake.snowUvIndex_50 = rand() % 12;
+      snowflake.translation_58.set(rand() % 2 - 1, rand() % 2 + 1, rand() % 2 - 1);
       snowflake.brightness_5c = 0.0f;
-      snowflake.z_5e = rand() % 2 - 1;
     }
     //LAB_800eccfc
   }
 
   @Method(0x800ecd10L)
   private void renderSnow() {
-    final MV lsMatrix = new MV();
-    final Vector3f rotation = new Vector3f();
-
     //LAB_800ecdb4
     for(int i = 0; i < 64; i++) {
       final WMapAtmosphericEffectInstance60 snowflake = this.wmapStruct258_800c66a8.atmosphericEffectInstances_24[i];
@@ -6122,9 +6082,9 @@ public class WMap extends EngineState {
       //LAB_800ed164
       if(!MathHelper.flEq(snowflake.brightness_5c, 0.0f)) {
         //LAB_800ed184
-        snowflake.coord2_00.coord.transfer.x += snowflake.x_58 / (3.0f / vsyncMode_8007a3b8);
-        snowflake.coord2_00.coord.transfer.y += snowflake.y_5a / (3.0f / vsyncMode_8007a3b8);
-        snowflake.coord2_00.coord.transfer.z += snowflake.z_5e / (3.0f / vsyncMode_8007a3b8);
+        snowflake.coord2_00.coord.transfer.x += snowflake.translation_58.x / (3.0f / vsyncMode_8007a3b8);
+        snowflake.coord2_00.coord.transfer.y += snowflake.translation_58.y / (3.0f / vsyncMode_8007a3b8);
+        snowflake.coord2_00.coord.transfer.z += snowflake.translation_58.z / (3.0f / vsyncMode_8007a3b8);
 
         if(snowflake.coord2_00.coord.transfer.y > 0.0f) {
           snowflake.coord2_00.coord.transfer.x =  500 - rand() % 1000;
@@ -6133,10 +6093,10 @@ public class WMap extends EngineState {
         }
 
         //LAB_800ed2bc
-        this.rotateCoord2(rotation, snowflake.coord2_00);
-        GsGetLs(snowflake.coord2_00, lsMatrix);
-        lsMatrix.identity(); // NOTE: does not clear translation
-        GTE.setTransforms(lsMatrix);
+        snowflake.coord2_00.flg = 0;
+        GsGetLs(snowflake.coord2_00, snowflake.transforms);
+        snowflake.transforms.identity(); // NOTE: does not clear translation
+        GTE.setTransforms(snowflake.transforms);
         GTE.perspectiveTransform(-2, -2, 0);
 
         final float sx0 = GTE.getScreenX(2);
@@ -6173,27 +6133,11 @@ public class WMap extends EngineState {
                 //LAB_800ed570
                 //LAB_800ed5a4
                 //LAB_800ed5d8
-                snowflake.rotation_50.z = (snowflake.rotation_50.z + 1) % 12;
-                final int index = (int)(snowflake.rotation_50.z / 2.0f);
-
-                final int u = snowUvs_800f65c8.get(index).get(0).get();
-                final int v = snowUvs_800f65c8.get(index).get(1).get();
-
-                GPU.queueCommand(139, new GpuCommandPoly(4)
-                  .bpp(Bpp.BITS_4)
-                  .translucent(Translucency.B_PLUS_F)
-                  .clut(640, 496)
-                  .vramPos(640, 256)
-                  .monochrome(snowflake.brightness_5c)
-                  .pos(0, sx0, sy0)
-                  .pos(1, sx1, sy1)
-                  .pos(2, sx2, sy2)
-                  .pos(3, sx3, sy3)
-                  .uv(0, u, v)
-                  .uv(1, u + 8, v)
-                  .uv(2, u, v + 8)
-                  .uv(3, u + 8, v + 8)
-                );
+                snowflake.snowUvIndex_50 = (snowflake.snowUvIndex_50 + 1) % 12;
+                final int index = (int)(snowflake.snowUvIndex_50 / 2.0f);
+                snowflake.transforms.transfer.set(GPU.getOffsetX() + sx0, GPU.getOffsetY() + sy0, 556.0f);
+                RENDERER.queueOrthoModel(this.wmapStruct258_800c66a8.atmosphericEffectSprites[index], snowflake.transforms)
+                  .monochrome(snowflake.brightness_5c);
               }
             }
           }
@@ -6210,25 +6154,23 @@ public class WMap extends EngineState {
     }
 
     //LAB_800ed98c
-    switch(this.smokeEffectStage_800c66a4) {
-      case 0 -> { }
-
+    switch(this.atmosphericEffectStage_800c66a4) {
       case 2 -> {
         if((this.filesLoadedFlags_800c66b8.get() & 0x1_0000) != 0 && (this.filesLoadedFlags_800c66b8.get() & 0x1000) != 0) {
-          this.smokeEffectStage_800c66a4 = 3;
+          this.atmosphericEffectStage_800c66a4 = 3;
         }
       }
 
       //LAB_800eda18
       case 3 -> {
         this.atmosphericEffectAllocators_800f65a4[this.currentWmapEffect_800f6598].run();
-        this.smokeEffectStage_800c66a4 = 4;
+        this.atmosphericEffectStage_800c66a4 = 4;
       }
 
       case 4 -> {
         if(this.worldMapState_800c6698 >= 3 || this.playerState_800c669c >= 3) {
           //LAB_800eda98
-          this.smokeEffectStage_800c66a4 = 5;
+          this.atmosphericEffectStage_800c66a4 = 5;
         }
       }
 
@@ -6237,15 +6179,15 @@ public class WMap extends EngineState {
         this.previousWmapEffect_800f659c = this.currentWmapEffect_800f6598;
         this.currentWmapEffect_800f6598 = (locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).effectFlags_12.get() & 0x30) >>> 4;
         if(this.currentWmapEffect_800f6598 != this.previousWmapEffect_800f659c) {
-          this.atmosphericEffectDeallocators_800f65bc[this.previousWmapEffect_800f659c].run();
-          this.smokeEffectStage_800c66a4 = 3;
+          this.deallocateAtmosphericEffect();
+          this.atmosphericEffectStage_800c66a4 = 3;
         } else {
           //LAB_800edb5c
           this.atmosphericEffectRenderers_800f65b0[this.currentWmapEffect_800f6598].run();
         }
       }
 
-      default -> throw new IllegalArgumentException("Invalid index " + this.smokeEffectStage_800c66a4);
+      default -> throw new IllegalArgumentException("Invalid index " + this.atmosphericEffectStage_800c66a4);
     }
 
     //LAB_800edba4
@@ -6441,17 +6383,9 @@ public class WMap extends EngineState {
   }
 
   @Method(0x800eed3cL)
-  private void deallocateClouds() {
-    if(this.renderAtmosphericEffect_800c86fc) {
-      this.renderAtmosphericEffect_800c86fc = false;
+  private void deallocateAtmosphericEffect() {
+    if(this.wmapStruct258_800c66a8.atmosphericEffectSprites != null) {
       this.wmapStruct258_800c66a8.deleteAtmosphericEffectObjs();
-    }
-  }
-
-  @Method(0x800eed90L)
-  private void deallocateSnow() {
-    if(this.renderAtmosphericEffect_800c86fc) {
-      this.renderAtmosphericEffect_800c86fc = false;
     }
   }
 
