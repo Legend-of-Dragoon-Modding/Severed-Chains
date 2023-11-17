@@ -401,6 +401,7 @@ public final class GameEngine {
   }
 
   private static void loadGfx() {
+    RENDERER.setProjectionSize(320.0f, 240.0f);
     RENDERER.camera().moveTo(0.0f, 0.0f, -2.0f);
 
     glEnable(GL_BLEND);

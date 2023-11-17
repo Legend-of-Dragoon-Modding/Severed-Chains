@@ -99,6 +99,7 @@ public class RenderEngine {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
 
   public static int legacyMode;
+  public boolean usePs1Gpu = true;
 
   private Camera camera2d;
   private Camera camera3d;
@@ -435,7 +436,7 @@ public class RenderEngine {
 
       this.renderCallback.run();
 
-      if(legacyMode == 0) {
+      if(legacyMode == 0 && this.usePs1Gpu) {
         this.transparentFrameBuffer.bind();
         glClearBufferfv(GL_COLOR, 0, this.clear0);
         glClearBufferfv(GL_COLOR, 1, this.clear1);
