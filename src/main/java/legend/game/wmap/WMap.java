@@ -473,7 +473,7 @@ public class WMap extends EngineState {
           this.renderCenteredShadowedText(this.destLabelName, this.destLabelX, this.destLabelY, TextColour.WHITE, 0);
         }
 
-        if(this.coolonWarpDestLabelName != null) {
+        if(this.coolonWarpDestLabelName != null && this.destinationLabelStage_800c86f0 != 0) {
           this.renderCenteredShadowedText(this.coolonWarpDestLabelName, this.coolonWarpDestLabelX, this.coolonWarpDestLabelY, TextColour.WHITE, 0);
         }
 
