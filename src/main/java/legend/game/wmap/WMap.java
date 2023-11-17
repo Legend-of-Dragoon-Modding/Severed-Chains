@@ -171,7 +171,7 @@ public class WMap extends EngineState {
 
   public int encounterAccumulator_800c6ae8;
 
-  private static final ArrayRef<VECTOR> smokeTranslationVectors_800c74b8 = MEMORY.ref(4, 0x800c74b8L, ArrayRef.of(VECTOR.class, 0x101, 0x10, VECTOR::new));
+  private static final ArrayRef<VECTOR> locationModelTranslationVectors_800c74b8 = MEMORY.ref(4, 0x800c74b8L, ArrayRef.of(VECTOR.class, 0x101, 0x10, VECTOR::new));
   private static final ArrayRef<ShortRef> locationsIndices_800c84c8 = MEMORY.ref(2, 0x800c84c8L, ArrayRef.of(ShortRef.class, 0x101, 2, ShortRef::new));
 
   private int placeCount_800c86cc;
