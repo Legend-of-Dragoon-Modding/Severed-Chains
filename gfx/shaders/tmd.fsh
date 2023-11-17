@@ -46,6 +46,7 @@ void main() {
     // Texture recolouring uses an RGB range of 0..128 or 0.0..0.5 so we multiply by 2
     if((flags & 0x4) != 0) {
       outColour.rgb *= 2.0;
+      outColour.a = 1.0;
     }
 
     //NOTE: these only work for 4/8 bpp

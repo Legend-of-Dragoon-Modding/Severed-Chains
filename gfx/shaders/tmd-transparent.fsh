@@ -36,8 +36,8 @@ void main() {
 
   vec4 colour = vec4(1.0, 1.0, 1.0, 1.0);
 
-  // Vertex colour
-  if((flags & 0x4) != 0) {
+  // Vertex colour or lit
+  if((flags & 0x5) != 0) {
     colour = vertColour;
   }
 
@@ -46,6 +46,7 @@ void main() {
     // Texture recolouring uses an RGB range of 0..128 or 0.0..0.5 so we multiply by 2
     if((flags & 0x4) != 0) {
       colour *= 2.0;
+      colour.a = 1.0;
     }
 
     //NOTE: these only work for 4/8 bpp
