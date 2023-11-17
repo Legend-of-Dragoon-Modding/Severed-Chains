@@ -3113,7 +3113,7 @@ public class WMap extends EngineState {
         textboxes_800be358[7].width_1c = textboxes_800be358[7].chars_18 * 9 / 2;
         textboxes_800be358[7].height_1e = textboxes_800be358[7].lines_1a * 6 + 4;
         textboxes_800be358[7].x_14 = x;
-        textboxes_800be358[7].y_16 = y;
+        textboxes_800be358[7].y_16 = y - 4;
       }
 
       //LAB_800dcb48
@@ -3122,7 +3122,7 @@ public class WMap extends EngineState {
       if(this.shouldSetCoolonWarpDestLabelMetrics) {
         this.coolonWarpDestLabelName = coolonWarpDest_800ef228[struct.coolonWarpIndex_222].placeName_1c;
         this.coolonWarpDestLabelX = x;
-        this.coolonWarpDestLabelY = y - lines * 7 + 1;
+        this.coolonWarpDestLabelY = y - lines * 7 - 3;
       }
     }
     //LAB_800dcc0c
