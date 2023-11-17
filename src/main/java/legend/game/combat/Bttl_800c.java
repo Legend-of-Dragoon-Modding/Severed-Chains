@@ -21,6 +21,7 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.core.opengl.McqBuilder;
 import legend.core.opengl.Obj;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.EngineStateEnum;
@@ -122,6 +123,7 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
+import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
@@ -1530,6 +1532,10 @@ public final class Bttl_800c {
         battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].obj.delete();
       }
 
+      if(battlePreloadedEntities_1f8003f4.skyboxObj != null) {
+        battlePreloadedEntities_1f8003f4.skyboxObj.delete();
+      }
+
       script_800c66fc = null;
 
       //LAB_800c8314
@@ -1663,17 +1669,35 @@ public final class Bttl_800c {
     } else {
       final McqHeader mcq = battlePreloadedEntities_1f8003f4.stageMcq_9cb0;
 
+      if(battlePreloadedEntities_1f8003f4.skyboxObj == null) {
+        battlePreloadedEntities_1f8003f4.skyboxObj = new McqBuilder("Battle Skybox", mcq)
+          .vramOffset(320, 0)
+          .build();
+      }
+
       mcqOffsetX_800c6774.add(mcqStepX_800c676c.get());
       mcqOffsetY_800c6778.add(mcqStepY_800c6770.get());
-      final int x0 = (mcqBaseOffsetX_800c66cc.get() * MathHelper.radToPsxDeg(calculateXAngleFromRefpointToViewpoint()) / 0x1000 + mcqOffsetX_800c6774.get()) % mcq.screenWidth_14 - centreScreenX_1f8003dc.get();
+      final int x0 = (mcqBaseOffsetX_800c66cc.get() * MathHelper.radToPsxDeg(calculateXAngleFromRefpointToViewpoint()) / 0x1000 + mcqOffsetX_800c6774.get()) % mcq.screenWidth_14;
       final int x1 = x0 - mcq.screenWidth_14;
       final int x2 = x0 + mcq.screenWidth_14;
-      int y = mcqOffsetY_800c6778.get() - MathHelper.radToPsxDeg(MathHelper.floorMod(calculateYAngleFromRefpointToViewpoint() + MathHelper.PI, MathHelper.TWO_PI)) + 0x760 - centreScreenY_1f8003de.get();
+      int y = mcqOffsetY_800c6778.get() - MathHelper.radToPsxDeg(MathHelper.floorMod(calculateYAngleFromRefpointToViewpoint() + MathHelper.PI, MathHelper.TWO_PI)) + 1888;
       renderMcq(mcq, 320, 0, x0, y, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
       renderMcq(mcq, 320, 0, x1, y, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
 
+      battlePreloadedEntities_1f8003f4.skyboxTransforms.transfer.set(x0, y, orderingTableSize_1f8003c8.get() - 8.0f);
+      RENDERER.queueOrthoUnderlayModel(battlePreloadedEntities_1f8003f4.skyboxObj, battlePreloadedEntities_1f8003f4.skyboxTransforms)
+        .monochrome(mcqColour_800fa6dc.get() / 128.0f);
+
+      battlePreloadedEntities_1f8003f4.skyboxTransforms.transfer.set(x1, y, orderingTableSize_1f8003c8.get() - 8.0f);
+      RENDERER.queueOrthoUnderlayModel(battlePreloadedEntities_1f8003f4.skyboxObj, battlePreloadedEntities_1f8003f4.skyboxTransforms)
+        .monochrome(mcqColour_800fa6dc.get() / 128.0f);
+
       if(centreScreenX_1f8003dc.get() >= x2) {
         renderMcq(mcq, 320, 0, x2, y, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
+
+        battlePreloadedEntities_1f8003f4.skyboxTransforms.transfer.set(x2, y, orderingTableSize_1f8003c8.get() - 8.0f);
+        RENDERER.queueOrthoUnderlayModel(battlePreloadedEntities_1f8003f4.skyboxObj, battlePreloadedEntities_1f8003f4.skyboxTransforms)
+          .monochrome(mcqColour_800fa6dc.get() / 128.0f);
       }
 
       //LAB_800c89d4
@@ -1701,6 +1725,11 @@ public final class Bttl_800c {
 
   @Method(0x800c8b20L)
   public static void loadStage(final int stage) {
+    if(battlePreloadedEntities_1f8003f4.skyboxObj != null) {
+      battlePreloadedEntities_1f8003f4.skyboxObj.delete();
+      battlePreloadedEntities_1f8003f4.skyboxObj = null;
+    }
+
     loadDrgnDir(0, 2497 + stage, files -> {
       if(files.get(0).hasVirtualSize()) {
         loadStageMcq(new McqHeader(files.get(0)));
