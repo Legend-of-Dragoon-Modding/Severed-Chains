@@ -31,7 +31,9 @@ import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
@@ -130,9 +132,8 @@ public class RenderEngine {
 
   // Text
   public final Obj[] chars = new Obj[0x56];
-  // Fullscreen quads
-  public Obj fullscreenWhiteout;
-  public Obj fullscreenBlackout;
+  // Plain quads
+  public final Map<Translucency, Obj> plainQuads = new EnumMap<>(Translucency.class);
   // Simple quads
   public Obj centredQuadBPlusF;
   public Obj centredQuadBMinusF;
@@ -378,19 +379,15 @@ public class RenderEngine {
     }
 
     // Build fullscreen fade quads
-    this.fullscreenWhiteout = new QuadBuilder("FullscreenWhiteout")
-      .translucency(Translucency.B_PLUS_F)
-      .pos(0.0f, 0.0f, 999)
-      .size(384, 240)
-      .build();
-    this.fullscreenWhiteout.persistent = true;
+    for(final Translucency translucency : Translucency.FOR_RENDERING) {
+      final Obj obj = new QuadBuilder("Plain Quad " + translucency)
+        .translucency(translucency)
+        .size(1.0f, 1.0f)
+        .build();
+      obj.persistent = true;
 
-    this.fullscreenBlackout = new QuadBuilder("FullscreenBlackout")
-      .translucency(Translucency.B_MINUS_F)
-      .pos(0.0f, 0.0f, 999)
-      .size(384, 240)
-      .build();
-    this.fullscreenBlackout.persistent = true;
+      this.plainQuads.put(translucency, obj);
+    }
 
     this.centredQuadBPlusF = new QuadBuilder("Centred Quad B+F")
       .translucency(Translucency.B_PLUS_F)
