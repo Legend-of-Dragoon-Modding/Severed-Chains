@@ -620,6 +620,7 @@ public final class Scus94491BpeSegment {
   public static void swapDisplayBuffer() {
     GsSwapDispBuff();
     GsSortClear(clearRed_8007a3a8.get(), clearGreen_800bb104.get(), clearBlue_800babc0.get());
+    RENDERER.setClearColour(clearRed_8007a3a8.get() / 255.0f, clearGreen_800bb104.get() / 255.0f, clearBlue_800babc0.get() / 255.0f);
   }
 
   @Method(0x80013200L)
