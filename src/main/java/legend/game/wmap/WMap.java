@@ -4732,7 +4732,7 @@ public class WMap extends EngineState {
         textboxes_800be358[i].width_1c = textboxes_800be358[i].chars_18 * 9 / 2;
         textboxes_800be358[i].height_1e = textboxes_800be358[i].lines_1a * 6 + 4;
         textboxes_800be358[i].x_14 = x;
-        textboxes_800be358[i].y_16 = y;
+        textboxes_800be358[i].y_16 = y - 4;
 
         //LAB_800e74d8
         textZ_800bdf00.set(i + 119);
@@ -4741,7 +4741,7 @@ public class WMap extends EngineState {
         if(this.startLocationLabelsActive_800c68a8) {
           this.startLabelNames[i] = places_800f0234.get(place).name_00.deref();
           this.startLabelXs[i] = x;
-          this.startLabelYs[i] = y - lines.get() * 7 + 1;
+          this.startLabelYs[i] = y - lines.get() * 7 - 3;
         }
       }
       //LAB_800e7590
