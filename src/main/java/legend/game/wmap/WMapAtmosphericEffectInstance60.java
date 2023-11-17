@@ -16,7 +16,7 @@ public class WMapAtmosphericEffectInstance60 {
   public float queueZ;
 
   public final GsCOORDINATE2 coord2_00 = new GsCOORDINATE2();
-  /** Originally vectro rotation_50 */
+  /** Originally vector rotation_50 */
   public int snowUvIndex_50;
   /** Was short x_58, short y_5a, byte z_5e */
   public final Vector3i translation_58 = new Vector3i();

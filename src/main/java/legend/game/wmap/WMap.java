@@ -2801,7 +2801,7 @@ public class WMap extends EngineState {
         //LAB_800db0f0
         struct258.models_0c[2].coord2_14.transforms.scale.set(struct258.models_0c[2].coord2_14.transforms.scale.x);
 
-        this.renderCoolonMap(true, 0x1L);
+        this.renderCoolonMap(true, false);
         break;
 
       case 5:
@@ -2814,13 +2814,13 @@ public class WMap extends EngineState {
         }
 
         //LAB_800db1d8
-        this.renderCoolonMap(false, 0);
+        this.renderCoolonMap(false, true);
         break;
 
       case 6:
         textboxes_800be358[6].z_0c = 18;
 
-        this.renderCoolonMap(false, 0);
+        this.renderCoolonMap(false, true);
 
         if(Input.pressedThisFrame(InputAction.BUTTON_EAST)) {
           playSound(0, 3, 0, 0, (short)0, (short)0);
@@ -2874,7 +2874,7 @@ public class WMap extends EngineState {
         //LAB_800db74c
         struct258.models_0c[2].coord2_14.transforms.scale.set(struct258.models_0c[2].coord2_14.transforms.scale.x);
 
-        this.renderCoolonMap(false, 0);
+        this.renderCoolonMap(false, true);
         break;
 
       case 8:
@@ -2901,7 +2901,7 @@ public class WMap extends EngineState {
         //LAB_800dba98
 
         this.FUN_800e3fac(1);
-        this.renderCoolonMap(false, 0);
+        this.renderCoolonMap(false, true);
         break;
 
       case 0xb:
@@ -2999,7 +2999,7 @@ public class WMap extends EngineState {
   }
 
   @Method(0x800dc178L)
-  private void renderCoolonMap(final boolean enableInput, final long a1) {
+  private void renderCoolonMap(final boolean enableInput, final boolean destSelected) {
     final WMapStruct258 struct = this.wmapStruct258_800c66a8;
 
     final CoolonWarpDestination20 warp1 = coolonWarpDest_800ef228[struct.coolonWarpIndex_221];
@@ -3073,7 +3073,7 @@ public class WMap extends EngineState {
       .uv(((int)(tickCount_800bb0fc.get() / (3.0f / vsyncMode_8007a3b8)) & 0x7) * 16, 32)
     );
 
-    if(a1 == 0) {
+    if(destSelected) {
       //LAB_800dcbf4
       FUN_8002a3ec(7, 0);
       this.destinationLabelStage_800c86f0 = 0;
@@ -4655,15 +4655,15 @@ public class WMap extends EngineState {
     final List<WmapLocationLabelMetrics0c> labelList = new ArrayList<>();
 
     //LAB_800e6c38
-    final MV sp0x38 = new MV();
+    final MV transforms = new MV();
     for(int i = 0; i < this.placeCount_800c86cc; i++) {
       //LAB_800e6c5c
       if(!places_800f0234.get(locations_800f0e34.get(locationsIndices_800c84c8.get(i).get()).placeIndex_02.get()).name_00.isNull()) {
         //LAB_800e6ccc
-        GsGetLs(this.wmapStruct258_800c66a8.tmdRendering_08.coord2s_04[0], sp0x38);
-        GTE.setTransforms(sp0x38);
+        GsGetLs(this.wmapStruct258_800c66a8.tmdRendering_08.coord2s_04[0], transforms);
+        GTE.setTransforms(transforms);
 
-        GTE.perspectiveTransform(smokeTranslationVectors_800c74b8.get(i));
+        GTE.perspectiveTransform(locationModelTranslationVectors_800c74b8.get(i));
         final float sx = GTE.getScreenX(2);
         final float sy = GTE.getScreenY(2);
         final float z = GTE.getScreenZ(3) / 4.0f;
@@ -5781,7 +5781,7 @@ public class WMap extends EngineState {
 
           //LAB_800eb694
           if(sp20 == 1) {
-            smokeTranslationVectors_800c74b8.get(effectCount).set(sp0x60[0]);
+            locationModelTranslationVectors_800c74b8.get(effectCount).set(sp0x60[0]);
           } else {
             //LAB_800eb724
             sp0x30.set(sp0x60[0]);
@@ -5795,7 +5795,7 @@ public class WMap extends EngineState {
             }
 
             //LAB_800eb828
-            smokeTranslationVectors_800c74b8.get(effectCount).set(sp0x50);
+            locationModelTranslationVectors_800c74b8.get(effectCount).set(sp0x50);
           }
 
           //LAB_800eb8ac
@@ -6262,22 +6262,22 @@ public class WMap extends EngineState {
 
           //LAB_800edebc
           //LAB_800edf88
-          smoke.coord2_00.coord.transfer.x = smokeTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
-          smoke.coord2_00.coord.transfer.y = smokeTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
-          smoke.coord2_00.coord.transfer.z = smokeTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16;
+          smoke.coord2_00.coord.transfer.x = locationModelTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
+          smoke.coord2_00.coord.transfer.y = locationModelTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
+          smoke.coord2_00.coord.transfer.z = locationModelTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16;
 
           if(this.mapState_800c6798.continentIndex_00 == 0) {
             if(mode == 4) {
               //LAB_800ee0e4
-              smoke.coord2_00.coord.transfer.x = smokeTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
-              smoke.coord2_00.coord.transfer.y = smokeTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
-              smoke.coord2_00.coord.transfer.z = smokeTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 + 80;
+              smoke.coord2_00.coord.transfer.x = locationModelTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
+              smoke.coord2_00.coord.transfer.y = locationModelTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
+              smoke.coord2_00.coord.transfer.z = locationModelTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 + 80;
               //LAB_800ee1dc
             } else if(mode == 8) {
               //LAB_800ee238
-              smoke.coord2_00.coord.transfer.x = smokeTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16 + 48;
-              smoke.coord2_00.coord.transfer.y = smokeTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
-              smoke.coord2_00.coord.transfer.z = smokeTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 + 48;
+              smoke.coord2_00.coord.transfer.x = locationModelTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16 + 48;
+              smoke.coord2_00.coord.transfer.y = locationModelTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
+              smoke.coord2_00.coord.transfer.z = locationModelTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 + 48;
             }
 
             //LAB_800ee32c
@@ -6285,15 +6285,15 @@ public class WMap extends EngineState {
           } else if(this.mapState_800c6798.continentIndex_00 == 1) {
             if(mode == 4) {
               //LAB_800ee3a4
-              smoke.coord2_00.coord.transfer.x = smokeTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
-              smoke.coord2_00.coord.transfer.y = smokeTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4 + 48;
-              smoke.coord2_00.coord.transfer.z = smokeTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 - 100;
+              smoke.coord2_00.coord.transfer.x = locationModelTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
+              smoke.coord2_00.coord.transfer.y = locationModelTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4 + 48;
+              smoke.coord2_00.coord.transfer.z = locationModelTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 - 100;
               //LAB_800ee4a0
             } else if(mode == 8) {
               //LAB_800ee4fc
-              smoke.coord2_00.coord.transfer.x = smokeTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16 - 48;
-              smoke.coord2_00.coord.transfer.y = smokeTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
-              smoke.coord2_00.coord.transfer.z = smokeTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 + 32;
+              smoke.coord2_00.coord.transfer.x = locationModelTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16 - 48;
+              smoke.coord2_00.coord.transfer.y = locationModelTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
+              smoke.coord2_00.coord.transfer.z = locationModelTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 + 32;
             }
           }
 
