@@ -224,6 +224,7 @@ public class WMap extends EngineState {
     this::transitionToTitle,
     this::loadBackgroundObj,
   };
+  // TODO Do some refactoring to remove these two statics
   /** Only seems to use element at index 1, but not positive */
   private static final ArrayRef<WmapLocationThumbnailMetrics08> locationThumbnailMetrics_800ef0cc = MEMORY.ref(2, 0x800ef0ccL, ArrayRef.of(WmapLocationThumbnailMetrics08.class, 7, 8, WmapLocationThumbnailMetrics08::new));
   private static final ArrayRef<WmapRectMetrics06> zoomUiMetrics_800ef104 = MEMORY.ref(1, 0x800ef104L, ArrayRef.of(WmapRectMetrics06.class, 7, 6, WmapRectMetrics06::new));
@@ -768,6 +769,12 @@ public class WMap extends EngineState {
     }
   }
 
+  private void initMapMarkers() {
+    final WMapStruct258 struct = this.wmapStruct258_800c66a8;
+    struct.mapArrow = new MapMarker("MapArrow", 8, 16, 32, false);
+    struct.coolonPlaceMarker = new MapMarker("CoolonPlaceMarker", 3, 16, 0, true);
+  }
+
   @Method(0x800ccf04L)
   private void initWmapAudioVisuals() {
     this.worldMapState_800c6698 = 2;
@@ -789,6 +796,7 @@ public class WMap extends EngineState {
     this.loadMapMcq();
     this.coolonQueenFuryOverlay = new CoolonQueenFuryOverlay();
     this.initCoolonMovePrompt();
+    this.initMapMarkers();
 
     if(this.mapState_800c6798.continentIndex_00 < 3) { // South Serdio, North Serdio, Tiberoa
       loadLocationMenuSoundEffects(1);
@@ -3034,29 +3042,14 @@ public class WMap extends EngineState {
     }
 
     //LAB_800dc410
-    final int u = (int)(tickCount_800bb0fc.get() / 5 / (3.0f / vsyncMode_8007a3b8) % 3);
+    int u = (int)(tickCount_800bb0fc.get() / 5 / (3.0f / vsyncMode_8007a3b8) % 3);
 
     //LAB_800dc468
-    for(int sp1c = 0; sp1c < 9; sp1c++) {
+    for(int i = 0; i < 9; i++) {
       //LAB_800dc484
-      final int left = coolonWarpDest_800ef228[sp1c].x_18;
-      final int top = coolonWarpDest_800ef228[sp1c].y_1a;
-
-      GPU.queueCommand(orderingTableSize_1f8003c8.get() - 4, new GpuCommandPoly(4)
-        .bpp(Bpp.BITS_4)
-        .translucent(Translucency.B_PLUS_F)
-        .clut(640, 496)
-        .vramPos(640, 256)
-        .rgb(0x80, 0x80, 0xff)
-        .pos(0, left, top)
-        .pos(1, left + 10, top)
-        .pos(2, left, top + 10)
-        .pos(3, left + 10, top + 10)
-        .uv(0, u * 16, 0)
-        .uv(1, (u + 1) * 16, 0)
-        .uv(2, u * 16, 16)
-        .uv(3, (u + 1) * 16, 16)
-      );
+      final int left = coolonWarpDest_800ef228[i].x_18;
+      final int top = coolonWarpDest_800ef228[i].y_1a;
+      struct.coolonPlaceMarker.render(u, GPU.getOffsetX() + left, GPU.getOffsetY() + top, (orderingTableSize_1f8003c8.get() - 4.0f) * 4.0f, 10.0f, 2);
     }
 
     //LAB_800dc734
@@ -3064,14 +3057,8 @@ public class WMap extends EngineState {
     y = coolonWarpDest_800ef228[struct.coolonWarpIndex_222].y_1a - 12;
 
     // Selection arrow
-    GPU.queueCommand(17, new GpuCommandQuad()
-      .bpp(Bpp.BITS_4)
-      .clut(640, 496)
-      .vramPos(640, 256)
-      .rgb(0x80, 0x80, 0xff)
-      .pos(x, y, 16, 16)
-      .uv(((int)(tickCount_800bb0fc.get() / (3.0f / vsyncMode_8007a3b8)) & 0x7) * 16, 32)
-    );
+    u = (int)(tickCount_800bb0fc.get() / (3.0f / vsyncMode_8007a3b8)) & 0x7;
+    struct.mapArrow.render(u, GPU.getOffsetX() + x, GPU.getOffsetY() + y, 68, 16.0f, 2);
 
     if(destSelected) {
       //LAB_800dcbf4
