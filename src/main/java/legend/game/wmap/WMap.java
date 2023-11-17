@@ -462,7 +462,7 @@ public class WMap extends EngineState {
           this.coolonPromptPopup.render();
         }
 
-        if(this.startLocationLabelsActive_800c68a8) {
+        if(this.startLocationLabelsActive_800c68a8 && this.wmapStruct258_800c66a8.zoomState_1f8 != 4) {
           for(int i = 0; i < 8; i++) {
             if(this.startLabelNames[i] != null) {
               this.renderCenteredShadowedText(this.startLabelNames[i], this.startLabelXs[i], this.startLabelYs[i], TextColour.WHITE, 0);
