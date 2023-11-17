@@ -5937,7 +5937,7 @@ public class WMap extends EngineState {
         }
 
         //LAB_800ec34c
-        if(this.wmapStruct258_800c66a8.wmapState_05 == WmapStateEnum.TRANSITION_OUT) {
+        if(struct.wmapState_05 == WmapStateEnum.TRANSITION_OUT) {
           cloud.brightness_5c -= 0.125f / (3.0f / vsyncMode_8007a3b8);
 
           if(cloud.brightness_5c < 0.0f) {
@@ -5988,7 +5988,7 @@ public class WMap extends EngineState {
                 }
 
                 //LAB_800ec73c
-                if(this.wmapStruct258_800c66a8.wmapState_05 == WmapStateEnum.TRANSITION_OUT) {
+                if(struct.wmapState_05 == WmapStateEnum.TRANSITION_OUT) {
                   cloud.brightness_5c -= 0.125f / (3.0f / vsyncMode_8007a3b8);
 
                   if(cloud.brightness_5c < 0.0f) {
@@ -6012,7 +6012,7 @@ public class WMap extends EngineState {
                   cloud.queueZ = i < 12 ? 556.0f : (orderingTableSize_1f8003c8.get() - 4.0f) * 4.0f;
                   cloud.transforms.scaling(sx1 - sx0, sy2 - sy0, 1.0f);
                   cloud.transforms.transfer.set(GPU.getOffsetX() + sx0, GPU.getOffsetY() + sy0, cloud.queueZ);
-                  RENDERER.queueOrthoModel(this.wmapStruct258_800c66a8.atmosphericEffectSprites[i % 3], cloud.transforms)
+                  RENDERER.queueOrthoModel(struct.atmosphericEffectSprites[i % 3], cloud.transforms)
                     .monochrome(i < 12 ? cloud.brightness_5c : cloud.brightness_5c / 3.0f);
                 }
               }
@@ -6051,8 +6051,9 @@ public class WMap extends EngineState {
   @Method(0x800ecd10L)
   private void renderSnow() {
     //LAB_800ecdb4
+    final WMapStruct258 struct = this.wmapStruct258_800c66a8;
     for(int i = 0; i < 64; i++) {
-      final WMapAtmosphericEffectInstance60 snowflake = this.wmapStruct258_800c66a8.atmosphericEffectInstances_24[i];
+      final WMapAtmosphericEffectInstance60 snowflake = struct.atmosphericEffectInstances_24[i];
 
       //LAB_800ecdd0
       if(this.wmapStruct19c0_800c66b0.hideAtmosphericEffect_c4) {
@@ -6070,7 +6071,7 @@ public class WMap extends EngineState {
         }
 
         //LAB_800ed108
-        if(this.wmapStruct258_800c66a8.wmapState_05 == WmapStateEnum.TRANSITION_OUT) {
+        if(struct.wmapState_05 == WmapStateEnum.TRANSITION_OUT) {
           snowflake.brightness_5c -= 0.125f / (3.0f / vsyncMode_8007a3b8);
 
           if(snowflake.brightness_5c < 0.0f) {
@@ -6136,7 +6137,7 @@ public class WMap extends EngineState {
                 snowflake.snowUvIndex_50 = (snowflake.snowUvIndex_50 + 1) % 12;
                 final int index = (int)(snowflake.snowUvIndex_50 / 2.0f);
                 snowflake.transforms.transfer.set(GPU.getOffsetX() + sx0, GPU.getOffsetY() + sy0, 556.0f);
-                RENDERER.queueOrthoModel(this.wmapStruct258_800c66a8.atmosphericEffectSprites[index], snowflake.transforms)
+                RENDERER.queueOrthoModel(struct.atmosphericEffectSprites[index], snowflake.transforms)
                   .monochrome(snowflake.brightness_5c);
               }
             }
