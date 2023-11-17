@@ -11,8 +11,8 @@ import static legend.core.GameEngine.RENDERER;
 
 public class MapMarker {
   public static final Vector3f[] colours = {
-    new Vector3f(85.0f / 255.0f, 0.0f, 0.0f),
-    new Vector3f(0.0f, 0.0f, 85.0f / 255.0f),
+    new Vector3f(85.0f / 128.0f, 0.0f, 0.0f),
+    new Vector3f(0.0f, 0.0f, 85.0f / 128.0f),
     new Vector3f(1.0f, 1.0f, 2.0f)
   };
 
@@ -25,7 +25,6 @@ public class MapMarker {
     for(int i = 0; i < objArrayLength; i++) {
       final QuadBuilder builder = new QuadBuilder(name + " (index " + i +')')
         .bpp(Bpp.BITS_4)
-        .translucency(Translucency.B_PLUS_F)
         .clut(640, 496)
         .vramPos(640, 256)
         .size(1.0f, 1.0f)
@@ -45,5 +44,13 @@ public class MapMarker {
     this.transforms.transfer.set(x, y, z);
     RENDERER.queueOrthoOverlayModel(this.sprites[spriteIndex], this.transforms)
       .colour(colours[colourIndex]);
+  }
+
+  public void delete() {
+    for(final MeshObj sprite : this.sprites) {
+      if(sprite != null) {
+        sprite.delete();
+      }
+    }
   }
 }

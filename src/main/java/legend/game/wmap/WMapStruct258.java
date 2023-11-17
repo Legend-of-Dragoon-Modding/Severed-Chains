@@ -94,4 +94,9 @@ public class WMapStruct258 {
       }
     }
   }
+
+  public void deleteMapMarkers() {
+    this.mapArrow.delete();
+    this.coolonPlaceMarker.delete();
+  }
 }
