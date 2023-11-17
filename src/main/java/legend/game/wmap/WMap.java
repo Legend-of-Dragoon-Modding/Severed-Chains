@@ -1418,12 +1418,10 @@ public class WMap extends EngineState {
     final int zoomState = struct.zoomState_1f8;
 
     final int size;
-    final int v;
     if(zoomState == 1) {
       //LAB_800d4108
       this.destinationLabelStage_800c86f0 = 0;
       size = 16;
-      v = 32;
     } else if(zoomState == 4) {
       //LAB_800d4170
       if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_LEFT_2)) { // L2
@@ -1434,7 +1432,6 @@ public class WMap extends EngineState {
 
       //LAB_800d4198
       size = 8;
-      v = 48;
 
       //LAB_800d40e8
     } else if(zoomState == 5) {
@@ -1457,7 +1454,6 @@ public class WMap extends EngineState {
 
       //LAB_800d4158
       size = 16;
-      v = 32;
     } else {
       return;
     }
@@ -1527,7 +1523,7 @@ public class WMap extends EngineState {
             textboxes_800be358[7].width_1c = textboxes_800be358[7].chars_18 * 9 / 2;
             textboxes_800be358[7].height_1e = textboxes_800be358[7].lines_1a * 6 + 4;
             textboxes_800be358[7].x_14 = textboxX;
-            textboxes_800be358[7].y_16 = textboxY;
+            textboxes_800be358[7].y_16 = textboxY - 4;
           }
 
           //LAB_800d4aec
@@ -1538,7 +1534,7 @@ public class WMap extends EngineState {
             this.shouldSetDestLabelMetrics = false;
             this.destLabelName = places_800f0234.get(wmapDestinationMarkers_800f5a6c.get(destinationIndex).placeIndex_28.get()).name_00.deref();
             this.destLabelX = textboxX;
-            this.destLabelY = textboxY - lines.get() * 7 + 1;
+            this.destLabelY = textboxY - lines.get() * 7 - 3;
           }
         }
       }
@@ -4711,7 +4707,7 @@ public class WMap extends EngineState {
         textboxes_800be358[i].width_1c = textboxes_800be358[i].chars_18 * 9 / 2;
         textboxes_800be358[i].height_1e = textboxes_800be358[i].lines_1a * 6 + 4;
         textboxes_800be358[i].x_14 = x;
-        textboxes_800be358[i].y_16 = y - 4;
+        textboxes_800be358[i].y_16 = y - 2;
 
         //LAB_800e74d8
         textZ_800bdf00.set(i + 119);
@@ -4720,7 +4716,7 @@ public class WMap extends EngineState {
         if(this.startLocationLabelsActive_800c68a8) {
           this.startLabelNames[i] = places_800f0234.get(place).name_00.deref();
           this.startLabelXs[i] = x;
-          this.startLabelYs[i] = y - lines.get() * 7 - 3;
+          this.startLabelYs[i] = y - lines.get() * 7 - 1;
         }
       }
       //LAB_800e7590
