@@ -1681,8 +1681,6 @@ public final class Bttl_800c {
       final int x1 = x0 - mcq.screenWidth_14;
       final int x2 = x0 + mcq.screenWidth_14;
       int y = mcqOffsetY_800c6778.get() - MathHelper.radToPsxDeg(MathHelper.floorMod(calculateYAngleFromRefpointToViewpoint() + MathHelper.PI, MathHelper.TWO_PI)) + 1888;
-      renderMcq(mcq, 320, 0, x0, y, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
-      renderMcq(mcq, 320, 0, x1, y, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
 
       battlePreloadedEntities_1f8003f4.skyboxTransforms.transfer.set(x0, y, orderingTableSize_1f8003c8.get() - 8.0f);
       RENDERER.queueOrthoUnderlayModel(battlePreloadedEntities_1f8003f4.skyboxObj, battlePreloadedEntities_1f8003f4.skyboxTransforms)
@@ -1692,9 +1690,7 @@ public final class Bttl_800c {
       RENDERER.queueOrthoUnderlayModel(battlePreloadedEntities_1f8003f4.skyboxObj, battlePreloadedEntities_1f8003f4.skyboxTransforms)
         .monochrome(mcqColour_800fa6dc.get() / 128.0f);
 
-      if(centreScreenX_1f8003dc.get() >= x2) {
-        renderMcq(mcq, 320, 0, x2, y, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
-
+      if(x2 <= centreScreenX_1f8003dc.get() * 2) {
         battlePreloadedEntities_1f8003f4.skyboxTransforms.transfer.set(x2, y, orderingTableSize_1f8003c8.get() - 8.0f);
         RENDERER.queueOrthoUnderlayModel(battlePreloadedEntities_1f8003f4.skyboxObj, battlePreloadedEntities_1f8003f4.skyboxTransforms)
           .monochrome(mcqColour_800fa6dc.get() / 128.0f);
