@@ -770,8 +770,8 @@ public class WMap extends EngineState {
   }
 
   private void initMapMarkers() {
-    this.wmapStruct258_800c66a8.mapArrow = new MapMarker("MapArrow", 8, 16, 32, false);
-    this.wmapStruct258_800c66a8.coolonPlaceMarker = new MapMarker("CoolonPlaceMarker", 3, 16, 0, true);
+    this.wmapStruct258_800c66a8.mapArrow = new MapMarker("MapArrow", 8, 16.0f, 16, 32, false);
+    this.wmapStruct258_800c66a8.coolonPlaceMarker = new MapMarker("CoolonPlaceMarker", 3, 10.0f, 16, 0, true);
   }
 
   @Method(0x800ccf04L)
@@ -1417,11 +1417,9 @@ public class WMap extends EngineState {
     final WMapStruct258 struct = this.wmapStruct258_800c66a8;
     final int zoomState = struct.zoomState_1f8;
 
-    final int size;
     if(zoomState == 1) {
       //LAB_800d4108
       this.destinationLabelStage_800c86f0 = 0;
-      size = 16;
     } else if(zoomState == 4) {
       //LAB_800d4170
       if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_LEFT_2)) { // L2
@@ -1429,10 +1427,7 @@ public class WMap extends EngineState {
         this.shouldSetDestLabelMetrics = false;
         this.destLabelName = null;
       }
-
       //LAB_800d4198
-      size = 8;
-
       //LAB_800d40e8
     } else if(zoomState == 5) {
       //LAB_800d41b0
@@ -1451,9 +1446,7 @@ public class WMap extends EngineState {
       if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_2)) { // R2
         this.destinationLabelStage_800c86f0 = 0;
       }
-
       //LAB_800d4158
-      size = 16;
     } else {
       return;
     }
@@ -1469,9 +1462,9 @@ public class WMap extends EngineState {
 
     // Player arrow on map
     final int u = (int)(tickCount_800bb0fc.get() / (3.0f / vsyncMode_8007a3b8)) & 0x7;
-    float x = GPU.getOffsetX() + playerArrowXy.x - size / 2.0f;
-    float y = GPU.getOffsetY() + playerArrowXy.y - size;
-    struct.mapArrow.render(u, x, y, 100.0f, size, 0);
+    float x = GPU.getOffsetX() + playerArrowXy.x - struct.mapArrow.getSize() / 2.0f;
+    float y = GPU.getOffsetY() + playerArrowXy.y - struct.mapArrow.getSize();
+    struct.mapArrow.render(u, 0, x, y, 100.0f);
 
     if(struct.zoomState_1f8 == 4) {
       //LAB_800d44d0
@@ -1493,7 +1486,7 @@ public class WMap extends EngineState {
         // Destination arrow on map
         x = GPU.getOffsetX() + wmapDestinationMarkers_800f5a6c.get(destinationIndex).x_24.get() - 160;
         y = GPU.getOffsetY() + wmapDestinationMarkers_800f5a6c.get(destinationIndex).y_26.get() - 120;
-        struct.mapArrow.render(u, x, y, 100.0f, size, 1);
+        struct.mapArrow.render(u, 1, x, y, 100.0f);
 
         if(!places_800f0234.get(wmapDestinationMarkers_800f5a6c.get(destinationIndex).placeIndex_28.get()).name_00.isNull()) {
           //LAB_800d4878
@@ -2457,6 +2450,7 @@ public class WMap extends EngineState {
         break;
 
       case 3:
+        this.wmapStruct258_800c66a8.mapArrow.setSize(8.0f);
         this.wmapStruct258_800c66a8.zoomState_1f8 = 4;
 
       case 4:
@@ -2518,6 +2512,7 @@ public class WMap extends EngineState {
 
         if(this.wmapStruct258_800c66a8._1f9 >= 18 / vsyncMode_8007a3b8) {
           this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(this.wmapStruct258_800c66a8.svec_1e8);
+          this.wmapStruct258_800c66a8.mapArrow.setSize(16.0f);
           this.wmapStruct258_800c66a8.zoomState_1f8 = 6;
         }
 
@@ -3031,13 +3026,14 @@ public class WMap extends EngineState {
 
     //LAB_800dc410
     int u = (int)(tickCount_800bb0fc.get() / 5 / (3.0f / vsyncMode_8007a3b8) % 3);
+    final float z = (orderingTableSize_1f8003c8.get() - 4.0f) * 4.0f;
 
-    //LAB_800dc468
+    //LAB_800dc468 - Location markers
     for(int i = 0; i < 9; i++) {
       //LAB_800dc484
       final int left = coolonWarpDest_800ef228[i].x_18;
       final int top = coolonWarpDest_800ef228[i].y_1a;
-      struct.coolonPlaceMarker.render(u, GPU.getOffsetX() + left, GPU.getOffsetY() + top, (orderingTableSize_1f8003c8.get() - 4.0f) * 4.0f, 10.0f, 2);
+      struct.coolonPlaceMarker.render(u, 2, GPU.getOffsetX() + left, GPU.getOffsetY() + top, z);
     }
 
     //LAB_800dc734
@@ -3046,7 +3042,7 @@ public class WMap extends EngineState {
 
     // Selection arrow
     u = (int)(tickCount_800bb0fc.get() / (3.0f / vsyncMode_8007a3b8)) & 0x7;
-    struct.mapArrow.render(u, GPU.getOffsetX() + x, GPU.getOffsetY() + y, 68, 16.0f, 2);
+    struct.mapArrow.render(u, 2, GPU.getOffsetX() + x, GPU.getOffsetY() + y, 68.0f);
 
     if(destSelected) {
       //LAB_800dcbf4

@@ -10,17 +10,19 @@ import org.joml.Vector3f;
 import static legend.core.GameEngine.RENDERER;
 
 public class MapMarker {
-  public static final Vector3f[] colours = {
+  private static final Vector3f[] colours = {
     new Vector3f(85.0f / 128.0f, 0.0f, 0.0f),
     new Vector3f(0.0f, 0.0f, 85.0f / 128.0f),
     new Vector3f(1.0f, 1.0f, 2.0f)
   };
 
-  public MeshObj[] sprites;
-  public final MV transforms = new MV();
+  private final MeshObj[] sprites;
+  private final MV transforms = new MV();
+  private float size;
 
-  public MapMarker(final String name, final int objArrayLength, final float uvSize, final int v, final boolean isTranslucent) {
+  public MapMarker(final String name, final int objArrayLength, final float size, final int uvSize, final int v, final boolean isTranslucent) {
     this.sprites = new MeshObj[objArrayLength];
+    this.size = size;
 
     for(int i = 0; i < objArrayLength; i++) {
       final QuadBuilder builder = new QuadBuilder(name + " (index " + i +')')
@@ -39,8 +41,16 @@ public class MapMarker {
     }
   }
 
-  public void render(final int spriteIndex, final float x, final float y, final float z, final float size, final int colourIndex) {
-    this.transforms.scaling(size, size, 1.0f);
+  public float getSize() {
+    return this.size;
+  }
+
+  public void setSize(final float size) {
+    this.size = size;
+  }
+
+  public void render(final int spriteIndex, final int colourIndex, final float x, final float y, final float z) {
+    this.transforms.scaling(this.size, this.size, 1.0f);
     this.transforms.transfer.set(x, y, z);
     RENDERER.queueOrthoOverlayModel(this.sprites[spriteIndex], this.transforms)
       .colour(colours[colourIndex]);
