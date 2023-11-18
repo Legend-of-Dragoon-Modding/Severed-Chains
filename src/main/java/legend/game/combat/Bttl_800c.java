@@ -139,7 +139,6 @@ import static legend.game.Scus94491BpeSegment.loadMcq;
 import static legend.game.Scus94491BpeSegment.loadMusicPackage;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
-import static legend.game.Scus94491BpeSegment.renderMcq;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.setDepthResolution;
 import static legend.game.Scus94491BpeSegment.simpleRand;
@@ -1772,7 +1771,7 @@ public final class Bttl_800c {
 
   @Method(0x800c8d64L)
   public static void loadStageMcq(final McqHeader mcq) {
-    final long x;
+    final int x;
     if((battleFlags_800bc960.get() & 0x80) != 0) {
       x = 320;
       shouldRenderMcq_800c6764.set(1);

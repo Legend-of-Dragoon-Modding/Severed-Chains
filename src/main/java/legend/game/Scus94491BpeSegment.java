@@ -1175,26 +1175,23 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x800180c0L)
-  public static long loadMcq(final McqHeader mcq, final long x, final long y) {
-    if((x & 0x3fL) != 0 || (y & 0xffL) != 0) {
+  public static void loadMcq(final McqHeader mcq, final int x, final int y) {
+    if((x & 0x3f) != 0 || (y & 0xff) != 0) {
       //LAB_800180e0
-      throw new RuntimeException("Invalid MCQ");
+      throw new RuntimeException("X/Y");
     }
 
     //LAB_800180e8
     if(mcq.magic_00 != McqHeader.MAGIC_1 && mcq.magic_00 != McqHeader.MAGIC_2) {
-      throw new RuntimeException("Invalid MCQ");
+      throw new RuntimeException("Invalid MCQ magic");
     }
 
     //LAB_80018104
     if(mcq.vramHeight_0a != 256) {
-      throw new RuntimeException("Invalid MCQ");
+      throw new RuntimeException("Invalid MCQ height");
     }
 
     LoadImage(new RECT((short)x, (short)y, (short)mcq.vramWidth_08, (short)mcq.vramHeight_0a), mcq.imageData);
-
-    //LAB_8001813c
-    return 0;
   }
 
   @Method(0x8001814cL)
