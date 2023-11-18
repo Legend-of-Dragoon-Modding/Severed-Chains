@@ -24,6 +24,9 @@ public class WMapStruct258 {
   public MeshObj[] zoomOverlayObjs = new MeshObj[7];
   public final MV mapOverlayTransforms = new MV();
 
+  public MapMarker mapArrow;
+  public MapMarker coolonPlaceMarker;
+
   public WMapAtmosphericEffectInstance60[] atmosphericEffectInstances_24;
   public MeshObj[] atmosphericEffectSprites;
 
@@ -90,5 +93,10 @@ public class WMapStruct258 {
         obj.delete();
       }
     }
+  }
+
+  public void deleteMapMarkers() {
+    this.mapArrow.delete();
+    this.coolonPlaceMarker.delete();
   }
 }
