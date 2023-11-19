@@ -1672,6 +1672,10 @@ public final class Bttl_800c {
     } else {
       final McqHeader mcq = battlePreloadedEntities_1f8003f4.stageMcq_9cb0;
 
+      if(mcq.screenWidth_14 < 16 || mcq.screenHeight_16 < 16) {
+        return;
+      }
+
       if(battlePreloadedEntities_1f8003f4.skyboxObj == null) {
         battlePreloadedEntities_1f8003f4.skyboxObj = new McqBuilder("Battle Skybox", mcq)
           .vramOffset(320, 0)
