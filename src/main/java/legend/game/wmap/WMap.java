@@ -5301,7 +5301,7 @@ public class WMap extends EngineState {
   @Method(0x800e9648L)
   private void updatePlayerRotation() {
     final WMapStruct258 struct258 = this.wmapStruct258_800c66a8;
-    struct258.rotation_a4.set(0.0f, MathHelper.atan2(this.mapState_800c6798.currDotPos_20.x - this.mapState_800c6798.nextDotPos_30.x, this.mapState_800c6798.currDotPos_20.z - this.mapState_800c6798.nextDotPos_30.z), 0.0f);
+    struct258.rotation_a4.set(0.0f, MathHelper.atan2(this.mapState_800c6798.prevDotPos_20.x - this.mapState_800c6798.nextDotPos_30.x, this.mapState_800c6798.prevDotPos_20.z - this.mapState_800c6798.nextDotPos_30.z), 0.0f);
     this.mapState_800c6798.previousPlayerRotation_c2 = struct258.rotation_a4.y;
     struct258.rotation_a4.y += this.mapState_800c6798.playerDestAngle_c0;
   }
@@ -5506,7 +5506,7 @@ public class WMap extends EngineState {
     this.getPathPositions(prevDotPos, nextDotPos);
     this.weightedAvg(4.0f - this.mapState_800c6798.dotOffset_18, this.mapState_800c6798.dotOffset_18, this.wmapStruct258_800c66a8.currPlayerPos_94, prevDotPos, nextDotPos);
     this.wmapStruct258_800c66a8.currPlayerPos_94.y -= 2.0f;
-    this.mapState_800c6798.currDotPos_20.set(prevDotPos);
+    this.mapState_800c6798.prevDotPos_20.set(prevDotPos);
     this.mapState_800c6798.nextDotPos_30.set(nextDotPos);
 
     this.updatePlayerRotation();

@@ -43,9 +43,9 @@ public class MapState100 {
 
   /** +1 - left, -1 - right (800c67b4) */
   public int facing_1c;
-  /** Not the canonical player pos, just a copy (for animation purposes?) (800c67b8) */
-  public final Vector3f currDotPos_20 = new Vector3f();
-  /** 800c67c8 */
+  /** Previous as in travel index ("plot") order, not based on direction of travel. (800c67b8) */
+  public final Vector3f prevDotPos_20 = new Vector3f();
+  /** Next as in travel index ("plot") order, not based on direction of travel. (800c67c8) */
   public final Vector3f nextDotPos_30 = new Vector3f();
   /**
    * 800c67d8
