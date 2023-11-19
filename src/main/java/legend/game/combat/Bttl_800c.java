@@ -1360,15 +1360,7 @@ public final class Bttl_800c {
 
             //LAB_800c7d74
           } else { // Monsters dead
-            FUN_80020308();
-
-            if(encounterId_800bb0f8.get() != 443) { // Standard victory
-              postBattleActionIndex_800bc974.set(1);
-              startEncounterSounds();
-            } else { // Melbu Victory
-              //LAB_800c7d30
-              postBattleActionIndex_800bc974.set(4);
-            }
+            endBattle();
           }
         }
       } else { // Game over
@@ -1384,6 +1376,18 @@ public final class Bttl_800c {
     }
 
     //LAB_800c7d98
+  }
+
+  public static void endBattle() {
+    FUN_80020308();
+
+    if(encounterId_800bb0f8.get() != 443) { // Standard victory
+      postBattleActionIndex_800bc974.set(1);
+      startEncounterSounds();
+    } else { // Melbu Victory
+      //LAB_800c7d30
+      postBattleActionIndex_800bc974.set(4);
+    }
   }
 
   @Method(0x800c7da8L)
