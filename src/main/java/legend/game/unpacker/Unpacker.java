@@ -51,6 +51,8 @@ public final class Unpacker {
   private static final int PVD_SECTOR = 16;
 
   private static final Pattern ROOT_MRG = Pattern.compile("^SECT/DRGN0\\.BIN/\\d{4}/\\d+$");
+  private static final Pattern DRGN0_FILE = Pattern.compile("^SECT/DRGN0.BIN/\\d+/.*");
+  private static final Pattern ITEM_SCRIPT = Pattern.compile("^SECT/DRGN0.BIN/\\d+/1.*");
 
   /** Update this any time we make a breaking change */
   private static final int VERSION = 1;
@@ -899,10 +901,11 @@ public final class Unpacker {
       return false;
     }
 
-    for(int i = 4140; i <= 5500; i += 2) {
-      if(name.startsWith("SECT/DRGN0.BIN/" + i + "/1")) {
-        return true;
-      }
+    if(ITEM_SCRIPT.matcher(name).matches()) {
+      final String[] parts = name.split("/");
+      final int fileId = Integer.parseInt(parts[2]);
+
+      return ((fileId & 0x1) == 0) && fileId >= 4140 && fileId <= 5500;
     }
 
     return false;
@@ -926,10 +929,11 @@ public final class Unpacker {
   }
 
   private static boolean playerCombatSoundEffectsDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    for(int i = 752; i <= 772; i++) {
-      if(name.startsWith("SECT/DRGN0.BIN/" + i + '/')) {
-        return true;
-      }
+    if(DRGN0_FILE.matcher(name).matches()) {
+      final String[] parts = name.split("/");
+      final int fileId = Integer.parseInt(parts[2]);
+
+      return fileId >= 752 && fileId <= 772;
     }
 
     return false;
@@ -962,10 +966,11 @@ public final class Unpacker {
   }
 
   private static boolean playerCombatModelsAndTexturesDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    for(int i = 3993; i <= 4010; i++) {
-      if(name.startsWith("SECT/DRGN0.BIN/" + i + '/') && (!name.endsWith("mrg") || i % 2 == 0)) { // Only copy MRG files for models
-        return true;
-      }
+    if(DRGN0_FILE.matcher(name).matches()) {
+      final String[] parts = name.split("/");
+      final int fileId = Integer.parseInt(parts[2]);
+
+      return fileId >= 3993 && fileId <= 4010 && (!name.endsWith("mrg") || fileId % 2 == 0);
     }
 
     return false;
@@ -988,10 +993,11 @@ public final class Unpacker {
   }
 
   private static boolean dragoonCombatModelsAndTexturesDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    for(int i = 4011; i <= 4030; i++) {
-      if(name.startsWith("SECT/DRGN0.BIN/" + i + '/') && (!name.endsWith("mrg") || i % 2 == 0)) { // Only copy MRG files for models
-        return true;
-      }
+    if(DRGN0_FILE.matcher(name).matches()) {
+      final String[] parts = name.split("/");
+      final int fileId = Integer.parseInt(parts[2]);
+
+      return fileId >= 4011 && fileId <= 4030 && (!name.endsWith("mrg") || fileId % 2 == 0);
     }
 
     return false;
@@ -1014,10 +1020,11 @@ public final class Unpacker {
   }
 
   private static boolean skipPartyPermutationsDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    for(int i = 3537; i <= 3592; i++) {
-      if(name.startsWith("SECT/DRGN0.BIN/" + i + '/')) {
-        return true;
-      }
+    if(DRGN0_FILE.matcher(name).matches()) {
+      final String[] parts = name.split("/");
+      final int fileId = Integer.parseInt(parts[2]);
+
+      return fileId >= 3537 && fileId <= 3592;
     }
 
     return false;
