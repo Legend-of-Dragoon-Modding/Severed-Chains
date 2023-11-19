@@ -1441,8 +1441,8 @@ public final class Scus94491BpeSegment_8002 {
 
     renderable._28 = 0;
     renderable.tpage_2c = 0;
-    renderable._34 = 0x1000;
-    renderable._38 = 0x1000;
+    renderable.widthScale = 1.0f;
+    renderable.heightScale_38 = 1.0f;
     renderable.z_3c = 36;
     renderable.x_40 = 0;
     renderable.y_44 = 0;
@@ -1552,60 +1552,60 @@ public final class Scus94491BpeSegment_8002 {
           final GpuCommandPoly cmd = new GpuCommandPoly(4)
             .monochrome(0x80);
 
-          final int x1;
-          final int x2;
-          if(renderable._34 == 0x1000) {
-            if(metrics._10() < 0) {
-              x2 = renderable.x_40 + metrics.x_02() - centreX;
-              x1 = x2 + metrics.width_08();
+          final float x1;
+          final float x2;
+          if(MathHelper.flEq(renderable.widthScale, 1.0f)) {
+            if(metrics.widthScale_10 < 0) {
+              x2 = renderable.x_40 + metrics.x_02 - centreX;
+              x1 = x2 + metrics.width_08;
             } else {
               //LAB_80023f20
-              x1 = renderable.x_40 + metrics.x_02() - centreX;
-              x2 = x1 + metrics.width_08();
+              x1 = renderable.x_40 + metrics.x_02 - centreX;
+              x2 = x1 + metrics.width_08;
             }
           } else {
             //LAB_80023f40
-            final int a0_0 = renderable._34 != 0 ? renderable._34 : metrics._10();
+            final float widthScale = !MathHelper.flEq(renderable.widthScale, 0.0f) ? renderable.widthScale : metrics.widthScale_10;
 
             //LAB_80023f4c
             //LAB_80023f68
-            final int a1 = Math.abs(metrics.width_08() * a0_0 / 0x1000);
-            if(metrics._10() < 0) {
-              x2 = renderable.x_40 + metrics.width_08() / 2 + metrics.x_02() - centreX - a1 / 2;
-              x1 = x2 + a1;
+            final float scaledWidth = Math.abs(metrics.width_08 * widthScale);
+            if(metrics.widthScale_10 < 0) {
+              x2 = renderable.x_40 + metrics.width_08 / 2.0f + metrics.x_02 - centreX - scaledWidth / 2.0f;
+              x1 = x2 + scaledWidth;
             } else {
               //LAB_80023fb4
-              x1 = renderable.x_40 + metrics.width_08() / 2 + metrics.x_02() - centreX - a1 / 2;
-              x2 = x1 + a1;
+              x1 = renderable.x_40 + metrics.width_08 / 2.0f + metrics.x_02 - centreX - scaledWidth / 2.0f;
+              x2 = x1 + scaledWidth;
             }
           }
 
           //LAB_80023fe4
-          final int y1;
-          final int y2;
-          if(renderable._38 == 0x1000) {
-            if(metrics._12() < 0) {
-              y2 = renderable.y_44 + metrics.y_03() - 120;
-              y1 = y2 + metrics.height_0a();
+          final float y1;
+          final float y2;
+          if(MathHelper.flEq(renderable.heightScale_38, 1.0f)) {
+            if(metrics.heightScale_12 < 0) {
+              y2 = renderable.y_44 + metrics.y_03 - 120;
+              y1 = y2 + metrics.height_0a;
             } else {
               //LAB_80024024
-              y1 = renderable.y_44 + metrics.y_03() - 120;
-              y2 = y1 + metrics.height_0a();
+              y1 = renderable.y_44 + metrics.y_03 - 120;
+              y2 = y1 + metrics.height_0a;
             }
           } else {
             //LAB_80024044
-            final int a0_0 = renderable._38 != 0 ? renderable._38 : metrics._12();
+            final float heightScale = !MathHelper.flEq(renderable.heightScale_38, 0.0f) ? renderable.heightScale_38 : metrics.heightScale_12;
 
             //LAB_80024050
             //LAB_8002406c
-            final int a1 = Math.abs(metrics.height_0a() * a0_0 / 0x1000);
-            if(metrics._12() < 0) {
-              y2 = renderable.y_44 + metrics.height_0a() / 2 + metrics.y_03() - a1 / 2 - 120;
-              y1 = y2 + a1;
+            final float scaledHeight = Math.abs(metrics.height_0a * heightScale);
+            if(metrics.heightScale_12 < 0) {
+              y2 = renderable.y_44 + metrics.height_0a / 2.0f + metrics.y_03 - scaledHeight / 2.0f - 120.0f;
+              y1 = y2 + scaledHeight;
             } else {
               //LAB_800240b8
-              y1 = renderable.y_44 + metrics.height_0a() / 2 + metrics.y_03() - a1 / 2 - 120;
-              y2 = y1 + a1;
+              y1 = renderable.y_44 + metrics.height_0a / 2.0f + metrics.y_03 - scaledHeight / 2.0f - 120.0f;
+              y2 = y1 + scaledHeight;
             }
           }
 
@@ -1617,26 +1617,26 @@ public final class Scus94491BpeSegment_8002 {
 
           //LAB_80024144
           //LAB_800241b4
-          int v1 = metrics.u_00() + metrics.textureWidth();
+          int v1 = metrics.u_00 + metrics.textureWidth;
           final int u = v1 < 255 ? v1 : v1 - 1;
 
-          v1 = metrics.v_01() + metrics.textureHeight();
+          v1 = metrics.v_01 + metrics.textureHeight;
           final int v = v1 < 255 ? v1 : v1 - 1;
 
-          cmd.uv(0, metrics.u_00(), metrics.v_01() + renderable.heightCut);
-          cmd.uv(1, u, metrics.v_01() + renderable.heightCut);
-          cmd.uv(2, metrics.u_00(), v);
+          cmd.uv(0, metrics.u_00, metrics.v_01 + renderable.heightCut);
+          cmd.uv(1, u, metrics.v_01 + renderable.heightCut);
+          cmd.uv(2, metrics.u_00, v);
           cmd.uv(3, u, v);
 
-          final int clut = renderable.clut_30 != 0 ? renderable.clut_30 : metrics.clut_04() & 0x7fff;
+          final int clut = renderable.clut_30 != 0 ? renderable.clut_30 : metrics.clut_04 & 0x7fff;
           cmd.clut((clut & 0b111111) * 16, clut >>> 6);
 
           //LAB_80024214
-          final int tpage = renderable.tpage_2c != 0 ? metrics.tpage_06() & 0x60 | renderable.tpage_2c : metrics.tpage_06() & 0x7f;
+          final int tpage = renderable.tpage_2c != 0 ? metrics.tpage_06 & 0x60 | renderable.tpage_2c : metrics.tpage_06 & 0x7f;
           cmd.vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0);
           cmd.bpp(Bpp.of(tpage >>> 7 & 0b11));
 
-          if((metrics.clut_04() & 0x8000) != 0) {
+          if((metrics.clut_04 & 0x8000) != 0) {
             cmd.translucent(Translucency.of(tpage >>> 5 & 0b11));
           }
 
