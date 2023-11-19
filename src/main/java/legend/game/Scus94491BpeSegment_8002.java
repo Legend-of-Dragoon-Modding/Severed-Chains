@@ -3609,7 +3609,8 @@ public final class Scus94491BpeSegment_8002 {
         }
 
         textTransforms.transfer.set(x + lineIndex * 8 - glyphNudge, y, textZ_800bdf00.get() * 4.0f);
-        RENDERER.queueOrthoOverlayModel(RENDERER.chars[c], textTransforms)
+        RENDERER.queueOrthoOverlayModel(RENDERER.chars, textTransforms)
+          .vertices(c * 4, 4)
           .colour(colour.r / 255.0f, colour.g / 255.0f, colour.b / 255.0f);
 
         glyphNudge += switch(c) {

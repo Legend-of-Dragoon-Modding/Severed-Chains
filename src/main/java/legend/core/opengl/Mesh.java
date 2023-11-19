@@ -4,6 +4,7 @@ import static org.lwjgl.opengl.GL11C.GL_FLOAT;
 import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11C.glDrawArrays;
 import static org.lwjgl.opengl.GL11C.glDrawElements;
+import static org.lwjgl.opengl.GL12C.glDrawRangeElements;
 import static org.lwjgl.opengl.GL15C.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15C.GL_ELEMENT_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15C.GL_STATIC_DRAW;
@@ -84,6 +85,21 @@ public class Mesh {
       glDrawElements(this.mode, this.count, GL_UNSIGNED_INT, 0L);
     } else {
       glDrawArrays(this.mode, 0, this.count);
+    }
+  }
+
+  public void draw(final int start, final int count) {
+    if(count == 0) {
+      this.draw();
+      return;
+    }
+
+    glBindVertexArray(this.vao);
+
+    if(this.useIndices) {
+      glDrawRangeElements(this.mode, start, start + count - 1, count, GL_UNSIGNED_INT, 0L);
+    } else {
+      glDrawArrays(this.mode, start, count);
     }
   }
 }
