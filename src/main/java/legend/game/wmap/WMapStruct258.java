@@ -35,8 +35,8 @@ public class WMapStruct258 {
   public FileData imageData_30;
   /** Used as the camera position, only translation is used */
   public final GsCOORDINATE2 coord2_34 = new GsCOORDINATE2();
-  public final Vector3f vec_84 = new Vector3f();
-  public final Vector3f vec_94 = new Vector3f();
+  public final Vector3f prevPlayerPos_84 = new Vector3f();
+  public final Vector3f currPlayerPos_94 = new Vector3f();
   public final Vector3f rotation_a4 = new Vector3f();
   public int currentAnimIndex_ac;
   public int animIndex_b0;
@@ -84,8 +84,18 @@ public class WMapStruct258 {
 
   public int _248;
   public int _24c;
-  public int _250;
-  public int _254;
+  /**
+   * Not totally sure what this should be called yet, but seems related to transitions
+   * and transition animations (except combat).
+   * <ol start="0">
+   *   <li>World map active</li>
+   *   <li>Teleportation animation</li>
+   *   <li>Transition to submap</li>
+   *   <li>Transition to world map</li>
+   * </ol>
+   */
+  public int wmapTransitionMode_250;
+  public boolean usingCoolonFromZenebatos_254;
 
   public void deleteAtmosphericEffectObjs() {
     for(final MeshObj obj : this.atmosphericEffectSprites) {

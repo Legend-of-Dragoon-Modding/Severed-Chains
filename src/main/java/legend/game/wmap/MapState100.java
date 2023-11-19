@@ -44,11 +44,14 @@ public class MapState100 {
   /** +1 - left, -1 - right (800c67b4) */
   public int facing_1c;
   /** Not the canonical player pos, just a copy (for animation purposes?) (800c67b8) */
-  public final Vector3f playerPos_20 = new Vector3f();
+  public final Vector3f currDotPos_20 = new Vector3f();
   /** 800c67c8 */
   public final Vector3f nextDotPos_30 = new Vector3f();
-  /** 800c67d8 */
-  public final Vector3i[] _40 = new Vector3i[7];
+  /**
+   * 800c67d8
+   * Array of temp positions of the second or second to last small dot of a path, depending on direction of approch of segment
+   */
+  public final Vector3i[] tempPathSegmentStartOffsets_40 = new Vector3i[7];
   /** 800c6848 */
   public final Vector3f _b0 = new Vector3f();
   /** 800c6858 */
@@ -70,14 +73,25 @@ public class MapState100 {
   public int _d4;
   /** 800c6870 */
   public int _d8;
-  /** 800c6874 */
-  public final int[] _dc = new int[7];
+  /**
+   * 800c6874
+   * Array of temp indices of paths branching off a location point
+   * */
+  public final int[] tempPathSegmentIndices_dc = new int[7];
   /** 800c6890 */
   public int _f8;
-  /** 800c6894 */
-  public int _fc;
+  /**
+   * 800c6894
+   * Describes the type of path segment endpoint that Dart is at.
+   * <ol start="0">
+   *   <li>Not at endpoint</li>
+   *   <li>Terminal endpoint</li>
+   *   <li>Intersection</li>
+   * </ol>
+   */
+  public int pathSegmentEndpointTypeCrossed_fc;
 
   public MapState100() {
-    Arrays.setAll(this._40, i -> new Vector3i());
+    Arrays.setAll(this.tempPathSegmentStartOffsets_40, i -> new Vector3i());
   }
 }

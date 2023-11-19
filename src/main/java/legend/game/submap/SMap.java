@@ -182,7 +182,7 @@ import static legend.game.Scus94491BpeSegment_800b.musicLoaded_800bd782;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.projectionPlaneDistance_800bd810;
 import static legend.game.Scus94491BpeSegment_800b.rview2_800bd7e8;
-import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
+import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.screenOffsetX_800bed50;
 import static legend.game.Scus94491BpeSegment_800b.screenOffsetY_800bed54;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
@@ -4702,7 +4702,7 @@ public class SMap extends EngineState {
 
         //LAB_800e5e94
         this.FUN_800e770c();
-        savedGameSelected_800bdc34.set(false);
+        loadingNewGameState_800bdc34.set(false);
         submapEnvState_80052c44.set(0);
         startFadeEffect(2, 10);
         this._800cab24 = this.FUN_800ea974(this._800caaf4);
@@ -4798,7 +4798,7 @@ public class SMap extends EngineState {
         this._800f7e4c = false;
         this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
 
-        if(savedGameSelected_800bdc34.get()) {
+        if(loadingNewGameState_800bdc34.get()) {
           this.mapTransition(submapCut_80052c30.get(), submapScene_80052c34.get());
         }
       }

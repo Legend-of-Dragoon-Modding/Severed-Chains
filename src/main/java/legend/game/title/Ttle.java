@@ -64,7 +64,7 @@ import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd2
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
-import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
+import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 
 public class Ttle extends EngineState {
@@ -382,7 +382,7 @@ public class Ttle extends EngineState {
     loadAndRenderMenus();
 
     if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
-      if(savedGameSelected_800bdc34.get()) {
+      if(loadingNewGameState_800bdc34.get()) {
         removeInputHandlers();
         this.deallocateFire();
 
@@ -464,7 +464,7 @@ public class Ttle extends EngineState {
     loadAndRenderMenus();
 
     if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
-      if(savedGameSelected_800bdc34.get()) {
+      if(loadingNewGameState_800bdc34.get()) {
         if(gameState_800babc8.isOnWorldMap_4e4) {
           engineStateOnceLoaded_8004dd24 = EngineStateEnum.WORLD_MAP_08;
         } else {

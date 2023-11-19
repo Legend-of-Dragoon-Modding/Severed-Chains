@@ -323,10 +323,10 @@ public class DebuggerController {
       if(Config.combatStage()) {
         battleStage_800bb0f4.set(Config.getCombatStage());
       } else {
-        if(area.stage_04.get() == -1) {
+        if(area.combatStage_04.get() == -1) {
           battleStage_800bb0f4.set(1);
         } else {
-          battleStage_800bb0f4.set(area.stage_04.get());
+          battleStage_800bb0f4.set(area.combatStage_04.get());
         }
       }
 
