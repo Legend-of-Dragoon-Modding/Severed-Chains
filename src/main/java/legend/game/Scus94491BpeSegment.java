@@ -12,7 +12,6 @@ import legend.core.gpu.Gpu;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.GpuCommandSetMaskBit;
-import legend.core.gpu.GpuCommandUntexturedQuad;
 import legend.core.gpu.RECT;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
@@ -192,6 +191,7 @@ import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
 import static legend.game.combat.Bttl_800c.cacheLivingBents;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
+import static legend.game.combat.Bttl_800c.endBattle;
 import static legend.game.combat.Bttl_800c.isCombatantModelLoaded;
 import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800c.renderSkybox;
@@ -200,6 +200,7 @@ import static legend.game.combat.Bttl_800d.updateBattleCamera;
 import static legend.game.combat.SBtld.stageData_80109a98;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F5;
 
 public final class Scus94491BpeSegment {
   private Scus94491BpeSegment() { }
@@ -391,6 +392,10 @@ public final class Scus94491BpeSegment {
         } else {
           Platform.runLater(Debugger::show);
         }
+      }
+
+      if(key == GLFW_KEY_F5 && engineState_8004dd20 == EngineStateEnum.COMBAT_06) {
+        endBattle();
       }
     });
 
@@ -621,6 +626,7 @@ public final class Scus94491BpeSegment {
   public static void swapDisplayBuffer() {
     GsSwapDispBuff();
     GsSortClear(clearRed_8007a3a8.get(), clearGreen_800bb104.get(), clearBlue_800babc0.get());
+    RENDERER.setClearColour(clearRed_8007a3a8.get() / 255.0f, clearGreen_800bb104.get() / 255.0f, clearBlue_800babc0.get() / 255.0f);
   }
 
   @Method(0x80013200L)
@@ -790,11 +796,13 @@ public final class Scus94491BpeSegment {
 
     //caseD_0
     //LAB_80013994
-
     // This causes the bright flash of light from the lightning, etc.
     if(fullScreenEffect_800bb140.red0_20 != 0 || fullScreenEffect_800bb140.green0_1c != 0 || fullScreenEffect_800bb140.blue0_14 != 0) {
+      fullScreenEffect_800bb140.transforms.scaling(displayWidth_1f8003e0.get(), displayHeight_1f8003e4.get(), 1.0f);
+      fullScreenEffect_800bb140.transforms.transfer.set(0.0f, 0.0f, 999.0f);
+
       //LAB_800139c4
-      RENDERER.queueOrthoOverlayModel(RENDERER.fullscreenWhiteout)
+      RENDERER.queueOrthoOverlayModel(RENDERER.plainQuads.get(Translucency.B_PLUS_F), fullScreenEffect_800bb140.transforms)
         .colour(fullScreenEffect_800bb140.red0_20 / 255.0f, fullScreenEffect_800bb140.green0_1c / 255.0f, fullScreenEffect_800bb140.blue0_14 / 255.0f);
     }
 
@@ -802,8 +810,11 @@ public final class Scus94491BpeSegment {
 
     // This causes the screen darkening from the lightning, etc.
     if(fullScreenEffect_800bb140.red1_18 != 0 || fullScreenEffect_800bb140.green1_10 != 0 || fullScreenEffect_800bb140.blue1_0c != 0) {
+      fullScreenEffect_800bb140.transforms.scaling(displayWidth_1f8003e0.get(), displayHeight_1f8003e4.get(), 1.0f);
+      fullScreenEffect_800bb140.transforms.transfer.set(0.0f, 0.0f, 999.0f);
+
       //LAB_80013b10
-      RENDERER.queueOrthoOverlayModel(RENDERER.fullscreenBlackout)
+      RENDERER.queueOrthoOverlayModel(RENDERER.plainQuads.get(Translucency.B_MINUS_F), fullScreenEffect_800bb140.transforms)
         .colour(fullScreenEffect_800bb140.red0_20 / 255.0f, fullScreenEffect_800bb140.green0_1c / 255.0f, fullScreenEffect_800bb140.blue0_14 / 255.0f);
     }
 
@@ -811,12 +822,12 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80013c3cL)
-  public static void drawFullScreenRect(final long colour, final Translucency transMode) {
-    final GpuCommandUntexturedQuad packet = new GpuCommandUntexturedQuad();
-    packet.translucent(transMode);
-    packet.monochrome((int)colour);
-    packet.pos(-centreScreenX_1f8003dc.get(), -centreScreenY_1f8003de.get(), displayWidth_1f8003e0.get() + 1, displayHeight_1f8003e4.get() + 1);
-    GPU.queueCommand(30, packet);
+  public static void drawFullScreenRect(final int colour, final Translucency transMode) {
+    fullScreenEffect_800bb140.transforms.scaling(displayWidth_1f8003e0.get(), displayHeight_1f8003e4.get(), 1.0f);
+    fullScreenEffect_800bb140.transforms.transfer.set(0.0f, 0.0f, 120.0f);
+
+    RENDERER.queueOrthoOverlayModel(RENDERER.plainQuads.get(transMode), fullScreenEffect_800bb140.transforms)
+      .monochrome(colour / 255.0f);
   }
 
   @Method(0x80013d78L)
@@ -1170,26 +1181,23 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x800180c0L)
-  public static long loadMcq(final McqHeader mcq, final long x, final long y) {
-    if((x & 0x3fL) != 0 || (y & 0xffL) != 0) {
+  public static void loadMcq(final McqHeader mcq, final int x, final int y) {
+    if((x & 0x3f) != 0 || (y & 0xff) != 0) {
       //LAB_800180e0
-      throw new RuntimeException("Invalid MCQ");
+      throw new RuntimeException("X/Y");
     }
 
     //LAB_800180e8
     if(mcq.magic_00 != McqHeader.MAGIC_1 && mcq.magic_00 != McqHeader.MAGIC_2) {
-      throw new RuntimeException("Invalid MCQ");
+      throw new RuntimeException("Invalid MCQ magic");
     }
 
     //LAB_80018104
     if(mcq.vramHeight_0a != 256) {
-      throw new RuntimeException("Invalid MCQ");
+      throw new RuntimeException("Invalid MCQ height");
     }
 
     LoadImage(new RECT((short)x, (short)y, (short)mcq.vramWidth_08, (short)mcq.vramHeight_0a), mcq.imageData);
-
-    //LAB_8001813c
-    return 0;
   }
 
   @Method(0x8001814cL)

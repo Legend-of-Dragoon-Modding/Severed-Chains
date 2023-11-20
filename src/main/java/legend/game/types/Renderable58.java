@@ -21,8 +21,8 @@ public class Renderable58 {
   public int _28;
   public int tpage_2c;
   public int clut_30;
-  public int _34;
-  public int _38;
+  public float widthScale;
+  public float heightScale_38;
   public int z_3c;
   public int x_40;
   public int y_44;

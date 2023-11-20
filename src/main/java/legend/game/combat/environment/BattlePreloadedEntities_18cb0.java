@@ -1,6 +1,8 @@
 package legend.game.combat.environment;
 
+import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
+import legend.core.opengl.Obj;
 import legend.game.types.McqHeader;
 
 import java.util.Arrays;
@@ -16,6 +18,8 @@ public class BattlePreloadedEntities_18cb0 {
 
   public final BattleStage stage_963c = new BattleStage();
   public McqHeader stageMcq_9cb0;
+  public Obj skyboxObj;
+  public final MV skyboxTransforms = new MV();
 
   public final Rendering1298[] _9ce8 = new Rendering1298[3];
 

@@ -23,6 +23,7 @@ public abstract class Obj {
   }
 
   public Obj(final String name) {
+    System.out.println("Allocated " + name);
     this.name = name;
     objList.add(this);
   }
@@ -47,5 +48,5 @@ public abstract class Obj {
   }
 
   public abstract boolean shouldRender(@Nullable final Translucency translucency);
-  public abstract void render(@Nullable final Translucency translucency);
+  public abstract void render(@Nullable final Translucency translucency, final int startVertex, final int vertexCount);
 }

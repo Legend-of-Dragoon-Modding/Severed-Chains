@@ -398,8 +398,8 @@ public final class SItem {
   @Method(0x801033ccL)
   public static void FUN_801033cc(final Renderable58 a0) {
     a0._28 = 0x1;
-    a0._38 = 0;
-    a0._34 = 0;
+    a0.heightScale_38 = 0;
+    a0.widthScale = 0;
     a0.z_3c = 31;
   }
 
@@ -739,8 +739,8 @@ public final class SItem {
   @Method(0x80104b60L)
   public static void FUN_80104b60(final Renderable58 a0) {
     a0._28 = 0x1;
-    a0._34 = 0;
-    a0._38 = 0;
+    a0.widthScale = 0;
+    a0.heightScale_38 = 0;
     a0.z_3c = 35;
   }
 
@@ -1846,14 +1846,14 @@ public final class SItem {
         if(fullScreenEffect_800bb140.currentColour_28 == 0) {
           deallocateRenderables(0xff);
           Renderable58 glyph = FUN_8010cfa0(0, 0, 165, 21, 720, 497);
-          glyph._34 = 0;
-          glyph._38 = 0;
+          glyph.widthScale = 0;
+          glyph.heightScale_38 = 0;
           glyph = FUN_8010cfa0(2, 2, 13, 21, 720, 497);
-          glyph._34 = 0;
-          glyph._38 = 0;
+          glyph.widthScale = 0;
+          glyph.heightScale_38 = 0;
           glyph = FUN_8010cfa0(1, 1, 13, 149, 720, 497);
-          glyph._34 = 0;
-          glyph._38 = 0;
+          glyph.widthScale = 0;
+          glyph.heightScale_38 = 0;
 
           FUN_8010cfa0(0x3e, 0x3e, 24, 28, 736, 497);
           FUN_8010cfa0(0x3d, 0x3d, 24, 40, 736, 497);
@@ -2454,8 +2454,8 @@ public final class SItem {
           if(messageBox.highlightRenderable_04 == null) {
             renderable = allocateUiElement(125, 125, messageBox.x_1c + 45, messageBox.menuIndex_18 * 14 + y + 5);
             messageBox.highlightRenderable_04 = renderable;
-            renderable._38 = 0;
-            renderable._34 = 0;
+            renderable.heightScale_38 = 0;
+            renderable.widthScale = 0;
             messageBox.highlightRenderable_04.z_3c = 32;
           }
 

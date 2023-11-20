@@ -2,6 +2,7 @@ package legend.game.fmv;
 
 import legend.core.MathHelper;
 import legend.core.ProjectionMode;
+import legend.core.opengl.FrameBuffer;
 import legend.core.opengl.Mesh;
 import legend.core.opengl.Shader;
 import legend.core.opengl.ShaderManager;
@@ -23,6 +24,7 @@ import javax.sound.sampled.SourceDataLine;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
+import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
@@ -247,6 +249,8 @@ public final class Fmv {
     onResize = RENDERER.events().onResize(Fmv::windowResize);
     windowResize(RENDERER.window(), RENDERER.window().getWidth(), RENDERER.window().getHeight());
 
+    RENDERER.usePs1Gpu = false;
+
     oldRenderer = RENDERER.setRenderCallback(() -> {
       if(Input.pressedThisFrame(InputAction.BUTTON_CENTER_2)
         || Input.pressedThisFrame(InputAction.BUTTON_NORTH) || Input.pressedThisFrame(InputAction.BUTTON_SOUTH)
@@ -444,6 +448,7 @@ public final class Fmv {
         displayTexture = Texture.filteredEmpty(frameHeader.getWidth(), frameHeader.getHeight());
       }
 
+      FrameBuffer.unbind();
       RENDERER.setProjectionMode(ProjectionMode._2D);
 
       simpleShader.use();
@@ -481,6 +486,7 @@ public final class Fmv {
         onResize = null;
       }
 
+      RENDERER.usePs1Gpu = true;
       RENDERER.setRenderCallback(oldRenderer);
       RENDERER.window().setFpsLimit(oldFps);
       oldRenderer = null;
@@ -492,10 +498,13 @@ public final class Fmv {
     });
   }
 
-  private static void windowResize(final Window window, final int width, final int height) {
+  private static void windowResize(final Window window, int width, int height) {
     if(fullScrenMesh != null) {
       fullScrenMesh.delete();
     }
+
+    width = GPU.getDisplayTextureWidth();
+    height = 240;
 
     final float aspect = 4.0f / 3.0f;
 

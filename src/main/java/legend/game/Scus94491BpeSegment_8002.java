@@ -4,7 +4,6 @@ import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.GpuCommandPoly;
-import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
@@ -164,8 +163,6 @@ import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.soundFiles_800bcf80;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.submapFullyLoaded_800bd7b4;
-import static legend.game.Scus94491BpeSegment_800b.textCol_800be5c0;
-import static legend.game.Scus94491BpeSegment_800b.textRow_800be5c8;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.textboxArrows_800bdea0;
 import static legend.game.Scus94491BpeSegment_800b.textboxText_800bdf38;
@@ -181,6 +178,9 @@ public final class Scus94491BpeSegment_8002 {
   private Scus94491BpeSegment_8002() { }
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Scus94491BpeSegment_8002.class);
+
+  private static Obj textboxBackgroundObj;
+  private static final Obj[] textboxBorderObjs = new Obj[8];
 
   /** One per animation frame */
   private static final Obj[] textboxArrowObjs = new Obj[7];
@@ -1441,8 +1441,8 @@ public final class Scus94491BpeSegment_8002 {
 
     renderable._28 = 0;
     renderable.tpage_2c = 0;
-    renderable._34 = 0x1000;
-    renderable._38 = 0x1000;
+    renderable.widthScale = 1.0f;
+    renderable.heightScale_38 = 1.0f;
     renderable.z_3c = 36;
     renderable.x_40 = 0;
     renderable.y_44 = 0;
@@ -1552,60 +1552,60 @@ public final class Scus94491BpeSegment_8002 {
           final GpuCommandPoly cmd = new GpuCommandPoly(4)
             .monochrome(0x80);
 
-          final int x1;
-          final int x2;
-          if(renderable._34 == 0x1000) {
-            if(metrics._10() < 0) {
-              x2 = renderable.x_40 + metrics.x_02() - centreX;
-              x1 = x2 + metrics.width_08();
+          final float x1;
+          final float x2;
+          if(MathHelper.flEq(renderable.widthScale, 1.0f)) {
+            if(metrics.widthScale_10 < 0) {
+              x2 = renderable.x_40 + metrics.x_02 - centreX;
+              x1 = x2 + metrics.width_08;
             } else {
               //LAB_80023f20
-              x1 = renderable.x_40 + metrics.x_02() - centreX;
-              x2 = x1 + metrics.width_08();
+              x1 = renderable.x_40 + metrics.x_02 - centreX;
+              x2 = x1 + metrics.width_08;
             }
           } else {
             //LAB_80023f40
-            final int a0_0 = renderable._34 != 0 ? renderable._34 : metrics._10();
+            final float widthScale = !MathHelper.flEq(renderable.widthScale, 0.0f) ? renderable.widthScale : metrics.widthScale_10;
 
             //LAB_80023f4c
             //LAB_80023f68
-            final int a1 = Math.abs(metrics.width_08() * a0_0 / 0x1000);
-            if(metrics._10() < 0) {
-              x2 = renderable.x_40 + metrics.width_08() / 2 + metrics.x_02() - centreX - a1 / 2;
-              x1 = x2 + a1;
+            final float scaledWidth = Math.abs(metrics.width_08 * widthScale);
+            if(metrics.widthScale_10 < 0) {
+              x2 = renderable.x_40 + metrics.width_08 / 2.0f + metrics.x_02 - centreX - scaledWidth / 2.0f;
+              x1 = x2 + scaledWidth;
             } else {
               //LAB_80023fb4
-              x1 = renderable.x_40 + metrics.width_08() / 2 + metrics.x_02() - centreX - a1 / 2;
-              x2 = x1 + a1;
+              x1 = renderable.x_40 + metrics.width_08 / 2.0f + metrics.x_02 - centreX - scaledWidth / 2.0f;
+              x2 = x1 + scaledWidth;
             }
           }
 
           //LAB_80023fe4
-          final int y1;
-          final int y2;
-          if(renderable._38 == 0x1000) {
-            if(metrics._12() < 0) {
-              y2 = renderable.y_44 + metrics.y_03() - 120;
-              y1 = y2 + metrics.height_0a();
+          final float y1;
+          final float y2;
+          if(MathHelper.flEq(renderable.heightScale_38, 1.0f)) {
+            if(metrics.heightScale_12 < 0) {
+              y2 = renderable.y_44 + metrics.y_03 - 120;
+              y1 = y2 + metrics.height_0a;
             } else {
               //LAB_80024024
-              y1 = renderable.y_44 + metrics.y_03() - 120;
-              y2 = y1 + metrics.height_0a();
+              y1 = renderable.y_44 + metrics.y_03 - 120;
+              y2 = y1 + metrics.height_0a;
             }
           } else {
             //LAB_80024044
-            final int a0_0 = renderable._38 != 0 ? renderable._38 : metrics._12();
+            final float heightScale = !MathHelper.flEq(renderable.heightScale_38, 0.0f) ? renderable.heightScale_38 : metrics.heightScale_12;
 
             //LAB_80024050
             //LAB_8002406c
-            final int a1 = Math.abs(metrics.height_0a() * a0_0 / 0x1000);
-            if(metrics._12() < 0) {
-              y2 = renderable.y_44 + metrics.height_0a() / 2 + metrics.y_03() - a1 / 2 - 120;
-              y1 = y2 + a1;
+            final float scaledHeight = Math.abs(metrics.height_0a * heightScale);
+            if(metrics.heightScale_12 < 0) {
+              y2 = renderable.y_44 + metrics.height_0a / 2.0f + metrics.y_03 - scaledHeight / 2.0f - 120.0f;
+              y1 = y2 + scaledHeight;
             } else {
               //LAB_800240b8
-              y1 = renderable.y_44 + metrics.height_0a() / 2 + metrics.y_03() - a1 / 2 - 120;
-              y2 = y1 + a1;
+              y1 = renderable.y_44 + metrics.height_0a / 2.0f + metrics.y_03 - scaledHeight / 2.0f - 120.0f;
+              y2 = y1 + scaledHeight;
             }
           }
 
@@ -1617,26 +1617,26 @@ public final class Scus94491BpeSegment_8002 {
 
           //LAB_80024144
           //LAB_800241b4
-          int v1 = metrics.u_00() + metrics.textureWidth();
+          int v1 = metrics.u_00 + metrics.textureWidth;
           final int u = v1 < 255 ? v1 : v1 - 1;
 
-          v1 = metrics.v_01() + metrics.textureHeight();
+          v1 = metrics.v_01 + metrics.textureHeight;
           final int v = v1 < 255 ? v1 : v1 - 1;
 
-          cmd.uv(0, metrics.u_00(), metrics.v_01() + renderable.heightCut);
-          cmd.uv(1, u, metrics.v_01() + renderable.heightCut);
-          cmd.uv(2, metrics.u_00(), v);
+          cmd.uv(0, metrics.u_00, metrics.v_01 + renderable.heightCut);
+          cmd.uv(1, u, metrics.v_01 + renderable.heightCut);
+          cmd.uv(2, metrics.u_00, v);
           cmd.uv(3, u, v);
 
-          final int clut = renderable.clut_30 != 0 ? renderable.clut_30 : metrics.clut_04() & 0x7fff;
+          final int clut = renderable.clut_30 != 0 ? renderable.clut_30 : metrics.clut_04 & 0x7fff;
           cmd.clut((clut & 0b111111) * 16, clut >>> 6);
 
           //LAB_80024214
-          final int tpage = renderable.tpage_2c != 0 ? metrics.tpage_06() & 0x60 | renderable.tpage_2c : metrics.tpage_06() & 0x7f;
+          final int tpage = renderable.tpage_2c != 0 ? metrics.tpage_06 & 0x60 | renderable.tpage_2c : metrics.tpage_06 & 0x7f;
           cmd.vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0);
           cmd.bpp(Bpp.of(tpage >>> 7 & 0b11));
 
-          if((metrics.clut_04() & 0x8000) != 0) {
+          if((metrics.clut_04 & 0x8000) != 0) {
             cmd.translucent(Translucency.of(tpage >>> 5 & 0b11));
           }
 
@@ -1857,9 +1857,6 @@ public final class Scus94491BpeSegment_8002 {
     for(int i = 0; i < 10; i++) {
       textboxVariables_800bdf10.get(i).set(0);
     }
-
-    textCol_800be5c0 = 0;
-    textRow_800be5c8 = 0;
   }
 
   @ScriptDescription("Sets a textbox's text and type")
@@ -1970,9 +1967,34 @@ public final class Scus94491BpeSegment_8002 {
     return FlowControl.CONTINUE;
   }
 
-  public static void initTextboxArrowsAndSelection() {
+  public static void initTextboxGeometry() {
+    textboxBackgroundObj = new QuadBuilder("TextboxBackground")
+      .translucency(Translucency.HALF_B_PLUS_HALF_F)
+      .pos(-1.0f, -1.0f, 0.0f)
+      .size(2.0f, 2.0f)
+      .rgb(0.0f, 41.0f / 255.0f, 159.0f / 255.0f)
+      .monochrome(0, 0.0f)
+      .monochrome(3, 0.0f)
+      .build();
+    textboxBackgroundObj.persistent = true;
+
+    for(int borderIndex = 0; borderIndex < 8; borderIndex++) {
+      final TextboxBorderMetrics0c borderMetrics = textboxBorderMetrics_800108b0.get(borderIndex);
+      final int u = borderMetrics.u_04.get();
+      final int v = borderMetrics.v_06.get();
+
+      textboxBorderObjs[borderIndex] = new QuadBuilder("TextboxBorder" + borderIndex)
+        .bpp(Bpp.BITS_4)
+        .clut(832, 484)
+        .vramPos(896, 256)
+        .size(16, 16)
+        .uv(u, v)
+        .build();
+      textboxBorderObjs[borderIndex].persistent = true;
+    }
+
     for(int i = 0; i < textboxArrowObjs.length; i++) {
-      textboxArrowObjs[i] = new QuadBuilder("TextboxArrow")
+      textboxArrowObjs[i] = new QuadBuilder("TextboxArrow" + i)
         .bpp(Bpp.BITS_4)
         .monochrome(0.5f)
         .clut(1008, 484)
@@ -1981,6 +2003,7 @@ public final class Scus94491BpeSegment_8002 {
         .size(16.0f, 14.0f)
         .uv(64.0f + i * 16.0f, 0.0f)
         .build();
+      textboxArrowObjs[i].persistent = true;
     }
 
     textboxSelectionObj = new QuadBuilder("TextboxSelection")
@@ -1988,6 +2011,7 @@ public final class Scus94491BpeSegment_8002 {
       .rgb(0.5f, 0.19607843f, 0.39215687f)
       .size(1.0f, 12.0f)
       .build();
+    textboxSelectionObj.persistent = true;
   }
 
   /** Deallocate textbox used in yellow-name textboxes and combat effect popups, maybe others */
@@ -2016,8 +2040,6 @@ public final class Scus94491BpeSegment_8002 {
     textbox.stepY_34 = 0;
     textbox._38 = 0;
     textbox._3c = 0;
-
-    textbox.delete();
   }
 
   @Method(0x800258a8L)
@@ -2026,7 +2048,7 @@ public final class Scus94491BpeSegment_8002 {
     textboxText.state_00 = TextboxTextState._1;
     textboxText.flags_08 = 0;
     textboxText.z_0c = 13;
-    textboxText.textColour_28 = 0;
+    textboxText.textColour_28 = TextColour.WHITE;
     textboxText.scrollSpeed_2a = 2;
     textboxText.scrollAmount_2c = 0;
     textboxText.charIndex_30 = 0;
@@ -2207,21 +2229,9 @@ public final class Scus94491BpeSegment_8002 {
 
     if(textbox.type_04 != TextboxType.NO_BACKGROUND) {
       if(textbox.state_00 != TextboxState._1) {
-        if(textbox.backgroundObj == null || textbox.x_14 != textbox.oldX || textbox.y_16 != textbox.oldY || textbox.width_1c != textbox.oldW || textbox.height_1e != textbox.oldH) {
-          if(textbox.backgroundObj != null) {
-            textbox.delete();
-          }
-
-          textbox.backgroundObj = new QuadBuilder("TextboxBackground")
-            .translucency(Translucency.HALF_B_PLUS_HALF_F)
-            .pos(textbox.x_14 - textbox.width_1c, textbox.y_16 - textbox.height_1e, textbox.z_0c * 4.0f)
-            .size(textbox.width_1c * 2.0f, textbox.height_1e * 2.0f)
-            .rgb(0.0f, 41.0f / 255.0f, 159.0f / 255.0f)
-            .monochrome(0, 0.0f)
-            .monochrome(3, 0.0f)
-            .build();
-
-          textbox.backgroundTransforms.identity();
+        if(textbox.x_14 != textbox.oldX || textbox.y_16 != textbox.oldY || textbox.width_1c != textbox.oldW || textbox.height_1e != textbox.oldH) {
+          textbox.backgroundTransforms.transfer.set(textbox.x_14, textbox.y_16, textbox.z_0c * 4.0f);
+          textbox.backgroundTransforms.scaling(textbox.width_1c, textbox.height_1e, 1.0f);
 
           textbox.oldX = textbox.x_14;
           textbox.oldY = textbox.y_16;
@@ -2230,7 +2240,7 @@ public final class Scus94491BpeSegment_8002 {
           textbox.updateBorder = true;
         }
 
-        RENDERER.queueOrthoOverlayModel(textbox.backgroundObj, textbox.backgroundTransforms);
+        RENDERER.queueOrthoOverlayModel(textboxBackgroundObj, textbox.backgroundTransforms);
 
         if(textbox.renderBorder_06) {
           renderTextboxBorder(textboxIndex, textbox.x_14 - textbox.width_1c, textbox.y_16 - textbox.height_1e, textbox.x_14 + textbox.width_1c, textbox.y_16 + textbox.height_1e);
@@ -2275,33 +2285,18 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_8002637c
-      final int u = borderMetrics.u_04.get();
-      final int v = borderMetrics.v_06.get();
       final float left = xs[borderMetrics.topLeftVertexIndex_00.get()] - w;
       final float right = xs[borderMetrics.bottomRightVertexIndex_02.get()] + w;
       final float top = ys[borderMetrics.topLeftVertexIndex_00.get()] - h;
       final float bottom = ys[borderMetrics.bottomRightVertexIndex_02.get()] + h;
 
       if(textbox.updateBorder) {
-        if(textbox.borderObjs[borderIndex] != null) {
-          textbox.borderObjs[borderIndex].delete();
-        }
-
-        textbox.borderObjs[borderIndex] = new QuadBuilder("TextboxBorder")
-          .bpp(Bpp.BITS_4)
-          .clut(832, 484)
-          .vramPos(896, 256)
-          .pos(0.0f, 0.0f, textbox.z_0c * 4.0f)
-          .size(16, 16)
-          .uv(u, v)
-          .build();
-
+        textbox.borderTransforms[borderIndex].transfer.set(left, top, textbox.z_0c * 4.0f);
         textbox.borderTransforms[borderIndex]
           .scaling((right - left) / 16.0f, (bottom - top) / 16.0f, 1.0f);
-        textbox.borderTransforms[borderIndex].transfer.set(left, top, 0.0f);
       }
 
-      RENDERER.queueOrthoOverlayModel(textbox.borderObjs[borderIndex], textbox.borderTransforms[borderIndex]);
+      RENDERER.queueOrthoOverlayModel(textboxBorderObjs[borderIndex], textbox.borderTransforms[borderIndex]);
     }
 
     textbox.oldScaleW = textbox.animationWidth_20;
@@ -3136,12 +3131,9 @@ public final class Scus94491BpeSegment_8002 {
           parseMore = false;
         }
 
-        case TextboxText84.COLOUR -> {
-          final int colour = chr & 0xf;
-
+        case TextboxText84.COLOUR ->
           //LAB_80027950
-          textboxText.textColour_28 = colour < 12 ? colour : 0;
-        }
+          textboxText.textColour_28 = TextColour.values()[chr & 0xf];
 
         case TextboxText84.VAR -> {
           textboxText.flags_08 |= TextboxText84.SHOW_VAR;
@@ -3329,16 +3321,6 @@ public final class Scus94491BpeSegment_8002 {
   public static void advanceTextbox(final int textboxIndex) {
     final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
 
-    if((textboxText.flags_08 & TextboxText84.HAS_NAME) == 0) {
-      for(int charIndex = 0; charIndex < textboxText.chars_1c; charIndex++) {
-        textboxText.chars_58[charIndex].delete();
-      }
-    } else {
-      for(int charIndex = textboxText.chars_1c; charIndex < textboxText.chars_1c * 2; charIndex++) {
-        textboxText.chars_58[charIndex].delete();
-      }
-    }
-
     //LAB_80027efc
     for(int lineIndex = (textboxText.flags_08 & TextboxText84.HAS_NAME) != 0 ? 1 : 0; lineIndex < textboxText.lines_1e; lineIndex++) {
       //LAB_80027f18
@@ -3415,26 +3397,22 @@ public final class Scus94491BpeSegment_8002 {
         nudgeX -= getCharShrink(chr.char_06);
 
         int scrollY = 0;
-        int scrollV = 0;
         int scrollH = 0;
         if((textboxText.flags_08 & 0x1) != 0) {
           if(i >= firstCharInLineIndex && i < lastCharInLineIndex) {
             final int scroll = textboxText.scrollAmount_2c;
             scrollY = -scroll;
-            scrollV = -scroll;
             scrollH = scroll;
           }
 
           //LAB_800283c4
           if(i >= textboxText.chars_1c * textboxText.lines_1e && i < textboxText.chars_1c * (textboxText.lines_1e + 1)) {
             scrollY = 0;
-            scrollV = 0;
             scrollH = 12 - textboxText.scrollAmount_2c;
           }
         }
 
         //LAB_8002840c
-        setCharMetrics(chr.char_06);
         if(scrollH < 13) {
           final float x = textboxText._18 + chr.x_00 * 9 - centreScreenX_1f8003dc.get() - nudgeX;
           final float y;
@@ -3447,23 +3425,14 @@ public final class Scus94491BpeSegment_8002 {
 
           //LAB_80028544
           //LAB_80028564
-          final int u = textCol_800be5c0 * 16;
-          final int v = textRow_800be5c8 * 12 - scrollV;
           final int height = 12 - scrollH;
 
           textboxText.transforms.identity();
           textboxText.transforms.transfer.set(GPU.getOffsetX() + x, GPU.getOffsetY() + y - scrollH, textboxText.z_0c * 4.0f);
-          RENDERER.queueOrthoOverlayModel(chr.obj, textboxText.transforms)
+          RENDERER.queueOrthoOverlayModel(RENDERER.chars, textboxText.transforms)
+            .vertices(chr.char_06 * 4, 4)
+            .colour(chr.colour_04.r / 255.0f, chr.colour_04.g / 255.0f, chr.colour_04.b / 255.0f)
             .scissor(GPU.getOffsetX() + (int)x, GPU.getOffsetY() + (int)y + height, 8, height);
-
-          GPU.queueCommand(textboxText.z_0c + 1, new GpuCommandQuad()
-            .bpp(Bpp.BITS_4)
-            .monochrome(0x80)
-            .clut(976, 480)
-            .vramPos(832, 256)
-            .pos(x + 1, y + 1, 8, height)
-            .uv(u, v)
-          );
         }
 
         nudgeX += getCharWidth(chr.char_06);
@@ -3609,7 +3578,8 @@ public final class Scus94491BpeSegment_8002 {
         }
 
         textTransforms.transfer.set(x + lineIndex * 8 - glyphNudge, y, textZ_800bdf00.get() * 4.0f);
-        RENDERER.queueOrthoOverlayModel(RENDERER.chars[c], textTransforms)
+        RENDERER.queueOrthoOverlayModel(RENDERER.chars, textTransforms)
+          .vertices(c * 4, 4)
           .colour(colour.r / 255.0f, colour.g / 255.0f, colour.b / 255.0f);
 
         glyphNudge += switch(c) {
@@ -3781,8 +3751,6 @@ public final class Scus94491BpeSegment_8002 {
     textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
     textbox.state_00 = TextboxState.UNINITIALIZED_0;
 
-    textbox.delete();
-
     setTextboxArrowPosition(textboxIndex, false);
     return FlowControl.CONTINUE;
   }
@@ -3802,8 +3770,6 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_80029e48
       textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
       textbox.state_00 = TextboxState.UNINITIALIZED_0;
-
-      textbox.delete();
 
       setTextboxArrowPosition(i, false);
     }
@@ -3893,16 +3859,15 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002a180L)
-  public static void appendTextboxChar(final int textboxIndex, final int charX, final int charY, int colour, final int lodChar) {
+  public static void appendTextboxChar(final int textboxIndex, final int charX, final int charY, TextColour colour, final int lodChar) {
     final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
     final int charIndex = textboxText.charY_36 * textboxText.chars_1c + textboxText.charX_34;
     final TextboxChar08 chr = textboxText.chars_58[charIndex];
-    chr.delete();
     chr.x_00 = charX;
     chr.y_02 = charY;
 
     if((textboxText.flags_08 & TextboxText84.HAS_NAME) != 0 && charY == 0) {
-      colour = 8;
+      colour = TextColour.YELLOW;
     }
 
     //LAB_8002a1e8
@@ -3915,18 +3880,6 @@ public final class Scus94491BpeSegment_8002 {
     } else {
       chr.char_06 = lodChar;
     }
-
-    setCharMetrics(chr.char_06);
-    final int u = textCol_800be5c0 * 16;
-    final int v = textRow_800be5c8 * 12;
-
-    chr.obj = new QuadBuilder("TextChar")
-      .bpp(Bpp.BITS_4)
-      .clut(832 + chr.colour_04 * 16, 480)
-      .vramPos(832, 256)
-      .uv(u, v)
-      .size(8, 12)
-      .build();
   }
 
   @Method(0x8002a1fcL)
@@ -4063,12 +4016,6 @@ public final class Scus94491BpeSegment_8002 {
 
   public static int textHeight(final String text) {
     return 12;
-  }
-
-  @Method(0x8002a63cL)
-  public static void setCharMetrics(final int chr) {
-    textCol_800be5c0 = chr & 0xf;
-    textRow_800be5c8 = chr % 208 / 16;
   }
 
   @Method(0x8002a6fcL)

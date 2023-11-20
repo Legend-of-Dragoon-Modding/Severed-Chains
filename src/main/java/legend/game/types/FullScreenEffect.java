@@ -1,5 +1,7 @@
 package legend.game.types;
 
+import legend.core.gte.MV;
+
 public class FullScreenEffect {
   public int type_00;
   public int startTime_04;
@@ -12,4 +14,6 @@ public class FullScreenEffect {
   public int red0_20;
   public int _24;
   public int currentColour_28;
+
+  public final MV transforms = new MV();
 }

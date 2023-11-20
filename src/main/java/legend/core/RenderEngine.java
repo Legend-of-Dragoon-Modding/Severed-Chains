@@ -1,11 +1,11 @@
 package legend.core;
 
-import legend.core.gpu.Bpp;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
 import legend.core.opengl.BasicCamera;
 import legend.core.opengl.Camera;
 import legend.core.opengl.FrameBuffer;
+import legend.core.opengl.LegacyTextBuilder;
 import legend.core.opengl.LineBuilder;
 import legend.core.opengl.Mesh;
 import legend.core.opengl.Obj;
@@ -31,7 +31,9 @@ import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
@@ -97,6 +99,7 @@ public class RenderEngine {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
 
   public static int legacyMode;
+  public boolean usePs1Gpu = true;
 
   private Camera camera2d;
   private Camera camera3d;
@@ -129,10 +132,9 @@ public class RenderEngine {
   private final float[] clear1 = {1.0f, 1.0f, 1.0f, 1.0f};
 
   // Text
-  public final Obj[] chars = new Obj[0x56];
-  // Fullscreen quads
-  public Obj fullscreenWhiteout;
-  public Obj fullscreenBlackout;
+  public Obj chars;
+  // Plain quads
+  public final Map<Translucency, Obj> plainQuads = new EnumMap<>(Translucency.class);
   // Simple quads
   public Obj centredQuadBPlusF;
   public Obj centredQuadBMinusF;
@@ -361,36 +363,19 @@ public class RenderEngine {
     postQuad.attribute(1, 2L, 2, 4);
 
     // Build text quads
-    for(int i = 0; i < this.chars.length; i++) {
-      final int textU = i & 0xf;
-      final int textV = i / 16;
-
-      this.chars[i] = new QuadBuilder("Char " + i)
-        .bpp(Bpp.BITS_4)
-        .monochrome(1.0f)
-        .size(8.0f, 12.0f)
-        .uv(textU * 16.0f, textV * 12.0f)
-        .clut(832, 480)
-        .vramPos(832, 256)
-        .build();
-
-      this.chars[i].persistent = true;
-    }
+    this.chars = new LegacyTextBuilder("Text Characters").build();
+    this.chars.persistent = true;
 
     // Build fullscreen fade quads
-    this.fullscreenWhiteout = new QuadBuilder("FullscreenWhiteout")
-      .translucency(Translucency.B_PLUS_F)
-      .pos(0.0f, 0.0f, 999)
-      .size(384, 240)
-      .build();
-    this.fullscreenWhiteout.persistent = true;
+    for(final Translucency translucency : Translucency.FOR_RENDERING) {
+      final Obj obj = new QuadBuilder("Plain Quad " + translucency)
+        .translucency(translucency)
+        .size(1.0f, 1.0f)
+        .build();
+      obj.persistent = true;
 
-    this.fullscreenBlackout = new QuadBuilder("FullscreenBlackout")
-      .translucency(Translucency.B_MINUS_F)
-      .pos(0.0f, 0.0f, 999)
-      .size(384, 240)
-      .build();
-    this.fullscreenBlackout.persistent = true;
+      this.plainQuads.put(translucency, obj);
+    }
 
     this.centredQuadBPlusF = new QuadBuilder("Centred Quad B+F")
       .translucency(Translucency.B_PLUS_F)
@@ -438,7 +423,7 @@ public class RenderEngine {
 
       this.renderCallback.run();
 
-      if(legacyMode == 0) {
+      if(legacyMode == 0 && this.usePs1Gpu) {
         this.transparentFrameBuffer.bind();
         glClearBufferfv(GL_COLOR, 0, this.clear0);
         glClearBufferfv(GL_COLOR, 1, this.clear1);
@@ -552,7 +537,7 @@ public class RenderEngine {
       if(entry.obj.shouldRender(null)) {
         updated = true;
         entry.updateTransforms();
-        entry.obj.render(null);
+        entry.render(null);
       }
 
       // First pass of translucency rendering - renders opaque pixels with translucency bit not set for translucent primitives
@@ -565,7 +550,7 @@ public class RenderEngine {
             entry.updateTransforms();
           }
 
-          entry.obj.render(translucency);
+          entry.render(translucency);
         }
       }
     }
@@ -585,13 +570,13 @@ public class RenderEngine {
       if(entry.obj.shouldRender(Translucency.B_PLUS_F)) {
         this.tmdShaderColour.set(entry.colour);
         entry.updateTransforms();
-        entry.obj.render(Translucency.B_PLUS_F);
+        entry.render(Translucency.B_PLUS_F);
       }
 
       if(entry.obj.shouldRender(Translucency.B_MINUS_F)) {
         this.tmdShaderColour.set(entry.colour.mul(-1.0f, this.tempColour));
         entry.updateTransforms();
-        entry.obj.render(Translucency.B_MINUS_F);
+        entry.render(Translucency.B_MINUS_F);
       }
     }
 
@@ -609,7 +594,7 @@ public class RenderEngine {
       if(entry.obj.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
         entry.updateTransforms();
         this.tmdShaderTransparentColour.set(entry.colour);
-        entry.obj.render(Translucency.HALF_B_PLUS_HALF_F);
+        entry.render(Translucency.HALF_B_PLUS_HALF_F);
       }
     }
 
@@ -637,7 +622,7 @@ public class RenderEngine {
 
       if(entry.obj.shouldRender(null)) {
         glDisable(GL_BLEND);
-        entry.obj.render(null);
+        entry.render(null);
       }
 
       glEnable(GL_BLEND);
@@ -646,7 +631,7 @@ public class RenderEngine {
 
         if(entry.obj.shouldRender(translucency)) {
           translucency.setGlState();
-          entry.obj.render(translucency);
+          entry.render(translucency);
         }
       }
 
@@ -692,6 +677,7 @@ public class RenderEngine {
     entry.screenspaceOffset.zero();
     entry.colour.set(1.0f, 1.0f, 1.0f);
     entry.scissor.set(0, 0, 0, 0);
+    entry.vertexCount = 0;
     return entry;
   }
 
@@ -703,6 +689,7 @@ public class RenderEngine {
     entry.screenspaceOffset.zero();
     entry.colour.set(1.0f, 1.0f, 1.0f);
     entry.scissor.set(0, 0, 0, 0);
+    entry.vertexCount = 0;
     return entry;
   }
 
@@ -717,6 +704,7 @@ public class RenderEngine {
     entry.screenspaceOffset.zero();
     entry.colour.set(1.0f, 1.0f, 1.0f);
     entry.scissor.set(0, 0, 0, 0);
+    entry.vertexCount = 0;
     return entry;
   }
 
@@ -732,6 +720,7 @@ public class RenderEngine {
     entry.screenspaceOffset.zero();
     entry.colour.set(1.0f, 1.0f, 1.0f);
     entry.scissor.set(0, 0, 0, 0);
+    entry.vertexCount = 0;
     return entry;
   }
 
@@ -746,6 +735,7 @@ public class RenderEngine {
     entry.screenspaceOffset.zero();
     entry.colour.set(1.0f, 1.0f, 1.0f);
     entry.scissor.set(0, 0, 0, 0);
+    entry.vertexCount = 0;
     return entry;
   }
 
@@ -761,6 +751,7 @@ public class RenderEngine {
     entry.screenspaceOffset.zero();
     entry.colour.set(1.0f, 1.0f, 1.0f);
     entry.scissor.set(0, 0, 0, 0);
+    entry.vertexCount = 0;
     return entry;
   }
 
@@ -775,6 +766,7 @@ public class RenderEngine {
     entry.screenspaceOffset.zero();
     entry.colour.set(1.0f, 1.0f, 1.0f);
     entry.scissor.set(0, 0, 0, 0);
+    entry.vertexCount = 0;
     return entry;
   }
 
@@ -790,6 +782,7 @@ public class RenderEngine {
     entry.screenspaceOffset.zero();
     entry.colour.set(1.0f, 1.0f, 1.0f);
     entry.scissor.set(0, 0, 0, 0);
+    entry.vertexCount = 0;
     return entry;
   }
 
@@ -996,6 +989,9 @@ public class RenderEngine {
 
     private final Rect4i scissor = new Rect4i();
 
+    private int startVertex;
+    private int vertexCount;
+
     public QueuedModel screenspaceOffset(final Vector2f offset) {
       this.screenspaceOffset.set(offset);
       return this;
@@ -1041,6 +1037,12 @@ public class RenderEngine {
       return this;
     }
 
+    public QueuedModel vertices(final int startVertex, final int vertexCount) {
+      this.startVertex = startVertex;
+      this.vertexCount = vertexCount;
+      return this;
+    }
+
     private void updateTransforms() {
       this.transforms.get(RenderEngine.this.transforms2Buffer);
       this.screenspaceOffset.get(16, RenderEngine.this.transforms2Buffer);
@@ -1050,6 +1052,10 @@ public class RenderEngine {
       this.lightColour.get(16, RenderEngine.this.lightBuffer);
       this.backgroundColour.get(32, RenderEngine.this.lightBuffer);
       RenderEngine.this.lightUniform.set(RenderEngine.this.lightBuffer);
+    }
+
+    private void render(final Translucency translucency) {
+      this.obj.render(translucency, this.startVertex, this.vertexCount);
     }
   }
 

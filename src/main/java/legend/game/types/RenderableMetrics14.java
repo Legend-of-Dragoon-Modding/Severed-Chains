@@ -2,17 +2,43 @@ package legend.game.types;
 
 import legend.game.unpacker.FileData;
 
-/**
- * @param u_00      ubyte
- * @param v_01      ubyte
- * @param x_02      ubyte
- * @param y_03      ubyte
- * @param clut_04   MSB enables translucency (ushort)
- * @param tpage_06  ushort
- * @param width_08  ushort
- * @param height_0a ushort
- */
-public record RenderableMetrics14(int u_00, int v_01, int x_02, int y_03, int clut_04, int tpage_06, int width_08, int height_0a, int textureWidth, int textureHeight, short _10, short _12) {
+public final class RenderableMetrics14 {
+  /** ubyte */
+  public final int u_00;
+  /** ubyte */
+  public final int v_01;
+  /** ubyte */
+  public final int x_02;
+  /** ubyte */
+  public final int y_03;
+  /** MSB enables translucency (ushort) */
+  public final int clut_04;
+  /** ushort */
+  public final int tpage_06;
+  /** ushort */
+  public final int width_08;
+  /** ushort */
+  public final int height_0a;
+  public final int textureWidth;
+  public final int textureHeight;
+  public final float widthScale_10;
+  public final float heightScale_12;
+
+  public RenderableMetrics14(final int u, final int v, final int x, final int y, final int clut, final int tpage, final int width, final int height, final int textureWidth, final int textureHeight, final float widthScale, final float heightScale) {
+    this.u_00 = u;
+    this.v_01 = v;
+    this.x_02 = x;
+    this.y_03 = y;
+    this.clut_04 = clut;
+    this.tpage_06 = tpage;
+    this.width_08 = width;
+    this.height_0a = height;
+    this.textureWidth = textureWidth;
+    this.textureHeight = textureHeight;
+    this.widthScale_10 = widthScale;
+    this.heightScale_12 = heightScale;
+  }
+
   public static RenderableMetrics14 fromFile(final FileData data) {
     final int u = data.readUByte(0x0);
     final int v = data.readUByte(0x1);
@@ -23,13 +49,13 @@ public record RenderableMetrics14(int u_00, int v_01, int x_02, int y_03, int cl
     final int width = data.readUShort(0x8);
     final int height = data.readUShort(0xa);
 
-    final short _10 = data.readShort(0x10);
-    final short _12 = data.readShort(0x12);
+    final float _10 = data.readShort(0x10) / (float)0x1000;
+    final float _12 = data.readShort(0x12) / (float)0x1000;
 
     return new RenderableMetrics14(u, v, x, y, clut, tpage, width, height, width, height, _10, _12);
   }
 
   public RenderableMetrics14(final int u, final int v, final int x, final int y, final int clut, final int tpage, final int width, final int height, final int textureWidth, final int textureHeight) {
-    this(u, v, x, y, clut, tpage, width, height, textureWidth, textureHeight, (short)0x1000, (short)0x1000);
+    this(u, v, x, y, clut, tpage, width, height, textureWidth, textureHeight, 1.0f, 1.0f);
   }
 }
