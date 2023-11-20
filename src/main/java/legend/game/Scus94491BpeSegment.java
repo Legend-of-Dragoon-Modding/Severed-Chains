@@ -191,6 +191,7 @@ import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
 import static legend.game.combat.Bttl_800c.cacheLivingBents;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
+import static legend.game.combat.Bttl_800c.endBattle;
 import static legend.game.combat.Bttl_800c.isCombatantModelLoaded;
 import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800c.renderSkybox;
@@ -199,6 +200,7 @@ import static legend.game.combat.Bttl_800d.updateBattleCamera;
 import static legend.game.combat.SBtld.stageData_80109a98;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F5;
 
 public final class Scus94491BpeSegment {
   private Scus94491BpeSegment() { }
@@ -390,6 +392,10 @@ public final class Scus94491BpeSegment {
         } else {
           Platform.runLater(Debugger::show);
         }
+      }
+
+      if(key == GLFW_KEY_F5 && engineState_8004dd20 == EngineStateEnum.COMBAT_06) {
+        endBattle();
       }
     });
 

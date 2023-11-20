@@ -152,7 +152,6 @@ import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
-import static legend.game.Scus94491BpeSegment_8002.initTextboxArrowsAndSelection;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.scriptDeallocateAllTextboxes;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
@@ -1039,7 +1038,6 @@ public final class Bttl_800c {
     //LAB_800c760c
     allocateStageDarkeningStorage();
     btldLoadEncounterSoundEffectsAndMusic();
-    initTextboxArrowsAndSelection();
 
     pregameLoadingStage_800bb10c.incr();
   }
@@ -1360,15 +1358,7 @@ public final class Bttl_800c {
 
             //LAB_800c7d74
           } else { // Monsters dead
-            FUN_80020308();
-
-            if(encounterId_800bb0f8.get() != 443) { // Standard victory
-              postBattleActionIndex_800bc974.set(1);
-              startEncounterSounds();
-            } else { // Melbu Victory
-              //LAB_800c7d30
-              postBattleActionIndex_800bc974.set(4);
-            }
+            endBattle();
           }
         }
       } else { // Game over
@@ -1384,6 +1374,18 @@ public final class Bttl_800c {
     }
 
     //LAB_800c7d98
+  }
+
+  public static void endBattle() {
+    FUN_80020308();
+
+    if(encounterId_800bb0f8.get() != 443) { // Standard victory
+      postBattleActionIndex_800bc974.set(1);
+      startEncounterSounds();
+    } else { // Melbu Victory
+      //LAB_800c7d30
+      postBattleActionIndex_800bc974.set(4);
+    }
   }
 
   @Method(0x800c7da8L)
@@ -1667,6 +1669,10 @@ public final class Bttl_800c {
       clearRed_8007a3a8.set(0);
     } else {
       final McqHeader mcq = battlePreloadedEntities_1f8003f4.stageMcq_9cb0;
+
+      if(mcq.screenWidth_14 < 16 || mcq.screenHeight_16 < 16) {
+        return;
+      }
 
       if(battlePreloadedEntities_1f8003f4.skyboxObj == null) {
         battlePreloadedEntities_1f8003f4.skyboxObj = new McqBuilder("Battle Skybox", mcq)
