@@ -88,15 +88,18 @@ public class WMapStruct258 {
   public int _254;
 
   public void deleteAtmosphericEffectObjs() {
-    for(final MeshObj obj : this.atmosphericEffectSprites) {
-      if(obj != null) {
-        obj.delete();
+    for(int i = 0; i < this.atmosphericEffectSprites.length; i++) {
+      if(this.atmosphericEffectSprites[i] != null) {
+        this.atmosphericEffectSprites[i].delete();
+        this.atmosphericEffectSprites[i] = null;
       }
     }
   }
 
   public void deleteMapMarkers() {
     this.mapArrow.delete();
+    this.mapArrow = null;
     this.coolonPlaceMarker.delete();
+    this.coolonPlaceMarker = null;
   }
 }
