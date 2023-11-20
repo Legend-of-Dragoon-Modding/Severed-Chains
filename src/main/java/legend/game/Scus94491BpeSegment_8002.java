@@ -4,7 +4,6 @@ import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.GpuCommandPoly;
-import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
@@ -164,8 +163,6 @@ import static legend.game.Scus94491BpeSegment_800b.saveListUpArrow_800bdb94;
 import static legend.game.Scus94491BpeSegment_800b.soundFiles_800bcf80;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.submapFullyLoaded_800bd7b4;
-import static legend.game.Scus94491BpeSegment_800b.textCol_800be5c0;
-import static legend.game.Scus94491BpeSegment_800b.textRow_800be5c8;
 import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800b.textboxArrows_800bdea0;
 import static legend.game.Scus94491BpeSegment_800b.textboxText_800bdf38;
@@ -1860,9 +1857,6 @@ public final class Scus94491BpeSegment_8002 {
     for(int i = 0; i < 10; i++) {
       textboxVariables_800bdf10.get(i).set(0);
     }
-
-    textCol_800be5c0 = 0;
-    textRow_800be5c8 = 0;
   }
 
   @ScriptDescription("Sets a textbox's text and type")
@@ -2054,7 +2048,7 @@ public final class Scus94491BpeSegment_8002 {
     textboxText.state_00 = TextboxTextState._1;
     textboxText.flags_08 = 0;
     textboxText.z_0c = 13;
-    textboxText.textColour_28 = 0;
+    textboxText.textColour_28 = TextColour.WHITE;
     textboxText.scrollSpeed_2a = 2;
     textboxText.scrollAmount_2c = 0;
     textboxText.charIndex_30 = 0;
@@ -3137,12 +3131,9 @@ public final class Scus94491BpeSegment_8002 {
           parseMore = false;
         }
 
-        case TextboxText84.COLOUR -> {
-          final int colour = chr & 0xf;
-
+        case TextboxText84.COLOUR ->
           //LAB_80027950
-          textboxText.textColour_28 = colour < 12 ? colour : 0;
-        }
+          textboxText.textColour_28 = TextColour.values()[chr & 0xf];
 
         case TextboxText84.VAR -> {
           textboxText.flags_08 |= TextboxText84.SHOW_VAR;
@@ -3330,16 +3321,6 @@ public final class Scus94491BpeSegment_8002 {
   public static void advanceTextbox(final int textboxIndex) {
     final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
 
-    if((textboxText.flags_08 & TextboxText84.HAS_NAME) == 0) {
-      for(int charIndex = 0; charIndex < textboxText.chars_1c; charIndex++) {
-        textboxText.chars_58[charIndex].delete();
-      }
-    } else {
-      for(int charIndex = textboxText.chars_1c; charIndex < textboxText.chars_1c * 2; charIndex++) {
-        textboxText.chars_58[charIndex].delete();
-      }
-    }
-
     //LAB_80027efc
     for(int lineIndex = (textboxText.flags_08 & TextboxText84.HAS_NAME) != 0 ? 1 : 0; lineIndex < textboxText.lines_1e; lineIndex++) {
       //LAB_80027f18
@@ -3416,26 +3397,22 @@ public final class Scus94491BpeSegment_8002 {
         nudgeX -= getCharShrink(chr.char_06);
 
         int scrollY = 0;
-        int scrollV = 0;
         int scrollH = 0;
         if((textboxText.flags_08 & 0x1) != 0) {
           if(i >= firstCharInLineIndex && i < lastCharInLineIndex) {
             final int scroll = textboxText.scrollAmount_2c;
             scrollY = -scroll;
-            scrollV = -scroll;
             scrollH = scroll;
           }
 
           //LAB_800283c4
           if(i >= textboxText.chars_1c * textboxText.lines_1e && i < textboxText.chars_1c * (textboxText.lines_1e + 1)) {
             scrollY = 0;
-            scrollV = 0;
             scrollH = 12 - textboxText.scrollAmount_2c;
           }
         }
 
         //LAB_8002840c
-        setCharMetrics(chr.char_06);
         if(scrollH < 13) {
           final float x = textboxText._18 + chr.x_00 * 9 - centreScreenX_1f8003dc.get() - nudgeX;
           final float y;
@@ -3448,23 +3425,14 @@ public final class Scus94491BpeSegment_8002 {
 
           //LAB_80028544
           //LAB_80028564
-          final int u = textCol_800be5c0 * 16;
-          final int v = textRow_800be5c8 * 12 - scrollV;
           final int height = 12 - scrollH;
 
           textboxText.transforms.identity();
           textboxText.transforms.transfer.set(GPU.getOffsetX() + x, GPU.getOffsetY() + y - scrollH, textboxText.z_0c * 4.0f);
-          RENDERER.queueOrthoOverlayModel(chr.obj, textboxText.transforms)
+          RENDERER.queueOrthoOverlayModel(RENDERER.chars, textboxText.transforms)
+            .vertices(chr.char_06 * 4, 4)
+            .colour(chr.colour_04.r / 255.0f, chr.colour_04.g / 255.0f, chr.colour_04.b / 255.0f)
             .scissor(GPU.getOffsetX() + (int)x, GPU.getOffsetY() + (int)y + height, 8, height);
-
-          GPU.queueCommand(textboxText.z_0c + 1, new GpuCommandQuad()
-            .bpp(Bpp.BITS_4)
-            .monochrome(0x80)
-            .clut(976, 480)
-            .vramPos(832, 256)
-            .pos(x + 1, y + 1, 8, height)
-            .uv(u, v)
-          );
         }
 
         nudgeX += getCharWidth(chr.char_06);
@@ -3891,16 +3859,15 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002a180L)
-  public static void appendTextboxChar(final int textboxIndex, final int charX, final int charY, int colour, final int lodChar) {
+  public static void appendTextboxChar(final int textboxIndex, final int charX, final int charY, TextColour colour, final int lodChar) {
     final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
     final int charIndex = textboxText.charY_36 * textboxText.chars_1c + textboxText.charX_34;
     final TextboxChar08 chr = textboxText.chars_58[charIndex];
-    chr.delete();
     chr.x_00 = charX;
     chr.y_02 = charY;
 
     if((textboxText.flags_08 & TextboxText84.HAS_NAME) != 0 && charY == 0) {
-      colour = 8;
+      colour = TextColour.YELLOW;
     }
 
     //LAB_8002a1e8
@@ -3913,18 +3880,6 @@ public final class Scus94491BpeSegment_8002 {
     } else {
       chr.char_06 = lodChar;
     }
-
-    setCharMetrics(chr.char_06);
-    final int u = textCol_800be5c0 * 16;
-    final int v = textRow_800be5c8 * 12;
-
-    chr.obj = new QuadBuilder("TextChar")
-      .bpp(Bpp.BITS_4)
-      .clut(832 + chr.colour_04 * 16, 480)
-      .vramPos(832, 256)
-      .uv(u, v)
-      .size(8, 12)
-      .build();
   }
 
   @Method(0x8002a1fcL)
@@ -4061,12 +4016,6 @@ public final class Scus94491BpeSegment_8002 {
 
   public static int textHeight(final String text) {
     return 12;
-  }
-
-  @Method(0x8002a63cL)
-  public static void setCharMetrics(final int chr) {
-    textCol_800be5c0 = chr & 0xf;
-    textRow_800be5c8 = chr % 208 / 16;
   }
 
   @Method(0x8002a6fcL)
