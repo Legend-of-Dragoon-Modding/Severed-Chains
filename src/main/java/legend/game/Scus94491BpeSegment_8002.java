@@ -182,6 +182,9 @@ public final class Scus94491BpeSegment_8002 {
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Scus94491BpeSegment_8002.class);
 
+  private static Obj textboxBackgroundObj;
+  private static final Obj[] textboxBorderObjs = new Obj[8];
+
   /** One per animation frame */
   private static final Obj[] textboxArrowObjs = new Obj[7];
   private static final MV textboxArrowTransforms = new MV();
@@ -1970,9 +1973,34 @@ public final class Scus94491BpeSegment_8002 {
     return FlowControl.CONTINUE;
   }
 
-  public static void initTextboxArrowsAndSelection() {
+  public static void initTextboxGeometry() {
+    textboxBackgroundObj = new QuadBuilder("TextboxBackground")
+      .translucency(Translucency.HALF_B_PLUS_HALF_F)
+      .pos(-1.0f, -1.0f, 0.0f)
+      .size(2.0f, 2.0f)
+      .rgb(0.0f, 41.0f / 255.0f, 159.0f / 255.0f)
+      .monochrome(0, 0.0f)
+      .monochrome(3, 0.0f)
+      .build();
+    textboxBackgroundObj.persistent = true;
+
+    for(int borderIndex = 0; borderIndex < 8; borderIndex++) {
+      final TextboxBorderMetrics0c borderMetrics = textboxBorderMetrics_800108b0.get(borderIndex);
+      final int u = borderMetrics.u_04.get();
+      final int v = borderMetrics.v_06.get();
+
+      textboxBorderObjs[borderIndex] = new QuadBuilder("TextboxBorder" + borderIndex)
+        .bpp(Bpp.BITS_4)
+        .clut(832, 484)
+        .vramPos(896, 256)
+        .size(16, 16)
+        .uv(u, v)
+        .build();
+      textboxBorderObjs[borderIndex].persistent = true;
+    }
+
     for(int i = 0; i < textboxArrowObjs.length; i++) {
-      textboxArrowObjs[i] = new QuadBuilder("TextboxArrow")
+      textboxArrowObjs[i] = new QuadBuilder("TextboxArrow" + i)
         .bpp(Bpp.BITS_4)
         .monochrome(0.5f)
         .clut(1008, 484)
@@ -1981,6 +2009,7 @@ public final class Scus94491BpeSegment_8002 {
         .size(16.0f, 14.0f)
         .uv(64.0f + i * 16.0f, 0.0f)
         .build();
+      textboxArrowObjs[i].persistent = true;
     }
 
     textboxSelectionObj = new QuadBuilder("TextboxSelection")
@@ -1988,6 +2017,7 @@ public final class Scus94491BpeSegment_8002 {
       .rgb(0.5f, 0.19607843f, 0.39215687f)
       .size(1.0f, 12.0f)
       .build();
+    textboxSelectionObj.persistent = true;
   }
 
   /** Deallocate textbox used in yellow-name textboxes and combat effect popups, maybe others */
@@ -2016,8 +2046,6 @@ public final class Scus94491BpeSegment_8002 {
     textbox.stepY_34 = 0;
     textbox._38 = 0;
     textbox._3c = 0;
-
-    textbox.delete();
   }
 
   @Method(0x800258a8L)
@@ -2207,21 +2235,9 @@ public final class Scus94491BpeSegment_8002 {
 
     if(textbox.type_04 != TextboxType.NO_BACKGROUND) {
       if(textbox.state_00 != TextboxState._1) {
-        if(textbox.backgroundObj == null || textbox.x_14 != textbox.oldX || textbox.y_16 != textbox.oldY || textbox.width_1c != textbox.oldW || textbox.height_1e != textbox.oldH) {
-          if(textbox.backgroundObj != null) {
-            textbox.delete();
-          }
-
-          textbox.backgroundObj = new QuadBuilder("TextboxBackground")
-            .translucency(Translucency.HALF_B_PLUS_HALF_F)
-            .pos(textbox.x_14 - textbox.width_1c, textbox.y_16 - textbox.height_1e, textbox.z_0c * 4.0f)
-            .size(textbox.width_1c * 2.0f, textbox.height_1e * 2.0f)
-            .rgb(0.0f, 41.0f / 255.0f, 159.0f / 255.0f)
-            .monochrome(0, 0.0f)
-            .monochrome(3, 0.0f)
-            .build();
-
-          textbox.backgroundTransforms.identity();
+        if(textbox.x_14 != textbox.oldX || textbox.y_16 != textbox.oldY || textbox.width_1c != textbox.oldW || textbox.height_1e != textbox.oldH) {
+          textbox.backgroundTransforms.transfer.set(textbox.x_14, textbox.y_16, textbox.z_0c * 4.0f);
+          textbox.backgroundTransforms.scaling(textbox.width_1c, textbox.height_1e, 1.0f);
 
           textbox.oldX = textbox.x_14;
           textbox.oldY = textbox.y_16;
@@ -2230,7 +2246,7 @@ public final class Scus94491BpeSegment_8002 {
           textbox.updateBorder = true;
         }
 
-        RENDERER.queueOrthoOverlayModel(textbox.backgroundObj, textbox.backgroundTransforms);
+        RENDERER.queueOrthoOverlayModel(textboxBackgroundObj, textbox.backgroundTransforms);
 
         if(textbox.renderBorder_06) {
           renderTextboxBorder(textboxIndex, textbox.x_14 - textbox.width_1c, textbox.y_16 - textbox.height_1e, textbox.x_14 + textbox.width_1c, textbox.y_16 + textbox.height_1e);
@@ -2275,33 +2291,18 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_8002637c
-      final int u = borderMetrics.u_04.get();
-      final int v = borderMetrics.v_06.get();
       final float left = xs[borderMetrics.topLeftVertexIndex_00.get()] - w;
       final float right = xs[borderMetrics.bottomRightVertexIndex_02.get()] + w;
       final float top = ys[borderMetrics.topLeftVertexIndex_00.get()] - h;
       final float bottom = ys[borderMetrics.bottomRightVertexIndex_02.get()] + h;
 
       if(textbox.updateBorder) {
-        if(textbox.borderObjs[borderIndex] != null) {
-          textbox.borderObjs[borderIndex].delete();
-        }
-
-        textbox.borderObjs[borderIndex] = new QuadBuilder("TextboxBorder")
-          .bpp(Bpp.BITS_4)
-          .clut(832, 484)
-          .vramPos(896, 256)
-          .pos(0.0f, 0.0f, textbox.z_0c * 4.0f)
-          .size(16, 16)
-          .uv(u, v)
-          .build();
-
+        textbox.borderTransforms[borderIndex].transfer.set(left, top, textbox.z_0c * 4.0f);
         textbox.borderTransforms[borderIndex]
           .scaling((right - left) / 16.0f, (bottom - top) / 16.0f, 1.0f);
-        textbox.borderTransforms[borderIndex].transfer.set(left, top, 0.0f);
       }
 
-      RENDERER.queueOrthoOverlayModel(textbox.borderObjs[borderIndex], textbox.borderTransforms[borderIndex]);
+      RENDERER.queueOrthoOverlayModel(textboxBorderObjs[borderIndex], textbox.borderTransforms[borderIndex]);
     }
 
     textbox.oldScaleW = textbox.animationWidth_20;
@@ -3782,8 +3783,6 @@ public final class Scus94491BpeSegment_8002 {
     textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
     textbox.state_00 = TextboxState.UNINITIALIZED_0;
 
-    textbox.delete();
-
     setTextboxArrowPosition(textboxIndex, false);
     return FlowControl.CONTINUE;
   }
@@ -3803,8 +3802,6 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_80029e48
       textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
       textbox.state_00 = TextboxState.UNINITIALIZED_0;
-
-      textbox.delete();
 
       setTextboxArrowPosition(i, false);
     }
