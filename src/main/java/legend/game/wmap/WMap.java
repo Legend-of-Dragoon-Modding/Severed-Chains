@@ -418,6 +418,8 @@ public class WMap extends EngineState {
 
   @Method(0x800c925cL)
   private void renderWmapModel(final Model124 model) {
+    final MV lw = new MV();
+
     zOffset_1f8003e8.set(model.zOffset_a0);
     tmdGp0Tpage_1f8003ec.set(model.tpage_108);
 
@@ -426,7 +428,6 @@ public class WMap extends EngineState {
       final ModelPart10 dobj2 = model.modelParts_00[i];
 
       if((model.partInvisible_f4 & 1L << i) == 0) {
-        final MV lw = new MV();
         GsGetLw(dobj2.coord2_04, lw);
 
         RENDERER.queueModel(dobj2.obj, lw)
@@ -3115,13 +3116,8 @@ public class WMap extends EngineState {
 
   @Method(0x800dce64L)
   private void rotateCoord2(final Vector3f rotation, final GsCOORDINATE2 coord2) {
-    final MV mat = new MV();
-    mat.transfer.set(coord2.coord.transfer);
-
-    mat.rotationXYZ(rotation);
-
     coord2.flg = 0;
-    coord2.coord.set(mat);
+    coord2.coord.rotationXYZ(rotation);
   }
 
   @Method(0x800dfa70L)
