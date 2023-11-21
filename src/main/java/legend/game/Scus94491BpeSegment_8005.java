@@ -67,7 +67,7 @@ public final class Scus94491BpeSegment_8005 {
   public static final BoolRef _80052c40 = MEMORY.ref(4, 0x80052c40L, BoolRef::new);
   public static final IntRef submapEnvState_80052c44 = MEMORY.ref(4, 0x80052c44L, IntRef::new);
 
-  public static boolean dontSetMapStateAttributesOnTransitionToWmap_80052c6c;
+  public static boolean reinitializingWmap_80052c6c;
 
   public static final ArrayRef<IntRef> _80052d6c = MEMORY.ref(4, 0x80052d6cL, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
   public static final String[][] diskFmvs_80052d7c = {

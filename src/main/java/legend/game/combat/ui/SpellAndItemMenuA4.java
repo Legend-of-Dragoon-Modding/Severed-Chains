@@ -82,13 +82,26 @@ public class SpellAndItemMenuA4 {
   public void delete() {
     if(this.unknownObj1[0] != null) {
       for(int i = 0; i < 8; i++) {
-        this.unknownObj1[i].delete();
+        if(this.unknownObj1[i] != null) {
+          this.unknownObj1[i].delete();
+          this.unknownObj1[i] = null;
+        }
       }
 
-      this.unknownObj2.delete();
+      if(this.unknownObj2 != null) {
+        this.unknownObj2.delete();
+        this.unknownObj2 = null;
+      }
 
-      this.upArrow.delete();
-      this.downArrow.delete();
+      if(this.upArrow != null) {
+        this.upArrow.delete();
+        this.upArrow = null;
+      }
+
+      if(this.downArrow != null) {
+        this.downArrow.delete();
+        this.downArrow = null;
+      }
     }
   }
 }

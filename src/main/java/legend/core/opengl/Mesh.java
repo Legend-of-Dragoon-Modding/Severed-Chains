@@ -1,5 +1,8 @@
 package legend.core.opengl;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+
 import static org.lwjgl.opengl.GL11C.GL_FLOAT;
 import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11C.glDrawArrays;
@@ -19,6 +22,9 @@ import static org.lwjgl.opengl.GL30C.glDeleteVertexArrays;
 import static org.lwjgl.opengl.GL30C.glGenVertexArrays;
 
 public class Mesh {
+  private static final Int2ObjectMap<Mesh> usedVaos = new Int2ObjectOpenHashMap<>();
+  private static final Int2ObjectMap<Mesh> usedVbos = new Int2ObjectOpenHashMap<>();
+
   private final int vao;
   private final int vbo;
   private final int ebo;
@@ -43,6 +49,17 @@ public class Mesh {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
 
     glBindVertexArray(0);
+
+    if(usedVaos.containsKey(this.vao)) {
+      throw new RuntimeException("Allocated already-used VAO " + this.vao);
+    }
+
+    if(usedVbos.containsKey(this.vbo)) {
+      throw new RuntimeException("Allocated already-used VBO " + this.vbo);
+    }
+
+    usedVaos.put(this.vao, this);
+    usedVbos.put(this.vbo, this);
   }
 
   public Mesh(final int mode, final float[] vertexData, final int vertexCount) {
@@ -60,6 +77,17 @@ public class Mesh {
     this.ebo = -1;
 
     glBindVertexArray(0);
+
+    if(usedVaos.containsKey(this.vao)) {
+      throw new RuntimeException("Allocated already-used VAO " + this.vao);
+    }
+
+    if(usedVbos.containsKey(this.vbo)) {
+      throw new RuntimeException("Allocated already-used VBO " + this.vbo);
+    }
+
+    usedVaos.put(this.vao, this);
+    usedVbos.put(this.vbo, this);
   }
 
   public void delete() {
@@ -69,6 +97,9 @@ public class Mesh {
 
     glDeleteBuffers(this.vbo);
     glDeleteVertexArrays(this.vao);
+
+    usedVaos.remove(this.vao);
+    usedVbos.remove(this.vbo);
   }
 
   public void attribute(final int index, final long offset, final int size, final int stride) {

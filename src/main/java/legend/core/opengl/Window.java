@@ -284,7 +284,8 @@ public class Window {
     while(!glfwWindowShouldClose(this.window)) {
       Action nextAction = null;
 
-      for(final Action action : this.actions) {
+      for(int i = 0; i < this.actions.size(); i++) {
+        final Action action = this.actions.get(i);
         action.tick();
 
         if(nextAction == null || action.nanosUntilNextRun() < nextAction.nanosUntilNextRun()) {
@@ -471,7 +472,8 @@ public class Window {
     }
 
     public void callInputEvents(final Controller controller) {
-      for(final InputBinding binding : controller.bindings) {
+      for(int i = 0; i < controller.bindings.size(); i++) {
+        final InputBinding binding = controller.bindings.get(i);
         if(binding.getState() == InputState.PRESSED_THIS_FRAME) {
           this.onInputPressedThisFrame(binding.getInputAction());
           this.onInputPressedWithRepeat(binding.getInputAction());
@@ -666,8 +668,8 @@ public class Window {
 
     private void onDraw() {
       synchronized(LOCK) {
-        for(final Runnable draw : this.draw) {
-          draw.run();
+        for(int i = 0; i < this.draw.size(); i++) {
+          this.draw.get(i).run();
         }
       }
     }

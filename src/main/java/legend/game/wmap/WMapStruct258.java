@@ -3,6 +3,7 @@ package legend.game.wmap;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.opengl.MeshObj;
+import legend.core.opengl.Obj;
 import legend.game.types.Model124;
 import legend.game.unpacker.FileData;
 import org.joml.Vector3f;
@@ -42,8 +43,8 @@ public class WMapStruct258 {
   public int animIndex_b0;
   public final WMapStruct258Sub40[] _b4 = {new WMapStruct258Sub40(), new WMapStruct258Sub40(), new WMapStruct258Sub40(), new WMapStruct258Sub40()};
 
-  /** short */
-  public final int[] _1c4 = new int[16];
+  public Obj shadowObj;
+  public final MV shadowTransforms = new MV();
   public int modelIndex_1e4;
   public final Vector3f svec_1e8 = new Vector3f();
   public final Vector3f svec_1f0 = new Vector3f();
@@ -98,15 +99,18 @@ public class WMapStruct258 {
   public boolean usingCoolonFromZenebatos_254;
 
   public void deleteAtmosphericEffectObjs() {
-    for(final MeshObj obj : this.atmosphericEffectSprites) {
-      if(obj != null) {
-        obj.delete();
+    for(int i = 0; i < this.atmosphericEffectSprites.length; i++) {
+      if(this.atmosphericEffectSprites[i] != null) {
+        this.atmosphericEffectSprites[i].delete();
+        this.atmosphericEffectSprites[i] = null;
       }
     }
   }
 
   public void deleteMapMarkers() {
     this.mapArrow.delete();
+    this.mapArrow = null;
     this.coolonPlaceMarker.delete();
+    this.coolonPlaceMarker = null;
   }
 }
