@@ -24,6 +24,7 @@ import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.core.opengl.McqBuilder;
 import legend.core.opengl.Obj;
+import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.EngineState;
@@ -72,7 +73,6 @@ import static legend.game.Scus94491BpeSegment.loadLocationMenuSoundEffects;
 import static legend.game.Scus94491BpeSegment.loadWmapMusic;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.playSound;
-import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.simpleRand;
@@ -105,7 +105,6 @@ import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
 import static legend.game.Scus94491BpeSegment_8003.StoreImage;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
-import static legend.game.Scus94491BpeSegment_8003.perspectiveTransformTriple;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.previousEngineState_8004dd28;
@@ -3243,12 +3242,24 @@ public class WMap extends EngineState {
     struct258.currentAnimIndex_ac = 2;
     struct258.animIndex_b0 = 2;
 
+    final float shadowAngleDelta = MathHelper.TWO_PI / 8.0f;
+
+    final PolyBuilder shadowBuilder = new PolyBuilder("Dart Shadow")
+      .translucency(Translucency.B_MINUS_F);
+
     //LAB_800dff70
     for(int i = 0; i < 8; i++) {
-      //LAB_800dff8c
-      struct258._1c4[i * 2    ] = rcos(i * 0x200) * 0x20 >> 12;
-      struct258._1c4[i * 2 + 1] = rsin(i * 0x200) * 0x20 >> 12;
+      final float sin1 = MathHelper.sin(i * shadowAngleDelta);
+      final float cos1 = MathHelper.cosFromSin(sin1, i * shadowAngleDelta);
+      final float sin2 = MathHelper.sin((i + 1 & 0x7) * shadowAngleDelta);
+      final float cos2 = MathHelper.cosFromSin(sin2, (i + 1 & 0x7) * shadowAngleDelta);
+
+      shadowBuilder.addVertex(0.0f, 0.0f, 0.0f).monochrome(0.5f);
+      shadowBuilder.addVertex(cos1 * 32.0f, 0.0f, sin1 * 32.0f);
+      shadowBuilder.addVertex(cos2 * 32.0f, 0.0f, sin2 * 32.0f);
     }
+
+    struct258.shadowObj = shadowBuilder.build();
 
     //LAB_800e002c
     struct258.modelIndex_1e4 = areaData_800f2248.get(this.mapState_800c6798.areaIndex_12).modelIndex_06.get();
@@ -3339,6 +3350,9 @@ public class WMap extends EngineState {
       this.wmapStruct258_800c66a8.models_0c[i].deleteModelParts();
       this.wmapStruct258_800c66a8.models_0c[i] = null;
     }
+
+    this.wmapStruct258_800c66a8.shadowObj.delete();
+    this.wmapStruct258_800c66a8.shadowObj = null;
   }
 
   @Method(0x800e06d0L)
@@ -3533,43 +3547,8 @@ public class WMap extends EngineState {
 
   @Method(0x800e1740L)
   private void renderDartShadow() {
-    final MV sp0x28 = new MV();
-    final Vector3f vert0 = new Vector3f();
-    final Vector3f vert1 = new Vector3f();
-    final Vector3f vert2 = new Vector3f();
-    final Vector2f sxy0 = new Vector2f();
-    final Vector2f sxy1 = new Vector2f();
-    final Vector2f sxy2 = new Vector2f();
-
-    GsGetLs(this.wmapStruct258_800c66a8.models_0c[this.wmapStruct258_800c66a8.modelIndex_1e4].coord2_14, sp0x28);
-    GTE.setTransforms(sp0x28);
-
-    //LAB_800e17b4
-    for(int i = 0; i < 8; i++) {
-      //LAB_800e17d0
-      vert1.set(this.wmapStruct258_800c66a8._1c4[ i            * 2], 0.0f, this.wmapStruct258_800c66a8._1c4[ i            * 2 + 1]);
-      vert2.set(this.wmapStruct258_800c66a8._1c4[(i + 1 & 0x7) * 2], 0.0f, this.wmapStruct258_800c66a8._1c4[(i + 1 & 0x7) * 2 + 1]);
-
-      final float z = perspectiveTransformTriple(vert0, vert1, vert2, sxy0, sxy1, sxy2);
-
-      if(z >= 3 && z < orderingTableSize_1f8003c8.get()) {
-        final GpuCommandPoly cmd = new GpuCommandPoly(3)
-          .bpp(Bpp.BITS_4)
-          .translucent(Translucency.B_MINUS_F)
-          .monochrome(0, 0x80)
-          .monochrome(1, 0)
-          .monochrome(2, 0)
-          .pos(0, sxy0.x, sxy0.y)
-          .pos(1, sxy1.x, sxy1.y)
-          .pos(2, sxy2.x, sxy2.y);
-
-        GPU.queueCommand(78 + z, cmd);
-      }
-
-      //LAB_800e1a98
-    }
-
-    //LAB_800e1ab0
+    GsGetLw(this.wmapStruct258_800c66a8.models_0c[this.wmapStruct258_800c66a8.modelIndex_1e4].coord2_14, this.wmapStruct258_800c66a8.shadowTransforms);
+    RENDERER.queueModel(this.wmapStruct258_800c66a8.shadowObj, this.wmapStruct258_800c66a8.shadowTransforms);
   }
 
   @Method(0x800e1ac4L)

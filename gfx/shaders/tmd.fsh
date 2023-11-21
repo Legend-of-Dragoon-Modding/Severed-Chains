@@ -75,6 +75,11 @@ void main() {
     }
 
     outColour *= texColour;
+  } else {
+    // Untextured translucent primitives don't have a translucency bit so we always discard during the appropriate discard modes
+    if(discardTranslucency == 1 && (flags & ~0x7) != 0 || discardTranslucency == 2 && (flags & ~0x7) == 0) {
+      discard;
+    }
   }
 
   outColour.rgb *= recolour;

@@ -121,6 +121,13 @@ public class RenderEngine {
   private Shader tmdShaderTransparent;
   private Shader.UniformVec3 tmdShaderColour;
   private Shader.UniformVec3 tmdShaderTransparentColour;
+  /**
+   * <ul>
+   *   <li>0: regular rendering, anything rendered will pass through the shader</li>
+   *   <li>1: discard translucent pixels, used for rendering translucent primitives that have translucency disabled in their textures</li>
+   *   <li>2: discard non-translucent pixels, used to render B+F and B-F primitives since they don't need to go through the OIT shader</li>
+   * </ul>
+   */
   private Shader.UniformFloat tmdShaderDiscardTranslucency;
   private FrameBuffer opaqueFrameBuffer;
   private FrameBuffer transparentFrameBuffer;
