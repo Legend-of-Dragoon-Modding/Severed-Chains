@@ -3,8 +3,8 @@ package legend.game.input;
 public class DummyController extends Controller {
   @Override
   public void poll() {
-    for(final InputBinding binding : this.bindings) {
-      binding.poll();
+    for(int i = 0; i < this.bindings.size(); i++) {
+      this.bindings.get(i).poll();
     }
   }
 

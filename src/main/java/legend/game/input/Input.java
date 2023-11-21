@@ -47,7 +47,9 @@ public final class Input {
 
     activeController.poll();
 
-    for(final InputBinding binding : activeController.bindings) {
+    for(int i = 0; i < activeController.bindings.size(); i++) {
+      final InputBinding binding = activeController.bindings.get(i);
+
       if(binding.getState().pressed) {
         if(!held.containsKey(binding)) {
           pressedThisFrame.put(binding, true);
