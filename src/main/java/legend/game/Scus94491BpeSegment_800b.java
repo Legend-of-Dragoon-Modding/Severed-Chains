@@ -225,7 +225,6 @@ public final class Scus94491BpeSegment_800b {
    */
   public static final Value inventoryJoypadInput_800bdc44 = MEMORY.ref(4, 0x800bdc44L);
 
-  public static final Value _800bdc58 = MEMORY.ref(4, 0x800bdc58L);
   public static Renderable58 renderablePtr_800bdc5c;
 
   public static final TextboxArrow0c[] textboxArrows_800bdea0 = new TextboxArrow0c[8];

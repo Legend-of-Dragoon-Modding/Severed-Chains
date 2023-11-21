@@ -24,6 +24,8 @@ public final class RenderableMetrics14 {
   public final float widthScale_10;
   public final float heightScale_12;
 
+  public int vertexStart;
+
   public RenderableMetrics14(final int u, final int v, final int x, final int y, final int clut, final int tpage, final int width, final int height, final int textureWidth, final int textureHeight, final float widthScale, final float heightScale) {
     this.u_00 = u;
     this.v_01 = v;
@@ -49,10 +51,10 @@ public final class RenderableMetrics14 {
     final int width = data.readUShort(0x8);
     final int height = data.readUShort(0xa);
 
-    final float _10 = data.readShort(0x10) / (float)0x1000;
-    final float _12 = data.readShort(0x12) / (float)0x1000;
+    final float widthScale = data.readShort(0x10) / (float)0x1000;
+    final float heightScale = data.readShort(0x12) / (float)0x1000;
 
-    return new RenderableMetrics14(u, v, x, y, clut, tpage, width, height, width, height, _10, _12);
+    return new RenderableMetrics14(u, v, x, y, clut, tpage, width, height, width, height, widthScale, heightScale);
   }
 
   public RenderableMetrics14(final int u, final int v, final int x, final int y, final int clut, final int tpage, final int width, final int height, final int textureWidth, final int textureHeight) {

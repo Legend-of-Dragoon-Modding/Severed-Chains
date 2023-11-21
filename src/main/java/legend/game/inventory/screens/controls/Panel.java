@@ -111,7 +111,7 @@ public class Panel extends Control {
     super.onResize();
 
     if(this.background != null) {
-      final UiPart uiType = this.background.uiType_20.entries_08()[0];
+      final UiPart uiType = this.background.uiType_20.entries_08[0];
       uiType.metrics_00()[0] = new RenderableMetrics14(this.mu, this.mv, 8 + this.cw - this.mg, this.ch - this.mg, this.clut, this.tpage, this.getWidth() - (this.cw - this.mg) * 2 + this.mw, this.getHeight() - (this.ch - this.mg) * 2 + this.mh, this.mw, this.mh);
 
       uiType.metrics_00()[1] = new RenderableMetrics14(this.u0, this.v0, 8, 0, this.clut, this.tpage, this.cw, this.ch, this.cw, this.ch);
