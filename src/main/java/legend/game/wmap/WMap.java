@@ -3350,6 +3350,9 @@ public class WMap extends EngineState {
       this.wmapStruct258_800c66a8.models_0c[i].deleteModelParts();
       this.wmapStruct258_800c66a8.models_0c[i] = null;
     }
+
+    this.wmapStruct258_800c66a8.shadowObj.delete();
+    this.wmapStruct258_800c66a8.shadowObj = null;
   }
 
   @Method(0x800e06d0L)
