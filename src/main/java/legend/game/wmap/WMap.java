@@ -3186,7 +3186,7 @@ public class WMap extends EngineState {
       shadowBuilder.addVertex(cos2 * 32.0f, 0.0f, sin2 * 32.0f);
     }
 
-    struct258.shadowObj = shadowBuilder.build();
+    struct.shadowObj = shadowBuilder.build();
 
     //LAB_800e002c
     struct.modelIndex_1e4 = areaData_800f2248.get(this.mapState_800c6798.areaIndex_12).modelIndex_06.get();
