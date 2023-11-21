@@ -1,6 +1,5 @@
 package legend.game.wmap;
 
-import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
@@ -151,8 +150,6 @@ public class WMap extends EngineState {
    * </ul>
    */
   private final AtomicInteger filesLoadedFlags_800c66b8 = new AtomicInteger();
-
-  private int tempZ_800c66d8;
 
   private McqHeader mcqHeader_800c6768;
   private final MV mcqTransforms = new MV();
@@ -779,7 +776,6 @@ public class WMap extends EngineState {
     this.filesLoadedFlags_800c66b8.set(0);
     zOffset_1f8003e8.set(0);
     tmdGp0Tpage_1f8003ec.set(0x20);
-    this.tempZ_800c66d8 = 0;
 
     this.FUN_800e3fac(0);
     this.FUN_800e78c0();
@@ -2353,19 +2349,11 @@ public class WMap extends EngineState {
       GsSetLightMatrix(lightMatrix);
       GTE.setTransforms(rotTransMatrix);
 
-      //TODO remove
-      if(this.mapState_800c6798.continentIndex_00 < 9 && i == 0) {
-        this.tempZ_800c66d8 = orderingTableSize_1f8003c8.get() - 3;
-        this.renderSpecialDobj2(dobj2); // water
-        this.tempZ_800c66d8 = 0;
-        //LAB_800d93c0
-      } else {
-        //LAB_800d93b4
-        //LAB_800d93c8
-        //renderDobj2(dobj2);
-      }
+      final RenderEngine.QueuedModel model = RENDERER.queueModel(dobj2.obj, lightMatrix);
 
-      RENDERER.queueModel(dobj2.obj, lightMatrix);
+      if(this.mapState_800c6798.continentIndex_00 < 9 && i == 0) {
+        model.clutOverride(1008, waterClutYs_800ef348.get((int)this.wmapStruct258_800c66a8.clutYIndex_28).get());
+      }
 
       //LAB_800d93d4
     }
@@ -3134,70 +3122,6 @@ public class WMap extends EngineState {
 
     coord2.flg = 0;
     coord2.coord.set(mat);
-  }
-
-  /** Don't really know what makes it special. Seems to use a fixed Z value and doesn't check if the triangles are on screen. Used for water. */
-  @Method(0x800dd05cL)
-  private void renderSpecialDobj2(final ModelPart10 dobj2) {
-    final Vector3f[] vertices = dobj2.tmd_08.vert_top_00;
-
-    for(final TmdObjTable1c.Primitive primitive : dobj2.tmd_08.primitives_10) {
-      final int command = primitive.header() & 0xff04_0000;
-
-      if(command == 0x3d00_0000) {
-        this.FUN_800deeac(primitive, vertices);
-      } else {
-        assert false;
-      }
-    }
-  }
-
-  @Method(0x800deeacL)
-  private void FUN_800deeac(final TmdObjTable1c.Primitive primitive, final Vector3f[] vertices) {
-    //LAB_800deee8
-    for(final byte[] data : primitive.data()) {
-      final int tpage = IoHelper.readUShort(data, 0x6);
-
-      final GpuCommandPoly cmd = new GpuCommandPoly(4)
-        .bpp(Bpp.of(tpage >>> 7 & 0b11))
-        .clut(1008, waterClutYs_800ef348.get((int)this.wmapStruct258_800c66a8.clutYIndex_28).get())
-        .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
-        .uv(0, IoHelper.readUByte(data, 0x0), IoHelper.readUByte(data, 0x1))
-        .uv(1, IoHelper.readUByte(data, 0x4), IoHelper.readUByte(data, 0x5))
-        .uv(2, IoHelper.readUByte(data, 0x8), IoHelper.readUByte(data, 0x9))
-        .uv(3, IoHelper.readUByte(data, 0xc), IoHelper.readUByte(data, 0xd));
-
-      //LAB_800def00
-      final Vector3f vert0 = vertices[IoHelper.readUShort(data, 0x20)];
-      final Vector3f vert1 = vertices[IoHelper.readUShort(data, 0x22)];
-      final Vector3f vert2 = vertices[IoHelper.readUShort(data, 0x24)];
-      GTE.perspectiveTransformTriangle(vert0, vert1, vert2);
-
-      if(!GTE.hasError()) {
-        //LAB_800defac
-        if(GTE.normalClipping() > 0) { // Is visible
-          //LAB_800defe8
-          cmd
-            .pos(0, GTE.getScreenX(0), GTE.getScreenY(0))
-            .pos(1, GTE.getScreenX(1), GTE.getScreenY(1))
-            .pos(2, GTE.getScreenX(2), GTE.getScreenY(2));
-
-          GTE.perspectiveTransform(vertices[IoHelper.readUShort(data, 0x26)]);
-
-          if(!GTE.hasError()) { // No errors
-            //LAB_800df0ac
-            cmd
-              .pos(3, GTE.getScreenX(2), GTE.getScreenY(2))
-              .rgb(0, IoHelper.readInt(data, 0x10))
-              .rgb(1, IoHelper.readInt(data, 0x14))
-              .rgb(2, IoHelper.readInt(data, 0x18))
-              .rgb(3, IoHelper.readInt(data, 0x1c));
-
-            GPU.queueCommand(this.tempZ_800c66d8, cmd); // water
-          }
-        }
-      }
-    }
   }
 
   @Method(0x800dfa70L)

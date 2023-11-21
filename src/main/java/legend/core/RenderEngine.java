@@ -120,7 +120,11 @@ public class RenderEngine {
   private Shader tmdShader;
   private Shader tmdShaderTransparent;
   private Shader.UniformVec3 tmdShaderColour;
+  private Shader.UniformVec2 tmdShaderUvOffset;
+  private Shader.UniformVec2 tmdShaderClutOverride;
   private Shader.UniformVec3 tmdShaderTransparentColour;
+  private Shader.UniformVec2 tmdShaderTransparentUvOffset;
+  private Shader.UniformVec2 tmdShaderTransparentClutOverride;
   /**
    * <ul>
    *   <li>0: regular rendering, anything rendered will pass through the shader</li>
@@ -299,6 +303,8 @@ public class RenderEngine {
       this.tmdShader.new UniformInt("tex24").set(0);
       this.tmdShader.new UniformInt("tex15").set(1);
       this.tmdShaderColour = this.tmdShader.new UniformVec3("recolour");
+      this.tmdShaderClutOverride = this.tmdShader.new UniformVec2("clutOverride");
+      this.tmdShaderUvOffset = this.tmdShader.new UniformVec2("uvOffset");
       this.tmdShaderDiscardTranslucency = this.tmdShader.new UniformFloat("discardTranslucency");
       this.tmdShaderDiscardTranslucency.set(1.0f);
 
@@ -318,6 +324,8 @@ public class RenderEngine {
       this.tmdShaderTransparent.new UniformInt("tex24").set(0);
       this.tmdShaderTransparent.new UniformInt("tex15").set(1);
       this.tmdShaderTransparentColour = this.tmdShaderTransparent.new UniformVec3("recolour");
+      this.tmdShaderTransparentClutOverride = this.tmdShaderTransparent.new UniformVec2("clutOverride");
+      this.tmdShaderTransparentUvOffset = this.tmdShaderTransparent.new UniformVec2("uvOffset");
 
       ShaderManager.addShader("tmd-transparent", this.tmdShaderTransparent);
     } catch(final IOException e) {
@@ -539,6 +547,8 @@ public class RenderEngine {
     for(int i = 0; i < pool.size(); i++) {
       final QueuedModel entry = pool.get(i);
       this.tmdShaderColour.set(entry.colour);
+      this.tmdShaderClutOverride.set(entry.clutOverride);
+      this.tmdShaderUvOffset.set(entry.uvOffset);
       boolean updated = false;
 
       if(entry.obj.shouldRender(null)) {
@@ -576,12 +586,16 @@ public class RenderEngine {
 
       if(entry.obj.shouldRender(Translucency.B_PLUS_F)) {
         this.tmdShaderColour.set(entry.colour);
+        this.tmdShaderClutOverride.set(entry.clutOverride);
+        this.tmdShaderUvOffset.set(entry.uvOffset);
         entry.updateTransforms();
         entry.render(Translucency.B_PLUS_F);
       }
 
       if(entry.obj.shouldRender(Translucency.B_MINUS_F)) {
         this.tmdShaderColour.set(entry.colour.mul(-1.0f, this.tempColour));
+        this.tmdShaderClutOverride.set(entry.clutOverride);
+        this.tmdShaderUvOffset.set(entry.uvOffset);
         entry.updateTransforms();
         entry.render(Translucency.B_MINUS_F);
       }
@@ -601,6 +615,8 @@ public class RenderEngine {
       if(entry.obj.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
         entry.updateTransforms();
         this.tmdShaderTransparentColour.set(entry.colour);
+        this.tmdShaderTransparentClutOverride.set(entry.clutOverride);
+        this.tmdShaderTransparentUvOffset.set(entry.uvOffset);
         entry.render(Translucency.HALF_B_PLUS_HALF_F);
       }
     }
@@ -621,6 +637,8 @@ public class RenderEngine {
       final QueuedModel entry = pool.get(i);
       entry.updateTransforms();
       this.tmdShaderColour.set(entry.colour);
+      this.tmdShaderClutOverride.set(entry.clutOverride);
+      this.tmdShaderUvOffset.set(entry.uvOffset);
 
       if(entry.scissor.w != 0) {
         glEnable(GL_SCISSOR_TEST);
@@ -679,24 +697,16 @@ public class RenderEngine {
 
   public QueuedModel queueModel(final Obj obj) {
     final QueuedModel entry = this.modelPool.acquire();
+    entry.reset();
     entry.obj = obj;
-    entry.transforms.identity();
-    entry.screenspaceOffset.zero();
-    entry.colour.set(1.0f, 1.0f, 1.0f);
-    entry.scissor.set(0, 0, 0, 0);
-    entry.vertexCount = 0;
     return entry;
   }
 
   public QueuedModel queueModel(final Obj obj, final MV mv) {
     final QueuedModel entry = this.modelPool.acquire();
+    entry.reset();
     entry.obj = obj;
-    entry.transforms.set(mv);
-    entry.transforms.setTranslation(mv.transfer);
-    entry.screenspaceOffset.zero();
-    entry.colour.set(1.0f, 1.0f, 1.0f);
-    entry.scissor.set(0, 0, 0, 0);
-    entry.vertexCount = 0;
+    entry.transforms.set(mv).setTranslation(mv.transfer);
     return entry;
   }
 
@@ -706,12 +716,8 @@ public class RenderEngine {
     }
 
     final QueuedModel entry = this.orthoPool.acquire();
+    entry.reset();
     entry.obj = obj;
-    entry.transforms.identity();
-    entry.screenspaceOffset.zero();
-    entry.colour.set(1.0f, 1.0f, 1.0f);
-    entry.scissor.set(0, 0, 0, 0);
-    entry.vertexCount = 0;
     return entry;
   }
 
@@ -721,13 +727,9 @@ public class RenderEngine {
     }
 
     final QueuedModel entry = this.orthoPool.acquire();
+    entry.reset();
     entry.obj = obj;
-    entry.transforms.set(mv);
-    entry.transforms.setTranslation(mv.transfer);
-    entry.screenspaceOffset.zero();
-    entry.colour.set(1.0f, 1.0f, 1.0f);
-    entry.scissor.set(0, 0, 0, 0);
-    entry.vertexCount = 0;
+    entry.transforms.set(mv).setTranslation(mv.transfer);
     return entry;
   }
 
@@ -737,12 +739,8 @@ public class RenderEngine {
     }
 
     final QueuedModel entry = this.orthoOverlayPool.acquire();
+    entry.reset();
     entry.obj = obj;
-    entry.transforms.identity();
-    entry.screenspaceOffset.zero();
-    entry.colour.set(1.0f, 1.0f, 1.0f);
-    entry.scissor.set(0, 0, 0, 0);
-    entry.vertexCount = 0;
     return entry;
   }
 
@@ -752,13 +750,9 @@ public class RenderEngine {
     }
 
     final QueuedModel entry = this.orthoOverlayPool.acquire();
+    entry.reset();
     entry.obj = obj;
-    entry.transforms.set(mv);
-    entry.transforms.setTranslation(mv.transfer);
-    entry.screenspaceOffset.zero();
-    entry.colour.set(1.0f, 1.0f, 1.0f);
-    entry.scissor.set(0, 0, 0, 0);
-    entry.vertexCount = 0;
+    entry.transforms.set(mv).setTranslation(mv.transfer);
     return entry;
   }
 
@@ -768,12 +762,8 @@ public class RenderEngine {
     }
 
     final QueuedModel entry = this.orthoUnderlayPool.acquire();
+    entry.reset();
     entry.obj = obj;
-    entry.transforms.identity();
-    entry.screenspaceOffset.zero();
-    entry.colour.set(1.0f, 1.0f, 1.0f);
-    entry.scissor.set(0, 0, 0, 0);
-    entry.vertexCount = 0;
     return entry;
   }
 
@@ -783,13 +773,9 @@ public class RenderEngine {
     }
 
     final QueuedModel entry = this.orthoUnderlayPool.acquire();
+    entry.reset();
     entry.obj = obj;
-    entry.transforms.set(mv);
-    entry.transforms.setTranslation(mv.transfer);
-    entry.screenspaceOffset.zero();
-    entry.colour.set(1.0f, 1.0f, 1.0f);
-    entry.scissor.set(0, 0, 0, 0);
-    entry.vertexCount = 0;
+    entry.transforms.set(mv).setTranslation(mv.transfer);
     return entry;
   }
 
@@ -989,6 +975,8 @@ public class RenderEngine {
     private final Matrix4f transforms = new Matrix4f();
     private final Vector2f screenspaceOffset = new Vector2f();
     private final Vector3f colour = new Vector3f();
+    private final Vector2f clutOverride = new Vector2f();
+    private final Vector2f uvOffset = new Vector2f();
 
     private final Matrix4f lightDirection = new Matrix4f();
     private final Matrix4f lightColour = new Matrix4f();
@@ -1024,6 +1012,16 @@ public class RenderEngine {
       return this;
     }
 
+    public QueuedModel clutOverride(final float x, final float y) {
+      this.clutOverride.set(x, y);
+      return this;
+    }
+
+    public QueuedModel uvOffset(final float x, final float y) {
+      this.uvOffset.set(x, y);
+      return this;
+    }
+
     public QueuedModel lightDirection(final Matrix3f lightDirection) {
       this.lightDirection.set(lightDirection).mul(this.transforms).setTranslation(0.0f, 0.0f, 0.0f);
       return this;
@@ -1048,6 +1046,16 @@ public class RenderEngine {
       this.startVertex = startVertex;
       this.vertexCount = vertexCount;
       return this;
+    }
+
+    private void reset() {
+      this.transforms.identity();
+      this.screenspaceOffset.zero();
+      this.colour.set(1.0f, 1.0f, 1.0f);
+      this.clutOverride.zero();
+      this.uvOffset.zero();
+      this.scissor.set(0, 0, 0, 0);
+      this.vertexCount = 0;
     }
 
     private void updateTransforms() {
