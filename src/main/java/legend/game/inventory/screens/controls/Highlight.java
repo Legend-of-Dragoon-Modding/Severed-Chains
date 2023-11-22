@@ -111,7 +111,7 @@ public class Highlight extends Control {
     if(this.background.uiType_20.obj != null) {
       this.background.uiType_20.obj.delete();
     }
-t dett
+
     if(this.brackets.uiType_20.obj != null) {
       this.brackets.uiType_20.obj.delete();
     }
