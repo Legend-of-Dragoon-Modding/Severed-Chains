@@ -2,7 +2,6 @@ package legend.game.wmap;
 
 import legend.core.opengl.MeshObj;
 import org.joml.Vector3f;
-import org.joml.Vector3i;
 
 import java.util.Arrays;
 
@@ -51,7 +50,7 @@ public class MapState100 {
    * 800c67d8
    * Array of temp positions of the second or second to last small dot of a path, depending on direction of approch of segment
    */
-  public final Vector3i[] tempPathSegmentStartOffsets_40 = new Vector3i[7];
+  public final Vector3f[] tempPathSegmentStartOffsets_40 = new Vector3f[7];
   /**
    * 800c6848
    * Seems to be the dot on a path segment that the player is entering that is used
@@ -105,6 +104,6 @@ public class MapState100 {
   public int pathSegmentEndpointTypeCrossed_fc;
 
   public MapState100() {
-    Arrays.setAll(this.tempPathSegmentStartOffsets_40, i -> new Vector3i());
+    Arrays.setAll(this.tempPathSegmentStartOffsets_40, i -> new Vector3f());
   }
 }
