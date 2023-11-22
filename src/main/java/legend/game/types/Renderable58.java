@@ -29,7 +29,7 @@ public class Renderable58 {
   public int clut_30;
   public float widthScale;
   public float heightScale_38;
-  public int z_3c;
+  public float z_3c;
   public int x_40;
   public int y_44;
 
@@ -37,6 +37,9 @@ public class Renderable58 {
   public Renderable58 parent_54;
 
   public int heightCut;
+
+  public int baseX;
+  public int baseY;
 
   public Renderable58 setVisible(final boolean visible) {
     if(visible) {

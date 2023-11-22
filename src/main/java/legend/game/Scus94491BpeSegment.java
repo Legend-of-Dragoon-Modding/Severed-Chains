@@ -82,6 +82,7 @@ import static legend.game.Scus94491BpeSegment_8002.handleTextboxAndText;
 import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.renderTextboxes;
+import static legend.game.Scus94491BpeSegment_8002.renderUi;
 import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
 import static legend.game.Scus94491BpeSegment_8002.unloadEncounterSoundEffects;
 import static legend.game.Scus94491BpeSegment_8003.GsInitGraph;
@@ -417,6 +418,8 @@ public final class Scus94491BpeSegment {
       RENDERER.window().setFpsLimit((60 / frames) * Config.getGameSpeedMultiplier());
 
       loadQueuedOverlay();
+
+      renderUi();
 
       if(currentEngineState_8004dd04 != null) {
         currentEngineState_8004dd04.tick();

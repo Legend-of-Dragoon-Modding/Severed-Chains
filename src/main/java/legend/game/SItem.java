@@ -379,6 +379,11 @@ public final class SItem {
 
       case UNLOAD_125 -> {
         deallocateRenderables(0xff);
+
+        if(uiFile_800bdc3c != null) {
+          uiFile_800bdc3c.delete();
+        }
+
         uiFile_800bdc3c = null;
 
         switch(whichMenu_800bdc38) {
@@ -481,14 +486,23 @@ public final class SItem {
 
   @Method(0x8010376cL)
   public static void renderGlyphs(final UnboundedArrayRef<MenuGlyph06> glyphs, final int x, final int y) {
-    //LAB_801037ac
+    int count = 0;
     for(int i = 0; glyphs.get(i).glyph_00.get() != 0xff; i++) {
+      count++;
+    }
+
+    float offsetZ = 0.0f;
+
+    //LAB_801037ac
+    for(int i = count - 1; i >= 0; i--) {
       final Renderable58 s0 = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
 
       initGlyph(s0, glyphs.get(i));
 
       s0.x_40 += x;
       s0.y_44 += y;
+      s0.z_3c += offsetZ;
+      offsetZ += 0.01f;
     }
 
     //LAB_801037f4
@@ -604,10 +618,10 @@ public final class SItem {
 
     //LAB_80103d24
     //LAB_80103d28
-    Scus94491BpeSegment_8002.renderText(text, x    , y    , colour, 0);
     Scus94491BpeSegment_8002.renderText(text, x    , y + 1, shadowColour, 0);
     Scus94491BpeSegment_8002.renderText(text, x + 1, y    , shadowColour, 0);
     Scus94491BpeSegment_8002.renderText(text, x + 1, y + 1, shadowColour, 0);
+    Scus94491BpeSegment_8002.renderText(text, x    , y    , colour, 0);
   }
 
   @Method(0x80103dd4L)
@@ -1830,7 +1844,7 @@ public final class SItem {
     return additionId;
   }
 
-  private static Obj buildUiRenderable(final UiType type, final String name) {
+  public static Obj buildUiRenderable(final UiType type, final String name) {
     final QuadBuilder builder = new QuadBuilder("UI " + name);
     int vertices = 0;
 
@@ -1864,6 +1878,10 @@ public final class SItem {
 
     switch(inventoryMenuState_800bdc28.get()) {
       case INIT_0:
+        if(uiFile_800bdc3c != null) {
+          uiFile_800bdc3c.delete();
+        }
+
         renderablePtr_800bdc5c = null;
         uiFile_800bdc3c = null;
         resizeDisplay(320, 240);
@@ -2193,6 +2211,11 @@ public final class SItem {
       case _18:
         startFadeEffect(2, 10);
         deallocateRenderables(0xff);
+
+        if(uiFile_800bdc3c != null) {
+          uiFile_800bdc3c.delete();
+        }
+
         uiFile_800bdc3c = null;
         whichMenu_800bdc38 = WhichMenu.UNLOAD_POST_COMBAT_REPORT_30;
         textZ_800bdf00.set(13);
@@ -2494,7 +2517,7 @@ public final class SItem {
             messageBox.highlightRenderable_04 = renderable;
             renderable.heightScale_38 = 0;
             renderable.widthScale = 0;
-            messageBox.highlightRenderable_04.z_3c = 32;
+            messageBox.highlightRenderable_04.z_3c = 31;
           }
 
           //LAB_8010ef64

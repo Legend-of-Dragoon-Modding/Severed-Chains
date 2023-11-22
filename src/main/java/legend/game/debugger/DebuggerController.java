@@ -10,27 +10,27 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.stage.Stage;
 import legend.core.Config;
-import legend.game.submap.SMap;
 import legend.game.combat.AdditionMode;
 import legend.game.combat.SEffe;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.config.ConfigLoadedEvent;
 import legend.game.modding.events.config.ConfigUpdatedEvent;
+import legend.game.submap.SMap;
 import legend.game.submap.SubmapState;
 import legend.game.wmap.DirectionalPathSegmentData08;
 import legend.game.wmap.WMap;
+import legend.game.wmap.WmapState;
 import org.legendofdragoon.modloader.events.EventListener;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
-import static legend.game.submap.SMap.encounterData_800f64c4;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
+import static legend.game.submap.SMap.encounterData_800f64c4;
 import static legend.game.wmap.WmapStatics.directionalPathSegmentData_800f2248;
 
 public class DebuggerController {
@@ -335,7 +335,7 @@ public class DebuggerController {
       gameState_800babc8.dotIndex_4da = wmap.mapState_800c6798.dotIndex_16;
       gameState_800babc8.dotOffset_4dc = wmap.mapState_800c6798.dotOffset_18;
       gameState_800babc8.facing_4dd = wmap.mapState_800c6798.facing_1c;
-      pregameLoadingStage_800bb10c.set(8);
+      wmap.wmapState_800bb10c = WmapState.TRANSITION_TO_BATTLE_8;
     }
   }
 

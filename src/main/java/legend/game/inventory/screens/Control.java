@@ -209,7 +209,7 @@ public abstract class Control extends ControlHost {
 
   protected void renderCharacter(final int x, final int y, final int character) {
     final Renderable58 v0 = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
-    v0.flags_00 |= Renderable58.FLAG_NO_ANIMATION;
+    v0.flags_00 |= Renderable58.FLAG_NO_ANIMATION | Renderable58.FLAG_DELETE_AFTER_RENDER;
     v0.glyph_04 = character;
     v0.tpage_2c = 0x19;
     v0.clut_30 = 0x7ca9;

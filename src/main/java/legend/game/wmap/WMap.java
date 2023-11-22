@@ -171,7 +171,7 @@ public class WMap extends EngineState {
 
   private final Vector3f shipWakeCrossVector_800c87d8 = new Vector3f(0.0f, 1.0f, 0.0f);
 
-  private WmapState wmapState_800bb10c = WmapState.INIT_0;
+  public WmapState wmapState_800bb10c = WmapState.INIT_0;
 
   /**
    * <ol start="0">
