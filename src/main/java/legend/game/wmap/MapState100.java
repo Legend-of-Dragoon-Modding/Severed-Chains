@@ -16,21 +16,21 @@ public class MapState100 {
    *   <li>Mille Seseau</li>
    *   <li>Gloriano</li>
    *   <li>Death Frontier</li>
-   *   <li>Teleportation</li>
+   *   <li>Endiness</li>
    * </ol>
    * 800c6798
    */
   public int continentIndex_00;
-  /** 800c679c */
-//  public int _04; // was just a copy of continentIndex_00
+  // /** 800c679c */
+  // public int _04; // was just a copy of continentIndex_00
   /** 800c67a0 */
   public int locationCount_08;
-  /** 800c67a4 */
-  public int areaCount_0c;
+  /** The number of paths on the continent * 2 (one for positive and negative directions) (800c67a4) */
+  public int directionalPathCount_0c;
   /** 800c67a8 */
   public int locationIndex_10;
-  /** 800c67aa */
-  public int areaIndex_12;
+  /** The section of the path that the player is on, plus the direction (800c67aa) */
+  public int directionalPathIndex_12;
   /** The section of the path that the player is on (800c67ac) */
   public int pathIndex_14;
   /** The path dot the player is on (800c67ae) */
@@ -52,8 +52,12 @@ public class MapState100 {
    * Array of temp positions of the second or second to last small dot of a path, depending on direction of approch of segment
    */
   public final Vector3i[] tempPathSegmentStartOffsets_40 = new Vector3i[7];
-  /** 800c6848 */
-  public final Vector3f _b0 = new Vector3f();
+  /**
+   * 800c6848
+   * Seems to be the dot on a path segment that the player is entering that is used
+   * to orient and move the player in case of discrepancy in direction.
+   */
+  public final Vector3f dotPositionForPlayerOrientationCorrectionAtIntersection = new Vector3f();
   /** 800c6858 */
   public float playerDestAngle_c0;
   /** 800c685a */
@@ -76,10 +80,19 @@ public class MapState100 {
   /**
    * 800c6874
    * Array of temp indices of paths branching off a location point
-   * */
+   */
   public final int[] tempPathSegmentIndices_dc = new int[7];
-  /** 800c6890 */
-  public int _f8;
+  /**
+   * 800c6890
+   * What path segment Dart is moving into. Segment order is absolute based on order of paths,
+   * not Dart's travel direction.
+   * <ol start="0">
+   *   <li>Current</li>
+   *   <li>Previous</li>
+   *   <li>Next</li>
+   * </ol>
+   */
+  public int pathSegmentPlayerMovingInto_f8;
   /**
    * 800c6894
    * Describes the type of path segment endpoint that Dart is at.

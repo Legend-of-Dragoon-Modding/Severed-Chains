@@ -6,16 +6,12 @@ import legend.core.memory.types.MemoryRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedByteRef;
 
-/**
- * AreaData is related to path segments, but there is one for each direction you travel
- * on a segment.
- */
-public class AreaData08 implements MemoryRef {
+public class DirectionalPathSegmentData08 implements MemoryRef {
   private final Value ref;
 
   /**
-   * Each AreaData has its own unique path segment, with each segment index having a positive
-   * and negative direction version.
+   * Path segment index (actually path index + 1 because 0 can't have a sign).
+   * The index can be positive or negative depending on Dart's direction.
    */
   public final ShortRef pathSegmentIndexAndDirection_00;
 
@@ -25,7 +21,7 @@ public class AreaData08 implements MemoryRef {
   public final ByteRef encounterIndex_05;
   public final UnsignedByteRef modelIndex_06;
 
-  public AreaData08(final Value ref) {
+  public DirectionalPathSegmentData08(final Value ref) {
     this.ref = ref;
 
     this.pathSegmentIndexAndDirection_00 = ref.offset(2, 0x00L).cast(ShortRef::new);

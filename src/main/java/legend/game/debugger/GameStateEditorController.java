@@ -194,7 +194,7 @@ public class GameStateEditorController {
     this.textDotIndex.setText(String.valueOf(gameState_800babc8.dotIndex_4da));
     this.textDotOffset.setText(String.valueOf(gameState_800babc8.dotOffset_4dc));
     this.textFacing.setText(String.valueOf(gameState_800babc8.facing_4dd));
-    this.textAreaIndex.setText(String.valueOf(gameState_800babc8.areaIndex_4de));
+    this.textAreaIndex.setText(String.valueOf(gameState_800babc8.directionalPathIndex_4de));
   }
 
   @FXML
@@ -511,11 +511,11 @@ public class GameStateEditorController {
 
   @FXML
   public void getAreaIndex() {
-    this.textAreaIndex.setText(String.valueOf(gameState_800babc8.areaIndex_4de));
+    this.textAreaIndex.setText(String.valueOf(gameState_800babc8.directionalPathIndex_4de));
   }
 
   @FXML
   public void setAreaIndex() {
-    gameState_800babc8.areaIndex_4de = Integer.parseInt(this.textAreaIndex.getText());
+    gameState_800babc8.directionalPathIndex_4de = Integer.parseInt(this.textAreaIndex.getText());
   }
 }

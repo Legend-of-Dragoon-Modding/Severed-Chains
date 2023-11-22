@@ -137,7 +137,7 @@ public final class RetailSerializer {
     state.dotIndex_4da = data.readUShort(0x4da);
     state.dotOffset_4dc = data.readUByte(0x4dc);
     state.facing_4dd = data.readByte(0x4dd);
-    state.areaIndex_4de = data.readUShort(0x4de);
+    state.directionalPathIndex_4de = data.readUShort(0x4de);
 
 //    state.mono_4e0 = data.readUByte(0x4e0) != 0;
     state.vibrationEnabled_4e1 = data.readUByte(0x4e1) != 0;

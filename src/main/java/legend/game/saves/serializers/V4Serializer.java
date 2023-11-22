@@ -204,7 +204,7 @@ public final class V4Serializer {
     offset++;
     state.facing_4dd = data.readByte(offset);
     offset++;
-    state.areaIndex_4de = data.readUShort(offset);
+    state.directionalPathIndex_4de = data.readUShort(offset);
     offset += 2;
 
     state.characterInitialized_4e6 = data.readInt(offset);
@@ -415,7 +415,7 @@ public final class V4Serializer {
     offset++;
     data.writeByte(offset, state.facing_4dd);
     offset++;
-    data.writeShort(offset, state.areaIndex_4de);
+    data.writeShort(offset, state.directionalPathIndex_4de);
     offset += 2;
 
     data.writeInt(offset, state.characterInitialized_4e6);

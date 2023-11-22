@@ -9,7 +9,7 @@ import legend.core.memory.types.UnsignedByteRef;
 public class Location14 implements MemoryRef {
   private final Value ref;
 
-  public final ShortRef areaIndex_00;
+  public final ShortRef directionalPathIndex_00;
   public final ShortRef placeIndex_02;
   public final ShortRef submapCut_04;
   public final ShortRef submapScene_06;
@@ -34,7 +34,7 @@ public class Location14 implements MemoryRef {
   public Location14(final Value ref) {
     this.ref = ref;
 
-    this.areaIndex_00 = ref.offset(2, 0x00L).cast(ShortRef::new);
+    this.directionalPathIndex_00 = ref.offset(2, 0x00L).cast(ShortRef::new);
     this.placeIndex_02 = ref.offset(2, 0x02L).cast(ShortRef::new);
     this.submapCut_04 = ref.offset(2, 0x04L).cast(ShortRef::new);
     this.submapScene_06 = ref.offset(2, 0x06L).cast(ShortRef::new);
