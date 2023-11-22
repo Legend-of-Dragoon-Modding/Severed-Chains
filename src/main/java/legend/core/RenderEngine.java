@@ -634,7 +634,6 @@ public class RenderEngine {
 
   private void render2dPool(final QueuePool pool) {
     this.tmdShader.use();
-    this.tmdShaderDiscardTranslucency.set(0.0f);
     GPU.useVramTexture();
 
     final float widthScale = this.window.getWidth() / this.projectionWidth;
@@ -654,12 +653,26 @@ public class RenderEngine {
         glScissor((int)(entry.scissor.x * widthScale), this.window.getHeight() - (int)(entry.scissor.y * heightScale), (int)(entry.scissor.w * widthScale), (int)(entry.scissor.h * heightScale));
       }
 
+      this.tmdShaderDiscardTranslucency.set(0.0f);
+      glDisable(GL_BLEND);
+
       if(entry.obj.shouldRender(null)) {
-        glDisable(GL_BLEND);
         entry.render(null);
       }
 
+      this.tmdShaderDiscardTranslucency.set(1.0f);
+
+      for(int translucencyIndex = 0; translucencyIndex < Translucency.FOR_RENDERING.length; translucencyIndex++) {
+        final Translucency translucency = Translucency.FOR_RENDERING[translucencyIndex];
+
+        if(entry.obj.shouldRender(translucency)) {
+          entry.render(translucency);
+        }
+      }
+
+      this.tmdShaderDiscardTranslucency.set(2.0f);
       glEnable(GL_BLEND);
+
       for(int translucencyIndex = 0; translucencyIndex < Translucency.FOR_RENDERING.length; translucencyIndex++) {
         final Translucency translucency = Translucency.FOR_RENDERING[translucencyIndex];
 

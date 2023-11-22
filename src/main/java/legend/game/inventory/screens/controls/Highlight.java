@@ -7,6 +7,7 @@ import legend.game.types.RenderableMetrics14;
 import legend.game.types.UiPart;
 import legend.game.types.UiType;
 
+import static legend.game.SItem.buildUiRenderable;
 import static legend.game.SItem.initGlyph;
 import static legend.game.Scus94491BpeSegment_8002.allocateManualRenderable;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderable;
@@ -91,10 +92,41 @@ public class Highlight extends Control {
 
     bracketsPart.metrics_00()[4] = new RenderableMetrics14(240, 71, 8, this.getHeight() - 5, 0xfc29, 0x2c, 5, 5, 5, 5);
     bracketsPart.metrics_00()[5] = new RenderableMetrics14(251, 71, 8 + this.getWidth() - 5, this.getHeight() - 5, 0xfc29, 0x2c, 5, 5, 5, 5);
+
+    if(this.background.uiType_20.obj != null) {
+      this.background.uiType_20.obj.delete();
+      this.background.uiType_20.obj = null;
+    }
+
+    if(this.brackets.uiType_20.obj != null) {
+      this.brackets.uiType_20.obj.delete();
+      this.brackets.uiType_20.obj = null;
+    }
+  }
+
+  @Override
+  protected void delete() {
+    super.delete();
+
+    if(this.background.uiType_20.obj != null) {
+      this.background.uiType_20.obj.delete();
+    }
+t dett
+    if(this.brackets.uiType_20.obj != null) {
+      this.brackets.uiType_20.obj.delete();
+    }
   }
 
   @Override
   protected void render(final int x, final int y) {
+    if(this.background.uiType_20.obj == null) {
+      this.background.uiType_20.obj = buildUiRenderable(this.background.uiType_20, "Highlight Background");
+    }
+
+    if(this.brackets.uiType_20.obj == null) {
+      this.brackets.uiType_20.obj = buildUiRenderable(this.brackets.uiType_20, "Highlight Brackets");
+    }
+
     uploadRenderable(this.background, x, y);
     uploadRenderable(this.brackets, x, y);
   }

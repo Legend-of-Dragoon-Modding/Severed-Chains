@@ -11,4 +11,26 @@ public record UiFile(UiType uiElements_0000, UiType itemIcons_c6a4, UiType portr
 
     return new UiFile(uiElements_0000, itemIcons_c6a4, portraits_cfac, _d2d8);
   }
+
+  public void delete() {
+    if(this.uiElements_0000.obj != null) {
+      this.uiElements_0000.obj.delete();
+      this.uiElements_0000.obj = null;
+    }
+
+    if(this.itemIcons_c6a4.obj != null) {
+      this.itemIcons_c6a4.obj.delete();
+      this.itemIcons_c6a4.obj = null;
+    }
+
+    if(this.portraits_cfac.obj != null) {
+      this.portraits_cfac.obj.delete();
+      this.portraits_cfac.obj = null;
+    }
+
+    if(this._d2d8.obj != null) {
+      this._d2d8.obj.delete();
+      this._d2d8.obj = null;
+    }
+  }
 }

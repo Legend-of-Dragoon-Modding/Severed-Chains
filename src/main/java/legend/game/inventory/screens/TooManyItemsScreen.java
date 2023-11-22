@@ -187,6 +187,11 @@ public class TooManyItemsScreen extends MenuScreen {
         if(fullScreenEffect_800bb140.currentColour_28 >= 0xff) {
           startFadeEffect(2, 10);
           deallocateRenderables(0xff);
+
+          if(uiFile_800bdc3c != null) {
+            uiFile_800bdc3c.delete();
+          }
+
           uiFile_800bdc3c = null;
           whichMenu_800bdc38 = WhichMenu.UNLOAD_TOO_MANY_ITEMS_MENU_35;
 

@@ -54,6 +54,13 @@ public abstract class ControlHost implements Iterable<Control> {
 
   public void removeControl(final Control control) {
     this.controls.remove(control);
+    control.delete();
+  }
+
+  protected void delete() {
+    for(final Control control : this.controls) {
+      control.delete();
+    }
   }
 
   public <T extends Control> Optional<T> findControl(final Class<T> type, final Predicate<T> predicate) {

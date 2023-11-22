@@ -925,6 +925,10 @@ public final class Scus94491BpeSegment_8002 {
         if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
           whichMenu_800bdc38 = WhichMenu.WAIT_FOR_S_ITEM_TO_LOAD_3;
 
+          if(uiFile_800bdc3c != null) {
+            uiFile_800bdc3c.delete();
+          }
+
           renderablePtr_800bdc5c = null;
           uiFile_800bdc3c = null;
           resizeDisplay(384, 240);
@@ -972,6 +976,11 @@ public final class Scus94491BpeSegment_8002 {
         whichMenu_800bdc38 = WhichMenu.NONE_0;
 
         deallocateRenderables(0xff);
+
+        if(uiFile_800bdc3c != null) {
+          uiFile_800bdc3c.delete();
+        }
+
         uiFile_800bdc3c = null;
 
         startFadeEffect(2, 10);
@@ -1455,9 +1464,34 @@ public final class Scus94491BpeSegment_8002 {
     uploadRenderable(renderablePtr_800bdc5c, 0, 0);
   }
 
+  private static final List<Renderable58> renderables = new ArrayList<>();
+  private static final Comparator<Renderable58> renderableDepthComparator = Comparator.comparingDouble((Renderable58 r) -> r.z_3c).reversed();
+
   public static void uploadRenderable(Renderable58 renderable, final int x, final int y) {
-    //LAB_80023c8c
     while(renderable != null) {
+      renderable.baseX = x;
+      renderable.baseY = y;
+      renderables.add(renderable);
+      renderable = renderable.parent_54;
+    }
+  }
+
+  public static void renderUi() {
+    if(renderables.isEmpty()) {
+      return;
+    }
+
+    renderables.sort(renderableDepthComparator);
+
+    //LAB_80023c8c
+    for(int i = 0; i < renderables.size(); i++) {
+      final Renderable58 renderable = renderables.get(i);
+
+      // If a glyph is unloaded after being queued
+      if(renderable.glyph_04 == -1) {
+        continue;
+      }
+
       boolean forceUnload = false;
       final UiPart[] entries = renderable.uiType_20.entries_08;
 
@@ -1542,8 +1576,8 @@ public final class Scus94491BpeSegment_8002 {
         final RenderableMetrics14[] metricses = entries[renderable.glyph_04].metrics_00();
 
         //LAB_80023e94
-        for(int i = metricses.length - 1; i >= 0; i--) {
-          final RenderableMetrics14 metrics = metricses[i];
+        for(int metricsIndex = 0; metricsIndex < metricses.length; metricsIndex++) {
+          final RenderableMetrics14 metrics = metricses[metricsIndex];
 
           final GpuCommandPoly cmd = new GpuCommandPoly(4)
             .monochrome(0x80);
@@ -1616,10 +1650,10 @@ public final class Scus94491BpeSegment_8002 {
           }
 
           //LAB_800240e8
-          cmd.pos(0, x1 + x, y1 + y + renderable.heightCut);
-          cmd.pos(1, x2 + x, y1 + y + renderable.heightCut);
-          cmd.pos(2, x1 + x, y2 + y);
-          cmd.pos(3, x2 + x, y2 + y);
+          cmd.pos(0, x1 + renderable.baseX, y1 + renderable.baseY + renderable.heightCut);
+          cmd.pos(1, x2 + renderable.baseX, y1 + renderable.baseY + renderable.heightCut);
+          cmd.pos(2, x1 + renderable.baseX, y2 + renderable.baseY);
+          cmd.pos(3, x2 + renderable.baseX, y2 + renderable.baseY);
 
           //LAB_80024144
           //LAB_800241b4
@@ -1647,7 +1681,8 @@ public final class Scus94491BpeSegment_8002 {
           if(renderable.uiType_20.obj != null) {
             final MV transforms = new MV();
             transforms.scaling(width, height, 1.0f);
-            transforms.transfer.set(x1 + x + centreX - 8 + (width < 0 ? 1.0f : 0.0f), y1 + y + 120.0f + (height < 0 ? 1.0f : 0.0f), renderable.z_3c * 4.0f);
+            transforms.transfer.set(x1 + renderable.baseX + centreX - 8 + (width < 0 ? 1.0f : 0.0f), y1 + renderable.baseY + 120.0f + (height < 0 ? 1.0f : 0.0f), renderable.z_3c * 4.0f);
+
             RENDERER
               .queueOrthoOverlayModel(renderable.uiType_20.obj, transforms)
               .vertices(metrics.vertexStart, 4)
@@ -1662,12 +1697,10 @@ public final class Scus94491BpeSegment_8002 {
         //LAB_800242a8
         unloadRenderable(renderable);
       }
-
-      //LAB_800242b0
-      renderable = renderable.parent_54;
     }
 
     //LAB_800242b8
+    renderables.clear();
   }
 
   @Method(0x800242e8L)

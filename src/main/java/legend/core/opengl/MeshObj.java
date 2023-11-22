@@ -40,11 +40,13 @@ public class MeshObj extends Obj {
 
   @Override
   public void delete() {
-    super.delete();
+    if(!this.deleted) {
+      super.delete();
 
-    for(final Mesh mesh : this.meshes) {
-      if(mesh != null) {
-        mesh.delete();
+      for(final Mesh mesh : this.meshes) {
+        if(mesh != null) {
+          mesh.delete();
+        }
       }
     }
   }
