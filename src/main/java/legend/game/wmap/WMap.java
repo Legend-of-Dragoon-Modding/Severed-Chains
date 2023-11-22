@@ -182,7 +182,7 @@ public class WMap extends EngineState {
 
   private static final ArrayRef<UvAdjustmentMetrics14> tmdUvAdjustmentMetrics_800eee48 = MEMORY.ref(4, 0x800eee48L, ArrayRef.of(UvAdjustmentMetrics14.class, 22, 20, UvAdjustmentMetrics14::new));
 
-  private WmapState wmapState_800bb10c = WmapState.INIT_0;
+  public WmapState wmapState_800bb10c = WmapState.INIT_0;
 
   /**
    * <ol start="0">
