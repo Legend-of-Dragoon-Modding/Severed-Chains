@@ -23,7 +23,7 @@ public class UnboundedArrayRef<T extends MemoryRef> implements MemoryRef {
   }
 
   private final Value ref;
-  public final Int2ObjectMap<T> elements;
+  private final Int2ObjectMap<T> elements;
   private final int stride;
   private final Function<Value, T> constructor;
   @Nullable
