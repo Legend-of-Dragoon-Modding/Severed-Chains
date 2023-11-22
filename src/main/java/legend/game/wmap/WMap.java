@@ -11,15 +11,8 @@ import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
-import legend.core.gte.VECTOR;
 import legend.core.memory.Method;
-import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.IntRef;
-import legend.core.memory.types.Pointer;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnboundedArrayRef;
-import legend.core.memory.types.UnsignedShortRef;
 import legend.core.opengl.McqBuilder;
 import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;
@@ -61,7 +54,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
-import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.flEq;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
@@ -132,6 +124,7 @@ import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
+import static legend.game.wmap.WmapStatics.*;
 
 public class WMap extends EngineState {
   private int tickMainMenuOpenTransition_800c6690;
@@ -166,9 +159,6 @@ public class WMap extends EngineState {
 
   public int encounterAccumulator_800c6ae8;
 
-  private static final ArrayRef<VECTOR> locationModelTranslationVectors_800c74b8 = MEMORY.ref(4, 0x800c74b8L, ArrayRef.of(VECTOR.class, 0x101, 0x10, VECTOR::new));
-  private static final ArrayRef<ShortRef> locationsIndices_800c84c8 = MEMORY.ref(2, 0x800c84c8L, ArrayRef.of(ShortRef.class, 0x101, 2, ShortRef::new));
-
   private int placeCount_800c86cc;
 
   private final int[] startButtonLabelStages_800c86d4 = new int[8];
@@ -180,8 +170,6 @@ public class WMap extends EngineState {
   private final RECT storedEffectsRect_800c8700 = new RECT((short)576, (short)256, (short)128, (short)256);
 
   private final Vector3f shipWakeCrossVector_800c87d8 = new Vector3f(0.0f, 1.0f, 0.0f);
-
-  private static final ArrayRef<UvAdjustmentMetrics14> tmdUvAdjustmentMetrics_800eee48 = MEMORY.ref(4, 0x800eee48L, ArrayRef.of(UvAdjustmentMetrics14.class, 22, 20, UvAdjustmentMetrics14::new));
 
   private WmapState wmapState_800bb10c = WmapState.INIT_0;
 
@@ -221,43 +209,11 @@ public class WMap extends EngineState {
     this::transitionToTitle,
     this::loadBackgroundObj,
   };
-  // TODO Do some refactoring to remove these two statics
-  /** Only seems to use element at index 1, but not positive */
-  private static final ArrayRef<WmapLocationThumbnailMetrics08> locationThumbnailMetrics_800ef0cc = MEMORY.ref(2, 0x800ef0ccL, ArrayRef.of(WmapLocationThumbnailMetrics08.class, 7, 8, WmapLocationThumbnailMetrics08::new));
-  private static final ArrayRef<WmapRectMetrics06> zoomUiMetrics_800ef104 = MEMORY.ref(1, 0x800ef104L, ArrayRef.of(WmapRectMetrics06.class, 7, 6, WmapRectMetrics06::new));
 
   private CoolonQueenFuryOverlay coolonQueenFuryOverlay;
 
-  private static final ArrayRef<ArrayRef<WmapRectMetrics04>> pathIntersectionSymbolMetrics_800ef170 = MEMORY.ref(1, 0x800ef170L, ArrayRef.of(ArrayRef.classFor(WmapRectMetrics04.class), 3, 12, ArrayRef.of(WmapRectMetrics04.class, 3, 4, WmapRectMetrics04::new)));
-  private static final ArrayRef<ByteRef> mapTerrainTmdIndices_800ef194 = MEMORY.ref(1, 0x800ef194L, ArrayRef.of(ByteRef.class, 7, 1, ByteRef::new));
-
-  private static final ArrayRef<ByteRef> mapFrameTmdIndices_800ef19c = MEMORY.ref(1, 0x800ef19cL, ArrayRef.of(ByteRef.class, 7, 1, ByteRef::new));
-
   private float mcqBrightness_800ef1a4;
-  /** These are where the 3D map disappears towards when you fully zoom out */
-  private static final Vector3i[] mapPositions_800ef1a8 = {
-    new Vector3i(-1550, - 8000,   900),
-    new Vector3i(-2800, -20000, -1200),
-    new Vector3i(- 750, -13000, - 450),
-    new Vector3i(-1000, -24000, -2500),
-    new Vector3i(  190, - 8600, -1640),
-    new Vector3i( 1700, -10000, -1950),
-    new Vector3i(  780, -10000, - 200),
-    new Vector3i(   80, - 1700, -  80),
-  };
-  private static final CoolonWarpDestination20[] coolonWarpDest_800ef228 = {
-    new CoolonWarpDestination20(new Vector3f( 72.0f,    6.0f, 4040.0f), 25, 2, 50, 52, new LodString("Commercial\nTown of Lohan")),
-    new CoolonWarpDestination20(new Vector3f( 87.0f, -400.0f, 4040.0f), 13, 3, 84, -6, new LodString("Indels Castle\nCapital Bale")),
-    new CoolonWarpDestination20(new Vector3f( 60.0f, -224.0f, 4040.0f), 28, 0, 26, 16, new LodString("Twin Castle\nin Fletz")),
-    new CoolonWarpDestination20(new Vector3f( 66.0f, -400.0f, 4040.0f), 35, 2, 40, -4, new LodString("Donau the\nWater City")),
-    new CoolonWarpDestination20(new Vector3f(950.0f, -380.0f, 4040.0f), 48, 5, 20, -4, new LodString("City of Fueno")),
-    new CoolonWarpDestination20(new Vector3f( 46.0f, -544.0f, 4040.0f), 51, 4, -4, -22, new LodString("Furni the\nWater City")),
-    new CoolonWarpDestination20(new Vector3f( 39.0f, -720.0f, 4040.0f), 60, 8, -18, -48, new LodString("Crystal Palace\nin Deningrad")),
-    new CoolonWarpDestination20(new Vector3f( 31.0f, -272.0f, 4040.0f), 70, 5, -34, 10, new LodString("Spring Breath\nTown, Ulara")),
-    new CoolonWarpDestination20(new Vector3f( 10.0f, -928.0f, 4040.0f), 83, 6, -82, -76, new LodString("Law Capital\nZenebatos")),
-  };
-  private static final ArrayRef<ShortRef> waterClutYs_800ef348 = MEMORY.ref(2, 0x800ef348L, ArrayRef.of(ShortRef.class, 14, 2, ShortRef::new));
-  private static final ArrayRef<ArrayRef<UnsignedShortRef>> encounterIds_800ef364 = MEMORY.ref(2, 0x800ef364L, ArrayRef.of(ArrayRef.classFor(UnsignedShortRef.class), 100, 8, ArrayRef.of(UnsignedShortRef.class, 4, 2, UnsignedShortRef::new)));
+
   /**
    * <ol start="0">
    *   <li>{@link WMap#renderDartShadow}</li>
@@ -272,979 +228,13 @@ public class WMap extends EngineState {
     this::renderNoOp, // Coolon
     this::renderNoOp, // Teleporter
   };
-  /**
-   * <ol start="0">
-   *   <li>Dart</li>
-   *   <li>Queen Fury</li>
-   *   <li>Coolon</li>
-   *   <li>Teleporter</li>
-   * </ol>
-   */
-  private static final ArrayRef<ByteRef> playerAvatarColourMapOffsets_800ef694 = MEMORY.ref(1, 0x800ef694L, ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new));
-  private static final ArrayRef<TeleportationEndpoints08> teleportationEndpoints_800ef698 = MEMORY.ref(4, 0x800ef698L, ArrayRef.of(TeleportationEndpoints08.class, 6, 0x8, TeleportationEndpoints08::new));
-  private static final TeleportationLocation0c[] teleportationLocations_800ef6c8 = {
-    new TeleportationLocation0c(0x48, new Vector3i(- 825, -112,  921)),
-    new TeleportationLocation0c(0x49, new Vector3i(- 825, -112,  825)),
-    new TeleportationLocation0c(0x4a, new Vector3i(-  75, -  7,  187)),
-    new TeleportationLocation0c(0x4b, new Vector3i(-  75, -  7,  187)),
-    new TeleportationLocation0c(0x4c, new Vector3i(-1012,    0, - 75)),
-    new TeleportationLocation0c(0x4d, new Vector3i(- 825, -112,  825)),
-  };
-
-  private static final ArrayRef<Pointer<LodString>> services_800f01cc = MEMORY.ref(4, 0x800f01ccL, ArrayRef.of(Pointer.classFor(LodString.class), 5, 4, Pointer.deferred(4, LodString::new)));
-
-  private static final ArrayRef<Pointer<LodString>> regions_800f01ec = MEMORY.ref(4, 0x800f01ecL, ArrayRef.of(Pointer.classFor(LodString.class), 3, 4, Pointer.deferred(4, LodString::new)));
 
   private final Runnable[] _800f01fc = new Runnable[2];
   {
     this._800f01fc[0] = this::FUN_800e406c;
     this._800f01fc[1] = this::FUN_800e469c;
   }
-  /** Each element is an input value mask, with values counter-clockwise from north */
-  private static final int[] positiveDirectionMovementMask_800f0204 = {0x1, 0x9, 0x8, 0xc, 0x4, 0x6, 0x2, 0x3, 0x1, 0x0, 0x0, 0x0};
-  /** Each element is an input value mask, with values counter-clockwise from south */
-  private static final int[] negativeDirectionMovementMask_800f0210 = {0x4, 0x6, 0x2, 0x3, 0x1, 0x9, 0x8, 0xc, 0x4, 0x0, 0x0, 0x0};
-  /** Used in calculation determining which path you take at a path intersection point */
-  private static final int[] inputAngleModifierAtPathIntersection_800f021c = {0x0, 0xc00, 0xe00, 0x800, 0x0, 0xa00, 0x0, 0x400, 0x200, 0x0, 0x0, 0x600};
 
-  private static final UnboundedArrayRef<Place0c> places_800f0234 = MEMORY.ref(4, 0x800f0234L, UnboundedArrayRef.of(0xc, Place0c::new));
-
-  /** Valid entries seem to end at 158, though their seem to be some 0 entries scattered throughout as well */
-  private static final ArrayRef<Location14> locations_800f0e34 = MEMORY.ref(2, 0x800f0e34L, ArrayRef.of(Location14.class, 0x100, 0x14, Location14::new));
-  public static final ArrayRef<DirectionalPathSegmentData08> directionalPathSegmentData_800f2248 = MEMORY.ref(2, 0x800f2248L, ArrayRef.of(DirectionalPathSegmentData08.class, 133, 8, DirectionalPathSegmentData08::new));
-
-  private static final int[] pathSegmentLengths_800f5810 = {5, 6, 8, 7, 12, 16, 11, 21, 8, 4, 5, 3, 9, 11, 6, 9, 18, 13, 9, 16, 20, 4, 16, 7, 11, 27, 4, 8, 7, 38, 17, 18, 21, 5, 13, 8, 6, 9, 7, 9, 17, 19, 10, 26, 21, 9, 15, 19, 46, 13, 16, 12, 14, 9, 12, 7, 8, 7, 7, 7, 8, 7, 13, 16, 2, 2, -1};
-
-  private static final Vector3f[][] pathDotPosArr_800f591c = {
-    {
-      new Vector3f(720.0f, -6.0f, 628.0f),
-      new Vector3f(693.0f, -6.0f, 613.0f),
-      new Vector3f(667.0f, -6.0f, 598.0f),
-      new Vector3f(641.0f, -6.0f, 583.0f),
-      new Vector3f(615.0f, -6.0f, 568.0f)
-    },
-    {
-      new Vector3f(510.0f, -6.0f, 508.0f),
-      new Vector3f(480.0f, -6.0f, 478.0f),
-      new Vector3f(461.0f, -6.0f, 459.0f),
-      new Vector3f(442.0f, -6.0f, 440.0f),
-      new Vector3f(423.0f, -6.0f, 422.0f),
-      new Vector3f(405.0f, -6.0f, 403.0f)
-    },
-    {
-      new Vector3f(300.0f, -6.0f, 328.0f),
-      new Vector3f(270.0f, -6.0f, 328.0f),
-      new Vector3f(240.0f, -6.0f, 328.0f),
-      new Vector3f(210.0f, -6.0f, 328.0f),
-      new Vector3f(180.0f, -6.0f, 322.0f),
-      new Vector3f(150.0f, -6.0f, 315.0f),
-      new Vector3f(120.0f, -6.0f, 298.0f),
-      new Vector3f(90.0f, -6.0f, 274.0f)
-    },
-    {
-      new Vector3f(90.0f, -6.0f, 274.0f),
-      new Vector3f(49.0f, -6.0f, 238.0f),
-      new Vector3f(20.0f, -6.0f, 204.0f),
-      new Vector3f(3.0f, -6.0f, 166.0f),
-      new Vector3f(-7.0f, -6.0f, 118.0f),
-      new Vector3f(-27.0f, -6.0f, 88.0f),
-      new Vector3f(-51.0f, -6.0f, 58.0f)
-    },
-    {
-      new Vector3f(-51.0f, -6.0f, 58.0f),
-      new Vector3f(-28.0f, -6.0f, 32.0f),
-      new Vector3f(-12.0f, -6.0f, -1.0f),
-      new Vector3f(0.0f, -6.0f, -31.0f),
-      new Vector3f(5.0f, -6.0f, -61.0f),
-      new Vector3f(10.0f, -6.0f, -90.0f),
-      new Vector3f(18.0f, -6.0f, -121.0f),
-      new Vector3f(21.0f, -6.0f, -151.0f),
-      new Vector3f(27.0f, -6.0f, -174.0f),
-      new Vector3f(36.0f, -6.0f, -196.0f),
-      new Vector3f(54.0f, -6.0f, -219.0f),
-      new Vector3f(70.0f, -6.0f, -241.0f)
-    },
-    {
-      new Vector3f(90.0f, -6.0f, 274.0f),
-      new Vector3f(102.0f, -6.0f, 316.0f),
-      new Vector3f(120.0f, -6.0f, 358.0f),
-      new Vector3f(147.0f, -6.0f, 388.0f),
-      new Vector3f(180.0f, -6.0f, 418.0f),
-      new Vector3f(197.0f, -6.0f, 448.0f),
-      new Vector3f(210.0f, -6.0f, 478.0f),
-      new Vector3f(210.0f, -6.0f, 508.0f),
-      new Vector3f(210.0f, -6.0f, 538.0f),
-      new Vector3f(210.0f, -6.0f, 568.0f),
-      new Vector3f(215.0f, -6.0f, 598.0f),
-      new Vector3f(223.0f, -6.0f, 628.0f),
-      new Vector3f(232.0f, -6.0f, 658.0f),
-      new Vector3f(252.0f, -6.0f, 688.0f),
-      new Vector3f(275.0f, -6.0f, 710.0f),
-      new Vector3f(301.0f, -6.0f, 731.0f)
-    },
-    {
-      new Vector3f(360.0f, -6.0f, 448.0f),
-      new Vector3f(360.0f, -6.0f, 478.0f),
-      new Vector3f(371.0f, -6.0f, 508.0f),
-      new Vector3f(390.0f, -6.0f, 538.0f),
-      new Vector3f(420.0f, -6.0f, 568.0f),
-      new Vector3f(450.0f, -6.0f, 598.0f),
-      new Vector3f(468.0f, -6.0f, 628.0f),
-      new Vector3f(480.0f, -6.0f, 658.0f),
-      new Vector3f(480.0f, -6.0f, 688.0f),
-      new Vector3f(468.0f, -6.0f, 718.0f),
-      new Vector3f(450.0f, -6.0f, 748.0f)
-    },
-    {
-      new Vector3f(-240.0f, -25.0f, 307.0f),
-      new Vector3f(-203.0f, -15.0f, 305.0f),
-      new Vector3f(-166.0f, -6.0f, 304.0f),
-      new Vector3f(-158.0f, -17.0f, 335.0f),
-      new Vector3f(-150.0f, -29.0f, 366.0f),
-      new Vector3f(-142.0f, -41.0f, 397.0f),
-      new Vector3f(-134.0f, -53.0f, 428.0f),
-      new Vector3f(-119.0f, -63.0f, 453.0f),
-      new Vector3f(-104.0f, -73.0f, 478.0f),
-      new Vector3f(-87.0f, -54.0f, 492.0f),
-      new Vector3f(-71.0f, -35.0f, 506.0f),
-      new Vector3f(-65.0f, -30.0f, 526.0f),
-      new Vector3f(-59.0f, -25.0f, 546.0f),
-      new Vector3f(-52.0f, -6.0f, 553.0f),
-      new Vector3f(-33.0f, -17.0f, 559.0f),
-      new Vector3f(-13.0f, -29.0f, 565.0f),
-      new Vector3f(0.0f, -53.0f, 589.0f),
-      new Vector3f(0.0f, -35.0f, 615.0f),
-      new Vector3f(0.0f, -42.0f, 643.0f),
-      new Vector3f(0.0f, -49.0f, 672.0f),
-      new Vector3f(0.0f, -35.0f, 697.0f)
-    },
-    {
-      new Vector3f(-296.0f, -6.0f, 387.0f),
-      new Vector3f(-277.0f, -15.0f, 404.0f),
-      new Vector3f(-257.0f, -25.0f, 404.0f),
-      new Vector3f(-248.0f, -20.0f, 440.0f),
-      new Vector3f(-240.0f, -16.0f, 458.0f),
-      new Vector3f(-230.0f, -11.0f, 478.0f),
-      new Vector3f(-219.0f, -6.0f, 501.0f),
-      new Vector3f(-201.0f, -6.0f, 523.0f)
-    },
-    {
-      new Vector3f(-468.0f, -6.0f, 350.0f),
-      new Vector3f(-442.0f, -6.0f, 343.0f),
-      new Vector3f(-412.0f, -6.0f, 342.0f),
-      new Vector3f(-383.0f, -6.0f, 336.0f)
-    },
-    {
-      new Vector3f(-469.0f, -6.0f, 232.0f),
-      new Vector3f(-468.0f, -6.0f, 266.0f),
-      new Vector3f(-468.0f, -6.0f, 296.0f),
-      new Vector3f(-468.0f, -6.0f, 326.0f),
-      new Vector3f(-468.0f, -6.0f, 350.0f)
-    },
-    {
-      new Vector3f(-469.0f, -6.0f, 232.0f),
-      new Vector3f(-499.0f, -6.0f, 232.0f),
-      new Vector3f(-529.0f, -6.0f, 232.0f)
-    },
-    {
-      new Vector3f(-360.0f, -6.0f, -1.0f),
-      new Vector3f(-390.0f, -6.0f, 28.0f),
-      new Vector3f(-414.0f, -6.0f, 58.0f),
-      new Vector3f(-420.0f, -6.0f, 88.0f),
-      new Vector3f(-420.0f, -6.0f, 118.0f),
-      new Vector3f(-420.0f, -6.0f, 148.0f),
-      new Vector3f(-425.0f, -6.0f, 178.0f),
-      new Vector3f(-450.0f, -6.0f, 208.0f),
-      new Vector3f(-469.0f, -6.0f, 232.0f)
-    },
-    {
-      new Vector3f(-51.0f, -6.0f, 58.0f),
-      new Vector3f(-84.0f, -6.0f, 58.0f),
-      new Vector3f(-120.0f, -6.0f, 58.0f),
-      new Vector3f(-150.0f, -6.0f, 58.0f),
-      new Vector3f(-180.0f, -6.0f, 52.0f),
-      new Vector3f(-210.0f, -6.0f, 43.0f),
-      new Vector3f(-240.0f, -6.0f, 28.0f),
-      new Vector3f(-270.0f, -6.0f, 13.0f),
-      new Vector3f(-300.0f, -6.0f, 4.0f),
-      new Vector3f(-330.0f, -6.0f, -1.0f),
-      new Vector3f(-360.0f, -6.0f, -1.0f)
-    },
-    {
-      new Vector3f(-360.0f, -6.0f, -1.0f),
-      new Vector3f(-360.0f, -6.0f, -31.0f),
-      new Vector3f(-360.0f, -6.0f, -61.0f),
-      new Vector3f(-360.0f, -6.0f, -91.0f),
-      new Vector3f(-354.0f, -6.0f, -121.0f),
-      new Vector3f(-345.0f, -6.0f, -151.0f)
-    },
-    {
-      new Vector3f(-468.0f, -6.0f, 350.0f),
-      new Vector3f(-488.0f, -6.0f, 375.0f),
-      new Vector3f(-501.0f, -6.0f, 405.0f),
-      new Vector3f(-502.0f, -6.0f, 436.0f),
-      new Vector3f(-501.0f, -6.0f, 468.0f),
-      new Vector3f(-495.0f, -6.0f, 498.0f),
-      new Vector3f(-477.0f, -6.0f, 528.0f),
-      new Vector3f(-456.0f, -6.0f, 560.0f),
-      new Vector3f(-444.0f, -6.0f, 592.0f)
-    },
-    {
-      new Vector3f(617.0f, -6.0f, -750.0f),
-      new Vector3f(617.0f, -6.0f, -720.0f),
-      new Vector3f(617.0f, -6.0f, -690.0f),
-      new Vector3f(617.0f, -6.0f, -659.0f),
-      new Vector3f(617.0f, -6.0f, -630.0f),
-      new Vector3f(621.0f, -6.0f, -599.0f),
-      new Vector3f(635.0f, -6.0f, -570.0f),
-      new Vector3f(657.0f, -6.0f, -540.0f),
-      new Vector3f(670.0f, -6.0f, -509.0f),
-      new Vector3f(677.0f, -6.0f, -480.0f),
-      new Vector3f(677.0f, -6.0f, -449.0f),
-      new Vector3f(677.0f, -6.0f, -419.0f),
-      new Vector3f(677.0f, -6.0f, -390.0f),
-      new Vector3f(668.0f, -6.0f, -359.0f),
-      new Vector3f(660.0f, -6.0f, -330.0f),
-      new Vector3f(637.0f, -6.0f, -299.0f),
-      new Vector3f(612.0f, -6.0f, -269.0f),
-      new Vector3f(570.0f, -6.0f, -240.0f)
-    },
-    {
-      new Vector3f(409.0f, -6.0f, 98.0f),
-      new Vector3f(404.0f, -6.0f, 129.0f),
-      new Vector3f(398.0f, -6.0f, 159.0f),
-      new Vector3f(387.0f, -6.0f, 191.0f),
-      new Vector3f(367.0f, -6.0f, 216.0f),
-      new Vector3f(342.0f, -6.0f, 240.0f),
-      new Vector3f(310.0f, -6.0f, 259.0f),
-      new Vector3f(277.0f, -6.0f, 264.0f),
-      new Vector3f(233.0f, -6.0f, 266.0f),
-      new Vector3f(191.0f, -6.0f, 267.0f),
-      new Vector3f(150.0f, -6.0f, 272.0f),
-      new Vector3f(112.0f, -6.0f, 287.0f),
-      new Vector3f(94.0f, -6.0f, 308.0f)
-    },
-    {
-      new Vector3f(94.0f, -6.0f, 308.0f),
-      new Vector3f(104.0f, -6.0f, 347.0f),
-      new Vector3f(135.0f, -6.0f, 375.0f),
-      new Vector3f(171.0f, -6.0f, 404.0f),
-      new Vector3f(202.0f, -6.0f, 430.0f),
-      new Vector3f(233.0f, -6.0f, 455.0f),
-      new Vector3f(264.0f, -6.0f, 480.0f),
-      new Vector3f(300.0f, -6.0f, 501.0f),
-      new Vector3f(330.0f, -6.0f, 509.0f)
-    },
-    {
-      new Vector3f(94.0f, -6.0f, 308.0f),
-      new Vector3f(66.0f, -6.0f, 294.0f),
-      new Vector3f(50.0f, -6.0f, 270.0f),
-      new Vector3f(33.0f, -6.0f, 243.0f),
-      new Vector3f(14.0f, -6.0f, 213.0f),
-      new Vector3f(-3.0f, -6.0f, 181.0f),
-      new Vector3f(-17.0f, -6.0f, 150.0f),
-      new Vector3f(-33.0f, -6.0f, 119.0f),
-      new Vector3f(-58.0f, -6.0f, 90.0f),
-      new Vector3f(-81.0f, -6.0f, 65.0f),
-      new Vector3f(-105.0f, -6.0f, 40.0f),
-      new Vector3f(-134.0f, -6.0f, 19.0f),
-      new Vector3f(-165.0f, -6.0f, 0.0f),
-      new Vector3f(-198.0f, -6.0f, -17.0f),
-      new Vector3f(-228.0f, -6.0f, -31.0f),
-      new Vector3f(-249.0f, -6.0f, -57.0f)
-    },
-    {
-      new Vector3f(-249.0f, -6.0f, -57.0f),
-      new Vector3f(-279.0f, -6.0f, -48.0f),
-      new Vector3f(-308.0f, -6.0f, -57.0f),
-      new Vector3f(-335.0f, -6.0f, -69.0f),
-      new Vector3f(-364.0f, -6.0f, -80.0f),
-      new Vector3f(-394.0f, -6.0f, -93.0f),
-      new Vector3f(-426.0f, -6.0f, -108.0f),
-      new Vector3f(-459.0f, -6.0f, -125.0f),
-      new Vector3f(-491.0f, -6.0f, -142.0f),
-      new Vector3f(-520.0f, -6.0f, -162.0f),
-      new Vector3f(-544.0f, -6.0f, -190.0f),
-      new Vector3f(-567.0f, -6.0f, -216.0f),
-      new Vector3f(-590.0f, -6.0f, -242.0f),
-      new Vector3f(-611.0f, -6.0f, -271.0f),
-      new Vector3f(-635.0f, -6.0f, -301.0f),
-      new Vector3f(-652.0f, -6.0f, -330.0f),
-      new Vector3f(-667.0f, -6.0f, -354.0f),
-      new Vector3f(-674.0f, -6.0f, -382.0f),
-      new Vector3f(-686.0f, -6.0f, -406.0f),
-      new Vector3f(-704.0f, -6.0f, -426.0f)
-    },
-    {
-      new Vector3f(-704.0f, -6.0f, -426.0f),
-      new Vector3f(-726.0f, -6.0f, -427.0f),
-      new Vector3f(-753.0f, -6.0f, -419.0f),
-      new Vector3f(-777.0f, -6.0f, -403.0f)
-    },
-    {
-      new Vector3f(-704.0f, -6.0f, -426.0f),
-      new Vector3f(-689.0f, -6.0f, -451.0f),
-      new Vector3f(-686.0f, -6.0f, -480.0f),
-      new Vector3f(-700.0f, -6.0f, -511.0f),
-      new Vector3f(-721.0f, -6.0f, -536.0f),
-      new Vector3f(-749.0f, -6.0f, -562.0f),
-      new Vector3f(-771.0f, -6.0f, -593.0f),
-      new Vector3f(-791.0f, -6.0f, -624.0f),
-      new Vector3f(-805.0f, -6.0f, -659.0f),
-      new Vector3f(-819.0f, -6.0f, -694.0f),
-      new Vector3f(-830.0f, -6.0f, -730.0f),
-      new Vector3f(-840.0f, -6.0f, -762.0f),
-      new Vector3f(-847.0f, -6.0f, -794.0f),
-      new Vector3f(-854.0f, -6.0f, -827.0f),
-      new Vector3f(-858.0f, -6.0f, -855.0f),
-      new Vector3f(-864.0f, -6.0f, -892.0f)
-    },
-    {
-      new Vector3f(-249.0f, -6.0f, -57.0f),
-      new Vector3f(-249.0f, -6.0f, -95.0f),
-      new Vector3f(-249.0f, -6.0f, -130.0f),
-      new Vector3f(-249.0f, -6.0f, -166.0f),
-      new Vector3f(-249.0f, -6.0f, -200.0f),
-      new Vector3f(-249.0f, -6.0f, -230.0f),
-      new Vector3f(-249.0f, -6.0f, -260.0f)
-    },
-    {
-      new Vector3f(-240.0f, -6.0f, -464.0f),
-      new Vector3f(-240.0f, -18.0f, -480.0f),
-      new Vector3f(-240.0f, -27.0f, -498.0f),
-      new Vector3f(-240.0f, -35.0f, -517.0f),
-      new Vector3f(-240.0f, -43.0f, -536.0f),
-      new Vector3f(-240.0f, -52.0f, -555.0f),
-      new Vector3f(-240.0f, -57.0f, -577.0f),
-      new Vector3f(-240.0f, -62.0f, -599.0f),
-      new Vector3f(-240.0f, -69.0f, -621.0f),
-      new Vector3f(-240.0f, -76.0f, -643.0f),
-      new Vector3f(-240.0f, -73.0f, -668.0f)
-    },
-    {
-      new Vector3f(674.0f, -6.0f, -684.0f),
-      new Vector3f(662.0f, -6.0f, -664.0f),
-      new Vector3f(652.0f, -6.0f, -633.0f),
-      new Vector3f(645.0f, -6.0f, -600.0f),
-      new Vector3f(641.0f, -6.0f, -569.0f),
-      new Vector3f(639.0f, -6.0f, -540.0f),
-      new Vector3f(638.0f, -6.0f, -510.0f),
-      new Vector3f(638.0f, -6.0f, -479.0f),
-      new Vector3f(640.0f, -6.0f, -449.0f),
-      new Vector3f(644.0f, -6.0f, -419.0f),
-      new Vector3f(649.0f, -6.0f, -389.0f),
-      new Vector3f(654.0f, -6.0f, -360.0f),
-      new Vector3f(660.0f, -6.0f, -330.0f),
-      new Vector3f(663.0f, -6.0f, -299.0f),
-      new Vector3f(665.0f, -6.0f, -269.0f),
-      new Vector3f(663.0f, -6.0f, -240.0f),
-      new Vector3f(660.0f, -6.0f, -209.0f),
-      new Vector3f(655.0f, -6.0f, -180.0f),
-      new Vector3f(650.0f, -6.0f, -150.0f),
-      new Vector3f(641.0f, -6.0f, -119.0f),
-      new Vector3f(630.0f, -6.0f, -96.0f),
-      new Vector3f(611.0f, -6.0f, -74.0f),
-      new Vector3f(594.0f, -6.0f, -55.0f),
-      new Vector3f(572.0f, -6.0f, -37.0f),
-      new Vector3f(547.0f, -6.0f, -18.0f),
-      new Vector3f(519.0f, -6.0f, -5.0f),
-      new Vector3f(487.0f, -6.0f, 7.0f)
-    },
-    {
-      new Vector3f(487.0f, -6.0f, 7.0f),
-      new Vector3f(456.0f, -6.0f, 5.0f),
-      new Vector3f(426.0f, -6.0f, -4.0f),
-      new Vector3f(401.0f, -6.0f, -19.0f)
-    },
-    {
-      new Vector3f(487.0f, -6.0f, 7.0f),
-      new Vector3f(500.0f, -6.0f, 22.0f),
-      new Vector3f(506.0f, -6.0f, 48.0f),
-      new Vector3f(509.0f, -6.0f, 87.0f),
-      new Vector3f(508.0f, -6.0f, 121.0f),
-      new Vector3f(505.0f, -6.0f, 150.0f),
-      new Vector3f(499.0f, -6.0f, 181.0f),
-      new Vector3f(490.0f, -6.0f, 210.0f)
-    },
-    {
-      new Vector3f(476.0f, -6.0f, 375.0f),
-      new Vector3f(480.0f, -6.0f, 405.0f),
-      new Vector3f(485.0f, -6.0f, 435.0f),
-      new Vector3f(492.0f, -6.0f, 465.0f),
-      new Vector3f(502.0f, -6.0f, 494.0f),
-      new Vector3f(512.0f, -6.0f, 525.0f),
-      new Vector3f(529.0f, -6.0f, 555.0f)
-    },
-    {
-      new Vector3f(370.0f, -6.0f, 293.0f),
-      new Vector3f(345.0f, -6.0f, 296.0f),
-      new Vector3f(320.0f, -6.0f, 300.0f),
-      new Vector3f(293.0f, -6.0f, 304.0f),
-      new Vector3f(267.0f, -6.0f, 307.0f),
-      new Vector3f(241.0f, -6.0f, 309.0f),
-      new Vector3f(219.0f, -6.0f, 308.0f),
-      new Vector3f(193.0f, -6.0f, 305.0f),
-      new Vector3f(169.0f, -6.0f, 306.0f),
-      new Vector3f(147.0f, -26.0f, 307.0f),
-      new Vector3f(126.0f, -46.0f, 307.0f),
-      new Vector3f(112.0f, -26.0f, 294.0f),
-      new Vector3f(98.0f, -6.0f, 282.0f),
-      new Vector3f(80.0f, -19.0f, 280.0f),
-      new Vector3f(62.0f, -33.0f, 277.0f),
-      new Vector3f(52.0f, -19.0f, 284.0f),
-      new Vector3f(42.0f, -6.0f, 290.0f),
-      new Vector3f(28.0f, -6.0f, 287.0f),
-      new Vector3f(14.0f, -19.0f, 287.0f),
-      new Vector3f(0.0f, -33.0f, 287.0f),
-      new Vector3f(-6.0f, -28.0f, 277.0f),
-      new Vector3f(-13.0f, -23.0f, 268.0f),
-      new Vector3f(-26.0f, -28.0f, 265.0f),
-      new Vector3f(-39.0f, -33.0f, 263.0f),
-      new Vector3f(-47.0f, -28.0f, 251.0f),
-      new Vector3f(-55.0f, -23.0f, 240.0f),
-      new Vector3f(-71.0f, -33.0f, 240.0f),
-      new Vector3f(-81.0f, -28.0f, 230.0f),
-      new Vector3f(-92.0f, -23.0f, 221.0f),
-      new Vector3f(-103.0f, -33.0f, 212.0f),
-      new Vector3f(-118.0f, -19.0f, 215.0f),
-      new Vector3f(-133.0f, -6.0f, 219.0f),
-      new Vector3f(-145.0f, -26.0f, 221.0f),
-      new Vector3f(-158.0f, -46.0f, 223.0f),
-      new Vector3f(-171.0f, -36.0f, 216.0f),
-      new Vector3f(-185.0f, -26.0f, 209.0f),
-      new Vector3f(-199.0f, -16.0f, 203.0f),
-      new Vector3f(-213.0f, -6.0f, 196.0f)
-    },
-    {
-      new Vector3f(-291.0f, -33.0f, 263.0f),
-      new Vector3f(-299.0f, -20.0f, 240.0f),
-      new Vector3f(-308.0f, -6.0f, 211.0f),
-      new Vector3f(-328.0f, -6.0f, 186.0f),
-      new Vector3f(-347.0f, -6.0f, 160.0f),
-      new Vector3f(-369.0f, -6.0f, 132.0f),
-      new Vector3f(-392.0f, -6.0f, 104.0f),
-      new Vector3f(-417.0f, -6.0f, 79.0f),
-      new Vector3f(-445.0f, -6.0f, 60.0f),
-      new Vector3f(-475.0f, -6.0f, 46.0f),
-      new Vector3f(-505.0f, -6.0f, 38.0f),
-      new Vector3f(-535.0f, -6.0f, 37.0f),
-      new Vector3f(-565.0f, -6.0f, 37.0f),
-      new Vector3f(-595.0f, -6.0f, 39.0f),
-      new Vector3f(-625.0f, -6.0f, 43.0f),
-      new Vector3f(-655.0f, -6.0f, 51.0f),
-      new Vector3f(-685.0f, -6.0f, 65.0f)
-    },
-    {
-      new Vector3f(480.0f, 0.0f, -480.0f),
-      new Vector3f(448.0f, 0.0f, -480.0f),
-      new Vector3f(413.0f, 0.0f, -480.0f),
-      new Vector3f(382.0f, 0.0f, -480.0f),
-      new Vector3f(345.0f, 0.0f, -492.0f),
-      new Vector3f(311.0f, 0.0f, -512.0f),
-      new Vector3f(277.0f, 0.0f, -543.0f),
-      new Vector3f(243.0f, 0.0f, -564.0f),
-      new Vector3f(210.0f, 0.0f, -579.0f),
-      new Vector3f(176.0f, 0.0f, -587.0f),
-      new Vector3f(142.0f, 0.0f, -591.0f),
-      new Vector3f(108.0f, 0.0f, -591.0f),
-      new Vector3f(75.0f, 0.0f, -591.0f),
-      new Vector3f(41.0f, 0.0f, -591.0f),
-      new Vector3f(7.0f, 0.0f, -588.0f),
-      new Vector3f(-26.0f, 0.0f, -579.0f),
-      new Vector3f(-60.0f, 0.0f, -565.0f),
-      new Vector3f(-93.0f, 0.0f, -543.0f)
-    },
-    {
-      new Vector3f(-93.0f, 0.0f, -543.0f),
-      new Vector3f(-127.0f, 0.0f, -513.0f),
-      new Vector3f(-161.0f, 0.0f, -493.0f),
-      new Vector3f(-194.0f, 0.0f, -480.0f),
-      new Vector3f(-228.0f, 0.0f, -480.0f),
-      new Vector3f(-262.0f, 0.0f, -480.0f),
-      new Vector3f(-296.0f, 0.0f, -480.0f),
-      new Vector3f(-331.0f, 0.0f, -475.0f),
-      new Vector3f(-365.0f, 0.0f, -463.0f),
-      new Vector3f(-399.0f, 0.0f, -446.0f),
-      new Vector3f(-426.0f, 0.0f, -423.0f),
-      new Vector3f(-448.0f, 0.0f, -391.0f),
-      new Vector3f(-464.0f, 0.0f, -362.0f),
-      new Vector3f(-475.0f, 0.0f, -326.0f),
-      new Vector3f(-482.0f, 0.0f, -285.0f),
-      new Vector3f(-494.0f, 0.0f, -251.0f),
-      new Vector3f(-512.0f, 0.0f, -222.0f),
-      new Vector3f(-536.0f, 0.0f, -194.0f),
-      new Vector3f(-556.0f, 0.0f, -171.0f),
-      new Vector3f(-576.0f, 0.0f, -146.0f),
-      new Vector3f(-600.0f, 0.0f, -120.0f)
-    },
-    {
-      new Vector3f(-93.0f, 0.0f, -543.0f),
-      new Vector3f(-108.0f, 0.0f, -506.0f),
-      new Vector3f(-116.0f, 0.0f, -470.0f),
-      new Vector3f(-120.0f, 0.0f, -433.0f),
-      new Vector3f(-120.0f, 0.0f, -396.0f)
-    },
-    {
-      new Vector3f(-38.0f, -6.0f, -270.0f),
-      new Vector3f(-10.0f, -6.0f, -265.0f),
-      new Vector3f(11.0f, -6.0f, -256.0f),
-      new Vector3f(30.0f, -6.0f, -245.0f),
-      new Vector3f(47.0f, -6.0f, -234.0f),
-      new Vector3f(65.0f, -6.0f, -221.0f),
-      new Vector3f(83.0f, -6.0f, -206.0f),
-      new Vector3f(99.0f, -6.0f, -189.0f),
-      new Vector3f(117.0f, -6.0f, -169.0f),
-      new Vector3f(134.0f, -6.0f, -149.0f),
-      new Vector3f(150.0f, -6.0f, -123.0f),
-      new Vector3f(164.0f, -6.0f, -95.0f),
-      new Vector3f(174.0f, -6.0f, -60.0f)
-    },
-    {
-      new Vector3f(174.0f, -6.0f, -60.0f),
-      new Vector3f(179.0f, -6.0f, -22.0f),
-      new Vector3f(181.0f, -6.0f, 12.0f),
-      new Vector3f(185.0f, -6.0f, 43.0f),
-      new Vector3f(193.0f, -6.0f, 79.0f),
-      new Vector3f(206.0f, -6.0f, 110.0f),
-      new Vector3f(222.0f, -6.0f, 137.0f),
-      new Vector3f(240.0f, -6.0f, 165.0f)
-    },
-    {
-      new Vector3f(600.0f, 0.0f, 401.0f),
-      new Vector3f(618.0f, 0.0f, 424.0f),
-      new Vector3f(636.0f, 0.0f, 445.0f),
-      new Vector3f(660.0f, 0.0f, 467.0f),
-      new Vector3f(687.0f, 0.0f, 479.0f),
-      new Vector3f(715.0f, 0.0f, 482.0f)
-    },
-    {
-      new Vector3f(200.0f, -6.0f, -639.0f),
-      new Vector3f(172.0f, -6.0f, -616.0f),
-      new Vector3f(158.0f, -6.0f, -587.0f),
-      new Vector3f(149.0f, -6.0f, -553.0f),
-      new Vector3f(149.0f, -6.0f, -525.0f),
-      new Vector3f(149.0f, -6.0f, -496.0f),
-      new Vector3f(139.0f, -6.0f, -460.0f),
-      new Vector3f(125.0f, -6.0f, -432.0f),
-      new Vector3f(93.0f, -6.0f, -410.0f)
-    },
-    {
-      new Vector3f(-60.0f, -6.0f, -300.0f),
-      new Vector3f(-90.0f, -6.0f, -300.0f),
-      new Vector3f(-120.0f, -6.0f, -300.0f),
-      new Vector3f(-151.0f, -6.0f, -300.0f),
-      new Vector3f(-181.0f, -6.0f, -300.0f),
-      new Vector3f(-206.0f, -6.0f, -285.0f),
-      new Vector3f(-216.0f, -6.0f, -258.0f)
-    },
-    {
-      new Vector3f(-216.0f, -6.0f, -258.0f),
-      new Vector3f(-216.0f, -6.0f, -220.0f),
-      new Vector3f(-203.0f, -6.0f, -181.0f),
-      new Vector3f(-180.0f, -6.0f, -147.0f),
-      new Vector3f(-166.0f, -6.0f, -107.0f),
-      new Vector3f(-166.0f, -6.0f, -73.0f),
-      new Vector3f(-174.0f, -6.0f, -42.0f),
-      new Vector3f(-187.0f, -6.0f, -19.0f),
-      new Vector3f(-208.0f, -6.0f, 5.0f)
-    },
-    {
-      new Vector3f(-216.0f, -6.0f, -258.0f),
-      new Vector3f(-241.0f, -6.0f, -236.0f),
-      new Vector3f(-270.0f, -6.0f, -217.0f),
-      new Vector3f(-302.0f, -6.0f, -207.0f),
-      new Vector3f(-336.0f, -6.0f, -204.0f),
-      new Vector3f(-369.0f, -6.0f, -205.0f),
-      new Vector3f(-399.0f, -6.0f, -197.0f),
-      new Vector3f(-425.0f, -6.0f, -186.0f),
-      new Vector3f(-446.0f, -6.0f, -166.0f),
-      new Vector3f(-465.0f, -6.0f, -141.0f),
-      new Vector3f(-480.0f, -6.0f, -119.0f),
-      new Vector3f(-494.0f, -6.0f, -101.0f),
-      new Vector3f(-508.0f, -6.0f, -83.0f),
-      new Vector3f(-533.0f, -6.0f, -68.0f),
-      new Vector3f(-557.0f, -6.0f, -53.0f),
-      new Vector3f(-571.0f, -6.0f, -27.0f),
-      new Vector3f(-586.0f, -6.0f, -10.0f)
-    },
-    {
-      new Vector3f(180.0f, -6.0f, -300.0f),
-      new Vector3f(208.0f, -6.0f, -300.0f),
-      new Vector3f(236.0f, -6.0f, -300.0f),
-      new Vector3f(265.0f, -6.0f, -293.0f),
-      new Vector3f(290.0f, -6.0f, -274.0f),
-      new Vector3f(316.0f, -6.0f, -248.0f),
-      new Vector3f(339.0f, -6.0f, -223.0f),
-      new Vector3f(360.0f, -6.0f, -191.0f),
-      new Vector3f(377.0f, -6.0f, -165.0f),
-      new Vector3f(394.0f, -6.0f, -136.0f),
-      new Vector3f(413.0f, -6.0f, -105.0f),
-      new Vector3f(434.0f, -6.0f, -82.0f),
-      new Vector3f(463.0f, -6.0f, -65.0f),
-      new Vector3f(491.0f, -6.0f, -60.0f),
-      new Vector3f(519.0f, -6.0f, -60.0f),
-      new Vector3f(547.0f, -6.0f, -60.0f),
-      new Vector3f(576.0f, -6.0f, -60.0f),
-      new Vector3f(604.0f, -6.0f, -60.0f),
-      new Vector3f(633.0f, -6.0f, -60.0f)
-    },
-    {
-      new Vector3f(147.0f, -6.0f, -216.0f),
-      new Vector3f(173.0f, -6.0f, -199.0f),
-      new Vector3f(195.0f, -6.0f, -173.0f),
-      new Vector3f(211.0f, -6.0f, -142.0f),
-      new Vector3f(217.0f, -6.0f, -108.0f),
-      new Vector3f(221.0f, -6.0f, -70.0f),
-      new Vector3f(230.0f, -6.0f, -37.0f),
-      new Vector3f(249.0f, -6.0f, -5.0f),
-      new Vector3f(273.0f, -6.0f, 22.0f),
-      new Vector3f(297.0f, -6.0f, 51.0f)
-    },
-    {
-      new Vector3f(60.0f, -6.0f, -180.0f),
-      new Vector3f(60.0f, -6.0f, -157.0f),
-      new Vector3f(60.0f, -6.0f, -134.0f),
-      new Vector3f(63.0f, -6.0f, -112.0f),
-      new Vector3f(70.0f, -6.0f, -89.0f),
-      new Vector3f(81.0f, -6.0f, -67.0f),
-      new Vector3f(97.0f, -6.0f, -45.0f),
-      new Vector3f(114.0f, -6.0f, -22.0f),
-      new Vector3f(119.0f, -6.0f, 0.0f),
-      new Vector3f(119.0f, -16.0f, 15.0f),
-      new Vector3f(119.0f, -27.0f, 31.0f),
-      new Vector3f(115.0f, -22.0f, 53.0f),
-      new Vector3f(110.0f, -16.0f, 75.0f),
-      new Vector3f(106.0f, -11.0f, 96.0f),
-      new Vector3f(101.0f, -6.0f, 118.0f),
-      new Vector3f(111.0f, -6.0f, 140.0f),
-      new Vector3f(105.0f, -39.0f, 165.0f),
-      new Vector3f(124.0f, -27.0f, 186.0f),
-      new Vector3f(126.0f, -40.0f, 213.0f),
-      new Vector3f(127.0f, -53.0f, 240.0f),
-      new Vector3f(129.0f, -29.0f, 267.0f),
-      new Vector3f(130.0f, -6.0f, 295.0f),
-      new Vector3f(121.0f, -6.0f, 320.0f),
-      new Vector3f(114.0f, -6.0f, 345.0f),
-      new Vector3f(112.0f, -6.0f, 369.0f),
-      new Vector3f(112.0f, -6.0f, 394.0f)
-    },
-    {
-      new Vector3f(690.0f, -6.0f, -60.0f),
-      new Vector3f(660.0f, -6.0f, -60.0f),
-      new Vector3f(630.0f, -6.0f, -60.0f),
-      new Vector3f(600.0f, -6.0f, -60.0f),
-      new Vector3f(570.0f, -6.0f, -60.0f),
-      new Vector3f(540.0f, -6.0f, -60.0f),
-      new Vector3f(510.0f, -6.0f, -60.0f),
-      new Vector3f(480.0f, -6.0f, -60.0f),
-      new Vector3f(450.0f, -6.0f, -60.0f),
-      new Vector3f(420.0f, -6.0f, -60.0f),
-      new Vector3f(390.0f, -6.0f, -60.0f),
-      new Vector3f(360.0f, -6.0f, -60.0f),
-      new Vector3f(330.0f, -6.0f, -60.0f),
-      new Vector3f(300.0f, -6.0f, -60.0f),
-      new Vector3f(270.0f, -6.0f, -60.0f),
-      new Vector3f(240.0f, -6.0f, -60.0f),
-      new Vector3f(210.0f, -6.0f, -60.0f),
-      new Vector3f(180.0f, -6.0f, -53.0f),
-      new Vector3f(150.0f, -6.0f, -41.0f),
-      new Vector3f(120.0f, -6.0f, -26.0f),
-      new Vector3f(90.0f, -6.0f, 0.0f)
-    },
-    {
-      new Vector3f(-90.0f, -6.0f, 0.0f),
-      new Vector3f(-119.0f, -6.0f, 9.0f),
-      new Vector3f(-141.0f, -6.0f, 30.0f),
-      new Vector3f(-154.0f, -6.0f, 58.0f),
-      new Vector3f(-179.0f, -6.0f, 77.0f),
-      new Vector3f(-210.0f, -6.0f, 84.0f),
-      new Vector3f(-243.0f, -6.0f, 84.0f),
-      new Vector3f(-273.0f, -6.0f, 94.0f),
-      new Vector3f(-300.0f, -6.0f, 120.0f)
-    },
-    {
-      new Vector3f(0.0f, 0.0f, 630.0f),
-      new Vector3f(0.0f, 0.0f, 600.0f),
-      new Vector3f(0.0f, 0.0f, 570.0f),
-      new Vector3f(0.0f, 0.0f, 540.0f),
-      new Vector3f(0.0f, 0.0f, 510.0f),
-      new Vector3f(0.0f, 0.0f, 480.0f),
-      new Vector3f(0.0f, 0.0f, 450.0f),
-      new Vector3f(-12.0f, 0.0f, 420.0f),
-      new Vector3f(-30.0f, 0.0f, 390.0f),
-      new Vector3f(-60.0f, 0.0f, 360.0f),
-      new Vector3f(-90.0f, 0.0f, 330.0f),
-      new Vector3f(-107.0f, 0.0f, 300.0f),
-      new Vector3f(-120.0f, 0.0f, 270.0f),
-      new Vector3f(-120.0f, 0.0f, 240.0f),
-      new Vector3f(-120.0f, 0.0f, 210.0f)
-    },
-    {
-      new Vector3f(-30.0f, 0.0f, 120.0f),
-      new Vector3f(0.0f, 0.0f, 120.0f),
-      new Vector3f(30.0f, 0.0f, 120.0f),
-      new Vector3f(60.0f, 0.0f, 120.0f),
-      new Vector3f(90.0f, 0.0f, 120.0f),
-      new Vector3f(120.0f, 0.0f, 120.0f),
-      new Vector3f(150.0f, 0.0f, 132.0f),
-      new Vector3f(180.0f, 0.0f, 150.0f),
-      new Vector3f(210.0f, 0.0f, 180.0f),
-      new Vector3f(240.0f, 0.0f, 210.0f),
-      new Vector3f(270.0f, 0.0f, 240.0f),
-      new Vector3f(300.0f, 0.0f, 270.0f),
-      new Vector3f(330.0f, 0.0f, 300.0f),
-      new Vector3f(360.0f, 0.0f, 330.0f),
-      new Vector3f(390.0f, 0.0f, 348.0f),
-      new Vector3f(420.0f, 0.0f, 360.0f),
-      new Vector3f(450.0f, 0.0f, 360.0f),
-      new Vector3f(480.0f, 0.0f, 360.0f),
-      new Vector3f(510.0f, 0.0f, 360.0f)
-    },
-    {
-      new Vector3f(487.0f, 0.0f, -262.0f),
-      new Vector3f(450.0f, 0.0f, -300.0f),
-      new Vector3f(412.0f, 0.0f, -337.0f),
-      new Vector3f(375.0f, 0.0f, -375.0f),
-      new Vector3f(337.0f, 0.0f, -412.0f),
-      new Vector3f(300.0f, 0.0f, -450.0f),
-      new Vector3f(262.0f, 0.0f, -487.0f),
-      new Vector3f(225.0f, 0.0f, -525.0f),
-      new Vector3f(187.0f, 0.0f, -562.0f),
-      new Vector3f(150.0f, 0.0f, -600.0f),
-      new Vector3f(112.0f, 0.0f, -637.0f),
-      new Vector3f(75.0f, 0.0f, -675.0f),
-      new Vector3f(37.0f, 0.0f, -712.0f),
-      new Vector3f(0.0f, 0.0f, -735.0f),
-      new Vector3f(-37.0f, 0.0f, -750.0f),
-      new Vector3f(-75.0f, 0.0f, -764.0f),
-      new Vector3f(-112.0f, 0.0f, -779.0f),
-      new Vector3f(-150.0f, 0.0f, -795.0f),
-      new Vector3f(-187.0f, 0.0f, -802.0f),
-      new Vector3f(-225.0f, 0.0f, -810.0f),
-      new Vector3f(-262.0f, 0.0f, -817.0f),
-      new Vector3f(-300.0f, 0.0f, -825.0f),
-      new Vector3f(-337.0f, 0.0f, -825.0f),
-      new Vector3f(-375.0f, 0.0f, -825.0f),
-      new Vector3f(-412.0f, 0.0f, -825.0f),
-      new Vector3f(-450.0f, 0.0f, -825.0f),
-      new Vector3f(-487.0f, 0.0f, -825.0f),
-      new Vector3f(-525.0f, 0.0f, -825.0f),
-      new Vector3f(-562.0f, 0.0f, -810.0f),
-      new Vector3f(-600.0f, 0.0f, -787.0f),
-      new Vector3f(-637.0f, 0.0f, -750.0f),
-      new Vector3f(-675.0f, 0.0f, -712.0f),
-      new Vector3f(-712.0f, 0.0f, -675.0f),
-      new Vector3f(-735.0f, 0.0f, -637.0f),
-      new Vector3f(-750.0f, 0.0f, -600.0f),
-      new Vector3f(-750.0f, 0.0f, -562.0f),
-      new Vector3f(-750.0f, 0.0f, -525.0f),
-      new Vector3f(-750.0f, 0.0f, -487.0f),
-      new Vector3f(-750.0f, 0.0f, -450.0f),
-      new Vector3f(-764.0f, 0.0f, -412.0f),
-      new Vector3f(-787.0f, 0.0f, -375.0f),
-      new Vector3f(-825.0f, 0.0f, -337.0f),
-      new Vector3f(-862.0f, 0.0f, -314.0f),
-      new Vector3f(-900.0f, 0.0f, -300.0f),
-      new Vector3f(-937.0f, 0.0f, -300.0f),
-      new Vector3f(-975.0f, 0.0f, -300.0f)
-    },
-    {
-      new Vector3f(-825.0f, -112.0f, 862.0f),
-      new Vector3f(-825.0f, -115.0f, 850.0f),
-      new Vector3f(-825.0f, -119.0f, 832.0f),
-      new Vector3f(-825.0f, -132.0f, 777.0f),
-      new Vector3f(-815.0f, -137.0f, 750.0f),
-      new Vector3f(-789.0f, -144.0f, 722.0f),
-      new Vector3f(-743.0f, -150.0f, 707.0f),
-      new Vector3f(-690.0f, -150.0f, 694.0f),
-      new Vector3f(-642.0f, -150.0f, 673.0f),
-      new Vector3f(-605.0f, -150.0f, 638.0f),
-      new Vector3f(-582.0f, -150.0f, 593.0f),
-      new Vector3f(-555.0f, -150.0f, 556.0f),
-      new Vector3f(-525.0f, -150.0f, 525.0f)
-    },
-    {
-      new Vector3f(-525.0f, -150.0f, 525.0f),
-      new Vector3f(-474.0f, -150.0f, 537.0f),
-      new Vector3f(-429.0f, -150.0f, 543.0f),
-      new Vector3f(-384.0f, -150.0f, 534.0f),
-      new Vector3f(-346.0f, -150.0f, 511.0f),
-      new Vector3f(-304.0f, -150.0f, 498.0f),
-      new Vector3f(-252.0f, -146.0f, 498.0f),
-      new Vector3f(-208.0f, -138.0f, 498.0f),
-      new Vector3f(-177.0f, -129.0f, 499.0f),
-      new Vector3f(-155.0f, -110.0f, 503.0f),
-      new Vector3f(-133.0f, -75.0f, 510.0f),
-      new Vector3f(-113.0f, -45.0f, 521.0f),
-      new Vector3f(-98.0f, -26.0f, 531.0f),
-      new Vector3f(-88.0f, -17.0f, 542.0f),
-      new Vector3f(-80.0f, -11.0f, 552.0f),
-      new Vector3f(-75.0f, -7.0f, 562.0f)
-    },
-    {
-      new Vector3f(-525.0f, -150.0f, 525.0f),
-      new Vector3f(-536.0f, -150.0f, 479.0f),
-      new Vector3f(-529.0f, -150.0f, 430.0f),
-      new Vector3f(-512.0f, -150.0f, 392.0f),
-      new Vector3f(-476.0f, -150.0f, 351.0f),
-      new Vector3f(-447.0f, -150.0f, 310.0f),
-      new Vector3f(-415.0f, -150.0f, 268.0f),
-      new Vector3f(-392.0f, -150.0f, 224.0f),
-      new Vector3f(-367.0f, -150.0f, 187.0f),
-      new Vector3f(-324.0f, -150.0f, 161.0f),
-      new Vector3f(-274.0f, -150.0f, 149.0f),
-      new Vector3f(-225.0f, -150.0f, 150.0f)
-    },
-    {
-      new Vector3f(-225.0f, -150.0f, 150.0f),
-      new Vector3f(-202.0f, -150.0f, 191.0f),
-      new Vector3f(-175.0f, -150.0f, 223.0f),
-      new Vector3f(-143.0f, -150.0f, 253.0f),
-      new Vector3f(-114.0f, -150.0f, 275.0f),
-      new Vector3f(-85.0f, -150.0f, 292.0f),
-      new Vector3f(-57.0f, -150.0f, 307.0f),
-      new Vector3f(-33.0f, -145.0f, 320.0f),
-      new Vector3f(-11.0f, -129.0f, 328.0f),
-      new Vector3f(13.0f, -103.0f, 330.0f),
-      new Vector3f(35.0f, -57.0f, 327.0f),
-      new Vector3f(53.0f, -26.0f, 318.0f),
-      new Vector3f(66.0f, -14.0f, 309.0f),
-      new Vector3f(75.0f, -7.0f, 300.0f)
-    },
-    {
-      new Vector3f(-225.0f, -150.0f, 150.0f),
-      new Vector3f(-205.0f, -150.0f, 115.0f),
-      new Vector3f(-172.0f, -150.0f, 96.0f),
-      new Vector3f(-131.0f, -150.0f, 88.0f),
-      new Vector3f(-94.0f, -150.0f, 88.0f),
-      new Vector3f(-59.0f, -150.0f, 80.0f),
-      new Vector3f(-29.0f, -150.0f, 64.0f),
-      new Vector3f(-10.0f, -150.0f, 36.0f),
-      new Vector3f(0.0f, -150.0f, 0.0f)
-    },
-    {
-      new Vector3f(0.0f, -150.0f, 0.0f),
-      new Vector3f(-27.0f, -150.0f, -27.0f),
-      new Vector3f(-65.0f, -150.0f, -51.0f),
-      new Vector3f(-107.0f, -150.0f, -63.0f),
-      new Vector3f(-153.0f, -145.0f, -65.0f),
-      new Vector3f(-187.0f, -137.0f, -70.0f),
-      new Vector3f(-219.0f, -121.0f, -77.0f),
-      new Vector3f(-248.0f, -93.0f, -87.0f),
-      new Vector3f(-277.0f, -46.0f, -92.0f),
-      new Vector3f(-301.0f, -25.0f, -95.0f),
-      new Vector3f(-317.0f, -16.0f, -95.0f),
-      new Vector3f(-331.0f, -7.0f, -95.0f)
-    },
-    {
-      new Vector3f(0.0f, -150.0f, 0.0f),
-      new Vector3f(40.0f, -150.0f, -10.0f),
-      new Vector3f(79.0f, -150.0f, -19.0f),
-      new Vector3f(127.0f, -150.0f, -25.0f),
-      new Vector3f(162.0f, -150.0f, -25.0f),
-      new Vector3f(197.0f, -150.0f, -15.0f),
-      new Vector3f(225.0f, -150.0f, 0.0f)
-    },
-    {
-      new Vector3f(225.0f, -150.0f, 0.0f),
-      new Vector3f(225.0f, -150.0f, 37.0f),
-      new Vector3f(229.0f, -141.0f, 70.0f),
-      new Vector3f(237.0f, -119.0f, 97.0f),
-      new Vector3f(244.0f, -71.0f, 117.0f),
-      new Vector3f(251.0f, -26.0f, 133.0f),
-      new Vector3f(257.0f, -11.0f, 144.0f),
-      new Vector3f(262.0f, -7.0f, 150.0f)
-    },
-    {
-      new Vector3f(225.0f, -150.0f, 0.0f),
-      new Vector3f(253.0f, -150.0f, -17.0f),
-      new Vector3f(290.0f, -150.0f, -27.0f),
-      new Vector3f(338.0f, -150.0f, -30.0f),
-      new Vector3f(381.0f, -150.0f, -38.0f),
-      new Vector3f(417.0f, -150.0f, -55.0f),
-      new Vector3f(450.0f, -150.0f, -75.0f)
-    },
-    {
-      new Vector3f(450.0f, -150.0f, -75.0f),
-      new Vector3f(449.0f, -142.0f, -93.0f),
-      new Vector3f(449.0f, -129.0f, -110.0f),
-      new Vector3f(452.0f, -99.0f, -133.0f),
-      new Vector3f(462.0f, -59.0f, -145.0f),
-      new Vector3f(475.0f, -21.0f, -150.0f),
-      new Vector3f(487.0f, -7.0f, -150.0f)
-    },
-    {
-      new Vector3f(450.0f, -150.0f, -75.0f),
-      new Vector3f(477.0f, -150.0f, -59.0f),
-      new Vector3f(503.0f, -150.0f, -53.0f),
-      new Vector3f(528.0f, -150.0f, -62.0f),
-      new Vector3f(548.0f, -150.0f, -79.0f),
-      new Vector3f(572.0f, -150.0f, -81.0f),
-      new Vector3f(600.0f, -150.0f, -75.0f)
-    },
-    {
-      new Vector3f(600.0f, -150.0f, -75.0f),
-      new Vector3f(605.0f, -140.0f, -53.0f),
-      new Vector3f(615.0f, -122.0f, -32.0f),
-      new Vector3f(629.0f, -85.0f, -16.0f),
-      new Vector3f(634.0f, -47.0f, 0.0f),
-      new Vector3f(636.0f, -26.0f, 14.0f),
-      new Vector3f(637.0f, -13.0f, 28.0f),
-      new Vector3f(637.0f, -7.0f, 37.0f)
-    },
-    {
-      new Vector3f(600.0f, -150.0f, -75.0f),
-      new Vector3f(619.0f, -150.0f, -97.0f),
-      new Vector3f(645.0f, -150.0f, -112.0f),
-      new Vector3f(672.0f, -150.0f, -118.0f),
-      new Vector3f(700.0f, -150.0f, -119.0f),
-      new Vector3f(724.0f, -150.0f, -131.0f),
-      new Vector3f(750.0f, -150.0f, -150.0f)
-    },
-    {
-      new Vector3f(750.0f, -150.0f, -150.0f),
-      new Vector3f(744.0f, -150.0f, -197.0f),
-      new Vector3f(724.0f, -150.0f, -243.0f),
-      new Vector3f(714.0f, -150.0f, -290.0f),
-      new Vector3f(708.0f, -144.0f, -337.0f),
-      new Vector3f(711.0f, -131.0f, -375.0f),
-      new Vector3f(721.0f, -110.0f, -413.0f),
-      new Vector3f(720.0f, -90.0f, -439.0f),
-      new Vector3f(715.0f, -63.0f, -463.0f),
-      new Vector3f(707.0f, -38.0f, -485.0f),
-      new Vector3f(697.0f, -22.0f, -503.0f),
-      new Vector3f(685.0f, -13.0f, -516.0f),
-      new Vector3f(675.0f, -7.0f, -525.0f)
-    },
-    {
-      new Vector3f(750.0f, -150.0f, -150.0f),
-      new Vector3f(785.0f, -150.0f, -135.0f),
-      new Vector3f(820.0f, -150.0f, -121.0f),
-      new Vector3f(853.0f, -150.0f, -103.0f),
-      new Vector3f(888.0f, -150.0f, -82.0f),
-      new Vector3f(916.0f, -150.0f, -63.0f),
-      new Vector3f(948.0f, -150.0f, -49.0f),
-      new Vector3f(973.0f, -150.0f, -40.0f),
-      new Vector3f(998.0f, -145.0f, -31.0f),
-      new Vector3f(1018.0f, -137.0f, -17.0f),
-      new Vector3f(1035.0f, -116.0f, -2.0f),
-      new Vector3f(1044.0f, -76.0f, 18.0f),
-      new Vector3f(1047.0f, -44.0f, 39.0f),
-      new Vector3f(1049.0f, -25.0f, 55.0f),
-      new Vector3f(1049.0f, -14.0f, 67.0f),
-      new Vector3f(1050.0f, -7.0f, 75.0f)
-    },
-    {
-      new Vector3f(-1012.0f, 0.0f, -75.0f),
-      new Vector3f(-825.0f, -112.0f, 825.0f)
-    },
-    {
-      new Vector3f(-825.0f, -112.0f, 825.0f),
-      new Vector3f(-75.0f, -7.0f, 187.0f)
-    }
-  };
-
-  private static final ArrayRef<WMapDestinationMarker2c> wmapDestinationMarkers_800f5a6c = MEMORY.ref(2, 0x800f5a6cL, ArrayRef.of(WMapDestinationMarker2c.class, 0x40, 0x2c, WMapDestinationMarker2c::new));
   private int currentWmapEffect_800f6598;
   private int previousWmapEffect_800f659c;
 
@@ -1719,11 +709,11 @@ public class WMap extends EngineState {
     this.initCoolonMovePrompt();
     this.initMapMarkers();
 
-    if(this.mapState_800c6798.continentIndex_00.ordinal() < Continent.ILLISA_BAY.ordinal()) { // South Serdio, North Serdio, Tiberoa
+    if(this.mapState_800c6798.continent_00.ordinal() < Continent.ILLISA_BAY.ordinal()) { // South Serdio, North Serdio, Tiberoa
       loadLocationMenuSoundEffects(1);
     } else {
       //LAB_800cd004
-      loadLocationMenuSoundEffects(this.mapState_800c6798.continentIndex_00.ordinal() + 1);
+      loadLocationMenuSoundEffects(this.mapState_800c6798.continent_00.ordinal() + 1);
     }
     //LAB_800cd020
   }
@@ -1958,7 +948,7 @@ public class WMap extends EngineState {
     int count = 0;
     for(int i = 0; i < this.mapState_800c6798.locationCount_08; i++) {
       //LAB_800d1e38
-      if(!places_800f0234.get(locations_800f0e34.get(i).placeIndex_02.get()).name_00.isNull()) {
+      if(!places_800f0234.get(locations_800f0e34[i].placeIndex_02).name_00.isNull()) {
         //LAB_800d1e90
         if(this.FUN_800eb09c(i, 1, this.wmapStruct19c0_800c66b0._154[count].position_08) == 0) {
           //LAB_800d1ee0
@@ -2123,7 +1113,7 @@ public class WMap extends EngineState {
     if(struct._110 == 0) {
       if(this.wmapStruct258_800c66a8.zoomState_1f8 == 0) {
         if(!struct.hideAtmosphericEffect_c4) {
-          if(this.mapState_800c6798.continentIndex_00 != Continent.ENDINESS) { // Not teleporting
+          if(this.mapState_800c6798.continent_00 != Continent.ENDINESS) { // Not teleporting
             if(!struct.mapRotating_80) {
               //LAB_800d30d8
               if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_1)) { // R1
@@ -2209,7 +1199,7 @@ public class WMap extends EngineState {
       //LAB_800d3654
       //LAB_800d3670
       //LAB_800d368c
-      if(this.mapState_800c6798.continentIndex_00 != Continent.ENDINESS && this.mapState_800c6798._d8 == 0 && this.tickMainMenuOpenTransition_800c6690 == 0) {
+      if(this.mapState_800c6798.continent_00 != Continent.ENDINESS && this.mapState_800c6798._d8 == 0 && this.tickMainMenuOpenTransition_800c6690 == 0) {
         //LAB_800d36a8
         if(this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc != 1) {
           if(!this.wmapStruct19c0_800c66b0.mapRotating_80) {
@@ -2950,7 +1940,7 @@ public class WMap extends EngineState {
         .vramPos(640, 256)
         .pos(GPU.getOffsetX() - 144.0f, GPU.getOffsetY() - 104.0f, 54.0f)
         .size(128.0f, 24.0f)
-        .uv(128.0f, this.mapState_800c6798.continentIndex_00.ordinal() * 24.0f)
+        .uv(128.0f, this.mapState_800c6798.continent_00.ordinal() * 24.0f)
         .build();
     }
 
@@ -2969,7 +1959,7 @@ public class WMap extends EngineState {
     //LAB_800d6b5c
     this.renderPath();
 
-    if(this.mapState_800c6798.continentIndex_00 == Continent.ENDINESS) {
+    if(this.mapState_800c6798.continent_00 == Continent.ENDINESS) {
       return;
     }
 
@@ -3098,7 +2088,7 @@ public class WMap extends EngineState {
       //LAB_800d7d90
       if(this.FUN_800eb09c(i, 1, intersectionPoint) == 0) {
         //LAB_800d7db4
-        if(this.mapState_800c6798.continentIndex_00 != Continent.ENDINESS || i == 31 || i == 78) {
+        if(this.mapState_800c6798.continent_00 != Continent.ENDINESS || i == 31 || i == 78) {
           transforms.set(lw)
             .rotateLocalX(-MathHelper.PI / 2.0f)
             .scale(0.5f);
@@ -3131,9 +2121,9 @@ public class WMap extends EngineState {
       //LAB_800d8564
       if(this.FUN_800eb09c(i, 0, null) == 0) {
         //LAB_800d8584
-        if(this.mapState_800c6798.continentIndex_00 != Continent.ENDINESS || i == 31 || i == 78) {
+        if(this.mapState_800c6798.continent_00 != Continent.ENDINESS || i == 31 || i == 78) {
           //LAB_800d85c0
-          final int pathIndexAndDirection = directionalPathSegmentData_800f2248.get(locations_800f0e34.get(i).directionalPathIndex_00.get()).pathSegmentIndexAndDirection_00.get();
+          final int pathIndexAndDirection = directionalPathSegmentData_800f2248.get(locations_800f0e34[i].directionalPathIndex_00).pathSegmentIndexAndDirection_00.get();
           final int pathSegmentIndex = Math.abs(pathIndexAndDirection) - 1;
 
           if(!pathSegmentsRendered[pathSegmentIndex]) {
@@ -3188,7 +2178,7 @@ public class WMap extends EngineState {
   /** Used to initialize Coolon move prompt selector as well */
   @Method(0x800d8d18L)
   private void loadMapModelAssets() {
-    this.loadMapModelAndTexture(this.mapState_800c6798.continentIndex_00.ordinal());
+    this.loadMapModelAndTexture(this.mapState_800c6798.continent_00.ordinal());
 
     this.wmapStruct258_800c66a8.zoomState_1f8 = 0;
     this.wmapStruct258_800c66a8.previousZoomLevel = 2;
@@ -3208,7 +2198,7 @@ public class WMap extends EngineState {
     this.wmapStruct258_800c66a8.textureAnimation_1c = this.prepareAnimationStruct(size, 0, 3, 1);
     this.wmapStruct258_800c66a8.clutYIndex_28 = 0.0f;
 
-    if(this.mapState_800c6798.continentIndex_00 == Continent.TIBEROA) {
+    if(this.mapState_800c6798.continent_00 == Continent.TIBEROA) {
       //LAB_800d8f94
       for(int i = 0; i < this.wmapStruct258_800c66a8.tmdRendering_08.count_0c; i++) {
         //LAB_800d8fc4
@@ -3243,9 +2233,9 @@ public class WMap extends EngineState {
       final Vector3f rotation = this.wmapStruct258_800c66a8.tmdRendering_08.rotations_08[i];
 
       //LAB_800d9180
-      if(this.mapState_800c6798.continentIndex_00 != Continent.ENDINESS) {
+      if(this.mapState_800c6798.continent_00 != Continent.ENDINESS) {
         //LAB_800d91cc
-        if(mapTerrainTmdIndices_800ef194.get(this.mapState_800c6798.continentIndex_00.ordinal()).get() == i || mapFrameTmdIndices_800ef19c.get(this.mapState_800c6798.continentIndex_00.ordinal()).get() == i) {
+        if(mapTerrainTmdIndices_800ef194.get(this.mapState_800c6798.continent_00.ordinal()).get() == i || mapFrameTmdIndices_800ef19c.get(this.mapState_800c6798.continent_00.ordinal()).get() == i) {
           zOffset_1f8003e8.set(500); // background models
         } else {
           //LAB_800d9204
@@ -3256,7 +2246,7 @@ public class WMap extends EngineState {
       //LAB_800d9210
       this.rotateCoord2(rotation, coord2);
 
-      if(this.mapState_800c6798.continentIndex_00 == Continent.TIBEROA) {
+      if(this.mapState_800c6798.continent_00 == Continent.TIBEROA) {
         //LAB_800d9264
         if(i >= 2 && i < 9 || i >= 15 && i < 17) {
           //LAB_800d9294
@@ -3280,7 +2270,7 @@ public class WMap extends EngineState {
 
       final RenderEngine.QueuedModel model = RENDERER.queueModel(dobj2.obj, lightMatrix);
 
-      if(this.mapState_800c6798.continentIndex_00.ordinal() < 9 && i == 0) {
+      if(this.mapState_800c6798.continent_00.ordinal() < 9 && i == 0) {
         model.clutOverride(1008, waterClutYs_800ef348.get((int)this.wmapStruct258_800c66a8.clutYIndex_28).get());
       }
 
@@ -3288,7 +2278,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d942c
-    if(this.mapState_800c6798.continentIndex_00.ordinal() < 9) {
+    if(this.mapState_800c6798.continent_00.ordinal() < 9) {
       this.animateTextures(this.wmapStruct258_800c66a8.textureAnimation_1c); // water animation
     }
 
@@ -3319,7 +2309,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d9540
-    if(this.mapState_800c6798.continentIndex_00 == Continent.ENDINESS) {
+    if(this.mapState_800c6798.continent_00 == Continent.ENDINESS) {
       return;
     }
 
@@ -3355,7 +2345,7 @@ public class WMap extends EngineState {
         this.wmapStruct258_800c66a8._1f9++;
 
         if(this.wmapStruct258_800c66a8._1f9 >= 18 / vsyncMode_8007a3b8) {
-          this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(mapPositions_800ef1a8[this.mapState_800c6798.continentIndex_00.ordinal()]);
+          this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(mapPositions_800ef1a8[this.mapState_800c6798.continent_00.ordinal()]);
           this.wmapStruct258_800c66a8.zoomState_1f8 = 3;
 
           //LAB_800d97bc
@@ -3452,7 +2442,7 @@ public class WMap extends EngineState {
    */
   @Method(0x800d9d24L)
   private void FUN_800d9d24(final int zoomDirection) {
-    final Vector3i vec = mapPositions_800ef1a8[this.mapState_800c6798.continentIndex_00.ordinal()];
+    final Vector3i vec = mapPositions_800ef1a8[this.mapState_800c6798.continent_00.ordinal()];
     final WMapStruct258 wmap = this.wmapStruct258_800c66a8;
     wmap.svec_1f0.x = (vec.x - wmap.svec_1e8.x) * zoomDirection / 6.0f / (3.0f / vsyncMode_8007a3b8);
     wmap.svec_1f0.y = (vec.y - wmap.svec_1e8.y) * zoomDirection / 6.0f / (3.0f / vsyncMode_8007a3b8);
@@ -3634,7 +2624,7 @@ public class WMap extends EngineState {
         boolean sp24 = false;
         for(int i = 0; i < 9; i++) {
           //LAB_800dac9c
-          if(locations_800f0e34.get(coolonWarpDest_800ef228[i].locationIndex_10).continentNumber_0e.get() == this.mapState_800c6798.continentIndex_00.ordinal() + 1) {
+          if(locations_800f0e34[coolonWarpDest_800ef228[i].locationIndex_10].continent_0e == this.mapState_800c6798.continent_00) {
             struct258.coolonWarpIndex_221 = i;
             sp24 = true;
             break;
@@ -3649,7 +2639,7 @@ public class WMap extends EngineState {
         }
 
         //LAB_800dad4c
-        if(this.mapState_800c6798.continentIndex_00 == Continent.MILLE_SESEAU) {
+        if(this.mapState_800c6798.continent_00 == Continent.MILLE_SESEAU) {
           if(struct258.currPlayerPos_94.z < -400.0f) {
             struct258.coolonWarpIndex_221 = 5;
           } else {
@@ -3680,8 +2670,8 @@ public class WMap extends EngineState {
           //LAB_800daf44
           // Closing Coolon map when traveling out of Zenebatos
           if(struct258.usingCoolonFromZenebatos_254) {
-            this.mapState_800c6798.submapCut_c8 = locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).submapCut_08.get();
-            this.mapState_800c6798.submapScene_ca = locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).submapScene_0a.get();
+            this.mapState_800c6798.submapCut_c8 = locations_800f0e34[this.mapState_800c6798.locationIndex_10].submapCut_08;
+            this.mapState_800c6798.submapScene_ca = locations_800f0e34[this.mapState_800c6798.locationIndex_10].submapScene_0a;
             submapCut_80052c30.set(this.mapState_800c6798.submapCut_c8);
             submapScene_80052c34.set(this.mapState_800c6798.submapScene_ca);
 
@@ -3795,14 +2785,14 @@ public class WMap extends EngineState {
           gameState_800babc8.visitedLocations_17c.set(coolonWarpDest_800ef228[struct258.coolonWarpIndex_222].locationIndex_10, true);
 
           //LAB_800db8f4
-          this.mapState_800c6798.submapCut_c8 = locations_800f0e34.get(coolonWarpDest_800ef228[struct258.coolonWarpIndex_222].locationIndex_10).submapCut_08.get();
-          this.mapState_800c6798.submapScene_ca = locations_800f0e34.get(coolonWarpDest_800ef228[struct258.coolonWarpIndex_222].locationIndex_10).submapScene_0a.get();
+          this.mapState_800c6798.submapCut_c8 = locations_800f0e34[coolonWarpDest_800ef228[struct258.coolonWarpIndex_222].locationIndex_10].submapCut_08;
+          this.mapState_800c6798.submapScene_ca = locations_800f0e34[coolonWarpDest_800ef228[struct258.coolonWarpIndex_222].locationIndex_10].submapScene_0a;
           submapCut_80052c30.set(this.mapState_800c6798.submapCut_c8);
           submapScene_80052c34.set(this.mapState_800c6798.submapScene_ca);
         } else {
           //LAB_800db9bc
-          this.mapState_800c6798.submapCut_c8 = locations_800f0e34.get(coolonWarpDest_800ef228[struct258.coolonWarpIndex_222].locationIndex_10).submapCut_04.get();
-          this.mapState_800c6798.submapScene_ca = locations_800f0e34.get(coolonWarpDest_800ef228[struct258.coolonWarpIndex_222].locationIndex_10).submapScene_06.get();
+          this.mapState_800c6798.submapCut_c8 = locations_800f0e34[coolonWarpDest_800ef228[struct258.coolonWarpIndex_222].locationIndex_10].submapCut_04;
+          this.mapState_800c6798.submapScene_ca = locations_800f0e34[coolonWarpDest_800ef228[struct258.coolonWarpIndex_222].locationIndex_10].submapScene_06;
           submapCut_80052c30.set(this.mapState_800c6798.submapCut_c8);
           index_80052c38.set(this.mapState_800c6798.submapScene_ca);
           struct258.wmapTransitionMode_250 = 3;
@@ -4121,7 +3111,7 @@ public class WMap extends EngineState {
       model.coord2_14.transforms.scale.set(0.5f, 0.4f, 0.5f);
     } else if(modelIndex == 1) {
       //LAB_800e0114
-      if(this.mapState_800c6798.continentIndex_00 == Continent.ENDINESS) { // Teleporting
+      if(this.mapState_800c6798.continent_00 == Continent.ENDINESS) { // Teleporting
         model.coord2_14.transforms.scale.set(1.0f, 1.0f, 1.0f);
       } else {
         model.coord2_14.transforms.scale.set(2.0f, 2.0f, 2.0f);
@@ -4167,7 +3157,7 @@ public class WMap extends EngineState {
       //LAB_800e0404
       GTE.setBackgroundColour(0.5f, 0.5f, 0.5f);
 
-      if(this.mapState_800c6798.continentIndex_00 == Continent.ENDINESS) { // Teleporting
+      if(this.mapState_800c6798.continent_00 == Continent.ENDINESS) { // Teleporting
         struct.models_0c[1].coord2_14.transforms.scale.set(1.0f, 1.0f, 1.0f);
       } else {
         struct.models_0c[1].coord2_14.transforms.scale.set(2.0f, 2.0f, 2.0f);
@@ -4257,8 +3247,8 @@ public class WMap extends EngineState {
         gameState_800babc8.visitedLocations_17c.set(locationIndex, true);
 
         //LAB_800e0b64
-        this.mapState_800c6798.submapCut_c8 = locations_800f0e34.get(locationIndex).submapCut_08.get();
-        this.mapState_800c6798.submapScene_ca = locations_800f0e34.get(locationIndex).submapScene_0a.get();
+        this.mapState_800c6798.submapCut_c8 = locations_800f0e34[locationIndex].submapCut_08;
+        this.mapState_800c6798.submapScene_ca = locations_800f0e34[locationIndex].submapScene_0a;
         submapCut_80052c30.set(this.mapState_800c6798.submapCut_c8);
         submapScene_80052c34.set(this.mapState_800c6798.submapScene_ca);
 
@@ -5012,7 +4002,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800e5248
-    final int placeIndex = locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).placeIndex_02.get();
+    final int placeIndex = locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02;
     switch(this.mapTransitionState_800c68a4) {
       case 0:
         final int pathIndexAndInverseDirection = -directionalPathSegmentData_800f2248.get(this.mapState_800c6798.tempPathSegmentIndices_dc[0]).pathSegmentIndexAndDirection_00.get();
@@ -5041,11 +4031,11 @@ public class WMap extends EngineState {
 
         //LAB_800e53e0
         textZ_800bdf00.set(13);
-        this.mapState_800c6798.submapCut_c8 = locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).submapCut_08.get();
-        this.mapState_800c6798.submapScene_ca = locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).submapScene_0a.get();
+        this.mapState_800c6798.submapCut_c8 = locations_800f0e34[this.mapState_800c6798.locationIndex_10].submapCut_08;
+        this.mapState_800c6798.submapScene_ca = locations_800f0e34[this.mapState_800c6798.locationIndex_10].submapScene_0a;
         this.mapTransitionState_800c68a4 = 1;
 
-        if(places_800f0234.get(locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).placeIndex_02.get()).name_00.isNull()) {
+        if(places_800f0234.get(locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02).name_00.isNull()) {
           this.mapTransitionState_800c68a4 = 8;
         }
 
@@ -5055,7 +4045,7 @@ public class WMap extends EngineState {
       case 1:
         this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & 0xffff_f7ff);
 
-        loadDrgnFileSync(0, 5655 + places_800f0234.get(locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).placeIndex_02.get()).fileIndex_04.get(), data -> this.loadLocationThumbnailImage(new Tim(data), 1));
+        loadDrgnFileSync(0, 5655 + places_800f0234.get(locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02).fileIndex_04.get(), data -> this.loadLocationThumbnailImage(new Tim(data), 1));
         initTextbox(6, true, 240, 120, 14, 16);
 
         this.mapTransitionState_800c68a4 = 2;
@@ -5065,7 +4055,7 @@ public class WMap extends EngineState {
         //LAB_800e55f0
         for(int i = 0; i < 4; i++) {
           //LAB_800e560c
-          final int soundIndex = places_800f0234.get(locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).placeIndex_02.get()).soundIndices_06.get(i).get();
+          final int soundIndex = places_800f0234.get(locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02).soundIndices_06.get(i).get();
 
           if(soundIndex > 0) {
             playSound(0xc, soundIndex, 0, 0, (short)0, (short)0);
@@ -5175,7 +4165,7 @@ public class WMap extends EngineState {
         final float currentBrightness = this.wmapLocationPromptPopup.getThumbnailBrightness();
         if(
           gameState_800babc8.visitedLocations_17c.get(this.mapState_800c6798.locationIndex_10) ||
-            locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).thumbnailShouldUseFullBrightness_10.get()
+            locations_800f0e34[this.mapState_800c6798.locationIndex_10].thumbnailShouldUseFullBrightness_10
         ) {
           //LAB_800e5e98
           newBrightness = currentBrightness * 0.5f;
@@ -5241,7 +4231,7 @@ public class WMap extends EngineState {
             //LAB_800e6350
             for(int i = 0; i < 4; i++) {
               //LAB_800e636c
-              final int soundIndex = places_800f0234.get(locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).placeIndex_02.get()).soundIndices_06.get(i).get();
+              final int soundIndex = places_800f0234.get(locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02).soundIndices_06.get(i).get();
 
               if(soundIndex > 0) {
                 stopSound(soundFiles_800bcf80[12], soundIndex, 1);
@@ -5263,7 +4253,7 @@ public class WMap extends EngineState {
             //LAB_800e6468
             for(int i = 0; i < 4; i++) {
               //LAB_800e6484
-              final int soundIndex = places_800f0234.get(locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).placeIndex_02.get()).soundIndices_06.get(i).get();
+              final int soundIndex = places_800f0234.get(locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02).soundIndices_06.get(i).get();
 
               if(soundIndex > 0) {
                 stopSound(soundFiles_800bcf80[12], soundIndex, 1);
@@ -5281,7 +4271,7 @@ public class WMap extends EngineState {
             //LAB_800e6560
             for(int i = 0; i < 4; i++) {
               //LAB_800e657c
-              final int soundIndex = places_800f0234.get(locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).placeIndex_02.get()).soundIndices_06.get(i).get();
+              final int soundIndex = places_800f0234.get(locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02).soundIndices_06.get(i).get();
 
               if(soundIndex > 0) {
                 stopSound(soundFiles_800bcf80[12], soundIndex, 1);
@@ -5363,7 +4353,7 @@ public class WMap extends EngineState {
           submapScene_80052c34.set(this.mapState_800c6798.submapScene_ca);
         } else {
           //LAB_800e693c
-          submapCut_80052c30.set(locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).submapCut_04.get());
+          submapCut_80052c30.set(locations_800f0e34[this.mapState_800c6798.locationIndex_10].submapCut_04);
 
           final int sp20;
           if(this.wmapLocationPromptPopup.getMenuSelectorOptionIndex() == 1) {
@@ -5457,7 +4447,7 @@ public class WMap extends EngineState {
     final MV transforms = new MV();
     for(int i = 0; i < this.placeCount_800c86cc; i++) {
       //LAB_800e6c5c
-      if(!places_800f0234.get(locations_800f0e34.get(locationsIndices_800c84c8.get(i).get()).placeIndex_02.get()).name_00.isNull()) {
+      if(!places_800f0234.get(locations_800f0e34[locationsIndices_800c84c8.get(i).get()].placeIndex_02).name_00.isNull()) {
         //LAB_800e6ccc
         GsGetLs(this.wmapStruct258_800c66a8.tmdRendering_08.coord2s_04[0], transforms);
         GTE.setTransforms(transforms);
@@ -5502,7 +4492,7 @@ public class WMap extends EngineState {
       //LAB_800e6ff4
       final float x = label.xy_08.x + 160;
       final float y = label.xy_08.y + 104;
-      final int place = locations_800f0e34.get(label.locationIndex_04).placeIndex_02.get();
+      final int place = locations_800f0e34[label.locationIndex_04].placeIndex_02;
 
       if(!places_800f0234.get(place).name_00.isNull()) {
         //LAB_800e70f4
@@ -5633,7 +4623,7 @@ public class WMap extends EngineState {
     int locationIndex;
     for(locationIndex = 0; locationIndex < 0x100; locationIndex++) {
       //LAB_800e7b70
-      if(locations_800f0e34.get(locationIndex).submapCut_04.get() == this.mapState_800c6798.submapCut_c4 && locations_800f0e34.get(locationIndex).submapScene_06.get() == this.mapState_800c6798.submapScene_c6) {
+      if(locations_800f0e34[locationIndex].submapCut_04 == this.mapState_800c6798.submapCut_c4 && locations_800f0e34[locationIndex].submapScene_06 == this.mapState_800c6798.submapScene_c6) {
         sp18 = true;
         break;
       }
@@ -5680,7 +4670,7 @@ public class WMap extends EngineState {
     //LAB_800e7cb8
     //LAB_800e7cbc
     //LAB_800e7d0c
-    this.mapState_800c6798.locationCount_08 = locations_800f0e34.length();
+    this.mapState_800c6798.locationCount_08 = locations_800f0e34.length;
 
     //LAB_800e7d1c
     int sp24;
@@ -5693,8 +4683,8 @@ public class WMap extends EngineState {
 
     GsInitCoordinate2(null, this.wmapStruct258_800c66a8.coord2_34);
 
-    this.mapState_800c6798.continentIndex_00 = Continent.values()[locations_800f0e34.get(locationIndex).continentNumber_0e.get() - 1];
-    continentIndex_800bf0b0.set(this.mapState_800c6798.continentIndex_00.ordinal());
+    this.mapState_800c6798.continent_00 = locations_800f0e34[locationIndex].continent_0e;
+    continentIndex_800bf0b0.set(this.mapState_800c6798.continent_00.ordinal());
 
     this.FUN_800ea630(locationIndex);
 
@@ -5727,7 +4717,7 @@ public class WMap extends EngineState {
       //LAB_800e7f00
       for(int i = 0; i < this.mapState_800c6798.locationCount_08; i++) {
         //LAB_800e7f24
-        final int directionalPathIndex = locations_800f0e34.get(i).directionalPathIndex_00.get();
+        final int directionalPathIndex = locations_800f0e34[i].directionalPathIndex_00;
 
         if(directionalPathIndex != -1) {
           //LAB_800e7f68
@@ -5744,8 +4734,8 @@ public class WMap extends EngineState {
 
       //LAB_800e7fcc
       this.mapState_800c6798.locationIndex_10 = locationIndex;
-      this.mapState_800c6798.continentIndex_00 = Continent.values()[locations_800f0e34.get(locationIndex).continentNumber_0e.get() - 1];
-      continentIndex_800bf0b0.set(this.mapState_800c6798.continentIndex_00.ordinal());
+      this.mapState_800c6798.continent_00 = locations_800f0e34[locationIndex].continent_0e;
+      continentIndex_800bf0b0.set(this.mapState_800c6798.continent_00.ordinal());
 
       final DirectionalPathSegmentData08 directionalPathSegment = directionalPathSegmentData_800f2248.get(this.mapState_800c6798.directionalPathIndex_12);
 
@@ -5789,8 +4779,8 @@ public class WMap extends EngineState {
     }
 
     //LAB_800e8494
-    this.mapState_800c6798.submapCut_c8 = locations_800f0e34.get(locationIndex).submapCut_08.get();
-    this.mapState_800c6798.submapScene_ca = locations_800f0e34.get(locationIndex).submapScene_0a.get();
+    this.mapState_800c6798.submapCut_c8 = locations_800f0e34[locationIndex].submapCut_08;
+    this.mapState_800c6798.submapScene_ca = locations_800f0e34[locationIndex].submapScene_0a;
 
     final Vector3f avg = new Vector3f();
     final Vector3f prevDotPos = new Vector3f();
@@ -6014,8 +5004,8 @@ public class WMap extends EngineState {
                         //LAB_800e9078
                         if(Input.pressedThisFrame(InputAction.BUTTON_WEST)) { // Square
                           if(this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc != 1) {
-                            this.mapState_800c6798.submapCut_c8 = locations_800f0e34.get(93).submapCut_08.get();
-                            this.mapState_800c6798.submapScene_ca = locations_800f0e34.get(93).submapScene_0a.get();
+                            this.mapState_800c6798.submapCut_c8 = locations_800f0e34[93].submapCut_08;
+                            this.mapState_800c6798.submapScene_ca = locations_800f0e34[93].submapScene_0a;
                             submapCut_80052c30.set(this.mapState_800c6798.submapCut_c8);
                             submapScene_80052c34.set(this.mapState_800c6798.submapScene_ca);
                             this.FUN_800e3fac(1);
@@ -6169,9 +5159,9 @@ public class WMap extends EngineState {
       // Seems like it's mostly used here to check continent number?
       if(this.FUN_800eb09c(i, 0, null) == 0) {
         //LAB_800e98a8
-        if(locations_800f0e34.get(i)._0c.get() != -1) {
+        if(locations_800f0e34[i]._0c != -1) {
           //LAB_800e98e0
-          final int directionalPathIndex = locations_800f0e34.get(i).directionalPathIndex_00.get();
+          final int directionalPathIndex = locations_800f0e34[i].directionalPathIndex_00;
           final int pathIndexAndDirection = directionalPathSegmentData_800f2248.get(directionalPathIndex).pathSegmentIndexAndDirection_00.get();
 
           if(this.mapState_800c6798.facing_1c <= 0 || pathIndexAndDirection >= 0) {
@@ -6353,13 +5343,13 @@ public class WMap extends EngineState {
     int i;
     for(i = 0; i < this.mapState_800c6798.locationCount_08; i++) {
       //LAB_800ea520
-      if(locations_800f0e34.get(i).directionalPathIndex_00.get() != -1) {
+      if(locations_800f0e34[i].directionalPathIndex_00 != -1) {
         //LAB_800ea558
         if(this.FUN_800eb09c(i, 0, null) == 0) {
           //LAB_800ea578
-          if(locations_800f0e34.get(i).continentNumber_0e.get() == this.mapState_800c6798.continentIndex_00.ordinal() + 1) {
+          if(locations_800f0e34[i].continent_0e == this.mapState_800c6798.continent_00) {
             //LAB_800ea5bc
-            if(locations_800f0e34.get(i).directionalPathIndex_00.get() == directionalPathIndex) {
+            if(locations_800f0e34[i].directionalPathIndex_00 == directionalPathIndex) {
               break;
             }
           }
@@ -6374,12 +5364,12 @@ public class WMap extends EngineState {
 
   @Method(0x800ea630L)
   private void FUN_800ea630(final int locationIndex) {
-    if(locations_800f0e34.get(locationIndex).directionalPathIndex_00.get() == -1) {
+    if(locations_800f0e34[locationIndex].directionalPathIndex_00 == -1) {
       return;
     }
 
     //LAB_800ea678
-    if(locations_800f0e34.get(locationIndex).continentNumber_0e.get() != this.mapState_800c6798.continentIndex_00.ordinal() + 1) {
+    if(locations_800f0e34[locationIndex].continent_0e != this.mapState_800c6798.continent_00) {
       return;
     }
 
@@ -6390,7 +5380,7 @@ public class WMap extends EngineState {
 
     //LAB_800ea6dc
     this.mapState_800c6798.locationIndex_10 = locationIndex;
-    this.mapState_800c6798.directionalPathIndex_12 = locations_800f0e34.get(locationIndex).directionalPathIndex_00.get();
+    this.mapState_800c6798.directionalPathIndex_12 = locations_800f0e34[locationIndex].directionalPathIndex_00;
 
     final DirectionalPathSegmentData08 directionalPathSegment = directionalPathSegmentData_800f2248.get(this.mapState_800c6798.directionalPathIndex_12);
     this.mapState_800c6798.pathIndex_14 = Math.abs(directionalPathSegment.pathSegmentIndexAndDirection_00.get()) - 1; // Transition to a different path
@@ -6437,12 +5427,12 @@ public class WMap extends EngineState {
 
   @Method(0x800eab94L)
   private void FUN_800eab94(final int locationIndex) {
-    if(locations_800f0e34.get(locationIndex).directionalPathIndex_00.get() == -1) {
+    if(locations_800f0e34[locationIndex].directionalPathIndex_00 == -1) {
       return;
     }
 
     //LAB_800eabdc
-    if(locations_800f0e34.get(locationIndex).continentNumber_0e.get() != this.mapState_800c6798.continentIndex_00.ordinal() + 1) {
+    if(locations_800f0e34[locationIndex].continent_0e != this.mapState_800c6798.continent_00) {
       return;
     }
 
@@ -6453,7 +5443,7 @@ public class WMap extends EngineState {
 
     //LAB_800eac40
     this.mapState_800c6798.locationIndex_10 = locationIndex;
-    this.mapState_800c6798.directionalPathIndex_12 = locations_800f0e34.get(locationIndex).directionalPathIndex_00.get();
+    this.mapState_800c6798.directionalPathIndex_12 = locations_800f0e34[locationIndex].directionalPathIndex_00;
 
     final DirectionalPathSegmentData08 directionalPathSegment = directionalPathSegmentData_800f2248.get(this.mapState_800c6798.directionalPathIndex_12);
     this.mapState_800c6798.pathIndex_14 = Math.abs(directionalPathSegment.pathSegmentIndexAndDirection_00.get()) - 1;
@@ -6494,13 +5484,13 @@ public class WMap extends EngineState {
    */
   @Method(0x800eb09cL)
   private int FUN_800eb09c(final int locationIndex, final int a1, @Nullable final Vector3f dotPos) {
-    if(locations_800f0e34.get(locationIndex).directionalPathIndex_00.get() == -1) {
+    if(locations_800f0e34[locationIndex].directionalPathIndex_00 == -1) {
       return -1;
     }
 
     //LAB_800eb0ec
     if(a1 != -1) {
-      if(locations_800f0e34.get(locationIndex).continentNumber_0e.get() != this.mapState_800c6798.continentIndex_00.ordinal() + 1) {
+      if(locations_800f0e34[locationIndex].continent_0e != this.mapState_800c6798.continent_00) {
         return -2;
       }
     }
@@ -6517,7 +5507,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800eb204
-    final int pathIndexAndDirection = directionalPathSegmentData_800f2248.get(locations_800f0e34.get(locationIndex).directionalPathIndex_00.get()).pathSegmentIndexAndDirection_00.get();
+    final int pathIndexAndDirection = directionalPathSegmentData_800f2248.get(locations_800f0e34[locationIndex].directionalPathIndex_00).pathSegmentIndexAndDirection_00.get();
 
     // This should only be the zeroed entry at the end of the array used to indicate its endpoint
     if(pathIndexAndDirection == 0) {
@@ -6563,7 +5553,7 @@ public class WMap extends EngineState {
         //LAB_800eb468
         if(!sp0xd0[i]) {
           //LAB_800eb48c
-          final int placeIndex0 = locations_800f0e34.get(i).placeIndex_02.get();
+          final int placeIndex0 = locations_800f0e34[i].placeIndex_02;
           int sp20 = 0;
 
           //LAB_800eb4c8
@@ -6573,7 +5563,7 @@ public class WMap extends EngineState {
               //LAB_800eb50c
               if(!sp0xd0[sp1c]) {
                 //LAB_800eb530
-                final int placeIndex1 = locations_800f0e34.get(sp1c).placeIndex_02.get();
+                final int placeIndex1 = locations_800f0e34[sp1c].placeIndex_02;
 
                 if(!places_800f0234.get(placeIndex0).name_00.isNull() || !places_800f0234.get(placeIndex1).name_00.isNull()) {
                   // Added this check since these pointers can be null
@@ -6630,7 +5620,7 @@ public class WMap extends EngineState {
 
   @Method(0x800eb914L)
   private void allocateSmoke() {
-    this.currentWmapEffect_800f6598 = (locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).effectFlags_12.get() & 0x30) >>> 4;
+    this.currentWmapEffect_800f6598 = (locations_800f0e34[this.mapState_800c6798.locationIndex_10].effectFlags_12 & 0x30) >>> 4;
     this.previousWmapEffect_800f659c = this.currentWmapEffect_800f6598;
 
     this.smokeInstances_800c86f8 = new WmapSmokeInstance60[48];
@@ -6994,7 +5984,7 @@ public class WMap extends EngineState {
       //LAB_800edaa4
       case 5 -> {
         this.previousWmapEffect_800f659c = this.currentWmapEffect_800f6598;
-        this.currentWmapEffect_800f6598 = (locations_800f0e34.get(this.mapState_800c6798.locationIndex_10).effectFlags_12.get() & 0x30) >>> 4;
+        this.currentWmapEffect_800f6598 = (locations_800f0e34[this.mapState_800c6798.locationIndex_10].effectFlags_12 & 0x30) >>> 4;
         if(this.currentWmapEffect_800f6598 != this.previousWmapEffect_800f659c) {
           this.deallocateAtmosphericEffect();
           this.atmosphericEffectStage_800c66a4 = 3;
@@ -7045,18 +6035,18 @@ public class WMap extends EngineState {
     //LAB_800edca8
     for(int i = 0; i < this.placeCount_800c86cc; i++) {
       //LAB_800edccc
-      if(places_800f0234.get(locations_800f0e34.get(locationsIndices_800c84c8.get(i).get()).placeIndex_02.get()).name_00.isNull()) {
+      if(places_800f0234.get(locations_800f0e34[locationsIndices_800c84c8.get(i).get()].placeIndex_02).name_00.isNull()) {
         continue;
       }
 
       //LAB_800edd3c
-      final int mode = locations_800f0e34.get(locationsIndices_800c84c8.get(i).get()).effectFlags_12.get() & 0xc;
+      final int mode = locations_800f0e34[locationsIndices_800c84c8.get(i).get()].effectFlags_12 & 0xc;
       if(mode == 0) {
         continue;
       }
 
       //LAB_800edda0
-      if(locations_800f0e34.get(locationsIndices_800c84c8.get(i).get()).continentNumber_0e.get() == this.mapState_800c6798.continentIndex_00.ordinal() + 1) {
+      if(locations_800f0e34[locationsIndices_800c84c8.get(i).get()].continent_0e == this.mapState_800c6798.continent_00) {
         //LAB_800eddfc
         if(i >= 9) {
           break;
@@ -7082,7 +6072,7 @@ public class WMap extends EngineState {
           smoke.coord2_00.coord.transfer.y = locationModelTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
           smoke.coord2_00.coord.transfer.z = locationModelTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16;
 
-          if(this.mapState_800c6798.continentIndex_00 == Continent.SOUTH_SERDIO) {
+          if(this.mapState_800c6798.continent_00 == Continent.SOUTH_SERDIO) {
             if(mode == 4) {
               //LAB_800ee0e4
               smoke.coord2_00.coord.transfer.x = locationModelTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
@@ -7098,7 +6088,7 @@ public class WMap extends EngineState {
 
             //LAB_800ee32c
             //LAB_800ee334
-          } else if(this.mapState_800c6798.continentIndex_00 == Continent.NORTH_SERDIO) {
+          } else if(this.mapState_800c6798.continent_00 == Continent.NORTH_SERDIO) {
             if(mode == 4) {
               //LAB_800ee3a4
               smoke.coord2_00.coord.transfer.x = locationModelTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;

@@ -21,9 +21,9 @@ public class MapState100 {
    * </ol>
    * 800c6798
    */
-  public Continent continentIndex_00;
+  public Continent continent_00;
   // /** 800c679c */
-  // public int _04; // was just a copy of continentIndex_00
+  // public int _04; // was just a copy of continent_00
   /** 800c67a0 */
   public int locationCount_08;
   /** The number of paths on the continent * 2 (one for positive and negative directions) (800c67a4) */
@@ -67,10 +67,10 @@ public class MapState100 {
   public int submapCut_c4;
   /** 800c685e */
   public int submapScene_c6;
-  /** 800c6860 */
-  public short submapCut_c8;
-  /** 800c6862 */
-  public short submapScene_ca;
+  /** short 800c6860 */
+  public int submapCut_c8;
+  /** short 800c6862 */
+  public int submapScene_ca;
 
   /** 800c6868 */
   public boolean disableInput_d0;

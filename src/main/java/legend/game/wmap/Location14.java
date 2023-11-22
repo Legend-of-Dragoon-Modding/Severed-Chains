@@ -1,25 +1,19 @@
 package legend.game.wmap;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.BoolRef;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnsignedByteRef;
+import legend.game.wmap.WmapEnums.Continent;
 
-public class Location14 implements MemoryRef {
-  private final Value ref;
-
-  public final ShortRef directionalPathIndex_00;
-  public final ShortRef placeIndex_02;
-  public final ShortRef submapCut_04;
-  public final ShortRef submapScene_06;
-  public final ShortRef submapCut_08;
-  public final ShortRef submapScene_0a;
-  public final ShortRef _0c;
+public class Location14 {
+  public int directionalPathIndex_00;
+  public int placeIndex_02;
+  public int submapCut_04;
+  public int submapScene_06;
+  public int submapCut_08;
+  public int submapScene_0a;
+  public int _0c;
   /** 1-based, because why not */
-  public final UnsignedByteRef continentNumber_0e;
+  public Continent continent_0e;
   /** ubyte */
-  public final BoolRef thumbnailShouldUseFullBrightness_10;
+  public boolean thumbnailShouldUseFullBrightness_10;
   /**
    * <ul>
    *   <li>0x0 = atmospheric effect 0 (no-op)</li>
@@ -29,25 +23,18 @@ public class Location14 implements MemoryRef {
    *   <li>0x20 = atmospheric effect 2 (snow)</li>
    * </ul>
    */
-  public final UnsignedByteRef effectFlags_12;
+  public int effectFlags_12;
 
-  public Location14(final Value ref) {
-    this.ref = ref;
-
-    this.directionalPathIndex_00 = ref.offset(2, 0x00L).cast(ShortRef::new);
-    this.placeIndex_02 = ref.offset(2, 0x02L).cast(ShortRef::new);
-    this.submapCut_04 = ref.offset(2, 0x04L).cast(ShortRef::new);
-    this.submapScene_06 = ref.offset(2, 0x06L).cast(ShortRef::new);
-    this.submapCut_08 = ref.offset(2, 0x08L).cast(ShortRef::new);
-    this.submapScene_0a = ref.offset(2, 0x0aL).cast(ShortRef::new);
-    this._0c = ref.offset(2, 0x0cL).cast(ShortRef::new);
-    this.continentNumber_0e = ref.offset(1, 0x0eL).cast(UnsignedByteRef::new);
-    this.thumbnailShouldUseFullBrightness_10 = ref.offset(1, 0x10L).cast(BoolRef::new);
-    this.effectFlags_12 = ref.offset(1, 0x12L).cast(UnsignedByteRef::new);
-  }
-
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+  public Location14(final int directionalPathIndex, final int placeIndex, final int submapCut0, final int submapScene0, final int submapCut1, final int submapScene1, final int unknown, final WmapEnums.Continent continent, final boolean thumbnailShouldUseFullBrightness, final int effectFlags_12) {
+    this.directionalPathIndex_00 = directionalPathIndex;
+    this.placeIndex_02 = placeIndex;
+    this.submapCut_04 = submapCut0;
+    this.submapScene_06 = submapScene0;
+    this.submapCut_08 = submapCut1;
+    this.submapScene_0a = submapScene1;
+    this._0c = unknown;
+    this.continent_0e = continent;
+    this.thumbnailShouldUseFullBrightness_10 = thumbnailShouldUseFullBrightness;
+    this.effectFlags_12 = effectFlags_12;
   }
 }

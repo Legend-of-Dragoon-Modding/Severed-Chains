@@ -9,7 +9,8 @@ public class WmapEnums {
     MILLE_SESEAU,
     GLORIANO,
     DEATH_FRONTIER,
-    ENDINESS
+    ENDINESS,
+    NONE
   }
 
   public enum WmapActiveState {
