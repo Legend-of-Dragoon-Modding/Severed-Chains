@@ -312,7 +312,7 @@ public class WMap extends EngineState {
   private static final ArrayRef<Location14> locations_800f0e34 = MEMORY.ref(2, 0x800f0e34L, ArrayRef.of(Location14.class, 0x100, 0x14, Location14::new));
   public static final ArrayRef<DirectionalPathSegmentData08> directionalPathSegmentData_800f2248 = MEMORY.ref(2, 0x800f2248L, ArrayRef.of(DirectionalPathSegmentData08.class, 133, 8, DirectionalPathSegmentData08::new));
 
-  private static final ArrayRef<IntRef> pathSegmentLengths_800f5810 = MEMORY.ref(4, 0x800f5810L, ArrayRef.of(IntRef.class, 0x43, 4, IntRef::new));
+  private static final int[] pathSegmentLengths_800f5810 = {5, 6, 8, 7, 12, 16, 11, 21, 8, 4, 5, 3, 9, 11, 6, 9, 18, 13, 9, 16, 20, 4, 16, 7, 11, 27, 4, 8, 7, 38, 17, 18, 21, 5, 13, 8, 6, 9, 7, 9, 17, 19, 10, 26, 21, 9, 15, 19, 46, 13, 16, 12, 14, 9, 12, 7, 8, 7, 7, 7, 8, 7, 13, 16, 2, 2, -1};
 
   private static final Vector3f[][] pathDotPosPtrArr_800f591c = {
     {
@@ -2838,9 +2838,9 @@ public class WMap extends EngineState {
           if(!pathSegmentsRendered[pathSegmentIndex]) {
             //LAB_800d863c
             pathSegmentsRendered[pathSegmentIndex] = true;
-            final int pathPointCount = pathSegmentLengths_800f5810.get(pathSegmentIndex).get() - 1;
+            final int pathPointCount = pathSegmentLengths_800f5810[pathSegmentIndex] - 1;
 
-            final Vector3f[] pathPoints = pathDotPosPtrArr_800f591c[pathSegmentIndex];
+            final Vector3f[] dots = pathDotPosPtrArr_800f591c[pathSegmentIndex];
             final int pathPointIndexBase = pathIndexAndDirection >= 0 ? 0 : pathPointCount - 1;
 
             //LAB_800d86d0
@@ -2849,10 +2849,10 @@ public class WMap extends EngineState {
               //LAB_800d86f4
               final Vector3f pathPoint;
               if(pathIndexAndDirection > 0) {
-                pathPoint = pathPoints[pathPointIndexBase + pathPointIndex];
+                pathPoint = dots[pathPointIndexBase + pathPointIndex];
               } else {
                 //LAB_800d8784
-                pathPoint = pathPoints[pathPointIndexBase - pathPointIndex];
+                pathPoint = dots[pathPointIndexBase - pathPointIndex];
               }
 
               transforms.set(lw)
@@ -5464,7 +5464,7 @@ public class WMap extends EngineState {
         this.mapState_800c6798.playerDestAngle_c0 = 0.0f;
       } else {
         //LAB_800e8190
-        final int index = pathSegmentLengths_800f5810.get(Math.abs(directionalPathSegment.pathSegmentIndexAndDirection_00.get()) - 1).get() - 1;
+        final int index = pathSegmentLengths_800f5810[Math.abs(directionalPathSegment.pathSegmentIndexAndDirection_00.get()) - 1] - 1;
         dx = dots[index].x - dots[index - 1].x;
         dz = dots[index].z - dots[index - 1].z;
 
@@ -5662,7 +5662,7 @@ public class WMap extends EngineState {
       //LAB_800e8d48
       this.mapState_800c6798.dotOffset_18 %= 4.0f;
 
-      final int maxDotIndex = pathSegmentLengths_800f5810.get(Math.abs(directionalPathSegmentData_800f2248.get(this.mapState_800c6798.directionalPathIndex_12).pathSegmentIndexAndDirection_00.get()) - 1).get() - 1;
+      final int maxDotIndex = pathSegmentLengths_800f5810[Math.abs(directionalPathSegmentData_800f2248.get(this.mapState_800c6798.directionalPathIndex_12).pathSegmentIndexAndDirection_00.get()) - 1] - 1;
 
       if(this.mapState_800c6798.dotIndex_16 >= maxDotIndex) {
         this.mapState_800c6798.dotIndex_16 = maxDotIndex - 1;
@@ -5879,7 +5879,7 @@ public class WMap extends EngineState {
             if(this.mapState_800c6798.facing_1c >= 0 || pathIndexAndDirection <= 0) {
               //LAB_800e9988
               final int pathIndex = Math.abs(pathIndexAndDirection) - 1;
-              final int dotCount = pathSegmentLengths_800f5810.get(pathIndex).get();
+              final int dotCount = pathSegmentLengths_800f5810[pathIndex];
               final Vector3f[] dots = pathDotPosPtrArr_800f591c[pathIndex];
               dots[dotCount - 1].get(prevDotPos);
               dots[0].get(nextDotPos);
@@ -6005,7 +6005,7 @@ public class WMap extends EngineState {
       dot = dots[0];
     } else {
       //LAB_800ea248
-      dot = dots[pathSegmentLengths_800f5810.get(this.mapState_800c6798.pathIndex_14).get() - 1];
+      dot = dots[pathSegmentLengths_800f5810[this.mapState_800c6798.pathIndex_14] - 1];
     }
 
     //LAB_800ea2a8
@@ -6015,7 +6015,7 @@ public class WMap extends EngineState {
     if(this.mapState_800c6798.dotPositionForPlayerOrientationCorrectionAtIntersection.x != dot.x || this.mapState_800c6798.dotPositionForPlayerOrientationCorrectionAtIntersection.y != dot.y || this.mapState_800c6798.dotPositionForPlayerOrientationCorrectionAtIntersection.z != dot.z) {
       //LAB_800ea2f8
       if(directionalPathSegment.pathSegmentIndexAndDirection_00.get() >= 0) {
-        this.mapState_800c6798.dotIndex_16 = (short)(pathSegmentLengths_800f5810.get(Math.abs(directionalPathSegment.pathSegmentIndexAndDirection_00.get()) - 1).get() - 2);
+        this.mapState_800c6798.dotIndex_16 = pathSegmentLengths_800f5810[Math.abs(directionalPathSegment.pathSegmentIndexAndDirection_00.get()) - 1] - 2;
         this.mapState_800c6798.dotOffset_18 = 2.0f;
         this.mapState_800c6798.facing_1c = -1;
         this.mapState_800c6798.playerDestAngle_c0 = MathHelper.PI;
@@ -6113,7 +6113,7 @@ public class WMap extends EngineState {
       this.mapState_800c6798.facing_1c = 1;
     } else {
       //LAB_800ea8d4
-      final int dotIndex = pathSegmentLengths_800f5810.get(Math.abs(directionalPathSegment.pathSegmentIndexAndDirection_00.get()) - 1).get() - 1;
+      final int dotIndex = pathSegmentLengths_800f5810[Math.abs(directionalPathSegment.pathSegmentIndexAndDirection_00.get()) - 1] - 1;
       dx = dots[dotIndex].x - dots[dotIndex - 1].x;
       dz = dots[dotIndex].z - dots[dotIndex - 1].z;
 
@@ -6164,7 +6164,7 @@ public class WMap extends EngineState {
     final float dx;
     final float dz;
     if(this.mapState_800c6798.facing_1c > 0) {
-      final int dotIndex = pathSegmentLengths_800f5810.get(Math.abs(directionalPathSegment.pathSegmentIndexAndDirection_00.get()) - 1).get() - 1;
+      final int dotIndex = pathSegmentLengths_800f5810[Math.abs(directionalPathSegment.pathSegmentIndexAndDirection_00.get()) - 1] - 1;
       struct.coord2_34.coord.transfer.set(dots[dotIndex].x, dots[dotIndex].y - 2, dots[dotIndex].z);
       this.mapState_800c6798.dotIndex_16 = dotIndex - 1;
       this.mapState_800c6798.dotOffset_18 = 3.0f;
@@ -6233,7 +6233,7 @@ public class WMap extends EngineState {
       dots[0].get(dotPos);
     } else {
       //LAB_800eb2fc
-      dots[pathSegmentLengths_800f5810.get(pathIndex).get() - 1].get(dotPos);
+      dots[pathSegmentLengths_800f5810[pathIndex] - 1].get(dotPos);
     }
 
     //LAB_800eb3a8
