@@ -352,7 +352,7 @@ public class Sequencer {
 
   @Method(0x80046a04L)
   public void sssqHandleKeyOn(final SequenceData124 sequenceData) {
-    LOGGER.info(SEQUENCE_MARKER, "Key on channel %d, note %d, velocity %d", sequenceData.command_000 & 0xf, sequenceData.param0_002, sequenceData.param1_003);
+    LOGGER.debug(SEQUENCE_MARKER, "Key on channel %d, note %d, velocity %d", sequenceData.command_000 & 0xf, sequenceData.param0_002, sequenceData.param1_003);
 
     if(sequenceData.param1_003 == 0) { // Velocity
       this.sssqHandleKeyOff(sequenceData);
@@ -388,7 +388,7 @@ public class Sequencer {
           }
 
           final PlayingNote66 playingNote = playingNotes_800c3a40[voiceIndex];
-          LOGGER.info(SEQUENCE_MARKER, "Loaded into voice %d", voiceIndex);
+          LOGGER.debug(SEQUENCE_MARKER, "Loaded into voice %d", voiceIndex);
 
           instrumentLayerIndex_800c6678 += instrumentIndex;
           instrumentLayer_800c6678 = instrumentLayers_800c6678[instrumentLayerIndex_800c6678];
@@ -1063,7 +1063,7 @@ public class Sequencer {
 
   @Method(0x800486d4L)
   public void sssqHandleKeyOff(final SequenceData124 sequenceData) {
-    LOGGER.info(SEQUENCE_MARKER, "Key off channel %d, note %d", sequenceData.command_000 & 0xf, sequenceData.param0_002);
+    LOGGER.debug(SEQUENCE_MARKER, "Key off channel %d, note %d", sequenceData.command_000 & 0xf, sequenceData.param0_002);
 
     //LAB_80048724
     for(int voiceIndex = 0; voiceIndex < SPU.voices.length; voiceIndex++) {
@@ -1087,7 +1087,7 @@ public class Sequencer {
                   }
 
                   //LAB_800487d8
-                  LOGGER.info(SEQUENCE_MARKER, "Key off voice %d", voiceIndex);
+                  LOGGER.debug(SEQUENCE_MARKER, "Key off voice %d", voiceIndex);
                   setKeyOff(sequenceData, voiceIndex);
                 }
               }
@@ -1855,7 +1855,7 @@ public class Sequencer {
     }
 
     if(LOGGER.isInfoEnabled(SEQUENCE_MARKER)) {
-      LOGGER.info(SEQUENCE_MARKER, "Delta ms %.2f", sequenceData.deltaTime_118 / (sequenceData.tempo_108 * sequenceData.ticksPerQuarterNote_10a / 60_000.0f));
+      LOGGER.debug(SEQUENCE_MARKER, "Delta ms %.2f", sequenceData.deltaTime_118 / (sequenceData.tempo_108 * sequenceData.ticksPerQuarterNote_10a / 60_000.0f));
     }
 
     //LAB_8004a680
@@ -1973,7 +1973,7 @@ public class Sequencer {
             }
 
             //LAB_8004aa7c
-            LOGGER.info(SEQUENCE_MARKER, "Clearing note for voice %d", voiceIndex);
+            LOGGER.debug(SEQUENCE_MARKER, "Clearing note for voice %d", voiceIndex);
             playingNote.clear();
             playingNote.sequenceData_06 = null;
             playingNote.sequenceIndex_26 = -1;

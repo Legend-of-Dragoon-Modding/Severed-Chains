@@ -122,9 +122,11 @@ public class RenderEngine {
   private Shader.UniformVec3 tmdShaderColour;
   private Shader.UniformVec2 tmdShaderUvOffset;
   private Shader.UniformVec2 tmdShaderClutOverride;
+  private Shader.UniformVec2 tmdShaderTpageOverride;
   private Shader.UniformVec3 tmdShaderTransparentColour;
   private Shader.UniformVec2 tmdShaderTransparentUvOffset;
   private Shader.UniformVec2 tmdShaderTransparentClutOverride;
+  private Shader.UniformVec2 tmdShaderTransparentTpageOverride;
   /**
    * <ul>
    *   <li>0: regular rendering, anything rendered will pass through the shader</li>
@@ -304,6 +306,7 @@ public class RenderEngine {
       this.tmdShader.new UniformInt("tex15").set(1);
       this.tmdShaderColour = this.tmdShader.new UniformVec3("recolour");
       this.tmdShaderClutOverride = this.tmdShader.new UniformVec2("clutOverride");
+      this.tmdShaderTpageOverride = this.tmdShader.new UniformVec2("tpageOverride");
       this.tmdShaderUvOffset = this.tmdShader.new UniformVec2("uvOffset");
       this.tmdShaderDiscardTranslucency = this.tmdShader.new UniformFloat("discardTranslucency");
       this.tmdShaderDiscardTranslucency.set(1.0f);
@@ -325,6 +328,7 @@ public class RenderEngine {
       this.tmdShaderTransparent.new UniformInt("tex15").set(1);
       this.tmdShaderTransparentColour = this.tmdShaderTransparent.new UniformVec3("recolour");
       this.tmdShaderTransparentClutOverride = this.tmdShaderTransparent.new UniformVec2("clutOverride");
+      this.tmdShaderTransparentTpageOverride = this.tmdShaderTransparent.new UniformVec2("tpageOverride");
       this.tmdShaderTransparentUvOffset = this.tmdShaderTransparent.new UniformVec2("uvOffset");
 
       ShaderManager.addShader("tmd-transparent", this.tmdShaderTransparent);
@@ -548,6 +552,7 @@ public class RenderEngine {
       final QueuedModel entry = pool.get(i);
       this.tmdShaderColour.set(entry.colour);
       this.tmdShaderClutOverride.set(entry.clutOverride);
+      this.tmdShaderTpageOverride.set(entry.tpageOverride);
       this.tmdShaderUvOffset.set(entry.uvOffset);
       boolean updated = false;
 
@@ -587,6 +592,7 @@ public class RenderEngine {
       if(entry.obj.shouldRender(Translucency.B_PLUS_F)) {
         this.tmdShaderColour.set(entry.colour);
         this.tmdShaderClutOverride.set(entry.clutOverride);
+        this.tmdShaderTpageOverride.set(entry.tpageOverride);
         this.tmdShaderUvOffset.set(entry.uvOffset);
         entry.updateTransforms();
         entry.render(Translucency.B_PLUS_F);
@@ -595,6 +601,7 @@ public class RenderEngine {
       if(entry.obj.shouldRender(Translucency.B_MINUS_F)) {
         this.tmdShaderColour.set(entry.colour.mul(-1.0f, this.tempColour));
         this.tmdShaderClutOverride.set(entry.clutOverride);
+        this.tmdShaderTpageOverride.set(entry.tpageOverride);
         this.tmdShaderUvOffset.set(entry.uvOffset);
         entry.updateTransforms();
         entry.render(Translucency.B_MINUS_F);
@@ -616,6 +623,7 @@ public class RenderEngine {
         entry.updateTransforms();
         this.tmdShaderTransparentColour.set(entry.colour);
         this.tmdShaderTransparentClutOverride.set(entry.clutOverride);
+        this.tmdShaderTransparentTpageOverride.set(entry.tpageOverride);
         this.tmdShaderTransparentUvOffset.set(entry.uvOffset);
         entry.render(Translucency.HALF_B_PLUS_HALF_F);
       }
@@ -638,6 +646,7 @@ public class RenderEngine {
       entry.updateTransforms();
       this.tmdShaderColour.set(entry.colour);
       this.tmdShaderClutOverride.set(entry.clutOverride);
+      this.tmdShaderTpageOverride.set(entry.tpageOverride);
       this.tmdShaderUvOffset.set(entry.uvOffset);
 
       if(entry.scissor.w != 0) {
@@ -976,6 +985,7 @@ public class RenderEngine {
     private final Vector2f screenspaceOffset = new Vector2f();
     private final Vector3f colour = new Vector3f();
     private final Vector2f clutOverride = new Vector2f();
+    private final Vector2f tpageOverride = new Vector2f();
     private final Vector2f uvOffset = new Vector2f();
 
     private final Matrix4f lightDirection = new Matrix4f();
@@ -1017,6 +1027,11 @@ public class RenderEngine {
       return this;
     }
 
+    public QueuedModel tpageOverride(final float x, final float y) {
+      this.tpageOverride.set(x, y);
+      return this;
+    }
+
     public QueuedModel uvOffset(final float x, final float y) {
       this.uvOffset.set(x, y);
       return this;
@@ -1053,6 +1068,7 @@ public class RenderEngine {
       this.screenspaceOffset.zero();
       this.colour.set(1.0f, 1.0f, 1.0f);
       this.clutOverride.zero();
+      this.tpageOverride.zero();
       this.uvOffset.zero();
       this.scissor.set(0, 0, 0, 0);
       this.vertexCount = 0;

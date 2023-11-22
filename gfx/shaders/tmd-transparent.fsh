@@ -17,6 +17,7 @@ layout(std140) uniform projectionInfo {
 
 uniform vec3 recolour;
 uniform vec2 clutOverride;
+uniform vec2 tpageOverride;
 uniform vec2 uvOffset;
 uniform sampler2D tex24;
 uniform usampler2D tex15;
@@ -58,9 +59,16 @@ void main() {
     int indexMask = int(pow(16, vertBpp + 1) - 1);
 
     // Calculate CLUT index
-    ivec2 uv = ivec2(vertTpage.x + (vertUv.x + uvOffset.x) / widthDivisor, vertTpage.y + vertUv.y + uvOffset.y);
+    vec2 tpage;
+    if(tpageOverride.x != 0) {
+      tpage = tpageOverride;
+    } else {
+      tpage = vertTpage;
+    }
+
+    ivec2 uv = ivec2(tpage.x + (vertUv.x + uvOffset.x) / widthDivisor, tpage.y + vertUv.y + uvOffset.y);
     ivec4 indexVec = ivec4(texelFetch(tex15, uv, 0));
-    int p = (indexVec.r >> ((int(vertTpage.x + vertUv.x) & widthMask) << indexShift)) & indexMask;
+    int p = (indexVec.r >> ((int(tpage.x + vertUv.x) & widthMask) << indexShift)) & indexMask;
 
     ivec2 clutUv;
     if(clutOverride.x == 0) {

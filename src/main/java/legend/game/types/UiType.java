@@ -1,10 +1,18 @@
 package legend.game.types;
 
+import legend.core.opengl.Obj;
 import legend.game.unpacker.FileData;
 
 import java.util.Arrays;
 
-public record UiType(UiPart[] entries_08) {
+public class UiType {
+  public final UiPart[] entries_08;
+  public Obj obj;
+
+  public UiType(final UiPart[] entries_08) {
+    this.entries_08 = entries_08;
+  }
+
   public static UiType fromFile(final FileData data) {
     final int entryCount = data.readUShort(0x6);
 

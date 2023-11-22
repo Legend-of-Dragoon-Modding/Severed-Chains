@@ -1,24 +1,30 @@
 package legend.game.types;
 
-/** Main menu renderable? */
+/** Main menu renderable */
 public class Renderable58 {
-  /**
-   * <ul>
-   *   <li>0x4 - start and end glyph is the same - no transition</li>
-   *   <li>0x40 - invisible</li>
-   * </ul>
-   */
+  /** Does not animate */
+  public static final int FLAG_NO_ANIMATION = 0x4;
+  /** Automatically deleted after rendering */
+  public static final int FLAG_DELETE_AFTER_RENDER = 0x8;
+  /** Automatically deleted after animation finishes */
+  public static final int FLAG_DELETE_AFTER_ANIMATION = 0x10;
+  /** Glyph sequence counts down instead of up */
+  public static final int FLAG_BACKWARDS_ANIMATION = 0x20;
+  /** Do not render */
+  public static final int FLAG_INVISIBLE = 0x40;
+
   public int flags_00;
   public int glyph_04;
-  public int _08;
-  public int _0c;
+  public int ticksPerFrame_08;
+  public int animationLoopsCompletedCount_0c;
   public int startGlyph_10;
   public int endGlyph_14;
-  public int _18;
-  public int _1c;
+  public int repeatStartGlyph_18;
+  public int repeatEndGlyph_1c;
   public UiType uiType_20;
 //  public int[] metricsIndices_24;
-  public int _28;
+  /** Only values that are used are 0 and 1. deallocateRenderables(0) would only deallocate group 0. deallocateRenderables(0xff) would deallocate all groups 0xff and under. */
+  public int deallocationGroup_28;
   public int tpage_2c;
   public int clut_30;
   public float widthScale;
@@ -26,7 +32,7 @@ public class Renderable58 {
   public int z_3c;
   public int x_40;
   public int y_44;
-  public int _48;
+
   public Renderable58 child_50;
   public Renderable58 parent_54;
 
@@ -34,9 +40,9 @@ public class Renderable58 {
 
   public Renderable58 setVisible(final boolean visible) {
     if(visible) {
-      this.flags_00 &= ~0x40;
+      this.flags_00 &= ~Renderable58.FLAG_INVISIBLE;
     } else {
-      this.flags_00 |= 0x40;
+      this.flags_00 |= Renderable58.FLAG_INVISIBLE;
     }
 
     return this;

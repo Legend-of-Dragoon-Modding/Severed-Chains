@@ -142,7 +142,6 @@ import static legend.game.Scus94491BpeSegment_8005.textboxTextType_80052ba8;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bd7ac;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
-import static legend.game.Scus94491BpeSegment_800b._800bdc58;
 import static legend.game.Scus94491BpeSegment_800b._800bdf04;
 import static legend.game.Scus94491BpeSegment_800b._800bdf08;
 import static legend.game.Scus94491BpeSegment_800b._800be5d0;
@@ -1431,22 +1430,21 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80023b7c
     renderable.flags_00 = 0;
     renderable.glyph_04 = 0;
-    renderable._08 = uiType.entries_08()[0]._02();
-    renderable._0c = 0;
+    renderable.ticksPerFrame_08 = uiType.entries_08[0].ticksPerFrame();
+    renderable.animationLoopsCompletedCount_0c = 0;
     renderable.startGlyph_10 = 0;
-    renderable.endGlyph_14 = uiType.entries_08().length - 1;
-    renderable._18 = 0;
-    renderable._1c = 0;
+    renderable.endGlyph_14 = uiType.entries_08.length - 1;
+    renderable.repeatStartGlyph_18 = 0;
+    renderable.repeatEndGlyph_1c = 0;
     renderable.uiType_20 = uiType;
 
-    renderable._28 = 0;
+    renderable.deallocationGroup_28 = 0;
     renderable.tpage_2c = 0;
     renderable.widthScale = 1.0f;
     renderable.heightScale_38 = 1.0f;
     renderable.z_3c = 36;
     renderable.x_40 = 0;
     renderable.y_44 = 0;
-    renderable._48 = 0;
     renderable.child_50 = null;
 
     return renderable;
@@ -1454,8 +1452,6 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80023c28L)
   public static void uploadRenderables() {
-    _800bdc58.addu(0x1L);
-
     uploadRenderable(renderablePtr_800bdc5c, 0, 0);
   }
 
@@ -1463,84 +1459,84 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80023c8c
     while(renderable != null) {
       boolean forceUnload = false;
-      final UiPart[] entries = renderable.uiType_20.entries_08();
+      final UiPart[] entries = renderable.uiType_20.entries_08;
 
-      if((renderable.flags_00 & 0x4) == 0) {
-        renderable._08--;
+      if((renderable.flags_00 & Renderable58.FLAG_NO_ANIMATION) == 0) {
+        renderable.ticksPerFrame_08--;
 
-        if(renderable._08 < 0) {
-          if((renderable.flags_00 & 0x20) != 0) {
+        if(renderable.ticksPerFrame_08 < 0) {
+          if((renderable.flags_00 & Renderable58.FLAG_BACKWARDS_ANIMATION) != 0) {
             renderable.glyph_04--;
 
             if(renderable.glyph_04 < renderable.startGlyph_10) {
-              if((renderable.flags_00 & 0x10) != 0) {
+              if((renderable.flags_00 & Renderable58.FLAG_DELETE_AFTER_ANIMATION) != 0) {
                 forceUnload = true;
-                renderable.flags_00 |= 0x40;
+                renderable.flags_00 |= Renderable58.FLAG_INVISIBLE;
               }
 
               //LAB_80023d0c
-              if(renderable._18 != 0) {
-                renderable.startGlyph_10 = renderable._18;
+              if(renderable.repeatStartGlyph_18 != 0) {
+                renderable.startGlyph_10 = renderable.repeatStartGlyph_18;
 
-                if(renderable._1c != 0) {
-                  renderable.endGlyph_14 = renderable._1c;
+                if(renderable.repeatEndGlyph_1c != 0) {
+                  renderable.endGlyph_14 = renderable.repeatEndGlyph_1c;
                 } else {
                   //LAB_80023d34
-                  renderable.endGlyph_14 = renderable._18;
-                  renderable.flags_00 |= 0x4;
+                  renderable.endGlyph_14 = renderable.repeatStartGlyph_18;
+                  renderable.flags_00 |= Renderable58.FLAG_NO_ANIMATION;
                 }
 
                 //LAB_80023d48
-                renderable._18 = 0;
-                renderable.flags_00 &= 0xffff_ffdf;
+                renderable.repeatStartGlyph_18 = 0;
+                renderable.flags_00 &= ~Renderable58.FLAG_BACKWARDS_ANIMATION;
               }
 
               //LAB_80023d5c
               //LAB_80023e00
               renderable.glyph_04 = renderable.endGlyph_14;
-              renderable._0c++;
+              renderable.animationLoopsCompletedCount_0c++;
             }
           } else {
             //LAB_80023d6c
             renderable.glyph_04++;
 
-            if(renderable.endGlyph_14 < renderable.glyph_04) {
-              if((renderable.flags_00 & 0x10) != 0) {
+            if(renderable.glyph_04 > renderable.endGlyph_14) {
+              if((renderable.flags_00 & Renderable58.FLAG_DELETE_AFTER_ANIMATION) != 0) {
                 forceUnload = true;
-                renderable.flags_00 |= 0x40;
+                renderable.flags_00 |= Renderable58.FLAG_INVISIBLE;
               }
 
               //LAB_80023da4
-              if(renderable._18 != 0) {
-                renderable.startGlyph_10 = renderable._18;
+              if(renderable.repeatStartGlyph_18 != 0) {
+                renderable.startGlyph_10 = renderable.repeatStartGlyph_18;
 
-                if(renderable._1c != 0) {
-                  renderable.endGlyph_14 = renderable._1c;
+                if(renderable.repeatEndGlyph_1c != 0) {
+                  renderable.endGlyph_14 = renderable.repeatEndGlyph_1c;
                 } else {
                   //LAB_80023dcc
-                  renderable.endGlyph_14 = renderable._18;
-                  renderable.flags_00 |= 0x4;
+                  renderable.endGlyph_14 = renderable.repeatStartGlyph_18;
+                  renderable.flags_00 |= Renderable58.FLAG_NO_ANIMATION;
                 }
 
                 //LAB_80023de0
-                renderable._18 = 0;
-                renderable.flags_00 &= 0xffff_ffdf;
+                renderable.repeatStartGlyph_18 = 0;
+                renderable.flags_00 &= ~Renderable58.FLAG_BACKWARDS_ANIMATION;
               }
 
               //LAB_80023df4
               //LAB_80023e00
               renderable.glyph_04 = renderable.startGlyph_10;
-              renderable._0c++;
+              renderable.animationLoopsCompletedCount_0c++;
             }
           }
 
           //LAB_80023e08
-          renderable._08 = entries[renderable.glyph_04]._02() - 1;
+          renderable.ticksPerFrame_08 = entries[renderable.glyph_04].ticksPerFrame() - 1;
         }
       }
 
       //LAB_80023e28
-      if((renderable.flags_00 & 0x40) == 0) {
+      if((renderable.flags_00 & Renderable58.FLAG_INVISIBLE) == 0) {
         final int centreX = displayWidth_1f8003e0.get() / 2 + 8;
 
         final RenderableMetrics14[] metricses = entries[renderable.glyph_04].metrics_00();
@@ -1554,12 +1550,15 @@ public final class Scus94491BpeSegment_8002 {
 
           final float x1;
           final float x2;
+          final float width;
           if(MathHelper.flEq(renderable.widthScale, 1.0f)) {
             if(metrics.widthScale_10 < 0) {
+              width = -metrics.width_08;
               x2 = renderable.x_40 + metrics.x_02 - centreX;
               x1 = x2 + metrics.width_08;
             } else {
               //LAB_80023f20
+              width = metrics.width_08;
               x1 = renderable.x_40 + metrics.x_02 - centreX;
               x2 = x1 + metrics.width_08;
             }
@@ -1571,10 +1570,12 @@ public final class Scus94491BpeSegment_8002 {
             //LAB_80023f68
             final float scaledWidth = Math.abs(metrics.width_08 * widthScale);
             if(metrics.widthScale_10 < 0) {
+              width = -scaledWidth;
               x2 = renderable.x_40 + metrics.width_08 / 2.0f + metrics.x_02 - centreX - scaledWidth / 2.0f;
               x1 = x2 + scaledWidth;
             } else {
               //LAB_80023fb4
+              width = scaledWidth;
               x1 = renderable.x_40 + metrics.width_08 / 2.0f + metrics.x_02 - centreX - scaledWidth / 2.0f;
               x2 = x1 + scaledWidth;
             }
@@ -1583,13 +1584,16 @@ public final class Scus94491BpeSegment_8002 {
           //LAB_80023fe4
           final float y1;
           final float y2;
+          final float height;
           if(MathHelper.flEq(renderable.heightScale_38, 1.0f)) {
             if(metrics.heightScale_12 < 0) {
-              y2 = renderable.y_44 + metrics.y_03 - 120;
+              height = -metrics.height_0a;
+              y2 = renderable.y_44 + metrics.y_03 - 120.0f;
               y1 = y2 + metrics.height_0a;
             } else {
               //LAB_80024024
-              y1 = renderable.y_44 + metrics.y_03 - 120;
+              height = metrics.height_0a;
+              y1 = renderable.y_44 + metrics.y_03 - 120.0f;
               y2 = y1 + metrics.height_0a;
             }
           } else {
@@ -1600,10 +1604,12 @@ public final class Scus94491BpeSegment_8002 {
             //LAB_8002406c
             final float scaledHeight = Math.abs(metrics.height_0a * heightScale);
             if(metrics.heightScale_12 < 0) {
+              height = -scaledHeight;
               y2 = renderable.y_44 + metrics.height_0a / 2.0f + metrics.y_03 - scaledHeight / 2.0f - 120.0f;
               y1 = y2 + scaledHeight;
             } else {
               //LAB_800240b8
+              height = scaledHeight;
               y1 = renderable.y_44 + metrics.height_0a / 2.0f + metrics.y_03 - scaledHeight / 2.0f - 120.0f;
               y2 = y1 + scaledHeight;
             }
@@ -1617,22 +1623,17 @@ public final class Scus94491BpeSegment_8002 {
 
           //LAB_80024144
           //LAB_800241b4
-          int v1 = metrics.u_00 + metrics.textureWidth;
-          final int u = v1 < 255 ? v1 : v1 - 1;
-
-          v1 = metrics.v_01 + metrics.textureHeight;
-          final int v = v1 < 255 ? v1 : v1 - 1;
-
           cmd.uv(0, metrics.u_00, metrics.v_01 + renderable.heightCut);
-          cmd.uv(1, u, metrics.v_01 + renderable.heightCut);
-          cmd.uv(2, metrics.u_00, v);
-          cmd.uv(3, u, v);
+          cmd.uv(1, metrics.u_00 + metrics.textureWidth, metrics.v_01 + renderable.heightCut);
+          cmd.uv(2, metrics.u_00, metrics.v_01 + metrics.textureHeight);
+          cmd.uv(3, metrics.u_00 + metrics.textureWidth, metrics.v_01 + metrics.textureHeight);
 
           final int clut = renderable.clut_30 != 0 ? renderable.clut_30 : metrics.clut_04 & 0x7fff;
           cmd.clut((clut & 0b111111) * 16, clut >>> 6);
 
           //LAB_80024214
           final int tpage = renderable.tpage_2c != 0 ? metrics.tpage_06 & 0x60 | renderable.tpage_2c : metrics.tpage_06 & 0x7f;
+
           cmd.vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0);
           cmd.bpp(Bpp.of(tpage >>> 7 & 0b11));
 
@@ -1642,11 +1643,22 @@ public final class Scus94491BpeSegment_8002 {
 
           //LAB_8002424c
           GPU.queueCommand(renderable.z_3c, cmd);
+
+          if(renderable.uiType_20.obj != null) {
+            final MV transforms = new MV();
+            transforms.scaling(width, height, 1.0f);
+            transforms.transfer.set(x1 + x + centreX - 8 + (width < 0 ? 1.0f : 0.0f), y1 + y + 120.0f + (height < 0 ? 1.0f : 0.0f), renderable.z_3c * 4.0f);
+            RENDERER
+              .queueOrthoOverlayModel(renderable.uiType_20.obj, transforms)
+              .vertices(metrics.vertexStart, 4)
+              .tpageOverride((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
+              .clutOverride((clut & 0b111111) * 16, clut >>> 6);
+          }
         }
       }
 
       //LAB_80024280
-      if((renderable.flags_00 & 0x8) != 0 || forceUnload) {
+      if((renderable.flags_00 & Renderable58.FLAG_DELETE_AFTER_RENDER) != 0 || forceUnload) {
         //LAB_800242a8
         unloadRenderable(renderable);
       }
@@ -1691,7 +1703,7 @@ public final class Scus94491BpeSegment_8002 {
         final Renderable58 a0_0 = s0;
         s0 = s0.parent_54;
 
-        if(a0_0._28 <= a0) {
+        if(a0_0.deallocationGroup_28 <= a0) {
           unloadRenderable(a0_0);
         }
 
@@ -1699,7 +1711,7 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_800243e0
-      if(s0._28 <= a0) {
+      if(s0.deallocationGroup_28 <= a0) {
         unloadRenderable(s0);
       }
 
