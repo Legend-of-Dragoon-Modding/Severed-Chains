@@ -314,13 +314,13 @@ public class WMap extends EngineState {
 
   private static final int[] pathSegmentLengths_800f5810 = {5, 6, 8, 7, 12, 16, 11, 21, 8, 4, 5, 3, 9, 11, 6, 9, 18, 13, 9, 16, 20, 4, 16, 7, 11, 27, 4, 8, 7, 38, 17, 18, 21, 5, 13, 8, 6, 9, 7, 9, 17, 19, 10, 26, 21, 9, 15, 19, 46, 13, 16, 12, 14, 9, 12, 7, 8, 7, 7, 7, 8, 7, 13, 16, 2, 2, -1};
 
-  private static final Vector3f[][] pathDotPosPtrArr_800f591c = {
+  private static final Vector3f[][] pathDotPosArr_800f591c = {
     {
       new Vector3f(720.0f, -6.0f, 628.0f),
       new Vector3f(693.0f, -6.0f, 613.0f),
       new Vector3f(667.0f, -6.0f, 598.0f),
       new Vector3f(641.0f, -6.0f, 583.0f),
-      new Vector3f(615.0f, -6.0f, 568.0f),
+      new Vector3f(615.0f, -6.0f, 568.0f)
     },
     {
       new Vector3f(510.0f, -6.0f, 508.0f),
@@ -328,7 +328,7 @@ public class WMap extends EngineState {
       new Vector3f(461.0f, -6.0f, 459.0f),
       new Vector3f(442.0f, -6.0f, 440.0f),
       new Vector3f(423.0f, -6.0f, 422.0f),
-      new Vector3f(405.0f, -6.0f, 403.0f),
+      new Vector3f(405.0f, -6.0f, 403.0f)
     },
     {
       new Vector3f(300.0f, -6.0f, 328.0f),
@@ -338,7 +338,7 @@ public class WMap extends EngineState {
       new Vector3f(180.0f, -6.0f, 322.0f),
       new Vector3f(150.0f, -6.0f, 315.0f),
       new Vector3f(120.0f, -6.0f, 298.0f),
-      new Vector3f(90.0f, -6.0f, 274.0f),
+      new Vector3f(90.0f, -6.0f, 274.0f)
     },
     {
       new Vector3f(90.0f, -6.0f, 274.0f),
@@ -347,9 +347,21 @@ public class WMap extends EngineState {
       new Vector3f(3.0f, -6.0f, 166.0f),
       new Vector3f(-7.0f, -6.0f, 118.0f),
       new Vector3f(-27.0f, -6.0f, 88.0f),
-      new Vector3f(-51.0f, -6.0f, 58.0f),
+      new Vector3f(-51.0f, -6.0f, 58.0f)
     },
     {
+      new Vector3f(-51.0f, -6.0f, 58.0f),
+      new Vector3f(-28.0f, -6.0f, 32.0f),
+      new Vector3f(-12.0f, -6.0f, -1.0f),
+      new Vector3f(0.0f, -6.0f, -31.0f),
+      new Vector3f(5.0f, -6.0f, -61.0f),
+      new Vector3f(10.0f, -6.0f, -90.0f),
+      new Vector3f(18.0f, -6.0f, -121.0f),
+      new Vector3f(21.0f, -6.0f, -151.0f),
+      new Vector3f(27.0f, -6.0f, -174.0f),
+      new Vector3f(36.0f, -6.0f, -196.0f),
+      new Vector3f(54.0f, -6.0f, -219.0f),
+      new Vector3f(70.0f, -6.0f, -241.0f)
     },
     {
       new Vector3f(90.0f, -6.0f, 274.0f),
@@ -367,7 +379,7 @@ public class WMap extends EngineState {
       new Vector3f(232.0f, -6.0f, 658.0f),
       new Vector3f(252.0f, -6.0f, 688.0f),
       new Vector3f(275.0f, -6.0f, 710.0f),
-      new Vector3f(301.0f, -6.0f, 731.0f),
+      new Vector3f(301.0f, -6.0f, 731.0f)
     },
     {
       new Vector3f(360.0f, -6.0f, 448.0f),
@@ -380,7 +392,7 @@ public class WMap extends EngineState {
       new Vector3f(480.0f, -6.0f, 658.0f),
       new Vector3f(480.0f, -6.0f, 688.0f),
       new Vector3f(468.0f, -6.0f, 718.0f),
-      new Vector3f(450.0f, -6.0f, 748.0f),
+      new Vector3f(450.0f, -6.0f, 748.0f)
     },
     {
       new Vector3f(-240.0f, -25.0f, 307.0f),
@@ -403,7 +415,7 @@ public class WMap extends EngineState {
       new Vector3f(0.0f, -35.0f, 615.0f),
       new Vector3f(0.0f, -42.0f, 643.0f),
       new Vector3f(0.0f, -49.0f, 672.0f),
-      new Vector3f(0.0f, -35.0f, 697.0f),
+      new Vector3f(0.0f, -35.0f, 697.0f)
     },
     {
       new Vector3f(-296.0f, -6.0f, 387.0f),
@@ -413,25 +425,25 @@ public class WMap extends EngineState {
       new Vector3f(-240.0f, -16.0f, 458.0f),
       new Vector3f(-230.0f, -11.0f, 478.0f),
       new Vector3f(-219.0f, -6.0f, 501.0f),
-      new Vector3f(-201.0f, -6.0f, 523.0f),
+      new Vector3f(-201.0f, -6.0f, 523.0f)
     },
     {
       new Vector3f(-468.0f, -6.0f, 350.0f),
       new Vector3f(-442.0f, -6.0f, 343.0f),
       new Vector3f(-412.0f, -6.0f, 342.0f),
-      new Vector3f(-383.0f, -6.0f, 336.0f),
+      new Vector3f(-383.0f, -6.0f, 336.0f)
     },
     {
       new Vector3f(-469.0f, -6.0f, 232.0f),
       new Vector3f(-468.0f, -6.0f, 266.0f),
       new Vector3f(-468.0f, -6.0f, 296.0f),
       new Vector3f(-468.0f, -6.0f, 326.0f),
-      new Vector3f(-468.0f, -6.0f, 350.0f),
+      new Vector3f(-468.0f, -6.0f, 350.0f)
     },
     {
       new Vector3f(-469.0f, -6.0f, 232.0f),
       new Vector3f(-499.0f, -6.0f, 232.0f),
-      new Vector3f(-529.0f, -6.0f, 232.0f),
+      new Vector3f(-529.0f, -6.0f, 232.0f)
     },
     {
       new Vector3f(-360.0f, -6.0f, -1.0f),
@@ -442,7 +454,7 @@ public class WMap extends EngineState {
       new Vector3f(-420.0f, -6.0f, 148.0f),
       new Vector3f(-425.0f, -6.0f, 178.0f),
       new Vector3f(-450.0f, -6.0f, 208.0f),
-      new Vector3f(-469.0f, -6.0f, 232.0f),
+      new Vector3f(-469.0f, -6.0f, 232.0f)
     },
     {
       new Vector3f(-51.0f, -6.0f, 58.0f),
@@ -455,7 +467,7 @@ public class WMap extends EngineState {
       new Vector3f(-270.0f, -6.0f, 13.0f),
       new Vector3f(-300.0f, -6.0f, 4.0f),
       new Vector3f(-330.0f, -6.0f, -1.0f),
-      new Vector3f(-360.0f, -6.0f, -1.0f),
+      new Vector3f(-360.0f, -6.0f, -1.0f)
     },
     {
       new Vector3f(-360.0f, -6.0f, -1.0f),
@@ -463,9 +475,18 @@ public class WMap extends EngineState {
       new Vector3f(-360.0f, -6.0f, -61.0f),
       new Vector3f(-360.0f, -6.0f, -91.0f),
       new Vector3f(-354.0f, -6.0f, -121.0f),
-      new Vector3f(-345.0f, -6.0f, -151.0f),
+      new Vector3f(-345.0f, -6.0f, -151.0f)
     },
     {
+      new Vector3f(-468.0f, -6.0f, 350.0f),
+      new Vector3f(-488.0f, -6.0f, 375.0f),
+      new Vector3f(-501.0f, -6.0f, 405.0f),
+      new Vector3f(-502.0f, -6.0f, 436.0f),
+      new Vector3f(-501.0f, -6.0f, 468.0f),
+      new Vector3f(-495.0f, -6.0f, 498.0f),
+      new Vector3f(-477.0f, -6.0f, 528.0f),
+      new Vector3f(-456.0f, -6.0f, 560.0f),
+      new Vector3f(-444.0f, -6.0f, 592.0f)
     },
     {
       new Vector3f(617.0f, -6.0f, -750.0f),
@@ -485,7 +506,7 @@ public class WMap extends EngineState {
       new Vector3f(660.0f, -6.0f, -330.0f),
       new Vector3f(637.0f, -6.0f, -299.0f),
       new Vector3f(612.0f, -6.0f, -269.0f),
-      new Vector3f(570.0f, -6.0f, -240.0f),
+      new Vector3f(570.0f, -6.0f, -240.0f)
     },
     {
       new Vector3f(409.0f, -6.0f, 98.0f),
@@ -500,7 +521,7 @@ public class WMap extends EngineState {
       new Vector3f(191.0f, -6.0f, 267.0f),
       new Vector3f(150.0f, -6.0f, 272.0f),
       new Vector3f(112.0f, -6.0f, 287.0f),
-      new Vector3f(94.0f, -6.0f, 308.0f),
+      new Vector3f(94.0f, -6.0f, 308.0f)
     },
     {
       new Vector3f(94.0f, -6.0f, 308.0f),
@@ -511,19 +532,93 @@ public class WMap extends EngineState {
       new Vector3f(233.0f, -6.0f, 455.0f),
       new Vector3f(264.0f, -6.0f, 480.0f),
       new Vector3f(300.0f, -6.0f, 501.0f),
-      new Vector3f(330.0f, -6.0f, 509.0f),
+      new Vector3f(330.0f, -6.0f, 509.0f)
     },
     {
+      new Vector3f(94.0f, -6.0f, 308.0f),
+      new Vector3f(66.0f, -6.0f, 294.0f),
+      new Vector3f(50.0f, -6.0f, 270.0f),
+      new Vector3f(33.0f, -6.0f, 243.0f),
+      new Vector3f(14.0f, -6.0f, 213.0f),
+      new Vector3f(-3.0f, -6.0f, 181.0f),
+      new Vector3f(-17.0f, -6.0f, 150.0f),
+      new Vector3f(-33.0f, -6.0f, 119.0f),
+      new Vector3f(-58.0f, -6.0f, 90.0f),
+      new Vector3f(-81.0f, -6.0f, 65.0f),
+      new Vector3f(-105.0f, -6.0f, 40.0f),
+      new Vector3f(-134.0f, -6.0f, 19.0f),
+      new Vector3f(-165.0f, -6.0f, 0.0f),
+      new Vector3f(-198.0f, -6.0f, -17.0f),
+      new Vector3f(-228.0f, -6.0f, -31.0f),
+      new Vector3f(-249.0f, -6.0f, -57.0f)
     },
     {
+      new Vector3f(-249.0f, -6.0f, -57.0f),
+      new Vector3f(-279.0f, -6.0f, -48.0f),
+      new Vector3f(-308.0f, -6.0f, -57.0f),
+      new Vector3f(-335.0f, -6.0f, -69.0f),
+      new Vector3f(-364.0f, -6.0f, -80.0f),
+      new Vector3f(-394.0f, -6.0f, -93.0f),
+      new Vector3f(-426.0f, -6.0f, -108.0f),
+      new Vector3f(-459.0f, -6.0f, -125.0f),
+      new Vector3f(-491.0f, -6.0f, -142.0f),
+      new Vector3f(-520.0f, -6.0f, -162.0f),
+      new Vector3f(-544.0f, -6.0f, -190.0f),
+      new Vector3f(-567.0f, -6.0f, -216.0f),
+      new Vector3f(-590.0f, -6.0f, -242.0f),
+      new Vector3f(-611.0f, -6.0f, -271.0f),
+      new Vector3f(-635.0f, -6.0f, -301.0f),
+      new Vector3f(-652.0f, -6.0f, -330.0f),
+      new Vector3f(-667.0f, -6.0f, -354.0f),
+      new Vector3f(-674.0f, -6.0f, -382.0f),
+      new Vector3f(-686.0f, -6.0f, -406.0f),
+      new Vector3f(-704.0f, -6.0f, -426.0f)
     },
     {
+      new Vector3f(-704.0f, -6.0f, -426.0f),
+      new Vector3f(-726.0f, -6.0f, -427.0f),
+      new Vector3f(-753.0f, -6.0f, -419.0f),
+      new Vector3f(-777.0f, -6.0f, -403.0f)
     },
     {
+      new Vector3f(-704.0f, -6.0f, -426.0f),
+      new Vector3f(-689.0f, -6.0f, -451.0f),
+      new Vector3f(-686.0f, -6.0f, -480.0f),
+      new Vector3f(-700.0f, -6.0f, -511.0f),
+      new Vector3f(-721.0f, -6.0f, -536.0f),
+      new Vector3f(-749.0f, -6.0f, -562.0f),
+      new Vector3f(-771.0f, -6.0f, -593.0f),
+      new Vector3f(-791.0f, -6.0f, -624.0f),
+      new Vector3f(-805.0f, -6.0f, -659.0f),
+      new Vector3f(-819.0f, -6.0f, -694.0f),
+      new Vector3f(-830.0f, -6.0f, -730.0f),
+      new Vector3f(-840.0f, -6.0f, -762.0f),
+      new Vector3f(-847.0f, -6.0f, -794.0f),
+      new Vector3f(-854.0f, -6.0f, -827.0f),
+      new Vector3f(-858.0f, -6.0f, -855.0f),
+      new Vector3f(-864.0f, -6.0f, -892.0f)
     },
     {
+      new Vector3f(-249.0f, -6.0f, -57.0f),
+      new Vector3f(-249.0f, -6.0f, -95.0f),
+      new Vector3f(-249.0f, -6.0f, -130.0f),
+      new Vector3f(-249.0f, -6.0f, -166.0f),
+      new Vector3f(-249.0f, -6.0f, -200.0f),
+      new Vector3f(-249.0f, -6.0f, -230.0f),
+      new Vector3f(-249.0f, -6.0f, -260.0f)
     },
     {
+      new Vector3f(-240.0f, -6.0f, -464.0f),
+      new Vector3f(-240.0f, -18.0f, -480.0f),
+      new Vector3f(-240.0f, -27.0f, -498.0f),
+      new Vector3f(-240.0f, -35.0f, -517.0f),
+      new Vector3f(-240.0f, -43.0f, -536.0f),
+      new Vector3f(-240.0f, -52.0f, -555.0f),
+      new Vector3f(-240.0f, -57.0f, -577.0f),
+      new Vector3f(-240.0f, -62.0f, -599.0f),
+      new Vector3f(-240.0f, -69.0f, -621.0f),
+      new Vector3f(-240.0f, -76.0f, -643.0f),
+      new Vector3f(-240.0f, -73.0f, -668.0f)
     },
     {
       new Vector3f(674.0f, -6.0f, -684.0f),
@@ -552,13 +647,13 @@ public class WMap extends EngineState {
       new Vector3f(572.0f, -6.0f, -37.0f),
       new Vector3f(547.0f, -6.0f, -18.0f),
       new Vector3f(519.0f, -6.0f, -5.0f),
-      new Vector3f(487.0f, -6.0f, 7.0f),
+      new Vector3f(487.0f, -6.0f, 7.0f)
     },
     {
       new Vector3f(487.0f, -6.0f, 7.0f),
       new Vector3f(456.0f, -6.0f, 5.0f),
       new Vector3f(426.0f, -6.0f, -4.0f),
-      new Vector3f(401.0f, -6.0f, -19.0f),
+      new Vector3f(401.0f, -6.0f, -19.0f)
     },
     {
       new Vector3f(487.0f, -6.0f, 7.0f),
@@ -568,7 +663,7 @@ public class WMap extends EngineState {
       new Vector3f(508.0f, -6.0f, 121.0f),
       new Vector3f(505.0f, -6.0f, 150.0f),
       new Vector3f(499.0f, -6.0f, 181.0f),
-      new Vector3f(490.0f, -6.0f, 210.0f),
+      new Vector3f(490.0f, -6.0f, 210.0f)
     },
     {
       new Vector3f(476.0f, -6.0f, 375.0f),
@@ -577,7 +672,7 @@ public class WMap extends EngineState {
       new Vector3f(492.0f, -6.0f, 465.0f),
       new Vector3f(502.0f, -6.0f, 494.0f),
       new Vector3f(512.0f, -6.0f, 525.0f),
-      new Vector3f(529.0f, -6.0f, 555.0f),
+      new Vector3f(529.0f, -6.0f, 555.0f)
     },
     {
       new Vector3f(370.0f, -6.0f, 293.0f),
@@ -617,7 +712,7 @@ public class WMap extends EngineState {
       new Vector3f(-171.0f, -36.0f, 216.0f),
       new Vector3f(-185.0f, -26.0f, 209.0f),
       new Vector3f(-199.0f, -16.0f, 203.0f),
-      new Vector3f(-213.0f, -6.0f, 196.0f),
+      new Vector3f(-213.0f, -6.0f, 196.0f)
     },
     {
       new Vector3f(-291.0f, -33.0f, 263.0f),
@@ -636,7 +731,7 @@ public class WMap extends EngineState {
       new Vector3f(-595.0f, -6.0f, 39.0f),
       new Vector3f(-625.0f, -6.0f, 43.0f),
       new Vector3f(-655.0f, -6.0f, 51.0f),
-      new Vector3f(-685.0f, -6.0f, 65.0f),
+      new Vector3f(-685.0f, -6.0f, 65.0f)
     },
     {
       new Vector3f(480.0f, 0.0f, -480.0f),
@@ -656,16 +751,37 @@ public class WMap extends EngineState {
       new Vector3f(7.0f, 0.0f, -588.0f),
       new Vector3f(-26.0f, 0.0f, -579.0f),
       new Vector3f(-60.0f, 0.0f, -565.0f),
-      new Vector3f(-93.0f, 0.0f, -543.0f),
+      new Vector3f(-93.0f, 0.0f, -543.0f)
     },
     {
+      new Vector3f(-93.0f, 0.0f, -543.0f),
+      new Vector3f(-127.0f, 0.0f, -513.0f),
+      new Vector3f(-161.0f, 0.0f, -493.0f),
+      new Vector3f(-194.0f, 0.0f, -480.0f),
+      new Vector3f(-228.0f, 0.0f, -480.0f),
+      new Vector3f(-262.0f, 0.0f, -480.0f),
+      new Vector3f(-296.0f, 0.0f, -480.0f),
+      new Vector3f(-331.0f, 0.0f, -475.0f),
+      new Vector3f(-365.0f, 0.0f, -463.0f),
+      new Vector3f(-399.0f, 0.0f, -446.0f),
+      new Vector3f(-426.0f, 0.0f, -423.0f),
+      new Vector3f(-448.0f, 0.0f, -391.0f),
+      new Vector3f(-464.0f, 0.0f, -362.0f),
+      new Vector3f(-475.0f, 0.0f, -326.0f),
+      new Vector3f(-482.0f, 0.0f, -285.0f),
+      new Vector3f(-494.0f, 0.0f, -251.0f),
+      new Vector3f(-512.0f, 0.0f, -222.0f),
+      new Vector3f(-536.0f, 0.0f, -194.0f),
+      new Vector3f(-556.0f, 0.0f, -171.0f),
+      new Vector3f(-576.0f, 0.0f, -146.0f),
+      new Vector3f(-600.0f, 0.0f, -120.0f)
     },
     {
       new Vector3f(-93.0f, 0.0f, -543.0f),
       new Vector3f(-108.0f, 0.0f, -506.0f),
       new Vector3f(-116.0f, 0.0f, -470.0f),
       new Vector3f(-120.0f, 0.0f, -433.0f),
-      new Vector3f(-120.0f, 0.0f, -396.0f),
+      new Vector3f(-120.0f, 0.0f, -396.0f)
     },
     {
       new Vector3f(-38.0f, -6.0f, -270.0f),
@@ -680,7 +796,7 @@ public class WMap extends EngineState {
       new Vector3f(134.0f, -6.0f, -149.0f),
       new Vector3f(150.0f, -6.0f, -123.0f),
       new Vector3f(164.0f, -6.0f, -95.0f),
-      new Vector3f(174.0f, -6.0f, -60.0f),
+      new Vector3f(174.0f, -6.0f, -60.0f)
     },
     {
       new Vector3f(174.0f, -6.0f, -60.0f),
@@ -690,7 +806,7 @@ public class WMap extends EngineState {
       new Vector3f(193.0f, -6.0f, 79.0f),
       new Vector3f(206.0f, -6.0f, 110.0f),
       new Vector3f(222.0f, -6.0f, 137.0f),
-      new Vector3f(240.0f, -6.0f, 165.0f),
+      new Vector3f(240.0f, -6.0f, 165.0f)
     },
     {
       new Vector3f(600.0f, 0.0f, 401.0f),
@@ -698,7 +814,7 @@ public class WMap extends EngineState {
       new Vector3f(636.0f, 0.0f, 445.0f),
       new Vector3f(660.0f, 0.0f, 467.0f),
       new Vector3f(687.0f, 0.0f, 479.0f),
-      new Vector3f(715.0f, 0.0f, 482.0f),
+      new Vector3f(715.0f, 0.0f, 482.0f)
     },
     {
       new Vector3f(200.0f, -6.0f, -639.0f),
@@ -709,7 +825,7 @@ public class WMap extends EngineState {
       new Vector3f(149.0f, -6.0f, -496.0f),
       new Vector3f(139.0f, -6.0f, -460.0f),
       new Vector3f(125.0f, -6.0f, -432.0f),
-      new Vector3f(93.0f, -6.0f, -410.0f),
+      new Vector3f(93.0f, -6.0f, -410.0f)
     },
     {
       new Vector3f(-60.0f, -6.0f, -300.0f),
@@ -718,7 +834,7 @@ public class WMap extends EngineState {
       new Vector3f(-151.0f, -6.0f, -300.0f),
       new Vector3f(-181.0f, -6.0f, -300.0f),
       new Vector3f(-206.0f, -6.0f, -285.0f),
-      new Vector3f(-216.0f, -6.0f, -258.0f),
+      new Vector3f(-216.0f, -6.0f, -258.0f)
     },
     {
       new Vector3f(-216.0f, -6.0f, -258.0f),
@@ -729,7 +845,7 @@ public class WMap extends EngineState {
       new Vector3f(-166.0f, -6.0f, -73.0f),
       new Vector3f(-174.0f, -6.0f, -42.0f),
       new Vector3f(-187.0f, -6.0f, -19.0f),
-      new Vector3f(-208.0f, -6.0f, 5.0f),
+      new Vector3f(-208.0f, -6.0f, 5.0f)
     },
     {
       new Vector3f(-216.0f, -6.0f, -258.0f),
@@ -748,7 +864,7 @@ public class WMap extends EngineState {
       new Vector3f(-533.0f, -6.0f, -68.0f),
       new Vector3f(-557.0f, -6.0f, -53.0f),
       new Vector3f(-571.0f, -6.0f, -27.0f),
-      new Vector3f(-586.0f, -6.0f, -10.0f),
+      new Vector3f(-586.0f, -6.0f, -10.0f)
     },
     {
       new Vector3f(180.0f, -6.0f, -300.0f),
@@ -769,9 +885,19 @@ public class WMap extends EngineState {
       new Vector3f(547.0f, -6.0f, -60.0f),
       new Vector3f(576.0f, -6.0f, -60.0f),
       new Vector3f(604.0f, -6.0f, -60.0f),
-      new Vector3f(633.0f, -6.0f, -60.0f),
+      new Vector3f(633.0f, -6.0f, -60.0f)
     },
     {
+      new Vector3f(147.0f, -6.0f, -216.0f),
+      new Vector3f(173.0f, -6.0f, -199.0f),
+      new Vector3f(195.0f, -6.0f, -173.0f),
+      new Vector3f(211.0f, -6.0f, -142.0f),
+      new Vector3f(217.0f, -6.0f, -108.0f),
+      new Vector3f(221.0f, -6.0f, -70.0f),
+      new Vector3f(230.0f, -6.0f, -37.0f),
+      new Vector3f(249.0f, -6.0f, -5.0f),
+      new Vector3f(273.0f, -6.0f, 22.0f),
+      new Vector3f(297.0f, -6.0f, 51.0f)
     },
     {
       new Vector3f(60.0f, -6.0f, -180.0f),
@@ -799,7 +925,7 @@ public class WMap extends EngineState {
       new Vector3f(121.0f, -6.0f, 320.0f),
       new Vector3f(114.0f, -6.0f, 345.0f),
       new Vector3f(112.0f, -6.0f, 369.0f),
-      new Vector3f(112.0f, -6.0f, 394.0f),
+      new Vector3f(112.0f, -6.0f, 394.0f)
     },
     {
       new Vector3f(690.0f, -6.0f, -60.0f),
@@ -822,7 +948,7 @@ public class WMap extends EngineState {
       new Vector3f(180.0f, -6.0f, -53.0f),
       new Vector3f(150.0f, -6.0f, -41.0f),
       new Vector3f(120.0f, -6.0f, -26.0f),
-      new Vector3f(90.0f, -6.0f, 0.0f),
+      new Vector3f(90.0f, -6.0f, 0.0f)
     },
     {
       new Vector3f(-90.0f, -6.0f, 0.0f),
@@ -833,7 +959,7 @@ public class WMap extends EngineState {
       new Vector3f(-210.0f, -6.0f, 84.0f),
       new Vector3f(-243.0f, -6.0f, 84.0f),
       new Vector3f(-273.0f, -6.0f, 94.0f),
-      new Vector3f(-300.0f, -6.0f, 120.0f),
+      new Vector3f(-300.0f, -6.0f, 120.0f)
     },
     {
       new Vector3f(0.0f, 0.0f, 630.0f),
@@ -850,7 +976,28 @@ public class WMap extends EngineState {
       new Vector3f(-107.0f, 0.0f, 300.0f),
       new Vector3f(-120.0f, 0.0f, 270.0f),
       new Vector3f(-120.0f, 0.0f, 240.0f),
-      new Vector3f(-120.0f, 0.0f, 210.0f),
+      new Vector3f(-120.0f, 0.0f, 210.0f)
+    },
+    {
+      new Vector3f(-30.0f, 0.0f, 120.0f),
+      new Vector3f(0.0f, 0.0f, 120.0f),
+      new Vector3f(30.0f, 0.0f, 120.0f),
+      new Vector3f(60.0f, 0.0f, 120.0f),
+      new Vector3f(90.0f, 0.0f, 120.0f),
+      new Vector3f(120.0f, 0.0f, 120.0f),
+      new Vector3f(150.0f, 0.0f, 132.0f),
+      new Vector3f(180.0f, 0.0f, 150.0f),
+      new Vector3f(210.0f, 0.0f, 180.0f),
+      new Vector3f(240.0f, 0.0f, 210.0f),
+      new Vector3f(270.0f, 0.0f, 240.0f),
+      new Vector3f(300.0f, 0.0f, 270.0f),
+      new Vector3f(330.0f, 0.0f, 300.0f),
+      new Vector3f(360.0f, 0.0f, 330.0f),
+      new Vector3f(390.0f, 0.0f, 348.0f),
+      new Vector3f(420.0f, 0.0f, 360.0f),
+      new Vector3f(450.0f, 0.0f, 360.0f),
+      new Vector3f(480.0f, 0.0f, 360.0f),
+      new Vector3f(510.0f, 0.0f, 360.0f)
     },
     {
       new Vector3f(487.0f, 0.0f, -262.0f),
@@ -898,49 +1045,202 @@ public class WMap extends EngineState {
       new Vector3f(-862.0f, 0.0f, -314.0f),
       new Vector3f(-900.0f, 0.0f, -300.0f),
       new Vector3f(-937.0f, 0.0f, -300.0f),
-      new Vector3f(-975.0f, 0.0f, -300.0f),
+      new Vector3f(-975.0f, 0.0f, -300.0f)
     },
     {
       new Vector3f(-825.0f, -112.0f, 862.0f),
+      new Vector3f(-825.0f, -115.0f, 850.0f),
+      new Vector3f(-825.0f, -119.0f, 832.0f),
+      new Vector3f(-825.0f, -132.0f, 777.0f),
+      new Vector3f(-815.0f, -137.0f, 750.0f),
+      new Vector3f(-789.0f, -144.0f, 722.0f),
+      new Vector3f(-743.0f, -150.0f, 707.0f),
+      new Vector3f(-690.0f, -150.0f, 694.0f),
+      new Vector3f(-642.0f, -150.0f, 673.0f),
+      new Vector3f(-605.0f, -150.0f, 638.0f),
+      new Vector3f(-582.0f, -150.0f, 593.0f),
+      new Vector3f(-555.0f, -150.0f, 556.0f),
+      new Vector3f(-525.0f, -150.0f, 525.0f)
     },
     {
+      new Vector3f(-525.0f, -150.0f, 525.0f),
+      new Vector3f(-474.0f, -150.0f, 537.0f),
+      new Vector3f(-429.0f, -150.0f, 543.0f),
+      new Vector3f(-384.0f, -150.0f, 534.0f),
+      new Vector3f(-346.0f, -150.0f, 511.0f),
+      new Vector3f(-304.0f, -150.0f, 498.0f),
+      new Vector3f(-252.0f, -146.0f, 498.0f),
+      new Vector3f(-208.0f, -138.0f, 498.0f),
+      new Vector3f(-177.0f, -129.0f, 499.0f),
+      new Vector3f(-155.0f, -110.0f, 503.0f),
+      new Vector3f(-133.0f, -75.0f, 510.0f),
+      new Vector3f(-113.0f, -45.0f, 521.0f),
+      new Vector3f(-98.0f, -26.0f, 531.0f),
+      new Vector3f(-88.0f, -17.0f, 542.0f),
+      new Vector3f(-80.0f, -11.0f, 552.0f),
+      new Vector3f(-75.0f, -7.0f, 562.0f)
     },
     {
+      new Vector3f(-525.0f, -150.0f, 525.0f),
+      new Vector3f(-536.0f, -150.0f, 479.0f),
+      new Vector3f(-529.0f, -150.0f, 430.0f),
+      new Vector3f(-512.0f, -150.0f, 392.0f),
+      new Vector3f(-476.0f, -150.0f, 351.0f),
+      new Vector3f(-447.0f, -150.0f, 310.0f),
+      new Vector3f(-415.0f, -150.0f, 268.0f),
+      new Vector3f(-392.0f, -150.0f, 224.0f),
+      new Vector3f(-367.0f, -150.0f, 187.0f),
+      new Vector3f(-324.0f, -150.0f, 161.0f),
+      new Vector3f(-274.0f, -150.0f, 149.0f),
+      new Vector3f(-225.0f, -150.0f, 150.0f)
     },
     {
+      new Vector3f(-225.0f, -150.0f, 150.0f),
+      new Vector3f(-202.0f, -150.0f, 191.0f),
+      new Vector3f(-175.0f, -150.0f, 223.0f),
+      new Vector3f(-143.0f, -150.0f, 253.0f),
+      new Vector3f(-114.0f, -150.0f, 275.0f),
+      new Vector3f(-85.0f, -150.0f, 292.0f),
+      new Vector3f(-57.0f, -150.0f, 307.0f),
+      new Vector3f(-33.0f, -145.0f, 320.0f),
+      new Vector3f(-11.0f, -129.0f, 328.0f),
+      new Vector3f(13.0f, -103.0f, 330.0f),
+      new Vector3f(35.0f, -57.0f, 327.0f),
+      new Vector3f(53.0f, -26.0f, 318.0f),
+      new Vector3f(66.0f, -14.0f, 309.0f),
+      new Vector3f(75.0f, -7.0f, 300.0f)
     },
     {
+      new Vector3f(-225.0f, -150.0f, 150.0f),
+      new Vector3f(-205.0f, -150.0f, 115.0f),
+      new Vector3f(-172.0f, -150.0f, 96.0f),
+      new Vector3f(-131.0f, -150.0f, 88.0f),
+      new Vector3f(-94.0f, -150.0f, 88.0f),
+      new Vector3f(-59.0f, -150.0f, 80.0f),
+      new Vector3f(-29.0f, -150.0f, 64.0f),
+      new Vector3f(-10.0f, -150.0f, 36.0f),
+      new Vector3f(0.0f, -150.0f, 0.0f)
     },
     {
+      new Vector3f(0.0f, -150.0f, 0.0f),
+      new Vector3f(-27.0f, -150.0f, -27.0f),
+      new Vector3f(-65.0f, -150.0f, -51.0f),
+      new Vector3f(-107.0f, -150.0f, -63.0f),
+      new Vector3f(-153.0f, -145.0f, -65.0f),
+      new Vector3f(-187.0f, -137.0f, -70.0f),
+      new Vector3f(-219.0f, -121.0f, -77.0f),
+      new Vector3f(-248.0f, -93.0f, -87.0f),
+      new Vector3f(-277.0f, -46.0f, -92.0f),
+      new Vector3f(-301.0f, -25.0f, -95.0f),
+      new Vector3f(-317.0f, -16.0f, -95.0f),
+      new Vector3f(-331.0f, -7.0f, -95.0f)
     },
     {
+      new Vector3f(0.0f, -150.0f, 0.0f),
+      new Vector3f(40.0f, -150.0f, -10.0f),
+      new Vector3f(79.0f, -150.0f, -19.0f),
+      new Vector3f(127.0f, -150.0f, -25.0f),
+      new Vector3f(162.0f, -150.0f, -25.0f),
+      new Vector3f(197.0f, -150.0f, -15.0f),
+      new Vector3f(225.0f, -150.0f, 0.0f)
     },
     {
+      new Vector3f(225.0f, -150.0f, 0.0f),
+      new Vector3f(225.0f, -150.0f, 37.0f),
+      new Vector3f(229.0f, -141.0f, 70.0f),
+      new Vector3f(237.0f, -119.0f, 97.0f),
+      new Vector3f(244.0f, -71.0f, 117.0f),
+      new Vector3f(251.0f, -26.0f, 133.0f),
+      new Vector3f(257.0f, -11.0f, 144.0f),
+      new Vector3f(262.0f, -7.0f, 150.0f)
     },
     {
+      new Vector3f(225.0f, -150.0f, 0.0f),
+      new Vector3f(253.0f, -150.0f, -17.0f),
+      new Vector3f(290.0f, -150.0f, -27.0f),
+      new Vector3f(338.0f, -150.0f, -30.0f),
+      new Vector3f(381.0f, -150.0f, -38.0f),
+      new Vector3f(417.0f, -150.0f, -55.0f),
+      new Vector3f(450.0f, -150.0f, -75.0f)
     },
     {
+      new Vector3f(450.0f, -150.0f, -75.0f),
+      new Vector3f(449.0f, -142.0f, -93.0f),
+      new Vector3f(449.0f, -129.0f, -110.0f),
+      new Vector3f(452.0f, -99.0f, -133.0f),
+      new Vector3f(462.0f, -59.0f, -145.0f),
+      new Vector3f(475.0f, -21.0f, -150.0f),
+      new Vector3f(487.0f, -7.0f, -150.0f)
     },
     {
+      new Vector3f(450.0f, -150.0f, -75.0f),
+      new Vector3f(477.0f, -150.0f, -59.0f),
+      new Vector3f(503.0f, -150.0f, -53.0f),
+      new Vector3f(528.0f, -150.0f, -62.0f),
+      new Vector3f(548.0f, -150.0f, -79.0f),
+      new Vector3f(572.0f, -150.0f, -81.0f),
+      new Vector3f(600.0f, -150.0f, -75.0f)
     },
     {
+      new Vector3f(600.0f, -150.0f, -75.0f),
+      new Vector3f(605.0f, -140.0f, -53.0f),
+      new Vector3f(615.0f, -122.0f, -32.0f),
+      new Vector3f(629.0f, -85.0f, -16.0f),
+      new Vector3f(634.0f, -47.0f, 0.0f),
+      new Vector3f(636.0f, -26.0f, 14.0f),
+      new Vector3f(637.0f, -13.0f, 28.0f),
+      new Vector3f(637.0f, -7.0f, 37.0f)
     },
     {
+      new Vector3f(600.0f, -150.0f, -75.0f),
+      new Vector3f(619.0f, -150.0f, -97.0f),
+      new Vector3f(645.0f, -150.0f, -112.0f),
+      new Vector3f(672.0f, -150.0f, -118.0f),
+      new Vector3f(700.0f, -150.0f, -119.0f),
+      new Vector3f(724.0f, -150.0f, -131.0f),
+      new Vector3f(750.0f, -150.0f, -150.0f)
     },
     {
+      new Vector3f(750.0f, -150.0f, -150.0f),
+      new Vector3f(744.0f, -150.0f, -197.0f),
+      new Vector3f(724.0f, -150.0f, -243.0f),
+      new Vector3f(714.0f, -150.0f, -290.0f),
+      new Vector3f(708.0f, -144.0f, -337.0f),
+      new Vector3f(711.0f, -131.0f, -375.0f),
+      new Vector3f(721.0f, -110.0f, -413.0f),
+      new Vector3f(720.0f, -90.0f, -439.0f),
+      new Vector3f(715.0f, -63.0f, -463.0f),
+      new Vector3f(707.0f, -38.0f, -485.0f),
+      new Vector3f(697.0f, -22.0f, -503.0f),
+      new Vector3f(685.0f, -13.0f, -516.0f),
+      new Vector3f(675.0f, -7.0f, -525.0f)
     },
     {
-    },
-    {
+      new Vector3f(750.0f, -150.0f, -150.0f),
+      new Vector3f(785.0f, -150.0f, -135.0f),
+      new Vector3f(820.0f, -150.0f, -121.0f),
+      new Vector3f(853.0f, -150.0f, -103.0f),
+      new Vector3f(888.0f, -150.0f, -82.0f),
+      new Vector3f(916.0f, -150.0f, -63.0f),
+      new Vector3f(948.0f, -150.0f, -49.0f),
+      new Vector3f(973.0f, -150.0f, -40.0f),
+      new Vector3f(998.0f, -145.0f, -31.0f),
+      new Vector3f(1018.0f, -137.0f, -17.0f),
+      new Vector3f(1035.0f, -116.0f, -2.0f),
+      new Vector3f(1044.0f, -76.0f, 18.0f),
+      new Vector3f(1047.0f, -44.0f, 39.0f),
+      new Vector3f(1049.0f, -25.0f, 55.0f),
+      new Vector3f(1049.0f, -14.0f, 67.0f),
+      new Vector3f(1050.0f, -7.0f, 75.0f)
     },
     {
       new Vector3f(-1012.0f, 0.0f, -75.0f),
-      new Vector3f(-825.0f, -112.0f, 825.0f),
+      new Vector3f(-825.0f, -112.0f, 825.0f)
     },
     {
       new Vector3f(-825.0f, -112.0f, 825.0f),
-      new Vector3f(-75.0f, -7.0f, 187.0f),
-    },
+      new Vector3f(-75.0f, -7.0f, 187.0f)
+    }
   };
 
   private static final ArrayRef<WMapDestinationMarker2c> wmapDestinationMarkers_800f5a6c = MEMORY.ref(2, 0x800f5a6cL, ArrayRef.of(WMapDestinationMarker2c.class, 0x40, 0x2c, WMapDestinationMarker2c::new));
@@ -2840,7 +3140,7 @@ public class WMap extends EngineState {
             pathSegmentsRendered[pathSegmentIndex] = true;
             final int pathPointCount = pathSegmentLengths_800f5810[pathSegmentIndex] - 1;
 
-            final Vector3f[] dots = pathDotPosPtrArr_800f591c[pathSegmentIndex];
+            final Vector3f[] dots = pathDotPosArr_800f591c[pathSegmentIndex];
             final int pathPointIndexBase = pathIndexAndDirection >= 0 ? 0 : pathPointCount - 1;
 
             //LAB_800d86d0
@@ -5451,7 +5751,7 @@ public class WMap extends EngineState {
 
       //LAB_800e8064
       //LAB_800e8068
-      final Vector3f[] dots = pathDotPosPtrArr_800f591c[this.mapState_800c6798.pathIndex_14];
+      final Vector3f[] dots = pathDotPosArr_800f591c[this.mapState_800c6798.pathIndex_14];
 
       final float dx;
       final float dz;
@@ -5812,7 +6112,7 @@ public class WMap extends EngineState {
 
   @Method(0x800e9418L)
   private void getPathPositions(final Vector3f prevDotPos, final Vector3f nextDotPos) {
-    final Vector3f[] dots = pathDotPosPtrArr_800f591c[this.mapState_800c6798.pathIndex_14];
+    final Vector3f[] dots = pathDotPosArr_800f591c[this.mapState_800c6798.pathIndex_14];
     dots[this.mapState_800c6798.dotIndex_16].get(prevDotPos);
     dots[this.mapState_800c6798.dotIndex_16 + 1].get(nextDotPos);
   }
@@ -5880,7 +6180,7 @@ public class WMap extends EngineState {
               //LAB_800e9988
               final int pathIndex = Math.abs(pathIndexAndDirection) - 1;
               final int dotCount = pathSegmentLengths_800f5810[pathIndex];
-              final Vector3f[] dots = pathDotPosPtrArr_800f591c[pathIndex];
+              final Vector3f[] dots = pathDotPosArr_800f591c[pathIndex];
               dots[dotCount - 1].get(prevDotPos);
               dots[0].get(nextDotPos);
 
@@ -5998,7 +6298,7 @@ public class WMap extends EngineState {
     final DirectionalPathSegmentData08 directionalPathSegment = directionalPathSegmentData_800f2248.get(this.mapState_800c6798.directionalPathIndex_12);
 
     //LAB_800ea1dc
-    final Vector3f[] dots = pathDotPosPtrArr_800f591c[this.mapState_800c6798.pathIndex_14];
+    final Vector3f[] dots = pathDotPosArr_800f591c[this.mapState_800c6798.pathIndex_14];
 
     final Vector3f dot;
     if(directionalPathSegment.pathSegmentIndexAndDirection_00.get() >= 0) {
@@ -6097,7 +6397,7 @@ public class WMap extends EngineState {
 
     //LAB_800ea790
     final WMapStruct258 struct = this.wmapStruct258_800c66a8;
-    final Vector3f[] dots = pathDotPosPtrArr_800f591c[this.mapState_800c6798.pathIndex_14];
+    final Vector3f[] dots = pathDotPosArr_800f591c[this.mapState_800c6798.pathIndex_14];
 
     final float dx;
     final float dz;
@@ -6159,7 +6459,7 @@ public class WMap extends EngineState {
     this.mapState_800c6798.pathIndex_14 = Math.abs(directionalPathSegment.pathSegmentIndexAndDirection_00.get()) - 1;
 
     final WMapStruct258 struct = this.wmapStruct258_800c66a8;
-    final Vector3f[] dots = pathDotPosPtrArr_800f591c[this.mapState_800c6798.pathIndex_14];
+    final Vector3f[] dots = pathDotPosArr_800f591c[this.mapState_800c6798.pathIndex_14];
 
     final float dx;
     final float dz;
@@ -6226,7 +6526,7 @@ public class WMap extends EngineState {
 
     //LAB_800eb264
     final int pathIndex = Math.abs(pathIndexAndDirection) - 1;
-    final Vector3f[] dots = pathDotPosPtrArr_800f591c[pathIndex];
+    final Vector3f[] dots = pathDotPosArr_800f591c[pathIndex];
 
     assert dotPos != null;
     if(pathIndexAndDirection > 0) {
