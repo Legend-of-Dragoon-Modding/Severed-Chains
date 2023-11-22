@@ -1,6 +1,8 @@
 package legend.game.wmap;
 
 import legend.core.opengl.MeshObj;
+import legend.game.wmap.WmapEnums.Continent;
+import legend.game.wmap.WmapEnums.PathSegmentEntering;
 import org.joml.Vector3f;
 
 import java.util.Arrays;
@@ -19,7 +21,7 @@ public class MapState100 {
    * </ol>
    * 800c6798
    */
-  public int continentIndex_00;
+  public Continent continentIndex_00;
   // /** 800c679c */
   // public int _04; // was just a copy of continentIndex_00
   /** 800c67a0 */
@@ -91,7 +93,7 @@ public class MapState100 {
    *   <li>Next</li>
    * </ol>
    */
-  public int pathSegmentPlayerMovingInto_f8;
+  public PathSegmentEntering pathSegmentPlayerMovingInto_f8;
   /**
    * 800c6894
    * Describes the type of path segment endpoint that Dart is at.

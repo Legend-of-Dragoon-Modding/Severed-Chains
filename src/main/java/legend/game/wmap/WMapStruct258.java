@@ -6,6 +6,7 @@ import legend.core.opengl.MeshObj;
 import legend.core.opengl.Obj;
 import legend.game.types.Model124;
 import legend.game.unpacker.FileData;
+import legend.game.wmap.WmapEnums.WmapActiveState;
 import org.joml.Vector3f;
 
 public class WMapStruct258 {
@@ -13,7 +14,7 @@ public class WMapStruct258 {
   /** ubyte */
   public int _04;
   /** ubyte */
-  public WmapStateEnum wmapState_05;
+  public WmapActiveState wmapState_05;
 
   public WMapTmdRenderingStruct18 tmdRendering_08;
   public final Model124[] models_0c = new Model124[4];

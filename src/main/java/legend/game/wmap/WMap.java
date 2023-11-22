@@ -45,6 +45,7 @@ import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
+import legend.game.wmap.WmapEnums.*;
 import org.joml.Math;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -1460,7 +1461,7 @@ public class WMap extends EngineState {
                     //LAB_800cc900
                     if(Input.pressedThisFrame(InputAction.BUTTON_NORTH)) {
                       if(this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc != 1) {
-                        if(a0.wmapState_05 == WmapStateEnum.ACTIVE) {
+                        if(a0.wmapState_05 == WmapActiveState.ACTIVE) {
                           if(this.mapState_800c6798._d8 == 0) {
                             if(a0.wmapTransitionMode_250 == 0) {
                               startFadeEffect(1, 15);
@@ -1718,11 +1719,11 @@ public class WMap extends EngineState {
     this.initCoolonMovePrompt();
     this.initMapMarkers();
 
-    if(this.mapState_800c6798.continentIndex_00 < 3) { // South Serdio, North Serdio, Tiberoa
+    if(this.mapState_800c6798.continentIndex_00.ordinal() < Continent.ILLISA_BAY.ordinal()) { // South Serdio, North Serdio, Tiberoa
       loadLocationMenuSoundEffects(1);
     } else {
       //LAB_800cd004
-      loadLocationMenuSoundEffects(this.mapState_800c6798.continentIndex_00 + 1);
+      loadLocationMenuSoundEffects(this.mapState_800c6798.continentIndex_00.ordinal() + 1);
     }
     //LAB_800cd020
   }
@@ -2107,7 +2108,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d2fd4
-    if(this.wmapStruct258_800c66a8.wmapTransitionMode_250 == 2 && this.wmapStruct258_800c66a8.wmapState_05 == WmapStateEnum.ACTIVE) {
+    if(this.wmapStruct258_800c66a8.wmapTransitionMode_250 == 2 && this.wmapStruct258_800c66a8.wmapState_05 == WmapActiveState.ACTIVE) {
       return;
     }
 
@@ -2122,7 +2123,7 @@ public class WMap extends EngineState {
     if(struct._110 == 0) {
       if(this.wmapStruct258_800c66a8.zoomState_1f8 == 0) {
         if(!struct.hideAtmosphericEffect_c4) {
-          if(this.mapState_800c6798.continentIndex_00 != 7) { // Not teleporting
+          if(this.mapState_800c6798.continentIndex_00 != Continent.ENDINESS) { // Not teleporting
             if(!struct.mapRotating_80) {
               //LAB_800d30d8
               if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_1)) { // R1
@@ -2208,11 +2209,11 @@ public class WMap extends EngineState {
       //LAB_800d3654
       //LAB_800d3670
       //LAB_800d368c
-      if(this.mapState_800c6798.continentIndex_00 != 7 && this.mapState_800c6798._d8 == 0 && this.tickMainMenuOpenTransition_800c6690 == 0) {
+      if(this.mapState_800c6798.continentIndex_00 != Continent.ENDINESS && this.mapState_800c6798._d8 == 0 && this.tickMainMenuOpenTransition_800c6690 == 0) {
         //LAB_800d36a8
         if(this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc != 1) {
           if(!this.wmapStruct19c0_800c66b0.mapRotating_80) {
-            if(this.wmapStruct258_800c66a8.wmapState_05 == WmapStateEnum.ACTIVE) {
+            if(this.wmapStruct258_800c66a8.wmapState_05 == WmapActiveState.ACTIVE) {
               if(this.wmapStruct19c0_800c66b0._110 == 0) {
                 if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_2)) { // R2
                   if(this.wmapStruct258_800c66a8.zoomState_1f8 == 0) {
@@ -2274,7 +2275,7 @@ public class WMap extends EngineState {
       }
     } else if(v0 == 2) {
       //LAB_800d3bd8
-      if(this.wmapStruct258_800c66a8.wmapState_05 == WmapStateEnum.ACTIVE) {
+      if(this.wmapStruct258_800c66a8.wmapState_05 == WmapActiveState.ACTIVE) {
         this.wmapStruct19c0_800c66b0.rview2_00.viewpoint_00.y += 1450.0f / (3.0f / vsyncMode_8007a3b8);
         this.wmapStruct19c0_800c66b0.rview2_00.refpoint_0c.y -= 1450.0f / (3.0f / vsyncMode_8007a3b8);
       } else {
@@ -2294,7 +2295,7 @@ public class WMap extends EngineState {
       this.wmapStruct19c0_800c66b0._a0 += 1.0f / (3.0f / vsyncMode_8007a3b8);
 
       boolean sp18 = false;
-      if(this.wmapStruct258_800c66a8.wmapState_05 == WmapStateEnum.ACTIVE) {
+      if(this.wmapStruct258_800c66a8.wmapState_05 == WmapActiveState.ACTIVE) {
         if(this.wmapStruct19c0_800c66b0._a0 >= 6.0f) {
           sp18 = true;
         }
@@ -2572,7 +2573,7 @@ public class WMap extends EngineState {
       if(struct._154[0].distanceFromPlayer_04 < 90.0f) {
         struct._11a = 1;
         //LAB_800d52e8
-      } else if(this.wmapStruct258_800c66a8.wmapState_05 == WmapStateEnum.ACTIVE || struct._c5 != 2) {
+      } else if(this.wmapStruct258_800c66a8.wmapState_05 == WmapActiveState.ACTIVE || struct._c5 != 2) {
         //LAB_800d5328
         struct._11a = 3;
       } else {
@@ -2949,7 +2950,7 @@ public class WMap extends EngineState {
         .vramPos(640, 256)
         .pos(GPU.getOffsetX() - 144.0f, GPU.getOffsetY() - 104.0f, 54.0f)
         .size(128.0f, 24.0f)
-        .uv(128.0f, this.mapState_800c6798.continentIndex_00 * 24.0f)
+        .uv(128.0f, this.mapState_800c6798.continentIndex_00.ordinal() * 24.0f)
         .build();
     }
 
@@ -2968,7 +2969,7 @@ public class WMap extends EngineState {
     //LAB_800d6b5c
     this.renderPath();
 
-    if(this.mapState_800c6798.continentIndex_00 == 7) {
+    if(this.mapState_800c6798.continentIndex_00 == Continent.ENDINESS) {
       return;
     }
 
@@ -3097,7 +3098,7 @@ public class WMap extends EngineState {
       //LAB_800d7d90
       if(this.FUN_800eb09c(i, 1, intersectionPoint) == 0) {
         //LAB_800d7db4
-        if(this.mapState_800c6798.continentIndex_00 != 7 || i == 31 || i == 78) {
+        if(this.mapState_800c6798.continentIndex_00 != Continent.ENDINESS || i == 31 || i == 78) {
           transforms.set(lw)
             .rotateLocalX(-MathHelper.PI / 2.0f)
             .scale(0.5f);
@@ -3130,7 +3131,7 @@ public class WMap extends EngineState {
       //LAB_800d8564
       if(this.FUN_800eb09c(i, 0, null) == 0) {
         //LAB_800d8584
-        if(this.mapState_800c6798.continentIndex_00 != 7 || i == 31 || i == 78) {
+        if(this.mapState_800c6798.continentIndex_00 != Continent.ENDINESS || i == 31 || i == 78) {
           //LAB_800d85c0
           final int pathIndexAndDirection = directionalPathSegmentData_800f2248.get(locations_800f0e34.get(i).directionalPathIndex_00.get()).pathSegmentIndexAndDirection_00.get();
           final int pathSegmentIndex = Math.abs(pathIndexAndDirection) - 1;
@@ -3187,7 +3188,7 @@ public class WMap extends EngineState {
   /** Used to initialize Coolon move prompt selector as well */
   @Method(0x800d8d18L)
   private void loadMapModelAssets() {
-    this.loadMapModelAndTexture(this.mapState_800c6798.continentIndex_00);
+    this.loadMapModelAndTexture(this.mapState_800c6798.continentIndex_00.ordinal());
 
     this.wmapStruct258_800c66a8.zoomState_1f8 = 0;
     this.wmapStruct258_800c66a8.previousZoomLevel = 2;
@@ -3207,14 +3208,13 @@ public class WMap extends EngineState {
     this.wmapStruct258_800c66a8.textureAnimation_1c = this.prepareAnimationStruct(size, 0, 3, 1);
     this.wmapStruct258_800c66a8.clutYIndex_28 = 0.0f;
 
-    if(this.mapState_800c6798.continentIndex_00 == 2) { // Tiberoa
+    if(this.mapState_800c6798.continentIndex_00 == Continent.TIBEROA) {
       //LAB_800d8f94
       for(int i = 0; i < this.wmapStruct258_800c66a8.tmdRendering_08.count_0c; i++) {
         //LAB_800d8fc4
         this.wmapStruct258_800c66a8.tmdRendering_08.angles_10[i] = MathHelper.psxDegToRad(rand() % 4095);
       }
     }
-
     //LAB_800d9030
   }
 
@@ -3243,9 +3243,9 @@ public class WMap extends EngineState {
       final Vector3f rotation = this.wmapStruct258_800c66a8.tmdRendering_08.rotations_08[i];
 
       //LAB_800d9180
-      if(this.mapState_800c6798.continentIndex_00 != 7) {
+      if(this.mapState_800c6798.continentIndex_00 != Continent.ENDINESS) {
         //LAB_800d91cc
-        if(mapTerrainTmdIndices_800ef194.get(this.mapState_800c6798.continentIndex_00).get() == i || mapFrameTmdIndices_800ef19c.get(this.mapState_800c6798.continentIndex_00).get() == i) {
+        if(mapTerrainTmdIndices_800ef194.get(this.mapState_800c6798.continentIndex_00.ordinal()).get() == i || mapFrameTmdIndices_800ef19c.get(this.mapState_800c6798.continentIndex_00.ordinal()).get() == i) {
           zOffset_1f8003e8.set(500); // background models
         } else {
           //LAB_800d9204
@@ -3256,7 +3256,7 @@ public class WMap extends EngineState {
       //LAB_800d9210
       this.rotateCoord2(rotation, coord2);
 
-      if(this.mapState_800c6798.continentIndex_00 == 2) { // Tiberoa
+      if(this.mapState_800c6798.continentIndex_00 == Continent.TIBEROA) {
         //LAB_800d9264
         if(i >= 2 && i < 9 || i >= 15 && i < 17) {
           //LAB_800d9294
@@ -3280,7 +3280,7 @@ public class WMap extends EngineState {
 
       final RenderEngine.QueuedModel model = RENDERER.queueModel(dobj2.obj, lightMatrix);
 
-      if(this.mapState_800c6798.continentIndex_00 < 9 && i == 0) {
+      if(this.mapState_800c6798.continentIndex_00.ordinal() < 9 && i == 0) {
         model.clutOverride(1008, waterClutYs_800ef348.get((int)this.wmapStruct258_800c66a8.clutYIndex_28).get());
       }
 
@@ -3288,7 +3288,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d942c
-    if(this.mapState_800c6798.continentIndex_00 < 9) {
+    if(this.mapState_800c6798.continentIndex_00.ordinal() < 9) {
       this.animateTextures(this.wmapStruct258_800c66a8.textureAnimation_1c); // water animation
     }
 
@@ -3319,7 +3319,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d9540
-    if(this.mapState_800c6798.continentIndex_00 == 7) {
+    if(this.mapState_800c6798.continentIndex_00 == Continent.ENDINESS) {
       return;
     }
 
@@ -3355,7 +3355,7 @@ public class WMap extends EngineState {
         this.wmapStruct258_800c66a8._1f9++;
 
         if(this.wmapStruct258_800c66a8._1f9 >= 18 / vsyncMode_8007a3b8) {
-          this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(mapPositions_800ef1a8[this.mapState_800c6798.continentIndex_00]);
+          this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(mapPositions_800ef1a8[this.mapState_800c6798.continentIndex_00.ordinal()]);
           this.wmapStruct258_800c66a8.zoomState_1f8 = 3;
 
           //LAB_800d97bc
@@ -3452,7 +3452,7 @@ public class WMap extends EngineState {
    */
   @Method(0x800d9d24L)
   private void FUN_800d9d24(final int zoomDirection) {
-    final Vector3i vec = mapPositions_800ef1a8[this.mapState_800c6798.continentIndex_00];
+    final Vector3i vec = mapPositions_800ef1a8[this.mapState_800c6798.continentIndex_00.ordinal()];
     final WMapStruct258 wmap = this.wmapStruct258_800c66a8;
     wmap.svec_1f0.x = (vec.x - wmap.svec_1e8.x) * zoomDirection / 6.0f / (3.0f / vsyncMode_8007a3b8);
     wmap.svec_1f0.y = (vec.y - wmap.svec_1e8.y) * zoomDirection / 6.0f / (3.0f / vsyncMode_8007a3b8);
@@ -3475,7 +3475,7 @@ public class WMap extends EngineState {
     final WMapStruct258 struct258 = this.wmapStruct258_800c66a8;
 
     //LAB_800da270
-    if(struct258.wmapState_05 != WmapStateEnum.ACTIVE) {
+    if(struct258.wmapState_05 != WmapActiveState.ACTIVE) {
       return;
     }
 
@@ -3634,7 +3634,7 @@ public class WMap extends EngineState {
         boolean sp24 = false;
         for(int i = 0; i < 9; i++) {
           //LAB_800dac9c
-          if(locations_800f0e34.get(coolonWarpDest_800ef228[i].locationIndex_10).continentNumber_0e.get() == this.mapState_800c6798.continentIndex_00 + 1) {
+          if(locations_800f0e34.get(coolonWarpDest_800ef228[i].locationIndex_10).continentNumber_0e.get() == this.mapState_800c6798.continentIndex_00.ordinal() + 1) {
             struct258.coolonWarpIndex_221 = i;
             sp24 = true;
             break;
@@ -3649,7 +3649,7 @@ public class WMap extends EngineState {
         }
 
         //LAB_800dad4c
-        if(this.mapState_800c6798.continentIndex_00 == 4) { // Mille Seseau
+        if(this.mapState_800c6798.continentIndex_00 == Continent.MILLE_SESEAU) {
           if(struct258.currPlayerPos_94.z < -400.0f) {
             struct258.coolonWarpIndex_221 = 5;
           } else {
@@ -4121,7 +4121,7 @@ public class WMap extends EngineState {
       model.coord2_14.transforms.scale.set(0.5f, 0.4f, 0.5f);
     } else if(modelIndex == 1) {
       //LAB_800e0114
-      if(this.mapState_800c6798.continentIndex_00 == 7) { // Teleporting
+      if(this.mapState_800c6798.continentIndex_00 == Continent.ENDINESS) { // Teleporting
         model.coord2_14.transforms.scale.set(1.0f, 1.0f, 1.0f);
       } else {
         model.coord2_14.transforms.scale.set(2.0f, 2.0f, 2.0f);
@@ -4167,7 +4167,7 @@ public class WMap extends EngineState {
       //LAB_800e0404
       GTE.setBackgroundColour(0.5f, 0.5f, 0.5f);
 
-      if(this.mapState_800c6798.continentIndex_00 == 7) { // Teleporting
+      if(this.mapState_800c6798.continentIndex_00 == Continent.ENDINESS) { // Teleporting
         struct.models_0c[1].coord2_14.transforms.scale.set(1.0f, 1.0f, 1.0f);
       } else {
         struct.models_0c[1].coord2_14.transforms.scale.set(2.0f, 2.0f, 2.0f);
@@ -4653,7 +4653,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800e3724
-    if(this.wmapStruct258_800c66a8.wmapState_05 != WmapStateEnum.ACTIVE) {
+    if(this.wmapStruct258_800c66a8.wmapState_05 != WmapActiveState.ACTIVE) {
       return;
     }
 
@@ -4780,12 +4780,12 @@ public class WMap extends EngineState {
   private void FUN_800e3fac(final int a0) {
     this.wmapStruct258_800c66a8._00 = 0;
     this.wmapStruct258_800c66a8._04 = 0;
-    this.wmapStruct258_800c66a8.wmapState_05 = WmapStateEnum.values()[a0 + 1];
+    this.wmapStruct258_800c66a8.wmapState_05 = WmapActiveState.values()[a0 + 1];
   }
 
   @Method(0x800e3ff0L)
   private void FUN_800e3ff0() {
-    if(this.wmapStruct258_800c66a8.wmapState_05 != WmapStateEnum.ACTIVE) {
+    if(this.wmapStruct258_800c66a8.wmapState_05 != WmapActiveState.ACTIVE) {
       //LAB_800e4020
       this._800f01fc[this.wmapStruct258_800c66a8.wmapState_05.ordinal() - 1].run();
     }
@@ -4822,7 +4822,7 @@ public class WMap extends EngineState {
         //LAB_800e4624
         if(this.wmapStruct19c0_800c66b0._c5 == 0 && this.mapState_800c6798._d4 == 0) {
           this.mapState_800c6798.disableInput_d0 = false;
-          this.wmapStruct258_800c66a8.wmapState_05 = WmapStateEnum.ACTIVE;
+          this.wmapStruct258_800c66a8.wmapState_05 = WmapActiveState.ACTIVE;
           this.wmapStruct258_800c66a8._04 = 2;
         }
         //LAB_800e4478
@@ -4867,7 +4867,7 @@ public class WMap extends EngineState {
         //LAB_800e43c4
         if(this.wmapStruct19c0_800c66b0._c5 == 0 && this.mapState_800c6798._d4 == 0) {
           this.mapState_800c6798.disableInput_d0 = false;
-          this.wmapStruct258_800c66a8.wmapState_05 = WmapStateEnum.ACTIVE;
+          this.wmapStruct258_800c66a8.wmapState_05 = WmapActiveState.ACTIVE;
           this.wmapStruct258_800c66a8._04 = 2;
         }
 
@@ -4937,7 +4937,7 @@ public class WMap extends EngineState {
 
       if(this.wmapStruct19c0_800c66b0._10e >= 16.0f) {
         if(this.wmapStruct258_800c66a8.colour_20 == 0.0f) {
-          this.wmapStruct258_800c66a8.wmapState_05 = WmapStateEnum.ACTIVE;
+          this.wmapStruct258_800c66a8.wmapState_05 = WmapActiveState.ACTIVE;
 
           if(submapCut_80052c30.get() != 999) {
             this.wmapState_800bb10c = WmapState.TRANSITION_TO_SUBMAP_7;
@@ -4974,7 +4974,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800e4eac
-    if(this.wmapStruct258_800c66a8.wmapState_05 != WmapStateEnum.TRANSITION_OUT) {
+    if(this.wmapStruct258_800c66a8.wmapState_05 != WmapActiveState.TRANSITION_OUT) {
       this.mcqColour_800c6794 += 0.125f / (3.0f / vsyncMode_8007a3b8);
 
       if(this.mcqColour_800c6794 > 0.25f) {
@@ -5693,8 +5693,8 @@ public class WMap extends EngineState {
 
     GsInitCoordinate2(null, this.wmapStruct258_800c66a8.coord2_34);
 
-    this.mapState_800c6798.continentIndex_00 = locations_800f0e34.get(locationIndex).continentNumber_0e.get() - 1;
-    continentIndex_800bf0b0.set(this.mapState_800c6798.continentIndex_00);
+    this.mapState_800c6798.continentIndex_00 = Continent.values()[locations_800f0e34.get(locationIndex).continentNumber_0e.get() - 1];
+    continentIndex_800bf0b0.set(this.mapState_800c6798.continentIndex_00.ordinal());
 
     this.FUN_800ea630(locationIndex);
 
@@ -5744,8 +5744,8 @@ public class WMap extends EngineState {
 
       //LAB_800e7fcc
       this.mapState_800c6798.locationIndex_10 = locationIndex;
-      this.mapState_800c6798.continentIndex_00 = locations_800f0e34.get(locationIndex).continentNumber_0e.get() - 1;
-      continentIndex_800bf0b0.set(this.mapState_800c6798.continentIndex_00);
+      this.mapState_800c6798.continentIndex_00 = Continent.values()[locations_800f0e34.get(locationIndex).continentNumber_0e.get() - 1];
+      continentIndex_800bf0b0.set(this.mapState_800c6798.continentIndex_00.ordinal());
 
       final DirectionalPathSegmentData08 directionalPathSegment = directionalPathSegmentData_800f2248.get(this.mapState_800c6798.directionalPathIndex_12);
 
@@ -5778,7 +5778,7 @@ public class WMap extends EngineState {
       this.mapState_800c6798.previousPlayerRotation_c2 = this.wmapStruct258_800c66a8.rotation_a4.y;
       this.wmapStruct258_800c66a8.rotation_a4.y += this.mapState_800c6798.playerDestAngle_c0;
 
-      this.mapState_800c6798.pathSegmentPlayerMovingInto_f8 = 0;
+      this.mapState_800c6798.pathSegmentPlayerMovingInto_f8 = PathSegmentEntering.CURRENT;
       this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc = 0;
       loadingNewGameState_800bdc34.set(false);
     }
@@ -5878,7 +5878,7 @@ public class WMap extends EngineState {
     if(this.mapState_800c6798._d8 != 0) {
       this.mapState_800c6798.disableInput_d0 = true;
 
-      if(this.wmapStruct258_800c66a8.wmapState_05 != WmapStateEnum.ACTIVE) {
+      if(this.wmapStruct258_800c66a8.wmapState_05 != WmapActiveState.ACTIVE) {
         return;
       }
 
@@ -5944,7 +5944,7 @@ public class WMap extends EngineState {
 
   @Method(0x800e8cb0L)
   private void FUN_800e8cb0() {
-    if(this.mapState_800c6798.pathSegmentPlayerMovingInto_f8 != 0) {
+    if(this.mapState_800c6798.pathSegmentPlayerMovingInto_f8 != PathSegmentEntering.CURRENT) {
       return;
     }
 
@@ -5967,7 +5967,7 @@ public class WMap extends EngineState {
       if(this.mapState_800c6798.dotIndex_16 >= maxDotIndex) {
         this.mapState_800c6798.dotIndex_16 = maxDotIndex - 1;
         this.mapState_800c6798.dotOffset_18 = 3.0f;
-        this.mapState_800c6798.pathSegmentPlayerMovingInto_f8 = 2;
+        this.mapState_800c6798.pathSegmentPlayerMovingInto_f8 = PathSegmentEntering.NEXT;
       }
 
       //LAB_800e8dfc
@@ -5979,7 +5979,7 @@ public class WMap extends EngineState {
       if(this.mapState_800c6798.dotIndex_16 < 0) {
         this.mapState_800c6798.dotIndex_16 = 0;
         this.mapState_800c6798.dotOffset_18 = 0.0f;
-        this.mapState_800c6798.pathSegmentPlayerMovingInto_f8 = 1;
+        this.mapState_800c6798.pathSegmentPlayerMovingInto_f8 = PathSegmentEntering.PREVIOUS;
       }
     }
 
@@ -5998,7 +5998,7 @@ public class WMap extends EngineState {
         if(this.mapState_800c6798._d8 == 0) {
           //LAB_800e8f64
           //LAB_800e8f88
-          if(this.wmapStruct258_800c66a8.wmapState_05 == WmapStateEnum.ACTIVE) {
+          if(this.wmapStruct258_800c66a8.wmapState_05 == WmapActiveState.ACTIVE) {
             //LAB_800e8fac
             if(this.wmapStruct19c0_800c66b0._110 == 0) {
               //LAB_800e8fd0
@@ -6038,7 +6038,7 @@ public class WMap extends EngineState {
   @Method(0x800e9104L)
   private void processInput() {
     //LAB_800e912c
-    if(Unpacker.getLoadingFileCount() != 0 || this.wmapStruct258_800c66a8.wmapState_05 != WmapStateEnum.ACTIVE) {
+    if(Unpacker.getLoadingFileCount() != 0 || this.wmapStruct258_800c66a8.wmapState_05 != WmapActiveState.ACTIVE) {
       return;
     }
 
@@ -6135,7 +6135,7 @@ public class WMap extends EngineState {
 
   @Method(0x800e975cL)
   private void FUN_800e975c() {
-    if(this.mapState_800c6798.pathSegmentPlayerMovingInto_f8 == 0) {
+    if(this.mapState_800c6798.pathSegmentPlayerMovingInto_f8 == PathSegmentEntering.CURRENT) {
       return;
     }
 
@@ -6153,7 +6153,7 @@ public class WMap extends EngineState {
     //LAB_800e97dc
     this.getPathPositions(prevDotPos, nextDotPos);
 
-    if(this.mapState_800c6798.pathSegmentPlayerMovingInto_f8 == 1) {
+    if(this.mapState_800c6798.pathSegmentPlayerMovingInto_f8 == PathSegmentEntering.PREVIOUS) {
       pos.set(prevDotPos);
     } else {
       //LAB_800e9834
@@ -6203,7 +6203,7 @@ public class WMap extends EngineState {
 
     //LAB_800e9cf8
     this.mapState_800c6798.dotPositionForPlayerOrientationCorrectionAtIntersection.set(pos);
-    this.mapState_800c6798.pathSegmentPlayerMovingInto_f8 = 0;
+    this.mapState_800c6798.pathSegmentPlayerMovingInto_f8 = PathSegmentEntering.CURRENT;
 
     if(index == 1) {
       this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc = 1;
@@ -6357,7 +6357,7 @@ public class WMap extends EngineState {
         //LAB_800ea558
         if(this.FUN_800eb09c(i, 0, null) == 0) {
           //LAB_800ea578
-          if(locations_800f0e34.get(i).continentNumber_0e.get() == this.mapState_800c6798.continentIndex_00 + 1) {
+          if(locations_800f0e34.get(i).continentNumber_0e.get() == this.mapState_800c6798.continentIndex_00.ordinal() + 1) {
             //LAB_800ea5bc
             if(locations_800f0e34.get(i).directionalPathIndex_00.get() == directionalPathIndex) {
               break;
@@ -6379,7 +6379,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800ea678
-    if(locations_800f0e34.get(locationIndex).continentNumber_0e.get() != this.mapState_800c6798.continentIndex_00 + 1) {
+    if(locations_800f0e34.get(locationIndex).continentNumber_0e.get() != this.mapState_800c6798.continentIndex_00.ordinal() + 1) {
       return;
     }
 
@@ -6429,7 +6429,7 @@ public class WMap extends EngineState {
     struct.rotation_a4.set(0.0f, MathHelper.atan2(dx, dz), 0.0f);
 
     this.mapState_800c6798.previousPlayerRotation_c2 = struct.rotation_a4.y;
-    this.mapState_800c6798.pathSegmentPlayerMovingInto_f8 = 0;
+    this.mapState_800c6798.pathSegmentPlayerMovingInto_f8 = PathSegmentEntering.CURRENT;
     this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc = 0;
 
     //LAB_800eab80
@@ -6442,7 +6442,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800eabdc
-    if(locations_800f0e34.get(locationIndex).continentNumber_0e.get() != this.mapState_800c6798.continentIndex_00 + 1) {
+    if(locations_800f0e34.get(locationIndex).continentNumber_0e.get() != this.mapState_800c6798.continentIndex_00.ordinal() + 1) {
       return;
     }
 
@@ -6500,7 +6500,7 @@ public class WMap extends EngineState {
 
     //LAB_800eb0ec
     if(a1 != -1) {
-      if(locations_800f0e34.get(locationIndex).continentNumber_0e.get() != this.mapState_800c6798.continentIndex_00 + 1) {
+      if(locations_800f0e34.get(locationIndex).continentNumber_0e.get() != this.mapState_800c6798.continentIndex_00.ordinal() + 1) {
         return -2;
       }
     }
@@ -6753,7 +6753,7 @@ public class WMap extends EngineState {
         }
 
         //LAB_800ec34c
-        if(struct.wmapState_05 == WmapStateEnum.TRANSITION_OUT) {
+        if(struct.wmapState_05 == WmapActiveState.TRANSITION_OUT) {
           cloud.brightness_5c -= 0.125f / (3.0f / vsyncMode_8007a3b8);
 
           if(cloud.brightness_5c < 0.0f) {
@@ -6804,7 +6804,7 @@ public class WMap extends EngineState {
                 }
 
                 //LAB_800ec73c
-                if(struct.wmapState_05 == WmapStateEnum.TRANSITION_OUT) {
+                if(struct.wmapState_05 == WmapActiveState.TRANSITION_OUT) {
                   cloud.brightness_5c -= 0.125f / (3.0f / vsyncMode_8007a3b8);
 
                   if(cloud.brightness_5c < 0.0f) {
@@ -6887,7 +6887,7 @@ public class WMap extends EngineState {
         }
 
         //LAB_800ed108
-        if(struct.wmapState_05 == WmapStateEnum.TRANSITION_OUT) {
+        if(struct.wmapState_05 == WmapActiveState.TRANSITION_OUT) {
           snowflake.brightness_5c -= 0.125f / (3.0f / vsyncMode_8007a3b8);
 
           if(snowflake.brightness_5c < 0.0f) {
@@ -7056,7 +7056,7 @@ public class WMap extends EngineState {
       }
 
       //LAB_800edda0
-      if(locations_800f0e34.get(locationsIndices_800c84c8.get(i).get()).continentNumber_0e.get() == this.mapState_800c6798.continentIndex_00 + 1) {
+      if(locations_800f0e34.get(locationsIndices_800c84c8.get(i).get()).continentNumber_0e.get() == this.mapState_800c6798.continentIndex_00.ordinal() + 1) {
         //LAB_800eddfc
         if(i >= 9) {
           break;
@@ -7082,7 +7082,7 @@ public class WMap extends EngineState {
           smoke.coord2_00.coord.transfer.y = locationModelTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
           smoke.coord2_00.coord.transfer.z = locationModelTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16;
 
-          if(this.mapState_800c6798.continentIndex_00 == 0) {
+          if(this.mapState_800c6798.continentIndex_00 == Continent.SOUTH_SERDIO) {
             if(mode == 4) {
               //LAB_800ee0e4
               smoke.coord2_00.coord.transfer.x = locationModelTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
@@ -7098,7 +7098,7 @@ public class WMap extends EngineState {
 
             //LAB_800ee32c
             //LAB_800ee334
-          } else if(this.mapState_800c6798.continentIndex_00 == 1) {
+          } else if(this.mapState_800c6798.continentIndex_00 == Continent.NORTH_SERDIO) {
             if(mode == 4) {
               //LAB_800ee3a4
               smoke.coord2_00.coord.transfer.x = locationModelTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
