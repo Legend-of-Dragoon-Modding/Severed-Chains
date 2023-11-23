@@ -12,16 +12,4 @@ public class WmapEnums {
     ENDINESS,
     NONE
   }
-
-  public enum WmapActiveState {
-    ACTIVE,
-    TRANSITION_IN,
-    TRANSITION_OUT
-  }
-
-  public enum PathSegmentEntering {
-    CURRENT,
-    PREVIOUS,
-    NEXT
-  }
 }

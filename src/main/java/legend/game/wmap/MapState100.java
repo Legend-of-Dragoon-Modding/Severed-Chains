@@ -2,12 +2,23 @@ package legend.game.wmap;
 
 import legend.core.opengl.MeshObj;
 import legend.game.wmap.WmapEnums.Continent;
-import legend.game.wmap.WmapEnums.PathSegmentEntering;
 import org.joml.Vector3f;
 
 import java.util.Arrays;
 
 public class MapState100 {
+  public enum PathSegmentEntering {
+    CURRENT,
+    PREVIOUS,
+    NEXT
+  }
+
+  public enum PathSegmentEndpointType {
+    NOT_AT_ENDPOINT,
+    TERMINAL,
+    INTERSECTION
+  }
+
   /**
    * <ol start="0">
    *   <li>South Serdio</li>
@@ -103,7 +114,7 @@ public class MapState100 {
    *   <li>Intersection</li>
    * </ol>
    */
-  public int pathSegmentEndpointTypeCrossed_fc;
+  public PathSegmentEndpointType pathSegmentEndpointTypeCrossed_fc;
 
   public MapState100() {
     Arrays.setAll(this.tempPathSegmentStartOffsets_40, i -> new Vector3f());

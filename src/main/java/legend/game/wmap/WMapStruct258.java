@@ -6,10 +6,21 @@ import legend.core.opengl.MeshObj;
 import legend.core.opengl.Obj;
 import legend.game.types.Model124;
 import legend.game.unpacker.FileData;
-import legend.game.wmap.WmapEnums.WmapActiveState;
 import org.joml.Vector3f;
 
 public class WMapStruct258 {
+  public enum WmapActiveState {
+    ACTIVE,
+    TRANSITION_IN,
+    TRANSITION_OUT
+  }
+  public enum MapTransitionAnimationMode {
+    NO_ANIMATION,
+    TELEPORT,
+    SUBMAP,
+    WORLD_MAP
+  }
+
   public int _00;
   /** ubyte */
   public int _04;
@@ -90,13 +101,13 @@ public class WMapStruct258 {
    * Not totally sure what this should be called yet, but seems related to transitions
    * and transition animations (except combat).
    * <ol start="0">
-   *   <li>World map active</li>
+   *   <li>No map animation</li>
    *   <li>Teleportation animation</li>
    *   <li>Transition to submap</li>
    *   <li>Transition to world map</li>
    * </ol>
    */
-  public int wmapTransitionMode_250;
+  public MapTransitionAnimationMode mapTransitionAnimationMode_250;
   public boolean usingCoolonFromZenebatos_254;
 
   public void deleteAtmosphericEffectObjs() {
