@@ -84,18 +84,22 @@ public class WMapStruct258 {
   public int coolonWarpIndex_222;
   /** ubyte */
   public int _223;
-  public Vector3f[] vecs_224;
-  public Vector3f[] vecs_228;
-  public int[] _22c;
-  public int _230;
-  public int _234;
-  public int _238;
-  public int _23c;
-  public int _240;
-  /** byte */
-  public int _244;
 
+
+  // _224 through _248 are used for rendering the Queen Fury's wake, though they are
+  // initialized regardless.
+  public Vector3f[] shipPosDeltasArray_224;
+  public Vector3f[] shipPositionsArray_228;
+  public int[] wakeSegmentNumArray_22c;
+  public int currShipPositionIndex_230;
+  public int prevShipPositionIndex_234;
+  public int shipPositionsCount_238;
+  public int wakeSegmentStride_23c;
+  public int tickNum_240;
+  /** byte */
+  public boolean shipPositionsUninitialized_244;
   public int _248;
+
   public int _24c;
   /**
    * Not totally sure what this should be called yet, but seems related to transitions

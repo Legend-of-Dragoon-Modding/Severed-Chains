@@ -56,6 +56,7 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.flEq;
+import static legend.core.MathHelper.set;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnDirSync;
@@ -320,9 +321,9 @@ public class WMap extends EngineState {
 
     //LAB_800c9024
     for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & metrics.clutMaskOn_04.get() | metrics.clutMaskOff_00.get()) + metrics.uvOffset_10.get());
-      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & metrics.tpageMaskOn_0c.get() | metrics.tpageMaskOff_08.get()) + metrics.uvOffset_10.get());
-      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + metrics.uvOffset_10.get());
+      set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & metrics.clutMaskOn_04.get() | metrics.clutMaskOff_00.get()) + metrics.uvOffset_10.get());
+      set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & metrics.tpageMaskOn_0c.get() | metrics.tpageMaskOff_08.get()) + metrics.uvOffset_10.get());
+      set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + metrics.uvOffset_10.get());
     }
   }
 
@@ -332,10 +333,10 @@ public class WMap extends EngineState {
 
     //LAB_800c90b0
     for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & metrics.clutMaskOn_04.get() | metrics.clutMaskOff_00.get()) + metrics.uvOffset_10.get());
-      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & metrics.tpageMaskOn_0c.get() | metrics.tpageMaskOff_08.get()) + metrics.uvOffset_10.get());
-      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + metrics.uvOffset_10.get());
-      MathHelper.set(data, 0xc, 4,  MathHelper.get(data, 0xc, 4) + metrics.uvOffset_10.get());
+      set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & metrics.clutMaskOn_04.get() | metrics.clutMaskOff_00.get()) + metrics.uvOffset_10.get());
+      set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & metrics.tpageMaskOn_0c.get() | metrics.tpageMaskOff_08.get()) + metrics.uvOffset_10.get());
+      set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + metrics.uvOffset_10.get());
+      set(data, 0xc, 4,  MathHelper.get(data, 0xc, 4) + metrics.uvOffset_10.get());
     }
   }
 
@@ -3106,7 +3107,7 @@ public class WMap extends EngineState {
 
     //LAB_800e002c
     struct.modelIndex_1e4 = directionalPathSegmentData_800f2248.get(this.mapState_800c6798.directionalPathIndex_12).modelIndex_06.get();
-    this.FUN_800e28dc(40, 1);
+    this.initQueenFuryWake(40, 1);
 
     final int modelIndex = struct.modelIndex_1e4;
     final Model124 model = struct.models_0c[modelIndex];
@@ -3402,18 +3403,21 @@ public class WMap extends EngineState {
     final Vector3f vertex2 = new Vector3f();
     final Vector3f vertex3 = new Vector3f();
 
-    final IntRef sp0x70 = new IntRef();
-    final IntRef sp0x74 = new IntRef();
+    final IntRef deltaScaleFactor = new IntRef();
+    final IntRef colourScaleFactor = new IntRef();
 
-    final Vector3f sp0x88 = new Vector3f();
-    final Vector3f sp0x98 = new Vector3f();
-    final Vector3f sp0xa8 = new Vector3f();
+    final Vector3f pos0 = new Vector3f();
+    final Vector3f pos1 = new Vector3f();
+    final Vector3f posDelta0 = new Vector3f();
+    final Vector3f negDelta0 = new Vector3f();
+    final Vector3f posDelta1 = new Vector3f();
+    final Vector3f negDelta1 = new Vector3f();
 
-    final Vector3f delta = new Vector3f(this.wmapStruct258_800c66a8.prevPlayerPos_84)
+    final Vector3f playerPosDelta = new Vector3f(this.wmapStruct258_800c66a8.prevPlayerPos_84)
       .sub(this.wmapStruct258_800c66a8.currPlayerPos_94)
       .normalize()
       .cross(this.shipWakeCrossVector_800c87d8);
-    this.FUN_800e2ae4(delta, this.wmapStruct258_800c66a8.currPlayerPos_94);
+    this.updateQueenFuryWakePositionAndDelta(playerPosDelta, this.wmapStruct258_800c66a8.currPlayerPos_94);
     this.rotateCoord2(this.wmapStruct258_800c66a8.tmdRendering_08.rotations_08[0], this.wmapStruct258_800c66a8.tmdRendering_08.coord2s_04[0]);
     GsGetLs(this.wmapStruct258_800c66a8.tmdRendering_08.coord2s_04[0], transforms);
     GTE.setTransforms(transforms);
@@ -3421,33 +3425,19 @@ public class WMap extends EngineState {
     //LAB_800e1ccc
     for(int i = 0; i < 39; i++) {
       //LAB_800e1ce8
-      this.FUN_800e2e1c(i, sp0x88, sp0x98, sp0x74, sp0x70);
-      float spc8 = sp0x88.x * sp0x70.get();
-      float spcc = sp0x88.y * sp0x70.get();
-      float spd0 = sp0x88.z * sp0x70.get();
-      final float spd8 = -spc8;
-      final float spdc = -spcc;
-      final float spe0 = -spd0;
-      vertex0.x = spc8 + sp0x98.x;
-      vertex0.y = spcc + sp0x98.y;
-      vertex0.z = spd0 + sp0x98.z;
-      vertex1.x = sp0x98.x;
-      vertex1.y = sp0x98.y;
-      vertex1.z = sp0x98.z;
+      this.getQueenFuryWakeMetrics(i, posDelta0, pos0, colourScaleFactor, deltaScaleFactor);
+      posDelta0.mul(deltaScaleFactor.get());
+      negDelta0.set(posDelta0).negate();
+      vertex0.set(posDelta0.x + pos0.x, posDelta0.y + pos0.y, posDelta0.z + pos0.z);
+      vertex1.set(pos0);
 
-      this.FUN_800e2e1c(i + 1, sp0x88, sp0xa8, sp0x74, sp0x70);
-      spc8 = sp0x88.x * sp0x70.get();
-      spcc = sp0x88.y * sp0x70.get();
-      spd0 = sp0x88.z * sp0x70.get();
-      final float spe8 = -spc8;
-      final float spec = -spcc;
-      final float spf0 = -spd0;
-      vertex2.x = spc8 + sp0xa8.x;
-      vertex2.y = spcc + sp0xa8.y;
-      vertex2.z = spd0 + sp0xa8.z;
-      vertex3.set(sp0xa8);
+      this.getQueenFuryWakeMetrics(i + 1, posDelta1, pos1, colourScaleFactor, deltaScaleFactor);
+      posDelta1.mul(deltaScaleFactor.get());
+      negDelta1.set(posDelta1).negate();
+      vertex2.set(posDelta1.x + pos1.x, posDelta1.y + pos1.y, posDelta1.z + pos1.z);
+      vertex3.set(pos1);
 
-      int baseColour = 256 - sp0x74.get() * 256 / 40;
+      int baseColour = 256 - colourScaleFactor.get() * 256 / 40;
       final int r0 = baseColour * 96 / 256;
       final int g0 = baseColour * 96 / 256;
       final int b0 = baseColour * 96 / 256;
@@ -3455,7 +3445,7 @@ public class WMap extends EngineState {
       final int g1 = baseColour / 8;
       final int b1 = baseColour * 96 / 256;
 
-      baseColour = 256 - sp0x74.get() * 256 / 40;
+      baseColour = 256 - colourScaleFactor.get() * 256 / 40;
       final int r2 = baseColour * 96 / 256;
       final int g2 = baseColour * 96 / 256;
       final int b2 = baseColour * 96 / 256;
@@ -3493,12 +3483,8 @@ public class WMap extends EngineState {
       }
 
       //LAB_800e2440
-      vertex0.x = spd8 + sp0x98.x;
-      vertex0.y = spdc + sp0x98.y;
-      vertex0.z = spe0 + sp0x98.z;
-      vertex2.x = spe8 + sp0xa8.x;
-      vertex2.y = spec + sp0xa8.y;
-      vertex2.z = spf0 + sp0xa8.z;
+      vertex0.set(negDelta0.x + pos0.x, negDelta0.y + pos0.y, negDelta0.z + pos0.z);
+      vertex2.set(negDelta1.x + pos1.x, negDelta1.y + pos1.y, negDelta1.z + pos1.z);
       z = RotTransPers4(vertex0, vertex1, vertex2, vertex3, sxyz0, sxyz1, sxyz2, sxyz3);
 
       if(z >= 3 && z < orderingTableSize_1f8003c8.get()) {
@@ -3528,91 +3514,89 @@ public class WMap extends EngineState {
     //LAB_800e2774
     for(int i = 0; i < 40; i++) {
       //LAB_800e2790
-      int sp6c = this.wmapStruct258_800c66a8._230 - i * this.wmapStruct258_800c66a8._23c;
+      int wakeSegmentIndex = this.wmapStruct258_800c66a8.currShipPositionIndex_230 - i * this.wmapStruct258_800c66a8.wakeSegmentStride_23c;
 
-      if(sp6c < 0) {
-        sp6c += this.wmapStruct258_800c66a8._238;
+      if(wakeSegmentIndex < 0) {
+        wakeSegmentIndex += this.wmapStruct258_800c66a8.shipPositionsCount_238;
       }
 
       //LAB_800e2808
-      this.wmapStruct258_800c66a8._22c[sp6c]++;
+      this.wmapStruct258_800c66a8.wakeSegmentNumArray_22c[wakeSegmentIndex]++;
     }
 
     //LAB_800e289c
-    this.wmapStruct258_800c66a8._240++;
+    this.wmapStruct258_800c66a8.tickNum_240++;
   }
 
   @Method(0x800e28dcL)
-  private void FUN_800e28dc(final int a0, final int a1) {
-    final int count = a0 * a1;
+  private void initQueenFuryWake(final int segmentCount, final int stride) {
+    final int count = segmentCount * stride;
 
-    this.wmapStruct258_800c66a8.vecs_224 = new Vector3f[count];
-    this.wmapStruct258_800c66a8.vecs_228 = new Vector3f[count];
+    this.wmapStruct258_800c66a8.shipPosDeltasArray_224 = new Vector3f[count];
+    this.wmapStruct258_800c66a8.shipPositionsArray_228 = new Vector3f[count];
 
-    this.wmapStruct258_800c66a8._22c = new int[count];
-    this.wmapStruct258_800c66a8._230 = 0;
-    this.wmapStruct258_800c66a8._234 = count - 1;
-    this.wmapStruct258_800c66a8._238 = count;
-    this.wmapStruct258_800c66a8._23c = a1;
+    this.wmapStruct258_800c66a8.wakeSegmentNumArray_22c = new int[count];
+    this.wmapStruct258_800c66a8.currShipPositionIndex_230 = 0;
+    this.wmapStruct258_800c66a8.prevShipPositionIndex_234 = count - 1;
+    this.wmapStruct258_800c66a8.shipPositionsCount_238 = count;
+    this.wmapStruct258_800c66a8.wakeSegmentStride_23c = stride;
 
     //NOTE: there's a bug in the original code, it just sets the first vector in the array over and over again
-    Arrays.setAll(this.wmapStruct258_800c66a8.vecs_224, i -> new Vector3f());
-    Arrays.setAll(this.wmapStruct258_800c66a8.vecs_228, i -> new Vector3f());
+    Arrays.setAll(this.wmapStruct258_800c66a8.shipPosDeltasArray_224, i -> new Vector3f());
+    Arrays.setAll(this.wmapStruct258_800c66a8.shipPositionsArray_228, i -> new Vector3f());
 
-    this.wmapStruct258_800c66a8._244 = 0;
+    this.wmapStruct258_800c66a8.shipPositionsUninitialized_244 = true;
   }
 
   @Method(0x800e2ae4L)
-  private void FUN_800e2ae4(final Vector3f a0, final Vector3f a1) {
-    final WMapStruct258 struct258 = this.wmapStruct258_800c66a8;
+  private void updateQueenFuryWakePositionAndDelta(final Vector3f playerPosDelta, final Vector3f currPlayerPos) {
+    final WMapStruct258 struct = this.wmapStruct258_800c66a8;
 
-    if(struct258._244 == 0) {
+    if(struct.shipPositionsUninitialized_244) {
       //LAB_800e2b14
-      for(int i = 0; i < struct258._238; i++) {
+      for(int i = 0; i < struct.shipPositionsCount_238; i++) {
         //LAB_800e2b3c
-        struct258.vecs_224[i].set(a0);
-        struct258.vecs_228[i].set(a1);
+        struct.shipPositionsArray_228[i].set(currPlayerPos);
       }
 
       //LAB_800e2ca4
-      struct258._244 = 1;
-      struct258._240 = 0;
+      struct.shipPositionsUninitialized_244 = false;
+      struct.tickNum_240 = 0;
     }
 
     //LAB_800e2cc4
-    struct258.vecs_224[struct258._230].set(a0);
-    struct258.vecs_228[struct258._230].set(a1);
+    struct.shipPosDeltasArray_224[struct.currShipPositionIndex_230].set(playerPosDelta);
+    struct.shipPositionsArray_228[struct.currShipPositionIndex_230].set(currPlayerPos);
 
-    struct258._22c[struct258._230] = 0;
+    struct.wakeSegmentNumArray_22c[struct.currShipPositionIndex_230] = 0;
 
-    struct258._234 = struct258._230;
-    struct258._230 = (struct258._230 + 1) % struct258._238;
+    struct.prevShipPositionIndex_234 = struct.currShipPositionIndex_230;
+    struct.currShipPositionIndex_230 = (struct.currShipPositionIndex_230 + 1) % struct.shipPositionsCount_238;
   }
 
   @Method(0x800e2e1cL)
-  private void FUN_800e2e1c(final int index, final Vector3f a1, final Vector3f a2, final IntRef a3, final IntRef a4) {
+  private void getQueenFuryWakeMetrics(final int index, final Vector3f delta, final Vector3f position, final IntRef colourFadeFactor, final IntRef deltaScaleFactor) {
     if(index == 0) {
-      a1.set(this.wmapStruct258_800c66a8.vecs_224[this.wmapStruct258_800c66a8._234]);
-      a2.set(this.wmapStruct258_800c66a8.vecs_228[this.wmapStruct258_800c66a8._234]);
-      a3.set(this.wmapStruct258_800c66a8._22c[this.wmapStruct258_800c66a8._234]);
-      final int v0 = this.wmapStruct258_800c66a8._22c[this.wmapStruct258_800c66a8._234] - this.wmapStruct258_800c66a8._240;
-      a4.set(this.wmapStruct258_800c66a8._22c[this.wmapStruct258_800c66a8._234] + (rsin(v0 << 8 & 0x7ff) * this.wmapStruct258_800c66a8._22c[this.wmapStruct258_800c66a8._234] >> 12));
+      delta.set(this.wmapStruct258_800c66a8.shipPosDeltasArray_224[this.wmapStruct258_800c66a8.prevShipPositionIndex_234]);
+      position.set(this.wmapStruct258_800c66a8.shipPositionsArray_228[this.wmapStruct258_800c66a8.prevShipPositionIndex_234]);
+      colourFadeFactor.set(this.wmapStruct258_800c66a8.wakeSegmentNumArray_22c[this.wmapStruct258_800c66a8.prevShipPositionIndex_234]);
+      final int v0 = this.wmapStruct258_800c66a8.wakeSegmentNumArray_22c[this.wmapStruct258_800c66a8.prevShipPositionIndex_234] - this.wmapStruct258_800c66a8.tickNum_240;
+      deltaScaleFactor.set(this.wmapStruct258_800c66a8.wakeSegmentNumArray_22c[this.wmapStruct258_800c66a8.prevShipPositionIndex_234] + (rsin(v0 << 8 & 0x7ff) * this.wmapStruct258_800c66a8.wakeSegmentNumArray_22c[this.wmapStruct258_800c66a8.prevShipPositionIndex_234] >> 12));
     } else {
       //LAB_800e3024
-      int sp10 = this.wmapStruct258_800c66a8._230 - index * this.wmapStruct258_800c66a8._23c;
+      int wakeSegmentIndex = this.wmapStruct258_800c66a8.currShipPositionIndex_230 - index * this.wmapStruct258_800c66a8.wakeSegmentStride_23c;
 
-      if(sp10 < 0) {
-        sp10 += this.wmapStruct258_800c66a8._238;
+      if(wakeSegmentIndex < 0) {
+        wakeSegmentIndex += this.wmapStruct258_800c66a8.shipPositionsCount_238;
       }
 
       //LAB_800e3090
-      a1.set(this.wmapStruct258_800c66a8.vecs_224[sp10]);
-      a2.set(this.wmapStruct258_800c66a8.vecs_228[sp10]);
-      a3.set(this.wmapStruct258_800c66a8._22c[sp10]);
-      final int v0 = this.wmapStruct258_800c66a8._22c[sp10] - this.wmapStruct258_800c66a8._240;
-      a4.set(this.wmapStruct258_800c66a8._22c[sp10] + (rsin(v0 << 8 & 0x7ff) * this.wmapStruct258_800c66a8._22c[sp10] >> 12));
+      delta.set(this.wmapStruct258_800c66a8.shipPosDeltasArray_224[wakeSegmentIndex]);
+      position.set(this.wmapStruct258_800c66a8.shipPositionsArray_228[wakeSegmentIndex]);
+      colourFadeFactor.set(this.wmapStruct258_800c66a8.wakeSegmentNumArray_22c[wakeSegmentIndex]);
+      final int v0 = this.wmapStruct258_800c66a8.wakeSegmentNumArray_22c[wakeSegmentIndex] - this.wmapStruct258_800c66a8.tickNum_240;
+      deltaScaleFactor.set(this.wmapStruct258_800c66a8.wakeSegmentNumArray_22c[wakeSegmentIndex] + (rsin(v0 << 8 & 0x7ff) * this.wmapStruct258_800c66a8.wakeSegmentNumArray_22c[wakeSegmentIndex] >> 12));
     }
-
     //LAB_800e321c
   }
 
