@@ -3415,10 +3415,13 @@ public class WMap extends EngineState {
     
     final WMapStruct258 struct = this.wmapStruct258_800c66a8;
 
-    final Vector3f playerPosDelta = new Vector3f(struct.prevPlayerPos_84)
-      .sub(struct.currPlayerPos_94)
-      .normalize()
-      .cross(this.shipWakeCrossVector_800c87d8);
+    final Vector3f playerPosDelta = new Vector3f(struct.prevPlayerPos_84).sub(struct.currPlayerPos_94);
+    if(flEq(playerPosDelta.x, 0.0f) && flEq(playerPosDelta.y, 0.0f) && flEq(playerPosDelta.z, 0.0f)) {
+      playerPosDelta.set(0.0f);
+    } else {
+      playerPosDelta.normalize().cross(this.shipWakeCrossVector_800c87d8);
+    }
+
     this.updateQueenFuryWakePositionAndDelta(playerPosDelta, struct.currPlayerPos_94);
     this.rotateCoord2(struct.tmdRendering_08.rotations_08[0], struct.tmdRendering_08.coord2s_04[0]);
     GsGetLs(struct.tmdRendering_08.coord2s_04[0], transforms);
