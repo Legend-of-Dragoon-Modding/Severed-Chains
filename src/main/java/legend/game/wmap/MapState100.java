@@ -61,15 +61,17 @@ public class MapState100 {
   public final Vector3f nextDotPos_30 = new Vector3f();
   /**
    * 800c67d8
-   * Array of temp positions of the second or second to last small dot of a path, depending on direction of approch of segment
+   * Array of temp positions of the second or second to last small dot of a path,
+   * depending on direction of approach of segment
    */
   public final Vector3f[] tempPathSegmentStartOffsets_40 = new Vector3f[7];
   /**
    * 800c6848
-   * Seems to be the dot on a path segment that the player is entering that is used
-   * to orient and move the player in case of discrepancy in direction.
+   * The correct starting point of the path segment the player is entering based on direction
+   * of travel. Used to correct position when intersection code for some reason places Dart
+   * at the wrong end of the path.
    */
-  public final Vector3f dotPositionForPlayerOrientationCorrectionAtIntersection = new Vector3f();
+  public final Vector3f correctPathSegmentStartPos = new Vector3f();
   /** 800c6858 */
   public float playerDestAngle_c0;
   /** 800c685a */

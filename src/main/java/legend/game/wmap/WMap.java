@@ -38,7 +38,7 @@ import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
-import legend.game.wmap.WmapEnums.*;
+import legend.game.wmap.WmapEnums.Continent;
 import org.joml.Math;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -56,7 +56,6 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.flEq;
-import static legend.core.MathHelper.set;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnDirSync;
@@ -321,9 +320,9 @@ public class WMap extends EngineState {
 
     //LAB_800c9024
     for(final byte[] data : primitive.data()) {
-      set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & metrics.clutMaskOn_04.get() | metrics.clutMaskOff_00.get()) + metrics.uvOffset_10.get());
-      set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & metrics.tpageMaskOn_0c.get() | metrics.tpageMaskOff_08.get()) + metrics.uvOffset_10.get());
-      set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + metrics.uvOffset_10.get());
+      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & metrics.clutMaskOn_04.get() | metrics.clutMaskOff_00.get()) + metrics.uvOffset_10.get());
+      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & metrics.tpageMaskOn_0c.get() | metrics.tpageMaskOff_08.get()) + metrics.uvOffset_10.get());
+      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + metrics.uvOffset_10.get());
     }
   }
 
@@ -333,10 +332,10 @@ public class WMap extends EngineState {
 
     //LAB_800c90b0
     for(final byte[] data : primitive.data()) {
-      set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & metrics.clutMaskOn_04.get() | metrics.clutMaskOff_00.get()) + metrics.uvOffset_10.get());
-      set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & metrics.tpageMaskOn_0c.get() | metrics.tpageMaskOff_08.get()) + metrics.uvOffset_10.get());
-      set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + metrics.uvOffset_10.get());
-      set(data, 0xc, 4,  MathHelper.get(data, 0xc, 4) + metrics.uvOffset_10.get());
+      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & metrics.clutMaskOn_04.get() | metrics.clutMaskOff_00.get()) + metrics.uvOffset_10.get());
+      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & metrics.tpageMaskOn_0c.get() | metrics.tpageMaskOff_08.get()) + metrics.uvOffset_10.get());
+      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + metrics.uvOffset_10.get());
+      MathHelper.set(data, 0xc, 4,  MathHelper.get(data, 0xc, 4) + metrics.uvOffset_10.get());
     }
   }
 
@@ -722,9 +721,6 @@ public class WMap extends EngineState {
     }
     //LAB_800cd020
   }
-
-  /** This is a hack to "fix" a bug caused by the game loading too fast. Without this delay, Dart will automatically walk forward a bit when leaving a submap. */
-  private static int loadWait = 60 / vsyncMode_8007a3b8;
 
   @Method(0x800cd030L)
   private void handleAndRenderMapAndPlayer() {
@@ -1118,7 +1114,7 @@ public class WMap extends EngineState {
     if(struct._110 == 0) {
       if(this.wmapStruct258_800c66a8.zoomState_1f8 == 0) {
         if(!struct.hideAtmosphericEffect_c4) {
-          if(this.mapState_800c6798.continent_00 != Continent.ENDINESS) { // Not teleporting
+          if(this.mapState_800c6798.continent_00 != Continent.ENDINESS) {
             if(!struct.mapRotating_80) {
               //LAB_800d30d8
               if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_1)) { // R1
@@ -3116,7 +3112,7 @@ public class WMap extends EngineState {
       model.coord2_14.transforms.scale.set(0.5f, 0.4f, 0.5f);
     } else if(modelIndex == 1) {
       //LAB_800e0114
-      if(this.mapState_800c6798.continent_00 == Continent.ENDINESS) { // Teleporting
+      if(this.mapState_800c6798.continent_00 == Continent.ENDINESS) {
         model.coord2_14.transforms.scale.set(1.0f, 1.0f, 1.0f);
       } else {
         model.coord2_14.transforms.scale.set(2.0f, 2.0f, 2.0f);
@@ -3162,7 +3158,7 @@ public class WMap extends EngineState {
       //LAB_800e0404
       GTE.setBackgroundColour(0.5f, 0.5f, 0.5f);
 
-      if(this.mapState_800c6798.continent_00 == Continent.ENDINESS) { // Teleporting
+      if(this.mapState_800c6798.continent_00 == Continent.ENDINESS) {
         struct.models_0c[1].coord2_14.transforms.scale.set(1.0f, 1.0f, 1.0f);
       } else {
         struct.models_0c[1].coord2_14.transforms.scale.set(2.0f, 2.0f, 2.0f);
@@ -3322,7 +3318,11 @@ public class WMap extends EngineState {
 
     struct.currentAnimIndex_ac = struct.animIndex_b0;
 
-    if(!flEq(struct.prevPlayerPos_84.x, struct.currPlayerPos_94.x) || !flEq(struct.prevPlayerPos_84.y, struct.currPlayerPos_94.y) || !flEq(struct.prevPlayerPos_84.z, struct.currPlayerPos_94.z)) {
+    if(
+      !flEq(struct.prevPlayerPos_84.x, struct.currPlayerPos_94.x) ||
+        !flEq(struct.prevPlayerPos_84.y, struct.currPlayerPos_94.y) ||
+        !flEq(struct.prevPlayerPos_84.z, struct.currPlayerPos_94.z)
+    ) {
       final EncounterRateMode mode = CONFIG.getConfig(CoreMod.ENCOUNTER_RATE_CONFIG.get());
 
       //LAB_800e117c
@@ -3412,14 +3412,16 @@ public class WMap extends EngineState {
     final Vector3f negDelta0 = new Vector3f();
     final Vector3f posDelta1 = new Vector3f();
     final Vector3f negDelta1 = new Vector3f();
+    
+    final WMapStruct258 struct = this.wmapStruct258_800c66a8;
 
-    final Vector3f playerPosDelta = new Vector3f(this.wmapStruct258_800c66a8.prevPlayerPos_84)
-      .sub(this.wmapStruct258_800c66a8.currPlayerPos_94)
+    final Vector3f playerPosDelta = new Vector3f(struct.prevPlayerPos_84)
+      .sub(struct.currPlayerPos_94)
       .normalize()
       .cross(this.shipWakeCrossVector_800c87d8);
-    this.updateQueenFuryWakePositionAndDelta(playerPosDelta, this.wmapStruct258_800c66a8.currPlayerPos_94);
-    this.rotateCoord2(this.wmapStruct258_800c66a8.tmdRendering_08.rotations_08[0], this.wmapStruct258_800c66a8.tmdRendering_08.coord2s_04[0]);
-    GsGetLs(this.wmapStruct258_800c66a8.tmdRendering_08.coord2s_04[0], transforms);
+    this.updateQueenFuryWakePositionAndDelta(playerPosDelta, struct.currPlayerPos_94);
+    this.rotateCoord2(struct.tmdRendering_08.rotations_08[0], struct.tmdRendering_08.coord2s_04[0]);
+    GsGetLs(struct.tmdRendering_08.coord2s_04[0], transforms);
     GTE.setTransforms(transforms);
 
     //LAB_800e1ccc
@@ -3428,13 +3430,13 @@ public class WMap extends EngineState {
       this.getQueenFuryWakeMetrics(i, posDelta0, pos0, colourScaleFactor, deltaScaleFactor);
       posDelta0.mul(deltaScaleFactor.get());
       negDelta0.set(posDelta0).negate();
-      vertex0.set(posDelta0.x + pos0.x, posDelta0.y + pos0.y, posDelta0.z + pos0.z);
+      vertex0.set(pos0).add(posDelta0);
       vertex1.set(pos0);
 
       this.getQueenFuryWakeMetrics(i + 1, posDelta1, pos1, colourScaleFactor, deltaScaleFactor);
       posDelta1.mul(deltaScaleFactor.get());
       negDelta1.set(posDelta1).negate();
-      vertex2.set(posDelta1.x + pos1.x, posDelta1.y + pos1.y, posDelta1.z + pos1.z);
+      vertex2.set(pos1).add(posDelta1);
       vertex3.set(pos1);
 
       int baseColour = 256 - colourScaleFactor.get() * 256 / 40;
@@ -3464,7 +3466,7 @@ public class WMap extends EngineState {
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
           .bpp(Bpp.BITS_4)
           .translucent(Translucency.B_PLUS_F)
-          .clut(1008, waterClutYs_800ef348.get((int)this.wmapStruct258_800c66a8.clutYIndex_28).get())
+          .clut(1008, waterClutYs_800ef348.get((int)struct.clutYIndex_28).get())
           .vramPos(448, 0)
           .rgb(0, r0, g0, b0)
           .rgb(1, r1, g1, b1)
@@ -3483,15 +3485,15 @@ public class WMap extends EngineState {
       }
 
       //LAB_800e2440
-      vertex0.set(negDelta0.x + pos0.x, negDelta0.y + pos0.y, negDelta0.z + pos0.z);
-      vertex2.set(negDelta1.x + pos1.x, negDelta1.y + pos1.y, negDelta1.z + pos1.z);
+      vertex0.set(pos0).add(negDelta0);
+      vertex2.set(pos1).add(negDelta1);
       z = RotTransPers4(vertex0, vertex1, vertex2, vertex3, sxyz0, sxyz1, sxyz2, sxyz3);
 
       if(z >= 3 && z < orderingTableSize_1f8003c8.get()) {
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
           .bpp(Bpp.BITS_4)
           .translucent(Translucency.B_PLUS_F)
-          .clut(1008, waterClutYs_800ef348.get((int)this.wmapStruct258_800c66a8.clutYIndex_28).get())
+          .clut(1008, waterClutYs_800ef348.get((int)struct.clutYIndex_28).get())
           .vramPos(448, 0)
           .rgb(0, r0, g0, b0)
           .rgb(1, r1, g1, b1)
@@ -3514,18 +3516,18 @@ public class WMap extends EngineState {
     //LAB_800e2774
     for(int i = 0; i < 40; i++) {
       //LAB_800e2790
-      int wakeSegmentIndex = this.wmapStruct258_800c66a8.currShipPositionIndex_230 - i * this.wmapStruct258_800c66a8.wakeSegmentStride_23c;
+      int wakeSegmentIndex = struct.currShipPositionIndex_230 - i * struct.wakeSegmentStride_23c;
 
       if(wakeSegmentIndex < 0) {
-        wakeSegmentIndex += this.wmapStruct258_800c66a8.shipPositionsCount_238;
+        wakeSegmentIndex += struct.shipPositionsCount_238;
       }
 
       //LAB_800e2808
-      this.wmapStruct258_800c66a8.wakeSegmentNumArray_22c[wakeSegmentIndex]++;
+      struct.wakeSegmentNumArray_22c[wakeSegmentIndex]++;
     }
 
     //LAB_800e289c
-    this.wmapStruct258_800c66a8.tickNum_240++;
+    struct.tickNum_240++;
   }
 
   @Method(0x800e28dcL)
@@ -3993,11 +3995,11 @@ public class WMap extends EngineState {
     final int placeIndex = locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02;
     switch(this.mapTransitionState_800c68a4) {
       case 0:
-        final int pathIndexAndInverseDirection = -directionalPathSegmentData_800f2248.get(this.mapState_800c6798.tempPathSegmentIndices_dc[0]).pathSegmentIndexAndDirection_00.get();
+        final int pathIndexAndReverseDirection = -directionalPathSegmentData_800f2248.get(this.mapState_800c6798.tempPathSegmentIndices_dc[0]).pathSegmentIndexAndDirection_00.get();
 
         //LAB_800e52cc
         int pathIndex;
-        for(pathIndex = 0; pathIndex < this.mapState_800c6798.directionalPathCount_0c && directionalPathSegmentData_800f2248.get(pathIndex).pathSegmentIndexAndDirection_00.get() != pathIndexAndInverseDirection; pathIndex++) {
+        for(pathIndex = 0; pathIndex < this.mapState_800c6798.directionalPathCount_0c && directionalPathSegmentData_800f2248.get(pathIndex).pathSegmentIndexAndDirection_00.get() != pathIndexAndReverseDirection; pathIndex++) {
           // intentionally empty
         }
 
@@ -4845,7 +4847,7 @@ public class WMap extends EngineState {
       //LAB_800e8a58
       this.FUN_800e8cb0();
       this.FUN_800e975c();
-      this.selectNewPathAtIntersection(); // intersections
+      this.selectNewPathAtIntersection();
       this.updatePlayer();
     }
     //LAB_800e8a80
@@ -5180,7 +5182,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800e9cf8
-    this.mapState_800c6798.dotPositionForPlayerOrientationCorrectionAtIntersection.set(pos);
+    this.mapState_800c6798.correctPathSegmentStartPos.set(pos);
     this.mapState_800c6798.pathSegmentPlayerMovingInto_f8 = PathSegmentEntering.CURRENT;
 
     if(index == 1) {
@@ -5287,10 +5289,9 @@ public class WMap extends EngineState {
     }
 
     //LAB_800ea2a8
-    // This seems to be related somehow to certain situations where something does not line up
-    // between the direction the player is moving Dart and the directions of branching paths
-    // at an intersection. Not sure exactly how it happens, but it seems to be a catch of sorts.
-    if(this.mapState_800c6798.dotPositionForPlayerOrientationCorrectionAtIntersection.x != dot.x || this.mapState_800c6798.dotPositionForPlayerOrientationCorrectionAtIntersection.y != dot.y || this.mapState_800c6798.dotPositionForPlayerOrientationCorrectionAtIntersection.z != dot.z) {
+    // This corrects situations where for whatever reason Dart would end up teleporting
+    // to the wrong end of a path segment he was entering. Not sure why this can happen yet.
+    if(this.mapState_800c6798.correctPathSegmentStartPos.x != dot.x || this.mapState_800c6798.correctPathSegmentStartPos.y != dot.y || this.mapState_800c6798.correctPathSegmentStartPos.z != dot.z) {
       //LAB_800ea2f8
       if(directionalPathSegment.pathSegmentIndexAndDirection_00.get() >= 0) {
         this.mapState_800c6798.dotIndex_16 = pathSegmentLengths_800f5810[Math.abs(directionalPathSegment.pathSegmentIndexAndDirection_00.get()) - 1] - 2;
@@ -5497,7 +5498,7 @@ public class WMap extends EngineState {
     //LAB_800eb204
     final int pathIndexAndDirection = directionalPathSegmentData_800f2248.get(locations_800f0e34[locationIndex].directionalPathIndex_00).pathSegmentIndexAndDirection_00.get();
 
-    // This should only be the zeroed entry at the end of the array used to indicate its endpoint
+    // This should only be the zeroed entry at the end of the array. Used to indicate its endpoint
     if(pathIndexAndDirection == 0) {
       return -3;
     }

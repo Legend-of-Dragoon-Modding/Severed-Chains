@@ -9,13 +9,14 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.LodString;
-import legend.game.wmap.WmapEnums.*;
+import legend.game.wmap.WmapEnums.Continent;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
 import static legend.core.GameEngine.MEMORY;
+import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 
-public class WmapStatics {
+public final class WmapStatics {
   public static final ArrayRef<VECTOR> locationModelTranslationVectors_800c74b8 = MEMORY.ref(4, 0x800c74b8L, ArrayRef.of(VECTOR.class, 0x101, 0x10, VECTOR::new));
   public static final ArrayRef<ShortRef> locationsIndices_800c84c8 = MEMORY.ref(2, 0x800c84c8L, ArrayRef.of(ShortRef.class, 0x101, 2, ShortRef::new));
 
@@ -1281,4 +1282,10 @@ public class WmapStatics {
       new Vector3f(-75.0f, -7.0f, 187.0f)
     }
   };
+
+  /** This is a hack to "fix" a bug caused by the game loading too fast. Without this delay, Dart will automatically walk forward a bit when leaving a submap. */
+  public static int loadWait = 60 / vsyncMode_8007a3b8;
+
+  private WmapStatics() {
+  }
 }
