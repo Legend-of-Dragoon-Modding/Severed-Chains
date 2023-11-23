@@ -59,6 +59,7 @@ import static legend.game.SItem.roseXpTable_801139b4;
 import static legend.game.SItem.shanaXpTable_80113aa8;
 import static legend.game.Scus94491BpeSegment.gameLoop;
 import static legend.game.Scus94491BpeSegment.startSound;
+import static legend.game.Scus94491BpeSegment_8002.initTextboxGeometry;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
@@ -394,6 +395,7 @@ public final class GameEngine {
     synchronized(LOCK) {
       Input.init();
 
+      initTextboxGeometry();
       startSound();
       gameLoop();
       Fmv.playCurrentFmv(0, EngineStateEnum.TITLE_02);
@@ -401,6 +403,7 @@ public final class GameEngine {
   }
 
   private static void loadGfx() {
+    RENDERER.setProjectionSize(320.0f, 240.0f);
     RENDERER.camera().moveTo(0.0f, 0.0f, -2.0f);
 
     glEnable(GL_BLEND);

@@ -176,7 +176,7 @@ public abstract class Control extends ControlHost {
   protected void renderNumber(final int x, final int y, final String value, final int digitCount) {
     for(int i = 0; i < Math.min(digitCount, value.length()); i++) {
       final Renderable58 struct = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
-      struct.flags_00 |= 0xc;
+      struct.flags_00 |= Renderable58.FLAG_NO_ANIMATION | Renderable58.FLAG_DELETE_AFTER_RENDER;
       struct.tpage_2c = 0x19;
       struct.clut_30 = 0;
       struct.z_3c = 33;
@@ -209,7 +209,7 @@ public abstract class Control extends ControlHost {
 
   protected void renderCharacter(final int x, final int y, final int character) {
     final Renderable58 v0 = allocateRenderable(uiFile_800bdc3c.uiElements_0000(), null);
-    v0.flags_00 |= 0x2 | 0x4;
+    v0.flags_00 |= Renderable58.FLAG_NO_ANIMATION | Renderable58.FLAG_DELETE_AFTER_RENDER;
     v0.glyph_04 = character;
     v0.tpage_2c = 0x19;
     v0.clut_30 = 0x7ca9;

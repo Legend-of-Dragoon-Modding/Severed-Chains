@@ -6,7 +6,9 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static legend.core.opengl.TmdObjLoader.BPP_SIZE;
 import static legend.core.opengl.TmdObjLoader.CLUT_SIZE;
@@ -20,117 +22,141 @@ import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class QuadBuilder {
   private final String name;
-  private final Vector3f pos = new Vector3f();
-  private final Vector2f posSize = new Vector2f();
-  private final Vector2f uv = new Vector2f();
-  private final Vector2f uvSize = new Vector2f();
-  private final Vector2i vramPos = new Vector2i();
-  private final Vector2i clut = new Vector2i();
-  private final Vector3f[] colour = {new Vector3f(), new Vector3f(), new Vector3f(), new Vector3f()};
-  private Bpp bpp;
   private Translucency translucency;
-
   private int flags;
+
+  private final List<Quad> quads = new ArrayList<>();
+  private Quad current;
 
   public QuadBuilder(final String name) {
     this.name = name;
   }
 
+  public QuadBuilder add() {
+    this.current = new Quad();
+    this.quads.add(this.current);
+    return this;
+  }
+
+  private void addFirstQuad() {
+    if(this.current == null) {
+      this.add();
+    }
+  }
+
   public QuadBuilder pos(final Vector3f pos) {
-    this.pos.set(pos);
+    this.addFirstQuad();
+    this.current.pos.set(pos);
     return this;
   }
 
   public QuadBuilder pos(final float x, final float y, final float z) {
-    this.pos.set(x, y, z);
+    this.addFirstQuad();
+    this.current.pos.set(x, y, z);
     return this;
   }
 
   /** Sets both position and UV size */
   public QuadBuilder size(final Vector2f size) {
-    this.posSize.set(size);
-    this.uvSize.set(size);
+    this.addFirstQuad();
+    this.current.posSize.set(size);
+    this.current.uvSize.set(size);
     return this;
   }
 
   /** Sets both position and UV size */
   public QuadBuilder size(final float w, final float h) {
-    this.posSize.set(w, h);
-    this.uvSize.set(w, h);
+    this.addFirstQuad();
+    this.current.posSize.set(w, h);
+    this.current.uvSize.set(w, h);
     return this;
   }
 
   public QuadBuilder posSize(final Vector2f size) {
-    this.posSize.set(size);
+    this.addFirstQuad();
+    this.current.posSize.set(size);
     return this;
   }
 
   public QuadBuilder posSize(final float w, final float h) {
-    this.posSize.set(w, h);
+    this.addFirstQuad();
+    this.current.posSize.set(w, h);
     return this;
   }
 
   public QuadBuilder uvSize(final Vector2f size) {
-    this.uvSize.set(size);
+    this.addFirstQuad();
+    this.current.uvSize.set(size);
     return this;
   }
 
   public QuadBuilder uvSize(final float w, final float h) {
-    this.uvSize.set(w, h);
+    this.addFirstQuad();
+    this.current.uvSize.set(w, h);
     return this;
   }
 
   public QuadBuilder uv(final Vector2f uv) {
-    this.uv.set(uv);
+    this.addFirstQuad();
+    this.current.uv.set(uv);
     this.flags |= TmdObjLoader.TEXTURED_FLAG;
     return this;
   }
 
   public QuadBuilder uv(final float u, final float v) {
-    this.uv.set(u, v);
+    this.addFirstQuad();
+    this.current.uv.set(u, v);
     this.flags |= TmdObjLoader.TEXTURED_FLAG;
     return this;
   }
 
   public QuadBuilder vramPos(final Vector2i vramPos) {
-    this.vramPos.set(vramPos);
+    this.addFirstQuad();
+    this.current.vramPos.set(vramPos);
     this.flags |= TmdObjLoader.TEXTURED_FLAG;
     return this;
   }
 
   public QuadBuilder vramPos(final int x, final int y) {
-    this.vramPos.set(x, y);
+    this.addFirstQuad();
+    this.current.vramPos.set(x, y);
     this.flags |= TmdObjLoader.TEXTURED_FLAG;
     return this;
   }
 
   public QuadBuilder clut(final Vector2i clut) {
-    this.clut.set(clut);
+    this.addFirstQuad();
+    this.current.clut.set(clut);
     this.flags |= TmdObjLoader.TEXTURED_FLAG;
     return this;
   }
 
   public QuadBuilder clut(final int x, final int y) {
-    this.clut.set(x, y);
+    this.addFirstQuad();
+    this.current.clut.set(x, y);
     this.flags |= TmdObjLoader.TEXTURED_FLAG;
     return this;
   }
 
   public QuadBuilder rgb(final Vector3f colour) {
-    Arrays.fill(this.colour, colour);
+    this.addFirstQuad();
+    Arrays.fill(this.current.colour, colour);
     this.flags |= TmdObjLoader.COLOURED_FLAG;
     return this;
   }
 
   public QuadBuilder rgb(final int vertex, final Vector3f colour) {
-    this.colour[vertex].set(colour);
+    this.addFirstQuad();
+    this.current.colour[vertex].set(colour);
     this.flags |= TmdObjLoader.COLOURED_FLAG;
     return this;
   }
 
   public QuadBuilder rgb(final float r, final float g, final float b) {
-    for(int i = 0; i < this.colour.length; i++) {
-      this.colour[i].set(r, g, b);
+    this.addFirstQuad();
+
+    for(int i = 0; i < this.current.colour.length; i++) {
+      this.current.colour[i].set(r, g, b);
     }
 
     this.flags |= TmdObjLoader.COLOURED_FLAG;
@@ -138,14 +164,17 @@ public class QuadBuilder {
   }
 
   public QuadBuilder rgb(final int vertex, final float r, final float g, final float b) {
-    this.colour[vertex].set(r, g, b);
+    this.addFirstQuad();
+    this.current.colour[vertex].set(r, g, b);
     this.flags |= TmdObjLoader.COLOURED_FLAG;
     return this;
   }
 
   public QuadBuilder monochrome(final float shade) {
-    for(int i = 0; i < this.colour.length; i++) {
-      this.colour[i].set(shade);
+    this.addFirstQuad();
+
+    for(int i = 0; i < this.current.colour.length; i++) {
+      this.current.colour[i].set(shade);
     }
 
     this.flags |= TmdObjLoader.COLOURED_FLAG;
@@ -153,54 +182,84 @@ public class QuadBuilder {
   }
 
   public QuadBuilder monochrome(final int vertex, final float shade) {
-    this.colour[vertex].set(shade);
+    this.addFirstQuad();
+    this.current.colour[vertex].set(shade);
     this.flags |= TmdObjLoader.COLOURED_FLAG;
     return this;
   }
 
   public QuadBuilder bpp(final Bpp bpp) {
-    this.bpp = bpp;
+    this.addFirstQuad();
+    this.current.bpp = bpp;
     this.flags |= TmdObjLoader.TEXTURED_FLAG;
     return this;
   }
 
   public QuadBuilder translucency(final Translucency translucency) {
+    this.addFirstQuad();
     this.translucency = translucency;
     this.flags |= TmdObjLoader.TRANSLUCENCY_FLAG << translucency.ordinal();
     return this;
   }
 
+  private int setVertex(int offset, final float[] vertices, final float x, final float y, final float z, final float u, final float v, final float tpx, final float tpy, final float clx, final float cly, final Bpp bpp, final float r, final float g, final float b, final float flags) {
+    vertices[offset++] = x;
+    vertices[offset++] = y;
+    vertices[offset++] = z;
+    vertices[offset++] = 0.0f;
+    vertices[offset++] = 0.0f;
+    vertices[offset++] = 0.0f;
+    vertices[offset++] = u;
+    vertices[offset++] = v;
+    vertices[offset++] = tpx;
+    vertices[offset++] = tpy;
+    vertices[offset++] = clx;
+    vertices[offset++] = cly;
+    vertices[offset++] = bpp != null ? bpp.ordinal() : 0.0f;
+    vertices[offset++] = r;
+    vertices[offset++] = g;
+    vertices[offset++] = b;
+    vertices[offset++] = 0.0f;
+    vertices[offset++] = flags;
+    return offset;
+  }
+
+  private int setVertices(int offset, final float[] vertices, final Quad quad) {
+    final float x0 = quad.pos.x;
+    final float y0 = quad.pos.y;
+    final float x1 = x0 + quad.posSize.x;
+    final float y1 = y0 + quad.posSize.y;
+    final float z = quad.pos.z;
+    final float u0 = quad.uv.x;
+    final float v0 = quad.uv.y;
+    final float u1 = u0 + quad.uvSize.x;
+    final float v1 = v0 + quad.uvSize.y;
+    final float tpx = quad.vramPos.x;
+    final float tpy = quad.vramPos.y;
+    final float clx = quad.clut.x;
+    final float cly = quad.clut.y;
+
+    offset = this.setVertex(offset, vertices, x0, y0, z, u0, v0, tpx, tpy, clx, cly, quad.bpp, quad.colour[0].x, quad.colour[0].y, quad.colour[0].z, this.flags);
+    offset = this.setVertex(offset, vertices, x0, y1, z, u0, v1, tpx, tpy, clx, cly, quad.bpp, quad.colour[1].x, quad.colour[1].y, quad.colour[1].z, this.flags);
+    offset = this.setVertex(offset, vertices, x1, y0, z, u1, v0, tpx, tpy, clx, cly, quad.bpp, quad.colour[2].x, quad.colour[2].y, quad.colour[2].z, this.flags);
+    offset = this.setVertex(offset, vertices, x1, y1, z, u1, v1, tpx, tpy, clx, cly, quad.bpp, quad.colour[3].x, quad.colour[3].y, quad.colour[3].z, this.flags);
+    return offset;
+  }
+
   public MeshObj build() {
-    final float x0 = this.pos.x;
-    final float y0 = this.pos.y;
-    final float x1 = x0 + this.posSize.x;
-    final float y1 = y0 + this.posSize.y;
-    final float z = this.pos.z;
-    final float u0 = this.uv.x;
-    final float v0 = this.uv.y;
-    final float u1 = u0 + this.uvSize.x;
-    final float v1 = v0 + this.uvSize.y;
-    final float tpx = this.vramPos.x;
-    final float tpy = this.vramPos.y;
-    final float clx = this.clut.x;
-    final float cly = this.clut.y;
-    final float bpp = this.bpp != null ? this.bpp.ordinal() : 0;
-
-    // x y z nx ny nz u v tpx tpy clx cly bpp r g b m flags
-    final float[] vertices = {
-      x0, y0, z, 0, 0, 0, u0, v0, tpx, tpy, clx, cly, bpp, this.colour[0].x, this.colour[0].y, this.colour[0].z, 0, this.flags,
-      x0, y1, z, 0, 0, 0, u0, v1, tpx, tpy, clx, cly, bpp, this.colour[1].x, this.colour[1].y, this.colour[1].z, 0, this.flags,
-      x1, y0, z, 0, 0, 0, u1, v0, tpx, tpy, clx, cly, bpp, this.colour[2].x, this.colour[2].y, this.colour[2].z, 0, this.flags,
-      x1, y1, z, 0, 0, 0, u1, v1, tpx, tpy, clx, cly, bpp, this.colour[3].x, this.colour[3].y, this.colour[3].z, 0, this.flags,
-    };
-
-    final Mesh mesh = new Mesh(GL_TRIANGLE_STRIP, vertices, 4);
-
     int vertexSize = POS_SIZE;
     vertexSize += NORM_SIZE;
     vertexSize += UV_SIZE + TPAGE_SIZE + CLUT_SIZE + BPP_SIZE;
     vertexSize += COLOUR_SIZE;
     vertexSize += FLAGS_SIZE;
+
+    final float[] vertices = new float[this.quads.size() * 4 * vertexSize];
+    int offset = 0;
+    for(final Quad quad : this.quads) {
+      offset = this.setVertices(offset, vertices, quad);
+    }
+
+    final Mesh mesh = new Mesh(GL_TRIANGLE_STRIP, vertices, this.quads.size() * 4);
 
     mesh.attribute(0, 0L, 3, vertexSize);
 
@@ -242,5 +301,16 @@ public class QuadBuilder {
     }
 
     return new MeshObj(this.name, meshes);
+  }
+
+  private static class Quad {
+    private final Vector3f pos = new Vector3f();
+    private final Vector2f posSize = new Vector2f();
+    private final Vector2f uv = new Vector2f();
+    private final Vector2f uvSize = new Vector2f();
+    private final Vector2i vramPos = new Vector2i();
+    private final Vector2i clut = new Vector2i();
+    private final Vector3f[] colour = {new Vector3f(), new Vector3f(), new Vector3f(), new Vector3f()};
+    private Bpp bpp;
   }
 }

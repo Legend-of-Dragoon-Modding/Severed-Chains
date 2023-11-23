@@ -1,11 +1,12 @@
 package legend.core;
 
-import legend.core.gpu.Bpp;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
 import legend.core.opengl.BasicCamera;
 import legend.core.opengl.Camera;
 import legend.core.opengl.FrameBuffer;
+import legend.core.opengl.LegacyTextBuilder;
+import legend.core.opengl.LineBuilder;
 import legend.core.opengl.Mesh;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
@@ -30,7 +31,9 @@ import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
@@ -44,6 +47,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_TAB;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
+import static org.lwjgl.glfw.GLFW.GLFW_MOD_SHIFT;
 import static org.lwjgl.opengl.GL11C.GL_ALWAYS;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_COLOR;
@@ -58,11 +62,14 @@ import static org.lwjgl.opengl.GL11C.GL_FRONT_AND_BACK;
 import static org.lwjgl.opengl.GL11C.GL_LESS;
 import static org.lwjgl.opengl.GL11C.GL_LINE;
 import static org.lwjgl.opengl.GL11C.GL_LINEAR;
+import static org.lwjgl.opengl.GL11C.GL_LINE_SMOOTH;
 import static org.lwjgl.opengl.GL11C.GL_ONE;
+import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_COLOR;
 import static org.lwjgl.opengl.GL11C.GL_RED;
 import static org.lwjgl.opengl.GL11C.GL_RGBA;
 import static org.lwjgl.opengl.GL11C.GL_SCISSOR_TEST;
+import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11C.GL_STENCIL_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11C.GL_ZERO;
@@ -73,6 +80,7 @@ import static org.lwjgl.opengl.GL11C.glDepthFunc;
 import static org.lwjgl.opengl.GL11C.glDepthMask;
 import static org.lwjgl.opengl.GL11C.glDisable;
 import static org.lwjgl.opengl.GL11C.glEnable;
+import static org.lwjgl.opengl.GL11C.glLineWidth;
 import static org.lwjgl.opengl.GL11C.glPolygonMode;
 import static org.lwjgl.opengl.GL11C.glScissor;
 import static org.lwjgl.opengl.GL11C.glViewport;
@@ -91,6 +99,7 @@ public class RenderEngine {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
 
   public static int legacyMode;
+  public boolean usePs1Gpu = true;
 
   private Camera camera2d;
   private Camera camera3d;
@@ -111,7 +120,20 @@ public class RenderEngine {
   private Shader tmdShader;
   private Shader tmdShaderTransparent;
   private Shader.UniformVec3 tmdShaderColour;
+  private Shader.UniformVec2 tmdShaderUvOffset;
+  private Shader.UniformVec2 tmdShaderClutOverride;
+  private Shader.UniformVec2 tmdShaderTpageOverride;
   private Shader.UniformVec3 tmdShaderTransparentColour;
+  private Shader.UniformVec2 tmdShaderTransparentUvOffset;
+  private Shader.UniformVec2 tmdShaderTransparentClutOverride;
+  private Shader.UniformVec2 tmdShaderTransparentTpageOverride;
+  /**
+   * <ul>
+   *   <li>0: regular rendering, anything rendered will pass through the shader</li>
+   *   <li>1: discard translucent pixels, used for rendering translucent primitives that have translucency disabled in their textures</li>
+   *   <li>2: discard non-translucent pixels, used to render B+F and B-F primitives since they don't need to go through the OIT shader</li>
+   * </ul>
+   */
   private Shader.UniformFloat tmdShaderDiscardTranslucency;
   private FrameBuffer opaqueFrameBuffer;
   private FrameBuffer transparentFrameBuffer;
@@ -123,10 +145,15 @@ public class RenderEngine {
   private final float[] clear1 = {1.0f, 1.0f, 1.0f, 1.0f};
 
   // Text
-  public final Obj[] chars = new Obj[0x56];
-  // Fullscren Fade Outs
-  public Obj fullscreenWhiteout;
-  public Obj fullscreenBlackout;
+  public Obj chars;
+  // Plain quads
+  public final Map<Translucency, Obj> plainQuads = new EnumMap<>(Translucency.class);
+  // Simple quads
+  public Obj centredQuadBPlusF;
+  public Obj centredQuadBMinusF;
+  // Line box (reticles)
+  public Obj lineBox;
+  public Obj lineBoxBPlusF;
 
   private int width;
   private int height;
@@ -161,6 +188,7 @@ public class RenderEngine {
   private final QueuePool orthoPool = new QueuePool();
   private final QueuePool orthoUnderlayPool = new QueuePool();
   private final QueuePool orthoOverlayPool = new QueuePool();
+  private final Vector3f tempColour = new Vector3f();
 
   private float projectionWidth;
   private float projectionHeight;
@@ -248,6 +276,8 @@ public class RenderEngine {
     this.window = new Window("Legend of Dragoon", Config.windowWidth(), Config.windowHeight());
     this.window.setFpsLimit(60);
 
+    glEnable(GL_LINE_SMOOTH);
+
     this.window.events.onResize(this::onResize);
 
     this.window.events.onMouseMove(this::onMouseMove);
@@ -275,6 +305,9 @@ public class RenderEngine {
       this.tmdShader.new UniformInt("tex24").set(0);
       this.tmdShader.new UniformInt("tex15").set(1);
       this.tmdShaderColour = this.tmdShader.new UniformVec3("recolour");
+      this.tmdShaderClutOverride = this.tmdShader.new UniformVec2("clutOverride");
+      this.tmdShaderTpageOverride = this.tmdShader.new UniformVec2("tpageOverride");
+      this.tmdShaderUvOffset = this.tmdShader.new UniformVec2("uvOffset");
       this.tmdShaderDiscardTranslucency = this.tmdShader.new UniformFloat("discardTranslucency");
       this.tmdShaderDiscardTranslucency.set(1.0f);
 
@@ -294,6 +327,9 @@ public class RenderEngine {
       this.tmdShaderTransparent.new UniformInt("tex24").set(0);
       this.tmdShaderTransparent.new UniformInt("tex15").set(1);
       this.tmdShaderTransparentColour = this.tmdShaderTransparent.new UniformVec3("recolour");
+      this.tmdShaderTransparentClutOverride = this.tmdShaderTransparent.new UniformVec2("clutOverride");
+      this.tmdShaderTransparentTpageOverride = this.tmdShaderTransparent.new UniformVec2("tpageOverride");
+      this.tmdShaderTransparentUvOffset = this.tmdShaderTransparent.new UniformVec2("uvOffset");
 
       ShaderManager.addShader("tmd-transparent", this.tmdShaderTransparent);
     } catch(final IOException e) {
@@ -346,36 +382,54 @@ public class RenderEngine {
     postQuad.attribute(1, 2L, 2, 4);
 
     // Build text quads
-    for(int i = 0; i < this.chars.length; i++) {
-      final int textU = i & 0xf;
-      final int textV = i / 16;
-
-      this.chars[i] = new QuadBuilder("Char " + i)
-        .bpp(Bpp.BITS_4)
-        .monochrome(1.0f)
-        .size(8.0f, 12.0f)
-        .uv(textU * 16.0f, textV * 12.0f)
-        .clut(832, 480)
-        .vramPos(832, 256)
-        .build();
-
-      this.chars[i].persistent = true;
-    }
+    this.chars = new LegacyTextBuilder("Text Characters").build();
+    this.chars.persistent = true;
 
     // Build fullscreen fade quads
-    fullscreenWhiteout = new QuadBuilder("FullscreenWhiteout")
-      .translucency(Translucency.B_PLUS_F)
-      .pos(0.0f, 0.0f, 999)
-      .size(384, 240)
-      .build();
-    fullscreenWhiteout.persistent = true;
+    for(final Translucency translucency : Translucency.FOR_RENDERING) {
+      final Obj obj = new QuadBuilder("Plain Quad " + translucency)
+        .translucency(translucency)
+        .size(1.0f, 1.0f)
+        .build();
+      obj.persistent = true;
 
-    fullscreenBlackout = new QuadBuilder("FullscreenBlackout")
-      .translucency(Translucency.B_MINUS_F)
-      .pos(0.0f, 0.0f, 999)
-      .size(384, 240)
+      this.plainQuads.put(translucency, obj);
+    }
+
+    this.centredQuadBPlusF = new QuadBuilder("Centred Quad B+F")
+      .translucency(Translucency.B_PLUS_F)
+      .monochrome(1.0f)
+      .pos(-1.0f, -1.0f, 0.0f)
+      .size(1.0f, 1.0f)
       .build();
-    fullscreenBlackout.persistent = true;
+    this.centredQuadBPlusF.persistent = true;
+
+    this.centredQuadBMinusF = new QuadBuilder("Centred Quad B-F")
+      .translucency(Translucency.B_MINUS_F)
+      .monochrome(1.0f)
+      .pos(-1.0f, -1.0f, 0.0f)
+      .size(1.0f, 1.0f)
+      .build();
+    this.centredQuadBMinusF.persistent = true;
+
+    this.lineBox = new LineBuilder("Line Box")
+      .pos(-1.0f, -1.0f, 0.0f)
+      .pos( 1.0f, -1.0f, 0.0f)
+      .pos( 1.0f,  1.0f, 0.0f)
+      .pos(-1.0f,  1.0f, 0.0f)
+      .closed()
+      .build();
+    this.lineBox.persistent = true;
+
+    this.lineBoxBPlusF = new LineBuilder("Line Box (B+F)")
+      .translucency(Translucency.B_PLUS_F)
+      .pos(-1.0f, -1.0f, 0.0f)
+      .pos( 1.0f, -1.0f, 0.0f)
+      .pos( 1.0f,  1.0f, 0.0f)
+      .pos(-1.0f,  1.0f, 0.0f)
+      .closed()
+      .build();
+    this.lineBoxBPlusF.persistent = true;
 
     this.window.events.onDraw(() -> {
       this.pre();
@@ -388,7 +442,7 @@ public class RenderEngine {
 
       this.renderCallback.run();
 
-      if(legacyMode == 0) {
+      if(legacyMode == 0 && this.usePs1Gpu) {
         this.transparentFrameBuffer.bind();
         glClearBufferfv(GL_COLOR, 0, this.clear0);
         glClearBufferfv(GL_COLOR, 1, this.clear1);
@@ -396,20 +450,21 @@ public class RenderEngine {
         this.opaqueFrameBuffer.bind();
         this.clear();
 
+        RENDERER.setProjectionMode(ProjectionMode._2D);
         this.render2dPool(this.orthoUnderlayPool);
         this.clearDepth();
-
-        RENDERER.setProjectionMode(ProjectionMode._2D);
-        this.renderPool(this.orthoPool);
 
         RENDERER.setProjectionMode(ProjectionMode._3D);
         this.renderPool(this.modelPool);
 
+        RENDERER.setProjectionMode(ProjectionMode._2D);
+        this.renderPool(this.orthoPool);
+
         // set render states
+        RENDERER.setProjectionMode(ProjectionMode._3D);
         glDepthFunc(GL_ALWAYS);
         glEnable(GL_BLEND);
-        glBlendEquation(GL_FUNC_ADD);
-        glBlendFunc(GL_ONE, GL_ONE); //TODO this is only for B+F
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         // bind opaque framebuffer
         this.opaqueFrameBuffer.bind();
@@ -442,6 +497,7 @@ public class RenderEngine {
         this.opaqueTexture.use();
         postQuad.draw();
 
+        RENDERER.setProjectionMode(ProjectionMode._2D);
         this.render2dPool(this.orthoOverlayPool);
       } else {
         this.orthoUnderlayPool.reset();
@@ -495,12 +551,15 @@ public class RenderEngine {
     for(int i = 0; i < pool.size(); i++) {
       final QueuedModel entry = pool.get(i);
       this.tmdShaderColour.set(entry.colour);
+      this.tmdShaderClutOverride.set(entry.clutOverride);
+      this.tmdShaderTpageOverride.set(entry.tpageOverride);
+      this.tmdShaderUvOffset.set(entry.uvOffset);
       boolean updated = false;
 
       if(entry.obj.shouldRender(null)) {
         updated = true;
         entry.updateTransforms();
-        entry.obj.render(null);
+        entry.render(null);
       }
 
       // First pass of translucency rendering - renders opaque pixels with translucency bit not set for translucent primitives
@@ -513,42 +572,60 @@ public class RenderEngine {
             entry.updateTransforms();
           }
 
-          entry.obj.render(translucency);
+          entry.render(translucency);
         }
       }
     }
 
-    glDisable(GL_CULL_FACE);
-
     glDepthMask(false);
+    glDisable(GL_CULL_FACE);
     glEnable(GL_BLEND);
+
+    // Render B+F (implicitly order-independent, because it's all addition)
+    // Also renders B-F by negating the colour value and rendering as B+F
+    this.tmdShaderDiscardTranslucency.set(2.0f);
+    Translucency.B_PLUS_F.setGlState();
+
+    for(int i = 0; i < pool.size(); i++) {
+      final QueuedModel entry = pool.get(i);
+
+      if(entry.obj.shouldRender(Translucency.B_PLUS_F)) {
+        this.tmdShaderColour.set(entry.colour);
+        this.tmdShaderClutOverride.set(entry.clutOverride);
+        this.tmdShaderTpageOverride.set(entry.tpageOverride);
+        this.tmdShaderUvOffset.set(entry.uvOffset);
+        entry.updateTransforms();
+        entry.render(Translucency.B_PLUS_F);
+      }
+
+      if(entry.obj.shouldRender(Translucency.B_MINUS_F)) {
+        this.tmdShaderColour.set(entry.colour.mul(-1.0f, this.tempColour));
+        this.tmdShaderClutOverride.set(entry.clutOverride);
+        this.tmdShaderTpageOverride.set(entry.tpageOverride);
+        this.tmdShaderUvOffset.set(entry.uvOffset);
+        entry.updateTransforms();
+        entry.render(Translucency.B_MINUS_F);
+      }
+    }
+
+    // Order-independent translucency for (B+F)/2
     glBlendFunci(0, GL_ONE, GL_ONE);
     glBlendFunci(1, GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
     glBlendEquation(GL_FUNC_ADD);
 
     this.transparentFrameBuffer.bind();
     this.tmdShaderTransparent.use();
-    GPU.useVramTexture();
 
-    for(int translucencyIndex = 0; translucencyIndex < Translucency.FOR_RENDERING.length; translucencyIndex++) {
-      final Translucency translucency = Translucency.FOR_RENDERING[translucencyIndex];
+    for(int i = 0; i < pool.size(); i++) {
+      final QueuedModel entry = pool.get(i);
 
-//        switch(translucency) {
-//          case HALF_B_PLUS_HALF_F ->
-//            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-//
-//          case B_PLUS_F ->
-//            glBlendFunc(GL_ONE, GL_ONE);
-//        }
-
-      for(int i = 0; i < pool.size(); i++) {
-        final QueuedModel entry = pool.get(i);
-
-        if(entry.obj.shouldRender(translucency)) {
-          entry.updateTransforms();
-          this.tmdShaderTransparentColour.set(entry.colour);
-          entry.obj.render(translucency);
-        }
+      if(entry.obj.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
+        entry.updateTransforms();
+        this.tmdShaderTransparentColour.set(entry.colour);
+        this.tmdShaderTransparentClutOverride.set(entry.clutOverride);
+        this.tmdShaderTransparentTpageOverride.set(entry.tpageOverride);
+        this.tmdShaderTransparentUvOffset.set(entry.uvOffset);
+        entry.render(Translucency.HALF_B_PLUS_HALF_F);
       }
     }
 
@@ -556,9 +633,7 @@ public class RenderEngine {
   }
 
   private void render2dPool(final QueuePool pool) {
-    RENDERER.setProjectionMode(ProjectionMode._2D);
     this.tmdShader.use();
-    this.tmdShaderDiscardTranslucency.set(0.0f);
     GPU.useVramTexture();
 
     final float widthScale = this.window.getWidth() / this.projectionWidth;
@@ -569,24 +644,41 @@ public class RenderEngine {
       final QueuedModel entry = pool.get(i);
       entry.updateTransforms();
       this.tmdShaderColour.set(entry.colour);
+      this.tmdShaderClutOverride.set(entry.clutOverride);
+      this.tmdShaderTpageOverride.set(entry.tpageOverride);
+      this.tmdShaderUvOffset.set(entry.uvOffset);
 
       if(entry.scissor.w != 0) {
         glEnable(GL_SCISSOR_TEST);
         glScissor((int)(entry.scissor.x * widthScale), this.window.getHeight() - (int)(entry.scissor.y * heightScale), (int)(entry.scissor.w * widthScale), (int)(entry.scissor.h * heightScale));
       }
 
+      this.tmdShaderDiscardTranslucency.set(0.0f);
+      glDisable(GL_BLEND);
+
       if(entry.obj.shouldRender(null)) {
-        glDisable(GL_BLEND);
-        entry.obj.render(null);
+        entry.render(null);
       }
 
+      this.tmdShaderDiscardTranslucency.set(1.0f);
+
+      for(int translucencyIndex = 0; translucencyIndex < Translucency.FOR_RENDERING.length; translucencyIndex++) {
+        final Translucency translucency = Translucency.FOR_RENDERING[translucencyIndex];
+
+        if(entry.obj.shouldRender(translucency)) {
+          entry.render(translucency);
+        }
+      }
+
+      this.tmdShaderDiscardTranslucency.set(2.0f);
       glEnable(GL_BLEND);
+
       for(int translucencyIndex = 0; translucencyIndex < Translucency.FOR_RENDERING.length; translucencyIndex++) {
         final Translucency translucency = Translucency.FOR_RENDERING[translucencyIndex];
 
         if(entry.obj.shouldRender(translucency)) {
           translucency.setGlState();
-          entry.obj.render(translucency);
+          entry.render(translucency);
         }
       }
 
@@ -627,22 +719,16 @@ public class RenderEngine {
 
   public QueuedModel queueModel(final Obj obj) {
     final QueuedModel entry = this.modelPool.acquire();
+    entry.reset();
     entry.obj = obj;
-    entry.transforms.identity();
-    entry.screenspaceOffset.zero();
-    entry.colour.set(1.0f, 1.0f, 1.0f);
-    entry.scissor.set(0, 0, 0, 0);
     return entry;
   }
 
   public QueuedModel queueModel(final Obj obj, final MV mv) {
     final QueuedModel entry = this.modelPool.acquire();
+    entry.reset();
     entry.obj = obj;
-    entry.transforms.set(mv);
-    entry.transforms.setTranslation(mv.transfer);
-    entry.screenspaceOffset.zero();
-    entry.colour.set(1.0f, 1.0f, 1.0f);
-    entry.scissor.set(0, 0, 0, 0);
+    entry.transforms.set(mv).setTranslation(mv.transfer);
     return entry;
   }
 
@@ -652,11 +738,8 @@ public class RenderEngine {
     }
 
     final QueuedModel entry = this.orthoPool.acquire();
+    entry.reset();
     entry.obj = obj;
-    entry.transforms.identity();
-    entry.screenspaceOffset.zero();
-    entry.colour.set(1.0f, 1.0f, 1.0f);
-    entry.scissor.set(0, 0, 0, 0);
     return entry;
   }
 
@@ -666,12 +749,9 @@ public class RenderEngine {
     }
 
     final QueuedModel entry = this.orthoPool.acquire();
+    entry.reset();
     entry.obj = obj;
-    entry.transforms.set(mv);
-    entry.transforms.setTranslation(mv.transfer);
-    entry.screenspaceOffset.zero();
-    entry.colour.set(1.0f, 1.0f, 1.0f);
-    entry.scissor.set(0, 0, 0, 0);
+    entry.transforms.set(mv).setTranslation(mv.transfer);
     return entry;
   }
 
@@ -681,11 +761,8 @@ public class RenderEngine {
     }
 
     final QueuedModel entry = this.orthoOverlayPool.acquire();
+    entry.reset();
     entry.obj = obj;
-    entry.transforms.identity();
-    entry.screenspaceOffset.zero();
-    entry.colour.set(1.0f, 1.0f, 1.0f);
-    entry.scissor.set(0, 0, 0, 0);
     return entry;
   }
 
@@ -695,12 +772,9 @@ public class RenderEngine {
     }
 
     final QueuedModel entry = this.orthoOverlayPool.acquire();
+    entry.reset();
     entry.obj = obj;
-    entry.transforms.set(mv);
-    entry.transforms.setTranslation(mv.transfer);
-    entry.screenspaceOffset.zero();
-    entry.colour.set(1.0f, 1.0f, 1.0f);
-    entry.scissor.set(0, 0, 0, 0);
+    entry.transforms.set(mv).setTranslation(mv.transfer);
     return entry;
   }
 
@@ -710,11 +784,8 @@ public class RenderEngine {
     }
 
     final QueuedModel entry = this.orthoUnderlayPool.acquire();
+    entry.reset();
     entry.obj = obj;
-    entry.transforms.identity();
-    entry.screenspaceOffset.zero();
-    entry.colour.set(1.0f, 1.0f, 1.0f);
-    entry.scissor.set(0, 0, 0, 0);
     return entry;
   }
 
@@ -724,12 +795,9 @@ public class RenderEngine {
     }
 
     final QueuedModel entry = this.orthoUnderlayPool.acquire();
+    entry.reset();
     entry.obj = obj;
-    entry.transforms.set(mv);
-    entry.transforms.setTranslation(mv.transfer);
-    entry.screenspaceOffset.zero();
-    entry.colour.set(1.0f, 1.0f, 1.0f);
-    entry.scissor.set(0, 0, 0, 0);
+    entry.transforms.set(mv).setTranslation(mv.transfer);
     return entry;
   }
 
@@ -779,6 +847,8 @@ public class RenderEngine {
 
     this.width = width;
     this.height = height;
+
+    glLineWidth(Math.max(1, height / 480.0f));
 
     // Projections
     this.updateProjections();
@@ -881,6 +951,20 @@ public class RenderEngine {
           glPolygonMode(GL_FRONT_AND_BACK, this.wireframeMode ? GL_LINE : GL_FILL);
         }
       }
+    } else if(key == GLFW_KEY_TAB) {
+      if((mods & GLFW_MOD_SHIFT) != 0) {
+        legacyMode = Math.floorMod(legacyMode - 1, 3);
+      } else {
+        legacyMode = (legacyMode + 1) % 3;
+      }
+
+      this.updateProjections();
+
+      switch(legacyMode) {
+        case 0 -> System.out.println("Switched to OpenGL rendering");
+        case 1 -> System.out.println("Switched to legacy rendering");
+        case 2 -> System.out.println("Switched to VRAM rendering");
+      }
     }
 
     if(key == GLFW_KEY_M) {
@@ -891,17 +975,6 @@ public class RenderEngine {
         this.window.hideCursor();
       } else {
         this.window.showCursor();
-      }
-    }
-
-    if(key == GLFW_KEY_TAB) {
-      legacyMode = (legacyMode + 1) % 3;
-      this.updateProjections();
-
-      switch(legacyMode) {
-        case 0 -> System.out.println("Switched to OpenGL rendering");
-        case 1 -> System.out.println("Switched to legacy rendering");
-        case 2 -> System.out.println("Switched to VRAM rendering");
       }
     }
   }
@@ -924,12 +997,18 @@ public class RenderEngine {
     private final Matrix4f transforms = new Matrix4f();
     private final Vector2f screenspaceOffset = new Vector2f();
     private final Vector3f colour = new Vector3f();
+    private final Vector2f clutOverride = new Vector2f();
+    private final Vector2f tpageOverride = new Vector2f();
+    private final Vector2f uvOffset = new Vector2f();
 
     private final Matrix4f lightDirection = new Matrix4f();
     private final Matrix4f lightColour = new Matrix4f();
     private final Vector4f backgroundColour = new Vector4f();
 
     private final Rect4i scissor = new Rect4i();
+
+    private int startVertex;
+    private int vertexCount;
 
     public QueuedModel screenspaceOffset(final Vector2f offset) {
       this.screenspaceOffset.set(offset);
@@ -956,6 +1035,21 @@ public class RenderEngine {
       return this;
     }
 
+    public QueuedModel clutOverride(final float x, final float y) {
+      this.clutOverride.set(x, y);
+      return this;
+    }
+
+    public QueuedModel tpageOverride(final float x, final float y) {
+      this.tpageOverride.set(x, y);
+      return this;
+    }
+
+    public QueuedModel uvOffset(final float x, final float y) {
+      this.uvOffset.set(x, y);
+      return this;
+    }
+
     public QueuedModel lightDirection(final Matrix3f lightDirection) {
       this.lightDirection.set(lightDirection).mul(this.transforms).setTranslation(0.0f, 0.0f, 0.0f);
       return this;
@@ -976,6 +1070,23 @@ public class RenderEngine {
       return this;
     }
 
+    public QueuedModel vertices(final int startVertex, final int vertexCount) {
+      this.startVertex = startVertex;
+      this.vertexCount = vertexCount;
+      return this;
+    }
+
+    private void reset() {
+      this.transforms.identity();
+      this.screenspaceOffset.zero();
+      this.colour.set(1.0f, 1.0f, 1.0f);
+      this.clutOverride.zero();
+      this.tpageOverride.zero();
+      this.uvOffset.zero();
+      this.scissor.set(0, 0, 0, 0);
+      this.vertexCount = 0;
+    }
+
     private void updateTransforms() {
       this.transforms.get(RenderEngine.this.transforms2Buffer);
       this.screenspaceOffset.get(16, RenderEngine.this.transforms2Buffer);
@@ -985,6 +1096,10 @@ public class RenderEngine {
       this.lightColour.get(16, RenderEngine.this.lightBuffer);
       this.backgroundColour.get(32, RenderEngine.this.lightBuffer);
       RenderEngine.this.lightUniform.set(RenderEngine.this.lightBuffer);
+    }
+
+    private void render(final Translucency translucency) {
+      this.obj.render(translucency, this.startVertex, this.vertexCount);
     }
   }
 

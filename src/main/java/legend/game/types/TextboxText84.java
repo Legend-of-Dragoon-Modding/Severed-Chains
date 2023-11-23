@@ -1,6 +1,7 @@
 package legend.game.types;
 
 import legend.core.gte.MV;
+import legend.game.inventory.screens.TextColour;
 
 public class TextboxText84 {
   public static final int END = 0xa0;
@@ -63,7 +64,7 @@ public class TextboxText84 {
 
   public LodString str_24;
 
-  public int textColour_28;
+  public TextColour textColour_28 = TextColour.WHITE;
 
   public int scrollSpeed_2a;
   /** Adjusts the Y value of the text as the box is scrolling */
@@ -103,12 +104,6 @@ public class TextboxText84 {
   public final MV transforms = new MV();
 
   public void delete() {
-    if(this.chars_58 != null) {
-      for(final TextboxChar08 chr : this.chars_58) {
-        chr.delete();
-      }
-
-      this.chars_58 = null;
-    }
+    this.chars_58 = null;
   }
 }

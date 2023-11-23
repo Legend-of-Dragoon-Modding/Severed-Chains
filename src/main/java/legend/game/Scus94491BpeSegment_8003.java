@@ -701,6 +701,9 @@ public final class Scus94491BpeSegment_8003 {
     GsMulCoord2(worldToScreenMatrix_800c3548, ls);
   }
 
+  private static final MV cameraTemp = new MV();
+  private static final MV cameraLw = new MV();
+  private static final MV cameraTransposedLw = new MV();
   private static final Matrix4f cameraParent = new Matrix4f();
 
   /**
@@ -741,33 +744,30 @@ public final class Scus94491BpeSegment_8003 {
     final float normalizedHypotenuse = horizontalLength / vectorLength;
 
     //LAB_8003e230
-    final MV sp0x30 = new MV();
-    FUN_8003cee0(sp0x30, normalizedY, normalizedHypotenuse, 0);
-    worldToScreenMatrix_800c3548.mul(sp0x30);
+    FUN_8003cee0(cameraTemp, normalizedY, normalizedHypotenuse, 0);
+    worldToScreenMatrix_800c3548.mul(cameraTemp);
 
     if(horizontalLength != 0) {
       final float normalizedX = -deltaX / horizontalLength;
       final float normalizedZ = deltaZ / horizontalLength;
 
-      FUN_8003cee0(sp0x30, normalizedX, normalizedZ, 1);
-      worldToScreenMatrix_800c3548.mul(sp0x30);
+      FUN_8003cee0(cameraTemp, normalizedX, normalizedZ, 1);
+      worldToScreenMatrix_800c3548.mul(cameraTemp);
     }
 
     //LAB_8003e474
     worldToScreenMatrix_800c3548.transfer.set(s2.viewpoint_00).negate().mul(worldToScreenMatrix_800c3548);
 
     if(s2.super_1c != null) {
-      final MV lw = new MV();
-      GsGetLw(s2.super_1c, lw);
+      GsGetLw(s2.super_1c, cameraLw);
 
-      final MV transposedLw = new MV();
-      lw.transpose(transposedLw);
-      lw.transfer.mul(transposedLw, transposedLw.transfer);
-      transposedLw.transfer.negate();
-      GsMulCoord2(worldToScreenMatrix_800c3548, transposedLw);
-      worldToScreenMatrix_800c3548.set(transposedLw);
+      cameraLw.transpose(cameraTransposedLw);
+      cameraLw.transfer.mul(cameraTransposedLw, cameraTransposedLw.transfer);
+      cameraTransposedLw.transfer.negate();
+      GsMulCoord2(worldToScreenMatrix_800c3548, cameraTransposedLw);
+      worldToScreenMatrix_800c3548.set(cameraTransposedLw);
 
-      cameraParent.set(lw).translate(-lw.transfer.x, -lw.transfer.y, -lw.transfer.z);
+      cameraParent.set(cameraLw).translate(-cameraLw.transfer.x, -cameraLw.transfer.y, -cameraLw.transfer.z);
       RENDERER.camera().getView().mul(cameraParent);
     }
 

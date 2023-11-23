@@ -2392,10 +2392,6 @@ public final class Bttl_800f {
         //LAB_800f6c90
         final int menuElementBaseX = menu.x_06 - menu.xShiftOffset_0a + iconIndex * 19;
         final int menuElementBaseY = menu.y_08 - battleMenuIconHeights_800fb6bc.get(iconId).get(iconState).get();
-        if((menu.iconFlags_10[iconIndex] & 0x80) != 0) {
-          menu.transforms.transfer.set(menuElementBaseX, menu.y_08 - (centreScreenY_1f8003de.get() + 16), 124.0f);
-          RENDERER.queueOrthoOverlayModel(menu.actionDisabledObj, menu.transforms);
-        }
 
         if(menu.selectedIcon_22 == iconIndex && menu.renderSelectedIconText_40) {
           // Selected combat menu icon text
@@ -2419,6 +2415,11 @@ public final class Bttl_800f {
             //LAB_800f6de0
             RENDERER.queueOrthoOverlayModel(menu.divineSpiritOverlay[iconState - 1], menu.transforms);
           }
+        }
+
+        if((menu.iconFlags_10[iconIndex] & 0x80) != 0) {
+          menu.transforms.transfer.set(menuElementBaseX, menu.y_08 - 16, 124.0f);
+          RENDERER.queueOrthoOverlayModel(menu.actionDisabledObj, menu.transforms);
         }
 
         //LAB_800f6fa4

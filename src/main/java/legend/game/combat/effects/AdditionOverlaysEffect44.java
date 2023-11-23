@@ -1,5 +1,7 @@
 package legend.game.combat.effects;
 
+import legend.core.gte.MV;
+import legend.core.opengl.Obj;
 import org.joml.Vector3f;
 
 public class AdditionOverlaysEffect44 implements Effect {
@@ -30,4 +32,7 @@ public class AdditionOverlaysEffect44 implements Effect {
   // Not needed anymore, just reference hit overlay array at index lastCompletedHit_39
   // public final Pointer<AdditionOverlaysHit20> lastCompletedHitOverlay_3c;
   public AdditionOverlaysHit20[] hitOverlays_40;
+
+  public Obj reticleBorderShadow;
+  public final MV transforms = new MV();
 }

@@ -12,9 +12,7 @@ import legend.core.gpu.Gpu;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.GpuCommandSetMaskBit;
-import legend.core.gpu.GpuCommandUntexturedQuad;
 import legend.core.gpu.RECT;
-import legend.core.gte.COLOUR;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
@@ -84,6 +82,7 @@ import static legend.game.Scus94491BpeSegment_8002.handleTextboxAndText;
 import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.renderTextboxes;
+import static legend.game.Scus94491BpeSegment_8002.renderUi;
 import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
 import static legend.game.Scus94491BpeSegment_8002.unloadEncounterSoundEffects;
 import static legend.game.Scus94491BpeSegment_8003.GsInitGraph;
@@ -193,6 +192,7 @@ import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
 import static legend.game.combat.Bttl_800c.cacheLivingBents;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
+import static legend.game.combat.Bttl_800c.endBattle;
 import static legend.game.combat.Bttl_800c.isCombatantModelLoaded;
 import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800c.renderSkybox;
@@ -201,6 +201,7 @@ import static legend.game.combat.Bttl_800d.updateBattleCamera;
 import static legend.game.combat.SBtld.stageData_80109a98;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F5;
 
 public final class Scus94491BpeSegment {
   private Scus94491BpeSegment() { }
@@ -229,7 +230,6 @@ public final class Scus94491BpeSegment {
 
   public static final Value _80010320 = MEMORY.ref(4, 0x80010320L);
 
-  public static final COLOUR colour_80010328 = MEMORY.ref(1, 0x80010328L, COLOUR::new);
   public static final Value _8001032c = MEMORY.ref(1, 0x8001032cL);
   public static final Value _80010334 = MEMORY.ref(1, 0x80010334L);
 
@@ -394,6 +394,10 @@ public final class Scus94491BpeSegment {
           Platform.runLater(Debugger::show);
         }
       }
+
+      if(key == GLFW_KEY_F5 && engineState_8004dd20 == EngineStateEnum.COMBAT_06) {
+        endBattle();
+      }
     });
 
     final MatrixStack matrixStack = new MatrixStack();
@@ -414,6 +418,8 @@ public final class Scus94491BpeSegment {
       RENDERER.window().setFpsLimit((60 / frames) * Config.getGameSpeedMultiplier());
 
       loadQueuedOverlay();
+
+      renderUi();
 
       if(currentEngineState_8004dd04 != null) {
         currentEngineState_8004dd04.tick();
@@ -625,6 +631,7 @@ public final class Scus94491BpeSegment {
   public static void swapDisplayBuffer() {
     GsSwapDispBuff();
     GsSortClear(clearRed_8007a3a8.get(), clearGreen_800bb104.get(), clearBlue_800babc0.get());
+    RENDERER.setClearColour(clearRed_8007a3a8.get() / 255.0f, clearGreen_800bb104.get() / 255.0f, clearBlue_800babc0.get() / 255.0f);
   }
 
   @Method(0x80013200L)
@@ -794,11 +801,13 @@ public final class Scus94491BpeSegment {
 
     //caseD_0
     //LAB_80013994
-
     // This causes the bright flash of light from the lightning, etc.
     if(fullScreenEffect_800bb140.red0_20 != 0 || fullScreenEffect_800bb140.green0_1c != 0 || fullScreenEffect_800bb140.blue0_14 != 0) {
+      fullScreenEffect_800bb140.transforms.scaling(displayWidth_1f8003e0.get(), displayHeight_1f8003e4.get(), 1.0f);
+      fullScreenEffect_800bb140.transforms.transfer.set(0.0f, 0.0f, 999.0f);
+
       //LAB_800139c4
-      RENDERER.queueOrthoOverlayModel(RENDERER.fullscreenWhiteout)
+      RENDERER.queueOrthoOverlayModel(RENDERER.plainQuads.get(Translucency.B_PLUS_F), fullScreenEffect_800bb140.transforms)
         .colour(fullScreenEffect_800bb140.red0_20 / 255.0f, fullScreenEffect_800bb140.green0_1c / 255.0f, fullScreenEffect_800bb140.blue0_14 / 255.0f);
     }
 
@@ -806,8 +815,11 @@ public final class Scus94491BpeSegment {
 
     // This causes the screen darkening from the lightning, etc.
     if(fullScreenEffect_800bb140.red1_18 != 0 || fullScreenEffect_800bb140.green1_10 != 0 || fullScreenEffect_800bb140.blue1_0c != 0) {
+      fullScreenEffect_800bb140.transforms.scaling(displayWidth_1f8003e0.get(), displayHeight_1f8003e4.get(), 1.0f);
+      fullScreenEffect_800bb140.transforms.transfer.set(0.0f, 0.0f, 999.0f);
+
       //LAB_80013b10
-      RENDERER.queueOrthoOverlayModel(RENDERER.fullscreenBlackout)
+      RENDERER.queueOrthoOverlayModel(RENDERER.plainQuads.get(Translucency.B_MINUS_F), fullScreenEffect_800bb140.transforms)
         .colour(fullScreenEffect_800bb140.red0_20 / 255.0f, fullScreenEffect_800bb140.green0_1c / 255.0f, fullScreenEffect_800bb140.blue0_14 / 255.0f);
     }
 
@@ -815,12 +827,12 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80013c3cL)
-  public static void drawFullScreenRect(final long colour, final Translucency transMode) {
-    final GpuCommandUntexturedQuad packet = new GpuCommandUntexturedQuad();
-    packet.translucent(transMode);
-    packet.monochrome((int)colour);
-    packet.pos(-centreScreenX_1f8003dc.get(), -centreScreenY_1f8003de.get(), displayWidth_1f8003e0.get() + 1, displayHeight_1f8003e4.get() + 1);
-    GPU.queueCommand(30, packet);
+  public static void drawFullScreenRect(final int colour, final Translucency transMode) {
+    fullScreenEffect_800bb140.transforms.scaling(displayWidth_1f8003e0.get(), displayHeight_1f8003e4.get(), 1.0f);
+    fullScreenEffect_800bb140.transforms.transfer.set(0.0f, 0.0f, 120.0f);
+
+    RENDERER.queueOrthoOverlayModel(RENDERER.plainQuads.get(transMode), fullScreenEffect_800bb140.transforms)
+      .monochrome(colour / 255.0f);
   }
 
   @Method(0x80013d78L)
@@ -1174,26 +1186,23 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x800180c0L)
-  public static long loadMcq(final McqHeader mcq, final long x, final long y) {
-    if((x & 0x3fL) != 0 || (y & 0xffL) != 0) {
+  public static void loadMcq(final McqHeader mcq, final int x, final int y) {
+    if((x & 0x3f) != 0 || (y & 0xff) != 0) {
       //LAB_800180e0
-      throw new RuntimeException("Invalid MCQ");
+      throw new RuntimeException("X/Y");
     }
 
     //LAB_800180e8
     if(mcq.magic_00 != McqHeader.MAGIC_1 && mcq.magic_00 != McqHeader.MAGIC_2) {
-      throw new RuntimeException("Invalid MCQ");
+      throw new RuntimeException("Invalid MCQ magic");
     }
 
     //LAB_80018104
     if(mcq.vramHeight_0a != 256) {
-      throw new RuntimeException("Invalid MCQ");
+      throw new RuntimeException("Invalid MCQ height");
     }
 
     LoadImage(new RECT((short)x, (short)y, (short)mcq.vramWidth_08, (short)mcq.vramHeight_0a), mcq.imageData);
-
-    //LAB_8001813c
-    return 0;
   }
 
   @Method(0x8001814cL)
@@ -1350,30 +1359,30 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80018a5cL)
-  public static void renderButtonPressHudElement(final int x, final int y, final int leftU, final int topV, final int rightU, final int bottomV, final int clutOffset, @Nullable final Translucency transMode, final COLOUR colour, final int a9, final int a10) {
+  public static void renderButtonPressHudElement(final int x, final int y, final int leftU, final int topV, final int rightU, final int bottomV, final int clutOffset, @Nullable final Translucency transMode, final int brightness, final int widthStretch, final int heightStretch) {
     final int w = Math.abs(rightU - leftU);
     final int h = Math.abs(bottomV - topV);
 
     final GpuCommandPoly cmd = new GpuCommandPoly(4)
-      .rgb(colour.getR(), colour.getG(), colour.getB());
+      .monochrome(brightness);
 
     if(transMode != null) {
       cmd.translucent(transMode);
     }
 
     //LAB_80018b38
-    if((short)a9 != 0x1000 || (short)a10 != (short)a9) {
+    if(widthStretch != 0x1000 || heightStretch != 0x1000) {
       //LAB_80018b90
-      final int sp10 = x + (short)w / 2;
-      final int sp12 = y + (short)h / 2;
-      final int a2 = (short)w * (short)a9 >> 13;
-      final int a1 = (short)h * (short)a10 >> 13;
+      final int left = x + w / 2;
+      final int top = y + h / 2;
+      final int offsetX = w * widthStretch / 2 >> 12;
+      final int offsetY = h * heightStretch / 2 >> 12;
 
       cmd
-        .pos(0, sp10 - a2, sp12 - a1)
-        .pos(1, sp10 + a2, sp12 - a1)
-        .pos(2, sp10 - a2, sp12 + a1)
-        .pos(3, sp10 + a2, sp12 + a1);
+        .pos(0, left - offsetX, top - offsetY)
+        .pos(1, left + offsetX, top - offsetY)
+        .pos(2, left - offsetX, top + offsetY)
+        .pos(3, left + offsetX, top + offsetY);
     } else {
       //LAB_80018c38
       cmd
@@ -1412,13 +1421,13 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80018d60L)
-  public static void renderButtonPressHudTexturedRect(final int x, final int y, final int u, final int v, final int width, final int height, final int clutOffset, @Nullable final Translucency transMode, final COLOUR colour, final int a9) {
-    renderButtonPressHudElement((short)x, (short)y, u & 0xff, v & 0xff, u + width & 0xff, v + height & 0xff, clutOffset, transMode, colour, a9, a9);
+  public static void renderButtonPressHudTexturedRect(final int x, final int y, final int u, final int v, final int width, final int height, final int clutOffset, @Nullable final Translucency transMode, final int brightness, final int stretch) {
+    renderButtonPressHudElement(x, y, u, v, u + width, v + height, clutOffset, transMode, brightness, stretch, stretch);
   }
 
   @Method(0x80018decL)
-  public static void renderDivineDragoonAdditionPressIris(final int x, final int y, final int u, final int v, final int width, final int height, final int clutOffset, @Nullable final Translucency transMode, final COLOUR colour, final int a9, final int a10) {
-    renderButtonPressHudElement(x, y, u, v, u + width, v + height, clutOffset, transMode, colour, a9, a10);
+  public static void renderDivineDragoonAdditionPressIris(final int x, final int y, final int u, final int v, final int width, final int height, final int clutOffset, @Nullable final Translucency transMode, final int brightness, final int widthStretch, final int heightStretch) {
+    renderButtonPressHudElement(x, y, u, v, u + width, v + height, clutOffset, transMode, brightness, widthStretch, heightStretch);
   }
 
   @Method(0x80018e84L)
@@ -1539,7 +1548,7 @@ public final class Scus94491BpeSegment {
             79,
             s0.clutAndTranslucency_0c,
             Translucency.of((s0.clutAndTranslucency_0c >>> 12 & 0x7) - 1),
-            colour_80010328,
+            0xff,
             s0._04 + 0x1000,
             s0._06 + 0x1000
           );

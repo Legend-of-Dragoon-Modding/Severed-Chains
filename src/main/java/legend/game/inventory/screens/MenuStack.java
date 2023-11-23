@@ -46,7 +46,9 @@ public class MenuStack {
   }
 
   public void popScreen() {
-    this.screens.pop().setStack(null);
+    final MenuScreen screen = this.screens.pop();
+    screen.setStack(null);
+    screen.delete();
 
     if(this.screens.isEmpty()) {
       this.removeInputHandlers();

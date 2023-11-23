@@ -384,14 +384,14 @@ public class ListBox<T> extends Control {
       textZ_800bdf00.set(oldZ);
 
       if(ListBox.this.entryToIcon != null) {
-        renderItemIcon(ListBox.this.entryToIcon.applyAsInt(this.data), x + 13, y + 1, 0x8L);
+        renderItemIcon(ListBox.this.entryToIcon.applyAsInt(this.data), x + 13, y + 1, 0x8);
       }
 
       if(ListBox.this.entryToRightIcon != null) {
         final int icon = ListBox.this.entryToRightIcon.applyAsInt(this.data);
 
         if(icon != -1) {
-          renderItemIcon(48 | icon, x + this.getWidth() - 20, y + 1, 0x8L).clut_30 = (500 + icon & 0x1ff) << 6 | 0x2b;
+          renderItemIcon(48 | icon, x + this.getWidth() - 20, y + 1, 0x8).clut_30 = (500 + icon & 0x1ff) << 6 | 0x2b;
         }
       }
     }

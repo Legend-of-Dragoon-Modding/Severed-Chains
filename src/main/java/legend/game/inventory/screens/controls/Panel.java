@@ -7,6 +7,7 @@ import legend.game.types.RenderableMetrics14;
 import legend.game.types.UiPart;
 import legend.game.types.UiType;
 
+import static legend.game.SItem.buildUiRenderable;
 import static legend.game.SItem.initGlyph;
 import static legend.game.Scus94491BpeSegment_8002.allocateManualRenderable;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderable;
@@ -111,7 +112,7 @@ public class Panel extends Control {
     super.onResize();
 
     if(this.background != null) {
-      final UiPart uiType = this.background.uiType_20.entries_08()[0];
+      final UiPart uiType = this.background.uiType_20.entries_08[0];
       uiType.metrics_00()[0] = new RenderableMetrics14(this.mu, this.mv, 8 + this.cw - this.mg, this.ch - this.mg, this.clut, this.tpage, this.getWidth() - (this.cw - this.mg) * 2 + this.mw, this.getHeight() - (this.ch - this.mg) * 2 + this.mh, this.mw, this.mh);
 
       uiType.metrics_00()[1] = new RenderableMetrics14(this.u0, this.v0, 8, 0, this.clut, this.tpage, this.cw, this.ch, this.cw, this.ch);
@@ -124,12 +125,30 @@ public class Panel extends Control {
       uiType.metrics_00()[6] = new RenderableMetrics14(this.u0, this.v2, 8, this.getHeight() - this.ch, this.clut, this.tpage, this.cw, this.ch, this.cw, this.ch);
       uiType.metrics_00()[7] = new RenderableMetrics14(this.u1, this.v2, 8 + this.cw, this.getHeight() - this.ch, this.clut, this.tpage, this.getWidth() - this.cw * 2, this.ch, this.mw, this.ch);
       uiType.metrics_00()[8] = new RenderableMetrics14(this.u2, this.v2, 8 + this.getWidth() - this.cw, this.getHeight() - this.ch, this.clut, this.tpage, this.cw, this.ch, this.cw, this.ch);
+
+      if(this.background.uiType_20.obj != null) {
+        this.background.uiType_20.obj.delete();
+        this.background.uiType_20.obj = null;
+      }
+    }
+  }
+
+  @Override
+  protected void delete() {
+    super.delete();
+
+    if(this.background.uiType_20.obj != null) {
+      this.background.uiType_20.obj.delete();
     }
   }
 
   @Override
   protected void render(final int x, final int y) {
     if(this.background != null) {
+      if(this.background.uiType_20.obj == null) {
+        this.background.uiType_20.obj = buildUiRenderable(this.background.uiType_20, "Panel Background");
+      }
+
       uploadRenderable(this.background, x, y);
     }
   }

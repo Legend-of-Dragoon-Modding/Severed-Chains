@@ -26,25 +26,27 @@ public class MeshObj extends Obj {
   }
 
   @Override
-  public void render(@Nullable final Translucency translucency) {
+  public void render(@Nullable final Translucency translucency, final int startVertex, final int vertexCount) {
     if(translucency == null) {
-      this.meshes[0].draw();
+      this.meshes[0].draw(startVertex, vertexCount);
     } else {
       if(translucency != Translucency.HALF_B_PLUS_HALF_F && translucency != Translucency.B_PLUS_F && translucency != Translucency.B_MINUS_F) {
         throw new RuntimeException("Need to implement " + translucency);
       }
 
-      this.meshes[translucency.ordinal() + 1].draw();
+      this.meshes[translucency.ordinal() + 1].draw(startVertex, vertexCount);
     }
   }
 
   @Override
   public void delete() {
-    super.delete();
+    if(!this.deleted) {
+      super.delete();
 
-    for(final Mesh mesh : this.meshes) {
-      if(mesh != null) {
-        mesh.delete();
+      for(final Mesh mesh : this.meshes) {
+        if(mesh != null) {
+          mesh.delete();
+        }
       }
     }
   }

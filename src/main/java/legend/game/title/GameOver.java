@@ -90,6 +90,11 @@ public class GameOver extends EngineState {
 
       case 6 -> {
         deallocateRenderables(0xff);
+
+        if(uiFile_800bdc3c != null) {
+          uiFile_800bdc3c.delete();
+        }
+
         uiFile_800bdc3c = null;
         gameOverMcq_800bdc3c = null;
         engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;

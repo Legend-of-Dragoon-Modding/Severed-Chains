@@ -2,6 +2,7 @@ package legend.game.combat;
 
 import legend.core.Config;
 import legend.core.MathHelper;
+import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Gpu;
 import legend.core.gpu.GpuCommand;
@@ -29,6 +30,7 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.TriConsumer;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
+import legend.core.opengl.QuadBuilder;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.deff.Anim;
 import legend.game.combat.deff.DeffManager7cc;
@@ -42,7 +44,6 @@ import legend.game.combat.effects.AdditionOverlaysEffect44;
 import legend.game.combat.effects.AdditionOverlaysHit20;
 import legend.game.combat.effects.BillboardSpriteEffect0c;
 import legend.game.combat.effects.DeffTmdRenderer14;
-import legend.game.combat.effects.Effect;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerData6cInner;
 import legend.game.combat.effects.ElectricityEffect38;
@@ -114,12 +115,12 @@ import org.joml.Vector3i;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
+import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
@@ -160,7 +161,6 @@ import static legend.game.combat.Bttl_800c.FUN_800cf684;
 import static legend.game.combat.Bttl_800c.FUN_800cfb94;
 import static legend.game.combat.Bttl_800c.FUN_800cfc20;
 import static legend.game.combat.Bttl_800c.ZERO;
-import static legend.game.combat.Bttl_800c.callScriptFunction;
 import static legend.game.combat.Bttl_800c.colourMapUvs_800fb0ec;
 import static legend.game.combat.Bttl_800c.currentStage_800c66a4;
 import static legend.game.combat.Bttl_800c.deffManager_800c693c;
@@ -177,6 +177,7 @@ import static legend.game.combat.Bttl_800d.getRotationFromTransforms;
 import static legend.game.combat.Bttl_800d.loadModelAnim;
 import static legend.game.combat.Bttl_800d.optimisePacketsIfNecessary;
 import static legend.game.combat.Bttl_800d.refpointRawComponent;
+import static legend.game.combat.Bttl_800d.renderButtonPressHudElement1;
 import static legend.game.combat.Bttl_800d.renderTmdSpriteEffect;
 import static legend.game.combat.Bttl_800e.FUN_800e60e0;
 import static legend.game.combat.Bttl_800e.FUN_800e6170;
@@ -3457,19 +3458,16 @@ public final class SEffe {
 
   /** Runs callbacks to render correct button icon effects during addition */
   @Method(0x80106050L)
-  public static void renderAdditionButton(final long a0, final boolean isCounter) {
-    final Consumer<RunningScript<?>> callback = Bttl_800d::scriptRenderButtonPressHudElement;
-
-    // Params: ?, x, y, translucency, colour
+  public static void renderAdditionButton(final int frames, final boolean isCounter) {
     final int offset = isCounter ? 1 : 0;
-    if(Math.abs((byte)a0) >= 2) {  // Button up position
-      callScriptFunction(callback, 0x24, 119, 43, Translucency.B_PLUS_F.ordinal(), 0x80);
-      callScriptFunction(callback, additionButtonRenderCallbackIndices_800fb7bc.get(offset).get(), 115, 48, 0x1, 0x80);
+    if(Math.abs(frames) >= 2) {  // Button up position
+      renderButtonPressHudElement1(0x24, 119, 43, Translucency.B_PLUS_F, 0x80);
+      renderButtonPressHudElement1(additionButtonRenderCallbackIndices_800fb7bc.get(offset).get(), 115, 48, Translucency.B_PLUS_F, 0x80);
     } else {  // Button down position
       //LAB_80106114
-      callScriptFunction(callback, 0x24, 119, 51, Translucency.B_PLUS_F.ordinal(), 0x80);
-      callScriptFunction(callback, additionButtonRenderCallbackIndices_800fb7bc.get(offset + 2).get(), 115, 48, Translucency.B_PLUS_F.ordinal(), 0x80);
-      callScriptFunction(callback, 0x25, 115, 50, Translucency.B_PLUS_F.ordinal(), 0x80);
+      renderButtonPressHudElement1(0x24, 119, 51, Translucency.B_PLUS_F, 0x80);
+      renderButtonPressHudElement1(additionButtonRenderCallbackIndices_800fb7bc.get(offset + 2).get(), 115, 48, Translucency.B_PLUS_F, 0x80);
+      renderButtonPressHudElement1(0x25, 115, 50, Translucency.B_PLUS_F, 0x80);
     }
   }
 
@@ -3496,6 +3494,16 @@ public final class SEffe {
   @Method(0x801062a8L)
   public static void initializeAdditionOverlaysEffect(final int attackerScriptIndex, final int targetScriptIndex, final AdditionOverlaysEffect44 effect, final int autoCompleteType) {
     final BattleEntity27c s5 = (BattleEntity27c)scriptStatePtrArr_800bc1c0[attackerScriptIndex].innerStruct_00;
+
+    effect.reticleBorderShadow = new QuadBuilder("Reticle background")
+      .translucency(Translucency.B_MINUS_F)
+      .monochrome(0, 0.0f)
+      .monochrome(1, 0.0f)
+      .monochrome(2, 1.0f)
+      .monochrome(3, 1.0f)
+      .pos(-1.0f, -0.5f, 0.0f)
+      .size(1.0f, 1.0f)
+      .build();
 
     //LAB_8010633c
     int hitNum;
@@ -3562,15 +3570,15 @@ public final class SEffe {
       int val = 16;
       for(int borderNum = 0; borderNum < 17; borderNum++) {
         final AdditionOverlaysBorder0e borderOverlay = borderArray[borderNum];
-        borderOverlay.size_08 = (short)((0x12 - val) * 0xa);
+        borderOverlay.size_08 = (18 - val) * 10;
         borderOverlay.isVisible_00 = true;
         //LAB_8010656c
         //LAB_80106574
-        borderOverlay.angleModifier_02 = (short)((0x10 - val) * 0x80 + 0x200);
+        borderOverlay.angleModifier_02 = Math.toRadians((16 - val) * 11.25f);
         borderOverlay.countFramesVisible_0c = 5;
         borderOverlay.sideEffects_0d = 0;
-        borderOverlay.framesUntilRender_0a = (short)(hitOverlay.frameSuccessLowerBound_10 + (hitOverlay.numSuccessFrames_0e - 0x1) / 2 + val - 0x11);
-        borderOverlay.r_04 = additionBorderColours_800fb7f0.get(hitOverlay.borderColoursArrayIndex_02 * 3).get()& 0xff;
+        borderOverlay.framesUntilRender_0a = (short)(hitOverlay.frameSuccessLowerBound_10 + (hitOverlay.numSuccessFrames_0e - 1) / 2 + val - 17);
+        borderOverlay.r_04 = additionBorderColours_800fb7f0.get(hitOverlay.borderColoursArrayIndex_02 * 3).get() & 0xff;
         borderOverlay.g_05 = additionBorderColours_800fb7f0.get(hitOverlay.borderColoursArrayIndex_02 * 3 + 1).get() & 0xff;
         borderOverlay.b_06 = additionBorderColours_800fb7f0.get(hitOverlay.borderColoursArrayIndex_02 * 3 + 2).get() & 0xff;
 
@@ -3581,10 +3589,10 @@ public final class SEffe {
       val = 0;
       for(int borderNum = 16; borderNum >= 14; borderNum--) {
         final AdditionOverlaysBorder0e borderOverlay = borderArray[borderNum];
-        borderOverlay.size_08 = (short)(0x14 - val * 0x2);
-        borderOverlay.angleModifier_02 = (short)0x200;
+        borderOverlay.size_08 = 20 - val * 2;
+        borderOverlay.angleModifier_02 = 0.0f;
         borderOverlay.countFramesVisible_0c = 0x11;
-        borderOverlay.framesUntilRender_0a = (short)(hitOverlay.frameSuccessLowerBound_10 - 0x11);
+        borderOverlay.framesUntilRender_0a = hitOverlay.frameSuccessLowerBound_10 - 17;
 
         if(val != 0x1L) {
           borderOverlay.r_04 = 0x30;
@@ -3653,151 +3661,105 @@ public final class SEffe {
   }
 
   @Method(0x80106808L)
-  public static void renderAdditionCentreSolidSquare(final Effect a0, final AdditionOverlaysHit20 hitOverlay, final int completionState, final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> a3, final EffectManagerData6c effect) {
-    if(effect._10.flags_00 >= 0) {
+  public static void renderAdditionCentreSolidSquare(final AdditionOverlaysEffect44 effect, final AdditionOverlaysHit20 hitOverlay, final int completionState, final EffectManagerData6c<?> manager) {
+    if(manager._10.flags_00 >= 0) {
       final AdditionOverlaysBorder0e[] targetBorderArray = hitOverlay.borderArray_18;
 
       //LAB_8010685c
       for(int targetBorderNum = 0; targetBorderNum < 2; targetBorderNum++) {
         final int squareSize = targetBorderArray[16].size_08 - targetBorderNum * 8;
 
-        //LAB_80106874
-        final int[] vertexCoords = new int[8];
-        for(int i = 0; i < 4; i++) {
-          vertexCoords[i * 2] = rcos(targetBorderArray[16].angleModifier_02 + i * 0x400) * squareSize >> 12;
-          vertexCoords[i * 2 + 1] = (rsin(targetBorderArray[16].angleModifier_02 + i * 0x400) * squareSize >> 12) + 30;
-        }
-
-        final GpuCommandPoly cmd = new GpuCommandPoly(4);
+        effect.transforms.scaling(squareSize * 2.0f, squareSize * 2.0f, 1.0f);
+        effect.transforms.transfer.set(GPU.getOffsetX() + squareSize, GPU.getOffsetY() + squareSize + 30.0f, 120.0f);
+        final RenderEngine.QueuedModel model = RENDERER.queueOrthoOverlayModel(RENDERER.centredQuadBPlusF, effect.transforms);
 
         if(completionState == 1) {  // Success
-          cmd.monochrome(0xff);
-          //LAB_80106918
+          model.monochrome(1.0f);
         } else if(completionState != -2) {  // Too early
-          //LAB_80106988
-          cmd.monochrome(0x30);
+          model.monochrome(0x30 / 255.0f);
         } else if(hitOverlay.isCounter_1c) {  // Counter-attack too late
           if(Config.changeAdditionOverlayRgb()) {
-            cmd.rgb(additionBorderColours_800fb7f0.get(6).get(), additionBorderColours_800fb7f0.get(7).get(), (additionBorderColours_800fb7f0.get(8).get() * 8 - 2) * 8);
+            model.colour(additionBorderColours_800fb7f0.get(6).get() / 255.0f, additionBorderColours_800fb7f0.get(7).get() / 255.0f, (additionBorderColours_800fb7f0.get(8).get() * 8 - 2) * 8 / 255.0f);
           } else {
-            cmd.rgb(targetBorderArray[15].r_04 * 3, targetBorderArray[15].g_05, (targetBorderArray[15].b_06 - 1) * 8);
+            model.colour(targetBorderArray[15].r_04 * 3 / 255.0f, targetBorderArray[15].g_05 / 255.0f, (targetBorderArray[15].b_06 - 1) * 8 / 255.0f);
           }
         } else {  // Too late
-          //LAB_80106964
-          cmd.rgb(targetBorderArray[15].r_04, targetBorderArray[15].g_05, targetBorderArray[15].b_06);
+          model.colour(targetBorderArray[15].r_04 / 255.0f, targetBorderArray[15].g_05 / 255.0f, targetBorderArray[15].b_06 / 255.0f);
         }
-
-        //LAB_80106994
-        cmd
-          .translucent(Translucency.B_PLUS_F)
-          .pos(0, vertexCoords[0], vertexCoords[1])
-          .pos(1, vertexCoords[2], vertexCoords[3])
-          .pos(2, vertexCoords[6], vertexCoords[5])
-          .pos(3, vertexCoords[4], vertexCoords[7]);
-        GPU.queueCommand(30, cmd);
       }
     }
+
     //LAB_80106a4c
   }
 
   /** Renders the shadow on the inside of the innermost rotating border. */
   @Method(0x80106ac4L)
-  public static void renderAdditionBorderShadow(final AdditionOverlaysHit20 hitOverlay, final int angle0, final int borderSize) {
-    final int angle1 = angle0 + 0x400;
-    final int offset0 = borderSize - 1;
-    final int offset1 = borderSize - 11;
-    final int x0 = rcos(angle0) * offset0 >> 12;
-    final int x1 = rcos(angle1) * offset0 >> 12;
-    final int x2 = rcos(angle0) * offset1 >> 12;
-    final int x3 = rcos(angle1) * offset1 >> 12;
-    final int y0 = rsin(angle0) * offset0 >> 12;
-    final int y1 = rsin(angle1) * offset0 >> 12;
-    final int y2 = rsin(angle0) * offset1 >> 12;
-    final int y3 = rsin(angle1) * offset1 >> 12;
+  public static void renderAdditionBorderShadow(final AdditionOverlaysEffect44 effect, final AdditionOverlaysHit20 hitOverlay, final float angle, final int borderSize) {
+    // Would you believe me if I said I knew what I was doing when I wrote any of this?
+    final int offset = borderSize - 1;
+    final float sin0 = MathHelper.sin(angle);
+    final float cos0 = MathHelper.cosFromSin(sin0, angle);
+    final float x0 = cos0 * offset / 2.0f;
+    final float y0 = sin0 * offset / 2.0f;
     final int colour = hitOverlay.shadowColour_08 * 4;
 
-    final GpuCommandPoly cmd = new GpuCommandPoly(4)
-      .translucent(Translucency.B_MINUS_F)
-      .monochrome(0, colour)
-      .monochrome(1, colour)
-      .monochrome(2, 0)
-      .monochrome(3, 0)
-      .pos(0, x0, y0 + 30)
-      .pos(1, x1, y1 + 30)
-      .pos(2, x2, y2 + 30)
-      .pos(3, x3, y3 + 30);
+    effect.transforms.transfer.set(x0 + GPU.getOffsetX(), y0 + GPU.getOffsetY() + 30.0f, 124.0f);
+    effect.transforms
+      .scaling(10.0f, borderSize, 1.0f)
+      .rotateLocalZ(angle);
 
-    GPU.queueCommand(31, cmd);
+    RENDERER.queueOrthoOverlayModel(effect.reticleBorderShadow, effect.transforms)
+      .monochrome(colour / 255.0f);
   }
 
   @Method(0x80106cccL)
-  public static void renderAdditionBorders(final int a0, final int hitNum, final AdditionOverlaysEffect44 effect, final AdditionOverlaysHit20[] hitArray, final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state) {
+  public static void renderAdditionBorders(final AdditionOverlaysEffect44 effect, final int hitNum, final AdditionOverlaysHit20[] hitArray) {
     final AdditionOverlaysBorder0e[] borderArray = hitArray[hitNum].borderArray_18;
     final byte currentHitCompletionState = additionHitCompletionState_8011a014[hitNum];
 
     //LAB_80106d18
     for(int borderNum = 0; borderNum < 17; borderNum++) {
       final AdditionOverlaysBorder0e borderOverlay = borderArray[borderNum];
-      if(borderOverlay.isVisible_00) {
-        if(borderOverlay.framesUntilRender_0a <= 0) {
-          final int borderSize = borderOverlay.size_08;
-          int x0 = rcos(borderOverlay.angleModifier_02) * borderSize >> 12;
-          int y0 = (rsin(borderOverlay.angleModifier_02) * borderSize >> 12) + 30;
 
-          //LAB_80106d80
-          int angleModifier = 0;
-          for(long lineNum = 0; lineNum < 4; lineNum++) {
-            final GpuCommandLine cmd = new GpuCommandLine();
+      if(borderOverlay.isVisible_00 && borderOverlay.framesUntilRender_0a <= 0) {
+        effect.transforms
+          .scaling(borderOverlay.size_08, borderOverlay.size_08, 1.0f)
+          .rotateZ(borderOverlay.angleModifier_02);
+        effect.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY() + 30.0f, 120.0f);
 
-            final int sideEffects = borderOverlay.sideEffects_0d;
+        final RenderEngine.QueuedModel model;
 
-            //LAB_80106dc0
-            // Set translucent if button press is failure and border sideEffects_0d not innermost rotating border or target (15)
-            if(sideEffects != 0 && sideEffects != -1 || currentHitCompletionState < 0) {
-              //LAB_80106de8
-              cmd.translucent(Translucency.B_PLUS_F);
-            }
+        // Set translucent if button press is failure and border sideEffects_0d not innermost rotating border or target (15)
+        if((borderOverlay.sideEffects_0d == 0 || borderOverlay.sideEffects_0d == -1) && currentHitCompletionState >= 0) {
+          model = RENDERER.queueOrthoOverlayModel(RENDERER.lineBox, effect.transforms);
+        } else {
+          model = RENDERER.queueOrthoOverlayModel(RENDERER.lineBoxBPlusF, effect.transforms);
+        }
 
+        if(hitArray[hitNum].isCounter_1c && borderNum != 16) {
+          if(Config.changeAdditionOverlayRgb()) {
+            final int rgb = Config.getCounterOverlayRgb();
 
-            if(hitArray[hitNum].isCounter_1c && borderNum != 0x10) {
-              if(Config.changeAdditionOverlayRgb()) {
-                final int rgb = Config.getCounterOverlayRgb();
+            // Hack to get around lack of separate counterattack color field until full dememulation
+            final float rFactor = borderArray[borderNum].r_04 / (float)additionBorderColours_800fb7f0.get(9).get();
+            final float gFactor = borderArray[borderNum].g_05 / (float)additionBorderColours_800fb7f0.get(10).get();
+            final float bFactor = borderArray[borderNum].b_06 / (float)additionBorderColours_800fb7f0.get(11).get();
 
-                // Hack to get around lack of separate counterattack color field until full dememulation
-                final float rFactor = borderArray[borderNum].r_04 / (float)additionBorderColours_800fb7f0.get(9).get();
-                final float gFactor = borderArray[borderNum].g_05 / (float)additionBorderColours_800fb7f0.get(10).get();
-                final float bFactor = borderArray[borderNum].b_06 / (float)additionBorderColours_800fb7f0.get(11).get();
-
-                cmd.rgb(Math.round((rgb & 0xff) * rFactor), Math.round((rgb >> 8 & 0xff) * gFactor), Math.round((rgb >> 16 & 0xff) * bFactor));
-              } else {
-                cmd.rgb(borderOverlay.r_04 * 3, borderOverlay.g_05, (borderOverlay.b_06 + 1) / 8);
-              }
-            } else {
-              //LAB_80106e58
-              cmd.rgb(borderOverlay.r_04, borderOverlay.g_05, borderOverlay.b_06);
-            }
-
-            //LAB_80106e74
-            angleModifier += 0x400;
-            final int x1 = rcos(borderOverlay.angleModifier_02 + angleModifier) * borderSize >> 12;
-            final int y1 = (rsin(borderOverlay.angleModifier_02 + angleModifier) * borderSize >> 12) + 30;
-            cmd
-              .pos(0, x0, y0)
-              .pos(1, x1, y1);
-
-            GPU.queueCommand(30, cmd);
-
-            x0 = x1;
-            y0 = y1;
+            model.colour((rgb & 0xff) * rFactor / 255.0f, (rgb >> 8 & 0xff) * gFactor / 255.0f, (rgb >> 16 & 0xff) * bFactor / 255.0f);
+          } else {
+            model.colour(borderOverlay.r_04 * 3 / 255.0f, borderOverlay.g_05 / 255.0f, (borderOverlay.b_06 + 1) / 8.0f / 255.0f);
           }
+        } else {
+          //LAB_80106e58
+          model.colour(borderOverlay.r_04 / 255.0f, borderOverlay.g_05 / 255.0f, borderOverlay.b_06 / 255.0f);
+        }
 
-          // Renders rotating shadow on innermost rotating border
-          if(borderOverlay.sideEffects_0d == 0) {
-            renderAdditionBorderShadow(hitArray[hitNum], borderOverlay.angleModifier_02 + angleModifier, borderSize);
-            renderAdditionBorderShadow(hitArray[hitNum], borderOverlay.angleModifier_02 + angleModifier + 0x400, borderSize);
-            renderAdditionBorderShadow(hitArray[hitNum], borderOverlay.angleModifier_02 + angleModifier + 0x800, borderSize);
-            renderAdditionBorderShadow(hitArray[hitNum], borderOverlay.angleModifier_02 + angleModifier + 0xc00, borderSize);
-          }
+        // Renders rotating shadow on innermost rotating border
+        if(borderOverlay.sideEffects_0d == 0) {
+          renderAdditionBorderShadow(effect, hitArray[hitNum], borderOverlay.angleModifier_02, borderOverlay.size_08 * 2);
+          renderAdditionBorderShadow(effect, hitArray[hitNum], borderOverlay.angleModifier_02 + MathHelper.HALF_PI, borderOverlay.size_08 * 2);
+          renderAdditionBorderShadow(effect, hitArray[hitNum], borderOverlay.angleModifier_02 + MathHelper.PI, borderOverlay.size_08 * 2);
+          renderAdditionBorderShadow(effect, hitArray[hitNum], borderOverlay.angleModifier_02 + MathHelper.PI + MathHelper.HALF_PI, borderOverlay.size_08 * 2);
         }
       }
       //LAB_80106fac
@@ -3901,7 +3863,7 @@ public final class SEffe {
         int hitNum;
         for(hitNum = 0; hitNum < effect.count_30; hitNum++) {
           if(CONFIG.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) == AdditionOverlayMode.FULL) {
-            renderAdditionBorders(hitArray[hitNum].borderColoursArrayIndex_02, hitNum, effect, hitArray, state);
+            renderAdditionBorders((AdditionOverlaysEffect44)data.effect_44, hitNum, hitArray);
           }
         }
 
@@ -3917,13 +3879,13 @@ public final class SEffe {
         if(hitNum < effect.count_30) {
           final AdditionOverlaysHit20 hitOverlay = hitArray[hitNum];
           if(CONFIG.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) == AdditionOverlayMode.FULL) {
-            renderAdditionButton((byte)(hitOverlay.frameSuccessLowerBound_10 + (hitOverlay.frameSuccessUpperBound_12 - hitOverlay.frameSuccessLowerBound_10) / 2 - effect.currentFrame_34 - 0x1L), hitOverlay.isCounter_1c);
+            renderAdditionButton(hitOverlay.frameSuccessLowerBound_10 + (hitOverlay.frameSuccessUpperBound_12 - hitOverlay.frameSuccessLowerBound_10) / 2 - effect.currentFrame_34 - 1, hitOverlay.isCounter_1c);
           }
 
           final byte currentFrame = (byte)effect.currentFrame_34;
           if(currentFrame >= hitOverlay.frameSuccessLowerBound_10 && currentFrame <= hitOverlay.frameSuccessUpperBound_12) {
             if(CONFIG.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) != AdditionOverlayMode.OFF) {
-              renderAdditionCentreSolidSquare(effect, hitOverlay, -2, state, data);
+              renderAdditionCentreSolidSquare(effect, hitOverlay, -2, data);
             }
           }
         }
@@ -4055,8 +4017,7 @@ public final class SEffe {
           if(effect.numFramesToRenderCenterSquare_38 != 0) {
             effect.numFramesToRenderCenterSquare_38--;
             if(CONFIG.getConfig(CoreMod.ADDITION_OVERLAY_CONFIG.get()) != AdditionOverlayMode.OFF) {
-              renderAdditionCentreSolidSquare(effect, effect.hitOverlays_40[effect.lastCompletedHit_39],
-                additionHitCompletionState_8011a014[effect.lastCompletedHit_39], state, data);
+              renderAdditionCentreSolidSquare(effect, effect.hitOverlays_40[effect.lastCompletedHit_39], additionHitCompletionState_8011a014[effect.lastCompletedHit_39], data);
             }
           }
         }
@@ -4088,7 +4049,7 @@ public final class SEffe {
       script.scriptState_04,
       SEffe::tickAdditionOverlaysEffect,
       SEffe::renderAdditionOverlaysEffect,
-      null,
+      (state1, manager) -> ((AdditionOverlaysEffect44)manager.effect_44).reticleBorderShadow.delete(),
       new AdditionOverlaysEffect44()
     );
 
@@ -4162,34 +4123,32 @@ public final class SEffe {
     final int y0 = daddyHudOffsetY_8011a020.get();
     final int x1 = x0 + 16;
     final int y1 = y0 + 70;
-    final Consumer<RunningScript<?>> func = Bttl_800d::scriptRenderButtonPressHudElement;
 
     final int buttonHudMetricsIndex;
     // Button arrow placement
     if(getCurrentDragoonAdditionPressNumber(daddy, 0) != 0) {
-      callScriptFunction(func, 36, x1, y0 + 64, 1, 128);
+      renderButtonPressHudElement1(36, x1, y0 + 64, Translucency.B_PLUS_F, 128);
       buttonHudMetricsIndex = 33;
     } else {
       //LAB_80107a80
       if(getCurrentDragoonAdditionPressNumber(daddy, 2) != 0) {
-        callScriptFunction(func, 36, x1, y0 + 60, 1, 128);
+        renderButtonPressHudElement1(36, x1, y0 + 60, Translucency.B_PLUS_F, 128);
         buttonHudMetricsIndex = 33;
       } else {
         //LAB_80107ad4
-        callScriptFunction(func, 36, x1, y0 + 56, 1, 128);
+        renderButtonPressHudElement1(36, x1, y0 + 56, Translucency.B_PLUS_F, 128);
         buttonHudMetricsIndex = 35;
       }
     }
 
     //LAB_80107b10
     // Button
-    callScriptFunction(func, buttonHudMetricsIndex, x0 + 12, y0 + 66, 1, 128);
+    renderButtonPressHudElement1(buttonHudMetricsIndex, x0 + 12, y0 + 66, Translucency.B_PLUS_F, 128);
 
     // Button press red glow
     if(daddy.buttonPressGlowBrightnessFactor_11 != 0) {
-      final int colour = daddy.buttonPressGlowBrightnessFactor_11 * 0x40 - 1;
-      final COLOUR rgb = new COLOUR().set(colour, colour, colour);
-      callScriptFunction(func, 20, x1 - 4, y1 - 4, 1, 128);
+      final int brightness = daddy.buttonPressGlowBrightnessFactor_11 * 0x40 - 1;
+      renderButtonPressHudElement1(20, x1 - 4, y1 - 4, Translucency.B_PLUS_F, 128);
       renderButtonPressHudElement(
         (short)x1 - 2,
         (short)y1 - 5,
@@ -4199,7 +4158,7 @@ public final class SEffe {
         143,
         0xc,
         Translucency.B_PLUS_F,
-        rgb,
+        brightness,
         daddy.buttonPressGlowBrightnessFactor_11 * 256 + 6404,
         daddy.buttonPressGlowBrightnessFactor_11 * 256 + 4096
       );
@@ -4210,30 +4169,29 @@ public final class SEffe {
 
     //LAB_80107c08
     // Press number
-    callScriptFunction(func, hudMetricsIndexOffset + 4, x1 + 36, y1, 1, 128);
+    renderButtonPressHudElement1(hudMetricsIndexOffset + 4, x1 + 36, y1, Translucency.B_PLUS_F, 128);
     // Button count background left edge
-    callScriptFunction(func, 24,     x1 -  4, y1,      1, 128);
-    callScriptFunction(func, 26,     x1 -  4, y1 + 12, 1, 128);
-    callScriptFunction(func, 30,     x1 -  4, y1 +  4, 1, 128);
+    renderButtonPressHudElement1(24, x1 -  4, y1,      Translucency.B_PLUS_F, 128);
+    renderButtonPressHudElement1(26, x1 -  4, y1 + 12, Translucency.B_PLUS_F, 128);
+    renderButtonPressHudElement1(30, x1 -  4, y1 +  4, Translucency.B_PLUS_F, 128);
 
     //LAB_80107cd4
     // Button count background main
     for(int i = 0; i < 48; i += 8) {
-      callScriptFunction(func, 28, x1 + i, y1,      1, 128);
-      callScriptFunction(func, 29, x1 + i, y1 + 12, 1, 128);
-      callScriptFunction(func, 32, x1 + i, y1 +  4, 1, 128);
+      renderButtonPressHudElement1(28, x1 + i, y1,      Translucency.B_PLUS_F, 128);
+      renderButtonPressHudElement1(29, x1 + i, y1 + 12, Translucency.B_PLUS_F, 128);
+      renderButtonPressHudElement1(32, x1 + i, y1 +  4, Translucency.B_PLUS_F, 128);
     }
 
     // Button count background right edge
-    callScriptFunction(func, 25, x1 + 48, y1     , 1, 128);
-    callScriptFunction(func, 27, x1 + 48, y1 + 12, 1, 128);
-    callScriptFunction(func, 31, x1 + 48, y1 +  4, 1, 128);
+    renderButtonPressHudElement1(25, x1 + 48, y1     , Translucency.B_PLUS_F, 128);
+    renderButtonPressHudElement1(27, x1 + 48, y1 + 12, Translucency.B_PLUS_F, 128);
+    renderButtonPressHudElement1(31, x1 + 48, y1 +  4, Translucency.B_PLUS_F, 128);
   }
 
   @Method(0x80107dc4L)
   public static void renderDragoonAdditionHud_(final DragoonAdditionScriptData1c daddy, final int transModesIndex, final int angle) {
-    final int colour = (daddySpinnerBrightnessFactor_80119fb4.get() + 1) * 0x40;
-    final COLOUR rgb = new COLOUR().set(colour, colour, colour);
+    int brightness = (daddySpinnerBrightnessFactor_80119fb4.get() + 1) * 0x40;
 
     final int y = daddyHudOffsetY_8011a020.get() + (rsin(angle) * 17 >> 12) + 24;
 
@@ -4246,14 +4204,14 @@ public final class SEffe {
 
     //LAB_80108048
     // Spinner star
-    renderButtonPressHudTexturedRect(x, y, 128, 64, 16, 16, 51, Translucency.B_PLUS_F, rgb, 0x1000);
+    renderButtonPressHudTexturedRect(x, y, 128, 64, 16, 16, 51, Translucency.B_PLUS_F, brightness, 0x1000);
 
-    rgb.set(0x80, 0x80, 0x80);
+    brightness = 0x80;
 
     //LAB_801080ac
     for(int i = 0; i < 5; i++) {
       if(daddy.currentPressNumber_07 < i) {
-        rgb.set(0x10, 0x10, 0x10);
+        brightness = 0x10;
       }
 
       //LAB_801080cc
@@ -4267,7 +4225,7 @@ public final class SEffe {
         daddyHudMeterDimensions_800fb82c.get(i).get(1).get(),
         53 + i,
         Translucency.B_PLUS_F,
-        rgb,
+        brightness,
         0x1000
       );
     }
@@ -4275,7 +4233,7 @@ public final class SEffe {
     // Button press textures
     renderDragoonAdditionButtonPressTextures(daddy);
 
-    rgb.set(0x80, 0x80, 0x80);
+    brightness = 0x80;
 
     //LAB_801081a8
     for(int i = 0; i < daddy.countEyeFlashTicks_0d; i++) {
@@ -4289,7 +4247,7 @@ public final class SEffe {
         31,
         daddyHudEyeClutOffsets_800fb84c.get(daddy.charId_18).get(),
         Translucency.B_PLUS_F,
-        rgb,
+        brightness,
         0x1000
       );
 
@@ -4303,7 +4261,7 @@ public final class SEffe {
           23,
           12,
           Translucency.B_PLUS_F,
-          rgb,
+          brightness,
           0x800,
           0x1800
         );
@@ -4323,7 +4281,7 @@ public final class SEffe {
       24,
       50,
       Translucency.HALF_B_PLUS_HALF_F,
-      rgb,
+      brightness,
       0x1000
     );
     // Dark eye overlay
@@ -4336,7 +4294,7 @@ public final class SEffe {
       31,
       daddyHudEyeClutOffsets_800fb84c.get(daddy.charId_18).get(),
       Translucency.of(daddyHudEyeTranslucencyModes_800fb7fc.get(transModesIndex).get(0).get()),
-      rgb,
+      brightness,
       0x1000
     );
     // Flat center overlay
@@ -4349,7 +4307,7 @@ public final class SEffe {
       40,
       52,
       Translucency.of(daddyHudEyeTranslucencyModes_800fb7fc.get(transModesIndex).get(1).get()),
-      rgb,
+      brightness,
       0x1000
     );
     // Frame top portion
@@ -4361,7 +4319,7 @@ public final class SEffe {
       48,
       daddyHudFrameClutOffsets_800fb840.get(daddy.charId_18).get(),
       null,
-      rgb,
+      brightness,
       0x1000
     );
     // Frame bottom portion
@@ -4374,7 +4332,7 @@ public final class SEffe {
       8,
       daddyHudFrameClutOffsets_800fb840.get(daddy.charId_18).get(),
       null,
-      rgb,
+      brightness,
       0x1000
     );
     daddySpinnerBrightnessFactor_80119fb4.set(1 - daddySpinnerBrightnessFactor_80119fb4.get());
@@ -4575,7 +4533,7 @@ public final class SEffe {
   public static void tickPerfectDragoonAdditionEffect(final ScriptState<PerfectDragoonAdditionEffect30> state, final PerfectDragoonAdditionEffect30 effect) {
     //LAB_80108a38
     for(int i = 7; i >= 0; i--) {
-      final COLOUR rgb = new COLOUR().set(0x80, 0x80, 0x80);
+      int brightness = 0x80;
 
       final int u = perfectDaddyGlyphUs_80119fbc.get(i).get();
       final int v = perfectDaddyGlyphVs_80119fc4.get(i).get();
@@ -4595,9 +4553,7 @@ public final class SEffe {
         //LAB_80108aac
         //LAB_80108ac4
         for(int j = 0; j < 4; j++) {
-          rgb.r.sub(32);
-          rgb.g.sub(32);
-          rgb.b.sub(32);
+          brightness -= 0x20;
           renderButtonPressHudTexturedRect(
             glyph.currentXPosition_02 + j * 6,
             daddyHudOffsetY_8011a020.get() + 16,
@@ -4607,7 +4563,7 @@ public final class SEffe {
             16,
             41,
             Translucency.B_PLUS_F,
-            rgb,
+            brightness,
             0x1000
           );
         }
@@ -4642,7 +4598,7 @@ public final class SEffe {
         16,
         41,
         Translucency.B_PLUS_F,
-        rgb,
+        brightness,
         0x1000
       );
 
@@ -4656,7 +4612,7 @@ public final class SEffe {
           16,
           41,
           Translucency.B_PLUS_F,
-          rgb,
+          brightness,
           0x1000
         );
       }
@@ -9916,9 +9872,8 @@ public final class SEffe {
 
             //LAB_80118ce4
             if(buffPos.h.get() > 0) {
-              final int scale = GPU.getScale();
-              final int[] data = new int[buffPos.w.get() * scale * buffPos.h.get() * scale];
-              final Rect4i rect = new Rect4i(buffPos.x.get() * scale, buffPos.y.get() * scale, buffPos.w.get() * scale, buffPos.h.get() * scale);
+              final int[] data = new int[buffPos.w.get() * buffPos.h.get()];
+              final Rect4i rect = new Rect4i(buffPos.x.get(), buffPos.y.get(), buffPos.w.get(), buffPos.h.get());
 
               // Back up draw buffer data after background is rendered, but before models are rendered
               GPU.queueCommand(maxZ, new GpuCommand() {

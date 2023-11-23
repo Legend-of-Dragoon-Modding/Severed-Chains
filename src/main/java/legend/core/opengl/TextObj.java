@@ -18,13 +18,15 @@ public class TextObj extends Obj {
   }
 
   @Override
-  public void render(@Nullable final Translucency translucency) {
-    this.mesh.draw();
+  public void render(@Nullable final Translucency translucency, final int startVertex, final int vertexCount) {
+    this.mesh.draw(startVertex, vertexCount);
   }
 
   @Override
   public void delete() {
-    super.delete();
-    this.mesh.delete();
+    if(!this.deleted) {
+      super.delete();
+      this.mesh.delete();
+    }
   }
 }

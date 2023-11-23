@@ -412,7 +412,7 @@ public class ShopScreen extends MenuScreen {
       int i;
       for(i = 0; firstItem + i < gameState_800babc8.items_2e9.size() && i < 6; i++) {
         final Item item = gameState_800babc8.items_2e9.get(firstItem + i);
-        renderItemIcon(item.getIcon(), 151, this.menuEntryY(i), 0x8L);
+        renderItemIcon(item.getIcon(), 151, this.menuEntryY(i), 0x8);
         renderText(new LodString(item.getName()), 168, this.menuEntryY(i) + 2, TextColour.BROWN);
 
         final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4.get(), item, item.getPrice()));
@@ -424,14 +424,14 @@ public class ShopScreen extends MenuScreen {
       int i;
       for(i = 0; firstItem + i < gameState_800babc8.equipment_1e8.size() && i < 6; i++) {
         final Equipment equipment = gameState_800babc8.equipment_1e8.get(firstItem + i);
-        renderItemIcon(equipment.icon_0e, 151, this.menuEntryY(i), 0x8L);
+        renderItemIcon(equipment.icon_0e, 151, this.menuEntryY(i), 0x8);
         renderText(new LodString(equipment.name), 168, this.menuEntryY(i) + 2, equipment.canBeDiscarded() ? TextColour.BROWN : TextColour.MIDDLE_BROWN);
 
         if(equipment.canBeDiscarded()) {
           final ShopSellPriceEvent event = EVENTS.postEvent(new ShopSellPriceEvent(shopId_8007a3b4.get(), equipment, equipment.getPrice()));
           renderFiveDigitNumber(322, this.menuEntryY(i) + 4, event.price);
         } else {
-          renderItemIcon(58, 330, this.menuEntryY(i), 0x8L).clut_30 = 0x7eaa;
+          renderItemIcon(58, 330, this.menuEntryY(i), 0x8).clut_30 = 0x7eaa;
         }
       }
 
@@ -447,7 +447,7 @@ public class ShopScreen extends MenuScreen {
       final ShopEntry<? extends InventoryEntry> item = list.get(startItemIndex + i);
       renderText(new LodString(item.item.getName()), 168, this.menuEntryY(i) + 2, TextColour.BROWN);
       renderFiveDigitNumber(324, this.menuEntryY(i) + 4, item.price);
-      renderItemIcon(item.item.getIcon(), 151, this.menuEntryY(i), 0x8L);
+      renderItemIcon(item.item.getIcon(), 151, this.menuEntryY(i), 0x8);
     }
 
     upArrow.setVisible(startItemIndex != 0);

@@ -1140,7 +1140,7 @@ public final class Bttl_800d {
     } while(true);
 
     //LAB_800d3864
-    renderButtonPressHudTexturedRect(displayX, displayY, charIdx % 21 * 12 & 0xfc, charIdx / 21 * 12 + 144 & 0xfc, 12, 12, 0xa, Translucency.B_PLUS_F, new COLOUR().set(charAlpha, charAlpha, charAlpha), 0x1000);
+    renderButtonPressHudTexturedRect(displayX, displayY, charIdx % 21 * 12 & 0xfc, charIdx / 21 * 12 + 144 & 0xfc, 12, 12, 0xa, Translucency.B_PLUS_F, charAlpha, 0x1000);
   }
 
   /**
@@ -1321,8 +1321,8 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d3f98L)
-  public static void FUN_800d3f98(final short x, final short y, final int a2, final short a3, final int colour) {
-    renderButtonPressHudTexturedRect(x, y, a2 * 8 + 16 & 0xf8, 40, 8, 16, a3, Translucency.B_PLUS_F, new COLOUR().set(colour, colour, colour), 0x1000);
+  public static void FUN_800d3f98(final short x, final short y, final int a2, final short a3, final int brightness) {
+    renderButtonPressHudTexturedRect(x, y, a2 * 8 + 16 & 0xf8, 40, 8, 16, a3, Translucency.B_PLUS_F, brightness, 0x1000);
   }
 
   @Method(0x800d4018L)
@@ -1515,19 +1515,18 @@ public final class Bttl_800d {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "brightness", description = "The brightness")
   @Method(0x800d46d4L)
   public static FlowControl scriptRenderButtonPressHudElement(final RunningScript<?> script) {
-    final ButtonPressHudMetrics06 metrics = buttonPressHudMetrics_800faaa0.get(script.params_20[0].get());
+    renderButtonPressHudElement1(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), Translucency.of(script.params_20[3].get()), script.params_20[4].get());
+    return FlowControl.CONTINUE;
+  }
 
-    final COLOUR colour = new COLOUR().set(script.params_20[4].get(), script.params_20[4].get(), script.params_20[4].get());
+  public static void renderButtonPressHudElement1(final int type, final int x, final int y, final Translucency translucency, final int brightness) {
+    final ButtonPressHudMetrics06 metrics = buttonPressHudMetrics_800faaa0.get(type);
 
     if(metrics.hudElementType_00.get() == 0) {
-      renderButtonPressHudTexturedRect(script.params_20[1].get(), script.params_20[2].get(), metrics.u_01.get(), metrics.v_02.get(), metrics.wOrRightU_03.get(), metrics.hOrBottomV_04.get(), metrics.clutOffset_05.get(), Translucency.of(script.params_20[3].get()), colour, 0x1000);
+      renderButtonPressHudTexturedRect(x, y, metrics.u_01.get(), metrics.v_02.get(), metrics.wOrRightU_03.get(), metrics.hOrBottomV_04.get(), metrics.clutOffset_05.get(), translucency, brightness, 0x1000);
     } else {
-      //LAB_800d4784
-      renderButtonPressHudElement(script.params_20[1].get(), script.params_20[2].get(), metrics.u_01.get(), metrics.v_02.get(), metrics.wOrRightU_03.get(), metrics.hOrBottomV_04.get(), metrics.clutOffset_05.get(), Translucency.of(script.params_20[3].get()), colour, 0x1000, 0x1000);
+      renderButtonPressHudElement(x, y, metrics.u_01.get(), metrics.v_02.get(), metrics.wOrRightU_03.get(), metrics.hOrBottomV_04.get(), metrics.clutOffset_05.get(), translucency, brightness, 0x1000, 0x1000);
     }
-
-    //LAB_800d47cc
-    return FlowControl.CONTINUE;
   }
 
   /**

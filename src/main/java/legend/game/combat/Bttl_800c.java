@@ -21,6 +21,7 @@ import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
+import legend.core.opengl.McqBuilder;
 import legend.core.opengl.Obj;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.EngineStateEnum;
@@ -87,7 +88,6 @@ import legend.game.modding.events.battle.BattleEndedEvent;
 import legend.game.modding.events.battle.BattleEntityTurnEvent;
 import legend.game.modding.events.battle.BattleStartedEvent;
 import legend.game.scripting.FlowControl;
-import legend.game.scripting.IntParam;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
 import legend.game.scripting.ScriptEnum;
@@ -118,12 +118,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
+import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
@@ -139,7 +139,6 @@ import static legend.game.Scus94491BpeSegment.loadMcq;
 import static legend.game.Scus94491BpeSegment.loadMusicPackage;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
-import static legend.game.Scus94491BpeSegment.renderMcq;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.setDepthResolution;
 import static legend.game.Scus94491BpeSegment.simpleRand;
@@ -153,7 +152,6 @@ import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
-import static legend.game.Scus94491BpeSegment_8002.initTextboxArrowsAndSelection;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.scriptDeallocateAllTextboxes;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
@@ -1040,7 +1038,6 @@ public final class Bttl_800c {
     //LAB_800c760c
     allocateStageDarkeningStorage();
     btldLoadEncounterSoundEffectsAndMusic();
-    initTextboxArrowsAndSelection();
 
     pregameLoadingStage_800bb10c.incr();
   }
@@ -1363,15 +1360,7 @@ public final class Bttl_800c {
 
             //LAB_800c7d74
           } else { // Monsters dead
-            FUN_80020308();
-
-            if(encounterId_800bb0f8.get() != 443) { // Standard victory
-              postBattleActionIndex_800bc974.set(1);
-              startEncounterSounds();
-            } else { // Melbu Victory
-              //LAB_800c7d30
-              postBattleActionIndex_800bc974.set(4);
-            }
+            endBattle();
           }
         }
       } else { // Game over
@@ -1387,6 +1376,18 @@ public final class Bttl_800c {
     }
 
     //LAB_800c7d98
+  }
+
+  public static void endBattle() {
+    FUN_80020308();
+
+    if(encounterId_800bb0f8.get() != 443) { // Standard victory
+      postBattleActionIndex_800bc974.set(1);
+      startEncounterSounds();
+    } else { // Melbu Victory
+      //LAB_800c7d30
+      postBattleActionIndex_800bc974.set(4);
+    }
   }
 
   @Method(0x800c7da8L)
@@ -1534,6 +1535,10 @@ public final class Bttl_800c {
         battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].obj.delete();
       }
 
+      if(battlePreloadedEntities_1f8003f4.skyboxObj != null) {
+        battlePreloadedEntities_1f8003f4.skyboxObj.delete();
+      }
+
       script_800c66fc = null;
 
       //LAB_800c8314
@@ -1667,17 +1672,35 @@ public final class Bttl_800c {
     } else {
       final McqHeader mcq = battlePreloadedEntities_1f8003f4.stageMcq_9cb0;
 
+      if(mcq.screenWidth_14 < 16 || mcq.screenHeight_16 < 16) {
+        return;
+      }
+
+      if(battlePreloadedEntities_1f8003f4.skyboxObj == null) {
+        battlePreloadedEntities_1f8003f4.skyboxObj = new McqBuilder("Battle Skybox", mcq)
+          .vramOffset(320, 0)
+          .build();
+      }
+
       mcqOffsetX_800c6774.add(mcqStepX_800c676c.get());
       mcqOffsetY_800c6778.add(mcqStepY_800c6770.get());
-      final int x0 = (mcqBaseOffsetX_800c66cc.get() * MathHelper.radToPsxDeg(calculateXAngleFromRefpointToViewpoint()) / 0x1000 + mcqOffsetX_800c6774.get()) % mcq.screenWidth_14 - centreScreenX_1f8003dc.get();
+      final int x0 = (mcqBaseOffsetX_800c66cc.get() * MathHelper.radToPsxDeg(calculateXAngleFromRefpointToViewpoint()) / 0x1000 + mcqOffsetX_800c6774.get()) % mcq.screenWidth_14;
       final int x1 = x0 - mcq.screenWidth_14;
       final int x2 = x0 + mcq.screenWidth_14;
-      int y = mcqOffsetY_800c6778.get() - MathHelper.radToPsxDeg(MathHelper.floorMod(calculateYAngleFromRefpointToViewpoint() + MathHelper.PI, MathHelper.TWO_PI)) + 0x760 - centreScreenY_1f8003de.get();
-      renderMcq(mcq, 320, 0, x0, y, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
-      renderMcq(mcq, 320, 0, x1, y, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
+      int y = mcqOffsetY_800c6778.get() - MathHelper.radToPsxDeg(MathHelper.floorMod(calculateYAngleFromRefpointToViewpoint() + MathHelper.PI, MathHelper.TWO_PI)) + 1888;
 
-      if(centreScreenX_1f8003dc.get() >= x2) {
-        renderMcq(mcq, 320, 0, x2, y, orderingTableSize_1f8003c8.get() - 2, mcqColour_800fa6dc.get());
+      battlePreloadedEntities_1f8003f4.skyboxTransforms.transfer.set(x0, y, orderingTableSize_1f8003c8.get() - 8.0f);
+      RENDERER.queueOrthoUnderlayModel(battlePreloadedEntities_1f8003f4.skyboxObj, battlePreloadedEntities_1f8003f4.skyboxTransforms)
+        .monochrome(mcqColour_800fa6dc.get() / 128.0f);
+
+      battlePreloadedEntities_1f8003f4.skyboxTransforms.transfer.set(x1, y, orderingTableSize_1f8003c8.get() - 8.0f);
+      RENDERER.queueOrthoUnderlayModel(battlePreloadedEntities_1f8003f4.skyboxObj, battlePreloadedEntities_1f8003f4.skyboxTransforms)
+        .monochrome(mcqColour_800fa6dc.get() / 128.0f);
+
+      if(x2 <= centreScreenX_1f8003dc.get() * 2) {
+        battlePreloadedEntities_1f8003f4.skyboxTransforms.transfer.set(x2, y, orderingTableSize_1f8003c8.get() - 8.0f);
+        RENDERER.queueOrthoUnderlayModel(battlePreloadedEntities_1f8003f4.skyboxObj, battlePreloadedEntities_1f8003f4.skyboxTransforms)
+          .monochrome(mcqColour_800fa6dc.get() / 128.0f);
       }
 
       //LAB_800c89d4
@@ -1705,6 +1728,11 @@ public final class Bttl_800c {
 
   @Method(0x800c8b20L)
   public static void loadStage(final int stage) {
+    if(battlePreloadedEntities_1f8003f4.skyboxObj != null) {
+      battlePreloadedEntities_1f8003f4.skyboxObj.delete();
+      battlePreloadedEntities_1f8003f4.skyboxObj = null;
+    }
+
     loadDrgnDir(0, 2497 + stage, files -> {
       if(files.get(0).hasVirtualSize()) {
         loadStageMcq(new McqHeader(files.get(0)));
@@ -1751,7 +1779,7 @@ public final class Bttl_800c {
 
   @Method(0x800c8d64L)
   public static void loadStageMcq(final McqHeader mcq) {
-    final long x;
+    final int x;
     if((battleFlags_800bc960.get() & 0x80) != 0) {
       x = 320;
       shouldRenderMcq_800c6764.set(1);
@@ -4744,25 +4772,6 @@ public final class Bttl_800c {
   public static FlowControl scriptSetMtSeed(final RunningScript<?> script) {
     setMtSeed(script.params_20[0].get());
     return FlowControl.CONTINUE;
-  }
-
-  /**
-   * Holy crap this method was complicated... the way the stack is set up, all params after a3 are part of the sp0x90 array. Count is the number of parameters.
-   * It's basically a variadic method so I'm changing the signature to that.
-   * <p>
-   * This method allows you to call a script function from the main game engine. Variadic params get passed in as the param array.
-   */
-  @Method(0x800cff54L)
-  public static void callScriptFunction(final Consumer<RunningScript<?>> func, final int... params) {
-    final RunningScript<Void> script = new RunningScript<>(null);
-
-    //LAB_800cff90
-    for(int i = 0; i < params.length; i++) {
-      script.params_20[i] = new IntParam(params[i]);
-    }
-
-    //LAB_800cffbc
-    func.accept(script);
   }
 
   /** Sets translation vector to position of individual part of model associated with scriptIndex */

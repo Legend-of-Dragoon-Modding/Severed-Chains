@@ -139,29 +139,54 @@ public class BattleMenuStruct58 {
   public void delete() {
     for(int i = 0; i < this.actionIconObj.length; i++) {
       for(int state = 0; state < this.actionIconObj[i].length; state++) {
-        this.actionIconObj[i][state].delete();
+        if(this.actionIconObj[i][state] != null) {
+          this.actionIconObj[i][state].delete();
+          this.actionIconObj[i][state] = null;
+        }
       }
 
-      this.actionIconTextObj[i].delete();
-      this.actionMenuBackground[i].delete();
+      if(this.actionIconTextObj[i] != null) {
+        this.actionIconTextObj[i].delete();
+        this.actionIconTextObj[i] = null;
+      }
+
+      if(this.actionMenuBackground[i] != null) {
+        this.actionMenuBackground[i].delete();
+        this.actionMenuBackground[i] = null;
+      }
     }
 
     for(int i = 0; i < this.dragoonIconObj.length; i++) {
       for(int state = 0; state < this.dragoonIconObj[i].length; state++) {
-        this.dragoonIconObj[i][state].delete();
+        if(this.dragoonIconObj[i][state] != null) {
+          this.dragoonIconObj[i][state].delete();
+          this.dragoonIconObj[i][state] = null;
+        }
       }
     }
 
-    this.actionDisabledObj.delete();
-
-    for(int i = 0; i < 2; i++) {
-      this.divineSpiritOverlay[i].delete();
+    if(this.actionDisabledObj != null) {
+      this.actionDisabledObj.delete();
+      this.actionDisabledObj = null;
     }
 
-    this.highlight.delete();
+    for(int i = 0; i < 2; i++) {
+      if(this.divineSpiritOverlay[i] != null) {
+        this.divineSpiritOverlay[i].delete();
+        this.divineSpiritOverlay[i] = null;
+      }
+    }
+
+    if(this.highlight != null) {
+      this.highlight.delete();
+      this.highlight = null;
+    }
 
     for(int i = 0; i < this.targetArrows.length; i++) {
-      this.targetArrows[i].delete();
+      if(this.targetArrows[i] != null) {
+        this.targetArrows[i].delete();
+        this.targetArrows[i] = null;
+      }
     }
   }
 }

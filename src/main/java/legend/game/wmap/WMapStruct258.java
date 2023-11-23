@@ -3,6 +3,7 @@ package legend.game.wmap;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.opengl.MeshObj;
+import legend.core.opengl.Obj;
 import legend.game.types.Model124;
 import legend.game.unpacker.FileData;
 import org.joml.Vector3f;
@@ -12,18 +13,24 @@ public class WMapStruct258 {
   /** ubyte */
   public int _04;
   /** ubyte */
-  public int _05;
+  public WmapStateEnum wmapState_05;
 
   public WMapTmdRenderingStruct18 tmdRendering_08;
   public final Model124[] models_0c = new Model124[4];
   public TextureAnimation20 textureAnimation_1c;
   /** short */
   public float colour_20;
+
   public MeshObj mapOverlayObj;
-  public MeshObj zoomOverlayObjs[] = new MeshObj[7];
+  public MeshObj[] zoomOverlayObjs = new MeshObj[7];
   public final MV mapOverlayTransforms = new MV();
 
-  public WMapAtmosphericEffectInstance60[] _24;
+  public MapMarker mapArrow;
+  public MapMarker coolonPlaceMarker;
+
+  public WMapAtmosphericEffectInstance60[] atmosphericEffectInstances_24;
+  public MeshObj[] atmosphericEffectSprites;
+
   public float clutYIndex_28;
   public FileData imageData_2c;
   public FileData imageData_30;
@@ -36,8 +43,8 @@ public class WMapStruct258 {
   public int animIndex_b0;
   public final WMapStruct258Sub40[] _b4 = {new WMapStruct258Sub40(), new WMapStruct258Sub40(), new WMapStruct258Sub40(), new WMapStruct258Sub40()};
 
-  /** short */
-  public final int[] _1c4 = new int[16];
+  public Obj shadowObj;
+  public final MV shadowTransforms = new MV();
   public int modelIndex_1e4;
   public final Vector3f svec_1e8 = new Vector3f();
   public final Vector3f svec_1f0 = new Vector3f();
@@ -80,4 +87,20 @@ public class WMapStruct258 {
   public int _24c;
   public int _250;
   public int _254;
+
+  public void deleteAtmosphericEffectObjs() {
+    for(int i = 0; i < this.atmosphericEffectSprites.length; i++) {
+      if(this.atmosphericEffectSprites[i] != null) {
+        this.atmosphericEffectSprites[i].delete();
+        this.atmosphericEffectSprites[i] = null;
+      }
+    }
+  }
+
+  public void deleteMapMarkers() {
+    this.mapArrow.delete();
+    this.mapArrow = null;
+    this.coolonPlaceMarker.delete();
+    this.coolonPlaceMarker = null;
+  }
 }
