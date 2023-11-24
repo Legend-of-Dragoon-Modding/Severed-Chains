@@ -2347,6 +2347,11 @@ public class WMap extends EngineState {
 
       //LAB_800d9320
       GsGetLws(dobj2.coord2_04, lightMatrix, rotTransMatrix);
+
+      if(i == 0) {
+        lightMatrix.transfer.add(0.0f, 1.0f, 0.0f);
+      }
+      
       GsSetLightMatrix(lightMatrix);
       GTE.setTransforms(rotTransMatrix);
 
