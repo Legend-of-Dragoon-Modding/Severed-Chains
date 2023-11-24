@@ -3408,10 +3408,8 @@ public class WMap extends EngineState {
 
     final Vector3f pos0 = new Vector3f();
     final Vector3f pos1 = new Vector3f();
-    final Vector3f posDelta0 = new Vector3f();
-    final Vector3f negDelta0 = new Vector3f();
-    final Vector3f posDelta1 = new Vector3f();
-    final Vector3f negDelta1 = new Vector3f();
+    final Vector3f delta0 = new Vector3f();
+    final Vector3f delta1 = new Vector3f();
     
     final WMapStruct258 struct = this.wmapStruct258_800c66a8;
 
@@ -3430,17 +3428,10 @@ public class WMap extends EngineState {
     //LAB_800e1ccc
     for(int i = 0; i < 39; i++) {
       //LAB_800e1ce8
-      this.getQueenFuryWakeMetrics(i, posDelta0, pos0, colourScaleFactor, deltaScaleFactor);
-      posDelta0.mul(deltaScaleFactor.get());
-      negDelta0.set(posDelta0).negate();
-      vertex0.set(pos0).add(posDelta0);
+      this.getQueenFuryWakeMetrics(i, delta0, pos0, colourScaleFactor, deltaScaleFactor);
+      delta0.mul(deltaScaleFactor.get());
+      vertex0.set(pos0).add(delta0);
       vertex1.set(pos0);
-
-      this.getQueenFuryWakeMetrics(i + 1, posDelta1, pos1, colourScaleFactor, deltaScaleFactor);
-      posDelta1.mul(deltaScaleFactor.get());
-      negDelta1.set(posDelta1).negate();
-      vertex2.set(pos1).add(posDelta1);
-      vertex3.set(pos1);
 
       int baseColour = 256 - colourScaleFactor.get() * 256 / 40;
       final int r0 = baseColour * 96 / 256;
@@ -3449,6 +3440,11 @@ public class WMap extends EngineState {
       final int r1 = 0;
       final int g1 = baseColour / 8;
       final int b1 = baseColour * 96 / 256;
+
+      this.getQueenFuryWakeMetrics(i + 1, delta1, pos1, colourScaleFactor, deltaScaleFactor);
+      delta1.mul(deltaScaleFactor.get());
+      vertex2.set(pos1).add(delta1);
+      vertex3.set(pos1);
 
       baseColour = 256 - colourScaleFactor.get() * 256 / 40;
       final int r2 = baseColour * 96 / 256;
@@ -3488,8 +3484,8 @@ public class WMap extends EngineState {
       }
 
       //LAB_800e2440
-      vertex0.set(pos0).add(negDelta0);
-      vertex2.set(pos1).add(negDelta1);
+      vertex0.set(pos0).sub(delta0);
+      vertex2.set(pos1).sub(delta1);
       z = RotTransPers4(vertex0, vertex1, vertex2, vertex3, sxyz0, sxyz1, sxyz2, sxyz3);
 
       if(z >= 3 && z < orderingTableSize_1f8003c8.get()) {
