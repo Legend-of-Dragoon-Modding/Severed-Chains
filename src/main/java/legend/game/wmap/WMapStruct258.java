@@ -88,7 +88,7 @@ public class WMapStruct258 {
 
   // _224 through _248 are used for rendering the Queen Fury's wake, though they are
   // initialized regardless.
-  public Vector3f[] shipPosDeltasArray_224;
+  public Vector3f[] wakeSpreadsArray_224;
   public Vector3f[] shipPositionsArray_228;
   public int[] wakeSegmentNumArray_22c;
   public int currShipPositionIndex_230;

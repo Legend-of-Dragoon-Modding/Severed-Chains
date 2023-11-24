@@ -3408,19 +3408,20 @@ public class WMap extends EngineState {
 
     final Vector3f pos0 = new Vector3f();
     final Vector3f pos1 = new Vector3f();
-    final Vector3f delta0 = new Vector3f();
-    final Vector3f delta1 = new Vector3f();
+    final Vector3f spread0 = new Vector3f();
+    final Vector3f spread1 = new Vector3f();
     
     final WMapStruct258 struct = this.wmapStruct258_800c66a8;
 
     final Vector3f playerPosDelta = new Vector3f(struct.prevPlayerPos_84).sub(struct.currPlayerPos_94);
+    final Vector3f wakeSpread = new Vector3f();
     if(flEq(playerPosDelta.x, 0.0f) && flEq(playerPosDelta.y, 0.0f) && flEq(playerPosDelta.z, 0.0f)) {
-      playerPosDelta.set(0.0f);
+      wakeSpread.set(0.0f);
     } else {
-      playerPosDelta.normalize().cross(this.shipWakeCrossVector_800c87d8);
+      wakeSpread.set(playerPosDelta).normalize().cross(this.shipWakeCrossVector_800c87d8);
     }
 
-    this.updateQueenFuryWakePositionAndDelta(playerPosDelta, struct.currPlayerPos_94);
+    this.updateQueenFuryWakePositionAndSpread(wakeSpread, struct.currPlayerPos_94);
     this.rotateCoord2(struct.tmdRendering_08.rotations_08[0], struct.tmdRendering_08.coord2s_04[0]);
     GsGetLs(struct.tmdRendering_08.coord2s_04[0], transforms);
     GTE.setTransforms(transforms);
@@ -3428,9 +3429,9 @@ public class WMap extends EngineState {
     //LAB_800e1ccc
     for(int i = 0; i < 39; i++) {
       //LAB_800e1ce8
-      this.getQueenFuryWakeMetrics(i, delta0, pos0, colourScaleFactor, deltaScaleFactor);
-      delta0.mul(deltaScaleFactor.get());
-      vertex0.set(pos0).add(delta0);
+      this.getQueenFuryWakeMetrics(i, spread0, pos0, colourScaleFactor, deltaScaleFactor);
+      spread0.mul(deltaScaleFactor.get());
+      vertex0.set(pos0).add(spread0);
       vertex1.set(pos0);
 
       int baseColour = 256 - colourScaleFactor.get() * 256 / 40;
@@ -3441,9 +3442,9 @@ public class WMap extends EngineState {
       final int g1 = baseColour / 8;
       final int b1 = baseColour * 96 / 256;
 
-      this.getQueenFuryWakeMetrics(i + 1, delta1, pos1, colourScaleFactor, deltaScaleFactor);
-      delta1.mul(deltaScaleFactor.get());
-      vertex2.set(pos1).add(delta1);
+      this.getQueenFuryWakeMetrics(i + 1, spread1, pos1, colourScaleFactor, deltaScaleFactor);
+      spread1.mul(deltaScaleFactor.get());
+      vertex2.set(pos1).add(spread1);
       vertex3.set(pos1);
 
       baseColour = 256 - colourScaleFactor.get() * 256 / 40;
@@ -3484,8 +3485,8 @@ public class WMap extends EngineState {
       }
 
       //LAB_800e2440
-      vertex0.set(pos0).sub(delta0);
-      vertex2.set(pos1).sub(delta1);
+      vertex0.set(pos0).sub(spread0);
+      vertex2.set(pos1).sub(spread1);
       z = RotTransPers4(vertex0, vertex1, vertex2, vertex3, sxyz0, sxyz1, sxyz2, sxyz3);
 
       if(z >= 3 && z < orderingTableSize_1f8003c8.get()) {
@@ -3533,7 +3534,7 @@ public class WMap extends EngineState {
   private void initQueenFuryWake(final int segmentCount, final int stride) {
     final int count = segmentCount * stride;
 
-    this.wmapStruct258_800c66a8.shipPosDeltasArray_224 = new Vector3f[count];
+    this.wmapStruct258_800c66a8.wakeSpreadsArray_224 = new Vector3f[count];
     this.wmapStruct258_800c66a8.shipPositionsArray_228 = new Vector3f[count];
 
     this.wmapStruct258_800c66a8.wakeSegmentNumArray_22c = new int[count];
@@ -3543,14 +3544,14 @@ public class WMap extends EngineState {
     this.wmapStruct258_800c66a8.wakeSegmentStride_23c = stride;
 
     //NOTE: there's a bug in the original code, it just sets the first vector in the array over and over again
-    Arrays.setAll(this.wmapStruct258_800c66a8.shipPosDeltasArray_224, i -> new Vector3f());
+    Arrays.setAll(this.wmapStruct258_800c66a8.wakeSpreadsArray_224, i -> new Vector3f());
     Arrays.setAll(this.wmapStruct258_800c66a8.shipPositionsArray_228, i -> new Vector3f());
 
     this.wmapStruct258_800c66a8.shipPositionsUninitialized_244 = true;
   }
 
   @Method(0x800e2ae4L)
-  private void updateQueenFuryWakePositionAndDelta(final Vector3f playerPosDelta, final Vector3f currPlayerPos) {
+  private void updateQueenFuryWakePositionAndSpread(final Vector3f wakeSpread, final Vector3f currPlayerPos) {
     final WMapStruct258 struct = this.wmapStruct258_800c66a8;
 
     if(struct.shipPositionsUninitialized_244) {
@@ -3566,7 +3567,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800e2cc4
-    struct.shipPosDeltasArray_224[struct.currShipPositionIndex_230].set(playerPosDelta);
+    struct.wakeSpreadsArray_224[struct.currShipPositionIndex_230].set(wakeSpread);
     struct.shipPositionsArray_228[struct.currShipPositionIndex_230].set(currPlayerPos);
 
     struct.wakeSegmentNumArray_22c[struct.currShipPositionIndex_230] = 0;
@@ -3576,14 +3577,15 @@ public class WMap extends EngineState {
   }
 
   @Method(0x800e2e1cL)
-  private void getQueenFuryWakeMetrics(final int index, final Vector3f delta, final Vector3f position, final IntRef colourFadeFactor, final IntRef deltaScaleFactor) {
+  private void getQueenFuryWakeMetrics(final int index, final Vector3f spread, final Vector3f position, final IntRef colourFadeFactor, final IntRef spreadScaleFactor) {
+    final int angle;
     final WMapStruct258 struct = this.wmapStruct258_800c66a8;
     if(index == 0) {
-      delta.set(struct.shipPosDeltasArray_224[struct.prevShipPositionIndex_234]);
+      spread.set(struct.wakeSpreadsArray_224[struct.prevShipPositionIndex_234]);
       position.set(struct.shipPositionsArray_228[struct.prevShipPositionIndex_234]);
       colourFadeFactor.set(struct.wakeSegmentNumArray_22c[struct.prevShipPositionIndex_234]);
-      final int v0 = struct.wakeSegmentNumArray_22c[struct.prevShipPositionIndex_234] - (int)(struct.tickNum_240 / (3.0f / vsyncMode_8007a3b8));
-      deltaScaleFactor.set(struct.wakeSegmentNumArray_22c[struct.prevShipPositionIndex_234] + (rsin(v0 << 8 & 0x7ff) * struct.wakeSegmentNumArray_22c[struct.prevShipPositionIndex_234] >> 12));
+      angle = struct.wakeSegmentNumArray_22c[struct.prevShipPositionIndex_234] - (int)(struct.tickNum_240 / (3.0f / vsyncMode_8007a3b8));
+      spreadScaleFactor.set(struct.wakeSegmentNumArray_22c[struct.prevShipPositionIndex_234] + (rsin(angle << 8 & 0x7ff) * struct.wakeSegmentNumArray_22c[struct.prevShipPositionIndex_234] >> 12));
     } else {
       //LAB_800e3024
       int wakeSegmentIndex = struct.currShipPositionIndex_230 - index * struct.wakeSegmentStride_23c;
@@ -3593,11 +3595,11 @@ public class WMap extends EngineState {
       }
 
       //LAB_800e3090
-      delta.set(struct.shipPosDeltasArray_224[wakeSegmentIndex]);
+      spread.set(struct.wakeSpreadsArray_224[wakeSegmentIndex]);
       position.set(struct.shipPositionsArray_228[wakeSegmentIndex]);
       colourFadeFactor.set(struct.wakeSegmentNumArray_22c[wakeSegmentIndex]);
-      final int v0 = struct.wakeSegmentNumArray_22c[wakeSegmentIndex] - (int)(struct.tickNum_240 / (3.0f / vsyncMode_8007a3b8));
-      deltaScaleFactor.set(struct.wakeSegmentNumArray_22c[wakeSegmentIndex] + (rsin(v0 << 8 & 0x7ff) * struct.wakeSegmentNumArray_22c[wakeSegmentIndex] >> 12));
+      angle = struct.wakeSegmentNumArray_22c[wakeSegmentIndex] - (int)(struct.tickNum_240 / (3.0f / vsyncMode_8007a3b8));
+      spreadScaleFactor.set(struct.wakeSegmentNumArray_22c[wakeSegmentIndex] + (rsin(angle << 8 & 0x7ff) * struct.wakeSegmentNumArray_22c[wakeSegmentIndex] >> 12));
     }
     //LAB_800e321c
   }
