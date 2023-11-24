@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashMap;
@@ -51,6 +52,8 @@ public final class Unpacker {
   private static final int PVD_SECTOR = 16;
 
   private static final Pattern ROOT_MRG = Pattern.compile("^SECT/DRGN0\\.BIN/\\d{4}/\\d+$");
+  private static final Pattern DRGN0_FILE = Pattern.compile("^SECT/DRGN0.BIN/\\d+");
+  private static final Pattern DRGN0_SUBFILE = Pattern.compile("^SECT/DRGN0.BIN/\\d+/\\d");
 
   /** Update this any time we make a breaking change */
   private static final int VERSION = 1;
@@ -76,6 +79,12 @@ public final class Unpacker {
    */
   private static final Map<Discriminator, Transformer> transformers = new LinkedHashMap<>();
   static {
+    //This has to happen before MRG
+    transformers.put(Unpacker::dragoonTransformationSfxDiscriminator, Unpacker::dragoonTransformationSfxTransformer);
+    transformers.put(Unpacker::monsterSfxDiscriminator, Unpacker::monsterSfxTransformer);
+    transformers.put(Unpacker::stagedFightsSfxDiscriminator, Unpacker::stagedFightsSfxTransformer);
+    transformers.put(Unpacker::monsterTextureDiscriminator, Unpacker::monsterTextureTransformer);
+
     transformers.put(Unpacker::decompressDiscriminator, Unpacker::decompress);
     transformers.put(Unpacker::mrgDiscriminator, Unpacker::unmrg);
     transformers.put(Unpacker::deffDiscriminator, Unpacker::undeff);
@@ -1071,6 +1080,268 @@ public final class Unpacker {
     }
 
     return Map.of(name, data);
+  }
+
+  private static boolean monsterSfxDiscriminator(final String name, final FileData data, final Set<String> flags) {
+    if(DRGN0_SUBFILE.matcher(name).matches()) {
+      final String[] parts = name.split("/");
+      final int fileId = Integer.parseInt(parts[2]);
+
+      return fileId >= 778 && fileId <= 1289;
+    }
+
+    return false;
+  }
+
+  private static Map<String, FileData> monsterSfxTransformer(final String name, final FileData data, final Set<String> flags) {
+    final String[] parts = name.split("/");
+    final int fileId = Integer.parseInt(parts[2]);
+    final int index = Integer.parseInt(parts[3]);
+    
+    final int[] monsters = battleAssetIdentifier(fileId - 778);
+
+    if(monsters.length == 0 || index >= monsters.length || monsters[index] == -1) {
+      return Collections.EMPTY_MAP;
+    }
+
+    return Map.of("monsters/" + monsters[index] + "/sounds/", data);
+  }
+
+  private static boolean monsterTextureDiscriminator(final String name, final FileData data, final Set<String> flags) {
+    if(DRGN0_SUBFILE.matcher(name).matches()) {
+      final String[] parts = name.split("/");
+      final int fileId = Integer.parseInt(parts[2]);
+
+      return fileId >= 2625 && fileId <= 3136;
+    }
+
+    return false;
+  }
+
+  private static Map<String, FileData> monsterTextureTransformer(final String name, final FileData data, final Set<String> flags) {
+    final String[] parts = name.split("/");
+    final int fileId = Integer.parseInt(parts[2]);
+    final int index = Integer.parseInt(parts[3]);
+
+    final int[] monsters = battleAssetIdentifier(fileId - 2625);
+
+    if(monsters.length == 0 || index >= monsters.length || monsters[index] == -1) {
+      return Collections.EMPTY_MAP;
+    }
+
+    return Map.of("monsters/" + monsters[index] + "/textures/combat", data);
+  }
+
+  private static int[] battleAssetIdentifier(final int encounterId) {
+    switch(encounterId) {
+      case 6 -> { return new int[] {21, 24}; }
+      case 9 -> { return new int[] {8, 38}; }
+      case 16 -> { return new int[] {0, 59}; }
+      case 18 -> { return new int[] {27, 45}; }
+      case 23 -> { return new int[] {94}; }
+      case 24 -> { return new int[] {13}; }
+      case 25 -> { return new int[] {46, 64}; }
+      case 28 -> { return new int[] {104, 148}; }
+      case 35 -> { return new int[] {4, 28}; }
+      case 36 -> { return new int[] {22}; }
+      case 38 -> { return new int[] {68}; }
+      case 42 -> { return new int[] {92}; }
+      case 47 -> { return new int[] {33, 150}; }
+      case 49 -> { return new int[] {100, 146}; }
+      case 53 -> { return new int[] {88}; }
+      case 57 -> { return new int[] {90, 115}; }
+      case 58 -> { return new int[] {19, 35}; }
+      case 60 -> { return new int[] {66}; }
+      case 67 -> { return new int[] {15, 107}; }
+      case 68 -> { return new int[] {55, 58}; }
+      case 70 -> { return new int[] {87}; }
+      case 71 -> { return new int[] {124}; }
+      case 87 -> { return new int[] {1, 69}; }
+      case 82 -> { return new int[] {99}; }
+      case 83 -> { return new int[] {108}; }
+      case 76 -> { return new int[] {136}; }
+      case 77 -> { return new int[] {137}; }
+      case 78 -> { return new int[] {138}; }
+      case 89 -> { return new int[] {26}; }
+      case 92 -> { return new int[] {16}; }
+      case 95 -> { return new int[] {52, 106}; }
+      case 96 -> { return new int[] {14, 29}; }
+      case 106 -> { return new int[] {79, 83}; }
+      case 109 -> { return new int[] {82, 109}; }
+      case 124 -> { return new int[] {12}; }
+      case 127 -> { return new int[] {91, 110}; }
+      case 129 -> { return new int[] {23, 76}; }
+      case 132 -> { return new int[] {51}; }
+      case 138 -> { return new int[] {53, 95}; }
+      case 139 -> { return new int[] {73, 117}; }
+      case 143 -> { return new int[] {2}; }
+      case 146 -> { return new int[] {30, 111}; }
+      case 149 -> { return new int[] {43, 44}; }
+      case 152 -> { return new int[] {112}; }
+      case 154 -> { return new int[] {37}; }
+      case 157 -> { return new int[] {6, 113}; }
+      case 159 -> { return new int[] {96}; }
+      case 161 -> { return new int[] {48}; }
+      case 162 -> { return new int[] {114}; }
+      case 168 -> { return new int[] {5, 32}; }
+      case 177 -> { return new int[] {25, 49}; }
+      case 179 -> { return new int[] {56, 144}; }
+      case 183 -> { return new int[] {20}; }
+      case 186 -> { return new int[] {31, 57}; }
+      case 188 -> { return new int[] {50, 116}; }
+      case 196 -> { return new int[] {39, 47}; }
+      case 197 -> { return new int[] {41, 63}; }
+      case 198 -> { return new int[] {65}; }
+      case 208 -> { return new int[] {11, 67, 93}; }
+      case 232 -> { return new int[] {72}; }
+      case 235 -> { return new int[] {60, 75}; }
+      case 236 -> { return new int[] {9, 121}; }
+      case 244 -> { return new int[] {118}; }
+      case 245 -> { return new int[] {40, 97}; }
+      case 247 -> { return new int[] {80, 122}; }
+      case 252 -> { return new int[] {10}; }
+      case 256 -> { return new int[] {78, 125}; }
+      case 257 -> { return new int[] {101, 152}; }
+      case 259 -> { return new int[] {84}; }
+      case 266 -> { return new int[] {7, 98}; }
+      case 264 -> { return new int[] {126}; }
+      case 267 -> { return new int[] {62, 77}; }
+      case 282 -> { return new int[] {127}; }
+      case 291 -> { return new int[] {54}; }
+      case 292 -> { return new int[] {139}; }
+      case 298 -> { return new int[] {42}; }
+      case 307 -> { return new int[] {120}; }
+      case 309 -> { return new int[] {34, 81}; }
+      case 312 -> { return new int[] {71}; }
+      case 314 -> { return new int[] {123, 128}; }
+      case 384 -> { return new int[] {256, 257}; }
+      case 385 -> { return new int[] {258, 273}; }
+      case 386 -> { return new int[] {259, 260, 261}; }
+      case 387 -> { return new int[] {262, 263, 264}; }
+      case 388 -> { return new int[] {265}; }
+      case 389 -> { return new int[] {266}; }
+      case 390 -> { return new int[] {267, 268}; }
+      case 391 -> { return new int[] {269}; }
+      case 392 -> { return new int[] {270, 277}; }
+      case 393 -> { return new int[] {275, 287}; }
+      case 394 -> { return new int[] {283, 284, 285}; }
+      case 395 -> { return new int[] {288, 289, 290}; }
+      case 396 -> { return new int[] {293}; }
+      case 397 -> { return new int[] {279, 294}; }
+      case 398 -> { return new int[] {295}; }
+      case 399 -> { return new int[] {296}; }
+      case 400 -> { return new int[] {297}; }
+      case 401 -> { return new int[] {298}; }
+      case 402 -> { return new int[] {274, 299}; }
+      case 403 -> { return new int[] {300, 301}; }
+      case 404 -> { return new int[] {302}; }
+      case 405 -> { return new int[] {303}; }
+      case 406 -> { return new int[] {304}; }
+      case 407 -> { return new int[] {305}; }
+      case 408 -> { return new int[] {308, 309, 310}; }
+      case 409 -> { return new int[] {311, 312, 313}; }
+      case 410 -> { return new int[] {316, 317, 318}; }
+      case 411 -> { return new int[] {320, 321, 322}; }
+      case 412 -> { return new int[] {325, 326, 327}; }
+      case 413 -> { return new int[] {329}; }
+      case 414 -> { return new int[] {332}; }
+      case 415 -> { return new int[] {333, 334}; }
+      case 416 -> { return new int[] {335}; }
+      case 417 -> { return new int[] {340, 341}; }
+      case 418 -> { return new int[] {339, 343}; }
+      case 420 -> { return new int[] {342, 344}; }
+      case 421 -> { return new int[] {345}; }
+      case 422 -> { return new int[] {346, 347, 348}; }
+      case 423 -> { return new int[] {349, 350, 351}; }
+      case 424 -> { return new int[] {355, 356, 357}; }
+      case 430 -> { return new int[] {360, 361, 362}; }
+      case 431 -> { return new int[] {363, 364}; }
+      case 432 -> { return new int[] {365, 366}; }
+      case 433 -> { return new int[] {368, 369, 370}; }
+      case 434 -> { return new int[] {371}; }
+      case 435 -> { return new int[] {373, 374}; }
+      case 436 -> { return new int[] {375}; }
+      case 437 -> { return new int[] {378, 380}; }
+      case 438 -> { return new int[] {376, 377, 381}; }
+      case 439 -> { return new int[] {382}; }
+      case 442 -> { return new int[] {386, 387}; }
+      case 443 -> { return new int[] {388, 389}; }
+      case 444 -> { return new int[] {390}; }
+      case 445 -> { return new int[] {391, 392}; }
+      case 446 -> { return new int[] {393, 394, 395}; }
+      case 447 -> { return new int[] {352, 383}; }
+      case 448 -> { return new int[] {353, 384}; }
+      case 449 -> { return new int[] {354, 385}; }
+      case 450 -> { return new int[] {254}; }
+      case 451 -> { return new int[] {253}; }
+      case 452 -> { return new int[] {255}; }
+      case 453 -> { return new int[] {18, 86, 154}; }
+      case 456 -> { return new int[] {89}; }
+      case 457 -> { return new int[] {3, 61}; }
+      case 458 -> { return new int[] {36, 119}; }
+      case 461 -> { return new int[] {102}; }
+      case 462 -> { return new int[] {336, 337, 338}; }
+      case 471 -> { return new int[] {130}; }
+      case 474 -> { return new int[] {74, 157}; }
+      case 479 -> { return new int[] {131, 132}; }
+      case 480 -> { return new int[] {17, 103}; }
+      case 483 -> { return new int[] {129, 133}; }
+      case 484 -> { return new int[] {105, -1}; }
+      case 486 -> { return new int[] {134}; }
+      case 487 -> { return new int[] {-1, 135}; }
+      case 488 -> { return new int[] {70, 85}; }
+      default -> { return new int[] {}; }
+    }
+  }
+
+  private static boolean stagedFightsSfxDiscriminator(final String name, final FileData data, final Set<String> flags) {
+    if(DRGN0_FILE.matcher(name).matches()) {
+      final String[] parts = name.split("/");
+      final int fileId = Integer.parseInt(parts[2]);
+
+      return fileId >= 1290 && fileId <= 1297;
+    }
+
+    return false;
+  }
+
+  private static Map<String, FileData> stagedFightsSfxTransformer(final String name, final FileData data, final Set<String> flags) {
+    final String[] parts = name.split("/");
+    final int fileId = Integer.parseInt(parts[2]);
+
+    final String path;
+    switch(fileId) {
+      case 1290 -> path = "monsters/fightStages/Doel/0/";
+      case 1291 -> path = "monsters/fightStages/Doel/1/";
+      case 1292 -> path = "monsters/fightStages/Melbu/0/";
+      case 1293 -> path = "monsters/fightStages/Melbu/1/";
+      case 1294 -> path = "monsters/fightStages/Melbu/4/";
+      case 1295 -> path = "monsters/fightStages/Melbu/6/";
+      case 1296 -> path = "monsters/fightStages/Zackwell/0/";
+      case 1297 -> path = "monsters/fightStages/Zackwell/1/";
+      default -> path = "monsters/fightStages/unknown/";
+    }
+
+    return Map.of(path, data);
+  }
+
+  private static boolean dragoonTransformationSfxDiscriminator(final String name, final FileData data, final Set<String> flags) {
+    if(DRGN0_FILE.matcher(name).matches()) {
+      final String[] parts = name.split("/");
+      final int fileId = Integer.parseInt(parts[2]);
+
+      return (fileId >= 1317 && fileId <= 1325) || (fileId == 1327);
+    }
+
+    return false;
+  }
+
+  private static Map<String, FileData> dragoonTransformationSfxTransformer(final String name, final FileData data, final Set<String> flags) {
+    final int offset = data.readInt(0x8);
+
+    final int id = data.readUShort(offset);
+
+    return Map.of("characters/" + getCharacterName(id) + "/sounds/combat/transformation/", data);
   }
 
   private static void writeFiles(final Map<String, FileData> files) {
