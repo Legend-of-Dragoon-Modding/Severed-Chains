@@ -3103,7 +3103,7 @@ public class WMap extends EngineState {
 
     //LAB_800e002c
     struct.modelIndex_1e4 = directionalPathSegmentData_800f2248.get(this.mapState_800c6798.directionalPathIndex_12).modelIndex_06.get();
-    this.initQueenFuryWake(40, 1);
+    this.initQueenFuryWake(40, 3);
 
     final int modelIndex = struct.modelIndex_1e4;
     final Model124 model = struct.models_0c[modelIndex];
@@ -3577,26 +3577,27 @@ public class WMap extends EngineState {
 
   @Method(0x800e2e1cL)
   private void getQueenFuryWakeMetrics(final int index, final Vector3f delta, final Vector3f position, final IntRef colourFadeFactor, final IntRef deltaScaleFactor) {
+    final WMapStruct258 struct = this.wmapStruct258_800c66a8;
     if(index == 0) {
-      delta.set(this.wmapStruct258_800c66a8.shipPosDeltasArray_224[this.wmapStruct258_800c66a8.prevShipPositionIndex_234]);
-      position.set(this.wmapStruct258_800c66a8.shipPositionsArray_228[this.wmapStruct258_800c66a8.prevShipPositionIndex_234]);
-      colourFadeFactor.set(this.wmapStruct258_800c66a8.wakeSegmentNumArray_22c[this.wmapStruct258_800c66a8.prevShipPositionIndex_234]);
-      final int v0 = this.wmapStruct258_800c66a8.wakeSegmentNumArray_22c[this.wmapStruct258_800c66a8.prevShipPositionIndex_234] - this.wmapStruct258_800c66a8.tickNum_240;
-      deltaScaleFactor.set(this.wmapStruct258_800c66a8.wakeSegmentNumArray_22c[this.wmapStruct258_800c66a8.prevShipPositionIndex_234] + (rsin(v0 << 8 & 0x7ff) * this.wmapStruct258_800c66a8.wakeSegmentNumArray_22c[this.wmapStruct258_800c66a8.prevShipPositionIndex_234] >> 12));
+      delta.set(struct.shipPosDeltasArray_224[struct.prevShipPositionIndex_234]);
+      position.set(struct.shipPositionsArray_228[struct.prevShipPositionIndex_234]);
+      colourFadeFactor.set(struct.wakeSegmentNumArray_22c[struct.prevShipPositionIndex_234]);
+      final int v0 = struct.wakeSegmentNumArray_22c[struct.prevShipPositionIndex_234] - (int)(struct.tickNum_240 / (3.0f / vsyncMode_8007a3b8));
+      deltaScaleFactor.set(struct.wakeSegmentNumArray_22c[struct.prevShipPositionIndex_234] + (rsin(v0 << 8 & 0x7ff) * struct.wakeSegmentNumArray_22c[struct.prevShipPositionIndex_234] >> 12));
     } else {
       //LAB_800e3024
-      int wakeSegmentIndex = this.wmapStruct258_800c66a8.currShipPositionIndex_230 - index * this.wmapStruct258_800c66a8.wakeSegmentStride_23c;
+      int wakeSegmentIndex = struct.currShipPositionIndex_230 - index * struct.wakeSegmentStride_23c;
 
       if(wakeSegmentIndex < 0) {
-        wakeSegmentIndex += this.wmapStruct258_800c66a8.shipPositionsCount_238;
+        wakeSegmentIndex += struct.shipPositionsCount_238;
       }
 
       //LAB_800e3090
-      delta.set(this.wmapStruct258_800c66a8.shipPosDeltasArray_224[wakeSegmentIndex]);
-      position.set(this.wmapStruct258_800c66a8.shipPositionsArray_228[wakeSegmentIndex]);
-      colourFadeFactor.set(this.wmapStruct258_800c66a8.wakeSegmentNumArray_22c[wakeSegmentIndex]);
-      final int v0 = this.wmapStruct258_800c66a8.wakeSegmentNumArray_22c[wakeSegmentIndex] - this.wmapStruct258_800c66a8.tickNum_240;
-      deltaScaleFactor.set(this.wmapStruct258_800c66a8.wakeSegmentNumArray_22c[wakeSegmentIndex] + (rsin(v0 << 8 & 0x7ff) * this.wmapStruct258_800c66a8.wakeSegmentNumArray_22c[wakeSegmentIndex] >> 12));
+      delta.set(struct.shipPosDeltasArray_224[wakeSegmentIndex]);
+      position.set(struct.shipPositionsArray_228[wakeSegmentIndex]);
+      colourFadeFactor.set(struct.wakeSegmentNumArray_22c[wakeSegmentIndex]);
+      final int v0 = struct.wakeSegmentNumArray_22c[wakeSegmentIndex] - (int)(struct.tickNum_240 / (3.0f / vsyncMode_8007a3b8));
+      deltaScaleFactor.set(struct.wakeSegmentNumArray_22c[wakeSegmentIndex] + (rsin(v0 << 8 & 0x7ff) * struct.wakeSegmentNumArray_22c[wakeSegmentIndex] >> 12));
     }
     //LAB_800e321c
   }
