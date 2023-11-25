@@ -16,7 +16,7 @@ public class DirectionalPathSegmentData08 implements MemoryRef {
   public final ShortRef pathSegmentIndexAndDirection_00;
 
   public final UnsignedByteRef encounterRate_03;
-  public final ByteRef combatStage_04;
+  public final ByteRef battleStage_04;
   /** Index into a table which has the actual encounter ID */
   public final ByteRef encounterIndex_05;
   public final UnsignedByteRef modelIndex_06;
@@ -27,7 +27,7 @@ public class DirectionalPathSegmentData08 implements MemoryRef {
     this.pathSegmentIndexAndDirection_00 = ref.offset(2, 0x00L).cast(ShortRef::new);
 
     this.encounterRate_03 = ref.offset(1, 0x03L).cast(UnsignedByteRef::new);
-    this.combatStage_04 = ref.offset(1, 0x04L).cast(ByteRef::new);
+    this.battleStage_04 = ref.offset(1, 0x04L).cast(ByteRef::new);
     this.encounterIndex_05 = ref.offset(1, 0x05L).cast(ByteRef::new);
     this.modelIndex_06 = ref.offset(1, 0x06L).cast(UnsignedByteRef::new);
   }

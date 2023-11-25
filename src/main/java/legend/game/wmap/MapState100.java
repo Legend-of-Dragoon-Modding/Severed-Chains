@@ -41,7 +41,11 @@ public class MapState100 {
   public int directionalPathCount_0c;
   /** 800c67a8 */
   public int locationIndex_10;
-  /** The section of the path that the player is on, plus the direction (800c67aa) */
+  /**
+   * The section of the path that the player is on, plus the direction they are headed, in sequence/
+   * plot order. That is, e.g. direction is positive when moving from an area toward its subsequent area
+   * in the order the plots opens them. (800c67aa)
+   */
   public int directionalPathIndex_12;
   /** The section of the path that the player is on (800c67ac) */
   public int pathIndex_14;
@@ -106,7 +110,7 @@ public class MapState100 {
    *   <li>Next</li>
    * </ol>
    */
-  public PathSegmentEntering pathSegmentPlayerMovingInto_f8;
+  public PathSegmentEntering pathSegmentPlayerMovingInto_f8 = PathSegmentEntering.CURRENT;
   /**
    * 800c6894
    * Describes the type of path segment endpoint that Dart is at.
@@ -116,7 +120,7 @@ public class MapState100 {
    *   <li>Intersection</li>
    * </ol>
    */
-  public PathSegmentEndpointType pathSegmentEndpointTypeCrossed_fc;
+  public PathSegmentEndpointType pathSegmentEndpointTypeCrossed_fc = PathSegmentEndpointType.NOT_AT_ENDPOINT;
 
   public MapState100() {
     Arrays.setAll(this.tempPathSegmentStartOffsets_40, i -> new Vector3f());

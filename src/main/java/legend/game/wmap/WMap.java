@@ -124,11 +124,9 @@ import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
-import static legend.game.wmap.MapState100.PathSegmentEntering;
-import static legend.game.wmap.MapState100.PathSegmentEndpointType;
+import static legend.game.wmap.MapState100.*;
 import static legend.game.wmap.WmapStatics.*;
-import static legend.game.wmap.WMapStruct258.WmapActiveState;
-import static legend.game.wmap.WMapStruct258.MapTransitionAnimationMode;
+import static legend.game.wmap.WMapStruct258.*;
 
 public class WMap extends EngineState {
   private int tickMainMenuOpenTransition_800c6690;
@@ -3415,7 +3413,7 @@ public class WMap extends EngineState {
 
     final Vector3f playerPosDelta = new Vector3f(struct.prevPlayerPos_84).sub(struct.currPlayerPos_94);
     final Vector3f wakeSpread = new Vector3f();
-    if(flEq(playerPosDelta.x, 0.0f) && flEq(playerPosDelta.y, 0.0f) && flEq(playerPosDelta.z, 0.0f)) {
+    if(playerPosDelta.x == 0.0f && playerPosDelta.y == 0.0f && playerPosDelta.z == 0.0f) {
       wakeSpread.set(0.0f);
     } else {
       wakeSpread.set(playerPosDelta).normalize().cross(this.shipWakeCrossVector_800c87d8);
@@ -3653,11 +3651,11 @@ public class WMap extends EngineState {
     if(this.encounterAccumulator_800c6ae8 >= 5120) {
       this.encounterAccumulator_800c6ae8 = 0;
 
-      if(directionalPathSegment.combatStage_04.get() == -1) {
+      if(directionalPathSegment.battleStage_04.get() == -1) {
         battleStage_800bb0f4.set(1);
       } else {
         //LAB_800e386c
-        battleStage_800bb0f4.set(directionalPathSegment.combatStage_04.get());
+        battleStage_800bb0f4.set(directionalPathSegment.battleStage_04.get());
       }
 
       //LAB_800e3894
