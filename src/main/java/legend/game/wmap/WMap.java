@@ -98,7 +98,6 @@ import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
-import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
@@ -2292,8 +2291,7 @@ public class WMap extends EngineState {
 
   @Method(0x800d9044L)
   private void renderWorldMap() {
-    final MV lightMatrix = new MV();
-    final MV rotTransMatrix = new MV();
+    final MV lw = new MV();
 
     this.renderAndHandleWorldMap();
     this.FUN_800da248();
@@ -2346,16 +2344,13 @@ public class WMap extends EngineState {
       }
 
       //LAB_800d9320
-      GsGetLws(dobj2.coord2_04, lightMatrix, rotTransMatrix);
+      GsGetLw(dobj2.coord2_04, lw);
 
       if(i == 0) {
-        lightMatrix.transfer.add(0.0f, 1.0f, 0.0f);
+        lw.transfer.add(0.0f, 1.0f, 0.0f);
       }
-      
-      GsSetLightMatrix(lightMatrix);
-      GTE.setTransforms(rotTransMatrix);
 
-      final RenderEngine.QueuedModel model = RENDERER.queueModel(dobj2.obj, lightMatrix);
+      final RenderEngine.QueuedModel model = RENDERER.queueModel(dobj2.obj, lw);
 
       if(this.mapState_800c6798.continentIndex_00 < 9 && i == 0) {
         model.clutOverride(1008, waterClutYs_800ef348.get((int)this.wmapStruct258_800c66a8.clutYIndex_28).get());
