@@ -1,6 +1,7 @@
 package legend.game.combat.effects;
 
 import legend.core.gte.TmdObjTable1c;
+import legend.core.opengl.Obj;
 import legend.game.combat.deff.Lmb;
 import legend.game.combat.deff.LmbTransforms14;
 
@@ -25,6 +26,7 @@ public class LmbAnimationEffect5c implements Effect {
 
   public int deffTmdFlags_48;
   public TmdObjTable1c deffTmdObjTable_4c;
+  public Obj obj;
   public int deffSpriteFlags_50;
   public final SpriteMetrics08 metrics_54 = new SpriteMetrics08();
 }

@@ -17,6 +17,7 @@ import legend.core.memory.Method;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.opengl.Obj;
+import legend.core.opengl.TmdObjLoader;
 import legend.game.characters.Element;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bent.BattleEntity27c;
@@ -204,7 +205,6 @@ import static legend.game.combat.Bttl_800c.stageDarkeningClutWidth_800c695c;
 import static legend.game.combat.Bttl_800c.stageDarkening_800c6958;
 import static legend.game.combat.Bttl_800c.targetArrowOffsetY_800fb188;
 import static legend.game.combat.Bttl_800c.targeting_800fb36c;
-import static legend.game.combat.Bttl_800c.tmds_800c6944;
 import static legend.game.combat.Bttl_800c.uiTextureElementBrightness_800c71ec;
 import static legend.game.combat.Bttl_800c.usedRepeatItems_800c6c3c;
 import static legend.game.combat.Bttl_800d.FUN_800dd89c;
@@ -212,7 +212,6 @@ import static legend.game.combat.Bttl_800d.applyAnimation;
 import static legend.game.combat.Bttl_800d.loadModelAnim;
 import static legend.game.combat.Bttl_800d.loadModelTmd;
 import static legend.game.combat.Bttl_800d.optimisePacketsIfNecessary;
-import static legend.game.combat.Bttl_800f.tickFloatingNumbers;
 import static legend.game.combat.Bttl_800f.buildUiTextureElement;
 import static legend.game.combat.Bttl_800f.clearBattleMenu;
 import static legend.game.combat.Bttl_800f.clearSpellAndItemMenu;
@@ -224,6 +223,7 @@ import static legend.game.combat.Bttl_800f.getTargetEnemyName;
 import static legend.game.combat.Bttl_800f.handleSpellAndItemMenu;
 import static legend.game.combat.Bttl_800f.prepareItemList;
 import static legend.game.combat.Bttl_800f.renderNumber;
+import static legend.game.combat.Bttl_800f.tickFloatingNumbers;
 import static legend.game.combat.SBtld.monsterNames_80112068;
 import static legend.game.combat.SBtld.monsterStats_8010ba98;
 import static legend.game.combat.SEffe.addGenericAttachment;
@@ -1996,12 +1996,15 @@ public final class Bttl_800e {
 
   @Method(0x800e8ffcL)
   public static void allocateDeffManager() {
+    if(deffManager_800c693c != null) {
+      deffManager_800c693c.delete();
+    }
+
     final DeffManager7cc deffManager = new DeffManager7cc();
     _800c6938 = deffManager._5b8;
     _800c6930 = deffManager._5dc;
     lights_800c692c = deffManager._640;
     deffManager.flags_20 = 0x4;
-    tmds_800c6944 = deffManager.tmds_2f8;
     deffManager_800c693c = deffManager;
     spriteMetrics_800c6948 = deffManager.spriteMetrics_39c;
     final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> manager = allocateEffectManager("DEFF manager", null, null, null, null, null);
@@ -2016,6 +2019,7 @@ public final class Bttl_800e {
     scriptStatePtrArr_800bc1c0[1].deallocateWithChildren();
     deallocateDeffManagerScriptsArray();
     deffManager_800c693c.scriptState_1c.deallocateWithChildren();
+    deffManager_800c693c.delete();
     deffManager_800c693c = null;
   }
 
@@ -2627,6 +2631,7 @@ public final class Bttl_800e {
       if(index >= 5) {
         final DeffPart.TmdType tmdType = new DeffPart.TmdType("HUD DEFF file " + i, files.get(i));
         struct7cc.tmds_2f8[index] = tmdType.tmd_0c.tmdPtr_00.tmd.objTable[0];
+        struct7cc.objs[index] = TmdObjLoader.fromObjTable(tmdType.name, struct7cc.tmds_2f8[index]);
       }
 
       //LAB_800ea928

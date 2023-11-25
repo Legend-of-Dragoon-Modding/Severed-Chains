@@ -305,9 +305,7 @@ public final class Bttl_800c {
 
   public static BattleStruct24_2 _800c6938;
   public static DeffManager7cc deffManager_800c693c;
-  /** Dunno what this is for, it's set to a pointer but unused. I removed the set for now. */
-  public static final IntRef _800c6940 = MEMORY.ref(4, 0x800c6940L, IntRef::new);
-  public static TmdObjTable1c[] tmds_800c6944;
+
   public static SpriteMetrics08[] spriteMetrics_800c6948;
 
   public static BattleStageDarkening1800 stageDarkening_800c6958;

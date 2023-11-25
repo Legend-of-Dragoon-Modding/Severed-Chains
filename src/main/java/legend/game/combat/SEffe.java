@@ -30,6 +30,7 @@ import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.TriConsumer;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
+import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.combat.bent.BattleEntity27c;
@@ -174,7 +175,6 @@ import static legend.game.combat.Bttl_800c.rotateAndTranslateEffect;
 import static legend.game.combat.Bttl_800c.scriptGetScriptedObjectPos;
 import static legend.game.combat.Bttl_800c.seed_800fa754;
 import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
-import static legend.game.combat.Bttl_800c.tmds_800c6944;
 import static legend.game.combat.Bttl_800d.getRotationAndScaleFromTransforms;
 import static legend.game.combat.Bttl_800d.getRotationFromTransforms;
 import static legend.game.combat.Bttl_800d.loadModelAnim;
@@ -2328,9 +2328,7 @@ public final class SEffe {
     effect.subParticleType_60 = 1;
 
     if((flags & 0xf_ff00) == 0xf_ff00) {
-      //TODO I added the first deref here, this might have been a retail bug...
-      //     Looking at how _800c6944 gets set, I don't see how it could have been correct
-      effect.tmd_30 = tmds_800c6944[flags & 0xff];
+      effect.tmd_30 = deffManager_800c693c.tmds_2f8[flags & 0xff];
       effect.tpage_56 = 0x20;
     } else {
       //LAB_80101d98
@@ -5994,9 +5992,7 @@ public final class SEffe {
       instance._80 = -1;
 
       if((deffFlags & 0xf_ff00) == 0xf_ff00) {
-        //TODO I added the first deref here, this might have been a retail bug...
-        //     Looking at how _800c6944 gets set, I don't see how it could have been correct
-        instance.tmd_70 = tmds_800c6944[deffFlags & 0xff];
+        instance.tmd_70 = deffManager_800c693c.tmds_2f8[deffFlags & 0xff];
       } else {
         //LAB_8010dc40
         final DeffPart.TmdType tmdType = (DeffPart.TmdType)getDeffPart(deffFlags | 0x300_0000);
@@ -8773,8 +8769,11 @@ public final class SEffe {
     if(type == 0x300_0000) {
       //LAB_80116708
       final TmdObjTable1c tmdObjTable;
+      final Obj obj;
+      // If we already have it cached
       if(effect.deffTmdFlags_48 == deffFlags) {
         tmdObjTable = effect.deffTmdObjTable_4c;
+        obj = effect.obj;
       } else {
         //LAB_80116724
         if((deffFlags & 0xf_ff00) == 0xf_ff00) {
@@ -8785,12 +8784,20 @@ public final class SEffe {
         }
 
         //LAB_8011676c
+        // Cache it
         effect.deffTmdFlags_48 = deffFlags;
         effect.deffTmdObjTable_4c = tmdObjTable;
+
+        if(effect.obj != null) {
+          effect.obj.delete();
+        }
+
+        effect.obj = TmdObjLoader.fromObjTable(manager.name, effect.deffTmdObjTable_4c);
+        obj = effect.obj;
       }
 
       //LAB_80116778
-      renderTmdSpriteEffect(tmdObjTable, null, manager._10, sp0x10);
+      renderTmdSpriteEffect(tmdObjTable, obj, manager._10, sp0x10);
     } else if(type == 0x400_0000) {
       if(effect.deffSpriteFlags_50 != deffFlags) {
         //LAB_801162e8
@@ -9464,7 +9471,11 @@ public final class SEffe {
       script.scriptState_04,
       null,
       SEffe::lmbAnimationRenderer,
-      null,
+      (s, manager) -> {
+        if(((LmbAnimationEffect5c)manager.effect_44).obj != null) {
+          ((LmbAnimationEffect5c)manager.effect_44).obj.delete();
+        }
+      },
       new LmbAnimationEffect5c(),
       new EffectManagerData6cInner.AnimType()
     );
@@ -9964,7 +9975,7 @@ public final class SEffe {
         }
 
         //LAB_80118f9c
-        renderTmdSpriteEffect(sprite.tmd_08, null, manager._10, transformMatrix);
+        renderTmdSpriteEffect(sprite.tmd_08, sprite.obj, manager._10, transformMatrix);
       } else if(type == 0x400_0000) {
         final BillboardSpriteEffect0c sprite = (BillboardSpriteEffect0c)effect.subEffect_1c;
         renderBillboardSpriteEffect_(sprite.metrics_04, manager._10, transformMatrix);
@@ -10048,7 +10059,7 @@ public final class SEffe {
             if(type == 0x300_0000) {
               //LAB_801193f0
               final TmdSpriteEffect10 subEffect = (TmdSpriteEffect10)effect.subEffect_1c;
-              renderTmdSpriteEffect(subEffect.tmd_08, null, managerInner, transformMatrix);
+              renderTmdSpriteEffect(subEffect.tmd_08, subEffect.obj, managerInner, transformMatrix);
             } else if(type == 0x400_0000) {
               final BillboardSpriteEffect0c subEffect = (BillboardSpriteEffect0c)effect.subEffect_1c;
               renderBillboardSpriteEffect_(subEffect.metrics_04, managerInner, transformMatrix);
@@ -10083,13 +10094,18 @@ public final class SEffe {
   @Method(0x80119484L)
   public static FlowControl allocateSpriteWithTrailEffect(final RunningScript<? extends BattleObject> script) {
     final int effectFlag = script.params_20[1].get();
+    final int effectType = effectFlag & 0xff00_0000;
 
     final ScriptState<EffectManagerData6c<EffectManagerData6cInner.ColourType>> state = allocateEffectManager(
       "SpriteWithTrailEffect30",
       script.scriptState_04,
       SEffe::tickSpriteWithTrailEffect,
       SEffe::renderSpriteWithTrailEffect,
-      null,
+      (s, manager) -> {
+        if(((SpriteWithTrailEffect30)manager.effect_44).subEffect_1c instanceof final TmdSpriteEffect10 effect) {
+          effect.obj.delete();
+        }
+      },
       new SpriteWithTrailEffect30(script.params_20[3].get()),
       new EffectManagerData6cInner.ColourType()
     );
@@ -10104,7 +10120,6 @@ public final class SEffe {
     effect.translationIndexBase_14 = 0;
 
     //LAB_8011956c
-    final int effectType = effectFlag & 0xff00_0000;
     if(effectType == 0x400_0000) {
       //LAB_80119640
       effect.subEffect_1c = new BillboardSpriteEffect0c();
@@ -10112,8 +10127,10 @@ public final class SEffe {
       manager._10.flags_00 = manager._10.flags_00 & 0xfbff_ffff | 0x5000_0000;
     } else if(effectType == 0x300_0000) {
       //LAB_80119668
-      effect.subEffect_1c = new TmdSpriteEffect10();
-      getSpriteTmdFromSource((TmdSpriteEffect10)effect.subEffect_1c, effectFlag);
+      final TmdSpriteEffect10 subEffect = new TmdSpriteEffect10();
+      effect.subEffect_1c = subEffect;
+      getSpriteTmdFromSource(subEffect, effectFlag);
+      subEffect.obj = TmdObjLoader.fromObjTable(state.name, subEffect.tmd_08);
       manager._10.flags_00 = 0x1400_0000;
     } else if(effectType == 0) {
       //LAB_801195a8

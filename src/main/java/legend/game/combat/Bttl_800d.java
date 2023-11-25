@@ -4951,27 +4951,27 @@ public final class Bttl_800d {
 
   /** used renderCtmd */
   @Method(0x800de3f4L)
-  public static void renderTmdSpriteEffect(final TmdObjTable1c objTable, final Obj obj, final EffectManagerData6cInner<?> a1, final MV a2) {
+  public static void renderTmdSpriteEffect(final TmdObjTable1c objTable, final Obj obj, final EffectManagerData6cInner<?> effectParams, final MV transforms) {
     final MV sp0x10 = new MV();
-    if((a1.flags_00 & 0x8) != 0) {
+    if((effectParams.flags_00 & 0x8) != 0) {
       //TODO pretty sure this isn't equivalent to MATRIX#normalize
-      a2.normal(sp0x10);
+      transforms.normal(sp0x10);
       GsSetLightMatrix(sp0x10);
     } else {
       //LAB_800de458
-      GsSetLightMatrix(a2);
+      GsSetLightMatrix(transforms);
     }
 
     //LAB_800de45c
     if(RenderEngine.legacyMode != 0) {
-      a2.compose(worldToScreenMatrix_800c3548, sp0x10);
+      transforms.compose(worldToScreenMatrix_800c3548, sp0x10);
     } else {
-      sp0x10.set(a2);
+      sp0x10.set(transforms);
     }
 
-    if((a1.flags_00 & 0x400_0000) == 0) {
-      sp0x10.rotationXYZ(a1.rot_10);
-      sp0x10.scaleLocal(a1.scale_16);
+    if((effectParams.flags_00 & 0x400_0000) == 0) {
+      sp0x10.rotationXYZ(effectParams.rot_10);
+      sp0x10.scaleLocal(effectParams.scale_16);
     }
 
     //LAB_800de4a8
@@ -4979,7 +4979,7 @@ public final class Bttl_800d {
     GTE.setTransforms(sp0x10);
 
     final ModelPart10 dobj2 = new ModelPart10();
-    dobj2.attribute_00 = a1.flags_00;
+    dobj2.attribute_00 = effectParams.flags_00;
     dobj2.tmd_08 = objTable;
 
     final int oldZShift = zShift_1f8003c4.get();
@@ -4993,12 +4993,10 @@ public final class Bttl_800d {
     zMax_1f8003cc.set(oldZMax);
     zMin = oldZMin;
 
-    if(obj != null) {
-      RENDERER.queueModel(obj, sp0x10)
-        .lightDirection(lightDirectionMatrix_800c34e8)
-        .lightColour(lightColourMatrix_800c3508)
-        .backgroundColour(GTE.backgroundColour);
-    }
+    RENDERER.queueModel(obj, sp0x10)
+      .lightDirection(lightDirectionMatrix_800c34e8)
+      .lightColour(lightColourMatrix_800c3508)
+      .backgroundColour(GTE.backgroundColour);
 
     //LAB_800de528
   }
