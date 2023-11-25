@@ -179,7 +179,14 @@ public final class TmdObjLoader {
           vertices[vertexOffsets[translucencyIndex]++] = pos.z;
 
           if(lit) {
-            final Vector3f normal = objTable.normal_top_08[vertex.normalIndex];
+            final Vector3f normal;
+
+            if(vertex.normalIndex >= objTable.normal_top_08.length) {
+              normal = new Vector3f();
+            } else {
+              normal = objTable.normal_top_08[vertex.normalIndex];
+            }
+
             vertices[vertexOffsets[translucencyIndex]++] = normal.x;
             vertices[vertexOffsets[translucencyIndex]++] = normal.y;
             vertices[vertexOffsets[translucencyIndex]++] = normal.z;
