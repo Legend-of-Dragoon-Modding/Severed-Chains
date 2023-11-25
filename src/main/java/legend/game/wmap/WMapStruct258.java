@@ -21,8 +21,8 @@ public class WMapStruct258 {
     END_FADE
   }
 
-  public enum MapTransitionAnimationMode {
-    NO_ANIMATION,
+  public enum MapTransitionDestinationMode {
+    NONE,
     TELEPORT,
     SUBMAP,
     WORLD_MAP
@@ -132,7 +132,7 @@ public class WMapStruct258 {
    *   <li>Transition to world map</li>
    * </ol>
    */
-  public MapTransitionAnimationMode mapTransitionAnimationMode_250;
+  public MapTransitionDestinationMode mapTransitionDestinationMode_250;
   public boolean usingCoolonFromZenebatos_254;
 
   public void deleteAtmosphericEffectObjs() {
