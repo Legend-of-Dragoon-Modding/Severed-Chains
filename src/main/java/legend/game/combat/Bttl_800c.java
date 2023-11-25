@@ -579,13 +579,6 @@ public final class Bttl_800c {
   /**
    * <ol start="0">
    *   <li>{@link Bttl_800d#FUN_800d53e4}</li>
-   *   <li>{@link Bttl_800d#FUN_800d5574}</li>
-   *   <li>{@link Bttl_800d#FUN_800db78c}</li>
-   *   <li>{@link Bttl_800d#FUN_800db794}</li>
-   *   <li>{@link Bttl_800d#FUN_800d5740}</li>
-   *   <li>{@link Bttl_800d#FUN_800d5930}</li>
-   *   <li>{@link Bttl_800d#FUN_800d5afc}</li>
-   *   <li>{@link Bttl_800d#FUN_800d5cf4}</li>
    * </ol>
    */
   public static final CameraSeptParamCallback[] _800fac1c = new CameraSeptParamCallback[8];
@@ -651,10 +644,6 @@ public final class Bttl_800c {
    *   <li>{@link Bttl_800d#FUN_800d7920}</li>
    *   <li>{@link Bttl_800d#FUN_800d7aec}</li>
    *   <li>{@link Bttl_800d#FUN_800d7cdc}</li>
-   *   <li>{@link Bttl_800d#FUN_800db8a0}</li>
-   *   <li>{@link Bttl_800d#FUN_800db8a8}</li>
-   *   <li>{@link Bttl_800d#FUN_800d7ea8}</li>
-   *   <li>{@link Bttl_800d#FUN_800d80a0}</li>
    * </ol>
    */
   public static final CameraSeptParamCallback[] _800fac7c = new CameraSeptParamCallback[8];
@@ -1162,7 +1151,7 @@ public final class Bttl_800c {
 
   @Method(0x800c791cL)
   public static void loadEncounterAssets() {
-    loadEnemyTextures(2625 + encounterId_800bb0f8.get());
+    loadEnemyTextures();
 
     //LAB_800fc030
     for(int i = 0; i < combatantCount_800c66a0.get(); i++) {
@@ -1202,31 +1191,18 @@ public final class Bttl_800c {
 
   /** Pulled from S_ITEM */
   @Method(0x800fc3c0L)
-  public static void loadEnemyTextures(final int fileIndex) {
-    // Example file: 2856
-    loadDrgnDir(0, fileIndex, Bttl_800c::enemyTexturesLoadedCallback);
-  }
-
-  /** Pulled from S_ITEM */
-  @Method(0x800fc404L)
-  public static void enemyTexturesLoadedCallback(final List<FileData> files) {
-    final BattlePreloadedEntities_18cb0 s2 = battlePreloadedEntities_1f8003f4;
-
-    //LAB_800fc434
+  public static void loadEnemyTextures() {
     for(int i = 0; i < combatantCount_800c66a0.get(); i++) {
       final CombatantStruct1a8 a0 = getCombatant(i);
 
-      if(a0.charSlot_19c < 0) {
-        final int enemyIndex = a0.charIndex_1a2 & 0x1ff;
-
-        //LAB_800fc464
-        for(int enemySlot = 0; enemySlot < 3; enemySlot++) {
-          if((s2.encounterData_00.enemyIndices_00[enemySlot] & 0x1ff) == enemyIndex && files.get(enemySlot).hasVirtualSize()) {
-            loadCombatantTim(i, files.get(enemySlot));
-            break;
-          }
-        }
+      if(a0.charSlot_19c >= 0) {
+        continue;
       }
+
+      final int enemyIndex = a0.charIndex_1a2 & 0x1ff;
+
+      final int index = i;
+      loadFile("monsters/%d/textures/combat".formatted(enemyIndex), files -> loadCombatantTim(index, files));
     }
   }
 
