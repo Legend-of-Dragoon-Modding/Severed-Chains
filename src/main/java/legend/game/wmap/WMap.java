@@ -125,6 +125,7 @@ import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.wmap.MapState100.PathSegmentEntering;
 import static legend.game.wmap.MapState100.PathSegmentEndpointType;
+import static legend.game.wmap.MapState100.ForcedMovementState;
 import static legend.game.wmap.WMapStruct258.FadeState;
 import static legend.game.wmap.WMapStruct258.TransitionAnimationType;
 import static legend.game.wmap.WMapStruct258.MapTransitionAnimationMode;
@@ -482,7 +483,7 @@ public class WMap extends EngineState {
                     if(Input.pressedThisFrame(InputAction.BUTTON_NORTH)) {
                       if(this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc != PathSegmentEndpointType.TERMINAL) {
                         if(struct.transitionAnimationType_05 == TransitionAnimationType.NONE) {
-                          if(this.mapState_800c6798._d8 == 0) {
+                          if(this.mapState_800c6798.queenFuryForceMovementState_d8 == ForcedMovementState.NONE) {
                             if(struct.mapTransitionAnimationMode_250 == MapTransitionAnimationMode.NO_ANIMATION) {
                               startFadeEffect(1, 15);
                               this.mapState_800c6798.disableInput_d0 = true;
@@ -727,7 +728,7 @@ public class WMap extends EngineState {
     zOffset_1f8003e8.set(0);
     tmdGp0Tpage_1f8003ec.set(0x20);
 
-    this.initTransitionAnimation(TransitionAnimationType.NONE);
+    this.initTransitionAnimation(TransitionAnimationType.FADE_IN);
     this.FUN_800e78c0();
     this.loadWmapTextures();
     this.initCameraAndLight();
@@ -1227,7 +1228,11 @@ public class WMap extends EngineState {
       //LAB_800d3654
       //LAB_800d3670
       //LAB_800d368c
-      if(this.mapState_800c6798.continent_00 != Continent.ENDINESS && this.mapState_800c6798._d8 == 0 && this.tickMainMenuOpenTransition_800c6690 == 0) {
+      if(
+        this.mapState_800c6798.continent_00 != Continent.ENDINESS &&
+          this.mapState_800c6798.queenFuryForceMovementState_d8 == ForcedMovementState.NONE &&
+          this.tickMainMenuOpenTransition_800c6690 == 0
+      ) {
         //LAB_800d36a8
         if(this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc != PathSegmentEndpointType.TERMINAL) {
           if(!this.wmapStruct19c0_800c66b0.mapRotating_80) {
@@ -1993,7 +1998,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d6b80
-    if(this.mapState_800c6798._d8 != 0) {
+    if(this.mapState_800c6798.queenFuryForceMovementState_d8 != ForcedMovementState.NONE) {
       return;
     }
 
@@ -2530,8 +2535,9 @@ public class WMap extends EngineState {
     }
 
     //LAB_800da360
+    // Show square prompt while sailing Queen Fury
     if(struct.modelIndex_1e4 == 1) {
-      if(gameState_800babc8.scriptFlags2_bc.get(0x97) && this.mapState_800c6798._d8 == 0) {
+      if(gameState_800babc8.scriptFlags2_bc.get(0x97) && this.mapState_800c6798.queenFuryForceMovementState_d8 == ForcedMovementState.NONE) {
         this.coolonQueenFuryOverlay.render(1);
       }
 
@@ -2705,7 +2711,7 @@ public class WMap extends EngineState {
             submapCut_80052c30.set(this.mapState_800c6798.submapCut_c8);
             submapScene_80052c34.set(this.mapState_800c6798.submapScene_ca);
 
-            this.initTransitionAnimation(TransitionAnimationType.FADE_IN);
+            this.initTransitionAnimation(TransitionAnimationType.FADE_OUT);
           } else {
             //LAB_800daff4
             struct._220 = 10;
@@ -2831,7 +2837,7 @@ public class WMap extends EngineState {
 
         //LAB_800dba98
 
-        this.initTransitionAnimation(TransitionAnimationType.FADE_IN);
+        this.initTransitionAnimation(TransitionAnimationType.FADE_OUT);
         this.renderCoolonMap(false, true);
         break;
 
@@ -3282,7 +3288,7 @@ public class WMap extends EngineState {
         submapCut_80052c30.set(this.mapState_800c6798.submapCut_c8);
         submapScene_80052c34.set(this.mapState_800c6798.submapScene_ca);
 
-        this.initTransitionAnimation(TransitionAnimationType.FADE_IN);
+        this.initTransitionAnimation(TransitionAnimationType.FADE_OUT);
         this.wmapStruct258_800c66a8._248 = 3;
       } else if(this.wmapStruct258_800c66a8._248 == 3) {
         //LAB_800e0c00
@@ -3669,7 +3675,10 @@ public class WMap extends EngineState {
     }
 
     //LAB_800e3748
-    if(this.mapState_800c6798._d4 != 0 || this.mapState_800c6798._d8 != 0) {
+    if(
+      this.mapState_800c6798.shortForceMovementState_d4 != ForcedMovementState.NONE ||
+      this.mapState_800c6798.queenFuryForceMovementState_d8 != ForcedMovementState.NONE
+    ) {
       //LAB_800e3778
       return;
     }
@@ -3846,12 +3855,12 @@ public class WMap extends EngineState {
             struct.transitionAnimationTicks_00++;
 
             if(struct.transitionAnimationTicks_00 >= 6 / vsyncMode_8007a3b8) {
-              this.mapState_800c6798._d4 = 0;
+              this.mapState_800c6798.shortForceMovementState_d4 = ForcedMovementState.NONE;
             }
           }
 
           //LAB_800e4624
-          if(this.wmapStruct19c0_800c66b0._c5 == 0 && this.mapState_800c6798._d4 == 0) {
+          if(this.wmapStruct19c0_800c66b0._c5 == 0 && this.mapState_800c6798.shortForceMovementState_d4 == ForcedMovementState.NONE) {
             this.mapState_800c6798.disableInput_d0 = false;
             struct.transitionAnimationType_05 = TransitionAnimationType.NONE;
           }
@@ -3905,12 +3914,12 @@ public class WMap extends EngineState {
             struct.transitionAnimationTicks_00++;
 
             if(struct.transitionAnimationTicks_00 >= 6 / vsyncMode_8007a3b8) {
-              this.mapState_800c6798._d4 = 0;
+              this.mapState_800c6798.shortForceMovementState_d4 = ForcedMovementState.NONE;
             }
           }
 
           //LAB_800e43c4
-          if(this.wmapStruct19c0_800c66b0._c5 == 0 && this.mapState_800c6798._d4 == 0) {
+          if(this.wmapStruct19c0_800c66b0._c5 == 0 && this.mapState_800c6798.shortForceMovementState_d4 == ForcedMovementState.NONE) {
             this.mapState_800c6798.disableInput_d0 = false;
             struct.transitionAnimationType_05 = TransitionAnimationType.NONE;
           }
@@ -4285,7 +4294,7 @@ public class WMap extends EngineState {
             //LAB_800e6404
           } else {
             //LAB_800e640c
-            this.initTransitionAnimation(TransitionAnimationType.FADE_IN);
+            this.initTransitionAnimation(TransitionAnimationType.FADE_OUT);
             FUN_8002a3ec(6, 0);
             FUN_8002a3ec(7, 1);
             this.mapTransitionState_800c68a4 = 5;
@@ -4343,6 +4352,7 @@ public class WMap extends EngineState {
         //LAB_800e66cc
         break;
 
+      // Backing out of location entrance prompt, set up for forced movement
       case 6:
         this.wmapLocationPromptPopup.deallocate();
 
@@ -4356,7 +4366,7 @@ public class WMap extends EngineState {
         }
 
         //LAB_800e671c
-        this.mapState_800c6798._d4 = 1;
+        this.mapState_800c6798.shortForceMovementState_d4 = ForcedMovementState.WALK;
         this.cancelLocationEntryDelayTick_800c68a0 = 0;
         this.mapTransitionState_800c68a4 = 7;
 
@@ -4373,7 +4383,7 @@ public class WMap extends EngineState {
       case 8:
         this.mapTransitionState_800c68a4 = 0;
         this.mapState_800c6798.disableInput_d0 = false;
-        this.mapState_800c6798._d4 = 0;
+        this.mapState_800c6798.shortForceMovementState_d4 = ForcedMovementState.NONE;
         this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc = PathSegmentEndpointType.NOT_AT_ENDPOINT;
         this.startLocationLabelsActive_800c68a8 = true;
 
@@ -4730,7 +4740,7 @@ public class WMap extends EngineState {
 
     this.FUN_800ea630(locationIndex);
 
-    this.mapState_800c6798._d8 = 0;
+    this.mapState_800c6798.queenFuryForceMovementState_d8 = ForcedMovementState.NONE;
 
     boolean transitionFromCombatOrShip = previousEngineState_8004dd28 == EngineStateEnum.COMBAT_06 && this.mapState_800c6798.submapCut_c4 != 999;
 
@@ -4744,7 +4754,7 @@ public class WMap extends EngineState {
     if(!transitionFromCombatOrShip && !loadingNewGameState_800bdc34.get() || reinitializingWmap_80052c6c) {
       //LAB_800e844c
       // Transition from submap or other world map
-      this.mapState_800c6798._d4 = 1;
+      this.mapState_800c6798.shortForceMovementState_d4 = ForcedMovementState.WALK;
       this.mapState_800c6798.disableInput_d0 = true;
     } else {
       // Transition from title or combat to world map (or sailing Queen Fury)
@@ -4753,7 +4763,7 @@ public class WMap extends EngineState {
       this.mapState_800c6798.dotIndex_16 = gameState_800babc8.dotIndex_4da;
       this.mapState_800c6798.dotOffset_18 = gameState_800babc8.dotOffset_4dc;
       this.mapState_800c6798.facing_1c = gameState_800babc8.facing_4dd;
-      this.mapState_800c6798._d4 = 0;
+      this.mapState_800c6798.shortForceMovementState_d4 = ForcedMovementState.NONE;
       this.mapState_800c6798.disableInput_d0 = false;
 
       //LAB_800e7f00
@@ -4835,17 +4845,19 @@ public class WMap extends EngineState {
     this.wmapStruct258_800c66a8.coord2_34.coord.transfer.y -= 2.0f;
 
     if(this.mapState_800c6798.submapCut_c4 == 242 && this.mapState_800c6798.submapScene_c6 == 3) { // Donau
+      // First time Queen Fury leaves Donau, with forced movement
       if(gameState_800babc8.scriptFlags2_bc.get(0x8f)) {
-        this.mapState_800c6798._d4 = 0;
-        this.mapState_800c6798._d8 = 1;
+        this.mapState_800c6798.shortForceMovementState_d4 = ForcedMovementState.NONE;
+        this.mapState_800c6798.queenFuryForceMovementState_d8 = ForcedMovementState.WALK;
         this.mapState_800c6798.disableInput_d0 = true;
       }
 
       //LAB_800e8684
+      // Queen Fury leaving Donau after first time
       if(gameState_800babc8.scriptFlags2_bc.get(0x90)) {
         this.mapState_800c6798.disableInput_d0 = true;
-        this.mapState_800c6798._d4 = 1;
-        this.mapState_800c6798._d8 = 0;
+        this.mapState_800c6798.shortForceMovementState_d4 = ForcedMovementState.WALK;
+        this.mapState_800c6798.queenFuryForceMovementState_d8 = ForcedMovementState.NONE;
       }
     }
 
@@ -4907,7 +4919,7 @@ public class WMap extends EngineState {
 
   @Method(0x800e8a90L)
   private void FUN_800e8a90() {
-    if(this.mapState_800c6798._d8 != 0) {
+    if(this.mapState_800c6798.queenFuryForceMovementState_d8 != ForcedMovementState.NONE) {
       this.mapState_800c6798.disableInput_d0 = true;
 
       if(this.wmapStruct258_800c66a8.transitionAnimationType_05 != TransitionAnimationType.NONE) {
@@ -4917,7 +4929,7 @@ public class WMap extends EngineState {
       //LAB_800e8ae0
     } else {
       //LAB_800e8ae8
-      if(this.mapState_800c6798._d4 == 0) {
+      if(this.mapState_800c6798.shortForceMovementState_d4 == ForcedMovementState.NONE) {
         return;
       }
 
@@ -4953,7 +4965,11 @@ public class WMap extends EngineState {
     }
 
     //LAB_800e8bfc
-    if(this.mapState_800c6798._d4 == 2 || this.mapState_800c6798._d8 == 2) {
+    // These values never actually set to RUN, but who knows, maybe someone will want it.
+    if(
+      this.mapState_800c6798.shortForceMovementState_d4 == ForcedMovementState.RUN ||
+        this.mapState_800c6798.queenFuryForceMovementState_d8 == ForcedMovementState.RUN
+    ) {
       //LAB_800e8c2c
       movement *= 2;
     }
@@ -5027,7 +5043,7 @@ public class WMap extends EngineState {
       //LAB_800e8f24
       if(this.wmapStruct258_800c66a8.modelIndex_1e4 == 1) {
         //LAB_800e8f48
-        if(this.mapState_800c6798._d8 == 0) {
+        if(this.mapState_800c6798.queenFuryForceMovementState_d8 == ForcedMovementState.NONE) {
           //LAB_800e8f64
           //LAB_800e8f88
           if(this.wmapStruct258_800c66a8.transitionAnimationType_05 == TransitionAnimationType.NONE) {
@@ -5050,7 +5066,7 @@ public class WMap extends EngineState {
                             this.mapState_800c6798.submapScene_ca = locations_800f0e34[93].submapScene_0a;
                             submapCut_80052c30.set(this.mapState_800c6798.submapCut_c8);
                             submapScene_80052c34.set(this.mapState_800c6798.submapScene_ca);
-                            this.initTransitionAnimation(TransitionAnimationType.FADE_IN);
+                            this.initTransitionAnimation(TransitionAnimationType.FADE_OUT);
                           }
                         }
                       }
@@ -5090,7 +5106,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800e91b0
-    if(this.mapState_800c6798._d8 != 0) {
+    if(this.mapState_800c6798.queenFuryForceMovementState_d8 != ForcedMovementState.NONE) {
       return;
     }
 
@@ -5264,12 +5280,13 @@ public class WMap extends EngineState {
     int currentMovementToPathAngle = 0x1000;
 
     //LAB_800e9da0
-    if(this.mapState_800c6798._d8 != 0) {
-      if(this.mapState_800c6798._d8 < 3) {
-        this.initTransitionAnimation(TransitionAnimationType.FADE_IN);
+    // Transition to Queen Fury deck for Shana scene
+    if(this.mapState_800c6798.queenFuryForceMovementState_d8 != ForcedMovementState.NONE) {
+      if(this.mapState_800c6798.queenFuryForceMovementState_d8.ordinal() < ForcedMovementState.FADE_OUT.ordinal()) {
+        this.initTransitionAnimation(TransitionAnimationType.FADE_OUT);
         submapCut_80052c30.set(285); // A Queen Fury cut
         submapScene_80052c34.set(32);
-        this.mapState_800c6798._d8 = 3;
+        this.mapState_800c6798.queenFuryForceMovementState_d8 = ForcedMovementState.FADE_OUT;
       }
 
       //LAB_800e9dfc
