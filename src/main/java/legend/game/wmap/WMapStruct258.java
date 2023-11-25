@@ -93,14 +93,18 @@ public class WMapStruct258 {
   public Obj shadowObj;
   public final MV shadowTransforms = new MV();
   public int modelIndex_1e4;
-  public final Vector3f svec_1e8 = new Vector3f();
-  public final Vector3f svec_1f0 = new Vector3f();
+
+  // Zoom attributes
+  public final Vector3f mapPosition_1e8 = new Vector3f();
+  public final Vector3f mapZoomStep_1f0 = new Vector3f();
   /** ubyte */
   public int zoomState_1f8;
   /** Not in retail */
   public int previousZoomLevel;
   /** ubyte */
   public int zoomAnimationTick_1f9;
+
+  // Coolon attributes
   /** Highlight refactored into WmapPromptPopup */
   // public WmapMenuTextHighlight40 coolonTravelMenuSelectorHighlight_1fc;
   public final Vector3f svec_200 = new Vector3f();
@@ -118,7 +122,7 @@ public class WMapStruct258 {
   /** ubyte */
   public int coolonWarpIndex_222;
   /** ubyte */
-  public int _223;
+  public int coolonPromptIndex_223;
 
 
   // _224 through _248 are used for rendering the Queen Fury's wake, though they are

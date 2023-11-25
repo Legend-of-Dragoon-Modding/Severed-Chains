@@ -2347,9 +2347,9 @@ public class WMap extends EngineState {
           playSound(0, 4, 0, 0, (short)0, (short)0);
           this.shouldSetDestLabelMetrics = true;
 
-          this.wmapStruct258_800c66a8.svec_1e8.set(this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer);
+          this.wmapStruct258_800c66a8.mapPosition_1e8.set(this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer);
 
-          this.FUN_800d9d24(1);
+          this.initMapModelZoom(1);
 
           this.wmapStruct258_800c66a8.zoomState_1f8 = 2;
           this.mcqBrightness_800ef1a4 = 0.0f;
@@ -2367,7 +2367,7 @@ public class WMap extends EngineState {
         }
 
         //LAB_800d96b8
-        this.FUN_800d9eb0();
+        this.tickMapPositionDuringZoom();
 
         this.wmapStruct258_800c66a8.zoomAnimationTick_1f9++;
 
@@ -2404,7 +2404,7 @@ public class WMap extends EngineState {
         //LAB_800d98a8
         if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_LEFT_2)) { // Zoom in
           playSound(0, 4, 0, 0, (short)0, (short)0);
-          this.FUN_800d9d24(-1);
+          this.initMapModelZoom(-1);
 
           this.wmapStruct258_800c66a8.zoomState_1f8 = 5;
 
@@ -2442,12 +2442,12 @@ public class WMap extends EngineState {
         }
 
         //LAB_800d9b18
-        this.FUN_800d9eb0();
+        this.tickMapPositionDuringZoom();
 
         this.wmapStruct258_800c66a8.zoomAnimationTick_1f9++;
 
         if(this.wmapStruct258_800c66a8.zoomAnimationTick_1f9 >= 18 / vsyncMode_8007a3b8) {
-          this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(this.wmapStruct258_800c66a8.svec_1e8);
+          this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(this.wmapStruct258_800c66a8.mapPosition_1e8);
           this.wmapStruct258_800c66a8.mapArrow.setSize(16.0f);
           this.wmapStruct258_800c66a8.zoomState_1f8 = 6;
         }
@@ -2468,18 +2468,18 @@ public class WMap extends EngineState {
    * @param zoomDirection -1 or +1
    */
   @Method(0x800d9d24L)
-  private void FUN_800d9d24(final int zoomDirection) {
+  private void initMapModelZoom(final int zoomDirection) {
     final Vector3i vec = mapPositions_800ef1a8[this.mapState_800c6798.continent_00.ordinal()];
-    final WMapStruct258 wmap = this.wmapStruct258_800c66a8;
-    wmap.svec_1f0.x = (vec.x - wmap.svec_1e8.x) * zoomDirection / 6.0f / (3.0f / vsyncMode_8007a3b8);
-    wmap.svec_1f0.y = (vec.y - wmap.svec_1e8.y) * zoomDirection / 6.0f / (3.0f / vsyncMode_8007a3b8);
-    wmap.svec_1f0.z = (vec.z - wmap.svec_1e8.z) * zoomDirection / 6.0f / (3.0f / vsyncMode_8007a3b8);
-    wmap.zoomAnimationTick_1f9 = 0;
+    final WMapStruct258 struct = this.wmapStruct258_800c66a8;
+    struct.mapZoomStep_1f0.x = (vec.x - struct.mapPosition_1e8.x) * zoomDirection / 6.0f / (3.0f / vsyncMode_8007a3b8);
+    struct.mapZoomStep_1f0.y = (vec.y - struct.mapPosition_1e8.y) * zoomDirection / 6.0f / (3.0f / vsyncMode_8007a3b8);
+    struct.mapZoomStep_1f0.z = (vec.z - struct.mapPosition_1e8.z) * zoomDirection / 6.0f / (3.0f / vsyncMode_8007a3b8);
+    struct.zoomAnimationTick_1f9 = 0;
   }
 
   @Method(0x800d9eb0L)
-  private void FUN_800d9eb0() {
-    this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.add(this.wmapStruct258_800c66a8.svec_1f0);
+  private void tickMapPositionDuringZoom() {
+    this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.add(this.wmapStruct258_800c66a8.mapZoomStep_1f0);
   }
 
   /** Handles Coolon fast travel, Queen Fury overlay, probably other things */
@@ -2571,7 +2571,7 @@ public class WMap extends EngineState {
         struct.svec_208.set(struct.currPlayerPos_94);
         struct.angle_21c = struct.rotation_a4.y;
         struct.angle_21e = this.wmapStruct19c0_800c66b0.mapRotation_70.y;
-        struct._223 = 0;
+        struct.coolonPromptIndex_223 = 0;
         struct._220 = 1;
         struct.models_0c[2].coord2_14.transforms.rotate.set(0.0f, struct.rotation_a4.y, 0.0f);
         struct.models_0c[2].coord2_14.transforms.scale.x = 0.25f;
@@ -2738,7 +2738,7 @@ public class WMap extends EngineState {
 
         if(isTextboxInState6(6)) {
           struct._220 = 5;
-          struct._223 = 0;
+          struct.coolonPromptIndex_223 = 0;
           struct._218 = 0;
         }
 
@@ -2761,12 +2761,12 @@ public class WMap extends EngineState {
         if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP) ||
           Input.pressedThisFrame(InputAction.DPAD_DOWN) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
           playSound(0, 1, 0, 0, (short)0, (short)0);
-          struct._223 ^= 1;
+          struct.coolonPromptIndex_223 ^= 1;
         }
 
         //LAB_800db3f8
         if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
-          if(struct._223 == 0) {
+          if(struct.coolonPromptIndex_223 == 0) {
             playSound(0, 3, 0, 0, (short)0, (short)0);
             FUN_8002a3ec(6, 1);
             struct._220 = 3;
@@ -2779,7 +2779,7 @@ public class WMap extends EngineState {
         }
 
         //LAB_800db4b4
-        this.coolonPromptPopup.getSelector().y_3a = struct._223 * 0x10;
+        this.coolonPromptPopup.getSelector().y_3a = struct.coolonPromptIndex_223 * 0x10;
 
         break;
 
