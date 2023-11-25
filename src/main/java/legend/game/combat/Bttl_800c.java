@@ -1054,7 +1054,9 @@ public final class Bttl_800c {
       final BattleStage stage = battlePreloadedEntities_1f8003f4.stage_963c;
 
       for(int i = 0; i < stage.dobj2s_00.length; i++) {
-        stage.dobj2s_00[i].obj = TmdObjLoader.fromObjTable("BattleStage (obj " + i + ')', stage.tmd_5d0.objTable[i]);
+        if(stage.tmd_5d0.objTable[i] != null) {
+          stage.dobj2s_00[i].obj = TmdObjLoader.fromObjTable("BattleStage (obj " + i + ')', stage.tmd_5d0.objTable[i]);
+        }
       }
 
       pregameLoadingStage_800bb10c.incr();
@@ -1530,11 +1532,15 @@ public final class Bttl_800c {
       setStageHasNoModel();
 
       for(int i = 0; i < battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00.length; i++) {
-        battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].obj.delete();
+        if(battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].obj != null) {
+          battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].obj.delete();
+          battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].obj = null;
+        }
       }
 
       if(battlePreloadedEntities_1f8003f4.skyboxObj != null) {
         battlePreloadedEntities_1f8003f4.skyboxObj.delete();
+        battlePreloadedEntities_1f8003f4.skyboxObj = null;
       }
 
       script_800c66fc = null;
