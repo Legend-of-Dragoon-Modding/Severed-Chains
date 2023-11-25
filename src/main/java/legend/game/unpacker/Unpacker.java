@@ -902,8 +902,7 @@ public final class Unpacker {
     }
 
     if(ITEM_SCRIPT.matcher(name).matches()) {
-      final String[] parts = name.split("/");
-      final int fileId = Integer.parseInt(parts[2]);
+      final int fileId = Integer.parseInt(name, 15, name.indexOf('/', 16), 10);
 
       return ((fileId & 0x1) == 0) && fileId >= 4140 && fileId <= 5500;
     }
@@ -930,8 +929,7 @@ public final class Unpacker {
 
   private static boolean playerCombatSoundEffectsDiscriminator(final String name, final FileData data, final Set<String> flags) {
     if(DRGN0_FILE.matcher(name).matches()) {
-      final String[] parts = name.split("/");
-      final int fileId = Integer.parseInt(parts[2]);
+      final int fileId = Integer.parseInt(name, 15, name.indexOf('/', 16), 10);
 
       return fileId >= 752 && fileId <= 772;
     }
@@ -967,8 +965,7 @@ public final class Unpacker {
 
   private static boolean playerCombatModelsAndTexturesDiscriminator(final String name, final FileData data, final Set<String> flags) {
     if(DRGN0_FILE.matcher(name).matches()) {
-      final String[] parts = name.split("/");
-      final int fileId = Integer.parseInt(parts[2]);
+      final int fileId = Integer.parseInt(name, 15, name.indexOf('/', 16), 10);
 
       return fileId >= 3993 && fileId <= 4010 && (!name.endsWith("mrg") || fileId % 2 == 0);
     }
@@ -994,8 +991,7 @@ public final class Unpacker {
 
   private static boolean dragoonCombatModelsAndTexturesDiscriminator(final String name, final FileData data, final Set<String> flags) {
     if(DRGN0_FILE.matcher(name).matches()) {
-      final String[] parts = name.split("/");
-      final int fileId = Integer.parseInt(parts[2]);
+      final int fileId = Integer.parseInt(name, 15, name.indexOf('/', 16), 10);
 
       return fileId >= 4011 && fileId <= 4030 && (!name.endsWith("mrg") || fileId % 2 == 0);
     }
@@ -1021,8 +1017,7 @@ public final class Unpacker {
 
   private static boolean skipPartyPermutationsDiscriminator(final String name, final FileData data, final Set<String> flags) {
     if(DRGN0_FILE.matcher(name).matches()) {
-      final String[] parts = name.split("/");
-      final int fileId = Integer.parseInt(parts[2]);
+      final int fileId = Integer.parseInt(name, 15, name.indexOf('/', 16), 10);
 
       return fileId >= 3537 && fileId <= 3592;
     }
