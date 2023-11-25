@@ -31,6 +31,7 @@ import legend.core.memory.types.TriConsumer;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.opengl.QuadBuilder;
+import legend.core.opengl.TmdObjLoader;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.deff.Anim;
 import legend.game.combat.deff.DeffManager7cc;
@@ -156,6 +157,8 @@ import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
+import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
+import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800c.FUN_800cf684;
 import static legend.game.combat.Bttl_800c.FUN_800cfb94;
@@ -8787,7 +8790,7 @@ public final class SEffe {
       }
 
       //LAB_80116778
-      renderTmdSpriteEffect(tmdObjTable, manager._10, sp0x10);
+      renderTmdSpriteEffect(tmdObjTable, null, manager._10, sp0x10);
     } else if(type == 0x400_0000) {
       if(effect.deffSpriteFlags_50 != deffFlags) {
         //LAB_801162e8
@@ -9606,9 +9609,14 @@ public final class SEffe {
         zShift_1f8003c4.set(oldZShift);
         zMax_1f8003cc.set(oldZMax);
         zMin = oldZMin;
+
+        RENDERER.queueModel(deffEffect.obj, sp0x10)
+          .lightDirection(lightDirectionMatrix_800c34e8)
+          .lightColour(lightColourMatrix_800c3508)
+          .backgroundColour(GTE.backgroundColour);
       } else {
         //LAB_80118370
-        renderTmdSpriteEffect(deffEffect.tmd_08, data._10, sp0x10);
+        renderTmdSpriteEffect(deffEffect.tmd_08, deffEffect.obj, data._10, sp0x10);
       }
 
       //LAB_80118380
@@ -9642,7 +9650,7 @@ public final class SEffe {
       script.scriptState_04,
       null,
       SEffe::renderDeffTmd,
-      null,
+      (s, manager) -> ((DeffTmdRenderer14)manager.effect_44).obj.delete(),
       new DeffTmdRenderer14()
     );
 
@@ -9665,6 +9673,8 @@ public final class SEffe {
       effect.tmd_08 = tmdWithId.tmd.objTable[0];
       effect.tpage_10 = (int)((tmdWithId.id & 0xffff_0000L) >>> 11);
     }
+
+    effect.obj = TmdObjLoader.fromObjTable(state.name, effect.tmd_08);
 
     //LAB_801184ac
     manager._10.flags_00 = 0x1400_0000;
@@ -9721,7 +9731,7 @@ public final class SEffe {
       script.scriptState_04,
       null,
       SEffe::renderDeffTmd,
-      null,
+      (s, manager) -> ((DeffTmdRenderer14)manager.effect_44).obj.delete(),
       new DeffTmdRenderer14()
     );
 
@@ -9733,6 +9743,8 @@ public final class SEffe {
     s0._00 = 0x300_0000;
     s0.tmdType_04 = null;
     s0.tmd_08 = objTable;
+
+    s0.obj = TmdObjLoader.fromObjTable(state.name, s0.tmd_08);
 
     //LAB_801186bc
     //LAB_801186c0
@@ -9782,7 +9794,7 @@ public final class SEffe {
       tmdGp0Tpage_1f8003ec.set(manager._10.flags_00 >>> 23 & 0x60);
       zOffset_1f8003e8.set(manager._10.z_22);
       FUN_800e60e0(manager._10.colour_1c.x / 128.0f, manager._10.colour_1c.y / 128.0f, manager._10.colour_1c.z / 128.0f);
-      renderTmdSpriteEffect(shadowModel_800bda10.modelParts_00[0].tmd_08, manager._10, sp0x10);
+      renderTmdSpriteEffect(shadowModel_800bda10.modelParts_00[0].tmd_08, null, manager._10, sp0x10);
       FUN_800e6170();
     }
 
@@ -9952,7 +9964,7 @@ public final class SEffe {
         }
 
         //LAB_80118f9c
-        renderTmdSpriteEffect(sprite.tmd_08, manager._10, transformMatrix);
+        renderTmdSpriteEffect(sprite.tmd_08, null, manager._10, transformMatrix);
       } else if(type == 0x400_0000) {
         final BillboardSpriteEffect0c sprite = (BillboardSpriteEffect0c)effect.subEffect_1c;
         renderBillboardSpriteEffect_(sprite.metrics_04, manager._10, transformMatrix);
@@ -10036,7 +10048,7 @@ public final class SEffe {
             if(type == 0x300_0000) {
               //LAB_801193f0
               final TmdSpriteEffect10 subEffect = (TmdSpriteEffect10)effect.subEffect_1c;
-              renderTmdSpriteEffect(subEffect.tmd_08, managerInner, transformMatrix);
+              renderTmdSpriteEffect(subEffect.tmd_08, null, managerInner, transformMatrix);
             } else if(type == 0x400_0000) {
               final BillboardSpriteEffect0c subEffect = (BillboardSpriteEffect0c)effect.subEffect_1c;
               renderBillboardSpriteEffect_(subEffect.metrics_04, managerInner, transformMatrix);

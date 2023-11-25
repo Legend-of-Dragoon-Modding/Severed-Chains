@@ -2,6 +2,7 @@ package legend.game.combat;
 
 import legend.core.Config;
 import legend.core.MathHelper;
+import legend.core.RenderEngine;
 import legend.core.gpu.GpuCommandLine;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.MV;
@@ -13,6 +14,7 @@ import legend.core.memory.Method;
 import legend.core.memory.types.CString;
 import legend.core.memory.types.ComponentFunction;
 import legend.core.memory.types.FloatRef;
+import legend.core.opengl.Obj;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.deff.Anim;
@@ -67,6 +69,7 @@ import java.util.Arrays;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.MEMORY;
+import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.renderButtonPressHudElement;
@@ -94,6 +97,8 @@ import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
+import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
+import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800c.FUN_800cfb14;
 import static legend.game.combat.Bttl_800c.ZERO;
@@ -124,7 +129,6 @@ import static legend.game.combat.Bttl_800c.charWidthAdjustTable_800fa7cc;
 import static legend.game.combat.Bttl_800c.completedAdditionStarburstAngleModifiers_800c6dac;
 import static legend.game.combat.Bttl_800c.completedAdditionStarburstTranslationMagnitudes_800c6d94;
 import static legend.game.combat.Bttl_800c.currentAddition_800c6790;
-import static legend.game.combat.Bttl_800c.deffManager_800c693c;
 import static legend.game.combat.Bttl_800c.framesUntilWobble_800c67d4;
 import static legend.game.combat.Bttl_800c.getModelObjectTranslation;
 import static legend.game.combat.Bttl_800c.getRelativeOffset;
@@ -4624,53 +4628,50 @@ public final class Bttl_800d {
    */
   @Method(0x800dd89cL)
   public static void FUN_800dd89c(final Model124 model, final int newAttribute) {
-    final long v0;
-    final long v1;
-    long s6;
     zOffset_1f8003e8.set(model.zOffset_a0);
     tmdGp0Tpage_1f8003ec.set(model.tpage_108);
-    s6 = deffManager_800c693c.flags_20 & 0x4;
-    v1 = (int)s6 >> 1;
-    v0 = (int)s6 >> 2;
-    s6 = v1 | v0;
+
+    final MV lw = new MV();
+    final MV ls = new MV();
 
     //LAB_800dd928
     for(int i = 0; i < model.modelParts_00.length; i++) {
-      final ModelPart10 s2 = model.modelParts_00[i];
+      final ModelPart10 part = model.modelParts_00[i];
 
       //LAB_800dd940
       if((model.partInvisible_f4 & 1L << i) == 0) {
-        final MV lw = new MV();
-        final MV ls = new MV();
-        GsGetLws(s2.coord2_04, lw, ls);
+        GsGetLws(part.coord2_04, lw, ls);
 
-        if((s6 & ((int)ls.transfer.z ^ tickCount_800bb0fc.get())) == 0 || ls.transfer.z - ls.transfer.x >= -0x800 && ls.transfer.z + ls.transfer.x >= -0x800 && ls.transfer.z - ls.transfer.y >= -0x800 && ls.transfer.z + ls.transfer.y >= -0x800) {
-          //LAB_800dd9bc
-          if((newAttribute & 0x8) != 0) {
-            //TODO pretty sure this is not equivalent to MATRIX#normalize
-            lw.normal();
-          }
-
-          //LAB_800dd9d8
-          GsSetLightMatrix(lw);
-          GTE.setTransforms(ls);
-
-          final int oldAttrib = s2.attribute_00;
-          s2.attribute_00 = newAttribute;
-
-          final int oldZShift = zShift_1f8003c4.get();
-          final int oldZMax = zMax_1f8003cc.get();
-          final int oldZMin = zMin;
-          zShift_1f8003c4.set(2);
-          zMax_1f8003cc.set(0xffe);
-          zMin = 0xb;
-          Renderer.renderDobj2(s2, false, 0x20);
-          zShift_1f8003c4.set(oldZShift);
-          zMax_1f8003cc.set(oldZMax);
-          zMin = oldZMin;
-
-          s2.attribute_00 = oldAttrib;
+        //LAB_800dd9bc
+        if((newAttribute & 0x8) != 0) {
+          //TODO pretty sure this is not equivalent to MATRIX#normalize
+          lw.normal();
         }
+
+        //LAB_800dd9d8
+        GsSetLightMatrix(lw);
+        GTE.setTransforms(ls);
+
+        final int oldAttrib = part.attribute_00;
+        part.attribute_00 = newAttribute;
+
+        final int oldZShift = zShift_1f8003c4.get();
+        final int oldZMax = zMax_1f8003cc.get();
+        final int oldZMin = zMin;
+        zShift_1f8003c4.set(2);
+        zMax_1f8003cc.set(0xffe);
+        zMin = 0xb;
+        Renderer.renderDobj2(part, false, 0x20);
+        zShift_1f8003c4.set(oldZShift);
+        zMax_1f8003cc.set(oldZMax);
+        zMin = oldZMin;
+
+        RENDERER.queueModel(part.obj, lw)
+          .lightDirection(lightDirectionMatrix_800c34e8)
+          .lightColour(lightColourMatrix_800c3508)
+          .backgroundColour(GTE.backgroundColour);
+
+        part.attribute_00 = oldAttrib;
       }
     }
 
@@ -4950,9 +4951,7 @@ public final class Bttl_800d {
 
   /** used renderCtmd */
   @Method(0x800de3f4L)
-  public static void renderTmdSpriteEffect(final TmdObjTable1c a0, final EffectManagerData6cInner<?> a1, final MV a2) {
-    final int s0 = deffManager_800c693c.flags_20 & 0x4;
-
+  public static void renderTmdSpriteEffect(final TmdObjTable1c objTable, final Obj obj, final EffectManagerData6cInner<?> a1, final MV a2) {
     final MV sp0x10 = new MV();
     if((a1.flags_00 & 0x8) != 0) {
       //TODO pretty sure this isn't equivalent to MATRIX#normalize
@@ -4964,7 +4963,11 @@ public final class Bttl_800d {
     }
 
     //LAB_800de45c
-    a2.compose(worldToScreenMatrix_800c3548, sp0x10);
+    if(RenderEngine.legacyMode != 0) {
+      a2.compose(worldToScreenMatrix_800c3548, sp0x10);
+    } else {
+      sp0x10.set(a2);
+    }
 
     if((a1.flags_00 & 0x400_0000) == 0) {
       sp0x10.rotationXYZ(a1.rot_10);
@@ -4972,24 +4975,29 @@ public final class Bttl_800d {
     }
 
     //LAB_800de4a8
-    if(((s0 >> 1 | s0 >> 2) & ((int)sp0x10.transfer.z ^ tickCount_800bb0fc.get())) == 0 || sp0x10.transfer.z - sp0x10.transfer.x >= -0x800 && sp0x10.transfer.z + sp0x10.transfer.x >= -0x800 && sp0x10.transfer.z - sp0x10.transfer.y >= -0x800 && sp0x10.transfer.z + sp0x10.transfer.y >= -0x800) {
-      //LAB_800de50c
-      GTE.setTransforms(sp0x10);
+    //LAB_800de50c
+    GTE.setTransforms(sp0x10);
 
-      final ModelPart10 dobj2 = new ModelPart10();
-      dobj2.attribute_00 = a1.flags_00;
-      dobj2.tmd_08 = a0;
+    final ModelPart10 dobj2 = new ModelPart10();
+    dobj2.attribute_00 = a1.flags_00;
+    dobj2.tmd_08 = objTable;
 
-      final int oldZShift = zShift_1f8003c4.get();
-      final int oldZMax = zMax_1f8003cc.get();
-      final int oldZMin = zMin;
-      zShift_1f8003c4.set(2);
-      zMax_1f8003cc.set(0xffe);
-      zMin = 0xb;
-      Renderer.renderDobj2(dobj2, false, 0x20);
-      zShift_1f8003c4.set(oldZShift);
-      zMax_1f8003cc.set(oldZMax);
-      zMin = oldZMin;
+    final int oldZShift = zShift_1f8003c4.get();
+    final int oldZMax = zMax_1f8003cc.get();
+    final int oldZMin = zMin;
+    zShift_1f8003c4.set(2);
+    zMax_1f8003cc.set(0xffe);
+    zMin = 0xb;
+    Renderer.renderDobj2(dobj2, false, 0x20);
+    zShift_1f8003c4.set(oldZShift);
+    zMax_1f8003cc.set(oldZMax);
+    zMin = oldZMin;
+
+    if(obj != null) {
+      RENDERER.queueModel(obj, sp0x10)
+        .lightDirection(lightDirectionMatrix_800c34e8)
+        .lightColour(lightColourMatrix_800c3508)
+        .backgroundColour(GTE.backgroundColour);
     }
 
     //LAB_800de528

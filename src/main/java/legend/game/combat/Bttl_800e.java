@@ -2188,7 +2188,7 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Allocates an unknown model effect")
+  @ScriptDescription("Allocates an unknown model effect (used in Miranda transformation)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0", description = "Unused")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @Method(0x800e9854L)
@@ -2233,7 +2233,7 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Allocates an unknown model effect manager")
+  @ScriptDescription("Allocates an unknown model effect manager (used in Miranda transformation)")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flags", description = "The DEFF flags, mostly unknown")
   @Method(0x800e99bcL)

@@ -18,6 +18,7 @@ public class DeffManager7cc {
   public ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> scriptState_1c;
   /**
    * <ul>
+   *   <li>0x4 - I suspect this is some misguided attempt at optimization, makes the effect flicker intermittently based on Z and ticks</li>
    *   <li>0x4_0000 - Has sounds?</li>
    *   <li>0x10_0000 - Has attack animations?</li>
    *   <li>0x60_0000 - Has combat stage effects?</li>
