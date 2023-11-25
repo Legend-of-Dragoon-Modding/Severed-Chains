@@ -4775,15 +4775,12 @@ public class WMap extends EngineState {
       for(int i = 0; i < this.mapState_800c6798.locationCount_08; i++) {
         //LAB_800e7f24
         final int directionalPathIndex = locations_800f0e34[i].directionalPathIndex_00;
-
-        if(directionalPathIndex != -1) {
           //LAB_800e7f68
-          if(this.checkLocationIsValidAndOptionallySetPathStart(i, -1, null) == 0) {
-            //LAB_800e7f88
-            if(directionalPathIndex == this.mapState_800c6798.directionalPathIndex_12) {
-              locationIndex = i;
-              break;
-            }
+        if(this.checkLocationIsValidAndOptionallySetPathStart(i, -1, null) == 0) {
+          //LAB_800e7f88
+          if(directionalPathIndex == this.mapState_800c6798.directionalPathIndex_12) {
+            locationIndex = i;
+            break;
           }
         }
         //LAB_800e7fb4
@@ -5406,14 +5403,12 @@ public class WMap extends EngineState {
     int i;
     for(i = 0; i < this.mapState_800c6798.locationCount_08; i++) {
       //LAB_800ea520
-      if(locations_800f0e34[i].directionalPathIndex_00 != -1) {
-        //LAB_800ea558
-        if(this.checkLocationIsValidAndOptionallySetPathStart(i, 0, null) == 0) {
-          //LAB_800ea578
-          //LAB_800ea5bc
-          if(locations_800f0e34[i].directionalPathIndex_00 == directionalPathIndex) {
-            break;
-          }
+      //LAB_800ea558
+      if(this.checkLocationIsValidAndOptionallySetPathStart(i, 0, null) == 0) {
+        //LAB_800ea578
+        //LAB_800ea5bc
+        if(locations_800f0e34[i].directionalPathIndex_00 == directionalPathIndex) {
+          break;
         }
       }
       //LAB_800ea5f8
@@ -5426,15 +5421,6 @@ public class WMap extends EngineState {
   /** Sets relevant state fields for the path segment the player is either loading into or entering. */
   @Method(0x800ea630L)
   private void setNewPathSegmentStateInfo(final int locationIndex) {
-    if(locations_800f0e34[locationIndex].directionalPathIndex_00 == -1) {
-      return;
-    }
-
-    //LAB_800ea678
-    if(locations_800f0e34[locationIndex].continent_0e != this.mapState_800c6798.continent_00) {
-      return;
-    }
-
     //LAB_800ea6bc
     if(this.checkLocationIsValidAndOptionallySetPathStart(locationIndex, 0, null) != 0) {
       return;
