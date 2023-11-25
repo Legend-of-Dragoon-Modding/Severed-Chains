@@ -28,6 +28,20 @@ public class WMapStruct258 {
     WORLD_MAP
   }
 
+  /**
+   * TODO Look more into zoom code before refactoring to use states, might be able
+   *  to reduce number.
+   */
+  public enum ZoomState {
+    LOCAL,
+    CONTINENT_IN,
+    TRANSITION_MODEL_OUT,
+    TRANSITION_ARROW_SIZE,
+    WORLD,
+    TRANSITION_MODEL_IN,
+    CONTINENT_OUT
+  }
+
   public int transitionAnimationTicks_00;
   /**
    * ubyte
@@ -86,7 +100,7 @@ public class WMapStruct258 {
   /** Not in retail */
   public int previousZoomLevel;
   /** ubyte */
-  public int _1f9;
+  public int zoomAnimationTick_1f9;
   /** Highlight refactored into WmapPromptPopup */
   // public WmapMenuTextHighlight40 coolonTravelMenuSelectorHighlight_1fc;
   public final Vector3f svec_200 = new Vector3f();

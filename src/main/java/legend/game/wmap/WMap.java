@@ -2369,9 +2369,9 @@ public class WMap extends EngineState {
         //LAB_800d96b8
         this.FUN_800d9eb0();
 
-        this.wmapStruct258_800c66a8._1f9++;
+        this.wmapStruct258_800c66a8.zoomAnimationTick_1f9++;
 
-        if(this.wmapStruct258_800c66a8._1f9 >= 18 / vsyncMode_8007a3b8) {
+        if(this.wmapStruct258_800c66a8.zoomAnimationTick_1f9 >= 18 / vsyncMode_8007a3b8) {
           this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(mapPositions_800ef1a8[this.mapState_800c6798.continent_00.ordinal()]);
           this.wmapStruct258_800c66a8.zoomState_1f8 = 3;
 
@@ -2444,9 +2444,9 @@ public class WMap extends EngineState {
         //LAB_800d9b18
         this.FUN_800d9eb0();
 
-        this.wmapStruct258_800c66a8._1f9++;
+        this.wmapStruct258_800c66a8.zoomAnimationTick_1f9++;
 
-        if(this.wmapStruct258_800c66a8._1f9 >= 18 / vsyncMode_8007a3b8) {
+        if(this.wmapStruct258_800c66a8.zoomAnimationTick_1f9 >= 18 / vsyncMode_8007a3b8) {
           this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(this.wmapStruct258_800c66a8.svec_1e8);
           this.wmapStruct258_800c66a8.mapArrow.setSize(16.0f);
           this.wmapStruct258_800c66a8.zoomState_1f8 = 6;
@@ -2474,7 +2474,7 @@ public class WMap extends EngineState {
     wmap.svec_1f0.x = (vec.x - wmap.svec_1e8.x) * zoomDirection / 6.0f / (3.0f / vsyncMode_8007a3b8);
     wmap.svec_1f0.y = (vec.y - wmap.svec_1e8.y) * zoomDirection / 6.0f / (3.0f / vsyncMode_8007a3b8);
     wmap.svec_1f0.z = (vec.z - wmap.svec_1e8.z) * zoomDirection / 6.0f / (3.0f / vsyncMode_8007a3b8);
-    wmap._1f9 = 0;
+    wmap.zoomAnimationTick_1f9 = 0;
   }
 
   @Method(0x800d9eb0L)
