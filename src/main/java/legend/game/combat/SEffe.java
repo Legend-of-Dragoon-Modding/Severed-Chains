@@ -9771,9 +9771,9 @@ public final class SEffe {
     //LAB_80118780
   }
 
-  /** TODO renders some kind of deff tmd maybe, uses ctmd render pipeline */
+  /** Uses ctmd render pipeline */
   @Method(0x80118790L)
-  public static void FUN_80118790(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
+  public static void renderShadowEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
     if(manager._10.flags_00 >= 0) { // No errors
       final float y = manager._10.trans_04.y;
       manager._10.trans_04.y = 0.0f;
@@ -9782,7 +9782,6 @@ public final class SEffe {
       sp0x10.transfer.y = y;
       manager._10.trans_04.y = y;
 
-      //TODO verify order of elements
       final float rotY = MathHelper.atan2(-sp0x10.m02, sp0x10.m00);
       sp0x10.rotateY(-rotY);
       sp0x10.rotateZ(-MathHelper.atan2(sp0x10.m01, sp0x10.m00));
@@ -9791,25 +9790,26 @@ public final class SEffe {
       sp0x10.m01 = 0.0f;
       sp0x10.m11 = 0.0f;
       sp0x10.m21 = 0.0f;
+      sp0x10.transfer.y -= 0.05f; // Fix Z-fighting with ground
       tmdGp0Tpage_1f8003ec.set(manager._10.flags_00 >>> 23 & 0x60);
       zOffset_1f8003e8.set(manager._10.z_22);
       FUN_800e60e0(manager._10.colour_1c.x / 128.0f, manager._10.colour_1c.y / 128.0f, manager._10.colour_1c.z / 128.0f);
-      renderTmdSpriteEffect(shadowModel_800bda10.modelParts_00[0].tmd_08, null, manager._10, sp0x10);
+      renderTmdSpriteEffect(shadowModel_800bda10.modelParts_00[0].tmd_08, shadowModel_800bda10.modelParts_00[0].obj, manager._10, sp0x10);
       FUN_800e6170();
     }
 
     //LAB_801188d8
   }
 
-  @ScriptDescription("Allocates an unknown effect")
+  @ScriptDescription("Allocates a shadow effect")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @Method(0x801188ecL)
-  public static FlowControl FUN_801188ec(final RunningScript<? extends BattleObject> script) {
+  public static FlowControl scriptAllocateShadowEffect(final RunningScript<? extends BattleObject> script) {
     final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
       "Unknown (FUN_801188ec, %s)".formatted(shadowModel_800bda10.modelParts_00[0].tmd_08.name),
       script.scriptState_04,
       null,
-      SEffe::FUN_80118790,
+      SEffe::renderShadowEffect,
       null,
       null
     );
