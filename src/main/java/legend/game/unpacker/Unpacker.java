@@ -1084,8 +1084,7 @@ public final class Unpacker {
 
   private static boolean monsterSfxDiscriminator(final String name, final FileData data, final Set<String> flags) {
     if(DRGN0_SUBFILE.matcher(name).matches()) {
-      final String[] parts = name.split("/");
-      final int fileId = Integer.parseInt(parts[2]);
+      final int fileId = Integer.parseInt(name, 15, name.indexOf('/', 16), 10);
 
       return fileId >= 778 && fileId <= 1289;
     }
@@ -1094,9 +1093,9 @@ public final class Unpacker {
   }
 
   private static Map<String, FileData> monsterSfxTransformer(final String name, final FileData data, final Set<String> flags) {
-    final String[] parts = name.split("/");
-    final int fileId = Integer.parseInt(parts[2]);
-    final int index = Integer.parseInt(parts[3]);
+    final int slash = name.indexOf('/', 16);
+    final int fileId = Integer.parseInt(name, 15, slash, 10);
+    final int index = Integer.parseInt(name, slash + 1, name.indexOf('/', slash + 2), 10);
     
     final int[] monsters = battleAssetIdentifier(fileId - 778);
 
@@ -1109,8 +1108,7 @@ public final class Unpacker {
 
   private static boolean monsterTextureDiscriminator(final String name, final FileData data, final Set<String> flags) {
     if(DRGN0_SUBFILE.matcher(name).matches()) {
-      final String[] parts = name.split("/");
-      final int fileId = Integer.parseInt(parts[2]);
+      final int fileId = Integer.parseInt(name, 15, name.indexOf('/', 16), 10);
 
       return fileId >= 2625 && fileId <= 3136;
     }
@@ -1119,9 +1117,9 @@ public final class Unpacker {
   }
 
   private static Map<String, FileData> monsterTextureTransformer(final String name, final FileData data, final Set<String> flags) {
-    final String[] parts = name.split("/");
-    final int fileId = Integer.parseInt(parts[2]);
-    final int index = Integer.parseInt(parts[3]);
+    final int slash = name.indexOf('/', 16);
+    final int fileId = Integer.parseInt(name, 15, slash, 10);
+    final int index = Integer.parseInt(name, slash + 1, name.indexOf('/', slash + 2), 10);
 
     final int[] monsters = battleAssetIdentifier(fileId - 2625);
 
@@ -1296,8 +1294,7 @@ public final class Unpacker {
 
   private static boolean stagedFightsSfxDiscriminator(final String name, final FileData data, final Set<String> flags) {
     if(DRGN0_FILE.matcher(name).matches()) {
-      final String[] parts = name.split("/");
-      final int fileId = Integer.parseInt(parts[2]);
+      final int fileId = Integer.parseInt(name, 15, name.indexOf('/', 16), 10);
 
       return fileId >= 1290 && fileId <= 1297;
     }
@@ -1306,8 +1303,7 @@ public final class Unpacker {
   }
 
   private static Map<String, FileData> stagedFightsSfxTransformer(final String name, final FileData data, final Set<String> flags) {
-    final String[] parts = name.split("/");
-    final int fileId = Integer.parseInt(parts[2]);
+    final int fileId = Integer.parseInt(name, 15, name.indexOf('/', 16), 10);
 
     final String path;
     switch(fileId) {
@@ -1327,8 +1323,7 @@ public final class Unpacker {
 
   private static boolean dragoonTransformationSfxDiscriminator(final String name, final FileData data, final Set<String> flags) {
     if(DRGN0_FILE.matcher(name).matches()) {
-      final String[] parts = name.split("/");
-      final int fileId = Integer.parseInt(parts[2]);
+      final int fileId = Integer.parseInt(name, 15, name.indexOf('/', 16), 10);
 
       return (fileId >= 1317 && fileId <= 1325) || (fileId == 1327);
     }
