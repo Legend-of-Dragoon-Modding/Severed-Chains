@@ -89,7 +89,7 @@ public final class WmapStatics {
 
   public static final UnboundedArrayRef<Place0c> places_800f0234 = MEMORY.ref(4, 0x800f0234L, UnboundedArrayRef.of(0xc, Place0c::new));
 
-  /** Valid entries seem to end at 158, though their seem to be some 0 entries scattered throughout as well */
+  /** Valid entries seem to end at 158, though there seem to be some 0 entries scattered throughout as well */
   public static final Location14[] locations_800f0e34 = {
     new Location14(4, 0, 7, 13, 7, 12, 0, Continent.SOUTH_SERDIO, true, 128),
     new Location14(3, 1, 624, 11, 624, 10, 1, Continent.SOUTH_SERDIO, false, 128),
