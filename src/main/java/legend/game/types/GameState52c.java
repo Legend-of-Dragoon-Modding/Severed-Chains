@@ -76,7 +76,7 @@ public class GameState52c {
   public int dotIndex_4da;
   public float dotOffset_4dc;
   public int facing_4dd;
-  public int areaIndex_4de;
+  public int directionalPathIndex_4de;
 
   // Config stuff
   public boolean vibrationEnabled_4e1;

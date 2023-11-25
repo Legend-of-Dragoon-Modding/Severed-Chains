@@ -394,7 +394,7 @@ public class GameStateViewerController {
           GameStateViewerController.this.dotIndex.setText(String.valueOf(gameState_800babc8.dotIndex_4da));
           GameStateViewerController.this.dotOffset.setText(String.valueOf(gameState_800babc8.dotOffset_4dc));
           GameStateViewerController.this.facing.setText(String.valueOf(gameState_800babc8.facing_4dd));
-          GameStateViewerController.this.areaIndex.setText(String.valueOf(gameState_800babc8.areaIndex_4de));
+          GameStateViewerController.this.areaIndex.setText(String.valueOf(gameState_800babc8.directionalPathIndex_4de));
         });
       }
     }, 0, 1000);

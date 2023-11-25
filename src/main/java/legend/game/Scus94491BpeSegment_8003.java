@@ -1021,7 +1021,7 @@ public final class Scus94491BpeSegment_8003 {
    *
    * <p>After transforming the four coordinate vectors v0, v1, v2, and v3 using a rotation matrix, the function
    * performs perspective transformation, and returns four screen coordinates sxy0, sxy1, sxy2, and sxy3. It
-   * also returns an interpolation value for depth cueing to p corresponding to v3.</p>
+   * also returns an interpolation value for depth queueing to p corresponding to v3.</p>
    *
    * @param v0 Vector 0
    * @param v1 Vector 1

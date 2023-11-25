@@ -104,7 +104,7 @@ import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba4;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdba8;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
-import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
+import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.secondaryCharIndices_800bdbf8;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
@@ -339,7 +339,7 @@ public final class SItem {
 
     switch(inventoryMenuState_800bdc28.get()) {
       case INIT_0 -> { // Initialize, loads some files (unknown contents)
-        savedGameSelected_800bdc34.set(false);
+        loadingNewGameState_800bdc34.set(false);
         messageBox_8011dc90.state_0c = 0;
         loadCharacterStats();
 

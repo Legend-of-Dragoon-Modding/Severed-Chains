@@ -1,12 +1,24 @@
 package legend.game.wmap;
 
 import legend.core.opengl.MeshObj;
+import legend.game.wmap.WmapEnums.Continent;
 import org.joml.Vector3f;
-import org.joml.Vector3i;
 
 import java.util.Arrays;
 
 public class MapState100 {
+  public enum PathSegmentEntering {
+    CURRENT,
+    PREVIOUS,
+    NEXT
+  }
+
+  public enum PathSegmentEndpointType {
+    NOT_AT_ENDPOINT,
+    TERMINAL,
+    INTERSECTION
+  }
+
   /**
    * <ol start="0">
    *   <li>South Serdio</li>
@@ -16,21 +28,25 @@ public class MapState100 {
    *   <li>Mille Seseau</li>
    *   <li>Gloriano</li>
    *   <li>Death Frontier</li>
-   *   <li>Teleportation</li>
+   *   <li>Endiness</li>
    * </ol>
    * 800c6798
    */
-  public int continentIndex_00;
-  /** 800c679c */
-//  public int _04; // was just a copy of continentIndex_00
+  public Continent continent_00;
+  // /** 800c679c */
+  // public int _04; // was just a copy of continent_00
   /** 800c67a0 */
   public int locationCount_08;
-  /** 800c67a4 */
-  public int areaCount_0c;
+  /** The number of paths on the continent * 2 (one for positive and negative directions) (800c67a4) */
+  public int directionalPathCount_0c;
   /** 800c67a8 */
   public int locationIndex_10;
-  /** 800c67aa */
-  public int areaIndex_12;
+  /**
+   * The section of the path that the player is on, plus the direction they are headed, in sequence/
+   * plot order. That is, e.g. direction is positive when moving from an area toward its subsequent area
+   * in the order the plots opens them. (800c67aa)
+   */
+  public int directionalPathIndex_12;
   /** The section of the path that the player is on (800c67ac) */
   public int pathIndex_14;
   /** The path dot the player is on (800c67ae) */
@@ -43,14 +59,23 @@ public class MapState100 {
 
   /** +1 - left, -1 - right (800c67b4) */
   public int facing_1c;
-  /** Not the canonical player pos, just a copy (for animation purposes?) (800c67b8) */
-  public final Vector3f playerPos_20 = new Vector3f();
-  /** 800c67c8 */
+  /** Previous as in travel index ("plot") order, not based on direction of travel. (800c67b8) */
+  public final Vector3f prevDotPos_20 = new Vector3f();
+  /** Next as in travel index ("plot") order, not based on direction of travel. (800c67c8) */
   public final Vector3f nextDotPos_30 = new Vector3f();
-  /** 800c67d8 */
-  public final Vector3i[] _40 = new Vector3i[7];
-  /** 800c6848 */
-  public final Vector3f _b0 = new Vector3f();
+  /**
+   * 800c67d8
+   * Array of temp positions of the second or second to last small dot of a path,
+   * depending on direction of approach of segment
+   */
+  public final Vector3f[] tempPathSegmentStartOffsets_40 = new Vector3f[7];
+  /**
+   * 800c6848
+   * The correct starting point of the path segment the player is entering based on direction
+   * of travel. Used to correct position when intersection code for some reason places Dart
+   * at the wrong end of the path.
+   */
+  public final Vector3f correctPathSegmentStartPos = new Vector3f();
   /** 800c6858 */
   public float playerDestAngle_c0;
   /** 800c685a */
@@ -59,10 +84,10 @@ public class MapState100 {
   public int submapCut_c4;
   /** 800c685e */
   public int submapScene_c6;
-  /** 800c6860 */
-  public short submapCut_c8;
-  /** 800c6862 */
-  public short submapScene_ca;
+  /** short 800c6860 */
+  public int submapCut_c8;
+  /** short 800c6862 */
+  public int submapScene_ca;
 
   /** 800c6868 */
   public boolean disableInput_d0;
@@ -70,14 +95,34 @@ public class MapState100 {
   public int _d4;
   /** 800c6870 */
   public int _d8;
-  /** 800c6874 */
-  public final int[] _dc = new int[7];
-  /** 800c6890 */
-  public int _f8;
-  /** 800c6894 */
-  public int _fc;
+  /**
+   * 800c6874
+   * Array of temp indices of paths branching off a location point
+   */
+  public final int[] tempPathSegmentIndices_dc = new int[7];
+  /**
+   * 800c6890
+   * What path segment Dart is moving into. Segment order is absolute based on order of paths,
+   * not Dart's travel direction.
+   * <ol start="0">
+   *   <li>Current</li>
+   *   <li>Previous</li>
+   *   <li>Next</li>
+   * </ol>
+   */
+  public PathSegmentEntering pathSegmentPlayerMovingInto_f8 = PathSegmentEntering.CURRENT;
+  /**
+   * 800c6894
+   * Describes the type of path segment endpoint that Dart is at.
+   * <ol start="0">
+   *   <li>Not at endpoint</li>
+   *   <li>Terminal endpoint</li>
+   *   <li>Intersection</li>
+   * </ol>
+   */
+  public PathSegmentEndpointType pathSegmentEndpointTypeCrossed_fc = PathSegmentEndpointType.NOT_AT_ENDPOINT;
 
   public MapState100() {
-    Arrays.setAll(this._40, i -> new Vector3i());
+    Arrays.setAll(this.tempPathSegmentStartOffsets_40, i -> new Vector3f());
   }
 }

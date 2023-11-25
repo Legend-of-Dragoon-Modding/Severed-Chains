@@ -9,11 +9,23 @@ import legend.game.unpacker.FileData;
 import org.joml.Vector3f;
 
 public class WMapStruct258 {
+  public enum WmapActiveState {
+    ACTIVE,
+    TRANSITION_IN,
+    TRANSITION_OUT
+  }
+  public enum MapTransitionAnimationMode {
+    NO_ANIMATION,
+    TELEPORT,
+    SUBMAP,
+    WORLD_MAP
+  }
+
   public int _00;
   /** ubyte */
   public int _04;
   /** ubyte */
-  public WmapStateEnum wmapState_05;
+  public WmapActiveState wmapState_05;
 
   public WMapTmdRenderingStruct18 tmdRendering_08;
   public final Model124[] models_0c = new Model124[4];
@@ -36,8 +48,8 @@ public class WMapStruct258 {
   public FileData imageData_30;
   /** Used as the camera position, only translation is used */
   public final GsCOORDINATE2 coord2_34 = new GsCOORDINATE2();
-  public final Vector3f vec_84 = new Vector3f();
-  public final Vector3f vec_94 = new Vector3f();
+  public final Vector3f prevPlayerPos_84 = new Vector3f();
+  public final Vector3f currPlayerPos_94 = new Vector3f();
   public final Vector3f rotation_a4 = new Vector3f();
   public int currentAnimIndex_ac;
   public int animIndex_b0;
@@ -72,21 +84,35 @@ public class WMapStruct258 {
   public int coolonWarpIndex_222;
   /** ubyte */
   public int _223;
-  public Vector3f[] vecs_224;
-  public Vector3f[] vecs_228;
-  public int[] _22c;
-  public int _230;
-  public int _234;
-  public int _238;
-  public int _23c;
-  public int _240;
-  /** byte */
-  public int _244;
 
+
+  // _224 through _248 are used for rendering the Queen Fury's wake, though they are
+  // initialized regardless.
+  public Vector3f[] wakeSpreadsArray_224;
+  public Vector3f[] shipPositionsArray_228;
+  public int[] wakeSegmentNumArray_22c;
+  public int currShipPositionIndex_230;
+  public int prevShipPositionIndex_234;
+  public int shipPositionsCount_238;
+  public int wakeSegmentStride_23c;
+  public int tickNum_240;
+  /** byte */
+  public boolean shipPositionsUninitialized_244;
   public int _248;
+
   public int _24c;
-  public int _250;
-  public int _254;
+  /**
+   * Not totally sure what this should be called yet, but seems related to transitions
+   * and transition animations (except combat).
+   * <ol start="0">
+   *   <li>No map animation</li>
+   *   <li>Teleportation animation</li>
+   *   <li>Transition to submap</li>
+   *   <li>Transition to world map</li>
+   * </ol>
+   */
+  public MapTransitionAnimationMode mapTransitionAnimationMode_250;
+  public boolean usingCoolonFromZenebatos_254;
 
   public void deleteAtmosphericEffectObjs() {
     for(int i = 0; i < this.atmosphericEffectSprites.length; i++) {

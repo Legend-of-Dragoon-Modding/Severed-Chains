@@ -31,7 +31,7 @@ import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.savedGameSelected_800bdc34;
+import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 
 public class CampaignSelectionScreen extends MenuScreen {
@@ -82,7 +82,7 @@ public class CampaignSelectionScreen extends MenuScreen {
       gameState_800babc8 = event.gameState;
       gameState_800babc8.syncIds();
 
-      savedGameSelected_800bdc34.set(true);
+      loadingNewGameState_800bdc34.set(true);
       whichMenu_800bdc38 = WhichMenu.UNLOAD_CAMPAIGN_SELECTION_MENU;
 
       submapScene_80052c34.set(gameState_800babc8.submapScene_a4);

@@ -175,7 +175,7 @@ public final class V2Serializer {
     offset++;
     state.facing_4dd = data.readByte(offset);
     offset++;
-    state.areaIndex_4de = data.readUShort(offset);
+    state.directionalPathIndex_4de = data.readUShort(offset);
     offset += 2;
 
     state.characterInitialized_4e6 = data.readInt(offset);

@@ -17,7 +17,7 @@ import legend.game.modding.events.config.ConfigLoadedEvent;
 import legend.game.modding.events.config.ConfigUpdatedEvent;
 import legend.game.submap.SMap;
 import legend.game.submap.SubmapState;
-import legend.game.wmap.AreaData08;
+import legend.game.wmap.DirectionalPathSegmentData08;
 import legend.game.wmap.WMap;
 import legend.game.wmap.WmapState;
 import org.legendofdragoon.modloader.events.EventListener;
@@ -31,7 +31,7 @@ import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.submap.SMap.encounterData_800f64c4;
-import static legend.game.wmap.WMap.areaData_800f2248;
+import static legend.game.wmap.WmapStatics.directionalPathSegmentData_800f2248;
 
 public class DebuggerController {
   @FXML
@@ -318,19 +318,19 @@ public class DebuggerController {
 
       smap.mapTransition(-1, 0);
     } else if(currentEngineState_8004dd04 instanceof final WMap wmap) {
-      final AreaData08 area = areaData_800f2248.get(wmap.mapState_800c6798.areaIndex_12);
+      final DirectionalPathSegmentData08 directionalPathSegment = directionalPathSegmentData_800f2248.get(wmap.mapState_800c6798.directionalPathIndex_12);
 
       if(Config.combatStage()) {
         battleStage_800bb0f4.set(Config.getCombatStage());
       } else {
-        if(area.stage_04.get() == -1) {
+        if(directionalPathSegment.battleStage_04.get() == -1) {
           battleStage_800bb0f4.set(1);
         } else {
-          battleStage_800bb0f4.set(area.stage_04.get());
+          battleStage_800bb0f4.set(directionalPathSegment.battleStage_04.get());
         }
       }
 
-      gameState_800babc8.areaIndex_4de = wmap.mapState_800c6798.areaIndex_12;
+      gameState_800babc8.directionalPathIndex_4de = wmap.mapState_800c6798.directionalPathIndex_12;
       gameState_800babc8.pathIndex_4d8 = wmap.mapState_800c6798.pathIndex_14;
       gameState_800babc8.dotIndex_4da = wmap.mapState_800c6798.dotIndex_16;
       gameState_800babc8.dotOffset_4dc = wmap.mapState_800c6798.dotOffset_18;
