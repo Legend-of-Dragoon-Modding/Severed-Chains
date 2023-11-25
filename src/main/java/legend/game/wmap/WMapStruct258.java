@@ -9,11 +9,18 @@ import legend.game.unpacker.FileData;
 import org.joml.Vector3f;
 
 public class WMapStruct258 {
-  public enum WmapActiveState {
-    ACTIVE,
-    TRANSITION_IN,
-    TRANSITION_OUT
+  public enum TransitionAnimationType {
+    NONE,
+    FADE_IN,
+    FADE_OUT
   }
+
+  public enum FadeState {
+    START_FADE,
+    FADE,
+    END_FADE
+  }
+
   public enum MapTransitionAnimationMode {
     NO_ANIMATION,
     TELEPORT,
@@ -21,19 +28,33 @@ public class WMapStruct258 {
     WORLD_MAP
   }
 
-  public int _00;
-  /** ubyte */
-  public int _04;
-  /** ubyte */
-  public WmapActiveState wmapState_05;
+  public int transitionAnimationTicks_00;
+  /**
+   * ubyte
+   * <ol start="0">
+   *  <li>Start fade</li>
+   *  <li>Fade</li>
+   *  <li>End fade</li>
+   * </ol>
+   */
+  public FadeState fadeState_04;
+  /**
+   * ubyte
+   * <ol start="0">
+   *  <li>None</li>
+   *  <li>Fade in</li>
+   *  <li>Fade out</li>
+   * </ol>
+   */
+  public TransitionAnimationType transitionAnimationType_05;
 
   public WMapTmdRenderingStruct18 tmdRendering_08;
   public final Model124[] models_0c = new Model124[4];
   public TextureAnimation20 textureAnimation_1c;
-  /** short */
-  public float colour_20;
+  /** Used for brightness of the map name and the map textures overall (short) */
+  public float mapTextureBrightness_20;
 
-  public MeshObj mapOverlayObj;
+  public MeshObj mapContinentNameObj;
   public MeshObj[] zoomOverlayObjs = new MeshObj[7];
   public final MV mapOverlayTransforms = new MV();
 
