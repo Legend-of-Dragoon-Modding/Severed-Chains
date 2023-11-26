@@ -3260,7 +3260,7 @@ public class WMap extends EngineState {
           //LAB_800e08b8
           this.renderWinglyTeleportScreenEffect();
 
-          this.lerpish(this.wmapStruct258_800c66a8.currPlayerPos_94, originTranslation, targetTranslation, 32.0f / this.wmapStruct258_800c66a8.teleportAnimationTick_24c);
+          this.lerpish(this.wmapStruct258_800c66a8.currPlayerPos_94, originTranslation, targetTranslation, this.wmapStruct258_800c66a8.teleportAnimationTick_24c / (32.0f * (3.0f / vsyncMode_8007a3b8)));
 
           this.wmapStruct258_800c66a8.teleportAnimationTick_24c++;
           if(this.wmapStruct258_800c66a8.teleportAnimationTick_24c / (3.0f / vsyncMode_8007a3b8) > 32) {
@@ -3268,7 +3268,7 @@ public class WMap extends EngineState {
           }
 
           //LAB_800e0980
-          scale = this.wmapStruct258_800c66a8.teleportAnimationTick_24c * 0.015625f + (rsin(this.wmapStruct258_800c66a8.teleportAnimationTick_24c * 0x200) * 0x100 >> 12) / (float)0x1000;
+          scale = (this.wmapStruct258_800c66a8.teleportAnimationTick_24c * 0.015625f) / (3.0f / vsyncMode_8007a3b8) + MathHelper.sin(this.wmapStruct258_800c66a8.teleportAnimationTick_24c * (MathHelper.PI / 4.0f / (3.0f / vsyncMode_8007a3b8))) / 16.0f;
           this.wmapStruct258_800c66a8.models_0c[3].coord2_14.transforms.scale.set(scale, scale, scale);
           this.wmapStruct258_800c66a8.models_0c[this.wmapStruct258_800c66a8.modelIndex_1e4].coord2_14.transforms.rotate.y = this.wmapStruct19c0_800c66b0.mapRotation_70.y;
           this.wmapStruct258_800c66a8.rotation_a4.y = this.wmapStruct19c0_800c66b0.mapRotation_70.y;
@@ -3328,20 +3328,19 @@ public class WMap extends EngineState {
     //LAB_800e0e3c
   }
 
-  /** lerp, but I think it decreases Y more the lower the ratio */
+  /** lerp, but I think it decreases Y more the lower the ratio. Used for teleportation movement. */
   @Method(0x800e0e4cL)
-  private void lerpish(final Vector3f out, final Vector3f a1, final Vector3f a2, final float ratio) {
+  private void lerpish(final Vector3f currPlayerPos, final Vector3f originPos, final Vector3f targetPos, final float ratio) {
     if(ratio == 0.0f) {
-      out.set(a1);
+      currPlayerPos.set(originPos);
     } else if(ratio == 1.0f) {
-      out.set(a2);
+      currPlayerPos.set(targetPos);
     } else {
       //LAB_800e0ed8
-      out.x = a1.x + (a2.x - a1.x) * ratio;
-      out.y = a1.y + (a2.y - a1.y) * ratio + MathHelper.sin(MathHelper.PI * ratio) * -200;
-      out.z = a1.z + (a2.z - a1.z) * ratio;
+      currPlayerPos.x = originPos.x + (targetPos.x - originPos.x) * ratio;
+      currPlayerPos.y = originPos.y + (targetPos.y - originPos.y) * ratio + MathHelper.sin(MathHelper.PI * ratio) * -200;
+      currPlayerPos.z = originPos.z + (targetPos.z - originPos.z) * ratio;
     }
-
     //LAB_800e108c
   }
 
