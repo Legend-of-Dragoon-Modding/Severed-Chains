@@ -95,10 +95,9 @@ public final class SItem {
 
   public static final MenuStack menuStack = new MenuStack();
 
-  public static final Value _800fba58 = MEMORY.ref(4, 0x800fba58L);
-
   public static final ArrayRef<UnsignedByteRef> additionXpPerLevel_800fba2c = MEMORY.ref(1, 0x800fba2cL, ArrayRef.of(UnsignedByteRef.class, 5, 1, UnsignedByteRef::new));
 
+  public static final ArrayRef<IntRef> charDragoonSpiritIndices_800fba58 = MEMORY.ref(4, 0x800fba58L, ArrayRef.of(IntRef.class, 9, 4, IntRef::new));
   public static final ArrayRef<MenuStatus08> menuStatus_800fba7c = MEMORY.ref(4, 0x800fba7cL, ArrayRef.of(MenuStatus08.class, 8, 8, MenuStatus08::new));
   public static final ArrayRef<IntRef> dragoonSpiritGoodsBits_800fbabc = MEMORY.ref(4, 0x800fbabcL, ArrayRef.of(IntRef.class, 8, 4, IntRef::new));
 
@@ -215,8 +214,6 @@ public final class SItem {
 
   public static final MessageBox20 messageBox_8011dc90 = new MessageBox20();
 
-  public static final BoolRef _8011dcfc = MEMORY.ref(1, 0x8011dcfcL, BoolRef::new);
-
   public static final EnumRef<MessageBoxResult> msgboxResult_8011e1e8 = MEMORY.ref(4, 0x8011e1e8L, EnumRef.of(MessageBoxResult.values()));
 
   @Method(0x800fc698L)
@@ -242,30 +239,6 @@ public final class SItem {
   @Method(0x800fc814L)
   public static int FUN_800fc814(final int a0) {
     return 9 + a0 * 17;
-  }
-
-  @Method(0x800fc824L)
-  public static int FUN_800fc824(final int a0) {
-    if(a0 == 0) {
-      return 43;
-    }
-
-    return 221;
-  }
-
-  @Method(0x800fc84cL)
-  public static int getSlotY(final int slot) {
-    return 16 + slot * 72;
-  }
-
-  @Method(0x800fc8c0L)
-  public static int getCharacterPortraitX(final int slot) {
-    return 21 + slot * 50;
-  }
-
-  @Method(0x800fc8dcL)
-  public static int getItemSlotY(final int slot) {
-    return 18 + slot * 17;
   }
 
   @Method(0x800fc944L)
@@ -313,7 +286,6 @@ public final class SItem {
       case AWAIT_INIT_1 -> {
         if(uiFile_800bdc3c != null) {
           inventoryMenuState_800bdc28.set(InventoryMenuState._2);
-          _8011dcfc.set((gameState_800babc8.goods_19c[1] & 0x4) > 0);
         }
       }
 
@@ -720,7 +692,7 @@ public final class SItem {
   }
 
   @Method(0x80104b7cL)
-  public static boolean hasDragoon(final long dragoons, final int charIndex) {
+  public static boolean hasDragoon(final int dragoons, final int charIndex) {
     //LAB_80104b94
     if(charIndex == -1) {
       return false;
@@ -733,7 +705,7 @@ public final class SItem {
 
     //LAB_80104c24
     //LAB_80104c28
-    return (dragoons & 0x1L << (_800fba58.offset(charIndex * 0x4L).get() & 0x1fL)) > 0;
+    return (dragoons & 0x1 << (charDragoonSpiritIndices_800fba58.get(charIndex).get() & 0x1f)) != 0;
   }
 
   @Method(0x80104c30L)

@@ -2,6 +2,7 @@ package legend.game.inventory.screens;
 
 import legend.core.Config;
 import legend.core.MathHelper;
+import legend.core.memory.Method;
 import legend.game.input.InputAction;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.Renderable58;
@@ -9,7 +10,6 @@ import legend.game.types.Renderable58;
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.charSwapGlyphs_80114160;
-import static legend.game.SItem.getSlotY;
 import static legend.game.SItem.glyph_801142d4;
 import static legend.game.SItem.initGlyph;
 import static legend.game.SItem.renderCharacterSlot;
@@ -51,7 +51,7 @@ public class CharSwapScreen extends MenuScreen {
       case 1 -> {
         deallocateRenderables(0xff);
         renderGlyphs(charSwapGlyphs_80114160, 0, 0);
-        this.primaryCharHighlight = allocateUiElement(0x7f, 0x7f, 16, getSlotY(this.primaryCharIndex));
+        this.primaryCharHighlight = allocateUiElement(0x7f, 0x7f, 16, this.getSlotY(this.primaryCharIndex));
         FUN_80104b60(this.primaryCharHighlight);
         this.renderCharacterSwapScreen(0xff);
         this.loadingStage++;
@@ -137,10 +137,10 @@ public class CharSwapScreen extends MenuScreen {
 
     if(this.loadingStage == 2) {
       for(int i = 0; i < 3; i++) {
-        if(this.primaryCharIndex != i && MathHelper.inBox(x, y, 8, getSlotY(i), 174, 65)) {
+        if(this.primaryCharIndex != i && MathHelper.inBox(x, y, 8, this.getSlotY(i), 174, 65)) {
           playSound(1);
           this.primaryCharIndex = i;
-          this.primaryCharHighlight.y_44 = getSlotY(i);
+          this.primaryCharHighlight.y_44 = this.getSlotY(i);
           return InputPropagation.HANDLED;
         }
       }
@@ -167,10 +167,10 @@ public class CharSwapScreen extends MenuScreen {
 
     if(this.loadingStage == 2) {
       for(int i = 0; i < 3; i++) {
-        if(MathHelper.inBox(x, y, 8, getSlotY(i), 174, 65)) {
+        if(MathHelper.inBox(x, y, 8, this.getSlotY(i), 174, 65)) {
           playSound(2);
           this.primaryCharIndex = i;
-          this.primaryCharHighlight.y_44 = getSlotY(i);
+          this.primaryCharHighlight.y_44 = this.getSlotY(i);
 
           final int charIndex = gameState_800babc8.charIds_88[this.primaryCharIndex];
           if(Config.unlockParty() || charIndex == -1 || (gameState_800babc8.charData_32c[charIndex].partyFlags_04 & 0x20) == 0) {
@@ -231,7 +231,7 @@ public class CharSwapScreen extends MenuScreen {
       this.primaryCharIndex--;
     }
 
-    this.primaryCharHighlight.y_44 = getSlotY(this.primaryCharIndex);
+    this.primaryCharHighlight.y_44 = this.getSlotY(this.primaryCharIndex);
   }
 
   private void menuStage2NavigateDown() {
@@ -240,7 +240,7 @@ public class CharSwapScreen extends MenuScreen {
       this.primaryCharIndex++;
     }
 
-    this.primaryCharHighlight.y_44 = getSlotY(this.primaryCharIndex);
+    this.primaryCharHighlight.y_44 = this.getSlotY(this.primaryCharIndex);
   }
 
   private void menuStage2Select() {
@@ -373,5 +373,10 @@ public class CharSwapScreen extends MenuScreen {
     }
 
     return InputPropagation.PROPAGATE;
+  }
+
+  @Method(0x800fc84cL)
+  private int getSlotY(final int slot) {
+    return 16 + slot * 72;
   }
 }

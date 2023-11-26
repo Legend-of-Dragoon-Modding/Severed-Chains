@@ -1,6 +1,7 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
+import legend.core.memory.Method;
 import legend.game.input.InputAction;
 import legend.game.inventory.EquipItemResult;
 import legend.game.inventory.Equipment;
@@ -8,7 +9,6 @@ import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.Renderable58;
 
-import static legend.game.SItem.FUN_800fc824;
 import static legend.game.SItem.FUN_801034cc;
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.allocateUiElement;
@@ -72,7 +72,7 @@ public class EquipmentScreen extends MenuScreen {
         renderGlyphs(equipmentGlyphs_80114180, 0, 0);
 
         if(this.itemHighlight == null) {
-          this.itemHighlight = allocateUiElement(0x79, 0x79, FUN_800fc824(1), 0);
+          this.itemHighlight = allocateUiElement(0x79, 0x79, this.FUN_800fc824(1), 0);
           FUN_80104b60(this.itemHighlight);
         }
 
@@ -157,6 +157,15 @@ public class EquipmentScreen extends MenuScreen {
 
   private int FUN_800fc804(final int slot) {
     return 99 + slot * 17;
+  }
+
+  @Method(0x800fc824L)
+  private int FUN_800fc824(final int a0) {
+    if(a0 == 0) {
+      return 43;
+    }
+
+    return 221;
   }
 
   @Override
