@@ -100,7 +100,7 @@ public class MapState100 {
   public boolean disableInput_d0;
   /** Used to move player away from location when exiting entrance prompt or leaving location (800c686c) */
   public ForcedMovementState shortForceMovementState_d4;
-  /** Used specifically for when the Queen Fury is force sailed the first time (800c6870) */
+  /** Used specifically for when the Queen Fury is force-sailed the first time (800c6870) */
   public ForcedMovementState queenFuryForceMovementState_d8;
   /**
    * 800c6874

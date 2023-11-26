@@ -123,13 +123,13 @@ import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
-import static legend.game.wmap.MapState100.PathSegmentEntering;
-import static legend.game.wmap.MapState100.PathSegmentEndpointType;
 import static legend.game.wmap.MapState100.ForcedMovementState;
+import static legend.game.wmap.MapState100.PathSegmentEndpointType;
+import static legend.game.wmap.MapState100.PathSegmentEntering;
 import static legend.game.wmap.WMapStruct258.FadeState;
+import static legend.game.wmap.WMapStruct258.MapTransitionDestinationType;
 import static legend.game.wmap.WMapStruct258.TeleportAnimationState;
 import static legend.game.wmap.WMapStruct258.TransitionAnimationType;
-import static legend.game.wmap.WMapStruct258.MapTransitionDestinationMode;
 import static legend.game.wmap.WmapStatics.coolonWarpDest_800ef228;
 import static legend.game.wmap.WmapStatics.directionalPathSegmentData_800f2248;
 import static legend.game.wmap.WmapStatics.encounterIds_800ef364;
@@ -485,7 +485,7 @@ public class WMap extends EngineState {
                       if(this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc != PathSegmentEndpointType.TERMINAL) {
                         if(struct.transitionAnimationType_05 == TransitionAnimationType.NONE) {
                           if(this.mapState_800c6798.queenFuryForceMovementState_d8 == ForcedMovementState.NONE) {
-                            if(struct.mapTransitionDestinationMode_250 == MapTransitionDestinationMode.NONE) {
+                            if(struct.mapTransitionDestinationType_250 == MapTransitionDestinationType.NONE) {
                               startFadeEffect(1, 15);
                               this.mapState_800c6798.disableInput_d0 = true;
                               this.tickMainMenuOpenTransition_800c6690 = 1;
@@ -1121,12 +1121,12 @@ public class WMap extends EngineState {
 
   @Method(0x800d2fa8L)
   private void handleMapRotation() {
-    if(this.wmapStruct258_800c66a8.mapTransitionDestinationMode_250 == MapTransitionDestinationMode.TELEPORT) {
+    if(this.wmapStruct258_800c66a8.mapTransitionDestinationType_250 == MapTransitionDestinationType.TELEPORT) {
       //LAB_800d401c
       this.wmapStruct19c0_800c66b0.mapRotation_70.y += MathHelper.psxDegToRad(8) / (3.0f / vsyncMode_8007a3b8);
     } else {
       //LAB_800d2fd4
-      if(this.wmapStruct258_800c66a8.mapTransitionDestinationMode_250 == MapTransitionDestinationMode.SUBMAP && this.wmapStruct258_800c66a8.transitionAnimationType_05 == TransitionAnimationType.NONE) {
+      if(this.wmapStruct258_800c66a8.mapTransitionDestinationType_250 == MapTransitionDestinationType.SUBMAP && this.wmapStruct258_800c66a8.transitionAnimationType_05 == TransitionAnimationType.NONE) {
         return;
       }
 
@@ -1956,7 +1956,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d692c
-    if(this.wmapStruct258_800c66a8.mapTransitionDestinationMode_250 == MapTransitionDestinationMode.SUBMAP) {
+    if(this.wmapStruct258_800c66a8.mapTransitionDestinationType_250 == MapTransitionDestinationType.SUBMAP) {
       return;
     }
 
@@ -2332,7 +2332,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d951c
-    if(this.wmapStruct258_800c66a8.mapTransitionDestinationMode_250 != MapTransitionDestinationMode.NONE) {
+    if(this.wmapStruct258_800c66a8.mapTransitionDestinationType_250 != MapTransitionDestinationType.NONE) {
       return;
     }
 
@@ -2539,7 +2539,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800da420
-    if(struct.mapTransitionDestinationMode_250 == MapTransitionDestinationMode.TELEPORT) {
+    if(struct.mapTransitionDestinationType_250 == MapTransitionDestinationType.TELEPORT) {
       return;
     }
 
@@ -2555,11 +2555,11 @@ public class WMap extends EngineState {
     if(Input.pressedThisFrame(InputAction.BUTTON_WEST)) { // Square
       this.destinationLabelStage_800c86f0 = 0;
       this.shouldSetCoolonWarpDestLabelMetrics = true;
-      struct.mapTransitionDestinationMode_250 = MapTransitionDestinationMode.SUBMAP;
+      struct.mapTransitionDestinationType_250 = MapTransitionDestinationType.SUBMAP;
     }
 
     //LAB_800da520
-    if(struct.mapTransitionDestinationMode_250 != MapTransitionDestinationMode.SUBMAP) {
+    if(struct.mapTransitionDestinationType_250 != MapTransitionDestinationType.SUBMAP) {
       return;
     }
 
@@ -2747,6 +2747,7 @@ public class WMap extends EngineState {
         this.renderCoolonMap(false, true);
         break;
 
+      // TODO Refactor Coolon prompt code a bit to work more like location prompt
       case 6:
         textboxes_800be358[6].z_0c = 18;
 
@@ -2824,7 +2825,7 @@ public class WMap extends EngineState {
           this.mapState_800c6798.submapScene_ca = locations_800f0e34[coolonWarpDest_800ef228[struct.coolonWarpIndex_222].locationIndex_10].submapScene_06;
           submapCut_80052c30.set(this.mapState_800c6798.submapCut_c8);
           index_80052c38.set(this.mapState_800c6798.submapScene_ca);
-          struct.mapTransitionDestinationMode_250 = MapTransitionDestinationMode.WORLD_MAP;
+          struct.mapTransitionDestinationType_250 = MapTransitionDestinationType.WORLD_MAP;
           previousEngineState_8004dd28 = null;
         }
 
@@ -2915,7 +2916,7 @@ public class WMap extends EngineState {
 
         this.wmapStruct19c0_800c66b0.mapRotation_70.y = struct.angle_21e;
 
-        struct.mapTransitionDestinationMode_250 = MapTransitionDestinationMode.NONE;
+        struct.mapTransitionDestinationType_250 = MapTransitionDestinationType.NONE;
         struct._220 = 0;
         return;
     }
@@ -3163,7 +3164,7 @@ public class WMap extends EngineState {
   private void renderPlayer() {
     final WMapStruct258 struct = this.wmapStruct258_800c66a8;
 
-    if(struct.mapTransitionDestinationMode_250 != MapTransitionDestinationMode.SUBMAP) {
+    if(struct.mapTransitionDestinationType_250 != MapTransitionDestinationType.SUBMAP) {
       struct.modelIndex_1e4 = directionalPathSegmentData_800f2248.get(this.mapState_800c6798.directionalPathIndex_12).modelIndex_06.get();
 
       assert struct.modelIndex_1e4 < 4;
@@ -3227,10 +3228,10 @@ public class WMap extends EngineState {
   private void FUN_800e06d0() {
     this.wmapStruct258_800c66a8.prevPlayerPos_84.set(this.wmapStruct258_800c66a8.currPlayerPos_94);
 
-    if(this.wmapStruct258_800c66a8.mapTransitionDestinationMode_250 == MapTransitionDestinationMode.NONE) {
+    if(this.wmapStruct258_800c66a8.mapTransitionDestinationType_250 == MapTransitionDestinationType.NONE) {
       //LAB_800e0760
       this.FUN_800e8a10();
-    } else if(this.wmapStruct258_800c66a8.mapTransitionDestinationMode_250 == MapTransitionDestinationMode.TELEPORT) {
+    } else if(this.wmapStruct258_800c66a8.mapTransitionDestinationType_250 == MapTransitionDestinationType.TELEPORT) {
       //LAB_800e0770
       //LAB_800e0774
       int targetLocationIndex = 0;
@@ -3403,7 +3404,7 @@ public class WMap extends EngineState {
     struct.coord2_34.coord.transfer.set(struct.currPlayerPos_94);
     struct.models_0c[struct.modelIndex_1e4].coord2_14.coord.transfer.set(struct.coord2_34.coord.transfer);
 
-    if(struct.mapTransitionDestinationMode_250 == MapTransitionDestinationMode.NONE) {
+    if(struct.mapTransitionDestinationType_250 == MapTransitionDestinationType.NONE) {
       float sp10 = struct.rotation_a4.y - struct.models_0c[struct.modelIndex_1e4].coord2_14.transforms.rotate.y;
       final float sp14 = struct.rotation_a4.y - (struct.models_0c[struct.modelIndex_1e4].coord2_14.transforms.rotate.y - MathHelper.TWO_PI);
 
@@ -3812,7 +3813,7 @@ public class WMap extends EngineState {
   @Method(0x800e406cL)
   private void tickFadeInTransition() {
     final WMapStruct258 struct = this.wmapStruct258_800c66a8;
-    if(struct.mapTransitionDestinationMode_250 == MapTransitionDestinationMode.TELEPORT) {
+    if(struct.mapTransitionDestinationType_250 == MapTransitionDestinationType.TELEPORT) {
       //LAB_800e442c
       switch(struct.fadeState_04) {
         case START_FADE:
@@ -3865,8 +3866,8 @@ public class WMap extends EngineState {
           break;
       }
     } else if(
-      struct.mapTransitionDestinationMode_250 == MapTransitionDestinationMode.NONE ||
-        struct.mapTransitionDestinationMode_250 == MapTransitionDestinationMode.SUBMAP
+      struct.mapTransitionDestinationType_250 == MapTransitionDestinationType.NONE ||
+        struct.mapTransitionDestinationType_250 == MapTransitionDestinationType.SUBMAP
     ) {
       switch(struct.fadeState_04) {
         case START_FADE:
@@ -3984,10 +3985,10 @@ public class WMap extends EngineState {
             }
 
             //LAB_800e48c4
-            if(struct.mapTransitionDestinationMode_250 == MapTransitionDestinationMode.SUBMAP) {
+            if(struct.mapTransitionDestinationType_250 == MapTransitionDestinationType.SUBMAP) {
               this.wmapState_800bb10c = WmapState.TRANSITION_TO_SUBMAP_7;
               //LAB_800e48f4
-            } else if(struct.mapTransitionDestinationMode_250 == MapTransitionDestinationMode.WORLD_MAP) {
+            } else if(struct.mapTransitionDestinationType_250 == MapTransitionDestinationType.WORLD_MAP) {
               this.wmapState_800bb10c = WmapState.TRANSITION_TO_WORLD_MAP_9;
             }
           }
@@ -4670,7 +4671,7 @@ public class WMap extends EngineState {
 
     //LAB_800e7b44
     //LAB_800e7b54
-    boolean locationFound = false;
+    boolean locationExists = false;
     int locationIndex;
     for(locationIndex = 0; locationIndex < 0x100; locationIndex++) {
       //LAB_800e7b70
@@ -4678,7 +4679,7 @@ public class WMap extends EngineState {
         locations_800f0e34[locationIndex].submapCut_04 == this.mapState_800c6798.submapCut_c4 &&
           locations_800f0e34[locationIndex].submapScene_06 == this.mapState_800c6798.submapScene_c6
       ) {
-        locationFound = true;
+        locationExists = true;
         break;
       }
       //LAB_800e7bc0
@@ -4686,7 +4687,7 @@ public class WMap extends EngineState {
 
     //LAB_800e7be8
     //LAB_800e7c18
-    if(!locationFound || !gameState_800babc8.wmapFlags_15c.get(locationIndex)) {
+    if(!locationExists || !gameState_800babc8.wmapFlags_15c.get(locationIndex)) {
       this.mapState_800c6798.submapCut_c4 = 13; // Hellena
       this.mapState_800c6798.submapScene_c6 = 17;
       locationIndex = 5;
@@ -4861,7 +4862,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800e8720
-    this.wmapStruct258_800c66a8.mapTransitionDestinationMode_250 = MapTransitionDestinationMode.NONE;
+    this.wmapStruct258_800c66a8.mapTransitionDestinationType_250 = MapTransitionDestinationType.NONE;
     this.wmapStruct258_800c66a8.usingCoolonFromZenebatos_254 = false;
 
     //LAB_800e8770
@@ -4877,12 +4878,12 @@ public class WMap extends EngineState {
         this.mapState_800c6798.submapCut_c4 == 572 && this.mapState_800c6798.submapScene_c6 == 23     // Aglis to Zenebatos
     ) {
       //LAB_800e8830
-      this.wmapStruct258_800c66a8.mapTransitionDestinationMode_250 = MapTransitionDestinationMode.TELEPORT;
+      this.wmapStruct258_800c66a8.mapTransitionDestinationType_250 = MapTransitionDestinationType.TELEPORT;
       //LAB_800e8848
 
       // Zenebatos to Coolon map
     } else if(this.mapState_800c6798.submapCut_c4 == 529 && this.mapState_800c6798.submapScene_c6 == 41) {
-      this.wmapStruct258_800c66a8.mapTransitionDestinationMode_250 = MapTransitionDestinationMode.SUBMAP;
+      this.wmapStruct258_800c66a8.mapTransitionDestinationType_250 = MapTransitionDestinationType.SUBMAP;
       this.wmapStruct258_800c66a8.usingCoolonFromZenebatos_254 = true;
       gameState_800babc8.visitedLocations_17c.set(this.mapState_800c6798.locationIndex_10, true);
     }
@@ -5586,9 +5587,7 @@ public class WMap extends EngineState {
     final Vector3f sp0x50 = new Vector3f();
     final Vector3f[] sp0x60 = new Vector3f[0x101];
 
-    for(int i = 0; i < sp0x60.length; i++) {
-      sp0x60[i] = new Vector3f();
-    }
+    Arrays.setAll(sp0x60, i -> new Vector3f());
 
     //LAB_800eb420
     //LAB_800eb424
@@ -5655,7 +5654,6 @@ public class WMap extends EngineState {
           effectCount++;
         }
       }
-
       //LAB_800eb8dc
     }
 
