@@ -16,7 +16,7 @@ import static legend.game.SItem.additions_8011a064;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.characterCount_8011d7c4;
 import static legend.game.SItem.loadAdditions;
-import static legend.game.SItem.ptrTable_80114070;
+import static legend.game.SItem.additions_80114070;
 import static legend.game.SItem.renderCharacter;
 import static legend.game.SItem.renderCharacterSlot;
 import static legend.game.SItem.renderGlyphs;
@@ -132,7 +132,7 @@ public class AdditionsScreen extends MenuScreen {
             renderThreeDigitNumber(197, y, level); // Addition level
             renderThreeDigitNumber(230, y, additionData_80052884.get(offset).attacks_01.get()); // Number of attacks
             renderThreeDigitNumber(263, y, additionData_80052884.get(offset).sp_02.get(level - 1).get()); // SP
-            renderThreeDigitNumber(297, y, (int)(additionData_80052884.get(offset).damage_0c.get() * (ptrTable_80114070.offset(offset * 0x4L).deref(1).offset(level * 0x4L).offset(0x3L).get() + 100) / 100)); // Damage
+            renderThreeDigitNumber(297, y, additionData_80052884.get(offset).damage_0c.get() * (additions_80114070.get(offset).deref().get(level).damageMultiplier_03.get() + 100) / 100); // Damage
             renderThreeDigitNumber(322, y, gameState_800babc8.charData_32c[charIndex].additionXp_22[index]); // Current XP
 
             if(level < 5) {

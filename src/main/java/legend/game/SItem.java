@@ -15,6 +15,7 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
+import legend.game.inventory.Addition04;
 import legend.game.inventory.EquipItemResult;
 import legend.game.inventory.Equipment;
 import legend.game.inventory.Item;
@@ -128,7 +129,7 @@ public final class SItem {
   public static final int[] mirandaXpTable_80113aa8 = new int[61];
   public static final int[][] xpTables = {dartXpTable_801135e4, lavitzXpTable_801138c0, shanaXpTable_80113aa8, roseXpTable_801139b4, haschelXpTable_801136d8, albertXpTable_801138c0, meruXpTable_801137cc, kongolXpTable_801134f0, mirandaXpTable_80113aa8};
 
-  public static final Value ptrTable_80114070 = MEMORY.ref(4, 0x80114070L);
+  public static final ArrayRef<Pointer<ArrayRef<Addition04>>> additions_80114070 = MEMORY.ref(4, 0x80114070L, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(Addition04.class)), 48, 4, Pointer.deferred(4, ArrayRef.of(Addition04.class, 6, 4, Addition04::new))));
 
   public static final UnboundedArrayRef<MenuGlyph06> charSwapGlyphs_80114160 = MEMORY.ref(1, 0x80114160L, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
   public static final UnboundedArrayRef<MenuGlyph06> equipmentGlyphs_80114180 = MEMORY.ref(1, 0x80114180L, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
@@ -1715,12 +1716,11 @@ public final class SItem {
 
       final int additionIndex = stats.selectedAddition_35;
       if(additionIndex != -1) {
-        //TODO straighten this out
-        final long a0 = ptrTable_80114070.offset(additionIndex * 0x4L).deref(4).offset(stats.additionLevels_36[additionIndex - additionOffsets_8004f5ac.get(charId).get()] * 0x4L).getAddress();
+        final Addition04 addition = additions_80114070.get(additionIndex).deref().get(stats.additionLevels_36[additionIndex - additionOffsets_8004f5ac.get(charId).get()]);
 
-        stats.addition_00_9c = (int)MEMORY.ref(2, a0).offset(0x0L).get();
-        stats.additionSpMultiplier_9e = (int)MEMORY.ref(1, a0).offset(0x2L).get();
-        stats.additionDamageMultiplier_9f = (int)MEMORY.ref(1, a0).offset(0x3L).get();
+        stats.addition_00_9c = addition._00.get();
+        stats.additionSpMultiplier_9e = addition.spMultiplier_02.get();
+        stats.additionDamageMultiplier_9f = addition.damageMultiplier_03.get();
 
         final AdditionHitMultiplierEvent event = EVENTS.postEvent(new AdditionHitMultiplierEvent(additionIndex, stats.additionLevels_36[additionIndex - additionOffsets_8004f5ac.get(charId).get()], stats.additionSpMultiplier_9e, stats.additionDamageMultiplier_9f));
         stats.additionSpMultiplier_9e = event.additionSpMulti;
