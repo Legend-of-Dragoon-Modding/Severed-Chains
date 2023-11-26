@@ -42,6 +42,13 @@ public class WMapStruct258 {
     CONTINENT_OUT
   }
 
+  public enum TeleportAnimationState {
+    INIT_ANIM,
+    RENDER_ANIM,
+    INIT_FADE,
+    FADE_OUT
+  }
+
   public int transitionAnimationTicks_00;
   /**
    * ubyte
@@ -125,7 +132,7 @@ public class WMapStruct258 {
   public int coolonPromptIndex_223;
 
 
-  // _224 through _248 are used for rendering the Queen Fury's wake, though they are
+  // _224 through _244 are used for rendering the Queen Fury's wake, though they are
   // initialized regardless.
   public Vector3f[] wakeSpreadsArray_224;
   public Vector3f[] shipPositionsArray_228;
@@ -137,9 +144,9 @@ public class WMapStruct258 {
   public int tickNum_240;
   /** byte */
   public boolean shipPositionsUninitialized_244;
-  public int _248;
+  public TeleportAnimationState teleportAnimationState_248;
 
-  public int _24c;
+  public int teleportAnimationTick_24c;
   /**
    * Not totally sure what this should be called yet, but seems related to transitions
    * and transition animations (except combat).
