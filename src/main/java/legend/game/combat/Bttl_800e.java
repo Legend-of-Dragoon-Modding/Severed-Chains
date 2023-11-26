@@ -111,6 +111,7 @@ import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDeffSounds;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
+import static legend.game.Scus94491BpeSegment.loadDrgnDirSync;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.projectionPlaneDistance_1f8003f8;
@@ -2682,7 +2683,7 @@ public final class Bttl_800e {
 
   @Method(0x800eacf4L)
   public static void loadBattleHudDeff() {
-    loadDrgnDir(0, "4114/2", Bttl_800e::hudDeffLoaded);
+    loadDrgnDirSync(0, "4114/2", Bttl_800e::hudDeffLoaded);
     loadDrgnDir(0, "4114/3", Bttl_800e::uploadTims);
     loadDrgnDir(0, "4114/1", files -> {
       deffManager_800c693c.scripts_2c = new ScriptFile[files.size()];
