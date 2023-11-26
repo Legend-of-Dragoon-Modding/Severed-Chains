@@ -506,7 +506,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[643] = Bttl_800e::FUN_800e9798;
     scriptSubFunctions_8004e29c[644] = Bttl_800e::scriptSetBttlShadowSize;
     scriptSubFunctions_8004e29c[645] = Bttl_800e::scriptSetBttlShadowOffset;
-    scriptSubFunctions_8004e29c[646] = SEffe::FUN_801188ec;
+    scriptSubFunctions_8004e29c[646] = SEffe::scriptAllocateShadowEffect;
     scriptSubFunctions_8004e29c[647] = SEffe::scriptUpdateDeffManagerFlags;
     scriptSubFunctions_8004e29c[648] = SEffe::scriptLoadDeffStageEffects;
     scriptSubFunctions_8004e29c[649] = SEffe::scriptGetEffectTextureMetrics;

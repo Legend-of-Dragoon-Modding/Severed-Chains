@@ -17,6 +17,7 @@ import legend.core.memory.Method;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.opengl.Obj;
+import legend.core.opengl.TmdObjLoader;
 import legend.game.characters.Element;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bent.BattleEntity27c;
@@ -32,7 +33,7 @@ import legend.game.combat.effects.DeffTmdRenderer14;
 import legend.game.combat.effects.Effect;
 import legend.game.combat.effects.EffectAttachment;
 import legend.game.combat.effects.EffectManagerData6c;
-import legend.game.combat.effects.EffectManagerData6cInner;
+import legend.game.combat.effects.EffectManagerParams;
 import legend.game.combat.effects.GenericSpriteEffect24;
 import legend.game.combat.effects.ModelEffect13c;
 import legend.game.combat.effects.RedEyeDragoonTransformationFlameArmorEffect20;
@@ -110,6 +111,7 @@ import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDeffSounds;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
+import static legend.game.Scus94491BpeSegment.loadDrgnDirSync;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.projectionPlaneDistance_1f8003f8;
@@ -204,7 +206,6 @@ import static legend.game.combat.Bttl_800c.stageDarkeningClutWidth_800c695c;
 import static legend.game.combat.Bttl_800c.stageDarkening_800c6958;
 import static legend.game.combat.Bttl_800c.targetArrowOffsetY_800fb188;
 import static legend.game.combat.Bttl_800c.targeting_800fb36c;
-import static legend.game.combat.Bttl_800c.tmds_800c6944;
 import static legend.game.combat.Bttl_800c.uiTextureElementBrightness_800c71ec;
 import static legend.game.combat.Bttl_800c.usedRepeatItems_800c6c3c;
 import static legend.game.combat.Bttl_800d.FUN_800dd89c;
@@ -212,7 +213,6 @@ import static legend.game.combat.Bttl_800d.applyAnimation;
 import static legend.game.combat.Bttl_800d.loadModelAnim;
 import static legend.game.combat.Bttl_800d.loadModelTmd;
 import static legend.game.combat.Bttl_800d.optimisePacketsIfNecessary;
-import static legend.game.combat.Bttl_800f.tickFloatingNumbers;
 import static legend.game.combat.Bttl_800f.buildUiTextureElement;
 import static legend.game.combat.Bttl_800f.clearBattleMenu;
 import static legend.game.combat.Bttl_800f.clearSpellAndItemMenu;
@@ -224,6 +224,7 @@ import static legend.game.combat.Bttl_800f.getTargetEnemyName;
 import static legend.game.combat.Bttl_800f.handleSpellAndItemMenu;
 import static legend.game.combat.Bttl_800f.prepareItemList;
 import static legend.game.combat.Bttl_800f.renderNumber;
+import static legend.game.combat.Bttl_800f.tickFloatingNumbers;
 import static legend.game.combat.SBtld.monsterNames_80112068;
 import static legend.game.combat.SBtld.monsterStats_8010ba98;
 import static legend.game.combat.SEffe.addGenericAttachment;
@@ -1017,7 +1018,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e6314L)
-  public static void scriptDeffDeallocator(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> data) {
+  public static void scriptDeffDeallocator(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
     LOGGER.info(DEFF, "Deallocating DEFF script state %d", state.index);
 
     final DeffManager7cc struct7cc = deffManager_800c693c;
@@ -1057,7 +1058,7 @@ public final class Bttl_800e {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptEntrypoint", description = "The effect manager's entrypoint into this script")
   @Method(0x800e6470L)
-  public static ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> scriptAllocateDeffEffectManager(final RunningScript<? extends BattleObject> script) {
+  public static ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> scriptAllocateDeffEffectManager(final RunningScript<? extends BattleObject> script) {
     final DeffManager7cc struct7cc = deffManager_800c693c;
 
     final int flags = script.params_20[0].get();
@@ -1076,7 +1077,7 @@ public final class Bttl_800e {
       }
     }
 
-    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager(
       "DEFF ticker for script %d (%s)".formatted(script.scriptState_04.index, script.scriptState_04.name),
       script.scriptState_04,
       Bttl_800e::scriptDeffTicker,
@@ -1087,7 +1088,7 @@ public final class Bttl_800e {
 
     LOGGER.info(DEFF, "Allocated DEFF script state %d", state.index);
 
-    final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
     manager.flags_04 = 0x600_0400;
 
     final BattleStruct24_2 v0 = _800c6938;
@@ -1452,7 +1453,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e7060L)
-  public static void loadDeffPackage(final List<FileData> files, final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state) {
+  public static void loadDeffPackage(final List<FileData> files, final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state) {
     LOGGER.info(DEFF, "Loading DEFF files");
 
     deffManager_800c693c.deffPackage_5a8 = new DeffPart[files.size()];
@@ -1461,7 +1462,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e70bcL)
-  public static void scriptDeffTicker(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> struct) {
+  public static void scriptDeffTicker(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> struct) {
     final BattleStruct24_2 a0 = _800c6938;
 
     if(a0.frameCount_20 != -1) {
@@ -1609,7 +1610,7 @@ public final class Bttl_800e {
       loadCutsceneDeff(script);
     }
 
-    final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager = _800c6938.managerState_18.innerStruct_00;
+    final EffectManagerData6c<EffectManagerParams.VoidType> manager = _800c6938.managerState_18.innerStruct_00;
     manager.ticker_48 = Bttl_800e::FUN_800e74e0;
 
     return FlowControl.CONTINUE;
@@ -1635,7 +1636,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e74e0L)
-  public static void FUN_800e74e0(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> data) {
+  public static void FUN_800e74e0(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
     final BattleStruct24_2 struct24 = _800c6938;
 
     final int deffStage = deffLoadingStage_800fafe8.get();
@@ -1780,7 +1781,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e7ec4L)
-  public static <T extends EffectManagerData6cInner<T>> void effectManagerDestructor(final ScriptState<EffectManagerData6c<T>> state, final EffectManagerData6c<T> struct) {
+  public static <T extends EffectManagerParams<T>> void effectManagerDestructor(final ScriptState<EffectManagerData6c<T>> state, final EffectManagerData6c<T> struct) {
     LOGGER.info(EFFECTS, "Deallocating effect manager %d", state.index);
 
     if(struct.parentScript_50 != null) {
@@ -1822,12 +1823,12 @@ public final class Bttl_800e {
     }
   }
 
-  public static ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> allocateEffectManager(final String name, @Nullable final ScriptState<? extends BattleObject> parentState, @Nullable final BiConsumer<ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>>, EffectManagerData6c<EffectManagerData6cInner.VoidType>> ticker, @Nullable final BiConsumer<ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>>, EffectManagerData6c<EffectManagerData6cInner.VoidType>> renderer, @Nullable final BiConsumer<ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>>, EffectManagerData6c<EffectManagerData6cInner.VoidType>> destructor, @Nullable final Effect effect) {
-    return allocateEffectManager(name, parentState, ticker, renderer, destructor, effect, new EffectManagerData6cInner.VoidType());
+  public static ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> allocateEffectManager(final String name, @Nullable final ScriptState<? extends BattleObject> parentState, @Nullable final BiConsumer<ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>>, EffectManagerData6c<EffectManagerParams.VoidType>> ticker, @Nullable final BiConsumer<ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>>, EffectManagerData6c<EffectManagerParams.VoidType>> renderer, @Nullable final BiConsumer<ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>>, EffectManagerData6c<EffectManagerParams.VoidType>> destructor, @Nullable final Effect effect) {
+    return allocateEffectManager(name, parentState, ticker, renderer, destructor, effect, new EffectManagerParams.VoidType());
   }
 
   @Method(0x800e80c4L)
-  public static <T extends EffectManagerData6cInner<T>> ScriptState<EffectManagerData6c<T>> allocateEffectManager(final String name, @Nullable ScriptState<? extends BattleObject> parentState, @Nullable final BiConsumer<ScriptState<EffectManagerData6c<T>>, EffectManagerData6c<T>> ticker, @Nullable final BiConsumer<ScriptState<EffectManagerData6c<T>>, EffectManagerData6c<T>> renderer, @Nullable final BiConsumer<ScriptState<EffectManagerData6c<T>>, EffectManagerData6c<T>> destructor, @Nullable final Effect effect, final T inner) {
+  public static <T extends EffectManagerParams<T>> ScriptState<EffectManagerData6c<T>> allocateEffectManager(final String name, @Nullable ScriptState<? extends BattleObject> parentState, @Nullable final BiConsumer<ScriptState<EffectManagerData6c<T>>, EffectManagerData6c<T>> ticker, @Nullable final BiConsumer<ScriptState<EffectManagerData6c<T>>, EffectManagerData6c<T>> renderer, @Nullable final BiConsumer<ScriptState<EffectManagerData6c<T>>, EffectManagerData6c<T>> destructor, @Nullable final Effect effect, final T inner) {
     final ScriptState<EffectManagerData6c<T>> state = SCRIPTS.allocateScriptState(name, new EffectManagerData6c<>(name, inner));
     final EffectManagerData6c<T> manager = state.innerStruct_00;
 
@@ -1855,9 +1856,9 @@ public final class Bttl_800e {
     manager.scriptIndex_0c = -1;
     manager.coord2Index_0d = -1;
     manager.myScriptState_0e = state;
-    manager._10.flags_00 = 0x5400_0000;
-    manager._10.scale_16.set(1.0f, 1.0f, 1.0f);
-    manager._10.colour_1c.set(0x80, 0x80, 0x80);
+    manager.params_10.flags_00 = 0x5400_0000;
+    manager.params_10.scale_16.set(1.0f, 1.0f, 1.0f);
+    manager.params_10.colour_1c.set(0x80, 0x80, 0x80);
     manager.ticker_48 = ticker;
     manager.destructor_4c = destructor;
 
@@ -1884,9 +1885,9 @@ public final class Bttl_800e {
   /** Considers all parents */
   @Method(0x800e8594L)
   public static void calculateEffectTransforms(final MV transformMatrix, final EffectManagerData6c<?> manager) {
-    transformMatrix.rotationXYZ(manager._10.rot_10);
-    transformMatrix.transfer.set(manager._10.trans_04);
-    transformMatrix.scaleLocal(manager._10.scale_16);
+    transformMatrix.rotationXYZ(manager.params_10.rot_10);
+    transformMatrix.transfer.set(manager.params_10.trans_04);
+    transformMatrix.scaleLocal(manager.params_10.scale_16);
 
     EffectManagerData6c<?> currentManager = manager;
     int scriptIndex = manager.scriptIndex_0c;
@@ -1895,7 +1896,7 @@ public final class Bttl_800e {
     while(scriptIndex >= 0) {
       final ScriptState<?> state = scriptStatePtrArr_800bc1c0[scriptIndex];
       if(state == null) { // error, parent no longer exists
-        manager._10.flags_00 |= 0x8000_0000;
+        manager.params_10.flags_00 |= 0x8000_0000;
         transformMatrix.transfer.z = -0x7fff;
         scriptIndex = -2;
         break;
@@ -1905,9 +1906,9 @@ public final class Bttl_800e {
       if(BattleObject.EM__.equals(base.magic_00)) {
         final EffectManagerData6c<?> baseManager = (EffectManagerData6c<?>)base;
         final MV baseTransformMatrix = new MV();
-        baseTransformMatrix.rotationXYZ(baseManager._10.rot_10);
-        baseTransformMatrix.transfer.set(baseManager._10.trans_04);
-        baseTransformMatrix.scaleLocal(baseManager._10.scale_16);
+        baseTransformMatrix.rotationXYZ(baseManager.params_10.rot_10);
+        baseTransformMatrix.transfer.set(baseManager.params_10.trans_04);
+        baseTransformMatrix.scaleLocal(baseManager.params_10.scale_16);
 
         if(currentManager.coord2Index_0d != -1) {
           //LAB_800e866c
@@ -1941,7 +1942,7 @@ public final class Bttl_800e {
       } else { // error, parent not a bent or effect
         //LAB_800e878c
         //LAB_800e8790
-        manager._10.flags_00 |= 0x8000_0000;
+        manager.params_10.flags_00 |= 0x8000_0000;
         transformMatrix.transfer.z = -0x7fff;
         scriptIndex = -2;
         break;
@@ -1961,7 +1962,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e8e9cL)
-  public static <T extends EffectManagerData6cInner<T>> void effectManagerTicker(final ScriptState<EffectManagerData6c<T>> state, final EffectManagerData6c<T> data) {
+  public static <T extends EffectManagerParams<T>> void effectManagerTicker(final ScriptState<EffectManagerData6c<T>> state, final EffectManagerData6c<T> data) {
     AttachmentHost subPtr = data;
 
     //LAB_800e8ee0
@@ -1996,15 +1997,18 @@ public final class Bttl_800e {
 
   @Method(0x800e8ffcL)
   public static void allocateDeffManager() {
+    if(deffManager_800c693c != null) {
+      deffManager_800c693c.delete();
+    }
+
     final DeffManager7cc deffManager = new DeffManager7cc();
     _800c6938 = deffManager._5b8;
     _800c6930 = deffManager._5dc;
     lights_800c692c = deffManager._640;
     deffManager.flags_20 = 0x4;
-    tmds_800c6944 = deffManager.tmds_2f8;
     deffManager_800c693c = deffManager;
     spriteMetrics_800c6948 = deffManager.spriteMetrics_39c;
-    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> manager = allocateEffectManager("DEFF manager", null, null, null, null, null);
+    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> manager = allocateEffectManager("DEFF manager", null, null, null, null, null);
     manager.innerStruct_00.flags_04 = 0x600_0400;
     deffManager.scriptState_1c = manager;
     allocateLighting();
@@ -2016,6 +2020,7 @@ public final class Bttl_800e {
     scriptStatePtrArr_800bc1c0[1].deallocateWithChildren();
     deallocateDeffManagerScriptsArray();
     deffManager_800c693c.scriptState_1c.deallocateWithChildren();
+    deffManager_800c693c.delete();
     deffManager_800c693c = null;
   }
 
@@ -2034,7 +2039,7 @@ public final class Bttl_800e {
       //LAB_800e9214
       deallocateDeffManagerScriptsArray();
       deffManager_800c693c.scriptState_1c.deallocateWithChildren();
-      final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> manager = allocateEffectManager("DEFF manager (but different)", null, null, null, null, null);
+      final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> manager = allocateEffectManager("DEFF manager (but different)", null, null, null, null, null);
       deffManager_800c693c.scriptState_1c = manager;
       manager.innerStruct_00.flags_04 = 0x600_0400;
     }
@@ -2066,7 +2071,7 @@ public final class Bttl_800e {
 
   /** Has some relation to rendering of certain effect sprites, like ones from HUD DEFF */
   @Method(0x800e9428L)
-  public static void renderBillboardSpriteEffect_(final SpriteMetrics08 metrics, final EffectManagerData6cInner<?> managerInner, final MV transformMatrix) {
+  public static void renderBillboardSpriteEffect_(final SpriteMetrics08 metrics, final EffectManagerParams<?> managerInner, final MV transformMatrix) {
     if(managerInner.flags_00 >= 0) { // No errors
       final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24();
       spriteEffect.flags_00 = managerInner.flags_00 & 0xffff_ffffL;
@@ -2098,10 +2103,10 @@ public final class Bttl_800e {
   }
 
   @Method(0x800e9590L)
-  public static void renderBillboardSpriteEffect(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state, final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager) {
+  public static void renderBillboardSpriteEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
     final MV transformMatrix = new MV();
     calculateEffectTransforms(transformMatrix, manager);
-    renderBillboardSpriteEffect_(((BillboardSpriteEffect0c)manager.effect_44).metrics_04, manager._10, transformMatrix);
+    renderBillboardSpriteEffect_(((BillboardSpriteEffect0c)manager.effect_44).metrics_04, manager.params_10, transformMatrix);
   }
 
   @Method(0x800e95f0L)
@@ -2133,7 +2138,7 @@ public final class Bttl_800e {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flags", description = "Flag meanings are unknown")
   @Method(0x800e96ccL)
   public static FlowControl allocateBillboardSpriteEffect(final RunningScript<? extends BattleObject> script) {
-    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager(
       "BillboardSpriteEffect0c",
       script.scriptState_04,
       null,
@@ -2142,10 +2147,10 @@ public final class Bttl_800e {
       new BillboardSpriteEffect0c()
     );
 
-    final EffectManagerData6c<EffectManagerData6cInner.VoidType> manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
     manager.flags_04 = 0x400_0000;
     getSpriteMetricsFromSource((BillboardSpriteEffect0c)manager.effect_44, script.params_20[1].get());
-    manager._10.flags_00 = manager._10.flags_00 & 0xfbff_ffff | 0x5000_0000;
+    manager.params_10.flags_00 = manager.params_10.flags_00 & 0xfbff_ffff | 0x5000_0000;
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
@@ -2188,24 +2193,24 @@ public final class Bttl_800e {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Allocates an unknown model effect")
+  @ScriptDescription("Allocates an unknown model effect (used in Miranda transformation)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0", description = "Unused")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @Method(0x800e9854L)
   public static FlowControl FUN_800e9854(final RunningScript<? extends BattleObject> script) {
     final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)getDeffPart(script.params_20[1].get() | 0x200_0000);
 
-    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.AnimType>> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state = allocateEffectManager(
       animatedTmdType.name,
       script.scriptState_04,
       Bttl_800e::FUN_800ea3f8,
       Bttl_800e::FUN_800ea510,
       null,
       new ModelEffect13c("Script " + script.scriptState_04.index),
-      new EffectManagerData6cInner.AnimType()
+      new EffectManagerParams.AnimType()
     );
 
-    final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerParams.AnimType> manager = state.innerStruct_00;
     manager.flags_04 = 0x200_0000;
 
     final ModelEffect13c effect = (ModelEffect13c)manager.effect_44;
@@ -2228,29 +2233,29 @@ public final class Bttl_800e {
     loadModelTmd(model, effect.extTmd_08);
     loadModelAnim(model, effect.anim_0c);
     addGenericAttachment(manager, 0, 0x100, 0);
-    manager._10.flags_00 = 0x1400_0040;
+    manager.params_10.flags_00 = 0x1400_0040;
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Allocates an unknown model effect manager")
+  @ScriptDescription("Allocates an unknown model effect manager (used in Miranda transformation)")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flags", description = "The DEFF flags, mostly unknown")
   @Method(0x800e99bcL)
   public static FlowControl FUN_800e99bc(final RunningScript<? extends BattleObject> script) {
     final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)getDeffPart(script.params_20[1].get() | 0x100_0000);
 
-    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.AnimType>> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state = allocateEffectManager(
       animatedTmdType.name,
       script.scriptState_04,
       Bttl_800e::FUN_800ea3f8,
       Bttl_800e::FUN_800ea510,
       null,
       new ModelEffect13c("Script " + script.scriptState_04.index),
-      new EffectManagerData6cInner.AnimType()
+      new EffectManagerParams.AnimType()
     );
 
-    final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerParams.AnimType> manager = state.innerStruct_00;
     manager.flags_04 = 0x100_0000;
     final ModelEffect13c effect = (ModelEffect13c)manager.effect_44;
     effect._00 = 0;
@@ -2263,7 +2268,7 @@ public final class Bttl_800e {
     loadModelTmd(effect.model_134, effect.extTmd_08);
     loadModelAnim(effect.model_134, effect.anim_0c);
     addGenericAttachment(manager, 0, 0x100, 0);
-    manager._10.flags_00 = 0x5400_0000;
+    manager.params_10.flags_00 = 0x5400_0000;
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
@@ -2332,17 +2337,17 @@ public final class Bttl_800e {
   @Method(0x800e9f68L)
   public static FlowControl FUN_800e9f68(final RunningScript<? extends BattleObject> script) {
     final int s2 = script.params_20[1].get();
-    final ScriptState<EffectManagerData6c<EffectManagerData6cInner.AnimType>> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state = allocateEffectManager(
       "Unknown (FUN_800e9f68, s2 = 0x%x)".formatted(s2),
       script.scriptState_04,
       Bttl_800e::FUN_800ea3f8,
       Bttl_800e::FUN_800ea510,
       null,
       new ModelEffect13c("Script " + script.scriptState_04.index),
-      new EffectManagerData6cInner.AnimType()
+      new EffectManagerParams.AnimType()
     );
 
-    final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerParams.AnimType> manager = state.innerStruct_00;
     manager.flags_04 = 0x200_0000;
 
     final ModelEffect13c s0 = (ModelEffect13c)manager.effect_44;
@@ -2361,10 +2366,10 @@ public final class Bttl_800e {
 
     //LAB_800ea04c
     final Model124 model = s0.model_134;
-    manager._10.trans_04.set(model.coord2_14.coord.transfer);
-    manager._10.rot_10.set(model.coord2_14.transforms.rotate);
-    manager._10.scale_16.set(model.coord2_14.transforms.scale);
-    manager._10.flags_00 = 0x1400_0040;
+    manager.params_10.trans_04.set(model.coord2_14.coord.transfer);
+    manager.params_10.rot_10.set(model.coord2_14.transforms.rotate);
+    manager.params_10.scale_16.set(model.coord2_14.transforms.scale);
+    manager.params_10.flags_00 = 0x1400_0040;
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
@@ -2413,14 +2418,14 @@ public final class Bttl_800e {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flags", description = "The DEFF flags, mostly unknown")
   @Method(0x800ea200L)
   public static FlowControl scriptLoadCmbAnimation(final RunningScript<?> script) {
-    final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.classFor(EffectManagerData6cInner.AnimType.class));
+    final EffectManagerData6c<EffectManagerParams.AnimType> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.classFor(EffectManagerParams.AnimType.class));
     final ModelEffect13c effect = (ModelEffect13c)manager.effect_44;
 
     final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)getDeffPart(script.params_20[1].get() | 0x200_0000);
     final Anim cmb = animatedTmdType.anim_14;
     effect.anim_0c = cmb;
     loadModelAnim(effect.model_134, cmb);
-    manager._10.ticks_24 = 0;
+    manager.params_10.ticks_24 = 0;
     addGenericAttachment(manager, 0, 0x100, 0);
     return FlowControl.CONTINUE;
   }
@@ -2474,14 +2479,14 @@ public final class Bttl_800e {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "loopCount", description = "The number of loops")
   @Method(0x800ea384L)
   public static FlowControl scriptGetEffectLoopCount(final RunningScript<?> script) {
-    final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.classFor(EffectManagerData6cInner.AnimType.class));
+    final EffectManagerData6c<EffectManagerParams.AnimType> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.classFor(EffectManagerParams.AnimType.class));
     final ModelEffect13c effect = (ModelEffect13c)manager.effect_44;
 
     if(effect.anim_0c == null) {
       script.params_20[1].set(0);
     } else {
       //LAB_800ea3cc
-      script.params_20[1].set((manager._10.ticks_24 + 2) / effect.model_134.totalFrames_9a);
+      script.params_20[1].set((manager.params_10.ticks_24 + 2) / effect.model_134.totalFrames_9a);
     }
 
     //LAB_800ea3e4
@@ -2489,31 +2494,31 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ea3f8L)
-  public static void FUN_800ea3f8(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.AnimType>> state, final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager) {
+  public static void FUN_800ea3f8(final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state, final EffectManagerData6c<EffectManagerParams.AnimType> manager) {
     final MV sp0x10 = new MV();
     calculateEffectTransforms(sp0x10, manager);
 
     final ModelEffect13c effect = (ModelEffect13c)manager.effect_44;
     final Model124 model = effect.model_134;
-    model.coord2_14.transforms.rotate.set(manager._10.rot_10);
-    model.coord2_14.transforms.scale.set(manager._10.scale_16);
-    model.zOffset_a0 = manager._10.z_22;
+    model.coord2_14.transforms.rotate.set(manager.params_10.rot_10);
+    model.coord2_14.transforms.scale.set(manager.params_10.scale_16);
+    model.zOffset_a0 = manager.params_10.z_22;
     model.coord2_14.coord.set(sp0x10);
     model.coord2_14.flg = 0;
 
     if(effect.anim_0c != null) {
-      applyAnimation(model, manager._10.ticks_24);
+      applyAnimation(model, manager.params_10.ticks_24);
     }
 
     //LAB_800ea4fc
   }
 
   @Method(0x800ea510L)
-  public static void FUN_800ea510(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.AnimType>> state, final EffectManagerData6c<EffectManagerData6cInner.AnimType> manager) {
+  public static void FUN_800ea510(final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state, final EffectManagerData6c<EffectManagerParams.AnimType> manager) {
     final ModelEffect13c effect = (ModelEffect13c)manager.effect_44;
-    if(manager._10.flags_00 >= 0) {
-      if((manager._10.flags_00 & 0x40) == 0) {
-        FUN_800e61e4(manager._10.colour_1c.x / 128.0f, manager._10.colour_1c.y / 128.0f, manager._10.colour_1c.z / 128.0f);
+    if(manager.params_10.flags_00 >= 0) {
+      if((manager.params_10.flags_00 & 0x40) == 0) {
+        FUN_800e61e4(manager.params_10.colour_1c.x / 128.0f, manager.params_10.colour_1c.y / 128.0f, manager.params_10.colour_1c.z / 128.0f);
       } else {
         //LAB_800ea564
         FUN_800e60e0(1.0f, 1.0f, 1.0f);
@@ -2524,16 +2529,16 @@ public final class Bttl_800e {
 
       final int oldTpage = model.tpage_108;
 
-      if((manager._10.flags_00 & 0x4000_0000L) != 0) {
-        model.tpage_108 = manager._10.flags_00 >>> 23 & 0x60;
+      if((manager.params_10.flags_00 & 0x4000_0000L) != 0) {
+        model.tpage_108 = manager.params_10.flags_00 >>> 23 & 0x60;
       }
 
       //LAB_800ea598
-      FUN_800dd89c(model, manager._10.flags_00);
+      FUN_800dd89c(model, manager.params_10.flags_00);
 
       model.tpage_108 = oldTpage;
 
-      if((manager._10.flags_00 & 0x40) == 0) {
+      if((manager.params_10.flags_00 & 0x40) == 0) {
         FUN_800e62a8();
       } else {
         //LAB_800ea5d4
@@ -2545,7 +2550,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ea620L)
-  public static void prepareDeffFiles(final List<FileData> deff, final ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> deffManagerState) {
+  public static void prepareDeffFiles(final List<FileData> deff, final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> deffManagerState) {
     //LAB_800ea674
     for(int i = 0; i < deff.size(); i++) {
       final FileData data = deff.get(i);
@@ -2627,6 +2632,7 @@ public final class Bttl_800e {
       if(index >= 5) {
         final DeffPart.TmdType tmdType = new DeffPart.TmdType("HUD DEFF file " + i, files.get(i));
         struct7cc.tmds_2f8[index] = tmdType.tmd_0c.tmdPtr_00.tmd.objTable[0];
+        struct7cc.objs[index] = TmdObjLoader.fromObjTable(tmdType.name, struct7cc.tmds_2f8[index]);
       }
 
       //LAB_800ea928
@@ -2677,7 +2683,7 @@ public final class Bttl_800e {
 
   @Method(0x800eacf4L)
   public static void loadBattleHudDeff() {
-    loadDrgnDir(0, "4114/2", Bttl_800e::hudDeffLoaded);
+    loadDrgnDirSync(0, "4114/2", Bttl_800e::hudDeffLoaded);
     loadDrgnDir(0, "4114/3", Bttl_800e::uploadTims);
     loadDrgnDir(0, "4114/1", files -> {
       deffManager_800c693c.scripts_2c = new ScriptFile[files.size()];

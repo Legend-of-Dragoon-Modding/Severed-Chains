@@ -511,27 +511,27 @@ public class RenderEngine {
       this.vsyncCount += 60.0d * Config.getGameSpeedMultiplier() / this.window.getFpsLimit();
 
       if(this.movingLeft) {
-        this.camera3d.strafe(-MOVE_SPEED);
+        this.camera3d.strafe(-MOVE_SPEED * 200);
       }
 
       if(this.movingRight) {
-        this.camera3d.strafe(MOVE_SPEED);
+        this.camera3d.strafe(MOVE_SPEED * 200);
       }
 
       if(this.movingForward) {
-        this.camera3d.move(-MOVE_SPEED);
+        this.camera3d.move(-MOVE_SPEED * 200);
       }
 
       if(this.movingBackward) {
-        this.camera3d.move(MOVE_SPEED);
+        this.camera3d.move(MOVE_SPEED * 200);
       }
 
       if(this.movingUp) {
-        this.camera3d.jump(-MOVE_SPEED);
+        this.camera3d.jump(-MOVE_SPEED * 200);
       }
 
       if(this.movingDown) {
-        this.camera3d.jump(MOVE_SPEED);
+        this.camera3d.jump(MOVE_SPEED * 200);
       }
     });
   }

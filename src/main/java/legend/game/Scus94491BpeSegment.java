@@ -18,6 +18,7 @@ import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.ShortRef;
+import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.core.opengl.MatrixStack;
 import legend.core.opengl.Obj;
@@ -230,8 +231,8 @@ public final class Scus94491BpeSegment {
 
   public static final Value _80010320 = MEMORY.ref(4, 0x80010320L);
 
-  public static final Value _8001032c = MEMORY.ref(1, 0x8001032cL);
-  public static final Value _80010334 = MEMORY.ref(1, 0x80010334L);
+  public static final ArrayRef<UnsignedByteRef> levelUpUs_8001032c = MEMORY.ref(1, 0x8001032cL, ArrayRef.of(UnsignedByteRef.class, 8, 1, UnsignedByteRef::new));
+  public static final ArrayRef<UnsignedByteRef> levelUpOffsets_80010334 = MEMORY.ref(1, 0x80010334L, ArrayRef.of(UnsignedByteRef.class, 8, 1, UnsignedByteRef::new));
 
   public static final Value shadowCContainer_800103d0 = MEMORY.ref(4, 0x800103d0L);
   public static final Value shadowAnimation_8001051c = MEMORY.ref(4, 0x8001051cL);
@@ -961,6 +962,17 @@ public final class Scus94491BpeSegment {
     Unpacker.loadDirectory("SECT/DRGN%d.BIN/%d".formatted(drgnBinIndex, directory), onCompletion);
   }
 
+  public static void loadDrgnDirSync(int drgnBinIndex, final String directory, final Consumer<List<FileData>> onCompletion) {
+    if(drgnBinIndex >= 2) {
+      drgnBinIndex = 20 + drgnBinIndex_800bc058;
+    }
+
+    final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
+    LOGGER.info("Loading DRGN%d dir %s from %s.%s(%s:%d)", drgnBinIndex, directory, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
+
+    onCompletion.accept(Unpacker.loadDirectory("SECT/DRGN%d.BIN/%s".formatted(drgnBinIndex, directory)));
+  }
+
   public static void loadDrgnDirSync(int drgnBinIndex, final int directory, final Consumer<List<FileData>> onCompletion) {
     if(drgnBinIndex >= 2) {
       drgnBinIndex = 20 + drgnBinIndex_800bc058;
@@ -1560,7 +1572,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x800192d8L)
-  public static void FUN_800192d8(int x, final int y) {
+  public static void drawLevelUp(int x, final int y) {
     final Struct10 s0 = new Struct10();
     s0._00 = 0x61;
     s0._01 = 0x6c;
@@ -1584,9 +1596,9 @@ public final class Scus94491BpeSegment {
       v1._06 = 0x1ffe;
       v1._08 = (byte)~i;
       v1._09 = (byte)(20 - i);
-      v1.u_0b = (int)_8001032c.offset(i).get();
+      v1.u_0b = levelUpUs_8001032c.get(i).get();
       v1.clutAndTranslucency_0c = 0x204a;
-      x += (int)_80010334.offset(i).get();
+      x += levelUpOffsets_80010334.get(i).get();
     }
   }
 

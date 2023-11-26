@@ -38,7 +38,7 @@ public class ElectricityEffect38 implements Effect {
   /** ubyte; Effect is only meant to send new render commands every other frame if manager._10._24 != 0 */
   public int frameNum_2a;
 
-  public QuadConsumer<EffectManagerData6c<EffectManagerData6cInner.ElectricityType>, ElectricityEffect38, LightningBoltEffect14, Integer> callback_2c;
+  public QuadConsumer<EffectManagerData6c<EffectManagerParams.ElectricityType>, ElectricityEffect38, LightningBoltEffect14, Integer> callback_2c;
 
   public LightningBoltEffect14[] bolts_34;
 

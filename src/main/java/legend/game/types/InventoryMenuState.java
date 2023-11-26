@@ -20,7 +20,6 @@ public enum InventoryMenuState {
   LIST_INIT_16,
   _17,
   _18,
-  _19,
 
   UNLOAD_125,
 }

@@ -1,8 +1,9 @@
 package legend.game.combat.deff;
 
 import legend.core.gte.TmdObjTable1c;
+import legend.core.opengl.Obj;
 import legend.game.combat.effects.EffectManagerData6c;
-import legend.game.combat.effects.EffectManagerData6cInner;
+import legend.game.combat.effects.EffectManagerParams;
 import legend.game.combat.effects.SpriteMetrics08;
 import legend.game.combat.environment.BattleLightStruct64;
 import legend.game.combat.environment.BttlLightStruct84;
@@ -15,9 +16,10 @@ import java.util.Arrays;
 public class DeffManager7cc {
   public Struct08 _00 = new Struct08();
   public final Struct04[] _08 = {new Struct04(), new Struct04(), new Struct04(), new Struct04(), new Struct04()};
-  public ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> scriptState_1c;
+  public ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> scriptState_1c;
   /**
    * <ul>
+   *   <li>0x4 - I suspect this is some misguided attempt at optimization, makes the effect flicker intermittently based on Z and ticks</li>
    *   <li>0x4_0000 - Has sounds?</li>
    *   <li>0x10_0000 - Has attack animations?</li>
    *   <li>0x60_0000 - Has combat stage effects?</li>
@@ -38,6 +40,7 @@ public class DeffManager7cc {
   public final StageAmbiance4c[] dragoonSpaceAmbiance_98 = {new StageAmbiance4c(), new StageAmbiance4c(), new StageAmbiance4c(), new StageAmbiance4c(), new StageAmbiance4c(), new StageAmbiance4c(), new StageAmbiance4c(), new StageAmbiance4c()};
   /** Only type 3 TMDs (see {@link DeffPart#flags_00}) */
   public final TmdObjTable1c[] tmds_2f8 = new TmdObjTable1c[38];
+  public final Obj[] objs = new Obj[38];
   public final DeffPart.LmbType[] lmbs_390 = new DeffPart.LmbType[3];
   public final SpriteMetrics08[] spriteMetrics_39c = new SpriteMetrics08[65];
   public DeffPart[] deffPackage_5a8;
@@ -49,6 +52,15 @@ public class DeffManager7cc {
 
   public DeffManager7cc() {
     Arrays.setAll(this.spriteMetrics_39c, i -> new SpriteMetrics08());
+  }
+
+  public void delete() {
+    for(int i = 0; i < this.objs.length; i++) {
+      if(this.objs[i] != null) {
+        this.objs[i].delete();
+        this.objs[i] = null;
+      }
+    }
   }
 
   public static class Struct08 {

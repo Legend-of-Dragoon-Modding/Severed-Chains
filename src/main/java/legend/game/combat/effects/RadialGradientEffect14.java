@@ -14,5 +14,5 @@ public class RadialGradientEffect14 implements Effect {
   public int g_0d;
   public int b_0e;
 
-  public QuintConsumer<EffectManagerData6c<EffectManagerData6cInner.RadialGradientType>, Integer, Vector2f[], RadialGradientEffect14, Translucency> renderer_10;
+  public QuintConsumer<EffectManagerData6c<EffectManagerParams.RadialGradientType>, Integer, Vector2f[], RadialGradientEffect14, Translucency> renderer_10;
 }

@@ -3,7 +3,7 @@ package legend.game.combat.effects;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
-public abstract class EffectManagerData6cInner<T extends EffectManagerData6cInner<T>> {
+public abstract class EffectManagerParams<T extends EffectManagerParams<T>> {
   /**
    * <ul>
    *   <li>0x8 - normalize light matrix before use</li>
@@ -34,7 +34,7 @@ public abstract class EffectManagerData6cInner<T extends EffectManagerData6cInne
   public abstract int get24(final int index);
   public abstract void set24(final int index, final int val);
 
-  public static class AnimType extends EffectManagerData6cInner<AnimType> {
+  public static class AnimType extends EffectManagerParams<AnimType> {
     public int ticks_24;
     public int scale_28;
     public int _2c;
@@ -72,7 +72,7 @@ public abstract class EffectManagerData6cInner<T extends EffectManagerData6cInne
     }
   }
 
-  public static class ShirleyType extends EffectManagerData6cInner<ShirleyType> {
+  public static class ShirleyType extends EffectManagerParams<ShirleyType> {
     public int width_24;
     public int height_28;
     public int depth_2c;
@@ -110,7 +110,7 @@ public abstract class EffectManagerData6cInner<T extends EffectManagerData6cInne
     }
   }
 
-  public static class ColourType extends EffectManagerData6cInner<ColourType> {
+  public static class ColourType extends EffectManagerParams<ColourType> {
     public int _24;
     /** 12-bit fixed-point */
     public int r_28;
@@ -151,7 +151,7 @@ public abstract class EffectManagerData6cInner<T extends EffectManagerData6cInne
     }
   }
 
-  public static class RadialGradientType extends EffectManagerData6cInner<RadialGradientType> {
+  public static class RadialGradientType extends EffectManagerParams<RadialGradientType> {
     public int colour_24;
     public int size_28;
     public int z_2c;
@@ -189,7 +189,7 @@ public abstract class EffectManagerData6cInner<T extends EffectManagerData6cInne
     }
   }
 
-  public static class WeaponTrailType extends EffectManagerData6cInner<WeaponTrailType> {
+  public static class WeaponTrailType extends EffectManagerParams<WeaponTrailType> {
     public int vertexComponent_24;
     public int _28;
     public int _2c;
@@ -227,7 +227,7 @@ public abstract class EffectManagerData6cInner<T extends EffectManagerData6cInne
     }
   }
 
-  public static class ParticleType extends EffectManagerData6cInner<ParticleType> {
+  public static class ParticleType extends EffectManagerParams<ParticleType> {
     public int flags_24;
     public int _28;
     public int _2c;
@@ -265,7 +265,7 @@ public abstract class EffectManagerData6cInner<T extends EffectManagerData6cInne
     }
   }
 
-  public static class ElectricityType extends EffectManagerData6cInner<ElectricityType> {
+  public static class ElectricityType extends EffectManagerParams<ElectricityType> {
     /** Used for flickering, each bit corresponds to a frame and if set that frame will not render */
     public int shouldRenderFrameBits_24;
     /** Multiple packed values */
@@ -305,7 +305,7 @@ public abstract class EffectManagerData6cInner<T extends EffectManagerData6cInne
     }
   }
 
-  public static class FrozenJetType extends EffectManagerData6cInner<FrozenJetType> {
+  public static class FrozenJetType extends EffectManagerParams<FrozenJetType> {
     public int _24;
     public int _28;
     public int _2c;
@@ -343,7 +343,7 @@ public abstract class EffectManagerData6cInner<T extends EffectManagerData6cInne
     }
   }
 
-  public static class VoidType extends EffectManagerData6cInner<VoidType> {
+  public static class VoidType extends EffectManagerParams<VoidType> {
     @Override
     public int get24(final int index) {
       throw new IllegalArgumentException("Invalid index " + index);

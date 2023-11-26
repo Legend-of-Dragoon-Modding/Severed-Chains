@@ -9,6 +9,7 @@ import legend.core.opengl.Mesh;
 import legend.core.opengl.Shader;
 import legend.core.opengl.ShaderManager;
 import legend.core.opengl.Texture;
+import legend.core.opengl.TmdObjLoader;
 import legend.core.opengl.Window;
 import legend.core.opengl.fonts.Font;
 import legend.core.opengl.fonts.FontManager;
@@ -60,6 +61,7 @@ import static legend.game.SItem.shanaXpTable_80113aa8;
 import static legend.game.Scus94491BpeSegment.gameLoop;
 import static legend.game.Scus94491BpeSegment.startSound;
 import static legend.game.Scus94491BpeSegment_8002.initTextboxGeometry;
+import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
@@ -394,6 +396,11 @@ public final class GameEngine {
 
     synchronized(LOCK) {
       Input.init();
+
+      for(int i = 0; i < shadowModel_800bda10.modelParts_00.length; i++) {
+        shadowModel_800bda10.modelParts_00[i].obj = TmdObjLoader.fromObjTable("Shadow " + i, shadowModel_800bda10.modelParts_00[i].tmd_08);
+        shadowModel_800bda10.modelParts_00[i].obj.persistent = true;
+      }
 
       initTextboxGeometry();
       startSound();

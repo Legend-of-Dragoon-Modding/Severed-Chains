@@ -9,7 +9,7 @@ import org.joml.Vector3i;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
-public class EffectManagerData6c<T extends EffectManagerData6cInner<T>> extends BattleObject implements AttachmentHost {
+public class EffectManagerData6c<T extends EffectManagerParams<T>> extends BattleObject implements AttachmentHost {
   public final String name;
 
   /** The first 11 (or more?) bits denote which attachments this effect has */
@@ -18,7 +18,7 @@ public class EffectManagerData6c<T extends EffectManagerData6cInner<T>> extends 
   public int coord2Index_0d;
   public ScriptState<EffectManagerData6c<T>> myScriptState_0e;
 
-  public final T _10;
+  public final T params_10;
   public Effect effect_44;
   public BiConsumer<ScriptState<EffectManagerData6c<T>>, EffectManagerData6c<T>> ticker_48;
   public BiConsumer<ScriptState<EffectManagerData6c<T>>, EffectManagerData6c<T>> destructor_4c;
@@ -32,13 +32,13 @@ public class EffectManagerData6c<T extends EffectManagerData6cInner<T>> extends 
   private EffectAttachment attachment_58;
   //  public String type_5c; Equivalent to "name" above
 
-  public static <T extends EffectManagerData6cInner<T>> Class<EffectManagerData6c<T>> classFor(final Class<T> cls) {
+  public static <T extends EffectManagerParams<T>> Class<EffectManagerData6c<T>> classFor(final Class<T> cls) {
     return (Class<EffectManagerData6c<T>>)(Class<?>)EffectManagerData6c.class;
   }
 
-  public EffectManagerData6c(final String name, final T inner) {
+  public EffectManagerData6c(final String name, final T params) {
     this.name = name;
-    this._10 = inner;
+    this.params_10 = params;
   }
 
   public void set(final EffectManagerData6c<T> other) {
@@ -46,7 +46,7 @@ public class EffectManagerData6c<T extends EffectManagerData6cInner<T>> extends 
     this.scriptIndex_0c = other.scriptIndex_0c;
     this.coord2Index_0d = other.coord2Index_0d;
     this.myScriptState_0e = other.myScriptState_0e;
-    this._10.set(other._10);
+    this.params_10.set(other.params_10);
     this.effect_44 = other.effect_44;
     this.ticker_48 = other.ticker_48;
     this.destructor_4c = other.destructor_4c;
@@ -59,22 +59,22 @@ public class EffectManagerData6c<T extends EffectManagerData6cInner<T>> extends 
 
   @Override
   public Vector3f getPosition() {
-    return this._10.trans_04;
+    return this.params_10.trans_04;
   }
 
   @Override
   public Vector3f getRotation() {
-    return this._10.rot_10;
+    return this.params_10.rot_10;
   }
 
   @Override
   public Vector3f getScale() {
-    return this._10.scale_16;
+    return this.params_10.scale_16;
   }
 
   @Override
   public Vector3i getColour() {
-    return this._10.colour_1c;
+    return this.params_10.colour_1c;
   }
 
   public boolean hasAttachment(final int id) {
