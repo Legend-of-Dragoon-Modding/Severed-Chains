@@ -12,7 +12,7 @@ import legend.game.types.Renderable58;
 import legend.game.types.Translucency;
 
 import static legend.core.GameEngine.GPU;
-import static legend.game.SItem._800fbbf0;
+import static legend.game.SItem.dragoonXpRequirements_800fbbf0;
 import static legend.game.SItem.characterPortraitVs_800fbc88;
 import static legend.game.SItem.charPortraitGlyphs_800fbc9c;
 import static legend.game.SItem._800fbca8;
@@ -504,7 +504,7 @@ public class PostBattleScreen extends MenuScreen {
 
       //LAB_8010ceb0
       //LAB_8010cecc
-      while(gameState_800babc8.charData_32c[charIndex].dlevelXp_0e >= _800fbbf0.get(charIndex).deref().get(gameState_800babc8.charData_32c[charIndex].dlevel_13 + 1).get() && gameState_800babc8.charData_32c[charIndex].dlevel_13 < 5) {
+      while(gameState_800babc8.charData_32c[charIndex].dlevelXp_0e >= dragoonXpRequirements_800fbbf0.get(charIndex).deref().get(gameState_800babc8.charData_32c[charIndex].dlevel_13 + 1).get() && gameState_800babc8.charData_32c[charIndex].dlevel_13 < 5) {
         loadCharacterStats();
         final byte[] spellIndices = new byte[8];
         final int spellCount = getUnlockedDragoonSpells(spellIndices, charIndex);
@@ -778,7 +778,7 @@ public class PostBattleScreen extends MenuScreen {
       this.drawNextLevelXp(x + 84, y + 40, xp);
 
 
-      final int dxp = _800fbbf0.get(charId).deref().get(gameState_800babc8.charData_32c[charId].dlevel_13 + 1).get();
+      final int dxp = dragoonXpRequirements_800fbbf0.get(charId).deref().get(gameState_800babc8.charData_32c[charId].dlevel_13 + 1).get();
       this.drawSixDigitNumber(x + 76 - this.getXpWidth(dxp), y + 52, gameState_800babc8.charData_32c[charId].dlevelXp_0e);
       this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(dxp) - 114), y + 52, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       this.drawNextLevelXp(x + 84, y + 52, dxp);

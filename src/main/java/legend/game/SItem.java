@@ -102,7 +102,8 @@ public final class SItem {
   public static final ArrayRef<MenuStatus08> menuStatus_800fba7c = MEMORY.ref(4, 0x800fba7cL, ArrayRef.of(MenuStatus08.class, 8, 8, MenuStatus08::new));
   public static final ArrayRef<IntRef> dragoonSpiritGoodsBits_800fbabc = MEMORY.ref(4, 0x800fbabcL, ArrayRef.of(IntRef.class, 8, 4, IntRef::new));
 
-  public static final ArrayRef<Pointer<ArrayRef<UnsignedShortRef>>> _800fbbf0 = MEMORY.ref(4, 0x800fbbf0L, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(UnsignedShortRef.class)), 9, 4, Pointer.deferred(4, ArrayRef.of(UnsignedShortRef.class, 6, 2, UnsignedShortRef::new))));
+  /** Note: arrays run into the next array's first element */
+  public static final ArrayRef<Pointer<ArrayRef<UnsignedShortRef>>> dragoonXpRequirements_800fbbf0 = MEMORY.ref(4, 0x800fbbf0L, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(UnsignedShortRef.class)), 9, 4, Pointer.deferred(4, ArrayRef.of(UnsignedShortRef.class, 7, 2, UnsignedShortRef::new))));
 
   public static final ArrayRef<ShortRef> characterPortraitVs_800fbc88 = MEMORY.ref(2, 0x800fbc88L, ArrayRef.of(ShortRef.class, 9, 2, ShortRef::new));
 
