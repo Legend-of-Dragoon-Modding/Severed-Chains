@@ -3263,12 +3263,12 @@ public class WMap extends EngineState {
           this.lerpish(this.wmapStruct258_800c66a8.currPlayerPos_94, originTranslation, targetTranslation, 32.0f / this.wmapStruct258_800c66a8.teleportAnimationTick_24c);
 
           this.wmapStruct258_800c66a8.teleportAnimationTick_24c++;
-          if(this.wmapStruct258_800c66a8.teleportAnimationTick_24c > 32) {
+          if(this.wmapStruct258_800c66a8.teleportAnimationTick_24c / (3.0f / vsyncMode_8007a3b8) > 32) {
             this.wmapStruct258_800c66a8.teleportAnimationState_248 = TeleportAnimationState.INIT_FADE;
           }
 
           //LAB_800e0980
-          scale = this.wmapStruct258_800c66a8.teleportAnimationTick_24c * 0x40 + (rsin(this.wmapStruct258_800c66a8.teleportAnimationTick_24c * 0x200) * 0x100 >> 12) / (float)0x1000;
+          scale = this.wmapStruct258_800c66a8.teleportAnimationTick_24c * 0.015625f + (rsin(this.wmapStruct258_800c66a8.teleportAnimationTick_24c * 0x200) * 0x100 >> 12) / (float)0x1000;
           this.wmapStruct258_800c66a8.models_0c[3].coord2_14.transforms.scale.set(scale, scale, scale);
           this.wmapStruct258_800c66a8.models_0c[this.wmapStruct258_800c66a8.modelIndex_1e4].coord2_14.transforms.rotate.y = this.wmapStruct19c0_800c66b0.mapRotation_70.y;
           this.wmapStruct258_800c66a8.rotation_a4.y = this.wmapStruct19c0_800c66b0.mapRotation_70.y;
