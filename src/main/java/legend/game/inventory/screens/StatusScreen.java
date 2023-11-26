@@ -4,7 +4,7 @@ import legend.game.input.InputAction;
 import legend.game.types.LodString;
 
 import static legend.game.SItem.FUN_801034cc;
-import static legend.game.SItem._80114290;
+import static legend.game.SItem.spellMp_80114290;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.characterCount_8011d7c4;
 import static legend.game.SItem.characterStatusGlyphs_801141a4;
@@ -121,7 +121,7 @@ public class StatusScreen extends MenuScreen {
           renderText(new LodString(spellStats_800fa0b8[spellIndex].name), 210, 125 + i * 14, TextColour.BROWN);
 
           if(allocate) {
-            renderThreeDigitNumber(342, 128 + i * 14, (int)_80114290.offset(spellIndex).get());
+            renderThreeDigitNumber(342, 128 + i * 14, spellMp_80114290.get(spellIndex).get());
           }
         }
       }

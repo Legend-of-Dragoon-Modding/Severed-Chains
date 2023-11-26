@@ -16,7 +16,6 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nullable;
 
 import static legend.core.GameEngine.SAVES;
-import static legend.game.SItem.Overwrite_save_8011c9e8;
 import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
@@ -28,6 +27,8 @@ import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 
 public class SaveGameScreen extends MenuScreen {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
+
+  private static final LodString Overwrite_save_8011c9e8 = new LodString("Overwrite save?");
 
   private final Runnable unload;
 

@@ -1,6 +1,7 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
+import legend.core.memory.Method;
 import legend.game.DabasManager;
 import legend.game.input.InputAction;
 import legend.game.inventory.Equipment;
@@ -20,14 +21,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.REGISTRIES;
-import static legend.game.SItem.AcquiredGold_8011cdd4;
-import static legend.game.SItem.AcquiredItems_8011d050;
-import static legend.game.SItem.DigDabas_8011d04c;
-import static legend.game.SItem.Discard_8011d05c;
 import static legend.game.SItem.FUN_80104b60;
-import static legend.game.SItem.NextDig_8011d064;
-import static legend.game.SItem.SpecialItem_8011d054;
-import static legend.game.SItem.Take_8011d058;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.dabasMenuGlyphs_80114228;
 import static legend.game.SItem.menuStack;
@@ -38,9 +32,9 @@ import static legend.game.SItem.renderEightDigitNumber;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderItemIcon;
 import static legend.game.SItem.renderMenuItems;
-import static legend.game.SItem.renderString;
 import static legend.game.SItem.renderText;
 import static legend.game.SItem.setMessageBoxText;
+import static legend.game.SItem.textLength;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
@@ -56,6 +50,14 @@ import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
 public class DabasScreen extends MenuScreen {
+  private static final LodString DigDabas_8011d04c = new LodString("Diiig Dabas!");
+  private static final LodString AcquiredGold_8011cdd4 = new LodString("Acquired Gold");
+  private static final LodString AcquiredItems_8011d050 = new LodString("Acquired Items");
+  private static final LodString SpecialItem_8011d054 = new LodString("Special Item");
+  private static final LodString Take_8011d058 = new LodString("Take");
+  private static final LodString Discard_8011d05c = new LodString("Discard");
+  private static final LodString NextDig_8011d064 = new LodString("Next Dig");
+
   private int loadingStage;
 
   private DabasData100 dabasData_8011d7c0;
@@ -611,12 +613,66 @@ public class DabasScreen extends MenuScreen {
     }
 
     //LAB_80103390
-    renderString(2, 16, 178, selectedSlot, false);
+    renderString(16, 178, selectedSlot, false);
   }
 
   private int getDabasMenuY(final int slot) {
     return 57 + slot * 14;
   }
+
+  @Method(0x80109074L)
+  public static void renderString(final int x, final int y, final int stringIndex, final boolean allocate) {
+    if(allocate) {
+      allocateUiElement(0x5b, 0x5b, x, y);
+    }
+
+    //LAB_801090e0
+    //LAB_8010914c
+    LodString s0 = MENU_DESCRIPTIONS[stringIndex];
+
+    //LAB_80109160
+    //LAB_80109168
+    //LAB_80109188
+    for(int i = 0; i < 4; i++) {
+      int s4 = 0;
+      final int len = Math.min(textLength(s0), 20);
+      final LodString s3 = new LodString(len + 1);
+
+      //LAB_801091bc
+      //LAB_801091cc
+      int a1;
+      for(a1 = 0; a1 < len; a1++) {
+        if(s0.charAt(a1) == 0xa1ffL) {
+          //LAB_8010924c
+          s4 = 1;
+          break;
+        }
+
+        s3.charAt(a1, s0.charAt(a1));
+      }
+
+      //LAB_801091fc
+      s3.charAt(a1, 0xa0ff);
+
+      renderText(s3, x + 2, y + i * 14 + 4, TextColour.BROWN);
+
+      if(textLength(s3) > len) {
+        //LAB_80109270
+        break;
+      }
+
+      //LAB_80109254
+      s0 = s0.slice(textLength(s3) + s4);
+    }
+
+    //LAB_80109284
+  }
+
+  private static final LodString[] MENU_DESCRIPTIONS = {
+    new LodString("Send gold and items\nDabas has found to\nthe main game."),
+    new LodString("Delete items from\nthe Pocket Station."),
+    new LodString("Leave for the\nnext adventure."),
+  };
 
   private static final String[] TAKE_RESPONSES = {
     "Dabas thanks you.",

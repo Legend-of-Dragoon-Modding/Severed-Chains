@@ -13,8 +13,8 @@ import legend.game.types.Translucency;
 
 import static legend.core.GameEngine.GPU;
 import static legend.game.SItem._800fbbf0;
-import static legend.game.SItem._800fbc88;
-import static legend.game.SItem._800fbc9c;
+import static legend.game.SItem.characterPortraitVs_800fbc88;
+import static legend.game.SItem.charPortraitGlyphs_800fbc9c;
 import static legend.game.SItem._800fbca8;
 import static legend.game.SItem.additions_8011a064;
 import static legend.game.SItem.cacheCharacterSlots;
@@ -504,7 +504,7 @@ public class PostBattleScreen extends MenuScreen {
 
       //LAB_8010ceb0
       //LAB_8010cecc
-      while(gameState_800babc8.charData_32c[charIndex].dlevelXp_0e >= _800fbbf0.offset(charIndex * 0x4L).deref(2).offset(gameState_800babc8.charData_32c[charIndex].dlevel_13 * 0x2L).offset(0x2L).get() && gameState_800babc8.charData_32c[charIndex].dlevel_13 < 5) {
+      while(gameState_800babc8.charData_32c[charIndex].dlevelXp_0e >= _800fbbf0.get(charIndex).deref().get(gameState_800babc8.charData_32c[charIndex].dlevel_13 + 1).get() && gameState_800babc8.charData_32c[charIndex].dlevel_13 < 5) {
         loadCharacterStats();
         final byte[] spellIndices = new byte[8];
         final int spellCount = getUnlockedDragoonSpells(spellIndices, charIndex);
@@ -645,14 +645,14 @@ public class PostBattleScreen extends MenuScreen {
   }
 
   @Method(0x8010e114L)
-  private Renderable58 drawCharPortrait(final int x, final int y, final int charSlot) {
-    if(charSlot >= 9) {
+  private Renderable58 drawCharPortrait(final int x, final int y, final int charId) {
+    if(charId >= 9) {
       //LAB_8010e1ec
       throw new IllegalArgumentException("Invalid character index");
     }
 
-    final int glyph = (int)_800fbc9c.offset(charSlot).getSigned();
-    final Renderable58 renderable = this.drawGlyph(glyph, glyph, x, y, 704, (int)_800fbc88.offset(charSlot * 0x2L).getSigned());
+    final int glyph = charPortraitGlyphs_800fbc9c.get(charId).get();
+    final Renderable58 renderable = this.drawGlyph(glyph, glyph, x, y, 704, characterPortraitVs_800fbc88.get(charId).get());
     renderable.z_3c = 35;
 
     //LAB_8010e1f0
@@ -750,36 +750,36 @@ public class PostBattleScreen extends MenuScreen {
   }
 
   @Method(0x8010e708L)
-  private void drawChar(final int x, final int y, final int charIndex) {
-    if(charIndex != -1) {
+  private void drawChar(final int x, final int y, final int charId) {
+    if(charId != -1) {
       this.FUN_8010d078(x + 1, y + 5, 24, 32, 2);
-      this.drawCharPortrait(x - 1, y + 4, charIndex).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
-      this.drawGlyph((int)_800fbca8.offset(charIndex).get(), (int)_800fbca8.offset(charIndex).get(), x + 32, y + 4, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+      this.drawCharPortrait(x - 1, y + 4, charId).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+      this.drawGlyph(_800fbca8.get(charId).get(), _800fbca8.get(charId).get(), x + 32, y + 4, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       this.drawGlyph(0x3b, 0x3b, x + 30, y + 16, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       this.drawGlyph(0x3c, 0x3c, x + 30, y + 28, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       this.drawGlyph(0x3d, 0x3d, x, y + 40, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       this.drawGlyph(0x3c, 0x3c, x, y + 52, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       this.drawGlyph(0x3d, 0x3d, x + 10, y + 52, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
 
-      this.drawTwoDigitNumber(x + 108, y + 16, gameState_800babc8.charData_32c[charIndex].level_12);
+      this.drawTwoDigitNumber(x + 108, y + 16, gameState_800babc8.charData_32c[charId].level_12);
 
       final int dlevel;
-      if(!hasDragoon(gameState_800babc8.goods_19c[0], charIndex)) {
+      if(!hasDragoon(gameState_800babc8.goods_19c[0], charId)) {
         dlevel = 0;
       } else {
-        dlevel = gameState_800babc8.charData_32c[charIndex].dlevel_13;
+        dlevel = gameState_800babc8.charData_32c[charId].dlevel_13;
       }
 
       //LAB_8010e8e0
       this.drawTwoDigitNumber(x + 108, y + 28, dlevel);
-      final int xp = getXpToNextLevel(charIndex);
-      this.drawSixDigitNumber(x + 76 - this.getXpWidth(xp), y + 40, gameState_800babc8.charData_32c[charIndex].xp_00);
+      final int xp = getXpToNextLevel(charId);
+      this.drawSixDigitNumber(x + 76 - this.getXpWidth(xp), y + 40, gameState_800babc8.charData_32c[charId].xp_00);
       this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(xp) - 114), y + 40, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       this.drawNextLevelXp(x + 84, y + 40, xp);
 
 
-      final int dxp = (int) _800fbbf0.offset(charIndex * 0x4L).deref(2).offset(gameState_800babc8.charData_32c[charIndex].dlevel_13 * 0x2L).offset(0x2L).get();
-      this.drawSixDigitNumber(x + 76 - this.getXpWidth(dxp), y + 52, gameState_800babc8.charData_32c[charIndex].dlevelXp_0e);
+      final int dxp = _800fbbf0.get(charId).deref().get(gameState_800babc8.charData_32c[charId].dlevel_13 + 1).get();
+      this.drawSixDigitNumber(x + 76 - this.getXpWidth(dxp), y + 52, gameState_800babc8.charData_32c[charId].dlevelXp_0e);
       this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(dxp) - 114), y + 52, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       this.drawNextLevelXp(x + 84, y + 52, dxp);
     }

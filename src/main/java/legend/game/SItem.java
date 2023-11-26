@@ -3,12 +3,13 @@ package legend.game;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.memory.Method;
-import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
+import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.EnumRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
+import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
@@ -102,13 +103,13 @@ public final class SItem {
   public static final ArrayRef<MenuStatus08> menuStatus_800fba7c = MEMORY.ref(4, 0x800fba7cL, ArrayRef.of(MenuStatus08.class, 8, 8, MenuStatus08::new));
   public static final ArrayRef<IntRef> dragoonSpiritGoodsBits_800fbabc = MEMORY.ref(4, 0x800fbabcL, ArrayRef.of(IntRef.class, 8, 4, IntRef::new));
 
-  public static final Value _800fbbf0 = MEMORY.ref(4, 0x800fbbf0L);
+  public static final ArrayRef<Pointer<ArrayRef<UnsignedShortRef>>> _800fbbf0 = MEMORY.ref(4, 0x800fbbf0L, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(UnsignedShortRef.class)), 9, 4, Pointer.deferred(4, ArrayRef.of(UnsignedShortRef.class, 6, 2, UnsignedShortRef::new))));
 
-  public static final Value _800fbc88 = MEMORY.ref(2, 0x800fbc88L);
+  public static final ArrayRef<ShortRef> characterPortraitVs_800fbc88 = MEMORY.ref(2, 0x800fbc88L, ArrayRef.of(ShortRef.class, 9, 2, ShortRef::new));
 
-  public static final Value _800fbc9c = MEMORY.ref(1, 0x800fbc9cL);
+  public static final ArrayRef<ByteRef> charPortraitGlyphs_800fbc9c = MEMORY.ref(1, 0x800fbc9cL, ArrayRef.of(ByteRef.class, 9, 1, ByteRef::new));
 
-  public static final Value _800fbca8 = MEMORY.ref(1, 0x800fbca8L);
+  public static final ArrayRef<ByteRef> _800fbca8 = MEMORY.ref(1, 0x800fbca8L, ArrayRef.of(ByteRef.class, 9, 1, ByteRef::new));
 
   public static final ArrayRef<UnsignedIntRef> _800fbd08 = MEMORY.ref(4, 0x800fbd08L, ArrayRef.of(UnsignedIntRef.class, 10, 4, UnsignedIntRef::new));
   public static final ArrayRef<Pointer<ArrayRef<LevelStuff08>>> levelStuff_800fbd30 = MEMORY.ref(4, 0x800fbd30L, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(LevelStuff08.class)), 9, 4, Pointer.deferred(4, ArrayRef.of(LevelStuff08.class, 61, 8, LevelStuff08::new))));
@@ -138,10 +139,9 @@ public final class SItem {
   public static final UnboundedArrayRef<MenuGlyph06> useItemGlyphs_801141fc = MEMORY.ref(1, 0x801141fcL, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
   public static final UnboundedArrayRef<MenuGlyph06> dabasMenuGlyphs_80114228 = MEMORY.ref(1, 0x80114228L, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
 
-  public static final Value characterValidEquipment_80114284 = MEMORY.ref(1, 0x80114284L);
+  public static final ArrayRef<UnsignedByteRef> characterValidEquipment_80114284 = MEMORY.ref(1, 0x80114284L, ArrayRef.of(UnsignedByteRef.class, 9, 1, UnsignedByteRef::new));
 
-  public static final Value _80114290 = MEMORY.ref(1, 0x80114290L);
-
+  public static final ArrayRef<UnsignedByteRef> spellMp_80114290 = MEMORY.ref(1, 0x80114290L, ArrayRef.of(UnsignedByteRef.class, 68, 1, UnsignedByteRef::new));
   public static final MenuGlyph06 glyph_801142d4 = MEMORY.ref(1, 0x801142d4L, MenuGlyph06::new);
 
   public static final ArrayRef<Pointer<LodString>> chapterNames_80114248 = MEMORY.ref(4, 0x80114248L, ArrayRef.of(Pointer.classFor(LodString.class), 4, 4, Pointer.deferred(4, LodString::new)));
@@ -164,50 +164,10 @@ public final class SItem {
   public static final ArrayRef<Pointer<LodString>> submapNames_8011c108 = MEMORY.ref(4, 0x8011c108L, ArrayRef.of(Pointer.classFor(LodString.class), 57, 4, Pointer.deferred(4, LodString::new)));
   public static final ArrayRef<Pointer<LodString>> worldMapNames_8011c1ec = MEMORY.ref(4, 0x8011c1ecL, ArrayRef.of(Pointer.classFor(LodString.class), 8, 4, Pointer.deferred(4, LodString::new)));
 
-  public static final LodString _8011c254 = MEMORY.ref(4, 0x8011c254L, LodString::new);
-
   /** "Yes" */
-  public static final LodString Yes_8011c20c = MEMORY.ref(2, 0x8011c20cL, LodString::new);
+  public static final LodString Yes_8011c20c = new LodString("Yes");
   /** "No" */
-  public static final LodString No_8011c214 = MEMORY.ref(2, 0x8011c214L, LodString::new);
-  public static final LodString This_item_cannot_be_thrown_away_8011c2a8 = MEMORY.ref(2, 0x8011c2a8L, LodString::new);
-  public static final LodString Acquired_item_8011c2f8 = MEMORY.ref(2, 0x8011c2f8L, LodString::new);
-  public static final LodString Armed_item_8011c314 = MEMORY.ref(2, 0x8011c314L, LodString::new);
-  public static final LodString Used_item_8011c32c = MEMORY.ref(2, 0x8011c32cL, LodString::new);
-  public static final LodString Addition_cannot_be_used_8011c340 = MEMORY.ref(2, 0x8011c340L, LodString::new);
-  public static final LodString Not_enough_money_8011c468 = MEMORY.ref(2, 0x8011c468L, LodString::new);
-  public static final LodString Which_item_do_you_want_to_sell_8011c4e4 = MEMORY.ref(2, 0x8011c4e4L, LodString::new);
-  public static final LodString Which_weapon_do_you_want_to_sell_8011c524 = MEMORY.ref(2, 0x8011c524L, LodString::new);
-
-  public static final LodString Buy_8011c6a4 = MEMORY.ref(2, 0x8011c6a4L, LodString::new);
-  public static final LodString Sell_8011c6ac = MEMORY.ref(2, 0x8011c6acL, LodString::new);
-  public static final LodString Carried_8011c6b8 = MEMORY.ref(2, 0x8011c6b8L, LodString::new);
-  public static final LodString Leave_8011c6c8 = MEMORY.ref(2, 0x8011c6c8L, LodString::new);
-  public static final LodString Cannot_be_armed_with_8011c6d4 = MEMORY.ref(2, 0x8011c6d4L, LodString::new);
-
-  public static final LodString Number_kept_8011c7f4 = MEMORY.ref(2, 0x8011c7f4L, LodString::new);
-  /** "Overwrite save?" */
-  public static final LodString Overwrite_save_8011c9e8 = MEMORY.ref(2, 0x8011c9e8L, LodString::new);
-  public static final LodString AcquiredGold_8011cdd4 = new LodString("Acquired Gold");
-  public static final LodString HP_recovered_for_all_8011cfcc = MEMORY.ref(2, 0x8011cfccL, LodString::new);
-  public static final LodString MP_recovered_for_all_8011cff8 = MEMORY.ref(2, 0x8011cff8L, LodString::new);
-  public static final LodString Press_to_sort_8011d024 = MEMORY.ref(2, 0x8011d024L, LodString::new);
-  public static final LodString DigDabas_8011d04c = new LodString("Diiig Dabas!");
-  public static final LodString AcquiredItems_8011d050 = new LodString("Acquired Items");
-  public static final LodString SpecialItem_8011d054 = new LodString("Special Item");
-  public static final LodString Take_8011d058 = new LodString("Take");
-  public static final LodString Discard_8011d05c = new LodString("Discard");
-  public static final LodString NextDig_8011d064 = new LodString("Next Dig");
-  public static final LodString Completely_recovered_8011d534 = MEMORY.ref(2, 0x8011d534L, LodString::new);
-  public static final LodString Recovered_8011d560 = MEMORY.ref(2, 0x8011d560L, LodString::new);
-  public static final LodString HP_8011d57c = MEMORY.ref(2, 0x8011d57cL, LodString::new);
-  public static final LodString MP_8011d584 = MEMORY.ref(2, 0x8011d584L, LodString::new);
-  public static final LodString SP_8011d58c = MEMORY.ref(2, 0x8011d58cL, LodString::new);
-  public static final LodString Encounter_risk_reduced_8011d594 = MEMORY.ref(2, 0x8011d594L, LodString::new);
-  public static final LodString Detoxified_8011d5c8 = MEMORY.ref(2, 0x8011d5c8L, LodString::new);
-  public static final LodString Spirit_recovered_8011d5e0 = MEMORY.ref(2, 0x8011d5e0L, LodString::new);
-  public static final LodString Fear_gone_8011d604 = MEMORY.ref(2, 0x8011d604L, LodString::new);
-  public static final LodString Nothing_happened_8011d618 = MEMORY.ref(2, 0x8011d618L, LodString::new);
+  public static final LodString No_8011c214 = new LodString("No");
 
   public static final UnsignedByteRef characterCount_8011d7c4 = MEMORY.ref(1, 0x8011d7c4L, UnsignedByteRef::new);
 
@@ -481,7 +441,7 @@ public final class SItem {
 
   @Method(0x801039a0L)
   public static boolean canEquip(final Equipment equipment, final int charIndex) {
-    return (characterValidEquipment_80114284.offset(charIndex).get() & equipment.equipableFlags_03) != 0;
+    return (characterValidEquipment_80114284.get(charIndex).get() & equipment.equipableFlags_03) != 0;
   }
 
   /**
@@ -1322,82 +1282,6 @@ public final class SItem {
     }
 
     //LAB_8010905c
-  }
-
-  /**
-   * String types:
-   * <ul>
-   *   <li>0 - item descriptions (removed)</li>
-   *   <li>1 - ?</li>
-   *   <li>2 - Dabas</li>
-   * </ul>
-   */
-  @Method(0x80109074L)
-  public static void renderString(final int stringType, final int x, final int y, final int stringIndex, final boolean allocate) {
-    if(allocate) {
-      allocateUiElement(0x5b, 0x5b, x, y);
-    }
-
-    //LAB_801090e0
-    LodString s0 = null;
-    if(stringType == 0) {
-      throw new RuntimeException("Use renderString overload");
-    } else if(stringType == 1) {
-      //LAB_8010912c
-      if(stringIndex >= 0xff) {
-        //LAB_80109140
-        s0 = _8011c254;
-      } else {
-        //LAB_80109154
-        s0 = _8011b75c.get(stringIndex).deref();
-      }
-      //LAB_80109108
-    } else if(stringType == 2) {
-      //LAB_8010914c
-      s0 = switch(stringIndex) {
-        case 0 -> new LodString("Send gold and items\nDabas has found to\nthe main game.");
-        case 1 -> new LodString("Delete items from\nthe Pocket Station.");
-        case 2 -> new LodString("Leave for the\nnext adventure.");
-        default -> null;
-      };
-    }
-
-    //LAB_80109160
-    //LAB_80109168
-    //LAB_80109188
-    for(int i = 0; i < 4; i++) {
-      int s4 = 0;
-      final int len = Math.min(textLength(s0), 20);
-      final LodString s3 = new LodString(len + 1);
-
-      //LAB_801091bc
-      //LAB_801091cc
-      int a1;
-      for(a1 = 0; a1 < len; a1++) {
-        if(s0.charAt(a1) == 0xa1ffL) {
-          //LAB_8010924c
-          s4 = 1;
-          break;
-        }
-
-        s3.charAt(a1, s0.charAt(a1));
-      }
-
-      //LAB_801091fc
-      s3.charAt(a1, 0xa0ff);
-
-      renderText(s3, x + 2, y + i * 14 + 4, TextColour.BROWN);
-
-      if(textLength(s3) > len) {
-        //LAB_80109270
-        break;
-      }
-
-      //LAB_80109254
-      s0 = s0.slice(textLength(s3) + s4);
-    }
-
-    //LAB_80109284
   }
 
   @Method(0x80109074L)
