@@ -3,7 +3,7 @@ package legend.game.combat.deff;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.opengl.Obj;
 import legend.game.combat.effects.EffectManagerData6c;
-import legend.game.combat.effects.EffectManagerData6cInner;
+import legend.game.combat.effects.EffectManagerParams;
 import legend.game.combat.effects.SpriteMetrics08;
 import legend.game.combat.environment.BattleLightStruct64;
 import legend.game.combat.environment.BttlLightStruct84;
@@ -16,7 +16,7 @@ import java.util.Arrays;
 public class DeffManager7cc {
   public Struct08 _00 = new Struct08();
   public final Struct04[] _08 = {new Struct04(), new Struct04(), new Struct04(), new Struct04(), new Struct04()};
-  public ScriptState<EffectManagerData6c<EffectManagerData6cInner.VoidType>> scriptState_1c;
+  public ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> scriptState_1c;
   /**
    * <ul>
    *   <li>0x4 - I suspect this is some misguided attempt at optimization, makes the effect flicker intermittently based on Z and ticks</li>
