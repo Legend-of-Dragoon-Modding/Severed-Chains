@@ -188,10 +188,10 @@ public final class Scus94491BpeSegment_800b {
 
   public static final ArrayRef<IntRef> characterIndices_800bdbb8 = MEMORY.ref(4, 0x800bdbb8L, ArrayRef.of(IntRef.class, 9, 0x4, IntRef::new));
 
-  public static final ArrayRef<IntRef> secondaryCharIndices_800bdbf8 = MEMORY.ref(4, 0x800bdbf8L, ArrayRef.of(IntRef.class, 9, 4, IntRef::new));
+  public static final ArrayRef<IntRef> secondaryCharIds_800bdbf8 = MEMORY.ref(4, 0x800bdbf8L, ArrayRef.of(IntRef.class, 9, 4, IntRef::new));
 
   public static final EnumRef<InventoryMenuState> inventoryMenuState_800bdc28 = MEMORY.ref(4, 0x800bdc28L, EnumRef.of(InventoryMenuState.values()));
-  public static final Value _800bdc2c = MEMORY.ref(4, 0x800bdc2cL);
+
   public static final EnumRef<InventoryMenuState> confirmDest_800bdc30 = MEMORY.ref(4, 0x800bdc30L, EnumRef.of(InventoryMenuState.values()));
 
   public static final BoolRef loadingNewGameState_800bdc34 = MEMORY.ref(4, 0x800bdc34L, BoolRef::new);

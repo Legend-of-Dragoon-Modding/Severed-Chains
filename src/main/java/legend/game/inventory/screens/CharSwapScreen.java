@@ -21,7 +21,7 @@ import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.secondaryCharIndices_800bdbf8;
+import static legend.game.Scus94491BpeSegment_800b.secondaryCharIds_800bdbf8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 
@@ -70,12 +70,12 @@ public class CharSwapScreen extends MenuScreen {
   private void renderCharacterSwapScreen(final int a0) {
     final boolean allocate = a0 == 0xff;
 
-    this.renderSecondaryChar(198, 16, secondaryCharIndices_800bdbf8.get(0).get(), allocate);
-    this.renderSecondaryChar(255, 16, secondaryCharIndices_800bdbf8.get(1).get(), allocate);
-    this.renderSecondaryChar(312, 16, secondaryCharIndices_800bdbf8.get(2).get(), allocate);
-    this.renderSecondaryChar(198, 122, secondaryCharIndices_800bdbf8.get(3).get(), allocate);
-    this.renderSecondaryChar(255, 122, secondaryCharIndices_800bdbf8.get(4).get(), allocate);
-    this.renderSecondaryChar(312, 122, secondaryCharIndices_800bdbf8.get(5).get(), allocate);
+    this.renderSecondaryChar(198, 16, secondaryCharIds_800bdbf8.get(0).get(), allocate);
+    this.renderSecondaryChar(255, 16, secondaryCharIds_800bdbf8.get(1).get(), allocate);
+    this.renderSecondaryChar(312, 16, secondaryCharIds_800bdbf8.get(2).get(), allocate);
+    this.renderSecondaryChar(198, 122, secondaryCharIds_800bdbf8.get(3).get(), allocate);
+    this.renderSecondaryChar(255, 122, secondaryCharIds_800bdbf8.get(4).get(), allocate);
+    this.renderSecondaryChar(312, 122, secondaryCharIds_800bdbf8.get(5).get(), allocate);
 
     if(gameState_800babc8.charIds_88[0] != -1) {
       renderCharacterSlot(16, 16, gameState_800babc8.charIds_88[0], allocate, !Config.unlockParty() && (gameState_800babc8.charData_32c[gameState_800babc8.charIds_88[0]].partyFlags_04 & 0x20) != 0);
@@ -200,13 +200,13 @@ public class CharSwapScreen extends MenuScreen {
             }
           }
 
-          final int secondaryCharIndex = secondaryCharIndices_800bdbf8.get(this.secondaryCharIndex).get();
+          final int secondaryCharIndex = secondaryCharIds_800bdbf8.get(this.secondaryCharIndex).get();
 
           if(((Config.unlockParty() && charCount >= 2) || secondaryCharIndex != -1) && (secondaryCharIndex == -1 || Config.unlockParty() || (gameState_800babc8.charData_32c[secondaryCharIndex].partyFlags_04 & 0x2) != 0)) {
             playSound(2);
             final int charIndex = gameState_800babc8.charIds_88[this.primaryCharIndex];
             gameState_800babc8.charIds_88[this.primaryCharIndex] = secondaryCharIndex;
-            secondaryCharIndices_800bdbf8.get(this.secondaryCharIndex).set(charIndex);
+            secondaryCharIds_800bdbf8.get(this.secondaryCharIndex).set(charIndex);
             this.loadingStage = 1;
           } else {
             playSound(40);
@@ -316,13 +316,13 @@ public class CharSwapScreen extends MenuScreen {
       }
     }
 
-    final int secondaryCharIndex = secondaryCharIndices_800bdbf8.get(this.secondaryCharIndex).get();
+    final int secondaryCharIndex = secondaryCharIds_800bdbf8.get(this.secondaryCharIndex).get();
 
     if(((Config.unlockParty() && charCount >= 2) || secondaryCharIndex != -1) && (secondaryCharIndex == -1 || Config.unlockParty() || (gameState_800babc8.charData_32c[secondaryCharIndex].partyFlags_04 & 0x2) != 0)) {
       playSound(2);
       final int charIndex = gameState_800babc8.charIds_88[this.primaryCharIndex];
       gameState_800babc8.charIds_88[this.primaryCharIndex] = secondaryCharIndex;
-      secondaryCharIndices_800bdbf8.get(this.secondaryCharIndex).set(charIndex);
+      secondaryCharIds_800bdbf8.get(this.secondaryCharIndex).set(charIndex);
       this.loadingStage = 1;
     } else {
       playSound(40);
