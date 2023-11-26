@@ -65,7 +65,6 @@ import legend.game.types.MrgFile;
 import legend.game.types.NewRootStruct;
 import legend.game.types.ShopStruct40;
 import legend.game.types.SmallerStruct;
-import legend.game.types.TexPageY;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxChar08;
 import legend.game.types.TextboxText84;
@@ -176,12 +175,12 @@ import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.hasNoEncounters_800bed58;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
+import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.matrix_800bed30;
 import static legend.game.Scus94491BpeSegment_800b.musicLoaded_800bd782;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.projectionPlaneDistance_800bd810;
 import static legend.game.Scus94491BpeSegment_800b.rview2_800bd7e8;
-import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.screenOffsetX_800bed50;
 import static legend.game.Scus94491BpeSegment_800b.screenOffsetY_800bed54;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
@@ -190,7 +189,6 @@ import static legend.game.Scus94491BpeSegment_800b.sobjPositions_800bd818;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.submapFullyLoaded_800bd7b4;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
-import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b.textboxText_800bdf38;
 import static legend.game.Scus94491BpeSegment_800b.textboxes_800be358;
 import static legend.game.Scus94491BpeSegment_800b.transitioningFromCombatToSubmap_800bd7b8;
@@ -4174,7 +4172,7 @@ public class SMap extends EngineState {
 
   @Method(0x800e4ac8L)
   private void cacheHasNoEncounters() {
-    hasNoEncounters_800bed58.setu(encounterData_800f64c4.get(submapCut_80052c30.get()).rate_02.get() == 0 ? 1 : 0);
+    hasNoEncounters_800bed58.set(encounterData_800f64c4.get(submapCut_80052c30.get()).rate_02.get() == 0);
   }
 
   @Method(0x800e4b20L)
@@ -5356,7 +5354,7 @@ public class SMap extends EngineState {
 
   @Method(0x800e7328L)
   private void updateCamera() {
-    setProjectionPlaneDistance((int)projectionPlaneDistance_800bd810.get());
+    setProjectionPlaneDistance(projectionPlaneDistance_800bd810.get());
     GsSetSmapRefView2L(this.rview2_800cbd10);
     this.clearSmallValuesFromMatrix(worldToScreenMatrix_800c3548);
     this.worldToScreenMatrix_800cbd68.set(worldToScreenMatrix_800c3548);
@@ -5370,7 +5368,7 @@ public class SMap extends EngineState {
     this.rview2_800cbd10.refpoint_0c.set(refpoint);
     this.rview2_800cbd10.viewpointTwist_18 = (short)rotation << 12;
     this.rview2_800cbd10.super_1c = null;
-    projectionPlaneDistance_800bd810.setu(projectionDistance);
+    projectionPlaneDistance_800bd810.set(projectionDistance);
 
     this.updateCamera();
   }
@@ -9265,7 +9263,7 @@ public class SMap extends EngineState {
 
     //LAB_800f42d0
     final RECT imageRect = tim.getImageRect();
-    tpageOut.set(texPages_800bb110.get(Bpp.values()[tim.getFlags() & 0b11]).get(transMode).get(TexPageY.fromY(imageRect.y.get())).get() | (imageRect.x.get() & 0x3c0) >> 6);
+    tpageOut.set(GetTPage(Bpp.values()[tim.getFlags() & 0b11], transMode, imageRect.x.get(), imageRect.y.get()));
     LoadImage(imageRect, tim.getImageData());
 
     //LAB_800f4338
@@ -9354,7 +9352,7 @@ public class SMap extends EngineState {
       final TimHeader header = parseTimHeader(this.miscTextures_800f9eb0[textureIndex].offset(0x4L));
       LoadImage(header.imageRect, header.imageAddress);
 
-      this.texPages_800d6050[textureIndex] = texPages_800bb110.get(Bpp.values()[header.flags & 0b11]).get(this.miscTextureTransModes_800d6cf0[textureIndex]).get(TexPageY.fromY(header.imageRect.y.get())).get() | (header.imageRect.x.get() & 0x3c0) >>> 6;
+      this.texPages_800d6050[textureIndex] = GetTPage(Bpp.values()[header.flags & 0b11], this.miscTextureTransModes_800d6cf0[textureIndex], header.imageRect.x.get(), header.imageRect.y.get());
       this.cluts_800d6068[textureIndex] = header.clutRect.y.get() << 6 | (header.clutRect.x.get() & 0x3f0) >>> 4;
 
       LoadImage(header.clutRect, header.clutAddress);

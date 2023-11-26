@@ -15,6 +15,8 @@ public class MessageBox20 {
   public int x_1c;
   public int y_1e;
 
+  public MessageBoxResult result = MessageBoxResult.AWAITING_INPUT;
+
   public LodString yes;
   public LodString no;
 

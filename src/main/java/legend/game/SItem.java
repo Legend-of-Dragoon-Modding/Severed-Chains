@@ -6,7 +6,6 @@ import legend.core.memory.Method;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.ByteRef;
-import legend.core.memory.types.EnumRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
@@ -175,8 +174,6 @@ public final class SItem {
 
   public static final MessageBox20 messageBox_8011dc90 = new MessageBox20();
 
-  public static final EnumRef<MessageBoxResult> msgboxResult_8011e1e8 = MEMORY.ref(4, 0x8011e1e8L, EnumRef.of(MessageBoxResult.values()));
-
   @Method(0x800fc698L)
   public static int getXpToNextLevel(final int charIndex) {
     if(charIndex == -1 || charIndex > 8) {
@@ -225,7 +222,7 @@ public final class SItem {
 
   @Method(0x800fcad4L)
   public static void renderMenus() {
-    inventoryJoypadInput_800bdc44.setu(getJoypadInputByPriority());
+    inventoryJoypadInput_800bdc44.set(getJoypadInputByPriority());
 
     switch(inventoryMenuState_800bdc28.get()) {
       case INIT_0 -> { // Initialize, loads some files (unknown contents)
@@ -1420,7 +1417,7 @@ public final class SItem {
         messageBox.backgroundRenderable_08 = allocateUiElement(149, 142, messageBox.x_1c - 50, messageBox.y_1e - 10);
         messageBox.backgroundRenderable_08.z_3c = 32;
         messageBox.backgroundRenderable_08.repeatStartGlyph_18 = 142;
-        msgboxResult_8011e1e8.set(MessageBoxResult.AWAITING_INPUT);
+        messageBox.result = MessageBoxResult.AWAITING_INPUT;
 
       case 2:
         if(messageBox.backgroundRenderable_08.animationLoopsCompletedCount_0c != 0) {
@@ -1451,7 +1448,7 @@ public final class SItem {
           if(!messageBox.ignoreInput && (inventoryJoypadInput_800bdc44.get() & 0x60) != 0) {
             playSound(2);
             messageBox.state_0c = 4;
-            msgboxResult_8011e1e8.set(MessageBoxResult.YES);
+            messageBox.result = MessageBoxResult.YES;
           }
 
           break;
@@ -1502,7 +1499,7 @@ public final class SItem {
 
       case 6:
         messageBox.state_0c = 0;
-        return msgboxResult_8011e1e8.get();
+        return messageBox.result;
     }
 
     //LAB_8010f108

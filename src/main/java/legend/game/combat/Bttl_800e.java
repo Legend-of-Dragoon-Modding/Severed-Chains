@@ -137,7 +137,7 @@ import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b._800be5d0;
+import static legend.game.Scus94491BpeSegment_800b.characterStatsLoaded_800be5d0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
@@ -3851,12 +3851,8 @@ public final class Bttl_800e {
 
   @Method(0x800ef28cL)
   public static void FUN_800ef28c() {
-    //LAB_800ef2c4
-    //TODO sp0x18 is unused, why?
-    //memcpy(sp0x18, _800c6e68.getAddress(), 0x28);
-
     loadCharacterStats();
-    _800be5d0.setu(1);
+    characterStatsLoaded_800be5d0.set(true);
 
     //LAB_800ef31c
     for(int charSlot = 0; charSlot < 3; charSlot++) {
@@ -4034,7 +4030,7 @@ public final class Bttl_800e {
 
       //LAB_800efa34
       for(int charSlot = 0; charSlot < charCount; charSlot++) {
-        if(activePartyBattleHudCharacterDisplays_800c6c40.get(charSlot).charIndex_00.get() == -1 && _800be5d0.get() == 1) {
+        if(activePartyBattleHudCharacterDisplays_800c6c40.get(charSlot).charIndex_00.get() == -1 && characterStatsLoaded_800be5d0.get()) {
           initializeBattleHudCharacterDisplay(charSlot);
         }
         //LAB_800efa64

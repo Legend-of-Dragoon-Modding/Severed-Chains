@@ -79,7 +79,7 @@ public class PostBattleScreen extends MenuScreen {
   @Method(0x8010d614L)
   @Override
   protected void render() {
-    inventoryJoypadInput_800bdc44.setu(getJoypadInputByPriority());
+    inventoryJoypadInput_800bdc44.set(getJoypadInputByPriority());
 
     switch(this.inventoryMenuState_800bdc28) {
       case INIT_0:

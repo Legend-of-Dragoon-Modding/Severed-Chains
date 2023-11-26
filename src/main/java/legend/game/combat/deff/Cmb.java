@@ -1,10 +1,10 @@
 package legend.game.combat.deff;
 
 import legend.core.MathHelper;
-import legend.core.gte.BVEC4;
 import legend.game.types.TmdAnimationFile;
 import legend.game.unpacker.FileData;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 
 public class Cmb extends TmdAnimationFile {
   public static final int MAGIC = 0x2042_4d43;
@@ -50,21 +50,21 @@ public class Cmb extends TmdAnimationFile {
 
     public SubTransforms08(final FileData data) {
       final int rotScale_00 = 1 << data.readUByte(0);
-      final BVEC4 rot = data.readBvec3(1, new BVEC4());
+      final Vector3i rot = data.readBvec3(1, new Vector3i());
 
       final int transScale_04 = 1 << data.readUByte(4);
-      final BVEC4 trans = data.readBvec3(5, new BVEC4());
+      final Vector3i trans = data.readBvec3(5, new Vector3i());
 
       this.rot_01.set(
-        MathHelper.psxDegToRad(rot.getX() * rotScale_00),
-        MathHelper.psxDegToRad(rot.getY() * rotScale_00),
-        MathHelper.psxDegToRad(rot.getZ() * rotScale_00)
+        MathHelper.psxDegToRad(rot.x * rotScale_00),
+        MathHelper.psxDegToRad(rot.y * rotScale_00),
+        MathHelper.psxDegToRad(rot.z * rotScale_00)
       );
 
       this.trans_05.set(
-        trans.getX() * transScale_04,
-        trans.getY() * transScale_04,
-        trans.getZ() * transScale_04
+        trans.x * transScale_04,
+        trans.y * transScale_04,
+        trans.z * transScale_04
       );
     }
   }

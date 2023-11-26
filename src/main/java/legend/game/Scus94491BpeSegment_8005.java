@@ -34,14 +34,11 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final Value _8005027c = MEMORY.ref(4, 0x8005027cL);
 
-  public static final Value _8005039c = MEMORY.ref(2, 0x8005039cL);
-
+  public static final ArrayRef<ShortRef> shadowScale_8005039c = MEMORY.ref(2, 0x8005039cL, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
   public static final ArrayRef<ShortRef> _800503b0 = MEMORY.ref(2, 0x800503b0L, ArrayRef.of(ShortRef.class, 18, 2, ShortRef::new));
   public static final ArrayRef<ShortRef> _800503d4 = MEMORY.ref(2, 0x800503d4L, ArrayRef.of(ShortRef.class, 18, 2, ShortRef::new));
   public static final ArrayRef<ShortRef> _800503f8 = MEMORY.ref(2, 0x800503f8L, ArrayRef.of(ShortRef.class, 22, 2, ShortRef::new));
   public static final ArrayRef<ShortRef> _80050424 = MEMORY.ref(2, 0x80050424L, ArrayRef.of(ShortRef.class, 22, 2, ShortRef::new));
-
-  public static final ArrayRef<Pointer<LodString>> combatItemNames_80050ae8 = MEMORY.ref(4, 0x80050ae8L, ArrayRef.of(Pointer.classFor(LodString.class), 0x40, 4, Pointer.deferred(4, LodString::new)));
 
   public static final ArrayRef<Pointer<LodString>> itemCombatDescriptions_80051758 = MEMORY.ref(4, 0x80051758L, ArrayRef.of(Pointer.classFor(LodString.class), 0x40, 4, Pointer.deferred(4, LodString::new)));
 
@@ -97,8 +94,6 @@ public final class Scus94491BpeSegment_8005 {
 
   /** short */
   public static int sssqFadeCurrent_8005a1ce;
-
-  public static final Value _8005a1d8 = MEMORY.ref(4, 0x8005a1d8L);
 
   public static final BoolRef standingInSavePoint_8005a368 = MEMORY.ref(4, 0x8005a368L, BoolRef::new);
 

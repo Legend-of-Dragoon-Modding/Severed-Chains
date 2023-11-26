@@ -121,18 +121,17 @@ import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.freeSequence;
 import static legend.game.Scus94491BpeSegment_8004.stopMusicSequence;
 import static legend.game.Scus94491BpeSegment_8005._8005027c;
-import static legend.game.Scus94491BpeSegment_8005._8005039c;
 import static legend.game.Scus94491BpeSegment_8005._800503b0;
 import static legend.game.Scus94491BpeSegment_8005._800503d4;
 import static legend.game.Scus94491BpeSegment_8005._800503f8;
 import static legend.game.Scus94491BpeSegment_8005._80050424;
 import static legend.game.Scus94491BpeSegment_8005._80052c20;
 import static legend.game.Scus94491BpeSegment_8005._80052c40;
-import static legend.game.Scus94491BpeSegment_8005._8005a1d8;
 import static legend.game.Scus94491BpeSegment_8005.digits_80052b40;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.monsterSoundFileIndices_800500e8;
 import static legend.game.Scus94491BpeSegment_8005.renderBorder_80052b68;
+import static legend.game.Scus94491BpeSegment_8005.shadowScale_8005039c;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c3c;
 import static legend.game.Scus94491BpeSegment_8005.submapEnvState_80052c44;
@@ -142,10 +141,8 @@ import static legend.game.Scus94491BpeSegment_8005.textboxTextType_80052ba8;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bd7ac;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
-import static legend.game.Scus94491BpeSegment_800b._800bdf04;
-import static legend.game.Scus94491BpeSegment_800b._800bdf08;
-import static legend.game.Scus94491BpeSegment_800b._800be5d0;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
+import static legend.game.Scus94491BpeSegment_800b.characterStatsLoaded_800be5d0;
 import static legend.game.Scus94491BpeSegment_800b.encounterSoundEffects_800bd610;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
@@ -654,14 +651,14 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80021520L)
-  public static void FUN_80021520(final Model124 model, final CContainer a1, final TmdAnimationFile a2, final long a3) {
-    FUN_80020718(model, a1, a2);
-    FUN_8002155c(model, a3);
+  public static void FUN_80021520(final Model124 model, final CContainer tmd, final TmdAnimationFile anim, final int shadowSizeIndex) {
+    FUN_80020718(model, tmd, anim);
+    setShadowSize(model, shadowSizeIndex);
   }
 
   @Method(0x8002155cL)
-  public static void FUN_8002155c(final Model124 model, final long a1) {
-    final float scale = (int)_8005039c.offset(2, a1 * 0x2L).getSigned() / (float)0x1000;
+  public static void setShadowSize(final Model124 model, final int shadowSizeIndex) {
+    final float scale = shadowScale_8005039c.get(shadowSizeIndex).get() / (float)0x1000;
     model.shadowSize_10c.set(scale, scale, scale);
   }
 
@@ -1881,8 +1878,6 @@ public final class Scus94491BpeSegment_8002 {
     loadDrgnDir(0, 6669, Scus94491BpeSegment_8002::basicUiTexturesLoaded);
 
     textZ_800bdf00.set(13);
-    _800bdf04.setu(0);
-    _800bdf08.setu(0);
     clearCharacterStats();
 
     //LAB_800250c0
@@ -4125,7 +4120,7 @@ public final class Scus94491BpeSegment_8002 {
       stats.additionDamageMultiplier_9f = 0;
     }
 
-    _800be5d0.setu(0);
+    characterStatsLoaded_800be5d0.set(false);
   }
 
   @Method(0x8002a86cL)
@@ -4224,11 +4219,11 @@ public final class Scus94491BpeSegment_8002 {
 //      final CdlLOC pos = CdlFILE_800bb4c8.get((int)MEMORY.ref(2, v1).offset(xaArchiveIndex * 0x8L).getSigned()).pos;
 
 //      CDROM.playXaAudio(pos, 1, xaFileIndex, () -> _800bf0cf.setu(0));
-      _800bf0cf.setu(4);
+      _800bf0cf.set(4);
     }
 
     if(xaLoadingStage == 2) {
-      _800bf0cf.setu(4);
+      _800bf0cf.set(4);
     }
 
     return 0;
@@ -4236,7 +4231,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002ced8L)
   public static void start() {
-    MEMORY.memfill(_8005a1d8.getAddress(), 0x6c4b0, 0);
+    MEMORY.memfill(0x8005a1d8L, 0x6c4b0, 0);
     main();
   }
 
