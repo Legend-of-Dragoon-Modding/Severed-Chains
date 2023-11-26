@@ -949,7 +949,6 @@ public final class Scus94491BpeSegment_8002 {
 
       case INIT_POST_COMBAT_REPORT_26 -> {
         if((getLoadedDrgnFiles() & 0x80L) == 0) {
-          inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_0);
           whichMenu_800bdc38 = WhichMenu.WAIT_FOR_POST_COMBAT_REPORT_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_27;
         }
       }

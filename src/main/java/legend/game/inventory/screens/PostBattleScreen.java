@@ -7,7 +7,6 @@ import legend.core.memory.types.UnsignedIntRef;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.inventory.WhichMenu;
-import legend.game.types.InventoryMenuState;
 import legend.game.types.LodString;
 import legend.game.types.Renderable58;
 import legend.game.types.Translucency;
@@ -28,7 +27,7 @@ import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderItemIcon;
 import static legend.game.SItem.renderText;
 import static legend.game.Scus94491BpeSegment.FUN_80018e84;
-import static legend.game.Scus94491BpeSegment.FUN_800192d8;
+import static legend.game.Scus94491BpeSegment.drawLevelUp;
 import static legend.game.Scus94491BpeSegment.FUN_80019470;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.loadDrgnFileSync;
@@ -43,12 +42,10 @@ import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.uploadRenderables;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
-import static legend.game.Scus94491BpeSegment_800b.confirmDest_800bdc30;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920;
 import static legend.game.Scus94491BpeSegment_800b.inventoryJoypadInput_800bdc44;
-import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
 import static legend.game.Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928;
 import static legend.game.Scus94491BpeSegment_800b.livingCharCount_800bc97c;
 import static legend.game.Scus94491BpeSegment_800b.livingCharIds_800bc968;
@@ -67,21 +64,24 @@ public class PostBattleScreen extends MenuScreen {
   private static final LodString NEW_ADDITION = new LodString("New Addition");
   private static final LodString SPELL_UNLOCKED = new LodString("Spell Unlocked");
 
-  private int _8011e170;
-  private int _8011e178;
+  private int levelUpCharId_8011e170;
+  private int unlockHeight_8011e178;
   private int soundTick_8011e17c;
   private final int[] pendingXp_8011e180 = new int[10];
   private final int[] spellsUnlocked_8011e1a8 = new int[10];
   private final int[] additionsUnlocked_8011e1b8 = new int[10];
-  private final int[] _8011e1c8 = new int[10];
-  private final int[] _8011e1d8 = new int[10];
+  private final int[] levelsGained_8011e1c8 = new int[10];
+  private final int[] dragoonLevelsGained_8011e1d8 = new int[10];
+
+  private MenuState inventoryMenuState_800bdc28 = MenuState.INIT_0;
+  private MenuState confirmDest_800bdc30;
 
   @Method(0x8010d614L)
   @Override
   protected void render() {
     inventoryJoypadInput_800bdc44.setu(getJoypadInputByPriority());
 
-    switch(inventoryMenuState_800bdc28.get()) {
+    switch(this.inventoryMenuState_800bdc28) {
       case INIT_0:
         if(uiFile_800bdc3c != null) {
           uiFile_800bdc3c.delete();
@@ -93,32 +93,32 @@ public class PostBattleScreen extends MenuScreen {
         loadDrgnFileSync(0, 6665, data -> menuAssetsLoaded(data, 0));
         loadDrgnFileSync(0, 6666, data -> menuAssetsLoaded(data, 1));
         textZ_800bdf00.set(33);
-        inventoryMenuState_800bdc28.set(InventoryMenuState.AWAIT_INIT_1);
+        this.inventoryMenuState_800bdc28 = MenuState.WAIT_FOR_UI_FILE_TO_LOAD_1;
         break;
 
-      case AWAIT_INIT_1:
+      case WAIT_FOR_UI_FILE_TO_LOAD_1:
         if(uiFile_800bdc3c != null) {
           startFadeEffect(2, 10);
-          inventoryMenuState_800bdc28.set(InventoryMenuState._2);
+          this.inventoryMenuState_800bdc28 = MenuState.WAIT_FOR_FADE_IN_AND_INIT_CONTROLS_2;
         }
         break;
 
-      case _2:
+      case WAIT_FOR_FADE_IN_AND_INIT_CONTROLS_2:
         if(fullScreenEffect_800bb140.currentColour_28 == 0) {
           deallocateRenderables(0xff);
-          Renderable58 glyph = this.FUN_8010cfa0(0, 0, 165, 21, 720, 497);
+          Renderable58 glyph = this.drawGlyph(0, 0, 165, 21, 720, 497);
           glyph.widthScale = 0;
           glyph.heightScale_38 = 0;
-          glyph = this.FUN_8010cfa0(2, 2, 13, 21, 720, 497);
+          glyph = this.drawGlyph(2, 2, 13, 21, 720, 497);
           glyph.widthScale = 0;
           glyph.heightScale_38 = 0;
-          glyph = this.FUN_8010cfa0(1, 1, 13, 149, 720, 497);
+          glyph = this.drawGlyph(1, 1, 13, 149, 720, 497);
           glyph.widthScale = 0;
           glyph.heightScale_38 = 0;
 
-          this.FUN_8010cfa0(0x3e, 0x3e, 24, 28, 736, 497);
-          this.FUN_8010cfa0(0x3d, 0x3d, 24, 40, 736, 497);
-          this.FUN_8010cfa0(0x40, 0x40, 24, 52, 736, 497);
+          this.drawGlyph(0x3e, 0x3e, 24, 28, 736, 497);
+          this.drawGlyph(0x3d, 0x3d, 24, 40, 736, 497);
+          this.drawGlyph(0x40, 0x40, 24, 52, 736, 497);
 
           cacheCharacterSlots();
 
@@ -126,8 +126,8 @@ public class PostBattleScreen extends MenuScreen {
           for(int i = 0; i < 10; i++) {
             this.spellsUnlocked_8011e1a8[i] = 0;
             this.additionsUnlocked_8011e1b8[i] = 0;
-            this._8011e1c8[i] = 0;
-            this._8011e1d8[i] = 0;
+            this.levelsGained_8011e1c8[i] = 0;
+            this.dragoonLevelsGained_8011e1d8[i] = 0;
             this.pendingXp_8011e180[i] = 0;
           }
 
@@ -160,26 +160,28 @@ public class PostBattleScreen extends MenuScreen {
             //LAB_8010da24
           }
 
-          inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_MAIN_MENU_3);
-          this.FUN_8010e9a8(1);
+          this.inventoryMenuState_800bdc28 = MenuState.WAIT_FOR_FIRST_BUTTON_PRESS_3;
+          this.drawGlyph(0x3f, 0x3f, 144,  28, 736, 497);
+          this.drawGlyph(0x3f, 0x3f, 144, 156, 736, 497);
+          this.drawReport();
         }
 
         break;
 
-      case INIT_MAIN_MENU_3:
+      case WAIT_FOR_FIRST_BUTTON_PRESS_3:
         if((press_800bee94.get() & 0x20) != 0) {
           //LAB_8010da84
           if(goldGainedFromCombat_800bc920.get() == 0) {
-            inventoryMenuState_800bdc28.set(InventoryMenuState._5);
+            this.inventoryMenuState_800bdc28 = MenuState.TICK_XP_5;
           } else {
-            inventoryMenuState_800bdc28.set(InventoryMenuState.MAIN_MENU_4);
+            this.inventoryMenuState_800bdc28 = MenuState.TICK_GOLD_4;
           }
         }
 
-        this.FUN_8010e9a8(0);
+        this.drawReport();
         break;
 
-      case MAIN_MENU_4:
+      case TICK_GOLD_4:
         final int goldTick;
         if((press_800bee94.get() & 0x20) != 0) {
           goldTick = goldGainedFromCombat_800bc920.get();
@@ -194,7 +196,7 @@ public class PostBattleScreen extends MenuScreen {
         if(goldTick >= goldGained) {
           this.soundTick_8011e17c = 0;
           goldGainedFromCombat_800bc920.set(0);
-          inventoryMenuState_800bdc28.set(InventoryMenuState._5);
+          this.inventoryMenuState_800bdc28 = MenuState.TICK_XP_5;
           gameState_800babc8.gold_94 += goldGained;
         } else {
           //LAB_8010db00
@@ -215,10 +217,10 @@ public class PostBattleScreen extends MenuScreen {
           playSound(0x1L);
         }
 
-        this.FUN_8010e9a8(0);
+        this.drawReport();
         break;
 
-      case _5:
+      case TICK_XP_5:
         final boolean moreXpToGive =
           this.givePendingXp(gameState_800babc8.charIds_88[0], 0) ||
           this.givePendingXp(gameState_800babc8.charIds_88[1], 1) ||
@@ -237,83 +239,83 @@ public class PostBattleScreen extends MenuScreen {
             playSound(0x1L);
           }
         } else {
-          this._8011e170 = 3;
+          this.levelUpCharId_8011e170 = 3;
           totalXpFromCombat_800bc95c.set(0);
 
           if(this.additionsUnlocked_8011e1b8[0] + this.additionsUnlocked_8011e1b8[1] + this.additionsUnlocked_8011e1b8[2] == 0) {
             //LAB_8010dc9c
-            inventoryMenuState_800bdc28.set(InventoryMenuState.REPLACE_INIT_8);
+            this.inventoryMenuState_800bdc28 = MenuState.MAIN_LEVEL_UPS_8;
           } else if((press_800bee94.get() & 0x20) != 0) {
             playSound(0x2L);
-            this._8011e178 = 0;
-            inventoryMenuState_800bdc28.set(InventoryMenuState.CONFIG_6);
+            this.unlockHeight_8011e178 = 0;
+            this.inventoryMenuState_800bdc28 = MenuState.EMBIGGEN_UNLOCKED_ADDITIONS_6;
           }
         }
 
-        this.FUN_8010e9a8(0);
+        this.drawReport();
         break;
 
-      case CONFIG_6:
-        if(this._8011e178 < 20) {
-          this._8011e178 += 2;
+      case EMBIGGEN_UNLOCKED_ADDITIONS_6:
+        if(this.unlockHeight_8011e178 < 20) {
+          this.unlockHeight_8011e178 += 2;
         } else {
           //LAB_8010dcc8
           if((press_800bee94.get() & 0x20) != 0) {
             playSound(0x2L);
 
             //LAB_8010dcf0
-            inventoryMenuState_800bdc28.set(InventoryMenuState._7);
+            this.inventoryMenuState_800bdc28 = MenuState.ENSMALLEN_UNLOCKED_ADDITIONS_7;
           }
         }
 
         //LAB_8010dcf4
         //LAB_8010dcf8
-        this.renderAdditionsUnlocked(this._8011e178);
-        this.FUN_8010e9a8(0);
+        this.renderAdditionsUnlocked(this.unlockHeight_8011e178);
+        this.drawReport();
         break;
 
-      case _7:
-        if(this._8011e178 > 0) {
-          this._8011e178 -= 2;
+      case ENSMALLEN_UNLOCKED_ADDITIONS_7:
+        if(this.unlockHeight_8011e178 > 0) {
+          this.unlockHeight_8011e178 -= 2;
         } else {
           //LAB_8010dd28
-          inventoryMenuState_800bdc28.set(InventoryMenuState.REPLACE_INIT_8);
+          this.inventoryMenuState_800bdc28 = MenuState.MAIN_LEVEL_UPS_8;
         }
 
-        this.renderAdditionsUnlocked(this._8011e178);
-        this.FUN_8010e9a8(0);
+        this.renderAdditionsUnlocked(this.unlockHeight_8011e178);
+        this.drawReport();
         break;
 
-      case REPLACE_INIT_8:
-        if(this._8011e170 >= 9) {
+      case MAIN_LEVEL_UPS_8:
+        if(this.levelUpCharId_8011e170 >= 9) {
           //LAB_8010dd90
-          inventoryMenuState_800bdc28.set(InventoryMenuState.REPLACE_MENU_10);
-        } else if(this._8011e1c8[this._8011e170] != 0) {
-          FUN_800192d8(-80, 44);
+          this.inventoryMenuState_800bdc28 = MenuState.DRAGOON_LEVEL_UPS_10;
+        } else if(this.levelsGained_8011e1c8[this.levelUpCharId_8011e170] != 0) {
+          drawLevelUp(-80, 44);
           playSound(9);
-          inventoryMenuState_800bdc28.set(InventoryMenuState._9);
+          this.inventoryMenuState_800bdc28 = MenuState.SECONDARY_LEVEL_UPS_9;
         } else {
           //LAB_8010dd88
-          this._8011e170++;
+          this.levelUpCharId_8011e170++;
         }
 
-        this.FUN_8010e9a8(0);
+        this.drawReport();
         break;
 
-      case _9:
-        this.FUN_8010e708(24, 152, secondaryCharIds_800bdbf8.get(this._8011e170 - 3).get());
+      case SECONDARY_LEVEL_UPS_9:
+        this.drawChar(24, 152, secondaryCharIds_800bdbf8.get(this.levelUpCharId_8011e170 - 3).get());
 
         if((press_800bee94.get() & 0x60) != 0) {
           playSound(0x2L);
-          this._8011e1c8[this._8011e170] = 0;
-          inventoryMenuState_800bdc28.set(InventoryMenuState.REPLACE_INIT_8);
-          this._8011e170++;
+          this.levelsGained_8011e1c8[this.levelUpCharId_8011e170] = 0;
+          this.inventoryMenuState_800bdc28 = MenuState.MAIN_LEVEL_UPS_8;
+          this.levelUpCharId_8011e170++;
         }
 
-        this.FUN_8010e9a8(0);
+        this.drawReport();
         break;
 
-      case REPLACE_MENU_10:
+      case DRAGOON_LEVEL_UPS_10:
         for(int charSlot = 0; charSlot < 3; charSlot++) {
           if(this.characterIsAlive(charSlot)) {
             this.levelUpDragoon(gameState_800babc8.charIds_88[charSlot], charSlot);
@@ -322,69 +324,69 @@ public class PostBattleScreen extends MenuScreen {
 
         //LAB_8010de6c
         if(this.spellsUnlocked_8011e1a8[0] != 0 || this.spellsUnlocked_8011e1a8[1] != 0 || this.spellsUnlocked_8011e1a8[2] != 0) {
-          inventoryMenuState_800bdc28.set(InventoryMenuState._11);
+          this.inventoryMenuState_800bdc28 = MenuState.WAIT_FOR_DRAGOON_LEVEL_UP_INPUT_11;
         } else {
           //LAB_8010de98
-          inventoryMenuState_800bdc28.set(InventoryMenuState._14);
+          this.inventoryMenuState_800bdc28 = MenuState.WAIT_FOR_INPUT_14;
         }
 
-        this.FUN_8010e9a8(0);
+        this.drawReport();
         break;
 
-      case _11:
+      case WAIT_FOR_DRAGOON_LEVEL_UP_INPUT_11:
         if((press_800bee94.get() & 0x20) != 0) {
-          this._8011e178 = 0;
+          this.unlockHeight_8011e178 = 0;
           playSound(0x2L);
 
           //LAB_8010decc
-          inventoryMenuState_800bdc28.set(InventoryMenuState.EQUIPMENT_INIT_12);
+          this.inventoryMenuState_800bdc28 = MenuState.EMBIGGEN_SPELL_UNLOCK_12;
         }
 
-        this.FUN_8010e9a8(0);
+        this.drawReport();
         break;
 
-      case EQUIPMENT_INIT_12:
-        if(this._8011e178 < 20) {
-          this._8011e178 += 2;
+      case EMBIGGEN_SPELL_UNLOCK_12:
+        if(this.unlockHeight_8011e178 < 20) {
+          this.unlockHeight_8011e178 += 2;
         } else {
           //LAB_8010def4
           if((press_800bee94.get() & 0x20) != 0) {
             playSound(0x2L);
 
             //LAB_8010df1c
-            inventoryMenuState_800bdc28.set(InventoryMenuState._13);
+            this.inventoryMenuState_800bdc28 = MenuState.ENSMALLEN_SPELL_UNLOCK_13;
           }
         }
 
         //LAB_8010df20
         //LAB_8010df24
-        this.renderSpellsUnlocked(this._8011e178);
-        this.FUN_8010e9a8(0);
+        this.renderSpellsUnlocked(this.unlockHeight_8011e178);
+        this.drawReport();
         break;
 
-      case _13:
-        if(this._8011e178 > 0) {
-          this._8011e178 -= 2;
+      case ENSMALLEN_SPELL_UNLOCK_13:
+        if(this.unlockHeight_8011e178 > 0) {
+          this.unlockHeight_8011e178 -= 2;
         } else {
           //LAB_8010df54
           //LAB_8010df1c
-          inventoryMenuState_800bdc28.set(InventoryMenuState._14);
+          this.inventoryMenuState_800bdc28 = MenuState.WAIT_FOR_INPUT_14;
         }
 
         //LAB_8010df20
         //LAB_8010df24
-        this.renderSpellsUnlocked(this._8011e178);
-        this.FUN_8010e9a8(0);
+        this.renderSpellsUnlocked(this.unlockHeight_8011e178);
+        this.drawReport();
         break;
 
-      case _14:
+      case WAIT_FOR_INPUT_14:
         if((press_800bee94.get() & 0x60) != 0) {
           playSound(3);
 
           if(itemsDroppedByEnemies_800bc928.isEmpty() || giveItems(itemsDroppedByEnemies_800bc928) == 0) {
             //LAB_8010dfac
             // No items remaining
-            this.FUN_8010d050(InventoryMenuState._18);
+            this.fadeToMenuState(MenuState.UNLOAD_18);
           } else {
             // Some items remaining
             resizeDisplay(384, 240);
@@ -396,24 +398,24 @@ public class PostBattleScreen extends MenuScreen {
 
         //LAB_8010dfb8
         //LAB_8010dfbc
-        this.FUN_8010e9a8(0);
+        this.drawReport();
         break;
 
-      case LIST_INIT_16:
+      case FADE_OUT_16:
         startFadeEffect(1, 10);
-        inventoryMenuState_800bdc28.set(InventoryMenuState._17);
+        this.inventoryMenuState_800bdc28 = MenuState.WAIT_FOR_FADE_OUT_17;
 
-      case _17:
-        this.FUN_8010e9a8(0);
+      case WAIT_FOR_FADE_OUT_17:
+        this.drawReport();
 
         if(fullScreenEffect_800bb140.currentColour_28 >= 0xff) {
-          inventoryMenuState_800bdc28.set(confirmDest_800bdc30.get());
+          this.inventoryMenuState_800bdc28 = this.confirmDest_800bdc30;
           FUN_80019470();
         }
 
         break;
 
-      case _18:
+      case UNLOAD_18:
         startFadeEffect(2, 10);
         deallocateRenderables(0xff);
 
@@ -426,10 +428,6 @@ public class PostBattleScreen extends MenuScreen {
         textZ_800bdf00.set(13);
 
         menuStack.popScreen();
-        break;
-
-      case _19:
-        menuStack.render();
         break;
     }
 
@@ -482,7 +480,7 @@ public class PostBattleScreen extends MenuScreen {
     while(gameState_800babc8.charData_32c[charIndex].xp_00 >= getXpToNextLevel(charIndex) && gameState_800babc8.charData_32c[charIndex].level_12 < 60) {
       gameState_800babc8.charData_32c[charIndex].level_12++;
 
-      this._8011e1c8[charSlot]++;
+      this.levelsGained_8011e1c8[charSlot]++;
       if(this.additionsUnlocked_8011e1b8[charSlot] == 0) {
         this.additionsUnlocked_8011e1b8[charSlot] = loadAdditions(charIndex, null);
       }
@@ -512,7 +510,7 @@ public class PostBattleScreen extends MenuScreen {
         final int spellCount = getUnlockedDragoonSpells(spellIndices, charIndex);
 
         gameState_800babc8.charData_32c[charIndex].dlevel_13++;
-        this._8011e1d8[charSlot]++;
+        this.dragoonLevelsGained_8011e1d8[charSlot]++;
 
         loadCharacterStats();
         if(spellCount != getUnlockedDragoonSpells(spellIndices, charIndex)) {
@@ -527,7 +525,7 @@ public class PostBattleScreen extends MenuScreen {
   }
 
   @Method(0x8010cfa0L)
-  private Renderable58 FUN_8010cfa0(final int startGlyph, final int endGlyph, final int x, final int y, final int u, final int v) {
+  private Renderable58 drawGlyph(final int startGlyph, final int endGlyph, final int x, final int y, final int u, final int v) {
     final Renderable58 renderable = allocateRenderable(uiFile_800bdc3c._d2d8(), null);
     renderable.glyph_04 = startGlyph;
     renderable.startGlyph_10 = startGlyph;
@@ -548,9 +546,9 @@ public class PostBattleScreen extends MenuScreen {
   }
 
   @Method(0x8010d050L)
-  private void FUN_8010d050(final InventoryMenuState nextMenuState) {
-    inventoryMenuState_800bdc28.set(InventoryMenuState.LIST_INIT_16);
-    confirmDest_800bdc30.set(nextMenuState);
+  private void fadeToMenuState(final MenuState nextMenuState) {
+    this.inventoryMenuState_800bdc28 = MenuState.FADE_OUT_16;
+    this.confirmDest_800bdc30 = nextMenuState;
   }
 
   @Method(0x8010d078L)
@@ -647,14 +645,14 @@ public class PostBattleScreen extends MenuScreen {
   }
 
   @Method(0x8010e114L)
-  private Renderable58 FUN_8010e114(final int x, final int y, final int charSlot) {
+  private Renderable58 drawCharPortrait(final int x, final int y, final int charSlot) {
     if(charSlot >= 9) {
       //LAB_8010e1ec
       throw new IllegalArgumentException("Invalid character index");
     }
 
     final int glyph = (int)_800fbc9c.offset(charSlot).getSigned();
-    final Renderable58 renderable = this.FUN_8010cfa0(glyph, glyph, x, y, 704, (int)_800fbc88.offset(charSlot * 0x2L).getSigned());
+    final Renderable58 renderable = this.drawGlyph(glyph, glyph, x, y, 704, (int)_800fbc88.offset(charSlot * 0x2L).getSigned());
     renderable.z_3c = 35;
 
     //LAB_8010e1f0
@@ -662,11 +660,11 @@ public class PostBattleScreen extends MenuScreen {
   }
 
   @Method(0x8010e200L)
-  private void FUN_8010e200(final int x, final int y, int val, final UnsignedIntRef a3) {
+  private void drawDigit(final int x, final int y, int val, final UnsignedIntRef a3) {
     val %= 10;
     if(val != 0 || a3.get() != 0) {
       //LAB_8010e254
-      final Renderable58 renderable = this.FUN_8010cfa0(val + 3, val + 3, x, y, 736, 497);
+      final Renderable58 renderable = this.drawGlyph(val + 3, val + 3, x, y, 736, 497);
       renderable.flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       a3.set(1);
     }
@@ -675,46 +673,46 @@ public class PostBattleScreen extends MenuScreen {
   }
 
   @Method(0x8010e2a0L)
-  private void FUN_8010e2a0(final int x, final int y, final int dlevel) {
+  private void drawTwoDigitNumber(final int x, final int y, final int dlevel) {
     final int s2 = Math.min(99, dlevel);
     final UnsignedIntRef sp0x10 = new UnsignedIntRef();
-    this.FUN_8010e200(x, y, s2 / 10, sp0x10.set(0));
-    this.FUN_8010e200(x + 6, y, s2, sp0x10.incr());
+    this.drawDigit(x, y, s2 / 10, sp0x10.set(0));
+    this.drawDigit(x + 6, y, s2, sp0x10.incr());
   }
 
   @Method(0x8010e340L)
-  private void FUN_8010e340(final int x, final int y, final int val) {
+  private void drawSixDigitNumber(final int x, final int y, final int val) {
     final int s2 = Math.min(999_999, val);
     final UnsignedIntRef sp0x10 = new UnsignedIntRef();
-    this.FUN_8010e200(x, y, s2 / 100_000, sp0x10);
-    this.FUN_8010e200(x +  6, y, s2 / 10_000, sp0x10);
-    this.FUN_8010e200(x + 12, y, s2 /  1_000, sp0x10);
-    this.FUN_8010e200(x + 18, y, s2 /    100, sp0x10);
-    this.FUN_8010e200(x + 24, y, s2 /     10, sp0x10);
-    this.FUN_8010e200(x + 30, y, s2, sp0x10.incr());
+    this.drawDigit(x, y, s2 / 100_000, sp0x10);
+    this.drawDigit(x +  6, y, s2 / 10_000, sp0x10);
+    this.drawDigit(x + 12, y, s2 /  1_000, sp0x10);
+    this.drawDigit(x + 18, y, s2 /    100, sp0x10);
+    this.drawDigit(x + 24, y, s2 /     10, sp0x10);
+    this.drawDigit(x + 30, y, s2, sp0x10.incr());
   }
 
   @Method(0x8010e490L)
-  private void FUN_8010e490(final int x, final int y, final int val) {
+  private void drawEightDigitNumber(final int x, final int y, final int val) {
     final int s2 = Math.min(99_999_999, val);
     final UnsignedIntRef sp0x10 = new UnsignedIntRef();
-    this.FUN_8010e200(x, y, s2 / 10_000_000, sp0x10);
-    this.FUN_8010e200(x +  6, y, s2 / 1_000_000, sp0x10);
-    this.FUN_8010e200(x + 12, y, s2 /   100_000, sp0x10);
-    this.FUN_8010e200(x + 18, y, s2 /    10_000, sp0x10);
-    this.FUN_8010e200(x + 24, y, s2 /     1_000, sp0x10);
-    this.FUN_8010e200(x + 30, y, s2 /       100, sp0x10);
-    this.FUN_8010e200(x + 36, y, s2 /        10, sp0x10);
-    this.FUN_8010e200(x + 42, y, s2, sp0x10.incr());
+    this.drawDigit(x, y, s2 / 10_000_000, sp0x10);
+    this.drawDigit(x +  6, y, s2 / 1_000_000, sp0x10);
+    this.drawDigit(x + 12, y, s2 /   100_000, sp0x10);
+    this.drawDigit(x + 18, y, s2 /    10_000, sp0x10);
+    this.drawDigit(x + 24, y, s2 /     1_000, sp0x10);
+    this.drawDigit(x + 30, y, s2 /       100, sp0x10);
+    this.drawDigit(x + 36, y, s2 /        10, sp0x10);
+    this.drawDigit(x + 42, y, s2, sp0x10.incr());
   }
 
   @Method(0x8010e630L)
-  private void FUN_8010e630(final int x, final int y, final int val) {
+  private void drawNextLevelXp(final int x, final int y, final int val) {
     if(val != 0) {
-      this.FUN_8010e340(x, y, val);
+      this.drawSixDigitNumber(x, y, val);
     } else {
       //LAB_8010e660
-      final Renderable58 renderable = this.FUN_8010cfa0(0x47, 0x47, x + 30, y, 736, 497);
+      final Renderable58 renderable = this.drawGlyph(0x47, 0x47, x + 30, y, 736, 497);
       renderable.flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
     }
 
@@ -752,19 +750,18 @@ public class PostBattleScreen extends MenuScreen {
   }
 
   @Method(0x8010e708L)
-  private void FUN_8010e708(final int x, final int y, final int charIndex) {
+  private void drawChar(final int x, final int y, final int charIndex) {
     if(charIndex != -1) {
       this.FUN_8010d078(x + 1, y + 5, 24, 32, 2);
-      final Renderable58 renderable = this.FUN_8010e114(x - 1, y + 4, charIndex);
-      renderable.flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
-      this.FUN_8010cfa0((int)_800fbca8.offset(charIndex).get(), (int)_800fbca8.offset(charIndex).get(), x + 32, y + 4, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
-      this.FUN_8010cfa0(0x3b, 0x3b, x + 30, y + 16, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
-      this.FUN_8010cfa0(0x3c, 0x3c, x + 30, y + 28, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
-      this.FUN_8010cfa0(0x3d, 0x3d, x, y + 40, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
-      this.FUN_8010cfa0(0x3c, 0x3c, x, y + 52, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
-      this.FUN_8010cfa0(0x3d, 0x3d, x + 10, y + 52, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+      this.drawCharPortrait(x - 1, y + 4, charIndex).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+      this.drawGlyph((int)_800fbca8.offset(charIndex).get(), (int)_800fbca8.offset(charIndex).get(), x + 32, y + 4, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+      this.drawGlyph(0x3b, 0x3b, x + 30, y + 16, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+      this.drawGlyph(0x3c, 0x3c, x + 30, y + 28, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+      this.drawGlyph(0x3d, 0x3d, x, y + 40, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+      this.drawGlyph(0x3c, 0x3c, x, y + 52, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+      this.drawGlyph(0x3d, 0x3d, x + 10, y + 52, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
 
-      this.FUN_8010e2a0(x + 108, y + 16, gameState_800babc8.charData_32c[charIndex].level_12);
+      this.drawTwoDigitNumber(x + 108, y + 16, gameState_800babc8.charData_32c[charIndex].level_12);
 
       final int dlevel;
       if(!hasDragoon(gameState_800babc8.goods_19c[0], charIndex)) {
@@ -774,24 +771,24 @@ public class PostBattleScreen extends MenuScreen {
       }
 
       //LAB_8010e8e0
-      this.FUN_8010e2a0(x + 108, y + 28, dlevel);
+      this.drawTwoDigitNumber(x + 108, y + 28, dlevel);
       final int xp = getXpToNextLevel(charIndex);
-      this.FUN_8010e340(x + 76 - this.getXpWidth(xp), y + 40, gameState_800babc8.charData_32c[charIndex].xp_00);
-      this.FUN_8010cfa0(0x22, 0x22, x - (this.getXpWidth(xp) - 114), y + 40, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
-      this.FUN_8010e630(x + 84, y + 40, xp);
+      this.drawSixDigitNumber(x + 76 - this.getXpWidth(xp), y + 40, gameState_800babc8.charData_32c[charIndex].xp_00);
+      this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(xp) - 114), y + 40, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+      this.drawNextLevelXp(x + 84, y + 40, xp);
 
 
       final int dxp = (int) _800fbbf0.offset(charIndex * 0x4L).deref(2).offset(gameState_800babc8.charData_32c[charIndex].dlevel_13 * 0x2L).offset(0x2L).get();
-      this.FUN_8010e340(x + 76 - this.getXpWidth(dxp), y + 52, gameState_800babc8.charData_32c[charIndex].dlevelXp_0e);
-      this.FUN_8010cfa0(0x22, 0x22, x - (this.getXpWidth(dxp) - 114), y + 52, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
-      this.FUN_8010e630(x + 84, y + 52, dxp);
+      this.drawSixDigitNumber(x + 76 - this.getXpWidth(dxp), y + 52, gameState_800babc8.charData_32c[charIndex].dlevelXp_0e);
+      this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(dxp) - 114), y + 52, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+      this.drawNextLevelXp(x + 84, y + 52, dxp);
     }
 
     //LAB_8010e978
   }
 
   @Method(0x8010e9a8L)
-  private void FUN_8010e9a8(final int a0) {
+  private void drawReport() {
     int y1 = 24;
     int y2 = -82;
     int y3 = -70;
@@ -799,18 +796,18 @@ public class PostBattleScreen extends MenuScreen {
     //LAB_8010e9fc
     for(int i = 0; i < 3; i++) {
       if(gameState_800babc8.charIds_88[i] != -1) {
-        this.FUN_8010e708(176, y1, gameState_800babc8.charIds_88[i]);
+        this.drawChar(176, y1, gameState_800babc8.charIds_88[i]);
 
-        if(this._8011e1c8[i] != 0) {
-          this._8011e1c8[i] = 0;
-          FUN_800192d8(72, y2);
+        if(this.levelsGained_8011e1c8[i] != 0) {
+          this.levelsGained_8011e1c8[i] = 0;
+          drawLevelUp(72, y2);
           playSound(9);
         }
 
         //LAB_8010ea44
-        if(this._8011e1d8[i] != 0) {
-          this._8011e1d8[i] = 0;
-          FUN_800192d8(72, y3);
+        if(this.dragoonLevelsGained_8011e1d8[i] != 0) {
+          this.dragoonLevelsGained_8011e1d8[i] = 0;
+          drawLevelUp(72, y3);
           playSound(9);
         }
       }
@@ -821,8 +818,8 @@ public class PostBattleScreen extends MenuScreen {
       y3 += 64;
     }
 
-    this.FUN_8010e490( 96, 28, goldGainedFromCombat_800bc920.get());
-    this.FUN_8010e340(108, 40, totalXpFromCombat_800bc95c.get());
+    this.drawEightDigitNumber( 96, 28, goldGainedFromCombat_800bc920.get());
+    this.drawSixDigitNumber(108, 40, totalXpFromCombat_800bc95c.get());
 
     y1 = 63;
     y2 = 64;
@@ -838,12 +835,7 @@ public class PostBattleScreen extends MenuScreen {
     }
 
     //LAB_8010eb58
-    this.FUN_8010e490(96, 156, gameState_800babc8.gold_94);
-
-    if(a0 != 0) {
-      this.FUN_8010cfa0(0x3f, 0x3f, 144,  28, 736, 497);
-      this.FUN_8010cfa0(0x3f, 0x3f, 144, 156, 736, 497);
-    }
+    this.drawEightDigitNumber(96, 156, gameState_800babc8.gold_94);
 
     //LAB_8010ebb0
     uploadRenderables();
@@ -937,5 +929,27 @@ public class PostBattleScreen extends MenuScreen {
 
     //LAB_8010d60c
     return additionId;
+  }
+
+  private enum MenuState {
+    INIT_0,
+    WAIT_FOR_UI_FILE_TO_LOAD_1,
+    WAIT_FOR_FADE_IN_AND_INIT_CONTROLS_2,
+    WAIT_FOR_FIRST_BUTTON_PRESS_3,
+    TICK_GOLD_4,
+    TICK_XP_5,
+    EMBIGGEN_UNLOCKED_ADDITIONS_6,
+    ENSMALLEN_UNLOCKED_ADDITIONS_7,
+    MAIN_LEVEL_UPS_8,
+    SECONDARY_LEVEL_UPS_9,
+    DRAGOON_LEVEL_UPS_10,
+    WAIT_FOR_DRAGOON_LEVEL_UP_INPUT_11,
+    EMBIGGEN_SPELL_UNLOCK_12,
+    ENSMALLEN_SPELL_UNLOCK_13,
+    WAIT_FOR_INPUT_14,
+    _15,
+    FADE_OUT_16,
+    WAIT_FOR_FADE_OUT_17,
+    UNLOAD_18,
   }
 }
