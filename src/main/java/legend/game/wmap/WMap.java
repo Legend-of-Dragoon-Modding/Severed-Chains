@@ -135,9 +135,6 @@ import static legend.game.wmap.WmapStatics.directionalPathSegmentData_800f2248;
 import static legend.game.wmap.WmapStatics.encounterIds_800ef364;
 import static legend.game.wmap.WmapStatics.inputAngleModifierAtPathIntersection_800f021c;
 import static legend.game.wmap.WmapStatics.loadWait;
-import static legend.game.wmap.WmapStatics.locationModelTranslationVectors_800c74b8;
-import static legend.game.wmap.WmapStatics.locationThumbnailMetrics_800ef0cc;
-import static legend.game.wmap.WmapStatics.locationsIndices_800c84c8;
 import static legend.game.wmap.WmapStatics.locations_800f0e34;
 import static legend.game.wmap.WmapStatics.mapFrameTmdIndices_800ef19c;
 import static legend.game.wmap.WmapStatics.mapPositions_800ef1a8;
@@ -146,6 +143,8 @@ import static legend.game.wmap.WmapStatics.negativeDirectionMovementMask_800f021
 import static legend.game.wmap.WmapStatics.pathDotPosArr_800f591c;
 import static legend.game.wmap.WmapStatics.pathIntersectionSymbolMetrics_800ef170;
 import static legend.game.wmap.WmapStatics.pathSegmentLengths_800f5810;
+import static legend.game.wmap.WmapStatics.placeIndices_800c84c8;
+import static legend.game.wmap.WmapStatics.placePositionVectors_800c74b8;
 import static legend.game.wmap.WmapStatics.places_800f0234;
 import static legend.game.wmap.WmapStatics.playerAvatarColourMapOffsets_800ef694;
 import static legend.game.wmap.WmapStatics.positiveDirectionMovementMask_800f0204;
@@ -730,7 +729,7 @@ public class WMap extends EngineState {
     tmdGp0Tpage_1f8003ec.set(0x20);
 
     this.initTransitionAnimation(TransitionAnimationType.FADE_IN);
-    this.FUN_800e78c0();
+    this.initFlagsPathsCutsAndPlaces();
     this.loadWmapTextures();
     this.initCameraAndLight();
     this.loadMapModelAssets();
@@ -1678,9 +1677,8 @@ public class WMap extends EngineState {
   }
 
   @Method(0x800d5768L)
-  private void loadLocationThumbnailImage(final Tim tim, final int param) {
-    final WmapLocationThumbnailMetrics08 thumbnail = locationThumbnailMetrics_800ef0cc.get(param);
-    this.loadLocationThumbnailImage_(tim, thumbnail.imageX_00.get(), thumbnail.imageY_02.get(), thumbnail.clutX_04.get(), thumbnail.clutY_06.get());
+  private void loadLocationThumbnailImage(final Tim tim) {
+    this.loadLocationThumbnailImage_(tim, 448, 256, 768, 508);
     this.filesLoadedFlags_800c66b8.updateAndGet(val -> val | 0x800);
 
     //LAB_800d5848
@@ -4094,7 +4092,7 @@ public class WMap extends EngineState {
       case 1:
         this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & 0xffff_f7ff);
 
-        loadDrgnFileSync(0, 5655 + places_800f0234.get(locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02).fileIndex_04.get(), data -> this.loadLocationThumbnailImage(new Tim(data), 1));
+        loadDrgnFileSync(0, 5655 + places_800f0234.get(locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02).fileIndex_04.get(), data -> this.loadLocationThumbnailImage(new Tim(data)));
         initTextbox(6, true, 240, 120, 14, 16);
 
         this.mapTransitionState_800c68a4 = 2;
@@ -4225,10 +4223,10 @@ public class WMap extends EngineState {
 
         //LAB_800e5f04
         this.wmapLocationPromptPopup.setImage(
-          locationThumbnailMetrics_800ef0cc.get(1).clutX_04.get(),
-          locationThumbnailMetrics_800ef0cc.get(1).clutY_06.get(),
-          locationThumbnailMetrics_800ef0cc.get(1).imageX_00.get(),
-          locationThumbnailMetrics_800ef0cc.get(1).imageY_02.get(),
+          768,
+          508,
+          448,
+          256,
           GPU.getOffsetX() + 20,
           GPU.getOffsetY() - 95,
           120,
@@ -4497,12 +4495,12 @@ public class WMap extends EngineState {
     final MV transforms = new MV();
     for(int i = 0; i < this.placeCount_800c86cc; i++) {
       //LAB_800e6c5c
-      if(!places_800f0234.get(locations_800f0e34[locationsIndices_800c84c8.get(i).get()].placeIndex_02).name_00.isNull()) {
+      if(!places_800f0234.get(locations_800f0e34[placeIndices_800c84c8[i]].placeIndex_02).name_00.isNull()) {
         //LAB_800e6ccc
         GsGetLs(this.wmapStruct258_800c66a8.tmdRendering_08.coord2s_04[0], transforms);
         GTE.setTransforms(transforms);
 
-        GTE.perspectiveTransform(locationModelTranslationVectors_800c74b8.get(i));
+        GTE.perspectiveTransform(placePositionVectors_800c74b8[i]);
         final float sx = GTE.getScreenX(2);
         final float sy = GTE.getScreenY(2);
         final float z = GTE.getScreenZ(3) / 4.0f;
@@ -4518,7 +4516,7 @@ public class WMap extends EngineState {
             if(z >= 6 && z < orderingTableSize_1f8003c8.get() - 1) {
               final WmapLocationLabelMetrics0c label = new WmapLocationLabelMetrics0c();
               label.z_00 = z;
-              label.locationIndex_04 = locationsIndices_800c84c8.get(i).get();
+              label.locationIndex_04 = placeIndices_800c84c8[i];
               label.xy_08.set(sx, sy);
               labelList.add(label);
             }
@@ -4642,7 +4640,7 @@ public class WMap extends EngineState {
   }
 
   @Method(0x800e78c0L)
-  private void FUN_800e78c0() {
+  private void initFlagsPathsCutsAndPlaces() {
     //LAB_800e7940
     //LAB_800e7944
     // Set all destination flags in the gameState
@@ -4900,7 +4898,7 @@ public class WMap extends EngineState {
 
     //LAB_800e89f4
 
-    this.FUN_800eb3c8();
+    this.setPositionsOfValidMapPlaces();
   }
 
   /** Seems to relate to character position and movement along the path */
@@ -5577,51 +5575,51 @@ public class WMap extends EngineState {
     return 0;
   }
 
+  /** In this context, places are locations that have submaps and that the player has unlocked. */
   @Method(0x800eb3c8L)
-  private void FUN_800eb3c8() {
-    final boolean[] sp0xd0 = new boolean[0x101];
-    int effectCount = 0;
+  private void setPositionsOfValidMapPlaces() {
+    final boolean[] locationsChecked = new boolean[0x101];
+    int placeIndex = 0;
 
-    final Vector3f sp0x30 = new Vector3f();
-    final Vector3f sp0x40 = new Vector3f();
-    final Vector3f sp0x50 = new Vector3f();
-    final Vector3f[] sp0x60 = new Vector3f[0x101];
-
-    Arrays.setAll(sp0x60, i -> new Vector3f());
+    final Vector3f pos0 = new Vector3f();
+    final Vector3f pos1 = new Vector3f();
+    final Vector3f avgPos = new Vector3f();
+    final Vector3f[] matchPositions = new Vector3f[0x101];
+    Arrays.setAll(matchPositions, i -> new Vector3f());
 
     //LAB_800eb420
     //LAB_800eb424
-    for(int i = 0; i < this.mapState_800c6798.locationCount_08; i++) {
+    for(int locationIndex0 = 0; locationIndex0 < this.mapState_800c6798.locationCount_08; locationIndex0++) {
       //LAB_800eb448
-      if(this.checkLocationIsValidAndOptionallySetPathStart(i, 0, null) == 0) {
+      if(this.checkLocationIsValidAndOptionallySetPathStart(locationIndex0, 0, null) == 0) {
         //LAB_800eb468
-        if(!sp0xd0[i]) {
+        if(!locationsChecked[locationIndex0]) {
           //LAB_800eb48c
-          final int placeIndex0 = locations_800f0e34[i].placeIndex_02;
-          int sp20 = 0;
+          final int placeIndex0 = locations_800f0e34[locationIndex0].placeIndex_02;
+          int matchCount = 0;
 
           //LAB_800eb4c8
-          for(int sp1c = i; sp1c < this.mapState_800c6798.locationCount_08; sp1c++) {
+          for(int locationIndex1 = locationIndex0; locationIndex1 < this.mapState_800c6798.locationCount_08; locationIndex1++) {
             //LAB_800eb4ec
-            if(this.checkLocationIsValidAndOptionallySetPathStart(sp1c, 0, null) == 0) {
+            if(this.checkLocationIsValidAndOptionallySetPathStart(locationIndex1, 0, null) == 0) {
               //LAB_800eb50c
-              if(!sp0xd0[sp1c]) {
+              if(!locationsChecked[locationIndex1]) {
                 //LAB_800eb530
-                final int placeIndex1 = locations_800f0e34[sp1c].placeIndex_02;
+                final int placeIndex1 = locations_800f0e34[locationIndex1].placeIndex_02;
 
                 if(!places_800f0234.get(placeIndex0).name_00.isNull() || !places_800f0234.get(placeIndex1).name_00.isNull()) {
                   // Added this check since these pointers can be null
                   if(!places_800f0234.get(placeIndex0).name_00.isNull() && !places_800f0234.get(placeIndex1).name_00.isNull()) {
                     //LAB_800eb5d8
                     if(strcmp(places_800f0234.get(placeIndex0).name_00.deref().get(), places_800f0234.get(placeIndex1).name_00.deref().get()) == 0) {
-                      this.checkLocationIsValidAndOptionallySetPathStart(sp1c, 1, sp0x60[sp20]);
+                      this.checkLocationIsValidAndOptionallySetPathStart(locationIndex1, 1, matchPositions[matchCount]);
 
-                      sp20++;
-                      sp0xd0[sp1c] = true;
+                      matchCount++;
+                      locationsChecked[locationIndex1] = true;
                     }
                   }
                 } else {
-                  sp0xd0[sp1c] = true;
+                  locationsChecked[locationIndex1] = true;
                 }
               }
             }
@@ -5630,35 +5628,35 @@ public class WMap extends EngineState {
           }
 
           //LAB_800eb694
-          if(sp20 == 1) {
-            locationModelTranslationVectors_800c74b8.get(effectCount).set(sp0x60[0]);
+          if(matchCount == 1) {
+            placePositionVectors_800c74b8[placeIndex].set(matchPositions[0]);
           } else {
             //LAB_800eb724
-            sp0x30.set(sp0x60[0]);
+            pos0.set(matchPositions[0]);
 
             //LAB_800eb750
-            for(int sp1c = 0; sp1c < sp20 - 1; sp1c++) {
+            for(int matchNum = 0; matchNum < matchCount - 1; matchNum++) {
               //LAB_800eb778
-              sp0x40.set(sp0x60[sp1c + 1]);
-              this.weightedAvg(1.0f, 1.0f, sp0x50, sp0x30, sp0x40);
-              sp0x30.set(sp0x50);
+              pos1.set(matchPositions[matchNum + 1]);
+              this.weightedAvg(1.0f, 1.0f, avgPos, pos0, pos1);
+              pos0.set(avgPos);
             }
 
             //LAB_800eb828
-            locationModelTranslationVectors_800c74b8.get(effectCount).set(sp0x50);
+            placePositionVectors_800c74b8[placeIndex].set(avgPos);
           }
 
           //LAB_800eb8ac
-          locationsIndices_800c84c8.get(effectCount).set((short)i);
+          placeIndices_800c84c8[placeIndex] = locationIndex0;
 
-          effectCount++;
+          placeIndex++;
         }
       }
       //LAB_800eb8dc
     }
 
     //LAB_800eb8f4
-    this.placeCount_800c86cc = effectCount;
+    this.placeCount_800c86cc = placeIndex;
   }
 
   @Method(0x800eb914L)
@@ -6078,18 +6076,18 @@ public class WMap extends EngineState {
     //LAB_800edca8
     for(int i = 0; i < this.placeCount_800c86cc; i++) {
       //LAB_800edccc
-      if(places_800f0234.get(locations_800f0e34[locationsIndices_800c84c8.get(i).get()].placeIndex_02).name_00.isNull()) {
+      if(places_800f0234.get(locations_800f0e34[placeIndices_800c84c8[i]].placeIndex_02).name_00.isNull()) {
         continue;
       }
 
       //LAB_800edd3c
-      final int mode = locations_800f0e34[locationsIndices_800c84c8.get(i).get()].effectFlags_12 & 0xc;
+      final int mode = locations_800f0e34[placeIndices_800c84c8[i]].effectFlags_12 & 0xc;
       if(mode == 0) {
         continue;
       }
 
       //LAB_800edda0
-      if(locations_800f0e34[locationsIndices_800c84c8.get(i).get()].continent_0e == this.mapState_800c6798.continent_00) {
+      if(locations_800f0e34[placeIndices_800c84c8[i]].continent_0e == this.mapState_800c6798.continent_00) {
         //LAB_800eddfc
         if(i >= 9) {
           break;
@@ -6111,22 +6109,22 @@ public class WMap extends EngineState {
 
           //LAB_800edebc
           //LAB_800edf88
-          smoke.coord2_00.coord.transfer.x = locationModelTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
-          smoke.coord2_00.coord.transfer.y = locationModelTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
-          smoke.coord2_00.coord.transfer.z = locationModelTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16;
+          smoke.coord2_00.coord.transfer.x = placePositionVectors_800c74b8[i].x + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
+          smoke.coord2_00.coord.transfer.y = placePositionVectors_800c74b8[i].y + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
+          smoke.coord2_00.coord.transfer.z = placePositionVectors_800c74b8[i].z + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16;
 
           if(this.mapState_800c6798.continent_00 == Continent.SOUTH_SERDIO) {
             if(mode == 4) {
               //LAB_800ee0e4
-              smoke.coord2_00.coord.transfer.x = locationModelTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
-              smoke.coord2_00.coord.transfer.y = locationModelTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
-              smoke.coord2_00.coord.transfer.z = locationModelTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 + 80;
+              smoke.coord2_00.coord.transfer.x = placePositionVectors_800c74b8[i].x + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
+              smoke.coord2_00.coord.transfer.y = placePositionVectors_800c74b8[i].y + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
+              smoke.coord2_00.coord.transfer.z = placePositionVectors_800c74b8[i].z + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 + 80;
               //LAB_800ee1dc
             } else if(mode == 8) {
               //LAB_800ee238
-              smoke.coord2_00.coord.transfer.x = locationModelTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16 + 48;
-              smoke.coord2_00.coord.transfer.y = locationModelTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
-              smoke.coord2_00.coord.transfer.z = locationModelTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 + 48;
+              smoke.coord2_00.coord.transfer.x = placePositionVectors_800c74b8[i].x + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16 + 48;
+              smoke.coord2_00.coord.transfer.y = placePositionVectors_800c74b8[i].y + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
+              smoke.coord2_00.coord.transfer.z = placePositionVectors_800c74b8[i].z + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 + 48;
             }
 
             //LAB_800ee32c
@@ -6134,15 +6132,15 @@ public class WMap extends EngineState {
           } else if(this.mapState_800c6798.continent_00 == Continent.NORTH_SERDIO) {
             if(mode == 4) {
               //LAB_800ee3a4
-              smoke.coord2_00.coord.transfer.x = locationModelTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
-              smoke.coord2_00.coord.transfer.y = locationModelTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4 + 48;
-              smoke.coord2_00.coord.transfer.z = locationModelTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 - 100;
+              smoke.coord2_00.coord.transfer.x = placePositionVectors_800c74b8[i].x + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16;
+              smoke.coord2_00.coord.transfer.y = placePositionVectors_800c74b8[i].y + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4 + 48;
+              smoke.coord2_00.coord.transfer.z = placePositionVectors_800c74b8[i].z + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 - 100;
               //LAB_800ee4a0
             } else if(mode == 8) {
               //LAB_800ee4fc
-              smoke.coord2_00.coord.transfer.x = locationModelTranslationVectors_800c74b8.get(i).getX() + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16 - 48;
-              smoke.coord2_00.coord.transfer.y = locationModelTranslationVectors_800c74b8.get(i).getY() + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
-              smoke.coord2_00.coord.transfer.z = locationModelTranslationVectors_800c74b8.get(i).getZ() + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 + 32;
+              smoke.coord2_00.coord.transfer.x = placePositionVectors_800c74b8[i].x + smoke.translationOffset_54.x * smoke.scaleAndColourFade_50 / 16 - 48;
+              smoke.coord2_00.coord.transfer.y = placePositionVectors_800c74b8[i].y + smoke.translationOffset_54.y * smoke.scaleAndColourFade_50 / 4;
+              smoke.coord2_00.coord.transfer.z = placePositionVectors_800c74b8[i].z + smoke.translationOffset_54.z * smoke.scaleAndColourFade_50 / 16 + 32;
             }
           }
 

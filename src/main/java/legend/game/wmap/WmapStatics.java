@@ -1,6 +1,5 @@
 package legend.game.wmap;
 
-import legend.core.gte.VECTOR;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.Pointer;
@@ -13,18 +12,21 @@ import legend.game.wmap.WmapEnums.Continent;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
+import java.util.Arrays;
+
 import static legend.core.GameEngine.MEMORY;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 
 public final class WmapStatics {
-  public static final ArrayRef<VECTOR> locationModelTranslationVectors_800c74b8 = MEMORY.ref(4, 0x800c74b8L, ArrayRef.of(VECTOR.class, 0x101, 0x10, VECTOR::new));
-  public static final ArrayRef<ShortRef> locationsIndices_800c84c8 = MEMORY.ref(2, 0x800c84c8L, ArrayRef.of(ShortRef.class, 0x101, 2, ShortRef::new));
+  public static final Vector3f[] placePositionVectors_800c74b8 = new Vector3f[257];
+  static {
+    Arrays.setAll(placePositionVectors_800c74b8, i -> new Vector3f());
+  }
+  public static final int[] placeIndices_800c84c8 = new int[257];
 
   public static final ArrayRef<UvAdjustmentMetrics14> tmdUvAdjustmentMetrics_800eee48 = MEMORY.ref(4, 0x800eee48L, ArrayRef.of(UvAdjustmentMetrics14.class, 22, 20, UvAdjustmentMetrics14::new));
 
   // TODO Do some refactoring to remove these two statics
-  /** Only seems to use element at index 1, but not positive */
-  public static final ArrayRef<WmapLocationThumbnailMetrics08> locationThumbnailMetrics_800ef0cc = MEMORY.ref(2, 0x800ef0ccL, ArrayRef.of(WmapLocationThumbnailMetrics08.class, 7, 8, WmapLocationThumbnailMetrics08::new));
   public static final ArrayRef<WmapRectMetrics06> zoomUiMetrics_800ef104 = MEMORY.ref(1, 0x800ef104L, ArrayRef.of(WmapRectMetrics06.class, 7, 6, WmapRectMetrics06::new));
 
   public static final ArrayRef<ArrayRef<WmapRectMetrics04>> pathIntersectionSymbolMetrics_800ef170 = MEMORY.ref(1, 0x800ef170L, ArrayRef.of(ArrayRef.classFor(WmapRectMetrics04.class), 3, 12, ArrayRef.of(WmapRectMetrics04.class, 3, 4, WmapRectMetrics04::new)));

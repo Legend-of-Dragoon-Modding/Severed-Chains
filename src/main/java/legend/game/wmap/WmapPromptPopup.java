@@ -161,7 +161,7 @@ public class WmapPromptPopup {
     return this;
   }
 
-  public WmapPromptPopup setImage(final short clutX, final short clutY, final short vramX, final short vramY, final float posX, final float posY, final float w, final float h, final int u, final int v, final float brightness) {
+  public WmapPromptPopup setImage(final int clutX, final int clutY, final int vramX, final int vramY, final float posX, final float posY, final float w, final float h, final int u, final int v, final float brightness) {
     if(this.thumbnail != null && this.currentThumbnailBrightness != this.previousThumbnailBrightness) {
       this.thumbnail.delete();
       this.thumbnail = null;
