@@ -343,26 +343,26 @@ public class WMap extends EngineState {
 
   @Method(0x800c9004L)
   private void adjustWmapTriPrimitiveUvs(final TmdObjTable1c.Primitive primitive, final int colourMap) {
-    final UvAdjustmentMetrics14 metrics = tmdUvAdjustmentMetrics_800eee48.get(colourMap);
+    final UvAdjustmentMetrics14 metrics = tmdUvAdjustmentMetrics_800eee48[colourMap];
 
     //LAB_800c9024
     for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & metrics.clutMaskOn_04.get() | metrics.clutMaskOff_00.get()) + metrics.uvOffset_10.get());
-      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & metrics.tpageMaskOn_0c.get() | metrics.tpageMaskOff_08.get()) + metrics.uvOffset_10.get());
-      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + metrics.uvOffset_10.get());
+      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & metrics.clutMaskOn_04 | metrics.clutMaskOff_00) + metrics.uvOffset_10);
+      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & metrics.tpageMaskOn_0c | metrics.tpageMaskOff_08) + metrics.uvOffset_10);
+      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + metrics.uvOffset_10);
     }
   }
 
   @Method(0x800c9090L)
   private void adjustWmapQuadPrimitiveUvs(final TmdObjTable1c.Primitive primitive, final int colourMap) {
-    final UvAdjustmentMetrics14 metrics = tmdUvAdjustmentMetrics_800eee48.get(colourMap);
+    final UvAdjustmentMetrics14 metrics = tmdUvAdjustmentMetrics_800eee48[colourMap];
 
     //LAB_800c90b0
     for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & metrics.clutMaskOn_04.get() | metrics.clutMaskOff_00.get()) + metrics.uvOffset_10.get());
-      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & metrics.tpageMaskOn_0c.get() | metrics.tpageMaskOff_08.get()) + metrics.uvOffset_10.get());
-      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + metrics.uvOffset_10.get());
-      MathHelper.set(data, 0xc, 4,  MathHelper.get(data, 0xc, 4) + metrics.uvOffset_10.get());
+      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & metrics.clutMaskOn_04 | metrics.clutMaskOff_00) + metrics.uvOffset_10);
+      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & metrics.tpageMaskOn_0c | metrics.tpageMaskOff_08) + metrics.uvOffset_10);
+      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + metrics.uvOffset_10);
+      MathHelper.set(data, 0xc, 4,  MathHelper.get(data, 0xc, 4) + metrics.uvOffset_10);
     }
   }
 
@@ -2259,7 +2259,7 @@ public class WMap extends EngineState {
       //LAB_800d9180
       if(this.mapState_800c6798.continent_00 != Continent.ENDINESS) {
         //LAB_800d91cc
-        if(mapTerrainTmdIndices_800ef194.get(this.mapState_800c6798.continent_00.ordinal()).get() == i || mapFrameTmdIndices_800ef19c.get(this.mapState_800c6798.continent_00.ordinal()).get() == i) {
+        if(mapTerrainTmdIndices_800ef194[this.mapState_800c6798.continent_00.ordinal()] == i || mapFrameTmdIndices_800ef19c[this.mapState_800c6798.continent_00.ordinal()] == i) {
           zOffset_1f8003e8.set(500); // background models
         } else {
           //LAB_800d9204

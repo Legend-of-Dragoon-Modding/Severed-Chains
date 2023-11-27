@@ -24,15 +24,37 @@ public final class WmapStatics {
   }
   public static final int[] placeIndices_800c84c8 = new int[257];
 
-  public static final ArrayRef<UvAdjustmentMetrics14> tmdUvAdjustmentMetrics_800eee48 = MEMORY.ref(4, 0x800eee48L, ArrayRef.of(UvAdjustmentMetrics14.class, 22, 20, UvAdjustmentMetrics14::new));
+  public static final UvAdjustmentMetrics14[] tmdUvAdjustmentMetrics_800eee48 = {
+    new UvAdjustmentMetrics14(0x0,        0xffffffff, 0x0,      0xffffffff, 0x0),
+    new UvAdjustmentMetrics14(0x5c260000, 0x3c0ffff,  0x190000, 0xffe0ffff, 0x80),
+    new UvAdjustmentMetrics14(0x5c270000, 0x3c0ffff,  0x190000, 0xffe0ffff, 0xc0),
+    new UvAdjustmentMetrics14(0x7c240000, 0x3c0ffff,  0x190000, 0xffe0ffff, 0x8000),
+    new UvAdjustmentMetrics14(0x7c250000, 0x3c0ffff,  0x190000, 0xffe0ffff, 0x8040),
+    new UvAdjustmentMetrics14(0x7c260000, 0x3c0ffff,  0x190000, 0xffe0ffff, 0x8080),
+    new UvAdjustmentMetrics14(0x7c270000, 0x3c0ffff,  0x190000, 0xffe0ffff, 0x80c0),
+    new UvAdjustmentMetrics14(0x5c2a0000, 0x3c0ffff,  0x1a0000, 0xffe0ffff, 0x80),
+    new UvAdjustmentMetrics14(0x5c2b0000, 0x3c0ffff,  0x1a0000, 0xffe0ffff, 0xc0),
+    new UvAdjustmentMetrics14(0x7c280000, 0x3c0ffff,  0x1a0000, 0xffe0ffff, 0x8000),
+    new UvAdjustmentMetrics14(0x7c290000, 0x3c0ffff,  0x1a0000, 0xffe0ffff, 0x8040),
+    new UvAdjustmentMetrics14(0x7c2a0000, 0x3c0ffff,  0x1a0000, 0xffe0ffff, 0x8080),
+    new UvAdjustmentMetrics14(0x7c2b0000, 0x3c0ffff,  0x1a0000, 0xffe0ffff, 0x80c0),
+    new UvAdjustmentMetrics14(0x5c2e0000, 0x3c0ffff,  0x1b0000, 0xffe0ffff, 0x80),
+    new UvAdjustmentMetrics14(0x5c2f0000, 0x3c0ffff,  0x1b0000, 0xffe0ffff, 0xc0),
+    new UvAdjustmentMetrics14(0x5c2c0000, 0x3c0ffff,  0x1b0000, 0xffe0ffff, 0x0),
+    new UvAdjustmentMetrics14(0x5c2d0000, 0x3c0ffff,  0x1b0000, 0xffe0ffff, 0x40),
+    new UvAdjustmentMetrics14(0x5c3f0000, 0x3c0ffff,  0x1f0000, 0xffe0ffff, 0xc0),
+    new UvAdjustmentMetrics14(0x5c240000, 0x83c3ffff, 0x190000, 0xffe0ffff, 0x0),
+    new UvAdjustmentMetrics14(0x5c280000, 0x83c3ffff, 0x1a0000, 0xffe0ffff, 0x0),
+    new UvAdjustmentMetrics14(0x5c2e0000, 0x3c0ffff,  0x1b0000, 0xffe0ffff, 0x80),
+    new UvAdjustmentMetrics14(0x7c2c0000, 0x3c0ffff,  0x1b0000, 0xffe0ffff, 0x8000)
+  };
 
   // TODO Do some refactoring to remove these two statics
   public static final ArrayRef<WmapRectMetrics06> zoomUiMetrics_800ef104 = MEMORY.ref(1, 0x800ef104L, ArrayRef.of(WmapRectMetrics06.class, 7, 6, WmapRectMetrics06::new));
 
   public static final ArrayRef<ArrayRef<WmapRectMetrics04>> pathIntersectionSymbolMetrics_800ef170 = MEMORY.ref(1, 0x800ef170L, ArrayRef.of(ArrayRef.classFor(WmapRectMetrics04.class), 3, 12, ArrayRef.of(WmapRectMetrics04.class, 3, 4, WmapRectMetrics04::new)));
-  public static final ArrayRef<ByteRef> mapTerrainTmdIndices_800ef194 = MEMORY.ref(1, 0x800ef194L, ArrayRef.of(ByteRef.class, 7, 1, ByteRef::new));
-
-  public static final ArrayRef<ByteRef> mapFrameTmdIndices_800ef19c = MEMORY.ref(1, 0x800ef19cL, ArrayRef.of(ByteRef.class, 7, 1, ByteRef::new));
+  public static final int[] mapTerrainTmdIndices_800ef194 = {12, 6, 13, 8, 4, 3, 3};
+  public static final int[] mapFrameTmdIndices_800ef19c = {4, 9, 14, 9, 8, 5, 5};
 
   /** These are where the 3D map disappears towards when you fully zoom out */
   public static final Vector3i[] mapPositions_800ef1a8 = {

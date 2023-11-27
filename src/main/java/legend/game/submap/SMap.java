@@ -485,7 +485,28 @@ public class SMap extends EngineState {
 
   public static final ArrayRef<ShopStruct40> shops_800f4930 = MEMORY.ref(4, 0x800f4930L, ArrayRef.of(ShopStruct40.class, 64, 0x40, ShopStruct40::new));
 
-  private final ArrayRef<UvAdjustmentMetrics14> uvAdjustments_800f5930 = MEMORY.ref(4, 0x800f5930L, ArrayRef.of(UvAdjustmentMetrics14.class, 20, 0x14, UvAdjustmentMetrics14::new));
+  private final UvAdjustmentMetrics14[] uvAdjustments_800f5930 = {
+    new UvAdjustmentMetrics14(0x0,        0xffffffff, 0x0,      0xffffffff, 0x0),
+	  new UvAdjustmentMetrics14(0x5c260000, 0x3c0ffff,  0x190000, 0xffe0ffff, 0x80),
+	  new UvAdjustmentMetrics14(0x5c270000, 0x3c0ffff,  0x190000, 0xffe0ffff, 0xc0),
+	  new UvAdjustmentMetrics14(0x7c240000, 0x3c0ffff,  0x190000, 0xffe0ffff, 0x8000),
+	  new UvAdjustmentMetrics14(0x7c250000, 0x3c0ffff,  0x190000, 0xffe0ffff, 0x8040),
+	  new UvAdjustmentMetrics14(0x7c260000, 0x3c0ffff,  0x190000, 0xffe0ffff, 0x8080),
+	  new UvAdjustmentMetrics14(0x7c270000, 0x3c0ffff,  0x190000, 0xffe0ffff, 0x80c0),
+	  new UvAdjustmentMetrics14(0x5c2a0000, 0x3c0ffff,  0x1a0000, 0xffe0ffff, 0x80),
+	  new UvAdjustmentMetrics14(0x5c2b0000, 0x3c0ffff,  0x1a0000, 0xffe0ffff, 0xc0),
+	  new UvAdjustmentMetrics14(0x7c280000, 0x3c0ffff,  0x1a0000, 0xffe0ffff, 0x8000),
+	  new UvAdjustmentMetrics14(0x7c290000, 0x3c0ffff,  0x1a0000, 0xffe0ffff, 0x8040),
+	  new UvAdjustmentMetrics14(0x7c2a0000, 0x3c0ffff,  0x1a0000, 0xffe0ffff, 0x8080),
+	  new UvAdjustmentMetrics14(0x7c2b0000, 0x3c0ffff,  0x1a0000, 0xffe0ffff, 0x80c0),
+	  new UvAdjustmentMetrics14(0x5c2e0000, 0x3c0ffff,  0x1b0000, 0xffe0ffff, 0x80),
+	  new UvAdjustmentMetrics14(0x5c2f0000, 0x3c0ffff,  0x1b0000, 0xffe0ffff, 0xc0),
+	  new UvAdjustmentMetrics14(0x5c2c0000, 0x3c0ffff,  0x1b0000, 0xffe0ffff, 0x0),
+	  new UvAdjustmentMetrics14(0x5c2d0000, 0x3c0ffff,  0x1b0000, 0xffe0ffff, 0x40),
+	  new UvAdjustmentMetrics14(0x5c3f0000, 0x3c0ffff,  0x1f0000, 0xffe0ffff, 0xc0),
+	  new UvAdjustmentMetrics14(0x5c240000, 0x83c3ffff, 0x190000, 0xffe0ffff, 0x0),
+	  new UvAdjustmentMetrics14(0x5c280000, 0x83c3ffff, 0x1a0000, 0xffe0ffff, 0x0)
+  };
 
   /**
    * 65 - {@link SMap#handleAndRenderSubmapModel()}
@@ -1124,14 +1145,10 @@ public class SMap extends EngineState {
       final int header = primitive.header();
       final int id = header & 0xff04_0000;
 
-      if(id == 0x3400_0000 || id == 0x3600_0000) {
-        this.FUN_800da6c8(primitive, colourMap & 0x7f);
-      } else if(id == 0x3500_0000 || id == 0x3700_0000) {
-        this.FUN_800da7f4(primitive, colourMap & 0x7f);
-      } else if(id == 0x3c00_0000 || id == 0x3e00_0000) {
-        this.FUN_800da754(primitive, colourMap & 0x7f);
-      } else if(id == 0x3d00_0000 || id == 0x3f00_0000) {
-        this.FUN_800da880(primitive, colourMap & 0x7f);
+      if(id == 0x3400_0000 || id == 0x3600_0000 || id == 0x3500_0000 || id == 0x3700_0000) {
+        this.adjustWmapTriPrimitiveUvs(primitive, colourMap & 0x7f);
+      } else if(id == 0x3c00_0000 || id == 0x3e00_0000 || id == 0x3d00_0000 || id == 0x3f00_0000) {
+        this.adjustWmapQuadPrimitiveUvs(primitive, colourMap & 0x7f);
       }
     }
   }
@@ -1237,52 +1254,27 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800da6c8L)
-  private void FUN_800da6c8(final TmdObjTable1c.Primitive primitive, final int colourMap) {
-    final UvAdjustmentMetrics14 a3 = this.uvAdjustments_800f5930.get(colourMap);
+  private void adjustWmapTriPrimitiveUvs(final TmdObjTable1c.Primitive primitive, final int colourMap) {
+    final UvAdjustmentMetrics14 metrics = this.uvAdjustments_800f5930[colourMap];
 
     //LAB_800da6e8
     for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & a3.clutMaskOn_04.get() | a3.clutMaskOff_00.get()) + a3.uvOffset_10.get());
-      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & a3.tpageMaskOn_0c.get() | a3.tpageMaskOff_08.get()) + a3.uvOffset_10.get());
-      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + a3.uvOffset_10.get());
+      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & metrics.clutMaskOn_04 | metrics.clutMaskOff_00) + metrics.uvOffset_10);
+      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & metrics.tpageMaskOn_0c | metrics.tpageMaskOff_08) + metrics.uvOffset_10);
+      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + metrics.uvOffset_10);
     }
   }
 
   @Method(0x800da754L)
-  private void FUN_800da754(final TmdObjTable1c.Primitive primitive, final int colourMap) {
-    final UvAdjustmentMetrics14 a3 = this.uvAdjustments_800f5930.get(colourMap);
+  private void adjustWmapQuadPrimitiveUvs(final TmdObjTable1c.Primitive primitive, final int colourMap) {
+    final UvAdjustmentMetrics14 metrics = this.uvAdjustments_800f5930[colourMap];
 
     //LAB_800da774
     for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & a3.clutMaskOn_04.get() | a3.clutMaskOff_00.get()) + a3.uvOffset_10.get());
-      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & a3.tpageMaskOn_0c.get() | a3.tpageMaskOff_08.get()) + a3.uvOffset_10.get());
-      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + a3.uvOffset_10.get());
-      MathHelper.set(data, 0xc, 4,  MathHelper.get(data, 0xc, 4) + a3.uvOffset_10.get());
-    }
-  }
-
-  @Method(0x800da7f4L)
-  private void FUN_800da7f4(final TmdObjTable1c.Primitive primitive, final int colourMap) {
-    final UvAdjustmentMetrics14 a3 = this.uvAdjustments_800f5930.get(colourMap);
-
-    //LAB_800da814
-    for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & a3.clutMaskOn_04.get() | a3.clutMaskOff_00.get()) + a3.uvOffset_10.get());
-      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & a3.tpageMaskOn_0c.get() | a3.tpageMaskOff_08.get()) + a3.uvOffset_10.get());
-      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + a3.uvOffset_10.get());
-    }
-  }
-
-  @Method(0x800da880L)
-  private void FUN_800da880(final TmdObjTable1c.Primitive primitive, final int colourMap) {
-    final UvAdjustmentMetrics14 a3 = this.uvAdjustments_800f5930.get(colourMap);
-
-    //LAB_800da8a0
-    for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & a3.clutMaskOn_04.get() | a3.clutMaskOff_00.get()) + a3.uvOffset_10.get());
-      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & a3.tpageMaskOn_0c.get() | a3.tpageMaskOff_08.get()) + a3.uvOffset_10.get());
-      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + a3.uvOffset_10.get());
-      MathHelper.set(data, 0xc, 4,  MathHelper.get(data, 0xc, 4) + a3.uvOffset_10.get());
+      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & metrics.clutMaskOn_04 | metrics.clutMaskOff_00) + metrics.uvOffset_10);
+      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & metrics.tpageMaskOn_0c | metrics.tpageMaskOff_08) + metrics.uvOffset_10);
+      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + metrics.uvOffset_10);
+      MathHelper.set(data, 0xc, 4,  MathHelper.get(data, 0xc, 4) + metrics.uvOffset_10);
     }
   }
 
