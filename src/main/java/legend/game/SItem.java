@@ -11,7 +11,6 @@ import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
-import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
@@ -111,7 +110,7 @@ public final class SItem {
 
   public static final ArrayRef<ByteRef> _800fbca8 = MEMORY.ref(1, 0x800fbca8L, ArrayRef.of(ByteRef.class, 9, 1, ByteRef::new));
 
-  public static final ArrayRef<UnsignedIntRef> _800fbd08 = MEMORY.ref(4, 0x800fbd08L, ArrayRef.of(UnsignedIntRef.class, 10, 4, UnsignedIntRef::new));
+  public static final ArrayRef<IntRef> dragoonGoodsBits_800fbd08 = MEMORY.ref(4, 0x800fbd08L, ArrayRef.of(IntRef.class, 10, 4, IntRef::new));
   public static final ArrayRef<Pointer<ArrayRef<LevelStuff08>>> levelStuff_800fbd30 = MEMORY.ref(4, 0x800fbd30L, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(LevelStuff08.class)), 9, 4, Pointer.deferred(4, ArrayRef.of(LevelStuff08.class, 61, 8, LevelStuff08::new))));
   public static final ArrayRef<Pointer<ArrayRef<MagicStuff08>>> magicStuff_800fbd54 = MEMORY.ref(4, 0x800fbd54L, ArrayRef.of(Pointer.classFor(ArrayRef.classFor(MagicStuff08.class)), 9, 4, Pointer.deferred(4, ArrayRef.of(MagicStuff08.class, 6, 8, MagicStuff08::new))));
 
@@ -158,7 +157,7 @@ public final class SItem {
 
   public static final ArrayRef<Pointer<LodString>> additions_8011a064 = MEMORY.ref(4, 0x8011a064L, ArrayRef.of(Pointer.classFor(LodString.class), 43, 4, Pointer.deferred(4, LodString::new)));
 
-  public static final ArrayRef<Pointer<LodString>> _8011b75c = MEMORY.ref(4, 0x8011b75cL, ArrayRef.of(Pointer.classFor(LodString.class), 64, 4, Pointer.deferred(4, LodString::new)));
+  public static final ArrayRef<Pointer<LodString>> goodsDescriptions_8011b75c = MEMORY.ref(4, 0x8011b75cL, ArrayRef.of(Pointer.classFor(LodString.class), 64, 4, Pointer.deferred(4, LodString::new)));
 
   public static final ArrayRef<Pointer<LodString>> goodsItemNames_8011c008 = MEMORY.ref(4, 0x8011c008L, ArrayRef.of(Pointer.classFor(LodString.class), 64, 4, Pointer.deferred(4, LodString::new)));
   public static final ArrayRef<Pointer<LodString>> submapNames_8011c108 = MEMORY.ref(4, 0x8011c108L, ArrayRef.of(Pointer.classFor(LodString.class), 57, 4, Pointer.deferred(4, LodString::new)));
@@ -1614,12 +1613,12 @@ public final class SItem {
       //LAB_8011042c
       applyEquipmentStats(charId);
 
-      long v0 = _800fbd08.get(charId).get();
+      final int v0 = dragoonGoodsBits_800fbd08.get(charId).get();
       if((gameState_800babc8.goods_19c[0] & 0x1 << v0) != 0) {
         stats.flags_0c |= 0x2000;
 
-        if((gameState_800babc8.characterInitialized_4e6 >> v0 & 1) == 0) {
-          gameState_800babc8.characterInitialized_4e6 |= 1 << v0;
+        if((gameState_800babc8.characterInitialized_4e6 & 0x1 << v0) == 0) {
+          gameState_800babc8.characterInitialized_4e6 |= 0x1 << v0;
 
           stats.mp_06 = statsEvent.maxMp;
           stats.maxMp_6e = statsEvent.maxMp;
@@ -1632,25 +1631,21 @@ public final class SItem {
       }
 
       //LAB_801104f8
-      if(charId == 0) {
-        v0 = _800fbd08.get(9).get();
+      if(charId == 0 && (gameState_800babc8.goods_19c[0] & 0x1 << dragoonGoodsBits_800fbd08.get(9).get()) != 0) {
+        stats.flags_0c |= 0x6000;
 
-        if((gameState_800babc8.goods_19c[0] & 0x1 << v0) != 0) {
-          stats.flags_0c |= 0x6000;
+        stats.dlevel_0f = gameState_800babc8.charData_32c[0].dlevel_13;
 
-          stats.dlevel_0f = gameState_800babc8.charData_32c[0].dlevel_13;
+        final int a1 = dragoonGoodsBits_800fbd08.get(0).get();
 
-          final long a1 = _800fbd08.get(0).get();
-
-          if((gameState_800babc8.characterInitialized_4e6 >> a1 & 1) == 0) {
-            gameState_800babc8.characterInitialized_4e6 |= 1 << a1;
-            stats.mp_06 = statsEvent.maxMp;
-            stats.maxMp_6e = statsEvent.maxMp;
-          } else {
-            //LAB_80110590
-            stats.mp_06 = charData.mp_0a;
-            stats.maxMp_6e = magicStuff.mp_00.get();
-          }
+        if((gameState_800babc8.characterInitialized_4e6 & 0x1 << a1) == 0) {
+          gameState_800babc8.characterInitialized_4e6 |= 0x1 << a1;
+          stats.mp_06 = statsEvent.maxMp;
+          stats.maxMp_6e = statsEvent.maxMp;
+        } else {
+          //LAB_80110590
+          stats.mp_06 = charData.mp_0a;
+          stats.maxMp_6e = magicStuff.mp_00.get();
         }
       }
 
