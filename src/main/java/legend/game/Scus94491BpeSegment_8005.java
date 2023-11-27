@@ -56,6 +56,7 @@ public final class Scus94491BpeSegment_8005 {
   public static final LodString _80052c20 = MEMORY.ref(2, 0x80052c20L, LodString::new);
   public static final IntRef submapCut_80052c30 = MEMORY.ref(4, 0x80052c30L, IntRef::new);
   public static final IntRef submapScene_80052c34 = MEMORY.ref(4, 0x80052c34L, IntRef::new);
+  /** TODO This seems like it's set to a lot of different things, hopefully they're actually related. */
   public static final IntRef index_80052c38 = MEMORY.ref(4, 0x80052c38L, IntRef::new);
   public static final IntRef submapCut_80052c3c = MEMORY.ref(4, 0x80052c3cL, IntRef::new);
   /** Moved from SMAP since it's referenced unconditionally when saving the game */

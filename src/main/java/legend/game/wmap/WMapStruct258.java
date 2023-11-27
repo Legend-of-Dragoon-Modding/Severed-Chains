@@ -9,31 +9,73 @@ import legend.game.unpacker.FileData;
 import org.joml.Vector3f;
 
 public class WMapStruct258 {
-  public enum WmapActiveState {
-    ACTIVE,
-    TRANSITION_IN,
-    TRANSITION_OUT
+  public enum TransitionAnimationType {
+    NONE,
+    FADE_IN,
+    FADE_OUT
   }
-  public enum MapTransitionAnimationMode {
-    NO_ANIMATION,
+
+  public enum FadeState {
+    START_FADE,
+    FADE,
+    END_FADE
+  }
+
+  public enum MapTransitionDestinationType {
+    NONE,
     TELEPORT,
     SUBMAP,
     WORLD_MAP
   }
 
-  public int _00;
-  /** ubyte */
-  public int _04;
-  /** ubyte */
-  public WmapActiveState wmapState_05;
+  /**
+   * TODO Look more into zoom code before refactoring to use states, might be able
+   *  to reduce number.
+   */
+  public enum ZoomState {
+    LOCAL,
+    CONTINENT_IN,
+    TRANSITION_MODEL_OUT,
+    TRANSITION_ARROW_SIZE,
+    WORLD,
+    TRANSITION_MODEL_IN,
+    CONTINENT_OUT
+  }
+
+  public enum TeleportAnimationState {
+    INIT_ANIM,
+    RENDER_ANIM,
+    INIT_FADE,
+    FADE_OUT
+  }
+
+  public int transitionAnimationTicks_00;
+  /**
+   * ubyte
+   * <ol start="0">
+   *  <li>Start fade</li>
+   *  <li>Fade</li>
+   *  <li>End fade</li>
+   * </ol>
+   */
+  public FadeState fadeState_04;
+  /**
+   * ubyte
+   * <ol start="0">
+   *  <li>None</li>
+   *  <li>Fade in</li>
+   *  <li>Fade out</li>
+   * </ol>
+   */
+  public TransitionAnimationType transitionAnimationType_05;
 
   public WMapTmdRenderingStruct18 tmdRendering_08;
   public final Model124[] models_0c = new Model124[4];
   public TextureAnimation20 textureAnimation_1c;
-  /** short */
-  public float colour_20;
+  /** Used for brightness of the map name and the map textures overall (short) */
+  public float mapTextureBrightness_20;
 
-  public MeshObj mapOverlayObj;
+  public MeshObj mapContinentNameObj;
   public MeshObj[] zoomOverlayObjs = new MeshObj[7];
   public final MV mapOverlayTransforms = new MV();
 
@@ -58,14 +100,18 @@ public class WMapStruct258 {
   public Obj shadowObj;
   public final MV shadowTransforms = new MV();
   public int modelIndex_1e4;
-  public final Vector3f svec_1e8 = new Vector3f();
-  public final Vector3f svec_1f0 = new Vector3f();
+
+  // Zoom attributes
+  public final Vector3f mapPosition_1e8 = new Vector3f();
+  public final Vector3f mapZoomStep_1f0 = new Vector3f();
   /** ubyte */
   public int zoomState_1f8;
   /** Not in retail */
   public int previousZoomLevel;
   /** ubyte */
-  public int _1f9;
+  public int zoomAnimationTick_1f9;
+
+  // Coolon attributes
   /** Highlight refactored into WmapPromptPopup */
   // public WmapMenuTextHighlight40 coolonTravelMenuSelectorHighlight_1fc;
   public final Vector3f svec_200 = new Vector3f();
@@ -83,10 +129,10 @@ public class WMapStruct258 {
   /** ubyte */
   public int coolonWarpIndex_222;
   /** ubyte */
-  public int _223;
+  public int coolonPromptIndex_223;
 
 
-  // _224 through _248 are used for rendering the Queen Fury's wake, though they are
+  // _224 through _244 are used for rendering the Queen Fury's wake, though they are
   // initialized regardless.
   public Vector3f[] wakeSpreadsArray_224;
   public Vector3f[] shipPositionsArray_228;
@@ -98,9 +144,9 @@ public class WMapStruct258 {
   public int tickNum_240;
   /** byte */
   public boolean shipPositionsUninitialized_244;
-  public int _248;
+  public TeleportAnimationState teleportAnimationState_248;
 
-  public int _24c;
+  public int teleportAnimationTick_24c;
   /**
    * Not totally sure what this should be called yet, but seems related to transitions
    * and transition animations (except combat).
@@ -111,7 +157,7 @@ public class WMapStruct258 {
    *   <li>Transition to world map</li>
    * </ol>
    */
-  public MapTransitionAnimationMode mapTransitionAnimationMode_250;
+  public MapTransitionDestinationType mapTransitionDestinationType_250;
   public boolean usingCoolonFromZenebatos_254;
 
   public void deleteAtmosphericEffectObjs() {
