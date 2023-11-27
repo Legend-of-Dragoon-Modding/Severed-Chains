@@ -6615,6 +6615,8 @@ public class SMap extends EngineState {
     //LAB_800ede14
     switch(this.submapModelLoadingStage_800f9e5a + 1) {
       case 0x0 -> {
+        this.submapModel_800d4bf8.deleteModelParts();
+
         this._800d4bd0 = null;
         this._800d4bd4 = null;
 
@@ -6729,6 +6731,10 @@ public class SMap extends EngineState {
         this.submapModel_800d4bf8.colourMap_9d = 0x91;
 
         initModel(this.submapModel_800d4bf8, this.submapCutModel, this.submapCutAnim);
+
+        for(int i = 0; i < this.submapModel_800d4bf8.modelParts_00.length; i++) {
+          this.submapModel_800d4bf8.modelParts_00[i].obj = TmdObjLoader.fromObjTable("Submap model part " + i, this.submapModel_800d4bf8.modelParts_00[i].tmd_08);
+        }
 
         if(submapCut_80052c30.get() == 673) { // End cutscene
           this.FUN_800eef6c(this._800d6b48, this._800d4bd4, this._800d4bd0);
@@ -7089,7 +7095,9 @@ public class SMap extends EngineState {
     final MV lw = new MV();
 
     //LAB_800eee94
-    for(final ModelPart10 dobj2 : model.modelParts_00) {
+    for(int i = 0; i < model.modelParts_00.length; i++) {
+      final ModelPart10 dobj2 = model.modelParts_00[i];
+
       GsGetLw(dobj2.coord2_04, lw);
       GsSetLightMatrix(lw);
 
@@ -7097,6 +7105,12 @@ public class SMap extends EngineState {
       GTE.setTransforms(matrix);
       renderDobj2(dobj2);
       PopMatrix();
+
+      RENDERER.queueModel(dobj2.obj, lw)
+        .screenspaceOffset(this.screenOffsetX_800cb568 + 8, -this.screenOffsetY_800cb56c)
+        .lightDirection(lightDirectionMatrix_800c34e8)
+        .lightColour(lightColourMatrix_800c3508)
+        .backgroundColour(GTE.backgroundColour);
     }
 
     //LAB_800eef0c
