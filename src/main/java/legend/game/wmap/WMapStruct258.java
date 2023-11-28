@@ -76,7 +76,7 @@ public class WMapStruct258 {
   public float mapTextureBrightness_20;
 
   public MeshObj mapContinentNameObj;
-  public MeshObj[] zoomOverlayObjs = new MeshObj[7];
+  public ZoomOverlay zoomOverlay = new ZoomOverlay();
   public final MV mapOverlayTransforms = new MV();
 
   public MapMarker mapArrow;
@@ -106,8 +106,6 @@ public class WMapStruct258 {
   public final Vector3f mapZoomStep_1f0 = new Vector3f();
   /** ubyte */
   public int zoomState_1f8;
-  /** Not in retail */
-  public int previousZoomLevel;
   /** ubyte */
   public int zoomAnimationTick_1f9;
 

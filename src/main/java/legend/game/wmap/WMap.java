@@ -155,7 +155,6 @@ import static legend.game.wmap.WmapStatics.teleportationLocations_800ef6c8;
 import static legend.game.wmap.WmapStatics.tmdUvAdjustmentMetrics_800eee48;
 import static legend.game.wmap.WmapStatics.waterClutYs_800ef348;
 import static legend.game.wmap.WmapStatics.wmapDestinationMarkers_800f5a6c;
-import static legend.game.wmap.WmapStatics.zoomUiMetrics_800ef104;
 
 public class WMap extends EngineState {
   private int tickMainMenuOpenTransition_800c6690;
@@ -846,13 +845,6 @@ public class WMap extends EngineState {
       this.mcqObj = null;
     }
 
-    for(int i = 0; i < this.wmapStruct258_800c66a8.zoomOverlayObjs.length; i++) {
-      if(this.wmapStruct258_800c66a8.zoomOverlayObjs[i] != null) {
-        this.wmapStruct258_800c66a8.zoomOverlayObjs[i].delete();
-        this.wmapStruct258_800c66a8.zoomOverlayObjs[i] = null;
-      }
-    }
-
     this.coolonQueenFuryOverlay.deallocate();
     this.coolonQueenFuryOverlay = null;
 
@@ -877,6 +869,7 @@ public class WMap extends EngineState {
     this.unloadWmapPlayerModels();
     this.wmapStruct258_800c66a8.deleteMapMarkers();
     this.deallocateAtmosphericEffect();
+    this.wmapStruct258_800c66a8.zoomOverlay.delete();
     this.deallocateSmoke();
     textZ_800bdf00.set(13);
 
@@ -2003,56 +1996,20 @@ public class WMap extends EngineState {
       default -> 0;
     };
 
-    if(currentZoomLevel != this.wmapStruct258_800c66a8.previousZoomLevel) {
-      for(int i = 2; i < 5; i++) {
-        if(this.wmapStruct258_800c66a8.zoomOverlayObjs[i] != null) {
-          this.wmapStruct258_800c66a8.zoomOverlayObjs[i].delete();
-          this.wmapStruct258_800c66a8.zoomOverlayObjs[i] = null;
-        }
-      }
-
-      this.wmapStruct258_800c66a8.previousZoomLevel = currentZoomLevel;
-    }
-
     //LAB_800d6c10
     //LAB_800d6c14
-    for(int i = 6; i >= 0; i--) {
-      //LAB_800d6c30
-      //LAB_800d6d14
-      if(this.wmapStruct258_800c66a8.zoomOverlayObjs[i] == null) {
-        final QuadBuilder builder = new QuadBuilder("ZoomOverlay (obj " + i + ')')
-          .bpp(Bpp.BITS_4)
-          .clut(640, i < 5 ? 502 : 503)
-          .vramPos(640, 256);
+    for(int i = 4; i >= 0; i--) {
+      final RenderEngine.QueuedModel model = RENDERER.queueOrthoOverlayModel(this.wmapStruct258_800c66a8.zoomOverlay.overlayOpaque)
+        .vertices(i * 4, 4);
 
-        if(i < 2) {
-          builder.translucency(Translucency.HALF_B_PLUS_HALF_F);
-        }
-
-        //LAB_800d6d44
-        //LAB_800d6d84
-        //LAB_800d6da8
-        if(i < 2 || i >= 5) {
-          //LAB_800d6f34
-          builder.monochrome(0.5f);
-        } else if(i == currentZoomLevel) {
-          builder.monochrome(1.0f);
-        } else {
-          //LAB_800d6ec0
-          builder.monochrome(0.25f);
-        }
-
-        //LAB_800d6f2c
-        //LAB_800d6fa0
-        builder
-          .pos(GPU.getOffsetX() + zoomUiMetrics_800ef104.get(i).x_00.get() + 88.0f, GPU.getOffsetY() + zoomUiMetrics_800ef104.get(i).y_01.get() - 96.0f, 80.0f)
-          .size(zoomUiMetrics_800ef104.get(i).w_04.get(), zoomUiMetrics_800ef104.get(i).h_05.get())
-          .uv(zoomUiMetrics_800ef104.get(i).u_02.get(), zoomUiMetrics_800ef104.get(i).v_03.get());
-
-        this.wmapStruct258_800c66a8.zoomOverlayObjs[i] = builder.build();
+      if(i + 2 == currentZoomLevel) {
+        model.monochrome(4.0f);
       }
+    }
 
-      RENDERER.queueOrthoOverlayModel(this.wmapStruct258_800c66a8.zoomOverlayObjs[i]);
+    for(int i = 1; i >= 0; i--) {
+      RENDERER.queueOrthoOverlayModel(this.wmapStruct258_800c66a8.zoomOverlay.overlayTranslucent)
+        .vertices(i * 4, 4);
     }
     //LAB_800d71f4
   }
@@ -2206,7 +2163,6 @@ public class WMap extends EngineState {
     this.loadMapModelAndTexture(this.mapState_800c6798.continent_00.ordinal());
 
     this.wmapStruct258_800c66a8.zoomState_1f8 = 0;
-    this.wmapStruct258_800c66a8.previousZoomLevel = 2;
     this.wmapStruct258_800c66a8._220 = 0;
   }
 
