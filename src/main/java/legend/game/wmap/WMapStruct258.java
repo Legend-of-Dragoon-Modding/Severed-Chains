@@ -85,7 +85,7 @@ public class WMapStruct258 {
   public WMapAtmosphericEffectInstance60[] atmosphericEffectInstances_24;
   public MeshObj[] atmosphericEffectSprites;
 
-  public float clutYIndex_28;
+  public int clutYIndex_28;
   public FileData imageData_2c;
   public FileData imageData_30;
   /** Used as the camera position, only translation is used */

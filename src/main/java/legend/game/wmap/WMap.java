@@ -2165,7 +2165,7 @@ public class WMap extends EngineState {
   private void initMapAnimation() {
     final RECT size = new RECT((short)448, (short)0, (short)64, (short)64);
     this.wmapStruct258_800c66a8.textureAnimation_1c = this.prepareAnimationStruct(size, 0, 3, 1);
-    this.wmapStruct258_800c66a8.clutYIndex_28 = 0.0f;
+    this.wmapStruct258_800c66a8.clutYIndex_28 = 0;
 
     if(this.mapState_800c6798.continent_00 == Continent.TIBEROA) {
       //LAB_800d8f94
@@ -2241,7 +2241,7 @@ public class WMap extends EngineState {
       final RenderEngine.QueuedModel model = RENDERER.queueModel(dobj2.obj, lw);
 
       if(this.mapState_800c6798.continent_00.ordinal() < 9 && i == 0) {
-        model.clutOverride(1008, waterClutYs_800ef348.get((int)this.wmapStruct258_800c66a8.clutYIndex_28).get());
+        model.clutOverride(1008, waterClutYs_800ef348[this.wmapStruct258_800c66a8.clutYIndex_28]);
       }
 
       //LAB_800d93d4
@@ -2253,10 +2253,10 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d945c
-    this.wmapStruct258_800c66a8.clutYIndex_28 += 1.0f / (3.0f / vsyncMode_8007a3b8);
+    this.wmapStruct258_800c66a8.clutYIndex_28 += (int)(1.0f / (3.0f / vsyncMode_8007a3b8));
 
-    if(this.wmapStruct258_800c66a8.clutYIndex_28 >= 14.0f) {
-      this.wmapStruct258_800c66a8.clutYIndex_28 = 0.0f;
+    if(this.wmapStruct258_800c66a8.clutYIndex_28 >= 14) {
+      this.wmapStruct258_800c66a8.clutYIndex_28 = 0;
     }
 
     //LAB_800d94b8
@@ -3441,7 +3441,7 @@ public class WMap extends EngineState {
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
           .bpp(Bpp.BITS_4)
           .translucent(Translucency.B_PLUS_F)
-          .clut(1008, waterClutYs_800ef348.get((int)struct.clutYIndex_28).get())
+          .clut(1008, waterClutYs_800ef348[struct.clutYIndex_28])
           .vramPos(448, 0)
           .rgb(0, r0, g0, b0)
           .rgb(1, r1, g1, b1)
@@ -3468,7 +3468,7 @@ public class WMap extends EngineState {
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
           .bpp(Bpp.BITS_4)
           .translucent(Translucency.B_PLUS_F)
-          .clut(1008, waterClutYs_800ef348.get((int)struct.clutYIndex_28).get())
+          .clut(1008, waterClutYs_800ef348[struct.clutYIndex_28])
           .vramPos(448, 0)
           .rgb(0, r0, g0, b0)
           .rgb(1, r1, g1, b1)
@@ -3646,18 +3646,17 @@ public class WMap extends EngineState {
       } else {
         //LAB_800e38dc
         final int rand = simpleRand() % 100;
-
         if(rand < 35) {
-          encounterId_800bb0f8.set(encounterIds_800ef364.get(encounterIndex).get(0).get());
+          encounterId_800bb0f8.set(encounterIds_800ef364[encounterIndex][0]);
           //LAB_800e396c
         } else if(rand < 70) {
-          encounterId_800bb0f8.set(encounterIds_800ef364.get(encounterIndex).get(1).get());
+          encounterId_800bb0f8.set(encounterIds_800ef364[encounterIndex][1]);
           //LAB_800e39c0
         } else if(rand < 90) {
-          encounterId_800bb0f8.set(encounterIds_800ef364.get(encounterIndex).get(2).get());
+          encounterId_800bb0f8.set(encounterIds_800ef364[encounterIndex][2]);
         } else {
           //LAB_800e3a14
-          encounterId_800bb0f8.set(encounterIds_800ef364.get(encounterIndex).get(3).get());
+          encounterId_800bb0f8.set(encounterIds_800ef364[encounterIndex][3]);
         }
       }
 
