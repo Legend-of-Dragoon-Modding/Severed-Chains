@@ -49,9 +49,6 @@ public final class WmapStatics {
     new UvAdjustmentMetrics14(0x7c2c0000, 0x3c0ffff,  0x1b0000, 0xffe0ffff, 0x8000)
   };
 
-  // TODO Do some refactoring to remove these two statics
-
-  public static final ArrayRef<ArrayRef<WmapRectMetrics04>> pathIntersectionSymbolMetrics_800ef170 = MEMORY.ref(1, 0x800ef170L, ArrayRef.of(ArrayRef.classFor(WmapRectMetrics04.class), 3, 12, ArrayRef.of(WmapRectMetrics04.class, 3, 4, WmapRectMetrics04::new)));
   public static final int[] mapTerrainTmdIndices_800ef194 = {12, 6, 13, 8, 4, 3, 3};
   public static final int[] mapFrameTmdIndices_800ef19c = {4, 9, 14, 9, 8, 5, 5};
 

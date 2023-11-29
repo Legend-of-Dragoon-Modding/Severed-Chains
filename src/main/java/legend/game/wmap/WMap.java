@@ -141,7 +141,6 @@ import static legend.game.wmap.WmapStatics.mapPositions_800ef1a8;
 import static legend.game.wmap.WmapStatics.mapTerrainTmdIndices_800ef194;
 import static legend.game.wmap.WmapStatics.negativeDirectionMovementMask_800f0210;
 import static legend.game.wmap.WmapStatics.pathDotPosArr_800f591c;
-import static legend.game.wmap.WmapStatics.pathIntersectionSymbolMetrics_800ef170;
 import static legend.game.wmap.WmapStatics.pathSegmentLengths_800f5810;
 import static legend.game.wmap.WmapStatics.placeIndices_800c84c8;
 import static legend.game.wmap.WmapStatics.placePositionVectors_800c74b8;
@@ -738,6 +737,7 @@ public class WMap extends EngineState {
     this.coolonQueenFuryOverlay = new CoolonQueenFuryOverlay();
     this.initCoolonMovePrompt();
     this.initMapMarkers();
+    this.wmapStruct258_800c66a8.zoomOverlay = new ZoomOverlay();
 
     if(this.mapState_800c6798.continent_00.ordinal() < Continent.ILLISA_BAY.ordinal()) { // South Serdio, North Serdio, Tiberoa
       loadLocationMenuSoundEffects(1);
@@ -848,17 +848,7 @@ public class WMap extends EngineState {
     this.coolonQueenFuryOverlay.deallocate();
     this.coolonQueenFuryOverlay = null;
 
-    for(int intersectionSymbolIndex = 0; intersectionSymbolIndex < 3; intersectionSymbolIndex++) {
-      for(int intersectionStateIndex = 0; intersectionStateIndex < 3; intersectionStateIndex++) {
-        if(this.mapState_800c6798.pathBigDotObjs[intersectionSymbolIndex][intersectionStateIndex] != null) {
-          this.mapState_800c6798.pathBigDotObjs[intersectionSymbolIndex][intersectionStateIndex].delete();
-          this.mapState_800c6798.pathBigDotObjs[intersectionSymbolIndex][intersectionStateIndex] = null;
-        }
-      }
-    }
-
-    this.mapState_800c6798.pathSmallDotObj.delete();
-    this.mapState_800c6798.pathSmallDotObj = null;
+    this.mapState_800c6798.pathDots.delete();
 
     if(this.coolonPromptPopup != null) {
       this.coolonPromptPopup.deallocate();
@@ -2032,25 +2022,14 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d7b00
-    final int intersectionSymbolIndex;
-    if(zoomState == 1 || zoomState == 6) {
-      //LAB_800d7b64
-      intersectionSymbolIndex = 1;
-    } else if(zoomState == 0) {
-      //LAB_800d7b58
-      intersectionSymbolIndex = 0;
-      //LAB_800d7b38
-    } else if(zoomState == 4) { // world map
-      //LAB_800d7b74
-      intersectionSymbolIndex = 2;
-    } else {
-      intersectionSymbolIndex = 0; //TODO this was uninitialized in the code
-    }
+    //LAB_800d7b64
+    //LAB_800d7b58
+    //LAB_800d7b38
 
     final Vector3f intersectionPoint = new Vector3f();
 
     //LAB_800d7b84
-    final int intersectionStateIndex = (int)(tickCount_800bb0fc.get() / 5 / (3.0f / vsyncMode_8007a3b8) % 3);
+    final int bigDotStateIndex = (int)(tickCount_800bb0fc.get() / 5 / (3.0f / vsyncMode_8007a3b8) % 3);
 
     final float x = this.wmapStruct258_800c66a8.coord2_34.coord.transfer.x;
     final float y = this.wmapStruct258_800c66a8.coord2_34.coord.transfer.y;
@@ -2063,29 +2042,32 @@ public class WMap extends EngineState {
     GsGetLws(this.wmapStruct258_800c66a8.tmdRendering_08.coord2s_04[0], lw, ls);
     GTE.setTransforms(ls);
 
-    final MV transforms = new MV();
-
     //LAB_800d7d6c
     for(int i = 0; i < this.mapState_800c6798.locationCount_08; i++) {
       //LAB_800d7d90
       if(this.checkLocationIsValidAndOptionallySetPathStart(i, 1, intersectionPoint) == 0) {
         //LAB_800d7db4
         if(this.mapState_800c6798.continent_00 != Continent.ENDINESS || i == 31 || i == 78) {
-          transforms.set(lw)
-            .rotateLocalX(-MathHelper.PI / 2.0f)
-            .scale(0.5f);
-          transforms.transfer.add(intersectionPoint).y -= 1.0f;
+          this.mapState_800c6798.pathDots.transforms.set(lw)
+            .rotateLocalX(-MathHelper.PI / 2.0f);
+          if(zoomState == 0) {
+            this.mapState_800c6798.pathDots.transforms.scale(0.5f);
+          } else {
+            this.mapState_800c6798.pathDots.transforms.scale(0.25f);
+          }
+          this.mapState_800c6798.pathDots.transforms.transfer.add(intersectionPoint).y -= 1.0f;
 
-          final RenderEngine.QueuedModel model = RENDERER.queueModel(this.mapState_800c6798.pathBigDotObjs[intersectionSymbolIndex][intersectionStateIndex], transforms);
+          final RenderEngine.QueuedModel model = RENDERER.queueModel(this.mapState_800c6798.pathDots.bigDots, this.mapState_800c6798.pathDots.transforms)
+            .vertices(bigDotStateIndex * 4, 4);
 
           //LAB_800d7df0
           if(this.wmapStruct258_800c66a8.zoomState_1f8 == 0) {
             final float dx = x - intersectionPoint.x;
             final float dy = y - intersectionPoint.y;
             final float dz = z - intersectionPoint.z;
-            final float sp90 = Math.max(0, 0x200 - Math.sqrt(dx * dx + dy * dy + dz * dz)) / 2;
+            final float baseColour = Math.max(0, 0x200 - Math.sqrt(dx * dx + dy * dy + dz * dz)) / 2;
 
-            model.colour(sp90 * 31 / 256 / 64.0f, sp90 * 63 / 256 / 64.0f, 0.0f);
+            model.colour(baseColour * 31 / 256 / 64.0f, baseColour * 63 / 256 / 64.0f, 0.0f);
           } else {
             //LAB_800d8048
             model.colour(31 / 64.0f, 63 / 64.0f, 0.0f);
@@ -2128,21 +2110,21 @@ public class WMap extends EngineState {
                 pathPoint = dots[pathPointIndexBase - pathPointIndex];
               }
 
-              transforms.set(lw)
+              this.mapState_800c6798.pathDots.transforms.set(lw)
                 .rotateLocalX(-MathHelper.PI / 2.0f)
                 .scale(0.25f);
-              transforms.transfer.add(pathPoint.x, pathPoint.y, pathPoint.z).y -= 1.0f;
+              this.mapState_800c6798.pathDots.transforms.transfer.add(pathPoint.x, pathPoint.y, pathPoint.z).y -= 1.0f;
 
-              final RenderEngine.QueuedModel model = RENDERER.queueModel(this.mapState_800c6798.pathSmallDotObj, transforms);
+              final RenderEngine.QueuedModel model = RENDERER.queueModel(this.mapState_800c6798.pathDots.smallDots, this.mapState_800c6798.pathDots.transforms);
 
               //LAB_800d87fc
               if(zoomState == 0) {
                 final float dx = x - pathPoint.x;
                 final float dy = y - pathPoint.y;
                 final float dz = z - pathPoint.z;
-                final float sp90 = Math.max(0, 0x200 - Math.sqrt(dx * dx + dy * dy + dz * dz)) / 2.0f;
+                final float baseColour = Math.max(0, 0x200 - Math.sqrt(dx * dx + dy * dy + dz * dz)) / 2.0f;
 
-                model.colour(sp90 * 47 / 256 / 64.0f, sp90 * 39 / 256 / 64.0f, 0.0f);
+                model.colour(baseColour * 47 / 256 / 64.0f, baseColour * 39 / 256 / 64.0f, 0.0f);
               } else {
                 //LAB_800d8b40
                 model.colour(0x2f / 64.0f, 0x27 / 64.0f, 0.0f);
@@ -4647,34 +4629,7 @@ public class WMap extends EngineState {
       locationIndex = 5;
     }
 
-    for(int intersectionSymbolIndex = 0; intersectionSymbolIndex < 3; intersectionSymbolIndex++) {
-      for(int intersectionStateIndex = 0; intersectionStateIndex < 3; intersectionStateIndex++) {
-        final int u = pathIntersectionSymbolMetrics_800ef170.get(intersectionSymbolIndex).get(intersectionStateIndex).u_00.get();
-        final int v = pathIntersectionSymbolMetrics_800ef170.get(intersectionSymbolIndex).get(intersectionStateIndex).v_01.get();
-        final int w = pathIntersectionSymbolMetrics_800ef170.get(intersectionSymbolIndex).get(intersectionStateIndex).w_02.get();
-        final int h = pathIntersectionSymbolMetrics_800ef170.get(intersectionSymbolIndex).get(intersectionStateIndex).h_03.get();
-
-        this.mapState_800c6798.pathBigDotObjs[intersectionSymbolIndex][intersectionStateIndex] = new QuadBuilder("PathBigDot")
-          .bpp(Bpp.BITS_4)
-          .translucency(Translucency.B_PLUS_F)
-          .clut(640, 496)
-          .vramPos(640, 256)
-          .pos(-w / 2.0f, -h / 2.0f, 0.0f)
-          .size(w, h)
-          .uv(u, v)
-          .build();
-      }
-    }
-
-    this.mapState_800c6798.pathSmallDotObj = new QuadBuilder("PathSmallDot")
-      .bpp(Bpp.BITS_4)
-      .translucency(Translucency.B_PLUS_F)
-      .clut(640, 496)
-      .vramPos(640, 256)
-      .pos(-8.0f, -8.0f, 0.0f)
-      .size(16.0f, 16.0f)
-      .uv(48.0f, 0.0f)
-      .build();
+    this.mapState_800c6798.pathDots = new PathDots();
 
     //LAB_800e7cb8
     //LAB_800e7cbc

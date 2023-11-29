@@ -26,11 +26,12 @@ public class ZoomOverlay {
     final QuadBuilder builderOpaque = new QuadBuilder("ZoomOverlayOpaque");
     int i = 0;
     for(; i < 2; i++) {
-      builderTranslucent.add()
+      builderTranslucent
+        .add()
         .bpp(Bpp.BITS_4)
         .clut(640, 502)
         .vramPos(640, 256)
-        .pos(GPU.getOffsetX() + zoomUiMetrics_800ef104[i].x_00 + 48.0f, GPU.getOffsetY() + zoomUiMetrics_800ef104[i].y_01 - 96.0f, 80.0f)
+        .pos(GPU.getOffsetX() + zoomUiMetrics_800ef104[i].x_00 + 88.0f, GPU.getOffsetY() + zoomUiMetrics_800ef104[i].y_01 - 96.0f, 80.0f)
         .size(zoomUiMetrics_800ef104[i].w_04, zoomUiMetrics_800ef104[i].h_05)
         .uv(zoomUiMetrics_800ef104[i].u_02, zoomUiMetrics_800ef104[i].v_03)
         .translucency(Translucency.HALF_B_PLUS_HALF_F)
@@ -38,11 +39,12 @@ public class ZoomOverlay {
     }
 
     for(; i < 7; i++) {
-      builderOpaque.add()
+      builderOpaque
+        .add()
         .bpp(Bpp.BITS_4)
         .clut(640, i < 5 ? 502 : 503)
         .vramPos(640, 256)
-        .pos(GPU.getOffsetX() + zoomUiMetrics_800ef104[i].x_00 + 48.0f, GPU.getOffsetY() + zoomUiMetrics_800ef104[i].y_01 - 96.0f, 80.0f)
+        .pos(GPU.getOffsetX() + zoomUiMetrics_800ef104[i].x_00 + 88.0f, GPU.getOffsetY() + zoomUiMetrics_800ef104[i].y_01 - 96.0f, 80.0f)
         .size(zoomUiMetrics_800ef104[i].w_04, zoomUiMetrics_800ef104[i].h_05)
         .uv(zoomUiMetrics_800ef104[i].u_02, zoomUiMetrics_800ef104[i].v_03);
 
