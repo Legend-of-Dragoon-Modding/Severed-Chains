@@ -3023,7 +3023,7 @@ public class WMap extends EngineState {
       this.wmapStruct258_800c66a8.models_0c[i] = new Model124("Player " + i);
       final int finalI = i;
       loadDrgnDir(0, 5714 + i, files -> this.loadPlayerAvatarModelFiles(files, finalI));
-      this.wmapStruct258_800c66a8.models_0c[i].colourMap_9d = playerAvatarColourMapOffsets_800ef694.get(i).get() + 0x80;
+      this.wmapStruct258_800c66a8.models_0c[i].colourMap_9d = playerAvatarColourMapOffsets_800ef694[i] + 0x80;
     }
 
     //LAB_800dfbb4
