@@ -1,35 +1,18 @@
 package legend.game.wmap;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.IntRef;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnsignedShortRef;
+public class WMapDestinationMarker2c{
+  public final int packedFlag_00;
 
-public class WMapDestinationMarker2c implements MemoryRef {
-  private final Value ref;
+  public final int[] flags_04;
+  public final int x_24;
+  public final int y_26;
+  public final int placeIndex_28;
 
-  public final ShortRef packedFlag_00;
-
-  public final ArrayRef<IntRef> flags_04;
-  public final ShortRef x_24;
-  public final ShortRef y_26;
-  public final UnsignedShortRef placeIndex_28;
-
-  public WMapDestinationMarker2c(final Value ref) {
-    this.ref = ref;
-
-    this.packedFlag_00 = ref.offset(2, 0x00L).cast(ShortRef::new);
-
-    this.flags_04 = ref.offset(4, 0x04L).cast(ArrayRef.of(IntRef.class, 8, 4, IntRef::new));
-    this.x_24 = ref.offset(2, 0x24L).cast(ShortRef::new);
-    this.y_26 = ref.offset(2, 0x26L).cast(ShortRef::new);
-    this.placeIndex_28 = ref.offset(2, 0x28L).cast(UnsignedShortRef::new);
-  }
-
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+  public WMapDestinationMarker2c(final int packedFlag, final int[] flags, final int x, final int y, final int placeIndex) {
+    this.packedFlag_00 = packedFlag;
+    this.flags_04 = flags;
+    this.x_24 = x;
+    this.y_26 = y;
+    this.placeIndex_28 = placeIndex;
   }
 }

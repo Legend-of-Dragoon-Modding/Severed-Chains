@@ -1399,7 +1399,7 @@ public class WMap extends EngineState {
       //LAB_800d44d8
       for(int i = 0; i < 49; i++) {
         //LAB_800d4518
-        if(gameState_800babc8.scriptFlags2_bc.get(wmapDestinationMarkers_800f5a6c.get(i).packedFlag_00.get())) {
+        if(gameState_800babc8.scriptFlags2_bc.get(wmapDestinationMarkers_800f5a6c[i].packedFlag_00)) {
           //LAB_800d45cc
           destinationIndex = i;
         }
@@ -1410,18 +1410,18 @@ public class WMap extends EngineState {
       if(destinationIndex != 0) {
         //LAB_800d4608
         // Destination arrow on map
-        x = GPU.getOffsetX() + wmapDestinationMarkers_800f5a6c.get(destinationIndex).x_24.get() - 160;
-        y = GPU.getOffsetY() + wmapDestinationMarkers_800f5a6c.get(destinationIndex).y_26.get() - 120;
+        x = GPU.getOffsetX() + wmapDestinationMarkers_800f5a6c[destinationIndex].x_24 - 160;
+        y = GPU.getOffsetY() + wmapDestinationMarkers_800f5a6c[destinationIndex].y_26 - 120;
         struct.mapArrow.render(u, 1, x, y, 100.0f);
 
-        if(!places_800f0234.get(wmapDestinationMarkers_800f5a6c.get(destinationIndex).placeIndex_28.get()).name_00.isNull()) {
+        if(!places_800f0234.get(wmapDestinationMarkers_800f5a6c[destinationIndex].placeIndex_28).name_00.isNull()) {
           //LAB_800d4878
-          final int textboxX = wmapDestinationMarkers_800f5a6c.get(destinationIndex).x_24.get();
-          final int textboxY = wmapDestinationMarkers_800f5a6c.get(destinationIndex).y_26.get() - 8;
+          final int textboxX = wmapDestinationMarkers_800f5a6c[destinationIndex].x_24;
+          final int textboxY = wmapDestinationMarkers_800f5a6c[destinationIndex].y_26 - 8;
 
           final IntRef width = new IntRef();
           final IntRef lines = new IntRef();
-          this.measureText(places_800f0234.get(wmapDestinationMarkers_800f5a6c.get(destinationIndex).placeIndex_28.get()).name_00.deref(), width, lines);
+          this.measureText(places_800f0234.get(wmapDestinationMarkers_800f5a6c[destinationIndex].placeIndex_28).name_00.deref(), width, lines);
 
           final int labelStage = this.destinationLabelStage_800c86f0;
           textboxes_800be358[7].chars_18 = Math.max(width.get(), 4);
@@ -1451,7 +1451,7 @@ public class WMap extends EngineState {
 
           if(this.shouldSetDestLabelMetrics) {
             this.shouldSetDestLabelMetrics = false;
-            this.destLabelName = places_800f0234.get(wmapDestinationMarkers_800f5a6c.get(destinationIndex).placeIndex_28.get()).name_00.deref();
+            this.destLabelName = places_800f0234.get(wmapDestinationMarkers_800f5a6c[destinationIndex].placeIndex_28).name_00.deref();
             this.destLabelX = textboxX;
             this.destLabelY = textboxY - lines.get() * 7 - 3;
           }
@@ -4584,12 +4584,12 @@ public class WMap extends EngineState {
     // Set all destination flags in the gameState
     for(int i = 0; i < 49; i++) {
       //LAB_800e7984
-      if(gameState_800babc8.scriptFlags2_bc.get(wmapDestinationMarkers_800f5a6c.get(i).packedFlag_00.get())) {
+      if(gameState_800babc8.scriptFlags2_bc.get(wmapDestinationMarkers_800f5a6c[i].packedFlag_00)) {
         //LAB_800e7a38
         //LAB_800e7a3c
         for(int flagIndex = 0; flagIndex < 8; flagIndex++) {
           //LAB_800e7a58
-          gameState_800babc8.wmapFlags_15c.setRaw(flagIndex, wmapDestinationMarkers_800f5a6c.get(i).flags_04.get(flagIndex).get());
+          gameState_800babc8.wmapFlags_15c.setRaw(flagIndex, wmapDestinationMarkers_800f5a6c[i].flags_04[flagIndex]);
         }
       }
       //LAB_800e7acc
