@@ -378,10 +378,16 @@ public class WMap extends EngineState {
       if((model.partInvisible_f4 & 1L << i) == 0) {
         GsGetLw(dobj2.coord2_04, lw);
 
+        float screenOffsetY = 0.0f;
+        if(this.wmapStruct258_800c66a8.zoomState_1f8 == 4) {
+          screenOffsetY = 8.0f; // Needed to correct for MCQ shift
+        }
+
         RENDERER.queueModel(dobj2.obj, lw)
           .lightDirection(lightDirectionMatrix_800c34e8)
           .lightColour(lightColourMatrix_800c3508)
-          .backgroundColour(GTE.backgroundColour);
+          .backgroundColour(GTE.backgroundColour)
+          .screenspaceOffset(0, screenOffsetY);
       }
     }
 
@@ -1389,7 +1395,7 @@ public class WMap extends EngineState {
     // Player arrow on map
     final int u = (int)(tickCount_800bb0fc.get() / (3.0f / vsyncMode_8007a3b8)) & 0x7;
     float x = GPU.getOffsetX() + playerArrowXy.x - struct.mapArrow.getSize() / 2.0f;
-    float y = GPU.getOffsetY() + playerArrowXy.y - struct.mapArrow.getSize();
+    float y = GPU.getOffsetY() + playerArrowXy.y - struct.mapArrow.getSize() - (zoomState == 4 ? 8 : 0);
     struct.mapArrow.render(u, 0, x, y, 100.0f);
 
     if(struct.zoomState_1f8 == 4) {

@@ -64,15 +64,15 @@ public final class WmapStatics {
     new Vector3i(   80, - 1700, -  80),
   };
   public static final CoolonWarpDestination20[] coolonWarpDest_800ef228 = {
-    new CoolonWarpDestination20(new Vector3f( 72.0f,    6.0f, 4040.0f), 25, 2, 50, 52, new LodString("Commercial\nTown of Lohan")),
-    new CoolonWarpDestination20(new Vector3f( 87.0f, -400.0f, 4040.0f), 13, 3, 84, -6, new LodString("Indels Castle\nCapital Bale")),
-    new CoolonWarpDestination20(new Vector3f( 60.0f, -224.0f, 4040.0f), 28, 0, 26, 16, new LodString("Twin Castle\nin Fletz")),
-    new CoolonWarpDestination20(new Vector3f( 66.0f, -400.0f, 4040.0f), 35, 2, 40, -4, new LodString("Donau the\nWater City")),
-    new CoolonWarpDestination20(new Vector3f(950.0f, -380.0f, 4040.0f), 48, 5, 20, -4, new LodString("City of Fueno")),
-    new CoolonWarpDestination20(new Vector3f( 46.0f, -544.0f, 4040.0f), 51, 4, -4, -22, new LodString("Furni the\nWater City")),
-    new CoolonWarpDestination20(new Vector3f( 39.0f, -720.0f, 4040.0f), 60, 8, -18, -48, new LodString("Crystal Palace\nin Deningrad")),
-    new CoolonWarpDestination20(new Vector3f( 31.0f, -272.0f, 4040.0f), 70, 5, -34, 10, new LodString("Spring Breath\nTown, Ulara")),
-    new CoolonWarpDestination20(new Vector3f( 10.0f, -928.0f, 4040.0f), 83, 6, -82, -76, new LodString("Law Capital\nZenebatos")),
+    new CoolonWarpDestination20(new Vector3f( 72.0f,    6.0f, 4040.0f), 25, 2,  50,  44, new LodString("Commercial\nTown of Lohan")),
+    new CoolonWarpDestination20(new Vector3f( 87.0f, -400.0f, 4040.0f), 13, 3,  84, -14, new LodString("Indels Castle\nCapital Bale")),
+    new CoolonWarpDestination20(new Vector3f( 60.0f, -224.0f, 4040.0f), 28, 0,  26,   8, new LodString("Twin Castle\nin Fletz")),
+    new CoolonWarpDestination20(new Vector3f( 66.0f, -400.0f, 4040.0f), 35, 2,  40, -12, new LodString("Donau the\nWater City")),
+    new CoolonWarpDestination20(new Vector3f(950.0f, -380.0f, 4040.0f), 48, 5,  20, -12, new LodString("City of Fueno")),
+    new CoolonWarpDestination20(new Vector3f( 46.0f, -544.0f, 4040.0f), 51, 4, - 4, -30, new LodString("Furni the\nWater City")),
+    new CoolonWarpDestination20(new Vector3f( 39.0f, -720.0f, 4040.0f), 60, 8, -18, -56, new LodString("Crystal Palace\nin Deningrad")),
+    new CoolonWarpDestination20(new Vector3f( 31.0f, -272.0f, 4040.0f), 70, 5, -34,   2, new LodString("Spring Breath\nTown, Ulara")),
+    new CoolonWarpDestination20(new Vector3f( 10.0f, -928.0f, 4040.0f), 83, 6, -82, -84, new LodString("Law Capital\nZenebatos")),
   };
   public static final ArrayRef<ShortRef> waterClutYs_800ef348 = MEMORY.ref(2, 0x800ef348L, ArrayRef.of(ShortRef.class, 14, 2, ShortRef::new));
   public static final ArrayRef<ArrayRef<UnsignedShortRef>> encounterIds_800ef364 = MEMORY.ref(2, 0x800ef364L, ArrayRef.of(ArrayRef.classFor(UnsignedShortRef.class), 100, 8, ArrayRef.of(UnsignedShortRef.class, 4, 2, UnsignedShortRef::new)));
