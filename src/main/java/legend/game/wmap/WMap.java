@@ -49,7 +49,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
@@ -149,13 +151,14 @@ import static legend.game.wmap.WmapStatics.playerAvatarColourMapOffsets_800ef694
 import static legend.game.wmap.WmapStatics.positiveDirectionMovementMask_800f0204;
 import static legend.game.wmap.WmapStatics.regions_800f01ec;
 import static legend.game.wmap.WmapStatics.services_800f01cc;
-import static legend.game.wmap.WmapStatics.teleportationEndpoints_800ef698;
+import static legend.game.wmap.WmapStatics.teleportationEndpointIndices_800ef698;
 import static legend.game.wmap.WmapStatics.teleportationLocations_800ef6c8;
 import static legend.game.wmap.WmapStatics.tmdUvAdjustmentMetrics_800eee48;
 import static legend.game.wmap.WmapStatics.waterClutYs_800ef348;
 import static legend.game.wmap.WmapStatics.wmapDestinationMarkers_800f5a6c;
 
 public class WMap extends EngineState {
+  private static final Pattern NEWLINE = Pattern.compile("\\n");
   private int tickMainMenuOpenTransition_800c6690;
 
   private int worldMapState_800c6698;
@@ -299,14 +302,14 @@ public class WMap extends EngineState {
   private WmapPromptPopup wmapLocationPromptPopup;
   private WmapPromptPopup coolonPromptPopup;
   /** Temporary solution until text refactoring */
-  private final LodString[] startLabelNames = new LodString[8];
+  private final String[] startLabelNames = new String[8];
   private final float[] startLabelXs = new float[8];
   private final float[] startLabelYs = new float[8];
-  private LodString destLabelName;
+  private String destLabelName;
   private int destLabelX;
   private int destLabelY;
   private boolean shouldSetDestLabelMetrics;
-  private LodString coolonWarpDestLabelName;
+  private String coolonWarpDestLabelName;
   private int coolonWarpDestLabelX;
   private int coolonWarpDestLabelY;
   private boolean shouldSetCoolonWarpDestLabelMetrics;
@@ -965,7 +968,7 @@ public class WMap extends EngineState {
     int count = 0;
     for(int i = 0; i < this.mapState_800c6798.locationCount_08; i++) {
       //LAB_800d1e38
-      if(!places_800f0234.get(locations_800f0e34[i].placeIndex_02).name_00.isNull()) {
+      if(places_800f0234[locations_800f0e34[i].placeIndex_02].name_00 != null) {
         //LAB_800d1e90
         if(this.checkLocationIsValidAndOptionallySetPathStart(i, 1, this.wmapStruct19c0_800c66b0._154[count].position_08) == 0) {
           //LAB_800d1ee0
@@ -1420,14 +1423,15 @@ public class WMap extends EngineState {
         y = GPU.getOffsetY() + wmapDestinationMarkers_800f5a6c[destinationIndex].y_26 - 120;
         struct.mapArrow.render(u, 1, x, y, 100.0f);
 
-        if(!places_800f0234.get(wmapDestinationMarkers_800f5a6c[destinationIndex].placeIndex_28).name_00.isNull()) {
+        final String placeName = places_800f0234[wmapDestinationMarkers_800f5a6c[destinationIndex].placeIndex_28].name_00;
+        if(placeName != null) {
           //LAB_800d4878
           final int textboxX = wmapDestinationMarkers_800f5a6c[destinationIndex].x_24;
           final int textboxY = wmapDestinationMarkers_800f5a6c[destinationIndex].y_26 - 8;
 
           final IntRef width = new IntRef();
           final IntRef lines = new IntRef();
-          this.measureText(places_800f0234.get(wmapDestinationMarkers_800f5a6c[destinationIndex].placeIndex_28).name_00.deref(), width, lines);
+          this.measureText(placeName, width, lines);
 
           final int labelStage = this.destinationLabelStage_800c86f0;
           textboxes_800be358[7].chars_18 = Math.max(width.get(), 4);
@@ -1457,7 +1461,7 @@ public class WMap extends EngineState {
 
           if(this.shouldSetDestLabelMetrics) {
             this.shouldSetDestLabelMetrics = false;
-            this.destLabelName = places_800f0234.get(wmapDestinationMarkers_800f5a6c[destinationIndex].placeIndex_28).name_00.deref();
+            this.destLabelName = placeName;
             this.destLabelX = textboxX;
             this.destLabelY = textboxY - lines.get() * 7 - 3;
           }
@@ -1793,7 +1797,7 @@ public class WMap extends EngineState {
     anim._1c = 0.0f;
 
     if((anim._10 & 0x1) == 0) {
-      anim._18 %= anim.w_04;
+      anim._18 %= (short)anim.w_04;
 
       if(anim._18 > 0) {
         src0.set(
@@ -1857,7 +1861,7 @@ public class WMap extends EngineState {
       //LAB_800d6460
     } else {
       //LAB_800d6468
-      anim._18 %= anim.h_06;
+      anim._18 %= (short)anim.h_06;
 
       if(anim._18 > 0) {
         src0.set(
@@ -3179,8 +3183,8 @@ public class WMap extends EngineState {
       int targetLocationIndex = 0;
       for(int i = 0; i < 6; i++) {
         //LAB_800e0790
-        if(this.mapState_800c6798.locationIndex_10 == teleportationEndpoints_800ef698.get(i).originLocationIndex_00.get()) {
-          targetLocationIndex = teleportationEndpoints_800ef698.get(i).targetLocationIndex_04.get();
+        if(this.mapState_800c6798.locationIndex_10 == teleportationEndpointIndices_800ef698[i][0]) {
+          targetLocationIndex = teleportationEndpointIndices_800ef698[i][1];
           break;
         }
       }
@@ -4025,7 +4029,7 @@ public class WMap extends EngineState {
         this.mapState_800c6798.submapScene_ca = locations_800f0e34[this.mapState_800c6798.locationIndex_10].submapScene_0a;
         this.mapTransitionState_800c68a4 = 1;
 
-        if(places_800f0234.get(locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02).name_00.isNull()) {
+        if(places_800f0234[locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].name_00 == null) {
           this.mapTransitionState_800c68a4 = 8;
         }
 
@@ -4035,7 +4039,7 @@ public class WMap extends EngineState {
       case 1:
         this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & 0xffff_f7ff);
 
-        loadDrgnFileSync(0, 5655 + places_800f0234.get(locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02).fileIndex_04.get(), data -> this.loadLocationThumbnailImage(new Tim(data)));
+        loadDrgnFileSync(0, 5655 + places_800f0234[locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].fileIndex_04, data -> this.loadLocationThumbnailImage(new Tim(data)));
         initTextbox(6, true, 240, 120, 14, 16);
 
         this.mapTransitionState_800c68a4 = 2;
@@ -4045,7 +4049,7 @@ public class WMap extends EngineState {
         //LAB_800e55f0
         for(int i = 0; i < 4; i++) {
           //LAB_800e560c
-          final int soundIndex = places_800f0234.get(locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02).soundIndices_06.get(i).get();
+          final int soundIndex = places_800f0234[locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].soundIndices_06[i];
 
           if(soundIndex > 0) {
             playSound(0xc, soundIndex, 0, 0, (short)0, (short)0);
@@ -4063,12 +4067,12 @@ public class WMap extends EngineState {
           this.mapTransitionState_800c68a4 = 3;
 
           // Build Objs
-          this.wmapLocationPromptPopup = new WmapPromptPopup(places_800f0234.get(placeIndex).name_00.deref().get(), textZ_800bdf00.get() * 4.0f)
+          this.wmapLocationPromptPopup = new WmapPromptPopup(Objects.requireNonNull(places_800f0234[placeIndex].name_00), textZ_800bdf00.get() * 4.0f)
             .addOptionText("Don't enter");
 
           if(this.mapState_800c6798.submapCut_c8 == 999) { // Going to a different region
-            final String dest1 = regions_800f01ec.get(this.mapState_800c6798.submapScene_ca >>> 4 & 0xffff).deref().get();
-            final String dest2 = regions_800f01ec.get(this.mapState_800c6798.submapScene_ca & 0xf).deref().get();
+            final String dest1 = regions_800f01ec[this.mapState_800c6798.submapScene_ca >>> 4 & 0xffff];
+            final String dest2 = regions_800f01ec[this.mapState_800c6798.submapScene_ca & 0xf];
 
             this.wmapLocationPromptPopup
               .addOptionText(dest1)
@@ -4079,11 +4083,11 @@ public class WMap extends EngineState {
             this.wmapLocationPromptPopup.addOptionText("Enter");
           }
 
-          final int services = places_800f0234.get(placeIndex).services_05.get();
+          final int servicesFlag = places_800f0234[placeIndex].servicesFlag_05;
           int servicesCount = 0;
           for(int i = 0; i < 5; i++) {
-            if((services & 0x1 << i) != 0) {
-              this.wmapLocationPromptPopup.addAltText(services_800f01cc.get(i).deref().get());
+            if((servicesFlag & 0x1 << i) != 0) {
+              this.wmapLocationPromptPopup.addAltText(services_800f01cc[i]);
               servicesCount++;
             }
           }
@@ -4221,7 +4225,7 @@ public class WMap extends EngineState {
             //LAB_800e6350
             for(int i = 0; i < 4; i++) {
               //LAB_800e636c
-              final int soundIndex = places_800f0234.get(locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02).soundIndices_06.get(i).get();
+              final int soundIndex = places_800f0234[locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].soundIndices_06[i];
 
               if(soundIndex > 0) {
                 stopSound(soundFiles_800bcf80[12], soundIndex, 1);
@@ -4243,7 +4247,7 @@ public class WMap extends EngineState {
             //LAB_800e6468
             for(int i = 0; i < 4; i++) {
               //LAB_800e6484
-              final int soundIndex = places_800f0234.get(locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02).soundIndices_06.get(i).get();
+              final int soundIndex = places_800f0234[locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].soundIndices_06[i];
 
               if(soundIndex > 0) {
                 stopSound(soundFiles_800bcf80[12], soundIndex, 1);
@@ -4261,7 +4265,7 @@ public class WMap extends EngineState {
             //LAB_800e6560
             for(int i = 0; i < 4; i++) {
               //LAB_800e657c
-              final int soundIndex = places_800f0234.get(locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02).soundIndices_06.get(i).get();
+              final int soundIndex = places_800f0234[locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].soundIndices_06[i];
 
               if(soundIndex > 0) {
                 stopSound(soundFiles_800bcf80[12], soundIndex, 1);
@@ -4438,7 +4442,7 @@ public class WMap extends EngineState {
     final MV transforms = new MV();
     for(int i = 0; i < this.placeCount_800c86cc; i++) {
       //LAB_800e6c5c
-      if(!places_800f0234.get(locations_800f0e34[placeIndices_800c84c8[i]].placeIndex_02).name_00.isNull()) {
+      if(places_800f0234[locations_800f0e34[placeIndices_800c84c8[i]].placeIndex_02].name_00 != null) {
         //LAB_800e6ccc
         GsGetLs(this.wmapStruct258_800c66a8.tmdRendering_08.coord2s_04[0], transforms);
         GTE.setTransforms(transforms);
@@ -4485,11 +4489,12 @@ public class WMap extends EngineState {
       final float y = label.xy_08.y + 104;
       final int place = locations_800f0e34[label.locationIndex_04].placeIndex_02;
 
-      if(!places_800f0234.get(place).name_00.isNull()) {
+      final String placeName = places_800f0234[place].name_00;
+      if(placeName != null) {
         //LAB_800e70f4
         final IntRef width = new IntRef();
         final IntRef lines = new IntRef();
-        this.measureText(places_800f0234.get(place).name_00.deref(), width, lines);
+        this.measureText(placeName, width, lines);
 
         // labelStage == 2 uses code common to all conditions
         final int labelStage = this.startButtonLabelStages_800c86d4[i];
@@ -4519,7 +4524,7 @@ public class WMap extends EngineState {
         textboxes_800be358[i].z_0c = i + 119;
 
         if(this.startLocationLabelsActive_800c68a8) {
-          this.startLabelNames[i] = places_800f0234.get(place).name_00.deref();
+          this.startLabelNames[i] = placeName;
           this.startLabelXs[i] = x;
           this.startLabelYs[i] = y - lines.get() * 7 - 1;
         }
@@ -4536,49 +4541,28 @@ public class WMap extends EngineState {
     //LAB_800e7610
   }
 
+  /** Completely replaced retail with modern String version. */
   @Method(0x800e7624L)
-  private void measureText(final LodString text, final IntRef widthRef, final IntRef linesRef) {
-    int lines = 1;
-    int lineWidth = 0;
+  public void measureText(final String text, final IntRef widthRef, final IntRef linesRef) {
     int longestLineWidth = 0;
-
-    //LAB_800e7648
-    for(int charIndex = 0; text.charAt(charIndex) != 0xa0ff; charIndex++) {
-      //LAB_800e7668
-      if(text.charAt(charIndex) == 0xa1ff) { // New line
-        lines++;
-
-        if(longestLineWidth < lineWidth) {
-          longestLineWidth = lineWidth;
-        }
-
-        //LAB_800e76c4
-        lineWidth = 0;
-      } else {
-        //LAB_800e76d0
-        lineWidth++;
-      }
+    final String[] lines = text.split("\n");
+    for(final String line : lines) {
+      longestLineWidth = Math.max(longestLineWidth, line.length());
     }
 
-    //LAB_800e76f8
-    if(lineWidth < longestLineWidth) {
-      lineWidth = longestLineWidth;
-    }
-
-    //LAB_800e771c
-    widthRef.set(lineWidth);
-    linesRef.set(lines);
+    widthRef.set(longestLineWidth);
+    linesRef.set(lines.length);
   }
 
   @Method(0x800e774cL)
-  private void renderCenteredShadowedText(final LodString text, final float x, final float y, final TextColour colour, final int trim) {
-    final String[] split = text.get().split("\\n");
+  private void renderCenteredShadowedText(final String text, final float x, final float y, final TextColour colour, final int trim) {
+    final String[] lines = NEWLINE.split(text);
 
-    for(int i = 0; i < split.length; i++) {
-      final LodString part = new LodString(split[i]);
-      final int textWidth = textWidth(part);
-      renderText(part, x - textWidth / 2.0f + 1, y + i * 12 + 1, TextColour.BLACK, trim);
-      renderText(part, x - textWidth / 2.0f, y + i * 12, colour, trim);
+    for(int i = 0; i < lines.length; i++) {
+      final LodString line = new LodString(lines[i]);
+      final int textWidth = textWidth(line);
+      renderText(line, x - textWidth / 2.0f + 1, y + i * 12 + 1, TextColour.BLACK, trim);
+      renderText(line, x - textWidth / 2.0f, y + i * 12, colour, trim);
     }
   }
 
@@ -5523,11 +5507,13 @@ public class WMap extends EngineState {
                 //LAB_800eb530
                 final int placeIndex1 = locations_800f0e34[locationIndex1].placeIndex_02;
 
-                if(!places_800f0234.get(placeIndex0).name_00.isNull() || !places_800f0234.get(placeIndex1).name_00.isNull()) {
+                final String placeName0 = places_800f0234[placeIndex0].name_00;
+                final String placeName1 = places_800f0234[placeIndex1].name_00;
+                if(placeName0 != null || placeName1 != null) {
                   // Added this check since these pointers can be null
-                  if(!places_800f0234.get(placeIndex0).name_00.isNull() && !places_800f0234.get(placeIndex1).name_00.isNull()) {
+                  if(placeName0 != null && placeName1 != null) {
                     //LAB_800eb5d8
-                    if(strcmp(places_800f0234.get(placeIndex0).name_00.deref().get(), places_800f0234.get(placeIndex1).name_00.deref().get()) == 0) {
+                    if(strcmp(placeName0, placeName1) == 0) {
                       this.checkLocationIsValidAndOptionallySetPathStart(locationIndex1, 1, matchPositions[matchCount]);
 
                       matchCount++;
@@ -5992,7 +5978,7 @@ public class WMap extends EngineState {
     //LAB_800edca8
     for(int i = 0; i < this.placeCount_800c86cc; i++) {
       //LAB_800edccc
-      if(places_800f0234.get(locations_800f0e34[placeIndices_800c84c8[i]].placeIndex_02).name_00.isNull()) {
+      if(places_800f0234[locations_800f0e34[placeIndices_800c84c8[i]].placeIndex_02].name_00 == null) {
         continue;
       }
 
