@@ -1,11 +1,13 @@
 package legend.game.wmap;
 
+import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
 import legend.core.opengl.MeshObj;
 import legend.core.opengl.QuadBuilder;
 import legend.game.types.Translucency;
 
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.RENDERER;
 
 public class ZoomOverlay {
   public static final WmapRectMetrics06[] zoomUiMetrics_800ef104 = {
@@ -18,8 +20,8 @@ public class ZoomOverlay {
     new WmapRectMetrics06(36, 16, 80, 48, 16, 16),
   };
 
-  public MeshObj overlayTranslucent;
-  public MeshObj overlayOpaque;
+  public final MeshObj overlayTranslucent;
+  public final MeshObj overlayOpaque;
 
   public ZoomOverlay() {
     final QuadBuilder builderTranslucent = new QuadBuilder("ZoomOverlayTranslucent");
@@ -57,6 +59,29 @@ public class ZoomOverlay {
 
     this.overlayTranslucent = builderTranslucent.build();
     this.overlayOpaque = builderOpaque.build();
+  }
+
+  public void render(final int zoomState) {
+    final int currentZoomLevel = switch(zoomState) {
+      case 0 -> 2;
+      case 1, 2, 3, 6 -> 3;
+      case 4, 5 -> 4;
+      default -> 0;
+    };
+
+    for(int i = 4; i >= 0; i--) {
+      final RenderEngine.QueuedModel model = RENDERER.queueOrthoOverlayModel(this.overlayOpaque)
+        .vertices(i * 4, 4);
+
+      if(i + 2 == currentZoomLevel) {
+        model.monochrome(4.0f);
+      }
+    }
+
+    for(int i = 1; i >= 0; i--) {
+      RENDERER.queueOrthoOverlayModel(this.overlayTranslucent)
+        .vertices(i * 4, 4);
+    }
   }
 
   public void delete() {

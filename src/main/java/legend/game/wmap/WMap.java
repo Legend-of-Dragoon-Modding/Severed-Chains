@@ -383,7 +383,7 @@ public class WMap extends EngineState {
 
         float screenOffsetY = 0.0f;
         if(this.wmapStruct258_800c66a8.zoomState_1f8 == 4) {
-          screenOffsetY = 8.0f; // Needed to correct for MCQ shift
+          screenOffsetY = 8.0f; // Needs adjustment for MCQ shift
         }
 
         RENDERER.queueModel(dobj2.obj, lw)
@@ -1398,7 +1398,7 @@ public class WMap extends EngineState {
     // Player arrow on map
     final int u = (int)(tickCount_800bb0fc.get() / (3.0f / vsyncMode_8007a3b8)) & 0x7;
     float x = GPU.getOffsetX() + playerArrowXy.x - struct.mapArrow.getSize() / 2.0f;
-    float y = GPU.getOffsetY() + playerArrowXy.y - struct.mapArrow.getSize() - (zoomState == 4 ? 8 : 0);
+    float y = GPU.getOffsetY() + playerArrowXy.y - struct.mapArrow.getSize() - (zoomState == 4 ? 8 : 0); // Needs adjustment for MCQ shift
     struct.mapArrow.render(u, 0, x, y, 100.0f);
 
     if(struct.zoomState_1f8 == 4) {
@@ -1987,31 +1987,7 @@ public class WMap extends EngineState {
     }
 
     // Render map zoom level pyramid thing
-
-    //LAB_800d6b9c
-    final int currentZoomLevel = switch(this.wmapStruct258_800c66a8.zoomState_1f8) {
-      case 0 -> 2;
-      case 1, 2, 3, 6 -> 3;
-      case 4, 5 -> 4;
-      default -> 0;
-    };
-
-    //LAB_800d6c10
-    //LAB_800d6c14
-    for(int i = 4; i >= 0; i--) {
-      final RenderEngine.QueuedModel model = RENDERER.queueOrthoOverlayModel(this.wmapStruct258_800c66a8.zoomOverlay.overlayOpaque)
-        .vertices(i * 4, 4);
-
-      if(i + 2 == currentZoomLevel) {
-        model.monochrome(4.0f);
-      }
-    }
-
-    for(int i = 1; i >= 0; i--) {
-      RENDERER.queueOrthoOverlayModel(this.wmapStruct258_800c66a8.zoomOverlay.overlayTranslucent)
-        .vertices(i * 4, 4);
-    }
-    //LAB_800d71f4
+    this.wmapStruct258_800c66a8.zoomOverlay.render(this.wmapStruct258_800c66a8.zoomState_1f8);
   }
 
   @Method(0x800d7a34L)
