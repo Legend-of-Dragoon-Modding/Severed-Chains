@@ -52,6 +52,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
@@ -75,7 +76,6 @@ import static legend.game.Scus94491BpeSegment.stopSound;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
-import static legend.game.Scus94491BpeSegment_8002.setTextAndTextboxesToUninitialized;
 import static legend.game.Scus94491BpeSegment_8002.animateModel;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.clearTextbox;
@@ -86,6 +86,7 @@ import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.renderText;
+import static legend.game.Scus94491BpeSegment_8002.setTextAndTextboxesToUninitialized;
 import static legend.game.Scus94491BpeSegment_8002.strcmp;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
@@ -382,7 +383,7 @@ public class WMap extends EngineState {
         GsGetLw(dobj2.coord2_04, lw);
 
         float screenOffsetY = 0.0f;
-        if(this.wmapModelAndAnimData258_800c66a8.zoomState_1f8 == 4) {
+        if(this.wmapModelAndAnimData258_800c66a8.zoomState_1f8 == 4 || this.wmapModelAndAnimData258_800c66a8.coolonWarpState_220 > 2) {
           screenOffsetY = 8.0f; // Needs adjustment for MCQ shift
         }
 
@@ -2525,7 +2526,7 @@ public class WMap extends EngineState {
       case 2:
         this.renderFastTravelScreenDistortionEffect();
 
-        modelAndAnimData.models_0c[2].coord2_14.transforms.scale.y += 0.015625f / (3.0f / vsyncMode_8007a3b8); // 1/64
+        modelAndAnimData.models_0c[2].coord2_14.transforms.scale.x += 0.015625f / (3.0f / vsyncMode_8007a3b8); // 1/64
 
         if(modelAndAnimData.models_0c[2].coord2_14.transforms.scale.x > 0.375f) { // 24/64
           modelAndAnimData.models_0c[2].coord2_14.transforms.scale.x = 0.375f;
@@ -2572,37 +2573,54 @@ public class WMap extends EngineState {
         this.wmapStruct19c0_800c66b0._11a = 3;
 
         //LAB_800dac80
-        boolean sp24 = false;
+        final List<Integer> possibleOriginIndices = new ArrayList<>();
         for(int i = 0; i < 9; i++) {
           //LAB_800dac9c
           if(locations_800f0e34[coolonWarpDest_800ef228[i].locationIndex_10].continent_0e == this.mapState_800c6798.continent_00) {
-            modelAndAnimData.coolonOriginIndex_221 = i;
-            sp24 = true;
-            break;
+            possibleOriginIndices.add(i);
           }
-
           //LAB_800dad14
         }
 
         //LAB_800dad2c
-        if(!sp24) {
+        if(possibleOriginIndices.size() == 1) {
+          modelAndAnimData.coolonOriginIndex_221 = possibleOriginIndices.get(0);
+        } else if(possibleOriginIndices.size() > 1) {
+          int posIndex = IntStream.range(0, placeIndices_800c84c8.length).filter(j -> coolonWarpDest_800ef228[possibleOriginIndices.get(0)].locationIndex_10 == placeIndices_800c84c8[j]).findFirst().orElse(-1);
+          assert posIndex != -1;
+
+          Vector3f placePos = placePositionVectors_800c74b8[posIndex];
+          float diffX = placePos.x - modelAndAnimData.currPlayerPos_94.x;
+          float diffZ = placePos.z - modelAndAnimData.currPlayerPos_94.z;
+          float minDistance = Math.sqrt(diffX * diffX + diffZ * diffZ);
+          int index = possibleOriginIndices.get(0);
+          modelAndAnimData.coolonOriginIndex_221 = index;
+
+          float distance;
+          for(int i = 1; i < possibleOriginIndices.size(); i++) {
+            index = possibleOriginIndices.get(i);
+            final int finalI = i;
+            posIndex = IntStream.range(0, placeIndices_800c84c8.length).filter(j -> coolonWarpDest_800ef228[possibleOriginIndices.get(finalI)].locationIndex_10 == placeIndices_800c84c8[j]).findFirst().orElse(-1);
+            assert posIndex != -1;
+
+            placePos = placePositionVectors_800c74b8[posIndex];
+            diffX = placePos.x - modelAndAnimData.currPlayerPos_94.x;
+            diffZ = placePos.z - modelAndAnimData.currPlayerPos_94.z;
+            distance = Math.sqrt(diffX * diffX + diffZ * diffZ);
+            if(distance < minDistance) {
+              modelAndAnimData.coolonOriginIndex_221 = index;
+              minDistance = distance;
+            }
+          }
+        } else {
           modelAndAnimData.coolonOriginIndex_221 = 8;
         }
 
         //LAB_800dad4c
-        if(this.mapState_800c6798.continent_00 == Continent.MILLE_SESEAU) {
-          if(modelAndAnimData.currPlayerPos_94.z < -400.0f) {
-            modelAndAnimData.coolonOriginIndex_221 = 5;
-          } else {
-            //LAB_800dad9c
-            modelAndAnimData.coolonOriginIndex_221 = 6;
-          }
-        }
-
         //LAB_800dadac
-        modelAndAnimData.coolonDestIndex_222 = coolonWarpDest_800ef228[modelAndAnimData.coolonOriginIndex_221]._14;
+        modelAndAnimData.coolonDestIndex_222 = coolonWarpDest_800ef228[modelAndAnimData.coolonOriginIndex_221].defaultDestLocationIndex_14;
         modelAndAnimData.coolonWarpState_220 = 3;
-        modelAndAnimData.currPlayerPos_94.set(coolonWarpDest_800ef228[modelAndAnimData.coolonOriginIndex_221].vec_00);
+        modelAndAnimData.currPlayerPos_94.set(coolonWarpDest_800ef228[modelAndAnimData.coolonOriginIndex_221].destPosition_00);
         break;
 
       case 4:
@@ -2653,7 +2671,7 @@ public class WMap extends EngineState {
         //LAB_800db0f0
         modelAndAnimData.models_0c[2].coord2_14.transforms.scale.set(modelAndAnimData.models_0c[2].coord2_14.transforms.scale.x);
 
-        this.renderCoolonMap(true, false);
+        this.renderCoolonMapSymbols(true, false);
         break;
 
       case 5:
@@ -2666,14 +2684,13 @@ public class WMap extends EngineState {
         }
 
         //LAB_800db1d8
-        this.renderCoolonMap(false, true);
+        this.renderCoolonMapSymbols(false, true);
         break;
 
-      // TODO Refactor Coolon prompt code a bit to work more like location prompt
       case 6:
         textboxes_800be358[6].z_0c = 18;
 
-        this.renderCoolonMap(false, true);
+        this.renderCoolonMapSymbols(false, true);
 
         if(Input.pressedThisFrame(InputAction.BUTTON_EAST)) {
           playSound(0, 3, 0, 0, (short)0, (short)0);
@@ -2716,7 +2733,7 @@ public class WMap extends EngineState {
         }
 
         //LAB_800db698
-        this.lerp(modelAndAnimData.currPlayerPos_94, coolonWarpDest_800ef228[modelAndAnimData.coolonOriginIndex_221].vec_00, coolonWarpDest_800ef228[modelAndAnimData.coolonDestIndex_222].vec_00, 36.0f / vsyncMode_8007a3b8 / modelAndAnimData.coolonTravelAnimationTick_218);
+        this.lerp(modelAndAnimData.currPlayerPos_94, coolonWarpDest_800ef228[modelAndAnimData.coolonOriginIndex_221].destPosition_00, coolonWarpDest_800ef228[modelAndAnimData.coolonDestIndex_222].destPosition_00, modelAndAnimData.coolonTravelAnimationTick_218 / (36.0f / vsyncMode_8007a3b8));
 
         modelAndAnimData.models_0c[2].coord2_14.transforms.scale.x -= 0.041503906f / (3.0f / vsyncMode_8007a3b8); // ~1/24
 
@@ -2727,7 +2744,7 @@ public class WMap extends EngineState {
         //LAB_800db74c
         modelAndAnimData.models_0c[2].coord2_14.transforms.scale.set(modelAndAnimData.models_0c[2].coord2_14.transforms.scale.x);
 
-        this.renderCoolonMap(false, true);
+        this.renderCoolonMapSymbols(false, true);
         break;
 
       case 8:
@@ -2754,7 +2771,7 @@ public class WMap extends EngineState {
         //LAB_800dba98
 
         this.initTransitionAnimation(TransitionAnimationType.FADE_OUT);
-        this.renderCoolonMap(false, true);
+        this.renderCoolonMapSymbols(false, true);
         break;
 
       case 0xb:
@@ -2852,7 +2869,7 @@ public class WMap extends EngineState {
   }
 
   @Method(0x800dc178L)
-  private void renderCoolonMap(final boolean enableInput, final boolean destSelected) {
+  private void renderCoolonMapSymbols(final boolean enableInput, final boolean destSelected) {
     final WMapModelAndAnimData258 modelAndAnimData = this.wmapModelAndAnimData258_800c66a8;
 
     final CoolonWarpDestination20 warp1 = coolonWarpDest_800ef228[modelAndAnimData.coolonOriginIndex_221];
@@ -3183,7 +3200,7 @@ public class WMap extends EngineState {
           //LAB_800e08b8
           this.renderFastTravelScreenDistortionEffect();
 
-          this.lerpish(this.wmapModelAndAnimData258_800c66a8.currPlayerPos_94, originTranslation, targetTranslation, this.wmapModelAndAnimData258_800c66a8.teleportAnimationTick_24c / (32.0f * (3.0f / vsyncMode_8007a3b8)));
+          this.arcLerp(this.wmapModelAndAnimData258_800c66a8.currPlayerPos_94, originTranslation, targetTranslation, this.wmapModelAndAnimData258_800c66a8.teleportAnimationTick_24c / (32.0f * (3.0f / vsyncMode_8007a3b8)));
 
           this.wmapModelAndAnimData258_800c66a8.teleportAnimationTick_24c++;
           if(this.wmapModelAndAnimData258_800c66a8.teleportAnimationTick_24c / (3.0f / vsyncMode_8007a3b8) > 32) {
@@ -3251,9 +3268,9 @@ public class WMap extends EngineState {
     //LAB_800e0e3c
   }
 
-  /** lerp, but I think it decreases Y more the lower the ratio. Used for teleportation movement. */
+  /** lerp, but it arcs in the y direction. Used for teleportation movement. */
   @Method(0x800e0e4cL)
-  private void lerpish(final Vector3f currPlayerPos, final Vector3f originPos, final Vector3f targetPos, final float ratio) {
+  private void arcLerp(final Vector3f currPlayerPos, final Vector3f originPos, final Vector3f targetPos, final float ratio) {
     if(ratio == 0.0f) {
       currPlayerPos.set(originPos);
     } else if(ratio == 1.0f) {
