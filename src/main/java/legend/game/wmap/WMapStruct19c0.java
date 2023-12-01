@@ -66,7 +66,7 @@ public class WMapStruct19c0 {
   public int _114;
   /** short */
   public float projectionPlaneDistance_118;
-  /** ubyte */
+  /** related to projection distance somehow (ubyte) */
   public int _11a;
 
   public final GsF_LIGHT[] lights_11c = {new GsF_LIGHT(), new GsF_LIGHT(), new GsF_LIGHT()};

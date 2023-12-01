@@ -2223,7 +2223,7 @@ public final class Scus94491BpeSegment_8002 {
         }
       }
 
-      case _3 -> {
+      case ANIMATE_OUT_3 -> {
         if(textbox.type_04 == TextboxType.ANIMATE_IN_OUT) {
           textbox.animationWidth_20 = (textbox.currentTicks_10 << 12) / textbox.animationTicks_24;
           textbox.animationHeight_22 = (textbox.currentTicks_10 << 12) / textbox.animationTicks_24;
@@ -2248,7 +2248,7 @@ public final class Scus94491BpeSegment_8002 {
       case _4, _5 -> {
         if(textboxText_800bdf38[textboxIndex].state_00 == TextboxTextState.UNINITIALIZED_0) {
           if(textbox.type_04 == TextboxType.ANIMATE_IN_OUT) {
-            textbox.state_00 = TextboxState._3;
+            textbox.state_00 = TextboxState.ANIMATE_OUT_3;
             textbox.flags_08 |= Textbox4c.ANIMATING;
 
             final int ticks = 60 / vsyncMode_8007a3b8 / 4;
@@ -3987,14 +3987,14 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002a3ecL)
-  public static void FUN_8002a3ec(final int textboxIndex, final int mode) {
+  public static void setTextAndTextboxesToUninitialized(final int textboxIndex, final int mode) {
     if(mode == 0) {
       //LAB_8002a40c
       textboxText_800bdf38[textboxIndex].state_00 = TextboxTextState.UNINITIALIZED_0;
       textboxes_800be358[textboxIndex].state_00 = TextboxState.UNINITIALIZED_0;
     } else {
       //LAB_8002a458
-      textboxes_800be358[textboxIndex].state_00 = TextboxState._3;
+      textboxes_800be358[textboxIndex].state_00 = TextboxState.ANIMATE_OUT_3;
     }
   }
 
