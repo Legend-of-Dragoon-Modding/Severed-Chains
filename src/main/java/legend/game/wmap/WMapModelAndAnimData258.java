@@ -9,7 +9,7 @@ import legend.game.unpacker.FileData;
 import org.joml.Vector3f;
 
 public class WMapModelAndAnimData258 {
-  public enum TransitionAnimationType {
+  public enum FadeAnimationType {
     NONE,
     FADE_IN,
     FADE_OUT
@@ -42,6 +42,21 @@ public class WMapModelAndAnimData258 {
     CONTINENT_OUT
   }
 
+  public enum CoolonWarpState {
+    NONE,
+    ASCENT,
+    INIT_WORLD_MAP,
+    MAIN_LOOP,
+    INIT_PROMPT,
+    PROMPT_LOOP,
+    FLY_ANIM,
+    INIT_DEST,
+    INIT_DESCENT,
+    PAN_MAP,
+    DESCENT,
+    RESTORE_DART
+  }
+
   public enum TeleportAnimationState {
     INIT_ANIM,
     RENDER_ANIM,
@@ -49,7 +64,7 @@ public class WMapModelAndAnimData258 {
     FADE_OUT
   }
 
-  public int transitionAnimationTicks_00;
+  public int fadeAnimationTicks_00;
   /**
    * ubyte
    * <ol start="0">
@@ -67,7 +82,7 @@ public class WMapModelAndAnimData258 {
    *  <li>Fade out</li>
    * </ol>
    */
-  public TransitionAnimationType transitionAnimationType_05;
+  public FadeAnimationType fadeAnimationType_05;
 
   public WMapTmdRenderingStruct18 tmdRendering_08;
   public final Model124[] models_0c = new Model124[4];
@@ -132,19 +147,19 @@ public class WMapModelAndAnimData258 {
    * <ol start="-1">
    *   <li>Restore Dart</li>
    *   <li>Store data and clear text</li>
-   *   <li>Fly up</li>
+   *   <li>Coolon ascent</li>
    *   <li>Initialize map</li>
    *   <li>Main loop</li>
    *   <li>Initialize prompt</li>
    *   <li>Prompt loop</li>
    *   <li>Fly to destination</li>
-   *   <li></li>
-   *   <li value="10">Initialize map exit</li>
-   *   <li></li>
-   *   <li></li>
+   *   <li>Initialize destination</li>
+   *   <li value="10">Initialize descent animation</li>
+   *   <li>Pan map model</li>
+   *   <li>Coolon descent</li>
    * </ol>
    */
-  public int coolonWarpState_220;
+  public CoolonWarpState coolonWarpState_220;
   /** ubyte */
   public int coolonOriginIndex_221;
   /** ubyte */
