@@ -12,6 +12,7 @@ import legend.game.types.DabasData100;
 import legend.game.types.LodString;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
+import legend.game.types.MessageBox20;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Renderable58;
 import legend.game.unpacker.FileData;
@@ -26,7 +27,6 @@ import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.dabasMenuGlyphs_80114228;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.messageBox;
-import static legend.game.SItem.messageBox_8011dc90;
 import static legend.game.SItem.renderCentredText;
 import static legend.game.SItem.renderEightDigitNumber;
 import static legend.game.SItem.renderGlyphs;
@@ -64,6 +64,8 @@ public class DabasScreen extends MenuScreen {
   private Renderable58 renderable1;
   private Renderable58 renderable2;
   private FileData dabasFilePtr_8011dd00;
+
+  private final MessageBox20 messageBox_8011dc90 = new MessageBox20();
 
   private int menuIndex;
 

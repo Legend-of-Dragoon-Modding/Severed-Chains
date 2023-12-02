@@ -172,8 +172,6 @@ public final class SItem {
 
   public static final BoolRef canSave_8011dc88 = MEMORY.ref(1, 0x8011dc88L, BoolRef::new);
 
-  public static final MessageBox20 messageBox_8011dc90 = new MessageBox20();
-
   @Method(0x800fc698L)
   public static int getXpToNextLevel(final int charIndex) {
     if(charIndex == -1 || charIndex > 8) {
@@ -227,7 +225,6 @@ public final class SItem {
     switch(inventoryMenuState_800bdc28.get()) {
       case INIT_0 -> { // Initialize, loads some files (unknown contents)
         loadingNewGameState_800bdc34.set(false);
-        messageBox_8011dc90.state_0c = 0;
         loadCharacterStats();
 
         if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {

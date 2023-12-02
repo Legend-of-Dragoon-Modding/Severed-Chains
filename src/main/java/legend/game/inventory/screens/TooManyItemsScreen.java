@@ -18,7 +18,6 @@ import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.glyphs_80114548;
 import static legend.game.SItem.loadItemsAndEquipmentForDisplay;
 import static legend.game.SItem.menuStack;
-import static legend.game.SItem.messageBox_8011dc90;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderMenuItems;
 import static legend.game.SItem.renderString;
@@ -69,7 +68,6 @@ public class TooManyItemsScreen extends MenuScreen {
       case _1 -> {
         if(uiFile_800bdc3c != null) {
           loadItemsAndEquipmentForDisplay(this.equipment, this.items, 0x1L);
-          messageBox_8011dc90.state_0c = 0;
 
           for(final Item item : itemOverflow) {
             this.droppedItems.add(MenuEntryStruct04.make(item));
