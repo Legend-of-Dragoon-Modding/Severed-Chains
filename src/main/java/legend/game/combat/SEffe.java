@@ -8500,7 +8500,7 @@ public final class SEffe {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "loadingStage", description = "The stage")
   @Method(0x80115a94L)
   public static FlowControl scriptGetXaLoadingStage(final RunningScript<?> script) {
-    script.params_20[0].set((int)_800bf0cf.get());
+    script.params_20[0].set(_800bf0cf.get());
     return FlowControl.CONTINUE;
   }
 

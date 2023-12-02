@@ -71,7 +71,7 @@ import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b._800be5d0;
+import static legend.game.Scus94491BpeSegment_800b.characterStatsLoaded_800be5d0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
 import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
@@ -877,7 +877,7 @@ public final class Bttl_800f {
     for(int i = 0; i < charCount_800c677c.get(); i++) {
       final BattleHudCharacterDisplay3c s1 = activePartyBattleHudCharacterDisplays_800c6c40.get(i);
 
-      if(s1.charIndex_00.get() == -1 && _800be5d0.get() == 1) {
+      if(s1.charIndex_00.get() == -1 && characterStatsLoaded_800be5d0.get()) {
         initializeBattleHudCharacterDisplay(i);
       }
 

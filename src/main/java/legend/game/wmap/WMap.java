@@ -383,7 +383,7 @@ public class WMap extends EngineState {
 
         float screenOffsetY = 0.0f;
         if(this.wmapModelAndAnimData258_800c66a8.zoomState_1f8 == 4) {
-          screenOffsetY = 8.0f; // Needs adjustment for MCQ shift
+          screenOffsetY = 8.0f; // Needs adjustment since we shifted the world map MCQ 8 pixels down
         }
 
         RENDERER.queueModel(dobj2.obj, lw)
@@ -1398,7 +1398,7 @@ public class WMap extends EngineState {
     // Player arrow on map
     final int u = (int)(tickCount_800bb0fc.get() / (3.0f / vsyncMode_8007a3b8)) & 0x7;
     float x = GPU.getOffsetX() + playerArrowXy.x - modelAndAnimData.mapArrow.getSize() / 2.0f;
-    float y = GPU.getOffsetY() + playerArrowXy.y - modelAndAnimData.mapArrow.getSize() - (zoomState == 4 ? 8 : 0); // Needs adjustment for MCQ shift
+    float y = GPU.getOffsetY() + playerArrowXy.y - modelAndAnimData.mapArrow.getSize() - (zoomState == 4 ? 8 : 0); // Needs adjustment since we shifted the world map MCQ 8 pixels down
     modelAndAnimData.mapArrow.render(u, 0, x, y, 100.0f);
 
     if(modelAndAnimData.zoomState_1f8 == 4) {
@@ -1671,7 +1671,7 @@ public class WMap extends EngineState {
 
   @Method(0x800d5768L)
   private void loadLocationThumbnailImage(final Tim tim) {
-    this.loadLocationThumbnailImage_(tim, 448, 256, 768, 508);
+    this.loadLocationThumbnailImage(tim, 448, 256, 768, 508);
     this.filesLoadedFlags_800c66b8.updateAndGet(val -> val | 0x800);
 
     //LAB_800d5848
@@ -1743,7 +1743,7 @@ public class WMap extends EngineState {
   }
 
   @Method(0x800d5c50L)
-  private void loadLocationThumbnailImage_(final Tim tim, final long imageX, final long imageY, final long clutX, final long clutY) {
+  private void loadLocationThumbnailImage(final Tim tim, final long imageX, final long imageY, final long clutX, final long clutY) {
     final RECT imageRect = tim.getImageRect();
     final RECT rect = new RECT((short)imageX, (short)imageY, imageRect.w.get(), imageRect.h.get());
     LoadImage(rect, tim.getImageData());
@@ -2043,7 +2043,7 @@ public class WMap extends EngineState {
           }
           this.mapState_800c6798.pathDots.transforms.transfer.add(intersectionPoint).y -= 1.0f;
 
-          final RenderEngine.QueuedModel model = RENDERER.queueModel(this.mapState_800c6798.pathDots.bigDots, this.mapState_800c6798.pathDots.transforms)
+          final RenderEngine.QueuedModel model = RENDERER.queueModel(this.mapState_800c6798.pathDots.dots, this.mapState_800c6798.pathDots.transforms)
             .vertices(bigDotStateIndex * 4, 4);
 
           //LAB_800d7df0
@@ -2101,7 +2101,8 @@ public class WMap extends EngineState {
                 .scale(0.25f);
               this.mapState_800c6798.pathDots.transforms.transfer.add(pathPoint.x, pathPoint.y, pathPoint.z).y -= 1.0f;
 
-              final RenderEngine.QueuedModel model = RENDERER.queueModel(this.mapState_800c6798.pathDots.smallDots, this.mapState_800c6798.pathDots.transforms);
+              final RenderEngine.QueuedModel model = RENDERER.queueModel(this.mapState_800c6798.pathDots.dots, this.mapState_800c6798.pathDots.transforms)
+                .vertices(12, 4);
 
               //LAB_800d87fc
               if(zoomState == 0) {

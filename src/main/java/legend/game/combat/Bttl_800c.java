@@ -2040,15 +2040,15 @@ public final class Bttl_800c {
 
       model.modelParts_00 = a0_0.dobj2s_00;
 
-      final long a3;
+      final int shadowSizeIndex;
       if((s0.charIndex_1a2 & 0x1) != 0) {
-        a3 = 0x9L;
+        shadowSizeIndex = 9;
       } else {
-        a3 = s0.charIndex_1a2 - 0x200 >>> 1;
+        shadowSizeIndex = s0.charIndex_1a2 - 0x200 >>> 1;
       }
 
       //LAB_800c9650
-      FUN_80021520(model, tmd, anim, a3);
+      FUN_80021520(model, tmd, anim, shadowSizeIndex);
     } else {
       //LAB_800c9664
       initModel(model, tmd, anim);

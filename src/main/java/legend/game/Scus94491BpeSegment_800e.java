@@ -1,15 +1,12 @@
 package legend.game;
 
-import legend.core.gpu.Bpp;
 import legend.core.gpu.RECT;
 import legend.core.gpu.TimHeader;
 import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
 import legend.game.types.CContainer;
 import legend.game.types.Model124;
-import legend.game.types.TexPageY;
 import legend.game.types.TmdAnimationFile;
-import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 
 import java.util.Arrays;
@@ -32,7 +29,6 @@ import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.loadBasicUiTexturesAndSomethingElse;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
-import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.InitGeom;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
@@ -51,7 +47,6 @@ import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
-import static legend.game.Scus94491BpeSegment_800b.texPages_800bb110;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800c.timHeader_800c6748;
 
@@ -89,22 +84,11 @@ public final class Scus94491BpeSegment_800e {
     vsyncMode_8007a3b8 = 2;
     tickCount_800bb0fc.set(0);
 
-    precalculateTpages();
     loadSystemFont();
     SCRIPTS.clear();
     loadShadow();
     FUN_800e6d60();
     initFmvs();
-  }
-
-  @Method(0x800e60d8L)
-  public static void precalculateTpages() {
-    for(final Bpp bpp : Bpp.values()) {
-      for(final Translucency trans : Translucency.values()) {
-        texPages_800bb110.get(bpp).get(trans).get(TexPageY.Y_0).set(GetTPage(bpp, trans, 0, 0));
-        texPages_800bb110.get(bpp).get(trans).get(TexPageY.Y_256).set(GetTPage(bpp, trans, 0, 256));
-      }
-    }
   }
 
   @Method(0x800e6184L)
@@ -222,6 +206,6 @@ public final class Scus94491BpeSegment_800e {
 
   @Method(0x800e6e6cL)
   public static void initFmvs() {
-    _800bf0cf.setu(0);
+    _800bf0cf.set(0);
   }
 }

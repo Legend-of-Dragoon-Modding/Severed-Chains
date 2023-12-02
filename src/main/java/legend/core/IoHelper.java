@@ -1,8 +1,6 @@
 package legend.core;
 
 import legend.core.gpu.RECT;
-import legend.core.gte.BVEC4;
-import legend.core.memory.Value;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Vector3f;
@@ -136,12 +134,6 @@ public final class IoHelper {
     write(stream, value.h.get());
   }
 
-  public static void read(final ByteBuffer stream, final Value value) {
-    for(int i = 0; i < value.getSize(); i++) {
-      value.offset(1, i).setu(stream.get());
-    }
-  }
-
   public static boolean readBool(final ByteBuffer stream) {
     return stream.get() != 0;
   }
@@ -206,22 +198,6 @@ public final class IoHelper {
     final byte[] data = new byte[length];
     stream.get(data);
     return new String(data);
-  }
-
-  public static RECT readRect(final ByteBuffer stream, final RECT rect) {
-    return rect.set(readShort(stream), readShort(stream), readShort(stream), readShort(stream));
-  }
-
-  public static RECT readRect(final byte[] data, final int offset, final RECT rect) {
-    return rect.set(readShort(data, offset), readShort(data, offset), readShort(data, offset), readShort(data, offset));
-  }
-
-  public static BVEC4 readBvec3(final ByteBuffer stream, final BVEC4 bvec) {
-    return bvec.set(readByte(stream), readByte(stream), readByte(stream));
-  }
-
-  public static BVEC4 readBvec3(final byte[] data, final int offset, final BVEC4 bvec) {
-    return bvec.set(readByte(data, offset), readByte(data, offset), readByte(data, offset));
   }
 
   public static Vector3f readSvec3_12(final ByteBuffer stream, final Vector3f svec) {

@@ -9,7 +9,7 @@ import legend.game.inventory.screens.controls.ListBox;
 import legend.game.types.MenuEntryStruct04;
 
 import static legend.core.IoHelper.getPackedFlag;
-import static legend.game.SItem._8011b75c;
+import static legend.game.SItem.goodsDescriptions_8011b75c;
 import static legend.game.SItem.goodsItemNames_8011c008;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
@@ -29,7 +29,7 @@ public class GoodsScreen extends MenuScreen {
 
     this.unload = unload;
 
-    final ListBox.Highlight<MenuEntryStruct04<Integer>> description = item -> this.description.setText(item.item_00 >= 0xff ? "" : _8011b75c.get(item.item_00).deref().get());
+    final ListBox.Highlight<MenuEntryStruct04<Integer>> description = item -> this.description.setText(item.item_00 >= 0xff ? "" : goodsDescriptions_8011b75c.get(item.item_00).deref().get());
 
     this.leftList = new ItemList<>(MenuEntryStruct04::getName, null, null, null);
     this.leftList.setPos(8, 15);
