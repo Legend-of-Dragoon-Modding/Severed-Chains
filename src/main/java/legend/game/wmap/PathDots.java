@@ -22,7 +22,7 @@ public class PathDots {
         .vramPos(640, 256)
         .pos(-8.0f, -8.0f, 0.0f)
         .size(16.0f, 16.0f)
-        .uv(i == 3 ? 48 : i * 16, 0);
+        .uv(i * 16, 0);
     }
 
     this.dots = builder.build();
