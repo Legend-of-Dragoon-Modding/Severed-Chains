@@ -52,7 +52,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
-import java.util.stream.IntStream;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
@@ -2411,6 +2410,16 @@ public class WMap extends EngineState {
     this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.add(this.modelAndAnimData_800c66a8.mapZoomStep_1f0);
   }
 
+  private int findPlaceMatch(final int value) {
+    for(int j = 0; j < placeIndices_800c84c8.length; j++) {
+      if(value == placeIndices_800c84c8[j]) {
+        return j;
+      }
+    }
+
+    throw new RuntimeException("Could not find a place matching index " + value);
+  }
+
   /** Handles Coolon travel, and also renders the square button prompts for Coolon and Queen Fury. */
   @Method(0x800da248L)
   private void handleCoolonAndQueenFuryPrompts() {
@@ -2590,9 +2599,7 @@ public class WMap extends EngineState {
         if(possibleOriginIndices.size() == 1) {
           modelAndAnimData.coolonOriginIndex_221 = possibleOriginIndices.get(0);
         } else if(possibleOriginIndices.size() > 1) {
-          int posIndex = IntStream.range(0, placeIndices_800c84c8.length).filter(j -> coolonWarpDest_800ef228[possibleOriginIndices.get(0)].locationIndex_10 == placeIndices_800c84c8[j]).findFirst().orElse(-1);
-          assert posIndex != -1;
-
+          int posIndex = this.findPlaceMatch(coolonWarpDest_800ef228[possibleOriginIndices.get(0)].locationIndex_10);
           Vector3f placePos = placePositionVectors_800c74b8[posIndex];
           float diffX = placePos.x - modelAndAnimData.currPlayerPos_94.x;
           float diffZ = placePos.z - modelAndAnimData.currPlayerPos_94.z;
@@ -2603,9 +2610,7 @@ public class WMap extends EngineState {
           float distance;
           for(int i = 1; i < possibleOriginIndices.size(); i++) {
             index = possibleOriginIndices.get(i);
-            final int finalI = i;
-            posIndex = IntStream.range(0, placeIndices_800c84c8.length).filter(j -> coolonWarpDest_800ef228[possibleOriginIndices.get(finalI)].locationIndex_10 == placeIndices_800c84c8[j]).findFirst().orElse(-1);
-            assert posIndex != -1;
+            posIndex = this.findPlaceMatch(coolonWarpDest_800ef228[possibleOriginIndices.get(i)].locationIndex_10);
 
             placePos = placePositionVectors_800c74b8[posIndex];
             diffX = placePos.x - modelAndAnimData.currPlayerPos_94.x;
