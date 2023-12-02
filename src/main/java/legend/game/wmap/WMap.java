@@ -2770,6 +2770,7 @@ public class WMap extends EngineState {
           index_80052c38.set(this.mapState_800c6798.submapScene_ca);
           modelAndAnimData.mapTransitionDestinationType_250 = MapTransitionDestinationType.WORLD_MAP;
           previousEngineState_8004dd28 = null;
+          this.coolonWarpDestLabelName = null;
         }
 
         //LAB_800dba98
