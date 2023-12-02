@@ -11,8 +11,8 @@ public class CoolonWarpDestination20 {
   public final int y_1a;
   public final String placeName_1c;
 
-  public CoolonWarpDestination20(final Vector3f vec, final int locationIndex, final int defaultDestLocationIndex, final int x, final int y, final String placeName) {
-    this.destPosition_00 = vec;
+  public CoolonWarpDestination20(final Vector3f destPos, final int locationIndex, final int defaultDestLocationIndex, final int x, final int y, final String placeName) {
+    this.destPosition_00 = destPos;
     this.locationIndex_10 = locationIndex;
     this.defaultDestLocationIndex_14 = defaultDestLocationIndex;
     this.x_18 = x;
