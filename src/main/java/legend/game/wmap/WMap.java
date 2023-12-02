@@ -2481,7 +2481,6 @@ public class WMap extends EngineState {
 
     if(Input.pressedThisFrame(InputAction.BUTTON_WEST)) { // Square
       this.destinationLabelStage_800c86f0 = 0;
-      this.shouldSetCoolonWarpDestLabelMetrics = true;
       modelAndAnimData.mapTransitionDestinationType_250 = MapTransitionDestinationType.SUBMAP;
     }
 
@@ -2625,6 +2624,7 @@ public class WMap extends EngineState {
         modelAndAnimData.coolonDestIndex_222 = coolonWarpDest_800ef228[modelAndAnimData.coolonOriginIndex_221].defaultDestLocationIndex_14;
         modelAndAnimData.coolonWarpState_220 = CoolonWarpState.MAIN_LOOP;
         modelAndAnimData.currPlayerPos_94.set(coolonWarpDest_800ef228[modelAndAnimData.coolonOriginIndex_221].destPosition_00);
+        this.shouldSetCoolonWarpDestLabelMetrics = true;
         break;
 
       case MAIN_LOOP:
