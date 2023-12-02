@@ -224,7 +224,6 @@ public final class SEffe {
 
   private static final ArrayRef<ByteRef> daddyHudEyeClutOffsets_800fb84c = MEMORY.ref(1, 0x800fb84cL, ArrayRef.of(ByteRef.class, 16, 1, ByteRef::new));
 
-  private static final COLOUR _800fb8cc = MEMORY.ref(2, 0x800fb8ccL, COLOUR::new);
   private static final Vector3f _800fb8d0 = new Vector3f(1.0f, 0.0f, 0.0f);
 
   private static final ArrayRef<IntRef> lensFlareGlowScales_800fb8fc = MEMORY.ref(4, 0x800fb8fcL, ArrayRef.of(IntRef.class, 5, 4, IntRef::new));
@@ -5305,7 +5304,7 @@ public final class SEffe {
       final Vector3f normal = new Vector3f();
       _800fb8d0.mul(transforms, normal);
       normal.add(transforms.transfer.x / 4096.0f, transforms.transfer.y / 4096.0f, transforms.transfer.z / 4096.0f);
-      rgb.unpack(GTE.normalColour(normal, (int)_800fb8cc.pack()));
+      rgb.unpack(GTE.normalColour(normal, 0xffffff));
     } else {
       //LAB_8010b6c8
       rgb.set(0x80, 0x80, 0x80);
@@ -5456,7 +5455,7 @@ public final class SEffe {
       final Vector3f normal = new Vector3f();
       _800fb8d0.mul(transforms, normal);
       normal.add(transforms.transfer.x / 4096.0f, transforms.transfer.y / 4096.0f, transforms.transfer.z / 4096.0f);
-      rgb.unpack(GTE.normalColour(normal, (int)_800fb8cc.pack()));
+      rgb.unpack(GTE.normalColour(normal, 0xffffff));
     } else {
       //LAB_8010bd6c
       rgb.set(0x80, 0x80, 0x80);
