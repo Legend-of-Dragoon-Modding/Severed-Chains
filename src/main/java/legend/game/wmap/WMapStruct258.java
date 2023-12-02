@@ -76,7 +76,7 @@ public class WMapStruct258 {
   public float mapTextureBrightness_20;
 
   public MeshObj mapContinentNameObj;
-  public MeshObj[] zoomOverlayObjs = new MeshObj[7];
+  public ZoomOverlay zoomOverlay;
   public final MV mapOverlayTransforms = new MV();
 
   public MapMarker mapArrow;
@@ -85,7 +85,7 @@ public class WMapStruct258 {
   public WMapAtmosphericEffectInstance60[] atmosphericEffectInstances_24;
   public MeshObj[] atmosphericEffectSprites;
 
-  public float clutYIndex_28;
+  public int clutYIndex_28;
   public FileData imageData_2c;
   public FileData imageData_30;
   /** Used as the camera position, only translation is used */
@@ -106,8 +106,6 @@ public class WMapStruct258 {
   public final Vector3f mapZoomStep_1f0 = new Vector3f();
   /** ubyte */
   public int zoomState_1f8;
-  /** Not in retail */
-  public int previousZoomLevel;
   /** ubyte */
   public int zoomAnimationTick_1f9;
 

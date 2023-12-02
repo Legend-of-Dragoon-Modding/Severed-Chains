@@ -318,15 +318,15 @@ public class DebuggerController {
 
       smap.mapTransition(-1, 0);
     } else if(currentEngineState_8004dd04 instanceof final WMap wmap) {
-      final DirectionalPathSegmentData08 directionalPathSegment = directionalPathSegmentData_800f2248.get(wmap.mapState_800c6798.directionalPathIndex_12);
+      final DirectionalPathSegmentData08 directionalPathSegment = directionalPathSegmentData_800f2248[wmap.mapState_800c6798.directionalPathIndex_12];
 
       if(Config.combatStage()) {
         battleStage_800bb0f4.set(Config.getCombatStage());
       } else {
-        if(directionalPathSegment.battleStage_04.get() == -1) {
+        if(directionalPathSegment.battleStage_04 == -1) {
           battleStage_800bb0f4.set(1);
         } else {
-          battleStage_800bb0f4.set(directionalPathSegment.battleStage_04.get());
+          battleStage_800bb0f4.set(directionalPathSegment.battleStage_04);
         }
       }
 

@@ -1,6 +1,5 @@
 package legend.game.wmap;
 
-import legend.game.types.LodString;
 import org.joml.Vector3f;
 
 public class CoolonWarpDestination20 {
@@ -10,9 +9,9 @@ public class CoolonWarpDestination20 {
   public final int _14;
   public final int x_18;
   public final int y_1a;
-  public final LodString placeName_1c;
+  public final String placeName_1c;
 
-  public CoolonWarpDestination20(final Vector3f vec, final int locationIndex, final int _14, final int x, final int y, final LodString placeName) {
+  public CoolonWarpDestination20(final Vector3f vec, final int locationIndex, final int _14, final int x, final int y, final String placeName) {
     this.vec_00 = vec;
     this.locationIndex_10 = locationIndex;
     this._14 = _14;
