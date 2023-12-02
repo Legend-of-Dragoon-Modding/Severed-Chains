@@ -1,6 +1,5 @@
 package legend.game.wmap;
 
-import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.RECT;
 import legend.core.gte.MV;
@@ -188,24 +187,14 @@ public class WmapPromptPopup {
       case SELECTOR -> this.selector = highlight;
     }
 
+    this.setRenderColours(mode, highlight);
+
     return this;
   }
 
   @Method(0x800cea1cL)
-  private void setRenderColours(final WmapMenuTextHighlight40 highlight) {
-    if(highlight.currentBrightness_34 < 0.0f) {
-      highlight.currentBrightness_34 = 0.0f;
-      //LAB_800cea54
-    } else if(highlight.currentBrightness_34 > 1.0f) {
-      highlight.currentBrightness_34 = 1.0f;
-    }
-
-    //LAB_800cea7c
-    if(MathHelper.flEq(highlight.currentBrightness_34, highlight.previousBrightness_36)) {
-      return;
-    }
-
-    highlight.delete();
+  private void setRenderColours(final HighlightMode mode, final WmapMenuTextHighlight40 highlight) {
+    final QuadBuilder builder = new QuadBuilder("MenuPrompt" + mode);
 
     //LAB_800ceaa0
     //LAB_800ceacc
@@ -214,25 +203,26 @@ public class WmapPromptPopup {
     for(int i = 0; i < highlight.subRectCount_30; i++) {
       final WMapTextHighlightSubRectVertexColours10 colours = highlight.subRectVertexColoursArray_00[n];
 
-      final float r0 = colours.topLeft_00.x * highlight.currentBrightness_34;
-      final float g0 = colours.topLeft_00.y * highlight.currentBrightness_34;
-      final float b0 = colours.topLeft_00.z * highlight.currentBrightness_34;
-      final float r1 = colours.topRight_04.x * highlight.currentBrightness_34;
-      final float g1 = colours.topRight_04.y * highlight.currentBrightness_34;
-      final float b1 = colours.topRight_04.z * highlight.currentBrightness_34;
-      final float r2 = colours.bottomLeft_08.x * highlight.currentBrightness_34;
-      final float g2 = colours.bottomLeft_08.y * highlight.currentBrightness_34;
-      final float b2 = colours.bottomLeft_08.z * highlight.currentBrightness_34;
-      final float r3 = colours.bottomRight_0c.x * highlight.currentBrightness_34;
-      final float g3 = colours.bottomRight_0c.y * highlight.currentBrightness_34;
-      final float b3 = colours.bottomRight_0c.z * highlight.currentBrightness_34;
+      final float r0 = colours.topLeft_00.x;
+      final float g0 = colours.topLeft_00.y;
+      final float b0 = colours.topLeft_00.z;
+      final float r1 = colours.topRight_04.x;
+      final float g1 = colours.topRight_04.y;
+      final float b1 = colours.topRight_04.z;
+      final float r2 = colours.bottomLeft_08.x;
+      final float g2 = colours.bottomLeft_08.y;
+      final float b2 = colours.bottomLeft_08.z;
+      final float r3 = colours.bottomRight_0c.x;
+      final float g3 = colours.bottomRight_0c.y;
+      final float b3 = colours.bottomRight_0c.z;
       if(highlight.type_3f != 0) {
         n++;
       }
 
       final RECT rect = highlight.rects_1c[i];
 
-      final QuadBuilder builder = new QuadBuilder("MenuHighlight")
+      builder
+        .add()
         .rgb(0, r0, g0, b0)
         .rgb(1, r2, g2, b2)
         .rgb(2, r1, g1, b1)
@@ -243,20 +233,24 @@ public class WmapPromptPopup {
       if(highlight.transparency_3c) {
         builder.translucency(highlight.tpagePacket_04[i]);
       }
-
-      highlight.objs[i] = builder.build();
     }
+
+    highlight.highlight = builder.build();
 
     //LAB_800cf1dc
     //LAB_800cf1e4
-    highlight.previousBrightness_36 = highlight.currentBrightness_34;
-
     //LAB_800cf1fc
   }
 
   public void renderHighlight(final HighlightMode mode) {
     final WmapMenuTextHighlight40 highlight = mode == HighlightMode.SELECTOR ? this.selector : this.shadow;
-    this.setRenderColours(highlight);
+
+    if(highlight.currentBrightness_34 < 0.0f) {
+      highlight.currentBrightness_34 = 0.0f;
+      //LAB_800cea54
+    } else if(highlight.currentBrightness_34 > 1.0f) {
+      highlight.currentBrightness_34 = 1.0f;
+    }
 
     final float x = highlight.x_38 + GPU.getOffsetX();
     final float y = highlight.y_3a + GPU.getOffsetY();
@@ -268,7 +262,9 @@ public class WmapPromptPopup {
       //LAB_800ce5c8
       highlight.transforms.identity();
       highlight.transforms.transfer.set(x, y, highlight.z_3e);
-      RENDERER.queueOrthoOverlayModel(highlight.objs[i], highlight.transforms);
+      RENDERER.queueOrthoOverlayModel(highlight.highlight, highlight.transforms)
+        .vertices(i * 4, 4)
+        .monochrome(highlight.currentBrightness_34);
     }
   }
 

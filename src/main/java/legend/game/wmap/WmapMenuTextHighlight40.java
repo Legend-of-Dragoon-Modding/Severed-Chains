@@ -9,6 +9,9 @@ import org.joml.Vector3f;
 import java.util.Arrays;
 
 public class WmapMenuTextHighlight40 {
+  public Obj highlight;
+  public final MV transforms = new MV();
+
   public WMapTextHighlightSubRectVertexColours10[] subRectVertexColoursArray_00;
   public Translucency[] tpagePacket_04;
 
@@ -19,15 +22,12 @@ public class WmapMenuTextHighlight40 {
   public int rowCount_2c;
   public int subRectCount_30;
   public float currentBrightness_34;
-  public float previousBrightness_36;
+  // Unneeded now
+  // public float previousBrightness_36;
   public float x_38;
   public float y_3a;
   public boolean transparency_3c;
   public float z_3e;
-
-  public Obj[] objs;
-  public final MV transforms = new MV();
-
   public int type_3f;
 
   public WmapMenuTextHighlight40(final float brightness, final Vector3f baseColour, final RECT fullRect, final int columnCount, final int rowCount, final int type, final boolean transparency, final Translucency transparencyMode, final float z) {
@@ -44,8 +44,6 @@ public class WmapMenuTextHighlight40 {
     this.y_3a = 0;
     this.transparency_3c = transparency;
     this.z_3e = z;
-
-    this.objs = new Obj[this.subRectCount_30];
 
     // Types 2 and 4 are the only ones used by retail; 0 would be a single-color rect
     if(type == 0) {
@@ -116,7 +114,6 @@ public class WmapMenuTextHighlight40 {
   private void initializeWmapTextHighlightTypeAndColour(final WmapMenuTextHighlight40 highlight, final int type, final Vector3f baseColour) {
     highlight.type_3f = type;
     highlight.shadeWmapTextHighlightSubRectVertices(type, highlight.columnCount_28, highlight.rowCount_2c, baseColour);
-    highlight.previousBrightness_36 = -1;
   }
 
   /**
@@ -593,13 +590,9 @@ public class WmapMenuTextHighlight40 {
   }
 
   public void delete() {
-    if(this.objs != null) {
-      for(int i = 0; i < this.objs.length; i++) {
-        if(this.objs[i] != null) {
-          this.objs[i].delete();
-          this.objs[i] = null;
-        }
-      }
+    if(this.highlight != null) {
+      this.highlight.delete();
+      this.highlight = null;
     }
   }
 }
