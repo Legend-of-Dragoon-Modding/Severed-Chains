@@ -8,7 +8,7 @@ import legend.game.types.Model124;
 import legend.game.unpacker.FileData;
 import org.joml.Vector3f;
 
-public class WMapStruct258 {
+public class WMapModelAndAnimData258 {
   public enum TransitionAnimationType {
     NONE,
     FADE_IN,
@@ -92,13 +92,21 @@ public class WMapStruct258 {
   public final GsCOORDINATE2 coord2_34 = new GsCOORDINATE2();
   public final Vector3f prevPlayerPos_84 = new Vector3f();
   public final Vector3f currPlayerPos_94 = new Vector3f();
-  public final Vector3f rotation_a4 = new Vector3f();
+  public final Vector3f playerRotation_a4 = new Vector3f();
   public int currentAnimIndex_ac;
   public int animIndex_b0;
-  public final WMapStruct258Sub40[] _b4 = {new WMapStruct258Sub40(), new WMapStruct258Sub40(), new WMapStruct258Sub40(), new WMapStruct258Sub40()};
+  public final PlayerModelTmdFileData[] playerModelTmdFileData_b4 = {new PlayerModelTmdFileData(), new PlayerModelTmdFileData(), new PlayerModelTmdFileData(), new PlayerModelTmdFileData()};
 
   public Obj shadowObj;
   public final MV shadowTransforms = new MV();
+  /**
+   * <ol start="0">
+   *   <li>Dart</li>
+   *   <li>Queen Fury</li>
+   *   <li>Coolon</li>
+   *   <li>Teleporter</li>
+   * </ol>
+   */
   public int modelIndex_1e4;
 
   // Zoom attributes
@@ -112,20 +120,35 @@ public class WMapStruct258 {
   // Coolon attributes
   /** Highlight refactored into WmapPromptPopup */
   // public WmapMenuTextHighlight40 coolonTravelMenuSelectorHighlight_1fc;
-  public final Vector3f svec_200 = new Vector3f();
-  public final Vector3f svec_208 = new Vector3f();
+  public final Vector3f mapPos_200 = new Vector3f();
+  public final Vector3f playerPos_208 = new Vector3f();
 
-  public int _218;
+  public int coolonTravelAnimationTick_218;
   /** ushort */
-  public float angle_21c;
+  public float playerRotation_21c;
   /** ushort */
-  public float angle_21e;
-  /** byte */
-  public int _220;
+  public float mapRotation_21e;
+  /** byte
+   * <ol start="-1">
+   *   <li>Restore Dart</li>
+   *   <li>Store data and clear text</li>
+   *   <li>Fly up</li>
+   *   <li>Initialize map</li>
+   *   <li>Main loop</li>
+   *   <li>Initialize prompt</li>
+   *   <li>Prompt loop</li>
+   *   <li>Fly to destination</li>
+   *   <li></li>
+   *   <li value="10">Initialize map exit</li>
+   *   <li></li>
+   *   <li></li>
+   * </ol>
+   */
+  public int coolonWarpState_220;
   /** ubyte */
-  public int coolonWarpIndex_221;
+  public int coolonOriginIndex_221;
   /** ubyte */
-  public int coolonWarpIndex_222;
+  public int coolonDestIndex_222;
   /** ubyte */
   public int coolonPromptIndex_223;
 

@@ -4,7 +4,7 @@ public enum TextboxState {
   UNINITIALIZED_0,
   _1,
   _2,
-  _3,
+  ANIMATE_OUT_3,
   _4,
   _5,
   _6,
