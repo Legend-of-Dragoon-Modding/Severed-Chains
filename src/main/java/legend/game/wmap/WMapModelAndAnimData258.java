@@ -42,6 +42,21 @@ public class WMapModelAndAnimData258 {
     CONTINENT_OUT
   }
 
+  public enum CoolonWarpState {
+    NONE,
+    ASCENT,
+    INIT_WORLD_MAP,
+    MAIN_LOOP,
+    INIT_PROMPT,
+    PROMPT_LOOP,
+    FLY_ANIM,
+    INIT_DEST,
+    INIT_DESCENT,
+    PAN_MAP,
+    DESCENT,
+    RESTORE_DART
+  }
+
   public enum TeleportAnimationState {
     INIT_ANIM,
     RENDER_ANIM,
@@ -144,7 +159,7 @@ public class WMapModelAndAnimData258 {
    *   <li>Coolon descent</li>
    * </ol>
    */
-  public int coolonWarpState_220;
+  public CoolonWarpState coolonWarpState_220;
   /** ubyte */
   public int coolonOriginIndex_221;
   /** ubyte */
