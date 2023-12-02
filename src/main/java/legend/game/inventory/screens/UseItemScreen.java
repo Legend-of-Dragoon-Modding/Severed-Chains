@@ -11,19 +11,7 @@ import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.Renderable58;
 
-import static legend.game.SItem.Completely_recovered_8011d534;
-import static legend.game.SItem.Detoxified_8011d5c8;
-import static legend.game.SItem.Encounter_risk_reduced_8011d594;
 import static legend.game.SItem.FUN_80104b60;
-import static legend.game.SItem.Fear_gone_8011d604;
-import static legend.game.SItem.HP_8011d57c;
-import static legend.game.SItem.HP_recovered_for_all_8011cfcc;
-import static legend.game.SItem.MP_8011d584;
-import static legend.game.SItem.MP_recovered_for_all_8011cff8;
-import static legend.game.SItem.Nothing_happened_8011d618;
-import static legend.game.SItem.Recovered_8011d560;
-import static legend.game.SItem.SP_8011d58c;
-import static legend.game.SItem.Spirit_recovered_8011d5e0;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.characterCount_8011d7c4;
 import static legend.game.SItem.glyph_801142d4;
@@ -50,6 +38,19 @@ import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 
 public class UseItemScreen extends MenuScreen {
+  private static final LodString HP_recovered_for_all_8011cfcc = new LodString("HP recovered for all");
+  private static final LodString MP_recovered_for_all_8011cff8 = new LodString("MP recovered for all");
+  private static final LodString Completely_recovered_8011d534 = new LodString("SP recovered for all");
+  private static final LodString Recovered_8011d560 = new LodString("Recovered");
+  private static final LodString HP_8011d57c = new LodString("HP");
+  private static final LodString MP_8011d584 = new LodString("MP");
+  private static final LodString SP_8011d58c = new LodString("SP");
+  private static final LodString Encounter_risk_reduced_8011d594 = new LodString("Encounter risk reduced");
+  private static final LodString Detoxified_8011d5c8 = new LodString("Detoxified");
+  private static final LodString Spirit_recovered_8011d5e0 = new LodString("Spirit recovered");
+  private static final LodString Fear_gone_8011d604 = new LodString("Fear gone");
+  private static final LodString Nothing_happened_8011d618 = new LodString("Nothing happened");
+
   private int loadingStage;
   private double scrollAccumulator;
   private final Runnable unload;

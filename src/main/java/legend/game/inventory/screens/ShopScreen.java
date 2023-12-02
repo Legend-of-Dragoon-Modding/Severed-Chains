@@ -30,16 +30,7 @@ import java.util.Objects;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.REGISTRIES;
-import static legend.game.SItem.Buy_8011c6a4;
-import static legend.game.SItem.Cannot_be_armed_with_8011c6d4;
-import static legend.game.SItem.Carried_8011c6b8;
 import static legend.game.SItem.FUN_80104b60;
-import static legend.game.SItem.Leave_8011c6c8;
-import static legend.game.SItem.Not_enough_money_8011c468;
-import static legend.game.SItem.Number_kept_8011c7f4;
-import static legend.game.SItem.Sell_8011c6ac;
-import static legend.game.SItem.Which_item_do_you_want_to_sell_8011c4e4;
-import static legend.game.SItem.Which_weapon_do_you_want_to_sell_8011c524;
 import static legend.game.SItem.allocateOneFrameGlyph;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.cacheCharacterSlots;
@@ -84,6 +75,16 @@ import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.submap.SMap.shops_800f4930;
 
 public class ShopScreen extends MenuScreen {
+  private static final LodString Not_enough_money_8011c468 = new LodString("Not enough\nmoney");
+  private static final LodString Which_item_do_you_want_to_sell_8011c4e4 = new LodString("Which item do you\nwant to sell?");
+  private static final LodString Which_weapon_do_you_want_to_sell_8011c524 = new LodString("Which weapon do\nyou want to sell?");
+  private static final LodString Buy_8011c6a4 = new LodString("Buy");
+  private static final LodString Sell_8011c6ac = new LodString("Sell");
+  private static final LodString Carried_8011c6b8 = new LodString("Carried");
+  private static final LodString Leave_8011c6c8 = new LodString("Leave");
+  private static final LodString Cannot_be_armed_with_8011c6d4 = new LodString("Cannot be armed\nwith");
+  private static final LodString Number_kept_8011c7f4 = new LodString("Number kept");
+
   private MenuState menuState = MenuState.INIT_0;
   private MenuState confirmDest;
 

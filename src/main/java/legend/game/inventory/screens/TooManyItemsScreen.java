@@ -12,12 +12,7 @@ import legend.game.types.MenuEntryStruct04;
 import legend.game.types.MessageBoxResult;
 import legend.game.types.Renderable58;
 
-import static legend.game.SItem.Acquired_item_8011c2f8;
-import static legend.game.SItem.Armed_item_8011c314;
 import static legend.game.SItem.FUN_80104b60;
-import static legend.game.SItem.Press_to_sort_8011d024;
-import static legend.game.SItem.This_item_cannot_be_thrown_away_8011c2a8;
-import static legend.game.SItem.Used_item_8011c32c;
 import static legend.game.SItem.allocateOneFrameGlyph;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.glyphs_80114548;
@@ -46,6 +41,12 @@ import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 
 public class TooManyItemsScreen extends MenuScreen {
+  private static final LodString This_item_cannot_be_thrown_away_8011c2a8 = new LodString("This item cannot\nbe thrown away");
+  private static final LodString Acquired_item_8011c2f8 = new LodString("Acquired item");
+  private static final LodString Armed_item_8011c314 = new LodString("Armed item");
+  private static final LodString Used_item_8011c32c = new LodString("Used item");
+  private static final LodString Press_to_sort_8011d024 = new LodString("Press  to sort");
+
   private MenuState menuState = MenuState._1;
   private double scrollAccumulator;
   private int mouseX;

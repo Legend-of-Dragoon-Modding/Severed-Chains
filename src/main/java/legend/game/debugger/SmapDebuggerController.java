@@ -16,9 +16,8 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import legend.core.MathHelper;
-import legend.game.submap.SMap;
 import legend.game.scripting.ScriptState;
+import legend.game.submap.SMap;
 import legend.game.submap.SubmapObject210;
 
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
@@ -192,9 +191,9 @@ public class SmapDebuggerController {
 
   public void updateRot(final ActionEvent event) {
     if(this.sobj != null) {
-      this.sobj.model_00.coord2_14.transforms.rotate.x = MathHelper.psxDegToRad(this.rotX.getValueFactory().getValue().shortValue());
-      this.sobj.model_00.coord2_14.transforms.rotate.y = MathHelper.psxDegToRad(this.rotY.getValueFactory().getValue().shortValue());
-      this.sobj.model_00.coord2_14.transforms.rotate.z = MathHelper.psxDegToRad(this.rotZ.getValueFactory().getValue().shortValue());
+      this.sobj.model_00.coord2_14.transforms.rotate.x = this.rotX.getValueFactory().getValue().floatValue();
+      this.sobj.model_00.coord2_14.transforms.rotate.y = this.rotY.getValueFactory().getValue().floatValue();
+      this.sobj.model_00.coord2_14.transforms.rotate.z = this.rotZ.getValueFactory().getValue().floatValue();
     }
   }
 

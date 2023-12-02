@@ -2,21 +2,21 @@ package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
 import legend.game.input.InputAction;
+import legend.game.types.LodString;
 import legend.game.types.MenuAdditionInfo;
 import legend.game.types.Renderable58;
 
 import java.util.Arrays;
 
-import static legend.game.SItem.Addition_cannot_be_used_8011c340;
 import static legend.game.SItem.FUN_801034cc;
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.additionGlyphs_801141e4;
 import static legend.game.SItem.additionXpPerLevel_800fba2c;
+import static legend.game.SItem.additions_80114070;
 import static legend.game.SItem.additions_8011a064;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.characterCount_8011d7c4;
 import static legend.game.SItem.loadAdditions;
-import static legend.game.SItem.additions_80114070;
 import static legend.game.SItem.renderCharacter;
 import static legend.game.SItem.renderCharacterSlot;
 import static legend.game.SItem.renderGlyphs;
@@ -33,6 +33,8 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
 public class AdditionsScreen extends MenuScreen {
+  private static final LodString Addition_cannot_be_used_8011c340 = new LodString("Additions cannot be used");
+
   private int loadingStage;
   private double scrollAccumulator;
   private final Runnable unload;

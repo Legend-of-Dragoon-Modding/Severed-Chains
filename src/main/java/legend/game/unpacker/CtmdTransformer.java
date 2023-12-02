@@ -1,9 +1,9 @@
 package legend.game.unpacker;
 
 import legend.core.MathHelper;
-import legend.core.gte.BVEC4;
 import legend.core.memory.Method;
 import org.joml.Vector3i;
+import org.joml.Vector4i;
 
 import java.util.Map;
 import java.util.Set;
@@ -117,13 +117,13 @@ public final class CtmdTransformer {
 
       final FileData vertices = ctmdData.slice(0xc + objTable.vertices_00);
       for(int i = 0; i < vertexCount; i++) {
-        final BVEC4 lo = new BVEC4().set(vertices.readByte(i * 4), vertices.readByte(i * 4 + 1), vertices.readByte(i * 4 + 2), vertices.readByte(i * 4 + 3));
-        final int hiIndex = lo.getW() & 0xff;
-        final BVEC4 hi = new BVEC4().set(vertices.readByte(hiIndex * 4), vertices.readByte(hiIndex * 4 + 1), vertices.readByte(hiIndex * 4 + 2), vertices.readByte(hiIndex * 4 + 3));
+        final Vector4i lo = new Vector4i(vertices.readByte(i * 4), vertices.readByte(i * 4 + 1), vertices.readByte(i * 4 + 2), vertices.readByte(i * 4 + 3));
+        final int hiIndex = lo.w & 0xff;
+        final Vector4i hi = new Vector4i(vertices.readByte(hiIndex * 4), vertices.readByte(hiIndex * 4 + 1), vertices.readByte(hiIndex * 4 + 2), vertices.readByte(hiIndex * 4 + 3));
         final Vector3i vert = new Vector3i();
-        vert.x = lo.getX() + ((hi.getX() & 0xff) << 8);
-        vert.y = lo.getY() + ((hi.getY() & 0xff) << 8);
-        vert.z = lo.getZ() + ((hi.getZ() & 0xff) << 8);
+        vert.x = lo.x + ((hi.x & 0xff) << 8);
+        vert.y = lo.y + ((hi.y & 0xff) << 8);
+        vert.z = lo.z + ((hi.z & 0xff) << 8);
         objTable.unpackedVertices[i] = vert;
       }
 

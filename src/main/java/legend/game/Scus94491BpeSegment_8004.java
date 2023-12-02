@@ -2,7 +2,6 @@ package legend.game;
 
 import legend.core.MathHelper;
 import legend.core.memory.Method;
-import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.IntRef;
@@ -147,8 +146,8 @@ public final class Scus94491BpeSegment_8004 {
 
   public static Runnable syncFrame_8004dd3c;
   public static Runnable swapDisplayBuffer_8004dd40;
-  public static final Value simpleRandSeed_8004dd44 = MEMORY.ref(4, 0x8004dd44L);
-  public static final Value _8004dd48 = MEMORY.ref(2, 0x8004dd48L);
+  public static final IntRef simpleRandSeed_8004dd44 = MEMORY.ref(4, 0x8004dd44L, IntRef::new);
+  public static final ArrayRef<UnsignedShortRef> _8004dd48 = MEMORY.ref(2, 0x8004dd48L, ArrayRef.of(UnsignedShortRef.class, 7, 2, UnsignedShortRef::new));
 
   public static final BoolRef preloadingAudioAssets_8004ddcc = MEMORY.ref(1, 0x8004ddccL, BoolRef::new);
 
@@ -682,8 +681,8 @@ public final class Scus94491BpeSegment_8004 {
   public static final ScriptFile doNothingScript_8004f650 = new ScriptFile("Do nothing", new int[] {0x4, 0x1});
   public static Struct10 _8004f658;
 
-  public static final Value _8004f6e4 = MEMORY.ref(4, 0x8004f6e4L);
-  public static final Value _8004f6e8 = MEMORY.ref(4, 0x8004f6e8L);
+  public static final IntRef _8004f6e4 = MEMORY.ref(4, 0x8004f6e4L, IntRef::new);
+
   public static final IntRef battleStartDelayTicks_8004f6ec = MEMORY.ref(4, 0x8004f6ecL, IntRef::new);
 
   public static final ArrayRef<SubmapMusic08> _8004fa98 = MEMORY.ref(1, 0x8004fa98L, ArrayRef.of(SubmapMusic08.class, 13, 8, SubmapMusic08::new));

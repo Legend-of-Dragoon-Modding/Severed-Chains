@@ -460,6 +460,15 @@ public class RenderEngine {
         RENDERER.setProjectionMode(ProjectionMode._2D);
         this.renderPool(this.orthoPool);
 
+        RENDERER.setProjectionMode(ProjectionMode._3D);
+        this.renderPoolTranslucent(this.modelPool);
+
+        RENDERER.setProjectionMode(ProjectionMode._2D);
+        this.renderPoolTranslucent(this.orthoPool);
+
+        this.modelPool.reset();
+        this.orthoPool.reset();
+
         // set render states
         RENDERER.setProjectionMode(ProjectionMode._3D);
         glDepthFunc(GL_ALWAYS);
@@ -576,13 +585,17 @@ public class RenderEngine {
         }
       }
     }
+  }
 
+  private void renderPoolTranslucent(final QueuePool pool) {
     glDepthMask(false);
     glDisable(GL_CULL_FACE);
     glEnable(GL_BLEND);
 
     // Render B+F (implicitly order-independent, because it's all addition)
     // Also renders B-F by negating the colour value and rendering as B+F
+    this.opaqueFrameBuffer.bind();
+    this.tmdShader.use();
     this.tmdShaderDiscardTranslucency.set(2.0f);
     Translucency.B_PLUS_F.setGlState();
 
@@ -628,8 +641,6 @@ public class RenderEngine {
         entry.render(Translucency.HALF_B_PLUS_HALF_F);
       }
     }
-
-    pool.reset();
   }
 
   private void render2dPool(final QueuePool pool) {

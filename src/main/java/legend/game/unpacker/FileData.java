@@ -2,9 +2,9 @@ package legend.game.unpacker;
 
 import legend.core.MathHelper;
 import legend.core.gpu.RECT;
-import legend.core.gte.BVEC4;
 import legend.core.gte.COLOUR;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
 import java.nio.charset.StandardCharsets;
@@ -145,7 +145,7 @@ public record FileData(byte[] data, int offset, int size, int virtualSize, int r
     return rect.set(this.readShort(offset), this.readShort(offset + 0x2), this.readShort(offset + 0x4), this.readShort(offset + 0x6));
   }
 
-  public BVEC4 readBvec3(final int offset, final BVEC4 bvec) {
+  public Vector3i readBvec3(final int offset, final Vector3i bvec) {
     this.checkBounds(offset, 3);
     return bvec.set(this.readByte(offset), this.readByte(offset + 0x1), this.readByte(offset + 0x2));
   }
