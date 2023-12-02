@@ -197,7 +197,7 @@ public final class WmapStatics {
   };
 
   public static final String[] services_800f01cc = {
-    "Saving Point",
+    "Save Point",
     "Hotel",
     "Clinic",
     "Weapon Shop",
