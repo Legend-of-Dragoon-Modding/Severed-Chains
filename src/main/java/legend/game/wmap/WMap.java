@@ -2164,7 +2164,7 @@ public class WMap extends EngineState {
     final MV lw = new MV();
 
     this.renderAndHandleWorldMap();
-    this.FUN_800da248();
+    this.handleCoolonAndQueenFuryPrompts();
 
     if(
       this.wmapModelAndAnimData258_800c66a8.coolonWarpState_220.ordinal() >= 2 &&
@@ -2410,9 +2410,9 @@ public class WMap extends EngineState {
     this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.add(this.wmapModelAndAnimData258_800c66a8.mapZoomStep_1f0);
   }
 
-  /** Handles Coolon fast travel, Queen Fury overlay, probably other things */
+  /** Handles Coolon travel, and also renders the square button prompts for Coolon and Queen Fury. */
   @Method(0x800da248L)
-  private void FUN_800da248() {
+  private void handleCoolonAndQueenFuryPrompts() {
     if(this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc == PathSegmentEndpointType.TERMINAL) {
       return;
     }
