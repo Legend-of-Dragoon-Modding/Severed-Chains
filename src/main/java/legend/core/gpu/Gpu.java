@@ -135,9 +135,24 @@ public class Gpu {
     }
   }
 
+  private final float[] fps = new float[60];
+  private int fpsIndex;
+
   public void endFrame() {
     this.tick();
-    RENDERER.window().setTitle("Legend of Dragoon - FPS: %.2f/%d scale: %.2f res: %dx%d".formatted(RENDERER.getFps(), RENDERER.window().getFpsLimit(), RENDERER.window().getHeight() / 240.0f, this.displayTexture.width, this.displayTexture.height));
+
+    final int fpsLimit = RENDERER.window().getFpsLimit();
+    this.fps[this.fpsIndex] = RENDERER.getFps();
+    this.fpsIndex = (this.fpsIndex + 1) % fpsLimit;
+
+    if(this.fpsIndex == 0) {
+      float avg = 0.0f;
+      for(int i = 0; i < fpsLimit; i++) {
+        avg += this.fps[i];
+      }
+
+      RENDERER.window().setTitle("Legend of Dragoon - FPS: %.2f/%d scale: %.2f res: %dx%d".formatted(avg / fpsLimit, fpsLimit, RENDERER.window().getHeight() / 240.0f, this.displayTexture.width, this.displayTexture.height));
+    }
   }
 
   public void useVramTexture() {

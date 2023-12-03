@@ -73,6 +73,8 @@ public final class Config {
     properties.setProperty("textbox_transparency_mode", "0");
   }
 
+  private static int gameSpeedMultiplier = 1;
+
   public static int windowWidth() {
     return readInt("window_width", 640, 1, Integer.MAX_VALUE);
   }
@@ -118,11 +120,12 @@ public final class Config {
   }
 
   public static int getGameSpeedMultiplier() {
-    return readInt("game_speed_multiplier", 1, 1, 16);
+    return gameSpeedMultiplier;
   }
 
-  public static void setGameSpeedMultiplier(final int id) {
-    properties.setProperty("game_speed_multiplier", String.valueOf(id));
+  public static void setGameSpeedMultiplier(final int multiplier) {
+    gameSpeedMultiplier = multiplier;
+    properties.setProperty("game_speed_multiplier", String.valueOf(multiplier));
   }
 
   public static Vector3f getBattleRgb() {
@@ -288,6 +291,7 @@ public final class Config {
 
   public static void load() throws IOException {
     properties.load(Files.newInputStream(path, StandardOpenOption.READ));
+    gameSpeedMultiplier = readInt("game_speed_multiplier", 1, 1, 16);
   }
 
   public static void save() throws IOException {
