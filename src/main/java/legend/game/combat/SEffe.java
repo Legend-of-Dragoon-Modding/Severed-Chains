@@ -207,7 +207,11 @@ public final class SEffe {
   private static final ArrayRef<ByteRef> additionButtonRenderCallbackIndices_800fb7bc = MEMORY.ref(1, 0x800fb7bcL, ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new));
 
   /** Some kind of mysterious global 2-hit addition array. Should probably be yeeted, but need to be sure. */
-  private static final ArrayRef<AdditionHitProperties10> staticTestAdditionHitProperties_800fb7c0 = MEMORY.ref(1, 0x800fb7c0L, ArrayRef.of(AdditionHitProperties10.class, 3, 16, AdditionHitProperties10::new));
+  private static final AdditionHitProperties10[] staticTestAdditionHitProperties_800fb7c0 = {
+    new AdditionHitProperties10(0xc0, 13, 9, 2, 50, 20, 2, 0, 0, 0, 8, 5, 8, 32, 0, 11),
+    new AdditionHitProperties10(0xc0, 33, 27, 1, 30, 10, 0, 0, 0, 25, 2, 1, 8, 32, 0, 0),
+    new AdditionHitProperties10(0x0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+  };
 
   /** Four sets of color values used for addition overlay borders; only last actually used */
   public static final ArrayRef<UnsignedByteRef> additionBorderColours_800fb7f0 = MEMORY.ref(1, 0x800fb7f0L, ArrayRef.of(UnsignedByteRef.class, 0xc, 0x1, UnsignedByteRef::new));
@@ -3458,7 +3462,7 @@ public final class SEffe {
     final int hitPropertyValue;
     if(autoCompleteType == 1 || autoCompleteType == 3) {
       //LAB_80106274
-      hitPropertyValue = staticTestAdditionHitProperties_800fb7c0.get(hitNum).get(hitPropertyIndex);
+      hitPropertyValue = staticTestAdditionHitProperties_800fb7c0[hitNum].get(hitPropertyIndex);
     } else {
       //LAB_8010628c
       hitPropertyValue = Bttl_800c.getHitProperty(charSlot, hitNum, hitPropertyIndex) & 0xff;

@@ -31,6 +31,11 @@ public class COLOUR implements MemoryRef {
     this.pad = new UnsignedByteRef();
   }
 
+  public COLOUR(final int r, final int g, final int b) {
+    this();
+    this.set(r, g, b);
+  }
+
   public COLOUR set(final COLOUR other) {
     this.setR(other.getR());
     this.setG(other.getG());

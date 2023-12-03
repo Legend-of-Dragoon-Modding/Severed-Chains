@@ -1,36 +1,48 @@
 package legend.game.combat.environment;
 
-import legend.core.IoHelper;
 import legend.game.scripting.Param;
 import org.joml.Vector3f;
 
-import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 public class StageAmbiance4c {
-  public final Vector3f ambientColour_00 = new Vector3f();
-  public final Vector3f _06 = new Vector3f();
+  public final Vector3f ambientColour_00;
+  public final Vector3f _06;
   public int _0c;
   public int _0e;
-  public final BattleStruct14[] _10 = {new BattleStruct14(), new BattleStruct14(), new BattleStruct14()};
+  public final BattleStruct14[] _10;
 
-  public StageAmbiance4c set(final ByteBuffer buffer) {
-    IoHelper.readColour(buffer, this.ambientColour_00);
-    IoHelper.readColour(buffer, this._06);
-    this._0c = IoHelper.readShort(buffer);
-    this._0e = IoHelper.readShort(buffer);
+  public StageAmbiance4c(final Vector3f ambientColour, final Vector3f _06, final int _0c, final int _0e, final BattleStruct14... _10) {
+    this.ambientColour_00 = ambientColour;
+    this._06 = _06;
+    this._0c = _0c;
+    this._0e = _0e;
+    this._10 = _10;
+  }
 
-    for(final BattleStruct14 struct : this._10) {
-      IoHelper.readSvec3_12(buffer, struct.lightDirection_00);
-      struct.x_06 = IoHelper.readShort(buffer) / (float)0x1000;
-      struct.y_08 = IoHelper.readShort(buffer) / (float)0x1000;
-      struct.lightColour_0a.r.set(IoHelper.readUByte(buffer));
-      struct.lightColour_0a.g.set(IoHelper.readUByte(buffer));
-      struct.lightColour_0a.b.set(IoHelper.readUByte(buffer));
-      struct._0d.r.set(IoHelper.readUByte(buffer));
-      struct._0d.g.set(IoHelper.readUByte(buffer));
-      struct._0d.b.set(IoHelper.readUByte(buffer));
-      struct.x_10 = IoHelper.readShort(buffer) / (float)0x1000;
-      struct.y_12 = IoHelper.readShort(buffer) / (float)0x1000;
+  public StageAmbiance4c() {
+    this.ambientColour_00 = new Vector3f();
+    this._06 = new Vector3f();
+    this._10 = new BattleStruct14[3];
+    Arrays.setAll(this._10, i -> new BattleStruct14());
+  }
+
+  public StageAmbiance4c set(final StageAmbiance4c other) {
+    this.ambientColour_00.set(other.ambientColour_00);
+    this._06.set(other._06);
+    this._0c = other._0c;
+    this._0e = other._0e;
+
+    for(int i = 0; i < this._10.length; i++) {
+      final BattleStruct14 struct = this._10[i];
+      final BattleStruct14 otherStruct = other._10[i];
+      struct.lightDirection_00.set(otherStruct.lightDirection_00);
+      struct.x_06 = otherStruct.x_06;
+      struct.y_08 = otherStruct.y_08;
+      struct.lightColour_0a.set(otherStruct.lightColour_0a);
+      struct._0d.set(otherStruct._0d);
+      struct.x_10 = otherStruct.x_10;
+      struct.y_12 = otherStruct.y_12;
     }
 
     return this;

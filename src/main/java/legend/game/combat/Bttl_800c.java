@@ -45,7 +45,6 @@ import legend.game.combat.effects.RadialGradientEffect14;
 import legend.game.combat.effects.SpriteMetrics08;
 import legend.game.combat.effects.WeaponTrailEffect3c;
 import legend.game.combat.effects.WeaponTrailEffectSegment2c;
-import legend.game.combat.environment.ActiveStageData2c;
 import legend.game.combat.environment.BattleCamera;
 import legend.game.combat.environment.BattleHudBorderMetrics14;
 import legend.game.combat.environment.BattleItemMenuArrowUvMetrics06;
@@ -63,8 +62,10 @@ import legend.game.combat.environment.CameraOctParamCallback;
 import legend.game.combat.environment.CameraQuadParamCallback;
 import legend.game.combat.environment.CameraSeptParamCallback;
 import legend.game.combat.environment.CombatPortraitBorderMetrics0c;
+import legend.game.combat.environment.EncounterData38;
 import legend.game.combat.environment.NameAndPortraitDisplayMetrics0c;
 import legend.game.combat.environment.SpBarBorderMetrics04;
+import legend.game.combat.environment.StageData2c;
 import legend.game.combat.types.BattleHudStatLabelMetrics0c;
 import legend.game.combat.types.BattleObject;
 import legend.game.combat.types.BattleStateEf4;
@@ -127,13 +128,13 @@ import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.FUN_80013404;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
-import static legend.game.Scus94491BpeSegment.btldLoadEncounterSoundEffectsAndMusic;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.getCharacterName;
 import static legend.game.Scus94491BpeSegment.loadDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
+import static legend.game.Scus94491BpeSegment.loadEncounterSoundsAndMusic;
 import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadMcq;
 import static legend.game.Scus94491BpeSegment.loadMusicPackage;
@@ -218,7 +219,11 @@ import static legend.game.combat.Bttl_800f.addFloatingNumberForBent;
 import static legend.game.combat.Bttl_800f.handleCombatMenu;
 import static legend.game.combat.Bttl_800f.initializeCombatMenuIcons;
 import static legend.game.combat.Bttl_800f.loadBattleHudTextures;
+import static legend.game.combat.Bttl_800f.loadMonster;
 import static legend.game.combat.Bttl_800f.toggleBattleMenuSelectorRendering;
+import static legend.game.combat.SBtld.loadAdditions;
+import static legend.game.combat.SBtld.loadEnemyDropsAndScript;
+import static legend.game.combat.SBtld.loadStageDataAndControllerScripts;
 import static legend.game.combat.SEffe.scriptGetPositionScalerAttachmentVelocity;
 
 public final class Bttl_800c {
@@ -258,8 +263,7 @@ public final class Bttl_800c {
 
   public static final IntRef _800c6710 = MEMORY.ref(4, 0x800c6710L, IntRef::new);
 
-  /** Struct for combat stage stuff */
-  public static final ActiveStageData2c currentStageData_800c6718 = new ActiveStageData2c();
+  public static StageData2c currentStageData_800c6718;
   public static final IntRef _800c6748 = MEMORY.ref(4, 0x800c6748L, IntRef::new);
   public static ScriptState<Void> scriptState_800c674c;
 
@@ -321,7 +325,7 @@ public final class Bttl_800c {
   public static final List<CombatItem02> combatItems_800c6988 = new ArrayList<>();
   public static final BoolRef itemTargetAll_800c69c8 = MEMORY.ref(4, 0x800c69c8L, BoolRef::new);
 
-  public static final ArrayRef<LodString> currentEnemyNames_800c69d0 = MEMORY.ref(2, 0x800c69d0L, ArrayRef.of(LodString.class, 9, 0x2c, LodString::new));
+  public static final LodString[] currentEnemyNames_800c69d0 = new LodString[9];
 
   public static final FloatingNumberC4[] floatingNumbers_800c6b5c = new FloatingNumberC4[12];
   static {
@@ -337,7 +341,7 @@ public final class Bttl_800c {
   public static final ByteRef currentCameraPositionIndicesIndicesIndex_800c6ba1 = MEMORY.ref(1, 0x800c6ba1L, ByteRef::new);
 
   /** Uhh, contains the monsters that Melbu summons during his fight...? */
-  public static final ArrayRef<LodString> melbuMonsterNames_800c6ba8 = MEMORY.ref(2, 0x800c6ba8L, ArrayRef.of(LodString.class, 3, 0x2c, LodString::new));
+  public static final LodString[] melbuMonsterNames_800c6ba8 = new LodString[3];
 
   /**
    * One per character slot
@@ -1034,7 +1038,7 @@ public final class Bttl_800c {
 
     //LAB_800c760c
     allocateStageDarkeningStorage();
-    btldLoadEncounterSoundEffectsAndMusic();
+    loadEncounterSoundsAndMusic();
 
     pregameLoadingStage_800bb10c.incr();
   }
@@ -1042,7 +1046,7 @@ public final class Bttl_800c {
   @Method(0x800c7648L)
   public static void loadStageAndControllerScripts() {
     loadStage(battleStage_800bb0f4.get());
-    loadSupportOverlay(1, SBtld::loadStageDataAndControllerScripts);
+    loadStageDataAndControllerScripts();
     pregameLoadingStage_800bb10c.incr();
   }
 
@@ -1093,7 +1097,7 @@ public final class Bttl_800c {
     monsterCount_800c6768.set(0);
     charCount_800c677c.set(0);
 
-    loadSupportOverlay(1, SBtld::battlePrepareSelectedAdditionHitProperties_80109250);
+    loadAdditions();
 
     //LAB_800c7830
     for(int i = 0; i < 12; i++) {
@@ -1107,8 +1111,58 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c788cL)
-  public static void deferAllocateEnemyBattleEntities() {
-    loadSupportOverlay(1, SBtld::allocateEnemyBattleEntities);
+  public static void allocateEnemyBattleEntities() {
+    final BattlePreloadedEntities_18cb0 fp = battlePreloadedEntities_1f8003f4;
+
+    //LAB_801095a0
+    for(int i = 0; i < 3; i++) {
+      final int enemyIndex = fp.encounterData_00.enemyIndices_00[i] & 0x1ff;
+      if(enemyIndex == 0x1ff) {
+        break;
+      }
+
+      loadEnemyDropsAndScript((addCombatant(enemyIndex, -1) << 16) + enemyIndex);
+    }
+
+    //LAB_801095ec
+    //LAB_801095fc
+    for(int i = 0; i < 6; i++) {
+      final EncounterData38.EnemyInfo08 s5 = fp.encounterData_00.enemyInfo_08[i];
+      final int charIndex = s5.index_00 & 0x1ff;
+      if(charIndex == 0x1ff) {
+        break;
+      }
+
+      final int combatantIndex = getCombatantIndex(charIndex);
+      final String name = "Enemy combatant index " + combatantIndex;
+      final ScriptState<MonsterBattleEntity> state = SCRIPTS.allocateScriptState(name, new MonsterBattleEntity(name));
+      state.setTicker(Bttl_800c::bentTicker);
+      state.setDestructor(Bttl_800c::bentDestructor);
+      battleState_8006e398.allBents_e0c[allBentCount_800c66d0.get()] = state;
+      battleState_8006e398.monsterBents_e50[monsterCount_800c6768.get()] = state;
+      final BattleEntity27c data = state.innerStruct_00;
+      data.magic_00 = BattleObject.BOBJ;
+      data.charId_272 = charIndex;
+      data.bentSlot_274 = allBentCount_800c66d0.get();
+      data.charSlot_276 = monsterCount_800c6768.get();
+      data.combatant_144 = getCombatant(combatantIndex);
+      data.combatantIndex_26c = combatantIndex;
+      data.model_148.coord2_14.coord.transfer.set(s5.pos_02);
+      data.model_148.coord2_14.transforms.rotate.set(0.0f, MathHelper.TWO_PI * 0.75f, 0.0f);
+      state.storage_44[7] |= 0x4;
+      allBentCount_800c66d0.incr();
+      monsterCount_800c6768.incr();
+    }
+
+    //LAB_8010975c
+    battleState_8006e398.allBents_e0c[allBentCount_800c66d0.get()] = null;
+    battleState_8006e398.monsterBents_e50[monsterCount_800c6768.get()] = null;
+
+    //LAB_801097ac
+    for(int i = 0; i < monsterCount_800c6768.get(); i++) {
+      loadMonster(battleState_8006e398.monsterBents_e50[i]);
+    }
+
     pregameLoadingStage_800bb10c.incr();
   }
 

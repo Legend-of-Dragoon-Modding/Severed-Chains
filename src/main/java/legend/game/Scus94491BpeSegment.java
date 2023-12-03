@@ -27,7 +27,7 @@ import legend.core.spu.Voice;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
-import legend.game.combat.environment.StageData10;
+import legend.game.combat.environment.StageData2c;
 import legend.game.debugger.Debugger;
 import legend.game.inventory.WhichMenu;
 import legend.game.scripting.FlowControl;
@@ -194,7 +194,7 @@ import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800c.renderSkybox;
 import static legend.game.combat.Bttl_800c.rotateAndRenderBattleStage;
 import static legend.game.combat.Bttl_800d.updateBattleCamera;
-import static legend.game.combat.SBtld.stageData_80109a98;
+import static legend.game.combat.environment.StageData.stageData_80109a98;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F5;
@@ -545,10 +545,10 @@ public final class Scus94491BpeSegment {
    *
    * @param overlayIndex <ol start="0">
    *                       <li>S_INIT (no longer used)</li>
-   *                       <li>S_BTLD</li>
+   *                       <li>S_BTLD (no longer used)</li>
    *                       <li>S_ITEM</li>
    *                       <li>S_EFFE</li>
-   *                       <li>S_STRM</li>
+   *                       <li>S_STRM (no longer used)</li>
    *                     </ol>
    */
   @Method(0x80012b1cL)
@@ -2925,21 +2925,21 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001d9d0L)
   public static void loadEncounterMusic() {
-    final StageData10 stageData = stageData_80109a98.get(encounterId_800bb0f8.get());
+    final StageData2c stageData = stageData_80109a98[encounterId_800bb0f8.get()];
 
-    if(stageData.musicIndex_01.get() != 0xff) {
+    if(stageData.musicIndex_04 != 0xff) {
       loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x80);
 
       final int fileIndex;
       final Consumer<List<FileData>> callback;
-      if((stageData.musicIndex_01.get() & 0x1f) == 0x13) {
+      if((stageData.musicIndex_04 & 0x1f) == 0x13) {
         unloadSoundFile(8);
         fileIndex = 732;
         callback = files -> musicPackageLoadedCallback(files, 732 << 8);
       } else {
         //LAB_8001da58
-        fileIndex = (int)combatMusicFileIndices_800501bc.get(stageData.musicIndex_01.get() & 0x1f).get();
-        callback = files -> FUN_8001fb44(files, "Encounter music %d (file %d)".formatted(stageData.musicIndex_01.get() & 0x1f, fileIndex), 0);
+        fileIndex = (int)combatMusicFileIndices_800501bc.get(stageData.musicIndex_04 & 0x1f).get();
+        callback = files -> FUN_8001fb44(files, "Encounter music %d (file %d)".formatted(stageData.musicIndex_04 & 0x1f, fileIndex), 0);
       }
 
       //LAB_8001daa4
@@ -3022,16 +3022,16 @@ public final class Scus94491BpeSegment {
     unloadSoundFile(5);
     unloadSoundFile(6);
 
-    final StageData10 stageData = stageData_80109a98.get(encounterId_800bb0f8.get());
+    final StageData2c stageData = stageData_80109a98[encounterId_800bb0f8.get()];
 
-    if(stageData.musicIndex_01.get() != 0xff) {
+    if(stageData.musicIndex_04 != 0xff) {
       unloadEncounterSoundEffects();
 
       // Pulled this up from below since the methods below queue files which are now loaded synchronously. This code would therefore run before the files were loaded.
       //LAB_8001df8c
       unloadSoundFile(8);
 
-      final int type = combatSoundEffectsTypes_8005019c.get(stageData.musicIndex_01.get() & 0x1f).get();
+      final int type = combatSoundEffectsTypes_8005019c.get(stageData.musicIndex_04 & 0x1f).get();
       if(type == 0xc) {
         loadEncounterSoundEffects(696);
       } else if(type == 0xd) {
@@ -3692,11 +3692,6 @@ public final class Scus94491BpeSegment {
   @Method(0x8001fe28L)
   public static FlowControl FUN_8001fe28(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
-  }
-
-  @Method(0x8001ff74L)
-  public static void btldLoadEncounterSoundEffectsAndMusic() {
-    loadSupportOverlay(1, Scus94491BpeSegment::loadEncounterSoundsAndMusic);
   }
 
   @Method(0x8001ffb0L)

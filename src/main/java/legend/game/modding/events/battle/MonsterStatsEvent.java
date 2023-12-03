@@ -5,7 +5,7 @@ import legend.game.characters.ElementSet;
 import legend.game.combat.types.MonsterStats1c;
 import org.legendofdragoon.modloader.events.Event;
 
-import static legend.game.combat.SBtld.monsterStats_8010ba98;
+import static legend.game.combat.Monsters.monsterStats_8010ba98;
 
 public class MonsterStatsEvent extends Event {
   public final int enemyId;
@@ -33,19 +33,19 @@ public class MonsterStatsEvent extends Event {
   public MonsterStatsEvent(final int enemyId) {
     this.enemyId = enemyId;
 
-    final MonsterStats1c monsterStats = monsterStats_8010ba98.get(enemyId);
-    this.hp = monsterStats.hp_00.get();
-    this.maxHp = monsterStats.hp_00.get();
-    this.specialEffectFlag = monsterStats.specialEffectFlag_0d.get();
-    this.elementFlag = Element.fromFlag(monsterStats.elementFlag_0f.get());
-    this.elementalImmunityFlag.unpack(monsterStats.elementalImmunityFlag_10.get());
-    this.statusResistFlag = monsterStats.statusResistFlag_11.get();
-    this.speed = monsterStats.speed_08.get();
-    this.attack = monsterStats.attack_04.get();
-    this.magicAttack = monsterStats.magicAttack_06.get();
-    this.defence = monsterStats.defence_09.get();
-    this.magicDefence = monsterStats.magicDefence_0a.get();
-    this.attackAvoid = monsterStats.attackAvoid_0b.get();
-    this.magicAvoid = monsterStats.magicAvoid_0c.get();
+    final MonsterStats1c monsterStats = monsterStats_8010ba98[enemyId];
+    this.hp = monsterStats.hp_00;
+    this.maxHp = monsterStats.hp_00;
+    this.specialEffectFlag = monsterStats.specialEffectFlag_0d;
+    this.elementFlag = Element.fromFlag(monsterStats.elementFlag_0f);
+    this.elementalImmunityFlag.unpack(monsterStats.elementalImmunityFlag_10);
+    this.statusResistFlag = monsterStats.statusResistFlag_11;
+    this.speed = monsterStats.speed_08;
+    this.attack = monsterStats.attack_04;
+    this.magicAttack = monsterStats.magicAttack_06;
+    this.defence = monsterStats.defence_09;
+    this.magicDefence = monsterStats.magicDefence_0a;
+    this.attackAvoid = monsterStats.attackAvoid_0b;
+    this.magicAvoid = monsterStats.magicAvoid_0c;
   }
 }

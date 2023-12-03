@@ -199,7 +199,7 @@ public class CombatDebuggerController {
     }
 
     if((combatant.flags_19e & 0x4) == 0) {
-      return currentEnemyNames_800c69d0.get(bent.charSlot_276).get();
+      return currentEnemyNames_800c69d0[bent.charSlot_276].get();
     }
 
     return bent.charId_272 == 8 ? "Who?" : playerNames_800fb378.get(bent.charId_272).deref().get();

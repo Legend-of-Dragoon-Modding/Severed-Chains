@@ -619,7 +619,7 @@ public final class Scus94491BpeSegment_8004 {
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link Scus94491BpeSegment#nextLoadingStage}</li>
    *   <li>{@link Bttl_800c#battleInitiateAndPreload_800c772c}</li>
-   *   <li>{@link Bttl_800c#deferAllocateEnemyBattleEntities()}</li>
+   *   <li>{@link Bttl_800c#allocateEnemyBattleEntities()}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link Bttl_800c#allocatePlayerBattleEntities()}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
@@ -655,7 +655,7 @@ public final class Scus94491BpeSegment_8004 {
     Scus94491BpeSegment::nextLoadingStage,
     Bttl_800c::battleInitiateAndPreload_800c772c,
     Scus94491BpeSegment::waitForFilesToLoad,
-    Bttl_800c::deferAllocateEnemyBattleEntities,
+    Bttl_800c::allocateEnemyBattleEntities,
     Scus94491BpeSegment::waitForFilesToLoad,
     Bttl_800c::allocatePlayerBattleEntities,
     Scus94491BpeSegment::waitForFilesToLoad,

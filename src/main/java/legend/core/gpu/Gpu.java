@@ -141,7 +141,7 @@ public class Gpu {
   public void endFrame() {
     this.tick();
 
-    final int fpsLimit = RENDERER.window().getFpsLimit();
+    final int fpsLimit = RENDERER.window().getFpsLimit() / Config.getGameSpeedMultiplier();
     this.fps[this.fpsIndex] = RENDERER.getFps();
     this.fpsIndex = (this.fpsIndex + 1) % fpsLimit;
 

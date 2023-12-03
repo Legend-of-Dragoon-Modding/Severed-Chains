@@ -212,6 +212,18 @@ public final class GameEngine {
 
           loadXpTables();
 
+/*
+          loadSupportOverlay(1, () -> {
+            System.out.println('{');
+
+            for(final StageDeffThing08 s : SBtld._8011517c) {
+              System.out.printf("  new StageDeffThing08(%d, %d, %d),%n", s._00.get(), s._02.get(), s._04.get());
+            }
+
+            System.out.println("};");
+          });
+*/
+
           // Find and load all mods so their global config can be shown in the title screen options menu
           MOD_ACCESS.findMods();
           bootMods(MODS.getAllModIds());
