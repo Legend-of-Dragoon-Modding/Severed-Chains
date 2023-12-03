@@ -1275,10 +1275,10 @@ public class WMap extends EngineState {
         this.wmapStruct19c0_800c66b0.vec_a4.y / (3.0f / vsyncMode_8007a3b8),
         this.wmapStruct19c0_800c66b0.vec_a4.z / (3.0f / vsyncMode_8007a3b8)
       );
-      this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(this.modelAndAnimData_800c66a8.coord2_34.coord.transfer).sub(
-        (int)(this.wmapStruct19c0_800c66b0.vec_b4.x / (3.0f / vsyncMode_8007a3b8)),
-        (int)(this.wmapStruct19c0_800c66b0.vec_b4.y / (3.0f / vsyncMode_8007a3b8)),
-        (int)(this.wmapStruct19c0_800c66b0.vec_b4.z / (3.0f / vsyncMode_8007a3b8))
+      this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(
+        (this.modelAndAnimData_800c66a8.coord2_34.coord.transfer.x - this.wmapStruct19c0_800c66b0.vec_b4.x) / (3.0f / vsyncMode_8007a3b8),
+        (this.modelAndAnimData_800c66a8.coord2_34.coord.transfer.y - this.wmapStruct19c0_800c66b0.vec_b4.y) / (3.0f / vsyncMode_8007a3b8),
+        (this.modelAndAnimData_800c66a8.coord2_34.coord.transfer.z - this.wmapStruct19c0_800c66b0.vec_b4.z) / (3.0f / vsyncMode_8007a3b8)
       );
       this.wmapStruct19c0_800c66b0._a0 += 1.0f / (3.0f / vsyncMode_8007a3b8);
 
