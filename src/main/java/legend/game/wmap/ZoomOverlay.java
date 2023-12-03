@@ -61,12 +61,11 @@ public class ZoomOverlay {
     this.overlayOpaque = builderOpaque.build();
   }
 
-  public void render(final int zoomState) {
+  public void render(final WMapModelAndAnimData258.ZoomState zoomState) {
     final int currentZoomLevel = switch(zoomState) {
-      case 0 -> 2;
-      case 1, 2, 3, 6 -> 3;
-      case 4, 5 -> 4;
-      default -> 0;
+      case LOCAL -> 2;
+      case CONTINENT, TRANSITION_MODEL_OUT, TRANSITION_ARROW_SIZE -> 3;
+      case WORLD, TRANSITION_MODEL_IN -> 4;
     };
 
     for(int i = 4; i >= 0; i--) {

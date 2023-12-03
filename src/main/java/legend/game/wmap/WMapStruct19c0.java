@@ -25,7 +25,7 @@ public class WMapStruct19c0 {
   public boolean mapRotating_80;
 
   public float brightness_84;
-  public int _88;
+  public int lightsUpdateState_88;
   public final COLOUR[] colour_8c = {new COLOUR(), new COLOUR(), new COLOUR()};
   /** short */
   public float angle_98;

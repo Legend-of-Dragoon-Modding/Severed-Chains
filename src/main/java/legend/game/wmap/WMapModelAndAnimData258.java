@@ -28,18 +28,14 @@ public class WMapModelAndAnimData258 {
     WORLD_MAP
   }
 
-  /**
-   * TODO Look more into zoom code before refactoring to use states, might be able
-   *  to reduce number.
-   */
+
   public enum ZoomState {
     LOCAL,
-    CONTINENT_IN,
+    CONTINENT,
     TRANSITION_MODEL_OUT,
     TRANSITION_ARROW_SIZE,
     WORLD,
     TRANSITION_MODEL_IN,
-    CONTINENT_OUT
   }
 
   public enum CoolonWarpState {
@@ -91,7 +87,6 @@ public class WMapModelAndAnimData258 {
   public float mapTextureBrightness_20;
 
   public MeshObj mapContinentNameObj;
-  public ZoomOverlay zoomOverlay;
   public final MV mapOverlayTransforms = new MV();
 
   public MapMarker mapArrow;
@@ -128,9 +123,10 @@ public class WMapModelAndAnimData258 {
   public final Vector3f mapPosition_1e8 = new Vector3f();
   public final Vector3f mapZoomStep_1f0 = new Vector3f();
   /** ubyte */
-  public int zoomState_1f8;
+  public ZoomState zoomState_1f8;
   /** ubyte */
   public int zoomAnimationTick_1f9;
+  public ZoomOverlay zoomOverlay;
 
   // Coolon attributes
   /** Highlight refactored into WmapPromptPopup */
