@@ -1,6 +1,7 @@
 package legend.game.combat;
 
 import legend.core.MathHelper;
+import legend.core.Random;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.RECT;
@@ -72,7 +73,6 @@ import legend.game.combat.types.CombatantAsset0c;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.DragoonSpells09;
 import legend.game.combat.types.EnemyDrop;
-import legend.game.combat.types.MersenneTwisterSeed;
 import legend.game.combat.ui.BattleDisplayStats144;
 import legend.game.combat.ui.BattleHudCharacterDisplay3c;
 import legend.game.combat.ui.BattleMenuStruct58;
@@ -455,8 +455,7 @@ public final class Bttl_800c {
 
   public static final ArrayRef<UnsignedShortRef> additionNextLevelXp_800fa744 = MEMORY.ref(2, 0x800fa744L, ArrayRef.of(UnsignedShortRef.class, 5, 2, UnsignedShortRef::new));
 
-  /** Mersenne Twister seed */
-  public static final MersenneTwisterSeed seed_800fa754 = MEMORY.ref(4, 0x800fa754L, MersenneTwisterSeed::new);
+  public static final Random seed_800fa754 = new Random();
   /**
    * <ol start="0">
    *   <li>{@link Bttl_800d#renderDiscGradientEffect}</li>
@@ -4527,7 +4526,8 @@ public final class Bttl_800c {
   @Method(0x800cee50L)
   public static FlowControl scriptRand(final RunningScript<?> script) {
     final int min = script.params_20[1].get();
-    script.params_20[0].set((int)(seed_800fa754.advance().get() % (script.params_20[2].get() - min + 1) + min));
+    final int max = script.params_20[2].get();
+    script.params_20[0].set(seed_800fa754.nextInt(min, max));
     return FlowControl.CONTINUE;
   }
 
@@ -4765,7 +4765,7 @@ public final class Bttl_800c {
 
   @Method(0x800cfed0L)
   public static void setMtSeed(final long seed) {
-    seed_800fa754.set(seed ^ 0x75b_d924L);
+    seed_800fa754.setSeed(seed ^ 0x75b_d924L);
   }
 
   @ScriptDescription("Sets the Mersenne Twister random number seed")

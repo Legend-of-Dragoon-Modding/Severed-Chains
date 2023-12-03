@@ -299,16 +299,16 @@ public final class Bttl_800d {
       struct.g_36 = script.params_20[3].get() << 8;
       struct.b_38 = script.params_20[4].get() << 8;
 
-      final short x = (short)(seed_800fa754.advance().get() % 301 + 200);
-      final short y = (short)(seed_800fa754.advance().get() % 401 - 300);
-      final short z = (short)(seed_800fa754.advance().get() % 601 - 300);
+      final short x = (short)(seed_800fa754.nextInt(301) + 200);
+      final short y = (short)(seed_800fa754.nextInt(401) - 300);
+      final short z = (short)(seed_800fa754.nextInt(601) - 300);
       struct._24[0].set(x, y, z);
       struct._24[1].set(x, y, z);
 
       struct._04[0].x = 0.0f;
-      struct._04[0].y = seed_800fa754.advance().get() % 101 - 50;
-      struct._04[0].z = seed_800fa754.advance().get() % 101 - 50;
-      struct.frames_44 = (int)(seed_800fa754.advance().get() % 9 + 7);
+      struct._04[0].y = seed_800fa754.nextInt(101) - 50;
+      struct._04[0].z = seed_800fa754.nextInt(101) - 50;
+      struct.frames_44 = seed_800fa754.nextInt(9) + 7;
 
       struct._40 = 0;
       struct._24[1].y += 25.0f;
@@ -440,12 +440,12 @@ public final class Bttl_800d {
 
       inst.ticksExisted_00 = 0;
 
-      inst.delay_04 = (byte)(seed_800fa754.advance().get() % (s4 + 1));
-      inst.ticksRemaining_05 = (byte)(seed_800fa754.advance().get() % 9 + 7);
+      inst.delay_04 = (byte)(seed_800fa754.nextInt(s4 + 1));
+      inst.ticksRemaining_05 = (byte)(seed_800fa754.nextInt(9) + 7);
 
       inst.startPos_08.set(inst.delay_04 * s1, 0, 0);
       inst.endPos_18.set(0, 0, 0);
-      inst.speed_28.set((int)seed_800fa754.advance().get() % 201, (int)seed_800fa754.advance().get() % 201 - 100, (int)seed_800fa754.advance().get() % 201 - 100);
+      inst.speed_28.set(seed_800fa754.nextInt(201), seed_800fa754.nextInt(201) - 100, seed_800fa754.nextInt(201) - 100);
       inst.acceleration_38.set(0.0f, 15.0f, 0.0f);
 
       inst.r_40 = script.params_20[2].get() << 8;
@@ -617,11 +617,11 @@ public final class Bttl_800d {
     //LAB_800d1ac4
     for(int rayNum = 0; rayNum < rayCount; rayNum++) {
       rayArray[rayNum].renderRay_00 = true;
-      rayArray[rayNum].angle_02 = MathHelper.psxDegToRad(seed_800fa754.advance().get() % 4097);
+      rayArray[rayNum].angle_02 = seed_800fa754.nextFloat(MathHelper.TWO_PI);
       rayArray[rayNum].unused_04 = 16;
-      rayArray[rayNum].endpointTranslationMagnitude_06 = (short)(seed_800fa754.advance().get() % 31);
-      rayArray[rayNum].endpointTranslationMagnitudeVelocity_08 = (short)(seed_800fa754.advance().get() % 21 + 10);
-      rayArray[rayNum].angleModifier_0a = MathHelper.psxDegToRad(seed_800fa754.advance().get() % 11 - 5);
+      rayArray[rayNum].endpointTranslationMagnitude_06 = (short)(seed_800fa754.nextInt(31));
+      rayArray[rayNum].endpointTranslationMagnitudeVelocity_08 = (short)(seed_800fa754.nextInt(21) + 10);
+      rayArray[rayNum].angleModifier_0a = MathHelper.psxDegToRad(seed_800fa754.nextInt(11) - 5);
       rayArray[rayNum].unused_0c = 0;
     }
 
@@ -999,8 +999,8 @@ public final class Bttl_800d {
           objArray[objIndex].destructionState_00 = 1;
           objArray[objIndex].stepCount_01 = 8;
           objArray[objIndex].scaleModifier_04 = 0;
-          objArray[objIndex].scaleModifierVelocity_08 = (int)(seed_800fa754.advance().get() % 49 + 104) / (float)0x1000;
-          objArray[objIndex].angleModifier_0c = MathHelper.psxDegToRad((int)(seed_800fa754.advance().get() % 4097));
+          objArray[objIndex].scaleModifierVelocity_08 = (seed_800fa754.nextInt(49) + 104) / (float)0x1000;
+          objArray[objIndex].angleModifier_0c = seed_800fa754.nextFloat(MathHelper.TWO_PI);
           objArray[objIndex].angleModifierVelocity_10 = 0;
           objArray[objIndex].r_24 = manager.params_10.colour_1c.x << 8;
           objArray[objIndex].g_26 = manager.params_10.colour_1c.y << 8;
@@ -1801,7 +1801,7 @@ public final class Bttl_800d {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d60b0L)
-  public static void FUN_800d60b0(final float x, final float y, final float z, final int ticks, final int stepSmoothingMode, final float stepZ, final int stepType, BattleObject bobj) {
+  public static void FUN_800d60b0(final float x, final float y, final float z, final int ticks, final int stepSmoothingMode, final float stepZ, final int stepType, final BattleObject bobj) {
     final BattleCamera cam = camera_800c67f0;
 
     cam.viewpointAngleX_ac = calculateCameraValue(false, 1, 0, null);
@@ -1834,7 +1834,7 @@ public final class Bttl_800d {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d62d8L)
-  public static void FUN_800d62d8(final float x, final float y, final float z, final int ticks, final int stepSmoothingMode, final float stepZ, final int stepType, BattleObject bobj) {
+  public static void FUN_800d62d8(final float x, final float y, final float z, final int ticks, final int stepSmoothingMode, final float stepZ, final int stepType, final BattleObject bobj) {
     final BattleCamera cam = camera_800c67f0;
 
     cam.viewpointBaseTranslation_94.x = calculateCameraValue(false, 4, 0, null);
@@ -1863,7 +1863,7 @@ public final class Bttl_800d {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d64e4L)
-  public static void FUN_800d64e4(final float x, final float y, final float z, final int ticks, final int stepSmoothingMode, final float stepZ, final int stepType, BattleObject bobj) {
+  public static void FUN_800d64e4(final float x, final float y, final float z, final int ticks, final int stepSmoothingMode, final float stepZ, final int stepType, final BattleObject bobj) {
     final BattleCamera cam = camera_800c67f0;
 
     cam.viewpointAngleX_ac = calculateCameraValue(false, 5, 0, null);
