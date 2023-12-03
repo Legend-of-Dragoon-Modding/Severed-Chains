@@ -596,6 +596,7 @@ public class WMap extends EngineState {
 
   private void loadBackgroundObj() {
     if((this.filesLoadedFlags_800c66b8.get() & 0x1) != 0) {
+      this.mcqBrightness_800ef1a4 = 0.0f;
       this.mcqObj = new McqBuilder("World Map Background MCQ", this.mcqHeader_800c6768)
         .translucency(Translucency.B_PLUS_F)
         .vramOffset(320, 0)
@@ -1274,10 +1275,10 @@ public class WMap extends EngineState {
         this.wmapStruct19c0_800c66b0.vec_a4.y / (3.0f / vsyncMode_8007a3b8),
         this.wmapStruct19c0_800c66b0.vec_a4.z / (3.0f / vsyncMode_8007a3b8)
       );
-      this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(this.modelAndAnimData_800c66a8.coord2_34.coord.transfer).sub(
-        (int)(this.wmapStruct19c0_800c66b0.vec_b4.x / (3.0f / vsyncMode_8007a3b8)),
-        (int)(this.wmapStruct19c0_800c66b0.vec_b4.y / (3.0f / vsyncMode_8007a3b8)),
-        (int)(this.wmapStruct19c0_800c66b0.vec_b4.z / (3.0f / vsyncMode_8007a3b8))
+      this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(
+        (this.modelAndAnimData_800c66a8.coord2_34.coord.transfer.x - this.wmapStruct19c0_800c66b0.vec_b4.x) / (3.0f / vsyncMode_8007a3b8),
+        (this.modelAndAnimData_800c66a8.coord2_34.coord.transfer.y - this.wmapStruct19c0_800c66b0.vec_b4.y) / (3.0f / vsyncMode_8007a3b8),
+        (this.modelAndAnimData_800c66a8.coord2_34.coord.transfer.z - this.wmapStruct19c0_800c66b0.vec_b4.z) / (3.0f / vsyncMode_8007a3b8)
       );
       this.wmapStruct19c0_800c66b0._a0 += 1.0f / (3.0f / vsyncMode_8007a3b8);
 
@@ -2385,8 +2386,8 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d9ccc
-    this.mcqTransforms.transfer.set(0.0f, -8.0f, 10);
-    RENDERER.queueOrthoUnderlayModel(this.mcqObj, this.mcqTransforms)
+    this.mcqTransforms.transfer.set(0.0f, -8.0f, 101);
+    RENDERER.queueOrthoModel(this.mcqObj, this.mcqTransforms)
       .monochrome(this.mcqBrightness_800ef1a4);
 
     //LAB_800d9d10
