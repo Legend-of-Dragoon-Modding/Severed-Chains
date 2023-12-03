@@ -133,6 +133,7 @@ import static legend.game.wmap.WMapModelAndAnimData258.FadeAnimationType;
 import static legend.game.wmap.WMapModelAndAnimData258.FadeState;
 import static legend.game.wmap.WMapModelAndAnimData258.MapTransitionDestinationType;
 import static legend.game.wmap.WMapModelAndAnimData258.TeleportAnimationState;
+import static legend.game.wmap.WMapModelAndAnimData258.ZoomState;
 import static legend.game.wmap.WmapStatics.coolonWarpDest_800ef228;
 import static legend.game.wmap.WmapStatics.directionalPathSegmentData_800f2248;
 import static legend.game.wmap.WmapStatics.encounterIds_800ef364;
@@ -383,7 +384,7 @@ public class WMap extends EngineState {
         GsGetLw(dobj2.coord2_04, lw);
 
         float screenOffsetY = 0.0f;
-        if(this.modelAndAnimData_800c66a8.zoomState_1f8 == 4 || this.modelAndAnimData_800c66a8.coolonWarpState_220.ordinal() > 2) {
+        if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.WORLD || this.modelAndAnimData_800c66a8.coolonWarpState_220.ordinal() > 2) {
           screenOffsetY = 8.0f; // Needs adjustment since we shifted the world map MCQ 8 pixels down
         }
 
@@ -417,7 +418,7 @@ public class WMap extends EngineState {
           this.coolonPromptPopup.render();
         }
 
-        if(this.startLocationLabelsActive_800c68a8 && this.modelAndAnimData_800c66a8.zoomState_1f8 != 4) {
+        if(this.startLocationLabelsActive_800c68a8 && this.modelAndAnimData_800c66a8.zoomState_1f8 != ZoomState.WORLD) {
           for(int i = 0; i < 8; i++) {
             if(this.startLabelNames[i] != null) {
               this.renderCenteredShadowedText(this.startLabelNames[i], this.startLabelXs[i], this.startLabelYs[i], TextColour.WHITE, 0);
@@ -484,7 +485,7 @@ public class WMap extends EngineState {
             if(!v1.hideAtmosphericEffect_c4) {
               final WMapModelAndAnimData258 modelAndAnimData = this.modelAndAnimData_800c66a8;
 
-              if(modelAndAnimData.zoomState_1f8 == 0) {
+              if(modelAndAnimData.zoomState_1f8 == ZoomState.LOCAL) {
                 if(modelAndAnimData.coolonWarpState_220 == CoolonWarpState.NONE) {
                   if(this.worldMapState_800c6698 >= 3 || this.playerState_800c669c >= 3) {
                     //LAB_800cc900
@@ -547,7 +548,7 @@ public class WMap extends EngineState {
     modelAndAnimData.imageData_30 = null;
     this.initLighting();
 
-    if(modelAndAnimData.zoomState_1f8 == 0) {
+    if(modelAndAnimData.zoomState_1f8 == ZoomState.LOCAL) {
       this.mapState_800c6798.disableInput_d0 = false;
     }
 
@@ -939,7 +940,7 @@ public class WMap extends EngineState {
     //LAB_800d1c88
     v0.ambientLight_14c.set(0.375f, 0.375f, 0.375f);
     GTE.setBackgroundColour(v0.ambientLight_14c.x, v0.ambientLight_14c.y, v0.ambientLight_14c.z);
-    v0._88 = 0;
+    v0.lightsUpdateState_88 = 0;
   }
 
   @Method(0x800d1d28L)
@@ -995,17 +996,17 @@ public class WMap extends EngineState {
 
   @Method(0x800d219cL)
   private void updateLights() {
-    if(this.modelAndAnimData_800c66a8.zoomState_1f8 == 0) {
+    if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL) {
       return;
     }
 
     //LAB_800d21cc
-    if(this.modelAndAnimData_800c66a8.zoomState_1f8 == 2 || this.modelAndAnimData_800c66a8.zoomState_1f8 == 3 || this.modelAndAnimData_800c66a8.zoomState_1f8 == 4) {
+    if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.TRANSITION_MODEL_OUT || this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.WORLD) {
       //LAB_800d2228
-      final int v0 = this.wmapStruct19c0_800c66b0._88;
+      final int lightsState = this.wmapStruct19c0_800c66b0.lightsUpdateState_88;
 
-      if(v0 == 0 || v0 == 1) {
-        if(v0 == 0) {
+      if(lightsState == 0 || lightsState == 1) {
+        if(lightsState == 0) {
           //LAB_800d2258
           //LAB_800d225c
           for(int i = 0; i < 3; i++) {
@@ -1018,7 +1019,7 @@ public class WMap extends EngineState {
 
           //LAB_800d235c
           this.wmapStruct19c0_800c66b0.brightness_84 = 1.0f;
-          this.wmapStruct19c0_800c66b0._88 = 1;
+          this.wmapStruct19c0_800c66b0.lightsUpdateState_88 = 1;
         }
 
         //LAB_800d237c
@@ -1026,7 +1027,7 @@ public class WMap extends EngineState {
 
         if(this.wmapStruct19c0_800c66b0.brightness_84 < 0.25f) {
           this.wmapStruct19c0_800c66b0.brightness_84 = 0.125f;
-          this.wmapStruct19c0_800c66b0._88 = 2;
+          this.wmapStruct19c0_800c66b0.lightsUpdateState_88 = 2;
         }
 
         //LAB_800d23e0
@@ -1048,23 +1049,25 @@ public class WMap extends EngineState {
 
     //LAB_800d2590
     //LAB_800d2598
-    if(this.modelAndAnimData_800c66a8.zoomState_1f8 != 5 && this.modelAndAnimData_800c66a8.zoomState_1f8 != 6) {
+    if(this.modelAndAnimData_800c66a8.zoomState_1f8 != ZoomState.TRANSITION_MODEL_IN) {
       return;
     }
 
     //LAB_800d25d8
-    final int v0 = this.wmapStruct19c0_800c66b0._88;
-    if(v0 == 2) {
-      //LAB_800d2608
-      this.wmapStruct19c0_800c66b0.brightness_84 = 0.25f;
-      this.wmapStruct19c0_800c66b0._88 = 3;
-    } else if(v0 == 3) {
+    final int lightsState = this.wmapStruct19c0_800c66b0.lightsUpdateState_88;
+    if(lightsState == 2 || lightsState == 3) {
+      if(lightsState == 2) {
+        //LAB_800d2608
+        this.wmapStruct19c0_800c66b0.brightness_84 = 0.25f;
+        this.wmapStruct19c0_800c66b0.lightsUpdateState_88 = 3;
+      }
+
       //LAB_800d2628
-      this.wmapStruct19c0_800c66b0.brightness_84 += 0.140625f;
+      this.wmapStruct19c0_800c66b0.brightness_84 += 0.140625f / (3.0f / vsyncMode_8007a3b8);
 
       if(this.wmapStruct19c0_800c66b0.brightness_84 > 1.0f) {
         this.wmapStruct19c0_800c66b0.brightness_84 = 1.0f;
-        this.wmapStruct19c0_800c66b0._88 = 0;
+        this.wmapStruct19c0_800c66b0.lightsUpdateState_88 = 0;
       }
 
       //LAB_800d268c
@@ -1096,7 +1099,7 @@ public class WMap extends EngineState {
 
     if(struct._c5 == 0) {
       if(!struct.hideAtmosphericEffect_c4) {
-        if(this.modelAndAnimData_800c66a8.zoomState_1f8 == 0) {
+        if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL) {
           if(this.modelAndAnimData_800c66a8.coolonWarpState_220 == CoolonWarpState.NONE) {
             struct.coord2_20.coord.transfer.set(this.modelAndAnimData_800c66a8.coord2_34.coord.transfer);
           }
@@ -1132,7 +1135,7 @@ public class WMap extends EngineState {
 
       //LAB_800d3040
       if(struct._110 == 0) {
-        if(this.modelAndAnimData_800c66a8.zoomState_1f8 == 0) {
+        if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL) {
           if(!struct.hideAtmosphericEffect_c4) {
             if(this.mapState_800c6798.continent_00 != Continent.ENDINESS) {
               if(!struct.mapRotating_80) {
@@ -1233,7 +1236,7 @@ public class WMap extends EngineState {
             if(this.modelAndAnimData_800c66a8.fadeAnimationType_05 == FadeAnimationType.NONE) {
               if(this.wmapStruct19c0_800c66b0._110 == 0) {
                 if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_2)) { // R2
-                  if(this.modelAndAnimData_800c66a8.zoomState_1f8 == 0) {
+                  if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL) {
                     playSound(0, 4, 0, 0, (short)0, (short)0);
                     this.wmapStruct19c0_800c66b0._9e = -9000;
                     this.wmapStruct19c0_800c66b0._c5 = 1;
@@ -1246,7 +1249,7 @@ public class WMap extends EngineState {
 
                 //LAB_800d37bc
                 if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_LEFT_2)) { // L2
-                  if(this.modelAndAnimData_800c66a8.zoomState_1f8 == 1 || this.modelAndAnimData_800c66a8.zoomState_1f8 == 6) {
+                  if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.CONTINENT) {
                     //LAB_800d3814
                     setTextAndTextboxesToUninitialized(7, 0);
                     playSound(0, 4, 0, 0, (short)0, (short)0);
@@ -1254,9 +1257,9 @@ public class WMap extends EngineState {
                     this.wmapStruct19c0_800c66b0._c5 = 2;
                     this.FUN_800d4bc8(1);
                     this.wmapStruct19c0_800c66b0.hideAtmosphericEffect_c4 = false;
-                    this.modelAndAnimData_800c66a8.zoomState_1f8 = 0;
+                    this.modelAndAnimData_800c66a8.zoomState_1f8 = ZoomState.LOCAL;
                     //LAB_800d3898
-                  } else if(this.modelAndAnimData_800c66a8.zoomState_1f8 == 0) {
+                  } else if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL) {
                     playSound(0, 0x28, 0, 0, (short)0, (short)0);
                   }
                 }
@@ -1288,7 +1291,7 @@ public class WMap extends EngineState {
         this.wmapStruct19c0_800c66b0.mapRotation_70.y = this.wmapStruct19c0_800c66b0.angle_98;
         this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(0, 0, 0);
         this.wmapStruct19c0_800c66b0._c5 = 0;
-        this.modelAndAnimData_800c66a8.zoomState_1f8 = 1;
+        this.modelAndAnimData_800c66a8.zoomState_1f8 = ZoomState.CONTINENT;
       }
     } else if(v0 == 2) {
       //LAB_800d3bd8
@@ -1331,7 +1334,7 @@ public class WMap extends EngineState {
         this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(this.modelAndAnimData_800c66a8.coord2_34.coord.transfer);
         this.wmapStruct19c0_800c66b0._c5 = 0;
         this.mapState_800c6798.disableInput_d0 = false;
-        this.modelAndAnimData_800c66a8.zoomState_1f8 = 0;
+        this.modelAndAnimData_800c66a8.zoomState_1f8 = ZoomState.LOCAL;
       }
     }
 
@@ -1352,12 +1355,12 @@ public class WMap extends EngineState {
 
     //LAB_800d40ac
     final WMapModelAndAnimData258 modelAndAnimData = this.modelAndAnimData_800c66a8;
-    final int zoomState = modelAndAnimData.zoomState_1f8;
+    final ZoomState zoomState = modelAndAnimData.zoomState_1f8;
 
-    if(zoomState == 1) {
+    if(zoomState == ZoomState.CONTINENT) {
       //LAB_800d4108
       this.destinationLabelStage_800c86f0 = 0;
-    } else if(zoomState == 4) {
+    } else if(zoomState == ZoomState.WORLD) {
       //LAB_800d4170
       if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_LEFT_2)) { // L2
         setTextAndTextboxesToUninitialized(7, 0);
@@ -1366,7 +1369,7 @@ public class WMap extends EngineState {
       }
       //LAB_800d4198
       //LAB_800d40e8
-    } else if(zoomState == 5) {
+    } else if(zoomState == ZoomState.TRANSITION_MODEL_IN) {
       //LAB_800d41b0
       setTextAndTextboxesToUninitialized(7, 0);
 
@@ -1376,14 +1379,6 @@ public class WMap extends EngineState {
 
       //LAB_800d41e0
       return;
-    } else if(zoomState == 6) {
-      //LAB_800d4128
-      setTextAndTextboxesToUninitialized(7, 0);
-
-      if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_2)) { // R2
-        this.destinationLabelStage_800c86f0 = 0;
-      }
-      //LAB_800d4158
     } else {
       return;
     }
@@ -1400,10 +1395,10 @@ public class WMap extends EngineState {
     // Player arrow on map
     final int u = (int)(tickCount_800bb0fc.get() / (3.0f / vsyncMode_8007a3b8)) & 0x7;
     float x = GPU.getOffsetX() + playerArrowXy.x - modelAndAnimData.mapArrow.getSize() / 2.0f;
-    float y = GPU.getOffsetY() + playerArrowXy.y - modelAndAnimData.mapArrow.getSize() - (zoomState == 4 ? 8 : 0); // Needs adjustment since we shifted the world map MCQ 8 pixels down
+    float y = GPU.getOffsetY() + playerArrowXy.y - modelAndAnimData.mapArrow.getSize() - (zoomState == ZoomState.WORLD ? 8 : 0); // Needs adjustment since we shifted the world map MCQ 8 pixels down
     modelAndAnimData.mapArrow.render(u, 0, x, y, 100.0f);
 
-    if(modelAndAnimData.zoomState_1f8 == 4) {
+    if(modelAndAnimData.zoomState_1f8 == ZoomState.WORLD) {
       //LAB_800d44d0
       int destinationIndex = 0;
 
@@ -2003,8 +1998,8 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d7a80
-    final int zoomState = this.modelAndAnimData_800c66a8.zoomState_1f8;
-    if(zoomState == 2 || zoomState == 3 || zoomState == 4 || zoomState == 5) {
+    final ZoomState zoomState = this.modelAndAnimData_800c66a8.zoomState_1f8;
+    if(zoomState == ZoomState.TRANSITION_MODEL_OUT || zoomState == ZoomState.WORLD || zoomState == ZoomState.TRANSITION_MODEL_IN) {
       //LAB_800d7af8
       return;
     }
@@ -2038,7 +2033,7 @@ public class WMap extends EngineState {
         if(this.mapState_800c6798.continent_00 != Continent.ENDINESS || i == 31 || i == 78) {
           this.mapState_800c6798.pathDots.transforms.set(lw)
             .rotateLocalX(-MathHelper.PI / 2.0f);
-          if(zoomState == 0) {
+          if(zoomState == ZoomState.LOCAL) {
             this.mapState_800c6798.pathDots.transforms.scale(0.5f);
           } else {
             this.mapState_800c6798.pathDots.transforms.scale(0.25f);
@@ -2049,7 +2044,7 @@ public class WMap extends EngineState {
             .vertices(bigDotStateIndex * 4, 4);
 
           //LAB_800d7df0
-          if(this.modelAndAnimData_800c66a8.zoomState_1f8 == 0) {
+          if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL) {
             final float dx = x - intersectionPoint.x;
             final float dy = y - intersectionPoint.y;
             final float dz = z - intersectionPoint.z;
@@ -2107,7 +2102,7 @@ public class WMap extends EngineState {
                 .vertices(12, 4);
 
               //LAB_800d87fc
-              if(zoomState == 0) {
+              if(zoomState == ZoomState.LOCAL) {
                 final float dx = x - pathPoint.x;
                 final float dy = y - pathPoint.y;
                 final float dz = z - pathPoint.z;
@@ -2133,7 +2128,7 @@ public class WMap extends EngineState {
   private void loadMapModelAssets() {
     this.loadMapModelAndTexture(this.mapState_800c6798.continent_00.ordinal());
 
-    this.modelAndAnimData_800c66a8.zoomState_1f8 = 0;
+    this.modelAndAnimData_800c66a8.zoomState_1f8 = ZoomState.LOCAL;
     this.modelAndAnimData_800c66a8.coolonWarpState_220 = CoolonWarpState.NONE;
   }
 
@@ -2175,7 +2170,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d90a8
-    if(this.modelAndAnimData_800c66a8.zoomState_1f8 == 4) {
+    if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.WORLD) {
       return;
     }
 
@@ -2255,7 +2250,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d94f8
-    if(this.modelAndAnimData_800c66a8.zoomState_1f8 == 0) {
+    if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL) {
       return;
     }
 
@@ -2271,7 +2266,7 @@ public class WMap extends EngineState {
 
     //LAB_800d955c
     switch(this.modelAndAnimData_800c66a8.zoomState_1f8) {
-      case 1, 6:
+      case CONTINENT:
         if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_2)) { // Zoom out
           playSound(0, 4, 0, 0, (short)0, (short)0);
           this.shouldSetDestLabelMetrics = true;
@@ -2280,7 +2275,7 @@ public class WMap extends EngineState {
 
           this.initMapModelZoom(1);
 
-          this.modelAndAnimData_800c66a8.zoomState_1f8 = 2;
+          this.modelAndAnimData_800c66a8.zoomState_1f8 = ZoomState.TRANSITION_MODEL_OUT;
           this.mcqBrightness_800ef1a4 = 0.0f;
         }
 
@@ -2288,7 +2283,10 @@ public class WMap extends EngineState {
         //LAB_800d9cc4
         break;
 
-      case 2:
+      case TRANSITION_MODEL_OUT:
+        this.modelAndAnimData_800c66a8.zoomAnimationTick_1f9++;
+
+
         this.mcqBrightness_800ef1a4 += 0.125f / (3.0f / vsyncMode_8007a3b8);
 
         if(this.mcqBrightness_800ef1a4 > 1.0f) {
@@ -2298,11 +2296,10 @@ public class WMap extends EngineState {
         //LAB_800d96b8
         this.tickMapPositionDuringZoom();
 
-        this.modelAndAnimData_800c66a8.zoomAnimationTick_1f9++;
-
         if(this.modelAndAnimData_800c66a8.zoomAnimationTick_1f9 >= 18 / vsyncMode_8007a3b8) {
           this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(mapPositions_800ef1a8[this.mapState_800c6798.continent_00.ordinal()]);
-          this.modelAndAnimData_800c66a8.zoomState_1f8 = 3;
+          this.modelAndAnimData_800c66a8.mapArrow.setSize(8.0f);
+          this.modelAndAnimData_800c66a8.zoomState_1f8 = ZoomState.WORLD;
 
           //LAB_800d97bc
           for(int i = 0; i < 7; i++) {
@@ -2314,11 +2311,7 @@ public class WMap extends EngineState {
         //LAB_800d9808
         break;
 
-      case 3:
-        this.modelAndAnimData_800c66a8.mapArrow.setSize(8.0f);
-        this.modelAndAnimData_800c66a8.zoomState_1f8 = 4;
-
-      case 4:
+      case WORLD:
         if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_2)) { // Can't zoom out more
           playSound(0, 40, 0, 0, (short)0, (short)0);
         }
@@ -2335,7 +2328,7 @@ public class WMap extends EngineState {
           playSound(0, 4, 0, 0, (short)0, (short)0);
           this.initMapModelZoom(-1);
 
-          this.modelAndAnimData_800c66a8.zoomState_1f8 = 5;
+          this.modelAndAnimData_800c66a8.zoomState_1f8 = ZoomState.TRANSITION_MODEL_IN;
 
           //LAB_800d9900
           for(int i = 0; i < 3; i++) {
@@ -2363,7 +2356,7 @@ public class WMap extends EngineState {
         //LAB_800d9adc
         break;
 
-      case 5:
+      case TRANSITION_MODEL_IN:
         this.mcqBrightness_800ef1a4 -= 0.125f / (3.0f / vsyncMode_8007a3b8);
 
         if(this.mcqBrightness_800ef1a4 < 0.0f) {
@@ -2378,7 +2371,7 @@ public class WMap extends EngineState {
         if(this.modelAndAnimData_800c66a8.zoomAnimationTick_1f9 >= 18 / vsyncMode_8007a3b8) {
           this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(this.modelAndAnimData_800c66a8.mapPosition_1e8);
           this.modelAndAnimData_800c66a8.mapArrow.setSize(16.0f);
-          this.modelAndAnimData_800c66a8.zoomState_1f8 = 6;
+          this.modelAndAnimData_800c66a8.zoomState_1f8 = ZoomState.CONTINENT;
         }
 
         //LAB_800d9be8
@@ -2441,7 +2434,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800da2b8
-    if(modelAndAnimData.zoomState_1f8 != 0) {
+    if(modelAndAnimData.zoomState_1f8 != ZoomState.LOCAL) {
       return;
     }
 
@@ -3779,7 +3772,7 @@ public class WMap extends EngineState {
             this.FUN_800d4bc8(1);
 
             this.wmapStruct19c0_800c66b0.hideAtmosphericEffect_c4 = false;
-            modelAndAnimData.zoomState_1f8 = 0;
+            modelAndAnimData.zoomState_1f8 = ZoomState.LOCAL;
             modelAndAnimData.fadeState_04 = FadeState.FADE;
           }
           break;
@@ -3838,7 +3831,7 @@ public class WMap extends EngineState {
             this.wmapStruct19c0_800c66b0.vec_a4.set(modelAndAnimData.coord2_34.coord.transfer).div(30.0f);
 
             this.wmapStruct19c0_800c66b0.hideAtmosphericEffect_c4 = false;
-            modelAndAnimData.zoomState_1f8 = 0;
+            modelAndAnimData.zoomState_1f8 = ZoomState.LOCAL;
             this.wmapStruct19c0_800c66b0._c5 = 2;
             modelAndAnimData.fadeState_04 = FadeState.FADE;
           }
@@ -3999,7 +3992,7 @@ public class WMap extends EngineState {
     if(
       this.wmapStruct19c0_800c66b0._c5 != 0 ||
         this.wmapStruct19c0_800c66b0.hideAtmosphericEffect_c4 ||
-        this.modelAndAnimData_800c66a8.zoomState_1f8 != 0 ||
+        this.modelAndAnimData_800c66a8.zoomState_1f8 != ZoomState.LOCAL ||
         this.modelAndAnimData_800c66a8.coolonWarpState_220 != CoolonWarpState.NONE
     ) {
       return;
@@ -4387,7 +4380,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800e6a10
-    if(this.modelAndAnimData_800c66a8.zoomState_1f8 == 4) {
+    if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.WORLD) {
       return;
     }
 
@@ -4958,7 +4951,7 @@ public class WMap extends EngineState {
             //LAB_800e8fac
             if(this.wmapStruct19c0_800c66b0._110 == 0) {
               //LAB_800e8fd0
-              if(this.modelAndAnimData_800c66a8.zoomState_1f8 == 0) {
+              if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL) {
                 //LAB_800e8ff4
                 if(this.wmapStruct19c0_800c66b0._c5 == 0) {
                   //LAB_800e9018
@@ -5968,7 +5961,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800edc20
-    if(this.modelAndAnimData_800c66a8.zoomState_1f8 == 4) {
+    if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.WORLD) {
       return;
     }
 
