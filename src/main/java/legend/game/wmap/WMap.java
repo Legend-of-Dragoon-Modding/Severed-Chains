@@ -2385,8 +2385,8 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d9ccc
-    this.mcqTransforms.transfer.set(0.0f, -8.0f, 10);
-    RENDERER.queueOrthoUnderlayModel(this.mcqObj, this.mcqTransforms)
+    this.mcqTransforms.transfer.set(0.0f, -8.0f, 101);
+    RENDERER.queueOrthoModel(this.mcqObj, this.mcqTransforms)
       .monochrome(this.mcqBrightness_800ef1a4);
 
     //LAB_800d9d10
