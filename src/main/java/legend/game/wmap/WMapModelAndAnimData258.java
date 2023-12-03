@@ -28,7 +28,18 @@ public class WMapModelAndAnimData258 {
     WORLD_MAP
   }
 
-
+  /**
+   * Retail state equivalent:
+   * <ol start="0">
+   *  <li>LOCAL</li>
+   *  <li>CONTINENT</li>
+   *  <li>TRANSITION_MODEL_OUT</li>
+   *  <li>TRANSITION_MODEL_OUT</li>
+   *  <li>WORLD</li>
+   *  <li>TRANSITION_MODEL_IN</li>
+   *  <li>CONTINENT</li>
+   * </ol>
+   */
   public enum ZoomState {
     LOCAL,
     CONTINENT,
