@@ -64,7 +64,7 @@ public class ZoomOverlay {
   public void render(final WMapModelAndAnimData258.ZoomState zoomState) {
     final int currentZoomLevel = switch(zoomState) {
       case LOCAL -> 2;
-      case CONTINENT, TRANSITION_MODEL_OUT, TRANSITION_ARROW_SIZE -> 3;
+      case CONTINENT, TRANSITION_MODEL_OUT -> 3;
       case WORLD, TRANSITION_MODEL_IN -> 4;
     };
 

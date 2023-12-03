@@ -1001,7 +1001,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d21cc
-    if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.TRANSITION_MODEL_OUT || this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.TRANSITION_ARROW_SIZE || this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.WORLD) {
+    if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.TRANSITION_MODEL_OUT || this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.WORLD) {
       //LAB_800d2228
       final int lightsState = this.wmapStruct19c0_800c66b0.lightsUpdateState_88;
 
@@ -1999,7 +1999,7 @@ public class WMap extends EngineState {
 
     //LAB_800d7a80
     final ZoomState zoomState = this.modelAndAnimData_800c66a8.zoomState_1f8;
-    if(zoomState == ZoomState.TRANSITION_MODEL_OUT || zoomState == ZoomState.TRANSITION_ARROW_SIZE || zoomState == ZoomState.WORLD || zoomState == ZoomState.TRANSITION_MODEL_IN) {
+    if(zoomState == ZoomState.TRANSITION_MODEL_OUT || zoomState == ZoomState.WORLD || zoomState == ZoomState.TRANSITION_MODEL_IN) {
       //LAB_800d7af8
       return;
     }
@@ -2284,6 +2284,9 @@ public class WMap extends EngineState {
         break;
 
       case TRANSITION_MODEL_OUT:
+        this.modelAndAnimData_800c66a8.zoomAnimationTick_1f9++;
+
+
         this.mcqBrightness_800ef1a4 += 0.125f / (3.0f / vsyncMode_8007a3b8);
 
         if(this.mcqBrightness_800ef1a4 > 1.0f) {
@@ -2293,11 +2296,10 @@ public class WMap extends EngineState {
         //LAB_800d96b8
         this.tickMapPositionDuringZoom();
 
-        this.modelAndAnimData_800c66a8.zoomAnimationTick_1f9++;
-
         if(this.modelAndAnimData_800c66a8.zoomAnimationTick_1f9 >= 18 / vsyncMode_8007a3b8) {
           this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(mapPositions_800ef1a8[this.mapState_800c6798.continent_00.ordinal()]);
-          this.modelAndAnimData_800c66a8.zoomState_1f8 = ZoomState.TRANSITION_ARROW_SIZE;
+          this.modelAndAnimData_800c66a8.mapArrow.setSize(8.0f);
+          this.modelAndAnimData_800c66a8.zoomState_1f8 = ZoomState.WORLD;
 
           //LAB_800d97bc
           for(int i = 0; i < 7; i++) {
@@ -2308,10 +2310,6 @@ public class WMap extends EngineState {
 
         //LAB_800d9808
         break;
-
-      case TRANSITION_ARROW_SIZE:
-        this.modelAndAnimData_800c66a8.mapArrow.setSize(8.0f);
-        this.modelAndAnimData_800c66a8.zoomState_1f8 = ZoomState.WORLD;
 
       case WORLD:
         if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_2)) { // Can't zoom out more

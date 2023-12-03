@@ -33,7 +33,6 @@ public class WMapModelAndAnimData258 {
     LOCAL,
     CONTINENT,
     TRANSITION_MODEL_OUT,
-    TRANSITION_ARROW_SIZE,
     WORLD,
     TRANSITION_MODEL_IN,
   }
