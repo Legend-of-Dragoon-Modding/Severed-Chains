@@ -596,6 +596,7 @@ public class WMap extends EngineState {
 
   private void loadBackgroundObj() {
     if((this.filesLoadedFlags_800c66b8.get() & 0x1) != 0) {
+      this.mcqBrightness_800ef1a4 = 0.0f;
       this.mcqObj = new McqBuilder("World Map Background MCQ", this.mcqHeader_800c6768)
         .translucency(Translucency.B_PLUS_F)
         .vramOffset(320, 0)
