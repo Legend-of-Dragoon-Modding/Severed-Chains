@@ -12,6 +12,8 @@ public class WMapStruct19c0 {
   public final GsRVIEW2 rview2_00 = new GsRVIEW2();
   /** Parent coordinate system of camera; controls movement */
   public final GsCOORDINATE2 coord2_20 = new GsCOORDINATE2();
+  /** Not in retail */
+  public int mapRotationState;
   public final Vector3f currMapRotation_70 = new Vector3f();
   /** short */
   public float mapRotationStartAngle_78;

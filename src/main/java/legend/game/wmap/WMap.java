@@ -1141,12 +1141,14 @@ public class WMap extends EngineState {
               if(!struct.mapRotating_80) {
                 //LAB_800d30d8
                 if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_1)) { // R1
+                  this.wmapStruct19c0_800c66b0.mapRotationState = (int)MathHelper.floorMod((this.wmapStruct19c0_800c66b0.mapRotationState + 1), 8);
                   this.startMapRotation(1);
                   struct.mapRotating_80 = true;
                 }
 
                 //LAB_800d310c
                 if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_LEFT_1)) { // L1
+                  this.wmapStruct19c0_800c66b0.mapRotationState = (int)MathHelper.floorMod((this.wmapStruct19c0_800c66b0.mapRotationState - 1), 8);
                   this.startMapRotation(-1);
                   struct.mapRotating_80 = true;
                 }
@@ -1157,7 +1159,7 @@ public class WMap extends EngineState {
                 struct.currMapRotation_70.y += struct.mapRotationStep_7c / (3.0f / vsyncMode_8007a3b8);
                 struct.mapRotationCounter_7e++;
 
-                if(struct.mapRotationCounter_7e > 16 / vsyncMode_8007a3b8) {
+                if(struct.mapRotationCounter_7e >= 18 / vsyncMode_8007a3b8) {
                   struct.currMapRotation_70.y = struct.mapRotationEndAngle_7a;
                   struct.mapRotating_80 = false;
                 }
@@ -1527,16 +1529,18 @@ public class WMap extends EngineState {
     final WMapStruct19c0 struct = this.wmapStruct19c0_800c66b0;
     struct.mapRotationCounter_7e = 0;
     struct.mapRotationStartAngle_78 = struct.currMapRotation_70.y;
-    struct.mapRotationEndAngle_7a = struct.currMapRotation_70.y + direction * angleDelta;
-    float sp10 = -direction * angleDelta;
-    final float sp14 = sp10 + MathHelper.TWO_PI;
-
-    if(Math.abs(sp14) < Math.abs(sp10)) {
-      sp10 = sp14;
+    struct.mapRotationEndAngle_7a = struct.mapRotationState * angleDelta;
+    final float ccwAngle = -direction * angleDelta;
+    final float cwAngle = ccwAngle + MathHelper.TWO_PI;
+    final float finalAngle;
+    if(Math.abs(cwAngle) < Math.abs(ccwAngle)) {
+      finalAngle = cwAngle;
+    } else {
+      finalAngle = ccwAngle;
     }
 
     //LAB_800d4fd0
-    struct.mapRotationStep_7c = -sp10 / 6.0f;
+    struct.mapRotationStep_7c = -finalAngle / 6.0f;
   }
 
   @Method(0x800d5018L)
