@@ -169,7 +169,7 @@ public class WMap extends EngineState {
   private int atmosphericEffectStage_800c66a4;
   private final WMapModelAndAnimData258 modelAndAnimData_800c66a8 = new WMapModelAndAnimData258();
 
-  private final WMapStruct19c0 wmapStruct19c0_800c66b0 = new WMapStruct19c0();
+  private final WMapCameraAndLights19c0 wmapCameraAndLights19c0_800c66b0 = new WMapCameraAndLights19c0();
 
   /**
    * <ul>
@@ -479,7 +479,7 @@ public class WMap extends EngineState {
     if(Unpacker.getLoadingFileCount() == 0) {
       if(this.tickMainMenuOpenTransition_800c6690 == 0) {
         if((input_800bee90.get() & 0x1af) == 0) {
-          final WMapStruct19c0 v1 = this.wmapStruct19c0_800c66b0;
+          final WMapCameraAndLights19c0 v1 = this.wmapCameraAndLights19c0_800c66b0;
 
           if(v1.cameraUpdateState_c5 == 0) {
             if(!v1.hideAtmosphericEffect_c4) {
@@ -888,26 +888,26 @@ public class WMap extends EngineState {
 
   @Method(0x800d177cL)
   private void initCameraAndLight() {
-    GsInitCoordinate2(null, this.wmapStruct19c0_800c66b0.coord2_20);
+    GsInitCoordinate2(null, this.wmapCameraAndLights19c0_800c66b0.coord2_20);
 
-    this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(0, 0, 0);
-    this.wmapStruct19c0_800c66b0.currMapRotation_70.zero();
-    this.wmapStruct19c0_800c66b0.rview2_00.viewpoint_00.set(0.0f, -300.0f, -900.0f);
-    this.wmapStruct19c0_800c66b0.rview2_00.refpoint_0c.set(0.0f, 300.0f, 900.0f);
-    this.wmapStruct19c0_800c66b0.rview2_00.viewpointTwist_18 = 0;
-    this.wmapStruct19c0_800c66b0.rview2_00.super_1c = this.wmapStruct19c0_800c66b0.coord2_20;
+    this.wmapCameraAndLights19c0_800c66b0.coord2_20.coord.transfer.set(0, 0, 0);
+    this.wmapCameraAndLights19c0_800c66b0.currMapRotation_70.zero();
+    this.wmapCameraAndLights19c0_800c66b0.currRview2_00.viewpoint_00.set(0.0f, -300.0f, -900.0f);
+    this.wmapCameraAndLights19c0_800c66b0.currRview2_00.refpoint_0c.set(0.0f, 300.0f, 900.0f);
+    this.wmapCameraAndLights19c0_800c66b0.currRview2_00.viewpointTwist_18 = 0;
+    this.wmapCameraAndLights19c0_800c66b0.currRview2_00.super_1c = this.wmapCameraAndLights19c0_800c66b0.coord2_20;
 
-    this.FUN_800d1d28();
+    this.initCamera();
     this.initLighting();
 
-    this.wmapStruct19c0_800c66b0._114 = 0;
-    this.wmapStruct19c0_800c66b0.projectionPlaneDistance_118 = 1100.0f;
-    this.wmapStruct19c0_800c66b0._11a = 0;
+    this.wmapCameraAndLights19c0_800c66b0._114 = 0;
+    this.wmapCameraAndLights19c0_800c66b0.projectionPlaneDistance_118 = 1100.0f;
+    this.wmapCameraAndLights19c0_800c66b0._11a = 0;
   }
 
   @Method(0x800d1914L)
   private void initLighting() {
-    final WMapStruct19c0 v0 = this.wmapStruct19c0_800c66b0;
+    final WMapCameraAndLights19c0 v0 = this.wmapCameraAndLights19c0_800c66b0;
 
     clearRed_8007a3a8.set(0);
     clearGreen_800bb104.set(0);
@@ -944,13 +944,13 @@ public class WMap extends EngineState {
   }
 
   @Method(0x800d1d28L)
-  private void FUN_800d1d28() {
-    this.wmapStruct19c0_800c66b0.mapRotating_80 = false;
-    this.wmapStruct19c0_800c66b0.mapRotationStep_7c = 0.0f;
-    this.wmapStruct19c0_800c66b0.cameraUpdateState_c5 = 0;
-    this.wmapStruct19c0_800c66b0.hideAtmosphericEffect_c4 = false;
+  private void initCamera() {
+    this.wmapCameraAndLights19c0_800c66b0.mapRotating_80 = false;
+    this.wmapCameraAndLights19c0_800c66b0.mapRotationStep_7c = 0.0f;
+    this.wmapCameraAndLights19c0_800c66b0.cameraUpdateState_c5 = 0;
+    this.wmapCameraAndLights19c0_800c66b0.hideAtmosphericEffect_c4 = false;
 
-    this.FUN_800d5018();
+    this.initCameraMovement();
   }
 
   @Method(0x800d1d88L)
@@ -973,14 +973,14 @@ public class WMap extends EngineState {
       //LAB_800d1e38
       if(places_800f0234[locations_800f0e34[i].placeIndex_02].name_00 != null) {
         //LAB_800d1e90
-        if(this.checkLocationIsValidAndOptionallySetPathStart(i, 1, this.wmapStruct19c0_800c66b0._154[count].position_08) == 0) {
+        if(this.checkLocationIsValidAndOptionallySetPathStart(i, 1, this.wmapCameraAndLights19c0_800c66b0._154[count].position_08) == 0) {
           //LAB_800d1ee0
-          final float dx = x - this.wmapStruct19c0_800c66b0._154[count].position_08.x;
-          final float dy = y - this.wmapStruct19c0_800c66b0._154[count].position_08.y;
-          final float dz = z - this.wmapStruct19c0_800c66b0._154[count].position_08.z;
+          final float dx = x - this.wmapCameraAndLights19c0_800c66b0._154[count].position_08.x;
+          final float dy = y - this.wmapCameraAndLights19c0_800c66b0._154[count].position_08.y;
+          final float dz = z - this.wmapCameraAndLights19c0_800c66b0._154[count].position_08.z;
 
-          this.wmapStruct19c0_800c66b0._154[count].locationIndex_00 = i;
-          this.wmapStruct19c0_800c66b0._154[count].distanceFromPlayer_04 = Math.sqrt(dx * dx + dy * dy + dz * dz);
+          this.wmapCameraAndLights19c0_800c66b0._154[count].locationIndex_00 = i;
+          this.wmapCameraAndLights19c0_800c66b0._154[count].distanceFromPlayer_04 = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
           count++;
         }
@@ -990,8 +990,8 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d2088
-    this.wmapStruct19c0_800c66b0._154[count].locationIndex_00 = -1;
-    Arrays.sort(this.wmapStruct19c0_800c66b0._154, Comparator.comparingDouble(a -> a.distanceFromPlayer_04));
+    this.wmapCameraAndLights19c0_800c66b0._154[count].locationIndex_00 = -1;
+    Arrays.sort(this.wmapCameraAndLights19c0_800c66b0._154, Comparator.comparingDouble(a -> a.distanceFromPlayer_04));
   }
 
   @Method(0x800d219cL)
@@ -1003,7 +1003,7 @@ public class WMap extends EngineState {
     //LAB_800d21cc
     if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.TRANSITION_MODEL_OUT || this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.WORLD) {
       //LAB_800d2228
-      final int lightsState = this.wmapStruct19c0_800c66b0.lightsUpdateState_88;
+      final int lightsState = this.wmapCameraAndLights19c0_800c66b0.lightsUpdateState_88;
 
       if(lightsState == 0 || lightsState == 1) {
         if(lightsState == 0) {
@@ -1011,38 +1011,38 @@ public class WMap extends EngineState {
           //LAB_800d225c
           for(int i = 0; i < 3; i++) {
             //LAB_800d2278
-            final WMapStruct19c0 struct = this.wmapStruct19c0_800c66b0;
+            final WMapCameraAndLights19c0 struct = this.wmapCameraAndLights19c0_800c66b0;
             struct.lightsColours_8c[i].setR((int)(struct.lights_11c[i].r_0c * 0x100));
             struct.lightsColours_8c[i].setG((int)(struct.lights_11c[i].g_0d * 0x100));
             struct.lightsColours_8c[i].setB((int)(struct.lights_11c[i].b_0e * 0x100));
           }
 
           //LAB_800d235c
-          this.wmapStruct19c0_800c66b0.lightsBrightness_84 = 1.0f;
-          this.wmapStruct19c0_800c66b0.lightsUpdateState_88 = 1;
+          this.wmapCameraAndLights19c0_800c66b0.lightsBrightness_84 = 1.0f;
+          this.wmapCameraAndLights19c0_800c66b0.lightsUpdateState_88 = 1;
         }
 
         //LAB_800d237c
-        this.wmapStruct19c0_800c66b0.lightsBrightness_84 -= 0.140625f / (3.0f / vsyncMode_8007a3b8);
+        this.wmapCameraAndLights19c0_800c66b0.lightsBrightness_84 -= 0.140625f / (3.0f / vsyncMode_8007a3b8);
 
-        if(this.wmapStruct19c0_800c66b0.lightsBrightness_84 < 0.25f) {
-          this.wmapStruct19c0_800c66b0.lightsBrightness_84 = 0.125f;
-          this.wmapStruct19c0_800c66b0.lightsUpdateState_88 = 2;
+        if(this.wmapCameraAndLights19c0_800c66b0.lightsBrightness_84 < 0.25f) {
+          this.wmapCameraAndLights19c0_800c66b0.lightsBrightness_84 = 0.125f;
+          this.wmapCameraAndLights19c0_800c66b0.lightsUpdateState_88 = 2;
         }
 
         //LAB_800d23e0
         //LAB_800d23e4
         for(int i = 0; i < 3; i++) {
-          final GsF_LIGHT light = this.wmapStruct19c0_800c66b0.lights_11c[i];
+          final GsF_LIGHT light = this.wmapCameraAndLights19c0_800c66b0.lights_11c[i];
 
           //LAB_800d2400
           //LAB_800d2464
           //LAB_800d24d0
           //LAB_800d253c
-          light.r_0c = this.wmapStruct19c0_800c66b0.lightsColours_8c[i].getR() * this.wmapStruct19c0_800c66b0.lightsBrightness_84 / 0x100;
-          light.g_0d = this.wmapStruct19c0_800c66b0.lightsColours_8c[i].getG() * this.wmapStruct19c0_800c66b0.lightsBrightness_84 / 0x100;
-          light.b_0e = this.wmapStruct19c0_800c66b0.lightsColours_8c[i].getB() * this.wmapStruct19c0_800c66b0.lightsBrightness_84 / 0x100;
-          GsSetFlatLight(i, this.wmapStruct19c0_800c66b0.lights_11c[i]);
+          light.r_0c = this.wmapCameraAndLights19c0_800c66b0.lightsColours_8c[i].getR() * this.wmapCameraAndLights19c0_800c66b0.lightsBrightness_84 / 0x100;
+          light.g_0d = this.wmapCameraAndLights19c0_800c66b0.lightsColours_8c[i].getG() * this.wmapCameraAndLights19c0_800c66b0.lightsBrightness_84 / 0x100;
+          light.b_0e = this.wmapCameraAndLights19c0_800c66b0.lightsColours_8c[i].getB() * this.wmapCameraAndLights19c0_800c66b0.lightsBrightness_84 / 0x100;
+          GsSetFlatLight(i, this.wmapCameraAndLights19c0_800c66b0.lights_11c[i]);
         }
       }
     }
@@ -1054,35 +1054,35 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d25d8
-    final int lightsState = this.wmapStruct19c0_800c66b0.lightsUpdateState_88;
+    final int lightsState = this.wmapCameraAndLights19c0_800c66b0.lightsUpdateState_88;
     if(lightsState == 2 || lightsState == 3) {
       if(lightsState == 2) {
         //LAB_800d2608
-        this.wmapStruct19c0_800c66b0.lightsBrightness_84 = 0.25f;
-        this.wmapStruct19c0_800c66b0.lightsUpdateState_88 = 3;
+        this.wmapCameraAndLights19c0_800c66b0.lightsBrightness_84 = 0.25f;
+        this.wmapCameraAndLights19c0_800c66b0.lightsUpdateState_88 = 3;
       }
 
       //LAB_800d2628
-      this.wmapStruct19c0_800c66b0.lightsBrightness_84 += 0.140625f / (3.0f / vsyncMode_8007a3b8);
+      this.wmapCameraAndLights19c0_800c66b0.lightsBrightness_84 += 0.140625f / (3.0f / vsyncMode_8007a3b8);
 
-      if(this.wmapStruct19c0_800c66b0.lightsBrightness_84 > 1.0f) {
-        this.wmapStruct19c0_800c66b0.lightsBrightness_84 = 1.0f;
-        this.wmapStruct19c0_800c66b0.lightsUpdateState_88 = 0;
+      if(this.wmapCameraAndLights19c0_800c66b0.lightsBrightness_84 > 1.0f) {
+        this.wmapCameraAndLights19c0_800c66b0.lightsBrightness_84 = 1.0f;
+        this.wmapCameraAndLights19c0_800c66b0.lightsUpdateState_88 = 0;
       }
 
       //LAB_800d268c
       //LAB_800d2690
       for(int i = 0; i < 3; i++) {
-        final GsF_LIGHT light = this.wmapStruct19c0_800c66b0.lights_11c[i];
+        final GsF_LIGHT light = this.wmapCameraAndLights19c0_800c66b0.lights_11c[i];
 
         //LAB_800d26ac
         //LAB_800d2710
         //LAB_800d277c
         //LAB_800d27e8
-        light.r_0c = this.wmapStruct19c0_800c66b0.lightsColours_8c[i].getR() * this.wmapStruct19c0_800c66b0.lightsBrightness_84 / 0x100;
-        light.g_0d = this.wmapStruct19c0_800c66b0.lightsColours_8c[i].getG() * this.wmapStruct19c0_800c66b0.lightsBrightness_84 / 0x100;
-        light.b_0e = this.wmapStruct19c0_800c66b0.lightsColours_8c[i].getB() * this.wmapStruct19c0_800c66b0.lightsBrightness_84 / 0x100;
-        GsSetFlatLight(i, this.wmapStruct19c0_800c66b0.lights_11c[i]);
+        light.r_0c = this.wmapCameraAndLights19c0_800c66b0.lightsColours_8c[i].getR() * this.wmapCameraAndLights19c0_800c66b0.lightsBrightness_84 / 0x100;
+        light.g_0d = this.wmapCameraAndLights19c0_800c66b0.lightsColours_8c[i].getG() * this.wmapCameraAndLights19c0_800c66b0.lightsBrightness_84 / 0x100;
+        light.b_0e = this.wmapCameraAndLights19c0_800c66b0.lightsColours_8c[i].getB() * this.wmapCameraAndLights19c0_800c66b0.lightsBrightness_84 / 0x100;
+        GsSetFlatLight(i, this.wmapCameraAndLights19c0_800c66b0.lights_11c[i]);
       }
     }
     //LAB_800d283c
@@ -1093,7 +1093,7 @@ public class WMap extends EngineState {
   private void updateMapAndCamera() {
     this.FUN_800d5288();
 
-    final WMapStruct19c0 struct = this.wmapStruct19c0_800c66b0;
+    final WMapCameraAndLights19c0 struct = this.wmapCameraAndLights19c0_800c66b0;
 
     this.rotateCoord2(struct.currMapRotation_70, struct.coord2_20);
 
@@ -1108,7 +1108,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d2ec4
-    GsSetRefView2L(struct.rview2_00);
+    GsSetRefView2L(struct.currRview2_00);
     this.handleMapRotation();
 
     MathHelper.floorMod(struct.currMapRotation_70, MathHelper.TWO_PI);
@@ -1119,14 +1119,14 @@ public class WMap extends EngineState {
   private void handleMapRotation() {
     if(this.modelAndAnimData_800c66a8.mapTransitionDestinationType_250 == MapTransitionDestinationType.TELEPORT) {
       //LAB_800d401c
-      this.wmapStruct19c0_800c66b0.currMapRotation_70.y += MathHelper.psxDegToRad(8) / (3.0f / vsyncMode_8007a3b8);
+      this.wmapCameraAndLights19c0_800c66b0.currMapRotation_70.y += MathHelper.psxDegToRad(8) / (3.0f / vsyncMode_8007a3b8);
     } else {
       //LAB_800d2fd4
       if(this.modelAndAnimData_800c66a8.mapTransitionDestinationType_250 == MapTransitionDestinationType.SUBMAP && this.modelAndAnimData_800c66a8.fadeAnimationType_05 == FadeAnimationType.NONE) {
         return;
       }
 
-      final WMapStruct19c0 struct = this.wmapStruct19c0_800c66b0;
+      final WMapCameraAndLights19c0 struct = this.wmapCameraAndLights19c0_800c66b0;
 
       //LAB_800d3014
       if(struct.mapRotationStep_7c == 0.0f) {
@@ -1141,14 +1141,14 @@ public class WMap extends EngineState {
               if(!struct.mapRotating_80) {
                 //LAB_800d30d8
                 if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_1)) { // R1
-                  this.wmapStruct19c0_800c66b0.mapRotationState = (int)MathHelper.floorMod((this.wmapStruct19c0_800c66b0.mapRotationState + 1), 8);
+                  this.wmapCameraAndLights19c0_800c66b0.mapRotationState = (int)MathHelper.floorMod((this.wmapCameraAndLights19c0_800c66b0.mapRotationState + 1), 8);
                   this.startMapRotation(1);
                   struct.mapRotating_80 = true;
                 }
 
                 //LAB_800d310c
                 if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_LEFT_1)) { // L1
-                  this.wmapStruct19c0_800c66b0.mapRotationState = (int)MathHelper.floorMod((this.wmapStruct19c0_800c66b0.mapRotationState - 1), 8);
+                  this.wmapCameraAndLights19c0_800c66b0.mapRotationState = (int)MathHelper.floorMod((this.wmapCameraAndLights19c0_800c66b0.mapRotationState - 1), 8);
                   this.startMapRotation(-1);
                   struct.mapRotating_80 = true;
                 }
@@ -1172,27 +1172,27 @@ public class WMap extends EngineState {
       //LAB_800d31e8
       this.handleCameraZoom();
 
-      final int v0 = this.wmapStruct19c0_800c66b0._110;
+      final int v0 = this.wmapCameraAndLights19c0_800c66b0._110;
       if(v0 == 1) {  // Fade out to submap
         //LAB_800d3250
-        this.FUN_800d5018();
-        this.wmapStruct19c0_800c66b0._110 = 2;
+        this.initCameraMovement();
+        this.wmapCameraAndLights19c0_800c66b0._110 = 2;
       } else if(v0 == 3) {
         //LAB_800d3434
-        this.wmapStruct19c0_800c66b0.rview2_00.viewpoint_00.y = this.wmapStruct19c0_800c66b0.rview2_c8.viewpoint_00.y + this.wmapStruct19c0_800c66b0.viewpointY_ec * this.wmapStruct19c0_800c66b0._10e;
-        this.wmapStruct19c0_800c66b0.rview2_00.viewpoint_00.z = this.wmapStruct19c0_800c66b0.rview2_c8.viewpoint_00.z + this.wmapStruct19c0_800c66b0.viewpointZ_f0 * this.wmapStruct19c0_800c66b0._10e;
-        this.wmapStruct19c0_800c66b0.rview2_00.refpoint_0c.y = this.wmapStruct19c0_800c66b0.rview2_c8.refpoint_0c.y + this.wmapStruct19c0_800c66b0.refpointY_f8 * this.wmapStruct19c0_800c66b0._10e;
-        this.wmapStruct19c0_800c66b0.rview2_00.refpoint_0c.z = this.wmapStruct19c0_800c66b0.rview2_c8.refpoint_0c.z + this.wmapStruct19c0_800c66b0.refpointZ_fc * this.wmapStruct19c0_800c66b0._10e;
-        this.wmapStruct19c0_800c66b0.currMapRotation_70.y = this.wmapStruct19c0_800c66b0.angle_10a + this.wmapStruct19c0_800c66b0.angle_10c * this.wmapStruct19c0_800c66b0._10e;
+        this.wmapCameraAndLights19c0_800c66b0.currRview2_00.viewpoint_00.y = this.wmapCameraAndLights19c0_800c66b0.rview2_c8.viewpoint_00.y + this.wmapCameraAndLights19c0_800c66b0.viewpointSwoopY_ec * this.wmapCameraAndLights19c0_800c66b0._10e;
+        this.wmapCameraAndLights19c0_800c66b0.currRview2_00.viewpoint_00.z = this.wmapCameraAndLights19c0_800c66b0.rview2_c8.viewpoint_00.z + this.wmapCameraAndLights19c0_800c66b0.viewpointSwoopZ_f0 * this.wmapCameraAndLights19c0_800c66b0._10e;
+        this.wmapCameraAndLights19c0_800c66b0.currRview2_00.refpoint_0c.y = this.wmapCameraAndLights19c0_800c66b0.rview2_c8.refpoint_0c.y + this.wmapCameraAndLights19c0_800c66b0.refpointSwoopY_f8 * this.wmapCameraAndLights19c0_800c66b0._10e;
+        this.wmapCameraAndLights19c0_800c66b0.currRview2_00.refpoint_0c.z = this.wmapCameraAndLights19c0_800c66b0.rview2_c8.refpoint_0c.z + this.wmapCameraAndLights19c0_800c66b0.refpointSwoopZ_fc * this.wmapCameraAndLights19c0_800c66b0._10e;
+        this.wmapCameraAndLights19c0_800c66b0.currMapRotation_70.y = this.wmapCameraAndLights19c0_800c66b0.angle_10a + this.wmapCameraAndLights19c0_800c66b0.angle_10c * this.wmapCameraAndLights19c0_800c66b0._10e;
 
-        if(this.wmapStruct19c0_800c66b0._10e > 0.0f) {
-          this.wmapStruct19c0_800c66b0._10e -= 1.0f / (3.0f / vsyncMode_8007a3b8);
+        if(this.wmapCameraAndLights19c0_800c66b0._10e > 0.0f) {
+          this.wmapCameraAndLights19c0_800c66b0._10e -= 1.0f / (3.0f / vsyncMode_8007a3b8);
         } else {
-          this.wmapStruct19c0_800c66b0._110 = 0;
+          this.wmapCameraAndLights19c0_800c66b0._110 = 0;
         }
 
         return;
-      } else if(v0 < 2) {
+      } else if(v0 == 0) {
         //LAB_800d3248
         return;
       }
@@ -1201,18 +1201,17 @@ public class WMap extends EngineState {
 
       //LAB_800d3228
       //LAB_800d3268
-      this.wmapStruct19c0_800c66b0.rview2_00.viewpoint_00.y = this.wmapStruct19c0_800c66b0.rview2_c8.viewpoint_00.y + this.wmapStruct19c0_800c66b0.viewpointY_ec * this.wmapStruct19c0_800c66b0._10e;
-      this.wmapStruct19c0_800c66b0.rview2_00.viewpoint_00.z = this.wmapStruct19c0_800c66b0.rview2_c8.viewpoint_00.z + this.wmapStruct19c0_800c66b0.viewpointZ_f0 * this.wmapStruct19c0_800c66b0._10e;
-      this.wmapStruct19c0_800c66b0.rview2_00.refpoint_0c.y = this.wmapStruct19c0_800c66b0.rview2_c8.refpoint_0c.y + this.wmapStruct19c0_800c66b0.refpointY_f8 * this.wmapStruct19c0_800c66b0._10e;
-      this.wmapStruct19c0_800c66b0.rview2_00.refpoint_0c.z = this.wmapStruct19c0_800c66b0.rview2_c8.refpoint_0c.z + this.wmapStruct19c0_800c66b0.refpointZ_fc * this.wmapStruct19c0_800c66b0._10e;
-      this.wmapStruct19c0_800c66b0.currMapRotation_70.y = this.wmapStruct19c0_800c66b0.angle_10a + this.wmapStruct19c0_800c66b0.angle_10c * this.wmapStruct19c0_800c66b0._10e;
+      this.wmapCameraAndLights19c0_800c66b0.currRview2_00.viewpoint_00.y = this.wmapCameraAndLights19c0_800c66b0.rview2_c8.viewpoint_00.y + this.wmapCameraAndLights19c0_800c66b0.viewpointSwoopY_ec * this.wmapCameraAndLights19c0_800c66b0._10e;
+      this.wmapCameraAndLights19c0_800c66b0.currRview2_00.viewpoint_00.z = this.wmapCameraAndLights19c0_800c66b0.rview2_c8.viewpoint_00.z + this.wmapCameraAndLights19c0_800c66b0.viewpointSwoopZ_f0 * this.wmapCameraAndLights19c0_800c66b0._10e;
+      this.wmapCameraAndLights19c0_800c66b0.currRview2_00.refpoint_0c.y = this.wmapCameraAndLights19c0_800c66b0.rview2_c8.refpoint_0c.y + this.wmapCameraAndLights19c0_800c66b0.refpointSwoopY_f8 * this.wmapCameraAndLights19c0_800c66b0._10e;
+      this.wmapCameraAndLights19c0_800c66b0.currRview2_00.refpoint_0c.z = this.wmapCameraAndLights19c0_800c66b0.rview2_c8.refpoint_0c.z + this.wmapCameraAndLights19c0_800c66b0.refpointSwoopZ_fc * this.wmapCameraAndLights19c0_800c66b0._10e;
+      this.wmapCameraAndLights19c0_800c66b0.currMapRotation_70.y = this.wmapCameraAndLights19c0_800c66b0.angle_10a + this.wmapCameraAndLights19c0_800c66b0.angle_10c * this.wmapCameraAndLights19c0_800c66b0._10e;
 
-      this.wmapStruct19c0_800c66b0._10e += 1.0f / (3.0f / vsyncMode_8007a3b8);
-      if(this.wmapStruct19c0_800c66b0._10e >= 16.0f) {
-        this.wmapStruct19c0_800c66b0._10e = 16.0f;
-        this.wmapStruct19c0_800c66b0.currMapRotation_70.y = this.wmapStruct19c0_800c66b0.angle_108;
+      this.wmapCameraAndLights19c0_800c66b0._10e += 1.0f / (3.0f / vsyncMode_8007a3b8);
+      if(this.wmapCameraAndLights19c0_800c66b0._10e >= 16.0f) {
+        this.wmapCameraAndLights19c0_800c66b0._10e = 16.0f;
+        this.wmapCameraAndLights19c0_800c66b0.currMapRotation_70.y = this.wmapCameraAndLights19c0_800c66b0.angle_108;
       }
-
       //LAB_800d342c
       //LAB_800d35e4
       //LAB_800d35ec
@@ -1221,7 +1220,7 @@ public class WMap extends EngineState {
 
   @Method(0x800d35fcL)
   private void handleCameraZoom() {
-    switch(this.wmapStruct19c0_800c66b0.cameraUpdateState_c5) {
+    switch(this.wmapCameraAndLights19c0_800c66b0.cameraUpdateState_c5) {
       case 0:
         //LAB_800d3654
         //LAB_800d3670
@@ -1233,18 +1232,18 @@ public class WMap extends EngineState {
         ) {
           //LAB_800d36a8
           if(this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc != PathSegmentEndpointType.TERMINAL) {
-            if(!this.wmapStruct19c0_800c66b0.mapRotating_80) {
+            if(!this.wmapCameraAndLights19c0_800c66b0.mapRotating_80) {
               if(this.modelAndAnimData_800c66a8.fadeAnimationType_05 == FadeAnimationType.NONE) {
-                if(this.wmapStruct19c0_800c66b0._110 == 0) {
+                if(this.wmapCameraAndLights19c0_800c66b0._110 == 0) {
                   if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_2)) { // R2
                     if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL) {
                       playSound(0, 4, 0, 0, (short)0, (short)0);
-                      this.wmapStruct19c0_800c66b0.finalCameraY_9e = -9000;
-                      this.wmapStruct19c0_800c66b0.cameraUpdateState_c5 = 1;
-                      this.wmapStruct19c0_800c66b0._11a = 1;
-                      this.FUN_800d4bc8(0);
+                      this.wmapCameraAndLights19c0_800c66b0.finalCameraY_9e = -9000;
+                      this.wmapCameraAndLights19c0_800c66b0.cameraUpdateState_c5 = 1;
+                      this.wmapCameraAndLights19c0_800c66b0._11a = 1;
+                      this.initCameraZoomPositionAndRotationSteps(0);
                       this.mapState_800c6798.disableInput_d0 = true;
-                      this.wmapStruct19c0_800c66b0.hideAtmosphericEffect_c4 = true;
+                      this.wmapCameraAndLights19c0_800c66b0.hideAtmosphericEffect_c4 = true;
                     }
                   }
 
@@ -1254,10 +1253,10 @@ public class WMap extends EngineState {
                       //LAB_800d3814
                       setTextAndTextboxesToUninitialized(7, 0);
                       playSound(0, 4, 0, 0, (short)0, (short)0);
-                      this.wmapStruct19c0_800c66b0.finalCameraY_9e = -300;
-                      this.wmapStruct19c0_800c66b0.cameraUpdateState_c5 = 2;
-                      this.FUN_800d4bc8(1);
-                      this.wmapStruct19c0_800c66b0.hideAtmosphericEffect_c4 = false;
+                      this.wmapCameraAndLights19c0_800c66b0.finalCameraY_9e = -300;
+                      this.wmapCameraAndLights19c0_800c66b0.cameraUpdateState_c5 = 2;
+                      this.initCameraZoomPositionAndRotationSteps(1);
+                      this.wmapCameraAndLights19c0_800c66b0.hideAtmosphericEffect_c4 = false;
                       this.modelAndAnimData_800c66a8.zoomState_1f8 = ZoomState.LOCAL;
                       //LAB_800d3898
                     } else if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL) {
@@ -1273,27 +1272,27 @@ public class WMap extends EngineState {
 
       case 1:
         //LAB_800d38dc
-        this.wmapStruct19c0_800c66b0.rview2_00.viewpoint_00.y -= 1450.0f / (3.0f / vsyncMode_8007a3b8);
-        this.wmapStruct19c0_800c66b0.rview2_00.refpoint_0c.y += 1450.0f / (3.0f / vsyncMode_8007a3b8);
-        this.wmapStruct19c0_800c66b0.currMapRotation_70.y = this.wmapStruct19c0_800c66b0.originalMapRotation_9a + this.wmapStruct19c0_800c66b0.mapRotationStep_9c * this.wmapStruct19c0_800c66b0.cameraZoomTick_a0;
-        this.wmapStruct19c0_800c66b0.currCameraZoomPos_b4.add(
-          this.wmapStruct19c0_800c66b0.cameraZoomPosStep_a4.x / (3.0f / vsyncMode_8007a3b8),
-          this.wmapStruct19c0_800c66b0.cameraZoomPosStep_a4.y / (3.0f / vsyncMode_8007a3b8),
-          this.wmapStruct19c0_800c66b0.cameraZoomPosStep_a4.z / (3.0f / vsyncMode_8007a3b8)
+        this.wmapCameraAndLights19c0_800c66b0.currRview2_00.viewpoint_00.y -= 1450.0f / (3.0f / vsyncMode_8007a3b8);
+        this.wmapCameraAndLights19c0_800c66b0.currRview2_00.refpoint_0c.y += 1450.0f / (3.0f / vsyncMode_8007a3b8);
+        this.wmapCameraAndLights19c0_800c66b0.currMapRotation_70.y = this.wmapCameraAndLights19c0_800c66b0.originalMapRotation_9a + this.wmapCameraAndLights19c0_800c66b0.mapRotationStep_9c * this.wmapCameraAndLights19c0_800c66b0.cameraZoomTick_a0;
+        this.wmapCameraAndLights19c0_800c66b0.currCameraZoomPos_b4.add(
+          this.wmapCameraAndLights19c0_800c66b0.cameraZoomPosStep_a4.x / (3.0f / vsyncMode_8007a3b8),
+          this.wmapCameraAndLights19c0_800c66b0.cameraZoomPosStep_a4.y / (3.0f / vsyncMode_8007a3b8),
+          this.wmapCameraAndLights19c0_800c66b0.cameraZoomPosStep_a4.z / (3.0f / vsyncMode_8007a3b8)
         );
-        this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(
-          (this.modelAndAnimData_800c66a8.coord2_34.coord.transfer.x - this.wmapStruct19c0_800c66b0.currCameraZoomPos_b4.x) / (3.0f / vsyncMode_8007a3b8),
-          (this.modelAndAnimData_800c66a8.coord2_34.coord.transfer.y - this.wmapStruct19c0_800c66b0.currCameraZoomPos_b4.y) / (3.0f / vsyncMode_8007a3b8),
-          (this.modelAndAnimData_800c66a8.coord2_34.coord.transfer.z - this.wmapStruct19c0_800c66b0.currCameraZoomPos_b4.z) / (3.0f / vsyncMode_8007a3b8)
+        this.wmapCameraAndLights19c0_800c66b0.coord2_20.coord.transfer.set(
+          (this.modelAndAnimData_800c66a8.coord2_34.coord.transfer.x - this.wmapCameraAndLights19c0_800c66b0.currCameraZoomPos_b4.x) / (3.0f / vsyncMode_8007a3b8),
+          (this.modelAndAnimData_800c66a8.coord2_34.coord.transfer.y - this.wmapCameraAndLights19c0_800c66b0.currCameraZoomPos_b4.y) / (3.0f / vsyncMode_8007a3b8),
+          (this.modelAndAnimData_800c66a8.coord2_34.coord.transfer.z - this.wmapCameraAndLights19c0_800c66b0.currCameraZoomPos_b4.z) / (3.0f / vsyncMode_8007a3b8)
         );
-        this.wmapStruct19c0_800c66b0.cameraZoomTick_a0 += 1.0f / (3.0f / vsyncMode_8007a3b8);
+        this.wmapCameraAndLights19c0_800c66b0.cameraZoomTick_a0 += 1.0f / (3.0f / vsyncMode_8007a3b8);
 
-        if(this.wmapStruct19c0_800c66b0.cameraZoomTick_a0 >= 6.0f) {
-          this.wmapStruct19c0_800c66b0.rview2_00.viewpoint_00.y = this.wmapStruct19c0_800c66b0.finalCameraY_9e;
-          this.wmapStruct19c0_800c66b0.rview2_00.refpoint_0c.y = -this.wmapStruct19c0_800c66b0.finalCameraY_9e;
-          this.wmapStruct19c0_800c66b0.currMapRotation_70.y = this.wmapStruct19c0_800c66b0.finalMapRotation_98;
-          this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(0, 0, 0);
-          this.wmapStruct19c0_800c66b0.cameraUpdateState_c5 = 0;
+        if(this.wmapCameraAndLights19c0_800c66b0.cameraZoomTick_a0 >= 6.0f) {
+          this.wmapCameraAndLights19c0_800c66b0.currRview2_00.viewpoint_00.y = this.wmapCameraAndLights19c0_800c66b0.finalCameraY_9e;
+          this.wmapCameraAndLights19c0_800c66b0.currRview2_00.refpoint_0c.y = -this.wmapCameraAndLights19c0_800c66b0.finalCameraY_9e;
+          this.wmapCameraAndLights19c0_800c66b0.currMapRotation_70.y = this.wmapCameraAndLights19c0_800c66b0.finalMapRotation_98;
+          this.wmapCameraAndLights19c0_800c66b0.coord2_20.coord.transfer.set(0, 0, 0);
+          this.wmapCameraAndLights19c0_800c66b0.cameraUpdateState_c5 = 0;
           this.modelAndAnimData_800c66a8.zoomState_1f8 = ZoomState.CONTINENT;
         }
         break;
@@ -1301,42 +1300,42 @@ public class WMap extends EngineState {
       case 2:
         //LAB_800d3bd8
         if(this.modelAndAnimData_800c66a8.fadeAnimationType_05 == FadeAnimationType.NONE) {
-          this.wmapStruct19c0_800c66b0.rview2_00.viewpoint_00.y += 1450.0f / (3.0f / vsyncMode_8007a3b8);
-          this.wmapStruct19c0_800c66b0.rview2_00.refpoint_0c.y -= 1450.0f / (3.0f / vsyncMode_8007a3b8);
+          this.wmapCameraAndLights19c0_800c66b0.currRview2_00.viewpoint_00.y += 1450.0f / (3.0f / vsyncMode_8007a3b8);
+          this.wmapCameraAndLights19c0_800c66b0.currRview2_00.refpoint_0c.y -= 1450.0f / (3.0f / vsyncMode_8007a3b8);
         } else {
           //LAB_800d3c44
-          this.wmapStruct19c0_800c66b0.rview2_00.viewpoint_00.y += 290.0f / (3.0f / vsyncMode_8007a3b8);
-          this.wmapStruct19c0_800c66b0.rview2_00.refpoint_0c.y -= 290.0f / (3.0f / vsyncMode_8007a3b8);
+          this.wmapCameraAndLights19c0_800c66b0.currRview2_00.viewpoint_00.y += 290.0f / (3.0f / vsyncMode_8007a3b8);
+          this.wmapCameraAndLights19c0_800c66b0.currRview2_00.refpoint_0c.y -= 290.0f / (3.0f / vsyncMode_8007a3b8);
         }
 
         //LAB_800d3c8c
-        this.wmapStruct19c0_800c66b0.currMapRotation_70.y = this.wmapStruct19c0_800c66b0.originalMapRotation_9a + this.wmapStruct19c0_800c66b0.mapRotationStep_9c * this.wmapStruct19c0_800c66b0.cameraZoomTick_a0;
-        this.wmapStruct19c0_800c66b0.currCameraZoomPos_b4.add(
-          this.wmapStruct19c0_800c66b0.cameraZoomPosStep_a4.x / (3.0f / vsyncMode_8007a3b8),
-          this.wmapStruct19c0_800c66b0.cameraZoomPosStep_a4.y / (3.0f / vsyncMode_8007a3b8),
-          this.wmapStruct19c0_800c66b0.cameraZoomPosStep_a4.z / (3.0f / vsyncMode_8007a3b8)
+        this.wmapCameraAndLights19c0_800c66b0.currMapRotation_70.y = this.wmapCameraAndLights19c0_800c66b0.originalMapRotation_9a + this.wmapCameraAndLights19c0_800c66b0.mapRotationStep_9c * this.wmapCameraAndLights19c0_800c66b0.cameraZoomTick_a0;
+        this.wmapCameraAndLights19c0_800c66b0.currCameraZoomPos_b4.add(
+          this.wmapCameraAndLights19c0_800c66b0.cameraZoomPosStep_a4.x / (3.0f / vsyncMode_8007a3b8),
+          this.wmapCameraAndLights19c0_800c66b0.cameraZoomPosStep_a4.y / (3.0f / vsyncMode_8007a3b8),
+          this.wmapCameraAndLights19c0_800c66b0.cameraZoomPosStep_a4.z / (3.0f / vsyncMode_8007a3b8)
         );
-        this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(this.wmapStruct19c0_800c66b0.currCameraZoomPos_b4);
-        this.wmapStruct19c0_800c66b0.cameraZoomTick_a0 += 1.0f / (3.0f / vsyncMode_8007a3b8);
+        this.wmapCameraAndLights19c0_800c66b0.coord2_20.coord.transfer.set(this.wmapCameraAndLights19c0_800c66b0.currCameraZoomPos_b4);
+        this.wmapCameraAndLights19c0_800c66b0.cameraZoomTick_a0 += 1.0f / (3.0f / vsyncMode_8007a3b8);
 
         boolean zoomComplete = false;
         if(this.modelAndAnimData_800c66a8.fadeAnimationType_05 == FadeAnimationType.NONE) {
-          if(this.wmapStruct19c0_800c66b0.cameraZoomTick_a0 >= 6.0f) {
+          if(this.wmapCameraAndLights19c0_800c66b0.cameraZoomTick_a0 >= 6.0f) {
             zoomComplete = true;
           }
           //LAB_800d3e78
           //LAB_800d3e80
-        } else if(this.wmapStruct19c0_800c66b0.cameraZoomTick_a0 >= 30.0f) {
+        } else if(this.wmapCameraAndLights19c0_800c66b0.cameraZoomTick_a0 >= 30.0f) {
           zoomComplete = true;
         }
 
         //LAB_800d3ea8
         if(zoomComplete) {
-          this.wmapStruct19c0_800c66b0.rview2_00.viewpoint_00.y = this.wmapStruct19c0_800c66b0.finalCameraY_9e;
-          this.wmapStruct19c0_800c66b0.rview2_00.refpoint_0c.y = -this.wmapStruct19c0_800c66b0.finalCameraY_9e;
-          this.wmapStruct19c0_800c66b0.currMapRotation_70.y = this.wmapStruct19c0_800c66b0.finalMapRotation_98;
-          this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(this.modelAndAnimData_800c66a8.coord2_34.coord.transfer);
-          this.wmapStruct19c0_800c66b0.cameraUpdateState_c5 = 0;
+          this.wmapCameraAndLights19c0_800c66b0.currRview2_00.viewpoint_00.y = this.wmapCameraAndLights19c0_800c66b0.finalCameraY_9e;
+          this.wmapCameraAndLights19c0_800c66b0.currRview2_00.refpoint_0c.y = -this.wmapCameraAndLights19c0_800c66b0.finalCameraY_9e;
+          this.wmapCameraAndLights19c0_800c66b0.currMapRotation_70.y = this.wmapCameraAndLights19c0_800c66b0.finalMapRotation_98;
+          this.wmapCameraAndLights19c0_800c66b0.coord2_20.coord.transfer.set(this.modelAndAnimData_800c66a8.coord2_34.coord.transfer);
+          this.wmapCameraAndLights19c0_800c66b0.cameraUpdateState_c5 = 0;
           this.mapState_800c6798.disableInput_d0 = false;
           this.modelAndAnimData_800c66a8.zoomState_1f8 = ZoomState.LOCAL;
         }
@@ -1353,7 +1352,7 @@ public class WMap extends EngineState {
   @Method(0x800d4058L)
   private void renderPlayerAndDestinationIndicators() {
     //LAB_800d4088
-    if(!this.wmapStruct19c0_800c66b0.hideAtmosphericEffect_c4 || this.wmapStruct19c0_800c66b0.cameraUpdateState_c5 != 0) {
+    if(!this.wmapCameraAndLights19c0_800c66b0.hideAtmosphericEffect_c4 || this.wmapCameraAndLights19c0_800c66b0.cameraUpdateState_c5 != 0) {
       //LAB_800d41f0
       return;
     }
@@ -1472,17 +1471,16 @@ public class WMap extends EngineState {
     }
   }
 
-  /** Something to do with the fade in/out camera movement */
   @Method(0x800d4bc8L)
-  private void FUN_800d4bc8(final int a0) {
+  private void initCameraZoomPositionAndRotationSteps(final int zoomMode) {
     final float angleOffset;
     final float cwAngle;
     final float ccwAngle;
     final float finalAngle;
 
-    final WMapStruct19c0 struct = this.wmapStruct19c0_800c66b0;
+    final WMapCameraAndLights19c0 struct = this.wmapCameraAndLights19c0_800c66b0;
 
-    if(a0 == 0) {
+    if(zoomMode == 0) {
       struct.originalMapRotation_9a = struct.currMapRotation_70.y;
       struct.finalMapRotation_98 = 0;
       ccwAngle = struct.finalMapRotation_98 - struct.originalMapRotation_9a;
@@ -1526,7 +1524,7 @@ public class WMap extends EngineState {
   private void startMapRotation(final int direction) {
     final float angleDelta = MathHelper.TWO_PI / 8.0f;
 
-    final WMapStruct19c0 struct = this.wmapStruct19c0_800c66b0;
+    final WMapCameraAndLights19c0 struct = this.wmapCameraAndLights19c0_800c66b0;
     struct.mapRotationCounter_7e = 0;
     struct.mapRotationStartAngle_78 = struct.currMapRotation_70.y;
     struct.mapRotationEndAngle_7a = struct.mapRotationState * angleDelta;
@@ -1543,19 +1541,20 @@ public class WMap extends EngineState {
     struct.mapRotationStep_7c = -finalAngle / 6.0f;
   }
 
+  /** This is used exclusively for the fade in/out movement, not zooming. */
   @Method(0x800d5018L)
-  private void FUN_800d5018() {
-    final WMapStruct19c0 struct = this.wmapStruct19c0_800c66b0;
+  private void initCameraMovement() {
+    final WMapCameraAndLights19c0 struct = this.wmapCameraAndLights19c0_800c66b0;
     struct._110 = 0;
     struct._10e = 0.0f;
-    struct.rview2_c8.viewpoint_00.set(struct.rview2_00.viewpoint_00);
-    struct.rview2_c8.refpoint_0c.set(struct.rview2_00.refpoint_0c);
-    struct.rview2_c8.viewpointTwist_18 = struct.rview2_00.viewpointTwist_18;
-    struct.rview2_c8.super_1c = struct.rview2_00.super_1c;
-    struct.viewpointY_ec = (-100.0f - struct.rview2_c8.viewpoint_00.y) / 16.0f;
-    struct.viewpointZ_f0 = (-600.0f - struct.rview2_c8.viewpoint_00.z) / 16.0f;
-    struct.refpointY_f8 = (-90.0f - struct.rview2_c8.refpoint_0c.y) / 16.0f;
-    struct.refpointZ_fc = -struct.rview2_c8.refpoint_0c.z / 16.0f;
+    struct.rview2_c8.viewpoint_00.set(struct.currRview2_00.viewpoint_00);
+    struct.rview2_c8.refpoint_0c.set(struct.currRview2_00.refpoint_0c);
+    struct.rview2_c8.viewpointTwist_18 = struct.currRview2_00.viewpointTwist_18;
+    struct.rview2_c8.super_1c = struct.currRview2_00.super_1c;
+    struct.viewpointSwoopY_ec = (-100.0f - struct.rview2_c8.viewpoint_00.y) / 16.0f;
+    struct.viewpointSwoopZ_f0 = (-600.0f - struct.rview2_c8.viewpoint_00.z) / 16.0f;
+    struct.refpointSwoopY_f8 = (-90.0f - struct.rview2_c8.refpoint_0c.y) / 16.0f;
+    struct.refpointSwoopZ_fc = -struct.rview2_c8.refpoint_0c.z / 16.0f;
     struct.angle_10a = struct.currMapRotation_70.y;
 
     final float angle = this.modelAndAnimData_800c66a8.playerRotation_a4.y + MathHelper.PI;
@@ -1574,7 +1573,7 @@ public class WMap extends EngineState {
 
   @Method(0x800d5288L)
   private void FUN_800d5288() {
-    final WMapStruct19c0 struct = this.wmapStruct19c0_800c66b0;
+    final WMapCameraAndLights19c0 struct = this.wmapCameraAndLights19c0_800c66b0;
     final int v0 = struct._11a;
 
     if(v0 == 0) {
@@ -2273,7 +2272,7 @@ public class WMap extends EngineState {
           playSound(0, 4, 0, 0, (short)0, (short)0);
           this.shouldSetDestLabelMetrics = true;
 
-          this.modelAndAnimData_800c66a8.mapPosition_1e8.set(this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer);
+          this.modelAndAnimData_800c66a8.mapPosition_1e8.set(this.wmapCameraAndLights19c0_800c66b0.coord2_20.coord.transfer);
 
           this.initMapModelZoom(1);
 
@@ -2299,7 +2298,7 @@ public class WMap extends EngineState {
         this.tickMapPositionDuringZoom();
 
         if(this.modelAndAnimData_800c66a8.zoomAnimationTick_1f9 >= 18 / vsyncMode_8007a3b8) {
-          this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(mapPositions_800ef1a8[this.mapState_800c6798.continent_00.ordinal()]);
+          this.wmapCameraAndLights19c0_800c66b0.coord2_20.coord.transfer.set(mapPositions_800ef1a8[this.mapState_800c6798.continent_00.ordinal()]);
           this.modelAndAnimData_800c66a8.mapArrow.setSize(8.0f);
           this.modelAndAnimData_800c66a8.zoomState_1f8 = ZoomState.WORLD;
 
@@ -2338,11 +2337,11 @@ public class WMap extends EngineState {
             //LAB_800d996c
             //LAB_800d99c4
             //LAB_800d9a1c
-            this.wmapStruct19c0_800c66b0.lights_11c[i].r_0c = this.wmapStruct19c0_800c66b0.lightsColours_8c[i].r.get() / 4.0f / 0x100;
-            this.wmapStruct19c0_800c66b0.lights_11c[i].g_0d = this.wmapStruct19c0_800c66b0.lightsColours_8c[i].g.get() / 4.0f / 0x100;
-            this.wmapStruct19c0_800c66b0.lights_11c[i].b_0e = this.wmapStruct19c0_800c66b0.lightsColours_8c[i].b.get() / 4.0f / 0x100;
+            this.wmapCameraAndLights19c0_800c66b0.lights_11c[i].r_0c = this.wmapCameraAndLights19c0_800c66b0.lightsColours_8c[i].r.get() / 4.0f / 0x100;
+            this.wmapCameraAndLights19c0_800c66b0.lights_11c[i].g_0d = this.wmapCameraAndLights19c0_800c66b0.lightsColours_8c[i].g.get() / 4.0f / 0x100;
+            this.wmapCameraAndLights19c0_800c66b0.lights_11c[i].b_0e = this.wmapCameraAndLights19c0_800c66b0.lightsColours_8c[i].b.get() / 4.0f / 0x100;
 
-            GsSetFlatLight(i, this.wmapStruct19c0_800c66b0.lights_11c[i]);
+            GsSetFlatLight(i, this.wmapCameraAndLights19c0_800c66b0.lights_11c[i]);
           }
 
           //LAB_800d9a70
@@ -2371,7 +2370,7 @@ public class WMap extends EngineState {
         this.modelAndAnimData_800c66a8.zoomAnimationTick_1f9++;
 
         if(this.modelAndAnimData_800c66a8.zoomAnimationTick_1f9 >= 18 / vsyncMode_8007a3b8) {
-          this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(this.modelAndAnimData_800c66a8.mapPosition_1e8);
+          this.wmapCameraAndLights19c0_800c66b0.coord2_20.coord.transfer.set(this.modelAndAnimData_800c66a8.mapPosition_1e8);
           this.modelAndAnimData_800c66a8.mapArrow.setSize(16.0f);
           this.modelAndAnimData_800c66a8.zoomState_1f8 = ZoomState.CONTINENT;
         }
@@ -2403,7 +2402,7 @@ public class WMap extends EngineState {
 
   @Method(0x800d9eb0L)
   private void tickMapPositionDuringZoom() {
-    this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.add(this.modelAndAnimData_800c66a8.mapZoomStep_1f0);
+    this.wmapCameraAndLights19c0_800c66b0.coord2_20.coord.transfer.add(this.modelAndAnimData_800c66a8.mapZoomStep_1f0);
   }
 
   private int findPlaceMatch(final int value) {
@@ -2431,7 +2430,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800da294
-    if(this.wmapStruct19c0_800c66b0._110 != 0) {
+    if(this.wmapCameraAndLights19c0_800c66b0._110 != 0) {
       return;
     }
 
@@ -2441,12 +2440,12 @@ public class WMap extends EngineState {
     }
 
     //LAB_800da2dc
-    if(this.wmapStruct19c0_800c66b0.cameraUpdateState_c5 != 0) {
+    if(this.wmapCameraAndLights19c0_800c66b0.cameraUpdateState_c5 != 0) {
       return;
     }
 
     //LAB_800da300
-    if(this.wmapStruct19c0_800c66b0.hideAtmosphericEffect_c4) {
+    if(this.wmapCameraAndLights19c0_800c66b0.hideAtmosphericEffect_c4) {
       return;
     }
 
@@ -2500,10 +2499,10 @@ public class WMap extends EngineState {
       case NONE:
         playSound(0, 4, 0, 0, (short)0, (short)0);
 
-        modelAndAnimData.mapPos_200.set(this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer);
+        modelAndAnimData.mapPos_200.set(this.wmapCameraAndLights19c0_800c66b0.coord2_20.coord.transfer);
         modelAndAnimData.playerPos_208.set(modelAndAnimData.currPlayerPos_94);
         modelAndAnimData.playerRotation_21c = modelAndAnimData.playerRotation_a4.y;
-        modelAndAnimData.mapRotation_21e = this.wmapStruct19c0_800c66b0.currMapRotation_70.y;
+        modelAndAnimData.mapRotation_21e = this.wmapCameraAndLights19c0_800c66b0.currMapRotation_70.y;
         modelAndAnimData.coolonPromptIndex_223 = 0;
         modelAndAnimData.coolonWarpState_220 = CoolonWarpState.ASCENT;
         modelAndAnimData.models_0c[2].coord2_14.transforms.rotate.set(0.0f, modelAndAnimData.playerRotation_a4.y, 0.0f);
@@ -2545,10 +2544,10 @@ public class WMap extends EngineState {
         modelAndAnimData.models_0c[2].coord2_14.transforms.scale.set(modelAndAnimData.models_0c[2].coord2_14.transforms.scale.x);
         modelAndAnimData.currPlayerPos_94.y -= 96.0f / (3.0f / vsyncMode_8007a3b8);
 
-        this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.y -= 96.0f / (3.0f / vsyncMode_8007a3b8);
+        this.wmapCameraAndLights19c0_800c66b0.coord2_20.coord.transfer.y -= 96.0f / (3.0f / vsyncMode_8007a3b8);
 
-        if(this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.y < -1500) {
-          this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.y = -1500;
+        if(this.wmapCameraAndLights19c0_800c66b0.coord2_20.coord.transfer.y < -1500) {
+          this.wmapCameraAndLights19c0_800c66b0.coord2_20.coord.transfer.y = -1500;
         }
 
         //LAB_800daab8
@@ -2558,7 +2557,7 @@ public class WMap extends EngineState {
 
         //LAB_800daaf0
         if(modelAndAnimData.currPlayerPos_94.y <= -2500.0f) {
-          if(this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.y <= -1500) {
+          if(this.wmapCameraAndLights19c0_800c66b0.coord2_20.coord.transfer.y <= -1500) {
             modelAndAnimData.coolonWarpState_220 = CoolonWarpState.INIT_WORLD_MAP;
           }
         }
@@ -2577,9 +2576,9 @@ public class WMap extends EngineState {
         modelAndAnimData.models_0c[2].coord2_14.transforms.scale.zero();
         modelAndAnimData.models_0c[2].coord2_14.transforms.rotate.set(MathHelper.PI / 2.0f, MathHelper.PI, 0.0f);
 
-        this.wmapStruct19c0_800c66b0.currMapRotation_70.y = 0.0f;
-        this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(720, -1500, 628);
-        this.wmapStruct19c0_800c66b0._11a = 3;
+        this.wmapCameraAndLights19c0_800c66b0.currMapRotation_70.y = 0.0f;
+        this.wmapCameraAndLights19c0_800c66b0.coord2_20.coord.transfer.set(720, -1500, 628);
+        this.wmapCameraAndLights19c0_800c66b0._11a = 3;
 
         //LAB_800dac80
         final List<Integer> possibleOriginIndices = new ArrayList<>();
@@ -2782,12 +2781,12 @@ public class WMap extends EngineState {
         break;
 
       case INIT_DESCENT:
-        this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(modelAndAnimData.mapPos_200);
-        this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.y = -1500;
+        this.wmapCameraAndLights19c0_800c66b0.coord2_20.coord.transfer.set(modelAndAnimData.mapPos_200);
+        this.wmapCameraAndLights19c0_800c66b0.coord2_20.coord.transfer.y = -1500;
         modelAndAnimData.currPlayerPos_94.set(modelAndAnimData.playerPos_208);
         modelAndAnimData.currPlayerPos_94.y = -5000.0f;
         modelAndAnimData.playerRotation_a4.y = modelAndAnimData.playerRotation_21c;
-        this.wmapStruct19c0_800c66b0.currMapRotation_70.y = modelAndAnimData.mapRotation_21e;
+        this.wmapCameraAndLights19c0_800c66b0.currMapRotation_70.y = modelAndAnimData.mapRotation_21e;
         modelAndAnimData.models_0c[2].coord2_14.transforms.rotate.set(0.0f, modelAndAnimData.playerRotation_a4.y, 0.0f);
         modelAndAnimData.models_0c[2].coord2_14.transforms.scale.set(0.375f, 0.375f, 0.375f);
         modelAndAnimData.coolonWarpState_220 = CoolonWarpState.PAN_MAP;
@@ -2799,14 +2798,14 @@ public class WMap extends EngineState {
       case PAN_MAP:
         this.renderFastTravelScreenDistortionEffect();
 
-        this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.y += 112.0f / (3.0f / vsyncMode_8007a3b8);
+        this.wmapCameraAndLights19c0_800c66b0.coord2_20.coord.transfer.y += 112.0f / (3.0f / vsyncMode_8007a3b8);
 
-        if(modelAndAnimData.mapPos_200.y < this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.y) {
-          this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.y = modelAndAnimData.mapPos_200.y;
+        if(modelAndAnimData.mapPos_200.y < this.wmapCameraAndLights19c0_800c66b0.coord2_20.coord.transfer.y) {
+          this.wmapCameraAndLights19c0_800c66b0.coord2_20.coord.transfer.y = modelAndAnimData.mapPos_200.y;
         }
 
         //LAB_800dbd6c
-        if(modelAndAnimData.mapPos_200.y <= this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.y) {
+        if(modelAndAnimData.mapPos_200.y <= this.wmapCameraAndLights19c0_800c66b0.coord2_20.coord.transfer.y) {
           modelAndAnimData.coolonWarpState_220 = CoolonWarpState.DESCENT;
           modelAndAnimData.currPlayerPos_94.y = -400.0f;
         }
@@ -2855,12 +2854,12 @@ public class WMap extends EngineState {
       case RESTORE_DART:
         this.mcqBrightness_800ef1a4 = 0.0f;
 
-        this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(modelAndAnimData.mapPos_200);
+        this.wmapCameraAndLights19c0_800c66b0.coord2_20.coord.transfer.set(modelAndAnimData.mapPos_200);
 
         modelAndAnimData.currPlayerPos_94.set(modelAndAnimData.playerPos_208);
         modelAndAnimData.playerRotation_a4.y = modelAndAnimData.playerRotation_21c;
 
-        this.wmapStruct19c0_800c66b0.currMapRotation_70.y = modelAndAnimData.mapRotation_21e;
+        this.wmapCameraAndLights19c0_800c66b0.currMapRotation_70.y = modelAndAnimData.mapRotation_21e;
 
         modelAndAnimData.mapTransitionDestinationType_250 = MapTransitionDestinationType.NONE;
         modelAndAnimData.coolonWarpState_220 = CoolonWarpState.NONE;
@@ -3152,7 +3151,7 @@ public class WMap extends EngineState {
     //LAB_800e04fc
     modelAndAnimData.models_0c[modelAndAnimData.modelIndex_1e4].zOffset_a0 = 78;
     this.renderWmapModel(modelAndAnimData.models_0c[modelAndAnimData.modelIndex_1e4]);
-    GTE.setBackgroundColour(this.wmapStruct19c0_800c66b0.ambientLight_14c.x, this.wmapStruct19c0_800c66b0.ambientLight_14c.y, this.wmapStruct19c0_800c66b0.ambientLight_14c.z);
+    GTE.setBackgroundColour(this.wmapCameraAndLights19c0_800c66b0.ambientLight_14c.x, this.wmapCameraAndLights19c0_800c66b0.ambientLight_14c.y, this.wmapCameraAndLights19c0_800c66b0.ambientLight_14c.z);
     this.FUN_800e06d0();
     this.FUN_800e1364();
   }
@@ -3217,8 +3216,8 @@ public class WMap extends EngineState {
           //LAB_800e0980
           scale = (this.modelAndAnimData_800c66a8.teleportAnimationTick_24c * 0.015625f) / (3.0f / vsyncMode_8007a3b8) + MathHelper.sin(this.modelAndAnimData_800c66a8.teleportAnimationTick_24c * (MathHelper.PI / 4.0f / (3.0f / vsyncMode_8007a3b8))) / 16.0f;
           this.modelAndAnimData_800c66a8.models_0c[3].coord2_14.transforms.scale.set(scale, scale, scale);
-          this.modelAndAnimData_800c66a8.models_0c[this.modelAndAnimData_800c66a8.modelIndex_1e4].coord2_14.transforms.rotate.y = this.wmapStruct19c0_800c66b0.currMapRotation_70.y;
-          this.modelAndAnimData_800c66a8.playerRotation_a4.y = this.wmapStruct19c0_800c66b0.currMapRotation_70.y;
+          this.modelAndAnimData_800c66a8.models_0c[this.modelAndAnimData_800c66a8.modelIndex_1e4].coord2_14.transforms.rotate.y = this.wmapCameraAndLights19c0_800c66b0.currMapRotation_70.y;
+          this.modelAndAnimData_800c66a8.playerRotation_a4.y = this.wmapCameraAndLights19c0_800c66b0.currMapRotation_70.y;
           break;
 
         case INIT_FADE:
@@ -3766,14 +3765,14 @@ public class WMap extends EngineState {
             //LAB_800e44b0
             startFadeEffect(2, 15);
 
-            this.wmapStruct19c0_800c66b0._11a = 1;
-            this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(0, 0, 0);
-            this.wmapStruct19c0_800c66b0.originalMapRotation_9a = 0;
-            this.wmapStruct19c0_800c66b0.currMapRotation_70.y = 0.0f;
+            this.wmapCameraAndLights19c0_800c66b0._11a = 1;
+            this.wmapCameraAndLights19c0_800c66b0.coord2_20.coord.transfer.set(0, 0, 0);
+            this.wmapCameraAndLights19c0_800c66b0.originalMapRotation_9a = 0;
+            this.wmapCameraAndLights19c0_800c66b0.currMapRotation_70.y = 0.0f;
 
-            this.FUN_800d4bc8(1);
+            this.initCameraZoomPositionAndRotationSteps(1);
 
-            this.wmapStruct19c0_800c66b0.hideAtmosphericEffect_c4 = false;
+            this.wmapCameraAndLights19c0_800c66b0.hideAtmosphericEffect_c4 = false;
             modelAndAnimData.zoomState_1f8 = ZoomState.LOCAL;
             modelAndAnimData.fadeState_04 = FadeState.FADE;
           }
@@ -3803,7 +3802,7 @@ public class WMap extends EngineState {
           }
 
           //LAB_800e4624
-          if(this.wmapStruct19c0_800c66b0.cameraUpdateState_c5 == 0 && this.mapState_800c6798.shortForceMovementState_d4 == ForcedMovementState.NONE) {
+          if(this.wmapCameraAndLights19c0_800c66b0.cameraUpdateState_c5 == 0 && this.mapState_800c6798.shortForceMovementState_d4 == ForcedMovementState.NONE) {
             this.mapState_800c6798.disableInput_d0 = false;
             modelAndAnimData.fadeAnimationType_05 = FadeAnimationType.NONE;
           }
@@ -3820,21 +3819,21 @@ public class WMap extends EngineState {
             //LAB_800e4144
             startFadeEffect(2, 15);
 
-            this.wmapStruct19c0_800c66b0.rview2_00.viewpoint_00.y = -9000.0f;
-            this.wmapStruct19c0_800c66b0.rview2_00.refpoint_0c.y = 9000.0f;
-            this.wmapStruct19c0_800c66b0._11a = 1;
-            this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(0, 0, 0);
-            this.wmapStruct19c0_800c66b0.finalCameraY_9e = -300;
-            this.wmapStruct19c0_800c66b0.originalMapRotation_9a = 0;
-            this.wmapStruct19c0_800c66b0.currMapRotation_70.y = 0.0f;
+            this.wmapCameraAndLights19c0_800c66b0.currRview2_00.viewpoint_00.y = -9000.0f;
+            this.wmapCameraAndLights19c0_800c66b0.currRview2_00.refpoint_0c.y = 9000.0f;
+            this.wmapCameraAndLights19c0_800c66b0._11a = 1;
+            this.wmapCameraAndLights19c0_800c66b0.coord2_20.coord.transfer.set(0, 0, 0);
+            this.wmapCameraAndLights19c0_800c66b0.finalCameraY_9e = -300;
+            this.wmapCameraAndLights19c0_800c66b0.originalMapRotation_9a = 0;
+            this.wmapCameraAndLights19c0_800c66b0.currMapRotation_70.y = 0.0f;
 
-            this.FUN_800d4bc8(1);
+            this.initCameraZoomPositionAndRotationSteps(1);
 
-            this.wmapStruct19c0_800c66b0.cameraZoomPosStep_a4.set(modelAndAnimData.coord2_34.coord.transfer).div(30.0f);
+            this.wmapCameraAndLights19c0_800c66b0.cameraZoomPosStep_a4.set(modelAndAnimData.coord2_34.coord.transfer).div(30.0f);
 
-            this.wmapStruct19c0_800c66b0.hideAtmosphericEffect_c4 = false;
+            this.wmapCameraAndLights19c0_800c66b0.hideAtmosphericEffect_c4 = false;
             modelAndAnimData.zoomState_1f8 = ZoomState.LOCAL;
-            this.wmapStruct19c0_800c66b0.cameraUpdateState_c5 = 2;
+            this.wmapCameraAndLights19c0_800c66b0.cameraUpdateState_c5 = 2;
             modelAndAnimData.fadeState_04 = FadeState.FADE;
           }
           break;
@@ -3862,7 +3861,7 @@ public class WMap extends EngineState {
           }
 
           //LAB_800e43c4
-          if(this.wmapStruct19c0_800c66b0.cameraUpdateState_c5 == 0 && this.mapState_800c6798.shortForceMovementState_d4 == ForcedMovementState.NONE) {
+          if(this.wmapCameraAndLights19c0_800c66b0.cameraUpdateState_c5 == 0 && this.mapState_800c6798.shortForceMovementState_d4 == ForcedMovementState.NONE) {
             this.mapState_800c6798.disableInput_d0 = false;
             modelAndAnimData.fadeAnimationType_05 = FadeAnimationType.NONE;
           }
@@ -3883,14 +3882,14 @@ public class WMap extends EngineState {
       case START_FADE:
         //LAB_800e46f0
         startFadeEffect(1, 30);
-        this.wmapStruct19c0_800c66b0._110 = 1;
-        this.wmapStruct19c0_800c66b0._10e = 0;
+        this.wmapCameraAndLights19c0_800c66b0._110 = 1;
+        this.wmapCameraAndLights19c0_800c66b0._10e = 0;
         modelAndAnimData.fadeState_04 = FadeState.FADE;
         break;
 
       case FADE:
         //LAB_800e4738
-        this.wmapStruct19c0_800c66b0._110 = 2;
+        this.wmapCameraAndLights19c0_800c66b0._110 = 2;
         this.mcqColour_800c6794 -= 0.125f / (3.0f / vsyncMode_8007a3b8);
 
         if(this.mcqColour_800c6794 < 0.0f) {
@@ -3916,9 +3915,9 @@ public class WMap extends EngineState {
         }
 
         //LAB_800e4820
-        this.wmapStruct19c0_800c66b0._10e += 1.0f / (3.0f / vsyncMode_8007a3b8);
+        this.wmapCameraAndLights19c0_800c66b0._10e += 1.0f / (3.0f / vsyncMode_8007a3b8);
 
-        if(this.wmapStruct19c0_800c66b0._10e >= 16.0f) {
+        if(this.wmapCameraAndLights19c0_800c66b0._10e >= 16.0f) {
           if(modelAndAnimData.mapTextureBrightness_20 == 0.0f) {
             modelAndAnimData.fadeAnimationType_05 = FadeAnimationType.NONE;
 
@@ -3992,8 +3991,8 @@ public class WMap extends EngineState {
     //LAB_800e5200
     //LAB_800e5224
     if(
-      this.wmapStruct19c0_800c66b0.cameraUpdateState_c5 != 0 ||
-        this.wmapStruct19c0_800c66b0.hideAtmosphericEffect_c4 ||
+      this.wmapCameraAndLights19c0_800c66b0.cameraUpdateState_c5 != 0 ||
+        this.wmapCameraAndLights19c0_800c66b0.hideAtmosphericEffect_c4 ||
         this.modelAndAnimData_800c66a8.zoomState_1f8 != ZoomState.LOCAL ||
         this.modelAndAnimData_800c66a8.coolonWarpState_220 != CoolonWarpState.NONE
     ) {
@@ -4951,13 +4950,13 @@ public class WMap extends EngineState {
           //LAB_800e8f88
           if(this.modelAndAnimData_800c66a8.fadeAnimationType_05 == FadeAnimationType.NONE) {
             //LAB_800e8fac
-            if(this.wmapStruct19c0_800c66b0._110 == 0) {
+            if(this.wmapCameraAndLights19c0_800c66b0._110 == 0) {
               //LAB_800e8fd0
               if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL) {
                 //LAB_800e8ff4
-                if(this.wmapStruct19c0_800c66b0.cameraUpdateState_c5 == 0) {
+                if(this.wmapCameraAndLights19c0_800c66b0.cameraUpdateState_c5 == 0) {
                   //LAB_800e9018
-                  if(!this.wmapStruct19c0_800c66b0.hideAtmosphericEffect_c4) {
+                  if(!this.wmapCameraAndLights19c0_800c66b0.hideAtmosphericEffect_c4) {
                     //LAB_800e903c
                     if((this.filesLoadedFlags_800c66b8.get() & 0x1) != 0) {
                       //LAB_800e905c
@@ -5021,7 +5020,7 @@ public class WMap extends EngineState {
     // Whichever mask gives a non-zero result determines whether the movement direction is positive or
     // negative. If both are zero or both are non-zero, Dart moves whichever way he is facing.
     if(directionInput != 0) {
-      final int directionMaskIndex = MathHelper.radToPsxDeg(MathHelper.floorMod(this.wmapStruct19c0_800c66b0.currMapRotation_70.y - this.mapState_800c6798.previousPlayerRotation_c2 - 0.875f * MathHelper.PI, MathHelper.TWO_PI)) >> 9;
+      final int directionMaskIndex = MathHelper.radToPsxDeg(MathHelper.floorMod(this.wmapCameraAndLights19c0_800c66b0.currMapRotation_70.y - this.mapState_800c6798.previousPlayerRotation_c2 - 0.875f * MathHelper.PI, MathHelper.TWO_PI)) >> 9;
       final int positiveDirectionMask = directionInput & positiveDirectionMovementMask_800f0204[directionMaskIndex];
       final int negativeDirectionMask = directionInput & negativeDirectionMovementMask_800f0210[directionMaskIndex];
 
@@ -5214,7 +5213,7 @@ public class WMap extends EngineState {
       //LAB_800e9edc
       playerOffsetFromPathStart.set(this.modelAndAnimData_800c66a8.currPlayerPos_94).sub(this.mapState_800c6798.tempPathSegmentStartOffsets_40[i]);
 
-      playerAngleRelativeToPath = MathHelper.radToPsxDeg(this.wmapStruct19c0_800c66b0.currMapRotation_70.y - MathHelper.atan2(playerOffsetFromPathStart.x, playerOffsetFromPathStart.z) + MathHelper.PI) & 0xfff;
+      playerAngleRelativeToPath = MathHelper.radToPsxDeg(this.wmapCameraAndLights19c0_800c66b0.currMapRotation_70.y - MathHelper.atan2(playerOffsetFromPathStart.x, playerOffsetFromPathStart.z) + MathHelper.PI) & 0xfff;
 
       final int movementMaskIndex = (playerAngleRelativeToPath + 0x100 & 0xfff) >> 9;
       if((movementInput & positiveDirectionMovementMask_800f0204[movementMaskIndex]) != 0) {
@@ -5676,7 +5675,7 @@ public class WMap extends EngineState {
       }
 
       //LAB_800ec2b0
-      if(this.wmapStruct19c0_800c66b0.hideAtmosphericEffect_c4) {
+      if(this.wmapCameraAndLights19c0_800c66b0.hideAtmosphericEffect_c4) {
         cloud.brightness_5c -= 0.125f / (3.0f / vsyncMode_8007a3b8);
 
         if(cloud.brightness_5c < 0.0f) {
@@ -5810,7 +5809,7 @@ public class WMap extends EngineState {
       final WMapAtmosphericEffectInstance60 snowflake = modelAndAnimData.atmosphericEffectInstances_24[i];
 
       //LAB_800ecdd0
-      if(this.wmapStruct19c0_800c66b0.hideAtmosphericEffect_c4) {
+      if(this.wmapCameraAndLights19c0_800c66b0.hideAtmosphericEffect_c4) {
         snowflake.brightness_5c -= 0.125f / (3.0f / vsyncMode_8007a3b8);
 
         if(snowflake.brightness_5c < 0.0f) {
@@ -5904,7 +5903,7 @@ public class WMap extends EngineState {
 
   @Method(0x800ed95cL)
   private void handleSmokeAndAtmosphericEffects() {
-    if(this.wmapStruct19c0_800c66b0.cameraUpdateState_c5 == 2) {
+    if(this.wmapCameraAndLights19c0_800c66b0.cameraUpdateState_c5 == 2) {
       return;
     }
 

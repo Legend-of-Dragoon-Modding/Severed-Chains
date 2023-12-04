@@ -8,8 +8,8 @@ import org.joml.Vector3f;
 
 import java.util.Arrays;
 
-public class WMapStruct19c0 {
-  public final GsRVIEW2 rview2_00 = new GsRVIEW2();
+public class WMapCameraAndLights19c0 {
+  public final GsRVIEW2 currRview2_00 = new GsRVIEW2();
   /** Parent coordinate system of camera; controls movement */
   public final GsCOORDINATE2 coord2_20 = new GsCOORDINATE2();
   /** Not in retail */
@@ -48,11 +48,12 @@ public class WMapStruct19c0 {
 
   public final GsRVIEW2 rview2_c8 = new GsRVIEW2();
 
-  public float viewpointY_ec;
-  public float viewpointZ_f0;
+  // Next 4 fields are used for little swoop during fade-to-submap camera animation on top of the rotation
+  public float viewpointSwoopY_ec;
+  public float viewpointSwoopZ_f0;
 
-  public float refpointY_f8;
-  public float refpointZ_fc;
+  public float refpointSwoopY_f8;
+  public float refpointSwoopZ_fc;
 
   /** short */
   public float angle_108;
@@ -81,7 +82,7 @@ public class WMapStruct19c0 {
   public final float[] _19a8 = new float[3];
   public final float[] _19ae = new float[3];
 
-  public WMapStruct19c0() {
+  public WMapCameraAndLights19c0() {
     Arrays.setAll(this._154, i -> new WMapSubStruct18());
   }
 }
