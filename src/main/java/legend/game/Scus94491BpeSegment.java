@@ -547,7 +547,7 @@ public final class Scus94491BpeSegment {
    *                       <li>S_INIT (no longer used)</li>
    *                       <li>S_BTLD (no longer used)</li>
    *                       <li>S_ITEM</li>
-   *                       <li>S_EFFE</li>
+   *                       <li>S_EFFE (no longer used)</li>
    *                       <li>S_STRM (no longer used)</li>
    *                     </ol>
    */

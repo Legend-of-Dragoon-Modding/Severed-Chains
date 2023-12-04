@@ -111,7 +111,6 @@ import static legend.game.Scus94491BpeSegment.loadDeffSounds;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnDirSync;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
-import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.projectionPlaneDistance_1f8003f8;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
@@ -1094,10 +1093,8 @@ public final class Bttl_800e {
     v0.scriptIndex_0c = script.scriptState_04.index;
     v0.scriptEntrypoint_10 = script.params_20[3].get() & 0xff;
     v0.managerState_18 = state;
-    v0.init_1c = false;
+    v0.init_1c = true;
     v0.frameCount_20 = -1;
-    // S_EFFE
-    loadSupportOverlay(3, () -> v0.init_1c = true);
     return state;
   }
 

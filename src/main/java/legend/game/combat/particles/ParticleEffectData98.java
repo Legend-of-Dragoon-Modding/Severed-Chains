@@ -44,7 +44,7 @@ public class ParticleEffectData98 implements Effect {
    * but can have values greater than length of callback array.
    */
   public byte subParticleType_60;
-  public byte callback90Type_61;
+  public int callback90Type_61;
 
   /** Size in bytes of following array of structs */
   // public int size_64;

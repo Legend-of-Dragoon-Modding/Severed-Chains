@@ -54,8 +54,6 @@ import static legend.game.combat.Bttl_800e.FUN_800e61e4;
 import static legend.game.combat.Bttl_800e.FUN_800e62a8;
 import static legend.game.combat.Bttl_800e.allocateEffectManager;
 import static legend.game.combat.Bttl_800e.getDeffPart;
-import static legend.game.combat.SEffe.particleInitialTransformationMetrics_801198f0;
-import static legend.game.combat.SEffe.particleInnerStuffDefaultsArray_801197ec;
 
 public class ParticleManager {
   private static final short[] particleSubCounts_800fb794 = {0, 0, 4, 0, 8, 0, 16, 0, 0, 0, 1, 0, 2, 0, 4, 0, 3, 0, 5, 0};
@@ -219,23 +217,23 @@ public class ParticleManager {
   private void initializeParticleInstance(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     if((effectInner.particleInnerStuff_1c & 0xff) == 0) {
       effectInner.particleInnerStuff_1c &= 0xffff_ff00;
-      effectInner.particleInnerStuff_1c |= particleInnerStuffDefaultsArray_801197ec.get(effectInner.callbackIndex_20).ticksRemaining_02.get();
+      effectInner.particleInnerStuff_1c |= particleInnerStuffDefaultsArray_801197ec[effectInner.callbackIndex_20].ticksRemaining_02;
     }
 
     //LAB_8010137c
     if((effectInner.particleInnerStuff_1c & 0xff00) == 0) {
       effectInner.particleInnerStuff_1c &= 0xffff_00ff;
-      effectInner.particleInnerStuff_1c |= particleInnerStuffDefaultsArray_801197ec.get(effectInner.callbackIndex_20).colour_01.get() << 8;
+      effectInner.particleInnerStuff_1c |= particleInnerStuffDefaultsArray_801197ec[effectInner.callbackIndex_20].colour_01 << 8;
     }
 
     //LAB_801013c0
     if((effectInner.particleInnerStuff_1c & 0xff_0000) == 0) {
       effectInner.particleInnerStuff_1c &= 0xff00_ffff;
-      effectInner.particleInnerStuff_1c |= particleInnerStuffDefaultsArray_801197ec.get(effectInner.callbackIndex_20).renderFrameCount_00.get() << 16;
+      effectInner.particleInnerStuff_1c |= particleInnerStuffDefaultsArray_801197ec[effectInner.callbackIndex_20].renderFrameCount_00 << 16;
     }
 
     //LAB_80101400
-    effect.callback90Type_61 = particleInnerStuffDefaultsArray_801197ec.get(effectInner.callbackIndex_20).callbackType_03.get();
+    effect.callback90Type_61 = particleInnerStuffDefaultsArray_801197ec[effectInner.callbackIndex_20].callbackType_03;
     particle.unused_00 = 0x73;
     particle.unused_01 = 0x6d;
     particle.unused_02 = 0x6b;
@@ -267,48 +265,48 @@ public class ParticleManager {
     particle.spriteRotationStep_78.y = seed_800fa754.nextFloat() * MathHelper.TWO_PI / 32.0f - MathHelper.TWO_PI / 64.0f;
     particle.spriteRotationStep_78.z = 0.0f;
     particle.flags_90 = particle.flags_90 & 0xffff_fff1 | (seed_800fa754.nextFloat() < 0.5f ? 0 : 0x8);
-    final ParticleInitialTransformationMetrics10 metrics = particleInitialTransformationMetrics_801198f0.get(callbackIndex);
-    final int initialPositionMode = metrics.initialPositionMode_00.get();
+    final ParticleInitialTransformationMetrics10 metrics = particleInitialTransformationMetrics_801198f0[callbackIndex];
+    final int initialPositionMode = metrics.initialPositionMode_00;
     if(initialPositionMode == 1) {
       //LAB_80101840
       final int angle = seed_800fa754.nextInt(4097);
       final short baseTranslationMagnitude = effectInner._10;
-      particle.particlePosition_50.x = rcos(angle) * baseTranslationMagnitude >> metrics.initialTranslationMagnitudeReductionFactor1_02.get();
+      particle.particlePosition_50.x = rcos(angle) * baseTranslationMagnitude >> metrics.initialTranslationMagnitudeReductionFactor1_02;
       particle.particlePosition_50.y = 0.0f;
-      particle.particlePosition_50.z = rsin(angle) * baseTranslationMagnitude >> metrics.initialTranslationMagnitudeReductionFactor1_02.get();
+      particle.particlePosition_50.z = rsin(angle) * baseTranslationMagnitude >> metrics.initialTranslationMagnitudeReductionFactor1_02;
       //LAB_80101824
     } else if(initialPositionMode == 2) {
       //LAB_801018c8
       final int angle = seed_800fa754.nextInt(4097);
       final int baseTranslationMagnitude = seed_800fa754.nextInt(effectInner._10 + 1);
-      particle.particlePosition_50.x = rcos(angle) * baseTranslationMagnitude >> metrics.initialTranslationMagnitudeReductionFactor1_02.get();
+      particle.particlePosition_50.x = rcos(angle) * baseTranslationMagnitude >> metrics.initialTranslationMagnitudeReductionFactor1_02;
       particle.particlePosition_50.y = 0.0f;
-      particle.particlePosition_50.z = rsin(angle) * baseTranslationMagnitude >> metrics.initialTranslationMagnitudeReductionFactor1_02.get();
+      particle.particlePosition_50.z = rsin(angle) * baseTranslationMagnitude >> metrics.initialTranslationMagnitudeReductionFactor1_02;
     } else if(initialPositionMode == 3) {
       //LAB_80101990
-      particle.particlePosition_50.y = seed_800fa754.nextInt(metrics.initialTranslationMagnitudeReductionFactor2_04.get() - metrics.initialTranslationMagnitudeReductionFactor1_02.get() + 1) + metrics.initialTranslationMagnitudeReductionFactor1_02.get();
+      particle.particlePosition_50.y = seed_800fa754.nextInt(metrics.initialTranslationMagnitudeReductionFactor2_04 - metrics.initialTranslationMagnitudeReductionFactor1_02 + 1) + metrics.initialTranslationMagnitudeReductionFactor1_02;
     } else if(initialPositionMode == 4) {
       //LAB_801019e4
       final int angle1 = seed_800fa754.nextInt(4097);
       final int angle2 = seed_800fa754.nextInt(2049);
-      particle.particlePosition_50.x = (rcos(angle1) * rsin(angle2) >> metrics.initialTranslationMagnitudeReductionFactor1_02.get()) * effectInner._10 >> metrics.initialTranslationMagnitudeReductionFactor2_04.get();
-      particle.particlePosition_50.y = rcos(angle2) * effectInner._10 >> metrics.initialTranslationMagnitudeReductionFactor2_04.get();
-      particle.particlePosition_50.z = (rsin(angle1) * rsin(angle2) >> metrics.initialTranslationMagnitudeReductionFactor1_02.get()) * effectInner._10 >> metrics.initialTranslationMagnitudeReductionFactor2_04.get();
+      particle.particlePosition_50.x = (rcos(angle1) * rsin(angle2) >> metrics.initialTranslationMagnitudeReductionFactor1_02) * effectInner._10 >> metrics.initialTranslationMagnitudeReductionFactor2_04;
+      particle.particlePosition_50.y = rcos(angle2) * effectInner._10 >> metrics.initialTranslationMagnitudeReductionFactor2_04;
+      particle.particlePosition_50.z = (rsin(angle1) * rsin(angle2) >> metrics.initialTranslationMagnitudeReductionFactor1_02) * effectInner._10 >> metrics.initialTranslationMagnitudeReductionFactor2_04;
     }
 
     //LAB_80101b10
     //LAB_80101b18
     effect.initializerCallback_8c.accept(effect, particle, effectInner);
 
-    if(metrics.hasSpecialAccelerationHandling_06.get() == 1) {
+    if(metrics.hasSpecialAccelerationHandling_06) {
       particle.particleVelocity_58.x = particle.particleVelocity_58.x * effectInner._18;
       particle.particleVelocity_58.y = particle.particleVelocity_58.y * effectInner._18;
       particle.particleVelocity_58.z = particle.particleVelocity_58.z * effectInner._18;
     }
 
     //LAB_80101ba4
-    if(metrics.hasSpecialScaleStepHandling_07.get() == 1) {
-      final float scaleStep = (byte)(seed_800fa754.nextInt(metrics.scaleStepUpperBound_09.get() - metrics.scaleStepLowerBound_08.get() + 1) + metrics.scaleStepLowerBound_08.get()) / (float)0x1000;
+    if(metrics.hasSpecialScaleStepHandling_07) {
+      final float scaleStep = (byte)(seed_800fa754.nextInt(metrics.scaleStepUpperBound_09 - metrics.scaleStepLowerBound_08 + 1) + metrics.scaleStepLowerBound_08) / (float)0x1000;
       particle.scaleHorizontalStep_0a = scaleStep;
       particle.scaleVerticalStep_0c = scaleStep;
     }
@@ -1861,6 +1859,142 @@ public class ParticleManager {
     effect.halfW_34 = (short)(effect.w_5e >>> 1);
     effect.halfH_36 = (short)(effect.h_5f >>> 1);
   }
+
+  public static final ParticleInnerStuff04[] particleInnerStuffDefaultsArray_801197ec = {
+    new ParticleInnerStuff04(32, 127, 35, 1),
+    new ParticleInnerStuff04(32, 127, 35, 0),
+    new ParticleInnerStuff04(10, 64, 0, 0),
+    new ParticleInnerStuff04(19, 64, 0, 0),
+    new ParticleInnerStuff04(19, 64, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 1),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(27, 127, 0, 0),
+    new ParticleInnerStuff04(48, 127, 0, 1),
+    new ParticleInnerStuff04(48, 127, 0, 1),
+    new ParticleInnerStuff04(48, 127, 0, 0),
+    new ParticleInnerStuff04(48, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(26, 64, 0, 0),
+    new ParticleInnerStuff04(26, 128, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 1),
+    new ParticleInnerStuff04(255, 128, 0, 0),
+    new ParticleInnerStuff04(26, 128, 0, 1),
+    new ParticleInnerStuff04(32, 128, 0, 0),
+    new ParticleInnerStuff04(32, 128, 0, 0),
+    new ParticleInnerStuff04(255, 128, 0, 0),
+    new ParticleInnerStuff04(20, 128, 0, 0),
+    new ParticleInnerStuff04(48, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(10, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(255, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(48, 127, 0, 0),
+    new ParticleInnerStuff04(255, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(255, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(16, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 1),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 1),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(96, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(32, 127, 35, 0),
+    new ParticleInnerStuff04(32, 127, 0, 0),
+    new ParticleInnerStuff04(4, 127, 0, 0),
+  };
+
+  public static final ParticleInitialTransformationMetrics10[] particleInitialTransformationMetrics_801198f0 = {
+    new ParticleInitialTransformationMetrics10(1, 12, 0, true, true, 5, 80),
+    new ParticleInitialTransformationMetrics10(1, 12, 0, true, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(1, 12, 0, true, true, 10, 80),
+    new ParticleInitialTransformationMetrics10(1, 12, 0, true, true, 10, 80),
+    new ParticleInitialTransformationMetrics10(1, 12, 0, false, true, 10, 80),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, true, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, true, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, true, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, true, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, true, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, true, -30, -10),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, true, -30, -10),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, true, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(3, -1024, 0, false, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, true, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, true, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, true, -30, -10),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, true, 5, 80),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, true, 5, 80),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, true, 5, 80),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(4, 12, 12, true, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(1, 12, 0, true, true, 5, 80),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, true, 5, 80),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, true, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(2, 12, 0, false, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(2, 12, 0, false, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, true, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, true, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, true, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(4, 12, 12, true, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(4, 12, 12, true, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, true, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, true, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(4, 12, 12, true, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(4, 12, 12, true, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(4, 12, 12, false, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(1, 12, 0, false, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(1, 12, 0, true, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, true, false, 0, 0),
+    new ParticleInitialTransformationMetrics10(0, 0, 0, false, false, 0, 0),
+  };
 
   /**
    * <ol start="0">

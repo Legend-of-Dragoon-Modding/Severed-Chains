@@ -1345,7 +1345,6 @@ public final class Bttl_800c {
 
   @Method(0x800c7a30L)
   public static void loadSEffe() {
-    loadSupportOverlay(3, () -> { });
     pregameLoadingStage_800bb10c.incr();
   }
 

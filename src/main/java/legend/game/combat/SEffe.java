@@ -21,8 +21,6 @@ import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
 import legend.core.memory.Method;
-import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.QuadConsumer;
 import legend.core.memory.types.TriConsumer;
 import legend.core.opengl.Obj;
@@ -79,8 +77,6 @@ import legend.game.combat.effects.WsDragoonTransformationFeatherInstance70;
 import legend.game.combat.effects.WsDragoonTransformationFeathersEffect14;
 import legend.game.combat.particles.ParticleEffectData98;
 import legend.game.combat.particles.ParticleEffectInstance94;
-import legend.game.combat.particles.ParticleInitialTransformationMetrics10;
-import legend.game.combat.particles.ParticleInnerStuff04;
 import legend.game.combat.particles.ParticleManager;
 import legend.game.combat.types.AdditionHitProperties10;
 import legend.game.combat.types.BattleObject;
@@ -111,7 +107,6 @@ import java.util.function.BiConsumer;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
-import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
@@ -209,10 +204,6 @@ public final class SEffe {
   private static final int[] lensFlareGlowScales_800fb8fc = {0xf0, 0xa0, 0x60, 0x30, 0x10};
   private static final int[][] lensFlareTranslationMagnitudeFactors_800fb910 = {{-1, -1}, {0, -1}, {-1, 0}, {0, 0}};
   private static final int[][] lensFlareVertexIndices_800fb930 = {{3, 2, 1, 0}, {2, 3, 0, 1}, {1, 0, 3, 2}, {0, 1, 2, 3}};
-
-  public static final ArrayRef<ParticleInnerStuff04> particleInnerStuffDefaultsArray_801197ec = MEMORY.ref(4, 0x801197ecL, ArrayRef.of(ParticleInnerStuff04.class, 65, 0x4, ParticleInnerStuff04::new));
-
-  public static final ArrayRef<ParticleInitialTransformationMetrics10> particleInitialTransformationMetrics_801198f0 = MEMORY.ref(4, 0x801198f0L, ArrayRef.of(ParticleInitialTransformationMetrics10.class, 65, 0xa, ParticleInitialTransformationMetrics10::new));
 
   /**
    * <ol start="0">
@@ -326,7 +317,7 @@ public final class SEffe {
   private static final int[] kongolDaddyHudSpinnerStepCounts_80119f7c = {14, 12, 10, 1, 1, 1, 0};
   /** Array of daddy spinner successful press frame windows for special boi Kongol */
   private static final int[] kongolDaddyHitSuccessWindows_80119f98 = {4, 3, 2, 0, 0, 0, 0};
-  private static final ByteRef daddySpinnerBrightnessFactor_80119fb4 = MEMORY.ref(1, 0x80119fb4L, ByteRef::new);
+  private static int daddySpinnerBrightnessFactor_80119fb4;
 
   private static final int[] perfectDaddyGlyphUs_80119fbc = {232, 208, 40, 48, 208, 56, 64, 240};
   private static final int[] perfectDaddyGlyphVs_80119fc4 = {64, 64, 128, 128, 64, 128, 128, 64};
@@ -2093,7 +2084,7 @@ public final class SEffe {
 
   @Method(0x80107dc4L)
   public static void renderDragoonAdditionHud_(final DragoonAdditionScriptData1c daddy, final int transModesIndex, final int angle) {
-    int brightness = (daddySpinnerBrightnessFactor_80119fb4.get() + 1) * 0x40;
+    int brightness = (daddySpinnerBrightnessFactor_80119fb4 + 1) * 0x40;
 
     final int y = daddyHudOffsetY_8011a020 + (rsin(angle) * 17 >> 12) + 24;
 
@@ -2237,7 +2228,7 @@ public final class SEffe {
       brightness,
       0x1000
     );
-    daddySpinnerBrightnessFactor_80119fb4.set(1 - daddySpinnerBrightnessFactor_80119fb4.get());
+    daddySpinnerBrightnessFactor_80119fb4 = 1 - daddySpinnerBrightnessFactor_80119fb4;
   }
 
   @Method(0x80108460L)
