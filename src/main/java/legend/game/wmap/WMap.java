@@ -1473,9 +1473,9 @@ public class WMap extends EngineState {
   /** Something to do with the fade in/out camera movement */
   @Method(0x800d4bc8L)
   private void FUN_800d4bc8(final int a0) {
-    final float sp18;
-    final float posAngle;
-    final float negAngle;
+    final float angleOffset;
+    final float cwAngle;
+    final float ccwAngle;
     final float finalAngle;
 
     final WMapStruct19c0 struct = this.wmapStruct19c0_800c66b0;
@@ -1483,31 +1483,23 @@ public class WMap extends EngineState {
     if(a0 == 0) {
       struct.originalMapRotation_9a = struct.currMapRotation_70.y;
       struct.finalMapRotation_98 = 0;
-      negAngle = struct.finalMapRotation_98 - struct.originalMapRotation_9a;
-      posAngle = struct.finalMapRotation_98 - (struct.originalMapRotation_9a - MathHelper.TWO_PI);
-    } else {  // TODO zooming in seems to rotate the wrong way
+      ccwAngle = struct.finalMapRotation_98 - struct.originalMapRotation_9a;
+      cwAngle = struct.finalMapRotation_98 - (struct.originalMapRotation_9a - MathHelper.TWO_PI);
+    } else {
       //LAB_800d4c80
       struct.finalMapRotation_98 = struct.originalMapRotation_9a;
       struct.originalMapRotation_9a = struct.currMapRotation_70.y;
 
-      float diff = (struct.originalMapRotation_9a - struct.finalMapRotation_98) % MathHelper.TWO_PI;
-
-      if(diff >= MathHelper.PI) {
-        diff -= MathHelper.PI;
-      } else if(diff < -MathHelper.PI) {
-        diff += MathHelper.PI;
-      }
-
-      if(diff > 0.0f) {
-        sp18 = -MathHelper.TWO_PI;
+      if(struct.originalMapRotation_9a < struct.finalMapRotation_98) {
+        angleOffset = -MathHelper.TWO_PI;
       } else {
         //LAB_800d4cf8
-        sp18 = MathHelper.TWO_PI;
+        angleOffset = MathHelper.TWO_PI;
       }
 
       //LAB_800d4d00
-      negAngle = struct.finalMapRotation_98 - struct.originalMapRotation_9a;
-      posAngle = struct.originalMapRotation_9a - struct.finalMapRotation_98 + sp18;
+      ccwAngle = struct.finalMapRotation_98 - struct.originalMapRotation_9a;
+      cwAngle = struct.finalMapRotation_98 + angleOffset - struct.originalMapRotation_9a;
     }
 
     //LAB_800d4d64
@@ -1517,10 +1509,10 @@ public class WMap extends EngineState {
     struct.cameraZoomPosStep_a4.z = transfer.z / 6.0f;
     struct.currCameraZoomPos_b4.zero();
 
-    if(Math.abs(posAngle) < Math.abs(negAngle)) {
-      finalAngle = posAngle;
+    if(Math.abs(cwAngle) < Math.abs(ccwAngle)) {
+      finalAngle = cwAngle;
     } else {
-      finalAngle = negAngle;
+      finalAngle = ccwAngle;
     }
 
     //LAB_800d4e88
