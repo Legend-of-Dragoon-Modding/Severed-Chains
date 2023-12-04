@@ -1518,7 +1518,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d4e88
-    struct.mapRotationStep_9c = finalAngle / (18.0f / vsyncMode_8007a3b8);
+    struct.mapRotationStep_9c = finalAngle / 6.0f;
     struct.cameraZoomTick_a0 = 0;
   }
 
