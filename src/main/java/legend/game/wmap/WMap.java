@@ -1177,21 +1177,6 @@ public class WMap extends EngineState {
         //LAB_800d3250
         this.initCameraMovement();
         this.wmapCameraAndLights19c0_800c66b0._110 = 2;
-      } else if(v0 == 3) {
-        //LAB_800d3434
-        this.wmapCameraAndLights19c0_800c66b0.currRview2_00.viewpoint_00.y = this.wmapCameraAndLights19c0_800c66b0.rview2_c8.viewpoint_00.y + this.wmapCameraAndLights19c0_800c66b0.viewpointSwoopY_ec * this.wmapCameraAndLights19c0_800c66b0._10e;
-        this.wmapCameraAndLights19c0_800c66b0.currRview2_00.viewpoint_00.z = this.wmapCameraAndLights19c0_800c66b0.rview2_c8.viewpoint_00.z + this.wmapCameraAndLights19c0_800c66b0.viewpointSwoopZ_f0 * this.wmapCameraAndLights19c0_800c66b0._10e;
-        this.wmapCameraAndLights19c0_800c66b0.currRview2_00.refpoint_0c.y = this.wmapCameraAndLights19c0_800c66b0.rview2_c8.refpoint_0c.y + this.wmapCameraAndLights19c0_800c66b0.refpointSwoopY_f8 * this.wmapCameraAndLights19c0_800c66b0._10e;
-        this.wmapCameraAndLights19c0_800c66b0.currRview2_00.refpoint_0c.z = this.wmapCameraAndLights19c0_800c66b0.rview2_c8.refpoint_0c.z + this.wmapCameraAndLights19c0_800c66b0.refpointSwoopZ_fc * this.wmapCameraAndLights19c0_800c66b0._10e;
-        this.wmapCameraAndLights19c0_800c66b0.currMapRotation_70.y = this.wmapCameraAndLights19c0_800c66b0.angle_10a + this.wmapCameraAndLights19c0_800c66b0.angle_10c * this.wmapCameraAndLights19c0_800c66b0._10e;
-
-        if(this.wmapCameraAndLights19c0_800c66b0._10e > 0.0f) {
-          this.wmapCameraAndLights19c0_800c66b0._10e -= 1.0f / (3.0f / vsyncMode_8007a3b8);
-        } else {
-          this.wmapCameraAndLights19c0_800c66b0._110 = 0;
-        }
-
-        return;
       } else if(v0 == 0) {
         //LAB_800d3248
         return;
