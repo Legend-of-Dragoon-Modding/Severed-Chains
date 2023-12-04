@@ -29,7 +29,7 @@ public class GoodsScreen extends MenuScreen {
 
     this.unload = unload;
 
-    final ListBox.Highlight<MenuEntryStruct04<Integer>> description = item -> this.description.setText(item.item_00 >= 0xff ? "" : goodsDescriptions_8011b75c.get(item.item_00).deref().get());
+    final ListBox.Highlight<MenuEntryStruct04<Integer>> description = item -> this.description.setText(item.item_00 >= 0xff ? "" : goodsDescriptions_8011b75c[item.item_00].get());
 
     this.leftList = new ItemList<>(MenuEntryStruct04::getName, null, null, null);
     this.leftList.setPos(8, 15);
@@ -83,7 +83,7 @@ public class GoodsScreen extends MenuScreen {
 
     for(int i = 0, listIndex = 0; i < 64; i++) {
       if(getPackedFlag(gameState_800babc8.goods_19c, i)) {
-        final MenuEntryStruct04<Integer> item = new MenuEntryStruct04<>(goodsIndex -> goodsItemNames_8011c008.get(goodsIndex).deref().get(), null, null, i);
+        final MenuEntryStruct04<Integer> item = new MenuEntryStruct04<>(goodsIndex -> goodsItemNames_8011c008[goodsIndex].get(), null, null, i);
 
         if(listIndex % 2 == 0) {
           this.leftList.add(item);

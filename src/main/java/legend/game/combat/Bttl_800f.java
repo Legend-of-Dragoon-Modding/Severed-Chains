@@ -87,7 +87,6 @@ import static legend.game.combat.Bttl_800c._800c6980;
 import static legend.game.combat.Bttl_800c.activePartyBattleHudCharacterDisplays_800c6c40;
 import static legend.game.combat.Bttl_800c.aliveBentCount_800c669c;
 import static legend.game.combat.Bttl_800c.aliveMonsterCount_800c6758;
-import static legend.game.combat.Bttl_800c.allText_800fb3c0;
 import static legend.game.combat.Bttl_800c.battleMenuBackgroundDisplayMetrics_800fb614;
 import static legend.game.combat.Bttl_800c.battleMenuIconHeights_800fb6bc;
 import static legend.game.combat.Bttl_800c.battleMenuIconStates_800c71e4;
@@ -2985,7 +2984,7 @@ public final class Bttl_800f {
     } else if(textType == 5) {
       str = new LodString(spellStats_800fa0b8[textIndex].combatDescription);
     } else {
-      str = allText_800fb3c0.get(textType).deref().get(textIndex).deref();
+      throw new IllegalArgumentException("Only supports textType 4/5");
     }
 
     final BattleDescriptionEvent event = EVENTS.postEvent(new BattleDescriptionEvent(textType, textIndex, str));

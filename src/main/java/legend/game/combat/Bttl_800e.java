@@ -4292,7 +4292,7 @@ public final class Bttl_800e {
         LodString str;
         Element element;
         if(targetCombatant == -1) {  // Target all
-          str = targeting_800fb36c.get(menu.targetType_50).deref();
+          str = targeting_800fb36c[menu.targetType_50];
           element = CoreMod.DIVINE_ELEMENT.get();
         } else {  // Target single
           final BattleEntity27c targetBent;
@@ -4316,7 +4316,7 @@ public final class Bttl_800e {
             targetBent = monsterBent;
           } else if(menu.targetType_50 == 0) {
             targetBent = battleState_8006e398.charBents_e40[targetCombatant].innerStruct_00;
-            str = playerNames_800fb378.get(targetBent.charId_272).deref();
+            str = playerNames_800fb378[targetBent.charId_272];
             element = targetBent.getElement();
 
             if(targetBent.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && battleState_8006e398.charBents_e40[menu.combatantIndex_54].innerStruct_00.isDragoon()) {
@@ -4332,7 +4332,7 @@ public final class Bttl_800e {
               str = getTargetEnemyName(monsterBent, currentEnemyNames_800c69d0[targetCombatant]);
               element = monsterBent.displayElement_1c;
             } else {
-              str = playerNames_800fb378.get(targetBent.charId_272).deref();
+              str = playerNames_800fb378[targetBent.charId_272];
               element = targetBent.getElement();
 
               if(targetBent.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && battleState_8006e398.charBents_e40[menu.combatantIndex_54].innerStruct_00.isDragoon()) {
@@ -4364,7 +4364,7 @@ public final class Bttl_800e {
               }
 
               //LAB_800f0ec0
-              str = ailments_800fb3a0.get(statusBit).deref();
+              str = ailments_800fb3a0[statusBit];
             }
           }
         }

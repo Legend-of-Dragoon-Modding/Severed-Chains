@@ -185,7 +185,7 @@ public class ShopScreen extends MenuScreen {
         this.selectedMenuOptionRenderablePtr_800bdbe0 = allocateUiElement(0x7a, 0x7a, 49, this.getShopMenuYOffset(this.menuIndex_8011e0dc));
         FUN_80104b60(this.selectedMenuOptionRenderablePtr_800bdbe0);
 
-        for(int charSlot = 0; charSlot < characterCount_8011d7c4.get(); charSlot++) {
+        for(int charSlot = 0; charSlot < characterCount_8011d7c4; charSlot++) {
           this.charRenderables[charSlot] = this.allocateCharRenderable(this.FUN_8010a818(charSlot), 174, characterIndices_800bdbb8.get(charSlot).get());
         }
 
@@ -530,7 +530,7 @@ public class ShopScreen extends MenuScreen {
         }
       }
     } else if(this.menuState == MenuState.BUY_SELECT_CHAR_5) {
-      for(int i = 0; i < characterCount_8011d7c4.get(); i++) {
+      for(int i = 0; i < characterCount_8011d7c4; i++) {
         if(this.equipCharIndex != i && MathHelper.inBox(x, y, this.FUN_8010a818(i) - 9, 174, 50, 48)) {
           playSound(1);
           this.equipCharIndex = i;
@@ -617,7 +617,7 @@ public class ShopScreen extends MenuScreen {
         }
       }
     } else if(this.menuState == MenuState.BUY_SELECT_CHAR_5) {
-      for(int i = 0; i < characterCount_8011d7c4.get(); i++) {
+      for(int i = 0; i < characterCount_8011d7c4; i++) {
         if(MathHelper.inBox(x, y, this.FUN_8010a818(i) - 9, 174, 50, 48)) {
           playSound(2);
           this.equipCharIndex = i;
@@ -932,7 +932,7 @@ public class ShopScreen extends MenuScreen {
   private void menuSelectChar5NavigateRight() {
     playSound(1);
 
-    if(this.equipCharIndex < characterCount_8011d7c4.get() - 1) {
+    if(this.equipCharIndex < characterCount_8011d7c4 - 1) {
       this.equipCharIndex++;
     }
 

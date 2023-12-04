@@ -175,7 +175,7 @@ public class FileBasedItem extends Item {
 
     if(location == UsageLocation.MENU && (this.type_0b & 0x8) != 0) {
       int allStatus = 0;
-      for(int i = 0; i < characterCount_8011d7c4.get(); i++) {
+      for(int i = 0; i < characterCount_8011d7c4; i++) {
         allStatus |= gameState_800babc8.charData_32c[characterIndices_800bdbb8.get(i).get()].status_10;
       }
 

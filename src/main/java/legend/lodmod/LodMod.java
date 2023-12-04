@@ -54,20 +54,20 @@ public class LodMod {
   @EventListener
   public static void registerItems(final ItemRegistryEvent event) {
     for(int itemId = 0; itemId < itemStats_8004f2ac.length; itemId++) {
-      String name = itemNames_8011972c.get(itemId + 0xc0).deref().get();
+      String name = itemNames_8011972c[itemId + 0xc0].get();
       if(name.isEmpty()) {
         name = "Item " + itemId;
       }
 
       if(itemStats_8004f2ac[itemId] == null) {
-        itemStats_8004f2ac[itemId] = ItemStats0c.fromFile(name, itemDescriptions_80117a10.get(itemId + 0xc0).deref().get(), itemCombatDescriptions_80051758.get(itemId).deref().get(), Unpacker.loadFile("items/%d.ditm".formatted(itemId)));
+        itemStats_8004f2ac[itemId] = ItemStats0c.fromFile(name, itemDescriptions_80117a10[itemId + 0xc0].get(), itemCombatDescriptions_80051758[itemId].get(), Unpacker.loadFile("items/%d.ditm".formatted(itemId)));
       }
 
       final Item item;
       if(itemId != 0x1f) { // Charm Potion
-        item = FileBasedItem.fromFile(name, itemDescriptions_80117a10.get(itemId + 0xc0).deref().get(), itemCombatDescriptions_80051758.get(itemId).deref().get(), itemPrices_80114310.get(itemId + 192).get(), Unpacker.loadFile("items/%d.ditm".formatted(itemId)));
+        item = FileBasedItem.fromFile(name, itemDescriptions_80117a10[itemId + 0xc0].get(), itemCombatDescriptions_80051758[itemId].get(), itemPrices_80114310.get(itemId + 192).get(), Unpacker.loadFile("items/%d.ditm".formatted(itemId)));
       } else {
-        item = new CharmPotionItem(name, itemDescriptions_80117a10.get(itemId + 0xc0).deref().get(), itemCombatDescriptions_80051758.get(itemId).deref().get(), itemPrices_80114310.get(itemId + 192).get());
+        item = new CharmPotionItem(name, itemDescriptions_80117a10[itemId + 0xc0].get(), itemCombatDescriptions_80051758[itemId].get(), itemPrices_80114310.get(itemId + 192).get());
       }
 
       event.register(id(slug.slugify(name)), item);
@@ -87,14 +87,14 @@ public class LodMod {
     idEquipmentMap.clear();
 
     for(int equipmentId = 0; equipmentId < equipmentStats_80111ff0.length; equipmentId++) {
-      final String name = itemNames_8011972c.get(equipmentId).deref().get();
+      final String name = itemNames_8011972c[equipmentId].get();
 
       if(equipmentStats_80111ff0[equipmentId] == null) {
-        equipmentStats_80111ff0[equipmentId] = EquipmentStats1c.fromFile(name, itemDescriptions_80117a10.get(equipmentId).deref().get(), Unpacker.loadFile("equipment/%d.deqp".formatted(equipmentId)));
+        equipmentStats_80111ff0[equipmentId] = EquipmentStats1c.fromFile(name, itemDescriptions_80117a10[equipmentId].get(), Unpacker.loadFile("equipment/%d.deqp".formatted(equipmentId)));
       }
 
       if(!name.isEmpty()) {
-        final Equipment equipment = event.register(id(slug.slugify(name)), Equipment.fromFile(name, itemDescriptions_80117a10.get(equipmentId).deref().get(), itemPrices_80114310.get(equipmentId).get(), Unpacker.loadFile("equipment/%d.deqp".formatted(equipmentId))));
+        final Equipment equipment = event.register(id(slug.slugify(name)), Equipment.fromFile(name, itemDescriptions_80117a10[equipmentId].get(), itemPrices_80114310.get(equipmentId).get(), Unpacker.loadFile("equipment/%d.deqp".formatted(equipmentId))));
         equipmentIdMap.put(equipmentId, equipment.getRegistryId());
         idEquipmentMap.put(equipment.getRegistryId(), equipmentId);
       }
@@ -105,8 +105,8 @@ public class LodMod {
   public static void registerSpells(final SpellRegistryEvent event) {
     for(int spellId = 0; spellId < spellStats_800fa0b8.length; spellId++) {
       if(spellStats_800fa0b8[spellId] == null) {
-        final String name = spellId < 84 ? spells_80052734.get(spellId).deref().get() : "Spell " + spellId;
-        final String desc = spellId < 84 ? spellCombatDescriptions_80052018.get(spellId).deref().get() : "";
+        final String name = spellId < 84 ? spells_80052734[spellId].get() : "Spell " + spellId;
+        final String desc = spellId < 84 ? spellCombatDescriptions_80052018[spellId].get() : "";
         spellStats_800fa0b8[spellId] = SpellStats0c.fromFile(name, desc, Unpacker.loadFile("spells/%d.dspl".formatted(spellId)));
       }
     }

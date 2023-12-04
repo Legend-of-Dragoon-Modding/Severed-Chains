@@ -1,29 +1,15 @@
 package legend.game.types;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.MemoryRef;
 import legend.game.scripting.Param;
 
-import javax.annotation.Nullable;
-
-public class LodString implements MemoryRef {
-  @Nullable
-  private final Value ref;
-  @Nullable
+public class LodString {
   private final int[] chars;
 
-  public LodString(final Value ref) {
-    this.ref = ref;
-    this.chars = null;
-  }
-
   public LodString(final int length) {
-    this.ref = null;
     this.chars = new int[length];
   }
 
   public LodString(final int[] chars) {
-    this.ref = null;
     this.chars = chars;
   }
 
@@ -67,7 +53,7 @@ public class LodString implements MemoryRef {
         break;
       }
 
-      sb.append(switch((int)c) {
+      sb.append(switch(c) {
         case 0x00 -> ' ';
         case 0x01 -> ',';
         case 0x02 -> '.';
@@ -163,24 +149,15 @@ public class LodString implements MemoryRef {
   }
 
   public int charAt(final int index) {
-    if(this.ref == null) {
-      if(index >= this.chars.length) {
-        throw new IndexOutOfBoundsException("Index %d out of bounds for length %d".formatted(index, this.chars.length));
-      }
-
-      return this.chars[index];
+    if(index >= this.chars.length) {
+      throw new IndexOutOfBoundsException("Index %d out of bounds for length %d".formatted(index, this.chars.length));
     }
 
-    return (int)this.ref.offset(2, index * 0x2L).get();
+    return this.chars[index];
   }
 
   public void charAt(final int index, final int c) {
-    if(this.ref == null) {
-      this.chars[index] = c;
-      return;
-    }
-
-    this.ref.offset(2, index * 0x2L).setu(c);
+    this.chars[index] = c;
   }
 
   public void set(final String text) {
@@ -199,25 +176,17 @@ public class LodString implements MemoryRef {
   }
 
   public LodString slice(final int index, final int length) {
-    if(this.ref == null) {
-      final LodString str = new LodString(length);
+    final LodString str = new LodString(length);
 
-      for(int i = 0; i < length; i++) {
-        str.charAt(i, this.charAt(index + i));
-      }
-
-      return str;
+    for(int i = 0; i < length; i++) {
+      str.charAt(i, this.charAt(index + i));
     }
 
-    return this.ref.offset(2, index * 0x2L).cast(LodString::new);
+    return str;
   }
 
   public LodString slice(final int index) {
-    if(this.ref == null) {
-      return this.slice(index, this.chars.length - index);
-    }
-
-    return this.ref.offset(2, index * 0x2L).cast(LodString::new);
+    return this.slice(index, this.chars.length - index);
   }
 
   public int length() {
@@ -322,16 +291,7 @@ public class LodString implements MemoryRef {
   }
 
   @Override
-  public long getAddress() {
-    if(this.ref == null) {
-      return 0;
-    }
-
-    return this.ref.getAddress();
-  }
-
-  @Override
   public String toString() {
-    return this.get() + (this.ref == null ? " (local)" : " @ " + Long.toHexString(this.getAddress()));
+    return this.get();
   }
 }

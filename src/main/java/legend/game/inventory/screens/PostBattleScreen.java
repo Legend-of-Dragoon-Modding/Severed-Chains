@@ -12,12 +12,9 @@ import legend.game.types.Renderable58;
 import legend.game.types.Translucency;
 
 import static legend.core.GameEngine.GPU;
-import static legend.game.SItem.dragoonXpRequirements_800fbbf0;
-import static legend.game.SItem.characterPortraitVs_800fbc88;
-import static legend.game.SItem.charPortraitGlyphs_800fbc9c;
-import static legend.game.SItem._800fbca8;
 import static legend.game.SItem.additions_8011a064;
 import static legend.game.SItem.cacheCharacterSlots;
+import static legend.game.SItem.dragoonXpRequirements_800fbbf0;
 import static legend.game.SItem.getXpToNextLevel;
 import static legend.game.SItem.hasDragoon;
 import static legend.game.SItem.loadAdditions;
@@ -27,9 +24,9 @@ import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderItemIcon;
 import static legend.game.SItem.renderText;
 import static legend.game.Scus94491BpeSegment.FUN_80018e84;
-import static legend.game.Scus94491BpeSegment.drawLevelUp;
 import static legend.game.Scus94491BpeSegment.FUN_80019470;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
+import static legend.game.Scus94491BpeSegment.drawLevelUp;
 import static legend.game.Scus94491BpeSegment.loadDrgnFileSync;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
@@ -63,6 +60,10 @@ import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
 public class PostBattleScreen extends MenuScreen {
   private static final LodString NEW_ADDITION = new LodString("New Addition");
   private static final LodString SPELL_UNLOCKED = new LodString("Spell Unlocked");
+
+  private static final int[] characterPortraitVs_800fbc88 = {0x1f0, 0x1f2, 0x1f1, 0x1f3, 0x1f4, 0x1f5, 0x1f6, 0x1f7, 0x1f8};
+  private static final int[] charPortraitGlyphs_800fbc9c = {0xd, 0xf, 0xe, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15};
+  private static final int[] _800fbca8 = {0x26, 0x28, 0x27, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e};
 
   private int levelUpCharId_8011e170;
   private int unlockHeight_8011e178;
@@ -504,7 +505,7 @@ public class PostBattleScreen extends MenuScreen {
 
       //LAB_8010ceb0
       //LAB_8010cecc
-      while(gameState_800babc8.charData_32c[charIndex].dlevelXp_0e >= dragoonXpRequirements_800fbbf0.get(charIndex).deref().get(gameState_800babc8.charData_32c[charIndex].dlevel_13 + 1).get() && gameState_800babc8.charData_32c[charIndex].dlevel_13 < 5) {
+      while(gameState_800babc8.charData_32c[charIndex].dlevelXp_0e >= dragoonXpRequirements_800fbbf0[charIndex][gameState_800babc8.charData_32c[charIndex].dlevel_13 + 1] && gameState_800babc8.charData_32c[charIndex].dlevel_13 < 5) {
         loadCharacterStats();
         final byte[] spellIndices = new byte[8];
         final int spellCount = getUnlockedDragoonSpells(spellIndices, charIndex);
@@ -651,8 +652,8 @@ public class PostBattleScreen extends MenuScreen {
       throw new IllegalArgumentException("Invalid character index");
     }
 
-    final int glyph = charPortraitGlyphs_800fbc9c.get(charId).get();
-    final Renderable58 renderable = this.drawGlyph(glyph, glyph, x, y, 704, characterPortraitVs_800fbc88.get(charId).get());
+    final int glyph = charPortraitGlyphs_800fbc9c[charId];
+    final Renderable58 renderable = this.drawGlyph(glyph, glyph, x, y, 704, characterPortraitVs_800fbc88[charId]);
     renderable.z_3c = 35;
 
     //LAB_8010e1f0
@@ -754,7 +755,7 @@ public class PostBattleScreen extends MenuScreen {
     if(charId != -1) {
       this.FUN_8010d078(x + 1, y + 5, 24, 32, 2);
       this.drawCharPortrait(x - 1, y + 4, charId).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
-      this.drawGlyph(_800fbca8.get(charId).get(), _800fbca8.get(charId).get(), x + 32, y + 4, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
+      this.drawGlyph(_800fbca8[charId], _800fbca8[charId], x + 32, y + 4, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       this.drawGlyph(0x3b, 0x3b, x + 30, y + 16, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       this.drawGlyph(0x3c, 0x3c, x + 30, y + 28, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       this.drawGlyph(0x3d, 0x3d, x, y + 40, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
@@ -777,8 +778,7 @@ public class PostBattleScreen extends MenuScreen {
       this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(xp) - 114), y + 40, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       this.drawNextLevelXp(x + 84, y + 40, xp);
 
-
-      final int dxp = dragoonXpRequirements_800fbbf0.get(charId).deref().get(gameState_800babc8.charData_32c[charId].dlevel_13 + 1).get();
+      final int dxp = dragoonXpRequirements_800fbbf0[charId][gameState_800babc8.charData_32c[charId].dlevel_13 + 1];
       this.drawSixDigitNumber(x + 76 - this.getXpWidth(dxp), y + 52, gameState_800babc8.charData_32c[charId].dlevelXp_0e);
       this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(dxp) - 114), y + 52, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       this.drawNextLevelXp(x + 84, y + 52, dxp);
@@ -888,7 +888,7 @@ public class PostBattleScreen extends MenuScreen {
     this.FUN_8010d078(x + 1, y + 20 - height + 1, 132, height * 2, 3);
 
     if(height >= 20) {
-      Scus94491BpeSegment_8002.renderText(additions_8011a064.get(additionIndex).deref(), x - 4, y + 6, TextColour.WHITE, 0);
+      Scus94491BpeSegment_8002.renderText(additions_8011a064[additionIndex], x - 4, y + 6, TextColour.WHITE, 0);
       Scus94491BpeSegment_8002.renderText(NEW_ADDITION, x - 4, y + 20, TextColour.WHITE, 0);
     }
 

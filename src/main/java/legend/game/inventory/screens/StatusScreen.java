@@ -55,7 +55,7 @@ public class StatusScreen extends MenuScreen {
       }
 
       case 2 -> {
-        FUN_801034cc(this.charSlot, characterCount_8011d7c4.get());
+        FUN_801034cc(this.charSlot, characterCount_8011d7c4);
         this.renderStatusMenu(this.charSlot, 0);
 
         if(this.scrollAccumulator >= 1.0d) {
@@ -69,14 +69,14 @@ public class StatusScreen extends MenuScreen {
         if(this.scrollAccumulator <= -1.0d) {
           this.scrollAccumulator += 1.0d;
 
-          if(this.charSlot < characterCount_8011d7c4.get() - 1) {
+          if(this.charSlot < characterCount_8011d7c4 - 1) {
             this.scroll(this.charSlot + 1);
           }
         }
       }
 
       case 3 -> {
-        FUN_801034cc(this.charSlot, characterCount_8011d7c4.get());
+        FUN_801034cc(this.charSlot, characterCount_8011d7c4);
         this.renderStatusMenu(this.charSlot, 0);
         this.unload.run();
       }
@@ -140,7 +140,7 @@ public class StatusScreen extends MenuScreen {
   }
 
   private void menuNavigateRight() {
-    if(this.charSlot < characterCount_8011d7c4.get() - 1) {
+    if(this.charSlot < characterCount_8011d7c4 - 1) {
       this.scroll(this.charSlot + 1);
     }
   }

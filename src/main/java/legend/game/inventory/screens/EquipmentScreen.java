@@ -83,7 +83,7 @@ public class EquipmentScreen extends MenuScreen {
         break;
 
       case 3:
-        FUN_801034cc(this.charSlot, characterCount_8011d7c4.get());
+        FUN_801034cc(this.charSlot, characterCount_8011d7c4);
         this.FUN_80102660(this.charSlot, this.selectedSlot, this.slotScroll, 0);
 
         if(this.scrollAccumulator >= 1.0d) {
@@ -284,7 +284,7 @@ public class EquipmentScreen extends MenuScreen {
   }
 
   private void menuNavigateRight() {
-    if(this.charSlot < characterCount_8011d7c4.get() - 1) {
+    if(this.charSlot < characterCount_8011d7c4 - 1) {
       this.charSlot++;
       this.loadingStage = 1;
     }

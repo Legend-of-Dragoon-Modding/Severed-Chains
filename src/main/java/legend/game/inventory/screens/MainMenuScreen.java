@@ -81,7 +81,7 @@ public class MainMenuScreen extends MenuScreen {
     this.addButton("Replace", this::showCharSwapScreen);
     this.addButton("Options", this::showOptionsScreen);
     this.addButton("", () -> { }).hide();
-    this.addButton("Save", this::showSaveScreen).setDisabled(!canSave_8011dc88.get());
+    this.addButton("Save", this::showSaveScreen).setDisabled(!canSave_8011dc88);
 
     for(int i = 0; i < 3; i++) {
       this.addCharCard(i);
@@ -223,13 +223,13 @@ public class MainMenuScreen extends MenuScreen {
     this.renderNumber(128, 184, getTimestampPart(gameState_800babc8.timestamp_a0, 0), 3);
     this.renderNumber(152, 184, getTimestampPart(gameState_800babc8.timestamp_a0, 1), 2, 0x1);
     this.renderNumber(170, 184, getTimestampPart(gameState_800babc8.timestamp_a0, 2), 2, 0x1);
-    renderCentredText(chapterNames_80114248.get(gameState_800babc8.chapterIndex_98).deref(), 94, 24, TextColour.BROWN);
+    renderCentredText(chapterNames_80114248[gameState_800babc8.chapterIndex_98], 94, 24, TextColour.BROWN);
 
     final LodString name;
     if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
-      name = submapNames_8011c108.get(submapId_800bd808.get()).deref();
+      name = submapNames_8011c108[submapId_800bd808.get()];
     } else {
-      name = worldMapNames_8011c1ec.get(continentIndex_800bf0b0.get()).deref();
+      name = worldMapNames_8011c1ec[continentIndex_800bf0b0.get()];
     }
 
     renderCentredText(name, 90, 38, TextColour.BROWN);
@@ -292,7 +292,7 @@ public class MainMenuScreen extends MenuScreen {
   }
 
   private void showSaveScreen() {
-    if(canSave_8011dc88.get()) {
+    if(canSave_8011dc88) {
       playSound(2);
 
       menuStack.pushScreen(new SaveGameScreen(() -> {

@@ -11,7 +11,6 @@ import java.util.Arrays;
 import static legend.game.SItem.FUN_801034cc;
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.additionGlyphs_801141e4;
-import static legend.game.SItem.additionXpPerLevel_800fba2c;
 import static legend.game.SItem.additions_80114070;
 import static legend.game.SItem.additions_8011a064;
 import static legend.game.SItem.allocateUiElement;
@@ -77,7 +76,7 @@ public class AdditionsScreen extends MenuScreen {
       }
 
       case 2 -> {
-        FUN_801034cc(this.charSlot, characterCount_8011d7c4.get());
+        FUN_801034cc(this.charSlot, characterCount_8011d7c4);
         this.renderAdditions(this.charSlot, this.additions, gameState_800babc8.charData_32c[characterIndices_800bdbb8.get(this.charSlot).get()].selectedAddition_19, 0);
 
         if(this.scrollAccumulator >= 1.0d) {
@@ -91,7 +90,7 @@ public class AdditionsScreen extends MenuScreen {
         if(this.scrollAccumulator <= -1.0d) {
           this.scrollAccumulator += 1.0d;
 
-          if(this.charSlot < characterCount_8011d7c4.get() - 1) {
+          if(this.charSlot < characterCount_8011d7c4 - 1) {
             this.scroll(this.charSlot + 1);
           }
         }
@@ -127,7 +126,7 @@ public class AdditionsScreen extends MenuScreen {
         final int index = additions[i].index_01;
 
         if(offset != -1) {
-          renderText(additions_8011a064.get(offset).deref(), 33, y - 2, offset != selectedAdditionOffset ? TextColour.BROWN : TextColour.RED);
+          renderText(additions_8011a064[offset], 33, y - 2, offset != selectedAdditionOffset ? TextColour.BROWN : TextColour.RED);
 
           if(allocate) {
             final int level = gameState_800babc8.charData_32c[charIndex].additionLevels_1a[index];
@@ -138,7 +137,7 @@ public class AdditionsScreen extends MenuScreen {
             renderThreeDigitNumber(322, y, gameState_800babc8.charData_32c[charIndex].additionXp_22[index]); // Current XP
 
             if(level < 5) {
-              renderThreeDigitNumber(342, y, additionXpPerLevel_800fba2c.get(level).get()); // Max XP
+              renderThreeDigitNumber(342, y, level * 20); // Max XP
             } else {
               renderCharacter(354, y, 218); // Dash if at max XP
             }

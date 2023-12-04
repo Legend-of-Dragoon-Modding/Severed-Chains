@@ -5,7 +5,6 @@ import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.IntRef;
-import legend.core.memory.types.Pointer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
@@ -40,20 +39,68 @@ public final class Scus94491BpeSegment_8005 {
   public static final ArrayRef<ShortRef> _800503f8 = MEMORY.ref(2, 0x800503f8L, ArrayRef.of(ShortRef.class, 22, 2, ShortRef::new));
   public static final ArrayRef<ShortRef> _80050424 = MEMORY.ref(2, 0x80050424L, ArrayRef.of(ShortRef.class, 22, 2, ShortRef::new));
 
-  public static final ArrayRef<Pointer<LodString>> itemCombatDescriptions_80051758 = MEMORY.ref(4, 0x80051758L, ArrayRef.of(Pointer.classFor(LodString.class), 0x40, 4, Pointer.deferred(4, LodString::new)));
+  public static final LodString[] itemCombatDescriptions_80051758 = {
+    new LodString(" "), new LodString("Detonates & attacks all."), new LodString("S attack(thunder, multi)."), new LodString("S attack(flame, multi)."), new LodString(" "),
+    new LodString("S attack(earth, multi)."), new LodString("S attack(water, multi)."), new LodString("S attack(wind, multi)."), new LodString("Generates 1 attack item."), new LodString("S attack(light, multi)."),
+    new LodString("S attack(dark, multi)."), new LodString("Recovers 1/2 of max HP."), new LodString("Dissolves petrification."), new LodString("Dissolves B, C, F, D."), new LodString("Dissolves P, S, A-block."),
+    new LodString("A attack(thndr, multi)."), new LodString("A attack(earth, multi)."), new LodString("A attack(flame, multi)."), new LodString("A attack(light, multi)."), new LodString("Recovers 100SP in combat."),
+    new LodString("Confuses minor enemy."), new LodString(" "), new LodString("A attack(water, multi)."), new LodString("Stuns minor enemy."), new LodString("A attack(dark, multi)."),
+    new LodString("Poisons minor enemy."), new LodString("Frightens minor enemy."), new LodString(" "), new LodString("A attack (wind, multi)."), new LodString("Eliminates minor enemy."),
+    new LodString("Revitalize & Recover 1/2HP."), new LodString("Avoids minor enemy 3x."), new LodString("Allow minor enemy attack 3x."), new LodString("Generates 1 recovery item."), new LodString(" "),
+    new LodString("Nullify magic attack 3x."), new LodString("Nullify phys attack 3x."), new LodString("Completely recovers MP."), new LodString("Escape a minor enemy."), new LodString("Completely recovers HP."),
+    new LodString("Blocks enemy move 3x (rep)."), new LodString("Recovers 100% HP for all."), new LodString("Recovers 100% MP for all."), new LodString("3 turns powerful (rep)."), new LodString("3 turns weak (rep)."),
+    new LodString("Double agility 3x (rep)."), new LodString("Halves agility 3x(rep)."), new LodString(" "), new LodString("Gives subtle good aroma."), new LodString("A attack(non, multi)."),
+    new LodString("Powerful A attack(Flame)."), new LodString("Powerful A attack(Water)."), new LodString("Powerful A attack(Wind)."), new LodString("Powerful A attack(Earth)."), new LodString("Powerful A attack(Light)."),
+    new LodString("Powerful A attack(Dark)."), new LodString("Powerful A attack(Thndr)."), new LodString("Recovers 1/2 HP for all."), new LodString("A attack (non, multi, rep)."), new LodString(" "),
+    new LodString(" "), new LodString(" "), new LodString(" "), new LodString(" "),
+  };
 
-  public static final ArrayRef<Pointer<LodString>> spellCombatDescriptions_80052018 = MEMORY.ref(4, 0x80052018L, ArrayRef.of(Pointer.classFor(LodString.class), 0x54, 4, Pointer.deferred(4, LodString::new)));
+  public static final LodString[] spellCombatDescriptions_80052018 = {
+    new LodString("Fire STR 50% Single"), new LodString("Fire STR 25% All"), new LodString("Fire STR 75% Single"), new LodString("Fire STR 175% All"), new LodString("STR 100% Single"),
+    new LodString("Wind STR 25% All"), new LodString("Wind STR 75% Single"), new LodString("Damage Resist 50% Dur 3"), new LodString("Wind STR 75% All"), new LodString("STR 50% All"),
+    new LodString("Light STR 25% All"), new LodString("Ally Single 100% Rev & Rec"), new LodString("Ally All 100% Recover"), new LodString("Light STR 100% All HP"), new LodString("Wind STR 25% All"),
+    new LodString("Dark STR 25% Single & HP"), new LodString("Dark STR 25% All & Fear"), new LodString("Wind STR 100% Single"), new LodString("Lethal attack for all"), new LodString("Darkn STR 100% Single"),
+    new LodString("Thunder STR 50% Single"), new LodString("Thunder STR 65% Single"), new LodString("Thunder STR 75% Single"), new LodString("Thunder STR 100% Single"), new LodString("Water STR 50% Single"),
+    new LodString("HP Recv & Cure - All"), new LodString("Damage Resist 50% Dur 3"), new LodString("Water STR 50% All"), new LodString("Water STR 100% Single"), new LodString("Earth STR 25% All"),
+    new LodString("Earth STR 50% All"), new LodString("Earth STR 75% All"), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString("Light STR 25% All"), new LodString("HP Recv & Cure-Single"), new LodString("HP Recv & Cure-All"), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+  };
 
-  public static final ArrayRef<Pointer<LodString>> spells_80052734 = MEMORY.ref(4, 0x80052734L, ArrayRef.of(Pointer.classFor(LodString.class), 0x54, 4, Pointer.deferred(4, LodString::new)));
+  public static final LodString[] spells_80052734 = {
+    new LodString("Flameshot"), new LodString("Explosion"), new LodString("Final Burst"), new LodString("Red-Eyed Dragon"), new LodString("Divine DG Cannon"),
+    new LodString("Wing Blaster"), new LodString("Gaspless"), new LodString("Blossom Storm"), new LodString("Jade Dragon"), new LodString("Divine DG Ball"),
+    new LodString("Star Children"), new LodString("Moon Light"), new LodString("Gates of Heaven"), new LodString("W Silver Dragon"), new LodString("Wing Blaster"),
+    new LodString("Astral Drain"), new LodString("Death Dimension"), new LodString("Gaspless"), new LodString("Demon's Gate"), new LodString("Dark Dragon"),
+    new LodString("Atomic Mind"), new LodString("Thunder Kid"), new LodString("Thunder God"), new LodString("Violet Dragon"), new LodString("Freezing Ring"),
+    new LodString("Rainbow Breath"), new LodString("Rose Storm"), new LodString("Diamond Dust"), new LodString("Blue Sea Dragon"), new LodString("Grand Stream"),
+    new LodString("Meteor Strike"), new LodString("Golden Dragon"), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString("Star Children"), new LodString("Moon Light"), new LodString("Gates of Heaven"), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+  };
   public static final ArrayRef<AdditionData0e> additionData_80052884 = MEMORY.ref(1, 0x80052884L, ArrayRef.of(AdditionData0e.class, 43, 0xe, AdditionData0e::new));
 
-  public static final ArrayRef<Pointer<LodString>> digits_80052b40 = MEMORY.ref(4, 0x80052b40L, ArrayRef.of(Pointer.classFor(LodString.class), 10, 4, Pointer.deferred(2, LodString::new)));
+  public static final LodString[] digits_80052b40 = { new LodString("0"), new LodString("1"), new LodString("2"), new LodString("3"), new LodString("4"), new LodString("5"), new LodString("6"), new LodString("7"), new LodString("8"), new LodString("9") };
   public static final ArrayRef<BoolRef> renderBorder_80052b68 = MEMORY.ref(2, 0x80052b68L, ArrayRef.of(BoolRef.class, 0x10, 2, BoolRef::new));
   public static final ArrayRef<ShortRef> textboxMode_80052b88 = MEMORY.ref(2, 0x80052b88L, ArrayRef.of(ShortRef.class, 0x10, 2, ShortRef::new));
   public static final ArrayRef<ShortRef> textboxTextType_80052ba8 = MEMORY.ref(2, 0x80052ba8L, ArrayRef.of(ShortRef.class, 0x10, 2, ShortRef::new));
 
-  /** Unknown what this is supposed to be, it's a bunch of chars that are way out of range, even for JP, but it does start with a control char and end with an a0ff */
-  public static final LodString _80052c20 = MEMORY.ref(2, 0x80052c20L, LodString::new);
   public static final IntRef submapCut_80052c30 = MEMORY.ref(4, 0x80052c30L, IntRef::new);
   public static final IntRef submapScene_80052c34 = MEMORY.ref(4, 0x80052c34L, IntRef::new);
   /** TODO This seems like it's set to a lot of different things, hopefully they're actually related. */

@@ -51,7 +51,7 @@ public class CharacterCard extends Control {
     this.portrait.setVisibility(visible);
 
     if(visible) {
-      this.name.setText(characterNames_801142dc.get(this.charId).deref().get());
+      this.name.setText(characterNames_801142dc[this.charId].get());
     }
   }
 

@@ -916,13 +916,16 @@ public final class Bttl_800c {
   public static final ArrayRef<ShortRef> battleHudYOffsets_800fb198 = MEMORY.ref(2, 0x800fb198L, ArrayRef.of(ShortRef.class, 4, 2, ShortRef::new));
 
   /** Targeting ("All allies", "All players", "All") */
-  public static final ArrayRef<Pointer<LodString>> targeting_800fb36c = MEMORY.ref(4, 0x800fb36cL, ArrayRef.of(Pointer.classFor(LodString.class),  3, 4, Pointer.deferred(4, LodString::new)));
-  public static final ArrayRef<Pointer<LodString>> playerNames_800fb378 = MEMORY.ref(4, 0x800fb378L, ArrayRef.of(Pointer.classFor(LodString.class), 11, 4, Pointer.deferred(4, LodString::new)));
+  public static final LodString[] targeting_800fb36c = { new LodString("All allies"), new LodString("All enemies"), new LodString("All") };
+  public static final LodString[] playerNames_800fb378 = {
+    new LodString("Dart"), new LodString("Lavitz"), new LodString("Shana"), new LodString("Rose"), new LodString("Haschel"),
+    new LodString("Albert"), new LodString("Meru"), new LodString("Kongol"), new LodString("Miranda"), new LodString("DivinDGDart"),
+  };
   /** Poisoned, Dispirited, Weapon blocked, Stunned, Fearful, Confused, Bewitched, Petrified */
-  public static final ArrayRef<Pointer<LodString>> ailments_800fb3a0 = MEMORY.ref(4, 0x800fb3a0L, ArrayRef.of(Pointer.classFor(LodString.class),  8, 4, Pointer.deferred(4, LodString::new)));
-
-  /** Player names, player names, item names, dragoon spells, item descriptions, spell descriptions */
-  public static final ArrayRef<Pointer<UnboundedArrayRef<Pointer<LodString>>>> allText_800fb3c0 = MEMORY.ref(4, 0x800fb3c0L, ArrayRef.of(Pointer.classFor(UnboundedArrayRef.classFor(Pointer.classFor(LodString.class))),  6, 4, Pointer.deferred(4, UnboundedArrayRef.of(4, Pointer.deferred(4, LodString::new)))));
+  public static final LodString[] ailments_800fb3a0 = {
+    new LodString("Poisoned"), new LodString("Dispirited"), new LodString("Weapon blocked"), new LodString("Stunned"), new LodString("Fearful"),
+    new LodString("Confused"), new LodString("Bewitched"), new LodString("Petrified"),
+  };
 
   public static final ArrayRef<Pointer<NameAndPortraitDisplayMetrics0c>> hudNameAndPortraitMetrics_800fb444 = MEMORY.ref(4, 0x800fb444L, ArrayRef.of(Pointer.classFor(NameAndPortraitDisplayMetrics0c.class), 10, 4, Pointer.deferred(4, NameAndPortraitDisplayMetrics0c::new)));
   public static final ArrayRef<SpBarBorderMetrics04> spBarBorderMetrics_800fb46c = MEMORY.ref(1, 0x800fb46cL, ArrayRef.of(SpBarBorderMetrics04.class, 4, 4, SpBarBorderMetrics04::new));

@@ -125,7 +125,6 @@ import static legend.game.Scus94491BpeSegment_8005._800503b0;
 import static legend.game.Scus94491BpeSegment_8005._800503d4;
 import static legend.game.Scus94491BpeSegment_8005._800503f8;
 import static legend.game.Scus94491BpeSegment_8005._80050424;
-import static legend.game.Scus94491BpeSegment_8005._80052c20;
 import static legend.game.Scus94491BpeSegment_8005._80052c40;
 import static legend.game.Scus94491BpeSegment_8005.digits_80052b40;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
@@ -893,7 +892,7 @@ public final class Scus94491BpeSegment_8002 {
 
   private static void initMenu(final WhichMenu destMenu, final Supplier<MenuScreen> destScreen) {
     if((getLoadedDrgnFiles() & 0x80L) == 0) {
-      inventoryMenuState_800bdc28.set(InventoryMenuState.INIT_0);
+      inventoryMenuState_800bdc28 = InventoryMenuState.INIT_0;
       whichMenu_800bdc38 = WhichMenu.WAIT_FOR_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_2;
       FUN_8001e010(0);
       SCRIPTS.stop();
@@ -3187,7 +3186,7 @@ public final class Scus94491BpeSegment_8002 {
           final int[] varDigits = new int[10];
           //LAB_800279dc
           for(int i = 0; i < varDigits.length; i++) {
-            varDigits[i] = digits_80052b40.get(variable / divisor).deref().charAt(0);
+            varDigits[i] = digits_80052b40[variable / divisor].charAt(0);
             variable %= divisor;
             divisor /= 10;
           }
@@ -3555,7 +3554,7 @@ public final class Scus94491BpeSegment_8002 {
 
     final TextboxText84 textboxText = textboxText_800bdf38[0];
     textboxText.type_04 = textboxTextType_80052ba8.get(1).get();
-    textboxText.str_24 = _80052c20;
+    textboxText.str_24 = new LodString("Garbage text"); // _80052c20
     textboxText.flags_08 |= 0x40;
 
     textboxText.chars_58 = new TextboxChar08[textboxText.chars_1c * (textboxText.lines_1e + 1)];
@@ -3651,7 +3650,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_8002980c
     for(int i = 0; i < 10; i++) {
-      tmp.charAt(i, digits_80052b40.get(val / divisor).deref().charAt(0));
+      tmp.charAt(i, digits_80052b40[val / divisor].charAt(0));
       val %= divisor;
       divisor /= 10;
     }
