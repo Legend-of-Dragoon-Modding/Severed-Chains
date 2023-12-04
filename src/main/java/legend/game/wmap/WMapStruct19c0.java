@@ -12,7 +12,7 @@ public class WMapStruct19c0 {
   public final GsRVIEW2 rview2_00 = new GsRVIEW2();
   /** Parent coordinate system of camera; controls movement */
   public final GsCOORDINATE2 coord2_20 = new GsCOORDINATE2();
-  public final Vector3f mapRotation_70 = new Vector3f();
+  public final Vector3f currMapRotation_70 = new Vector3f();
   /** short */
   public float mapRotationStartAngle_78;
   /** short */
@@ -24,25 +24,25 @@ public class WMapStruct19c0 {
   /** ubyte */
   public boolean mapRotating_80;
 
-  public float brightness_84;
+  public float lightsBrightness_84;
   public int lightsUpdateState_88;
-  public final COLOUR[] colour_8c = {new COLOUR(), new COLOUR(), new COLOUR()};
+  public final COLOUR[] lightsColours_8c = {new COLOUR(), new COLOUR(), new COLOUR()};
   /** short */
-  public float angle_98;
+  public float finalMapRotation_98;
   /** short */
-  public float angle_9a;
+  public float originalMapRotation_9a;
   /** short */
-  public float angle_9c;
+  public float mapRotationStep_9c;
   /** short */
-  public int _9e;
+  public int finalCameraY_9e;
   /** short */
-  public float _a0;
-  public final Vector3f vec_a4 = new Vector3f();
-  public final Vector3f vec_b4 = new Vector3f();
+  public int cameraZoomTick_a0;
+  public final Vector3f cameraZoomPosStep_a4 = new Vector3f();
+  public final Vector3f currCameraZoomPos_b4 = new Vector3f();
   /** byte */
   public boolean hideAtmosphericEffect_c4;
   /** ubyte */
-  public int _c5;
+  public int cameraUpdateState_c5;
 
   public final GsRVIEW2 rview2_c8 = new GsRVIEW2();
 
