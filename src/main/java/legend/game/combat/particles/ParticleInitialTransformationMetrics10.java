@@ -1,4 +1,4 @@
-package legend.game.combat.effects;
+package legend.game.combat.particles;
 
 import legend.core.memory.Value;
 import legend.core.memory.types.ByteRef;

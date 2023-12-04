@@ -1,8 +1,11 @@
-package legend.game.combat.effects;
+package legend.game.combat.particles;
 
 import legend.core.gte.TmdObjTable1c;
 import legend.core.memory.types.QuadConsumer;
 import legend.core.memory.types.TriConsumer;
+import legend.game.combat.effects.Effect;
+import legend.game.combat.effects.EffectManagerData6c;
+import legend.game.combat.effects.EffectManagerParams;
 import legend.game.scripting.ScriptState;
 import org.joml.Vector3f;
 
@@ -52,8 +55,8 @@ public class ParticleEffectData98 implements Effect {
   public int scaleParticleAcceleration_80;
   public TriConsumer<EffectManagerData6c<EffectManagerParams.ParticleType>, ParticleEffectData98, ParticleEffectInstance94> particleInstancePrerenderCallback_84;
   public QuadConsumer<ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>>, EffectManagerData6c<EffectManagerParams.ParticleType>, ParticleEffectData98, ParticleEffectInstance94> particleInstanceTickCallback_88;
-  public QuadConsumer<EffectManagerData6c<EffectManagerParams.ParticleType>, ParticleEffectData98, ParticleEffectInstance94, ParticleEffectData98Inner24> initializerCallback_8c;
-  public QuadConsumer<ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>>, EffectManagerData6c<EffectManagerParams.ParticleType>, ParticleEffectData98, ParticleEffectInstance94> particleInstanceReconstructorCallback_90;
+  public TriConsumer<ParticleEffectData98, ParticleEffectInstance94, ParticleEffectData98Inner24> initializerCallback_8c;
+  public TriConsumer<EffectManagerData6c<EffectManagerParams.ParticleType>, ParticleEffectData98, ParticleEffectInstance94> particleInstanceReconstructorCallback_90;
   public ParticleEffectData98 next_94;
 
   public ParticleEffectData98(final int count) {
