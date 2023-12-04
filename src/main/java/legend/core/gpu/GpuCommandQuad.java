@@ -135,10 +135,10 @@ public class GpuCommandQuad extends GpuCommand {
 
   @Override
   public void render(final Gpu gpu) {
-    final int x1 = Math.max(this.x + gpu.getOffsetX(), gpu.drawingArea.x.get());
-    final int y1 = Math.max(this.y + gpu.getOffsetY(), gpu.drawingArea.y.get());
-    final int x2 = Math.min(this.x + gpu.getOffsetX() + this.w, gpu.drawingArea.x.get() + gpu.drawingArea.w.get());
-    final int y2 = Math.min(this.y + gpu.getOffsetY() + this.h, gpu.drawingArea.y.get() + gpu.drawingArea.h.get());
+    final int x1 = Math.max(this.x + gpu.getOffsetX(), gpu.drawingArea.x);
+    final int y1 = Math.max(this.y + gpu.getOffsetY(), gpu.drawingArea.y);
+    final int x2 = Math.min(this.x + gpu.getOffsetX() + this.w, gpu.drawingArea.x + gpu.drawingArea.w);
+    final int y2 = Math.min(this.y + gpu.getOffsetY() + this.h, gpu.drawingArea.y + gpu.drawingArea.h);
 
     final int u1;
     final int v1;

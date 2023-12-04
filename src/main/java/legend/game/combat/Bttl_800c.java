@@ -4,7 +4,7 @@ import legend.core.MathHelper;
 import legend.core.Random;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
-import legend.core.gpu.RECT;
+import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.gte.TmdObjTable1c;
@@ -18,7 +18,6 @@ import legend.core.memory.types.IntRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.QuintConsumer;
 import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedIntRef;
 import legend.core.memory.types.UnsignedShortRef;
@@ -156,8 +155,6 @@ import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.scriptDeallocateAllTextboxes;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
-import static legend.game.Scus94491BpeSegment_8003.LoadImage;
-import static legend.game.Scus94491BpeSegment_8003.MoveImage;
 import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
@@ -250,7 +247,7 @@ public final class Bttl_800c {
 
   public static ScriptState<? extends BattleEntity27c> forcedTurnBent_800c66bc;
 
-  public static final IntRef _800c66c4 = MEMORY.ref(4, 0x800c66c4L, IntRef::new);
+  public static final IntRef usedMonsterTextureSlots_800c66c4 = MEMORY.ref(4, 0x800c66c4L, IntRef::new);
   public static ScriptState<? extends BattleEntity27c> currentTurnBent_800c66c8;
   public static final IntRef mcqBaseOffsetX_800c66cc = MEMORY.ref(4, 0x800c66ccL, IntRef::new);
   public static final IntRef allBentCount_800c66d0 = MEMORY.ref(4, 0x800c66d0L, IntRef::new);
@@ -453,9 +450,15 @@ public final class Bttl_800c {
   public static final ArrayRef<ShortRef> postCombatActionFrames_800fa6d0 = MEMORY.ref(2, 0x800fa6d0L, ArrayRef.of(ShortRef.class, 6, 2, ShortRef::new));
 
   public static final IntRef mcqColour_800fa6dc = MEMORY.ref(4, 0x800fa6dcL, IntRef::new);
-  public static final UnboundedArrayRef<RECT> combatantTimRects_800fa6e0 = MEMORY.ref(2, 0x800fa6e0L, UnboundedArrayRef.of(0x8, RECT::new));
+  public static final Rect4i[] combatantTimRects_800fa6e0 = {
+    new Rect4i(0, 0, 0, 0), new Rect4i(320, 256, 64, 256),
+    new Rect4i(384, 256, 64, 256), new Rect4i(448, 256, 64, 256),
+    new Rect4i(512, 256, 64, 256), new Rect4i(576, 256, 64, 256),
+    new Rect4i(640, 256, 64, 256), new Rect4i(512, 0, 64, 256),
+    new Rect4i(576, 0, 64, 256), new Rect4i(640, 0, 64, 256),
+  };
 
-  public static final ArrayRef<ShortRef> colourMaps_800fa730 = MEMORY.ref(2, 0x800fa730L, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
+  public static final ArrayRef<ShortRef> vramSlotIndices_800fa730 = MEMORY.ref(2, 0x800fa730L, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
 
   public static final ArrayRef<UnsignedShortRef> additionNextLevelXp_800fa744 = MEMORY.ref(2, 0x800fa744L, ArrayRef.of(UnsignedShortRef.class, 5, 2, UnsignedShortRef::new));
 
@@ -907,9 +910,8 @@ public final class Bttl_800c {
    * The rest are -1
    */
   public static final ArrayRef<ByteRef> melbuStageIndices_800fb064 = MEMORY.ref(1, 0x800fb064L, ArrayRef.of(ByteRef.class, 8, 1, ByteRef::new));
-  public static final ArrayRef<IntRef> modelColourMaps_800fb06c = MEMORY.ref(4, 0x800fb06cL, ArrayRef.of(IntRef.class, 32, 4, IntRef::new));
-
-  public static final ArrayRef<IntRef> colourMapUvs_800fb0ec = MEMORY.ref(4, 0x800fb0ecL, ArrayRef.of(IntRef.class, 39, 4, IntRef::new));
+  public static final ArrayRef<IntRef> modelVramSlots_800fb06c = MEMORY.ref(4, 0x800fb06cL, ArrayRef.of(IntRef.class, 32, 4, IntRef::new));
+  public static final ArrayRef<IntRef> vramSlotUvs_800fb0ec = MEMORY.ref(4, 0x800fb0ecL, ArrayRef.of(IntRef.class, 18, 4, IntRef::new));
 
   public static final ArrayRef<ShortRef> targetArrowOffsetY_800fb188 = MEMORY.ref(2, 0x800fb188L, ArrayRef.of(ShortRef.class, 8, 2, ShortRef::new));
 
@@ -1006,15 +1008,15 @@ public final class Bttl_800c {
 
     gameState_800babc8._b4++;
     Arrays.fill(unlockedUltimateAddition_800bc910, false);
-    goldGainedFromCombat_800bc920.set(0);
+    goldGainedFromCombat_800bc920 = 0;
 
-    spGained_800bc950.get(0).set(0);
-    spGained_800bc950.get(1).set(0);
-    spGained_800bc950.get(2).set(0);
+    spGained_800bc950[0] = 0;
+    spGained_800bc950[1] = 0;
+    spGained_800bc950[2] = 0;
 
-    totalXpFromCombat_800bc95c.set(0);
-    battleFlags_800bc960.set(0);
-    postBattleActionIndex_800bc974.set(0);
+    totalXpFromCombat_800bc95c = 0;
+    battleFlags_800bc960 = 0;
+    postBattleActionIndex_800bc974 = 0;
     itemsDroppedByEnemies_800bc928.clear();
     itemOverflow.clear();
     equipmentOverflow.clear();
@@ -1048,7 +1050,7 @@ public final class Bttl_800c {
 
   @Method(0x800c7648L)
   public static void loadStageAndControllerScripts() {
-    loadStage(battleStage_800bb0f4.get());
+    loadStage(battleStage_800bb0f4);
     loadStageDataAndControllerScripts();
     pregameLoadingStage_800bb10c.incr();
   }
@@ -1069,11 +1071,11 @@ public final class Bttl_800c {
 
   @Method(0x800c76a0L)
   public static void initializeViewportAndCamera() {
-    if((battleFlags_800bc960.get() & 0x3) == 0x3) {
+    if((battleFlags_800bc960 & 0x3) == 0x3) {
       resizeDisplay(320, 240);
       setDepthResolution(12);
       vsyncMode_8007a3b8 = 3;
-      battleFlags_800bc960.or(0x40);
+      battleFlags_800bc960 |= 0x40;
       setProjectionPlaneDistance(320);
       resetCameraMovement();
       pregameLoadingStage_800bb10c.incr();
@@ -1086,11 +1088,11 @@ public final class Bttl_800c {
   public static void battleInitiateAndPreload_800c772c() {
     FUN_800c8e48();
 
-    battleLoaded_800bc94c.set(true);
+    battleLoaded_800bc94c = true;
 
     startFadeEffect(4, 30);
 
-    battleFlags_800bc960.or(0x20);
+    battleFlags_800bc960 |= 0x20;
     battleState_8006e398.stageProgression_eec = 0;
 
     clearCombatants();
@@ -1223,7 +1225,7 @@ public final class Bttl_800c {
 
   @Method(0x800c791cL)
   public static void loadEncounterAssets() {
-    loadEnemyTextures(2625 + encounterId_800bb0f8.get());
+    loadEnemyTextures(2625 + encounterId_800bb0f8);
 
     //LAB_800fc030
     for(int i = 0; i < combatantCount_800c66a0.get(); i++) {
@@ -1243,7 +1245,7 @@ public final class Bttl_800c {
     //LAB_800fc104
     loadPartyTims();
     loadPartyTmdAndAnims();
-    battleFlags_800bc960.or(0x400);
+    battleFlags_800bc960 |= 0x400;
 
     pregameLoadingStage_800bb10c.incr();
   }
@@ -1258,7 +1260,7 @@ public final class Bttl_800c {
     combatantTmdAndAnimLoadedCallback(files, data.combatantIndex_26c, false);
 
     //LAB_800fc34c
-    battleFlags_800bc960.or(0x4);
+    battleFlags_800bc960 |= 0x4;
   }
 
   /** Pulled from S_ITEM */
@@ -1322,7 +1324,7 @@ public final class Bttl_800c {
 
   @Method(0x800c7964L)
   public static void loadHudAndAttackAnimations() {
-    battleFlags_800bc960.or(0xc);
+    battleFlags_800bc960 |= 0xc;
 
     loadBattleHudTextures();
     loadBattleHudDeff();
@@ -1354,7 +1356,7 @@ public final class Bttl_800c {
   @Method(0x800c7a80L)
   public static void calculateInitialTurnValues() {
     if(_800c66a8.get() != 0) {
-      battleFlags_800bc960.or(0x10);
+      battleFlags_800bc960 |= 0x10;
 
       //LAB_800c7ae4
       for(int i = 0; i < allBentCount_800c66d0.get(); i++) {
@@ -1383,7 +1385,7 @@ public final class Bttl_800c {
     drawUiText();
     drawUiElements();
 
-    if(postBattleActionIndex_800bc974.get() != 0) {
+    if(postBattleActionIndex_800bc974 != 0) {
       pregameLoadingStage_800bb10c.incr();
       return;
     }
@@ -1418,12 +1420,12 @@ public final class Bttl_800c {
         }
       } else { // Game over
         loadMusicPackage(19, 0);
-        postBattleActionIndex_800bc974.set(2);
+        postBattleActionIndex_800bc974 = 2;
       }
     }
 
     //LAB_800c7d78
-    if(postBattleActionIndex_800bc974.get() != 0) {
+    if(postBattleActionIndex_800bc974 != 0) {
       //LAB_800c7d88
       pregameLoadingStage_800bb10c.incr();
     }
@@ -1434,12 +1436,12 @@ public final class Bttl_800c {
   public static void endBattle() {
     FUN_80020308();
 
-    if(encounterId_800bb0f8.get() != 443) { // Standard victory
-      postBattleActionIndex_800bc974.set(1);
+    if(encounterId_800bb0f8 != 443) { // Standard victory
+      postBattleActionIndex_800bc974 = 1;
       startEncounterSounds();
     } else { // Melbu Victory
       //LAB_800c7d30
-      postBattleActionIndex_800bc974.set(4);
+      postBattleActionIndex_800bc974 = 4;
     }
   }
 
@@ -1525,7 +1527,7 @@ public final class Bttl_800c {
   public static void performPostBattleAction() {
     EVENTS.postEvent(new BattleEndedEvent());
 
-    final int postBattleActionIndex = postBattleActionIndex_800bc974.get();
+    final int postBattleActionIndex = postBattleActionIndex_800bc974;
 
     if(currentPostCombatActionFrame_800c6690.get() == 0) {
       final int postBattleAction = postBattleActions_800fa6c4.get(postBattleActionIndex).get();
@@ -1537,11 +1539,11 @@ public final class Bttl_800c {
 
       //LAB_800c80c8
       final int aliveCharBents = aliveCharCount_800c6760.get();
-      livingCharCount_800bc97c.set(aliveCharBents);
+      livingCharCount_800bc97c = aliveCharBents;
 
       //LAB_800c8104
       for(int i = 0; i < aliveCharBents; i++) {
-        livingCharIds_800bc968.get(i).set(battleState_8006e398.aliveCharBents_eac[i].innerStruct_00.charId_272);
+        livingCharIds_800bc968[i] = battleState_8006e398.aliveCharBents_eac[i].innerStruct_00.charId_272;
       }
 
       //LAB_800c8144
@@ -1557,7 +1559,7 @@ public final class Bttl_800c {
     //LAB_800c81c0
     currentPostCombatActionFrame_800c6690.incr();
 
-    if(currentPostCombatActionFrame_800c6690.get() >= postCombatActionTotalFrames_800fa6b8.get(postBattleActionIndex).get() || (press_800bee94.get() & 0xff) != 0 && currentPostCombatActionFrame_800c6690.get() >= 25) {
+    if(currentPostCombatActionFrame_800c6690.get() >= postCombatActionTotalFrames_800fa6b8.get(postBattleActionIndex).get() || (press_800bee94 & 0xff) != 0 && currentPostCombatActionFrame_800c6690.get() >= 25) {
       //LAB_800c8214
       deallocateLightingControllerAndDeffManager();
       loadSupportOverlay(2, () -> { });
@@ -1642,10 +1644,9 @@ public final class Bttl_800c {
       }
 
       //LAB_800c84b4
-      switch(postBattleActionIndex_800bc974.get()) {
+      switch(postBattleActionIndex_800bc974) {
         case 2 -> {
-          final int encounter = encounterId_800bb0f8.get();
-          if(encounter == 391 || encounter >= 404 && encounter < 408) { // Arena fights in Lohan
+          if(encounterId_800bb0f8 == 391 || encounterId_800bb0f8 >= 404 && encounterId_800bb0f8 < 408) { // Arena fights in Lohan
             //LAB_800c8514
             gameState_800babc8.scriptFlags2_bc.set(29, 27, true); // Died in arena fight
           } else {
@@ -1662,20 +1663,20 @@ public final class Bttl_800c {
 
       final int postCombatSubmapStage = currentStageData_800c6718.postCombatSubmapStage_0c;
       if(postCombatSubmapStage != 0xff) {
-        submapScene_80052c34.set(postCombatSubmapStage);
+        submapScene_80052c34 = postCombatSubmapStage;
       }
 
       //LAB_800c8578
       final int postCombatSubmapCut = currentStageData_800c6718.postCombatSubmapCut_28;
       if(postCombatSubmapCut != 0xffff) {
-        submapCut_80052c30.set(postCombatSubmapCut);
+        submapCut_80052c30 = postCombatSubmapCut;
       }
 
       //LAB_800c8590
       setDepthResolution(14);
-      battleLoaded_800bc94c.set(false);
+      battleLoaded_800bc94c = false;
 
-      switch(postBattleActionIndex_800bc974.get()) {
+      switch(postBattleActionIndex_800bc974) {
         case 1, 3 -> whichMenu_800bdc38 = WhichMenu.INIT_POST_COMBAT_REPORT_26;
         case 2, 4, 5 -> whichMenu_800bdc38 = WhichMenu.NONE_0;
       }
@@ -1720,12 +1721,12 @@ public final class Bttl_800c {
 
   @Method(0x800c882cL)
   public static void renderSkybox() {
-    if(shouldRenderMcq_800c6764.get() == 0 || !shouldRenderMcq_800c66d4.get() || (battleFlags_800bc960.get() & 0x80) == 0) {
+    if(shouldRenderMcq_800c6764.get() == 0 || !shouldRenderMcq_800c66d4.get() || (battleFlags_800bc960 & 0x80) == 0) {
       //LAB_800c8ad8
       //LAB_800c8adc
-      clearBlue_800babc0.set(0);
-      clearGreen_800bb104.set(0);
-      clearRed_8007a3a8.set(0);
+      clearBlue_800babc0 = 0;
+      clearGreen_800bb104 = 0;
+      clearRed_8007a3a8 = 0;
     } else {
       final McqHeader mcq = battlePreloadedEntities_1f8003f4.stageMcq_9cb0;
 
@@ -1746,16 +1747,16 @@ public final class Bttl_800c {
       final int x2 = x0 + mcq.screenWidth_14;
       int y = mcqOffsetY_800c6778.get() - MathHelper.radToPsxDeg(MathHelper.floorMod(calculateYAngleFromRefpointToViewpoint() + MathHelper.PI, MathHelper.TWO_PI)) + 1888;
 
-      battlePreloadedEntities_1f8003f4.skyboxTransforms.transfer.set(x0, y, orderingTableSize_1f8003c8.get() - 8.0f);
+      battlePreloadedEntities_1f8003f4.skyboxTransforms.transfer.set(x0, y, orderingTableSize_1f8003c8 - 8.0f);
       RENDERER.queueOrthoUnderlayModel(battlePreloadedEntities_1f8003f4.skyboxObj, battlePreloadedEntities_1f8003f4.skyboxTransforms)
         .monochrome(mcqColour_800fa6dc.get() / 128.0f);
 
-      battlePreloadedEntities_1f8003f4.skyboxTransforms.transfer.set(x1, y, orderingTableSize_1f8003c8.get() - 8.0f);
+      battlePreloadedEntities_1f8003f4.skyboxTransforms.transfer.set(x1, y, orderingTableSize_1f8003c8 - 8.0f);
       RENDERER.queueOrthoUnderlayModel(battlePreloadedEntities_1f8003f4.skyboxObj, battlePreloadedEntities_1f8003f4.skyboxTransforms)
         .monochrome(mcqColour_800fa6dc.get() / 128.0f);
 
-      if(x2 <= centreScreenX_1f8003dc.get() * 2) {
-        battlePreloadedEntities_1f8003f4.skyboxTransforms.transfer.set(x2, y, orderingTableSize_1f8003c8.get() - 8.0f);
+      if(x2 <= centreScreenX_1f8003dc * 2) {
+        battlePreloadedEntities_1f8003f4.skyboxTransforms.transfer.set(x2, y, orderingTableSize_1f8003c8 - 8.0f);
         RENDERER.queueOrthoUnderlayModel(battlePreloadedEntities_1f8003f4.skyboxObj, battlePreloadedEntities_1f8003f4.skyboxTransforms)
           .monochrome(mcqColour_800fa6dc.get() / 128.0f);
       }
@@ -1768,15 +1769,15 @@ public final class Bttl_800c {
 
       //LAB_800c8a04
       final int colour = mcqColour_800fa6dc.get();
-      if(y >= -centreScreenY_1f8003de.get()) {
-        clearRed_8007a3a8.set(mcq.colour0_18.getR() * colour / 0x80);
-        clearGreen_800bb104.set(mcq.colour0_18.getG() * colour / 0x80);
-        clearBlue_800babc0.set(mcq.colour0_18.getB() * colour / 0x80);
+      if(y >= -centreScreenY_1f8003de) {
+        clearRed_8007a3a8 = mcq.colour0_18.getR() * colour / 0x80;
+        clearGreen_800bb104 = mcq.colour0_18.getG() * colour / 0x80;
+        clearBlue_800babc0 = mcq.colour0_18.getB() * colour / 0x80;
       } else {
         //LAB_800c8a74
-        clearRed_8007a3a8.set(mcq.colour1_20.getR() * colour / 0x80);
-        clearGreen_800bb104.set(mcq.colour1_20.getG() * colour / 0x80);
-        clearBlue_800babc0.set(mcq.colour1_20.getB() * colour / 0x80);
+        clearRed_8007a3a8 = mcq.colour1_20.getR() * colour / 0x80;
+        clearGreen_800bb104 = mcq.colour1_20.getG() * colour / 0x80;
+        clearBlue_800babc0 = mcq.colour1_20.getB() * colour / 0x80;
       }
     }
 
@@ -1809,10 +1810,10 @@ public final class Bttl_800c {
   public static void loadStageTim(final FileData data) {
     final Tim tim = new Tim(data);
 
-    LoadImage(tim.getImageRect(), tim.getImageData());
+    GPU.uploadData(tim.getImageRect(), tim.getImageData());
 
     if(tim.hasClut()) {
-      LoadImage(tim.getClutRect(), tim.getClutData());
+      GPU.uploadData(tim.getClutRect(), tim.getClutData());
     }
 
     //LAB_800c8ccc
@@ -1826,7 +1827,7 @@ public final class Bttl_800c {
 
   @Method(0x800c8cf0L)
   public static void rotateAndRenderBattleStage() {
-    if(stageHasModel_800c66b8.get() && _800c6754.get() != 0 && (battleFlags_800bc960.get() & 0x20) != 0) {
+    if(stageHasModel_800c66b8.get() && _800c6754.get() != 0 && (battleFlags_800bc960 & 0x20) != 0) {
       rotateBattleStage(battlePreloadedEntities_1f8003f4.stage_963c);
       renderBattleStage(battlePreloadedEntities_1f8003f4.stage_963c);
     }
@@ -1837,7 +1838,7 @@ public final class Bttl_800c {
   @Method(0x800c8d64L)
   public static void loadStageMcq(final McqHeader mcq) {
     final int x;
-    if((battleFlags_800bc960.get() & 0x80) != 0) {
+    if((battleFlags_800bc960 & 0x80) != 0) {
       x = 320;
       shouldRenderMcq_800c6764.set(1);
     } else {
@@ -1857,11 +1858,10 @@ public final class Bttl_800c {
 
   @Method(0x800c8e48L)
   public static void FUN_800c8e48() {
-    if(shouldRenderMcq_800c66d4.get() && (battleFlags_800bc960.get() & 0x80) == 0) {
-      final RECT sp0x10 = new RECT((short)512, (short)0, (short)battlePreloadedEntities_1f8003f4.stageMcq_9cb0.vramWidth_08, (short)256);
-      MoveImage(sp0x10, 320, 0);
+    if(shouldRenderMcq_800c66d4.get() && (battleFlags_800bc960 & 0x80) == 0) {
+      GPU.copyVramToVram(512, 0, 320, 0, battlePreloadedEntities_1f8003f4.stageMcq_9cb0.vramWidth_08, 256);
       shouldRenderMcq_800c6764.set(1);
-      battleFlags_800bc960.or(0x80);
+      battleFlags_800bc960 |= 0x80;
     }
     //LAB_800c8ec8
   }
@@ -1900,7 +1900,7 @@ public final class Bttl_800c {
 
         //LAB_800c8f94
         combatant.charSlot_19c = charSlot;
-        combatant.colourMap_1a0 = 0;
+        combatant.vramSlot_1a0 = 0;
         combatant.charIndex_1a2 = a0;
         combatant._1a4 = -1;
         combatant._1a6 = -1;
@@ -1916,8 +1916,8 @@ public final class Bttl_800c {
   public static void removeCombatant(final int combatantIndex) {
     final CombatantStruct1a8 combatant = combatants_8005e398[combatantIndex];
 
-    if(combatant.colourMap_1a0 != 0) {
-      FUN_800ca918(combatant.colourMap_1a0);
+    if(combatant.vramSlot_1a0 != 0) {
+      unsetMonsterTextureSlotUsed(combatant.vramSlot_1a0);
     }
 
     //LAB_800c9020
@@ -2037,7 +2037,7 @@ public final class Bttl_800c {
     combatant.flags_19e &= 0xffdf;
 
     if(!isMonster) {
-      battleFlags_800bc960.or(0x4);
+      battleFlags_800bc960 |= 0x4;
     }
 
     //LAB_800c947c
@@ -2139,7 +2139,7 @@ public final class Bttl_800c {
         if(isDragoon == 0) {
           // Additions
           if(charId != 2 && charId != 8) {
-            fileIndex = 4031 + gameState_800babc8.charData_32c[charId].selectedAddition_19 + charId * 8 - additionOffsets_8004f5ac.get(charId).get();
+            fileIndex = 4031 + gameState_800babc8.charData_32c[charId].selectedAddition_19 + charId * 8 - additionOffsets_8004f5ac[charId];
           } else {
             // Retail fix: Shana/??? have selectedAddition 255 which loads a random file... just load Dart's first addition here, it isn't used (see GH#357)
             fileIndex = 4031 + charId * 8;
@@ -2530,54 +2530,54 @@ public final class Bttl_800c {
 
   @Method(0x800ca75cL)
   public static void loadCombatantTim(final int combatantIndex, final FileData timFile) {
-    final int a0;
+    final int vramSlot;
 
     if(combatantIndex >= 0) {
       //LAB_800ca77c
-      final CombatantStruct1a8 s0 = getCombatant(combatantIndex);
+      final CombatantStruct1a8 combatant = getCombatant(combatantIndex);
 
-      if(s0.colourMap_1a0 == 0) {
-        final int charSlot = s0.charSlot_19c;
+      if(combatant.vramSlot_1a0 == 0) {
+        final int charSlot = combatant.charSlot_19c;
 
         if(charSlot < 0) {
-          s0.colourMap_1a0 = FUN_800ca89c(s0.charIndex_1a2);
+          combatant.vramSlot_1a0 = findFreeMonsterTextureSlot(combatant.charIndex_1a2);
         } else {
           //LAB_800ca7c4
-          s0.colourMap_1a0 = charSlot + 1;
+          combatant.vramSlot_1a0 = charSlot + 1;
         }
       }
 
-      a0 = s0.colourMap_1a0;
+      vramSlot = combatant.vramSlot_1a0;
     } else {
-      a0 = 0;
+      vramSlot = 0;
     }
 
     //LAB_800ca7d0
-    loadCombatantTim2(a0, timFile);
+    loadCombatantTim2(vramSlot, timFile);
   }
 
   @Method(0x800ca7ecL)
-  public static void loadCombatantTim2(final int a0, final FileData timFile) {
+  public static void loadCombatantTim2(final int vramSlot, final FileData timFile) {
     final Tim tim = new Tim(timFile);
 
-    if(a0 != 0) {
+    if(vramSlot != 0) {
       //LAB_800ca83c
-      final RECT combatantTimRect = combatantTimRects_800fa6e0.get(a0);
-      LoadImage(combatantTimRect, tim.getImageData());
+      final Rect4i combatantTimRect = combatantTimRects_800fa6e0[vramSlot];
+      GPU.uploadData(combatantTimRect, tim.getImageData());
 
       if(tim.hasClut()) {
-        final RECT clutRect = tim.getClutRect();
-        clutRect.x.set(combatantTimRect.x.get());
-        clutRect.y.set((short)(combatantTimRect.y.get() + 240));
+        final Rect4i clutRect = tim.getClutRect();
+        clutRect.x = combatantTimRect.x;
+        clutRect.y = combatantTimRect.y + 240;
 
         //LAB_800ca884
-        LoadImage(clutRect, tim.getClutData());
+        GPU.uploadData(clutRect, tim.getClutData());
       }
     } else {
-      final RECT imageRect = tim.getImageRect();
+      final Rect4i imageRect = tim.getImageRect();
 
       // This is a fix for a retail bug where they try to load a TMD as a TIM (it has a 0 w/h anyway so no data gets loaded) see GH#330b
-      if(imageRect.x.get() == 0x41 && imageRect.y.get() == 0 && imageRect.w.get() == 0 && imageRect.h.get() == 0) {
+      if(imageRect.x == 0x41 && imageRect.y == 0 && imageRect.w == 0 && imageRect.h == 0) {
         return;
       }
 
@@ -2588,14 +2588,14 @@ public final class Bttl_800c {
   }
 
   @Method(0x800ca89cL)
-  public static int FUN_800ca89c(final int a0) {
+  public static int findFreeMonsterTextureSlot(final int a0) {
     //LAB_800ca8ac
     //LAB_800ca8c4
     for(int i = a0 < 0x200 ? 4 : 1; i < 9; i++) {
       final int a0_0 = 0x1 << i;
 
-      if((_800c66c4.get() & a0_0) == 0) {
-        _800c66c4.or(a0_0);
+      if((usedMonsterTextureSlots_800c66c4.get() & a0_0) == 0) {
+        usedMonsterTextureSlots_800c66c4.or(a0_0);
         return i;
       }
 
@@ -2607,18 +2607,18 @@ public final class Bttl_800c {
   }
 
   @Method(0x800ca8fcL)
-  public static void FUN_800ca8fc(final int shift) {
-    _800c66c4.or(0x1 << shift);
+  public static void setMonsterTextureSlotUsed(final int shift) {
+    usedMonsterTextureSlots_800c66c4.or(0x1 << shift);
   }
 
   @Method(0x800ca918L)
-  public static void FUN_800ca918(final int shift) {
-    _800c66c4.and(~(0x1 << shift));
+  public static void unsetMonsterTextureSlotUsed(final int shift) {
+    usedMonsterTextureSlots_800c66c4.and(~(0x1 << shift));
   }
 
   @Method(0x800ca938L)
-  public static short getCombatantColourMap(final int combatantIndex) {
-    return colourMaps_800fa730.get(combatants_8005e398[combatantIndex].colourMap_1a0).get();
+  public static short getCombatantVramSlotIndex(final int combatantIndex) {
+    return vramSlotIndices_800fa730.get(combatants_8005e398[combatantIndex].vramSlot_1a0).get();
   }
 
   @Method(0x800ca9b4L)
@@ -2738,15 +2738,15 @@ public final class Bttl_800c {
 
     final int v1;
     if((state.storage_44[7] & 0x4) != 0) {
-      v1 = battleFlags_800bc960.get() & 0x110;
+      v1 = battleFlags_800bc960 & 0x110;
     } else {
       //LAB_800cae94
-      v1 = battleFlags_800bc960.get() & 0x210;
+      v1 = battleFlags_800bc960 & 0x210;
     }
 
     //LAB_800cae98
     if(v1 != 0 && isCombatantModelLoaded(bent.combatantIndex_26c)) {
-      bent.model_148.colourMap_9d = getCombatantColourMap(bent.combatantIndex_26c);
+      bent.model_148.vramSlot_9d = getCombatantVramSlotIndex(bent.combatantIndex_26c);
       bent.loadingAnimIndex_26e = 0;
       FUN_800c952c(bent.model_148, bent.combatantIndex_26c);
       bent._278 = 1;
@@ -3700,7 +3700,7 @@ public final class Bttl_800c {
   @ScriptDescription("Sets post-battle action to 3")
   @Method(0x800ccef8L)
   public static FlowControl FUN_800ccef8(final RunningScript<?> script) {
-    postBattleActionIndex_800bc974.set(3);
+    postBattleActionIndex_800bc974 = 3;
     return FlowControl.PAUSE_AND_REWIND;
   }
 
@@ -3708,7 +3708,7 @@ public final class Bttl_800c {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "action", description = "The post-battle action")
   @Method(0x800ccf0cL)
   public static FlowControl scriptSetPostBattleAction(final RunningScript<?> script) {
-    postBattleActionIndex_800bc974.set(script.params_20[0].get());
+    postBattleActionIndex_800bc974 = script.params_20[0].get();
     return FlowControl.PAUSE_AND_REWIND;
   }
 
@@ -3727,8 +3727,8 @@ public final class Bttl_800c {
 
         if((flags & 0x4) != 0) { // Monster
           final CombatantStruct1a8 enemyCombatant = data.combatant_144;
-          goldGainedFromCombat_800bc920.add(enemyCombatant.gold_196);
-          totalXpFromCombat_800bc95c.add(enemyCombatant.xp_194);
+          goldGainedFromCombat_800bc920 += enemyCombatant.gold_196;
+          totalXpFromCombat_800bc95c += enemyCombatant.xp_194;
 
           if((flags & 0x2000) == 0) { // Hasn't already dropped loot
             for(final CombatantStruct1a8.ItemDrop drop : enemyCombatant.drops) {
@@ -3803,7 +3803,7 @@ public final class Bttl_800c {
       final int charIndex = bent.charId_272;
       final CharacterData2c charData = gameState_800babc8.charData_32c[charIndex];
 
-      final int additionIndex = charData.selectedAddition_19 - additionOffsets_8004f5ac.get(charIndex).get();
+      final int additionIndex = charData.selectedAddition_19 - additionOffsets_8004f5ac[charIndex];
       if(charIndex == 2 || charIndex == 8 || additionIndex < 0) {
         //LAB_800cd200
         return FlowControl.CONTINUE;
@@ -3819,12 +3819,12 @@ public final class Bttl_800c {
       }
 
       //LAB_800cd2ac
-      int nonMaxedAdditions = additionCounts_8004f5c0.get(charIndex).get();
+      int nonMaxedAdditions = additionCounts_8004f5c0[charIndex];
       int lastNonMaxAdditionIndex = -1;
 
       // Find the first addition that isn't already maxed out
       //LAB_800cd2ec
-      for(int additionIndex2 = 0; additionIndex2 < additionCounts_8004f5c0.get(charIndex).get(); additionIndex2++) {
+      for(int additionIndex2 = 0; additionIndex2 < additionCounts_8004f5c0[charIndex]; additionIndex2++) {
         if(charData.additionLevels_1a[additionIndex2] == 5) {
           nonMaxedAdditions--;
         } else {

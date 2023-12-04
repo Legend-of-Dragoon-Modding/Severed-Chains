@@ -7,7 +7,7 @@ import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.GpuCommandPoly;
-import legend.core.gpu.RECT;
+import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
@@ -188,7 +188,7 @@ import static legend.game.combat.Bttl_800c.light_800c6ddc;
 import static legend.game.combat.Bttl_800c.lights_800c692c;
 import static legend.game.combat.Bttl_800c.loadAttackAnimations;
 import static legend.game.combat.Bttl_800c.melbuMonsterNames_800c6ba8;
-import static legend.game.combat.Bttl_800c.modelColourMaps_800fb06c;
+import static legend.game.combat.Bttl_800c.modelVramSlots_800fb06c;
 import static legend.game.combat.Bttl_800c.monsterBents_800c6b78;
 import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800c.monsterCount_800c6b9c;
@@ -1654,7 +1654,7 @@ public final class Bttl_800e {
   public static void FUN_800e75ac(final GenericSpriteEffect24 spriteEffect, final MV transformMatrix) {
     final MV finalTransform = new MV();
     transformMatrix.compose(worldToScreenMatrix_800c3548, finalTransform);
-    final float z = Math.min(0x3ff8, zOffset_1f8003e8.get() + finalTransform.transfer.z / 4.0f);
+    final float z = Math.min(0x3ff8, zOffset_1f8003e8 + finalTransform.transfer.z / 4.0f);
 
     if(z >= 40) {
       //LAB_800e7610
@@ -2085,7 +2085,7 @@ public final class Bttl_800e {
       spriteEffect.angle_20 = managerInner.rot_10.z;
 
       if((managerInner.flags_00 & 0x400_0000) != 0) {
-        zOffset_1f8003e8.set(managerInner.z_22);
+        zOffset_1f8003e8 = managerInner.z_22;
         FUN_800e75ac(spriteEffect, transformMatrix);
       } else {
         //LAB_800e9574
@@ -2217,10 +2217,10 @@ public final class Bttl_800e {
     // Retail bug? Trying to read textureInfo from a DEFF container that doesn't have it
     if(animatedTmdType.textureInfo_08 != null) {
       final DeffPart.TextureInfo textureInfo = animatedTmdType.textureInfo_08[0];
-      final int tpage = GetTPage(Bpp.BITS_4, Translucency.HALF_B_PLUS_HALF_F, textureInfo.vramPos_00.x.get(), textureInfo.vramPos_00.y.get());
-      model.colourMap_9d = modelColourMaps_800fb06c.get(tpage).get();
+      final int tpage = GetTPage(Bpp.BITS_4, Translucency.HALF_B_PLUS_HALF_F, textureInfo.vramPos_00.x, textureInfo.vramPos_00.y);
+      model.vramSlot_9d = modelVramSlots_800fb06c.get(tpage).get();
     } else {
-      model.colourMap_9d = 0;
+      model.vramSlot_9d = 0;
     }
 
     loadModelTmd(model, effect.extTmd_08);
@@ -2256,7 +2256,7 @@ public final class Bttl_800e {
     effect.tmdType_04 = animatedTmdType;
     effect.extTmd_08 = animatedTmdType.tmd_0c;
     effect.anim_0c = animatedTmdType.anim_14;
-    effect.model_10.colourMap_9d = 0;
+    effect.model_10.vramSlot_9d = 0;
     effect.model_134 = effect.model_10;
     loadModelTmd(effect.model_134, effect.extTmd_08);
     loadModelAnim(effect.model_134, effect.anim_0c);
@@ -2277,7 +2277,7 @@ public final class Bttl_800e {
     model.partCount_98 = a1.partCount_5dc;
     model.totalFrames_9a = a1.totalFrames_5de;
     model.animationState_9c = a1.animationState_5e0;
-    model.colourMap_9d = 0;
+    model.vramSlot_9d = 0;
     model.zOffset_a0 = 0x200;
     model.disableInterpolation_a2 = false;
     model.ub_a3 = 0;
@@ -2688,10 +2688,10 @@ public final class Bttl_800e {
   }
 
   @Method(0x800ead44L)
-  public static void applyTextureAnimation(final RECT rect, final int h) {
-    GPU.queueCommand(1, new GpuCommandCopyVramToVram(960, 256, rect.x.get(), rect.y.get() + rect.h.get() - h, rect.w.get(), h));
-    GPU.queueCommand(1, new GpuCommandCopyVramToVram(rect.x.get(), rect.y.get() + h, rect.x.get(), rect.y.get(), rect.w.get(), rect.h.get() - h));
-    GPU.queueCommand(1, new GpuCommandCopyVramToVram(rect.x.get(), rect.y.get(), 960, 256, rect.w.get(), h));
+  public static void applyTextureAnimation(final Rect4i rect, final int h) {
+    GPU.queueCommand(1, new GpuCommandCopyVramToVram(960, 256, rect.x, rect.y + rect.h - h, rect.w, h));
+    GPU.queueCommand(1, new GpuCommandCopyVramToVram(rect.x, rect.y + h, rect.x, rect.y, rect.w, rect.h - h));
+    GPU.queueCommand(1, new GpuCommandCopyVramToVram(rect.x, rect.y, 960, 256, rect.w, h));
   }
 
   @Method(0x800eaec8L)
@@ -2700,10 +2700,10 @@ public final class Bttl_800e {
     anim.accumulator_14 += anim.step_18;
 
     //LAB_800eaf08
-    int h = (anim.step_18 >> 8) % anim.rect_0c.h.get();
+    int h = (anim.step_18 >> 8) % anim.rect_0c.h;
 
     if(h < 0) {
-      h += anim.rect_0c.h.get();
+      h += anim.rect_0c.h;
     }
 
     //LAB_800eaf30
@@ -2716,7 +2716,7 @@ public final class Bttl_800e {
   }
 
   @Method(0x800eaf54L)
-  public static TextureAnimationAttachment1c findTextureAnimationAttachment(EffectManagerData6c<?> manager, final RECT vramPos) {
+  public static TextureAnimationAttachment1c findTextureAnimationAttachment(EffectManagerData6c<?> manager, final Rect4i vramPos) {
     // Find manager with attachment 10
     //LAB_800eaf80
     while(!manager.hasAttachment(10)) {
@@ -2732,7 +2732,7 @@ public final class Bttl_800e {
 
     //LAB_800eafcc
     while(attachment != null) {
-      if(attachment.rect_0c.x.get() == vramPos.x.get() && attachment.rect_0c.y.get() == vramPos.y.get()) {
+      if(attachment.rect_0c.x == vramPos.x && attachment.rect_0c.y == vramPos.y) {
         break;
       }
 
@@ -2775,8 +2775,8 @@ public final class Bttl_800e {
       final EffectAttachment attachment = current.getAttachment();
 
       if(attachment.id_05 == 10 && attachment instanceof final TextureAnimationAttachment1c attachment10) {
-        if(attachment10.rect_0c.x.get() == textureInfo.vramPos_00.x.get()) {
-          if(attachment10.rect_0c.y.get() == textureInfo.vramPos_00.y.get()) {
+        if(attachment10.rect_0c.x == textureInfo.vramPos_00.x) {
+          if(attachment10.rect_0c.y == textureInfo.vramPos_00.y) {
             current.setAttachment(attachment.getAttachment());
             break;
           }
@@ -2805,10 +2805,10 @@ public final class Bttl_800e {
     final TextureAnimationAttachment1c attachment = findTextureAnimationAttachment(manager, textureInfo.vramPos_00);
 
     if(attachment != null) {
-      int h = (-attachment.accumulator_14 >> 8) % attachment.rect_0c.h.get();
+      int h = (-attachment.accumulator_14 >> 8) % attachment.rect_0c.h;
 
       if(h < 0) {
-        h += attachment.rect_0c.h.get();
+        h += attachment.rect_0c.h;
       }
 
       //LAB_800eb25c
@@ -2823,7 +2823,7 @@ public final class Bttl_800e {
 
   /** Adds a new texture update attachment, or updates an existing one's step value if one already exists for that region */
   @Method(0x800eb280L)
-  public static void addOrUpdateTextureAnimationAttachment(final EffectManagerData6c<?> manager, final RECT vramPos, final int step) {
+  public static void addOrUpdateTextureAnimationAttachment(final EffectManagerData6c<?> manager, final Rect4i vramPos, final int step) {
     TextureAnimationAttachment1c attachment = findTextureAnimationAttachment(manager, vramPos);
 
     if(attachment == null) {
@@ -2849,18 +2849,18 @@ public final class Bttl_800e {
           final TextureAnimationAttachment1c sub = manager.addAttachment(10, 0, Bttl_800e::tickTextureAnimationAttachment, new TextureAnimationAttachment1c());
 
           if((s0[1] & 0x3c0) == 0) {
-            sub.rect_0c.x.set((short)(textureInfo[0].vramPos_00.x.get() & 0x3c0 | s0[1]));
-            sub.rect_0c.y.set((short)(textureInfo[0].vramPos_00.y.get() & 0x100 | s0[2]));
+            sub.rect_0c.x = textureInfo[0].vramPos_00.x & 0x3c0 | s0[1];
+            sub.rect_0c.y = textureInfo[0].vramPos_00.y & 0x100 | s0[2];
           } else {
             //LAB_800eb3cc
-            sub.rect_0c.x.set(s0[1]);
-            sub.rect_0c.y.set(s0[2]);
+            sub.rect_0c.x = s0[1];
+            sub.rect_0c.y = s0[2];
           }
 
           //LAB_800eb3dc
           //LAB_800eb3f8
-          sub.rect_0c.w.set((short)(s0[3] / 4));
-          sub.rect_0c.h.set(s0[4]);
+          sub.rect_0c.w = s0[3] / 4;
+          sub.rect_0c.h = s0[4];
           sub.accumulator_14 = 0;
 
           final int v0;
@@ -2906,12 +2906,12 @@ public final class Bttl_800e {
 
   /** Used in Dart transform */
   @Method(0x800eb554L)
-  public static void applyRedEyeDragoonTransformationFlameArmorEffectTextureAnimations(final RECT a0, final Vector2i a1, final int height) {
-    GPU.queueCommand(1, new GpuCommandCopyVramToVram(960, 256, a1.x, a1.y + a0.h.get() - height, a0.w.get(), height));
-    GPU.queueCommand(1, new GpuCommandCopyVramToVram(a1.x, a1.y + height, a1.x, a1.y, a0.w.get(), a0.h.get() - height));
-    GPU.queueCommand(1, new GpuCommandCopyVramToVram(a1.x, a1.y, a0.x.get(), a0.y.get() + a0.h.get() - height, a0.w.get(), height));
-    GPU.queueCommand(1, new GpuCommandCopyVramToVram(a0.x.get(), a0.y.get() + height, a0.x.get(), a0.y.get(), a0.w.get(), a0.h.get() - height));
-    GPU.queueCommand(1, new GpuCommandCopyVramToVram(a0.x.get(), a0.y.get(), 960, 256, a0.w.get(), height));
+  public static void applyRedEyeDragoonTransformationFlameArmorEffectTextureAnimations(final Rect4i a0, final Vector2i a1, final int height) {
+    GPU.queueCommand(1, new GpuCommandCopyVramToVram(960, 256, a1.x, a1.y + a0.h - height, a0.w, height));
+    GPU.queueCommand(1, new GpuCommandCopyVramToVram(a1.x, a1.y + height, a1.x, a1.y, a0.w, a0.h - height));
+    GPU.queueCommand(1, new GpuCommandCopyVramToVram(a1.x, a1.y, a0.x, a0.y + a0.h - height, a0.w, height));
+    GPU.queueCommand(1, new GpuCommandCopyVramToVram(a0.x, a0.y + height, a0.x, a0.y, a0.w, a0.h - height));
+    GPU.queueCommand(1, new GpuCommandCopyVramToVram(a0.x, a0.y, 960, 256, a0.w, height));
   }
 
   @Method(0x800eb7c4L)
@@ -2920,10 +2920,10 @@ public final class Bttl_800e {
     effect.accumulator_14 += effect.step_18;
 
     //LAB_800eb800
-    int a2 = (effect.step_18 >> 8) % effect.rect_0c.h.get();
+    int a2 = (effect.step_18 >> 8) % effect.rect_0c.h;
 
     if(a2 < 0) {
-      a2 = a2 + effect.rect_0c.h.get();
+      a2 = a2 + effect.rect_0c.h;
     }
 
     //LAB_800eb828
@@ -2964,8 +2964,8 @@ public final class Bttl_800e {
     attachment.rect_0c.set(textureInfo1.vramPos_00);
     attachment.accumulator_14 = 0;
     attachment.step_18 = script.params_20[3].get();
-    attachment._1c.x = textureInfo2.vramPos_00.x.get();
-    attachment._1c.y = textureInfo2.vramPos_00.y.get();
+    attachment._1c.x = textureInfo2.vramPos_00.x;
+    attachment._1c.y = textureInfo2.vramPos_00.y;
     return FlowControl.CONTINUE;
   }
 
@@ -3035,12 +3035,12 @@ public final class Bttl_800e {
           v0 = colour & 0xffff_8000 | 0x1;
         }
 
-        darkening.modified_800[y][x] = (short)v0;
+        darkening.modified_800[y][x] = v0;
       }
     }
 
     for(int y = 0; y < 16; y++) {
-      GPU.uploadData(new RECT().set((short)448, (short)(240 + y), (short)64, (short)1), stageDarkening_800c6958.modified_800[y]);
+      GPU.uploadData(new Rect4i(448, (240 + y), 64, 1), stageDarkening_800c6958.modified_800[y]);
     }
   }
 
@@ -3189,8 +3189,8 @@ public final class Bttl_800e {
       //LAB_800ec560
     }
 
-    tmdGp0Tpage_1f8003ec.set(0);
-    zOffset_1f8003e8.set(stage.z_5e8);
+    tmdGp0Tpage_1f8003ec = 0;
+    zOffset_1f8003e8 = stage.z_5e8;
 
     //LAB_800ec5a0
     int partBit = 0x1;
@@ -3314,8 +3314,8 @@ public final class Bttl_800e {
 
   @Method(0x800ec974L)
   public static void renderBttlModel(final Model124 model) {
-    tmdGp0Tpage_1f8003ec.set(model.tpage_108);
-    zOffset_1f8003e8.set(model.zOffset_a0);
+    tmdGp0Tpage_1f8003ec = model.tpage_108;
+    zOffset_1f8003e8 = model.zOffset_a0;
 
     //LAB_800ec9d0
     for(int i = 0; i < model.modelParts_00.length; i++) {
@@ -3465,7 +3465,7 @@ public final class Bttl_800e {
 
     //LAB_800ece9c
     battleMenu_800c6c34.transforms.identity();
-    battleMenu_800c6c34.transforms.transfer.set(GPU.getOffsetX() + screenCoords.x - 8, GPU.getOffsetY() + screenCoords.y + targetArrowOffsetY_800fb188.get(tickCount_800bb0fc.get() & 0x7).get(), 112.0f);
+    battleMenu_800c6c34.transforms.transfer.set(GPU.getOffsetX() + screenCoords.x - 8, GPU.getOffsetY() + screenCoords.y + targetArrowOffsetY_800fb188.get(tickCount_800bb0fc & 0x7).get(), 112.0f);
     RENDERER.queueOrthoModel(battleMenu_800c6c34.targetArrows[colour], battleMenu_800c6c34.transforms);
   }
 
@@ -3664,7 +3664,7 @@ public final class Bttl_800e {
 
     //LAB_800ee894
     for(int charSlot = 0; charSlot < 3; charSlot++) {
-      spGained_800bc950.get(charSlot).set(0);
+      spGained_800bc950[charSlot] = 0;
     }
 
     sortItems();
@@ -3679,23 +3679,23 @@ public final class Bttl_800e {
         final Tim tim = new Tim(files.get(fileIndex));
 
         if(fileIndex == 0) {
-          GPU.uploadData(new RECT().set((short)704, (short)256, (short)64, (short)256), tim.getImageData());
+          GPU.uploadData(new Rect4i(704, 256, 64, 256), tim.getImageData());
         }
 
         //LAB_800eea20
-        final RECT rect = new RECT();
+        final Rect4i rect = new Rect4i();
         if(fileIndex < 4) {
-          rect.x.set((short)(battleHudTextureVramXOffsets_800c6e60[fileIndex] + 704));
-          rect.y.set((short)496);
+          rect.x = battleHudTextureVramXOffsets_800c6e60[fileIndex] + 704;
+          rect.y = 496;
         } else {
           //LAB_800eea3c
-          rect.x.set((short)(battleHudTextureVramXOffsets_800c6e60[fileIndex] + 896));
-          rect.y.set((short)304);
+          rect.x = battleHudTextureVramXOffsets_800c6e60[fileIndex] + 896;
+          rect.y = 304;
         }
 
         //LAB_800eea50
-        rect.w.set((short)combatUiElementRectDimensions_800c6e48[fileIndex].x);
-        rect.h.set((short)combatUiElementRectDimensions_800c6e48[fileIndex].y);
+        rect.w = combatUiElementRectDimensions_800c6e48[fileIndex].x;
+        rect.h = combatUiElementRectDimensions_800c6e48[fileIndex].y;
         GPU.uploadData(rect, tim.getClutData());
         countCombatUiFilesLoaded_800c6cf4.add(1);
       }
@@ -3747,7 +3747,7 @@ public final class Bttl_800e {
   @Method(0x800ef28cL)
   public static void FUN_800ef28c() {
     loadCharacterStats();
-    characterStatsLoaded_800be5d0.set(true);
+    characterStatsLoaded_800be5d0 = true;
 
     //LAB_800ef31c
     for(int charSlot = 0; charSlot < 3; charSlot++) {
@@ -3925,7 +3925,7 @@ public final class Bttl_800e {
 
       //LAB_800efa34
       for(int charSlot = 0; charSlot < charCount; charSlot++) {
-        if(activePartyBattleHudCharacterDisplays_800c6c40.get(charSlot).charIndex_00.get() == -1 && characterStatsLoaded_800be5d0.get()) {
+        if(activePartyBattleHudCharacterDisplays_800c6c40.get(charSlot).charIndex_00.get() == -1 && characterStatsLoaded_800be5d0) {
           initializeBattleHudCharacterDisplay(charSlot);
         }
         //LAB_800efa64
@@ -3963,7 +3963,7 @@ public final class Bttl_800e {
           renderNumber(charSlot, 4, playerSp.getCurrent() / 100, 1);
           EVENTS.postEvent(new StatDisplayEvent(charSlot, player));
 
-          charDisplay._14.get(1).set(tickCount_800bb0fc.get() & 0x3);
+          charDisplay._14.get(1).set(tickCount_800bb0fc & 0x3);
 
           //LAB_800efc0c
           if(playerSp.getCurrent() < playerSp.getMax()) {
@@ -4122,8 +4122,8 @@ public final class Bttl_800e {
 
           if(brightnessIndex0 != 0) {
             final int v1_0 = (6 - charDisplay._14.get(2).get()) * 8 + 100;
-            final int x = displayStats.x_00 - centreScreenX_1f8003dc.get() + namePortraitMetrics.portraitW_06.get() / 2 - 44;
-            final int y = displayStats.y_02 - centreScreenY_1f8003de.get() + namePortraitMetrics.portraitH_07.get() / 2 - 22;
+            final int x = displayStats.x_00 - centreScreenX_1f8003dc + namePortraitMetrics.portraitW_06.get() / 2 - 44;
+            final int y = displayStats.y_02 - centreScreenY_1f8003de + namePortraitMetrics.portraitH_07.get() / 2 - 22;
             int dimVertexPositionModifier = (namePortraitMetrics.portraitW_06.get() + 2) * v1_0 / 100 / 2;
             final int x0 = x - dimVertexPositionModifier;
             final int x1 = x + dimVertexPositionModifier - 1;
@@ -4233,8 +4233,8 @@ public final class Bttl_800e {
               spBarW = Math.max(0, (short)spBarW * 35 / 100);
 
               //LAB_800f0780
-              final int left = displayStats.x_00 - centreScreenX_1f8003dc.get() + 3;
-              final int top = displayStats.y_02 - centreScreenY_1f8003de.get() + 8;
+              final int left = displayStats.x_00 - centreScreenX_1f8003dc + 3;
+              final int top = displayStats.y_02 - centreScreenY_1f8003de + 8;
               final int right = left + spBarW;
               final int bottom = top + 3;
 
@@ -4260,8 +4260,8 @@ public final class Bttl_800e {
             //SP border
             //LAB_800f0910
             for(int i = 0; i < 4; i++) {
-              final int offsetX = displayStats.x_00 - centreScreenX_1f8003dc.get();
-              final int offsetY = displayStats.y_02 - centreScreenY_1f8003de.get();
+              final int offsetX = displayStats.x_00 - centreScreenX_1f8003dc;
+              final int offsetY = displayStats.y_02 - centreScreenY_1f8003de;
               drawLine(spBarBorderMetrics_800fb46c.get(i).x1_00.get() + offsetX, spBarBorderMetrics_800fb46c.get(i).y1_01.get() + offsetY, spBarBorderMetrics_800fb46c.get(i).x2_02.get() + offsetX, spBarBorderMetrics_800fb46c.get(i).y2_03.get() + offsetY, 0x60, 0x60, 0x60, false);
             }
 
@@ -4269,8 +4269,8 @@ public final class Bttl_800e {
             if((charDisplay.flags_06.get() & 0x8) != 0) {
               //LAB_800f09ec
               for(int i = 0; i < 4; i++) {
-                final int offsetX = displayStats.x_00 - centreScreenX_1f8003dc.get();
-                final int offsetY = displayStats.y_02 - centreScreenY_1f8003de.get();
+                final int offsetX = displayStats.x_00 - centreScreenX_1f8003dc;
+                final int offsetY = displayStats.y_02 - centreScreenY_1f8003de;
                 drawLine(spBarFlashingBorderMetrics_800fb47c.get(i).x1_00.get() + offsetX, spBarFlashingBorderMetrics_800fb47c.get(i).y1_01.get() + offsetY, spBarFlashingBorderMetrics_800fb47c.get(i).x2_02.get() + offsetX, spBarFlashingBorderMetrics_800fb47c.get(i).y2_03.get() + offsetY, 0x80, 0, 0, false);
               }
             }
@@ -4345,7 +4345,7 @@ public final class Bttl_800e {
           final int status = targetBent.status_0e;
 
           if((status & 0xff) != 0) {
-            if((tickCount_800bb0fc.get() & 0x10) != 0) {
+            if((tickCount_800bb0fc & 0x10) != 0) {
               int mask = 0x80;
 
               //LAB_800f0e94

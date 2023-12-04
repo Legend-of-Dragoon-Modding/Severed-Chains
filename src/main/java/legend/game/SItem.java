@@ -399,11 +399,11 @@ public final class SItem {
 
   @Method(0x800fcad4L)
   public static void renderMenus() {
-    inventoryJoypadInput_800bdc44.set(getJoypadInputByPriority());
+    inventoryJoypadInput_800bdc44 = getJoypadInputByPriority();
 
     switch(inventoryMenuState_800bdc28) {
       case INIT_0 -> { // Initialize, loads some files (unknown contents)
-        loadingNewGameState_800bdc34.set(false);
+        loadingNewGameState_800bdc34 = false;
         loadCharacterStats();
 
         if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {
@@ -411,7 +411,7 @@ public final class SItem {
           canSave_8011dc88 = true;
         } else {
           gameState_800babc8.isOnWorldMap_4e4 = false;
-          canSave_8011dc88 = CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get()) || standingInSavePoint_8005a368.get();
+          canSave_8011dc88 = CONFIG.getConfig(CoreMod.SAVE_ANYWHERE_CONFIG.get()) || standingInSavePoint_8005a368;
         }
 
         inventoryMenuState_800bdc28 = InventoryMenuState.AWAIT_INIT_1;
@@ -462,7 +462,7 @@ public final class SItem {
 
         currentEngineState_8004dd04.menuClosed();
 
-        textZ_800bdf00.set(13);
+        textZ_800bdf00 = 13;
       }
     }
   }
@@ -643,15 +643,15 @@ public final class SItem {
     //LAB_80103b48
     int usedCharacterSlots = 0;
     for(int slot = 0; slot < 9; slot++) {
-      secondaryCharIds_800bdbf8.get(slot).set(-1);
-      characterIndices_800bdbb8.get(slot).set(-1);
+      secondaryCharIds_800bdbf8[slot] = -1;
+      characterIndices_800bdbb8[slot] = -1;
 
       if((gameState_800babc8.charData_32c[slot].partyFlags_04 & 0x1) != 0) {
-        characterIndices_800bdbb8.get(characterCount_8011d7c4).set(slot);
+        characterIndices_800bdbb8[characterCount_8011d7c4] = slot;
         characterCount_8011d7c4++;
 
         if(gameState_800babc8.charIds_88[0] != slot && gameState_800babc8.charIds_88[1] != slot && gameState_800babc8.charIds_88[2] != slot) {
-          secondaryCharIds_800bdbf8.get(usedCharacterSlots).set(slot);
+          secondaryCharIds_800bdbf8[usedCharacterSlots] = slot;
           usedCharacterSlots++;
         }
       }
@@ -737,10 +737,10 @@ public final class SItem {
       if(a0 == 0) {
         for(int i = 0; i < characterCount_8011d7c4; i++) {
           for(final EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
-            if(gameState_800babc8.charData_32c[characterIndices_800bdbb8.get(i).get()].equipment_14.get(equipmentSlot) != null) {
-              final Equipment equipment = gameState_800babc8.charData_32c[characterIndices_800bdbb8.get(i).get()].equipment_14.get(equipmentSlot);
+            if(gameState_800babc8.charData_32c[characterIndices_800bdbb8[i]].equipment_14.get(equipmentSlot) != null) {
+              final Equipment equipment = gameState_800babc8.charData_32c[characterIndices_800bdbb8[i]].equipment_14.get(equipmentSlot);
               final MenuEntryStruct04<Equipment> menuEntry = MenuEntryStruct04.make(equipment);
-              menuEntry.flags_02 = 0x3000 | characterIndices_800bdbb8.get(i).get();
+              menuEntry.flags_02 = 0x3000 | characterIndices_800bdbb8[i];
               equipments.add(menuEntry);
 
               equipmentIndex++;
@@ -763,28 +763,28 @@ public final class SItem {
       return 0;
     }
 
-    if(additionOffsets_8004f5ac.get(charIndex).get() == -1) { // No additions (Shiranda)
+    if(additionOffsets_8004f5ac[charIndex] == -1) { // No additions (Shiranda)
       return 0;
     }
 
     int t5 = 0;
     int t0 = 0;
-    for(int additionIndex = 0; additionIndex < additionCounts_8004f5c0.get(charIndex).get(); additionIndex++) {
-      final AdditionUnlockEvent event = EVENTS.postEvent(new AdditionUnlockEvent(additionOffsets_8004f5ac.get(charIndex).get() + additionIndex, additionData_80052884.get(additionOffsets_8004f5ac.get(charIndex).get() + additionIndex).level_00.get()));
-      additionData_80052884.get(additionOffsets_8004f5ac.get(charIndex).get() + additionIndex).level_00.set(event.additionLevel);
+    for(int additionIndex = 0; additionIndex < additionCounts_8004f5c0[charIndex]; additionIndex++) {
+      final AdditionUnlockEvent event = EVENTS.postEvent(new AdditionUnlockEvent(additionOffsets_8004f5ac[charIndex] + additionIndex, additionData_80052884.get(additionOffsets_8004f5ac[charIndex] + additionIndex).level_00.get()));
+      additionData_80052884.get(additionOffsets_8004f5ac[charIndex] + additionIndex).level_00.set(event.additionLevel);
 
-      final int level = additionData_80052884.get(additionOffsets_8004f5ac.get(charIndex).get() + additionIndex).level_00.get();
+      final int level = additionData_80052884.get(additionOffsets_8004f5ac[charIndex] + additionIndex).level_00.get();
 
       if(level == -1 && (gameState_800babc8.charData_32c[charIndex].partyFlags_04 & 0x40) != 0) {
         if(additions != null) {
-          additions[t0].offset_00 = additionOffsets_8004f5ac.get(charIndex).get() + additionIndex;
+          additions[t0].offset_00 = additionOffsets_8004f5ac[charIndex] + additionIndex;
           additions[t0].index_01 = additionIndex;
         }
 
         t0++;
       } else if(level > 0 && level <= gameState_800babc8.charData_32c[charIndex].level_12) {
         if(additions != null) {
-          additions[t0].offset_00 = additionOffsets_8004f5ac.get(charIndex).get() + additionIndex;
+          additions[t0].offset_00 = additionOffsets_8004f5ac[charIndex] + additionIndex;
           additions[t0].index_01 = additionIndex;
         }
 
@@ -793,7 +793,7 @@ public final class SItem {
         }
 
         if(level == gameState_800babc8.charData_32c[charIndex].level_12) {
-          t5 = additionOffsets_8004f5ac.get(charIndex).get() + additionIndex + 1;
+          t5 = additionOffsets_8004f5ac[charIndex] + additionIndex + 1;
         }
 
         t0++;
@@ -1242,7 +1242,7 @@ public final class SItem {
     //LAB_80107e90
     final int status = gameState_800babc8.charData_32c[charIndex].status_10;
 
-    if((tickCount_800bb0fc.get() & 0x10) == 0) {
+    if((tickCount_800bb0fc & 0x10) == 0) {
       return false;
     }
 
@@ -1603,7 +1603,7 @@ public final class SItem {
         break;
 
       case 3:
-        textZ_800bdf00.set(31);
+        textZ_800bdf00 = 31;
         final int x = messageBox.x_1c + 60;
         int y = messageBox.y_1e + 7;
 
@@ -1617,11 +1617,11 @@ public final class SItem {
         }
 
         //LAB_8010eeac
-        textZ_800bdf00.set(33);
+        textZ_800bdf00 = 33;
 
         if(messageBox.type_15 == 0) {
           //LAB_8010eed8
-          if(!messageBox.ignoreInput && (inventoryJoypadInput_800bdc44.get() & 0x60) != 0) {
+          if(!messageBox.ignoreInput && (inventoryJoypadInput_800bdc44 & 0x60) != 0) {
             playSound(2);
             messageBox.state_0c = 4;
             messageBox.result = MessageBoxResult.YES;
@@ -1641,12 +1641,12 @@ public final class SItem {
           }
 
           //LAB_8010ef64
-          textZ_800bdf00.set(31);
+          textZ_800bdf00 = 31;
 
           renderCentredText(messageBox.yes, messageBox.x_1c + 60, y + 7, messageBox.menuIndex_18 == 0 ? TextColour.RED : TextColour.BROWN);
           renderCentredText(messageBox.no, messageBox.x_1c + 60, y + 21, messageBox.menuIndex_18 == 0 ? TextColour.BROWN : TextColour.RED);
 
-          textZ_800bdf00.set(33);
+          textZ_800bdf00 = 33;
         }
 
         break;
@@ -1773,13 +1773,13 @@ public final class SItem {
 
       final int additionIndex = stats.selectedAddition_35;
       if(additionIndex != -1) {
-        final Addition04 addition = additions_80114070.get(additionIndex).deref().get(stats.additionLevels_36[additionIndex - additionOffsets_8004f5ac.get(charId).get()]);
+        final Addition04 addition = additions_80114070.get(additionIndex).deref().get(stats.additionLevels_36[additionIndex - additionOffsets_8004f5ac[charId]]);
 
         stats.addition_00_9c = addition._00.get();
         stats.additionSpMultiplier_9e = addition.spMultiplier_02.get();
         stats.additionDamageMultiplier_9f = addition.damageMultiplier_03.get();
 
-        final AdditionHitMultiplierEvent event = EVENTS.postEvent(new AdditionHitMultiplierEvent(additionIndex, stats.additionLevels_36[additionIndex - additionOffsets_8004f5ac.get(charId).get()], stats.additionSpMultiplier_9e, stats.additionDamageMultiplier_9f));
+        final AdditionHitMultiplierEvent event = EVENTS.postEvent(new AdditionHitMultiplierEvent(additionIndex, stats.additionLevels_36[additionIndex - additionOffsets_8004f5ac[charId]], stats.additionSpMultiplier_9e, stats.additionDamageMultiplier_9f));
         stats.additionSpMultiplier_9e = event.additionSpMulti;
         stats.additionDamageMultiplier_9f = event.additionDmgMulti;
       } else {

@@ -219,6 +219,16 @@ public final class GameEngine {
           ConfigStorage.loadConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
 
           Scus94491BpeSegment_8002.start();
+
+/*
+          loadGameStateOverlay(EngineStateEnum.COMBAT_06);
+          System.out.println('{');
+          for(final RECT s : Bttl_800c.combatantTimRects_800fa6e0.bound(RECT.class, 10)) {
+            System.out.printf("  new Rect4i(%d, %d, %d, %d),%n", s.x.get(), s.y.get(), s.w.get(), s.h.get());
+          }
+          System.out.println("};");
+*/
+
           loading = false;
         }
       } catch(final Exception e) {

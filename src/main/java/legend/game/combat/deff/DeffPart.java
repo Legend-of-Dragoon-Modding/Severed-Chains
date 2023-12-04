@@ -1,6 +1,6 @@
 package legend.game.combat.deff;
 
-import legend.core.gpu.RECT;
+import legend.core.gpu.Rect4i;
 import legend.game.types.CContainer;
 import legend.game.types.TmdAnimationFile;
 import legend.game.unpacker.FileData;
@@ -112,7 +112,7 @@ public class DeffPart {
   }
 
   public static class TextureInfo {
-    public final RECT vramPos_00 = new RECT();
+    public final Rect4i vramPos_00 = new Rect4i();
 
     public TextureInfo(final FileData data) {
       data.readRect(0, this.vramPos_00);

@@ -31,7 +31,7 @@ public abstract class EngineState {
   }
 
   public void adjustModelPartUvs(final Model124 model, final ModelPart10 part) {
-    adjustPartUvs(part, model.colourMap_9d);
+    adjustPartUvs(part, model.vramSlot_9d);
   }
 
   public void modelLoaded(final Model124 model, final CContainer cContainer) {

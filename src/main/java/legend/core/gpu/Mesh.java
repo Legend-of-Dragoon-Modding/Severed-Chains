@@ -117,7 +117,7 @@ public record Mesh(Segment[] segments) {
 
         // Average Z
         final float averageZ = this.vertexCount == 3 ? GTE.averageZ3() : GTE.averageZ4();
-        final float z = Math.min((averageZ + zOffset_1f8003e8.get()) / (1 << zShift_1f8003c4.get()), zMax_1f8003cc.get());
+        final float z = Math.min((averageZ + zOffset_1f8003e8) / (1 << zShift_1f8003c4), zMax_1f8003cc);
 
         if(z < zMin) {
           continue;
@@ -134,7 +134,7 @@ public record Mesh(Segment[] segments) {
         }
 
         if(this.translucent && !this.textured) {
-          translucency = Translucency.of(tmdGp0Tpage_1f8003ec.get() >>> 5 & 0b11);
+          translucency = Translucency.of(tmdGp0Tpage_1f8003ec >>> 5 & 0b11);
         }
 
         GPU.queueCommand(z + offsetZ, renderable.new Command(this.name, this, vertices, uvs, colours, translucency, poly.paletteBase, poly.pageX, poly.pageY));

@@ -2,7 +2,7 @@ package legend.game.credits;
 
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
-import legend.core.gpu.RECT;
+import legend.core.gpu.Rect4i;
 import legend.core.memory.Method;
 import legend.core.memory.types.ArrayRef;
 import legend.game.EngineState;
@@ -23,10 +23,8 @@ import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.playXaAudio;
-import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 
 public class Credits extends EngineState {
   private List<FileData> creditTims_800d1ae0;
@@ -34,6 +32,8 @@ public class Credits extends EngineState {
   private boolean creditTimsLoaded_800d1ae8;
   private int creditsPassed_800d1aec;
   private int creditIndex_800d1af0;
+
+  private int loadingStage;
 
   private static final ArrayRef<CreditStruct1c> credits_800d1af8 = MEMORY.ref(4, 0x800d1af8L, ArrayRef.of(CreditStruct1c.class, 16, 0x1c, CreditStruct1c::new));
 
@@ -78,7 +78,7 @@ public class Credits extends EngineState {
   @Override
   @Method(0x800eaa88L)
   public void tick() {
-    this.creditsStates_800f9378[pregameLoadingStage_800bb10c.get()].run();
+    this.creditsStates_800f9378[this.loadingStage].run();
   }
 
   @Method(0x800eaad4L)
@@ -113,7 +113,7 @@ public class Credits extends EngineState {
 
     this.creditTimsLoaded_800d1ae8 = false;
     loadDrgnDir(0, 5720, this::creditsLoaded);
-    pregameLoadingStage_800bb10c.incr();
+    this.loadingStage++;
   }
 
   @Method(0x800eacc8L)
@@ -128,7 +128,7 @@ public class Credits extends EngineState {
       //LAB_800ead7c
       playXaAudio(3, 3, 1);
       startFadeEffect(2, 15);
-      pregameLoadingStage_800bb10c.incr();
+      this.loadingStage++;
     }
 
     //LAB_800ead9c
@@ -140,7 +140,7 @@ public class Credits extends EngineState {
 
     if(this.loadAndRenderCredits()) {
       startFadeEffect(1, 15);
-      pregameLoadingStage_800bb10c.incr();
+      this.loadingStage++;
     }
 
     //LAB_800eae28
@@ -152,7 +152,7 @@ public class Credits extends EngineState {
 
     if(this.fadeOutTicks_800d1ae4 >= 16) {
       //LAB_800eaea0
-      pregameLoadingStage_800bb10c.incr();
+      this.loadingStage++;
     }
 
     //LAB_800eaeac
@@ -163,7 +163,6 @@ public class Credits extends EngineState {
     //LAB_800eaedc
     this.creditTims_800d1ae0 = null;
     engineStateOnceLoaded_8004dd24 = EngineStateEnum.SUBMAP_05;
-    pregameLoadingStage_800bb10c.set(0);
 
     //LAB_800eaf14
   }
@@ -233,7 +232,7 @@ public class Credits extends EngineState {
           w, h,
           x, y,
           w, h,
-          orderingTableSize_1f8003c8.get() - 3
+          orderingTableSize_1f8003c8 - 3
         );
 
         //LAB_800eba4c
@@ -543,22 +542,17 @@ public class Credits extends EngineState {
     final CreditStruct1c credit = credits_800d1af8.get(creditSlot);
 
     //LAB_800ed1f8
-    final RECT imageRect = tim.getImageRect();
+    final Rect4i imageRect = tim.getImageRect();
+    imageRect.x = creditPos_800f9670[creditSlot].x;
+    imageRect.y = creditPos_800f9670[creditSlot].y;
 
-    final RECT rect = new RECT(
-      (short)creditPos_800f9670[creditSlot].x,
-      (short)creditPos_800f9670[creditSlot].y,
-      imageRect.w.get(),
-      imageRect.h.get()
-    );
+    credit.width_0e.set(imageRect.w);
+    credit.height_10.set(imageRect.h);
 
-    credit.width_0e.set(imageRect.w.get());
-    credit.height_10.set(imageRect.h.get());
-
-    LoadImage(rect, tim.getImageData());
+    GPU.uploadData(imageRect, tim.getImageData());
 
     if(tim.hasClut()) {
-      LoadImage(new RECT((short)896, (short)creditSlot, (short)16, (short)1), tim.getClutData());
+      GPU.uploadData(new Rect4i(896, creditSlot, 16, 1), tim.getClutData());
     }
 
     //LAB_800ed32c

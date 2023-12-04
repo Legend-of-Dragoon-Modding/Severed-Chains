@@ -79,10 +79,10 @@ public class Label extends Control {
       case BOTTOM -> this.getHeight() - this.textHeight;
     };
 
-    final int oldZ = textZ_800bdf00.get();
-    textZ_800bdf00.set(this.getZ() - 1);
+    final int oldZ = textZ_800bdf00;
+    textZ_800bdf00 = this.getZ() - 1;
     renderText(this.lodString, x + offsetX, y + offsetY, TextColour.BROWN);
-    textZ_800bdf00.set(oldZ);
+    textZ_800bdf00 = oldZ;
   }
 
   public enum HorizontalAlign {

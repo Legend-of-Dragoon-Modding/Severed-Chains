@@ -747,12 +747,12 @@ public class ParticleManager {
 
       //LAB_800fcff8
       GTE.setTransforms(transformMatrix);
-      zOffset_1f8003e8.set(0);
+      zOffset_1f8003e8 = 0;
       if((manager.params_10.flags_00 & 0x4000_0000) != 0) {
-        tmdGp0Tpage_1f8003ec.set(manager.params_10.flags_00 >>> 23 & 0x60);
+        tmdGp0Tpage_1f8003ec = manager.params_10.flags_00 >>> 23 & 0x60;
       } else {
         //LAB_800fd038
-        tmdGp0Tpage_1f8003ec.set(tpage);
+        tmdGp0Tpage_1f8003ec = tpage;
       }
 
       //LAB_800fd040
@@ -760,15 +760,15 @@ public class ParticleManager {
       dobj.attribute_00 = particleMetrics.flags_00;
       dobj.tmd_08 = tmd;
 
-      final int oldZShift = zShift_1f8003c4.get();
-      final int oldZMax = zMax_1f8003cc.get();
+      final int oldZShift = zShift_1f8003c4;
+      final int oldZMax = zMax_1f8003cc;
       final int oldZMin = zMin;
-      zShift_1f8003c4.set(2);
-      zMax_1f8003cc.set(0xffe);
+      zShift_1f8003c4 = 2;
+      zMax_1f8003cc = 0xffe;
       zMin = 0xb;
       Renderer.renderDobj2(dobj, false, 0x20);
-      zShift_1f8003c4.set(oldZShift);
-      zMax_1f8003cc.set(oldZMax);
+      zShift_1f8003c4 = oldZShift;
+      zMax_1f8003cc = oldZMax;
       zMin = oldZMin;
 
       if((particleMetrics.flags_00 & 0x40) == 0) {

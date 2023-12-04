@@ -98,7 +98,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
 
       CONFIG.setConfig(CoreMod.ENABLED_MODS_CONFIG.get(), this.enabledMods.toArray(String[]::new));
 
-      loadingNewGameState_800bdc34.set(true);
+      loadingNewGameState_800bdc34 = true;
       playSound(2);
       whichMenu_800bdc38 = WhichMenu.UNLOAD_NEW_CAMPAIGN_MENU;
     }

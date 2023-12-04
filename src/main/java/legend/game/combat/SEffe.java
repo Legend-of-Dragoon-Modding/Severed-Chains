@@ -11,7 +11,6 @@ import legend.core.gpu.GpuCommandLine;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.GpuCommandSetMaskBit;
-import legend.core.gpu.RECT;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.COLOUR;
 import legend.core.gte.GsCOORDINATE2;
@@ -147,7 +146,7 @@ import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800c.FUN_800cf684;
 import static legend.game.combat.Bttl_800c.FUN_800cfb94;
-import static legend.game.combat.Bttl_800c.colourMapUvs_800fb0ec;
+import static legend.game.combat.Bttl_800c.vramSlotUvs_800fb0ec;
 import static legend.game.combat.Bttl_800c.currentStage_800c66a4;
 import static legend.game.combat.Bttl_800c.deffManager_800c693c;
 import static legend.game.combat.Bttl_800c.getRelativeOffset;
@@ -1869,7 +1868,7 @@ public final class SEffe {
                 }
 
                 //LAB_80107664
-                final int buttonPressed = press_800bee94.get();
+                final int buttonPressed = press_800bee94;
 
                 if((buttonPressed & 0x60) != 0) {
                   additionHitCompletionState_8011a014[hitNum] = -1;
@@ -2270,7 +2269,7 @@ public final class SEffe {
         daddy.ticksRemainingToBeginAddition_12--;
         if(daddy.ticksRemainingToBeginAddition_12 == 0) {
           state.deallocateWithChildren();
-        } else if(((press_800bee94.get() >>> 4 & 0x2) != 0 || CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get())) && daddy.inputMode_13 != 2) {
+        } else if(((press_800bee94 >>> 4 & 0x2) != 0 || CONFIG.getConfig(CoreMod.AUTO_DRAGOON_ADDITION_CONFIG.get())) && daddy.inputMode_13 != 2) {
           daddy.meterSpinning_10 = 1;
           daddyMeterSpinning_80119f42 = 1;
         }
@@ -2306,7 +2305,7 @@ public final class SEffe {
 
           //LAB_801086bc
           //LAB_801086e0
-          if(getCurrentDragoonAdditionPressNumber(daddy, 0) != 0 && daddy.inputMode_13 == 1 || (press_800bee94.get() >>> 4 & 0x2) != 0 && daddy.inputMode_13 == 0) {
+          if(getCurrentDragoonAdditionPressNumber(daddy, 0) != 0 && daddy.inputMode_13 == 1 || (press_800bee94 >>> 4 & 0x2) != 0 && daddy.inputMode_13 == 0) {
             //LAB_8010870c
             daddy.buttonPressGlowBrightnessFactor_11 = 4;
             daddy.countEyeFlashTicks_0d = 0;
@@ -3557,8 +3556,8 @@ public final class SEffe {
       //LAB_8010c7c0
       for(int i = 0; i < 5; i++) {
         final LensFlareEffectInstance3c inst = effect.instances_38[i];
-        final int dispW = displayWidth_1f8003e0.get();
-        final int dispH = displayHeight_1f8003e4.get();
+        final int dispW = displayWidth_1f8003e0;
+        final int dispH = displayHeight_1f8003e4;
         inst.x_04 = screenCoords.x + dispW / 2.0f;
         inst.y_06 = screenCoords.y + dispH / 2.0f;
 
@@ -3577,7 +3576,7 @@ public final class SEffe {
 
       // Adjust brightness based on X position
       float screenX = Math.abs(screenCoords.x);
-      final int screenWidth = displayWidth_1f8003e0.get() / 2;
+      final int screenWidth = displayWidth_1f8003e0 / 2;
       if(screenX > screenWidth) {
         screenX = screenWidth;
       }
@@ -3616,8 +3615,8 @@ public final class SEffe {
             for(int j = 0; j < 4; j++) {
               final int x = (inst.widthScale_2e * w >> 12) * lensFlareTranslationMagnitudeFactors_800fb910[j][0];
               final int y = (inst.heightScale_30 * h >> 12) * lensFlareTranslationMagnitudeFactors_800fb910[j][1];
-              final int halfW = displayWidth_1f8003e0.get() / 2;
-              final int halfH = displayHeight_1f8003e4.get() / 2;
+              final int halfW = displayWidth_1f8003e0 / 2;
+              final int halfH = displayHeight_1f8003e4 / 2;
               final float[][] sp0x48 = new float[4][2];
               sp0x48[0][0] = inst.x_04 - halfW + x;
               sp0x48[0][1] = inst.y_06 - halfH + y;
@@ -3650,8 +3649,8 @@ public final class SEffe {
             }
           } else {
             //LAB_8010ceec
-            final int halfW = displayWidth_1f8003e0.get() / 2;
-            final int halfH = displayHeight_1f8003e4.get() / 2;
+            final int halfW = displayWidth_1f8003e0 / 2;
+            final int halfH = displayHeight_1f8003e4 / 2;
             final float x = inst.x_04 - halfW - (inst.widthScale_2e * w >> 12) / 2.0f;
             final float y = inst.y_06 - halfH - (inst.heightScale_30 * h >> 12) / 2.0f;
             final int w2 = w * inst.widthScale_2e >> 12;
@@ -3977,8 +3976,8 @@ public final class SEffe {
         transforms.compose(worldToScreenMatrix_800c3548, sp0x98);
         GTE.setTransforms(sp0x98);
 
-        zOffset_1f8003e8.set(0);
-        tmdGp0Tpage_1f8003ec.set(2);
+        zOffset_1f8003e8 = 0;
+        tmdGp0Tpage_1f8003ec = 2;
 
         renderDobj2(dobj2);
       }
@@ -4405,14 +4404,14 @@ public final class SEffe {
           dobj.attribute_00 = manager.params_10.flags_00;
           transformMatrix1.compose(worldToScreenMatrix_800c3548, finalTransformMatrix1);
           GTE.setTransforms(finalTransformMatrix1);
-          zOffset_1f8003e8.set(0);
-          tmdGp0Tpage_1f8003ec.set(manager.params_10.flags_00 >>> 23 & 0x60);
+          zOffset_1f8003e8 = 0;
+          tmdGp0Tpage_1f8003ec = manager.params_10.flags_00 >>> 23 & 0x60;
 
-          final int oldZShift = zShift_1f8003c4.get();
-          final int oldZMax = zMax_1f8003cc.get();
+          final int oldZShift = zShift_1f8003c4;
+          final int oldZMax = zMax_1f8003cc;
           final int oldZMin = zMin;
-          zShift_1f8003c4.set(2);
-          zMax_1f8003cc.set(0xffe);
+          zShift_1f8003c4 = 2;
+          zMax_1f8003cc = 0xffe;
           zMin = 0xb;
 
           if(impact.renderShockwave_01) {
@@ -4429,8 +4428,8 @@ public final class SEffe {
             Renderer.renderDobj2(dobj, false, 0x20);
           }
 
-          zShift_1f8003c4.set(oldZShift);
-          zMax_1f8003cc.set(oldZMax);
+          zShift_1f8003c4 = oldZShift;
+          zMax_1f8003cc = oldZMax;
           zMin = oldZMin;
 
           //LAB_8010f608
@@ -6393,7 +6392,7 @@ public final class SEffe {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "loadingStage", description = "The stage")
   @Method(0x80115a94L)
   public static FlowControl scriptGetXaLoadingStage(final RunningScript<?> script) {
-    script.params_20[0].set(_800bf0cf.get());
+    script.params_20[0].set(_800bf0cf);
     return FlowControl.CONTINUE;
   }
 
@@ -6559,7 +6558,7 @@ public final class SEffe {
       final int uvs;
       if(!BattleObject.EM__.equals(bobj.magic_00)) {
         //LAB_8011604c
-        uvs = colourMapUvs_800fb0ec.get(((BattleEntity27c)bobj).model_148.colourMap_9d).get();
+        uvs = vramSlotUvs_800fb0ec.get(((BattleEntity27c)bobj).model_148.vramSlot_9d).get();
         u = (uvs & 0xf) << 6;
         v = (uvs & 0x10) << 4;
         w = 0x100;
@@ -6584,7 +6583,7 @@ public final class SEffe {
           }
         } else {
           //LAB_80115fd8
-          uvs = colourMapUvs_800fb0ec.get(((ModelEffect13c)manager.effect_44).model_134.colourMap_9d).get();
+          uvs = vramSlotUvs_800fb0ec.get(((ModelEffect13c)manager.effect_44).model_134.vramSlot_9d).get();
           u = (uvs & 0xf) << 6;
           v = (uvs & 0x10) << 4;
           w = 256;
@@ -6595,8 +6594,8 @@ public final class SEffe {
       //LAB_80116098
       final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)getDeffPart(typeOrBobjIndex);
       final DeffPart.TextureInfo textureInfo = animatedTmdType.textureInfo_08[0];
-      u = textureInfo.vramPos_00.x.get();
-      v = textureInfo.vramPos_00.y.get();
+      u = textureInfo.vramPos_00.x;
+      v = textureInfo.vramPos_00.y;
       w = 256;
       h = 256;
     } else if(type == 0x100_0000 || type == 0x300_0000) {
@@ -6604,10 +6603,10 @@ public final class SEffe {
       //LAB_801160d4
       final DeffPart.TmdType tmdType = (DeffPart.TmdType)getDeffPart(typeOrBobjIndex);
       final DeffPart.TextureInfo textureInfo = tmdType.textureInfo_08[textureIndex * 2];
-      u = textureInfo.vramPos_00.x.get();
-      v = textureInfo.vramPos_00.y.get();
-      w = textureInfo.vramPos_00.w.get() * 4;
-      h = textureInfo.vramPos_00.h.get();
+      u = textureInfo.vramPos_00.x;
+      v = textureInfo.vramPos_00.y;
+      w = textureInfo.vramPos_00.w * 4;
+      h = textureInfo.vramPos_00.h;
       //LAB_80115f34
     } else if(type == 0x400_0000) {
       //LAB_801160f4
@@ -7232,8 +7231,8 @@ public final class SEffe {
     final LmbAnimationEffect5c effect = (LmbAnimationEffect5c)manager.effect_44;
     if(flags >= 0) { // No errors
       int s1 = Math.max(0, manager.params_10.ticks_24) % (effect.keyframeCount_08 * 2) << 12;
-      tmdGp0Tpage_1f8003ec.set(flags >>> 23 & 0x60); // tpage
-      zOffset_1f8003e8.set(manager.params_10.z_22);
+      tmdGp0Tpage_1f8003ec = flags >>> 23 & 0x60; // tpage
+      zOffset_1f8003e8 = manager.params_10.z_22;
       if((manager.params_10.flags_00 & 0x40) == 0) {
         FUN_800e61e4(manager.params_10.colour_1c.x / 128.0f, manager.params_10.colour_1c.y / 128.0f, manager.params_10.colour_1c.z / 128.0f);
       }
@@ -7467,14 +7466,14 @@ public final class SEffe {
       final MV sp0x10 = new MV();
       calculateEffectTransforms(sp0x10, data);
       if((data.params_10.flags_00 & 0x4000_0000) != 0) {
-        tmdGp0Tpage_1f8003ec.set(data.params_10.flags_00 >>> 23 & 0x60);
+        tmdGp0Tpage_1f8003ec = data.params_10.flags_00 >>> 23 & 0x60;
       } else {
         //LAB_801182bc
-        tmdGp0Tpage_1f8003ec.set(deffEffect.tpage_10);
+        tmdGp0Tpage_1f8003ec = deffEffect.tpage_10;
       }
 
       //LAB_801182c8
-      zOffset_1f8003e8.set(data.params_10.z_22);
+      zOffset_1f8003e8 = data.params_10.z_22;
       if((data.params_10.flags_00 & 0x40) == 0) {
         FUN_800e61e4(data.params_10.colour_1c.x / 128.0f, data.params_10.colour_1c.y / 128.0f, data.params_10.colour_1c.z / 128.0f);
       } else {
@@ -7496,15 +7495,15 @@ public final class SEffe {
         dobj2.attribute_00 = data.params_10.flags_00;
         dobj2.tmd_08 = deffEffect.tmd_08;
 
-        final int oldZShift = zShift_1f8003c4.get();
-        final int oldZMax = zMax_1f8003cc.get();
+        final int oldZShift = zShift_1f8003c4;
+        final int oldZMax = zMax_1f8003cc;
         final int oldZMin = zMin;
-        zShift_1f8003c4.set(2);
-        zMax_1f8003cc.set(0xffe);
+        zShift_1f8003c4 = 2;
+        zMax_1f8003cc = 0xffe;
         zMin = 0xb;
         Renderer.renderDobj2(dobj2, false, 0);
-        zShift_1f8003c4.set(oldZShift);
-        zMax_1f8003cc.set(oldZMax);
+        zShift_1f8003c4 = oldZShift;
+        zMax_1f8003cc = oldZMax;
         zMin = oldZMin;
 
         RENDERER.queueModel(deffEffect.obj, sp0x10)
@@ -7688,8 +7687,8 @@ public final class SEffe {
       sp0x10.m11 = 0.0f;
       sp0x10.m21 = 0.0f;
       sp0x10.transfer.y -= 0.05f; // Fix Z-fighting with ground
-      tmdGp0Tpage_1f8003ec.set(manager.params_10.flags_00 >>> 23 & 0x60);
-      zOffset_1f8003e8.set(manager.params_10.z_22);
+      tmdGp0Tpage_1f8003ec = manager.params_10.flags_00 >>> 23 & 0x60;
+      zOffset_1f8003e8 = manager.params_10.z_22;
       FUN_800e60e0(manager.params_10.colour_1c.x / 128.0f, manager.params_10.colour_1c.y / 128.0f, manager.params_10.colour_1c.z / 128.0f);
       renderTmdSpriteEffect(shadowModel_800bda10.modelParts_00[0].tmd_08, shadowModel_800bda10.modelParts_00[0].obj, manager.params_10, sp0x10);
       FUN_800e6170();
@@ -7747,42 +7746,42 @@ public final class SEffe {
     final int right = 320;
     final int bottom = 240;
 
-    final RECT buffPos = new RECT();
+    final Rect4i buffPos = new Rect4i();
 
     //LAB_80118ba8
     for(int i = 0; i < 4; i++) {
-      buffPos.x.set((short)(x + manager.params_10.width_24 / 2 * (i & 1)));
-      buffPos.y.set((short)(y + manager.params_10.height_28 / 2 * (i >> 1)));
-      buffPos.w.set((short)(manager.params_10.width_24 / 2));
-      buffPos.h.set((short)(manager.params_10.height_28 / 2));
+      buffPos.x = (int)(x + manager.params_10.width_24 / 2 * (i & 1));
+      buffPos.y = (int)(y + manager.params_10.height_28 / 2 * (i >> 1));
+      buffPos.w = manager.params_10.width_24 / 2;
+      buffPos.h = manager.params_10.height_28 / 2;
 
-      if(buffPos.x.get() < right) {
-        if(buffPos.x.get() < 0) {
-          buffPos.w.add(buffPos.x.get());
-          buffPos.x.set((short)0);
+      if(buffPos.x < right) {
+        if(buffPos.x < 0) {
+          buffPos.w += buffPos.x;
+          buffPos.x = 0;
         }
 
         //LAB_80118c58
-        if(buffPos.x.get() + buffPos.w.get() > right) {
-          buffPos.w.set((short)(right - buffPos.x.get()));
+        if(buffPos.x + buffPos.w > right) {
+          buffPos.w = right - buffPos.x;
         }
 
         //LAB_80118c7c
-        if(buffPos.w.get() > 0) {
-          if(buffPos.y.get() < bottom) {
-            if(buffPos.y.get() < 0) {
-              buffPos.y.set((short)0);
+        if(buffPos.w > 0) {
+          if(buffPos.y < bottom) {
+            if(buffPos.y < 0) {
+              buffPos.y = 0;
             }
 
             //LAB_80118cc0
-            if(buffPos.y.get() + buffPos.h.get() > bottom) {
-              buffPos.h.set((short)(bottom - buffPos.y.get()));
+            if(buffPos.y + buffPos.h > bottom) {
+              buffPos.h = bottom - buffPos.y;
             }
 
             //LAB_80118ce4
-            if(buffPos.h.get() > 0) {
-              final int[] data = new int[buffPos.w.get() * buffPos.h.get()];
-              final Rect4i rect = new Rect4i(buffPos.x.get(), buffPos.y.get(), buffPos.w.get(), buffPos.h.get());
+            if(buffPos.h > 0) {
+              final int[] data = new int[buffPos.w * buffPos.h];
+              final Rect4i rect = new Rect4i(buffPos.x, buffPos.y, buffPos.w, buffPos.h);
 
               // Back up draw buffer data after background is rendered, but before models are rendered
               GPU.queueCommand(maxZ, new GpuCommand() {
@@ -7847,14 +7846,14 @@ public final class SEffe {
 
         //LAB_80118f38
         if((manager.params_10.flags_00 & 0x4000_0000) != 0) {
-          tmdGp0Tpage_1f8003ec.set(manager.params_10.flags_00 >>> 23 & 0x60);
+          tmdGp0Tpage_1f8003ec = manager.params_10.flags_00 >>> 23 & 0x60;
         } else {
           //LAB_80118f5c
-          tmdGp0Tpage_1f8003ec.set(sprite.tpage_10);
+          tmdGp0Tpage_1f8003ec = sprite.tpage_10;
         }
 
         //LAB_80118f68
-        zOffset_1f8003e8.set(manager.params_10.z_22);
+        zOffset_1f8003e8 = manager.params_10.z_22;
 
         if((manager.params_10.flags_00 & 0x40) == 0) {
           FUN_800e61e4(manager.params_10.colour_1c.x / 128.0f, manager.params_10.colour_1c.y / 128.0f, manager.params_10.colour_1c.z / 128.0f);

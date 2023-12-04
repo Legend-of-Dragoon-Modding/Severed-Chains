@@ -25,7 +25,7 @@ public class Checkbox extends Control {
   public Checkbox() {
     this.uncheckedRenderable = ModelLoader.quad(
       "unchecked",
-      -displayWidth_1f8003e0.get() / 2, -displayHeight_1f8003e4.get() / 2, 0, 14, 14,
+      -displayWidth_1f8003e0 / 2, -displayHeight_1f8003e4 / 2, 0, 14, 14,
       0, 0, 14, 14,
       0, 0, 0,
       0x80, 0x80, 0x80,
@@ -36,7 +36,7 @@ public class Checkbox extends Control {
 
     this.checkedRenderable = ModelLoader.quad(
       "checked",
-      -displayWidth_1f8003e0.get() / 2, -displayHeight_1f8003e4.get() / 2, 0, 14, 14,
+      -displayWidth_1f8003e0 / 2, -displayHeight_1f8003e4 / 2, 0, 14, 14,
       0, 0, 14, 14,
       0, 0, 0,
       0x80, 0x80, 0x80,

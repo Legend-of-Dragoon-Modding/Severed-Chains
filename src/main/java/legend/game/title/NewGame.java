@@ -49,7 +49,7 @@ public class NewGame extends EngineState {
         final int index = levelStuff_80111cfc.get(charIndex).deref().get(i).addition_02.get();
 
         if(index != -1) {
-          final int offset = additionOffsets_8004f5ac.get(charIndex).get();
+          final int offset = additionOffsets_8004f5ac[charIndex];
           charData.additionLevels_1a[index - offset] = 1;
         }
 

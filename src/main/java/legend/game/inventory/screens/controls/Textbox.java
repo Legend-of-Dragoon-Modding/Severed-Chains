@@ -84,7 +84,7 @@ public class Textbox extends Control {
     this.textRenderable.render(x + 4, y + (this.getHeight() - 11) / 2 + 1, this.getZ() - 1);
 
     if(this.hasFocus()) {
-      final int offsetX = -displayWidth_1f8003e0.get() / 2;
+      final int offsetX = -displayWidth_1f8003e0 / 2;
       final int offsetY = -120;
       final int caretX = x + offsetX + 4 + this.caretX;
       final int caretY = y + offsetY + 3;

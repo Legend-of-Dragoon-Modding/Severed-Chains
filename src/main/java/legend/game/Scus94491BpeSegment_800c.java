@@ -1,6 +1,6 @@
 package legend.game;
 
-import legend.core.gpu.RECT;
+import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.memory.Value;
@@ -30,7 +30,7 @@ import static legend.core.GameEngine.SPU;
 public final class Scus94491BpeSegment_800c {
   private Scus94491BpeSegment_800c() { }
 
-  public static final RECT displayRect_800c34c8 = MEMORY.ref(8, 0x800c34c8L, RECT::new);
+  public static final Rect4i displayRect_800c34c8 = new Rect4i();
   /** Incremented with each frame - overflows to 1 */
   public static int PSDCNT_800c34d0;
 

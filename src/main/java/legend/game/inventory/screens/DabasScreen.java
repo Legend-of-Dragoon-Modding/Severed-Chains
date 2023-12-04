@@ -148,9 +148,9 @@ public class DabasScreen extends MenuScreen {
       case 2 -> this.renderDabasMenu(this.menuIndex);
 
       case 3 -> {
-        messageBox(messageBox_8011dc90);
+        messageBox(this.messageBox_8011dc90);
 
-        if(messageBox_8011dc90.ticks_10 < 3) {
+        if(this.messageBox_8011dc90.ticks_10 < 3) {
           this.renderDabasMenu(this.menuIndex);
           break;
         }
@@ -163,7 +163,7 @@ public class DabasScreen extends MenuScreen {
         this.FUN_801073f8(112, 144, this.gold);
         this.FUN_80106d10(226, 144, gameState_800babc8.gold_94);
 
-        if((inventoryJoypadInput_800bdc44.get() & 0x20) == 0) {
+        if((inventoryJoypadInput_800bdc44 & 0x20) == 0) {
           this.renderDabasMenu(this.menuIndex);
           break;
         }
@@ -176,9 +176,9 @@ public class DabasScreen extends MenuScreen {
       }
 
       case 4 -> {
-        messageBox(messageBox_8011dc90);
+        messageBox(this.messageBox_8011dc90);
 
-        if(this.gold <= 10 || (inventoryJoypadInput_800bdc44.get() & 0x20) != 0) {
+        if(this.gold <= 10 || (inventoryJoypadInput_800bdc44 & 0x20) != 0) {
           gameState_800babc8.gold_94 += this.gold;
           this.gold = 0;
           unloadRenderable(this.renderable2);
@@ -194,7 +194,7 @@ public class DabasScreen extends MenuScreen {
           gameState_800babc8.gold_94 = 99999999;
         }
 
-        if((tickCount_800bb0fc.get() & 0x1) != 0) {
+        if((tickCount_800bb0fc & 0x1) != 0) {
           playSound(1);
         }
 
@@ -204,10 +204,10 @@ public class DabasScreen extends MenuScreen {
       }
 
       case 5 -> {
-        messageBox(messageBox_8011dc90);
-        if((inventoryJoypadInput_800bdc44.get() & 0x20) != 0) {
+        messageBox(this.messageBox_8011dc90);
+        if((inventoryJoypadInput_800bdc44 & 0x20) != 0) {
           unloadRenderable(this.renderable2);
-          messageBox_8011dc90.state_0c++;
+          this.messageBox_8011dc90.state_0c++;
           this.loadingStage++;
         }
 
@@ -219,7 +219,7 @@ public class DabasScreen extends MenuScreen {
       case 6 -> {
         this.renderDabasMenu(this.menuIndex);
 
-        if(messageBox(messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
+        if(messageBox(this.messageBox_8011dc90) != MessageBoxResult.AWAITING_INPUT) {
           this.loadingStage = 2;
         }
       }
@@ -282,7 +282,7 @@ public class DabasScreen extends MenuScreen {
 
     dabasData.specialItem_2c = 0;
 
-    setMessageBoxText(messageBox_8011dc90, new LodString(TAKE_RESPONSES[ThreadLocalRandom.current().nextInt(TAKE_RESPONSES.length)]), 0x1);
+    setMessageBoxText(this.messageBox_8011dc90, new LodString(TAKE_RESPONSES[ThreadLocalRandom.current().nextInt(TAKE_RESPONSES.length)]), 0x1);
     this.renderable2 = null;
     this.loadingStage = 3;
   }

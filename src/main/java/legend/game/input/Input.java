@@ -66,9 +66,9 @@ public final class Input {
   }
 
   public static void updateLegacyInput() {
-    input_800bee90.set(0);
-    analogAngle_800bee9c.set(0);
-    analogMagnitude_800beeb4.set(0);
+    input_800bee90 = 0;
+    analogAngle_800bee9c = 0;
+    analogMagnitude_800beeb4 = 0;
 
     if(!MODS.isReady(CoreMod.MOD_ID)) {
       return;
@@ -83,7 +83,7 @@ public final class Input {
         final InputAction inputAction = entry.getKey().getInputAction();
 
         if(inputAction.hexCode != -1) {
-          input_800bee90.or(inputAction.hexCode);
+          input_800bee90 |= inputAction.hexCode;
         }
 
         if(inputAction == InputAction.JOYSTICK_LEFT_X || inputAction == InputAction.JOYSTICK_LEFT_Y) {
@@ -96,9 +96,9 @@ public final class Input {
           final int angle = Math.floorMod((int)(Math.atan2(y, x) * 0x800 / Math.PI) + 0x400, 0x1000); // 0..0x1000, clockwise, up=0
           final int mag = (int)((Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)) - deadzone) / (1.0f - deadzone) * 0xff); // 0..0xff
 
-          analogInput_800beebc.set(1);
-          analogAngle_800bee9c.set(angle);
-          analogMagnitude_800beeb4.set(mag);
+          analogInput_800beebc = 1;
+          analogAngle_800bee9c = angle;
+          analogMagnitude_800beeb4 = mag;
         }
       }
     }
@@ -108,13 +108,13 @@ public final class Input {
 
       if(hexCode != -1) {
         if(entry.getBooleanValue()) {
-          input_800bee90.or(hexCode);
-          press_800bee94.or(hexCode);
-          repeat_800bee98.or(hexCode);
+          input_800bee90 |= hexCode;
+          press_800bee94 |= hexCode;
+          repeat_800bee98 |= hexCode;
         } else {
-          input_800bee90.and(~hexCode);
-          press_800bee94.and(~hexCode);
-          repeat_800bee98.and(~hexCode);
+          input_800bee90 &= ~hexCode;
+          press_800bee94 &= ~hexCode;
+          repeat_800bee98 &= ~hexCode;
         }
       }
     }
@@ -123,8 +123,8 @@ public final class Input {
   public static void clearLegacyInput() {
     pressedThisFrame.clear();
 
-    press_800bee94.set(0);
-    repeat_800bee98.set(0);
+    press_800bee94 = 0;
+    repeat_800bee98 = 0;
   }
 
   public static void init() {

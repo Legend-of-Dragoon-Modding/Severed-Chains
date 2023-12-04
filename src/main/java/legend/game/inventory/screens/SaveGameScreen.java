@@ -83,7 +83,7 @@ public class SaveGameScreen extends MenuScreen {
         return;
       }
 
-      gameState_800babc8.submapScene_a4 = index_80052c38.get();
+      gameState_800babc8.submapScene_a4 = index_80052c38;
       gameState_800babc8.submapCut_a8 = submapCutForSave_800cb450;
 
       try {
@@ -98,7 +98,7 @@ public class SaveGameScreen extends MenuScreen {
 
   private void onOverwriteResult(final MessageBoxResult result, final SavedGame save) {
     if(result == MessageBoxResult.YES) {
-      gameState_800babc8.submapScene_a4 = index_80052c38.get();
+      gameState_800babc8.submapScene_a4 = index_80052c38;
       gameState_800babc8.submapCut_a8 = submapCutForSave_800cb450;
 
       try {

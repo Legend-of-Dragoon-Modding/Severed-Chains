@@ -1,11 +1,7 @@
 package legend.game;
 
 import legend.core.gte.MV;
-import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.BoolRef;
-import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.IntRef;
-import legend.core.memory.types.UnsignedShortRef;
 import legend.game.combat.environment.BattleStage;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.combat.ui.BattleDissolveDarkeningMetrics10;
@@ -44,17 +40,14 @@ import static legend.core.GameEngine.MEMORY;
 public final class Scus94491BpeSegment_800b {
   private Scus94491BpeSegment_800b() { }
 
-  public static final IntRef clearBlue_800babc0 = MEMORY.ref(4, 0x800babc0L, IntRef::new);
+  public static int clearBlue_800babc0;
 
   public static GameState52c gameState_800babc8;
+  public static int battleStage_800bb0f4;
+  public static int encounterId_800bb0f8;
+  public static int tickCount_800bb0fc;
 
-  // End of game state 800bb0f4
-
-  public static final IntRef battleStage_800bb0f4 = MEMORY.ref(4, 0x800bb0f4L, IntRef::new);
-  public static final IntRef encounterId_800bb0f8 = MEMORY.ref(4, 0x800bb0f8L, IntRef::new);
-  public static final IntRef tickCount_800bb0fc = MEMORY.ref(4, 0x800bb0fcL, IntRef::new);
-
-  public static final IntRef clearGreen_800bb104 = MEMORY.ref(4, 0x800bb104L, IntRef::new);
+  public static int clearGreen_800bb104;
 
   public static final IntRef pregameLoadingStage_800bb10c = MEMORY.ref(4, 0x800bb10cL, IntRef::new);
 
@@ -66,14 +59,14 @@ public final class Scus94491BpeSegment_800b {
 
   public static final boolean[] unlockedUltimateAddition_800bc910 = new boolean[3];
   public static EngineStateEnum postCombatMainCallbackIndex_800bc91c = EngineStateEnum.PRELOAD_00;
-  public static final IntRef goldGainedFromCombat_800bc920 = MEMORY.ref(4, 0x800bc920L, IntRef::new);
+  public static int goldGainedFromCombat_800bc920;
 
   public static final List<EnemyDrop> itemsDroppedByEnemies_800bc928 = new ArrayList<>();
   public static final List<Item> itemOverflow = new ArrayList<>();
   public static final List<Equipment> equipmentOverflow = new ArrayList<>();
-  public static final BoolRef battleLoaded_800bc94c = MEMORY.ref(4, 0x800bc94cL, BoolRef::new);
-  public static final ArrayRef<IntRef> spGained_800bc950 = MEMORY.ref(4, 0x800bc950L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
-  public static final IntRef totalXpFromCombat_800bc95c = MEMORY.ref(4, 0x800bc95cL, IntRef::new);
+  public static boolean battleLoaded_800bc94c;
+  public static final int[] spGained_800bc950 = new int[3];
+  public static int totalXpFromCombat_800bc95c;
   /**
    * <ul>
    *   <li>0x1 - battle start delay period has elapsed</li>
@@ -88,9 +81,9 @@ public final class Scus94491BpeSegment_800b {
    *   <li>0x400 - encounter assets have been requested from the filesystem (may still be loading)</li>
    * </ul>
    */
-  public static final IntRef battleFlags_800bc960 = MEMORY.ref(4, 0x800bc960L, IntRef::new);
+  public static int battleFlags_800bc960;
 
-  public static final ArrayRef<IntRef> livingCharIds_800bc968 = MEMORY.ref(4, 0x800bc968L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
+  public static int[] livingCharIds_800bc968 = new int[3];
   /**
    * <ol>
    *   <li value="1">Combat victory</li>
@@ -98,9 +91,9 @@ public final class Scus94491BpeSegment_800b {
    *   <li value="4">FMV</li>
    * </ol>
    */
-  public static final IntRef postBattleActionIndex_800bc974 = MEMORY.ref(4, 0x800bc974L, IntRef::new);
+  public static int postBattleActionIndex_800bc974;
 
-  public static final IntRef livingCharCount_800bc97c = MEMORY.ref(4, 0x800bc97cL, IntRef::new);
+  public static int livingCharCount_800bc97c;
 
   /** One per voice */
   public static final SpuStruct08[] _800bc9a8 = new SpuStruct08[24];
@@ -121,11 +114,11 @@ public final class Scus94491BpeSegment_800b {
     Arrays.setAll(soundFiles_800bcf80, i -> new SoundFile());
   }
 
-  public static final UnsignedShortRef _800bd0f0 = MEMORY.ref(2, 0x800bd0f0L, UnsignedShortRef::new);
+  public static int _800bd0f0;
 
   public static SequenceData124 currentSequenceData_800bd0f8;
 
-  public static final IntRef _800bd0fc = MEMORY.ref(4, 0x800bd0fcL, IntRef::new);
+  public static int _800bd0fc;
   public static int sssqTempoScale_800bd100;
   public static int sssqTempo_800bd104;
   public static int sequenceVolume_800bd108;
@@ -135,33 +128,33 @@ public final class Scus94491BpeSegment_800b {
   public static final EncounterSoundEffects10 encounterSoundEffects_800bd610 = new EncounterSoundEffects10();
 
   public static final BattleDissolveDarkeningMetrics10 dissolveDarkening_800bd700 = new BattleDissolveDarkeningMetrics10();
-  public static final IntRef _800bd710 = MEMORY.ref(4, 0x800bd710L, IntRef::new);
-  public static final IntRef _800bd714 = MEMORY.ref(4, 0x800bd714L, IntRef::new);
+  public static int _800bd710;
+  public static int _800bd714;
   public static int battleDissolveTicks;
 
-  public static final IntRef _800bd740 = MEMORY.ref(4, 0x800bd740L, IntRef::new);
+  public static int _800bd740;
 
   public static boolean melbuSoundsLoaded_800bd780;
   public static boolean melbuMusicLoaded_800bd781;
   public static boolean musicLoaded_800bd782;
 
-  public static final BoolRef _800bd7ac = MEMORY.ref(4, 0x800bd7acL, BoolRef::new);
-  public static final IntRef _800bd7b0 = MEMORY.ref(4, 0x800bd7b0L, IntRef::new);
-  public static final BoolRef submapFullyLoaded_800bd7b4 = MEMORY.ref(2, 0x800bd7b4L, BoolRef::new);
+  public static boolean _800bd7ac;
+  public static int _800bd7b0;
+  public static boolean submapFullyLoaded_800bd7b4;
 
-  public static final BoolRef transitioningFromCombatToSubmap_800bd7b8 = MEMORY.ref(4, 0x800bd7b8L, BoolRef::new);
+  public static boolean transitioningFromCombatToSubmap_800bd7b8;
 
   public static final GsRVIEW2 rview2_800bd7e8 = new GsRVIEW2();
-  public static final IntRef submapId_800bd808 = MEMORY.ref(4, 0x800bd808L, IntRef::new);
+  public static int submapId_800bd808;
 
-  public static final IntRef projectionPlaneDistance_800bd810 = MEMORY.ref(4, 0x800bd810L, IntRef::new);
+  public static int projectionPlaneDistance_800bd810;
 
   public static final SobjPos14[] sobjPositions_800bd818 = new SobjPos14[24];
   static {
     Arrays.setAll(sobjPositions_800bd818, i -> new SobjPos14());
   }
 
-  public static final IntRef _800bda08 = MEMORY.ref(4, 0x800bda08L, IntRef::new);
+  public static int _800bda08;
   public static BattleStage stage_800bda0c;
   public static final Model124 shadowModel_800bda10 = new Model124("Shadow");
 
@@ -173,13 +166,12 @@ public final class Scus94491BpeSegment_800b {
   public static Renderable58 renderablePtr_800bdba4;
   public static Renderable58 renderablePtr_800bdba8;
 
-  public static final ArrayRef<IntRef> characterIndices_800bdbb8 = MEMORY.ref(4, 0x800bdbb8L, ArrayRef.of(IntRef.class, 9, 0x4, IntRef::new));
-
-  public static final ArrayRef<IntRef> secondaryCharIds_800bdbf8 = MEMORY.ref(4, 0x800bdbf8L, ArrayRef.of(IntRef.class, 9, 4, IntRef::new));
+  public static final int[] characterIndices_800bdbb8 = new int[9];
+  public static final int[] secondaryCharIds_800bdbf8 = new int[9];
 
   public static InventoryMenuState inventoryMenuState_800bdc28 = InventoryMenuState.INIT_0;
 
-  public static final BoolRef loadingNewGameState_800bdc34 = MEMORY.ref(4, 0x800bdc34L, BoolRef::new);
+  public static boolean loadingNewGameState_800bdc34;
   /**
    * 0xe - load game
    * 0x13 - also load game (maybe save game...?)
@@ -208,19 +200,19 @@ public final class Scus94491BpeSegment_800b {
    *   <li>0x8000 - Left</li>
    * </ul>
    */
-  public static final IntRef inventoryJoypadInput_800bdc44 = MEMORY.ref(4, 0x800bdc44L, IntRef::new);
+  public static int inventoryJoypadInput_800bdc44;
 
   public static Renderable58 renderablePtr_800bdc5c;
 
   public static final TextboxArrow0c[] textboxArrows_800bdea0 = new TextboxArrow0c[8];
 
-  public static final IntRef textZ_800bdf00 = MEMORY.ref(4, 0x800bdf00L, IntRef::new);
+  public static int textZ_800bdf00;
 
-  public static final ArrayRef<IntRef> textboxVariables_800bdf10 = MEMORY.ref(4, 0x800bdf10L, ArrayRef.of(IntRef.class, 10, 0x4, IntRef::new));
+  public static final int[] textboxVariables_800bdf10 = new int[10];
   public static final TextboxText84[] textboxText_800bdf38 = new TextboxText84[8];
   public static final Textbox4c[] textboxes_800be358 = new Textbox4c[8];
 
-  public static final BoolRef characterStatsLoaded_800be5d0 = MEMORY.ref(4, 0x800be5d0L, BoolRef::new);
+  public static boolean characterStatsLoaded_800be5d0;
 
   public static final ActiveStatsa0[] stats_800be5f8 = new ActiveStatsa0[9];
   static {
@@ -228,9 +220,9 @@ public final class Scus94491BpeSegment_800b {
   }
 
   public static final MV matrix_800bed30 = new MV();
-  public static final IntRef screenOffsetX_800bed50 = MEMORY.ref(4, 0x800bed50L, IntRef::new);
-  public static final IntRef screenOffsetY_800bed54 = MEMORY.ref(4, 0x800bed54L, IntRef::new);
-  public static final BoolRef hasNoEncounters_800bed58 = MEMORY.ref(4, 0x800bed58L, BoolRef::new);
+  public static int screenOffsetX_800bed50;
+  public static int screenOffsetY_800bed54;
+  public static boolean hasNoEncounters_800bed58;
 
   /**
    * Remains set for the duration of the button press
@@ -249,7 +241,7 @@ public final class Scus94491BpeSegment_800b {
    *   <li>0x8000 - Left</li>
    * </ul>
    */
-  public static final IntRef input_800bee90 = MEMORY.ref(4, 0x800bee90L, IntRef::new);
+  public static int input_800bee90;
   /**
    * Only set for an instant after buttons are pressed
    * <ul>
@@ -267,7 +259,7 @@ public final class Scus94491BpeSegment_800b {
    *   <li>0x8000 - Left</li>
    * </ul>
    */
-  public static final IntRef press_800bee94 = MEMORY.ref(4, 0x800bee94L, IntRef::new);
+  public static int press_800bee94;
   /**
    * Only set for an instant after buttons are pressed, but repeats while button is held
    * <ul>
@@ -285,18 +277,18 @@ public final class Scus94491BpeSegment_800b {
    *   <li>0x8000 - Left</li>
    * </ul>
    */
-  public static final IntRef repeat_800bee98 = MEMORY.ref(4, 0x800bee98L, IntRef::new);
-  public static final IntRef analogAngle_800bee9c = MEMORY.ref(4, 0x800bee9cL, IntRef::new);
+  public static int repeat_800bee98;
+  public static int analogAngle_800bee9c;
 
-  public static final IntRef _800beea4 = MEMORY.ref(4, 0x800beea4L, IntRef::new);
+  public static int _800beea4;
 
-  public static final IntRef _800beeac = MEMORY.ref(4, 0x800beeacL, IntRef::new);
+  public static int _800beeac;
 
-  public static final IntRef analogMagnitude_800beeb4 = MEMORY.ref(4, 0x800beeb4L, IntRef::new);
+  public static int analogMagnitude_800beeb4;
 
-  public static final IntRef analogInput_800beebc = MEMORY.ref(4, 0x800beebcL, IntRef::new);
+  public static int analogInput_800beebc;
 
-  public static final IntRef continentIndex_800bf0b0 = MEMORY.ref(4, 0x800bf0b0L, IntRef::new);
+  public static int continentIndex_800bf0b0;
 
-  public static final ByteRef _800bf0cf = MEMORY.ref(1, 0x800bf0cfL, ByteRef::new);
+  public static int _800bf0cf;
 }

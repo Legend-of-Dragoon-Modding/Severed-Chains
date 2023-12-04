@@ -95,7 +95,7 @@ public final class TmdObjLoader {
       }
 
       //TODO need to figure out what this was being used for
-      final long specialTrans = tmdGp0CommandId_1f8003ee.get();
+      final long specialTrans = tmdGp0CommandId_1f8003ee;
 
       final int vertexCount = quad ? 4 : 3;
       // ---

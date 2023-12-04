@@ -107,10 +107,10 @@ public class Button extends Control {
 
   @Override
   protected void render(final int x, final int y) {
-    final int oldZ = textZ_800bdf00.get();
-    textZ_800bdf00.set(this.getZ() - 1);
+    final int oldZ = textZ_800bdf00;
+    textZ_800bdf00 = this.getZ() - 1;
     renderCentredText(this.text, x + this.getWidth() / 2, y + (this.getHeight() - 11) / 2, this.isDisabled() ? TextColour.MIDDLE_BROWN : this.textColour);
-    textZ_800bdf00.set(oldZ);
+    textZ_800bdf00 = oldZ;
   }
 
   public void onPressed(final Pressed handler) {

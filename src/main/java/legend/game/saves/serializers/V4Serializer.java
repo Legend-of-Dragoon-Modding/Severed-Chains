@@ -233,14 +233,14 @@ public final class V4Serializer {
     final int locationIndex;
     if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {
       locationType = 1;
-      locationIndex = continentIndex_800bf0b0.get();
+      locationIndex = continentIndex_800bf0b0;
       //LAB_80103c98
     } else if(whichMenu_800bdc38 == WhichMenu.RENDER_SAVE_GAME_MENU_19) {
       locationType = 3;
       locationIndex = state.chapterIndex_98;
     } else {
       locationType = 0;
-      locationIndex = submapId_800bd808.get();
+      locationIndex = submapId_800bd808;
     }
 
     int offset = 0;

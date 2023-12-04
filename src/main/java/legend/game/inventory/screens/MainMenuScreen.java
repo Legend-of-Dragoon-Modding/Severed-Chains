@@ -227,9 +227,9 @@ public class MainMenuScreen extends MenuScreen {
 
     final LodString name;
     if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
-      name = submapNames_8011c108[submapId_800bd808.get()];
+      name = submapNames_8011c108[submapId_800bd808];
     } else {
-      name = worldMapNames_8011c1ec[continentIndex_800bf0b0.get()];
+      name = worldMapNames_8011c1ec[continentIndex_800bf0b0];
     }
 
     renderCentredText(name, 90, 38, TextColour.BROWN);

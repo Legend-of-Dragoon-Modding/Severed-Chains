@@ -1,7 +1,7 @@
 package legend.game.unpacker;
 
 import legend.core.MathHelper;
-import legend.core.gpu.RECT;
+import legend.core.gpu.Rect4i;
 import legend.core.gte.COLOUR;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
@@ -140,7 +140,7 @@ public record FileData(byte[] data, int offset, int size, int virtualSize, int r
     return RegistryId.of(this.readAscii(offset));
   }
 
-  public RECT readRect(final int offset, final RECT rect) {
+  public Rect4i readRect(final int offset, final Rect4i rect) {
     this.checkBounds(offset, 8);
     return rect.set(this.readShort(offset), this.readShort(offset + 0x2), this.readShort(offset + 0x4), this.readShort(offset + 0x6));
   }

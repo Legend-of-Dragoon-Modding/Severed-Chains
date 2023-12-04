@@ -16,12 +16,20 @@ public final class Rect4i {
     this.set(x, y, w, h);
   }
 
+  public Rect4i(final Rect4i other) {
+    this.set(other.x, other.y, other.w, other.h);
+  }
+
   public Rect4i set(final int x, final int y, final int w, final int h) {
     this.x = x;
     this.y = y;
     this.w = w;
     this.h = h;
     return this;
+  }
+
+  public Rect4i set(final Rect4i other) {
+    return this.set(other.x, other.y, other.w, other.h);
   }
 
   /**

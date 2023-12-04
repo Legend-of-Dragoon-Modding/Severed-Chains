@@ -3,7 +3,6 @@ package legend.game;
 import legend.core.gte.MV;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedByteRef;
@@ -21,19 +20,19 @@ public final class Scus94491BpeSegment_8005 {
   private Scus94491BpeSegment_8005() { }
 
   public static final ArrayRef<ShortRef> submapMusic_80050068 = MEMORY.ref(2, 0x80050068L, ArrayRef.of(ShortRef.class, 64, 2, ShortRef::new));
-  public static final ArrayRef<IntRef> monsterSoundFileIndices_800500e8 = MEMORY.ref(4, 0x800500e8L, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
-  public static final ArrayRef<IntRef> characterSoundFileIndices_800500f8 = MEMORY.ref(4, 0x800500f8L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
+  public static final int[] monsterSoundFileIndices_800500e8 = {4, 5, 6, 7};
+  public static final int[] characterSoundFileIndices_800500f8 = {1, 2, 3};
 
-  public static final ArrayRef<IntRef> charSlotSpuOffsets_80050190 = MEMORY.ref(4, 0x80050190L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
+  public static final int[] charSlotSpuOffsets_80050190 = {0x44250, 0x4b780, 0x52cb0};
 
   public static final ArrayRef<UnsignedByteRef> combatSoundEffectsTypes_8005019c = MEMORY.ref(1, 0x8005019cL, ArrayRef.of(UnsignedByteRef.class, 32, 1, UnsignedByteRef::new));
   public static final ArrayRef<UnsignedIntRef> combatMusicFileIndices_800501bc = MEMORY.ref(4, 0x800501bcL, ArrayRef.of(UnsignedIntRef.class, 32, 4, UnsignedIntRef::new));
 
-  public static final IntRef _80050274 = MEMORY.ref(4, 0x80050274L, IntRef::new);
+  public static int _80050274 = -1;
 
   public static final Value _8005027c = MEMORY.ref(4, 0x8005027cL);
 
-  public static final ArrayRef<ShortRef> shadowScale_8005039c = MEMORY.ref(2, 0x8005039cL, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
+  public static final int[] shadowScale_8005039c = {0x1800, 0x1800, 0x1000, 0xe00, 0x1600, 0x1300, 0xe00, 0x2000, 0x1300, 0x1500};
   public static final ArrayRef<ShortRef> _800503b0 = MEMORY.ref(2, 0x800503b0L, ArrayRef.of(ShortRef.class, 18, 2, ShortRef::new));
   public static final ArrayRef<ShortRef> _800503d4 = MEMORY.ref(2, 0x800503d4L, ArrayRef.of(ShortRef.class, 18, 2, ShortRef::new));
   public static final ArrayRef<ShortRef> _800503f8 = MEMORY.ref(2, 0x800503f8L, ArrayRef.of(ShortRef.class, 22, 2, ShortRef::new));
@@ -97,20 +96,20 @@ public final class Scus94491BpeSegment_8005 {
   public static final ArrayRef<AdditionData0e> additionData_80052884 = MEMORY.ref(1, 0x80052884L, ArrayRef.of(AdditionData0e.class, 43, 0xe, AdditionData0e::new));
 
   public static final LodString[] digits_80052b40 = { new LodString("0"), new LodString("1"), new LodString("2"), new LodString("3"), new LodString("4"), new LodString("5"), new LodString("6"), new LodString("7"), new LodString("8"), new LodString("9") };
-  public static final ArrayRef<BoolRef> renderBorder_80052b68 = MEMORY.ref(2, 0x80052b68L, ArrayRef.of(BoolRef.class, 0x10, 2, BoolRef::new));
-  public static final ArrayRef<ShortRef> textboxMode_80052b88 = MEMORY.ref(2, 0x80052b88L, ArrayRef.of(ShortRef.class, 0x10, 2, ShortRef::new));
-  public static final ArrayRef<ShortRef> textboxTextType_80052ba8 = MEMORY.ref(2, 0x80052ba8L, ArrayRef.of(ShortRef.class, 0x10, 2, ShortRef::new));
+  public static final boolean[] renderBorder_80052b68 = {false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
+  public static final int[] textboxMode_80052b88 = {0, 1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
+  public static final int[] textboxTextType_80052ba8 = {0, 1, 2, 3, 4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2};
 
-  public static final IntRef submapCut_80052c30 = MEMORY.ref(4, 0x80052c30L, IntRef::new);
-  public static final IntRef submapScene_80052c34 = MEMORY.ref(4, 0x80052c34L, IntRef::new);
+  public static int submapCut_80052c30 = 675;
+  public static int submapScene_80052c34 = 4;
   /** TODO This seems like it's set to a lot of different things, hopefully they're actually related. */
-  public static final IntRef index_80052c38 = MEMORY.ref(4, 0x80052c38L, IntRef::new);
-  public static final IntRef submapCut_80052c3c = MEMORY.ref(4, 0x80052c3cL, IntRef::new);
+  public static int index_80052c38;
+  public static int submapCut_80052c3c = -1;
   /** Moved from SMAP since it's referenced unconditionally when saving the game */
   public static int submapCutForSave_800cb450;
   /** Something related to submap camera and map transitioning */
-  public static final BoolRef _80052c40 = MEMORY.ref(4, 0x80052c40L, BoolRef::new);
-  public static final IntRef submapEnvState_80052c44 = MEMORY.ref(4, 0x80052c44L, IntRef::new);
+  public static boolean _80052c40;
+  public static int submapEnvState_80052c44 = 2;
 
   public static boolean reinitializingWmap_80052c6c;
 
@@ -143,7 +142,7 @@ public final class Scus94491BpeSegment_8005 {
   /** short */
   public static int sssqFadeCurrent_8005a1ce;
 
-  public static final BoolRef standingInSavePoint_8005a368 = MEMORY.ref(4, 0x8005a368L, BoolRef::new);
+  public static boolean standingInSavePoint_8005a368;
 
   public static final CombatantStruct1a8[] combatants_8005e398 = new CombatantStruct1a8[10];
 }

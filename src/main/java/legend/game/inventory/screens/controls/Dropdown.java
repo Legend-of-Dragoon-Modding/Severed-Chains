@@ -158,10 +158,10 @@ public class Dropdown extends Control {
   @Override
   protected void render(final int x, final int y) {
     if(!this.options.isEmpty()) {
-      final int oldZ = textZ_800bdf00.get();
-      textZ_800bdf00.set(this.background.getZ() - 1);
+      final int oldZ = textZ_800bdf00;
+      textZ_800bdf00 = this.background.getZ() - 1;
       renderText(this.optionsLod.get(this.selectedIndex), x + 4, y + (this.getHeight() - 11) / 2 + 1, TextColour.BROWN);
-      textZ_800bdf00.set(oldZ);
+      textZ_800bdf00 = oldZ;
     }
   }
 

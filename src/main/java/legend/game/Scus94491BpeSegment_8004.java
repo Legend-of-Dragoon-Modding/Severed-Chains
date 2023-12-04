@@ -3,10 +3,6 @@ package legend.game;
 import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.BoolRef;
-import legend.core.memory.types.IntRef;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnsignedShortRef;
 import legend.core.spu.Voice;
 import legend.game.combat.Battle;
 import legend.game.combat.Bttl_800c;
@@ -142,14 +138,12 @@ public final class Scus94491BpeSegment_8004 {
   public static int width_8004dd34 = 320;
   public static int height_8004dd34 = 240;
 
-  public static final UnsignedShortRef reinitOrderingTableBits_8004dd38 = MEMORY.ref(2, 0x8004dd38L, UnsignedShortRef::new);
+  public static int reinitOrderingTableBits_8004dd38 = 14;
 
   public static Runnable syncFrame_8004dd3c;
   public static Runnable swapDisplayBuffer_8004dd40;
-  public static final IntRef simpleRandSeed_8004dd44 = MEMORY.ref(4, 0x8004dd44L, IntRef::new);
-  public static final ArrayRef<UnsignedShortRef> _8004dd48 = MEMORY.ref(2, 0x8004dd48L, ArrayRef.of(UnsignedShortRef.class, 7, 2, UnsignedShortRef::new));
-
-  public static final BoolRef preloadingAudioAssets_8004ddcc = MEMORY.ref(1, 0x8004ddccL, BoolRef::new);
+  public static int simpleRandSeed_8004dd44 = 3;
+  public static final int[] _8004dd48 = {0, 1, 2, 1, 2, 1, 2};
 
   public static final Function<RunningScript, FlowControl>[] scriptSubFunctions_8004e29c = new Function[1024];
   public static Function<RunningScript, FlowControl>[] engineStateFunctions_8004e29c = new Function[1024];
@@ -604,8 +598,8 @@ public final class Scus94491BpeSegment_8004 {
   // 8004f29c end of jump table
 
   public static final ItemStats0c[] itemStats_8004f2ac = new ItemStats0c[64];
-  public static final ArrayRef<ShortRef> additionOffsets_8004f5ac = MEMORY.ref(2, 0x8004f5acL, ArrayRef.of(ShortRef.class, 10, 0x2, ShortRef::new));
-  public static final ArrayRef<ShortRef> additionCounts_8004f5c0 = MEMORY.ref(2, 0x8004f5c0L, ArrayRef.of(ShortRef.class, 10, 0x2, ShortRef::new));
+  public static final int[] additionOffsets_8004f5ac = {0, 8, -1, 14, 29, 8, 23, 19, -1, 0};
+  public static final int[] additionCounts_8004f5c0 = {7, 5, 0, 4, 6, 5, 5, 3, 0, 0};
   /**
    * <ol start="0">
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
@@ -681,9 +675,9 @@ public final class Scus94491BpeSegment_8004 {
   public static final ScriptFile doNothingScript_8004f650 = new ScriptFile("Do nothing", new int[] {0x4, 0x1});
   public static Struct10 _8004f658;
 
-  public static final IntRef _8004f6e4 = MEMORY.ref(4, 0x8004f6e4L, IntRef::new);
+  public static int _8004f6e4 = -1;
 
-  public static final IntRef battleStartDelayTicks_8004f6ec = MEMORY.ref(4, 0x8004f6ecL, IntRef::new);
+  public static int battleStartDelayTicks_8004f6ec;
 
   public static final ArrayRef<SubmapMusic08> _8004fa98 = MEMORY.ref(1, 0x8004fa98L, ArrayRef.of(SubmapMusic08.class, 13, 8, SubmapMusic08::new));
   public static final ArrayRef<SubmapMusic08> _8004fb00 = MEMORY.ref(1, 0x8004fb00L, ArrayRef.of(SubmapMusic08.class, 130, 8, SubmapMusic08::new));

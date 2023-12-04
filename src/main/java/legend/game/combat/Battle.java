@@ -13,11 +13,11 @@ public class Battle extends EngineState {
   @Override
   @Method(0x800186a0L)
   public void tick() {
-    if(battleLoaded_800bc94c.get()) {
+    if(battleLoaded_800bc94c) {
       checkIfCharacterAndMonsterModelsAreLoadedAndCacheLivingBents();
       battleLoadingStage_8004f5d4[pregameLoadingStage_800bb10c.get()].run();
 
-      if(battleLoaded_800bc94c.get()) {
+      if(battleLoaded_800bc94c) {
         renderBattleEnvironment();
       }
     } else {
