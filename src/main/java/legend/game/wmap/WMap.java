@@ -1275,7 +1275,7 @@ public class WMap extends EngineState {
         //LAB_800d38dc
         this.wmapStruct19c0_800c66b0.rview2_00.viewpoint_00.y -= 1450.0f / (3.0f / vsyncMode_8007a3b8);
         this.wmapStruct19c0_800c66b0.rview2_00.refpoint_0c.y += 1450.0f / (3.0f / vsyncMode_8007a3b8);
-        this.wmapStruct19c0_800c66b0.currMapRotation_70.y = this.wmapStruct19c0_800c66b0.originalMapRotation_9a + this.wmapStruct19c0_800c66b0.mapRotationStep_9c * this.wmapStruct19c0_800c66b0.cameraZoomTick_a0 / (3.0f / vsyncMode_8007a3b8);
+        this.wmapStruct19c0_800c66b0.currMapRotation_70.y = this.wmapStruct19c0_800c66b0.originalMapRotation_9a + this.wmapStruct19c0_800c66b0.mapRotationStep_9c * this.wmapStruct19c0_800c66b0.cameraZoomTick_a0;
         this.wmapStruct19c0_800c66b0.currCameraZoomPos_b4.add(
           this.wmapStruct19c0_800c66b0.cameraZoomPosStep_a4.x / (3.0f / vsyncMode_8007a3b8),
           this.wmapStruct19c0_800c66b0.cameraZoomPosStep_a4.y / (3.0f / vsyncMode_8007a3b8),
@@ -1286,9 +1286,9 @@ public class WMap extends EngineState {
           (this.modelAndAnimData_800c66a8.coord2_34.coord.transfer.y - this.wmapStruct19c0_800c66b0.currCameraZoomPos_b4.y) / (3.0f / vsyncMode_8007a3b8),
           (this.modelAndAnimData_800c66a8.coord2_34.coord.transfer.z - this.wmapStruct19c0_800c66b0.currCameraZoomPos_b4.z) / (3.0f / vsyncMode_8007a3b8)
         );
-        this.wmapStruct19c0_800c66b0.cameraZoomTick_a0++;
+        this.wmapStruct19c0_800c66b0.cameraZoomTick_a0 += 1.0f / (3.0f / vsyncMode_8007a3b8);
 
-        if(this.wmapStruct19c0_800c66b0.cameraZoomTick_a0 >= 6 * (3.0f / vsyncMode_8007a3b8)) {
+        if(this.wmapStruct19c0_800c66b0.cameraZoomTick_a0 >= 6.0f) {
           this.wmapStruct19c0_800c66b0.rview2_00.viewpoint_00.y = this.wmapStruct19c0_800c66b0.finalCameraY_9e;
           this.wmapStruct19c0_800c66b0.rview2_00.refpoint_0c.y = -this.wmapStruct19c0_800c66b0.finalCameraY_9e;
           this.wmapStruct19c0_800c66b0.currMapRotation_70.y = this.wmapStruct19c0_800c66b0.finalMapRotation_98;
@@ -1310,23 +1310,23 @@ public class WMap extends EngineState {
         }
 
         //LAB_800d3c8c
-        this.wmapStruct19c0_800c66b0.currMapRotation_70.y = this.wmapStruct19c0_800c66b0.originalMapRotation_9a + this.wmapStruct19c0_800c66b0.mapRotationStep_9c * this.wmapStruct19c0_800c66b0.cameraZoomTick_a0 / (3.0f / vsyncMode_8007a3b8);
+        this.wmapStruct19c0_800c66b0.currMapRotation_70.y = this.wmapStruct19c0_800c66b0.originalMapRotation_9a + this.wmapStruct19c0_800c66b0.mapRotationStep_9c * this.wmapStruct19c0_800c66b0.cameraZoomTick_a0;
         this.wmapStruct19c0_800c66b0.currCameraZoomPos_b4.add(
           this.wmapStruct19c0_800c66b0.cameraZoomPosStep_a4.x / (3.0f / vsyncMode_8007a3b8),
           this.wmapStruct19c0_800c66b0.cameraZoomPosStep_a4.y / (3.0f / vsyncMode_8007a3b8),
           this.wmapStruct19c0_800c66b0.cameraZoomPosStep_a4.z / (3.0f / vsyncMode_8007a3b8)
         );
         this.wmapStruct19c0_800c66b0.coord2_20.coord.transfer.set(this.wmapStruct19c0_800c66b0.currCameraZoomPos_b4);
-        this.wmapStruct19c0_800c66b0.cameraZoomTick_a0++;
+        this.wmapStruct19c0_800c66b0.cameraZoomTick_a0 += 1.0f / (3.0f / vsyncMode_8007a3b8);
 
         boolean zoomComplete = false;
         if(this.modelAndAnimData_800c66a8.fadeAnimationType_05 == FadeAnimationType.NONE) {
-          if(this.wmapStruct19c0_800c66b0.cameraZoomTick_a0 >= 6 * (3.0f / vsyncMode_8007a3b8)) {
+          if(this.wmapStruct19c0_800c66b0.cameraZoomTick_a0 >= 6.0f) {
             zoomComplete = true;
           }
           //LAB_800d3e78
           //LAB_800d3e80
-        } else if(this.wmapStruct19c0_800c66b0.cameraZoomTick_a0 >= 30 * (3.0f / vsyncMode_8007a3b8)) {
+        } else if(this.wmapStruct19c0_800c66b0.cameraZoomTick_a0 >= 30.0f) {
           zoomComplete = true;
         }
 
@@ -1518,7 +1518,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d4e88
-    struct.mapRotationStep_9c = finalAngle / 6.0f;
+    struct.mapRotationStep_9c = finalAngle / (18.0f / vsyncMode_8007a3b8);
     struct.cameraZoomTick_a0 = 0;
   }
 

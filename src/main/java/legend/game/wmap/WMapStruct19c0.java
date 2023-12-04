@@ -38,7 +38,7 @@ public class WMapStruct19c0 {
   /** short */
   public int finalCameraY_9e;
   /** short */
-  public int cameraZoomTick_a0;
+  public float cameraZoomTick_a0;
   public final Vector3f cameraZoomPosStep_a4 = new Vector3f();
   public final Vector3f currCameraZoomPos_b4 = new Vector3f();
   /** byte */
