@@ -1,4 +1,4 @@
-package legend.game.combat.effects;
+package legend.game.combat.particles;
 
 import org.joml.Vector3f;
 

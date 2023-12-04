@@ -1,4 +1,4 @@
-package legend.game.combat.effects;
+package legend.game.combat.particles;
 
 public class ParticleEffectInstance94Sub10 {
   public int x0_00;
