@@ -22,13 +22,8 @@ import legend.core.gte.TmdWithId;
 import legend.core.memory.Method;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.ByteRef;
-import legend.core.memory.types.IntRef;
-import legend.core.memory.types.Pointer;
 import legend.core.memory.types.QuadConsumer;
-import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.TriConsumer;
-import legend.core.memory.types.UnboundedArrayRef;
-import legend.core.memory.types.UnsignedByteRef;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.deff.Anim;
 import legend.game.combat.deff.DeffManager7cc;
@@ -104,8 +99,6 @@ import legend.game.tmd.Renderer;
 import legend.game.types.CContainer;
 import legend.game.types.Model124;
 import legend.game.types.Translucency;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.joml.Math;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -196,36 +189,27 @@ import static legend.game.combat.Bttl_800e.transformToScreenSpace;
 public final class SEffe {
   private SEffe() { }
 
-  private static final Logger LOGGER = LogManager.getFormatterLogger(SEffe.class);
-
-  private static final ArrayRef<ShortRef> particleSubCounts_800fb794 = MEMORY.ref(2, 0x800fb794L, ArrayRef.of(ShortRef.class, 20, 2, ShortRef::new));
-
-  private static final ArrayRef<ByteRef> additionButtonRenderCallbackIndices_800fb7bc = MEMORY.ref(1, 0x800fb7bcL, ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new));
+  private static final short[] particleSubCounts_800fb794 = {0, 0, 4, 0, 8, 0, 16, 0, 0, 0, 1, 0, 2, 0, 4, 0, 3, 0, 5, 0};
+  private static final byte[] additionButtonRenderCallbackIndices_800fb7bc = {35, 40, 33, 38};
 
   /** Some kind of mysterious global 2-hit addition array. Should probably be yeeted, but need to be sure. */
   private static final ArrayRef<AdditionHitProperties10> staticTestAdditionHitProperties_800fb7c0 = MEMORY.ref(1, 0x800fb7c0L, ArrayRef.of(AdditionHitProperties10.class, 3, 16, AdditionHitProperties10::new));
 
   /** Four sets of color values used for addition overlay borders; only last actually used */
-  public static final ArrayRef<UnsignedByteRef> additionBorderColours_800fb7f0 = MEMORY.ref(1, 0x800fb7f0L, ArrayRef.of(UnsignedByteRef.class, 0xc, 0x1, UnsignedByteRef::new));
-
-  private static final ArrayRef<ArrayRef<ByteRef>> daddyHudEyeTranslucencyModes_800fb7fc = MEMORY.ref(1, 0x800fb7fcL, ArrayRef.of(ArrayRef.classFor(ByteRef.class), 4, 2, ArrayRef.of(ByteRef.class, 2, 1, ByteRef::new)));
-
-  private static final ArrayRef<ArrayRef<ShortRef>> daddyHudMeterOffsets_800fb804 = MEMORY.ref(1, 0x800fb804L, ArrayRef.of(ArrayRef.classFor(ShortRef.class), 5, 4, ArrayRef.of(ShortRef.class, 2, 2, ShortRef::new)));
-
-  private static final ArrayRef<ArrayRef<ShortRef>> daddyHudMeterUvs_800fb818 = MEMORY.ref(1, 0x800fb818L, ArrayRef.of(ArrayRef.classFor(ShortRef.class), 5, 4, ArrayRef.of(ShortRef.class, 2, 2, ShortRef::new)));
-
-  private static final ArrayRef<ArrayRef<ShortRef>> daddyHudMeterDimensions_800fb82c = MEMORY.ref(1, 0x800fb82cL, ArrayRef.of(ArrayRef.classFor(ShortRef.class), 5, 4, ArrayRef.of(ShortRef.class, 2, 2, ShortRef::new)));
-
-  private static final ArrayRef<ByteRef> daddyHudFrameClutOffsets_800fb840 = MEMORY.ref(1, 0x800fb840L, ArrayRef.of(ByteRef.class, 12, 1, ByteRef::new));
-
-  private static final ArrayRef<ByteRef> daddyHudEyeClutOffsets_800fb84c = MEMORY.ref(1, 0x800fb84cL, ArrayRef.of(ByteRef.class, 16, 1, ByteRef::new));
+  public static final int[] additionBorderColours_800fb7f0 = {0x70, 0xc0, 0x75, 0xc0, 0xa8, 0x70, 0x70, 0xb5, 0xc0, 0x48, 0x60, 0xff};
+  private static final int[][] daddyHudEyeTranslucencyModes_800fb7fc = {{3, 0}, {1, 1}, {1, 1}, {0, 0}};
+  private static final int[][] daddyHudMeterOffsets_800fb804 = {{49, 32}, {46, 49}, {38, 56}, {35, 60}, {31, 60}};
+  private static final int[][] daddyHudMeterUvs_800fb818 = {{128, 112}, {128, 80}, {128, 96}, {216, 8}, {216, 16}};
+  private static final int[][] daddyHudMeterDimensions_800fb82c = {{24, 32}, {16, 16}, {16, 16}, {8, 8}, {8, 8}};
+  private static final int[] daddyHudFrameClutOffsets_800fb840 = {0x50, 0x51, 0x52, 0x53, 0x54, 0x51, 0x55, 0x56, 0x52, 0x57, 0, 0};
+  private static final int[] daddyHudEyeClutOffsets_800fb84c = {0x58, 0x59, 0x5a, 0x5b, 0x5c, 0x59, 0x5d, 0x5e, 0x5a, 0x5f, 0, 0, 0, 1, 0, 0};
 
   private static final COLOUR _800fb8cc = MEMORY.ref(2, 0x800fb8ccL, COLOUR::new);
   private static final Vector3f _800fb8d0 = new Vector3f(1.0f, 0.0f, 0.0f);
 
-  private static final ArrayRef<IntRef> lensFlareGlowScales_800fb8fc = MEMORY.ref(4, 0x800fb8fcL, ArrayRef.of(IntRef.class, 5, 4, IntRef::new));
-  private static final ArrayRef<ArrayRef<IntRef>> lensFlareTranslationMagnitudeFactors_800fb910 = MEMORY.ref(4, 0x800fb910L, ArrayRef.of(ArrayRef.classFor(IntRef.class), 4, 8, ArrayRef.of(IntRef.class, 2, 4, IntRef::new)));
-  private static final ArrayRef<ArrayRef<ByteRef>> lensFlareVertexIndices_800fb930 = MEMORY.ref(1, 0x800fb930L, ArrayRef.of(ArrayRef.classFor(ByteRef.class), 4, 4, ArrayRef.of(ByteRef.class, 4, 1, ByteRef::new)));
+  private static final int[] lensFlareGlowScales_800fb8fc = {0xf0, 0xa0, 0x60, 0x30, 0x10};
+  private static final int[][] lensFlareTranslationMagnitudeFactors_800fb910 = {{-1, -1}, {0, -1}, {-1, 0}, {0, 0}};
+  private static final int[][] lensFlareVertexIndices_800fb930 = {{3, 2, 1, 0}, {2, 3, 0, 1}, {1, 0, 3, 2}, {0, 1, 2, 3}};
 
   /**
    * <ol start="0">
@@ -591,24 +575,23 @@ public final class SEffe {
   }
 
   /** -1 = failed with no successful presses, 0 = continue, 1-4 = number successful presses */
-  private static final ByteRef daddyHitsCompleted_80119f40 = MEMORY.ref(1, 0x80119f40L, ByteRef::new);
+  private static int daddyHitsCompleted_80119f40;
   private static byte additionOverlayActive_80119f41;
   /** Active when spinning */
   private static byte daddyMeterSpinning_80119f42;
 
   /** Array of daddy spinner step counts */
-  private static final ArrayRef<IntRef> daddyHudSpinnerStepCounts_80119f44 = MEMORY.ref(4, 0x80119f44L, ArrayRef.of(IntRef.class, 7, 4, IntRef::new));
+  private static final int[] daddyHudSpinnerStepCounts_80119f44 = {14, 12, 10, 8, 1, 1, 0};
   /** Array of daddy spinner successful press frame windows */
-  private static final ArrayRef<IntRef> daddyHitSuccessWindows_80119f60 = MEMORY.ref(4, 0x80119f60L, ArrayRef.of(IntRef.class, 7, 4, IntRef::new));
+  private static final int[] daddyHitSuccessWindows_80119f60 = {4, 3, 2, 1, 0, 0, 0};
   /** Array of daddy spinner step counts for special boi Kongol */
-  private static final ArrayRef<IntRef> kongolDaddyHudSpinnerStepCounts_80119f7c = MEMORY.ref(4, 0x80119f7cL, ArrayRef.of(IntRef.class, 7, 4, IntRef::new));
+  private static final int[] kongolDaddyHudSpinnerStepCounts_80119f7c = {14, 12, 10, 1, 1, 1, 0};
   /** Array of daddy spinner successful press frame windows for special boi Kongol */
-  private static final ArrayRef<IntRef> kongolDaddyHitSuccessWindows_80119f98 = MEMORY.ref(4, 0x80119f98L, ArrayRef.of(IntRef.class, 7, 4, IntRef::new));
-
+  private static final int[] kongolDaddyHitSuccessWindows_80119f98 = {4, 3, 2, 0, 0, 0, 0};
   private static final ByteRef daddySpinnerBrightnessFactor_80119fb4 = MEMORY.ref(1, 0x80119fb4L, ByteRef::new);
 
-  private static final ArrayRef<UnsignedByteRef> perfectDaddyGlyphUs_80119fbc = MEMORY.ref(1, 0x80119fbcL, ArrayRef.of(UnsignedByteRef.class, 8, 1, UnsignedByteRef::new));
-  private static final ArrayRef<UnsignedByteRef> perfectDaddyGlyphVs_80119fc4 = MEMORY.ref(1, 0x80119fc4L, ArrayRef.of(UnsignedByteRef.class, 8, 1, UnsignedByteRef::new));
+  private static final int[] perfectDaddyGlyphUs_80119fbc = {232, 208, 40, 48, 208, 56, 64, 240};
+  private static final int[] perfectDaddyGlyphVs_80119fc4 = {64, 64, 128, 128, 64, 128, 128, 64};
 
   /**
    * <ol start="0">
@@ -628,21 +611,20 @@ public final class SEffe {
     WsDragoonTransformationFeatherCallbacks_80119ff4[4] = SEffe::WsDragoonTransformationCallback4; // no-op
   }
 
-  private static final IntRef currentParticleIndex_8011a008 = MEMORY.ref(4, 0x8011a008L, IntRef::new);
+  private static int currentParticleIndex_8011a008;
   private static ParticleEffectData98 firstParticle_8011a00c;
   private static ParticleEffectData98 lastParticle_8011a010;
   /** Success values for each addition hit: 0 = not attempted, 1 = success, -1 = too early, -2 = too late, -3 = wrong button */
   private static final byte[] additionHitCompletionState_8011a014 = new byte[8];
 
-  private static final IntRef daddyHudOffsetX_8011a01c = MEMORY.ref(4, 0x8011a01cL, IntRef::new);
-  private static final IntRef daddyHudOffsetY_8011a020 = MEMORY.ref(4, 0x8011a020L, IntRef::new);
-  /** Unused */
-  private static final IntRef daddyScriptIndex_8011a024 = MEMORY.ref(4, 0x8011a024L, IntRef::new);
-  private static final Pointer<ArrayRef<IntRef>> daddyHudSpinnerStepCountsPointer_8011a028 = MEMORY.ref(4, 0x8011a028L, Pointer.deferred(4, ArrayRef.of(IntRef.class, 7, 4, IntRef::new)));
-  private static final Pointer<ArrayRef<IntRef>> daddyHitSuccessWindowsPointer_8011a02c = MEMORY.ref(4, 0x8011a02cL, Pointer.deferred(4, ArrayRef.of(IntRef.class, 7, 4, IntRef::new)));
+  private static int daddyHudOffsetX_8011a01c;
+  private static int daddyHudOffsetY_8011a020;
+
+  private static int[] daddyHudSpinnerStepCountsPointer_8011a028;
+  private static int[] daddyHitSuccessWindowsPointer_8011a02c;
 
   /** Related to processing type 2 LMBs */
-  private static final UnboundedArrayRef<ByteRef> lmbType2TransformationData_8011a048 = MEMORY.ref(1, 0x8011a048L, UnboundedArrayRef.of(1, ByteRef::new));
+  private static final byte[] lmbType2TransformationData_8011a048 = new byte[0x300];
 
   @Method(0x800fb95cL)
   public static void FUN_800fb95c(final ParticleEffectInstance94 particle) {
@@ -1756,16 +1738,16 @@ public final class SEffe {
 
   @Method(0x800ff6fcL)
   public static void FUN_800ff6fc(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
-    final int a0 = currentParticleIndex_8011a008.get();
+    final int particleIndex = currentParticleIndex_8011a008;
     particle.angleVelocity_10 = MathHelper.TWO_PI / 32.0f;
-    final int v1 = a0 >>> 1;
+    final int v1 = particleIndex >>> 1;
     particle.angle_0e = MathHelper.psxDegToRad(v1 << 7);
     particle._14 = (short)(v1 << 7);
     particle._16 = effectInner._10;
-    particle._18 = (short)(a0 & 0x1);
+    particle._18 = (short)(particleIndex & 0x1);
     particle._1a.x = v1 << 3;
 
-    final float colour = Math.max(0, (effectInner.particleInnerStuff_1c >>> 8 & 0xff) - a0 * 16) / (float)0x80;
+    final float colour = Math.max(0, (effectInner.particleInnerStuff_1c >>> 8 & 0xff) - particleIndex * 16) / (float)0x80;
 
     //LAB_800ff754
     particle.ticksRemaining_12 = -1;
@@ -1826,7 +1808,7 @@ public final class SEffe {
     final long v0;
     long a0;
     particle.particleAcceleration_60.y = 8.0f;
-    a0 = currentParticleIndex_8011a008.get();
+    a0 = currentParticleIndex_8011a008;
     v0 = a0 << 9;
     particle._14 = (short)v0;
     a0 = a0 >>> 2;
@@ -1884,7 +1866,7 @@ public final class SEffe {
     particle._1a.x = effectInner._10;
     particle._14 = (short)(seed_800fa754.nextInt(4097));
     particle._16 = (short)((seed_800fa754.nextInt(123) + 64) * effectInner._18);
-    particle._18 = (short)(0x800 / effect.countParticleInstance_50 * currentParticleIndex_8011a008.get());
+    particle._18 = (short)(0x800 / effect.countParticleInstance_50 * currentParticleIndex_8011a008);
   }
 
   @Method(0x801000b8L)
@@ -1994,7 +1976,7 @@ public final class SEffe {
     particle._14 = 0x800;
     particle._16 = (short)(effectInner._10 << 4);
     particle._1a.x = effectInner._18 * 64.0f;
-    particle.framesUntilRender_04 = (short)(currentParticleIndex_8011a008.get() * (effectInner._14 / effectInner.totalCountParticleInstance_0c));
+    particle.framesUntilRender_04 = (short)(currentParticleIndex_8011a008 * (effectInner._14 / effectInner.totalCountParticleInstance_0c));
   }
 
   @Method(0x80100978L)
@@ -2045,7 +2027,7 @@ public final class SEffe {
   @Method(0x80100d00L)
   public static void FUN_80100d00(final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     final Vector3f translation = new Vector3f();
-    getModelObjectTranslation(effectInner.parentScriptIndex_04, translation, currentParticleIndex_8011a008.get());
+    getModelObjectTranslation(effectInner.parentScriptIndex_04, translation, currentParticleIndex_8011a008);
     particle.particlePosition_50.set(translation);
   }
 
@@ -2119,7 +2101,7 @@ public final class SEffe {
   @Method(0x801010a0L)
   public static void FUN_801010a0(final ScriptState<EffectManagerData6c<EffectManagerData6cInner.ParticleType>> state, final EffectManagerData6c<EffectManagerData6cInner.ParticleType> manager, final ParticleEffectData98 effect, final ParticleEffectInstance94 particle) {
     // Calculate the index of this array element
-    currentParticleIndex_8011a008.set(particle.index);
+    currentParticleIndex_8011a008 = particle.index;
 
     initializeParticleInstance(manager, effect, particle, effect.effectInner_08);
 
@@ -2316,7 +2298,7 @@ public final class SEffe {
 
     //LAB_80101dd8
     if((effect.effectInner_08.particleInnerStuff_1c & 0x6000_0000) != 0) {
-      effect.countParticleSub_54 = particleSubCounts_800fb794.get((effect.effectInner_08.particleInnerStuff_1c & 0x6000_0000) >>> 28).get();
+      effect.countParticleSub_54 = particleSubCounts_800fb794[(effect.effectInner_08.particleInnerStuff_1c & 0x6000_0000) >>> 28];
 
       //LAB_80101e3c
       for(int i = 0; i < effect.countParticleInstance_50; i++) {
@@ -2334,16 +2316,11 @@ public final class SEffe {
 
     if((effect.effectInner_08.particleInnerStuff_1c & 0x6000_0000) != 0) {
       final int index = (effect.effectInner_08.particleInnerStuff_1c & 0x6000_0000) >>> 28;
-      effect.countParticleSub_54 = particleSubCounts_800fb794.get(index).get();
+      effect.countParticleSub_54 = particleSubCounts_800fb794[index];
 
       //LAB_80101f2c
       for(int i = 0; i < effect.countParticleInstance_50; i++) {
         final ParticleEffectInstance94 inst = effect.particleArray_68[i];
-        //TODO why is a GP0 packet started here but not used?
-        //        final long v1 = gpuPacketAddr_1f8003d8.get();
-        //        gpuPacketAddr_1f8003d8.addu(0x28L);
-        //        MEMORY.ref(1, v1).offset(0x3L).setu(0x9L);
-        //        MEMORY.ref(4, v1).offset(0x4L).setu(0x2c80_8080L);
         inst.particleInstanceSubArray_80 = new ParticleEffectInstance94Sub10[effect.countParticleSub_54];
         Arrays.setAll(inst.particleInstanceSubArray_80, n -> new ParticleEffectInstance94Sub10());
       }
@@ -2438,7 +2415,7 @@ public final class SEffe {
     //LAB_80102278
     for(int i = 0; i < effect.countParticleInstance_50; i++) {
       final ParticleEffectInstance94 particle = effect.particleArray_68[i];
-      currentParticleIndex_8011a008.set(i);
+      currentParticleIndex_8011a008 = i;
       initializeParticleInstance(manager, effect, particle, effect.effectInner_08);
       particle.particlePositionCopy1.set(particle.particlePosition_50);
     }
@@ -3441,11 +3418,11 @@ public final class SEffe {
     final int offset = isCounter ? 1 : 0;
     if(Math.abs((byte)a0) >= 2) {  // Button up position
       callScriptFunction(callback, 0x24, 119, 43, Translucency.B_PLUS_F.ordinal(), 0x80);
-      callScriptFunction(callback, additionButtonRenderCallbackIndices_800fb7bc.get(offset).get(), 115, 48, 0x1, 0x80);
+      callScriptFunction(callback, additionButtonRenderCallbackIndices_800fb7bc[offset], 115, 48, 0x1, 0x80);
     } else {  // Button down position
       //LAB_80106114
       callScriptFunction(callback, 0x24, 119, 51, Translucency.B_PLUS_F.ordinal(), 0x80);
-      callScriptFunction(callback, additionButtonRenderCallbackIndices_800fb7bc.get(offset + 2).get(), 115, 48, Translucency.B_PLUS_F.ordinal(), 0x80);
+      callScriptFunction(callback, additionButtonRenderCallbackIndices_800fb7bc[offset + 2], 115, 48, Translucency.B_PLUS_F.ordinal(), 0x80);
       callScriptFunction(callback, 0x25, 115, 50, Translucency.B_PLUS_F.ordinal(), 0x80);
     }
   }
@@ -3527,12 +3504,12 @@ public final class SEffe {
       if(Config.changeAdditionOverlayRgb()) {
         final int counterRgb = Config.getCounterOverlayRgb();
         final int additionRgb = Config.getAdditionOverlayRgb();
-        additionBorderColours_800fb7f0.get(6).set(counterRgb & 0xff);
-        additionBorderColours_800fb7f0.get(7).set(counterRgb >> 8 & 0xff);
-        additionBorderColours_800fb7f0.get(8).set(counterRgb >> 16 & 0xff);
-        additionBorderColours_800fb7f0.get(9).set(additionRgb & 0xff);
-        additionBorderColours_800fb7f0.get(10).set(additionRgb >> 8 & 0xff);
-        additionBorderColours_800fb7f0.get(11).set(additionRgb >> 16 & 0xff);
+        additionBorderColours_800fb7f0[6] = counterRgb & 0xff;
+        additionBorderColours_800fb7f0[7] = counterRgb >> 8 & 0xff;
+        additionBorderColours_800fb7f0[8] = counterRgb >> 16 & 0xff;
+        additionBorderColours_800fb7f0[9] = additionRgb & 0xff;
+        additionBorderColours_800fb7f0[10] = additionRgb >> 8 & 0xff;
+        additionBorderColours_800fb7f0[11] = additionRgb >> 16 & 0xff;
       }
 
       int val = 16;
@@ -3545,10 +3522,10 @@ public final class SEffe {
         borderOverlay.angleModifier_02 = (short)((0x10 - val) * 0x80 + 0x200);
         borderOverlay.countFramesVisible_0c = 5;
         borderOverlay.sideEffects_0d = 0;
-        borderOverlay.framesUntilRender_0a = (short)(hitOverlay.frameSuccessLowerBound_10 + (hitOverlay.numSuccessFrames_0e - 0x1) / 2 + val - 0x11);
-        borderOverlay.r_04 = additionBorderColours_800fb7f0.get(hitOverlay.borderColoursArrayIndex_02 * 3).get()& 0xff;
-        borderOverlay.g_05 = additionBorderColours_800fb7f0.get(hitOverlay.borderColoursArrayIndex_02 * 3 + 1).get() & 0xff;
-        borderOverlay.b_06 = additionBorderColours_800fb7f0.get(hitOverlay.borderColoursArrayIndex_02 * 3 + 2).get() & 0xff;
+        borderOverlay.framesUntilRender_0a = (short)(hitOverlay.frameSuccessLowerBound_10 + (hitOverlay.numSuccessFrames_0e - 1) / 2 + val - 17);
+        borderOverlay.r_04 = additionBorderColours_800fb7f0[hitOverlay.borderColoursArrayIndex_02 * 3];
+        borderOverlay.g_05 = additionBorderColours_800fb7f0[hitOverlay.borderColoursArrayIndex_02 * 3 + 1];
+        borderOverlay.b_06 = additionBorderColours_800fb7f0[hitOverlay.borderColoursArrayIndex_02 * 3 + 2];
 
         val--;
       }
@@ -3654,7 +3631,7 @@ public final class SEffe {
           cmd.monochrome(0x30);
         } else if(hitOverlay.isCounter_1c) {  // Counter-attack too late
           if(Config.changeAdditionOverlayRgb()) {
-            cmd.rgb(additionBorderColours_800fb7f0.get(6).get(), additionBorderColours_800fb7f0.get(7).get(), (additionBorderColours_800fb7f0.get(8).get() * 8 - 2) * 8);
+            cmd.rgb(additionBorderColours_800fb7f0[6], additionBorderColours_800fb7f0[7], (additionBorderColours_800fb7f0[8] * 8 - 2) * 8);
           } else {
             cmd.rgb(targetBorderArray[15].r_04 * 3, targetBorderArray[15].g_05, (targetBorderArray[15].b_06 - 1) * 8);
           }
@@ -3740,9 +3717,9 @@ public final class SEffe {
                 final int rgb = Config.getCounterOverlayRgb();
 
                 // Hack to get around lack of separate counterattack color field until full dememulation
-                final float rFactor = borderArray[borderNum].r_04 / (float)additionBorderColours_800fb7f0.get(9).get();
-                final float gFactor = borderArray[borderNum].g_05 / (float)additionBorderColours_800fb7f0.get(10).get();
-                final float bFactor = borderArray[borderNum].b_06 / (float)additionBorderColours_800fb7f0.get(11).get();
+                final float rFactor = borderArray[borderNum].r_04 / (float)additionBorderColours_800fb7f0[9];
+                final float gFactor = borderArray[borderNum].g_05 / (float)additionBorderColours_800fb7f0[10];
+                final float bFactor = borderArray[borderNum].b_06 / (float)additionBorderColours_800fb7f0[11];
 
                 cmd.rgb(Math.round((rgb & 0xff) * rFactor), Math.round((rgb >> 8 & 0xff) * gFactor), Math.round((rgb >> 16 & 0xff) * bFactor));
               } else {
@@ -4134,8 +4111,8 @@ public final class SEffe {
 
   @Method(0x801079e8L)
   public static void renderDragoonAdditionButtonPressTextures(final DragoonAdditionScriptData1c daddy) {
-    final int x0 = daddyHudOffsetX_8011a01c.get();
-    final int y0 = daddyHudOffsetY_8011a020.get();
+    final int x0 = daddyHudOffsetX_8011a01c;
+    final int y0 = daddyHudOffsetY_8011a020;
     final int x1 = x0 + 16;
     final int y1 = y0 + 70;
     final Consumer<RunningScript<?>> func = Bttl_800d::scriptRenderButtonPressHudElement;
@@ -4211,13 +4188,13 @@ public final class SEffe {
     final int colour = (daddySpinnerBrightnessFactor_80119fb4.get() + 1) * 0x40;
     final COLOUR rgb = new COLOUR().set(colour, colour, colour);
 
-    final int y = daddyHudOffsetY_8011a020.get() + (rsin(angle) * 17 >> 12) + 24;
+    final int y = daddyHudOffsetY_8011a020 + (rsin(angle) * 17 >> 12) + 24;
 
     final int x;
-    if(daddyHudSpinnerStepCountsPointer_8011a028.deref().get(daddy.stepCountIndex_06).get() >= 2) {
-      x = daddyHudOffsetX_8011a01c.get() + (rcos(angle) * 17 >> 12) + 28;
+    if(daddyHudSpinnerStepCountsPointer_8011a028[daddy.stepCountIndex_06] >= 2) {
+      x = daddyHudOffsetX_8011a01c + (rcos(angle) * 17 >> 12) + 28;
     } else {
-      x = daddyHudOffsetX_8011a01c.get() + 28;
+      x = daddyHudOffsetX_8011a01c + 28;
     }
 
     //LAB_80108048
@@ -4235,12 +4212,12 @@ public final class SEffe {
       //LAB_801080cc
       // Meter
       renderButtonPressHudTexturedRect(
-        daddyHudOffsetX_8011a01c.get() + daddyHudMeterOffsets_800fb804.get(i).get(0).get(),
-        daddyHudOffsetY_8011a020.get() + daddyHudMeterOffsets_800fb804.get(i).get(1).get(),
-        daddyHudMeterUvs_800fb818.get(i).get(0).get(),
-        daddyHudMeterUvs_800fb818.get(i).get(1).get(),
-        daddyHudMeterDimensions_800fb82c.get(i).get(0).get(),
-        daddyHudMeterDimensions_800fb82c.get(i).get(1).get(),
+        daddyHudOffsetX_8011a01c + daddyHudMeterOffsets_800fb804[i][0],
+        daddyHudOffsetY_8011a020 + daddyHudMeterOffsets_800fb804[i][1],
+        daddyHudMeterUvs_800fb818[i][0],
+        daddyHudMeterUvs_800fb818[i][1],
+        daddyHudMeterDimensions_800fb82c[i][0],
+        daddyHudMeterDimensions_800fb82c[i][1],
         53 + i,
         Translucency.B_PLUS_F,
         rgb,
@@ -4257,13 +4234,13 @@ public final class SEffe {
     for(int i = 0; i < daddy.countEyeFlashTicks_0d; i++) {
       // Eye flash
       renderButtonPressHudTexturedRect(
-        daddyHudOffsetX_8011a01c.get() + 18,
-        daddyHudOffsetY_8011a020.get() + 16,
+        daddyHudOffsetX_8011a01c + 18,
+        daddyHudOffsetY_8011a020 + 16,
         224,
         208,
         31,
         31,
-        daddyHudEyeClutOffsets_800fb84c.get(daddy.charId_18).get(),
+        daddyHudEyeClutOffsets_800fb84c[daddy.charId_18],
         Translucency.B_PLUS_F,
         rgb,
         0x1000
@@ -4271,8 +4248,8 @@ public final class SEffe {
 
       if(daddy.charId_18 == 9) {
         renderDivineDragoonAdditionPressIris(
-          daddyHudOffsetX_8011a01c.get() + 23,
-          daddyHudOffsetY_8011a020.get() + 21,
+          daddyHudOffsetX_8011a01c + 23,
+          daddyHudOffsetY_8011a020 + 21,
           232,
           120,
           23,
@@ -4291,8 +4268,8 @@ public final class SEffe {
     // Daddy spinner
     // Arrow/ tick mark
     renderButtonPressHudTexturedRect(
-      daddyHudOffsetX_8011a01c.get() + 32,
-      daddyHudOffsetY_8011a020.get() -  4,
+      daddyHudOffsetX_8011a01c + 32,
+      daddyHudOffsetY_8011a020 -  4,
       152,
       208,
       8,
@@ -4304,51 +4281,51 @@ public final class SEffe {
     );
     // Dark eye overlay
     renderButtonPressHudTexturedRect(
-      daddyHudOffsetX_8011a01c.get() + 18,
-      daddyHudOffsetY_8011a020.get() + 16,
+      daddyHudOffsetX_8011a01c + 18,
+      daddyHudOffsetY_8011a020 + 16,
       224,
       208,
       31,
       31,
-      daddyHudEyeClutOffsets_800fb84c.get(daddy.charId_18).get(),
-      Translucency.of(daddyHudEyeTranslucencyModes_800fb7fc.get(transModesIndex).get(0).get()),
+      daddyHudEyeClutOffsets_800fb84c[daddy.charId_18],
+      Translucency.of(daddyHudEyeTranslucencyModes_800fb7fc[transModesIndex][0]),
       rgb,
       0x1000
     );
     // Flat center overlay
     renderButtonPressHudTexturedRect(
-      daddyHudOffsetX_8011a01c.get() + 17,
-      daddyHudOffsetY_8011a020.get() + 14,
+      daddyHudOffsetX_8011a01c + 17,
+      daddyHudOffsetY_8011a020 + 14,
       112,
       200,
       40,
       40,
       52,
-      Translucency.of(daddyHudEyeTranslucencyModes_800fb7fc.get(transModesIndex).get(1).get()),
+      Translucency.of(daddyHudEyeTranslucencyModes_800fb7fc[transModesIndex][1]),
       rgb,
       0x1000
     );
     // Frame top portion
     renderButtonPressHudTexturedRect(
-      daddyHudOffsetX_8011a01c.get(),
-      daddyHudOffsetY_8011a020.get(), 160,
+      daddyHudOffsetX_8011a01c,
+      daddyHudOffsetY_8011a020, 160,
       192,
       64,
       48,
-      daddyHudFrameClutOffsets_800fb840.get(daddy.charId_18).get(),
+      daddyHudFrameClutOffsets_800fb840[daddy.charId_18],
       null,
       rgb,
       0x1000
     );
     // Frame bottom portion
     renderButtonPressHudTexturedRect(
-      daddyHudOffsetX_8011a01c.get() +  8,
-      daddyHudOffsetY_8011a020.get() + 48,
+      daddyHudOffsetX_8011a01c +  8,
+      daddyHudOffsetY_8011a020 + 48,
       200,
       80,
       42,
       8,
-      daddyHudFrameClutOffsets_800fb840.get(daddy.charId_18).get(),
+      daddyHudFrameClutOffsets_800fb840[daddy.charId_18],
       null,
       rgb,
       0x1000
@@ -4360,18 +4337,18 @@ public final class SEffe {
   public static int getCurrentDragoonAdditionPressNumber(final DragoonAdditionScriptData1c daddy, final int tickThresholdModifier) {
     int currentPressNumber = 0;
     int totalSteps = 0;
-    final ArrayRef<IntRef> successWindowArray = daddyHitSuccessWindowsPointer_8011a02c.deref();
-    final ArrayRef<IntRef> stepCounts = daddyHudSpinnerStepCountsPointer_8011a028.deref();
+    final int[] successWindowArray = daddyHitSuccessWindowsPointer_8011a02c;
+    final int[] stepCounts = daddyHudSpinnerStepCountsPointer_8011a028;
     final int previousTick = daddy.currentTick_04 - 1;
 
     //LAB_80108484
     for(int i = 0; i < 5; i++) {
-      totalSteps += stepCounts.get(i).get();
-      final int tickThreshold = totalSteps - tickThresholdModifier - (successWindowArray.get(i).get() >> 1);
+      totalSteps += stepCounts[i];
+      final int tickThreshold = totalSteps - tickThresholdModifier - (successWindowArray[i] >> 1);
       //LAB_801084c4
       if((i & 1) == 0 && previousTick >= tickThreshold + 1 || (i & 1) != 0 && previousTick >= tickThreshold) {
         //LAB_801084cc
-        final int successWindow = successWindowArray.get(i).get();
+        final int successWindow = successWindowArray[i];
         if(successWindow != 0 && totalSteps + (successWindow >> 1) >= previousTick) {
           currentPressNumber = i + 1;
         }
@@ -4418,7 +4395,7 @@ public final class SEffe {
         } else {
           //LAB_8010864c
           daddy.currentTick_04++;
-          daddy.baseAngle_02 += 0x1000 / daddyHudSpinnerStepCountsPointer_8011a028.deref().get(daddy.stepCountIndex_06).get();
+          daddy.baseAngle_02 += 0x1000 / daddyHudSpinnerStepCountsPointer_8011a028[daddy.stepCountIndex_06];
 
           if(daddy.stepCountIndex_06 + 1 << 12 < daddy.baseAngle_02) {
             daddy.stepCountIndex_06++;
@@ -4440,14 +4417,14 @@ public final class SEffe {
             if(currentPressNumber != 0) {
               daddy.currentPressNumber_07 = currentPressNumber;
               daddy.countEyeFlashTicks_0d = 4;
-              daddyHitsCompleted_80119f40.set(0);
+              daddyHitsCompleted_80119f40 = 0;
             } else {
               //LAB_8010873c
               if(daddy.currentPressNumber_07 == 0) {
-                daddyHitsCompleted_80119f40.set(-1);
+                daddyHitsCompleted_80119f40 = -1;
               } else {
                 //LAB_8010875c
-                daddyHitsCompleted_80119f40.set(daddy.currentPressNumber_07);
+                daddyHitsCompleted_80119f40 = daddy.currentPressNumber_07;
               }
 
               //LAB_80108760
@@ -4460,7 +4437,7 @@ public final class SEffe {
             daddy.countEyeFlashTicks_0d = 0;
 
             if(daddy.currentPressNumber_07 == 0) {
-              daddyHitsCompleted_80119f40.set(-1);
+              daddyHitsCompleted_80119f40 = -1;
             } else {
               //LAB_801087a4
               if(daddy.currentPressNumber_07 == daddy.totalPressCount_14) {
@@ -4468,7 +4445,7 @@ public final class SEffe {
               }
 
               //LAB_801087bc
-              daddyHitsCompleted_80119f40.set(daddy.currentPressNumber_07);
+              daddyHitsCompleted_80119f40 = daddy.currentPressNumber_07;
             }
 
             //LAB_801087c8
@@ -4516,25 +4493,24 @@ public final class SEffe {
     daddy.charId_18 = charId;
 
     //LAB_80108910
-    daddyHudOffsetX_8011a01c.set(script.params_20[3].get());
-    daddyHudOffsetY_8011a020.set(script.params_20[4].get());
+    daddyHudOffsetX_8011a01c = script.params_20[3].get();
+    daddyHudOffsetY_8011a020 = script.params_20[4].get();
 
     //LAB_80108924
     if(charId == 7) {
-      daddyHudSpinnerStepCountsPointer_8011a028.set(kongolDaddyHudSpinnerStepCounts_80119f7c);
-      daddyHitSuccessWindowsPointer_8011a02c.set(kongolDaddyHitSuccessWindows_80119f98);
+      daddyHudSpinnerStepCountsPointer_8011a028 = kongolDaddyHudSpinnerStepCounts_80119f7c;
+      daddyHitSuccessWindowsPointer_8011a02c = kongolDaddyHitSuccessWindows_80119f98;
       daddy.totalPressCount_14 = 3;
     } else {
       //LAB_80108964
-      daddyHudSpinnerStepCountsPointer_8011a028.set(daddyHudSpinnerStepCounts_80119f44);
-      daddyHitSuccessWindowsPointer_8011a02c.set(daddyHitSuccessWindows_80119f60);
+      daddyHudSpinnerStepCountsPointer_8011a028 = daddyHudSpinnerStepCounts_80119f44;
+      daddyHitSuccessWindowsPointer_8011a02c = daddyHitSuccessWindows_80119f60;
       daddy.totalPressCount_14 = 4;
     }
 
     //LAB_80108984
-    daddyHitsCompleted_80119f40.set(0);
+    daddyHitsCompleted_80119f40 = 0;
     daddyMeterSpinning_80119f42 = 0;
-    daddyScriptIndex_8011a024.set(state.index);
     return FlowControl.CONTINUE;
   }
 
@@ -4543,7 +4519,7 @@ public final class SEffe {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "count", description = "The number of hits completed")
   @Method(0x801089ccL)
   public static FlowControl scriptGetDragoonAdditionHitsCompleted(final RunningScript<?> script) {
-    script.params_20[1].set(daddyHitsCompleted_80119f40.get());
+    script.params_20[1].set(daddyHitsCompleted_80119f40);
     return FlowControl.CONTINUE;
   }
 
@@ -4553,8 +4529,8 @@ public final class SEffe {
     for(int i = 7; i >= 0; i--) {
       final COLOUR rgb = new COLOUR().set(0x80, 0x80, 0x80);
 
-      final int u = perfectDaddyGlyphUs_80119fbc.get(i).get();
-      final int v = perfectDaddyGlyphVs_80119fc4.get(i).get();
+      final int u = perfectDaddyGlyphUs_80119fbc[i];
+      final int v = perfectDaddyGlyphVs_80119fc4[i];
 
       final PerfectDragoonAdditionEffectGlyph06 glyph = effect.glyphs_00[i];
 
@@ -4576,7 +4552,7 @@ public final class SEffe {
           rgb.b.sub(32);
           renderButtonPressHudTexturedRect(
             glyph.currentXPosition_02 + j * 6,
-            daddyHudOffsetY_8011a020.get() + 16,
+            daddyHudOffsetY_8011a020 + 16,
             u,
             v,
             8,
@@ -4611,7 +4587,7 @@ public final class SEffe {
       //LAB_80108bf0
       renderButtonPressHudTexturedRect(
         glyph.currentXPosition_02,
-        daddyHudOffsetY_8011a020.get() + 16,
+        daddyHudOffsetY_8011a020 + 16,
         u,
         v,
         8,
@@ -4625,7 +4601,7 @@ public final class SEffe {
       if((glyph.currentStaticRenderTick_01 & 0x1) != 0) {
         renderButtonPressHudTexturedRect(
           glyph.currentXPosition_02,
-          daddyHudOffsetY_8011a020.get() + 16,
+          daddyHudOffsetY_8011a020 + 16,
           u,
           v,
           8,
@@ -4651,7 +4627,7 @@ public final class SEffe {
     final PerfectDragoonAdditionEffect30 effect = state.innerStruct_00;
 
     //LAB_80108d9c
-    int finalXPosition = daddyHudOffsetX_8011a01c.get();
+    int finalXPosition = daddyHudOffsetX_8011a01c;
     int initialXPosition = 130;
     for(int i = 0; i < 8; i++) {
       final PerfectDragoonAdditionEffectGlyph06 glyph = effect.glyphs_00[i];
@@ -5693,7 +5669,7 @@ public final class SEffe {
         if(inst.x_04 > 0 && inst.x_04 < dispW && inst.y_06 > 0 && inst.y_06 < dispH) {
           inst.onScreen_03 = true;
 
-          final int scale = lensFlareGlowScales_800fb8fc.get(i).get();
+          final int scale = lensFlareGlowScales_800fb8fc[i];
           inst.x_04 += x * scale / 0x100;
           inst.y_06 += y * scale / 0x100;
         } else {
@@ -5742,8 +5718,8 @@ public final class SEffe {
 
           if(i == 0) {
             for(int j = 0; j < 4; j++) {
-              final int x = (inst.widthScale_2e * w >> 12) * lensFlareTranslationMagnitudeFactors_800fb910.get(j).get(0).get();
-              final int y = (inst.heightScale_30 * h >> 12) * lensFlareTranslationMagnitudeFactors_800fb910.get(j).get(1).get();
+              final int x = (inst.widthScale_2e * w >> 12) * lensFlareTranslationMagnitudeFactors_800fb910[j][0];
+              final int y = (inst.heightScale_30 * h >> 12) * lensFlareTranslationMagnitudeFactors_800fb910[j][1];
               final int halfW = displayWidth_1f8003e0.get() / 2;
               final int halfH = displayHeight_1f8003e4.get() / 2;
               final float[][] sp0x48 = new float[4][2];
@@ -5761,10 +5737,10 @@ public final class SEffe {
                 .clut(clutX, clutY)
                 .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
                 .rgb(r, g, b)
-                .pos(0, sp0x48[lensFlareVertexIndices_800fb930.get(j).get(0).get()][0], sp0x48[lensFlareVertexIndices_800fb930.get(j).get(0).get()][1])
-                .pos(1, sp0x48[lensFlareVertexIndices_800fb930.get(j).get(1).get()][0], sp0x48[lensFlareVertexIndices_800fb930.get(j).get(1).get()][1])
-                .pos(2, sp0x48[lensFlareVertexIndices_800fb930.get(j).get(2).get()][0], sp0x48[lensFlareVertexIndices_800fb930.get(j).get(2).get()][1])
-                .pos(3, sp0x48[lensFlareVertexIndices_800fb930.get(j).get(3).get()][0], sp0x48[lensFlareVertexIndices_800fb930.get(j).get(3).get()][1])
+                .pos(0, sp0x48[lensFlareVertexIndices_800fb930[j][0]][0], sp0x48[lensFlareVertexIndices_800fb930[j][0]][1])
+                .pos(1, sp0x48[lensFlareVertexIndices_800fb930[j][1]][0], sp0x48[lensFlareVertexIndices_800fb930[j][1]][1])
+                .pos(2, sp0x48[lensFlareVertexIndices_800fb930[j][2]][0], sp0x48[lensFlareVertexIndices_800fb930[j][2]][1])
+                .pos(3, sp0x48[lensFlareVertexIndices_800fb930[j][3]][0], sp0x48[lensFlareVertexIndices_800fb930[j][3]][1])
                 .uv(0, u, v)
                 .uv(1, u + w - 1, v)
                 .uv(2, u, v + h - 1)
@@ -8701,13 +8677,6 @@ public final class SEffe {
           if(managerType == 0x300_0000) {
             //LAB_80116014
             throw new RuntimeException("ASM is bugged");
-//          v0 = manager._44.deref();
-//          MEMORY.ref(4, v0).offset(0x4L).setu(0);
-//          v0 = t2 + MEMORY.ref(4, t2).offset(0x8L).get() + s0 * 0x10L;
-//          u = MEMORY.ref(2, v0).offset(0x0L).getSigned();
-//          v = MEMORY.ref(2, v0).offset(0x2L).getSigned();
-//          w = MEMORY.ref(2, v0).offset(0x4L).getSigned() * 4;
-//          h = MEMORY.ref(2, v0).offset(0x6L).getSigned();
             //LAB_80115fc8
           } else if(managerType == 0x400_0000) {
             //LAB_8011602c
@@ -9132,8 +9101,8 @@ public final class SEffe {
 
         //LAB_80117234
         for(int i = 0; i < lmb.transformDataPairCount_08 * 2; i += 2) {
-          lmbType2TransformationData_8011a048.get(i).set(lmb._14[a0] >> 4);
-          lmbType2TransformationData_8011a048.get(i + 1).set(lmb._14[a0] << 28 >> 28);
+          lmbType2TransformationData_8011a048[i] = (byte)(lmb._14[a0] >> 4);
+          lmbType2TransformationData_8011a048[i + 1] = (byte)(lmb._14[a0] << 28 >> 28);
           a0++;
         }
 
@@ -9146,60 +9115,60 @@ public final class SEffe {
           final int flags = lmb.flags_0c[i];
 
           if((flags & 0xe000) != 0xe000) {
-            final int shift = lmbType2TransformationData_8011a048.get(index++).get() & 0xf;
+            final int shift = lmbType2TransformationData_8011a048[index++] & 0xf;
 
             if((flags & 0x8000) == 0) {
-              transform.scale_00.x += lmbType2TransformationData_8011a048.get(index++).get() << shift;
+              transform.scale_00.x += lmbType2TransformationData_8011a048[index++] << shift;
             }
 
             //LAB_801172c8
             if((flags & 0x4000) == 0) {
-              transform.scale_00.y += lmbType2TransformationData_8011a048.get(index++).get() << shift;
+              transform.scale_00.y += lmbType2TransformationData_8011a048[index++] << shift;
             }
 
             //LAB_801172f0
             if((flags & 0x2000) == 0) {
-              transform.scale_00.z += lmbType2TransformationData_8011a048.get(index++).get() << shift;
+              transform.scale_00.z += lmbType2TransformationData_8011a048[index++] << shift;
             }
           }
 
           //LAB_80117310
           //LAB_80117314
           if((flags & 0x1c00) != 0x1c00) {
-            final int shift = lmbType2TransformationData_8011a048.get(index++).get() & 0xf;
+            final int shift = lmbType2TransformationData_8011a048[index++] & 0xf;
 
             if((flags & 0x1000) == 0) {
-              transform.trans_06.x += lmbType2TransformationData_8011a048.get(index++).get() << shift;
+              transform.trans_06.x += lmbType2TransformationData_8011a048[index++] << shift;
             }
 
             //LAB_80117348
             if((flags & 0x800) == 0) {
-              transform.trans_06.y += lmbType2TransformationData_8011a048.get(index++).get() << shift;
+              transform.trans_06.y += lmbType2TransformationData_8011a048[index++] << shift;
             }
 
             //LAB_80117370
             if((flags & 0x400) == 0) {
-              transform.trans_06.z += lmbType2TransformationData_8011a048.get(index++).get() << shift;
+              transform.trans_06.z += lmbType2TransformationData_8011a048[index++] << shift;
             }
           }
 
           //LAB_80117390
           //LAB_80117394
           if((flags & 0x380) != 0x380) {
-            final int shift = lmbType2TransformationData_8011a048.get(index++).get() & 0xf;
+            final int shift = lmbType2TransformationData_8011a048[index++] & 0xf;
 
             if((flags & 0x200) == 0) {
-              transform.rot_0c.x += lmbType2TransformationData_8011a048.get(index++).get() << shift;
+              transform.rot_0c.x += lmbType2TransformationData_8011a048[index++] << shift;
             }
 
             //LAB_801173c8
             if((flags & 0x100) == 0) {
-              transform.rot_0c.y += lmbType2TransformationData_8011a048.get(index++).get() << shift;
+              transform.rot_0c.y += lmbType2TransformationData_8011a048[index++] << shift;
             }
 
             //LAB_801173f0
             if((flags & 0x80) == 0) {
-              transform.rot_0c.z += lmbType2TransformationData_8011a048.get(index++).get() << shift;
+              transform.rot_0c.z += lmbType2TransformationData_8011a048[index++] << shift;
             }
           }
         }
@@ -9250,8 +9219,8 @@ public final class SEffe {
 
         //LAB_80117470
         for(int i = 0; i < lmb.transformDataPairCount_08 * 2; i += 2) {
-          lmbType2TransformationData_8011a048.get(i).set(lmb._14[a0] >> 4);
-          lmbType2TransformationData_8011a048.get(i + 1).set(lmb._14[a0] << 28 >> 28);
+          lmbType2TransformationData_8011a048[i] = (byte)(lmb._14[a0] >> 4);
+          lmbType2TransformationData_8011a048[i + 1] = (byte)(lmb._14[a0] << 28 >> 28);
           a0++;
         }
 
@@ -9265,40 +9234,40 @@ public final class SEffe {
           final int flags = lmb.flags_0c[i];
 
           if((flags & 0xe000) != 0xe000) {
-            final int shift = lmbType2TransformationData_8011a048.get(index++).get() & 0xf;
+            final int shift = lmbType2TransformationData_8011a048[index++] & 0xf;
 
             if((flags & 0x8000) == 0) {
-              transformHi.scale_00.x = transformLo.scale_00.x + (lmbType2TransformationData_8011a048.get(index++).get() << shift) * lerpScale;
+              transformHi.scale_00.x = transformLo.scale_00.x + (lmbType2TransformationData_8011a048[index++] << shift) * lerpScale;
             }
 
             //LAB_80117524
             if((flags & 0x4000) == 0) {
-              transformHi.scale_00.y = transformLo.scale_00.y + (lmbType2TransformationData_8011a048.get(index++).get() << shift) * lerpScale;
+              transformHi.scale_00.y = transformLo.scale_00.y + (lmbType2TransformationData_8011a048[index++] << shift) * lerpScale;
             }
 
             //LAB_80117564
             if((flags & 0x2000) == 0) {
-              transformHi.scale_00.z = transformLo.scale_00.z + (lmbType2TransformationData_8011a048.get(index++).get() << shift) * lerpScale;
+              transformHi.scale_00.z = transformLo.scale_00.z + (lmbType2TransformationData_8011a048[index++] << shift) * lerpScale;
             }
           }
 
           //LAB_8011759c
           //LAB_801175a0
           if((flags & 0x1c00) != 0x1c00) {
-            final int shift = lmbType2TransformationData_8011a048.get(index++).get() & 0xf;
+            final int shift = lmbType2TransformationData_8011a048[index++] & 0xf;
 
             if((flags & 0x1000) == 0) {
-              transformHi.trans_06.x = transformLo.trans_06.x + (lmbType2TransformationData_8011a048.get(index++).get() << shift) * lerpScale;
+              transformHi.trans_06.x = transformLo.trans_06.x + (lmbType2TransformationData_8011a048[index++] << shift) * lerpScale;
             }
 
             //LAB_801175ec
             if((flags & 0x800) == 0) {
-              transformHi.trans_06.y = transformLo.trans_06.y + (lmbType2TransformationData_8011a048.get(index++).get() << shift) * lerpScale;
+              transformHi.trans_06.y = transformLo.trans_06.y + (lmbType2TransformationData_8011a048[index++] << shift) * lerpScale;
             }
 
             //LAB_8011762c
             if((flags & 0x400) == 0) {
-              transformHi.trans_06.z = transformLo.trans_06.z + (lmbType2TransformationData_8011a048.get(index++).get() << shift) * lerpScale;
+              transformHi.trans_06.z = transformLo.trans_06.z + (lmbType2TransformationData_8011a048[index++] << shift) * lerpScale;
             }
           }
 

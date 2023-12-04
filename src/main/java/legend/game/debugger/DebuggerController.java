@@ -397,9 +397,9 @@ public class DebuggerController {
 
   @FXML
   private void getAdditionOverlayRgb(final ActionEvent event) {
-    this.additionOverlayR.getValueFactory().setValue(SEffe.additionBorderColours_800fb7f0.get(9).get());
-    this.additionOverlayG.getValueFactory().setValue(SEffe.additionBorderColours_800fb7f0.get(10).get());
-    this.additionOverlayB.getValueFactory().setValue(SEffe.additionBorderColours_800fb7f0.get(11).get());
+    this.additionOverlayR.getValueFactory().setValue(SEffe.additionBorderColours_800fb7f0[9]);
+    this.additionOverlayG.getValueFactory().setValue(SEffe.additionBorderColours_800fb7f0[10]);
+    this.additionOverlayB.getValueFactory().setValue(SEffe.additionBorderColours_800fb7f0[11]);
   }
 
   @FXML
@@ -416,17 +416,17 @@ public class DebuggerController {
       0xff & rgbArray[0];
 
     Config.setAdditionOverlayRgb(rgb);
-    SEffe.additionBorderColours_800fb7f0.get(9).set(rgbArray[0] & 0xff);
-    SEffe.additionBorderColours_800fb7f0.get(10).set(rgbArray[1] & 0xff);
-    SEffe.additionBorderColours_800fb7f0.get(11).set(rgbArray[2] & 0xff);
+    SEffe.additionBorderColours_800fb7f0[9] = rgbArray[0] & 0xff;
+    SEffe.additionBorderColours_800fb7f0[10] = rgbArray[1] & 0xff;
+    SEffe.additionBorderColours_800fb7f0[11] = rgbArray[2] & 0xff;
     this.additionOverlayColour.setSelected(true);
   }
 
   @FXML
   private void getCounterOverlayRgb(final ActionEvent event) {
-    this.counterOverlayR.getValueFactory().setValue(SEffe.additionBorderColours_800fb7f0.get(6).get());
-    this.counterOverlayG.getValueFactory().setValue(SEffe.additionBorderColours_800fb7f0.get(7).get());
-    this.counterOverlayB.getValueFactory().setValue(SEffe.additionBorderColours_800fb7f0.get(8).get());
+    this.counterOverlayR.getValueFactory().setValue(SEffe.additionBorderColours_800fb7f0[6]);
+    this.counterOverlayG.getValueFactory().setValue(SEffe.additionBorderColours_800fb7f0[7]);
+    this.counterOverlayB.getValueFactory().setValue(SEffe.additionBorderColours_800fb7f0[8]);
   }
 
   @FXML
@@ -443,9 +443,9 @@ public class DebuggerController {
       0xff & rgbArray[0];
 
     Config.setCounterOverlayRgb(rgb);
-    SEffe.additionBorderColours_800fb7f0.get(6).set(rgbArray[0] & 0xff);
-    SEffe.additionBorderColours_800fb7f0.get(7).set(rgbArray[1] & 0xff);
-    SEffe.additionBorderColours_800fb7f0.get(8).set(rgbArray[2] & 0xff);
+    SEffe.additionBorderColours_800fb7f0[6] = rgbArray[0] & 0xff;
+    SEffe.additionBorderColours_800fb7f0[7] = rgbArray[1] & 0xff;
+    SEffe.additionBorderColours_800fb7f0[8] = rgbArray[2] & 0xff;
     this.additionOverlayColour.setSelected(true);
   }
 
