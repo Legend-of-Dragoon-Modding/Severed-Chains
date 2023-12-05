@@ -69,40 +69,6 @@ public final class Scus94491BpeSegment_8003 {
     GPU.commandA0CopyRectFromCpuToVram(rect, address);
   }
 
-  public static void LoadImage(final RECT rect, final FileData data) {
-    validateRect("LoadImage", rect);
-
-    GPU.uploadData(rect, data);
-  }
-
-  public static long StoreImage(final RECT rect, final FileData data) {
-    validateRect("StoreImage", rect);
-
-    rect.w.set(MathHelper.clamp(rect.w.get(), (short)0, (short)vramWidth_800546c0));
-    rect.h.set(MathHelper.clamp(rect.h.get(), (short)0, (short)vramHeight_800546c2));
-
-    if(rect.w.get() <= 0 || rect.h.get() <= 0) {
-      throw new IllegalArgumentException("RECT width and height must be greater than 0");
-    }
-
-    GPU.commandC0CopyRectFromVramToCpu(rect, data);
-
-    return 0;
-  }
-
-  @Method(0x80038878L)
-  public static void MoveImage(final RECT rect, final int x, final int y) {
-    validateRect("MoveImage", rect);
-
-    if(rect.w.get() <= 0 || rect.h.get() <= 0) {
-      throw new IllegalArgumentException("RECT width and height must be greater than 0");
-    }
-
-    //LAB_800388d0
-    //LAB_80038918
-    GPU.command80CopyRectFromVramToVram(rect.x.get(), rect.y.get(), x, y, rect.w.get(), rect.h.get());
-  }
-
   /**
    * <p>Calculates the texture page ID, and returns it.</p>
    *
@@ -180,8 +146,8 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003be28L)
   public static void initDisplay(final int displayWidth, final int displayHeight) {
-    displayWidth_1f8003e0.set(displayWidth);
-    displayHeight_1f8003e4.set(displayHeight);
+    displayWidth_1f8003e0 = displayWidth;
+    displayHeight_1f8003e4 = displayHeight;
 
     final float aspect = (float)displayHeight / displayWidth * 4.0f / 3.0f;
 
@@ -192,10 +158,10 @@ public final class Scus94491BpeSegment_8003 {
     lightDirectionMatrix_800c34e8.zero();
     lightColourMatrix_800c3508.zero();
 
-    centreScreenX_1f8003dc.set((short)0);
-    centreScreenY_1f8003de.set((short)0);
+    centreScreenX_1f8003dc = 0;
+    centreScreenY_1f8003de = 0;
 
-    displayRect_800c34c8.set((short)0, (short)0, (short)displayWidth, (short)displayHeight);
+    displayRect_800c34c8.set(0, 0, displayWidth, displayHeight);
 
     PSDCNT_800c34d0 = 1;
   }
@@ -208,15 +174,12 @@ public final class Scus94491BpeSegment_8003 {
    */
   @Method(0x8003c048L)
   public static void GsSortClear(final int r, final int g, final int b) {
-    GPU.queueCommand(orderingTableSize_1f8003c8.get() - 1, new GpuCommandFillVram(r, g, b));
+    GPU.queueCommand(orderingTableSize_1f8003c8 - 1, new GpuCommandFillVram(r, g, b));
   }
 
   @Method(0x8003c1c0L)
   public static void GsSetDrawBuffOffset() {
-    final short x = centreScreenX_1f8003dc.get();
-    final short y = centreScreenY_1f8003de.get();
-
-    GPU.drawingOffset(x, y);
+    GPU.drawingOffset(centreScreenX_1f8003dc, centreScreenY_1f8003de);
   }
 
   /**
@@ -229,12 +192,7 @@ public final class Scus94491BpeSegment_8003 {
    */
   @Method(0x8003c2d0L)
   public static void GsSetDrawBuffClip() {
-    final int clipX = displayRect_800c34c8.x.get();
-    final int clipY = displayRect_800c34c8.y.get();
-    final int clipW = displayRect_800c34c8.w.get();
-    final int clipH = displayRect_800c34c8.h.get();
-
-    GPU.drawingArea(clipX, clipY, clipW, clipH);
+    GPU.drawingArea(displayRect_800c34c8.x, displayRect_800c34c8.y, displayRect_800c34c8.w, displayRect_800c34c8.h);
   }
 
   /**
@@ -284,8 +242,8 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003c5e0L)
   public static void setDrawOffset() {
-    centreScreenX_1f8003dc.set((short)(displayWidth_1f8003e0.get() / 2));
-    centreScreenY_1f8003de.set((short)(displayHeight_1f8003e4.get() / 2));
+    centreScreenX_1f8003dc = displayWidth_1f8003e0 / 2;
+    centreScreenY_1f8003de = displayHeight_1f8003e4 / 2;
     GsSetDrawBuffOffset();
   }
 
@@ -722,7 +680,7 @@ public final class Scus94491BpeSegment_8003 {
     worldToScreenMatrix_800c3548.set(identityAspectMatrix_800c3588);
 
     // Use a Y scale of 1.0 minus half the ratio between 320 and the actual width. I don't know why this is necessary. I don't even know why I thought to try this.
-    worldToScreenMatrix_800c3548.m11 = 1.0f - (1.0f - 320.0f / GPU.drawingArea.w.get()) / 2.0f;
+    worldToScreenMatrix_800c3548.m11 = 1.0f - (1.0f - 320.0f / GPU.drawingArea.w) / 2.0f;
 
     FUN_8003d5d0(worldToScreenMatrix_800c3548, -s2.viewpointTwist_18);
 
@@ -783,7 +741,7 @@ public final class Scus94491BpeSegment_8003 {
     worldToScreenMatrix_800c3548.set(identityAspectMatrix_800c3588);
 
     // Use a Y scale of 1.0 minus half the ratio between 320 and the actual width. I don't know why this is necessary. I don't even know why I thought to try this.
-    worldToScreenMatrix_800c3548.m11 = 1.0f - (1.0f - 320.0f / GPU.drawingArea.w.get()) / 2.0f;
+    worldToScreenMatrix_800c3548.m11 = 1.0f - (1.0f - 320.0f / GPU.drawingArea.w) / 2.0f;
 
     FUN_8003d5d0(worldToScreenMatrix_800c3548, -s2.viewpointTwist_18);
 

@@ -34,7 +34,7 @@ public class BattleMenuStruct58 {
    *   <li>0x80 - disabled</li>
    * </ul>
    */
-  public final short[] iconFlags_10 = new short[9];
+  public final int[] iconFlags_10 = new int[9];
   public short selectedIcon_22;
   public short currentIconStateTick_24;
   public short iconStateIndex_26;
@@ -94,7 +94,7 @@ public class BattleMenuStruct58 {
       for(int spiritId = 0; spiritId < 10; spiritId++) {
         final BattleMenuIconMetrics08 iconMetrics = battleMenuIconMetrics_800fb674.get(1);
 
-        final int iconClutOffset = dragoonSpiritIconClutOffsets_800c71d0.get(spiritId).get();
+        final int iconClutOffset = dragoonSpiritIconClutOffsets_800c71d0[spiritId];
 
         for(int iconState = 0; iconState < 3; iconState++) {
           final int vOffset = battleMenuIconVOffsets_800fb6f4.get(1).get(iconState).get();

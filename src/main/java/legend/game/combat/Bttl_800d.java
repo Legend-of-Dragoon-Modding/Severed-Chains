@@ -1125,9 +1125,9 @@ public final class Bttl_800d {
     int charIdx = 0;
 
     //LAB_800d3838
-    long chr;
+    int chr;
     do {
-      chr = asciiTable_800fa788.get(charIdx).get();
+      chr = asciiTable_800fa788[charIdx];
 
       if(additionName.charAt(0) == chr) {
         break;
@@ -1152,19 +1152,19 @@ public final class Bttl_800d {
     //LAB_800d391c
     int charTableOffset;
     for(charTableOffset = 0; ; charTableOffset++) {
-      if(asciiTable_800fa788.get(charTableOffset).get() == 0) {
+      if(asciiTable_800fa788[charTableOffset] == 0) {
         charTableOffset = 0;
         break;
       }
 
-      if(chr == asciiTable_800fa788.get(charTableOffset).get()) {
+      if(chr == asciiTable_800fa788[charTableOffset]) {
         break;
       }
     }
 
     //LAB_800d3944
     //LAB_800d3948
-    return 10 - charWidthAdjustTable_800fa7cc.get(charTableOffset).get();
+    return 10 - charWidthAdjustTable_800fa7cc[charTableOffset];
   }
 
   @Method(0x800d3968L)
@@ -3134,7 +3134,7 @@ public final class Bttl_800d {
       //LAB_800daabc
       final int x;
       final int y;
-      final int type = tickCount_800bb0fc.get() & 0x3;
+      final int type = tickCount_800bb0fc & 0x3;
       if(type == 0) {
         //LAB_800dab04
         x = cameraWobbleOffsetX_800c67e4.get();
@@ -4628,8 +4628,8 @@ public final class Bttl_800d {
    */
   @Method(0x800dd89cL)
   public static void FUN_800dd89c(final Model124 model, final int newAttribute) {
-    zOffset_1f8003e8.set(model.zOffset_a0);
-    tmdGp0Tpage_1f8003ec.set(model.tpage_108);
+    zOffset_1f8003e8 = model.zOffset_a0;
+    tmdGp0Tpage_1f8003ec = model.tpage_108;
 
     final MV lw = new MV();
     final MV ls = new MV();
@@ -4655,15 +4655,15 @@ public final class Bttl_800d {
         final int oldAttrib = part.attribute_00;
         part.attribute_00 = newAttribute;
 
-        final int oldZShift = zShift_1f8003c4.get();
-        final int oldZMax = zMax_1f8003cc.get();
+        final int oldZShift = zShift_1f8003c4;
+        final int oldZMax = zMax_1f8003cc;
         final int oldZMin = zMin;
-        zShift_1f8003c4.set(2);
-        zMax_1f8003cc.set(0xffe);
+        zShift_1f8003c4 = 2;
+        zMax_1f8003cc = 0xffe;
         zMin = 0xb;
         Renderer.renderDobj2(part, false, 0x20);
-        zShift_1f8003c4.set(oldZShift);
-        zMax_1f8003cc.set(oldZMax);
+        zShift_1f8003c4 = oldZShift;
+        zMax_1f8003cc = oldZMax;
         zMin = oldZMin;
 
         RENDERER.queueModel(part.obj, lw)
@@ -4739,7 +4739,7 @@ public final class Bttl_800d {
     model.zOffset_a0 = 0;
     model.coord2_14.coord.transfer.set(sp0x18);
 
-    if((tmd.header.flags & 0x2) == 0 && model.colourMap_9d != 0) {
+    if((tmd.header.flags & 0x2) == 0 && model.vramSlot_9d != 0) {
       adjustModelUvs(model);
     }
 
@@ -4982,15 +4982,15 @@ public final class Bttl_800d {
     dobj2.attribute_00 = effectParams.flags_00;
     dobj2.tmd_08 = objTable;
 
-    final int oldZShift = zShift_1f8003c4.get();
-    final int oldZMax = zMax_1f8003cc.get();
+    final int oldZShift = zShift_1f8003c4;
+    final int oldZMax = zMax_1f8003cc;
     final int oldZMin = zMin;
-    zShift_1f8003c4.set(2);
-    zMax_1f8003cc.set(0xffe);
+    zShift_1f8003c4 = 2;
+    zMax_1f8003cc = 0xffe;
     zMin = 0xb;
     Renderer.renderDobj2(dobj2, false, 0x20);
-    zShift_1f8003c4.set(oldZShift);
-    zMax_1f8003cc.set(oldZMax);
+    zShift_1f8003c4 = oldZShift;
+    zMax_1f8003cc = oldZMax;
     zMin = oldZMin;
 
     RENDERER.queueModel(obj, sp0x10)

@@ -63,17 +63,17 @@ public final class Scus94491BpeSegment_800e {
   public static void gameInit() {
     ResetGraph();
 
-    orderingTableBits_1f8003c0.set(14);
-    zShift_1f8003c4.set(0);
-    orderingTableSize_1f8003c8.set(0x4000);
-    zMax_1f8003cc.set(0x3ffe);
-    GPU.updateOrderingTableSize(orderingTableSize_1f8003c8.get());
+    orderingTableBits_1f8003c0 = 14;
+    zShift_1f8003c4 = 0;
+    orderingTableSize_1f8003c8 = 0x4000;
+    zMax_1f8003cc = 0x3ffe;
+    GPU.updateOrderingTableSize(orderingTableSize_1f8003c8);
 
     setDrawOffset();
 
-    clearRed_8007a3a8.set(0);
-    clearGreen_800bb104.set(0);
-    clearBlue_800babc0.set(0);
+    clearRed_8007a3a8 = 0;
+    clearGreen_800bb104 = 0;
+    clearBlue_800babc0 = 0;
 
     InitGeom();
     setProjectionPlaneDistance(640);
@@ -82,7 +82,7 @@ public final class Scus94491BpeSegment_800e {
     engineStateOnceLoaded_8004dd24 = EngineStateEnum.PRELOAD_00;
     pregameLoadingStage_800bb10c.set(0);
     vsyncMode_8007a3b8 = 2;
-    tickCount_800bb0fc.set(0);
+    tickCount_800bb0fc = 0;
 
     loadSystemFont();
     SCRIPTS.clear();
@@ -118,7 +118,7 @@ public final class Scus94491BpeSegment_800e {
 
   @Method(0x800e6998L)
   public static void loadShadow() {
-    submapId_800bd808.set(0);
+    submapId_800bd808 = 0;
 
     loadTimImage(shadowTimFile_80010544.getAddress());
 
@@ -129,7 +129,7 @@ public final class Scus94491BpeSegment_800e {
     FUN_800e6b3c(shadowModel_800bda10, container, animation);
 
     shadowModel_800bda10.coord2_14.transforms.rotate.zero();
-    shadowModel_800bda10.colourMap_9d = 0;
+    shadowModel_800bda10.vramSlot_9d = 0;
     shadowModel_800bda10.shadowType_cc = 0;
   }
 
@@ -206,6 +206,6 @@ public final class Scus94491BpeSegment_800e {
 
   @Method(0x800e6e6cL)
   public static void initFmvs() {
-    _800bf0cf.set(0);
+    _800bf0cf = 0;
   }
 }

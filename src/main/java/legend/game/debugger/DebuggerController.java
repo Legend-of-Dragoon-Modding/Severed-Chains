@@ -302,18 +302,18 @@ public class DebuggerController {
 
   @FXML
   private void getEncounterId(final ActionEvent event) {
-    this.encounterId.getValueFactory().setValue(encounterId_800bb0f8.get());
+    this.encounterId.getValueFactory().setValue(encounterId_800bb0f8);
   }
 
   @FXML
   private void startEncounter(final ActionEvent event) {
-    encounterId_800bb0f8.set(this.encounterId.getValue());
+    encounterId_800bb0f8 = this.encounterId.getValue();
 
     if(currentEngineState_8004dd04 instanceof final SMap smap) {
       if(Config.combatStage()) {
-        battleStage_800bb0f4.set(Config.getCombatStage());
+        battleStage_800bb0f4 = Config.getCombatStage();
       } else {
-        battleStage_800bb0f4.set(encounterData_800f64c4.get(submapCut_80052c30.get()).stage_03.get());
+        battleStage_800bb0f4 = encounterData_800f64c4[submapCut_80052c30].stage_03;
       }
 
       smap.mapTransition(-1, 0);
@@ -321,12 +321,12 @@ public class DebuggerController {
       final DirectionalPathSegmentData08 directionalPathSegment = directionalPathSegmentData_800f2248[wmap.mapState_800c6798.directionalPathIndex_12];
 
       if(Config.combatStage()) {
-        battleStage_800bb0f4.set(Config.getCombatStage());
+        battleStage_800bb0f4 = Config.getCombatStage();
       } else {
         if(directionalPathSegment.battleStage_04 == -1) {
-          battleStage_800bb0f4.set(1);
+          battleStage_800bb0f4 = 1;
         } else {
-          battleStage_800bb0f4.set(directionalPathSegment.battleStage_04);
+          battleStage_800bb0f4 = directionalPathSegment.battleStage_04;
         }
       }
 
@@ -341,12 +341,12 @@ public class DebuggerController {
 
   @FXML
   private void getMapId(final ActionEvent event) {
-    this.mapId.getValueFactory().setValue(submapCut_80052c30.get());
+    this.mapId.getValueFactory().setValue(submapCut_80052c30);
   }
 
   @FXML
   private void warpToMap(final ActionEvent event) {
-    submapCut_80052c30.set(this.mapId.getValue());
+    submapCut_80052c30 = this.mapId.getValue();
     ((SMap)currentEngineState_8004dd04).smapLoadingStage_800cb430 = SubmapState.CHANGE_SUBMAP_4;
   }
 
@@ -397,9 +397,9 @@ public class DebuggerController {
 
   @FXML
   private void getAdditionOverlayRgb(final ActionEvent event) {
-    this.additionOverlayR.getValueFactory().setValue(SEffe.additionBorderColours_800fb7f0.get(9).get());
-    this.additionOverlayG.getValueFactory().setValue(SEffe.additionBorderColours_800fb7f0.get(10).get());
-    this.additionOverlayB.getValueFactory().setValue(SEffe.additionBorderColours_800fb7f0.get(11).get());
+    this.additionOverlayR.getValueFactory().setValue(SEffe.additionBorderColours_800fb7f0[9]);
+    this.additionOverlayG.getValueFactory().setValue(SEffe.additionBorderColours_800fb7f0[10]);
+    this.additionOverlayB.getValueFactory().setValue(SEffe.additionBorderColours_800fb7f0[11]);
   }
 
   @FXML
@@ -416,17 +416,17 @@ public class DebuggerController {
       0xff & rgbArray[0];
 
     Config.setAdditionOverlayRgb(rgb);
-    SEffe.additionBorderColours_800fb7f0.get(9).set(rgbArray[0] & 0xff);
-    SEffe.additionBorderColours_800fb7f0.get(10).set(rgbArray[1] & 0xff);
-    SEffe.additionBorderColours_800fb7f0.get(11).set(rgbArray[2] & 0xff);
+    SEffe.additionBorderColours_800fb7f0[9] = rgbArray[0] & 0xff;
+    SEffe.additionBorderColours_800fb7f0[10] = rgbArray[1] & 0xff;
+    SEffe.additionBorderColours_800fb7f0[11] = rgbArray[2] & 0xff;
     this.additionOverlayColour.setSelected(true);
   }
 
   @FXML
   private void getCounterOverlayRgb(final ActionEvent event) {
-    this.counterOverlayR.getValueFactory().setValue(SEffe.additionBorderColours_800fb7f0.get(6).get());
-    this.counterOverlayG.getValueFactory().setValue(SEffe.additionBorderColours_800fb7f0.get(7).get());
-    this.counterOverlayB.getValueFactory().setValue(SEffe.additionBorderColours_800fb7f0.get(8).get());
+    this.counterOverlayR.getValueFactory().setValue(SEffe.additionBorderColours_800fb7f0[6]);
+    this.counterOverlayG.getValueFactory().setValue(SEffe.additionBorderColours_800fb7f0[7]);
+    this.counterOverlayB.getValueFactory().setValue(SEffe.additionBorderColours_800fb7f0[8]);
   }
 
   @FXML
@@ -443,9 +443,9 @@ public class DebuggerController {
       0xff & rgbArray[0];
 
     Config.setCounterOverlayRgb(rgb);
-    SEffe.additionBorderColours_800fb7f0.get(6).set(rgbArray[0] & 0xff);
-    SEffe.additionBorderColours_800fb7f0.get(7).set(rgbArray[1] & 0xff);
-    SEffe.additionBorderColours_800fb7f0.get(8).set(rgbArray[2] & 0xff);
+    SEffe.additionBorderColours_800fb7f0[6] = rgbArray[0] & 0xff;
+    SEffe.additionBorderColours_800fb7f0[7] = rgbArray[1] & 0xff;
+    SEffe.additionBorderColours_800fb7f0[8] = rgbArray[2] & 0xff;
     this.additionOverlayColour.setSelected(true);
   }
 
@@ -472,7 +472,7 @@ public class DebuggerController {
 
   @FXML
   private void getCombatStageId(final ActionEvent event) {
-    this.combatStageId.getValueFactory().setValue(battleStage_800bb0f4.get());
+    this.combatStageId.getValueFactory().setValue(battleStage_800bb0f4);
   }
 
   @FXML

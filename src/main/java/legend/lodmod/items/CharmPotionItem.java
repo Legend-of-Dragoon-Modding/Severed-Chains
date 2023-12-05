@@ -29,7 +29,7 @@ public class CharmPotionItem extends Item {
       //LAB_80022e40
       response._00 = 8;
       wmap.encounterAccumulator_800c6ae8 = 0;
-    } else if(currentEngineState_8004dd04 instanceof final SMap smap && !hasNoEncounters_800bed58.get()) {
+    } else if(currentEngineState_8004dd04 instanceof final SMap smap && !hasNoEncounters_800bed58) {
       response._00 = 8;
       smap.encounterAccumulator_800c6ae8 = 0;
     } else {

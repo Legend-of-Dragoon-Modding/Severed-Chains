@@ -28,7 +28,7 @@ public class CombatantStruct1a8 {
    * 0x4 - player (not NPC)
    */
   public int flags_19e;
-  public int colourMap_1a0;
+  public int vramSlot_1a0;
   /**
    * Not just char index
    * <ul>

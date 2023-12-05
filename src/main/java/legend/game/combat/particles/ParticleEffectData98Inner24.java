@@ -1,4 +1,4 @@
-package legend.game.combat.effects;
+package legend.game.combat.particles;
 
 public class ParticleEffectData98Inner24 {
   public int scriptIndex_00; // unused

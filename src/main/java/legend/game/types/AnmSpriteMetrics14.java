@@ -1,45 +1,33 @@
 package legend.game.types;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.UnsignedByteRef;
-import legend.core.memory.types.UnsignedShortRef;
+import legend.game.unpacker.FileData;
 
-public class AnmSpriteMetrics14 implements MemoryRef {
-  private final Value ref;
+public class AnmSpriteMetrics14 {
+  public final int u_00;
+  public final int v_01;
+  public final int ofs_x_02;
+  public final int ofs_y_03;
+  public final int cba_04;
+  public final int flag_06;
+  public final int w_08;
+  public final int h_0a;
+  public final int rot_0c;
+  public final int flag2_0e;
+  public final int x_10;
+  public final int y_12;
 
-  public final UnsignedByteRef u_00;
-  public final UnsignedByteRef v_01;
-  public final UnsignedByteRef ofs_x_02;
-  public final UnsignedByteRef ofs_y_03;
-  public final UnsignedShortRef cba_04;
-  public final UnsignedShortRef flag_06;
-  public final UnsignedShortRef w_08;
-  public final UnsignedShortRef h_0a;
-  public final UnsignedShortRef rot_0c;
-  public final UnsignedShortRef flag2_0e;
-  public final UnsignedShortRef x_10;
-  public final UnsignedShortRef y_12;
-
-  public AnmSpriteMetrics14(final Value ref) {
-    this.ref = ref;
-
-    this.u_00 = ref.offset(1, 0x00L).cast(UnsignedByteRef::new);
-    this.v_01 = ref.offset(1, 0x01L).cast(UnsignedByteRef::new);
-    this.ofs_x_02 = ref.offset(1, 0x02L).cast(UnsignedByteRef::new);
-    this.ofs_y_03 = ref.offset(1, 0x03L).cast(UnsignedByteRef::new);
-    this.cba_04 = ref.offset(2, 0x04L).cast(UnsignedShortRef::new);
-    this.flag_06 = ref.offset(2, 0x06L).cast(UnsignedShortRef::new);
-    this.w_08 = ref.offset(2, 0x08L).cast(UnsignedShortRef::new);
-    this.h_0a = ref.offset(2, 0x0aL).cast(UnsignedShortRef::new);
-    this.rot_0c = ref.offset(2, 0x0cL).cast(UnsignedShortRef::new);
-    this.flag2_0e = ref.offset(2, 0x0eL).cast(UnsignedShortRef::new);
-    this.x_10 = ref.offset(2, 0x10L).cast(UnsignedShortRef::new);
-    this.y_12 = ref.offset(2, 0x12L).cast(UnsignedShortRef::new);
-  }
-
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+  public AnmSpriteMetrics14(final FileData data) {
+    this.u_00 = data.readUByte(0x0);
+    this.v_01 = data.readUByte(0x1);
+    this.ofs_x_02 = data.readUByte(0x2);
+    this.ofs_y_03 = data.readUByte(0x3);
+    this.cba_04 = data.readUShort(0x4);
+    this.flag_06 = data.readUShort(0x6);
+    this.w_08 = data.readUShort(0x8);
+    this.h_0a = data.readUShort(0xa);
+    this.rot_0c = data.readUShort(0xc);
+    this.flag2_0e = data.readUShort(0xe);
+    this.x_10 = data.readUShort(0x10);
+    this.y_12 = data.readUShort(0x12);
   }
 }

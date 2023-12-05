@@ -72,7 +72,7 @@ public final class Renderer {
     }
 
     //TODO need to figure out what this was being used for
-    final long specialTrans = tmdGp0CommandId_1f8003ee.get();
+    final long specialTrans = tmdGp0CommandId_1f8003ee;
 
     final int vertexCount = quad ? 4 : 3;
     // ---
@@ -168,7 +168,7 @@ public final class Renderer {
       }
 
       final float screenZ = quad ? GTE.averageZ4() : GTE.averageZ3();
-      final float z = Math.min((screenZ + zOffset_1f8003e8.get()) / (1 << zShift_1f8003c4.get()), zMax_1f8003cc.get());
+      final float z = Math.min((screenZ + zOffset_1f8003e8) / (1 << zShift_1f8003c4), zMax_1f8003cc);
 
       if(z < zMin) {
         continue;
@@ -200,7 +200,7 @@ public final class Renderer {
       }
 
       if(translucent && (!textured || uniformLit)) {
-        cmd.translucent(Translucency.of(tmdGp0Tpage_1f8003ec.get() >>> 5 & 0b11));
+        cmd.translucent(Translucency.of(tmdGp0Tpage_1f8003ec >>> 5 & 0b11));
       }
 
       GPU.queueCommand(z, cmd);

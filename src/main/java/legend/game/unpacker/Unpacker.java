@@ -55,7 +55,7 @@ public final class Unpacker {
   private static final Pattern ITEM_SCRIPT = Pattern.compile("^SECT/DRGN0.BIN/\\d+/1.*");
 
   /** Update this any time we make a breaking change */
-  private static final int VERSION = 1;
+  private static final int VERSION = 2;
 
   static {
     System.setProperty("log4j.skipJansi", "false");
@@ -92,6 +92,9 @@ public final class Unpacker {
     transformers.put(Unpacker::itemTableDiscriminator, Unpacker::itemTableExtractor);
     transformers.put(Unpacker::equipmentAndXpDiscriminator, Unpacker::equipmentAndXpExtractor);
     transformers.put(Unpacker::spellsDiscriminator, Unpacker::spellsExtractor);
+
+    // Savepoint from SMAP
+    transformers.put(Unpacker::savepointDiscriminator, Unpacker::savepointExtractor);
 
     // Give Dart his hand back during oof
     transformers.put(Unpacker::drgn0_5546_1_patcherDiscriminator, Unpacker::drgn0_5546_1_patcher);
@@ -752,6 +755,20 @@ public final class Unpacker {
     for(int i = 0; i < 128; i++) {
       files.put("spells/%d.dspl".formatted(i), data.slice(0x33a30 + i * 0xc, 0xc));
     }
+
+    return files;
+  }
+
+  private static boolean savepointDiscriminator(final String name, final FileData data, final Set<String> flags) {
+    return "OVL/SMAP.OV_".equals(name) && !flags.contains("SMAP");
+  }
+
+  private static Map<String, FileData> savepointExtractor(final String name, final FileData data, final Set<String> flags) {
+    flags.add("SMAP");
+
+    final Map<String, FileData> files = new HashMap<>();
+    files.put(name, data);
+    files.put("submap/savepoint", new FileData(data.data(), 0x10694, 0x904));
 
     return files;
   }

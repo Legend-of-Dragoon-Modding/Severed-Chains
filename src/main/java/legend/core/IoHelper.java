@@ -1,6 +1,5 @@
 package legend.core;
 
-import legend.core.gpu.RECT;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Vector3f;
@@ -125,13 +124,6 @@ public final class IoHelper {
   public static void write(final ByteBuffer stream, final String value) {
     write(stream, value.length());
     stream.put(value.getBytes());
-  }
-
-  public static void write(final ByteBuffer stream, final RECT value) {
-    write(stream, value.x.get());
-    write(stream, value.y.get());
-    write(stream, value.w.get());
-    write(stream, value.h.get());
   }
 
   public static boolean readBool(final ByteBuffer stream) {

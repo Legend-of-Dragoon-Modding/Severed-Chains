@@ -2,11 +2,6 @@ package legend.game;
 
 import legend.core.MathHelper;
 import legend.core.memory.Method;
-import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.BoolRef;
-import legend.core.memory.types.IntRef;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnsignedShortRef;
 import legend.core.spu.Voice;
 import legend.game.combat.Battle;
 import legend.game.combat.Bttl_800c;
@@ -51,10 +46,8 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SEQUENCER;
 import static legend.core.GameEngine.SPU;
-import static legend.game.Scus94491BpeSegment_8005.atanTable_80058d0c;
 import static legend.game.Scus94491BpeSegment_8005.reverbConfigs_80059f7c;
 import static legend.game.Scus94491BpeSegment_800c.patchList_800c4abc;
 import static legend.game.Scus94491BpeSegment_800c.playableSounds_800c43d0;
@@ -142,14 +135,12 @@ public final class Scus94491BpeSegment_8004 {
   public static int width_8004dd34 = 320;
   public static int height_8004dd34 = 240;
 
-  public static final UnsignedShortRef reinitOrderingTableBits_8004dd38 = MEMORY.ref(2, 0x8004dd38L, UnsignedShortRef::new);
+  public static int reinitOrderingTableBits_8004dd38 = 14;
 
   public static Runnable syncFrame_8004dd3c;
   public static Runnable swapDisplayBuffer_8004dd40;
-  public static final IntRef simpleRandSeed_8004dd44 = MEMORY.ref(4, 0x8004dd44L, IntRef::new);
-  public static final ArrayRef<UnsignedShortRef> _8004dd48 = MEMORY.ref(2, 0x8004dd48L, ArrayRef.of(UnsignedShortRef.class, 7, 2, UnsignedShortRef::new));
-
-  public static final BoolRef preloadingAudioAssets_8004ddcc = MEMORY.ref(1, 0x8004ddccL, BoolRef::new);
+  public static int simpleRandSeed_8004dd44 = 3;
+  public static final int[] _8004dd48 = {0, 1, 2, 1, 2, 1, 2};
 
   public static final Function<RunningScript, FlowControl>[] scriptSubFunctions_8004e29c = new Function[1024];
   public static Function<RunningScript, FlowControl>[] engineStateFunctions_8004e29c = new Function[1024];
@@ -604,8 +595,8 @@ public final class Scus94491BpeSegment_8004 {
   // 8004f29c end of jump table
 
   public static final ItemStats0c[] itemStats_8004f2ac = new ItemStats0c[64];
-  public static final ArrayRef<ShortRef> additionOffsets_8004f5ac = MEMORY.ref(2, 0x8004f5acL, ArrayRef.of(ShortRef.class, 10, 0x2, ShortRef::new));
-  public static final ArrayRef<ShortRef> additionCounts_8004f5c0 = MEMORY.ref(2, 0x8004f5c0L, ArrayRef.of(ShortRef.class, 10, 0x2, ShortRef::new));
+  public static final int[] additionOffsets_8004f5ac = {0, 8, -1, 14, 29, 8, 23, 19, -1, 0};
+  public static final int[] additionCounts_8004f5c0 = {7, 5, 0, 4, 6, 5, 5, 3, 0, 0};
   /**
    * <ol start="0">
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
@@ -681,83 +672,202 @@ public final class Scus94491BpeSegment_8004 {
   public static final ScriptFile doNothingScript_8004f650 = new ScriptFile("Do nothing", new int[] {0x4, 0x1});
   public static Struct10 _8004f658;
 
-  public static final IntRef _8004f6e4 = MEMORY.ref(4, 0x8004f6e4L, IntRef::new);
+  public static int _8004f6e4 = -1;
 
-  public static final IntRef battleStartDelayTicks_8004f6ec = MEMORY.ref(4, 0x8004f6ecL, IntRef::new);
+  public static int battleStartDelayTicks_8004f6ec;
 
-  public static final ArrayRef<SubmapMusic08> _8004fa98 = MEMORY.ref(1, 0x8004fa98L, ArrayRef.of(SubmapMusic08.class, 13, 8, SubmapMusic08::new));
-  public static final ArrayRef<SubmapMusic08> _8004fb00 = MEMORY.ref(1, 0x8004fb00L, ArrayRef.of(SubmapMusic08.class, 130, 8, SubmapMusic08::new));
-  public static final ArrayRef<MoonMusic08> moonMusic_8004ff10 = MEMORY.ref(4, 0x8004ff10L, ArrayRef.of(MoonMusic08.class, 43, 8, MoonMusic08::new));
-
-  /**
-   * Uses PlayStation format (4096 = 360 degrees = 2pi) to finish the x/y arctan function (-180 degrees and +180 degrees, -pi...pi).
-   *
-   *  1-bit sign
-   * 19-bit whole
-   * 12-bit decimal
-   */
-  @Method(0x80040b90L)
-  public static int ratan2(int x, int y) {
-    boolean negativeY = false;
-    boolean negativeX = false;
-
-    if(y < 0) {
-      negativeY = true;
-      y = -y;
-    }
-
-    //LAB_80040ba4
-    if(x < 0) {
-      negativeX = true;
-      x = -x;
-    }
-
-    //LAB_80040bb4
-    if(y == 0 && x == 0) {
-      return 0;
-    }
-
-    //LAB_80040bc8
-    int atan;
-    if(x < y) {
-      if((x & 0x7fe0_0000) == 0) {
-        //LAB_80040c10
-        //LAB_80040c3c
-        x = Math.floorDiv(x << 10, y);
-      } else {
-        x = Math.floorDiv(x, y >> 10);
-      }
-
-      //LAB_80040c44
-      atan = atanTable_80058d0c.get(x).get();
-    } else {
-      //LAB_80040c58
-      if((y & 0x7fe0_0000) == 0) {
-        //LAB_80040c98
-        //LAB_80040cc4
-        x = Math.floorDiv(y << 10, x);
-      } else {
-        //LAB_80040c8c
-        x = Math.floorDiv(y, x >> 10);
-      }
-
-      //LAB_80040ccc
-      atan = 0x400 - atanTable_80058d0c.get(x).get();
-    }
-
-    //LAB_80040ce0
-    if(negativeY) {
-      atan = 0x800 - atan;
-    }
-
-    //LAB_80040cec
-    if(negativeX) {
-      return -atan;
-    }
-
-    //LAB_80040cfc
-    return atan;
-  }
+  public static final SubmapMusic08[] _8004fa98 = {
+    new SubmapMusic08(8, 59, 83, 84),
+    new SubmapMusic08(19, 59, 204, 214, 211),
+    new SubmapMusic08(22, 59, 247),
+    new SubmapMusic08(32, 59, 332),
+    new SubmapMusic08(34, 59, 357),
+    new SubmapMusic08(49, 59, 515, 525),
+    new SubmapMusic08(8, 60, 78, 79, 80),
+    new SubmapMusic08(19, 60, 210, 209),
+    new SubmapMusic08(22, 60, 246),
+    new SubmapMusic08(30, 60, 316, 317),
+    new SubmapMusic08(32, 60, 335),
+    new SubmapMusic08(34, 60, 356, 361),
+    new SubmapMusic08(99, 99, 83, 84),
+  };
+  public static final SubmapMusic08[] _8004fb00 = {
+    new SubmapMusic08(57, -1, 675, 676, 677),
+    new SubmapMusic08(3, 70, 9, 10, 725),
+    new SubmapMusic08(3, 72, 694, 13),
+    new SubmapMusic08(3, 71, 695, 694, 742),
+    new SubmapMusic08(2, 66, 5, 6, 7, 624, 625),
+    new SubmapMusic08(4, 70, 14, 15),
+    new SubmapMusic08(5, 70, 38, 39),
+    new SubmapMusic08(5, 28, 697, 740, 741),
+    new SubmapMusic08(6, 72, 53),
+    new SubmapMusic08(10, 63, 95, 98, 99, 100, 101, 102, 103, 104, 105),
+    new SubmapMusic08(10, -1, 96),
+    new SubmapMusic08(10, -1, 657, 726),
+    new SubmapMusic08(10, 70, 674),
+    new SubmapMusic08(11, 70, 108),
+    new SubmapMusic08(11, 68, 109),
+    new SubmapMusic08(13, 68, 716),
+    new SubmapMusic08(14, 72, 140, 647),
+    new SubmapMusic08(14, -1, 149, 150, 151, 637, 638),
+    new SubmapMusic08(14, 61, 152, 634, 636, 639),
+    new SubmapMusic08(4, 67, 643, 27),
+    new SubmapMusic08(10, 70, 96, 112, 113, 657),
+    new SubmapMusic08(8, -1, 66),
+    new SubmapMusic08(8, -1, 68),
+    new SubmapMusic08(9, -1, 94),
+    new SubmapMusic08(17, -1, 181),
+    new SubmapMusic08(18, -1, 658, 659, 660),
+    new SubmapMusic08(57, 115, 703, 704),
+    new SubmapMusic08(5, -1, 41),
+    new SubmapMusic08(3, -1, 11),
+    new SubmapMusic08(3, 45, 696, 743),
+    new SubmapMusic08(12, 76, 120),
+    new SubmapMusic08(20, 81, 221, 223, 225, 226, 663, 665, 666, 667),
+    new SubmapMusic08(20, 70, 236),
+    new SubmapMusic08(20, -1, 236, 669),
+    new SubmapMusic08(20, 64, 238, 698),
+    new SubmapMusic08(20, 67, 702),
+    new SubmapMusic08(22, -1, 240),
+    new SubmapMusic08(23, 79, 255),
+    new SubmapMusic08(20, -1, 227),
+    new SubmapMusic08(46, 25, 496, 497, 498),
+    new SubmapMusic08(44, -1, 458),
+    new SubmapMusic08(49, 43, 512, 522),
+    new SubmapMusic08(56, -1, 733),
+    new SubmapMusic08(56, 75, 597, 598, 735, 736, 737),
+    new SubmapMusic08(53, 81, 701),
+    new SubmapMusic08(53, 70, 629, 700),
+    new SubmapMusic08(53, 38, 629),
+    new SubmapMusic08(34, 75, 348),
+    new SubmapMusic08(35, 68, 370),
+    new SubmapMusic08(35, -1, 372),
+    new SubmapMusic08(35, 70, 373, 374),
+    new SubmapMusic08(35, -1, 375),
+    new SubmapMusic08(34, 70, 349, 350, 355, 356),
+    new SubmapMusic08(34, 68, 389),
+    new SubmapMusic08(32, -1, 338, 670),
+    new SubmapMusic08(32, 114, 671),
+    new SubmapMusic08(32, -1, 710),
+    new SubmapMusic08(33, -1, 346),
+    new SubmapMusic08(37, -1, 381, 382),
+    new SubmapMusic08(36, 70, 692, 724),
+    new SubmapMusic08(37, 70, 388),
+    new SubmapMusic08(38, 70, 393),
+    new SubmapMusic08(35, -1, 376),
+    new SubmapMusic08(31, 71, 325, 324),
+    new SubmapMusic08(24, 63, 266),
+    new SubmapMusic08(14, -1, 647),
+    new SubmapMusic08(31, -1, 325),
+    new SubmapMusic08(34, 63, 354),
+    new SubmapMusic08(35, -1, 371),
+    new SubmapMusic08(54, -1, 711, 714),
+    new SubmapMusic08(54, 68, 713),
+    new SubmapMusic08(50, -1, 718, 719),
+    new SubmapMusic08(43, -1, 446),
+    new SubmapMusic08(43, 71, 447),
+    new SubmapMusic08(43, 68, 447),
+    new SubmapMusic08(24, -1, 266),
+    new SubmapMusic08(15, 74, 161),
+    new SubmapMusic08(3, 71, 696, 743),
+    new SubmapMusic08(22, 78, 244, 248, 259),
+    new SubmapMusic08(54, -1, 580),
+    new SubmapMusic08(28, 74, 678),
+    new SubmapMusic08(28, -1, 364),
+    new SubmapMusic08(27, 76, 288),
+    new SubmapMusic08(53, -1, 568),
+    new SubmapMusic08(19, 78, 216),
+    new SubmapMusic08(19, 81, 201, 202, 744),
+    new SubmapMusic08(20, -1, 664, 702),
+    new SubmapMusic08(30, -1, 312, 313, 314, 318),
+    new SubmapMusic08(28, -1, 297, 298, 299, 300, 364, 365, 366, 630, 678),
+    new SubmapMusic08(29, -1, 301, 302, 303, 304, 305, 308),
+    new SubmapMusic08(14, -1, 647, 646),
+    new SubmapMusic08(26, -1, 286),
+    new SubmapMusic08(58, -1, 672, 673),
+    new SubmapMusic08(40, -1, 423),
+    new SubmapMusic08(40, -1, 419),
+    new SubmapMusic08(40, 71, 424),
+    new SubmapMusic08(36, 28, 692, 693, 723),
+    new SubmapMusic08(43, 70, 446),
+    new SubmapMusic08(43, 75, 445, 449, 451, 452),
+    new SubmapMusic08(46, 74, 499, 500, 501, 502),
+    new SubmapMusic08(4, 63, 24),
+    new SubmapMusic08(4, -1, 27),
+    new SubmapMusic08(4, 70, 27),
+    new SubmapMusic08(4, 70, 15, 56),
+    new SubmapMusic08(4, -1, 36),
+    new SubmapMusic08(32, 63, 329),
+    new SubmapMusic08(33, 81, 343),
+    new SubmapMusic08(33, 68, 343),
+    new SubmapMusic08(33, -1, 345),
+    new SubmapMusic08(9, -1, 94),
+    new SubmapMusic08(18, -1, 200),
+    new SubmapMusic08(53, 70, 563, 564, 565, 566, 567, 568, 629, 595),
+    new SubmapMusic08(51, 66, 715, 722),
+    new SubmapMusic08(55, -1, 588),
+    new SubmapMusic08(55, -1, 593),
+    new SubmapMusic08(27, -1, 295),
+    new SubmapMusic08(49, 39, 525),
+    new SubmapMusic08(54, 63, 580),
+    new SubmapMusic08(54, 75, 714),
+    new SubmapMusic08(54, 81, 580, 581, 594),
+    new SubmapMusic08(54, -1, 570, 571, 572, 573, 574, 576, 578, 579, 582, 711, 712),
+    new SubmapMusic08(43, -1, 446),
+    new SubmapMusic08(54, -1, 575, 577, 580),
+    new SubmapMusic08(5, 20, 38, 39, 40, 41, 42, 43, 44),
+    new SubmapMusic08(46, -1, 486, 488, 489, 491),
+    new SubmapMusic08(56, -1, 607),
+    new SubmapMusic08(56, -1, 561),
+    new SubmapMusic08(27, -1, 322),
+    new SubmapMusic08(3, -1, 743),
+    new SubmapMusic08(99, 99, 675, 676, 677),
+  };
+  public static final MoonMusic08[] moonMusic_8004ff10 = {
+    new MoonMusic08(561, 56),
+    new MoonMusic08(596, 45),
+    new MoonMusic08(597, 56),
+    new MoonMusic08(598, -1),
+    new MoonMusic08(599, 79),
+    new MoonMusic08(600, 79),
+    new MoonMusic08(601, 60),
+    new MoonMusic08(602, 79),
+    new MoonMusic08(603, 79),
+    new MoonMusic08(604, 79),
+    new MoonMusic08(605, 20),
+    new MoonMusic08(606, 23),
+    new MoonMusic08(607, 23),
+    new MoonMusic08(608, 72),
+    new MoonMusic08(609, 72),
+    new MoonMusic08(610, 72),
+    new MoonMusic08(611, 72),
+    new MoonMusic08(612, 21),
+    new MoonMusic08(613, 21),
+    new MoonMusic08(614, 21),
+    new MoonMusic08(615, 47),
+    new MoonMusic08(616, 47),
+    new MoonMusic08(617, 47),
+    new MoonMusic08(618, 47),
+    new MoonMusic08(619, 29),
+    new MoonMusic08(620, 29),
+    new MoonMusic08(621, 45),
+    new MoonMusic08(622, 39),
+    new MoonMusic08(699, 79),
+    new MoonMusic08(727, 39),
+    new MoonMusic08(728, 39),
+    new MoonMusic08(729, 63),
+    new MoonMusic08(730, -1),
+    new MoonMusic08(731, -1),
+    new MoonMusic08(732, 79),
+    new MoonMusic08(733, 79),
+    new MoonMusic08(734, 56),
+    new MoonMusic08(735, 56),
+    new MoonMusic08(736, 56),
+    new MoonMusic08(737, 56),
+    new MoonMusic08(738, 21),
+    new MoonMusic08(739, 72),
+    new MoonMusic08(-1, -1),
+  };
 
   // Start of SPU code
 

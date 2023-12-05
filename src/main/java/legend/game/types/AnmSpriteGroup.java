@@ -1,25 +1,17 @@
 package legend.game.types;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.IntRef;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.UnboundedArrayRef;
+import legend.game.unpacker.FileData;
 
-public class AnmSpriteGroup implements MemoryRef {
-  private final Value ref;
+public class AnmSpriteGroup {
+  public final int n_sprite_00;
+  public final AnmSpriteMetrics14[] metrics_04;
 
-  public final IntRef n_sprite_00;
-  public final UnboundedArrayRef<AnmSpriteMetrics14> metrics_04;
+  public AnmSpriteGroup(final FileData data) {
+    this.n_sprite_00 = data.readInt(0x0);
+    this.metrics_04 = new AnmSpriteMetrics14[this.n_sprite_00];
 
-  public AnmSpriteGroup(final Value ref) {
-    this.ref = ref;
-
-    this.n_sprite_00 = ref.offset(4, 0x00L).cast(IntRef::new);
-    this.metrics_04 = ref.offset(4, 0x04L).cast(UnboundedArrayRef.of(0x14, AnmSpriteMetrics14::new));
-  }
-
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+    for(int i = 0; i < this.n_sprite_00; i++) {
+      this.metrics_04[i] = new AnmSpriteMetrics14(data.slice(0x4 + i * 0x14));
+    }
   }
 }

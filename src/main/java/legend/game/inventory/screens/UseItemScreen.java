@@ -138,8 +138,8 @@ public class UseItemScreen extends MenuScreen {
     final boolean allocate = a3 == 0xff;
 
     //LAB_80102e48
-    for(int i = 0; i < characterCount_8011d7c4.get(); i++) {
-      this.renderUseItemCharacterPortrait(this.getCharacterPortraitX(i) - 5, 120, characterIndices_800bdbb8.get(i).get(), allocate);
+    for(int i = 0; i < characterCount_8011d7c4; i++) {
+      this.renderUseItemCharacterPortrait(this.getCharacterPortraitX(i) - 5, 120, characterIndices_800bdbb8[i], allocate);
     }
 
     //LAB_80102e88
@@ -223,7 +223,7 @@ public class UseItemScreen extends MenuScreen {
         }
       }
     } else if(this.loadingStage == 3 && !this.itemTargetAll) {
-      for(int slot = 0; slot < characterCount_8011d7c4.get(); slot++) {
+      for(int slot = 0; slot < characterCount_8011d7c4; slot++) {
         if(this.charSlot != slot && MathHelper.inBox(x, y, this.getCharacterPortraitX(slot) - 11, 110, 48, 112)) {
           playSound(1);
           this.charSlot = slot;
@@ -276,15 +276,15 @@ public class UseItemScreen extends MenuScreen {
         }
       }
     } else if(this.loadingStage == 3) {
-      for(int slot = 0; slot < characterCount_8011d7c4.get(); slot++) {
+      for(int slot = 0; slot < characterCount_8011d7c4; slot++) {
         if(MathHelper.inBox(x, y, this.getCharacterPortraitX(slot) - 11, 110, 48, 112)) {
           if(!this.itemTargetAll) {
-            this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.useItemInMenu(this.useItemResponse, characterIndices_800bdbb8.get(this.charSlot).get());
+            this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.useItemInMenu(this.useItemResponse, characterIndices_800bdbb8[this.charSlot]);
           } else {
             int responseValue = -2;
 
-            for(int i = 0; i < characterCount_8011d7c4.get(); i++) {
-              this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.useItemInMenu(this.useItemResponse, characterIndices_800bdbb8.get(i).get());
+            for(int i = 0; i < characterCount_8011d7c4; i++) {
+              this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.useItemInMenu(this.useItemResponse, characterIndices_800bdbb8[i]);
 
               if(this.useItemResponse.value_04 != -2) {
                 responseValue = 0;
@@ -476,7 +476,7 @@ public class UseItemScreen extends MenuScreen {
     if(!this.itemTargetAll) {
       playSound(1);
 
-      if(this.charSlot < characterCount_8011d7c4.get() - 1) {
+      if(this.charSlot < characterCount_8011d7c4 - 1) {
         this.charSlot++;
       }
 
@@ -486,12 +486,12 @@ public class UseItemScreen extends MenuScreen {
 
   private void menuStage3Select() {
     if(!this.itemTargetAll) {
-      this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.useItemInMenu(this.useItemResponse, characterIndices_800bdbb8.get(this.charSlot).get());
+      this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.useItemInMenu(this.useItemResponse, characterIndices_800bdbb8[this.charSlot]);
     } else {
       int responseValue = -2;
 
-      for(int i = 0; i < characterCount_8011d7c4.get(); i++) {
-        this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.useItemInMenu(this.useItemResponse, characterIndices_800bdbb8.get(i).get());
+      for(int i = 0; i < characterCount_8011d7c4; i++) {
+        this.menuItems.get(this.selectedSlot + this.slotScroll).item_00.useItemInMenu(this.useItemResponse, characterIndices_800bdbb8[i]);
 
         if(this.useItemResponse.value_04 != -2) {
           responseValue = 0;

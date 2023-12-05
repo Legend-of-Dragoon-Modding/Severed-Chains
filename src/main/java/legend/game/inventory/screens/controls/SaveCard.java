@@ -1,7 +1,5 @@
 package legend.game.inventory.screens.controls;
 
-import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.Pointer;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.TextColour;
 import legend.game.saves.SavedGame;
@@ -68,7 +66,7 @@ public class SaveCard extends Control {
   protected void render(final int x, final int y) {
     if(this.saveData != null) {
       if(this.saveData.isValid()) {
-        final ArrayRef<Pointer<LodString>> locationNames;
+        final LodString[] locationNames;
         if(this.saveData.locationType() == 1) {
           //LAB_80108b5c
           locationNames = worldMapNames_8011c1ec;
@@ -81,7 +79,7 @@ public class SaveCard extends Control {
         }
 
         //LAB_80108ba0
-        renderCentredText(locationNames.get(this.saveData.locationIndex()).deref(), x + 258, y + 47, TextColour.BROWN); // Location text
+        renderCentredText(locationNames[this.saveData.locationIndex()], x + 258, y + 47, TextColour.BROWN); // Location text
 
         final GameState52c state = this.saveData.state();
 

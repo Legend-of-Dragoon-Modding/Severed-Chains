@@ -178,7 +178,7 @@ public final class WmapStatics {
    *   <li>Teleporter</li>
    * </ol>
    */
-  public static final int[] playerAvatarColourMapOffsets_800ef694 = {15, 16, 20, 21};
+  public static final int[] playerAvatarVramSlots_800ef694 = {15, 16, 20, 21};
   public static final int[][] teleportationEndpointIndices_800ef698 = {
     {72, 76},
     {73, 74},

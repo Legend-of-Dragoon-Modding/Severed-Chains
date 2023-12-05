@@ -91,7 +91,7 @@ public final class TextRenderer {
 
           renderables.add(ModelLoader.quad(
             '"' + text + "\" index " + i,
-            x - centreScreenX_1f8003dc.get() + glyphX, y - centreScreenY_1f8003de.get(), 0,
+            x - centreScreenX_1f8003dc + glyphX, y - centreScreenY_1f8003de, 0,
             8, h,
             textU * 16, v, 8, h,
             0, 0, 0,

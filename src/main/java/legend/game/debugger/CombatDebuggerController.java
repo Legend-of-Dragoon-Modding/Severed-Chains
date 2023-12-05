@@ -202,7 +202,7 @@ public class CombatDebuggerController {
       return currentEnemyNames_800c69d0[bent.charSlot_276].get();
     }
 
-    return bent.charId_272 == 8 ? "Who?" : playerNames_800fb378.get(bent.charId_272).deref().get();
+    return bent.charId_272 == 8 ? "Who?" : playerNames_800fb378[bent.charId_272].get();
   }
 
   public void openScriptDebugger(final ActionEvent event) throws Exception {

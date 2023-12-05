@@ -43,7 +43,7 @@ import static legend.game.combat.environment.StageData.stageData_80109a98;
 public class SBtld {
   @Method(0x80109050L)
   public static void loadStageDataAndControllerScripts() {
-    currentStageData_800c6718 = stageData_80109a98[encounterId_800bb0f8.get()];
+    currentStageData_800c6718 = stageData_80109a98[encounterId_800bb0f8];
 
     script_800c66fc = new ScriptFile("player_combat_script", Unpacker.loadFile("player_combat_script").getBytes());
 
@@ -66,7 +66,7 @@ public class SBtld {
     _800c6748.set(v1 + 1);
     currentCameraPositionIndicesIndex_800c66b0.set(simpleRand() & 3);
     currentCameraIndex_800c6780.set(currentStageData_800c6718.cameraPosIndices_18[currentCameraPositionIndicesIndex_800c66b0.get()]);
-    battleFlags_800bc960.or(0x2);
+    battleFlags_800bc960 |= 0x2;
   }
 
   @Method(0x80109250L)
@@ -101,7 +101,7 @@ public class SBtld {
       //LAB_80109340
     }
 
-    loadFile("encounters", file -> battlePreloadedEntities_1f8003f4.encounterData_00 = new EncounterData38(file.getBytes(), encounterId_800bb0f8.get() * 0x38));
+    loadFile("encounters", file -> battlePreloadedEntities_1f8003f4.encounterData_00 = new EncounterData38(file.getBytes(), encounterId_800bb0f8 * 0x38));
   }
 
   @Method(0x80109808L)
@@ -133,7 +133,7 @@ public class SBtld {
   @Method(0x801098f4L)
   public static void loadStageAmbiance() {
     final DeffManager7cc deffManager = deffManager_800c693c;
-    final int stage = Math.max(0, battleStage_800bb0f4.get());
+    final int stage = Math.max(0, battleStage_800bb0f4);
 
     //LAB_8010993c
     //LAB_80109954
@@ -145,13 +145,13 @@ public class SBtld {
       deffManager.dragoonSpaceAmbiance_98[i].set(dragoonSpaceAmbiance_80114a10[i]);
     }
 
-    final StageDeffThing08 thing = _8011517c[battleStage_800bb0f4.get()];
+    final StageDeffThing08 thing = _8011517c[battleStage_800bb0f4];
     deffManager._00._00 = thing._00;
     deffManager._00._02 = thing._02;
     deffManager._00._04 = thing._04;
 
     //LAB_80109a30
-    for(int i = 0; melbuStageIndices_800fb064.get(i).get() != -1; i++) {
+    for(int i = 0; melbuStageIndices_800fb064[i] != -1; i++) {
       deffManager._08[i]._00 = thing._00;
       deffManager._08[i]._02 = thing._02;
     }

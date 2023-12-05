@@ -196,7 +196,7 @@ public class TooManyItemsScreen extends MenuScreen {
 
           currentEngineState_8004dd04.menuClosed();
 
-          textZ_800bdf00.set(13);
+          textZ_800bdf00 = 13;
 
           menuStack.popScreen();
         }

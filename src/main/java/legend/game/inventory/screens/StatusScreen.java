@@ -55,7 +55,7 @@ public class StatusScreen extends MenuScreen {
       }
 
       case 2 -> {
-        FUN_801034cc(this.charSlot, characterCount_8011d7c4.get());
+        FUN_801034cc(this.charSlot, characterCount_8011d7c4);
         this.renderStatusMenu(this.charSlot, 0);
 
         if(this.scrollAccumulator >= 1.0d) {
@@ -69,14 +69,14 @@ public class StatusScreen extends MenuScreen {
         if(this.scrollAccumulator <= -1.0d) {
           this.scrollAccumulator += 1.0d;
 
-          if(this.charSlot < characterCount_8011d7c4.get() - 1) {
+          if(this.charSlot < characterCount_8011d7c4 - 1) {
             this.scroll(this.charSlot + 1);
           }
         }
       }
 
       case 3 -> {
-        FUN_801034cc(this.charSlot, characterCount_8011d7c4.get());
+        FUN_801034cc(this.charSlot, characterCount_8011d7c4);
         this.renderStatusMenu(this.charSlot, 0);
         this.unload.run();
       }
@@ -90,10 +90,10 @@ public class StatusScreen extends MenuScreen {
   }
 
   private void renderStatusMenu(final int charSlot, final long a1) {
-    renderCharacterStats(characterIndices_800bdbb8.get(charSlot).get(), null, a1 == 0xff);
-    renderCharacterSlot(16, 21, characterIndices_800bdbb8.get(charSlot).get(), a1 == 0xff, false);
-    renderCharacterEquipment(characterIndices_800bdbb8.get(charSlot).get(), a1 == 0xff);
-    this.renderCharacterSpells(characterIndices_800bdbb8.get(charSlot).get(), a1 == 0xff);
+    renderCharacterStats(characterIndices_800bdbb8[charSlot], null, a1 == 0xff);
+    renderCharacterSlot(16, 21, characterIndices_800bdbb8[charSlot], a1 == 0xff, false);
+    renderCharacterEquipment(characterIndices_800bdbb8[charSlot], a1 == 0xff);
+    this.renderCharacterSpells(characterIndices_800bdbb8[charSlot], a1 == 0xff);
   }
 
   private void renderCharacterSpells(final int charIndex, final boolean allocate) {
@@ -121,7 +121,7 @@ public class StatusScreen extends MenuScreen {
           renderText(new LodString(spellStats_800fa0b8[spellIndex].name), 210, 125 + i * 14, TextColour.BROWN);
 
           if(allocate) {
-            renderThreeDigitNumber(342, 128 + i * 14, spellMp_80114290.get(spellIndex).get());
+            renderThreeDigitNumber(342, 128 + i * 14, spellMp_80114290[spellIndex]);
           }
         }
       }
@@ -140,7 +140,7 @@ public class StatusScreen extends MenuScreen {
   }
 
   private void menuNavigateRight() {
-    if(this.charSlot < characterCount_8011d7c4.get() - 1) {
+    if(this.charSlot < characterCount_8011d7c4 - 1) {
       this.scroll(this.charSlot + 1);
     }
   }

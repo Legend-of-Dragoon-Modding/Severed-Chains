@@ -3,12 +3,6 @@ package legend.game;
 import legend.core.gte.MV;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.BoolRef;
-import legend.core.memory.types.IntRef;
-import legend.core.memory.types.Pointer;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnsignedByteRef;
-import legend.core.memory.types.UnsignedIntRef;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.sound.ReverbConfigAndLocation;
 import legend.game.types.AdditionData0e;
@@ -21,53 +15,120 @@ import static legend.core.GameEngine.MEMORY;
 public final class Scus94491BpeSegment_8005 {
   private Scus94491BpeSegment_8005() { }
 
-  public static final ArrayRef<ShortRef> submapMusic_80050068 = MEMORY.ref(2, 0x80050068L, ArrayRef.of(ShortRef.class, 64, 2, ShortRef::new));
-  public static final ArrayRef<IntRef> monsterSoundFileIndices_800500e8 = MEMORY.ref(4, 0x800500e8L, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
-  public static final ArrayRef<IntRef> characterSoundFileIndices_800500f8 = MEMORY.ref(4, 0x800500f8L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
+  public static final int[] submapMusic_80050068 = {
+    -1, -1, 23, 28, 44, 20, 22, -1,
+    29, 40, 30, 22, 24, 22, 31, 42,
+    -1, 32, 45, 29, 40, 27, 33, 21,
+    21, -1, 48, 46, -1, 22, 38, -1,
+    33, 23, 36, 49, 28, 39, 50, -1,
+    47, -1, 26, 27, 26, 42, 45, -1,
+    27, 39, 27, 52, -1, 38, 53, 54,
+    55, -1, -1, -1, -1, -1, -1, -1,
+  };
+  public static final int[] monsterSoundFileIndices_800500e8 = {4, 5, 6, 7};
+  public static final int[] characterSoundFileIndices_800500f8 = {1, 2, 3};
 
-  public static final ArrayRef<IntRef> charSlotSpuOffsets_80050190 = MEMORY.ref(4, 0x80050190L, ArrayRef.of(IntRef.class, 3, 4, IntRef::new));
+  public static final int[] charSlotSpuOffsets_80050190 = {0x44250, 0x4b780, 0x52cb0};
 
-  public static final ArrayRef<UnsignedByteRef> combatSoundEffectsTypes_8005019c = MEMORY.ref(1, 0x8005019cL, ArrayRef.of(UnsignedByteRef.class, 32, 1, UnsignedByteRef::new));
-  public static final ArrayRef<UnsignedIntRef> combatMusicFileIndices_800501bc = MEMORY.ref(4, 0x800501bcL, ArrayRef.of(UnsignedIntRef.class, 32, 4, UnsignedIntRef::new));
+  public static final int[] combatSoundEffectsTypes_8005019c = {
+    12, 13, 86, 12, 12, 12, 12, 12,
+    12, 12, 12, 12, 12, 12, 12, 12,
+    14, 15, 88, 90, 14, 14, 14, 14,
+    14, 14, 14, 14, 14, 14, 14, 14,
+  };
+  public static final int[] combatMusicFileIndices_800501bc = {
+    702, 707, 722, 702, 702, 702, 702, 702,
+    702, 702, 702, 702, 702, 702, 702, 702,
+    712, 717, 727, 732, 712, 712, 712, 712,
+    712, 712, 712, 712, 712, 712, 712, 712,
+  };
 
-  public static final IntRef _80050274 = MEMORY.ref(4, 0x80050274L, IntRef::new);
+  public static int _80050274 = -1;
 
   public static final Value _8005027c = MEMORY.ref(4, 0x8005027cL);
 
-  public static final ArrayRef<ShortRef> shadowScale_8005039c = MEMORY.ref(2, 0x8005039cL, ArrayRef.of(ShortRef.class, 10, 2, ShortRef::new));
-  public static final ArrayRef<ShortRef> _800503b0 = MEMORY.ref(2, 0x800503b0L, ArrayRef.of(ShortRef.class, 18, 2, ShortRef::new));
-  public static final ArrayRef<ShortRef> _800503d4 = MEMORY.ref(2, 0x800503d4L, ArrayRef.of(ShortRef.class, 18, 2, ShortRef::new));
-  public static final ArrayRef<ShortRef> _800503f8 = MEMORY.ref(2, 0x800503f8L, ArrayRef.of(ShortRef.class, 22, 2, ShortRef::new));
-  public static final ArrayRef<ShortRef> _80050424 = MEMORY.ref(2, 0x80050424L, ArrayRef.of(ShortRef.class, 22, 2, ShortRef::new));
+  public static final int[] shadowScale_8005039c = {0x1800, 0x1800, 0x1000, 0xe00, 0x1600, 0x1300, 0xe00, 0x2000, 0x1300, 0x1500};
+  public static final int[] _800503b0 = {0, 320, 384, 448, 512, 576, 640, 576, 640, 704, 768, 832, 896, 960, 512, 576, 640, 704};
+  public static final int[] _800503d4 = {0, 256, 256, 256, 256, 256, 256, 256, 256, 256, 0, 0, 0, 0, 0, 0, 0, 0};
+  public static final int[] _800503f8 = {576, 608, 624, 576, 592, 608, 624, 672, 688, 640, 656, 672, 688, 736, 752, 704, 720, 1008, 576, 640, 736, 704};
+  public static final int[] _80050424 = {256, 256, 256, 384, 384, 384, 384, 256, 256, 384, 384, 384, 384, 256, 256, 256, 256, 256, 256, 256, 256, 384};
 
-  public static final ArrayRef<Pointer<LodString>> itemCombatDescriptions_80051758 = MEMORY.ref(4, 0x80051758L, ArrayRef.of(Pointer.classFor(LodString.class), 0x40, 4, Pointer.deferred(4, LodString::new)));
+  public static final LodString[] itemCombatDescriptions_80051758 = {
+    new LodString(" "), new LodString("Detonates & attacks all."), new LodString("S attack(thunder, multi)."), new LodString("S attack(flame, multi)."), new LodString(" "),
+    new LodString("S attack(earth, multi)."), new LodString("S attack(water, multi)."), new LodString("S attack(wind, multi)."), new LodString("Generates 1 attack item."), new LodString("S attack(light, multi)."),
+    new LodString("S attack(dark, multi)."), new LodString("Recovers 1/2 of max HP."), new LodString("Dissolves petrification."), new LodString("Dissolves B, C, F, D."), new LodString("Dissolves P, S, A-block."),
+    new LodString("A attack(thndr, multi)."), new LodString("A attack(earth, multi)."), new LodString("A attack(flame, multi)."), new LodString("A attack(light, multi)."), new LodString("Recovers 100SP in combat."),
+    new LodString("Confuses minor enemy."), new LodString(" "), new LodString("A attack(water, multi)."), new LodString("Stuns minor enemy."), new LodString("A attack(dark, multi)."),
+    new LodString("Poisons minor enemy."), new LodString("Frightens minor enemy."), new LodString(" "), new LodString("A attack (wind, multi)."), new LodString("Eliminates minor enemy."),
+    new LodString("Revitalize & Recover 1/2HP."), new LodString("Avoids minor enemy 3x."), new LodString("Allow minor enemy attack 3x."), new LodString("Generates 1 recovery item."), new LodString(" "),
+    new LodString("Nullify magic attack 3x."), new LodString("Nullify phys attack 3x."), new LodString("Completely recovers MP."), new LodString("Escape a minor enemy."), new LodString("Completely recovers HP."),
+    new LodString("Blocks enemy move 3x (rep)."), new LodString("Recovers 100% HP for all."), new LodString("Recovers 100% MP for all."), new LodString("3 turns powerful (rep)."), new LodString("3 turns weak (rep)."),
+    new LodString("Double agility 3x (rep)."), new LodString("Halves agility 3x(rep)."), new LodString(" "), new LodString("Gives subtle good aroma."), new LodString("A attack(non, multi)."),
+    new LodString("Powerful A attack(Flame)."), new LodString("Powerful A attack(Water)."), new LodString("Powerful A attack(Wind)."), new LodString("Powerful A attack(Earth)."), new LodString("Powerful A attack(Light)."),
+    new LodString("Powerful A attack(Dark)."), new LodString("Powerful A attack(Thndr)."), new LodString("Recovers 1/2 HP for all."), new LodString("A attack (non, multi, rep)."), new LodString(" "),
+    new LodString(" "), new LodString(" "), new LodString(" "), new LodString(" "),
+  };
 
-  public static final ArrayRef<Pointer<LodString>> spellCombatDescriptions_80052018 = MEMORY.ref(4, 0x80052018L, ArrayRef.of(Pointer.classFor(LodString.class), 0x54, 4, Pointer.deferred(4, LodString::new)));
+  public static final LodString[] spellCombatDescriptions_80052018 = {
+    new LodString("Fire STR 50% Single"), new LodString("Fire STR 25% All"), new LodString("Fire STR 75% Single"), new LodString("Fire STR 175% All"), new LodString("STR 100% Single"),
+    new LodString("Wind STR 25% All"), new LodString("Wind STR 75% Single"), new LodString("Damage Resist 50% Dur 3"), new LodString("Wind STR 75% All"), new LodString("STR 50% All"),
+    new LodString("Light STR 25% All"), new LodString("Ally Single 100% Rev & Rec"), new LodString("Ally All 100% Recover"), new LodString("Light STR 100% All HP"), new LodString("Wind STR 25% All"),
+    new LodString("Dark STR 25% Single & HP"), new LodString("Dark STR 25% All & Fear"), new LodString("Wind STR 100% Single"), new LodString("Lethal attack for all"), new LodString("Darkn STR 100% Single"),
+    new LodString("Thunder STR 50% Single"), new LodString("Thunder STR 65% Single"), new LodString("Thunder STR 75% Single"), new LodString("Thunder STR 100% Single"), new LodString("Water STR 50% Single"),
+    new LodString("HP Recv & Cure - All"), new LodString("Damage Resist 50% Dur 3"), new LodString("Water STR 50% All"), new LodString("Water STR 100% Single"), new LodString("Earth STR 25% All"),
+    new LodString("Earth STR 50% All"), new LodString("Earth STR 75% All"), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString("Light STR 25% All"), new LodString("HP Recv & Cure-Single"), new LodString("HP Recv & Cure-All"), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+  };
 
-  public static final ArrayRef<Pointer<LodString>> spells_80052734 = MEMORY.ref(4, 0x80052734L, ArrayRef.of(Pointer.classFor(LodString.class), 0x54, 4, Pointer.deferred(4, LodString::new)));
+  public static final LodString[] spells_80052734 = {
+    new LodString("Flameshot"), new LodString("Explosion"), new LodString("Final Burst"), new LodString("Red-Eyed Dragon"), new LodString("Divine DG Cannon"),
+    new LodString("Wing Blaster"), new LodString("Gaspless"), new LodString("Blossom Storm"), new LodString("Jade Dragon"), new LodString("Divine DG Ball"),
+    new LodString("Star Children"), new LodString("Moon Light"), new LodString("Gates of Heaven"), new LodString("W Silver Dragon"), new LodString("Wing Blaster"),
+    new LodString("Astral Drain"), new LodString("Death Dimension"), new LodString("Gaspless"), new LodString("Demon's Gate"), new LodString("Dark Dragon"),
+    new LodString("Atomic Mind"), new LodString("Thunder Kid"), new LodString("Thunder God"), new LodString("Violet Dragon"), new LodString("Freezing Ring"),
+    new LodString("Rainbow Breath"), new LodString("Rose Storm"), new LodString("Diamond Dust"), new LodString("Blue Sea Dragon"), new LodString("Grand Stream"),
+    new LodString("Meteor Strike"), new LodString("Golden Dragon"), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString("Star Children"), new LodString("Moon Light"), new LodString("Gates of Heaven"), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+    new LodString(""), new LodString(""), new LodString(""), new LodString(""),
+  };
   public static final ArrayRef<AdditionData0e> additionData_80052884 = MEMORY.ref(1, 0x80052884L, ArrayRef.of(AdditionData0e.class, 43, 0xe, AdditionData0e::new));
 
-  public static final ArrayRef<Pointer<LodString>> digits_80052b40 = MEMORY.ref(4, 0x80052b40L, ArrayRef.of(Pointer.classFor(LodString.class), 10, 4, Pointer.deferred(2, LodString::new)));
-  public static final ArrayRef<BoolRef> renderBorder_80052b68 = MEMORY.ref(2, 0x80052b68L, ArrayRef.of(BoolRef.class, 0x10, 2, BoolRef::new));
-  public static final ArrayRef<ShortRef> textboxMode_80052b88 = MEMORY.ref(2, 0x80052b88L, ArrayRef.of(ShortRef.class, 0x10, 2, ShortRef::new));
-  public static final ArrayRef<ShortRef> textboxTextType_80052ba8 = MEMORY.ref(2, 0x80052ba8L, ArrayRef.of(ShortRef.class, 0x10, 2, ShortRef::new));
+  public static final LodString[] digits_80052b40 = { new LodString("0"), new LodString("1"), new LodString("2"), new LodString("3"), new LodString("4"), new LodString("5"), new LodString("6"), new LodString("7"), new LodString("8"), new LodString("9") };
+  public static final boolean[] renderBorder_80052b68 = {false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
+  public static final int[] textboxMode_80052b88 = {0, 1, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
+  public static final int[] textboxTextType_80052ba8 = {0, 1, 2, 3, 4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2};
 
-  /** Unknown what this is supposed to be, it's a bunch of chars that are way out of range, even for JP, but it does start with a control char and end with an a0ff */
-  public static final LodString _80052c20 = MEMORY.ref(2, 0x80052c20L, LodString::new);
-  public static final IntRef submapCut_80052c30 = MEMORY.ref(4, 0x80052c30L, IntRef::new);
-  public static final IntRef submapScene_80052c34 = MEMORY.ref(4, 0x80052c34L, IntRef::new);
+  public static int submapCut_80052c30 = 675;
+  public static int submapScene_80052c34 = 4;
   /** TODO This seems like it's set to a lot of different things, hopefully they're actually related. */
-  public static final IntRef index_80052c38 = MEMORY.ref(4, 0x80052c38L, IntRef::new);
-  public static final IntRef submapCut_80052c3c = MEMORY.ref(4, 0x80052c3cL, IntRef::new);
+  public static int index_80052c38;
+  public static int submapCut_80052c3c = -1;
   /** Moved from SMAP since it's referenced unconditionally when saving the game */
   public static int submapCutForSave_800cb450;
   /** Something related to submap camera and map transitioning */
-  public static final BoolRef _80052c40 = MEMORY.ref(4, 0x80052c40L, BoolRef::new);
-  public static final IntRef submapEnvState_80052c44 = MEMORY.ref(4, 0x80052c44L, IntRef::new);
+  public static boolean _80052c40;
+  public static int submapEnvState_80052c44 = 2;
 
   public static boolean reinitializingWmap_80052c6c;
 
-  public static final ArrayRef<IntRef> _80052d6c = MEMORY.ref(4, 0x80052d6cL, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
+  public static final int[] _80052d6c = {0, 4, 7, 15};
   public static final String[][] diskFmvs_80052d7c = {
     {"\\STR\\DEMOH.IKI", "\\STR\\DEMO2.IKI", "\\STR\\OPENH.IKI", "\\STR\\WAR1H.IKI"},
     {"\\STR\\TVRH.IKI", "\\STR\\GOAST.IKI", "\\STR\\ROZEH.IKI"},
@@ -84,10 +145,6 @@ public final class Scus94491BpeSegment_8005 {
     Arrays.setAll(matrixStack_80054a0c, i -> new MV());
   }
 
-  /** Precomputed sin/cos table */
-  public static final ArrayRef<ShortRef> sin_cos_80054d0c = MEMORY.ref(2, 0x80054d0cL, ArrayRef.of(ShortRef.class, 0x2000, 2, ShortRef::new));
-  public static final ArrayRef<ShortRef> atanTable_80058d0c = MEMORY.ref(2, 0x80058d0cL, ArrayRef.of(ShortRef.class, 0x401, 2, ShortRef::new));
-
   /**
    * Start of a fairly large block of data - something to do with SPU reverb initialisation. Stride is 66 bytes. Unknown length.
    */
@@ -96,7 +153,7 @@ public final class Scus94491BpeSegment_8005 {
   /** short */
   public static int sssqFadeCurrent_8005a1ce;
 
-  public static final BoolRef standingInSavePoint_8005a368 = MEMORY.ref(4, 0x8005a368L, BoolRef::new);
+  public static boolean standingInSavePoint_8005a368;
 
   public static final CombatantStruct1a8[] combatants_8005e398 = new CombatantStruct1a8[10];
 }

@@ -82,15 +82,15 @@ public class CampaignSelectionScreen extends MenuScreen {
       gameState_800babc8 = event.gameState;
       gameState_800babc8.syncIds();
 
-      loadingNewGameState_800bdc34.set(true);
+      loadingNewGameState_800bdc34 = true;
       whichMenu_800bdc38 = WhichMenu.UNLOAD_CAMPAIGN_SELECTION_MENU;
 
-      submapScene_80052c34.set(gameState_800babc8.submapScene_a4);
-      submapCut_80052c30.set(gameState_800babc8.submapCut_a8);
-      index_80052c38.set(gameState_800babc8.submapCut_a8);
+      submapScene_80052c34 = gameState_800babc8.submapScene_a4;
+      submapCut_80052c30 = gameState_800babc8.submapCut_a8;
+      index_80052c38 = gameState_800babc8.submapCut_a8;
 
       if(gameState_800babc8.submapCut_a8 == 264) { // Somewhere in Home of Giganto
-        submapScene_80052c34.set(53);
+        submapScene_80052c34 = 53;
       }
     }, () -> {
       menuStack.popScreen();

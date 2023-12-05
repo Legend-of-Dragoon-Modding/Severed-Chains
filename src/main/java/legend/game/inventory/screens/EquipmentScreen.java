@@ -77,13 +77,13 @@ public class EquipmentScreen extends MenuScreen {
         }
 
         this.itemHighlight.y_44 = this.FUN_800fc804(this.selectedSlot);
-        this.equipmentCount = this.getEquippableItemsForCharacter(characterIndices_800bdbb8.get(this.charSlot).get());
+        this.equipmentCount = this.getEquippableItemsForCharacter(characterIndices_800bdbb8[this.charSlot]);
         this.FUN_80102660(this.charSlot, this.selectedSlot, this.slotScroll, 0xff);
         this.loadingStage++;
         break;
 
       case 3:
-        FUN_801034cc(this.charSlot, characterCount_8011d7c4.get());
+        FUN_801034cc(this.charSlot, characterCount_8011d7c4);
         this.FUN_80102660(this.charSlot, this.selectedSlot, this.slotScroll, 0);
 
         if(this.scrollAccumulator >= 1.0d) {
@@ -138,9 +138,9 @@ public class EquipmentScreen extends MenuScreen {
   private void FUN_80102660(final int charSlot, final int slotIndex, final int slotScroll, final long a3) {
     final boolean allocate = a3 == 0xff;
 
-    renderCharacterSlot(16, 21, characterIndices_800bdbb8.get(charSlot).get(), allocate, false);
-    renderCharacterStats(characterIndices_800bdbb8.get(charSlot).get(), slotIndex + slotScroll >= this.menuItems.size() ? null : this.menuItems.get(slotIndex + slotScroll).item_00, allocate);
-    renderCharacterEquipment(characterIndices_800bdbb8.get(charSlot).get(), allocate);
+    renderCharacterSlot(16, 21, characterIndices_800bdbb8[charSlot], allocate, false);
+    renderCharacterStats(characterIndices_800bdbb8[charSlot], slotIndex + slotScroll >= this.menuItems.size() ? null : this.menuItems.get(slotIndex + slotScroll).item_00, allocate);
+    renderCharacterEquipment(characterIndices_800bdbb8[charSlot], allocate);
 
     if(allocate) {
       allocateUiElement(90, 0x5a, 194, 96);
@@ -208,7 +208,7 @@ public class EquipmentScreen extends MenuScreen {
         final int itemIndex = this.selectedSlot + this.slotScroll;
         if(itemIndex < this.menuItems.size()) {
           final Equipment equipment = this.menuItems.get(itemIndex).item_00;
-          final EquipItemResult previousEquipment = equipItem(equipment, characterIndices_800bdbb8.get(this.charSlot).get());
+          final EquipItemResult previousEquipment = equipItem(equipment, characterIndices_800bdbb8[this.charSlot]);
           takeEquipment(this.menuItems.get(itemIndex).itemSlot_01);
 
           if(previousEquipment.previousEquipment != null) {
@@ -217,8 +217,8 @@ public class EquipmentScreen extends MenuScreen {
 
           playSound(2);
           loadCharacterStats();
-          addHp(characterIndices_800bdbb8.get(this.charSlot).get(), 0);
-          addMp(characterIndices_800bdbb8.get(this.charSlot).get(), 0);
+          addHp(characterIndices_800bdbb8[this.charSlot], 0);
+          addMp(characterIndices_800bdbb8[this.charSlot], 0);
           this.loadingStage = 2;
         }
 
@@ -284,7 +284,7 @@ public class EquipmentScreen extends MenuScreen {
   }
 
   private void menuNavigateRight() {
-    if(this.charSlot < characterCount_8011d7c4.get() - 1) {
+    if(this.charSlot < characterCount_8011d7c4 - 1) {
       this.charSlot++;
       this.loadingStage = 1;
     }
@@ -297,7 +297,7 @@ public class EquipmentScreen extends MenuScreen {
 
     if(itemIndex < this.menuItems.size()) {
       final Equipment equipment = this.menuItems.get(itemIndex).item_00;
-      final EquipItemResult previousEquipment = equipItem(equipment, characterIndices_800bdbb8.get(this.charSlot).get());
+      final EquipItemResult previousEquipment = equipItem(equipment, characterIndices_800bdbb8[this.charSlot]);
       takeEquipment(this.menuItems.get(itemIndex).itemSlot_01);
 
       if(previousEquipment.previousEquipment != null) {
@@ -306,8 +306,8 @@ public class EquipmentScreen extends MenuScreen {
 
       playSound(2);
       loadCharacterStats();
-      addHp(characterIndices_800bdbb8.get(this.charSlot).get(), 0);
-      addMp(characterIndices_800bdbb8.get(this.charSlot).get(), 0);
+      addHp(characterIndices_800bdbb8[this.charSlot], 0);
+      addMp(characterIndices_800bdbb8[this.charSlot], 0);
       this.loadingStage = 2;
     }
   }

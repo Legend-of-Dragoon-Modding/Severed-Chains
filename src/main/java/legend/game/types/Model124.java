@@ -52,7 +52,7 @@ public class Model124 {
    * ubyte */
   public int animationState_9c;
   /** ubyte */
-  public int colourMap_9d;
+  public int vramSlot_9d;
   /** short */
   public int remainingFrames_9e;
   public int interpolationFrameIndex;
@@ -132,7 +132,7 @@ public class Model124 {
     this.partCount_98 = other.partCount_98;
     this.totalFrames_9a = other.totalFrames_9a;
     this.animationState_9c = other.animationState_9c;
-    this.colourMap_9d = other.colourMap_9d;
+    this.vramSlot_9d = other.vramSlot_9d;
     this.remainingFrames_9e = other.remainingFrames_9e;
     this.zOffset_a0 = other.zOffset_a0;
     this.disableInterpolation_a2 = other.disableInterpolation_a2;

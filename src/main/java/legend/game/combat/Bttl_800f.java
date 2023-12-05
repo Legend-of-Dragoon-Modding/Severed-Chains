@@ -87,7 +87,6 @@ import static legend.game.combat.Bttl_800c._800c6980;
 import static legend.game.combat.Bttl_800c.activePartyBattleHudCharacterDisplays_800c6c40;
 import static legend.game.combat.Bttl_800c.aliveBentCount_800c669c;
 import static legend.game.combat.Bttl_800c.aliveMonsterCount_800c6758;
-import static legend.game.combat.Bttl_800c.allText_800fb3c0;
 import static legend.game.combat.Bttl_800c.battleMenuBackgroundDisplayMetrics_800fb614;
 import static legend.game.combat.Bttl_800c.battleMenuIconHeights_800fb6bc;
 import static legend.game.combat.Bttl_800c.battleMenuIconStates_800c71e4;
@@ -113,7 +112,7 @@ import static legend.game.combat.Bttl_800c.floatingTextType3DigitUs_800c70e0;
 import static legend.game.combat.Bttl_800c.iconFlags_800c7194;
 import static legend.game.combat.Bttl_800c.itemTargetAll_800c69c8;
 import static legend.game.combat.Bttl_800c.itemTargetType_800c6b68;
-import static legend.game.combat.Bttl_800c.melbuMonsterNameIndices;
+import static legend.game.combat.Bttl_800c.melbuMonsterNameIndices_800c6e90;
 import static legend.game.combat.Bttl_800c.melbuMonsterNames_800c6ba8;
 import static legend.game.combat.Bttl_800c.melbuStageToMonsterNameIndices_800c6f30;
 import static legend.game.combat.Bttl_800c.monsterBents_800c6b78;
@@ -554,7 +553,7 @@ public final class Bttl_800f {
         type1FloatingDigits[i] = builder1.build();
 
         final QuadBuilder builder3 = new QuadBuilder("Type 3 Floating Digit " + i)
-          .uv(floatingTextType3DigitUs_800c70e0.get(i).get(), 40)
+          .uv(floatingTextType3DigitUs_800c70e0[i], 40)
           .size(8.0f, 16.0f);
         setGpuPacketClutAndTpageAndQueue(builder3, 0x80, null);
         type3FloatingDigits[i] = builder3.build();
@@ -736,8 +735,8 @@ public final class Bttl_800f {
 
             //LAB_800f3a44
             final Vector2f screenCoords = perspectiveTransformXyz(bent.model_148, x, y, z);
-            num.x_1c = clampX(screenCoords.x + centreScreenX_1f8003dc.get());
-            num.y_20 = clampY(screenCoords.y + centreScreenY_1f8003de.get());
+            num.x_1c = clampX(screenCoords.x + centreScreenX_1f8003dc);
+            num.y_20 = clampY(screenCoords.y + centreScreenY_1f8003de);
           }
 
           //LAB_800f3ac8
@@ -885,7 +884,7 @@ public final class Bttl_800f {
     for(int i = 0; i < charCount_800c677c.get(); i++) {
       final BattleHudCharacterDisplay3c s1 = activePartyBattleHudCharacterDisplays_800c6c40.get(i);
 
-      if(s1.charIndex_00.get() == -1 && characterStatsLoaded_800be5d0.get()) {
+      if(s1.charIndex_00.get() == -1 && characterStatsLoaded_800be5d0) {
         initializeBattleHudCharacterDisplay(i);
       }
 
@@ -935,7 +934,7 @@ public final class Bttl_800f {
     final Vector2f screenCoords = perspectiveTransformXyz(bent.model_148, x, y, z);
 
     //LAB_800f4394
-    FUN_800f89f4(bentIndex, 0, 2, damage, clampX(screenCoords.x + centreScreenX_1f8003dc.get()), clampY(screenCoords.y + centreScreenY_1f8003de.get()), 60 / vsyncMode_8007a3b8 / 4, s4);
+    FUN_800f89f4(bentIndex, 0, 2, damage, clampX(screenCoords.x + centreScreenX_1f8003dc), clampY(screenCoords.y + centreScreenY_1f8003de), 60 / vsyncMode_8007a3b8 / 4, s4);
   }
 
   @ScriptDescription("Gives SP to a battle entity")
@@ -958,7 +957,7 @@ public final class Bttl_800f {
     final VitalsStat sp = player.stats.getStat(CoreMod.SP_STAT.get());
 
     sp.setCurrent(sp.getCurrent() + script.params_20[1].get());
-    spGained_800bc950.get(charSlot).add(script.params_20[1].get());
+    spGained_800bc950[charSlot] += script.params_20[1].get();
 
     //LAB_800f4500
     script.params_20[2].set(sp.getCurrent());
@@ -1044,7 +1043,7 @@ public final class Bttl_800f {
     if(menu._a0 == 1 && menu.menuType_0a == 0) {
       //LAB_800f47e4
       for(int i = 0; i < 17; i++) {
-        if(targetAllItemIds_800c7124.get(i).get() == itemOrSpellId + 0xc0) {
+        if(targetAllItemIds_800c7124[i] == itemOrSpellId + 0xc0) {
           //LAB_800f4674
           script.params_20[1].set(-1);
           break;
@@ -1247,7 +1246,7 @@ public final class Bttl_800f {
         menu._02 &= 0xfcff;
         menu.itemOrSpellId_1c = (short)getItemOrSpellId();
 
-        if((press_800bee94.get() & 0x4) != 0) { // L1
+        if((press_800bee94 & 0x4) != 0) { // L1
           if(menu.listScroll_24 != 0) {
             menu._88 = 2;
             menu.listScroll_24 = 0;
@@ -1259,7 +1258,7 @@ public final class Bttl_800f {
         }
 
         //LAB_800f4d54
-        if((press_800bee94.get() & 0x1) != 0) { // L2
+        if((press_800bee94 & 0x1) != 0) { // L2
           final int oldScroll = menu.listScroll_24;
 
           if(menu.count_22 - 1 >= menu.listIndex_1e + 6) {
@@ -1281,7 +1280,7 @@ public final class Bttl_800f {
         }
 
         //LAB_800f4dc4
-        if((press_800bee94.get() & 0x8) != 0) { // R1
+        if((press_800bee94 & 0x8) != 0) { // R1
           if(menu.listIndex_1e == 0) {
             break;
           }
@@ -1305,7 +1304,7 @@ public final class Bttl_800f {
         }
 
         //LAB_800f4e40
-        if((press_800bee94.get() & 0x2) != 0) { // R2
+        if((press_800bee94 & 0x2) != 0) { // R2
           if(menu.listIndex_1e + 6 >= menu.count_22 - 1) {
             break;
           }
@@ -1326,7 +1325,7 @@ public final class Bttl_800f {
         }
 
         //LAB_800f4ecc
-        if((input_800bee90.get() & 0x1000) != 0) { // Up
+        if((input_800bee90 & 0x1000) != 0) { // Up
           if(menu.listScroll_24 != 0) {
             menu.menuState_00 = 5;
             menu.listScroll_24--;
@@ -1350,7 +1349,7 @@ public final class Bttl_800f {
         }
 
         //LAB_800f4f74
-        if((input_800bee90.get() & 0x4000) != 0) { // Down
+        if((input_800bee90 & 0x4000) != 0) { // Down
           if(menu.listScroll_24 != menu.count_22 - 1) {
             if(menu.listIndex_1e + menu.listScroll_24 + 1 < menu.count_22) {
               playSound(0, 1, 0, 0, (short)0, (short)0);
@@ -1377,7 +1376,7 @@ public final class Bttl_800f {
         //LAB_800f5044
         menu._90 = 0;
 
-        if((press_800bee94.get() & 0x20) != 0) { // X
+        if((press_800bee94 & 0x20) != 0) { // X
           //LAB_800f5078
           PlayerBattleEntity player = null;
 
@@ -1438,7 +1437,7 @@ public final class Bttl_800f {
         }
 
         //LAB_800f5208
-        if((press_800bee94.get() & 0x40) != 0) { // O
+        if((press_800bee94 & 0x40) != 0) { // O
           playSound(0, 3, 0, 0, (short)0, (short)0);
           menu.menuState_00 = 8;
           menu._02 &= 0xfff7;
@@ -1531,7 +1530,7 @@ public final class Bttl_800f {
 
             boolean returnItem = false;
             for(int repeatItemIndex = 0; repeatItemIndex < 9; repeatItemIndex++) {
-              if(itemId == repeatItemIds_800c6e34.get(repeatItemIndex).get()) {
+              if(itemId == repeatItemIds_800c6e34[repeatItemIndex]) {
                 returnItem = true;
                 break;
               }
@@ -1625,7 +1624,7 @@ public final class Bttl_800f {
 
     //LAB_800f5694
     //LAB_800f5698
-    menu._84 = tickCount_800bb0fc.get() & 0x7;
+    menu._84 = tickCount_800bb0fc & 0x7;
 
     //LAB_800f56ac
   }
@@ -1914,7 +1913,7 @@ public final class Bttl_800f {
             final BattleEntity27c bent = setActiveCharacterSpell(menu.itemOrSpellId_1c);
             addFloatingNumber(0, 1, 0, bent.spell_94.mp_06, 280, 135, 0, 1);
 
-            menu.transforms.transfer.set(236 - centreScreenX_1f8003dc.get(), 130 - centreScreenY_1f8003de.get(), 124.0f);
+            menu.transforms.transfer.set(236 - centreScreenX_1f8003dc, 130 - centreScreenY_1f8003de, 124.0f);
             RENDERER.queueOrthoOverlayModel(menu.unknownObj2, menu.transforms);
 
             if(battleUiSpellList == null) {
@@ -2026,7 +2025,7 @@ public final class Bttl_800f {
     //LAB_800f62a4
     for(int i = 0, used = 0; i < 8; i++) {
       if((displayedIconsBitset & 0x1 << i) != 0) {
-        menu.iconFlags_10[used++] = iconFlags_800c7194.get(i).get();
+        menu.iconFlags_10[used++] = iconFlags_800c7194[i];
         menu.iconCount_0e++;
       }
       //LAB_800f62d0
@@ -2122,7 +2121,7 @@ public final class Bttl_800f {
         menu.cameraPositionSwitchTicksRemaining_44 = 0;
 
         // Input for changing camera angles
-        if(countCameraPositionIndicesIndices >= 2 && (input_800bee90.get() & 0x2) != 0) {
+        if(countCameraPositionIndicesIndices >= 2 && (input_800bee90 & 0x2) != 0) {
           currentCameraPositionIndicesIndicesIndex_800c6ba1.add(1);
           if(currentCameraPositionIndicesIndicesIndex_800c6ba1.get() >= countCameraPositionIndicesIndices) {
             currentCameraPositionIndicesIndicesIndex_800c6ba1.set(0);
@@ -2139,7 +2138,7 @@ public final class Bttl_800f {
 
         // Input for cycling right on menu bar
         //LAB_800f65b8
-        if((input_800bee90.get() & 0x2000) != 0) {
+        if((input_800bee90 & 0x2000) != 0) {
           playSound(0, 1, 0, 0, (short)0, (short)0);
 
           if(menu.selectedIcon_22 < menu.iconCount_0e - 1) {
@@ -2168,7 +2167,7 @@ public final class Bttl_800f {
 
         // Input for cycling left on menu bar
         //LAB_800f6664
-        if((input_800bee90.get() & 0x8000) != 0) {
+        if((input_800bee90 & 0x8000) != 0) {
           playSound(0, 1, 0, 0, (short)0, (short)0);
 
           if(menu.selectedIcon_22 != 0) {
@@ -2199,7 +2198,7 @@ public final class Bttl_800f {
 
         // Input for pressing X on menu bar
         //LAB_800f671c
-        if((press_800bee94.get() & 0x20) != 0) {
+        if((press_800bee94 & 0x20) != 0) {
           int selectedIconFlag = menu.iconFlags_10[menu.selectedIcon_22];
           if((selectedIconFlag & 0x80) != 0) {
             playSound(0, 3, 0, 0, (short)0, (short)0);
@@ -2249,7 +2248,7 @@ public final class Bttl_800f {
           }
           //LAB_800f6898
           // Input for pressing circle on menu bar
-        } else if((press_800bee94.get() & 0x40) != 0) {
+        } else if((press_800bee94 & 0x40) != 0) {
           //LAB_800f68a4
           //LAB_800f68bc
           playSound(0, 3, 0, 0, (short)0, (short)0);
@@ -2391,7 +2390,7 @@ public final class Bttl_800f {
         final int iconId = (menu.iconFlags_10[iconIndex] & 0xf) - 1;
         final int iconState;
         if(menu.selectedIcon_22 == iconIndex) {
-          iconState = battleMenuIconStates_800c71e4.get(menu.iconStateIndex_26).get();
+          iconState = battleMenuIconStates_800c71e4[menu.iconStateIndex_26];
         } else {
           //LAB_800f6c88
           iconState = 0;
@@ -2553,7 +2552,7 @@ public final class Bttl_800f {
     }
 
     //LAB_800f77f4
-    if((press_800bee94.get() & 0x3000) != 0) {
+    if((press_800bee94 & 0x3000) != 0) {
       _800c697c.add((short)1);
       if(_800c697c.get() >= count) {
         _800c697c.set((short)0);
@@ -2561,7 +2560,7 @@ public final class Bttl_800f {
     }
 
     //LAB_800f7830
-    if((press_800bee94.get() & 0xc000) != 0) {
+    if((press_800bee94 & 0xc000) != 0) {
       _800c697c.sub((short)1);
       if(_800c697c.get() < 0) {
         _800c697c.set((short)(count - 1));
@@ -2630,14 +2629,14 @@ public final class Bttl_800f {
     //LAB_800f7a0c
     //LAB_800f7a10
     int ret = 0;
-    if((press_800bee94.get() & 0x20) != 0) { // Cross
+    if((press_800bee94 & 0x20) != 0) { // Cross
       ret = 1;
       _800c697c.set((short)0);
       menu.displayTargetArrowAndName_4c = false;
     }
 
     //LAB_800f7a38
-    if((press_800bee94.get() & 0x40) != 0) { // Circle
+    if((press_800bee94 & 0x40) != 0) { // Circle
       ret = -1;
       _800c697c.set((short)0);
       menu.target_48 = -1;
@@ -2770,7 +2769,7 @@ public final class Bttl_800f {
     if(target.charId_272 == 0x185) {
       final int stageProgression = battleState_8006e398.stageProgression_eec;
       if(stageProgression == 0 || stageProgression == 4 || stageProgression == 6) {
-        return melbuMonsterNames_800c6ba8[melbuStageToMonsterNameIndices_800c6f30.get(battleState_8006e398.stageProgression_eec).get()];
+        return melbuMonsterNames_800c6ba8[melbuStageToMonsterNameIndices_800c6f30[battleState_8006e398.stageProgression_eec]];
       }
     }
 
@@ -2786,7 +2785,7 @@ public final class Bttl_800f {
   public static void loadMonster(final ScriptState<MonsterBattleEntity> state) {
     //LAB_800eeecc
     for(int i = 0; i < 3; i++) {
-      melbuMonsterNames_800c6ba8[i] = monsterNames_80112068[melbuMonsterNameIndices.get(i).get()];
+      melbuMonsterNames_800c6ba8[i] = monsterNames_80112068[melbuMonsterNameIndices_800c6e90[i]];
     }
 
     final MonsterBattleEntity monster = state.innerStruct_00;
@@ -2985,7 +2984,7 @@ public final class Bttl_800f {
     } else if(textType == 5) {
       str = new LodString(spellStats_800fa0b8[textIndex].combatDescription);
     } else {
-      str = allText_800fb3c0.get(textType).deref().get(textIndex).deref();
+      throw new IllegalArgumentException("Only supports textType 4/5");
     }
 
     final BattleDescriptionEvent event = EVENTS.postEvent(new BattleDescriptionEvent(textType, textIndex, str));
@@ -3001,7 +3000,7 @@ public final class Bttl_800f {
       if((disabledIconBitset & 0x1 << i) != 0) {
         //LAB_800f8bf4
         for(int j = 0; j < 8; j++) {
-          if((menu.iconFlags_10[j] & 0xf) == iconFlags_800c7194.get(i).get()) {
+          if((menu.iconFlags_10[j] & 0xf) == iconFlags_800c7194[i]) {
             menu.iconFlags_10[j] |= 0x80;
             break;
           }
@@ -3286,7 +3285,7 @@ public final class Bttl_800f {
 
       //LAB_800f996c
       for(int i = 0; i < 10; i++) {
-        if(itemId == protectedItems_800c72cc.get(i).get()) {
+        if(itemId == protectedItems_800c72cc[i]) {
           //LAB_800f999c
           item = null;
           itemId = -1;
@@ -3455,9 +3454,9 @@ public final class Bttl_800f {
   @Method(0x800f9c2cL)
   public static FlowControl scriptRenderBattleHudBackground(final RunningScript<?> script) {
     final int colourIndex = script.params_20[4].get();
-    final int r = textboxColours_800c6fec.get(colourIndex).get(0).get();
-    final int g = textboxColours_800c6fec.get(colourIndex).get(1).get();
-    final int b = textboxColours_800c6fec.get(colourIndex).get(2).get();
+    final int r = textboxColours_800c6fec[colourIndex][0];
+    final int g = textboxColours_800c6fec[colourIndex][1];
+    final int b = textboxColours_800c6fec[colourIndex][2];
 
     // This is kinda dumb since we'll have to upload a new box each frame, but there isn't a great
     // way to deal with it. Maybe check to see if any of the params have changed before deleting?
@@ -3491,7 +3490,7 @@ public final class Bttl_800f {
       if((iconIndicesBitset & 0x1 << i) != 0) {
         //LAB_800f9d34
         for(int icon = 0; icon < 8; icon++) {
-          if((menu.iconFlags_10[icon] & 0xf) == iconFlags_800c7194.get(i).get()) {
+          if((menu.iconFlags_10[icon] & 0xf) == iconFlags_800c7194[i]) {
             menu.iconFlags_10[icon] |= 0x80;
             break;
           }

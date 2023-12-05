@@ -71,17 +71,17 @@ public class CoolonQueenFuryOverlay {
 
   /** @param mode 0: Coolon icon, 1: Queen Fury icon */
   public void render(final int mode) {
-    final int buttonState = buttonStates[(int)(tickCount_800bb0fc.get() / 2 / (3.0f / vsyncMode_8007a3b8) % 7)];
+    final int buttonState = buttonStates[(int)(tickCount_800bb0fc / 2 / (3.0f / vsyncMode_8007a3b8) % 7)];
     final MeshObj button = this.buttonSprites[buttonState];
     RENDERER.queueOrthoOverlayModel(button);
 
     final int iconState;
     final MeshObj icon;
     if(mode == 0) {
-      iconState = coolonIconStates[(int)(tickCount_800bb0fc.get() / 2 / (3.0f / vsyncMode_8007a3b8) % 5)];
+      iconState = coolonIconStates[(int)(tickCount_800bb0fc / 2 / (3.0f / vsyncMode_8007a3b8) % 5)];
       icon = this.coolonSprites[iconState];
     } else {
-      iconState = queenFuryIconStates[(int)(tickCount_800bb0fc.get() / 3 / (3.0f / vsyncMode_8007a3b8) % 15)];
+      iconState = queenFuryIconStates[(int)(tickCount_800bb0fc / 3 / (3.0f / vsyncMode_8007a3b8) % 15)];
       icon = this.queenFurySprites[iconState];
     }
 

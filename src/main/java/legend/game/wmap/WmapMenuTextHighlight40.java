@@ -1,6 +1,6 @@
 package legend.game.wmap;
 
-import legend.core.gpu.RECT;
+import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
 import legend.core.opengl.Obj;
 import legend.game.types.Translucency;
@@ -15,7 +15,7 @@ public class WmapMenuTextHighlight40 {
   public WMapTextHighlightSubRectVertexColours10[] subRectVertexColoursArray_00;
   public Translucency[] tpagePacket_04;
 
-  public RECT[] rects_1c;
+  public Rect4i[] rects_1c;
   // public final long[] _20 = new long[2]; // Unused
 
   public int columnCount_28;
@@ -30,11 +30,11 @@ public class WmapMenuTextHighlight40 {
   public float z_3e;
   public int type_3f;
 
-  public WmapMenuTextHighlight40(final float brightness, final Vector3f baseColour, final RECT fullRect, final int columnCount, final int rowCount, final int type, final boolean transparency, final Translucency transparencyMode, final float z) {
+  public WmapMenuTextHighlight40(final float brightness, final Vector3f baseColour, final Rect4i fullRect, final int columnCount, final int rowCount, final int type, final boolean transparency, final Translucency transparencyMode, final float z) {
     int horizontalRectIndex = 0;
     int verticalRectIndex = 0;
-    short x;
-    short y;
+    int x;
+    int y;
 
     this.columnCount_28 = columnCount;
     this.rowCount_2c = rowCount;
@@ -62,11 +62,11 @@ public class WmapMenuTextHighlight40 {
     this.tpagePacket_04 = null;
 
     //LAB_800cd600
-    this.rects_1c = new RECT[this.subRectCount_30];
-    Arrays.setAll(this.rects_1c, i -> new RECT());
+    this.rects_1c = new Rect4i[this.subRectCount_30];
+    Arrays.setAll(this.rects_1c, i -> new Rect4i());
 
-    final short w = (short)(fullRect.w.get() / columnCount);
-    final short h = (short)(fullRect.h.get() / rowCount);
+    final int w = fullRect.w / columnCount;
+    final int h = fullRect.h / rowCount;
 
     //LAB_800cd6b8
     if(transparency) {
@@ -87,8 +87,8 @@ public class WmapMenuTextHighlight40 {
       }
 
       //LAB_800cd8e8
-      x = (short)(fullRect.x.get() + w * horizontalRectIndex - 160);
-      y = (short)(fullRect.y.get() + h * verticalRectIndex - 120);
+      x = fullRect.x + w * horizontalRectIndex - 160;
+      y = fullRect.y + h * verticalRectIndex - 120;
 
       this.rects_1c[i].set(x, y, w, h);
 

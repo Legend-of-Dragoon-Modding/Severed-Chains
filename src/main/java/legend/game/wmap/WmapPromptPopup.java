@@ -1,7 +1,7 @@
 package legend.game.wmap;
 
 import legend.core.gpu.Bpp;
-import legend.core.gpu.RECT;
+import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.opengl.MeshObj;
@@ -219,7 +219,7 @@ public class WmapPromptPopup {
         n++;
       }
 
-      final RECT rect = highlight.rects_1c[i];
+      final Rect4i rect = highlight.rects_1c[i];
 
       builder
         .add()
@@ -227,8 +227,8 @@ public class WmapPromptPopup {
         .rgb(1, r2, g2, b2)
         .rgb(2, r1, g1, b1)
         .rgb(3, r3, g3, b3)
-        .pos(rect.x.get(), rect.y.get(), 0.0f)
-        .size(rect.w.get(), rect.h.get());
+        .pos(rect.x, rect.y, 0.0f)
+        .size(rect.w, rect.h);
 
       if(highlight.transparency_3c) {
         builder.translucency(highlight.tpagePacket_04[i]);

@@ -1,7 +1,7 @@
 package legend.game.tim;
 
 import legend.core.gpu.Bpp;
-import legend.core.gpu.RECT;
+import legend.core.gpu.Rect4i;
 import legend.game.unpacker.FileData;
 
 import static legend.core.GameEngine.GPU;
@@ -37,12 +37,12 @@ public class Tim {
     return (this.getFlags() & 0b1000) != 0;
   }
 
-  public RECT getClutRect() {
+  public Rect4i getClutRect() {
     if(!this.hasClut()) {
       throw new IllegalStateException("TIM has no CLUT");
     }
 
-    return this.data.readRect(0xc, new RECT());
+    return this.data.readRect(0xc, new Rect4i());
   }
 
   private int getClutOffset() {
@@ -57,8 +57,8 @@ public class Tim {
     return this.data.slice(this.getClutOffset(), this.data.readInt(0x8) - 0xc);
   }
 
-  public RECT getImageRect() {
-    return this.data.readRect(this.getImageDataOffset() + 0xc, new RECT());
+  public Rect4i getImageRect() {
+    return this.data.readRect(this.getImageDataOffset() + 0xc, new Rect4i());
   }
 
   private int getImageOffset() {

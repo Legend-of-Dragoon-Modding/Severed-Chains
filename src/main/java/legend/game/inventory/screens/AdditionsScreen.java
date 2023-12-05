@@ -11,7 +11,6 @@ import java.util.Arrays;
 import static legend.game.SItem.FUN_801034cc;
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.additionGlyphs_801141e4;
-import static legend.game.SItem.additionXpPerLevel_800fba2c;
 import static legend.game.SItem.additions_80114070;
 import static legend.game.SItem.additions_8011a064;
 import static legend.game.SItem.allocateUiElement;
@@ -63,7 +62,7 @@ public class AdditionsScreen extends MenuScreen {
 
       case 1 -> {
         deallocateRenderables(0);
-        loadAdditions(characterIndices_800bdbb8.get(this.charSlot).get(), this.additions);
+        loadAdditions(characterIndices_800bdbb8[this.charSlot], this.additions);
 
         if(this.additions[0].offset_00 != -1) {
           this.additionHighlight = allocateUiElement(117, 117, 39, this.getAdditionSlotY(this.selectedSlot) - 4);
@@ -72,13 +71,13 @@ public class AdditionsScreen extends MenuScreen {
 
         allocateUiElement(69, 69, 0, 0);
         allocateUiElement(70, 70, 192, 0);
-        this.renderAdditions(this.charSlot, this.additions, gameState_800babc8.charData_32c[characterIndices_800bdbb8.get(this.charSlot).get()].selectedAddition_19, 0xffL);
+        this.renderAdditions(this.charSlot, this.additions, gameState_800babc8.charData_32c[characterIndices_800bdbb8[this.charSlot]].selectedAddition_19, 0xffL);
         this.loadingStage++;
       }
 
       case 2 -> {
-        FUN_801034cc(this.charSlot, characterCount_8011d7c4.get());
-        this.renderAdditions(this.charSlot, this.additions, gameState_800babc8.charData_32c[characterIndices_800bdbb8.get(this.charSlot).get()].selectedAddition_19, 0);
+        FUN_801034cc(this.charSlot, characterCount_8011d7c4);
+        this.renderAdditions(this.charSlot, this.additions, gameState_800babc8.charData_32c[characterIndices_800bdbb8[this.charSlot]].selectedAddition_19, 0);
 
         if(this.scrollAccumulator >= 1.0d) {
           this.scrollAccumulator -= 1.0d;
@@ -91,7 +90,7 @@ public class AdditionsScreen extends MenuScreen {
         if(this.scrollAccumulator <= -1.0d) {
           this.scrollAccumulator += 1.0d;
 
-          if(this.charSlot < characterCount_8011d7c4.get() - 1) {
+          if(this.charSlot < characterCount_8011d7c4 - 1) {
             this.scroll(this.charSlot + 1);
           }
         }
@@ -99,7 +98,7 @@ public class AdditionsScreen extends MenuScreen {
 
       // Fade out
       case 100 -> {
-        this.renderAdditions(this.charSlot, this.additions, gameState_800babc8.charData_32c[characterIndices_800bdbb8.get(this.charSlot).get()].selectedAddition_19, 0);
+        this.renderAdditions(this.charSlot, this.additions, gameState_800babc8.charData_32c[characterIndices_800bdbb8[this.charSlot]].selectedAddition_19, 0);
         this.unload.run();
       }
     }
@@ -107,7 +106,7 @@ public class AdditionsScreen extends MenuScreen {
 
   private void renderAdditions(final int charSlot, final MenuAdditionInfo[] additions, final int selectedAdditionOffset, final long a4) {
     final boolean allocate = a4 == 0xff;
-    final int charIndex = characterIndices_800bdbb8.get(charSlot).get();
+    final int charIndex = characterIndices_800bdbb8[charSlot];
 
     if(additions[0].offset_00 == -1) {
       renderText(Addition_cannot_be_used_8011c340, 106, 150, TextColour.BROWN);
@@ -119,7 +118,7 @@ public class AdditionsScreen extends MenuScreen {
       for(int i = 0; i < 8; i++) {
         final int y = this.getAdditionSlotY(i);
 
-        if(allocate && i < additionCounts_8004f5c0.get(charIndex).get()) { // Total number of additions
+        if(allocate && i < additionCounts_8004f5c0[charIndex]) { // Total number of additions
           renderCharacter(24, y, i + 1); // Addition number
         }
 
@@ -127,7 +126,7 @@ public class AdditionsScreen extends MenuScreen {
         final int index = additions[i].index_01;
 
         if(offset != -1) {
-          renderText(additions_8011a064.get(offset).deref(), 33, y - 2, offset != selectedAdditionOffset ? TextColour.BROWN : TextColour.RED);
+          renderText(additions_8011a064[offset], 33, y - 2, offset != selectedAdditionOffset ? TextColour.BROWN : TextColour.RED);
 
           if(allocate) {
             final int level = gameState_800babc8.charData_32c[charIndex].additionLevels_1a[index];
@@ -138,7 +137,7 @@ public class AdditionsScreen extends MenuScreen {
             renderThreeDigitNumber(322, y, gameState_800babc8.charData_32c[charIndex].additionXp_22[index]); // Current XP
 
             if(level < 5) {
-              renderThreeDigitNumber(342, y, additionXpPerLevel_800fba2c.get(level).get()); // Max XP
+              renderThreeDigitNumber(342, y, level * 20); // Max XP
             } else {
               renderCharacter(354, y, 218); // Dash if at max XP
             }
@@ -202,7 +201,7 @@ public class AdditionsScreen extends MenuScreen {
           final int additionOffset = this.additions[i].offset_00;
 
           if(additionOffset != -1) {
-            gameState_800babc8.charData_32c[characterIndices_800bdbb8.get(this.charSlot).get()].selectedAddition_19 = additionOffset;
+            gameState_800babc8.charData_32c[characterIndices_800bdbb8[this.charSlot]].selectedAddition_19 = additionOffset;
             playSound(2);
             unloadRenderable(this.additionHighlight);
             this.loadingStage = 1;
@@ -253,7 +252,7 @@ public class AdditionsScreen extends MenuScreen {
     final int additionOffset = this.additions[this.selectedSlot].offset_00;
 
     if(additionOffset != -1) {
-      gameState_800babc8.charData_32c[characterIndices_800bdbb8.get(this.charSlot).get()].selectedAddition_19 = additionOffset;
+      gameState_800babc8.charData_32c[characterIndices_800bdbb8[this.charSlot]].selectedAddition_19 = additionOffset;
       playSound(2);
       unloadRenderable(this.additionHighlight);
       this.loadingStage = 1;

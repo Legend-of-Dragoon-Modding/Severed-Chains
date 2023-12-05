@@ -378,10 +378,10 @@ public class ListBox<T> extends Control {
 
     @Override
     protected void render(final int x, final int y) {
-      final int oldZ = textZ_800bdf00.get();
-      textZ_800bdf00.set(this.getZ() - 1);
+      final int oldZ = textZ_800bdf00;
+      textZ_800bdf00 = this.getZ() - 1;
       renderText(this.lodString, x + 28, y + 3, this.colour);
-      textZ_800bdf00.set(oldZ);
+      textZ_800bdf00 = oldZ;
 
       if(ListBox.this.entryToIcon != null) {
         renderItemIcon(ListBox.this.entryToIcon.applyAsInt(this.data), x + 13, y + 1, 0x8);

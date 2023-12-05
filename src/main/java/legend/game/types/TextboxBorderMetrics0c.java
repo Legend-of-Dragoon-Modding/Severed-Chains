@@ -1,32 +1,19 @@
 package legend.game.types;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.ShortRef;
+public class TextboxBorderMetrics0c {
+  public int topLeftVertexIndex_00;
+  public int bottomRightVertexIndex_02;
+  public int u_04;
+  public int v_06;
+  public int w_08;
+  public int h_0a;
 
-public class TextboxBorderMetrics0c implements MemoryRef {
-  private final Value ref;
-
-  public final ShortRef topLeftVertexIndex_00;
-  public final ShortRef bottomRightVertexIndex_02;
-  public final ShortRef u_04;
-  public final ShortRef v_06;
-  public final ShortRef w_08;
-  public final ShortRef h_0a;
-
-  public TextboxBorderMetrics0c(final Value ref) {
-    this.ref = ref;
-
-    this.topLeftVertexIndex_00 = ref.offset(2, 0x00L).cast(ShortRef::new);
-    this.bottomRightVertexIndex_02 = ref.offset(2, 0x02L).cast(ShortRef::new);
-    this.u_04 = ref.offset(2, 0x04L).cast(ShortRef::new);
-    this.v_06 = ref.offset(2, 0x06L).cast(ShortRef::new);
-    this.w_08 = ref.offset(2, 0x08L).cast(ShortRef::new);
-    this.h_0a = ref.offset(2, 0x0aL).cast(ShortRef::new);
-  }
-
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+  public TextboxBorderMetrics0c(final int topLeftVertexIndex, final int bottomRightVertexIndex, final int u, final int v, final int w, final int h) {
+    this.topLeftVertexIndex_00 = topLeftVertexIndex;
+    this.bottomRightVertexIndex_02 = bottomRightVertexIndex;
+    this.u_04 = u;
+    this.v_06 = v;
+    this.w_08 = w;
+    this.h_0a = h;
   }
 }

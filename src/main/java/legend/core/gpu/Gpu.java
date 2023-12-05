@@ -64,8 +64,8 @@ public class Gpu {
 
   public final Status status = new Status();
 
-  public final RECT drawingArea = new RECT();
-  public final RECT scaledDrawingArea = new RECT();
+  public final Rect4i drawingArea = new Rect4i();
+  public final Rect4i scaledDrawingArea = new Rect4i();
   private short offsetX;
   private short offsetY;
 
@@ -130,8 +130,8 @@ public class Gpu {
       this.vramDirty = false;
     }
 
-    if(this.zMax != orderingTableSize_1f8003c8.get()) {
-      this.updateOrderingTableSize(orderingTableSize_1f8003c8.get());
+    if(this.zMax != orderingTableSize_1f8003c8) {
+      this.updateOrderingTableSize(orderingTableSize_1f8003c8);
     }
   }
 
@@ -263,11 +263,11 @@ public class Gpu {
     });
   }
 
-  public void uploadData(final RECT rect, final FileData data) {
-    final int rectX = rect.x.get();
-    final int rectY = rect.y.get();
-    final int rectW = rect.w.get();
-    final int rectH = rect.h.get();
+  public void uploadData(final Rect4i rect, final FileData data) {
+    final int rectX = rect.x;
+    final int rectY = rect.y;
+    final int rectW = rect.w;
+    final int rectH = rect.h;
 
     assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
     assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
@@ -294,33 +294,11 @@ public class Gpu {
     this.vramDirty = true;
   }
 
-  public void uploadData(final RECT rect, final short[] data) {
-    final int rectX = rect.x.get();
-    final int rectY = rect.y.get();
-    final int rectW = rect.w.get();
-    final int rectH = rect.h.get();
-
-    assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
-    assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
-
-    LOGGER.debug("Copying (%d, %d, %d, %d) from CPU to VRAM", rectX, rectY, rectW, rectH);
-
-    int i = 0;
-    for(int y = rectY; y < rectY + rectH; y++) {
-      for(int x = rectX; x < rectX + rectW; x++) {
-        this.setVramPixel(x, y, MathHelper.colour15To24(data[i]), data[i]);
-        i++;
-      }
-    }
-
-    this.vramDirty = true;
-  }
-
   public void uploadData(final Rect4i rect, final int[] data) {
-    final int rectX = rect.x();
-    final int rectY = rect.y();
-    final int rectW = rect.w();
-    final int rectH = rect.h();
+    final int rectX = rect.x;
+    final int rectY = rect.y;
+    final int rectW = rect.w;
+    final int rectH = rect.h;
 
     assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
     assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
@@ -338,11 +316,11 @@ public class Gpu {
     this.vramDirty = true;
   }
 
-  public void commandC0CopyRectFromVramToCpu(final RECT rect, final FileData out) {
-    final int rectX = rect.x.get();
-    final int rectY = rect.y.get();
-    final int rectW = rect.w.get();
-    final int rectH = rect.h.get();
+  public void downloadData(final Rect4i rect, final FileData out) {
+    final int rectX = rect.x;
+    final int rectY = rect.y;
+    final int rectW = rect.w;
+    final int rectH = rect.h;
 
     assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
     assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
@@ -360,7 +338,7 @@ public class Gpu {
     }
   }
 
-  public void command80CopyRectFromVramToVram(final int sourceX, final int sourceY, final int destX, final int destY, final int width, final int height) {
+  public void copyVramToVram(final int sourceX, final int sourceY, final int destX, final int destY, final int width, final int height) {
     LOGGER.debug("COPY VRAM VRAM from %d %d to %d %d size %d %d", sourceX, sourceY, destX, destY, width, height);
 
     for(int y = 0; y < height; y++) {
@@ -613,10 +591,10 @@ public class Gpu {
     int maxY = Math.max(vy0, Math.max(vy1, vy2));
 
     /*clip*/
-    minX = (short)Math.max(minX, this.scaledDrawingArea.x.get());
-    minY = (short)Math.max(minY, this.scaledDrawingArea.y.get());
-    maxX = (short)Math.min(maxX, this.scaledDrawingArea.x.get() + this.scaledDrawingArea.w.get());
-    maxY = (short)Math.min(maxY, this.scaledDrawingArea.y.get() + this.scaledDrawingArea.h.get());
+    minX = (short)Math.max(minX, this.scaledDrawingArea.x);
+    minY = (short)Math.max(minY, this.scaledDrawingArea.y);
+    maxX = (short)Math.min(maxX, this.scaledDrawingArea.x + this.scaledDrawingArea.w);
+    maxY = (short)Math.min(maxY, this.scaledDrawingArea.y + this.scaledDrawingArea.h);
 
     final int A01 = vy0 - vy1;
     final int B01 = vx1 - vx0;
@@ -671,7 +649,7 @@ public class Gpu {
               texel = 0;
               if(palettes == null) {
                 if(texture == this.getDisplayBuffer() || texture == this.getDrawBuffer()) {
-                  if(texelX < this.drawingArea.x.get() + this.drawingArea.w.get() && texelY < this.drawingArea.y.get() + this.drawingArea.h.get()) {
+                  if(texelX < this.drawingArea.x + this.drawingArea.w && texelY < this.drawingArea.y + this.drawingArea.h) {
                     texel = texture.getPixel(texelX, texelY) & 0xffffff;
                   }
                 } else {

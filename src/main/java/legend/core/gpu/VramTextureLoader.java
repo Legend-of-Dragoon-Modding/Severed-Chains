@@ -29,21 +29,21 @@ public final class VramTextureLoader {
     }
 
     final FileData imageData = tim.getImageData();
-    final RECT imageSize = tim.getImageRect();
+    final Rect4i imageSize = tim.getImageRect();
 
     final Bpp bpp = tim.getBpp();
-    final int width = imageSize.w.get() * bpp.widthDivisor;
-    final int height = imageSize.h.get();
+    final int width = imageSize.w * bpp.widthDivisor;
+    final int height = imageSize.h;
 
     final int[] data = new int[width * height];
 
     for(int y = 0; y < height; y++) {
       for(int x = 0; x < width; x++) {
-        data[y * width + x] = getPixel(imageData, imageSize.w.get(), x, y, bpp);
+        data[y * width + x] = getPixel(imageData, imageSize.w, x, y, bpp);
       }
     }
 
-    return new VramTextureSingle(bpp, new Rect4i(imageSize.x.get(), imageSize.y.get(), width, height), data);
+    return new VramTextureSingle(bpp, new Rect4i(imageSize.x, imageSize.y, width, height), data);
   }
 
   public static VramTexture textureFromPng(final Path path) {
@@ -202,9 +202,9 @@ public final class VramTextureLoader {
     }
 
     final FileData clutData = tim.getClutData();
-    final RECT clutSize = tim.getClutRect();
-    final int paletteCount = clutSize.h.get();
-    final int width = clutSize.w.get();
+    final Rect4i clutSize = tim.getClutRect();
+    final int paletteCount = clutSize.h;
+    final int width = clutSize.w;
 
     final VramTexture[] palettes = new VramTexture[paletteCount];
 
@@ -215,7 +215,7 @@ public final class VramTextureLoader {
         data[x] = MathHelper.colour15To24(getPixel(clutData, width, x, paletteIndex));
       }
 
-      palettes[paletteIndex] = new VramTextureSingle(tim.getBpp(), new Rect4i(0, clutSize.y.get() + paletteIndex, width, 1), data);
+      palettes[paletteIndex] = new VramTextureSingle(tim.getBpp(), new Rect4i(0, clutSize.y + paletteIndex, width, 1), data);
     }
 
     return palettes;

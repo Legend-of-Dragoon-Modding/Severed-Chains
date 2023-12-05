@@ -35,6 +35,6 @@ public class GpuCommandCopyVramToVram extends GpuCommand {
 
   @Override
   public void render(final Gpu gpu) {
-    gpu.command80CopyRectFromVramToVram(this.sourceX, this.sourceY, this.destX, this.destY, this.width, this.height);
+    gpu.copyVramToVram(this.sourceX, this.sourceY, this.destX, this.destY, this.width, this.height);
   }
 }
