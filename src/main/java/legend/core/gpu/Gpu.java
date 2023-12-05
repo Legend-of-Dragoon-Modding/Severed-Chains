@@ -92,13 +92,13 @@ public class Gpu {
     RENDERER.events().onKeyPress((window, key, scancode, mods) -> {
       if(key == GLFW_KEY_EQUAL) {
         if(mods == 0) {
-          Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() + 1);
+          Config.setGameSpeedMultiplier(Math.max(Config.getGameSpeedMultiplier() + 1, 16));
         }
       }
 
       if(key == GLFW_KEY_MINUS) {
         if(mods == 0) {
-          Config.setGameSpeedMultiplier(Config.getGameSpeedMultiplier() - 1);
+          Config.setGameSpeedMultiplier(Math.min(Config.getGameSpeedMultiplier() - 1, 1));
         }
       }
     });
