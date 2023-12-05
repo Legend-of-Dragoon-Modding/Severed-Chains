@@ -15,7 +15,6 @@ import legend.core.gpu.GpuCommandSetMaskBit;
 import legend.core.gpu.Rect4i;
 import legend.core.memory.Method;
 import legend.core.memory.Value;
-import legend.core.memory.types.ArrayRef;
 import legend.core.opengl.MatrixStack;
 import legend.core.opengl.Obj;
 import legend.core.opengl.ScissorStack;
@@ -139,7 +138,6 @@ import static legend.game.Scus94491BpeSegment_8005.characterSoundFileIndices_800
 import static legend.game.Scus94491BpeSegment_8005.combatMusicFileIndices_800501bc;
 import static legend.game.Scus94491BpeSegment_8005.combatSoundEffectsTypes_8005019c;
 import static legend.game.Scus94491BpeSegment_8005.monsterSoundFileIndices_800500e8;
-import static legend.game.Scus94491BpeSegment_8005.sin_cos_80054d0c;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapMusic_80050068;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
@@ -232,7 +230,16 @@ public final class Scus94491BpeSegment {
     new Rect4i(896, 256, 16, 46), new Rect4i(832, 484, 16, 1), new Rect4i(912, 256, 28, 14), new Rect4i(1008, 484, 16, 1),
   };
 
-  public static final ArrayRef<TextboxBorderMetrics0c> textboxBorderMetrics_800108b0 = MEMORY.ref(4, 0x800108b0L, ArrayRef.of(TextboxBorderMetrics0c.class, 8, 0xc, TextboxBorderMetrics0c::new));
+  public static final TextboxBorderMetrics0c[] textboxBorderMetrics_800108b0 = {
+    new TextboxBorderMetrics0c(0, 0, 0, 0, 6, 8),
+    new TextboxBorderMetrics0c(1, 1, 48, 0, 6, 8),
+    new TextboxBorderMetrics0c(2, 2, 0, 32, 6, 8),
+    new TextboxBorderMetrics0c(3, 3, 48, 32, 6, 8),
+    new TextboxBorderMetrics0c(0, 1, 16, 0, -4, 8),
+    new TextboxBorderMetrics0c(0, 2, 0, 16, 6, -4),
+    new TextboxBorderMetrics0c(1, 3, 48, 16, 6, -4),
+    new TextboxBorderMetrics0c(2, 3, 16, 32, -4, 8),
+  };
 
   public static boolean[] scriptLog = new boolean[0x48];
 
@@ -674,31 +681,13 @@ public final class Scus94491BpeSegment {
   /** ALWAYS returns a positive value even for negative angles */
   @Method(0x80013598L)
   public static short rsin(final int theta) {
-    return sin_cos_80054d0c.get((theta & 0xfff) * 2).get();
+    return (short)(MathHelper.sin(MathHelper.psxDegToRad(theta)) * 0x1000);
   }
 
   /** ALWAYS returns a positive value even for negative angles */
   @Method(0x800135b8L)
   public static short rcos(final int theta) {
-    return sin_cos_80054d0c.get((theta & 0xfff) * 2 + 1).get();
-  }
-
-  @Method(0x80013598L)
-  public static short sin(final int theta) {
-    if(theta < 0) {
-      return (short)-rsin(-theta);
-    }
-
-    return rsin(theta);
-  }
-
-  @Method(0x800135b8L)
-  public static short cos(final int theta) {
-    if(theta < 0) {
-      return (short)-rcos(-theta);
-    }
-
-    return rcos(theta);
+    return (short)(MathHelper.cos(MathHelper.psxDegToRad(theta)) * 0x1000);
   }
 
   /**
@@ -2560,35 +2549,33 @@ public final class Scus94491BpeSegment {
       //LAB_8001c63c
       SubmapMusic08 a2;
       int a3;
-      for(a3 = 0, a2 = _8004fb00.get(a3); a2.submapCut_00.get() != 99 || a2.musicIndex_02.get() != 99; a3++, a2 = _8004fb00.get(a3)) { // I think 99 is just a sentinel value that means "end of list"
+      for(a3 = 0, a2 = _8004fb00[a3]; a2.submapCut_00 != 99 || a2.musicIndex_02 != 99; a3++, a2 = _8004fb00[a3]) { // I think 99 is just a sentinel value that means "end of list"
         final int submapId = submapId_800bd808;
 
-        if(submapId == a2.submapCut_00.get()) {
-          int v1 = 0;
-
+        if(submapId == a2.submapCut_00) {
           //LAB_8001c680
-          do {
+          for(int v1 = 0; v1 < a2.submapCuts_04.length; v1++) {
             if(submapId == 57) { // Opening (Rose intro, Dart forest, horses)
-              if(a2.submapCuts_04.deref().get(v1).get() != submapCut_80052c30) {
+              if(a2.submapCuts_04[v1] != submapCut_80052c30) {
                 continue;
               }
 
               if((gameState_800babc8._1a4[0] & 0x1) == 0) {
                 //LAB_8001c7cc
-                musicIndex = a2.musicIndex_02.get();
+                musicIndex = a2.musicIndex_02;
                 break jmp_8001c7a0;
               }
             }
 
             //LAB_8001c6ac
-            if(a2.submapCuts_04.deref().get(v1).get() == submapCut_80052c30 && (gameState_800babc8._1a4[a3 >>> 5] & 0x1 << (a3 & 0x1f)) != 0) {
+            if(a2.submapCuts_04[v1] == submapCut_80052c30 && (gameState_800babc8._1a4[a3 >>> 5] & 0x1 << (a3 & 0x1f)) != 0) {
               //LAB_8001c7c0
-              musicIndex = a2.musicIndex_02.get();
+              musicIndex = a2.musicIndex_02;
               break jmp_8001c7a0;
             }
 
             //LAB_8001c6e4
-          } while(a2.submapCuts_04.deref().get(++v1).get() != -1);
+          }
         }
 
         //LAB_8001c700
@@ -2596,17 +2583,15 @@ public final class Scus94491BpeSegment {
 
       //LAB_8001c728
       SubmapMusic08 a0;
-      for(a3 = 0, a0 = _8004fa98.get(a3); a0.submapCut_00.get() != 99 || a0.musicIndex_02.get() != 99; a3++, a0 = _8004fa98.get(a3)) {
-        if(submapId_800bd808 == a0.submapCut_00.get()) {
-          int v1 = 0;
-
+      for(a3 = 0, a0 = _8004fa98[a3]; a0.submapCut_00 != 99 || a0.musicIndex_02 != 99; a3++, a0 = _8004fa98[a3]) {
+        if(submapId_800bd808 == a0.submapCut_00) {
           //LAB_8001c748
-          do {
-            if(a0.submapCuts_04.deref().get(v1).get() == submapCut_80052c30) {
+          for(int v1 = 0; v1 < a0.submapCuts_04.length; v1++) {
+            if(a0.submapCuts_04[v1] == submapCut_80052c30) {
               //LAB_8001c7d8
-              return FUN_8001c84c(s0, a0.musicIndex_02.get());
+              return FUN_8001c84c(s0, a0.musicIndex_02);
             }
-          } while(a0.submapCuts_04.deref().get(++v1).get() != -1);
+          }
         }
 
         //LAB_8001c76c
@@ -2647,16 +2632,16 @@ public final class Scus94491BpeSegment {
   public static int getCurrentSubmapMusic() {
     if(submapId_800bd808 == 56) { // Moon
       for(int i = 0; ; i++) {
-        final MoonMusic08 moonMusic = moonMusic_8004ff10.get(i);
+        final MoonMusic08 moonMusic = moonMusic_8004ff10[i];
 
-        if(moonMusic.submapCut_00.get() == submapCut_80052c30) {
-          return moonMusic.musicIndex_04.get();
+        if(moonMusic.submapCut_00 == submapCut_80052c30) {
+          return moonMusic.musicIndex_04;
         }
       }
     }
 
     //LAB_8001c8bc
-    return submapMusic_80050068.get(submapId_800bd808).get();
+    return submapMusic_80050068[submapId_800bd808];
   }
 
   @Method(0x8001cae0L)
@@ -2934,7 +2919,7 @@ public final class Scus94491BpeSegment {
         callback = files -> musicPackageLoadedCallback(files, 732 << 8);
       } else {
         //LAB_8001da58
-        fileIndex = (int)combatMusicFileIndices_800501bc.get(stageData.musicIndex_04 & 0x1f).get();
+        fileIndex = combatMusicFileIndices_800501bc[stageData.musicIndex_04 & 0x1f];
         callback = files -> FUN_8001fb44(files, "Encounter music %d (file %d)".formatted(stageData.musicIndex_04 & 0x1f, fileIndex), 0);
       }
 
@@ -3027,7 +3012,7 @@ public final class Scus94491BpeSegment {
       //LAB_8001df8c
       unloadSoundFile(8);
 
-      final int type = combatSoundEffectsTypes_8005019c.get(stageData.musicIndex_04 & 0x1f).get();
+      final int type = combatSoundEffectsTypes_8005019c[stageData.musicIndex_04 & 0x1f];
       if(type == 0xc) {
         loadEncounterSoundEffects(696);
       } else if(type == 0xd) {

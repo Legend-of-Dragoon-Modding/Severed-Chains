@@ -3,10 +3,6 @@ package legend.game;
 import legend.core.gte.MV;
 import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.IntRef;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnsignedByteRef;
-import legend.core.memory.types.UnsignedIntRef;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.sound.ReverbConfigAndLocation;
 import legend.game.types.AdditionData0e;
@@ -19,24 +15,43 @@ import static legend.core.GameEngine.MEMORY;
 public final class Scus94491BpeSegment_8005 {
   private Scus94491BpeSegment_8005() { }
 
-  public static final ArrayRef<ShortRef> submapMusic_80050068 = MEMORY.ref(2, 0x80050068L, ArrayRef.of(ShortRef.class, 64, 2, ShortRef::new));
+  public static final int[] submapMusic_80050068 = {
+    -1, -1, 23, 28, 44, 20, 22, -1,
+    29, 40, 30, 22, 24, 22, 31, 42,
+    -1, 32, 45, 29, 40, 27, 33, 21,
+    21, -1, 48, 46, -1, 22, 38, -1,
+    33, 23, 36, 49, 28, 39, 50, -1,
+    47, -1, 26, 27, 26, 42, 45, -1,
+    27, 39, 27, 52, -1, 38, 53, 54,
+    55, -1, -1, -1, -1, -1, -1, -1,
+  };
   public static final int[] monsterSoundFileIndices_800500e8 = {4, 5, 6, 7};
   public static final int[] characterSoundFileIndices_800500f8 = {1, 2, 3};
 
   public static final int[] charSlotSpuOffsets_80050190 = {0x44250, 0x4b780, 0x52cb0};
 
-  public static final ArrayRef<UnsignedByteRef> combatSoundEffectsTypes_8005019c = MEMORY.ref(1, 0x8005019cL, ArrayRef.of(UnsignedByteRef.class, 32, 1, UnsignedByteRef::new));
-  public static final ArrayRef<UnsignedIntRef> combatMusicFileIndices_800501bc = MEMORY.ref(4, 0x800501bcL, ArrayRef.of(UnsignedIntRef.class, 32, 4, UnsignedIntRef::new));
+  public static final int[] combatSoundEffectsTypes_8005019c = {
+    12, 13, 86, 12, 12, 12, 12, 12,
+    12, 12, 12, 12, 12, 12, 12, 12,
+    14, 15, 88, 90, 14, 14, 14, 14,
+    14, 14, 14, 14, 14, 14, 14, 14,
+  };
+  public static final int[] combatMusicFileIndices_800501bc = {
+    702, 707, 722, 702, 702, 702, 702, 702,
+    702, 702, 702, 702, 702, 702, 702, 702,
+    712, 717, 727, 732, 712, 712, 712, 712,
+    712, 712, 712, 712, 712, 712, 712, 712,
+  };
 
   public static int _80050274 = -1;
 
   public static final Value _8005027c = MEMORY.ref(4, 0x8005027cL);
 
   public static final int[] shadowScale_8005039c = {0x1800, 0x1800, 0x1000, 0xe00, 0x1600, 0x1300, 0xe00, 0x2000, 0x1300, 0x1500};
-  public static final ArrayRef<ShortRef> _800503b0 = MEMORY.ref(2, 0x800503b0L, ArrayRef.of(ShortRef.class, 18, 2, ShortRef::new));
-  public static final ArrayRef<ShortRef> _800503d4 = MEMORY.ref(2, 0x800503d4L, ArrayRef.of(ShortRef.class, 18, 2, ShortRef::new));
-  public static final ArrayRef<ShortRef> _800503f8 = MEMORY.ref(2, 0x800503f8L, ArrayRef.of(ShortRef.class, 22, 2, ShortRef::new));
-  public static final ArrayRef<ShortRef> _80050424 = MEMORY.ref(2, 0x80050424L, ArrayRef.of(ShortRef.class, 22, 2, ShortRef::new));
+  public static final int[] _800503b0 = {0, 320, 384, 448, 512, 576, 640, 576, 640, 704, 768, 832, 896, 960, 512, 576, 640, 704};
+  public static final int[] _800503d4 = {0, 256, 256, 256, 256, 256, 256, 256, 256, 256, 0, 0, 0, 0, 0, 0, 0, 0};
+  public static final int[] _800503f8 = {576, 608, 624, 576, 592, 608, 624, 672, 688, 640, 656, 672, 688, 736, 752, 704, 720, 1008, 576, 640, 736, 704};
+  public static final int[] _80050424 = {256, 256, 256, 384, 384, 384, 384, 256, 256, 384, 384, 384, 384, 256, 256, 256, 256, 256, 256, 256, 256, 384};
 
   public static final LodString[] itemCombatDescriptions_80051758 = {
     new LodString(" "), new LodString("Detonates & attacks all."), new LodString("S attack(thunder, multi)."), new LodString("S attack(flame, multi)."), new LodString(" "),
@@ -113,7 +128,7 @@ public final class Scus94491BpeSegment_8005 {
 
   public static boolean reinitializingWmap_80052c6c;
 
-  public static final ArrayRef<IntRef> _80052d6c = MEMORY.ref(4, 0x80052d6cL, ArrayRef.of(IntRef.class, 4, 4, IntRef::new));
+  public static final int[] _80052d6c = {0, 4, 7, 15};
   public static final String[][] diskFmvs_80052d7c = {
     {"\\STR\\DEMOH.IKI", "\\STR\\DEMO2.IKI", "\\STR\\OPENH.IKI", "\\STR\\WAR1H.IKI"},
     {"\\STR\\TVRH.IKI", "\\STR\\GOAST.IKI", "\\STR\\ROZEH.IKI"},
@@ -129,10 +144,6 @@ public final class Scus94491BpeSegment_8005 {
   static {
     Arrays.setAll(matrixStack_80054a0c, i -> new MV());
   }
-
-  /** Precomputed sin/cos table */
-  public static final ArrayRef<ShortRef> sin_cos_80054d0c = MEMORY.ref(2, 0x80054d0cL, ArrayRef.of(ShortRef.class, 0x2000, 2, ShortRef::new));
-  public static final ArrayRef<ShortRef> atanTable_80058d0c = MEMORY.ref(2, 0x80058d0cL, ArrayRef.of(ShortRef.class, 0x401, 2, ShortRef::new));
 
   /**
    * Start of a fairly large block of data - something to do with SPU reverb initialisation. Stride is 66 bytes. Unknown length.

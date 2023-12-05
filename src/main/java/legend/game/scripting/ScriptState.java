@@ -24,7 +24,6 @@ import static legend.game.Scus94491BpeSegment.scriptFunctionDescriptions;
 import static legend.game.Scus94491BpeSegment.scriptLog;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_8004.engineStateFunctions_8004e29c;
-import static legend.game.Scus94491BpeSegment_8004.ratan2;
 import static legend.game.Scus94491BpeSegment_8004.scriptSubFunctions_8004e29c;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 
@@ -896,7 +895,7 @@ public class ScriptState<T> {
 
   @Method(0x80016cb4L)
   public FlowControl scriptRatan2() {
-    this.context.params_20[2].set(ratan2(this.context.params_20[0].get(), this.context.params_20[1].get()));
+    this.context.params_20[2].set(MathHelper.radToPsxDeg(MathHelper.atan2(this.context.params_20[0].get(), this.context.params_20[1].get())));
     return FlowControl.CONTINUE;
   }
 

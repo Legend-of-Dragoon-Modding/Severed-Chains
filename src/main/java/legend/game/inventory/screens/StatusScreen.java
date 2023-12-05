@@ -121,7 +121,7 @@ public class StatusScreen extends MenuScreen {
           renderText(new LodString(spellStats_800fa0b8[spellIndex].name), 210, 125 + i * 14, TextColour.BROWN);
 
           if(allocate) {
-            renderThreeDigitNumber(342, 128 + i * 14, spellMp_80114290.get(spellIndex).get());
+            renderThreeDigitNumber(342, 128 + i * 14, spellMp_80114290[spellIndex]);
           }
         }
       }

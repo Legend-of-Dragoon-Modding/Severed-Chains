@@ -151,7 +151,7 @@ public class SBtld {
     deffManager._00._04 = thing._04;
 
     //LAB_80109a30
-    for(int i = 0; melbuStageIndices_800fb064.get(i).get() != -1; i++) {
+    for(int i = 0; melbuStageIndices_800fb064[i] != -1; i++) {
       deffManager._08[i]._00 = thing._00;
       deffManager._08[i]._02 = thing._02;
     }

@@ -1125,9 +1125,9 @@ public final class Bttl_800d {
     int charIdx = 0;
 
     //LAB_800d3838
-    long chr;
+    int chr;
     do {
-      chr = asciiTable_800fa788.get(charIdx).get();
+      chr = asciiTable_800fa788[charIdx];
 
       if(additionName.charAt(0) == chr) {
         break;
@@ -1152,19 +1152,19 @@ public final class Bttl_800d {
     //LAB_800d391c
     int charTableOffset;
     for(charTableOffset = 0; ; charTableOffset++) {
-      if(asciiTable_800fa788.get(charTableOffset).get() == 0) {
+      if(asciiTable_800fa788[charTableOffset] == 0) {
         charTableOffset = 0;
         break;
       }
 
-      if(chr == asciiTable_800fa788.get(charTableOffset).get()) {
+      if(chr == asciiTable_800fa788[charTableOffset]) {
         break;
       }
     }
 
     //LAB_800d3944
     //LAB_800d3948
-    return 10 - charWidthAdjustTable_800fa7cc.get(charTableOffset).get();
+    return 10 - charWidthAdjustTable_800fa7cc[charTableOffset];
   }
 
   @Method(0x800d3968L)

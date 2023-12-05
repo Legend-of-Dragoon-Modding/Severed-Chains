@@ -65,9 +65,9 @@ public class LodMod {
 
       final Item item;
       if(itemId != 0x1f) { // Charm Potion
-        item = FileBasedItem.fromFile(name, itemDescriptions_80117a10[itemId + 0xc0].get(), itemCombatDescriptions_80051758[itemId].get(), itemPrices_80114310.get(itemId + 192).get(), Unpacker.loadFile("items/%d.ditm".formatted(itemId)));
+        item = FileBasedItem.fromFile(name, itemDescriptions_80117a10[itemId + 0xc0].get(), itemCombatDescriptions_80051758[itemId].get(), itemPrices_80114310[itemId + 192], Unpacker.loadFile("items/%d.ditm".formatted(itemId)));
       } else {
-        item = new CharmPotionItem(name, itemDescriptions_80117a10[itemId + 0xc0].get(), itemCombatDescriptions_80051758[itemId].get(), itemPrices_80114310.get(itemId + 192).get());
+        item = new CharmPotionItem(name, itemDescriptions_80117a10[itemId + 0xc0].get(), itemCombatDescriptions_80051758[itemId].get(), itemPrices_80114310[itemId + 192]);
       }
 
       event.register(id(slug.slugify(name)), item);
@@ -94,7 +94,7 @@ public class LodMod {
       }
 
       if(!name.isEmpty()) {
-        final Equipment equipment = event.register(id(slug.slugify(name)), Equipment.fromFile(name, itemDescriptions_80117a10[equipmentId].get(), itemPrices_80114310.get(equipmentId).get(), Unpacker.loadFile("equipment/%d.deqp".formatted(equipmentId))));
+        final Equipment equipment = event.register(id(slug.slugify(name)), Equipment.fromFile(name, itemDescriptions_80117a10[equipmentId].get(), itemPrices_80114310[equipmentId], Unpacker.loadFile("equipment/%d.deqp".formatted(equipmentId))));
         equipmentIdMap.put(equipmentId, equipment.getRegistryId());
         idEquipmentMap.put(equipment.getRegistryId(), equipmentId);
       }

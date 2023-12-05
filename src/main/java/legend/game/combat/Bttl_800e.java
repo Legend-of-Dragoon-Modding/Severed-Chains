@@ -14,8 +14,6 @@ import legend.core.gte.ModelPart10;
 import legend.core.gte.TmdWithId;
 import legend.core.gte.Transforms;
 import legend.core.memory.Method;
-import legend.core.memory.types.ArrayRef;
-import legend.core.memory.types.UnsignedByteRef;
 import legend.core.opengl.Obj;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.characters.Element;
@@ -1111,7 +1109,7 @@ public final class Bttl_800e {
     LOGGER.info(DEFF, "Loading dragoon DEFF (ID: %d, flags: %x)", index, script.params_20[0].get() & 0xffff_0000);
 
     final DeffManager7cc deffManager = deffManager_800c693c;
-    deffManager.flags_20 |= dragoonDeffFlags_800fafec.get(index).get() << 16;
+    deffManager.flags_20 |= dragoonDeffFlags_800fafec[index] << 16;
     scriptAllocateDeffEffectManager(script);
 
     final BattleStruct24_2 battle24 = _800c6938;
@@ -1129,8 +1127,8 @@ public final class Bttl_800e {
     }
 
     //LAB_800e6738
-    for(int i = 0; dragoonDeffsWithExtraTims_800fb040.get(i).get() != -1; i++) {
-      if(dragoonDeffsWithExtraTims_800fb040.get(i).get() == index) {
+    for(int i = 0; i < dragoonDeffsWithExtraTims_800fb040.length; i++) {
+      if(dragoonDeffsWithExtraTims_800fb040[i] == index) {
         if(Unpacker.isDirectory("SECT/DRGN0.BIN/%d".formatted(4115 + i))) {
           loadDrgnDir(0, 4115 + i, Bttl_800e::uploadTims);
         }
@@ -1233,7 +1231,7 @@ public final class Bttl_800e {
     } else {
       //LAB_800e6a30
       final int a0_0 = monsterIndex >>> 4;
-      int fileIndex = enemyDeffFileIndices_800faec4.get(a0_0 - 0x100).get() + (monsterIndex & 0xf);
+      int fileIndex = enemyDeffFileIndices_800faec4[a0_0 - 0x100] + (monsterIndex & 0xf);
       if(a0_0 >= 320) {
         fileIndex += 117;
       }
@@ -1281,8 +1279,8 @@ public final class Bttl_800e {
     a0_0.type_00 |= 0x500_0000;
 
     //LAB_800e6b5c
-    for(int i = 0; cutsceneDeffsWithExtraTims_800fb05c.get(i).get() != -1; i++) {
-      if(cutsceneDeffsWithExtraTims_800fb05c.get(i).get() == cutsceneIndex) {
+    for(int i = 0; i < cutsceneDeffsWithExtraTims_800fb05c.length; i++) {
+      if(cutsceneDeffsWithExtraTims_800fb05c[i] == cutsceneIndex) {
         if(Unpacker.isDirectory("SECT/DRGN0.BIN/%d".formatted(5505 + i))) {
           loadDrgnDir(0, 5505 + i, Bttl_800e::uploadTims);
         }
@@ -2218,7 +2216,7 @@ public final class Bttl_800e {
     if(animatedTmdType.textureInfo_08 != null) {
       final DeffPart.TextureInfo textureInfo = animatedTmdType.textureInfo_08[0];
       final int tpage = GetTPage(Bpp.BITS_4, Translucency.HALF_B_PLUS_HALF_F, textureInfo.vramPos_00.x, textureInfo.vramPos_00.y);
-      model.vramSlot_9d = modelVramSlots_800fb06c.get(tpage).get();
+      model.vramSlot_9d = modelVramSlots_800fb06c[tpage];
     } else {
       model.vramSlot_9d = 0;
     }
@@ -3465,7 +3463,7 @@ public final class Bttl_800e {
 
     //LAB_800ece9c
     battleMenu_800c6c34.transforms.identity();
-    battleMenu_800c6c34.transforms.transfer.set(GPU.getOffsetX() + screenCoords.x - 8, GPU.getOffsetY() + screenCoords.y + targetArrowOffsetY_800fb188.get(tickCount_800bb0fc & 0x7).get(), 112.0f);
+    battleMenu_800c6c34.transforms.transfer.set(GPU.getOffsetX() + screenCoords.x - 8, GPU.getOffsetY() + screenCoords.y + targetArrowOffsetY_800fb188[tickCount_800bb0fc & 0x7], 112.0f);
     RENDERER.queueOrthoModel(battleMenu_800c6c34.targetArrows[colour], battleMenu_800c6c34.transforms);
   }
 
@@ -3715,12 +3713,12 @@ public final class Bttl_800e {
       //LAB_800eec10
       charData.hp_08 = Math.max(1, bent.stats.getStat(CoreMod.HP_STAT.get()).getCurrent());
 
-      if((gameState_800babc8.goods_19c[0] & 0x1 << characterDragoonIndices_800c6e68.get(bent.charId_272).get()) != 0) {
+      if((gameState_800babc8.goods_19c[0] & 0x1 << characterDragoonIndices_800c6e68[bent.charId_272]) != 0) {
         charData.mp_0a = bent.stats.getStat(CoreMod.MP_STAT.get()).getCurrent();
       }
 
       //LAB_800eec78
-      if(bent.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0x1 << characterDragoonIndices_800c6e68.get(9).get()) != 0) {
+      if(bent.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0x1 << characterDragoonIndices_800c6e68[9]) != 0) {
         charData.mp_0a = bent.stats.getStat(CoreMod.MP_STAT.get()).getCurrent();
       }
 
@@ -3990,8 +3988,8 @@ public final class Bttl_800e {
       for(int charSlot = 0; charSlot < charCount; charSlot++) {
         final BattleDisplayStats144 displayStats = displayStats_800c6c2c[charSlot];
         final BattleHudCharacterDisplay3c charDisplay = activePartyBattleHudCharacterDisplays_800c6c40.get(charSlot);
-        final short y = battleHudYOffsets_800fb198.get(battleHudYOffsetIndex_800c6c38.get()).get();
-        charDisplay.y_0a.set(y);
+        final int y = battleHudYOffsets_800fb198[battleHudYOffsetIndex_800c6c38.get()];
+        charDisplay.y_0a.set((short)y);
         displayStats.y_02 = y;
       }
 
@@ -4024,7 +4022,7 @@ public final class Bttl_800e {
       // Background
       if(activePartyBattleHudCharacterDisplays_800c6c40.get(0).charIndex_00.get() != -1 && (activePartyBattleHudCharacterDisplays_800c6c40.get(0).flags_06.get() & 0x1) != 0) {
         if(battleUiBackground == null) {
-          battleUiBackground = new UiBox("Battle UI Background", 16, battleHudYOffsets_800fb198.get(battleHudYOffsetIndex_800c6c38.get()).get() - 26, 288, 40);
+          battleUiBackground = new UiBox("Battle UI Background", 16, battleHudYOffsets_800fb198[battleHudYOffsetIndex_800c6c38.get()] - 26, 288, 40);
         }
 
         battleUiBackground.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
@@ -4073,9 +4071,9 @@ public final class Bttl_800e {
               final RenderEngine.QueuedModel digitModel = RENDERER.queueOrthoOverlayModel(floatingTextType1Digits[digit.digitValue_00], uiTransforms);
 
               if(charDisplay._14.get(2).get() < 6) {
-                digit.colour.mul(((byte)(uiTextureElementBrightness_800c71ec.get(brightnessIndex0).get() + 0x80) / 6 * charDisplay._14.get(2).get() - 0x80 & 0xff) / 128.0f, colourTemp);
+                digit.colour.mul(((byte)(uiTextureElementBrightness_800c71ec[brightnessIndex0] + 0x80) / 6 * charDisplay._14.get(2).get() - 0x80 & 0xff) / 128.0f, colourTemp);
               } else {
-                digit.colour.mul((uiTextureElementBrightness_800c71ec.get(brightnessIndex0).get() & 0xff) / 128.0f, colourTemp);
+                digit.colour.mul((uiTextureElementBrightness_800c71ec[brightnessIndex0] & 0xff) / 128.0f, colourTemp);
               }
 
               digitModel.colour(colourTemp);
@@ -4113,11 +4111,11 @@ public final class Bttl_800e {
           final RenderEngine.QueuedModel portraitModel = RENDERER.queueOrthoOverlayModel(portraits[charSlot], uiTransforms);
 
           if(charDisplay._14.get(2).get() < 6) {
-            nameModel.monochrome(((byte)(uiTextureElementBrightness_800c71ec.get(brightnessIndex0).get() + 0x80) / 6 * charDisplay._14.get(2).get() - 0x80 & 0xff) / 128.0f);
-            portraitModel.monochrome(((byte)(uiTextureElementBrightness_800c71ec.get(brightnessIndex1).get() + 0x80) / 6 * charDisplay._14.get(2).get() - 0x80 & 0xff) / 128.0f);
+            nameModel.monochrome(((byte)(uiTextureElementBrightness_800c71ec[brightnessIndex0] + 0x80) / 6 * charDisplay._14.get(2).get() - 0x80 & 0xff) / 128.0f);
+            portraitModel.monochrome(((byte)(uiTextureElementBrightness_800c71ec[brightnessIndex1] + 0x80) / 6 * charDisplay._14.get(2).get() - 0x80 & 0xff) / 128.0f);
           } else {
-            nameModel.monochrome((uiTextureElementBrightness_800c71ec.get(brightnessIndex0).get() & 0xff) / 128.0f);
-            portraitModel.monochrome((uiTextureElementBrightness_800c71ec.get(brightnessIndex1).get() & 0xff) / 128.0f);
+            nameModel.monochrome((uiTextureElementBrightness_800c71ec[brightnessIndex0] & 0xff) / 128.0f);
+            portraitModel.monochrome((uiTextureElementBrightness_800c71ec[brightnessIndex1] & 0xff) / 128.0f);
           }
 
           if(brightnessIndex0 != 0) {
@@ -4203,9 +4201,9 @@ public final class Bttl_800e {
             final RenderEngine.QueuedModel statsModel = RENDERER.queueOrthoOverlayModel(stats[charSlot][i], uiTransforms);
 
             if(charDisplay._14.get(2).get() < 6) {
-              statsModel.monochrome(((byte)(uiTextureElementBrightness_800c71ec.get(brightnessIndex0).get() + 0x80) / 6 * charDisplay._14.get(2).get() - 0x80 & 0xff) / 128.0f);
+              statsModel.monochrome(((byte)(uiTextureElementBrightness_800c71ec[brightnessIndex0] + 0x80) / 6 * charDisplay._14.get(2).get() - 0x80 & 0xff) / 128.0f);
             } else {
-              statsModel.monochrome((uiTextureElementBrightness_800c71ec.get(brightnessIndex0).get() & 0xff) / 128.0f);
+              statsModel.monochrome((uiTextureElementBrightness_800c71ec[brightnessIndex0] & 0xff) / 128.0f);
             }
           }
 
@@ -4244,15 +4242,15 @@ public final class Bttl_800e {
                 .pos(2, left, bottom)
                 .pos(3, right, bottom);
 
-              final ArrayRef<UnsignedByteRef> spBarColours = spBarColours_800c6f04.get(spBarIndex);
+              final int[] spBarColours = spBarColours_800c6f04[spBarIndex];
 
               cmd
-                .rgb(0, spBarColours.get(0).get(), spBarColours.get(1).get(), spBarColours.get(2).get())
-                .rgb(1, spBarColours.get(0).get(), spBarColours.get(1).get(), spBarColours.get(2).get());
+                .rgb(0, spBarColours[0], spBarColours[1], spBarColours[2])
+                .rgb(1, spBarColours[0], spBarColours[1], spBarColours[2]);
 
               cmd
-                .rgb(2, spBarColours.get(3).get(), spBarColours.get(4).get(), spBarColours.get(5).get())
-                .rgb(3, spBarColours.get(3).get(), spBarColours.get(4).get(), spBarColours.get(5).get());
+                .rgb(2, spBarColours[3], spBarColours[4], spBarColours[5])
+                .rgb(3, spBarColours[3], spBarColours[4], spBarColours[5]);
 
               GPU.queueCommand(31, cmd);
             }

@@ -6477,7 +6477,7 @@ public final class SEffe {
       //LAB_80115d14
       //LAB_80115d2c
       for(int i = 0; ; i++) {
-        if(melbuStageIndices_800fb064.get(i).get() == -1) { // This is the normal branch, no special-case handling
+        if(melbuStageIndices_800fb064[i] == -1) { // This is the normal branch, no special-case handling
           //LAB_80115cd8
           final DeffManager7cc.Struct08 v0 = deffManager_800c693c._00;
           _00 = v0._00;
@@ -6486,7 +6486,7 @@ public final class SEffe {
           break;
         }
 
-        if(melbuStageIndices_800fb064.get(i).get() == currentStage_800c66a4.get()) { // Melbu stages
+        if(melbuStageIndices_800fb064[i] == currentStage_800c66a4.get()) { // Melbu stages
           //LAB_80115d58
           final DeffManager7cc.Struct04 v0 = deffManager_800c693c._08[i];
           _00 = v0._00;
@@ -6558,7 +6558,7 @@ public final class SEffe {
       final int uvs;
       if(!BattleObject.EM__.equals(bobj.magic_00)) {
         //LAB_8011604c
-        uvs = vramSlotUvs_800fb0ec.get(((BattleEntity27c)bobj).model_148.vramSlot_9d).get();
+        uvs = vramSlotUvs_800fb0ec[((BattleEntity27c)bobj).model_148.vramSlot_9d];
         u = (uvs & 0xf) << 6;
         v = (uvs & 0x10) << 4;
         w = 0x100;
@@ -6583,7 +6583,7 @@ public final class SEffe {
           }
         } else {
           //LAB_80115fd8
-          uvs = vramSlotUvs_800fb0ec.get(((ModelEffect13c)manager.effect_44).model_134.vramSlot_9d).get();
+          uvs = vramSlotUvs_800fb0ec[((ModelEffect13c)manager.effect_44).model_134.vramSlot_9d];
           u = (uvs & 0xf) << 6;
           v = (uvs & 0x10) << 4;
           w = 256;

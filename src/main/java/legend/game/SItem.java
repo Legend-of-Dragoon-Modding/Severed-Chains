@@ -6,8 +6,6 @@ import legend.core.memory.Method;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.Pointer;
 import legend.core.memory.types.UnboundedArrayRef;
-import legend.core.memory.types.UnsignedByteRef;
-import legend.core.memory.types.UnsignedShortRef;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.game.inventory.Addition04;
@@ -146,7 +144,17 @@ public final class SItem {
 
   public static final int[] characterValidEquipment_80114284 = {0x80, 0x40, 0x2, 0x4, 0x10, 0x40, 0x1, 0x20, 0x2};
 
-  public static final ArrayRef<UnsignedByteRef> spellMp_80114290 = MEMORY.ref(1, 0x80114290L, ArrayRef.of(UnsignedByteRef.class, 68, 1, UnsignedByteRef::new));
+  public static final int[] spellMp_80114290 = {
+    10, 20, 30, 80, 50, 20, 30, 20,
+    80, 50, 20, 10, 30, 80, 20, 10,
+    20, 30, 30, 80, 10, 20, 30, 80,
+    10, 20, 20, 30, 80, 20, 30, 80,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 20, 10, 30,
+  };
   public static final MenuGlyph06 glyph_801142d4 = MEMORY.ref(1, 0x801142d4L, MenuGlyph06::new);
 
   public static final LodString[] chapterNames_80114248 = {
@@ -161,7 +169,40 @@ public final class SItem {
     new LodString("Albert"), new LodString("Meru"), new LodString("Kongol"), new LodString("Miranda"),
   };
 
-  public static final ArrayRef<UnsignedShortRef> itemPrices_80114310 = MEMORY.ref(2, 0x80114310L, ArrayRef.of(UnsignedShortRef.class, 0x100, 2, UnsignedShortRef::new));
+  public static final int[] itemPrices_80114310 = {
+    10, 30, 75, 125, 175, 200, 250, 225,
+    100, 150, 175, 200, 250, 30, 100, 150,
+    175, 200, 250, 80, 10, 50, 125, 150,
+    200, 250, 70, 10, 25, 75, 125, 175,
+    200, 250, 100, 125, 150, 200, 250, 200,
+    50, 125, 150, 225, 250, 175, 10, 25,
+    75, 100, 150, 400, 400, 75, 125, 200,
+    400, 30, 75, 125, 150, 400, 10, 25,
+    75, 100, 150, 400, 400, 400, 250, 250,
+    250, 250, 5000, 1, 5, 20, 50, 75,
+    100, 100, 5, 30, 75, 100, 125, 1,
+    300, 5000, 250, 250, 1, 5, 50, 75,
+    5, 50, 75, 150, 250, 150, 1, 100,
+    100, 100, 150, 100, 150, 150, 200, 100,
+    100, 300, 300, 500, 500, 500, 150, 150,
+    300, 500, 500, 500, 250, 250, 250, 250,
+    250, 250, 250, 250, 250, 250, 250, 250,
+    250, 250, 250, 250, 250, 100, 500, 500,
+    500, 1, 500, 1, 500, 5000, 2500, 2500,
+    5, 50, 50, 25, 500, 5000, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 1, 1, 1, 1, 1,
+    2, 5, 5, 5, 1, 5, 5, 5,
+    50, 5, 5, 5, 15, 10, 5, 10,
+    10, 10, 10, 10, 10, 1, 10, 10,
+    10, 10, 10, 1, 10, 10, 15, 2,
+    200, 50, 1, 200, 200, 25, 200, 15,
+    200, 60, 100, 200, 200, 200, 200, 1,
+    200, 10, 10, 10, 10, 10, 10, 10,
+    10, 25, 200, 0, 0, 0, 0, 0,
+  };
   public static final UnboundedArrayRef<MenuGlyph06> glyphs_80114510 = MEMORY.ref(1, 0x80114510L, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
   public static final UnboundedArrayRef<MenuGlyph06> glyphs_80114548 = MEMORY.ref(1, 0x80114548L, UnboundedArrayRef.of(0x6, MenuGlyph06::new));
 

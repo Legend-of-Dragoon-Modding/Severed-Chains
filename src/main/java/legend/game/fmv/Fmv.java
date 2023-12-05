@@ -211,7 +211,7 @@ public final class Fmv {
 
     submapId_800bd808 = -1;
 
-    Fmv.play(diskFmvs_80052d7c[drgnBinIndex_800bc058 - 1][fmvIndex - _80052d6c.get(drgnBinIndex_800bc058 - 1).get()], true);
+    Fmv.play(diskFmvs_80052d7c[drgnBinIndex_800bc058 - 1][fmvIndex - _80052d6c[drgnBinIndex_800bc058 - 1]], true);
     engineStateOnceLoaded_8004dd24 = afterFmvState;
   }
 

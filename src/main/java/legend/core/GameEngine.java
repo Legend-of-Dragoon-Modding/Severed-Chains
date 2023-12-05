@@ -221,12 +221,24 @@ public final class GameEngine {
           Scus94491BpeSegment_8002.start();
 
 /*
-          loadGameStateOverlay(EngineStateEnum.COMBAT_06);
-          System.out.println('{');
-          for(final RECT s : Bttl_800c.combatantTimRects_800fa6e0.bound(RECT.class, 10)) {
-            System.out.printf("  new Rect4i(%d, %d, %d, %d),%n", s.x.get(), s.y.get(), s.w.get(), s.h.get());
-          }
-          System.out.println("};");
+          loadSupportOverlay(2, () -> {
+            loadGameStateOverlay(EngineStateEnum.COMBAT_06);
+            System.out.println('{');
+            int i = 0;
+            final var v = Bttl_800c.textboxColours_800c6fec;
+            for(final var s : v) {
+              final String[] ints = new String[s.length()];
+              for(int n = 0; n < s.length(); n++) {
+                ints[n] = String.valueOf(s.get(n).get());
+              }
+              System.out.printf("{%s}, ", String.join(", ", ints));
+              if(i % 20 == 19 || i == v.length() - 1) {
+                System.out.println();
+              }
+              i++;
+            }
+            System.out.println("};");
+          });
 */
 
           loading = false;

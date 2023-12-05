@@ -3,7 +3,7 @@ package legend.game.inventory.screens;
 import legend.core.MathHelper;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.memory.Method;
-import legend.core.memory.types.UnsignedIntRef;
+import legend.core.memory.types.IntRef;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.inventory.WhichMenu;
@@ -661,7 +661,7 @@ public class PostBattleScreen extends MenuScreen {
   }
 
   @Method(0x8010e200L)
-  private void drawDigit(final int x, final int y, int val, final UnsignedIntRef a3) {
+  private void drawDigit(final int x, final int y, int val, final IntRef a3) {
     val %= 10;
     if(val != 0 || a3.get() != 0) {
       //LAB_8010e254
@@ -676,7 +676,7 @@ public class PostBattleScreen extends MenuScreen {
   @Method(0x8010e2a0L)
   private void drawTwoDigitNumber(final int x, final int y, final int dlevel) {
     final int s2 = Math.min(99, dlevel);
-    final UnsignedIntRef sp0x10 = new UnsignedIntRef();
+    final IntRef sp0x10 = new IntRef();
     this.drawDigit(x, y, s2 / 10, sp0x10.set(0));
     this.drawDigit(x + 6, y, s2, sp0x10.incr());
   }
@@ -684,7 +684,7 @@ public class PostBattleScreen extends MenuScreen {
   @Method(0x8010e340L)
   private void drawSixDigitNumber(final int x, final int y, final int val) {
     final int s2 = Math.min(999_999, val);
-    final UnsignedIntRef sp0x10 = new UnsignedIntRef();
+    final IntRef sp0x10 = new IntRef();
     this.drawDigit(x, y, s2 / 100_000, sp0x10);
     this.drawDigit(x +  6, y, s2 / 10_000, sp0x10);
     this.drawDigit(x + 12, y, s2 /  1_000, sp0x10);
@@ -696,7 +696,7 @@ public class PostBattleScreen extends MenuScreen {
   @Method(0x8010e490L)
   private void drawEightDigitNumber(final int x, final int y, final int val) {
     final int s2 = Math.min(99_999_999, val);
-    final UnsignedIntRef sp0x10 = new UnsignedIntRef();
+    final IntRef sp0x10 = new IntRef();
     this.drawDigit(x, y, s2 / 10_000_000, sp0x10);
     this.drawDigit(x +  6, y, s2 / 1_000_000, sp0x10);
     this.drawDigit(x + 12, y, s2 /   100_000, sp0x10);

@@ -112,7 +112,7 @@ import static legend.game.combat.Bttl_800c.floatingTextType3DigitUs_800c70e0;
 import static legend.game.combat.Bttl_800c.iconFlags_800c7194;
 import static legend.game.combat.Bttl_800c.itemTargetAll_800c69c8;
 import static legend.game.combat.Bttl_800c.itemTargetType_800c6b68;
-import static legend.game.combat.Bttl_800c.melbuMonsterNameIndices;
+import static legend.game.combat.Bttl_800c.melbuMonsterNameIndices_800c6e90;
 import static legend.game.combat.Bttl_800c.melbuMonsterNames_800c6ba8;
 import static legend.game.combat.Bttl_800c.melbuStageToMonsterNameIndices_800c6f30;
 import static legend.game.combat.Bttl_800c.monsterBents_800c6b78;
@@ -553,7 +553,7 @@ public final class Bttl_800f {
         type1FloatingDigits[i] = builder1.build();
 
         final QuadBuilder builder3 = new QuadBuilder("Type 3 Floating Digit " + i)
-          .uv(floatingTextType3DigitUs_800c70e0.get(i).get(), 40)
+          .uv(floatingTextType3DigitUs_800c70e0[i], 40)
           .size(8.0f, 16.0f);
         setGpuPacketClutAndTpageAndQueue(builder3, 0x80, null);
         type3FloatingDigits[i] = builder3.build();
@@ -1043,7 +1043,7 @@ public final class Bttl_800f {
     if(menu._a0 == 1 && menu.menuType_0a == 0) {
       //LAB_800f47e4
       for(int i = 0; i < 17; i++) {
-        if(targetAllItemIds_800c7124.get(i).get() == itemOrSpellId + 0xc0) {
+        if(targetAllItemIds_800c7124[i] == itemOrSpellId + 0xc0) {
           //LAB_800f4674
           script.params_20[1].set(-1);
           break;
@@ -1530,7 +1530,7 @@ public final class Bttl_800f {
 
             boolean returnItem = false;
             for(int repeatItemIndex = 0; repeatItemIndex < 9; repeatItemIndex++) {
-              if(itemId == repeatItemIds_800c6e34.get(repeatItemIndex).get()) {
+              if(itemId == repeatItemIds_800c6e34[repeatItemIndex]) {
                 returnItem = true;
                 break;
               }
@@ -2025,7 +2025,7 @@ public final class Bttl_800f {
     //LAB_800f62a4
     for(int i = 0, used = 0; i < 8; i++) {
       if((displayedIconsBitset & 0x1 << i) != 0) {
-        menu.iconFlags_10[used++] = iconFlags_800c7194.get(i).get();
+        menu.iconFlags_10[used++] = iconFlags_800c7194[i];
         menu.iconCount_0e++;
       }
       //LAB_800f62d0
@@ -2390,7 +2390,7 @@ public final class Bttl_800f {
         final int iconId = (menu.iconFlags_10[iconIndex] & 0xf) - 1;
         final int iconState;
         if(menu.selectedIcon_22 == iconIndex) {
-          iconState = battleMenuIconStates_800c71e4.get(menu.iconStateIndex_26).get();
+          iconState = battleMenuIconStates_800c71e4[menu.iconStateIndex_26];
         } else {
           //LAB_800f6c88
           iconState = 0;
@@ -2769,7 +2769,7 @@ public final class Bttl_800f {
     if(target.charId_272 == 0x185) {
       final int stageProgression = battleState_8006e398.stageProgression_eec;
       if(stageProgression == 0 || stageProgression == 4 || stageProgression == 6) {
-        return melbuMonsterNames_800c6ba8[melbuStageToMonsterNameIndices_800c6f30.get(battleState_8006e398.stageProgression_eec).get()];
+        return melbuMonsterNames_800c6ba8[melbuStageToMonsterNameIndices_800c6f30[battleState_8006e398.stageProgression_eec]];
       }
     }
 
@@ -2785,7 +2785,7 @@ public final class Bttl_800f {
   public static void loadMonster(final ScriptState<MonsterBattleEntity> state) {
     //LAB_800eeecc
     for(int i = 0; i < 3; i++) {
-      melbuMonsterNames_800c6ba8[i] = monsterNames_80112068[melbuMonsterNameIndices.get(i).get()];
+      melbuMonsterNames_800c6ba8[i] = monsterNames_80112068[melbuMonsterNameIndices_800c6e90[i]];
     }
 
     final MonsterBattleEntity monster = state.innerStruct_00;
@@ -3000,7 +3000,7 @@ public final class Bttl_800f {
       if((disabledIconBitset & 0x1 << i) != 0) {
         //LAB_800f8bf4
         for(int j = 0; j < 8; j++) {
-          if((menu.iconFlags_10[j] & 0xf) == iconFlags_800c7194.get(i).get()) {
+          if((menu.iconFlags_10[j] & 0xf) == iconFlags_800c7194[i]) {
             menu.iconFlags_10[j] |= 0x80;
             break;
           }
@@ -3285,7 +3285,7 @@ public final class Bttl_800f {
 
       //LAB_800f996c
       for(int i = 0; i < 10; i++) {
-        if(itemId == protectedItems_800c72cc.get(i).get()) {
+        if(itemId == protectedItems_800c72cc[i]) {
           //LAB_800f999c
           item = null;
           itemId = -1;
@@ -3454,9 +3454,9 @@ public final class Bttl_800f {
   @Method(0x800f9c2cL)
   public static FlowControl scriptRenderBattleHudBackground(final RunningScript<?> script) {
     final int colourIndex = script.params_20[4].get();
-    final int r = textboxColours_800c6fec.get(colourIndex).get(0).get();
-    final int g = textboxColours_800c6fec.get(colourIndex).get(1).get();
-    final int b = textboxColours_800c6fec.get(colourIndex).get(2).get();
+    final int r = textboxColours_800c6fec[colourIndex][0];
+    final int g = textboxColours_800c6fec[colourIndex][1];
+    final int b = textboxColours_800c6fec[colourIndex][2];
 
     // This is kinda dumb since we'll have to upload a new box each frame, but there isn't a great
     // way to deal with it. Maybe check to see if any of the params have changed before deleting?
@@ -3490,7 +3490,7 @@ public final class Bttl_800f {
       if((iconIndicesBitset & 0x1 << i) != 0) {
         //LAB_800f9d34
         for(int icon = 0; icon < 8; icon++) {
-          if((menu.iconFlags_10[icon] & 0xf) == iconFlags_800c7194.get(i).get()) {
+          if((menu.iconFlags_10[icon] & 0xf) == iconFlags_800c7194[i]) {
             menu.iconFlags_10[icon] |= 0x80;
             break;
           }

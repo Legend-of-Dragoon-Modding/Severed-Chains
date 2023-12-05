@@ -766,16 +766,16 @@ public final class Scus94491BpeSegment_8002 {
     final int x;
     final int y;
     if((a0.vramSlot_9d & 0x80) == 0) {
-      x = _800503b0.get(a0.vramSlot_9d).get();
-      y = _800503d4.get(a0.vramSlot_9d).get();
+      x = _800503b0[a0.vramSlot_9d];
+      y = _800503d4[a0.vramSlot_9d];
     } else {
       //LAB_80022098
       if(a0.vramSlot_9d == 0x80) {
         return;
       }
 
-      x = _800503f8.get(a0.vramSlot_9d & 0x7f).get();
-      y = _80050424.get(a0.vramSlot_9d & 0x7f).get();
+      x = _800503f8[a0.vramSlot_9d & 0x7f];
+      y = _80050424[a0.vramSlot_9d & 0x7f];
     }
 
     //LAB_800220c0
@@ -2005,9 +2005,9 @@ public final class Scus94491BpeSegment_8002 {
     textboxBackgroundObj.persistent = true;
 
     for(int borderIndex = 0; borderIndex < 8; borderIndex++) {
-      final TextboxBorderMetrics0c borderMetrics = textboxBorderMetrics_800108b0.get(borderIndex);
-      final int u = borderMetrics.u_04.get();
-      final int v = borderMetrics.v_06.get();
+      final TextboxBorderMetrics0c borderMetrics = textboxBorderMetrics_800108b0[borderIndex];
+      final int u = borderMetrics.u_04;
+      final int v = borderMetrics.v_06;
 
       textboxBorderObjs[borderIndex] = new QuadBuilder("TextboxBorder" + borderIndex)
         .bpp(Bpp.BITS_4)
@@ -2301,20 +2301,20 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_800262e4
     for(int borderIndex = 0; borderIndex < 8; borderIndex++) {
-      final TextboxBorderMetrics0c borderMetrics = textboxBorderMetrics_800108b0.get(borderIndex);
+      final TextboxBorderMetrics0c borderMetrics = textboxBorderMetrics_800108b0[borderIndex];
 
-      int w = borderMetrics.w_08.get();
-      int h = borderMetrics.h_0a.get();
+      int w = borderMetrics.w_08;
+      int h = borderMetrics.h_0a;
       if((textbox.flags_08 & Textbox4c.ANIMATING) != 0) {
         w = w * textbox.animationWidth_20 >> 12;
         h = h * textbox.animationHeight_22 >> 12;
       }
 
       //LAB_8002637c
-      final float left = xs[borderMetrics.topLeftVertexIndex_00.get()] - w;
-      final float right = xs[borderMetrics.bottomRightVertexIndex_02.get()] + w;
-      final float top = ys[borderMetrics.topLeftVertexIndex_00.get()] - h;
-      final float bottom = ys[borderMetrics.bottomRightVertexIndex_02.get()] + h;
+      final float left = xs[borderMetrics.topLeftVertexIndex_00] - w;
+      final float right = xs[borderMetrics.bottomRightVertexIndex_02] + w;
+      final float top = ys[borderMetrics.topLeftVertexIndex_00] - h;
+      final float bottom = ys[borderMetrics.bottomRightVertexIndex_02] + h;
 
       if(textbox.updateBorder) {
         textbox.borderTransforms[borderIndex].transfer.set(left, top, textbox.z_0c * 4.0f);
