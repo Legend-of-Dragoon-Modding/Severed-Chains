@@ -140,13 +140,13 @@ public class ShopScreen extends MenuScreen {
 
         startFadeEffect(2, 10);
 
-        this.shopType = shops_800f4930.get(shopId_8007a3b4).shopType_00.get() & 1;
+        this.shopType = shops_800f4930[shopId_8007a3b4].shopType_00 & 1;
 
         if(this.shopType == 0) {
           final List<ShopEntry<Equipment>> shopEntries = new ArrayList<>();
 
           for(int i = 0; i < 16; i++) {
-            final int id = shops_800f4930.get(shopId_8007a3b4).item_00.get(i).id_01.get();
+            final int id = shops_800f4930[shopId_8007a3b4].item_00[i];
 
             if(id != 0xff) {
               final RegistryId registryId = LodMod.equipmentIdMap.get(id);
@@ -161,7 +161,7 @@ public class ShopScreen extends MenuScreen {
           final List<ShopEntry<Item>> shopEntries = new ArrayList<>();
 
           for(int i = 0; i < 16; i++) {
-            final int id = shops_800f4930.get(shopId_8007a3b4).item_00.get(i).id_01.get();
+            final int id = shops_800f4930[shopId_8007a3b4].item_00[i];
 
             if(id != 0xff) {
               final RegistryId registryId = LodMod.itemIdMap.get(id - 192);

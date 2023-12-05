@@ -313,7 +313,7 @@ public class DebuggerController {
       if(Config.combatStage()) {
         battleStage_800bb0f4 = Config.getCombatStage();
       } else {
-        battleStage_800bb0f4 = encounterData_800f64c4.get(submapCut_80052c30).stage_03.get();
+        battleStage_800bb0f4 = encounterData_800f64c4[submapCut_80052c30].stage_03;
       }
 
       smap.mapTransition(-1, 0);

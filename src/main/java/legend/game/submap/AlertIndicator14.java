@@ -1,37 +1,23 @@
 package legend.game.submap;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.ShortRef;
-import legend.core.memory.types.UnsignedShortRef;
+public class AlertIndicator14 {
+  public final int x0_00;
+  public final int x1_02;
+  public final int y0_04;
+  public final int y1_06;
+  public final int u0_08;
+  public final int u1_0a;
+  public final int v0_0c;
+  public final int v1_0e;
 
-public class AlertIndicator14 implements MemoryRef {
-  public final Value ref;
-
-  public final ShortRef x0_00;
-  public final ShortRef x1_02;
-  public final ShortRef y0_04;
-  public final ShortRef y1_06;
-  public final UnsignedShortRef u0_08;
-  public final UnsignedShortRef u1_0a;
-  public final UnsignedShortRef v0_0c;
-  public final UnsignedShortRef v1_0e;
-
-  public AlertIndicator14(final Value ref) {
-    this.ref = ref;
-
-    this.x0_00 = ref.offset(2, 0x00).cast(ShortRef::new);
-    this.x1_02 = ref.offset(2, 0x02).cast(ShortRef::new);
-    this.y0_04 = ref.offset(2, 0x04).cast(ShortRef::new);
-    this.y1_06 = ref.offset(2, 0x06).cast(ShortRef::new);
-    this.u0_08 = ref.offset(2, 0x08).cast(UnsignedShortRef::new);
-    this.u1_0a = ref.offset(2, 0x0a).cast(UnsignedShortRef::new);
-    this.v0_0c = ref.offset(2, 0x0c).cast(UnsignedShortRef::new);
-    this.v1_0e = ref.offset(2, 0x0e).cast(UnsignedShortRef::new);
-  }
-
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+  public AlertIndicator14(final int x0, final int x1, final int y0, final int y1, final int u0, final int u1, final int v0, final int v1) {
+    this.x0_00 = x0;
+    this.x1_02 = x1;
+    this.y0_04 = y0;
+    this.y1_06 = y1;
+    this.u0_08 = u0;
+    this.u1_0a = u1;
+    this.v0_0c = v0;
+    this.v1_0e = v1;
   }
 }
