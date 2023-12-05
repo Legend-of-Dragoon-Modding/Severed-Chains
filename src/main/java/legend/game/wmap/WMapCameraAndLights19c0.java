@@ -46,35 +46,44 @@ public class WMapCameraAndLights19c0 {
   /** ubyte */
   public int cameraUpdateState_c5;
 
-  public final GsRVIEW2 rview2_c8 = new GsRVIEW2();
+  public final GsRVIEW2 originalRview2_c8 = new GsRVIEW2();
 
   // Next 4 fields are used for little swoop during fade-to-submap camera animation on top of the rotation
-  public float viewpointSwoopY_ec;
-  public float viewpointSwoopZ_f0;
+  public float viewpointSwoopStepY_ec;
+  public float viewpointSwoopStepZ_f0;
 
-  public float refpointSwoopY_f8;
-  public float refpointSwoopZ_fc;
+  public float refpointSwoopStepY_f8;
+  public float refpointSwoopStepZ_fc;
 
   /** short */
-  public float angle_108;
+  public float finalCameraRotation_108;
   /** short */
-  public float angle_10a;
+  public float originalCameraRotation_10a;
   /** short */
-  public float angle_10c;
+  public float cameraRotationStep_10c;
   /** ushort */
-  public float _10e;
+  public float fadeOutZoomTick_10e;
   /** ubyte */
-  public int _110;
+  public int fadeCameraMovementState_110;
 
   public int _114;
   /** short */
   public float projectionPlaneDistance_118;
-  /** related to projection distance somehow (ubyte) */
-  public int _11a;
+  /**
+   * ubyte
+   * <ol start="0">
+   *   <li>Case selection</li>
+   *   <li>Close view main loop</li>
+   *   <li>Zooming in</li>
+   *   <li>Far view main loop</li>
+   *   <li>Zooming out</li>
+   * </ol>
+   */
+  public int projectionDistanceState_11a;
 
   public final GsF_LIGHT[] lights_11c = {new GsF_LIGHT(), new GsF_LIGHT(), new GsF_LIGHT()};
   public final Vector3f ambientLight_14c = new Vector3f();
-  public final WMapSubStruct18[] _154 = new WMapSubStruct18[0x101];
+  public final LocationDistance18[] locationDistances_154 = new LocationDistance18[0x101];
   public int _196c;
   public int _1970;
   public int _1974;
@@ -83,6 +92,6 @@ public class WMapCameraAndLights19c0 {
   public final float[] _19ae = new float[3];
 
   public WMapCameraAndLights19c0() {
-    Arrays.setAll(this._154, i -> new WMapSubStruct18());
+    Arrays.setAll(this.locationDistances_154, i -> new LocationDistance18());
   }
 }

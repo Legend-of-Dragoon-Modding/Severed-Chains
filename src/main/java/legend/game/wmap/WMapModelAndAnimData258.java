@@ -70,6 +70,7 @@ public class WMapModelAndAnimData258 {
     FADE_OUT
   }
 
+  // TODO change to float
   public int fadeAnimationTicks_00;
   /**
    * ubyte
