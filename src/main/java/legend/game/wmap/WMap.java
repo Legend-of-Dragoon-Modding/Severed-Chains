@@ -915,7 +915,6 @@ public class WMap extends EngineState {
     clearGreen_800bb104.set(0);
     clearBlue_800babc0.set(0);
 
-    cameraAndLights.locationDistances_154[0].locationIndex_00 = -1;
     cameraAndLights._196c = 0;
     cameraAndLights._1970 = 0;
     cameraAndLights._1974 = -1;
@@ -992,8 +991,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d2088
-    cameraAndLights.locationDistances_154[count].locationIndex_00 = -1;
-    Arrays.sort(cameraAndLights.locationDistances_154, Comparator.comparingDouble(a -> a.distanceFromPlayer_04));
+    Arrays.sort(cameraAndLights.locationDistances_154, 0, count, Comparator.comparingDouble(a -> a.distanceFromPlayer_04));
   }
 
   @Method(0x800d219cL)
