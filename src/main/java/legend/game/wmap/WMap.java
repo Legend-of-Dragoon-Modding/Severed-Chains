@@ -902,7 +902,7 @@ public class WMap extends EngineState {
     this.initCamera();
     this.initLighting();
 
-    cameraAndLights._114 = 0;
+    cameraAndLights.projectionPlaneZoomTick_114 = 0;
     cameraAndLights.projectionPlaneDistance_118 = 1100.0f;
     cameraAndLights.projectionDistanceState_11a = 0;
   }
@@ -915,25 +915,18 @@ public class WMap extends EngineState {
     clearGreen_800bb104.set(0);
     clearBlue_800babc0.set(0);
 
-    cameraAndLights._196c = 0;
-    cameraAndLights._1970 = 0;
-    cameraAndLights._1974 = -1;
-
     this.calculateDistancesToPlaces();
 
     //LAB_800d1984
     for(int i = 0; i < 3; i++) {
       //LAB_800d19a0
-      cameraAndLights._19a8[i] = Math.toRadians(15);
-      cameraAndLights._19ae[i] = Math.toRadians(315);
-
       final GsF_LIGHT light = cameraAndLights.lights_11c[i];
       light.r_0c = 0.125f;
       light.g_0d = 0.125f;
       light.b_0e = 0.125f;
-      light.direction_00.x = MathHelper.sin(cameraAndLights._19a8[i]);
-      light.direction_00.y = MathHelper.cos(cameraAndLights._19ae[i]);
-      light.direction_00.z = MathHelper.cosFromSin(cameraAndLights._19a8[i], light.direction_00.x);
+      light.direction_00.x = MathHelper.sin(0.2617994f);
+      light.direction_00.y = MathHelper.cos(5.497787f);
+      light.direction_00.z = MathHelper.cosFromSin(0.2617994f, light.direction_00.x);
       light.direction_00.set(0.24414062f, 0.024414062f, 0.0f);
       GsSetFlatLight(i, light);
     }
@@ -1578,14 +1571,14 @@ public class WMap extends EngineState {
       }
     } else if(v0 == 1) {
       //LAB_800d5394
-      cameraAndLights._114 = 0;
+      cameraAndLights.projectionPlaneZoomTick_114 = 0;
       cameraAndLights.projectionDistanceState_11a = 2;
 
       //LAB_800d53b4
-      cameraAndLights._114++;
+      cameraAndLights.projectionPlaneZoomTick_114++;
 
       //LAB_800d5424
-      cameraAndLights.projectionPlaneDistance_118 += Math.max(4, 64 - cameraAndLights._114 * 2) / (3.0f / vsyncMode_8007a3b8);
+      cameraAndLights.projectionPlaneDistance_118 += Math.max(4, 64 - cameraAndLights.projectionPlaneZoomTick_114 * 2) / (3.0f / vsyncMode_8007a3b8);
 
       if(cameraAndLights.projectionPlaneDistance_118 >= 800.0f) {
         cameraAndLights.projectionPlaneDistance_118 = 800.0f;
@@ -1593,10 +1586,10 @@ public class WMap extends EngineState {
       }
     } else if(v0 == 2) {
       //LAB_800d53b4
-      cameraAndLights._114++;
+      cameraAndLights.projectionPlaneZoomTick_114++;
 
       //LAB_800d5424
-      cameraAndLights.projectionPlaneDistance_118 += Math.max(4, 64 - cameraAndLights._114 * 2) / (3.0f / vsyncMode_8007a3b8);
+      cameraAndLights.projectionPlaneDistance_118 += Math.max(4, 64 - cameraAndLights.projectionPlaneZoomTick_114 * 2) / (3.0f / vsyncMode_8007a3b8);
 
       if(cameraAndLights.projectionPlaneDistance_118 >= 800.0f) {
         cameraAndLights.projectionPlaneDistance_118 = 800.0f;
@@ -1610,14 +1603,14 @@ public class WMap extends EngineState {
       }
 
       //LAB_800d54c8
-      cameraAndLights._114 = 0;
+      cameraAndLights.projectionPlaneZoomTick_114 = 0;
       cameraAndLights.projectionDistanceState_11a = 4;
 
       //LAB_800d54e8
-      cameraAndLights._114++;
+      cameraAndLights.projectionPlaneZoomTick_114++;
 
       //LAB_800d5558
-      cameraAndLights.projectionPlaneDistance_118 -= Math.max(4, 64 - cameraAndLights._114 * 2) / (3.0f / vsyncMode_8007a3b8);
+      cameraAndLights.projectionPlaneDistance_118 -= Math.max(4, 64 - cameraAndLights.projectionPlaneZoomTick_114 * 2) / (3.0f / vsyncMode_8007a3b8);
 
       if(cameraAndLights.projectionPlaneDistance_118 <= 600.0f) {
         cameraAndLights.projectionPlaneDistance_118 = 600.0f;
@@ -1625,10 +1618,10 @@ public class WMap extends EngineState {
       }
     } else if(v0 == 4) {
       //LAB_800d54e8
-      cameraAndLights._114++;
+      cameraAndLights.projectionPlaneZoomTick_114++;
 
       //LAB_800d5558
-      cameraAndLights.projectionPlaneDistance_118 -= Math.max(4, 64 - cameraAndLights._114 * 2) / (3.0f / vsyncMode_8007a3b8);
+      cameraAndLights.projectionPlaneDistance_118 -= Math.max(4, 64 - cameraAndLights.projectionPlaneZoomTick_114 * 2) / (3.0f / vsyncMode_8007a3b8);
 
       if(cameraAndLights.projectionPlaneDistance_118 <= 600.0f) {
         cameraAndLights.projectionPlaneDistance_118 = 600.0f;

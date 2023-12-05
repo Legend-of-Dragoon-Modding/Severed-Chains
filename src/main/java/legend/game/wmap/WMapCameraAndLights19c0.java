@@ -66,7 +66,7 @@ public class WMapCameraAndLights19c0 {
   /** ubyte */
   public int fadeCameraMovementState_110;
 
-  public int _114;
+  public int projectionPlaneZoomTick_114;
   /** short */
   public float projectionPlaneDistance_118;
   /**
@@ -84,12 +84,8 @@ public class WMapCameraAndLights19c0 {
   public final GsF_LIGHT[] lights_11c = {new GsF_LIGHT(), new GsF_LIGHT(), new GsF_LIGHT()};
   public final Vector3f ambientLight_14c = new Vector3f();
   public final LocationDistance18[] locationDistances_154 = new LocationDistance18[0x101];
-  public int _196c;
-  public int _1970;
-  public int _1974;
 
-  public final float[] _19a8 = new float[3];
-  public final float[] _19ae = new float[3];
+  // _196c, _1970, and _1974 are never used, and _19a8 and _19ae each store 3 copies of a single unchanging value.
 
   public WMapCameraAndLights19c0() {
     Arrays.setAll(this.locationDistances_154, i -> new LocationDistance18());
