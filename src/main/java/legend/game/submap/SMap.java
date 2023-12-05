@@ -23,7 +23,6 @@ import legend.core.memory.Value;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.IntRef;
-import legend.core.memory.types.RelativePointer;
 import legend.core.memory.types.UnboundedArrayRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.core.opengl.QuadBuilder;
@@ -59,7 +58,6 @@ import legend.game.types.GsRVIEW2;
 import legend.game.types.LodString;
 import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms0c;
-import legend.game.types.MrgFile;
 import legend.game.types.NewRootStruct;
 import legend.game.types.ShopStruct40;
 import legend.game.types.SmallerStruct;
@@ -93,6 +91,7 @@ import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.getSubmapMusicChange;
+import static legend.game.Scus94491BpeSegment.loadDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadFile;
@@ -381,8 +380,8 @@ public class SMap extends EngineState {
     Arrays.setAll(this._800d4ff0, i -> new TriangleIndicator44());
   }
 
-  private final AnimatedSprite08 playerIndicatorAnimation_800d5588 = MEMORY.ref(4, 0x800d5588L, AnimatedSprite08::new);
-  private final AnimatedSprite08 doorIndicatorAnimation_800d5590 = MEMORY.ref(4, 0x800d5590L, AnimatedSprite08::new);
+  private final AnimatedSprite08 playerIndicatorAnimation_800d5588 = new AnimatedSprite08();
+  private final AnimatedSprite08 doorIndicatorAnimation_800d5590 = new AnimatedSprite08();
   private final SavePointRenderData44[] savePoint_800d5598 = new SavePointRenderData44[2];
   {
     Arrays.setAll(this.savePoint_800d5598, i -> new SavePointRenderData44());
@@ -503,18 +502,14 @@ public class SMap extends EngineState {
   private final int[] _800d6cd8 = {992, 992, 976};
   private final int[] _800d6ce4 = {208, 207, 8};
   private final Translucency[] miscTextureTransModes_800d6cf0 = {Translucency.B_PLUS_F, Translucency.B_PLUS_F, Translucency.B_PLUS_F, Translucency.B_PLUS_F, Translucency.B_PLUS_QUARTER_F, Translucency.B_PLUS_F, Translucency.B_PLUS_F, Translucency.B_MINUS_F, Translucency.B_MINUS_F, Translucency.B_PLUS_F, Translucency.B_PLUS_F};
-  /**
-   * Savepoint MRG (0x904 bytes)
-   * <ol start="0">
-   *   <li>ANM</li>
-   *   <li>ANM</li>
-   *   <li>Extended TMD</li>
-   *   <li>Unknown - has "extended" 0xc header, then the first word is 01 00 08 00. The rest of the data is 00s.</li>
-   *   <li>Extended TMD</li>
-   *   <li>Unknown - has "extended" 0xc header, then the first word is 01 00 14 00. The rest of the data appears to be 16-bit words on a 32-bit boundary, i.e. 16 bits of data, followed by 16 bits of 0s.</li>
-   * </ol>
-   */
-  private final MrgFile mrg_800d6d1c = MEMORY.ref(4, 0x800d6d1cL, MrgFile::new);
+
+  private AnmFile savepointAnm1;
+  private AnmFile savepointAnm2;
+  private CContainer savepointTmd;
+  private TmdAnimationFile savepointAnimation;
+  private CContainer dustTmd;
+  private TmdAnimationFile dustAnimation;
+
   private final Value tim_800d7620 = MEMORY.ref(4, 0x800d7620L);
   private final Value tim_800d7c60 = MEMORY.ref(4, 0x800d7c60L);
   private final Value tim_800d7ee0 = MEMORY.ref(4, 0x800d7ee0L);
@@ -4712,11 +4707,19 @@ public class SMap extends EngineState {
 
       case LOAD_NEWROOT_1 -> {
         loadFile("\\SUBMAP\\NEWROOT.RDT", data -> this.newrootPtr_800cab04 = new NewRootStruct(data));
+        loadDir("\\SUBMAP\\savepoint", files -> {
+          this.savepointAnm1 = new AnmFile(files.get(0));
+          this.savepointAnm2 = new AnmFile(files.get(1));
+          this.savepointTmd = new CContainer("Savepoint", files.get(2));
+          this.savepointAnimation = new TmdAnimationFile(files.get(3));
+          this.dustTmd = new CContainer("Dust", files.get(4));
+          this.dustAnimation = new TmdAnimationFile(files.get(5));
+        });
         this.smapLoadingStage_800cb430 = SubmapState.WAIT_FOR_NEWROOT_2;
       }
 
       case WAIT_FOR_NEWROOT_2 -> {
-        if(this.newrootPtr_800cab04 != null) {
+        if(Unpacker.getLoadingFileCount() == 0) {
           this.smapLoadingStage_800cb430 = SubmapState.LOAD_ENVIRONMENT_3;
         }
       }
@@ -6636,6 +6639,7 @@ public class SMap extends EngineState {
         for(int i = 0; i < a0.count_40; i++) {
           if(index_80052c38 == a0.arr_00[i]) {
             a0._44 = false;
+            break;
           }
 
           //LAB_800ea8ec
@@ -7663,7 +7667,7 @@ public class SMap extends EngineState {
 
   @Method(0x800f0370L)
   private void FUN_800f0370() {
-    initModel(this.dustModel_800d4d40, new CContainer("Dust", new FileData(MEMORY.getBytes(this.mrg_800d6d1c.getFile(4), this.mrg_800d6d1c.entries.get(4).size.get()))), new TmdAnimationFile(new FileData(MEMORY.getBytes(this.mrg_800d6d1c.getFile(5), this.mrg_800d6d1c.entries.get(5).size.get()))));
+    initModel(this.dustModel_800d4d40, this.dustTmd, this.dustAnimation);
     this.dust_800d4e68.next_50 = null;
     this._800d4ec0.next_1c = null;
     this.FUN_800f0e60();
@@ -8750,7 +8754,7 @@ public class SMap extends EngineState {
 
   @Method(0x800f2788L)
   private void initSavePoint() {
-    initModel(this.savePointModel_800d5eb0, new CContainer("Save point", new FileData(MEMORY.getBytes(this.mrg_800d6d1c.getFile(2), this.mrg_800d6d1c.entries.get(2).size.get()))), new TmdAnimationFile(new FileData(MEMORY.getBytes(this.mrg_800d6d1c.getFile(3), this.mrg_800d6d1c.entries.get(3).size.get()))));
+    initModel(this.savePointModel_800d5eb0, this.savepointTmd, this.savepointAnimation);
     this.savePoint_800d5598[0].rotation_28 = 0.0f;
     this.savePoint_800d5598[0].colour_34 = 0.3125f;
     this.savePoint_800d5598[1].rotation_28 = 0.0f;
@@ -9036,7 +9040,7 @@ public class SMap extends EngineState {
         s1.x_34 = indicator.playerX_08;
         s1.y_38 = indicator.playerY_0c - 28;
 
-        anm = this.playerIndicatorAnimation_800d5588.anm_00.deref();
+        anm = this.playerIndicatorAnimation_800d5588.anm_00;
       } else {
         // Door indicators
 
@@ -9048,10 +9052,10 @@ public class SMap extends EngineState {
         s1.x_34 = indicator.screenOffsetX_10 - indicator.screenOffsetX_90[indicatorIndex - 1] + indicator.x_40[indicatorIndex - 1] -  2;
         s1.y_38 = indicator.screenOffsetY_14 - indicator.screenOffsetY_e0[indicatorIndex - 1] + indicator.y_68[indicatorIndex - 1] - 32;
 
-        anm = this.doorIndicatorAnimation_800d5590.anm_00.deref();
+        anm = this.doorIndicatorAnimation_800d5590.anm_00;
       }
 
-      final UnboundedArrayRef<RelativePointer<AnmSpriteGroup>> spriteGroups = anm.getSpriteGroups();
+      final AnmSpriteGroup[] spriteGroups = anm.spriteGroups;
 
       //LAB_800f365c
       if((s1._00 & 0x1) == 0) {
@@ -9066,47 +9070,47 @@ public class SMap extends EngineState {
           }
 
           //LAB_800f36b0
-          s1.time_08 = anm.getSequences().get(s1.sequence_04).time_02.get() - 1;
+          s1.time_08 = anm.sequences_08[s1.sequence_04].time_02 - 1;
         }
       }
 
       //LAB_800f36d0
-      final AnmSpriteGroup group = spriteGroups.get(anm.getSequences().get(s1.sequence_04).spriteGroupNumber_00.get()).deref();
-      final int count = group.n_sprite_00.get();
+      final AnmSpriteGroup group = spriteGroups[anm.sequences_08[s1.sequence_04].spriteGroupNumber_00];
+      final int count = group.n_sprite_00;
 
       //LAB_800f3724
       for(int s6 = count - 1; s6 >= 0; s6--) {
-        final AnmSpriteMetrics14 sprite = group.metrics_04.get(s6);
+        final AnmSpriteMetrics14 sprite = group.metrics_04[s6];
 
-        final float x = s1.x_34 - sprite.w_08.get() / 2.0f;
+        final float x = s1.x_34 - sprite.w_08 / 2.0f;
         final float y = s1.y_38;
-        final int u = s1.u_1c + sprite.u_00.get();
-        final int v = s1.v_20 + sprite.v_01.get();
-        final int tpage = s1.tpage_18 | sprite.flag_06.get() & 0x60;
+        final int u = s1.u_1c + sprite.u_00;
+        final int v = s1.v_20 + sprite.v_01;
+        final int tpage = s1.tpage_18 | sprite.flag_06 & 0x60;
 
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
           .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
           .bpp(Bpp.of(tpage >>> 7 & 0b11))
           .rgb(s1.r_24, s1.g_25, s1.b_26)
           .pos(0, x, y)
-          .pos(1, x + sprite.w_08.get(), y)
-          .pos(2, x, y + sprite.h_0a.get())
-          .pos(3, x + sprite.w_08.get(), y + sprite.h_0a.get())
+          .pos(1, x + sprite.w_08, y)
+          .pos(2, x, y + sprite.h_0a)
+          .pos(3, x + sprite.w_08, y + sprite.h_0a)
           .uv(0, u, v)
-          .uv(1, u + sprite.w_08.get(), v)
-          .uv(2, u, v + sprite.h_0a.get())
-          .uv(3, u + sprite.w_08.get(), v + sprite.h_0a.get());
+          .uv(1, u + sprite.w_08, v)
+          .uv(2, u, v + sprite.h_0a)
+          .uv(3, u + sprite.w_08, v + sprite.h_0a);
 
         if(indicatorIndex == 0) { // Player indicator
           final int triangleIndex = this.getEncounterTriangleColour();
-          cmd.clut(this._800d6cd8[triangleIndex] & 0x3f0, (sprite.cba_04.get() >>> 6 & 0x1ff) - this._800d6ce4[triangleIndex]);
+          cmd.clut(this._800d6cd8[triangleIndex] & 0x3f0, (sprite.cba_04 >>> 6 & 0x1ff) - this._800d6ce4[triangleIndex]);
         } else { // Door indicators
           //LAB_800f3884
-          if((sprite.cba_04.get() & 0x8000L) != 0) {
+          if((sprite.cba_04 & 0x8000) != 0) {
             cmd.translucent(Translucency.of(tpage >>> 5 & 0b11));
           }
 
-          cmd.clut(992, (sprite.cba_04.get() >>> 6 & 0x1ff) - this._800d6cc8[indicator._18[indicatorIndex - 1]]);
+          cmd.clut(992, (sprite.cba_04 >>> 6 & 0x1ff) - this._800d6cc8[indicator._18[indicatorIndex - 1]]);
         }
 
         //LAB_800f38b0
@@ -9137,9 +9141,9 @@ public class SMap extends EngineState {
 
   @Method(0x800f3a48L)
   private void initTriangleIndicators() {
-    this.parseAnmFile(this.mrg_800d6d1c.getFile(0, AnmFile::new), this.playerIndicatorAnimation_800d5588);
-    this.parseAnmFile(this.mrg_800d6d1c.getFile(1, AnmFile::new), this.doorIndicatorAnimation_800d5590);
-    this.FUN_800f3b64(this.mrg_800d6d1c.getFile(0, AnmFile::new), this.mrg_800d6d1c.getFile(1, AnmFile::new), this._800d4ff0, 21);
+    this.parseAnmFile(this.savepointAnm1, this.playerIndicatorAnimation_800d5588);
+    this.parseAnmFile(this.savepointAnm2, this.doorIndicatorAnimation_800d5590);
+    this.FUN_800f3b64(this.savepointAnm1, this.savepointAnm2, this._800d4ff0, 21);
   }
 
   @Method(0x800f3abcL)
@@ -9191,10 +9195,10 @@ public class SMap extends EngineState {
       //LAB_800f3c24
       t2._00 = 0;
       t2.sequence_04 = 0;
-      t2.time_08 = anm.getSequences().get(0).time_02.get();
+      t2.time_08 = anm.sequences_08[0].time_02;
       t2._0c = 0;
       t2._10 = 0;
-      t2.sequenceCount_14 = anm.n_sequence_06.get() - 1;
+      t2.sequenceCount_14 = anm.n_sequence_06 - 1;
 
       t2.r_24 = 0x80;
       t2.g_25 = 0x80;
@@ -9216,8 +9220,8 @@ public class SMap extends EngineState {
 
   @Method(0x800f3c98L)
   private void parseAnmFile(final AnmFile anmFile, final AnimatedSprite08 a1) {
-    a1.anm_00.set(anmFile);
-    a1.spriteGroup_04.set(anmFile.getSpriteGroups());
+    a1.anm_00 = anmFile;
+    a1.spriteGroup_04 = anmFile.spriteGroups;
   }
 
   @Method(0x800f3cb8L)
