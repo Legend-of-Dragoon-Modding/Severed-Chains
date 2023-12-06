@@ -85,14 +85,14 @@ public class MapState100 {
   public float playerDestAngle_c0;
   /** 800c685a */
   public float previousPlayerRotation_c2;
-  /** 800c685c */
-  public int submapCut_c4;
-  /** 800c685e */
-  public int submapScene_c6;
-  /** short 800c6860 */
-  public int submapCut_c8;
-  /** short 800c6862 */
-  public int submapScene_ca;
+  /** Submap cut last visited (800c685c) */
+  public int submapCutFrom_c4;
+  /** Submap scene last visited (800c685e) */
+  public int submapSceneFrom_c6;
+  /** Cut that will be entered from current location (short 800c6860) */
+  public int submapCutTo_c8;
+  /** Scene that will be entered from current location (short 800c6862) */
+  public int submapSceneTo_ca;
 
   /** 800c6868 */
   public boolean disableInput_d0;

@@ -5,11 +5,11 @@ import legend.game.wmap.WmapEnums.Continent;
 public class Location14 {
   public int directionalPathIndex_00;
   public int placeIndex_02;
-  public int submapCut_04;
-  public int submapScene_06;
-  public int submapCut_08;
-  public int submapScene_0a;
-  public int _0c;
+  public int submapCutFrom_04;
+  public int submapSceneFrom_06;
+  public int submapCutTo_08;
+  public int submapSceneTo_0a;
+  public int unknownIndex_0c;
   /** 1-based, because why not */
   public Continent continent_0e;
   /** ubyte */
@@ -28,11 +28,11 @@ public class Location14 {
   public Location14(final int directionalPathIndex, final int placeIndex, final int submapCut0, final int submapScene0, final int submapCut1, final int submapScene1, final int unknown, final WmapEnums.Continent continent, final boolean thumbnailShouldUseFullBrightness, final int effectFlags_12) {
     this.directionalPathIndex_00 = directionalPathIndex;
     this.placeIndex_02 = placeIndex;
-    this.submapCut_04 = submapCut0;
-    this.submapScene_06 = submapScene0;
-    this.submapCut_08 = submapCut1;
-    this.submapScene_0a = submapScene1;
-    this._0c = unknown;
+    this.submapCutFrom_04 = submapCut0;
+    this.submapSceneFrom_06 = submapScene0;
+    this.submapCutTo_08 = submapCut1;
+    this.submapSceneTo_0a = submapScene1;
+    this.unknownIndex_0c = unknown;
     this.continent_0e = continent;
     this.thumbnailShouldUseFullBrightness_10 = thumbnailShouldUseFullBrightness;
     this.effectFlags_12 = effectFlags_12;
