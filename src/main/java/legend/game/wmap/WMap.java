@@ -2009,7 +2009,7 @@ public class WMap extends EngineState {
   @Method(0x800d8efcL)
   private void initMapAnimation() {
     this.modelAndAnimData_800c66a8.textureAnimation_1c = this.prepareWaterAnimation();
-    this.modelAndAnimData_800c66a8.clutYIndex_28 = 0;
+    this.modelAndAnimData_800c66a8.clutYIndex_28 = 0.0f;
 
     if(this.mapState_800c6798.continent_00 == Continent.TIBEROA) {
       //LAB_800d8f94
@@ -2088,7 +2088,7 @@ public class WMap extends EngineState {
       final RenderEngine.QueuedModel model = RENDERER.queueModel(dobj2.obj, lw);
 
       if(this.mapState_800c6798.continent_00.ordinal() < 9 && i == 0) {
-        model.clutOverride(1008, waterClutYs_800ef348[this.modelAndAnimData_800c66a8.clutYIndex_28]);
+        model.clutOverride(1008, waterClutYs_800ef348[(int)this.modelAndAnimData_800c66a8.clutYIndex_28]);
       }
 
       //LAB_800d93d4
@@ -2100,12 +2100,11 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d945c
-    this.modelAndAnimData_800c66a8.clutYIndex_28 += (int)(1.0f / (3.0f / vsyncMode_8007a3b8));
+    this.modelAndAnimData_800c66a8.clutYIndex_28 += 1.0f / (3.0f / vsyncMode_8007a3b8);
 
-    if(this.modelAndAnimData_800c66a8.clutYIndex_28 >= 14) {
-      this.modelAndAnimData_800c66a8.clutYIndex_28 = 0;
+    if(this.modelAndAnimData_800c66a8.clutYIndex_28 >= 14.0f) {
+      this.modelAndAnimData_800c66a8.clutYIndex_28 = 0.0f;
     }
-
     //LAB_800d94b8
   }
 
@@ -3313,7 +3312,7 @@ public class WMap extends EngineState {
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
           .bpp(Bpp.BITS_4)
           .translucent(Translucency.B_PLUS_F)
-          .clut(1008, waterClutYs_800ef348[modelAndAnimData.clutYIndex_28])
+          .clut(1008, waterClutYs_800ef348[(int)modelAndAnimData.clutYIndex_28])
           .vramPos(448, 0)
           .rgb(0, r0, g0, b0)
           .rgb(1, r1, g1, b1)
@@ -3340,7 +3339,7 @@ public class WMap extends EngineState {
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
           .bpp(Bpp.BITS_4)
           .translucent(Translucency.B_PLUS_F)
-          .clut(1008, waterClutYs_800ef348[modelAndAnimData.clutYIndex_28])
+          .clut(1008, waterClutYs_800ef348[(int)modelAndAnimData.clutYIndex_28])
           .vramPos(448, 0)
           .rgb(0, r0, g0, b0)
           .rgb(1, r1, g1, b1)
