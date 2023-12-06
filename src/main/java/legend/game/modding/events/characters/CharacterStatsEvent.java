@@ -5,8 +5,8 @@ import legend.game.types.LevelStuff08;
 import legend.game.types.MagicStuff08;
 import org.legendofdragoon.modloader.events.Event;
 
-import static legend.game.SItem.levelStuff_800fbd30;
-import static legend.game.SItem.magicStuff_800fbd54;
+import static legend.game.SItem.levelStuff_80111cfc;
+import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 
 public class CharacterStatsEvent extends Event {
@@ -54,21 +54,21 @@ public class CharacterStatsEvent extends Event {
     this.level = charData.level_12;
     this.dlevel = charData.dlevel_13;
 
-    final LevelStuff08 levelStuff = levelStuff_800fbd30.get(characterId).deref().get(this.level);
-    this.maxHp = levelStuff.hp_00.get();
-    this.addition = levelStuff.addition_02.get();
-    this.bodySpeed = levelStuff.bodySpeed_03.get();
-    this.bodyAttack = levelStuff.bodyAttack_04.get();
-    this.bodyMagicAttack = levelStuff.bodyMagicAttack_05.get();
-    this.bodyDefence = levelStuff.bodyDefence_06.get();
-    this.bodyMagicDefence = levelStuff.bodyMagicDefence_07.get();
+    final LevelStuff08 levelStuff = levelStuff_80111cfc[characterId][this.level];
+    this.maxHp = levelStuff.hp_00;
+    this.addition = levelStuff.addition_02;
+    this.bodySpeed = levelStuff.bodySpeed_03;
+    this.bodyAttack = levelStuff.bodyAttack_04;
+    this.bodyMagicAttack = levelStuff.bodyMagicAttack_05;
+    this.bodyDefence = levelStuff.bodyDefence_06;
+    this.bodyMagicDefence = levelStuff.bodyMagicDefence_07;
 
-    final MagicStuff08 magicStuff = magicStuff_800fbd54.get(characterId).deref().get(this.dlevel);
-    this.maxMp = magicStuff.mp_00.get();
-    this.spellId = magicStuff.spellIndex_02.get();
-    this.dragoonAttack = magicStuff.dragoonAttack_04.get();
-    this.dragoonMagicAttack = magicStuff.dragoonMagicAttack_05.get();
-    this.dragoonDefence = magicStuff.dragoonDefence_06.get();
-    this.dragoonMagicDefence = magicStuff.dragoonMagicDefence_07.get();
+    final MagicStuff08 magicStuff = magicStuff_80111d20[characterId][this.dlevel];
+    this.maxMp = magicStuff.mp_00;
+    this.spellId = magicStuff.spellIndex_02;
+    this.dragoonAttack = magicStuff.dragoonAttack_04;
+    this.dragoonMagicAttack = magicStuff.dragoonMagicAttack_05;
+    this.dragoonDefence = magicStuff.dragoonDefence_06;
+    this.dragoonMagicDefence = magicStuff.dragoonMagicDefence_07;
   }
 }

@@ -96,7 +96,6 @@ import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadMenuSounds;
 import static legend.game.Scus94491BpeSegment.loadMusicPackage;
 import static legend.game.Scus94491BpeSegment.loadSubmapSounds;
-import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
 import static legend.game.Scus94491BpeSegment.reinitSound;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
@@ -1330,7 +1329,7 @@ public class SMap extends EngineState {
   @ScriptDescription("Restore vitals for all characters")
   @Method(0x800d9bc0L)
   private FlowControl scriptRestoreCharDataVitals(final RunningScript<?> script) {
-    loadSupportOverlay(2, () -> this.restoreCharDataVitals(-1));
+    this.restoreCharDataVitals(-1);
     return FlowControl.CONTINUE;
   }
 
@@ -1352,7 +1351,7 @@ public class SMap extends EngineState {
   private FlowControl scriptCloneCharacterData(final RunningScript<?> script) {
     //LAB_800d9c78
     gameState_800babc8.charData_32c[script.params_20[1].get()].set(gameState_800babc8.charData_32c[script.params_20[0].get()]);
-    loadSupportOverlay(2, () -> this.restoreCharDataVitals(script.params_20[1].get()));
+    this.restoreCharDataVitals(script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
@@ -1385,7 +1384,7 @@ public class SMap extends EngineState {
     //LAB_800d9d90
     gameState_800babc8.charData_32c[0].dlevel_13 = 5;
 
-    loadSupportOverlay(2, () -> this.restoreVitalsAndSp(0));
+    this.restoreVitalsAndSp(0);
     return FlowControl.CONTINUE;
   }
 

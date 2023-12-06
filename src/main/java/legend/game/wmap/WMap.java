@@ -1010,9 +1010,9 @@ public class WMap extends EngineState {
           for(int i = 0; i < 3; i++) {
             //LAB_800d2278
             final WMapStruct19c0 struct = this.wmapStruct19c0_800c66b0;
-            struct.colour_8c[i].setR((int)(struct.lights_11c[i].r_0c * 0x100));
-            struct.colour_8c[i].setG((int)(struct.lights_11c[i].g_0d * 0x100));
-            struct.colour_8c[i].setB((int)(struct.lights_11c[i].b_0e * 0x100));
+            struct.colour_8c[i].x = (int)(struct.lights_11c[i].r_0c * 0x100);
+            struct.colour_8c[i].y = (int)(struct.lights_11c[i].g_0d * 0x100);
+            struct.colour_8c[i].z = (int)(struct.lights_11c[i].b_0e * 0x100);
           }
 
           //LAB_800d235c
@@ -1037,9 +1037,9 @@ public class WMap extends EngineState {
           //LAB_800d2464
           //LAB_800d24d0
           //LAB_800d253c
-          light.r_0c = this.wmapStruct19c0_800c66b0.colour_8c[i].getR() * this.wmapStruct19c0_800c66b0.brightness_84 / 0x100;
-          light.g_0d = this.wmapStruct19c0_800c66b0.colour_8c[i].getG() * this.wmapStruct19c0_800c66b0.brightness_84 / 0x100;
-          light.b_0e = this.wmapStruct19c0_800c66b0.colour_8c[i].getB() * this.wmapStruct19c0_800c66b0.brightness_84 / 0x100;
+          light.r_0c = this.wmapStruct19c0_800c66b0.colour_8c[i].x * this.wmapStruct19c0_800c66b0.brightness_84 / 0x100;
+          light.g_0d = this.wmapStruct19c0_800c66b0.colour_8c[i].y * this.wmapStruct19c0_800c66b0.brightness_84 / 0x100;
+          light.b_0e = this.wmapStruct19c0_800c66b0.colour_8c[i].z * this.wmapStruct19c0_800c66b0.brightness_84 / 0x100;
           GsSetFlatLight(i, this.wmapStruct19c0_800c66b0.lights_11c[i]);
         }
       }
@@ -1077,9 +1077,9 @@ public class WMap extends EngineState {
         //LAB_800d2710
         //LAB_800d277c
         //LAB_800d27e8
-        light.r_0c = this.wmapStruct19c0_800c66b0.colour_8c[i].getR() * this.wmapStruct19c0_800c66b0.brightness_84 / 0x100;
-        light.g_0d = this.wmapStruct19c0_800c66b0.colour_8c[i].getG() * this.wmapStruct19c0_800c66b0.brightness_84 / 0x100;
-        light.b_0e = this.wmapStruct19c0_800c66b0.colour_8c[i].getB() * this.wmapStruct19c0_800c66b0.brightness_84 / 0x100;
+        light.r_0c = this.wmapStruct19c0_800c66b0.colour_8c[i].x * this.wmapStruct19c0_800c66b0.brightness_84 / 0x100;
+        light.g_0d = this.wmapStruct19c0_800c66b0.colour_8c[i].y * this.wmapStruct19c0_800c66b0.brightness_84 / 0x100;
+        light.b_0e = this.wmapStruct19c0_800c66b0.colour_8c[i].z * this.wmapStruct19c0_800c66b0.brightness_84 / 0x100;
         GsSetFlatLight(i, this.wmapStruct19c0_800c66b0.lights_11c[i]);
       }
     }
@@ -2327,9 +2327,9 @@ public class WMap extends EngineState {
             //LAB_800d996c
             //LAB_800d99c4
             //LAB_800d9a1c
-            this.wmapStruct19c0_800c66b0.lights_11c[i].r_0c = this.wmapStruct19c0_800c66b0.colour_8c[i].r.get() / 4.0f / 0x100;
-            this.wmapStruct19c0_800c66b0.lights_11c[i].g_0d = this.wmapStruct19c0_800c66b0.colour_8c[i].g.get() / 4.0f / 0x100;
-            this.wmapStruct19c0_800c66b0.lights_11c[i].b_0e = this.wmapStruct19c0_800c66b0.colour_8c[i].b.get() / 4.0f / 0x100;
+            this.wmapStruct19c0_800c66b0.lights_11c[i].r_0c = this.wmapStruct19c0_800c66b0.colour_8c[i].x / 4.0f / 0x100;
+            this.wmapStruct19c0_800c66b0.lights_11c[i].g_0d = this.wmapStruct19c0_800c66b0.colour_8c[i].y / 4.0f / 0x100;
+            this.wmapStruct19c0_800c66b0.lights_11c[i].b_0e = this.wmapStruct19c0_800c66b0.colour_8c[i].z / 4.0f / 0x100;
 
             GsSetFlatLight(i, this.wmapStruct19c0_800c66b0.lights_11c[i]);
           }

@@ -2,7 +2,6 @@ package legend.game.unpacker;
 
 import legend.core.MathHelper;
 import legend.core.gpu.Rect4i;
-import legend.core.gte.COLOUR;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 import org.legendofdragoon.modloader.registries.RegistryId;
@@ -165,7 +164,7 @@ public record FileData(byte[] data, int offset, int size, int virtualSize, int r
     return svec.set(MathHelper.psxDegToRad(this.readShort(offset)), MathHelper.psxDegToRad(this.readShort(offset + 0x2)), MathHelper.psxDegToRad(this.readShort(offset + 0x4)));
   }
 
-  public COLOUR readColour(final int offset, final COLOUR colour) {
+  public Vector3i readColour(final int offset, final Vector3i colour) {
     this.checkBounds(offset, 3);
     return colour.set(this.readUByte(offset), this.readUByte(offset + 0x1), this.readUByte(offset + 0x2));
   }

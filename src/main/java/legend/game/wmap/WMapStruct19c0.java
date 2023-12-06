@@ -1,10 +1,10 @@
 package legend.game.wmap;
 
-import legend.core.gte.COLOUR;
 import legend.core.gte.GsCOORDINATE2;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsRVIEW2;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 
 import java.util.Arrays;
 
@@ -26,7 +26,7 @@ public class WMapStruct19c0 {
 
   public float brightness_84;
   public int lightsUpdateState_88;
-  public final COLOUR[] colour_8c = {new COLOUR(), new COLOUR(), new COLOUR()};
+  public final Vector3i[] colour_8c = {new Vector3i(), new Vector3i(), new Vector3i()};
   /** short */
   public float angle_98;
   /** short */

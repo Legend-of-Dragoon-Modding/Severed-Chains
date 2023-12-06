@@ -1,8 +1,8 @@
 package legend.game.combat.effects;
 
-import legend.core.gte.COLOUR;
 import legend.core.gte.TmdObjTable1c;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 
 public class StarChildrenImpactEffectInstancea8 {
   public final int index;
@@ -18,7 +18,7 @@ public class StarChildrenImpactEffectInstancea8 {
   public final Vector3f[] rotation_2c = {new Vector3f(), new Vector3f()};
 
   public final Vector3f[] scale_6c = {new Vector3f(), new Vector3f()};
-  public final COLOUR[] opacity_8c = {new COLOUR(), new COLOUR()};
+  public final Vector3i[] opacity_8c = {new Vector3i(), new Vector3i()};
   public TmdObjTable1c explosionObjTable_94;
   public TmdObjTable1c shockwaveObjTable_98;
   public TmdObjTable1c plumeObjTable_9c;

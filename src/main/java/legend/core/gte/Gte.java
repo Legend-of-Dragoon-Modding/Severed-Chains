@@ -4,6 +4,9 @@ import legend.core.MathHelper;
 import org.joml.Matrix3f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
+
+import javax.annotation.Nullable;
 
 public class Gte {
   private static class Color {
@@ -310,7 +313,7 @@ public class Gte {
    *
    * @return colour
    */
-  public int normalColour(final Vector3f normal, final int colour) {
+  public int normalColour(final Vector3f normal, final int colour, @Nullable final Vector3i out) {
     this.RGBC.val(colour);
 
     MathHelper.clamp(normal.mul(this.lightDirection, this.colourTemp), 0.0f, Float.MAX_VALUE)
@@ -321,7 +324,17 @@ public class Gte {
     this.RGBC.g = (int)MathHelper.clamp(this.RGBC.g * this.colourTemp.y, 0, 0xff);
     this.RGBC.b = (int)MathHelper.clamp(this.RGBC.b * this.colourTemp.z, 0, 0xff);
 
+    if(out != null) {
+      out.x = this.RGBC.r;
+      out.y = this.RGBC.g;
+      out.z = this.RGBC.b;
+    }
+
     return this.RGBC.val();
+  }
+
+  public int normalColour(final Vector3f normal, final int colour) {
+    return this.normalColour(normal, colour, null);
   }
 
   /**

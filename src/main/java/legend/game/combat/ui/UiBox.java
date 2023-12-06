@@ -66,29 +66,29 @@ public class UiBox {
 
     //LAB_800f1060
     for(int i = 0; i < 8; i++) {
-      final BattleHudBorderMetrics14 borderMetrics = battleHudBorderMetrics_800c6f4c.get(i);
+      final BattleHudBorderMetrics14 borderMetrics = battleHudBorderMetrics_800c6f4c[i];
 
       final int leftX;
       final int rightX;
       final int leftU;
       final int rightU;
-      final int topY = ys[borderMetrics.indexXy0_00.get()] - borderMetrics.offsetY_0a.get();
-      final int bottomY = ys[borderMetrics.indexXy1_02.get()] + borderMetrics.offsetY_0a.get();
-      final int topV = borderMetrics.v_06.get();
-      final int bottomV = topV + borderMetrics.h_0e.get();
+      final int topY = ys[borderMetrics.indexXy0_00] - borderMetrics.offsetY_0a;
+      final int bottomY = ys[borderMetrics.indexXy1_02] + borderMetrics.offsetY_0a;
+      final int topV = borderMetrics.v_06;
+      final int bottomV = topV + borderMetrics.h_0e;
 
       if(i == 5 || i == 7) {
         //LAB_800f10ac
-        leftX = xs[borderMetrics.indexXy1_02.get()] + borderMetrics.offsetX_08.get();
-        rightX = xs[borderMetrics.indexXy0_00.get()] - borderMetrics.offsetX_08.get();
-        rightU = borderMetrics.u_04.get();
-        leftU = rightU + borderMetrics.w_0c.get() - 1;
+        leftX = xs[borderMetrics.indexXy1_02] + borderMetrics.offsetX_08;
+        rightX = xs[borderMetrics.indexXy0_00] - borderMetrics.offsetX_08;
+        rightU = borderMetrics.u_04;
+        leftU = rightU + borderMetrics.w_0c - 1;
       } else {
         //LAB_800f1128
-        leftX = xs[borderMetrics.indexXy0_00.get()] - borderMetrics.offsetX_08.get();
-        rightX = xs[borderMetrics.indexXy1_02.get()] + borderMetrics.offsetX_08.get();
-        leftU = borderMetrics.u_04.get();
-        rightU = leftU + borderMetrics.w_0c.get();
+        leftX = xs[borderMetrics.indexXy0_00] - borderMetrics.offsetX_08;
+        rightX = xs[borderMetrics.indexXy1_02] + borderMetrics.offsetX_08;
+        leftU = borderMetrics.u_04;
+        rightU = leftU + borderMetrics.w_0c;
       }
 
       if(this.hudBackgroundBorders[i] == null) {

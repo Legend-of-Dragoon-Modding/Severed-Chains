@@ -1,84 +1,71 @@
 package legend.game.sound;
 
-import legend.core.memory.Value;
-import legend.core.memory.types.MemoryRef;
-import legend.core.memory.types.ShortRef;
+public class ReverbConfig {
+  public final int dApf1;
+  public final int dApf2;
+  public final int vIir;
+  public final int vComb1;
+  public final int vComb2;
+  public final int vComb3;
+  public final int vComb4;
+  public final int vWall;
+  public final int vApf1;
+  public final int vApf2;
+  public final int mLSame;
+  public final int mRSame;
+  public final int mLComb1;
+  public final int mRComb1;
+  public final int mLComb2;
+  public final int mRComb2;
+  public final int dLSame;
+  public final int dRSame;
+  public final int mLDiff;
+  public final int mRDiff;
+  public final int mLComb3;
+  public final int mRComb3;
+  public final int mLComb4;
+  public final int mRComb4;
+  public final int dLDiff;
+  public final int dRDiff;
+  public final int mLApf1;
+  public final int mRApf1;
+  public final int mLApf2;
+  public final int mRApf2;
+  public final int vLIn;
+  public final int vRIn;
 
-public class ReverbConfig implements MemoryRef {
-  private final Value ref;
-
-  public final ShortRef dApf1;
-  public final ShortRef dApf2;
-  public final ShortRef vIir;
-  public final ShortRef vComb1;
-  public final ShortRef vComb2;
-  public final ShortRef vComb3;
-  public final ShortRef vComb4;
-  public final ShortRef vWall;
-  public final ShortRef vApf1;
-  public final ShortRef vApf2;
-  public final ShortRef mLSame;
-  public final ShortRef mRSame;
-  public final ShortRef mLComb1;
-  public final ShortRef mRComb1;
-  public final ShortRef mLComb2;
-  public final ShortRef mRComb2;
-  public final ShortRef dLSame;
-  public final ShortRef dRSame;
-  public final ShortRef mLDiff;
-  public final ShortRef mRDiff;
-  public final ShortRef mLComb3;
-  public final ShortRef mRComb3;
-  public final ShortRef mLComb4;
-  public final ShortRef mRComb4;
-  public final ShortRef dLDiff;
-  public final ShortRef dRDiff;
-  public final ShortRef mLApf1;
-  public final ShortRef mRApf1;
-  public final ShortRef mLApf2;
-  public final ShortRef mRApf2;
-  public final ShortRef vLIn;
-  public final ShortRef vRIn;
-
-  public ReverbConfig(final Value ref) {
-    this.ref = ref;
-
-    this.dApf1 = ref.offset(2, 0x00L).cast(ShortRef::new);
-    this.dApf2 = ref.offset(2, 0x02L).cast(ShortRef::new);
-    this.vIir = ref.offset(2, 0x04L).cast(ShortRef::new);
-    this.vComb1 = ref.offset(2, 0x06L).cast(ShortRef::new);
-    this.vComb2 = ref.offset(2, 0x08L).cast(ShortRef::new);
-    this.vComb3 = ref.offset(2, 0x0aL).cast(ShortRef::new);
-    this.vComb4 = ref.offset(2, 0x0cL).cast(ShortRef::new);
-    this.vWall = ref.offset(2, 0x0eL).cast(ShortRef::new);
-    this.vApf1 = ref.offset(2, 0x10L).cast(ShortRef::new);
-    this.vApf2 = ref.offset(2, 0x12L).cast(ShortRef::new);
-    this.mLSame = ref.offset(2, 0x14L).cast(ShortRef::new);
-    this.mRSame = ref.offset(2, 0x16L).cast(ShortRef::new);
-    this.mLComb1 = ref.offset(2, 0x18L).cast(ShortRef::new);
-    this.mRComb1 = ref.offset(2, 0x1aL).cast(ShortRef::new);
-    this.mLComb2 = ref.offset(2, 0x1cL).cast(ShortRef::new);
-    this.mRComb2 = ref.offset(2, 0x1eL).cast(ShortRef::new);
-    this.dLSame = ref.offset(2, 0x20L).cast(ShortRef::new);
-    this.dRSame = ref.offset(2, 0x22L).cast(ShortRef::new);
-    this.mLDiff = ref.offset(2, 0x24L).cast(ShortRef::new);
-    this.mRDiff = ref.offset(2, 0x26L).cast(ShortRef::new);
-    this.mLComb3 = ref.offset(2, 0x28L).cast(ShortRef::new);
-    this.mRComb3 = ref.offset(2, 0x2aL).cast(ShortRef::new);
-    this.mLComb4 = ref.offset(2, 0x2cL).cast(ShortRef::new);
-    this.mRComb4 = ref.offset(2, 0x2eL).cast(ShortRef::new);
-    this.dLDiff = ref.offset(2, 0x30L).cast(ShortRef::new);
-    this.dRDiff = ref.offset(2, 0x32L).cast(ShortRef::new);
-    this.mLApf1 = ref.offset(2, 0x34L).cast(ShortRef::new);
-    this.mRApf1 = ref.offset(2, 0x36L).cast(ShortRef::new);
-    this.mLApf2 = ref.offset(2, 0x38L).cast(ShortRef::new);
-    this.mRApf2 = ref.offset(2, 0x3aL).cast(ShortRef::new);
-    this.vLIn = ref.offset(2, 0x3cL).cast(ShortRef::new);
-    this.vRIn = ref.offset(2, 0x3eL).cast(ShortRef::new);
-  }
-
-  @Override
-  public long getAddress() {
-    return this.ref.getAddress();
+  public ReverbConfig(final int dApf1, final int dApf2, final int vIir, final int vComb1, final int vComb2, final int vComb3, final int vComb4, final int vWall, final int vApf1, final int vApf2, final int mLSame, final int mRSame, final int mLComb1, final int mRComb1, final int mLComb2, final int mRComb2, final int dLSame, final int dRSame, final int mLDiff, final int mRDiff, final int mLComb3, final int mRComb3, final int mLComb4, final int mRComb4, final int dLDiff, final int dRDiff, final int mLApf1, final int mRApf1, final int mLApf2, final int mRApf2, final int vLIn, final int vRIn) {
+    this.dApf1 = dApf1;
+    this.dApf2 = dApf2;
+    this.vIir = vIir;
+    this.vComb1 = vComb1;
+    this.vComb2 = vComb2;
+    this.vComb3 = vComb3;
+    this.vComb4 = vComb4;
+    this.vWall = vWall;
+    this.vApf1 = vApf1;
+    this.vApf2 = vApf2;
+    this.mLSame = mLSame;
+    this.mRSame = mRSame;
+    this.mLComb1 = mLComb1;
+    this.mRComb1 = mRComb1;
+    this.mLComb2 = mLComb2;
+    this.mRComb2 = mRComb2;
+    this.dLSame = dLSame;
+    this.dRSame = dRSame;
+    this.mLDiff = mLDiff;
+    this.mRDiff = mRDiff;
+    this.mLComb3 = mLComb3;
+    this.mRComb3 = mRComb3;
+    this.mLComb4 = mLComb4;
+    this.mRComb4 = mRComb4;
+    this.dLDiff = dLDiff;
+    this.dRDiff = dRDiff;
+    this.mLApf1 = mLApf1;
+    this.mRApf1 = mRApf1;
+    this.mLApf2 = mLApf2;
+    this.mRApf2 = mRApf2;
+    this.vLIn = vLIn;
+    this.vRIn = vRIn;
   }
 }

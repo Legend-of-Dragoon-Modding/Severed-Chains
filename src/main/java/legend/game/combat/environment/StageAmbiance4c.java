@@ -70,12 +70,12 @@ public class StageAmbiance4c {
       struct.lightDirection_00.z = (short)vals[paramIndex + 1] / (float)0x1000;
       struct.x_06 = (short)(vals[paramIndex + 1] >> 16) / (float)0x1000;
       struct.y_08 = (short)vals[paramIndex + 2] / (float)0x1000;
-      struct.lightColour_0a.r.set(vals[paramIndex + 2] >>> 16 & 0xff);
-      struct.lightColour_0a.g.set(vals[paramIndex + 2] >>> 24 & 0xff);
-      struct.lightColour_0a.b.set(vals[paramIndex + 3] & 0xff);
-      struct._0d.r.set(vals[paramIndex + 3] >>  8 & 0xff);
-      struct._0d.g.set(vals[paramIndex + 3] >> 16 & 0xff);
-      struct._0d.b.set(vals[paramIndex + 3] >> 24 & 0xff);
+      struct.lightColour_0a.x = vals[paramIndex + 2] >>> 16 & 0xff;
+      struct.lightColour_0a.y = vals[paramIndex + 2] >>> 24 & 0xff;
+      struct.lightColour_0a.z = vals[paramIndex + 3] & 0xff;
+      struct._0d.x = vals[paramIndex + 3] >>  8 & 0xff;
+      struct._0d.y = vals[paramIndex + 3] >> 16 & 0xff;
+      struct._0d.z = vals[paramIndex + 3] >> 24 & 0xff;
       struct.x_10 = (short)vals[paramIndex + 4] / (float)0x1000;
       struct.y_12 = (short)(vals[paramIndex + 4] >> 16) / (float)0x1000;
       paramIndex += 5;

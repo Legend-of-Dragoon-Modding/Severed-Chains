@@ -106,7 +106,6 @@ import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFileSync;
-import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.rectArray28_80010770;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.soundBufferOffset;
@@ -918,8 +917,6 @@ public final class Scus94491BpeSegment_8002 {
 
       case WAIT_FOR_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_2 -> {
         if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
-          whichMenu_800bdc38 = WhichMenu.WAIT_FOR_S_ITEM_TO_LOAD_3;
-
           if(uiFile_800bdc3c != null) {
             uiFile_800bdc3c.delete();
           }
@@ -931,14 +928,12 @@ public final class Scus94491BpeSegment_8002 {
           loadDrgnFileSync(0, 6666, data -> menuAssetsLoaded(data, 1));
           textZ_800bdf00 = 33;
 
-          loadSupportOverlay(2, () -> {
-            whichMenu_800bdc38 = destMenu;
+          whichMenu_800bdc38 = destMenu;
 
-            if(destScreen != null) {
-              menuStack.pushScreen(destScreen.get());
-              destScreen = null;
-            }
-          });
+          if(destScreen != null) {
+            menuStack.pushScreen(destScreen.get());
+            destScreen = null;
+          }
         }
       }
 
@@ -950,11 +945,8 @@ public final class Scus94491BpeSegment_8002 {
 
       case WAIT_FOR_POST_COMBAT_REPORT_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_27 -> {
         if((loadedDrgnFiles_800bcf78.get() & 0x80L) == 0) {
-          whichMenu_800bdc38 = WhichMenu.WAIT_FOR_S_ITEM_TO_LOAD_28;
-          loadSupportOverlay(2, () -> {
-            whichMenu_800bdc38 = WhichMenu.RENDER_POST_COMBAT_REPORT_29;
-            menuStack.pushScreen(new PostBattleScreen());
-          });
+          whichMenu_800bdc38 = WhichMenu.RENDER_POST_COMBAT_REPORT_29;
+          menuStack.pushScreen(new PostBattleScreen());
         }
       }
 
@@ -1000,7 +992,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80022928L)
-  public static int getUnlockedDragoonSpells(final byte[] spellIndicesOut, final int charIndex) {
+  public static int getUnlockedDragoonSpells(final int[] spellIndicesOut, final int charIndex) {
     //LAB_80022940
     for(int spellIndex = 0; spellIndex < 8; spellIndex++) {
       spellIndicesOut[spellIndex] = -1;
@@ -1023,8 +1015,8 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_800229d0
     int spellCount = 0;
     for(int dlevel = 0; dlevel < stats_800be5f8[charIndex].dlevel_0f + 1; dlevel++) {
-      final MagicStuff08 spellStuff = magicStuff_80111d20.get(charIndex).deref().get(dlevel);
-      final byte spellIndex = spellStuff.spellIndex_02.get();
+      final MagicStuff08 spellStuff = magicStuff_80111d20[charIndex][dlevel];
+      final int spellIndex = spellStuff.spellIndex_02;
 
       if(spellIndex != -1) {
         spellIndicesOut[spellCount] = spellIndex;
@@ -1055,7 +1047,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80022a64
     int unlockedSpells = 0;
     for(int i = 0; i < 6; i++) {
-      if(magicStuff_80111d20.get(charIndex).deref().get(i).spellIndex_02.get() != -1) {
+      if(magicStuff_80111d20[charIndex][i].spellIndex_02 != -1) {
         unlockedSpells++;
       }
 

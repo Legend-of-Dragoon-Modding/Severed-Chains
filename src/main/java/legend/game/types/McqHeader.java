@@ -1,7 +1,7 @@
 package legend.game.types;
 
-import legend.core.gte.COLOUR;
 import legend.game.unpacker.FileData;
+import org.joml.Vector3i;
 
 /** 0x2c bytes */
 public class McqHeader {
@@ -19,9 +19,9 @@ public class McqHeader {
   public final int screenWidth_14;
   public final int screenHeight_16;
 
-  public final COLOUR colour0_18;
+  public final Vector3i colour0_18;
 
-  public final COLOUR colour1_20;
+  public final Vector3i colour1_20;
 
   public final int screenOffsetX_28;
   public final int screenOffsetY_2a;
@@ -40,9 +40,9 @@ public class McqHeader {
     this.screenWidth_14 = data.readUShort(0x14);
     this.screenHeight_16 = data.readUShort(0x16);
 
-    this.colour0_18 = data.readColour(0x18, new COLOUR());
+    this.colour0_18 = data.readColour(0x18, new Vector3i());
 
-    this.colour1_20 = data.readColour(0x20, new COLOUR());
+    this.colour1_20 = data.readColour(0x20, new Vector3i());
 
     this.screenOffsetX_28 = data.readShort(0x28);
     this.screenOffsetY_2a = data.readShort(0x2a);

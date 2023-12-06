@@ -107,7 +107,6 @@ import static legend.game.Scus94491BpeSegment_8004.height_8004dd34;
 import static legend.game.Scus94491BpeSegment_8004.initSpu;
 import static legend.game.Scus94491BpeSegment_8004.loadSshdAndSoundbank;
 import static legend.game.Scus94491BpeSegment_8004.loadSssq;
-import static legend.game.Scus94491BpeSegment_8004.loadedOverlayIndex_8004dd10;
 import static legend.game.Scus94491BpeSegment_8004.moonMusic_8004ff10;
 import static legend.game.Scus94491BpeSegment_8004.previousEngineState_8004dd28;
 import static legend.game.Scus94491BpeSegment_8004.reinitOrderingTableBits_8004dd38;
@@ -129,7 +128,6 @@ import static legend.game.Scus94491BpeSegment_8004.startSequenceAndChangeVolumeO
 import static legend.game.Scus94491BpeSegment_8004.stopMusicSequence;
 import static legend.game.Scus94491BpeSegment_8004.stopSoundSequence;
 import static legend.game.Scus94491BpeSegment_8004.stopSoundsAndSequences;
-import static legend.game.Scus94491BpeSegment_8004.supportOverlays_8004db88;
 import static legend.game.Scus94491BpeSegment_8004.swapDisplayBuffer_8004dd40;
 import static legend.game.Scus94491BpeSegment_8004.syncFrame_8004dd3c;
 import static legend.game.Scus94491BpeSegment_8004.width_8004dd34;
@@ -549,34 +547,6 @@ public final class Scus94491BpeSegment {
     }
   }
 
-  /**
-   * Supporting overlays that can be loaded at any time like S_ITEM, etc.
-   *
-   * @param overlayIndex <ol start="0">
-   *                       <li>S_INIT (no longer used)</li>
-   *                       <li>S_BTLD (no longer used)</li>
-   *                       <li>S_ITEM</li>
-   *                       <li>S_EFFE (no longer used)</li>
-   *                       <li>S_STRM (no longer used)</li>
-   *                     </ol>
-   */
-  @Method(0x80012b1cL)
-  public static void loadSupportOverlay(final int overlayIndex, final Runnable overlayMethod) {
-    LOGGER.info("Loading support overlay %d", overlayIndex);
-
-    if(loadedOverlayIndex_8004dd10 == overlayIndex) {
-      overlayMethod.run();
-      return;
-    }
-
-    //LAB_80012b6c
-    //LAB_80012b70
-    loadedOverlayIndex_8004dd10 = overlayIndex;
-    loadOverlay(supportOverlays_8004db88[loadedOverlayIndex_8004dd10], 0x800fb778L, overlayMethod);
-
-    //LAB_80012ba4
-  }
-
   @Method(0x80012df8L)
   public static void endFrame() {
     GPU.queueCommand(3, new GpuCommandSetMaskBit(false, Gpu.DRAW_PIXELS.ALWAYS));
@@ -843,17 +813,6 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_80013f1c
-  }
-
-  @Method(0x8001524cL)
-  public static void loadOverlay(final String name, final long fileTransferDest, final Runnable onCompletion) {
-    final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
-
-    Unpacker.loadFile(name, data -> {
-      LOGGER.info("Loading overlay %s, size %d, dest %08x from %s.%s(%s:%d)", name, data.size(), fileTransferDest, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
-      MEMORY.setBytes(fileTransferDest, data.getBytes());
-      onCompletion.run();
-    });
   }
 
   public static void loadOverlaySync(final String name, final long fileTransferDest) {

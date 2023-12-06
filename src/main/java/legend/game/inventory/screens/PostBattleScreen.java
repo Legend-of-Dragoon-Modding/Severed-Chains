@@ -507,7 +507,7 @@ public class PostBattleScreen extends MenuScreen {
       //LAB_8010cecc
       while(gameState_800babc8.charData_32c[charIndex].dlevelXp_0e >= dragoonXpRequirements_800fbbf0[charIndex][gameState_800babc8.charData_32c[charIndex].dlevel_13 + 1] && gameState_800babc8.charData_32c[charIndex].dlevel_13 < 5) {
         loadCharacterStats();
-        final byte[] spellIndices = new byte[8];
+        final int[] spellIndices = new int[8];
         final int spellCount = getUnlockedDragoonSpells(spellIndices, charIndex);
 
         gameState_800babc8.charData_32c[charIndex].dlevel_13++;
