@@ -1029,7 +1029,7 @@ public final class Bttl_800e {
       for(int i = 0; i < combatantCount_800c66a0.get(); i++) {
         final CombatantStruct1a8 combatant = getCombatant(i);
         if((combatant.flags_19e & 0x1) != 0 && combatant.charIndex_1a2 >= 0) {
-          loadAttackAnimations(i);
+          loadAttackAnimations(combatant);
         }
 
         //LAB_800e6408
@@ -1060,10 +1060,10 @@ public final class Bttl_800e {
     if((struct7cc.flags_20 & 0x10_0000) != 0) {
       //LAB_800e651c
       for(int i = 0; i < combatantCount_800c66a0.get(); i++) {
-        final CombatantStruct1a8 v1 = getCombatant(i);
+        final CombatantStruct1a8 combatant = getCombatant(i);
 
-        if((v1.flags_19e & 0x1) != 0 && v1.mrg_04 != null && v1.charIndex_1a2 >= 0) {
-          FUN_800ca418(i);
+        if((combatant.flags_19e & 0x1) != 0 && combatant.mrg_04 != null && combatant.charIndex_1a2 >= 0) {
+          FUN_800ca418(combatant);
         }
 
         //LAB_800e6564
@@ -1197,9 +1197,9 @@ public final class Bttl_800e {
     int monsterIndex = (short)script.params_20[0].get();
 
     if(monsterIndex == -1) {
-      final BattleEntity27c v0 = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00;
+      final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[1].get(), BattleEntity27c.class);
       assert false : "?"; //script.params_20.get(0).set(sp0x20);
-      monsterIndex = getCombatant(v0.combatantIndex_26c).charIndex_1a2;
+      monsterIndex = bent.combatant_144.charIndex_1a2;
     }
 
     LOGGER.info(DEFF, "Loading enemy/boss DEFF (ID: %d, flags: %x)", monsterIndex, s1 & 0xffff_0000);
@@ -1842,7 +1842,6 @@ public final class Bttl_800e {
       LOGGER.info(EFFECTS, "Allocating empty effect manager %d (parent: %d) from %s.%s(%s:%d)", state.index, parentState != null ? parentState.index : -1, caller.getClassName(), caller.getMethodName(), caller.getFileName(), caller.getLineNumber());
     }
 
-    manager.magic_00 = BattleObject.EM__;
     manager.flags_04 = 0xff00_0000;
     manager.scriptIndex_0c = -1;
     manager.coord2Index_0d = -1;

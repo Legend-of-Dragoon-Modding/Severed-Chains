@@ -37,6 +37,7 @@ public class EffectManagerData6c<T extends EffectManagerParams<T>> extends Battl
   }
 
   public EffectManagerData6c(final String name, final T params) {
+    super(BattleObject.EM__);
     this.name = name;
     this.params_10 = params;
   }

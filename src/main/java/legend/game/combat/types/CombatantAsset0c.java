@@ -5,8 +5,8 @@ import legend.game.unpacker.FileData;
 
 /** A union type, see type property to tell which type it is */
 public abstract class CombatantAsset0c {
-  public int BttlStruct08_index_04;
-  public int BattleStructEf4Sub08_index_06;
+  public int assetIndex_04;
+  public int compressedAssetIndex_06;
   public int _08;
   public int _09;
   /**
@@ -33,11 +33,11 @@ public abstract class CombatantAsset0c {
   }
 
   /** Type 3 */
-  public static class IndexType extends CombatantAsset0c {
-    public final int index_00;
+  public static class GlobalAssetType extends CombatantAsset0c {
+    public final int assetIndex_00;
 
-    public IndexType(final int index) {
-      this.index_00 = index;
+    public GlobalAssetType(final int assetIndex) {
+      this.assetIndex_00 = assetIndex;
     }
   }
 

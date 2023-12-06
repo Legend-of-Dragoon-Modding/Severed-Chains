@@ -179,7 +179,6 @@ import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
 import static legend.game.combat.Bttl_800c.cacheLivingBents;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c.endBattle;
-import static legend.game.combat.Bttl_800c.isCombatantModelLoaded;
 import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800c.renderSkybox;
 import static legend.game.combat.Bttl_800c.rotateAndRenderBattleStage;
@@ -1245,7 +1244,7 @@ public final class Scus94491BpeSegment {
   public static boolean areCharacterModelsLoaded() {
     //LAB_80018800
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      if(!isCombatantModelLoaded(battleState_8006e398.charBents_e40[charSlot].innerStruct_00.combatantIndex_26c)) {
+      if(!battleState_8006e398.charBents_e40[charSlot].innerStruct_00.combatant_144.isModelLoaded()) {
         return false;
       }
     }
@@ -1259,7 +1258,7 @@ public final class Scus94491BpeSegment {
   public static boolean areMonsterModelsLoaded() {
     //LAB_800188a09
     for(int i = 0; i < monsterCount_800c6768.get(); i++) {
-      if(!isCombatantModelLoaded(battleState_8006e398.monsterBents_e50[i].innerStruct_00.combatantIndex_26c)) {
+      if(!battleState_8006e398.monsterBents_e50[i].innerStruct_00.combatant_144.isModelLoaded()) {
         return false;
       }
     }

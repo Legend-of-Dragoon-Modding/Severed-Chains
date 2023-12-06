@@ -1,5 +1,6 @@
 package legend.game.combat.types;
 
+import legend.core.memory.Method;
 import legend.game.inventory.InventoryEntry;
 import legend.game.scripting.ScriptFile;
 import legend.game.types.CContainer;
@@ -38,6 +39,27 @@ public class CombatantStruct1a8 {
   public int charIndex_1a2;
   public int _1a4;
   public int _1a6;
+
+  @Method(0x800c90b0L)
+  public boolean isModelLoaded() {
+    return (this._1a4 >= 0 || this.mrg_00 != null && this.mrg_00.get(32).hasVirtualSize()) && this.isAssetLoaded(0);
+  }
+
+  @Method(0x800ca054L)
+  public boolean isAssetLoaded(final int assetIndex) {
+    final CombatantAsset0c asset = this.assets_14[assetIndex];
+
+    if(asset instanceof CombatantAsset0c.AnimType || asset instanceof CombatantAsset0c.GlobalAssetType) {
+      return true;
+    }
+
+    if(asset instanceof CombatantAsset0c.BpeType || asset instanceof CombatantAsset0c.TimType) {
+      return asset.isLoaded_0b && asset.assetIndex_04 >= 0;
+    }
+
+    //LAB_800ca0f8
+    return false;
+  }
 
   public record ItemDrop(int chance, InventoryEntry item) {
   }
