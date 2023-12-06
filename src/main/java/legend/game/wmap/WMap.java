@@ -158,12 +158,33 @@ import static legend.game.wmap.WmapStatics.waterClutYs_800ef348;
 import static legend.game.wmap.WmapStatics.wmapDestinationMarkers_800f5a6c;
 
 public class WMap extends EngineState {
+  private enum WorldMapState {
+    UNINITIALIZED_0,
+    UNUSED_1,
+    LOAD_MODEL_2,
+    INIT_MAP_ANIM_3,
+    NOOP_4,
+    RENDER_5,
+    NOOP_6,
+    UNUSED_DEALLOC_7
+  }
+
+  private enum PlayerState {
+    UNINITIALIZED_0,
+    UNUSED_1,
+    LOAD_MODEL_2,
+    INIT_PLAYER_MODEL_3,
+    NOOP_4,
+    RENDER_5,
+    NOOP_6,
+    UNUSED_DEALLOC_7
+  }
+
   private static final Pattern NEWLINE = Pattern.compile("\\n");
   private int tickMainMenuOpenTransition_800c6690;
 
-  // TODO Enum these states
-  private int worldMapState_800c6698;
-  private int playerState_800c669c;
+  private WorldMapState worldMapState_800c6698;
+  private PlayerState playerState_800c669c;
 
   private int atmosphericEffectStage_800c66a4;
   private final WMapModelAndAnimData258 modelAndAnimData_800c66a8 = new WMapModelAndAnimData258();
@@ -412,7 +433,7 @@ public class WMap extends EngineState {
   @Override
   public void overlayTick() {
     if(this.wmapState_800bb10c == WmapState.PLAY_3) {
-      if(this.worldMapState_800c6698 >= 4 && this.playerState_800c669c >= 4) {
+      if(this.worldMapState_800c6698.ordinal() > WorldMapState.INIT_MAP_ANIM_3.ordinal() && this.playerState_800c669c.ordinal() > PlayerState.INIT_PLAYER_MODEL_3.ordinal()) {
         if(this.modelAndAnimData_800c66a8.coolonWarpState_220 == CoolonWarpState.PROMPT_LOOP) {
           this.coolonPromptPopup.render();
         }
@@ -486,7 +507,10 @@ public class WMap extends EngineState {
 
               if(modelAndAnimData.zoomState_1f8 == ZoomState.LOCAL) {
                 if(modelAndAnimData.coolonWarpState_220 == CoolonWarpState.NONE) {
-                  if(this.worldMapState_800c6698 >= 3 || this.playerState_800c669c >= 3) {
+                  if(
+                    this.worldMapState_800c6698.ordinal() >= WorldMapState.INIT_MAP_ANIM_3.ordinal() ||
+                      this.playerState_800c669c.ordinal() >= PlayerState.INIT_PLAYER_MODEL_3.ordinal()
+                  ) {
                     //LAB_800cc900
                     if(Input.pressedThisFrame(InputAction.BUTTON_NORTH)) {
                       if(this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc != PathSegmentEndpointType.TERMINAL) {
@@ -729,8 +753,8 @@ public class WMap extends EngineState {
 
   @Method(0x800ccf04L)
   private void initWmapAudioVisuals() {
-    this.worldMapState_800c6698 = 2;
-    this.playerState_800c669c = 2;
+    this.worldMapState_800c6698 = WorldMapState.LOAD_MODEL_2;
+    this.playerState_800c669c = PlayerState.LOAD_MODEL_2;
     loadWait = 60;
     this.atmosphericEffectStage_800c66a4 = 2;
     this.filesLoadedFlags_800c66b8.set(0);
@@ -765,7 +789,7 @@ public class WMap extends EngineState {
     this.tickTransitionAnimation();
 
     switch(this.worldMapState_800c6698) {
-      case 2 -> {
+      case LOAD_MODEL_2 -> {
         if((this.filesLoadedFlags_800c66b8.get() & 0x2) != 0 && (this.filesLoadedFlags_800c66b8.get() & 0x4) != 0) { // World map textures and mesh loaded
           for(int i = 0; i < this.modelAndAnimData_800c66a8.tmdRendering_08.dobj2s_00.length; i++) {
             //LAB_800e3d44
@@ -773,40 +797,40 @@ public class WMap extends EngineState {
             this.modelAndAnimData_800c66a8.tmdRendering_08.dobj2s_00[i].obj = TmdObjLoader.fromObjTable("WmapModel (obj " + i + ')', this.modelAndAnimData_800c66a8.tmdRendering_08.dobj2s_00[i].tmd_08);
           }
 
-          this.worldMapState_800c6698 = 3;
+          this.worldMapState_800c6698 = WorldMapState.INIT_MAP_ANIM_3;
         }
       }
 
       //LAB_800cd0d4
-      case 3 -> {
+      case INIT_MAP_ANIM_3 -> {
         this.initMapAnimation();
-        this.worldMapState_800c6698 = 4;
+        this.worldMapState_800c6698 = WorldMapState.NOOP_4;
       }
 
-      case 4 -> this.worldMapState_800c6698 = 5;
+      case NOOP_4 -> this.worldMapState_800c6698 = WorldMapState.RENDER_5;
 
-      case 5 -> this.renderWorldMap();
+      case RENDER_5 -> this.renderWorldMap();
 
-      case 6 -> this.worldMapState_800c6698 = 7;
+      case NOOP_6 -> this.worldMapState_800c6698 = WorldMapState.UNUSED_DEALLOC_7;
 
-      case 7 -> {
+      case UNUSED_DEALLOC_7 -> {
         this.deallocateWorldMap();
-        this.worldMapState_800c6698 = 0;
+        this.worldMapState_800c6698 = WorldMapState.UNINITIALIZED_0;
       }
     }
 
     //LAB_800cd148
     switch(this.playerState_800c669c) {
-      case 0 -> loadWait = 60 / vsyncMode_8007a3b8;
+      case UNINITIALIZED_0 -> loadWait = 60 / vsyncMode_8007a3b8;
 
-      case 2 -> {
+      case LOAD_MODEL_2 -> {
         if((this.filesLoadedFlags_800c66b8.get() & 0x2a8) == 0x2a8 && (this.filesLoadedFlags_800c66b8.get() & 0x550) == 0x550) {
-          this.playerState_800c669c = 3;
+          this.playerState_800c669c = PlayerState.INIT_PLAYER_MODEL_3;
         }
       }
 
       //LAB_800cd1dc
-      case 3 -> {
+      case INIT_PLAYER_MODEL_3 -> {
         if(loadWait-- > 30 / vsyncMode_8007a3b8) break;
         this.initPlayerModelAndAnimation();
 
@@ -817,24 +841,24 @@ public class WMap extends EngineState {
           }
         }
 
-        this.playerState_800c669c = 4;
+        this.playerState_800c669c = PlayerState.NOOP_4;
       }
 
-      case 4 -> {
+      case NOOP_4 -> {
         if(loadWait-- > 0) break;
-        this.playerState_800c669c = 5;
+        this.playerState_800c669c = PlayerState.RENDER_5;
       }
 
-      case 5 -> this.renderPlayer();
-      case 6 -> this.playerState_800c669c = 7;
+      case RENDER_5 -> this.renderPlayer();
+      case NOOP_6 -> this.playerState_800c669c = PlayerState.UNUSED_DEALLOC_7;
 
-      case 7 -> {
+      case UNUSED_DEALLOC_7 -> {
         for(final Model124 model : this.modelAndAnimData_800c66a8.models_0c) {
           model.deleteModelParts();
         }
 
         this.unloadWmapPlayerModels();
-        this.playerState_800c669c = 0;
+        this.playerState_800c669c = PlayerState.UNINITIALIZED_0;
       }
     }
 
@@ -1856,7 +1880,10 @@ public class WMap extends EngineState {
 
   @Method(0x800d7a34L)
   private void renderPath() {
-    if(this.worldMapState_800c6698 < 4 || this.playerState_800c669c < 4) {
+    if(
+      this.worldMapState_800c6698.ordinal() <= WorldMapState.INIT_MAP_ANIM_3.ordinal() ||
+      this.playerState_800c669c.ordinal() <= PlayerState.INIT_PLAYER_MODEL_3.ordinal()
+    ) {
       return;
     }
 
@@ -3476,7 +3503,12 @@ public class WMap extends EngineState {
 
   @Method(0x800e367cL)
   private void handleEncounters(final float encounterRateMultiplier) {
-    if(Unpacker.getLoadingFileCount() != 0 || this.worldMapState_800c6698 != 5 || this.playerState_800c669c != 5 || this.modelAndAnimData_800c66a8.modelIndex_1e4 >= 2) {
+    if(
+      Unpacker.getLoadingFileCount() != 0 ||
+        this.worldMapState_800c6698 != WorldMapState.RENDER_5 ||
+        this.playerState_800c669c != PlayerState.RENDER_5 ||
+        this.modelAndAnimData_800c66a8.modelIndex_1e4 >= 2
+    ) {
       return;
     }
 
@@ -3628,7 +3660,10 @@ public class WMap extends EngineState {
       //LAB_800e442c
       switch(modelAndAnimData.fadeState_04) {
         case START_FADE:
-          if(this.worldMapState_800c6698 >= 3 || this.playerState_800c669c >= 3) {
+          if(
+            this.worldMapState_800c6698.ordinal() >= WorldMapState.INIT_MAP_ANIM_3.ordinal() ||
+              this.playerState_800c669c.ordinal() >= PlayerState.INIT_PLAYER_MODEL_3.ordinal()
+          ) {
             //LAB_800e44b0
             startFadeEffect(2, 15);
 
@@ -3660,7 +3695,7 @@ public class WMap extends EngineState {
 
         case END_FADE:
           //LAB_800e45c8
-          if(this.playerState_800c669c >= 3) {
+          if(this.playerState_800c669c.ordinal() >= PlayerState.INIT_PLAYER_MODEL_3.ordinal()) {
             modelAndAnimData.fadeAnimationTicks_00++;
 
             if(modelAndAnimData.fadeAnimationTicks_00 >= 6 / vsyncMode_8007a3b8) {
@@ -3682,7 +3717,9 @@ public class WMap extends EngineState {
     ) {
       switch(modelAndAnimData.fadeState_04) {
         case START_FADE:
-          if(this.worldMapState_800c6698 >= 3 || this.playerState_800c669c >= 3) {
+          if(
+            this.worldMapState_800c6698.ordinal() >= WorldMapState.INIT_MAP_ANIM_3.ordinal() ||
+              this.playerState_800c669c.ordinal() >= PlayerState.INIT_PLAYER_MODEL_3.ordinal()) {
             //LAB_800e4144
             startFadeEffect(2, 15);
 
@@ -3719,7 +3756,7 @@ public class WMap extends EngineState {
 
         case END_FADE:
           //LAB_800e4368
-          if(this.playerState_800c669c >= 3) {
+          if(this.playerState_800c669c.ordinal() >= PlayerState.INIT_PLAYER_MODEL_3.ordinal()) {
             modelAndAnimData.fadeAnimationTicks_00++;
 
             if(modelAndAnimData.fadeAnimationTicks_00 >= 6 / vsyncMode_8007a3b8) {
@@ -4669,7 +4706,7 @@ public class WMap extends EngineState {
   @Method(0x800e8a10L)
   private void handlePlayerMovementOnPath() {
     //LAB_800e8a38
-    if(this.worldMapState_800c6698 >= 4 && this.playerState_800c669c >= 4) {
+    if(this.worldMapState_800c6698.ordinal() > WorldMapState.INIT_MAP_ANIM_3.ordinal() && this.playerState_800c669c.ordinal() > PlayerState.INIT_PLAYER_MODEL_3.ordinal()) {
       //LAB_800e8a58
       this.handleTravelAlongPathSegment();
       this.checkAndInitPathSegmentChange();
@@ -4702,7 +4739,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800e8b2c
-    int movement;;
+    int movement;
     if(directionalPathSegmentData_800f2248[this.mapState_800c6798.directionalPathIndex_12].pathSegmentIndexAndDirection_00 < 0) {
       movement = -1;
     } else {
@@ -4849,12 +4886,12 @@ public class WMap extends EngineState {
     }
 
     //LAB_800e9178
-    if(this.worldMapState_800c6698 != 5) {
+    if(this.worldMapState_800c6698 != WorldMapState.RENDER_5) {
       return;
     }
 
     //LAB_800e9194
-    if(this.playerState_800c669c != 5) {
+    if(this.playerState_800c669c != PlayerState.RENDER_5) {
       return;
     }
 
@@ -5771,7 +5808,9 @@ public class WMap extends EngineState {
       }
 
       case 4 -> {
-        if(this.worldMapState_800c6698 >= 3 || this.playerState_800c669c >= 3) {
+        if(
+          this.worldMapState_800c6698.ordinal() >= WorldMapState.INIT_MAP_ANIM_3.ordinal() ||
+            this.playerState_800c669c.ordinal() >= PlayerState.INIT_PLAYER_MODEL_3.ordinal()) {
           //LAB_800eda98
           this.atmosphericEffectStage_800c66a4 = 5;
         }
@@ -5816,12 +5855,12 @@ public class WMap extends EngineState {
     }
 
     //LAB_800edc44
-    if(this.worldMapState_800c6698 < 4) {
+    if(this.worldMapState_800c6698.ordinal() <= WorldMapState.INIT_MAP_ANIM_3.ordinal()) {
       return;
     }
 
     //LAB_800edc64
-    if(this.playerState_800c669c < 4) {
+    if(this.playerState_800c669c.ordinal() <= PlayerState.INIT_PLAYER_MODEL_3.ordinal()) {
       return;
     }
 
