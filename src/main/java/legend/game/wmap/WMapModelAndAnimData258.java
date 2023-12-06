@@ -93,7 +93,7 @@ public class WMapModelAndAnimData258 {
 
   public WMapTmdRenderingData18 tmdRendering_08;
   public final Model124[] models_0c = new Model124[4];
-  public TextureAnimation20 textureAnimation_1c;
+  public WaterAnimation20 textureAnimation_1c;
   /** Used for brightness of the map name and the map textures overall (short) */
   public float mapTextureBrightness_20;
 

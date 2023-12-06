@@ -1729,181 +1729,71 @@ public class WMap extends EngineState {
     //LAB_800d5d84
   }
 
-  // TODO name things here
   @Method(0x800d5e70L)
-  private TextureAnimation20 prepareAnimationStruct(final Rect4i size, final int a1, final int a2, final int a3) {
-    final int imageSize = size.w / (2 - a1) * size.h;
-
-    final TextureAnimation20 anim = new TextureAnimation20();
-    anim.x_00 = size.x;
-    anim.y_02 = size.y;
-    anim.w_04 = size.w / (4 - a1 * 2);
-    anim.h_06 = size.h;
-    anim.imageData_08 = new FileData(new byte[imageSize]);
-    anim.imageData_0c = new FileData(new byte[imageSize]);
-    anim._10 = a2;
-    anim._14 = a1;
-    anim._18 = (short)a3;
-    anim._1a = (short)(a2 / 2 * 2);
-    anim._1c = anim._1a;
+  private WaterAnimation20 prepareWaterAnimation() {
+    final WaterAnimation20 anim = new WaterAnimation20();
+    anim.x_00 = 448;
+    anim.y_02 = 0;
+    anim.w_04 = 16;
+    anim.h_06 = 64;
+    anim.imageData_08 = new FileData(new byte[2048]);
+    anim.imageData_0c = new FileData(new byte[2048]);
+    anim.currTick_1c = 2;
     return anim;
   }
 
   @Method(0x800d6080L)
-  private void animateTextures(final TextureAnimation20 anim) {
-    if(anim._18 == 0) {
-      return;
-    }
-
+  private void animateWater(final WaterAnimation20 anim) {
     //LAB_800d60b0
-    anim._1c += 1.0f / (3.0f / vsyncMode_8007a3b8);
+    anim.currTick_1c += 1.0f / (3.0f / vsyncMode_8007a3b8);
 
-    if(anim._1c < anim._1a) {
-      return;
-    }
+    if(anim.currTick_1c >= 2.0f) {
+      final Rect4i src0 = new Rect4i();
+      final Rect4i src1 = new Rect4i();
+      final Rect4i dest0 = new Rect4i();
+      final Rect4i dest1 = new Rect4i();
 
-    final Rect4i src0 = new Rect4i();
-    final Rect4i src1 = new Rect4i();
-    final Rect4i dest0 = new Rect4i();
-    final Rect4i dest1 = new Rect4i();
-
-    //LAB_800d60f8
-    anim._1c = 0.0f;
-
-    if((anim._10 & 0x1) == 0) {
-      anim._18 %= (short)anim.w_04;
-
-      if(anim._18 > 0) {
-        src0.set(
-          anim.x_00 + anim.w_04 - anim._18,
-          anim.y_02,
-          anim._18,
-          anim.h_06
-        );
-
-        src1.set(
-          anim.x_00,
-          anim.y_02,
-          anim.w_04 - anim._18,
-          anim.h_06
-        );
-
-        dest0.set(
-          anim.x_00,
-          anim.y_02,
-          anim._18,
-          anim.h_06
-        );
-
-        dest1.set(
-          anim.x_00 + anim._18,
-          anim.y_02,
-          anim.w_04 - anim._18,
-          anim.h_06
-        );
-      } else {
-        //LAB_800d62e4
-        src0.set(
-          anim.x_00,
-          anim.y_02,
-          -anim._18,
-          anim.h_06
-        );
-
-        src1.set(
-          anim.x_00 - anim._18,
-          anim.y_02,
-          anim.w_04 + anim._18,
-          anim.h_06
-        );
-
-        dest0.set(
-          anim.x_00 + anim.w_04 + anim._18,
-          anim.y_02,
-          -anim._18,
-          anim.h_06
-        );
-
-        dest1.set(
-          anim.x_00,
-          anim.y_02,
-          anim.w_04 + anim._18,
-          anim.h_06
-        );
-      }
+      //LAB_800d60f8
+      anim.currTick_1c = 0.0f;
 
       //LAB_800d6460
-    } else {
       //LAB_800d6468
-      anim._18 %= (short)anim.h_06;
+      src0.set(
+        anim.x_00,
+        anim.y_02 + anim.h_06 - 1,
+        anim.w_04,
+        1
+      );
 
-      if(anim._18 > 0) {
-        src0.set(
-          anim.x_00,
-          anim.y_02 + anim.h_06 - anim._18,
-          anim.w_04,
-          anim._18
-        );
+      src1.set(
+        anim.x_00,
+        anim.y_02,
+        anim.w_04,
+        anim.h_06 - 1
+      );
 
-        src1.set(
-          anim.x_00,
-          anim.y_02,
-          anim.w_04,
-          anim.h_06 - anim._18
-        );
+      dest0.set(
+        anim.x_00,
+        anim.y_02,
+        anim.w_04,
+        1
+      );
 
-        dest0.set(
-          anim.x_00,
-          anim.y_02,
-          anim.w_04,
-          anim._18
-        );
+      dest1.set(
+        anim.x_00,
+        anim.y_02 + 1,
+        anim.w_04,
+        anim.h_06 - 1
+      );
 
-        dest1.set(
-          anim.x_00,
-          anim.y_02 + anim._18,
-          anim.w_04,
-          anim.h_06 - anim._18
-        );
-      } else {
-        //LAB_800d662c
-        src0.set(
-          anim.x_00,
-          anim.y_02,
-          anim.w_04,
-          -anim._18
-        );
+      //LAB_800d67a8
+      GPU.downloadData(src0, anim.imageData_0c);
+      GPU.downloadData(src1, anim.imageData_08);
+      GPU.uploadData(dest0, anim.imageData_0c);
+      GPU.uploadData(dest1, anim.imageData_08);
 
-        src1.set(
-          anim.x_00,
-          anim.y_02 - anim._18,
-          anim.w_04,
-          anim.h_06 + anim._18
-        );
-
-        dest0.set(
-          anim.x_00,
-          anim.y_02 + anim.h_06 + anim._18,
-          anim.w_04,
-          -anim._18
-        );
-
-        dest1.set(
-          anim.x_00,
-          anim.y_02,
-          anim.w_04,
-          anim.h_06 + anim._18
-        );
-      }
+      //LAB_800d6804
     }
-
-    //LAB_800d67a8
-    GPU.downloadData(src0, anim.imageData_0c);
-    GPU.downloadData(src1, anim.imageData_08);
-    GPU.uploadData(dest0, anim.imageData_0c);
-    GPU.uploadData(dest1, anim.imageData_08);
-
-    //LAB_800d6804
   }
 
   @Method(0x800d6880L)
@@ -2118,8 +2008,7 @@ public class WMap extends EngineState {
 
   @Method(0x800d8efcL)
   private void initMapAnimation() {
-    final Rect4i size = new Rect4i(448, 0, 64, 64);
-    this.modelAndAnimData_800c66a8.textureAnimation_1c = this.prepareAnimationStruct(size, 0, 3, 1);
+    this.modelAndAnimData_800c66a8.textureAnimation_1c = this.prepareWaterAnimation();
     this.modelAndAnimData_800c66a8.clutYIndex_28 = 0;
 
     if(this.mapState_800c6798.continent_00 == Continent.TIBEROA) {
@@ -2207,7 +2096,7 @@ public class WMap extends EngineState {
 
     //LAB_800d942c
     if(this.mapState_800c6798.continent_00.ordinal() < 9) {
-      this.animateTextures(this.modelAndAnimData_800c66a8.textureAnimation_1c); // water animation
+      this.animateWater(this.modelAndAnimData_800c66a8.textureAnimation_1c);
     }
 
     //LAB_800d945c
