@@ -180,6 +180,20 @@ public class WMap extends EngineState {
     UNUSED_DEALLOC_7
   }
 
+  /** 5 and 9 used when entering location, 6-8 used when canceling. */
+  private enum MapTransitionState {
+    INIT_0,
+    LOAD_FILES_1,
+    BUILD_PROMPT_2,
+    MAIN_LOOP_3,
+    _4,
+    ANIMATE_PROMPT_OUT_5,
+    INIT_MOVEMENT_6,
+    WAIT_7,
+    END_MOVEMENT_8,
+    SET_DEST_9
+  }
+
   private static final Pattern NEWLINE = Pattern.compile("\\n");
   private int tickMainMenuOpenTransition_800c6690;
 
@@ -208,7 +222,21 @@ public class WMap extends EngineState {
   public final MapState100 mapState_800c6798 = new MapState100();
 
   private int cancelLocationEntryDelayTick_800c68a0;
-  private int mapTransitionState_800c68a4; // TODO
+  /**
+   * <ol start="0">
+   *   <li>Init new path/prompt</li>
+   *   <li>Load files</li>
+   *   <li>Build prompt</li>
+   *   <li>Main loop</li>
+   *   <li></li>
+   *   <li>Animate out prompt</li>
+   *   <li>Init forced movement</li>
+   *   <li>Wait for prompt to close</li>
+   *   <li>End forced movement</li>
+   *   <li>Set destination entered</li>
+   * </ol>
+   */
+  private MapTransitionState mapTransitionState_800c68a4;
   private boolean startLocationLabelsActive_800c68a8;
 
   public int encounterAccumulator_800c6ae8;
@@ -881,11 +909,6 @@ public class WMap extends EngineState {
     this.coolonQueenFuryOverlay = null;
 
     this.mapState_800c6798.pathDots.delete();
-
-    if(this.wmapLocationPromptPopup != null) {
-      this.wmapLocationPromptPopup.deallocate();
-      this.wmapLocationPromptPopup = null;
-    }
 
     if(this.coolonPromptPopup != null) {
       this.coolonPromptPopup.deallocate();
@@ -3904,7 +3927,7 @@ public class WMap extends EngineState {
     //LAB_800e5248
     final int placeIndex = locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02;
     switch(this.mapTransitionState_800c68a4) {
-      case 0:
+      case INIT_0:
         final int pathIndexAndReverseDirection = -directionalPathSegmentData_800f2248[this.mapState_800c6798.tempPathSegmentIndices_dc[0]].pathSegmentIndexAndDirection_00;
 
         //LAB_800e52cc
@@ -3933,22 +3956,22 @@ public class WMap extends EngineState {
         textZ_800bdf00 = 13;
         this.mapState_800c6798.submapCutTo_c8 = locations_800f0e34[this.mapState_800c6798.locationIndex_10].submapCutTo_08;
         this.mapState_800c6798.submapSceneTo_ca = locations_800f0e34[this.mapState_800c6798.locationIndex_10].submapSceneTo_0a;
-        this.mapTransitionState_800c68a4 = 1;
+        this.mapTransitionState_800c68a4 = MapTransitionState.LOAD_FILES_1;
 
         if(places_800f0234[locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].name_00 == null) {
-          this.mapTransitionState_800c68a4 = 8;
+          this.mapTransitionState_800c68a4 = MapTransitionState.END_MOVEMENT_8;
         }
 
         //LAB_800e54c4
         break;
 
-      case 1:
+      case LOAD_FILES_1:
         this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & 0xffff_f7ff);
 
         loadDrgnFileSync(0, 5655 + places_800f0234[locations_800f0e34[this.mapState_800c6798.locationIndex_10].placeIndex_02].fileIndex_04, data -> this.loadLocationThumbnailImage(new Tim(data)));
         initTextbox(6, true, 240, 120, 14, 16);
 
-        this.mapTransitionState_800c68a4 = 2;
+        this.mapTransitionState_800c68a4 = MapTransitionState.BUILD_PROMPT_2;
 
         playSound(0, 4, 0, 0, (short)0, (short)0);
 
@@ -3967,10 +3990,10 @@ public class WMap extends EngineState {
         //LAB_800e56b0
         break;
 
-      case 2:
+      case BUILD_PROMPT_2:
         if(isTextboxInState6(6) && (this.filesLoadedFlags_800c66b8.get() & 0x800) != 0) {
           initTextbox(7, false, 240, 71, 13, 7);
-          this.mapTransitionState_800c68a4 = 3;
+          this.mapTransitionState_800c68a4 = MapTransitionState.MAIN_LOOP_3;
 
           // Build Objs
           this.wmapLocationPromptPopup = new WmapPromptPopup(Objects.requireNonNull(places_800f0234[placeIndex].name_00), textZ_800bdf00 * 4.0f)
@@ -4037,7 +4060,7 @@ public class WMap extends EngineState {
         //LAB_800e5700
         break;
 
-      case 3: // Trying to enter an area
+      case MAIN_LOOP_3:
         this.wmapLocationPromptPopup.getShadow().currentBrightness_34 += 0.25f / (3.0f / vsyncMode_8007a3b8);
 
         if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
@@ -4124,7 +4147,7 @@ public class WMap extends EngineState {
           if(this.wmapLocationPromptPopup.getMenuSelectorOptionIndex() == 0) {
             setTextAndTextboxesToUninitialized(6, 1);
             setTextAndTextboxesToUninitialized(7, 0);
-            this.mapTransitionState_800c68a4 = 6;
+            this.mapTransitionState_800c68a4 = MapTransitionState.INIT_MOVEMENT_6;
 
             playSound(0, 3, 0, 0, (short)0, (short)0);
 
@@ -4146,7 +4169,7 @@ public class WMap extends EngineState {
             this.initTransitionAnimation(FadeAnimationType.FADE_OUT);
             setTextAndTextboxesToUninitialized(6, 1);
             setTextAndTextboxesToUninitialized(7, 0);
-            this.mapTransitionState_800c68a4 = 5;
+            this.mapTransitionState_800c68a4 = MapTransitionState.ANIMATE_PROMPT_OUT_5;
 
             playSound(0, 2, 0, 0, (short)0, (short)0);
 
@@ -4182,28 +4205,26 @@ public class WMap extends EngineState {
             //LAB_800e6614
             setTextAndTextboxesToUninitialized(6, 1);
             setTextAndTextboxesToUninitialized(7, 0);
-            this.mapTransitionState_800c68a4 = 6;
+            this.mapTransitionState_800c68a4 = MapTransitionState.INIT_MOVEMENT_6;
           }
         }
 
         //LAB_800e6640
         break;
 
-      case 5:
+      case ANIMATE_PROMPT_OUT_5:
         this.wmapLocationPromptPopup.getShadow().currentBrightness_34 -= 0.5f / (3.0f / vsyncMode_8007a3b8);
         this.wmapLocationPromptPopup.renderHighlight(WmapPromptPopup.HighlightMode.SHADOW);
 
         if(textboxes_800be358[6].state_00 == TextboxState.UNINITIALIZED_0 && textboxes_800be358[7].state_00 == TextboxState.UNINITIALIZED_0 && flEq(this.wmapLocationPromptPopup.getShadow().currentBrightness_34, 0.0f)) {
-          this.mapTransitionState_800c68a4 = 9;
+          this.mapTransitionState_800c68a4 = MapTransitionState.SET_DEST_9;
         }
 
         //LAB_800e66cc
         break;
 
       // Backing out of location entrance prompt, set up for forced movement
-      case 6:
-        this.wmapLocationPromptPopup.deallocate();
-
+      case INIT_MOVEMENT_6:
         if(!flEq(this.mapState_800c6798.playerDestAngle_c0, 0.0f)) {
           this.mapState_800c6798.playerDestAngle_c0 = 0.0f;
           this.mapState_800c6798.facing_1c = 1;
@@ -4216,20 +4237,21 @@ public class WMap extends EngineState {
         //LAB_800e671c
         this.mapState_800c6798.shortForceMovementState_d4 = ForcedMovementState.WALK;
         this.cancelLocationEntryDelayTick_800c68a0 = 0;
-        this.mapTransitionState_800c68a4 = 7;
+        this.mapTransitionState_800c68a4 = MapTransitionState.WAIT_7;
 
-      case 7:
+      case WAIT_7:
         this.cancelLocationEntryDelayTick_800c68a0++;
 
         if(this.cancelLocationEntryDelayTick_800c68a0 >= 9.0f / vsyncMode_8007a3b8) {
-          this.mapTransitionState_800c68a4 = 8;
+          this.mapTransitionState_800c68a4 = MapTransitionState.END_MOVEMENT_8;
         }
 
         //LAB_800e6770
         break;
 
-      case 8:
-        this.mapTransitionState_800c68a4 = 0;
+      case END_MOVEMENT_8:
+        this.wmapLocationPromptPopup.deallocate();
+        this.mapTransitionState_800c68a4 = MapTransitionState.INIT_0;
         this.mapState_800c6798.disableInput_d0 = false;
         this.mapState_800c6798.shortForceMovementState_d4 = ForcedMovementState.NONE;
         this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc = PathSegmentEndpointType.NOT_AT_ENDPOINT;
@@ -4244,7 +4266,7 @@ public class WMap extends EngineState {
         //LAB_800e67f8
         break;
 
-      case 9:
+      case SET_DEST_9:
         gameState_800babc8.visitedLocations_17c.set(this.mapState_800c6798.locationIndex_10, true);
 
         //LAB_800e6900
@@ -4269,6 +4291,7 @@ public class WMap extends EngineState {
 
         //LAB_800e69c4
         this.mapState_800c6798.disableInput_d0 = false;
+        this.wmapLocationPromptPopup.deallocate();
         break;
     }
     //LAB_800e69d4
@@ -4691,7 +4714,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800e8990
-    this.mapTransitionState_800c68a4 = 0;
+    this.mapTransitionState_800c68a4 = MapTransitionState.INIT_0;
     this.startLocationLabelsActive_800c68a8 = false;
 
     //LAB_800e89a4
