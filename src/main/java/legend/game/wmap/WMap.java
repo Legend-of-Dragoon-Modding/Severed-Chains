@@ -288,7 +288,7 @@ public class WMap extends EngineState {
     this.fadeTransitionTickers_800f01fc[0] = this::tickFadeInTransition;
     this.fadeTransitionTickers_800f01fc[1] = this::tickFadeOutTransition;
   }
-  // TODO fix textbox disappearing before shadow
+
   private int currentWmapEffect_800f6598;
   private int previousWmapEffect_800f659c;
 
@@ -881,6 +881,11 @@ public class WMap extends EngineState {
     this.coolonQueenFuryOverlay = null;
 
     this.mapState_800c6798.pathDots.delete();
+
+    if(this.wmapLocationPromptPopup != null) {
+      this.wmapLocationPromptPopup.deallocate();
+      this.wmapLocationPromptPopup = null;
+    }
 
     if(this.coolonPromptPopup != null) {
       this.coolonPromptPopup.deallocate();
@@ -4117,8 +4122,8 @@ public class WMap extends EngineState {
         //LAB_800e62d4
         if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
           if(this.wmapLocationPromptPopup.getMenuSelectorOptionIndex() == 0) {
-            setTextAndTextboxesToUninitialized(6, 0);
-            setTextAndTextboxesToUninitialized(7, 1);
+            setTextAndTextboxesToUninitialized(6, 1);
+            setTextAndTextboxesToUninitialized(7, 0);
             this.mapTransitionState_800c68a4 = 6;
 
             playSound(0, 3, 0, 0, (short)0, (short)0);
@@ -4139,8 +4144,8 @@ public class WMap extends EngineState {
           } else {
             //LAB_800e640c
             this.initTransitionAnimation(FadeAnimationType.FADE_OUT);
-            setTextAndTextboxesToUninitialized(6, 0);
-            setTextAndTextboxesToUninitialized(7, 1);
+            setTextAndTextboxesToUninitialized(6, 1);
+            setTextAndTextboxesToUninitialized(7, 0);
             this.mapTransitionState_800c68a4 = 5;
 
             playSound(0, 2, 0, 0, (short)0, (short)0);
@@ -4175,8 +4180,8 @@ public class WMap extends EngineState {
             }
 
             //LAB_800e6614
-            setTextAndTextboxesToUninitialized(6, 0);
-            setTextAndTextboxesToUninitialized(7, 1);
+            setTextAndTextboxesToUninitialized(6, 1);
+            setTextAndTextboxesToUninitialized(7, 0);
             this.mapTransitionState_800c68a4 = 6;
           }
         }
@@ -4189,7 +4194,6 @@ public class WMap extends EngineState {
         this.wmapLocationPromptPopup.renderHighlight(WmapPromptPopup.HighlightMode.SHADOW);
 
         if(textboxes_800be358[6].state_00 == TextboxState.UNINITIALIZED_0 && textboxes_800be358[7].state_00 == TextboxState.UNINITIALIZED_0 && flEq(this.wmapLocationPromptPopup.getShadow().currentBrightness_34, 0.0f)) {
-          this.wmapLocationPromptPopup.deallocate();
           this.mapTransitionState_800c68a4 = 9;
         }
 
