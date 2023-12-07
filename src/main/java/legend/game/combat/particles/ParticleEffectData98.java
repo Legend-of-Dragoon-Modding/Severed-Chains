@@ -1,8 +1,10 @@
 package legend.game.combat.particles;
 
+import legend.core.gte.MV;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.memory.types.QuadConsumer;
 import legend.core.memory.types.TriConsumer;
+import legend.core.opengl.Obj;
 import legend.game.combat.effects.Effect;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerParams;
@@ -59,9 +61,19 @@ public class ParticleEffectData98 implements Effect {
   public TriConsumer<EffectManagerData6c<EffectManagerParams.ParticleType>, ParticleEffectData98, ParticleEffectInstance94> particleInstanceReconstructorCallback_90;
   public ParticleEffectData98 next_94;
 
+  public Obj obj;
+  public final MV transforms = new MV();
+
   public ParticleEffectData98(final int count) {
     this.countParticleInstance_50 = count;
     this.particleArray_68 = new ParticleEffectInstance94[count];
     Arrays.setAll(this.particleArray_68, ParticleEffectInstance94::new);
+  }
+
+  public void delete() {
+    if(this.obj != null) {
+      this.obj.delete();
+      this.obj = null;
+    }
   }
 }
