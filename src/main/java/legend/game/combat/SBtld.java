@@ -33,7 +33,7 @@ import static legend.game.combat.Bttl_800c.deffManager_800c693c;
 import static legend.game.combat.Bttl_800c.getCombatant;
 import static legend.game.combat.Bttl_800c.melbuStageIndices_800fb064;
 import static legend.game.combat.Bttl_800c.scriptState_800c674c;
-import static legend.game.combat.Bttl_800c.script_800c66fc;
+import static legend.game.combat.Bttl_800c.playerBattleScript_800c66fc;
 import static legend.game.combat.Bttl_800e.applyStageAmbiance;
 import static legend.game.combat.Monsters.enemyRewards_80112868;
 import static legend.game.combat.environment.Ambiance.dragoonSpaceAmbiance_80114a10;
@@ -45,7 +45,7 @@ public class SBtld {
   public static void loadStageDataAndControllerScripts() {
     currentStageData_800c6718 = stageData_80109a98[encounterId_800bb0f8];
 
-    script_800c66fc = new ScriptFile("player_combat_script", Unpacker.loadFile("player_combat_script").getBytes());
+    playerBattleScript_800c66fc = new ScriptFile("player_combat_script", Unpacker.loadFile("player_combat_script").getBytes());
 
     loadDrgnFile(1, "401", SBtld::combatControllerScriptLoaded);
   }

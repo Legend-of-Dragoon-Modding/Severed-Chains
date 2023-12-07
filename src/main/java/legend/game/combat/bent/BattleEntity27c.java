@@ -175,6 +175,7 @@ public abstract class BattleEntity27c extends BattleObject {
   private final Vector3i colour = new Vector3i(0x80, 0x80, 0x80);
 
   public BattleEntity27c(final BattleEntityType type, final String name) {
+    super(BattleObject.BOBJ);
     this.type = type;
     this.model_148 = new Model124(name);
 

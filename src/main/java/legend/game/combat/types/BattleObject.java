@@ -10,7 +10,11 @@ public abstract class BattleObject {
   public static String EM__ = "EM  ";
   public static String BOBJ = "BOBJ";
 
-  public String magic_00;
+  public final String magic_00;
+
+  protected BattleObject(final String magic) {
+    this.magic_00 = magic;
+  }
 
   public abstract Vector3f getPosition();
   public abstract Vector3f getRotation();

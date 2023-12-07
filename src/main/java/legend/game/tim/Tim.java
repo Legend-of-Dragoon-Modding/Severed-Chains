@@ -70,10 +70,10 @@ public class Tim {
   }
 
   public void uploadToGpu() {
-    GPU.uploadData(this.getImageRect(), this.getImageData());
+    GPU.uploadData15(this.getImageRect(), this.getImageData());
 
     if(this.hasClut()) {
-      GPU.uploadData(this.getClutRect(), this.getClutData());
+      GPU.uploadData15(this.getClutRect(), this.getClutData());
     }
   }
 }

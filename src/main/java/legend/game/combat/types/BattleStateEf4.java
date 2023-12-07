@@ -1,14 +1,25 @@
 package legend.game.combat.types;
 
+import legend.core.memory.Method;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.types.battlestate.AdditionExtra04;
 import legend.game.combat.types.battlestate.SpecialEffects20;
 import legend.game.combat.types.battlestate.Status04;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptState;
+import legend.game.types.TmdAnimationFile;
+import legend.game.unpacker.FileData;
 
 import java.util.Arrays;
+
+import static legend.game.Scus94491BpeSegment.loadDrgnFile;
+import static legend.game.Scus94491BpeSegment.simpleRand;
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+import static legend.game.combat.Bttl_800c.aliveBentCount_800c669c;
+import static legend.game.combat.Bttl_800c.allBentCount_800c66d0;
+import static legend.game.combat.Bttl_800c.currentAssetIndex_800c66b4;
 
 public class BattleStateEf4 {
   public final SpecialEffects20[] specialEffect_00 = new SpecialEffects20[10];
@@ -301,10 +312,10 @@ public class BattleStateEf4 {
   public int _574;
   public int _578;
   public int _57c;
-  public final BttlStruct08[] _580 = new BttlStruct08[0x100];
+  public final BattleAsset08[] assets_580 = new BattleAsset08[0x100];
   // This was used for storing animation files in VRAM
 //  public final int[] y_d80 = new int[3];
-  public final BattleStateEf4Sub08[] _d8c = new BattleStateEf4Sub08[16];
+  public final CompressedAsset08[] compressedAssets_d8c = new CompressedAsset08[16];
   public final ScriptState<? extends BattleEntity27c>[] allBents_e0c = new ScriptState[13];
   public final ScriptState<PlayerBattleEntity>[] charBents_e40 = new ScriptState[4];
   public final ScriptState<MonsterBattleEntity>[] monsterBents_e50 = new ScriptState[10];
@@ -323,7 +334,208 @@ public class BattleStateEf4 {
     Arrays.setAll(this.specialEffect_00, i -> new SpecialEffects20());
     Arrays.setAll(this.status_384, i -> new Status04());
     Arrays.setAll(this.additionExtra_474, AdditionExtra04::new);
-    Arrays.setAll(this._d8c, i -> new BattleStateEf4Sub08());
-    Arrays.setAll(this._580, i -> new BttlStruct08());
+    Arrays.setAll(this.compressedAssets_d8c, i -> new CompressedAsset08());
+    Arrays.setAll(this.assets_580, i -> new BattleAsset08());
+  }
+
+  public void calculateInitialTurnValues() {
+    for(int i = 0; i < allBentCount_800c66d0.get(); i++) {
+      final ScriptState<? extends BattleEntity27c> bentState = this.allBents_e0c[i];
+      final BattleEntity27c bent = bentState.innerStruct_00;
+
+      if((bentState.storage_44[7] & 0x4) != 0) {
+        bent.turnValue_4c = simpleRand() * 0xd9 / 0x10000;
+      } else {
+        //LAB_800c7b3c
+        bent.turnValue_4c = simpleRand() * 0xa7 / 0x10000 + 0x32;
+      }
+
+      //LAB_800c7b68
+    }
+  }
+
+  @Method(0x800c7e24L)
+  public ScriptState<? extends BattleEntity27c> getForcedTurnBent() {
+    //LAB_800c7e54
+    for(int i = 0; i < aliveBentCount_800c669c.get(); i++) {
+      final ScriptState<? extends BattleEntity27c> bentState = this.aliveBents_e78[i];
+      if(bentState != null && (bentState.storage_44[7] & 0x20) != 0) {
+        return bentState;
+      }
+
+      //LAB_800c7e8c
+    }
+
+    //LAB_800c7e98
+    return null;
+  }
+
+  @Method(0x800c7ea0L)
+  public ScriptState<? extends BattleEntity27c> getCurrentTurnBent() {
+    //LAB_800c7ee4
+    for(int s4 = 0; s4 < 32; s4++) {
+      //LAB_800c7ef0
+      int highestTurnValue = 0;
+      int highestCombatantindex = 0;
+      for(int combatantIndex = 0; combatantIndex < aliveBentCount_800c669c.get(); combatantIndex++) {
+        final int turnValue = this.aliveBents_e78[combatantIndex].innerStruct_00.turnValue_4c;
+
+        if(highestTurnValue <= turnValue) {
+          highestTurnValue = turnValue;
+          highestCombatantindex = combatantIndex;
+        }
+
+        //LAB_800c7f30
+      }
+
+      //LAB_800c7f40
+      if(highestTurnValue > 0xd9) {
+        final ScriptState<? extends BattleEntity27c> state = this.aliveBents_e78[highestCombatantindex];
+        state.innerStruct_00.turnValue_4c = highestTurnValue - 0xd9;
+
+        if((state.storage_44[7] & 0x4) == 0) {
+          gameState_800babc8._b8++;
+        }
+
+        //LAB_800c7f9c
+        return state;
+      }
+
+      //LAB_800c7fa4
+      //LAB_800c7fb0
+      for(int combatantIndex = 0; combatantIndex < aliveBentCount_800c669c.get(); combatantIndex++) {
+        final BattleEntity27c bent = this.aliveBents_e78[combatantIndex].innerStruct_00;
+        highestTurnValue = bent.stats.getStat(CoreMod.SPEED_STAT.get()).get() * (simpleRand() + 0x4_4925);
+        final int v1 = (int)(highestTurnValue * 0x35c2_9183L >>> 32) >> 16; //TODO _pretty_ sure this is roughly /312,110 (seems oddly specific?)
+        bent.turnValue_4c += v1;
+      }
+
+      //LAB_800c8028
+    }
+
+    //LAB_800c8040
+    return this.aliveCharBents_eac[0];
+  }
+
+  @Method(0x800ca31cL)
+  public TmdAnimationFile getAnimationGlobalAsset(final CombatantStruct1a8 combatant, final int animIndex) {
+    final CombatantAsset0c asset = combatant.assets_14[animIndex];
+
+    if(asset instanceof final CombatantAsset0c.AnimType animType) {
+      return animType.anim_00;
+    }
+
+    if(asset instanceof final CombatantAsset0c.GlobalAssetType globalAssetType) {
+      return new TmdAnimationFile(this.getGlobalAsset(globalAssetType.assetIndex_00).data_00);
+    }
+
+    if(asset instanceof CombatantAsset0c.BpeType || asset instanceof CombatantAsset0c.TimType) {
+      if(asset.isLoaded_0b && asset.assetIndex_04 >= 0) {
+        return new TmdAnimationFile(this.getGlobalAsset(asset.assetIndex_04).data_00);
+      }
+    }
+
+    return null;
+  }
+
+  @Method(0x800ca9b4L)
+  public void deallocateLoadedGlobalAssets() {
+    //LAB_800ca9d8
+    for(int assetIndex = 0; assetIndex < 0x100; assetIndex++) {
+      final BattleAsset08 asset = this.assets_580[assetIndex];
+      if(asset.state_04 >= 2) {
+        asset.state_04 = 0;
+      }
+    }
+  }
+
+  @Method(0x800caa20L)
+  public int getFreeGlobalAssetIndex() {
+    currentAssetIndex_800c66b4.incr();
+    if(currentAssetIndex_800c66b4.get() >= 0x100) {
+      currentAssetIndex_800c66b4.set(0);
+    }
+
+    //LAB_800caa44
+    //LAB_800caa64
+    for(int i = currentAssetIndex_800c66b4.get(); i < 0x100; i++) {
+      final BattleAsset08 asset = this.assets_580[i];
+
+      if(asset.state_04 == 0) {
+        //LAB_800caacc
+        currentAssetIndex_800c66b4.set(i);
+        asset.data_00 = null;
+        asset.state_04 = 1;
+        return i;
+      }
+    }
+
+    //LAB_800caa88
+    //LAB_800caaa4
+    for(int i = 0; i < currentAssetIndex_800c66b4.get(); i++) {
+      final BattleAsset08 asset = this.assets_580[i];
+
+      if(asset.state_04 == 0) {
+        //LAB_800caacc
+        currentAssetIndex_800c66b4.set(i);
+        asset.data_00 = null;
+        asset.state_04 = 1;
+        return i;
+      }
+    }
+
+    //LAB_800caac4
+    throw new RuntimeException("Failed to find free slot");
+  }
+
+  @Method(0x800caae4L)
+  public int loadGlobalAsset(final FileData fileData, final int state) {
+    final int index = this.getFreeGlobalAssetIndex();
+
+    final BattleAsset08 asset = this.assets_580[index];
+    asset.data_00 = fileData;
+    asset.state_04 = state;
+
+    //LAB_800cab3c
+    return index;
+  }
+
+  @Method(0x800cac38L)
+  public int loadGlobalAsset(final int drgnIndex, final int fileIndex) {
+    final int index = this.getFreeGlobalAssetIndex();
+
+    loadDrgnFile(drgnIndex, fileIndex, data -> this.globalAssetLoaded(data, index));
+
+    //LAB_800cac98
+    return index;
+  }
+
+  @Method(0x800cacb0L)
+  public void globalAssetLoaded(final FileData data, final int assetIndex) {
+    final BattleAsset08 asset = this.assets_580[assetIndex];
+
+    if(asset.state_04 == 1) {
+      asset.data_00 = data;
+      asset.state_04 = 2;
+    }
+
+    //LAB_800cad04
+  }
+
+  @Method(0x800cad50L)
+  public BattleAsset08 getGlobalAsset(final int assetIndex) {
+    return this.assets_580[assetIndex];
+  }
+
+  @Method(0x800cad64L)
+  public void deallocateGlobalAsset(final int assetIndex) {
+    final BattleAsset08 asset = this.assets_580[assetIndex];
+
+    if(asset.state_04 != 1) {
+      asset.data_00 = null;
+    }
+
+    //LAB_800cada8
+    asset.state_04 = 0;
   }
 }

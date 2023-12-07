@@ -639,10 +639,10 @@ public class Credits extends EngineState {
     credit.width_0e = imageRect.w;
     credit.height_10 = imageRect.h;
 
-    GPU.uploadData(imageRect, tim.getImageData());
+    GPU.uploadData15(imageRect, tim.getImageData());
 
     if(tim.hasClut()) {
-      GPU.uploadData(new Rect4i(896, creditSlot, 16, 1), tim.getClutData());
+      GPU.uploadData15(new Rect4i(896, creditSlot, 16, 1), tim.getClutData());
     }
 
     //LAB_800ed32c

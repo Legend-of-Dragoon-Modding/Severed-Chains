@@ -3554,7 +3554,7 @@ public class SMap extends EngineState {
         final Rect4i imageRect = tim.getImageRect();
         imageRect.h = 128;
 
-        GPU.uploadData(imageRect, tim.getImageData());
+        GPU.uploadData15(imageRect, tim.getImageData());
 
         final ScriptState<Void> submapController = SCRIPTS.allocateScriptState(0, "Submap controller", 0, null);
         this.submapControllerState_800c6740 = submapController;
@@ -4511,7 +4511,7 @@ public class SMap extends EngineState {
   @Method(0x800e4e5cL)
   private void FUN_800e4e5c() {
     //LAB_800e4ecc
-    GPU.uploadData(new Rect4i(640, 0, 368, 240), GPU.getDisplayBuffer().getData());
+    GPU.uploadData24(new Rect4i(640, 0, 368, 240), GPU.getDisplayBuffer().getData());
   }
 
   @Method(0x800e4f8cL)
@@ -6963,7 +6963,7 @@ public class SMap extends EngineState {
 
       case 0x2 -> {
         if(this.submapCutModelAndAnimLoaded_800d4bdc && this.submapTextureAndMatrixLoaded_800d4be0) {
-          GPU.uploadData(new Rect4i(1008, 256, this.submapCutTexture.getImageRect().w, this.submapCutTexture.getImageRect().h), this.submapCutTexture.getImageData());
+          GPU.uploadData15(new Rect4i(1008, 256, this.submapCutTexture.getImageRect().w, this.submapCutTexture.getImageRect().h), this.submapCutTexture.getImageData());
           this.submapCutMatrix_800d4bb0.set(this.submapCutMatrix);
 
           this.submapModelLoadingStage_800f9e5a++;
@@ -6981,7 +6981,7 @@ public class SMap extends EngineState {
           }
 
           this.FUN_800f4244(this.theEndTim_800d4bf0, this.tpage_800f9e5c, this.clut_800f9e5e, Translucency.B_PLUS_F);
-          GPU.downloadData(this._800d6b48, this._800d4bd4);
+          GPU.downloadData15(this._800d6b48, this._800d4bd4);
         }
 
         this.submapModelLoadingStage_800f9e5a++;
@@ -7010,7 +7010,7 @@ public class SMap extends EngineState {
 
         if(this._800d4bd0 != null && this._800d4bd4 != null) {
           this.FUN_800ee9e0(this._800d4bd4, this._800d4bd0, this.tpage_800f9e5c, this.clut_800f9e5e);
-          GPU.uploadData(this._800d6b48, this._800d4bd4);
+          GPU.uploadData15(this._800d6b48, this._800d4bd4);
         }
       }
     }
@@ -7387,7 +7387,7 @@ public class SMap extends EngineState {
       imageAddress.writeShort(i * 0x2, 0x8000);
     }
 
-    GPU.uploadData(imageRect, imageAddress);
+    GPU.uploadData15(imageRect, imageAddress);
   }
 
   @Method(0x800ef034L)
@@ -9532,13 +9532,13 @@ public class SMap extends EngineState {
     if(tim.hasClut()) {
       final Rect4i clutRect = tim.getClutRect();
       clutOut.set(clutRect.y << 6 | (clutRect.x & 0x3f0) >> 4);
-      GPU.uploadData(clutRect, tim.getClutData());
+      GPU.uploadData15(clutRect, tim.getClutData());
     }
 
     //LAB_800f42d0
     final Rect4i imageRect = tim.getImageRect();
     tpageOut.set(GetTPage(Bpp.values()[tim.getFlags() & 0b11], transMode, imageRect.x, imageRect.y));
-    GPU.uploadData(imageRect, tim.getImageData());
+    GPU.uploadData15(imageRect, tim.getImageData());
 
     //LAB_800f4338
   }

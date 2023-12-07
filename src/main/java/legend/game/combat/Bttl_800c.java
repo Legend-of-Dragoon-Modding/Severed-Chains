@@ -62,12 +62,13 @@ import legend.game.combat.environment.EncounterData38;
 import legend.game.combat.environment.NameAndPortraitDisplayMetrics0c;
 import legend.game.combat.environment.SpBarBorderMetrics04;
 import legend.game.combat.environment.StageData2c;
+import legend.game.combat.types.BattleAsset08;
 import legend.game.combat.types.BattleHudStatLabelMetrics0c;
 import legend.game.combat.types.BattleObject;
 import legend.game.combat.types.BattleStateEf4;
-import legend.game.combat.types.BttlStruct08;
 import legend.game.combat.types.CombatantAsset0c;
 import legend.game.combat.types.CombatantStruct1a8;
+import legend.game.combat.types.CompressedAsset08;
 import legend.game.combat.types.DragoonSpells09;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.combat.ui.BattleDisplayStats144;
@@ -129,7 +130,6 @@ import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.getCharacterName;
 import static legend.game.Scus94491BpeSegment.loadDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
-import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadEncounterSoundsAndMusic;
 import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadMcq;
@@ -232,11 +232,10 @@ public final class Bttl_800c {
   public static final IntRef currentStage_800c66a4 = MEMORY.ref(4, 0x800c66a4L, IntRef::new);
 
   public static final IntRef _800c66a8 = MEMORY.ref(4, 0x800c66a8L, IntRef::new);
-  public static final ShortRef _800c66ac = MEMORY.ref(2, 0x800c66acL, ShortRef::new);
-
+  public static final IntRef currentCompressedAssetIndex_800c66ac = MEMORY.ref(4, 0x800c66acL, IntRef::new);
   public static final IntRef currentCameraPositionIndicesIndex_800c66b0 = MEMORY.ref(4, 0x800c66b0L, IntRef::new);
 
-  public static final IntRef _800c66b4 = MEMORY.ref(4, 0x800c66b4L, IntRef::new);
+  public static final IntRef currentAssetIndex_800c66b4 = MEMORY.ref(4, 0x800c66b4L, IntRef::new);
   public static final BoolRef stageHasModel_800c66b8 = MEMORY.ref(1, 0x800c66b8L, BoolRef::new);
   /** Character scripts deallocated? */
   public static final BoolRef combatDisabled_800c66b9 = MEMORY.ref(1, 0x800c66b9L, BoolRef::new);
@@ -249,7 +248,7 @@ public final class Bttl_800c {
   public static final IntRef allBentCount_800c66d0 = MEMORY.ref(4, 0x800c66d0L, IntRef::new);
   public static final BoolRef shouldRenderMcq_800c66d4 = MEMORY.ref(1, 0x800c66d4L, BoolRef::new);
 
-  public static ScriptFile script_800c66fc;
+  public static ScriptFile playerBattleScript_800c66fc;
 
   public static final IntRef _800c6700 = MEMORY.ref(4, 0x800c6700L, IntRef::new);
   public static final IntRef _800c6704 = MEMORY.ref(4, 0x800c6704L, IntRef::new);
@@ -1267,7 +1266,6 @@ public final class Bttl_800c {
       battleState_8006e398.allBents_e0c[allBentCount_800c66d0.get()] = state;
       battleState_8006e398.monsterBents_e50[monsterCount_800c6768.get()] = state;
       final BattleEntity27c data = state.innerStruct_00;
-      data.magic_00 = BattleObject.BOBJ;
       data.charId_272 = charIndex;
       data.bentSlot_274 = allBentCount_800c66d0.get();
       data.charSlot_276 = monsterCount_800c6768.get();
@@ -1302,11 +1300,11 @@ public final class Bttl_800c {
     }
 
     //LAB_800fbde8
-    final int[] charIndices = new int[charCount_800c677c.get()];
+    final int[] combatantIndices = new int[charCount_800c677c.get()];
 
     //LAB_800fbe18
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      charIndices[charSlot] = addCombatant(0x200 + gameState_800babc8.charIds_88[charSlot] * 2, charSlot);
+      combatantIndices[charSlot] = addCombatant(0x200 + gameState_800babc8.charIds_88[charSlot] * 2, charSlot);
     }
 
     //LAB_800fbe4c
@@ -1320,13 +1318,12 @@ public final class Bttl_800c {
       battleState_8006e398.allBents_e0c[allBentCount_800c66d0.get()] = state;
       battleState_8006e398.charBents_e40[charSlot] = state;
       final PlayerBattleEntity bent = state.innerStruct_00;
-      bent.magic_00 = BattleObject.BOBJ;
       bent.element = characterElements_800c706c[charIndex].get();
-      bent.combatant_144 = getCombatant((short)charIndices[charSlot]);
+      bent.combatant_144 = getCombatant((short)combatantIndices[charSlot]);
       bent.charId_272 = charIndex;
       bent.bentSlot_274 = allBentCount_800c66d0.get();
       bent.charSlot_276 = charSlot;
-      bent.combatantIndex_26c = charIndices[charSlot];
+      bent.combatantIndex_26c = combatantIndices[charSlot];
       bent.model_148.coord2_14.coord.transfer.x = charCount_800c677c.get() > 2 && charSlot == 0 ? 0x900 : 0xa00;
       bent.model_148.coord2_14.coord.transfer.y = 0.0f;
       // Alternates placing characters to the right and left of the main character (offsets by -0x400 for even character counts)
@@ -1350,8 +1347,9 @@ public final class Bttl_800c {
 
     //LAB_800fc030
     for(int i = 0; i < combatantCount_800c66a0.get(); i++) {
-      if(getCombatant(i).charSlot_19c < 0) { // I think this means it's not a player
-        loadCombatantTmdAndAnims(i);
+      final CombatantStruct1a8 combatant = getCombatant(i);
+      if(combatant.charSlot_19c < 0) { // I think this means it's not a player
+        loadCombatantTmdAndAnims(combatant);
       }
 
       //LAB_800fc050
@@ -1360,7 +1358,7 @@ public final class Bttl_800c {
     //LAB_800fc064
     //LAB_800fc09c
     for(int i = 0; i < charCount_800c677c.get(); i++) {
-      combatants_8005e398[battleState_8006e398.charBents_e40[i].innerStruct_00.combatantIndex_26c].flags_19e |= 0x2a;
+      battleState_8006e398.charBents_e40[i].innerStruct_00.combatant_144.flags_19e |= 0x2a;
     }
 
     //LAB_800fc104
@@ -1378,7 +1376,7 @@ public final class Bttl_800c {
     final BattleEntity27c data = battleState_8006e398.charBents_e40[charSlot].innerStruct_00;
 
     //LAB_800fc298
-    combatantTmdAndAnimLoadedCallback(files, data.combatantIndex_26c, false);
+    combatantTmdAndAnimLoadedCallback(files, data.combatant_144, false);
 
     //LAB_800fc34c
     battleFlags_800bc960 |= 0x4;
@@ -1398,15 +1396,15 @@ public final class Bttl_800c {
 
     //LAB_800fc434
     for(int i = 0; i < combatantCount_800c66a0.get(); i++) {
-      final CombatantStruct1a8 a0 = getCombatant(i);
+      final CombatantStruct1a8 combatant = getCombatant(i);
 
-      if(a0.charSlot_19c < 0) {
-        final int enemyIndex = a0.charIndex_1a2 & 0x1ff;
+      if(combatant.charSlot_19c < 0) {
+        final int enemyIndex = combatant.charIndex_1a2 & 0x1ff;
 
         //LAB_800fc464
         for(int enemySlot = 0; enemySlot < 3; enemySlot++) {
           if((s2.encounterData_00.enemyIndices_00[enemySlot] & 0x1ff) == enemyIndex && files.get(enemySlot).hasVirtualSize()) {
-            loadCombatantTim(i, files.get(enemySlot));
+            loadCombatantTim(combatant, files.get(enemySlot));
             break;
           }
         }
@@ -1429,7 +1427,7 @@ public final class Bttl_800c {
   @Method(0x800fc548L)
   public static void loadCharacterTim(final FileData file, final int charSlot) {
     final BattleEntity27c bent = battleState_8006e398.charBents_e40[charSlot].innerStruct_00;
-    loadCombatantTim(bent.combatantIndex_26c, file);
+    loadCombatantTim(bent.combatant_144, file);
   }
 
   /** Pulled from S_ITEM */
@@ -1452,7 +1450,7 @@ public final class Bttl_800c {
 
     //LAB_800c79a8
     for(int combatantIndex = 0; combatantIndex < combatantCount_800c66a0.get(); combatantIndex++) {
-      loadAttackAnimations(combatantIndex);
+      loadAttackAnimations(combatants_8005e398[combatantIndex]);
     }
 
     //LAB_800c79c8
@@ -1478,27 +1476,9 @@ public final class Bttl_800c {
   public static void calculateInitialTurnValues() {
     if(_800c66a8.get() != 0) {
       battleFlags_800bc960 |= 0x10;
-
-      //LAB_800c7ae4
-      for(int i = 0; i < allBentCount_800c66d0.get(); i++) {
-        final ScriptState<? extends BattleEntity27c> bentState = battleState_8006e398.allBents_e0c[i];
-        final BattleEntity27c bent = bentState.innerStruct_00;
-
-        if((bentState.storage_44[7] & 0x4) != 0) {
-          bent.turnValue_4c = simpleRand() * 0xd9 / 0x10000;
-        } else {
-          //LAB_800c7b3c
-          bent.turnValue_4c = simpleRand() * 0xa7 / 0x10000 + 0x32;
-        }
-
-        //LAB_800c7b68
-      }
-
-      //LAB_800c7b80
+      battleState_8006e398.calculateInitialTurnValues();
       pregameLoadingStage_800bb10c.incr();
     }
-
-    //LAB_800c7b9c
   }
 
   @Method(0x800c7bb8L)
@@ -1518,21 +1498,19 @@ public final class Bttl_800c {
 
       if(aliveCharCount_800c6760.get() > 0) {
         //LAB_800c7c98
-        final ScriptState<? extends BattleEntity27c> forcedTurnBent = getForcedTurnBent();
-        forcedTurnBent_800c66bc = forcedTurnBent;
+        forcedTurnBent_800c66bc = battleState_8006e398.getForcedTurnBent();
 
-        if(forcedTurnBent != null) { // A bent has a forced turn
-          forcedTurnBent.storage_44[7] = forcedTurnBent.storage_44[7] & 0xffff_ffdf | 0x1008;
-          currentTurnBent_800c66c8 = forcedTurnBent;
-          EVENTS.postEvent(new BattleEntityTurnEvent<>(forcedTurnBent));
+        if(forcedTurnBent_800c66bc != null) { // A bent has a forced turn
+          forcedTurnBent_800c66bc.storage_44[7] = forcedTurnBent_800c66bc.storage_44[7] & 0xffff_ffdf | 0x1008;
+          currentTurnBent_800c66c8 = forcedTurnBent_800c66bc;
+          EVENTS.postEvent(new BattleEntityTurnEvent<>(forcedTurnBent_800c66bc));
         } else { // Take regular turns
           //LAB_800c7ce8
           if(aliveMonsterCount_800c6758.get() > 0) { // Monsters alive, calculate next bent turn
             //LAB_800c7d3c
-            final ScriptState<? extends BattleEntity27c> currentTurn = getCurrentTurnBent();
-            currentTurnBent_800c66c8 = currentTurn;
-            currentTurn.storage_44[7] |= 0x1008;
-            EVENTS.postEvent(new BattleEntityTurnEvent<>(currentTurn));
+            currentTurnBent_800c66c8 = battleState_8006e398.getCurrentTurnBent();
+            currentTurnBent_800c66c8.storage_44[7] |= 0x1008;
+            EVENTS.postEvent(new BattleEntityTurnEvent<>(currentTurnBent_800c66c8));
 
             //LAB_800c7d74
           } else { // Monsters dead
@@ -1579,69 +1557,6 @@ public final class Bttl_800c {
 
     //LAB_800c7e1c
     return true;
-  }
-
-  @Method(0x800c7e24L)
-  public static ScriptState<? extends BattleEntity27c> getForcedTurnBent() {
-    //LAB_800c7e54
-    for(int i = 0; i < aliveBentCount_800c669c.get(); i++) {
-      final ScriptState<? extends BattleEntity27c> bentState = battleState_8006e398.aliveBents_e78[i];
-      if(bentState != null && (bentState.storage_44[7] & 0x20) != 0) {
-        return bentState;
-      }
-
-      //LAB_800c7e8c
-    }
-
-    //LAB_800c7e98
-    return null;
-  }
-
-  @Method(0x800c7ea0L)
-  public static ScriptState<? extends BattleEntity27c> getCurrentTurnBent() {
-    //LAB_800c7ee4
-    for(int s4 = 0; s4 < 32; s4++) {
-      //LAB_800c7ef0
-      int highestTurnValue = 0;
-      int highestCombatantindex = 0;
-      for(int combatantIndex = 0; combatantIndex < aliveBentCount_800c669c.get(); combatantIndex++) {
-        final int turnValue = battleState_8006e398.aliveBents_e78[combatantIndex].innerStruct_00.turnValue_4c;
-
-        if(highestTurnValue <= turnValue) {
-          highestTurnValue = turnValue;
-          highestCombatantindex = combatantIndex;
-        }
-
-        //LAB_800c7f30
-      }
-
-      //LAB_800c7f40
-      if(highestTurnValue > 0xd9) {
-        final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.aliveBents_e78[highestCombatantindex];
-        state.innerStruct_00.turnValue_4c = highestTurnValue - 0xd9;
-
-        if((state.storage_44[7] & 0x4) == 0) {
-          gameState_800babc8._b8++;
-        }
-
-        //LAB_800c7f9c
-        return state;
-      }
-
-      //LAB_800c7fa4
-      //LAB_800c7fb0
-      for(int combatantIndex = 0; combatantIndex < aliveBentCount_800c669c.get(); combatantIndex++) {
-        final BattleEntity27c bent = battleState_8006e398.aliveBents_e78[combatantIndex].innerStruct_00;
-        highestTurnValue = bent.stats.getStat(CoreMod.SPEED_STAT.get()).get() * (simpleRand() + 0x4_4925);
-        final int v1 = (int)(highestTurnValue * 0x35c2_9183L >>> 32) >> 16; //TODO _pretty_ sure this is roughly /312,110 (seems oddly specific?)
-        bent.turnValue_4c += v1;
-      }
-
-      //LAB_800c8028
-    }
-
-    //LAB_800c8040
-    return battleState_8006e398.aliveCharBents_eac[0];
   }
 
   @Method(0x800c8068L)
@@ -1718,7 +1633,7 @@ public final class Bttl_800c {
         battlePreloadedEntities_1f8003f4.skyboxObj = null;
       }
 
-      script_800c66fc = null;
+      playerBattleScript_800c66fc = null;
 
       //LAB_800c8314
       scriptDeallocateAllTextboxes(null);
@@ -1754,7 +1669,7 @@ public final class Bttl_800c {
       }
 
       //LAB_800c847c
-      FUN_800ca9b4();
+      battleState_8006e398.deallocateLoadedGlobalAssets();
       deallocateStageDarkeningStorage();
       FUN_800c8748();
 
@@ -1930,10 +1845,10 @@ public final class Bttl_800c {
   public static void loadStageTim(final FileData data) {
     final Tim tim = new Tim(data);
 
-    GPU.uploadData(tim.getImageRect(), tim.getImageData());
+    GPU.uploadData15(tim.getImageRect(), tim.getImageData());
 
     if(tim.hasClut()) {
-      GPU.uploadData(tim.getClutRect(), tim.getClutData());
+      GPU.uploadData15(tim.getClutRect(), tim.getClutData());
     }
 
     //LAB_800c8ccc
@@ -2064,23 +1979,8 @@ public final class Bttl_800c {
     return -1;
   }
 
-  @Method(0x800c90b0L)
-  public static boolean isCombatantModelLoaded(final int combatantIndex) {
-    //LAB_800c9114
-    //LAB_800c9128
-    //LAB_800c912c
-    return (combatants_8005e398[combatantIndex]._1a4 >= 0 || combatants_8005e398[combatantIndex].mrg_00 != null && combatants_8005e398[combatantIndex].mrg_00.get(32).hasVirtualSize()) && isCombatantAssetLoaded(combatantIndex, 0);
-  }
-
-  @Method(0x800c913cL)
-  public static ScriptFile getCombatantScript(final int index) {
-    return combatants_8005e398[index].scriptPtr_10;
-  }
-
   @Method(0x800c9170L)
-  public static void deallocateCombatant(final int combatantIndex) {
-    final CombatantStruct1a8 combatant = combatants_8005e398[combatantIndex];
-
+  public static void deallocateCombatant(final CombatantStruct1a8 combatant) {
     //LAB_800c91bc
     if(combatant.mrg_00 != null) {
       combatant.mrg_00 = null;
@@ -2092,19 +1992,19 @@ public final class Bttl_800c {
     }
 
     if(combatant._1a4 >= 0) {
-      FUN_800cad64(combatant._1a4);
+      battleState_8006e398.deallocateGlobalAsset(combatant._1a4);
     }
 
     //LAB_800c921c
     if(combatant._1a6 >= 0) {
-      FUN_800cad64(combatant._1a6);
+      battleState_8006e398.deallocateGlobalAsset(combatant._1a6);
     }
 
     //LAB_800c9234
     //LAB_800c9238
     for(int i = 0; i < 32; i++) {
       if(combatant.assets_14[i] != null && combatant.assets_14[i]._09 != 0) {
-        FUN_800c9c7c(combatantIndex, i);
+        FUN_800c9c7c(combatant, i);
       }
 
       //LAB_800c9254
@@ -2114,9 +2014,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c9290L)
-  public static void loadCombatantTmdAndAnims(final int combatantIndex) {
-    final CombatantStruct1a8 combatant = combatants_8005e398[combatantIndex];
-
+  public static void loadCombatantTmdAndAnims(final CombatantStruct1a8 combatant) {
     if(combatant.charIndex_1a2 >= 0) {
       if((combatant.flags_19e & 0x8) == 0) {
         if(combatant.mrg_00 == null) {
@@ -2125,7 +2023,7 @@ public final class Bttl_800c {
           if((combatant.flags_19e & 0x4) == 0) {
             // Enemy TMDs
             final int fileIndex = 3137 + combatant.charIndex_1a2;
-            loadDrgnDir(0, fileIndex, files -> Bttl_800c.combatantTmdAndAnimLoadedCallback(files, combatantIndex, true));
+            loadDrgnDir(0, fileIndex, files -> Bttl_800c.combatantTmdAndAnimLoadedCallback(files, combatant, true));
           } else {
             // Player TMDs
             //LAB_800c9334
@@ -2138,10 +2036,10 @@ public final class Bttl_800c {
               }
 
               final String charName = getCharacterName(charIndex).toLowerCase();
-              loadDir("characters/%s/models/dragoon".formatted(charName), files -> Bttl_800c.combatantTmdAndAnimLoadedCallback(files, combatantIndex, false));
+              loadDir("characters/%s/models/dragoon".formatted(charName), files -> Bttl_800c.combatantTmdAndAnimLoadedCallback(files, combatant, false));
             } else {
               final String charName = getCharacterName(charIndex).toLowerCase();
-              loadDir("characters/%s/models/combat".formatted(charName), files -> Bttl_800c.combatantTmdAndAnimLoadedCallback(files, combatantIndex, false));
+              loadDir("characters/%s/models/combat".formatted(charName), files -> Bttl_800c.combatantTmdAndAnimLoadedCallback(files, combatant, false));
             }
           }
         }
@@ -2152,8 +2050,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c941cL)
-  public static void combatantTmdAndAnimLoadedCallback(final List<FileData> files, final int combatantIndex, final boolean isMonster) {
-    final CombatantStruct1a8 combatant = getCombatant(combatantIndex);
+  public static void combatantTmdAndAnimLoadedCallback(final List<FileData> files, final CombatantStruct1a8 combatant, final boolean isMonster) {
     combatant.flags_19e &= 0xffdf;
 
     if(!isMonster) {
@@ -2172,7 +2069,7 @@ public final class Bttl_800c {
     //LAB_800c94a4
     for(int animIndex = 0; animIndex < 32; animIndex++) {
       if(files.get(animIndex).hasVirtualSize()) {
-        FUN_800c9a80(files.get(animIndex), 1, 0, combatantIndex, animIndex);
+        FUN_800c9a80(files.get(animIndex), 1, 0, combatant, animIndex);
       }
 
       //LAB_800c94cc
@@ -2188,27 +2085,25 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c952cL)
-  public static void FUN_800c952c(final Model124 model, final int combatantIndex) {
-    final CombatantStruct1a8 s0 = combatants_8005e398[combatantIndex];
-
+  public static void FUN_800c952c(final Model124 model, final CombatantStruct1a8 combatant) {
     final CContainer tmd;
-    if(s0._1a4 >= 0) {
-      tmd = new CContainer(model.name, FUN_800cad34(s0._1a4));
+    if(combatant._1a4 >= 0) {
+      tmd = new CContainer(model.name, battleState_8006e398.getGlobalAsset(combatant._1a4).data_00);
     } else {
       //LAB_800c9590
-      if(s0.mrg_00 != null && s0.mrg_00.get(32).hasVirtualSize()) {
-        tmd = new CContainer(model.name, s0.mrg_00.get(32));
+      if(combatant.mrg_00 != null && combatant.mrg_00.get(32).hasVirtualSize()) {
+        tmd = new CContainer(model.name, combatant.mrg_00.get(32));
       } else {
         throw new RuntimeException("anim undefined");
       }
     }
 
     //LAB_800c95bc
-    s0.tmd_08 = tmd;
+    combatant.tmd_08 = tmd;
 
-    final TmdAnimationFile anim = FUN_800ca31c(combatantIndex, 0);
-    if((s0.flags_19e & 0x4) != 0) {
-      final BattlePreloadedEntities_18cb0.Rendering1298 a0_0 = battlePreloadedEntities_1f8003f4._9ce8[s0.charSlot_19c];
+    final TmdAnimationFile anim = battleState_8006e398.getAnimationGlobalAsset(combatant, 0);
+    if((combatant.flags_19e & 0x4) != 0) {
+      final BattlePreloadedEntities_18cb0.Rendering1298 a0_0 = battlePreloadedEntities_1f8003f4._9ce8[combatant.charSlot_19c];
 
       a0_0.dobj2s_00 = new ModelPart10[tmd.tmdPtr_00.tmd.header.nobj];
       Arrays.setAll(a0_0.dobj2s_00, i -> new ModelPart10());
@@ -2216,10 +2111,10 @@ public final class Bttl_800c {
       model.modelParts_00 = a0_0.dobj2s_00;
 
       final int shadowSizeIndex;
-      if((s0.charIndex_1a2 & 0x1) != 0) {
+      if((combatant.charIndex_1a2 & 0x1) != 0) {
         shadowSizeIndex = 9;
       } else {
-        shadowSizeIndex = s0.charIndex_1a2 - 0x200 >>> 1;
+        shadowSizeIndex = combatant.charIndex_1a2 - 0x200 >>> 1;
       }
 
       //LAB_800c9650
@@ -2231,19 +2126,17 @@ public final class Bttl_800c {
 
     for(int i = 0; i < model.modelParts_00.length; i++) {
       model.modelParts_00[i].obj = TmdObjLoader.fromObjTable(
-        "CombatantModel (index " + s0.charSlot_19c + ')' + " (part " + i + ')',
+        "CombatantModel (index " + combatant.charSlot_19c + ')' + " (part " + i + ')',
         tmd.tmdPtr_00.tmd.objTable[i]
       );
     }
 
     //LAB_800c9680
-    s0.assets_14[0]._09++;
+    combatant.assets_14[0]._09++;
   }
 
   @Method(0x800c9708L)
-  public static void loadAttackAnimations(final int combatantIndex) {
-    final CombatantStruct1a8 combatant = combatants_8005e398[combatantIndex];
-
+  public static void loadAttackAnimations(final CombatantStruct1a8 combatant) {
     if(combatant.charIndex_1a2 >= 0 && combatant.mrg_04 == null) {
       combatant.flags_19e |= 0x10;
 
@@ -2251,7 +2144,7 @@ public final class Bttl_800c {
       if((combatant.flags_19e & 0x4) == 0) {
         // Enemy attack animations
         fileIndex = 3593 + combatant.charIndex_1a2;
-        loadDrgnDir(0, fileIndex, files -> Bttl_800c.attackAnimationsLoaded(files, combatantIndex, true, -1));
+        loadDrgnDir(0, fileIndex, files -> attackAnimationsLoaded(files, combatant, true, -1));
       } else {
         //LAB_800c97a4
         final int isDragoon = combatant.charIndex_1a2 & 0x1;
@@ -2272,7 +2165,7 @@ public final class Bttl_800c {
           fileIndex = 4112;
         }
 
-        loadDrgnDir(0, fileIndex, files -> Bttl_800c.attackAnimationsLoaded(files, combatantIndex, false, combatant.charSlot_19c));
+        loadDrgnDir(0, fileIndex, files -> attackAnimationsLoaded(files, combatant, false, combatant.charSlot_19c));
       }
     }
 
@@ -2280,9 +2173,7 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c9898L)
-  public static void attackAnimationsLoaded(final List<FileData> files, final int combatantIndex, final boolean isMonster, final int charSlot) {
-    final CombatantStruct1a8 combatant = getCombatant(combatantIndex);
-
+  public static void attackAnimationsLoaded(final List<FileData> files, final CombatantStruct1a8 combatant, final boolean isMonster, final int charSlot) {
     if(combatant.mrg_04 == null) {
       //LAB_800c9910
       if(!isMonster && files.size() == 64) {
@@ -2290,12 +2181,12 @@ public final class Bttl_800c {
         for(int animIndex = 0; animIndex < 32; animIndex++) {
           if(files.get(32 + animIndex).hasVirtualSize()) {
             if(combatant.assets_14[animIndex] != null && combatant.assets_14[animIndex]._09 != 0) {
-              FUN_800c9c7c(combatantIndex, animIndex);
+              FUN_800c9c7c(combatant, animIndex);
             }
 
             //LAB_800c9974
-            // Type 6 - TIM file (except it's loading animation data into VRAM???) TODO
-            FUN_800c9a80(files.get(32 + animIndex), 6, charSlot, combatantIndex, animIndex);
+            // Type 6 - TIM file (used to load animation data into VRAM)
+            FUN_800c9a80(files.get(32 + animIndex), 6, charSlot, combatant, animIndex);
           }
         }
       }
@@ -2307,11 +2198,11 @@ public final class Bttl_800c {
       for(int animIndex = 0; animIndex < 32; animIndex++) {
         if(files.get(animIndex).hasVirtualSize()) {
           if(combatant.assets_14[animIndex] != null && combatant.assets_14[animIndex]._09 != 0) {
-            FUN_800c9c7c(combatantIndex, animIndex);
+            FUN_800c9c7c(combatant, animIndex);
           }
 
           //LAB_800c9a18
-          FUN_800c9a80(files.get(animIndex), 2, 1, combatantIndex, animIndex);
+          FUN_800c9a80(files.get(animIndex), 2, 1, combatant, animIndex);
         }
 
         //LAB_800c9a34
@@ -2330,11 +2221,11 @@ public final class Bttl_800c {
    *             </ol>
    */
   @Method(0x800c9a80L)
-  public static void FUN_800c9a80(final FileData data, final int type, final int a3, final int combatantIndex, final int animIndex) {
-    CombatantAsset0c s3 = combatants_8005e398[combatantIndex].assets_14[animIndex];
+  public static void FUN_800c9a80(final FileData data, final int type, final int a3, final CombatantStruct1a8 combatant, final int animIndex) {
+    CombatantAsset0c s3 = combatant.assets_14[animIndex];
 
     if(s3 != null) {
-      FUN_800c9c7c(combatantIndex, animIndex);
+      FUN_800c9c7c(combatant, animIndex);
     }
 
     //LAB_800c9b28
@@ -2373,11 +2264,11 @@ public final class Bttl_800c {
       //LAB_800c9b4c
     } else if(type == 3) {
       //LAB_800c9bb0
-      final CombatantAsset0c.IndexType index = new CombatantAsset0c.IndexType(a3);
-      index._08 = -1;
-      index.type_0a = 3;
-      index.isLoaded_0b = true;
-      s3 = index;
+      final CombatantAsset0c.GlobalAssetType asset = new CombatantAsset0c.GlobalAssetType(a3);
+      asset._08 = -1;
+      asset.type_0a = 3;
+      asset.isLoaded_0b = true;
+      s3 = asset;
     } else if(type == 6) {
       //LAB_800c9bcc
       final CombatantAsset0c.TimType tim = new CombatantAsset0c.TimType(data);
@@ -2390,84 +2281,83 @@ public final class Bttl_800c {
     }
 
     //LAB_800c9c44
-    s3.BttlStruct08_index_04 = -1;
-    s3.BattleStructEf4Sub08_index_06 = -1;
+    s3.assetIndex_04 = -1;
+    s3.compressedAssetIndex_06 = -1;
     s3._09 = 0;
 
-    combatants_8005e398[combatantIndex].assets_14[animIndex] = s3;
+    combatant.assets_14[animIndex] = s3;
 
     //LAB_800c9c54
   }
 
   @Method(0x800c9c7cL)
-  public static void FUN_800c9c7c(final int combatantIndex, final int animIndex) {
-    final CombatantAsset0c s0 = combatants_8005e398[combatantIndex].assets_14[animIndex];
+  public static void FUN_800c9c7c(final CombatantStruct1a8 combatant, final int animIndex) {
+    final CombatantAsset0c asset = combatant.assets_14[animIndex];
 
-    if(s0 != null) {
+    if(asset != null) {
       //LAB_800c9cec
-      while(s0._09 > 0) {
-        FUN_800ca194(combatantIndex, animIndex);
+      while(asset._09 > 0) {
+        FUN_800ca194(combatant.assets_14[animIndex]);
       }
 
       //LAB_800c9d04
-      if(s0 instanceof final CombatantAsset0c.IndexType index) {
-        FUN_800cad64(index.index_00);
-      } else if(s0 instanceof final CombatantAsset0c.BpeType bpe) {
+      if(asset instanceof final CombatantAsset0c.GlobalAssetType index) {
+        battleState_8006e398.deallocateGlobalAsset(index.assetIndex_00);
+      } else if(asset instanceof final CombatantAsset0c.BpeType bpe) {
         if(bpe.isLoaded_0b) {
-          final int a0 = bpe.BttlStruct08_index_04;
-          if(a0 >= 0) {
+          if(bpe.assetIndex_04 >= 0) {
             //LAB_800c9d78
-            FUN_800cad64(a0);
+            battleState_8006e398.deallocateGlobalAsset(bpe.assetIndex_04);
           } else {
-            battleState_8006e398._d8c[bpe.BattleStructEf4Sub08_index_06].used_04 = false;
+            battleState_8006e398.compressedAssets_d8c[bpe.compressedAssetIndex_06].used_04 = false;
           }
         }
       }
 
       //LAB_800c9d84
-      combatants_8005e398[combatantIndex].assets_14[animIndex] = null;
+      combatant.assets_14[animIndex] = null;
     }
 
     //LAB_800c9da0
   }
 
   @Method(0x800c9db8L)
-  public static void FUN_800c9db8(final int combatantIndex, final int animIndex, final int a2) {
-    FUN_800c9c7c(combatantIndex, animIndex);
-    FUN_800c9a80(null, 3, a2, combatantIndex, animIndex);
+  public static void FUN_800c9db8(final CombatantStruct1a8 combatant, final int animIndex, final int a2) {
+    FUN_800c9c7c(combatant, animIndex);
+    FUN_800c9a80(null, 3, a2, combatant, animIndex);
   }
 
   @Method(0x800c9e10L)
-  public static boolean FUN_800c9e10(final int combatantIndex, final int animIndex) {
-    final CombatantAsset0c s0 = combatants_8005e398[combatantIndex].assets_14[animIndex];
+  public static boolean FUN_800c9e10(final CombatantStruct1a8 combatant, final int animIndex) {
+    final CombatantAsset0c asset = combatant.assets_14[animIndex];
 
-    if(s0 instanceof final CombatantAsset0c.AnimType animType) {
+    if(asset instanceof final CombatantAsset0c.AnimType animType) {
       return animType.anim_00 != null;
     }
 
-    if(s0 instanceof final CombatantAsset0c.IndexType indexType) {
-      return indexType.index_00 >= 0;
+    if(asset instanceof final CombatantAsset0c.GlobalAssetType globalAssetType) {
+      return globalAssetType.assetIndex_00 >= 0;
     }
 
-    if(s0 instanceof final CombatantAsset0c.BpeType bpeType) {
+    if(asset instanceof final CombatantAsset0c.BpeType bpeType) {
       if(!bpeType.isLoaded_0b) {
-        final int a3 = _800c66ac.get() + 1 & 0xffff_fff0;
-        _800c66ac.set((short)a3);
-        battleState_8006e398._d8c[a3]._00 = bpeType;
-        battleState_8006e398._d8c[a3].used_04 = true;
+        currentCompressedAssetIndex_800c66ac.incr().and(0xf);
+        final int index = currentCompressedAssetIndex_800c66ac.get();
+        battleState_8006e398.compressedAssets_d8c[index].asset_00 = bpeType;
+        battleState_8006e398.compressedAssets_d8c[index].used_04 = true;
         bpeType.isLoaded_0b = true;
-        bpeType.BattleStructEf4Sub08_index_06 = a3;
+        bpeType.compressedAssetIndex_06 = index;
 
-        FUN_800c9fcc(new FileData(Unpacker.decompress(bpeType.bpe_00)), a3);
+        FUN_800c9fcc(new FileData(Unpacker.decompress(bpeType.bpe_00)), battleState_8006e398.compressedAssets_d8c[index]);
       }
 
       return true;
     }
 
-    if(s0 instanceof final CombatantAsset0c.TimType timType) {
+    if(asset instanceof final CombatantAsset0c.TimType timType) {
       if(!timType.isLoaded_0b) {
-        s0.BttlStruct08_index_04 = FUN_800caae4(timType.data, 3);
-        s0.isLoaded_0b = true;
+        asset.assetIndex_04 = battleState_8006e398.loadGlobalAsset(timType.data, 3);
+        asset.isLoaded_0b = true;
       }
 
       //LAB_800c9fb4
@@ -2478,132 +2368,63 @@ public final class Bttl_800c {
   }
 
   @Method(0x800c9fccL)
-  public static void FUN_800c9fcc(final FileData data, final int param) {
-    final CombatantAsset0c s0 = battleState_8006e398._d8c[param]._00;
+  public static void FUN_800c9fcc(final FileData data, final CompressedAsset08 compressedAsset) {
+    final CombatantAsset0c asset = compressedAsset.asset_00;
 
-    if(s0.isLoaded_0b && battleState_8006e398._d8c[param].used_04) {
-      s0.BttlStruct08_index_04 = FUN_800caae4(data, 3);
-      s0.BattleStructEf4Sub08_index_06 = -1;
-      battleState_8006e398._d8c[param].used_04 = false;
+    if(compressedAsset.used_04 && asset.isLoaded_0b) {
+      asset.assetIndex_04 = battleState_8006e398.loadGlobalAsset(data, 3);
+      asset.compressedAssetIndex_06 = -1;
+      compressedAsset.used_04 = false;
     }
 
     //LAB_800ca040
   }
 
-  @Method(0x800ca054L)
-  public static boolean isCombatantAssetLoaded(final int combatantIndex, final int assetIndex) {
-    final CombatantAsset0c asset = combatants_8005e398[combatantIndex].assets_14[assetIndex];
-
-    if(asset instanceof CombatantAsset0c.AnimType || asset instanceof CombatantAsset0c.IndexType) {
-      return true;
-    }
-
-    if(asset instanceof CombatantAsset0c.BpeType || asset instanceof CombatantAsset0c.TimType) {
-      return asset.isLoaded_0b && asset.BttlStruct08_index_04 >= 0;
-    }
-
-    //LAB_800ca0f8
-    return false;
-  }
-
   @Method(0x800ca100L)
-  public static void FUN_800ca100(final Model124 model, final int combatantIndex, final int animIndex) {
-    loadModelStandardAnimation(model, FUN_800ca31c(combatantIndex, animIndex));
-    combatants_8005e398[combatantIndex].assets_14[0]._09++;
+  public static void loadAnimationAssetIntoModel(final Model124 model, final CombatantStruct1a8 combatant, final int animIndex) {
+    loadModelStandardAnimation(model, battleState_8006e398.getAnimationGlobalAsset(combatant, animIndex));
+    combatant.assets_14[0]._09++;
   }
 
   @Method(0x800ca194L)
-  public static boolean FUN_800ca194(final int combatantIndex, final int animIndex) {
-    final CombatantAsset0c s0 = combatants_8005e398[combatantIndex].assets_14[animIndex];
-
-    if(s0 != null) {
-      if(s0._09 > 0) {
-        s0._09--;
+  public static void FUN_800ca194(@Nullable final CombatantAsset0c asset) {
+    if(asset != null) {
+      if(asset._09 > 0) {
+        asset._09--;
       }
 
       //LAB_800ca1f4
-      final int type = s0.type_0a;
-
-      if(type < 4) {
-        return true;
-      }
-
-      if(s0._09 == 0) {
-        if(s0.BttlStruct08_index_04 >= 0) {
-          FUN_800cad64(s0.BttlStruct08_index_04);
+      if(asset.type_0a >= 4 && asset._09 == 0) {
+        if(asset.assetIndex_04 >= 0) {
+          battleState_8006e398.deallocateGlobalAsset(asset.assetIndex_04);
         }
 
         //LAB_800ca240
-        s0.BttlStruct08_index_04 = -1;
-        s0.BattleStructEf4Sub08_index_06 = -1;
-        s0.isLoaded_0b = false;
+        asset.assetIndex_04 = -1;
+        asset.compressedAssetIndex_06 = -1;
+        asset.isLoaded_0b = false;
       }
     }
-
-    //LAB_800ca258
-    //LAB_800ca25c
-    return true;
   }
 
   @Method(0x800ca26cL)
-  public static boolean FUN_800ca26c(final int combatantIndex) {
-    final CombatantStruct1a8 combatant = combatants_8005e398[combatantIndex];
-
+  public static void FUN_800ca26c(final CombatantStruct1a8 combatant) {
     //LAB_800ca2bc
-    boolean s3 = true;
     for(int i = 0; i < 32; i++) {
       if(combatant.assets_14[i] != null && combatant.assets_14[i]._09 == 0) {
-        if(FUN_800ca194(combatantIndex, i)) {
-          s3 = !s3;
-        } else {
-          s3 = false;
-        }
-      }
-
-      //LAB_800ca2e8
-    }
-
-    return s3;
-  }
-
-  @Method(0x800ca31cL)
-  public static TmdAnimationFile FUN_800ca31c(final int combatantIndex, final int animIndex) {
-    final CombatantAsset0c a0_0 = combatants_8005e398[combatantIndex].assets_14[animIndex];
-
-    if(a0_0 instanceof final CombatantAsset0c.AnimType animType) {
-      return animType.anim_00;
-    }
-
-    if(a0_0 instanceof final CombatantAsset0c.IndexType indexType) {
-      final int s0 = indexType.index_00;
-
-      return new TmdAnimationFile(FUN_800cad34(s0));
-    }
-
-    if(a0_0 instanceof CombatantAsset0c.BpeType || a0_0 instanceof CombatantAsset0c.TimType) {
-      if(a0_0.isLoaded_0b) {
-        final int s0 = a0_0.BttlStruct08_index_04;
-
-        if(s0 >= 0) {
-          //LAB_800ca3f4
-          return new TmdAnimationFile(FUN_800cad34(s0));
-        }
+        FUN_800ca194(combatant.assets_14[i]);
       }
     }
-
-    return null;
   }
 
   @Method(0x800ca418L)
-  public static void FUN_800ca418(final int index) {
-    final CombatantStruct1a8 combatant = combatants_8005e398[index];
-
+  public static void FUN_800ca418(final CombatantStruct1a8 combatant) {
     //LAB_800ca488
     //LAB_800ca494
     for(int i = 0; i < 32; i++) {
       if(combatant.assets_14[i] instanceof CombatantAsset0c.AnimType && combatant.assets_14[i].type_0a == 2 || combatant.assets_14[i] instanceof CombatantAsset0c.TimType) {
         //LAB_800ca4c0
-        FUN_800c9c7c(index, i);
+        FUN_800c9c7c(combatant, i);
       }
 
       //LAB_800ca4cc
@@ -2618,17 +2439,14 @@ public final class Bttl_800c {
   }
 
   @Method(0x800ca528L)
-  public static int FUN_800ca528(final int combatantIndex, final int a1) {
-    final CombatantStruct1a8 combatant = combatants_8005e398[combatantIndex];
+  public static int FUN_800ca528(final CombatantStruct1a8 combatant, final int a1) {
     final int oldVal = combatant._1a6;
     combatant._1a6 = a1;
     return oldVal;
   }
 
   @Method(0x800ca55cL)
-  public static void loadCombatantTextures(final int combatantIndex) {
-    final CombatantStruct1a8 combatant = combatants_8005e398[combatantIndex];
-
+  public static void loadCombatantTextures(final CombatantStruct1a8 combatant) {
     if(combatant.charIndex_1a2 >= 0) {
       int fileIndex = gameState_800babc8.charIds_88[combatant.charSlot_19c];
 
@@ -2638,10 +2456,10 @@ public final class Bttl_800c {
         }
 
         final String charName = getCharacterName(fileIndex).toLowerCase();
-        loadFile("characters/%s/textures/dragoon".formatted(charName), files -> Bttl_800c.loadCombatantTim(combatantIndex, files));
+        loadFile("characters/%s/textures/dragoon".formatted(charName), files -> Bttl_800c.loadCombatantTim(combatant, files));
       } else {
         final String charName = getCharacterName(fileIndex).toLowerCase();
-        loadFile("characters/%s/textures/combat".formatted(charName), files -> Bttl_800c.loadCombatantTim(combatantIndex, files));
+        loadFile("characters/%s/textures/combat".formatted(charName), files -> Bttl_800c.loadCombatantTim(combatant, files));
       }
     }
 
@@ -2649,13 +2467,11 @@ public final class Bttl_800c {
   }
 
   @Method(0x800ca75cL)
-  public static void loadCombatantTim(final int combatantIndex, final FileData timFile) {
+  public static void loadCombatantTim(@Nullable final CombatantStruct1a8 combatant, final FileData timFile) {
     final int vramSlot;
 
-    if(combatantIndex >= 0) {
+    if(combatant != null) {
       //LAB_800ca77c
-      final CombatantStruct1a8 combatant = getCombatant(combatantIndex);
-
       if(combatant.vramSlot_1a0 == 0) {
         final int charSlot = combatant.charSlot_19c;
 
@@ -2683,7 +2499,7 @@ public final class Bttl_800c {
     if(vramSlot != 0) {
       //LAB_800ca83c
       final Rect4i combatantTimRect = combatantTimRects_800fa6e0[vramSlot];
-      GPU.uploadData(combatantTimRect, tim.getImageData());
+      GPU.uploadData15(combatantTimRect, tim.getImageData());
 
       if(tim.hasClut()) {
         final Rect4i clutRect = tim.getClutRect();
@@ -2691,7 +2507,7 @@ public final class Bttl_800c {
         clutRect.y = combatantTimRect.y + 240;
 
         //LAB_800ca884
-        GPU.uploadData(clutRect, tim.getClutData());
+        GPU.uploadData15(clutRect, tim.getClutData());
       }
     } else {
       final Rect4i imageRect = tim.getImageRect();
@@ -2737,114 +2553,8 @@ public final class Bttl_800c {
   }
 
   @Method(0x800ca938L)
-  public static int getCombatantVramSlotIndex(final int combatantIndex) {
-    return vramSlotIndices_800fa730[combatants_8005e398[combatantIndex].vramSlot_1a0];
-  }
-
-  @Method(0x800ca9b4L)
-  public static void FUN_800ca9b4() {
-    //LAB_800ca9d8
-    for(int s1 = 0; s1 < 0x100; s1++) {
-      final BttlStruct08 s0 = battleState_8006e398._580[s1];
-      if(s0._04 >= 2) {
-        s0._04 = 0;
-      }
-    }
-  }
-
-  @Method(0x800caa20L)
-  public static int FUN_800caa20() {
-    _800c66b4.add(1);
-    if(_800c66b4.get() >= 0x100) {
-      _800c66b4.set(0);
-    }
-
-    //LAB_800caa44
-    //LAB_800caa64
-    for(int i = _800c66b4.get(); i < 0x100; i++) {
-      final BttlStruct08 a1 = battleState_8006e398._580[i];
-
-      if(a1._04 == 0) {
-        //LAB_800caacc
-        _800c66b4.set(i);
-        a1.data_00 = null;
-        a1._04 = 1;
-        return i;
-      }
-    }
-
-    //LAB_800caa88
-    //LAB_800caaa4
-    for(int i = 0; i < _800c66b4.get(); i++) {
-      final BttlStruct08 a1 = battleState_8006e398._580[i];
-
-      if(a1._04 == 0) {
-        //LAB_800caacc
-        _800c66b4.set(i);
-        a1.data_00 = null;
-        a1._04 = 1;
-        return i;
-      }
-    }
-
-    //LAB_800caac4
-    throw new RuntimeException("Failed to find free slot");
-  }
-
-  @Method(0x800caae4L)
-  public static int FUN_800caae4(final FileData fileData, final int a1) {
-    final int index = FUN_800caa20();
-
-    final BttlStruct08 a0 = battleState_8006e398._580[index];
-    a0.data_00 = fileData;
-    a0._04 = a1;
-
-    //LAB_800cab3c
-    return index;
-  }
-
-  @Method(0x800cac38L)
-  public static int FUN_800cac38(final int drgnIndex, final int fileIndex) {
-    final int index = FUN_800caa20();
-
-    loadDrgnFile(drgnIndex, fileIndex, data -> FUN_800cacb0(data, index));
-
-    //LAB_800cac98
-    return index;
-  }
-
-  @Method(0x800cacb0L)
-  public static void FUN_800cacb0(final FileData data, final int index) {
-    final BttlStruct08 a1 = battleState_8006e398._580[index];
-
-    if(a1._04 == 1) {
-      a1.data_00 = data;
-      a1._04 = 2;
-    }
-
-    //LAB_800cad04
-  }
-
-  @Method(0x800cad34L)
-  public static FileData FUN_800cad34(final int index) {
-    return battleState_8006e398._580[index].data_00;
-  }
-
-  @Method(0x800cad50L)
-  public static BttlStruct08 FUN_800cad50(final int index) {
-    return battleState_8006e398._580[index];
-  }
-
-  @Method(0x800cad64L)
-  public static void FUN_800cad64(final int index) {
-    final BttlStruct08 s0 = battleState_8006e398._580[index];
-
-    if(s0._04 != 1) {
-      s0.data_00 = null;
-    }
-
-    //LAB_800cada8
-    s0._04 = 0;
+  public static int getCombatantVramSlotIndex(final CombatantStruct1a8 combatant) {
+    return vramSlotIndices_800fa730[combatant.vramSlot_1a0];
   }
 
   @Method(0x800cae44L)
@@ -2865,28 +2575,30 @@ public final class Bttl_800c {
     }
 
     //LAB_800cae98
-    if(v1 != 0 && isCombatantModelLoaded(bent.combatantIndex_26c)) {
-      bent.model_148.vramSlot_9d = getCombatantVramSlotIndex(bent.combatantIndex_26c);
-      bent.loadingAnimIndex_26e = 0;
-      FUN_800c952c(bent.model_148, bent.combatantIndex_26c);
-      bent._278 = 1;
-      bent.currentAnimIndex_270 = -1;
+    if(v1 != 0) {
+      if(bent.combatant_144.isModelLoaded()) {
+        bent.model_148.vramSlot_9d = getCombatantVramSlotIndex(bent.combatant_144);
+        bent.loadingAnimIndex_26e = 0;
+        FUN_800c952c(bent.model_148, bent.combatant_144);
+        bent._278 = 1;
+        bent.currentAnimIndex_270 = -1;
 
-      if((state.storage_44[7] & 0x800) == 0) {
-        final ScriptFile script;
-        if((state.storage_44[7] & 0x4) != 0) {
-          script = getCombatantScript(bent.combatantIndex_26c);
-        } else {
-          //LAB_800caf18
-          script = script_800c66fc;
+        if((state.storage_44[7] & 0x800) == 0) {
+          final ScriptFile script;
+          if((state.storage_44[7] & 0x4) != 0) {
+            script = bent.combatant_144.scriptPtr_10;
+          } else {
+            //LAB_800caf18
+            script = playerBattleScript_800c66fc;
+          }
+
+          //LAB_800caf20
+          state.loadScriptFile(script);
         }
 
-        //LAB_800caf20
-        state.loadScriptFile(script);
+        //LAB_800caf2c
+        state.setTicker(Bttl_800c::FUN_800caf50);
       }
-
-      //LAB_800caf2c
-      state.setTicker(Bttl_800c::FUN_800caf50);
     }
 
     //LAB_800caf38
@@ -2925,7 +2637,7 @@ public final class Bttl_800c {
   @Method(0x800cb058L)
   public static void bentDestructor(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
     //LAB_800cb088
-    FUN_800ca194(bent.combatantIndex_26c, bent.loadingAnimIndex_26e);
+    FUN_800ca194(bent.combatant_144.assets_14[bent.loadingAnimIndex_26e]);
 
     allBentCount_800c66d0.decr();
 
@@ -3128,13 +2840,13 @@ public final class Bttl_800c {
     final int animIndex = a0.params_20[1].get();
 
     if(bent.currentAnimIndex_270 < 0) {
-      FUN_800c9e10(bent.combatantIndex_26c, animIndex);
+      FUN_800c9e10(bent.combatant_144, animIndex);
       bent.currentAnimIndex_270 = animIndex;
     } else if(bent.currentAnimIndex_270 != animIndex) {
-      FUN_800ca194(bent.combatantIndex_26c, bent.currentAnimIndex_270);
+      FUN_800ca194(bent.combatant_144.assets_14[bent.currentAnimIndex_270]);
 
       //LAB_800cb73c
-      FUN_800c9e10(bent.combatantIndex_26c, animIndex);
+      FUN_800c9e10(bent.combatant_144, animIndex);
       bent.currentAnimIndex_270 = animIndex;
     }
 
@@ -3163,9 +2875,9 @@ public final class Bttl_800c {
       }
 
       //LAB_800cb7d0
-      if(isCombatantAssetLoaded(s0.combatantIndex_26c, animIndex)) {
-        FUN_800ca194(s0.combatantIndex_26c, s0.loadingAnimIndex_26e);
-        FUN_800ca100(s0.model_148, s0.combatantIndex_26c, animIndex);
+      if(s0.combatant_144.isAssetLoaded(animIndex)) {
+        FUN_800ca194(s0.combatant_144.assets_14[s0.loadingAnimIndex_26e]);
+        loadAnimationAssetIntoModel(s0.model_148, s0.combatant_144, animIndex);
         s2.storage_44[7] &= 0xffff_ff6f;
         s0.model_148.animationState_9c = 1;
         s0.loadingAnimIndex_26e = animIndex;
@@ -3193,7 +2905,7 @@ public final class Bttl_800c {
 
       if(currentAnim >= 0) {
         if(currentAnim != newAnim) {
-          FUN_800ca194(s0.combatantIndex_26c, currentAnim);
+          FUN_800ca194(s0.combatant_144.assets_14[currentAnim]);
         }
 
         //LAB_800cb8d0
@@ -3201,9 +2913,9 @@ public final class Bttl_800c {
       }
 
       //LAB_800cb8d4
-      if(isCombatantAssetLoaded(s0.combatantIndex_26c, newAnim)) {
-        FUN_800ca194(s0.combatantIndex_26c, s0.loadingAnimIndex_26e);
-        FUN_800ca100(s0.model_148, s0.combatantIndex_26c, newAnim);
+      if(s0.combatant_144.isAssetLoaded(newAnim)) {
+        FUN_800ca194(s0.combatant_144.assets_14[s0.loadingAnimIndex_26e]);
+        loadAnimationAssetIntoModel(s0.model_148, s0.combatant_144, newAnim);
         s2.storage_44[7] &= 0xffff_ff6f;
         s0.model_148.animationState_9c = 1;
         s0.loadingAnimIndex_26e = newAnim;
@@ -3212,7 +2924,7 @@ public final class Bttl_800c {
       }
 
       //LAB_800cb934
-      FUN_800c9e10(s0.combatantIndex_26c, newAnim);
+      FUN_800c9e10(s0.combatant_144, newAnim);
     }
 
     //LAB_800cb944
@@ -3224,7 +2936,7 @@ public final class Bttl_800c {
   @Method(0x800cb95cL)
   public static FlowControl FUN_800cb95c(final RunningScript<?> script) {
     final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    FUN_800ca26c(bent.combatantIndex_26c);
+    FUN_800ca26c(bent.combatant_144);
     return FlowControl.CONTINUE;
   }
 
@@ -3564,7 +3276,7 @@ public final class Bttl_800c {
   @Method(0x800cc784L)
   public static FlowControl FUN_800cc784(final RunningScript<?> script) {
     final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    FUN_800ca418(bent.combatantIndex_26c);
+    FUN_800ca418(bent.combatant_144);
     return FlowControl.CONTINUE;
   }
 
@@ -3572,15 +3284,15 @@ public final class Bttl_800c {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800cc7d8L)
   public static FlowControl FUN_800cc7d8(final RunningScript<?> script) {
-    final ScriptState<?> v1 = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
-    final long s2 = v1.storage_44[7] & 0x4;
-    final int s1 = ((BattleEntity27c)v1.innerStruct_00).combatantIndex_26c;
+    final ScriptState<BattleEntity27c> state = SCRIPTS.getState(script.params_20[0].get(), BattleEntity27c.class);
+    final int s2 = state.storage_44[7] & 0x4;
+    final CombatantStruct1a8 bentCombatant = state.innerStruct_00.combatant_144;
 
     //LAB_800cc83c
     for(int i = 0; i < combatantCount_800c66a0.get(); i++) {
-      if(i != s1) {
-        final CombatantStruct1a8 combatant = getCombatant(i);
+      final CombatantStruct1a8 combatant = getCombatant(i);
 
+      if(combatant != bentCombatant) {
         if((combatant.flags_19e & 0x1) != 0 && combatant.mrg_04 != null && combatant.charIndex_1a2 >= 0) {
           final int v0 = combatant.flags_19e >>> 2 ^ 1;
 
@@ -3588,11 +3300,11 @@ public final class Bttl_800c {
             //LAB_800cc8ac
             if((v0 & 1) == 0) {
               //LAB_800cc8b4
-              FUN_800ca418(i);
+              FUN_800ca418(combatant);
             }
           } else {
             if((v0 & 1) != 0) {
-              FUN_800ca418(i);
+              FUN_800ca418(combatant);
             }
           }
         }
@@ -3610,7 +3322,7 @@ public final class Bttl_800c {
   @Method(0x800cc8f4L)
   public static FlowControl scriptLoadAttackAnimations(final RunningScript<?> script) {
     final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    loadAttackAnimations(bent.combatantIndex_26c);
+    loadAttackAnimations(bent.combatant_144);
     return FlowControl.CONTINUE;
   }
 
@@ -3621,7 +3333,7 @@ public final class Bttl_800c {
     for(int i = 0; i < combatantCount_800c66a0.get(); i++) {
       final CombatantStruct1a8 combatant = getCombatant(i);
       if((combatant.flags_19e & 0x1) != 0 && combatant.charIndex_1a2 >= 0) {
-        loadAttackAnimations(i);
+        loadAttackAnimations(combatant);
       }
 
       //LAB_800cc9a8
@@ -3710,15 +3422,14 @@ public final class Bttl_800c {
     final ScriptState<?> state = scriptStatePtrArr_800bc1c0[script.params_20[0].get()];
     final BattleEntity27c bent = (BattleEntity27c)state.innerStruct_00;
     final CombatantStruct1a8 combatant = bent.combatant_144;
-    final int combatantIndex = bent.combatantIndex_26c;
 
     if((state.storage_44[7] & 0x1) == 0) {
       if(bent.currentAnimIndex_270 >= 0) {
-        FUN_800ca194(combatantIndex, bent.currentAnimIndex_270);
+        FUN_800ca194(bent.combatant_144.assets_14[bent.currentAnimIndex_270]);
       }
 
       //LAB_800ccc24
-      deallocateCombatant(combatantIndex);
+      deallocateCombatant(bent.combatant_144);
 
       if(script.params_20[1].get() != 0) {
         state.storage_44[7] |= 0x3;
@@ -3730,11 +3441,11 @@ public final class Bttl_800c {
       }
 
       //LAB_800ccc78
-      loadCombatantTextures(combatantIndex);
-      loadCombatantTmdAndAnims(combatantIndex);
+      loadCombatantTextures(bent.combatant_144);
+      loadCombatantTmdAndAnims(combatant);
       //LAB_800ccc94
     } else if((combatant.flags_19e & 0x20) == 0) {
-      FUN_800c952c(bent.model_148, combatantIndex);
+      FUN_800c952c(bent.model_148, combatant);
       bent.loadingAnimIndex_26e = 0;
       bent.currentAnimIndex_270 = -1;
       state.storage_44[7] &= 0xffff_fffe;
@@ -4000,7 +3711,7 @@ public final class Bttl_800c {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "index", description = "The output battleState_8006e398._580 array index")
   @Method(0x800cd468L)
   public static FlowControl FUN_800cd468(final RunningScript<?> script) {
-    script.params_20[2].set(FUN_800cac38(script.params_20[0].get(), script.params_20[1].get()));
+    script.params_20[2].set(battleState_8006e398.loadGlobalAsset(script.params_20[0].get(), script.params_20[1].get()));
     return FlowControl.CONTINUE;
   }
 
@@ -4008,15 +3719,15 @@ public final class Bttl_800c {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The battleState_8006e398._580 array index")
   @Method(0x800cd4b0L)
   public static FlowControl FUN_800cd4b0(final RunningScript<?> script) {
-    final BttlStruct08 v0 = FUN_800cad50(script.params_20[0].get());
-    return v0._04 == 1 ? FlowControl.PAUSE_AND_REWIND : FlowControl.CONTINUE;
+    final BattleAsset08 v0 = battleState_8006e398.getGlobalAsset(script.params_20[0].get());
+    return v0.state_04 == 1 ? FlowControl.PAUSE_AND_REWIND : FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Unknown, something to do with loading files, may clear the file entry")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The battleState_8006e398._580 array index")
   @Method(0x800cd4f0L)
   public static FlowControl FUN_800cd4f0(final RunningScript<?> script) {
-    FUN_800cad64(script.params_20[0].get());
+    battleState_8006e398.deallocateGlobalAsset(script.params_20[0].get());
     return FlowControl.CONTINUE;
   }
 
@@ -4033,7 +3744,7 @@ public final class Bttl_800c {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "combatantIndex", description = "The combatant's index")
   @Method(0x800cd570L)
   public static FlowControl scriptDeallocateAndRemoveCombatant(final RunningScript<?> script) {
-    deallocateCombatant(script.params_20[0].get());
+    deallocateCombatant(combatants_8005e398[script.params_20[0].get()]);
     removeCombatant(script.params_20[0].get());
     return FlowControl.CONTINUE;
   }
@@ -4055,7 +3766,6 @@ public final class Bttl_800c {
     battleState_8006e398.monsterBents_e50[monsterCount_800c6768.get()] = state;
 
     final BattleEntity27c bent = state.innerStruct_00;
-    bent.magic_00 = BattleObject.BOBJ;
     final CombatantStruct1a8 combatant = getCombatant(script.params_20[1].get());
     bent.combatant_144 = combatant;
     bent.combatantIndex_26c = script.params_20[1].get();
@@ -4074,9 +3784,9 @@ public final class Bttl_800c {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
   @Method(0x800cd740L)
   public static FlowControl FUN_800cd740(final RunningScript<?> script) {
-    final BttlStruct08 v0 = FUN_800cad50(script.params_20[0].get());
+    final BattleAsset08 v0 = battleState_8006e398.getGlobalAsset(script.params_20[0].get());
 
-    if(v0._04 == 1) {
+    if(v0.state_04 == 1) {
       //LAB_800cd794
       return FlowControl.PAUSE_AND_REWIND;
     }
@@ -4092,14 +3802,14 @@ public final class Bttl_800c {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
   @Method(0x800cd7a8L)
   public static FlowControl FUN_800cd7a8(final RunningScript<?> script) {
-    final BttlStruct08 v0 = FUN_800cad50(script.params_20[0].get());
+    final BattleAsset08 v0 = battleState_8006e398.getGlobalAsset(script.params_20[0].get());
 
-    if(v0._04 == 1) {
+    if(v0.state_04 == 1) {
       //LAB_800cd7fc
       return FlowControl.PAUSE_AND_REWIND;
     }
 
-    FUN_800ca528(script.params_20[0].get(), (short)script.params_20[1].get());
+    FUN_800ca528(combatants_8005e398[script.params_20[0].get()], (short)script.params_20[1].get());
 
     //LAB_800cd800
     return FlowControl.CONTINUE;
@@ -4115,15 +3825,15 @@ public final class Bttl_800c {
 
     if(s0 >= 0) {
       //LAB_800cd85c
-      final BttlStruct08 v0 = FUN_800cad50(s0);
+      final BattleAsset08 v0 = battleState_8006e398.getGlobalAsset(s0);
 
-      if(v0._04 == 1) {
+      if(v0.state_04 == 1) {
         return FlowControl.PAUSE_AND_REWIND;
       }
 
-      FUN_800c9db8(script.params_20[0].get(), script.params_20[1].get(), s0);
+      FUN_800c9db8(combatants_8005e398[script.params_20[0].get()], script.params_20[1].get(), s0);
     } else {
-      FUN_800c9c7c(script.params_20[0].get(), script.params_20[1].get());
+      FUN_800c9c7c(combatants_8005e398[script.params_20[0].get()], script.params_20[1].get());
     }
 
     //LAB_800cd890
@@ -4135,14 +3845,16 @@ public final class Bttl_800c {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
   @Method(0x800cd8a4L)
   public static FlowControl FUN_800cd8a4(final RunningScript<?> script) {
-    final BttlStruct08 a1 = FUN_800cad50(script.params_20[1].get());
+    final BattleAsset08 a1 = battleState_8006e398.getGlobalAsset(script.params_20[1].get());
 
-    if(a1._04 == 1) {
+    if(a1.state_04 == 1) {
       //LAB_800cd8fc
       return FlowControl.PAUSE_AND_REWIND;
     }
 
-    loadCombatantTim(script.params_20[0].get(), a1.data_00);
+    final int combatantIndex = script.params_20[0].get();
+    final CombatantStruct1a8 combatant = combatantIndex >= 0 ? combatants_8005e398[combatantIndex] : null; // Not sure if the else case actually happens
+    loadCombatantTim(combatant, a1.data_00);
 
     //LAB_800cd900
     return FlowControl.PAUSE;
@@ -4154,7 +3866,7 @@ public final class Bttl_800c {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "queueIndex", description = "The index into the file queue")
   @Method(0x800cd910L)
   public static FlowControl FUN_800cd910(final RunningScript<?> script) {
-    script.params_20[2].set(FUN_800cac38(script.params_20[0].get(), script.params_20[1].get()));
+    script.params_20[2].set(battleState_8006e398.loadGlobalAsset(script.params_20[0].get(), script.params_20[1].get()));
     return FlowControl.CONTINUE;
   }
 
@@ -4201,7 +3913,7 @@ public final class Bttl_800c {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @Method(0x800cda3cL)
   public static FlowControl scriptDeallocateCombatant(final RunningScript<?> script) {
-    deallocateCombatant(script.params_20[0].get());
+    deallocateCombatant(combatants_8005e398[script.params_20[0].get()]);
     return FlowControl.CONTINUE;
   }
 
@@ -4211,7 +3923,7 @@ public final class Bttl_800c {
   public static FlowControl FUN_800cda78(final RunningScript<?> script) {
     final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
 
-    if(!isCombatantModelLoaded(bent.combatantIndex_26c)) {
+    if(!bent.combatant_144.isModelLoaded()) {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
@@ -4220,7 +3932,7 @@ public final class Bttl_800c {
 
     //LAB_800cdaf4
     bent.loadingAnimIndex_26e = 0;
-    FUN_800c952c(bent.model_148, bent.combatantIndex_26c);
+    FUN_800c952c(bent.model_148, bent.combatant_144);
 
     //LAB_800cdb08
     return FlowControl.CONTINUE;
@@ -4253,7 +3965,7 @@ public final class Bttl_800c {
     }
 
     //LAB_800cdbe0
-    script_800c66fc = null;
+    playerBattleScript_800c66fc = null;
 
     //LAB_800cdc00
     return FlowControl.CONTINUE;
