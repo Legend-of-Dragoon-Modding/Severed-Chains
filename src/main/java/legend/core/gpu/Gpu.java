@@ -20,6 +20,7 @@ import java.util.List;
 
 import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.RENDERER;
+import static legend.core.MathHelper.colour15To24;
 import static legend.core.MathHelper.colour24To15;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_EQUAL;
@@ -263,7 +264,7 @@ public class Gpu {
     });
   }
 
-  public void uploadData(final Rect4i rect, final FileData data) {
+  public void uploadData15(final Rect4i rect, final FileData data) {
     final int rectX = rect.x;
     final int rectY = rect.y;
     final int rectW = rect.w;
@@ -294,7 +295,29 @@ public class Gpu {
     this.vramDirty = true;
   }
 
-  public void uploadData(final Rect4i rect, final int[] data) {
+  public void uploadData15(final Rect4i rect, final int[] data) {
+    final int rectX = rect.x;
+    final int rectY = rect.y;
+    final int rectW = rect.w;
+    final int rectH = rect.h;
+
+    assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
+    assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
+
+    LOGGER.debug("Copying (%d, %d, %d, %d) from CPU to VRAM", rectX, rectY, rectW, rectH);
+
+    int i = 0;
+    for(int y = rectY; y < rectY + rectH; y++) {
+      for(int x = rectX; x < rectX + rectW; x++) {
+        this.setVramPixel(x, y, colour15To24(data[i]), data[i]);
+        i++;
+      }
+    }
+
+    this.vramDirty = true;
+  }
+
+  public void uploadData24(final Rect4i rect, final int[] data) {
     final int rectX = rect.x;
     final int rectY = rect.y;
     final int rectW = rect.w;
@@ -316,7 +339,7 @@ public class Gpu {
     this.vramDirty = true;
   }
 
-  public void downloadData(final Rect4i rect, final FileData out) {
+  public void downloadData15(final Rect4i rect, final FileData out) {
     final int rectX = rect.x;
     final int rectY = rect.y;
     final int rectW = rect.w;

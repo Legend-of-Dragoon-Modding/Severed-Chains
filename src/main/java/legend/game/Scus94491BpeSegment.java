@@ -1146,7 +1146,7 @@ public final class Scus94491BpeSegment {
       throw new RuntimeException("Invalid MCQ height");
     }
 
-    GPU.uploadData(new Rect4i(x, y, mcq.vramWidth_08, mcq.vramHeight_0a), mcq.imageData);
+    GPU.uploadData15(new Rect4i(x, y, mcq.vramWidth_08, mcq.vramHeight_0a), mcq.imageData);
   }
 
   @Method(0x8001814cL)

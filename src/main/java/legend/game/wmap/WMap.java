@@ -528,8 +528,8 @@ public class WMap extends EngineState {
       this.modelAndAnimData_800c66a8.imageData_2c = new FileData(new byte[0x1_0000]);
       this.modelAndAnimData_800c66a8.imageData_30 = new FileData(new byte[0x1_0000]);
 
-      GPU.downloadData(this.storedEffectsRect_800c8700, this.modelAndAnimData_800c66a8.imageData_2c);
-      GPU.downloadData(new Rect4i(320, 0, 64, 512), this.modelAndAnimData_800c66a8.imageData_30);
+      GPU.downloadData15(this.storedEffectsRect_800c8700, this.modelAndAnimData_800c66a8.imageData_2c);
+      GPU.downloadData15(new Rect4i(320, 0, 64, 512), this.modelAndAnimData_800c66a8.imageData_30);
     }
 
     //LAB_800cca5c
@@ -540,8 +540,8 @@ public class WMap extends EngineState {
     final WMapModelAndAnimData258 modelAndAnimData = this.modelAndAnimData_800c66a8;
     vsyncMode_8007a3b8 = 1;
     startFadeEffect(2, 15);
-    GPU.uploadData(this.storedEffectsRect_800c8700, modelAndAnimData.imageData_2c);
-    GPU.uploadData(new Rect4i(320, 0, 64, 512), modelAndAnimData.imageData_30);
+    GPU.uploadData15(this.storedEffectsRect_800c8700, modelAndAnimData.imageData_2c);
+    GPU.uploadData15(new Rect4i(320, 0, 64, 512), modelAndAnimData.imageData_30);
     modelAndAnimData.imageData_2c = null;
     modelAndAnimData.imageData_30 = null;
     this.initLighting();
@@ -1651,7 +1651,7 @@ public class WMap extends EngineState {
     final McqHeader mcq = new McqHeader(data);
 
     //LAB_800d568c
-    GPU.uploadData(new Rect4i(320, 0, mcq.vramWidth_08, mcq.vramHeight_0a), mcq.imageData);
+    GPU.uploadData15(new Rect4i(320, 0, mcq.vramWidth_08, mcq.vramHeight_0a), mcq.imageData);
     this.mcqHeader_800c6768 = mcq;
 
     this.filesLoadedFlags_800c66b8.updateAndGet(val -> val | 0x1);
@@ -1734,12 +1734,12 @@ public class WMap extends EngineState {
   private void loadLocationThumbnailImage(final Tim tim, final int imageX, final int imageY, final int clutX, final int clutY) {
     final Rect4i imageRect = tim.getImageRect();
     final Rect4i rect = new Rect4i(imageX, imageY, imageRect.w, imageRect.h);
-    GPU.uploadData(rect, tim.getImageData());
+    GPU.uploadData15(rect, tim.getImageData());
 
     if((tim.getFlags() & 0x8) != 0 && clutX != -1) {
       final Rect4i clutRect = tim.getClutRect();
       rect.set(clutX, clutY, clutRect.w, clutRect.h);
-      GPU.uploadData(rect, tim.getClutData());
+      GPU.uploadData15(rect, tim.getClutData());
     }
     //LAB_800d5d84
   }
@@ -1912,10 +1912,10 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d67a8
-    GPU.downloadData(src0, anim.imageData_0c);
-    GPU.downloadData(src1, anim.imageData_08);
-    GPU.uploadData(dest0, anim.imageData_0c);
-    GPU.uploadData(dest1, anim.imageData_08);
+    GPU.downloadData15(src0, anim.imageData_0c);
+    GPU.downloadData15(src1, anim.imageData_08);
+    GPU.uploadData15(dest0, anim.imageData_0c);
+    GPU.uploadData15(dest1, anim.imageData_08);
 
     //LAB_800d6804
   }
