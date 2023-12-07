@@ -2,12 +2,10 @@ package legend.game.combat;
 
 import legend.core.MathHelper;
 import legend.core.Random;
-import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.TmdObjTable1c;
 import legend.core.memory.Method;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
@@ -115,7 +113,6 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.BiConsumer;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
@@ -364,20 +361,6 @@ public final class Bttl_800c {
     new Vector3f(0, MathHelper.psxDegToRad(16), 0),
     new Vector3f(0, MathHelper.psxDegToRad(16), 0),
   };
-
-  /**
-   * <ol start="0">
-   *   <li>{@link Bttl_800d#renderAdditionHitStarburst}</li>
-   *   <li>{@link Bttl_800d#renderAdditionCompletedStarburst}</li>
-   *   <li>{@link Bttl_800d#renderAdditionCompletedStarburst}</li>
-   * </ol>
-   */
-  public static final BiConsumer<ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>>, EffectManagerData6c<EffectManagerParams.VoidType>>[] additionStarburstRenderers_800c6dc4 = new BiConsumer[3];
-  static {
-    additionStarburstRenderers_800c6dc4[0] = Bttl_800d::renderAdditionHitStarburst;
-    additionStarburstRenderers_800c6dc4[1] = Bttl_800d::renderAdditionCompletedStarburst;
-    additionStarburstRenderers_800c6dc4[2] = Bttl_800d::renderAdditionCompletedStarburst;
-  }
 
   public static final GsF_LIGHT light_800c6ddc = new GsF_LIGHT(1.0f, 1.0f, 1.0f);
 
@@ -3992,265 +3975,25 @@ public final class Bttl_800c {
     s1._f4 = a7;
   }
 
-  @Method(0x800cdcecL)
-  public static void getVertexMinMaxByComponent(final Model124 model, final int dobjIndex, final Vector3f smallestVertRef, final Vector3f largestVertRef, final EffectManagerData6c<EffectManagerParams.WeaponTrailType> manager, final IntRef smallestIndexRef, final IntRef largestIndexRef) {
-    float largest = -Float.MAX_VALUE;
-    float smallest = Float.MAX_VALUE;
-    int largestIndex = 0;
-    int smallestIndex = 0;
-    final TmdObjTable1c tmd = model.modelParts_00[dobjIndex].tmd_08;
-
-    //LAB_800cdd24
-    for(int i = 0; i < tmd.n_vert_04; i++) {
-      final Vector3f vert = tmd.vert_top_00[i];
-      final float val = vert.get(manager.params_10.vertexComponent_24);
-
-      if(val >= largest) {
-        largest = val;
-        largestIndex = i;
-        largestVertRef.set(vert);
-        //LAB_800cdd7c
-      } else if(val <= smallest) {
-        smallest = val;
-        smallestIndex = i;
-        smallestVertRef.set(vert);
-      }
-      //LAB_800cddbc
-    }
-
-    //LAB_800cddcc
-    largestIndexRef.set(largestIndex);
-    smallestIndexRef.set(smallestIndex);
-  }
-
-  @Method(0x800cdde4L)
-  public static WeaponTrailEffectSegment2c getRootSegment(final WeaponTrailEffect3c trail) {
-    WeaponTrailEffectSegment2c segment = trail.currentSegment_38;
-
-    //LAB_800cddfc
-    while(segment.previousSegmentRef_24 != null) {
-      segment = segment.previousSegmentRef_24;
-    }
-
-    //LAB_800cde14
-    return segment;
-  }
-
-  @Method(0x800cde1cL)
-  public static WeaponTrailEffectSegment2c FUN_800cde1c(final WeaponTrailEffect3c trail) {
-    WeaponTrailEffectSegment2c segment = trail.segments_34[0];
-
-    int segmentIndex = 0;
-    //LAB_800cde3c
-    while(segment._03) {
-      segmentIndex++;
-      segment = trail.segments_34[segmentIndex];
-    }
-
-    //LAB_800cde50
-    if(segmentIndex == 64) {
-      segment = getRootSegment(trail);
-      segment._03 = false;
-
-      if(segment.nextSegmentRef_28 != null) {
-        segment.nextSegmentRef_28.previousSegmentRef_24 = null;
-      }
-    }
-
-    //LAB_800cde80
-    //LAB_800cde84
-    return segment;
-  }
-
-  @Method(0x800cde94L)
-  public static void renderWeaponTrailEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.WeaponTrailType>> state, final EffectManagerData6c<EffectManagerParams.WeaponTrailType> data) {
-    // Prevent garbage trails from rendering across the screen
-    final int renderCoordThreshold = 5000;
-    boolean renderCoordThresholdExceeded;
-
-    final WeaponTrailEffect3c trail = (WeaponTrailEffect3c)data.effect_44;
-
-    if(trail.currentSegment_38 != null) {
-      final Vector3i colour = new Vector3i(data.params_10.colour_1c).mul(0x100);
-      final Vector3i colourStep = new Vector3i(colour).div(trail.segmentCount_0e);
-      WeaponTrailEffectSegment2c segment = trail.currentSegment_38;
-
-      final Vector2f v0 = new Vector2f();
-      transformWorldspaceToScreenspace(segment.endpointCoords_04[0], v0);
-      renderCoordThresholdExceeded = Math.abs(v0.x) > renderCoordThreshold || Math.abs(v0.y) > renderCoordThreshold;
-
-      final Vector2f v2 = new Vector2f();
-      final float z = transformWorldspaceToScreenspace(segment.endpointCoords_04[1], v2) / 4.0f;
-      renderCoordThresholdExceeded = renderCoordThresholdExceeded || Math.abs(v2.x) > renderCoordThreshold || Math.abs(v2.y) > renderCoordThreshold;
-
-      //LAB_800cdf94
-      segment = segment.previousSegmentRef_24;
-      for(int i = 0; i < trail.segmentCount_0e && segment != null; i++) {
-        final Vector2f v1 = new Vector2f();
-        transformWorldspaceToScreenspace(segment.endpointCoords_04[0], v1);
-        renderCoordThresholdExceeded = renderCoordThresholdExceeded || Math.abs(v1.x) > renderCoordThreshold || Math.abs(v1.y) > renderCoordThreshold;
-        final Vector2f v3 = new Vector2f();
-        transformWorldspaceToScreenspace(segment.endpointCoords_04[1], v3);
-        renderCoordThresholdExceeded = renderCoordThresholdExceeded || Math.abs(v3.x) > renderCoordThreshold || Math.abs(v3.y) > renderCoordThreshold;
-
-        final GpuCommandPoly cmd = new GpuCommandPoly(4)
-          .translucent(Translucency.B_PLUS_F)
-          .pos(0, v0.x, v0.y)
-          .pos(1, v1.x, v1.y)
-          .pos(2, v2.x, v2.y)
-          .pos(3, v3.x, v3.y)
-          .monochrome(0, 0)
-          .monochrome(1, 0)
-          .rgb(2, colour.x >>> 8, colour.y >>> 8, colour.z >>> 8);
-
-        colour.sub(colourStep);
-
-        cmd.rgb(3, colour.x >>> 8, colour.y >>> 8, colour.z >>> 8);
-
-        float zFinal = z + data.params_10.z_22;
-        if(zFinal >= 0xa0 && !renderCoordThresholdExceeded) {
-          if(zFinal >= 0xffe) {
-            zFinal = 0xffe;
-          }
-
-          //LAB_800ce138
-          GPU.queueCommand(zFinal / 4.0f, cmd);
-        }
-
-        //LAB_800ce14c
-        v0.x = v1.x;
-        v0.y = v1.y;
-        v2.x = v3.x;
-        v2.y = v3.y;
-        segment = segment.previousSegmentRef_24;
-        renderCoordThresholdExceeded =
-          Math.abs(v0.x) > renderCoordThreshold ||
-          Math.abs(v0.y) > renderCoordThreshold ||
-          Math.abs(v2.x) > renderCoordThreshold ||
-          Math.abs(v2.y) > renderCoordThreshold;
-      }
-
-      //LAB_800ce1a0
-      //LAB_800ce1a4
-    }
-
-    //LAB_800ce230
-  }
-
-  @Method(0x800ce254L)
-  public static void tickWeaponTrailEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.WeaponTrailType>> state, final EffectManagerData6c<EffectManagerParams.WeaponTrailType> data) {
-    final WeaponTrailEffect3c trail = (WeaponTrailEffect3c)data.effect_44;
-    trail.currentSegmentIndex_00++;
-    if(trail.currentSegmentIndex_00 == 0) {
-      final IntRef smallestVertexIndex = new IntRef();
-      final IntRef largestVertexIndex = new IntRef();
-      getVertexMinMaxByComponent(trail.parentModel_30, trail.dobjIndex_08, trail.smallestVertex_20, trail.largestVertex_10, data, smallestVertexIndex, largestVertexIndex);
-      trail.smallestVertexIndex_0c = smallestVertexIndex.get();
-      trail.largestVertexIndex_0a = largestVertexIndex.get();
-      return;
-    }
-
-    //LAB_800ce2c4
-    WeaponTrailEffectSegment2c segment = FUN_800cde1c(trail);
-
-    if(trail.currentSegment_38 != null) {
-      trail.currentSegment_38.nextSegmentRef_28 = segment;
-    }
-
-    //LAB_800ce2e4
-    segment.unused_00 = 0x6c;
-    segment.unused_01 = 0x63;
-    segment.unused_02 = 0x73;
-    segment._03 = true;
-    segment.nextSegmentRef_28 = null;
-    segment.previousSegmentRef_24 = trail.currentSegment_38;
-    trail.currentSegment_38 = segment;
-
-    //LAB_800ce320
-    for(int i = 0; i < 2; i++) {
-      final MV perspectiveTransformMatrix = new MV();
-      GsGetLw(trail.parentModel_30.modelParts_00[trail.dobjIndex_08].coord2_04, perspectiveTransformMatrix);
-      (i == 0 ? trail.smallestVertex_20 : trail.largestVertex_10).mul(perspectiveTransformMatrix, segment.endpointCoords_04[i]); // Yes, I hate me for this syntax too
-      segment.endpointCoords_04[i].add(perspectiveTransformMatrix.transfer);
-    }
-
-    //LAB_800ce3e0
-    segment = trail.currentSegment_38;
-    while(segment != null) {
-      applyWeaponTrailScaling(segment.endpointCoords_04[1], segment.endpointCoords_04[0], 1.0f, 0.25f);
-      segment = segment.previousSegmentRef_24;
-    }
-
-    //LAB_800ce404
-    //LAB_800ce40c
-    int s6;
-    for(int i = 0; i < 2; i++) {
-      segment = trail.currentSegment_38;
-      s6 = 0;
-
-      //LAB_800ce41c
-      while(segment != null) {
-        if(segment.nextSegmentRef_28 != null) {
-          if(segment.previousSegmentRef_24 != null) {
-            WeaponTrailEffectSegment2c previousSegment = segment.previousSegmentRef_24;
-
-            //LAB_800ce444
-            final WeaponTrailEffectSegment2c[] sp0x50 = new WeaponTrailEffectSegment2c[2];
-            for(int j = 0; j < 2; j++) {
-              final WeaponTrailEffectSegment2c v0 = FUN_800cde1c(trail);
-              sp0x50[j] = v0;
-              v0.unused_00 = 0x6c;
-              v0.unused_01 = 0x63;
-              v0.unused_02 = 0x73;
-              v0._03 = true;
-              v0.endpointCoords_04[0].set(previousSegment.endpointCoords_04[0]).sub(segment.endpointCoords_04[0]).div(3).add(segment.endpointCoords_04[0]);
-              v0.endpointCoords_04[1].set(previousSegment.endpointCoords_04[1]).sub(segment.endpointCoords_04[1]).div(3).add(segment.endpointCoords_04[1]);
-              previousSegment = segment.nextSegmentRef_28;
-            }
-
-            sp0x50[0].previousSegmentRef_24 = segment.previousSegmentRef_24;
-            sp0x50[1].previousSegmentRef_24 = sp0x50[0];
-            sp0x50[1].nextSegmentRef_28 = segment.nextSegmentRef_28;
-            sp0x50[0].nextSegmentRef_28 = sp0x50[1];
-            segment.nextSegmentRef_28.previousSegmentRef_24 = sp0x50[1];
-            segment.previousSegmentRef_24.nextSegmentRef_28 = sp0x50[0];
-            segment._03 = false;
-            segment = segment.previousSegmentRef_24;
-            s6++;
-            if(s6 > i * 2 || segment == null) {
-              break;
-            }
-          }
-        }
-
-        //LAB_800ce630
-        segment = segment.previousSegmentRef_24;
-      }
-
-      //LAB_800ce640
-    }
-
-    //LAB_800ce650
-  }
-
   @ScriptDescription("Allocates a weapon trail effect manager")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "parentIndex", description = "The battle object index to trail behind")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "dobjIndex", description = "The model index")
   @Method(0x800ce6a8L)
   public static FlowControl scriptAllocateWeaponTrailEffect(final RunningScript<? extends BattleObject> script) {
+    final WeaponTrailEffect3c trail = new WeaponTrailEffect3c();
+
     final ScriptState<EffectManagerData6c<EffectManagerParams.WeaponTrailType>> state = allocateEffectManager(
       "Weapon trail",
       script.scriptState_04,
-      Bttl_800c::tickWeaponTrailEffect,
-      Bttl_800c::renderWeaponTrailEffect,
+      trail::tickWeaponTrailEffect,
+      trail::renderWeaponTrailEffect,
       null,
-      new WeaponTrailEffect3c(),
+      trail,
       new EffectManagerParams.WeaponTrailType()
     );
 
     final EffectManagerData6c<EffectManagerParams.WeaponTrailType> manager = state.innerStruct_00;
-    final WeaponTrailEffect3c trail = (WeaponTrailEffect3c)manager.effect_44;
 
     //LAB_800ce75c
     for(int i = 0; i < 65; i++) {
@@ -4283,42 +4026,6 @@ public final class Bttl_800c {
     return FlowControl.CONTINUE;
   }
 
-  @Method(0x800ce83cL)
-  public static void setWeaponTrailSegmentCount(final int scriptIndex, int segmentCount) {
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
-    final WeaponTrailEffect3c trail = (WeaponTrailEffect3c)manager.effect_44;
-
-    segmentCount = segmentCount * 4;
-    if((segmentCount & 0xff) > 0x40) {
-      segmentCount = 0x40;
-    }
-
-    trail.segmentCount_0e = segmentCount;
-  }
-
-  @Method(0x800ce880L)
-  public static void applyWeaponTrailScaling(final Vector3f largestVertex, final Vector3f smallestVertex, final float largestVertexDiffScale, final float smallestVertexDiffScale) {
-    final Vector3f vertexDiff = new Vector3f();
-    final Vector3f scaledVertexDiff = new Vector3f();
-    vertexDiff.set(largestVertex).sub(smallestVertex);
-
-    scaledVertexDiff.set(
-      vertexDiff.x * largestVertexDiffScale,
-      vertexDiff.y * largestVertexDiffScale,
-      vertexDiff.z * largestVertexDiffScale
-    );
-
-    largestVertex.set(smallestVertex).add(scaledVertexDiff);
-
-    scaledVertexDiff.set(
-      vertexDiff.x * smallestVertexDiffScale,
-      vertexDiff.y * smallestVertexDiffScale,
-      vertexDiff.z * smallestVertexDiffScale
-    );
-
-    smallestVertex.add(scaledVertexDiff);
-  }
-
   @ScriptDescription("Rescales the weapon trail effect as it progresses")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The weapon trail effect index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "smallScalingFactor", description = "The scaling factor for the trailing end")
@@ -4327,7 +4034,7 @@ public final class Bttl_800c {
   public static FlowControl scriptApplyWeaponTrailScaling(final RunningScript<?> script) {
     final EffectManagerData6c<EffectManagerParams.WeaponTrailType> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.classFor(EffectManagerParams.WeaponTrailType.class));
     final WeaponTrailEffect3c trail = (WeaponTrailEffect3c)manager.effect_44;
-    applyWeaponTrailScaling(trail.largestVertex_10, trail.smallestVertex_20, script.params_20[2].get() / (float)0x1000, script.params_20[1].get() / (float)0x1000);
+    trail.applyWeaponTrailScaling(trail.largestVertex_10, trail.smallestVertex_20, script.params_20[2].get() / (float)0x1000, script.params_20[1].get() / (float)0x1000);
     return FlowControl.CONTINUE;
   }
 
@@ -4335,31 +4042,6 @@ public final class Bttl_800c {
   public static void scriptGetScriptedObjectPos(final int scriptIndex, final Vector3f posOut) {
     final BattleObject bobj = (BattleObject)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
     posOut.set(bobj.getPosition());
-  }
-
-  @Method(0x800cea9cL)
-  public static void tickFullScreenOverlay(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
-    final FullScreenOverlayEffect0e effect = (FullScreenOverlayEffect0e)manager.effect_44;
-
-    if(effect.ticksRemaining_0c != 0) {
-      effect.r_00 += effect.stepR_06;
-      effect.g_02 += effect.stepG_08;
-      effect.b_04 += effect.stepB_0a;
-      effect.ticksRemaining_0c--;
-    }
-
-    //LAB_800ceb20
-  }
-
-  @Method(0x800ceb28L)
-  public static void renderFullScreenOverlay(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
-    final FullScreenOverlayEffect0e a0 = (FullScreenOverlayEffect0e)manager.effect_44;
-
-    GPU.queueCommand(30, new GpuCommandQuad()
-      .translucent(Translucency.of(manager.params_10.flags_00 >>> 28 & 0b11))
-      .rgb(a0.r_00 >> 8, a0.g_02 >> 8, a0.b_04 >> 8)
-      .pos(-160, -120, 320, 280)
-    );
   }
 
   /** Used at the end of Rose transform, lots during Albert transform */
@@ -4382,19 +4064,20 @@ public final class Bttl_800c {
     final int fullB = script.params_20[6].get() << 8 & 0xffff; //
     final int ticks = script.params_20[7].get() & 0xffff;
 
+    final FullScreenOverlayEffect0e effect = new FullScreenOverlayEffect0e();
+
     final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager(
       "Full screen overlay rgb(%x, %x, %x) -> rgb(%x, %x, %x)".formatted(r, g, b, fullR, fullG, fullB),
       script.scriptState_04,
-      Bttl_800c::tickFullScreenOverlay,
-      Bttl_800c::renderFullScreenOverlay,
+      effect::tickFullScreenOverlay,
+      effect::renderFullScreenOverlay,
       null,
-      new FullScreenOverlayEffect0e()
+      effect
     );
 
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
     manager.params_10.flags_00 = 0x5000_0000;
 
-    final FullScreenOverlayEffect0e effect = (FullScreenOverlayEffect0e)manager.effect_44;
     effect.r_00 = r;
     effect.g_02 = g;
     effect.b_04 = b;
@@ -4424,7 +4107,9 @@ public final class Bttl_800c {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "count", description = "The segment count")
   @Method(0x800ceeccL)
   public static FlowControl scriptSetWeaponTrailSegmentCount(final RunningScript<?> script) {
-    setWeaponTrailSegmentCount(script.params_20[0].get(), script.params_20[1].get());
+    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+    final WeaponTrailEffect3c trail = (WeaponTrailEffect3c)manager.effect_44;
+    trail.setWeaponTrailSegmentCount(script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 

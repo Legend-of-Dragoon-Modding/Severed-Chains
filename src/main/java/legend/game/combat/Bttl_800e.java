@@ -202,8 +202,6 @@ import static legend.game.combat.Bttl_800c.targetArrowOffsetY_800fb188;
 import static legend.game.combat.Bttl_800c.targeting_800fb36c;
 import static legend.game.combat.Bttl_800c.uiTextureElementBrightness_800c71ec;
 import static legend.game.combat.Bttl_800c.usedRepeatItems_800c6c3c;
-import static legend.game.combat.Bttl_800d.FUN_800dd89c;
-import static legend.game.combat.Bttl_800d.applyAnimation;
 import static legend.game.combat.Bttl_800d.loadModelAnim;
 import static legend.game.combat.Bttl_800d.loadModelTmd;
 import static legend.game.combat.Bttl_800d.optimisePacketsIfNecessary;
@@ -2061,7 +2059,7 @@ public final class Bttl_800e {
 
   /** Has some relation to rendering of certain effect sprites, like ones from HUD DEFF */
   @Method(0x800e9428L)
-  public static void renderBillboardSpriteEffect_(final SpriteMetrics08 metrics, final EffectManagerParams<?> managerInner, final MV transformMatrix) {
+  public static void renderBillboardSpriteEffect(final SpriteMetrics08 metrics, final EffectManagerParams<?> managerInner, final MV transformMatrix) {
     if(managerInner.flags_00 >= 0) { // No errors
       final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24();
       spriteEffect.flags_00 = managerInner.flags_00 & 0xffff_ffffL;
@@ -2090,13 +2088,6 @@ public final class Bttl_800e {
       }
     }
     //LAB_800e9580
-  }
-
-  @Method(0x800e9590L)
-  public static void renderBillboardSpriteEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
-    final MV transformMatrix = new MV();
-    calculateEffectTransforms(transformMatrix, manager);
-    renderBillboardSpriteEffect_(((BillboardSpriteEffect0c)manager.effect_44).metrics_04, manager.params_10, transformMatrix);
   }
 
   @Method(0x800e95f0L)
@@ -2128,18 +2119,20 @@ public final class Bttl_800e {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "flags", description = "Flag meanings are unknown")
   @Method(0x800e96ccL)
   public static FlowControl allocateBillboardSpriteEffect(final RunningScript<? extends BattleObject> script) {
+    final BillboardSpriteEffect0c effect = new BillboardSpriteEffect0c();
+
     final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager(
       "BillboardSpriteEffect0c",
       script.scriptState_04,
       null,
-      Bttl_800e::renderBillboardSpriteEffect,
+      effect::renderBillboardSpriteEffect,
       null,
-      new BillboardSpriteEffect0c()
+      effect
     );
 
     final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
     manager.flags_04 = 0x400_0000;
-    getSpriteMetricsFromSource((BillboardSpriteEffect0c)manager.effect_44, script.params_20[1].get());
+    getSpriteMetricsFromSource(effect, script.params_20[1].get());
     manager.params_10.flags_00 = manager.params_10.flags_00 & 0xfbff_ffff | 0x5000_0000;
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
@@ -2190,20 +2183,21 @@ public final class Bttl_800e {
   public static FlowControl FUN_800e9854(final RunningScript<? extends BattleObject> script) {
     final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)getDeffPart(script.params_20[1].get() | 0x200_0000);
 
+    final ModelEffect13c effect = new ModelEffect13c("Script " + script.scriptState_04.index);
+
     final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state = allocateEffectManager(
       animatedTmdType.name,
       script.scriptState_04,
-      Bttl_800e::FUN_800ea3f8,
-      Bttl_800e::FUN_800ea510,
+      effect::FUN_800ea3f8,
+      effect::FUN_800ea510,
       null,
-      new ModelEffect13c("Script " + script.scriptState_04.index),
+      effect,
       new EffectManagerParams.AnimType()
     );
 
     final EffectManagerData6c<EffectManagerParams.AnimType> manager = state.innerStruct_00;
     manager.flags_04 = 0x200_0000;
 
-    final ModelEffect13c effect = (ModelEffect13c)manager.effect_44;
     effect._00 = 0;
     effect.tmdType_04 = animatedTmdType;
     effect.extTmd_08 = animatedTmdType.tmd_0c;
@@ -2235,19 +2229,20 @@ public final class Bttl_800e {
   public static FlowControl FUN_800e99bc(final RunningScript<? extends BattleObject> script) {
     final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)getDeffPart(script.params_20[1].get() | 0x100_0000);
 
+    final ModelEffect13c effect = new ModelEffect13c("Script " + script.scriptState_04.index);
+
     final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state = allocateEffectManager(
       animatedTmdType.name,
       script.scriptState_04,
-      Bttl_800e::FUN_800ea3f8,
-      Bttl_800e::FUN_800ea510,
+      effect::FUN_800ea3f8,
+      effect::FUN_800ea510,
       null,
-      new ModelEffect13c("Script " + script.scriptState_04.index),
+      effect,
       new EffectManagerParams.AnimType()
     );
 
     final EffectManagerData6c<EffectManagerParams.AnimType> manager = state.innerStruct_00;
     manager.flags_04 = 0x100_0000;
-    final ModelEffect13c effect = (ModelEffect13c)manager.effect_44;
     effect._00 = 0;
 
     effect.tmdType_04 = animatedTmdType;
@@ -2327,20 +2322,22 @@ public final class Bttl_800e {
   @Method(0x800e9f68L)
   public static FlowControl FUN_800e9f68(final RunningScript<? extends BattleObject> script) {
     final int s2 = script.params_20[1].get();
+
+    final ModelEffect13c s0 = new ModelEffect13c("Script " + script.scriptState_04.index);
+
     final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state = allocateEffectManager(
       "Unknown (FUN_800e9f68, s2 = 0x%x)".formatted(s2),
       script.scriptState_04,
-      Bttl_800e::FUN_800ea3f8,
-      Bttl_800e::FUN_800ea510,
+      s0::FUN_800ea3f8,
+      s0::FUN_800ea510,
       null,
-      new ModelEffect13c("Script " + script.scriptState_04.index),
+      s0,
       new EffectManagerParams.AnimType()
     );
 
     final EffectManagerData6c<EffectManagerParams.AnimType> manager = state.innerStruct_00;
     manager.flags_04 = 0x200_0000;
 
-    final ModelEffect13c s0 = (ModelEffect13c)manager.effect_44;
     s0._00 = 0;
     s0.tmdType_04 = null;
     s0.extTmd_08 = null;
@@ -2481,62 +2478,6 @@ public final class Bttl_800e {
 
     //LAB_800ea3e4
     return FlowControl.CONTINUE;
-  }
-
-  @Method(0x800ea3f8L)
-  public static void FUN_800ea3f8(final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state, final EffectManagerData6c<EffectManagerParams.AnimType> manager) {
-    final MV sp0x10 = new MV();
-    calculateEffectTransforms(sp0x10, manager);
-
-    final ModelEffect13c effect = (ModelEffect13c)manager.effect_44;
-    final Model124 model = effect.model_134;
-    model.coord2_14.transforms.rotate.set(manager.params_10.rot_10);
-    model.coord2_14.transforms.scale.set(manager.params_10.scale_16);
-    model.zOffset_a0 = manager.params_10.z_22;
-    model.coord2_14.coord.set(sp0x10);
-    model.coord2_14.flg = 0;
-
-    if(effect.anim_0c != null) {
-      applyAnimation(model, manager.params_10.ticks_24);
-    }
-
-    //LAB_800ea4fc
-  }
-
-  @Method(0x800ea510L)
-  public static void FUN_800ea510(final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state, final EffectManagerData6c<EffectManagerParams.AnimType> manager) {
-    final ModelEffect13c effect = (ModelEffect13c)manager.effect_44;
-    if(manager.params_10.flags_00 >= 0) {
-      if((manager.params_10.flags_00 & 0x40) == 0) {
-        FUN_800e61e4(manager.params_10.colour_1c.x / 128.0f, manager.params_10.colour_1c.y / 128.0f, manager.params_10.colour_1c.z / 128.0f);
-      } else {
-        //LAB_800ea564
-        FUN_800e60e0(1.0f, 1.0f, 1.0f);
-      }
-
-      //LAB_800ea574
-      final Model124 model = effect.model_134;
-
-      final int oldTpage = model.tpage_108;
-
-      if((manager.params_10.flags_00 & 0x4000_0000L) != 0) {
-        model.tpage_108 = manager.params_10.flags_00 >>> 23 & 0x60;
-      }
-
-      //LAB_800ea598
-      FUN_800dd89c(model, manager.params_10.flags_00);
-
-      model.tpage_108 = oldTpage;
-
-      if((manager.params_10.flags_00 & 0x40) == 0) {
-        FUN_800e62a8();
-      } else {
-        //LAB_800ea5d4
-        FUN_800e6170();
-      }
-    }
-
-    //LAB_800ea5dc
   }
 
   @Method(0x800ea620L)

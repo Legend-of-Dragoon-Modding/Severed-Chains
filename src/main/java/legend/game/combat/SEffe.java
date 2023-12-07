@@ -170,7 +170,7 @@ import static legend.game.combat.Bttl_800e.calculateEffectTransforms;
 import static legend.game.combat.Bttl_800e.getDeffPart;
 import static legend.game.combat.Bttl_800e.getSpriteMetricsFromSource;
 import static legend.game.combat.Bttl_800e.perspectiveTransformXyz;
-import static legend.game.combat.Bttl_800e.renderBillboardSpriteEffect_;
+import static legend.game.combat.Bttl_800e.renderBillboardSpriteEffect;
 import static legend.game.combat.Bttl_800e.renderGenericSpriteAtZOffset0;
 import static legend.game.combat.Bttl_800e.transformToScreenSpace;
 
@@ -7862,7 +7862,7 @@ public final class SEffe {
         renderTmdSpriteEffect(sprite.tmd_08, sprite.obj, manager.params_10, transformMatrix);
       } else if(type == 0x400_0000) {
         final BillboardSpriteEffect0c sprite = (BillboardSpriteEffect0c)effect.subEffect_1c;
-        renderBillboardSpriteEffect_(sprite.metrics_04, manager.params_10, transformMatrix);
+        renderBillboardSpriteEffect(sprite.metrics_04, manager.params_10, transformMatrix);
       }
 
       //LAB_80118fac
@@ -7946,7 +7946,7 @@ public final class SEffe {
               renderTmdSpriteEffect(subEffect.tmd_08, subEffect.obj, managerInner, transformMatrix);
             } else if(type == 0x400_0000) {
               final BillboardSpriteEffect0c subEffect = (BillboardSpriteEffect0c)effect.subEffect_1c;
-              renderBillboardSpriteEffect_(subEffect.metrics_04, managerInner, transformMatrix);
+              renderBillboardSpriteEffect(subEffect.metrics_04, managerInner, transformMatrix);
             }
             //LAB_80119400
             //LAB_80119404
