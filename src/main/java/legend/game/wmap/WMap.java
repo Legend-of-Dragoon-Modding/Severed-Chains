@@ -288,7 +288,7 @@ public class WMap extends EngineState {
     this.fadeTransitionTickers_800f01fc[0] = this::tickFadeInTransition;
     this.fadeTransitionTickers_800f01fc[1] = this::tickFadeOutTransition;
   }
-
+  // TODO fix textbox disappearing before shadow
   private int currentWmapEffect_800f6598;
   private int previousWmapEffect_800f659c;
 
@@ -716,7 +716,7 @@ public class WMap extends EngineState {
     vsyncMode_8007a3b8 = 2;
     drgnBinIndex_800bc058 = 1;
   }
-  //TODO selector still on 1 if you close and reopen it
+
   private void initCoolonMovePrompt() {
     if(gameState_800babc8.scriptFlags2_bc.get(0x15a)) {
       this.coolonPromptPopup = new WmapPromptPopup()
@@ -2576,6 +2576,7 @@ public class WMap extends EngineState {
         if(isTextboxInState6(6)) {
           modelAndAnimData.coolonWarpState_220 = CoolonWarpState.PROMPT_LOOP;
           modelAndAnimData.coolonPromptIndex_223 = 0;
+          this.coolonPromptPopup.getSelector().y_3a = modelAndAnimData.coolonPromptIndex_223 * 0x10; // Needed because of overlayTick
           modelAndAnimData.coolonTravelAnimationTick_218 = 0;
         }
 
