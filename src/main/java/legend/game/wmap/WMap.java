@@ -5521,7 +5521,7 @@ public class WMap extends EngineState {
 
       //LAB_800ebe24
       cloud.snowUvIndex_50 = 0;
-      cloud.translation_58.set((288 - rand() % 64) / 2, (80 - rand() % 32) / 2, 0);
+      cloud.translation_58.set((288 - rand() % 64) / 2.0f, (80 - rand() % 32) / 2.0f, 0.0f);
       cloud.brightness_5c = 0.0f;
     }
 
@@ -5546,10 +5546,10 @@ public class WMap extends EngineState {
       final WMapAtmosphericEffectInstance60 cloud = modelAndAnimData.atmosphericEffectInstances_24[i];
 
       //LAB_800ec044
-      cloud.translation_58.z++;
-      if(cloud.translation_58.z >> i % 3 + 4 != 0) {
-        cloud.coord2_00.coord.transfer.x++;  //TODO is this wrong for 60fps?
-        cloud.translation_58.z = 0;
+      cloud.translation_58.z += 1.0f / (3.0f / vsyncMode_8007a3b8);
+      if((int)cloud.translation_58.z >> i % 3 + 4 != 0) {
+        cloud.coord2_00.coord.transfer.x += 1.0f / (3.0f / vsyncMode_8007a3b8);
+        cloud.translation_58.z = 0.0f;
       }
 
       //LAB_800ec288
@@ -5588,21 +5588,21 @@ public class WMap extends EngineState {
         GsGetLs(cloud.coord2_00, cloud.transforms);
         cloud.transforms.identity(); // NOTE: does not clear translation
         GTE.setTransforms(cloud.transforms);
-        GTE.perspectiveTransform(-cloud.translation_58.x, -cloud.translation_58.y, 0);
+        GTE.perspectiveTransform(-cloud.translation_58.x, -cloud.translation_58.y, 0.0f);
         final float sx0 = GTE.getScreenX(2);
         final float sy0 = GTE.getScreenY(2);
         float z = GTE.getScreenZ(3) / 4.0f;
 
         if(z >= 5 && z < orderingTableSize_1f8003c8 - 3) {
           //LAB_800ec534
-          GTE.perspectiveTransform(cloud.translation_58.x, -cloud.translation_58.y, 0);
+          GTE.perspectiveTransform(cloud.translation_58.x, -cloud.translation_58.y, 0.0f);
           final float sx1 = GTE.getScreenX(2);
           final float sy1 = GTE.getScreenY(2);
           z = GTE.getScreenZ(3) / 4.0f;
 
           if(z >= 5 && z < orderingTableSize_1f8003c8 - 3 && sx1 - sx0 <= 0x400) {
             //LAB_800ec5ec
-            GTE.perspectiveTransform(-cloud.translation_58.x, cloud.translation_58.y, 0);
+            GTE.perspectiveTransform(-cloud.translation_58.x, cloud.translation_58.y, 0.0f);
             final float sx2 = GTE.getScreenX(2);
             final float sy2 = GTE.getScreenY(2);
             z = GTE.getScreenZ(3) / 4.0f;
@@ -5636,7 +5636,7 @@ public class WMap extends EngineState {
               //LAB_800ec798
               if(!flEq(cloud.brightness_5c, 0.0f)) {
                 //LAB_800ec7b8
-                GTE.perspectiveTransform(cloud.translation_58.x, cloud.translation_58.y, 0);
+                GTE.perspectiveTransform(cloud.translation_58.x, cloud.translation_58.y, 0.0f);
                 final float sx3 = GTE.getScreenX(2);
                 final float sy3 = GTE.getScreenY(2);
                 z = GTE.getScreenZ(3) / 4.0f;
