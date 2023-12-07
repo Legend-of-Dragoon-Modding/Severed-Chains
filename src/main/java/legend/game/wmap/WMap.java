@@ -208,7 +208,7 @@ public class WMap extends EngineState {
   public final MapState100 mapState_800c6798 = new MapState100();
 
   private int cancelLocationEntryDelayTick_800c68a0;
-  private int mapTransitionState_800c68a4;
+  private int mapTransitionState_800c68a4; // TODO
   private boolean startLocationLabelsActive_800c68a8;
 
   public int encounterAccumulator_800c6ae8;
@@ -543,20 +543,17 @@ public class WMap extends EngineState {
 
       //LAB_800cc998
       this.tickMainMenuOpenTransition_800c6690++;
-      if(this.tickMainMenuOpenTransition_800c6690 < 48) {
-        return;
+      if(this.tickMainMenuOpenTransition_800c6690 >= 45.0f / vsyncMode_8007a3b8) {
+        this.wmapState_800bb10c = WmapState.TRANSITION_TO_SCREENS_4;
+        whichMenu_800bdc38 = WhichMenu.INIT_INVENTORY_MENU_1;
+
+        this.modelAndAnimData_800c66a8.imageData_2c = new FileData(new byte[0x1_0000]);
+        this.modelAndAnimData_800c66a8.imageData_30 = new FileData(new byte[0x1_0000]);
+
+        GPU.downloadData(this.storedEffectsRect_800c8700, this.modelAndAnimData_800c66a8.imageData_2c);
+        GPU.downloadData(new Rect4i(320, 0, 64, 512), this.modelAndAnimData_800c66a8.imageData_30);
       }
-
-      this.wmapState_800bb10c = WmapState.TRANSITION_TO_SCREENS_4;
-      whichMenu_800bdc38 = WhichMenu.INIT_INVENTORY_MENU_1;
-
-      this.modelAndAnimData_800c66a8.imageData_2c = new FileData(new byte[0x1_0000]);
-      this.modelAndAnimData_800c66a8.imageData_30 = new FileData(new byte[0x1_0000]);
-
-      GPU.downloadData(this.storedEffectsRect_800c8700, this.modelAndAnimData_800c66a8.imageData_2c);
-      GPU.downloadData(new Rect4i(320, 0, 64, 512), this.modelAndAnimData_800c66a8.imageData_30);
     }
-
     //LAB_800cca5c
   }
 
@@ -719,7 +716,7 @@ public class WMap extends EngineState {
     vsyncMode_8007a3b8 = 2;
     drgnBinIndex_800bc058 = 1;
   }
-
+  //TODO selector still on 1 if you close and reopen it
   private void initCoolonMovePrompt() {
     if(gameState_800babc8.scriptFlags2_bc.get(0x15a)) {
       this.coolonPromptPopup = new WmapPromptPopup()
@@ -927,7 +924,7 @@ public class WMap extends EngineState {
 
     cameraAndLights.projectionPlaneZoomTick_114 = 0;
     cameraAndLights.projectionPlaneDistance_118 = 1100.0f;
-    cameraAndLights.projectionDistanceState_11a = 0;
+    cameraAndLights.projectionDistanceState_11a = 0; //TODO
   }
 
   @Method(0x800d1914L)
@@ -1177,7 +1174,7 @@ public class WMap extends EngineState {
                 cameraAndLights.currMapRotation_70.y += cameraAndLights.mapRotationStep_7c / (3.0f / vsyncMode_8007a3b8);
                 cameraAndLights.mapRotationCounter_7e++;
 
-                if(cameraAndLights.mapRotationCounter_7e >= 18 / vsyncMode_8007a3b8) {
+                if(cameraAndLights.mapRotationCounter_7e >= 18.0f / vsyncMode_8007a3b8) {
                   cameraAndLights.currMapRotation_70.y = cameraAndLights.mapRotationEndAngle_7a;
                   cameraAndLights.mapRotating_80 = false;
                 }
@@ -2190,7 +2187,7 @@ public class WMap extends EngineState {
         //LAB_800d96b8
         this.tickMapPositionDuringZoom();
 
-        if(this.modelAndAnimData_800c66a8.zoomAnimationTick_1f9 >= 18 / vsyncMode_8007a3b8) {
+        if(this.modelAndAnimData_800c66a8.zoomAnimationTick_1f9 >= 18.0f / vsyncMode_8007a3b8) {
           cameraAndLights.coord2_20.coord.transfer.set(mapPositions_800ef1a8[this.mapState_800c6798.continent_00.ordinal()]);
           this.modelAndAnimData_800c66a8.mapArrow.setSize(8.0f);
           this.modelAndAnimData_800c66a8.zoomState_1f8 = ZoomState.WORLD;
@@ -2262,7 +2259,7 @@ public class WMap extends EngineState {
 
         this.modelAndAnimData_800c66a8.zoomAnimationTick_1f9++;
 
-        if(this.modelAndAnimData_800c66a8.zoomAnimationTick_1f9 >= 18 / vsyncMode_8007a3b8) {
+        if(this.modelAndAnimData_800c66a8.zoomAnimationTick_1f9 >= 18.0f / vsyncMode_8007a3b8) {
           cameraAndLights.coord2_20.coord.transfer.set(this.modelAndAnimData_800c66a8.mapPosition_1e8);
           this.modelAndAnimData_800c66a8.mapArrow.setSize(16.0f);
           this.modelAndAnimData_800c66a8.zoomState_1f8 = ZoomState.CONTINENT;
@@ -2626,8 +2623,8 @@ public class WMap extends EngineState {
       case FLY_ANIM:
         modelAndAnimData.coolonTravelAnimationTick_218++;
 
-        if(modelAndAnimData.coolonTravelAnimationTick_218 > 36 / vsyncMode_8007a3b8) {
-          modelAndAnimData.coolonTravelAnimationTick_218 = 36 / vsyncMode_8007a3b8;
+        if(modelAndAnimData.coolonTravelAnimationTick_218 > 36.0f / vsyncMode_8007a3b8) {
+          modelAndAnimData.coolonTravelAnimationTick_218 = (int)(36.0f / vsyncMode_8007a3b8);
           modelAndAnimData.coolonWarpState_220 = CoolonWarpState.INIT_DEST;
         }
 
@@ -3101,10 +3098,10 @@ public class WMap extends EngineState {
           //LAB_800e08b8
           this.renderFastTravelScreenDistortionEffect();
 
-          this.arcLerp(this.modelAndAnimData_800c66a8.currPlayerPos_94, originTranslation, targetTranslation, this.modelAndAnimData_800c66a8.teleportAnimationTick_24c / (32.0f * (3.0f / vsyncMode_8007a3b8)));
+          this.arcLerp(this.modelAndAnimData_800c66a8.currPlayerPos_94, originTranslation, targetTranslation, this.modelAndAnimData_800c66a8.teleportAnimationTick_24c / (96.0f / vsyncMode_8007a3b8));
 
           this.modelAndAnimData_800c66a8.teleportAnimationTick_24c++;
-          if(this.modelAndAnimData_800c66a8.teleportAnimationTick_24c / (3.0f / vsyncMode_8007a3b8) > 32) {
+          if(this.modelAndAnimData_800c66a8.teleportAnimationTick_24c > 96.0f / vsyncMode_8007a3b8) {
             this.modelAndAnimData_800c66a8.teleportAnimationState_248 = TeleportAnimationState.INIT_FADE;
           }
 
@@ -3684,7 +3681,7 @@ public class WMap extends EngineState {
           //LAB_800e4564
           modelAndAnimData.fadeAnimationTicks_00++;
 
-          if(modelAndAnimData.fadeAnimationTicks_00 >= 45 / vsyncMode_8007a3b8) {
+          if(modelAndAnimData.fadeAnimationTicks_00 >= 45.0f / vsyncMode_8007a3b8) {
             modelAndAnimData.fadeState_04 = FadeState.END_FADE;
             modelAndAnimData.fadeAnimationTicks_00 = 0;
           }
@@ -3698,7 +3695,7 @@ public class WMap extends EngineState {
           if(this.playerState_800c669c.ordinal() >= PlayerState.INIT_PLAYER_MODEL_3.ordinal()) {
             modelAndAnimData.fadeAnimationTicks_00++;
 
-            if(modelAndAnimData.fadeAnimationTicks_00 >= 6 / vsyncMode_8007a3b8) {
+            if(modelAndAnimData.fadeAnimationTicks_00 >= 6.0f / vsyncMode_8007a3b8) {
               this.mapState_800c6798.shortForceMovementState_d4 = ForcedMovementState.NONE;
             }
           }
@@ -3746,7 +3743,7 @@ public class WMap extends EngineState {
           //LAB_800e4304
           modelAndAnimData.fadeAnimationTicks_00++;
 
-          if(modelAndAnimData.fadeAnimationTicks_00 >= 45 / vsyncMode_8007a3b8) {
+          if(modelAndAnimData.fadeAnimationTicks_00 >= 45.0f / vsyncMode_8007a3b8) {
             modelAndAnimData.fadeState_04 = FadeState.END_FADE;
             modelAndAnimData.fadeAnimationTicks_00 = 0;
           }
@@ -3759,7 +3756,7 @@ public class WMap extends EngineState {
           if(this.playerState_800c669c.ordinal() >= PlayerState.INIT_PLAYER_MODEL_3.ordinal()) {
             modelAndAnimData.fadeAnimationTicks_00++;
 
-            if(modelAndAnimData.fadeAnimationTicks_00 >= 6 / vsyncMode_8007a3b8) {
+            if(modelAndAnimData.fadeAnimationTicks_00 >= 6.0f / vsyncMode_8007a3b8) {
               this.mapState_800c6798.shortForceMovementState_d4 = ForcedMovementState.NONE;
             }
           }
@@ -3802,7 +3799,7 @@ public class WMap extends EngineState {
 
         //LAB_800e477c
         modelAndAnimData.fadeAnimationTicks_00++;
-        if(modelAndAnimData.fadeAnimationTicks_00 >= 90 / vsyncMode_8007a3b8) {
+        if(modelAndAnimData.fadeAnimationTicks_00 >= 90.0f / vsyncMode_8007a3b8) {
           modelAndAnimData.fadeState_04 = FadeState.END_FADE;
         }
 
@@ -4219,7 +4216,7 @@ public class WMap extends EngineState {
       case 7:
         this.cancelLocationEntryDelayTick_800c68a0++;
 
-        if(this.cancelLocationEntryDelayTick_800c68a0 > 3) {
+        if(this.cancelLocationEntryDelayTick_800c68a0 >= 9.0f / vsyncMode_8007a3b8) {
           this.mapTransitionState_800c68a4 = 8;
         }
 
@@ -5551,7 +5548,7 @@ public class WMap extends EngineState {
       //LAB_800ec044
       cloud.translation_58.z++;
       if(cloud.translation_58.z >> i % 3 + 4 != 0) {
-        cloud.coord2_00.coord.transfer.x++;
+        cloud.coord2_00.coord.transfer.x++;  //TODO is this wrong for 60fps?
         cloud.translation_58.z = 0;
       }
 
