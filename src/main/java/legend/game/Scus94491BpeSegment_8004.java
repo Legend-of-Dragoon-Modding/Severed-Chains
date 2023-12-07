@@ -66,14 +66,6 @@ public final class Scus94491BpeSegment_8004 {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Scus94491BpeSegment_8004.class);
   private static final Marker SEQUENCER_MARKER = MarkerManager.getMarker("SEQUENCER");
 
-  public static final String[] supportOverlays_8004db88 = {
-    "\\OVL\\S_INIT.OV_",
-    "\\OVL\\S_BTLD.OV_",
-    "\\OVL\\S_ITEM.OV_",
-    "\\OVL\\S_EFFE.OV_",
-    "\\OVL\\S_STRM.OV_",
-  };
-
   /**
    * <ol start="0">
    *   <li>preload</li>
@@ -114,7 +106,6 @@ public final class Scus94491BpeSegment_8004 {
 
   public static EngineState currentEngineState_8004dd04;
   public static boolean dontZeroMemoryOnOverlayLoad_8004dd0c;
-  public static int loadedOverlayIndex_8004dd10;
 
   /**
    * <ol>
@@ -1214,7 +1205,7 @@ public final class Scus94491BpeSegment_8004 {
     if(type != 0) {
       SPU.setReverbMode(0);
       SPU.enableReverb();
-      SPU.setReverb(reverbConfigs_80059f7c.get(type - 1).config_02);
+      SPU.setReverb(reverbConfigs_80059f7c[type - 1].config_02);
       return;
     }
 

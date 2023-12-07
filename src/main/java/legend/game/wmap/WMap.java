@@ -1026,9 +1026,9 @@ public class WMap extends EngineState {
           //LAB_800d225c
           for(int i = 0; i < 3; i++) {
             //LAB_800d2278
-            cameraAndLights.lightsColours_8c[i].setR((int)(cameraAndLights.lights_11c[i].r_0c * 0x100));
-            cameraAndLights.lightsColours_8c[i].setG((int)(cameraAndLights.lights_11c[i].g_0d * 0x100));
-            cameraAndLights.lightsColours_8c[i].setB((int)(cameraAndLights.lights_11c[i].b_0e * 0x100));
+            cameraAndLights.lightsColours_8c[i].x = (int)(cameraAndLights.lights_11c[i].r_0c * 0x100);
+            cameraAndLights.lightsColours_8c[i].y = (int)(cameraAndLights.lights_11c[i].g_0d * 0x100);
+            cameraAndLights.lightsColours_8c[i].z = (int)(cameraAndLights.lights_11c[i].b_0e * 0x100);
           }
 
           //LAB_800d235c
@@ -1053,9 +1053,9 @@ public class WMap extends EngineState {
           //LAB_800d2464
           //LAB_800d24d0
           //LAB_800d253c
-          light.r_0c = cameraAndLights.lightsColours_8c[i].getR() * cameraAndLights.lightsBrightness_84 / 0x100;
-          light.g_0d = cameraAndLights.lightsColours_8c[i].getG() * cameraAndLights.lightsBrightness_84 / 0x100;
-          light.b_0e = cameraAndLights.lightsColours_8c[i].getB() * cameraAndLights.lightsBrightness_84 / 0x100;
+          light.r_0c = cameraAndLights.lightsColours_8c[i].x * cameraAndLights.lightsBrightness_84 / 0x100;
+          light.g_0d = cameraAndLights.lightsColours_8c[i].y * cameraAndLights.lightsBrightness_84 / 0x100;
+          light.b_0e = cameraAndLights.lightsColours_8c[i].z * cameraAndLights.lightsBrightness_84 / 0x100;
           GsSetFlatLight(i, cameraAndLights.lights_11c[i]);
         }
       }
@@ -1093,9 +1093,9 @@ public class WMap extends EngineState {
         //LAB_800d2710
         //LAB_800d277c
         //LAB_800d27e8
-        light.r_0c = cameraAndLights.lightsColours_8c[i].getR() * cameraAndLights.lightsBrightness_84 / 0x100;
-        light.g_0d = cameraAndLights.lightsColours_8c[i].getG() * cameraAndLights.lightsBrightness_84 / 0x100;
-        light.b_0e = cameraAndLights.lightsColours_8c[i].getB() * cameraAndLights.lightsBrightness_84 / 0x100;
+        light.r_0c = cameraAndLights.lightsColours_8c[i].x * cameraAndLights.lightsBrightness_84 / 0x100;
+        light.g_0d = cameraAndLights.lightsColours_8c[i].y * cameraAndLights.lightsBrightness_84 / 0x100;
+        light.b_0e = cameraAndLights.lightsColours_8c[i].z * cameraAndLights.lightsBrightness_84 / 0x100;
         GsSetFlatLight(i, cameraAndLights.lights_11c[i]);
       }
     }
@@ -2227,9 +2227,9 @@ public class WMap extends EngineState {
             //LAB_800d996c
             //LAB_800d99c4
             //LAB_800d9a1c
-            cameraAndLights.lights_11c[i].r_0c = cameraAndLights.lightsColours_8c[i].r.get() / 4.0f / 0x100;
-            cameraAndLights.lights_11c[i].g_0d = cameraAndLights.lightsColours_8c[i].g.get() / 4.0f / 0x100;
-            cameraAndLights.lights_11c[i].b_0e = cameraAndLights.lightsColours_8c[i].b.get() / 4.0f / 0x100;
+            cameraAndLights.lights_11c[i].r_0c = cameraAndLights.lightsColours_8c[i].x / 4.0f / 0x100;
+            cameraAndLights.lights_11c[i].g_0d = cameraAndLights.lightsColours_8c[i].y / 4.0f / 0x100;
+            cameraAndLights.lights_11c[i].b_0e = cameraAndLights.lightsColours_8c[i].z / 4.0f / 0x100;
 
             GsSetFlatLight(i, cameraAndLights.lights_11c[i]);
           }

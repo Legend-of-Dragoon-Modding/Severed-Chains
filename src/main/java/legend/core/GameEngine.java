@@ -219,28 +219,6 @@ public final class GameEngine {
           ConfigStorage.loadConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
 
           Scus94491BpeSegment_8002.start();
-
-/*
-          loadSupportOverlay(2, () -> {
-            loadGameStateOverlay(EngineStateEnum.COMBAT_06);
-            System.out.println('{');
-            int i = 0;
-            final var v = Bttl_800c.textboxColours_800c6fec;
-            for(final var s : v) {
-              final String[] ints = new String[s.length()];
-              for(int n = 0; n < s.length(); n++) {
-                ints[n] = String.valueOf(s.get(n).get());
-              }
-              System.out.printf("{%s}, ", String.join(", ", ints));
-              if(i % 20 == 19 || i == v.length() - 1) {
-                System.out.println();
-              }
-              i++;
-            }
-            System.out.println("};");
-          });
-*/
-
           loading = false;
         }
       } catch(final Exception e) {

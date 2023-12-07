@@ -74,41 +74,41 @@ public class BattleMenuStruct58 {
       }
 
       for(int iconId = 0; iconId < 9; iconId++) {
-        final BattleMenuIconMetrics08 iconMetrics = battleMenuIconMetrics_800fb674.get(iconId);
+        final BattleMenuIconMetrics08 iconMetrics = battleMenuIconMetrics_800fb674[iconId];
 
-        final int iconClutOffset = battleMenuIconMetrics_800fb674.get(iconId).clutOffset_04.get();
+        final int iconClutOffset = iconMetrics.clutOffset_04;
 
         for(int iconState = 0; iconState < 3; iconState++) {
-          final int vOffset = battleMenuIconVOffsets_800fb6f4.get(iconId).get(iconState).get();
-          final int iconH = battleMenuIconHeights_800fb6bc.get(iconId).get(iconState).get();
+          final int vOffset = battleMenuIconVOffsets_800fb6f4[iconId][iconState];
+          final int iconH = battleMenuIconHeights_800fb6bc[iconId][iconState];
 
           // Combat menu icons
-          this.actionIconObj[iconId][iconState] = buildBattleMenuElement("Action Icon " + iconId + " state " + iconState, 0, 0, iconMetrics.u_00.get(), iconMetrics.v_02.get() + vOffset & 0xff, 16, iconH, iconClutOffset, Translucency.of(iconMetrics.translucencyMode_06.get()));
+          this.actionIconObj[iconId][iconState] = buildBattleMenuElement("Action Icon " + iconId + " state " + iconState, 0, 0, iconMetrics.u_00, iconMetrics.v_02 + vOffset & 0xff, 16, iconH, iconClutOffset, Translucency.of(iconMetrics.translucencyMode_06));
         }
 
         // Selected combat menu icon text
-        final BattleMenuTextMetrics08 textMetrics = battleMenuTextMetrics_800fb72c.get(iconId);
-        this.actionIconTextObj[iconId] = buildBattleMenuElement("Action Icon Text " + iconId, -textMetrics.w_04.get() / 2 + 8, -24, textMetrics.u_00.get(), textMetrics.v_02.get(), textMetrics.w_04.get(), 8, textMetrics.clutOffset_06.get(), null);
+        final BattleMenuTextMetrics08 textMetrics = battleMenuTextMetrics_800fb72c[iconId];
+        this.actionIconTextObj[iconId] = buildBattleMenuElement("Action Icon Text " + iconId, -textMetrics.w_04 / 2 + 8, -24, textMetrics.u_00, textMetrics.v_02, textMetrics.w_04, 8, textMetrics.clutOffset_06, null);
       }
 
       for(int spiritId = 0; spiritId < 10; spiritId++) {
-        final BattleMenuIconMetrics08 iconMetrics = battleMenuIconMetrics_800fb674.get(1);
+        final BattleMenuIconMetrics08 iconMetrics = battleMenuIconMetrics_800fb674[1];
 
         final int iconClutOffset = dragoonSpiritIconClutOffsets_800c71d0[spiritId];
 
         for(int iconState = 0; iconState < 3; iconState++) {
-          final int vOffset = battleMenuIconVOffsets_800fb6f4.get(1).get(iconState).get();
-          final int iconH = battleMenuIconHeights_800fb6bc.get(1).get(iconState).get();
+          final int vOffset = battleMenuIconVOffsets_800fb6f4[1][iconState];
+          final int iconH = battleMenuIconHeights_800fb6bc[1][iconState];
 
           // Combat menu icons
-          this.dragoonIconObj[spiritId][iconState] = buildBattleMenuElement("Spirit Icon " + spiritId + " state " + iconState, 0, 0, iconMetrics.u_00.get(), iconMetrics.v_02.get() + vOffset & 0xff, 16, iconH, iconClutOffset, Translucency.of(iconMetrics.translucencyMode_06.get()));
+          this.dragoonIconObj[spiritId][iconState] = buildBattleMenuElement("Spirit Icon " + spiritId + " state " + iconState, 0, 0, iconMetrics.u_00, iconMetrics.v_02 + vOffset & 0xff, 16, iconH, iconClutOffset, Translucency.of(iconMetrics.translucencyMode_06));
         }
       }
 
-      this.actionMenuBackground[0] = buildBattleMenuBackground("Action Background 0", battleMenuBackgroundMetrics_800fb5dc.get(0), 0, 0, 1, 2, 0x2b, Translucency.B_PLUS_F, battleMenuBackgroundMetrics_800fb5dc.get(0).uvShiftType_04.get());
+      this.actionMenuBackground[0] = buildBattleMenuBackground("Action Background 0", battleMenuBackgroundMetrics_800fb5dc[0], 0, 0, 1, 2, 0x2b, Translucency.B_PLUS_F, battleMenuBackgroundMetrics_800fb5dc[0].uvShiftType_04);
 
       for(int i = 1; i < 9; i++) {
-        this.actionMenuBackground[i] = buildBattleMenuBackground("Action Background " + i, battleMenuBackgroundMetrics_800fb5dc.get(i), 0, 0, 1, 1, 0x2b, Translucency.B_PLUS_F, battleMenuBackgroundMetrics_800fb5dc.get(i).uvShiftType_04.get());
+        this.actionMenuBackground[i] = buildBattleMenuBackground("Action Background " + i, battleMenuBackgroundMetrics_800fb5dc[i], 0, 0, 1, 1, 0x2b, Translucency.B_PLUS_F, battleMenuBackgroundMetrics_800fb5dc[i].uvShiftType_04);
       }
 
       // Red glow underneath selected menu item

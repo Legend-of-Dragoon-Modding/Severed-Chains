@@ -106,7 +106,7 @@ public class StatusScreen extends MenuScreen {
     }
 
     if(hasDragoon(gameState_800babc8.goods_19c[0], charIndex)) {
-      final byte[] spellIndices = new byte[8];
+      final int[] spellIndices = new int[8];
       getUnlockedDragoonSpells(spellIndices, charIndex);
       final int unlockedSpellCount = getUnlockedSpellCount(charIndex);
 
@@ -116,7 +116,7 @@ public class StatusScreen extends MenuScreen {
         }
 
         //LAB_80109370
-        final byte spellIndex = spellIndices[i];
+        final int spellIndex = spellIndices[i];
         if(spellIndex != -1) {
           renderText(new LodString(spellStats_800fa0b8[spellIndex].name), 210, 125 + i * 14, TextColour.BROWN);
 

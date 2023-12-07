@@ -2,8 +2,8 @@ package legend.game;
 
 import legend.core.gte.MV;
 import legend.core.memory.Value;
-import legend.core.memory.types.ArrayRef;
 import legend.game.combat.types.CombatantStruct1a8;
+import legend.game.sound.ReverbConfig;
 import legend.game.sound.ReverbConfigAndLocation;
 import legend.game.types.AdditionData0e;
 import legend.game.types.LodString;
@@ -108,7 +108,51 @@ public final class Scus94491BpeSegment_8005 {
     new LodString(""), new LodString(""), new LodString(""), new LodString(""), new LodString(""),
     new LodString(""), new LodString(""), new LodString(""), new LodString(""),
   };
-  public static final ArrayRef<AdditionData0e> additionData_80052884 = MEMORY.ref(1, 0x80052884L, ArrayRef.of(AdditionData0e.class, 43, 0xe, AdditionData0e::new));
+  public static final AdditionData0e[] additionData_80052884 = {
+    new AdditionData0e(1, 1, new int[] {35, 35, 35, 35, 35}, 150),
+    new AdditionData0e(2, 3, new int[] {20, 24, 28, 32, 36}, 200),
+    new AdditionData0e(8, 2, new int[] {30, 45, 60, 75, 102}, 150),
+    new AdditionData0e(15, 4, new int[] {50, 60, 75, 85, 100}, 150),
+    new AdditionData0e(22, 5, new int[] {60, 90, 120, 150, 204}, 100),
+    new AdditionData0e(29, 6, new int[] {20, 20, 20, 20, 20}, 200),
+    new AdditionData0e(-1, 7, new int[] {100, 110, 120, 130, 150}, 250),
+    new AdditionData0e(-2, 5, new int[] {0, 0, 0, 0, 0}, 0),
+    new AdditionData0e(1, 1, new int[] {35, 38, 42, 45, 50}, 100),
+    new AdditionData0e(5, 2, new int[] {35, 35, 35, 35, 35}, 100),
+    new AdditionData0e(7, 4, new int[] {30, 45, 60, 75, 100}, 150),
+    new AdditionData0e(11, 6, new int[] {35, 35, 35, 35, 35}, 200),
+    new AdditionData0e(-1, 7, new int[] {60, 90, 120, 150, 202}, 300),
+    new AdditionData0e(-2, 5, new int[] {0, 0, 0, 0, 0}, 0),
+    new AdditionData0e(1, 1, new int[] {35, 35, 35, 35, 35}, 100),
+    new AdditionData0e(14, 2, new int[] {30, 45, 60, 75, 102}, 150),
+    new AdditionData0e(19, 5, new int[] {35, 35, 35, 35, 35}, 100),
+    new AdditionData0e(-1, 7, new int[] {100, 100, 100, 100, 100}, 200),
+    new AdditionData0e(-2, 5, new int[] {0, 0, 0, 0, 0}, 0),
+    new AdditionData0e(1, 1, new int[] {35, 38, 42, 45, 50}, 100),
+    new AdditionData0e(23, 3, new int[] {20, 20, 20, 20, 20}, 100),
+    new AdditionData0e(-1, 5, new int[] {100, 100, 100, 100, 100}, 200),
+    new AdditionData0e(-2, 5, new int[] {0, 0, 0, 0, 0}, 0),
+    new AdditionData0e(1, 1, new int[] {20, 24, 28, 32, 34}, 100),
+    new AdditionData0e(21, 3, new int[] {35, 43, 51, 59, 70}, 150),
+    new AdditionData0e(26, 4, new int[] {60, 90, 120, 150, 200}, 100),
+    new AdditionData0e(30, 6, new int[] {20, 20, 20, 20, 20}, 150),
+    new AdditionData0e(-1, 7, new int[] {100, 100, 100, 100, 100}, 200),
+    new AdditionData0e(-2, 5, new int[] {0, 0, 0, 0, 0}, 0),
+    new AdditionData0e(1, 1, new int[] {35, 38, 42, 45, 50}, 100),
+    new AdditionData0e(14, 2, new int[] {20, 20, 20, 20, 20}, 150),
+    new AdditionData0e(18, 3, new int[] {50, 61, 75, 86, 100}, 100),
+    new AdditionData0e(22, 4, new int[] {35, 35, 40, 45, 50}, 150),
+    new AdditionData0e(26, 6, new int[] {15, 15, 15, 15, 15}, 200),
+    new AdditionData0e(-1, 7, new int[] {50, 75, 100, 125, 150}, 300),
+    new AdditionData0e(-2, 5, new int[] {0, 0, 0, 0, 0}, 0),
+    new AdditionData0e(1, 1, new int[] {35, 38, 42, 45, 50}, 100),
+    new AdditionData0e(5, 2, new int[] {35, 35, 35, 35, 35}, 100),
+    new AdditionData0e(7, 4, new int[] {30, 45, 60, 75, 100}, 150),
+    new AdditionData0e(11, 6, new int[] {35, 35, 35, 35, 35}, 200),
+    new AdditionData0e(-1, 7, new int[] {60, 90, 120, 150, 202}, 300),
+    new AdditionData0e(-2, 5, new int[] {0, 0, 0, 0, 0}, 0),
+    new AdditionData0e(-2, 5, new int[] {0, 0, 0, 0, 0}, 0),
+  };
 
   public static final LodString[] digits_80052b40 = { new LodString("0"), new LodString("1"), new LodString("2"), new LodString("3"), new LodString("4"), new LodString("5"), new LodString("6"), new LodString("7"), new LodString("8"), new LodString("9") };
   public static final boolean[] renderBorder_80052b68 = {false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
@@ -145,10 +189,17 @@ public final class Scus94491BpeSegment_8005 {
     Arrays.setAll(matrixStack_80054a0c, i -> new MV());
   }
 
-  /**
-   * Start of a fairly large block of data - something to do with SPU reverb initialisation. Stride is 66 bytes. Unknown length.
-   */
-  public static final ArrayRef<ReverbConfigAndLocation> reverbConfigs_80059f7c = MEMORY.ref(2, 0x80059f7cL, ArrayRef.of(ReverbConfigAndLocation.class, 9, 0x42, ReverbConfigAndLocation::new));
+  public static final ReverbConfigAndLocation[] reverbConfigs_80059f7c = {
+    new ReverbConfigAndLocation(64296, new ReverbConfig(125, 91, 28032, 21688, -16688, 0, 0, -17792, 22528, 21248, 1238, 819, 1008, 551, 884, 495, 820, 437, 0, 0, 0, 0, 0, 0, 0, 0, 436, 310, 184, 92, -32768, -32768)),
+    new ReverbConfigAndLocation(64536, new ReverbConfig(51, 37, 28912, 20392, -17184, 17424, -16144, -25600, 21120, 20160, 996, 795, 932, 687, 882, 614, 796, 605, 604, 398, 559, 309, 466, 183, 399, 181, 180, 128, 76, 38, -32768, -32768)),
+    new ReverbConfigAndLocation(63224, new ReverbConfig(177, 127, 28912, 20392, -17184, 17680, -16656, -19264, 21120, 20160, 2308, 1899, 2084, 1631, 1954, 1558, 1900, 1517, 1516, 1070, 1295, 773, 1122, 695, 1071, 613, 612, 434, 256, 128, -32768, -32768)),
+    new ReverbConfigAndLocation(61956, new ReverbConfig(227, 169, 28512, 20392, -17184, 17680, -16656, -22912, 22144, 21184, 3579, 2904, 3337, 2620, 3033, 2419, 2905, 2266, 2265, 1513, 2028, 1200, 1775, 978, 1514, 797, 796, 568, 340, 170, -32768, -32768)),
+    new ReverbConfigAndLocation(59972, new ReverbConfig(421, 313, 24576, 20480, 19456, -18432, -17408, -16384, 24576, 23552, 5562, 4539, 5314, 4285, 4540, 3521, 4544, 3523, 3520, 2497, 3012, 1985, 2560, 1741, 2498, 1473, 1472, 1050, 628, 314, -32768, -32768)),
+    new ReverbConfigAndLocation(57640, new ReverbConfig(829, 561, 32256, 20480, -19456, -20480, 19456, -20480, 24576, 21504, 7894, 6705, 7444, 6203, 7106, 5810, 6706, 5615, 5614, 4181, 4916, 3885, 4598, 3165, 4182, 2785, 2784, 1954, 1124, 562, -32768, -32768)),
+    new ReverbConfigAndLocation(57344, new ReverbConfig(1, 1, 32767, 32767, 0, 0, 0, -32512, 0, 0, 8191, 4095, 4101, 5, 0, 0, 4101, 5, 0, 0, 0, 0, 0, 0, 0, 0, 4100, 4098, 4, 2, -32768, -32768)),
+    new ReverbConfigAndLocation(57344, new ReverbConfig(1, 1, 32767, 32767, 0, 0, 0, 0, 0, 0, 8191, 4095, 4101, 5, 0, 0, 4101, 5, 0, 0, 0, 0, 0, 0, 0, 0, 4100, 4098, 4, 2, -32768, -32768)),
+    new ReverbConfigAndLocation(64652, new ReverbConfig(23, 19, 28912, 20392, -17184, 17680, -16656, -31488, 24448, 21696, 881, 687, 741, 479, 688, 471, 856, 618, 470, 286, 301, 177, 287, 89, 416, 227, 88, 64, 40, 20, -32768, -32768)),
+  };
 
   /** short */
   public static int sssqFadeCurrent_8005a1ce;

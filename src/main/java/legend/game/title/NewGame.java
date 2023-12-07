@@ -8,7 +8,6 @@ import legend.game.types.CharacterData2c;
 import static legend.game.SItem.levelStuff_80111cfc;
 import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.SItem.xpTables;
-import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -28,8 +27,8 @@ public class NewGame extends EngineState {
       final CharacterData2c charData = gameState_800babc8.charData_32c[charIndex];
       final int level = characterStartingLevels[charIndex];
       charData.xp_00 = xpTables[charIndex][level];
-      charData.hp_08 = levelStuff_80111cfc.get(charIndex).deref().get(level).hp_00.get();
-      charData.mp_0a = magicStuff_80111d20.get(charIndex).deref().get(1).mp_00.get();
+      charData.hp_08 = levelStuff_80111cfc[charIndex][level].hp_00;
+      charData.mp_0a = magicStuff_80111d20[charIndex][1].mp_00;
       charData.sp_0c = 0;
       charData.dlevelXp_0e = 0;
       charData.status_10 = 0;
@@ -46,7 +45,7 @@ public class NewGame extends EngineState {
 
       //LAB_800c72d4
       for(int i = 1; i < level; i++) {
-        final int index = levelStuff_80111cfc.get(charIndex).deref().get(i).addition_02.get();
+        final int index = levelStuff_80111cfc[charIndex][i].addition_02;
 
         if(index != -1) {
           final int offset = additionOffsets_8004f5ac[charIndex];
@@ -66,12 +65,7 @@ public class NewGame extends EngineState {
   @Override
   @Method(0x800c7424L)
   public void tick() {
-    this.loadSItemAndSetUpNewGameData();
+    this.setUpNewGameData();
     engineStateOnceLoaded_8004dd24 = EngineStateEnum.SUBMAP_05;
-  }
-
-  @Method(0x800c7524L)
-  private void loadSItemAndSetUpNewGameData() {
-    loadSupportOverlay(2, this::setUpNewGameData);
   }
 }

@@ -12,10 +12,8 @@ import legend.core.memory.Method;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.ByteRef;
-import legend.core.memory.types.CString;
 import legend.core.memory.types.ComponentFunction;
 import legend.core.memory.types.IntRef;
-import legend.core.memory.types.Pointer;
 import legend.core.memory.types.QuintConsumer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedByteRef;
@@ -136,7 +134,6 @@ import static legend.game.Scus94491BpeSegment.loadEncounterSoundsAndMusic;
 import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadMcq;
 import static legend.game.Scus94491BpeSegment.loadMusicPackage;
-import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.setDepthResolution;
@@ -193,6 +190,7 @@ import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800d.calculateXAngleFromRefpointToViewpoint;
 import static legend.game.combat.Bttl_800d.calculateYAngleFromRefpointToViewpoint;
 import static legend.game.combat.Bttl_800d.resetCameraMovement;
+import static legend.game.combat.Bttl_800e.FUN_800ef28c;
 import static legend.game.combat.Bttl_800e.allocateDeffManager;
 import static legend.game.combat.Bttl_800e.allocateEffectManager;
 import static legend.game.combat.Bttl_800e.allocateStageDarkeningStorage;
@@ -210,7 +208,6 @@ import static legend.game.combat.Bttl_800e.rotateBattleStage;
 import static legend.game.combat.Bttl_800e.updateGameStateAndDeallocateMenu;
 import static legend.game.combat.Bttl_800f.FUN_800f1a00;
 import static legend.game.combat.Bttl_800f.FUN_800f417c;
-import static legend.game.combat.Bttl_800f.FUN_800f863c;
 import static legend.game.combat.Bttl_800f.addFloatingNumberForBent;
 import static legend.game.combat.Bttl_800f.handleCombatMenu;
 import static legend.game.combat.Bttl_800f.initializeCombatMenuIcons;
@@ -277,8 +274,6 @@ public final class Bttl_800c {
   public static final IntRef charCount_800c677c = MEMORY.ref(4, 0x800c677cL, IntRef::new);
   /** This may be unused. Only referenced by the script engine, but seems like there may be no real uses */
   public static final IntRef currentCameraIndex_800c6780 = MEMORY.ref(4, 0x800c6780L, IntRef::new);
-
-  public static final Pointer<CString> currentAddition_800c6790 = MEMORY.ref(4, 0x800c6790L, Pointer.deferred(1, CString.maxLength(30)));
 
   public static final MV cameraTransformMatrix_800c6798 = new MV();
   // public static final UnsignedIntRef flags_800c67b8 = MEMORY.ref(4, 0x800c67b8L, UnsignedIntRef::new);
@@ -403,13 +398,31 @@ public final class Bttl_800c {
 
   public static final int[] melbuMonsterNameIndices_800c6e90 = {395, 396, 397};
 
-  public static final ArrayRef<CombatPortraitBorderMetrics0c> combatPortraitBorderVertexCoords_800c6e9c = MEMORY.ref(1, 0x800c6e9cL, ArrayRef.of(CombatPortraitBorderMetrics0c.class, 4, 0xc, CombatPortraitBorderMetrics0c::new));
-  public static final ArrayRef<BattleHudStatLabelMetrics0c> battleHudStatLabelMetrics_800c6ecc = MEMORY.ref(1, 0x800c6eccL, ArrayRef.of(BattleHudStatLabelMetrics0c.class, 3, 0xc, BattleHudStatLabelMetrics0c::new));
+  public static final CombatPortraitBorderMetrics0c[] combatPortraitBorderVertexCoords_800c6e9c = {
+    new CombatPortraitBorderMetrics0c(0, 0, 1, 1, 0, 0, 0, 0, -1, -1, 1, -1),
+    new CombatPortraitBorderMetrics0c(2, 2, 3, 3, 0, 0, 0, 0, -1, 1, 1, 1),
+    new CombatPortraitBorderMetrics0c(0, 0, 2, 2, 0, 1, 0, -1, -1, -1, -1, 1),
+    new CombatPortraitBorderMetrics0c(1, 1, 3, 3, 0, 1, 0, -1, 1, -1, 1, 1),
+  };
+  public static final BattleHudStatLabelMetrics0c[] battleHudStatLabelMetrics_800c6ecc = {
+    new BattleHudStatLabelMetrics0c(21, -15, 96, 32, 8, 8),
+    new BattleHudStatLabelMetrics0c(21, -5, 96, 32, 8, 8),
+    new BattleHudStatLabelMetrics0c(-18, -19, 0, 32, 16, 32),
+  };
 
   public static final int[][] spBarColours_800c6f04 = {{16, 87, 240, 9, 50, 138}, {16, 87, 240, 9, 50, 138}, {0, 181, 142, 0, 102, 80}, {206, 204, 17, 118, 117, 10}, {230, 139, 0, 132, 80, 0}, {181, 0, 0, 104, 0, 0}, {16, 87, 240, 9, 50, 138}};
 
   public static final int[] melbuStageToMonsterNameIndices_800c6f30 = {0, 0, 0, 0, 1, 0, 2};
-  public static final ArrayRef<BattleHudBorderMetrics14> battleHudBorderMetrics_800c6f4c = MEMORY.ref(2, 0x800c6f4cL, ArrayRef.of(BattleHudBorderMetrics14.class, 8, 20, BattleHudBorderMetrics14::new));
+  public static final BattleHudBorderMetrics14[] battleHudBorderMetrics_800c6f4c = {
+    new BattleHudBorderMetrics14(0, 1, 200, 48, 0, 4, 48, 8),
+    new BattleHudBorderMetrics14(0, 2, 0, 128, 4, 0, 8, 15),
+    new BattleHudBorderMetrics14(1, 3, 8, 128, 4, 1, 8, 15),
+    new BattleHudBorderMetrics14(2, 3, 200, 88, 0, 4, 48, 8),
+    new BattleHudBorderMetrics14(0, 0, 192, 48, 4, 4, 8, 8),
+    new BattleHudBorderMetrics14(1, 1, 248, 48, 4, 4, 8, 8),
+    new BattleHudBorderMetrics14(2, 2, 192, 88, 4, 4, 8, 8),
+    new BattleHudBorderMetrics14(3, 3, 248, 88, 4, 4, 8, 8),
+  };
   public static final int[][] textboxColours_800c6fec = {{76, 183, 225}, {182, 112, 0}, {25, 15, 128}, {128, 128, 128}, {129, 9, 236}, {213, 197, 58}, {72, 255, 159}, {238, 9, 9}, {0, 41, 159}};
 
   public static final int[] digitOffsetX_800c7014 = {0, 27, 0, 27, 42};
@@ -428,10 +441,10 @@ public final class Bttl_800c {
   };
   public static final int[] targetAllItemIds_800c7124 = {193, 207, 208, 209, 210, 214, 216, 220, 241, 242, 243, 244, 245, 246, 247, 248, 250};
 
-  public static final BattleMenuBackgroundUvMetrics04 battleItemMenuScrollArrowUvMetrics_800c7190 = MEMORY.ref(1, 0x800c7190L, BattleMenuBackgroundUvMetrics04::new);
+  public static final BattleMenuBackgroundUvMetrics04 battleItemMenuScrollArrowUvMetrics_800c7190 = new BattleMenuBackgroundUvMetrics04(224, 8, 16, 8);
   public static final int[] iconFlags_800c7194 = {4, 1, 5, 6, 2, 9, 3, 7};
 
-  public static final BattleMenuHighlightMetrics12 battleMenuHighlightMetrics_800c71bc = MEMORY.ref(2, 0x800c71bcL, BattleMenuHighlightMetrics12::new);
+  public static final BattleMenuHighlightMetrics12 battleMenuHighlightMetrics_800c71bc = new BattleMenuHighlightMetrics12(0, 0, 24, 24, 232, 120, 23, 23, 0);
   public static final int[] dragoonSpiritIconClutOffsets_800c71d0 = {152, 153, 154, 155, 156, 153, 157, 158, 154, 159};
   public static final int[] battleMenuIconStates_800c71e4 = {0, 1, 2, 1};
   public static final int[] uiTextureElementBrightness_800c71ec = {96, 64, -128};
@@ -478,7 +491,15 @@ public final class Bttl_800c {
     radialGradientEffectRenderers_800fa758[4] = Bttl_800d::renderRingGradientEffect;
   }
 
-  public static final ArrayRef<GuardEffectMetrics04> guardEffectMetrics_800fa76c = MEMORY.ref(4, 0x800fa76cL, ArrayRef.of(GuardEffectMetrics04.class, 7, 4, GuardEffectMetrics04::new));
+  public static final GuardEffectMetrics04[] guardEffectMetrics_800fa76c = {
+    new GuardEffectMetrics04(0, 0),
+    new GuardEffectMetrics04(0, -1000),
+    new GuardEffectMetrics04(600, -300),
+    new GuardEffectMetrics04(500, 600),
+    new GuardEffectMetrics04(0, 1000),
+    new GuardEffectMetrics04(-500, -100),
+    new GuardEffectMetrics04(0, -1000),
+  };
 
   /** ASCII chars - [0-9][A-Z][a-z]'-& <null> */
   public static final int[] asciiTable_800fa788 = {
@@ -487,19 +508,59 @@ public final class Bttl_800c {
   };
   public static final int[] charWidthAdjustTable_800fa7cc = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, -1, -1, 0, 1, -1, 0, 4, 2, -1, 1, -2, 0, -2, 0, -1, -2, 0, 1, -1, -1, -2, -1, 0, 0, 1, 1, 1, 1, 1, 3, 1, 1, 5, 4, 1, 5, -2, 1, 1, 1, 1, 3, 2, 3, 1, 1, -3, 1, 1, 2, 4, 2, -1, 6};
 
-  public static final CString additionNames_800fa8d4 = MEMORY.ref(4, 0x800fa8d4L, CString.maxLength(0x1bb));
+  public static final String[] additionNames_800fa8d4 = {"Double Slash", "Volcano", "Burning Rush", "Crush Dance", "Madness Hero", "Moon Strike", "Blazing Dynamo", "", "Harpoon", "Spinning Cane", "Rod Typhoon", "Gust of Wind Dance", "Flower Storm", "", "Whip Smack", "More & More", "Hard Blade", "Demon's Dance", "", "Pursuit", "Inferno", "Bone Crush", "", "Double Smack", "Hammer Spin", "Cool Boogie", "Cat's Cradle", "Perky Step", "", "Double Punch", "Ferry of Styx", "Summon 4 Gods", " 5-Ring Shattering", "Hex Hammer", "Omni-Sweep", "Harpoon", "Spinning Cane", "Rod Typhoon", "Gust of Wind Dance", "Flower Storm"};
 
   /** Next 4 globals are related to SpTextEffect40 */
   public static final ShortRef _800faa90 = MEMORY.ref(2, 0x800faa90L, ShortRef::new);
   public static final ShortRef _800faa92 = MEMORY.ref(2, 0x800faa92L, ShortRef::new);
   public static final ByteRef _800faa94 = MEMORY.ref(1, 0x800faa94L, ByteRef::new);
 
-  public static final IntRef _800faa98 = MEMORY.ref(4, 0x800faa98L, IntRef::new);
-  /** Next 2 globals are related to AdditionNameTextEffect1c */
-  public static final ByteRef _800faa9c = MEMORY.ref(1, 0x800faa9cL, ByteRef::new);
+  /** Next global is related to AdditionNameTextEffect1c */
   public static final ByteRef _800faa9d = MEMORY.ref(1, 0x800faa9dL, ByteRef::new);
 
-  public static final ArrayRef<ButtonPressHudMetrics06> buttonPressHudMetrics_800faaa0 = MEMORY.ref(4, 0x800faaa0L, ArrayRef.of(ButtonPressHudMetrics06.class, 41, 6, ButtonPressHudMetrics06::new));
+  public static final ButtonPressHudMetrics06[] buttonPressHudMetrics_800faaa0 = {
+    new ButtonPressHudMetrics06(0, 184, 96, 24, 16, 42),
+    new ButtonPressHudMetrics06(0, 208, 96, 24, 16, 42),
+    new ButtonPressHudMetrics06(0, 232, 96, 23, 23, 42),
+    new ButtonPressHudMetrics06(0, 16, 40, 8, 16, 33),
+    new ButtonPressHudMetrics06(0, 24, 40, 8, 16, 33),
+    new ButtonPressHudMetrics06(0, 32, 40, 8, 16, 33),
+    new ButtonPressHudMetrics06(0, 40, 40, 8, 16, 33),
+    new ButtonPressHudMetrics06(0, 48, 40, 8, 16, 33),
+    new ButtonPressHudMetrics06(0, 56, 40, 8, 16, 33),
+    new ButtonPressHudMetrics06(0, 64, 40, 8, 16, 33),
+    new ButtonPressHudMetrics06(0, 72, 40, 8, 16, 33),
+    new ButtonPressHudMetrics06(0, 80, 40, 8, 16, 33),
+    new ButtonPressHudMetrics06(0, 88, 40, 8, 16, 33),
+    new ButtonPressHudMetrics06(0, 176, 32, 16, 16, 42),
+    new ButtonPressHudMetrics06(0, 192, 128, 40, 16, 59),
+    new ButtonPressHudMetrics06(0, 152, 112, 40, 16, 60),
+    new ButtonPressHudMetrics06(0, 192, 112, 40, 16, 62),
+    new ButtonPressHudMetrics06(0, 72, 128, 40, 16, 59),
+    new ButtonPressHudMetrics06(0, 184, 96, 16, 16, 27),
+    new ButtonPressHudMetrics06(0, 200, 96, 16, 16, 19),
+    new ButtonPressHudMetrics06(0, 232, 120, 23, 24, 12),
+    new ButtonPressHudMetrics06(0, 0, 208, 32, 32, 58),
+    new ButtonPressHudMetrics06(0, 32, 208, 32, 32, 58),
+    new ButtonPressHudMetrics06(0, 40, 128, 32, 16, 61),
+    new ButtonPressHudMetrics06(1, 176, 64, 180, 68, 43),
+    new ButtonPressHudMetrics06(1, 180, 64, 176, 68, 43),
+    new ButtonPressHudMetrics06(1, 176, 68, 180, 64, 43),
+    new ButtonPressHudMetrics06(1, 180, 68, 176, 64, 43),
+    new ButtonPressHudMetrics06(1, 183, 64, 191, 68, 43),
+    new ButtonPressHudMetrics06(1, 191, 68, 183, 64, 43),
+    new ButtonPressHudMetrics06(1, 176, 71, 180, 79, 43),
+    new ButtonPressHudMetrics06(1, 180, 79, 176, 71, 43),
+    new ButtonPressHudMetrics06(1, 183, 71, 191, 79, 43),
+    new ButtonPressHudMetrics06(0, 0, 208, 24, 24, 29),
+    new ButtonPressHudMetrics06(0, 24, 208, 24, 24, 29),
+    new ButtonPressHudMetrics06(0, 48, 208, 24, 24, 29),
+    new ButtonPressHudMetrics06(1, 239, 15, 224, 8, 18),
+    new ButtonPressHudMetrics06(0, 232, 120, 23, 24, 12),
+    new ButtonPressHudMetrics06(0, 184, 96, 24, 24, 19),
+    new ButtonPressHudMetrics06(0, 208, 96, 24, 24, 19),
+    new ButtonPressHudMetrics06(0, 232, 96, 23, 24, 19),
+  };
 
   public static final Vector3f cameraRotationVector_800fab98 = new Vector3f();
   public static final Vector3f temp1_800faba0 = new Vector3f();
@@ -903,21 +964,107 @@ public final class Bttl_800c {
     new LodString("Confused"), new LodString("Bewitched"), new LodString("Petrified"),
   };
 
-  public static final ArrayRef<Pointer<NameAndPortraitDisplayMetrics0c>> hudNameAndPortraitMetrics_800fb444 = MEMORY.ref(4, 0x800fb444L, ArrayRef.of(Pointer.classFor(NameAndPortraitDisplayMetrics0c.class), 10, 4, Pointer.deferred(4, NameAndPortraitDisplayMetrics0c::new)));
-  public static final ArrayRef<SpBarBorderMetrics04> spBarBorderMetrics_800fb46c = MEMORY.ref(1, 0x800fb46cL, ArrayRef.of(SpBarBorderMetrics04.class, 4, 4, SpBarBorderMetrics04::new));
-  public static final ArrayRef<SpBarBorderMetrics04> spBarFlashingBorderMetrics_800fb47c = MEMORY.ref(1, 0x800fb47cL, ArrayRef.of(SpBarBorderMetrics04.class, 4, 4, SpBarBorderMetrics04::new));
+  public static final NameAndPortraitDisplayMetrics0c[] hudNameAndPortraitMetrics_800fb444 = {
+    new NameAndPortraitDisplayMetrics0c(104, 32, 24, 8, 24, 0, 24, 32, 0),
+    new NameAndPortraitDisplayMetrics0c(112, 56, 40, 8, 48, 0, 24, 32, 2),
+    new NameAndPortraitDisplayMetrics0c(128, 32, 32, 8, 0, 0, 24, 32, 1),
+    new NameAndPortraitDisplayMetrics0c(0, 232, 32, 8, 72, 0, 24, 32, 3),
+    new NameAndPortraitDisplayMetrics0c(216, 24, 39, 8, 96, 0, 24, 32, 4),
+    new NameAndPortraitDisplayMetrics0c(152, 48, 40, 8, 120, 0, 24, 32, 5),
+    new NameAndPortraitDisplayMetrics0c(32, 232, 32, 8, 144, 0, 24, 32, 6),
+    new NameAndPortraitDisplayMetrics0c(152, 56, 40, 8, 168, 0, 24, 32, 7),
+    new NameAndPortraitDisplayMetrics0c(64, 232, 40, 8, 192, 0, 24, 32, 8),
+    new NameAndPortraitDisplayMetrics0c(104, 32, 24, 8, 24, 0, 24, 32, 0),
+  };
+  public static final SpBarBorderMetrics04[] spBarBorderMetrics_800fb46c = {
+    new SpBarBorderMetrics04(1, 6, 39, 6),
+    new SpBarBorderMetrics04(1, 7, 1, 11),
+    new SpBarBorderMetrics04(39, 7, 39, 11),
+    new SpBarBorderMetrics04(1, 12, 39, 12),
+  };
+  public static final SpBarBorderMetrics04[] spBarFlashingBorderMetrics_800fb47c = {
+    new SpBarBorderMetrics04(2, 7, 38, 7),
+    new SpBarBorderMetrics04(2, 8, 2, 10),
+    new SpBarBorderMetrics04(38, 8, 38, 10),
+    new SpBarBorderMetrics04(2, 11, 38, 11),
+  };
 
-  public static final ArrayRef<BattleItemMenuArrowUvMetrics06> battleMenuBackgroundMetrics_800fb5dc = MEMORY.ref(4, 0x800fb5dcL, ArrayRef.of(BattleItemMenuArrowUvMetrics06.class, 9, 6, BattleItemMenuArrowUvMetrics06::new));
+  public static final BattleItemMenuArrowUvMetrics06[] battleMenuBackgroundMetrics_800fb5dc = {
+    new BattleItemMenuArrowUvMetrics06(184, 72, 7, 7, 0),
+    new BattleItemMenuArrowUvMetrics06(176, 64, 7, 7, 0),
+    new BattleItemMenuArrowUvMetrics06(176, 64, 7, 7, 2),
+    new BattleItemMenuArrowUvMetrics06(176, 64, 7, 7, 1),
+    new BattleItemMenuArrowUvMetrics06(176, 64, 7, 7, 3),
+    new BattleItemMenuArrowUvMetrics06(184, 64, 7, 7, 0),
+    new BattleItemMenuArrowUvMetrics06(176, 72, 7, 7, 0),
+    new BattleItemMenuArrowUvMetrics06(176, 72, 7, 7, 2),
+    new BattleItemMenuArrowUvMetrics06(184, 64, 7, 7, 1),
+  };
 
-  public static final ArrayRef<BattleMenuBackgroundDisplayMetrics0c> battleMenuBackgroundDisplayMetrics_800fb614 = MEMORY.ref(4, 0x800fb614L, ArrayRef.of(BattleMenuBackgroundDisplayMetrics0c.class, 8, 12, BattleMenuBackgroundDisplayMetrics0c::new));
+  public static final BattleMenuBackgroundDisplayMetrics0c[] battleMenuBackgroundDisplayMetrics_800fb614 = {
+    new BattleMenuBackgroundDisplayMetrics0c(0, -8, -8, 8, 8),
+    new BattleMenuBackgroundDisplayMetrics0c(1, 0, -8, 8, 8),
+    new BattleMenuBackgroundDisplayMetrics0c(2, -8, 0, 8, 8),
+    new BattleMenuBackgroundDisplayMetrics0c(3, 0, 0, 8, 8),
+    new BattleMenuBackgroundDisplayMetrics0c(0, 0, -8, 0, 8),
+    new BattleMenuBackgroundDisplayMetrics0c(0, -8, 0, 8, 0),
+    new BattleMenuBackgroundDisplayMetrics0c(1, 0, 0, 8, 0),
+    new BattleMenuBackgroundDisplayMetrics0c(2, 0, 0, 0, 8),
+  };
 
-  public static final ArrayRef<BattleMenuIconMetrics08> battleMenuIconMetrics_800fb674 = MEMORY.ref(4, 0x800fb674L, ArrayRef.of(BattleMenuIconMetrics08.class, 12, 8, BattleMenuIconMetrics08::new));
+  public static final BattleMenuIconMetrics08[] battleMenuIconMetrics_800fb674 = {
+    new BattleMenuIconMetrics08(112, 64, 28, 0),
+    new BattleMenuIconMetrics08(80, 64, 25, -1),
+    new BattleMenuIconMetrics08(64, 64, 24, 1),
+    new BattleMenuIconMetrics08(16, 64, 21, -1),
+    new BattleMenuIconMetrics08(32, 64, 22, -1),
+    new BattleMenuIconMetrics08(48, 64, 23, -1),
+    new BattleMenuIconMetrics08(96, 64, 26, 0),
+    new BattleMenuIconMetrics08(112, 64, 13, 0),
+    new BattleMenuIconMetrics08(0, 64, 20, -1),
+    new BattleMenuIconMetrics08(16, 16, 16, 16),
+    new BattleMenuIconMetrics08(16, 16, 16, 24),
+    new BattleMenuIconMetrics08(24, 16, 24, 24),
+  };
 
-  public static final ArrayRef<ArrayRef<ShortRef>> battleMenuIconHeights_800fb6bc = MEMORY.ref(2, 0x800fb6bcL, ArrayRef.of(ArrayRef.classFor(ShortRef.class), 9, 6,  ArrayRef.of(ShortRef.class, 3, 2, ShortRef::new)));
+  public static final int[][] battleMenuIconHeights_800fb6bc = {
+    {16, 16, 16},
+    {16, 16, 16},
+    {16, 24, 24},
+    {16, 24, 24},
+    {16, 24, 24},
+    {16, 24, 24},
+    {16, 16, 16},
+    {16, 16, 16},
+    {16, 24, 24},
+  };
 
-  public static final ArrayRef<ArrayRef<ShortRef>> battleMenuIconVOffsets_800fb6f4 = MEMORY.ref(2, 0x800fb6f4L, ArrayRef.of(ArrayRef.classFor(ShortRef.class), 9, 6, ArrayRef.of(ShortRef.class, 3, 2, ShortRef::new)));
+  public static final int[][] battleMenuIconVOffsets_800fb6f4 = {
+    {0, 16, 32},
+    {0, 16, 32},
+    {0, 16, 40},
+    {0, 16, 40},
+    {0, 16, 40},
+    {0, 16, 40},
+    {0, 16, 32},
+    {0, 16, 32},
+    {0, 16, 40},
+  };
 
-  public static final ArrayRef<BattleMenuTextMetrics08> battleMenuTextMetrics_800fb72c = MEMORY.ref(4, 0x800fb72cL, ArrayRef.of(BattleMenuTextMetrics08.class, 12, 8, BattleMenuTextMetrics08::new));
+  public static final BattleMenuTextMetrics08[] battleMenuTextMetrics_800fb72c = {
+    new BattleMenuTextMetrics08(48, 56, 32, 33),
+    new BattleMenuTextMetrics08(144, 88, 40, 16),
+    new BattleMenuTextMetrics08(144, 72, 32, 14),
+    new BattleMenuTextMetrics08(16, 56, 32, 33),
+    new BattleMenuTextMetrics08(144, 64, 32, 33),
+    new BattleMenuTextMetrics08(144, 80, 32, 33),
+    new BattleMenuTextMetrics08(144, 104, 40, 15),
+    new BattleMenuTextMetrics08(0, 16, 32, 0),
+    new BattleMenuTextMetrics08(144, 96, 40, 14),
+    new BattleMenuTextMetrics08(0, 0, 0, 0),
+    new BattleMenuTextMetrics08(0, 0, 0, 0),
+    new BattleMenuTextMetrics08(0, 0, 0, 0),
+  };
 
   @Method(0x800c7304L)
   public static void cacheLivingBents() {
@@ -1192,7 +1339,7 @@ public final class Bttl_800c {
     battleState_8006e398.allBents_e0c[allBentCount_800c66d0.get()] = null;
     battleState_8006e398.charBents_e40[charCount_800c677c.get()] = null;
 
-    FUN_800f863c();
+    FUN_800ef28c();
 
     pregameLoadingStage_800bb10c.incr();
   }
@@ -1536,7 +1683,6 @@ public final class Bttl_800c {
     if(currentPostCombatActionFrame_800c6690.get() >= postCombatActionTotalFrames_800fa6b8[postBattleActionIndex] || (press_800bee94 & 0xff) != 0 && currentPostCombatActionFrame_800c6690.get() >= 25) {
       //LAB_800c8214
       deallocateLightingControllerAndDeffManager();
-      loadSupportOverlay(2, () -> { });
 
       if(fullScreenEffect_800bb140.currentColour_28 == 0) {
         startFadeEffect(1, postCombatActionFrames_800fa6d0[postBattleActionIndex]);
@@ -1744,14 +1890,14 @@ public final class Bttl_800c {
       //LAB_800c8a04
       final int colour = mcqColour_800fa6dc.get();
       if(y >= -centreScreenY_1f8003de) {
-        clearRed_8007a3a8 = mcq.colour0_18.getR() * colour / 0x80;
-        clearGreen_800bb104 = mcq.colour0_18.getG() * colour / 0x80;
-        clearBlue_800babc0 = mcq.colour0_18.getB() * colour / 0x80;
+        clearRed_8007a3a8 = mcq.colour0_18.x * colour / 0x80;
+        clearGreen_800bb104 = mcq.colour0_18.y * colour / 0x80;
+        clearBlue_800babc0 = mcq.colour0_18.z * colour / 0x80;
       } else {
         //LAB_800c8a74
-        clearRed_8007a3a8 = mcq.colour1_20.getR() * colour / 0x80;
-        clearGreen_800bb104 = mcq.colour1_20.getG() * colour / 0x80;
-        clearBlue_800babc0 = mcq.colour1_20.getB() * colour / 0x80;
+        clearRed_8007a3a8 = mcq.colour1_20.x * colour / 0x80;
+        clearGreen_800bb104 = mcq.colour1_20.y * colour / 0x80;
+        clearBlue_800babc0 = mcq.colour1_20.z * colour / 0x80;
       }
     }
 

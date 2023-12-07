@@ -131,9 +131,9 @@ public class AdditionsScreen extends MenuScreen {
           if(allocate) {
             final int level = gameState_800babc8.charData_32c[charIndex].additionLevels_1a[index];
             renderThreeDigitNumber(197, y, level); // Addition level
-            renderThreeDigitNumber(230, y, additionData_80052884.get(offset).attacks_01.get()); // Number of attacks
-            renderThreeDigitNumber(263, y, additionData_80052884.get(offset).sp_02.get(level - 1).get()); // SP
-            renderThreeDigitNumber(297, y, additionData_80052884.get(offset).damage_0c.get() * (additions_80114070.get(offset).deref().get(level).damageMultiplier_03.get() + 100) / 100); // Damage
+            renderThreeDigitNumber(230, y, additionData_80052884[offset].attacks_01); // Number of attacks
+            renderThreeDigitNumber(263, y, additionData_80052884[offset].sp_02[level - 1]); // SP
+            renderThreeDigitNumber(297, y, additionData_80052884[offset].damage_0c * (additions_80114070[offset][level].damageMultiplier_03 + 100) / 100); // Damage
             renderThreeDigitNumber(322, y, gameState_800babc8.charData_32c[charIndex].additionXp_22[index]); // Current XP
 
             if(level < 5) {

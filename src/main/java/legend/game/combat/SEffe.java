@@ -12,7 +12,6 @@ import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.GpuCommandSetMaskBit;
 import legend.core.gpu.Rect4i;
-import legend.core.gte.COLOUR;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
@@ -146,7 +145,6 @@ import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800c.FUN_800cf684;
 import static legend.game.combat.Bttl_800c.FUN_800cfb94;
-import static legend.game.combat.Bttl_800c.vramSlotUvs_800fb0ec;
 import static legend.game.combat.Bttl_800c.currentStage_800c66a4;
 import static legend.game.combat.Bttl_800c.deffManager_800c693c;
 import static legend.game.combat.Bttl_800c.getRelativeOffset;
@@ -154,6 +152,7 @@ import static legend.game.combat.Bttl_800c.melbuStageIndices_800fb064;
 import static legend.game.combat.Bttl_800c.scriptGetScriptedObjectPos;
 import static legend.game.combat.Bttl_800c.seed_800fa754;
 import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
+import static legend.game.combat.Bttl_800c.vramSlotUvs_800fb0ec;
 import static legend.game.combat.Bttl_800d.getRotationAndScaleFromTransforms;
 import static legend.game.combat.Bttl_800d.getRotationFromTransforms;
 import static legend.game.combat.Bttl_800d.loadModelAnim;
@@ -2617,8 +2616,8 @@ public final class SEffe {
     final RaindropEffect0c[] rainArray = effect.raindropArray_04;
     for(int i = 0; i < count; i++) {
       rainArray[i]._00 = 1;
-      rainArray[i].x0_02 = (short)(seed_800fa754.nextInt(513));
-      rainArray[i].y0_04 = (short)(seed_800fa754.nextInt(257));
+      rainArray[i].x0_02 = (short)seed_800fa754.nextInt(513);
+      rainArray[i].y0_04 = (short)seed_800fa754.nextInt(257);
       rainArray[i].angleModifier_0a = seed_800fa754.nextFloat(MathHelper.PI * 1.5f) + MathHelper.PI / 2.0f;
     }
 
@@ -3189,27 +3188,27 @@ public final class SEffe {
     int a0;
     int a1;
 
-    final COLOUR rgb = new COLOUR();
+    final Vector3i rgb = new Vector3i();
 
     if((manager.params_10.flags_00 & 0x40) != 0) {
       final Vector3f normal = new Vector3f();
       _800fb8d0.mul(transforms, normal);
       normal.add(transforms.transfer.x / 4096.0f, transforms.transfer.y / 4096.0f, transforms.transfer.z / 4096.0f);
-      rgb.unpack(GTE.normalColour(normal, 0xffffff));
+      GTE.normalColour(normal, 0xffffff, rgb);
     } else {
       //LAB_8010b6c8
       rgb.set(0x80, 0x80, 0x80);
     }
 
     //LAB_8010b6d8
-    rgb.setR(rgb.getR() * manager.params_10.colour_1c.x / 128);
-    rgb.setG(rgb.getG() * manager.params_10.colour_1c.y / 128);
-    rgb.setB(rgb.getB() * manager.params_10.colour_1c.z / 128);
+    rgb.x = rgb.x * manager.params_10.colour_1c.x / 128;
+    rgb.y = rgb.y * manager.params_10.colour_1c.y / 128;
+    rgb.z = rgb.z * manager.params_10.colour_1c.z / 128;
 
     //LAB_8010b764
     for(int i = 0; i < 8; i++) {
       final GpuCommandPoly cmd = new GpuCommandPoly(3)
-        .rgb(rgb.getR(), rgb.getG(), rgb.getB());
+        .rgb(rgb.x, rgb.y, rgb.z);
 
       switch(i) {
         case 1, 2, 4, 7 -> {
@@ -3321,7 +3320,7 @@ public final class SEffe {
           GPU.queueCommand(z / 4.0f, new GpuCommandPoly(4)
             .bpp(Bpp.BITS_15)
             .vramPos(metrics.u_00 & 0x3c0, (metrics.v_02 & 0x1) != 0 ? 256 : 0)
-            .rgb(rgb.getR(), rgb.getG(), rgb.getB())
+            .rgb(rgb.x, rgb.y, rgb.z)
             .pos(0, sxy0.x, sxy0.y)
             .pos(1, sxy1.x, sxy1.y)
             .pos(2, sxy2.x, sxy2.y)
@@ -3340,22 +3339,22 @@ public final class SEffe {
 
   @Method(0x8010bc60L)
   public static void renderScreenCapture(final EffectManagerData6c<EffectManagerParams.VoidType> manager, final ScreenCaptureEffect1c effect, final MV transforms) {
-    final COLOUR rgb = new COLOUR();
+    final Vector3i rgb = new Vector3i();
 
     if((manager.params_10.flags_00 & 0x40) != 0) {
       final Vector3f normal = new Vector3f();
       _800fb8d0.mul(transforms, normal);
       normal.add(transforms.transfer.x / 4096.0f, transforms.transfer.y / 4096.0f, transforms.transfer.z / 4096.0f);
-      rgb.unpack(GTE.normalColour(normal, 0xffffff));
+      GTE.normalColour(normal, 0xffffff, rgb);
     } else {
       //LAB_8010bd6c
       rgb.set(0x80, 0x80, 0x80);
     }
 
     //LAB_8010bd7c
-    rgb.setR(rgb.getR() * manager.params_10.colour_1c.x / 128);
-    rgb.setG(rgb.getG() * manager.params_10.colour_1c.y / 128);
-    rgb.setB(rgb.getB() * manager.params_10.colour_1c.z / 128);
+    rgb.x = rgb.x * manager.params_10.colour_1c.x / 128;
+    rgb.y = rgb.y * manager.params_10.colour_1c.y / 128;
+    rgb.z = rgb.z * manager.params_10.colour_1c.z / 128;
 
     //LAB_8010be14
     for(int s0 = 0; s0 < 15; s0++) {
@@ -3411,7 +3410,7 @@ public final class SEffe {
       GPU.queueCommand(z / 4.0f, new GpuCommandPoly(4)
         .bpp(Bpp.BITS_15)
         .vramPos(metrics.u_00 & 0x3c0, (metrics.v_02 & 0x1) != 0 ? 256 : 0)
-        .rgb(rgb.getR(), rgb.getG(), rgb.getB())
+        .rgb(rgb.x, rgb.y, rgb.z)
         .pos(0, sxy0.x, sxy0.y)
         .pos(1, sxy1.x, sxy1.y)
         .pos(2, sxy2.x, sxy2.y)
@@ -4323,9 +4322,9 @@ public final class SEffe {
             impact.scale_6c[0].y = Math.max(explosionHeight, 0.0f);
 
             //LAB_8010f2a8
-            impact.opacity_8c[0].r.sub(23);
-            impact.opacity_8c[0].g.sub(23);
-            impact.opacity_8c[0].b.sub(23);
+            impact.opacity_8c[0].x -= 23;
+            impact.opacity_8c[0].y -= 23;
+            impact.opacity_8c[0].z -= 23;
           } else { // Stage 1
             if(currentAnimFrame == 9) {
               impact.translation_0c[0].y = -0x800;
@@ -4387,9 +4386,9 @@ public final class SEffe {
           final float scaleX = impact.scale_6c[stageNum].x * manager.params_10.scale_16.x;
           final float scaleY = impact.scale_6c[stageNum].y * manager.params_10.scale_16.y;
           final float scaleZ = impact.scale_6c[stageNum].z * manager.params_10.scale_16.z;
-          final int r = impact.opacity_8c[stageNum].getR() * manager.params_10.colour_1c.x >> 8;
-          final int g = impact.opacity_8c[stageNum].getG() * manager.params_10.colour_1c.y >> 8;
-          final int b = impact.opacity_8c[stageNum].getB() * manager.params_10.colour_1c.z >> 8;
+          final int r = impact.opacity_8c[stageNum].x * manager.params_10.colour_1c.x >> 8;
+          final int g = impact.opacity_8c[stageNum].y * manager.params_10.colour_1c.y >> 8;
+          final int b = impact.opacity_8c[stageNum].z * manager.params_10.colour_1c.z >> 8;
 
           if((manager.params_10.flags_00 & 0x40) == 0) {
             FUN_800e61e4(r / 128.0f, g / 128.0f, b / 128.0f);
@@ -4547,7 +4546,7 @@ public final class SEffe {
       if(star.currentFrame_00 > star.toggleOffFrameThreshold_38) {
         star.renderStars_03 = false;
         star.currentFrame_00 = 0;
-        star.toggleOffFrameThreshold_38 = (short)(seed_800fa754.nextInt(star.maxToggleFrameThreshold_36 + 1));
+        star.toggleOffFrameThreshold_38 = (short)seed_800fa754.nextInt(star.maxToggleFrameThreshold_36 + 1);
       } else {
         //LAB_8010ffb0
         star.renderStars_03 = true;

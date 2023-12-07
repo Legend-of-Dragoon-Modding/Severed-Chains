@@ -756,9 +756,9 @@ public final class Bttl_800e {
       final BttlLightStruct84 a1 = lights_800c692c[i];
       final BattleStruct14 a0 = ambiance._10[i];
       a1.light_00.direction_00.set(a0.lightDirection_00);
-      a1.light_00.r_0c = a0.lightColour_0a.getR() / (float)0x100;
-      a1.light_00.g_0d = a0.lightColour_0a.getG() / (float)0x100;
-      a1.light_00.b_0e = a0.lightColour_0a.getB() / (float)0x100;
+      a1.light_00.r_0c = a0.lightColour_0a.x / (float)0x100;
+      a1.light_00.g_0d = a0.lightColour_0a.y / (float)0x100;
+      a1.light_00.b_0e = a0.lightColour_0a.z / (float)0x100;
 
       if(a0.x_06 != 0 || a0.y_08 != 0) {
         a1._10._00 = 0x3;
@@ -773,7 +773,7 @@ public final class Bttl_800e {
       if(a0.y_12 != 0) {
         a1._4c._00 = 0x3;
         a1._4c.angleAndColour_04.set(a1.light_00.r_0c, a1.light_00.g_0d, a1.light_00.b_0e);
-        a1._4c.vec_10.set(a0._0d.getR() / (float)0x100, a0._0d.getG() / (float)0x100, a0._0d.getB() / (float)0x100);
+        a1._4c.vec_10.set(a0._0d.x / (float)0x100, a0._0d.y / (float)0x100, a0._0d.z / (float)0x100);
         a1._4c.vec_28.x = a0.x_10;
         a1._4c.vec_28.y = a0.y_12;
       } else {
@@ -3761,7 +3761,7 @@ public final class Bttl_800e {
     //LAB_800ef38c
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
       final PlayerBattleEntity player = battleState_8006e398.charBents_e40[charSlot].innerStruct_00;
-      final byte[] spellIndices = new byte[8];
+      final int[] spellIndices = new int[8];
       getUnlockedDragoonSpells(spellIndices, player.charId_272);
       dragoonSpells_800c6960.get(charSlot).charIndex_00.set(player.charId_272);
 
@@ -4082,14 +4082,14 @@ public final class Bttl_800e {
           }
 
           //LAB_800f01f0
-          final NameAndPortraitDisplayMetrics0c namePortraitMetrics = hudNameAndPortraitMetrics_800fb444.get(player.charId_272).deref();
+          final NameAndPortraitDisplayMetrics0c namePortraitMetrics = hudNameAndPortraitMetrics_800fb444[player.charId_272];
 
           // Names
           if(names[charSlot] == null) {
             names[charSlot] = buildUiTextureElement(
               "Name " + charSlot,
-              namePortraitMetrics.nameU_00.get(), namePortraitMetrics.nameV_01.get(),
-              namePortraitMetrics.nameW_02.get(), namePortraitMetrics.nameH_03.get(),
+              namePortraitMetrics.nameU_00, namePortraitMetrics.nameV_01,
+              namePortraitMetrics.nameW_02, namePortraitMetrics.nameH_03,
               0x2c
             );
           }
@@ -4101,9 +4101,9 @@ public final class Bttl_800e {
           if(portraits[charSlot] == null) {
             portraits[charSlot] = buildUiTextureElement(
               "Portrait " + charSlot,
-              namePortraitMetrics.portraitU_04.get(), namePortraitMetrics.portraitV_05.get(),
-              namePortraitMetrics.portraitW_06.get(), namePortraitMetrics.portraitH_07.get(),
-              namePortraitMetrics.portraitClutOffset_08.get()
+              namePortraitMetrics.portraitU_04, namePortraitMetrics.portraitV_05,
+              namePortraitMetrics.portraitW_06, namePortraitMetrics.portraitH_07,
+              namePortraitMetrics.portraitClutOffset_08
             );
           }
 
@@ -4120,15 +4120,15 @@ public final class Bttl_800e {
 
           if(brightnessIndex0 != 0) {
             final int v1_0 = (6 - charDisplay._14.get(2).get()) * 8 + 100;
-            final int x = displayStats.x_00 - centreScreenX_1f8003dc + namePortraitMetrics.portraitW_06.get() / 2 - 44;
-            final int y = displayStats.y_02 - centreScreenY_1f8003de + namePortraitMetrics.portraitH_07.get() / 2 - 22;
-            int dimVertexPositionModifier = (namePortraitMetrics.portraitW_06.get() + 2) * v1_0 / 100 / 2;
+            final int x = displayStats.x_00 - centreScreenX_1f8003dc + namePortraitMetrics.portraitW_06 / 2 - 44;
+            final int y = displayStats.y_02 - centreScreenY_1f8003de + namePortraitMetrics.portraitH_07 / 2 - 22;
+            int dimVertexPositionModifier = (namePortraitMetrics.portraitW_06 + 2) * v1_0 / 100 / 2;
             final int x0 = x - dimVertexPositionModifier;
             final int x1 = x + dimVertexPositionModifier - 1;
 
             final short[] xs = {(short)x0, (short)x1, (short)x0, (short)x1};
 
-            dimVertexPositionModifier = (namePortraitMetrics.portraitH_07.get() + 2) * v1_0 / 100 / 2;
+            dimVertexPositionModifier = (namePortraitMetrics.portraitH_07 + 2) * v1_0 / 100 / 2;
             final int y0 = y - dimVertexPositionModifier;
             final int y1 = y + dimVertexPositionModifier - 1;
 
@@ -4157,14 +4157,14 @@ public final class Bttl_800e {
               //LAB_800f0470
               //LAB_800f047c
               final int borderLayer = i / 4;
-              final CombatPortraitBorderMetrics0c borderMetrics = combatPortraitBorderVertexCoords_800c6e9c.get(i % 4);
+              final CombatPortraitBorderMetrics0c borderMetrics = combatPortraitBorderVertexCoords_800c6e9c[i % 4];
 
               // Draw border around currently active character's portrait
               drawLine(
-                xs[borderMetrics.x1Index_00.get()] + borderMetrics.x1Offset_04.get() + borderMetrics._08.get() * borderLayer,
-                ys[borderMetrics.y1Index_01.get()] + borderMetrics.y1Offset_05.get() + borderMetrics._09.get() * borderLayer,
-                xs[borderMetrics.x2Index_02.get()] + borderMetrics.x2Offset_06.get() + borderMetrics._0a.get() * borderLayer,
-                ys[borderMetrics.y2Index_03.get()] + borderMetrics.y2Offset_07.get() + borderMetrics._0b.get() * borderLayer,
+                xs[borderMetrics.x1Index_00] + borderMetrics.x1Offset_04 + borderMetrics._08 * borderLayer,
+                ys[borderMetrics.y1Index_01] + borderMetrics.y1Offset_05 + borderMetrics._09 * borderLayer,
+                xs[borderMetrics.x2Index_02] + borderMetrics.x2Offset_06 + borderMetrics._0a * borderLayer,
+                ys[borderMetrics.y2Index_03] + borderMetrics.y2Offset_07 + borderMetrics._0b * borderLayer,
                 r,
                 g,
                 b,
@@ -4184,20 +4184,20 @@ public final class Bttl_800e {
             }
 
             //LAB_800f060c
-            final BattleHudStatLabelMetrics0c labelMetrics = battleHudStatLabelMetrics_800c6ecc.get(i);
+            final BattleHudStatLabelMetrics0c labelMetrics = battleHudStatLabelMetrics_800c6ecc[i];
 
             // HP: /  MP: /  SP:
             //LAB_800f0610
             if(stats[charSlot][i] == null) {
               stats[charSlot][i] = buildUiTextureElement(
                 "Stats " + charSlot + ' ' + i,
-                labelMetrics.u_04.get(), labelMetrics.v_06.get(),
-                labelMetrics.w_08.get(), labelMetrics.h_0a.get() + eraseSpHeight,
+                labelMetrics.u_04, labelMetrics.v_06,
+                labelMetrics.w_08, labelMetrics.h_0a + eraseSpHeight,
                 0x2c
               );
             }
 
-            uiTransforms.transfer.set(displayStats.x_00 + labelMetrics.x_00.get(), displayStats.y_02 + labelMetrics.y_02.get(), 124.0f);
+            uiTransforms.transfer.set(displayStats.x_00 + labelMetrics.x_00, displayStats.y_02 + labelMetrics.y_02, 124.0f);
             final RenderEngine.QueuedModel statsModel = RENDERER.queueOrthoOverlayModel(stats[charSlot][i], uiTransforms);
 
             if(charDisplay._14.get(2).get() < 6) {
@@ -4260,7 +4260,7 @@ public final class Bttl_800e {
             for(int i = 0; i < 4; i++) {
               final int offsetX = displayStats.x_00 - centreScreenX_1f8003dc;
               final int offsetY = displayStats.y_02 - centreScreenY_1f8003de;
-              drawLine(spBarBorderMetrics_800fb46c.get(i).x1_00.get() + offsetX, spBarBorderMetrics_800fb46c.get(i).y1_01.get() + offsetY, spBarBorderMetrics_800fb46c.get(i).x2_02.get() + offsetX, spBarBorderMetrics_800fb46c.get(i).y2_03.get() + offsetY, 0x60, 0x60, 0x60, false);
+              drawLine(spBarBorderMetrics_800fb46c[i].x1_00 + offsetX, spBarBorderMetrics_800fb46c[i].y1_01 + offsetY, spBarBorderMetrics_800fb46c[i].x2_02 + offsetX, spBarBorderMetrics_800fb46c[i].y2_03 + offsetY, 0x60, 0x60, 0x60, false);
             }
 
             //Full SP meter
@@ -4269,7 +4269,7 @@ public final class Bttl_800e {
               for(int i = 0; i < 4; i++) {
                 final int offsetX = displayStats.x_00 - centreScreenX_1f8003dc;
                 final int offsetY = displayStats.y_02 - centreScreenY_1f8003de;
-                drawLine(spBarFlashingBorderMetrics_800fb47c.get(i).x1_00.get() + offsetX, spBarFlashingBorderMetrics_800fb47c.get(i).y1_01.get() + offsetY, spBarFlashingBorderMetrics_800fb47c.get(i).x2_02.get() + offsetX, spBarFlashingBorderMetrics_800fb47c.get(i).y2_03.get() + offsetY, 0x80, 0, 0, false);
+                drawLine(spBarFlashingBorderMetrics_800fb47c[i].x1_00 + offsetX, spBarFlashingBorderMetrics_800fb47c[i].y1_01 + offsetY, spBarFlashingBorderMetrics_800fb47c[i].x2_02 + offsetX, spBarFlashingBorderMetrics_800fb47c[i].y2_03 + offsetY, 0x80, 0, 0, false);
               }
             }
           }

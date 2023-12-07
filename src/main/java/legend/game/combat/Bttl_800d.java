@@ -11,7 +11,6 @@ import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
 import legend.core.memory.Method;
-import legend.core.memory.types.CString;
 import legend.core.memory.types.ComponentFunction;
 import legend.core.memory.types.FloatRef;
 import legend.core.opengl.Obj;
@@ -68,7 +67,6 @@ import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
-import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.rcos;
@@ -105,8 +103,6 @@ import static legend.game.combat.Bttl_800c.ZERO;
 import static legend.game.combat.Bttl_800c._800faa90;
 import static legend.game.combat.Bttl_800c._800faa92;
 import static legend.game.combat.Bttl_800c._800faa94;
-import static legend.game.combat.Bttl_800c._800faa98;
-import static legend.game.combat.Bttl_800c._800faa9c;
 import static legend.game.combat.Bttl_800c._800faa9d;
 import static legend.game.combat.Bttl_800c._800fabfc;
 import static legend.game.combat.Bttl_800c._800fac1c;
@@ -128,7 +124,6 @@ import static legend.game.combat.Bttl_800c.camera_800c67f0;
 import static legend.game.combat.Bttl_800c.charWidthAdjustTable_800fa7cc;
 import static legend.game.combat.Bttl_800c.completedAdditionStarburstAngleModifiers_800c6dac;
 import static legend.game.combat.Bttl_800c.completedAdditionStarburstTranslationMagnitudes_800c6d94;
-import static legend.game.combat.Bttl_800c.currentAddition_800c6790;
 import static legend.game.combat.Bttl_800c.framesUntilWobble_800c67d4;
 import static legend.game.combat.Bttl_800c.getModelObjectTranslation;
 import static legend.game.combat.Bttl_800c.getRelativeOffset;
@@ -804,10 +799,10 @@ public final class Bttl_800d {
     float effectZ = 0;
     for(int i = 6; i >= 0; i--) {
       //LAB_800d289c
-      guardEffectMetrics = guardEffectMetrics_800fa76c.get(i);
+      guardEffectMetrics = guardEffectMetrics_800fa76c[i];
       translation.x = manager.params_10.trans_04.x + (i != 0 ? manager.params_10.scale_16.x * 0x1000 / 4 : 0);
-      translation.y = manager.params_10.trans_04.y + guardEffectMetrics.y_02.get() * manager.params_10.scale_16.y;
-      translation.z = manager.params_10.trans_04.z + guardEffectMetrics.z_00.get() * manager.params_10.scale_16.z;
+      translation.y = manager.params_10.trans_04.y + guardEffectMetrics.y_02 * manager.params_10.scale_16.y;
+      translation.z = manager.params_10.trans_04.z + guardEffectMetrics.z_00 * manager.params_10.scale_16.z;
       effectZ = transformWorldspaceToScreenspace(translation, pos[i]);
     }
 
@@ -861,10 +856,10 @@ public final class Bttl_800d {
 
       //LAB_800d2d4c
       for(int n = 1; n < 7; n++) {
-        guardEffectMetrics = guardEffectMetrics_800fa76c.get(n);
+        guardEffectMetrics = guardEffectMetrics_800fa76c[n];
         translation.x = baseX + manager.params_10.trans_04.x;
-        translation.y = guardEffectMetrics.y_02.get() * manager.params_10.scale_16.y * s6 / 0x1000 + manager.params_10.trans_04.y;
-        translation.z = guardEffectMetrics.z_00.get() * manager.params_10.scale_16.z * s6 / 0x1000 + manager.params_10.trans_04.z;
+        translation.y = guardEffectMetrics.y_02 * manager.params_10.scale_16.y * s6 / 0x1000 + manager.params_10.trans_04.y;
+        translation.z = guardEffectMetrics.z_00 * manager.params_10.scale_16.z * s6 / 0x1000 + manager.params_10.trans_04.z;
         effectZ = transformWorldspaceToScreenspace(translation, pos[n]) / 4.0f;
       }
 
@@ -1087,41 +1082,8 @@ public final class Bttl_800d {
     return FlowControl.CONTINUE;
   }
 
-  @Method(0x800d36e0L)
-  public static CString getAdditionName(final int a0, final int addition) {
-    currentAddition_800c6790.set(additionNames_800fa8d4);
-
-    //LAB_800d3708
-    //a0 always seems to be 0
-    for(int i = 0; i < a0; i++) {
-      //LAB_800d3724
-      while(currentAddition_800c6790.deref().charAt(0) != 0x2fL) {
-        currentAddition_800c6790.incr();
-      }
-
-      //LAB_800d3744
-      currentAddition_800c6790.incr();
-    }
-
-    //LAB_800d3760
-    //LAB_800d3778
-    for(int i = 0; i < addition; i++) {
-      //LAB_800d3790
-      while(currentAddition_800c6790.deref().charAt(0) != 0) {
-        currentAddition_800c6790.incr();
-      }
-
-      //LAB_800d37b0
-      currentAddition_800c6790.incr();
-    }
-
-    //LAB_800d37cc
-    return currentAddition_800c6790.deref();
-  }
-
   @Method(0x800d37dcL)
   public static void renderAdditionNameChar(final short displayX, final short displayY, final short addition, final short charOffset, final int charAlpha) {
-    final CString additionName = MEMORY.ref(1, getAdditionName(0, addition).getAddress() + charOffset, CString.maxLength(30)); //TODO implement string slicing in core
     int charIdx = 0;
 
     //LAB_800d3838
@@ -1129,7 +1091,7 @@ public final class Bttl_800d {
     do {
       chr = asciiTable_800fa788[charIdx];
 
-      if(additionName.charAt(0) == chr) {
+      if(additionNames_800fa8d4[addition].charAt(charOffset) == chr) {
         break;
       } else if(chr == 0) {
         //LAB_800d3860
@@ -1168,12 +1130,12 @@ public final class Bttl_800d {
   }
 
   @Method(0x800d3968L)
-  public static int[] setAdditionNameDisplayCoords(final int a2, final int addition) {
-    final CString additionName = getAdditionName(a2, addition);
+  public static int[] setAdditionNameDisplayCoords(final int addition) {
+    final String additionName = additionNames_800fa8d4[addition];
 
     int additionDisplayWidth = 0;
     //LAB_800d39b8
-    for(int i = 0; additionName.charAt(i) != 0; i++) {
+    for(int i = 0; i < additionName.length(); i++) {
       additionDisplayWidth += getCharDisplayWidth(additionName.charAt(i));
     }
 
@@ -1278,33 +1240,28 @@ public final class Bttl_800d {
       final ScriptState<AdditionNameTextEffect1c> state = SCRIPTS.allocateScriptState("AdditionNameTextEffect1c", new AdditionNameTextEffect1c());
       state.loadScriptFile(doNothingScript_8004f650);
       state.setTicker(Bttl_800d::tickAdditionNameEffect);
-      final CString additionName = getAdditionName(0, addition);
+      final String additionName = additionNames_800fa8d4[addition];
 
       //LAB_800d3e5c
-      int textLength;
-      for(textLength = 0; additionName.charAt(textLength) != 0; textLength++) {
-        //
-      }
-
       //LAB_800d3e7c
       final AdditionNameTextEffect1c additionStruct = state.innerStruct_00;
       additionStruct._00 = 0;
       additionStruct.addition_02 = addition;
       additionStruct._04 = 0;
-      additionStruct.length_08 = textLength;
+      additionStruct.length_08 = additionName.length();
       additionStruct.positionMovement_0c = 120;
       additionStruct.renderer_14 = Bttl_800d::renderAdditionNameChar;
       additionStruct.ptr_18 = new AdditionCharEffectData0c[additionStruct.length_08];
       Arrays.setAll(additionStruct.ptr_18, i -> new AdditionCharEffectData0c());
       _800faa9d.set(1);
 
-      final int[] displayOffset = setAdditionNameDisplayCoords(0, addition);
+      final int[] displayOffset = setAdditionNameDisplayCoords(addition);
       int charPosition = -160;
       int displayOffsetX = displayOffset[0];
       final int displayOffsetY = displayOffset[1];
 
       //LAB_800d3f18
-      for(int charIdx = 0; charIdx < textLength; charIdx++) {
+      for(int charIdx = 0; charIdx < additionName.length(); charIdx++) {
         final AdditionCharEffectData0c charStruct = additionStruct.ptr_18[charIdx];
         charStruct.scrolling_00 = 1;
         charStruct.dupes_02 = 8;
@@ -1433,7 +1390,6 @@ public final class Bttl_800d {
       if(s3 == 1) {
         _800faa92.set((short)0);
         _800faa94.set(s3);
-        _800faa98.set(0);
         s1._01 = 0;
         s1._1c = 0xffff6e00;
         _800faa90.set((short)-0x92);
@@ -1446,7 +1402,6 @@ public final class Bttl_800d {
       //LAB_800d448c
       s1._2c = (s1._1c - s1._0c) / 14;
       s1._30 = -0x800;
-      _800faa98.add(s2);
 
       //LAB_800d44dc
       for(int i = 0; i < 8; i++) {
@@ -1484,7 +1439,6 @@ public final class Bttl_800d {
       state.setTicker(Bttl_800d::tickAdditionNameEffect);
       final AdditionNameTextEffect1c s0 = state.innerStruct_00;
       s0.ptr_18 = new AdditionCharEffectData0c[] {new AdditionCharEffectData0c()};
-      _800faa9c.set(1);
       s0.positionMovement_0c = 40;
       s0.renderer_14 = Bttl_800d::renderAdditionNameEffect;
       s0._00 = 0;
@@ -1499,9 +1453,6 @@ public final class Bttl_800d {
       struct.offsetY_06 = 96;
       struct.offsetX_08 = 144 - (String.valueOf(s2).length() + 4) * 8;
       struct.offsetY_0a = 96;
-    } else {
-      //LAB_800d46b0
-      _800faa9c.set(0);
     }
 
     //LAB_800d46bc
@@ -1521,12 +1472,12 @@ public final class Bttl_800d {
   }
 
   public static void renderButtonPressHudElement1(final int type, final int x, final int y, final Translucency translucency, final int brightness) {
-    final ButtonPressHudMetrics06 metrics = buttonPressHudMetrics_800faaa0.get(type);
+    final ButtonPressHudMetrics06 metrics = buttonPressHudMetrics_800faaa0[type];
 
-    if(metrics.hudElementType_00.get() == 0) {
-      renderButtonPressHudTexturedRect(x, y, metrics.u_01.get(), metrics.v_02.get(), metrics.wOrRightU_03.get(), metrics.hOrBottomV_04.get(), metrics.clutOffset_05.get(), translucency, brightness, 0x1000);
+    if(metrics.hudElementType_00 == 0) {
+      renderButtonPressHudTexturedRect(x, y, metrics.u_01, metrics.v_02, metrics.wOrRightU_03, metrics.hOrBottomV_04, metrics.clutOffset_05, translucency, brightness, 0x1000);
     } else {
-      renderButtonPressHudElement(x, y, metrics.u_01.get(), metrics.v_02.get(), metrics.wOrRightU_03.get(), metrics.hOrBottomV_04.get(), metrics.clutOffset_05.get(), translucency, brightness, 0x1000, 0x1000);
+      renderButtonPressHudElement(x, y, metrics.u_01, metrics.v_02, metrics.wOrRightU_03, metrics.hOrBottomV_04, metrics.clutOffset_05, translucency, brightness, 0x1000, 0x1000);
     }
   }
 

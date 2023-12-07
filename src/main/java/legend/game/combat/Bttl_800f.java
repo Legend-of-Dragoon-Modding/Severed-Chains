@@ -62,7 +62,6 @@ import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
-import static legend.game.Scus94491BpeSegment.loadSupportOverlay;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
@@ -2346,23 +2345,23 @@ public final class Bttl_800f {
 
       //LAB_800f710c
       for(int i = 0; i < 8; i++) {
-        final BattleMenuBackgroundDisplayMetrics0c displayMetrics = battleMenuBackgroundDisplayMetrics_800fb614.get(i);
-        x = battleMenuBaseCoords[displayMetrics.vertexBaseOffsetIndex_00.get()][0] + displayMetrics.vertexXMod_02.get();
-        y = battleMenuBaseCoords[displayMetrics.vertexBaseOffsetIndex_00.get()][1] + displayMetrics.vertexYMod_04.get();
+        final BattleMenuBackgroundDisplayMetrics0c displayMetrics = battleMenuBackgroundDisplayMetrics_800fb614[i];
+        x = battleMenuBaseCoords[displayMetrics.vertexBaseOffsetIndex_00][0] + displayMetrics.vertexXMod_02;
+        y = battleMenuBaseCoords[displayMetrics.vertexBaseOffsetIndex_00][1] + displayMetrics.vertexYMod_04;
 
         final int w;
-        if(displayMetrics.w_06.get() != 0) {
-          w = displayMetrics.w_06.get();
+        if(displayMetrics.w_06 != 0) {
+          w = displayMetrics.w_06;
         } else {
           w = variableW;
         }
 
         //LAB_800f7158
         final int h;
-        if(displayMetrics.h_08.get() == 0) {
+        if(displayMetrics.h_08 == 0) {
           h = 2;
         } else {
-          h = displayMetrics.h_08.get();
+          h = displayMetrics.h_08;
         }
 
         //LAB_800f716c
@@ -2398,7 +2397,7 @@ public final class Bttl_800f {
 
         //LAB_800f6c90
         final int menuElementBaseX = menu.x_06 - menu.xShiftOffset_0a + iconIndex * 19;
-        final int menuElementBaseY = menu.y_08 - battleMenuIconHeights_800fb6bc.get(iconId).get(iconState).get();
+        final int menuElementBaseY = menu.y_08 - battleMenuIconHeights_800fb6bc[iconId][iconState];
 
         if(menu.selectedIcon_22 == iconIndex && menu.renderSelectedIconText_40) {
           // Selected combat menu icon text
@@ -2440,31 +2439,31 @@ public final class Bttl_800f {
     //LAB_800f7294
     final QuadBuilder builder = new QuadBuilder(name)
       .monochrome(colour)
-      .pos(highlightMetrics.xBase_00.get(), highlightMetrics.yBase_02.get(), 0.0f)
-      .posSize(highlightMetrics.w_04.get(), highlightMetrics.h_06.get());
+      .pos(highlightMetrics.xBase_00, highlightMetrics.yBase_02, 0.0f)
+      .posSize(highlightMetrics.w_04, highlightMetrics.h_06);
 
-    final int uvShiftType = highlightMetrics.uvShiftType_10.get();
+    final int uvShiftType = highlightMetrics.uvShiftType_10;
     if(uvShiftType == 0) {
       //LAB_800f7360
       builder
-        .uv(highlightMetrics.u_08.get(), highlightMetrics.v_0a.get())
-        .uvSize(highlightMetrics.uvW_0c.get(), highlightMetrics.uvH_0e.get());
+        .uv(highlightMetrics.u_08, highlightMetrics.v_0a)
+        .uvSize(highlightMetrics.uvW_0c, highlightMetrics.uvH_0e);
     } else if(uvShiftType == 1) {
       //LAB_800f738c
       builder
-        .uv(highlightMetrics.u_08.get(), highlightMetrics.v_0a.get() - 1)
-        .uvSize(highlightMetrics.uvW_0c.get(), highlightMetrics.uvH_0e.get());
+        .uv(highlightMetrics.u_08, highlightMetrics.v_0a - 1)
+        .uvSize(highlightMetrics.uvW_0c, highlightMetrics.uvH_0e);
       //LAB_800f7344
     } else if(uvShiftType == 2) {
       //LAB_800f73b8
       builder
-        .uv(highlightMetrics.u_08.get() - 1, highlightMetrics.v_0a.get())
-        .uvSize(highlightMetrics.uvW_0c.get(), highlightMetrics.uvH_0e.get());
+        .uv(highlightMetrics.u_08 - 1, highlightMetrics.v_0a)
+        .uvSize(highlightMetrics.uvW_0c, highlightMetrics.uvH_0e);
     } else if(uvShiftType == 3) {
       //LAB_800f740c
       builder
-        .uv(highlightMetrics.u_08.get() - 1, highlightMetrics.v_0a.get() - 1)
-        .uvSize(highlightMetrics.uvW_0c.get(), highlightMetrics.uvH_0e.get());
+        .uv(highlightMetrics.u_08 - 1, highlightMetrics.v_0a - 1)
+        .uvSize(highlightMetrics.uvW_0c, highlightMetrics.uvH_0e);
     }
 
     //LAB_800f745c
@@ -2487,7 +2486,7 @@ public final class Bttl_800f {
 
   /** Background of battle menu icons */
   @Method(0x800f74f4L)
-  public static Obj buildBattleMenuBackground(final String name, final BattleMenuBackgroundUvMetrics04 menuBackgroundMetrics, final int x, final int y, final int w, final int h, final int baseClutOffset, @Nullable final Translucency transMode, final short uvShiftType) {
+  public static Obj buildBattleMenuBackground(final String name, final BattleMenuBackgroundUvMetrics04 menuBackgroundMetrics, final int x, final int y, final int w, final int h, final int baseClutOffset, @Nullable final Translucency transMode, final int uvShiftType) {
     final QuadBuilder builder = new QuadBuilder(name)
       .monochrome(0.5f);
 
@@ -2497,24 +2496,24 @@ public final class Bttl_800f {
     if(uvShiftType == 0) {
       //LAB_800f7628
       builder
-        .uv(menuBackgroundMetrics.u_00.get(), menuBackgroundMetrics.v_01.get())
-        .uvSize(menuBackgroundMetrics.w_02.get(), menuBackgroundMetrics.h_03.get());
+        .uv(menuBackgroundMetrics.u_00, menuBackgroundMetrics.v_01)
+        .uvSize(menuBackgroundMetrics.w_02, menuBackgroundMetrics.h_03);
     } else if(uvShiftType == 1) {
       //LAB_800f7654
       builder
-        .uv(menuBackgroundMetrics.u_00.get(), menuBackgroundMetrics.v_01.get() + menuBackgroundMetrics.h_03.get())
-        .uvSize(menuBackgroundMetrics.w_02.get(), -menuBackgroundMetrics.h_03.get());
+        .uv(menuBackgroundMetrics.u_00, menuBackgroundMetrics.v_01 + menuBackgroundMetrics.h_03)
+        .uvSize(menuBackgroundMetrics.w_02, -menuBackgroundMetrics.h_03);
       //LAB_800f7610
     } else if(uvShiftType == 2) {
       //LAB_800f7680
       builder
-        .uv(menuBackgroundMetrics.u_00.get() + menuBackgroundMetrics.w_02.get() - 1, menuBackgroundMetrics.v_01.get())
-        .uvSize(-menuBackgroundMetrics.w_02.get(), menuBackgroundMetrics.h_03.get());
+        .uv(menuBackgroundMetrics.u_00 + menuBackgroundMetrics.w_02 - 1, menuBackgroundMetrics.v_01)
+        .uvSize(-menuBackgroundMetrics.w_02, menuBackgroundMetrics.h_03);
     } else if(uvShiftType == 3) {
       //LAB_800f76d4
       builder
-        .uv(menuBackgroundMetrics.u_00.get() + menuBackgroundMetrics.w_02.get() - 1, menuBackgroundMetrics.v_01.get() + menuBackgroundMetrics.h_03.get())
-        .uvSize(-menuBackgroundMetrics.w_02.get(), -menuBackgroundMetrics.h_03.get());
+        .uv(menuBackgroundMetrics.u_00 + menuBackgroundMetrics.w_02 - 1, menuBackgroundMetrics.v_01 + menuBackgroundMetrics.h_03)
+        .uvSize(-menuBackgroundMetrics.w_02, -menuBackgroundMetrics.h_03);
     }
 
     //LAB_800f7724
@@ -2774,11 +2773,6 @@ public final class Bttl_800f {
     }
 
     return targetName;
-  }
-
-  @Method(0x800f863cL)
-  public static void FUN_800f863c() {
-    loadSupportOverlay(2, Bttl_800e::FUN_800ef28c);
   }
 
   @Method(0x800f8670L)

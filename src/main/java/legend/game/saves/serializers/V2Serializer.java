@@ -9,8 +9,8 @@ import legend.game.types.EquipmentSlot;
 import legend.game.types.GameState52c;
 import legend.game.unpacker.FileData;
 
-import static legend.game.SItem.levelStuff_800fbd30;
-import static legend.game.SItem.magicStuff_800fbd54;
+import static legend.game.SItem.levelStuff_80111cfc;
+import static legend.game.SItem.magicStuff_80111d20;
 
 public final class V2Serializer {
   private V2Serializer() { }
@@ -197,8 +197,8 @@ public final class V2Serializer {
     ConfigStorage.loadConfig(config, ConfigStorageLocation.SAVE, data.slice(offset));
 
     final CharacterData2c charData = state.charData_32c[state.charIds_88[0]];
-    final int maxHp = levelStuff_800fbd30.get(state.charIds_88[0]).deref().get(charData.level_12).hp_00.get();
-    final int maxMp = magicStuff_800fbd54.get(state.charIds_88[0]).deref().get(charData.dlevel_13).mp_00.get();
+    final int maxHp = levelStuff_80111cfc[state.charIds_88[0]][charData.level_12].hp_00;
+    final int maxMp = magicStuff_80111d20[state.charIds_88[0]][charData.dlevel_13].mp_00;
     return new SavedGame(name, name, locationType, locationIndex, state, config, maxHp, maxMp);
   }
 }
