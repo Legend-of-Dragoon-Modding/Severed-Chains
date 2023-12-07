@@ -1,6 +1,8 @@
 package legend.game.combat.particles;
 
 import legend.core.MathHelper;
+import legend.core.RenderEngine;
+import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandLine;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
@@ -11,6 +13,9 @@ import legend.core.gte.TmdWithId;
 import legend.core.memory.Method;
 import legend.core.memory.types.QuadConsumer;
 import legend.core.memory.types.TriConsumer;
+import legend.core.opengl.Obj;
+import legend.core.opengl.QuadBuilder;
+import legend.core.opengl.TmdObjLoader;
 import legend.game.combat.deff.DeffPart;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerParams;
@@ -30,6 +35,7 @@ import java.util.function.BiConsumer;
 
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
+import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
@@ -40,6 +46,8 @@ import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8003.GetClut;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
+import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
+import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800c.FUN_800cfc20;
 import static legend.game.combat.Bttl_800c.ZERO;
@@ -181,6 +189,8 @@ public class ParticleManager {
   private void particleEffectDestructor(final ScriptState<EffectManagerData6c<EffectManagerParams.ParticleType>> state, final EffectManagerData6c<EffectManagerParams.ParticleType> manager) {
     final ParticleEffectData98 effect = (ParticleEffectData98)manager.effect_44;
     final ParticleEffectData98 effectParent = this.findParticleParent(effect);
+
+    effect.delete();
 
     if(effectParent == null) {
       this.firstParticle_8011a00c = effect.next_94;
@@ -717,6 +727,40 @@ public class ParticleManager {
     return z;
   }
 
+  /** Returns Z */
+  @Method(0x800fca78L)
+  private float FUN_800fca78(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleEffectInstance94 particle, final Vector3f translation, final MV transforms) {
+    final Vector2f ref = new Vector2f();
+    final float z = FUN_800cfc20(particle.managerRotation_68, particle.managerTranslation_2c, translation, ref);
+    if(z >= 40) {
+      final float zScale = (float)0x5000 / z;
+      final float horizontalScale = zScale * (manager.params_10.scale_16.x + particle.scaleHorizontal_06);
+      final float verticalScale = zScale * (manager.params_10.scale_16.y + particle.scaleVertical_08);
+
+      final float angle;
+      if((manager.params_10.flags_24 & 0x2) != 0) {
+        final Vector3f sp0x38 = new Vector3f();
+        this.FUN_800fc8f8(null, sp0x38);
+
+        //LAB_800fcb90
+        //LAB_800fcbd4
+        final float sp18 = (particle.particlePositionCopy2_48.z - translation.z) * -Math.abs(MathHelper.sin(sp0x38.y - manager.params_10.rot_10.y)) - (translation.x - particle.particlePositionCopy2_48.x) * -Math.abs(MathHelper.cos(sp0x38.y + manager.params_10.rot_10.y));
+        final float sp1c = translation.y - particle.particlePositionCopy2_48.y;
+        angle = -MathHelper.atan2(sp1c, sp18) + MathHelper.TWO_PI / 4.0f;
+        particle.particlePositionCopy2_48.set(translation);
+      } else {
+        angle = particle.angle_0e + manager.params_10.rot_10.x - MathHelper.TWO_PI / 1.6f;
+      }
+
+      transforms.transfer.x = ref.x;
+      transforms.transfer.y = ref.y;
+      transforms.rotationZ(angle).scale(horizontalScale, verticalScale, 1.0f);
+    }
+
+    //LAB_800fcde0
+    return z;
+  }
+
   @Method(0x800fea68L)
   private void FUN_800fea68(final ParticleEffectData98 a1, final ParticleEffectInstance94 a2, final ParticleEffectData98Inner24 a3) {
     // no-op
@@ -727,18 +771,23 @@ public class ParticleManager {
    * Seems to involve lit TMDs.
    */
   @Method(0x800fcf20L)
-  private void renderTmdParticle(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final TmdObjTable1c tmd, final ParticleMetrics48 particleMetrics, final int tpage) {
+  private void renderTmdParticle(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final TmdObjTable1c tmd, final Obj obj, final ParticleMetrics48 particleMetrics, final int tpage) {
     if(particleMetrics.flags_00 >= 0) {
-      final MV lightMatrix = new MV();
-      this.FUN_800fc4bc(lightMatrix, manager, particleMetrics);
+      final MV transforms = new MV();
+      this.FUN_800fc4bc(transforms, manager, particleMetrics);
       if((particleMetrics.flags_00 & 0x40) == 0) {
         FUN_800e61e4(particleMetrics.colour0_40.x, particleMetrics.colour0_40.y, particleMetrics.colour0_40.z);
       }
 
       //LAB_800fcf94
-      GsSetLightMatrix(lightMatrix);
+      GsSetLightMatrix(transforms);
       final MV transformMatrix = new MV();
-      lightMatrix.compose(worldToScreenMatrix_800c3548, transformMatrix);
+
+      if(RenderEngine.legacyMode != 0) {
+        transforms.compose(worldToScreenMatrix_800c3548, transformMatrix);
+      } else {
+        transformMatrix.set(transforms);
+      }
 
       if((particleMetrics.flags_00 & 0x400_0000) == 0) {
         transformMatrix.rotationXYZ(manager.params_10.rot_10);
@@ -770,6 +819,11 @@ public class ParticleManager {
       zShift_1f8003c4.set(oldZShift);
       zMax_1f8003cc.set(oldZMax);
       zMin = oldZMin;
+
+      RENDERER.queueModel(obj, transformMatrix)
+        .lightDirection(lightDirectionMatrix_800c34e8)
+        .lightColour(lightColourMatrix_800c3508)
+        .backgroundColour(GTE.backgroundColour);
 
       if((particleMetrics.flags_00 & 0x40) == 0) {
         FUN_800e62a8();
@@ -925,6 +979,10 @@ public class ParticleManager {
     final ParticleEffectData98 effect = (ParticleEffectData98)manager.effect_44;
     effect.countFramesRendered_52++;
 
+    if(effect.obj == null) {
+      effect.obj = TmdObjLoader.fromObjTable("Particle", effect.tmd_30);
+    }
+
     //LAB_800fd660
     for(int i = 0; i < effect.countParticleInstance_50; i++) {
       final ParticleEffectInstance94 particle = effect.particleArray_68[i];
@@ -949,7 +1007,7 @@ public class ParticleManager {
         particleMetrics.rotation_38.set(particle.spriteRotation_70).add(particle.managerRotation_68);
         particleMetrics.colour0_40.set(colour.x, colour.y, colour.z);
         particleMetrics.colour1_44.set(0, 0, 0);
-        this.renderTmdParticle(manager, effect.tmd_30, particleMetrics, effect.tpage_56);
+        this.renderTmdParticle(manager, effect.tmd_30, effect.obj, particleMetrics, effect.tpage_56);
       }
       //LAB_800fd7e0
     }
@@ -1107,6 +1165,22 @@ public class ParticleManager {
 
     effect.countFramesRendered_52++;
 
+    if(effect.obj == null) {
+      final QuadBuilder builder = new QuadBuilder("Particle")
+        .bpp(Bpp.BITS_4)
+        .clut((effect.clut_5c & 0b111111) * 16, effect.clut_5c >>> 6)
+        .vramPos(effect.u_58 & 0x3c0, effect.v_5a < 256 ? 0 : 256)
+        .uv((effect.u_58 & 0x3f) * 4, effect.v_5a)
+        .pos(-effect.w_5e / 2.0f, -effect.h_5f / 2.0f, 0.0f)
+        .size(effect.w_5e, effect.h_5f);
+
+      if((manager.params_10.flags_00 & 1 << 30) != 0) {
+        builder.translucency(Translucency.of(manager.params_10.flags_00 >>> 28 & 0b11));
+      }
+
+      effect.obj = builder.build();
+    }
+
     final Vector3f colour = new Vector3f();
     final Vector3f colourMod = new Vector3f();
     final Vector3f colourStep = new Vector3f();
@@ -1161,7 +1235,8 @@ public class ParticleManager {
           cmd1.translucent(Translucency.of(manager.params_10.flags_00 >>> 28 & 0b11));
         }
 
-        final float instZ = this.FUN_800fca78(manager, effect, particle, particle.particlePosition_50, cmd1) / 4.0f;
+        this.FUN_800fca78(manager, effect, particle, particle.particlePosition_50, cmd1);
+        final float instZ = this.FUN_800fca78(manager, particle, particle.particlePosition_50, effect.transforms) / 4.0f;
         float effectZ = manager.params_10.z_22;
         if(effectZ + instZ >= 160) {
           if(effectZ + instZ >= 4094) {
@@ -1170,6 +1245,11 @@ public class ParticleManager {
 
           //LAB_800fe548
           GPU.queueCommand((instZ + effectZ) / 4.0f, cmd1);
+          effect.transforms.transfer.x += GPU.getOffsetX();
+          effect.transforms.transfer.y += GPU.getOffsetY();
+          effect.transforms.transfer.z = effectZ * 4.0f;
+          RENDERER.queueOrthoModel(effect.obj, effect.transforms)
+            .colour(colour);
         }
 
         //LAB_800fe564

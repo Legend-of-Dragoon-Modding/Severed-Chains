@@ -20,7 +20,7 @@ public abstract class EffectManagerParams<T extends EffectManagerParams<T>> {
   public final Vector3f rot_10 = new Vector3f();
   public final Vector3f scale_16 = new Vector3f();
   public final Vector3i colour_1c = new Vector3i();
-  public int z_22;
+  public int z_22 = 1;
 
   public void set(final T other) {
     this.flags_00 = other.flags_00;
