@@ -1063,12 +1063,12 @@ public final class Scus94491BpeSegment_8002 {
     final Rect4i imageRect = tim.getImageRect();
 
     if(imageRect.w != 0 || imageRect.h != 0) {
-      GPU.uploadData(imageRect, tim.getImageData());
+      GPU.uploadData15(imageRect, tim.getImageData());
     }
 
     //LAB_80022acc
     if(tim.hasClut()) {
-      GPU.uploadData(tim.getClutRect(), tim.getClutData());
+      GPU.uploadData15(tim.getClutRect(), tim.getClutData());
     }
 
     //LAB_80022aec
@@ -1827,24 +1827,24 @@ public final class Scus94491BpeSegment_8002 {
         final int rectIndex = indexOffsets[i];
 
         if(i == 0 || i > 2) {
-          GPU.uploadData(rects[rectIndex], tim.getImageData());
+          GPU.uploadData15(rects[rectIndex], tim.getImageData());
         }
 
         //LAB_80024efc
         if(i == 3) {
           //LAB_80024f2c
-          GPU.uploadData(rects[indexOffsets[i] + 1], tim.getClutData());
+          GPU.uploadData15(rects[indexOffsets[i] + 1], tim.getClutData());
         } else if(i < 4) {
           //LAB_80024fac
           for(int s0 = 0; s0 < 4; s0++) {
             final Rect4i rect = new Rect4i(rects[rectIndex + 1]);
             rect.x += s0 * 16;
-            GPU.uploadData(rect, tim.getClutData().slice(s0 * 0x80));
+            GPU.uploadData15(rect, tim.getClutData().slice(s0 * 0x80));
           }
           //LAB_80024f1c
         } else if(i == 4) {
           //LAB_80024f68
-          GPU.uploadData(rects[rectIndex + 1], tim.getClutData());
+          GPU.uploadData15(rects[rectIndex + 1], tim.getClutData());
         }
       }
     }

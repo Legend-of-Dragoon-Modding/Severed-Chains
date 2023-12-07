@@ -1930,10 +1930,10 @@ public final class Bttl_800c {
   public static void loadStageTim(final FileData data) {
     final Tim tim = new Tim(data);
 
-    GPU.uploadData(tim.getImageRect(), tim.getImageData());
+    GPU.uploadData15(tim.getImageRect(), tim.getImageData());
 
     if(tim.hasClut()) {
-      GPU.uploadData(tim.getClutRect(), tim.getClutData());
+      GPU.uploadData15(tim.getClutRect(), tim.getClutData());
     }
 
     //LAB_800c8ccc
@@ -2683,7 +2683,7 @@ public final class Bttl_800c {
     if(vramSlot != 0) {
       //LAB_800ca83c
       final Rect4i combatantTimRect = combatantTimRects_800fa6e0[vramSlot];
-      GPU.uploadData(combatantTimRect, tim.getImageData());
+      GPU.uploadData15(combatantTimRect, tim.getImageData());
 
       if(tim.hasClut()) {
         final Rect4i clutRect = tim.getClutRect();
@@ -2691,7 +2691,7 @@ public final class Bttl_800c {
         clutRect.y = combatantTimRect.y + 240;
 
         //LAB_800ca884
-        GPU.uploadData(clutRect, tim.getClutData());
+        GPU.uploadData15(clutRect, tim.getClutData());
       }
     } else {
       final Rect4i imageRect = tim.getImageRect();

@@ -35,7 +35,7 @@ public class GameOver extends EngineState {
 
     final Rect4i rect = new Rect4i(640, 0, mcq.vramWidth_08, mcq.vramHeight_0a);
     gameOverMcq_800bdc3c = mcq;
-    GPU.uploadData(rect, mcq.imageData);
+    GPU.uploadData15(rect, mcq.imageData);
     this.loadingStage = 3;
   }
 

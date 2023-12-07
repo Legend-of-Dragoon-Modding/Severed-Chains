@@ -3026,19 +3026,19 @@ public final class Bttl_800e {
         final int g = (colour >>> 5 & 0x1f) * multiplier >> 4 & 0x1f;
         final int r = (colour & 0x1f) * multiplier >> 4 & 0x1f;
 
-        final int v0;
+        final int newColour;
         if(r != 0 || g != 0 || b != 0 || colour == 0) {
-          v0 = mask << 15 | b << 10 | g << 5 | r;
+          newColour = mask << 15 | b << 10 | g << 5 | r;
         } else {
-          v0 = colour & 0xffff_8000 | 0x1;
+          newColour = colour & 0xffff_8000 | 0x1;
         }
 
-        darkening.modified_800[y][x] = v0;
+        darkening.modified_800[y][x] = newColour;
       }
     }
 
     for(int y = 0; y < 16; y++) {
-      GPU.uploadData(new Rect4i(448, (240 + y), 64, 1), stageDarkening_800c6958.modified_800[y]);
+      GPU.uploadData15(new Rect4i(448, (240 + y), 64, 1), stageDarkening_800c6958.modified_800[y]);
     }
   }
 
@@ -3677,7 +3677,7 @@ public final class Bttl_800e {
         final Tim tim = new Tim(files.get(fileIndex));
 
         if(fileIndex == 0) {
-          GPU.uploadData(new Rect4i(704, 256, 64, 256), tim.getImageData());
+          GPU.uploadData15(new Rect4i(704, 256, 64, 256), tim.getImageData());
         }
 
         //LAB_800eea20
@@ -3694,7 +3694,7 @@ public final class Bttl_800e {
         //LAB_800eea50
         rect.w = combatUiElementRectDimensions_800c6e48[fileIndex].x;
         rect.h = combatUiElementRectDimensions_800c6e48[fileIndex].y;
-        GPU.uploadData(rect, tim.getClutData());
+        GPU.uploadData15(rect, tim.getClutData());
         countCombatUiFilesLoaded_800c6cf4.add(1);
       }
     }
