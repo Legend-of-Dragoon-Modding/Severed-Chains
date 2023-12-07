@@ -5627,7 +5627,7 @@ public class WMap extends EngineState {
       }
 
       //LAB_800ebe24
-      cloud.snowUvIndex_50 = 0;
+      cloud.snowTick_50 = 0;
       cloud.translation_58.set((288 - rand() % 64) / 2, (80 - rand() % 32) / 2, 0);
       cloud.brightness_5c = 0.0f;
     }
@@ -5784,7 +5784,7 @@ public class WMap extends EngineState {
       snowflake.coord2_00.coord.transfer.x = 500 - rand() % 1000;
       snowflake.coord2_00.coord.transfer.y =     - rand() %  200;
       snowflake.coord2_00.coord.transfer.z = 500 - rand() % 1000;
-      snowflake.snowUvIndex_50 = rand() % 12;
+      snowflake.snowTick_50 = rand() % 12;
       snowflake.translation_58.set(rand() % 2 - 1, rand() % 2 + 1, rand() % 2 - 1);
       snowflake.brightness_5c = 0.0f;
     }
@@ -5877,8 +5877,9 @@ public class WMap extends EngineState {
                 //LAB_800ed570
                 //LAB_800ed5a4
                 //LAB_800ed5d8
-                snowflake.snowUvIndex_50 = (snowflake.snowUvIndex_50 + 1) % 12;
-                final int index = (int)(snowflake.snowUvIndex_50 / 2.0f);
+                snowflake.snowTick_50 = (snowflake.snowTick_50 + 1.0f / (3.0f / vsyncMode_8007a3b8)) % 12;
+                final int index = (int)(snowflake.snowTick_50 / 2.0f);
+                snowflake.transforms.scaling(sx1 - sx0, sy2 - sy0, 1.0f);
                 snowflake.transforms.transfer.set(GPU.getOffsetX() + sx0, GPU.getOffsetY() + sy0, 556.0f);
                 RENDERER.queueOrthoModel(modelAndAnimData.atmosphericEffectSprites[index], snowflake.transforms)
                   .monochrome(snowflake.brightness_5c);
