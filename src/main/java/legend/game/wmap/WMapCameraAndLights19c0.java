@@ -9,12 +9,11 @@ import org.joml.Vector3i;
 import java.util.Arrays;
 
 public class WMapCameraAndLights19c0 {
-  public enum ProjectionDistanceState {
-    SELECT_0,
-    INIT_VIEW_NEAR_1,
-    MAIN_LOOP_NEAR_2,
-    INIT_VIEW_FAR_3,
-    MAIN_LOOP_FAR_4
+  public enum LightsUpdateState {
+    INIT_DIMMING_0,
+    DIM_1,
+    INIT_BRIGHTENING_2,
+    BRIGHTEN_3
   }
 
   public enum CameraUpdateState {
@@ -27,6 +26,14 @@ public class WMapCameraAndLights19c0 {
     MAIN_LOOP_0,
     INIT_SUBMAP_ZOOM_1,
     SUBMAP_ZOOM_2
+  }
+
+  public enum ProjectionDistanceState {
+    SELECT_0,
+    INIT_VIEW_NEAR_1,
+    MAIN_LOOP_NEAR_2,
+    INIT_VIEW_FAR_3,
+    MAIN_LOOP_FAR_4
   }
 
   public final GsRVIEW2 currRview2_00 = new GsRVIEW2();
@@ -47,7 +54,15 @@ public class WMapCameraAndLights19c0 {
   public boolean mapRotating_80;
 
   public float lightsBrightness_84;
-  public int lightsUpdateState_88; //TODO
+  /**
+   * <ol start="0">
+   *   <li>Init dimming</li>
+   *   <li>Dim</li>
+   *   <li>Init brightening</li>
+   *   <li>Brighten</li>
+   * </ol>
+   */
+  public LightsUpdateState lightsUpdateState_88;
   public final Vector3i[] lightsColours_8c = {new Vector3i(), new Vector3i(), new Vector3i()};
   /** short */
   public float finalMapRotation_98;

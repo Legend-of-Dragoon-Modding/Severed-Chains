@@ -126,6 +126,7 @@ import static legend.game.wmap.MapState100.ForcedMovementState;
 import static legend.game.wmap.MapState100.PathSegmentEndpointType;
 import static legend.game.wmap.MapState100.PathSegmentEntering;
 import static legend.game.wmap.WMapCameraAndLights19c0.CameraUpdateState;
+import static legend.game.wmap.WMapCameraAndLights19c0.LightsUpdateState;
 import static legend.game.wmap.WMapCameraAndLights19c0.MapRotationState;
 import static legend.game.wmap.WMapCameraAndLights19c0.ProjectionDistanceState;
 import static legend.game.wmap.WMapModelAndAnimData258.CoolonWarpState;
@@ -984,7 +985,7 @@ public class WMap extends EngineState {
     //LAB_800d1c88
     cameraAndLights.ambientLight_14c.set(0.375f, 0.375f, 0.375f);
     GTE.setBackgroundColour(cameraAndLights.ambientLight_14c.x, cameraAndLights.ambientLight_14c.y, cameraAndLights.ambientLight_14c.z);
-    cameraAndLights.lightsUpdateState_88 = 0;
+    cameraAndLights.lightsUpdateState_88 = LightsUpdateState.INIT_DIMMING_0;
   }
 
   @Method(0x800d1d28L)
@@ -1048,10 +1049,8 @@ public class WMap extends EngineState {
     //LAB_800d21cc
     if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.TRANSITION_MODEL_OUT || this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.WORLD) {
       //LAB_800d2228
-      final int lightsState = cameraAndLights.lightsUpdateState_88;
-
-      if(lightsState == 0 || lightsState == 1) {
-        if(lightsState == 0) {
+      switch(cameraAndLights.lightsUpdateState_88) {
+        case INIT_DIMMING_0:
           //LAB_800d2258
           //LAB_800d225c
           for(int i = 0; i < 3; i++) {
@@ -1063,70 +1062,71 @@ public class WMap extends EngineState {
 
           //LAB_800d235c
           cameraAndLights.lightsBrightness_84 = 1.0f;
-          cameraAndLights.lightsUpdateState_88 = 1;
-        }
+          cameraAndLights.lightsUpdateState_88 = LightsUpdateState.DIM_1;
 
-        //LAB_800d237c
-        cameraAndLights.lightsBrightness_84 -= 0.140625f / (3.0f / vsyncMode_8007a3b8);
+        case DIM_1:
+          //LAB_800d237c
+          cameraAndLights.lightsBrightness_84 -= 0.140625f / (3.0f / vsyncMode_8007a3b8);
 
-        if(cameraAndLights.lightsBrightness_84 < 0.25f) {
-          cameraAndLights.lightsBrightness_84 = 0.125f;
-          cameraAndLights.lightsUpdateState_88 = 2;
-        }
+          if(cameraAndLights.lightsBrightness_84 < 0.25f) {
+            cameraAndLights.lightsBrightness_84 = 0.125f;
+            cameraAndLights.lightsUpdateState_88 = LightsUpdateState.INIT_BRIGHTENING_2;
+          }
 
-        //LAB_800d23e0
-        //LAB_800d23e4
-        for(int i = 0; i < 3; i++) {
-          final GsF_LIGHT light = cameraAndLights.lights_11c[i];
+          //LAB_800d23e0
+          //LAB_800d23e4
+          for(int i = 0; i < 3; i++) {
+            final GsF_LIGHT light = cameraAndLights.lights_11c[i];
 
-          //LAB_800d2400
-          //LAB_800d2464
-          //LAB_800d24d0
-          //LAB_800d253c
-          light.r_0c = cameraAndLights.lightsColours_8c[i].x * cameraAndLights.lightsBrightness_84 / 0x100;
-          light.g_0d = cameraAndLights.lightsColours_8c[i].y * cameraAndLights.lightsBrightness_84 / 0x100;
-          light.b_0e = cameraAndLights.lightsColours_8c[i].z * cameraAndLights.lightsBrightness_84 / 0x100;
-          GsSetFlatLight(i, cameraAndLights.lights_11c[i]);
-        }
+            //LAB_800d2400
+            //LAB_800d2464
+            //LAB_800d24d0
+            //LAB_800d253c
+            light.r_0c = cameraAndLights.lightsColours_8c[i].x * cameraAndLights.lightsBrightness_84 / 0x100;
+            light.g_0d = cameraAndLights.lightsColours_8c[i].y * cameraAndLights.lightsBrightness_84 / 0x100;
+            light.b_0e = cameraAndLights.lightsColours_8c[i].z * cameraAndLights.lightsBrightness_84 / 0x100;
+            GsSetFlatLight(i, cameraAndLights.lights_11c[i]);
+          }
+
+          break;
       }
     }
 
     //LAB_800d2590
     //LAB_800d2598
-    if(this.modelAndAnimData_800c66a8.zoomState_1f8 != ZoomState.TRANSITION_MODEL_IN) {
-      return;
-    }
+    if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.TRANSITION_MODEL_IN) {
+      //LAB_800d25d8
+      switch(cameraAndLights.lightsUpdateState_88) {
+        case INIT_BRIGHTENING_2:
+          //LAB_800d2608
+          cameraAndLights.lightsBrightness_84 = 0.25f;
+          cameraAndLights.lightsUpdateState_88 = LightsUpdateState.BRIGHTEN_3;
 
-    //LAB_800d25d8
-    final int lightsState = cameraAndLights.lightsUpdateState_88;
-    if(lightsState == 2 || lightsState == 3) {
-      if(lightsState == 2) {
-        //LAB_800d2608
-        cameraAndLights.lightsBrightness_84 = 0.25f;
-        cameraAndLights.lightsUpdateState_88 = 3;
-      }
+        case BRIGHTEN_3:
+          //LAB_800d2628
+          cameraAndLights.lightsBrightness_84 += 0.140625f / (3.0f / vsyncMode_8007a3b8);
 
-      //LAB_800d2628
-      cameraAndLights.lightsBrightness_84 += 0.140625f / (3.0f / vsyncMode_8007a3b8);
+          if(cameraAndLights.lightsBrightness_84 > 1.0f) {
+            cameraAndLights.lightsBrightness_84 = 1.0f;
+            cameraAndLights.lightsUpdateState_88 = LightsUpdateState.INIT_DIMMING_0;
+          }
 
-      if(cameraAndLights.lightsBrightness_84 > 1.0f) {
-        cameraAndLights.lightsBrightness_84 = 1.0f;
-        cameraAndLights.lightsUpdateState_88 = 0;
-      }
+          //LAB_800d268c
+          //LAB_800d2690
+          for(int i = 0; i < 3; i++) {
+            final GsF_LIGHT light = cameraAndLights.lights_11c[i];
 
-      //LAB_800d268c
-      //LAB_800d2690
-      for(int i = 0; i < 3; i++) {
-        final GsF_LIGHT light = cameraAndLights.lights_11c[i];
+            //LAB_800d26ac
+            //LAB_800d2710
+            //LAB_800d277c
+            //LAB_800d27e8
+            light.r_0c = cameraAndLights.lightsColours_8c[i].x * cameraAndLights.lightsBrightness_84 / 0x100;
+            light.g_0d = cameraAndLights.lightsColours_8c[i].y * cameraAndLights.lightsBrightness_84 / 0x100;
+            light.b_0e = cameraAndLights.lightsColours_8c[i].z * cameraAndLights.lightsBrightness_84 / 0x100;
+            GsSetFlatLight(i, cameraAndLights.lights_11c[i]);
+          }
 
-        //LAB_800d26ac
-        //LAB_800d2710
-        //LAB_800d277c
-        //LAB_800d27e8
-        light.r_0c = cameraAndLights.lightsColours_8c[i].x * cameraAndLights.lightsBrightness_84 / 0x100;
-        light.g_0d = cameraAndLights.lightsColours_8c[i].y * cameraAndLights.lightsBrightness_84 / 0x100;
-        light.b_0e = cameraAndLights.lightsColours_8c[i].z * cameraAndLights.lightsBrightness_84 / 0x100;
-        GsSetFlatLight(i, cameraAndLights.lights_11c[i]);
+          break;
       }
     }
     //LAB_800d283c
