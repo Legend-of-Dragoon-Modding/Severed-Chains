@@ -23,6 +23,12 @@ public class WMapCameraAndLights19c0 {
     ZOOM_IN_2
   }
 
+  public enum MapRotationState {
+    MAIN_LOOP_0,
+    INIT_SUBMAP_ZOOM_1,
+    SUBMAP_ZOOM_2
+  }
+
   public final GsRVIEW2 currRview2_00 = new GsRVIEW2();
   /** Parent coordinate system of camera; controls movement */
   public final GsCOORDINATE2 coord2_20 = new GsCOORDINATE2();
@@ -84,8 +90,15 @@ public class WMapCameraAndLights19c0 {
   public float cameraRotationStep_10c;
   /** ushort */
   public float fadeOutZoomTick_10e;
-  /** ubyte */
-  public int fadeCameraMovementState_110;
+  /**
+   * ubyte
+   * <ol start="0">
+   *   <li>Main loop</li>
+   *   <li>Init submap zoom</li>
+   *   <li>Submap zoom</li>
+   * </ol>
+   */
+  public MapRotationState mapRotationState_110;
 
   public int projectionPlaneZoomTick_114;
   /** short */

@@ -1178,68 +1178,67 @@ public class WMap extends EngineState {
       }
 
       //LAB_800d3040
-      final int cameraMovementState = cameraAndLights.fadeCameraMovementState_110;
-      if(cameraMovementState == 0) {
-        if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL) {
-          if(!cameraAndLights.hideAtmosphericEffect_c4) {
-            if(this.mapState_800c6798.continent_00 != Continent.ENDINESS) {
-              if(!cameraAndLights.mapRotating_80) {
-                //LAB_800d30d8
-                if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_1)) { // R1
-                  cameraAndLights.mapRotationState = (int)MathHelper.floorMod((cameraAndLights.mapRotationState + 1), 8);
-                  this.startMapRotation(1);
-                  cameraAndLights.mapRotating_80 = true;
-                }
+      switch(this.wmapCameraAndLights19c0_800c66b0.mapRotationState_110) {
+        case MAIN_LOOP_0:
+          if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL) {
+            if(!cameraAndLights.hideAtmosphericEffect_c4) {
+              if(this.mapState_800c6798.continent_00 != Continent.ENDINESS) {
+                if(!cameraAndLights.mapRotating_80) {
+                  //LAB_800d30d8
+                  if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_1)) { // R1
+                    cameraAndLights.mapRotationState = (int)MathHelper.floorMod((cameraAndLights.mapRotationState + 1), 8);
+                    this.startMapRotation(1);
+                    cameraAndLights.mapRotating_80 = true;
+                  }
 
-                //LAB_800d310c
-                if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_LEFT_1)) { // L1
-                  cameraAndLights.mapRotationState = (int)MathHelper.floorMod((cameraAndLights.mapRotationState - 1), 8);
-                  this.startMapRotation(-1);
-                  cameraAndLights.mapRotating_80 = true;
-                }
+                  //LAB_800d310c
+                  if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_LEFT_1)) { // L1
+                    cameraAndLights.mapRotationState = (int)MathHelper.floorMod((cameraAndLights.mapRotationState - 1), 8);
+                    this.startMapRotation(-1);
+                    cameraAndLights.mapRotating_80 = true;
+                  }
 
-                //LAB_800d3140
-              } else {
-                //LAB_800d3148
-                cameraAndLights.currMapRotation_70.y += cameraAndLights.mapRotationStep_7c / (3.0f / vsyncMode_8007a3b8);
-                cameraAndLights.mapRotationCounter_7e++;
+                  //LAB_800d3140
+                } else {
+                  //LAB_800d3148
+                  cameraAndLights.currMapRotation_70.y += cameraAndLights.mapRotationStep_7c / (3.0f / vsyncMode_8007a3b8);
+                  cameraAndLights.mapRotationCounter_7e++;
 
-                if(cameraAndLights.mapRotationCounter_7e >= 18.0f / vsyncMode_8007a3b8) {
-                  cameraAndLights.currMapRotation_70.y = cameraAndLights.mapRotationEndAngle_7a;
-                  cameraAndLights.mapRotating_80 = false;
+                  if(cameraAndLights.mapRotationCounter_7e >= 18.0f / vsyncMode_8007a3b8) {
+                    cameraAndLights.currMapRotation_70.y = cameraAndLights.mapRotationEndAngle_7a;
+                    cameraAndLights.mapRotating_80 = false;
+                  }
                 }
               }
             }
           }
-        }
-      }
 
-      //LAB_800d31e8
-      this.handleCameraZoom();
+          //LAB_800d31e8
+          this.handleCameraZoom();
 
-      if(cameraMovementState == 1) {  // Fade out to submap
-        //LAB_800d3250
-        this.initCameraMovement();
-        cameraAndLights.fadeCameraMovementState_110 = 2;
-      } else if(cameraMovementState == 0) {
-        //LAB_800d3248
-        return;
-      }
+          return;
 
-      // if == 1 or 2
+        case INIT_SUBMAP_ZOOM_1:
+          //LAB_800d3250
+          this.initCameraMovement();
+          cameraAndLights.mapRotationState_110 = WMapCameraAndLights19c0.MapRotationState.SUBMAP_ZOOM_2;
 
-      //LAB_800d3228
-      //LAB_800d3268
-      cameraAndLights.currRview2_00.viewpoint_00.y = cameraAndLights.originalRview2_c8.viewpoint_00.y + cameraAndLights.viewpointSwoopStepY_ec * cameraAndLights.fadeOutZoomTick_10e;
-      cameraAndLights.currRview2_00.viewpoint_00.z = cameraAndLights.originalRview2_c8.viewpoint_00.z + cameraAndLights.viewpointSwoopStepZ_f0 * cameraAndLights.fadeOutZoomTick_10e;
-      cameraAndLights.currRview2_00.refpoint_0c.y = cameraAndLights.originalRview2_c8.refpoint_0c.y + cameraAndLights.refpointSwoopStepY_f8 * cameraAndLights.fadeOutZoomTick_10e;
-      cameraAndLights.currRview2_00.refpoint_0c.z = cameraAndLights.originalRview2_c8.refpoint_0c.z + cameraAndLights.refpointSwoopStepZ_fc * cameraAndLights.fadeOutZoomTick_10e;
-      cameraAndLights.currMapRotation_70.y = cameraAndLights.originalCameraRotation_10a + cameraAndLights.cameraRotationStep_10c * cameraAndLights.fadeOutZoomTick_10e;
+        case SUBMAP_ZOOM_2:
+          //LAB_800d3228
+          //LAB_800d3268
+          cameraAndLights.currRview2_00.viewpoint_00.y = cameraAndLights.originalRview2_c8.viewpoint_00.y + cameraAndLights.viewpointSwoopStepY_ec * cameraAndLights.fadeOutZoomTick_10e;
+          cameraAndLights.currRview2_00.viewpoint_00.z = cameraAndLights.originalRview2_c8.viewpoint_00.z + cameraAndLights.viewpointSwoopStepZ_f0 * cameraAndLights.fadeOutZoomTick_10e;
+          cameraAndLights.currRview2_00.refpoint_0c.y = cameraAndLights.originalRview2_c8.refpoint_0c.y + cameraAndLights.refpointSwoopStepY_f8 * cameraAndLights.fadeOutZoomTick_10e;
+          cameraAndLights.currRview2_00.refpoint_0c.z = cameraAndLights.originalRview2_c8.refpoint_0c.z + cameraAndLights.refpointSwoopStepZ_fc * cameraAndLights.fadeOutZoomTick_10e;
+          cameraAndLights.currMapRotation_70.y = cameraAndLights.originalCameraRotation_10a + cameraAndLights.cameraRotationStep_10c * cameraAndLights.fadeOutZoomTick_10e;
 
-      cameraAndLights.fadeOutZoomTick_10e += 1.0f / (3.0f / vsyncMode_8007a3b8);
-      if(cameraAndLights.fadeOutZoomTick_10e >= 16.0f) {
-        cameraAndLights.fadeOutZoomTick_10e = 16.0f;
-        cameraAndLights.currMapRotation_70.y = cameraAndLights.finalCameraRotation_108;
+          cameraAndLights.fadeOutZoomTick_10e += 1.0f / (3.0f / vsyncMode_8007a3b8);
+          if(cameraAndLights.fadeOutZoomTick_10e >= 16.0f) {
+            cameraAndLights.fadeOutZoomTick_10e = 16.0f;
+            cameraAndLights.currMapRotation_70.y = cameraAndLights.finalCameraRotation_108;
+          }
+
+          break;
       }
       //LAB_800d342c
       //LAB_800d35e4
@@ -1265,7 +1264,7 @@ public class WMap extends EngineState {
           if(this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc != PathSegmentEndpointType.TERMINAL) {
             if(!cameraAndLights.mapRotating_80) {
               if(this.modelAndAnimData_800c66a8.fadeAnimationType_05 == FadeAnimationType.NONE) {
-                if(cameraAndLights.fadeCameraMovementState_110 == 0) {
+                if(cameraAndLights.mapRotationState_110 == WMapCameraAndLights19c0.MapRotationState.MAIN_LOOP_0) {
                   if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_2)) { // R2
                     if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL) {
                       playSound(0, 4, 0, 0, (short)0, (short)0);
@@ -1579,7 +1578,7 @@ public class WMap extends EngineState {
   @Method(0x800d5018L)
   private void initCameraMovement() {
     final WMapCameraAndLights19c0 cameraAndLights = this.wmapCameraAndLights19c0_800c66b0;
-    cameraAndLights.fadeCameraMovementState_110 = 0;
+    cameraAndLights.mapRotationState_110 = WMapCameraAndLights19c0.MapRotationState.MAIN_LOOP_0;
     cameraAndLights.fadeOutZoomTick_10e = 0.0f;
     cameraAndLights.originalRview2_c8.viewpoint_00.set(cameraAndLights.currRview2_00.viewpoint_00);
     cameraAndLights.originalRview2_c8.refpoint_0c.set(cameraAndLights.currRview2_00.refpoint_0c);
@@ -2345,7 +2344,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800da294
-    if(cameraAndLights.fadeCameraMovementState_110 != 0) {
+    if(cameraAndLights.mapRotationState_110 != WMapCameraAndLights19c0.MapRotationState.MAIN_LOOP_0) {
       return;
     }
 
@@ -3815,13 +3814,13 @@ public class WMap extends EngineState {
       case START_FADE:
         //LAB_800e46f0
         startFadeEffect(1, 30);
-        cameraAndLights.fadeCameraMovementState_110 = 1;
+        cameraAndLights.mapRotationState_110 = WMapCameraAndLights19c0.MapRotationState.INIT_SUBMAP_ZOOM_1;
         modelAndAnimData.fadeState_04 = FadeState.FADE;
         break;
 
       case FADE:
         //LAB_800e4738
-        cameraAndLights.fadeCameraMovementState_110 = 2;
+        cameraAndLights.mapRotationState_110 = WMapCameraAndLights19c0.MapRotationState.SUBMAP_ZOOM_2;
         this.mcqColour_800c6794 -= 0.125f / (3.0f / vsyncMode_8007a3b8);
 
         if(this.mcqColour_800c6794 < 0.0f) {
@@ -4866,7 +4865,7 @@ public class WMap extends EngineState {
           //LAB_800e8f88
           if(this.modelAndAnimData_800c66a8.fadeAnimationType_05 == FadeAnimationType.NONE) {
             //LAB_800e8fac
-            if(this.wmapCameraAndLights19c0_800c66b0.fadeCameraMovementState_110 == 0) {
+            if(this.wmapCameraAndLights19c0_800c66b0.mapRotationState_110 == WMapCameraAndLights19c0.MapRotationState.MAIN_LOOP_0) {
               //LAB_800e8fd0
               if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL) {
                 //LAB_800e8ff4
