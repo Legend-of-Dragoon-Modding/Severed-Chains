@@ -127,6 +127,7 @@ import static legend.game.wmap.MapState100.ForcedMovementState;
 import static legend.game.wmap.MapState100.PathSegmentEndpointType;
 import static legend.game.wmap.MapState100.PathSegmentEntering;
 import static legend.game.wmap.WMapCameraAndLights19c0.CameraUpdateState;
+import static legend.game.wmap.WMapCameraAndLights19c0.MapRotationState;
 import static legend.game.wmap.WMapCameraAndLights19c0.ProjectionDistanceState;
 import static legend.game.wmap.WMapModelAndAnimData258.CoolonWarpState;
 import static legend.game.wmap.WMapModelAndAnimData258.FadeAnimationType;
@@ -531,7 +532,7 @@ public class WMap extends EngineState {
         if((input_800bee90 & 0x1af) == 0) {
           final WMapCameraAndLights19c0 cameraAndLights = this.wmapCameraAndLights19c0_800c66b0;
 
-          if(cameraAndLights.cameraUpdateState_c5 == WMapCameraAndLights19c0.CameraUpdateState.AWAIT_INPUT_0) {
+          if(cameraAndLights.cameraUpdateState_c5 == CameraUpdateState.AWAIT_INPUT_0) {
             if(!cameraAndLights.hideAtmosphericEffect_c4) {
               final WMapModelAndAnimData258 modelAndAnimData = this.modelAndAnimData_800c66a8;
 
@@ -954,7 +955,7 @@ public class WMap extends EngineState {
 
     cameraAndLights.projectionPlaneZoomTick_114 = 0;
     cameraAndLights.projectionPlaneDistance_118 = 1100.0f;
-    cameraAndLights.projectionDistanceState_11a = WMapCameraAndLights19c0.ProjectionDistanceState.SELECT_0;
+    cameraAndLights.projectionDistanceState_11a = ProjectionDistanceState.SELECT_0;
   }
 
   @Method(0x800d1914L)
@@ -1221,7 +1222,7 @@ public class WMap extends EngineState {
         case INIT_SUBMAP_ZOOM_1:
           //LAB_800d3250
           this.initCameraMovement();
-          cameraAndLights.mapRotationState_110 = WMapCameraAndLights19c0.MapRotationState.SUBMAP_ZOOM_2;
+          cameraAndLights.mapRotationState_110 = MapRotationState.SUBMAP_ZOOM_2;
 
         case SUBMAP_ZOOM_2:
           //LAB_800d3228
@@ -1264,7 +1265,7 @@ public class WMap extends EngineState {
           if(this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc != PathSegmentEndpointType.TERMINAL) {
             if(!cameraAndLights.mapRotating_80) {
               if(this.modelAndAnimData_800c66a8.fadeAnimationType_05 == FadeAnimationType.NONE) {
-                if(cameraAndLights.mapRotationState_110 == WMapCameraAndLights19c0.MapRotationState.MAIN_LOOP_0) {
+                if(cameraAndLights.mapRotationState_110 == MapRotationState.MAIN_LOOP_0) {
                   if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_2)) { // R2
                     if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL) {
                       playSound(0, 4, 0, 0, (short)0, (short)0);
@@ -1578,7 +1579,7 @@ public class WMap extends EngineState {
   @Method(0x800d5018L)
   private void initCameraMovement() {
     final WMapCameraAndLights19c0 cameraAndLights = this.wmapCameraAndLights19c0_800c66b0;
-    cameraAndLights.mapRotationState_110 = WMapCameraAndLights19c0.MapRotationState.MAIN_LOOP_0;
+    cameraAndLights.mapRotationState_110 = MapRotationState.MAIN_LOOP_0;
     cameraAndLights.fadeOutZoomTick_10e = 0.0f;
     cameraAndLights.originalRview2_c8.viewpoint_00.set(cameraAndLights.currRview2_00.viewpoint_00);
     cameraAndLights.originalRview2_c8.refpoint_0c.set(cameraAndLights.currRview2_00.refpoint_0c);
@@ -2344,7 +2345,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800da294
-    if(cameraAndLights.mapRotationState_110 != WMapCameraAndLights19c0.MapRotationState.MAIN_LOOP_0) {
+    if(cameraAndLights.mapRotationState_110 != MapRotationState.MAIN_LOOP_0) {
       return;
     }
 
@@ -3814,13 +3815,13 @@ public class WMap extends EngineState {
       case START_FADE:
         //LAB_800e46f0
         startFadeEffect(1, 30);
-        cameraAndLights.mapRotationState_110 = WMapCameraAndLights19c0.MapRotationState.INIT_SUBMAP_ZOOM_1;
+        cameraAndLights.mapRotationState_110 = MapRotationState.INIT_SUBMAP_ZOOM_1;
         modelAndAnimData.fadeState_04 = FadeState.FADE;
         break;
 
       case FADE:
         //LAB_800e4738
-        cameraAndLights.mapRotationState_110 = WMapCameraAndLights19c0.MapRotationState.SUBMAP_ZOOM_2;
+        cameraAndLights.mapRotationState_110 = MapRotationState.SUBMAP_ZOOM_2;
         this.mcqColour_800c6794 -= 0.125f / (3.0f / vsyncMode_8007a3b8);
 
         if(this.mcqColour_800c6794 < 0.0f) {
@@ -4865,7 +4866,7 @@ public class WMap extends EngineState {
           //LAB_800e8f88
           if(this.modelAndAnimData_800c66a8.fadeAnimationType_05 == FadeAnimationType.NONE) {
             //LAB_800e8fac
-            if(this.wmapCameraAndLights19c0_800c66b0.mapRotationState_110 == WMapCameraAndLights19c0.MapRotationState.MAIN_LOOP_0) {
+            if(this.wmapCameraAndLights19c0_800c66b0.mapRotationState_110 == MapRotationState.MAIN_LOOP_0) {
               //LAB_800e8fd0
               if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL) {
                 //LAB_800e8ff4
