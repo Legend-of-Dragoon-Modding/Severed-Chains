@@ -9,6 +9,13 @@ import org.joml.Vector3i;
 import java.util.Arrays;
 
 public class WMapCameraAndLights19c0 {
+  public enum ProjectionDistanceState {
+    SELECT_0,
+    INIT_VIEW_NEAR_1,
+    MAIN_LOOP_NEAR_2,
+    INIT_VIEW_FAR_3,
+    MAIN_LOOP_FAR_4
+  }
   public final GsRVIEW2 currRview2_00 = new GsRVIEW2();
   /** Parent coordinate system of camera; controls movement */
   public final GsCOORDINATE2 coord2_20 = new GsCOORDINATE2();
@@ -79,7 +86,7 @@ public class WMapCameraAndLights19c0 {
    *   <li>Zooming out</li>
    * </ol>
    */
-  public int projectionDistanceState_11a;
+  public ProjectionDistanceState projectionDistanceState_11a;
 
   public final GsF_LIGHT[] lights_11c = {new GsF_LIGHT(), new GsF_LIGHT(), new GsF_LIGHT()};
   public final Vector3f ambientLight_14c = new Vector3f();

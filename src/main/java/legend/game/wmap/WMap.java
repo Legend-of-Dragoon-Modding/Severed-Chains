@@ -126,6 +126,7 @@ import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8
 import static legend.game.wmap.MapState100.ForcedMovementState;
 import static legend.game.wmap.MapState100.PathSegmentEndpointType;
 import static legend.game.wmap.MapState100.PathSegmentEntering;
+import static legend.game.wmap.WMapCameraAndLights19c0.ProjectionDistanceState;
 import static legend.game.wmap.WMapModelAndAnimData258.CoolonWarpState;
 import static legend.game.wmap.WMapModelAndAnimData258.FadeAnimationType;
 import static legend.game.wmap.WMapModelAndAnimData258.FadeState;
@@ -952,7 +953,7 @@ public class WMap extends EngineState {
 
     cameraAndLights.projectionPlaneZoomTick_114 = 0;
     cameraAndLights.projectionPlaneDistance_118 = 1100.0f;
-    cameraAndLights.projectionDistanceState_11a = 0; //TODO
+    cameraAndLights.projectionDistanceState_11a = WMapCameraAndLights19c0.ProjectionDistanceState.SELECT_0;
   }
 
   @Method(0x800d1914L)
@@ -1023,7 +1024,7 @@ public class WMap extends EngineState {
           final float dz = z - cameraAndLights.locationDistances_154[count].position_08.z;
 
           cameraAndLights.locationDistances_154[count].locationIndex_00 = i;
-          cameraAndLights.locationDistances_154[count].distanceFromPlayer_04 = Math.sqrt(dx * dx + dy * dy + dz * dz);
+          cameraAndLights.locationDistances_154[count].distanceFromPlayer_04 = dx * dx + dy * dy + dz * dz;
 
           count++;
         }
@@ -1269,7 +1270,7 @@ public class WMap extends EngineState {
                       playSound(0, 4, 0, 0, (short)0, (short)0);
                       cameraAndLights.finalCameraY_9e = -9000;
                       cameraAndLights.cameraUpdateState_c5 = 1;
-                      cameraAndLights.projectionDistanceState_11a = 1;
+                      cameraAndLights.projectionDistanceState_11a = ProjectionDistanceState.INIT_VIEW_NEAR_1;
                       this.initCameraZoomPositionAndRotationSteps(0);
                       this.mapState_800c6798.disableInput_d0 = true;
                       cameraAndLights.hideAtmosphericEffect_c4 = true;
@@ -1605,76 +1606,64 @@ public class WMap extends EngineState {
   @Method(0x800d5288L)
   private void updateProjectionPlaneDistance() {
     final WMapCameraAndLights19c0 cameraAndLights = this.wmapCameraAndLights19c0_800c66b0;
-    final int projDistanceState = cameraAndLights.projectionDistanceState_11a;
 
-    if(projDistanceState == 0) {
-      if(cameraAndLights.locationDistances_154[0].distanceFromPlayer_04 < 90.0f) {
-        cameraAndLights.projectionDistanceState_11a = 1;
-        //LAB_800d52e8
-      } else if(this.modelAndAnimData_800c66a8.fadeAnimationType_05 == FadeAnimationType.NONE || cameraAndLights.cameraUpdateState_c5 != 2) {
-        //LAB_800d5328
-        cameraAndLights.projectionDistanceState_11a = 3;
-      } else {
-        return;
-      }
-    } else if(projDistanceState == 1) {
-      //LAB_800d5394
-      cameraAndLights.projectionPlaneZoomTick_114 = 0;
-      cameraAndLights.projectionDistanceState_11a = 2;
+    switch(cameraAndLights.projectionDistanceState_11a) {
+      case SELECT_0:
+        if(cameraAndLights.locationDistances_154[0].distanceFromPlayer_04 < 8100.0f) {
+          cameraAndLights.projectionDistanceState_11a = ProjectionDistanceState.INIT_VIEW_NEAR_1;
+          //LAB_800d52e8
+        } else if(this.modelAndAnimData_800c66a8.fadeAnimationType_05 == FadeAnimationType.NONE || cameraAndLights.cameraUpdateState_c5 != 2) {
+          //LAB_800d5328
+          cameraAndLights.projectionDistanceState_11a = ProjectionDistanceState.INIT_VIEW_FAR_3;
+        } else {
+          return;
+        }
 
-      //LAB_800d53b4
-      cameraAndLights.projectionPlaneZoomTick_114++;
+        break;
 
-      //LAB_800d5424
-      cameraAndLights.projectionPlaneDistance_118 += Math.max(4, 64 - cameraAndLights.projectionPlaneZoomTick_114 * 2) / (3.0f / vsyncMode_8007a3b8);
+      case INIT_VIEW_NEAR_1:
+        //LAB_800d5394
+        cameraAndLights.projectionPlaneZoomTick_114 = 0;
+        cameraAndLights.projectionDistanceState_11a = ProjectionDistanceState.MAIN_LOOP_NEAR_2;
 
-      if(cameraAndLights.projectionPlaneDistance_118 >= 800.0f) {
-        cameraAndLights.projectionPlaneDistance_118 = 800.0f;
-        cameraAndLights.projectionDistanceState_11a = 0;
-      }
-    } else if(projDistanceState == 2) {
-      //LAB_800d53b4
-      cameraAndLights.projectionPlaneZoomTick_114++;
+      case MAIN_LOOP_NEAR_2:
+        //LAB_800d53b4
+        cameraAndLights.projectionPlaneZoomTick_114++;
 
-      //LAB_800d5424
-      cameraAndLights.projectionPlaneDistance_118 += Math.max(4, 64 - cameraAndLights.projectionPlaneZoomTick_114 * 2) / (3.0f / vsyncMode_8007a3b8);
+        //LAB_800d5424
+        cameraAndLights.projectionPlaneDistance_118 += Math.max(4, 64 - cameraAndLights.projectionPlaneZoomTick_114 * 2) / (3.0f / vsyncMode_8007a3b8);
 
-      if(cameraAndLights.projectionPlaneDistance_118 >= 800.0f) {
-        cameraAndLights.projectionPlaneDistance_118 = 800.0f;
-        cameraAndLights.projectionDistanceState_11a = 0;
-      }
-    } else if(projDistanceState == 3) {
-      //LAB_800d5494
-      if(cameraAndLights.hideAtmosphericEffect_c4) {
-        cameraAndLights.projectionDistanceState_11a = 0;
-        return;
-      }
+        if(cameraAndLights.projectionPlaneDistance_118 >= 800.0f) {
+          cameraAndLights.projectionPlaneDistance_118 = 800.0f;
+          cameraAndLights.projectionDistanceState_11a = ProjectionDistanceState.SELECT_0;
+        }
 
-      //LAB_800d54c8
-      cameraAndLights.projectionPlaneZoomTick_114 = 0;
-      cameraAndLights.projectionDistanceState_11a = 4;
+        break;
 
-      //LAB_800d54e8
-      cameraAndLights.projectionPlaneZoomTick_114++;
+      case INIT_VIEW_FAR_3:
+        //LAB_800d5494
+        if(cameraAndLights.hideAtmosphericEffect_c4) {
+          cameraAndLights.projectionDistanceState_11a = ProjectionDistanceState.SELECT_0;
+          return;
+        }
 
-      //LAB_800d5558
-      cameraAndLights.projectionPlaneDistance_118 -= Math.max(4, 64 - cameraAndLights.projectionPlaneZoomTick_114 * 2) / (3.0f / vsyncMode_8007a3b8);
+        //LAB_800d54c8
+        cameraAndLights.projectionPlaneZoomTick_114 = 0;
+        cameraAndLights.projectionDistanceState_11a = ProjectionDistanceState.MAIN_LOOP_FAR_4;
 
-      if(cameraAndLights.projectionPlaneDistance_118 <= 600.0f) {
-        cameraAndLights.projectionPlaneDistance_118 = 600.0f;
-        cameraAndLights.projectionDistanceState_11a = 0;
-      }
-    } else if(projDistanceState == 4) {
-      //LAB_800d54e8
-      cameraAndLights.projectionPlaneZoomTick_114++;
+      case MAIN_LOOP_FAR_4:
+        //LAB_800d54e8
+        cameraAndLights.projectionPlaneZoomTick_114++;
 
-      //LAB_800d5558
-      cameraAndLights.projectionPlaneDistance_118 -= Math.max(4, 64 - cameraAndLights.projectionPlaneZoomTick_114 * 2) / (3.0f / vsyncMode_8007a3b8);
+        //LAB_800d5558
+        cameraAndLights.projectionPlaneDistance_118 -= Math.max(4, 64 - cameraAndLights.projectionPlaneZoomTick_114 * 2) / (3.0f / vsyncMode_8007a3b8);
 
-      if(cameraAndLights.projectionPlaneDistance_118 <= 600.0f) {
-        cameraAndLights.projectionPlaneDistance_118 = 600.0f;
-        cameraAndLights.projectionDistanceState_11a = 0;
-      }
+        if(cameraAndLights.projectionPlaneDistance_118 <= 600.0f) {
+          cameraAndLights.projectionPlaneDistance_118 = 600.0f;
+          cameraAndLights.projectionDistanceState_11a = ProjectionDistanceState.SELECT_0;
+        }
+
+        break;
     }
 
     setProjectionPlaneDistance(cameraAndLights.projectionPlaneDistance_118);
@@ -2497,7 +2486,7 @@ public class WMap extends EngineState {
 
         cameraAndLights.currMapRotation_70.y = 0.0f;
         cameraAndLights.coord2_20.coord.transfer.set(720, -1500, 628);
-        cameraAndLights.projectionDistanceState_11a = 3;
+        cameraAndLights.projectionDistanceState_11a = ProjectionDistanceState.INIT_VIEW_FAR_3;
 
         //LAB_800dac80
         final List<Integer> possibleOriginIndices = new ArrayList<>();
@@ -3693,7 +3682,7 @@ public class WMap extends EngineState {
             //LAB_800e44b0
             startFadeEffect(2, 15);
 
-            cameraAndLights.projectionDistanceState_11a = 1;
+            cameraAndLights.projectionDistanceState_11a = ProjectionDistanceState.INIT_VIEW_NEAR_1;
             cameraAndLights.coord2_20.coord.transfer.set(0, 0, 0);
             cameraAndLights.originalMapRotation_9a = 0;
             cameraAndLights.currMapRotation_70.y = 0.0f;
@@ -3751,7 +3740,7 @@ public class WMap extends EngineState {
 
             cameraAndLights.currRview2_00.viewpoint_00.y = -9000.0f;
             cameraAndLights.currRview2_00.refpoint_0c.y = 9000.0f;
-            cameraAndLights.projectionDistanceState_11a = 1;
+            cameraAndLights.projectionDistanceState_11a = ProjectionDistanceState.INIT_VIEW_NEAR_1;
             cameraAndLights.coord2_20.coord.transfer.set(0, 0, 0);
             cameraAndLights.finalCameraY_9e = -300;
             cameraAndLights.originalMapRotation_9a = 0;
