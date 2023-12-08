@@ -6,22 +6,22 @@ import java.util.Arrays;
 
 public class MapState100 {
   public enum ForcedMovementState {
-    NONE,
-    WALK,
-    RUN,
-    FADE_OUT
+    NONE_0,
+    WALK_1,
+    RUN_2,
+    FADE_OUT_3
   }
 
   public enum PathSegmentEntering {
-    CURRENT,
-    PREVIOUS,
-    NEXT
+    CURRENT_0,
+    PREVIOUS_1,
+    NEXT_2
   }
 
   public enum PathSegmentEndpointType {
-    NOT_AT_ENDPOINT,
-    TERMINAL,
-    INTERSECTION
+    NOT_AT_ENDPOINT_0,
+    TERMINAL_1,
+    INTERSECTION_2
   }
 
   /**
@@ -114,7 +114,7 @@ public class MapState100 {
    *   <li>Next</li>
    * </ol>
    */
-  public PathSegmentEntering pathSegmentPlayerMovingInto_f8 = PathSegmentEntering.CURRENT;
+  public PathSegmentEntering pathSegmentPlayerMovingInto_f8 = PathSegmentEntering.CURRENT_0;
   /**
    * 800c6894
    * Describes the type of path segment endpoint that Dart is at.
@@ -124,7 +124,7 @@ public class MapState100 {
    *   <li>Intersection</li>
    * </ol>
    */
-  public PathSegmentEndpointType pathSegmentEndpointTypeCrossed_fc = PathSegmentEndpointType.NOT_AT_ENDPOINT;
+  public PathSegmentEndpointType pathSegmentEndpointTypeCrossed_fc = PathSegmentEndpointType.NOT_AT_ENDPOINT_0;
 
   public MapState100() {
     Arrays.setAll(this.tempPathSegmentStartOffsets_40, i -> new Vector3f());

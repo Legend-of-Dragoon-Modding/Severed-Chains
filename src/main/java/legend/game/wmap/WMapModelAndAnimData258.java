@@ -10,22 +10,22 @@ import org.joml.Vector3f;
 
 public class WMapModelAndAnimData258 {
   public enum FadeAnimationType {
-    NONE,
-    FADE_IN,
-    FADE_OUT
+    NONE_0,
+    FADE_IN_1,
+    FADE_OUT_2
   }
 
   public enum FadeState {
-    START_FADE,
-    FADE,
-    END_FADE
+    START_FADE_0,
+    FADE_1,
+    END_FADE_2
   }
 
   public enum FastTravelTransitionMode {
-    NONE,
-    TELEPORT,
-    OPEN_COOLON_MAP,
-    COOLON_ARRIVAL
+    NONE_0,
+    TELEPORT_1,
+    OPEN_COOLON_MAP_2,
+    COOLON_ARRIVAL_3
   }
 
   /**
@@ -41,33 +41,33 @@ public class WMapModelAndAnimData258 {
    * </ol>
    */
   public enum ZoomState {
-    LOCAL,
-    CONTINENT,
-    TRANSITION_MODEL_OUT,
-    WORLD,
-    TRANSITION_MODEL_IN,
+    LOCAL_0,
+    CONTINENT_1,
+    TRANSITION_MODEL_OUT_2,
+    WORLD_3,
+    TRANSITION_MODEL_IN_4,
   }
 
   public enum CoolonWarpState {
-    NONE,
-    ASCENT,
-    INIT_WORLD_MAP,
-    MAIN_LOOP,
-    INIT_PROMPT,
-    PROMPT_LOOP,
-    FLY_ANIM,
-    INIT_DEST,
-    INIT_DESCENT,
-    PAN_MAP,
-    DESCENT,
-    RESTORE_DART
+    NONE_0,
+    ASCENT_1,
+    INIT_WORLD_MAP_2,
+    MAIN_LOOP_3,
+    INIT_PROMPT_4,
+    PROMPT_LOOP_5,
+    FLY_ANIM_6,
+    INIT_DEST_7,
+    INIT_DESCENT_10,
+    PAN_MAP_11,
+    DESCENT_12,
+    RESTORE_DART_NEG_1
   }
 
   public enum TeleportAnimationState {
-    INIT_ANIM,
-    RENDER_ANIM,
-    INIT_FADE,
-    FADE_OUT
+    INIT_ANIM_0,
+    RENDER_ANIM_1,
+    INIT_FADE_2,
+    FADE_OUT_3
   }
 
   public int fadeAnimationTicks_00;
