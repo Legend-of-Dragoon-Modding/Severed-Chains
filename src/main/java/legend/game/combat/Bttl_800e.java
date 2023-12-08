@@ -1,9 +1,7 @@
 package legend.game.combat;
 
-import legend.core.Config;
 import legend.core.DebugHelper;
 import legend.core.MathHelper;
-import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.GpuCommandPoly;
@@ -14,9 +12,7 @@ import legend.core.gte.ModelPart10;
 import legend.core.gte.TmdWithId;
 import legend.core.gte.Transforms;
 import legend.core.memory.Method;
-import legend.core.opengl.Obj;
 import legend.core.opengl.TmdObjLoader;
-import legend.game.characters.Element;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.MonsterBattleEntity;
@@ -43,24 +39,13 @@ import legend.game.combat.environment.BattleStageDarkening1800;
 import legend.game.combat.environment.BattleStruct14;
 import legend.game.combat.environment.BttlLightStruct84;
 import legend.game.combat.environment.BttlLightStruct84Sub38;
-import legend.game.combat.environment.CombatPortraitBorderMetrics0c;
-import legend.game.combat.environment.NameAndPortraitDisplayMetrics0c;
 import legend.game.combat.environment.StageAmbiance4c;
-import legend.game.combat.types.BattleHudStatLabelMetrics0c;
 import legend.game.combat.types.BattleObject;
 import legend.game.combat.types.CombatantStruct1a8;
-import legend.game.combat.ui.BattleDisplayStats144;
-import legend.game.combat.ui.BattleDisplayStatsDigit10;
-import legend.game.combat.ui.BattleHudCharacterDisplay3c;
 import legend.game.combat.ui.BattleMenuStruct58;
-import legend.game.combat.ui.FloatingNumberC4;
-import legend.game.combat.ui.FloatingNumberDigit20;
 import legend.game.combat.ui.SpellAndItemMenuA4;
-import legend.game.combat.ui.UiBox;
 import legend.game.inventory.Item;
-import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.modding.events.battle.StatDisplayEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
@@ -73,7 +58,6 @@ import legend.game.types.ActiveStatsa0;
 import legend.game.types.CContainer;
 import legend.game.types.CContainerSubfile2;
 import legend.game.types.CharacterData2c;
-import legend.game.types.LodString;
 import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms0c;
 import legend.game.types.TmdAnimationFile;
@@ -95,15 +79,12 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
-import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
-import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
-import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDeffSounds;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
@@ -118,9 +99,7 @@ import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
-import static legend.game.Scus94491BpeSegment_8002.renderText;
 import static legend.game.Scus94491BpeSegment_8002.sortItems;
-import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
@@ -146,37 +125,27 @@ import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800c.FUN_800ca418;
 import static legend.game.combat.Bttl_800c._800c6930;
 import static legend.game.combat.Bttl_800c._800c6938;
-import static legend.game.combat.Bttl_800c.activePartyBattleHudCharacterDisplays_800c6c40;
-import static legend.game.combat.Bttl_800c.ailments_800fb3a0;
 import static legend.game.combat.Bttl_800c.aliveBentCount_800c669c;
 import static legend.game.combat.Bttl_800c.aliveMonsterCount_800c6758;
-import static legend.game.combat.Bttl_800c.battleHudStatLabelMetrics_800c6ecc;
 import static legend.game.combat.Bttl_800c.battleHudTextureVramXOffsets_800c6e60;
-import static legend.game.combat.Bttl_800c.battleHudYOffsetIndex_800c6c38;
-import static legend.game.combat.Bttl_800c.battleHudYOffsets_800fb198;
 import static legend.game.combat.Bttl_800c.battleMenu_800c6c34;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c.characterDragoonIndices_800c6e68;
-import static legend.game.combat.Bttl_800c.combatPortraitBorderVertexCoords_800c6e9c;
 import static legend.game.combat.Bttl_800c.combatUiElementRectDimensions_800c6e48;
 import static legend.game.combat.Bttl_800c.combatantCount_800c66a0;
 import static legend.game.combat.Bttl_800c.countCombatUiFilesLoaded_800c6cf4;
 import static legend.game.combat.Bttl_800c.currentEnemyNames_800c69d0;
 import static legend.game.combat.Bttl_800c.currentStage_800c66a4;
-import static legend.game.combat.Bttl_800c.currentTurnBent_800c66c8;
 import static legend.game.combat.Bttl_800c.cutsceneDeffsWithExtraTims_800fb05c;
 import static legend.game.combat.Bttl_800c.deffLoadingStage_800fafe8;
 import static legend.game.combat.Bttl_800c.deffManager_800c693c;
-import static legend.game.combat.Bttl_800c.displayStats_800c6c2c;
 import static legend.game.combat.Bttl_800c.dragoonDeffFlags_800fafec;
 import static legend.game.combat.Bttl_800c.dragoonDeffsWithExtraTims_800fb040;
 import static legend.game.combat.Bttl_800c.dragoonSpaceElement_800c6b64;
 import static legend.game.combat.Bttl_800c.dragoonSpells_800c6960;
 import static legend.game.combat.Bttl_800c.enemyDeffFileIndices_800faec4;
-import static legend.game.combat.Bttl_800c.floatingNumbers_800c6b5c;
-import static legend.game.combat.Bttl_800c.floatingTextType1Digits;
 import static legend.game.combat.Bttl_800c.getCombatant;
-import static legend.game.combat.Bttl_800c.hudNameAndPortraitMetrics_800fb444;
+import static legend.game.combat.Bttl_800c.hud;
 import static legend.game.combat.Bttl_800c.itemTargetAll_800c69c8;
 import static legend.game.combat.Bttl_800c.itemTargetType_800c6b68;
 import static legend.game.combat.Bttl_800c.lightTicks_800c6928;
@@ -186,31 +155,17 @@ import static legend.game.combat.Bttl_800c.loadAttackAnimations;
 import static legend.game.combat.Bttl_800c.melbuMonsterNames_800c6ba8;
 import static legend.game.combat.Bttl_800c.modelVramSlots_800fb06c;
 import static legend.game.combat.Bttl_800c.monsterBents_800c6b78;
-import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800c.monsterCount_800c6b9c;
-import static legend.game.combat.Bttl_800c.playerNames_800fb378;
-import static legend.game.combat.Bttl_800c.spBarBorderMetrics_800fb46c;
-import static legend.game.combat.Bttl_800c.spBarColours_800c6f04;
-import static legend.game.combat.Bttl_800c.spBarFlashingBorderMetrics_800fb47c;
 import static legend.game.combat.Bttl_800c.spellAndItemMenu_800c6b60;
 import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
 import static legend.game.combat.Bttl_800c.stageDarkeningClutWidth_800c695c;
 import static legend.game.combat.Bttl_800c.stageDarkening_800c6958;
 import static legend.game.combat.Bttl_800c.targetArrowOffsetY_800fb188;
-import static legend.game.combat.Bttl_800c.targeting_800fb36c;
-import static legend.game.combat.Bttl_800c.uiTextureElementBrightness_800c71ec;
 import static legend.game.combat.Bttl_800c.usedRepeatItems_800c6c3c;
 import static legend.game.combat.Bttl_800d.loadModelAnim;
 import static legend.game.combat.Bttl_800d.loadModelTmd;
 import static legend.game.combat.Bttl_800d.optimisePacketsIfNecessary;
-import static legend.game.combat.Bttl_800f.buildUiTextureElement;
-import static legend.game.combat.Bttl_800f.deleteFloatingTextDigits;
-import static legend.game.combat.Bttl_800f.drawFloatingNumbers;
-import static legend.game.combat.Bttl_800f.drawLine;
-import static legend.game.combat.Bttl_800f.getTargetEnemyName;
 import static legend.game.combat.Bttl_800f.prepareItemList;
-import static legend.game.combat.Bttl_800f.renderNumber;
-import static legend.game.combat.Bttl_800f.tickFloatingNumbers;
 import static legend.game.combat.SBtld.loadStageAmbiance;
 import static legend.game.combat.SEffe.addGenericAttachment;
 import static legend.game.combat.SEffe.loadDeffStageEffects;
@@ -2055,17 +2010,7 @@ public final class Bttl_800e {
   @Method(0x800e9428L)
   public static void renderBillboardSpriteEffect(final SpriteMetrics08 metrics, final EffectManagerParams<?> managerInner, final MV transformMatrix) {
     if(managerInner.flags_00 >= 0) { // No errors
-      final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24();
-      spriteEffect.flags_00 = managerInner.flags_00 & 0xffff_ffffL;
-      spriteEffect.x_04 = (short)(-metrics.w_04 / 2);
-      spriteEffect.y_06 = (short)(-metrics.h_05 / 2);
-      spriteEffect.w_08 = metrics.w_04;
-      spriteEffect.h_0a = metrics.h_05;
-      spriteEffect.tpage_0c = (metrics.v_02 & 0x100) >>> 4 | (metrics.u_00 & 0x3ff) >>> 6;
-      spriteEffect.u_0e = (metrics.u_00 & 0x3f) * 4;
-      spriteEffect.v_0f = metrics.v_02;
-      spriteEffect.clutX_10 = metrics.clut_06 << 4 & 0x3ff;
-      spriteEffect.clutY_12 = metrics.clut_06 >>> 6 & 0x1ff;
+      final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24(managerInner.flags_00, metrics);
       spriteEffect.r_14 = managerInner.colour_1c.x & 0xff;
       spriteEffect.g_15 = managerInner.colour_1c.y & 0xff;
       spriteEffect.b_16 = managerInner.colour_1c.z & 0xff;
@@ -3310,7 +3255,7 @@ public final class Bttl_800e {
       drawTargetArrow(target.model_148, colour, targetState, target);
     } else {
       //LAB_800ecba4
-      long count = 0;
+      int count = 0;
       if(targetType == 0) {
         //LAB_800ecbdc
         count = charCount_800c677c.get();
@@ -3564,11 +3509,10 @@ public final class Bttl_800e {
   @Method(0x800ee610L)
   public static void initBattleMenu() {
     countCombatUiFilesLoaded_800c6cf4.set(0);
-    battleHudYOffsetIndex_800c6c38.set(1);
-    spellAndItemMenu_800c6b60 = new SpellAndItemMenuA4();
-    battleMenu_800c6c34 = new BattleMenuStruct58();
+    spellAndItemMenu_800c6b60 = new SpellAndItemMenuA4(hud);
+    battleMenu_800c6c34 = new BattleMenuStruct58(hud);
 
-    clearBattleHudDisplay();
+    hud.clear();
     spellAndItemMenu_800c6b60.clearSpellAndItemMenu();
     battleMenu_800c6c34.clear();
 
@@ -3672,8 +3616,8 @@ public final class Bttl_800e {
     spellAndItemMenu_800c6b60 = null;
     battleMenu_800c6c34.delete();
     battleMenu_800c6c34 = null;
-    deleteUiElements();
-    deleteFloatingTextDigits();
+    hud.deleteUiElements();
+    hud.deleteFloatingTextDigits();
   }
 
   @Method(0x800ef28cL)
@@ -3776,572 +3720,5 @@ public final class Bttl_800e {
     }
 
     //LAB_800ef798
-  }
-
-  @Method(0x800ef7c4L)
-  public static void clearBattleHudDisplay() {
-    //LAB_800ef7d4
-    for(int charSlot = 0; charSlot < 3; charSlot++) {
-      final BattleHudCharacterDisplay3c charDisplay = activePartyBattleHudCharacterDisplays_800c6c40.get(charSlot);
-      charDisplay.charIndex_00.set((short)-1);
-      charDisplay.unused_04.set((short)0);
-      charDisplay.flags_06.set((short)0);
-      charDisplay.x_08.set((short)0);
-      charDisplay.y_0a.set((short)0);
-      charDisplay.unused_0c.set((short)0);
-      charDisplay.unused_0e.set((short)0);
-      charDisplay.unused_10.set((short)0);
-      charDisplay.unused_12.set((short)0);
-    }
-
-    //LAB_800ef818
-    for(int charSlot = 0; charSlot < 3; charSlot++) {
-      final BattleDisplayStats144 displayStats = displayStats_800c6c2c[charSlot];
-
-      //LAB_800ef820
-      for(int i = 0; i < displayStats.digits_04.length; i++) {
-        //LAB_800ef828
-        for(int j = 0; j < displayStats.digits_04[i].length; j++) {
-          displayStats.digits_04[i][j].digitValue_00 = -1;
-        }
-      }
-    }
-
-    //LAB_800ef878
-    for(final FloatingNumberC4 num : floatingNumbers_800c6b5c) {
-      num.state_00 = 0;
-      num.flags_02 = 0;
-      num.bentIndex_04 = -1;
-      num.translucent_08 = false;
-      num.shade_0c = 0x80;
-      num.ticksRemaining_14 = -1;
-      num._18 = -1;
-
-      //LAB_800ef89c
-      for(int i = 0; i < num.digits_24.length; i++) {
-        final FloatingNumberDigit20 digit = num.digits_24[i];
-        digit.flags_00 = 0;
-        digit._04 = 0;
-        digit._08 = 0;
-        digit.digit_0c = -1;
-      }
-    }
-  }
-
-  @Method(0x800ef8d8L)
-  public static void initializeBattleHudCharacterDisplay(final int charSlot) {
-    final BattleHudCharacterDisplay3c charDisplay = activePartyBattleHudCharacterDisplays_800c6c40.get(charSlot);
-    charDisplay.charIndex_00.set((short)charSlot);
-    charDisplay.charId_02.set((short)battleState_8006e398.charBents_e40[charSlot].innerStruct_00.charId_272);
-    charDisplay.unused_04.set((short)0);
-    charDisplay.flags_06.or(0x2);
-    charDisplay.x_08.set((short)(charSlot * 94 + 63));
-    charDisplay.y_0a.set((short)38);
-    charDisplay.unused_10.set((short)32);
-    charDisplay.unused_12.set((short)17);
-
-    //LAB_800ef980
-    for(int i = 0; i < 10; i++) {
-      charDisplay._14.get(i).set(0);
-    }
-
-    final BattleDisplayStats144 displayStats = displayStats_800c6c2c[charSlot];
-    displayStats.x_00 = charDisplay.x_08.get();
-    displayStats.y_02 = charDisplay.y_0a.get();
-  }
-
-  @Method(0x800ef9e4L)
-  public static void drawUiText() {
-    if(countCombatUiFilesLoaded_800c6cf4.get() == 6) {
-      final int charCount = charCount_800c677c.get();
-
-      //LAB_800efa34
-      for(int charSlot = 0; charSlot < charCount; charSlot++) {
-        if(activePartyBattleHudCharacterDisplays_800c6c40.get(charSlot).charIndex_00.get() == -1 && characterStatsLoaded_800be5d0) {
-          initializeBattleHudCharacterDisplay(charSlot);
-        }
-        //LAB_800efa64
-      }
-
-      //LAB_800efa78
-      //LAB_800efa94
-      //LAB_800efaac
-      for(int charSlot = 0; charSlot < charCount; charSlot++) {
-        final BattleHudCharacterDisplay3c charDisplay = activePartyBattleHudCharacterDisplays_800c6c40.get(charSlot);
-
-        if(charDisplay.charIndex_00.get() != -1 && (charDisplay.flags_06.get() & 0x1) != 0 && (charDisplay.flags_06.get() & 0x2) != 0) {
-          final PlayerBattleEntity player = battleState_8006e398.charBents_e40[charSlot].innerStruct_00;
-
-          final VitalsStat playerHp = player.stats.getStat(CoreMod.HP_STAT.get());
-          final VitalsStat playerMp = player.stats.getStat(CoreMod.MP_STAT.get());
-          final VitalsStat playerSp = player.stats.getStat(CoreMod.SP_STAT.get());
-
-          final int colour;
-          if(playerHp.getCurrent() > playerHp.getMax() / 2) {
-            colour = 1;
-          } else if(playerHp.getCurrent() > playerHp.getMax() / 4) {
-            colour = 2;
-          } else {
-            colour = 3;
-          }
-
-          //LAB_800efb30
-          //LAB_800efb40
-          //LAB_800efb54
-          renderNumber(charSlot, 0, playerHp.getCurrent(), colour);
-          renderNumber(charSlot, 1, playerHp.getMax(), 1);
-          renderNumber(charSlot, 2, playerMp.getCurrent(), 1);
-          renderNumber(charSlot, 3, playerMp.getMax(), 1);
-          renderNumber(charSlot, 4, playerSp.getCurrent() / 100, 1);
-          EVENTS.postEvent(new StatDisplayEvent(charSlot, player));
-
-          charDisplay._14.get(1).set(tickCount_800bb0fc & 0x3);
-
-          //LAB_800efc0c
-          if(playerSp.getCurrent() < playerSp.getMax()) {
-            charDisplay.flags_06.and(0xfff3);
-          } else {
-            charDisplay.flags_06.or(0x4);
-          }
-
-          //LAB_800efc6c
-          if((charDisplay.flags_06.get() & 0x4) != 0) {
-            charDisplay.flags_06.xor(0x8);
-          }
-
-          //LAB_800efc84
-          if(charDisplay._14.get(2).get() < 6) {
-            charDisplay._14.get(2).incr();
-          }
-        }
-        //LAB_800efc9c
-      }
-
-      //LAB_800efcac
-      //LAB_800efcdc
-      for(int charSlot = 0; charSlot < charCount; charSlot++) {
-        final BattleDisplayStats144 displayStats = displayStats_800c6c2c[charSlot];
-        final BattleHudCharacterDisplay3c charDisplay = activePartyBattleHudCharacterDisplays_800c6c40.get(charSlot);
-        final int y = battleHudYOffsets_800fb198[battleHudYOffsetIndex_800c6c38.get()];
-        charDisplay.y_0a.set((short)y);
-        displayStats.y_02 = y;
-      }
-
-      //LAB_800efd00
-      tickFloatingNumbers();
-      spellAndItemMenu_800c6b60.handleSpellAndItemMenu();
-    }
-    //LAB_800efd10
-  }
-
-  private static UiBox battleUiBackground;
-  private static UiBox battleUiName;
-  private static final Obj[] names = new Obj[3];
-  private static final Obj[] portraits = new Obj[3];
-  private static final Obj[][] stats = new Obj[3][3];
-  private static final MV uiTransforms = new MV();
-  private static final Vector3f colourTemp = new Vector3f();
-
-  @Method(0x800efd34L)
-  public static void drawUiElements() {
-    int spBarIndex = 0;
-
-    //LAB_800efe04
-    //LAB_800efe9c
-    //LAB_800eff1c
-    //LAB_800eff70
-    //LAB_800effa0
-    if(countCombatUiFilesLoaded_800c6cf4.get() >= 6) {
-      //LAB_800f0ad4
-      // Background
-      if(activePartyBattleHudCharacterDisplays_800c6c40.get(0).charIndex_00.get() != -1 && (activePartyBattleHudCharacterDisplays_800c6c40.get(0).flags_06.get() & 0x1) != 0) {
-        if(battleUiBackground == null) {
-          battleUiBackground = new UiBox("Battle UI Background", 16, battleHudYOffsets_800fb198[battleHudYOffsetIndex_800c6c38.get()] - 26, 288, 40);
-        }
-
-        battleUiBackground.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
-      }
-
-      //LAB_800f0000
-      //LAB_800f0074
-      for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-        final BattleDisplayStats144 displayStats = displayStats_800c6c2c[charSlot];
-        final BattleHudCharacterDisplay3c charDisplay = activePartyBattleHudCharacterDisplays_800c6c40.get(charSlot);
-
-        if(charDisplay.charIndex_00.get() != -1 && (charDisplay.flags_06.get() & 0x1) != 0 && (charDisplay.flags_06.get() & 0x2) != 0) {
-          final ScriptState<PlayerBattleEntity> state = battleState_8006e398.charBents_e40[charSlot];
-          final PlayerBattleEntity player = state.innerStruct_00;
-          final int brightnessIndex0;
-          final int brightnessIndex1;
-          if((currentTurnBent_800c66c8.storage_44[7] & 0x4) != 0x1 && currentTurnBent_800c66c8 == state) {
-            brightnessIndex0 = 2;
-            brightnessIndex1 = 2;
-          } else {
-            brightnessIndex0 = 0;
-            brightnessIndex1 = 1;
-          }
-
-          //LAB_800f0108
-          final int count;
-          if((player.status_0e & 0x2000) == 0) { // Can't become dragoon
-            count = 4;
-          } else {
-            count = 5;
-          }
-
-          //LAB_800f0120
-          //LAB_800f0128
-          for(int i = 0; i < count; i++) {
-            //LAB_800f0134
-            for(int n = 0; n < displayStats.digits_04[i].length; n++) {
-              final BattleDisplayStatsDigit10 digit = displayStats.digits_04[i][n];
-              if(digit.digitValue_00 == -1) {
-                break;
-              }
-
-              // Numbers
-              //TODO drawUiTextureElement last two params: brightnessIndex0, charDisplay._14.get(2).get()
-              uiTransforms.transfer.set(displayStats.x_00 + digit.x_02, displayStats.y_02 + digit.y_04, 124.0f);
-              final RenderEngine.QueuedModel digitModel = RENDERER.queueOrthoOverlayModel(floatingTextType1Digits[digit.digitValue_00], uiTransforms);
-
-              if(charDisplay._14.get(2).get() < 6) {
-                digit.colour.mul(((byte)(uiTextureElementBrightness_800c71ec[brightnessIndex0] + 0x80) / 6 * charDisplay._14.get(2).get() - 0x80 & 0xff) / 128.0f, colourTemp);
-              } else {
-                digit.colour.mul((uiTextureElementBrightness_800c71ec[brightnessIndex0] & 0xff) / 128.0f, colourTemp);
-              }
-
-              digitModel.colour(colourTemp);
-            }
-            //LAB_800f01e0
-          }
-
-          //LAB_800f01f0
-          final NameAndPortraitDisplayMetrics0c namePortraitMetrics = hudNameAndPortraitMetrics_800fb444[player.charId_272];
-
-          // Names
-          if(names[charSlot] == null) {
-            names[charSlot] = buildUiTextureElement(
-              "Name " + charSlot,
-              namePortraitMetrics.nameU_00, namePortraitMetrics.nameV_01,
-              namePortraitMetrics.nameW_02, namePortraitMetrics.nameH_03,
-              0x2c
-            );
-          }
-
-          uiTransforms.transfer.set(displayStats.x_00 + 1, displayStats.y_02 - 25, 124.0f);
-          final RenderEngine.QueuedModel nameModel = RENDERER.queueOrthoOverlayModel(names[charSlot], uiTransforms);
-
-          // Portraits
-          if(portraits[charSlot] == null) {
-            portraits[charSlot] = buildUiTextureElement(
-              "Portrait " + charSlot,
-              namePortraitMetrics.portraitU_04, namePortraitMetrics.portraitV_05,
-              namePortraitMetrics.portraitW_06, namePortraitMetrics.portraitH_07,
-              namePortraitMetrics.portraitClutOffset_08
-            );
-          }
-
-          uiTransforms.transfer.set(displayStats.x_00 - 44, displayStats.y_02 - 22, 124.0f);
-          final RenderEngine.QueuedModel portraitModel = RENDERER.queueOrthoOverlayModel(portraits[charSlot], uiTransforms);
-
-          if(charDisplay._14.get(2).get() < 6) {
-            nameModel.monochrome(((byte)(uiTextureElementBrightness_800c71ec[brightnessIndex0] + 0x80) / 6 * charDisplay._14.get(2).get() - 0x80 & 0xff) / 128.0f);
-            portraitModel.monochrome(((byte)(uiTextureElementBrightness_800c71ec[brightnessIndex1] + 0x80) / 6 * charDisplay._14.get(2).get() - 0x80 & 0xff) / 128.0f);
-          } else {
-            nameModel.monochrome((uiTextureElementBrightness_800c71ec[brightnessIndex0] & 0xff) / 128.0f);
-            portraitModel.monochrome((uiTextureElementBrightness_800c71ec[brightnessIndex1] & 0xff) / 128.0f);
-          }
-
-          if(brightnessIndex0 != 0) {
-            final int v1_0 = (6 - charDisplay._14.get(2).get()) * 8 + 100;
-            final int x = displayStats.x_00 - centreScreenX_1f8003dc + namePortraitMetrics.portraitW_06 / 2 - 44;
-            final int y = displayStats.y_02 - centreScreenY_1f8003de + namePortraitMetrics.portraitH_07 / 2 - 22;
-            int dimVertexPositionModifier = (namePortraitMetrics.portraitW_06 + 2) * v1_0 / 100 / 2;
-            final int x0 = x - dimVertexPositionModifier;
-            final int x1 = x + dimVertexPositionModifier - 1;
-
-            final short[] xs = {(short)x0, (short)x1, (short)x0, (short)x1};
-
-            dimVertexPositionModifier = (namePortraitMetrics.portraitH_07 + 2) * v1_0 / 100 / 2;
-            final int y0 = y - dimVertexPositionModifier;
-            final int y1 = y + dimVertexPositionModifier - 1;
-
-            final short[] ys = {(short)y0, (short)y0, (short)y1, (short)y1};
-
-            //LAB_800f0438
-            for(int i = 0; i < 8; i++) {
-              dimVertexPositionModifier = charDisplay._14.get(2).get();
-
-              final int r;
-              final int g;
-              final int b;
-              final boolean translucent;
-              if(dimVertexPositionModifier < 6) {
-                r = dimVertexPositionModifier * 0x2a;
-                g = r;
-                b = r;
-                translucent = true;
-              } else {
-                r = 0xff;
-                g = 0xff;
-                b = 0xff;
-                translucent = false;
-              }
-
-              //LAB_800f0470
-              //LAB_800f047c
-              final int borderLayer = i / 4;
-              final CombatPortraitBorderMetrics0c borderMetrics = combatPortraitBorderVertexCoords_800c6e9c[i % 4];
-
-              // Draw border around currently active character's portrait
-              drawLine(
-                xs[borderMetrics.x1Index_00] + borderMetrics.x1Offset_04 + borderMetrics._08 * borderLayer,
-                ys[borderMetrics.y1Index_01] + borderMetrics.y1Offset_05 + borderMetrics._09 * borderLayer,
-                xs[borderMetrics.x2Index_02] + borderMetrics.x2Offset_06 + borderMetrics._0a * borderLayer,
-                ys[borderMetrics.y2Index_03] + borderMetrics.y2Offset_07 + borderMetrics._0b * borderLayer,
-                r,
-                g,
-                b,
-                translucent
-              );
-            }
-          }
-
-          //LAB_800f05d4
-          final boolean canTransform = (player.status_0e & 0x2000) != 0;
-
-          //LAB_800f05f4
-          int eraseSpHeight = 0;
-          for(int i = 0; i < 3; i++) {
-            if(i == 2 && !canTransform) {
-              eraseSpHeight = -10;
-            }
-
-            //LAB_800f060c
-            final BattleHudStatLabelMetrics0c labelMetrics = battleHudStatLabelMetrics_800c6ecc[i];
-
-            // HP: /  MP: /  SP:
-            //LAB_800f0610
-            if(stats[charSlot][i] == null) {
-              stats[charSlot][i] = buildUiTextureElement(
-                "Stats " + charSlot + ' ' + i,
-                labelMetrics.u_04, labelMetrics.v_06,
-                labelMetrics.w_08, labelMetrics.h_0a + eraseSpHeight,
-                0x2c
-              );
-            }
-
-            uiTransforms.transfer.set(displayStats.x_00 + labelMetrics.x_00, displayStats.y_02 + labelMetrics.y_02, 124.0f);
-            final RenderEngine.QueuedModel statsModel = RENDERER.queueOrthoOverlayModel(stats[charSlot][i], uiTransforms);
-
-            if(charDisplay._14.get(2).get() < 6) {
-              statsModel.monochrome(((byte)(uiTextureElementBrightness_800c71ec[brightnessIndex0] + 0x80) / 6 * charDisplay._14.get(2).get() - 0x80 & 0xff) / 128.0f);
-            } else {
-              statsModel.monochrome((uiTextureElementBrightness_800c71ec[brightnessIndex0] & 0xff) / 128.0f);
-            }
-          }
-
-          if(canTransform) {
-            final int sp = player.stats.getStat(CoreMod.SP_STAT.get()).getCurrent();
-            final int fullLevels = sp / 100;
-            final int partialSp = sp % 100;
-
-            //SP bars
-            //LAB_800f0714
-            for(int i = 0; i < 2; i++) {
-              int spBarW;
-              if(i == 0) {
-                spBarW = partialSp;
-                spBarIndex = fullLevels + 1;
-                //LAB_800f0728
-              } else if(fullLevels == 0) {
-                spBarW = 0;
-              } else {
-                spBarW = 100;
-                spBarIndex = fullLevels;
-              }
-
-              //LAB_800f0738
-              spBarW = Math.max(0, (short)spBarW * 35 / 100);
-
-              //LAB_800f0780
-              final int left = displayStats.x_00 - centreScreenX_1f8003dc + 3;
-              final int top = displayStats.y_02 - centreScreenY_1f8003de + 8;
-              final int right = left + spBarW;
-              final int bottom = top + 3;
-
-              final GpuCommandPoly cmd = new GpuCommandPoly(4)
-                .pos(0, left, top)
-                .pos(1, right, top)
-                .pos(2, left, bottom)
-                .pos(3, right, bottom);
-
-              final int[] spBarColours = spBarColours_800c6f04[spBarIndex];
-
-              cmd
-                .rgb(0, spBarColours[0], spBarColours[1], spBarColours[2])
-                .rgb(1, spBarColours[0], spBarColours[1], spBarColours[2]);
-
-              cmd
-                .rgb(2, spBarColours[3], spBarColours[4], spBarColours[5])
-                .rgb(3, spBarColours[3], spBarColours[4], spBarColours[5]);
-
-              GPU.queueCommand(31, cmd);
-            }
-
-            //SP border
-            //LAB_800f0910
-            for(int i = 0; i < 4; i++) {
-              final int offsetX = displayStats.x_00 - centreScreenX_1f8003dc;
-              final int offsetY = displayStats.y_02 - centreScreenY_1f8003de;
-              drawLine(spBarBorderMetrics_800fb46c[i].x1_00 + offsetX, spBarBorderMetrics_800fb46c[i].y1_01 + offsetY, spBarBorderMetrics_800fb46c[i].x2_02 + offsetX, spBarBorderMetrics_800fb46c[i].y2_03 + offsetY, 0x60, 0x60, 0x60, false);
-            }
-
-            //Full SP meter
-            if((charDisplay.flags_06.get() & 0x8) != 0) {
-              //LAB_800f09ec
-              for(int i = 0; i < 4; i++) {
-                final int offsetX = displayStats.x_00 - centreScreenX_1f8003dc;
-                final int offsetY = displayStats.y_02 - centreScreenY_1f8003de;
-                drawLine(spBarFlashingBorderMetrics_800fb47c[i].x1_00 + offsetX, spBarFlashingBorderMetrics_800fb47c[i].y1_01 + offsetY, spBarFlashingBorderMetrics_800fb47c[i].x2_02 + offsetX, spBarFlashingBorderMetrics_800fb47c[i].y2_03 + offsetY, 0x80, 0, 0, false);
-              }
-            }
-          }
-        }
-      }
-
-      //LAB_800f0b3c
-      drawFloatingNumbers();
-
-      // Use item menu
-      battleMenu_800c6c34.drawItemMenuElements();
-
-      // Targeting
-      final BattleMenuStruct58 menu = battleMenu_800c6c34;
-      if(menu.displayTargetArrowAndName_4c) {
-        drawTargetArrow(menu.targetType_50, menu.combatantIndex_54);
-        final int targetCombatant = menu.combatantIndex_54;
-        LodString str;
-        Element element;
-        if(targetCombatant == -1) {  // Target all
-          str = targeting_800fb36c[menu.targetType_50];
-          element = CoreMod.DIVINE_ELEMENT.get();
-        } else {  // Target single
-          final BattleEntity27c targetBent;
-
-          //LAB_800f0bb0
-          if(menu.targetType_50 == 1) {
-            //LAB_800f0ca4
-            final MonsterBattleEntity monsterBent = battleState_8006e398.aliveMonsterBents_ebc[targetCombatant].innerStruct_00;
-
-            //LAB_800f0cf0
-            int enemySlot;
-            for(enemySlot = 0; enemySlot < monsterCount_800c6768.get(); enemySlot++) {
-              if(monsterBents_800c6b78.get(enemySlot).get() == menu.target_48) {
-                break;
-              }
-            }
-
-            //LAB_800f0d10
-            str = getTargetEnemyName(monsterBent, currentEnemyNames_800c69d0[enemySlot]);
-            element = monsterBent.displayElement_1c;
-            targetBent = monsterBent;
-          } else if(menu.targetType_50 == 0) {
-            targetBent = battleState_8006e398.charBents_e40[targetCombatant].innerStruct_00;
-            str = playerNames_800fb378[targetBent.charId_272];
-            element = targetBent.getElement();
-
-            if(targetBent.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && battleState_8006e398.charBents_e40[menu.combatantIndex_54].innerStruct_00.isDragoon()) {
-              element = CoreMod.DIVINE_ELEMENT.get();
-            }
-          } else {
-            //LAB_800f0d58
-            //LAB_800f0d5c
-            final ScriptState<? extends BattleEntity27c> state = battleState_8006e398.allBents_e0c[targetCombatant];
-            targetBent = state.innerStruct_00;
-            if(targetBent instanceof final MonsterBattleEntity monsterBent) {
-              //LAB_800f0e24
-              str = getTargetEnemyName(monsterBent, currentEnemyNames_800c69d0[targetCombatant]);
-              element = monsterBent.displayElement_1c;
-            } else {
-              str = playerNames_800fb378[targetBent.charId_272];
-              element = targetBent.getElement();
-
-              if(targetBent.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && battleState_8006e398.charBents_e40[menu.combatantIndex_54].innerStruct_00.isDragoon()) {
-                element = CoreMod.DIVINE_ELEMENT.get();
-              }
-            }
-          }
-
-          //LAB_800f0e60
-          final int status = targetBent.status_0e;
-
-          if((status & 0xff) != 0) {
-            if((tickCount_800bb0fc & 0x10) != 0) {
-              int mask = 0x80;
-
-              //LAB_800f0e94
-              int statusBit;
-              for(statusBit = 0; statusBit < 8; statusBit++) {
-                if((status & mask) != 0) {
-                  break;
-                }
-
-                mask >>= 1;
-              }
-
-              //LAB_800f0eb4
-              if(statusBit == 8) {
-                statusBit = 7;
-              }
-
-              //LAB_800f0ec0
-              str = ailments_800fb3a0[statusBit];
-            }
-          }
-        }
-
-        //LAB_800f0ed8
-        //Character name
-        if(battleUiName == null) {
-          battleUiName = new UiBox("Battle UI Name", 44, 23, 232, 14);
-        }
-
-        battleUiName.render(element.colour);
-        renderText(str, 160 - textWidth(str) / 2, 24, TextColour.WHITE, 0);
-      }
-    }
-    //LAB_800f0f2c
-  }
-
-  private static void deleteUiElements() {
-    if(battleUiBackground != null) {
-      battleUiBackground.delete();
-      battleUiBackground = null;
-    }
-
-    if(battleUiName != null) {
-      battleUiName.delete();
-      battleUiName = null;
-    }
-
-    for(int i = 0; i < names.length; i++) {
-      if(names[i] != null) {
-        names[i].delete();
-        names[i] = null;
-      }
-
-      if(portraits[i] != null) {
-        portraits[i].delete();
-        portraits[i] = null;
-      }
-
-      for(int j = 0; j < stats[i].length; j++) {
-        if(stats[i][j] != null) {
-          stats[i][j].delete();
-          stats[i][j] = null;
-        }
-      }
-    }
   }
 }

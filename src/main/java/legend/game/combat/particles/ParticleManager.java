@@ -16,6 +16,7 @@ import legend.core.memory.types.TriConsumer;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.TmdObjLoader;
+import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.deff.DeffPart;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerParams;
@@ -36,6 +37,7 @@ import java.util.function.BiConsumer;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
+import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
@@ -1737,7 +1739,7 @@ public class ParticleManager {
   @Method(0x80100d00L)
   private void FUN_80100d00(final ParticleEffectData98 effect, final ParticleEffectInstance94 particle, final ParticleEffectData98Inner24 effectInner) {
     final Vector3f translation = new Vector3f();
-    getModelObjectTranslation(effectInner.parentScriptIndex_04, translation, this.currentParticleIndex_8011a008);
+    getModelObjectTranslation(SCRIPTS.getObject(effectInner.parentScriptIndex_04, BattleEntity27c.class), translation, this.currentParticleIndex_8011a008);
     particle.particlePosition_50.set(translation);
   }
 

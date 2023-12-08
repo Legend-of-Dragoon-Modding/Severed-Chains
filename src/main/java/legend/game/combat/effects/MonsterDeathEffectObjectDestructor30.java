@@ -3,10 +3,8 @@ package legend.game.combat.effects;
 import org.joml.Vector3f;
 
 public class MonsterDeathEffectObjectDestructor30 {
-  public final int index;
-
   /** byte; -1 = visible, 0 = invisible, 1 = fading */
-  public int destructionState_00;
+  public int destructionState_00 = -1;
   /** byte */
   public int stepCount_01;
 
@@ -23,8 +21,4 @@ public class MonsterDeathEffectObjectDestructor30 {
   public int stepR_2a;
   public int stepG_2c;
   public int stepB_2e;
-
-  public MonsterDeathEffectObjectDestructor30(final int index) {
-    this.index = index;
-  }
 }

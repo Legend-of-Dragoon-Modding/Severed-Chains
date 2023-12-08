@@ -11,12 +11,10 @@ import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.ByteRef;
 import legend.core.memory.types.IntRef;
-import legend.core.memory.types.QuintConsumer;
 import legend.core.memory.types.ShortRef;
 import legend.core.memory.types.UnsignedByteRef;
 import legend.core.memory.types.UnsignedShortRef;
 import legend.core.opengl.McqBuilder;
-import legend.core.opengl.Obj;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.EngineStateEnum;
 import legend.game.Scus94491BpeSegment_8005;
@@ -32,26 +30,18 @@ import legend.game.combat.effects.ButtonPressHudMetrics06;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerParams;
 import legend.game.combat.effects.FullScreenOverlayEffect0e;
-import legend.game.combat.effects.GuardEffectMetrics04;
 import legend.game.combat.effects.ModelEffect13c;
-import legend.game.combat.effects.RadialGradientEffect14;
 import legend.game.combat.effects.SpriteMetrics08;
 import legend.game.combat.effects.WeaponTrailEffect3c;
-import legend.game.combat.effects.WeaponTrailEffectSegment2c;
 import legend.game.combat.environment.BattleCamera;
-import legend.game.combat.environment.BattleHudBorderMetrics14;
 import legend.game.combat.environment.BattleLightStruct64;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
 import legend.game.combat.environment.BattleStage;
 import legend.game.combat.environment.BattleStageDarkening1800;
 import legend.game.combat.environment.BttlLightStruct84;
-import legend.game.combat.environment.CombatPortraitBorderMetrics0c;
 import legend.game.combat.environment.EncounterData38;
-import legend.game.combat.environment.NameAndPortraitDisplayMetrics0c;
-import legend.game.combat.environment.SpBarBorderMetrics04;
 import legend.game.combat.environment.StageData2c;
 import legend.game.combat.types.BattleAsset08;
-import legend.game.combat.types.BattleHudStatLabelMetrics0c;
 import legend.game.combat.types.BattleObject;
 import legend.game.combat.types.BattleStateEf4;
 import legend.game.combat.types.CombatantAsset0c;
@@ -59,11 +49,9 @@ import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.combat.types.CompressedAsset08;
 import legend.game.combat.types.DragoonSpells09;
 import legend.game.combat.types.EnemyDrop;
-import legend.game.combat.ui.BattleDisplayStats144;
-import legend.game.combat.ui.BattleHudCharacterDisplay3c;
+import legend.game.combat.ui.BattleHud;
 import legend.game.combat.ui.BattleMenuStruct58;
 import legend.game.combat.ui.CombatItem02;
-import legend.game.combat.ui.FloatingNumberC4;
 import legend.game.combat.ui.SpellAndItemMenuA4;
 import legend.game.fmv.Fmv;
 import legend.game.inventory.Equipment;
@@ -96,7 +84,6 @@ import org.joml.Math;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
-import org.joml.Vector3i;
 import org.legendofdragoon.modloader.registries.RegistryDelegate;
 
 import javax.annotation.Nullable;
@@ -130,8 +117,6 @@ import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80020308;
 import static legend.game.Scus94491BpeSegment_8002.FUN_80021520;
-import static legend.game.Scus94491BpeSegment_8002.animateModel;
-import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
@@ -181,18 +166,12 @@ import static legend.game.combat.Bttl_800e.allocateStageDarkeningStorage;
 import static legend.game.combat.Bttl_800e.backupStageClut;
 import static legend.game.combat.Bttl_800e.deallocateLightingControllerAndDeffManager;
 import static legend.game.combat.Bttl_800e.deallocateStageDarkeningStorage;
-import static legend.game.combat.Bttl_800e.drawUiElements;
-import static legend.game.combat.Bttl_800e.drawUiText;
 import static legend.game.combat.Bttl_800e.initBattleMenu;
 import static legend.game.combat.Bttl_800e.loadBattleHudDeff;
 import static legend.game.combat.Bttl_800e.loadStageTmd;
 import static legend.game.combat.Bttl_800e.renderBattleStage;
-import static legend.game.combat.Bttl_800e.renderBttlModel;
 import static legend.game.combat.Bttl_800e.rotateBattleStage;
 import static legend.game.combat.Bttl_800e.updateGameStateAndDeallocateMenu;
-import static legend.game.combat.Bttl_800f.FUN_800f1a00;
-import static legend.game.combat.Bttl_800f.FUN_800f417c;
-import static legend.game.combat.Bttl_800f.addFloatingNumberForBent;
 import static legend.game.combat.Bttl_800f.loadBattleHudTextures;
 import static legend.game.combat.Bttl_800f.loadMonster;
 import static legend.game.combat.SBtld.loadAdditions;
@@ -204,6 +183,8 @@ public final class Bttl_800c {
   private Bttl_800c() { }
 
   public static final Vector3f ZERO = new Vector3f();
+
+  public static final BattleHud hud = new BattleHud();
 
   public static final UnsignedShortRef currentPostCombatActionFrame_800c6690 = MEMORY.ref(2, 0x800c6690L, UnsignedShortRef::new);
 
@@ -286,10 +267,6 @@ public final class Bttl_800c {
 
   public static final LodString[] currentEnemyNames_800c69d0 = new LodString[9];
 
-  public static final FloatingNumberC4[] floatingNumbers_800c6b5c = new FloatingNumberC4[12];
-  static {
-    Arrays.setAll(floatingNumbers_800c6b5c, i -> new FloatingNumberC4());
-  }
   public static SpellAndItemMenuA4 spellAndItemMenu_800c6b60;
   public static Element dragoonSpaceElement_800c6b64;
   public static final IntRef itemTargetType_800c6b68 = MEMORY.ref(4, 0x800c6b68L, IntRef::new);
@@ -302,41 +279,15 @@ public final class Bttl_800c {
   /** Uhh, contains the monsters that Melbu summons during his fight...? */
   public static final LodString[] melbuMonsterNames_800c6ba8 = new LodString[3];
 
-  /**
-   * One per character slot
-   */
-  public static final BattleDisplayStats144[] displayStats_800c6c2c = new BattleDisplayStats144[3];
-  static {
-    Arrays.setAll(displayStats_800c6c2c, i -> new BattleDisplayStats144());
-  }
-
   public static final ArrayRef<UnsignedByteRef> cameraPositionIndicesIndices_800c6c30 = MEMORY.ref(4, 0x800c6c30L, ArrayRef.of(UnsignedByteRef.class, 4, 1, UnsignedByteRef::new));
 
   public static BattleMenuStruct58 battleMenu_800c6c34;
-  /** Only ever set to 1. 0 will set it to the top of the screen. */
-  public static final IntRef battleHudYOffsetIndex_800c6c38 = MEMORY.ref(4, 0x800c6c38L, IntRef::new);
-  public static final List<Item> usedRepeatItems_800c6c3c = new ArrayList<>();
 
-  public static final ArrayRef<BattleHudCharacterDisplay3c> activePartyBattleHudCharacterDisplays_800c6c40 = MEMORY.ref(2, 0x800c6c40L, ArrayRef.of(BattleHudCharacterDisplay3c.class, 3, 0x3c, BattleHudCharacterDisplay3c::new));
+  public static final List<Item> usedRepeatItems_800c6c3c = new ArrayList<>();
 
   public static final IntRef countCombatUiFilesLoaded_800c6cf4 = MEMORY.ref(4, 0x800c6cf4L, IntRef::new);
 
-  public static final Vector3i[] completedAdditionStarburstTranslationMagnitudes_800c6d94 = {
-    new Vector3i(360, 210, 210),
-    new Vector3i(210,  60, 210),
-    new Vector3i(360, 210, 210),
-    new Vector3i( 60, 210, 210),
-  };
-  public static final Vector3f[] completedAdditionStarburstAngleModifiers_800c6dac = {
-    new Vector3f(0, MathHelper.psxDegToRad(-16), 0),
-    new Vector3f(MathHelper.psxDegToRad(-16), 0, 0),
-    new Vector3f(0, MathHelper.psxDegToRad(16), 0),
-    new Vector3f(0, MathHelper.psxDegToRad(16), 0),
-  };
-
   public static final GsF_LIGHT light_800c6ddc = new GsF_LIGHT(1.0f, 1.0f, 1.0f);
-
-  public static final int[] repeatItemIds_800c6e34 = {224, 227, 228, 230, 232, 235, 236, 237, 238};
 
   public static final Vector2i[] combatUiElementRectDimensions_800c6e48 = {
     new Vector2i(16, 16),
@@ -352,42 +303,11 @@ public final class Bttl_800c {
 
   public static final int[] melbuMonsterNameIndices_800c6e90 = {395, 396, 397};
 
-  public static final CombatPortraitBorderMetrics0c[] combatPortraitBorderVertexCoords_800c6e9c = {
-    new CombatPortraitBorderMetrics0c(0, 0, 1, 1, 0, 0, 0, 0, -1, -1, 1, -1),
-    new CombatPortraitBorderMetrics0c(2, 2, 3, 3, 0, 0, 0, 0, -1, 1, 1, 1),
-    new CombatPortraitBorderMetrics0c(0, 0, 2, 2, 0, 1, 0, -1, -1, -1, -1, 1),
-    new CombatPortraitBorderMetrics0c(1, 1, 3, 3, 0, 1, 0, -1, 1, -1, 1, 1),
-  };
-  public static final BattleHudStatLabelMetrics0c[] battleHudStatLabelMetrics_800c6ecc = {
-    new BattleHudStatLabelMetrics0c(21, -15, 96, 32, 8, 8),
-    new BattleHudStatLabelMetrics0c(21, -5, 96, 32, 8, 8),
-    new BattleHudStatLabelMetrics0c(-18, -19, 0, 32, 16, 32),
-  };
-
-  public static final int[][] spBarColours_800c6f04 = {{16, 87, 240, 9, 50, 138}, {16, 87, 240, 9, 50, 138}, {0, 181, 142, 0, 102, 80}, {206, 204, 17, 118, 117, 10}, {230, 139, 0, 132, 80, 0}, {181, 0, 0, 104, 0, 0}, {16, 87, 240, 9, 50, 138}};
-
   public static final int[] melbuStageToMonsterNameIndices_800c6f30 = {0, 0, 0, 0, 1, 0, 2};
-  public static final BattleHudBorderMetrics14[] battleHudBorderMetrics_800c6f4c = {
-    new BattleHudBorderMetrics14(0, 1, 200, 48, 0, 4, 48, 8),
-    new BattleHudBorderMetrics14(0, 2, 0, 128, 4, 0, 8, 15),
-    new BattleHudBorderMetrics14(1, 3, 8, 128, 4, 1, 8, 15),
-    new BattleHudBorderMetrics14(2, 3, 200, 88, 0, 4, 48, 8),
-    new BattleHudBorderMetrics14(0, 0, 192, 48, 4, 4, 8, 8),
-    new BattleHudBorderMetrics14(1, 1, 248, 48, 4, 4, 8, 8),
-    new BattleHudBorderMetrics14(2, 2, 192, 88, 4, 4, 8, 8),
-    new BattleHudBorderMetrics14(3, 3, 248, 88, 4, 4, 8, 8),
-  };
   public static final int[][] textboxColours_800c6fec = {{76, 183, 225}, {182, 112, 0}, {25, 15, 128}, {128, 128, 128}, {129, 9, 236}, {213, 197, 58}, {72, 255, 159}, {238, 9, 9}, {0, 41, 159}};
-
-  public static final int[] digitOffsetX_800c7014 = {0, 27, 0, 27, 42};
-  public static final int[] digitOffsetY_800c7014 = {-15, -15, -5, -5, 6};
-  public static final int[] floatingTextType1DigitUs_800c7028 = {88, 16, 24, 32, 40, 48, 56, 64, 72, 80};
-  public static final Obj[] floatingTextType1Digits = new Obj[10];
 
   @SuppressWarnings("unchecked")
   public static final RegistryDelegate<Element>[] characterElements_800c706c = new RegistryDelegate[] {CoreMod.FIRE_ELEMENT, CoreMod.WIND_ELEMENT, CoreMod.LIGHT_ELEMENT, CoreMod.DARK_ELEMENT, CoreMod.THUNDER_ELEMENT, CoreMod.WIND_ELEMENT, CoreMod.WATER_ELEMENT, CoreMod.EARTH_ELEMENT, CoreMod.LIGHT_ELEMENT};
-
-  public static final int[] floatingTextType3DigitUs_800c70e0 = {16, 24, 32, 40, 48, 56, 64, 72, 80, 88};
 
   public static final Vector2i[] battleUiElementClutVramXy_800c7114 = {
     new Vector2i(0x2c0, 0x1f0),
@@ -418,36 +338,7 @@ public final class Bttl_800c {
     new Rect4i(576, 0, 64, 256), new Rect4i(640, 0, 64, 256),
   };
 
-  public static final int[] vramSlotIndices_800fa730 = {0, 1, 2, 3, 4, 5, 6, 14, 15, 16};
-
   public static final Random seed_800fa754 = new Random();
-  /**
-   * <ol start="0">
-   *   <li>{@link Bttl_800d#renderDiscGradientEffect}</li>
-   *   <li>{@link Bttl_800d#FUN_800d1e80}</li>
-   *   <li>{@link Bttl_800d#renderRingGradientEffect}</li>
-   *   <li>{@link Bttl_800d#renderDiscGradientEffect}</li>
-   *   <li>{@link Bttl_800d#renderRingGradientEffect}</li>
-   * </ol>
-   */
-  public static final QuintConsumer<EffectManagerData6c<EffectManagerParams.RadialGradientType>, Integer, Vector2f[], RadialGradientEffect14, Translucency>[] radialGradientEffectRenderers_800fa758 = new QuintConsumer[5];
-  static {
-    radialGradientEffectRenderers_800fa758[0] = Bttl_800d::renderDiscGradientEffect;
-    radialGradientEffectRenderers_800fa758[1] = Bttl_800d::FUN_800d1e80; // Not implemented
-    radialGradientEffectRenderers_800fa758[2] = Bttl_800d::renderRingGradientEffect;
-    radialGradientEffectRenderers_800fa758[3] = Bttl_800d::renderDiscGradientEffect;
-    radialGradientEffectRenderers_800fa758[4] = Bttl_800d::renderRingGradientEffect;
-  }
-
-  public static final GuardEffectMetrics04[] guardEffectMetrics_800fa76c = {
-    new GuardEffectMetrics04(0, 0),
-    new GuardEffectMetrics04(0, -1000),
-    new GuardEffectMetrics04(600, -300),
-    new GuardEffectMetrics04(500, 600),
-    new GuardEffectMetrics04(0, 1000),
-    new GuardEffectMetrics04(-500, -100),
-    new GuardEffectMetrics04(0, -1000),
-  };
 
   /** ASCII chars - [0-9][A-Z][a-z]'-& <null> */
   public static final int[] asciiTable_800fa788 = {
@@ -548,47 +439,8 @@ public final class Bttl_800c {
    */
   public static final int[] melbuStageIndices_800fb064 = {93, 94, 95, 25, 52, -1, -1, -1};
   public static final int[] modelVramSlots_800fb06c = {0, 0, 0, 0, 0, 0, 0, 0, 14, 15, 16, 17, 10, 11, 12, 13, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 0, 0, 0, 0, 0};
-  public static final int[] vramSlotUvs_800fb0ec = {0, 21, 22, 23, 24, 25, 26, 25, 26, 27, 12, 13, 14, 15, 8, 9, 10, 11};
 
   public static final int[] targetArrowOffsetY_800fb188 = {-20, -18, -16, -14, -12, -14, -16, -18};
-  public static final int[] battleHudYOffsets_800fb198 = {46, 208, -128, 0};
-
-  /** Targeting ("All allies", "All players", "All") */
-  public static final LodString[] targeting_800fb36c = { new LodString("All allies"), new LodString("All enemies"), new LodString("All") };
-  public static final LodString[] playerNames_800fb378 = {
-    new LodString("Dart"), new LodString("Lavitz"), new LodString("Shana"), new LodString("Rose"), new LodString("Haschel"),
-    new LodString("Albert"), new LodString("Meru"), new LodString("Kongol"), new LodString("Miranda"), new LodString("DivinDGDart"),
-  };
-  /** Poisoned, Dispirited, Weapon blocked, Stunned, Fearful, Confused, Bewitched, Petrified */
-  public static final LodString[] ailments_800fb3a0 = {
-    new LodString("Poisoned"), new LodString("Dispirited"), new LodString("Weapon blocked"), new LodString("Stunned"), new LodString("Fearful"),
-    new LodString("Confused"), new LodString("Bewitched"), new LodString("Petrified"),
-  };
-
-  public static final NameAndPortraitDisplayMetrics0c[] hudNameAndPortraitMetrics_800fb444 = {
-    new NameAndPortraitDisplayMetrics0c(104, 32, 24, 8, 24, 0, 24, 32, 0),
-    new NameAndPortraitDisplayMetrics0c(112, 56, 40, 8, 48, 0, 24, 32, 2),
-    new NameAndPortraitDisplayMetrics0c(128, 32, 32, 8, 0, 0, 24, 32, 1),
-    new NameAndPortraitDisplayMetrics0c(0, 232, 32, 8, 72, 0, 24, 32, 3),
-    new NameAndPortraitDisplayMetrics0c(216, 24, 39, 8, 96, 0, 24, 32, 4),
-    new NameAndPortraitDisplayMetrics0c(152, 48, 40, 8, 120, 0, 24, 32, 5),
-    new NameAndPortraitDisplayMetrics0c(32, 232, 32, 8, 144, 0, 24, 32, 6),
-    new NameAndPortraitDisplayMetrics0c(152, 56, 40, 8, 168, 0, 24, 32, 7),
-    new NameAndPortraitDisplayMetrics0c(64, 232, 40, 8, 192, 0, 24, 32, 8),
-    new NameAndPortraitDisplayMetrics0c(104, 32, 24, 8, 24, 0, 24, 32, 0),
-  };
-  public static final SpBarBorderMetrics04[] spBarBorderMetrics_800fb46c = {
-    new SpBarBorderMetrics04(1, 6, 39, 6),
-    new SpBarBorderMetrics04(1, 7, 1, 11),
-    new SpBarBorderMetrics04(39, 7, 39, 11),
-    new SpBarBorderMetrics04(1, 12, 39, 12),
-  };
-  public static final SpBarBorderMetrics04[] spBarFlashingBorderMetrics_800fb47c = {
-    new SpBarBorderMetrics04(2, 7, 38, 7),
-    new SpBarBorderMetrics04(2, 8, 2, 10),
-    new SpBarBorderMetrics04(38, 8, 38, 10),
-    new SpBarBorderMetrics04(2, 11, 38, 11),
-  };
 
   @Method(0x800c7304L)
   public static void cacheLivingBents() {
@@ -785,19 +637,19 @@ public final class Bttl_800c {
 
       final int combatantIndex = getCombatantIndex(charIndex);
       final String name = "Enemy combatant index " + combatantIndex;
-      final ScriptState<MonsterBattleEntity> state = SCRIPTS.allocateScriptState(name, new MonsterBattleEntity(name));
-      state.setTicker(Bttl_800c::bentTicker);
-      state.setDestructor(Bttl_800c::bentDestructor);
+      final MonsterBattleEntity bent = new MonsterBattleEntity(name);
+      final ScriptState<MonsterBattleEntity> state = SCRIPTS.allocateScriptState(name, bent);
+      state.setTicker(bent::bentLoadingTicker);
+      state.setDestructor(bent::bentDestructor);
       battleState_8006e398.allBents_e0c[allBentCount_800c66d0.get()] = state;
       battleState_8006e398.monsterBents_e50[monsterCount_800c6768.get()] = state;
-      final BattleEntity27c data = state.innerStruct_00;
-      data.charId_272 = charIndex;
-      data.bentSlot_274 = allBentCount_800c66d0.get();
-      data.charSlot_276 = monsterCount_800c6768.get();
-      data.combatant_144 = getCombatant(combatantIndex);
-      data.combatantIndex_26c = combatantIndex;
-      data.model_148.coord2_14.coord.transfer.set(s5.pos_02);
-      data.model_148.coord2_14.transforms.rotate.set(0.0f, MathHelper.TWO_PI * 0.75f, 0.0f);
+      bent.charId_272 = charIndex;
+      bent.bentSlot_274 = allBentCount_800c66d0.get();
+      bent.charSlot_276 = monsterCount_800c6768.get();
+      bent.combatant_144 = getCombatant(combatantIndex);
+      bent.combatantIndex_26c = combatantIndex;
+      bent.model_148.coord2_14.coord.transfer.set(s5.pos_02);
+      bent.model_148.coord2_14.transforms.rotate.set(0.0f, MathHelper.TWO_PI * 0.75f, 0.0f);
       state.storage_44[7] |= 0x4;
       allBentCount_800c66d0.incr();
       monsterCount_800c6768.incr();
@@ -837,12 +689,12 @@ public final class Bttl_800c {
     for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
       final int charIndex = gameState_800babc8.charIds_88[charSlot];
       final String name = "Char ID " + charIndex + " (bent + " + (charSlot + 6) + ')';
-      final ScriptState<PlayerBattleEntity> state = SCRIPTS.allocateScriptState(charSlot + 6, name, 0, new PlayerBattleEntity(name, charSlot + 6));
-      state.setTicker(Bttl_800c::bentTicker);
-      state.setDestructor(Bttl_800c::bentDestructor);
+      final PlayerBattleEntity bent = new PlayerBattleEntity(name, charSlot + 6);
+      final ScriptState<PlayerBattleEntity> state = SCRIPTS.allocateScriptState(charSlot + 6, name, 0, bent);
+      state.setTicker(bent::bentLoadingTicker);
+      state.setDestructor(bent::bentDestructor);
       battleState_8006e398.allBents_e0c[allBentCount_800c66d0.get()] = state;
       battleState_8006e398.charBents_e40[charSlot] = state;
-      final PlayerBattleEntity bent = state.innerStruct_00;
       bent.element = characterElements_800c706c[charIndex].get();
       bent.combatant_144 = getCombatant((short)combatantIndices[charSlot]);
       bent.charId_272 = charIndex;
@@ -985,7 +837,7 @@ public final class Bttl_800c {
   @Method(0x800c79f0L)
   public static void FUN_800c79f0() {
     currentTurnBent_800c66c8 = battleState_8006e398.allBents_e0c[0];
-    FUN_800f417c();
+    hud.FUN_800f417c();
 
     EVENTS.postEvent(new BattleStartedEvent());
 
@@ -1008,8 +860,7 @@ public final class Bttl_800c {
 
   @Method(0x800c7bb8L)
   public static void battleTick() {
-    drawUiText();
-    drawUiElements();
+    hud.draw();
 
     if(postBattleActionIndex_800bc974 != 0) {
       pregameLoadingStage_800bb10c.incr();
@@ -1601,14 +1452,6 @@ public final class Bttl_800c {
     }
   }
 
-  @Method(0x800c94f8L)
-  public static int FUN_800c94f8(final int combatantIndex, final short a1) {
-    final CombatantStruct1a8 combatant = combatants_8005e398[combatantIndex];
-    final int oldVal = combatant._1a4;
-    combatant._1a4 = a1;
-    return oldVal;
-  }
-
   @Method(0x800c952cL)
   public static void FUN_800c952c(final Model124 model, final CombatantStruct1a8 combatant) {
     final CContainer tmd;
@@ -1963,13 +1806,6 @@ public final class Bttl_800c {
     combatant.flags_19e &= 0xffef;
   }
 
-  @Method(0x800ca528L)
-  public static int FUN_800ca528(final CombatantStruct1a8 combatant, final int a1) {
-    final int oldVal = combatant._1a6;
-    combatant._1a6 = a1;
-    return oldVal;
-  }
-
   @Method(0x800ca55cL)
   public static void loadCombatantTextures(final CombatantStruct1a8 combatant) {
     if(combatant.charIndex_1a2 >= 0) {
@@ -2077,124 +1913,9 @@ public final class Bttl_800c {
     usedMonsterTextureSlots_800c66c4.and(~(0x1 << shift));
   }
 
-  @Method(0x800ca938L)
-  public static int getCombatantVramSlotIndex(final CombatantStruct1a8 combatant) {
-    return vramSlotIndices_800fa730[combatant.vramSlot_1a0];
-  }
-
   @Method(0x800cae44L)
   public static void clearCurrentDisplayableItems() {
     currentDisplayableIconsBitset_800c675c.set(0);
-  }
-
-  @Method(0x800cae50L)
-  public static void bentTicker(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
-    bent._278 = 0;
-
-    final int v1;
-    if((state.storage_44[7] & 0x4) != 0) {
-      v1 = battleFlags_800bc960 & 0x110;
-    } else {
-      //LAB_800cae94
-      v1 = battleFlags_800bc960 & 0x210;
-    }
-
-    //LAB_800cae98
-    if(v1 != 0) {
-      if(bent.combatant_144.isModelLoaded()) {
-        bent.model_148.vramSlot_9d = getCombatantVramSlotIndex(bent.combatant_144);
-        bent.loadingAnimIndex_26e = 0;
-        FUN_800c952c(bent.model_148, bent.combatant_144);
-        bent._278 = 1;
-        bent.currentAnimIndex_270 = -1;
-
-        if((state.storage_44[7] & 0x800) == 0) {
-          final ScriptFile script;
-          if((state.storage_44[7] & 0x4) != 0) {
-            script = bent.combatant_144.scriptPtr_10;
-          } else {
-            //LAB_800caf18
-            script = playerBattleScript_800c66fc;
-          }
-
-          //LAB_800caf20
-          state.loadScriptFile(script);
-        }
-
-        //LAB_800caf2c
-        state.setTicker(Bttl_800c::FUN_800caf50);
-      }
-    }
-
-    //LAB_800caf38
-  }
-
-  @Method(0x800caf2cL)
-  public static void FUN_800caf50(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
-    state.setRenderer(Bttl_800c::FUN_800cb024);
-    state.setTicker(Bttl_800c::FUN_800cafb4);
-    FUN_800cafb4(state, bent);
-  }
-
-  @Method(0x800cafb4L)
-  public static void FUN_800cafb4(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
-    if((state.storage_44[7] & 0x211) == 0) {
-      applyModelRotationAndScale(bent.model_148);
-
-      if((state.storage_44[7] & 0x80) == 0 || bent.model_148.remainingFrames_9e != 0) {
-        //LAB_800cb004
-        animateModel(bent.model_148);
-      }
-    }
-
-    //LAB_800cb00c
-  }
-
-  @Method(0x800cb024L)
-  public static void FUN_800cb024(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
-    if((state.storage_44[7] & 0x211) == 0) {
-      renderBttlModel(bent.model_148);
-    }
-
-    //LAB_800cb048
-  }
-
-  @Method(0x800cb058L)
-  public static void bentDestructor(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
-    //LAB_800cb088
-    FUN_800ca194(bent.combatant_144.assets_14[bent.loadingAnimIndex_26e]);
-
-    allBentCount_800c66d0.decr();
-
-    //LAB_800cb0d4
-    for(int i = bent.bentSlot_274; i < allBentCount_800c66d0.get(); i++) {
-      battleState_8006e398.allBents_e0c[i] = battleState_8006e398.allBents_e0c[i + 1];
-      battleState_8006e398.allBents_e0c[i].innerStruct_00.bentSlot_274 = i;
-    }
-
-    //LAB_800cb11c
-    if((state.storage_44[7] & 0x4) != 0) {
-      monsterCount_800c6768.decr();
-
-      //LAB_800cb168
-      for(int i = bent.charSlot_276; i < monsterCount_800c6768.get(); i++) {
-        battleState_8006e398.monsterBents_e50[i] = battleState_8006e398.monsterBents_e50[i + 1];
-        battleState_8006e398.monsterBents_e50[i].innerStruct_00.charSlot_276 = i;
-      }
-    } else {
-      //LAB_800cb1b8
-      charCount_800c677c.decr();
-
-      //LAB_800cb1f4
-      for(int i = bent.charSlot_276; i < charCount_800c677c.get(); i++) {
-        battleState_8006e398.charBents_e40[i] = battleState_8006e398.charBents_e40[i + 1];
-        battleState_8006e398.charBents_e40[i].innerStruct_00.charSlot_276 = i;
-      }
-    }
-
-    bent.model_148.deleteModelParts();
-
-    //LAB_800cb23c
   }
 
   @Method(0x800cb250L)
@@ -2926,7 +2647,7 @@ public final class Bttl_800c {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "damage", description = "The amount of damage done")
   @Method(0x800ccb3cL)
   public static FlowControl scriptRenderDamage(final RunningScript<?> script) {
-    Bttl_800f.renderDamage(script.params_20[0].get(), script.params_20[1].get());
+    hud.renderDamage(script.params_20[0].get(), script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
@@ -2935,7 +2656,7 @@ public final class Bttl_800c {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "value", description = "The number to show")
   @Method(0x800ccb70L)
   public static FlowControl scriptAddFloatingNumberForBent(final RunningScript<?> script) {
-    addFloatingNumberForBent(script.params_20[0].get(), script.params_20[1].get(), 13);
+    hud.addFloatingNumberForBent(script.params_20[0].get(), script.params_20[1].get(), 13);
     return FlowControl.CONTINUE;
   }
 
@@ -3049,7 +2770,7 @@ public final class Bttl_800c {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
   @Method(0x800ccec8L)
   public static FlowControl FUN_800ccec8(final RunningScript<?> script) {
-    FUN_800f1a00(script.params_20[0].get() > 0 ? 1 : 0);
+    hud.FUN_800f1a00(script.params_20[0].get() > 0);
     return FlowControl.CONTINUE;
   }
 
@@ -3281,16 +3002,16 @@ public final class Bttl_800c {
   @Method(0x800cd5b4L)
   public static FlowControl scriptAllocateBent(final RunningScript<?> script) {
     final String name = "Bent allocated by script " + script.scriptState_04.index;
-    final ScriptState<MonsterBattleEntity> state = SCRIPTS.allocateScriptState(name, new MonsterBattleEntity(name));
+    final MonsterBattleEntity bent = new MonsterBattleEntity(name);
+    final ScriptState<MonsterBattleEntity> state = SCRIPTS.allocateScriptState(name, bent);
     script.params_20[2].set(state.index);
-    state.setTicker(Bttl_800c::bentTicker);
-    state.setDestructor(Bttl_800c::bentDestructor);
+    state.setTicker(bent::bentLoadingTicker);
+    state.setDestructor(bent::bentDestructor);
     state.loadScriptFile(script.scriptState_04.scriptPtr_14, script.params_20[0].get());
     state.storage_44[7] |= 0x804;
     battleState_8006e398.allBents_e0c[allBentCount_800c66d0.get()] = state;
     battleState_8006e398.monsterBents_e50[monsterCount_800c6768.get()] = state;
 
-    final BattleEntity27c bent = state.innerStruct_00;
     final CombatantStruct1a8 combatant = getCombatant(script.params_20[1].get());
     bent.combatant_144 = combatant;
     bent.combatantIndex_26c = script.params_20[1].get();
@@ -3316,7 +3037,7 @@ public final class Bttl_800c {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
-    FUN_800c94f8(script.params_20[0].get(), (short)script.params_20[1].get());
+    combatants_8005e398[script.params_20[0].get()]._1a4 = (short)script.params_20[1].get();
 
     //LAB_800cd798
     return FlowControl.CONTINUE;
@@ -3334,7 +3055,7 @@ public final class Bttl_800c {
       return FlowControl.PAUSE_AND_REWIND;
     }
 
-    FUN_800ca528(combatants_8005e398[script.params_20[0].get()], (short)script.params_20[1].get());
+    combatants_8005e398[script.params_20[0].get()]._1a6 = (short)script.params_20[1].get();
 
     //LAB_800cd800
     return FlowControl.CONTINUE;
@@ -3523,7 +3244,9 @@ public final class Bttl_800c {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "dobjIndex", description = "The model index")
   @Method(0x800ce6a8L)
   public static FlowControl scriptAllocateWeaponTrailEffect(final RunningScript<? extends BattleObject> script) {
-    final WeaponTrailEffect3c trail = new WeaponTrailEffect3c();
+    final BattleObject parent = SCRIPTS.getObject(script.params_20[1].get(), BattleObject.class);
+
+    final WeaponTrailEffect3c trail = new WeaponTrailEffect3c(script.params_20[2].get(), parent);
 
     final ScriptState<EffectManagerData6c<EffectManagerParams.WeaponTrailType>> state = allocateEffectManager(
       "Weapon trail",
@@ -3535,33 +3258,7 @@ public final class Bttl_800c {
       new EffectManagerParams.WeaponTrailType()
     );
 
-    final EffectManagerData6c<EffectManagerParams.WeaponTrailType> manager = state.innerStruct_00;
-
-    //LAB_800ce75c
-    for(int i = 0; i < 65; i++) {
-      final WeaponTrailEffectSegment2c segment = trail.segments_34[i];
-      segment.unused_00 = 0x6c;
-      segment.unused_01 = 0x63;
-      segment.unused_02 = 0x73;
-      segment._03 = false;
-      segment.previousSegmentRef_24 = null;
-      segment.nextSegmentRef_28 = null;
-    }
-
-    trail.currentSegment_38 = null;
-    trail.currentSegmentIndex_00 = -1;
-    trail.parentIndex_04 = script.params_20[1].get();
-    trail.dobjIndex_08 = script.params_20[2].get();
-    trail.segmentCount_0e = 20;
-    manager.params_10.colour_1c.set(0xff, 0x80, 0x60);
-
-    final BattleObject parent = SCRIPTS.getObject(script.params_20[1].get(), BattleObject.class);
-    if(BattleObject.EM__.equals(parent.magic_00)) {
-      trail.parentModel_30 = ((ModelEffect13c)((EffectManagerData6c<?>)parent).effect_44).model_10;
-    } else {
-      //LAB_800ce7f8
-      trail.parentModel_30 = ((BattleEntity27c)parent).model_148;
-    }
+    state.innerStruct_00.params_10.colour_1c.set(0xff, 0x80, 0x60);
 
     //LAB_800ce804
     script.params_20[0].set(state.index);
@@ -3574,8 +3271,7 @@ public final class Bttl_800c {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "largeScalingFactor", description = "The scaling factor for the leading end")
   @Method(0x800ce9b0L)
   public static FlowControl scriptApplyWeaponTrailScaling(final RunningScript<?> script) {
-    final EffectManagerData6c<EffectManagerParams.WeaponTrailType> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.classFor(EffectManagerParams.WeaponTrailType.class));
-    final WeaponTrailEffect3c trail = (WeaponTrailEffect3c)manager.effect_44;
+    final WeaponTrailEffect3c trail = (WeaponTrailEffect3c)SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class).effect_44;
     trail.applyWeaponTrailScaling(trail.largestVertex_10, trail.smallestVertex_20, script.params_20[2].get() / (float)0x1000, script.params_20[1].get() / (float)0x1000);
     return FlowControl.CONTINUE;
   }
@@ -3606,7 +3302,7 @@ public final class Bttl_800c {
     final int fullB = script.params_20[6].get() << 8 & 0xffff; //
     final int ticks = script.params_20[7].get() & 0xffff;
 
-    final FullScreenOverlayEffect0e effect = new FullScreenOverlayEffect0e();
+    final FullScreenOverlayEffect0e effect = new FullScreenOverlayEffect0e(r, g, b, fullR, fullG, fullB, ticks);
 
     final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager(
       "Full screen overlay rgb(%x, %x, %x) -> rgb(%x, %x, %x)".formatted(r, g, b, fullR, fullG, fullB),
@@ -3617,16 +3313,7 @@ public final class Bttl_800c {
       effect
     );
 
-    final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
-    manager.params_10.flags_00 = 0x5000_0000;
-
-    effect.r_00 = r;
-    effect.g_02 = g;
-    effect.b_04 = b;
-    effect.stepR_06 = (short)((fullR - r) / ticks);
-    effect.stepG_08 = (short)((fullG - g) / ticks);
-    effect.stepB_0a = (short)((fullB - b) / ticks);
-    effect.ticksRemaining_0c = ticks;
+    state.innerStruct_00.params_10.flags_00 = 0x5000_0000;
 
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
@@ -3649,8 +3336,7 @@ public final class Bttl_800c {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "count", description = "The segment count")
   @Method(0x800ceeccL)
   public static FlowControl scriptSetWeaponTrailSegmentCount(final RunningScript<?> script) {
-    final EffectManagerData6c manager = (EffectManagerData6c)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    final WeaponTrailEffect3c trail = (WeaponTrailEffect3c)manager.effect_44;
+    final WeaponTrailEffect3c trail = (WeaponTrailEffect3c)SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class).effect_44;
     trail.setWeaponTrailSegmentCount(script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
@@ -3893,10 +3579,9 @@ public final class Bttl_800c {
 
   /** Sets translation vector to position of individual part of model associated with scriptIndex */
   @Method(0x800cffd8L)
-  public static void getModelObjectTranslation(final int scriptIndex, final Vector3f translation, final int objIndex) {
+  public static void getModelObjectTranslation(final BattleEntity27c bent, final Vector3f translation, final int objIndex) {
     final MV transformMatrix = new MV();
-    GsGetLw(((BattleEntity27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00).model_148.modelParts_00[objIndex].coord2_04, transformMatrix);
-    // Does nothing? Changed line below to set //ApplyMatrixLV(transformMatrix, new VECTOR(), translation);
+    GsGetLw(bent.model_148.modelParts_00[objIndex].coord2_04, transformMatrix);
     translation.set(transformMatrix.transfer);
   }
 }

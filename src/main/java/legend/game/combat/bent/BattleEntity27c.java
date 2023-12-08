@@ -10,6 +10,8 @@ import legend.game.combat.types.BattleObject;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.RegisterBattleEntityStatsEvent;
+import legend.game.scripting.ScriptFile;
+import legend.game.scripting.ScriptState;
 import legend.game.types.ItemStats0c;
 import legend.game.types.Model124;
 import legend.game.types.SpellStats0c;
@@ -20,8 +22,21 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static legend.core.GameEngine.EVENTS;
+import static legend.game.Scus94491BpeSegment_8002.animateModel;
+import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
+import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
+import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
+import static legend.game.combat.Bttl_800c.FUN_800c952c;
+import static legend.game.combat.Bttl_800c.FUN_800ca194;
+import static legend.game.combat.Bttl_800c.allBentCount_800c66d0;
+import static legend.game.combat.Bttl_800c.charCount_800c677c;
+import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
+import static legend.game.combat.Bttl_800c.playerBattleScript_800c66fc;
+import static legend.game.combat.Bttl_800e.renderBttlModel;
 
 public abstract class BattleEntity27c extends BattleObject {
+  private static final int[] vramSlotIndices_800fa730 = {0, 1, 2, 3, 4, 5, 6, 14, 15, 16};
+
   public final BattleEntityType type;
 
   public final StatCollection stats;
@@ -494,6 +509,116 @@ public abstract class BattleEntity27c extends BattleObject {
   @Override
   public Vector3i getColour() {
     return this.colour; // defaultEffectColour_800fb94c;
+  }
+
+  @Method(0x800cae50L)
+  public void bentLoadingTicker(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
+    this._278 = 0;
+
+    final int v1;
+    if((state.storage_44[7] & 0x4) != 0) {
+      v1 = battleFlags_800bc960 & 0x110;
+    } else {
+      //LAB_800cae94
+      v1 = battleFlags_800bc960 & 0x210;
+    }
+
+    //LAB_800cae98
+    if(v1 != 0) {
+      if(this.combatant_144.isModelLoaded()) {
+        this.model_148.vramSlot_9d = vramSlotIndices_800fa730[this.combatant_144.vramSlot_1a0];
+        this.loadingAnimIndex_26e = 0;
+        FUN_800c952c(this.model_148, this.combatant_144);
+        this._278 = 1;
+        this.currentAnimIndex_270 = -1;
+
+        if((state.storage_44[7] & 0x800) == 0) {
+          final ScriptFile script;
+          if((state.storage_44[7] & 0x4) != 0) {
+            script = this.combatant_144.scriptPtr_10;
+          } else {
+            //LAB_800caf18
+            script = playerBattleScript_800c66fc;
+          }
+
+          //LAB_800caf20
+          state.loadScriptFile(script);
+        }
+
+        //LAB_800caf2c
+        state.setTicker(this::bentLoadedTicker);
+      }
+    }
+
+    //LAB_800caf38
+  }
+
+  @Method(0x800caf2cL)
+  private void bentLoadedTicker(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
+    state.setRenderer(this::bentRenderer);
+    state.setTicker(this::bentTicker);
+    this.bentTicker(state, this);
+  }
+
+  @Method(0x800cafb4L)
+  private void bentTicker(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
+    if((state.storage_44[7] & 0x211) == 0) {
+      applyModelRotationAndScale(this.model_148);
+
+      if((state.storage_44[7] & 0x80) == 0 || this.model_148.remainingFrames_9e != 0) {
+        //LAB_800cb004
+        animateModel(this.model_148);
+      }
+    }
+
+    //LAB_800cb00c
+  }
+
+  @Method(0x800cb024L)
+  private void bentRenderer(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
+    if((state.storage_44[7] & 0x211) == 0) {
+      renderBttlModel(this.model_148);
+    }
+
+    //LAB_800cb048
+  }
+
+  @Method(0x800cb058L)
+  public void bentDestructor(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
+    //LAB_800cb088
+    FUN_800ca194(this.combatant_144.assets_14[this.loadingAnimIndex_26e]);
+
+    allBentCount_800c66d0.decr();
+
+    //LAB_800cb0d4
+    for(int i = this.bentSlot_274; i < allBentCount_800c66d0.get(); i++) {
+      battleState_8006e398.allBents_e0c[i] = battleState_8006e398.allBents_e0c[i + 1];
+      battleState_8006e398.allBents_e0c[i].innerStruct_00.bentSlot_274 = i;
+    }
+
+    //LAB_800cb11c
+    if((state.storage_44[7] & 0x4) != 0) {
+      monsterCount_800c6768.decr();
+
+      //LAB_800cb168
+      for(int i = this.charSlot_276; i < monsterCount_800c6768.get(); i++) {
+        battleState_8006e398.monsterBents_e50[i] = battleState_8006e398.monsterBents_e50[i + 1];
+        battleState_8006e398.monsterBents_e50[i].innerStruct_00.charSlot_276 = i;
+      }
+    } else {
+      //LAB_800cb1b8
+      charCount_800c677c.decr();
+
+      //LAB_800cb1f4
+      for(int i = this.charSlot_276; i < charCount_800c677c.get(); i++) {
+        battleState_8006e398.charBents_e40[i] = battleState_8006e398.charBents_e40[i + 1];
+        battleState_8006e398.charBents_e40[i].innerStruct_00.charSlot_276 = i;
+      }
+    }
+
+    this.model_148.deleteModelParts();
+
+    //LAB_800cb23c
   }
 
   @Method(0x800f9e10L)

@@ -6,22 +6,44 @@ import legend.game.scripting.ScriptState;
 import legend.game.types.Translucency;
 import org.joml.Vector2f;
 
-import java.util.Arrays;
-
 import static legend.core.GameEngine.GPU;
 import static legend.game.combat.Bttl_800c.getRelativeOffset;
 import static legend.game.combat.Bttl_800c.rotateAndTranslateEffect;
+import static legend.game.combat.Bttl_800c.seed_800fa754;
 import static legend.game.combat.Bttl_800c.transformWorldspaceToScreenspace;
 
 public class AdditionSparksEffect08 implements Effect {
   /** ubyte */
-  public final int count_00;
-  public final AdditionSparksEffectInstance4c[] instances_04;
+  private final int count_00;
+  private final AdditionSparksEffectInstance4c[] instances_04;
 
-  public AdditionSparksEffect08(final int count) {
+  public AdditionSparksEffect08(final int count, final int distance, final int ticks, final int r, final int g, final int b) {
     this.count_00 = count;
     this.instances_04 = new AdditionSparksEffectInstance4c[count];
-    Arrays.setAll(this.instances_04, i -> new AdditionSparksEffectInstance4c());
+
+    final int step = distance / ticks;
+
+    //LAB_800d0ee0
+    for(int i = 0; i < count; i++) {
+      final AdditionSparksEffectInstance4c inst = new AdditionSparksEffectInstance4c();
+      this.instances_04[i] = inst;
+
+      inst.delay_04 = (byte)(seed_800fa754.nextInt(ticks + 1));
+      inst.ticksRemaining_05 = (byte)(seed_800fa754.nextInt(9) + 7);
+
+      inst.startPos_08.set(inst.delay_04 * step, 0, 0);
+      inst.endPos_18.set(0, 0, 0);
+      inst.speed_28.set(seed_800fa754.nextInt(201), seed_800fa754.nextInt(201) - 100, seed_800fa754.nextInt(201) - 100);
+      inst.acceleration_38.set(0.0f, 15.0f, 0.0f);
+
+      inst.r_40 = r << 8;
+      inst.g_42 = g << 8;
+      inst.b_44 = b << 8;
+
+      inst.stepR_46 = inst.r_40 / inst.ticksRemaining_05;
+      inst.stepG_48 = inst.g_42 / inst.ticksRemaining_05;
+      inst.stepB_4a = inst.b_44 / inst.ticksRemaining_05;
+    }
   }
 
   @Method(0x800d09c0L)
@@ -33,12 +55,10 @@ public class AdditionSparksEffect08 implements Effect {
 
   @Method(0x800d0a30L)
   public void renderAdditionSparks(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
-    final AdditionSparksEffect08 s6 = (AdditionSparksEffect08)data.effect_44;
-
     //LAB_800d0a7c
     float s7 = 0;
-    for(int i = 0; i < s6.count_00; i++) {
-      final AdditionSparksEffectInstance4c inst = s6.instances_04[i];
+    for(int i = 0; i < this.count_00; i++) {
+      final AdditionSparksEffectInstance4c inst = this.instances_04[i];
 
       if(inst.delay_04 != 0) {
         inst.delay_04--;

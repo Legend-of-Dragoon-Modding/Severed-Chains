@@ -16,17 +16,21 @@ import legend.game.combat.environment.BattleMenuIconMetrics08;
 import legend.game.combat.environment.BattleMenuTextMetrics08;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.battle.BattleDescriptionEvent;
 import legend.game.scripting.ScriptState;
 import legend.game.types.LodString;
 import legend.game.types.Translucency;
 
 import javax.annotation.Nullable;
 
+import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment_8002.intToStr;
+import static legend.game.Scus94491BpeSegment_8002.textWidth;
+import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -47,11 +51,9 @@ import static legend.game.combat.Bttl_800c.dragoonSpells_800c6960;
 import static legend.game.combat.Bttl_800c.spellAndItemMenu_800c6b60;
 import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
 import static legend.game.combat.Bttl_800c.targetBents_800c71f0;
-import static legend.game.combat.Bttl_800f.addFloatingNumber;
 import static legend.game.combat.Bttl_800f.buildBattleMenuBackground;
 import static legend.game.combat.Bttl_800f.buildBattleMenuElement;
 import static legend.game.combat.Bttl_800f.prepareItemList;
-import static legend.game.combat.Bttl_800f.renderText;
 import static legend.game.combat.Bttl_800f.setActiveCharacterSpell;
 
 public class BattleMenuStruct58 {
@@ -189,6 +191,12 @@ public class BattleMenuStruct58 {
   public int _800c697c;
   public int _800c697e;
   public int _800c6980;
+
+  private final BattleHud hud;
+
+  public BattleMenuStruct58(final BattleHud hud) {
+    this.hud = hud;
+  }
 
   private void initIconObjs() {
     if(this.actionDisabledObj == null) {
@@ -566,7 +574,7 @@ public class BattleMenuStruct58 {
           textType = 5;
           if((menu._02 & 0x2) != 0) {
             final BattleEntity27c bent = setActiveCharacterSpell(menu.itemOrSpellId_1c);
-            addFloatingNumber(0, 1, 0, bent.spell_94.mp_06, 280, 135, 0, 1);
+            this.hud.addFloatingNumber(0, 1, 0, bent.spell_94.mp_06, 280, 135, 0, 1);
 
             menu.transforms.transfer.set(236 - centreScreenX_1f8003dc, 130 - centreScreenY_1f8003de, 124.0f);
             RENDERER.queueOrthoOverlayModel(menu.unknownObj2, menu.transforms);
@@ -589,7 +597,7 @@ public class BattleMenuStruct58 {
         }
 
         this.battleUiItemDescription.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
-        renderText(textType, menu.itemOrSpellId_1c, 160, 163);
+        this.renderText(textType, menu.itemOrSpellId_1c, 160, 163);
       }
     }
 
@@ -1254,6 +1262,31 @@ public class BattleMenuStruct58 {
 
     //LAB_800f7a68
     return ret;
+  }
+
+  /**
+   * @param textType <ol start="0">
+   *                   <li>Player names</li>
+   *                   <li>Player names</li>
+   *                   <li>Combat item names</li>
+   *                   <li>Dragoon spells</li>
+   *                   <li>Item descriptions</li>
+   *                   <li>Spell descriptions</li>
+   *                 </ol>
+   */
+  @Method(0x800f8ac4L)
+  private void renderText(final int textType, final int textIndex, final int x, final int y) {
+    final LodString str;
+    if(textType == 4) {
+      str = new LodString(itemStats_8004f2ac[textIndex].combatDescription);
+    } else if(textType == 5) {
+      str = new LodString(spellStats_800fa0b8[textIndex].combatDescription);
+    } else {
+      throw new IllegalArgumentException("Only supports textType 4/5");
+    }
+
+    final BattleDescriptionEvent event = EVENTS.postEvent(new BattleDescriptionEvent(textType, textIndex, str));
+    Scus94491BpeSegment_8002.renderText(event.string, x - textWidth(event.string) / 2, y - 6, TextColour.WHITE, 0);
   }
 
   @Method(0x800f8b74L)

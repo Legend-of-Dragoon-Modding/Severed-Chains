@@ -9,9 +9,19 @@ import legend.game.types.Translucency;
 import org.joml.Vector3f;
 
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.combat.Bttl_800c.battleHudBorderMetrics_800c6f4c;
 
 public class UiBox {
+  private static final BattleHudBorderMetrics14[] battleHudBorderMetrics_800c6f4c = {
+    new BattleHudBorderMetrics14(0, 1, 200, 48, 0, 4, 48, 8),
+    new BattleHudBorderMetrics14(0, 2, 0, 128, 4, 0, 8, 15),
+    new BattleHudBorderMetrics14(1, 3, 8, 128, 4, 1, 8, 15),
+    new BattleHudBorderMetrics14(2, 3, 200, 88, 0, 4, 48, 8),
+    new BattleHudBorderMetrics14(0, 0, 192, 48, 4, 4, 8, 8),
+    new BattleHudBorderMetrics14(1, 1, 248, 48, 4, 4, 8, 8),
+    new BattleHudBorderMetrics14(2, 2, 192, 88, 4, 4, 8, 8),
+    new BattleHudBorderMetrics14(3, 3, 248, 88, 4, 4, 8, 8),
+  };
+
   private final Obj hudBackgroundObj;
   private final Obj hudBackgroundButDarkerObj;
   private final Obj[] hudBackgroundBorders = new Obj[8];

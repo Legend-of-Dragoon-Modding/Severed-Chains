@@ -22,12 +22,12 @@ import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.types.CombatantStruct1a8;
+import legend.game.combat.ui.BattleHud;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptState;
 
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.combat.Bttl_800c.currentEnemyNames_800c69d0;
-import static legend.game.combat.Bttl_800c.playerNames_800fb378;
 
 public class CombatDebuggerController {
   @FXML
@@ -200,7 +200,7 @@ public class CombatDebuggerController {
       return currentEnemyNames_800c69d0[bent.charSlot_276].get();
     }
 
-    return bent.charId_272 == 8 ? "Who?" : playerNames_800fb378[bent.charId_272].get();
+    return bent.charId_272 == 8 ? "Who?" : BattleHud.playerNames_800fb378[bent.charId_272].get();
   }
 
   public void openScriptDebugger(final ActionEvent event) throws Exception {

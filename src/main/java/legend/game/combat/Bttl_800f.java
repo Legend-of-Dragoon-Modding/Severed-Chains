@@ -6,7 +6,6 @@ import legend.core.gpu.GpuCommandLine;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
-import legend.game.Scus94491BpeSegment_8002;
 import legend.game.characters.Element;
 import legend.game.characters.TurnBasedPercentileBuff;
 import legend.game.characters.VitalsStat;
@@ -18,19 +17,12 @@ import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.environment.BattleMenuBackgroundUvMetrics04;
 import legend.game.combat.types.AttackType;
 import legend.game.combat.types.MonsterStats1c;
-import legend.game.combat.ui.BattleDisplayStats144;
-import legend.game.combat.ui.BattleDisplayStatsDigit10;
-import legend.game.combat.ui.BattleHudCharacterDisplay3c;
 import legend.game.combat.ui.BattleMenuStruct58;
 import legend.game.combat.ui.CombatItem02;
-import legend.game.combat.ui.FloatingNumberC4;
-import legend.game.combat.ui.FloatingNumberDigit20;
 import legend.game.combat.ui.SpellAndItemMenuA4;
 import legend.game.combat.ui.UiBox;
 import legend.game.inventory.Item;
-import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.modding.events.battle.BattleDescriptionEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
 import legend.game.modding.events.battle.SpellStatsEvent;
 import legend.game.scripting.FlowControl;
@@ -44,33 +36,24 @@ import legend.game.types.Translucency;
 import legend.lodmod.LodMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joml.Vector2f;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.REGISTRIES;
-import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
-import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_8002.giveEquipment;
 import static legend.game.Scus94491BpeSegment_8002.giveItem;
 import static legend.game.Scus94491BpeSegment_8002.takeItemId;
-import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
-import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-import static legend.game.Scus94491BpeSegment_800b.characterStatsLoaded_800be5d0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.spGained_800bc950;
-import static legend.game.combat.Bttl_800c.activePartyBattleHudCharacterDisplays_800c6c40;
 import static legend.game.combat.Bttl_800c.aliveBentCount_800c669c;
 import static legend.game.combat.Bttl_800c.aliveMonsterCount_800c6758;
 import static legend.game.combat.Bttl_800c.battleMenu_800c6c34;
@@ -78,14 +61,8 @@ import static legend.game.combat.Bttl_800c.battleUiElementClutVramXy_800c7114;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c.combatItems_800c6988;
 import static legend.game.combat.Bttl_800c.currentEnemyNames_800c69d0;
-import static legend.game.combat.Bttl_800c.digitOffsetX_800c7014;
-import static legend.game.combat.Bttl_800c.digitOffsetY_800c7014;
-import static legend.game.combat.Bttl_800c.displayStats_800c6c2c;
 import static legend.game.combat.Bttl_800c.dragoonSpaceElement_800c6b64;
-import static legend.game.combat.Bttl_800c.floatingNumbers_800c6b5c;
-import static legend.game.combat.Bttl_800c.floatingTextType1DigitUs_800c7028;
-import static legend.game.combat.Bttl_800c.floatingTextType1Digits;
-import static legend.game.combat.Bttl_800c.floatingTextType3DigitUs_800c70e0;
+import static legend.game.combat.Bttl_800c.hud;
 import static legend.game.combat.Bttl_800c.melbuMonsterNameIndices_800c6e90;
 import static legend.game.combat.Bttl_800c.melbuMonsterNames_800c6ba8;
 import static legend.game.combat.Bttl_800c.melbuStageToMonsterNameIndices_800c6f30;
@@ -96,8 +73,6 @@ import static legend.game.combat.Bttl_800c.spellAndItemMenu_800c6b60;
 import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
 import static legend.game.combat.Bttl_800c.targetAllItemIds_800c7124;
 import static legend.game.combat.Bttl_800c.textboxColours_800c6fec;
-import static legend.game.combat.Bttl_800e.initializeBattleHudCharacterDisplay;
-import static legend.game.combat.Bttl_800e.perspectiveTransformXyz;
 import static legend.game.combat.Monsters.monsterNames_80112068;
 import static legend.game.combat.Monsters.monsterStats_8010ba98;
 
@@ -105,145 +80,6 @@ public final class Bttl_800f {
   private Bttl_800f() { }
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Bttl_800f.class);
-
-  public static void deleteFloatingTextDigits() {
-    for(int i = 0; i < floatingTextType1Digits.length; i++) {
-      if(floatingTextType1Digits[i] != null) {
-        floatingTextType1Digits[i].delete();
-        floatingTextType1Digits[i] = null;
-      }
-    }
-
-    for(int i = 0; i < 10; i++) {
-      if(type1FloatingDigits[i] != null) {
-        type1FloatingDigits[i].delete();
-        type1FloatingDigits[i] = null;
-      }
-
-      if(type3FloatingDigits[i] != null) {
-        type3FloatingDigits[i].delete();
-        type3FloatingDigits[i] = null;
-      }
-
-      if(miss != null) {
-        miss.delete();
-        miss = null;
-      }
-    }
-  }
-
-  /**
-   * @param numberIndex which UI element it is, controls positioning
-   */
-  @Method(0x800f1550L)
-  public static void renderNumber(final int charSlot, final int numberIndex, int value, final int colour) {
-    if(floatingTextType1Digits[0] == null) {
-      for(int i = 0; i < 10; i++) {
-        floatingTextType1Digits[i] = buildUiTextureElement(
-          "Floating text type 1 digit " + i,
-          floatingTextType1DigitUs_800c7028[i], 32,
-          8, 8,
-          0x80
-        );
-      }
-    }
-
-    final int digitCount = MathHelper.digitCount(value);
-
-    //LAB_800f16e4
-    final BattleDisplayStats144 displayStats = displayStats_800c6c2c[charSlot];
-
-    final int[] digits = new int[digitCount];
-
-    for(int i = 0; i < displayStats.digits_04[numberIndex].length; i++) {
-      displayStats.digits_04[numberIndex][i].digitValue_00 = -1;
-    }
-
-    //LAB_800f171c
-    Arrays.fill(digits, -1);
-
-    int divisor = 1;
-
-    //LAB_800f1768
-    for(int i = 0; i < digitCount - 1; i++) {
-      divisor *= 10;
-    }
-
-    //LAB_800f1780
-    //LAB_800f17b0
-    for(int i = 0; i < digitCount; i++) {
-      digits[i] = value / divisor;
-      value %= divisor;
-      divisor /= 10;
-    }
-
-    //LAB_800f1800
-    //LAB_800f1828
-    final int rightAlignOffset = 4 - digitCount;
-
-    //LAB_800f1848
-    //LAB_800f184c
-    //LAB_800f18cc
-    for(int i = 0; i < digitCount; i++) {
-      final BattleDisplayStatsDigit10 digit = displayStats.digits_04[numberIndex][i];
-
-      if(numberIndex == 1 || numberIndex == 3 || numberIndex == 4) {
-        //LAB_800f18f0
-        digit.x_02 = digitOffsetX_800c7014[numberIndex] + i * 5;
-      } else {
-        digit.x_02 = digitOffsetX_800c7014[numberIndex] + (i + rightAlignOffset) * 5;
-      }
-
-      //LAB_800f1920
-      digit.y_04 = digitOffsetY_800c7014[numberIndex];
-
-      if(colour == 1) {
-        digit.colour.set(1.0f, 1.0f, 1.0f);
-      } else if(colour == 2) {
-        digit.colour.set(248 / 240.0f, 224 / 240.0f, 72 / 240.0f);
-      } else if(colour == 3) {
-        digit.colour.set(224 / 240.0f, 72 / 240.0f, 0.0f);
-      }
-
-      //LAB_800f1998
-      //LAB_800f199c
-      digit.digitValue_00 = digits[i];
-    }
-
-    //LAB_800f19e0
-  }
-
-  @Method(0x800f1a00L)
-  public static void FUN_800f1a00(final long a0) {
-    if(a0 != 1) {
-      //LAB_800f1a10
-      //LAB_800f1a28
-      for(int i = 0; i < 3; i++) {
-        final BattleHudCharacterDisplay3c v1 = activePartyBattleHudCharacterDisplays_800c6c40.get(i);
-
-        if(v1.charIndex_00.get() != -1) {
-          v1._14.get(2).set(0);
-          v1.flags_06.and(0xffff_fffe).and(0xffff_fffd);
-        }
-
-        //LAB_800f1a4c
-      }
-
-      return;
-    }
-
-    //LAB_800f1a64
-    //LAB_800f1a70
-    for(int i = 0; i < 3; i++) {
-      final BattleHudCharacterDisplay3c v1 = activePartyBattleHudCharacterDisplays_800c6c40.get(i);
-      if(v1.charIndex_00.get() != -1) {
-        v1._14.get(2).set(0);
-        v1.flags_06.or(0x3);
-      }
-
-      //LAB_800f1a90
-    }
-  }
 
   @Method(0x800f1aa8L)
   public static boolean checkHit(final int attackerIndex, final int defenderIndex, final AttackType attackType) {
@@ -509,405 +345,6 @@ public final class Bttl_800f {
     return FlowControl.CONTINUE;
   }
 
-  private static final Obj[] type1FloatingDigits = new Obj[10];
-  private static final Obj[] type3FloatingDigits = new Obj[10];
-  private static Obj miss;
-
-  @Method(0x800f3354L)
-  public static void addFloatingNumber(final int numIndex, final int onHitTextType, final int onHitClutCol, final int number, final float x, final float y, int ticks, int colour) {
-    if(miss == null) {
-      for(int i = 0; i < 10; i++) {
-        final QuadBuilder builder1 = new QuadBuilder("Type 1 Floating Digit " + i)
-          .uv(floatingTextType1DigitUs_800c7028[i], 32)
-          .size(8.0f, 8.0f);
-        setGpuPacketClutAndTpageAndQueue(builder1, 0x80, null);
-        type1FloatingDigits[i] = builder1.build();
-
-        final QuadBuilder builder3 = new QuadBuilder("Type 3 Floating Digit " + i)
-          .uv(floatingTextType3DigitUs_800c70e0[i], 40)
-          .size(8.0f, 16.0f);
-        setGpuPacketClutAndTpageAndQueue(builder3, 0x80, null);
-        type3FloatingDigits[i] = builder3.build();
-      }
-
-      final QuadBuilder builderMiss = new QuadBuilder("Miss Floating Digit")
-        .uv(72, 128)
-        .size(36.0f, 16.0f);
-      setGpuPacketClutAndTpageAndQueue(builderMiss, 0x80, null);
-      miss = builderMiss.build();
-    }
-
-    final FloatingNumberC4 num = floatingNumbers_800c6b5c[numIndex];
-    final int[] damageDigits = new int[num.digits_24.length];
-
-    final int floatingTextType;  // 0=floating numbers, 1=MP cost, 2=miss
-    final int clutCol; //TODO: confirm this, it may not be this exactly
-    if(number != -1) {
-      floatingTextType = onHitTextType;
-      clutCol = onHitClutCol;
-    } else {
-      floatingTextType = 2;
-      clutCol = 2;
-      colour = 14;
-    }
-
-    switch(colour) {
-      case 0 -> num.colour.set(1.0333333f, 0.6666667f, 0.0f); // Orange
-      case 1 -> num.colour.set(1.0f, 1.0f, 1.0f); // Whiter
-      case 2, 6 -> num.colour.set(1.0f, 1.0f, 1.0f); // White
-      case 3, 7 -> num.colour.set(0.4f, 0.93333334f, 1.0333333f); // Cyan
-      case 4, 8 -> num.colour.set(1.0333333f, 0.93333334f, 0.3f); // Yellow
-      case 5, 9, 14 -> num.colour.set(0.93333334f, 0.3f, 0.0f); // Red
-      case 10, 12 -> num.colour.set(0.56666666f, 0.53333336f, 1.0333333f); // Violet
-      case 11, 13 -> num.colour.set(0.3f, 1.0333333f, 0.3f); // Green
-    }
-
-    //LAB_800f34d4
-    num.flags_02 = 0;
-    num.bentIndex_04 = -1;
-    num.translucent_08 = false;
-    num.shade_0c = 0x80;
-    num._18 = -1;
-    num.ticksRemaining_14 = -1;
-
-    //LAB_800f3528
-    for(int i = 0; i < num.digits_24.length; i++) {
-      num.digits_24[i].flags_00 = 0;
-      num.digits_24[i]._04 = 0;
-      num.digits_24[i]._08 = 0;
-      num.digits_24[i].digit_0c = -1;
-    }
-
-    num.state_00 = 1;
-
-    if(ticks == 0) {
-      num.flags_02 |= 0x1;
-    }
-
-    //LAB_800f3588
-    num.flags_02 |= 0x8000;
-    num._10 = clutCol;
-
-    if(clutCol == 2 && ticks == 0) {
-      ticks = 60 / vsyncMode_8007a3b8 * 2;
-    }
-
-    //LAB_800f35dc
-    //LAB_800f35e4
-    //LAB_800f3608
-    int damage = MathHelper.clamp(number, 0, 999999999);
-
-    //LAB_800f3614
-    num.x_1c = x;
-    num.y_20 = y;
-
-    //LAB_800f3654
-    for(int i = 0; i < num.digits_24.length; i++) {
-      num.digits_24[i].digit_0c = -1;
-      damageDigits[i] = -1;
-    }
-
-    //LAB_800f36a0
-    //Sets what places to render
-    int currDigitPlace = (int)Math.pow(10, num.digits_24.length - 1);
-    for(int i = 0; i < num.digits_24.length; i++) {
-      damageDigits[i] = damage / currDigitPlace;
-      damage %= currDigitPlace;
-      currDigitPlace /= 10;
-    }
-
-    //LAB_800f36dc
-    //LAB_800f36ec
-    int digitIdx;
-    for(digitIdx = 0; digitIdx < num.digits_24.length - 1; digitIdx++) {
-      if(damageDigits[digitIdx] != 0) {
-        break;
-      }
-    }
-
-    //LAB_800f370c
-    //LAB_800f3710
-    int displayPosX;
-    if(floatingTextType == 1) {
-      //LAB_800f3738
-      displayPosX = -(num.digits_24.length - digitIdx) * 5 / 2;
-    } else if(floatingTextType == 2) {
-      //LAB_800f3758
-      displayPosX = -18;
-    } else {
-      //LAB_800f372c
-      displayPosX = -(num.digits_24.length - digitIdx) * 4;
-    }
-
-    //LAB_800f375c
-    //LAB_800f37ac
-    int digitStructIdx;
-    for(digitStructIdx = 0; digitStructIdx < num.digits_24.length && digitIdx < num.digits_24.length; digitStructIdx++) {
-      final FloatingNumberDigit20 digit = num.digits_24[digitStructIdx];
-      digit.flags_00 = 0x8000;
-      digit.x_0e = displayPosX;
-      digit.y_10 = 0;
-
-      if(clutCol == 2) {
-        digit.flags_00 = 0;
-        digit._04 = digitStructIdx;
-        digit._08 = 0;
-      }
-
-      //LAB_800f37d8
-      if(floatingTextType == 1) {
-        //LAB_800f382c
-        digit.obj = type1FloatingDigits[damageDigits[digitIdx]];
-        displayPosX += 5;
-      } else if(floatingTextType == 2) {
-        //LAB_800f386c
-        digit.obj = miss;
-        displayPosX += 36;
-      } else {
-        //LAB_800f37f4
-        digit.obj = type3FloatingDigits[damageDigits[digitIdx]];
-        displayPosX += 8;
-      }
-
-      //LAB_800f3898
-      digit.digit_0c = damageDigits[digitIdx];
-
-      digitIdx++;
-    }
-
-    //LAB_800f38e8
-    num.ticksRemaining_14 = digitStructIdx + 12;
-    num._18 = ticks + 4; //TODO: ID duration meaning
-  }
-
-  @Method(0x800f3940L)
-  public static void tickFloatingNumbers() {
-    //LAB_800f3978
-    for(final FloatingNumberC4 num : floatingNumbers_800c6b5c) {
-      if((num.flags_02 & 0x8000) != 0) {
-        if(num.state_00 != 0) {
-          if(num.bentIndex_04 != -1) {
-            final ScriptState<?> state = scriptStatePtrArr_800bc1c0[num.bentIndex_04];
-            final BattleEntity27c bent = (BattleEntity27c)state.innerStruct_00;
-
-            final float x;
-            final float y;
-            final float z;
-            if(bent instanceof final MonsterBattleEntity monster) {
-              x = -monster.targetArrowPos_78.x * 100.0f;
-              y = -monster.targetArrowPos_78.y * 100.0f;
-              z = -monster.targetArrowPos_78.z * 100.0f;
-            } else {
-              //LAB_800f3a3c
-              x = 0;
-              y = -640;
-              z = 0;
-            }
-
-            //LAB_800f3a44
-            final Vector2f screenCoords = perspectiveTransformXyz(bent.model_148, x, y, z);
-            num.x_1c = clampX(screenCoords.x + centreScreenX_1f8003dc);
-            num.y_20 = clampY(screenCoords.y + centreScreenY_1f8003de);
-          }
-
-          //LAB_800f3ac8
-          if(num.state_00 == 1) {
-            //LAB_800f3b24
-            if(num._10 == 0x2) {
-              num.state_00 = 2;
-            } else {
-              //LAB_800f3b44
-              num.state_00 = 98;
-            }
-          } else if(num.state_00 == 2) {
-            //LAB_800f3b50
-            for(int n = 0; n < num.digits_24.length; n++) {
-              final FloatingNumberDigit20 digit = num.digits_24[n];
-
-              if(digit.digit_0c == -1) {
-                break;
-              }
-
-              if((digit.flags_00 & 0x1) != 0) {
-                if((digit.flags_00 & 0x2) != 0) {
-                  if(digit._08 < 5) {
-                    digit.y_10 += digit._08;
-                    digit._08++;
-                  }
-                } else {
-                  //LAB_800f3bb0
-                  digit.flags_00 |= 0x8002;
-                  digit._04 = digit.y_10;
-                  digit._08 = -4;
-                }
-              } else {
-                //LAB_800f3bc8
-                if(digit._08 == digit._04) {
-                  digit.flags_00 |= 0x1;
-                }
-
-                //LAB_800f3be0
-                digit._08++;
-              }
-            }
-
-            //LAB_800f3c00
-            num.ticksRemaining_14--;
-            if(num.ticksRemaining_14 <= 0) {
-              num.state_00 = 98;
-              num.ticksRemaining_14 = num._18;
-            }
-          } else if(num.state_00 == 97) {
-            //LAB_800f3c34
-            if(num.ticksRemaining_14 <= 0) {
-              num.state_00 = 100;
-            } else {
-              //LAB_800f3c50
-              num.ticksRemaining_14--;
-              num.shade_0c = (num.shade_0c - (num._18 & 0xff)) & 0xff;
-            }
-          } else if(num.state_00 == 100) {
-            //LAB_800f3d38
-            num.state_00 = 0;
-            num.flags_02 = 0;
-            num.bentIndex_04 = -1;
-            num.translucent_08 = false;
-            num.shade_0c = 0x80;
-            num.ticksRemaining_14 = -1;
-            num._18 = -1;
-
-            //LAB_800f3d60
-            for(int n = 0; n < num.digits_24.length; n++) {
-              final FloatingNumberDigit20 digit = num.digits_24[n];
-              digit.flags_00 = 0;
-              digit._04 = 0;
-              digit._08 = 0;
-              digit.digit_0c = -1;
-            }
-            //LAB_800f3b04
-          } else if(num.state_00 < 99) {
-            //LAB_800f3c88
-            if((num.flags_02 & 0x1) != 0) {
-              num.state_00 = 99;
-            } else {
-              //LAB_800f3ca4
-              num.ticksRemaining_14--;
-
-              if(num.ticksRemaining_14 <= 0) {
-                if(num._10 > 0 && num._10 < 3) {
-                  num.state_00 = 97;
-                  num.translucent_08 = true;
-                  num.shade_0c = 0x60;
-
-                  final int ticksRemaining = 60 / vsyncMode_8007a3b8 / 2;
-                  num.ticksRemaining_14 = ticksRemaining;
-                  num._18 = 96 / ticksRemaining;
-                } else {
-                  //LAB_800f3d24
-                  //LAB_800f3d2c
-                  num.state_00 = 100;
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
-  @Method(0x800f3dbcL)
-  public static void drawFloatingNumbers() {
-    //LAB_800f3e20
-    for(final FloatingNumberC4 num : floatingNumbers_800c6b5c) {
-      if((num.flags_02 & 0x8000) != 0) {
-        if(num.state_00 != 0) {
-          //LAB_800f3e80
-          for(int i = 0; i < num.digits_24.length; i++) {
-            final FloatingNumberDigit20 digit = num.digits_24[i];
-
-            if(digit.digit_0c == -1) {
-              break;
-            }
-
-            if((digit.flags_00 & 0x8000) != 0) {
-              //LAB_800f3ec0
-              num.transforms.transfer.set(digit.x_0e + num.x_1c, digit.y_10 + num.y_20, 28.0f);
-              RENDERER.queueOrthoOverlayModel(digit.obj, num.transforms)
-                .colour(num.colour);
-
-              if((num.state_00 & 97) == 0) {
-                //LAB_800f4118
-                break;
-              }
-
-              //LAB_800f4110
-            }
-          }
-        }
-      }
-      //LAB_800f4134
-    }
-  }
-
-  @Method(0x800f417cL)
-  public static void FUN_800f417c() {
-    //LAB_800f41ac
-    for(int i = 0; i < charCount_800c677c.get(); i++) {
-      final BattleHudCharacterDisplay3c s1 = activePartyBattleHudCharacterDisplays_800c6c40.get(i);
-
-      if(s1.charIndex_00.get() == -1 && characterStatsLoaded_800be5d0) {
-        initializeBattleHudCharacterDisplay(i);
-      }
-
-      //LAB_800f41dc
-    }
-
-    //LAB_800f41f4
-    //LAB_800f41f8
-    short x = 63;
-
-    //LAB_800f4220
-    for(int charSlot = 0; charSlot < 3; charSlot++) {
-      final BattleDisplayStats144 displayStats = displayStats_800c6c2c[charSlot];
-      final BattleHudCharacterDisplay3c v1 = activePartyBattleHudCharacterDisplays_800c6c40.get(charSlot);
-
-      if(v1.charIndex_00.get() != -1) {
-        v1.x_08.set(x);
-        displayStats.x_00 = x;
-      }
-
-      //LAB_800f4238
-      x += 94;
-    }
-  }
-
-  @Method(0x800f4268L)
-  public static void addFloatingNumberForBent(final int bentIndex, final int damage, final int s4) {
-    final ScriptState<?> state = scriptStatePtrArr_800bc1c0[bentIndex];
-    final BattleEntity27c bent = (BattleEntity27c)state.innerStruct_00;
-
-    final float x;
-    final float y;
-    final float z;
-    if(bent instanceof final MonsterBattleEntity monster) {
-      // ZYX is the correct order
-      x = -monster.targetArrowPos_78.z * 100.0f;
-      y = -monster.targetArrowPos_78.y * 100.0f;
-      z = -monster.targetArrowPos_78.x * 100.0f;
-    } else {
-      //LAB_800f4314
-      x = 0;
-      y = -640;
-      z = 0;
-    }
-
-    //LAB_800f4320
-    final Vector2f screenCoords = perspectiveTransformXyz(bent.model_148, x, y, z);
-
-    //LAB_800f4394
-    FUN_800f89f4(bentIndex, 0, 2, damage, clampX(screenCoords.x + centreScreenX_1f8003dc), clampY(screenCoords.y + centreScreenY_1f8003de), 60 / vsyncMode_8007a3b8 / 4, s4);
-  }
-
   @ScriptDescription("Gives SP to a battle entity")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "amount", description = "The amount of SP to add")
@@ -951,17 +388,13 @@ public final class Bttl_800f {
     }
 
     //LAB_800f456c
-    final BattleHudCharacterDisplay3c charDisplay = activePartyBattleHudCharacterDisplays_800c6c40.get(i);
-    charDisplay.unused_0c.set((short)0);
-    charDisplay.unused_0e.set((short)script.params_20[1].get());
-
     final PlayerBattleEntity player = (PlayerBattleEntity)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final VitalsStat sp = player.stats.getStat(CoreMod.SP_STAT.get());
 
     sp.setCurrent(sp.getCurrent() - script.params_20[2].get());
 
     if(sp.getCurrent() == 0) {
-      charDisplay.flags_06.and(0xfff3);
+      hud.clearFullSpFlags(i);
     }
 
     //LAB_800f45f8
@@ -1403,55 +836,6 @@ public final class Bttl_800f {
     defender.recalculateSpeedAndPerHitStats();
   }
 
-  @Method(0x800f89f4L)
-  public static boolean FUN_800f89f4(final int bentIndex, final int a1, final int a2, final int rawDamage, final float x, final float y, final int a6, final int a7) {
-    //LAB_800f8a30
-    for(int i = 0; i < floatingNumbers_800c6b5c.length; i++) {
-      final FloatingNumberC4 num = floatingNumbers_800c6b5c[i];
-
-      if(num.state_00 == 0) {
-        addFloatingNumber(i, a1, a2, rawDamage, x, y, a6, a7);
-        num.bentIndex_04 = bentIndex;
-        return true;
-      }
-
-      //LAB_800f8a74
-    }
-
-    //LAB_800f8a84
-    return false;
-  }
-
-  @Method(0x800f8aa4L)
-  public static void renderDamage(final int bentIndex, final int damage) {
-    addFloatingNumberForBent(bentIndex, damage, 8);
-  }
-
-  /**
-   * @param textType <ol start="0">
-   *                   <li>Player names</li>
-   *                   <li>Player names</li>
-   *                   <li>Combat item names</li>
-   *                   <li>Dragoon spells</li>
-   *                   <li>Item descriptions</li>
-   *                   <li>Spell descriptions</li>
-   *                 </ol>
-   */
-  @Method(0x800f8ac4L)
-  public static void renderText(final int textType, final int textIndex, final int x, final int y) {
-    final LodString str;
-    if(textType == 4) {
-      str = new LodString(itemStats_8004f2ac[textIndex].combatDescription);
-    } else if(textType == 5) {
-      str = new LodString(spellStats_800fa0b8[textIndex].combatDescription);
-    } else {
-      throw new IllegalArgumentException("Only supports textType 4/5");
-    }
-
-    final BattleDescriptionEvent event = EVENTS.postEvent(new BattleDescriptionEvent(textType, textIndex, str));
-    Scus94491BpeSegment_8002.renderText(event.string, x - textWidth(event.string) / 2, y - 6, TextColour.WHITE, 0);
-  }
-
   @Method(0x800f8cd8L)
   public static Obj buildBattleMenuElement(final String name, final int x, final int y, final int u, final int v, final int w, final int h, final int clut, @Nullable final Translucency transMode) {
     final QuadBuilder builder = new QuadBuilder(name)
@@ -1649,19 +1033,7 @@ public final class Bttl_800f {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y coordinate")
   @Method(0x800f9730L)
   public static FlowControl scriptAddFloatingNumber(final RunningScript<?> script) {
-    //LAB_800f9758
-    for(int i = 0; i < floatingNumbers_800c6b5c.length; i++) {
-      final FloatingNumberC4 num = floatingNumbers_800c6b5c[i];
-
-      if(num.state_00 == 0) {
-        addFloatingNumber(i, 0, 0, script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), 60 / vsyncMode_8007a3b8 * 5, 0);
-        break;
-      }
-
-      //LAB_800f97b8
-    }
-
-    //LAB_800f97c8
+    hud.addFloatingNumber(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
     return FlowControl.CONTINUE;
   }
 
@@ -1681,7 +1053,7 @@ public final class Bttl_800f {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "colourIndex", description = "Which colour to use (indices are unknown)")
   @Method(0x800f984cL)
   public static FlowControl scriptRenderRecover(final RunningScript<?> script) {
-    addFloatingNumberForBent(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
+    hud.addFloatingNumberForBent(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
     return FlowControl.CONTINUE;
   }
 
@@ -1807,18 +1179,8 @@ public final class Bttl_800f {
   @Method(0x800f9b2cL)
   public static FlowControl scriptIsFloatingNumberOnScreen(final RunningScript<?> script) {
     //LAB_800f9b3c
-    int found = 0;
-    for(final FloatingNumberC4 num : floatingNumbers_800c6b5c) {
-      if(num.state_00 != 0) {
-        found = 1;
-        break;
-      }
-
-      //LAB_800f9b58
-    }
-
     //LAB_800f9b64
-    script.params_20[0].set(found);
+    script.params_20[0].set(hud.isFloatingNumberOnScreen() ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 

@@ -7,10 +7,6 @@ import java.util.Arrays;
 public class WeaponTrailEffectSegment2c {
   public final int index;
 
-  /** ubytes */
-  public int unused_00;
-  public int unused_01;
-  public int unused_02;
   public boolean _03;
   public final Vector3f[] endpointCoords_04 = new Vector3f[2];
   public WeaponTrailEffectSegment2c previousSegmentRef_24;

@@ -24,12 +24,9 @@ import static legend.game.combat.Bttl_800c.battleMenu_800c6c34;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c.combatItems_800c6988;
 import static legend.game.combat.Bttl_800c.dragoonSpells_800c6960;
-import static legend.game.combat.Bttl_800c.floatingNumbers_800c6b5c;
 import static legend.game.combat.Bttl_800c.itemTargetAll_800c69c8;
 import static legend.game.combat.Bttl_800c.itemTargetType_800c6b68;
-import static legend.game.combat.Bttl_800c.repeatItemIds_800c6e34;
 import static legend.game.combat.Bttl_800c.usedRepeatItems_800c6c3c;
-import static legend.game.combat.Bttl_800f.addFloatingNumber;
 import static legend.game.combat.Bttl_800f.buildBattleMenuBackground;
 import static legend.game.combat.Bttl_800f.buildBattleMenuElement;
 import static legend.game.combat.Bttl_800f.prepareItemList;
@@ -37,6 +34,8 @@ import static legend.game.combat.Bttl_800f.setActiveCharacterSpell;
 import static legend.game.combat.Bttl_800f.setTempItemMagicStats;
 
 public class SpellAndItemMenuA4 {
+  private static final int[] repeatItemIds_800c6e34 = {224, 227, 228, 230, 232, 235, 236, 237, 238};
+
   private static final BattleMenuBackgroundUvMetrics04 battleItemMenuScrollArrowUvMetrics_800c7190 = new BattleMenuBackgroundUvMetrics04(224, 8, 16, 8);
 
   public short menuState_00;
@@ -95,6 +94,12 @@ public class SpellAndItemMenuA4 {
   public Obj unknownObj2;
   public Obj upArrow;
   public Obj downArrow;
+
+  private final BattleHud hud;
+
+  public SpellAndItemMenuA4(final BattleHud hud) {
+    this.hud = hud;
+  }
 
   public void init() {
     if(this.unknownObj1[0] == null) {
@@ -445,9 +450,7 @@ public class SpellAndItemMenuA4 {
             }
 
             //LAB_800f517c
-            final FloatingNumberC4 num = floatingNumbers_800c6b5c[0];
-            num.state_00 = 0;
-            num.flags_02 = 0;
+            this.hud.clearFloatingNumber(0);
           }
 
           //LAB_800f5190
@@ -618,7 +621,7 @@ public class SpellAndItemMenuA4 {
         //LAB_800f5588
         if(this.menuType_0a != 0) {
           this.itemOrSpellId_1c = (short)this.getItemOrSpellId();
-          addFloatingNumber(0, 1, 0, setActiveCharacterSpell(this.itemOrSpellId_1c).spell_94.mp_06, 280, 135, 0, 1);
+          this.hud.addFloatingNumber(0, 1, 0, setActiveCharacterSpell(this.itemOrSpellId_1c).spell_94.mp_06, 280, 135, 0, 1);
         }
       }
 
@@ -630,9 +633,7 @@ public class SpellAndItemMenuA4 {
         this._12 = 0;
         this._10 = 0;
         this._02 &= 0xfffc;
-        final FloatingNumberC4 num = floatingNumbers_800c6b5c[0];
-        num.state_00 = 0;
-        num.flags_02 = 0;
+        this.hud.clearFloatingNumber(0);
       }
 
       case 9 -> {

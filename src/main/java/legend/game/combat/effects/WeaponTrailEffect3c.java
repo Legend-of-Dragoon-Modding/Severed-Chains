@@ -4,7 +4,8 @@ import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.MV;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.memory.Method;
-import legend.core.memory.types.IntRef;
+import legend.game.combat.bent.BattleEntity27c;
+import legend.game.combat.types.BattleObject;
 import legend.game.scripting.ScriptState;
 import legend.game.types.Model124;
 import legend.game.types.Translucency;
@@ -20,31 +21,32 @@ import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.combat.Bttl_800c.transformWorldspaceToScreenspace;
 
 public class WeaponTrailEffect3c implements Effect {
-  public int currentSegmentIndex_00;
-  public int parentIndex_04;
-  public int dobjIndex_08;
-  public int largestVertexIndex_0a;
-  public int smallestVertexIndex_0c;
-  /**
-   * ubyte
-   */
-  public int segmentCount_0e;
+  private int currentSegmentIndex_00 = -1;
+  private final int dobjIndex_08;
+  /** ubyte */
+  private int segmentCount_0e = 20;
   public final Vector3f largestVertex_10 = new Vector3f();
   public final Vector3f smallestVertex_20 = new Vector3f();
-  public Model124 parentModel_30;
-  public WeaponTrailEffectSegment2c[] segments_34 = new WeaponTrailEffectSegment2c[65];
-  public WeaponTrailEffectSegment2c currentSegment_38;
+  private final Model124 parentModel_30;
+  private final WeaponTrailEffectSegment2c[] segments_34 = new WeaponTrailEffectSegment2c[65];
+  private WeaponTrailEffectSegment2c currentSegment_38;
 
-  public WeaponTrailEffect3c() {
+  public WeaponTrailEffect3c(final int dobjIndex, final BattleObject parent) {
     Arrays.setAll(this.segments_34, WeaponTrailEffectSegment2c::new);
+    this.dobjIndex_08 = dobjIndex;
+
+    if(BattleObject.EM__.equals(parent.magic_00)) {
+      this.parentModel_30 = ((ModelEffect13c)((EffectManagerData6c<?>)parent).effect_44).model_10;
+    } else {
+      //LAB_800ce7f8
+      this.parentModel_30 = ((BattleEntity27c)parent).model_148;
+    }
   }
 
   @Method(0x800cdcecL)
-  private void getVertexMinMaxByComponent(final Model124 model, final int dobjIndex, final Vector3f smallestVertRef, final Vector3f largestVertRef, final EffectManagerData6c<EffectManagerParams.WeaponTrailType> manager, final IntRef smallestIndexRef, final IntRef largestIndexRef) {
+  private void getVertexMinMaxByComponent(final Model124 model, final int dobjIndex, final Vector3f smallestVertRef, final Vector3f largestVertRef, final EffectManagerData6c<EffectManagerParams.WeaponTrailType> manager) {
     float largest = -Float.MAX_VALUE;
     float smallest = Float.MAX_VALUE;
-    int largestIndex = 0;
-    int smallestIndex = 0;
     final TmdObjTable1c tmd = model.modelParts_00[dobjIndex].tmd_08;
 
     //LAB_800cdd24
@@ -54,20 +56,14 @@ public class WeaponTrailEffect3c implements Effect {
 
       if(val >= largest) {
         largest = val;
-        largestIndex = i;
         largestVertRef.set(vert);
         //LAB_800cdd7c
       } else if(val <= smallest) {
         smallest = val;
-        smallestIndex = i;
         smallestVertRef.set(vert);
       }
       //LAB_800cddbc
     }
-
-    //LAB_800cddcc
-    largestIndexRef.set(largestIndex);
-    smallestIndexRef.set(smallestIndex);
   }
 
   @Method(0x800cdde4L)
@@ -186,11 +182,7 @@ public class WeaponTrailEffect3c implements Effect {
   public void tickWeaponTrailEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.WeaponTrailType>> state, final EffectManagerData6c<EffectManagerParams.WeaponTrailType> data) {
     this.currentSegmentIndex_00++;
     if(this.currentSegmentIndex_00 == 0) {
-      final IntRef smallestVertexIndex = new IntRef();
-      final IntRef largestVertexIndex = new IntRef();
-      this.getVertexMinMaxByComponent(this.parentModel_30, this.dobjIndex_08, this.smallestVertex_20, this.largestVertex_10, data, smallestVertexIndex, largestVertexIndex);
-      this.smallestVertexIndex_0c = smallestVertexIndex.get();
-      this.largestVertexIndex_0a = largestVertexIndex.get();
+      this.getVertexMinMaxByComponent(this.parentModel_30, this.dobjIndex_08, this.smallestVertex_20, this.largestVertex_10, data);
       return;
     }
 
@@ -202,9 +194,6 @@ public class WeaponTrailEffect3c implements Effect {
     }
 
     //LAB_800ce2e4
-    segment.unused_00 = 0x6c;
-    segment.unused_01 = 0x63;
-    segment.unused_02 = 0x73;
     segment._03 = true;
     segment.nextSegmentRef_28 = null;
     segment.previousSegmentRef_24 = this.currentSegment_38;
@@ -243,9 +232,6 @@ public class WeaponTrailEffect3c implements Effect {
             for(int j = 0; j < 2; j++) {
               final WeaponTrailEffectSegment2c v0 = this.FUN_800cde1c();
               sp0x50[j] = v0;
-              v0.unused_00 = 0x6c;
-              v0.unused_01 = 0x63;
-              v0.unused_02 = 0x73;
               v0._03 = true;
               v0.endpointCoords_04[0].set(previousSegment.endpointCoords_04[0]).sub(segment.endpointCoords_04[0]).div(3).add(segment.endpointCoords_04[0]);
               v0.endpointCoords_04[1].set(previousSegment.endpointCoords_04[1]).sub(segment.endpointCoords_04[1]).div(3).add(segment.endpointCoords_04[1]);

@@ -4,8 +4,8 @@ import org.joml.Vector3f;
 
 import java.util.Arrays;
 
-public class ProjectileHitEffect14Sub48 {
-  public boolean used_00;
+public class ProjectileHitEffectInstance48 {
+  public boolean used_00 = true;
 
   public final Vector3f[] _04 = new Vector3f[16];
   public final Vector3f[] _24 = new Vector3f[8];
@@ -23,7 +23,7 @@ public class ProjectileHitEffect14Sub48 {
   /** Number of frames to decrease the colour over */
   public int frames_44;
 
-  public ProjectileHitEffect14Sub48() {
+  public ProjectileHitEffectInstance48() {
     Arrays.setAll(this._04, i -> new Vector3f());
     Arrays.setAll(this._24, i -> new Vector3f());
   }

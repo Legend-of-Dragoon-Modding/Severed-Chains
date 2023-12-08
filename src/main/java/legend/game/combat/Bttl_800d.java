@@ -3,7 +3,6 @@ package legend.game.combat;
 import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.RenderEngine;
-import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.gte.Tmd;
@@ -22,18 +21,15 @@ import legend.game.combat.deff.LmbType0;
 import legend.game.combat.effects.AdditionCharEffectData0c;
 import legend.game.combat.effects.AdditionNameTextEffect1c;
 import legend.game.combat.effects.AdditionSparksEffect08;
-import legend.game.combat.effects.AdditionSparksEffectInstance4c;
 import legend.game.combat.effects.AdditionStarburstEffect10;
-import legend.game.combat.effects.AdditionStarburstEffectRay10;
 import legend.game.combat.effects.ButtonPressHudMetrics06;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerParams;
+import legend.game.combat.effects.GenericSpriteEffect24;
 import legend.game.combat.effects.GuardEffect06;
 import legend.game.combat.effects.ModelEffect13c;
 import legend.game.combat.effects.MonsterDeathEffect34;
-import legend.game.combat.effects.MonsterDeathEffectObjectDestructor30;
 import legend.game.combat.effects.ProjectileHitEffect14;
-import legend.game.combat.effects.ProjectileHitEffect14Sub48;
 import legend.game.combat.effects.RadialGradientEffect14;
 import legend.game.combat.effects.SpTextEffect40;
 import legend.game.combat.effects.SpriteMetrics08;
@@ -55,19 +51,15 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.joml.Math;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import java.util.Arrays;
 
-import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
-import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.renderButtonPressHudElement;
 import static legend.game.Scus94491BpeSegment.renderButtonPressHudTexturedRect;
-import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zMin;
@@ -86,11 +78,9 @@ import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.getScreenOffset;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
-import static legend.game.combat.Bttl_800c.FUN_800cfb14;
 import static legend.game.combat.Bttl_800c._800faa90;
 import static legend.game.combat.Bttl_800c._800faa92;
 import static legend.game.combat.Bttl_800c._800faa94;
@@ -100,10 +90,8 @@ import static legend.game.combat.Bttl_800c.asciiTable_800fa788;
 import static legend.game.combat.Bttl_800c.buttonPressHudMetrics_800faaa0;
 import static legend.game.combat.Bttl_800c.camera_800c67f0;
 import static legend.game.combat.Bttl_800c.charWidthAdjustTable_800fa7cc;
-import static legend.game.combat.Bttl_800c.radialGradientEffectRenderers_800fa758;
 import static legend.game.combat.Bttl_800c.screenOffsetX_800c67bc;
 import static legend.game.combat.Bttl_800c.screenOffsetY_800c67c0;
-import static legend.game.combat.Bttl_800c.seed_800fa754;
 import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
 import static legend.game.combat.Bttl_800e.allocateEffectManager;
 import static legend.game.combat.Bttl_800e.renderBttlShadow;
@@ -115,19 +103,6 @@ public final class Bttl_800d {
 
   private static final Logger LOGGER = LogManager.getFormatterLogger();
   private static final Marker CAMERA = MarkerManager.getMarker("CAMERA");
-
-  @Method(0x800d0094L)
-  public static void setModelObjectVisibility(final int scriptIndex, final int objIndex, final boolean clearBit) {
-    final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
-
-    //LAB_800d00d4
-    if(clearBit) {
-      bent.model_148.partInvisible_f4 &= ~(0x1L << objIndex);
-    } else {
-      //LAB_800d0104
-      bent.model_148.partInvisible_f4 |= 0x1L << objIndex;
-    }
-  }
 
   @ScriptDescription("Gets a battle object model's part count")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex", description = "The battle object index")
@@ -156,8 +131,11 @@ public final class Bttl_800d {
   @Method(0x800d0564L)
   public static FlowControl scriptAllocateProjectileHitEffect(final RunningScript<? extends BattleObject> script) {
     final int count = script.params_20[1].get();
+    final int r = script.params_20[2].get();
+    final int g = script.params_20[3].get();
+    final int b = script.params_20[4].get();
 
-    final ProjectileHitEffect14 effect = new ProjectileHitEffect14(count);
+    final ProjectileHitEffect14 effect = new ProjectileHitEffect14(count, r, g, b);
 
     final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager(
       "ProjectileHitEffect14",
@@ -167,36 +145,6 @@ public final class Bttl_800d {
       null,
       effect
     );
-
-    final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
-
-    //LAB_800d0634
-    for(int i = 0; i < count; i++) {
-      final ProjectileHitEffect14Sub48 struct = effect._08[i];
-
-      struct.used_00 = true;
-      struct.r_34 = script.params_20[2].get() << 8;
-      struct.g_36 = script.params_20[3].get() << 8;
-      struct.b_38 = script.params_20[4].get() << 8;
-
-      final short x = (short)(seed_800fa754.nextInt(301) + 200);
-      final short y = (short)(seed_800fa754.nextInt(401) - 300);
-      final short z = (short)(seed_800fa754.nextInt(601) - 300);
-      struct._24[0].set(x, y, z);
-      struct._24[1].set(x, y, z);
-
-      struct._04[0].x = 0.0f;
-      struct._04[0].y = seed_800fa754.nextInt(101) - 50;
-      struct._04[0].z = seed_800fa754.nextInt(101) - 50;
-      struct.frames_44 = seed_800fa754.nextInt(9) + 7;
-
-      struct._40 = 0;
-      struct._24[1].y += 25.0f;
-      struct._04[1].set(struct._04[0]).add(struct._24[0]);
-      struct.fadeR_3a = struct.r_34 / struct.frames_44;
-      struct.fadeG_3c = struct.g_36 / struct.frames_44;
-      struct.fadeB_3e = struct.b_38 / struct.frames_44;
-    }
 
     //LAB_800d0980
     script.params_20[0].set(state.index);
@@ -215,14 +163,18 @@ public final class Bttl_800d {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "r", description = "The red channel")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "g", description = "The green channel")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "b", description = "The blue channel")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p5", description = "Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p6", description = "Unknown, possibly ticks")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "distance")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
   @Method(0x800d0decL)
   public static FlowControl scriptAllocateAdditionSparksEffect(final RunningScript<? extends BattleObject> script) {
     final int count = script.params_20[1].get();
-    final int s4 = script.params_20[6].get();
+    final int r = script.params_20[2].get();
+    final int g = script.params_20[3].get();
+    final int b = script.params_20[4].get();
+    final int distance = script.params_20[5].get();
+    final int ticks = script.params_20[6].get();
 
-    final AdditionSparksEffect08 effect = new AdditionSparksEffect08(count);
+    final AdditionSparksEffect08 effect = new AdditionSparksEffect08(count, distance, ticks, r, g, b);
 
     final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager(
       "AdditionSparksEffect08",
@@ -232,33 +184,6 @@ public final class Bttl_800d {
       null,
       effect
     );
-
-    final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
-
-    final int s1 = script.params_20[5].get() / s4;
-
-    //LAB_800d0ee0
-    for(int i = 0; i < count; i++) {
-      final AdditionSparksEffectInstance4c inst = effect.instances_04[i];
-
-      inst.ticksExisted_00 = 0;
-
-      inst.delay_04 = (byte)(seed_800fa754.nextInt(s4 + 1));
-      inst.ticksRemaining_05 = (byte)(seed_800fa754.nextInt(9) + 7);
-
-      inst.startPos_08.set(inst.delay_04 * s1, 0, 0);
-      inst.endPos_18.set(0, 0, 0);
-      inst.speed_28.set(seed_800fa754.nextInt(201), seed_800fa754.nextInt(201) - 100, seed_800fa754.nextInt(201) - 100);
-      inst.acceleration_38.set(0.0f, 15.0f, 0.0f);
-
-      inst.r_40 = script.params_20[2].get() << 8;
-      inst.g_42 = script.params_20[3].get() << 8;
-      inst.b_44 = script.params_20[4].get() << 8;
-
-      inst.stepR_46 = inst.r_40 / inst.ticksRemaining_05;
-      inst.stepG_48 = inst.g_42 / inst.ticksRemaining_05;
-      inst.stepB_4a = inst.b_44 / inst.ticksRemaining_05;
-    }
 
     //LAB_800d1154
     script.params_20[0].set(state.index);
@@ -272,9 +197,10 @@ public final class Bttl_800d {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "Controls how the effect behaves")
   @Method(0x800d19ecL)
   public static FlowControl scriptAllocateAdditionStarburstEffect(final RunningScript<? extends BattleObject> script) {
+    final int parentIndex = script.params_20[1].get();
     final int rayCount = script.params_20[2].get();
 
-    final AdditionStarburstEffect10 effect = new AdditionStarburstEffect10(rayCount);
+    final AdditionStarburstEffect10 effect = new AdditionStarburstEffect10(parentIndex, rayCount);
 
     final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager(
       "AdditionStarburstEffect10",
@@ -284,21 +210,6 @@ public final class Bttl_800d {
       null,
       effect
     );
-
-    effect.parentIndex_00 = script.params_20[1].get();
-    effect.unused_08 = 0;
-    final AdditionStarburstEffectRay10[] rayArray = effect.rayArray_0c;
-
-    //LAB_800d1ac4
-    for(int rayNum = 0; rayNum < rayCount; rayNum++) {
-      rayArray[rayNum].renderRay_00 = true;
-      rayArray[rayNum].angle_02 = seed_800fa754.nextFloat(MathHelper.TWO_PI);
-      rayArray[rayNum].unused_04 = 16;
-      rayArray[rayNum].endpointTranslationMagnitude_06 = (short)(seed_800fa754.nextInt(31));
-      rayArray[rayNum].endpointTranslationMagnitudeVelocity_08 = (short)(seed_800fa754.nextInt(21) + 10);
-      rayArray[rayNum].angleModifier_0a = MathHelper.psxDegToRad(seed_800fa754.nextInt(11) - 5);
-      rayArray[rayNum].unused_0c = 0;
-    }
 
     //LAB_800d1c7c
     script.params_20[0].set(state.index);
@@ -321,69 +232,6 @@ public final class Bttl_800d {
     return FlowControl.CONTINUE;
   }
 
-  /** Renders things like the two-tone disc at the start of Detonating Arrow */
-  @Method(0x800d1d3cL)
-  public static void renderDiscGradientEffect(final EffectManagerData6c<EffectManagerParams.RadialGradientType> manager, final int angle, final Vector2f[] vertices, final RadialGradientEffect14 effect, final Translucency translucency) {
-    if(manager.params_10.flags_00 >= 0) {
-      GPU.queueCommand((effect.z_04 + manager.params_10.z_22) / 4.0f, new GpuCommandPoly(3)
-        .translucent(translucency)
-        .rgb(0, manager.params_10.colour_1c)
-        .rgb(1, effect.r_0c, effect.g_0d, effect.b_0e)
-        .rgb(2, effect.r_0c, effect.g_0d, effect.b_0e)
-        .pos(0, vertices[0].x, vertices[0].y)
-        .pos(1, vertices[1].x, vertices[1].y)
-        .pos(2, vertices[2].x, vertices[2].y)
-      );
-    }
-
-    //LAB_800d1e70
-  }
-
-  @Method(0x800d1e80L)
-  public static void FUN_800d1e80(final EffectManagerData6c<EffectManagerParams.RadialGradientType> manager, final int angle, final Vector2f[] vertices, final RadialGradientEffect14 effect, final Translucency translucency) {
-    throw new RuntimeException("Not implemented");
-  }
-
-  /** Renders things like the ring effect when using a healing potion */
-  @Method(0x800d21b8L)
-  public static void renderRingGradientEffect(final EffectManagerData6c<EffectManagerParams.RadialGradientType> manager, final int angle, final Vector2f[] vertices, final RadialGradientEffect14 effect, final Translucency translucency) {
-    if(manager.params_10.flags_00 >= 0) {
-      //TODO why does rsin/rcos not have to be >> 12?
-      final Vector3f sp0x20 = new Vector3f(
-        rcos(angle) * (manager.params_10.scale_16.x / effect.scaleModifier_01 + (manager.params_10.size_28 >> 12)),
-        rsin(angle) * (manager.params_10.scale_16.y / effect.scaleModifier_01 + (manager.params_10.size_28 >> 12)),
-        manager.params_10.z_2c
-      );
-
-      final Vector2f screenVert0 = new Vector2f();
-      FUN_800cfb14(manager, sp0x20, screenVert0);
-
-      //TODO why does rsin/rcos not have to be >> 12?
-      final Vector3f sp0x30 = new Vector3f(
-        rcos(angle + effect.angleStep_08) * (manager.params_10.scale_16.x / effect.scaleModifier_01 + (manager.params_10.size_28 >> 12)),
-        rsin(angle + effect.angleStep_08) * (manager.params_10.scale_16.y / effect.scaleModifier_01 + (manager.params_10.size_28 >> 12)),
-        manager.params_10.z_2c
-      );
-
-      final Vector2f screenVert1 = new Vector2f();
-      FUN_800cfb14(manager, sp0x30, screenVert1);
-
-      GPU.queueCommand((effect.z_04 + manager.params_10.z_22) / 4.0f, new GpuCommandPoly(4)
-        .translucent(translucency)
-        .rgb(0, manager.params_10.colour_1c)
-        .rgb(1, manager.params_10.colour_1c)
-        .rgb(2, effect.r_0c, effect.g_0d, effect.b_0e)
-        .rgb(3, effect.r_0c, effect.g_0d, effect.b_0e)
-        .pos(0, screenVert0.x, screenVert0.y)
-        .pos(1, screenVert1.x, screenVert1.y)
-        .pos(2, vertices[1].x, vertices[1].y)
-        .pos(3, vertices[2].x, vertices[2].y)
-      );
-    }
-
-    //LAB_800d2460
-  }
-
   @ScriptDescription("Allocates a radial gradient effect manager")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "count", description = "The number of subdivisions in the gradient")
@@ -393,7 +241,7 @@ public final class Bttl_800d {
     final int circleSubdivisionModifier = script.params_20[1].get();
     final int type = script.params_20[2].get();
 
-    final RadialGradientEffect14 effect = new RadialGradientEffect14();
+    final RadialGradientEffect14 effect = new RadialGradientEffect14(type, circleSubdivisionModifier);
 
     final ScriptState<EffectManagerData6c<EffectManagerParams.RadialGradientType>> state = allocateEffectManager(
       "RadialGradientEffect14",
@@ -405,14 +253,8 @@ public final class Bttl_800d {
       new EffectManagerParams.RadialGradientType()
     );
 
-    final EffectManagerData6c<EffectManagerParams.RadialGradientType> manager = state.innerStruct_00;
-
     //LAB_800d27b4
-    manager.params_10.scale_16.set(1.0f, 1.0f, 1.0f);
-
-    effect.circleSubdivisionModifier_00 = circleSubdivisionModifier;
-    effect.scaleModifier_01 = (type - 3 & 0xffff_ffffL) >= 2 ? 4.0f : 1.0f;
-    effect.renderer_10 = radialGradientEffectRenderers_800fa758[type];
+    state.innerStruct_00.params_10.scale_16.set(1.0f, 1.0f, 1.0f);
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }
@@ -432,18 +274,13 @@ public final class Bttl_800d {
       effect
     );
 
-    final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
-    effect._00 = 1;
-    effect._02 = 0;
-    effect._04 = 0;
-
     // Hack to make shield color default if counter overlay color is default
     // Otherwise, just use the overlay color. Maybe we can make shields toggleable later.
     final int rgb = Config.getCounterOverlayRgb();
     if(Config.changeAdditionOverlayRgb() && rgb != 0x2060d8) {
-      manager.params_10.colour_1c.set(rgb & 0xff, rgb >> 8 & 0xff, rgb >> 16 & 0xff);
+      state.innerStruct_00.params_10.colour_1c.set(rgb & 0xff, rgb >> 8 & 0xff, rgb >> 16 & 0xff);
     } else {
-      manager.params_10.colour_1c.set(255, 0, 0);
+      state.innerStruct_00.params_10.colour_1c.set(255, 0, 0);
     }
 
     script.params_20[0].set(state.index);
@@ -456,36 +293,6 @@ public final class Bttl_800d {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("No-op")
-  @Method(0x800d3098L)
-  public static FlowControl FUN_800d3098(final RunningScript<?> script) {
-    return FlowControl.CONTINUE;
-  }
-
-  @ScriptDescription("No-op")
-  @Method(0x800d30a0L)
-  public static FlowControl FUN_800d30a0(final RunningScript<?> script) {
-    return FlowControl.CONTINUE;
-  }
-
-  @ScriptDescription("No-op")
-  @Method(0x800d30a8L)
-  public static FlowControl FUN_800d30a8(final RunningScript<?> script) {
-    return FlowControl.CONTINUE;
-  }
-
-  @ScriptDescription("No-op")
-  @Method(0x800d30b0L)
-  public static FlowControl FUN_800d30b0(final RunningScript<?> script) {
-    return FlowControl.CONTINUE;
-  }
-
-  @ScriptDescription("No-op")
-  @Method(0x800d30b8L)
-  public static FlowControl FUN_800d30b8(final RunningScript<?> script) {
-    return FlowControl.CONTINUE;
-  }
-
   @ScriptDescription("Allocates a monster death effect effect for a monster battle entity")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The battle object index")
@@ -493,10 +300,10 @@ public final class Bttl_800d {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused", description = "Unused in code but passed by scripts")
   @Method(0x800d34bcL)
   public static FlowControl scriptAllocateMonsterDeathEffect(final RunningScript<? extends BattleObject> script) {
-    final BattleEntity27c bent = SCRIPTS.getObject(script.params_20[1].get(), BattleEntity27c.class);
-    final int modelObjectCount = bent.model_148.partCount_98;
+    final BattleEntity27c parent = SCRIPTS.getObject(script.params_20[1].get(), BattleEntity27c.class);
+    final SpriteMetrics08 sprite = spriteMetrics_800c6948[script.params_20[2].get() & 0xff];
 
-    final MonsterDeathEffect34 deathEffect = new MonsterDeathEffect34(modelObjectCount);
+    final MonsterDeathEffect34 deathEffect = new MonsterDeathEffect34(parent, new GenericSpriteEffect24(0x5400_0000, sprite));
 
     final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager(
       "MonsterDeathEffect34",
@@ -507,34 +314,7 @@ public final class Bttl_800d {
       deathEffect
     );
 
-    final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
-
-    deathEffect.destroyedPartsCutoffIndex_00 = 0;
-    deathEffect.remainingFrameLimit_02 = modelObjectCount + 8;
-    deathEffect.unused_06 = 0;
-    deathEffect.scriptIndex_08 = script.params_20[1].get();
-
-    //LAB_800d35a0
-    final MonsterDeathEffectObjectDestructor30[] objArray = deathEffect.objectDestructorArray_30;
-    for(int objIndex = 0; objIndex < deathEffect.modelObjectCount_04; objIndex++) {
-      setModelObjectVisibility(deathEffect.scriptIndex_08, objIndex, true);
-      objArray[objIndex].destructionState_00 = -1;
-    }
-
     //LAB_800d35cc
-    final SpriteMetrics08 metrics = spriteMetrics_800c6948[script.params_20[2].get() & 0xff];
-    deathEffect.sprite_0c.flags_00 = manager.params_10.flags_00 & 0xffff_ffffL;
-    deathEffect.sprite_0c.w_08 = metrics.w_04;
-    deathEffect.sprite_0c.h_0a = metrics.h_05;
-    deathEffect.sprite_0c.x_04 = (short)(-deathEffect.sprite_0c.w_08 >> 1);
-    deathEffect.sprite_0c.y_06 = (short)(-deathEffect.sprite_0c.h_0a >> 1);
-    deathEffect.sprite_0c.tpage_0c = (metrics.v_02 & 0x100) >>> 4 | (metrics.u_00 & 0x3ff) >>> 6;
-    deathEffect.sprite_0c.u_0e = (metrics.u_00 & 0x3f) * 4;
-    deathEffect.sprite_0c.v_0f = metrics.v_02;
-    deathEffect.sprite_0c.clutX_10 = metrics.clut_06 << 4 & 0x3ff;
-    deathEffect.sprite_0c.clutY_12 = metrics.clut_06 >>> 6 & 0x1ff;
-    deathEffect.sprite_0c.unused_18 = 0;
-    deathEffect.sprite_0c.unused_1a = 0;
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
   }

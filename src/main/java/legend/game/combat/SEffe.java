@@ -152,7 +152,6 @@ import static legend.game.combat.Bttl_800c.melbuStageIndices_800fb064;
 import static legend.game.combat.Bttl_800c.scriptGetScriptedObjectPos;
 import static legend.game.combat.Bttl_800c.seed_800fa754;
 import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
-import static legend.game.combat.Bttl_800c.vramSlotUvs_800fb0ec;
 import static legend.game.combat.Bttl_800d.getRotationAndScaleFromTransforms;
 import static legend.game.combat.Bttl_800d.getRotationFromTransforms;
 import static legend.game.combat.Bttl_800d.loadModelAnim;
@@ -176,6 +175,8 @@ import static legend.game.combat.Bttl_800e.transformToScreenSpace;
 
 public final class SEffe {
   private SEffe() { }
+
+  private static final int[] vramSlotUvs_800fb0ec = {0, 21, 22, 23, 24, 25, 26, 25, 26, 27, 12, 13, 14, 15, 8, 9, 10, 11};
 
   private static final ParticleManager particles = new ParticleManager();
 
@@ -3786,8 +3787,6 @@ public final class SEffe {
     spriteEffect.v_0f = effect.v_08;
     spriteEffect.clutX_10 = effect.clut_0e << 4 & 0x3ff;
     spriteEffect.clutY_12 = effect.clut_0e >>> 6 & 0x1ff;
-    spriteEffect.unused_18 = 0;
-    spriteEffect.unused_1a = 0;
 
     final Vector3f translation = new Vector3f();
 
@@ -4196,7 +4195,7 @@ public final class SEffe {
     final MoonlightStarsEffect18 starEffect = (MoonlightStarsEffect18)manager.effect_44;
 
     final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24();
-    spriteEffect.flags_00 = manager.params_10.flags_00 & 0xffff_ffffL;
+    spriteEffect.flags_00 = manager.params_10.flags_00;
     spriteEffect.x_04 = (short)(-starEffect.metrics_04.w_04 / 2);
     spriteEffect.y_06 = (short)(-starEffect.metrics_04.h_05 / 2);
     spriteEffect.w_08 = starEffect.metrics_04.w_04;
@@ -4206,8 +4205,6 @@ public final class SEffe {
     spriteEffect.v_0f = starEffect.metrics_04.v_02;
     spriteEffect.clutX_10 = starEffect.metrics_04.clut_06 << 4 & 0x3ff;
     spriteEffect.clutY_12 = starEffect.metrics_04.clut_06 >>> 6 & 0x1ff;
-    spriteEffect.unused_18 = 0;
-    spriteEffect.unused_1a = 0;
 
     final Vector3f translation = new Vector3f();
 

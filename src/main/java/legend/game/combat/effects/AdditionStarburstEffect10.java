@@ -8,24 +8,34 @@ import legend.game.types.Translucency;
 import org.joml.Math;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 
-import java.util.Arrays;
 import java.util.function.BiConsumer;
 
 import static legend.core.GameEngine.GPU;
-import static legend.game.combat.Bttl_800c.completedAdditionStarburstAngleModifiers_800c6dac;
-import static legend.game.combat.Bttl_800c.completedAdditionStarburstTranslationMagnitudes_800c6d94;
 import static legend.game.combat.Bttl_800c.scriptGetScriptedObjectPos;
+import static legend.game.combat.Bttl_800c.seed_800fa754;
 import static legend.game.combat.Bttl_800c.transformWorldspaceToScreenspace;
 
 public class AdditionStarburstEffect10 implements Effect {
-  public int parentIndex_00;
-  /** ushort */
-  public int rayCount_04;
+  private static final Vector3i[] completedAdditionStarburstTranslationMagnitudes_800c6d94 = {
+    new Vector3i(360, 210, 210),
+    new Vector3i(210,  60, 210),
+    new Vector3i(360, 210, 210),
+    new Vector3i( 60, 210, 210),
+  };
+  private static final Vector3f[] completedAdditionStarburstAngleModifiers_800c6dac = {
+    new Vector3f(0, MathHelper.psxDegToRad(-16), 0),
+    new Vector3f(MathHelper.psxDegToRad(-16), 0, 0),
+    new Vector3f(0, MathHelper.psxDegToRad(16), 0),
+    new Vector3f(0, MathHelper.psxDegToRad(16), 0),
+  };
 
-  /** Set to 0 and never used */
-  public int unused_08;
-  public AdditionStarburstEffectRay10[] rayArray_0c;
+  private final int parentIndex_00;
+  /** ushort */
+  private final int rayCount_04;
+
+  private final AdditionStarburstEffectRay10[] rayArray_0c;
 
   /**
    * <ol start="0">
@@ -41,10 +51,15 @@ public class AdditionStarburstEffect10 implements Effect {
     this.additionStarburstRenderers_800c6dc4[2] = this::renderAdditionCompletedStarburst;
   }
 
-  public AdditionStarburstEffect10(final int rayCount) {
+  public AdditionStarburstEffect10(final int parentIndex, final int rayCount) {
+    this.parentIndex_00 = parentIndex;
     this.rayCount_04 = rayCount;
     this.rayArray_0c = new AdditionStarburstEffectRay10[rayCount];
-    Arrays.setAll(this.rayArray_0c, AdditionStarburstEffectRay10::new);
+
+    //LAB_800d1ac4
+    for(int rayNum = 0; rayNum < rayCount; rayNum++) {
+      this.rayArray_0c[rayNum] = new AdditionStarburstEffectRay10(seed_800fa754.nextFloat(MathHelper.TWO_PI), (short)(seed_800fa754.nextInt(31)), (short)(seed_800fa754.nextInt(21) + 10), MathHelper.psxDegToRad(seed_800fa754.nextInt(11) - 5));
+    }
   }
 
   /** If a secondary script is specified, modifies the translations of the starburst rays by the secondary script's translation. */
@@ -72,56 +87,54 @@ public class AdditionStarburstEffect10 implements Effect {
     for(int rayNum = 0; rayNum < starburstEffect.rayCount_04; rayNum++) {
       final AdditionStarburstEffectRay10 ray = starburstEffect.rayArray_0c[rayNum];
 
-      if(ray.renderRay_00) {
-        //LAB_800d12a4
-        for(int i = 0; i < 2; i++) {
-          float angleModifier = baseAngle[i] + ray.angleModifier_0a;
-          int translationScale = 30 + ray.endpointTranslationMagnitude_06;
+      //LAB_800d12a4
+      for(int i = 0; i < 2; i++) {
+        float angleModifier = baseAngle[i] + ray.angleModifier_0a;
+        int translationScale = 30 + ray.endpointTranslationMagnitude_06;
 
-          float angle = ray.angle_02 + angleModifier;
-          float sin = MathHelper.sin(angle);
-          float cos = MathHelper.cosFromSin(sin, angle);
-          float x2 = cos * translationScale;
-          float y2 = sin * translationScale;
+        float angle = ray.angle_02 + angleModifier;
+        float sin = MathHelper.sin(angle);
+        float cos = MathHelper.cosFromSin(sin, angle);
+        float x2 = cos * translationScale;
+        float y2 = sin * translationScale;
 
-          float sin2 = MathHelper.sin(ray.angle_02);
-          float cos2 = MathHelper.cosFromSin(sin2, ray.angle_02);
-          float x3 = cos2 * translationScale;
-          float y3 = sin2 * translationScale;
+        float sin2 = MathHelper.sin(ray.angle_02);
+        float cos2 = MathHelper.cosFromSin(sin2, ray.angle_02);
+        float x3 = cos2 * translationScale;
+        float y3 = sin2 * translationScale;
 
-          angleModifier = baseAngle[i] + ray.angleModifier_0a;
-          translationScale = 210 + ray.endpointTranslationMagnitude_06;
+        angleModifier = baseAngle[i] + ray.angleModifier_0a;
+        translationScale = 210 + ray.endpointTranslationMagnitude_06;
 
-          angle = ray.angle_02 + angleModifier;
-          sin = MathHelper.sin(angle);
-          cos = MathHelper.cosFromSin(sin, angle);
-          final float x0 = cos * translationScale;
-          final float y0 = sin * translationScale;
+        angle = ray.angle_02 + angleModifier;
+        sin = MathHelper.sin(angle);
+        cos = MathHelper.cosFromSin(sin, angle);
+        final float x0 = cos * translationScale;
+        final float y0 = sin * translationScale;
 
-          sin2 = MathHelper.sin(ray.angle_02);
-          cos2 = MathHelper.cosFromSin(sin2, ray.angle_02);
-          final float x1 = cos2 * translationScale;
-          final float y1 = sin2 * translationScale;
+        sin2 = MathHelper.sin(ray.angle_02);
+        cos2 = MathHelper.cosFromSin(sin2, ray.angle_02);
+        final float x1 = cos2 * translationScale;
+        final float y1 = sin2 * translationScale;
 
-          final Vector2f translation = new Vector2f();
-          this.modifyAdditionStarburstTranslation(manager, starburstEffect, translation);
-          x2 += translation.x;
-          y2 += translation.y;
-          x3 += translation.x;
-          y3 += translation.y;
+        final Vector2f translation = new Vector2f();
+        this.modifyAdditionStarburstTranslation(manager, starburstEffect, translation);
+        x2 += translation.x;
+        y2 += translation.y;
+        x3 += translation.x;
+        y3 += translation.y;
 
-          GPU.queueCommand(30, new GpuCommandPoly(4)
-            .translucent(Translucency.B_PLUS_F)
-            .monochrome(0, 0)
-            .rgb(1, manager.params_10.colour_1c)
-            .monochrome(2, 0)
-            .rgb(3, 0)
-            .pos(0, x0, y0)
-            .pos(1, x1, y1)
-            .pos(2, x2, y2)
-            .pos(3, x3, y3)
-          );
-        }
+        GPU.queueCommand(30, new GpuCommandPoly(4)
+          .translucent(Translucency.B_PLUS_F)
+          .monochrome(0, 0)
+          .rgb(1, manager.params_10.colour_1c)
+          .monochrome(2, 0)
+          .rgb(3, 0)
+          .pos(0, x0, y0)
+          .pos(1, x1, y1)
+          .pos(2, x2, y2)
+          .pos(3, x3, y3)
+        );
       }
       //LAB_800d1538
     }
@@ -139,36 +152,34 @@ public class AdditionStarburstEffect10 implements Effect {
     for(int rayNum = 0; rayNum < starburstEffect.rayCount_04; rayNum++) {
       final AdditionStarburstEffectRay10 ray = starburstEffect.rayArray_0c[rayNum];
 
-      if(ray.renderRay_00) {
-        ray.endpointTranslationMagnitude_06 += ray.endpointTranslationMagnitudeVelocity_08;
+      ray.endpointTranslationMagnitude_06 += ray.endpointTranslationMagnitudeVelocity_08;
 
-        //LAB_800d1728
-        for(int i = 0; i < 4; i++) {
-          final Vector2f translation = new Vector2f();
-          this.modifyAdditionStarburstTranslation(manager, starburstEffect, translation);
+      //LAB_800d1728
+      for(int i = 0; i < 4; i++) {
+        final Vector2f translation = new Vector2f();
+        this.modifyAdditionStarburstTranslation(manager, starburstEffect, translation);
 
-          //LAB_800d174c
-          for(int j = 0; j < 3; j++) {
-            final int translationScale = Math.max(0, completedAdditionStarburstTranslationMagnitudes_800c6d94[i].get(j) - ray.endpointTranslationMagnitude_06);
+        //LAB_800d174c
+        for(int j = 0; j < 3; j++) {
+          final int translationScale = Math.max(0, completedAdditionStarburstTranslationMagnitudes_800c6d94[i].get(j) - ray.endpointTranslationMagnitude_06);
 
-            //LAB_800d1784
-            final float angle = ray.angle_02 + completedAdditionStarburstAngleModifiers_800c6dac[i].get(j);
-            final float sin = MathHelper.sin(angle);
-            final float cos = MathHelper.cosFromSin(sin, angle);
-            xArray[j] = cos * translationScale + translation.x;
-            yArray[j] = sin * translationScale + translation.y;
-          }
-
-          GPU.queueCommand(30, new GpuCommandPoly(3)
-            .translucent(Translucency.B_PLUS_F)
-            .monochrome(0, 0)
-            .monochrome(1, 0)
-            .rgb(2, manager.params_10.colour_1c)
-            .pos(0, xArray[0], yArray[0])
-            .pos(1, xArray[1], yArray[1])
-            .pos(2, xArray[2], yArray[2])
-          );
+          //LAB_800d1784
+          final float angle = ray.angle_02 + completedAdditionStarburstAngleModifiers_800c6dac[i].get(j);
+          final float sin = MathHelper.sin(angle);
+          final float cos = MathHelper.cosFromSin(sin, angle);
+          xArray[j] = cos * translationScale + translation.x;
+          yArray[j] = sin * translationScale + translation.y;
         }
+
+        GPU.queueCommand(30, new GpuCommandPoly(3)
+          .translucent(Translucency.B_PLUS_F)
+          .monochrome(0, 0)
+          .monochrome(1, 0)
+          .rgb(2, manager.params_10.colour_1c)
+          .pos(0, xArray[0], yArray[0])
+          .pos(1, xArray[1], yArray[1])
+          .pos(2, xArray[2], yArray[2])
+        );
       }
       //LAB_800d190c
     }

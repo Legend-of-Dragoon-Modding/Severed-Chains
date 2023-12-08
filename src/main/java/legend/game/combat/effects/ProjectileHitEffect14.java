@@ -7,31 +7,55 @@ import legend.game.types.Translucency;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
-import java.util.Arrays;
-
 import static legend.core.GameEngine.GPU;
 import static legend.game.combat.Bttl_800c.FUN_800cfb14;
+import static legend.game.combat.Bttl_800c.seed_800fa754;
 
 public class ProjectileHitEffect14 implements Effect {
-  public final int count_00;
+  private final int count_00;
 
-  public final ProjectileHitEffect14Sub48[] _08;
+  private final ProjectileHitEffectInstance48[] instances;
 
-  public ProjectileHitEffect14(final int count) {
+  public ProjectileHitEffect14(final int count, final int r, final int g, final int b) {
     this.count_00 = count;
 
-    this._08 = new ProjectileHitEffect14Sub48[count];
-    Arrays.setAll(this._08, i -> new ProjectileHitEffect14Sub48());
+    this.instances = new ProjectileHitEffectInstance48[count];
+
+    //LAB_800d0634
+    for(int i = 0; i < count; i++) {
+      final ProjectileHitEffectInstance48 inst = new ProjectileHitEffectInstance48();
+      this.instances[i] = inst;
+
+      inst.r_34 = r << 8;
+      inst.g_36 = g << 8;
+      inst.b_38 = b << 8;
+
+      final short x = (short)(seed_800fa754.nextInt(301) + 200);
+      final short y = (short)(seed_800fa754.nextInt(401) - 300);
+      final short z = (short)(seed_800fa754.nextInt(601) - 300);
+      inst._24[0].set(x, y, z);
+      inst._24[1].set(x, y, z);
+
+      inst._04[0].x = 0.0f;
+      inst._04[0].y = seed_800fa754.nextInt(101) - 50;
+      inst._04[0].z = seed_800fa754.nextInt(101) - 50;
+      inst.frames_44 = seed_800fa754.nextInt(9) + 7;
+
+      inst._24[1].y += 25.0f;
+      inst._04[1].set(inst._04[0]).add(inst._24[0]);
+      inst.fadeR_3a = inst.r_34 / inst.frames_44;
+      inst.fadeG_3c = inst.g_36 / inst.frames_44;
+      inst.fadeB_3e = inst.b_38 / inst.frames_44;
+    }
   }
 
   @Method(0x800d019cL)
   public void renderProjectileHitEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
     float a0 = 0.0f;
-    final ProjectileHitEffect14 effect = (ProjectileHitEffect14)data.effect_44;
 
     //LAB_800d01ec
-    for(int s7 = 0; s7 < effect.count_00; s7++) {
-      final ProjectileHitEffect14Sub48 s4 = effect._08[s7];
+    for(int i = 0; i < this.count_00; i++) {
+      final ProjectileHitEffectInstance48 s4 = this.instances[i];
 
       if(s4.used_00) {
         s4._40++;

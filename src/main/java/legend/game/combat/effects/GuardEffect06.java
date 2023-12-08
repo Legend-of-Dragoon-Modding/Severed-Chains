@@ -13,11 +13,20 @@ import org.joml.Vector3f;
 import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
-import static legend.game.combat.Bttl_800c.guardEffectMetrics_800fa76c;
 import static legend.game.combat.Bttl_800c.transformWorldspaceToScreenspace;
 
 public class GuardEffect06 implements Effect {
-  public int _00;
+  private static final GuardEffectMetrics04[] guardEffectMetrics_800fa76c = {
+    new GuardEffectMetrics04(0, 0),
+    new GuardEffectMetrics04(0, -1000),
+    new GuardEffectMetrics04(600, -300),
+    new GuardEffectMetrics04(500, 600),
+    new GuardEffectMetrics04(0, 1000),
+    new GuardEffectMetrics04(-500, -100),
+    new GuardEffectMetrics04(0, -1000),
+  };
+
+  public int _00 = 1;
   public int _02;
   public short _04;
 
