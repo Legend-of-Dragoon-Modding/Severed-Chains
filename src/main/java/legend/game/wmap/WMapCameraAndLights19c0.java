@@ -77,7 +77,7 @@ public class WMapCameraAndLights19c0 {
   public final Vector3f cameraZoomPosStep_a4 = new Vector3f();
   public final Vector3f currCameraZoomPos_b4 = new Vector3f();
   /** byte */
-  public boolean hideAtmosphericEffect_c4;
+  public boolean zoomStateIsLocal;
   /**
    * ubyte
    * <ol start="0">
@@ -104,7 +104,7 @@ public class WMapCameraAndLights19c0 {
   /** short */
   public float cameraRotationStep_10c;
   /** ushort */
-  public float fadeOutZoomTick_10e;
+  public int fadeOutZoomTick_10e;
   /**
    * ubyte
    * <ol start="0">

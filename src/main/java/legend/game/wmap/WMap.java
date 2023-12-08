@@ -533,7 +533,7 @@ public class WMap extends EngineState {
           final WMapCameraAndLights19c0 cameraAndLights = this.wmapCameraAndLights19c0_800c66b0;
 
           if(cameraAndLights.cameraUpdateState_c5 == CameraUpdateState.AWAIT_INPUT_0) {
-            if(!cameraAndLights.hideAtmosphericEffect_c4) {
+            if(cameraAndLights.zoomStateIsLocal) {
               final WMapModelAndAnimData258 modelAndAnimData = this.modelAndAnimData_800c66a8;
 
               if(modelAndAnimData.zoomState_1f8 == ZoomState.LOCAL_0) {
@@ -993,7 +993,7 @@ public class WMap extends EngineState {
     this.wmapCameraAndLights19c0_800c66b0.mapRotating_80 = false;
     this.wmapCameraAndLights19c0_800c66b0.mapRotationStep_7c = 0.0f;
     this.wmapCameraAndLights19c0_800c66b0.cameraUpdateState_c5 = CameraUpdateState.AWAIT_INPUT_0;
-    this.wmapCameraAndLights19c0_800c66b0.hideAtmosphericEffect_c4 = false;
+    this.wmapCameraAndLights19c0_800c66b0.zoomStateIsLocal = true;
 
     this.initCameraMovement();
   }
@@ -1142,7 +1142,7 @@ public class WMap extends EngineState {
     this.rotateCoord2(cameraAndLights.currMapRotation_70, cameraAndLights.coord2_20);
 
     if(cameraAndLights.cameraUpdateState_c5 == CameraUpdateState.AWAIT_INPUT_0) {
-      if(!cameraAndLights.hideAtmosphericEffect_c4) {
+      if(cameraAndLights.zoomStateIsLocal) {
         if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL_0) {
           if(this.modelAndAnimData_800c66a8.coolonWarpState_220 == CoolonWarpState.NONE_0) {
             cameraAndLights.coord2_20.coord.transfer.set(this.modelAndAnimData_800c66a8.coord2_34.coord.transfer);
@@ -1181,7 +1181,7 @@ public class WMap extends EngineState {
       switch(this.wmapCameraAndLights19c0_800c66b0.mapRotationState_110) {
         case MAIN_LOOP_0:
           if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL_0) {
-            if(!cameraAndLights.hideAtmosphericEffect_c4) {
+            if(cameraAndLights.zoomStateIsLocal) {
               if(this.mapState_800c6798.continent_00 != Continent.ENDINESS_7) {
                 if(!cameraAndLights.mapRotating_80) {
                   //LAB_800d30d8
@@ -1226,15 +1226,15 @@ public class WMap extends EngineState {
         case SUBMAP_ZOOM_2:
           //LAB_800d3228
           //LAB_800d3268
-          cameraAndLights.currRview2_00.viewpoint_00.y = cameraAndLights.originalRview2_c8.viewpoint_00.y + cameraAndLights.viewpointSwoopStepY_ec * cameraAndLights.fadeOutZoomTick_10e;
-          cameraAndLights.currRview2_00.viewpoint_00.z = cameraAndLights.originalRview2_c8.viewpoint_00.z + cameraAndLights.viewpointSwoopStepZ_f0 * cameraAndLights.fadeOutZoomTick_10e;
-          cameraAndLights.currRview2_00.refpoint_0c.y = cameraAndLights.originalRview2_c8.refpoint_0c.y + cameraAndLights.refpointSwoopStepY_f8 * cameraAndLights.fadeOutZoomTick_10e;
-          cameraAndLights.currRview2_00.refpoint_0c.z = cameraAndLights.originalRview2_c8.refpoint_0c.z + cameraAndLights.refpointSwoopStepZ_fc * cameraAndLights.fadeOutZoomTick_10e;
-          cameraAndLights.currMapRotation_70.y = cameraAndLights.originalCameraRotation_10a + cameraAndLights.cameraRotationStep_10c * cameraAndLights.fadeOutZoomTick_10e;
+          cameraAndLights.currRview2_00.viewpoint_00.y = cameraAndLights.originalRview2_c8.viewpoint_00.y + cameraAndLights.viewpointSwoopStepY_ec * cameraAndLights.fadeOutZoomTick_10e / (3.0f / vsyncMode_8007a3b8);
+          cameraAndLights.currRview2_00.viewpoint_00.z = cameraAndLights.originalRview2_c8.viewpoint_00.z + cameraAndLights.viewpointSwoopStepZ_f0 * cameraAndLights.fadeOutZoomTick_10e / (3.0f / vsyncMode_8007a3b8);
+          cameraAndLights.currRview2_00.refpoint_0c.y = cameraAndLights.originalRview2_c8.refpoint_0c.y + cameraAndLights.refpointSwoopStepY_f8 * cameraAndLights.fadeOutZoomTick_10e / (3.0f / vsyncMode_8007a3b8);
+          cameraAndLights.currRview2_00.refpoint_0c.z = cameraAndLights.originalRview2_c8.refpoint_0c.z + cameraAndLights.refpointSwoopStepZ_fc * cameraAndLights.fadeOutZoomTick_10e / (3.0f / vsyncMode_8007a3b8);
+          cameraAndLights.currMapRotation_70.y = cameraAndLights.originalCameraRotation_10a + cameraAndLights.cameraRotationStep_10c * cameraAndLights.fadeOutZoomTick_10e / (3.0f / vsyncMode_8007a3b8);
 
-          cameraAndLights.fadeOutZoomTick_10e += 1.0f / (3.0f / vsyncMode_8007a3b8);
-          if(cameraAndLights.fadeOutZoomTick_10e >= 16.0f) {
-            cameraAndLights.fadeOutZoomTick_10e = 16.0f;
+          cameraAndLights.fadeOutZoomTick_10e++;
+          if(cameraAndLights.fadeOutZoomTick_10e >= 48.0f / vsyncMode_8007a3b8) {
+            cameraAndLights.fadeOutZoomTick_10e = (int)(48.0f / vsyncMode_8007a3b8);
             cameraAndLights.currMapRotation_70.y = cameraAndLights.finalCameraRotation_108;
           }
 
@@ -1273,7 +1273,7 @@ public class WMap extends EngineState {
                       cameraAndLights.projectionDistanceState_11a = ProjectionDistanceState.INIT_VIEW_NEAR_1;
                       this.initCameraZoomPositionAndRotationSteps(0);
                       this.mapState_800c6798.disableInput_d0 = true;
-                      cameraAndLights.hideAtmosphericEffect_c4 = true;
+                      cameraAndLights.zoomStateIsLocal = false;
                     }
                   }
 
@@ -1286,7 +1286,7 @@ public class WMap extends EngineState {
                       cameraAndLights.finalCameraY_9e = -300;
                       cameraAndLights.cameraUpdateState_c5 = CameraUpdateState.ZOOM_IN_2;
                       this.initCameraZoomPositionAndRotationSteps(1);
-                      cameraAndLights.hideAtmosphericEffect_c4 = false;
+                      cameraAndLights.zoomStateIsLocal = true;
                       this.modelAndAnimData_800c66a8.zoomState_1f8 = ZoomState.LOCAL_0;
                       //LAB_800d3898
                     } else if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL_0) {
@@ -1383,7 +1383,7 @@ public class WMap extends EngineState {
   private void renderPlayerAndDestinationIndicators() {
     //LAB_800d4088
     if(
-      !this.wmapCameraAndLights19c0_800c66b0.hideAtmosphericEffect_c4 ||
+      this.wmapCameraAndLights19c0_800c66b0.zoomStateIsLocal ||
         this.wmapCameraAndLights19c0_800c66b0.cameraUpdateState_c5 != CameraUpdateState.AWAIT_INPUT_0
     ) {
       //LAB_800d41f0
@@ -1579,7 +1579,7 @@ public class WMap extends EngineState {
   private void initCameraMovement() {
     final WMapCameraAndLights19c0 cameraAndLights = this.wmapCameraAndLights19c0_800c66b0;
     cameraAndLights.mapRotationState_110 = MapRotationState.MAIN_LOOP_0;
-    cameraAndLights.fadeOutZoomTick_10e = 0.0f;
+    cameraAndLights.fadeOutZoomTick_10e = 0;
     cameraAndLights.originalRview2_c8.viewpoint_00.set(cameraAndLights.currRview2_00.viewpoint_00);
     cameraAndLights.originalRview2_c8.refpoint_0c.set(cameraAndLights.currRview2_00.refpoint_0c);
     cameraAndLights.originalRview2_c8.viewpointTwist_18 = cameraAndLights.currRview2_00.viewpointTwist_18;
@@ -1648,7 +1648,7 @@ public class WMap extends EngineState {
 
       case INIT_VIEW_FAR_3:
         //LAB_800d5494
-        if(cameraAndLights.hideAtmosphericEffect_c4) {
+        if(!cameraAndLights.zoomStateIsLocal) {
           cameraAndLights.projectionDistanceState_11a = ProjectionDistanceState.SELECT_0;
           return;
         }
@@ -2359,7 +2359,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800da300
-    if(cameraAndLights.hideAtmosphericEffect_c4) {
+    if(!cameraAndLights.zoomStateIsLocal) {
       return;
     }
 
@@ -3695,7 +3695,7 @@ public class WMap extends EngineState {
 
             this.initCameraZoomPositionAndRotationSteps(1);
 
-            cameraAndLights.hideAtmosphericEffect_c4 = false;
+            cameraAndLights.zoomStateIsLocal = true;
             modelAndAnimData.zoomState_1f8 = ZoomState.LOCAL_0;
             modelAndAnimData.fadeState_04 = FadeState.FADE_1;
           }
@@ -3759,7 +3759,7 @@ public class WMap extends EngineState {
 
             cameraAndLights.cameraZoomPosStep_a4.set(modelAndAnimData.coord2_34.coord.transfer).div(30.0f);
 
-            cameraAndLights.hideAtmosphericEffect_c4 = false;
+            cameraAndLights.zoomStateIsLocal = true;
             modelAndAnimData.zoomState_1f8 = ZoomState.LOCAL_0;
             cameraAndLights.cameraUpdateState_c5 = CameraUpdateState.ZOOM_IN_2;
             modelAndAnimData.fadeState_04 = FadeState.FADE_1;
@@ -3918,7 +3918,7 @@ public class WMap extends EngineState {
     //LAB_800e5224
     if(
       this.wmapCameraAndLights19c0_800c66b0.cameraUpdateState_c5 != CameraUpdateState.AWAIT_INPUT_0 ||
-        this.wmapCameraAndLights19c0_800c66b0.hideAtmosphericEffect_c4 ||
+        !this.wmapCameraAndLights19c0_800c66b0.zoomStateIsLocal ||
         this.modelAndAnimData_800c66a8.zoomState_1f8 != ZoomState.LOCAL_0 ||
         this.modelAndAnimData_800c66a8.coolonWarpState_220 != CoolonWarpState.NONE_0
     ) {
@@ -4871,7 +4871,7 @@ public class WMap extends EngineState {
                 //LAB_800e8ff4
                 if(this.wmapCameraAndLights19c0_800c66b0.cameraUpdateState_c5 == CameraUpdateState.AWAIT_INPUT_0) {
                   //LAB_800e9018
-                  if(!this.wmapCameraAndLights19c0_800c66b0.hideAtmosphericEffect_c4) {
+                  if(this.wmapCameraAndLights19c0_800c66b0.zoomStateIsLocal) {
                     //LAB_800e903c
                     if((this.filesLoadedFlags_800c66b8.get() & 0x1) != 0) {
                       //LAB_800e905c
@@ -5587,7 +5587,7 @@ public class WMap extends EngineState {
       }
 
       //LAB_800ec2b0
-      if(this.wmapCameraAndLights19c0_800c66b0.hideAtmosphericEffect_c4) {
+      if(!this.wmapCameraAndLights19c0_800c66b0.zoomStateIsLocal) {
         cloud.brightness_5c -= 0.125f / (3.0f / vsyncMode_8007a3b8);
 
         if(cloud.brightness_5c < 0.0f) {
@@ -5721,7 +5721,7 @@ public class WMap extends EngineState {
       final WMapAtmosphericEffectInstance60 snowflake = modelAndAnimData.atmosphericEffectInstances_24[i];
 
       //LAB_800ecdd0
-      if(this.wmapCameraAndLights19c0_800c66b0.hideAtmosphericEffect_c4) {
+      if(!this.wmapCameraAndLights19c0_800c66b0.zoomStateIsLocal) {
         snowflake.brightness_5c -= 0.125f / (3.0f / vsyncMode_8007a3b8);
 
         if(snowflake.brightness_5c < 0.0f) {
