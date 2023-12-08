@@ -177,12 +177,12 @@ import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
 import static legend.game.combat.Bttl_800c.cacheLivingBents;
+import static legend.game.combat.Bttl_800c.camera_800c67f0;
 import static legend.game.combat.Bttl_800c.charCount_800c677c;
 import static legend.game.combat.Bttl_800c.endBattle;
 import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
 import static legend.game.combat.Bttl_800c.renderSkybox;
 import static legend.game.combat.Bttl_800c.rotateAndRenderBattleStage;
-import static legend.game.combat.Bttl_800d.updateBattleCamera;
 import static legend.game.combat.environment.StageData.stageData_80109a98;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
@@ -1270,7 +1270,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001890cL)
   public static void renderBattleEnvironment() {
-    updateBattleCamera();
+    camera_800c67f0.updateBattleCamera();
     cacheLivingBents();
     rotateAndRenderBattleStage();
     renderSkybox();

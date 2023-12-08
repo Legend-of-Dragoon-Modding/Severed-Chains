@@ -10,7 +10,6 @@ import legend.core.memory.Method;
 import legend.core.memory.types.ArrayRef;
 import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.ByteRef;
-import legend.core.memory.types.ComponentFunction;
 import legend.core.memory.types.IntRef;
 import legend.core.memory.types.QuintConsumer;
 import legend.core.memory.types.ShortRef;
@@ -46,9 +45,6 @@ import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
 import legend.game.combat.environment.BattleStage;
 import legend.game.combat.environment.BattleStageDarkening1800;
 import legend.game.combat.environment.BttlLightStruct84;
-import legend.game.combat.environment.CameraOctParamCallback;
-import legend.game.combat.environment.CameraQuadParamCallback;
-import legend.game.combat.environment.CameraSeptParamCallback;
 import legend.game.combat.environment.CombatPortraitBorderMetrics0c;
 import legend.game.combat.environment.EncounterData38;
 import legend.game.combat.environment.NameAndPortraitDisplayMetrics0c;
@@ -178,9 +174,6 @@ import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
 import static legend.game.Scus94491BpeSegment_800b.unlockedUltimateAddition_800bc910;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
-import static legend.game.combat.Bttl_800d.calculateXAngleFromRefpointToViewpoint;
-import static legend.game.combat.Bttl_800d.calculateYAngleFromRefpointToViewpoint;
-import static legend.game.combat.Bttl_800d.resetCameraMovement;
 import static legend.game.combat.Bttl_800e.FUN_800ef28c;
 import static legend.game.combat.Bttl_800e.allocateDeffManager;
 import static legend.game.combat.Bttl_800e.allocateEffectManager;
@@ -262,19 +255,12 @@ public final class Bttl_800c {
   /** This may be unused. Only referenced by the script engine, but seems like there may be no real uses */
   public static final IntRef currentCameraIndex_800c6780 = MEMORY.ref(4, 0x800c6780L, IntRef::new);
 
-  public static final MV cameraTransformMatrix_800c6798 = new MV();
-  // public static final UnsignedIntRef flags_800c67b8 = MEMORY.ref(4, 0x800c67b8L, UnsignedIntRef::new);
   public static final IntRef screenOffsetX_800c67bc = MEMORY.ref(4, 0x800c67bcL, IntRef::new);
   public static final IntRef screenOffsetY_800c67c0 = MEMORY.ref(4, 0x800c67c0L, IntRef::new);
-  public static final IntRef wobbleFramesRemaining_800c67c4 = MEMORY.ref(4, 0x800c67c4L, IntRef::new);
+
   public static final IntRef _800c67c8 = MEMORY.ref(4, 0x800c67c8L, IntRef::new);
   public static final IntRef _800c67cc = MEMORY.ref(4, 0x800c67ccL, IntRef::new);
   public static final IntRef _800c67d0 = MEMORY.ref(4, 0x800c67d0L, IntRef::new);
-
-  public static final IntRef framesUntilWobble_800c67d4 = MEMORY.ref(4, 0x800c67d4L, IntRef::new);
-
-  public static final IntRef cameraWobbleOffsetX_800c67e4 = MEMORY.ref(4, 0x800c67e4L, IntRef::new);
-  public static final IntRef cameraWobbleOffsetY_800c67e8 = MEMORY.ref(4, 0x800c67e8L, IntRef::new);
 
   public static final BattleCamera camera_800c67f0 = new BattleCamera();
 
@@ -524,353 +510,6 @@ public final class Bttl_800c {
     new ButtonPressHudMetrics06(0, 232, 96, 23, 24, 19),
   };
 
-  public static final Vector3f cameraRotationVector_800fab98 = new Vector3f();
-  public static final Vector3f temp1_800faba0 = new Vector3f();
-  public static final Vector3f temp2_800faba8 = new Vector3f();
-
-  public static final BoolRef useCameraWobble_800fabb8 = MEMORY.ref(1, 0x800fabb8L, BoolRef::new);
-
-  /**
-   * <ol start="0">
-   *   <li>{@link Bttl_800d#setViewpointFromScriptTranslation}</li>
-   *   <li>{@link Bttl_800d#setViewpointFromScriptAngle}</li>
-   *   <li>{@link Bttl_800d#setViewpointFromScriptTranslationNoOp}</li>
-   *   <li>{@link Bttl_800d#setViewpointFromScriptAngleNoOp}</li>
-   *   <li>{@link Bttl_800d#setViewpointFromScriptTranslationRelativeToRefpoint}</li>
-   *   <li>{@link Bttl_800d#setViewpointFromScriptAngleRelativeToRefpoint}</li>
-   *   <li>{@link Bttl_800d#setViewpointFromScriptTranslationRelativeToObject}</li>
-   *   <li>{@link Bttl_800d#setViewpointFromScriptAngleRelativeToObject}</li>
-   * </ol>
-   */
-  public static final CameraQuadParamCallback[] viewpointSetFromScriptMethods_800fabbc = new CameraQuadParamCallback[8];
-  static {
-    viewpointSetFromScriptMethods_800fabbc[0] = Bttl_800d::setViewpointFromScriptTranslation;
-    viewpointSetFromScriptMethods_800fabbc[1] = Bttl_800d::setViewpointFromScriptAngle;
-    viewpointSetFromScriptMethods_800fabbc[2] = Bttl_800d::setViewpointFromScriptTranslationNoOp;
-    viewpointSetFromScriptMethods_800fabbc[3] = Bttl_800d::setViewpointFromScriptAngleNoOp;
-    viewpointSetFromScriptMethods_800fabbc[4] = Bttl_800d::setViewpointFromScriptTranslationRelativeToRefpoint;
-    viewpointSetFromScriptMethods_800fabbc[5] = Bttl_800d::setViewpointFromScriptAngleRelativeToRefpoint;
-    viewpointSetFromScriptMethods_800fabbc[6] = Bttl_800d::setViewpointFromScriptTranslationRelativeToObject;
-    viewpointSetFromScriptMethods_800fabbc[7] = Bttl_800d::setViewpointFromScriptAngleRelativeToObject;
-  }
-  /**
-   * <ol start="0">
-   *   <li>{@link Bttl_800d#setRefpointFromScriptTranslation}</li>
-   *   <li>{@link Bttl_800d#setRefpointFromScriptAngle}</li>
-   *   <li>{@link Bttl_800d#setRefpointFromScriptTranslationRelativeToViewpoint}</li>
-   *   <li>{@link Bttl_800d#setRefpointFromScriptAngleRelativeToViewpoint}</li>
-   *   <li>{@link Bttl_800d#setRefpointFromScriptTranslationNoOp}</li>
-   *   <li>{@link Bttl_800d#setRefpointFromScriptAngleNoOp}</li>
-   *   <li>{@link Bttl_800d#setRefpointFromScriptTranslationRelativeToObject}</li>
-   *   <li>{@link Bttl_800d#setRefpointFromScriptAngleRelativeToObject}</li>
-   * </ol>
-   */
-  public static final CameraQuadParamCallback[] refpointSetFromScriptMethods_800fabdc = new CameraQuadParamCallback[8];
-  static {
-    refpointSetFromScriptMethods_800fabdc[0] = Bttl_800d::setRefpointFromScriptTranslation;
-    refpointSetFromScriptMethods_800fabdc[1] = Bttl_800d::setRefpointFromScriptAngle;
-    refpointSetFromScriptMethods_800fabdc[2] = Bttl_800d::setRefpointFromScriptTranslationRelativeToViewpoint;
-    refpointSetFromScriptMethods_800fabdc[3] = Bttl_800d::setRefpointFromScriptAngleRelativeToViewpoint;
-    refpointSetFromScriptMethods_800fabdc[4] = Bttl_800d::setRefpointFromScriptTranslationNoOp;
-    refpointSetFromScriptMethods_800fabdc[5] = Bttl_800d::setRefpointFromScriptAngleNoOp;
-    refpointSetFromScriptMethods_800fabdc[6] = Bttl_800d::setRefpointFromScriptTranslationRelativeToObject;
-    refpointSetFromScriptMethods_800fabdc[7] = Bttl_800d::setRefpointFromScriptAngleRelativeToObject;
-  }
-  /**
-   * <ol start="0">
-   *   <li>{@link Bttl_800d#FUN_800d47dc}</li>
-   *   <li>{@link Bttl_800d#FUN_800d496c}</li>
-   *   <li>{@link Bttl_800d#FUN_800db564}</li>
-   *   <li>{@link Bttl_800d#FUN_800db56c}</li>
-   *   <li>{@link Bttl_800d#FUN_800d4bac}</li>
-   *   <li>{@link Bttl_800d#FUN_800d4d7c}</li>
-   *   <li>{@link Bttl_800d#FUN_800d4fbc}</li>
-   *   <li>{@link Bttl_800d#FUN_800d519c}</li>
-   * </ol>
-   */
-  public static final CameraSeptParamCallback[] _800fabfc = new CameraSeptParamCallback[8];
-  static {
-    _800fabfc[0] = Bttl_800d::FUN_800d47dc;
-    _800fabfc[1] = Bttl_800d::FUN_800d496c;
-    _800fabfc[2] = Bttl_800d::FUN_800db564;
-    _800fabfc[3] = Bttl_800d::FUN_800db56c;
-    _800fabfc[4] = Bttl_800d::FUN_800d4bac;
-    _800fabfc[5] = Bttl_800d::FUN_800d4d7c;
-    _800fabfc[6] = Bttl_800d::FUN_800d4fbc;
-    _800fabfc[7] = Bttl_800d::FUN_800d519c;
-  }
-  /**
-   * <ol start="0">
-   *   <li>{@link Bttl_800d#FUN_800d53e4}</li>
-   *   <li>{@link Bttl_800d#FUN_800d5574}</li>
-   *   <li>{@link Bttl_800d#FUN_800db78c}</li>
-   *   <li>{@link Bttl_800d#FUN_800db794}</li>
-   *   <li>{@link Bttl_800d#FUN_800d5740}</li>
-   *   <li>{@link Bttl_800d#FUN_800d5930}</li>
-   *   <li>{@link Bttl_800d#FUN_800d5afc}</li>
-   *   <li>{@link Bttl_800d#FUN_800d5cf4}</li>
-   * </ol>
-   */
-  public static final CameraSeptParamCallback[] _800fac1c = new CameraSeptParamCallback[8];
-  static {
-    _800fac1c[0] = Bttl_800d::FUN_800d53e4;
-    _800fac1c[1] = null;
-    _800fac1c[2] = null;
-    _800fac1c[3] = null;
-    _800fac1c[4] = null;
-    _800fac1c[5] = null;
-    _800fac1c[6] = null;
-    _800fac1c[7] = null;
-  }
-  /**
-   * <ol start="0">
-   *   <li>{@link Bttl_800d#FUN_800d5ec8}</li>
-   *   <li>{@link Bttl_800d#FUN_800d60b0}</li>
-   *   <li>{@link Bttl_800d#FUN_800db9d0}</li>
-   *   <li>{@link Bttl_800d#FUN_800db9d8}</li>
-   *   <li>{@link Bttl_800d#FUN_800d62d8}</li>
-   *   <li>{@link Bttl_800d#FUN_800d64e4}</li>
-   *   <li>{@link Bttl_800d#FUN_800d670c}</li>
-   *   <li>{@link Bttl_800d#FUN_800d6960}</li>
-   * </ol>
-   */
-  public static final CameraOctParamCallback[] _800fac3c = new CameraOctParamCallback[8];
-  static {
-    _800fac3c[0] = Bttl_800d::FUN_800d5ec8;
-    _800fac3c[1] = Bttl_800d::FUN_800d60b0;
-    _800fac3c[2] = Bttl_800d::FUN_800db9d0;
-    _800fac3c[3] = Bttl_800d::FUN_800db9d8;
-    _800fac3c[4] = Bttl_800d::FUN_800d62d8;
-    _800fac3c[5] = Bttl_800d::FUN_800d64e4;
-    _800fac3c[6] = Bttl_800d::FUN_800d670c;
-    _800fac3c[7] = Bttl_800d::FUN_800d6960;
-  }
-  /**
-   * <ol start="0">
-   *   <li>{@link Bttl_800d#FUN_800d6b90}</li>
-   *   <li>{@link Bttl_800d#FUN_800d6d18}</li>
-   *   <li>{@link Bttl_800d#FUN_800d6f58}</li>
-   *   <li>{@link Bttl_800d#FUN_800d7128}</li>
-   *   <li>{@link Bttl_800d#FUN_800db678}</li>
-   *   <li>{@link Bttl_800d#FUN_800db680}</li>
-   *   <li>{@link Bttl_800d#FUN_800d7368}</li>
-   *   <li>{@link Bttl_800d#FUN_800d7548}</li>
-   * </ol>
-   */
-  public static final CameraSeptParamCallback[] _800fac5c = new CameraSeptParamCallback[8];
-  static {
-    _800fac5c[0] = Bttl_800d::FUN_800d6b90;
-    _800fac5c[1] = Bttl_800d::FUN_800d6d18;
-    _800fac5c[2] = Bttl_800d::FUN_800d6f58;
-    _800fac5c[3] = Bttl_800d::FUN_800d7128;
-    _800fac5c[4] = Bttl_800d::FUN_800db678;
-    _800fac5c[5] = Bttl_800d::FUN_800db680;
-    _800fac5c[6] = Bttl_800d::FUN_800d7368;
-    _800fac5c[7] = Bttl_800d::FUN_800d7548;
-  }
-  /**
-   * <ol start="0">
-   *   <li>{@link Bttl_800d#FUN_800d7790}</li>
-   *   <li>{@link Bttl_800d#FUN_800d7920}</li>
-   *   <li>{@link Bttl_800d#FUN_800d7aec}</li>
-   *   <li>{@link Bttl_800d#FUN_800d7cdc}</li>
-   *   <li>{@link Bttl_800d#FUN_800db8a0}</li>
-   *   <li>{@link Bttl_800d#FUN_800db8a8}</li>
-   *   <li>{@link Bttl_800d#FUN_800d7ea8}</li>
-   *   <li>{@link Bttl_800d#FUN_800d80a0}</li>
-   * </ol>
-   */
-  public static final CameraSeptParamCallback[] _800fac7c = new CameraSeptParamCallback[8];
-  static {
-    _800fac7c[0] = Bttl_800d::FUN_800d7790;
-    _800fac7c[1] = Bttl_800d::FUN_800d7920;
-    _800fac7c[2] = Bttl_800d::FUN_800d7aec;
-    _800fac7c[3] = Bttl_800d::FUN_800d7cdc;
-    _800fac7c[4] = null;
-    _800fac7c[5] = null;
-    _800fac7c[6] = null;
-    _800fac7c[7] = null;
-  }
-  /**
-   * <ol start="0">
-   *   <li>{@link Bttl_800d#FUN_800d8274}</li>
-   *   <li>{@link Bttl_800d#FUN_800d8424}</li>
-   *   <li>{@link Bttl_800d#FUN_800d8614}</li>
-   *   <li>{@link Bttl_800d#FUN_800d8808}</li>
-   *   <li>{@link Bttl_800d#FUN_800dbb00}</li>
-   *   <li>{@link Bttl_800d#FUN_800dbb08}</li>
-   *   <li>{@link Bttl_800d#FUN_800d89f8}</li>
-   *   <li>{@link Bttl_800d#FUN_800d8bf4}</li>
-   * </ol>
-   */
-  public static final CameraOctParamCallback[] _800fac9c = new CameraOctParamCallback[8];
-  static {
-    _800fac9c[0] = Bttl_800d::FUN_800d8274;
-    _800fac9c[1] = Bttl_800d::FUN_800d8424;
-    _800fac9c[2] = Bttl_800d::FUN_800d8614;
-    _800fac9c[3] = Bttl_800d::FUN_800d8808;
-    _800fac9c[4] = Bttl_800d::FUN_800dbb00;
-    _800fac9c[5] = Bttl_800d::FUN_800dbb08;
-    _800fac9c[6] = Bttl_800d::FUN_800d89f8;
-    _800fac9c[7] = Bttl_800d::FUN_800d8bf4;
-  }
-  /**
-   * <ol start="0">
-   *   <li>{@link Bttl_800d#FUN_800dbe40}</li>
-   *   <li>{@link Bttl_800d#FUN_800dbe60}</li>
-   *   <li>{@link Bttl_800d#FUN_800dbe80}</li>
-   *   <li>{@link Bttl_800d#FUN_800dbe8c}</li>
-   *   <li>{@link Bttl_800d#FUN_800dbe98}</li>
-   *   <li>{@link Bttl_800d#FUN_800dbef0}</li>
-   *   <li>{@link Bttl_800d#FUN_800dbf70}</li>
-   *   <li>{@link Bttl_800d#FUN_800dbfd4}</li>
-   *   <li>{@link Bttl_800d#FUN_800d90c8}</li>
-   *   <li>{@link Bttl_800d#FUN_800d9154}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc070}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc078}</li>
-   *   <li>{@link Bttl_800d#FUN_800d9220}</li>
-   *   <li>{@link Bttl_800d#FUN_800d92bc}</li>
-   *   <li>{@link Bttl_800d#FUN_800d9380}</li>
-   *   <li>{@link Bttl_800d#FUN_800d9438}</li>
-   *   <li>{@link Bttl_800d#FUN_800d9518}</li>
-   *   <li>{@link Bttl_800d#FUN_800d9650}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc080}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc088}</li>
-   *   <li>{@link Bttl_800d#FUN_800d9788}</li>
-   *   <li>{@link Bttl_800d#FUN_800d98d0}</li>
-   *   <li>{@link Bttl_800d#FUN_800d9a68}</li>
-   *   <li>{@link Bttl_800d#FUN_800d9bd4}</li>
-   * </ol>
-   */
-  public static final Runnable[] cameraViewpointMethods_800facbc = new Runnable[24];
-  static {
-    cameraViewpointMethods_800facbc[0] = Bttl_800d::FUN_800dbe40;
-    cameraViewpointMethods_800facbc[1] = Bttl_800d::FUN_800dbe60;
-    cameraViewpointMethods_800facbc[2] = Bttl_800d::FUN_800dbe80;
-    cameraViewpointMethods_800facbc[3] = Bttl_800d::FUN_800dbe8c;
-    cameraViewpointMethods_800facbc[4] = Bttl_800d::FUN_800dbe98;
-    cameraViewpointMethods_800facbc[5] = Bttl_800d::FUN_800dbef0;
-    cameraViewpointMethods_800facbc[6] = Bttl_800d::FUN_800dbf70;
-    cameraViewpointMethods_800facbc[7] = Bttl_800d::FUN_800dbfd4;
-    cameraViewpointMethods_800facbc[8] = Bttl_800d::FUN_800d90c8;
-    cameraViewpointMethods_800facbc[9] = Bttl_800d::FUN_800d9154;
-    cameraViewpointMethods_800facbc[10] = Bttl_800d::FUN_800dc070;
-    cameraViewpointMethods_800facbc[11] = Bttl_800d::FUN_800dc078;
-    cameraViewpointMethods_800facbc[12] = Bttl_800d::FUN_800d9220;
-    cameraViewpointMethods_800facbc[13] = Bttl_800d::FUN_800d92bc;
-    cameraViewpointMethods_800facbc[14] = Bttl_800d::FUN_800d9380;
-    cameraViewpointMethods_800facbc[15] = Bttl_800d::FUN_800d9438;
-    cameraViewpointMethods_800facbc[16] = Bttl_800d::FUN_800d9518;
-    cameraViewpointMethods_800facbc[17] = Bttl_800d::FUN_800d9650;
-    cameraViewpointMethods_800facbc[18] = Bttl_800d::FUN_800dc080;
-    cameraViewpointMethods_800facbc[19] = Bttl_800d::FUN_800dc088;
-    cameraViewpointMethods_800facbc[20] = Bttl_800d::FUN_800d9788;
-    cameraViewpointMethods_800facbc[21] = Bttl_800d::FUN_800d98d0;
-    cameraViewpointMethods_800facbc[22] = Bttl_800d::FUN_800d9a68;
-    cameraViewpointMethods_800facbc[23] = Bttl_800d::FUN_800d9bd4;
-  }
-  /**
-   * <ol start="0">
-   *   <li>{@link Bttl_800d#FUN_800dc090}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc0b0}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc0d0}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc128}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc1a8}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc1b0}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc1b8}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc21c}</li>
-   *   <li>{@link Bttl_800d#FUN_800d9da0}</li>
-   *   <li>{@link Bttl_800d#FUN_800d9e2c}</li>
-   *   <li>{@link Bttl_800d#FUN_800d9ef8}</li>
-   *   <li>{@link Bttl_800d#FUN_800d9f94}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc2b8}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc2c0}</li>
-   *   <li>{@link Bttl_800d#FUN_800da058}</li>
-   *   <li>{@link Bttl_800d#FUN_800da110}</li>
-   *   <li>{@link Bttl_800d#FUN_800da1f0}</li>
-   *   <li>{@link Bttl_800d#FUN_800da328}</li>
-   *   <li>{@link Bttl_800d#FUN_800da460}</li>
-   *   <li>{@link Bttl_800d#FUN_800da5b0}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc2c8}</li>
-   *   <li>{@link Bttl_800d#FUN_800dc2d0}</li>
-   *   <li>{@link Bttl_800d#FUN_800da750}</li>
-   *   <li>{@link Bttl_800d#FUN_800da8bc}</li>
-   * </ol>
-   */
-  public static final Runnable[] cameraRefpointMethods_800fad1c = new Runnable[24];
-  static {
-    cameraRefpointMethods_800fad1c[0] = Bttl_800d::FUN_800dc090;
-    cameraRefpointMethods_800fad1c[1] = Bttl_800d::FUN_800dc0b0;
-    cameraRefpointMethods_800fad1c[2] = Bttl_800d::FUN_800dc0d0;
-    cameraRefpointMethods_800fad1c[3] = Bttl_800d::FUN_800dc128;
-    cameraRefpointMethods_800fad1c[4] = Bttl_800d::FUN_800dc1a8;
-    cameraRefpointMethods_800fad1c[5] = Bttl_800d::FUN_800dc1b0;
-    cameraRefpointMethods_800fad1c[6] = Bttl_800d::FUN_800dc1b8;
-    cameraRefpointMethods_800fad1c[7] = Bttl_800d::FUN_800dc21c;
-    cameraRefpointMethods_800fad1c[8] = Bttl_800d::FUN_800d9da0;
-    cameraRefpointMethods_800fad1c[9] = Bttl_800d::FUN_800d9e2c;
-    cameraRefpointMethods_800fad1c[10] = Bttl_800d::FUN_800d9ef8;
-    cameraRefpointMethods_800fad1c[11] = Bttl_800d::FUN_800d9f94;
-    cameraRefpointMethods_800fad1c[12] = Bttl_800d::FUN_800dc2b8;
-    cameraRefpointMethods_800fad1c[13] = Bttl_800d::FUN_800dc2c0;
-    cameraRefpointMethods_800fad1c[14] = Bttl_800d::FUN_800da058;
-    cameraRefpointMethods_800fad1c[15] = Bttl_800d::FUN_800da110;
-    cameraRefpointMethods_800fad1c[16] = Bttl_800d::FUN_800da1f0;
-    cameraRefpointMethods_800fad1c[17] = Bttl_800d::FUN_800da328;
-    cameraRefpointMethods_800fad1c[18] = Bttl_800d::FUN_800da460;
-    cameraRefpointMethods_800fad1c[19] = Bttl_800d::FUN_800da5b0;
-    cameraRefpointMethods_800fad1c[20] = Bttl_800d::FUN_800dc2c8;
-    cameraRefpointMethods_800fad1c[21] = Bttl_800d::FUN_800dc2d0;
-    cameraRefpointMethods_800fad1c[22] = Bttl_800d::FUN_800da750;
-    cameraRefpointMethods_800fad1c[23] = Bttl_800d::FUN_800da8bc;
-  }
-  /**
-   * <ol start="0">
-   *   <li>{@link Bttl_800d#refpointRawComponent}</li>
-   *   <li>{@link Bttl_800d#refpointAngleFrom0ToComponent}</li>
-   *   <li>{@link Bttl_800d#refpointNoop1}</li>
-   *   <li>{@link Bttl_800d#refpointNoop2}</li>
-   *   <li>{@link Bttl_800d#refpointDeltaFromRefpointToComponent}</li>
-   *   <li>{@link Bttl_800d#refpointAngleFromRefpointToComponent}</li>
-   *   <li>{@link Bttl_800d#refpointDeltaFromScriptedObjToComponent}</li>
-   *   <li>{@link Bttl_800d#refpointAngleFromScriptedObjToComponent}</li>
-   * </ol>
-   */
-  public static final ComponentFunction[] refpointComponentMethods_800fad7c = new ComponentFunction[8];
-  static {
-    refpointComponentMethods_800fad7c[0] = Bttl_800d::refpointRawComponent;
-    refpointComponentMethods_800fad7c[1] = Bttl_800d::refpointAngleFrom0ToComponent;
-    refpointComponentMethods_800fad7c[2] = Bttl_800d::refpointNoop1;
-    refpointComponentMethods_800fad7c[3] = Bttl_800d::refpointNoop2;
-    refpointComponentMethods_800fad7c[4] = Bttl_800d::refpointDeltaFromRefpointToComponent;
-    refpointComponentMethods_800fad7c[5] = Bttl_800d::refpointAngleFromRefpointToComponent;
-    refpointComponentMethods_800fad7c[6] = Bttl_800d::refpointDeltaFromScriptedObjToComponent;
-    refpointComponentMethods_800fad7c[7] = Bttl_800d::refpointAngleFromScriptedObjToComponent;
-  }
-  /**
-   * <ol start="0">
-   *   <li>{@link Bttl_800d#viewpointRawComponent}</li>
-   *   <li>{@link Bttl_800d#viewpointAngleFrom0ToComponent}</li>
-   *   <li>{@link Bttl_800d#viewpointDeltaFromViewpointToComponent}</li>
-   *   <li>{@link Bttl_800d#viewpointAngleFromViewpointToComponent}</li>
-   *   <li>{@link Bttl_800d#viewpointNoop1}</li>
-   *   <li>{@link Bttl_800d#viewpointNoop2}</li>
-   *   <li>{@link Bttl_800d#viewpointDeltaFromScriptedObjToComponent}</li>
-   *   <li>{@link Bttl_800d#viewpointAngleFromScriptedObjToComponent}</li>
-   * </ol>
-   */
-  public static final ComponentFunction[] viewpointComponentMethods_800fad9c = new ComponentFunction[8];
-  static {
-    viewpointComponentMethods_800fad9c[0] = Bttl_800d::viewpointRawComponent;
-    viewpointComponentMethods_800fad9c[1] = Bttl_800d::viewpointAngleFrom0ToComponent;
-    viewpointComponentMethods_800fad9c[2] = Bttl_800d::viewpointDeltaFromViewpointToComponent;
-    viewpointComponentMethods_800fad9c[3] = Bttl_800d::viewpointAngleFromViewpointToComponent;
-    viewpointComponentMethods_800fad9c[4] = Bttl_800d::viewpointNoop1;
-    viewpointComponentMethods_800fad9c[5] = Bttl_800d::viewpointNoop2;
-    viewpointComponentMethods_800fad9c[6] = Bttl_800d::viewpointDeltaFromScriptedObjToComponent;
-    viewpointComponentMethods_800fad9c[7] = Bttl_800d::viewpointAngleFromScriptedObjToComponent;
-  }
-
   public static final int[] enemyDeffFileIndices_800faec4 = {
     1, 2, 3, 7, 8, 9, 10, 12, 14, 16, 19, 22, 24, 27, 28, 33, 34, 35, 37, 38, 41, 42, 43, 44, 47, 48, 49, 50, 56, 57, 58, 59, 61, 62, 63, 64, 65, 66, 69, 73, 77, 81, 85, 89, 90, 91, 92, 93, 94, 95,
     98, 99, 100, 101, 102, 103, 107, 108, 109, 110, 111, 114, 115, 116, 0, 5, 6, 7, 8, 9, 10, 11, 12, 13, 17, 18, 19, 20, 22, 23, 26, 27, 28, 29, 30, 31, 32, 33, 34, 39, 40, 43, 44, 45, 46, 47, 48, 53, 56, 59,
@@ -1083,7 +722,7 @@ public final class Bttl_800c {
       vsyncMode_8007a3b8 = 3;
       battleFlags_800bc960 |= 0x40;
       setProjectionPlaneDistance(320);
-      resetCameraMovement();
+      camera_800c67f0.resetCameraMovement();
       pregameLoadingStage_800bb10c.incr();
     }
 
@@ -1663,10 +1302,10 @@ public final class Bttl_800c {
 
       mcqOffsetX_800c6774.add(mcqStepX_800c676c.get());
       mcqOffsetY_800c6778.add(mcqStepY_800c6770.get());
-      final int x0 = (mcqBaseOffsetX_800c66cc.get() * MathHelper.radToPsxDeg(calculateXAngleFromRefpointToViewpoint()) / 0x1000 + mcqOffsetX_800c6774.get()) % mcq.screenWidth_14;
+      final int x0 = (mcqBaseOffsetX_800c66cc.get() * MathHelper.radToPsxDeg(camera_800c67f0.calculateXAngleFromRefpointToViewpoint()) / 0x1000 + mcqOffsetX_800c6774.get()) % mcq.screenWidth_14;
       final int x1 = x0 - mcq.screenWidth_14;
       final int x2 = x0 + mcq.screenWidth_14;
-      int y = mcqOffsetY_800c6778.get() - MathHelper.radToPsxDeg(MathHelper.floorMod(calculateYAngleFromRefpointToViewpoint() + MathHelper.PI, MathHelper.TWO_PI)) + 1888;
+      int y = mcqOffsetY_800c6778.get() - MathHelper.radToPsxDeg(MathHelper.floorMod(camera_800c67f0.calculateYAngleFromRefpointToViewpoint() + MathHelper.PI, MathHelper.TWO_PI)) + 1888;
 
       battlePreloadedEntities_1f8003f4.skyboxTransforms.transfer.set(x0, y, orderingTableSize_1f8003c8 - 8.0f);
       RENDERER.queueOrthoUnderlayModel(battlePreloadedEntities_1f8003f4.skyboxObj, battlePreloadedEntities_1f8003f4.skyboxTransforms)

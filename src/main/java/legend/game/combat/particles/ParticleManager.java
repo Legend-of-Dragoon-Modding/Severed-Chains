@@ -51,13 +51,13 @@ import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800c.FUN_800cfc20;
 import static legend.game.combat.Bttl_800c.ZERO;
+import static legend.game.combat.Bttl_800c.camera_800c67f0;
 import static legend.game.combat.Bttl_800c.deffManager_800c693c;
 import static legend.game.combat.Bttl_800c.getModelObjectTranslation;
 import static legend.game.combat.Bttl_800c.rotateAndTranslateEffect;
 import static legend.game.combat.Bttl_800c.scriptGetScriptedObjectPos;
 import static legend.game.combat.Bttl_800c.seed_800fa754;
 import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
-import static legend.game.combat.Bttl_800d.refpointRawComponent;
 import static legend.game.combat.Bttl_800e.FUN_800e61e4;
 import static legend.game.combat.Bttl_800e.FUN_800e62a8;
 import static legend.game.combat.Bttl_800e.allocateEffectManager;
@@ -1214,8 +1214,8 @@ public class ParticleManager {
           // This is super bugged in retail and passes garbage as the last 3 params to both methods.
           // Hopefully this is fine with them all zeroed. This is used for the Glare's bewitching attack.
           particle.managerRotation_68.y = MathHelper.atan2(
-            refpointRawComponent(0, null, ZERO) - particle.particlePosition_50.x,
-            refpointRawComponent(2, null, ZERO) - particle.particlePosition_50.z
+            camera_800c67f0.refpointRawComponent(0, null, ZERO) - particle.particlePosition_50.x,
+            camera_800c67f0.refpointRawComponent(2, null, ZERO) - particle.particlePosition_50.z
           ) + MathHelper.TWO_PI / 4.0f;
         }
 
