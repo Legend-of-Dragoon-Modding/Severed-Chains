@@ -495,4 +495,10 @@ public abstract class BattleEntity27c extends BattleObject {
   public Vector3i getColour() {
     return this.colour; // defaultEffectColour_800fb94c;
   }
+
+  @Method(0x800f9e10L)
+  public void clearTempWeaponAndSpellStats() {
+    this.item_d4 = null;
+    this.spell_94 = null;
+  }
 }

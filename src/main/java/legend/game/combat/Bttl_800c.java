@@ -41,13 +41,7 @@ import legend.game.combat.effects.WeaponTrailEffect3c;
 import legend.game.combat.effects.WeaponTrailEffectSegment2c;
 import legend.game.combat.environment.BattleCamera;
 import legend.game.combat.environment.BattleHudBorderMetrics14;
-import legend.game.combat.environment.BattleItemMenuArrowUvMetrics06;
 import legend.game.combat.environment.BattleLightStruct64;
-import legend.game.combat.environment.BattleMenuBackgroundDisplayMetrics0c;
-import legend.game.combat.environment.BattleMenuBackgroundUvMetrics04;
-import legend.game.combat.environment.BattleMenuHighlightMetrics12;
-import legend.game.combat.environment.BattleMenuIconMetrics08;
-import legend.game.combat.environment.BattleMenuTextMetrics08;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
 import legend.game.combat.environment.BattleStage;
 import legend.game.combat.environment.BattleStageDarkening1800;
@@ -206,11 +200,8 @@ import static legend.game.combat.Bttl_800e.updateGameStateAndDeallocateMenu;
 import static legend.game.combat.Bttl_800f.FUN_800f1a00;
 import static legend.game.combat.Bttl_800f.FUN_800f417c;
 import static legend.game.combat.Bttl_800f.addFloatingNumberForBent;
-import static legend.game.combat.Bttl_800f.handleCombatMenu;
-import static legend.game.combat.Bttl_800f.initializeCombatMenuIcons;
 import static legend.game.combat.Bttl_800f.loadBattleHudTextures;
 import static legend.game.combat.Bttl_800f.loadMonster;
-import static legend.game.combat.Bttl_800f.toggleBattleMenuSelectorRendering;
 import static legend.game.combat.SBtld.loadAdditions;
 import static legend.game.combat.SBtld.loadEnemyDropsAndScript;
 import static legend.game.combat.SBtld.loadStageDataAndControllerScripts;
@@ -303,11 +294,6 @@ public final class Bttl_800c {
   public static int stageDarkeningClutWidth_800c695c;
 
   public static final ArrayRef<DragoonSpells09> dragoonSpells_800c6960 = MEMORY.ref(1, 0x800c6960L, ArrayRef.of(DragoonSpells09.class, 3, 9, DragoonSpells09::new));
-
-  /** These three are related to targeting */
-  public static final ShortRef _800c697c = MEMORY.ref(2, 0x800c697cL, ShortRef::new);
-  public static final ShortRef _800c697e = MEMORY.ref(2, 0x800c697eL, ShortRef::new);
-  public static final ShortRef _800c6980 = MEMORY.ref(2, 0x800c6980L, ShortRef::new);
 
   public static final List<CombatItem02> combatItems_800c6988 = new ArrayList<>();
   public static final BoolRef itemTargetAll_800c69c8 = MEMORY.ref(4, 0x800c69c8L, BoolRef::new);
@@ -423,12 +409,6 @@ public final class Bttl_800c {
   };
   public static final int[] targetAllItemIds_800c7124 = {193, 207, 208, 209, 210, 214, 216, 220, 241, 242, 243, 244, 245, 246, 247, 248, 250};
 
-  public static final BattleMenuBackgroundUvMetrics04 battleItemMenuScrollArrowUvMetrics_800c7190 = new BattleMenuBackgroundUvMetrics04(224, 8, 16, 8);
-  public static final int[] iconFlags_800c7194 = {4, 1, 5, 6, 2, 9, 3, 7};
-
-  public static final BattleMenuHighlightMetrics12 battleMenuHighlightMetrics_800c71bc = new BattleMenuHighlightMetrics12(0, 0, 24, 24, 232, 120, 23, 23, 0);
-  public static final int[] dragoonSpiritIconClutOffsets_800c71d0 = {152, 153, 154, 155, 156, 153, 157, 158, 154, 159};
-  public static final int[] battleMenuIconStates_800c71e4 = {0, 1, 2, 1};
   public static final int[] uiTextureElementBrightness_800c71ec = {96, 64, -128};
 
   /** Different sets of bents for different target types (chars, monsters, all) */
@@ -969,83 +949,6 @@ public final class Bttl_800c {
     new SpBarBorderMetrics04(2, 8, 2, 10),
     new SpBarBorderMetrics04(38, 8, 38, 10),
     new SpBarBorderMetrics04(2, 11, 38, 11),
-  };
-
-  public static final BattleItemMenuArrowUvMetrics06[] battleMenuBackgroundMetrics_800fb5dc = {
-    new BattleItemMenuArrowUvMetrics06(184, 72, 7, 7, 0),
-    new BattleItemMenuArrowUvMetrics06(176, 64, 7, 7, 0),
-    new BattleItemMenuArrowUvMetrics06(176, 64, 7, 7, 2),
-    new BattleItemMenuArrowUvMetrics06(176, 64, 7, 7, 1),
-    new BattleItemMenuArrowUvMetrics06(176, 64, 7, 7, 3),
-    new BattleItemMenuArrowUvMetrics06(184, 64, 7, 7, 0),
-    new BattleItemMenuArrowUvMetrics06(176, 72, 7, 7, 0),
-    new BattleItemMenuArrowUvMetrics06(176, 72, 7, 7, 2),
-    new BattleItemMenuArrowUvMetrics06(184, 64, 7, 7, 1),
-  };
-
-  public static final BattleMenuBackgroundDisplayMetrics0c[] battleMenuBackgroundDisplayMetrics_800fb614 = {
-    new BattleMenuBackgroundDisplayMetrics0c(0, -8, -8, 8, 8),
-    new BattleMenuBackgroundDisplayMetrics0c(1, 0, -8, 8, 8),
-    new BattleMenuBackgroundDisplayMetrics0c(2, -8, 0, 8, 8),
-    new BattleMenuBackgroundDisplayMetrics0c(3, 0, 0, 8, 8),
-    new BattleMenuBackgroundDisplayMetrics0c(0, 0, -8, 0, 8),
-    new BattleMenuBackgroundDisplayMetrics0c(0, -8, 0, 8, 0),
-    new BattleMenuBackgroundDisplayMetrics0c(1, 0, 0, 8, 0),
-    new BattleMenuBackgroundDisplayMetrics0c(2, 0, 0, 0, 8),
-  };
-
-  public static final BattleMenuIconMetrics08[] battleMenuIconMetrics_800fb674 = {
-    new BattleMenuIconMetrics08(112, 64, 28, 0),
-    new BattleMenuIconMetrics08(80, 64, 25, -1),
-    new BattleMenuIconMetrics08(64, 64, 24, 1),
-    new BattleMenuIconMetrics08(16, 64, 21, -1),
-    new BattleMenuIconMetrics08(32, 64, 22, -1),
-    new BattleMenuIconMetrics08(48, 64, 23, -1),
-    new BattleMenuIconMetrics08(96, 64, 26, 0),
-    new BattleMenuIconMetrics08(112, 64, 13, 0),
-    new BattleMenuIconMetrics08(0, 64, 20, -1),
-    new BattleMenuIconMetrics08(16, 16, 16, 16),
-    new BattleMenuIconMetrics08(16, 16, 16, 24),
-    new BattleMenuIconMetrics08(24, 16, 24, 24),
-  };
-
-  public static final int[][] battleMenuIconHeights_800fb6bc = {
-    {16, 16, 16},
-    {16, 16, 16},
-    {16, 24, 24},
-    {16, 24, 24},
-    {16, 24, 24},
-    {16, 24, 24},
-    {16, 16, 16},
-    {16, 16, 16},
-    {16, 24, 24},
-  };
-
-  public static final int[][] battleMenuIconVOffsets_800fb6f4 = {
-    {0, 16, 32},
-    {0, 16, 32},
-    {0, 16, 40},
-    {0, 16, 40},
-    {0, 16, 40},
-    {0, 16, 40},
-    {0, 16, 32},
-    {0, 16, 32},
-    {0, 16, 40},
-  };
-
-  public static final BattleMenuTextMetrics08[] battleMenuTextMetrics_800fb72c = {
-    new BattleMenuTextMetrics08(48, 56, 32, 33),
-    new BattleMenuTextMetrics08(144, 88, 40, 16),
-    new BattleMenuTextMetrics08(144, 72, 32, 14),
-    new BattleMenuTextMetrics08(16, 56, 32, 33),
-    new BattleMenuTextMetrics08(144, 64, 32, 33),
-    new BattleMenuTextMetrics08(144, 80, 32, 33),
-    new BattleMenuTextMetrics08(144, 104, 40, 15),
-    new BattleMenuTextMetrics08(0, 16, 32, 0),
-    new BattleMenuTextMetrics08(144, 96, 40, 14),
-    new BattleMenuTextMetrics08(0, 0, 0, 0),
-    new BattleMenuTextMetrics08(0, 0, 0, 0),
-    new BattleMenuTextMetrics08(0, 0, 0, 0),
   };
 
   @Method(0x800c7304L)
@@ -3357,22 +3260,22 @@ public final class Bttl_800c {
       }
 
       //LAB_800ccab4
-      initializeCombatMenuIcons(script.scriptState_04, displayableIconsBitset, disabledIconsBitset);
+      battleMenu_800c6c34.initializeMenuIcons(script.scriptState_04, displayableIconsBitset, disabledIconsBitset);
 
       script.scriptState_04.storage_44[7] &= 0xffff_efff;
       currentDisplayableIconsBitset_800c675c.set(displayableIconsBitset);
     }
 
     //LAB_800ccaec
-    toggleBattleMenuSelectorRendering(true);
+    battleMenu_800c6c34.toggleHighlight(true);
 
-    final int selectedAction = handleCombatMenu();
+    final int selectedAction = battleMenu_800c6c34.tickAndRender();
     if(selectedAction == 0) {
       //LAB_800ccb24
       return FlowControl.PAUSE_AND_REWIND;
     }
 
-    toggleBattleMenuSelectorRendering(false);
+    battleMenu_800c6c34.toggleHighlight(false);
     script.params_20[2].set(selectedAction - 1);
 
     //LAB_800ccb28

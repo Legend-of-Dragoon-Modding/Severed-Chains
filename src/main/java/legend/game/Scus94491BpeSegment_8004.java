@@ -361,7 +361,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[503] = Bttl_800f::FUN_800f9bd4;
     scriptSubFunctions_8004e29c[504] = Bttl_800f::FUN_800f9c00;
     scriptSubFunctions_8004e29c[505] = Bttl_800f::scriptRenderBattleHudBackground;
-    scriptSubFunctions_8004e29c[506] = Bttl_800f::FUN_800f9cac;
+    scriptSubFunctions_8004e29c[506] = Bttl_800f::scriptSetDisabledMenuIcons;
     scriptSubFunctions_8004e29c[507] = Bttl_800f::scriptCheckSpellOrStatusHit;
     scriptSubFunctions_8004e29c[508] = Bttl_800f::scriptCheckItemHit;
     scriptSubFunctions_8004e29c[509] = Bttl_800f::scriptFinishBentTurn;

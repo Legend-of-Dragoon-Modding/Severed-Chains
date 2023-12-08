@@ -146,8 +146,6 @@ import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Bttl_800c.FUN_800ca418;
 import static legend.game.combat.Bttl_800c._800c6930;
 import static legend.game.combat.Bttl_800c._800c6938;
-import static legend.game.combat.Bttl_800c._800c697e;
-import static legend.game.combat.Bttl_800c._800c6980;
 import static legend.game.combat.Bttl_800c.activePartyBattleHudCharacterDisplays_800c6c40;
 import static legend.game.combat.Bttl_800c.ailments_800fb3a0;
 import static legend.game.combat.Bttl_800c.aliveBentCount_800c669c;
@@ -206,14 +204,10 @@ import static legend.game.combat.Bttl_800d.loadModelAnim;
 import static legend.game.combat.Bttl_800d.loadModelTmd;
 import static legend.game.combat.Bttl_800d.optimisePacketsIfNecessary;
 import static legend.game.combat.Bttl_800f.buildUiTextureElement;
-import static legend.game.combat.Bttl_800f.clearBattleMenu;
-import static legend.game.combat.Bttl_800f.clearSpellAndItemMenu;
 import static legend.game.combat.Bttl_800f.deleteFloatingTextDigits;
 import static legend.game.combat.Bttl_800f.drawFloatingNumbers;
-import static legend.game.combat.Bttl_800f.drawItemMenuElements;
 import static legend.game.combat.Bttl_800f.drawLine;
 import static legend.game.combat.Bttl_800f.getTargetEnemyName;
-import static legend.game.combat.Bttl_800f.handleSpellAndItemMenu;
 import static legend.game.combat.Bttl_800f.prepareItemList;
 import static legend.game.combat.Bttl_800f.renderNumber;
 import static legend.game.combat.Bttl_800f.tickFloatingNumbers;
@@ -3575,8 +3569,8 @@ public final class Bttl_800e {
     battleMenu_800c6c34 = new BattleMenuStruct58();
 
     clearBattleHudDisplay();
-    clearSpellAndItemMenu();
-    clearBattleMenu();
+    spellAndItemMenu_800c6b60.clearSpellAndItemMenu();
+    battleMenu_800c6c34.clear();
 
     monsterCount_800c6b9c.set(0);
     itemTargetAll_800c69c8.set(false);
@@ -3596,8 +3590,8 @@ public final class Bttl_800e {
 
     usedRepeatItems_800c6c3c.clear();
 
-    _800c697e.set((short)0);
-    _800c6980.set((short)0);
+    battleMenu_800c6c34._800c697e = 0;
+    battleMenu_800c6c34._800c6980 = 0;
     dragoonSpaceElement_800c6b64 = null;
 
     //LAB_800ee894
@@ -3935,7 +3929,7 @@ public final class Bttl_800e {
 
       //LAB_800efd00
       tickFloatingNumbers();
-      handleSpellAndItemMenu();
+      spellAndItemMenu_800c6b60.handleSpellAndItemMenu();
     }
     //LAB_800efd10
   }
@@ -4220,7 +4214,7 @@ public final class Bttl_800e {
       drawFloatingNumbers();
 
       // Use item menu
-      drawItemMenuElements();
+      battleMenu_800c6c34.drawItemMenuElements();
 
       // Targeting
       final BattleMenuStruct58 menu = battleMenu_800c6c34;
