@@ -143,35 +143,35 @@ import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
-import static legend.game.combat.Bttl_800c.FUN_800cf684;
-import static legend.game.combat.Bttl_800c.FUN_800cfb94;
-import static legend.game.combat.Bttl_800c.currentStage_800c66a4;
-import static legend.game.combat.Bttl_800c.deffManager_800c693c;
-import static legend.game.combat.Bttl_800c.getRelativeOffset;
-import static legend.game.combat.Bttl_800c.melbuStageIndices_800fb064;
-import static legend.game.combat.Bttl_800c.scriptGetScriptedObjectPos;
-import static legend.game.combat.Bttl_800c.seed_800fa754;
-import static legend.game.combat.Bttl_800c.spriteMetrics_800c6948;
-import static legend.game.combat.Bttl_800d.getRotationAndScaleFromTransforms;
-import static legend.game.combat.Bttl_800d.getRotationFromTransforms;
-import static legend.game.combat.Bttl_800d.loadModelAnim;
-import static legend.game.combat.Bttl_800d.optimisePacketsIfNecessary;
-import static legend.game.combat.Bttl_800d.renderButtonPressHudElement1;
-import static legend.game.combat.Bttl_800d.renderTmdSpriteEffect;
-import static legend.game.combat.Bttl_800e.FUN_800e60e0;
-import static legend.game.combat.Bttl_800e.FUN_800e6170;
-import static legend.game.combat.Bttl_800e.FUN_800e61e4;
-import static legend.game.combat.Bttl_800e.FUN_800e62a8;
-import static legend.game.combat.Bttl_800e.FUN_800e9178;
-import static legend.game.combat.Bttl_800e.allocateEffectManager;
-import static legend.game.combat.Bttl_800e.applyScreenDarkening;
-import static legend.game.combat.Bttl_800e.calculateEffectTransforms;
-import static legend.game.combat.Bttl_800e.getDeffPart;
-import static legend.game.combat.Bttl_800e.getSpriteMetricsFromSource;
-import static legend.game.combat.Bttl_800e.perspectiveTransformXyz;
-import static legend.game.combat.Bttl_800e.renderBillboardSpriteEffect;
-import static legend.game.combat.Bttl_800e.renderGenericSpriteAtZOffset0;
-import static legend.game.combat.Bttl_800e.transformToScreenSpace;
+import static legend.game.combat.Bttl.FUN_800cf684;
+import static legend.game.combat.Bttl.FUN_800cfb94;
+import static legend.game.combat.Bttl.FUN_800e60e0;
+import static legend.game.combat.Bttl.FUN_800e6170;
+import static legend.game.combat.Bttl.FUN_800e61e4;
+import static legend.game.combat.Bttl.FUN_800e62a8;
+import static legend.game.combat.Bttl.FUN_800e9178;
+import static legend.game.combat.Bttl.allocateEffectManager;
+import static legend.game.combat.Bttl.applyScreenDarkening;
+import static legend.game.combat.Bttl.calculateEffectTransforms;
+import static legend.game.combat.Bttl.currentStage_800c66a4;
+import static legend.game.combat.Bttl.deffManager_800c693c;
+import static legend.game.combat.Bttl.getDeffPart;
+import static legend.game.combat.Bttl.getRelativeOffset;
+import static legend.game.combat.Bttl.getRotationAndScaleFromTransforms;
+import static legend.game.combat.Bttl.getRotationFromTransforms;
+import static legend.game.combat.Bttl.getSpriteMetricsFromSource;
+import static legend.game.combat.Bttl.loadModelAnim;
+import static legend.game.combat.Bttl.melbuStageIndices_800fb064;
+import static legend.game.combat.Bttl.optimisePacketsIfNecessary;
+import static legend.game.combat.Bttl.perspectiveTransformXyz;
+import static legend.game.combat.Bttl.renderBillboardSpriteEffect;
+import static legend.game.combat.Bttl.renderButtonPressHudElement1;
+import static legend.game.combat.Bttl.renderGenericSpriteAtZOffset0;
+import static legend.game.combat.Bttl.renderTmdSpriteEffect;
+import static legend.game.combat.Bttl.scriptGetScriptedObjectPos;
+import static legend.game.combat.Bttl.seed_800fa754;
+import static legend.game.combat.Bttl.spriteMetrics_800c6948;
+import static legend.game.combat.Bttl.transformToScreenSpace;
 
 public final class SEffe {
   private SEffe() { }
@@ -1377,7 +1377,7 @@ public final class SEffe {
       hitPropertyValue = staticTestAdditionHitProperties_800fb7c0[hitNum].get(hitPropertyIndex);
     } else {
       //LAB_8010628c
-      hitPropertyValue = Bttl_800c.getHitProperty(charSlot, hitNum, hitPropertyIndex) & 0xff;
+      hitPropertyValue = Bttl.getHitProperty(charSlot, hitNum, hitPropertyIndex) & 0xff;
     }
 
     //LAB_80106298

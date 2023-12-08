@@ -6,9 +6,9 @@ import legend.game.combat.bent.BattleEntity27c;
 import legend.game.scripting.ScriptState;
 import org.joml.Vector3f;
 
-import static legend.game.combat.Bttl_800c.getModelObjectTranslation;
-import static legend.game.combat.Bttl_800c.seed_800fa754;
-import static legend.game.combat.Bttl_800e.renderGenericSpriteAtZOffset0;
+import static legend.game.combat.Bttl.getModelObjectTranslation;
+import static legend.game.combat.Bttl.renderGenericSpriteAtZOffset0;
+import static legend.game.combat.Bttl.seed_800fa754;
 
 public class MonsterDeathEffect34 implements Effect {
   /** short; Indicates highest part index to turn off. Parts at index <= value are "destroyed" */

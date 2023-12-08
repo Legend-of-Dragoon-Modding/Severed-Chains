@@ -3,8 +3,8 @@ package legend.game.combat.formula;
 import legend.game.characters.Element;
 import legend.game.combat.types.AttackType;
 
-import static legend.game.combat.Bttl_800c.dragoonSpaceElement_800c6b64;
-import static legend.game.combat.Bttl_800f.adjustDamageForPower;
+import static legend.game.combat.Bttl.adjustDamageForPower;
+import static legend.game.combat.Bttl.dragoonSpaceElement_800c6b64;
 
 public final class PhysicalDamageFormula {
   private PhysicalDamageFormula() { }

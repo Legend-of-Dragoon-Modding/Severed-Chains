@@ -13,7 +13,7 @@ import org.joml.Vector3f;
 import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
-import static legend.game.combat.Bttl_800c.transformWorldspaceToScreenspace;
+import static legend.game.combat.Bttl.transformWorldspaceToScreenspace;
 
 public class GuardEffect06 implements Effect {
   private static final GuardEffectMetrics04[] guardEffectMetrics_800fa76c = {

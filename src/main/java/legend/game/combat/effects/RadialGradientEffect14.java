@@ -11,7 +11,7 @@ import org.joml.Vector3f;
 import static legend.core.GameEngine.GPU;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
-import static legend.game.combat.Bttl_800c.FUN_800cfb14;
+import static legend.game.combat.Bttl.FUN_800cfb14;
 
 public class RadialGradientEffect14 implements Effect {
   private final int circleSubdivisionModifier_00;

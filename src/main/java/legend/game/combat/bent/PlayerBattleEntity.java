@@ -19,8 +19,8 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
-import static legend.game.combat.Bttl_800c.getHitProperty;
-import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
+import static legend.game.combat.Bttl.getHitProperty;
+import static legend.game.combat.Bttl.spellStats_800fa0b8;
 
 public class PlayerBattleEntity extends BattleEntity27c {
   private final Latch<ScriptState<PlayerBattleEntity>> scriptState;

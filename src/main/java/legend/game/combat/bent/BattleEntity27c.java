@@ -26,13 +26,13 @@ import static legend.game.Scus94491BpeSegment_8002.animateModel;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
-import static legend.game.combat.Bttl_800c.FUN_800c952c;
-import static legend.game.combat.Bttl_800c.FUN_800ca194;
-import static legend.game.combat.Bttl_800c.allBentCount_800c66d0;
-import static legend.game.combat.Bttl_800c.charCount_800c677c;
-import static legend.game.combat.Bttl_800c.monsterCount_800c6768;
-import static legend.game.combat.Bttl_800c.playerBattleScript_800c66fc;
-import static legend.game.combat.Bttl_800e.renderBttlModel;
+import static legend.game.combat.Bttl.FUN_800c952c;
+import static legend.game.combat.Bttl.FUN_800ca194;
+import static legend.game.combat.Bttl.allBentCount_800c66d0;
+import static legend.game.combat.Bttl.charCount_800c677c;
+import static legend.game.combat.Bttl.monsterCount_800c6768;
+import static legend.game.combat.Bttl.playerBattleScript_800c66fc;
+import static legend.game.combat.Bttl.renderBttlModel;
 
 public abstract class BattleEntity27c extends BattleObject {
   private static final int[] vramSlotIndices_800fa730 = {0, 1, 2, 3, 4, 5, 6, 14, 15, 16};

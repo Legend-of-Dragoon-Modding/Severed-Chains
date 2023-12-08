@@ -55,7 +55,7 @@ import static legend.game.Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
 import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.unlockedUltimateAddition_800bc910;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
-import static legend.game.combat.Bttl_800c.spellStats_800fa0b8;
+import static legend.game.combat.Bttl.spellStats_800fa0b8;
 
 public class PostBattleScreen extends MenuScreen {
   private static final LodString NEW_ADDITION = new LodString("New Addition");

@@ -8,13 +8,13 @@ import legend.game.scripting.ScriptState;
 import legend.game.types.CContainer;
 import legend.game.types.Model124;
 
-import static legend.game.combat.Bttl_800d.FUN_800dd89c;
-import static legend.game.combat.Bttl_800d.applyAnimation;
-import static legend.game.combat.Bttl_800e.FUN_800e60e0;
-import static legend.game.combat.Bttl_800e.FUN_800e6170;
-import static legend.game.combat.Bttl_800e.FUN_800e61e4;
-import static legend.game.combat.Bttl_800e.FUN_800e62a8;
-import static legend.game.combat.Bttl_800e.calculateEffectTransforms;
+import static legend.game.combat.Bttl.FUN_800dd89c;
+import static legend.game.combat.Bttl.FUN_800e60e0;
+import static legend.game.combat.Bttl.FUN_800e6170;
+import static legend.game.combat.Bttl.FUN_800e61e4;
+import static legend.game.combat.Bttl.FUN_800e62a8;
+import static legend.game.combat.Bttl.applyAnimation;
+import static legend.game.combat.Bttl.calculateEffectTransforms;
 
 public class ModelEffect13c implements Effect {
   public int _00;

@@ -4,10 +4,7 @@ import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.core.spu.Voice;
 import legend.game.combat.Battle;
-import legend.game.combat.Bttl_800c;
-import legend.game.combat.Bttl_800d;
-import legend.game.combat.Bttl_800e;
-import legend.game.combat.Bttl_800f;
+import legend.game.combat.Bttl;
 import legend.game.combat.SEffe;
 import legend.game.credits.Credits;
 import legend.game.credits.FinalFmv;
@@ -154,77 +151,77 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[16] = Scus94491BpeSegment::FUN_800176c0;
     scriptSubFunctions_8004e29c[17] = Scus94491BpeSegment::FUN_800176ec;
 
-    scriptSubFunctions_8004e29c[32] = Bttl_800d::scriptResetCameraMovement;
-    scriptSubFunctions_8004e29c[33] = Bttl_800d::FUN_800dac20;
-    scriptSubFunctions_8004e29c[34] = Bttl_800d::FUN_800db034;
-    scriptSubFunctions_8004e29c[35] = Bttl_800d::FUN_800db460;
-    scriptSubFunctions_8004e29c[36] = Bttl_800d::FUN_800db574;
-    scriptSubFunctions_8004e29c[37] = Bttl_800d::FUN_800db688;
-    scriptSubFunctions_8004e29c[38] = Bttl_800d::FUN_800db79c;
-    scriptSubFunctions_8004e29c[39] = Bttl_800d::FUN_800db8b0;
-    scriptSubFunctions_8004e29c[40] = Bttl_800d::FUN_800db9e0;
-    scriptSubFunctions_8004e29c[41] = Bttl_800d::scriptIsCameraMoving;
-    scriptSubFunctions_8004e29c[42] = Bttl_800d::scriptCalculateCameraValue;
-    scriptSubFunctions_8004e29c[43] = Bttl_800d::FUN_800dbb9c;
-    scriptSubFunctions_8004e29c[44] = Bttl_800d::scriptWobbleCamera;
-    scriptSubFunctions_8004e29c[45] = Bttl_800d::scriptStopCameraMovement;
-    scriptSubFunctions_8004e29c[46] = Bttl_800d::scriptSetViewportTwist;
-    scriptSubFunctions_8004e29c[47] = Bttl_800d::FUN_800dbc80;
-    scriptSubFunctions_8004e29c[48] = Bttl_800d::scriptSetCameraProjectionPlaneDistance;
-    scriptSubFunctions_8004e29c[49] = Bttl_800d::scriptGetProjectionPlaneDistance;
-    scriptSubFunctions_8004e29c[50] = Bttl_800d::scriptMoveCameraProjectionPlane;
+    scriptSubFunctions_8004e29c[32] = Bttl::scriptResetCameraMovement;
+    scriptSubFunctions_8004e29c[33] = Bttl::FUN_800dac20;
+    scriptSubFunctions_8004e29c[34] = Bttl::FUN_800db034;
+    scriptSubFunctions_8004e29c[35] = Bttl::FUN_800db460;
+    scriptSubFunctions_8004e29c[36] = Bttl::FUN_800db574;
+    scriptSubFunctions_8004e29c[37] = Bttl::FUN_800db688;
+    scriptSubFunctions_8004e29c[38] = Bttl::FUN_800db79c;
+    scriptSubFunctions_8004e29c[39] = Bttl::FUN_800db8b0;
+    scriptSubFunctions_8004e29c[40] = Bttl::FUN_800db9e0;
+    scriptSubFunctions_8004e29c[41] = Bttl::scriptIsCameraMoving;
+    scriptSubFunctions_8004e29c[42] = Bttl::scriptCalculateCameraValue;
+    scriptSubFunctions_8004e29c[43] = Bttl::FUN_800dbb9c;
+    scriptSubFunctions_8004e29c[44] = Bttl::scriptWobbleCamera;
+    scriptSubFunctions_8004e29c[45] = Bttl::scriptStopCameraMovement;
+    scriptSubFunctions_8004e29c[46] = Bttl::scriptSetViewportTwist;
+    scriptSubFunctions_8004e29c[47] = Bttl::FUN_800dbc80;
+    scriptSubFunctions_8004e29c[48] = Bttl::scriptSetCameraProjectionPlaneDistance;
+    scriptSubFunctions_8004e29c[49] = Bttl::scriptGetProjectionPlaneDistance;
+    scriptSubFunctions_8004e29c[50] = Bttl::scriptMoveCameraProjectionPlane;
 
-    scriptSubFunctions_8004e29c[128] = Bttl_800c::scriptSetBentPos;
-    scriptSubFunctions_8004e29c[129] = Bttl_800c::scriptGetBentPos;
-    scriptSubFunctions_8004e29c[130] = Bttl_800c::scriptSetBentRotation;
-    scriptSubFunctions_8004e29c[131] = Bttl_800c::FUN_800cc7d8;
-    scriptSubFunctions_8004e29c[132] = Bttl_800c::scriptSetBentRotationY;
-    scriptSubFunctions_8004e29c[133] = Bttl_800c::loadAllCharAttackAnimations;
-    scriptSubFunctions_8004e29c[134] = Bttl_800c::scriptGetBentRotation;
+    scriptSubFunctions_8004e29c[128] = Bttl::scriptSetBentPos;
+    scriptSubFunctions_8004e29c[129] = Bttl::scriptGetBentPos;
+    scriptSubFunctions_8004e29c[130] = Bttl::scriptSetBentRotation;
+    scriptSubFunctions_8004e29c[131] = Bttl::FUN_800cc7d8;
+    scriptSubFunctions_8004e29c[132] = Bttl::scriptSetBentRotationY;
+    scriptSubFunctions_8004e29c[133] = Bttl::loadAllCharAttackAnimations;
+    scriptSubFunctions_8004e29c[134] = Bttl::scriptGetBentRotation;
     scriptSubFunctions_8004e29c[135] = Scus94491BpeSegment::scriptRewindAndPause2;
-    scriptSubFunctions_8004e29c[136] = Bttl_800c::scriptGetMonsterStatusResistFlags;
+    scriptSubFunctions_8004e29c[136] = Bttl::scriptGetMonsterStatusResistFlags;
     scriptSubFunctions_8004e29c[137] = Scus94491BpeSegment::scriptRewindAndPause2;
-    scriptSubFunctions_8004e29c[138] = Bttl_800c::FUN_800cb618;
-    scriptSubFunctions_8004e29c[139] = Bttl_800c::scriptSetInterpolationEnabled;
-    scriptSubFunctions_8004e29c[140] = Bttl_800c::FUN_800cb6bc;
-    scriptSubFunctions_8004e29c[141] = Bttl_800c::FUN_800cb764;
-    scriptSubFunctions_8004e29c[142] = Bttl_800c::FUN_800cb76c;
-    scriptSubFunctions_8004e29c[143] = Bttl_800c::scriptGetLoadingBentAnimationIndex;
-    scriptSubFunctions_8004e29c[144] = Bttl_800c::scriptPauseAnimation;
-    scriptSubFunctions_8004e29c[145] = Bttl_800c::scriptResumeAnimation;
-    scriptSubFunctions_8004e29c[146] = Bttl_800c::scriptSetBentAnimationLoopState;
-    scriptSubFunctions_8004e29c[147] = Bttl_800c::scriptAnimationHasFinished;
-    scriptSubFunctions_8004e29c[148] = Bttl_800c::FUN_800cbb00;
-    scriptSubFunctions_8004e29c[149] = Bttl_800c::FUN_800cbc14;
-    scriptSubFunctions_8004e29c[150] = Bttl_800c::FUN_800cbde0;
-    scriptSubFunctions_8004e29c[151] = Bttl_800c::FUN_800cbef8;
-    scriptSubFunctions_8004e29c[152] = Bttl_800c::FUN_800cc0c8;
-    scriptSubFunctions_8004e29c[153] = Bttl_800c::FUN_800cc1cc;
-    scriptSubFunctions_8004e29c[154] = Bttl_800c::FUN_800cc364;
-    scriptSubFunctions_8004e29c[155] = Bttl_800c::FUN_800cc46c;
-    scriptSubFunctions_8004e29c[156] = Bttl_800c::scriptBentLookAtBent;
-    scriptSubFunctions_8004e29c[157] = Bttl_800c::FUN_800cc698;
-    scriptSubFunctions_8004e29c[158] = Bttl_800c::FUN_800cc784;
-    scriptSubFunctions_8004e29c[159] = Bttl_800c::scriptLoadAttackAnimations;
-    scriptSubFunctions_8004e29c[160] = Bttl_800c::scriptSetUpAndHandleCombatMenu;
+    scriptSubFunctions_8004e29c[138] = Bttl::FUN_800cb618;
+    scriptSubFunctions_8004e29c[139] = Bttl::scriptSetInterpolationEnabled;
+    scriptSubFunctions_8004e29c[140] = Bttl::FUN_800cb6bc;
+    scriptSubFunctions_8004e29c[141] = Bttl::FUN_800cb764;
+    scriptSubFunctions_8004e29c[142] = Bttl::FUN_800cb76c;
+    scriptSubFunctions_8004e29c[143] = Bttl::scriptGetLoadingBentAnimationIndex;
+    scriptSubFunctions_8004e29c[144] = Bttl::scriptPauseAnimation;
+    scriptSubFunctions_8004e29c[145] = Bttl::scriptResumeAnimation;
+    scriptSubFunctions_8004e29c[146] = Bttl::scriptSetBentAnimationLoopState;
+    scriptSubFunctions_8004e29c[147] = Bttl::scriptAnimationHasFinished;
+    scriptSubFunctions_8004e29c[148] = Bttl::FUN_800cbb00;
+    scriptSubFunctions_8004e29c[149] = Bttl::FUN_800cbc14;
+    scriptSubFunctions_8004e29c[150] = Bttl::FUN_800cbde0;
+    scriptSubFunctions_8004e29c[151] = Bttl::FUN_800cbef8;
+    scriptSubFunctions_8004e29c[152] = Bttl::FUN_800cc0c8;
+    scriptSubFunctions_8004e29c[153] = Bttl::FUN_800cc1cc;
+    scriptSubFunctions_8004e29c[154] = Bttl::FUN_800cc364;
+    scriptSubFunctions_8004e29c[155] = Bttl::FUN_800cc46c;
+    scriptSubFunctions_8004e29c[156] = Bttl::scriptBentLookAtBent;
+    scriptSubFunctions_8004e29c[157] = Bttl::FUN_800cc698;
+    scriptSubFunctions_8004e29c[158] = Bttl::FUN_800cc784;
+    scriptSubFunctions_8004e29c[159] = Bttl::scriptLoadAttackAnimations;
+    scriptSubFunctions_8004e29c[160] = Bttl::scriptSetUpAndHandleCombatMenu;
     scriptSubFunctions_8004e29c[161] = Scus94491BpeSegment::scriptRewindAndPause2;
     scriptSubFunctions_8004e29c[162] = Scus94491BpeSegment::scriptRewindAndPause2;
     scriptSubFunctions_8004e29c[163] = Scus94491BpeSegment::scriptRewindAndPause2;
-    scriptSubFunctions_8004e29c[164] = Bttl_800c::scriptRenderDamage;
-    scriptSubFunctions_8004e29c[165] = Bttl_800c::scriptAddFloatingNumberForBent;
-    scriptSubFunctions_8004e29c[166] = Bttl_800c::FUN_800ccba4;
-    scriptSubFunctions_8004e29c[167] = Bttl_800c::scriptGetCharOrMonsterId;
-    scriptSubFunctions_8004e29c[168] = Bttl_800c::scriptSetBentStat;
-    scriptSubFunctions_8004e29c[169] = Bttl_800c::scriptGetBentStat;
-    scriptSubFunctions_8004e29c[170] = Bttl_800c::scriptSetPostBattleAction;
-    scriptSubFunctions_8004e29c[171] = Bttl_800c::FUN_800ccec8;
-    scriptSubFunctions_8004e29c[172] = Bttl_800c::FUN_800ccef8;
-    scriptSubFunctions_8004e29c[173] = Bttl_800c::scriptSetBentDeadAndDropLoot;
-    scriptSubFunctions_8004e29c[174] = Bttl_800c::scriptGetHitProperty;
-    scriptSubFunctions_8004e29c[175] = Bttl_800c::scriptSetBentDead;
-    scriptSubFunctions_8004e29c[176] = Bttl_800c::scriptLevelUpAddition;
-    scriptSubFunctions_8004e29c[177] = Bttl_800c::scriptGetBentStat2;
-    scriptSubFunctions_8004e29c[178] = Bttl_800c::scriptSetBentRawStat;
+    scriptSubFunctions_8004e29c[164] = Bttl::scriptRenderDamage;
+    scriptSubFunctions_8004e29c[165] = Bttl::scriptAddFloatingNumberForBent;
+    scriptSubFunctions_8004e29c[166] = Bttl::FUN_800ccba4;
+    scriptSubFunctions_8004e29c[167] = Bttl::scriptGetCharOrMonsterId;
+    scriptSubFunctions_8004e29c[168] = Bttl::scriptSetBentStat;
+    scriptSubFunctions_8004e29c[169] = Bttl::scriptGetBentStat;
+    scriptSubFunctions_8004e29c[170] = Bttl::scriptSetPostBattleAction;
+    scriptSubFunctions_8004e29c[171] = Bttl::FUN_800ccec8;
+    scriptSubFunctions_8004e29c[172] = Bttl::FUN_800ccef8;
+    scriptSubFunctions_8004e29c[173] = Bttl::scriptSetBentDeadAndDropLoot;
+    scriptSubFunctions_8004e29c[174] = Bttl::scriptGetHitProperty;
+    scriptSubFunctions_8004e29c[175] = Bttl::scriptSetBentDead;
+    scriptSubFunctions_8004e29c[176] = Bttl::scriptLevelUpAddition;
+    scriptSubFunctions_8004e29c[177] = Bttl::scriptGetBentStat2;
+    scriptSubFunctions_8004e29c[178] = Bttl::scriptSetBentRawStat;
 
     scriptSubFunctions_8004e29c[192] = Scus94491BpeSegment_8002::scriptGetFreeTextboxIndex;
     scriptSubFunctions_8004e29c[193] = Scus94491BpeSegment_8002::scriptInitTextbox;
@@ -276,111 +273,111 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[254] = Scus94491BpeSegment::scriptSetAllSoundSequenceVolumes;
     scriptSubFunctions_8004e29c[255] = Scus94491BpeSegment::scriptSssqFadeIn;
 
-    scriptSubFunctions_8004e29c[320] = Bttl_800c::scriptEnableBentTextureAnimation;
+    scriptSubFunctions_8004e29c[320] = Bttl::scriptEnableBentTextureAnimation;
     scriptSubFunctions_8004e29c[321] = Scus94491BpeSegment::scriptRewindAndPause2;
-    scriptSubFunctions_8004e29c[322] = Bttl_800c::scriptSetLoadingBentAnimationIndex;
-    scriptSubFunctions_8004e29c[323] = Bttl_800c::FUN_800cb95c;
+    scriptSubFunctions_8004e29c[322] = Bttl::scriptSetLoadingBentAnimationIndex;
+    scriptSubFunctions_8004e29c[323] = Bttl::FUN_800cb95c;
     scriptSubFunctions_8004e29c[324] = Scus94491BpeSegment::scriptRewindAndPause2;
 
-    scriptSubFunctions_8004e29c[352] = Bttl_800c::scriptSetModelPartVisibility;
-    scriptSubFunctions_8004e29c[353] = Bttl_800e::scriptCopyVram;
-    scriptSubFunctions_8004e29c[354] = Bttl_800c::FUN_800cd468;
-    scriptSubFunctions_8004e29c[355] = Bttl_800c::FUN_800cd4b0;
-    scriptSubFunctions_8004e29c[356] = Bttl_800c::FUN_800cd4f0;
-    scriptSubFunctions_8004e29c[357] = Bttl_800c::scriptAddCombatant;
-    scriptSubFunctions_8004e29c[358] = Bttl_800c::scriptDeallocateAndRemoveCombatant;
-    scriptSubFunctions_8004e29c[359] = Bttl_800c::FUN_800cda78;
-    scriptSubFunctions_8004e29c[360] = Bttl_800c::scriptAllocateBent;
-    scriptSubFunctions_8004e29c[361] = Bttl_800c::FUN_800cd740;
-    scriptSubFunctions_8004e29c[362] = Bttl_800c::FUN_800cd7a8;
-    scriptSubFunctions_8004e29c[363] = Bttl_800c::FUN_800cd810;
-    scriptSubFunctions_8004e29c[364] = Bttl_800c::FUN_800cd8a4;
-    scriptSubFunctions_8004e29c[365] = Bttl_800c::scriptGetBentNobj;
-    scriptSubFunctions_8004e29c[366] = Bttl_800c::scriptDeallocateCombatant;
-    scriptSubFunctions_8004e29c[367] = Bttl_800c::scriptStopRenderingStage;
-    scriptSubFunctions_8004e29c[368] = Bttl_800c::scriptLoadStage;
-    scriptSubFunctions_8004e29c[369] = Bttl_800c::FUN_800cd910;
-    scriptSubFunctions_8004e29c[370] = Bttl_800c::scriptGetCombatantIndex;
-    scriptSubFunctions_8004e29c[371] = Bttl_800c::scriptGetBentSlot;
-    scriptSubFunctions_8004e29c[372] = Bttl_800c::scriptDisableCombat;
+    scriptSubFunctions_8004e29c[352] = Bttl::scriptSetModelPartVisibility;
+    scriptSubFunctions_8004e29c[353] = Bttl::scriptCopyVram;
+    scriptSubFunctions_8004e29c[354] = Bttl::FUN_800cd468;
+    scriptSubFunctions_8004e29c[355] = Bttl::FUN_800cd4b0;
+    scriptSubFunctions_8004e29c[356] = Bttl::FUN_800cd4f0;
+    scriptSubFunctions_8004e29c[357] = Bttl::scriptAddCombatant;
+    scriptSubFunctions_8004e29c[358] = Bttl::scriptDeallocateAndRemoveCombatant;
+    scriptSubFunctions_8004e29c[359] = Bttl::FUN_800cda78;
+    scriptSubFunctions_8004e29c[360] = Bttl::scriptAllocateBent;
+    scriptSubFunctions_8004e29c[361] = Bttl::FUN_800cd740;
+    scriptSubFunctions_8004e29c[362] = Bttl::FUN_800cd7a8;
+    scriptSubFunctions_8004e29c[363] = Bttl::FUN_800cd810;
+    scriptSubFunctions_8004e29c[364] = Bttl::FUN_800cd8a4;
+    scriptSubFunctions_8004e29c[365] = Bttl::scriptGetBentNobj;
+    scriptSubFunctions_8004e29c[366] = Bttl::scriptDeallocateCombatant;
+    scriptSubFunctions_8004e29c[367] = Bttl::scriptStopRenderingStage;
+    scriptSubFunctions_8004e29c[368] = Bttl::scriptLoadStage;
+    scriptSubFunctions_8004e29c[369] = Bttl::FUN_800cd910;
+    scriptSubFunctions_8004e29c[370] = Bttl::scriptGetCombatantIndex;
+    scriptSubFunctions_8004e29c[371] = Bttl::scriptGetBentSlot;
+    scriptSubFunctions_8004e29c[372] = Bttl::scriptDisableCombat;
 
-    scriptSubFunctions_8004e29c[416] = Bttl_800e::FUN_800e6fb4;
+    scriptSubFunctions_8004e29c[416] = Bttl::FUN_800e6fb4;
 
-    scriptSubFunctions_8004e29c[419] = Bttl_800e::scriptResetLights;
-    scriptSubFunctions_8004e29c[420] = Bttl_800e::scriptSetLightDirection;
-    scriptSubFunctions_8004e29c[421] = Bttl_800e::scriptGetLightDirection;
-    scriptSubFunctions_8004e29c[422] = Bttl_800e::FUN_800e48a8;
-    scriptSubFunctions_8004e29c[423] = Bttl_800e::FUN_800e48e8;
-    scriptSubFunctions_8004e29c[424] = Bttl_800e::FUN_800e4964;
-    scriptSubFunctions_8004e29c[425] = Bttl_800e::FUN_800e4abc;
-    scriptSubFunctions_8004e29c[426] = Bttl_800e::scriptSetBattleLightColour;
-    scriptSubFunctions_8004e29c[427] = Bttl_800e::scriptGetBattleLightColour;
-    scriptSubFunctions_8004e29c[428] = Bttl_800e::scriptSetBattleBackgroundLightColour;
-    scriptSubFunctions_8004e29c[429] = Bttl_800e::scriptGetBattleBackgroundLightColour;
-    scriptSubFunctions_8004e29c[430] = Bttl_800e::FUN_800e4dfc;
-    scriptSubFunctions_8004e29c[431] = Bttl_800e::FUN_800e4e2c;
-    scriptSubFunctions_8004e29c[432] = Bttl_800e::FUN_800e4e64;
-    scriptSubFunctions_8004e29c[433] = Bttl_800e::FUN_800e4ea0;
-    scriptSubFunctions_8004e29c[434] = Bttl_800e::FUN_800e4fa0;
-    scriptSubFunctions_8004e29c[435] = Bttl_800e::FUN_800e50e8;
-    scriptSubFunctions_8004e29c[436] = Bttl_800e::FUN_800e52f8;
-    scriptSubFunctions_8004e29c[437] = Bttl_800e::FUN_800e540c;
-    scriptSubFunctions_8004e29c[438] = Bttl_800e::FUN_800e54f8;
-    scriptSubFunctions_8004e29c[439] = Bttl_800e::FUN_800e5528;
-    scriptSubFunctions_8004e29c[440] = Bttl_800e::FUN_800e5560;
-    scriptSubFunctions_8004e29c[441] = Bttl_800e::FUN_800e559c;
-    scriptSubFunctions_8004e29c[442] = Bttl_800e::FUN_800e569c;
-    scriptSubFunctions_8004e29c[443] = Bttl_800e::scriptApplyStageAmbiance;
-    scriptSubFunctions_8004e29c[444] = Bttl_800e::FUN_800e59d8;
+    scriptSubFunctions_8004e29c[419] = Bttl::scriptResetLights;
+    scriptSubFunctions_8004e29c[420] = Bttl::scriptSetLightDirection;
+    scriptSubFunctions_8004e29c[421] = Bttl::scriptGetLightDirection;
+    scriptSubFunctions_8004e29c[422] = Bttl::FUN_800e48a8;
+    scriptSubFunctions_8004e29c[423] = Bttl::FUN_800e48e8;
+    scriptSubFunctions_8004e29c[424] = Bttl::FUN_800e4964;
+    scriptSubFunctions_8004e29c[425] = Bttl::FUN_800e4abc;
+    scriptSubFunctions_8004e29c[426] = Bttl::scriptSetBattleLightColour;
+    scriptSubFunctions_8004e29c[427] = Bttl::scriptGetBattleLightColour;
+    scriptSubFunctions_8004e29c[428] = Bttl::scriptSetBattleBackgroundLightColour;
+    scriptSubFunctions_8004e29c[429] = Bttl::scriptGetBattleBackgroundLightColour;
+    scriptSubFunctions_8004e29c[430] = Bttl::FUN_800e4dfc;
+    scriptSubFunctions_8004e29c[431] = Bttl::FUN_800e4e2c;
+    scriptSubFunctions_8004e29c[432] = Bttl::FUN_800e4e64;
+    scriptSubFunctions_8004e29c[433] = Bttl::FUN_800e4ea0;
+    scriptSubFunctions_8004e29c[434] = Bttl::FUN_800e4fa0;
+    scriptSubFunctions_8004e29c[435] = Bttl::FUN_800e50e8;
+    scriptSubFunctions_8004e29c[436] = Bttl::FUN_800e52f8;
+    scriptSubFunctions_8004e29c[437] = Bttl::FUN_800e540c;
+    scriptSubFunctions_8004e29c[438] = Bttl::FUN_800e54f8;
+    scriptSubFunctions_8004e29c[439] = Bttl::FUN_800e5528;
+    scriptSubFunctions_8004e29c[440] = Bttl::FUN_800e5560;
+    scriptSubFunctions_8004e29c[441] = Bttl::FUN_800e559c;
+    scriptSubFunctions_8004e29c[442] = Bttl::FUN_800e569c;
+    scriptSubFunctions_8004e29c[443] = Bttl::scriptApplyStageAmbiance;
+    scriptSubFunctions_8004e29c[444] = Bttl::FUN_800e59d8;
 
     // scriptSubFunctions_8004e29c[445] = Temp::FUN_800ca734;
 
-    scriptSubFunctions_8004e29c[480] = Bttl_800f::scriptCheckPhysicalHit;
-    scriptSubFunctions_8004e29c[481] = Bttl_800f::scriptPhysicalAttack;
-    scriptSubFunctions_8004e29c[482] = Bttl_800f::scriptGetBentPos;
-    scriptSubFunctions_8004e29c[483] = Bttl_800f::scriptAddFloatingNumber;
-    scriptSubFunctions_8004e29c[484] = Bttl_800f::scriptCheckPhysicalHit;
-    scriptSubFunctions_8004e29c[485] = Bttl_800f::scriptCheckPhysicalHit;
-    scriptSubFunctions_8004e29c[486] = Bttl_800f::scriptCheckPhysicalHit;
-    scriptSubFunctions_8004e29c[487] = Bttl_800f::scriptGiveSp;
-    scriptSubFunctions_8004e29c[488] = Bttl_800f::scriptConsumeSp;
-    scriptSubFunctions_8004e29c[489] = Bttl_800f::scriptInitSpellAndItemMenu;
-    scriptSubFunctions_8004e29c[490] = Bttl_800f::FUN_800f4600;
-    scriptSubFunctions_8004e29c[491] = Bttl_800f::scriptGetItemOrSpellAttackTarget;
-    scriptSubFunctions_8004e29c[492] = Bttl_800f::scriptDragoonMagicStatusItemAttack;
-    scriptSubFunctions_8004e29c[493] = Bttl_800f::scriptSetTempSpellStats;
-    scriptSubFunctions_8004e29c[494] = Bttl_800f::scriptRenderRecover;
-    scriptSubFunctions_8004e29c[495] = Bttl_800f::scriptItemMagicAttack;
-    scriptSubFunctions_8004e29c[496] = Bttl_800f::scriptSetTempItemMagicStats;
-    scriptSubFunctions_8004e29c[497] = Bttl_800f::scriptTakeItem;
-    scriptSubFunctions_8004e29c[498] = Bttl_800f::scriptGiveItem;
-    scriptSubFunctions_8004e29c[499] = Bttl_800f::FUN_800f9a50;
-    scriptSubFunctions_8004e29c[500] = Bttl_800f::scriptIsFloatingNumberOnScreen;
-    scriptSubFunctions_8004e29c[501] = Bttl_800f::scriptSetDragoonSpaceElementIndex;
-    scriptSubFunctions_8004e29c[502] = Bttl_800f::FUN_800f9b94;
-    scriptSubFunctions_8004e29c[503] = Bttl_800f::FUN_800f9bd4;
-    scriptSubFunctions_8004e29c[504] = Bttl_800f::FUN_800f9c00;
-    scriptSubFunctions_8004e29c[505] = Bttl_800f::scriptRenderBattleHudBackground;
-    scriptSubFunctions_8004e29c[506] = Bttl_800f::scriptSetDisabledMenuIcons;
-    scriptSubFunctions_8004e29c[507] = Bttl_800f::scriptCheckSpellOrStatusHit;
-    scriptSubFunctions_8004e29c[508] = Bttl_800f::scriptCheckItemHit;
-    scriptSubFunctions_8004e29c[509] = Bttl_800f::scriptFinishBentTurn;
+    scriptSubFunctions_8004e29c[480] = Bttl::scriptCheckPhysicalHit;
+    scriptSubFunctions_8004e29c[481] = Bttl::scriptPhysicalAttack;
+    scriptSubFunctions_8004e29c[482] = Bttl::scriptGetBentPos2;
+    scriptSubFunctions_8004e29c[483] = Bttl::scriptAddFloatingNumber;
+    scriptSubFunctions_8004e29c[484] = Bttl::scriptCheckPhysicalHit;
+    scriptSubFunctions_8004e29c[485] = Bttl::scriptCheckPhysicalHit;
+    scriptSubFunctions_8004e29c[486] = Bttl::scriptCheckPhysicalHit;
+    scriptSubFunctions_8004e29c[487] = Bttl::scriptGiveSp;
+    scriptSubFunctions_8004e29c[488] = Bttl::scriptConsumeSp;
+    scriptSubFunctions_8004e29c[489] = Bttl::scriptInitSpellAndItemMenu;
+    scriptSubFunctions_8004e29c[490] = Bttl::FUN_800f4600;
+    scriptSubFunctions_8004e29c[491] = Bttl::scriptGetItemOrSpellAttackTarget;
+    scriptSubFunctions_8004e29c[492] = Bttl::scriptDragoonMagicStatusItemAttack;
+    scriptSubFunctions_8004e29c[493] = Bttl::scriptSetTempSpellStats;
+    scriptSubFunctions_8004e29c[494] = Bttl::scriptRenderRecover;
+    scriptSubFunctions_8004e29c[495] = Bttl::scriptItemMagicAttack;
+    scriptSubFunctions_8004e29c[496] = Bttl::scriptSetTempItemMagicStats;
+    scriptSubFunctions_8004e29c[497] = Bttl::scriptTakeItem;
+    scriptSubFunctions_8004e29c[498] = Bttl::scriptGiveItem;
+    scriptSubFunctions_8004e29c[499] = Bttl::FUN_800f9a50;
+    scriptSubFunctions_8004e29c[500] = Bttl::scriptIsFloatingNumberOnScreen;
+    scriptSubFunctions_8004e29c[501] = Bttl::scriptSetDragoonSpaceElementIndex;
+    scriptSubFunctions_8004e29c[502] = Bttl::FUN_800f9b94;
+    scriptSubFunctions_8004e29c[503] = Bttl::FUN_800f9bd4;
+    scriptSubFunctions_8004e29c[504] = Bttl::FUN_800f9c00;
+    scriptSubFunctions_8004e29c[505] = Bttl::scriptRenderBattleHudBackground;
+    scriptSubFunctions_8004e29c[506] = Bttl::scriptSetDisabledMenuIcons;
+    scriptSubFunctions_8004e29c[507] = Bttl::scriptCheckSpellOrStatusHit;
+    scriptSubFunctions_8004e29c[508] = Bttl::scriptCheckItemHit;
+    scriptSubFunctions_8004e29c[509] = Bttl::scriptFinishBentTurn;
 
-    scriptSubFunctions_8004e29c[512] = Bttl_800e::scriptSetBentZOffset;
-    scriptSubFunctions_8004e29c[513] = Bttl_800e::scriptSetBentScaleUniform;
-    scriptSubFunctions_8004e29c[514] = Bttl_800e::scriptSetBentScale;
-    scriptSubFunctions_8004e29c[515] = Bttl_800e::FUN_800ee384;
-    scriptSubFunctions_8004e29c[516] = Bttl_800e::scriptDisableBentShadow;
-    scriptSubFunctions_8004e29c[517] = Bttl_800e::scriptSetBentShadowSize;
-    scriptSubFunctions_8004e29c[518] = Bttl_800e::scriptSetBentShadowOffset;
-    scriptSubFunctions_8004e29c[519] = Bttl_800e::scriptApplyScreenDarkening;
-    scriptSubFunctions_8004e29c[520] = Bttl_800e::FUN_800ee384;
-    scriptSubFunctions_8004e29c[521] = Bttl_800e::scriptGetStageNobj;
-    scriptSubFunctions_8004e29c[522] = Bttl_800e::scriptShowStageModelPart;
-    scriptSubFunctions_8004e29c[523] = Bttl_800e::scriptHideStageModelPart;
-    scriptSubFunctions_8004e29c[524] = Bttl_800e::FUN_800ee3c0;
-    scriptSubFunctions_8004e29c[525] = Bttl_800e::FUN_800ee408;
-    scriptSubFunctions_8004e29c[526] = Bttl_800e::scriptSetStageZ;
+    scriptSubFunctions_8004e29c[512] = Bttl::scriptSetBentZOffset;
+    scriptSubFunctions_8004e29c[513] = Bttl::scriptSetBentScaleUniform;
+    scriptSubFunctions_8004e29c[514] = Bttl::scriptSetBentScale;
+    scriptSubFunctions_8004e29c[515] = Bttl::FUN_800ee384;
+    scriptSubFunctions_8004e29c[516] = Bttl::scriptDisableBentShadow;
+    scriptSubFunctions_8004e29c[517] = Bttl::scriptSetBentShadowSize;
+    scriptSubFunctions_8004e29c[518] = Bttl::scriptSetBentShadowOffset;
+    scriptSubFunctions_8004e29c[519] = Bttl::scriptApplyScreenDarkening;
+    scriptSubFunctions_8004e29c[520] = Bttl::FUN_800ee384;
+    scriptSubFunctions_8004e29c[521] = Bttl::scriptGetStageNobj;
+    scriptSubFunctions_8004e29c[522] = Bttl::scriptShowStageModelPart;
+    scriptSubFunctions_8004e29c[523] = Bttl::scriptHideStageModelPart;
+    scriptSubFunctions_8004e29c[524] = Bttl::FUN_800ee3c0;
+    scriptSubFunctions_8004e29c[525] = Bttl::FUN_800ee408;
+    scriptSubFunctions_8004e29c[526] = Bttl::scriptSetStageZ;
 
     scriptSubFunctions_8004e29c[544] = SEffe::scriptGetRelativePosition;
     scriptSubFunctions_8004e29c[545] = SEffe::scriptSetRelativePosition;
@@ -411,7 +408,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[570] = SEffe::scriptAddRotationScalerAttachmentTowardsPointTicks;
     scriptSubFunctions_8004e29c[571] = SEffe::scriptAddRotationScalerAttachmentTowardsPointDistance;
     scriptSubFunctions_8004e29c[572] = SEffe::FUN_80115600; // no-op
-    scriptSubFunctions_8004e29c[573] = Bttl_800e::FUN_800e9f68;
+    scriptSubFunctions_8004e29c[573] = Bttl::FUN_800e9f68;
     scriptSubFunctions_8004e29c[574] = SEffe::scriptLoadEffectModelAnimation;
     scriptSubFunctions_8004e29c[575] = SEffe::scriptAddScaleScalerAttachment;
 
@@ -431,41 +428,41 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[589] = SEffe::FUN_80115324;
     scriptSubFunctions_8004e29c[590] = SEffe::FUN_80115388;
     scriptSubFunctions_8004e29c[591] = SEffe::FUN_801153e4;
-    scriptSubFunctions_8004e29c[592] = Bttl_800e::FUN_800e74ac;
+    scriptSubFunctions_8004e29c[592] = Bttl::FUN_800e74ac;
     scriptSubFunctions_8004e29c[593] = SEffe::scriptGetPositionScalerAttachmentVelocity;
-    scriptSubFunctions_8004e29c[594] = Bttl_800e::scriptAddOrUpdateTextureAnimationAttachment;
+    scriptSubFunctions_8004e29c[594] = Bttl::scriptAddOrUpdateTextureAnimationAttachment;
     scriptSubFunctions_8004e29c[595] = SEffe::FUN_8011549c;
     scriptSubFunctions_8004e29c[596] = SEffe::scriptAddRelativePositionScalerDistance1;
     scriptSubFunctions_8004e29c[597] = SEffe::scriptAddRelativePositionScalerTicks1;
     scriptSubFunctions_8004e29c[598] = SEffe::scriptAddOrUpdatePositionScalerAttachment;
     scriptSubFunctions_8004e29c[599] = SEffe::scriptUpdateParabolicPositionScalerAttachment;
-    scriptSubFunctions_8004e29c[600] = Bttl_800e::scriptAllocateEmptyEffectManagerChild;
-    scriptSubFunctions_8004e29c[601] = Bttl_800e::allocateBillboardSpriteEffect;
-    scriptSubFunctions_8004e29c[602] = Bttl_800e::FUN_800e9854;
+    scriptSubFunctions_8004e29c[600] = Bttl::scriptAllocateEmptyEffectManagerChild;
+    scriptSubFunctions_8004e29c[601] = Bttl::allocateBillboardSpriteEffect;
+    scriptSubFunctions_8004e29c[602] = Bttl::FUN_800e9854;
     // scriptSubFunctions_8004e29c[603] = Temp::FUN_800ca648;
 
     scriptSubFunctions_8004e29c[605] = SEffe::scriptAllocateLmbAnimation;
     scriptSubFunctions_8004e29c[606] = SEffe::allocateDeffTmd;
-    scriptSubFunctions_8004e29c[607] = Bttl_800e::FUN_800e99bc;
+    scriptSubFunctions_8004e29c[607] = Bttl::FUN_800e99bc;
 
     scriptSubFunctions_8004e29c[608] = SEffe::FUN_801181a8;
 
-    scriptSubFunctions_8004e29c[610] = Bttl_800e::scriptLoadCmbAnimation;
+    scriptSubFunctions_8004e29c[610] = Bttl::scriptLoadCmbAnimation;
     scriptSubFunctions_8004e29c[611] = SEffe::FUN_801156f8;
-    scriptSubFunctions_8004e29c[612] = Bttl_800e::scriptHideEffectModelPart;
-    scriptSubFunctions_8004e29c[613] = Bttl_800e::scriptShowEffectModelPart;
-    scriptSubFunctions_8004e29c[614] = Bttl_800e::scriptAddRedEyeDragoonTransformationFlameArmorEffectAttachment;
-    scriptSubFunctions_8004e29c[615] = Bttl_800e::scriptApplyTextureAnimationAttachment;
-    scriptSubFunctions_8004e29c[616] = Bttl_800e::scriptRemoveTextureAnimationAttachment;
+    scriptSubFunctions_8004e29c[612] = Bttl::scriptHideEffectModelPart;
+    scriptSubFunctions_8004e29c[613] = Bttl::scriptShowEffectModelPart;
+    scriptSubFunctions_8004e29c[614] = Bttl::scriptAddRedEyeDragoonTransformationFlameArmorEffectAttachment;
+    scriptSubFunctions_8004e29c[615] = Bttl::scriptApplyTextureAnimationAttachment;
+    scriptSubFunctions_8004e29c[616] = Bttl::scriptRemoveTextureAnimationAttachment;
     // scriptSubFunctions_8004e29c[617] = Temp::FUN_800caae4;
     scriptSubFunctions_8004e29c[618] = SEffe::scriptLoadSameScriptAndJump;
     scriptSubFunctions_8004e29c[619] = SEffe::allocateShirleyTransformWipeEffect;
     scriptSubFunctions_8004e29c[620] = SEffe::FUN_80111a58;
-    scriptSubFunctions_8004e29c[621] = Bttl_800e::scriptGetEffectLoopCount;
+    scriptSubFunctions_8004e29c[621] = Bttl::scriptGetEffectLoopCount;
     scriptSubFunctions_8004e29c[622] = SEffe::allocateSpriteWithTrailEffect;
-    scriptSubFunctions_8004e29c[623] = Bttl_800e::scriptLoadDeff;
-    scriptSubFunctions_8004e29c[624] = Bttl_800e::FUN_800e6db4;
-    scriptSubFunctions_8004e29c[625] = Bttl_800e::scriptGetDeffLoadingStage;
+    scriptSubFunctions_8004e29c[623] = Bttl::scriptLoadDeff;
+    scriptSubFunctions_8004e29c[624] = Bttl::FUN_800e6db4;
+    scriptSubFunctions_8004e29c[625] = Bttl::scriptGetDeffLoadingStage;
     scriptSubFunctions_8004e29c[626] = SEffe::scriptGetEffectZ;
     scriptSubFunctions_8004e29c[627] = SEffe::scriptSetEffectZ;
     scriptSubFunctions_8004e29c[628] = SEffe::allocateDeffTmdRenderer;
@@ -477,16 +474,16 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[634] = SEffe::scriptWaitForXaToLoad;
     scriptSubFunctions_8004e29c[635] = SEffe::scriptGetXaLoadingStage;
     scriptSubFunctions_8004e29c[636] = SEffe::scriptPlayXaAudio;
-    scriptSubFunctions_8004e29c[637] = Bttl_800e::scriptLoadCutsceneDeff;
-    scriptSubFunctions_8004e29c[638] = Bttl_800e::scriptLoadSpellOrItemDeff;
-    scriptSubFunctions_8004e29c[639] = Bttl_800e::scriptLoadEnemyOrBossDeff;
+    scriptSubFunctions_8004e29c[637] = Bttl::scriptLoadCutsceneDeff;
+    scriptSubFunctions_8004e29c[638] = Bttl::scriptLoadSpellOrItemDeff;
+    scriptSubFunctions_8004e29c[639] = Bttl::scriptLoadEnemyOrBossDeff;
 
     scriptSubFunctions_8004e29c[640] = SEffe::scriptConvertRotationYxzToXyz;
     scriptSubFunctions_8004e29c[641] = SEffe::FUN_80115a28;
     scriptSubFunctions_8004e29c[642] = SEffe::FUN_8011287c;
-    scriptSubFunctions_8004e29c[643] = Bttl_800e::FUN_800e9798;
-    scriptSubFunctions_8004e29c[644] = Bttl_800e::scriptSetBttlShadowSize;
-    scriptSubFunctions_8004e29c[645] = Bttl_800e::scriptSetBttlShadowOffset;
+    scriptSubFunctions_8004e29c[643] = Bttl::FUN_800e9798;
+    scriptSubFunctions_8004e29c[644] = Bttl::scriptSetBttlShadowSize;
+    scriptSubFunctions_8004e29c[645] = Bttl::scriptSetBttlShadowOffset;
     scriptSubFunctions_8004e29c[646] = SEffe::scriptAllocateShadowEffect;
     scriptSubFunctions_8004e29c[647] = SEffe::scriptUpdateDeffManagerFlags;
     scriptSubFunctions_8004e29c[648] = SEffe::scriptLoadDeffStageEffects;
@@ -510,38 +507,38 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[717] = Scus94491BpeSegment::scriptLoadCutsceneSounds;
     scriptSubFunctions_8004e29c[718] = Scus94491BpeSegment::scriptLoadFinalBattleSounds;
 
-    scriptSubFunctions_8004e29c[736] = Bttl_800d::FUN_800d3090;
-    scriptSubFunctions_8004e29c[737] = Bttl_800c::scriptAllocateFullScreenOverlay;
-    scriptSubFunctions_8004e29c[738] = Bttl_800c::scriptRand;
-    scriptSubFunctions_8004e29c[739] = Bttl_800c::scriptSetWeaponTrailSegmentCount;
-    scriptSubFunctions_8004e29c[740] = Bttl_800d::FUN_800d3090;
-    scriptSubFunctions_8004e29c[741] = Bttl_800d::FUN_800d3090;
-    scriptSubFunctions_8004e29c[742] = Bttl_800d::FUN_800d3090;
-    scriptSubFunctions_8004e29c[743] = Bttl_800d::FUN_800d3090;
-    scriptSubFunctions_8004e29c[744] = Bttl_800c::scriptRenderColouredQuad;
-    scriptSubFunctions_8004e29c[745] = Bttl_800c::FUN_800cf0b4;
+    scriptSubFunctions_8004e29c[736] = Bttl::FUN_800d3090;
+    scriptSubFunctions_8004e29c[737] = Bttl::scriptAllocateFullScreenOverlay;
+    scriptSubFunctions_8004e29c[738] = Bttl::scriptRand;
+    scriptSubFunctions_8004e29c[739] = Bttl::scriptSetWeaponTrailSegmentCount;
+    scriptSubFunctions_8004e29c[740] = Bttl::FUN_800d3090;
+    scriptSubFunctions_8004e29c[741] = Bttl::FUN_800d3090;
+    scriptSubFunctions_8004e29c[742] = Bttl::FUN_800d3090;
+    scriptSubFunctions_8004e29c[743] = Bttl::FUN_800d3090;
+    scriptSubFunctions_8004e29c[744] = Bttl::scriptRenderColouredQuad;
+    scriptSubFunctions_8004e29c[745] = Bttl::FUN_800cf0b4;
     scriptSubFunctions_8004e29c[746] = SEffe::scriptAllocateParticleEffect;
     scriptSubFunctions_8004e29c[747] = SEffe::scriptSetParticleAcceleration;
-    scriptSubFunctions_8004e29c[748] = Bttl_800d::FUN_800d3090;
-    scriptSubFunctions_8004e29c[749] = Bttl_800d::scriptAllocateProjectileHitEffect;
-    scriptSubFunctions_8004e29c[750] = Bttl_800d::FUN_800d09b8;
-    scriptSubFunctions_8004e29c[751] = Bttl_800d::scriptAllocateAdditionSparksEffect;
+    scriptSubFunctions_8004e29c[748] = Bttl::FUN_800d3090;
+    scriptSubFunctions_8004e29c[749] = Bttl::scriptAllocateProjectileHitEffect;
+    scriptSubFunctions_8004e29c[750] = Bttl::FUN_800d09b8;
+    scriptSubFunctions_8004e29c[751] = Bttl::scriptAllocateAdditionSparksEffect;
     scriptSubFunctions_8004e29c[752] = SEffe::FUN_80102608;
     scriptSubFunctions_8004e29c[753] = SEffe::scriptAllocateAdditionOverlaysEffect;
     scriptSubFunctions_8004e29c[754] = SEffe::scriptGetHitCompletionState;
     scriptSubFunctions_8004e29c[755] = SEffe::FUN_80108de8;
-    scriptSubFunctions_8004e29c[756] = Bttl_800d::scriptAllocateAdditionStarburstEffect;
-    scriptSubFunctions_8004e29c[757] = Bttl_800d::FUN_800d1cac;
-    scriptSubFunctions_8004e29c[758] = Bttl_800d::FUN_800d1cf4;
+    scriptSubFunctions_8004e29c[756] = Bttl::scriptAllocateAdditionStarburstEffect;
+    scriptSubFunctions_8004e29c[757] = Bttl::FUN_800d1cac;
+    scriptSubFunctions_8004e29c[758] = Bttl::FUN_800d1cf4;
     scriptSubFunctions_8004e29c[759] = SEffe::scriptAlterAdditionContinuationState;
     scriptSubFunctions_8004e29c[760] = SEffe::FUN_80108df0;
-    scriptSubFunctions_8004e29c[761] = Bttl_800d::scriptAllocateGuardEffect;
-    scriptSubFunctions_8004e29c[762] = Bttl_800c::scriptAllocateWeaponTrailEffect;
-    scriptSubFunctions_8004e29c[763] = Bttl_800d::scriptAllocateRadialGradientEffect;
-    scriptSubFunctions_8004e29c[764] = Bttl_800d::scriptAllocateAdditionScript;
-    scriptSubFunctions_8004e29c[765] = Bttl_800c::scriptGetBobjLocalWorldMatrixTranslation;
-    scriptSubFunctions_8004e29c[766] = Bttl_800d::scriptAllocateSpTextEffect;
-    scriptSubFunctions_8004e29c[767] = Bttl_800d::scriptAllocateAdditionNameEffect;
+    scriptSubFunctions_8004e29c[761] = Bttl::scriptAllocateGuardEffect;
+    scriptSubFunctions_8004e29c[762] = Bttl::scriptAllocateWeaponTrailEffect;
+    scriptSubFunctions_8004e29c[763] = Bttl::scriptAllocateRadialGradientEffect;
+    scriptSubFunctions_8004e29c[764] = Bttl::scriptAllocateAdditionScript;
+    scriptSubFunctions_8004e29c[765] = Bttl::scriptGetBobjLocalWorldMatrixTranslation;
+    scriptSubFunctions_8004e29c[766] = Bttl::scriptAllocateSpTextEffect;
+    scriptSubFunctions_8004e29c[767] = Bttl::scriptAllocateAdditionNameEffect;
 
     scriptSubFunctions_8004e29c[800] = SEffe::scriptAllocateLensFlareEffect;
     scriptSubFunctions_8004e29c[801] = SEffe::scriptAllocateWsDragoonTransformationFeathersEffect;
@@ -552,12 +549,12 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[806] = Scus94491BpeSegment::FUN_8001c5fc;
     scriptSubFunctions_8004e29c[807] = Scus94491BpeSegment::FUN_8001c604;
 
-    scriptSubFunctions_8004e29c[832] = Bttl_800d::scriptRenderButtonPressHudElement;
+    scriptSubFunctions_8004e29c[832] = Bttl::scriptRenderButtonPressHudElement;
     scriptSubFunctions_8004e29c[833] = SEffe::FUN_80108df8;
     scriptSubFunctions_8004e29c[834] = SEffe::FUN_80102610;
-    scriptSubFunctions_8004e29c[835] = Bttl_800c::scriptGetBentDimension;
+    scriptSubFunctions_8004e29c[835] = Bttl::scriptGetBentDimension;
     scriptSubFunctions_8004e29c[836] = SEffe::scriptAllocateRainEffect;
-    scriptSubFunctions_8004e29c[837] = Bttl_800c::scriptApplyWeaponTrailScaling;
+    scriptSubFunctions_8004e29c[837] = Bttl::scriptApplyWeaponTrailScaling;
     scriptSubFunctions_8004e29c[838] = SEffe::scriptAllocateElectricityEffect;
     scriptSubFunctions_8004e29c[839] = SEffe::scriptGetBoltSegmentEnd;
     scriptSubFunctions_8004e29c[840] = SEffe::scriptAllocateDragoonAdditionScript;
@@ -566,14 +563,14 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[843] = SEffe::scriptAllocateScreenDistortionEffect;
     scriptSubFunctions_8004e29c[844] = SEffe::scriptGetDragoonAdditionHitsCompleted;
     scriptSubFunctions_8004e29c[845] = SEffe::FUN_801023f4;
-    scriptSubFunctions_8004e29c[846] = Bttl_800c::FUN_800cfec8;
+    scriptSubFunctions_8004e29c[846] = Bttl::FUN_800cfec8;
     scriptSubFunctions_8004e29c[847] = SEffe::scriptGetAliveParticles;
     scriptSubFunctions_8004e29c[848] = SEffe::scriptGetParticlePosition;
-    scriptSubFunctions_8004e29c[849] = Bttl_800c::scriptSetMtSeed;
+    scriptSubFunctions_8004e29c[849] = Bttl::scriptSetMtSeed;
     scriptSubFunctions_8004e29c[850] = SEffe::scriptAllocateVertexDifferenceAnimation;
     scriptSubFunctions_8004e29c[851] = SEffe::scriptAllocateFrozenJetEffect;
-    scriptSubFunctions_8004e29c[852] = Bttl_800d::scriptAllocateMonsterDeathEffect;
-    scriptSubFunctions_8004e29c[853] = Bttl_800d::scriptGetBobjModelPartCount;
+    scriptSubFunctions_8004e29c[852] = Bttl::scriptAllocateMonsterDeathEffect;
+    scriptSubFunctions_8004e29c[853] = Bttl::scriptGetBobjModelPartCount;
     scriptSubFunctions_8004e29c[854] = SEffe::scriptGetAdditionOverlayActiveStatus;
 
     scriptSubFunctions_8004e29c[864] = Scus94491BpeSegment_8002::scriptGiveChestContents;
@@ -591,33 +588,33 @@ public final class Scus94491BpeSegment_8004 {
   /**
    * <ol start="0">
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
-   *   <li>{@link Bttl_800c#initBattle}</li>
+   *   <li>{@link Bttl#initBattle}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
-   *   <li>{@link Bttl_800c#loadStageAndControllerScripts}</li>
-   *   <li>{@link Bttl_800c#uploadBattleStageToGpu}</li>
-   *   <li>{@link Bttl_800c#initializeViewportAndCamera}</li>
+   *   <li>{@link Bttl#loadStageAndControllerScripts}</li>
+   *   <li>{@link Bttl#uploadBattleStageToGpu}</li>
+   *   <li>{@link Bttl#initializeViewportAndCamera}</li>
    *   <li>{@link Scus94491BpeSegment#nextLoadingStage}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link Scus94491BpeSegment#nextLoadingStage}</li>
-   *   <li>{@link Bttl_800c#battleInitiateAndPreload_800c772c}</li>
-   *   <li>{@link Bttl_800c#allocateEnemyBattleEntities()}</li>
+   *   <li>{@link Bttl#battleInitiateAndPreload_800c772c}</li>
+   *   <li>{@link Bttl#allocateEnemyBattleEntities()}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
-   *   <li>{@link Bttl_800c#allocatePlayerBattleEntities()}</li>
+   *   <li>{@link Bttl#allocatePlayerBattleEntities()}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
-   *   <li>{@link Bttl_800c#loadEncounterAssets}</li>
+   *   <li>{@link Bttl#loadEncounterAssets}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
-   *   <li>{@link Bttl_800c#loadHudAndAttackAnimations}</li>
+   *   <li>{@link Bttl#loadHudAndAttackAnimations}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
-   *   <li>{@link Bttl_800c#FUN_800c79f0}</li>
+   *   <li>{@link Bttl#FUN_800c79f0}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
-   *   <li>{@link Bttl_800c#loadSEffe}</li>
+   *   <li>{@link Bttl#loadSEffe}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
-   *   <li>{@link Bttl_800c#calculateInitialTurnValues}</li>
-   *   <li>{@link Bttl_800c#battleTick}</li>
+   *   <li>{@link Bttl#calculateInitialTurnValues}</li>
+   *   <li>{@link Bttl#battleTick}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
-   *   <li>{@link Bttl_800c#performPostBattleAction}</li>
-   *   <li>{@link Bttl_800c#deallocateCombat}</li>
+   *   <li>{@link Bttl#performPostBattleAction}</li>
+   *   <li>{@link Bttl#deallocateCombat}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link Scus94491BpeSegment#nextLoadingStage}</li>
    *   <li>{@link Scus94491BpeSegment#renderPostCombatScreen}</li>
@@ -626,34 +623,34 @@ public final class Scus94491BpeSegment_8004 {
    */
   public static final Runnable[] battleLoadingStage_8004f5d4 = {
     Scus94491BpeSegment::waitForFilesToLoad,
-    Bttl_800c::initBattle,
+    Bttl::initBattle,
     Scus94491BpeSegment::waitForFilesToLoad,
     Scus94491BpeSegment::waitForFilesToLoad,
-    Bttl_800c::loadStageAndControllerScripts,
-    Bttl_800c::uploadBattleStageToGpu,
-    Bttl_800c::initializeViewportAndCamera,
+    Bttl::loadStageAndControllerScripts,
+    Bttl::uploadBattleStageToGpu,
+    Bttl::initializeViewportAndCamera,
     Scus94491BpeSegment::nextLoadingStage,
     Scus94491BpeSegment::waitForFilesToLoad,
     Scus94491BpeSegment::nextLoadingStage,
-    Bttl_800c::battleInitiateAndPreload_800c772c,
+    Bttl::battleInitiateAndPreload_800c772c,
     Scus94491BpeSegment::waitForFilesToLoad,
-    Bttl_800c::allocateEnemyBattleEntities,
+    Bttl::allocateEnemyBattleEntities,
     Scus94491BpeSegment::waitForFilesToLoad,
-    Bttl_800c::allocatePlayerBattleEntities,
+    Bttl::allocatePlayerBattleEntities,
     Scus94491BpeSegment::waitForFilesToLoad,
-    Bttl_800c::loadEncounterAssets,
+    Bttl::loadEncounterAssets,
     Scus94491BpeSegment::waitForFilesToLoad,
-    Bttl_800c::loadHudAndAttackAnimations,
+    Bttl::loadHudAndAttackAnimations,
     Scus94491BpeSegment::waitForFilesToLoad,
-    Bttl_800c::FUN_800c79f0,
+    Bttl::FUN_800c79f0,
     Scus94491BpeSegment::waitForFilesToLoad,
-    Bttl_800c::loadSEffe,
+    Bttl::loadSEffe,
     Scus94491BpeSegment::waitForFilesToLoad,
-    Bttl_800c::calculateInitialTurnValues,
-    Bttl_800c::battleTick,
+    Bttl::calculateInitialTurnValues,
+    Bttl::battleTick,
     Scus94491BpeSegment::waitForFilesToLoad,
-    Bttl_800c::performPostBattleAction,
-    Bttl_800c::deallocateCombat,
+    Bttl::performPostBattleAction,
+    Bttl::deallocateCombat,
     Scus94491BpeSegment::waitForFilesToLoad,
     Scus94491BpeSegment::nextLoadingStage,
     Scus94491BpeSegment::renderPostCombatScreen,

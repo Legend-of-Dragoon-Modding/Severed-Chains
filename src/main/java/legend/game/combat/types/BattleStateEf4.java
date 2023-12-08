@@ -17,9 +17,9 @@ import java.util.Arrays;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.combat.Bttl_800c.aliveBentCount_800c669c;
-import static legend.game.combat.Bttl_800c.allBentCount_800c66d0;
-import static legend.game.combat.Bttl_800c.currentAssetIndex_800c66b4;
+import static legend.game.combat.Bttl.aliveBentCount_800c669c;
+import static legend.game.combat.Bttl.allBentCount_800c66d0;
+import static legend.game.combat.Bttl.currentAssetIndex_800c66b4;
 
 public class BattleStateEf4 {
   public final SpecialEffects20[] specialEffect_00 = new SpecialEffects20[10];
