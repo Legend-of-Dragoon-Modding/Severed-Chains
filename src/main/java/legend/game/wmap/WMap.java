@@ -1312,9 +1312,9 @@ public class WMap extends EngineState {
           cameraAndLights.cameraZoomPosStep_a4.z / (3.0f / vsyncMode_8007a3b8)
         );
         cameraAndLights.coord2_20.coord.transfer.set(
-          (this.modelAndAnimData_800c66a8.coord2_34.coord.transfer.x - cameraAndLights.currCameraZoomPos_b4.x) / (3.0f / vsyncMode_8007a3b8),
-          (this.modelAndAnimData_800c66a8.coord2_34.coord.transfer.y - cameraAndLights.currCameraZoomPos_b4.y) / (3.0f / vsyncMode_8007a3b8),
-          (this.modelAndAnimData_800c66a8.coord2_34.coord.transfer.z - cameraAndLights.currCameraZoomPos_b4.z) / (3.0f / vsyncMode_8007a3b8)
+          (this.modelAndAnimData_800c66a8.coord2_34.coord.transfer.x - cameraAndLights.currCameraZoomPos_b4.x),
+          (this.modelAndAnimData_800c66a8.coord2_34.coord.transfer.y - cameraAndLights.currCameraZoomPos_b4.y),
+          (this.modelAndAnimData_800c66a8.coord2_34.coord.transfer.z - cameraAndLights.currCameraZoomPos_b4.z)
         );
         cameraAndLights.cameraZoomTick_a0 += 1.0f / (3.0f / vsyncMode_8007a3b8);
 
