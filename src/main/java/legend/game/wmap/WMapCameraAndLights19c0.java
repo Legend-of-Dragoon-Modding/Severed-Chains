@@ -16,6 +16,13 @@ public class WMapCameraAndLights19c0 {
     INIT_VIEW_FAR_3,
     MAIN_LOOP_FAR_4
   }
+
+  public enum CameraUpdateState {
+    AWAIT_INPUT_0,
+    ZOOM_OUT_1,
+    ZOOM_IN_2
+  }
+
   public final GsRVIEW2 currRview2_00 = new GsRVIEW2();
   /** Parent coordinate system of camera; controls movement */
   public final GsCOORDINATE2 coord2_20 = new GsCOORDINATE2();
@@ -50,8 +57,15 @@ public class WMapCameraAndLights19c0 {
   public final Vector3f currCameraZoomPos_b4 = new Vector3f();
   /** byte */
   public boolean hideAtmosphericEffect_c4;
-  /** ubyte */
-  public int cameraUpdateState_c5;
+  /**
+   * ubyte
+   * <ol start="0">
+   *   <li>Await input</li>
+   *   <li>Zoom out</li>
+   *   <li>Zoom in</li>
+   * </ol>
+   */
+  public CameraUpdateState cameraUpdateState_c5;
 
   public final GsRVIEW2 originalRview2_c8 = new GsRVIEW2();
 

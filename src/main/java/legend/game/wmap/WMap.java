@@ -126,6 +126,7 @@ import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8
 import static legend.game.wmap.MapState100.ForcedMovementState;
 import static legend.game.wmap.MapState100.PathSegmentEndpointType;
 import static legend.game.wmap.MapState100.PathSegmentEntering;
+import static legend.game.wmap.WMapCameraAndLights19c0.CameraUpdateState;
 import static legend.game.wmap.WMapCameraAndLights19c0.ProjectionDistanceState;
 import static legend.game.wmap.WMapModelAndAnimData258.CoolonWarpState;
 import static legend.game.wmap.WMapModelAndAnimData258.FadeAnimationType;
@@ -530,7 +531,7 @@ public class WMap extends EngineState {
         if((input_800bee90 & 0x1af) == 0) {
           final WMapCameraAndLights19c0 cameraAndLights = this.wmapCameraAndLights19c0_800c66b0;
 
-          if(cameraAndLights.cameraUpdateState_c5 == 0) {
+          if(cameraAndLights.cameraUpdateState_c5 == WMapCameraAndLights19c0.CameraUpdateState.AWAIT_INPUT_0) {
             if(!cameraAndLights.hideAtmosphericEffect_c4) {
               final WMapModelAndAnimData258 modelAndAnimData = this.modelAndAnimData_800c66a8;
 
@@ -990,7 +991,7 @@ public class WMap extends EngineState {
   private void initCamera() {
     this.wmapCameraAndLights19c0_800c66b0.mapRotating_80 = false;
     this.wmapCameraAndLights19c0_800c66b0.mapRotationStep_7c = 0.0f;
-    this.wmapCameraAndLights19c0_800c66b0.cameraUpdateState_c5 = 0;
+    this.wmapCameraAndLights19c0_800c66b0.cameraUpdateState_c5 = CameraUpdateState.AWAIT_INPUT_0;
     this.wmapCameraAndLights19c0_800c66b0.hideAtmosphericEffect_c4 = false;
 
     this.initCameraMovement();
@@ -1140,7 +1141,7 @@ public class WMap extends EngineState {
 
     this.rotateCoord2(cameraAndLights.currMapRotation_70, cameraAndLights.coord2_20);
 
-    if(cameraAndLights.cameraUpdateState_c5 == 0) {
+    if(cameraAndLights.cameraUpdateState_c5 == CameraUpdateState.AWAIT_INPUT_0) {
       if(!cameraAndLights.hideAtmosphericEffect_c4) {
         if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL) {
           if(this.modelAndAnimData_800c66a8.coolonWarpState_220 == CoolonWarpState.NONE) {
@@ -1251,7 +1252,7 @@ public class WMap extends EngineState {
     final WMapCameraAndLights19c0 cameraAndLights = this.wmapCameraAndLights19c0_800c66b0;
 
     switch(cameraAndLights.cameraUpdateState_c5) {
-      case 0:
+      case AWAIT_INPUT_0:
         //LAB_800d3654
         //LAB_800d3670
         //LAB_800d368c
@@ -1269,7 +1270,7 @@ public class WMap extends EngineState {
                     if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL) {
                       playSound(0, 4, 0, 0, (short)0, (short)0);
                       cameraAndLights.finalCameraY_9e = -9000;
-                      cameraAndLights.cameraUpdateState_c5 = 1;
+                      cameraAndLights.cameraUpdateState_c5 = CameraUpdateState.ZOOM_OUT_1;
                       cameraAndLights.projectionDistanceState_11a = ProjectionDistanceState.INIT_VIEW_NEAR_1;
                       this.initCameraZoomPositionAndRotationSteps(0);
                       this.mapState_800c6798.disableInput_d0 = true;
@@ -1284,7 +1285,7 @@ public class WMap extends EngineState {
                       setTextAndTextboxesToUninitialized(7, 0);
                       playSound(0, 4, 0, 0, (short)0, (short)0);
                       cameraAndLights.finalCameraY_9e = -300;
-                      cameraAndLights.cameraUpdateState_c5 = 2;
+                      cameraAndLights.cameraUpdateState_c5 = CameraUpdateState.ZOOM_IN_2;
                       this.initCameraZoomPositionAndRotationSteps(1);
                       cameraAndLights.hideAtmosphericEffect_c4 = false;
                       this.modelAndAnimData_800c66a8.zoomState_1f8 = ZoomState.LOCAL;
@@ -1300,7 +1301,7 @@ public class WMap extends EngineState {
         }
         break;
 
-      case 1:
+      case ZOOM_OUT_1:
         //LAB_800d38dc
         cameraAndLights.currRview2_00.viewpoint_00.y -= 1450.0f / (3.0f / vsyncMode_8007a3b8);
         cameraAndLights.currRview2_00.refpoint_0c.y += 1450.0f / (3.0f / vsyncMode_8007a3b8);
@@ -1322,12 +1323,12 @@ public class WMap extends EngineState {
           cameraAndLights.currRview2_00.refpoint_0c.y = -cameraAndLights.finalCameraY_9e;
           cameraAndLights.currMapRotation_70.y = cameraAndLights.finalMapRotation_98;
           cameraAndLights.coord2_20.coord.transfer.set(0, 0, 0);
-          cameraAndLights.cameraUpdateState_c5 = 0;
+          cameraAndLights.cameraUpdateState_c5 = CameraUpdateState.AWAIT_INPUT_0;
           this.modelAndAnimData_800c66a8.zoomState_1f8 = ZoomState.CONTINENT;
         }
         break;
 
-      case 2:
+      case ZOOM_IN_2:
         //LAB_800d3bd8
         if(this.modelAndAnimData_800c66a8.fadeAnimationType_05 == FadeAnimationType.NONE) {
           cameraAndLights.currRview2_00.viewpoint_00.y += 1450.0f / (3.0f / vsyncMode_8007a3b8);
@@ -1365,7 +1366,7 @@ public class WMap extends EngineState {
           cameraAndLights.currRview2_00.refpoint_0c.y = -cameraAndLights.finalCameraY_9e;
           cameraAndLights.currMapRotation_70.y = cameraAndLights.finalMapRotation_98;
           cameraAndLights.coord2_20.coord.transfer.set(this.modelAndAnimData_800c66a8.coord2_34.coord.transfer);
-          cameraAndLights.cameraUpdateState_c5 = 0;
+          cameraAndLights.cameraUpdateState_c5 = CameraUpdateState.AWAIT_INPUT_0;
           this.mapState_800c6798.disableInput_d0 = false;
           this.modelAndAnimData_800c66a8.zoomState_1f8 = ZoomState.LOCAL;
         }
@@ -1382,7 +1383,10 @@ public class WMap extends EngineState {
   @Method(0x800d4058L)
   private void renderPlayerAndDestinationIndicators() {
     //LAB_800d4088
-    if(!this.wmapCameraAndLights19c0_800c66b0.hideAtmosphericEffect_c4 || this.wmapCameraAndLights19c0_800c66b0.cameraUpdateState_c5 != 0) {
+    if(
+      !this.wmapCameraAndLights19c0_800c66b0.hideAtmosphericEffect_c4 ||
+        this.wmapCameraAndLights19c0_800c66b0.cameraUpdateState_c5 != CameraUpdateState.AWAIT_INPUT_0
+    ) {
       //LAB_800d41f0
       return;
     }
@@ -1612,7 +1616,10 @@ public class WMap extends EngineState {
         if(cameraAndLights.locationDistances_154[0].distanceFromPlayer_04 < 8100.0f) {
           cameraAndLights.projectionDistanceState_11a = ProjectionDistanceState.INIT_VIEW_NEAR_1;
           //LAB_800d52e8
-        } else if(this.modelAndAnimData_800c66a8.fadeAnimationType_05 == FadeAnimationType.NONE || cameraAndLights.cameraUpdateState_c5 != 2) {
+        } else if(
+          this.modelAndAnimData_800c66a8.fadeAnimationType_05 == FadeAnimationType.NONE ||
+            cameraAndLights.cameraUpdateState_c5 != CameraUpdateState.ZOOM_IN_2
+        ) {
           //LAB_800d5328
           cameraAndLights.projectionDistanceState_11a = ProjectionDistanceState.INIT_VIEW_FAR_3;
         } else {
@@ -2348,7 +2355,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800da2dc
-    if(cameraAndLights.cameraUpdateState_c5 != 0) {
+    if(cameraAndLights.cameraUpdateState_c5 != CameraUpdateState.AWAIT_INPUT_0) {
       return;
     }
 
@@ -3719,7 +3726,10 @@ public class WMap extends EngineState {
           }
 
           //LAB_800e4624
-          if(cameraAndLights.cameraUpdateState_c5 == 0 && this.mapState_800c6798.shortForceMovementState_d4 == ForcedMovementState.NONE) {
+          if(
+            cameraAndLights.cameraUpdateState_c5 == CameraUpdateState.AWAIT_INPUT_0 &&
+              this.mapState_800c6798.shortForceMovementState_d4 == ForcedMovementState.NONE
+          ) {
             this.mapState_800c6798.disableInput_d0 = false;
             modelAndAnimData.fadeAnimationType_05 = FadeAnimationType.NONE;
           }
@@ -3752,7 +3762,7 @@ public class WMap extends EngineState {
 
             cameraAndLights.hideAtmosphericEffect_c4 = false;
             modelAndAnimData.zoomState_1f8 = ZoomState.LOCAL;
-            cameraAndLights.cameraUpdateState_c5 = 2;
+            cameraAndLights.cameraUpdateState_c5 = CameraUpdateState.ZOOM_IN_2;
             modelAndAnimData.fadeState_04 = FadeState.FADE;
           }
           break;
@@ -3780,7 +3790,10 @@ public class WMap extends EngineState {
           }
 
           //LAB_800e43c4
-          if(cameraAndLights.cameraUpdateState_c5 == 0 && this.mapState_800c6798.shortForceMovementState_d4 == ForcedMovementState.NONE) {
+          if(
+            cameraAndLights.cameraUpdateState_c5 == CameraUpdateState.AWAIT_INPUT_0 &&
+              this.mapState_800c6798.shortForceMovementState_d4 == ForcedMovementState.NONE
+          ) {
             this.mapState_800c6798.disableInput_d0 = false;
             modelAndAnimData.fadeAnimationType_05 = FadeAnimationType.NONE;
           }
@@ -3905,7 +3918,7 @@ public class WMap extends EngineState {
     //LAB_800e5200
     //LAB_800e5224
     if(
-      this.wmapCameraAndLights19c0_800c66b0.cameraUpdateState_c5 != 0 ||
+      this.wmapCameraAndLights19c0_800c66b0.cameraUpdateState_c5 != CameraUpdateState.AWAIT_INPUT_0 ||
         this.wmapCameraAndLights19c0_800c66b0.hideAtmosphericEffect_c4 ||
         this.modelAndAnimData_800c66a8.zoomState_1f8 != ZoomState.LOCAL ||
         this.modelAndAnimData_800c66a8.coolonWarpState_220 != CoolonWarpState.NONE
@@ -4857,7 +4870,7 @@ public class WMap extends EngineState {
               //LAB_800e8fd0
               if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.LOCAL) {
                 //LAB_800e8ff4
-                if(this.wmapCameraAndLights19c0_800c66b0.cameraUpdateState_c5 == 0) {
+                if(this.wmapCameraAndLights19c0_800c66b0.cameraUpdateState_c5 == CameraUpdateState.AWAIT_INPUT_0) {
                   //LAB_800e9018
                   if(!this.wmapCameraAndLights19c0_800c66b0.hideAtmosphericEffect_c4) {
                     //LAB_800e903c
@@ -5804,7 +5817,7 @@ public class WMap extends EngineState {
 
   @Method(0x800ed95cL)
   private void handleSmokeAndAtmosphericEffects() {
-    if(this.wmapCameraAndLights19c0_800c66b0.cameraUpdateState_c5 == 2) {
+    if(this.wmapCameraAndLights19c0_800c66b0.cameraUpdateState_c5 == CameraUpdateState.ZOOM_IN_2) {
       return;
     }
 
