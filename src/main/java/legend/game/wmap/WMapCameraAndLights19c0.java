@@ -33,7 +33,7 @@ public class WMapCameraAndLights19c0 {
   /** Parent coordinate system of camera; controls movement */
   public final GsCOORDINATE2 coord2_20 = new GsCOORDINATE2();
   /** Not in retail */
-  public int mapRotationState;
+  public int mapRotationDirection;
   public final Vector3f currMapRotation_70 = new Vector3f();
   /** short */
   public float mapRotationStartAngle_78;
@@ -47,7 +47,7 @@ public class WMapCameraAndLights19c0 {
   public boolean mapRotating_80;
 
   public float lightsBrightness_84;
-  public int lightsUpdateState_88;
+  public int lightsUpdateState_88; //TODO
   public final Vector3i[] lightsColours_8c = {new Vector3i(), new Vector3i(), new Vector3i()};
   /** short */
   public float finalMapRotation_98;

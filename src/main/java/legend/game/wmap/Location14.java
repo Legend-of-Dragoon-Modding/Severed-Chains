@@ -1,7 +1,5 @@
 package legend.game.wmap;
 
-import legend.game.wmap.WmapEnums.Continent;
-
 public class Location14 {
   public int directionalPathIndex_00;
   public int placeIndex_02;
@@ -25,16 +23,16 @@ public class Location14 {
    */
   public int effectFlags_12;
 
-  public Location14(final int directionalPathIndex, final int placeIndex, final int submapCut0, final int submapScene0, final int submapCut1, final int submapScene1, final int unknown, final WmapEnums.Continent continent, final boolean thumbnailShouldUseFullBrightness, final int effectFlags_12) {
+  public Location14(final int directionalPathIndex, final int placeIndex, final int submapCut0, final int submapScene0, final int submapCut1, final int submapScene1, final int unknownIndex, final Continent continent, final boolean thumbnailShouldUseFullBrightness, final int effectFlags) {
     this.directionalPathIndex_00 = directionalPathIndex;
     this.placeIndex_02 = placeIndex;
     this.submapCutFrom_04 = submapCut0;
     this.submapSceneFrom_06 = submapScene0;
     this.submapCutTo_08 = submapCut1;
     this.submapSceneTo_0a = submapScene1;
-    this.unknownIndex_0c = unknown;
+    this.unknownIndex_0c = unknownIndex;
     this.continent_0e = continent;
     this.thumbnailShouldUseFullBrightness_10 = thumbnailShouldUseFullBrightness;
-    this.effectFlags_12 = effectFlags_12;
+    this.effectFlags_12 = effectFlags;
   }
 }

@@ -1,6 +1,5 @@
 package legend.game.wmap;
 
-import legend.game.wmap.WmapEnums.Continent;
 import org.joml.Vector3f;
 
 import java.util.Arrays;

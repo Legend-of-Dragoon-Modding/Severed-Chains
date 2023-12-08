@@ -38,7 +38,6 @@ import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
-import legend.game.wmap.WmapEnums.Continent;
 import org.joml.Math;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -1187,14 +1186,14 @@ public class WMap extends EngineState {
                 if(!cameraAndLights.mapRotating_80) {
                   //LAB_800d30d8
                   if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_RIGHT_1)) { // R1
-                    cameraAndLights.mapRotationState = (int)MathHelper.floorMod((cameraAndLights.mapRotationState + 1), 8);
+                    cameraAndLights.mapRotationDirection = (int)MathHelper.floorMod((cameraAndLights.mapRotationDirection + 1), 8);
                     this.startMapRotation(1);
                     cameraAndLights.mapRotating_80 = true;
                   }
 
                   //LAB_800d310c
                   if(Input.pressedThisFrame(InputAction.BUTTON_SHOULDER_LEFT_1)) { // L1
-                    cameraAndLights.mapRotationState = (int)MathHelper.floorMod((cameraAndLights.mapRotationState - 1), 8);
+                    cameraAndLights.mapRotationDirection = (int)MathHelper.floorMod((cameraAndLights.mapRotationDirection - 1), 8);
                     this.startMapRotation(-1);
                     cameraAndLights.mapRotating_80 = true;
                   }
@@ -1561,7 +1560,7 @@ public class WMap extends EngineState {
     final WMapCameraAndLights19c0 cameraAndLights = this.wmapCameraAndLights19c0_800c66b0;
     cameraAndLights.mapRotationCounter_7e = 0;
     cameraAndLights.mapRotationStartAngle_78 = cameraAndLights.currMapRotation_70.y;
-    cameraAndLights.mapRotationEndAngle_7a = cameraAndLights.mapRotationState * angleDelta;
+    cameraAndLights.mapRotationEndAngle_7a = cameraAndLights.mapRotationDirection * angleDelta;
     final float cwAngle = -direction * angleDelta;
     final float ccwAngle = cwAngle + MathHelper.TWO_PI;
     final float finalAngle;
