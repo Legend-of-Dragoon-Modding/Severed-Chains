@@ -1,6 +1,7 @@
 package legend.game.combat;
 
 import legend.core.Config;
+import legend.core.DebugHelper;
 import legend.core.MathHelper;
 import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
@@ -18,6 +19,7 @@ import legend.core.gte.ModelPart10;
 import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
+import legend.core.gte.Transforms;
 import legend.core.memory.Method;
 import legend.core.memory.types.QuadConsumer;
 import legend.core.memory.types.TriConsumer;
@@ -35,8 +37,12 @@ import legend.game.combat.deff.LmbType2;
 import legend.game.combat.effects.AdditionOverlaysBorder0e;
 import legend.game.combat.effects.AdditionOverlaysEffect44;
 import legend.game.combat.effects.AdditionOverlaysHit20;
+import legend.game.combat.effects.AttachmentHost;
 import legend.game.combat.effects.BillboardSpriteEffect0c;
+import legend.game.combat.effects.ButtonPressHudMetrics06;
 import legend.game.combat.effects.DeffTmdRenderer14;
+import legend.game.combat.effects.Effect;
+import legend.game.combat.effects.EffectAttachment;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerParams;
 import legend.game.combat.effects.ElectricityEffect38;
@@ -73,6 +79,8 @@ import legend.game.combat.effects.TmdSpriteEffect10;
 import legend.game.combat.effects.TransformScalerAttachment34;
 import legend.game.combat.effects.WsDragoonTransformationFeatherInstance70;
 import legend.game.combat.effects.WsDragoonTransformationFeathersEffect14;
+import legend.game.combat.environment.BattleLightStruct64;
+import legend.game.combat.environment.BattleStageDarkening1800;
 import legend.game.combat.particles.ParticleEffectData98;
 import legend.game.combat.particles.ParticleEffectInstance94;
 import legend.game.combat.particles.ParticleManager;
@@ -93,6 +101,10 @@ import legend.game.scripting.ScriptState;
 import legend.game.tmd.Renderer;
 import legend.game.types.Model124;
 import legend.game.types.Translucency;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.joml.Math;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -101,6 +113,7 @@ import org.joml.Vector3i;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
@@ -129,6 +142,9 @@ import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.renderDobj2;
 import static legend.game.Scus94491BpeSegment_8003.GetClut;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
+import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
+import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
+import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
 import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
@@ -143,38 +159,23 @@ import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
-import static legend.game.combat.Bttl.FUN_800cf684;
-import static legend.game.combat.Bttl.FUN_800cfb94;
-import static legend.game.combat.Bttl.FUN_800e60e0;
-import static legend.game.combat.Bttl.FUN_800e6170;
-import static legend.game.combat.Bttl.FUN_800e61e4;
-import static legend.game.combat.Bttl.FUN_800e62a8;
-import static legend.game.combat.Bttl.FUN_800e9178;
-import static legend.game.combat.Bttl.allocateEffectManager;
-import static legend.game.combat.Bttl.applyScreenDarkening;
-import static legend.game.combat.Bttl.calculateEffectTransforms;
-import static legend.game.combat.Bttl.currentStage_800c66a4;
-import static legend.game.combat.Bttl.deffManager_800c693c;
-import static legend.game.combat.Bttl.getDeffPart;
-import static legend.game.combat.Bttl.getRelativeOffset;
-import static legend.game.combat.Bttl.getRotationAndScaleFromTransforms;
-import static legend.game.combat.Bttl.getRotationFromTransforms;
-import static legend.game.combat.Bttl.getSpriteMetricsFromSource;
-import static legend.game.combat.Bttl.loadModelAnim;
-import static legend.game.combat.Bttl.melbuStageIndices_800fb064;
-import static legend.game.combat.Bttl.optimisePacketsIfNecessary;
-import static legend.game.combat.Bttl.perspectiveTransformXyz;
-import static legend.game.combat.Bttl.renderBillboardSpriteEffect;
-import static legend.game.combat.Bttl.renderButtonPressHudElement1;
-import static legend.game.combat.Bttl.renderGenericSpriteAtZOffset0;
-import static legend.game.combat.Bttl.renderTmdSpriteEffect;
-import static legend.game.combat.Bttl.scriptGetScriptedObjectPos;
-import static legend.game.combat.Bttl.seed_800fa754;
-import static legend.game.combat.Bttl.spriteMetrics_800c6948;
-import static legend.game.combat.Bttl.transformToScreenSpace;
+import static legend.game.combat.Battle._800c6930;
+import static legend.game.combat.Battle.buttonPressHudMetrics_800faaa0;
+import static legend.game.combat.Battle.currentStage_800c66a4;
+import static legend.game.combat.Battle.deffManager_800c693c;
+import static legend.game.combat.Battle.light_800c6ddc;
+import static legend.game.combat.Battle.lights_800c692c;
+import static legend.game.combat.Battle.melbuStageIndices_800fb064;
+import static legend.game.combat.Battle.seed_800fa754;
+import static legend.game.combat.Battle.spriteMetrics_800c6948;
+import static legend.game.combat.Battle.stageDarkeningClutWidth_800c695c;
+import static legend.game.combat.Battle.stageDarkening_800c6958;
 
 public final class SEffe {
   private SEffe() { }
+
+  private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Marker EFFECTS = MarkerManager.getMarker("EFFECTS");
 
   private static final int[] vramSlotUvs_800fb0ec = {0, 21, 22, 23, 24, 25, 26, 25, 26, 27, 12, 13, 14, 15, 8, 9, 10, 11};
 
@@ -350,6 +351,713 @@ public final class SEffe {
 
   /** Related to processing type 2 LMBs */
   private static final byte[] lmbType2TransformationData_8011a048 = new byte[0x300];
+
+  @Method(0x800cea1cL)
+  public static void scriptGetScriptedObjectPos(final int scriptIndex, final Vector3f posOut) {
+    final BattleObject bobj = (BattleObject)scriptStatePtrArr_800bc1c0[scriptIndex].innerStruct_00;
+    posOut.set(bobj.getPosition());
+  }
+
+  /** @return Z */
+  @Method(0x800cf244L)
+  public static float transformWorldspaceToScreenspace(final Vector3f pos, final Vector2f out) {
+    final Vector3f sp0x10 = new Vector3f();
+    pos.mul(worldToScreenMatrix_800c3548, sp0x10);
+    sp0x10.add(worldToScreenMatrix_800c3548.transfer);
+    out.x = MathHelper.safeDiv(getProjectionPlaneDistance() * sp0x10.x, sp0x10.z);
+    out.y = MathHelper.safeDiv(getProjectionPlaneDistance() * sp0x10.y, sp0x10.z);
+    return sp0x10.z;
+  }
+
+  @Method(0x800cf37cL)
+  public static void rotateAndTranslateEffect(final EffectManagerData6c<?> manager, @Nullable final Vector3f extraRotation, final Vector3f vertex, final Vector3f out) {
+    final Vector3f rotations = new Vector3f(manager.params_10.rot_10);
+
+    if(extraRotation != null) {
+      //LAB_800cf3c4
+      rotations.add(extraRotation);
+    }
+
+    //LAB_800cf400
+    final MV transforms = new MV();
+    transforms.rotationXYZ(rotations);
+
+    vertex.mul(transforms, out);
+    out.add(transforms.transfer);
+  }
+
+  @Method(0x800cf4f4L)
+  public static void getRelativeOffset(final EffectManagerData6c<?> manager, @Nullable final Vector3f extraRotation, final Vector3f in, final Vector3f out) {
+    final MV sp0x28 = new MV();
+
+    final Vector3f sp0x20 = new Vector3f(manager.getRotation());
+
+    if(extraRotation != null) {
+      //LAB_800cf53c
+      sp0x20.add(extraRotation);
+    }
+
+    //LAB_800cf578
+    sp0x28.rotationXYZ(sp0x20);
+    sp0x28.transfer.set(manager.getPosition());
+
+    in.mul(sp0x28, out);
+    out.add(sp0x28.transfer);
+  }
+
+  @Method(0x800cf684L)
+  public static void FUN_800cf684(final Vector3f rotation, final Vector3f translation, final Vector3f vector, final Vector3f out) {
+    final MV transforms = new MV();
+    transforms.rotationXYZ(rotation);
+    transforms.transfer.set(translation);
+    vector.mul(transforms, out);
+    out.add(transforms.transfer);
+  }
+
+  /** @return Z */
+  @Method(0x800cf7d4L)
+  public static float FUN_800cf7d4(final Vector3f rotation, final Vector3f translation1, final Vector3f translation2, final Vector2f out) {
+    final Vector3f sp0x10 = new Vector3f(translation1);
+    sp0x10.mul(worldToScreenMatrix_800c3548);
+
+    GTE.setTransforms(worldToScreenMatrix_800c3548);
+
+    final MV oldTransforms = new MV();
+    GTE.getTransforms(oldTransforms);
+
+    final MV sp0x58 = new MV();
+    sp0x58.rotationXYZ(rotation);
+    oldTransforms.mul(sp0x58);
+    oldTransforms.transfer.add(sp0x10);
+
+    GTE.setTransforms(oldTransforms);
+    GTE.perspectiveTransform(translation2);
+
+    out.set(GTE.getScreenX(2), GTE.getScreenY(2));
+    return GTE.getScreenZ(3);
+  }
+
+  /** @return Z */
+  @Method(0x800cfb14L)
+  public static float FUN_800cfb14(final EffectManagerData6c<?> manager, final Vector3f translation, final Vector2f out) {
+    return FUN_800cf7d4(manager.params_10.rot_10, manager.params_10.trans_04, translation, out);
+  }
+
+  /** @return Z */
+  @Method(0x800cfb94L)
+  public static float FUN_800cfb94(final EffectManagerData6c<?> manager, final Vector3f rotation, final Vector3f translation, final Vector2f out) {
+    final Vector3f tempRotation = new Vector3f(manager.params_10.rot_10).add(rotation);
+    return FUN_800cf7d4(tempRotation, manager.params_10.trans_04, translation, out);
+  }
+
+  /** @return Z */
+  @Method(0x800cfc20L)
+  public static float FUN_800cfc20(final Vector3f managerRotation, final Vector3f managerTranslation, final Vector3f translation, final Vector2f out) {
+    return FUN_800cf7d4(managerRotation, managerTranslation, translation, out);
+  }
+
+  /** Sets translation vector to position of individual part of model associated with scriptIndex */
+  @Method(0x800cffd8L)
+  public static void getModelObjectTranslation(final BattleEntity27c bent, final Vector3f translation, final int objIndex) {
+    final MV transformMatrix = new MV();
+    GsGetLw(bent.model_148.modelParts_00[objIndex].coord2_04, transformMatrix);
+    translation.set(transformMatrix.transfer);
+  }
+
+  @Method(0x800d3f98L)
+  public static void FUN_800d3f98(final short x, final short y, final int a2, final short a3, final int brightness) {
+    renderButtonPressHudTexturedRect(x, y, a2 * 8 + 16 & 0xf8, 40, 8, 16, a3, Translucency.B_PLUS_F, brightness, 0x1000);
+  }
+
+  /** used renderCtmd */
+  @Method(0x800de3f4L)
+  public static void renderTmdSpriteEffect(final TmdObjTable1c objTable, final Obj obj, final EffectManagerParams<?> effectParams, final MV transforms) {
+    final MV sp0x10 = new MV();
+    if((effectParams.flags_00 & 0x8) != 0) {
+      //TODO pretty sure this isn't equivalent to MATRIX#normalize
+      transforms.normal(sp0x10);
+      GsSetLightMatrix(sp0x10);
+    } else {
+      //LAB_800de458
+      GsSetLightMatrix(transforms);
+    }
+
+    //LAB_800de45c
+    if(RenderEngine.legacyMode != 0) {
+      transforms.compose(worldToScreenMatrix_800c3548, sp0x10);
+    } else {
+      sp0x10.set(transforms);
+    }
+
+    if((effectParams.flags_00 & 0x400_0000) == 0) {
+      sp0x10.rotationXYZ(effectParams.rot_10);
+      sp0x10.scaleLocal(effectParams.scale_16);
+    }
+
+    //LAB_800de4a8
+    //LAB_800de50c
+    GTE.setTransforms(sp0x10);
+
+    final ModelPart10 dobj2 = new ModelPart10();
+    dobj2.attribute_00 = effectParams.flags_00;
+    dobj2.tmd_08 = objTable;
+
+    final int oldZShift = zShift_1f8003c4;
+    final int oldZMax = zMax_1f8003cc;
+    final int oldZMin = zMin;
+    zShift_1f8003c4 = 2;
+    zMax_1f8003cc = 0xffe;
+    zMin = 0xb;
+    Renderer.renderDobj2(dobj2, false, 0x20);
+    zShift_1f8003c4 = oldZShift;
+    zMax_1f8003cc = oldZMax;
+    zMin = oldZMin;
+
+    RENDERER.queueModel(obj, sp0x10)
+      .lightDirection(lightDirectionMatrix_800c34e8)
+      .lightColour(lightColourMatrix_800c3508)
+      .backgroundColour(GTE.backgroundColour);
+
+    //LAB_800de528
+  }
+
+  @Method(0x800de544L)
+  public static Vector3f getRotationFromTransforms(final Vector3f rotOut, final MV transforms) {
+    final MV mat = new MV(transforms);
+    rotOut.x = MathHelper.atan2(-mat.m21, mat.m22);
+    mat.rotateLocalX(-rotOut.x);
+    rotOut.y = MathHelper.atan2(mat.m20, mat.m22);
+    mat.rotateLocalY(-rotOut.y);
+    rotOut.z = MathHelper.atan2(mat.m01, mat.m00);
+    return rotOut;
+  }
+
+  @Method(0x800de618L)
+  public static void getRotationAndScaleFromTransforms(final Vector3f rotOut, final Vector3f scaleOut, final MV transforms) {
+    final MV mat = new MV().set(transforms);
+    rotOut.x = MathHelper.atan2(-mat.m21, mat.m22);
+    mat.rotateLocalX(-rotOut.x);
+    rotOut.y = MathHelper.atan2(mat.m20, mat.m22);
+    mat.rotateLocalY(-rotOut.y);
+    rotOut.z = MathHelper.atan2(mat.m01, mat.m00);
+    mat.rotateLocalZ(-rotOut.z);
+    scaleOut.set(mat.m00, mat.m11, mat.m22);
+  }
+
+  @Method(0x800e4d74L)
+  public static void getBattleBackgroundLightColour(final Vector3f colour) {
+    final BattleLightStruct64 light = _800c6930;
+    colour.set(light.colour_00);
+  }
+
+  @Method(0x800e60e0L)
+  public static void FUN_800e60e0(final float r, final float g, final float b) {
+    if(r < 0.0f) {
+      LOGGER.warn("Negative R! %f", r);
+    }
+
+    if(g < 0.0f) {
+      LOGGER.warn("Negative G! %f", g);
+    }
+
+    if(b < 0.0f) {
+      LOGGER.warn("Negative B! %f", b);
+    }
+
+    final BattleLightStruct64 light = _800c6930;
+    final Vector3f colour = light.colours_30[light.colourIndex_60];
+    getBattleBackgroundLightColour(colour);
+
+    light.colour_00.set(r, g, b);
+    light.colourIndex_60 = light.colourIndex_60 + 1 & 3;
+  }
+
+  @Method(0x800e6170L)
+  public static void FUN_800e6170() {
+    final BattleLightStruct64 light = _800c6930;
+    light.colourIndex_60 = light.colourIndex_60 - 1 & 3;
+    light.colour_00.set(light.colours_30[light.colourIndex_60]);
+  }
+
+  @Method(0x800e61e4L)
+  public static void FUN_800e61e4(final float r, final float g, final float b) {
+    if(r < 0.0f) {
+      LOGGER.warn("Negative R! %f", r);
+    }
+
+    if(g < 0.0f) {
+      LOGGER.warn("Negative G! %f", g);
+    }
+
+    if(b < 0.0f) {
+      LOGGER.warn("Negative B! %f", b);
+    }
+
+    GsSetFlatLight(0, light_800c6ddc);
+    GsSetFlatLight(1, light_800c6ddc);
+    GsSetFlatLight(2, light_800c6ddc);
+    FUN_800e60e0(r, g, b);
+
+    final BattleLightStruct64 light = _800c6930;
+    GTE.setBackgroundColour(light.colour_00.x, light.colour_00.y, light.colour_00.z);
+  }
+
+  @Method(0x800e62a8L)
+  public static void FUN_800e62a8() {
+    FUN_800e6170();
+
+    final BattleLightStruct64 light = _800c6930;
+    GTE.setBackgroundColour(light.colour_00.x, light.colour_00.y, light.colour_00.z);
+
+    for(int i = 0; i < 3; i++) {
+      GsSetFlatLight(i, lights_800c692c[i].light_00);
+    }
+  }
+
+  /** Used in Astral Drain (ground glow) */
+  @Method(0x800e75acL)
+  public static void FUN_800e75ac(final GenericSpriteEffect24 spriteEffect, final MV transformMatrix) {
+    final MV finalTransform = new MV();
+    transformMatrix.compose(worldToScreenMatrix_800c3548, finalTransform);
+    final float z = java.lang.Math.min(0x3ff8, zOffset_1f8003e8 + finalTransform.transfer.z / 4.0f);
+
+    if(z >= 40) {
+      //LAB_800e7610
+      GTE.setTransforms(finalTransform);
+
+      GTE.setVertex(0, spriteEffect.x_04 * 64, spriteEffect.y_06 * 64, 0);
+      GTE.setVertex(1, (spriteEffect.x_04 + spriteEffect.w_08) * 64, spriteEffect.y_06 * 64, 0);
+      GTE.setVertex(2, spriteEffect.x_04 * 64, (spriteEffect.y_06 + spriteEffect.h_0a) * 64, 0);
+      GTE.perspectiveTransformTriangle();
+      final float sx0 = GTE.getScreenX(0);
+      final float sy0 = GTE.getScreenY(0);
+      final float sx1 = GTE.getScreenX(1);
+      final float sy1 = GTE.getScreenY(1);
+      final float sx2 = GTE.getScreenX(2);
+      final float sy2 = GTE.getScreenY(2);
+
+      GTE.perspectiveTransform((spriteEffect.x_04 + spriteEffect.w_08) * 64, (spriteEffect.y_06 + spriteEffect.h_0a) * 64, 0);
+      final float sx3 = GTE.getScreenX(2);
+      final float sy3 = GTE.getScreenY(2);
+
+      final GpuCommandPoly cmd = new GpuCommandPoly(4)
+        .clut(spriteEffect.clutX_10, spriteEffect.clutY_12)
+        .vramPos((spriteEffect.tpage_0c & 0b1111) * 64, (spriteEffect.tpage_0c & 0b10000) != 0 ? 256 : 0)
+        .rgb(spriteEffect.r_14, spriteEffect.g_15, spriteEffect.b_16)
+        .pos(0, sx0, sy0)
+        .pos(1, sx1, sy1)
+        .pos(2, sx2, sy2)
+        .pos(3, sx3, sy3)
+        .uv(0, spriteEffect.u_0e, spriteEffect.v_0f)
+        .uv(1, spriteEffect.u_0e + spriteEffect.w_08, spriteEffect.v_0f)
+        .uv(2, spriteEffect.u_0e, spriteEffect.v_0f + spriteEffect.h_0a)
+        .uv(3, spriteEffect.u_0e + spriteEffect.w_08, spriteEffect.v_0f + spriteEffect.h_0a);
+
+      if((spriteEffect.flags_00 >>> 30 & 1) != 0) {
+        cmd.translucent(Translucency.of(spriteEffect.flags_00 >>> 28 & 0b11));
+      }
+
+      GPU.queueCommand(z / 4.0f, cmd);
+    }
+    //LAB_800e7930
+  }
+
+  /**
+   * Renderer for some kind of effect sprites like those in HUD DEFF.
+   * Used for example for sprite effect overlays on red glow in Death Dimension.
+   */
+  @Method(0x800e7944L)
+  public static void FUN_800e7944(final GenericSpriteEffect24 spriteEffect, final Vector3f translation, final int zMod) {
+    if(spriteEffect.flags_00 >= 0) { // No errors
+      final Vector3f finalTranslation = new Vector3f();
+      translation.mul(worldToScreenMatrix_800c3548, finalTranslation);
+      finalTranslation.add(worldToScreenMatrix_800c3548.transfer);
+
+      final float x0 = MathHelper.safeDiv(finalTranslation.x * projectionPlaneDistance_1f8003f8, finalTranslation.z);
+      final float y0 = MathHelper.safeDiv(finalTranslation.y * projectionPlaneDistance_1f8003f8, finalTranslation.z);
+
+      // zMod needs to be ignored in z check or poly positions will overflow at low z values
+      float z = zMod + finalTranslation.z / 4.0f;
+      if(finalTranslation.z / 4.0f >= 40 && z >= 40) {
+        if(z > 0x3ff8) {
+          z = 0x3ff8;
+        }
+
+        //LAB_800e7a38
+        final float zDepth = MathHelper.safeDiv(projectionPlaneDistance_1f8003f8 * 0x1000 / 4.0f, finalTranslation.z / 4.0f);
+        final float x1 = spriteEffect.x_04 * spriteEffect.scaleX_1c / 8 * zDepth / 8;
+        final float x2 = x1 + spriteEffect.w_08 * spriteEffect.scaleX_1c / 8 * zDepth / 8;
+        final float y1 = spriteEffect.y_06 * spriteEffect.scaleY_1e / 8 * zDepth / 8;
+        final float y2 = y1 + spriteEffect.h_0a * spriteEffect.scaleY_1e / 8 * zDepth / 8;
+        final float sin = MathHelper.sin(spriteEffect.angle_20);
+        final float cos = MathHelper.cos(spriteEffect.angle_20);
+
+        final GpuCommandPoly cmd = new GpuCommandPoly(4)
+          .clut(spriteEffect.clutX_10, spriteEffect.clutY_12)
+          .vramPos((spriteEffect.tpage_0c & 0b1111) * 64, (spriteEffect.tpage_0c & 0b10000) != 0 ? 256 : 0)
+          .rgb(spriteEffect.r_14, spriteEffect.g_15, spriteEffect.b_16)
+          .pos(0, x0 + x1 * cos - y1 * sin, y0 + x1 * sin + y1 * cos)
+          .pos(1, x0 + x2 * cos - y1 * sin, y0 + x2 * sin + y1 * cos)
+          .pos(2, x0 + x1 * cos - y2 * sin, y0 + x1 * sin + y2 * cos)
+          .pos(3, x0 + x2 * cos - y2 * sin, y0 + x2 * sin + y2 * cos)
+          .uv(0, spriteEffect.u_0e, spriteEffect.v_0f)
+          .uv(1, spriteEffect.w_08 + spriteEffect.u_0e - 1, spriteEffect.v_0f)
+          .uv(2, spriteEffect.u_0e, spriteEffect.h_0a + spriteEffect.v_0f - 1)
+          .uv(3, spriteEffect.w_08 + spriteEffect.u_0e - 1, spriteEffect.h_0a + spriteEffect.v_0f - 1);
+
+        if((spriteEffect.flags_00 & 0x4000_0000) != 0) {
+          cmd.translucent(Translucency.of(spriteEffect.flags_00 >>> 28 & 0b11));
+        }
+
+        GPU.queueCommand(z / 4.0f, cmd);
+      }
+    }
+
+    //LAB_800e7d8c
+  }
+
+  @Method(0x800e7dbcL)
+  public static float transformToScreenSpace(final Vector2f out, final Vector3f translation) {
+    final Vector3f transformed = new Vector3f();
+    translation.mul(worldToScreenMatrix_800c3548, transformed);
+    transformed.add(worldToScreenMatrix_800c3548.transfer);
+
+    if(transformed.z >= 160) {
+      out.x = transformed.x * projectionPlaneDistance_1f8003f8 / transformed.z;
+      out.y = transformed.y * projectionPlaneDistance_1f8003f8 / transformed.z;
+      return transformed.z / 4.0f;
+    }
+
+    //LAB_800e7e8c
+    //LAB_800e7e90
+    return 0;
+  }
+
+  @Method(0x800e7ec4L)
+  public static <T extends EffectManagerParams<T>> void effectManagerDestructor(final ScriptState<EffectManagerData6c<T>> state, final EffectManagerData6c<T> struct) {
+    LOGGER.info(EFFECTS, "Deallocating effect manager %d", state.index);
+
+    if(struct.parentScript_50 != null) {
+      if(struct.newChildScript_56 != null) {
+        struct.newChildScript_56.innerStruct_00.oldChildScript_54 = struct.oldChildScript_54;
+      } else {
+        //LAB_800e7f4c
+        struct.parentScript_50.innerStruct_00.childScript_52 = struct.oldChildScript_54;
+      }
+
+      //LAB_800e7f6c
+      if(struct.oldChildScript_54 != null) {
+        struct.oldChildScript_54.innerStruct_00.newChildScript_56 = struct.newChildScript_56;
+      }
+
+      //LAB_800e7fa0
+      struct.parentScript_50 = null;
+      struct.oldChildScript_54 = null;
+      struct.newChildScript_56 = null;
+    }
+
+    //LAB_800e7fac
+    //LAB_800e7fcc
+    while(struct.childScript_52 != null) {
+      EffectManagerData6c<?> child = struct.childScript_52.innerStruct_00;
+
+      //LAB_800e7ff8
+      while(child.childScript_52 != null) {
+        child = child.childScript_52.innerStruct_00;
+      }
+
+      //LAB_800e8020
+      child.myScriptState_0e.deallocateWithChildren();
+    }
+
+    //LAB_800e8040
+    if(struct.destructor_4c != null) {
+      struct.destructor_4c.accept(state, struct);
+    }
+  }
+
+  public static ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> allocateEffectManager(final String name, @Nullable final ScriptState<? extends BattleObject> parentState, @Nullable final BiConsumer<ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>>, EffectManagerData6c<EffectManagerParams.VoidType>> ticker, @Nullable final BiConsumer<ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>>, EffectManagerData6c<EffectManagerParams.VoidType>> renderer, @Nullable final BiConsumer<ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>>, EffectManagerData6c<EffectManagerParams.VoidType>> destructor, @Nullable final Effect effect) {
+    return allocateEffectManager(name, parentState, ticker, renderer, destructor, effect, new EffectManagerParams.VoidType());
+  }
+
+  @Method(0x800e80c4L)
+  public static <T extends EffectManagerParams<T>> ScriptState<EffectManagerData6c<T>> allocateEffectManager(final String name, @Nullable ScriptState<? extends BattleObject> parentState, @Nullable final BiConsumer<ScriptState<EffectManagerData6c<T>>, EffectManagerData6c<T>> ticker, @Nullable final BiConsumer<ScriptState<EffectManagerData6c<T>>, EffectManagerData6c<T>> renderer, @Nullable final BiConsumer<ScriptState<EffectManagerData6c<T>>, EffectManagerData6c<T>> destructor, @Nullable final Effect effect, final T inner) {
+    final ScriptState<EffectManagerData6c<T>> state = SCRIPTS.allocateScriptState(name, new EffectManagerData6c<>(name, inner));
+    final EffectManagerData6c<T> manager = state.innerStruct_00;
+
+    state.loadScriptFile(doNothingScript_8004f650);
+    state.setTicker(SEffe::effectManagerTicker);
+
+    if(renderer != null) {
+      state.setRenderer(renderer);
+    }
+
+    state.setDestructor(SEffe::effectManagerDestructor);
+
+    final StackWalker.StackFrame caller = DebugHelper.getCallerFrame();
+
+    manager.effect_44 = effect;
+
+    if(effect != null) {
+      LOGGER.info(EFFECTS, "Allocating effect manager %d for %s (parent: %d) from %s.%s(%s:%d)", state.index, manager.effect_44.getClass().getSimpleName(), parentState != null ? parentState.index : -1, caller.getClassName(), caller.getMethodName(), caller.getFileName(), caller.getLineNumber());
+    } else {
+      LOGGER.info(EFFECTS, "Allocating empty effect manager %d (parent: %d) from %s.%s(%s:%d)", state.index, parentState != null ? parentState.index : -1, caller.getClassName(), caller.getMethodName(), caller.getFileName(), caller.getLineNumber());
+    }
+
+    manager.flags_04 = 0xff00_0000;
+    manager.scriptIndex_0c = -1;
+    manager.coord2Index_0d = -1;
+    manager.myScriptState_0e = state;
+    manager.params_10.flags_00 = 0x5400_0000;
+    manager.params_10.scale_16.set(1.0f, 1.0f, 1.0f);
+    manager.params_10.colour_1c.set(0x80, 0x80, 0x80);
+    manager.ticker_48 = ticker;
+    manager.destructor_4c = destructor;
+
+    if(parentState != null) {
+      if(!BattleObject.EM__.equals(parentState.innerStruct_00.magic_00)) {
+        parentState = deffManager_800c693c.scriptState_1c;
+      }
+
+      final EffectManagerData6c<?> parent = (EffectManagerData6c<?>)parentState.innerStruct_00;
+      final EffectManagerData6c<?> child = state.innerStruct_00;
+
+      child.parentScript_50 = (ScriptState<EffectManagerData6c<?>>)parentState;
+      if(parent.childScript_52 != null) {
+        child.oldChildScript_54 = parent.childScript_52;
+        parent.childScript_52.innerStruct_00.newChildScript_56 = (ScriptState)state;
+      }
+
+      parent.childScript_52 = (ScriptState)state;
+    }
+
+    return state;
+  }
+
+  @Method(0x800e8e9cL)
+  public static <T extends EffectManagerParams<T>> void effectManagerTicker(final ScriptState<EffectManagerData6c<T>> state, final EffectManagerData6c<T> data) {
+    AttachmentHost subPtr = data;
+
+    //LAB_800e8ee0
+    while(subPtr.getAttachment() != null) {
+      final EffectAttachment sub = subPtr.getAttachment();
+
+      final int ret = (int)((BiFunction)sub.ticker_08).apply(data, subPtr.getAttachment());
+      if(ret == 0) { // Remove this attachment
+        //LAB_800e8f2c
+        data.flags_04 &= ~(1 << sub.id_05);
+        subPtr.setAttachment(sub.getAttachment());
+      } else if(ret == 1) { // Continue
+        //LAB_800e8f6c
+        subPtr = sub;
+        //LAB_800e8f1c
+      } else if(ret == 2) { // Remove this effect entirely
+        //LAB_800e8f78
+        state.deallocateWithChildren();
+        return;
+      }
+
+      //LAB_800e8f8c
+    }
+
+    //LAB_800e8f9c
+    if(data.ticker_48 != null) {
+      data.ticker_48.accept(state, data);
+    }
+
+    //LAB_800e8fb8
+  }
+
+  @Method(0x800e7ea4L)
+  public static void renderGenericSpriteAtZOffset0(final GenericSpriteEffect24 spriteEffect, final Vector3f translation) {
+    FUN_800e7944(spriteEffect, translation, 0);
+  }
+
+  /** Considers all parents */
+  @Method(0x800e8594L)
+  public static void calculateEffectTransforms(final MV transformMatrix, final EffectManagerData6c<?> manager) {
+    transformMatrix.rotationXYZ(manager.params_10.rot_10);
+    transformMatrix.transfer.set(manager.params_10.trans_04);
+    transformMatrix.scaleLocal(manager.params_10.scale_16);
+
+    EffectManagerData6c<?> currentManager = manager;
+    int scriptIndex = manager.scriptIndex_0c;
+
+    //LAB_800e8604
+    while(scriptIndex >= 0) {
+      final ScriptState<?> state = scriptStatePtrArr_800bc1c0[scriptIndex];
+      if(state == null) { // error, parent no longer exists
+        manager.params_10.flags_00 |= 0x8000_0000;
+        transformMatrix.transfer.z = -0x7fff;
+        scriptIndex = -2;
+        break;
+      }
+
+      final BattleObject base = (BattleObject)state.innerStruct_00;
+      if(BattleObject.EM__.equals(base.magic_00)) {
+        final EffectManagerData6c<?> baseManager = (EffectManagerData6c<?>)base;
+        final MV baseTransformMatrix = new MV();
+        baseTransformMatrix.rotationXYZ(baseManager.params_10.rot_10);
+        baseTransformMatrix.transfer.set(baseManager.params_10.trans_04);
+        baseTransformMatrix.scaleLocal(baseManager.params_10.scale_16);
+
+        if(currentManager.coord2Index_0d != -1) {
+          //LAB_800e866c
+          FUN_800ea0f4(baseManager, currentManager.coord2Index_0d).coord.compose(baseTransformMatrix, baseTransformMatrix);
+        }
+
+        //LAB_800e86ac
+        transformMatrix.compose(baseTransformMatrix);
+        currentManager = baseManager;
+        scriptIndex = currentManager.scriptIndex_0c;
+        //LAB_800e86c8
+      } else if(BattleObject.BOBJ.equals(base.magic_00)) {
+        final BattleEntity27c bent = (BattleEntity27c)base;
+        final Model124 s1 = bent.model_148;
+        applyModelRotationAndScale(s1);
+        final int coord2Index = currentManager.coord2Index_0d;
+
+        final MV sp0x10 = new MV();
+        if(coord2Index == -1) {
+          sp0x10.set(s1.coord2_14.coord);
+        } else {
+          //LAB_800e8738
+          GsGetLw(s1.modelParts_00[coord2Index].coord2_04, sp0x10);
+          s1.modelParts_00[coord2Index].coord2_04.flg = 0;
+        }
+
+        //LAB_800e8774
+        transformMatrix.compose(sp0x10);
+        currentManager = null;
+        scriptIndex = -1; // finished
+      } else { // error, parent not a bent or effect
+        //LAB_800e878c
+        //LAB_800e8790
+        manager.params_10.flags_00 |= 0x8000_0000;
+        transformMatrix.transfer.z = -0x7fff;
+        scriptIndex = -2;
+        break;
+      }
+    }
+
+    //LAB_800e87b4
+    if(scriptIndex == -2) { // error
+      final MV transposedWs = new MV();
+      final Vector3f transposedTranslation = new Vector3f();
+      worldToScreenMatrix_800c3548.transpose(transposedWs);
+      transposedTranslation.set(worldToScreenMatrix_800c3548.transfer).negate();
+      transposedTranslation.mul(transposedWs, transposedWs.transfer);
+      transformMatrix.compose(transposedWs);
+    }
+    //LAB_800e8814
+  }
+
+  /** Has some relation to rendering of certain effect sprites, like ones from HUD DEFF */
+  @Method(0x800e9428L)
+  public static void renderBillboardSpriteEffect(final SpriteMetrics08 metrics, final EffectManagerParams<?> managerInner, final MV transformMatrix) {
+    if(managerInner.flags_00 >= 0) { // No errors
+      final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24(managerInner.flags_00, metrics);
+      spriteEffect.r_14 = managerInner.colour_1c.x & 0xff;
+      spriteEffect.g_15 = managerInner.colour_1c.y & 0xff;
+      spriteEffect.b_16 = managerInner.colour_1c.z & 0xff;
+      spriteEffect.scaleX_1c = managerInner.scale_16.x;
+      spriteEffect.scaleY_1e = managerInner.scale_16.y;
+      spriteEffect.angle_20 = managerInner.rot_10.z;
+
+      if((managerInner.flags_00 & 0x400_0000) != 0) {
+        zOffset_1f8003e8 = managerInner.z_22;
+        FUN_800e75ac(spriteEffect, transformMatrix);
+      } else {
+        //LAB_800e9574
+        FUN_800e7944(spriteEffect, transformMatrix.transfer, managerInner.z_22);
+      }
+    }
+    //LAB_800e9580
+  }
+
+  @Method(0x800ea0f4L)
+  public static GsCOORDINATE2 FUN_800ea0f4(final EffectManagerData6c<?> effectManager, final int coord2Index) {
+    final Model124 model = ((ModelEffect13c)effectManager.effect_44).model_10;
+    applyModelRotationAndScale(model);
+    return model.modelParts_00[coord2Index].coord2_04;
+  }
+
+  @Method(0x800ebb58L)
+  public static void applyScreenDarkening(final int multiplier) {
+    final BattleStageDarkening1800 darkening = stageDarkening_800c6958;
+
+    //LAB_800ebb7c
+    for(int y = 0; y < 16; y++) {
+      //LAB_800ebb80
+      for(int x = 0; x < stageDarkeningClutWidth_800c695c; x++) {
+        final int colour = darkening.original_000[y][x] & 0xffff;
+        final int mask = colour >>> 15 & 0x1;
+        final int b = (colour >>> 10 & 0x1f) * multiplier >> 4 & 0x1f;
+        final int g = (colour >>> 5 & 0x1f) * multiplier >> 4 & 0x1f;
+        final int r = (colour & 0x1f) * multiplier >> 4 & 0x1f;
+
+        final int newColour;
+        if(r != 0 || g != 0 || b != 0 || colour == 0) {
+          newColour = mask << 15 | b << 10 | g << 5 | r;
+        } else {
+          newColour = colour & 0xffff_8000 | 0x1;
+        }
+
+        darkening.modified_800[y][x] = newColour;
+      }
+    }
+
+    for(int y = 0; y < 16; y++) {
+      GPU.uploadData15(new Rect4i(448, (240 + y), 64, 1), stageDarkening_800c6958.modified_800[y]);
+    }
+  }
+
+  @Method(0x800ec258L)
+  public static void renderBttlShadow(final Model124 model) {
+    final Model124 shadow = shadowModel_800bda10;
+
+    GsInitCoordinate2(model.coord2_14, shadow.coord2_14);
+
+    if(model.shadowType_cc == 3) {
+      //LAB_800ec2ec
+      shadow.coord2_14.coord.transfer.x = model.shadowOffset_118.x + model.modelParts_00[model.modelPartWithShadowIndex_cd].coord2_04.coord.transfer.x;
+      shadow.coord2_14.coord.transfer.y = model.shadowOffset_118.y - MathHelper.safeDiv(model.coord2_14.coord.transfer.y, model.coord2_14.transforms.scale.y);
+      shadow.coord2_14.coord.transfer.z = model.shadowOffset_118.z + model.modelParts_00[model.modelPartWithShadowIndex_cd].coord2_04.coord.transfer.z;
+    } else {
+      shadow.coord2_14.coord.transfer.x = model.shadowOffset_118.x;
+
+      if(model.shadowType_cc == 1) {
+        shadow.coord2_14.coord.transfer.y = model.shadowOffset_118.y;
+      } else {
+        //LAB_800ec2bc
+        shadow.coord2_14.coord.transfer.y = model.shadowOffset_118.y - MathHelper.safeDiv(model.coord2_14.coord.transfer.y, model.coord2_14.transforms.scale.y);
+      }
+
+      //LAB_800ec2e0
+      shadow.coord2_14.coord.transfer.z = model.shadowOffset_118.z;
+    }
+
+    //LAB_800ec370
+    shadow.zOffset_a0 = model.zOffset_a0 + 16;
+    shadow.coord2_14.transforms.scale.set(model.shadowSize_10c.x).div(4.0f);
+    shadow.coord2_14.coord.rotationXYZ(shadow.coord2_14.transforms.rotate);
+    shadow.coord2_14.coord.scaleLocal(shadow.coord2_14.transforms.scale);
+    shadow.coord2_14.flg = 0;
+    final GsCOORDINATE2 v0 = shadow.modelParts_00[0].coord2_04;
+    final Transforms s0 = v0.transforms;
+    s0.rotate.zero();
+    v0.coord.rotationZYX(s0.rotate);
+    s0.trans.zero();
+    v0.coord.transfer.set(s0.trans);
+
+    final MV sp0x30 = new MV();
+    final MV sp0x10 = new MV();
+    GsGetLws(shadow.modelParts_00[0].coord2_04, sp0x30, sp0x10);
+    GsSetLightMatrix(sp0x30);
+    GTE.setTransforms(sp0x10);
+    Renderer.renderDobj2(shadow.modelParts_00[0], true, 0);
+    shadow.modelParts_00[0].coord2_04.flg--;
+  }
 
   @ScriptDescription("Allocates a particle effect manager")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager script index")
@@ -1364,6 +2072,16 @@ public final class SEffe {
     }
   }
 
+  public static void renderButtonPressHudElement1(final int type, final int x, final int y, final Translucency translucency, final int brightness) {
+    final ButtonPressHudMetrics06 metrics = buttonPressHudMetrics_800faaa0[type];
+
+    if(metrics.hudElementType_00 == 0) {
+      renderButtonPressHudTexturedRect(x, y, metrics.u_01, metrics.v_02, metrics.wOrRightU_03, metrics.hOrBottomV_04, metrics.clutOffset_05, translucency, brightness, 0x1000);
+    } else {
+      renderButtonPressHudElement(x, y, metrics.u_01, metrics.v_02, metrics.wOrRightU_03, metrics.hOrBottomV_04, metrics.clutOffset_05, translucency, brightness, 0x1000, 0x1000);
+    }
+  }
+
   /**
    * Selects where to get hit property from based on auto-complete type. 1 and 3 use a mysterious global 2-hit array,
    * which may be unused testing code.
@@ -1377,7 +2095,7 @@ public final class SEffe {
       hitPropertyValue = staticTestAdditionHitProperties_800fb7c0[hitNum].get(hitPropertyIndex);
     } else {
       //LAB_8010628c
-      hitPropertyValue = Bttl.getHitProperty(charSlot, hitNum, hitPropertyIndex) & 0xff;
+      hitPropertyValue = battlePreloadedEntities_1f8003f4.getHitProperty(charSlot, hitNum, hitPropertyIndex) & 0xff;
     }
 
     //LAB_80106298
@@ -3443,7 +4161,7 @@ public final class SEffe {
   @Method(0x8010c2e0L)
   public static void FUN_8010c2e0(final ScreenCaptureEffectMetrics8 metrics, final int deffFlags) {
     if((deffFlags & 0xf_ff00) != 0xf_ff00) {
-      final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(deffFlags | 0x400_0000);
+      final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)deffManager_800c693c.getDeffPart(deffFlags | 0x400_0000);
       final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
       metrics.u_00 = deffMetrics.u_00;
       metrics.v_02 = deffMetrics.v_02;
@@ -3520,7 +4238,7 @@ public final class SEffe {
           effect.clut_2c[i] = metrics.clut_06;
         } else {
           //LAB_8010c5a8
-          final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(a1 | 0x400_0000);
+          final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)deffManager_800c693c.getDeffPart(a1 | 0x400_0000);
           final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
           effect.u_04[i] = deffMetrics.u_00;
           effect.v_0e[i] = deffMetrics.v_02;
@@ -3549,7 +4267,7 @@ public final class SEffe {
     effect.shouldRender_4a = (short)(rand() % 30);
 
     if(effect.shouldRender_4a != 0) {
-      final Vector2f screenCoords = perspectiveTransformXyz(((BattleEntity27c)scriptStatePtrArr_800bc1c0[effect.bentIndex_3c].innerStruct_00).model_148, effect.x_40, effect.y_42, effect.z_44);
+      final Vector2f screenCoords = SCRIPTS.getObject(effect.bentIndex_3c, BattleEntity27c.class).transformRelative(effect.x_40, effect.y_42, effect.z_44);
       final float x = -(screenCoords.x * 2.5f);
       final float y = -(screenCoords.y * 2.5f);
 
@@ -3757,7 +4475,7 @@ public final class SEffe {
       featherEffect.clut_0e = (short)metrics.clut_06;
     } else {
       //LAB_8010d508
-      final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(effectFlags | 0x400_0000);
+      final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)deffManager_800c693c.getDeffPart(effectFlags | 0x400_0000);
       final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
       featherEffect.u_06 = (short)deffMetrics.u_00;
       featherEffect.v_08 = (short)deffMetrics.v_02;
@@ -3883,7 +4601,7 @@ public final class SEffe {
         instance.tmd_70 = deffManager_800c693c.tmds_2f8[deffFlags & 0xff];
       } else {
         //LAB_8010dc40
-        final DeffPart.TmdType tmdType = (DeffPart.TmdType)getDeffPart(deffFlags | 0x300_0000);
+        final DeffPart.TmdType tmdType = (DeffPart.TmdType)deffManager_800c693c.getDeffPart(deffFlags | 0x300_0000);
         instance.tmd_70 = tmdType.tmd_0c.tmdPtr_00.tmd.objTable[0];
       }
 
@@ -4029,7 +4747,7 @@ public final class SEffe {
       meteorEffect.metrics_04.clut_06 = metrics.clut_06;
     } else {
       //LAB_8010e254
-      final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(effectFlag | 0x400_0000);
+      final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)deffManager_800c693c.getDeffPart(effectFlag | 0x400_0000);
       final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
       meteorEffect.metrics_04.u_00 = deffMetrics.u_00;
       meteorEffect.metrics_04.v_02 = deffMetrics.v_02;
@@ -4176,7 +4894,7 @@ public final class SEffe {
       starEffect.metrics_04.clut_06 = metrics.clut_06;
     } else {
       //LAB_8010eb50
-      final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(effectFlags | 0x400_0000);
+      final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)deffManager_800c693c.getDeffPart(effectFlags | 0x400_0000);
       final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
       starEffect.metrics_04.u_00 = deffMetrics.u_00;
       starEffect.metrics_04.v_02 = deffMetrics.v_02;
@@ -4277,9 +4995,9 @@ public final class SEffe {
       impact.scale_6c[1].set(0.75f, 0.25f, 0.75f);
       impact.opacity_8c[0].set(0xff, 0xff, 0xff);
       impact.opacity_8c[1].set(0xff, 0xff, 0xff);
-      impact.explosionObjTable_94 = ((DeffPart.TmdType)getDeffPart(0x300_7100)).tmd_0c.tmdPtr_00.tmd.objTable[0];
-      impact.shockwaveObjTable_98 = ((DeffPart.TmdType)getDeffPart(0x300_7101)).tmd_0c.tmdPtr_00.tmd.objTable[0];
-      impact.plumeObjTable_9c = ((DeffPart.TmdType)getDeffPart(0x300_7103)).tmd_0c.tmdPtr_00.tmd.objTable[0];
+      impact.explosionObjTable_94 = ((DeffPart.TmdType)deffManager_800c693c.getDeffPart(0x300_7100)).tmd_0c.tmdPtr_00.tmd.objTable[0];
+      impact.shockwaveObjTable_98 = ((DeffPart.TmdType)deffManager_800c693c.getDeffPart(0x300_7101)).tmd_0c.tmdPtr_00.tmd.objTable[0];
+      impact.plumeObjTable_9c = ((DeffPart.TmdType)deffManager_800c693c.getDeffPart(0x300_7103)).tmd_0c.tmdPtr_00.tmd.objTable[0];
       impact.explosionHeightAngle_a0 = 0.0f;
       impact.animationFrame_a2 = 0;
     }
@@ -6366,11 +7084,11 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, possibly for finishing a DEFF")
+  @ScriptDescription("Resets the DEFF manager")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode")
   @Method(0x80115a28L)
-  public static FlowControl FUN_80115a28(final RunningScript<?> script) {
-    FUN_800e9178(script.params_20[0].get());
+  public static FlowControl scriptResetDeffManager(final RunningScript<?> script) {
+    deffManager_800c693c.reset(script.params_20[0].get());
     return FlowControl.CONTINUE;
   }
 
@@ -6588,7 +7306,7 @@ public final class SEffe {
       }
     } else if(type == 0x200_0000) {
       //LAB_80116098
-      final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)getDeffPart(typeOrBobjIndex);
+      final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)deffManager_800c693c.getDeffPart(typeOrBobjIndex);
       final DeffPart.TextureInfo textureInfo = animatedTmdType.textureInfo_08[0];
       u = textureInfo.vramPos_00.x;
       v = textureInfo.vramPos_00.y;
@@ -6597,7 +7315,7 @@ public final class SEffe {
     } else if(type == 0x100_0000 || type == 0x300_0000) {
       //LAB_801160c0
       //LAB_801160d4
-      final DeffPart.TmdType tmdType = (DeffPart.TmdType)getDeffPart(typeOrBobjIndex);
+      final DeffPart.TmdType tmdType = (DeffPart.TmdType)deffManager_800c693c.getDeffPart(typeOrBobjIndex);
       final DeffPart.TextureInfo textureInfo = tmdType.textureInfo_08[textureIndex * 2];
       u = textureInfo.vramPos_00.x;
       v = textureInfo.vramPos_00.y;
@@ -6607,7 +7325,7 @@ public final class SEffe {
     } else if(type == 0x400_0000) {
       //LAB_801160f4
       final BillboardSpriteEffect0c sp0x10 = new BillboardSpriteEffect0c();
-      getSpriteMetricsFromSource(sp0x10, typeOrBobjIndex & 0xff_ffff);
+      sp0x10.set(typeOrBobjIndex & 0xff_ffff);
       u = sp0x10.metrics_04.u_00;
       v = sp0x10.metrics_04.v_02;
       w = sp0x10.metrics_04.w_04;
@@ -6661,7 +7379,7 @@ public final class SEffe {
           tmdObjTable = deffManager_800c693c.tmds_2f8[deffFlags & 0xff];
         } else {
           //LAB_80116750
-          tmdObjTable = ((DeffPart.TmdType)getDeffPart(deffFlags | 0x300_0000)).tmd_0c.tmdPtr_00.tmd.objTable[0];
+          tmdObjTable = ((DeffPart.TmdType)deffManager_800c693c.getDeffPart(deffFlags | 0x300_0000)).tmd_0c.tmdPtr_00.tmd.objTable[0];
         }
 
         //LAB_8011676c
@@ -6684,7 +7402,7 @@ public final class SEffe {
         //LAB_801162e8
         final BillboardSpriteEffect0c sp0x48 = new BillboardSpriteEffect0c();
 
-        getSpriteMetricsFromSource(sp0x48, deffFlags);
+        sp0x48.set(deffFlags);
         effect.metrics_54.u_00 = sp0x48.metrics_04.u_00;
         effect.metrics_54.v_02 = sp0x48.metrics_04.v_02;
         effect.metrics_54.w_04 = sp0x48.metrics_04.w_04;
@@ -7369,7 +8087,7 @@ public final class SEffe {
       lmbType = deffManager_800c693c.lmbs_390[param1 & 0xff];
     } else {
       //LAB_80117f58
-      lmbType = (DeffPart.LmbType)getDeffPart(param1);
+      lmbType = (DeffPart.LmbType)deffManager_800c693c.getDeffPart(param1);
     }
 
     //LAB_80117f68
@@ -7533,7 +8251,7 @@ public final class SEffe {
     if((s1 & 0xf_ff00) == 0xf_ff00) {
       name = deffManager_800c693c.tmds_2f8[s1 & 0xff].name;
     } else {
-      final DeffPart.TmdType tmdType = (DeffPart.TmdType)getDeffPart(s1 | 0x300_0000);
+      final DeffPart.TmdType tmdType = (DeffPart.TmdType)deffManager_800c693c.getDeffPart(s1 | 0x300_0000);
       name = tmdType.name;
     }
 
@@ -7559,7 +8277,7 @@ public final class SEffe {
       effect.tpage_10 = 0x20;
     } else {
       //LAB_8011847c
-      final DeffPart.TmdType tmdType = (DeffPart.TmdType)getDeffPart(s1 | 0x300_0000);
+      final DeffPart.TmdType tmdType = (DeffPart.TmdType)deffManager_800c693c.getDeffPart(s1 | 0x300_0000);
       final TmdWithId tmdWithId = tmdType.tmd_0c.tmdPtr_00;
       effect.tmdType_04 = tmdType;
       effect.tmd_08 = tmdWithId.tmd.objTable[0];
@@ -7588,13 +8306,13 @@ public final class SEffe {
     final int type = flags & 0xff00_0000;
     if(type == 0x100_0000) {
       //LAB_801185e4
-      final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)getDeffPart(flags);
+      final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)deffManager_800c693c.getDeffPart(flags);
       final Tmd tmd = animatedTmdType.tmd_0c.tmdPtr_00.tmd;
       objTable = tmd.objTable[0];
     } else if(type == 0x200_0000) {
       //LAB_801185c0
-      final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)getDeffPart(flags);
-      objTable = optimisePacketsIfNecessary(animatedTmdType.tmd_0c.tmdPtr_00, objIndex);
+      final DeffPart.AnimatedTmdType animatedTmdType = (DeffPart.AnimatedTmdType)deffManager_800c693c.getDeffPart(flags);
+      objTable = animatedTmdType.tmd_0c.tmdPtr_00.optimisePacketsIfNecessary(objIndex);
       //LAB_801185b0
     } else if(type == 0x700_0000) {
       //LAB_80118610
@@ -7654,7 +8372,7 @@ public final class SEffe {
       spriteEffect.tpage_10 = 0x20;
     } else {
       //LAB_80118750
-      final DeffPart.TmdType tmdType = (DeffPart.TmdType)getDeffPart(flags | 0x300_0000);
+      final DeffPart.TmdType tmdType = (DeffPart.TmdType)deffManager_800c693c.getDeffPart(flags | 0x300_0000);
       final TmdWithId tmdWithId = tmdType.tmd_0c.tmdPtr_00;
       spriteEffect.tmdType_04 = tmdType;
       spriteEffect.tmd_08 = tmdWithId.tmd.objTable[0];
@@ -7723,11 +8441,11 @@ public final class SEffe {
     final EffectManagerData6c<EffectManagerParams.AnimType> manager = SCRIPTS.getObject(effectIndex, EffectManagerData6c.classFor(EffectManagerParams.AnimType.class));
     final ModelEffect13c effect = (ModelEffect13c)manager.effect_44;
 
-    final DeffPart part = getDeffPart(script.params_20[1].get() | 0x500_0000);
+    final DeffPart part = deffManager_800c693c.getDeffPart(script.params_20[1].get() | 0x500_0000);
     final Anim anim = ((DeffPart.AnimatedTmdType)part).anim_14;
 
     effect.anim_0c = anim;
-    loadModelAnim(effect.model_134, anim);
+    anim.loadIntoModel(effect.model_134);
     manager.params_10.ticks_24 = 0;
     addGenericAttachment(manager, 0, 0x100, 0);
     return FlowControl.CONTINUE;
@@ -8004,7 +8722,7 @@ public final class SEffe {
     if(effectType == 0x400_0000) {
       //LAB_80119640
       effect.subEffect_1c = new BillboardSpriteEffect0c();
-      getSpriteMetricsFromSource((BillboardSpriteEffect0c)effect.subEffect_1c, effectFlag);
+      ((BillboardSpriteEffect0c)effect.subEffect_1c).set(effectFlag);
       manager.params_10.flags_00 = manager.params_10.flags_00 & 0xfbff_ffff | 0x5000_0000;
     } else if(effectType == 0x300_0000) {
       //LAB_80119668

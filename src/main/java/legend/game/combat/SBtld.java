@@ -1,43 +1,28 @@
 package legend.game.combat;
 
 import legend.core.memory.Method;
-import legend.game.combat.deff.DeffManager7cc;
 import legend.game.combat.environment.EncounterData38;
 import legend.game.combat.types.AdditionHitProperties10;
 import legend.game.combat.types.AdditionHits80;
-import legend.game.combat.types.CombatantStruct1a8;
-import legend.game.combat.types.EnemyRewards08;
 import legend.game.combat.types.StageDeffThing08;
-import legend.game.modding.events.battle.EnemyRewardsEvent;
 import legend.game.scripting.ScriptFile;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
-import legend.lodmod.LodMod;
 
-import static legend.core.GameEngine.EVENTS;
-import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
-import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.combat.Bttl._800c6748;
-import static legend.game.combat.Bttl.applyStageAmbiance;
-import static legend.game.combat.Bttl.currentCameraIndex_800c6780;
-import static legend.game.combat.Bttl.currentCameraPositionIndicesIndex_800c66b0;
-import static legend.game.combat.Bttl.currentStageData_800c6718;
-import static legend.game.combat.Bttl.deffManager_800c693c;
-import static legend.game.combat.Bttl.getCombatant;
-import static legend.game.combat.Bttl.melbuStageIndices_800fb064;
-import static legend.game.combat.Bttl.playerBattleScript_800c66fc;
-import static legend.game.combat.Bttl.scriptState_800c674c;
-import static legend.game.combat.Monsters.enemyRewards_80112868;
-import static legend.game.combat.environment.Ambiance.dragoonSpaceAmbiance_80114a10;
-import static legend.game.combat.environment.Ambiance.stageAmbiance_801134fc;
+import static legend.game.combat.Battle._800c6748;
+import static legend.game.combat.Battle.currentCameraIndex_800c6780;
+import static legend.game.combat.Battle.currentCameraPositionIndicesIndex_800c66b0;
+import static legend.game.combat.Battle.currentStageData_800c6718;
+import static legend.game.combat.Battle.playerBattleScript_800c66fc;
+import static legend.game.combat.Battle.scriptState_800c674c;
 import static legend.game.combat.environment.StageData.stageData_80109a98;
 
 public class SBtld {
@@ -102,59 +87,6 @@ public class SBtld {
     }
 
     loadFile("encounters", file -> battlePreloadedEntities_1f8003f4.encounterData_00 = new EncounterData38(file.getBytes(), encounterId_800bb0f8 * 0x38));
-  }
-
-  @Method(0x80109808L)
-  public static void loadEnemyDropsAndScript(final int enemyAndCombatantId) {
-    final int enemyId = enemyAndCombatantId & 0xffff;
-    final int combatantIndex = enemyAndCombatantId >>> 16;
-    final CombatantStruct1a8 combatant = getCombatant(combatantIndex);
-    final EnemyRewards08 rewards = enemyRewards_80112868[enemyId];
-
-    combatant.drops.clear();
-    if(rewards.itemDrop_05 != 0xff) {
-      combatant.drops.add(new CombatantStruct1a8.ItemDrop(rewards.itemChance_04, rewards.itemDrop_05 < 192 ? REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(rewards.itemDrop_05)).get() : REGISTRIES.items.getEntry(LodMod.itemIdMap.get(rewards.itemDrop_05 - 192)).get()));
-    }
-
-    final EnemyRewardsEvent event = EVENTS.postEvent(new EnemyRewardsEvent(enemyId, rewards.xp_00, rewards.gold_02, combatant.drops));
-
-    combatant.xp_194 = event.xp;
-    combatant.gold_196 = event.gold;
-    combatant._19a = rewards._06;
-
-    loadDrgnFile(1, Integer.toString(enemyId + 1), file -> loadCombatantScript(file.getBytes(), combatantIndex));
-  }
-
-  @Method(0x8010989cL)
-  public static void loadCombatantScript(final byte[] file, final int index) {
-    getCombatant(index).scriptPtr_10 = new ScriptFile("Combatant " + index, file);
-  }
-
-  @Method(0x801098f4L)
-  public static void loadStageAmbiance() {
-    final DeffManager7cc deffManager = deffManager_800c693c;
-    final int stage = Math.max(0, battleStage_800bb0f4);
-
-    //LAB_8010993c
-    //LAB_80109954
-    deffManager.stageAmbiance_4c.set(stageAmbiance_801134fc[stage]);
-    applyStageAmbiance(deffManager.stageAmbiance_4c);
-
-    //LAB_8010999c
-    for(int i = 0; i < deffManager.dragoonSpaceAmbiance_98.length; i++) {
-      deffManager.dragoonSpaceAmbiance_98[i].set(dragoonSpaceAmbiance_80114a10[i]);
-    }
-
-    final StageDeffThing08 thing = _8011517c[battleStage_800bb0f4];
-    deffManager._00._00 = thing._00;
-    deffManager._00._02 = thing._02;
-    deffManager._00._04 = thing._04;
-
-    //LAB_80109a30
-    for(int i = 0; melbuStageIndices_800fb064[i] != -1; i++) {
-      deffManager._08[i]._00 = thing._00;
-      deffManager._08[i]._02 = thing._02;
-    }
   }
 
   public static final AdditionHits80[] additionHits_8010e658 = {

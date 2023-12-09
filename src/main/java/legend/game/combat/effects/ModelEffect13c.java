@@ -1,20 +1,33 @@
 package legend.game.combat.effects;
 
 import legend.core.gte.MV;
+import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
 import legend.game.combat.deff.Anim;
 import legend.game.combat.deff.DeffPart;
 import legend.game.scripting.ScriptState;
+import legend.game.tmd.Renderer;
 import legend.game.types.CContainer;
 import legend.game.types.Model124;
 
-import static legend.game.combat.Bttl.FUN_800dd89c;
-import static legend.game.combat.Bttl.FUN_800e60e0;
-import static legend.game.combat.Bttl.FUN_800e6170;
-import static legend.game.combat.Bttl.FUN_800e61e4;
-import static legend.game.combat.Bttl.FUN_800e62a8;
-import static legend.game.combat.Bttl.applyAnimation;
-import static legend.game.combat.Bttl.calculateEffectTransforms;
+import static legend.core.GameEngine.GTE;
+import static legend.core.GameEngine.RENDERER;
+import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
+import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
+import static legend.game.Scus94491BpeSegment.zMin;
+import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
+import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
+import static legend.game.Scus94491BpeSegment_8002.animateModelTextures;
+import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
+import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
+import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
+import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
+import static legend.game.combat.SEffe.FUN_800e60e0;
+import static legend.game.combat.SEffe.FUN_800e6170;
+import static legend.game.combat.SEffe.FUN_800e61e4;
+import static legend.game.combat.SEffe.FUN_800e62a8;
+import static legend.game.combat.SEffe.calculateEffectTransforms;
+import static legend.game.combat.SEffe.renderBttlShadow;
 
 public class ModelEffect13c implements Effect {
   public int _00;
@@ -27,6 +40,75 @@ public class ModelEffect13c implements Effect {
 
   public ModelEffect13c(final String name) {
     this.model_10 = new Model124(name);
+  }
+
+  /**
+   * used renderCtmd
+   */
+  @Method(0x800dd89cL)
+  private void FUN_800dd89c(final Model124 model, final int newAttribute) {
+    zOffset_1f8003e8 = model.zOffset_a0;
+    tmdGp0Tpage_1f8003ec = model.tpage_108;
+
+    final MV lw = new MV();
+    final MV ls = new MV();
+
+    //LAB_800dd928
+    for(int i = 0; i < model.modelParts_00.length; i++) {
+      final ModelPart10 part = model.modelParts_00[i];
+
+      //LAB_800dd940
+      if((model.partInvisible_f4 & 1L << i) == 0) {
+        GsGetLws(part.coord2_04, lw, ls);
+
+        //LAB_800dd9bc
+        if((newAttribute & 0x8) != 0) {
+          //TODO pretty sure this is not equivalent to MATRIX#normalize
+          lw.normal();
+        }
+
+        //LAB_800dd9d8
+        GsSetLightMatrix(lw);
+        GTE.setTransforms(ls);
+
+        final int oldAttrib = part.attribute_00;
+        part.attribute_00 = newAttribute;
+
+        final int oldZShift = zShift_1f8003c4;
+        final int oldZMax = zMax_1f8003cc;
+        final int oldZMin = zMin;
+        zShift_1f8003c4 = 2;
+        zMax_1f8003cc = 0xffe;
+        zMin = 0xb;
+        Renderer.renderDobj2(part, false, 0x20);
+        zShift_1f8003c4 = oldZShift;
+        zMax_1f8003cc = oldZMax;
+        zMin = oldZMin;
+
+        RENDERER.queueModel(part.obj, lw)
+          .lightDirection(lightDirectionMatrix_800c34e8)
+          .lightColour(lightColourMatrix_800c3508)
+          .backgroundColour(GTE.backgroundColour);
+
+        part.attribute_00 = oldAttrib;
+      }
+    }
+
+    //LAB_800dda54
+    //LAB_800dda58
+    for(int i = 0; i < 7; i++) {
+      if(model.animateTextures_ec[i]) {
+        animateModelTextures(model, i);
+      }
+
+      //LAB_800dda70
+    }
+
+    if(model.shadowType_cc != 0) {
+      renderBttlShadow(model);
+    }
+
+    //LAB_800dda98
   }
 
   @Method(0x800ea3f8L)
@@ -43,7 +125,7 @@ public class ModelEffect13c implements Effect {
     model.coord2_14.flg = 0;
 
     if(effect.anim_0c != null) {
-      applyAnimation(model, manager.params_10.ticks_24);
+      model.anim_08.apply(manager.params_10.ticks_24);
     }
 
     //LAB_800ea4fc

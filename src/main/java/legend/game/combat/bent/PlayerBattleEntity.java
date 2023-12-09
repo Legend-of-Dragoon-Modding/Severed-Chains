@@ -16,11 +16,11 @@ import java.util.Map;
 
 import static java.lang.Math.round;
 import static legend.core.GameEngine.CONFIG;
+import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
-import static legend.game.combat.Bttl.getHitProperty;
-import static legend.game.combat.Bttl.spellStats_800fa0b8;
+import static legend.game.combat.Battle.spellStats_800fa0b8;
 
 public class PlayerBattleEntity extends BattleEntity27c {
   private final Latch<ScriptState<PlayerBattleEntity>> scriptState;
@@ -125,7 +125,7 @@ public class PlayerBattleEntity extends BattleEntity27c {
       //LAB_800f2b94
       int additionMultiplier = 0;
       for(int i = 0; i < this.additionHits_56; i++) {
-        additionMultiplier += getHitProperty(this.charSlot_276, i, 4);
+        additionMultiplier += battlePreloadedEntities_1f8003f4.getHitProperty(this.charSlot_276, i, 4);
       }
 
       //LAB_800f2bb4

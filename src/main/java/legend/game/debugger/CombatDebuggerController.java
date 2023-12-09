@@ -27,7 +27,7 @@ import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptState;
 
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
-import static legend.game.combat.Bttl.currentEnemyNames_800c69d0;
+import static legend.game.combat.Battle.currentEnemyNames_800c69d0;
 
 public class CombatDebuggerController {
   @FXML

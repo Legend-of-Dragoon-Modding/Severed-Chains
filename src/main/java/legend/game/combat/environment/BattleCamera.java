@@ -20,9 +20,9 @@ import static legend.core.GameEngine.GTE;
 import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
-import static legend.game.combat.Bttl.ZERO;
-import static legend.game.combat.Bttl.screenOffsetX_800c67bc;
-import static legend.game.combat.Bttl.screenOffsetY_800c67c0;
+import static legend.game.combat.Battle.ZERO;
+import static legend.game.combat.Battle.screenOffsetX_800c67bc;
+import static legend.game.combat.Battle.screenOffsetY_800c67c0;
 
 public class BattleCamera {
   private static final Logger LOGGER = LogManager.getFormatterLogger();

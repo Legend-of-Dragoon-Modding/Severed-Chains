@@ -13,9 +13,9 @@ import org.joml.Vector3i;
 import java.util.function.BiConsumer;
 
 import static legend.core.GameEngine.GPU;
-import static legend.game.combat.Bttl.scriptGetScriptedObjectPos;
-import static legend.game.combat.Bttl.seed_800fa754;
-import static legend.game.combat.Bttl.transformWorldspaceToScreenspace;
+import static legend.game.combat.Battle.seed_800fa754;
+import static legend.game.combat.SEffe.scriptGetScriptedObjectPos;
+import static legend.game.combat.SEffe.transformWorldspaceToScreenspace;
 
 public class AdditionStarburstEffect10 implements Effect {
   private static final Vector3i[] completedAdditionStarburstTranslationMagnitudes_800c6d94 = {

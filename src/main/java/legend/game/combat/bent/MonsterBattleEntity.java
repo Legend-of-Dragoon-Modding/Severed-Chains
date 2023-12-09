@@ -7,9 +7,9 @@ import legend.game.combat.types.AttackType;
 import legend.game.modding.coremod.CoreMod;
 import org.joml.Vector3f;
 
-import static legend.game.combat.Bttl.applyBuffOrDebuff;
-import static legend.game.combat.Bttl.applyMagicDamageMultiplier;
-import static legend.game.combat.Bttl.spellStats_800fa0b8;
+import static legend.game.combat.Battle.applyBuffOrDebuff;
+import static legend.game.combat.Battle.applyMagicDamageMultiplier;
+import static legend.game.combat.Battle.spellStats_800fa0b8;
 
 public class MonsterBattleEntity extends BattleEntity27c {
   public Element displayElement_1c;

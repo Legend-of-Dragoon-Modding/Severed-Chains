@@ -51,19 +51,18 @@ import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
-import static legend.game.combat.Bttl.FUN_800cfc20;
-import static legend.game.combat.Bttl.FUN_800e61e4;
-import static legend.game.combat.Bttl.FUN_800e62a8;
-import static legend.game.combat.Bttl.ZERO;
-import static legend.game.combat.Bttl.allocateEffectManager;
-import static legend.game.combat.Bttl.camera_800c67f0;
-import static legend.game.combat.Bttl.deffManager_800c693c;
-import static legend.game.combat.Bttl.getDeffPart;
-import static legend.game.combat.Bttl.getModelObjectTranslation;
-import static legend.game.combat.Bttl.rotateAndTranslateEffect;
-import static legend.game.combat.Bttl.scriptGetScriptedObjectPos;
-import static legend.game.combat.Bttl.seed_800fa754;
-import static legend.game.combat.Bttl.spriteMetrics_800c6948;
+import static legend.game.combat.Battle.ZERO;
+import static legend.game.combat.Battle.camera_800c67f0;
+import static legend.game.combat.Battle.deffManager_800c693c;
+import static legend.game.combat.Battle.seed_800fa754;
+import static legend.game.combat.Battle.spriteMetrics_800c6948;
+import static legend.game.combat.SEffe.FUN_800cfc20;
+import static legend.game.combat.SEffe.FUN_800e61e4;
+import static legend.game.combat.SEffe.FUN_800e62a8;
+import static legend.game.combat.SEffe.allocateEffectManager;
+import static legend.game.combat.SEffe.getModelObjectTranslation;
+import static legend.game.combat.SEffe.rotateAndTranslateEffect;
+import static legend.game.combat.SEffe.scriptGetScriptedObjectPos;
 
 public class ParticleManager {
   private static final short[] particleSubCounts_800fb794 = {0, 0, 4, 0, 8, 0, 16, 0, 0, 0, 1, 0, 2, 0, 4, 0, 3, 0, 5, 0};
@@ -1881,7 +1880,7 @@ public class ParticleManager {
       effect.tpage_56 = 0x20;
     } else {
       //LAB_80101d98
-      final DeffPart.TmdType tmdType = (DeffPart.TmdType)getDeffPart(0x300_0000 | flags & 0xf_ffff);
+      final DeffPart.TmdType tmdType = (DeffPart.TmdType)deffManager_800c693c.getDeffPart(0x300_0000 | flags & 0xf_ffff);
       final CContainer extTmd = tmdType.tmd_0c;
       final TmdWithId tmd = extTmd.tmdPtr_00;
       effect.tmd_30 = tmd.tmd.objTable[0];
@@ -1928,7 +1927,7 @@ public class ParticleManager {
       effect.clut_5c = metrics.clut_06;
     } else {
       //LAB_80101fec
-      final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)getDeffPart(flags | 0x400_0000);
+      final DeffPart.SpriteType spriteType = (DeffPart.SpriteType)deffManager_800c693c.getDeffPart(flags | 0x400_0000);
       final DeffPart.SpriteMetrics deffMetrics = spriteType.metrics_08;
       effect.u_58 = deffMetrics.u_00;
       effect.v_5a = deffMetrics.v_02;

@@ -3,62 +3,86 @@ package legend.game.combat.ui;
 import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.RenderEngine;
+import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandLine;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
+import legend.game.Scus94491BpeSegment_8002;
 import legend.game.characters.Element;
 import legend.game.characters.VitalsStat;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
+import legend.game.combat.environment.BattleMenuBackgroundDisplayMetrics0c;
+import legend.game.combat.environment.BattleMenuBackgroundUvMetrics04;
 import legend.game.combat.environment.CombatPortraitBorderMetrics0c;
 import legend.game.combat.environment.NameAndPortraitDisplayMetrics0c;
 import legend.game.combat.environment.SpBarBorderMetrics04;
 import legend.game.combat.types.BattleHudStatLabelMetrics0c;
+import legend.game.inventory.Item;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.battle.BattleDescriptionEvent;
 import legend.game.modding.events.battle.StatDisplayEvent;
+import legend.game.modding.events.inventory.RepeatItemReturnEvent;
 import legend.game.scripting.ScriptState;
 import legend.game.types.LodString;
-import legend.game.types.Model124;
 import legend.game.types.Translucency;
+import legend.lodmod.LodMod;
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 import org.joml.Vector3f;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
-import static legend.game.Scus94491BpeSegment_8002.renderText;
+import static legend.game.Scus94491BpeSegment.playSound;
+import static legend.game.Scus94491BpeSegment_8002.intToStr;
+import static legend.game.Scus94491BpeSegment_8002.takeItemId;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
+import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.characterStatsLoaded_800be5d0;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
+import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
-import static legend.game.combat.Bttl.aliveBentCount_800c669c;
-import static legend.game.combat.Bttl.aliveMonsterCount_800c6758;
-import static legend.game.combat.Bttl.battleMenu_800c6c34;
-import static legend.game.combat.Bttl.charCount_800c677c;
-import static legend.game.combat.Bttl.countCombatUiFilesLoaded_800c6cf4;
-import static legend.game.combat.Bttl.currentEnemyNames_800c69d0;
-import static legend.game.combat.Bttl.currentTurnBent_800c66c8;
-import static legend.game.combat.Bttl.melbuMonsterNames_800c6ba8;
-import static legend.game.combat.Bttl.melbuStageToMonsterNameIndices_800c6f30;
-import static legend.game.combat.Bttl.monsterBents_800c6b78;
-import static legend.game.combat.Bttl.monsterCount_800c6768;
-import static legend.game.combat.Bttl.perspectiveTransformXyz;
-import static legend.game.combat.Bttl.setGpuPacketClutAndTpageAndQueue;
-import static legend.game.combat.Bttl.spellAndItemMenu_800c6b60;
+import static legend.game.combat.Battle._800c6748;
+import static legend.game.combat.Battle.aliveBentCount_800c669c;
+import static legend.game.combat.Battle.aliveMonsterCount_800c6758;
+import static legend.game.combat.Battle.cameraPositionIndicesIndices_800c6c30;
+import static legend.game.combat.Battle.charCount_800c677c;
+import static legend.game.combat.Battle.combatItems_800c6988;
+import static legend.game.combat.Battle.countCameraPositionIndicesIndices_800c6ba0;
+import static legend.game.combat.Battle.countCombatUiFilesLoaded_800c6cf4;
+import static legend.game.combat.Battle.currentCameraPositionIndicesIndex_800c66b0;
+import static legend.game.combat.Battle.currentCameraPositionIndicesIndicesIndex_800c6ba1;
+import static legend.game.combat.Battle.currentEnemyNames_800c69d0;
+import static legend.game.combat.Battle.currentStageData_800c6718;
+import static legend.game.combat.Battle.currentTurnBent_800c66c8;
+import static legend.game.combat.Battle.dragoonSpells_800c6960;
+import static legend.game.combat.Battle.melbuMonsterNames_800c6ba8;
+import static legend.game.combat.Battle.melbuStageToMonsterNameIndices_800c6f30;
+import static legend.game.combat.Battle.monsterBents_800c6b78;
+import static legend.game.combat.Battle.monsterCount_800c6768;
+import static legend.game.combat.Battle.spellStats_800fa0b8;
+import static legend.game.combat.Battle.targetBents_800c71f0;
+import static legend.game.combat.Battle.usedRepeatItems_800c6c3c;
 
 public class BattleHud {
+  private static final int[] repeatItemIds_800c6e34 = {224, 227, 228, 230, 232, 235, 236, 237, 238};
+
   private static final CombatPortraitBorderMetrics0c[] combatPortraitBorderVertexCoords_800c6e9c = {
     new CombatPortraitBorderMetrics0c(0, 0, 1, 1, 0, 0, 0, 0, -1, -1, 1, -1),
     new CombatPortraitBorderMetrics0c(2, 2, 3, 3, 0, 0, 0, 0, -1, 1, 1, 1),
@@ -76,6 +100,9 @@ public class BattleHud {
   private static final int[] digitOffsetY_800c7014 = {-15, -15, -5, -5, 6};
   private static final int[] floatingTextType1DigitUs_800c7028 = {88, 16, 24, 32, 40, 48, 56, 64, 72, 80};
   private static final int[] floatingTextType3DigitUs_800c70e0 = {16, 24, 32, 40, 48, 56, 64, 72, 80, 88};
+  private static final Vector2i[] battleUiElementClutVramXy_800c7114 = {new Vector2i(0x2c0, 0x1f0), new Vector2i(0x380, 0x130)};
+  private static final int[] iconFlags_800c7194 = {4, 1, 5, 6, 2, 9, 3, 7};
+  private static final int[] battleMenuIconStates_800c71e4 = {0, 1, 2, 1};
   private static final int[] uiTextureElementBrightness_800c71ec = {96, 64, -128};
   private static final int[] targetArrowOffsetY_800fb188 = {-20, -18, -16, -14, -12, -14, -16, -18};
   private static final int[] battleHudYOffsets_800fb198 = {46, 208, -128, 0};
@@ -117,6 +144,32 @@ public class BattleHud {
     new SpBarBorderMetrics04(2, 11, 38, 11),
   };
 
+  private static final BattleMenuBackgroundDisplayMetrics0c[] battleMenuBackgroundDisplayMetrics_800fb614 = {
+    new BattleMenuBackgroundDisplayMetrics0c(0, -8, -8, 8, 8),
+    new BattleMenuBackgroundDisplayMetrics0c(1, 0, -8, 8, 8),
+    new BattleMenuBackgroundDisplayMetrics0c(2, -8, 0, 8, 8),
+    new BattleMenuBackgroundDisplayMetrics0c(3, 0, 0, 8, 8),
+    new BattleMenuBackgroundDisplayMetrics0c(0, 0, -8, 0, 8),
+    new BattleMenuBackgroundDisplayMetrics0c(0, -8, 0, 8, 0),
+    new BattleMenuBackgroundDisplayMetrics0c(1, 0, 0, 8, 0),
+    new BattleMenuBackgroundDisplayMetrics0c(2, 0, 0, 0, 8),
+  };
+
+  public static final int[][] battleMenuIconHeights_800fb6bc = {
+    {16, 16, 16},
+    {16, 16, 16},
+    {16, 24, 24},
+    {16, 24, 24},
+    {16, 24, 24},
+    {16, 24, 24},
+    {16, 16, 16},
+    {16, 16, 16},
+    {16, 24, 24},
+  };
+
+  public final BattleMenuStruct58 battleMenu_800c6c34 = new BattleMenuStruct58(this);
+  public final SpellAndItemMenuA4 spellAndItemMenu_800c6b60 = new SpellAndItemMenuA4(this);
+
   /** Only ever set to 1. 0 will set it to the top of the screen. */
   private int battleHudYOffsetIndex_800c6c38;
 
@@ -136,6 +189,10 @@ public class BattleHud {
   private final Obj[] type1FloatingDigits = new Obj[10];
   private final Obj[] type3FloatingDigits = new Obj[10];
   private Obj miss;
+
+  private UiBox battleUiItemSpellList;
+  private UiBox battleUiSpellList;
+  private UiBox battleUiItemDescription;
 
   public BattleHud() {
     Arrays.setAll(this.floatingNumbers_800c6b5c, i -> new FloatingNumberC4());
@@ -193,7 +250,7 @@ public class BattleHud {
       }
 
       //LAB_800ecb90
-      this.drawTargetArrow(target.model_148, colour, targetState, target);
+      this.drawTargetArrow(colour, target);
     } else {
       //LAB_800ecba4
       int count = 0;
@@ -241,7 +298,7 @@ public class BattleHud {
 
         //LAB_800eccac
         if((targetBent.storage_44[7] & 0x4000) == 0) {
-          this.drawTargetArrow(target.model_148, colour, targetBent, target);
+          this.drawTargetArrow(colour, target);
         }
 
         //LAB_800eccc8
@@ -255,7 +312,7 @@ public class BattleHud {
    * @param colour 0 = blue, 1 = yellow, 2 = red
    */
   @Method(0x800eccfcL)
-  private void drawTargetArrow(final Model124 model, final int colour, final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
+  private void drawTargetArrow(final int colour, final BattleEntity27c bent) {
     final float x;
     final float y;
     final float z;
@@ -279,12 +336,12 @@ public class BattleHud {
     }
 
     //LAB_800ecdac
-    final Vector2f screenCoords = perspectiveTransformXyz(model, x, y, z);
+    final Vector2f screenCoords = bent.transformRelative(x, y, z);
 
     //LAB_800ece9c
-    battleMenu_800c6c34.transforms.identity();
-    battleMenu_800c6c34.transforms.transfer.set(GPU.getOffsetX() + screenCoords.x - 8, GPU.getOffsetY() + screenCoords.y + targetArrowOffsetY_800fb188[tickCount_800bb0fc & 0x7], 112.0f);
-    RENDERER.queueOrthoModel(battleMenu_800c6c34.targetArrows[colour], battleMenu_800c6c34.transforms);
+    this.battleMenu_800c6c34.transforms.identity();
+    this.battleMenu_800c6c34.transforms.transfer.set(GPU.getOffsetX() + screenCoords.x - 8, GPU.getOffsetY() + screenCoords.y + targetArrowOffsetY_800fb188[tickCount_800bb0fc & 0x7], 112.0f);
+    RENDERER.queueOrthoModel(this.battleMenu_800c6c34.targetArrows[colour], this.battleMenu_800c6c34.transforms);
   }
 
   @Method(0x800ef7c4L)
@@ -332,6 +389,9 @@ public class BattleHud {
         digit.digit_0c = -1;
       }
     }
+
+    this.battleMenu_800c6c34.clear();
+    this.spellAndItemMenu_800c6b60.clear();
   }
 
   @Method(0x800ef8d8L)
@@ -432,7 +492,7 @@ public class BattleHud {
 
       //LAB_800efd00
       this.tickFloatingNumbers();
-      spellAndItemMenu_800c6b60.handleSpellAndItemMenu();
+      this.handleSpellAndItemMenu();
     }
 
     this.drawUiElements();
@@ -709,10 +769,10 @@ public class BattleHud {
       this.drawFloatingNumbers();
 
       // Use item menu
-      battleMenu_800c6c34.drawItemMenuElements();
+      this.drawItemMenuElements();
 
       // Targeting
-      final BattleMenuStruct58 menu = battleMenu_800c6c34;
+      final BattleMenuStruct58 menu = this.battleMenu_800c6c34;
       if(menu.displayTargetArrowAndName_4c) {
         this.drawTargetArrow(menu.targetType_50, menu.combatantIndex_54);
         final int targetCombatant = menu.combatantIndex_54;
@@ -803,7 +863,7 @@ public class BattleHud {
         }
 
         this.battleUiName.render(element.colour);
-        renderText(str, 160 - textWidth(str) / 2, 24, TextColour.WHITE, 0);
+        Scus94491BpeSegment_8002.renderText(str, 160 - textWidth(str) / 2, 24, TextColour.WHITE, 0);
       }
     }
     //LAB_800f0f2c
@@ -941,20 +1001,20 @@ public class BattleHud {
         final QuadBuilder builder1 = new QuadBuilder("Type 1 Floating Digit " + i)
           .uv(floatingTextType1DigitUs_800c7028[i], 32)
           .size(8.0f, 8.0f);
-        setGpuPacketClutAndTpageAndQueue(builder1, 0x80, null);
+        this.setGpuPacketClutAndTpageAndQueue(builder1, 0x80, null);
         this.type1FloatingDigits[i] = builder1.build();
 
         final QuadBuilder builder3 = new QuadBuilder("Type 3 Floating Digit " + i)
           .uv(floatingTextType3DigitUs_800c70e0[i], 40)
           .size(8.0f, 16.0f);
-        setGpuPacketClutAndTpageAndQueue(builder3, 0x80, null);
+        this.setGpuPacketClutAndTpageAndQueue(builder3, 0x80, null);
         this.type3FloatingDigits[i] = builder3.build();
       }
 
       final QuadBuilder builderMiss = new QuadBuilder("Miss Floating Digit")
         .uv(72, 128)
         .size(36.0f, 16.0f);
-      setGpuPacketClutAndTpageAndQueue(builderMiss, 0x80, null);
+      this.setGpuPacketClutAndTpageAndQueue(builderMiss, 0x80, null);
       this.miss = builderMiss.build();
     }
 
@@ -1126,7 +1186,7 @@ public class BattleHud {
             }
 
             //LAB_800f3a44
-            final Vector2f screenCoords = perspectiveTransformXyz(bent.model_148, x, y, z);
+            final Vector2f screenCoords = bent.transformRelative(x, y, z);
             num.x_1c = this.clampX(screenCoords.x + centreScreenX_1f8003dc);
             num.y_20 = this.clampY(screenCoords.y + centreScreenY_1f8003de);
           }
@@ -1323,10 +1383,1404 @@ public class BattleHud {
     }
 
     //LAB_800f4320
-    final Vector2f screenCoords = perspectiveTransformXyz(bent.model_148, x, y, z);
+    final Vector2f screenCoords = bent.transformRelative(x, y, z);
 
     //LAB_800f4394
     this.FUN_800f89f4(bentIndex, 0, 2, damage, this.clampX(screenCoords.x + centreScreenX_1f8003dc), this.clampY(screenCoords.y + centreScreenY_1f8003de), 60 / vsyncMode_8007a3b8 / 4, s4);
+  }
+
+  @Method(0x800f49bcL)
+  public void initSpellAndItemMenu(final PlayerBattleEntity player, final int menuType) {
+    this.spellAndItemMenu_800c6b60.menuState_00 = 1;
+    this.spellAndItemMenu_800c6b60.x_04 = 160;
+    this.spellAndItemMenu_800c6b60.y_06 = 144;
+    this.spellAndItemMenu_800c6b60.player_08 = player;
+    this.spellAndItemMenu_800c6b60.menuType_0a = (short)(menuType & 0x1);
+    this.spellAndItemMenu_800c6b60._0c = 0x20;
+    this.spellAndItemMenu_800c6b60._0e = 0x2b;
+    this.spellAndItemMenu_800c6b60._10 = 0;
+    this.spellAndItemMenu_800c6b60._12 = 0;
+    this.spellAndItemMenu_800c6b60._14 = 0x1;
+    this.spellAndItemMenu_800c6b60._16 = 0x1000;
+    this.spellAndItemMenu_800c6b60.textX_18 = 0;
+    this.spellAndItemMenu_800c6b60._1a = 0;
+    this.spellAndItemMenu_800c6b60.itemOrSpellId_1c = -1;
+    this.spellAndItemMenu_800c6b60.listIndex_1e = 0;
+    this.spellAndItemMenu_800c6b60._20 = 0;
+
+    //LAB_800f4a58
+    if(menuType == 0) {
+      //LAB_800f4a9c
+      this.prepareItemList();
+      this.spellAndItemMenu_800c6b60.count_22 = (short)combatItems_800c6988.size();
+    } else if(menuType == 1) {
+      //LAB_800f4abc
+      //LAB_800f4ae0
+      //LAB_800f4b00
+      //LAB_800f4b18
+      short spellIndex;
+      for(spellIndex = 0; spellIndex < 8; spellIndex++) {
+        if(dragoonSpells_800c6960.get(this.spellAndItemMenu_800c6b60.player_08.charSlot_276).spellIndex_01.get(spellIndex).get() == -1) {
+          break;
+        }
+      }
+
+      //LAB_800f4b3c
+      this.spellAndItemMenu_800c6b60.count_22 = spellIndex;
+    } else if(menuType == 2) {
+      //LAB_800f4b4c
+      this.spellAndItemMenu_800c6b60.count_22 = 0;
+    }
+
+    //LAB_800f4b50
+    //LAB_800f4b54
+    //LAB_800f4b60
+    this.spellAndItemMenu_800c6b60._7c = 0;
+    this.spellAndItemMenu_800c6b60._80 = 0;
+    this.spellAndItemMenu_800c6b60._84 = 0;
+    this.spellAndItemMenu_800c6b60._88 = 0;
+    this.spellAndItemMenu_800c6b60._8c = 0;
+    this.spellAndItemMenu_800c6b60._90 = 0;
+    this.spellAndItemMenu_800c6b60._94 = 0;
+    this.spellAndItemMenu_800c6b60._98 = 0;
+    this.spellAndItemMenu_800c6b60._9c = 0;
+    this.spellAndItemMenu_800c6b60._a0 = 0;
+  }
+
+  @Method(0x800f4b80L)
+  public void handleSpellAndItemMenu() {
+    if(this.spellAndItemMenu_800c6b60.menuState_00 == 0) {
+      return;
+    }
+
+    int v0;
+    final int a1;
+    int s0;
+
+    //LAB_800f4bc0
+    switch(this.spellAndItemMenu_800c6b60.menuState_00) {
+      case 1 -> {
+        this.spellAndItemMenu_800c6b60._90 = 0;
+        this.spellAndItemMenu_800c6b60._a0 = 0;
+        this.spellAndItemMenu_800c6b60._12 = 0;
+        this.spellAndItemMenu_800c6b60._10 = 0;
+
+        if(this.spellAndItemMenu_800c6b60.menuType_0a == 0) {
+          this.spellAndItemMenu_800c6b60.listScroll_24 = this.spellAndItemMenu_800c6b60._26;
+          this.spellAndItemMenu_800c6b60._02 |= 0x20;
+          this.spellAndItemMenu_800c6b60.listIndex_1e = this.spellAndItemMenu_800c6b60._28;
+          this.spellAndItemMenu_800c6b60._20 = this.spellAndItemMenu_800c6b60._2a;
+          this.spellAndItemMenu_800c6b60._94 = this.spellAndItemMenu_800c6b60._2c;
+
+          if(this.spellAndItemMenu_800c6b60.count_22 - 1 < this.spellAndItemMenu_800c6b60.listScroll_24 + this.spellAndItemMenu_800c6b60.listIndex_1e) {
+            this.spellAndItemMenu_800c6b60.listScroll_24--;
+
+            if(this.spellAndItemMenu_800c6b60.listScroll_24 < 0) {
+              this.spellAndItemMenu_800c6b60.listScroll_24 = 0;
+              this.spellAndItemMenu_800c6b60.listIndex_1e = 0;
+              this.spellAndItemMenu_800c6b60._20 = this.spellAndItemMenu_800c6b60._1a;
+              this.spellAndItemMenu_800c6b60._94 = 0; // This was a3.1a - a3.1a
+            }
+          }
+        } else {
+          //LAB_800f4ca0
+          this.spellAndItemMenu_800c6b60.listIndex_1e = 0;
+          this.spellAndItemMenu_800c6b60._20 = 0;
+          this.spellAndItemMenu_800c6b60._94 = 0;
+          this.spellAndItemMenu_800c6b60.listScroll_24 = this.spellAndItemMenu_800c6b60._30;
+        }
+
+        //LAB_800f4cb4
+        this.spellAndItemMenu_800c6b60.itemOrSpellId_1c = (short)this.getItemOrSpellId();
+        this.spellAndItemMenu_800c6b60.menuState_00 = 7;
+        this.spellAndItemMenu_800c6b60._02 |= 0x40;
+      }
+
+      case 2 -> {
+        this.spellAndItemMenu_800c6b60._02 &= 0xfcff;
+        this.spellAndItemMenu_800c6b60.itemOrSpellId_1c = (short)this.getItemOrSpellId();
+
+        if((press_800bee94 & 0x4) != 0) { // L1
+          if(this.spellAndItemMenu_800c6b60.listScroll_24 != 0) {
+            this.spellAndItemMenu_800c6b60._88 = 2;
+            this.spellAndItemMenu_800c6b60.listScroll_24 = 0;
+            this.spellAndItemMenu_800c6b60.menuState_00 = 5;
+            playSound(0, 1, 0, 0, (short)0, (short)0);
+          }
+
+          break;
+        }
+
+        //LAB_800f4d54
+        if((press_800bee94 & 0x1) != 0) { // L2
+          final int oldScroll = this.spellAndItemMenu_800c6b60.listScroll_24;
+
+          if(this.spellAndItemMenu_800c6b60.count_22 - 1 >= this.spellAndItemMenu_800c6b60.listIndex_1e + 6) {
+            this.spellAndItemMenu_800c6b60.listScroll_24 = 6;
+          } else {
+            //LAB_800f4d8c
+            this.spellAndItemMenu_800c6b60.listScroll_24 = (short)(this.spellAndItemMenu_800c6b60.count_22 - (this.spellAndItemMenu_800c6b60.listIndex_1e + 1));
+          }
+
+          //LAB_800f4d90
+          this.spellAndItemMenu_800c6b60._88 = 2;
+          this.spellAndItemMenu_800c6b60.menuState_00 = 5;
+
+          if(oldScroll != this.spellAndItemMenu_800c6b60.listScroll_24) {
+            playSound(0, 1, 0, 0, (short)0, (short)0);
+          }
+
+          break;
+        }
+
+        //LAB_800f4dc4
+        if((press_800bee94 & 0x8) != 0) { // R1
+          if(this.spellAndItemMenu_800c6b60.listIndex_1e == 0) {
+            break;
+          }
+
+          if(this.spellAndItemMenu_800c6b60.listIndex_1e < 7) {
+            this.spellAndItemMenu_800c6b60.listScroll_24 = 0;
+            this.spellAndItemMenu_800c6b60.listIndex_1e = 0;
+            this.spellAndItemMenu_800c6b60._20 = this.spellAndItemMenu_800c6b60._1a;
+          } else {
+            //LAB_800f4df4
+            this.spellAndItemMenu_800c6b60.listIndex_1e -= 7;
+            this.spellAndItemMenu_800c6b60._20 += 98;
+          }
+
+          //LAB_800f4e00
+          this.spellAndItemMenu_800c6b60._88 = 2;
+          this.spellAndItemMenu_800c6b60.menuState_00 = 5;
+          this.spellAndItemMenu_800c6b60._94 = this.spellAndItemMenu_800c6b60._1a - this.spellAndItemMenu_800c6b60._20;
+          playSound(0, 1, 0, 0, (short)0, (short)0);
+          break;
+        }
+
+        //LAB_800f4e40
+        if((press_800bee94 & 0x2) != 0) { // R2
+          if(this.spellAndItemMenu_800c6b60.listIndex_1e + 6 >= this.spellAndItemMenu_800c6b60.count_22 - 1) {
+            break;
+          }
+
+          this.spellAndItemMenu_800c6b60.listIndex_1e += 7;
+          this.spellAndItemMenu_800c6b60._20 -= 98;
+
+          if(this.spellAndItemMenu_800c6b60.listIndex_1e + 6 >= this.spellAndItemMenu_800c6b60.count_22 - 1) {
+            this.spellAndItemMenu_800c6b60.listScroll_24 = 0;
+          }
+
+          //LAB_800f4e98
+          this.spellAndItemMenu_800c6b60._88 = 2;
+          this.spellAndItemMenu_800c6b60.menuState_00 = 5;
+          this.spellAndItemMenu_800c6b60._94 = this.spellAndItemMenu_800c6b60._1a - this.spellAndItemMenu_800c6b60._20;
+          playSound(0, 1, 0, 0, (short)0, (short)0);
+          break;
+        }
+
+        //LAB_800f4ecc
+        if((input_800bee90 & 0x1000) != 0) { // Up
+          if(this.spellAndItemMenu_800c6b60.listScroll_24 != 0) {
+            this.spellAndItemMenu_800c6b60.menuState_00 = 5;
+            this.spellAndItemMenu_800c6b60.listScroll_24--;
+            this.spellAndItemMenu_800c6b60._88 = 2;
+          } else {
+            //LAB_800f4f18
+            if(this.spellAndItemMenu_800c6b60.listIndex_1e == 0) {
+              break;
+            }
+
+            this.spellAndItemMenu_800c6b60.menuState_00 = 3;
+            this.spellAndItemMenu_800c6b60._02 |= 0x200;
+            this.spellAndItemMenu_800c6b60._80 = 5;
+            this.spellAndItemMenu_800c6b60._7c = this.spellAndItemMenu_800c6b60._20;
+            this.spellAndItemMenu_800c6b60._20 += 5;
+            this.spellAndItemMenu_800c6b60.listIndex_1e--;
+          }
+
+          playSound(0, 1, 0, 0, (short)0, (short)0);
+          break;
+        }
+
+        //LAB_800f4f74
+        if((input_800bee90 & 0x4000) != 0) { // Down
+          if(this.spellAndItemMenu_800c6b60.listScroll_24 != this.spellAndItemMenu_800c6b60.count_22 - 1) {
+            if(this.spellAndItemMenu_800c6b60.listIndex_1e + this.spellAndItemMenu_800c6b60.listScroll_24 + 1 < this.spellAndItemMenu_800c6b60.count_22) {
+              playSound(0, 1, 0, 0, (short)0, (short)0);
+
+              if(this.spellAndItemMenu_800c6b60.listScroll_24 != 6) {
+                this.spellAndItemMenu_800c6b60.listScroll_24++;
+                this.spellAndItemMenu_800c6b60._88 = 2;
+                this.spellAndItemMenu_800c6b60.menuState_00 = 5;
+              } else {
+                //LAB_800f4ff8
+                this.spellAndItemMenu_800c6b60._80 = -5;
+                this.spellAndItemMenu_800c6b60.menuState_00 = 4;
+                this.spellAndItemMenu_800c6b60._7c = this.spellAndItemMenu_800c6b60._20;
+                this.spellAndItemMenu_800c6b60._20 -= 5;
+                this.spellAndItemMenu_800c6b60.listIndex_1e++;
+                this.spellAndItemMenu_800c6b60._02 |= 0x100;
+              }
+            }
+          }
+
+          break;
+        }
+
+        //LAB_800f5044
+        this.spellAndItemMenu_800c6b60._90 = 0;
+
+        if((press_800bee94 & 0x20) != 0) { // X
+          //LAB_800f5078
+          final PlayerBattleEntity player = this.spellAndItemMenu_800c6b60.player_08;
+          this.battleMenu_800c6c34._800c6980 = this.spellAndItemMenu_800c6b60.player_08.charSlot_276;
+
+          //LAB_800f50b8
+          if(this.spellAndItemMenu_800c6b60.menuType_0a == 0) {
+            player.itemId_52 = this.spellAndItemMenu_800c6b60.itemOrSpellId_1c;
+            player.setTempItemMagicStats();
+
+            if((player.item_d4.target_00 & 0x4) != 0) {
+              this.spellAndItemMenu_800c6b60.itemTargetType_800c6b68 = 1;
+            } else {
+              //LAB_800f5100
+              this.spellAndItemMenu_800c6b60.itemTargetType_800c6b68 = 0;
+            }
+
+            //LAB_800f5108
+            //LAB_800f5128
+            this.spellAndItemMenu_800c6b60.itemTargetAll_800c69c8 = (player.item_d4.target_00 & 0x2) != 0;
+          } else {
+            //LAB_800f5134
+            final PlayerBattleEntity caster = this.spellAndItemMenu_800c6b60.player_08;
+            caster.setActiveSpell(this.spellAndItemMenu_800c6b60.itemOrSpellId_1c);
+
+            if(caster.stats.getStat(CoreMod.MP_STAT.get()).getCurrent() < caster.spell_94.mp_06) {
+              //LAB_800f5160
+              //LAB_800f5168
+              playSound(0, 3, 0, 0, (short)0, (short)0);
+              break;
+            }
+
+            //LAB_800f517c
+            this.clearFloatingNumber(0);
+          }
+
+          //LAB_800f5190
+          playSound(0, 2, 0, 0, (short)0, (short)0);
+          this.spellAndItemMenu_800c6b60._8c = 0;
+          this.spellAndItemMenu_800c6b60._02 |= 0x4;
+          if(this.spellAndItemMenu_800c6b60.menuType_0a == 0) {
+            this.spellAndItemMenu_800c6b60._94 = this.spellAndItemMenu_800c6b60._1a - this.spellAndItemMenu_800c6b60._20;
+          }
+
+          //LAB_800f51e8
+          this.spellAndItemMenu_800c6b60.menuState_00 = 6;
+          this.spellAndItemMenu_800c6b60._02 &= 0xfffd;
+          break;
+        }
+
+        //LAB_800f5208
+        if((press_800bee94 & 0x40) != 0) { // O
+          playSound(0, 3, 0, 0, (short)0, (short)0);
+          this.spellAndItemMenu_800c6b60.menuState_00 = 8;
+          this.spellAndItemMenu_800c6b60._02 &= 0xfff7;
+        }
+      }
+
+      case 3 -> {
+        s0 = this.spellAndItemMenu_800c6b60._80;
+        this.spellAndItemMenu_800c6b60._90++;
+        if(this.spellAndItemMenu_800c6b60._90 >= 3) {
+          s0 *= 2;
+        }
+
+        //LAB_800f5278
+        a1 = this.spellAndItemMenu_800c6b60._7c + 14;
+        this.spellAndItemMenu_800c6b60._20 += s0;
+        if(this.spellAndItemMenu_800c6b60._20 >= a1) {
+          this.spellAndItemMenu_800c6b60._20 = (short)a1;
+          this.spellAndItemMenu_800c6b60.menuState_00 = 2;
+        }
+      }
+
+      case 4 -> {
+        s0 = this.spellAndItemMenu_800c6b60._80;
+        this.spellAndItemMenu_800c6b60._90++;
+        if(this.spellAndItemMenu_800c6b60._90 >= 3) {
+          s0 = s0 * 2;
+        }
+
+        //LAB_800f52d4
+        a1 = this.spellAndItemMenu_800c6b60._7c - 14;
+        this.spellAndItemMenu_800c6b60._20 += s0;
+        if(this.spellAndItemMenu_800c6b60._20 <= a1) {
+          //LAB_800f5300
+          this.spellAndItemMenu_800c6b60._20 = (short)a1;
+          this.spellAndItemMenu_800c6b60.menuState_00 = 2;
+        }
+      }
+
+      case 5 -> {
+        s0 = this.spellAndItemMenu_800c6b60._88;
+        this.spellAndItemMenu_800c6b60._90++;
+        if(this.spellAndItemMenu_800c6b60._90 >= 3) {
+          s0 = s0 / 2;
+        }
+
+        //LAB_800f5338
+        if(s0 <= 1) {
+          this.spellAndItemMenu_800c6b60.menuState_00 = 2;
+        }
+      }
+
+      case 6 -> {
+        this.spellAndItemMenu_800c6b60._a0 = 0;
+        this.spellAndItemMenu_800c6b60.itemOrSpellId_1c = (short)this.getItemOrSpellId();
+
+        //LAB_800f53c8
+        final int targetType;
+        final boolean targetAll;
+        if(this.spellAndItemMenu_800c6b60.menuType_0a == 0) { // Items
+          targetType = this.spellAndItemMenu_800c6b60.itemTargetType_800c6b68;
+          targetAll = this.spellAndItemMenu_800c6b60.itemTargetAll_800c69c8;
+        } else { // Spells
+          //LAB_800f53f8
+          final int itemTargetType = this.spellAndItemMenu_800c6b60.player_08.spell_94.targetType_00;
+          targetType = (itemTargetType & 0x40) > 0 ? 1 : 0;
+          targetAll = (itemTargetType & 0x8) != 0;
+        }
+
+        //LAB_800f5410
+        final int ret = this.handleTargeting(targetType, targetAll);
+        if(ret == 1) { // Pressed X
+          if(this.spellAndItemMenu_800c6b60.menuType_0a == 0) {
+            final int itemId = this.spellAndItemMenu_800c6b60.itemOrSpellId_1c + 192;
+            final Item item = REGISTRIES.items.getEntry(LodMod.itemIdMap.get(this.spellAndItemMenu_800c6b60.itemOrSpellId_1c)).get(); //TODO
+            takeItemId(item);
+
+            boolean returnItem = false;
+            for(int repeatItemIndex = 0; repeatItemIndex < 9; repeatItemIndex++) {
+              if(itemId == repeatItemIds_800c6e34[repeatItemIndex]) {
+                returnItem = true;
+                break;
+              }
+            }
+
+            if(itemId == 0xfa) { // Psych Bomb X
+              returnItem = true;
+            }
+
+            final RepeatItemReturnEvent repeatItemReturnEvent = EVENTS.postEvent(new RepeatItemReturnEvent(itemId, returnItem));
+
+            if(repeatItemReturnEvent.returnItem) {
+              usedRepeatItems_800c6c3c.add(item);
+            }
+          }
+
+          //LAB_800f545c
+          if(this.spellAndItemMenu_800c6b60.menuType_0a == 1) {
+            final VitalsStat mp = this.spellAndItemMenu_800c6b60.player_08.stats.getStat(CoreMod.MP_STAT.get());
+            mp.setCurrent(mp.getCurrent() - this.spellAndItemMenu_800c6b60.player_08.spell_94.mp_06);
+          }
+
+          //LAB_800f5488
+          playSound(0, 2, 0, 0, (short)0, (short)0);
+          this.spellAndItemMenu_800c6b60._a0 = 1;
+          this.spellAndItemMenu_800c6b60.menuState_00 = 9;
+        } else if(ret == -1) { // Pressed O
+          //LAB_800f54b4
+          playSound(0, 0, 3, 0, (short)0, (short)0);
+          this.spellAndItemMenu_800c6b60.menuState_00 = 7;
+          this.spellAndItemMenu_800c6b60._02 &= 0xfffb;
+          this.spellAndItemMenu_800c6b60._02 |= 0x20;
+        }
+      }
+
+      case 7 -> {
+        if(this.spellAndItemMenu_800c6b60.menuType_0a != 0) {
+          s0 = 0x80;
+        } else {
+          s0 = 0xba;
+        }
+
+        this.spellAndItemMenu_800c6b60.menuState_00 = 2;
+        playSound(0, 4, 0, 0, (short)0, (short)0);
+        this.spellAndItemMenu_800c6b60._12 = 0x52;
+        this.spellAndItemMenu_800c6b60._10 = s0;
+        this.spellAndItemMenu_800c6b60.textX_18 = (short)(this.spellAndItemMenu_800c6b60.x_04 - s0 / 2 + 9);
+        v0 = (this.spellAndItemMenu_800c6b60.y_06 - this.spellAndItemMenu_800c6b60._12) - 16;
+        this.spellAndItemMenu_800c6b60._1a = (short)v0;
+        this.spellAndItemMenu_800c6b60._20 = (short)v0;
+        this.spellAndItemMenu_800c6b60._02 |= 0xb;
+        if((this.spellAndItemMenu_800c6b60._02 & 0x20) != 0) {
+          v0 = v0 - this.spellAndItemMenu_800c6b60._94;
+          this.spellAndItemMenu_800c6b60._20 = (short)v0;
+        }
+
+        //LAB_800f5588
+        if(this.spellAndItemMenu_800c6b60.menuType_0a != 0) {
+          this.spellAndItemMenu_800c6b60.itemOrSpellId_1c = (short)this.getItemOrSpellId();
+          this.spellAndItemMenu_800c6b60.player_08.setActiveSpell(this.spellAndItemMenu_800c6b60.itemOrSpellId_1c);
+          this.addFloatingNumber(0, 1, 0, this.spellAndItemMenu_800c6b60.player_08.spell_94.mp_06, 280, 135, 0, 1);
+        }
+      }
+
+      case 8 -> {
+        this.spellAndItemMenu_800c6b60.itemTargetAll_800c69c8 = false;
+        this.spellAndItemMenu_800c6b60.itemTargetType_800c6b68 = 0;
+        this.spellAndItemMenu_800c6b60._a0 = -1;
+        this.spellAndItemMenu_800c6b60.menuState_00 = 9;
+        this.spellAndItemMenu_800c6b60._12 = 0;
+        this.spellAndItemMenu_800c6b60._10 = 0;
+        this.spellAndItemMenu_800c6b60._02 &= 0xfffc;
+        this.clearFloatingNumber(0);
+      }
+
+      case 9 -> {
+        if(this.spellAndItemMenu_800c6b60.menuType_0a == 0) {
+          v0 = this.spellAndItemMenu_800c6b60._1a - this.spellAndItemMenu_800c6b60._20;
+          this.spellAndItemMenu_800c6b60._26 = this.spellAndItemMenu_800c6b60.listScroll_24;
+          this.spellAndItemMenu_800c6b60._28 = this.spellAndItemMenu_800c6b60.listIndex_1e;
+          this.spellAndItemMenu_800c6b60._2a = this.spellAndItemMenu_800c6b60._20;
+          this.spellAndItemMenu_800c6b60._94 = v0;
+          this.spellAndItemMenu_800c6b60._2c = v0;
+        }
+
+        //LAB_800f568c
+        this.spellAndItemMenu_800c6b60.clear();
+      }
+    }
+
+    //LAB_800f5694
+    //LAB_800f5698
+    this.spellAndItemMenu_800c6b60._84 = tickCount_800bb0fc & 0x7;
+
+    //LAB_800f56ac
+  }
+
+  @Method(0x800f56c4L)
+  private int getItemOrSpellId() {
+    if(this.spellAndItemMenu_800c6b60.menuType_0a == 0) {
+      //LAB_800f56f0
+      return LodMod.idItemMap.getInt(combatItems_800c6988.get(this.spellAndItemMenu_800c6b60.listScroll_24 + this.spellAndItemMenu_800c6b60.listIndex_1e).item.getRegistryId());
+    }
+
+    if(this.spellAndItemMenu_800c6b60.menuType_0a == 1) {
+      //LAB_800f5718
+      //LAB_800f5740
+      //LAB_800f5778
+      int spellIndex = dragoonSpells_800c6960.get(this.spellAndItemMenu_800c6b60.player_08.charSlot_276).spellIndex_01.get(this.spellAndItemMenu_800c6b60.listScroll_24 + this.spellAndItemMenu_800c6b60.listIndex_1e).get();
+      if(this.spellAndItemMenu_800c6b60.player_08.charId_272 == 8) { // Miranda
+        if(spellIndex == 65) {
+          spellIndex = 10;
+        }
+
+        //LAB_800f57d4
+        if(spellIndex == 66) {
+          spellIndex = 11;
+        }
+
+        //LAB_800f57e0
+        if(spellIndex == 67) {
+          spellIndex = 12;
+        }
+      }
+
+      return spellIndex;
+    }
+
+    throw new RuntimeException("Undefined a0");
+  }
+
+  /**
+   * @param type <ol start="0"><li>items</li><li>spells</li></ol>
+   */
+  @Method(0x800f57f8L)
+  private void renderList(final int type) {
+    int trim;
+
+    final SpellAndItemMenuA4 menu = this.spellAndItemMenu_800c6b60;
+
+    int y1 = menu._20;
+    final int y2 = menu._1a;
+    final int sp68 = menu.y_06;
+
+    //LAB_800f5860
+    //LAB_800f58a4
+    int sp7c = 0;
+
+    final LodString sp0x18 = new LodString(18);
+    final LodString sp0x40 = new LodString(5);
+    final LodString itemCount = new LodString(12);
+
+    //LAB_800f58e0
+    for(int spellSlot = 0; spellSlot < menu.count_22; spellSlot++) {
+      if(y1 >= sp68) {
+        break;
+      }
+
+      TextColour textColour = TextColour.WHITE;
+      final LodString name;
+      if(type == 0) {
+        //LAB_800f5918
+        name = new LodString(combatItems_800c6988.get(sp7c).item.getName());
+        intToStr(combatItems_800c6988.get(sp7c).count, itemCount);
+
+        //LAB_800f5968
+        int i;
+        for(i = 0; ; i++) {
+          sp0x18.charAt(i, name.charAt(i));
+          if(name.charAt(i) == 0xa0ff) {
+            break;
+          }
+        }
+
+        //LAB_800f5990
+        //LAB_800f59a4
+        for(; i < 16; i++) {
+          sp0x18.charAt(i, 0);
+        }
+
+        //LAB_800f59bc
+        if(combatItems_800c6988.get(sp7c).count < 10) {
+          sp0x18.charAt(i, 0);
+          i++;
+        }
+
+        //LAB_800f59e8
+        sp0x18.charAt(i, 0xa0ff);
+        sp0x40.charAt(0, 0xe);
+
+        //LAB_800f5a10
+        int n;
+        for(n = 0; n < 2; n++) {
+          final int chr = itemCount.charAt(n);
+          if(chr == 0xa0ff) {
+            break;
+          }
+
+          sp0x40.charAt(n + 1, chr);
+        }
+
+        //LAB_800f5a38
+        sp0x40.charAt(n + 1, 0xa0ff);
+      } else if(type == 1) {
+        //LAB_800f5a4c
+        int spellId = dragoonSpells_800c6960.get(menu.player_08.charSlot_276).spellIndex_01.get(spellSlot).get();
+        name = new LodString(spellStats_800fa0b8[spellId].name);
+
+        if(menu.player_08.charId_272 == 8) { // Miranda
+          if(spellId == 65) {
+            spellId = 10;
+          }
+
+          //LAB_800f5ab4
+          if(spellId == 66) {
+            spellId = 11;
+          }
+
+          //LAB_800f5ac0
+          if(spellId == 67) {
+            spellId = 12;
+          }
+        }
+
+        //LAB_800f5acc
+        final PlayerBattleEntity bent = setActiveCharacterSpell(spellId);
+
+        // Not enough MP for spell
+        if(bent.stats.getStat(CoreMod.MP_STAT.get()).getCurrent() < bent.spell_94.mp_06) {
+          textColour = TextColour.GREY;
+        }
+      } else {
+        throw new RuntimeException("Undefined s3");
+      }
+
+      //LAB_800f5af0
+      if(y1 >= y2) {
+        //LAB_800f5b90
+        if(sp68 >= y1 + 12) {
+          trim = 0;
+        } else {
+          trim = y1 - (sp68 - 12);
+        }
+
+        //LAB_800f5bb4
+        if((menu._02 & 0x4) != 0) {
+          trim = (short)menu._8c;
+        }
+
+        //LAB_800f5bd8
+        Scus94491BpeSegment_8002.renderText(name, menu.textX_18, y1, textColour, trim);
+
+        if(type == 0) {
+          Scus94491BpeSegment_8002.renderText(sp0x40, menu.textX_18 + 128, y1, textColour, trim);
+        }
+      } else if(y2 < y1 + 12) {
+        if((menu._02 & 0x4) != 0) {
+          trim = menu._8c;
+        } else {
+          trim = y1 - y2;
+        }
+
+        //LAB_800f5b40
+        Scus94491BpeSegment_8002.renderText(name, menu.textX_18, y2, textColour, trim);
+
+        if(type == 0) {
+          Scus94491BpeSegment_8002.renderText(sp0x40, menu.textX_18 + 128, y2, textColour, trim);
+        }
+      }
+
+      //LAB_800f5c38
+      y1 += 14;
+      sp7c++;
+    }
+
+    //LAB_800f5c64
+  }
+
+  /** Draws most elements associated with item and dragoon magic menus.
+   * This includes:
+   *   - Item and Dragoon magic backgrounds, scroll arrows, and text
+   *   - Item and Dragoon magic description background and text
+   *   - Dragoon magic MP cost background and normal text (excluding the number value) */
+  @Method(0x800f5c94L)
+  public void drawItemMenuElements() {
+    final SpellAndItemMenuA4 menu = this.spellAndItemMenu_800c6b60;
+    menu.init();
+    menu.transforms.identity();
+
+    if(menu.menuState_00 != 0 && (menu._02 & 0x1) != 0) {
+      if((menu._02 & 0x2) != 0) {
+        //LAB_800f5ee8
+        //Item menu
+        final int a2 = menu._10 + 6;
+        final int a3 = menu._12 + 17;
+
+        if(this.battleUiItemSpellList == null) {
+          this.battleUiItemSpellList = new UiBox("Battle UI Item/Spell List", menu.x_04 - a2 / 2, menu.y_06 - a3, a2, a3);
+        }
+
+        this.battleUiItemSpellList.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
+
+        this.renderList(menu.menuType_0a);
+
+        if((menu._02 & 0x8) != 0) {
+          //LAB_800f5d78
+          //LAB_800f5d90
+          menu.transforms.transfer.set(menu.textX_18 - 16, menu._1a + menu.listScroll_24 * 14 + 2, 124.0f);
+          RENDERER.queueOrthoOverlayModel(menu.unknownObj1[menu._84], menu.transforms);
+
+          final int s0;
+          if(menu.menuType_0a != 0) {
+            s0 = 0;
+          } else {
+            s0 = 26;
+          }
+
+          //LAB_800f5e00
+          final int s1;
+          if((menu._02 & 0x100) != 0) {
+            s1 = 2;
+          } else {
+            s1 = 0;
+          }
+
+          //LAB_800f5e18
+          final int t0;
+          if((menu._02 & 0x200) != 0) {
+            t0 = -2;
+          } else {
+            t0 = 0;
+          }
+
+          //LAB_800f5e24
+          if(menu.listIndex_1e > 0) {
+            menu.transforms.transfer.set(menu.x_04 + s0 + 56, menu.y_06 + t0 - 100, 124.0f);
+            RENDERER.queueOrthoOverlayModel(menu.upArrow, menu.transforms);
+          }
+
+          //LAB_800f5e7c
+          if(menu.listIndex_1e + 6 < menu.count_22 - 1) {
+            menu.transforms.transfer.set(menu.x_04 + s0 + 56, menu.y_06 + s1 - 7, 124.0f);
+            RENDERER.queueOrthoOverlayModel(menu.downArrow, menu.transforms);
+          }
+        }
+      }
+
+      //LAB_800f5f50
+      if((menu._02 & 0x40) != 0) {
+        final int textType;
+        if(menu.menuType_0a == 0) { // Item
+          //LAB_800f5f8c
+          textType = 4;
+        } else if(menu.menuType_0a == 1) { // Spell
+          //LAB_800f5f94
+          textType = 5;
+          if((menu._02 & 0x2) != 0) {
+            final BattleEntity27c bent = setActiveCharacterSpell(menu.itemOrSpellId_1c);
+            this.addFloatingNumber(0, 1, 0, bent.spell_94.mp_06, 280, 135, 0, 1);
+
+            menu.transforms.transfer.set(236 - centreScreenX_1f8003dc, 130 - centreScreenY_1f8003de, 124.0f);
+            RENDERER.queueOrthoOverlayModel(menu.unknownObj2, menu.transforms);
+
+            if(this.battleUiSpellList == null) {
+              this.battleUiSpellList = new UiBox("Battle UI Spell List", 236, 130, 64, 14);
+            }
+
+            this.battleUiSpellList.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
+          }
+        } else {
+          throw new RuntimeException("Undefined s1");
+        }
+
+        //LAB_800f604c
+        //LAB_800f6050
+        //Selected item description
+        if(this.battleUiItemDescription == null) {
+          this.battleUiItemDescription = new UiBox("Battle UI Item Description", 44, 156, 232, 14);
+        }
+
+        this.battleUiItemDescription.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
+        this.renderText(textType, menu.itemOrSpellId_1c, 160, 163);
+      }
+    }
+
+    //LAB_800f6088
+  }
+
+  @Method(0x800f6134L)
+  public void initializeMenuIcons(final ScriptState<? extends BattleEntity27c> bentState, final int displayedIconsBitset, final int disabledIconsBitset) {
+    this.battleMenu_800c6c34.initIconObjs();
+
+    this.battleMenu_800c6c34.state_00 = 1;
+    this.battleMenu_800c6c34.highlightState_02 = 2;
+    this.battleMenu_800c6c34.x_06 = 160;
+    this.battleMenu_800c6c34.y_08 = 172;
+    this.battleMenu_800c6c34.selectedIcon_22 = 0;
+    this.battleMenu_800c6c34.currentIconStateTick_24 = 0;
+    this.battleMenu_800c6c34.iconStateIndex_26 = 0;
+    this.battleMenu_800c6c34.highlightX0_28 = 0;
+    this.battleMenu_800c6c34.highlightY_2a = 0;
+    this.battleMenu_800c6c34.colour_2c = 128;
+
+    //LAB_800f61d8
+    for(int i = 0; i < 9; i++) {
+      this.battleMenu_800c6c34.iconFlags_10[i] = -1;
+    }
+
+    //LAB_800f61f8
+    this.battleMenu_800c6c34.countHighlightMovementStep_30 = 0;
+    this.battleMenu_800c6c34.highlightMovementDistance_34 = 0;
+    this.battleMenu_800c6c34.currentHighlightMovementStep_38 = 0;
+    this.battleMenu_800c6c34.highlightX1_3c = 0;
+    this.battleMenu_800c6c34.renderSelectedIconText_40 = false;
+    this.battleMenu_800c6c34.cameraPositionSwitchTicksRemaining_44 = 0;
+    this.battleMenu_800c6c34.target_48 = 0;
+    this.battleMenu_800c6c34.displayTargetArrowAndName_4c = false;
+    this.battleMenu_800c6c34.targetType_50 = 0;
+    this.battleMenu_800c6c34.combatantIndex_54 = 0;
+
+    //LAB_800f6224
+    //LAB_800f6234
+    int bentIndex;
+    for(bentIndex = 0; bentIndex < charCount_800c677c.get(); bentIndex++) {
+      if(battleState_8006e398.charBents_e40[bentIndex] == bentState) {
+        break;
+      }
+    }
+
+    //LAB_800f6254
+    this.battleMenu_800c6c34.iconCount_0e = 0;
+    this.battleMenu_800c6c34.player_04 = battleState_8006e398.charBents_e40[bentIndex].innerStruct_00;
+
+    //LAB_800f62a4
+    for(int i = 0, used = 0; i < 8; i++) {
+      if((displayedIconsBitset & 0x1 << i) != 0) {
+        this.battleMenu_800c6c34.iconFlags_10[used++] = iconFlags_800c7194[i];
+        this.battleMenu_800c6c34.iconCount_0e++;
+      }
+      //LAB_800f62d0
+    }
+
+    this.battleMenu_800c6c34.xShiftOffset_0a = (short)((this.battleMenu_800c6c34.iconCount_0e * 19 - 3) / 2);
+    this.setDisabledIcons(disabledIconsBitset);
+  }
+
+  /** Handles the various combat menu actions and then renders the menu:
+   * <ol>
+   *   <li>0 -> Set up camera positions</li>
+   *   <li>1 -> Check for and handle input</li>
+   *   <li>2 -> Cycle selector to adjacent icons</li>
+   *   <li>3 -> Wrap selector to other end of menu</li>
+   *   <li>4 -> Count down camera movement ticks</li>
+   * </ol>
+   */
+  @Method(0x800f6330L)
+  public int tickAndRender() {
+    if(this.battleMenu_800c6c34.state_00 == 0) {
+      return 0;
+    }
+
+    int selectedAction = 0;
+
+    switch(this.battleMenu_800c6c34.state_00 - 1) {
+      case 0 -> {  // Set up camera position list at battle start or camera reset (like dragoon or after trying to run)
+        this.battleMenu_800c6c34.state_00 = 2;
+        this.battleMenu_800c6c34.highlightX0_28 = (short)(this.battleMenu_800c6c34.x_06 - this.battleMenu_800c6c34.xShiftOffset_0a + this.battleMenu_800c6c34.selectedIcon_22 * 19 - 4);
+        this.battleMenu_800c6c34.highlightY_2a = (short)(this.battleMenu_800c6c34.y_08 - 22);
+
+        //LAB_800f63e8
+        this.battleMenu_800c6c34.countHighlightMovementStep_30 = 0;
+        this.battleMenu_800c6c34.highlightMovementDistance_34 = 0;
+        this.battleMenu_800c6c34.currentHighlightMovementStep_38 = 0;
+        this.battleMenu_800c6c34.highlightX1_3c = 0;
+        this.battleMenu_800c6c34.renderSelectedIconText_40 = false;
+        this.battleMenu_800c6c34.cameraPositionSwitchTicksRemaining_44 = 0;
+        this.battleMenu_800c6c34.target_48 = 0;
+        this.battleMenu_800c6c34.displayTargetArrowAndName_4c = false;
+        this.battleMenu_800c6c34.targetType_50 = 0;
+        this.battleMenu_800c6c34.combatantIndex_54 = 0;
+
+        this.battleMenu_800c6c34._800c697c = 0;
+        currentCameraPositionIndicesIndicesIndex_800c6ba1.set(0);
+        countCameraPositionIndicesIndices_800c6ba0.set(0);
+
+        //LAB_800f6424
+        final int[] previousIndicesList = new int[4];
+        for(int i = 0; i < 4; i++) {
+          previousIndicesList[i] = 0xff;
+          cameraPositionIndicesIndices_800c6c30.get(i).set(0);
+        }
+
+        //LAB_800f6458
+        int cameraPositionIndicesIndex;
+        boolean addCameraPositionIndex;
+        int cameraPositionIndex;
+        for(cameraPositionIndicesIndex = 0; cameraPositionIndicesIndex < 4; cameraPositionIndicesIndex++) {
+          addCameraPositionIndex = true;
+          cameraPositionIndex = currentStageData_800c6718.cameraPosIndices_18[cameraPositionIndicesIndex];
+
+          //LAB_800f646c
+          for(int i = 0; i < 4; i++) { // don't add duplicate indices
+            if(previousIndicesList[i] == cameraPositionIndex) {
+              addCameraPositionIndex = false;
+              break;
+            }
+            //LAB_800f6480
+          }
+
+          if(addCameraPositionIndex) {
+            previousIndicesList[countCameraPositionIndicesIndices_800c6ba0.get()] = currentStageData_800c6718.cameraPosIndices_18[cameraPositionIndicesIndex];
+            cameraPositionIndicesIndices_800c6c30.get(countCameraPositionIndicesIndices_800c6ba0.get()).set(cameraPositionIndicesIndex);
+
+            if(currentCameraPositionIndicesIndex_800c66b0.get() == cameraPositionIndicesIndex) {
+              currentCameraPositionIndicesIndicesIndex_800c6ba1.set(countCameraPositionIndicesIndices_800c6ba0.get());
+            }
+
+            //LAB_800f64dc
+            countCameraPositionIndicesIndices_800c6ba0.add(1);
+          }
+          //LAB_800f64ec
+        }
+      }
+
+      case 1 -> {  // Checking for input
+        final int countCameraPositionIndicesIndices = countCameraPositionIndicesIndices_800c6ba0.get();
+        this.battleMenu_800c6c34.renderSelectedIconText_40 = false;
+        this.battleMenu_800c6c34.cameraPositionSwitchTicksRemaining_44 = 0;
+
+        // Input for changing camera angles
+        if(countCameraPositionIndicesIndices >= 2 && (input_800bee90 & 0x2) != 0) {
+          currentCameraPositionIndicesIndicesIndex_800c6ba1.add(1);
+          if(currentCameraPositionIndicesIndicesIndex_800c6ba1.get() >= countCameraPositionIndicesIndices) {
+            currentCameraPositionIndicesIndicesIndex_800c6ba1.set(0);
+          }
+
+          //LAB_800f6560
+          _800c6748.set(33);
+          this.battleMenu_800c6c34.state_00 = 5;
+          currentCameraPositionIndicesIndex_800c66b0.set(cameraPositionIndicesIndices_800c6c30.get(currentCameraPositionIndicesIndicesIndex_800c6ba1.get()).get());
+          this.battleMenu_800c6c34.cameraPositionSwitchTicksRemaining_44 = 60 / vsyncMode_8007a3b8 + 2;
+          this.toggleHighlight(false);
+          break;
+        }
+
+        // Input for cycling right on menu bar
+        //LAB_800f65b8
+        if((input_800bee90 & 0x2000) != 0) {
+          playSound(0, 1, 0, 0, (short)0, (short)0);
+
+          if(this.battleMenu_800c6c34.selectedIcon_22 < this.battleMenu_800c6c34.iconCount_0e - 1) {
+            //LAB_800f6640
+            this.battleMenu_800c6c34.selectedIcon_22++;
+            this.battleMenu_800c6c34.state_00 = 3;
+
+            //LAB_800f664c
+            this.battleMenu_800c6c34.countHighlightMovementStep_30 = 3;
+            this.battleMenu_800c6c34.highlightMovementDistance_34 = 19;
+            this.battleMenu_800c6c34.currentHighlightMovementStep_38 = 0;
+            this.battleMenu_800c6c34.iconStateIndex_26 = 0;
+            break;
+          }
+
+          this.battleMenu_800c6c34.state_00 = 4;
+          this.battleMenu_800c6c34.highlightState_02 |= 1;
+          this.battleMenu_800c6c34.selectedIcon_22 = 0;
+          this.battleMenu_800c6c34.iconStateIndex_26 = 0;
+          this.battleMenu_800c6c34.countHighlightMovementStep_30 = 3;
+          this.battleMenu_800c6c34.highlightMovementDistance_34 = 19;
+          this.battleMenu_800c6c34.currentHighlightMovementStep_38 = 0;
+          this.battleMenu_800c6c34.highlightX1_3c = this.battleMenu_800c6c34.x_06 - this.battleMenu_800c6c34.xShiftOffset_0a - 23;
+          break;
+        }
+
+        // Input for cycling left on menu bar
+        //LAB_800f6664
+        if((input_800bee90 & 0x8000) != 0) {
+          playSound(0, 1, 0, 0, (short)0, (short)0);
+
+          if(this.battleMenu_800c6c34.selectedIcon_22 != 0) {
+            //LAB_800f66f0
+            this.battleMenu_800c6c34.selectedIcon_22--;
+            this.battleMenu_800c6c34.state_00 = 3;
+
+            //LAB_800f66fc
+            this.battleMenu_800c6c34.countHighlightMovementStep_30 = 3;
+            this.battleMenu_800c6c34.highlightMovementDistance_34 = -19;
+
+            //LAB_800f6710
+            this.battleMenu_800c6c34.currentHighlightMovementStep_38 = 0;
+            this.battleMenu_800c6c34.iconStateIndex_26 = 0;
+            break;
+          }
+
+          this.battleMenu_800c6c34.state_00 = 4;
+          this.battleMenu_800c6c34.highlightState_02 |= 1;
+          this.battleMenu_800c6c34.selectedIcon_22 = (short)(this.battleMenu_800c6c34.iconCount_0e - 1);
+          this.battleMenu_800c6c34.highlightX1_3c = this.battleMenu_800c6c34.x_06 - this.battleMenu_800c6c34.xShiftOffset_0a + this.battleMenu_800c6c34.iconCount_0e * 19 - 4;
+          this.battleMenu_800c6c34.countHighlightMovementStep_30 = 3;
+          this.battleMenu_800c6c34.highlightMovementDistance_34 = -19;
+          this.battleMenu_800c6c34.currentHighlightMovementStep_38 = 0;
+          this.battleMenu_800c6c34.iconStateIndex_26 = 0;
+          break;
+        }
+
+        // Input for pressing X on menu bar
+        //LAB_800f671c
+        if((press_800bee94 & 0x20) != 0) {
+          int selectedIconFlag = this.battleMenu_800c6c34.iconFlags_10[this.battleMenu_800c6c34.selectedIcon_22];
+          if((selectedIconFlag & 0x80) != 0) {
+            playSound(0, 3, 0, 0, (short)0, (short)0);
+          } else {
+            selectedIconFlag = selectedIconFlag & 0xf;
+            if(selectedIconFlag == 0x5) {
+              this.prepareItemList();
+
+              if(combatItems_800c6988.isEmpty()) {
+                playSound(0, 3, 0, 0, (short)0, (short)0);
+              } else {
+                playSound(0, 2, 0, 0, (short)0, (short)0);
+                selectedAction = this.battleMenu_800c6c34.iconFlags_10[this.battleMenu_800c6c34.selectedIcon_22] & 0xf;
+              }
+              //LAB_800f6790
+            } else if(selectedIconFlag == 0x3L) {
+              //LAB_800f67b8
+              //LAB_800f67d8
+              //LAB_800f67f4
+              int spellIndex;
+              for(spellIndex = 0; spellIndex < 8; spellIndex++) {
+                if(dragoonSpells_800c6960.get(this.battleMenu_800c6c34.player_04.charSlot_276).spellIndex_01.get(spellIndex).get() != -1) {
+                  break;
+                }
+              }
+
+              //LAB_800f681c
+              if(spellIndex == 8) {
+                playSound(0, 3, 0, 0, (short)0, (short)0);
+              } else {
+                playSound(0, 2, 0, 0, (short)0, (short)0);
+                selectedAction = this.battleMenu_800c6c34.iconFlags_10[this.battleMenu_800c6c34.selectedIcon_22] & 0xf;
+              }
+            } else {
+              //LAB_800f6858
+              //LAB_800f6860
+              playSound(0, 2, 0, 0, (short)0, (short)0);
+              selectedAction = this.battleMenu_800c6c34.iconFlags_10[this.battleMenu_800c6c34.selectedIcon_22] & 0xf;
+            }
+          }
+          //LAB_800f6898
+          // Input for pressing circle on menu bar
+        } else if((press_800bee94 & 0x40) != 0) {
+          //LAB_800f68a4
+          //LAB_800f68bc
+          playSound(0, 3, 0, 0, (short)0, (short)0);
+        }
+
+        //LAB_800f68c4
+        //LAB_800f68c8
+        this.battleMenu_800c6c34.renderSelectedIconText_40 = true;
+      }
+
+      case 2 -> {  // Cycle to adjacent menu bar icon
+        this.battleMenu_800c6c34.currentHighlightMovementStep_38++;
+        this.battleMenu_800c6c34.highlightX0_28 += (short)(this.battleMenu_800c6c34.highlightMovementDistance_34 / this.battleMenu_800c6c34.countHighlightMovementStep_30);
+
+        if(this.battleMenu_800c6c34.currentHighlightMovementStep_38 >= this.battleMenu_800c6c34.countHighlightMovementStep_30) {
+          this.battleMenu_800c6c34.state_00 = 2;
+          this.battleMenu_800c6c34.countHighlightMovementStep_30 = 0;
+          this.battleMenu_800c6c34.highlightMovementDistance_34 = 0;
+          this.battleMenu_800c6c34.currentHighlightMovementStep_38 = 0;
+          this.battleMenu_800c6c34.highlightX0_28 = (short)(this.battleMenu_800c6c34.x_06 - this.battleMenu_800c6c34.xShiftOffset_0a + this.battleMenu_800c6c34.selectedIcon_22 * 19 - 4);
+          this.battleMenu_800c6c34.highlightY_2a = (short)(this.battleMenu_800c6c34.y_08 - 22);
+        }
+      }
+
+      case 3 -> {  // Wrap menu bar icon
+        this.battleMenu_800c6c34.currentHighlightMovementStep_38++;
+        this.battleMenu_800c6c34.highlightX0_28 += (short)(this.battleMenu_800c6c34.highlightMovementDistance_34 / this.battleMenu_800c6c34.countHighlightMovementStep_30);
+        this.battleMenu_800c6c34.highlightX1_3c += this.battleMenu_800c6c34.highlightMovementDistance_34 / this.battleMenu_800c6c34.countHighlightMovementStep_30;
+        this.battleMenu_800c6c34.colour_2c += (short)(0x80 / this.battleMenu_800c6c34.countHighlightMovementStep_30);
+
+        if(this.battleMenu_800c6c34.currentHighlightMovementStep_38 >= this.battleMenu_800c6c34.countHighlightMovementStep_30) {
+          this.battleMenu_800c6c34.state_00 = 2;
+          this.battleMenu_800c6c34.colour_2c = 0x80;
+          this.battleMenu_800c6c34.currentHighlightMovementStep_38 = 0;
+          this.battleMenu_800c6c34.highlightMovementDistance_34 = 0;
+          this.battleMenu_800c6c34.countHighlightMovementStep_30 = 0;
+          this.battleMenu_800c6c34.highlightX0_28 = (short)(this.battleMenu_800c6c34.x_06 - this.battleMenu_800c6c34.xShiftOffset_0a + this.battleMenu_800c6c34.selectedIcon_22 * 19 - 4);
+          this.battleMenu_800c6c34.highlightY_2a = (short)(this.battleMenu_800c6c34.y_08 - 22);
+          this.battleMenu_800c6c34.highlightState_02 &= 0xfffe;
+        }
+      }
+
+      case 4 -> {  // Seems to be related to switching camera views
+        this.battleMenu_800c6c34.cameraPositionSwitchTicksRemaining_44--;
+        if(this.battleMenu_800c6c34.cameraPositionSwitchTicksRemaining_44 == 1) {
+          this.toggleHighlight(true);
+          this.battleMenu_800c6c34.state_00 = 2;
+        }
+      }
+    }
+
+    //LAB_800f6a88
+    //LAB_800f6a8c
+    this.battleMenu_800c6c34.currentIconStateTick_24++;
+    if(this.battleMenu_800c6c34.currentIconStateTick_24 >= 4) {
+      this.battleMenu_800c6c34.currentIconStateTick_24 = 0;
+      this.battleMenu_800c6c34.iconStateIndex_26++;
+      if(this.battleMenu_800c6c34.iconStateIndex_26 >= 4) {
+        this.battleMenu_800c6c34.iconStateIndex_26 = 0;
+      }
+    }
+
+    //LAB_800f6ae0
+    this.renderActionMenu();
+
+    //LAB_800f6aec
+    return selectedAction;
+  }
+
+  @Method(0x800f6b04L)
+  public void renderActionMenu() {
+    if(this.battleMenu_800c6c34.state_00 != 0 && (this.battleMenu_800c6c34.highlightState_02 & 0x2) != 0) {
+      //LAB_800f704c
+      final int variableW = this.battleMenu_800c6c34.iconCount_0e * 19 + 1;
+      int x = this.battleMenu_800c6c34.x_06 - variableW / 2;
+      int y = this.battleMenu_800c6c34.y_08 - 10;
+      this.battleMenu_800c6c34.transforms.scaling(variableW, 1.0f, 1.0f);
+      this.battleMenu_800c6c34.transforms.transfer.set(x, y, 124.0f);
+      RENDERER.queueOrthoOverlayModel(this.battleMenu_800c6c34.actionMenuBackground[0], this.battleMenu_800c6c34.transforms);
+
+      final int[][] battleMenuBaseCoords = new int[4][2];
+
+      battleMenuBaseCoords[0][0] = x;
+      battleMenuBaseCoords[2][0] = x;
+      x = x + variableW;
+      battleMenuBaseCoords[1][0] = x;
+      battleMenuBaseCoords[3][0] = x;
+      battleMenuBaseCoords[0][1] = y;
+      battleMenuBaseCoords[1][1] = y;
+      y = this.battleMenu_800c6c34.y_08 - 8;
+      battleMenuBaseCoords[2][1] = y;
+      battleMenuBaseCoords[3][1] = y;
+
+      //LAB_800f710c
+      for(int i = 0; i < 8; i++) {
+        final BattleMenuBackgroundDisplayMetrics0c displayMetrics = battleMenuBackgroundDisplayMetrics_800fb614[i];
+        x = battleMenuBaseCoords[displayMetrics.vertexBaseOffsetIndex_00][0] + displayMetrics.vertexXMod_02;
+        y = battleMenuBaseCoords[displayMetrics.vertexBaseOffsetIndex_00][1] + displayMetrics.vertexYMod_04;
+
+        final int w;
+        if(displayMetrics.w_06 != 0) {
+          w = displayMetrics.w_06;
+        } else {
+          w = variableW;
+        }
+
+        //LAB_800f7158
+        final int h;
+        if(displayMetrics.h_08 == 0) {
+          h = 2;
+        } else {
+          h = displayMetrics.h_08;
+        }
+
+        //LAB_800f716c
+        this.battleMenu_800c6c34.transforms.scaling(w, h, 1.0f);
+        this.battleMenu_800c6c34.transforms.transfer.set(x, y, 124.0f);
+        RENDERER.queueOrthoOverlayModel(this.battleMenu_800c6c34.actionMenuBackground[i + 1], this.battleMenu_800c6c34.transforms);
+      }
+
+      this.battleMenu_800c6c34.transforms.identity();
+
+      //LAB_800f6fc8
+      // Draw red glow underneath selected menu item
+      this.battleMenu_800c6c34.transforms.transfer.set(this.battleMenu_800c6c34.highlightX0_28, this.battleMenu_800c6c34.highlightY_2a, 124.0f);
+      RENDERER.queueOrthoOverlayModel(this.battleMenu_800c6c34.highlight, this.battleMenu_800c6c34.transforms)
+        .monochrome(this.battleMenu_800c6c34.colour_2c / 255.0f);
+
+      if((this.battleMenu_800c6c34.highlightState_02 & 0x1) != 0) {
+        this.battleMenu_800c6c34.transforms.transfer.set(this.battleMenu_800c6c34.highlightX1_3c, this.battleMenu_800c6c34.highlightY_2a, 124.0f);
+        RENDERER.queueOrthoOverlayModel(this.battleMenu_800c6c34.highlight, this.battleMenu_800c6c34.transforms)
+          .monochrome(Math.max(0, (0x80 - this.battleMenu_800c6c34.colour_2c) / 255.0f));
+      }
+
+      //LAB_800f6c48
+      for(int iconIndex = 0; iconIndex < this.battleMenu_800c6c34.iconCount_0e; iconIndex++) {
+        final int iconId = (this.battleMenu_800c6c34.iconFlags_10[iconIndex] & 0xf) - 1;
+        final int iconState;
+        if(this.battleMenu_800c6c34.selectedIcon_22 == iconIndex) {
+          iconState = battleMenuIconStates_800c71e4[this.battleMenu_800c6c34.iconStateIndex_26];
+        } else {
+          //LAB_800f6c88
+          iconState = 0;
+        }
+
+        //LAB_800f6c90
+        final int menuElementBaseX = this.battleMenu_800c6c34.x_06 - this.battleMenu_800c6c34.xShiftOffset_0a + iconIndex * 19;
+        final int menuElementBaseY = this.battleMenu_800c6c34.y_08 - battleMenuIconHeights_800fb6bc[iconId][iconState];
+
+        if(this.battleMenu_800c6c34.selectedIcon_22 == iconIndex && this.battleMenu_800c6c34.renderSelectedIconText_40) {
+          // Selected combat menu icon text
+          this.battleMenu_800c6c34.transforms.transfer.set(menuElementBaseX, this.battleMenu_800c6c34.y_08, 124.0f);
+          RENDERER.queueOrthoOverlayModel(this.battleMenu_800c6c34.actionIconTextObj[iconId], this.battleMenu_800c6c34.transforms);
+        }
+
+        // Combat menu icons
+        //LAB_800f6d70
+        this.battleMenu_800c6c34.transforms.transfer.set(menuElementBaseX, menuElementBaseY, 124.0f);
+
+        if((this.battleMenu_800c6c34.iconFlags_10[iconIndex] & 0xf) != 0x2) {
+          RENDERER.queueOrthoOverlayModel(this.battleMenu_800c6c34.actionIconObj[iconId][iconState], this.battleMenu_800c6c34.transforms);
+        } else if(this.battleMenu_800c6c34.player_04.charId_272 != 0 || (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 == 0) {
+          RENDERER.queueOrthoOverlayModel(this.battleMenu_800c6c34.dragoonIconObj[this.battleMenu_800c6c34.player_04.charSlot_276][iconState], this.battleMenu_800c6c34.transforms);
+        } else {
+          RENDERER.queueOrthoOverlayModel(this.battleMenu_800c6c34.dragoonIconObj[9][iconState], this.battleMenu_800c6c34.transforms);
+
+          if(iconState != 0) {
+            // Divine dragoon spirit overlay
+            //LAB_800f6de0
+            RENDERER.queueOrthoOverlayModel(this.battleMenu_800c6c34.divineSpiritOverlay[iconState - 1], this.battleMenu_800c6c34.transforms);
+          }
+        }
+
+        if((this.battleMenu_800c6c34.iconFlags_10[iconIndex] & 0x80) != 0) {
+          this.battleMenu_800c6c34.transforms.transfer.set(menuElementBaseX, this.battleMenu_800c6c34.y_08 - 16, 124.0f);
+          RENDERER.queueOrthoOverlayModel(this.battleMenu_800c6c34.actionDisabledObj, this.battleMenu_800c6c34.transforms);
+        }
+
+        //LAB_800f6fa4
+      }
+    }
+    //LAB_800f71e0
+  }
+
+  /** Background of battle menu icons */
+  @Method(0x800f74f4L)
+  public Obj buildBattleMenuBackground(final String name, final BattleMenuBackgroundUvMetrics04 menuBackgroundMetrics, final int x, final int y, final int w, final int h, final int baseClutOffset, @Nullable final Translucency transMode, final int uvShiftType) {
+    final QuadBuilder builder = new QuadBuilder(name)
+      .monochrome(0.5f);
+
+    this.setGpuPacketParams(builder, x, y, 0, 0, w, h, false);
+
+    // Modified 1 and 3 from retail to properly align bottom row of pixels
+    if(uvShiftType == 0) {
+      //LAB_800f7628
+      builder
+        .uv(menuBackgroundMetrics.u_00, menuBackgroundMetrics.v_01)
+        .uvSize(menuBackgroundMetrics.w_02, menuBackgroundMetrics.h_03);
+    } else if(uvShiftType == 1) {
+      //LAB_800f7654
+      builder
+        .uv(menuBackgroundMetrics.u_00, menuBackgroundMetrics.v_01 + menuBackgroundMetrics.h_03)
+        .uvSize(menuBackgroundMetrics.w_02, -menuBackgroundMetrics.h_03);
+      //LAB_800f7610
+    } else if(uvShiftType == 2) {
+      //LAB_800f7680
+      builder
+        .uv(menuBackgroundMetrics.u_00 + menuBackgroundMetrics.w_02 - 1, menuBackgroundMetrics.v_01)
+        .uvSize(-menuBackgroundMetrics.w_02, menuBackgroundMetrics.h_03);
+    } else if(uvShiftType == 3) {
+      //LAB_800f76d4
+      builder
+        .uv(menuBackgroundMetrics.u_00 + menuBackgroundMetrics.w_02 - 1, menuBackgroundMetrics.v_01 + menuBackgroundMetrics.h_03)
+        .uvSize(-menuBackgroundMetrics.w_02, -menuBackgroundMetrics.h_03);
+    }
+
+    //LAB_800f7724
+    //LAB_800f772c
+    this.setGpuPacketClutAndTpageAndQueue(builder, baseClutOffset, transMode);
+    return builder.build();
+  }
+
+  /**
+   * @param targetType 0: chars, 1: monsters, 2: all
+   */
+  @Method(0x800f7768L)
+  public int handleTargeting(final int targetType, final boolean targetAll) {
+    final int count;
+    short t3 = 1;
+
+    if(targetType == 1) {
+      this.battleMenu_800c6c34.displayTargetArrowAndName_4c = true;
+      //LAB_800f77d4
+      count = aliveMonsterCount_800c6758.get();
+
+      //LAB_800f77e8
+      this.battleMenu_800c6c34._800c697c = this.battleMenu_800c6c34._800c697e;
+    } else {
+      this.battleMenu_800c6c34.displayTargetArrowAndName_4c = true;
+      if(targetType == 0) {
+        this.battleMenu_800c6c34._800c697c = this.battleMenu_800c6c34._800c6980;
+        count = charCount_800c677c.get();
+      } else {
+        //LAB_800f77f0
+        count = aliveBentCount_800c669c.get();
+      }
+    }
+
+    //LAB_800f77f4
+    if((press_800bee94 & 0x3000) != 0) {
+      this.battleMenu_800c6c34._800c697c++;
+      if(this.battleMenu_800c6c34._800c697c >= count) {
+        this.battleMenu_800c6c34._800c697c = 0;
+      }
+    }
+
+    //LAB_800f7830
+    if((press_800bee94 & 0xc000) != 0) {
+      this.battleMenu_800c6c34._800c697c--;
+      if(this.battleMenu_800c6c34._800c697c < 0) {
+        this.battleMenu_800c6c34._800c697c = count - 1;
+      }
+      t3 = -1;
+    }
+
+    //LAB_800f786c
+    //LAB_800f7880
+    if(this.battleMenu_800c6c34._800c697c < 0 || this.battleMenu_800c6c34._800c697c >= count) {
+      //LAB_800f78a0
+      this.battleMenu_800c6c34._800c697c = 0;
+      t3 = 1;
+    }
+
+    //LAB_800f78ac
+    //LAB_800f78d4
+    int v1;
+    ScriptState<BattleEntity27c> target = null;
+    for(v1 = 0; v1 < count; v1++) {
+      target = targetBents_800c71f0[targetType][this.battleMenu_800c6c34._800c697c];
+
+      if(target != null && (target.storage_44[7] & 0x4000) == 0) {
+        break;
+      }
+
+      this.battleMenu_800c6c34._800c697c += t3;
+
+      if(this.battleMenu_800c6c34._800c697c >= count) {
+        this.battleMenu_800c6c34._800c697c = 0;
+      }
+
+      //LAB_800f792c
+      if(this.battleMenu_800c6c34._800c697c < 0) {
+        this.battleMenu_800c6c34._800c697c = count - 1;
+      }
+
+      //LAB_800f7948
+    }
+
+    //LAB_800f7960
+    if(v1 == count) {
+      target = targetBents_800c71f0[targetType][this.battleMenu_800c6c34._800c697c];
+      this.battleMenu_800c6c34._800c697c = 0;
+    }
+
+    //LAB_800f7998
+    this.battleMenu_800c6c34.targetType_50 = targetType;
+    if(!targetAll) {
+      this.battleMenu_800c6c34.combatantIndex_54 = this.battleMenu_800c6c34._800c697c;
+    } else {
+      //LAB_800f79b4
+      this.battleMenu_800c6c34.combatantIndex_54 = -1;
+    }
+
+    //LAB_800f79bc
+    this.battleMenu_800c6c34.target_48 = target.index;
+
+    if(targetType == 1) {
+      //LAB_800f79fc
+      this.battleMenu_800c6c34._800c697e = this.battleMenu_800c6c34._800c697c;
+    } else if(targetType == 0) {
+      this.battleMenu_800c6c34._800c6980 = this.battleMenu_800c6c34._800c697c;
+    }
+
+    //LAB_800f7a0c
+    //LAB_800f7a10
+    int ret = 0;
+    if((press_800bee94 & 0x20) != 0) { // Cross
+      ret = 1;
+      this.battleMenu_800c6c34._800c697c = 0;
+      this.battleMenu_800c6c34.displayTargetArrowAndName_4c = false;
+    }
+
+    //LAB_800f7a38
+    if((press_800bee94 & 0x40) != 0) { // Circle
+      ret = -1;
+      this.battleMenu_800c6c34._800c697c = 0;
+      this.battleMenu_800c6c34.target_48 = -1;
+      this.battleMenu_800c6c34.displayTargetArrowAndName_4c = false;
+    }
+
+    //LAB_800f7a68
+    return ret;
+  }
+
+  @Method(0x800f83c8L)
+  public void prepareItemList() {
+    //LAB_800f83dc
+    combatItems_800c6988.clear();
+
+    //LAB_800f8420
+    for(int itemSlot1 = 0; itemSlot1 < gameState_800babc8.items_2e9.size(); itemSlot1++) {
+      final Item item = gameState_800babc8.items_2e9.get(itemSlot1);
+
+      boolean found = false;
+
+      //LAB_800f843c
+      for(final CombatItem02 combatItem : combatItems_800c6988) {
+        if(combatItem.item == item) {
+          found = true;
+          combatItem.count++;
+          break;
+        }
+      }
+
+      if(!found) {
+        combatItems_800c6988.add(new CombatItem02(item));
+      }
+    }
   }
 
   @Method(0x800f8568L)
@@ -1366,18 +2820,179 @@ public class BattleHud {
     this.addFloatingNumberForBent(bentIndex, damage, 8);
   }
 
+  @Method(0x800f8cd8L)
+  public Obj buildBattleMenuElement(final String name, final int x, final int y, final int u, final int v, final int w, final int h, final int clut, @Nullable final Translucency transMode) {
+    final QuadBuilder builder = new QuadBuilder(name)
+      .monochrome(0.5f);
+
+    this.setGpuPacketParams(builder, x, y, u, v, w, h, true);
+    this.setGpuPacketClutAndTpageAndQueue(builder, clut, transMode);
+
+    return builder.build();
+  }
+
+  /**
+   * @param textType <ol start="0">
+   *                   <li>Player names</li>
+   *                   <li>Player names</li>
+   *                   <li>Combat item names</li>
+   *                   <li>Dragoon spells</li>
+   *                   <li>Item descriptions</li>
+   *                   <li>Spell descriptions</li>
+   *                 </ol>
+   */
+  @Method(0x800f8ac4L)
+  private void renderText(final int textType, final int textIndex, final int x, final int y) {
+    final LodString str;
+    if(textType == 4) {
+      str = new LodString(itemStats_8004f2ac[textIndex].combatDescription);
+    } else if(textType == 5) {
+      str = new LodString(spellStats_800fa0b8[textIndex].combatDescription);
+    } else {
+      throw new IllegalArgumentException("Only supports textType 4/5");
+    }
+
+    final BattleDescriptionEvent event = EVENTS.postEvent(new BattleDescriptionEvent(textType, textIndex, str));
+    Scus94491BpeSegment_8002.renderText(event.string, x - textWidth(event.string) / 2, y - 6, TextColour.WHITE, 0);
+  }
+
+  @Method(0x800f8b74L)
+  public void setDisabledIcons(final int disabledIconBitset) {
+    //LAB_800f8bd8
+    for(int i = 0; i < 8; i++) {
+      if((disabledIconBitset & 0x1 << i) != 0) {
+        //LAB_800f8bf4
+        for(int icon = 0; icon < 8; icon++) {
+          if((this.battleMenu_800c6c34.iconFlags_10[icon] & 0xf) == iconFlags_800c7194[i]) {
+            this.battleMenu_800c6c34.iconFlags_10[icon] |= 0x80;
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  @Method(0x800f8c38L)
+  public void toggleHighlight(final boolean render) {
+    if(this.battleMenu_800c6c34.state_00 != 0) {
+      //LAB_800f8c78
+      if(!render || this.battleMenu_800c6c34.cameraPositionSwitchTicksRemaining_44 != 0) {
+        //LAB_800f8c64
+        this.battleMenu_800c6c34.highlightState_02 &= 0xfffd;
+      } else {
+        this.battleMenu_800c6c34.highlightState_02 |= 0x2;
+      }
+    }
+    //LAB_800f8c98
+  }
+
+  @Method(0x800f8facL)
+  public void setGpuPacketParams(final QuadBuilder cmd, final int x, final int y, final int u, final int v, final int w, final int h, final boolean textured) {
+    cmd
+      .pos(x, y, 0.0f)
+      .size(w, h);
+
+    if(textured) {
+      cmd
+        .uv(u, v);
+    }
+
+    //LAB_800f901c
+  }
+
+  @Method(0x800f9024L)
+  public void setGpuPacketClutAndTpageAndQueue(final QuadBuilder cmd, int clut, @Nullable final Translucency transparencyMode) {
+    final int clutIndex;
+    if(clut >= 0x80) {
+      clutIndex = 1;
+      clut -= 0x80;
+    } else {
+      //LAB_800f9080
+      clutIndex = 0;
+    }
+
+    //LAB_800f9088
+    //LAB_800f9098
+    //LAB_800f90a8
+    final int clutX = battleUiElementClutVramXy_800c7114[clutIndex].x + clut & 0x3f0;
+    final int clutY = battleUiElementClutVramXy_800c7114[clutIndex].y + clut % 16;
+
+    cmd
+      .bpp(Bpp.BITS_4)
+      .clut(clutX, clutY)
+      .vramPos(704, 256);
+
+    if(transparencyMode != null) {
+      cmd.translucency(transparencyMode);
+    }
+  }
+
   @Method(0x800f8dfcL)
   private Obj buildUiTextureElement(final String name, final int u, final int v, final int w, final int h, final int clut) {
     final QuadBuilder builder = new QuadBuilder(name)
       .size(w, h)
       .uv(u, v);
 
-    setGpuPacketClutAndTpageAndQueue(builder, clut, null);
+    this.setGpuPacketClutAndTpageAndQueue(builder, clut, null);
 
     return builder.build();
   }
 
-  public void deleteUiElements() {
+  @Method(0x800f9e50L)
+  private PlayerBattleEntity setActiveCharacterSpell(final int spellId) {
+    final PlayerBattleEntity player = this.spellAndItemMenu_800c6b60.player_08;
+    player.setActiveSpell(spellId);
+    return player;
+  }
+
+  @Method(0x800f9ee8L)
+  private void drawLine(final int x1, final int y1, final int x2, final int y2, final int r, final int g, final int b, final boolean translucent) {
+    final GpuCommandLine cmd = new GpuCommandLine()
+      .rgb(0, r, g, b)
+      .rgb(1, r, g, b)
+      .pos(0, x1, y1)
+      .pos(1, x2, y2);
+
+    if(translucent) {
+      cmd.translucent(Translucency.B_PLUS_F);
+    }
+
+    GPU.queueCommand(31, cmd);
+  }
+
+  @Method(0x800fa068L)
+  private float clampX(final float x) {
+    return MathHelper.clamp(x, 20.0f, 300.0f);
+  }
+
+  @Method(0x800fa090L)
+  private float clampY(final float y) {
+    return MathHelper.clamp(y, 20.0f, 220.0f);
+  }
+
+  public void delete() {
+    this.deleteUiElements();
+    this.deleteFloatingTextDigits();
+    this.battleMenu_800c6c34.delete();
+    this.spellAndItemMenu_800c6b60.delete();
+
+    if(this.battleUiItemSpellList != null) {
+      this.battleUiItemSpellList.delete();
+      this.battleUiItemSpellList = null;
+    }
+
+    if(this.battleUiSpellList != null) {
+      this.battleUiSpellList.delete();
+      this.battleUiSpellList = null;
+    }
+
+    if(this.battleUiItemDescription != null) {
+      this.battleUiItemDescription.delete();
+      this.battleUiItemDescription = null;
+    }
+  }
+
+  private void deleteUiElements() {
     if(this.battleUiBackground != null) {
       this.battleUiBackground.delete();
       this.battleUiBackground = null;
@@ -1408,7 +3023,7 @@ public class BattleHud {
     }
   }
 
-  public void deleteFloatingTextDigits() {
+  private void deleteFloatingTextDigits() {
     for(int i = 0; i < this.floatingTextType1Digits.length; i++) {
       if(this.floatingTextType1Digits[i] != null) {
         this.floatingTextType1Digits[i].delete();
@@ -1432,30 +3047,5 @@ public class BattleHud {
         this.miss = null;
       }
     }
-  }
-
-  @Method(0x800f9ee8L)
-  private void drawLine(final int x1, final int y1, final int x2, final int y2, final int r, final int g, final int b, final boolean translucent) {
-    final GpuCommandLine cmd = new GpuCommandLine()
-      .rgb(0, r, g, b)
-      .rgb(1, r, g, b)
-      .pos(0, x1, y1)
-      .pos(1, x2, y2);
-
-    if(translucent) {
-      cmd.translucent(Translucency.B_PLUS_F);
-    }
-
-    GPU.queueCommand(31, cmd);
-  }
-
-  @Method(0x800fa068L)
-  private float clampX(final float x) {
-    return MathHelper.clamp(x, 20.0f, 300.0f);
-  }
-
-  @Method(0x800fa090L)
-  private float clampY(final float y) {
-    return MathHelper.clamp(y, 20.0f, 220.0f);
   }
 }

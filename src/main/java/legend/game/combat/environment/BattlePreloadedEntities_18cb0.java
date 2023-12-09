@@ -2,11 +2,14 @@ package legend.game.combat.environment;
 
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
+import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.game.combat.types.AdditionHits80;
 import legend.game.types.McqHeader;
 
 import java.util.Arrays;
+
+import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 
 /** 0x18cb0 bytes */
 public class BattlePreloadedEntities_18cb0 {
@@ -26,6 +29,16 @@ public class BattlePreloadedEntities_18cb0 {
 
   public BattlePreloadedEntities_18cb0() {
     Arrays.setAll(this._9ce8, i -> new Rendering1298());
+  }
+
+  @Method(0x800c7488L)
+  public int getHitProperty(final int charSlot, final int hitNum, final int hitPropertyIndex) {
+    if((battleState_8006e398.charBents_e40[charSlot].storage_44[7] & 0x2) != 0) { // Is dragoon
+      return this.additionHits_38[charSlot + 3].hits_00[hitNum].get(hitPropertyIndex);
+    }
+
+    //LAB_800c74fc
+    return this.additionHits_38[charSlot].hits_00[hitNum].get(hitPropertyIndex);
   }
 
   public static class Rendering1298 {

@@ -6,8 +6,8 @@ import org.joml.Math;
 
 import java.util.Arrays;
 
-import static legend.game.combat.Bttl.FUN_800d3f98;
-import static legend.game.combat.Bttl._800faa94;
+import static legend.game.combat.Battle._800faa94;
+import static legend.game.combat.SEffe.FUN_800d3f98;
 
 public class SpTextEffect40 {
   public int _00 = 1;

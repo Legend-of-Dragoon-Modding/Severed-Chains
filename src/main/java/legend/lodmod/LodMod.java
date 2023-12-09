@@ -32,7 +32,7 @@ import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 import static legend.game.Scus94491BpeSegment_8005.itemCombatDescriptions_80051758;
 import static legend.game.Scus94491BpeSegment_8005.spellCombatDescriptions_80052018;
 import static legend.game.Scus94491BpeSegment_8005.spells_80052734;
-import static legend.game.combat.Bttl.spellStats_800fa0b8;
+import static legend.game.combat.Battle.spellStats_800fa0b8;
 
 /** Will eventually contain standard LOD content. Will be able to be disabled for total overhaul mods. */
 @Mod(id = LodMod.MOD_ID)

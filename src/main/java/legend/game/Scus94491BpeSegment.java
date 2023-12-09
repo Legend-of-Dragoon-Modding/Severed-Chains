@@ -19,6 +19,7 @@ import legend.core.opengl.MatrixStack;
 import legend.core.opengl.Obj;
 import legend.core.opengl.ScissorStack;
 import legend.core.spu.Voice;
+import legend.game.combat.Battle;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
@@ -176,13 +177,7 @@ import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
-import static legend.game.combat.Bttl.cacheLivingBents;
-import static legend.game.combat.Bttl.camera_800c67f0;
-import static legend.game.combat.Bttl.charCount_800c677c;
-import static legend.game.combat.Bttl.endBattle;
-import static legend.game.combat.Bttl.monsterCount_800c6768;
-import static legend.game.combat.Bttl.renderSkybox;
-import static legend.game.combat.Bttl.rotateAndRenderBattleStage;
+import static legend.game.combat.Battle.monsterCount_800c6768;
 import static legend.game.combat.environment.StageData.stageData_80109a98;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
@@ -392,8 +387,8 @@ public final class Scus94491BpeSegment {
         }
       }
 
-      if(key == GLFW_KEY_F5 && engineState_8004dd20 == EngineStateEnum.COMBAT_06) {
-        endBattle();
+      if(key == GLFW_KEY_F5 && currentEngineState_8004dd04 instanceof final Battle battle) {
+        battle.endBattle();
       }
     });
 
@@ -1221,59 +1216,6 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_80018644
-  }
-
-  @Method(0x80018744L)
-  public static void checkIfCharacterAndMonsterModelsAreLoadedAndCacheLivingBents() {
-    if((battleFlags_800bc960 & 0x400) != 0) { // Encounter asset files have been requested
-      if((battleFlags_800bc960 & 0x8) == 0 && areCharacterModelsLoaded()) {
-        battleFlags_800bc960 |= 0x8;
-      }
-
-      //LAB_80018790
-      if((battleFlags_800bc960 & 0x4) == 0 && areMonsterModelsLoaded()) {
-        battleFlags_800bc960 |= 0x4;
-      }
-    }
-
-    //LAB_800187b0
-    cacheLivingBents();
-  }
-
-  @Method(0x800187ccL)
-  public static boolean areCharacterModelsLoaded() {
-    //LAB_80018800
-    for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
-      if(!battleState_8006e398.charBents_e40[charSlot].innerStruct_00.combatant_144.isModelLoaded()) {
-        return false;
-      }
-    }
-
-    //LAB_80018850
-    //LAB_80018854
-    return true;
-  }
-
-  @Method(0x8001886cL)
-  public static boolean areMonsterModelsLoaded() {
-    //LAB_800188a09
-    for(int i = 0; i < monsterCount_800c6768.get(); i++) {
-      if(!battleState_8006e398.monsterBents_e50[i].innerStruct_00.combatant_144.isModelLoaded()) {
-        return false;
-      }
-    }
-
-    //LAB_800188f0
-    //LAB_800188f4
-    return true;
-  }
-
-  @Method(0x8001890cL)
-  public static void renderBattleEnvironment() {
-    camera_800c67f0.updateBattleCamera();
-    cacheLivingBents();
-    rotateAndRenderBattleStage();
-    renderSkybox();
   }
 
   @Method(0x80018944L)

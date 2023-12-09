@@ -8,8 +8,8 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import static legend.core.GameEngine.GPU;
-import static legend.game.combat.Bttl.FUN_800cfb14;
-import static legend.game.combat.Bttl.seed_800fa754;
+import static legend.game.combat.Battle.seed_800fa754;
+import static legend.game.combat.SEffe.FUN_800cfb14;
 
 public class ProjectileHitEffect14 implements Effect {
   private final int count_00;

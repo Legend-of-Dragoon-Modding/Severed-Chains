@@ -17,7 +17,7 @@ import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zMin;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
-import static legend.game.combat.Bttl._800c6930;
+import static legend.game.combat.Battle._800c6930;
 
 public final class Renderer {
   private Renderer() { }

@@ -6,10 +6,10 @@ import legend.game.scripting.ScriptState;
 import legend.game.types.Translucency;
 
 import static legend.game.Scus94491BpeSegment.renderButtonPressHudTexturedRect;
-import static legend.game.combat.Bttl.FUN_800d3f98;
-import static legend.game.combat.Bttl._800faa9d;
-import static legend.game.combat.Bttl.additionNames_800fa8d4;
-import static legend.game.combat.Bttl.asciiTable_800fa788;
+import static legend.game.combat.Battle._800faa9d;
+import static legend.game.combat.Battle.additionNames_800fa8d4;
+import static legend.game.combat.Battle.asciiTable_800fa788;
+import static legend.game.combat.SEffe.FUN_800d3f98;
 
 public class AdditionNameTextEffect1c {
   /** ushort */

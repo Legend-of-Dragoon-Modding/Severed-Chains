@@ -17,9 +17,8 @@ import java.util.Arrays;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.combat.Bttl.aliveBentCount_800c669c;
-import static legend.game.combat.Bttl.allBentCount_800c66d0;
-import static legend.game.combat.Bttl.currentAssetIndex_800c66b4;
+import static legend.game.combat.Battle.aliveBentCount_800c669c;
+import static legend.game.combat.Battle.allBentCount_800c66d0;
 
 public class BattleStateEf4 {
   public final SpecialEffects20[] specialEffect_00 = new SpecialEffects20[10];
@@ -330,6 +329,8 @@ public class BattleStateEf4 {
   public int stageProgression_eec;
   public int _ef0;
 
+  private int currentAssetIndex_800c66b4;
+
   public BattleStateEf4() {
     Arrays.setAll(this.specialEffect_00, i -> new SpecialEffects20());
     Arrays.setAll(this.status_384, i -> new Status04());
@@ -451,19 +452,19 @@ public class BattleStateEf4 {
 
   @Method(0x800caa20L)
   public int getFreeGlobalAssetIndex() {
-    currentAssetIndex_800c66b4.incr();
-    if(currentAssetIndex_800c66b4.get() >= 0x100) {
-      currentAssetIndex_800c66b4.set(0);
+    this.currentAssetIndex_800c66b4++;
+    if(this.currentAssetIndex_800c66b4 >= 0x100) {
+      this.currentAssetIndex_800c66b4 = 0;
     }
 
     //LAB_800caa44
     //LAB_800caa64
-    for(int i = currentAssetIndex_800c66b4.get(); i < 0x100; i++) {
+    for(int i = this.currentAssetIndex_800c66b4; i < 0x100; i++) {
       final BattleAsset08 asset = this.assets_580[i];
 
       if(asset.state_04 == 0) {
         //LAB_800caacc
-        currentAssetIndex_800c66b4.set(i);
+        this.currentAssetIndex_800c66b4 = i;
         asset.data_00 = null;
         asset.state_04 = 1;
         return i;
@@ -472,12 +473,12 @@ public class BattleStateEf4 {
 
     //LAB_800caa88
     //LAB_800caaa4
-    for(int i = 0; i < currentAssetIndex_800c66b4.get(); i++) {
+    for(int i = 0; i < this.currentAssetIndex_800c66b4; i++) {
       final BattleAsset08 asset = this.assets_580[i];
 
       if(asset.state_04 == 0) {
         //LAB_800caacc
-        currentAssetIndex_800c66b4.set(i);
+        this.currentAssetIndex_800c66b4 = i;
         asset.data_00 = null;
         asset.state_04 = 1;
         return i;

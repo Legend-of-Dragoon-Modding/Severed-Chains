@@ -25,8 +25,10 @@ public class CombatantStruct1a8 {
   public int _19a;
   public int charSlot_19c;
   /**
-   * 0x1 - used?
-   * 0x4 - player (not NPC)
+   * <ul>
+   *   <li>0x1 - used?</li>
+   *   <li>0x4 - player (not NPC)</li>
+   * </ul>
    */
   public int flags_19e;
   public int vramSlot_1a0;

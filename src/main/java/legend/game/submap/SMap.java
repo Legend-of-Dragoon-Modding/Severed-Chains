@@ -3095,7 +3095,7 @@ public class SMap extends EngineState {
       }
     } else {
       //LAB_800e0ef0
-      model.ptr_a8 = null; //TODO was this needed? cContainer.ptr_08.getAddress();
+      model.ptr_a8 = null;
 
       //LAB_800e0f00
       for(int i = 0; i < 7; i++) {

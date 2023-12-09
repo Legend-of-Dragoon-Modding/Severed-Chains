@@ -7,10 +7,10 @@ import legend.game.types.Translucency;
 import org.joml.Vector2f;
 
 import static legend.core.GameEngine.GPU;
-import static legend.game.combat.Bttl.getRelativeOffset;
-import static legend.game.combat.Bttl.rotateAndTranslateEffect;
-import static legend.game.combat.Bttl.seed_800fa754;
-import static legend.game.combat.Bttl.transformWorldspaceToScreenspace;
+import static legend.game.combat.Battle.seed_800fa754;
+import static legend.game.combat.SEffe.getRelativeOffset;
+import static legend.game.combat.SEffe.rotateAndTranslateEffect;
+import static legend.game.combat.SEffe.transformWorldspaceToScreenspace;
 
 public class AdditionSparksEffect08 implements Effect {
   /** ubyte */

@@ -5,7 +5,6 @@ import legend.core.gpu.TimHeader;
 import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
 import legend.game.types.CContainer;
-import legend.game.types.Model124;
 import legend.game.types.TmdAnimationFile;
 import legend.game.unpacker.FileData;
 
@@ -24,12 +23,8 @@ import static legend.game.Scus94491BpeSegment.shadowCContainer_800103d0;
 import static legend.game.Scus94491BpeSegment.shadowTimFile_80010544;
 import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
-import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
+import static legend.game.Scus94491BpeSegment_8002.loadModelAndAnimation;
 import static legend.game.Scus94491BpeSegment_8002.loadBasicUiTexturesAndSomethingElse;
-import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
-import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
-import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.InitGeom;
 import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.ResetGraph;
@@ -126,7 +121,10 @@ public final class Scus94491BpeSegment_800e {
     final CContainer container = new CContainer("Shadow", new FileData(MEMORY.getBytes(shadowCContainer_800103d0.getAddress(), 0x14c)));
     final TmdAnimationFile animation = new TmdAnimationFile(new FileData(MEMORY.getBytes(shadowAnimation_8001051c.getAddress(), 0x28)));
 
-    FUN_800e6b3c(shadowModel_800bda10, container, animation);
+    shadowModel_800bda10.modelParts_00 = new ModelPart10[animation.modelPartCount_0c];
+    Arrays.setAll(shadowModel_800bda10.modelParts_00, i -> new ModelPart10());
+
+    loadModelAndAnimation(shadowModel_800bda10, container, animation);
 
     shadowModel_800bda10.coord2_14.transforms.rotate.zero();
     shadowModel_800bda10.vramSlot_9d = 0;
@@ -142,61 +140,6 @@ public final class Scus94491BpeSegment_800e {
     if(header.hasClut()) {
       LoadImage(header.clutRect, header.clutAddress);
     }
-  }
-
-  /** Very similar to {@link Scus94491BpeSegment_8002#FUN_80020718(Model124, CContainer, TmdAnimationFile)} */
-  @Method(0x800e6b3cL)
-  public static void FUN_800e6b3c(final Model124 model, final CContainer cContainer, final TmdAnimationFile tmdAnimFile) {
-    final float x = model.coord2_14.coord.transfer.x;
-    final float y = model.coord2_14.coord.transfer.y;
-    final float z = model.coord2_14.coord.transfer.z;
-
-    //LAB_800e6b7c
-    for(int i = 0; i < 7; i++) {
-      model.animateTextures_ec[i] = false;
-    }
-
-    model.modelParts_00 = new ModelPart10[tmdAnimFile.modelPartCount_0c];
-
-    Arrays.setAll(model.modelParts_00, i -> new ModelPart10());
-
-    model.tpage_108 = (int)((cContainer.tmdPtr_00.id & 0xffff0000L) >>> 11);
-
-    if(cContainer.ptr_08 != null) {
-      model.ptr_a8 = cContainer.ptr_08;
-
-      //LAB_800e6c00
-      for(int i = 0; i < 7; i++) {
-        model.ptrs_d0[i] = model.ptr_a8._00[i];
-        FUN_8002246c(model, i);
-      }
-    } else {
-      //LAB_800e6c44
-      model.ptr_a8 = null; //TODO was this needed? cContainer.ptr_08.getAddress();
-
-      //LAB_800e6c54
-      for(int i = 0; i < 7; i++) {
-        model.ptrs_d0[i] = null;
-      }
-    }
-
-    //LAB_800e6c64
-    initObjTable2(model.modelParts_00);
-    GsInitCoordinate2(null, model.coord2_14);
-    prepareObjTable2(model.modelParts_00, cContainer.tmdPtr_00.tmd, model.coord2_14);
-
-    model.zOffset_a0 = 0;
-    model.disableInterpolation_a2 = false;
-    model.ub_a3 = 0;
-    model.partInvisible_f4 = 0;
-
-    loadModelStandardAnimation(model, tmdAnimFile);
-
-    model.coord2_14.coord.transfer.set(x, y, z);
-    model.shadowType_cc = 0;
-    model.coord2_14.transforms.scale.set(1.0f, 1.0f, 1.0f);
-    model.shadowSize_10c.set(1.0f, 1.0f, 1.0f);
-    model.shadowOffset_118.zero();
   }
 
   @Method(0x800e6d60L)
