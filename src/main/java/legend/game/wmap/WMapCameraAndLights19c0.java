@@ -13,19 +13,19 @@ public class WMapCameraAndLights19c0 {
     INIT_DIMMING_0,
     DIM_1,
     INIT_BRIGHTENING_2,
-    BRIGHTEN_3
+    BRIGHTEN_3,
   }
 
   public enum CameraUpdateState {
     AWAIT_INPUT_0,
     ZOOM_OUT_1,
-    ZOOM_IN_2
+    ZOOM_IN_2,
   }
 
   public enum MapRotationState {
     MAIN_LOOP_0,
     INIT_SUBMAP_ZOOM_1,
-    SUBMAP_ZOOM_2
+    SUBMAP_ZOOM_2,
   }
 
   public enum ProjectionDistanceState {
@@ -33,7 +33,7 @@ public class WMapCameraAndLights19c0 {
     INIT_VIEW_NEAR_1,
     MAIN_LOOP_NEAR_2,
     INIT_VIEW_FAR_3,
-    MAIN_LOOP_FAR_4
+    MAIN_LOOP_FAR_4,
   }
 
   public final GsRVIEW2 currRview2_00 = new GsRVIEW2();

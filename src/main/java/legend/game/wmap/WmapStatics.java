@@ -37,7 +37,7 @@ public final class WmapStatics {
     new UvAdjustmentMetrics14(0x5c240000, 0x83c3ffff,  0x190000, 0xffe0ffff,    0x0),
     new UvAdjustmentMetrics14(0x5c280000, 0x83c3ffff,  0x1a0000, 0xffe0ffff,    0x0),
     new UvAdjustmentMetrics14(0x5c2e0000,  0x3c0ffff,  0x1b0000, 0xffe0ffff,   0x80),
-    new UvAdjustmentMetrics14(0x7c2c0000,  0x3c0ffff,  0x1b0000, 0xffe0ffff, 0x8000)
+    new UvAdjustmentMetrics14(0x7c2c0000,  0x3c0ffff,  0x1b0000, 0xffe0ffff, 0x8000),
   };
 
   public static final int[] mapTerrainTmdIndices_800ef194 = {12, 6, 13, 8, 4, 3, 3};
@@ -166,7 +166,7 @@ public final class WmapStatics {
     { 75, 120,  75, 122},
     { 75, 121,  75, 122},
     {  0,   0,   0,   0},
-    {  0,   0,   0,   0}
+    {  0,   0,   0,   0},
   };
 
   /**
@@ -200,7 +200,7 @@ public final class WmapStatics {
     "Hotel",
     "Clinic",
     "Weapon Shop",
-    "Item Shop"
+    "Item Shop",
   };
   /** The regions you can travel to at Barrier Stations */
   public static final String[] regions_800f01ec = {"South of Serdio", "North of Serdio", "Tiberoa"};
@@ -721,7 +721,7 @@ public final class WmapStatics {
     new Location14(-  1, 245,   0,  0,   0,  0,  245,           Continent.NONE_8, false,   0),
     new Location14(-  1, 246,   0,  0,   0,  0,  246,           Continent.NONE_8, false,   0),
     new Location14(-  1, 247,   0,  0,   0,  0,  247,           Continent.NONE_8, false,   0),
-    new Location14(-  1, 248,   0,  0,   0,  0,  248,           Continent.NONE_8, false,   0)
+    new Location14(-  1, 248,   0,  0,   0,  0,  248,           Continent.NONE_8, false,   0),
   };
   public static final DirectionalPathSegmentData08[] directionalPathSegmentData_800f2248 = {
     new DirectionalPathSegmentData08(  1, 1, 86,   0, 0),
@@ -925,7 +925,7 @@ public final class WmapStatics {
     new WMapDestinationMarker2c(0xffff, new int[]{0x1fff3f17,        0x0,   0x100000, 0x7ffff7ff,   0x0, 0x0, 0x0, 0},  64,  53,  3),
     new WMapDestinationMarker2c(0xffff, new int[]{0x1fff3f17,        0x0,   0x100000, 0x7ffff7ff,   0x0, 0x0, 0x0, 0},  64,  54,  3),
     new WMapDestinationMarker2c(0xffff, new int[]{0x1fff3f17,        0x0,   0x100000, 0x7ffff7ff,   0x0, 0x0, 0x0, 0},  64,  55,  3),
-    new WMapDestinationMarker2c(0xffff, new int[]{0x1fff3f17,        0x0,   0x100000, 0x7ffff7ff,   0x0, 0x0, 0x0, 0},  64,  56,  3)
+    new WMapDestinationMarker2c(0xffff, new int[]{0x1fff3f17,        0x0,   0x100000, 0x7ffff7ff,   0x0, 0x0, 0x0, 0},  64,  56,  3),
   };
 
   public static Vector3f[][] pathDotPosArr_800f591c = {
@@ -934,7 +934,7 @@ public final class WmapStatics {
       new Vector3f(  693.0f, -  6.0f,  613.0f),
       new Vector3f(  667.0f, -  6.0f,  598.0f),
       new Vector3f(  641.0f, -  6.0f,  583.0f),
-      new Vector3f(  615.0f, -  6.0f,  568.0f)
+      new Vector3f(  615.0f, -  6.0f,  568.0f),
     },
     {
       new Vector3f(  510.0f, -  6.0f,  508.0f),
@@ -942,7 +942,7 @@ public final class WmapStatics {
       new Vector3f(  461.0f, -  6.0f,  459.0f),
       new Vector3f(  442.0f, -  6.0f,  440.0f),
       new Vector3f(  423.0f, -  6.0f,  422.0f),
-      new Vector3f(  405.0f, -  6.0f,  403.0f)
+      new Vector3f(  405.0f, -  6.0f,  403.0f),
     },
     {
       new Vector3f(  300.0f, -  6.0f,  328.0f),
@@ -952,7 +952,7 @@ public final class WmapStatics {
       new Vector3f(  180.0f, -  6.0f,  322.0f),
       new Vector3f(  150.0f, -  6.0f,  315.0f),
       new Vector3f(  120.0f, -  6.0f,  298.0f),
-      new Vector3f(   90.0f, -  6.0f,  274.0f)
+      new Vector3f(   90.0f, -  6.0f,  274.0f),
     },
     {
       new Vector3f(   90.0f, -  6.0f,  274.0f),
@@ -961,7 +961,7 @@ public final class WmapStatics {
       new Vector3f(    3.0f, -  6.0f,  166.0f),
       new Vector3f(-   7.0f, -  6.0f,  118.0f),
       new Vector3f(-  27.0f, -  6.0f,   88.0f),
-      new Vector3f(-  51.0f, -  6.0f,   58.0f)
+      new Vector3f(-  51.0f, -  6.0f,   58.0f),
     },
     {
       new Vector3f(-  51.0f, -  6.0f,   58.0f),
@@ -975,7 +975,7 @@ public final class WmapStatics {
       new Vector3f(   27.0f, -  6.0f, -174.0f),
       new Vector3f(   36.0f, -  6.0f, -196.0f),
       new Vector3f(   54.0f, -  6.0f, -219.0f),
-      new Vector3f(   70.0f, -  6.0f, -241.0f)
+      new Vector3f(   70.0f, -  6.0f, -241.0f),
     },
     {
       new Vector3f(   90.0f, -  6.0f,  274.0f),
@@ -993,7 +993,7 @@ public final class WmapStatics {
       new Vector3f(  232.0f, -  6.0f,  658.0f),
       new Vector3f(  252.0f, -  6.0f,  688.0f),
       new Vector3f(  275.0f, -  6.0f,  710.0f),
-      new Vector3f(  301.0f, -  6.0f,  731.0f)
+      new Vector3f(  301.0f, -  6.0f,  731.0f),
     },
     {
       new Vector3f(  360.0f, -  6.0f,  448.0f),
@@ -1006,7 +1006,7 @@ public final class WmapStatics {
       new Vector3f(  480.0f, -  6.0f,  658.0f),
       new Vector3f(  480.0f, -  6.0f,  688.0f),
       new Vector3f(  468.0f, -  6.0f,  718.0f),
-      new Vector3f(  450.0f, -  6.0f,  748.0f)
+      new Vector3f(  450.0f, -  6.0f,  748.0f),
     },
     {
       new Vector3f(- 240.0f, - 25.0f,  307.0f),
@@ -1029,7 +1029,7 @@ public final class WmapStatics {
       new Vector3f(    0.0f, - 35.0f,  615.0f),
       new Vector3f(    0.0f, - 42.0f,  643.0f),
       new Vector3f(    0.0f, - 49.0f,  672.0f),
-      new Vector3f(    0.0f, - 35.0f,  697.0f)
+      new Vector3f(    0.0f, - 35.0f,  697.0f),
     },
     {
       new Vector3f(- 296.0f, -  6.0f,  387.0f),
@@ -1039,25 +1039,25 @@ public final class WmapStatics {
       new Vector3f(- 240.0f, - 16.0f,  458.0f),
       new Vector3f(- 230.0f, - 11.0f,  478.0f),
       new Vector3f(- 219.0f, -  6.0f,  501.0f),
-      new Vector3f(- 201.0f, -  6.0f,  523.0f)
+      new Vector3f(- 201.0f, -  6.0f,  523.0f),
     },
     {
       new Vector3f(- 468.0f, -  6.0f,  350.0f),
       new Vector3f(- 442.0f, -  6.0f,  343.0f),
       new Vector3f(- 412.0f, -  6.0f,  342.0f),
-      new Vector3f(- 383.0f, -  6.0f,  336.0f)
+      new Vector3f(- 383.0f, -  6.0f,  336.0f),
     },
     {
       new Vector3f(- 469.0f, -  6.0f,  232.0f),
       new Vector3f(- 468.0f, -  6.0f,  266.0f),
       new Vector3f(- 468.0f, -  6.0f,  296.0f),
       new Vector3f(- 468.0f, -  6.0f,  326.0f),
-      new Vector3f(- 468.0f, -  6.0f,  350.0f)
+      new Vector3f(- 468.0f, -  6.0f,  350.0f),
     },
     {
       new Vector3f(- 469.0f, -  6.0f,  232.0f),
       new Vector3f(- 499.0f, -  6.0f,  232.0f),
-      new Vector3f(- 529.0f, -  6.0f,  232.0f)
+      new Vector3f(- 529.0f, -  6.0f,  232.0f),
     },
     {
       new Vector3f(- 360.0f, -  6.0f, -  1.0f),
@@ -1068,7 +1068,7 @@ public final class WmapStatics {
       new Vector3f(- 420.0f, -  6.0f,  148.0f),
       new Vector3f(- 425.0f, -  6.0f,  178.0f),
       new Vector3f(- 450.0f, -  6.0f,  208.0f),
-      new Vector3f(- 469.0f, -  6.0f,  232.0f)
+      new Vector3f(- 469.0f, -  6.0f,  232.0f),
     },
     {
       new Vector3f(-  51.0f, -  6.0f,   58.0f),
@@ -1081,7 +1081,7 @@ public final class WmapStatics {
       new Vector3f(- 270.0f, -  6.0f,   13.0f),
       new Vector3f(- 300.0f, -  6.0f,    4.0f),
       new Vector3f(- 330.0f, -  6.0f, -  1.0f),
-      new Vector3f(- 360.0f, -  6.0f, -  1.0f)
+      new Vector3f(- 360.0f, -  6.0f, -  1.0f),
     },
     {
       new Vector3f(- 360.0f, -  6.0f, -  1.0f),
@@ -1089,7 +1089,7 @@ public final class WmapStatics {
       new Vector3f(- 360.0f, -  6.0f, - 61.0f),
       new Vector3f(- 360.0f, -  6.0f, - 91.0f),
       new Vector3f(- 354.0f, -  6.0f, -121.0f),
-      new Vector3f(- 345.0f, -  6.0f, -151.0f)
+      new Vector3f(- 345.0f, -  6.0f, -151.0f),
     },
     {
       new Vector3f(- 468.0f, -  6.0f,  350.0f),
@@ -1100,7 +1100,7 @@ public final class WmapStatics {
       new Vector3f(- 495.0f, -  6.0f,  498.0f),
       new Vector3f(- 477.0f, -  6.0f,  528.0f),
       new Vector3f(- 456.0f, -  6.0f,  560.0f),
-      new Vector3f(- 444.0f, -  6.0f,  592.0f)
+      new Vector3f(- 444.0f, -  6.0f,  592.0f),
     },
     {
       new Vector3f(  617.0f, -  6.0f, -750.0f),
@@ -1120,7 +1120,7 @@ public final class WmapStatics {
       new Vector3f(  660.0f, -  6.0f, -330.0f),
       new Vector3f(  637.0f, -  6.0f, -299.0f),
       new Vector3f(  612.0f, -  6.0f, -269.0f),
-      new Vector3f(  570.0f, -  6.0f, -240.0f)
+      new Vector3f(  570.0f, -  6.0f, -240.0f),
     },
     {
       new Vector3f(  409.0f, -  6.0f,   98.0f),
@@ -1135,7 +1135,7 @@ public final class WmapStatics {
       new Vector3f(  191.0f, -  6.0f,  267.0f),
       new Vector3f(  150.0f, -  6.0f,  272.0f),
       new Vector3f(  112.0f, -  6.0f,  287.0f),
-      new Vector3f(   94.0f, -  6.0f,  308.0f)
+      new Vector3f(   94.0f, -  6.0f,  308.0f),
     },
     {
       new Vector3f(   94.0f, -  6.0f,  308.0f),
@@ -1146,7 +1146,7 @@ public final class WmapStatics {
       new Vector3f(  233.0f, -  6.0f,  455.0f),
       new Vector3f(  264.0f, -  6.0f,  480.0f),
       new Vector3f(  300.0f, -  6.0f,  501.0f),
-      new Vector3f(  330.0f, -  6.0f,  509.0f)
+      new Vector3f(  330.0f, -  6.0f,  509.0f),
     },
     {
       new Vector3f(   94.0f, -  6.0f,  308.0f),
@@ -1164,7 +1164,7 @@ public final class WmapStatics {
       new Vector3f(- 165.0f, -  6.0f,    0.0f),
       new Vector3f(- 198.0f, -  6.0f, - 17.0f),
       new Vector3f(- 228.0f, -  6.0f, - 31.0f),
-      new Vector3f(- 249.0f, -  6.0f, - 57.0f)
+      new Vector3f(- 249.0f, -  6.0f, - 57.0f),
     },
     {
       new Vector3f(- 249.0f, -  6.0f, - 57.0f),
@@ -1186,13 +1186,13 @@ public final class WmapStatics {
       new Vector3f(- 667.0f, -  6.0f, -354.0f),
       new Vector3f(- 674.0f, -  6.0f, -382.0f),
       new Vector3f(- 686.0f, -  6.0f, -406.0f),
-      new Vector3f(- 704.0f, -  6.0f, -426.0f)
+      new Vector3f(- 704.0f, -  6.0f, -426.0f),
     },
     {
       new Vector3f(- 704.0f, -  6.0f, -426.0f),
       new Vector3f(- 726.0f, -  6.0f, -427.0f),
       new Vector3f(- 753.0f, -  6.0f, -419.0f),
-      new Vector3f(- 777.0f, -  6.0f, -403.0f)
+      new Vector3f(- 777.0f, -  6.0f, -403.0f),
     },
     {
       new Vector3f(- 704.0f, -  6.0f, -426.0f),
@@ -1210,7 +1210,7 @@ public final class WmapStatics {
       new Vector3f(- 847.0f, -  6.0f, -794.0f),
       new Vector3f(- 854.0f, -  6.0f, -827.0f),
       new Vector3f(- 858.0f, -  6.0f, -855.0f),
-      new Vector3f(- 864.0f, -  6.0f, -892.0f)
+      new Vector3f(- 864.0f, -  6.0f, -892.0f),
     },
     {
       new Vector3f(- 249.0f, -  6.0f, - 57.0f),
@@ -1219,7 +1219,7 @@ public final class WmapStatics {
       new Vector3f(- 249.0f, -  6.0f, -166.0f),
       new Vector3f(- 249.0f, -  6.0f, -200.0f),
       new Vector3f(- 249.0f, -  6.0f, -230.0f),
-      new Vector3f(- 249.0f, -  6.0f, -260.0f)
+      new Vector3f(- 249.0f, -  6.0f, -260.0f),
     },
     {
       new Vector3f(- 240.0f, -  6.0f, -464.0f),
@@ -1232,7 +1232,7 @@ public final class WmapStatics {
       new Vector3f(- 240.0f, - 62.0f, -599.0f),
       new Vector3f(- 240.0f, - 69.0f, -621.0f),
       new Vector3f(- 240.0f, - 76.0f, -643.0f),
-      new Vector3f(- 240.0f, - 73.0f, -668.0f)
+      new Vector3f(- 240.0f, - 73.0f, -668.0f),
     },
     {
       new Vector3f(  674.0f, -  6.0f, -684.0f),
@@ -1261,13 +1261,13 @@ public final class WmapStatics {
       new Vector3f(  572.0f, -  6.0f, - 37.0f),
       new Vector3f(  547.0f, -  6.0f, - 18.0f),
       new Vector3f(  519.0f, -  6.0f, -  5.0f),
-      new Vector3f(  487.0f, -  6.0f,    7.0f)
+      new Vector3f(  487.0f, -  6.0f,    7.0f),
     },
     {
       new Vector3f(  487.0f, -  6.0f,    7.0f),
       new Vector3f(  456.0f, -  6.0f,    5.0f),
       new Vector3f(  426.0f, -  6.0f, -  4.0f),
-      new Vector3f(  401.0f, -  6.0f, - 19.0f)
+      new Vector3f(  401.0f, -  6.0f, - 19.0f),
     },
     {
       new Vector3f(  487.0f, -  6.0f,    7.0f),
@@ -1277,7 +1277,7 @@ public final class WmapStatics {
       new Vector3f(  508.0f, -  6.0f,  121.0f),
       new Vector3f(  505.0f, -  6.0f,  150.0f),
       new Vector3f(  499.0f, -  6.0f,  181.0f),
-      new Vector3f(  490.0f, -  6.0f,  210.0f)
+      new Vector3f(  490.0f, -  6.0f,  210.0f),
     },
     {
       new Vector3f(  476.0f, -  6.0f,  375.0f),
@@ -1286,7 +1286,7 @@ public final class WmapStatics {
       new Vector3f(  492.0f, -  6.0f,  465.0f),
       new Vector3f(  502.0f, -  6.0f,  494.0f),
       new Vector3f(  512.0f, -  6.0f,  525.0f),
-      new Vector3f(  529.0f, -  6.0f,  555.0f)
+      new Vector3f(  529.0f, -  6.0f,  555.0f),
     },
     {
       new Vector3f(  370.0f, -  6.0f,  293.0f),
@@ -1326,7 +1326,7 @@ public final class WmapStatics {
       new Vector3f(- 171.0f, - 36.0f,  216.0f),
       new Vector3f(- 185.0f, - 26.0f,  209.0f),
       new Vector3f(- 199.0f, - 16.0f,  203.0f),
-      new Vector3f(- 213.0f, -  6.0f,  196.0f)
+      new Vector3f(- 213.0f, -  6.0f,  196.0f),
     },
     {
       new Vector3f(- 291.0f, - 33.0f,  263.0f),
@@ -1345,7 +1345,7 @@ public final class WmapStatics {
       new Vector3f(- 595.0f, -  6.0f,   39.0f),
       new Vector3f(- 625.0f, -  6.0f,   43.0f),
       new Vector3f(- 655.0f, -  6.0f,   51.0f),
-      new Vector3f(- 685.0f, -  6.0f,   65.0f)
+      new Vector3f(- 685.0f, -  6.0f,   65.0f),
     },
     {
       new Vector3f(  480.0f,    0.0f, -480.0f),
@@ -1365,7 +1365,7 @@ public final class WmapStatics {
       new Vector3f(    7.0f,    0.0f, -588.0f),
       new Vector3f(-  26.0f,    0.0f, -579.0f),
       new Vector3f(-  60.0f,    0.0f, -565.0f),
-      new Vector3f(-  93.0f,    0.0f, -543.0f)
+      new Vector3f(-  93.0f,    0.0f, -543.0f),
     },
     {
       new Vector3f(-  93.0f,    0.0f, -543.0f),
@@ -1388,14 +1388,14 @@ public final class WmapStatics {
       new Vector3f(- 536.0f,    0.0f, -194.0f),
       new Vector3f(- 556.0f,    0.0f, -171.0f),
       new Vector3f(- 576.0f,    0.0f, -146.0f),
-      new Vector3f(- 600.0f,    0.0f, -120.0f)
+      new Vector3f(- 600.0f,    0.0f, -120.0f),
     },
     {
       new Vector3f(-  93.0f,    0.0f, -543.0f),
       new Vector3f(- 108.0f,    0.0f, -506.0f),
       new Vector3f(- 116.0f,    0.0f, -470.0f),
       new Vector3f(- 120.0f,    0.0f, -433.0f),
-      new Vector3f(- 120.0f,    0.0f, -396.0f)
+      new Vector3f(- 120.0f,    0.0f, -396.0f),
     },
     {
       new Vector3f(-  38.0f, -  6.0f, -270.0f),
@@ -1410,7 +1410,7 @@ public final class WmapStatics {
       new Vector3f(  134.0f, -  6.0f, -149.0f),
       new Vector3f(  150.0f, -  6.0f, -123.0f),
       new Vector3f(  164.0f, -  6.0f, - 95.0f),
-      new Vector3f(  174.0f, -  6.0f, - 60.0f)
+      new Vector3f(  174.0f, -  6.0f, - 60.0f),
     },
     {
       new Vector3f(  174.0f, -  6.0f, - 60.0f),
@@ -1420,7 +1420,7 @@ public final class WmapStatics {
       new Vector3f(  193.0f, -  6.0f,   79.0f),
       new Vector3f(  206.0f, -  6.0f,  110.0f),
       new Vector3f(  222.0f, -  6.0f,  137.0f),
-      new Vector3f(  240.0f, -  6.0f,  165.0f)
+      new Vector3f(  240.0f, -  6.0f,  165.0f),
     },
     {
       new Vector3f(  600.0f,    0.0f,  401.0f),
@@ -1428,7 +1428,7 @@ public final class WmapStatics {
       new Vector3f(  636.0f,    0.0f,  445.0f),
       new Vector3f(  660.0f,    0.0f,  467.0f),
       new Vector3f(  687.0f,    0.0f,  479.0f),
-      new Vector3f(  715.0f,    0.0f,  482.0f)
+      new Vector3f(  715.0f,    0.0f,  482.0f),
     },
     {
       new Vector3f(  200.0f, -  6.0f, -639.0f),
@@ -1439,7 +1439,7 @@ public final class WmapStatics {
       new Vector3f(  149.0f, -  6.0f, -496.0f),
       new Vector3f(  139.0f, -  6.0f, -460.0f),
       new Vector3f(  125.0f, -  6.0f, -432.0f),
-      new Vector3f(   93.0f, -  6.0f, -410.0f)
+      new Vector3f(   93.0f, -  6.0f, -410.0f),
     },
     {
       new Vector3f(-  60.0f, -  6.0f, -300.0f),
@@ -1448,7 +1448,7 @@ public final class WmapStatics {
       new Vector3f(- 151.0f, -  6.0f, -300.0f),
       new Vector3f(- 181.0f, -  6.0f, -300.0f),
       new Vector3f(- 206.0f, -  6.0f, -285.0f),
-      new Vector3f(- 216.0f, -  6.0f, -258.0f)
+      new Vector3f(- 216.0f, -  6.0f, -258.0f),
     },
     {
       new Vector3f(- 216.0f, -  6.0f, -258.0f),
@@ -1459,7 +1459,7 @@ public final class WmapStatics {
       new Vector3f(- 166.0f, -  6.0f, - 73.0f),
       new Vector3f(- 174.0f, -  6.0f, - 42.0f),
       new Vector3f(- 187.0f, -  6.0f, - 19.0f),
-      new Vector3f(- 208.0f, -  6.0f,    5.0f)
+      new Vector3f(- 208.0f, -  6.0f,    5.0f),
     },
     {
       new Vector3f(- 216.0f, -  6.0f, -258.0f),
@@ -1478,7 +1478,7 @@ public final class WmapStatics {
       new Vector3f(- 533.0f, -  6.0f, - 68.0f),
       new Vector3f(- 557.0f, -  6.0f, - 53.0f),
       new Vector3f(- 571.0f, -  6.0f, - 27.0f),
-      new Vector3f(- 586.0f, -  6.0f, - 10.0f)
+      new Vector3f(- 586.0f, -  6.0f, - 10.0f),
     },
     {
       new Vector3f(  180.0f, -  6.0f, -300.0f),
@@ -1499,7 +1499,7 @@ public final class WmapStatics {
       new Vector3f(  547.0f, -  6.0f, - 60.0f),
       new Vector3f(  576.0f, -  6.0f, - 60.0f),
       new Vector3f(  604.0f, -  6.0f, - 60.0f),
-      new Vector3f(  633.0f, -  6.0f, - 60.0f)
+      new Vector3f(  633.0f, -  6.0f, - 60.0f),
     },
     {
       new Vector3f(  147.0f, -  6.0f, -216.0f),
@@ -1511,7 +1511,7 @@ public final class WmapStatics {
       new Vector3f(  230.0f, -  6.0f, - 37.0f),
       new Vector3f(  249.0f, -  6.0f, -  5.0f),
       new Vector3f(  273.0f, -  6.0f,   22.0f),
-      new Vector3f(  297.0f, -  6.0f,   51.0f)
+      new Vector3f(  297.0f, -  6.0f,   51.0f),
     },
     {
       new Vector3f(   60.0f, -  6.0f, -180.0f),
@@ -1539,7 +1539,7 @@ public final class WmapStatics {
       new Vector3f(  121.0f, -  6.0f,  320.0f),
       new Vector3f(  114.0f, -  6.0f,  345.0f),
       new Vector3f(  112.0f, -  6.0f,  369.0f),
-      new Vector3f(  112.0f, -  6.0f,  394.0f)
+      new Vector3f(  112.0f, -  6.0f,  394.0f),
     },
     {
       new Vector3f(  690.0f, -  6.0f, - 60.0f),
@@ -1562,7 +1562,7 @@ public final class WmapStatics {
       new Vector3f(  180.0f, -  6.0f, - 53.0f),
       new Vector3f(  150.0f, -  6.0f, - 41.0f),
       new Vector3f(  120.0f, -  6.0f, - 26.0f),
-      new Vector3f(   90.0f, -  6.0f,    0.0f)
+      new Vector3f(   90.0f, -  6.0f,    0.0f),
     },
     {
       new Vector3f(-  90.0f, -  6.0f,    0.0f),
@@ -1573,7 +1573,7 @@ public final class WmapStatics {
       new Vector3f(- 210.0f, -  6.0f,   84.0f),
       new Vector3f(- 243.0f, -  6.0f,   84.0f),
       new Vector3f(- 273.0f, -  6.0f,   94.0f),
-      new Vector3f(- 300.0f, -  6.0f,  120.0f)
+      new Vector3f(- 300.0f, -  6.0f,  120.0f),
     },
     {
       new Vector3f(    0.0f,    0.0f,  630.0f),
@@ -1590,7 +1590,7 @@ public final class WmapStatics {
       new Vector3f(- 107.0f,    0.0f,  300.0f),
       new Vector3f(- 120.0f,    0.0f,  270.0f),
       new Vector3f(- 120.0f,    0.0f,  240.0f),
-      new Vector3f(- 120.0f,    0.0f,  210.0f)
+      new Vector3f(- 120.0f,    0.0f,  210.0f),
     },
     {
       new Vector3f(-  30.0f,    0.0f,  120.0f),
@@ -1611,7 +1611,7 @@ public final class WmapStatics {
       new Vector3f(  420.0f,    0.0f,  360.0f),
       new Vector3f(  450.0f,    0.0f,  360.0f),
       new Vector3f(  480.0f,    0.0f,  360.0f),
-      new Vector3f(  510.0f,    0.0f,  360.0f)
+      new Vector3f(  510.0f,    0.0f,  360.0f),
     },
     {
       new Vector3f(  487.0f,    0.0f, -262.0f),
@@ -1659,7 +1659,7 @@ public final class WmapStatics {
       new Vector3f(- 862.0f,    0.0f, -314.0f),
       new Vector3f(- 900.0f,    0.0f, -300.0f),
       new Vector3f(- 937.0f,    0.0f, -300.0f),
-      new Vector3f(- 975.0f,    0.0f, -300.0f)
+      new Vector3f(- 975.0f,    0.0f, -300.0f),
     },
     {
       new Vector3f(- 825.0f, -112.0f,  862.0f),
@@ -1674,7 +1674,7 @@ public final class WmapStatics {
       new Vector3f(- 605.0f, -150.0f,  638.0f),
       new Vector3f(- 582.0f, -150.0f,  593.0f),
       new Vector3f(- 555.0f, -150.0f,  556.0f),
-      new Vector3f(- 525.0f, -150.0f,  525.0f)
+      new Vector3f(- 525.0f, -150.0f,  525.0f),
     },
     {
       new Vector3f(- 525.0f, -150.0f,  525.0f),
@@ -1692,7 +1692,7 @@ public final class WmapStatics {
       new Vector3f(-  98.0f, - 26.0f,  531.0f),
       new Vector3f(-  88.0f, - 17.0f,  542.0f),
       new Vector3f(-  80.0f, - 11.0f,  552.0f),
-      new Vector3f(-  75.0f, -  7.0f,  562.0f)
+      new Vector3f(-  75.0f, -  7.0f,  562.0f),
     },
     {
       new Vector3f(- 525.0f, -150.0f,  525.0f),
@@ -1706,7 +1706,7 @@ public final class WmapStatics {
       new Vector3f(- 367.0f, -150.0f,  187.0f),
       new Vector3f(- 324.0f, -150.0f,  161.0f),
       new Vector3f(- 274.0f, -150.0f,  149.0f),
-      new Vector3f(- 225.0f, -150.0f,  150.0f)
+      new Vector3f(- 225.0f, -150.0f,  150.0f),
     },
     {
       new Vector3f(- 225.0f, -150.0f,  150.0f),
@@ -1722,7 +1722,7 @@ public final class WmapStatics {
       new Vector3f(   35.0f, - 57.0f,  327.0f),
       new Vector3f(   53.0f, - 26.0f,  318.0f),
       new Vector3f(   66.0f, - 14.0f,  309.0f),
-      new Vector3f(   75.0f, -  7.0f,  300.0f)
+      new Vector3f(   75.0f, -  7.0f,  300.0f),
     },
     {
       new Vector3f(- 225.0f, -150.0f,  150.0f),
@@ -1733,7 +1733,7 @@ public final class WmapStatics {
       new Vector3f(-  59.0f, -150.0f,   80.0f),
       new Vector3f(-  29.0f, -150.0f,   64.0f),
       new Vector3f(-  10.0f, -150.0f,   36.0f),
-      new Vector3f(    0.0f, -150.0f,    0.0f)
+      new Vector3f(    0.0f, -150.0f,    0.0f),
     },
     {
       new Vector3f(    0.0f, -150.0f,    0.0f),
@@ -1747,7 +1747,7 @@ public final class WmapStatics {
       new Vector3f(- 277.0f, - 46.0f, - 92.0f),
       new Vector3f(- 301.0f, - 25.0f, - 95.0f),
       new Vector3f(- 317.0f, - 16.0f, - 95.0f),
-      new Vector3f(- 331.0f, -  7.0f, - 95.0f)
+      new Vector3f(- 331.0f, -  7.0f, - 95.0f),
     },
     {
       new Vector3f(    0.0f, -150.0f,    0.0f),
@@ -1756,7 +1756,7 @@ public final class WmapStatics {
       new Vector3f(  127.0f, -150.0f,  -25.0f),
       new Vector3f(  162.0f, -150.0f,  -25.0f),
       new Vector3f(  197.0f, -150.0f,  -15.0f),
-      new Vector3f(  225.0f, -150.0f,    0.0f)
+      new Vector3f(  225.0f, -150.0f,    0.0f),
     },
     {
       new Vector3f(  225.0f, -150.0f,    0.0f),
@@ -1766,7 +1766,7 @@ public final class WmapStatics {
       new Vector3f(  244.0f, - 71.0f,  117.0f),
       new Vector3f(  251.0f, - 26.0f,  133.0f),
       new Vector3f(  257.0f, - 11.0f,  144.0f),
-      new Vector3f(  262.0f, -  7.0f,  150.0f)
+      new Vector3f(  262.0f, -  7.0f,  150.0f),
     },
     {
       new Vector3f(  225.0f, -150.0f,    0.0f),
@@ -1775,7 +1775,7 @@ public final class WmapStatics {
       new Vector3f(  338.0f, -150.0f, - 30.0f),
       new Vector3f(  381.0f, -150.0f, - 38.0f),
       new Vector3f(  417.0f, -150.0f, - 55.0f),
-      new Vector3f(  450.0f, -150.0f, - 75.0f)
+      new Vector3f(  450.0f, -150.0f, - 75.0f),
     },
     {
       new Vector3f(  450.0f, -150.0f, - 75.0f),
@@ -1784,7 +1784,7 @@ public final class WmapStatics {
       new Vector3f(  452.0f, - 99.0f, -133.0f),
       new Vector3f(  462.0f, - 59.0f, -145.0f),
       new Vector3f(  475.0f, - 21.0f, -150.0f),
-      new Vector3f(  487.0f, -  7.0f, -150.0f)
+      new Vector3f(  487.0f, -  7.0f, -150.0f),
     },
     {
       new Vector3f(  450.0f, -150.0f, - 75.0f),
@@ -1793,7 +1793,7 @@ public final class WmapStatics {
       new Vector3f(  528.0f, -150.0f, - 62.0f),
       new Vector3f(  548.0f, -150.0f, - 79.0f),
       new Vector3f(  572.0f, -150.0f, - 81.0f),
-      new Vector3f(  600.0f, -150.0f, - 75.0f)
+      new Vector3f(  600.0f, -150.0f, - 75.0f),
     },
     {
       new Vector3f(  600.0f, -150.0f, - 75.0f),
@@ -1803,7 +1803,7 @@ public final class WmapStatics {
       new Vector3f(  634.0f, - 47.0f,    0.0f),
       new Vector3f(  636.0f, - 26.0f,   14.0f),
       new Vector3f(  637.0f, - 13.0f,   28.0f),
-      new Vector3f(  637.0f, -  7.0f,   37.0f)
+      new Vector3f(  637.0f, -  7.0f,   37.0f),
     },
     {
       new Vector3f(  600.0f, -150.0f, - 75.0f),
@@ -1812,7 +1812,7 @@ public final class WmapStatics {
       new Vector3f(  672.0f, -150.0f, -118.0f),
       new Vector3f(  700.0f, -150.0f, -119.0f),
       new Vector3f(  724.0f, -150.0f, -131.0f),
-      new Vector3f(  750.0f, -150.0f, -150.0f)
+      new Vector3f(  750.0f, -150.0f, -150.0f),
     },
     {
       new Vector3f(  750.0f, -150.0f, -150.0f),
@@ -1827,7 +1827,7 @@ public final class WmapStatics {
       new Vector3f(  707.0f, - 38.0f, -485.0f),
       new Vector3f(  697.0f, - 22.0f, -503.0f),
       new Vector3f(  685.0f, - 13.0f, -516.0f),
-      new Vector3f(  675.0f, -  7.0f, -525.0f)
+      new Vector3f(  675.0f, -  7.0f, -525.0f),
     },
     {
       new Vector3f(  750.0f, -150.0f, -150.0f),
@@ -1845,15 +1845,15 @@ public final class WmapStatics {
       new Vector3f( 1047.0f, - 44.0f,   39.0f),
       new Vector3f( 1049.0f, - 25.0f,   55.0f),
       new Vector3f( 1049.0f, - 14.0f,   67.0f),
-      new Vector3f( 1050.0f, -  7.0f,   75.0f)
+      new Vector3f( 1050.0f, -  7.0f,   75.0f),
     },
     {
       new Vector3f(-1012.0f,    0.0f, - 75.0f),
-      new Vector3f(- 825.0f, -112.0f,  825.0f)
+      new Vector3f(- 825.0f, -112.0f,  825.0f),
     },
     {
       new Vector3f(- 825.0f, -112.0f,  825.0f),
-      new Vector3f(-  75.0f, -  7.0f,  187.0f)
+      new Vector3f(-  75.0f, -  7.0f,  187.0f),
     }
   };
 

@@ -12,20 +12,20 @@ public class WMapModelAndAnimData258 {
   public enum FadeAnimationType {
     NONE_0,
     FADE_IN_1,
-    FADE_OUT_2
+    FADE_OUT_2,
   }
 
   public enum FadeState {
     START_FADE_0,
     FADE_1,
-    END_FADE_2
+    END_FADE_2,
   }
 
   public enum FastTravelTransitionMode {
     NONE_0,
     TELEPORT_1,
     OPEN_COOLON_MAP_2,
-    COOLON_ARRIVAL_3
+    COOLON_ARRIVAL_3,
   }
 
   /**
@@ -60,14 +60,14 @@ public class WMapModelAndAnimData258 {
     INIT_DESCENT_10,
     PAN_MAP_11,
     DESCENT_12,
-    RESTORE_DART_NEG_1
+    RESTORE_DART_NEG_1,
   }
 
   public enum TeleportAnimationState {
     INIT_ANIM_0,
     RENDER_ANIM_1,
     INIT_FADE_2,
-    FADE_OUT_3
+    FADE_OUT_3,
   }
 
   public int fadeAnimationTicks_00;

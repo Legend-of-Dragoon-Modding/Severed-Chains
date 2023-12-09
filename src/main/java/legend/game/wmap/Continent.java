@@ -9,5 +9,5 @@ public enum Continent {
   GLORIANO_5,
   DEATH_FRONTIER_6,
   ENDINESS_7,
-  NONE_8
+  NONE_8,
 }

@@ -9,19 +9,19 @@ public class MapState100 {
     NONE_0,
     WALK_1,
     RUN_2,
-    FADE_OUT_3
+    FADE_OUT_3,
   }
 
   public enum PathSegmentEntering {
     CURRENT_0,
     PREVIOUS_1,
-    NEXT_2
+    NEXT_2,
   }
 
   public enum PathSegmentEndpointType {
     NOT_AT_ENDPOINT_0,
     TERMINAL_1,
-    INTERSECTION_2
+    INTERSECTION_2,
   }
 
   /**
