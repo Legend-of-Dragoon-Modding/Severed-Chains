@@ -602,16 +602,12 @@ public class Sequencer {
                 if(playingNote.portamentoTimeRemaining_62 != 0) {
                   playingNote.portamentoTimeRemaining_62--;
 
-                  if(playingNote.newPortamento_60 < 0) {
-                    final int portamentoTimeElapsed = playingNote.portamentoTimeTotal_64 - playingNote.portamentoTimeRemaining_62;
-                    note = playingNote.portamentoNote_4e - portamentoTimeElapsed * (256 + playingNote.newPortamento_60) / 10 / playingNote.portamentoTimeTotal_64;
-                    sixtyFourths = sixtyFourths - (portamentoTimeElapsed * playingNote.newPortamento_60 * 768 / (playingNote.portamentoTimeTotal_64 * 120) % 64);
-                  } else {
-                    //LAB_8004762c
-                    final int portamentoTimeElapsed = (playingNote.portamentoTimeTotal_64 - playingNote.portamentoTimeRemaining_62) * playingNote.newPortamento_60;
-                    note = playingNote.portamentoNote_4e + portamentoTimeElapsed / 10 / playingNote.portamentoTimeTotal_64;
-                    sixtyFourths = sixtyFourths + (portamentoTimeElapsed * 768 / (playingNote.portamentoTimeTotal_64 * 120) % 64);
-                  }
+                  final int portamento10ths = playingNote.newPortamento_60;
+                  final int portamentoTimeElapsed = playingNote.portamentoTimeTotal_64 - playingNote.portamentoTimeRemaining_62;
+                  final float fraction = (portamento10ths * portamentoTimeElapsed) / (playingNote.portamentoTimeTotal_64 * 10f);
+                  final int noteOffset = (int)fraction;
+                  note = playingNote.portamentoNote_4e + noteOffset;
+                  sixtyFourths += Math.round(fraction * 64 - noteOffset * 64);
 
                   //LAB_800476f4
                   if(note <= 0xc) {
