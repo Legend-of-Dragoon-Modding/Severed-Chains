@@ -122,7 +122,7 @@ import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
-import static legend.game.wmap.MapState100.ForcedMovementState;
+import static legend.game.wmap.MapState100.ForcedMovementMode;
 import static legend.game.wmap.MapState100.PathSegmentEndpointType;
 import static legend.game.wmap.MapState100.PathSegmentEntering;
 import static legend.game.wmap.WMapCameraAndLights19c0.CameraUpdateState;
@@ -162,25 +162,39 @@ import static legend.game.wmap.WmapStatics.wmapDestinationMarkers_800f5a6c;
 
 public class WMap extends EngineState {
   private enum WorldMapState {
-    UNINITIALIZED_0,
-    UNUSED_1,
-    LOAD_MODEL_2,
-    INIT_MAP_ANIM_3,
-    NOOP_4,
-    RENDER_5,
-    NOOP_6,
-    UNUSED_DEALLOC_7
+    UNINITIALIZED_0(0),
+    UNUSED_1(1),
+    LOAD_MODEL_2(2),
+    INIT_MAP_ANIM_3(3),
+    NOOP_4(4),
+    RENDER_5(5),
+    NOOP_6(6),
+    UNUSED_DEALLOC_7(7),
+    ;
+
+    public final int state;
+
+    WorldMapState(final int state) {
+      this.state = state;
+    }
   }
 
   private enum PlayerState {
-    UNINITIALIZED_0,
-    UNUSED_1,
-    LOAD_MODEL_2,
-    INIT_PLAYER_MODEL_3,
-    NOOP_4,
-    RENDER_5,
-    NOOP_6,
-    UNUSED_DEALLOC_7
+    UNINITIALIZED_0(0),
+    UNUSED_1(1),
+    LOAD_MODEL_2(2),
+    INIT_PLAYER_MODEL_3(3),
+    NOOP_4(4),
+    RENDER_5(5),
+    NOOP_6(6),
+    UNUSED_DEALLOC_7(7),
+    ;
+    
+    public final int state;
+    
+    PlayerState(final int state) {
+      this.state = state;
+    }
   }
 
   /** 5 and 9 used when entering location, 6-8 used when canceling. */
@@ -194,7 +208,7 @@ public class WMap extends EngineState {
     INIT_MOVEMENT_6,
     WAIT_7,
     END_MOVEMENT_8,
-    SET_DEST_9
+    SET_DEST_9,
   }
 
   private static final Pattern NEWLINE = Pattern.compile("\\n");
@@ -435,7 +449,7 @@ public class WMap extends EngineState {
         GsGetLw(dobj2.coord2_04, lw);
 
         float screenOffsetY = 0.0f;
-        if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.WORLD_3 || this.modelAndAnimData_800c66a8.coolonWarpState_220.ordinal() > 2) {
+        if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.WORLD_3 || this.modelAndAnimData_800c66a8.coolonWarpState_220.state > 2) {
           screenOffsetY = 8.0f; // Needs adjustment since we shifted the world map MCQ 8 pixels down
         }
 
@@ -458,13 +472,13 @@ public class WMap extends EngineState {
   @Override
   @Method(0x800cc738L)
   public void tick() {
-    this.wmapStates_800ef000[this.wmapState_800bb10c.ordinal()].run();
+    this.wmapStates_800ef000[this.wmapState_800bb10c.state].run();
   }
 
   @Override
   public void overlayTick() {
     if(this.wmapState_800bb10c == WmapState.PLAY_3) {
-      if(this.worldMapState_800c6698.ordinal() > WorldMapState.INIT_MAP_ANIM_3.ordinal() && this.playerState_800c669c.ordinal() > PlayerState.INIT_PLAYER_MODEL_3.ordinal()) {
+      if(this.worldMapState_800c6698.state > WorldMapState.INIT_MAP_ANIM_3.state && this.playerState_800c669c.state > PlayerState.INIT_PLAYER_MODEL_3.state) {
         if(this.modelAndAnimData_800c66a8.coolonWarpState_220 == CoolonWarpState.PROMPT_LOOP_5) {
           this.coolonPromptPopup.render();
         }
@@ -539,14 +553,14 @@ public class WMap extends EngineState {
               if(modelAndAnimData.zoomState_1f8 == ZoomState.LOCAL_0) {
                 if(modelAndAnimData.coolonWarpState_220 == CoolonWarpState.NONE_0) {
                   if(
-                    this.worldMapState_800c6698.ordinal() >= WorldMapState.INIT_MAP_ANIM_3.ordinal() ||
-                      this.playerState_800c669c.ordinal() >= PlayerState.INIT_PLAYER_MODEL_3.ordinal()
+                    this.worldMapState_800c6698.state >= WorldMapState.INIT_MAP_ANIM_3.state ||
+                      this.playerState_800c669c.state >= PlayerState.INIT_PLAYER_MODEL_3.state
                   ) {
                     //LAB_800cc900
                     if(Input.pressedThisFrame(InputAction.BUTTON_NORTH)) {
                       if(this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc != PathSegmentEndpointType.TERMINAL_1) {
                         if(modelAndAnimData.fadeAnimationType_05 == FadeAnimationType.NONE_0) {
-                          if(this.mapState_800c6798.queenFuryForceMovementState_d8 == ForcedMovementState.NONE_0) {
+                          if(this.mapState_800c6798.queenFuryForceMovementMode_d8 == ForcedMovementMode.NONE_0) {
                             if(modelAndAnimData.fastTravelTransitionMode_250 == FastTravelTransitionMode.NONE_0) {
                               startFadeEffect(1, 15);
                               this.mapState_800c6798.disableInput_d0 = true;
@@ -802,11 +816,11 @@ public class WMap extends EngineState {
     this.initMapMarkers();
     this.modelAndAnimData_800c66a8.zoomOverlay = new ZoomOverlay();
 
-    if(this.mapState_800c6798.continent_00.ordinal() < Continent.ILLISA_BAY_3.ordinal()) { // South Serdio, North Serdio, Tiberoa
+    if(this.mapState_800c6798.continent_00.continentNum < Continent.ILLISA_BAY_3.continentNum) { // South Serdio, North Serdio, Tiberoa
       loadLocationMenuSoundEffects(1);
     } else {
       //LAB_800cd004
-      loadLocationMenuSoundEffects(this.mapState_800c6798.continent_00.ordinal() + 1);
+      loadLocationMenuSoundEffects(this.mapState_800c6798.continent_00.continentNum + 1);
     }
     //LAB_800cd020
   }
@@ -1257,7 +1271,7 @@ public class WMap extends EngineState {
         //LAB_800d368c
         if(
           this.mapState_800c6798.continent_00 != Continent.ENDINESS_7 &&
-            this.mapState_800c6798.queenFuryForceMovementState_d8 == ForcedMovementState.NONE_0 &&
+            this.mapState_800c6798.queenFuryForceMovementMode_d8 == ForcedMovementMode.NONE_0 &&
             this.tickMainMenuOpenTransition_800c6690 == 0
         ) {
           //LAB_800d36a8
@@ -1866,7 +1880,7 @@ public class WMap extends EngineState {
         .vramPos(640, 256)
         .pos(GPU.getOffsetX() - 144.0f, GPU.getOffsetY() - 104.0f, 54.0f)
         .size(128.0f, 24.0f)
-        .uv(128.0f, this.mapState_800c6798.continent_00.ordinal() * 24.0f)
+        .uv(128.0f, this.mapState_800c6798.continent_00.continentNum * 24.0f)
         .build();
     }
 
@@ -1890,7 +1904,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d6b80
-    if(this.mapState_800c6798.queenFuryForceMovementState_d8 != ForcedMovementState.NONE_0) {
+    if(this.mapState_800c6798.queenFuryForceMovementMode_d8 != ForcedMovementMode.NONE_0) {
       return;
     }
 
@@ -1901,8 +1915,8 @@ public class WMap extends EngineState {
   @Method(0x800d7a34L)
   private void renderPath() {
     if(
-      this.worldMapState_800c6698.ordinal() <= WorldMapState.INIT_MAP_ANIM_3.ordinal() ||
-      this.playerState_800c669c.ordinal() <= PlayerState.INIT_PLAYER_MODEL_3.ordinal()
+      this.worldMapState_800c6698.state <= WorldMapState.INIT_MAP_ANIM_3.state ||
+      this.playerState_800c669c.state <= PlayerState.INIT_PLAYER_MODEL_3.state
     ) {
       return;
     }
@@ -2040,7 +2054,7 @@ public class WMap extends EngineState {
   /** Used to initialize Coolon move prompt selector as well */
   @Method(0x800d8d18L)
   private void loadMapModelAssets() {
-    this.loadMapModelAndTexture(this.mapState_800c6798.continent_00.ordinal());
+    this.loadMapModelAndTexture(this.mapState_800c6798.continent_00.continentNum);
 
     this.modelAndAnimData_800c66a8.zoomState_1f8 = ZoomState.LOCAL_0;
     this.modelAndAnimData_800c66a8.coolonWarpState_220 = CoolonWarpState.NONE_0;
@@ -2076,8 +2090,8 @@ public class WMap extends EngineState {
     this.handleCoolonAndQueenFuryPrompts();
 
     if(
-      this.modelAndAnimData_800c66a8.coolonWarpState_220.ordinal() >= 2 &&
-        this.modelAndAnimData_800c66a8.coolonWarpState_220.ordinal() < 8
+      this.modelAndAnimData_800c66a8.coolonWarpState_220.state >= 2 &&
+        this.modelAndAnimData_800c66a8.coolonWarpState_220.state < 8
     ) {
       return;
     }
@@ -2097,7 +2111,7 @@ public class WMap extends EngineState {
       //LAB_800d9180
       if(this.mapState_800c6798.continent_00 != Continent.ENDINESS_7) {
         //LAB_800d91cc
-        if(mapTerrainTmdIndices_800ef194[this.mapState_800c6798.continent_00.ordinal()] == i || mapFrameTmdIndices_800ef19c[this.mapState_800c6798.continent_00.ordinal()] == i) {
+        if(mapTerrainTmdIndices_800ef194[this.mapState_800c6798.continent_00.continentNum] == i || mapFrameTmdIndices_800ef19c[this.mapState_800c6798.continent_00.continentNum] == i) {
           zOffset_1f8003e8 = 500; // background models
         } else {
           //LAB_800d9204
@@ -2134,7 +2148,7 @@ public class WMap extends EngineState {
 
       final RenderEngine.QueuedModel model = RENDERER.queueModel(dobj2.obj, lw);
 
-      if(this.mapState_800c6798.continent_00.ordinal() < 9 && i == 0) {
+      if(this.mapState_800c6798.continent_00.continentNum < 9 && i == 0) {
         model.clutOverride(1008, waterClutYs_800ef348[(int)this.modelAndAnimData_800c66a8.clutYIndex_28]);
       }
 
@@ -2142,7 +2156,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800d942c
-    if(this.mapState_800c6798.continent_00.ordinal() < 9) {
+    if(this.mapState_800c6798.continent_00.continentNum < 9) {
       this.animateWater(this.modelAndAnimData_800c66a8.textureAnimation_1c);
     }
 
@@ -2211,7 +2225,7 @@ public class WMap extends EngineState {
         this.tickMapPositionDuringZoom();
 
         if(this.modelAndAnimData_800c66a8.zoomAnimationTick_1f9 >= 18.0f / vsyncMode_8007a3b8) {
-          cameraAndLights.coord2_20.coord.transfer.set(mapPositions_800ef1a8[this.mapState_800c6798.continent_00.ordinal()]);
+          cameraAndLights.coord2_20.coord.transfer.set(mapPositions_800ef1a8[this.mapState_800c6798.continent_00.continentNum]);
           this.modelAndAnimData_800c66a8.mapArrow.setSize(8.0f);
           this.modelAndAnimData_800c66a8.zoomState_1f8 = ZoomState.WORLD_3;
 
@@ -2305,7 +2319,7 @@ public class WMap extends EngineState {
    */
   @Method(0x800d9d24L)
   private void initMapModelZoom(final int zoomDirection) {
-    final Vector3i mapPosition = mapPositions_800ef1a8[this.mapState_800c6798.continent_00.ordinal()];
+    final Vector3i mapPosition = mapPositions_800ef1a8[this.mapState_800c6798.continent_00.continentNum];
     final WMapModelAndAnimData258 modelAndAnimData = this.modelAndAnimData_800c66a8;
     modelAndAnimData.mapZoomStep_1f0.x = (mapPosition.x - modelAndAnimData.mapPosition_1e8.x) * zoomDirection / 6.0f / (3.0f / vsyncMode_8007a3b8);
     modelAndAnimData.mapZoomStep_1f0.y = (mapPosition.y - modelAndAnimData.mapPosition_1e8.y) * zoomDirection / 6.0f / (3.0f / vsyncMode_8007a3b8);
@@ -2376,7 +2390,7 @@ public class WMap extends EngineState {
     //LAB_800da360
     // Show square prompt while sailing Queen Fury
     if(modelAndAnimData.modelIndex_1e4 == 1) {
-      if(gameState_800babc8.scriptFlags2_bc.get(0x97) && this.mapState_800c6798.queenFuryForceMovementState_d8 == ForcedMovementState.NONE_0) {
+      if(gameState_800babc8.scriptFlags2_bc.get(0x97) && this.mapState_800c6798.queenFuryForceMovementMode_d8 == ForcedMovementMode.NONE_0) {
         this.coolonQueenFuryOverlay.render(1);
       }
 
@@ -3540,8 +3554,8 @@ public class WMap extends EngineState {
 
     //LAB_800e3748
     if(
-      this.mapState_800c6798.shortForceMovementState_d4 != ForcedMovementState.NONE_0 ||
-      this.mapState_800c6798.queenFuryForceMovementState_d8 != ForcedMovementState.NONE_0
+      this.mapState_800c6798.shortForceMovementMode_d4 != ForcedMovementMode.NONE_0 ||
+      this.mapState_800c6798.queenFuryForceMovementMode_d8 != ForcedMovementMode.NONE_0
     ) {
       //LAB_800e3778
       return;
@@ -3668,7 +3682,7 @@ public class WMap extends EngineState {
   private void tickTransitionAnimation() {
     if(this.modelAndAnimData_800c66a8.fadeAnimationType_05 != FadeAnimationType.NONE_0) {
       //LAB_800e4020
-      this.fadeTransitionTickers_800f01fc[this.modelAndAnimData_800c66a8.fadeAnimationType_05.ordinal() - 1].run();
+      this.fadeTransitionTickers_800f01fc[this.modelAndAnimData_800c66a8.fadeAnimationType_05.typeIndex - 1].run();
     }
     //LAB_800e4058
   }
@@ -3682,8 +3696,8 @@ public class WMap extends EngineState {
       switch(modelAndAnimData.fadeState_04) {
         case START_FADE_0:
           if(
-            this.worldMapState_800c6698.ordinal() >= WorldMapState.INIT_MAP_ANIM_3.ordinal() ||
-              this.playerState_800c669c.ordinal() >= PlayerState.INIT_PLAYER_MODEL_3.ordinal()
+            this.worldMapState_800c6698.state >= WorldMapState.INIT_MAP_ANIM_3.state ||
+              this.playerState_800c669c.state >= PlayerState.INIT_PLAYER_MODEL_3.state
           ) {
             //LAB_800e44b0
             startFadeEffect(2, 15);
@@ -3716,18 +3730,18 @@ public class WMap extends EngineState {
 
         case END_FADE_2:
           //LAB_800e45c8
-          if(this.playerState_800c669c.ordinal() >= PlayerState.INIT_PLAYER_MODEL_3.ordinal()) {
+          if(this.playerState_800c669c.state >= PlayerState.INIT_PLAYER_MODEL_3.state) {
             modelAndAnimData.fadeAnimationTicks_00++;
 
             if(modelAndAnimData.fadeAnimationTicks_00 >= 6.0f / vsyncMode_8007a3b8) {
-              this.mapState_800c6798.shortForceMovementState_d4 = ForcedMovementState.NONE_0;
+              this.mapState_800c6798.shortForceMovementMode_d4 = ForcedMovementMode.NONE_0;
             }
           }
 
           //LAB_800e4624
           if(
             cameraAndLights.cameraUpdateState_c5 == CameraUpdateState.AWAIT_INPUT_0 &&
-              this.mapState_800c6798.shortForceMovementState_d4 == ForcedMovementState.NONE_0
+              this.mapState_800c6798.shortForceMovementMode_d4 == ForcedMovementMode.NONE_0
           ) {
             this.mapState_800c6798.disableInput_d0 = false;
             modelAndAnimData.fadeAnimationType_05 = FadeAnimationType.NONE_0;
@@ -3742,8 +3756,8 @@ public class WMap extends EngineState {
       switch(modelAndAnimData.fadeState_04) {
         case START_FADE_0:
           if(
-            this.worldMapState_800c6698.ordinal() >= WorldMapState.INIT_MAP_ANIM_3.ordinal() ||
-              this.playerState_800c669c.ordinal() >= PlayerState.INIT_PLAYER_MODEL_3.ordinal()) {
+            this.worldMapState_800c6698.state >= WorldMapState.INIT_MAP_ANIM_3.state ||
+              this.playerState_800c669c.state >= PlayerState.INIT_PLAYER_MODEL_3.state) {
             //LAB_800e4144
             startFadeEffect(2, 15);
 
@@ -3780,18 +3794,18 @@ public class WMap extends EngineState {
 
         case END_FADE_2:
           //LAB_800e4368
-          if(this.playerState_800c669c.ordinal() >= PlayerState.INIT_PLAYER_MODEL_3.ordinal()) {
+          if(this.playerState_800c669c.state >= PlayerState.INIT_PLAYER_MODEL_3.state) {
             modelAndAnimData.fadeAnimationTicks_00++;
 
             if(modelAndAnimData.fadeAnimationTicks_00 >= 6.0f / vsyncMode_8007a3b8) {
-              this.mapState_800c6798.shortForceMovementState_d4 = ForcedMovementState.NONE_0;
+              this.mapState_800c6798.shortForceMovementMode_d4 = ForcedMovementMode.NONE_0;
             }
           }
 
           //LAB_800e43c4
           if(
             cameraAndLights.cameraUpdateState_c5 == CameraUpdateState.AWAIT_INPUT_0 &&
-              this.mapState_800c6798.shortForceMovementState_d4 == ForcedMovementState.NONE_0
+              this.mapState_800c6798.shortForceMovementMode_d4 == ForcedMovementMode.NONE_0
           ) {
             this.mapState_800c6798.disableInput_d0 = false;
             modelAndAnimData.fadeAnimationType_05 = FadeAnimationType.NONE_0;
@@ -4236,7 +4250,7 @@ public class WMap extends EngineState {
         }
 
         //LAB_800e671c
-        this.mapState_800c6798.shortForceMovementState_d4 = ForcedMovementState.WALK_1;
+        this.mapState_800c6798.shortForceMovementMode_d4 = ForcedMovementMode.WALK_1;
         this.cancelLocationEntryDelayTick_800c68a0 = 0;
         this.mapTransitionState_800c68a4 = MapTransitionState.WAIT_7;
 
@@ -4254,7 +4268,7 @@ public class WMap extends EngineState {
         this.wmapLocationPromptPopup.deallocate();
         this.mapTransitionState_800c68a4 = MapTransitionState.INIT_0;
         this.mapState_800c6798.disableInput_d0 = false;
-        this.mapState_800c6798.shortForceMovementState_d4 = ForcedMovementState.NONE_0;
+        this.mapState_800c6798.shortForceMovementMode_d4 = ForcedMovementMode.NONE_0;
         this.mapState_800c6798.pathSegmentEndpointTypeCrossed_fc = PathSegmentEndpointType.NOT_AT_ENDPOINT_0;
         this.startLocationLabelsActive_800c68a8 = true;
 
@@ -4565,11 +4579,11 @@ public class WMap extends EngineState {
     GsInitCoordinate2(null, this.modelAndAnimData_800c66a8.coord2_34);
 
     this.mapState_800c6798.continent_00 = locations_800f0e34[locationIndex].continent_0e;
-    continentIndex_800bf0b0 = this.mapState_800c6798.continent_00.ordinal();
+    continentIndex_800bf0b0 = this.mapState_800c6798.continent_00.continentNum;
 
     this.setNewPathSegmentStateInfo(locationIndex);
 
-    this.mapState_800c6798.queenFuryForceMovementState_d8 = ForcedMovementState.NONE_0;
+    this.mapState_800c6798.queenFuryForceMovementMode_d8 = ForcedMovementMode.NONE_0;
 
     boolean transitionFromCombatOrShip = previousEngineState_8004dd28 == EngineStateEnum.COMBAT_06 && this.mapState_800c6798.submapCutFrom_c4 != 999;
 
@@ -4583,7 +4597,7 @@ public class WMap extends EngineState {
     if(!transitionFromCombatOrShip && !loadingNewGameState_800bdc34 || reinitializingWmap_80052c6c) {
       //LAB_800e844c
       // Transition from submap or other world map
-      this.mapState_800c6798.shortForceMovementState_d4 = ForcedMovementState.WALK_1;
+      this.mapState_800c6798.shortForceMovementMode_d4 = ForcedMovementMode.WALK_1;
       this.mapState_800c6798.disableInput_d0 = true;
     } else {
       // Transition from title or combat to world map (or sailing Queen Fury)
@@ -4592,7 +4606,7 @@ public class WMap extends EngineState {
       this.mapState_800c6798.dotIndex_16 = gameState_800babc8.dotIndex_4da;
       this.mapState_800c6798.dotOffset_18 = gameState_800babc8.dotOffset_4dc;
       this.mapState_800c6798.facing_1c = gameState_800babc8.facing_4dd;
-      this.mapState_800c6798.shortForceMovementState_d4 = ForcedMovementState.NONE_0;
+      this.mapState_800c6798.shortForceMovementMode_d4 = ForcedMovementMode.NONE_0;
       this.mapState_800c6798.disableInput_d0 = false;
 
       //LAB_800e7f00
@@ -4613,7 +4627,7 @@ public class WMap extends EngineState {
       //LAB_800e7fcc
       this.mapState_800c6798.locationIndex_10 = locationIndex;
       this.mapState_800c6798.continent_00 = locations_800f0e34[locationIndex].continent_0e;
-      continentIndex_800bf0b0 = this.mapState_800c6798.continent_00.ordinal();
+      continentIndex_800bf0b0 = this.mapState_800c6798.continent_00.continentNum;
 
       final DirectionalPathSegmentData08 directionalPathSegment = directionalPathSegmentData_800f2248[this.mapState_800c6798.directionalPathIndex_12];
 
@@ -4673,8 +4687,8 @@ public class WMap extends EngineState {
     if(this.mapState_800c6798.submapCutFrom_c4 == 242 && this.mapState_800c6798.submapSceneFrom_c6 == 3) { // Donau
       // First time Queen Fury leaves Donau, with forced movement
       if(gameState_800babc8.scriptFlags2_bc.get(0x8f)) {
-        this.mapState_800c6798.shortForceMovementState_d4 = ForcedMovementState.NONE_0;
-        this.mapState_800c6798.queenFuryForceMovementState_d8 = ForcedMovementState.WALK_1;
+        this.mapState_800c6798.shortForceMovementMode_d4 = ForcedMovementMode.NONE_0;
+        this.mapState_800c6798.queenFuryForceMovementMode_d8 = ForcedMovementMode.WALK_1;
         this.mapState_800c6798.disableInput_d0 = true;
       }
 
@@ -4682,8 +4696,8 @@ public class WMap extends EngineState {
       // Queen Fury leaving Donau after first time
       if(gameState_800babc8.scriptFlags2_bc.get(0x90)) {
         this.mapState_800c6798.disableInput_d0 = true;
-        this.mapState_800c6798.shortForceMovementState_d4 = ForcedMovementState.WALK_1;
-        this.mapState_800c6798.queenFuryForceMovementState_d8 = ForcedMovementState.NONE_0;
+        this.mapState_800c6798.shortForceMovementMode_d4 = ForcedMovementMode.WALK_1;
+        this.mapState_800c6798.queenFuryForceMovementMode_d8 = ForcedMovementMode.NONE_0;
       }
     }
 
@@ -4732,7 +4746,7 @@ public class WMap extends EngineState {
   @Method(0x800e8a10L)
   private void handlePlayerMovementOnPath() {
     //LAB_800e8a38
-    if(this.worldMapState_800c6698.ordinal() > WorldMapState.INIT_MAP_ANIM_3.ordinal() && this.playerState_800c669c.ordinal() > PlayerState.INIT_PLAYER_MODEL_3.ordinal()) {
+    if(this.worldMapState_800c6698.state > WorldMapState.INIT_MAP_ANIM_3.state && this.playerState_800c669c.state > PlayerState.INIT_PLAYER_MODEL_3.state) {
       //LAB_800e8a58
       this.handleTravelAlongPathSegment();
       this.checkAndInitPathSegmentChange();
@@ -4744,7 +4758,7 @@ public class WMap extends EngineState {
 
   @Method(0x800e8a90L)
   private void handleForcedMovement() {
-    if(this.mapState_800c6798.queenFuryForceMovementState_d8 != ForcedMovementState.NONE_0) {
+    if(this.mapState_800c6798.queenFuryForceMovementMode_d8 != ForcedMovementMode.NONE_0) {
       this.mapState_800c6798.disableInput_d0 = true;
 
       if(this.modelAndAnimData_800c66a8.fadeAnimationType_05 != FadeAnimationType.NONE_0) {
@@ -4754,7 +4768,7 @@ public class WMap extends EngineState {
       //LAB_800e8ae0
     } else {
       //LAB_800e8ae8
-      if(this.mapState_800c6798.shortForceMovementState_d4 == ForcedMovementState.NONE_0) {
+      if(this.mapState_800c6798.shortForceMovementMode_d4 == ForcedMovementMode.NONE_0) {
         return;
       }
 
@@ -4784,8 +4798,8 @@ public class WMap extends EngineState {
     //LAB_800e8bfc
     // These values never actually set to RUN, but who knows, maybe someone will want it.
     if(
-      this.mapState_800c6798.shortForceMovementState_d4 == ForcedMovementState.RUN_2 ||
-        this.mapState_800c6798.queenFuryForceMovementState_d8 == ForcedMovementState.RUN_2
+      this.mapState_800c6798.shortForceMovementMode_d4 == ForcedMovementMode.RUN_2 ||
+        this.mapState_800c6798.queenFuryForceMovementMode_d8 == ForcedMovementMode.RUN_2
     ) {
       //LAB_800e8c2c
       movement *= 2;
@@ -4860,7 +4874,7 @@ public class WMap extends EngineState {
       //LAB_800e8f24
       if(this.modelAndAnimData_800c66a8.modelIndex_1e4 == 1) {
         //LAB_800e8f48
-        if(this.mapState_800c6798.queenFuryForceMovementState_d8 == ForcedMovementState.NONE_0) {
+        if(this.mapState_800c6798.queenFuryForceMovementMode_d8 == ForcedMovementMode.NONE_0) {
           //LAB_800e8f64
           //LAB_800e8f88
           if(this.modelAndAnimData_800c66a8.fadeAnimationType_05 == FadeAnimationType.NONE_0) {
@@ -4922,7 +4936,7 @@ public class WMap extends EngineState {
     }
 
     //LAB_800e91b0
-    if(this.mapState_800c6798.queenFuryForceMovementState_d8 != ForcedMovementState.NONE_0) {
+    if(this.mapState_800c6798.queenFuryForceMovementMode_d8 != ForcedMovementMode.NONE_0) {
       return;
     }
 
@@ -5095,12 +5109,12 @@ public class WMap extends EngineState {
 
     //LAB_800e9da0
     // Transition to Queen Fury deck for Shana scene
-    if(this.mapState_800c6798.queenFuryForceMovementState_d8 != ForcedMovementState.NONE_0) {
-      if(this.mapState_800c6798.queenFuryForceMovementState_d8.ordinal() < ForcedMovementState.FADE_OUT_3.ordinal()) {
+    if(this.mapState_800c6798.queenFuryForceMovementMode_d8 != ForcedMovementMode.NONE_0) {
+      if(this.mapState_800c6798.queenFuryForceMovementMode_d8.modeIndex < ForcedMovementMode.FADE_OUT_3.modeIndex) {
         this.initTransitionAnimation(FadeAnimationType.FADE_OUT_2);
         submapCut_80052c30 = 285; // A Queen Fury cut
         submapScene_80052c34 = 32;
-        this.mapState_800c6798.queenFuryForceMovementState_d8 = ForcedMovementState.FADE_OUT_3;
+        this.mapState_800c6798.queenFuryForceMovementMode_d8 = ForcedMovementMode.FADE_OUT_3;
       }
 
       //LAB_800e9dfc
@@ -5836,8 +5850,8 @@ public class WMap extends EngineState {
 
       case 4 -> {
         if(
-          this.worldMapState_800c6698.ordinal() >= WorldMapState.INIT_MAP_ANIM_3.ordinal() ||
-            this.playerState_800c669c.ordinal() >= PlayerState.INIT_PLAYER_MODEL_3.ordinal()) {
+          this.worldMapState_800c6698.state >= WorldMapState.INIT_MAP_ANIM_3.state ||
+            this.playerState_800c669c.state >= PlayerState.INIT_PLAYER_MODEL_3.state) {
           //LAB_800eda98
           this.atmosphericEffectStage_800c66a4 = 5;
         }
@@ -5882,12 +5896,12 @@ public class WMap extends EngineState {
     }
 
     //LAB_800edc44
-    if(this.worldMapState_800c6698.ordinal() <= WorldMapState.INIT_MAP_ANIM_3.ordinal()) {
+    if(this.worldMapState_800c6698.state <= WorldMapState.INIT_MAP_ANIM_3.state) {
       return;
     }
 
     //LAB_800edc64
-    if(this.playerState_800c669c.ordinal() <= PlayerState.INIT_PLAYER_MODEL_3.ordinal()) {
+    if(this.playerState_800c669c.state <= PlayerState.INIT_PLAYER_MODEL_3.state) {
       return;
     }
 

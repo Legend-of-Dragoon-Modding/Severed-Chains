@@ -10,9 +10,16 @@ import org.joml.Vector3f;
 
 public class WMapModelAndAnimData258 {
   public enum FadeAnimationType {
-    NONE_0,
-    FADE_IN_1,
-    FADE_OUT_2,
+    NONE_0(0),
+    FADE_IN_1(1),
+    FADE_OUT_2(2),
+    ;
+
+    public final int typeIndex;
+
+    FadeAnimationType(final int typeIndex) {
+      this.typeIndex = typeIndex;
+    }
   }
 
   public enum FadeState {
@@ -49,18 +56,25 @@ public class WMapModelAndAnimData258 {
   }
 
   public enum CoolonWarpState {
-    NONE_0,
-    ASCENT_1,
-    INIT_WORLD_MAP_2,
-    MAIN_LOOP_3,
-    INIT_PROMPT_4,
-    PROMPT_LOOP_5,
-    FLY_ANIM_6,
-    INIT_DEST_7,
-    INIT_DESCENT_10,
-    PAN_MAP_11,
-    DESCENT_12,
-    RESTORE_DART_NEG_1,
+    NONE_0(0),
+    ASCENT_1(1),
+    INIT_WORLD_MAP_2(2),
+    MAIN_LOOP_3(3),
+    INIT_PROMPT_4(4),
+    PROMPT_LOOP_5(5),
+    FLY_ANIM_6(6),
+    INIT_DEST_7(7),
+    INIT_DESCENT_10(10),
+    PAN_MAP_11(11),
+    DESCENT_12(12),
+    RESTORE_DART_NEG_1(-1),
+    ;
+    
+    public final int state;
+    
+    CoolonWarpState(final int state) {
+      this.state = state;
+    }
   }
 
   public enum TeleportAnimationState {

@@ -5,11 +5,18 @@ import org.joml.Vector3f;
 import java.util.Arrays;
 
 public class MapState100 {
-  public enum ForcedMovementState {
-    NONE_0,
-    WALK_1,
-    RUN_2,
-    FADE_OUT_3,
+  public enum ForcedMovementMode {
+    NONE_0(0),
+    WALK_1(1),
+    RUN_2(2),
+    FADE_OUT_3(3),
+    ;
+
+    public final int modeIndex;
+
+    ForcedMovementMode(final int modeIndex) {
+      this.modeIndex = modeIndex;
+    }
   }
 
   public enum PathSegmentEntering {
@@ -96,9 +103,9 @@ public class MapState100 {
   /** 800c6868 */
   public boolean disableInput_d0;
   /** Used to move player away from location when exiting entrance prompt or leaving location (800c686c) */
-  public ForcedMovementState shortForceMovementState_d4;
+  public ForcedMovementMode shortForceMovementMode_d4;
   /** Used specifically for when the Queen Fury is force-sailed the first time (800c6870) */
-  public ForcedMovementState queenFuryForceMovementState_d8;
+  public ForcedMovementMode queenFuryForceMovementMode_d8;
   /**
    * 800c6874
    * Array of temp indices of paths branching off a location point
