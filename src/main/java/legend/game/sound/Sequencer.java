@@ -605,14 +605,12 @@ public class Sequencer {
                   if(playingNote.newPortamento_60 < 0) {
                     final int portamentoTimeElapsed = playingNote.portamentoTimeTotal_64 - playingNote.portamentoTimeRemaining_62;
                     note = playingNote.portamentoNote_4e - portamentoTimeElapsed * (256 + playingNote.newPortamento_60) / 10 / playingNote.portamentoTimeTotal_64;
-                    //TODO remove the *4 by increasing resolution
-                    sixtyFourths = sixtyFourths - (portamentoTimeElapsed * playingNote.newPortamento_60 * 192 / (playingNote.portamentoTimeTotal_64 * 120) % 16) * 4;
+                    sixtyFourths = sixtyFourths - (portamentoTimeElapsed * playingNote.newPortamento_60 * 768 / (playingNote.portamentoTimeTotal_64 * 120) % 64);
                   } else {
                     //LAB_8004762c
                     final int portamentoTimeElapsed = (playingNote.portamentoTimeTotal_64 - playingNote.portamentoTimeRemaining_62) * playingNote.newPortamento_60;
                     note = playingNote.portamentoNote_4e + portamentoTimeElapsed / 10 / playingNote.portamentoTimeTotal_64;
-                    //TODO remove the *4 by increasing resolution
-                    sixtyFourths = sixtyFourths + (portamentoTimeElapsed * 192 / (playingNote.portamentoTimeTotal_64 * 120) % 16) * 4;
+                    sixtyFourths = sixtyFourths + (portamentoTimeElapsed * 768 / (playingNote.portamentoTimeTotal_64 * 120) % 64);
                   }
 
                   //LAB_800476f4
