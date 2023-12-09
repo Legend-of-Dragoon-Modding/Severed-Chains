@@ -604,7 +604,7 @@ public class Sequencer {
 
                   final int portamento10ths = playingNote.newPortamento_60;
                   final int portamentoTimeElapsed = playingNote.portamentoTimeTotal_64 - playingNote.portamentoTimeRemaining_62;
-                  final float fraction = (portamento10ths * portamentoTimeElapsed) / (playingNote.portamentoTimeTotal_64 * 10f);
+                  final float fraction = (portamento10ths * portamentoTimeElapsed) / (playingNote.portamentoTimeTotal_64 * 10.0f);
                   final int noteOffset = (int)fraction;
                   note = playingNote.portamentoNote_4e + noteOffset;
                   sixtyFourths += Math.round(fraction * 64 - noteOffset * 64);
