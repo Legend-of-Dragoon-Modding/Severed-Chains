@@ -37,6 +37,7 @@ import java.util.Map;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
@@ -119,6 +120,7 @@ public class RenderEngine {
   // Order-independent translucency
   private Shader tmdShader;
   private Shader tmdShaderTransparent;
+  private Shader.UniformFloat tmdShaderProjectionPlaneDistance;
   private Shader.UniformVec3 tmdShaderColour;
   private Shader.UniformVec2 tmdShaderUvOffset;
   private Shader.UniformVec2 tmdShaderClutOverride;
@@ -304,6 +306,7 @@ public class RenderEngine {
       this.tmdShader.use();
       this.tmdShader.new UniformInt("tex24").set(0);
       this.tmdShader.new UniformInt("tex15").set(1);
+      this.tmdShaderProjectionPlaneDistance = this.tmdShader.new UniformFloat("h");
       this.tmdShaderColour = this.tmdShader.new UniformVec3("recolour");
       this.tmdShaderClutOverride = this.tmdShader.new UniformVec2("clutOverride");
       this.tmdShaderTpageOverride = this.tmdShader.new UniformVec2("tpageOverride");
@@ -520,27 +523,27 @@ public class RenderEngine {
       this.vsyncCount += 60.0d * Config.getGameSpeedMultiplier() / this.window.getFpsLimit();
 
       if(this.movingLeft) {
-        this.camera3d.strafe(-MOVE_SPEED * 200);
+        this.camera3d.strafe(-MOVE_SPEED * 10);
       }
 
       if(this.movingRight) {
-        this.camera3d.strafe(MOVE_SPEED * 200);
+        this.camera3d.strafe(MOVE_SPEED * 10);
       }
 
       if(this.movingForward) {
-        this.camera3d.move(-MOVE_SPEED * 200);
+        this.camera3d.move(-MOVE_SPEED * 10);
       }
 
       if(this.movingBackward) {
-        this.camera3d.move(MOVE_SPEED * 200);
+        this.camera3d.move(MOVE_SPEED * 10);
       }
 
       if(this.movingUp) {
-        this.camera3d.jump(-MOVE_SPEED * 200);
+        this.camera3d.jump(-MOVE_SPEED * 10);
       }
 
       if(this.movingDown) {
-        this.camera3d.jump(MOVE_SPEED * 200);
+        this.camera3d.jump(MOVE_SPEED * 10);
       }
     });
   }
@@ -559,6 +562,7 @@ public class RenderEngine {
 
     for(int i = 0; i < pool.size(); i++) {
       final QueuedModel entry = pool.get(i);
+      this.tmdShaderProjectionPlaneDistance.set(GTE.getProjectionPlaneDistance());
       this.tmdShaderColour.set(entry.colour);
       this.tmdShaderClutOverride.set(entry.clutOverride);
       this.tmdShaderTpageOverride.set(entry.tpageOverride);
@@ -603,6 +607,7 @@ public class RenderEngine {
       final QueuedModel entry = pool.get(i);
 
       if(entry.obj.shouldRender(Translucency.B_PLUS_F)) {
+        this.tmdShaderProjectionPlaneDistance.set(GTE.getProjectionPlaneDistance());
         this.tmdShaderColour.set(entry.colour);
         this.tmdShaderClutOverride.set(entry.clutOverride);
         this.tmdShaderTpageOverride.set(entry.tpageOverride);
@@ -612,6 +617,7 @@ public class RenderEngine {
       }
 
       if(entry.obj.shouldRender(Translucency.B_MINUS_F)) {
+        this.tmdShaderProjectionPlaneDistance.set(GTE.getProjectionPlaneDistance());
         this.tmdShaderColour.set(entry.colour.mul(-1.0f, this.tempColour));
         this.tmdShaderClutOverride.set(entry.clutOverride);
         this.tmdShaderTpageOverride.set(entry.tpageOverride);
@@ -845,9 +851,10 @@ public class RenderEngine {
       return;
     }
 
-    // LOD uses a left-handed projection with a negated Y axis because reasons
-    this.perspectiveProjection.setPerspectiveLH(this.fieldOfView, this.aspectRatio, 0.1f, 1000000.0f); //TODO un-jank the world map so we can lower this ridiculousness
-    this.perspectiveProjection.negateY();
+    // LOD uses a left-handed projection with a negated Y axis because reasons.
+    // Our perspective projection is actually a centred orthographic projection. We are doing a
+    // projection plane division in the vertex shader to emulate perspective division on the GTE.
+    this.perspectiveProjection.setOrthoLH(-this.projectionWidth / 2.0f, this.projectionWidth / 2.0f, this.projectionHeight / 2.0f, -this.projectionHeight / 2.0f, 0.1f, 1000000.0f);
     this.orthographicProjection.setOrthoLH(0.0f, this.projectionWidth, this.projectionHeight, 0.0f, 0.1f, 1000000.0f);
   }
 
