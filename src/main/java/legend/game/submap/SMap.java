@@ -1404,9 +1404,9 @@ public class SMap extends EngineState {
       final int id = header & 0xff04_0000;
 
       if(id == 0x3400_0000 || id == 0x3600_0000 || id == 0x3500_0000 || id == 0x3700_0000) {
-        this.adjustWmapTriPrimitiveUvs(primitive, colourMap & 0x7f);
+        this.adjustSmapTriPrimitiveUvs(primitive, colourMap & 0x7f);
       } else if(id == 0x3c00_0000 || id == 0x3e00_0000 || id == 0x3d00_0000 || id == 0x3f00_0000) {
-        this.adjustWmapQuadPrimitiveUvs(primitive, colourMap & 0x7f);
+        this.adjustSmapQuadPrimitiveUvs(primitive, colourMap & 0x7f);
       }
     }
   }
@@ -1512,7 +1512,7 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800da6c8L)
-  private void adjustWmapTriPrimitiveUvs(final TmdObjTable1c.Primitive primitive, final int colourMap) {
+  private void adjustSmapTriPrimitiveUvs(final TmdObjTable1c.Primitive primitive, final int colourMap) {
     final UvAdjustmentMetrics14 metrics = this.uvAdjustments_800f5930[colourMap];
 
     //LAB_800da6e8
@@ -1524,7 +1524,7 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800da754L)
-  private void adjustWmapQuadPrimitiveUvs(final TmdObjTable1c.Primitive primitive, final int colourMap) {
+  private void adjustSmapQuadPrimitiveUvs(final TmdObjTable1c.Primitive primitive, final int colourMap) {
     final UvAdjustmentMetrics14 metrics = this.uvAdjustments_800f5930[colourMap];
 
     //LAB_800da774
