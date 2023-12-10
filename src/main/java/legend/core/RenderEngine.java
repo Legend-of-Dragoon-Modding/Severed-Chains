@@ -194,9 +194,6 @@ public class RenderEngine {
 
   private float projectionWidth;
   private float projectionHeight;
-  private float projectionDepth;
-  private float aspectRatio;
-  private float fieldOfView;
   private float halfWidthInv;
   private float halfHeightInv;
 
@@ -205,18 +202,6 @@ public class RenderEngine {
     this.projectionHeight = height;
     this.halfWidthInv = 1.0f / (width / 2.0f);
     this.halfHeightInv = 1.0f / (height / 2.0f);
-    this.updateFieldOfView();
-  }
-
-  public void setProjectionDepth(final float depth) {
-    this.projectionDepth = depth;
-    this.updateFieldOfView();
-  }
-
-  private void updateFieldOfView() {
-    this.aspectRatio = 320.0f / this.projectionHeight;
-    final float halfWidth = this.projectionWidth / 2.0f;
-    this.fieldOfView = (float)(Math.atan(halfWidth / this.projectionDepth) * 2.0f / this.aspectRatio);
     this.updateProjections();
   }
 
