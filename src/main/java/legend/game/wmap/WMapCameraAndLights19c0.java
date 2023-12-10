@@ -77,7 +77,7 @@ public class WMapCameraAndLights19c0 {
   public final Vector3f cameraZoomPosStep_a4 = new Vector3f();
   public final Vector3f currCameraZoomPos_b4 = new Vector3f();
   /** byte */
-  public boolean zoomStateIsLocal;
+  public boolean zoomStateIsLocal_c4;
   /**
    * ubyte
    * <ol start="0">
