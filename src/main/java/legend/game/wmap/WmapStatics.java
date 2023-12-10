@@ -1,7 +1,6 @@
 package legend.game.wmap;
 
 import legend.game.tmd.UvAdjustmentMetrics14;
-import legend.game.wmap.WmapEnums.Continent;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
@@ -38,7 +37,7 @@ public final class WmapStatics {
     new UvAdjustmentMetrics14(0x5c240000, 0x83c3ffff,  0x190000, 0xffe0ffff,    0x0),
     new UvAdjustmentMetrics14(0x5c280000, 0x83c3ffff,  0x1a0000, 0xffe0ffff,    0x0),
     new UvAdjustmentMetrics14(0x5c2e0000,  0x3c0ffff,  0x1b0000, 0xffe0ffff,   0x80),
-    new UvAdjustmentMetrics14(0x7c2c0000,  0x3c0ffff,  0x1b0000, 0xffe0ffff, 0x8000)
+    new UvAdjustmentMetrics14(0x7c2c0000,  0x3c0ffff,  0x1b0000, 0xffe0ffff, 0x8000),
   };
 
   public static final int[] mapTerrainTmdIndices_800ef194 = {12, 6, 13, 8, 4, 3, 3};
@@ -167,7 +166,7 @@ public final class WmapStatics {
     { 75, 120,  75, 122},
     { 75, 121,  75, 122},
     {  0,   0,   0,   0},
-    {  0,   0,   0,   0}
+    {  0,   0,   0,   0},
   };
 
   /**
@@ -201,7 +200,7 @@ public final class WmapStatics {
     "Hotel",
     "Clinic",
     "Weapon Shop",
-    "Item Shop"
+    "Item Shop",
   };
   /** The regions you can travel to at Barrier Stations */
   public static final String[] regions_800f01ec = {"South of Serdio", "North of Serdio", "Tiberoa"};
@@ -467,262 +466,262 @@ public final class WmapStatics {
 
   /** Valid entries seem to end at 158, though there seem to be some 0 entries scattered throughout as well */
   public static final Location14[] locations_800f0e34 = {
-    new Location14(   4,   0,   7, 13,   7, 12,    0,   Continent.SOUTH_SERDIO,  true, 128),
-    new Location14(   3,   1, 624, 11, 624, 10,    1,   Continent.SOUTH_SERDIO, false, 128),
-    new Location14(  12,   2,   7, 16,   7, 14,    2,   Continent.SOUTH_SERDIO,  true, 128),
-    new Location14(   2,   3,  11, 30,  12,  5, -  1,   Continent.SOUTH_SERDIO,  true, 136),
-    new Location14(   1,   4,   9,  9,   9,  6,    4,   Continent.SOUTH_SERDIO,  true,   0),
-    new Location14(   2,   3, 696, 13, 696, 13, -  1,   Continent.SOUTH_SERDIO,  true,   0),
-    new Location14(   2,   3, 695,  4, 695,  4, -  1,   Continent.SOUTH_SERDIO,  true,   0),
-    new Location14(   9,   5,  13, 17,  13, 16,    5,   Continent.SOUTH_SERDIO, false, 192),
-    new Location14(  11,   6,  38, 28,  38,  4,    6,   Continent.SOUTH_SERDIO, false,  64),
-    new Location14(  13,   7,  39, 25,  39, 20,    7,   Continent.SOUTH_SERDIO,  true,  64),
-    new Location14(  32,   8,  44,  6,  44, 24,    8,   Continent.NORTH_SERDIO,  true,  64),
-    new Location14(  33,   9,  45,  1,  45,  0,    9,   Continent.NORTH_SERDIO, false,   0),
-    new Location14(  34,  10,  54,  6,  54,  0,   10,   Continent.NORTH_SERDIO,  true,   0),
-    new Location14(  37,  11,  66, 41,  66, 40,   11,   Continent.NORTH_SERDIO, false,   0),
-    new Location14(  43,  12,  95,  1,  95,  2,   12,   Continent.NORTH_SERDIO, false,   0),
-    new Location14(  43,  13,  96,  1,  97,  2, -  1,   Continent.NORTH_SERDIO,  true, 136),
-    new Location14(  47,  14, 106, 10, 106, 19,   14,   Continent.NORTH_SERDIO, false,   0),
-    new Location14(  47,  15, 106, 16, 106, 19,   15,   Continent.NORTH_SERDIO,  true,   0),
-    new Location14(  47,  16, 106, 20, 106, 19,   16,   Continent.NORTH_SERDIO,  true,   0),
-    new Location14(  48,  17, 111, 11, 111, 12,   17,   Continent.NORTH_SERDIO,  true,   0),
-    new Location14(  49,  18, 114,  0, 114,  1,   18,   Continent.NORTH_SERDIO, false,   4),
-    new Location14(  15,  19, 122,  8, 122,  5,   19,   Continent.SOUTH_SERDIO,  true,   4),
-    new Location14(  14,  20, 130, 17, 130, 11,   20,   Continent.SOUTH_SERDIO, false,   0),
-    new Location14(  19,  21, 133, 57, 133, 56,   21,   Continent.SOUTH_SERDIO,  true,   0),
-    new Location14(  16,  22, 132, 22, 132,  4,   22,   Continent.SOUTH_SERDIO,  true,   0),
-    new Location14(  23,  23, 140,  2, 140,  0,   23,   Continent.SOUTH_SERDIO, false,   0),
-    new Location14(  17,  24, 153, 39, 153, 11,   24,   Continent.SOUTH_SERDIO, false,   0),
-    new Location14(  29,  25, 171,  1, 171,  0,   25,   Continent.SOUTH_SERDIO, false,   0),
-    new Location14(  53,  26, 201,  1, 201,  0,   26,        Continent.TIBEROA,  true,  16),
-    new Location14(  53,  26, 201, 32, 201,  0, -  1,        Continent.TIBEROA,  true,  16),
-    new Location14(  53,  26, 744,  2, 744,  0,   26,        Continent.TIBEROA,  true,  16),
-    new Location14(  96,  27, 224, 35, 224, 12,   27,       Continent.ENDINESS,  true,   0),
-    new Location14(  55,  28, 231,  1, 231,  0,   28,        Continent.TIBEROA, false,  16),
-    new Location14(  56,  29, 233, 13, 233, 12,   29,        Continent.TIBEROA,  true,  16),
-    new Location14(  58,  30, 232, 11, 232,  2,   30,        Continent.TIBEROA,  true,  16),
-    new Location14(  57,  31, 239, 26, 239,  7,   31,        Continent.TIBEROA, false,  16),
-    new Location14(  62,  32, 242,  3, 242,  8,   32,     Continent.ILLISA_BAY,  true,  16),
-    new Location14(  59,  33, 251, 10, 251,  9,   33,        Continent.TIBEROA, false,  16),
-    new Location14(  59,  34, 258, 10, 258,  9,   34,        Continent.TIBEROA,  true,  16),
-    new Location14(  60,  35, 256,  9, 256, 15,   35,        Continent.TIBEROA,  true,  16),
-    new Location14(  61,  36, 261,  1, 261,  0,   36,        Continent.TIBEROA, false,  16),
-    new Location14(  95,  37, 264, 28, 264, 27,   37, Continent.DEATH_FRONTIER,  true,   0),
-    new Location14(  73,  38, 297,  0, 297, 43,   38,     Continent.ILLISA_BAY,  true,  16),
-    new Location14(  73,  39, 297,  3, 297, 43,   -1,     Continent.ILLISA_BAY,  true,  16),
-    new Location14(  72,  40, 301, 19, 301, 12,   40,     Continent.ILLISA_BAY, false,  16),
-    new Location14(  72,  41, 302, 19, 302, 12,   41,     Continent.ILLISA_BAY,  true,  16),
-    new Location14(  71,  42, 301,  1, 301,  0,   42,     Continent.ILLISA_BAY,  true,  16),
-    new Location14(  71,  43, 302,  1, 302,  0,   43,     Continent.ILLISA_BAY,  true,  16),
-    new Location14(  68,  44, 309, 32, 309, 33,   44,     Continent.ILLISA_BAY, false,  16),
-    new Location14(  67,  45, 311, 18, 311,  0,   45,     Continent.ILLISA_BAY,  true,  16),
-    new Location14(  65,  46, 328, 54, 328, 30,   46,     Continent.ILLISA_BAY,  true,  16),
-    new Location14(  74,  47, 330, 25, 330, 24,   47,   Continent.MILLE_SESEAU,  true,  32),
-    new Location14(  74,  47, 330, 19, 330, 24, -  1,   Continent.MILLE_SESEAU,  true,  32),
-    new Location14(  75,  48, 339, 26, 339, 18,   48,   Continent.MILLE_SESEAU, false,  32),
-    new Location14(  76,  49, 344, 17, 344, 16,   49,   Continent.MILLE_SESEAU,  true,  32),
-    new Location14(  76,  49, 344, 18, 344, 16, -  1,   Continent.MILLE_SESEAU,  true,  32),
-    new Location14(  82,  50, 341, 14, 341, 16,   50,   Continent.MILLE_SESEAU,  true,  32),
-    new Location14(  84,  51,   0,  0,   0,  0,   51,   Continent.MILLE_SESEAU,  true,  32),
-    new Location14(  86,  52, 342, 38, 342, 35,   52,   Continent.MILLE_SESEAU,  true,  32),
-    new Location14(  79,  53, 347, 31, 347,  0,   53,   Continent.MILLE_SESEAU, false,  32),
-    new Location14(  79,  54, 349,  1, 349,  2,   54,   Continent.MILLE_SESEAU,  true,  32),
-    new Location14(  83,  55, 379,  0, 379,  1,   55,   Continent.MILLE_SESEAU, false,  32),
-    new Location14(  85,  56,   0,  0,   0,  0,   56,   Continent.MILLE_SESEAU, false,   0),
-    new Location14(  87,  57, 413,  1, 413,  0,   57,   Continent.MILLE_SESEAU, false,   0),
-    new Location14(  81,  58, 433,  3, 433,  2,   58,   Continent.MILLE_SESEAU, false,  32),
-    new Location14(  88,  59, 434,  1, 434, 27,   59,       Continent.GLORIANO,  true,  32),
-    new Location14(  89,  60, 457,  0, 457,  1,   60,       Continent.GLORIANO, false,   0),
-    new Location14(  90,  61, 459,  1, 459,  3,   61,       Continent.GLORIANO,  true,   0),
-    new Location14(  91,  62, 477,  0, 477,  1,   62,       Continent.GLORIANO, false,   0),
-    new Location14(  92,  63, 787,  1, 787,  2,   63, Continent.DEATH_FRONTIER,  true,   0),
-    new Location14(  93,  64, 513,  1, 513,  0,   64, Continent.DEATH_FRONTIER, false,   0),
-    new Location14(  94,  64, 526, 36, 526, 35,   64, Continent.DEATH_FRONTIER,  true,   0),
-    new Location14( 130,  65, 528, 14, 528, 12,   65,       Continent.ENDINESS,  true,   0),
-    new Location14( 129,  66, 528, 13, 528, 12,   66,       Continent.ENDINESS,  true,   0),
-    new Location14( 131,  67, 539,  0, 539,  0,   67,       Continent.ENDINESS,  true,   0),
-    new Location14( 131,  68, 540, 19, 540, 18,   68,       Continent.ENDINESS,  true,   0),
-    new Location14( 128,  69, 572, 23, 572, 29,   69,       Continent.ENDINESS,  true,   0),
-    new Location14( 130,  65, 528, 15, 528, 12,   65,       Continent.ENDINESS,  true,   0),
-    new Location14(  97,  71, 563, 25, 563,  7,   71,       Continent.ENDINESS, false,   0),
-    new Location14(-  1,  72,   0,  0,   0,  0,   72,           Continent.NONE, false,   0),
-    new Location14(-  1,  73,   0,  0,   0,  0,   73,           Continent.NONE, false,   0),
-    new Location14(   7, 100,  15,  8,  15,  8, -  1,   Continent.SOUTH_SERDIO,  true,   0),
-    new Location14(  86,  52, 346,  1, 346,  0,   52,   Continent.MILLE_SESEAU,  true,  32),
-    new Location14(  98,  76, 529, 41, 529, 42,   76,       Continent.ENDINESS,  true,   0),
-    new Location14(  11,   6,  38,  7,  38,  4, -  1,   Continent.SOUTH_SERDIO, false,  64),
-    new Location14( 105,  78, 994,  0, 994, 50,   78,       Continent.ENDINESS, false,   0),
-    new Location14( 109,  79, 996,  0, 996, 70,   79,       Continent.ENDINESS, false,   0),
-    new Location14( 113,  80, 993,  0, 993, 48,   80,       Continent.ENDINESS, false,   0),
-    new Location14( 117,  81, 992,  0, 992, 28,   81,       Continent.ENDINESS, false,   0),
-    new Location14( 121,  82, 992,  0, 992, 35,   82,       Continent.ENDINESS, false,   0),
-    new Location14( 125,  83, 990,  0, 990, 25,   83,       Continent.ENDINESS, false,   0),
-    new Location14( 127,  84, 991,  0, 991, 13,   84,       Continent.ENDINESS, false,   0),
-    new Location14(-  1,  85, 285,  0, 285, 32,   85,           Continent.NONE, false,   0),
-    new Location14(-  1,  86, 279, 31, 279, 31,   86,           Continent.NONE, false,   0),
-    new Location14(  94,  87, 527, 35, 527,  0, -  1, Continent.DEATH_FRONTIER,  true,   0),
-    new Location14( 130,  65, 528, 15, 528, 12, -  1,       Continent.ENDINESS,  true,   0),
-    new Location14(  65,  46, 327, 54, 327, 30, -  1,     Continent.ILLISA_BAY,  true,  16),
-    new Location14(  43,  13,  97,  1,  97,  2,   13,   Continent.NORTH_SERDIO,  true,   0),
-    new Location14(   2,   3,  12, 30,  12,  5,    3,   Continent.SOUTH_SERDIO,  true,   0),
-    new Location14(   0,  92,   0,  0,   0,  0,   92,   Continent.SOUTH_SERDIO, false,   0),
-    new Location14(  31,  93, 999,  0, 999, 18,   93,   Continent.SOUTH_SERDIO,  true,   0),
-    new Location14(  45,  94, 999,  1, 999,  2,   94,   Continent.NORTH_SERDIO,  true,   0),
-    new Location14(  50,  95, 999,  2, 999,  1,   95,        Continent.TIBEROA,  true,   0),
-    new Location14(   5,  96,   0,  0,   0,  0,   96,   Continent.SOUTH_SERDIO, false,   0),
-    new Location14(   6,  97,   0,  0,   0,  0,   97,   Continent.SOUTH_SERDIO, false,   0),
-    new Location14(  10,  98,   0,  0,   0,  0,   98,   Continent.SOUTH_SERDIO, false,   0),
-    new Location14(   7,  99,   0,  0,   0,  0,   99,   Continent.SOUTH_SERDIO, false,   0),
-    new Location14(   8, 100,   0,  0,   0,  0,  100,   Continent.SOUTH_SERDIO, false,   0),
-    new Location14(  27, 101,   0,  0,   0,  0,  101,   Continent.SOUTH_SERDIO, false,   0),
-    new Location14(  24, 102,   0,  0,   0,  0,  102,   Continent.SOUTH_SERDIO, false,   0),
-    new Location14(  26, 103,   0,  0,   0,  0,  103,   Continent.SOUTH_SERDIO, false,   0),
-    new Location14(  28, 104,   0,  0,   0,  0,  104,   Continent.SOUTH_SERDIO, false,   0),
-    new Location14(  20, 105,   0,  0,   0,  0,  105,   Continent.SOUTH_SERDIO, false,   0),
-    new Location14(  22, 106,   0,  0,   0,  0,  106,   Continent.SOUTH_SERDIO, false,   0),
-    new Location14(  25, 107,   0,  0,   0,  0,  107,   Continent.SOUTH_SERDIO, false,   0),
-    new Location14(  18, 108,   0,  0,   0,  0,  108,   Continent.SOUTH_SERDIO, false,   0),
-    new Location14(  21, 109,   0,  0,   0,  0,  109,   Continent.SOUTH_SERDIO, false,   0),
-    new Location14(  30, 110,   0,  0,   0,  0,  110,   Continent.SOUTH_SERDIO, false,   0),
-    new Location14(  35, 111,   0,  0,   0,  0,  111,   Continent.NORTH_SERDIO, false,   0),
-    new Location14(  36, 112,   0,  0,   0,  0,  112,   Continent.NORTH_SERDIO, false,   0),
-    new Location14(  38, 113,   0,  0,   0,  0,  113,   Continent.NORTH_SERDIO, false,   0),
-    new Location14(  39, 114,   0,  0,   0,  0,  114,   Continent.NORTH_SERDIO, false,   0),
-    new Location14(  40, 115,   0,  0,   0,  0,  115,   Continent.NORTH_SERDIO, false,   0),
-    new Location14(  46, 116,   0,  0,   0,  0,  116,   Continent.NORTH_SERDIO, false,   0),
-    new Location14(  41, 117,   0,  0,   0,  0,  117,   Continent.NORTH_SERDIO, false,   0),
-    new Location14(  42, 118,   0,  0,   0,  0,  118,   Continent.NORTH_SERDIO, false,   0),
-    new Location14(  44, 119,   0,  0,   0,  0,  119,   Continent.NORTH_SERDIO, false,   0),
-    new Location14(  52, 120,   0,  0,   0,  0,  120,        Continent.TIBEROA, false,  16),
-    new Location14(  54, 121,   0,  0,   0,  0,  121,        Continent.TIBEROA, false,  16),
-    new Location14(  51, 122,   0,  0,   0,  0,  122,        Continent.TIBEROA, false,  16),
-    new Location14(  63, 123,   0,  0,   0,  0,  123,     Continent.ILLISA_BAY, false,  16),
-    new Location14(  66, 124,   0,  0,   0,  0,  124,     Continent.ILLISA_BAY, false,  16),
-    new Location14(  64, 125,   0,  0,   0,  0,  125,     Continent.ILLISA_BAY, false,  16),
-    new Location14(  70, 126,   0,  0,   0,  0,  126,     Continent.ILLISA_BAY, false,  16),
-    new Location14(  69, 127,   0,  0,   0,  0,  127,     Continent.ILLISA_BAY, false,  16),
-    new Location14(  77, 128,   0,  0,   0,  0,  128,   Continent.MILLE_SESEAU, false,   0),
-    new Location14(  78, 129,   0,  0,   0,  0,  129,   Continent.MILLE_SESEAU, false,   0),
-    new Location14(  80, 130,   0,  0,   0,  0,  130,   Continent.MILLE_SESEAU, false,   0),
-    new Location14(  99, 131,   0,  0,   0,  0,  131,       Continent.ENDINESS, false,   0),
-    new Location14( 100, 132,   0,  0,   0,  0,  132,       Continent.ENDINESS, false,   0),
-    new Location14( 102, 133,   0,  0,   0,  0,  133,       Continent.ENDINESS, false,   0),
-    new Location14( 103, 134,   0,  0,   0,  0,  134,       Continent.ENDINESS, false,   0),
-    new Location14( 104, 135,   0,  0,   0,  0,  135,       Continent.ENDINESS, false,   0),
-    new Location14( 106, 136,   0,  0,   0,  0,  136,       Continent.ENDINESS, false,   0),
-    new Location14( 107, 137,   0,  0,   0,  0,  137,       Continent.ENDINESS, false,   0),
-    new Location14( 108, 138,   0,  0,   0,  0,  138,       Continent.ENDINESS, false,   0),
-    new Location14( 110, 139,   0,  0,   0,  0,  139,       Continent.ENDINESS, false,   0),
-    new Location14( 111, 140,   0,  0,   0,  0,  140,       Continent.ENDINESS, false,   0),
-    new Location14( 112, 141,   0,  0,   0,  0,  141,       Continent.ENDINESS, false,   0),
-    new Location14( 114, 142,   0,  0,   0,  0,  142,       Continent.ENDINESS, false,   0),
-    new Location14( 115, 143,   0,  0,   0,  0,  143,       Continent.ENDINESS, false,   0),
-    new Location14( 116, 144,   0,  0,   0,  0,  144,       Continent.ENDINESS, false,   0),
-    new Location14( 118, 145,   0,  0,   0,  0,  145,       Continent.ENDINESS, false,   0),
-    new Location14( 119, 146,   0,  0,   0,  0,  146,       Continent.ENDINESS, false,   0),
-    new Location14( 120, 147,   0,  0,   0,  0,  147,       Continent.ENDINESS, false,   0),
-    new Location14( 122, 148,   0,  0,   0,  0,  148,       Continent.ENDINESS, false,   0),
-    new Location14( 123, 149,   0,  0,   0,  0,  149,       Continent.ENDINESS, false,   0),
-    new Location14( 124, 150,   0,  0,   0,  0,  150,       Continent.ENDINESS, false,   0),
-    new Location14( 126, 151,   0,  0,   0,  0,  151,       Continent.ENDINESS, false,   0),
-    new Location14(-  1, 152,   0,  0,   0,  0,  152,           Continent.NONE, false,   0),
-    new Location14(-  1, 153,   0,  0,   0,  0,  153,           Continent.NONE, false,   0),
-    new Location14(-  1, 154,   0,  0,   0,  0,  154,           Continent.NONE, false,   0),
-    new Location14(-  1, 155,   0,  0,   0,  0,  155,           Continent.NONE, false,   0),
-    new Location14(-  1, 156,   0,  0,   0,  0,  156,           Continent.NONE, false,   0),
-    new Location14(-  1, 157,   0,  0,   0,  0,  157,           Continent.NONE, false,   0),
-    new Location14(-  1, 158,   0,  0,   0,  0,  158,           Continent.NONE, false,   0),
-    new Location14(-  1, 159,   0,  0,   0,  0,  159,           Continent.NONE, false,   0),
-    new Location14(-  1, 160,   0,  0,   0,  0,  160,           Continent.NONE, false,   0),
-    new Location14(-  1, 161,   0,  0,   0,  0,  161,           Continent.NONE, false,   0),
-    new Location14(-  1, 162,   0,  0,   0,  0,  162,           Continent.NONE, false,   0),
-    new Location14(-  1, 163,   0,  0,   0,  0,  163,           Continent.NONE, false,   0),
-    new Location14(-  1, 164,   0,  0,   0,  0,  164,           Continent.NONE, false,   0),
-    new Location14(-  1, 165,   0,  0,   0,  0,  165,           Continent.NONE, false,   0),
-    new Location14(-  1, 166,   0,  0,   0,  0,  166,           Continent.NONE, false,   0),
-    new Location14(-  1, 167,   0,  0,   0,  0,  167,           Continent.NONE, false,   0),
-    new Location14(-  1, 168,   0,  0,   0,  0,  168,           Continent.NONE, false,   0),
-    new Location14(-  1, 169,   0,  0,   0,  0,  169,           Continent.NONE, false,   0),
-    new Location14(-  1, 170,   0,  0,   0,  0,  170,           Continent.NONE, false,   0),
-    new Location14(-  1, 171,   0,  0,   0,  0,  171,           Continent.NONE, false,   0),
-    new Location14(-  1, 172,   0,  0,   0,  0,  172,           Continent.NONE, false,   0),
-    new Location14(-  1, 173,   0,  0,   0,  0,  173,           Continent.NONE, false,   0),
-    new Location14(-  1, 174,   0,  0,   0,  0,  174,           Continent.NONE, false,   0),
-    new Location14(-  1, 175,   0,  0,   0,  0,  175,           Continent.NONE, false,   0),
-    new Location14(-  1, 176,   0,  0,   0,  0,  176,           Continent.NONE, false,   0),
-    new Location14(-  1, 177,   0,  0,   0,  0,  177,           Continent.NONE, false,   0),
-    new Location14(-  1, 178,   0,  0,   0,  0,  178,           Continent.NONE, false,   0),
-    new Location14(-  1, 179,   0,  0,   0,  0,  179,           Continent.NONE, false,   0),
-    new Location14(-  1, 180,   0,  0,   0,  0,  180,           Continent.NONE, false,   0),
-    new Location14(-  1, 181,   0,  0,   0,  0,  181,           Continent.NONE, false,   0),
-    new Location14(-  1, 182,   0,  0,   0,  0,  182,           Continent.NONE, false,   0),
-    new Location14(-  1, 183,   0,  0,   0,  0,  183,           Continent.NONE, false,   0),
-    new Location14(-  1, 184,   0,  0,   0,  0,  184,           Continent.NONE, false,   0),
-    new Location14(-  1, 185,   0,  0,   0,  0,  185,           Continent.NONE, false,   0),
-    new Location14(-  1, 186,   0,  0,   0,  0,  186,           Continent.NONE, false,   0),
-    new Location14(-  1, 187,   0,  0,   0,  0,  187,           Continent.NONE, false,   0),
-    new Location14(-  1, 188,   0,  0,   0,  0,  188,           Continent.NONE, false,   0),
-    new Location14(-  1, 189,   0,  0,   0,  0,  189,           Continent.NONE, false,   0),
-    new Location14(-  1, 190,   0,  0,   0,  0,  190,           Continent.NONE, false,   0),
-    new Location14(-  1, 191,   0,  0,   0,  0,  191,           Continent.NONE, false,   0),
-    new Location14(-  1, 192,   0,  0,   0,  0,  192,           Continent.NONE, false,   0),
-    new Location14(-  1, 193,   0,  0,   0,  0,  193,           Continent.NONE, false,   0),
-    new Location14(-  1, 194,   0,  0,   0,  0,  194,           Continent.NONE, false,   0),
-    new Location14(-  1, 195,   0,  0,   0,  0,  195,           Continent.NONE, false,   0),
-    new Location14(-  1, 196,   0,  0,   0,  0,  196,           Continent.NONE, false,   0),
-    new Location14(-  1, 197,   0,  0,   0,  0,  197,           Continent.NONE, false,   0),
-    new Location14(-  1, 198,   0,  0,   0,  0,  198,           Continent.NONE, false,   0),
-    new Location14(-  1, 199,   0,  0,   0,  0,  199,           Continent.NONE, false,   0),
-    new Location14(-  1, 200,   0,  0,   0,  0,  200,           Continent.NONE, false,   0),
-    new Location14(-  1, 201,   0,  0,   0,  0,  201,           Continent.NONE, false,   0),
-    new Location14(-  1, 202,   0,  0,   0,  0,  202,           Continent.NONE, false,   0),
-    new Location14(-  1, 203,   0,  0,   0,  0,  203,           Continent.NONE, false,   0),
-    new Location14(-  1, 204,   0,  0,   0,  0,  204,           Continent.NONE, false,   0),
-    new Location14(-  1, 205,   0,  0,   0,  0,  205,           Continent.NONE, false,   0),
-    new Location14(-  1, 206,   0,  0,   0,  0,  206,           Continent.NONE, false,   0),
-    new Location14(-  1, 207,   0,  0,   0,  0,  207,           Continent.NONE, false,   0),
-    new Location14(-  1, 208,   0,  0,   0,  0,  208,           Continent.NONE, false,   0),
-    new Location14(-  1, 209,   0,  0,   0,  0,  209,           Continent.NONE, false,   0),
-    new Location14(-  1, 210,   0,  0,   0,  0,  210,           Continent.NONE, false,   0),
-    new Location14(-  1, 211,   0,  0,   0,  0,  211,           Continent.NONE, false,   0),
-    new Location14(-  1, 212,   0,  0,   0,  0,  212,           Continent.NONE, false,   0),
-    new Location14(-  1, 213,   0,  0,   0,  0,  213,           Continent.NONE, false,   0),
-    new Location14(-  1, 214,   0,  0,   0,  0,  214,           Continent.NONE, false,   0),
-    new Location14(-  1, 215,   0,  0,   0,  0,  215,           Continent.NONE, false,   0),
-    new Location14(-  1, 216,   0,  0,   0,  0,  216,           Continent.NONE, false,   0),
-    new Location14(-  1, 217,   0,  0,   0,  0,  217,           Continent.NONE, false,   0),
-    new Location14(-  1, 218,   0,  0,   0,  0,  218,           Continent.NONE, false,   0),
-    new Location14(-  1, 219,   0,  0,   0,  0,  219,           Continent.NONE, false,   0),
-    new Location14(-  1, 220,   0,  0,   0,  0,  220,           Continent.NONE, false,   0),
-    new Location14(-  1, 221,   0,  0,   0,  0,  221,           Continent.NONE, false,   0),
-    new Location14(-  1, 222,   0,  0,   0,  0,  222,           Continent.NONE, false,   0),
-    new Location14(-  1, 223,   0,  0,   0,  0,  223,           Continent.NONE, false,   0),
-    new Location14(-  1, 224,   0,  0,   0,  0,  224,           Continent.NONE, false,   0),
-    new Location14(-  1, 225,   0,  0,   0,  0,  225,           Continent.NONE, false,   0),
-    new Location14(-  1, 226,   0,  0,   0,  0,  226,           Continent.NONE, false,   0),
-    new Location14(-  1, 227,   0,  0,   0,  0,  227,           Continent.NONE, false,   0),
-    new Location14(-  1, 228,   0,  0,   0,  0,  228,           Continent.NONE, false,   0),
-    new Location14(-  1, 229,   0,  0,   0,  0,  229,           Continent.NONE, false,   0),
-    new Location14(-  1, 230,   0,  0,   0,  0,  230,           Continent.NONE, false,   0),
-    new Location14(-  1, 231,   0,  0,   0,  0,  231,           Continent.NONE, false,   0),
-    new Location14(-  1, 232,   0,  0,   0,  0,  232,           Continent.NONE, false,   0),
-    new Location14(-  1, 233,   0,  0,   0,  0,  233,           Continent.NONE, false,   0),
-    new Location14(-  1, 234,   0,  0,   0,  0,  234,           Continent.NONE, false,   0),
-    new Location14(-  1, 235,   0,  0,   0,  0,  235,           Continent.NONE, false,   0),
-    new Location14(-  1, 236,   0,  0,   0,  0,  236,           Continent.NONE, false,   0),
-    new Location14(-  1, 237,   0,  0,   0,  0,  237,           Continent.NONE, false,   0),
-    new Location14(-  1, 238,   0,  0,   0,  0,  238,           Continent.NONE, false,   0),
-    new Location14(-  1, 239,   0,  0,   0,  0,  239,           Continent.NONE, false,   0),
-    new Location14(-  1, 240,   0,  0,   0,  0,  240,           Continent.NONE, false,   0),
-    new Location14(-  1, 241,   0,  0,   0,  0,  241,           Continent.NONE, false,   0),
-    new Location14(-  1, 242,   0,  0,   0,  0,  242,           Continent.NONE, false,   0),
-    new Location14(-  1, 243,   0,  0,   0,  0,  243,           Continent.NONE, false,   0),
-    new Location14(-  1, 244,   0,  0,   0,  0,  244,           Continent.NONE, false,   0),
-    new Location14(-  1, 245,   0,  0,   0,  0,  245,           Continent.NONE, false,   0),
-    new Location14(-  1, 246,   0,  0,   0,  0,  246,           Continent.NONE, false,   0),
-    new Location14(-  1, 247,   0,  0,   0,  0,  247,           Continent.NONE, false,   0),
-    new Location14(-  1, 248,   0,  0,   0,  0,  248,           Continent.NONE, false,   0)
+    new Location14(   4,   0,   7, 13,   7, 12,    0,   Continent.SOUTH_SERDIO_0,  true, 128),
+    new Location14(   3,   1, 624, 11, 624, 10,    1,   Continent.SOUTH_SERDIO_0, false, 128),
+    new Location14(  12,   2,   7, 16,   7, 14,    2,   Continent.SOUTH_SERDIO_0,  true, 128),
+    new Location14(   2,   3,  11, 30,  12,  5, -  1,   Continent.SOUTH_SERDIO_0,  true, 136),
+    new Location14(   1,   4,   9,  9,   9,  6,    4,   Continent.SOUTH_SERDIO_0,  true,   0),
+    new Location14(   2,   3, 696, 13, 696, 13, -  1,   Continent.SOUTH_SERDIO_0,  true,   0),
+    new Location14(   2,   3, 695,  4, 695,  4, -  1,   Continent.SOUTH_SERDIO_0,  true,   0),
+    new Location14(   9,   5,  13, 17,  13, 16,    5,   Continent.SOUTH_SERDIO_0, false, 192),
+    new Location14(  11,   6,  38, 28,  38,  4,    6,   Continent.SOUTH_SERDIO_0, false,  64),
+    new Location14(  13,   7,  39, 25,  39, 20,    7,   Continent.SOUTH_SERDIO_0,  true,  64),
+    new Location14(  32,   8,  44,  6,  44, 24,    8,   Continent.NORTH_SERDIO_1,  true,  64),
+    new Location14(  33,   9,  45,  1,  45,  0,    9,   Continent.NORTH_SERDIO_1, false,   0),
+    new Location14(  34,  10,  54,  6,  54,  0,   10,   Continent.NORTH_SERDIO_1,  true,   0),
+    new Location14(  37,  11,  66, 41,  66, 40,   11,   Continent.NORTH_SERDIO_1, false,   0),
+    new Location14(  43,  12,  95,  1,  95,  2,   12,   Continent.NORTH_SERDIO_1, false,   0),
+    new Location14(  43,  13,  96,  1,  97,  2, -  1,   Continent.NORTH_SERDIO_1,  true, 136),
+    new Location14(  47,  14, 106, 10, 106, 19,   14,   Continent.NORTH_SERDIO_1, false,   0),
+    new Location14(  47,  15, 106, 16, 106, 19,   15,   Continent.NORTH_SERDIO_1,  true,   0),
+    new Location14(  47,  16, 106, 20, 106, 19,   16,   Continent.NORTH_SERDIO_1,  true,   0),
+    new Location14(  48,  17, 111, 11, 111, 12,   17,   Continent.NORTH_SERDIO_1,  true,   0),
+    new Location14(  49,  18, 114,  0, 114,  1,   18,   Continent.NORTH_SERDIO_1, false,   4),
+    new Location14(  15,  19, 122,  8, 122,  5,   19,   Continent.SOUTH_SERDIO_0,  true,   4),
+    new Location14(  14,  20, 130, 17, 130, 11,   20,   Continent.SOUTH_SERDIO_0, false,   0),
+    new Location14(  19,  21, 133, 57, 133, 56,   21,   Continent.SOUTH_SERDIO_0,  true,   0),
+    new Location14(  16,  22, 132, 22, 132,  4,   22,   Continent.SOUTH_SERDIO_0,  true,   0),
+    new Location14(  23,  23, 140,  2, 140,  0,   23,   Continent.SOUTH_SERDIO_0, false,   0),
+    new Location14(  17,  24, 153, 39, 153, 11,   24,   Continent.SOUTH_SERDIO_0, false,   0),
+    new Location14(  29,  25, 171,  1, 171,  0,   25,   Continent.SOUTH_SERDIO_0, false,   0),
+    new Location14(  53,  26, 201,  1, 201,  0,   26,        Continent.TIBEROA_2,  true,  16),
+    new Location14(  53,  26, 201, 32, 201,  0, -  1,        Continent.TIBEROA_2,  true,  16),
+    new Location14(  53,  26, 744,  2, 744,  0,   26,        Continent.TIBEROA_2,  true,  16),
+    new Location14(  96,  27, 224, 35, 224, 12,   27,       Continent.ENDINESS_7,  true,   0),
+    new Location14(  55,  28, 231,  1, 231,  0,   28,        Continent.TIBEROA_2, false,  16),
+    new Location14(  56,  29, 233, 13, 233, 12,   29,        Continent.TIBEROA_2,  true,  16),
+    new Location14(  58,  30, 232, 11, 232,  2,   30,        Continent.TIBEROA_2,  true,  16),
+    new Location14(  57,  31, 239, 26, 239,  7,   31,        Continent.TIBEROA_2, false,  16),
+    new Location14(  62,  32, 242,  3, 242,  8,   32,     Continent.ILLISA_BAY_3,  true,  16),
+    new Location14(  59,  33, 251, 10, 251,  9,   33,        Continent.TIBEROA_2, false,  16),
+    new Location14(  59,  34, 258, 10, 258,  9,   34,        Continent.TIBEROA_2,  true,  16),
+    new Location14(  60,  35, 256,  9, 256, 15,   35,        Continent.TIBEROA_2,  true,  16),
+    new Location14(  61,  36, 261,  1, 261,  0,   36,        Continent.TIBEROA_2, false,  16),
+    new Location14(  95,  37, 264, 28, 264, 27,   37, Continent.DEATH_FRONTIER_6,  true,   0),
+    new Location14(  73,  38, 297,  0, 297, 43,   38,     Continent.ILLISA_BAY_3,  true,  16),
+    new Location14(  73,  39, 297,  3, 297, 43,   -1,     Continent.ILLISA_BAY_3,  true,  16),
+    new Location14(  72,  40, 301, 19, 301, 12,   40,     Continent.ILLISA_BAY_3, false,  16),
+    new Location14(  72,  41, 302, 19, 302, 12,   41,     Continent.ILLISA_BAY_3,  true,  16),
+    new Location14(  71,  42, 301,  1, 301,  0,   42,     Continent.ILLISA_BAY_3,  true,  16),
+    new Location14(  71,  43, 302,  1, 302,  0,   43,     Continent.ILLISA_BAY_3,  true,  16),
+    new Location14(  68,  44, 309, 32, 309, 33,   44,     Continent.ILLISA_BAY_3, false,  16),
+    new Location14(  67,  45, 311, 18, 311,  0,   45,     Continent.ILLISA_BAY_3,  true,  16),
+    new Location14(  65,  46, 328, 54, 328, 30,   46,     Continent.ILLISA_BAY_3,  true,  16),
+    new Location14(  74,  47, 330, 25, 330, 24,   47,   Continent.MILLE_SESEAU_4,  true,  32),
+    new Location14(  74,  47, 330, 19, 330, 24, -  1,   Continent.MILLE_SESEAU_4,  true,  32),
+    new Location14(  75,  48, 339, 26, 339, 18,   48,   Continent.MILLE_SESEAU_4, false,  32),
+    new Location14(  76,  49, 344, 17, 344, 16,   49,   Continent.MILLE_SESEAU_4,  true,  32),
+    new Location14(  76,  49, 344, 18, 344, 16, -  1,   Continent.MILLE_SESEAU_4,  true,  32),
+    new Location14(  82,  50, 341, 14, 341, 16,   50,   Continent.MILLE_SESEAU_4,  true,  32),
+    new Location14(  84,  51,   0,  0,   0,  0,   51,   Continent.MILLE_SESEAU_4,  true,  32),
+    new Location14(  86,  52, 342, 38, 342, 35,   52,   Continent.MILLE_SESEAU_4,  true,  32),
+    new Location14(  79,  53, 347, 31, 347,  0,   53,   Continent.MILLE_SESEAU_4, false,  32),
+    new Location14(  79,  54, 349,  1, 349,  2,   54,   Continent.MILLE_SESEAU_4,  true,  32),
+    new Location14(  83,  55, 379,  0, 379,  1,   55,   Continent.MILLE_SESEAU_4, false,  32),
+    new Location14(  85,  56,   0,  0,   0,  0,   56,   Continent.MILLE_SESEAU_4, false,   0),
+    new Location14(  87,  57, 413,  1, 413,  0,   57,   Continent.MILLE_SESEAU_4, false,   0),
+    new Location14(  81,  58, 433,  3, 433,  2,   58,   Continent.MILLE_SESEAU_4, false,  32),
+    new Location14(  88,  59, 434,  1, 434, 27,   59,       Continent.GLORIANO_5,  true,  32),
+    new Location14(  89,  60, 457,  0, 457,  1,   60,       Continent.GLORIANO_5, false,   0),
+    new Location14(  90,  61, 459,  1, 459,  3,   61,       Continent.GLORIANO_5,  true,   0),
+    new Location14(  91,  62, 477,  0, 477,  1,   62,       Continent.GLORIANO_5, false,   0),
+    new Location14(  92,  63, 787,  1, 787,  2,   63, Continent.DEATH_FRONTIER_6,  true,   0),
+    new Location14(  93,  64, 513,  1, 513,  0,   64, Continent.DEATH_FRONTIER_6, false,   0),
+    new Location14(  94,  64, 526, 36, 526, 35,   64, Continent.DEATH_FRONTIER_6,  true,   0),
+    new Location14( 130,  65, 528, 14, 528, 12,   65,       Continent.ENDINESS_7,  true,   0),
+    new Location14( 129,  66, 528, 13, 528, 12,   66,       Continent.ENDINESS_7,  true,   0),
+    new Location14( 131,  67, 539,  0, 539,  0,   67,       Continent.ENDINESS_7,  true,   0),
+    new Location14( 131,  68, 540, 19, 540, 18,   68,       Continent.ENDINESS_7,  true,   0),
+    new Location14( 128,  69, 572, 23, 572, 29,   69,       Continent.ENDINESS_7,  true,   0),
+    new Location14( 130,  65, 528, 15, 528, 12,   65,       Continent.ENDINESS_7,  true,   0),
+    new Location14(  97,  71, 563, 25, 563,  7,   71,       Continent.ENDINESS_7, false,   0),
+    new Location14(-  1,  72,   0,  0,   0,  0,   72,           Continent.NONE_8, false,   0),
+    new Location14(-  1,  73,   0,  0,   0,  0,   73,           Continent.NONE_8, false,   0),
+    new Location14(   7, 100,  15,  8,  15,  8, -  1,   Continent.SOUTH_SERDIO_0,  true,   0),
+    new Location14(  86,  52, 346,  1, 346,  0,   52,   Continent.MILLE_SESEAU_4,  true,  32),
+    new Location14(  98,  76, 529, 41, 529, 42,   76,       Continent.ENDINESS_7,  true,   0),
+    new Location14(  11,   6,  38,  7,  38,  4, -  1,   Continent.SOUTH_SERDIO_0, false,  64),
+    new Location14( 105,  78, 994,  0, 994, 50,   78,       Continent.ENDINESS_7, false,   0),
+    new Location14( 109,  79, 996,  0, 996, 70,   79,       Continent.ENDINESS_7, false,   0),
+    new Location14( 113,  80, 993,  0, 993, 48,   80,       Continent.ENDINESS_7, false,   0),
+    new Location14( 117,  81, 992,  0, 992, 28,   81,       Continent.ENDINESS_7, false,   0),
+    new Location14( 121,  82, 992,  0, 992, 35,   82,       Continent.ENDINESS_7, false,   0),
+    new Location14( 125,  83, 990,  0, 990, 25,   83,       Continent.ENDINESS_7, false,   0),
+    new Location14( 127,  84, 991,  0, 991, 13,   84,       Continent.ENDINESS_7, false,   0),
+    new Location14(-  1,  85, 285,  0, 285, 32,   85,           Continent.NONE_8, false,   0),
+    new Location14(-  1,  86, 279, 31, 279, 31,   86,           Continent.NONE_8, false,   0),
+    new Location14(  94,  87, 527, 35, 527,  0, -  1, Continent.DEATH_FRONTIER_6,  true,   0),
+    new Location14( 130,  65, 528, 15, 528, 12, -  1,       Continent.ENDINESS_7,  true,   0),
+    new Location14(  65,  46, 327, 54, 327, 30, -  1,     Continent.ILLISA_BAY_3,  true,  16),
+    new Location14(  43,  13,  97,  1,  97,  2,   13,   Continent.NORTH_SERDIO_1,  true,   0),
+    new Location14(   2,   3,  12, 30,  12,  5,    3,   Continent.SOUTH_SERDIO_0,  true,   0),
+    new Location14(   0,  92,   0,  0,   0,  0,   92,   Continent.SOUTH_SERDIO_0, false,   0),
+    new Location14(  31,  93, 999,  0, 999, 18,   93,   Continent.SOUTH_SERDIO_0,  true,   0),
+    new Location14(  45,  94, 999,  1, 999,  2,   94,   Continent.NORTH_SERDIO_1,  true,   0),
+    new Location14(  50,  95, 999,  2, 999,  1,   95,        Continent.TIBEROA_2,  true,   0),
+    new Location14(   5,  96,   0,  0,   0,  0,   96,   Continent.SOUTH_SERDIO_0, false,   0),
+    new Location14(   6,  97,   0,  0,   0,  0,   97,   Continent.SOUTH_SERDIO_0, false,   0),
+    new Location14(  10,  98,   0,  0,   0,  0,   98,   Continent.SOUTH_SERDIO_0, false,   0),
+    new Location14(   7,  99,   0,  0,   0,  0,   99,   Continent.SOUTH_SERDIO_0, false,   0),
+    new Location14(   8, 100,   0,  0,   0,  0,  100,   Continent.SOUTH_SERDIO_0, false,   0),
+    new Location14(  27, 101,   0,  0,   0,  0,  101,   Continent.SOUTH_SERDIO_0, false,   0),
+    new Location14(  24, 102,   0,  0,   0,  0,  102,   Continent.SOUTH_SERDIO_0, false,   0),
+    new Location14(  26, 103,   0,  0,   0,  0,  103,   Continent.SOUTH_SERDIO_0, false,   0),
+    new Location14(  28, 104,   0,  0,   0,  0,  104,   Continent.SOUTH_SERDIO_0, false,   0),
+    new Location14(  20, 105,   0,  0,   0,  0,  105,   Continent.SOUTH_SERDIO_0, false,   0),
+    new Location14(  22, 106,   0,  0,   0,  0,  106,   Continent.SOUTH_SERDIO_0, false,   0),
+    new Location14(  25, 107,   0,  0,   0,  0,  107,   Continent.SOUTH_SERDIO_0, false,   0),
+    new Location14(  18, 108,   0,  0,   0,  0,  108,   Continent.SOUTH_SERDIO_0, false,   0),
+    new Location14(  21, 109,   0,  0,   0,  0,  109,   Continent.SOUTH_SERDIO_0, false,   0),
+    new Location14(  30, 110,   0,  0,   0,  0,  110,   Continent.SOUTH_SERDIO_0, false,   0),
+    new Location14(  35, 111,   0,  0,   0,  0,  111,   Continent.NORTH_SERDIO_1, false,   0),
+    new Location14(  36, 112,   0,  0,   0,  0,  112,   Continent.NORTH_SERDIO_1, false,   0),
+    new Location14(  38, 113,   0,  0,   0,  0,  113,   Continent.NORTH_SERDIO_1, false,   0),
+    new Location14(  39, 114,   0,  0,   0,  0,  114,   Continent.NORTH_SERDIO_1, false,   0),
+    new Location14(  40, 115,   0,  0,   0,  0,  115,   Continent.NORTH_SERDIO_1, false,   0),
+    new Location14(  46, 116,   0,  0,   0,  0,  116,   Continent.NORTH_SERDIO_1, false,   0),
+    new Location14(  41, 117,   0,  0,   0,  0,  117,   Continent.NORTH_SERDIO_1, false,   0),
+    new Location14(  42, 118,   0,  0,   0,  0,  118,   Continent.NORTH_SERDIO_1, false,   0),
+    new Location14(  44, 119,   0,  0,   0,  0,  119,   Continent.NORTH_SERDIO_1, false,   0),
+    new Location14(  52, 120,   0,  0,   0,  0,  120,        Continent.TIBEROA_2, false,  16),
+    new Location14(  54, 121,   0,  0,   0,  0,  121,        Continent.TIBEROA_2, false,  16),
+    new Location14(  51, 122,   0,  0,   0,  0,  122,        Continent.TIBEROA_2, false,  16),
+    new Location14(  63, 123,   0,  0,   0,  0,  123,     Continent.ILLISA_BAY_3, false,  16),
+    new Location14(  66, 124,   0,  0,   0,  0,  124,     Continent.ILLISA_BAY_3, false,  16),
+    new Location14(  64, 125,   0,  0,   0,  0,  125,     Continent.ILLISA_BAY_3, false,  16),
+    new Location14(  70, 126,   0,  0,   0,  0,  126,     Continent.ILLISA_BAY_3, false,  16),
+    new Location14(  69, 127,   0,  0,   0,  0,  127,     Continent.ILLISA_BAY_3, false,  16),
+    new Location14(  77, 128,   0,  0,   0,  0,  128,   Continent.MILLE_SESEAU_4, false,   0),
+    new Location14(  78, 129,   0,  0,   0,  0,  129,   Continent.MILLE_SESEAU_4, false,   0),
+    new Location14(  80, 130,   0,  0,   0,  0,  130,   Continent.MILLE_SESEAU_4, false,   0),
+    new Location14(  99, 131,   0,  0,   0,  0,  131,       Continent.ENDINESS_7, false,   0),
+    new Location14( 100, 132,   0,  0,   0,  0,  132,       Continent.ENDINESS_7, false,   0),
+    new Location14( 102, 133,   0,  0,   0,  0,  133,       Continent.ENDINESS_7, false,   0),
+    new Location14( 103, 134,   0,  0,   0,  0,  134,       Continent.ENDINESS_7, false,   0),
+    new Location14( 104, 135,   0,  0,   0,  0,  135,       Continent.ENDINESS_7, false,   0),
+    new Location14( 106, 136,   0,  0,   0,  0,  136,       Continent.ENDINESS_7, false,   0),
+    new Location14( 107, 137,   0,  0,   0,  0,  137,       Continent.ENDINESS_7, false,   0),
+    new Location14( 108, 138,   0,  0,   0,  0,  138,       Continent.ENDINESS_7, false,   0),
+    new Location14( 110, 139,   0,  0,   0,  0,  139,       Continent.ENDINESS_7, false,   0),
+    new Location14( 111, 140,   0,  0,   0,  0,  140,       Continent.ENDINESS_7, false,   0),
+    new Location14( 112, 141,   0,  0,   0,  0,  141,       Continent.ENDINESS_7, false,   0),
+    new Location14( 114, 142,   0,  0,   0,  0,  142,       Continent.ENDINESS_7, false,   0),
+    new Location14( 115, 143,   0,  0,   0,  0,  143,       Continent.ENDINESS_7, false,   0),
+    new Location14( 116, 144,   0,  0,   0,  0,  144,       Continent.ENDINESS_7, false,   0),
+    new Location14( 118, 145,   0,  0,   0,  0,  145,       Continent.ENDINESS_7, false,   0),
+    new Location14( 119, 146,   0,  0,   0,  0,  146,       Continent.ENDINESS_7, false,   0),
+    new Location14( 120, 147,   0,  0,   0,  0,  147,       Continent.ENDINESS_7, false,   0),
+    new Location14( 122, 148,   0,  0,   0,  0,  148,       Continent.ENDINESS_7, false,   0),
+    new Location14( 123, 149,   0,  0,   0,  0,  149,       Continent.ENDINESS_7, false,   0),
+    new Location14( 124, 150,   0,  0,   0,  0,  150,       Continent.ENDINESS_7, false,   0),
+    new Location14( 126, 151,   0,  0,   0,  0,  151,       Continent.ENDINESS_7, false,   0),
+    new Location14(-  1, 152,   0,  0,   0,  0,  152,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 153,   0,  0,   0,  0,  153,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 154,   0,  0,   0,  0,  154,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 155,   0,  0,   0,  0,  155,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 156,   0,  0,   0,  0,  156,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 157,   0,  0,   0,  0,  157,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 158,   0,  0,   0,  0,  158,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 159,   0,  0,   0,  0,  159,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 160,   0,  0,   0,  0,  160,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 161,   0,  0,   0,  0,  161,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 162,   0,  0,   0,  0,  162,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 163,   0,  0,   0,  0,  163,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 164,   0,  0,   0,  0,  164,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 165,   0,  0,   0,  0,  165,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 166,   0,  0,   0,  0,  166,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 167,   0,  0,   0,  0,  167,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 168,   0,  0,   0,  0,  168,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 169,   0,  0,   0,  0,  169,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 170,   0,  0,   0,  0,  170,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 171,   0,  0,   0,  0,  171,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 172,   0,  0,   0,  0,  172,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 173,   0,  0,   0,  0,  173,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 174,   0,  0,   0,  0,  174,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 175,   0,  0,   0,  0,  175,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 176,   0,  0,   0,  0,  176,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 177,   0,  0,   0,  0,  177,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 178,   0,  0,   0,  0,  178,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 179,   0,  0,   0,  0,  179,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 180,   0,  0,   0,  0,  180,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 181,   0,  0,   0,  0,  181,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 182,   0,  0,   0,  0,  182,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 183,   0,  0,   0,  0,  183,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 184,   0,  0,   0,  0,  184,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 185,   0,  0,   0,  0,  185,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 186,   0,  0,   0,  0,  186,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 187,   0,  0,   0,  0,  187,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 188,   0,  0,   0,  0,  188,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 189,   0,  0,   0,  0,  189,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 190,   0,  0,   0,  0,  190,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 191,   0,  0,   0,  0,  191,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 192,   0,  0,   0,  0,  192,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 193,   0,  0,   0,  0,  193,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 194,   0,  0,   0,  0,  194,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 195,   0,  0,   0,  0,  195,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 196,   0,  0,   0,  0,  196,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 197,   0,  0,   0,  0,  197,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 198,   0,  0,   0,  0,  198,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 199,   0,  0,   0,  0,  199,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 200,   0,  0,   0,  0,  200,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 201,   0,  0,   0,  0,  201,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 202,   0,  0,   0,  0,  202,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 203,   0,  0,   0,  0,  203,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 204,   0,  0,   0,  0,  204,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 205,   0,  0,   0,  0,  205,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 206,   0,  0,   0,  0,  206,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 207,   0,  0,   0,  0,  207,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 208,   0,  0,   0,  0,  208,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 209,   0,  0,   0,  0,  209,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 210,   0,  0,   0,  0,  210,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 211,   0,  0,   0,  0,  211,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 212,   0,  0,   0,  0,  212,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 213,   0,  0,   0,  0,  213,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 214,   0,  0,   0,  0,  214,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 215,   0,  0,   0,  0,  215,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 216,   0,  0,   0,  0,  216,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 217,   0,  0,   0,  0,  217,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 218,   0,  0,   0,  0,  218,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 219,   0,  0,   0,  0,  219,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 220,   0,  0,   0,  0,  220,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 221,   0,  0,   0,  0,  221,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 222,   0,  0,   0,  0,  222,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 223,   0,  0,   0,  0,  223,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 224,   0,  0,   0,  0,  224,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 225,   0,  0,   0,  0,  225,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 226,   0,  0,   0,  0,  226,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 227,   0,  0,   0,  0,  227,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 228,   0,  0,   0,  0,  228,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 229,   0,  0,   0,  0,  229,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 230,   0,  0,   0,  0,  230,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 231,   0,  0,   0,  0,  231,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 232,   0,  0,   0,  0,  232,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 233,   0,  0,   0,  0,  233,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 234,   0,  0,   0,  0,  234,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 235,   0,  0,   0,  0,  235,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 236,   0,  0,   0,  0,  236,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 237,   0,  0,   0,  0,  237,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 238,   0,  0,   0,  0,  238,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 239,   0,  0,   0,  0,  239,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 240,   0,  0,   0,  0,  240,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 241,   0,  0,   0,  0,  241,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 242,   0,  0,   0,  0,  242,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 243,   0,  0,   0,  0,  243,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 244,   0,  0,   0,  0,  244,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 245,   0,  0,   0,  0,  245,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 246,   0,  0,   0,  0,  246,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 247,   0,  0,   0,  0,  247,           Continent.NONE_8, false,   0),
+    new Location14(-  1, 248,   0,  0,   0,  0,  248,           Continent.NONE_8, false,   0),
   };
   public static final DirectionalPathSegmentData08[] directionalPathSegmentData_800f2248 = {
     new DirectionalPathSegmentData08(  1, 1, 86,   0, 0),
@@ -926,7 +925,7 @@ public final class WmapStatics {
     new WMapDestinationMarker2c(0xffff, new int[]{0x1fff3f17,        0x0,   0x100000, 0x7ffff7ff,   0x0, 0x0, 0x0, 0},  64,  53,  3),
     new WMapDestinationMarker2c(0xffff, new int[]{0x1fff3f17,        0x0,   0x100000, 0x7ffff7ff,   0x0, 0x0, 0x0, 0},  64,  54,  3),
     new WMapDestinationMarker2c(0xffff, new int[]{0x1fff3f17,        0x0,   0x100000, 0x7ffff7ff,   0x0, 0x0, 0x0, 0},  64,  55,  3),
-    new WMapDestinationMarker2c(0xffff, new int[]{0x1fff3f17,        0x0,   0x100000, 0x7ffff7ff,   0x0, 0x0, 0x0, 0},  64,  56,  3)
+    new WMapDestinationMarker2c(0xffff, new int[]{0x1fff3f17,        0x0,   0x100000, 0x7ffff7ff,   0x0, 0x0, 0x0, 0},  64,  56,  3),
   };
 
   public static Vector3f[][] pathDotPosArr_800f591c = {
@@ -935,7 +934,7 @@ public final class WmapStatics {
       new Vector3f(  693.0f, -  6.0f,  613.0f),
       new Vector3f(  667.0f, -  6.0f,  598.0f),
       new Vector3f(  641.0f, -  6.0f,  583.0f),
-      new Vector3f(  615.0f, -  6.0f,  568.0f)
+      new Vector3f(  615.0f, -  6.0f,  568.0f),
     },
     {
       new Vector3f(  510.0f, -  6.0f,  508.0f),
@@ -943,7 +942,7 @@ public final class WmapStatics {
       new Vector3f(  461.0f, -  6.0f,  459.0f),
       new Vector3f(  442.0f, -  6.0f,  440.0f),
       new Vector3f(  423.0f, -  6.0f,  422.0f),
-      new Vector3f(  405.0f, -  6.0f,  403.0f)
+      new Vector3f(  405.0f, -  6.0f,  403.0f),
     },
     {
       new Vector3f(  300.0f, -  6.0f,  328.0f),
@@ -953,7 +952,7 @@ public final class WmapStatics {
       new Vector3f(  180.0f, -  6.0f,  322.0f),
       new Vector3f(  150.0f, -  6.0f,  315.0f),
       new Vector3f(  120.0f, -  6.0f,  298.0f),
-      new Vector3f(   90.0f, -  6.0f,  274.0f)
+      new Vector3f(   90.0f, -  6.0f,  274.0f),
     },
     {
       new Vector3f(   90.0f, -  6.0f,  274.0f),
@@ -962,7 +961,7 @@ public final class WmapStatics {
       new Vector3f(    3.0f, -  6.0f,  166.0f),
       new Vector3f(-   7.0f, -  6.0f,  118.0f),
       new Vector3f(-  27.0f, -  6.0f,   88.0f),
-      new Vector3f(-  51.0f, -  6.0f,   58.0f)
+      new Vector3f(-  51.0f, -  6.0f,   58.0f),
     },
     {
       new Vector3f(-  51.0f, -  6.0f,   58.0f),
@@ -976,7 +975,7 @@ public final class WmapStatics {
       new Vector3f(   27.0f, -  6.0f, -174.0f),
       new Vector3f(   36.0f, -  6.0f, -196.0f),
       new Vector3f(   54.0f, -  6.0f, -219.0f),
-      new Vector3f(   70.0f, -  6.0f, -241.0f)
+      new Vector3f(   70.0f, -  6.0f, -241.0f),
     },
     {
       new Vector3f(   90.0f, -  6.0f,  274.0f),
@@ -994,7 +993,7 @@ public final class WmapStatics {
       new Vector3f(  232.0f, -  6.0f,  658.0f),
       new Vector3f(  252.0f, -  6.0f,  688.0f),
       new Vector3f(  275.0f, -  6.0f,  710.0f),
-      new Vector3f(  301.0f, -  6.0f,  731.0f)
+      new Vector3f(  301.0f, -  6.0f,  731.0f),
     },
     {
       new Vector3f(  360.0f, -  6.0f,  448.0f),
@@ -1007,7 +1006,7 @@ public final class WmapStatics {
       new Vector3f(  480.0f, -  6.0f,  658.0f),
       new Vector3f(  480.0f, -  6.0f,  688.0f),
       new Vector3f(  468.0f, -  6.0f,  718.0f),
-      new Vector3f(  450.0f, -  6.0f,  748.0f)
+      new Vector3f(  450.0f, -  6.0f,  748.0f),
     },
     {
       new Vector3f(- 240.0f, - 25.0f,  307.0f),
@@ -1030,7 +1029,7 @@ public final class WmapStatics {
       new Vector3f(    0.0f, - 35.0f,  615.0f),
       new Vector3f(    0.0f, - 42.0f,  643.0f),
       new Vector3f(    0.0f, - 49.0f,  672.0f),
-      new Vector3f(    0.0f, - 35.0f,  697.0f)
+      new Vector3f(    0.0f, - 35.0f,  697.0f),
     },
     {
       new Vector3f(- 296.0f, -  6.0f,  387.0f),
@@ -1040,25 +1039,25 @@ public final class WmapStatics {
       new Vector3f(- 240.0f, - 16.0f,  458.0f),
       new Vector3f(- 230.0f, - 11.0f,  478.0f),
       new Vector3f(- 219.0f, -  6.0f,  501.0f),
-      new Vector3f(- 201.0f, -  6.0f,  523.0f)
+      new Vector3f(- 201.0f, -  6.0f,  523.0f),
     },
     {
       new Vector3f(- 468.0f, -  6.0f,  350.0f),
       new Vector3f(- 442.0f, -  6.0f,  343.0f),
       new Vector3f(- 412.0f, -  6.0f,  342.0f),
-      new Vector3f(- 383.0f, -  6.0f,  336.0f)
+      new Vector3f(- 383.0f, -  6.0f,  336.0f),
     },
     {
       new Vector3f(- 469.0f, -  6.0f,  232.0f),
       new Vector3f(- 468.0f, -  6.0f,  266.0f),
       new Vector3f(- 468.0f, -  6.0f,  296.0f),
       new Vector3f(- 468.0f, -  6.0f,  326.0f),
-      new Vector3f(- 468.0f, -  6.0f,  350.0f)
+      new Vector3f(- 468.0f, -  6.0f,  350.0f),
     },
     {
       new Vector3f(- 469.0f, -  6.0f,  232.0f),
       new Vector3f(- 499.0f, -  6.0f,  232.0f),
-      new Vector3f(- 529.0f, -  6.0f,  232.0f)
+      new Vector3f(- 529.0f, -  6.0f,  232.0f),
     },
     {
       new Vector3f(- 360.0f, -  6.0f, -  1.0f),
@@ -1069,7 +1068,7 @@ public final class WmapStatics {
       new Vector3f(- 420.0f, -  6.0f,  148.0f),
       new Vector3f(- 425.0f, -  6.0f,  178.0f),
       new Vector3f(- 450.0f, -  6.0f,  208.0f),
-      new Vector3f(- 469.0f, -  6.0f,  232.0f)
+      new Vector3f(- 469.0f, -  6.0f,  232.0f),
     },
     {
       new Vector3f(-  51.0f, -  6.0f,   58.0f),
@@ -1082,7 +1081,7 @@ public final class WmapStatics {
       new Vector3f(- 270.0f, -  6.0f,   13.0f),
       new Vector3f(- 300.0f, -  6.0f,    4.0f),
       new Vector3f(- 330.0f, -  6.0f, -  1.0f),
-      new Vector3f(- 360.0f, -  6.0f, -  1.0f)
+      new Vector3f(- 360.0f, -  6.0f, -  1.0f),
     },
     {
       new Vector3f(- 360.0f, -  6.0f, -  1.0f),
@@ -1090,7 +1089,7 @@ public final class WmapStatics {
       new Vector3f(- 360.0f, -  6.0f, - 61.0f),
       new Vector3f(- 360.0f, -  6.0f, - 91.0f),
       new Vector3f(- 354.0f, -  6.0f, -121.0f),
-      new Vector3f(- 345.0f, -  6.0f, -151.0f)
+      new Vector3f(- 345.0f, -  6.0f, -151.0f),
     },
     {
       new Vector3f(- 468.0f, -  6.0f,  350.0f),
@@ -1101,7 +1100,7 @@ public final class WmapStatics {
       new Vector3f(- 495.0f, -  6.0f,  498.0f),
       new Vector3f(- 477.0f, -  6.0f,  528.0f),
       new Vector3f(- 456.0f, -  6.0f,  560.0f),
-      new Vector3f(- 444.0f, -  6.0f,  592.0f)
+      new Vector3f(- 444.0f, -  6.0f,  592.0f),
     },
     {
       new Vector3f(  617.0f, -  6.0f, -750.0f),
@@ -1121,7 +1120,7 @@ public final class WmapStatics {
       new Vector3f(  660.0f, -  6.0f, -330.0f),
       new Vector3f(  637.0f, -  6.0f, -299.0f),
       new Vector3f(  612.0f, -  6.0f, -269.0f),
-      new Vector3f(  570.0f, -  6.0f, -240.0f)
+      new Vector3f(  570.0f, -  6.0f, -240.0f),
     },
     {
       new Vector3f(  409.0f, -  6.0f,   98.0f),
@@ -1136,7 +1135,7 @@ public final class WmapStatics {
       new Vector3f(  191.0f, -  6.0f,  267.0f),
       new Vector3f(  150.0f, -  6.0f,  272.0f),
       new Vector3f(  112.0f, -  6.0f,  287.0f),
-      new Vector3f(   94.0f, -  6.0f,  308.0f)
+      new Vector3f(   94.0f, -  6.0f,  308.0f),
     },
     {
       new Vector3f(   94.0f, -  6.0f,  308.0f),
@@ -1147,7 +1146,7 @@ public final class WmapStatics {
       new Vector3f(  233.0f, -  6.0f,  455.0f),
       new Vector3f(  264.0f, -  6.0f,  480.0f),
       new Vector3f(  300.0f, -  6.0f,  501.0f),
-      new Vector3f(  330.0f, -  6.0f,  509.0f)
+      new Vector3f(  330.0f, -  6.0f,  509.0f),
     },
     {
       new Vector3f(   94.0f, -  6.0f,  308.0f),
@@ -1165,7 +1164,7 @@ public final class WmapStatics {
       new Vector3f(- 165.0f, -  6.0f,    0.0f),
       new Vector3f(- 198.0f, -  6.0f, - 17.0f),
       new Vector3f(- 228.0f, -  6.0f, - 31.0f),
-      new Vector3f(- 249.0f, -  6.0f, - 57.0f)
+      new Vector3f(- 249.0f, -  6.0f, - 57.0f),
     },
     {
       new Vector3f(- 249.0f, -  6.0f, - 57.0f),
@@ -1187,13 +1186,13 @@ public final class WmapStatics {
       new Vector3f(- 667.0f, -  6.0f, -354.0f),
       new Vector3f(- 674.0f, -  6.0f, -382.0f),
       new Vector3f(- 686.0f, -  6.0f, -406.0f),
-      new Vector3f(- 704.0f, -  6.0f, -426.0f)
+      new Vector3f(- 704.0f, -  6.0f, -426.0f),
     },
     {
       new Vector3f(- 704.0f, -  6.0f, -426.0f),
       new Vector3f(- 726.0f, -  6.0f, -427.0f),
       new Vector3f(- 753.0f, -  6.0f, -419.0f),
-      new Vector3f(- 777.0f, -  6.0f, -403.0f)
+      new Vector3f(- 777.0f, -  6.0f, -403.0f),
     },
     {
       new Vector3f(- 704.0f, -  6.0f, -426.0f),
@@ -1211,7 +1210,7 @@ public final class WmapStatics {
       new Vector3f(- 847.0f, -  6.0f, -794.0f),
       new Vector3f(- 854.0f, -  6.0f, -827.0f),
       new Vector3f(- 858.0f, -  6.0f, -855.0f),
-      new Vector3f(- 864.0f, -  6.0f, -892.0f)
+      new Vector3f(- 864.0f, -  6.0f, -892.0f),
     },
     {
       new Vector3f(- 249.0f, -  6.0f, - 57.0f),
@@ -1220,7 +1219,7 @@ public final class WmapStatics {
       new Vector3f(- 249.0f, -  6.0f, -166.0f),
       new Vector3f(- 249.0f, -  6.0f, -200.0f),
       new Vector3f(- 249.0f, -  6.0f, -230.0f),
-      new Vector3f(- 249.0f, -  6.0f, -260.0f)
+      new Vector3f(- 249.0f, -  6.0f, -260.0f),
     },
     {
       new Vector3f(- 240.0f, -  6.0f, -464.0f),
@@ -1233,7 +1232,7 @@ public final class WmapStatics {
       new Vector3f(- 240.0f, - 62.0f, -599.0f),
       new Vector3f(- 240.0f, - 69.0f, -621.0f),
       new Vector3f(- 240.0f, - 76.0f, -643.0f),
-      new Vector3f(- 240.0f, - 73.0f, -668.0f)
+      new Vector3f(- 240.0f, - 73.0f, -668.0f),
     },
     {
       new Vector3f(  674.0f, -  6.0f, -684.0f),
@@ -1262,13 +1261,13 @@ public final class WmapStatics {
       new Vector3f(  572.0f, -  6.0f, - 37.0f),
       new Vector3f(  547.0f, -  6.0f, - 18.0f),
       new Vector3f(  519.0f, -  6.0f, -  5.0f),
-      new Vector3f(  487.0f, -  6.0f,    7.0f)
+      new Vector3f(  487.0f, -  6.0f,    7.0f),
     },
     {
       new Vector3f(  487.0f, -  6.0f,    7.0f),
       new Vector3f(  456.0f, -  6.0f,    5.0f),
       new Vector3f(  426.0f, -  6.0f, -  4.0f),
-      new Vector3f(  401.0f, -  6.0f, - 19.0f)
+      new Vector3f(  401.0f, -  6.0f, - 19.0f),
     },
     {
       new Vector3f(  487.0f, -  6.0f,    7.0f),
@@ -1278,7 +1277,7 @@ public final class WmapStatics {
       new Vector3f(  508.0f, -  6.0f,  121.0f),
       new Vector3f(  505.0f, -  6.0f,  150.0f),
       new Vector3f(  499.0f, -  6.0f,  181.0f),
-      new Vector3f(  490.0f, -  6.0f,  210.0f)
+      new Vector3f(  490.0f, -  6.0f,  210.0f),
     },
     {
       new Vector3f(  476.0f, -  6.0f,  375.0f),
@@ -1287,7 +1286,7 @@ public final class WmapStatics {
       new Vector3f(  492.0f, -  6.0f,  465.0f),
       new Vector3f(  502.0f, -  6.0f,  494.0f),
       new Vector3f(  512.0f, -  6.0f,  525.0f),
-      new Vector3f(  529.0f, -  6.0f,  555.0f)
+      new Vector3f(  529.0f, -  6.0f,  555.0f),
     },
     {
       new Vector3f(  370.0f, -  6.0f,  293.0f),
@@ -1327,7 +1326,7 @@ public final class WmapStatics {
       new Vector3f(- 171.0f, - 36.0f,  216.0f),
       new Vector3f(- 185.0f, - 26.0f,  209.0f),
       new Vector3f(- 199.0f, - 16.0f,  203.0f),
-      new Vector3f(- 213.0f, -  6.0f,  196.0f)
+      new Vector3f(- 213.0f, -  6.0f,  196.0f),
     },
     {
       new Vector3f(- 291.0f, - 33.0f,  263.0f),
@@ -1346,7 +1345,7 @@ public final class WmapStatics {
       new Vector3f(- 595.0f, -  6.0f,   39.0f),
       new Vector3f(- 625.0f, -  6.0f,   43.0f),
       new Vector3f(- 655.0f, -  6.0f,   51.0f),
-      new Vector3f(- 685.0f, -  6.0f,   65.0f)
+      new Vector3f(- 685.0f, -  6.0f,   65.0f),
     },
     {
       new Vector3f(  480.0f,    0.0f, -480.0f),
@@ -1366,7 +1365,7 @@ public final class WmapStatics {
       new Vector3f(    7.0f,    0.0f, -588.0f),
       new Vector3f(-  26.0f,    0.0f, -579.0f),
       new Vector3f(-  60.0f,    0.0f, -565.0f),
-      new Vector3f(-  93.0f,    0.0f, -543.0f)
+      new Vector3f(-  93.0f,    0.0f, -543.0f),
     },
     {
       new Vector3f(-  93.0f,    0.0f, -543.0f),
@@ -1389,14 +1388,14 @@ public final class WmapStatics {
       new Vector3f(- 536.0f,    0.0f, -194.0f),
       new Vector3f(- 556.0f,    0.0f, -171.0f),
       new Vector3f(- 576.0f,    0.0f, -146.0f),
-      new Vector3f(- 600.0f,    0.0f, -120.0f)
+      new Vector3f(- 600.0f,    0.0f, -120.0f),
     },
     {
       new Vector3f(-  93.0f,    0.0f, -543.0f),
       new Vector3f(- 108.0f,    0.0f, -506.0f),
       new Vector3f(- 116.0f,    0.0f, -470.0f),
       new Vector3f(- 120.0f,    0.0f, -433.0f),
-      new Vector3f(- 120.0f,    0.0f, -396.0f)
+      new Vector3f(- 120.0f,    0.0f, -396.0f),
     },
     {
       new Vector3f(-  38.0f, -  6.0f, -270.0f),
@@ -1411,7 +1410,7 @@ public final class WmapStatics {
       new Vector3f(  134.0f, -  6.0f, -149.0f),
       new Vector3f(  150.0f, -  6.0f, -123.0f),
       new Vector3f(  164.0f, -  6.0f, - 95.0f),
-      new Vector3f(  174.0f, -  6.0f, - 60.0f)
+      new Vector3f(  174.0f, -  6.0f, - 60.0f),
     },
     {
       new Vector3f(  174.0f, -  6.0f, - 60.0f),
@@ -1421,7 +1420,7 @@ public final class WmapStatics {
       new Vector3f(  193.0f, -  6.0f,   79.0f),
       new Vector3f(  206.0f, -  6.0f,  110.0f),
       new Vector3f(  222.0f, -  6.0f,  137.0f),
-      new Vector3f(  240.0f, -  6.0f,  165.0f)
+      new Vector3f(  240.0f, -  6.0f,  165.0f),
     },
     {
       new Vector3f(  600.0f,    0.0f,  401.0f),
@@ -1429,7 +1428,7 @@ public final class WmapStatics {
       new Vector3f(  636.0f,    0.0f,  445.0f),
       new Vector3f(  660.0f,    0.0f,  467.0f),
       new Vector3f(  687.0f,    0.0f,  479.0f),
-      new Vector3f(  715.0f,    0.0f,  482.0f)
+      new Vector3f(  715.0f,    0.0f,  482.0f),
     },
     {
       new Vector3f(  200.0f, -  6.0f, -639.0f),
@@ -1440,7 +1439,7 @@ public final class WmapStatics {
       new Vector3f(  149.0f, -  6.0f, -496.0f),
       new Vector3f(  139.0f, -  6.0f, -460.0f),
       new Vector3f(  125.0f, -  6.0f, -432.0f),
-      new Vector3f(   93.0f, -  6.0f, -410.0f)
+      new Vector3f(   93.0f, -  6.0f, -410.0f),
     },
     {
       new Vector3f(-  60.0f, -  6.0f, -300.0f),
@@ -1449,7 +1448,7 @@ public final class WmapStatics {
       new Vector3f(- 151.0f, -  6.0f, -300.0f),
       new Vector3f(- 181.0f, -  6.0f, -300.0f),
       new Vector3f(- 206.0f, -  6.0f, -285.0f),
-      new Vector3f(- 216.0f, -  6.0f, -258.0f)
+      new Vector3f(- 216.0f, -  6.0f, -258.0f),
     },
     {
       new Vector3f(- 216.0f, -  6.0f, -258.0f),
@@ -1460,7 +1459,7 @@ public final class WmapStatics {
       new Vector3f(- 166.0f, -  6.0f, - 73.0f),
       new Vector3f(- 174.0f, -  6.0f, - 42.0f),
       new Vector3f(- 187.0f, -  6.0f, - 19.0f),
-      new Vector3f(- 208.0f, -  6.0f,    5.0f)
+      new Vector3f(- 208.0f, -  6.0f,    5.0f),
     },
     {
       new Vector3f(- 216.0f, -  6.0f, -258.0f),
@@ -1479,7 +1478,7 @@ public final class WmapStatics {
       new Vector3f(- 533.0f, -  6.0f, - 68.0f),
       new Vector3f(- 557.0f, -  6.0f, - 53.0f),
       new Vector3f(- 571.0f, -  6.0f, - 27.0f),
-      new Vector3f(- 586.0f, -  6.0f, - 10.0f)
+      new Vector3f(- 586.0f, -  6.0f, - 10.0f),
     },
     {
       new Vector3f(  180.0f, -  6.0f, -300.0f),
@@ -1500,7 +1499,7 @@ public final class WmapStatics {
       new Vector3f(  547.0f, -  6.0f, - 60.0f),
       new Vector3f(  576.0f, -  6.0f, - 60.0f),
       new Vector3f(  604.0f, -  6.0f, - 60.0f),
-      new Vector3f(  633.0f, -  6.0f, - 60.0f)
+      new Vector3f(  633.0f, -  6.0f, - 60.0f),
     },
     {
       new Vector3f(  147.0f, -  6.0f, -216.0f),
@@ -1512,7 +1511,7 @@ public final class WmapStatics {
       new Vector3f(  230.0f, -  6.0f, - 37.0f),
       new Vector3f(  249.0f, -  6.0f, -  5.0f),
       new Vector3f(  273.0f, -  6.0f,   22.0f),
-      new Vector3f(  297.0f, -  6.0f,   51.0f)
+      new Vector3f(  297.0f, -  6.0f,   51.0f),
     },
     {
       new Vector3f(   60.0f, -  6.0f, -180.0f),
@@ -1540,7 +1539,7 @@ public final class WmapStatics {
       new Vector3f(  121.0f, -  6.0f,  320.0f),
       new Vector3f(  114.0f, -  6.0f,  345.0f),
       new Vector3f(  112.0f, -  6.0f,  369.0f),
-      new Vector3f(  112.0f, -  6.0f,  394.0f)
+      new Vector3f(  112.0f, -  6.0f,  394.0f),
     },
     {
       new Vector3f(  690.0f, -  6.0f, - 60.0f),
@@ -1563,7 +1562,7 @@ public final class WmapStatics {
       new Vector3f(  180.0f, -  6.0f, - 53.0f),
       new Vector3f(  150.0f, -  6.0f, - 41.0f),
       new Vector3f(  120.0f, -  6.0f, - 26.0f),
-      new Vector3f(   90.0f, -  6.0f,    0.0f)
+      new Vector3f(   90.0f, -  6.0f,    0.0f),
     },
     {
       new Vector3f(-  90.0f, -  6.0f,    0.0f),
@@ -1574,7 +1573,7 @@ public final class WmapStatics {
       new Vector3f(- 210.0f, -  6.0f,   84.0f),
       new Vector3f(- 243.0f, -  6.0f,   84.0f),
       new Vector3f(- 273.0f, -  6.0f,   94.0f),
-      new Vector3f(- 300.0f, -  6.0f,  120.0f)
+      new Vector3f(- 300.0f, -  6.0f,  120.0f),
     },
     {
       new Vector3f(    0.0f,    0.0f,  630.0f),
@@ -1591,7 +1590,7 @@ public final class WmapStatics {
       new Vector3f(- 107.0f,    0.0f,  300.0f),
       new Vector3f(- 120.0f,    0.0f,  270.0f),
       new Vector3f(- 120.0f,    0.0f,  240.0f),
-      new Vector3f(- 120.0f,    0.0f,  210.0f)
+      new Vector3f(- 120.0f,    0.0f,  210.0f),
     },
     {
       new Vector3f(-  30.0f,    0.0f,  120.0f),
@@ -1612,7 +1611,7 @@ public final class WmapStatics {
       new Vector3f(  420.0f,    0.0f,  360.0f),
       new Vector3f(  450.0f,    0.0f,  360.0f),
       new Vector3f(  480.0f,    0.0f,  360.0f),
-      new Vector3f(  510.0f,    0.0f,  360.0f)
+      new Vector3f(  510.0f,    0.0f,  360.0f),
     },
     {
       new Vector3f(  487.0f,    0.0f, -262.0f),
@@ -1660,7 +1659,7 @@ public final class WmapStatics {
       new Vector3f(- 862.0f,    0.0f, -314.0f),
       new Vector3f(- 900.0f,    0.0f, -300.0f),
       new Vector3f(- 937.0f,    0.0f, -300.0f),
-      new Vector3f(- 975.0f,    0.0f, -300.0f)
+      new Vector3f(- 975.0f,    0.0f, -300.0f),
     },
     {
       new Vector3f(- 825.0f, -112.0f,  862.0f),
@@ -1675,7 +1674,7 @@ public final class WmapStatics {
       new Vector3f(- 605.0f, -150.0f,  638.0f),
       new Vector3f(- 582.0f, -150.0f,  593.0f),
       new Vector3f(- 555.0f, -150.0f,  556.0f),
-      new Vector3f(- 525.0f, -150.0f,  525.0f)
+      new Vector3f(- 525.0f, -150.0f,  525.0f),
     },
     {
       new Vector3f(- 525.0f, -150.0f,  525.0f),
@@ -1693,7 +1692,7 @@ public final class WmapStatics {
       new Vector3f(-  98.0f, - 26.0f,  531.0f),
       new Vector3f(-  88.0f, - 17.0f,  542.0f),
       new Vector3f(-  80.0f, - 11.0f,  552.0f),
-      new Vector3f(-  75.0f, -  7.0f,  562.0f)
+      new Vector3f(-  75.0f, -  7.0f,  562.0f),
     },
     {
       new Vector3f(- 525.0f, -150.0f,  525.0f),
@@ -1707,7 +1706,7 @@ public final class WmapStatics {
       new Vector3f(- 367.0f, -150.0f,  187.0f),
       new Vector3f(- 324.0f, -150.0f,  161.0f),
       new Vector3f(- 274.0f, -150.0f,  149.0f),
-      new Vector3f(- 225.0f, -150.0f,  150.0f)
+      new Vector3f(- 225.0f, -150.0f,  150.0f),
     },
     {
       new Vector3f(- 225.0f, -150.0f,  150.0f),
@@ -1723,7 +1722,7 @@ public final class WmapStatics {
       new Vector3f(   35.0f, - 57.0f,  327.0f),
       new Vector3f(   53.0f, - 26.0f,  318.0f),
       new Vector3f(   66.0f, - 14.0f,  309.0f),
-      new Vector3f(   75.0f, -  7.0f,  300.0f)
+      new Vector3f(   75.0f, -  7.0f,  300.0f),
     },
     {
       new Vector3f(- 225.0f, -150.0f,  150.0f),
@@ -1734,7 +1733,7 @@ public final class WmapStatics {
       new Vector3f(-  59.0f, -150.0f,   80.0f),
       new Vector3f(-  29.0f, -150.0f,   64.0f),
       new Vector3f(-  10.0f, -150.0f,   36.0f),
-      new Vector3f(    0.0f, -150.0f,    0.0f)
+      new Vector3f(    0.0f, -150.0f,    0.0f),
     },
     {
       new Vector3f(    0.0f, -150.0f,    0.0f),
@@ -1748,7 +1747,7 @@ public final class WmapStatics {
       new Vector3f(- 277.0f, - 46.0f, - 92.0f),
       new Vector3f(- 301.0f, - 25.0f, - 95.0f),
       new Vector3f(- 317.0f, - 16.0f, - 95.0f),
-      new Vector3f(- 331.0f, -  7.0f, - 95.0f)
+      new Vector3f(- 331.0f, -  7.0f, - 95.0f),
     },
     {
       new Vector3f(    0.0f, -150.0f,    0.0f),
@@ -1757,7 +1756,7 @@ public final class WmapStatics {
       new Vector3f(  127.0f, -150.0f,  -25.0f),
       new Vector3f(  162.0f, -150.0f,  -25.0f),
       new Vector3f(  197.0f, -150.0f,  -15.0f),
-      new Vector3f(  225.0f, -150.0f,    0.0f)
+      new Vector3f(  225.0f, -150.0f,    0.0f),
     },
     {
       new Vector3f(  225.0f, -150.0f,    0.0f),
@@ -1767,7 +1766,7 @@ public final class WmapStatics {
       new Vector3f(  244.0f, - 71.0f,  117.0f),
       new Vector3f(  251.0f, - 26.0f,  133.0f),
       new Vector3f(  257.0f, - 11.0f,  144.0f),
-      new Vector3f(  262.0f, -  7.0f,  150.0f)
+      new Vector3f(  262.0f, -  7.0f,  150.0f),
     },
     {
       new Vector3f(  225.0f, -150.0f,    0.0f),
@@ -1776,7 +1775,7 @@ public final class WmapStatics {
       new Vector3f(  338.0f, -150.0f, - 30.0f),
       new Vector3f(  381.0f, -150.0f, - 38.0f),
       new Vector3f(  417.0f, -150.0f, - 55.0f),
-      new Vector3f(  450.0f, -150.0f, - 75.0f)
+      new Vector3f(  450.0f, -150.0f, - 75.0f),
     },
     {
       new Vector3f(  450.0f, -150.0f, - 75.0f),
@@ -1785,7 +1784,7 @@ public final class WmapStatics {
       new Vector3f(  452.0f, - 99.0f, -133.0f),
       new Vector3f(  462.0f, - 59.0f, -145.0f),
       new Vector3f(  475.0f, - 21.0f, -150.0f),
-      new Vector3f(  487.0f, -  7.0f, -150.0f)
+      new Vector3f(  487.0f, -  7.0f, -150.0f),
     },
     {
       new Vector3f(  450.0f, -150.0f, - 75.0f),
@@ -1794,7 +1793,7 @@ public final class WmapStatics {
       new Vector3f(  528.0f, -150.0f, - 62.0f),
       new Vector3f(  548.0f, -150.0f, - 79.0f),
       new Vector3f(  572.0f, -150.0f, - 81.0f),
-      new Vector3f(  600.0f, -150.0f, - 75.0f)
+      new Vector3f(  600.0f, -150.0f, - 75.0f),
     },
     {
       new Vector3f(  600.0f, -150.0f, - 75.0f),
@@ -1804,7 +1803,7 @@ public final class WmapStatics {
       new Vector3f(  634.0f, - 47.0f,    0.0f),
       new Vector3f(  636.0f, - 26.0f,   14.0f),
       new Vector3f(  637.0f, - 13.0f,   28.0f),
-      new Vector3f(  637.0f, -  7.0f,   37.0f)
+      new Vector3f(  637.0f, -  7.0f,   37.0f),
     },
     {
       new Vector3f(  600.0f, -150.0f, - 75.0f),
@@ -1813,7 +1812,7 @@ public final class WmapStatics {
       new Vector3f(  672.0f, -150.0f, -118.0f),
       new Vector3f(  700.0f, -150.0f, -119.0f),
       new Vector3f(  724.0f, -150.0f, -131.0f),
-      new Vector3f(  750.0f, -150.0f, -150.0f)
+      new Vector3f(  750.0f, -150.0f, -150.0f),
     },
     {
       new Vector3f(  750.0f, -150.0f, -150.0f),
@@ -1828,7 +1827,7 @@ public final class WmapStatics {
       new Vector3f(  707.0f, - 38.0f, -485.0f),
       new Vector3f(  697.0f, - 22.0f, -503.0f),
       new Vector3f(  685.0f, - 13.0f, -516.0f),
-      new Vector3f(  675.0f, -  7.0f, -525.0f)
+      new Vector3f(  675.0f, -  7.0f, -525.0f),
     },
     {
       new Vector3f(  750.0f, -150.0f, -150.0f),
@@ -1846,15 +1845,15 @@ public final class WmapStatics {
       new Vector3f( 1047.0f, - 44.0f,   39.0f),
       new Vector3f( 1049.0f, - 25.0f,   55.0f),
       new Vector3f( 1049.0f, - 14.0f,   67.0f),
-      new Vector3f( 1050.0f, -  7.0f,   75.0f)
+      new Vector3f( 1050.0f, -  7.0f,   75.0f),
     },
     {
       new Vector3f(-1012.0f,    0.0f, - 75.0f),
-      new Vector3f(- 825.0f, -112.0f,  825.0f)
+      new Vector3f(- 825.0f, -112.0f,  825.0f),
     },
     {
       new Vector3f(- 825.0f, -112.0f,  825.0f),
-      new Vector3f(-  75.0f, -  7.0f,  187.0f)
+      new Vector3f(-  75.0f, -  7.0f,  187.0f),
     }
   };
 

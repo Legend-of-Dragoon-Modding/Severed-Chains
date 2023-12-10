@@ -13,7 +13,7 @@ public class MapMarker {
   private static final Vector3f[] colours = {
     new Vector3f(85.0f / 128.0f, 0.0f, 0.0f),
     new Vector3f(0.0f, 0.0f, 85.0f / 128.0f),
-    new Vector3f(1.0f, 1.0f, 2.0f)
+    new Vector3f(1.0f, 1.0f, 2.0f),
   };
 
   private final MeshObj[] sprites;

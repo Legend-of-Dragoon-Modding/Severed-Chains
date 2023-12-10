@@ -6,7 +6,7 @@ import legend.core.gte.MV;
 import legend.core.opengl.MeshObj;
 import legend.core.opengl.QuadBuilder;
 import legend.game.types.Translucency;
-import org.joml.Vector3i;
+import org.joml.Vector3f;
 
 public class WMapAtmosphericEffectInstance60 {
   public static final int[] snowUs = {32, 40, 32, 40, 32, 40};
@@ -19,7 +19,7 @@ public class WMapAtmosphericEffectInstance60 {
   /** Originally vector rotation_50 */
   public float snowTick_50;
   /** Was short x_58, short y_5a, byte z_5e */
-  public final Vector3i translation_58 = new Vector3i();
+  public final Vector3f translation_58 = new Vector3f();
   /** short */
   public float brightness_5c;
 
