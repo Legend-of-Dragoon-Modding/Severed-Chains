@@ -1,28 +1,34 @@
 package legend.game.wmap;
 
-import legend.game.wmap.WmapEnums.Continent;
 import org.joml.Vector3f;
 
 import java.util.Arrays;
 
 public class MapState100 {
-  public enum ForcedMovementState {
-    NONE,
-    WALK,
-    RUN,
-    FADE_OUT
+  public enum ForcedMovementMode {
+    NONE_0(0),
+    WALK_1(1),
+    RUN_2(2),
+    FADE_OUT_3(3),
+    ;
+
+    public final int modeIndex;
+
+    ForcedMovementMode(final int modeIndex) {
+      this.modeIndex = modeIndex;
+    }
   }
 
   public enum PathSegmentEntering {
-    CURRENT,
-    PREVIOUS,
-    NEXT
+    CURRENT_0,
+    PREVIOUS_1,
+    NEXT_2,
   }
 
   public enum PathSegmentEndpointType {
-    NOT_AT_ENDPOINT,
-    TERMINAL,
-    INTERSECTION
+    NOT_AT_ENDPOINT_0,
+    TERMINAL_1,
+    INTERSECTION_2,
   }
 
   /**
@@ -85,21 +91,21 @@ public class MapState100 {
   public float playerDestAngle_c0;
   /** 800c685a */
   public float previousPlayerRotation_c2;
-  /** 800c685c */
-  public int submapCut_c4;
-  /** 800c685e */
-  public int submapScene_c6;
-  /** short 800c6860 */
-  public int submapCut_c8;
-  /** short 800c6862 */
-  public int submapScene_ca;
+  /** Submap cut last visited (800c685c) */
+  public int submapCutFrom_c4;
+  /** Submap scene last visited (800c685e) */
+  public int submapSceneFrom_c6;
+  /** Cut that will be entered from current location (short 800c6860) */
+  public int submapCutTo_c8;
+  /** Scene that will be entered from current location (short 800c6862) */
+  public int submapSceneTo_ca;
 
   /** 800c6868 */
   public boolean disableInput_d0;
   /** Used to move player away from location when exiting entrance prompt or leaving location (800c686c) */
-  public ForcedMovementState shortForceMovementState_d4;
+  public ForcedMovementMode shortForceMovementMode_d4;
   /** Used specifically for when the Queen Fury is force-sailed the first time (800c6870) */
-  public ForcedMovementState queenFuryForceMovementState_d8;
+  public ForcedMovementMode queenFuryForceMovementMode_d8;
   /**
    * 800c6874
    * Array of temp indices of paths branching off a location point
@@ -115,7 +121,7 @@ public class MapState100 {
    *   <li>Next</li>
    * </ol>
    */
-  public PathSegmentEntering pathSegmentPlayerMovingInto_f8 = PathSegmentEntering.CURRENT;
+  public PathSegmentEntering pathSegmentPlayerMovingInto_f8 = PathSegmentEntering.CURRENT_0;
   /**
    * 800c6894
    * Describes the type of path segment endpoint that Dart is at.
@@ -125,7 +131,7 @@ public class MapState100 {
    *   <li>Intersection</li>
    * </ol>
    */
-  public PathSegmentEndpointType pathSegmentEndpointTypeCrossed_fc = PathSegmentEndpointType.NOT_AT_ENDPOINT;
+  public PathSegmentEndpointType pathSegmentEndpointTypeCrossed_fc = PathSegmentEndpointType.NOT_AT_ENDPOINT_0;
 
   public MapState100() {
     Arrays.setAll(this.tempPathSegmentStartOffsets_40, i -> new Vector3f());

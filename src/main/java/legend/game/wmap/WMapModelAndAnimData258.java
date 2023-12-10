@@ -10,22 +10,29 @@ import org.joml.Vector3f;
 
 public class WMapModelAndAnimData258 {
   public enum FadeAnimationType {
-    NONE,
-    FADE_IN,
-    FADE_OUT
+    NONE_0(0),
+    FADE_IN_1(1),
+    FADE_OUT_2(2),
+    ;
+
+    public final int typeIndex;
+
+    FadeAnimationType(final int typeIndex) {
+      this.typeIndex = typeIndex;
+    }
   }
 
   public enum FadeState {
-    START_FADE,
-    FADE,
-    END_FADE
+    START_FADE_0,
+    FADE_1,
+    END_FADE_2,
   }
 
-  public enum MapTransitionDestinationType {
-    NONE,
-    TELEPORT,
-    SUBMAP,
-    WORLD_MAP
+  public enum FastTravelTransitionMode {
+    NONE_0,
+    TELEPORT_1,
+    OPEN_COOLON_MAP_2,
+    COOLON_ARRIVAL_3,
   }
 
   /**
@@ -41,33 +48,40 @@ public class WMapModelAndAnimData258 {
    * </ol>
    */
   public enum ZoomState {
-    LOCAL,
-    CONTINENT,
-    TRANSITION_MODEL_OUT,
-    WORLD,
-    TRANSITION_MODEL_IN,
+    LOCAL_0,
+    CONTINENT_1,
+    TRANSITION_MODEL_OUT_2,
+    WORLD_3,
+    TRANSITION_MODEL_IN_4,
   }
 
   public enum CoolonWarpState {
-    NONE,
-    ASCENT,
-    INIT_WORLD_MAP,
-    MAIN_LOOP,
-    INIT_PROMPT,
-    PROMPT_LOOP,
-    FLY_ANIM,
-    INIT_DEST,
-    INIT_DESCENT,
-    PAN_MAP,
-    DESCENT,
-    RESTORE_DART
+    NONE_0(0),
+    ASCENT_1(1),
+    INIT_WORLD_MAP_2(2),
+    MAIN_LOOP_3(3),
+    INIT_PROMPT_4(4),
+    PROMPT_LOOP_5(5),
+    FLY_ANIM_6(6),
+    INIT_DEST_7(7),
+    INIT_DESCENT_10(10),
+    PAN_MAP_11(11),
+    DESCENT_12(12),
+    RESTORE_DART_NEG_1(-1),
+    ;
+    
+    public final int state;
+    
+    CoolonWarpState(final int state) {
+      this.state = state;
+    }
   }
 
   public enum TeleportAnimationState {
-    INIT_ANIM,
-    RENDER_ANIM,
-    INIT_FADE,
-    FADE_OUT
+    INIT_ANIM_0,
+    RENDER_ANIM_1,
+    INIT_FADE_2,
+    FADE_OUT_3,
   }
 
   public int fadeAnimationTicks_00;
@@ -90,9 +104,9 @@ public class WMapModelAndAnimData258 {
    */
   public FadeAnimationType fadeAnimationType_05;
 
-  public WMapTmdRenderingStruct18 tmdRendering_08;
+  public WMapTmdRenderingData18 tmdRendering_08;
   public final Model124[] models_0c = new Model124[4];
-  public TextureAnimation20 textureAnimation_1c;
+  public WaterAnimation20 textureAnimation_1c;
   /** Used for brightness of the map name and the map textures overall (short) */
   public float mapTextureBrightness_20;
 
@@ -105,7 +119,7 @@ public class WMapModelAndAnimData258 {
   public WMapAtmosphericEffectInstance60[] atmosphericEffectInstances_24;
   public MeshObj[] atmosphericEffectSprites;
 
-  public int clutYIndex_28;
+  public float clutYIndex_28;
   public FileData imageData_2c;
   public FileData imageData_30;
   /** Used as the camera position, only translation is used */
@@ -113,8 +127,22 @@ public class WMapModelAndAnimData258 {
   public final Vector3f prevPlayerPos_84 = new Vector3f();
   public final Vector3f currPlayerPos_94 = new Vector3f();
   public final Vector3f playerRotation_a4 = new Vector3f();
-  public int currentAnimIndex_ac;
-  public int animIndex_b0;
+  /**
+   * <ol start="2">
+   *   <li>Idle</li>
+   *   <li>Walk</li>
+   *   <li>Run</li>
+   * </ol>
+   */
+  public int prevAnimIndex_ac;
+  /**
+   * <ol start="2">
+   *   <li>Idle</li>
+   *   <li>Walk</li>
+   *   <li>Run</li>
+   * </ol>
+   */
+  public int currAnimIndex_b0;
   public final PlayerModelTmdFileData[] playerModelTmdFileData_b4 = {new PlayerModelTmdFileData(), new PlayerModelTmdFileData(), new PlayerModelTmdFileData(), new PlayerModelTmdFileData()};
 
   public Obj shadowObj;
@@ -168,7 +196,20 @@ public class WMapModelAndAnimData258 {
   public CoolonWarpState coolonWarpState_220;
   /** ubyte */
   public int coolonOriginIndex_221;
-  /** ubyte */
+  /**
+   * ubyte
+   * <ol>
+   *   <li>Lohan</li>
+   *   <li>Bale</li>
+   *   <li>Fletz</li>
+   *   <li>Donau</li>
+   *   <li>Fueno</li>
+   *   <li>Furni</li>
+   *   <li>Deningrad</li>
+   *   <li>Ulara</li>
+   *   <li>Zenebatos</li>
+   * </ol>
+   */
   public int coolonDestIndex_222;
   /** ubyte */
   public int coolonPromptIndex_223;
@@ -199,7 +240,7 @@ public class WMapModelAndAnimData258 {
    *   <li>Transition to world map</li>
    * </ol>
    */
-  public MapTransitionDestinationType mapTransitionDestinationType_250;
+  public FastTravelTransitionMode fastTravelTransitionMode_250;
   public boolean usingCoolonFromZenebatos_254;
 
   public void deleteAtmosphericEffectObjs() {

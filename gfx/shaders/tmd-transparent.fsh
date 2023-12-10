@@ -28,13 +28,6 @@ layout(location = 1) out float reveal;
 //TODO handle more flags
 
 void main() {
-  // Linearize depth for perspective transforms so that we can render ortho models at specific depths
-  if(orthographic == 0) {
-    gl_FragDepth = (depth - znear) / (zfar - znear);
-  } else {
-    gl_FragDepth = gl_FragCoord.z;
-  }
-
   int flags = int(vertFlags);
 
   vec4 colour = vec4(1.0, 1.0, 1.0, 1.0);
