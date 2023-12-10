@@ -18,6 +18,8 @@ flat out float vertFlags;
 
 smooth out float depth;
 
+uniform float h;
+
 layout(std140) uniform transforms {
   mat4 camera;
   mat4 projection;
@@ -34,6 +36,12 @@ layout(std140) uniform lighting {
   vec4 backgroundColour;
 };
 
+layout(std140) uniform projectionInfo {
+  float znear;
+  float zfar;
+  float orthographic;
+};
+
 void main() {
   vec4 pos = vec4(inPos, 1.0);
 
@@ -44,7 +52,15 @@ void main() {
     vertColour = min((lightColour * max(lightDirection * vec4(inNorm, 1.0), 0.0) + backgroundColour) * vertColour, 1.0);
   }
 
-  gl_Position = projection * camera * model * pos;
+  gl_Position = camera * model * pos;
+
+  // Projection plane division
+  float z = clamp(gl_Position.z, 0, 65536);
+  if(orthographic == 0 && z != 0) {
+    gl_Position.xy *= h / z;
+  }
+
+  gl_Position = projection * gl_Position;
   gl_Position.xy += screenOffset * gl_Position.w;
   vertUv = inUv;
   vertTpage = inTpage;

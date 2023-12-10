@@ -37,6 +37,7 @@ import java.util.Map;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
@@ -119,6 +120,7 @@ public class RenderEngine {
   // Order-independent translucency
   private Shader tmdShader;
   private Shader tmdShaderTransparent;
+  private Shader.UniformFloat tmdShaderProjectionPlaneDistance;
   private Shader.UniformVec3 tmdShaderColour;
   private Shader.UniformVec2 tmdShaderUvOffset;
   private Shader.UniformVec2 tmdShaderClutOverride;
@@ -192,9 +194,6 @@ public class RenderEngine {
 
   private float projectionWidth;
   private float projectionHeight;
-  private float projectionDepth;
-  private float aspectRatio;
-  private float fieldOfView;
   private float halfWidthInv;
   private float halfHeightInv;
 
@@ -203,18 +202,6 @@ public class RenderEngine {
     this.projectionHeight = height;
     this.halfWidthInv = 1.0f / (width / 2.0f);
     this.halfHeightInv = 1.0f / (height / 2.0f);
-    this.updateFieldOfView();
-  }
-
-  public void setProjectionDepth(final float depth) {
-    this.projectionDepth = depth;
-    this.updateFieldOfView();
-  }
-
-  private void updateFieldOfView() {
-    this.aspectRatio = 320.0f / this.projectionHeight;
-    final float halfWidth = this.projectionWidth / 2.0f;
-    this.fieldOfView = (float)(Math.atan(halfWidth / this.projectionDepth) * 2.0f / this.aspectRatio);
     this.updateProjections();
   }
 
@@ -304,6 +291,7 @@ public class RenderEngine {
       this.tmdShader.use();
       this.tmdShader.new UniformInt("tex24").set(0);
       this.tmdShader.new UniformInt("tex15").set(1);
+      this.tmdShaderProjectionPlaneDistance = this.tmdShader.new UniformFloat("h");
       this.tmdShaderColour = this.tmdShader.new UniformVec3("recolour");
       this.tmdShaderClutOverride = this.tmdShader.new UniformVec2("clutOverride");
       this.tmdShaderTpageOverride = this.tmdShader.new UniformVec2("tpageOverride");
@@ -520,27 +508,27 @@ public class RenderEngine {
       this.vsyncCount += 60.0d * Config.getGameSpeedMultiplier() / this.window.getFpsLimit();
 
       if(this.movingLeft) {
-        this.camera3d.strafe(-MOVE_SPEED * 200);
+        this.camera3d.strafe(-MOVE_SPEED * 10);
       }
 
       if(this.movingRight) {
-        this.camera3d.strafe(MOVE_SPEED * 200);
+        this.camera3d.strafe(MOVE_SPEED * 10);
       }
 
       if(this.movingForward) {
-        this.camera3d.move(-MOVE_SPEED * 200);
+        this.camera3d.move(-MOVE_SPEED * 10);
       }
 
       if(this.movingBackward) {
-        this.camera3d.move(MOVE_SPEED * 200);
+        this.camera3d.move(MOVE_SPEED * 10);
       }
 
       if(this.movingUp) {
-        this.camera3d.jump(-MOVE_SPEED * 200);
+        this.camera3d.jump(-MOVE_SPEED * 10);
       }
 
       if(this.movingDown) {
-        this.camera3d.jump(MOVE_SPEED * 200);
+        this.camera3d.jump(MOVE_SPEED * 10);
       }
     });
   }
@@ -559,6 +547,7 @@ public class RenderEngine {
 
     for(int i = 0; i < pool.size(); i++) {
       final QueuedModel entry = pool.get(i);
+      this.tmdShaderProjectionPlaneDistance.set(GTE.getProjectionPlaneDistance());
       this.tmdShaderColour.set(entry.colour);
       this.tmdShaderClutOverride.set(entry.clutOverride);
       this.tmdShaderTpageOverride.set(entry.tpageOverride);
@@ -603,6 +592,7 @@ public class RenderEngine {
       final QueuedModel entry = pool.get(i);
 
       if(entry.obj.shouldRender(Translucency.B_PLUS_F)) {
+        this.tmdShaderProjectionPlaneDistance.set(GTE.getProjectionPlaneDistance());
         this.tmdShaderColour.set(entry.colour);
         this.tmdShaderClutOverride.set(entry.clutOverride);
         this.tmdShaderTpageOverride.set(entry.tpageOverride);
@@ -612,6 +602,7 @@ public class RenderEngine {
       }
 
       if(entry.obj.shouldRender(Translucency.B_MINUS_F)) {
+        this.tmdShaderProjectionPlaneDistance.set(GTE.getProjectionPlaneDistance());
         this.tmdShaderColour.set(entry.colour.mul(-1.0f, this.tempColour));
         this.tmdShaderClutOverride.set(entry.clutOverride);
         this.tmdShaderTpageOverride.set(entry.tpageOverride);
@@ -740,6 +731,34 @@ public class RenderEngine {
     entry.reset();
     entry.obj = obj;
     entry.transforms.set(mv).setTranslation(mv.transfer);
+    entry.lightTransforms.set(entry.transforms);
+    return entry;
+  }
+
+  public QueuedModel queueModel(final Obj obj, final MV mv, final MV lightMv) {
+    final QueuedModel entry = this.modelPool.acquire();
+    entry.reset();
+    entry.obj = obj;
+    entry.transforms.set(mv).setTranslation(mv.transfer);
+    entry.lightTransforms.set(lightMv).setTranslation(lightMv.transfer);
+    return entry;
+  }
+
+  public QueuedModel queueModel(final Obj obj, final Matrix4f mv) {
+    final QueuedModel entry = this.modelPool.acquire();
+    entry.reset();
+    entry.obj = obj;
+    entry.transforms.set(mv);
+    entry.lightTransforms.set(entry.transforms);
+    return entry;
+  }
+
+  public QueuedModel queueModel(final Obj obj, final Matrix4f mv, final MV lightMv) {
+    final QueuedModel entry = this.modelPool.acquire();
+    entry.reset();
+    entry.obj = obj;
+    entry.transforms.set(mv);
+    entry.lightTransforms.set(lightMv).setTranslation(lightMv.transfer);
     return entry;
   }
 
@@ -763,6 +782,7 @@ public class RenderEngine {
     entry.reset();
     entry.obj = obj;
     entry.transforms.set(mv).setTranslation(mv.transfer);
+    entry.lightTransforms.set(entry.transforms);
     return entry;
   }
 
@@ -786,6 +806,7 @@ public class RenderEngine {
     entry.reset();
     entry.obj = obj;
     entry.transforms.set(mv).setTranslation(mv.transfer);
+    entry.lightTransforms.set(entry.transforms);
     return entry;
   }
 
@@ -809,6 +830,7 @@ public class RenderEngine {
     entry.reset();
     entry.obj = obj;
     entry.transforms.set(mv).setTranslation(mv.transfer);
+    entry.lightTransforms.set(entry.transforms);
     return entry;
   }
 
@@ -845,9 +867,10 @@ public class RenderEngine {
       return;
     }
 
-    // LOD uses a left-handed projection with a negated Y axis because reasons
-    this.perspectiveProjection.setPerspectiveLH(this.fieldOfView, this.aspectRatio, 0.1f, 1000000.0f); //TODO un-jank the world map so we can lower this ridiculousness
-    this.perspectiveProjection.negateY();
+    // LOD uses a left-handed projection with a negated Y axis because reasons.
+    // Our perspective projection is actually a centred orthographic projection. We are doing a
+    // projection plane division in the vertex shader to emulate perspective division on the GTE.
+    this.perspectiveProjection.setOrthoLH(-this.projectionWidth / 2.0f, this.projectionWidth / 2.0f, this.projectionHeight / 2.0f, -this.projectionHeight / 2.0f, 0.1f, 1000000.0f);
     this.orthographicProjection.setOrthoLH(0.0f, this.projectionWidth, this.projectionHeight, 0.0f, 0.1f, 1000000.0f);
   }
 
@@ -1006,6 +1029,7 @@ public class RenderEngine {
   public class QueuedModel {
     private Obj obj;
     private final Matrix4f transforms = new Matrix4f();
+    private final Matrix4f lightTransforms = new Matrix4f();
     private final Vector2f screenspaceOffset = new Vector2f();
     private final Vector3f colour = new Vector3f();
     private final Vector2f clutOverride = new Vector2f();
@@ -1062,7 +1086,7 @@ public class RenderEngine {
     }
 
     public QueuedModel lightDirection(final Matrix3f lightDirection) {
-      this.lightDirection.set(lightDirection).mul(this.transforms).setTranslation(0.0f, 0.0f, 0.0f);
+      this.lightDirection.set(lightDirection).mul(this.lightTransforms).setTranslation(0.0f, 0.0f, 0.0f);
       return this;
     }
 
@@ -1089,6 +1113,7 @@ public class RenderEngine {
 
     private void reset() {
       this.transforms.identity();
+      this.lightTransforms.identity();
       this.screenspaceOffset.zero();
       this.colour.set(1.0f, 1.0f, 1.0f);
       this.clutOverride.zero();

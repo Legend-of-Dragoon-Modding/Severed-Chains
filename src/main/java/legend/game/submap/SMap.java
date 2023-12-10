@@ -71,6 +71,7 @@ import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Math;
+import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -123,7 +124,6 @@ import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.rand;
-import static legend.game.Scus94491BpeSegment_8002.renderDobj2;
 import static legend.game.Scus94491BpeSegment_8002.scriptDeallocateAllTextboxes;
 import static legend.game.Scus94491BpeSegment_8002.srand;
 import static legend.game.Scus94491BpeSegment_8002.textboxFits;
@@ -193,8 +193,6 @@ import static legend.game.Scus94491BpeSegment_800e.loadTimImage;
 
 public class SMap extends EngineState {
   private static final Logger LOGGER = LogManager.getFormatterLogger(SMap.class);
-
-  private static final float SUBMAP_SCALE = 320.0f / 368.0f;
 
   private int fmvIndex_800bf0dc;
 
@@ -337,7 +335,7 @@ public class SMap extends EngineState {
   private UnknownStruct2 _800d1a8c;
   private final MediumStruct _800d1a90 = new MediumStruct();
 
-  private final MV submapCutMatrix_800d4bb0 = new MV();
+  private final Matrix4f submapCutMatrix_800d4bb0 = new Matrix4f();
 
   private Structb0 _800d4bd0;
   private FileData _800d4bd4;
@@ -6964,7 +6962,14 @@ public class SMap extends EngineState {
       case 0x2 -> {
         if(this.submapCutModelAndAnimLoaded_800d4bdc && this.submapTextureAndMatrixLoaded_800d4be0) {
           GPU.uploadData15(new Rect4i(1008, 256, this.submapCutTexture.getImageRect().w, this.submapCutTexture.getImageRect().h), this.submapCutTexture.getImageData());
-          this.submapCutMatrix_800d4bb0.set(this.submapCutMatrix);
+
+          // The submap cut model is rendered without using the camera matrix, so we multiply its transforms
+          // by the inverse of the camera matrix to cancel out the camera multiplication in the shader
+          final Matrix4f inverseW2s = new Matrix4f(worldToScreenMatrix_800c3548).setTranslation(worldToScreenMatrix_800c3548.transfer)
+            .invert();
+          this.submapCutMatrix_800d4bb0
+            .set(this.submapCutMatrix).setTranslation(this.submapCutMatrix.transfer)
+            .mul(inverseW2s);
 
           this.submapModelLoadingStage_800f9e5a++;
           this.submapModelLoaded_800c686c = true;
@@ -7315,7 +7320,7 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800eece0L)
-  private void animateAndRenderSubmapModel(final MV matrix) {
+  private void animateAndRenderSubmapModel(final Matrix4f matrix) {
     this.submapModel_800d4bf8.coord2_14.coord.transfer.zero();
     this.submapModel_800d4bf8.coord2_14.transforms.rotate.zero();
 
@@ -7348,7 +7353,7 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800eee48L)
-  private void renderSubmapModel(final Model124 model, final MV matrix) {
+  private void renderSubmapModel(final Model124 model, final Matrix4f matrix) {
     zOffset_1f8003e8 = model.zOffset_a0;
     tmdGp0Tpage_1f8003ec = model.tpage_108;
 
@@ -7359,14 +7364,8 @@ public class SMap extends EngineState {
       final ModelPart10 dobj2 = model.modelParts_00[i];
 
       GsGetLw(dobj2.coord2_04, lw);
-      GsSetLightMatrix(lw);
 
-      PushMatrix();
-      GTE.setTransforms(matrix);
-      renderDobj2(dobj2);
-      PopMatrix();
-
-      RENDERER.queueModel(dobj2.obj, lw)
+      RENDERER.queueModel(dobj2.obj, matrix, lw)
         .screenspaceOffset(this.screenOffsetX_800cb568 + 8, -this.screenOffsetY_800cb56c)
         .lightDirection(lightDirectionMatrix_800c34e8)
         .lightColour(lightColourMatrix_800c3508)
