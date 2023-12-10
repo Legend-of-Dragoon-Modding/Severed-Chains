@@ -746,6 +746,34 @@ public class RenderEngine {
     entry.reset();
     entry.obj = obj;
     entry.transforms.set(mv).setTranslation(mv.transfer);
+    entry.lightTransforms.set(entry.transforms);
+    return entry;
+  }
+
+  public QueuedModel queueModel(final Obj obj, final MV mv, final MV lightMv) {
+    final QueuedModel entry = this.modelPool.acquire();
+    entry.reset();
+    entry.obj = obj;
+    entry.transforms.set(mv).setTranslation(mv.transfer);
+    entry.lightTransforms.set(lightMv).setTranslation(lightMv.transfer);
+    return entry;
+  }
+
+  public QueuedModel queueModel(final Obj obj, final Matrix4f mv) {
+    final QueuedModel entry = this.modelPool.acquire();
+    entry.reset();
+    entry.obj = obj;
+    entry.transforms.set(mv);
+    entry.lightTransforms.set(entry.transforms);
+    return entry;
+  }
+
+  public QueuedModel queueModel(final Obj obj, final Matrix4f mv, final MV lightMv) {
+    final QueuedModel entry = this.modelPool.acquire();
+    entry.reset();
+    entry.obj = obj;
+    entry.transforms.set(mv);
+    entry.lightTransforms.set(lightMv).setTranslation(lightMv.transfer);
     return entry;
   }
 
@@ -769,6 +797,7 @@ public class RenderEngine {
     entry.reset();
     entry.obj = obj;
     entry.transforms.set(mv).setTranslation(mv.transfer);
+    entry.lightTransforms.set(entry.transforms);
     return entry;
   }
 
@@ -792,6 +821,7 @@ public class RenderEngine {
     entry.reset();
     entry.obj = obj;
     entry.transforms.set(mv).setTranslation(mv.transfer);
+    entry.lightTransforms.set(entry.transforms);
     return entry;
   }
 
@@ -815,6 +845,7 @@ public class RenderEngine {
     entry.reset();
     entry.obj = obj;
     entry.transforms.set(mv).setTranslation(mv.transfer);
+    entry.lightTransforms.set(entry.transforms);
     return entry;
   }
 
@@ -1013,6 +1044,7 @@ public class RenderEngine {
   public class QueuedModel {
     private Obj obj;
     private final Matrix4f transforms = new Matrix4f();
+    private final Matrix4f lightTransforms = new Matrix4f();
     private final Vector2f screenspaceOffset = new Vector2f();
     private final Vector3f colour = new Vector3f();
     private final Vector2f clutOverride = new Vector2f();
@@ -1069,7 +1101,7 @@ public class RenderEngine {
     }
 
     public QueuedModel lightDirection(final Matrix3f lightDirection) {
-      this.lightDirection.set(lightDirection).mul(this.transforms).setTranslation(0.0f, 0.0f, 0.0f);
+      this.lightDirection.set(lightDirection).mul(this.lightTransforms).setTranslation(0.0f, 0.0f, 0.0f);
       return this;
     }
 
@@ -1096,6 +1128,7 @@ public class RenderEngine {
 
     private void reset() {
       this.transforms.identity();
+      this.lightTransforms.identity();
       this.screenspaceOffset.zero();
       this.colour.set(1.0f, 1.0f, 1.0f);
       this.clutOverride.zero();
