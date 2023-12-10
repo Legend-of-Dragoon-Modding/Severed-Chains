@@ -6963,6 +6963,8 @@ public class SMap extends EngineState {
         if(this.submapCutModelAndAnimLoaded_800d4bdc && this.submapTextureAndMatrixLoaded_800d4be0) {
           GPU.uploadData15(new Rect4i(1008, 256, this.submapCutTexture.getImageRect().w, this.submapCutTexture.getImageRect().h), this.submapCutTexture.getImageData());
 
+          // The submap cut model is rendered without using the camera matrix, so we multiply its transforms
+          // by the inverse of the camera matrix to cancel out the camera multiplication in the shader
           final Matrix4f inverseW2s = new Matrix4f(worldToScreenMatrix_800c3548).setTranslation(worldToScreenMatrix_800c3548.transfer)
             .invert();
           this.submapCutMatrix_800d4bb0
