@@ -21,6 +21,7 @@ import legend.game.combat.deff.DeffPart;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerParams;
 import legend.game.combat.effects.SpriteMetrics08;
+import legend.game.combat.environment.BattleCamera;
 import legend.game.combat.types.BattleObject;
 import legend.game.scripting.ScriptState;
 import legend.game.tmd.Renderer;
@@ -52,10 +53,8 @@ import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static legend.game.combat.Battle.ZERO;
-import static legend.game.combat.Battle.camera_800c67f0;
 import static legend.game.combat.Battle.deffManager_800c693c;
 import static legend.game.combat.Battle.seed_800fa754;
-import static legend.game.combat.Battle.spriteMetrics_800c6948;
 import static legend.game.combat.SEffe.FUN_800cfc20;
 import static legend.game.combat.SEffe.FUN_800e61e4;
 import static legend.game.combat.SEffe.FUN_800e62a8;
@@ -70,6 +69,12 @@ public class ParticleManager {
   private int currentParticleIndex_8011a008;
   private ParticleEffectData98 firstParticle_8011a00c;
   private ParticleEffectData98 lastParticle_8011a010;
+
+  private final BattleCamera camera;
+
+  public ParticleManager(final BattleCamera camera) {
+    this.camera = camera;
+  }
 
   public ParticleEffectData98 allocateParticle(final ScriptState<? extends BattleObject> parent, final int type, final int particleCount, final int particleTypeId, final int _10, final int _14, final int _18, final int innerStuff, final int scriptIndex, final int parentScriptIndex) {
     final ParticleEffectData98 particle = new ParticleEffectData98(particleCount);
@@ -1215,8 +1220,8 @@ public class ParticleManager {
           // This is super bugged in retail and passes garbage as the last 3 params to both methods.
           // Hopefully this is fine with them all zeroed. This is used for the Glare's bewitching attack.
           particle.managerRotation_68.y = MathHelper.atan2(
-            camera_800c67f0.refpointRawComponent(0, null, ZERO) - particle.particlePosition_50.x,
-            camera_800c67f0.refpointRawComponent(2, null, ZERO) - particle.particlePosition_50.z
+            this.camera.refpointRawComponent(0, null, ZERO) - particle.particlePosition_50.x,
+            this.camera.refpointRawComponent(2, null, ZERO) - particle.particlePosition_50.z
           ) + MathHelper.TWO_PI / 4.0f;
         }
 
@@ -1919,7 +1924,7 @@ public class ParticleManager {
 
     //LAB_80101f70
     if((flags & 0xf_ff00) == 0xf_ff00) {
-      final SpriteMetrics08 metrics = spriteMetrics_800c6948[flags & 0xff];
+      final SpriteMetrics08 metrics = deffManager_800c693c.spriteMetrics_39c[flags & 0xff];
       effect.u_58 = metrics.u_00;
       effect.v_5a = metrics.v_02;
       effect.w_5e = metrics.w_04;

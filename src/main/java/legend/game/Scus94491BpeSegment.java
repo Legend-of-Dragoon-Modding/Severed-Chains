@@ -14,14 +14,12 @@ import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.GpuCommandSetMaskBit;
 import legend.core.gpu.Rect4i;
 import legend.core.memory.Method;
-import legend.core.memory.Value;
 import legend.core.opengl.MatrixStack;
 import legend.core.opengl.Obj;
 import legend.core.opengl.ScissorStack;
 import legend.core.spu.Voice;
 import legend.game.combat.Battle;
 import legend.game.combat.bent.BattleEntity27c;
-import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
 import legend.game.combat.environment.StageData2c;
 import legend.game.debugger.Debugger;
@@ -62,7 +60,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.GPU;
-import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCREENS;
 import static legend.core.GameEngine.SCRIPTS;
@@ -97,7 +94,6 @@ import static legend.game.Scus94491BpeSegment_8004._8004fb00;
 import static legend.game.Scus94491BpeSegment_8004.battleStartDelayTicks_8004f6ec;
 import static legend.game.Scus94491BpeSegment_8004.changeSequenceVolumeOverTime;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
-import static legend.game.Scus94491BpeSegment_8004.dontZeroMemoryOnOverlayLoad_8004dd0c;
 import static legend.game.Scus94491BpeSegment_8004.engineStateFunctions_8004e29c;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
@@ -177,7 +173,6 @@ import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
-import static legend.game.combat.Battle.monsterCount_800c6768;
 import static legend.game.combat.environment.StageData.stageData_80109a98;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
@@ -207,10 +202,6 @@ public final class Scus94491BpeSegment {
 
   public static final int[] levelUpUs_8001032c = {0xc8, 0xd0, 0xd8, 0xd0, 0xc8, 0xe0, 0xe8, 0xf0};
   public static final int[] levelUpOffsets_80010334 = {8, 8, 8, 8, 15, 8, 8, 0};
-
-  public static final Value shadowCContainer_800103d0 = MEMORY.ref(4, 0x800103d0L);
-  public static final Value shadowAnimation_8001051c = MEMORY.ref(4, 0x8001051cL);
-  public static final Value shadowTimFile_80010544 = MEMORY.ref(4, 0x80010544L);
 
   public static final Rect4i[] rectArray28_80010770 = {
     new Rect4i(832, 256, 64, 160), new Rect4i(832, 480, 16, 4), new Rect4i(64, 0, 64, 16), new Rect4i(0, 0, 0, 0),
@@ -500,7 +491,7 @@ public final class Scus94491BpeSegment {
     //LAB_800129c0
     //LAB_800129c4
     if(engineStateOnceLoaded_8004dd24 != null) {
-      pregameLoadingStage_800bb10c.set(0);
+      pregameLoadingStage_800bb10c = 0;
       previousEngineState_8004dd28 = engineState_8004dd20;
       engineState_8004dd20 = engineStateOnceLoaded_8004dd24;
       engineStateOnceLoaded_8004dd24 = null;
@@ -519,14 +510,8 @@ public final class Scus94491BpeSegment {
     LOGGER.info("Transitioning to engine state %s", engineState);
 
     final OverlayStruct overlay = gameStateOverlays_8004dbc0.get(engineState);
-    final String file = overlay.file_04;
 
     if(overlay.class_00.isInstance(currentEngineState_8004dd04)) {
-      if(!dontZeroMemoryOnOverlayLoad_8004dd0c && overlay.addressToClear_08 != 0) {
-        MEMORY.memfill(overlay.addressToClear_08, overlay.clearSize, 0);
-      }
-
-      dontZeroMemoryOnOverlayLoad_8004dd0c = false;
       return;
     }
 
@@ -534,11 +519,7 @@ public final class Scus94491BpeSegment {
 
     //LAB_80012ad8
     currentEngineState_8004dd04 = overlay.constructor_00.get();
-
-    if(file != null) {
-      loadOverlaySync(file, 0x800c6688L);
-      engineStateFunctions_8004e29c = currentEngineState_8004dd04.getScriptFunctions();
-    }
+    engineStateFunctions_8004e29c = currentEngineState_8004dd04.getScriptFunctions();
   }
 
   @Method(0x80012df8L)
@@ -807,14 +788,6 @@ public final class Scus94491BpeSegment {
     }
 
     //LAB_80013f1c
-  }
-
-  public static void loadOverlaySync(final String name, final long fileTransferDest) {
-    final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
-
-    final FileData data = Unpacker.loadFile(name);
-    LOGGER.info("Loading overlay %s, size %d, dest %08x from %s.%s(%s:%d)", name, data.size(), fileTransferDest, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
-    MEMORY.setBytes(fileTransferDest, data.getBytes());
   }
 
   public static void loadFile(final String file, final Consumer<FileData> onCompletion) {
@@ -1212,7 +1185,7 @@ public final class Scus94491BpeSegment {
 
     //LAB_8001852c
     if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
-      pregameLoadingStage_800bb10c.incr();
+      pregameLoadingStage_800bb10c++;
     }
 
     //LAB_80018644
@@ -1221,13 +1194,13 @@ public final class Scus94491BpeSegment {
   @Method(0x80018944L)
   public static void waitForFilesToLoad() {
     if(Unpacker.getLoadingFileCount() == 0) {
-      pregameLoadingStage_800bb10c.incr();
+      pregameLoadingStage_800bb10c++;
     }
   }
 
   @Method(0x80018998L)
   public static void nextLoadingStage() {
-    pregameLoadingStage_800bb10c.incr();
+    pregameLoadingStage_800bb10c++;
   }
 
   @Method(0x800189b0L)
@@ -1236,7 +1209,7 @@ public final class Scus94491BpeSegment {
       //LAB_800189e4
       //LAB_800189e8
       unloadEncounterSoundEffects();
-      pregameLoadingStage_800bb10c.set(0);
+      pregameLoadingStage_800bb10c = 0;
       vsyncMode_8007a3b8 = 2;
       engineStateOnceLoaded_8004dd24 = postCombatMainCallbackIndex_800bc91c;
     }
@@ -1681,139 +1654,6 @@ public final class Scus94491BpeSegment {
     //LAB_80019dfc
   }
 
-  /**
-   * @param type 1 - player, 2 - monster
-   */
-  @Method(0x80019e24L)
-  public static void playBentSound(final int type, final ScriptState<BattleEntity27c> state, final int soundIndex, final int a3, final int a4, final int initialDelay, final int repeatDelay) {
-    final BattleEntity27c bent = state.innerStruct_00;
-
-    int soundFileIndex = 0;
-    if(type == 1) {
-      //LAB_80019e68
-      for(int charSlot = 0; charSlot < 3; charSlot++) {
-        final int index = characterSoundFileIndices_800500f8[charSlot];
-        if(soundFiles_800bcf80[index].charId_02 == bent.charId_272) {
-          //LAB_80019ea4
-          soundFileIndex = index;
-          break;
-        }
-      }
-    } else {
-      //LAB_80019f18
-      //LAB_80019f30
-      for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
-        final int index = monsterSoundFileIndices_800500e8[monsterSlot];
-        if(soundFiles_800bcf80[index].charId_02 == bent.charId_272) {
-          //LAB_80019ea4
-          soundFileIndex = index;
-          break;
-        }
-
-        if(monsterSlot == 3) {
-          return;
-        }
-      }
-    }
-
-    //LAB_80019f70
-    //LAB_80019f74
-    //LAB_80019f7c
-    //LAB_80019eac
-    final SoundFile soundFile = soundFiles_800bcf80[soundFileIndex];
-
-    // Retail bug: one of the Divine Dragon Spirit's attack scripts tries to play soundIndex 10 but there are only 10 elements in the patch/sequence file (DRGN0.1225.1.1)
-    if(soundIndex < soundFile.indices_08.length) {
-      final QueuedSound28 queuedSound = new QueuedSound28();
-      queuedSounds_800bd110.add(queuedSound);
-
-      playSound(type, soundFile, soundIndex, queuedSound, soundFile.playableSound_10, soundFile.indices_08[soundIndex], 0, (short)-1, (short)-1, (short)-1, (short)repeatDelay, (short)initialDelay, state);
-    }
-
-    //LAB_80019f9c
-  }
-
-  /** Same as playBentSound, but looks up bent by combatant index */
-  @Method(0x80019facL)
-  public static void playCombatantSound(final int type, final int charOrMonsterIndex, final int soundIndex, final short initialDelay, final short repeatDelay) {
-    int soundFileIndex = 0;
-    ScriptState<? extends BattleEntity27c> state = null;
-
-    //LAB_80019fdc
-    for(int i = 0; i < monsterCount_800c6768.get(); i++) {
-      final ScriptState<MonsterBattleEntity> monster = battleState_8006e398.monsterBents_e50[i];
-
-      if(monster.innerStruct_00.charId_272 == charOrMonsterIndex) {
-        //LAB_8001a070
-        state = monster;
-        break;
-      }
-    }
-
-    //LAB_8001a018
-    if(type == 1) {
-      //LAB_8001a034
-      for(int charSlot = 0; charSlot < 3; charSlot++) {
-        final int index = characterSoundFileIndices_800500f8[charSlot];
-
-        if(soundFiles_800bcf80[index].charId_02 == charOrMonsterIndex) {
-          soundFileIndex = index;
-          break;
-        }
-      }
-    } else {
-      //LAB_8001a0e4
-      //LAB_8001a0f4
-      for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
-        final int index = monsterSoundFileIndices_800500e8[monsterSlot];
-
-        if(soundFiles_800bcf80[index].charId_02 == charOrMonsterIndex) {
-          //LAB_8001a078
-          soundFileIndex = index;
-          break;
-        }
-      }
-    }
-
-    //LAB_8001a128
-    //LAB_8001a12c
-    //LAB_8001a134
-    //LAB_8001a080
-    final QueuedSound28 queuedSound = new QueuedSound28();
-    queuedSounds_800bd110.add(queuedSound);
-
-    final SoundFile soundFile = soundFiles_800bcf80[soundFileIndex];
-    playSound(type, soundFile, soundIndex, queuedSound, soundFile.playableSound_10, soundFile.indices_08[soundIndex], 0, (short)-1, (short)-1, (short)-1, repeatDelay, initialDelay, state);
-
-    //LAB_8001a154
-  }
-
-  @Method(0x8001a164L)
-  public static void stopBentSound(final BattleEntity27c bent, final int soundIndex, final int mode) {
-    //LAB_8001a1a8
-    for(int sequenceIndex = 0; sequenceIndex < 24; sequenceIndex++) {
-      final SpuStruct08 s0 = _800bc9a8[sequenceIndex];
-
-      if(s0.soundIndex_03 == soundIndex && s0.bent_04 == bent) {
-        stopSoundSequence(sequenceData_800c4ac8[sequenceIndex], true);
-
-        if((mode & 0x1) == 0) {
-          break;
-        }
-      }
-
-      //LAB_8001a1e0
-    }
-
-    //LAB_8001a1f4
-    if((mode & 0x2) != 0) {
-      //LAB_8001a208
-      queuedSounds_800bd110.removeIf(queuedSound -> queuedSound.type_00 != 0 && (queuedSound.repeatDelayTotal_20 != 0 || queuedSound.initialDelay_24 != 0) && queuedSound.soundIndex_0c == soundIndex && queuedSound.bent_04 == bent);
-    }
-
-    //LAB_8001a270
-  }
-
   @Method(0x8001a4e8L)
   public static void startQueuedSounds() {
     //LAB_8001a50c
@@ -1896,9 +1736,9 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001a714L)
-  public static void playSound(final int type, final SoundFile soundFile, final int soundIndex, final QueuedSound28 playingSound, final PlayableSound0c playableSound, final SoundFileIndices soundFileIndices, final int a6, final short pitchShiftVolRight, final short pitchShiftVolLeft, final short pitch, final short repeatDelay, final short initialDelay, @Nullable final ScriptState<? extends BattleEntity27c> state) {
+  public static void playSound(final int type, final SoundFile soundFile, final int soundIndex, final QueuedSound28 playingSound, final PlayableSound0c playableSound, final SoundFileIndices soundFileIndices, final int a6, final short pitchShiftVolRight, final short pitchShiftVolLeft, final short pitch, final short repeatDelay, final short initialDelay, @Nullable final BattleEntity27c bent) {
     playingSound.type_00 = type;
-    playingSound.bent_04 = state != null ? state.innerStruct_00 : null;
+    playingSound.bent_04 = bent;
     playingSound.soundFile_08 = soundFile;
     playingSound.soundIndex_0c = soundIndex;
     playingSound.playableSound_10 = playableSound;
@@ -1952,53 +1792,6 @@ public final class Scus94491BpeSegment {
   public static FlowControl scriptStopSound(final RunningScript<?> script) {
     stopSound(soundFiles_800bcf80[script.params_20[0].get()], script.params_20[1].get(), script.params_20[2].get());
     return FlowControl.CONTINUE;
-  }
-
-  @ScriptDescription("Play a battle entity sound")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "1 = player, 2 = monster")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "soundIndex", description = "The sound index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "a3")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "a4")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "initialDelay", description = "The initial delay before the sound starts")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "repeatDelay", description = "The delay before a sound repeats")
-  @Method(0x8001abd0L)
-  public static FlowControl scriptPlayBentSound(final RunningScript<?> script) {
-    playBentSound(script.params_20[0].get(), (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[script.params_20[1].get()], script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get());
-    return FlowControl.CONTINUE;
-  }
-
-  @ScriptDescription("Stop a battle entity sound")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "soundIndex", description = "The sound index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode")
-  @Method(0x8001ac48L)
-  public static FlowControl scriptStopBentSound(final RunningScript<?> script) {
-    stopBentSound((BattleEntity27c)scriptStatePtrArr_800bc1c0[script.params_20[1].get()].innerStruct_00, script.params_20[2].get(), script.params_20[3].get());
-    return FlowControl.CONTINUE;
-  }
-
-  @ScriptDescription("Plays a combatant sound")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "type", description = "1 = player, 2 = monster")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "charOrMonsterIndex", description = "The character or monster index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "soundIndex", description = "The sound index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "initialDelay", description = "The initial delay before the sound starts")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "repeatDelay", description = "The delay before a sound repeats")
-  @Method(0x8001ac88L)
-  public static FlowControl scriptPlayCombatantSound(final RunningScript<?> script) {
-    playCombatantSound(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), (short)script.params_20[3].get(), (short)script.params_20[4].get());
-    return FlowControl.CONTINUE;
-  }
-
-  @ScriptDescription("Stop a battle entity sound")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bentIndex", description = "The BattleEntity27c index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "soundIndex", description = "The sound index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode")
-  @Method(0x8001acd8L)
-  public static FlowControl scriptStopBentSound2(final RunningScript<?> script) {
-    return scriptStopBentSound(script);
   }
 
   @Method(0x8001ad18L)

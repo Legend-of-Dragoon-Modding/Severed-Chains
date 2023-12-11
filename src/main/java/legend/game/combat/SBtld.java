@@ -5,55 +5,13 @@ import legend.game.combat.environment.EncounterData38;
 import legend.game.combat.types.AdditionHitProperties10;
 import legend.game.combat.types.AdditionHits80;
 import legend.game.combat.types.StageDeffThing08;
-import legend.game.scripting.ScriptFile;
-import legend.game.unpacker.FileData;
-import legend.game.unpacker.Unpacker;
 
-import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
-import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadFile;
-import static legend.game.Scus94491BpeSegment.simpleRand;
-import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.combat.Battle._800c6748;
-import static legend.game.combat.Battle.currentCameraIndex_800c6780;
-import static legend.game.combat.Battle.currentCameraPositionIndicesIndex_800c66b0;
-import static legend.game.combat.Battle.currentStageData_800c6718;
-import static legend.game.combat.Battle.playerBattleScript_800c66fc;
-import static legend.game.combat.Battle.scriptState_800c674c;
-import static legend.game.combat.environment.StageData.stageData_80109a98;
 
 public class SBtld {
-  @Method(0x80109050L)
-  public static void loadStageDataAndControllerScripts() {
-    currentStageData_800c6718 = stageData_80109a98[encounterId_800bb0f8];
-
-    playerBattleScript_800c66fc = new ScriptFile("player_combat_script", Unpacker.loadFile("player_combat_script").getBytes());
-
-    loadDrgnFile(1, "401", SBtld::combatControllerScriptLoaded);
-  }
-
-  @Method(0x80109170L)
-  public static void combatControllerScriptLoaded(final FileData file) {
-    scriptState_800c674c = SCRIPTS.allocateScriptState(5, "DRGN1.401", 0, null);
-    scriptState_800c674c.loadScriptFile(new ScriptFile("DRGN1.401", file.getBytes()));
-
-    final int v1;
-    if((simpleRand() & 0x8000) == 0) {
-      v1 = currentStageData_800c6718._14;
-    } else {
-      v1 = currentStageData_800c6718._10;
-    }
-
-    //LAB_801091dc
-    _800c6748.set(v1 + 1);
-    currentCameraPositionIndicesIndex_800c66b0.set(simpleRand() & 3);
-    currentCameraIndex_800c6780.set(currentStageData_800c6718.cameraPosIndices_18[currentCameraPositionIndicesIndex_800c66b0.get()]);
-    battleFlags_800bc960 |= 0x2;
-  }
-
   @Method(0x80109250L)
   public static void loadAdditions() {
     //LAB_801092a0

@@ -43,6 +43,7 @@ import legend.game.sound.QueuedSound28;
 import legend.game.sound.SoundFile;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
+import legend.game.tmd.UvAdjustmentMetrics10;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
@@ -86,7 +87,6 @@ import java.util.function.Supplier;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
-import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
@@ -532,41 +532,41 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021068L)
   public static void FUN_80021068(final TmdObjTable1c.Primitive primitive, final int colourMap) {
-    final long a3 = _8005027c.offset(colourMap * 0x10L).getAddress();
+    final UvAdjustmentMetrics10 a3 = _8005027c[colourMap];
 
     for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, MathHelper.get(data, 0x0, 4) & (int)MEMORY.ref(4, a3).offset(0xcL).get() | (int)MEMORY.ref(4, a3).offset(0x8L).get());
-      MathHelper.set(data, 0x4, 4, MathHelper.get(data, 0x4, 4) & (int)MEMORY.ref(4, a3).offset(0x4L).get() | (int)MEMORY.ref(4, a3).offset(0x0L).get());
+      MathHelper.set(data, 0x0, 4, MathHelper.get(data, 0x0, 4) & a3.tpageMaskOn_0c | a3.tpageMaskOff_08);
+      MathHelper.set(data, 0x4, 4, MathHelper.get(data, 0x4, 4) & a3.clutMaskOn_04 | a3.clutMaskOff_00);
     }
   }
 
   @Method(0x800210c4L)
   public static void FUN_800210c4(final TmdObjTable1c.Primitive primitive, final int colourMap) {
-    final long a3 = _8005027c.offset(colourMap * 0x10L).getAddress();
+    final UvAdjustmentMetrics10 a3 = _8005027c[colourMap];
 
     for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, MathHelper.get(data, 0x0, 4) & (int)MEMORY.ref(4, a3).offset(0xcL).get() | (int)MEMORY.ref(4, a3).offset(0x8L).get());
-      MathHelper.set(data, 0x4, 4, MathHelper.get(data, 0x4, 4) & (int)MEMORY.ref(4, a3).offset(0x4L).get() | (int)MEMORY.ref(4, a3).offset(0x0L).get());
+      MathHelper.set(data, 0x0, 4, MathHelper.get(data, 0x0, 4) & a3.tpageMaskOn_0c | a3.tpageMaskOff_08);
+      MathHelper.set(data, 0x4, 4, MathHelper.get(data, 0x4, 4) & a3.clutMaskOn_04 | a3.clutMaskOff_00);
     }
   }
 
   @Method(0x8002117cL)
   public static void FUN_8002117c(final TmdObjTable1c.Primitive primitive, final int colourMap) {
-    final long a3 = _8005027c.offset(colourMap * 0x10L).getAddress();
+    final UvAdjustmentMetrics10 a3 = _8005027c[colourMap];
 
     for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, MathHelper.get(data, 0x0, 4) & (int)MEMORY.ref(4, a3).offset(0xcL).get() | (int)MEMORY.ref(4, a3).offset(0x8L).get());
-      MathHelper.set(data, 0x4, 4, MathHelper.get(data, 0x4, 4) & (int)MEMORY.ref(4, a3).offset(0x4L).get() | (int)MEMORY.ref(4, a3).offset(0x0L).get());
+      MathHelper.set(data, 0x0, 4, MathHelper.get(data, 0x0, 4) & a3.tpageMaskOn_0c | a3.tpageMaskOff_08);
+      MathHelper.set(data, 0x4, 4, MathHelper.get(data, 0x4, 4) & a3.clutMaskOn_04 | a3.clutMaskOff_00);
     }
   }
 
   @Method(0x80021120L)
   public static void FUN_80021120(final TmdObjTable1c.Primitive primitive, final int colourMap) {
-    final long a3 = _8005027c.offset(colourMap * 0x10L).getAddress();
+    final UvAdjustmentMetrics10 a3 = _8005027c[colourMap];
 
     for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, MathHelper.get(data, 0x0, 4) & (int)MEMORY.ref(4, a3).offset(0xcL).get() | (int)MEMORY.ref(4, a3).offset(0x8L).get());
-      MathHelper.set(data, 0x4, 4, MathHelper.get(data, 0x4, 4) & (int)MEMORY.ref(4, a3).offset(0x4L).get() | (int)MEMORY.ref(4, a3).offset(0x0L).get());
+      MathHelper.set(data, 0x0, 4, MathHelper.get(data, 0x0, 4) & a3.tpageMaskOn_0c | a3.tpageMaskOff_08);
+      MathHelper.set(data, 0x4, 4, MathHelper.get(data, 0x4, 4) & a3.clutMaskOn_04 | a3.clutMaskOff_00);
     }
   }
 
@@ -4210,7 +4210,6 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002ced8L)
   public static void start() {
-    MEMORY.memfill(0x8005a1d8L, 0x6c4b0, 0);
     main();
   }
 

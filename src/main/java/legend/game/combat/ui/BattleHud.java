@@ -13,6 +13,7 @@ import legend.core.opengl.QuadBuilder;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.characters.Element;
 import legend.game.characters.VitalsStat;
+import legend.game.combat.Battle;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
@@ -37,7 +38,9 @@ import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
@@ -58,27 +61,8 @@ import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
 import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
-import static legend.game.combat.Battle._800c6748;
-import static legend.game.combat.Battle.aliveBentCount_800c669c;
-import static legend.game.combat.Battle.aliveMonsterCount_800c6758;
-import static legend.game.combat.Battle.cameraPositionIndicesIndices_800c6c30;
-import static legend.game.combat.Battle.charCount_800c677c;
-import static legend.game.combat.Battle.combatItems_800c6988;
-import static legend.game.combat.Battle.countCameraPositionIndicesIndices_800c6ba0;
-import static legend.game.combat.Battle.countCombatUiFilesLoaded_800c6cf4;
-import static legend.game.combat.Battle.currentCameraPositionIndicesIndex_800c66b0;
-import static legend.game.combat.Battle.currentCameraPositionIndicesIndicesIndex_800c6ba1;
-import static legend.game.combat.Battle.currentEnemyNames_800c69d0;
-import static legend.game.combat.Battle.currentStageData_800c6718;
-import static legend.game.combat.Battle.currentTurnBent_800c66c8;
-import static legend.game.combat.Battle.dragoonSpells_800c6960;
-import static legend.game.combat.Battle.melbuMonsterNames_800c6ba8;
 import static legend.game.combat.Battle.melbuStageToMonsterNameIndices_800c6f30;
-import static legend.game.combat.Battle.monsterBents_800c6b78;
-import static legend.game.combat.Battle.monsterCount_800c6768;
 import static legend.game.combat.Battle.spellStats_800fa0b8;
-import static legend.game.combat.Battle.targetBents_800c71f0;
-import static legend.game.combat.Battle.usedRepeatItems_800c6c3c;
 
 public class BattleHud {
   private static final int[] repeatItemIds_800c6e34 = {224, 227, 228, 230, 232, 235, 236, 237, 238};
@@ -170,12 +154,21 @@ public class BattleHud {
   public final BattleMenuStruct58 battleMenu_800c6c34 = new BattleMenuStruct58(this);
   public final SpellAndItemMenuA4 spellAndItemMenu_800c6b60 = new SpellAndItemMenuA4(this);
 
+  public int currentCameraPositionIndicesIndex_800c66b0;
+
   /** Only ever set to 1. 0 will set it to the top of the screen. */
   private int battleHudYOffsetIndex_800c6c38;
 
   private final FloatingNumberC4[] floatingNumbers_800c6b5c = new FloatingNumberC4[12];
+  private int countCameraPositionIndicesIndices_800c6ba0;
+  private int currentCameraPositionIndicesIndicesIndex_800c6ba1;
   private final BattleDisplayStats144[] displayStats_800c6c2c = new BattleDisplayStats144[3];
+  private final int[] cameraPositionIndicesIndices_800c6c30 = new int[4];
   private final BattleHudCharacterDisplay3c[] activePartyBattleHudCharacterDisplays_800c6c40 = new BattleHudCharacterDisplay3c[3];
+
+  private final List<CombatItem02> combatItems_800c6988 = new ArrayList<>();
+
+  private final Battle battle;
 
   private UiBox battleUiBackground;
   private UiBox battleUiName;
@@ -194,7 +187,8 @@ public class BattleHud {
   private UiBox battleUiSpellList;
   private UiBox battleUiItemDescription;
 
-  public BattleHud() {
+  public BattleHud(final Battle battle) {
+    this.battle = battle;
     Arrays.setAll(this.floatingNumbers_800c6b5c, i -> new FloatingNumberC4());
     Arrays.setAll(this.displayStats_800c6c2c, i -> new BattleDisplayStats144());
     Arrays.setAll(this.activePartyBattleHudCharacterDisplays_800c6c40, i -> new BattleHudCharacterDisplay3c());
@@ -226,7 +220,7 @@ public class BattleHud {
       final ScriptState<? extends BattleEntity27c> targetState;
       if(targetType == 0) {
         //LAB_800ecb00
-        targetState = battleState_8006e398.charBents_e40[combatantIdx];
+        targetState = battleState_8006e398.playerBents_e40[combatantIdx];
       } else if(targetType == 1) {
         //LAB_800ecb1c
         targetState = battleState_8006e398.aliveMonsterBents_ebc[combatantIdx];
@@ -256,14 +250,14 @@ public class BattleHud {
       int count = 0;
       if(targetType == 0) {
         //LAB_800ecbdc
-        count = charCount_800c677c.get();
+        count = battleState_8006e398.getPlayerCount();
       } else if(targetType == 1) {
         //LAB_800ecbec
-        count = aliveMonsterCount_800c6758.get();
+        count = battleState_8006e398.getAliveMonsterCount();
         //LAB_800ecbc8
       } else if(targetType == 2) {
         //LAB_800ecbfc
-        count = aliveBentCount_800c669c.get();
+        count = battleState_8006e398.getAliveBentCount();
       }
 
       //LAB_800ecc04
@@ -272,7 +266,7 @@ public class BattleHud {
         final ScriptState<? extends BattleEntity27c> targetBent;
         if(targetType == 0) {
           //LAB_800ecc50
-          targetBent = battleState_8006e398.charBents_e40[i];
+          targetBent = battleState_8006e398.playerBents_e40[i];
         } else if(targetType == 1) {
           //LAB_800ecc5c
           targetBent = battleState_8006e398.aliveMonsterBents_ebc[i];
@@ -398,7 +392,7 @@ public class BattleHud {
   public void initCharacterDisplay(final int charSlot) {
     final BattleHudCharacterDisplay3c charDisplay = this.activePartyBattleHudCharacterDisplays_800c6c40[charSlot];
     charDisplay.charIndex_00 = charSlot;
-    charDisplay.charId_02 = battleState_8006e398.charBents_e40[charSlot].innerStruct_00.charId_272;
+    charDisplay.charId_02 = battleState_8006e398.playerBents_e40[charSlot].innerStruct_00.charId_272;
     charDisplay.flags_06 |= 0x2;
     charDisplay.x_08 = charSlot * 94 + 63;
     charDisplay.y_0a = 38;
@@ -415,8 +409,8 @@ public class BattleHud {
 
   @Method(0x800ef9e4L)
   public void draw() {
-    if(countCombatUiFilesLoaded_800c6cf4.get() == 6) {
-      final int charCount = charCount_800c677c.get();
+    if(this.battle.countCombatUiFilesLoaded_800c6cf4 == 6) {
+      final int charCount = battleState_8006e398.getPlayerCount();
 
       //LAB_800efa34
       for(int charSlot = 0; charSlot < charCount; charSlot++) {
@@ -433,7 +427,7 @@ public class BattleHud {
         final BattleHudCharacterDisplay3c charDisplay = this.activePartyBattleHudCharacterDisplays_800c6c40[charSlot];
 
         if(charDisplay.charIndex_00 != -1 && (charDisplay.flags_06 & 0x1) != 0 && (charDisplay.flags_06 & 0x2) != 0) {
-          final PlayerBattleEntity player = battleState_8006e398.charBents_e40[charSlot].innerStruct_00;
+          final PlayerBattleEntity player = battleState_8006e398.playerBents_e40[charSlot].innerStruct_00;
 
           final VitalsStat playerHp = player.stats.getStat(CoreMod.HP_STAT.get());
           final VitalsStat playerMp = player.stats.getStat(CoreMod.MP_STAT.get());
@@ -507,7 +501,7 @@ public class BattleHud {
     //LAB_800eff1c
     //LAB_800eff70
     //LAB_800effa0
-    if(countCombatUiFilesLoaded_800c6cf4.get() >= 6) {
+    if(this.battle.countCombatUiFilesLoaded_800c6cf4 >= 6) {
       //LAB_800f0ad4
       // Background
       if(this.activePartyBattleHudCharacterDisplays_800c6c40[0].charIndex_00 != -1 && (this.activePartyBattleHudCharacterDisplays_800c6c40[0].flags_06 & 0x1) != 0) {
@@ -520,16 +514,16 @@ public class BattleHud {
 
       //LAB_800f0000
       //LAB_800f0074
-      for(int charSlot = 0; charSlot < charCount_800c677c.get(); charSlot++) {
+      for(int charSlot = 0; charSlot < battleState_8006e398.getPlayerCount(); charSlot++) {
         final BattleDisplayStats144 displayStats = this.displayStats_800c6c2c[charSlot];
         final BattleHudCharacterDisplay3c charDisplay = this.activePartyBattleHudCharacterDisplays_800c6c40[charSlot];
 
         if(charDisplay.charIndex_00 != -1 && (charDisplay.flags_06 & 0x1) != 0 && (charDisplay.flags_06 & 0x2) != 0) {
-          final ScriptState<PlayerBattleEntity> state = battleState_8006e398.charBents_e40[charSlot];
+          final ScriptState<PlayerBattleEntity> state = battleState_8006e398.playerBents_e40[charSlot];
           final PlayerBattleEntity player = state.innerStruct_00;
           final int brightnessIndex0;
           final int brightnessIndex1;
-          if((currentTurnBent_800c66c8.storage_44[7] & 0x4) != 0x1 && currentTurnBent_800c66c8 == state) {
+          if((this.battle.currentTurnBent_800c66c8.storage_44[7] & 0x4) != 0x1 && this.battle.currentTurnBent_800c66c8 == state) {
             brightnessIndex0 = 2;
             brightnessIndex1 = 2;
           } else {
@@ -791,22 +785,22 @@ public class BattleHud {
 
             //LAB_800f0cf0
             int enemySlot;
-            for(enemySlot = 0; enemySlot < monsterCount_800c6768.get(); enemySlot++) {
-              if(monsterBents_800c6b78.get(enemySlot).get() == menu.target_48) {
+            for(enemySlot = 0; enemySlot < battleState_8006e398.getMonsterCount(); enemySlot++) {
+              if(this.battle.monsterBents_800c6b78[enemySlot] == menu.target_48) {
                 break;
               }
             }
 
             //LAB_800f0d10
-            str = this.getTargetEnemyName(monsterBent, currentEnemyNames_800c69d0[enemySlot]);
+            str = this.getTargetEnemyName(monsterBent, this.battle.currentEnemyNames_800c69d0[enemySlot]);
             element = monsterBent.displayElement_1c;
             targetBent = monsterBent;
           } else if(menu.targetType_50 == 0) {
-            targetBent = battleState_8006e398.charBents_e40[targetCombatant].innerStruct_00;
+            targetBent = battleState_8006e398.playerBents_e40[targetCombatant].innerStruct_00;
             str = playerNames_800fb378[targetBent.charId_272];
             element = targetBent.getElement();
 
-            if(targetBent.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && battleState_8006e398.charBents_e40[menu.combatantIndex_54].innerStruct_00.isDragoon()) {
+            if(targetBent.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && battleState_8006e398.playerBents_e40[menu.combatantIndex_54].innerStruct_00.isDragoon()) {
               element = CoreMod.DIVINE_ELEMENT.get();
             }
           } else {
@@ -816,13 +810,13 @@ public class BattleHud {
             targetBent = state.innerStruct_00;
             if(targetBent instanceof final MonsterBattleEntity monsterBent) {
               //LAB_800f0e24
-              str = this.getTargetEnemyName(monsterBent, currentEnemyNames_800c69d0[targetCombatant]);
+              str = this.getTargetEnemyName(monsterBent, this.battle.currentEnemyNames_800c69d0[targetCombatant]);
               element = monsterBent.displayElement_1c;
             } else {
               str = playerNames_800fb378[targetBent.charId_272];
               element = targetBent.getElement();
 
-              if(targetBent.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && battleState_8006e398.charBents_e40[menu.combatantIndex_54].innerStruct_00.isDragoon()) {
+              if(targetBent.charId_272 == 0 && (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 != 0 && battleState_8006e398.playerBents_e40[menu.combatantIndex_54].innerStruct_00.isDragoon()) {
                 element = CoreMod.DIVINE_ELEMENT.get();
               }
             }
@@ -1333,7 +1327,7 @@ public class BattleHud {
   @Method(0x800f417cL)
   public void FUN_800f417c() {
     //LAB_800f41ac
-    for(int i = 0; i < charCount_800c677c.get(); i++) {
+    for(int i = 0; i < battleState_8006e398.getPlayerCount(); i++) {
       final BattleHudCharacterDisplay3c s1 = this.activePartyBattleHudCharacterDisplays_800c6c40[i];
 
       if(s1.charIndex_00 == -1 && characterStatsLoaded_800be5d0) {
@@ -1412,7 +1406,7 @@ public class BattleHud {
     if(menuType == 0) {
       //LAB_800f4a9c
       this.prepareItemList();
-      this.spellAndItemMenu_800c6b60.count_22 = (short)combatItems_800c6988.size();
+      this.spellAndItemMenu_800c6b60.count_22 = (short)this.combatItems_800c6988.size();
     } else if(menuType == 1) {
       //LAB_800f4abc
       //LAB_800f4ae0
@@ -1420,7 +1414,7 @@ public class BattleHud {
       //LAB_800f4b18
       short spellIndex;
       for(spellIndex = 0; spellIndex < 8; spellIndex++) {
-        if(dragoonSpells_800c6960.get(this.spellAndItemMenu_800c6b60.player_08.charSlot_276).spellIndex_01.get(spellIndex).get() == -1) {
+        if(this.battle.dragoonSpells_800c6960[this.spellAndItemMenu_800c6b60.player_08.charSlot_276].spellIndex_01[spellIndex] == -1) {
           break;
         }
       }
@@ -1774,7 +1768,7 @@ public class BattleHud {
             final RepeatItemReturnEvent repeatItemReturnEvent = EVENTS.postEvent(new RepeatItemReturnEvent(itemId, returnItem));
 
             if(repeatItemReturnEvent.returnItem) {
-              usedRepeatItems_800c6c3c.add(item);
+              this.battle.usedRepeatItems_800c6c3c.add(item);
             }
           }
 
@@ -1863,14 +1857,14 @@ public class BattleHud {
   private int getItemOrSpellId() {
     if(this.spellAndItemMenu_800c6b60.menuType_0a == 0) {
       //LAB_800f56f0
-      return LodMod.idItemMap.getInt(combatItems_800c6988.get(this.spellAndItemMenu_800c6b60.listScroll_24 + this.spellAndItemMenu_800c6b60.listIndex_1e).item.getRegistryId());
+      return LodMod.idItemMap.getInt(this.combatItems_800c6988.get(this.spellAndItemMenu_800c6b60.listScroll_24 + this.spellAndItemMenu_800c6b60.listIndex_1e).item.getRegistryId());
     }
 
     if(this.spellAndItemMenu_800c6b60.menuType_0a == 1) {
       //LAB_800f5718
       //LAB_800f5740
       //LAB_800f5778
-      int spellIndex = dragoonSpells_800c6960.get(this.spellAndItemMenu_800c6b60.player_08.charSlot_276).spellIndex_01.get(this.spellAndItemMenu_800c6b60.listScroll_24 + this.spellAndItemMenu_800c6b60.listIndex_1e).get();
+      int spellIndex = this.battle.dragoonSpells_800c6960[this.spellAndItemMenu_800c6b60.player_08.charSlot_276].spellIndex_01[this.spellAndItemMenu_800c6b60.listScroll_24 + this.spellAndItemMenu_800c6b60.listIndex_1e];
       if(this.spellAndItemMenu_800c6b60.player_08.charId_272 == 8) { // Miranda
         if(spellIndex == 65) {
           spellIndex = 10;
@@ -1924,8 +1918,8 @@ public class BattleHud {
       final LodString name;
       if(type == 0) {
         //LAB_800f5918
-        name = new LodString(combatItems_800c6988.get(sp7c).item.getName());
-        intToStr(combatItems_800c6988.get(sp7c).count, itemCount);
+        name = new LodString(this.combatItems_800c6988.get(sp7c).item.getName());
+        intToStr(this.combatItems_800c6988.get(sp7c).count, itemCount);
 
         //LAB_800f5968
         int i;
@@ -1943,7 +1937,7 @@ public class BattleHud {
         }
 
         //LAB_800f59bc
-        if(combatItems_800c6988.get(sp7c).count < 10) {
+        if(this.combatItems_800c6988.get(sp7c).count < 10) {
           sp0x18.charAt(i, 0);
           i++;
         }
@@ -1967,7 +1961,7 @@ public class BattleHud {
         sp0x40.charAt(n + 1, 0xa0ff);
       } else if(type == 1) {
         //LAB_800f5a4c
-        int spellId = dragoonSpells_800c6960.get(menu.player_08.charSlot_276).spellIndex_01.get(spellSlot).get();
+        int spellId = this.battle.dragoonSpells_800c6960[menu.player_08.charSlot_276].spellIndex_01[spellSlot];
         name = new LodString(spellStats_800fa0b8[spellId].name);
 
         if(menu.player_08.charId_272 == 8) { // Miranda
@@ -1987,7 +1981,7 @@ public class BattleHud {
         }
 
         //LAB_800f5acc
-        final PlayerBattleEntity bent = setActiveCharacterSpell(spellId);
+        final PlayerBattleEntity bent = this.setActiveCharacterSpell(spellId);
 
         // Not enough MP for spell
         if(bent.stats.getStat(CoreMod.MP_STAT.get()).getCurrent() < bent.spell_94.mp_06) {
@@ -2119,7 +2113,7 @@ public class BattleHud {
           //LAB_800f5f94
           textType = 5;
           if((menu._02 & 0x2) != 0) {
-            final BattleEntity27c bent = setActiveCharacterSpell(menu.itemOrSpellId_1c);
+            final BattleEntity27c bent = this.setActiveCharacterSpell(menu.itemOrSpellId_1c);
             this.addFloatingNumber(0, 1, 0, bent.spell_94.mp_06, 280, 135, 0, 1);
 
             menu.transforms.transfer.set(236 - centreScreenX_1f8003dc, 130 - centreScreenY_1f8003de, 124.0f);
@@ -2185,15 +2179,15 @@ public class BattleHud {
     //LAB_800f6224
     //LAB_800f6234
     int bentIndex;
-    for(bentIndex = 0; bentIndex < charCount_800c677c.get(); bentIndex++) {
-      if(battleState_8006e398.charBents_e40[bentIndex] == bentState) {
+    for(bentIndex = 0; bentIndex < battleState_8006e398.getPlayerCount(); bentIndex++) {
+      if(battleState_8006e398.playerBents_e40[bentIndex] == bentState) {
         break;
       }
     }
 
     //LAB_800f6254
     this.battleMenu_800c6c34.iconCount_0e = 0;
-    this.battleMenu_800c6c34.player_04 = battleState_8006e398.charBents_e40[bentIndex].innerStruct_00;
+    this.battleMenu_800c6c34.player_04 = battleState_8006e398.playerBents_e40[bentIndex].innerStruct_00;
 
     //LAB_800f62a4
     for(int i = 0, used = 0; i < 8; i++) {
@@ -2244,14 +2238,14 @@ public class BattleHud {
         this.battleMenu_800c6c34.combatantIndex_54 = 0;
 
         this.battleMenu_800c6c34._800c697c = 0;
-        currentCameraPositionIndicesIndicesIndex_800c6ba1.set(0);
-        countCameraPositionIndicesIndices_800c6ba0.set(0);
+        this.currentCameraPositionIndicesIndicesIndex_800c6ba1 = 0;
+        this.countCameraPositionIndicesIndices_800c6ba0 = 0;
 
         //LAB_800f6424
         final int[] previousIndicesList = new int[4];
         for(int i = 0; i < 4; i++) {
           previousIndicesList[i] = 0xff;
-          cameraPositionIndicesIndices_800c6c30.get(i).set(0);
+          this.cameraPositionIndicesIndices_800c6c30[i] = 0;
         }
 
         //LAB_800f6458
@@ -2260,7 +2254,7 @@ public class BattleHud {
         int cameraPositionIndex;
         for(cameraPositionIndicesIndex = 0; cameraPositionIndicesIndex < 4; cameraPositionIndicesIndex++) {
           addCameraPositionIndex = true;
-          cameraPositionIndex = currentStageData_800c6718.cameraPosIndices_18[cameraPositionIndicesIndex];
+          cameraPositionIndex = this.battle.currentStageData_800c6718.cameraPosIndices_18[cameraPositionIndicesIndex];
 
           //LAB_800f646c
           for(int i = 0; i < 4; i++) { // don't add duplicate indices
@@ -2272,36 +2266,36 @@ public class BattleHud {
           }
 
           if(addCameraPositionIndex) {
-            previousIndicesList[countCameraPositionIndicesIndices_800c6ba0.get()] = currentStageData_800c6718.cameraPosIndices_18[cameraPositionIndicesIndex];
-            cameraPositionIndicesIndices_800c6c30.get(countCameraPositionIndicesIndices_800c6ba0.get()).set(cameraPositionIndicesIndex);
+            previousIndicesList[this.countCameraPositionIndicesIndices_800c6ba0] = this.battle.currentStageData_800c6718.cameraPosIndices_18[cameraPositionIndicesIndex];
+            this.cameraPositionIndicesIndices_800c6c30[this.countCameraPositionIndicesIndices_800c6ba0] = cameraPositionIndicesIndex;
 
-            if(currentCameraPositionIndicesIndex_800c66b0.get() == cameraPositionIndicesIndex) {
-              currentCameraPositionIndicesIndicesIndex_800c6ba1.set(countCameraPositionIndicesIndices_800c6ba0.get());
+            if(this.currentCameraPositionIndicesIndex_800c66b0 == cameraPositionIndicesIndex) {
+              this.currentCameraPositionIndicesIndicesIndex_800c6ba1 = this.countCameraPositionIndicesIndices_800c6ba0;
             }
 
             //LAB_800f64dc
-            countCameraPositionIndicesIndices_800c6ba0.add(1);
+            this.countCameraPositionIndicesIndices_800c6ba0++;
           }
           //LAB_800f64ec
         }
       }
 
       case 1 -> {  // Checking for input
-        final int countCameraPositionIndicesIndices = countCameraPositionIndicesIndices_800c6ba0.get();
+        final int countCameraPositionIndicesIndices = this.countCameraPositionIndicesIndices_800c6ba0;
         this.battleMenu_800c6c34.renderSelectedIconText_40 = false;
         this.battleMenu_800c6c34.cameraPositionSwitchTicksRemaining_44 = 0;
 
         // Input for changing camera angles
         if(countCameraPositionIndicesIndices >= 2 && (input_800bee90 & 0x2) != 0) {
-          currentCameraPositionIndicesIndicesIndex_800c6ba1.add(1);
-          if(currentCameraPositionIndicesIndicesIndex_800c6ba1.get() >= countCameraPositionIndicesIndices) {
-            currentCameraPositionIndicesIndicesIndex_800c6ba1.set(0);
+          this.currentCameraPositionIndicesIndicesIndex_800c6ba1++;
+          if(this.currentCameraPositionIndicesIndicesIndex_800c6ba1 >= countCameraPositionIndicesIndices) {
+            this.currentCameraPositionIndicesIndicesIndex_800c6ba1 = 0;
           }
 
           //LAB_800f6560
-          _800c6748.set(33);
+          this.battle._800c6748 = 33;
           this.battleMenu_800c6c34.state_00 = 5;
-          currentCameraPositionIndicesIndex_800c66b0.set(cameraPositionIndicesIndices_800c6c30.get(currentCameraPositionIndicesIndicesIndex_800c6ba1.get()).get());
+          this.currentCameraPositionIndicesIndex_800c66b0 = this.cameraPositionIndicesIndices_800c6c30[this.currentCameraPositionIndicesIndicesIndex_800c6ba1];
           this.battleMenu_800c6c34.cameraPositionSwitchTicksRemaining_44 = 60 / vsyncMode_8007a3b8 + 2;
           this.toggleHighlight(false);
           break;
@@ -2378,7 +2372,7 @@ public class BattleHud {
             if(selectedIconFlag == 0x5) {
               this.prepareItemList();
 
-              if(combatItems_800c6988.isEmpty()) {
+              if(this.combatItems_800c6988.isEmpty()) {
                 playSound(0, 3, 0, 0, (short)0, (short)0);
               } else {
                 playSound(0, 2, 0, 0, (short)0, (short)0);
@@ -2391,7 +2385,7 @@ public class BattleHud {
               //LAB_800f67f4
               int spellIndex;
               for(spellIndex = 0; spellIndex < 8; spellIndex++) {
-                if(dragoonSpells_800c6960.get(this.battleMenu_800c6c34.player_04.charSlot_276).spellIndex_01.get(spellIndex).get() != -1) {
+                if(this.battle.dragoonSpells_800c6960[this.battleMenu_800c6c34.player_04.charSlot_276].spellIndex_01[spellIndex] != -1) {
                   break;
                 }
               }
@@ -2646,7 +2640,7 @@ public class BattleHud {
     if(targetType == 1) {
       this.battleMenu_800c6c34.displayTargetArrowAndName_4c = true;
       //LAB_800f77d4
-      count = aliveMonsterCount_800c6758.get();
+      count = battleState_8006e398.getAliveMonsterCount();
 
       //LAB_800f77e8
       this.battleMenu_800c6c34._800c697c = this.battleMenu_800c6c34._800c697e;
@@ -2654,10 +2648,10 @@ public class BattleHud {
       this.battleMenu_800c6c34.displayTargetArrowAndName_4c = true;
       if(targetType == 0) {
         this.battleMenu_800c6c34._800c697c = this.battleMenu_800c6c34._800c6980;
-        count = charCount_800c677c.get();
+        count = battleState_8006e398.getPlayerCount();
       } else {
         //LAB_800f77f0
-        count = aliveBentCount_800c669c.get();
+        count = battleState_8006e398.getAliveBentCount();
       }
     }
 
@@ -2691,7 +2685,7 @@ public class BattleHud {
     int v1;
     ScriptState<BattleEntity27c> target = null;
     for(v1 = 0; v1 < count; v1++) {
-      target = targetBents_800c71f0[targetType][this.battleMenu_800c6c34._800c697c];
+      target = this.battle.targetBents_800c71f0[targetType][this.battleMenu_800c6c34._800c697c];
 
       if(target != null && (target.storage_44[7] & 0x4000) == 0) {
         break;
@@ -2713,7 +2707,7 @@ public class BattleHud {
 
     //LAB_800f7960
     if(v1 == count) {
-      target = targetBents_800c71f0[targetType][this.battleMenu_800c6c34._800c697c];
+      target = this.battle.targetBents_800c71f0[targetType][this.battleMenu_800c6c34._800c697c];
       this.battleMenu_800c6c34._800c697c = 0;
     }
 
@@ -2760,7 +2754,7 @@ public class BattleHud {
   @Method(0x800f83c8L)
   public void prepareItemList() {
     //LAB_800f83dc
-    combatItems_800c6988.clear();
+    this.combatItems_800c6988.clear();
 
     //LAB_800f8420
     for(int itemSlot1 = 0; itemSlot1 < gameState_800babc8.items_2e9.size(); itemSlot1++) {
@@ -2769,7 +2763,7 @@ public class BattleHud {
       boolean found = false;
 
       //LAB_800f843c
-      for(final CombatItem02 combatItem : combatItems_800c6988) {
+      for(final CombatItem02 combatItem : this.combatItems_800c6988) {
         if(combatItem.item == item) {
           found = true;
           combatItem.count++;
@@ -2778,7 +2772,7 @@ public class BattleHud {
       }
 
       if(!found) {
-        combatItems_800c6988.add(new CombatItem02(item));
+        this.combatItems_800c6988.add(new CombatItem02(item));
       }
     }
   }
@@ -2789,7 +2783,7 @@ public class BattleHud {
     if(target.charId_272 == 0x185) {
       final int stageProgression = battleState_8006e398.stageProgression_eec;
       if(stageProgression == 0 || stageProgression == 4 || stageProgression == 6) {
-        return melbuMonsterNames_800c6ba8[melbuStageToMonsterNameIndices_800c6f30[battleState_8006e398.stageProgression_eec]];
+        return this.battle.melbuMonsterNames_800c6ba8[melbuStageToMonsterNameIndices_800c6f30[battleState_8006e398.stageProgression_eec]];
       }
     }
 

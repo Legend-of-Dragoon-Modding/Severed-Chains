@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.joml.Math;
+import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
@@ -21,8 +22,6 @@ import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.combat.Battle.ZERO;
-import static legend.game.combat.Battle.screenOffsetX_800c67bc;
-import static legend.game.combat.Battle.screenOffsetY_800c67c0;
 
 public class BattleCamera {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
@@ -132,6 +131,8 @@ public class BattleCamera {
   public boolean refpointMoving_123;
 
   private final MV cameraTransformMatrix_800c6798 = new MV();
+
+  public final Vector2i screenOffset_800c67bc = new Vector2i();
 
   private int wobbleFramesRemaining_800c67c4;
 
@@ -1625,12 +1626,12 @@ public class BattleCamera {
 
       //LAB_800dab70
       //LAB_800dab78
-      GTE.setScreenOffset(screenOffsetX_800c67bc.get() + x, screenOffsetY_800c67c0.get() + y);
+      GTE.setScreenOffset(this.screenOffset_800c67bc.x + x, this.screenOffset_800c67bc.y + y);
 
       this.wobbleFramesRemaining_800c67c4--;
       if(this.wobbleFramesRemaining_800c67c4 <= 0) {
         this.useCameraWobble_800fabb8 = false;
-        GTE.setScreenOffset(screenOffsetX_800c67bc.get(), screenOffsetY_800c67c0.get());
+        GTE.setScreenOffset(this.screenOffset_800c67bc.x, this.screenOffset_800c67bc.y);
       }
     }
 

@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.colour15To24;
 import static legend.core.MathHelper.colour24To15;
@@ -227,41 +226,6 @@ public class Gpu {
     LOGGER.trace("Clear display RGB %06x", colour);
 
     this.getDrawBuffer().fill(colour);
-  }
-
-  public void commandA0CopyRectFromCpuToVram(final RECT rect, final long address) {
-    assert address != 0;
-
-    final int rectX = rect.x.get();
-    final int rectY = rect.y.get();
-    final int rectW = rect.w.get();
-    final int rectH = rect.h.get();
-
-    if(rectX + rectW > this.vramWidth) {
-      throw new IllegalArgumentException("Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')');
-    }
-
-    if(rectY + rectH > this.vramHeight) {
-      throw new IllegalArgumentException("Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')');
-    }
-
-    LOGGER.debug("Copying (%d, %d, %d, %d) from CPU to VRAM (address: %08x)", rectX, rectY, rectW, rectH, address);
-
-    MEMORY.waitForLock(() -> {
-      int i = 0;
-      for(int y = rectY; y < rectY + rectH; y++) {
-        for(int x = rectX; x < rectX + rectW; x++) {
-          final int packed = (int)MEMORY.get(address + i, 2);
-          final int unpacked = MathHelper.colour15To24(packed);
-
-          this.setVramPixel(x, y, unpacked, packed);
-
-          i += 2;
-        }
-      }
-
-      this.vramDirty = true;
-    });
   }
 
   public void uploadData15(final Rect4i rect, final FileData data) {

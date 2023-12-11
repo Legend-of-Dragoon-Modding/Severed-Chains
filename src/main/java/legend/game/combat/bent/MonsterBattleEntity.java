@@ -5,6 +5,7 @@ import legend.game.characters.Element;
 import legend.game.characters.ElementSet;
 import legend.game.combat.types.AttackType;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.scripting.ScriptFile;
 import org.joml.Vector3f;
 
 import static legend.game.combat.Battle.applyBuffOrDebuff;
@@ -31,6 +32,11 @@ public class MonsterBattleEntity extends BattleEntity27c {
 
   public MonsterBattleEntity(final String name) {
     super(CoreMod.MONSTER_TYPE.get(), name);
+  }
+
+  @Override
+  protected ScriptFile getScript() {
+    return this.combatant_144.scriptPtr_10;
   }
 
   @Override

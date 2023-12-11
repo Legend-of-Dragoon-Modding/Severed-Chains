@@ -87,20 +87,17 @@ public final class Scus94491BpeSegment_8004 {
    */
   public static final Map<EngineStateEnum, OverlayStruct> gameStateOverlays_8004dbc0 = new EnumMap<>(EngineStateEnum.class);
   static {
-    //TODO this is called directly, is it needed?
-//    gameStateOverlays_8004dbc0.put(EngineStateEnum.PRELOAD_00, new OverlayStruct(Scus94491BpeSegment_800e::preload));
     gameStateOverlays_8004dbc0.put(EngineStateEnum.TITLE_02, new OverlayStruct(Ttle.class, Ttle::new));
     gameStateOverlays_8004dbc0.put(EngineStateEnum.TRANSITION_TO_NEW_GAME_03, new OverlayStruct(NewGame.class, NewGame::new));
-    gameStateOverlays_8004dbc0.put(EngineStateEnum.CREDITS_04, new OverlayStruct(Credits.class, Credits::new, "\\OVL\\SMAP.OV_", 0x800c6690L, 0xf9f0));
-    gameStateOverlays_8004dbc0.put(EngineStateEnum.SUBMAP_05, new OverlayStruct(SMap.class, SMap::new, "\\OVL\\SMAP.OV_", 0x800c6690L, 0xf9f0));
-    gameStateOverlays_8004dbc0.put(EngineStateEnum.COMBAT_06, new OverlayStruct(Battle.class, Battle::new, "\\OVL\\BTTL.OV_", 0x800c6690L, 0x668));
+    gameStateOverlays_8004dbc0.put(EngineStateEnum.CREDITS_04, new OverlayStruct(Credits.class, Credits::new));
+    gameStateOverlays_8004dbc0.put(EngineStateEnum.SUBMAP_05, new OverlayStruct(SMap.class, SMap::new));
+    gameStateOverlays_8004dbc0.put(EngineStateEnum.COMBAT_06, new OverlayStruct(Battle.class, Battle::new));
     gameStateOverlays_8004dbc0.put(EngineStateEnum.GAME_OVER_07, new OverlayStruct(GameOver.class, GameOver::new));
-    gameStateOverlays_8004dbc0.put(EngineStateEnum.WORLD_MAP_08, new OverlayStruct(WMap.class, WMap::new, "\\OVL\\WMAP.OV_", 0x800c6690L, 0x2070));
+    gameStateOverlays_8004dbc0.put(EngineStateEnum.WORLD_MAP_08, new OverlayStruct(WMap.class, WMap::new));
     gameStateOverlays_8004dbc0.put(EngineStateEnum.FINAL_FMV_11, new OverlayStruct(FinalFmv.class, FinalFmv::new));
   }
 
   public static EngineState currentEngineState_8004dd04;
-  public static boolean dontZeroMemoryOnOverlayLoad_8004dd0c;
 
   /**
    * <ol>
@@ -180,8 +177,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[235] = Scus94491BpeSegment_8002::scriptFreeEncounterSoundEffects;
     scriptSubFunctions_8004e29c[236] = Scus94491BpeSegment::scriptPlaySound;
     scriptSubFunctions_8004e29c[237] = Scus94491BpeSegment::scriptStopSound;
-    scriptSubFunctions_8004e29c[238] = Scus94491BpeSegment::scriptPlayBentSound;
-    scriptSubFunctions_8004e29c[239] = Scus94491BpeSegment::scriptStopBentSound;
+
     scriptSubFunctions_8004e29c[240] = Scus94491BpeSegment::scriptStopSoundsAndSequences;
     scriptSubFunctions_8004e29c[241] = Scus94491BpeSegment::scriptStartCurrentMusicSequence;
     scriptSubFunctions_8004e29c[242] = Scus94491BpeSegment::scriptStopCurrentMusicSequence;
@@ -207,8 +203,7 @@ public final class Scus94491BpeSegment_8004 {
     scriptSubFunctions_8004e29c[709] = Scus94491BpeSegment::scriptSetSssqTempoScale;
     scriptSubFunctions_8004e29c[710] = Scus94491BpeSegment::scriptGetLoadedSoundFiles;
     scriptSubFunctions_8004e29c[711] = Scus94491BpeSegment::scriptGetSequenceVolume;
-    scriptSubFunctions_8004e29c[712] = Scus94491BpeSegment::scriptPlayCombatantSound;
-    scriptSubFunctions_8004e29c[713] = Scus94491BpeSegment::scriptStopBentSound2;
+
     scriptSubFunctions_8004e29c[714] = Scus94491BpeSegment_8002::scriptStopAndUnloadSequences;
     scriptSubFunctions_8004e29c[715] = Scus94491BpeSegment::scriptLoadCharacterAttackSounds;
     scriptSubFunctions_8004e29c[716] = Scus94491BpeSegment_8002::scriptReplaceMonsterSounds;

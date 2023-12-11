@@ -11,7 +11,6 @@ import legend.core.gpu.GpuCommandLine;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.Rect4i;
-import legend.core.gpu.TimHeader;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
@@ -19,10 +18,7 @@ import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
 import legend.core.gte.Transforms;
 import legend.core.memory.Method;
-import legend.core.memory.Value;
-import legend.core.memory.types.BoolRef;
 import legend.core.memory.types.IntRef;
-import legend.core.memory.types.UnsignedShortRef;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.EngineState;
@@ -73,6 +69,7 @@ import org.apache.logging.log4j.Logger;
 import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 import java.util.Arrays;
@@ -82,7 +79,6 @@ import java.util.function.Function;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
-import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.core.MathHelper.flEq;
@@ -101,7 +97,6 @@ import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
 import static legend.game.Scus94491BpeSegment.reinitSound;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.rsin;
-import static legend.game.Scus94491BpeSegment.shadowTimFile_80010544;
 import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.startCurrentMusicSequence;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
@@ -135,11 +130,9 @@ import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.GsSetSmapRefView2L;
-import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.PopMatrix;
 import static legend.game.Scus94491BpeSegment_8003.PushMatrix;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
-import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
@@ -189,7 +182,6 @@ import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
-import static legend.game.Scus94491BpeSegment_800e.loadTimImage;
 
 public class SMap extends EngineState {
   private static final Logger LOGGER = LogManager.getFormatterLogger(SMap.class);
@@ -450,10 +442,6 @@ public class SMap extends EngineState {
     48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48,
     48, 48, 48, 48, 48, 48, 48, 0,
   };
-  /** TIM */
-  private final Value darkerShadowTimFile_800d673c = MEMORY.ref(4, 0x800d673cL);
-
-  private final Value timFile_800d689c = MEMORY.ref(4, 0x800d689cL);
 
   private final Rect4i _800d6b48 = new Rect4i(576, 368, 16, 1);
 
@@ -505,17 +493,17 @@ public class SMap extends EngineState {
   private CContainer dustTmd;
   private TmdAnimationFile dustAnimation;
 
-  private final Value tim_800d7620 = MEMORY.ref(4, 0x800d7620L);
-  private final Value tim_800d7c60 = MEMORY.ref(4, 0x800d7c60L);
-  private final Value tim_800d7ee0 = MEMORY.ref(4, 0x800d7ee0L);
-  private final Value tim_800d8520 = MEMORY.ref(4, 0x800d8520L);
-  private final Value tim_800d85e0 = MEMORY.ref(4, 0x800d85e0L);
-  private final Value tim_800d8720 = MEMORY.ref(4, 0x800d8720L);
-  private final Value tim_800d8960 = MEMORY.ref(4, 0x800d8960L);
-  private final Value tim_800d8ba0 = MEMORY.ref(4, 0x800d8ba0L);
-  private final Value tim_800d8ce0 = MEMORY.ref(4, 0x800d8ce0L);
-  private final Value tim_800d8e20 = MEMORY.ref(4, 0x800d8e20L);
-  private final Value tim_800d9060 = MEMORY.ref(4, 0x800d9060L);
+  private final String bigArrow_800d7620 = "big_arrow.tim";
+  private final String smallArrow_800d7c60 = "small_arrow.tim";
+  private final String savepoint_800d7ee0 = "savepoint.tim";
+  private final String tim_800d8520 = "800d8520.tim";
+  private final String tim_800d85e0 = "800d85e0.tim";
+  private final String savepointBigCircle_800d8720 = "savepoint_big_circle.tim";
+  private final String dust_800d8960 = "dust.tim";
+  private final String leftFoot_800d8ba0 = "left_foot.tim";
+  private final String rightFoot_800d8ce0 = "right_foot.tim";
+  private final String smoke1_800d8e20 = "smoke_1.tim";
+  private final String smoke2_800d9060 = "smoke_2.tim";
 
   public static final ShopStruct40[] shops_800f4930 = {
     new ShopStruct40(0, 1, 28, 47, 63, 77, 103, 106, 107, 108, 112, 255, 255, 255, 255, 255, 255),
@@ -818,8 +806,8 @@ public class SMap extends EngineState {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 7596, 0, 0, 0, 0, 7598, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7600, 0, 0, 0, 0, 0, 0, 0, 7602, 7604, 7606, 7608,
   };
   private int submapModelLoadingStage_800f9e5a;
-  private final UnsignedShortRef tpage_800f9e5c = new UnsignedShortRef();
-  private final UnsignedShortRef clut_800f9e5e = new UnsignedShortRef();
+  private final Vector2i tpage_800f9e5c = new Vector2i();
+  private final Vector2i clut_800f9e5e = new Vector2i();
   private int _800f9e60;
 
   private int snowLoadingStage_800f9e64;
@@ -828,8 +816,8 @@ public class SMap extends EngineState {
   private int _800f9e6a;
   private int _800f9e6c;
   private int _800f9e6e;
-  private final IntRef _800f9e70 = new IntRef();
-  private final BoolRef _800f9e74 = new BoolRef();
+  private int _800f9e70;
+  private boolean _800f9e74;
   private int _800f9e78;
 
   private final Struct18[] _800f9e7c = new Struct18[8];
@@ -847,18 +835,18 @@ public class SMap extends EngineState {
    * </ul>
    */
   private int submapEffectsState_800f9eac;
-  private final Value[] miscTextures_800f9eb0 = {
-    this.tim_800d7620,
-    this.tim_800d7c60,
-    this.tim_800d7ee0,
+  private final String[] miscTextures_800f9eb0 = {
+    this.bigArrow_800d7620,
+    this.smallArrow_800d7c60,
+    this.savepoint_800d7ee0,
     this.tim_800d8520,
     this.tim_800d85e0,
-    this.tim_800d8720,
-    this.tim_800d8960,
-    this.tim_800d8ba0,
-    this.tim_800d8ce0,
-    this.tim_800d8e20,
-    this.tim_800d9060,
+    this.savepointBigCircle_800d8720,
+    this.dust_800d8960,
+    this.leftFoot_800d8ba0,
+    this.rightFoot_800d8ce0,
+    this.smoke1_800d8e20,
+    this.smoke2_800d9060,
   };
 
   @Override
@@ -2971,12 +2959,12 @@ public class SMap extends EngineState {
   @Method(0x800e0b34L)
   private FlowControl scriptSwapShadowTexture(final RunningScript<?> script) {
     if(script.params_20[0].get() == 0) {
-      loadTimImage(shadowTimFile_80010544.getAddress());
+      new Tim(Unpacker.loadFile("shadow.tim")).uploadToGpu();
     }
 
     //LAB_800e0b68
     if(script.params_20[0].get() == 1) {
-      loadTimImage(this.darkerShadowTimFile_800d673c.getAddress());
+      new Tim(Unpacker.loadFile("SUBMAP/darker_shadow.tim")).uploadToGpu();
     }
 
     //LAB_800e0b8c
@@ -3307,7 +3295,7 @@ public class SMap extends EngineState {
   private void executeSubmapMediaLoadingStage(final int index) {
     switch(this.mediaLoadingStage_800c68e4) {
       case LOAD_SHADOW_AND_RESET_LIGHTING_0 -> {
-        loadTimImage(shadowTimFile_80010544.getAddress());
+        new Tim(Unpacker.loadFile("shadow.tim")).uploadToGpu();
 
         if(_80050274 != submapCut_80052c30) {
           _800bda08 = _80050274;
@@ -3687,7 +3675,7 @@ public class SMap extends EngineState {
 
         this.cameraPos_800c6aa0.set(rview2_800bd7e8.viewpoint_00).sub(rview2_800bd7e8.refpoint_0c);
 
-        loadTimImage(this.timFile_800d689c.getAddress());
+        new Tim(Unpacker.loadFile("SUBMAP/alert.tim")).uploadToGpu();
         this.resetTriangleIndicators();
 
         //LAB_800e1ecc
@@ -3816,7 +3804,7 @@ public class SMap extends EngineState {
     this.submapEffectsState_800f9eac = -1;
     this.loadSubmapEffects();
     this.triangleIndicator_800c69fc = null;
-    loadTimImage(shadowTimFile_80010544.getAddress());
+    new Tim(Unpacker.loadFile("shadow.tim")).uploadToGpu();
   }
 
   @Method(0x800e2428L)
@@ -4848,8 +4836,8 @@ public class SMap extends EngineState {
 
     //LAB_800e5a30
     //LAB_800e5a34
-    if(pregameLoadingStage_800bb10c.get() == 0) {
-      pregameLoadingStage_800bb10c.set(1);
+    if(pregameLoadingStage_800bb10c == 0) {
+      pregameLoadingStage_800bb10c = 1;
       this._800caaf4 = submapCut_80052c30;
       this._800caaf8 = submapScene_80052c34;
       submapEnvState_80052c44 = 2;
@@ -5114,7 +5102,7 @@ public class SMap extends EngineState {
 
         //LAB_800e62cc
         engineStateOnceLoaded_8004dd24 = EngineStateEnum.WORLD_MAP_08;
-        pregameLoadingStage_800bb10c.set(0);
+        pregameLoadingStage_800bb10c = 0;
         vsyncMode_8007a3b8 = 2;
         submapEnvState_80052c44 = 5;
         this._800f7e4c = false;
@@ -5125,7 +5113,7 @@ public class SMap extends EngineState {
         this.loadAndRenderSubmapModelAndEffects(this._800caaf8, this._800cab24);
         submapEnvState_80052c44 = 5;
         engineStateOnceLoaded_8004dd24 = EngineStateEnum.COMBAT_06;
-        pregameLoadingStage_800bb10c.set(0);
+        pregameLoadingStage_800bb10c = 0;
         vsyncMode_8007a3b8 = 2;
         this._800f7e4c = false;
         SCRIPTS.resume();
@@ -5153,7 +5141,7 @@ public class SMap extends EngineState {
         FUN_8002a9c0();
         engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;
         vsyncMode_8007a3b8 = 2;
-        pregameLoadingStage_800bb10c.set(0);
+        pregameLoadingStage_800bb10c = 0;
 
         //LAB_800e6484
         submapEnvState_80052c44 = 5;
@@ -5184,7 +5172,7 @@ public class SMap extends EngineState {
         //LAB_800e63b0
         submapEnvState_80052c44 = 5;
         Fmv.playCurrentFmv(this.fmvIndex_800bf0dc, this.afterFmvLoadingStage_800bf0ec);
-        pregameLoadingStage_800bb10c.set(0);
+        pregameLoadingStage_800bb10c = 0;
         this._800f7e4c = false;
         SCRIPTS.resume();
       }
@@ -7014,7 +7002,7 @@ public class SMap extends EngineState {
         this.animateAndRenderSubmapModel(this.submapCutMatrix_800d4bb0);
 
         if(this._800d4bd0 != null && this._800d4bd4 != null) {
-          this.FUN_800ee9e0(this._800d4bd4, this._800d4bd0, this.tpage_800f9e5c, this.clut_800f9e5e);
+          this.FUN_800ee9e0(this._800d4bd4, this._800d4bd0, this.tpage_800f9e5c, this.clut_800f9e5e, Translucency.B_PLUS_F);
           GPU.uploadData15(this._800d6b48, this._800d4bd4);
         }
       }
@@ -7244,7 +7232,7 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800ee9e0L)
-  private void FUN_800ee9e0(final FileData a1, final Structb0 a2, final UnsignedShortRef tpage, final UnsignedShortRef clut) {
+  private void FUN_800ee9e0(final FileData a1, final Structb0 a2, final Vector2i tpage, final Vector2i clut, final Translucency transMode) {
     if(a2._08 == 500) {
       a2._00 = 1;
       a2._02 = 0;
@@ -7277,10 +7265,10 @@ public class SMap extends EngineState {
 
       //LAB_800eeb0c
       GPU.queueCommand(40, new GpuCommandQuad()
-        .vramPos((tpage.get() & 0b1111) * 64, (tpage.get() & 0b10000) != 0 ? 256 : 0)
-        .clut((clut.get() & 0b111111) * 16, clut.get() >>> 6)
+        .vramPos(tpage.x, tpage.y >= 256 ? 256 : 0)
+        .clut(clut.x, clut.y)
         .monochrome(a2._0c >> 16)
-        .translucent(Translucency.of(tpage.get() >>> 5 & 0b11))
+        .translucent(transMode)
         .pos(-188, 18, 192, 72)
         .uv(0, 128)
       );
@@ -7754,8 +7742,8 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800f00a4L)
-  private void FUN_800f00a4(final BoolRef a0, final IntRef a1) {
-    if(a0.get()) {
+  private void FUN_800f00a4() {
+    if(this._800f9e74) {
       Struct34 s2 = this._800d4f18;
       Struct34 s1 = s2.parent_30;
 
@@ -7791,7 +7779,7 @@ public class SMap extends EngineState {
           s2.parent_30 = s0;
 
           if(this._800d4f18.parent_30 == null) {
-            a0.set(false);
+            this._800f9e74 = false;
           }
 
           s1 = s0;
@@ -7800,7 +7788,7 @@ public class SMap extends EngineState {
     }
 
     //LAB_800f023c
-    if(a1.get() == 1) {
+    if(this._800f9e70 == 1) {
       final Struct24 s1 = this._800d4ee0;
 
       if(s1._02 % s1._04 == 0) {
@@ -7900,9 +7888,9 @@ public class SMap extends EngineState {
     }
 
     //LAB_800f055c
-    this._800f9e74.set(false);
+    this._800f9e74 = false;
     this.FUN_800eed84(this.struct3c_800d4f50);
-    this._800f9e70.set(0);
+    this._800f9e70 = 0;
   }
 
   @Method(0x800f058cL)
@@ -8264,7 +8252,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p9")
   @Method(0x800f1274L)
   private FlowControl FUN_800f1274(final RunningScript<?> script) {
-    this._800f9e74.set(true);
+    this._800f9e74 = true;
 
     final Struct34 v1 = this._800d4f18;
     final Struct34 s1 = new Struct34();
@@ -8323,7 +8311,7 @@ public class SMap extends EngineState {
   @Method(0x800f14f0L)
   private FlowControl FUN_800f14f0(final RunningScript<?> script) {
     final int v1 = script.params_20[0].get();
-    this._800f9e70.set(v1);
+    this._800f9e70 = v1;
 
     final Struct24 a1 = this._800d4ee0;
     if(v1 != 0) {
@@ -8821,7 +8809,7 @@ public class SMap extends EngineState {
   @Method(0x800f24b0L)
   private FlowControl FUN_800f24b0(final RunningScript<?> script) {
     if(script.params_20[0].get() == 1) {
-      this._800f9e70.set(2);
+      this._800f9e70 = 2;
     }
 
     //LAB_800f24d0
@@ -8833,11 +8821,11 @@ public class SMap extends EngineState {
   @Method(0x800f24d8L)
   private FlowControl FUN_800f24d8(final RunningScript<?> script) {
     if(script.params_20[0].get() != 0) {
-      this._800f9e70.set(0);
+      this._800f9e70 = 0;
     }
 
     //LAB_800f24fc
-    if(this._800f9e70.get() == 0) {
+    if(this._800f9e70 == 0) {
       final Struct24 v0 = this._800d4ee0;
       v0._02 = 0;
       v0._04 = 0;
@@ -9526,17 +9514,17 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800f4244L)
-  private void FUN_800f4244(final Tim tim, final UnsignedShortRef tpageOut, final UnsignedShortRef clutOut, final Translucency transMode) {
+  private void FUN_800f4244(final Tim tim, final Vector2i tpageOut, final Vector2i clutOut, final Translucency transMode) {
     //LAB_800f427c
     if(tim.hasClut()) {
       final Rect4i clutRect = tim.getClutRect();
-      clutOut.set(clutRect.y << 6 | (clutRect.x & 0x3f0) >> 4);
+      clutOut.set(clutRect.x, clutRect.y);
       GPU.uploadData15(clutRect, tim.getClutData());
     }
 
     //LAB_800f42d0
     final Rect4i imageRect = tim.getImageRect();
-    tpageOut.set(GetTPage(Bpp.values()[tim.getFlags() & 0b11], transMode, imageRect.x, imageRect.y));
+    tpageOut.set(imageRect.x, imageRect.y);
     GPU.uploadData15(imageRect, tim.getImageData());
 
     //LAB_800f4338
@@ -9560,8 +9548,8 @@ public class SMap extends EngineState {
         this.handleSnow();
       }
 
-      if(this._800f9e74.get() || this._800f9e70.get() != 0) {
-        this.FUN_800f00a4(this._800f9e74, this._800f9e70);
+      if(this._800f9e74 || this._800f9e70 != 0) {
+        this.FUN_800f00a4();
         this.FUN_800efe7c();
       }
     }
@@ -9622,13 +9610,13 @@ public class SMap extends EngineState {
   private void loadMiscTextures(final int textureCount) {
     //LAB_800f47f0
     for(int textureIndex = 0; textureIndex < textureCount; textureIndex++) {
-      final TimHeader header = parseTimHeader(this.miscTextures_800f9eb0[textureIndex].offset(0x4L));
-      LoadImage(header.imageRect, header.imageAddress);
+      final Tim tim = new Tim(Unpacker.loadFile("SUBMAP/" + this.miscTextures_800f9eb0[textureIndex]));
+      GPU.uploadData15(tim.getImageRect(), tim.getImageData());
 
-      this.texPages_800d6050[textureIndex] = GetTPage(Bpp.values()[header.flags & 0b11], this.miscTextureTransModes_800d6cf0[textureIndex], header.imageRect.x.get(), header.imageRect.y.get());
-      this.cluts_800d6068[textureIndex] = header.clutRect.y.get() << 6 | (header.clutRect.x.get() & 0x3f0) >>> 4;
+      this.texPages_800d6050[textureIndex] = GetTPage(Bpp.values()[tim.getFlags() & 0b11], this.miscTextureTransModes_800d6cf0[textureIndex], tim.getImageRect().x, tim.getImageRect().y);
+      this.cluts_800d6068[textureIndex] = tim.getClutRect().y << 6 | (tim.getClutRect().x & 0x3f0) >>> 4;
 
-      LoadImage(header.clutRect, header.clutAddress);
+      GPU.uploadData15(tim.getClutRect(), tim.getClutData());
     }
 
     //LAB_800f48a8

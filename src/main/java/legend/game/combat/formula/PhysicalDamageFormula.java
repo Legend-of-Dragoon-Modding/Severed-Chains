@@ -1,10 +1,11 @@
 package legend.game.combat.formula;
 
 import legend.game.characters.Element;
+import legend.game.combat.Battle;
 import legend.game.combat.types.AttackType;
 
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.combat.Battle.adjustDamageForPower;
-import static legend.game.combat.Battle.dragoonSpaceElement_800c6b64;
 
 public final class PhysicalDamageFormula {
   private PhysicalDamageFormula() { }
@@ -31,11 +32,12 @@ public final class PhysicalDamageFormula {
   }
 
   public static int applyDragoonSpace(final State<Integer> state) {
+    final Element element = ((Battle)currentEngineState_8004dd04).dragoonSpaceElement_800c6b64;
     int damage = state.value();
 
-    if(dragoonSpaceElement_800c6b64 != null) {
+    if(element != null) {
       for(final Element attackElement : state.bents.get(Side.ATTACKER).getAttackElements()) {
-        damage = dragoonSpaceElement_800c6b64.adjustDragoonSpaceDamage(AttackType.PHYSICAL, damage, attackElement);
+        damage = element.adjustDragoonSpaceDamage(AttackType.PHYSICAL, damage, attackElement);
       }
     }
 

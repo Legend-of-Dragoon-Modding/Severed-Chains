@@ -42,11 +42,7 @@ import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.combat.Battle.FUN_800ca194;
-import static legend.game.combat.Battle.allBentCount_800c66d0;
-import static legend.game.combat.Battle.charCount_800c677c;
 import static legend.game.combat.Battle.loadCombatantModelAndAnimation;
-import static legend.game.combat.Battle.monsterCount_800c6768;
-import static legend.game.combat.Battle.playerBattleScript_800c66fc;
 import static legend.game.combat.Battle.spellStats_800fa0b8;
 import static legend.game.combat.SEffe.renderBttlShadow;
 
@@ -559,16 +555,8 @@ public abstract class BattleEntity27c extends BattleObject {
         this.currentAnimIndex_270 = -1;
 
         if((state.storage_44[7] & 0x800) == 0) {
-          final ScriptFile script;
-          if((state.storage_44[7] & 0x4) != 0) {
-            script = this.combatant_144.scriptPtr_10;
-          } else {
-            //LAB_800caf18
-            script = playerBattleScript_800c66fc;
-          }
-
           //LAB_800caf20
-          state.loadScriptFile(script);
+          state.loadScriptFile(this.getScript());
         }
 
         //LAB_800caf2c
@@ -578,6 +566,8 @@ public abstract class BattleEntity27c extends BattleObject {
 
     //LAB_800caf38
   }
+
+  protected abstract ScriptFile getScript();
 
   @Method(0x800caf2cL)
   private void bentLoadedTicker(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
@@ -614,32 +604,11 @@ public abstract class BattleEntity27c extends BattleObject {
     //LAB_800cb088
     FUN_800ca194(this.combatant_144.assets_14[this.loadingAnimIndex_26e]);
 
-    allBentCount_800c66d0.decr();
-
-    //LAB_800cb0d4
-    for(int i = this.bentSlot_274; i < allBentCount_800c66d0.get(); i++) {
-      battleState_8006e398.allBents_e0c[i] = battleState_8006e398.allBents_e0c[i + 1];
-      battleState_8006e398.allBents_e0c[i].innerStruct_00.bentSlot_274 = i;
-    }
-
     //LAB_800cb11c
     if((state.storage_44[7] & 0x4) != 0) {
-      monsterCount_800c6768.decr();
-
-      //LAB_800cb168
-      for(int i = this.charSlot_276; i < monsterCount_800c6768.get(); i++) {
-        battleState_8006e398.monsterBents_e50[i] = battleState_8006e398.monsterBents_e50[i + 1];
-        battleState_8006e398.monsterBents_e50[i].innerStruct_00.charSlot_276 = i;
-      }
+      battleState_8006e398.removeMonster((MonsterBattleEntity)this);
     } else {
-      //LAB_800cb1b8
-      charCount_800c677c.decr();
-
-      //LAB_800cb1f4
-      for(int i = this.charSlot_276; i < charCount_800c677c.get(); i++) {
-        battleState_8006e398.charBents_e40[i] = battleState_8006e398.charBents_e40[i + 1];
-        battleState_8006e398.charBents_e40[i].innerStruct_00.charSlot_276 = i;
-      }
+      battleState_8006e398.removePlayer((PlayerBattleEntity)this);
     }
 
     this.model_148.deleteModelParts();

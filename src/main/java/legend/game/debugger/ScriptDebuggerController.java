@@ -15,7 +15,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.util.StringConverter;
-import legend.core.GameEngine;
 import legend.game.Scus94491BpeSegment;
 import legend.game.modding.events.scripting.ScriptAllocatedEvent;
 import legend.game.modding.events.scripting.ScriptDeallocatedEvent;
@@ -209,15 +208,13 @@ public class ScriptDebuggerController {
   }
 
   private String getCommandStack(final int scriptIndex, final int stackIndex) {
-    return GameEngine.MEMORY.waitForLock(() -> {
-      final int val = scriptStatePtrArr_800bc1c0[scriptIndex] != null ? scriptStatePtrArr_800bc1c0[scriptIndex].callStack_1c[stackIndex] : -1;
+    final int val = scriptStatePtrArr_800bc1c0[scriptIndex] != null ? scriptStatePtrArr_800bc1c0[scriptIndex].callStack_1c[stackIndex] : -1;
 
-      if(val == -1) {
-        return "null";
-      } else {
-        return "0x%08x".formatted(val);
-      }
-    });
+    if(val == -1) {
+      return "null";
+    } else {
+      return "0x%08x".formatted(val);
+    }
   }
 
   @EventListener

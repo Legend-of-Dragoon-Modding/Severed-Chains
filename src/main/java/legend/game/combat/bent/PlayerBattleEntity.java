@@ -6,6 +6,7 @@ import legend.game.characters.Element;
 import legend.game.characters.ElementSet;
 import legend.game.inventory.Equipment;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.EquipmentSlot;
@@ -66,11 +67,19 @@ public class PlayerBattleEntity extends BattleEntity27c {
   public int hpMulti_13c;
   public int mpMulti_13e;
 
-  public PlayerBattleEntity(final String name, final int scriptIndex) {
+  private final ScriptFile script;
+
+  public PlayerBattleEntity(final String name, final int scriptIndex, final ScriptFile script) {
     super(CoreMod.PLAYER_TYPE.get(), name);
 
     //noinspection unchecked
     this.scriptState = new Latch<>(() -> (ScriptState<PlayerBattleEntity>)scriptStatePtrArr_800bc1c0[scriptIndex]);
+    this.script = script;
+  }
+
+  @Override
+  protected ScriptFile getScript() {
+    return this.script;
   }
 
   public boolean isDragoon() {

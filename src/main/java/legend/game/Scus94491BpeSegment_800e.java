@@ -1,34 +1,28 @@
 package legend.game;
 
-import legend.core.gpu.RECT;
-import legend.core.gpu.TimHeader;
+import legend.core.gpu.Rect4i;
 import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
+import legend.game.tim.Tim;
 import legend.game.types.CContainer;
 import legend.game.types.TmdAnimationFile;
-import legend.game.unpacker.FileData;
+import legend.game.unpacker.Unpacker;
 
 import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
-import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment.initSound;
 import static legend.game.Scus94491BpeSegment.loadMenuSounds;
 import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
-import static legend.game.Scus94491BpeSegment.shadowAnimation_8001051c;
-import static legend.game.Scus94491BpeSegment.shadowCContainer_800103d0;
-import static legend.game.Scus94491BpeSegment.shadowTimFile_80010544;
 import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
-import static legend.game.Scus94491BpeSegment_8002.loadModelAndAnimation;
 import static legend.game.Scus94491BpeSegment_8002.loadBasicUiTexturesAndSomethingElse;
+import static legend.game.Scus94491BpeSegment_8002.loadModelAndAnimation;
 import static legend.game.Scus94491BpeSegment_8003.InitGeom;
-import static legend.game.Scus94491BpeSegment_8003.LoadImage;
 import static legend.game.Scus94491BpeSegment_8003.ResetGraph;
-import static legend.game.Scus94491BpeSegment_8003.parseTimHeader;
 import static legend.game.Scus94491BpeSegment_8003.setDrawOffset;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
@@ -43,7 +37,6 @@ import static legend.game.Scus94491BpeSegment_800b.renderablePtr_800bdc5c;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
-import static legend.game.Scus94491BpeSegment_800c.timHeader_800c6748;
 
 public final class Scus94491BpeSegment_800e {
   private Scus94491BpeSegment_800e() { }
@@ -75,7 +68,7 @@ public final class Scus94491BpeSegment_800e {
     initSound();
 
     engineStateOnceLoaded_8004dd24 = EngineStateEnum.PRELOAD_00;
-    pregameLoadingStage_800bb10c.set(0);
+    pregameLoadingStage_800bb10c = 0;
     vsyncMode_8007a3b8 = 2;
     tickCount_800bb0fc = 0;
 
@@ -100,14 +93,14 @@ public final class Scus94491BpeSegment_800e {
 
   @Method(0x800e6524L)
   public static void loadSystemFont() {
-    final TimHeader header = parseTimHeader(timHeader_800c6748);
+    final Tim font = new Tim(Unpacker.loadFile("font.tim"));
 
-    final RECT imageRect = new RECT((short)832, (short)424, (short)64, (short)56);
-    LoadImage(imageRect, header.getImageAddress());
+    final Rect4i imageRect = new Rect4i(832, 424, 64, 56);
+    GPU.uploadData15(imageRect, font.getImageData());
 
-    if(header.hasClut()) {
-      final RECT clutRect = new RECT((short)832, (short)422, (short)32, (short)1);
-      LoadImage(clutRect, header.getClutAddress());
+    if(font.hasClut()) {
+      final Rect4i clutRect = new Rect4i(832, 422, 32, 1);
+      GPU.uploadData15(clutRect, font.getClutData());
     }
   }
 
@@ -115,11 +108,11 @@ public final class Scus94491BpeSegment_800e {
   public static void loadShadow() {
     submapId_800bd808 = 0;
 
-    loadTimImage(shadowTimFile_80010544.getAddress());
+    new Tim(Unpacker.loadFile("shadow.tim")).uploadToGpu();
 
     //LAB_800e6af0
-    final CContainer container = new CContainer("Shadow", new FileData(MEMORY.getBytes(shadowCContainer_800103d0.getAddress(), 0x14c)));
-    final TmdAnimationFile animation = new TmdAnimationFile(new FileData(MEMORY.getBytes(shadowAnimation_8001051c.getAddress(), 0x28)));
+    final CContainer container = new CContainer("Shadow", Unpacker.loadFile("shadow.ctmd"));
+    final TmdAnimationFile animation = new TmdAnimationFile(Unpacker.loadFile("shadow.anim"));
 
     shadowModel_800bda10.modelParts_00 = new ModelPart10[animation.modelPartCount_0c];
     Arrays.setAll(shadowModel_800bda10.modelParts_00, i -> new ModelPart10());
@@ -129,17 +122,6 @@ public final class Scus94491BpeSegment_800e {
     shadowModel_800bda10.coord2_14.transforms.rotate.zero();
     shadowModel_800bda10.vramSlot_9d = 0;
     shadowModel_800bda10.shadowType_cc = 0;
-  }
-
-  /** Pulled from SMAP */
-  @Method(0x800e3cc8L)
-  public static void loadTimImage(final long address) {
-    final TimHeader header = parseTimHeader(MEMORY.ref(4, address).offset(0x4L));
-    LoadImage(header.imageRect, header.imageAddress);
-
-    if(header.hasClut()) {
-      LoadImage(header.clutRect, header.clutAddress);
-    }
   }
 
   @Method(0x800e6d60L)

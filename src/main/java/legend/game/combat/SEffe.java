@@ -83,7 +83,6 @@ import legend.game.combat.environment.BattleLightStruct64;
 import legend.game.combat.environment.BattleStageDarkening1800;
 import legend.game.combat.particles.ParticleEffectData98;
 import legend.game.combat.particles.ParticleEffectInstance94;
-import legend.game.combat.particles.ParticleManager;
 import legend.game.combat.types.AdditionHitProperties10;
 import legend.game.combat.types.BattleObject;
 import legend.game.combat.types.DragoonAdditionScriptData1c;
@@ -99,6 +98,7 @@ import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptParam;
 import legend.game.scripting.ScriptState;
 import legend.game.tmd.Renderer;
+import legend.game.types.GsF_LIGHT;
 import legend.game.types.Model124;
 import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
@@ -150,6 +150,7 @@ import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
 import static legend.game.Scus94491BpeSegment_8003.getProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransformTriple;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
@@ -159,15 +160,10 @@ import static legend.game.Scus94491BpeSegment_800b.stage_800bda0c;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
-import static legend.game.combat.Battle._800c6930;
 import static legend.game.combat.Battle.buttonPressHudMetrics_800faaa0;
-import static legend.game.combat.Battle.currentStage_800c66a4;
 import static legend.game.combat.Battle.deffManager_800c693c;
-import static legend.game.combat.Battle.light_800c6ddc;
-import static legend.game.combat.Battle.lights_800c692c;
 import static legend.game.combat.Battle.melbuStageIndices_800fb064;
 import static legend.game.combat.Battle.seed_800fa754;
-import static legend.game.combat.Battle.spriteMetrics_800c6948;
 import static legend.game.combat.Battle.stageDarkeningClutWidth_800c695c;
 import static legend.game.combat.Battle.stageDarkening_800c6958;
 
@@ -177,9 +173,9 @@ public final class SEffe {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
   private static final Marker EFFECTS = MarkerManager.getMarker("EFFECTS");
 
-  private static final int[] vramSlotUvs_800fb0ec = {0, 21, 22, 23, 24, 25, 26, 25, 26, 27, 12, 13, 14, 15, 8, 9, 10, 11};
+  private static final GsF_LIGHT defaultLight_800c6ddc = new GsF_LIGHT(1.0f, 1.0f, 1.0f);
 
-  private static final ParticleManager particles = new ParticleManager();
+  private static final int[] vramSlotUvs_800fb0ec = {0, 21, 22, 23, 24, 25, 26, 25, 26, 27, 12, 13, 14, 15, 8, 9, 10, 11};
 
   private static final byte[] additionButtonRenderCallbackIndices_800fb7bc = {35, 40, 33, 38};
 
@@ -546,7 +542,7 @@ public final class SEffe {
 
   @Method(0x800e4d74L)
   public static void getBattleBackgroundLightColour(final Vector3f colour) {
-    final BattleLightStruct64 light = _800c6930;
+    final BattleLightStruct64 light = ((Battle)currentEngineState_8004dd04)._800c6930;
     colour.set(light.colour_00);
   }
 
@@ -564,7 +560,7 @@ public final class SEffe {
       LOGGER.warn("Negative B! %f", b);
     }
 
-    final BattleLightStruct64 light = _800c6930;
+    final BattleLightStruct64 light = ((Battle)currentEngineState_8004dd04)._800c6930;
     final Vector3f colour = light.colours_30[light.colourIndex_60];
     getBattleBackgroundLightColour(colour);
 
@@ -574,7 +570,7 @@ public final class SEffe {
 
   @Method(0x800e6170L)
   public static void FUN_800e6170() {
-    final BattleLightStruct64 light = _800c6930;
+    final BattleLightStruct64 light = ((Battle)currentEngineState_8004dd04)._800c6930;
     light.colourIndex_60 = light.colourIndex_60 - 1 & 3;
     light.colour_00.set(light.colours_30[light.colourIndex_60]);
   }
@@ -593,12 +589,12 @@ public final class SEffe {
       LOGGER.warn("Negative B! %f", b);
     }
 
-    GsSetFlatLight(0, light_800c6ddc);
-    GsSetFlatLight(1, light_800c6ddc);
-    GsSetFlatLight(2, light_800c6ddc);
+    GsSetFlatLight(0, defaultLight_800c6ddc);
+    GsSetFlatLight(1, defaultLight_800c6ddc);
+    GsSetFlatLight(2, defaultLight_800c6ddc);
     FUN_800e60e0(r, g, b);
 
-    final BattleLightStruct64 light = _800c6930;
+    final BattleLightStruct64 light = ((Battle)currentEngineState_8004dd04)._800c6930;
     GTE.setBackgroundColour(light.colour_00.x, light.colour_00.y, light.colour_00.z);
   }
 
@@ -606,11 +602,11 @@ public final class SEffe {
   public static void FUN_800e62a8() {
     FUN_800e6170();
 
-    final BattleLightStruct64 light = _800c6930;
+    final BattleLightStruct64 light = ((Battle)currentEngineState_8004dd04)._800c6930;
     GTE.setBackgroundColour(light.colour_00.x, light.colour_00.y, light.colour_00.z);
 
     for(int i = 0; i < 3; i++) {
-      GsSetFlatLight(i, lights_800c692c[i].light_00);
+      GsSetFlatLight(i, ((Battle)currentEngineState_8004dd04).lights_800c692c[i].light_00);
     }
   }
 
@@ -1080,7 +1076,7 @@ public final class SEffe {
     final int innerStuff = script.params_20[7].get();
     final int particleType = script.params_20[8].get();
 
-    final ParticleEffectData98 effect = particles.allocateParticle(script.scriptState_04, particleType, particleCount, particleTypeId, _10, _14, _18, innerStuff, scriptIndex, script.params_20[1].get());
+    final ParticleEffectData98 effect = ((Battle)currentEngineState_8004dd04).particles.allocateParticle(script.scriptState_04, particleType, particleCount, particleTypeId, _10, _14, _18, innerStuff, scriptIndex, script.params_20[1].get());
 
     script.params_20[0].set(effect.myState_00.index);
     return FlowControl.CONTINUE;
@@ -4230,7 +4226,7 @@ public final class SEffe {
         s0.enabled_02 = true;
 
         if((a1 & 0xf_ff00) == 0xf_ff00) {
-          final SpriteMetrics08 metrics = spriteMetrics_800c6948[a1 & 0xff];
+          final SpriteMetrics08 metrics = deffManager_800c693c.spriteMetrics_39c[a1 & 0xff];
           effect.u_04[i] = metrics.u_00;
           effect.v_0e[i] = metrics.v_02;
           effect.w_18[i] = metrics.w_04;
@@ -4467,7 +4463,7 @@ public final class SEffe {
 
     //LAB_8010d4a4
     if((effectFlags & 0xf_ff00) == 0xf_ff00) {
-      final SpriteMetrics08 metrics = spriteMetrics_800c6948[effectFlags & 0xff];
+      final SpriteMetrics08 metrics = deffManager_800c693c.spriteMetrics_39c[effectFlags & 0xff];
       featherEffect.u_06 = (short)metrics.u_00;
       featherEffect.v_08 = (short)metrics.v_02;
       featherEffect.width_0a = (short)metrics.w_04;
@@ -4739,7 +4735,7 @@ public final class SEffe {
 
     //LAB_8010e1d8
     if((effectFlag & 0xf_ff00) == 0xf_ff00) {
-      final SpriteMetrics08 metrics = spriteMetrics_800c6948[effectFlag & 0xff];
+      final SpriteMetrics08 metrics = deffManager_800c693c.spriteMetrics_39c[effectFlag & 0xff];
       meteorEffect.metrics_04.u_00 = metrics.u_00;
       meteorEffect.metrics_04.v_02 = metrics.v_02;
       meteorEffect.metrics_04.w_04 = metrics.w_04;
@@ -4886,7 +4882,7 @@ public final class SEffe {
 
     //LAB_8010ead0
     if((effectFlags & 0xf_ff00) == 0xf_ff00) {
-      final SpriteMetrics08 metrics = spriteMetrics_800c6948[effectFlags & 0xff];
+      final SpriteMetrics08 metrics = deffManager_800c693c.spriteMetrics_39c[effectFlags & 0xff];
       starEffect.metrics_04.u_00 = metrics.u_00;
       starEffect.metrics_04.v_02 = metrics.v_02;
       starEffect.metrics_04.w_04 = metrics.w_04;
@@ -7187,7 +7183,9 @@ public final class SEffe {
     final int _02;
     final int _04;
 
-    if(currentStage_800c66a4.get() < 71 || currentStage_800c66a4.get() > 78) { // Not in Dragoon "special transformation" stage
+    final int stage = ((Battle)currentEngineState_8004dd04).currentStage_800c66a4;
+
+    if(stage < 71 || stage > 78) { // Not in Dragoon "special transformation" stage
       //LAB_80115d14
       //LAB_80115d2c
       for(int i = 0; ; i++) {
@@ -7200,7 +7198,7 @@ public final class SEffe {
           break;
         }
 
-        if(melbuStageIndices_800fb064[i] == currentStage_800c66a4.get()) { // Melbu stages
+        if(melbuStageIndices_800fb064[i] == stage) { // Melbu stages
           //LAB_80115d58
           final DeffManager7cc.Struct04 v0 = deffManager_800c693c._08[i];
           _00 = v0._00;

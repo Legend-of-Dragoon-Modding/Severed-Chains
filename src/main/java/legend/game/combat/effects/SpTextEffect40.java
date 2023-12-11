@@ -6,7 +6,6 @@ import org.joml.Math;
 
 import java.util.Arrays;
 
-import static legend.game.combat.Battle._800faa94;
 import static legend.game.combat.SEffe.FUN_800d3f98;
 
 public class SpTextEffect40 {
@@ -32,8 +31,8 @@ public class SpTextEffect40 {
   }
 
   @Method(0x800d4018L)
-  public void tickSpTextEffect(final ScriptState<SpTextEffect40> state, final SpTextEffect40 s3) {
-    if(_800faa94.get() == 0 && this._00 == 0) {
+  public void tickSpTextEffect(final ScriptState<SpTextEffect40> state, final int unknown) {
+    if(unknown == 0 && this._00 == 0) {
       if(this._02 == 0) {
         state.deallocateWithChildren();
         return;

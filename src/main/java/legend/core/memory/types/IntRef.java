@@ -1,41 +1,13 @@
 package legend.core.memory.types;
 
-import legend.core.memory.Value;
-
-import javax.annotation.Nullable;
-
-public class IntRef implements MemoryRef {
-  @Nullable
-  private final Value ref;
-
+public class IntRef {
   private int val;
 
-  public IntRef() {
-    this.ref = null;
-  }
-
-  public IntRef(final Value ref) {
-    this.ref = ref;
-
-    if(ref.getSize() != 4) {
-      throw new IllegalArgumentException("Size of int refs must be 4");
-    }
-  }
-
   public int get() {
-    if(this.ref != null) {
-      return (int)this.ref.get();
-    }
-
     return this.val;
   }
 
   public IntRef set(final int val) {
-    if(this.ref != null) {
-      this.ref.setu(val);
-      return this;
-    }
-
     this.val = val;
     return this;
   }
@@ -150,26 +122,12 @@ public class IntRef implements MemoryRef {
   }
 
   public IntRef abs() {
-    if(this.ref != null) {
-      this.ref.abs();
-    } else {
-      this.val = Math.abs(this.val);
-    }
-
+    this.val = Math.abs(this.val);
     return this;
   }
 
   @Override
-  public long getAddress() {
-    if(this.ref == null) {
-      throw new IllegalStateException("Can't get address of non-memulated variable");
-    }
-
-    return this.ref.getAddress();
-  }
-
-  @Override
   public String toString() {
-    return Integer.toHexString(this.get()) + (this.ref == null ? " (local)" : " @ " + Long.toHexString(this.getAddress()));
+    return Integer.toHexString(this.get());
   }
 }

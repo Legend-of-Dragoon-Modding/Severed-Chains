@@ -3,13 +3,9 @@ package legend.game;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandFillVram;
-import legend.core.gpu.RECT;
-import legend.core.gpu.TimHeader;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
-import legend.core.memory.Value;
-import legend.core.memory.types.IntRef;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Translucency;
@@ -20,6 +16,7 @@ import org.joml.Math;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
@@ -34,8 +31,6 @@ import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment_8005.matrixStackIndex_80054a08;
 import static legend.game.Scus94491BpeSegment_8005.matrixStack_80054a0c;
-import static legend.game.Scus94491BpeSegment_8005.vramHeight_800546c2;
-import static legend.game.Scus94491BpeSegment_8005.vramWidth_800546c0;
 import static legend.game.Scus94491BpeSegment_800c.PSDCNT_800c34d0;
 import static legend.game.Scus94491BpeSegment_800c.coord2s_800c35a8;
 import static legend.game.Scus94491BpeSegment_800c.displayRect_800c34c8;
@@ -52,21 +47,6 @@ public final class Scus94491BpeSegment_8003 {
   @Method(0x80038190L)
   public static void ResetGraph() {
     GPU.resetCommandBuffer();
-  }
-
-  @Method(0x80038574L)
-  private static void validateRect(final String text, final RECT rect) {
-    if(rect.w.get() > vramWidth_800546c0 || rect.x.get() + rect.w.get() > vramWidth_800546c0 || rect.y.get() > vramHeight_800546c2 || rect.y.get() + rect.h.get() > vramHeight_800546c2 || rect.w.get() < 0 || rect.x.get() < 0 || rect.y.get() < 0 || rect.h.get() < 0) {
-      LOGGER.warn("%s:bad RECT", text);
-      LOGGER.warn("(%d,%d)-(%d,%d)", rect.x.get(), rect.y.get(), rect.w.get(), rect.h.get());
-    }
-  }
-
-  @Method(0x800387b8L)
-  public static void LoadImage(final RECT rect, final long address) {
-    validateRect("LoadImage", rect);
-
-    GPU.commandA0CopyRectFromCpuToVram(rect, address);
   }
 
   /**
@@ -322,47 +302,6 @@ public final class Scus94491BpeSegment_8003 {
   public static void GsInit3D() {
     InitGeom();
     GTE.setScreenOffset(0, 0);
-  }
-
-  @Method(0x8003cdf0L)
-  public static TimHeader parseTimHeader(final Value baseAddress) {
-    final TimHeader header = new TimHeader();
-    header.flags = (int)baseAddress.offset(4, 0x0L).get();
-
-    if(baseAddress.get(0b1000L) == 0) { // No CLUT
-      //LAB_8003ce94
-      final RECT imageRect = new RECT();
-      imageRect.x.set((short)baseAddress.offset(2, 0x8L).get()); // Image X
-      imageRect.y.set((short)baseAddress.offset(2, 0xaL).get()); // Image Y
-
-      imageRect.w.set((short)baseAddress.offset(2, 0xcL).get()); // Image W
-      imageRect.h.set((short)baseAddress.offset(2, 0xeL).get()); // Image H
-
-      header.setImage(imageRect, baseAddress.offset(0x10L).getAddress()); // Pointer to image data
-    } else { // Has CLUT
-      final RECT clutRect = new RECT();
-      clutRect.x.set((short)baseAddress.offset(2, 0x8L).get()); // CLUT X
-      clutRect.y.set((short)baseAddress.offset(2, 0xaL).get()); // CLUT Y
-
-      clutRect.w.set((short)baseAddress.offset(2, 0xcL).get()); // CLUT W
-      clutRect.h.set((short)baseAddress.offset(2, 0xeL).get()); // CLUT H
-
-      header.setClut(clutRect, baseAddress.offset(0x10L).getAddress()); // Pointer to CLUT table
-
-      final Value imageData = baseAddress.offset(0x4L).offset(baseAddress.offset(2, 0x4L)); // Address to image data block
-
-      final RECT imageRect = new RECT();
-      imageRect.x.set((short)imageData.offset(2, 0x4L).get()); // Image X
-      imageRect.y.set((short)imageData.offset(2, 0x6L).get()); // Image Y
-
-      imageRect.w.set((short)imageData.offset(2, 0x8L).get()); // Image W
-      imageRect.h.set((short)imageData.offset(2, 0xaL).get()); // Image H
-
-      header.setImage(imageRect, imageData.offset(0xcL).getAddress()); // Pointer to image data
-    }
-
-    //LAB_8003cecc
-    return header;
   }
 
   @Method(0x8003cee0L)
@@ -933,9 +872,8 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003f8a0L)
-  public static void getScreenOffset(final IntRef screenOffsetX, final IntRef screenOffsetY) {
-    screenOffsetX.set(GTE.getScreenOffsetX() >> 16);
-    screenOffsetY.set(GTE.getScreenOffsetY() >> 16);
+  public static void getScreenOffset(final Vector2i offset) {
+    GTE.getScreenOffset(offset);
   }
 
   @Method(0x8003f8c0L)

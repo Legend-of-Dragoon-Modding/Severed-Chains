@@ -1,7 +1,6 @@
 package legend.game;
 
 import legend.core.gte.MV;
-import legend.core.memory.types.IntRef;
 import legend.game.combat.environment.BattleStage;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.combat.ui.BattleDissolveDarkeningMetrics10;
@@ -35,8 +34,6 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static legend.core.GameEngine.MEMORY;
-
 public final class Scus94491BpeSegment_800b {
   private Scus94491BpeSegment_800b() { }
 
@@ -49,7 +46,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static int clearGreen_800bb104;
 
-  public static final IntRef pregameLoadingStage_800bb10c = MEMORY.ref(4, 0x800bb10cL, IntRef::new);
+  public static int pregameLoadingStage_800bb10c;
 
   public static final FullScreenEffect fullScreenEffect_800bb140 = new FullScreenEffect();
 
