@@ -134,7 +134,8 @@ public final class Scus94491BpeSegment_800b {
 
   public static SequenceData124 currentSequenceData_800bd0f8;
 
-  public static final Value _800bd0fc = MEMORY.ref(4, 0x800bd0fcL);
+  public static int musicFileIndex_800bd0fc;
+  /** .8 */
   public static int sssqTempoScale_800bd100;
   public static int sssqTempo_800bd104;
   public static int sequenceVolume_800bd108;
@@ -154,8 +155,6 @@ public final class Scus94491BpeSegment_800b {
 
   public static final Value _800bd774 = MEMORY.ref(4, 0x800bd774L);
 
-  public static boolean melbuSoundsLoaded_800bd780;
-  public static boolean melbuMusicLoaded_800bd781;
   public static boolean musicLoaded_800bd782;
 
   public static final BoolRef _800bd7ac = MEMORY.ref(4, 0x800bd7acL, BoolRef::new);

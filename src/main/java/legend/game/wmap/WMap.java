@@ -487,7 +487,7 @@ public class WMap extends EngineState {
       } else {
         //LAB_800cc804
         resizeDisplay(320, 240);
-        loadWmapMusic(gameState_800babc8.chapterIndex_98, 0);
+        loadWmapMusic(gameState_800babc8.chapterIndex_98);
         pregameLoadingStage_800bb10c.set(12);
       }
 
@@ -594,7 +594,7 @@ public class WMap extends EngineState {
     resizeDisplay(320, 240);
     vsyncMode_8007a3b8 = 1;
     unloadSoundFile(9);
-    loadWmapMusic(gameState_800babc8.chapterIndex_98, 0);
+    loadWmapMusic(gameState_800babc8.chapterIndex_98);
     pregameLoadingStage_800bb10c.set(1);
   }
 

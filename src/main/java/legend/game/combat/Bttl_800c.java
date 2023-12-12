@@ -1364,7 +1364,7 @@ public final class Bttl_800c {
           }
         }
       } else { // Game over
-        loadMusicPackage(19, 0);
+        loadMusicPackage(19);
         postBattleActionIndex_800bc974.set(2);
       }
     }
