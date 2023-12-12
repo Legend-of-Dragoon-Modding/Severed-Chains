@@ -520,6 +520,8 @@ public final class Scus94491BpeSegment {
     //LAB_80012ad8
     currentEngineState_8004dd04 = overlay.constructor_00.get();
     engineStateFunctions_8004e29c = currentEngineState_8004dd04.getScriptFunctions();
+    RENDERER.allowWidescreen = currentEngineState_8004dd04.allowsWidescreen();
+    RENDERER.updateProjections();
   }
 
   @Method(0x80012df8L)

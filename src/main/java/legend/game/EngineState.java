@@ -41,4 +41,8 @@ public abstract class EngineState {
   public void menuClosed() {
 
   }
+
+  public boolean allowsWidescreen() {
+    return true;
+  }
 }

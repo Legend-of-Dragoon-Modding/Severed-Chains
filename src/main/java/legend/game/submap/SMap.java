@@ -1004,6 +1004,11 @@ public class SMap extends EngineState {
     return functions;
   }
 
+  @Override
+  public boolean allowsWidescreen() {
+    return false;
+  }
+
   /** Pulled from BPE segment */
   @Method(0x800217a4L)
   private void FUN_800217a4(final Model124 model) {

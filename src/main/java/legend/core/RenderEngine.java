@@ -17,6 +17,7 @@ import legend.core.opengl.Texture;
 import legend.core.opengl.Window;
 import legend.core.opengl.fonts.Font;
 import legend.core.opengl.fonts.FontManager;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,6 +36,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
@@ -101,6 +103,9 @@ public class RenderEngine {
 
   public static int legacyMode;
   public boolean usePs1Gpu = true;
+
+  public boolean allowWidescreen;
+  private float widescreenOrthoOffsetX;
 
   private Camera camera2d;
   private Camera camera3d;
@@ -769,6 +774,7 @@ public class RenderEngine {
 
     final QueuedModel entry = this.orthoPool.acquire();
     entry.reset();
+    entry.transforms.setTranslation(this.widescreenOrthoOffsetX, 0.0f, 0.0f);
     entry.obj = obj;
     return entry;
   }
@@ -781,7 +787,7 @@ public class RenderEngine {
     final QueuedModel entry = this.orthoPool.acquire();
     entry.reset();
     entry.obj = obj;
-    entry.transforms.set(mv).setTranslation(mv.transfer);
+    entry.transforms.set(mv).setTranslation(mv.transfer.x + this.widescreenOrthoOffsetX, mv.transfer.y, mv.transfer.z);
     entry.lightTransforms.set(entry.transforms);
     return entry;
   }
@@ -793,6 +799,7 @@ public class RenderEngine {
 
     final QueuedModel entry = this.orthoOverlayPool.acquire();
     entry.reset();
+    entry.transforms.setTranslation(this.widescreenOrthoOffsetX, 0.0f, 0.0f);
     entry.obj = obj;
     return entry;
   }
@@ -805,7 +812,7 @@ public class RenderEngine {
     final QueuedModel entry = this.orthoOverlayPool.acquire();
     entry.reset();
     entry.obj = obj;
-    entry.transforms.set(mv).setTranslation(mv.transfer);
+    entry.transforms.set(mv).setTranslation(mv.transfer.x + this.widescreenOrthoOffsetX, mv.transfer.y, mv.transfer.z);
     entry.lightTransforms.set(entry.transforms);
     return entry;
   }
@@ -817,6 +824,7 @@ public class RenderEngine {
 
     final QueuedModel entry = this.orthoUnderlayPool.acquire();
     entry.reset();
+    entry.transforms.setTranslation(this.widescreenOrthoOffsetX, 0.0f, 0.0f);
     entry.obj = obj;
     return entry;
   }
@@ -829,7 +837,7 @@ public class RenderEngine {
     final QueuedModel entry = this.orthoUnderlayPool.acquire();
     entry.reset();
     entry.obj = obj;
-    entry.transforms.set(mv).setTranslation(mv.transfer);
+    entry.transforms.set(mv).setTranslation(mv.transfer.x + this.widescreenOrthoOffsetX, mv.transfer.y, mv.transfer.z);
     entry.lightTransforms.set(entry.transforms);
     return entry;
   }
@@ -860,7 +868,7 @@ public class RenderEngine {
     }
   }
 
-  private void updateProjections() {
+  public void updateProjections() {
     if(legacyMode != 0) {
       this.perspectiveProjection.setPerspectiveLH(MathHelper.PI / 4.0f, (float)this.width / this.height, 0.1f, 500.0f);
       this.orthographicProjection.setOrtho2D(0.0f, this.width, this.height, 0.0f);
@@ -870,8 +878,18 @@ public class RenderEngine {
     // LOD uses a left-handed projection with a negated Y axis because reasons.
     // Our perspective projection is actually a centred orthographic projection. We are doing a
     // projection plane division in the vertex shader to emulate perspective division on the GTE.
-    this.perspectiveProjection.setOrthoLH(-this.projectionWidth / 2.0f, this.projectionWidth / 2.0f, this.projectionHeight / 2.0f, -this.projectionHeight / 2.0f, 0.1f, 1000000.0f);
-    this.orthographicProjection.setOrthoLH(0.0f, this.projectionWidth, this.projectionHeight, 0.0f, 0.1f, 1000000.0f);
+    if(this.allowWidescreen && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get())) {
+      final float ratio = this.width / (float)this.height;
+      final float w = this.projectionHeight * ratio;
+      final float h = this.projectionHeight;
+      this.perspectiveProjection.setOrthoLH(-w / 2.0f, w / 2.0f, h / 2.0f, -h / 2.0f, 0.1f, 1000000.0f);
+      this.orthographicProjection.setOrthoLH(0.0f, w * (this.projectionWidth / 320.0f), h, 0.0f, 0.1f, 1000000.0f);
+      this.widescreenOrthoOffsetX = (w - 320.0f) / 2.0f;
+    } else {
+      this.perspectiveProjection.setOrthoLH(-this.projectionWidth / 2.0f, this.projectionWidth / 2.0f, this.projectionHeight / 2.0f, -this.projectionHeight / 2.0f, 0.1f, 1000000.0f);
+      this.orthographicProjection.setOrthoLH(0.0f, this.projectionWidth, this.projectionHeight, 0.0f, 0.1f, 1000000.0f);
+      this.widescreenOrthoOffsetX = 0.0f;
+    }
   }
 
   private void onResize(final Window window, final int width, final int height) {
