@@ -1519,7 +1519,7 @@ public class Battle extends EngineState {
           }
         }
       } else { // Game over
-        loadMusicPackage(19, 0);
+        loadMusicPackage(19);
         postBattleActionIndex_800bc974 = 2;
       }
     }

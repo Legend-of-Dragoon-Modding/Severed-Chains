@@ -3385,7 +3385,7 @@ public class SMap extends EngineState {
         }
 
         //LAB_800e15c0
-        loadMusicPackage(ret, 0);
+        loadMusicPackage(ret);
         this.mediaLoadingStage_800c68e4 = SubmapMediaState.WAIT_FOR_MUSIC_2;
       }
 

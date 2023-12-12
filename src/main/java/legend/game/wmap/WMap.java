@@ -528,7 +528,7 @@ public class WMap extends EngineState {
       } else {
         //LAB_800cc804
         resizeDisplay(320, 240);
-        loadWmapMusic(gameState_800babc8.chapterIndex_98, 0);
+        loadWmapMusic(gameState_800babc8.chapterIndex_98);
         this.wmapState_800bb10c = WmapState.PRE_EXIT_SCREENS_12;
       }
 
@@ -635,7 +635,7 @@ public class WMap extends EngineState {
     resizeDisplay(320, 240);
     vsyncMode_8007a3b8 = 1;
     unloadSoundFile(9);
-    loadWmapMusic(gameState_800babc8.chapterIndex_98, 0);
+    loadWmapMusic(gameState_800babc8.chapterIndex_98);
     this.wmapState_800bb10c = WmapState.WAIT_FOR_MUSIC_TO_LOAD_1;
   }
 

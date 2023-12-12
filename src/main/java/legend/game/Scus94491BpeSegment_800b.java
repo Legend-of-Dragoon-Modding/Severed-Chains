@@ -115,7 +115,8 @@ public final class Scus94491BpeSegment_800b {
 
   public static SequenceData124 currentSequenceData_800bd0f8;
 
-  public static int _800bd0fc;
+  public static int musicFileIndex_800bd0fc;
+  /** .8 */
   public static int sssqTempoScale_800bd100;
   public static int sssqTempo_800bd104;
   public static int sequenceVolume_800bd108;
@@ -131,8 +132,6 @@ public final class Scus94491BpeSegment_800b {
 
   public static int _800bd740;
 
-  public static boolean melbuSoundsLoaded_800bd780;
-  public static boolean melbuMusicLoaded_800bd781;
   public static boolean musicLoaded_800bd782;
 
   public static boolean _800bd7ac;
