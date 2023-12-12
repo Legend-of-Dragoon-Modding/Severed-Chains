@@ -9,9 +9,9 @@ import legend.core.opengl.ShaderManager;
 import legend.core.opengl.Texture;
 import legend.core.opengl.Window;
 import legend.core.spu.XaAdpcm;
+import legend.game.EngineStateEnum;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
-import legend.game.EngineStateEnum;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
@@ -28,8 +28,6 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
-import static legend.game.Scus94491BpeSegment_8005._80052d6c;
-import static legend.game.Scus94491BpeSegment_8005.diskFmvs_80052d7c;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
@@ -38,6 +36,14 @@ public final class Fmv {
   private Fmv() { }
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(Fmv.class);
+
+  private static final int[] _80052d6c = {0, 4, 7, 15};
+  private static final String[][] diskFmvs_80052d7c = {
+    {"\\STR\\DEMOH.IKI", "\\STR\\DEMO2.IKI", "\\STR\\OPENH.IKI", "\\STR\\WAR1H.IKI"},
+    {"\\STR\\TVRH.IKI", "\\STR\\GOAST.IKI", "\\STR\\ROZEH.IKI"},
+    {"\\STR\\TREEH.IKI", "\\STR\\WAR2H.IKI", "\\STR\\BLACKH.IKI", "\\STR\\DRAGON1.IKI", "\\STR\\DENIN.IKI", "\\STR\\DENIN2.IKI", "\\STR\\DRAGON2.IKI", "\\STR\\DEIASH.IKI"},
+    {"\\STR\\MOONH.IKI", "\\STR\\ENDING1H.IKI", "\\STR\\ENDING2H.IKI"}
+  };
 
   private static final ZeroRunLengthAc ESCAPE_CODE = new ZeroRunLengthAc(BitStreamCode._000001___________, true, false);
   private static final ZeroRunLengthAc END_OF_BLOCK = new ZeroRunLengthAc(BitStreamCode._10_______________, MdecCode.MDEC_END_OF_DATA_TOP6, MdecCode.MDEC_END_OF_DATA_BOTTOM10, false, true);

@@ -99,7 +99,6 @@ import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.previousEngineState_8004dd28;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
-import static legend.game.Scus94491BpeSegment_8005.reinitializingWmap_80052c6c;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8007.clearRed_8007a3a8;
@@ -189,9 +188,9 @@ public class WMap extends EngineState {
     NOOP_6(6),
     UNUSED_DEALLOC_7(7),
     ;
-    
+
     public final int state;
-    
+
     PlayerState(final int state) {
       this.state = state;
     }
@@ -212,6 +211,9 @@ public class WMap extends EngineState {
   }
 
   private static final Pattern NEWLINE = Pattern.compile("\\n");
+
+  private boolean reinitializingWmap_80052c6c;
+
   private int tickMainMenuOpenTransition_800c6690;
 
   private WorldMapState worldMapState_800c6698;
@@ -713,7 +715,7 @@ public class WMap extends EngineState {
 
     this.deallocate();
 
-    reinitializingWmap_80052c6c = false;
+    this.reinitializingWmap_80052c6c = false;
     engineStateOnceLoaded_8004dd24 = EngineStateEnum.SUBMAP_05;
     vsyncMode_8007a3b8 = 2;
   }
@@ -729,7 +731,7 @@ public class WMap extends EngineState {
     this.handleAndRenderMapAndPlayer();
     this.deallocate();
 
-    reinitializingWmap_80052c6c = false;
+    this.reinitializingWmap_80052c6c = false;
     engineStateOnceLoaded_8004dd24 = EngineStateEnum.COMBAT_06;
     vsyncMode_8007a3b8 = 2;
   }
@@ -737,7 +739,7 @@ public class WMap extends EngineState {
   @Method(0x800cce9cL)
   private void transitionToWorldMap() {
     this.deallocate();
-    reinitializingWmap_80052c6c = true;
+    this.reinitializingWmap_80052c6c = true;
     this.wmapState_800bb10c = WmapState.INIT_0;
   }
 
@@ -756,7 +758,7 @@ public class WMap extends EngineState {
     this.handleAndRenderMapAndPlayer();
     this.deallocate();
 
-    reinitializingWmap_80052c6c = false;
+    this.reinitializingWmap_80052c6c = false;
     engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;
     vsyncMode_8007a3b8 = 2;
     drgnBinIndex_800bc058 = 1;
@@ -4594,7 +4596,7 @@ public class WMap extends EngineState {
 
     //LAB_800e7e5c
     //LAB_800e7e88
-    if(!transitionFromCombatOrShip && !loadingNewGameState_800bdc34 || reinitializingWmap_80052c6c) {
+    if(!transitionFromCombatOrShip && !loadingNewGameState_800bdc34 || this.reinitializingWmap_80052c6c) {
       //LAB_800e844c
       // Transition from submap or other world map
       this.mapState_800c6798.shortForceMovementMode_d4 = ForcedMovementMode.WALK_1;
