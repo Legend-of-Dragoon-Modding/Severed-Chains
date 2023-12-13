@@ -352,7 +352,7 @@ public class SMap extends EngineState {
   private final Struct20 _800d4ec0 = new Struct20();
   private final SmokeCloudEffectData24 smokeCloudEffectData_800d4ee0 = new SmokeCloudEffectData24();
 
-  private final SmokePlumeEffectData34 smokePlumeEffectData_800d4f18 = new SmokePlumeEffectData34();
+  private final SmokePlumeEffectData34 unusedSmokeEffectData_800d4f18 = new SmokePlumeEffectData34();
 
   private final SmokeEffect3c smokeCloudEffect_800d4f50 = new SmokeEffect3c();
 
@@ -1000,15 +1000,15 @@ public class SMap extends EngineState {
     functions[779] = this::FUN_800f1b64;
     functions[780] = this::FUN_800f26c8;
     functions[781] = this::FUN_800f1d0c;
-    functions[782] = this::allocateSmokeCloudData;
-    functions[783] = this::deallocateSmokeCloudDataAndEffect;
+    functions[782] = this::scriptAllocateSmokeCloudData;
+    functions[783] = this::scriptDeallocateSmokeCloudDataAndEffect;
     functions[784] = this::FUN_800f24b0;
     functions[785] = this::FUN_800f23a0;
     functions[786] = this::FUN_800f1634;
     functions[787] = this::FUN_800f22c4;
     functions[788] = this::FUN_800f2554;
     functions[789] = this::FUN_800f25a8;
-    functions[790] = this::FUN_800f1274;
+    functions[790] = this::scriptAllocateUnusedSmokeEffectData;
     return functions;
   }
 
@@ -7755,7 +7755,7 @@ public class SMap extends EngineState {
   @Method(0x800f00a4L)
   private void tickSmokeCloud() {
     if(this.renderUnusedSmokeEffect_800f9e74) {
-      SmokePlumeEffectData34 prev = this.smokePlumeEffectData_800d4f18;
+      SmokePlumeEffectData34 prev = this.unusedSmokeEffectData_800d4f18;
       SmokePlumeEffectData34 dataInst = prev.next_30;
 
       //LAB_800f0100
@@ -7788,7 +7788,7 @@ public class SMap extends EngineState {
           final SmokePlumeEffectData34 next = dataInst.next_30;
           prev.next_30 = next;
 
-          if(this.smokePlumeEffectData_800d4f18.next_30 == null) {
+          if(this.unusedSmokeEffectData_800d4f18.next_30 == null) {
             this.renderUnusedSmokeEffect_800f9e74 = false;
           }
 
@@ -7879,10 +7879,9 @@ public class SMap extends EngineState {
     a0.ptr_3c = null;
   }
 
-  /** TODO deallocate some static particle struct */
   @Method(0x800f0514L)
-  private void FUN_800f0514() {
-    final SmokePlumeEffectData34 inst = this.smokePlumeEffectData_800d4f18;
+  private void deallocateUnusedSmokeDataAndEffect() {
+    final SmokePlumeEffectData34 inst = this.unusedSmokeEffectData_800d4f18;
 
     if(inst.next_30 != null) {
       //LAB_800f053c
@@ -8243,23 +8242,22 @@ public class SMap extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  /** There do not appear to be any references to this subfunc. */
-  @ScriptDescription("Unknown")
+  @ScriptDescription("Allocates/initializes unused smoke effect.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "totalTicks")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lifecycleTicks")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p6")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "finalOffsetY")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "offsetX")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "size")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p9")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "finalSize")
   @Method(0x800f1274L)
-  private FlowControl FUN_800f1274(final RunningScript<?> script) {
+  private FlowControl scriptAllocateUnusedSmokeEffectData(final RunningScript<?> script) {
     this.renderUnusedSmokeEffect_800f9e74 = true;
 
-    final SmokePlumeEffectData34 inst = this.smokePlumeEffectData_800d4f18;
+    final SmokePlumeEffectData34 inst = this.unusedSmokeEffectData_800d4f18;
     final SmokePlumeEffectData34 newInst = new SmokePlumeEffectData34();
     newInst.next_30 = inst.next_30;
     inst.next_30 = newInst;
@@ -8314,7 +8312,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "size")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "finalSize")
   @Method(0x800f14f0L)
-  private FlowControl allocateSmokeCloudData(final RunningScript<?> script) {
+  private FlowControl scriptAllocateSmokeCloudData(final RunningScript<?> script) {
     this.smokeCloudEffectState_800f9e70 = script.params_20[0].get();
 
     final SmokeCloudEffectData24 inst = this.smokeCloudEffectData_800d4ee0;
@@ -8826,7 +8824,7 @@ public class SMap extends EngineState {
   @ScriptDescription("Deallocates/uninitializes the smoke cloud data and effect structs.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "forceDeallocation", description = "Ensures that structs will be deallocated regardless of _800fe70's value.")
   @Method(0x800f24d8L)
-  private FlowControl deallocateSmokeCloudDataAndEffect(final RunningScript<?> script) {
+  private FlowControl scriptDeallocateSmokeCloudDataAndEffect(final RunningScript<?> script) {
     if(script.params_20[0].get() != 0) {
       this.smokeCloudEffectState_800f9e70 = 0;
     }
@@ -9539,7 +9537,7 @@ public class SMap extends EngineState {
         this.handleSnow();
       }
 
-      this.FUN_800f0514();
+      this.deallocateUnusedSmokeDataAndEffect();
     } else {
       this.tickSmokePlume();
       this.renderSmokePlume();
@@ -9564,7 +9562,7 @@ public class SMap extends EngineState {
     }
 
     //LAB_800f4454
-    this.FUN_800f0514();
+    this.deallocateUnusedSmokeDataAndEffect();
   }
 
   /** Things such as the save point, &lt;!&gt; action icon, encounter icon, etc. */
