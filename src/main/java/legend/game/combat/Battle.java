@@ -248,7 +248,6 @@ import static legend.game.combat.SEffe.applyScreenDarkening;
 import static legend.game.combat.SEffe.loadDeffStageEffects;
 import static legend.game.combat.SEffe.renderButtonPressHudElement1;
 import static legend.game.combat.SEffe.scriptGetPositionScalerAttachmentVelocity;
-import static legend.game.combat.environment.Ambiance.dragoonSpaceAmbiance_80114a10;
 import static legend.game.combat.environment.Ambiance.stageAmbiance_801134fc;
 import static legend.game.combat.environment.BattleCamera.UPDATE_REFPOINT;
 import static legend.game.combat.environment.BattleCamera.UPDATE_VIEWPOINT;
@@ -8789,7 +8788,7 @@ public class Battle extends EngineState {
 
     //LAB_8010999c
     for(int i = 0; i < deffManager.dragoonSpaceAmbiance_98.length; i++) {
-      deffManager.dragoonSpaceAmbiance_98[i].set(dragoonSpaceAmbiance_80114a10[i]);
+      deffManager.dragoonSpaceAmbiance_98[i].set(stageAmbiance_801134fc[71 + i]);
     }
 
     final StageDeffThing08 thing = _8011517c[battleStage_800bb0f4];
