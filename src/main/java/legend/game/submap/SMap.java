@@ -361,7 +361,7 @@ public class SMap extends EngineState {
   private final Struct14 _800d4fd0 = new Struct14();
 
   // Used to be a tick, but only 0 and not-0 mattered
-  private boolean smokePlumeEffectDataInitialized_800d4fe8; //TODO name better after figuring out struct
+  private boolean smokePlumeEffectDataInitialized_800d4fe8;
 
   private final TriangleIndicator44[] _800d4ff0 = new TriangleIndicator44[21];
   {
