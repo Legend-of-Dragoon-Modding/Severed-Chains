@@ -331,7 +331,7 @@ public class SMap extends EngineState {
 
   private Structb0 _800d4bd0;
   private FileData _800d4bd4;
-  private SnowEffect snow_800d4bd8;
+  private SnowEffect3c snow_800d4bd8;
   private boolean submapCutModelAndAnimLoaded_800d4bdc;
   private boolean submapTextureAndMatrixLoaded_800d4be0;
   private boolean theEndTimLoaded_800d4be4;
@@ -350,17 +350,18 @@ public class SMap extends EngineState {
   private final DustRenderData54 dust_800d4e68 = new DustRenderData54();
 
   private final Struct20 _800d4ec0 = new Struct20();
-  private final Struct24 _800d4ee0 = new Struct24();
+  private final SmokeCloudEffectData24 _800d4ee0 = new SmokeCloudEffectData24();
 
-  private final Struct34 _800d4f18 = new Struct34();
+  private final SmokePlumeEffectData34 _800d4f18 = new SmokePlumeEffectData34();
 
-  private final SMapStruct3c struct3c_800d4f50 = new SMapStruct3c();
+  private final SmokeEffect3c struct3c_800d4f50 = new SmokeEffect3c();
 
   private final Struct34_2 _800d4f90 = new Struct34_2();
 
   private final Struct14 _800d4fd0 = new Struct14();
 
-  private int _800d4fe8;
+  // Used to be a tick, but only 0 and not-0 mattered
+  private boolean somethingInitialized_800d4fe8; //TODO name better after figuring out struct
 
   private final TriangleIndicator44[] _800d4ff0 = new TriangleIndicator44[21];
   {
@@ -382,9 +383,9 @@ public class SMap extends EngineState {
   }
   private final Model124 savePointModel_800d5eb0 = new Model124("Save point");
 
-  private final SMapStruct3c struct3c_800d5fd8 = new SMapStruct3c();
+  private final SmokeEffect3c smokePlumeEffect_800d5fd8 = new SmokeEffect3c();
 
-  private final Struct34 struct34_800d6018 = new Struct34();
+  private final SmokePlumeEffectData34 smokePlumeEffectData_800d6018 = new SmokePlumeEffectData34();
 
   private final int[] texPages_800d6050 = new int[12];
   private final int[] cluts_800d6068 = new int[12];
@@ -460,8 +461,8 @@ public class SMap extends EngineState {
     new Vector3f( 12.0f, 0.0f,   8.0f),
   };
   private final int[] _800d6bdc = {96, 112, 64, 0};
-  private final int[] smokeTextureWidths_800d6bec = {15, 15, 31, 23};
-  private final int[] smokeTextureHeights_800d6bfc = {31, 31, 31, 23};
+  private final int[] dustTextureWidths_800d6bec = {15, 15, 31, 23};
+  private final int[] dustTextureHeights_800d6bfc = {31, 31, 31, 23};
   private final int[] _800d6c0c = {120, 0, 0, 0};
 
   private final Vector3f _800d6c18 = new Vector3f(-8.0f, 0.0f, 0.0f);
@@ -3398,7 +3399,7 @@ public class SMap extends EngineState {
       case LOAD_EFFECT_TEXTURES_3 -> {
         this.submapEffectsState_800f9eac = 0;
 
-        this.loadSubmapEffects();
+        this.reloadSubmapEffects();
 
         if(this.submapEffectsState_800f9eac == 1) {
           this.mediaLoadingStage_800c68e4 = SubmapMediaState.LOAD_EFFECT_MODELS_4;
@@ -3406,7 +3407,7 @@ public class SMap extends EngineState {
       }
 
       case LOAD_EFFECT_MODELS_4 -> {
-        this.loadSubmapEffects();
+        this.reloadSubmapEffects();
 
         if(this.submapEffectsState_800f9eac == 2) {
           this.mediaLoadingStage_800c68e4 = SubmapMediaState.LOAD_SOBJ_ASSETS_AND_SCRIPTS_5;
@@ -3807,7 +3808,7 @@ public class SMap extends EngineState {
     this.submapModelRenderers_800f5ad4[this.submapType_800c6968].run();
 
     this.submapEffectsState_800f9eac = -1;
-    this.loadSubmapEffects();
+    this.reloadSubmapEffects();
     this.triangleIndicator_800c69fc = null;
     new Tim(Unpacker.loadFile("shadow.tim")).uploadToGpu();
   }
@@ -7026,7 +7027,7 @@ public class SMap extends EngineState {
     //LAB_800ee234
     switch(this.snowLoadingStage_800f9e64) {
       case 0 -> {
-        this.snow_800d4bd8 = new SnowEffect();
+        this.snow_800d4bd8 = new SnowEffect3c();
         this.snowLoadingStage_800f9e64++;
       }
 
@@ -7038,7 +7039,7 @@ public class SMap extends EngineState {
       }
 
       case 2 -> {
-        SnowEffect snow = this.snow_800d4bd8.next_38;
+        SnowEffect3c snow = this.snow_800d4bd8.next_38;
 
         //LAB_800ee2d8
         int count;
@@ -7071,8 +7072,8 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800ee368L)
-  private void renderSnowEffect(final SnowEffect root) {
-    SnowEffect snow = root.next_38;
+  private void renderSnowEffect(final SnowEffect3c root) {
+    SnowEffect3c snow = root.next_38;
 
     //LAB_800ee38c
     while(snow != null) {
@@ -7123,7 +7124,7 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800ee558L)
-  private void initSnowEffect(final SnowEffect snow) {
+  private void initSnowEffect(final SnowEffect3c snow) {
     snow._00 = 1;
     snow.x_16 = (short)(rand() % 384 - 192 + this._800f9e6a);
     snow.y_18 = (short)(rand() % 240 - 120);
@@ -7177,7 +7178,7 @@ public class SMap extends EngineState {
 
   /** Reuse snow effect when it reaches the bottom of the screen */
   @Method(0x800ee7b0L)
-  private void wrapAroundSnowEffect(final SnowEffect snow) {
+  private void wrapAroundSnowEffect(final SnowEffect3c snow) {
     snow._00 = 0;
     snow.x_16 = (short)(rand() % 384 - 192 + this._800f9e6e);
     snow.y_18 = (short)-120;
@@ -7322,26 +7323,26 @@ public class SMap extends EngineState {
     this.renderSubmapModel(this.submapModel_800d4bf8, matrix);
   }
 
+  /** init new instance of SMapStruct3c and return it */
   @Method(0x800eed44L)
-  private SMapStruct3c FUN_800eed44(final SMapStruct3c a0) {
-    final SMapStruct3c v0 = new SMapStruct3c();
+  private SmokeEffect3c FUN_800eed44(final SmokeEffect3c a0) {
+    final SmokeEffect3c v0 = new SmokeEffect3c();
     v0.parent_38 = a0.parent_38;
     a0.parent_38 = v0;
     return v0;
   }
 
   @Method(0x800eed84L)
-  private void FUN_800eed84(final SMapStruct3c a0) {
-    if(a0.parent_38 != null) {
+  private void deallocateSmokeEffect(final SmokeEffect3c smoke) {
+    if(smoke.parent_38 != null) {
       //LAB_800eeda8
-      SMapStruct3c s0;
+      SmokeEffect3c temp;
       do {
-        final SMapStruct3c a0_0 = a0.parent_38;
-        s0 = a0_0.parent_38;
-        a0.parent_38 = s0;
-      } while(s0 != null);
+        final SmokeEffect3c parent = smoke.parent_38;
+        temp = parent.parent_38;
+        smoke.parent_38 = temp;
+      } while(temp != null);
     }
-
     //LAB_800eedc8
   }
 
@@ -7383,12 +7384,12 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800ef034L)
-  private boolean allocateSnowEffect(final SnowEffect root) {
-    SnowEffect current = root;
+  private boolean allocateSnowEffect(final SnowEffect3c root) {
+    SnowEffect3c current = root;
 
     //LAB_800ef04c
     for(int i = 0; i < 0x100; i++) {
-      current = new SnowEffect();
+      current = new SnowEffect3c();
       current.next_38 = root.next_38;
       root.next_38 = current;
     }
@@ -7397,8 +7398,8 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800ef090L)
-  private void deallocateSnowEffect(final SnowEffect a0) {
-    SnowEffect s0 = a0.next_38;
+  private void deallocateSnowEffect(final SnowEffect3c a0) {
+    SnowEffect3c s0 = a0.next_38;
 
     //LAB_800ef0b4
     while(s0 != null) {
@@ -7680,9 +7681,9 @@ public class SMap extends EngineState {
         cmd
           .monochrome(s0.colour_48)
           .uv(0, u[s0.textureIndex_02], v[s0.textureIndex_02])
-          .uv(1, u[s0.textureIndex_02] + this.smokeTextureWidths_800d6bec[s0.textureIndex_02], v[s0.textureIndex_02])
-          .uv(2, u[s0.textureIndex_02], v[s0.textureIndex_02] + this.smokeTextureHeights_800d6bfc[s0.textureIndex_02])
-          .uv(3, u[s0.textureIndex_02] + this.smokeTextureWidths_800d6bec[s0.textureIndex_02], v[s0.textureIndex_02] + this.smokeTextureHeights_800d6bfc[s0.textureIndex_02]);
+          .uv(1, u[s0.textureIndex_02] + this.dustTextureWidths_800d6bec[s0.textureIndex_02], v[s0.textureIndex_02])
+          .uv(2, u[s0.textureIndex_02], v[s0.textureIndex_02] + this.dustTextureHeights_800d6bfc[s0.textureIndex_02])
+          .uv(3, u[s0.textureIndex_02] + this.dustTextureWidths_800d6bec[s0.textureIndex_02], v[s0.textureIndex_02] + this.dustTextureHeights_800d6bfc[s0.textureIndex_02]);
 
         GPU.queueCommand(s0.z_4c, cmd);
 
@@ -7698,29 +7699,28 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800efe7cL)
-  private void FUN_800efe7c() {
-    SMapStruct3c s1 = this.struct3c_800d4f50;
-    SMapStruct3c s0 = s1.parent_38;
+  private void renderSmokeCloud() {
+    SmokeEffect3c prevStruct3c = this.struct3c_800d4f50;
+    SmokeEffect3c currStruct3c = prevStruct3c.parent_38;
 
     //LAB_800efecc
-    while(s0 != null) {
-      if(s0._06 < s0._02) {
-        s1.parent_38 = s0.parent_38;
-        s0 = s1.parent_38;
+    while(currStruct3c != null) {
+      if(currStruct3c.totalTicks_06 < currStruct3c.tick_02) {
+        prevStruct3c.parent_38 = currStruct3c.parent_38;
+        currStruct3c = prevStruct3c.parent_38;
       } else {
         //LAB_800eff04
-        final int colour = Math.max(s0._30 - s0._2c >> 16, 0);
+        final float colour = Math.max(currStruct3c.brightness_30 - currStruct3c.stepBrightness_2c, 0);
 
-        s0._14 += s0._1c;
-        s0._24 += s0._20;
-        s0.size_28 = (short)(s0._24 >> 16);
-        s0._30 -= s0._2c;
+        currStruct3c.offsetY_14 += currStruct3c.stepOffsetY_1c;
+        currStruct3c.size_28 += currStruct3c.stepSize_20;
+        currStruct3c.brightness_30 -= currStruct3c.stepBrightness_2c;
 
         final int clut = this.cluts_800d6068[6];
         final int tpage = this.texPages_800d6050[6];
 
-        final float x = this.screenOffsetX_800cb568 - s0.x_0c + s0._10 % 0x1_0000;
-        final float y = this.screenOffsetY_800cb56c - s0.y_0e + s0._14 / 0x1_0000 - (s0._24 >> 16);
+        final float x = this.screenOffsetX_800cb568 - currStruct3c.x_0c + currStruct3c.offsetX_10 % 65536;
+        final float y = this.screenOffsetY_800cb56c - currStruct3c.y_0e + currStruct3c.offsetY_14 - currStruct3c.size_28;
 
         //LAB_800eff7c
         GPU.queueCommand(40, new GpuCommandPoly(4)
@@ -7730,95 +7730,91 @@ public class SMap extends EngineState {
           .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
           .monochrome(colour)
           .pos(0, x, y)
-          .pos(1, x + s0.size_28, y)
-          .pos(2, x, y + s0.size_28)
-          .pos(3, x + s0.size_28, y + s0.size_28)
+          .pos(1, x + currStruct3c.size_28, y)
+          .pos(2, x, y + currStruct3c.size_28)
+          .pos(3, x + currStruct3c.size_28, y + currStruct3c.size_28)
           .uv(0, 64, 64)
           .uv(1, 95, 64)
           .uv(2, 64, 95)
           .uv(3, 95, 95)
         );
 
-        s0._02++;
-        s1 = s0;
-        s0 = s0.parent_38;
+        currStruct3c.tick_02++;
+        prevStruct3c = currStruct3c;
+        currStruct3c = currStruct3c.parent_38;
       }
     }
   }
 
+  /** TODO init static SMapStruct3c's */
   @Method(0x800f00a4L)
   private void FUN_800f00a4() {
     if(this._800f9e74) {
-      Struct34 s2 = this._800d4f18;
-      Struct34 s1 = s2.parent_30;
+      SmokePlumeEffectData34 smokeData = this._800d4f18;
+      SmokePlumeEffectData34 parent = smokeData.parent_30;
 
       //LAB_800f0100
-      while(s1 != null) {
-        if(s1._08 >= s1._02) {
-          if(s1._02 % s1._04 == 0) {
+      while(parent != null) {
+        if(parent._08 >= parent.tick_02) {
+          if(parent.tick_02 % parent._04 == 0) {
             //LAB_800f0148
             for(int i = 0; i < 4; i++) {
-              final SMapStruct3c s0 = this.FUN_800eed44(this.struct3c_800d4f50);
-              s0._02 = 0;
-              s0._06 = s1._06;
-              s0.x_0c = (short)this.screenOffsetX_800cb568;
-              s0.y_0e = (short)this.screenOffsetY_800cb56c;
-              s0._10 = s1.x_1c + (simpleRand() * s1._18 >> 16);
-              s0._14 = s1.y_20 * 0x1_0000;
-              s0._1c = -s1._0c;
-              s0._20 = s1._14;
-              s0._24 = s1._10;
-              s0.size_28 = 0;
-              s0._2c = 0x80_0000 / s0._06;
-              s0._30 = 0x80_0000;
+              final SmokeEffect3c smoke = this.FUN_800eed44(this.struct3c_800d4f50);
+              smoke.tick_02 = 0;
+              smoke.totalTicks_06 = parent.totalTicks_06;
+              smoke.x_0c = this.screenOffsetX_800cb568;
+              smoke.y_0e = this.screenOffsetY_800cb56c;
+              smoke.offsetX_10 = parent.offsetBaseX_1c + (simpleRand() * parent.offsetRandomX_18 >> 16);
+              smoke.offsetY_14 = parent.offsetBaseY_20;
+              smoke.stepOffsetY_1c = -parent.stepOffsetY_0c;
+              smoke.stepSize_20 = parent.stepSize_14;
+              smoke.size_28 = parent.size_10;
+              smoke.stepBrightness_2c = 0.5f / smoke.totalTicks_06;
+              smoke.brightness_30 = 0.5f;
             }
           }
 
           //LAB_800f01ec
-          s2 = s1;
-          s1._02++;
-          s1 = s1.parent_30;
+          smokeData = parent;
+          parent.tick_02++;
+          parent = parent.parent_30;
         } else {
           //LAB_800f0208
-          final Struct34 s0 = s1.parent_30;
-          s2.parent_30 = s0;
+          final SmokePlumeEffectData34 s0 = parent.parent_30;
+          smokeData.parent_30 = s0;
 
           if(this._800d4f18.parent_30 == null) {
             this._800f9e74 = false;
           }
 
-          s1 = s0;
+          parent = s0;
         }
       }
     }
 
     //LAB_800f023c
     if(this._800f9e70 == 1) {
-      final Struct24 s1 = this._800d4ee0;
+      final SmokeCloudEffectData24 smokeData = this._800d4ee0;
 
-      if(s1._02 % s1._04 == 0) {
+      if(smokeData.tick_02 % smokeData._04 == 0) {
         //LAB_800f0284
-        for(int i = 0; i < 1; i++) {
-          final SMapStruct3c s0 = this.FUN_800eed44(this.struct3c_800d4f50);
-          s0._02 = 0;
-          s0._06 = s1._06;
-          s0.x_0c = (short)this.screenOffsetX_800cb568;
-          s0.y_0e = (short)this.screenOffsetY_800cb56c;
-          s0._10 = s1._1c + (simpleRand() * s1._18 >> 16);
-          s0._14 = s1._20 << 16;
-          s0._1c = -s1._0c;
-          s0._20 = s1._14;
-          s0._24 = s1._10;
-          s0.size_28 = 0;
-          s0._2c = 0x80_0000 / s0._06;
-          s0._30 = 0x80_0000;
-        }
+        final SmokeEffect3c smoke = this.FUN_800eed44(this.struct3c_800d4f50);
+        smoke.tick_02 = 0;
+        smoke.totalTicks_06 = smokeData.totalTicks_06;
+        smoke.x_0c = this.screenOffsetX_800cb568;
+        smoke.y_0e = this.screenOffsetY_800cb56c;
+        smoke.offsetX_10 = smokeData.offsetBaseX_1c + (simpleRand() * smokeData.offsetRandomX_18 >> 16);
+        smoke.offsetY_14 = smokeData.offsetY_20;
+        smoke.stepOffsetY_1c = -smokeData.stepOffsetY_0c;
+        smoke.stepSize_20 = smokeData.stepSize_14;
+        smoke.size_28 = smokeData.size_10;
+        smoke.stepBrightness_2c = 0.5f / smoke.totalTicks_06;
+        smoke.brightness_30 = 0.5f;
       }
 
       //LAB_800f032c
-      s1._02++;
+      smokeData.tick_02++;
     }
-
     //LAB_800f0344
   }
 
@@ -7847,7 +7843,7 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800f0440L)
-  private void FUN_800f0440() {
+  private void deallocateDustAndSomething() {
     this.FUN_800f058c();
     this.deallocateDust();
     this.FUN_800f0e7c();
@@ -7878,15 +7874,16 @@ public class SMap extends EngineState {
     a0.ptr_3c = null;
   }
 
+  /** TODO deallocate some static particle struct */
   @Method(0x800f0514L)
   private void FUN_800f0514() {
-    final Struct34 v1 = this._800d4f18;
+    final SmokePlumeEffectData34 v1 = this._800d4f18;
 
     if(v1.parent_30 != null) {
       //LAB_800f053c
-      Struct34 s0;
+      SmokePlumeEffectData34 s0;
       do {
-        final Struct34 a0 = v1.parent_30;
+        final SmokePlumeEffectData34 a0 = v1.parent_30;
         s0 = a0.parent_30;
         v1.parent_30 = s0;
       } while(s0 != null);
@@ -7894,7 +7891,7 @@ public class SMap extends EngineState {
 
     //LAB_800f055c
     this._800f9e74 = false;
-    this.FUN_800eed84(this.struct3c_800d4f50);
+    this.deallocateSmokeEffect(this.struct3c_800d4f50);
     this._800f9e70 = 0;
   }
 
@@ -8183,62 +8180,60 @@ public class SMap extends EngineState {
     }
   }
 
+  /** TODO Name; initializes some kind of particle effect struct */
   @ScriptDescription("Unknown")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "data", description = "An array of unknown struct data")
   @Method(0x800f1060L)
   private FlowControl FUN_800f1060(final RunningScript<?> script) {
-    if(this._800d4fe8 != 0) {
-      this._800d4fe8++;
-      return FlowControl.CONTINUE;
+    if(!this.somethingInitialized_800d4fe8) {
+      final MV transforms = new MV();
+      final GsCOORDINATE2 coord2 = new GsCOORDINATE2();
+
+      //LAB_800f10ac
+      this.smokePlumeEffectData_800d6018.parent_30 = null;
+      GsInitCoordinate2(null, coord2);
+
+      final Param ints = script.params_20[0];
+      int i = 0;
+
+      //LAB_800f10dc
+      while(ints.array(i).get() != -1) {
+        final SmokePlumeEffectData34 struct = new SmokePlumeEffectData34();
+        struct.parent_30 = this.smokePlumeEffectData_800d6018.parent_30;
+        this.smokePlumeEffectData_800d6018.parent_30 = struct;
+
+        coord2.coord.transfer.x = ints.array(i++).get();
+        coord2.coord.transfer.y = ints.array(i++).get();
+        coord2.coord.transfer.z = ints.array(i++).get();
+        GsGetLs(coord2, transforms);
+
+        PushMatrix();
+        GTE.setTransforms(transforms);
+        GTE.perspectiveTransform(0, 0, 0);
+        final float sx = GTE.getScreenX(2);
+        final float sy = GTE.getScreenY(2);
+
+        struct.sz3_2c = GTE.getScreenZ(3) / 4.0f;
+        PopMatrix();
+
+        struct.tick_02 = 0;
+        struct._04 = 17;
+        struct.totalTicks_06 = 100;
+        struct._08 = 0;
+        struct._0a = 0;
+        struct.stepOffsetY_0c = ints.array(i++).get();
+        struct.size_10 = ints.array(i++).get();
+        struct.stepSize_14 = ints.array(i++).get();
+        struct.offsetRandomX_18 = ints.array(i++).get();
+        struct.offsetBaseX_1c = sx;
+        struct.offsetBaseY_20 = sy;
+        struct.screenOffsetX_24 = this.screenOffsetX_800cb568;
+        struct.screenOffsetY_28 = this.screenOffsetY_800cb56c;
+      }
+
+      //LAB_800f123c
+      this.somethingInitialized_800d4fe8 = true;
     }
-
-    final MV sp0x20 = new MV();
-    final GsCOORDINATE2 sp0x40 = new GsCOORDINATE2();
-
-    //LAB_800f10ac
-    this.struct34_800d6018.parent_30 = null;
-    GsInitCoordinate2(null, sp0x40);
-
-    final Param ints = script.params_20[0];
-    int s1 = 0;
-
-    //LAB_800f10dc
-    while(ints.array(s1).get() != -1) {
-      final Struct34 struct = new Struct34();
-      struct.parent_30 = this.struct34_800d6018.parent_30;
-      this.struct34_800d6018.parent_30 = struct;
-
-      sp0x40.coord.transfer.x = ints.array(s1++).get();
-      sp0x40.coord.transfer.y = ints.array(s1++).get();
-      sp0x40.coord.transfer.z = ints.array(s1++).get();
-      GsGetLs(sp0x40, sp0x20);
-
-      PushMatrix();
-      GTE.setTransforms(sp0x20);
-      GTE.perspectiveTransform(0, 0, 0);
-      final float sx = GTE.getScreenX(2);
-      final float sy = GTE.getScreenY(2);
-
-      struct.sz3_2c = GTE.getScreenZ(3) / 4.0f;
-      PopMatrix();
-
-      struct._02 = 0;
-      struct._04 = 17;
-      struct._06 = 100;
-      struct._08 = 0;
-      struct._0a = 0;
-      struct._0c = ints.array(s1++).get();
-      struct._10 = ints.array(s1++).get();
-      struct._14 = ints.array(s1++).get();
-      struct._18 = (short)ints.array(s1++).get();
-      struct.x_1c = sx;
-      struct.y_20 = sy;
-      struct.screenOffsetX_24 = this.screenOffsetX_800cb568;
-      struct.screenOffsetY_28 = this.screenOffsetY_800cb56c;
-    }
-
-    //LAB_800f123c
-    this._800d4fe8++;
 
     //LAB_800f1250
     return FlowControl.CONTINUE;
@@ -8246,7 +8241,7 @@ public class SMap extends EngineState {
 
   @ScriptDescription("Unknown")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "totalTicks")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y")
@@ -8259,20 +8254,20 @@ public class SMap extends EngineState {
   private FlowControl FUN_800f1274(final RunningScript<?> script) {
     this._800f9e74 = true;
 
-    final Struct34 v1 = this._800d4f18;
-    final Struct34 s1 = new Struct34();
+    final SmokePlumeEffectData34 v1 = this._800d4f18;
+    final SmokePlumeEffectData34 s1 = new SmokePlumeEffectData34();
     s1.parent_30 = v1.parent_30;
     v1.parent_30 = s1;
 
-    final GsCOORDINATE2 sp0x48 = new GsCOORDINATE2();
-    GsInitCoordinate2(null, sp0x48);
+    final GsCOORDINATE2 coord2 = new GsCOORDINATE2();
+    GsInitCoordinate2(null, coord2);
 
-    sp0x48.coord.transfer.set(script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get());
-    final MV sp0x28 = new MV();
-    GsGetLs(sp0x48, sp0x28);
+    coord2.coord.transfer.set(script.params_20[3].get(), script.params_20[4].get(), script.params_20[5].get());
+    final MV transforms = new MV();
+    GsGetLs(coord2, transforms);
 
     PushMatrix();
-    GTE.setTransforms(sp0x28);
+    GTE.setTransforms(transforms);
     GTE.perspectiveTransform(0, 0, 0);
 
     final float sx = GTE.getScreenX(2);
@@ -8285,17 +8280,17 @@ public class SMap extends EngineState {
     }
 
     //LAB_800f13f0
-    s1._02 = 0;
-    s1._04 = (short)script.params_20[0].get();
-    s1._06 = (short)script.params_20[1].get();
-    s1._08 = (short)script.params_20[2].get();
+    s1.tick_02 = 0;
+    s1._04 = script.params_20[0].get();
+    s1.totalTicks_06 = script.params_20[1].get();
+    s1._08 = script.params_20[2].get();
     s1._0a = 0;
-    s1._0c = (script.params_20[6].get() << 16) / script.params_20[1].get();
-    s1._10 = script.params_20[8].get() << 16;
-    s1._14 = (script.params_20[9].get() << 16) / script.params_20[1].get();
-    s1._18 = (short)script.params_20[7].get();
-    s1.x_1c = sx;
-    s1.y_20 = sy;
+    s1.stepOffsetY_0c = (float)((script.params_20[6].get() << 16) / script.params_20[1].get());
+    s1.size_10 = script.params_20[8].get();
+    s1.stepSize_14 = (float)((script.params_20[9].get() << 16) / script.params_20[1].get());
+    s1.offsetRandomX_18 = script.params_20[7].get();
+    s1.offsetBaseX_1c = sx;
+    s1.offsetBaseY_20 = sy;
     s1.screenOffsetX_24 = this.screenOffsetX_800cb568;
     s1.screenOffsetY_28 = this.screenOffsetY_800cb56c;
     s1.sz3_2c = sz;
@@ -8307,8 +8302,8 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p3")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p4")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p5")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p6")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p7")
@@ -8318,35 +8313,35 @@ public class SMap extends EngineState {
     final int v1 = script.params_20[0].get();
     this._800f9e70 = v1;
 
-    final Struct24 a1 = this._800d4ee0;
+    final SmokeCloudEffectData24 smokeData = this._800d4ee0;
     if(v1 != 0) {
-      a1._02 = 0;
-      a1._04 = (short)script.params_20[1].get();
+      smokeData.tick_02 = 0;
+      smokeData._04 = script.params_20[1].get();
 
       if(script.params_20[2].get() == 0) {
         script.params_20[2].set(1);
       }
 
       //LAB_800f154c
-      a1._06 = (short)script.params_20[2].get();
-      a1._1c = script.params_20[3].get();
-      a1._20 = script.params_20[4].get();
-      a1._18 = (short)script.params_20[5].get();
-      a1._0c = (script.params_20[6].get() << 16) / script.params_20[2].get();
-      a1._10 = script.params_20[7].get() << 16;
-      a1._14 = (script.params_20[8].get() << 16) / script.params_20[2].get();
+      smokeData.totalTicks_06 = script.params_20[2].get();
+      smokeData.offsetBaseX_1c = script.params_20[3].get();
+      smokeData.offsetY_20 = script.params_20[4].get();
+      smokeData.offsetRandomX_18 = script.params_20[5].get();
+      smokeData.stepOffsetY_0c = (float)script.params_20[6].get() / (float)script.params_20[2].get();
+      smokeData.size_10 = script.params_20[7].get();
+      smokeData.stepSize_14 = (float)script.params_20[8].get() / (float)script.params_20[2].get();
 
       //LAB_800f15fc
     } else {
-      a1._04 = 0;
-      a1._02 = 0;
-      a1._06 = 0;
-      a1._0c = 0;
-      a1._10 = 0;
-      a1._14 = 0;
-      a1._18 = 0;
-      a1._1c = 0;
-      a1._20 = 0;
+      smokeData._04 = 0;
+      smokeData.tick_02 = 0;
+      smokeData.totalTicks_06 = 0;
+      smokeData.stepOffsetY_0c = 0.0f;
+      smokeData.size_10 = 0;
+      smokeData.stepSize_14 = 0.0f;
+      smokeData.offsetRandomX_18 = 0;
+      smokeData.offsetBaseX_1c = 0;
+      smokeData.offsetY_20 = 0;
     }
 
     //LAB_800f162c
@@ -8592,18 +8587,19 @@ public class SMap extends EngineState {
     return this.FUN_800f1f9c(script);
   }
 
+  /** TODO Reinit some kind of particle struct? */
   @ScriptDescription("Unknown")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "data", description = "An array of struct data")
   @Method(0x800f2090L)
   private FlowControl FUN_800f2090(final RunningScript<?> script) {
     final Param ints = script.params_20[0];
     int a0 = 0;
-    Struct34 a1 = this.struct34_800d6018.parent_30;
-    Struct34 sp30 = null;
+    SmokePlumeEffectData34 a1 = this.smokePlumeEffectData_800d6018.parent_30;
+    SmokePlumeEffectData34 sp30 = null;
 
     //LAB_800f20a8
     while(a1 != null) {
-      final Struct34 v1 = a1.parent_30;
+      final SmokePlumeEffectData34 v1 = a1.parent_30;
       a1.parent_30 = sp30;
       sp30 = a1;
       a1 = v1;
@@ -8618,19 +8614,19 @@ public class SMap extends EngineState {
       if(ints.array(a0).get() == -1) {
         a0++;
         a1._04 = 17;
-        a1._06 = 100;
+        a1.totalTicks_06 = 100;
         a1._08 = 0;
         a1._0a = 0;
       } else {
         //LAB_800f2108
-        a1._08 = (short)ints.array(a0++).get();
-        a1._0a = (short)ints.array(a0++).get();
-        a1._04 = (short)ints.array(a0++).get();
-        a1._06 = (short)ints.array(a0++).get();
+        a1._08 = ints.array(a0++).get();
+        a1._0a = ints.array(a0++).get();
+        a1._04 = ints.array(a0++).get();
+        a1.totalTicks_06 = ints.array(a0++).get();
       }
 
       //LAB_800f2138
-      a1._00 = (short)ints.array(a0++).get();
+      a1.unused_00 = ints.array(a0++).get();
       a1 = a1.parent_30;
     }
 
@@ -8641,7 +8637,7 @@ public class SMap extends EngineState {
 
     //LAB_800f2170
     while(a1 != null) {
-      final Struct34 v1 = a1.parent_30;
+      final SmokePlumeEffectData34 v1 = a1.parent_30;
       a1.parent_30 = sp30;
       sp30 = a1;
       a1 = v1;
@@ -8831,17 +8827,17 @@ public class SMap extends EngineState {
 
     //LAB_800f24fc
     if(this._800f9e70 == 0) {
-      final Struct24 v0 = this._800d4ee0;
-      v0._02 = 0;
+      final SmokeCloudEffectData24 v0 = this._800d4ee0;
+      v0.tick_02 = 0;
       v0._04 = 0;
-      v0._06 = 0;
-      v0._0c = 0;
-      v0._10 = 0;
-      v0._14 = 0;
-      v0._18 = 0;
-      v0._1c = 0;
-      v0._20 = 0;
-      this.FUN_800eed84(this.struct3c_800d4f50);
+      v0.totalTicks_06 = 0;
+      v0.stepOffsetY_0c = 0.0f;
+      v0.size_10 = 0;
+      v0.stepSize_14 = 0.0f;
+      v0.offsetRandomX_18 = 0;
+      v0.offsetBaseX_1c = 0;
+      v0.offsetY_20 = 0;
+      this.deallocateSmokeEffect(this.struct3c_800d4f50);
     }
 
     //LAB_800f2544
@@ -9383,100 +9379,95 @@ public class SMap extends EngineState {
 
   @Method(0x800f3cb8L)
   private void FUN_800f3cb8() {
-    Struct34 s1 = this.struct34_800d6018.parent_30;
+    SmokePlumeEffectData34 smokeData = this.smokePlumeEffectData_800d6018.parent_30;
 
     //LAB_800f3ce8
-    while(s1 != null) {
-      if(s1._08 == 0) {
-        if(s1._02 % s1._04 == 0) {
-          final SMapStruct3c s0 = new SMapStruct3c();
+    while(smokeData != null) {
+      if(smokeData._08 == 0) {
+        if(smokeData.tick_02 % smokeData._04 == 0) {
+          final SmokeEffect3c smoke = new SmokeEffect3c();
 
-          s0._02 = 0;
-          s0._06 = s1._06;
-          s0.x_0c = (short)s1.screenOffsetX_24;
-          s0.y_0e = (short)s1.screenOffsetY_28;
-          s0._10 = s1.x_1c * 0x1_0000 - simpleRand() * s1._18;
-          s0._14 = s1.y_20 * 0x1_0000;
-          s0._1c = 0x8_0000 / s1._0c;
-          s0._20 = (s1._14 << 16) / s1._06;
-          s0._24 = s1._10 << 16;
-          s0.size_28 = 0;
-          s0._2c = 0x80_0000 / s0._06;
-          s0._30 = 0x80_0000;
-          s0.z_34 = s1.sz3_2c;
-          s0.parent_38 = this.struct3c_800d5fd8.parent_38;
+          smoke.tick_02 = 0;
+          smoke.totalTicks_06 = smokeData.totalTicks_06;
+          smoke.x_0c = smokeData.screenOffsetX_24;
+          smoke.y_0e = smokeData.screenOffsetY_28;
+          smoke.offsetX_10 = smokeData.offsetBaseX_1c - (simpleRand() * smokeData.offsetRandomX_18 >> 16);
+          smoke.offsetY_14 = smokeData.offsetBaseY_20;
+          smoke.stepOffsetY_1c = 8.0f / smokeData.stepOffsetY_0c;
+          smoke.stepSize_20 = smokeData.stepSize_14 / smokeData.totalTicks_06;
+          smoke.size_28 = smokeData.size_10;
+          smoke.stepBrightness_2c = 0.5f / smoke.totalTicks_06;
+          smoke.brightness_30 = 0.5f;
+          smoke.z_34 = smokeData.sz3_2c;
+          smoke.parent_38 = this.smokePlumeEffect_800d5fd8.parent_38;
 
-          this.struct3c_800d5fd8.parent_38 = s0;
+          this.smokePlumeEffect_800d5fd8.parent_38 = smoke;
         }
 
         //LAB_800f3df4
-        s1._02++;
+        smokeData.tick_02++;
       } else {
         //LAB_800f3e08
-        if(s1._02 >= s1._08) {
-          if(s1._02 % s1._04 == 0) {
-            final SMapStruct3c s0 = new SMapStruct3c();
+        if(smokeData.tick_02 >= smokeData._08) {
+          if(smokeData.tick_02 % smokeData._04 == 0) {
+            final SmokeEffect3c smoke = new SmokeEffect3c();
 
-            s0._02 = 0;
-            s0._06 = s1._06;
-            s0.x_0c = (short)s1.screenOffsetX_24;
-            s0.y_0e = (short)s1.screenOffsetY_28;
-            s0._10 = s1.x_1c * 0x1_0000 - simpleRand() * s1._18;
-            s0._14 = s1.y_20 * 0x1_0000;
-            s0._1c = 0x8_0000 / s1._0c;
-            s0._20 = (s1._14 << 16) / s1._06;
-            s0._24 = s1._10 << 16;
-            s0.size_28 = 0;
-            s0._2c = 0x80_0000 / s0._06;
-            s0._30 = 0x80_0000;
-            s0.z_34 = s1.sz3_2c;
-            s0.parent_38 = this.struct3c_800d5fd8.parent_38;
+            smoke.tick_02 = 0;
+            smoke.totalTicks_06 = smokeData.totalTicks_06;
+            smoke.x_0c = smokeData.screenOffsetX_24;
+            smoke.y_0e = smokeData.screenOffsetY_28;
+            smoke.offsetX_10 = smokeData.offsetBaseX_1c - (simpleRand() * smokeData.offsetRandomX_18 >> 16);
+            smoke.offsetY_14 = smokeData.offsetBaseY_20;
+            smoke.stepOffsetY_1c = 8.0f / smokeData.stepOffsetY_0c;
+            smoke.stepSize_20 = smokeData.stepSize_14 / smokeData.totalTicks_06;
+            smoke.size_28 = smokeData.size_10;
+            smoke.stepBrightness_2c = 0.5f / smoke.totalTicks_06;
+            smoke.brightness_30 = 0.5f;
+            smoke.z_34 = smokeData.sz3_2c;
+            smoke.parent_38 = this.smokePlumeEffect_800d5fd8.parent_38;
 
-            this.struct3c_800d5fd8.parent_38 = s0;
+            this.smokePlumeEffect_800d5fd8.parent_38 = smoke;
           }
         }
 
         //LAB_800f3f14
-        s1._02++;
+        smokeData.tick_02++;
 
-        if(s1._02 >= s1._0a) {
-          s1._02 = 0;
+        if(smokeData.tick_02 >= smokeData._0a) {
+          smokeData.tick_02 = 0;
         }
       }
 
       //LAB_800f3f3c
-      s1 = s1.parent_30;
+      smokeData = smokeData.parent_30;
     }
-
     //LAB_800f3f4c
   }
 
   @Method(0x800f3f68L)
-  private void renderSmoke() {
-    SMapStruct3c s1 = this.struct3c_800d5fd8;
-    SMapStruct3c s0 = s1.parent_38;
+  private void renderSmokePlume() {
+    SmokeEffect3c smoke = this.smokePlumeEffect_800d5fd8;
+    SmokeEffect3c parent = smoke.parent_38;
 
     //LAB_800f3fb0
-    while(s0 != null) {
-      if(s0._02 < s0._06) {
+    while(parent != null) {
+      if(parent.tick_02 < parent.totalTicks_06) {
         //LAB_800f3fe8
-        s0._24 += s0._20;
-        s0._14 -= s0._1c;
-        s0._30 -= s0._2c;
-        s0.size_28 = (short)(s0._24 >> 16);
-        final float x = this.screenOffsetX_800cb568 - s0.x_0c + s0._10 / 0x1_0000;
-        final float y = this.screenOffsetY_800cb56c - s0.y_0e + s0._14 / 0x1_0000;
-        final int size = s0.size_28 / 2;
+        parent.size_28 += parent.stepSize_20;
+        parent.offsetY_14 -= parent.stepOffsetY_1c;
+        parent.brightness_30 -= parent.stepBrightness_2c;
+        final float x = this.screenOffsetX_800cb568 - parent.x_0c + parent.offsetX_10;
+        final float y = this.screenOffsetY_800cb56c - parent.y_0e + parent.offsetY_14;
+        final float size = parent.size_28 / 2;
         final float left = x - size;
         final float right = x + size;
         final float top = y - size;
         final float bottom = y + size;
-        final int v0 = s0._30 >> 16;
-        final int colour = v0 > 0x80 ? 0 : v0;
+        final float brightness = parent.brightness_30 > 0.5f ? 0.0f : parent.brightness_30;
 
         //LAB_800f4084
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
-          .monochrome(colour)
+          .monochrome(brightness)
           .clut((this.cluts_800d6068[9] & 0b111111) * 16, this.cluts_800d6068[9] >>> 6)
           .vramPos((this.texPages_800d6050[9] & 0b1111) * 64, (this.texPages_800d6050[9] & 0b10000) != 0 ? 256 : 0)
           .translucent(Translucency.of(this.texPages_800d6050[9] >>> 5 & 0b11))
@@ -9490,32 +9481,31 @@ public class SMap extends EngineState {
           .uv(2, 64, 63)
           .uv(3, 95, 63);
 
-        GPU.queueCommand(s0.z_34, cmd);
+        GPU.queueCommand(parent.z_34, cmd);
 
-        s1 = s0;
-        s0._02++;
-        s0 = s0.parent_38;
+        smoke = parent;
+        parent.tick_02++;
+        parent = parent.parent_38;
       } else {
-        s1.parent_38 = s0.parent_38;
-        s0 = s1.parent_38;
+        smoke.parent_38 = parent.parent_38;
+        parent = smoke.parent_38;
       }
-
       //LAB_800f41b0
     }
-
     //LAB_800f41bc
   }
 
+  /** Deallocate Struct34 and SMapStruct3c */
   @Method(0x800f41dcL)
   private void FUN_800f41dc() {
     //LAB_800f4204
-    while(this.struct34_800d6018.parent_30 != null) {
-      final Struct34 a0 = this.struct34_800d6018.parent_30;
-      this.struct34_800d6018.parent_30 = a0.parent_30;
+    while(this.smokePlumeEffectData_800d6018.parent_30 != null) {
+      final SmokePlumeEffectData34 smokeData = this.smokePlumeEffectData_800d6018.parent_30;
+      this.smokePlumeEffectData_800d6018.parent_30 = smokeData.parent_30;
     }
 
     //LAB_800f4224
-    this.FUN_800eed84(this.struct3c_800d5fd8);
+    this.deallocateSmokeEffect(this.smokePlumeEffect_800d5fd8);
   }
 
   @Method(0x800f4244L)
@@ -9547,7 +9537,7 @@ public class SMap extends EngineState {
       this.FUN_800f0514();
     } else {
       this.FUN_800f3cb8();
-      this.renderSmoke();
+      this.renderSmokePlume();
 
       if(this._800f9e60 == 1) {
         this.handleSnow();
@@ -9555,13 +9545,13 @@ public class SMap extends EngineState {
 
       if(this._800f9e74 || this._800f9e70 != 0) {
         this.FUN_800f00a4();
-        this.FUN_800efe7c();
+        this.renderSmokeCloud();
       }
     }
   }
 
   @Method(0x800f4420L)
-  private void FUN_800f4420() {
+  private void deallocateSmokeAndSnow() {
     this.FUN_800f41dc();
 
     if(this._800f9e60 > 0 && this._800f9e60 < 3) {
@@ -9574,13 +9564,13 @@ public class SMap extends EngineState {
 
   /** Things such as the save point, &lt;!&gt; action icon, encounter icon, etc. */
   @Method(0x800f45f8L)
-  private void loadSubmapEffects() {
+  private void reloadSubmapEffects() {
     if(this.submapEffectsState_800f9eac == -1) {
       //LAB_800f4714
       this.deallocateSavePoint();
-      this.FUN_800f4420();
-      this.FUN_800f0440();
-      this._800d4fe8 = 0;
+      this.deallocateSmokeAndSnow();
+      this.deallocateDustAndSomething();
+      this.somethingInitialized_800d4fe8 = false;
       this.submapEffectsLoadMode_800f9ea8 = 0;
       this.submapEffectsState_800f9eac = 0;
       return;
@@ -9597,7 +9587,7 @@ public class SMap extends EngineState {
     } else if(loadMode == 1) {
       //LAB_800f4650
       //LAB_800f46d8
-      this._800d4fe8 = 0;
+      this.somethingInitialized_800d4fe8 = false;
       this.initTriangleIndicators();
       this.initSavePoint();
       this.FUN_800f0370();
