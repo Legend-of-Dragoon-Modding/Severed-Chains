@@ -27,5 +27,5 @@ public class SmokePlumeEffectData34 {
   public int screenOffsetX_24;
   public int screenOffsetY_28;
   public float sz3_2c;
-  public SmokePlumeEffectData34 parent_30;
+  public SmokePlumeEffectData34 next_30;
 }

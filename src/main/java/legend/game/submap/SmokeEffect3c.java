@@ -29,5 +29,5 @@ public class SmokeEffect3c {
   /** 16.16 fixed-point */
   public float brightness_30;
   public float z_34;
-  public SmokeEffect3c parent_38;
+  public SmokeEffect3c next_38;
 }
