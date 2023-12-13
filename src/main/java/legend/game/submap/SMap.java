@@ -1000,7 +1000,7 @@ public class SMap extends EngineState {
     functions[779] = this::FUN_800f1b64;
     functions[780] = this::FUN_800f26c8;
     functions[781] = this::FUN_800f1d0c;
-    functions[782] = this::FUN_800f14f0;
+    functions[782] = this::allocateSmokeCloudData;
     functions[783] = this::deallocateSmokeCloudDataAndEffect;
     functions[784] = this::FUN_800f24b0;
     functions[785] = this::FUN_800f23a0;
@@ -8303,18 +8303,18 @@ public class SMap extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptDescription("Allocates/initializes struct storing data for smoke cloud particle effect.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectState")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lifecycleTicks", description = "Number of ticks an individual particle exists for.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p5")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p6")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p7")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p8")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "offsetX")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "finalOffsetY")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "size")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "finalSize")
   @Method(0x800f14f0L)
-  private FlowControl FUN_800f14f0(final RunningScript<?> script) {
+  private FlowControl allocateSmokeCloudData(final RunningScript<?> script) {
     this.smokeCloudEffectState_800f9e70 = script.params_20[0].get();
 
     final SmokeCloudEffectData24 inst = this.smokeCloudEffectData_800d4ee0;
