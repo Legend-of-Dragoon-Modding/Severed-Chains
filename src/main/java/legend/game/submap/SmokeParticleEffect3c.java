@@ -1,16 +1,16 @@
 package legend.game.submap;
 
-public class SmokeEffect3c {
+public class SmokeParticleEffect3c {
   /** short */
   public int tick_02;
 
-  /** short */
-  public int countParticleLifecycleTicks_06;
+  /** Number of ticks until particle is destroyed (short) */
+  public int countTicksParticleLifecycle_06;
 
-  /** short */
-  public int x_0c;
-  /** short */
-  public int y_0e;
+  /** Used with current screen offset to maintain effect position when camera moves (short) */
+  public int initialScreenOffsetX_0c;
+  /** Used with current screen offset to maintain effect position when camera moves (short) */
+  public int initialScreenOffsetY_0e;
   /** 16.16 fixed-point */
   public float offsetX_10;
   /** 16.16 fixed-point */
@@ -29,5 +29,5 @@ public class SmokeEffect3c {
   /** 16.16 fixed-point */
   public float brightness_30;
   public float z_34;
-  public SmokeEffect3c next_38;
+  public SmokeParticleEffect3c next_38;
 }

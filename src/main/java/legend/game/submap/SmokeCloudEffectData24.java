@@ -3,10 +3,10 @@ package legend.game.submap;
 public class SmokeCloudEffectData24 {
   /** short */
   public int tick_02;
-  /** short */
-  public int _04;
-  /** short */
-  public int countParticleLifecycleTicks_06;
+  /** Number of ticks until new particle instantiated (short) */
+  public int countTicksParticleInstantiationInterval_04;
+  /** Number of ticks until particle is destroyed (short) */
+  public int countTicksParticleLifecycle_06;
 
   /** int */
   public float stepOffsetY_0c;

@@ -5,14 +5,14 @@ public class SmokePlumeEffectData34 {
   public int unused_00;
   /** short */
   public int tick_02;
-  /** short */
-  public int _04;
-  /** short */
-  public int countParticleLifecycleTicks_06;
-  /** short */
-  public int _08;
-  /** short */
-  public int _0a;
+  /** Number of ticks until new particle instantiated (short) */
+  public int countTicksParticleInstantiationInterval_04;
+  /** Number of ticks until particle is destroyed (short) */
+  public int countTicksParticleLifecycle_06;
+  /** Number of ticks to wait before instantiating particles (short) */
+  public int countTicksInstantiationDelay_08;
+  /** Number of ticks before ticker is reset to 0 (short) */
+  public int maxTicks_0a;
   /** int */
   public float stepOffsetY_0c;
   /** int */
