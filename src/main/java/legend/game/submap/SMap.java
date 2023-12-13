@@ -993,7 +993,7 @@ public class SMap extends EngineState {
     functions[772] = this::scriptAddSavePoint;
     functions[773] = this::FUN_800f23ec;
     functions[774] = this::FUN_800f2780;
-    functions[775] = this::FUN_800f2090;
+    functions[775] = this::scriptReinitializeSmokePlumeForIntermittentBursts;
     functions[776] = this::FUN_800f2198;
     functions[777] = this::FUN_800f1eb8;
     functions[778] = this::scriptAllocateTriangleIndicatorArray;
@@ -8597,7 +8597,7 @@ public class SMap extends EngineState {
   @ScriptDescription("Re-initializes some values for smoke particles.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "smokeData", description = "An array of data for the smoke plume particle data struc")
   @Method(0x800f2090L)
-  private FlowControl FUN_800f2090(final RunningScript<?> script) {
+  private FlowControl scriptReinitializeSmokePlumeForIntermittentBursts(final RunningScript<?> script) {
     final Param ints = script.params_20[0];
     SmokePlumeEffectData34 inst = this.smokePlumeEffectData_800d6018.next_30;
     SmokePlumeEffectData34 temp = null;
