@@ -27,7 +27,7 @@ layout(std140) uniform transforms {
 
 layout(std140) uniform transforms2 {
   mat4 model;
-  vec2 screenOffset;
+  vec3 screenOffset;
 };
 
 layout(std140) uniform lighting {
@@ -61,12 +61,12 @@ void main() {
   }
 
   gl_Position = projection * gl_Position;
-  gl_Position.xy += screenOffset * gl_Position.w;
+  gl_Position.xy += screenOffset.xy * gl_Position.w;
   vertUv = inUv;
   vertTpage = inTpage;
   vertClut = inClut;
   vertBpp = inBpp;
   vertFlags = inFlags;
 
-  depth = gl_Position.z;
+  depth = screenOffset.z;
 }

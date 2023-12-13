@@ -142,7 +142,6 @@ import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.renderDobj2;
 import static legend.game.Scus94491BpeSegment_8003.GetClut;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
@@ -1039,19 +1038,24 @@ public final class SEffe {
     shadow.coord2_14.coord.rotationXYZ(shadow.coord2_14.transforms.rotate);
     shadow.coord2_14.coord.scaleLocal(shadow.coord2_14.transforms.scale);
     shadow.coord2_14.flg = 0;
-    final GsCOORDINATE2 v0 = shadow.modelParts_00[0].coord2_04;
-    final Transforms s0 = v0.transforms;
-    s0.rotate.zero();
-    v0.coord.rotationZYX(s0.rotate);
-    s0.trans.zero();
-    v0.coord.transfer.set(s0.trans);
 
-    final MV sp0x30 = new MV();
-    final MV sp0x10 = new MV();
-    GsGetLws(shadow.modelParts_00[0].coord2_04, sp0x30, sp0x10);
-    GsSetLightMatrix(sp0x30);
-    GTE.setTransforms(sp0x10);
-    Renderer.renderDobj2(shadow.modelParts_00[0], true, 0);
+    final GsCOORDINATE2 coord2 = shadow.modelParts_00[0].coord2_04;
+    final Transforms transforms = coord2.transforms;
+    transforms.rotate.zero();
+    transforms.trans.zero();
+    coord2.coord.rotationZYX(transforms.rotate);
+    coord2.coord.transfer.set(transforms.trans);
+
+    final MV lw = new MV();
+    GsGetLw(shadow.modelParts_00[0].coord2_04, lw);
+
+    RENDERER
+      .queueModel(shadow.modelParts_00[0].obj, lw)
+      .depthOffset(-0.0001f)
+      .lightDirection(lightDirectionMatrix_800c34e8)
+      .lightColour(lightColourMatrix_800c3508)
+      .backgroundColour(GTE.backgroundColour);
+
     shadow.modelParts_00[0].coord2_04.flg--;
   }
 

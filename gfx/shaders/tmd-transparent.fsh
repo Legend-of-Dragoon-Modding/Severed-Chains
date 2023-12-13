@@ -28,6 +28,8 @@ layout(location = 1) out float reveal;
 //TODO handle more flags
 
 void main() {
+  gl_FragDepth = gl_FragCoord.z + depth;
+
   int flags = int(vertFlags);
 
   vec4 colour = vec4(1.0, 1.0, 1.0, 1.0);
