@@ -6,7 +6,7 @@ public class SmokeCloudEffectData24 {
   /** short */
   public int _04;
   /** short */
-  public int totalTicks_06;
+  public int countParticleLifecycleTicks_06;
 
   /** int */
   public float stepOffsetY_0c;

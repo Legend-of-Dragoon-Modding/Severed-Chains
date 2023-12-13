@@ -5,7 +5,7 @@ public class SmokeEffect3c {
   public int tick_02;
 
   /** short */
-  public int totalTicks_06;
+  public int countParticleLifecycleTicks_06;
 
   /** short */
   public int x_0c;
