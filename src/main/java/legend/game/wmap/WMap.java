@@ -14,7 +14,6 @@ import legend.core.gte.TmdWithId;
 import legend.core.memory.Method;
 import legend.core.memory.types.IntRef;
 import legend.core.opengl.McqBuilder;
-import legend.core.opengl.MeshObj;
 import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
@@ -3524,8 +3523,6 @@ public class WMap extends EngineState {
   private void renderNoOp() {
     // no-op
   }
-
-  private MeshObj displayBuffer;
 
   /** Some kind of full-screen effect during the Wingly teleportation between Aglis and Zenebatos */
   @Method(0x800e3304L)
