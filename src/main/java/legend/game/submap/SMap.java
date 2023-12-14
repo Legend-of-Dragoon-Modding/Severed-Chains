@@ -8198,6 +8198,17 @@ public class SMap extends EngineState {
       this.smokePlumeEffectDataInitialized_800d4fe8 = true;
       this.smokePlumeEffect_800d5fd8.particles = new SmokeParticleInstance3c[24];
       Arrays.setAll(this.smokePlumeEffect_800d5fd8.particles, val -> new SmokeParticleInstance3c());
+
+      QuadBuilder builder = new QuadBuilder("SmokePlumeParticle")
+        .bpp(Bpp.of(this.texPages_800d6050[9] >>> 7 & 0b11))
+        .vramPos((this.texPages_800d6050[9] & 0b1111) * 64, (this.texPages_800d6050[9] & 0b10000) != 0 ? 256 : 0)
+        .clut((this.cluts_800d6068[9] & 0b111111) * 16, this.cluts_800d6068[9] >>> 6)
+        .translucency(Translucency.of(this.texPages_800d6050[9] >>> 5 & 0b11))
+        .monochrome(1.0f)
+        .uv(64, 32)
+        .uvSize(32, 32)
+        .posSize(1.0f, 1.0f);
+      this.smokePlumeEffect_800d5fd8.particle = builder.build();
     }
 
     //LAB_800f1250
@@ -9406,6 +9417,11 @@ public class SMap extends EngineState {
           .uv(3, 95, 63);
 
         GPU.queueCommand(inst.z_34, cmd);
+
+        this.smokePlumeEffect_800d5fd8.transforms.scaling(inst.size_28, inst.size_28, 1.0f);
+        this.smokePlumeEffect_800d5fd8.transforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, inst.z_34 * 4);
+        RENDERER.queueOrthoModel(this.smokePlumeEffect_800d5fd8.particle, this.smokePlumeEffect_800d5fd8.transforms)
+          .monochrome(brightness);
 
         inst.tick_02++;
       }
