@@ -10,5 +10,14 @@ public class SmokeParticleEffect {
   public MeshObj particle;
   public final MV transforms = new MV();
 
+  public void deallocate() {
+    this.particles = null;
+    this.firstEmptyIndex = 0;
+    this.transforms.identity();
 
+    if(this.particle != null) {
+      this.particle.delete();
+      this.particle = null;
+    }
+  }
 }

@@ -29,5 +29,5 @@ public class SmokeParticleInstance3c {
   /** 16.16 fixed-point */
   public float brightness_30;
   public float z_34;
-  public int next_38;
+  // public int next_38;
 }
