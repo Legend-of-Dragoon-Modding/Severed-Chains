@@ -1,6 +1,6 @@
 package legend.game.submap;
 
-public class SmokePlumeEffectData34 {
+public class SmokeEffectData34 {
   /** short */
   public int unused_00;
   /** short */
@@ -27,5 +27,5 @@ public class SmokePlumeEffectData34 {
   public int screenOffsetX_24;
   public int screenOffsetY_28;
   public float sz3_2c;
-  public SmokePlumeEffectData34 next_30;
+  public SmokeEffectData34 next_30;
 }

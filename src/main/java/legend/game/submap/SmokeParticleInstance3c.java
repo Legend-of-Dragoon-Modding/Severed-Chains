@@ -1,6 +1,6 @@
 package legend.game.submap;
 
-public class SmokeParticleEffect3c {
+public class SmokeParticleInstance3c {
   /** short */
   public int tick_02;
 
@@ -29,5 +29,5 @@ public class SmokeParticleEffect3c {
   /** 16.16 fixed-point */
   public float brightness_30;
   public float z_34;
-  public SmokeParticleEffect3c next_38;
+  public int next_38;
 }
