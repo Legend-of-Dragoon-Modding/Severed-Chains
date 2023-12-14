@@ -46,6 +46,7 @@ public class Gpu {
   private final VramTextureSingle[] renderBuffers = new VramTextureSingle[2];
   private int drawBufferIndex;
 
+  private final Object vramLock = new Object();
   private final int[] vram24 = new int[this.vramWidth * this.vramHeight];
   private final int[] vram15 = new int[this.vramWidth * this.vramHeight];
 
@@ -124,10 +125,12 @@ public class Gpu {
   }
 
   public void startFrame() {
-    if(this.vramDirty) {
-      this.vramTexture15.dataInt(0, 0, 1024, 512, this.vram15);
-      this.vramTexture24.data(0, 0, 1024, 512, this.vram24);
-      this.vramDirty = false;
+    synchronized(this.vramLock) {
+      if(this.vramDirty) {
+        this.vramTexture15.dataInt(0, 0, 1024, 512, this.vram15);
+        this.vramTexture24.data(0, 0, 1024, 512, this.vram24);
+        this.vramDirty = false;
+      }
     }
 
     if(this.zMax != orderingTableSize_1f8003c8) {
@@ -239,24 +242,26 @@ public class Gpu {
 
     LOGGER.debug("Copying (%d, %d, %d, %d) from CPU to VRAM", rectX, rectY, rectW, rectH);
 
-    int i = 0;
-    for(int y = rectY; y < rectY + rectH; y++) {
-      for(int x = rectX; x < rectX + rectW; x++) {
-        // Sometimes the rect is larger than the data (see: the DEFF stuff where animations are loaded into VRAM for some reason)
-        if(i + 1 >= data.size()) {
-          break;
+    synchronized(this.vramLock) {
+      int i = 0;
+      for(int y = rectY; y < rectY + rectH; y++) {
+        for(int x = rectX; x < rectX + rectW; x++) {
+          // Sometimes the rect is larger than the data (see: the DEFF stuff where animations are loaded into VRAM for some reason)
+          if(i + 1 >= data.size()) {
+            break;
+          }
+
+          final int packed = data.readUShort(i);
+          final int unpacked = MathHelper.colour15To24(packed);
+
+          this.setVramPixel(x, y, unpacked, packed);
+
+          i += 2;
         }
-
-        final int packed = data.readUShort(i);
-        final int unpacked = MathHelper.colour15To24(packed);
-
-        this.setVramPixel(x, y, unpacked, packed);
-
-        i += 2;
       }
-    }
 
-    this.vramDirty = true;
+      this.vramDirty = true;
+    }
   }
 
   public void uploadData15(final Rect4i rect, final int[] data) {
@@ -270,15 +275,17 @@ public class Gpu {
 
     LOGGER.debug("Copying (%d, %d, %d, %d) from CPU to VRAM", rectX, rectY, rectW, rectH);
 
-    int i = 0;
-    for(int y = rectY; y < rectY + rectH; y++) {
-      for(int x = rectX; x < rectX + rectW; x++) {
-        this.setVramPixel(x, y, colour15To24(data[i]), data[i]);
-        i++;
+    synchronized(this.vramLock) {
+      int i = 0;
+      for(int y = rectY; y < rectY + rectH; y++) {
+        for(int x = rectX; x < rectX + rectW; x++) {
+          this.setVramPixel(x, y, colour15To24(data[i]), data[i]);
+          i++;
+        }
       }
-    }
 
-    this.vramDirty = true;
+      this.vramDirty = true;
+    }
   }
 
   public void uploadData24(final Rect4i rect, final int[] data) {
@@ -292,15 +299,17 @@ public class Gpu {
 
     LOGGER.debug("Copying (%d, %d, %d, %d) from CPU to VRAM", rectX, rectY, rectW, rectH);
 
-    int i = 0;
-    for(int y = rectY; y < rectY + rectH; y++) {
-      for(int x = rectX; x < rectX + rectW; x++) {
-        this.setVramPixel(x, y, data[i], colour24To15(data[i]));
-        i++;
+    synchronized(this.vramLock) {
+      int i = 0;
+      for(int y = rectY; y < rectY + rectH; y++) {
+        for(int x = rectX; x < rectX + rectW; x++) {
+          this.setVramPixel(x, y, data[i], colour24To15(data[i]));
+          i++;
+        }
       }
-    }
 
-    this.vramDirty = true;
+      this.vramDirty = true;
+    }
   }
 
   public void downloadData15(final Rect4i rect, final FileData out) {
@@ -314,13 +323,15 @@ public class Gpu {
 
     LOGGER.debug("Copying (%d, %d, %d, %d) from VRAM to byte array", rectX, rectY, rectW, rectH);
 
-    int i = 0;
-    for(int y = rectY; y < rectY + rectH; y++) {
-      for(int x = rectX; x < rectX + rectW; x++) {
-        final int pixel = this.getPixel15(x, y);
-        out.writeByte(i, (byte)(pixel & 0xff));
-        out.writeByte(i + 1, (byte)(pixel >>> 8));
-        i += 2;
+    synchronized(this.vramLock) {
+      int i = 0;
+      for(int y = rectY; y < rectY + rectH; y++) {
+        for(int x = rectX; x < rectX + rectW; x++) {
+          final int pixel = this.getPixel15(x, y);
+          out.writeByte(i, (byte)(pixel & 0xff));
+          out.writeByte(i + 1, (byte)(pixel >>> 8));
+          i += 2;
+        }
       }
     }
   }
@@ -328,25 +339,27 @@ public class Gpu {
   public void copyVramToVram(final int sourceX, final int sourceY, final int destX, final int destY, final int width, final int height) {
     LOGGER.debug("COPY VRAM VRAM from %d %d to %d %d size %d %d", sourceX, sourceY, destX, destY, width, height);
 
-    for(int y = 0; y < height; y++) {
-      for(int x = 0; x < width; x++) {
-        int colour15 = this.getPixel15(sourceX + x, sourceY + y);
-        int colour24 = this.getPixel(sourceX + x, sourceY + y);
+    synchronized(this.vramLock) {
+      for(int y = 0; y < height; y++) {
+        for(int x = 0; x < width; x++) {
+          int colour15 = this.getPixel15(sourceX + x, sourceY + y);
+          int colour24 = this.getPixel(sourceX + x, sourceY + y);
 
-        if(this.status.drawPixels == DRAW_PIXELS.NOT_TO_MASKED_AREAS) {
-          if((this.getPixel(destX + x, destY + y) & 0xff00_0000L) != 0) {
-            continue;
+          if(this.status.drawPixels == DRAW_PIXELS.NOT_TO_MASKED_AREAS) {
+            if((this.getPixel(destX + x, destY + y) & 0xff00_0000L) != 0) {
+              continue;
+            }
           }
+
+          colour15 |= (this.status.setMaskBit ? 1 : 0) << 15;
+          colour24 |= (this.status.setMaskBit ? 1 : 0) << 24;
+
+          this.setVramPixel(destX + x, destY + y, colour24, colour15);
         }
-
-        colour15 |= (this.status.setMaskBit ? 1 : 0) << 15;
-        colour24 |= (this.status.setMaskBit ? 1 : 0) << 24;
-
-        this.setVramPixel(destX + x, destY + y, colour24, colour15);
       }
-    }
 
-    this.vramDirty = true;
+      this.vramDirty = true;
+    }
   }
 
   public void queueCommand(final float z, final GpuCommand command) {
