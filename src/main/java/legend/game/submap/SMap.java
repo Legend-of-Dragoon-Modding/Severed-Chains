@@ -8595,7 +8595,7 @@ public class SMap extends EngineState {
    * Reverses particle instance order before re-init, then reverses them back.
    */
   @ScriptDescription("Re-initializes some values for smoke particles.")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "smokeData", description = "An array of data for the smoke plume particle data struc")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "smokeData", description = "An array of data for the smoke plume particle data struct")
   @Method(0x800f2090L)
   private FlowControl scriptReinitializeSmokePlumeForIntermittentBursts(final RunningScript<?> script) {
     final Param ints = script.params_20[0];
