@@ -7692,34 +7692,18 @@ public class SMap extends EngineState {
       final SmokeParticleInstance3c inst = particles[i];
       if(inst.tick_02 <= inst.countTicksParticleLifecycle_06 && inst.countTicksParticleLifecycle_06 != 0) {
         //LAB_800eff04
-        final float colour = Math.max(inst.brightness_30 - inst.stepBrightness_2c, 0);
-
         inst.offsetY_14 += inst.stepOffsetY_1c;
         inst.size_28 += inst.stepSize_20;
-        inst.brightness_30 -= inst.stepBrightness_2c;
-
-        final int clut = this.cluts_800d6068[6];
-        final int tpage = this.texPages_800d6050[6];
+        inst.brightness_30 = Math.max(inst.brightness_30 - inst.stepBrightness_2c, 0);
 
         final float x = this.screenOffsetX_800cb568 - inst.initialScreenOffsetX_0c + inst.offsetX_10 % 65536;
         final float y = this.screenOffsetY_800cb56c - inst.initialScreenOffsetY_0e + inst.offsetY_14 - inst.size_28;
 
         //LAB_800eff7c
-        GPU.queueCommand(40, new GpuCommandPoly(4)
-          .bpp(Bpp.of(tpage >>> 7 & 0b11))
-          .translucent(Translucency.of(tpage >>> 5 & 0b11))
-          .clut((clut & 0b111111) * 16, clut >>> 6)
-          .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
-          .monochrome(colour)
-          .pos(0, x, y)
-          .pos(1, x + inst.size_28, y)
-          .pos(2, x, y + inst.size_28)
-          .pos(3, x + inst.size_28, y + inst.size_28)
-          .uv(0, 64, 64)
-          .uv(1, 95, 64)
-          .uv(2, 64, 95)
-          .uv(3, 95, 95)
-        );
+        this.smokeCloudEffect_800d4f50.transforms.scaling(inst.size_28, inst.size_28, 1.0f);
+        this.smokeCloudEffect_800d4f50.transforms.transfer.set(GPU.getOffsetX() + x, GPU.getOffsetY() + y, 160.0f);
+        RENDERER.queueOrthoModel(this.smokeCloudEffect_800d4f50.particle, this.smokeCloudEffect_800d4f50.transforms)
+          .monochrome(inst.brightness_30);
 
         inst.tick_02++;
       }
@@ -8199,16 +8183,19 @@ public class SMap extends EngineState {
       this.smokePlumeEffect_800d5fd8.particles = new SmokeParticleInstance3c[24];
       Arrays.setAll(this.smokePlumeEffect_800d5fd8.particles, val -> new SmokeParticleInstance3c());
 
-      QuadBuilder builder = new QuadBuilder("SmokePlumeParticle")
-        .bpp(Bpp.of(this.texPages_800d6050[9] >>> 7 & 0b11))
-        .vramPos((this.texPages_800d6050[9] & 0b1111) * 64, (this.texPages_800d6050[9] & 0b10000) != 0 ? 256 : 0)
-        .clut((this.cluts_800d6068[9] & 0b111111) * 16, this.cluts_800d6068[9] >>> 6)
-        .translucency(Translucency.of(this.texPages_800d6050[9] >>> 5 & 0b11))
+      final int tpage = this.texPages_800d6050[9];
+      final int clut = this.cluts_800d6068[9];
+
+      this.smokePlumeEffect_800d5fd8.particle = new QuadBuilder("SmokePlumeParticle")
+        .bpp(Bpp.of(tpage >>> 7 & 0b11))
+        .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
+        .clut((clut & 0b111111) * 16, clut >>> 6)
+        .translucency(Translucency.of(tpage >>> 5 & 0b11))
         .monochrome(1.0f)
         .uv(64, 32)
         .uvSize(32, 32)
-        .posSize(1.0f, 1.0f);
-      this.smokePlumeEffect_800d5fd8.particle = builder.build();
+        .posSize(1.0f, 1.0f)
+        .build();
     }
 
     //LAB_800f1250
@@ -8313,6 +8300,20 @@ public class SMap extends EngineState {
 
       this.smokeCloudEffect_800d4f50.particles = new SmokeParticleInstance3c[inst.countTicksParticleLifecycle_06 / inst.countTicksParticleInstantiationInterval_04 + 1];
       Arrays.setAll(this.smokeCloudEffect_800d4f50.particles, val -> new SmokeParticleInstance3c());
+
+      final int tpage = this.texPages_800d6050[6];
+      final int clut = this.cluts_800d6068[6];
+
+      this.smokeCloudEffect_800d4f50.particle = new QuadBuilder("SmokeCloudEffect")
+        .bpp(Bpp.of(tpage >>> 7 & 0b11))
+        .clut((clut & 0b111111) * 16, clut >>> 6)
+        .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
+        .translucency(Translucency.of(tpage >>> 5 & 0b11))
+        .monochrome(1.0f)
+        .uv(64, 64)
+        .uvSize(32, 32)
+        .posSize(1.0f, 1.0f)
+        .build();
     }
 
     //LAB_800f162c
