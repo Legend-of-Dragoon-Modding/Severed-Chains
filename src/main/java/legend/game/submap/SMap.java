@@ -2498,6 +2498,7 @@ public class SMap extends EngineState {
   private FlowControl scriptLoadSobjModelAndAnimation(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
+    model.deleteModelParts(); // Clear old model objs first
 
     final int index = script.params_20[1].get();
 
