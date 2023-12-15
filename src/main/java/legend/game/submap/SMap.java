@@ -9391,35 +9391,14 @@ public class SMap extends EngineState {
         inst.size_28 += inst.stepSize_20;
         inst.offsetY_14 -= inst.stepOffsetY_1c;
         inst.brightness_30 -= inst.stepBrightness_2c;
-        final float x = this.screenOffsetX_800cb568 - inst.initialScreenOffsetX_0c + inst.offsetX_10;
-        final float y = this.screenOffsetY_800cb56c - inst.initialScreenOffsetY_0e + inst.offsetY_14;
-        final float size = inst.size_28 / 2;
-        final float left = x - size;
-        final float right = x + size;
-        final float top = y - size;
-        final float bottom = y + size;
+        final float halfSize = inst.size_28 / 2;
+        final float x = this.screenOffsetX_800cb568 - inst.initialScreenOffsetX_0c + inst.offsetX_10 - halfSize;
+        final float y = this.screenOffsetY_800cb56c - inst.initialScreenOffsetY_0e + inst.offsetY_14 - halfSize;
         final float brightness = inst.brightness_30 > 0.5f ? 0.0f : inst.brightness_30;
 
         //LAB_800f4084
-        final GpuCommandPoly cmd = new GpuCommandPoly(4)
-          .monochrome(brightness)
-          .clut((this.cluts_800d6068[9] & 0b111111) * 16, this.cluts_800d6068[9] >>> 6)
-          .vramPos((this.texPages_800d6050[9] & 0b1111) * 64, (this.texPages_800d6050[9] & 0b10000) != 0 ? 256 : 0)
-          .translucent(Translucency.of(this.texPages_800d6050[9] >>> 5 & 0b11))
-          .bpp(Bpp.of(this.texPages_800d6050[9] >>> 7 & 0b11))
-          .pos(0, left, top)
-          .pos(1, right, top)
-          .pos(2, left, bottom)
-          .pos(3, right, bottom)
-          .uv(0, 64, 32)
-          .uv(1, 95, 32)
-          .uv(2, 64, 63)
-          .uv(3, 95, 63);
-
-        GPU.queueCommand(inst.z_34, cmd);
-
         this.smokePlumeEffect_800d5fd8.transforms.scaling(inst.size_28, inst.size_28, 1.0f);
-        this.smokePlumeEffect_800d5fd8.transforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, inst.z_34 * 4);
+        this.smokePlumeEffect_800d5fd8.transforms.transfer.set(GPU.getOffsetX() + x, GPU.getOffsetY() + y, inst.z_34 * 4);
         RENDERER.queueOrthoModel(this.smokePlumeEffect_800d5fd8.particle, this.smokePlumeEffect_800d5fd8.transforms)
           .monochrome(brightness);
 
