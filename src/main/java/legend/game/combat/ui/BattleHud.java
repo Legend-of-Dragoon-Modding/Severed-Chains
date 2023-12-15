@@ -759,11 +759,11 @@ public class BattleHud {
         }
       }
 
-      //LAB_800f0b3c
-      this.drawFloatingNumbers();
-
       // Use item menu
       this.drawItemMenuElements();
+
+      //LAB_800f0b3c
+      this.drawFloatingNumbers();
 
       // Targeting
       final BattleMenuStruct58 menu = this.battleMenu_800c6c34;
@@ -1431,7 +1431,7 @@ public class BattleHud {
     //LAB_800f4b60
     this.spellAndItemMenu_800c6b60._7c = 0;
     this.spellAndItemMenu_800c6b60._80 = 0;
-    this.spellAndItemMenu_800c6b60._84 = 0;
+    this.spellAndItemMenu_800c6b60.selectionArrowFrame_84 = 0;
     this.spellAndItemMenu_800c6b60._88 = 0;
     this.spellAndItemMenu_800c6b60._8c = 0;
     this.spellAndItemMenu_800c6b60._90 = 0;
@@ -1848,7 +1848,7 @@ public class BattleHud {
 
     //LAB_800f5694
     //LAB_800f5698
-    this.spellAndItemMenu_800c6b60._84 = tickCount_800bb0fc & 0x7;
+    this.spellAndItemMenu_800c6b60.selectionArrowFrame_84 = tickCount_800bb0fc & 0x7;
 
     //LAB_800f56ac
   }
@@ -2064,7 +2064,7 @@ public class BattleHud {
           //LAB_800f5d78
           //LAB_800f5d90
           menu.transforms.transfer.set(menu.textX_18 - 16, menu._1a + menu.listScroll_24 * 14 + 2, 124.0f);
-          RENDERER.queueOrthoOverlayModel(menu.unknownObj1[menu._84], menu.transforms);
+          RENDERER.queueOrthoOverlayModel(menu.arrowObj[menu.selectionArrowFrame_84], menu.transforms);
 
           final int s0;
           if(menu.menuType_0a != 0) {
@@ -2113,17 +2113,17 @@ public class BattleHud {
           //LAB_800f5f94
           textType = 5;
           if((menu._02 & 0x2) != 0) {
+            this.battleUiSpellList.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
+
             final BattleEntity27c bent = this.setActiveCharacterSpell(menu.itemOrSpellId_1c);
             this.addFloatingNumber(0, 1, 0, bent.spell_94.mp_06, 280, 135, 0, 1);
 
-            menu.transforms.transfer.set(236 - centreScreenX_1f8003dc, 130 - centreScreenY_1f8003de, 124.0f);
-            RENDERER.queueOrthoOverlayModel(menu.unknownObj2, menu.transforms);
+            menu.transforms.transfer.set(236, 130, 124.0f);
+            RENDERER.queueOrthoOverlayModel(menu.mpObj, menu.transforms);
 
             if(this.battleUiSpellList == null) {
               this.battleUiSpellList = new UiBox("Battle UI Spell List", 236, 130, 64, 14);
             }
-
-            this.battleUiSpellList.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
           }
         } else {
           throw new RuntimeException("Undefined s1");

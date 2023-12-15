@@ -52,7 +52,7 @@ public class SpellAndItemMenuA4 {
 
   public int _7c;
   public int _80;
-  public int _84;
+  public int selectionArrowFrame_84;
   public int _88;
   public int _8c;
   public int _90;
@@ -62,8 +62,8 @@ public class SpellAndItemMenuA4 {
   public int _a0;
 
   public final MV transforms = new MV();
-  public final Obj[] unknownObj1 = new Obj[8];
-  public Obj unknownObj2;
+  public final Obj[] arrowObj = new Obj[8];
+  public Obj mpObj;
   public Obj upArrow;
   public Obj downArrow;
 
@@ -78,12 +78,12 @@ public class SpellAndItemMenuA4 {
   }
 
   public void init() {
-    if(this.unknownObj1[0] == null) {
+    if(this.arrowObj[0] == null) {
       for(int i = 0; i < 8; i++) {
-        this.unknownObj1[i] = this.hud.buildBattleMenuElement("Unknown Spell/Item UI Obj 1 " + i, 0, 0, i % 4 * 16 + 192 & 0xf0, i / 4 * 8 + 32 & 0xf8, 15, 8, 0xd, Translucency.B_PLUS_F);
+        this.arrowObj[i] = this.hud.buildBattleMenuElement("Spell/Item Selection Arrow " + i, 0, 0, i % 4 * 16 + 192 & 0xf0, i / 4 * 8 + 32 & 0xf8, 15, 8, 0xd, Translucency.B_PLUS_F);
       }
 
-      this.unknownObj2 = this.hud.buildBattleMenuElement("Unknown Spell/Item UI Obj 2", 0, 0, 16, 128, 24, 16, 0x2c, null);
+      this.mpObj = this.hud.buildBattleMenuElement("Spell/Item MP", 0, 0, 16, 128, 24, 16, 0x2c, null);
 
       this.upArrow = this.hud.buildBattleMenuBackground("Spell/Item Up Arrow", battleItemMenuScrollArrowUvMetrics_800c7190, 0, 0, battleItemMenuScrollArrowUvMetrics_800c7190.w_02, battleItemMenuScrollArrowUvMetrics_800c7190.h_03, 0xd, null, (short)0);
       this.downArrow = this.hud.buildBattleMenuBackground("Spell/Item Down Arrow", battleItemMenuScrollArrowUvMetrics_800c7190, 0, 0, battleItemMenuScrollArrowUvMetrics_800c7190.w_02, battleItemMenuScrollArrowUvMetrics_800c7190.h_03, 0xd, null, (short)1);
@@ -91,17 +91,17 @@ public class SpellAndItemMenuA4 {
   }
 
   public void delete() {
-    if(this.unknownObj1[0] != null) {
+    if(this.arrowObj[0] != null) {
       for(int i = 0; i < 8; i++) {
-        if(this.unknownObj1[i] != null) {
-          this.unknownObj1[i].delete();
-          this.unknownObj1[i] = null;
+        if(this.arrowObj[i] != null) {
+          this.arrowObj[i].delete();
+          this.arrowObj[i] = null;
         }
       }
 
-      if(this.unknownObj2 != null) {
-        this.unknownObj2.delete();
-        this.unknownObj2 = null;
+      if(this.mpObj != null) {
+        this.mpObj.delete();
+        this.mpObj = null;
       }
 
       if(this.upArrow != null) {
