@@ -8261,6 +8261,20 @@ public class SMap extends EngineState {
     this.smokeCloudEffect_800d4f50.particles = new SmokeParticleInstance3c[(inst.countTicksParticleLifecycle_06 / inst.countTicksParticleInstantiationInterval_04 + 1) * 4];
     Arrays.setAll(this.smokeCloudEffect_800d4f50.particles, val -> new SmokeParticleInstance3c());
 
+    final int tpage = this.texPages_800d6050[6];
+    final int clut = this.cluts_800d6068[6];
+
+    this.smokeCloudEffect_800d4f50.particle = new QuadBuilder("UnusedSmokeParticle")
+      .bpp(Bpp.of(tpage >>> 7 & 0b11))
+      .clut((clut & 0b111111) * 16, clut >>> 6)
+      .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
+      .translucency(Translucency.of(tpage >>> 5 & 0b11))
+      .monochrome(1.0f)
+      .uv(64, 64)
+      .uvSize(32, 32)
+      .posSize(1.0f, 1.0f)
+      .build();
+
     return FlowControl.CONTINUE;
   }
 
@@ -8304,7 +8318,7 @@ public class SMap extends EngineState {
       final int tpage = this.texPages_800d6050[6];
       final int clut = this.cluts_800d6068[6];
 
-      this.smokeCloudEffect_800d4f50.particle = new QuadBuilder("SmokeCloudEffect")
+      this.smokeCloudEffect_800d4f50.particle = new QuadBuilder("SmokeCloudParticle")
         .bpp(Bpp.of(tpage >>> 7 & 0b11))
         .clut((clut & 0b111111) * 16, clut >>> 6)
         .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
