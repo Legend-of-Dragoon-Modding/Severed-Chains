@@ -7722,16 +7722,6 @@ public class SMap extends EngineState {
     a0.ptr_3c = null;
   }
 
-  @Method(0x800f0514L)
-  private void deallocateUnusedSmokeDataAndEffect() {
-    this.smokeCloudEffect_800d4f50.smokeCloudEffectData_800d4ee0.clear();
-
-    //LAB_800f055c
-    this.smokeCloudEffect_800d4f50.renderUnusedSmokeEffect_800f9e74 = false;
-    this.smokeCloudEffect_800d4f50.deallocate();
-    this.smokeCloudEffect_800d4f50.smokeCloudState_800f9e70 = SmokeParticleEffect.SmokeCloudState.UNINITIALIZED;
-  }
-
   @Method(0x800f058cL)
   private void FUN_800f058c() {
     final Struct20 v1 = this._800d4ec0;
@@ -8478,7 +8468,7 @@ public class SMap extends EngineState {
   @Method(0x800f24b0L)
   private FlowControl scriptSetSmokeCloudEffectStateToDontTick(final RunningScript<?> script) {
     if(script.params_20[0].get() == 1) {
-      this.smokeCloudEffect_800d4f50.smokeCloudState_800f9e70 = SmokeParticleEffect.SmokeCloudState.DONT_TICK;
+      this.smokeCloudEffect_800d4f50.smokeCloudState = SmokeParticleEffect.SmokeCloudState.DONT_TICK;
     }
 
     //LAB_800f24d0
@@ -8490,11 +8480,11 @@ public class SMap extends EngineState {
   @Method(0x800f24d8L)
   private FlowControl scriptDeallocateSmokeCloudDataAndEffect(final RunningScript<?> script) {
     if(script.params_20[0].get() != 0) {
-      this.smokeCloudEffect_800d4f50.smokeCloudState_800f9e70 = SmokeParticleEffect.SmokeCloudState.UNINITIALIZED;
+      this.smokeCloudEffect_800d4f50.smokeCloudState = SmokeParticleEffect.SmokeCloudState.UNINITIALIZED;
     }
 
     //LAB_800f24fc
-    if(this.smokeCloudEffect_800d4f50.smokeCloudState_800f9e70 == SmokeParticleEffect.SmokeCloudState.UNINITIALIZED) {
+    if(this.smokeCloudEffect_800d4f50.smokeCloudState == SmokeParticleEffect.SmokeCloudState.UNINITIALIZED) {
       this.smokeCloudEffect_800d4f50.deallocate();
     }
 
@@ -9035,15 +9025,6 @@ public class SMap extends EngineState {
     a1.spriteGroup_04 = anmFile.spriteGroups;
   }
 
-  @Method(0x800f41dcL)
-  private void deallocateSmokePlumeDataAndEffect() {
-    //LAB_800f4204
-    this.smokePlumeEffect_800d5fd8.smokePlumeEffectData_800d6018.clear();
-
-    //LAB_800f4224
-    this.smokePlumeEffect_800d5fd8.deallocate();
-  }
-
   @Method(0x800f4244L)
   private void FUN_800f4244(final Tim tim, final Vector2i tpageOut, final Vector2i clutOut, final Translucency transMode) {
     //LAB_800f427c
@@ -9064,38 +9045,34 @@ public class SMap extends EngineState {
   @Method(0x800f4354L)
   private void handleAndRenderSubmapEffects() {
     if(this._800c6870 == -1) {
-      this.deallocateSmokePlumeDataAndEffect();
+      this.smokePlumeEffect_800d5fd8.deallocate();
 
       if(this._800f9e60 > 0 && this._800f9e60 < 3) {
         this.handleSnow();
       }
 
-      this.deallocateUnusedSmokeDataAndEffect();
+      this.smokeCloudEffect_800d4f50.deallocate();
     } else {
-      if(this.smokePlumeEffect_800d5fd8.renderSmokePlumeEffect_800d4fe8) {
-        this.smokePlumeEffect_800d5fd8.tickAndRenderSmokePlumeEffect(this.screenOffsetX_800cb568, this.screenOffsetY_800cb56c);
-      }
+      this.smokePlumeEffect_800d5fd8.tickAndRenderSmokePlumeEffect(this.screenOffsetX_800cb568, this.screenOffsetY_800cb56c);
 
       if(this._800f9e60 == 1) {
         this.handleSnow();
       }
 
-      if(this.smokeCloudEffect_800d4f50.renderUnusedSmokeEffect_800f9e74 || this.smokeCloudEffect_800d4f50.smokeCloudState_800f9e70 != SmokeParticleEffect.SmokeCloudState.UNINITIALIZED) {
-        this.smokeCloudEffect_800d4f50.tickAndRenderSmokeCloudEffect(this.screenOffsetX_800cb568, this.screenOffsetY_800cb56c);
-      }
+      this.smokeCloudEffect_800d4f50.tickAndRenderSmokeCloudEffect(this.screenOffsetX_800cb568, this.screenOffsetY_800cb56c);
     }
   }
 
   @Method(0x800f4420L)
   private void deallocateSmokeAndSnow() {
-    this.deallocateSmokePlumeDataAndEffect();
+    this.smokePlumeEffect_800d5fd8.deallocate();
 
     if(this._800f9e60 > 0 && this._800f9e60 < 3) {
       this.handleSnow();
     }
 
     //LAB_800f4454
-    this.deallocateUnusedSmokeDataAndEffect();
+    this.smokeCloudEffect_800d4f50.deallocate();
   }
 
   /** Things such as the save point, &lt;!&gt; action icon, encounter icon, etc. */
@@ -9106,7 +9083,6 @@ public class SMap extends EngineState {
       this.deallocateSavePoint();
       this.deallocateSmokeAndSnow();
       this.deallocateDustAndSomething();
-      this.smokePlumeEffect_800d5fd8.renderSmokePlumeEffect_800d4fe8 = false;
       this.submapEffectsLoadMode_800f9ea8 = 0;
       this.submapEffectsState_800f9eac = 0;
       return;
@@ -9123,7 +9099,7 @@ public class SMap extends EngineState {
     } else if(loadMode == 1) {
       //LAB_800f4650
       //LAB_800f46d8
-      this.smokePlumeEffect_800d5fd8.renderSmokePlumeEffect_800d4fe8 = false;
+      this.smokePlumeEffect_800d5fd8.effectShouldRender = false;
       this.initTriangleIndicators();
       this.initSavePoint();
       this.FUN_800f0370();

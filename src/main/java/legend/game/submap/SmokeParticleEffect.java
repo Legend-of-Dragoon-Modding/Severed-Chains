@@ -3,7 +3,6 @@ package legend.game.submap;
 import legend.core.gpu.Bpp;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
-import legend.core.memory.Method;
 import legend.core.opengl.MeshObj;
 import legend.core.opengl.QuadBuilder;
 import legend.game.scripting.Param;
@@ -31,8 +30,6 @@ public class SmokeParticleEffect {
     DONT_TICK,
   }
 
-  public boolean renderSmokePlumeEffect_800d4fe8;
-  public boolean renderUnusedSmokeEffect_800f9e74;
   /**
    * <ol>
    *   <li>Uninitialized</li>
@@ -40,10 +37,10 @@ public class SmokeParticleEffect {
    *   <li>Don't tick</li>
    * </ol>
    */
-  public SmokeCloudState smokeCloudState_800f9e70 = SmokeCloudState.UNINITIALIZED;
+  public SmokeCloudState smokeCloudState = SmokeCloudState.UNINITIALIZED;
+  public boolean effectShouldRender;
 
-  public final List<SmokeEffectData34> smokePlumeEffectData_800d6018 = new ArrayList<>();
-  public final List<SmokeEffectData34> smokeCloudEffectData_800d4ee0 = new ArrayList<>();
+  private final List<SmokeEffectData34> smokeEffectData = new ArrayList<>();
 
   private SmokeParticleInstance3c[] particles;
   private int firstEmptyIndex;
@@ -52,7 +49,7 @@ public class SmokeParticleEffect {
   private final MV transforms = new MV();
 
   public void allocateSmokePlumeEffect(final RunningScript<?> script, final int screenOffsetX, final int screenOffsetY, final int tpage, final int clut) {
-    if(!this.renderSmokePlumeEffect_800d4fe8) {
+    if(!this.effectShouldRender) {
       final MV transforms = new MV();
       final GsCOORDINATE2 coord2 = new GsCOORDINATE2();
 
@@ -94,11 +91,11 @@ public class SmokeParticleEffect {
         inst.screenOffsetX_24 = screenOffsetX;
         inst.screenOffsetY_28 = screenOffsetY;
 
-        this.smokePlumeEffectData_800d6018.add(inst);
+        this.smokeEffectData.add(inst);
       }
 
       //LAB_800f123c
-      this.renderSmokePlumeEffect_800d4fe8 = true;
+      this.effectShouldRender = true;
       this.particles = new SmokeParticleInstance3c[24];
       Arrays.setAll(this.particles, val -> new SmokeParticleInstance3c());
 
@@ -116,9 +113,9 @@ public class SmokeParticleEffect {
   }
 
   public void allocateSmokeCloudEffect(final RunningScript<?> script, final int tpage, final int clut) {
-    this.smokeCloudState_800f9e70 = SmokeCloudState.values()[script.params_20[0].get()];
+    this.smokeCloudState = SmokeCloudState.values()[script.params_20[0].get()];
 
-    if(this.smokeCloudState_800f9e70 != SmokeCloudState.UNINITIALIZED) {
+    if(this.smokeCloudState != SmokeCloudState.UNINITIALIZED) {
       final SmokeEffectData34 inst = new SmokeEffectData34();
       inst.tick_02 = 0;
       inst.countTicksParticleInstantiationInterval_04 = script.params_20[1].get();
@@ -136,7 +133,7 @@ public class SmokeParticleEffect {
       inst.size_10 = script.params_20[7].get();
       inst.stepSize_14 = (float)script.params_20[8].get() / (float)script.params_20[2].get();
 
-      this.smokeCloudEffectData_800d4ee0.add(inst);
+      this.smokeEffectData.add(inst);
 
       this.particles = new SmokeParticleInstance3c[inst.countTicksParticleLifecycle_06 / inst.countTicksParticleInstantiationInterval_04 + 1];
       Arrays.setAll(this.particles, val -> new SmokeParticleInstance3c());
@@ -155,7 +152,7 @@ public class SmokeParticleEffect {
   }
 
   public void allocateUnusedSmokeEffect(final RunningScript<?> script, final int screenOffsetX, final int screenOffsetY, final int tpage, final int clut) {
-    this.renderUnusedSmokeEffect_800f9e74 = true;
+    this.effectShouldRender = true;
 
     final SmokeEffectData34 inst = new SmokeEffectData34();
 
@@ -196,7 +193,7 @@ public class SmokeParticleEffect {
     inst.screenOffsetY_28 = screenOffsetY;
     inst.sz3_2c = sz;
 
-    this.smokeCloudEffectData_800d4ee0.add(inst);
+    this.smokeEffectData.add(inst);
 
     this.particles = new SmokeParticleInstance3c[(inst.countTicksParticleLifecycle_06 / inst.countTicksParticleInstantiationInterval_04 + 1) * 4];
     Arrays.setAll(this.particles, val -> new SmokeParticleInstance3c());
@@ -220,8 +217,8 @@ public class SmokeParticleEffect {
     //LAB_800f20c4
     //LAB_800f20e4
     int index = 0;
-    for(int i = this.smokePlumeEffectData_800d6018.size() - 1; i >= 0; i--) {
-      final SmokeEffectData34 inst = this.smokePlumeEffectData_800d6018.get(i);
+    for(int i = this.smokeEffectData.size() - 1; i >= 0; i--) {
+      final SmokeEffectData34 inst = this.smokeEffectData.get(i);
       if(ints.array(index).get() != -2) {
         if(ints.array(index).get() == -1) {
           index++;
@@ -244,19 +241,23 @@ public class SmokeParticleEffect {
   }
 
   public void tickAndRenderSmokePlumeEffect(final int screenOffsetX, final int screenOffsetY) {
-    this.tickSmokePlume();
-    this.renderSmokePlume(screenOffsetX, screenOffsetY);
+    if(this.effectShouldRender) {
+      this.tickSmokePlume();
+      this.renderSmokePlume(screenOffsetX, screenOffsetY);
+    }
   }
 
   public void tickAndRenderSmokeCloudEffect(final int screenOffsetX, final int screenOffsetY) {
-    this.tickSmokeCloud(screenOffsetX, screenOffsetY);
-    this.renderSmokeCloud(screenOffsetX, screenOffsetY);
+    if(this.effectShouldRender || this.smokeCloudState != SmokeParticleEffect.SmokeCloudState.UNINITIALIZED) {
+      this.tickSmokeCloud(screenOffsetX, screenOffsetY);
+      this.renderSmokeCloud(screenOffsetX, screenOffsetY);
+    }
   }
 
   private void tickSmokePlume() {
     //LAB_800f3ce8
-    for(int i = 0; i < this.smokePlumeEffectData_800d6018.size(); i++) {
-      final SmokeEffectData34 dataInst = this.smokePlumeEffectData_800d6018.get(i);
+    for(int i = 0; i < this.smokeEffectData.size(); i++) {
+      final SmokeEffectData34 dataInst = this.smokeEffectData.get(i);
       if(dataInst.countTicksInstantiationDelay_08 == 0) {
         if(dataInst.tick_02 % dataInst.countTicksParticleInstantiationInterval_04 == 0) {
           final SmokeParticleInstance3c effectInst = this.particles[this.firstEmptyIndex];
@@ -342,10 +343,10 @@ public class SmokeParticleEffect {
   }
 
   private void tickSmokeCloud(final int screenOffsetX, final int screenOffsetY) {
-    if(this.renderUnusedSmokeEffect_800f9e74) {
+    if(this.effectShouldRender) {
       //LAB_800f0100
-      for(int i = 0; i < this.smokeCloudEffectData_800d4ee0.size(); i++) {
-        final SmokeEffectData34 dataInst = this.smokeCloudEffectData_800d4ee0.get(i);
+      for(int i = 0; i < this.smokeEffectData.size(); i++) {
+        final SmokeEffectData34 dataInst = this.smokeEffectData.get(i);
         if(dataInst.countTicksInstantiationDelay_08 >= dataInst.tick_02) {
           if(dataInst.tick_02 % dataInst.countTicksParticleInstantiationInterval_04 == 0) {
             //LAB_800f0148
@@ -371,18 +372,18 @@ public class SmokeParticleEffect {
           dataInst.tick_02++;
         } else {
           //LAB_800f0208
-          this.smokeCloudEffectData_800d4ee0.remove(i);
+          this.smokeEffectData.remove(i);
           i--;
-          if(this.smokeCloudEffectData_800d4ee0.isEmpty()) {
-            this.renderUnusedSmokeEffect_800f9e74 = false;
+          if(this.smokeEffectData.isEmpty()) {
+            this.effectShouldRender = false;
           }
         }
       }
     }
 
     //LAB_800f023c
-    if(this.smokeCloudState_800f9e70 == SmokeCloudState.TICK) {
-      final SmokeEffectData34 dataInst = this.smokeCloudEffectData_800d4ee0.get(0);
+    if(this.smokeCloudState == SmokeCloudState.TICK) {
+      final SmokeEffectData34 dataInst = this.smokeEffectData.get(0);
 
       if(dataInst.tick_02 % dataInst.countTicksParticleInstantiationInterval_04 == 0) {
         //LAB_800f0284
@@ -408,7 +409,6 @@ public class SmokeParticleEffect {
     //LAB_800f0344
   }
 
-  @Method(0x800efe7cL)
   private void renderSmokeCloud(final int screenOffsetX, final int screenOffsetY) {
     //LAB_800efecc
     for(int i = this.particles.length - 1; i >= 0; i--) {
@@ -434,6 +434,9 @@ public class SmokeParticleEffect {
   }
 
   public void deallocate() {
+    this.effectShouldRender = false;
+    this.smokeCloudState = SmokeCloudState.UNINITIALIZED;
+    this.smokeEffectData.clear();
     this.particles = null;
     this.firstEmptyIndex = 0;
 
