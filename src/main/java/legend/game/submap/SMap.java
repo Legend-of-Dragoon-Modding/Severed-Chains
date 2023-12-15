@@ -1500,13 +1500,15 @@ public class SMap extends EngineState {
     partCoord.coord.transfer.set(partCoord.transforms.trans);
 
     final MV lw = new MV();
-    final MV ls = new MV();
-    GsGetLws(partCoord, lw, ls);
-    GsSetLightMatrix(lw);
+    GsGetLw(partCoord, lw);
 
-    GTE.setTransforms(ls);
+    RENDERER
+      .queueModel(modelPart.obj, lw)
+      .screenspaceOffset(this.screenOffsetX_800cb568 + 8, -this.screenOffsetY_800cb56c)
+      .lightDirection(lightDirectionMatrix_800c34e8)
+      .lightColour(lightColourMatrix_800c3508)
+      .backgroundColour(GTE.backgroundColour);
 
-    Renderer.renderDobj2(modelPart, false, 0);
     partCoord.flg--;
   }
 
