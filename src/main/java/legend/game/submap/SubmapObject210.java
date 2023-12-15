@@ -21,10 +21,10 @@ public class SubmapObject210 {
   public int movementTicks_144;
   /** Forced movement step */
   public final Vector3f movementStep_148 = new Vector3f();
-  /** Same as {@link #movementStep_148} but .16 */
-  public final Vector3f movementStep12_154 = new Vector3f();
-  /** The total distance moved (.16) */
-  public final Vector3f movementDistanceMoved12_160 = new Vector3f();
+//  /** Same as {@link #movementStep_148} but .16 */
+//  public final Vector3f movementStep12_154 = new Vector3f();
+//  /** The total distance moved (.16) */
+//  public final Vector3f movementDistanceMoved12_160 = new Vector3f();
   public int ui_16c;
   public int us_170;
   public int s_172;

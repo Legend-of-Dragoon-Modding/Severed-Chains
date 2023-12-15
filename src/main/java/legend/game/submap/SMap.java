@@ -1828,25 +1828,18 @@ public class SMap extends EngineState {
     sobj.us_170 = 1;
 
     if(sobj.movementTicks_144 != 0) {
-      sobj.movementStep_148.set(sobj.movementDestination_138).sub(model.coord2_14.coord.transfer).div(sobj.movementTicks_144);
+      // GH#777: These are load-bearing casts
+      sobj.movementStep_148.set(
+        (float)(int)(sobj.movementDestination_138.x - model.coord2_14.coord.transfer.x) / sobj.movementTicks_144,
+        (float)(int)(sobj.movementDestination_138.y - model.coord2_14.coord.transfer.y) / sobj.movementTicks_144,
+        (float)(int)(sobj.movementDestination_138.z - model.coord2_14.coord.transfer.z) / sobj.movementTicks_144
+      );
     } else {
       sobj.movementStep_148.zero();
     }
 
     //LAB_800de7a8
-    float x = 0.0f;
-    float y = 0.0f;
-    float z = 0.0f;
-    if(sobj.movementTicks_144 != 0) {
-      x = Math.abs((sobj.movementDestination_138.x - model.coord2_14.coord.transfer.x) / sobj.movementTicks_144);
-      y = Math.abs((sobj.movementDestination_138.y - model.coord2_14.coord.transfer.y) / sobj.movementTicks_144);
-      z = Math.abs((sobj.movementDestination_138.z - model.coord2_14.coord.transfer.z) / sobj.movementTicks_144);
-    }
-
     //LAB_800de8e8
-    sobj.movementStep12_154.set(x, y, z);
-    sobj.movementDistanceMoved12_160.zero();
-
     this.sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(this::FUN_800e1f90);
 
     sobj.flags_190 &= 0x7fff_ffff;
@@ -1871,12 +1864,7 @@ public class SMap extends EngineState {
     sobj.movementStep_148.z = (sobj.movementDestination_138.z - model.coord2_14.coord.transfer.z) / sobj.movementTicks_144;
 
     //LAB_800dea34
-    sobj.movementStep12_154.x = Math.abs((sobj.movementDestination_138.x - model.coord2_14.coord.transfer.x) / sobj.movementTicks_144);
-    sobj.movementStep12_154.z = Math.abs((sobj.movementDestination_138.z - model.coord2_14.coord.transfer.z) / sobj.movementTicks_144);
-
     sobj.movementStepY_134 = ((sobj.movementDestination_138.y - model.coord2_14.coord.transfer.y) * 2 - sobj.movementTicks_144 * 7 * (sobj.movementTicks_144 - 1)) / (sobj.movementTicks_144 * 2);
-    sobj.movementDistanceMoved12_160.x = 0;
-    sobj.movementDistanceMoved12_160.z = 0;
     sobj.us_170 = 2;
     sobj.s_172 = 1;
     sobj.movementStepAccelerationY_18c = 7;
@@ -1901,14 +1889,9 @@ public class SMap extends EngineState {
     sobj.movementStep_148.z = (sobj.movementDestination_138.z - sobj.model_00.coord2_14.coord.transfer.z) / sobj.movementTicks_144;
 
     //LAB_800decbc
-    sobj.movementStep12_154.x = Math.abs((sobj.movementDestination_138.x - sobj.model_00.coord2_14.coord.transfer.x) / sobj.movementTicks_144);
-    sobj.movementStep12_154.z = Math.abs((sobj.movementDestination_138.z - sobj.model_00.coord2_14.coord.transfer.z) / sobj.movementTicks_144);
-
     sobj.s_174 = sobj.s_172;
     sobj.s_172 = 1;
     sobj.us_170 = 2;
-    sobj.movementDistanceMoved12_160.x = 0;
-    sobj.movementDistanceMoved12_160.z = 0;
     sobj.movementStepY_134 = ((sobj.movementDestination_138.y - sobj.model_00.coord2_14.coord.transfer.y) * 2 - sobj.movementTicks_144 * sobj.movementStepAccelerationY_18c * (sobj.movementTicks_144 - 1)) / (sobj.movementTicks_144 * 2);
     this.sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(this::tickSobjMovement);
     return FlowControl.CONTINUE;
@@ -3723,8 +3706,6 @@ public class SMap extends EngineState {
     }
 
     //LAB_800e2014
-    sobj.movementDistanceMoved12_160.add(sobj.movementStep12_154);
-
     //LAB_800e20d8
     sobj.movementTicks_144--;
 
@@ -4219,9 +4200,6 @@ public class SMap extends EngineState {
     model.coord2_14.coord.transfer.y += sobj.movementStepY_134;
 
     //LAB_800e3ec0
-    sobj.movementDistanceMoved12_160.x += sobj.movementStep12_154.x;
-    sobj.movementDistanceMoved12_160.z += sobj.movementStep12_154.z;
-
     //LAB_800e3f3c
     model.coord2_14.coord.transfer.x += sobj.movementStep_148.x;
     model.coord2_14.coord.transfer.z += sobj.movementStep_148.z;
