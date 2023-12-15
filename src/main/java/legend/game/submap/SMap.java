@@ -5863,7 +5863,7 @@ public class SMap extends EngineState {
             .bpp(Bpp.of(metrics.tpage_04 >>> 7 & 0b11))
             .clut(768, metrics.clut_16 >>> 6)
             .vramPos((metrics.tpage_04 & 0b1111) * 64, (metrics.tpage_04 & 0b10000) != 0 ? 256 : 0)
-            .pos(metrics.offsetX_1c, metrics.offsetY_1e, metrics.z_20 * 4.0f)
+            .pos(metrics.offsetX_1c, metrics.offsetY_1e, 0.0f)
             .uv(metrics.u_14, metrics.v_15)
             .size(metrics.w_18, metrics.h_1a)
             .build();
@@ -5876,7 +5876,7 @@ public class SMap extends EngineState {
         }
 
         metrics.transforms.identity();
-        metrics.transforms.transfer.set(GPU.getOffsetX() + this.submapOffsetX_800cb560 + this.screenOffsetX_800cb568 + this.envForegroundMetrics_800cb590[i].x_00, GPU.getOffsetY() + this.submapOffsetY_800cb564 + this.screenOffsetY_800cb56c + this.envForegroundMetrics_800cb590[i].y_04, 0.0f);
+        metrics.transforms.transfer.set(GPU.getOffsetX() + this.submapOffsetX_800cb560 + this.screenOffsetX_800cb568 + this.envForegroundMetrics_800cb590[i].x_00, GPU.getOffsetY() + this.submapOffsetY_800cb564 + this.screenOffsetY_800cb56c + this.envForegroundMetrics_800cb590[i].y_04, z * 4.0f);
         RENDERER.queueOrthoModel(metrics.obj, metrics.transforms);
       }
     }
