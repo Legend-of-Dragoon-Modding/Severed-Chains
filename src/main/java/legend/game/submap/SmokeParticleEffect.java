@@ -22,6 +22,7 @@ import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.PopMatrix;
 import static legend.game.Scus94491BpeSegment_8003.PushMatrix;
+import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 
 public class SmokeParticleEffect {
   public enum SmokeCloudState {
@@ -282,7 +283,7 @@ public class SmokeParticleEffect {
         dataInst.tick_02++;
       } else {
         //LAB_800f3e08
-        if(dataInst.tick_02 >= dataInst.countTicksInstantiationDelay_08) {
+        if(dataInst.tick_02 >= dataInst.countTicksInstantiationDelay_08 * (2.0f / vsyncMode_8007a3b8)) {
           if(dataInst.tick_02 % dataInst.countTicksParticleInstantiationInterval_04 == 0) {
             final SmokeParticleInstance3c effectInst = this.particles[this.firstEmptyIndex];
 
@@ -306,7 +307,7 @@ public class SmokeParticleEffect {
         //LAB_800f3f14
         dataInst.tick_02++;
 
-        if(dataInst.tick_02 >= dataInst.maxTicks_0a) {
+        if(dataInst.tick_02 >= dataInst.maxTicks_0a * (2.0f / vsyncMode_8007a3b8)) {
           dataInst.tick_02 = 0;
         }
       }
@@ -319,11 +320,11 @@ public class SmokeParticleEffect {
     //LAB_800f3fb0
     for(int i = this.particles.length - 1; i >= 0; i--) {
       final SmokeParticleInstance3c inst = this.particles[i];
-      if(inst.tick_02 < inst.countTicksParticleLifecycle_06) {
+      if(inst.tick_02 < inst.countTicksParticleLifecycle_06 * (2.0f / vsyncMode_8007a3b8)) {
         //LAB_800f3fe8
-        inst.size_28 += inst.stepSize_20;
-        inst.offsetY_14 -= inst.stepOffsetY_1c;
-        inst.brightness_30 -= inst.stepBrightness_2c;
+        inst.size_28 += inst.stepSize_20 / (2.0f / vsyncMode_8007a3b8);
+        inst.offsetY_14 -= inst.stepOffsetY_1c / (2.0f / vsyncMode_8007a3b8);
+        inst.brightness_30 -= inst.stepBrightness_2c / (2.0f / vsyncMode_8007a3b8);
         final float halfSize = inst.size_28 / 2;
         final float x = screenOffsetX - inst.initialScreenOffsetX_0c + inst.offsetX_10 - halfSize;
         final float y = screenOffsetY - inst.initialScreenOffsetY_0e + inst.offsetY_14 - halfSize;
@@ -347,7 +348,7 @@ public class SmokeParticleEffect {
       //LAB_800f0100
       for(int i = 0; i < this.smokeEffectData.size(); i++) {
         final SmokeEffectData34 dataInst = this.smokeEffectData.get(i);
-        if(dataInst.countTicksInstantiationDelay_08 >= dataInst.tick_02) {
+        if(dataInst.countTicksInstantiationDelay_08 * (2.0f / vsyncMode_8007a3b8) >= dataInst.tick_02) {
           if(dataInst.tick_02 % dataInst.countTicksParticleInstantiationInterval_04 == 0) {
             //LAB_800f0148
             for(int j = 0; j < 4; j++) {
@@ -413,10 +414,10 @@ public class SmokeParticleEffect {
     //LAB_800efecc
     for(int i = this.particles.length - 1; i >= 0; i--) {
       final SmokeParticleInstance3c inst = this.particles[i];
-      if(inst.tick_02 <= inst.countTicksParticleLifecycle_06 && inst.countTicksParticleLifecycle_06 != 0) {
+      if(inst.tick_02 <= inst.countTicksParticleLifecycle_06 * (2.0f / vsyncMode_8007a3b8) && inst.countTicksParticleLifecycle_06 != 0) {
         //LAB_800eff04
-        inst.offsetY_14 += inst.stepOffsetY_1c;
-        inst.size_28 += inst.stepSize_20;
+        inst.offsetY_14 += inst.stepOffsetY_1c / (2.0f / vsyncMode_8007a3b8);
+        inst.size_28 += inst.stepSize_20 / (2.0f / vsyncMode_8007a3b8);
         inst.brightness_30 = Math.max(inst.brightness_30 - inst.stepBrightness_2c, 0);
 
         final float x = screenOffsetX - inst.initialScreenOffsetX_0c + inst.offsetX_10 % 65536;
