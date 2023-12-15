@@ -392,6 +392,7 @@ public class Ttle extends EngineState {
 
       if(this._800c6728 == 3) {
         engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;
+        this.loadingStage = 0;
         vsyncMode_8007a3b8 = 2;
       } else {
         this.renderMenuLogo();
