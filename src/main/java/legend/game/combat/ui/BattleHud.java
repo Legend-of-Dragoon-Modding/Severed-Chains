@@ -2569,7 +2569,7 @@ public class BattleHud {
         if((this.battleMenu_800c6c34.iconFlags_10[iconIndex] & 0xf) != 0x2) {
           RENDERER.queueOrthoOverlayModel(this.battleMenu_800c6c34.actionIconObj[iconId][iconState], this.battleMenu_800c6c34.transforms);
         } else if(this.battleMenu_800c6c34.player_04.charId_272 != 0 || (gameState_800babc8.goods_19c[0] & 0xff) >>> 7 == 0) {
-          RENDERER.queueOrthoOverlayModel(this.battleMenu_800c6c34.dragoonIconObj[this.battleMenu_800c6c34.player_04.charSlot_276][iconState], this.battleMenu_800c6c34.transforms);
+          RENDERER.queueOrthoOverlayModel(this.battleMenu_800c6c34.dragoonIconObj[this.battleMenu_800c6c34.player_04.charId_272][iconState], this.battleMenu_800c6c34.transforms);
         } else {
           RENDERER.queueOrthoOverlayModel(this.battleMenu_800c6c34.dragoonIconObj[9][iconState], this.battleMenu_800c6c34.transforms);
 
