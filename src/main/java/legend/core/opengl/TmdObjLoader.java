@@ -201,12 +201,6 @@ public final class TmdObjLoader {
               throw new RuntimeException("Only 4/8 BPP supported");
             }
 
-            final int translucency = poly.tpage >>> 5 & 0b11;
-
-            if(translucency != 0 && translucency != 1) {
-              LOGGER.error("Only 0/1 translucency supported, got %d", translucency);
-            }
-
             vertices[vertexOffsets[translucencyIndex]++] = vertex.u;
             vertices[vertexOffsets[translucencyIndex]++] = vertex.v;
             vertices[vertexOffsets[translucencyIndex]++] = (poly.tpage & 0b1111) * 64;

@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import legend.game.characters.UnaryStat;
 import legend.game.characters.VitalsStat;
+import legend.game.combat.Battle;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
@@ -26,8 +27,8 @@ import legend.game.combat.ui.BattleHud;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptState;
 
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
-import static legend.game.combat.Bttl.currentEnemyNames_800c69d0;
 
 public class CombatDebuggerController {
   @FXML
@@ -197,7 +198,7 @@ public class CombatDebuggerController {
     }
 
     if((combatant.flags_19e & 0x4) == 0) {
-      return currentEnemyNames_800c69d0[bent.charSlot_276].get();
+      return ((Battle)currentEngineState_8004dd04).currentEnemyNames_800c69d0[bent.charSlot_276].get();
     }
 
     return bent.charId_272 == 8 ? "Who?" : BattleHud.playerNames_800fb378[bent.charId_272].get();

@@ -1,5 +1,7 @@
 package legend.game.combat.bent;
 
+import legend.core.gte.MV;
+import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
 import legend.game.characters.Element;
 import legend.game.characters.ElementSet;
@@ -10,11 +12,14 @@ import legend.game.combat.types.BattleObject;
 import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.RegisterBattleEntityStatsEvent;
+import legend.game.modding.events.battle.SpellStatsEvent;
 import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
+import legend.game.tmd.Renderer;
 import legend.game.types.ItemStats0c;
 import legend.game.types.Model124;
 import legend.game.types.SpellStats0c;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
@@ -22,17 +27,24 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static legend.core.GameEngine.EVENTS;
+import static legend.core.GameEngine.GTE;
+import static legend.core.GameEngine.RENDERER;
+import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
+import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.animateModel;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
+import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
+import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
+import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
+import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
-import static legend.game.combat.Bttl.FUN_800c952c;
-import static legend.game.combat.Bttl.FUN_800ca194;
-import static legend.game.combat.Bttl.allBentCount_800c66d0;
-import static legend.game.combat.Bttl.charCount_800c677c;
-import static legend.game.combat.Bttl.monsterCount_800c6768;
-import static legend.game.combat.Bttl.playerBattleScript_800c66fc;
-import static legend.game.combat.Bttl.renderBttlModel;
+import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
+import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
+import static legend.game.combat.Battle.FUN_800ca194;
+import static legend.game.combat.Battle.loadCombatantModelAndAnimation;
+import static legend.game.combat.Battle.spellStats_800fa0b8;
+import static legend.game.combat.SEffe.renderBttlShadow;
 
 public abstract class BattleEntity27c extends BattleObject {
   private static final int[] vramSlotIndices_800fa730 = {0, 1, 2, 3, 4, 5, 6, 14, 15, 16};
@@ -511,6 +523,16 @@ public abstract class BattleEntity27c extends BattleObject {
     return this.colour; // defaultEffectColour_800fb94c;
   }
 
+  @Method(0x800ec7e4L)
+  public Vector2f transformRelative(final float x, final float y, final float z) {
+    final MV ls = new MV();
+    GsGetLs(this.model_148.coord2_14, ls);
+    GTE.setTransforms(ls);
+
+    GTE.perspectiveTransform(x, y, z);
+    return new Vector2f(GTE.getScreenX(2), GTE.getScreenY(2));
+  }
+
   @Method(0x800cae50L)
   public void bentLoadingTicker(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
     this._278 = 0;
@@ -528,21 +550,13 @@ public abstract class BattleEntity27c extends BattleObject {
       if(this.combatant_144.isModelLoaded()) {
         this.model_148.vramSlot_9d = vramSlotIndices_800fa730[this.combatant_144.vramSlot_1a0];
         this.loadingAnimIndex_26e = 0;
-        FUN_800c952c(this.model_148, this.combatant_144);
+        loadCombatantModelAndAnimation(this.model_148, this.combatant_144);
         this._278 = 1;
         this.currentAnimIndex_270 = -1;
 
         if((state.storage_44[7] & 0x800) == 0) {
-          final ScriptFile script;
-          if((state.storage_44[7] & 0x4) != 0) {
-            script = this.combatant_144.scriptPtr_10;
-          } else {
-            //LAB_800caf18
-            script = playerBattleScript_800c66fc;
-          }
-
           //LAB_800caf20
-          state.loadScriptFile(script);
+          state.loadScriptFile(this.getScript());
         }
 
         //LAB_800caf2c
@@ -552,6 +566,8 @@ public abstract class BattleEntity27c extends BattleObject {
 
     //LAB_800caf38
   }
+
+  protected abstract ScriptFile getScript();
 
   @Method(0x800caf2cL)
   private void bentLoadedTicker(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
@@ -577,7 +593,7 @@ public abstract class BattleEntity27c extends BattleObject {
   @Method(0x800cb024L)
   private void bentRenderer(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
     if((state.storage_44[7] & 0x211) == 0) {
-      renderBttlModel(this.model_148);
+      this.renderBttlModel(this.model_148);
     }
 
     //LAB_800cb048
@@ -588,32 +604,11 @@ public abstract class BattleEntity27c extends BattleObject {
     //LAB_800cb088
     FUN_800ca194(this.combatant_144.assets_14[this.loadingAnimIndex_26e]);
 
-    allBentCount_800c66d0.decr();
-
-    //LAB_800cb0d4
-    for(int i = this.bentSlot_274; i < allBentCount_800c66d0.get(); i++) {
-      battleState_8006e398.allBents_e0c[i] = battleState_8006e398.allBents_e0c[i + 1];
-      battleState_8006e398.allBents_e0c[i].innerStruct_00.bentSlot_274 = i;
-    }
-
     //LAB_800cb11c
     if((state.storage_44[7] & 0x4) != 0) {
-      monsterCount_800c6768.decr();
-
-      //LAB_800cb168
-      for(int i = this.charSlot_276; i < monsterCount_800c6768.get(); i++) {
-        battleState_8006e398.monsterBents_e50[i] = battleState_8006e398.monsterBents_e50[i + 1];
-        battleState_8006e398.monsterBents_e50[i].innerStruct_00.charSlot_276 = i;
-      }
+      battleState_8006e398.removeMonster((MonsterBattleEntity)this);
     } else {
-      //LAB_800cb1b8
-      charCount_800c677c.decr();
-
-      //LAB_800cb1f4
-      for(int i = this.charSlot_276; i < charCount_800c677c.get(); i++) {
-        battleState_8006e398.charBents_e40[i] = battleState_8006e398.charBents_e40[i + 1];
-        battleState_8006e398.charBents_e40[i].innerStruct_00.charSlot_276 = i;
-      }
+      battleState_8006e398.removePlayer((PlayerBattleEntity)this);
     }
 
     this.model_148.deleteModelParts();
@@ -621,9 +616,73 @@ public abstract class BattleEntity27c extends BattleObject {
     //LAB_800cb23c
   }
 
+  @Method(0x800ec974L)
+  private void renderBttlModel(final Model124 model) {
+    tmdGp0Tpage_1f8003ec = model.tpage_108;
+    zOffset_1f8003e8 = model.zOffset_a0;
+
+    final MV lw = new MV();
+    final MV ls = new MV();
+
+    //LAB_800ec9d0
+    for(int i = 0; i < model.modelParts_00.length; i++) {
+      if((model.partInvisible_f4 & 1L << i) == 0) {
+        final ModelPart10 part = model.modelParts_00[i];
+
+        GsGetLws(part.coord2_04, lw, ls);
+        GsSetLightMatrix(lw);
+        GTE.setTransforms(ls);
+        Renderer.renderDobj2(part, true, 0);
+
+        if(model.modelParts_00[i].obj != null) {
+          RENDERER.queueModel(model.modelParts_00[i].obj, lw)
+            .lightDirection(lightDirectionMatrix_800c34e8)
+            .lightColour(lightColourMatrix_800c3508)
+            .backgroundColour(GTE.backgroundColour);
+        }
+      }
+    }
+
+    //LAB_800eca58
+    if(model.shadowType_cc != 0) {
+      renderBttlShadow(model);
+    }
+
+    //LAB_800eca70
+  }
+
   @Method(0x800f9e10L)
   public void clearTempWeaponAndSpellStats() {
     this.item_d4 = null;
     this.spell_94 = null;
+  }
+
+  @Method(0x800f7a74L)
+  public void setTempItemMagicStats() {
+    //LAB_800f7a98
+    this.item_d4 = itemStats_8004f2ac[this.itemId_52];
+    this._ec = 0;
+    this._ee = 0;
+    this._f0 = 0;
+    this._f2 = 0;
+  }
+
+  @Method(0x800f7b68L)
+  public void setTempSpellStats() {
+    //LAB_800f7b8c
+    // Spell ID > 127 is a retail bug, happens with Shiranda's d-attack
+    if(this.spellId_4e != -1 && this.spellId_4e <= 127) {
+      this.spell_94 = EVENTS.postEvent(new SpellStatsEvent(this.spellId_4e, spellStats_800fa0b8[this.spellId_4e])).spell;
+    } else {
+      this.spell_94 = new SpellStats0c();
+    }
+
+    //LAB_800f7c54
+  }
+
+  @Method(0x800f9e50L)
+  public void setActiveSpell(final int spellId) {
+    this.spellId_4e = spellId;
+    this.setTempSpellStats();
   }
 }

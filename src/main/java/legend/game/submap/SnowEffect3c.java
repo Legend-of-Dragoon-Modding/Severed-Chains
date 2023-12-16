@@ -1,6 +1,6 @@
 package legend.game.submap;
 
-public class SnowEffect {
+public class SnowEffect3c {
   public short _00;
 
   public int angle_08;
@@ -17,5 +17,5 @@ public class SnowEffect {
 
   public short colour_34;
 
-  public SnowEffect next_38;
+  public SnowEffect3c next_38;
 }

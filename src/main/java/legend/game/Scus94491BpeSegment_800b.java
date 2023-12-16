@@ -1,7 +1,6 @@
 package legend.game;
 
 import legend.core.gte.MV;
-import legend.core.memory.types.IntRef;
 import legend.game.combat.environment.BattleStage;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.combat.ui.BattleDissolveDarkeningMetrics10;
@@ -35,8 +34,6 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static legend.core.GameEngine.MEMORY;
-
 public final class Scus94491BpeSegment_800b {
   private Scus94491BpeSegment_800b() { }
 
@@ -49,7 +46,7 @@ public final class Scus94491BpeSegment_800b {
 
   public static int clearGreen_800bb104;
 
-  public static final IntRef pregameLoadingStage_800bb10c = MEMORY.ref(4, 0x800bb10cL, IntRef::new);
+  public static int pregameLoadingStage_800bb10c;
 
   public static final FullScreenEffect fullScreenEffect_800bb140 = new FullScreenEffect();
 
@@ -118,7 +115,8 @@ public final class Scus94491BpeSegment_800b {
 
   public static SequenceData124 currentSequenceData_800bd0f8;
 
-  public static int _800bd0fc;
+  public static int musicFileIndex_800bd0fc;
+  /** .8 */
   public static int sssqTempoScale_800bd100;
   public static int sssqTempo_800bd104;
   public static int sequenceVolume_800bd108;
@@ -134,8 +132,6 @@ public final class Scus94491BpeSegment_800b {
 
   public static int _800bd740;
 
-  public static boolean melbuSoundsLoaded_800bd780;
-  public static boolean melbuMusicLoaded_800bd781;
   public static boolean musicLoaded_800bd782;
 
   public static boolean _800bd7ac;

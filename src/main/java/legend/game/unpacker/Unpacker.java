@@ -93,8 +93,8 @@ public final class Unpacker {
     transformers.put(Unpacker::equipmentAndXpDiscriminator, Unpacker::equipmentAndXpExtractor);
     transformers.put(Unpacker::spellsDiscriminator, Unpacker::spellsExtractor);
 
-    // Savepoint from SMAP
-    transformers.put(Unpacker::savepointDiscriminator, Unpacker::savepointExtractor);
+    // Savepoint etc. from SMAP
+    transformers.put(Unpacker::smapAssetDiscriminator, Unpacker::smapAssetExtractor);
 
     // Give Dart his hand back during oof
     transformers.put(Unpacker::drgn0_5546_1_patcherDiscriminator, Unpacker::drgn0_5546_1_patcher);
@@ -117,6 +117,9 @@ public final class Unpacker {
     transformers.put(Unpacker::playerScriptDamageCapsDiscriminator, Unpacker::playerScriptDamageCapsTransformer);
     transformers.put(Unpacker::enemyScriptDamageCapDiscriminator, Unpacker::enemyAndItemScriptDamageCapPatcher);
     transformers.put(Unpacker::itemScriptDamageCapDiscriminator, Unpacker::enemyAndItemScriptDamageCapPatcher);
+
+    // Extract a bunch of TIMs
+    transformers.put(Unpacker::lodEngineDiscriminator, Unpacker::lodEngineExtractor);
   }
 
   private static Consumer<String> statusListener = status -> { };
@@ -759,16 +762,29 @@ public final class Unpacker {
     return files;
   }
 
-  private static boolean savepointDiscriminator(final String name, final FileData data, final Set<String> flags) {
+  private static boolean smapAssetDiscriminator(final String name, final FileData data, final Set<String> flags) {
     return "OVL/SMAP.OV_".equals(name) && !flags.contains("SMAP");
   }
 
-  private static Map<String, FileData> savepointExtractor(final String name, final FileData data, final Set<String> flags) {
+  private static Map<String, FileData> smapAssetExtractor(final String name, final FileData data, final Set<String> flags) {
     flags.add("SMAP");
 
     final Map<String, FileData> files = new HashMap<>();
     files.put(name, data);
-    files.put("submap/savepoint", new FileData(data.data(), 0x10694, 0x904));
+    files.put("SUBMAP/savepoint", new FileData(data.data(), 0x10694, 0x904));
+    files.put("SUBMAP/darker_shadow.tim", getTimSize(data.slice(0x100b4)));
+    files.put("SUBMAP/alert.tim", getTimSize(data.slice(0x10214)));
+    files.put("SUBMAP/big_arrow.tim", getTimSize(data.slice(0x10f98)));
+    files.put("SUBMAP/small_arrow.tim", getTimSize(data.slice(0x115d8)));
+    files.put("SUBMAP/savepoint.tim", getTimSize(data.slice(0x11858)));
+    files.put("SUBMAP/800d8520.tim", getTimSize(data.slice(0x11e98)));
+    files.put("SUBMAP/800d85e0.tim", getTimSize(data.slice(0x11f58)));
+    files.put("SUBMAP/savepoint_big_circle.tim", getTimSize(data.slice(0x12098)));
+    files.put("SUBMAP/dust.tim", getTimSize(data.slice(0x122d8)));
+    files.put("SUBMAP/left_foot.tim", getTimSize(data.slice(0x12518)));
+    files.put("SUBMAP/right_foot.tim", getTimSize(data.slice(0x12658)));
+    files.put("SUBMAP/smoke_1.tim", getTimSize(data.slice(0x12798)));
+    files.put("SUBMAP/smoke_2.tim", getTimSize(data.slice(0x129d8)));
 
     return files;
   }
@@ -1090,6 +1106,32 @@ public final class Unpacker {
     }
 
     return Map.of(name, data);
+  }
+
+  private static boolean lodEngineDiscriminator(final String name, final FileData data, final Set<String> flags) {
+    return "lod_engine".equals(name);
+  }
+
+  private static Map<String, FileData> lodEngineExtractor(final String name, final FileData data, final Set<String> flags) {
+    return Map.of(
+      "shadow.ctmd", data.slice(0x3d0, 0x14c),
+      "shadow.anim", data.slice(0x51c, 0x28),
+      "shadow.tim", getTimSize(data.slice(0x544)),
+      "font.tim", getTimSize(data.slice(0xb6744))
+    );
+  }
+
+  private static FileData getTimSize(final FileData data) {
+    final int flags = data.readInt(0x4);
+    final int imageAddr;
+
+    if((flags & 0b1000) == 0) { // No CLUT
+      imageAddr = 0x14;
+    } else { // Has CLUT
+      imageAddr = 0x8 + data.readInt(0x8);
+    }
+
+    return data.slice(0x0, imageAddr + data.readUShort(imageAddr));
   }
 
   private static void writeFiles(final Map<String, FileData> files) {

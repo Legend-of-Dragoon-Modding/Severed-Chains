@@ -28,6 +28,8 @@ layout(location = 0) out vec4 outColour;
 //TODO handle more flags
 
 void main() {
+  gl_FragDepth = gl_FragCoord.z + depth;
+
   int flags = int(vertFlags);
 
   outColour = vec4(1.0, 1.0, 1.0, 1.0);

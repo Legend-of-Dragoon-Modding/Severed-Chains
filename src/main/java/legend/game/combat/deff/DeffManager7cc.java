@@ -1,6 +1,7 @@
 package legend.game.combat.deff;
 
 import legend.core.gte.TmdObjTable1c;
+import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.game.combat.effects.EffectManagerData6c;
 import legend.game.combat.effects.EffectManagerParams;
@@ -12,6 +13,8 @@ import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptState;
 
 import java.util.Arrays;
+
+import static legend.game.combat.SEffe.allocateEffectManager;
 
 public class DeffManager7cc {
   public Struct08 _00 = new Struct08();
@@ -61,6 +64,49 @@ public class DeffManager7cc {
         this.objs[i] = null;
       }
     }
+  }
+
+  @Method(0x800eab8cL)
+  public void deallocateScriptsArray() {
+    this.scripts_2c = null;
+  }
+
+  /** See {@link DeffPart#flags_00} */
+  @Method(0x800eac58L)
+  public DeffPart getDeffPart(final int flags) {
+    //LAB_800eac84
+    for(final DeffPart deffPart : this.deffPackage_5a8) {
+      if(deffPart.flags_00 == flags) {
+        return deffPart;
+      }
+      //LAB_800eaca0
+    }
+
+    //LAB_800eacac
+    throw new IllegalArgumentException("Couldn't find DEFF with flags " + Long.toHexString(flags));
+  }
+
+  @Method(0x800e9178L)
+  public void reset(final int mode) {
+    if(mode == 1) {
+      //LAB_800e91a0
+      this.scriptState_1c.innerStruct_00.removeAttachment(10);
+    } else if(mode == 2) {
+      //LAB_800e91d8
+      this.scriptState_1c.innerStruct_00.removeAttachment(10);
+      this.deallocateScriptsArray();
+    } else {
+      // This seems to be destroying and the re-creating the DEFF manager script state? Must be for ending the DEFF or something?
+
+      //LAB_800e9214
+      this.deallocateScriptsArray();
+      this.scriptState_1c.deallocateWithChildren();
+      final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> manager = allocateEffectManager("DEFF manager (but different)", null, null, null, null, null);
+      this.scriptState_1c = manager;
+      manager.innerStruct_00.flags_04 = 0x600_0400;
+    }
+
+    //LAB_800e9278
   }
 
   public static class Struct08 {

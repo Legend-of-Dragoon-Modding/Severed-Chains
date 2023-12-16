@@ -18,7 +18,7 @@ import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
-import static legend.game.combat.Bttl.transformWorldspaceToScreenspace;
+import static legend.game.combat.SEffe.transformWorldspaceToScreenspace;
 
 public class WeaponTrailEffect3c implements Effect {
   private int currentSegmentIndex_00 = -1;

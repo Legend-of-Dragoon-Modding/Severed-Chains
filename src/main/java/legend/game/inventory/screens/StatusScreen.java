@@ -23,7 +23,7 @@ import static legend.game.Scus94491BpeSegment_8002.getUnlockedSpellCount;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.combat.Bttl.spellStats_800fa0b8;
+import static legend.game.combat.Battle.spellStats_800fa0b8;
 
 public class StatusScreen extends MenuScreen {
   protected int loadingStage;

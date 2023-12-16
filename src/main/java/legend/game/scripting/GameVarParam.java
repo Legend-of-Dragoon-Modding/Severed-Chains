@@ -1,22 +1,22 @@
 package legend.game.scripting;
 
-import legend.game.combat.Bttl;
-import legend.game.submap.SMap;
+import legend.game.EngineStateEnum;
 import legend.game.Scus94491BpeSegment_8004;
 import legend.game.Scus94491BpeSegment_8005;
-import legend.game.Scus94491BpeSegment_8006;
 import legend.game.Scus94491BpeSegment_8007;
 import legend.game.Scus94491BpeSegment_800b;
+import legend.game.combat.Battle;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.effects.TransformationMode;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.EngineStateEnum;
+import legend.game.submap.SMap;
 import legend.game.submap.SubmapObject210;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
+import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 
 public class GameVarParam extends Param {
@@ -30,7 +30,7 @@ public class GameVarParam extends Param {
   public int get() {
     return switch(this.index) {
       case 0 -> Scus94491BpeSegment_8004.engineState_8004dd20.ordinal();
-      case 1 -> Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c.get();
+      case 1 -> Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
       case 2 -> Scus94491BpeSegment_800b.tickCount_800bb0fc;
       case 3 -> Scus94491BpeSegment_800b.input_800bee90;
       case 4 -> Scus94491BpeSegment_800b.press_800bee94;
@@ -60,34 +60,34 @@ public class GameVarParam extends Param {
       case 29 -> Scus94491BpeSegment_800b._800beea4;
       case 30 -> Scus94491BpeSegment_800b._800beeac;
       case 31 -> Scus94491BpeSegment_800b.analogMagnitude_800beeb4;
-      case 32 -> Scus94491BpeSegment_8006.battleState_8006e398.allBents_e0c[0] != null ? Scus94491BpeSegment_8006.battleState_8006e398.allBents_e0c[0].index : -1;
-      case 33 -> Bttl.allBentCount_800c66d0.get();
-      case 34 -> Scus94491BpeSegment_8006.battleState_8006e398.charBents_e40[0] != null ? Scus94491BpeSegment_8006.battleState_8006e398.charBents_e40[0].index : -1;
-      case 35 -> Bttl.charCount_800c677c.get();
-      case 36 -> Scus94491BpeSegment_8006.battleState_8006e398.monsterBents_e50[0] != null ? Scus94491BpeSegment_8006.battleState_8006e398.monsterBents_e50[0].index : -1;
-      case 37 -> Bttl.monsterCount_800c6768.get();
+      case 32 -> battleState_8006e398.allBents_e0c[0] != null ? battleState_8006e398.allBents_e0c[0].index : -1;
+      case 33 -> battleState_8006e398.getAllBentCount();
+      case 34 -> battleState_8006e398.playerBents_e40[0] != null ? battleState_8006e398.playerBents_e40[0].index : -1;
+      case 35 -> battleState_8006e398.getPlayerCount();
+      case 36 -> battleState_8006e398.monsterBents_e50[0] != null ? battleState_8006e398.monsterBents_e50[0].index : -1;
+      case 37 -> battleState_8006e398.getMonsterCount();
       case 38 -> CONFIG.getConfig(CoreMod.TRANSFORMATION_MODE_CONFIG.get()).ordinal();
-      case 39 -> Scus94491BpeSegment_8006.battleState_8006e398.stageProgression_eec;
+      case 39 -> battleState_8006e398.stageProgression_eec;
       case 40 -> Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928.size();
       case 41 -> throw new RuntimeException("Not implemented"); //Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928.get(0);
-      case 42 -> Bttl.forcedTurnBent_800c66bc != null ? Bttl.forcedTurnBent_800c66bc.index : -1;
+      case 42 -> ((Battle)currentEngineState_8004dd04).forcedTurnBent_800c66bc != null ? ((Battle)currentEngineState_8004dd04).forcedTurnBent_800c66bc.index : -1;
       case 43 -> Scus94491BpeSegment_800b.encounterId_800bb0f8;
-      case 44 -> Bttl._800c6748.get();
+      case 44 -> ((Battle)currentEngineState_8004dd04)._800c6748;
 //      case 45 -> Scus94491BpeSegment_8006._8006e398._180.get(0);
 //      case 46 -> Bttl_800c.intRef_800c6718.get();
       case 47 -> Scus94491BpeSegment_800b.battleStage_800bb0f4;
-      case 48 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveBents_e78[0] != null ? Scus94491BpeSegment_8006.battleState_8006e398.aliveBents_e78[0].index : -1;
-      case 49 -> Bttl.aliveBentCount_800c669c.get();
-      case 50 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveCharBents_eac[0] != null ? Scus94491BpeSegment_8006.battleState_8006e398.aliveCharBents_eac[0].index : -1;
-      case 51 -> Bttl.aliveCharCount_800c6760.get();
-      case 52 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveMonsterBents_ebc[0] != null ? Scus94491BpeSegment_8006.battleState_8006e398.aliveMonsterBents_ebc[0].index : -1;
-      case 53 -> Bttl.aliveMonsterCount_800c6758.get();
-      case 54 -> Scus94491BpeSegment_8006.battleState_8006e398._ef0;
+      case 48 -> battleState_8006e398.aliveBents_e78[0] != null ? battleState_8006e398.aliveBents_e78[0].index : -1;
+      case 49 -> battleState_8006e398.getAliveBentCount();
+      case 50 -> battleState_8006e398.alivePlayerBents_eac[0] != null ? battleState_8006e398.alivePlayerBents_eac[0].index : -1;
+      case 51 -> battleState_8006e398.getAlivePlayerCount();
+      case 52 -> battleState_8006e398.aliveMonsterBents_ebc[0] != null ? battleState_8006e398.aliveMonsterBents_ebc[0].index : -1;
+      case 53 -> battleState_8006e398.getAliveMonsterCount();
+      case 54 -> battleState_8006e398._ef0;
       case 55 -> Scus94491BpeSegment_800b.gameState_800babc8._b4;
       case 56 -> Scus94491BpeSegment_800b.gameState_800babc8._b8;
       case 57 -> Scus94491BpeSegment_800b.postBattleActionIndex_800bc974;
       case 58 -> Scus94491BpeSegment_800b.battleFlags_800bc960;
-      case 59 -> Bttl.currentTurnBent_800c66c8 != null ? Bttl.currentTurnBent_800c66c8.index : -1;
+      case 59 -> ((Battle)currentEngineState_8004dd04).currentTurnBent_800c66c8 != null ? ((Battle)currentEngineState_8004dd04).currentTurnBent_800c66c8.index : -1;
       case 60 -> Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920;
       case 61 -> Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c;
 
@@ -104,27 +104,27 @@ public class GameVarParam extends Param {
 //      case 74 -> Scus94491BpeSegment_8004._8004de54;
 //      case 75 -> Scus94491BpeSegment_8004._8004de50;
 
-      case 80 -> Bttl.scriptState_800c6914 != null ? Bttl.scriptState_800c6914.index : -1;
-      case 81 -> Bttl._800c6918.get();
-      case 82 -> Bttl._800c67c8.get();
-      case 83 -> Bttl._800c67cc.get();
-      case 84 -> Bttl._800c67d0.get();
-      case 85 -> Bttl._800c6710.get();
-      case 86 -> Bttl.currentCameraIndex_800c6780.get();
-      case 87 -> Bttl._800c66a8.get();
-      case 88 -> Bttl._800c6700.get();
-      case 89 -> Bttl._800c6704.get();
-      case 90 -> Bttl.currentCameraPositionIndicesIndex_800c66b0.get();
+      case 80 -> ((Battle)currentEngineState_8004dd04).scriptState_800c6914 != null ? ((Battle)currentEngineState_8004dd04).scriptState_800c6914.index : -1;
+      case 81 -> ((Battle)currentEngineState_8004dd04)._800c6918;
+      case 82 -> ((Battle)currentEngineState_8004dd04)._800c67c8;
+      case 83 -> ((Battle)currentEngineState_8004dd04)._800c67cc;
+      case 84 -> ((Battle)currentEngineState_8004dd04)._800c67d0;
+      case 85 -> ((Battle)currentEngineState_8004dd04)._800c6710;
+      case 86 -> ((Battle)currentEngineState_8004dd04).currentCameraIndex_800c6780;
+      case 87 -> ((Battle)currentEngineState_8004dd04)._800c66a8;
+      case 88 -> ((Battle)currentEngineState_8004dd04)._800c6700;
+      case 89 -> ((Battle)currentEngineState_8004dd04)._800c6704;
+      case 90 -> ((Battle)currentEngineState_8004dd04).hud.currentCameraPositionIndicesIndex_800c66b0;
 
-      case 96 -> Bttl._800c6754.get();
-      case 97 -> Bttl.currentStage_800c66a4.get();
+      case 96 -> ((Battle)currentEngineState_8004dd04)._800c6754;
+      case 97 -> ((Battle)currentEngineState_8004dd04).currentStage_800c66a4;
 
-      case 104 -> Bttl.shouldRenderMcq_800c6764.get();
-      case 105 -> Bttl.mcqOffsetX_800c6774.get();
-      case 106 -> Bttl.mcqOffsetY_800c6778.get();
-      case 107 -> Bttl.mcqStepX_800c676c.get();
-      case 108 -> Bttl.mcqStepY_800c6770.get();
-      case 109 -> Bttl.mcqColour_800fa6dc.get();
+      case 104 -> ((Battle)currentEngineState_8004dd04).shouldRenderMcq_800c6764 ? 1 : 0;
+      case 105 -> ((Battle)currentEngineState_8004dd04).mcqOffsetX_800c6774;
+      case 106 -> ((Battle)currentEngineState_8004dd04).mcqOffsetY_800c6778;
+      case 107 -> ((Battle)currentEngineState_8004dd04).mcqStepX_800c676c;
+      case 108 -> ((Battle)currentEngineState_8004dd04).mcqStepY_800c6770;
+      case 109 -> ((Battle)currentEngineState_8004dd04).mcqColour_800fa6dc;
 
       case 112 -> Scus94491BpeSegment_800b.gameState_800babc8.wmapFlags_15c.getRaw(0);
       case 113 -> Scus94491BpeSegment_800b.gameState_800babc8.visitedLocations_17c.getRaw(0);
@@ -161,7 +161,7 @@ public class GameVarParam extends Param {
   public Param set(final int val) {
     switch(this.index) {
       case 0 -> Scus94491BpeSegment_8004.engineState_8004dd20 = EngineStateEnum.values()[val];
-      case 1 -> Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c.set(val);
+      case 1 -> Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c = val;
       case 2 -> Scus94491BpeSegment_800b.tickCount_800bb0fc = val;
       case 3 -> Scus94491BpeSegment_800b.input_800bee90 = val;
       case 4 -> Scus94491BpeSegment_800b.press_800bee94 = val;
@@ -191,33 +191,33 @@ public class GameVarParam extends Param {
       case 29 -> Scus94491BpeSegment_800b._800beea4 = val;
       case 30 -> Scus94491BpeSegment_800b._800beeac = val;
       case 31 -> Scus94491BpeSegment_800b.analogMagnitude_800beeb4 = val;
-      case 32 -> Scus94491BpeSegment_8006.battleState_8006e398.allBents_e0c[0] = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[val];
-      case 33 -> Bttl.allBentCount_800c66d0.set(val);
-      case 34 -> Scus94491BpeSegment_8006.battleState_8006e398.charBents_e40[0] = (ScriptState<PlayerBattleEntity>)scriptStatePtrArr_800bc1c0[val];
-      case 35 -> Bttl.charCount_800c677c.set(val);
-      case 36 -> Scus94491BpeSegment_8006.battleState_8006e398.monsterBents_e50[0] = (ScriptState<MonsterBattleEntity>)scriptStatePtrArr_800bc1c0[val];
-      case 37 -> Bttl.monsterCount_800c6768.set(val);
+      case 32 -> battleState_8006e398.allBents_e0c[0] = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[val];
+//      case 33 -> battleState_8006e398.allBentCount_800c66d0 = val;
+      case 34 -> battleState_8006e398.playerBents_e40[0] = (ScriptState<PlayerBattleEntity>)scriptStatePtrArr_800bc1c0[val];
+//      case 35 -> battleState_8006e398.playerCount_800c677c = val;
+      case 36 -> battleState_8006e398.monsterBents_e50[0] = (ScriptState<MonsterBattleEntity>)scriptStatePtrArr_800bc1c0[val];
+//      case 37 -> battleState_8006e398.monsterCount_800c6768 = val;
       case 38 -> CONFIG.setConfig(CoreMod.TRANSFORMATION_MODE_CONFIG.get(), TransformationMode.values()[val]);
-      case 39 -> Scus94491BpeSegment_8006.battleState_8006e398.stageProgression_eec = val;
+      case 39 -> battleState_8006e398.stageProgression_eec = val;
       case 40, 41 -> throw new RuntimeException("Not supported"); // Dropped item list size, dropped item 0
-      case 42 -> Bttl.forcedTurnBent_800c66bc = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[val];
+      case 42 -> ((Battle)currentEngineState_8004dd04).forcedTurnBent_800c66bc = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[val];
       case 43 -> Scus94491BpeSegment_800b.encounterId_800bb0f8 = val;
-      case 44 -> Bttl._800c6748.set(val);
+      case 44 -> ((Battle)currentEngineState_8004dd04)._800c6748 = val;
 //      case 45 -> Scus94491BpeSegment_8006._8006e398._180.get(0);
 //      case 46 -> Bttl_800c.intRef_800c6718.set(val);
       case 47 -> Scus94491BpeSegment_800b.battleStage_800bb0f4 = val;
-      case 48 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveBents_e78[0] = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[val];
-      case 49 -> Bttl.aliveBentCount_800c669c.set(val);
-      case 50 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveCharBents_eac[0] = (ScriptState<PlayerBattleEntity>)scriptStatePtrArr_800bc1c0[val];
-      case 51 -> Bttl.aliveCharCount_800c6760.set(val);
-      case 52 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveMonsterBents_ebc[0] = (ScriptState<MonsterBattleEntity>)scriptStatePtrArr_800bc1c0[val];
-      case 53 -> Bttl.aliveMonsterCount_800c6758.set(val);
-      case 54 -> Scus94491BpeSegment_8006.battleState_8006e398._ef0 = val;
+      case 48 -> battleState_8006e398.aliveBents_e78[0] = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[val];
+//      case 49 -> battleState_8006e398.aliveBentCount_800c669c = val;
+      case 50 -> battleState_8006e398.alivePlayerBents_eac[0] = (ScriptState<PlayerBattleEntity>)scriptStatePtrArr_800bc1c0[val];
+//      case 51 -> battleState_8006e398.alivePlayerCount_800c6760 = val;
+      case 52 -> battleState_8006e398.aliveMonsterBents_ebc[0] = (ScriptState<MonsterBattleEntity>)scriptStatePtrArr_800bc1c0[val];
+//      case 53 -> battleState_8006e398.aliveMonsterCount_800c6758 = val;
+      case 54 -> battleState_8006e398._ef0 = val;
       case 55 -> Scus94491BpeSegment_800b.gameState_800babc8._b4 = val;
       case 56 -> Scus94491BpeSegment_800b.gameState_800babc8._b8 = val;
       case 57 -> Scus94491BpeSegment_800b.postBattleActionIndex_800bc974 = val;
       case 58 -> Scus94491BpeSegment_800b.battleFlags_800bc960 = val;
-      case 59 -> Bttl.currentTurnBent_800c66c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[val];
+      case 59 -> ((Battle)currentEngineState_8004dd04).currentTurnBent_800c66c8 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[val];
       case 60 -> Scus94491BpeSegment_800b.goldGainedFromCombat_800bc920 = val;
       case 61 -> Scus94491BpeSegment_800b.totalXpFromCombat_800bc95c = val;
 
@@ -234,27 +234,27 @@ public class GameVarParam extends Param {
 //      case 74 -> Scus94491BpeSegment_8004._8004de54;
 //      case 75 -> Scus94491BpeSegment_8004._8004de50;
 
-      case 80 -> Bttl.scriptState_800c6914 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[val];
-      case 81 -> Bttl._800c6918.set(val);
-      case 82 -> Bttl._800c67c8.set(val);
-      case 83 -> Bttl._800c67cc.set(val);
-      case 84 -> Bttl._800c67d0.set(val);
-      case 85 -> Bttl._800c6710.set(val);
-      case 86 -> Bttl.currentCameraIndex_800c6780.set(val);
-      case 87 -> Bttl._800c66a8.set(val);
-      case 88 -> Bttl._800c6700.set(val);
-      case 89 -> Bttl._800c6704.set(val);
-      case 90 -> Bttl.currentCameraPositionIndicesIndex_800c66b0.set(val);
+      case 80 -> ((Battle)currentEngineState_8004dd04).scriptState_800c6914 = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[val];
+      case 81 -> ((Battle)currentEngineState_8004dd04)._800c6918 = val;
+      case 82 -> ((Battle)currentEngineState_8004dd04)._800c67c8 = val;
+      case 83 -> ((Battle)currentEngineState_8004dd04)._800c67cc = val;
+      case 84 -> ((Battle)currentEngineState_8004dd04)._800c67d0 = val;
+      case 85 -> ((Battle)currentEngineState_8004dd04)._800c6710 = val;
+      case 86 -> ((Battle)currentEngineState_8004dd04).currentCameraIndex_800c6780 = val;
+      case 87 -> ((Battle)currentEngineState_8004dd04)._800c66a8 = val;
+      case 88 -> ((Battle)currentEngineState_8004dd04)._800c6700 = val;
+      case 89 -> ((Battle)currentEngineState_8004dd04)._800c6704 = val;
+      case 90 -> ((Battle)currentEngineState_8004dd04).hud.currentCameraPositionIndicesIndex_800c66b0 = val;
 
-      case 96 -> Bttl._800c6754.set(val);
-      case 97 -> Bttl.currentStage_800c66a4.set(val);
+      case 96 -> ((Battle)currentEngineState_8004dd04)._800c6754 = val;
+      case 97 -> ((Battle)currentEngineState_8004dd04).currentStage_800c66a4 = val;
 
-      case 104 -> Bttl.shouldRenderMcq_800c6764.set(val);
-      case 105 -> Bttl.mcqOffsetX_800c6774.set(val);
-      case 106 -> Bttl.mcqOffsetY_800c6778.set(val);
-      case 107 -> Bttl.mcqStepX_800c676c.set(val);
-      case 108 -> Bttl.mcqStepY_800c6770.set(val);
-      case 109 -> Bttl.mcqColour_800fa6dc.set(val);
+      case 104 -> ((Battle)currentEngineState_8004dd04).shouldRenderMcq_800c6764 = val != 0;
+      case 105 -> ((Battle)currentEngineState_8004dd04).mcqOffsetX_800c6774 = val;
+      case 106 -> ((Battle)currentEngineState_8004dd04).mcqOffsetY_800c6778 = val;
+      case 107 -> ((Battle)currentEngineState_8004dd04).mcqStepX_800c676c = val;
+      case 108 -> ((Battle)currentEngineState_8004dd04).mcqStepY_800c6770 = val;
+      case 109 -> ((Battle)currentEngineState_8004dd04).mcqColour_800fa6dc = val;
 
       case 112 -> Scus94491BpeSegment_800b.gameState_800babc8.wmapFlags_15c.setRaw(0, val);
       case 113 -> Scus94491BpeSegment_800b.gameState_800babc8.visitedLocations_17c.setRaw(0, val);

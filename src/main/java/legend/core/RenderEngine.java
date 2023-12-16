@@ -17,6 +17,7 @@ import legend.core.opengl.Texture;
 import legend.core.opengl.Window;
 import legend.core.opengl.fonts.Font;
 import legend.core.opengl.fonts.FontManager;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,6 +36,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
@@ -42,6 +44,7 @@ import static legend.core.GameEngine.RENDERER;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F11;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_M;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
@@ -102,6 +105,9 @@ public class RenderEngine {
   public static int legacyMode;
   public boolean usePs1Gpu = true;
 
+  public boolean allowWidescreen;
+  private float widescreenOrthoOffsetX;
+
   private Camera camera2d;
   private Camera camera3d;
   private Window window;
@@ -113,7 +119,7 @@ public class RenderEngine {
   private final Matrix4f orthographicProjection = new Matrix4f();
   private final Matrix4f transforms = new Matrix4f();
   private final FloatBuffer transformsBuffer = BufferUtils.createFloatBuffer(4 * 4 * 2);
-  private final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer(4 * 4 + 2);
+  private final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer(4 * 4 + 3);
   private final FloatBuffer lightBuffer = BufferUtils.createFloatBuffer(4 * 4 * 2 + 4);
   private final FloatBuffer projectionBuffer = BufferUtils.createFloatBuffer(3);
 
@@ -196,6 +202,9 @@ public class RenderEngine {
   private float projectionHeight;
   private float halfWidthInv;
   private float halfHeightInv;
+
+  private boolean togglePause;
+  private boolean paused;
 
   public void setProjectionSize(final float width, final float height) {
     this.projectionWidth = width;
@@ -428,7 +437,21 @@ public class RenderEngine {
       this.transforms.identity();
       this.transforms2Uniform.set(this.transforms);
 
-      this.renderCallback.run();
+      if(!this.paused) {
+        this.renderCallback.run();
+      }
+
+      if(this.togglePause) {
+        this.togglePause = false;
+        this.paused = !this.paused;
+
+        if(!this.paused) {
+          this.modelPool.reset();
+          this.orthoPool.reset();
+          this.orthoOverlayPool.reset();
+          this.orthoUnderlayPool.reset();
+        }
+      }
 
       if(legacyMode == 0 && this.usePs1Gpu) {
         this.transparentFrameBuffer.bind();
@@ -454,8 +477,10 @@ public class RenderEngine {
         RENDERER.setProjectionMode(ProjectionMode._2D);
         this.renderPoolTranslucent(this.orthoPool);
 
-        this.modelPool.reset();
-        this.orthoPool.reset();
+        if(!this.paused) {
+          this.modelPool.reset();
+          this.orthoPool.reset();
+        }
 
         // set render states
         RENDERER.setProjectionMode(ProjectionMode._3D);
@@ -496,7 +521,7 @@ public class RenderEngine {
 
         RENDERER.setProjectionMode(ProjectionMode._2D);
         this.render2dPool(this.orthoOverlayPool);
-      } else {
+      } else if(!this.paused) {
         this.orthoUnderlayPool.reset();
         this.orthoOverlayPool.reset();
         this.orthoPool.reset();
@@ -508,27 +533,27 @@ public class RenderEngine {
       this.vsyncCount += 60.0d * Config.getGameSpeedMultiplier() / this.window.getFpsLimit();
 
       if(this.movingLeft) {
-        this.camera3d.strafe(-MOVE_SPEED * 10);
+        this.camera3d.strafe(-MOVE_SPEED * 200);
       }
 
       if(this.movingRight) {
-        this.camera3d.strafe(MOVE_SPEED * 10);
+        this.camera3d.strafe(MOVE_SPEED * 200);
       }
 
       if(this.movingForward) {
-        this.camera3d.move(-MOVE_SPEED * 10);
+        this.camera3d.move(-MOVE_SPEED * 200);
       }
 
       if(this.movingBackward) {
-        this.camera3d.move(MOVE_SPEED * 10);
+        this.camera3d.move(MOVE_SPEED * 200);
       }
 
       if(this.movingUp) {
-        this.camera3d.jump(-MOVE_SPEED * 10);
+        this.camera3d.jump(-MOVE_SPEED * 200);
       }
 
       if(this.movingDown) {
-        this.camera3d.jump(MOVE_SPEED * 10);
+        this.camera3d.jump(MOVE_SPEED * 200);
       }
     });
   }
@@ -538,7 +563,6 @@ public class RenderEngine {
     glDepthFunc(GL_LESS);
     glDepthMask(true);
     glDisable(GL_BLEND);
-    glEnable(GL_CULL_FACE);
 
     this.opaqueFrameBuffer.bind();
     this.tmdShader.use();
@@ -555,6 +579,7 @@ public class RenderEngine {
       boolean updated = false;
 
       if(entry.obj.shouldRender(null)) {
+        glEnable(GL_CULL_FACE);
         updated = true;
         entry.updateTransforms();
         entry.render(null);
@@ -565,6 +590,8 @@ public class RenderEngine {
         final Translucency translucency = Translucency.FOR_RENDERING[translucencyIndex];
 
         if(entry.obj.shouldRender(translucency)) {
+          glDisable(GL_CULL_FACE);
+
           if(!updated) {
             updated = true;
             entry.updateTransforms();
@@ -689,7 +716,9 @@ public class RenderEngine {
       }
     }
 
-    pool.reset();
+    if(!this.paused) {
+      pool.reset();
+    }
   }
 
   public void setProjectionMode(final ProjectionMode projectionMode) {
@@ -769,6 +798,7 @@ public class RenderEngine {
 
     final QueuedModel entry = this.orthoPool.acquire();
     entry.reset();
+    entry.transforms.setTranslation(this.widescreenOrthoOffsetX, 0.0f, 0.0f);
     entry.obj = obj;
     return entry;
   }
@@ -781,7 +811,7 @@ public class RenderEngine {
     final QueuedModel entry = this.orthoPool.acquire();
     entry.reset();
     entry.obj = obj;
-    entry.transforms.set(mv).setTranslation(mv.transfer);
+    entry.transforms.set(mv).setTranslation(mv.transfer.x + this.widescreenOrthoOffsetX, mv.transfer.y, mv.transfer.z);
     entry.lightTransforms.set(entry.transforms);
     return entry;
   }
@@ -793,6 +823,7 @@ public class RenderEngine {
 
     final QueuedModel entry = this.orthoOverlayPool.acquire();
     entry.reset();
+    entry.transforms.setTranslation(this.widescreenOrthoOffsetX, 0.0f, 0.0f);
     entry.obj = obj;
     return entry;
   }
@@ -805,7 +836,7 @@ public class RenderEngine {
     final QueuedModel entry = this.orthoOverlayPool.acquire();
     entry.reset();
     entry.obj = obj;
-    entry.transforms.set(mv).setTranslation(mv.transfer);
+    entry.transforms.set(mv).setTranslation(mv.transfer.x + this.widescreenOrthoOffsetX, mv.transfer.y, mv.transfer.z);
     entry.lightTransforms.set(entry.transforms);
     return entry;
   }
@@ -817,6 +848,7 @@ public class RenderEngine {
 
     final QueuedModel entry = this.orthoUnderlayPool.acquire();
     entry.reset();
+    entry.transforms.setTranslation(this.widescreenOrthoOffsetX, 0.0f, 0.0f);
     entry.obj = obj;
     return entry;
   }
@@ -829,7 +861,7 @@ public class RenderEngine {
     final QueuedModel entry = this.orthoUnderlayPool.acquire();
     entry.reset();
     entry.obj = obj;
-    entry.transforms.set(mv).setTranslation(mv.transfer);
+    entry.transforms.set(mv).setTranslation(mv.transfer.x + this.widescreenOrthoOffsetX, mv.transfer.y, mv.transfer.z);
     entry.lightTransforms.set(entry.transforms);
     return entry;
   }
@@ -860,7 +892,7 @@ public class RenderEngine {
     }
   }
 
-  private void updateProjections() {
+  public void updateProjections() {
     if(legacyMode != 0) {
       this.perspectiveProjection.setPerspectiveLH(MathHelper.PI / 4.0f, (float)this.width / this.height, 0.1f, 500.0f);
       this.orthographicProjection.setOrtho2D(0.0f, this.width, this.height, 0.0f);
@@ -870,8 +902,18 @@ public class RenderEngine {
     // LOD uses a left-handed projection with a negated Y axis because reasons.
     // Our perspective projection is actually a centred orthographic projection. We are doing a
     // projection plane division in the vertex shader to emulate perspective division on the GTE.
-    this.perspectiveProjection.setOrthoLH(-this.projectionWidth / 2.0f, this.projectionWidth / 2.0f, this.projectionHeight / 2.0f, -this.projectionHeight / 2.0f, 0.1f, 1000000.0f);
-    this.orthographicProjection.setOrthoLH(0.0f, this.projectionWidth, this.projectionHeight, 0.0f, 0.1f, 1000000.0f);
+    if(this.allowWidescreen && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get())) {
+      final float ratio = this.width / (float)this.height;
+      final float w = this.projectionHeight * ratio;
+      final float h = this.projectionHeight;
+      this.perspectiveProjection.setOrthoLH(-w / 2.0f, w / 2.0f, h / 2.0f, -h / 2.0f, 0.1f, 1000000.0f);
+      this.orthographicProjection.setOrthoLH(0.0f, w * (this.projectionWidth / 320.0f), h, 0.0f, 0.1f, 1000000.0f);
+      this.widescreenOrthoOffsetX = (w - 320.0f) / 2.0f;
+    } else {
+      this.perspectiveProjection.setOrthoLH(-this.projectionWidth / 2.0f, this.projectionWidth / 2.0f, this.projectionHeight / 2.0f, -this.projectionHeight / 2.0f, 0.1f, 1000000.0f);
+      this.orthographicProjection.setOrthoLH(0.0f, this.projectionWidth, this.projectionHeight, 0.0f, 0.1f, 1000000.0f);
+      this.widescreenOrthoOffsetX = 0.0f;
+    }
   }
 
   private void onResize(final Window window, final int width, final int height) {
@@ -999,6 +1041,8 @@ public class RenderEngine {
         case 1 -> System.out.println("Switched to legacy rendering");
         case 2 -> System.out.println("Switched to VRAM rendering");
       }
+    } else if(key == GLFW_KEY_F11) {
+      this.togglePause = !this.togglePause;
     }
 
     if(key == GLFW_KEY_M) {
@@ -1030,7 +1074,7 @@ public class RenderEngine {
     private Obj obj;
     private final Matrix4f transforms = new Matrix4f();
     private final Matrix4f lightTransforms = new Matrix4f();
-    private final Vector2f screenspaceOffset = new Vector2f();
+    private final Vector3f screenspaceOffset = new Vector3f();
     private final Vector3f colour = new Vector3f();
     private final Vector2f clutOverride = new Vector2f();
     private final Vector2f tpageOverride = new Vector2f();
@@ -1046,12 +1090,19 @@ public class RenderEngine {
     private int vertexCount;
 
     public QueuedModel screenspaceOffset(final Vector2f offset) {
-      this.screenspaceOffset.set(offset);
+      this.screenspaceOffset.x = offset.x;
+      this.screenspaceOffset.y = offset.y;
       return this;
     }
 
     public QueuedModel screenspaceOffset(final float x, final float y) {
-      this.screenspaceOffset.set(x * RenderEngine.this.halfWidthInv, y * RenderEngine.this.halfHeightInv);
+      this.screenspaceOffset.x = x * RenderEngine.this.halfWidthInv;
+      this.screenspaceOffset.y = y * RenderEngine.this.halfHeightInv;
+      return this;
+    }
+
+    public QueuedModel depthOffset(final float z) {
+      this.screenspaceOffset.z = z;
       return this;
     }
 

@@ -1,6 +1,6 @@
 package legend.game.scripting;
 
-import legend.game.combat.Bttl;
+import legend.game.combat.Battle;
 import legend.game.submap.SMap;
 import legend.game.Scus94491BpeSegment_8006;
 import legend.game.Scus94491BpeSegment_800b;
@@ -31,14 +31,14 @@ public class GameVarArrayParam extends Param {
       case 6 -> Scus94491BpeSegment_800b.gameState_800babc8.scriptData_08[this.arrIndex];
       case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIds_88[this.arrIndex];
       case 32 -> Scus94491BpeSegment_8006.battleState_8006e398.allBents_e0c[this.arrIndex] != null ? Scus94491BpeSegment_8006.battleState_8006e398.allBents_e0c[this.arrIndex].index : -1;
-      case 34 -> Scus94491BpeSegment_8006.battleState_8006e398.charBents_e40[this.arrIndex] != null ? Scus94491BpeSegment_8006.battleState_8006e398.charBents_e40[this.arrIndex].index : -1;
+      case 34 -> Scus94491BpeSegment_8006.battleState_8006e398.playerBents_e40[this.arrIndex] != null ? Scus94491BpeSegment_8006.battleState_8006e398.playerBents_e40[this.arrIndex].index : -1;
       case 36 -> Scus94491BpeSegment_8006.battleState_8006e398.monsterBents_e50[this.arrIndex] != null ? Scus94491BpeSegment_8006.battleState_8006e398.monsterBents_e50[this.arrIndex].index : -1;
       case 41 -> throw new RuntimeException("Not implemented"); //Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928.get(this.arrIndex).get();
       case 45 -> this.readBattleVar(this.arrIndex);
       // Indices 6-9 are indices for the four camera positions in a battle
-      case 46 -> Bttl.currentStageData_800c6718.get(this.arrIndex);
+      case 46 -> ((Battle)currentEngineState_8004dd04).currentStageData_800c6718.get(this.arrIndex);
       case 48 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveBents_e78[this.arrIndex] != null ? Scus94491BpeSegment_8006.battleState_8006e398.aliveBents_e78[this.arrIndex].index : -1;
-      case 50 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveCharBents_eac[this.arrIndex] != null ? Scus94491BpeSegment_8006.battleState_8006e398.aliveCharBents_eac[this.arrIndex].index : -1;
+      case 50 -> Scus94491BpeSegment_8006.battleState_8006e398.alivePlayerBents_eac[this.arrIndex] != null ? Scus94491BpeSegment_8006.battleState_8006e398.alivePlayerBents_eac[this.arrIndex].index : -1;
       case 52 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveMonsterBents_ebc[this.arrIndex] != null ? Scus94491BpeSegment_8006.battleState_8006e398.aliveMonsterBents_ebc[this.arrIndex].index : -1;
       case 64 -> ((SMap)currentEngineState_8004dd04).sobjs_800c6880[this.arrIndex] != null ? ((SMap)currentEngineState_8004dd04).sobjs_800c6880[this.arrIndex].index : 0;
       case 73 -> ((SMap)currentEngineState_8004dd04).indicatorTickCountArray_800c6970[this.arrIndex];
@@ -68,13 +68,13 @@ public class GameVarArrayParam extends Param {
       case 6 -> Scus94491BpeSegment_800b.gameState_800babc8.scriptData_08[this.arrIndex] = val;
       case 17 -> Scus94491BpeSegment_800b.gameState_800babc8.charIds_88[this.arrIndex] = val;
       case 32 -> Scus94491BpeSegment_8006.battleState_8006e398.allBents_e0c[this.arrIndex] = SCRIPTS.getState(val, BattleEntity27c.class);
-      case 34 -> Scus94491BpeSegment_8006.battleState_8006e398.charBents_e40[this.arrIndex] = SCRIPTS.getState(val, PlayerBattleEntity.class);
+      case 34 -> Scus94491BpeSegment_8006.battleState_8006e398.playerBents_e40[this.arrIndex] = SCRIPTS.getState(val, PlayerBattleEntity.class);
       case 36 -> Scus94491BpeSegment_8006.battleState_8006e398.monsterBents_e50[this.arrIndex] = SCRIPTS.getState(val, MonsterBattleEntity.class);
       case 41 -> throw new RuntimeException("Not implemented"); //Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928.get(this.arrIndex).set(val);
       case 45 -> this.writeCombatVar(this.arrIndex, val);
-      case 46 -> Bttl.currentStageData_800c6718.set(this.arrIndex, val);
+      case 46 -> ((Battle)currentEngineState_8004dd04).currentStageData_800c6718.set(this.arrIndex, val);
       case 48 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveBents_e78[this.arrIndex] = SCRIPTS.getState(val, BattleEntity27c.class);
-      case 50 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveCharBents_eac[this.arrIndex] = SCRIPTS.getState(val, PlayerBattleEntity.class);
+      case 50 -> Scus94491BpeSegment_8006.battleState_8006e398.alivePlayerBents_eac[this.arrIndex] = SCRIPTS.getState(val, PlayerBattleEntity.class);
       case 52 -> Scus94491BpeSegment_8006.battleState_8006e398.aliveMonsterBents_ebc[this.arrIndex] = SCRIPTS.getState(val, MonsterBattleEntity.class);
       case 64 -> ((SMap)currentEngineState_8004dd04).sobjs_800c6880[this.arrIndex] = SCRIPTS.getState(val, SubmapObject210.class);
       case 73 -> ((SMap)currentEngineState_8004dd04).indicatorTickCountArray_800c6970[this.arrIndex] = val;

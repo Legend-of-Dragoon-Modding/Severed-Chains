@@ -3,7 +3,6 @@ package legend.game;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
-import legend.core.memory.Value;
 import legend.game.sound.Instrument;
 import legend.game.sound.InstrumentLayer10;
 import legend.game.sound.InstrumentsSubfile;
@@ -24,7 +23,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.SPU;
 
 public final class Scus94491BpeSegment_800c {
@@ -70,6 +68,4 @@ public final class Scus94491BpeSegment_800c {
   public static int instrumentLayerIndex_800c6678;
   public static SssqReader sssqReader_800c667c;
   public static Sssq.ChannelInfo sssqChannelInfo_800C6680;
-
-  public static final Value timHeader_800c6748 = MEMORY.ref(4, 0x800c6748L);
 }

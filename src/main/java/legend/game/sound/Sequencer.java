@@ -594,7 +594,7 @@ public class Sequencer {
                 }
 
                 //LAB_80047498
-                pitchBend = pitchBend * playingNote.modulation_16 / 255 - ((playingNote.modulation_16 + 1) / 2 - 64);
+                pitchBend = ((pitchBend - 0x80) * playingNote.modulation_16) / 256 + 64;
               }
 
               //LAB_800474f0
@@ -602,18 +602,12 @@ public class Sequencer {
                 if(playingNote.portamentoTimeRemaining_62 != 0) {
                   playingNote.portamentoTimeRemaining_62--;
 
-                  if(playingNote.newPortamento_60 < 0) {
-                    final int portamentoTimeElapsed = playingNote.portamentoTimeTotal_64 - playingNote.portamentoTimeRemaining_62;
-                    note = playingNote.portamentoNote_4e - portamentoTimeElapsed * (256 - playingNote.newPortamento_60) / 10 / playingNote.portamentoTimeTotal_64;
-                    //TODO remove the *4 by increasing resolution
-                    sixtyFourths = sixtyFourths - (portamentoTimeElapsed * playingNote.newPortamento_60 * 192 / (playingNote.portamentoTimeTotal_64 * 120) % 16) * 4;
-                  } else {
-                    //LAB_8004762c
-                    final int portamentoTimeElapsed = (playingNote.portamentoTimeTotal_64 - playingNote.portamentoTimeRemaining_62) * playingNote.newPortamento_60;
-                    note = playingNote.portamentoNote_4e + portamentoTimeElapsed / 10 / playingNote.portamentoTimeTotal_64;
-                    //TODO remove the *4 by increasing resolution
-                    sixtyFourths = sixtyFourths + (portamentoTimeElapsed * 192 / (playingNote.portamentoTimeTotal_64 * 120) % 16) * 4;
-                  }
+                  final int portamento10ths = playingNote.newPortamento_60;
+                  final int portamentoTimeElapsed = playingNote.portamentoTimeTotal_64 - playingNote.portamentoTimeRemaining_62;
+                  final float fraction = (portamento10ths * portamentoTimeElapsed) / (playingNote.portamentoTimeTotal_64 * 10.0f);
+                  final int noteOffset = (int)fraction;
+                  note = playingNote.portamentoNote_4e + noteOffset;
+                  sixtyFourths += Math.round(fraction * 64 - noteOffset * 64);
 
                   //LAB_800476f4
                   if(note <= 0xc) {

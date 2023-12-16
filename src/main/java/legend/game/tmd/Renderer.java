@@ -5,6 +5,7 @@ import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.ModelPart10;
 import legend.core.gte.TmdObjTable1c;
+import legend.game.combat.Battle;
 import legend.game.combat.environment.BattleLightStruct64;
 import legend.game.types.Translucency;
 import org.joml.Vector3f;
@@ -17,7 +18,7 @@ import static legend.game.Scus94491BpeSegment.zMax_1f8003cc;
 import static legend.game.Scus94491BpeSegment.zMin;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
-import static legend.game.combat.Bttl._800c6930;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 
 public final class Renderer {
   private Renderer() { }
@@ -175,7 +176,7 @@ public final class Renderer {
       }
 
       if(textured && translucent && !lit && (ctmd || uniformLit)) {
-        final BattleLightStruct64 bkLight = _800c6930;
+        final BattleLightStruct64 bkLight = ((Battle)currentEngineState_8004dd04)._800c6930;
 
         for(int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
           int rgb = poly.vertices[vertexIndex].colour;

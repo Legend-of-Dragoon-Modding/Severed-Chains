@@ -6,6 +6,8 @@ import legend.game.combat.deff.Cmb;
 import legend.game.combat.deff.Lmb;
 import org.joml.Vector3f;
 
+import java.util.Arrays;
+
 public class Model124 {
   public final String name;
 
@@ -13,9 +15,7 @@ public class Model124 {
 //  public GsCOORDINATE2[] coord2ArrPtr_04; // Use coord2 on modelParts_00
 //  public Transforms[] coord2ParamArrPtr_08; // Use modelParts_00.coord.transforms
   /** Union with coord2ParamArrPtr_08 */
-  public final LmbAnim lmbAnim_08 = new LmbAnim();
-  /** Union with coord2ParamArrPtr_08 */
-  public final CmbAnim cmbAnim_08 = new CmbAnim();
+  public AnimType anim_08;
 //  public final GsOBJTABLE2 ObjTable_0c = new GsOBJTABLE2();
   // Supercoordinate system for all model part coordinate systems, all model parts are attached to this
   public final GsCOORDINATE2 coord2_14 = new GsCOORDINATE2();
@@ -25,18 +25,6 @@ public class Model124 {
   public ModelPartTransforms0c[][] partTransforms_90;
   /** [keyframe][part] One entry for each TMD object (tmdNobj_ca) */
   public ModelPartTransforms0c[][] partTransforms_94;
-  /**
-   * Union with {@link #partTransforms_90}
-   * <ul>
-   *   <li>-1 - SAF</li>
-   *   <li>0 - CMB</li>
-   *   <li>1 - LMB</li>
-   *   <li>2 - CMB</li>
-   * </ul>
-   */
-  public int animType_90;
-  /** Union with {@link #partTransforms_94} */
-  public int lmbUnknown_94;
 
   /** short */
   public int partCount_98;
@@ -100,35 +88,59 @@ public class Model124 {
     return this.name + " (" + super.toString() + ')';
   }
 
-  public static class CmbAnim {
-    public int animationTicks_00;
-    public Cmb cmb_04;
-    public ModelPartTransforms0c[] transforms_08;
+  public abstract class AnimType {
+    public abstract void apply(final int animationTicks);
+  }
 
-    public void set(final CmbAnim other) {
-      this.animationTicks_00 = other.animationTicks_00;
-      this.cmb_04 = other.cmb_04;
-      this.transforms_08 = other.transforms_08;
+  public class StandardAnim extends AnimType {
+    public final TmdAnimationFile anim;
+
+    public StandardAnim(final TmdAnimationFile anim) {
+      this.anim = anim;
+    }
+
+    @Override
+    public void apply(final int animationTicks) {
+      this.anim.apply(Model124.this, animationTicks);
     }
   }
 
-  public static class LmbAnim {
-    public Lmb lmb_00;
+  public class CmbAnim extends AnimType {
+    public int animationTicks_00;
+    public final Cmb cmb_04;
+    public final ModelPartTransforms0c[] transforms_08;
 
-    public void set(final LmbAnim other) {
-      this.lmb_00 = other.lmb_00;
+    public CmbAnim(final Cmb cmb, final int count) {
+      this.cmb_04 = cmb;
+      this.transforms_08 = new ModelPartTransforms0c[count];
+      Arrays.setAll(this.transforms_08, i -> new ModelPartTransforms0c());
+    }
+
+    @Override
+    public void apply(final int animationTicks) {
+      this.cmb_04.apply(Model124.this, animationTicks);
+    }
+  }
+
+  public class LmbAnim extends AnimType {
+    public final Lmb lmb_00;
+
+    public LmbAnim(final Lmb lmb) {
+      this.lmb_00 = lmb;
+    }
+
+    @Override
+    public void apply(final int animationTicks) {
+      this.lmb_00.apply(Model124.this, animationTicks);
     }
   }
 
   public void set(final Model124 other) {
     this.modelParts_00 = other.modelParts_00;
-    this.lmbAnim_08.set(other.lmbAnim_08);
-    this.cmbAnim_08.set(other.cmbAnim_08);
+    this.anim_08 = other.anim_08;
     this.coord2_14.set(other.coord2_14);
     this.partTransforms_90 = other.partTransforms_90;
     this.partTransforms_94 = other.partTransforms_94;
-    this.animType_90 = other.animType_90;
-    this.lmbUnknown_94 = other.lmbUnknown_94;
     this.partCount_98 = other.partCount_98;
     this.totalFrames_9a = other.totalFrames_9a;
     this.animationState_9c = other.animationState_9c;

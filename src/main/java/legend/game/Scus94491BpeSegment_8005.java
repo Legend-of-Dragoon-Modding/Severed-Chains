@@ -1,16 +1,13 @@
 package legend.game;
 
 import legend.core.gte.MV;
-import legend.core.memory.Value;
-import legend.game.combat.types.CombatantStruct1a8;
 import legend.game.sound.ReverbConfig;
 import legend.game.sound.ReverbConfigAndLocation;
+import legend.game.tmd.UvAdjustmentMetrics10;
 import legend.game.types.AdditionData0e;
 import legend.game.types.LodString;
 
 import java.util.Arrays;
-
-import static legend.core.GameEngine.MEMORY;
 
 public final class Scus94491BpeSegment_8005 {
   private Scus94491BpeSegment_8005() { }
@@ -45,7 +42,26 @@ public final class Scus94491BpeSegment_8005 {
 
   public static int _80050274 = -1;
 
-  public static final Value _8005027c = MEMORY.ref(4, 0x8005027cL);
+  public static final UvAdjustmentMetrics10[] _8005027c = {
+    new UvAdjustmentMetrics10(0x0, 0xffff_ffff, 0x0, 0xffff_ffff),
+    new UvAdjustmentMetrics10(0x15_0000, 0xffe0_ffff, 0x7c14_0000, 0x83c3_ffff),
+    new UvAdjustmentMetrics10(0x16_0000, 0xffe0_ffff, 0x7c18_0000, 0x83c3_ffff),
+    new UvAdjustmentMetrics10(0x17_0000, 0xffe0_ffff, 0x7c1c_0000, 0x83c3_ffff),
+    new UvAdjustmentMetrics10(0x18_0000, 0xffe0_ffff, 0x7c20_0000, 0x83c3_ffff),
+    new UvAdjustmentMetrics10(0x19_0000, 0xffe0_ffff, 0x7c24_0000, 0x83c3_ffff),
+    new UvAdjustmentMetrics10(0x1a_0000, 0xffe0_ffff, 0x7c28_0000, 0x83c3_ffff),
+    new UvAdjustmentMetrics10(0x19_0000, 0xffe0_ffff, 0x7c24_0000, 0x83c3_ffff),
+    new UvAdjustmentMetrics10(0x1a_0000, 0xffe0_ffff, 0x7c28_0000, 0x83c3_ffff),
+    new UvAdjustmentMetrics10(0x1b_0000, 0xffe0_ffff, 0x7c2c_0000, 0x83c3_ffff),
+    new UvAdjustmentMetrics10(0x0c_0000, 0xffe0_ffff, 0x3c30_0000, 0x83c3_ffff),
+    new UvAdjustmentMetrics10(0x0d_0000, 0xffe0_ffff, 0x3c34_0000, 0x83c3_ffff),
+    new UvAdjustmentMetrics10(0x0e_0000, 0xffe0_ffff, 0x3c38_0000, 0x83c3_ffff),
+    new UvAdjustmentMetrics10(0x0f_0000, 0xffe0_ffff, 0x3c3c_0000, 0x83c3_ffff),
+    new UvAdjustmentMetrics10(0x08_0000, 0xffe0_ffff, 0x3c20_0000, 0x83c3_ffff),
+    new UvAdjustmentMetrics10(0x09_0000, 0xffe0_ffff, 0x3c24_0000, 0x83c3_ffff),
+    new UvAdjustmentMetrics10(0x0a_0000, 0xffe0_ffff, 0x3c28_0000, 0x83c3_ffff),
+    new UvAdjustmentMetrics10(0x0b_0000, 0xffe0_ffff, 0x3c2c_0000, 0x83c3_ffff),
+  };
 
   public static final int[] shadowScale_8005039c = {0x1800, 0x1800, 0x1000, 0xe00, 0x1600, 0x1300, 0xe00, 0x2000, 0x1300, 0x1500};
   public static final int[] _800503b0 = {0, 320, 384, 448, 512, 576, 640, 576, 640, 704, 768, 832, 896, 960, 512, 576, 640, 704};
@@ -170,19 +186,6 @@ public final class Scus94491BpeSegment_8005 {
   public static boolean _80052c40;
   public static int submapEnvState_80052c44 = 2;
 
-  public static boolean reinitializingWmap_80052c6c;
-
-  public static final int[] _80052d6c = {0, 4, 7, 15};
-  public static final String[][] diskFmvs_80052d7c = {
-    {"\\STR\\DEMOH.IKI", "\\STR\\DEMO2.IKI", "\\STR\\OPENH.IKI", "\\STR\\WAR1H.IKI"},
-    {"\\STR\\TVRH.IKI", "\\STR\\GOAST.IKI", "\\STR\\ROZEH.IKI"},
-    {"\\STR\\TREEH.IKI", "\\STR\\WAR2H.IKI", "\\STR\\BLACKH.IKI", "\\STR\\DRAGON1.IKI", "\\STR\\DENIN.IKI", "\\STR\\DENIN2.IKI", "\\STR\\DRAGON2.IKI", "\\STR\\DEIASH.IKI"},
-    {"\\STR\\MOONH.IKI", "\\STR\\ENDING1H.IKI", "\\STR\\ENDING2H.IKI"}
-  };
-
-  public static final int vramWidth_800546c0 = 1024;
-  public static final int vramHeight_800546c2 = 512;
-
   public static int matrixStackIndex_80054a08;
   public static final MV[] matrixStack_80054a0c = new MV[20];
   static {
@@ -190,21 +193,19 @@ public final class Scus94491BpeSegment_8005 {
   }
 
   public static final ReverbConfigAndLocation[] reverbConfigs_80059f7c = {
-    new ReverbConfigAndLocation(64296, new ReverbConfig(125, 91, 28032, 21688, -16688, 0, 0, -17792, 22528, 21248, 1238, 819, 1008, 551, 884, 495, 820, 437, 0, 0, 0, 0, 0, 0, 0, 0, 436, 310, 184, 92, -32768, -32768)),
-    new ReverbConfigAndLocation(64536, new ReverbConfig(51, 37, 28912, 20392, -17184, 17424, -16144, -25600, 21120, 20160, 996, 795, 932, 687, 882, 614, 796, 605, 604, 398, 559, 309, 466, 183, 399, 181, 180, 128, 76, 38, -32768, -32768)),
-    new ReverbConfigAndLocation(63224, new ReverbConfig(177, 127, 28912, 20392, -17184, 17680, -16656, -19264, 21120, 20160, 2308, 1899, 2084, 1631, 1954, 1558, 1900, 1517, 1516, 1070, 1295, 773, 1122, 695, 1071, 613, 612, 434, 256, 128, -32768, -32768)),
-    new ReverbConfigAndLocation(61956, new ReverbConfig(227, 169, 28512, 20392, -17184, 17680, -16656, -22912, 22144, 21184, 3579, 2904, 3337, 2620, 3033, 2419, 2905, 2266, 2265, 1513, 2028, 1200, 1775, 978, 1514, 797, 796, 568, 340, 170, -32768, -32768)),
-    new ReverbConfigAndLocation(59972, new ReverbConfig(421, 313, 24576, 20480, 19456, -18432, -17408, -16384, 24576, 23552, 5562, 4539, 5314, 4285, 4540, 3521, 4544, 3523, 3520, 2497, 3012, 1985, 2560, 1741, 2498, 1473, 1472, 1050, 628, 314, -32768, -32768)),
-    new ReverbConfigAndLocation(57640, new ReverbConfig(829, 561, 32256, 20480, -19456, -20480, 19456, -20480, 24576, 21504, 7894, 6705, 7444, 6203, 7106, 5810, 6706, 5615, 5614, 4181, 4916, 3885, 4598, 3165, 4182, 2785, 2784, 1954, 1124, 562, -32768, -32768)),
-    new ReverbConfigAndLocation(57344, new ReverbConfig(1, 1, 32767, 32767, 0, 0, 0, -32512, 0, 0, 8191, 4095, 4101, 5, 0, 0, 4101, 5, 0, 0, 0, 0, 0, 0, 0, 0, 4100, 4098, 4, 2, -32768, -32768)),
-    new ReverbConfigAndLocation(57344, new ReverbConfig(1, 1, 32767, 32767, 0, 0, 0, 0, 0, 0, 8191, 4095, 4101, 5, 0, 0, 4101, 5, 0, 0, 0, 0, 0, 0, 0, 0, 4100, 4098, 4, 2, -32768, -32768)),
-    new ReverbConfigAndLocation(64652, new ReverbConfig(23, 19, 28912, 20392, -17184, 17680, -16656, -31488, 24448, 21696, 881, 687, 741, 479, 688, 471, 856, 618, 470, 286, 301, 177, 287, 89, 416, 227, 88, 64, 40, 20, -32768, -32768)),
+    new ReverbConfigAndLocation(0xfb28, new ReverbConfig(125, 91, 28032, 21688, -16688, 0, 0, -17792, 22528, 21248, 1238, 819, 1008, 551, 884, 495, 820, 437, 0, 0, 0, 0, 0, 0, 0, 0, 436, 310, 184, 92, -32768, -32768)),
+    new ReverbConfigAndLocation(0xfc18, new ReverbConfig(51, 37, 28912, 20392, -17184, 17424, -16144, -25600, 21120, 20160, 996, 795, 932, 687, 882, 614, 796, 605, 604, 398, 559, 309, 466, 183, 399, 181, 180, 128, 76, 38, -32768, -32768)),
+    new ReverbConfigAndLocation(0xf6f8, new ReverbConfig(177, 127, 28912, 20392, -17184, 17680, -16656, -19264, 21120, 20160, 2308, 1899, 2084, 1631, 1954, 1558, 1900, 1517, 1516, 1070, 1295, 773, 1122, 695, 1071, 613, 612, 434, 256, 128, -32768, -32768)),
+    new ReverbConfigAndLocation(0xf204, new ReverbConfig(227, 169, 28512, 20392, -17184, 17680, -16656, -22912, 22144, 21184, 3579, 2904, 3337, 2620, 3033, 2419, 2905, 2266, 2265, 1513, 2028, 1200, 1775, 978, 1514, 797, 796, 568, 340, 170, -32768, -32768)),
+    new ReverbConfigAndLocation(0xea44, new ReverbConfig(421, 313, 24576, 20480, 19456, -18432, -17408, -16384, 24576, 23552, 5562, 4539, 5314, 4285, 4540, 3521, 4544, 3523, 3520, 2497, 3012, 1985, 2560, 1741, 2498, 1473, 1472, 1050, 628, 314, -32768, -32768)),
+    new ReverbConfigAndLocation(0xe128, new ReverbConfig(829, 561, 32256, 20480, -19456, -20480, 19456, -20480, 24576, 21504, 7894, 6705, 7444, 6203, 7106, 5810, 6706, 5615, 5614, 4181, 4916, 3885, 4598, 3165, 4182, 2785, 2784, 1954, 1124, 562, -32768, -32768)),
+    new ReverbConfigAndLocation(0xe000, new ReverbConfig(1, 1, 32767, 32767, 0, 0, 0, -32512, 0, 0, 8191, 4095, 4101, 5, 0, 0, 4101, 5, 0, 0, 0, 0, 0, 0, 0, 0, 4100, 4098, 4, 2, -32768, -32768)),
+    new ReverbConfigAndLocation(0xe000, new ReverbConfig(1, 1, 32767, 32767, 0, 0, 0, 0, 0, 0, 8191, 4095, 4101, 5, 0, 0, 4101, 5, 0, 0, 0, 0, 0, 0, 0, 0, 4100, 4098, 4, 2, -32768, -32768)),
+    new ReverbConfigAndLocation(0xfc8c, new ReverbConfig(23, 19, 28912, 20392, -17184, 17680, -16656, -31488, 24448, 21696, 881, 687, 741, 479, 688, 471, 856, 618, 470, 286, 301, 177, 287, 89, 416, 227, 88, 64, 40, 20, -32768, -32768)),
   };
 
   /** short */
   public static int sssqFadeCurrent_8005a1ce;
 
   public static boolean standingInSavePoint_8005a368;
-
-  public static final CombatantStruct1a8[] combatants_8005e398 = new CombatantStruct1a8[10];
 }

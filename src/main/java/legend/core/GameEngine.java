@@ -2,9 +2,6 @@ package legend.core;
 
 import legend.core.gpu.Gpu;
 import legend.core.gte.Gte;
-import legend.core.memory.Memory;
-import legend.core.memory.Value;
-import legend.core.memory.segments.RamSegment;
 import legend.core.opengl.Mesh;
 import legend.core.opengl.Shader;
 import legend.core.opengl.ShaderManager;
@@ -75,8 +72,6 @@ public final class GameEngine {
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(GameEngine.class);
 
-  public static final Memory MEMORY = new Memory();
-
   private static ModManager.Access MOD_ACCESS;
   private static LangManager.Access LANG_ACCESS;
   private static EventManager.Access EVENT_ACCESS;
@@ -115,11 +110,6 @@ public final class GameEngine {
       LOGGER.warn("Failed to load config", e);
     }
 
-    // --- User memory ------------------------
-
-    MEMORY.addSegment(new RamSegment(0x0001_0000L, 0x8f_0000));
-    MEMORY.addSegment(new RamSegment(0x1f80_0000L, 0x400));
-
     GTE = new Gte();
     GPU = new Gpu();
     SPU = new Spu();
@@ -129,8 +119,6 @@ public final class GameEngine {
     spuThread = new Thread(SPU);
     spuThread.setName("SPU");
   }
-
-  private static final Value _80010000 = MEMORY.ref(4, 0x80010000L);
 
   private static final Object LOCK = new Object();
 
@@ -207,8 +195,6 @@ public final class GameEngine {
             LOGGER.info("Unpacking stopped");
             return;
           }
-
-          MEMORY.setBytes(_80010000.getAddress(), Unpacker.loadFile("lod_engine").getBytes());
 
           loadXpTables();
 

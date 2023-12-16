@@ -59,7 +59,6 @@ import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.flEq;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
-import static legend.game.Scus94491BpeSegment.loadDrgnDirSync;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadDrgnFileSync;
 import static legend.game.Scus94491BpeSegment.loadLocationMenuSoundEffects;
@@ -99,7 +98,6 @@ import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.previousEngineState_8004dd28;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
-import static legend.game.Scus94491BpeSegment_8005.reinitializingWmap_80052c6c;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8007.clearRed_8007a3a8;
@@ -189,9 +187,9 @@ public class WMap extends EngineState {
     NOOP_6(6),
     UNUSED_DEALLOC_7(7),
     ;
-    
+
     public final int state;
-    
+
     PlayerState(final int state) {
       this.state = state;
     }
@@ -212,6 +210,9 @@ public class WMap extends EngineState {
   }
 
   private static final Pattern NEWLINE = Pattern.compile("\\n");
+
+  private boolean reinitializingWmap_80052c6c;
+
   private int tickMainMenuOpenTransition_800c6690;
 
   private WorldMapState worldMapState_800c6698;
@@ -526,7 +527,7 @@ public class WMap extends EngineState {
       } else {
         //LAB_800cc804
         resizeDisplay(320, 240);
-        loadWmapMusic(gameState_800babc8.chapterIndex_98, 0);
+        loadWmapMusic(gameState_800babc8.chapterIndex_98);
         this.wmapState_800bb10c = WmapState.PRE_EXIT_SCREENS_12;
       }
 
@@ -633,7 +634,7 @@ public class WMap extends EngineState {
     resizeDisplay(320, 240);
     vsyncMode_8007a3b8 = 1;
     unloadSoundFile(9);
-    loadWmapMusic(gameState_800babc8.chapterIndex_98, 0);
+    loadWmapMusic(gameState_800babc8.chapterIndex_98);
     this.wmapState_800bb10c = WmapState.WAIT_FOR_MUSIC_TO_LOAD_1;
   }
 
@@ -713,7 +714,7 @@ public class WMap extends EngineState {
 
     this.deallocate();
 
-    reinitializingWmap_80052c6c = false;
+    this.reinitializingWmap_80052c6c = false;
     engineStateOnceLoaded_8004dd24 = EngineStateEnum.SUBMAP_05;
     vsyncMode_8007a3b8 = 2;
   }
@@ -729,7 +730,7 @@ public class WMap extends EngineState {
     this.handleAndRenderMapAndPlayer();
     this.deallocate();
 
-    reinitializingWmap_80052c6c = false;
+    this.reinitializingWmap_80052c6c = false;
     engineStateOnceLoaded_8004dd24 = EngineStateEnum.COMBAT_06;
     vsyncMode_8007a3b8 = 2;
   }
@@ -737,7 +738,7 @@ public class WMap extends EngineState {
   @Method(0x800cce9cL)
   private void transitionToWorldMap() {
     this.deallocate();
-    reinitializingWmap_80052c6c = true;
+    this.reinitializingWmap_80052c6c = true;
     this.wmapState_800bb10c = WmapState.INIT_0;
   }
 
@@ -756,7 +757,7 @@ public class WMap extends EngineState {
     this.handleAndRenderMapAndPlayer();
     this.deallocate();
 
-    reinitializingWmap_80052c6c = false;
+    this.reinitializingWmap_80052c6c = false;
     engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;
     vsyncMode_8007a3b8 = 2;
     drgnBinIndex_800bc058 = 1;
@@ -1857,7 +1858,7 @@ public class WMap extends EngineState {
   @Method(0x800d6880L)
   private void loadWmapTextures() {
     this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & 0xffff_efff);
-    loadDrgnDirSync(0, 5695, files -> this.timsLoaded(files, 0x1_1000));
+    loadDrgnDir(0, 5695, files -> this.timsLoaded(files, 0x1_1000));
     this.modelAndAnimData_800c66a8.mapTextureBrightness_20 = 0.0f;
   }
 
@@ -2063,7 +2064,7 @@ public class WMap extends EngineState {
   @Method(0x800d8e4cL)
   private void loadMapModelAndTexture(final int index) {
     this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & 0xffff_fffd);
-    loadDrgnDirSync(0, 5697 + index, files -> this.timsLoaded(files, 0x2));
+    loadDrgnDir(0, 5697 + index, files -> this.timsLoaded(files, 0x2));
     loadDrgnFile(0, 5705 + index, files -> this.loadTmdCallback("Map model DRGN0/" + (5705 + index), files));
   }
 
@@ -2947,7 +2948,7 @@ public class WMap extends EngineState {
   private void loadPlayerAvatarTextureAndModelFiles() {
     this.filesLoadedFlags_800c66b8.updateAndGet(val -> val & 0xffff_fd57);
 
-    loadDrgnDirSync(0, 5713, files -> this.timsLoaded(files, 0x2a8));
+    loadDrgnDir(0, 5713, files -> this.timsLoaded(files, 0x2a8));
 
     //LAB_800dfacc
     for(int i = 0; i < 4; i++) {
@@ -4594,7 +4595,7 @@ public class WMap extends EngineState {
 
     //LAB_800e7e5c
     //LAB_800e7e88
-    if(!transitionFromCombatOrShip && !loadingNewGameState_800bdc34 || reinitializingWmap_80052c6c) {
+    if(!transitionFromCombatOrShip && !loadingNewGameState_800bdc34 || this.reinitializingWmap_80052c6c) {
       //LAB_800e844c
       // Transition from submap or other world map
       this.mapState_800c6798.shortForceMovementMode_d4 = ForcedMovementMode.WALK_1;

@@ -43,6 +43,7 @@ import legend.game.sound.QueuedSound28;
 import legend.game.sound.SoundFile;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
+import legend.game.tmd.UvAdjustmentMetrics10;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
@@ -86,7 +87,6 @@ import java.util.function.Supplier;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
-import static legend.core.GameEngine.MEMORY;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
@@ -310,21 +310,22 @@ public final class Scus94491BpeSegment_8002 {
     }
   }
 
-  /** Very similar to {@link Scus94491BpeSegment_800e#FUN_800e6b3c(Model124, CContainer, TmdAnimationFile)} */
   @Method(0x80020718L)
-  public static void FUN_80020718(final Model124 model, final CContainer cContainer, final TmdAnimationFile tmdAnimFile) {
+  public static void loadModelAndAnimation(final Model124 model, final CContainer cContainer, final TmdAnimationFile tmdAnimFile) {
     LOGGER.info("Loading scripted TMD %s (animation %s)", cContainer, tmdAnimFile);
 
-    final float transferX = model.coord2_14.coord.transfer.x;
-    final float transferY = model.coord2_14.coord.transfer.y;
-    final float transferZ = model.coord2_14.coord.transfer.z;
+    final float x = model.coord2_14.coord.transfer.x;
+    final float y = model.coord2_14.coord.transfer.y;
+    final float z = model.coord2_14.coord.transfer.z;
 
     //LAB_80020760
     for(int i = 0; i < 7; i++) {
       model.animateTextures_ec[i] = false;
     }
 
-    currentEngineState_8004dd04.modelLoaded(model, cContainer);
+    if(currentEngineState_8004dd04 != null) {
+      currentEngineState_8004dd04.modelLoaded(model, cContainer);
+    }
 
     //LAB_8002079c
     model.tpage_108 = (int)((cContainer.tmdPtr_00.id & 0xffff_0000L) >>> 11); // LOD uses the upper 16 bits of TMD IDs as tpage (sans VRAM X/Y)
@@ -339,7 +340,7 @@ public final class Scus94491BpeSegment_8002 {
       }
     } else {
       //LAB_80020818
-      model.ptr_a8 = null; //TODO was this needed? cContainer.ptr_08.getAddress();
+      model.ptr_a8 = null;
 
       //LAB_80020828
       for(int i = 0; i < 7; i++) {
@@ -359,14 +360,10 @@ public final class Scus94491BpeSegment_8002 {
 
     loadModelStandardAnimation(model, tmdAnimFile);
 
-    model.coord2_14.coord.transfer.set(transferX, transferY, transferZ);
-
-    adjustModelUvs(model);
-
     //LAB_800209b0
-    model.shadowType_cc = 0;
-    model.modelPartWithShadowIndex_cd = -2;
+    model.coord2_14.coord.transfer.set(x, y, z);
     model.coord2_14.transforms.scale.set(1.0f, 1.0f, 1.0f);
+    model.shadowType_cc = 0;
     model.shadowSize_10c.set(1.0f, 1.0f, 1.0f);
     model.shadowOffset_118.zero();
   }
@@ -377,7 +374,9 @@ public final class Scus94491BpeSegment_8002 {
 
     Arrays.setAll(model.modelParts_00, i -> new ModelPart10());
 
-    FUN_80020718(model, CContainer, tmdAnimFile);
+    loadModelAndAnimation(model, CContainer, tmdAnimFile);
+    adjustModelUvs(model);
+    model.modelPartWithShadowIndex_cd = -2;
   }
 
   @Method(0x80020b98L)
@@ -388,12 +387,15 @@ public final class Scus94491BpeSegment_8002 {
   public static void animateModel(final Model124 model, final int interpolationFrameCount) {
     //LAB_80020be8
     //LAB_80020bf0
-    for(int i = 0; i < 7; i++) {
-      if(model.animateTextures_ec[i]) {
-        animateModelTextures(model, i);
-      }
+    // Only apply texture animations for the keyframe of the middle interpolation frame
+    if(model.interpolationFrameIndex == 0 || model.interpolationFrameIndex == Math.ceil(interpolationFrameCount / 2.0f)) {
+      for(int i = 0; i < 7; i++) {
+        if(model.animateTextures_ec[i]) {
+          animateModelTextures(model, i);
+        }
 
-      //LAB_80020c08
+        //LAB_80020c08
+      }
     }
 
     if(model.animationState_9c == 2) {
@@ -533,41 +535,41 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021068L)
   public static void FUN_80021068(final TmdObjTable1c.Primitive primitive, final int colourMap) {
-    final long a3 = _8005027c.offset(colourMap * 0x10L).getAddress();
+    final UvAdjustmentMetrics10 a3 = _8005027c[colourMap];
 
     for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, MathHelper.get(data, 0x0, 4) & (int)MEMORY.ref(4, a3).offset(0xcL).get() | (int)MEMORY.ref(4, a3).offset(0x8L).get());
-      MathHelper.set(data, 0x4, 4, MathHelper.get(data, 0x4, 4) & (int)MEMORY.ref(4, a3).offset(0x4L).get() | (int)MEMORY.ref(4, a3).offset(0x0L).get());
+      MathHelper.set(data, 0x0, 4, MathHelper.get(data, 0x0, 4) & a3.tpageMaskOn_0c | a3.tpageMaskOff_08);
+      MathHelper.set(data, 0x4, 4, MathHelper.get(data, 0x4, 4) & a3.clutMaskOn_04 | a3.clutMaskOff_00);
     }
   }
 
   @Method(0x800210c4L)
   public static void FUN_800210c4(final TmdObjTable1c.Primitive primitive, final int colourMap) {
-    final long a3 = _8005027c.offset(colourMap * 0x10L).getAddress();
+    final UvAdjustmentMetrics10 a3 = _8005027c[colourMap];
 
     for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, MathHelper.get(data, 0x0, 4) & (int)MEMORY.ref(4, a3).offset(0xcL).get() | (int)MEMORY.ref(4, a3).offset(0x8L).get());
-      MathHelper.set(data, 0x4, 4, MathHelper.get(data, 0x4, 4) & (int)MEMORY.ref(4, a3).offset(0x4L).get() | (int)MEMORY.ref(4, a3).offset(0x0L).get());
+      MathHelper.set(data, 0x0, 4, MathHelper.get(data, 0x0, 4) & a3.tpageMaskOn_0c | a3.tpageMaskOff_08);
+      MathHelper.set(data, 0x4, 4, MathHelper.get(data, 0x4, 4) & a3.clutMaskOn_04 | a3.clutMaskOff_00);
     }
   }
 
   @Method(0x8002117cL)
   public static void FUN_8002117c(final TmdObjTable1c.Primitive primitive, final int colourMap) {
-    final long a3 = _8005027c.offset(colourMap * 0x10L).getAddress();
+    final UvAdjustmentMetrics10 a3 = _8005027c[colourMap];
 
     for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, MathHelper.get(data, 0x0, 4) & (int)MEMORY.ref(4, a3).offset(0xcL).get() | (int)MEMORY.ref(4, a3).offset(0x8L).get());
-      MathHelper.set(data, 0x4, 4, MathHelper.get(data, 0x4, 4) & (int)MEMORY.ref(4, a3).offset(0x4L).get() | (int)MEMORY.ref(4, a3).offset(0x0L).get());
+      MathHelper.set(data, 0x0, 4, MathHelper.get(data, 0x0, 4) & a3.tpageMaskOn_0c | a3.tpageMaskOff_08);
+      MathHelper.set(data, 0x4, 4, MathHelper.get(data, 0x4, 4) & a3.clutMaskOn_04 | a3.clutMaskOff_00);
     }
   }
 
   @Method(0x80021120L)
   public static void FUN_80021120(final TmdObjTable1c.Primitive primitive, final int colourMap) {
-    final long a3 = _8005027c.offset(colourMap * 0x10L).getAddress();
+    final UvAdjustmentMetrics10 a3 = _8005027c[colourMap];
 
     for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, MathHelper.get(data, 0x0, 4) & (int)MEMORY.ref(4, a3).offset(0xcL).get() | (int)MEMORY.ref(4, a3).offset(0x8L).get());
-      MathHelper.set(data, 0x4, 4, MathHelper.get(data, 0x4, 4) & (int)MEMORY.ref(4, a3).offset(0x4L).get() | (int)MEMORY.ref(4, a3).offset(0x0L).get());
+      MathHelper.set(data, 0x0, 4, MathHelper.get(data, 0x0, 4) & a3.tpageMaskOn_0c | a3.tpageMaskOff_08);
+      MathHelper.set(data, 0x4, 4, MathHelper.get(data, 0x4, 4) & a3.clutMaskOn_04 | a3.clutMaskOff_00);
     }
   }
 
@@ -648,8 +650,11 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80021520L)
-  public static void FUN_80021520(final Model124 model, final CContainer tmd, final TmdAnimationFile anim, final int shadowSizeIndex) {
-    FUN_80020718(model, tmd, anim);
+  public static void loadPlayerModelAndAnimation(final Model124 model, final CContainer tmd, final TmdAnimationFile anim, final int shadowSizeIndex) {
+    loadModelAndAnimation(model, tmd, anim);
+    adjustModelUvs(model);
+    model.modelPartWithShadowIndex_cd = -2;
+
     setShadowSize(model, shadowSizeIndex);
   }
 
@@ -661,7 +666,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80021584L)
   public static void loadModelStandardAnimation(final Model124 model, final TmdAnimationFile tmdAnimFile) {
-    model.animType_90 = -1;
+    model.anim_08 = model.new StandardAnim(tmdAnimFile);
     model.partTransforms_90 = tmdAnimFile.partTransforms_10;
     model.partTransforms_94 = tmdAnimFile.partTransforms_10;
     model.partCount_98 = tmdAnimFile.modelPartCount_0c;
@@ -3328,11 +3333,11 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80027e40
     final Textbox4c textbox = textboxes_800be358[textboxIndex];
     textbox.x_14 = newX;
-    textbox.y_16 = newY;
+    textbox.y_16 = newY + 8;
     textboxText.x_14 = newX;
-    textboxText.y_16 = newY;
+    textboxText.y_16 = newY + 8;
     textboxText._18 = newX - width;
-    textboxText._1a = newY - height;
+    textboxText._1a = newY - height + 8;
   }
 
   @Method(0x80027eb4L)
@@ -4208,7 +4213,6 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002ced8L)
   public static void start() {
-    MEMORY.memfill(0x8005a1d8L, 0x6c4b0, 0);
     main();
   }
 
