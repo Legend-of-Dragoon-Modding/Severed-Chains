@@ -3,7 +3,6 @@ package legend.game.submap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.Config;
-import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
@@ -22,7 +21,6 @@ import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
-import legend.game.combat.types.Ptr;
 import legend.game.fmv.Fmv;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
@@ -70,6 +68,7 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
@@ -252,7 +251,7 @@ public class SMap extends EngineState {
   /** Note: a negative value for some reason, counts up to 0 */
   private int ticksUntilEncountersAreEnabled_800c6ae4;
   public int encounterAccumulator_800c6ae8;
-  private UnknownStruct _800c6aec;
+  private final List<LatchStruct> latchList_800c6aec = new ArrayList<>();
 
   private int _800caaf4;
   private int _800caaf8;
@@ -298,27 +297,16 @@ public class SMap extends EngineState {
   private final GsRVIEW2 rview2_800cbd10 = new GsRVIEW2();
   private int _800cbd30;
   private int _800cbd34;
-  private UnknownStruct2 _800cbd38;
-  private UnknownStruct2 _800cbd3c;
+  private LatchStruct screenOffsetLatch_800cbd38;
+  private LatchStruct geomOffsetLatch_800cbd3c;
   private final MV screenToWorldMatrix_800cbd40 = new MV();
   private int minSobj_800cbd60;
   private int maxSobj_800cbd64;
   /** A copy of the WS matrix */
   private final MV worldToScreenMatrix_800cbd68 = new MV();
 
-  private int _800cbd94;
-  private final Vector3f _800cbd98 = new Vector3f();
+  private final CollisionGeometry collisionGeometry_800cbe08 = new CollisionGeometry(this);
 
-  private final GsCOORDINATE2 GsCOORDINATE2_800cbda8 = new GsCOORDINATE2();
-  private final ModelPart10 GsDOBJ2_800cbdf8 = new ModelPart10();
-  private final SomethingStruct SomethingStruct_800cbe08 = new SomethingStruct();
-  private UnknownStruct2 _800cbe34;
-  private UnknownStruct2 _800cbe38;
-
-  private final int[] collisionPrimitiveIndices_800cbe48 = new int[8];
-
-  private float dartRotationAfterCollision_800d1a84;
-  private SomethingStruct SomethingStructPtr_800d1a88;
   private final MediumStruct _800d1a90 = new MediumStruct();
 
   private final Matrix4f submapCutMatrix_800d4bb0 = new Matrix4f();
@@ -715,7 +703,7 @@ public class SMap extends EngineState {
   };
 
   private int _800f7e24;
-  private Ptr<UnknownStruct> _800f7e28 = new Ptr<>(() -> this._800c6aec, val -> this._800c6aec = val);
+
   private final ChapterStruct08[] _800f7e2c = {
     new ChapterStruct08(0, 0),
     new ChapterStruct08(709, 0),
@@ -734,8 +722,6 @@ public class SMap extends EngineState {
   private final int[] _800f7e58 = {140, 142, 155, 193, 197, 253, 310, 434, 665, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 760, 761, 762, 765, 766, 767, 768, 769, 770, 771, 772, 773, 774, 775, 776, 777, 778, 780, 781, 782, 783, 784, 785, 786};
 
   private boolean _800f7f0c;
-
-  private boolean _800f7f14;
 
   private final float[] oldRotations_800f7f6c = new float[8];
   private final Struct14_2[] _800f7f74 = {
@@ -1221,9 +1207,8 @@ public class SMap extends EngineState {
       }
 
       case 3 -> {
-        this.FUN_800e8e50();
-        this.FUN_800e828c();
-        this.FUN_800e4f8c();
+        this.collisionGeometry_800cbe08.unloadCollision();
+        this.clearLatches();
         this.unloadSmap();
         this.FUN_800e4e5c();
 
@@ -1233,9 +1218,8 @@ public class SMap extends EngineState {
 
       case 4 -> {
         this.renderEnvironment();
-        this.FUN_800e8e50();
-        this.FUN_800e828c();
-        this.FUN_800e4f8c();
+        this.collisionGeometry_800cbe08.unloadCollision();
+        this.clearLatches();
         this.unloadSmap();
         this.FUN_800e4e5c();
 
@@ -1245,9 +1229,8 @@ public class SMap extends EngineState {
 
       case 5 -> {
         this.renderEnvironment();
-        this.FUN_800e8e50();
-        this.FUN_800e828c();
-        this.FUN_800e4f8c();
+        this.collisionGeometry_800cbe08.unloadCollision();
+        this.clearLatches();
         this.unloadSmap();
         submapEnvState_80052c44 = 2;
       }
@@ -1609,16 +1592,16 @@ public class SMap extends EngineState {
       GTE.setTransforms(worldToScreenMatrix_800c3548);
       this.transformToWorldspace(worldspaceDeltaMovement, deltaMovement);
 
-      final int s2 = this.FUN_800e88a0(player.sobjIndex_12e, playerModel.coord2_14.coord.transfer, worldspaceDeltaMovement);
-      if(s2 >= 0) {
-        if(this.FUN_800e6798(s2) != 0) {
+      final int collisionResult = this.collisionGeometry_800cbe08.handleCollisionAndMovement(player.sobjIndex_12e != 0, playerModel.coord2_14.coord.transfer, worldspaceDeltaMovement);
+      if(collisionResult >= 0) {
+        if(this.FUN_800e6798(collisionResult) != 0) {
           playerModel.coord2_14.coord.transfer.x += worldspaceDeltaMovement.x;
           playerModel.coord2_14.coord.transfer.y = worldspaceDeltaMovement.y;
           playerModel.coord2_14.coord.transfer.z += worldspaceDeltaMovement.z;
         }
 
         //LAB_800de2c8
-        player.ui_16c = s2;
+        player.ui_16c = collisionResult;
       }
 
       //LAB_800de2cc
@@ -1637,7 +1620,7 @@ public class SMap extends EngineState {
   @Method(0x800de334L)
   private FlowControl FUN_800de334(final RunningScript<?> script) {
     final Vector3f sp0x10 = new Vector3f();
-    this.get3dAverageOfSomething(script.params_20[0].get(), sp0x10);
+    this.collisionGeometry_800cbe08.get3dAverageOfSomething(script.params_20[0].get(), sp0x10);
     this.playerModel_800c6748.coord2_14.coord.transfer.set(sp0x10);
     final MV lw = new MV();
     final MV ls = new MV();
@@ -1677,7 +1660,7 @@ public class SMap extends EngineState {
 
     //LAB_800de4f8
     while(ints.array(s0).get() != -1) {
-      this.get3dAverageOfSomething(ints.array(s0++).get(), sp0x10);
+      this.collisionGeometry_800cbe08.get3dAverageOfSomething(ints.array(s0++).get(), sp0x10);
       this.playerModel_800c6748.coord2_14.coord.transfer.set(sp0x10);
 
       GsGetLws(this.playerModel_800c6748.coord2_14, sp0x48, sp0x28);
@@ -1818,7 +1801,7 @@ public class SMap extends EngineState {
       GTE.setTransforms(worldToScreenMatrix_800c3548);
       this.transformToWorldspace(movement, deltaMovement);
 
-      final int collisionResult = this.FUN_800e88a0(sobj.sobjIndex_12e, model.coord2_14.coord.transfer, movement);
+      final int collisionResult = this.collisionGeometry_800cbe08.handleCollisionAndMovement(sobj.sobjIndex_12e != 0, model.coord2_14.coord.transfer, movement);
       if(collisionResult >= 0) {
         this.FUN_800e6798(collisionResult); //TODO does nothing?
       }
@@ -2482,7 +2465,7 @@ public class SMap extends EngineState {
   private FlowControl FUN_800e00cc(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
-    final int v0 = this.FUN_800e9018(model.coord2_14.coord.transfer.x, model.coord2_14.coord.transfer.y, model.coord2_14.coord.transfer.z, 0);
+    final int v0 = this.collisionGeometry_800cbe08.FUN_800e9018(model.coord2_14.coord.transfer.x, model.coord2_14.coord.transfer.y, model.coord2_14.coord.transfer.z, 0);
     script.params_20[1].set(v0);
     sobj.ui_16c = v0;
     return FlowControl.CONTINUE;
@@ -3617,7 +3600,7 @@ public class SMap extends EngineState {
       }
 
       //LAB_800e2140
-      final int s3 = this.FUN_800e88a0(sobj.sobjIndex_12e, model.coord2_14.coord.transfer, sp0x20);
+      final int s3 = this.collisionGeometry_800cbe08.handleCollisionAndMovement(sobj.sobjIndex_12e != 0, model.coord2_14.coord.transfer, sp0x20);
       if(s3 >= 0 && this.FUN_800e6798(s3) != 0) {
         model.coord2_14.coord.transfer.x += sp0x20.x / (2.0f / vsyncMode_8007a3b8);
         model.coord2_14.coord.transfer.y = sp0x20.y;
@@ -4350,7 +4333,7 @@ public class SMap extends EngineState {
     if(!this.FUN_800e5264(this.matrix_800c6ac0, submapCut)) {
       //LAB_800e4d34
       final Vector3f avg = new Vector3f();
-      this.get3dAverageOfSomething(index, avg);
+      this.collisionGeometry_800cbe08.get3dAverageOfSomething(index, avg);
       this.matrix_800c6ac0.transfer.set(avg);
       this._800f7e24 = 2;
     } else {
@@ -4375,7 +4358,7 @@ public class SMap extends EngineState {
     } else {
       //LAB_800e4e20
       final Vector3f sp10 = new Vector3f();
-      this.get3dAverageOfSomething(index, sp10);
+      this.collisionGeometry_800cbe08.get3dAverageOfSomething(index, sp10);
       model.coord2_14.coord.transfer.set(sp10);
     }
 
@@ -4388,43 +4371,18 @@ public class SMap extends EngineState {
     GPU.uploadData24(new Rect4i(640, 0, 368, 240), GPU.getDisplayBuffer().getData());
   }
 
-  @Method(0x800e4f8cL)
-  private void FUN_800e4f8c() {
-    //LAB_800e4fd4
-    this._800f7e28 = new Ptr<>(() -> this._800c6aec, val -> this._800c6aec = val);
-  }
-
   @Method(0x800e4ff4L)
-  private void FUN_800e4ff4() {
-    UnknownStruct s0 = this._800c6aec;
-    Ptr<UnknownStruct> s1 = new Ptr<>(() -> this._800c6aec, val -> this._800c6aec = val);
-
-    //LAB_800e5018
-    while(s0 != null) {
-      s0.inner_08._00 = false;
-
-      //LAB_800e5054
-      final UnknownStruct finalS0 = s0;
-      s1 = new Ptr<>(() -> finalS0.parent_00, val -> finalS0.parent_00 = val);
-
-      //LAB_800e5058
-      s0 = s1.get();
+  private void resetLatches() {
+    for(int i = 0; i < this.latchList_800c6aec.size(); i++) {
+      this.latchList_800c6aec.get(i).latched_00 = false;
     }
-
-    //LAB_800e5068
-    this._800f7e28 = s1;
   }
 
   @Method(0x800e5084L)
-  private long FUN_800e5084(final UnknownStruct2 a1) {
-    final UnknownStruct v0 = new UnknownStruct();
-    v0.inner_08 = a1;
-
-    this._800f7e28.set(v0);
-    this._800f7e28 = new Ptr<>(() -> v0.parent_00, val -> v0.parent_00 = val);
-
-    //LAB_800e50ec
-    return 0x1L;
+  private LatchStruct addLatch() {
+    final LatchStruct latch = new LatchStruct();
+    this.latchList_800c6aec.add(latch);
+    return latch;
   }
 
   @Method(0x800e5104L)
@@ -4440,7 +4398,8 @@ public class SMap extends EngineState {
     }
 
     //LAB_800e5184
-    this.FUN_800e4ff4();
+    this.resetLatches();
+    this.collisionGeometry_800cbe08.tick();
 
     if(submapFullyLoaded_800bd7b4) {
       this.renderSubmap();
@@ -4463,23 +4422,23 @@ public class SMap extends EngineState {
     this.renderEnvironment(matrices, this.sobjCount_800c6730);
 
     if(enableCollisionDebug) {
-      if(this.SomethingStruct_800cbe08.dobj2Ptr_20.obj == null) {
-        this.SomethingStruct_800cbe08.dobj2Ptr_20.obj = TmdObjLoader.fromObjTable("EnvironmentSomethingModel", this.SomethingStruct_800cbe08.dobj2Ptr_20.tmd_08);
+      if(this.collisionGeometry_800cbe08.dobj2Ptr_20.obj == null) {
+        this.collisionGeometry_800cbe08.dobj2Ptr_20.obj = TmdObjLoader.fromObjTable("EnvironmentSomethingModel", this.collisionGeometry_800cbe08.dobj2Ptr_20.tmd_08);
       }
 
       final MV lw = new MV();
       final MV ls = new MV();
-      GsGetLws(this.SomethingStructPtr_800d1a88.dobj2Ptr_20.coord2_04, lw, ls);
+      GsGetLws(this.collisionGeometry_800cbe08.dobj2Ptr_20.coord2_04, lw, ls);
       GsSetLightMatrix(lw);
       GTE.setTransforms(ls);
-      Renderer.renderDobj2(this.SomethingStructPtr_800d1a88.dobj2Ptr_20, false, 0);
+      Renderer.renderDobj2(this.collisionGeometry_800cbe08.dobj2Ptr_20, false, 0);
 
-      RENDERER.queueModel(this.SomethingStruct_800cbe08.dobj2Ptr_20.obj, lw)
+      RENDERER.queueModel(this.collisionGeometry_800cbe08.dobj2Ptr_20.obj, lw)
         .screenspaceOffset(this.screenOffsetX_800cb568 + 8, -this.screenOffsetY_800cb56c)
       ;
-    } else if(this.SomethingStruct_800cbe08.dobj2Ptr_20.obj != null) {
-      this.SomethingStruct_800cbe08.dobj2Ptr_20.obj.delete();
-      this.SomethingStruct_800cbe08.dobj2Ptr_20.obj = null;
+    } else if(this.collisionGeometry_800cbe08.dobj2Ptr_20.obj != null) {
+      this.collisionGeometry_800cbe08.dobj2Ptr_20.obj.delete();
+      this.collisionGeometry_800cbe08.dobj2Ptr_20.obj = null;
     }
   }
 
@@ -4547,7 +4506,7 @@ public class SMap extends EngineState {
 
     //LAB_800e5430
     this.loadEnvironment(new EnvironmentFile(files.get(0)));
-    this.loadCollision(new TmdWithId("Background " + mapName, files.get(2)), files.get(1));
+    this.collisionGeometry_800cbe08.loadCollision(new TmdWithId("Background " + mapName, files.get(2)), files.get(1));
 
     submapEnvState_80052c44 = 2;
     this._800cab20 = 2 * (3 - vsyncMode_8007a3b8);
@@ -4800,19 +4759,13 @@ public class SMap extends EngineState {
 
       case WAIT_FOR_ENVIRONMENT_6 -> {
         if(this.backgroundLoaded_800cab10) {
-          // Delete collision geometry if we had an old one loaded
-          if(this.SomethingStruct_800cbe08.dobj2Ptr_20.obj != null) {
-            this.SomethingStruct_800cbe08.dobj2Ptr_20.obj.delete();
-            this.SomethingStruct_800cbe08.dobj2Ptr_20.obj = null;
-          }
-
           this.smapLoadingStage_800cb430 = SubmapState.LOAD_MAP_POINTS_9;
         }
       }
 
       case LOAD_MAP_POINTS_9 -> {
         this.FUN_800e4d00(submapCut_80052c30, submapScene_80052c34);
-        this.FUN_800e81a0(submapScene_80052c34);
+        this.initCamera(submapScene_80052c34);
         this.loadCollisionAndTransitions(submapCut_80052c30);
         this.clearSubmapFlags();
 
@@ -5125,7 +5078,7 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800e6730L)
-  private int getCollisionAndTransitionInfo(final int index) {
+  public int getCollisionAndTransitionInfo(final int index) {
     // This did unsigned comparison, so -1 was >= 0x40
     if(index < 0 || index >= 0x40) {
       return 0;
@@ -5302,7 +5255,7 @@ public class SMap extends EngineState {
   private FlowControl FUN_800e6b64(final RunningScript<?> script) {
     if(script.params_20[0].get() >= 0) {
       final Vector3f sp0x10 = new Vector3f();
-      this.get3dAverageOfSomething(script.params_20[0].get(), sp0x10);
+      this.collisionGeometry_800cbe08.get3dAverageOfSomething(script.params_20[0].get(), sp0x10);
 
       script.params_20[1].set(Math.round(sp0x10.x));
       script.params_20[2].set(Math.round(sp0x10.y));
@@ -5534,8 +5487,8 @@ public class SMap extends EngineState {
 
   @Method(0x800e7604L)
   private void setGeomOffsetIfNotSet(final int x, final int y) {
-    if(!this._800cbd3c._00) {
-      this._800cbd3c._00 = true;
+    if(!this.geomOffsetLatch_800cbd3c.latched_00) {
+      this.geomOffsetLatch_800cbd3c.latched_00 = true;
       GTE.setScreenOffset(x, y);
     }
   }
@@ -5543,8 +5496,8 @@ public class SMap extends EngineState {
   @Method(0x800e7650L)
   private void setScreenOffsetIfNotSet(final int x, final int y) {
     // Added null check - bug in game code
-    if(this._800cbd38 != null && !this._800cbd38._00) {
-      this._800cbd38._00 = true;
+    if(this.screenOffsetLatch_800cbd38 != null && !this.screenOffsetLatch_800cbd38.latched_00) {
+      this.screenOffsetLatch_800cbd38.latched_00 = true;
       this.screenOffsetX_800cb568 = x;
       this.screenOffsetY_800cb56c = y;
     }
@@ -5848,8 +5801,8 @@ public class SMap extends EngineState {
 
   @Method(0x800e8104L)
   private void setCameraPos(final Vector3f cameraPos) {
-    if(!this._800cbd38._00) {
-      this._800cbd38._00 = true;
+    if(!this.screenOffsetLatch_800cbd38.latched_00) {
+      this.screenOffsetLatch_800cbd38.latched_00 = true;
 
       final Vector2f transformed = new Vector2f();
       this.transformVertex(transformed, cameraPos);
@@ -5862,24 +5815,20 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800e81a0L)
-  private void FUN_800e81a0(final int index) {
-    final UnknownStruct2 s0_0 = new UnknownStruct2();
-    this.FUN_800e5084(s0_0);
-    this._800cbd38 = s0_0;
-
-    final UnknownStruct2 s0_1 = new UnknownStruct2();
-    this.FUN_800e5084(s0_1);
-    this._800cbd3c = s0_1;
+  private void initCamera(final int index) {
+    this.screenOffsetLatch_800cbd38 = this.addLatch();
+    this.geomOffsetLatch_800cbd3c = this.addLatch();
 
     final Vector3f avg = new Vector3f();
-    this.get3dAverageOfSomething(index, avg);
+    this.collisionGeometry_800cbe08.get3dAverageOfSomething(index, avg);
     this.setCameraPos(avg);
   }
 
   @Method(0x800e828cL)
-  private void FUN_800e828c() {
-    this._800cbd38 = null;
-    this._800cbd3c = null;
+  private void clearLatches() {
+    this.latchList_800c6aec.clear();
+    this.screenOffsetLatch_800cbd38 = null;
+    this.geomOffsetLatch_800cbd3c = null;
   }
 
   @Method(0x800e82ccL)
@@ -5895,710 +5844,11 @@ public class SMap extends EngineState {
     //LAB_800e833c
   }
 
-  @Method(0x800e866cL)
-  private void FUN_800e866c() {
-    //LAB_800e86a4
-    for(int i = 0; i < this.SomethingStructPtr_800d1a88.count_0c; i++) {
-      final float y = Math.abs(this.SomethingStructPtr_800d1a88.normals_08[i].y);
-      this.SomethingStructPtr_800d1a88.ptr_14[i].bool_01 = y > 0x400;
-    }
-
-    //LAB_800e86f0
-  }
-
-  @Method(0x800e88a0L)
-  private int FUN_800e88a0(final long a0, final Vector3f playerPosition, final Vector3f playerMovement) {
-    if(a0 != 0) {
-      return this.FUN_800e9430(playerPosition.x, playerPosition.y, playerPosition.z, playerMovement);
-    }
-
-    //LAB_800e88d8
-    if(!this._800cbe34._00) {
-      this._800cbe34._00 = true;
-
-      //LAB_800e8908
-      this._800cbd94 = this.FUN_800e9430(playerPosition.x, playerPosition.y, playerPosition.z, playerMovement);
-      this._800cbd98.set(playerMovement);
-    } else {
-      //LAB_800e8954
-      playerMovement.set(this._800cbd98);
-    }
-
-    //LAB_800e897c
-    //LAB_800e8980
-    return this._800cbd94;
-  }
-
-  @Method(0x800e8990L)
-  private int FUN_800e8990(final float x, final float z) {
-    final Vector3f vec = new Vector3f();
-
-    int farthestIndex = 0;
-    float farthest = Float.MAX_VALUE;
-    final SomethingStruct struct = this.SomethingStructPtr_800d1a88;
-
-    //LAB_800e89b8
-    for(int i = 0; i < struct.count_0c; i++) {
-      vec.zero();
-
-      //LAB_800e89e0
-      if(this._800f7f14) {
-        //LAB_800e89f8
-        final SomethingStructSub0c_1 struct2 = struct.ptr_14[i];
-        final TmdObjTable1c.Primitive primitive = struct.getPrimitiveForOffset(struct2.primitivesOffset_04);
-        final int packetOffset = struct2.primitivesOffset_04 - primitive.offset();
-        final int packetIndex = packetOffset / (primitive.width() + 4);
-        final int remainder = packetOffset % (primitive.width() + 4);
-        final byte[] packet = primitive.data()[packetIndex];
-
-        //LAB_800e8a38
-        for(int t0 = 0; t0 < struct2.count_00; t0++) {
-          vec.add(struct.verts_04[IoHelper.readUShort(packet, remainder + 2 + t0 * 2)]);
-        }
-
-        //LAB_800e8a9c
-        vec.div(struct2.count_00);
-      }
-
-      //LAB_800e8ae4
-      final float dx = x - vec.x;
-      final float dz = z - vec.z;
-      final float distSqr = dx * dx + dz * dz;
-      if(distSqr < farthest) {
-        farthest = distSqr;
-        farthestIndex = i;
-      }
-
-      //LAB_800e8b2c
-    }
-
-    //LAB_800e8b34
-    return farthestIndex;
-  }
-
-  @Method(0x800e8b40L)
-  private void FUN_800e8b40(final SomethingStruct a0, FileData a1) {
-    final int count = a0.count_0c;
-
-    if(a1.size() < count * 5 * 0xc) {
-      LOGGER.warn("Submap file too short, padding with 0's");
-      final byte[] newData = new byte[count * 5 * 0xc];
-      a1.copyFrom(0, newData, 0, a1.size());
-      a1 = new FileData(newData);
-    }
-
-    a0.ptr_14 = new SomethingStructSub0c_1[count];
-    a0.ptr_18 = new SomethingStructSub0c_2[count * 4];
-
-    final FileData finalA1 = a1;
-    Arrays.setAll(a0.ptr_14, i -> new SomethingStructSub0c_1(finalA1.slice(i * 0xc, 0xc)));
-    Arrays.setAll(a0.ptr_18, i -> new SomethingStructSub0c_2(finalA1.slice((count + i) * 0xc, 0xc)));
-  }
-
-  @Method(0x800e8bd8L)
-  private void FUN_800e8bd8(final SomethingStruct a0) {
-    final TmdObjTable1c objTable = a0.objTableArrPtr_00[0];
-    a0.verts_04 = objTable.vert_top_00;
-    a0.normals_08 = new Vector3f[objTable.normal_top_08.length];
-    Arrays.setAll(a0.normals_08, i -> new Vector3f(objTable.normal_top_08[i].x * 4096.0f, objTable.normal_top_08[i].y * 4096.0f, objTable.normal_top_08[i].z * 4096.0f));
-    a0.count_0c = objTable.n_primitive_14;
-    a0.primitives_10 = objTable.primitives_10;
-  }
-
-  @Method(0x800e8c50L)
-  private void FUN_800e8c50(final ModelPart10 dobj2, final SomethingStruct a1, final TmdWithId tmd) {
-    a1.tmdPtr_1c = tmd;
-    final TmdObjTable1c[] objTables = tmd.tmd.objTable;
-    dobj2.tmd_08 = objTables[0];
-    a1.objTableArrPtr_00 = objTables;
-    this.FUN_800e8bd8(a1);
-  }
-
-  @Method(0x800e8cd0L)
-  private void loadCollision(final TmdWithId tmd, final FileData a2) {
-    this.SomethingStructPtr_800d1a88 = this.SomethingStruct_800cbe08;
-    this.SomethingStruct_800cbe08.dobj2Ptr_20 = this.GsDOBJ2_800cbdf8;
-    this.SomethingStruct_800cbe08.coord2Ptr_24 = this.GsCOORDINATE2_800cbda8;
-    GsInitCoordinate2(null, this.GsCOORDINATE2_800cbda8);
-
-    this.SomethingStructPtr_800d1a88.dobj2Ptr_20.coord2_04 = this.SomethingStructPtr_800d1a88.coord2Ptr_24;
-    this.SomethingStructPtr_800d1a88.dobj2Ptr_20.attribute_00 = 0x4000_0000;
-
-    this.FUN_800e8c50(this.SomethingStructPtr_800d1a88.dobj2Ptr_20, this.SomethingStructPtr_800d1a88, tmd);
-    this.FUN_800e8b40(this.SomethingStructPtr_800d1a88, a2);
-
-    this._800f7f14 = true;
-
-    final UnknownStruct2 s0_0 = new UnknownStruct2();
-    this.FUN_800e5084(s0_0);
-    this._800cbe34 = s0_0;
-
-    final UnknownStruct2 s0_2 = new UnknownStruct2();
-    this.FUN_800e5084(s0_2);
-    this._800cbe38 = s0_2;
-
-    this.FUN_800e866c();
-  }
-
-  /** Unloads data when transitioning */
-  @Method(0x800e8e50L)
-  private void FUN_800e8e50() {
-    this._800f7f14 = false;
-
-    this._800cbe34 = null;
-    this._800cbe38 = null;
-  }
-
-  @Method(0x800e9018L)
-  private int FUN_800e9018(final float x, final float y, final float z, final int a3) {
-    int t2 = 0;
-
-    //LAB_800e9040
-    for(int i = 0; i < this.SomethingStructPtr_800d1a88.count_0c; i++) {
-      final SomethingStructSub0c_1 a1 = this.SomethingStructPtr_800d1a88.ptr_14[i];
-      if(a3 != 1 || a1.bool_01) {
-        //LAB_800e9078
-        //LAB_800e90a0
-        boolean v0 = true;
-        for(int n = 0; n < a1.count_00; n++) {
-          final SomethingStructSub0c_2 a0 = this.SomethingStructPtr_800d1a88.ptr_18[a1._02 + n];
-
-          if(a0.x_00 * x + a0.z_02 * z + a0._04 < 0) {
-            //LAB_800e910c
-            v0 = false;
-            break;
-          }
-        }
-
-        //LAB_800e90f0
-        if(v0) {
-          this.collisionPrimitiveIndices_800cbe48[t2] = i;
-          t2++;
-        }
-      }
-
-      //LAB_800e9104
-    }
-
-    //LAB_800e9114
-    if(t2 == 0) {
-      return -1;
-    }
-
-    if(t2 == 1) {
-      return this.collisionPrimitiveIndices_800cbe48[0];
-    }
-
-    //LAB_800e9134
-    float t0 = Float.MAX_VALUE;
-    int t3 = -1;
-    final Vector3f[] normals = this.SomethingStructPtr_800d1a88.normals_08;
-
-    //LAB_800e9164
-    for(int i = 0; i < t2; i++) {
-      final int a3_0 = this.collisionPrimitiveIndices_800cbe48[i];
-      final SomethingStructSub0c_1 t5 = this.SomethingStructPtr_800d1a88.ptr_14[a3_0];
-
-      float v1 = -normals[a3_0].x * x - normals[a3_0].z * z - t5._08;
-
-      if(normals[a3_0].y != 0) {
-        v1 = v1 / normals[a3_0].y;
-      } else {
-        v1 = 0;
-      }
-
-      v1 -= y - 20;
-      if(v1 > 0 && v1 < t0) {
-        t3 = a3_0;
-        t0 = v1;
-      }
-
-      //LAB_800e91ec
-    }
-
-    //LAB_800e91fc
-    if(t0 == Float.MAX_VALUE) {
-      //LAB_800e920c
-      return -1;
-    }
-
-    //LAB_800e9210
-    //LAB_800e9214
-    return t3;
-  }
-
-  @Method(0x800e92dcL)
-  private long get3dAverageOfSomething(final int index, final Vector3f out) {
-    out.zero();
-
-    final SomethingStruct ss = this.SomethingStructPtr_800d1a88;
-
-    if(!this._800f7f14 || index < 0 || index >= ss.count_0c) {
-      //LAB_800e9318
-      return 0;
-    }
-
-    //LAB_800e932c
-    final SomethingStructSub0c_1 ss2 = ss.ptr_14[index];
-
-    final TmdObjTable1c.Primitive primitive = ss.getPrimitiveForOffset(ss2.primitivesOffset_04);
-    final int packetOffset = ss2.primitivesOffset_04 - primitive.offset();
-    final int packetIndex = packetOffset / (primitive.width() + 4);
-    final int remainder = packetOffset % (primitive.width() + 4);
-    final byte[] packet = primitive.data()[packetIndex];
-
-    final int count = ss2.count_00;
-
-    //LAB_800e937c
-    for(int i = 0; i < count; i++) {
-      out.add(ss.verts_04[IoHelper.readUShort(packet, remainder + 2 + i * 2)]);
-    }
-
-    //LAB_800e93e0
-    out.div(count);
-    return 0x1L;
-  }
-
-  /** TODO collision? */
-  @Method(0x800e9430L) //TODO this is almost definitely wrong
-  private int FUN_800e9430(final float x, final float y, final float z, final Vector3f playerMovement) {
-    int a1;
-    int s1;
-    int s2;
-    final int s4;
-    final Vector3f sp0x28 = new Vector3f();
-
-    if(this.smapLoadingStage_800cb430 != SubmapState.RENDER_SUBMAP_12) {
-      return -1;
-    }
-
-    if(flEq(playerMovement.x, 0.0f) && flEq(playerMovement.z, 0.0f)) {
-      return -1;
-    }
-
-    int s3 = 0;
-
-    //LAB_800e94a4
-    final int distanceMultiplier;
-    if(playerMovement.x * playerMovement.x + playerMovement.z * playerMovement.z > 64.0f) {
-      distanceMultiplier = 12;
-    } else {
-      //LAB_800e94e4
-      distanceMultiplier = 4;
-    }
-
-    //LAB_800e94ec
-    final float endX = x + playerMovement.x;
-    final float endZ = z + playerMovement.z;
-    final float t6 = y - 20;
-    int t0 = 0;
-
-    //LAB_800e9538
-    for(int primitiveIndex = 0; primitiveIndex < this.SomethingStructPtr_800d1a88.count_0c; primitiveIndex++) {
-      if(this.SomethingStructPtr_800d1a88.ptr_14[primitiveIndex].bool_01) {
-        //LAB_800e9594
-        boolean found = false;
-        for(int i = 0; i < this.SomethingStructPtr_800d1a88.ptr_14[primitiveIndex].count_00; i++) {
-          final SomethingStructSub0c_2 struct = this.SomethingStructPtr_800d1a88.ptr_18[this.SomethingStructPtr_800d1a88.ptr_14[primitiveIndex]._02 + i];
-
-          if(struct.x_00 * x + struct.z_02 * z + struct._04 < 0) {
-            //LAB_800e9604
-            found = true;
-            break;
-          }
-        }
-
-        //LAB_800e95e8
-        if(!found) {
-          this.collisionPrimitiveIndices_800cbe48[t0] = primitiveIndex;
-          t0++;
-        }
-      }
-
-      //LAB_800e95fc
-    }
-
-    //LAB_800e960c
-    if(t0 == 0) {
-      s4 = -1;
-    } else if(t0 == 1) {
-      s4 = this.collisionPrimitiveIndices_800cbe48[0];
-    } else {
-      //LAB_800e962c
-      float t1 = Float.MAX_VALUE;
-      int t2 = -1;
-
-      //LAB_800e965c
-      for(int i = 0; i < t0; i++) {
-        final int primitiveIndex = this.collisionPrimitiveIndices_800cbe48[i];
-        final Vector3f normal = this.SomethingStructPtr_800d1a88.normals_08[primitiveIndex];
-        final float v1 = (-normal.x * x - normal.z * z - this.SomethingStructPtr_800d1a88.ptr_14[primitiveIndex]._08) / normal.y - t6;
-
-        if(v1 > 0 && v1 < t1) {
-          t2 = primitiveIndex;
-          t1 = v1;
-        }
-
-        //LAB_800e96e8
-      }
-
-      //LAB_800e96f8
-      if(t1 != Float.MAX_VALUE) {
-        s4 = t2;
-      } else {
-        //LAB_800e9708
-        s4 = -1;
-      }
-
-      //LAB_800e970c
-    }
-
-    //LAB_800e9710
-    if(s4 < 0) {
-      final int primitiveIndex = this.FUN_800e8990(x, z);
-
-      //LAB_800e975c
-      //LAB_800e9764
-      sp0x28.zero();
-
-      if(!this._800f7f14 || primitiveIndex < 0 || primitiveIndex >= this.SomethingStructPtr_800d1a88.count_0c) {
-        //LAB_800e9774
-        final SomethingStructSub0c_1 ss2 = this.SomethingStructPtr_800d1a88.ptr_14[primitiveIndex];
-        final TmdObjTable1c.Primitive primitive = this.SomethingStructPtr_800d1a88.getPrimitiveForOffset(ss2.primitivesOffset_04);
-        final int packetOffset = ss2.primitivesOffset_04 - primitive.offset();
-        final int packetIndex = packetOffset / (primitive.width() + 4);
-        final int remainder = packetOffset % (primitive.width() + 4);
-        final byte[] packet = primitive.data()[packetIndex];
-
-        //LAB_800e97c4
-        for(int i = 0; i < this.SomethingStructPtr_800d1a88.ptr_14[primitiveIndex].count_00; i++) {
-          sp0x28.add(this.SomethingStructPtr_800d1a88.verts_04[IoHelper.readUShort(packet, remainder + 2 + i * 2)]);
-        }
-
-        //LAB_800e9828
-        sp0x28.div(this.SomethingStructPtr_800d1a88.ptr_14[primitiveIndex].count_00);
-      }
-
-      //LAB_800e9870
-      playerMovement.x = Math.round(sp0x28.x - x);
-      playerMovement.z = Math.round(sp0x28.z - z);
-
-      final Vector3f normal = this.SomethingStructPtr_800d1a88.normals_08[primitiveIndex];
-      playerMovement.y = (-normal.x * sp0x28.x - normal.z * sp0x28.z - this.SomethingStructPtr_800d1a88.ptr_14[primitiveIndex]._08) / normal.y;
-    } else {
-      //LAB_800e990c
-      t0 = 0;
-
-      //LAB_800e992c
-      for(int n = 0; n < this.SomethingStructPtr_800d1a88.count_0c; n++) {
-        if(this.SomethingStructPtr_800d1a88.ptr_14[n].bool_01) {
-          //LAB_800e9988
-          boolean found = false;
-          for(int i = 0; i < this.SomethingStructPtr_800d1a88.ptr_14[n].count_00; i++) {
-            final SomethingStructSub0c_2 struct = this.SomethingStructPtr_800d1a88.ptr_18[this.SomethingStructPtr_800d1a88.ptr_14[n]._02 + i];
-            if(struct.x_00 * endX + struct.z_02 * endZ + struct._04 < 0) {
-              //LAB_800e99f4
-              found = true;
-              break;
-            }
-          }
-
-          //LAB_800e99d8
-          if(!found) {
-            this.collisionPrimitiveIndices_800cbe48[t0] = n;
-            t0++;
-          }
-        }
-
-        //LAB_800e99ec
-      }
-
-      //LAB_800e99fc
-      if(t0 == 0) {
-        s3 = -1;
-      } else if(t0 == 1) {
-        s3 = this.collisionPrimitiveIndices_800cbe48[0];
-      } else {
-        //LAB_800e9a1c
-        float t1 = Float.MAX_VALUE;
-        int t2 = -1;
-
-        //LAB_800e9a4c
-        for(int n = 0; n < t0; n++) {
-          final int primitiveIndex = this.collisionPrimitiveIndices_800cbe48[n];
-          final Vector3f normal = this.SomethingStructPtr_800d1a88.normals_08[primitiveIndex];
-
-          final float v1 = (-normal.x * endX - normal.z * endZ - this.SomethingStructPtr_800d1a88.ptr_14[primitiveIndex]._08) / normal.y - t6;
-          if(v1 > 0 && v1 < t1) {
-            t2 = primitiveIndex;
-            t1 = v1;
-          }
-
-          //LAB_800e9ad4
-        }
-
-        //LAB_800e9ae4
-        if(t1 != Float.MAX_VALUE) {
-          s3 = t2;
-        } else {
-          //LAB_800e9af4
-          s3 = -1;
-        }
-      }
-
-      //LAB_800e9afc
-      int v0 = -1;
-      if(s3 >= 0) {
-        final SomethingStructSub0c_1 struct = this.SomethingStructPtr_800d1a88.ptr_14[s3];
-
-        //LAB_800e9b50
-        for(s1 = 0; s1 < struct.count_00; s1++) {
-          final SomethingStructSub0c_2 struct2 = this.SomethingStructPtr_800d1a88.ptr_18[struct._02 + s1];
-          if(struct2._08 != 0) {
-            if(Math.abs((struct2.x_00 * endX + struct2.z_02 * endZ + struct2._04) / 0x400) < 10) {
-              v0 = s1;
-              break;
-            }
-          }
-        }
-      }
-
-      //LAB_800e9bbc
-      //LAB_800e9bc0
-      if(s3 >= 0 && v0 < 0) {
-        final Vector3f normal = this.SomethingStructPtr_800d1a88.normals_08[s3];
-        final SomethingStructSub0c_1 struct = this.SomethingStructPtr_800d1a88.ptr_14[s3];
-
-        if(Math.abs(y - (-normal.x * endX - normal.z * endZ - struct._08) / normal.y) < 50) {
-          //LAB_800e9e64
-          playerMovement.y = (-normal.x * (x + playerMovement.x) - normal.z * (z + playerMovement.z) - struct._08) / normal.y;
-
-          //LAB_800ea390
-          //LAB_800ea3b4
-          this.dartRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(playerMovement.x, playerMovement.z) + MathHelper.PI, MathHelper.TWO_PI);
-
-          //LAB_800ea3e0
-          return s3;
-        }
-      }
-
-      //LAB_800e9c58
-      if((this.getCollisionAndTransitionInfo(s4) & 0x20) != 0) {
-        return -1;
-      }
-
-      //LAB_800e9ca0
-      a1 = -1;
-      for(int i = 1; i < 4; i++) {
-        final float endX2 = x + playerMovement.x * i;
-        final float endZ2 = z + playerMovement.z * i;
-
-        //LAB_800e9ce8
-        for(int a1_0 = 0; a1_0 < this.SomethingStructPtr_800d1a88.ptr_14[s4].count_00; a1_0++) {
-          final SomethingStructSub0c_2 struct = this.SomethingStructPtr_800d1a88.ptr_18[this.SomethingStructPtr_800d1a88.ptr_14[s4]._02 + a1_0];
-
-          if(struct._08 != 0) {
-            if((struct.x_00 * endX2 + struct.z_02 * endZ2 + struct._04) / 0x400 <= 0) {
-              a1 = a1_0;
-              break;
-            }
-          }
-        }
-
-        //LAB_800e9d44
-        //LAB_800e9d48
-        if(a1 >= 0) {
-          break;
-        }
-      }
-
-      if(a1 >= 0) {
-        //LAB_800e9e78
-        s2 = s4;
-
-        //LAB_800e9e7c
-        final SomethingStructSub0c_2 struct = this.SomethingStructPtr_800d1a88.ptr_18[this.SomethingStructPtr_800d1a88.ptr_14[s4]._02 + a1];
-        final float angle1 = MathHelper.atan2(endZ - z, endX - x);
-        float angle2 = MathHelper.atan2(-struct.x_00, struct.z_02);
-        float angleDeltaAbs = Math.abs(angle1 - angle2);
-        if(angleDeltaAbs > MathHelper.PI) {
-          angleDeltaAbs = MathHelper.TWO_PI - angleDeltaAbs;
-        }
-
-        //LAB_800e9f38
-        // About 73 to 107 degrees (90 +- 17)
-        final float baseAngle = MathHelper.PI / 2.0f; // 90 degrees
-        final float deviation = 0.29670597283903602807702743064306f; // 17 degrees
-        if(angleDeltaAbs >= baseAngle - deviation && angleDeltaAbs <= baseAngle + deviation) {
-          return -1;
-        }
-
-        if(angleDeltaAbs > baseAngle) {
-          if(angle2 > 0) {
-            angle2 -= MathHelper.PI;
-          } else {
-            //LAB_800e9f6c
-            angle2 += MathHelper.PI;
-          }
-        }
-
-        //LAB_800e9f70
-        if(!this._800cbe38._00) {
-          this._800cbe38._00 = true;
-        }
-
-        final float angleDelta = angle2 - angle1;
-
-        //LAB_800e9f98
-        final int direction;
-        if(angleDelta > 0 && angleDelta < MathHelper.PI / 2.0f || angleDelta < -MathHelper.PI) {
-          //LAB_800e9fb4
-          direction = 1;
-        } else {
-          direction = 0;
-        }
-
-        //LAB_800e9fbc
-        final float angleStep;
-        if(direction == 0) {
-          angleStep = -0.09817477f; // 5.625 degrees
-        } else {
-          angleStep = 0.09817477f; // 5.625 degrees
-        }
-
-        //LAB_800e9fd0
-        angle2 -= angleStep;
-
-        //LAB_800e9ff4
-        s1 = 8;
-        float offsetX;
-        float offsetZ;
-        do {
-          angle2 += angleStep;
-
-          final float sin = MathHelper.sin(angle2);
-          final float cos = MathHelper.cosFromSin(sin, angle2);
-          offsetX = x + cos * distanceMultiplier;
-          offsetZ = z + sin * distanceMultiplier;
-
-          s1--;
-          if(s1 <= 0) {
-            break;
-          }
-
-          t0 = 0;
-
-          //LAB_800ea064
-          for(int i = 0; i < this.SomethingStructPtr_800d1a88.count_0c; i++) {
-            final SomethingStructSub0c_1 a1_0 = this.SomethingStructPtr_800d1a88.ptr_14[i];
-
-            if(a1_0.bool_01) {
-              //LAB_800ea0c4
-              boolean found = false;
-              for(int n = 0; n < a1_0.count_00; n++) {
-                final SomethingStructSub0c_2 a0_0 = this.SomethingStructPtr_800d1a88.ptr_18[a1_0._02 + n];
-                if(a0_0.x_00 * offsetX + a0_0.z_02 * offsetZ + a0_0._04 < 0) {
-                  //LAB_800ea130
-                  found = true;
-                  break;
-                }
-              }
-
-              //LAB_800ea114
-              if(!found) {
-                this.collisionPrimitiveIndices_800cbe48[t0] = i;
-                t0++;
-              }
-            }
-
-            //LAB_800ea128
-          }
-
-          //LAB_800ea138
-          if(t0 == 0) {
-            s2 = -1;
-          } else if(t0 == 1) {
-            s2 = this.collisionPrimitiveIndices_800cbe48[0];
-          } else {
-            //LAB_800ea158
-            float t1 = Float.MAX_VALUE;
-            int t2 = -1;
-
-            //LAB_800ea17c
-            for(int i = 0; i < t0; i++) {
-              final int primitiveIndex = this.collisionPrimitiveIndices_800cbe48[i];
-              final Vector3f normal = this.SomethingStructPtr_800d1a88.normals_08[primitiveIndex];
-
-              final float v1_0 = (-normal.x * offsetX - normal.z * offsetZ - this.SomethingStructPtr_800d1a88.ptr_14[primitiveIndex]._08) / normal.y - t6;
-              if(v1_0 > 0 && v1_0 < t1) {
-                t2 = primitiveIndex;
-                t1 = v1_0;
-              }
-
-              //LAB_800ea204
-            }
-
-            //LAB_800ea214
-            if(t1 != Float.MAX_VALUE) {
-              s2 = t2;
-            } else {
-              //LAB_800ea224
-              s2 = -1;
-            }
-          }
-
-          //LAB_800ea22c
-        } while(s2 < 0);
-
-        //LAB_800ea254
-        if(s2 < 0) {
-          return -1;
-        }
-
-        //LAB_800ea234
-        final Vector3f normal = this.SomethingStructPtr_800d1a88.normals_08[s2];
-
-        if(Math.abs(y - (-normal.x * offsetX - normal.z * offsetZ - this.SomethingStructPtr_800d1a88.ptr_14[s2]._08) / normal.y) >= 50) {
-          return -1;
-        }
-
-        playerMovement.y = (-normal.x * offsetX - normal.z * offsetZ - this.SomethingStructPtr_800d1a88.ptr_14[s2]._08) / normal.y;
-        playerMovement.x = offsetX - x;
-        playerMovement.z = offsetZ - z;
-
-        return s2;
-      }
-
-      if(s3 < 0) {
-        return -1;
-      }
-
-      final Vector3f normal = this.SomethingStructPtr_800d1a88.normals_08[s3];
-
-      if(Math.abs(y - (-normal.x * endX - normal.z * endZ - this.SomethingStructPtr_800d1a88.ptr_14[s3]._08) / normal.y) >= 50) {
-        return -1;
-      }
-
-      //LAB_800e9df4
-      final SomethingStructSub0c_1 struct = this.SomethingStructPtr_800d1a88.ptr_14[s3];
-
-      //LAB_800e9e64
-      playerMovement.y = (-normal.x * (x + playerMovement.x) - normal.z * (z + playerMovement.z) - struct._08) / normal.y;
-    }
-
-    //LAB_800ea390
-    //LAB_800ea3b4
-    this.dartRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(playerMovement.x, playerMovement.z) + MathHelper.PI, MathHelper.TWO_PI);
-
-    //LAB_800ea3e0
-    return s3;
-  }
-
   @Method(0x800ea4c8L)
   private float smoothDartRotation() {
     final int lastRotationIndex = java.lang.Math.floorMod(this.smapTicks_800c6ae0 - 1, 4 * (3 - vsyncMode_8007a3b8));
     final int newRotationIndex = this.smapTicks_800c6ae0 % (4 * (3 - vsyncMode_8007a3b8));
-    float rotationDelta = this.oldRotations_800f7f6c[lastRotationIndex] - this.dartRotationAfterCollision_800d1a84;
+    float rotationDelta = this.oldRotations_800f7f6c[lastRotationIndex] - this.collisionGeometry_800cbe08.dartRotationAfterCollision_800d1a84;
 
     final boolean positive;
     if(Math.abs(rotationDelta) > MathHelper.PI) {
@@ -8030,7 +7280,7 @@ public class SMap extends EngineState {
     final Param ints = script.params_20[0];
     int s0 = 0;
     for(int i = 0; ints.array(s0).get() != -1; i++) {
-      this.get3dAverageOfSomething(ints.array(s0++).get(), sp0x10);
+      this.collisionGeometry_800cbe08.get3dAverageOfSomething(ints.array(s0++).get(), sp0x10);
 
       sp0x18.coord.transfer.set(sp0x10);
       GsGetLs(sp0x18, sp0x70);
@@ -8063,7 +7313,7 @@ public class SMap extends EngineState {
     final GsCOORDINATE2 sp0x40 = new GsCOORDINATE2();
     GsInitCoordinate2(null, sp0x40);
     final Vector3f sp0x10 = new Vector3f();
-    this.get3dAverageOfSomething(script.params_20[0].get(), sp0x10);
+    this.collisionGeometry_800cbe08.get3dAverageOfSomething(script.params_20[0].get(), sp0x10);
     sp0x40.coord.transfer.set(sp0x10);
     final MV sp0x20 = new MV();
     GsGetLs(sp0x40, sp0x20);
