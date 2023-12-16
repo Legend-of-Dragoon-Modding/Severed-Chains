@@ -387,12 +387,15 @@ public final class Scus94491BpeSegment_8002 {
   public static void animateModel(final Model124 model, final int interpolationFrameCount) {
     //LAB_80020be8
     //LAB_80020bf0
-    for(int i = 0; i < 7; i++) {
-      if(model.animateTextures_ec[i]) {
-        animateModelTextures(model, i);
-      }
+    // Only apply texture animations for the keyframe of the middle interpolation frame
+    if(model.interpolationFrameIndex == 0 || model.interpolationFrameIndex == Math.ceil(interpolationFrameCount / 2.0f)) {
+      for(int i = 0; i < 7; i++) {
+        if(model.animateTextures_ec[i]) {
+          animateModelTextures(model, i);
+        }
 
-      //LAB_80020c08
+        //LAB_80020c08
+      }
     }
 
     if(model.animationState_9c == 2) {

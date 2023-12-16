@@ -16,7 +16,6 @@ import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
-import legend.core.gte.Transforms;
 import legend.core.memory.Method;
 import legend.core.memory.types.IntRef;
 import legend.core.opengl.QuadBuilder;
@@ -51,7 +50,6 @@ import legend.game.types.GsF_LIGHT;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.LodString;
 import legend.game.types.Model124;
-import legend.game.types.ModelPartTransforms0c;
 import legend.game.types.NewRootStruct;
 import legend.game.types.ShopStruct40;
 import legend.game.types.SmallerStruct;
@@ -107,8 +105,7 @@ import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800218f0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a9c0;
-import static legend.game.Scus94491BpeSegment_8002.animateModelTextures;
-import static legend.game.Scus94491BpeSegment_8002.applyModelPartTransforms;
+import static legend.game.Scus94491BpeSegment_8002.animateModel;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.calculateAppropriateTextboxBounds;
 import static legend.game.Scus94491BpeSegment_8002.clearTextbox;
@@ -251,8 +248,9 @@ public class SMap extends EngineState {
   private final Vector3f prevPlayerPos_800c6ab0 = new Vector3f();
   private float encounterMultiplier_800c6abc;
   private final MV matrix_800c6ac0 = new MV();
-  private int _800c6ae0;
-  private int _800c6ae4;
+  private int smapTicks_800c6ae0;
+  /** Note: a negative value for some reason, counts up to 0 */
+  private int ticksUntilEncountersAreEnabled_800c6ae4;
   public int encounterAccumulator_800c6ae8;
   private UnknownStruct _800c6aec;
 
@@ -319,12 +317,8 @@ public class SMap extends EngineState {
 
   private final int[] collisionPrimitiveIndices_800cbe48 = new int[8];
 
-  private int _800d1a78;
-  private int _800d1a7c;
-  private int _800d1a80;
-  private float _800d1a84;
+  private float dartRotationAfterCollision_800d1a84;
   private SomethingStruct SomethingStructPtr_800d1a88;
-  private UnknownStruct2 _800d1a8c;
   private final MediumStruct _800d1a90 = new MediumStruct();
 
   private final Matrix4f submapCutMatrix_800d4bb0 = new Matrix4f();
@@ -743,7 +737,7 @@ public class SMap extends EngineState {
 
   private boolean _800f7f14;
 
-  private final float[] _800f7f6c = new float[4];
+  private final float[] oldRotations_800f7f6c = new float[8];
   private final Struct14_2[] _800f7f74 = {
     new Struct14_2(7, 13), new Struct14_2(624, 11), new Struct14_2(7, 16), new Struct14_2(11, 30), new Struct14_2(9, 9), new Struct14_2(696, 13), new Struct14_2(695, 4), new Struct14_2(13, 17),
     new Struct14_2(38, 28), new Struct14_2(39, 25), new Struct14_2(44, 6), new Struct14_2(45, 1), new Struct14_2(54, 6), new Struct14_2(66, 41), new Struct14_2(95, 1), new Struct14_2(96, 1),
@@ -940,8 +934,8 @@ public class SMap extends EngineState {
     functions[672] = this::scriptLoadSobjModelAndAnimation;
     functions[673] = this::scriptLoadSobjAnimation;
     functions[674] = this::scriptGetSobjAnimation;
-    functions[675] = this::FUN_800dffa4;
-    functions[676] = this::FUN_800dffdc;
+    functions[675] = this::scriptToggleAnimationDisabled;
+    functions[676] = this::scriptIsAnimationFinished;
     functions[677] = this::scriptFacePoint;
     functions[678] = this::FUN_800e0094;
     functions[679] = this::FUN_800de668;
@@ -999,15 +993,6 @@ public class SMap extends EngineState {
   @Override
   public boolean allowsWidescreen() {
     return false;
-  }
-
-  /** Pulled from BPE segment */
-  @Method(0x800217a4L)
-  private void FUN_800217a4(final Model124 model) {
-    model.coord2_14.transforms.rotate.y = this.FUN_800ea4c8(model.coord2_14.transforms.rotate.y);
-    model.coord2_14.coord.rotationXYZ(model.coord2_14.transforms.rotate);
-    model.coord2_14.coord.scale(model.coord2_14.transforms.scale);
-    model.coord2_14.flg = 0;
   }
 
   @ScriptDescription("Adds a textbox to a submap object")
@@ -1271,7 +1256,7 @@ public class SMap extends EngineState {
     //caseD_6
     if((this.submapFlags_800f7e54 & 0x1) == 0) {
       // If an encounter should start
-      if(this.handleEncounters() != 0) {
+      if(this.handleEncounters()) {
         this.mapTransition(-1, 0);
       }
     }
@@ -1396,71 +1381,23 @@ public class SMap extends EngineState {
 
   @Method(0x800da114L)
   private void animateSmapModel(final Model124 model) {
+    final int interpolationFrameCount = (2 - vsyncMode_8007a3b8) * 2 + 1;
+
     if(model.smallerStructPtr_a4 != null) {
-      //LAB_800da138
-      for(int i = 0; i < 4; i++) {
-        if(model.smallerStructPtr_a4.uba_04[i]) {
-          this.FUN_800dde70(model, i);
+      // Only apply texture animations for the keyframe of the middle interpolation frame
+      if(model.interpolationFrameIndex == 0 || model.interpolationFrameIndex == Math.ceil(interpolationFrameCount / 2.0f)) {
+        //LAB_800da138
+        for(int i = 0; i < 4; i++) {
+          if(model.smallerStructPtr_a4.uba_04[i]) {
+            this.FUN_800dde70(model, i);
+          }
+
+          //LAB_800da15c
         }
-
-        //LAB_800da15c
       }
     }
 
-    //LAB_800da16c
-    //LAB_800da174
-    for(int i = 0; i < 7; i++) {
-      if(model.animateTextures_ec[i]) {
-        animateModelTextures(model, i);
-      }
-
-      //LAB_800da18c
-    }
-
-    if(model.animationState_9c == 2) {
-      return;
-    }
-
-    if(model.animationState_9c == 0) {
-      if(model.disableInterpolation_a2) {
-        //LAB_800da1d0
-        model.remainingFrames_9e = model.totalFrames_9a / 2;
-      } else {
-        model.remainingFrames_9e = model.totalFrames_9a;
-      }
-
-      model.interpolationFrameIndex = 0;
-
-      //LAB_800da1e4
-      model.animationState_9c = 1;
-      model.partTransforms_94 = model.partTransforms_90;
-    }
-
-    //LAB_800da1f8
-    if((model.remainingFrames_9e & 0x1) == 0 && !model.disableInterpolation_a2) {
-      final ModelPartTransforms0c[][] old = model.partTransforms_94;
-
-      if(model.ub_a3 == 0) {
-        this.applyInterpolationFrame(model);
-      } else {
-        //LAB_800da23c
-        applyModelPartTransforms(model);
-      }
-
-      model.partTransforms_94 = old;
-    } else {
-      //LAB_800da24c
-      applyModelPartTransforms(model);
-    }
-
-    //LAB_800da254
-    model.remainingFrames_9e--;
-
-    if(model.remainingFrames_9e == 0) {
-      model.animationState_9c = 0;
-    }
-
-    //LAB_800da274
+    animateModel(model, interpolationFrameCount);
   }
 
   @Method(0x800da524L)
@@ -1521,33 +1458,6 @@ public class SMap extends EngineState {
     }
   }
 
-  @Method(0x800da920L)
-  private void applyInterpolationFrame(final Model124 a0) {
-    final ModelPartTransforms0c[][] transforms = a0.partTransforms_94;
-
-    //LAB_800da96c
-    for(int i = 0; i < a0.modelParts_00.length; i++) {
-      final ModelPart10 dobj2 = a0.modelParts_00[i];
-
-      final GsCOORDINATE2 coord2 = dobj2.coord2_04;
-      final Transforms params = coord2.transforms;
-      final MV matrix = coord2.coord;
-
-      matrix.rotationZYX(params.rotate);
-
-      params.trans.set(
-        (params.trans.x + transforms[0][i].translate_06.x) / 2.0f,
-        (params.trans.y + transforms[0][i].translate_06.y) / 2.0f,
-        (params.trans.z + transforms[0][i].translate_06.z) / 2.0f
-      );
-
-      matrix.transfer.set(params.trans);
-    }
-
-    //LAB_800daa0c
-    a0.partTransforms_94 = Arrays.copyOfRange(transforms, 1, transforms.length);
-  }
-
   @Method(0x800daa3cL)
   private void renderSmapModel(final Model124 model) {
     zOffset_1f8003e8 = model.zOffset_a0;
@@ -1583,6 +1493,7 @@ public class SMap extends EngineState {
     //LAB_800dab4c
   }
 
+  /** Used in pre-Melbu submap cutscene, Prairie, new game Rose cutscene (animates the cloud flicker by changing CLUT, pretty sure this is CLUT animation) */
   @Method(0x800dde70L)
   private void FUN_800dde70(final Model124 struct, final int index) {
     final SmallerStruct smallerStruct = struct.smallerStructPtr_a4;
@@ -1807,7 +1718,7 @@ public class SMap extends EngineState {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
     sobj.movementDestination_138.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
-    sobj.movementTicks_144 = script.params_20[4].get();
+    sobj.movementTicks_144 = script.params_20[4].get() * (3 - vsyncMode_8007a3b8);
 
     sobj.us_170 = 1;
 
@@ -1842,7 +1753,7 @@ public class SMap extends EngineState {
     final Model124 model = sobj.model_00;
 
     sobj.movementDestination_138.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
-    sobj.movementTicks_144 = script.params_20[4].get();
+    sobj.movementTicks_144 = script.params_20[4].get() * (3 - vsyncMode_8007a3b8);
 
     sobj.movementStep_148.x = (sobj.movementDestination_138.x - model.coord2_14.coord.transfer.x) / sobj.movementTicks_144;
     sobj.movementStep_148.z = (sobj.movementDestination_138.z - model.coord2_14.coord.transfer.z) / sobj.movementTicks_144;
@@ -1851,7 +1762,7 @@ public class SMap extends EngineState {
     sobj.movementStepY_134 = ((sobj.movementDestination_138.y - model.coord2_14.coord.transfer.y) * 2 - sobj.movementTicks_144 * 7 * (sobj.movementTicks_144 - 1)) / (sobj.movementTicks_144 * 2);
     sobj.us_170 = 2;
     sobj.s_172 = 1;
-    sobj.movementStepAccelerationY_18c = 7;
+    sobj.movementStepAccelerationY_18c = 7 / (2.0f / vsyncMode_8007a3b8);
     this.sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(this::tickSobjMovement);
     return FlowControl.CONTINUE;
   }
@@ -1867,8 +1778,8 @@ public class SMap extends EngineState {
   private FlowControl FUN_800deba0(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj.movementDestination_138.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
-    sobj.movementTicks_144 = script.params_20[4].get();
-    sobj.movementStepAccelerationY_18c = script.params_20[5].get() + 5;
+    sobj.movementTicks_144 = script.params_20[4].get() * (3 - vsyncMode_8007a3b8);
+    sobj.movementStepAccelerationY_18c = (script.params_20[5].get() + 5) / (2.0f / vsyncMode_8007a3b8);
     sobj.movementStep_148.x = (sobj.movementDestination_138.x - sobj.model_00.coord2_14.coord.transfer.x) / sobj.movementTicks_144;
     sobj.movementStep_148.z = (sobj.movementDestination_138.z - sobj.model_00.coord2_14.coord.transfer.z) / sobj.movementTicks_144;
 
@@ -1991,7 +1902,7 @@ public class SMap extends EngineState {
   private FlowControl FUN_800df1f8(final RunningScript<?> script) {
     script.params_20[1] = script.params_20[0];
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
-    return this.FUN_800dffa4(script);
+    return this.scriptToggleAnimationDisabled(script);
   }
 
   @ScriptDescription("Get us_12a from this submap object")
@@ -2000,7 +1911,7 @@ public class SMap extends EngineState {
   private FlowControl FUN_800df228(final RunningScript<?> script) {
     script.params_20[1] = script.params_20[0];
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
-    return this.FUN_800dffdc(script);
+    return this.scriptIsAnimationFinished(script);
   }
 
   @ScriptDescription("Set a submap object's position")
@@ -2233,7 +2144,7 @@ public class SMap extends EngineState {
   private FlowControl scriptRotateSobj(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
 
-    final int frames = script.params_20[4].get();
+    final int frames = script.params_20[4].get() * (3 - vsyncMode_8007a3b8);
     sobj.rotationFrames_188 = frames;
 
     // Added this to fix a /0 error in the retail code
@@ -2255,21 +2166,21 @@ public class SMap extends EngineState {
   /**
    * The (x, y, z) value is the amount to rotate per frame
    */
-  @ScriptDescription("Rotates a submap object to an absolute rotation over time")
+  @ScriptDescription("Rotates a submap object by an absolute rotation over time")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The absolute X rotation (PSX degrees)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The absolute Y rotation (PSX degrees)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The absolute Z rotation (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "The absolute X rotation per frame (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The absolute Y rotation per frame (PSX degrees)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The absolute Z rotation per frame (PSX degrees)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "frames", description = "The number of frames before the rotation completes")
   @Method(0x800df890L)
   private FlowControl scriptRotateSobjAbsolute(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj.rotationAmount_17c.set(
-      MathHelper.psxDegToRad(script.params_20[1].get()),
-      MathHelper.psxDegToRad(script.params_20[2].get()),
-      MathHelper.psxDegToRad(script.params_20[3].get())
+      MathHelper.psxDegToRad(script.params_20[1].get()) / (2.0f / vsyncMode_8007a3b8),
+      MathHelper.psxDegToRad(script.params_20[2].get()) / (2.0f / vsyncMode_8007a3b8),
+      MathHelper.psxDegToRad(script.params_20[3].get()) / (2.0f / vsyncMode_8007a3b8)
     );
-    sobj.rotationFrames_188 = script.params_20[4].get();
+    sobj.rotationFrames_188 = script.params_20[4].get() * (3 - vsyncMode_8007a3b8);
     return FlowControl.CONTINUE;
   }
 
@@ -2310,8 +2221,7 @@ public class SMap extends EngineState {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
 
     final MV ls = new MV();
-    final MV lw = new MV();
-    GsGetLws(sobj.model_00.coord2_14, lw, ls);
+    GsGetLs(sobj.model_00.coord2_14, ls);
 
     GTE.setTransforms(ls);
     GTE.perspectiveTransform(0, 0, 0);
@@ -2478,7 +2388,7 @@ public class SMap extends EngineState {
       part.obj = TmdObjLoader.fromObjTable("SobjModel (index " + index + ')', part.tmd_08);
     }
 
-    sobj.us_12c = 0;
+    sobj.animationFinished_12c = false;
     sobj.rotationFrames_188 = 0;
 
     return FlowControl.CONTINUE;
@@ -2498,7 +2408,7 @@ public class SMap extends EngineState {
 
     loadModelStandardAnimation(model, this.submapAssets.objects.get(sobj.sobjIndex_12e).animations.get(sobj.animIndex_132));
 
-    sobj.us_12c = 0;
+    sobj.animationFinished_12c = false;
     sobj.flags_190 &= 0x9fff_ffff;
 
     return FlowControl.CONTINUE;
@@ -2516,21 +2426,21 @@ public class SMap extends EngineState {
 
   @ScriptDescription("Set us_12a on a submap object")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "value", description = "The new value")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "disabled", description = "Whether or not the animation is disabled")
   @Method(0x800dffa4L)
-  private FlowControl FUN_800dffa4(final RunningScript<?> script) {
+  private FlowControl scriptToggleAnimationDisabled(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    sobj.us_12a = script.params_20[1].get();
+    sobj.disableAnimation_12a = script.params_20[1].get() != 0;
     return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Get us_12a from a submap object")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The value")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "finished", description = "Whether or not the animation is finished")
   @Method(0x800dffdcL)
-  private FlowControl FUN_800dffdc(final RunningScript<?> script) {
+  private FlowControl scriptIsAnimationFinished(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[1].set(sobj.us_12c);
+    script.params_20[1].set(sobj.animationFinished_12c ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 
@@ -2806,7 +2716,7 @@ public class SMap extends EngineState {
     model.ub_a3 = 1;
     model.disableInterpolation_a2 = false;
     loadModelStandardAnimation(model, this.submapAssets.objects.get(sobj.sobjIndex_12e).animations.get(sobj.animIndex_132));
-    sobj.us_12c = 0;
+    sobj.animationFinished_12c = false;
     sobj.flags_190 &= 0x9fff_ffff;
     return FlowControl.CONTINUE;
   }
@@ -2823,7 +2733,7 @@ public class SMap extends EngineState {
     model.ub_a3 = 0;
     model.disableInterpolation_a2 = true;
     loadModelStandardAnimation(model, this.submapAssets.objects.get(sobj.sobjIndex_12e).animations.get(sobj.animIndex_132));
-    sobj.us_12c = 0;
+    sobj.animationFinished_12c = false;
     sobj.flags_190 &= 0x9fff_ffff;
     return FlowControl.CONTINUE;
   }
@@ -3104,30 +3014,30 @@ public class SMap extends EngineState {
       }
 
       if(sobj.sobjIndex_12e == 0) {
-        this.FUN_800217a4(model);
-      } else {
-        applyModelRotationAndScale(model);
+        model.coord2_14.transforms.rotate.y = this.smoothDartRotation();
       }
 
-      if(sobj.us_12a == 0) {
+      applyModelRotationAndScale(model);
+
+      if(!sobj.disableAnimation_12a) {
         this.animateSmapModel(model);
-        if(sobj.us_12c == 1 && (sobj.flags_190 & 0x2000_0000) != 0) {
+
+        if(sobj.animationFinished_12c && (sobj.flags_190 & 0x2000_0000) != 0) {
           sobj.animIndex_132 = 0;
           loadModelStandardAnimation(model, this.submapAssets.objects.get(sobj.sobjIndex_12e).animations.get(sobj.animIndex_132));
-          sobj.us_12c = 0;
           sobj.flags_190 &= 0x9fff_ffff;
         }
       }
     }
 
     if(model.remainingFrames_9e == 0) {
-      sobj.us_12c = 1;
+      sobj.animationFinished_12c = true;
 
       if((sobj.flags_190 & 0x4000_0000) != 0) {
-        sobj.us_12a = 1;
+        sobj.disableAnimation_12a = true;
       }
     } else {
-      sobj.us_12c = 0;
+      sobj.animationFinished_12c = false;
     }
 
     if(sobj.showAlertIndicator_194) {
@@ -3584,8 +3494,8 @@ public class SMap extends EngineState {
 
           //LAB_800e1c50
           state.innerStruct_00.s_128 = 0;
-          state.innerStruct_00.us_12a = 0;
-          state.innerStruct_00.us_12c = 0;
+          state.innerStruct_00.disableAnimation_12a = false;
+          state.innerStruct_00.animationFinished_12c = false;
           state.innerStruct_00.sobjIndex_12e = i;
           state.innerStruct_00.sobjIndex_130 = i;
           state.innerStruct_00.animIndex_132 = 0;
@@ -3618,7 +3528,7 @@ public class SMap extends EngineState {
           model.coord2_14.coord.transfer.set(pos.pos_00);
           model.coord2_14.transforms.rotate.set(pos.rot_0c);
 
-          state.innerStruct_00.movementStepAccelerationY_18c = 7;
+          state.innerStruct_00.movementStepAccelerationY_18c = 7 / (2.0f / vsyncMode_8007a3b8);
           state.innerStruct_00.flags_190 = 0;
 
           if(i == 0) {
@@ -3698,20 +3608,20 @@ public class SMap extends EngineState {
 
       if((sobj.flags_190 & 0x1) != 0) { // Is player
         final Vector3f sp0x18 = new Vector3f();
-        sp0x18.set(sobj.movementStep_148);
+        sp0x18.set(sobj.movementStep_148).mul(2.0f / vsyncMode_8007a3b8);
         GTE.setTransforms(worldToScreenMatrix_800c3548);
         this.transformToWorldspace(sp0x20, sp0x18);
       } else {
         //LAB_800e2134
-        sp0x20.set(sobj.movementStep_148);
+        sp0x20.set(sobj.movementStep_148).mul(2.0f / vsyncMode_8007a3b8);
       }
 
       //LAB_800e2140
       final int s3 = this.FUN_800e88a0(sobj.sobjIndex_12e, model.coord2_14.coord.transfer, sp0x20);
       if(s3 >= 0 && this.FUN_800e6798(s3) != 0) {
-        model.coord2_14.coord.transfer.x += sp0x20.x;
+        model.coord2_14.coord.transfer.x += sp0x20.x / (2.0f / vsyncMode_8007a3b8);
         model.coord2_14.coord.transfer.y = sp0x20.y;
-        model.coord2_14.coord.transfer.z += sp0x20.z;
+        model.coord2_14.coord.transfer.z += sp0x20.z / (2.0f / vsyncMode_8007a3b8);
       }
 
       //LAB_800e21bc
@@ -4391,48 +4301,48 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800e4b20L)
-  private long handleEncounters() {
-    if(this._800c6ae0 < 15 || Unpacker.getLoadingFileCount() != 0 || gameState_800babc8.indicatorsDisabled_4e3) {
-      return 0;
+  private boolean handleEncounters() {
+    if(this.smapTicks_800c6ae0 < 15 * (3 - vsyncMode_8007a3b8) || Unpacker.getLoadingFileCount() != 0 || gameState_800babc8.indicatorsDisabled_4e3) {
+      return false;
     }
 
-    this._800c6ae4++;
+    this.ticksUntilEncountersAreEnabled_800c6ae4++;
 
-    if(this._800c6ae4 < 0) {
-      return 0;
+    if(this.ticksUntilEncountersAreEnabled_800c6ae4 < 0) {
+      return false;
     }
 
     // The first condition is to fix what we believe is caused by menus loading too fast in SC. Submaps still take several frames to initialize,
     // and if you spam triangle and escape immediately after the post-combat screen it's possible to get into this method when index_80052c38 is
     // still set to -1. See #304 for more details.
     if(index_80052c38 >= 0 && index_80052c38 < 0x40 && this.collisionAndTransitions_800cb460[index_80052c38] != 0) {
-      return 0;
+      return false;
     }
 
     //LAB_800e4bc0
     if(!this.isScriptLoaded(0)) {
-      return 0;
+      return false;
     }
 
     if(!this.hasPlayerMoved(this.sobjs_800c6880[0].innerStruct_00.model_00.coord2_14.coord)) {
-      return 0;
+      return false;
     }
 
     this.encounterAccumulator_800c6ae8 += Math.round(encounterData_800f64c4[submapCut_80052c30].rate_02 * this.encounterMultiplier_800c6abc);
 
-    if(this.encounterAccumulator_800c6ae8 > 0x1400) {
+    if(this.encounterAccumulator_800c6ae8 > 0x1400 * (3 - vsyncMode_8007a3b8)) {
       // Start combat
       encounterId_800bb0f8 = this.sceneEncounterIds_800f74c4[encounterData_800f64c4[submapCut_80052c30].scene_00][this.randomEncounterIndex()];
       battleStage_800bb0f4 = encounterData_800f64c4[submapCut_80052c30].stage_03;
       if(Config.combatStage()) {
         battleStage_800bb0f4 = Config.getCombatStage();
       }
-      return 0x1L;
+      return true;
     }
 
     //LAB_800e4ce4
     //LAB_800e4ce8
-    return 0;
+    return false;
   }
 
   @Method(0x800e4d00L)
@@ -4523,10 +4433,10 @@ public class SMap extends EngineState {
 
     a1.callback_48.accept(a1);
 
-    this._800c6ae0++;
+    this.smapTicks_800c6ae0++;
 
     if(gameState_800babc8.indicatorsDisabled_4e3) {
-      this._800c6ae4 = -30;
+      this.ticksUntilEncountersAreEnabled_800c6ae4 = -30 * (3 - vsyncMode_8007a3b8);
     }
 
     //LAB_800e5184
@@ -4640,7 +4550,7 @@ public class SMap extends EngineState {
     this.loadCollision(new TmdWithId("Background " + mapName, files.get(2)), files.get(1));
 
     submapEnvState_80052c44 = 2;
-    this._800cab20 = 2;
+    this._800cab20 = 2 * (3 - vsyncMode_8007a3b8);
   }
 
   @Method(0x800e5518L)
@@ -4666,7 +4576,7 @@ public class SMap extends EngineState {
       return false;
     }
 
-    if(this._800c6ae0 < 3) {
+    if(this.smapTicks_800c6ae0 < 3 * (3 - vsyncMode_8007a3b8)) {
       return false;
     }
 
@@ -4674,7 +4584,7 @@ public class SMap extends EngineState {
       return false;
     }
 
-    if(this._800c6ae0 > 15) {
+    if(this.smapTicks_800c6ae0 > 15 * (3 - vsyncMode_8007a3b8)) {
       this._800cb448 = false;
     }
 
@@ -4825,6 +4735,9 @@ public class SMap extends EngineState {
     //LAB_800e5ac4
     switch(this.smapLoadingStage_800cb430) {
       case INIT_0 -> {
+        vsyncMode_8007a3b8 = 1;
+        SCRIPTS.setFramesPerTick(2);
+
         srand((int)System.nanoTime());
         resizeDisplay(384, 240);
 
@@ -4927,7 +4840,7 @@ public class SMap extends EngineState {
         this._800cab24 = this.FUN_800ea974(this._800caaf4);
         this.cacheHasNoEncounters();
         SCRIPTS.resume();
-        this._800c6ae0 = 0;
+        this.smapTicks_800c6ae0 = 0;
         this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
       }
 
@@ -5026,7 +4939,7 @@ public class SMap extends EngineState {
         this.loadAndRenderSubmapModelAndEffects(this._800caaf8, this._800cab24);
 
         if(this.isScriptLoaded(0)) {
-          this.sobjs_800c6880[0].innerStruct_00.us_12a = 1;
+          this.sobjs_800c6880[0].innerStruct_00.disableAnimation_12a = true;
         }
 
         //LAB_800e61bc
@@ -5081,7 +4994,6 @@ public class SMap extends EngineState {
         //LAB_800e62cc
         engineStateOnceLoaded_8004dd24 = EngineStateEnum.WORLD_MAP_08;
         pregameLoadingStage_800bb10c = 0;
-        vsyncMode_8007a3b8 = 2;
         submapEnvState_80052c44 = 5;
         this._800f7e4c = false;
         SCRIPTS.resume();
@@ -5092,7 +5004,6 @@ public class SMap extends EngineState {
         submapEnvState_80052c44 = 5;
         engineStateOnceLoaded_8004dd24 = EngineStateEnum.COMBAT_06;
         pregameLoadingStage_800bb10c = 0;
-        vsyncMode_8007a3b8 = 2;
         this._800f7e4c = false;
         SCRIPTS.resume();
       }
@@ -5118,7 +5029,6 @@ public class SMap extends EngineState {
         //LAB_800e6458
         FUN_8002a9c0();
         engineStateOnceLoaded_8004dd24 = EngineStateEnum.TITLE_02;
-        vsyncMode_8007a3b8 = 2;
         pregameLoadingStage_800bb10c = 0;
 
         //LAB_800e6484
@@ -6117,10 +6027,6 @@ public class SMap extends EngineState {
     this.FUN_800e5084(s0_0);
     this._800cbe34 = s0_0;
 
-    final UnknownStruct2 s0_1 = new UnknownStruct2();
-    this.FUN_800e5084(s0_1);
-    this._800d1a8c = s0_1;
-
     final UnknownStruct2 s0_2 = new UnknownStruct2();
     this.FUN_800e5084(s0_2);
     this._800cbe38 = s0_2;
@@ -6134,7 +6040,6 @@ public class SMap extends EngineState {
     this._800f7f14 = false;
 
     this._800cbe34 = null;
-    this._800d1a8c = null;
     this._800cbe38 = null;
   }
 
@@ -6463,11 +6368,8 @@ public class SMap extends EngineState {
           playerMovement.y = (-normal.x * (x + playerMovement.x) - normal.z * (z + playerMovement.z) - struct._08) / normal.y;
 
           //LAB_800ea390
-          if(!this._800d1a8c._00) {
-            this._800d1a8c._00 = true;
-            //LAB_800ea3b4
-            this._800d1a84 = MathHelper.floorMod(MathHelper.atan2(playerMovement.x, playerMovement.z) + MathHelper.PI, MathHelper.TWO_PI);
-          }
+          //LAB_800ea3b4
+          this.dartRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(playerMovement.x, playerMovement.z) + MathHelper.PI, MathHelper.TWO_PI);
 
           //LAB_800ea3e0
           return s3;
@@ -6679,83 +6581,48 @@ public class SMap extends EngineState {
     }
 
     //LAB_800ea390
-    if(!this._800d1a8c._00) {
-      this._800d1a8c._00 = true;
-      //LAB_800ea3b4
-      this._800d1a84 = MathHelper.floorMod(MathHelper.atan2(playerMovement.x, playerMovement.z) + MathHelper.PI, MathHelper.TWO_PI);
-    }
+    //LAB_800ea3b4
+    this.dartRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(playerMovement.x, playerMovement.z) + MathHelper.PI, MathHelper.TWO_PI);
 
     //LAB_800ea3e0
     return s3;
   }
 
   @Method(0x800ea4c8L)
-  private float FUN_800ea4c8(final float a0) {
-    this._800d1a78--;
+  private float smoothDartRotation() {
+    final int lastRotationIndex = java.lang.Math.floorMod(this.smapTicks_800c6ae0 - 1, 4 * (3 - vsyncMode_8007a3b8));
+    final int newRotationIndex = this.smapTicks_800c6ae0 % (4 * (3 - vsyncMode_8007a3b8));
+    float rotationDelta = this.oldRotations_800f7f6c[lastRotationIndex] - this.dartRotationAfterCollision_800d1a84;
 
-    if(this._800d1a78 > 0) {
-      this._800d1a84 = this._800d1a80;
-
-      if(!this._800d1a8c._00) {
-        this._800d1a8c._00 = true;
-      }
-    }
-
-    //LAB_800ea534
-    //LAB_800ea538
-    final boolean bool;
-    if(this._800c6ae0 <= 0x400) {
-      bool = true;
-    } else if(this._800d1a8c._00) {
-      bool = false;
-    } else {
-      bool = true;
-      this._800d1a8c._00 = true;
-    }
-
-    //LAB_800ea570
-    if(bool || this._800d1a7c != 0) {
-      //LAB_800ea6d0
-      //LAB_800ea6d4
-      this._800d1a7c = 0;
-      return a0;
-    }
-
-    final int s1 = (this._800c6ae0 - 1) % 4;
-    final int s2 = this._800c6ae0 % 4;
-    float s0 = this._800f7f6c[s1] - this._800d1a84;
-
-    final boolean _800cbda4;
-    if(Math.abs(s0) > MathHelper.PI) {
-      _800cbda4 = s0 > 0;
-      s0 = MathHelper.TWO_PI - Math.abs(s0);
+    final boolean positive;
+    if(Math.abs(rotationDelta) > MathHelper.PI) {
+      positive = rotationDelta > 0;
+      rotationDelta = MathHelper.TWO_PI - Math.abs(rotationDelta);
     } else {
       //LAB_800ea628
-      _800cbda4 = s0 <= 0;
-      s0 = Math.abs(s0);
+      positive = rotationDelta <= 0;
+      rotationDelta = Math.abs(rotationDelta);
     }
 
     //LAB_800ea63c
-    if(s0 > 0.125f * MathHelper.TWO_PI || this._800d1a78 > 0) {
-      s0 /= 4.0f;
+    if(rotationDelta > 0.125f * MathHelper.TWO_PI) { // 45 degrees
+      rotationDelta /= 4.0f * (3 - vsyncMode_8007a3b8);
     }
 
     //LAB_800ea66c
-    final float v1 = this._800f7f6c[s1];
-
-    final float v0;
-    if(!_800cbda4) {
-      v0 = v1 - s0;
+    final float newRotation;
+    if(!positive) {
+      newRotation = this.oldRotations_800f7f6c[lastRotationIndex] - rotationDelta;
     } else {
       //LAB_800ea6a0
-      v0 = v1 + s0;
+      newRotation = this.oldRotations_800f7f6c[lastRotationIndex] + rotationDelta;
     }
 
     //LAB_800ea6a4
-    this._800f7f6c[s2] = v0;
+    this.oldRotations_800f7f6c[newRotationIndex] = newRotation;
 
     //LAB_800ea6dc
-    return v0;
+    return newRotation;
   }
 
   @Method(0x800ea84cL)

@@ -507,6 +507,8 @@ public final class Scus94491BpeSegment {
   public static void loadGameStateOverlay(final EngineStateEnum engineState) {
     LOGGER.info("Transitioning to engine state %s", engineState);
 
+    SCRIPTS.setFramesPerTick(1);
+
     final OverlayStruct overlay = gameStateOverlays_8004dbc0.get(engineState);
 
     if(overlay.class_00.isInstance(currentEngineState_8004dd04)) {

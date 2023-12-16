@@ -7,8 +7,8 @@ public class SubmapObject210 {
   public final Model124 model_00;
 
   public int s_128;
-  public int us_12a;
-  public int us_12c;
+  public boolean disableAnimation_12a;
+  public boolean animationFinished_12c;
   public int sobjIndex_12e;
   /** The script index of this sobj */
   public int sobjIndex_130;
@@ -37,7 +37,7 @@ public class SubmapObject210 {
   public final Vector3f rotationAmount_17c = new Vector3f();
   /** Number of frames to apply rotation for */
   public int rotationFrames_188;
-  public int movementStepAccelerationY_18c;
+  public float movementStepAccelerationY_18c;
   /**
    * Example flags for the player sobj - 0x120_0001
    *
@@ -54,8 +54,8 @@ public class SubmapObject210 {
    *   <li>0x400_0000 - collidee something</li>
    *   <li>0x800_0000 - collider something</li>
    *   <li>0x1000_0000 - collidee something</li>
-   *   <li>0x2000_0000 - ?</li>
-   *   <li>0x4000_0000 - ?</li>
+   *   <li>0x2000_0000 - switch to idle animation when current animation is finished</li>
+   *   <li>0x4000_0000 - disable animation when current animation is finished</li>
    *   <li>0x8000_0000 - doesn't seem to be set anywhere, looks like it disables forced movement or something like that
    *   </li>
    * </ul>
@@ -89,5 +89,10 @@ public class SubmapObject210 {
 
   public SubmapObject210(final String name) {
     this.model_00 = new Model124(name);
+  }
+
+  @Override
+  public String toString() {
+    return this.model_00.toString();
   }
 }

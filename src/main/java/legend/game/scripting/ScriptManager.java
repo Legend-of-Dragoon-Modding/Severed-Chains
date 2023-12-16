@@ -19,11 +19,24 @@ public class ScriptManager {
   private boolean paused;
   private int upperBound;
 
+  private int framesPerTick;
+  private int currentTicks;
+
   public void tick() {
-    this.executeScriptFrame();
+    if(this.currentTicks == 0) {
+      this.executeScriptFrame();
+    }
+
     this.executeScriptTickers();
     this.upperBound = 9;
     this.executeScriptRenderers();
+
+    this.currentTicks = (this.currentTicks + 1) % this.framesPerTick;
+  }
+
+  /** When running at higher frame rates, the number of frames to wait before ticking the script engine */
+  public void setFramesPerTick(final int ticks) {
+    this.framesPerTick = ticks;
   }
 
   /** Stops the script engine (will not render) */
