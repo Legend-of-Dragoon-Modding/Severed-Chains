@@ -4767,6 +4767,11 @@ public class SMap extends EngineState {
       }
 
       case LOAD_ENVIRONMENT_3 -> {
+        if(this.SomethingStruct_800cbe08.dobj2Ptr_20.obj != null) {
+          this.SomethingStruct_800cbe08.dobj2Ptr_20.obj.delete();
+          this.SomethingStruct_800cbe08.dobj2Ptr_20.obj = null;
+        }
+
         this.mapTransitionTicks_800cab28 = 0;
         submapEnvState_80052c44 = 1;
         this._800caaf4 = submapCut_80052c30;
