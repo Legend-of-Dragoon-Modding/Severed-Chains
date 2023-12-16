@@ -260,7 +260,7 @@ public class SmokeParticleEffect {
     for(int i = 0; i < this.smokeEffectData.size(); i++) {
       final SmokeEffectData34 dataInst = this.smokeEffectData.get(i);
       if(dataInst.countTicksInstantiationDelay_08 == 0) {
-        if(dataInst.tick_02 % dataInst.countTicksParticleInstantiationInterval_04 == 0) {
+        if(dataInst.tick_02 % (dataInst.countTicksParticleInstantiationInterval_04 * (int)(2.0f / vsyncMode_8007a3b8)) == 0) {
           final SmokeParticleInstance3c effectInst = this.particles[this.firstEmptyIndex];
 
           effectInst.tick_02 = 0;
@@ -284,7 +284,7 @@ public class SmokeParticleEffect {
       } else {
         //LAB_800f3e08
         if(dataInst.tick_02 >= dataInst.countTicksInstantiationDelay_08 * (2.0f / vsyncMode_8007a3b8)) {
-          if(dataInst.tick_02 % dataInst.countTicksParticleInstantiationInterval_04 == 0) {
+          if(dataInst.tick_02 % (dataInst.countTicksParticleInstantiationInterval_04 * (int)(2.0f / vsyncMode_8007a3b8)) == 0) {
             final SmokeParticleInstance3c effectInst = this.particles[this.firstEmptyIndex];
 
             effectInst.tick_02 = 0;
@@ -349,7 +349,7 @@ public class SmokeParticleEffect {
       for(int i = 0; i < this.smokeEffectData.size(); i++) {
         final SmokeEffectData34 dataInst = this.smokeEffectData.get(i);
         if(dataInst.countTicksInstantiationDelay_08 * (2.0f / vsyncMode_8007a3b8) >= dataInst.tick_02) {
-          if(dataInst.tick_02 % dataInst.countTicksParticleInstantiationInterval_04 == 0) {
+          if(dataInst.tick_02 % (dataInst.countTicksParticleInstantiationInterval_04 * (int)(2.0f / vsyncMode_8007a3b8)) == 0) {
             //LAB_800f0148
             for(int j = 0; j < 4; j++) {
               final SmokeParticleInstance3c effectInst = this.particles[this.firstEmptyIndex];
@@ -386,7 +386,7 @@ public class SmokeParticleEffect {
     if(this.smokeCloudState == SmokeCloudState.TICK) {
       final SmokeEffectData34 dataInst = this.smokeEffectData.get(0);
 
-      if(dataInst.tick_02 % dataInst.countTicksParticleInstantiationInterval_04 == 0) {
+      if(dataInst.tick_02 % (dataInst.countTicksParticleInstantiationInterval_04 * (int)(2.0f / vsyncMode_8007a3b8)) == 0) {
         //LAB_800f0284
         final SmokeParticleInstance3c effectInst = this.particles[this.firstEmptyIndex];
         effectInst.tick_02 = 0;
