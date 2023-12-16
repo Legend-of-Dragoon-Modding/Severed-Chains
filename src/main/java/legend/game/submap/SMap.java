@@ -8700,7 +8700,6 @@ public class SMap extends EngineState {
 
       final AnmSpriteGroup[] spriteGroups = anm.spriteGroups;
 
-      System.out.println(s1.time_08);
       //LAB_800f365c
       if((s1._00 & 0x1) == 0) {
         s1.time_08--;
