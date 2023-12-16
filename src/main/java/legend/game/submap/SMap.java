@@ -861,6 +861,8 @@ public class SMap extends EngineState {
     this.tim_800d9060,
   };
 
+  private MapIndicator mapIndicator = new MapIndicator();
+
   @Override
   public Function<RunningScript, FlowControl>[] getScriptFunctions() {
     final Function<RunningScript, FlowControl>[] functions = new Function[1024];
@@ -3817,6 +3819,7 @@ public class SMap extends EngineState {
     this.loadSubmapEffects();
     this.triangleIndicator_800c69fc = null;
     loadTimImage(shadowTimFile_80010544.getAddress());
+    mapIndicator.destroy();
   }
 
   @Method(0x800e2428L)
@@ -4355,22 +4358,7 @@ public class SMap extends EngineState {
     final float sx = GTE.getScreenX(2);
     final float sy = GTE.getScreenY(2);
 
-    final GpuCommandPoly cmd = new GpuCommandPoly(4)
-      .bpp(Bpp.BITS_4)
-      .translucent(Translucency.HALF_B_PLUS_HALF_F)
-      .monochrome(0x80)
-      .clut(976, 464)
-      .vramPos(960, 256)
-      .pos(0, this.alertIndicatorMetrics_800f64b0.x0_00 + sx, this.alertIndicatorMetrics_800f64b0.y0_04 + sy)
-      .pos(1, this.alertIndicatorMetrics_800f64b0.x1_02 + sx, this.alertIndicatorMetrics_800f64b0.y0_04 + sy)
-      .pos(2, this.alertIndicatorMetrics_800f64b0.x0_00 + sx, this.alertIndicatorMetrics_800f64b0.y1_06 + sy)
-      .pos(3, this.alertIndicatorMetrics_800f64b0.x1_02 + sx, this.alertIndicatorMetrics_800f64b0.y1_06 + sy)
-      .uv(0, this.alertIndicatorMetrics_800f64b0.u0_08, this.alertIndicatorMetrics_800f64b0.v0_0c)
-      .uv(1, this.alertIndicatorMetrics_800f64b0.u1_0a, this.alertIndicatorMetrics_800f64b0.v0_0c)
-      .uv(2, this.alertIndicatorMetrics_800f64b0.u0_08, this.alertIndicatorMetrics_800f64b0.v1_0e)
-      .uv(3, this.alertIndicatorMetrics_800f64b0.u1_0a, this.alertIndicatorMetrics_800f64b0.v1_0e);
-
-    GPU.queueCommand(37, cmd);
+    mapIndicator.renderAlertIndicator(GPU.getOffsetX() + this.alertIndicatorMetrics_800f64b0.x0_00 + sx, GPU.getOffsetY() + this.alertIndicatorMetrics_800f64b0.y0_04 + sy, 37, this.alertIndicatorMetrics_800f64b0.u0_08, this.alertIndicatorMetrics_800f64b0.v0_0c);
   }
 
   @Method(0x800e4994L)
@@ -9252,33 +9240,16 @@ public class SMap extends EngineState {
         final int v = s1.v_20 + sprite.v_01;
         final int tpage = s1.tpage_18 | sprite.flag_06 & 0x60;
 
-        final GpuCommandPoly cmd = new GpuCommandPoly(4)
-          .vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
-          .bpp(Bpp.of(tpage >>> 7 & 0b11))
-          .rgb(s1.r_24, s1.g_25, s1.b_26)
-          .pos(0, x, y)
-          .pos(1, x + sprite.w_08, y)
-          .pos(2, x, y + sprite.h_0a)
-          .pos(3, x + sprite.w_08, y + sprite.h_0a)
-          .uv(0, u, v)
-          .uv(1, u + sprite.w_08, v)
-          .uv(2, u, v + sprite.h_0a)
-          .uv(3, u + sprite.w_08, v + sprite.h_0a);
-
         if(indicatorIndex == 0) { // Player indicator
           final int triangleIndex = this.getEncounterTriangleColour();
-          cmd.clut(this._800d6cd8[triangleIndex] & 0x3f0, (sprite.cba_04 >>> 6 & 0x1ff) - this._800d6ce4[triangleIndex]);
+          mapIndicator.renderPlayerIndicator(GPU.getOffsetX() + x, GPU.getOffsetY() + y, 38, s1.r_24 / 128.0f, s1.g_25 / 128.0f, s1.b_26 / 128.0f, this._800d6cd8[triangleIndex] & 0x3f0, (sprite.cba_04 >>> 6 & 0x1ff) - this._800d6ce4[triangleIndex], u, v);
         } else { // Door indicators
           //LAB_800f3884
-          if((sprite.cba_04 & 0x8000) != 0) {
-            cmd.translucent(Translucency.of(tpage >>> 5 & 0b11));
-          }
-
-          cmd.clut(992, (sprite.cba_04 >>> 6 & 0x1ff) - this._800d6cc8[indicator._18[indicatorIndex - 1]]);
+          mapIndicator.renderDoorIndicator(indicatorIndex - 1, GPU.getOffsetX() + x, GPU.getOffsetY() + y, 38, s1.r_24 / 128.0f, s1.g_25 / 128.0f, s1.b_26 / 128.0f, 992, (sprite.cba_04 >>> 6 & 0x1ff) - this._800d6cc8[indicator._18[indicatorIndex - 1]], u, v);
         }
 
         //LAB_800f38b0
-        GPU.queueCommand(38, cmd);
+        //GPU.queueCommand(38, cmd);
       }
     }
 
