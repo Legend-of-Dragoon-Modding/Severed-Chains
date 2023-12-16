@@ -3,11 +3,7 @@ package legend.game.submap;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.opengl.MeshObj;
-import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
-
-import java.util.ArrayList;
-
 import static legend.core.GameEngine.RENDERER;
 
 public class MapIndicator {
