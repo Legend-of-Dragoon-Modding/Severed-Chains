@@ -835,7 +835,7 @@ public class SMap extends EngineState {
     this.smoke2_800d9060,
   };
 
-  private MapIndicator mapIndicator = new MapIndicator();
+  private final MapIndicator mapIndicator = new MapIndicator();
 
   @Override
   public Function<RunningScript, FlowControl>[] getScriptFunctions() {
@@ -8700,11 +8700,12 @@ public class SMap extends EngineState {
 
       final AnmSpriteGroup[] spriteGroups = anm.spriteGroups;
 
+      System.out.println(s1.time_08);
       //LAB_800f365c
       if((s1._00 & 0x1) == 0) {
         s1.time_08--;
 
-        if(s1.time_08 < 0) {
+        if(s1.time_08 < 0 - vsyncMode_8007a3b8 && ((this.smapTicks_800c6ae0 % (2 * (3 - vsyncMode_8007a3b8))) & 1) != 0) {
           s1.sequence_04++;
 
           if(s1.sequence_04 > s1.sequenceCount_14) {
@@ -8740,7 +8741,6 @@ public class SMap extends EngineState {
         }
 
         //LAB_800f38b0
-        //GPU.queueCommand(38, cmd);
       }
     }
 
