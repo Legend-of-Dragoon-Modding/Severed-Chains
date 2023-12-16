@@ -60,8 +60,6 @@ import legend.game.types.TmdSubExtension;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -180,8 +178,6 @@ import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 
 public class SMap extends EngineState {
-  private static final Logger LOGGER = LogManager.getFormatterLogger(SMap.class);
-
   private int fmvIndex_800bf0dc;
 
   private EngineStateEnum afterFmvLoadingStage_800bf0ec = EngineStateEnum.PRELOAD_00;
@@ -724,6 +720,8 @@ public class SMap extends EngineState {
   private boolean _800f7f0c;
 
   private final float[] oldRotations_800f7f6c = new float[8];
+  private boolean firstMovement;
+
   private final Struct14_2[] _800f7f74 = {
     new Struct14_2(7, 13), new Struct14_2(624, 11), new Struct14_2(7, 16), new Struct14_2(11, 30), new Struct14_2(9, 9), new Struct14_2(696, 13), new Struct14_2(695, 4), new Struct14_2(13, 17),
     new Struct14_2(38, 28), new Struct14_2(39, 25), new Struct14_2(44, 6), new Struct14_2(45, 1), new Struct14_2(54, 6), new Struct14_2(66, 41), new Struct14_2(95, 1), new Struct14_2(96, 1),
@@ -2996,7 +2994,7 @@ public class SMap extends EngineState {
         model.coord2_14.transforms.rotate.add(sobj.rotationAmount_17c);
       }
 
-      if(sobj.sobjIndex_12e == 0) {
+      if(sobj.sobjIndex_12e == 0 && this.collisionGeometry_800cbe08.dartRotationWasUpdated_800d1a8c) {
         model.coord2_14.transforms.rotate.y = this.smoothDartRotation();
       }
 
@@ -3396,6 +3394,8 @@ public class SMap extends EngineState {
 
         // Removed setting of unused sobjCount static
         this.sobjCount_800c6730 = this.submapAssets.objects.size();
+
+        this.firstMovement = true;
 
         final long s3;
         final long s4;
@@ -5846,7 +5846,12 @@ public class SMap extends EngineState {
 
   @Method(0x800ea4c8L)
   private float smoothDartRotation() {
-    final int lastRotationIndex = java.lang.Math.floorMod(this.smapTicks_800c6ae0 - 1, 4 * (3 - vsyncMode_8007a3b8));
+    if(this.firstMovement) {
+      this.firstMovement = false;
+      Arrays.fill(this.oldRotations_800f7f6c, this.collisionGeometry_800cbe08.dartRotationAfterCollision_800d1a84);
+    }
+
+    final int lastRotationIndex = java.lang.Math.floorMod(this.smapTicks_800c6ae0 - (3 - vsyncMode_8007a3b8), 4 * (3 - vsyncMode_8007a3b8));
     final int newRotationIndex = this.smapTicks_800c6ae0 % (4 * (3 - vsyncMode_8007a3b8));
     float rotationDelta = this.oldRotations_800f7f6c[lastRotationIndex] - this.collisionGeometry_800cbe08.dartRotationAfterCollision_800d1a84;
 
@@ -5862,7 +5867,7 @@ public class SMap extends EngineState {
 
     //LAB_800ea63c
     if(rotationDelta > 0.125f * MathHelper.TWO_PI) { // 45 degrees
-      rotationDelta /= 4.0f * (3 - vsyncMode_8007a3b8);
+      rotationDelta /= 4.0f;
     }
 
     //LAB_800ea66c

@@ -42,6 +42,7 @@ public class CollisionGeometry {
   private final int[] collisionPrimitiveIndices_800cbe48 = new int[8];
 
   public float dartRotationAfterCollision_800d1a84;
+  public boolean dartRotationWasUpdated_800d1a8c;
 
   private boolean collisionLoaded_800f7f14;
 
@@ -201,6 +202,7 @@ public class CollisionGeometry {
 
   public void tick() {
     this.playerCollisionLatch_800cbe34 = false;
+    this.dartRotationWasUpdated_800d1a8c = false;
   }
 
   @Method(0x800e9018L)
@@ -524,7 +526,10 @@ public class CollisionGeometry {
 
           //LAB_800ea390
           //LAB_800ea3b4
-          this.dartRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(movement.x, movement.z) + MathHelper.PI, MathHelper.TWO_PI);
+          if(!this.dartRotationWasUpdated_800d1a8c) {
+            this.dartRotationWasUpdated_800d1a8c = true;
+            this.dartRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(movement.x, movement.z) + MathHelper.PI, MathHelper.TWO_PI);
+          }
 
           //LAB_800ea3e0
           return s3;
@@ -733,7 +738,10 @@ public class CollisionGeometry {
 
     //LAB_800ea390
     //LAB_800ea3b4
-    this.dartRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(movement.x, movement.z) + MathHelper.PI, MathHelper.TWO_PI);
+    if(!this.dartRotationWasUpdated_800d1a8c) {
+      this.dartRotationWasUpdated_800d1a8c = true;
+      this.dartRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(movement.x, movement.z) + MathHelper.PI, MathHelper.TWO_PI);
+    }
 
     //LAB_800ea3e0
     return s3;
