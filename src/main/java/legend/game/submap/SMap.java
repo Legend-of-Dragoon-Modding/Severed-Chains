@@ -8702,9 +8702,11 @@ public class SMap extends EngineState {
 
       //LAB_800f365c
       if((s1._00 & 0x1) == 0) {
-        s1.time_08--;
+        if(((this.smapTicks_800c6ae0 % (3 - vsyncMode_8007a3b8) == 0))) {
+          s1.time_08--;
+        }
 
-        if(s1.time_08 < 0 - vsyncMode_8007a3b8 && ((this.smapTicks_800c6ae0 % (2 * (3 - vsyncMode_8007a3b8))) & 1) != 0) {
+        if(s1.time_08 < 0) {
           s1.sequence_04++;
 
           if(s1.sequence_04 > s1.sequenceCount_14) {

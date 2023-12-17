@@ -23,33 +23,6 @@ public class MapIndicator {
     }
   }
 
-  public void MapIndicator() {
-    this.indicators[IndicatorType.PLAYER.indicator] = new QuadBuilder("PlayerIndicator")
-      .vramPos(960, 256)
-      .bpp(Bpp.BITS_4)
-      .uv(0, 0)
-      .size(16, 16)
-      .uvSize(16, 16)
-      .build();
-
-    this.indicators[IndicatorType.DOOR.indicator] = new QuadBuilder("DoorIndicator")
-      .vramPos(960, 256)
-      .bpp(Bpp.BITS_4)
-      .uv(0, 0)
-      .size(8, 16)
-      .uvSize(8, 16)
-      .build();
-
-    this.indicators[IndicatorType.ALERT.indicator] = new QuadBuilder("AlertIndicator")
-      .vramPos(960, 256)
-      .bpp(Bpp.BITS_4)
-      .clut(976, 464)
-      .uv(0, 0)
-      .size(24, 24)
-      .uvSize(24, 24)
-      .build();
-  }
-
   private void createPlayerIndicator(final float r, final float g, final float b, final int cX, final int cY) {
     this.indicators[IndicatorType.PLAYER.indicator] = new QuadBuilder("PlayerIndicator")
       .vramPos(960, 256)
