@@ -3681,7 +3681,7 @@ public class SMap extends EngineState {
     this.reloadSubmapEffects();
     this.triangleIndicator_800c69fc = null;
     new Tim(Unpacker.loadFile("shadow.tim")).uploadToGpu();
-    mapIndicator.destroy();
+    this.mapIndicator.destroy();
   }
 
   @Method(0x800e2428L)
@@ -4210,14 +4210,13 @@ public class SMap extends EngineState {
   @Method(0x800e4774L)
   private void renderAlertIndicator(final Model124 parent, final int y) {
     final MV ls = new MV();
-    final MV lw = new MV();
-    GsGetLws(parent.coord2_14, lw, ls);
+    GsGetLs(parent.coord2_14, ls);
     GTE.setTransforms(ls);
     GTE.perspectiveTransform(0, y - 64, 0);
     final float sx = GTE.getScreenX(2);
     final float sy = GTE.getScreenY(2);
 
-    mapIndicator.renderAlertIndicator(GPU.getOffsetX() + this.alertIndicatorMetrics_800f64b0.x0_00 + sx, GPU.getOffsetY() + this.alertIndicatorMetrics_800f64b0.y0_04 + sy, 37, this.alertIndicatorMetrics_800f64b0.u0_08, this.alertIndicatorMetrics_800f64b0.v0_0c);
+    this.mapIndicator.renderAlertIndicator(GPU.getOffsetX() + this.alertIndicatorMetrics_800f64b0.x0_00 + sx, GPU.getOffsetY() + this.alertIndicatorMetrics_800f64b0.y0_04 + sy, 37, this.alertIndicatorMetrics_800f64b0.u0_08, this.alertIndicatorMetrics_800f64b0.v0_0c);
   }
 
   @Method(0x800e4994L)
@@ -7986,14 +7985,13 @@ public class SMap extends EngineState {
         final float y = s1.y_38;
         final int u = s1.u_1c + sprite.u_00;
         final int v = s1.v_20 + sprite.v_01;
-        final int tpage = s1.tpage_18 | sprite.flag_06 & 0x60;
 
         if(indicatorIndex == 0) { // Player indicator
           final int triangleIndex = this.getEncounterTriangleColour();
-          mapIndicator.renderPlayerIndicator(GPU.getOffsetX() + x, GPU.getOffsetY() + y, 38, s1.r_24 / 128.0f, s1.g_25 / 128.0f, s1.b_26 / 128.0f, this._800d6cd8[triangleIndex] & 0x3f0, (sprite.cba_04 >>> 6 & 0x1ff) - this._800d6ce4[triangleIndex], u, v);
+          this.mapIndicator.renderPlayerIndicator(GPU.getOffsetX() + x, GPU.getOffsetY() + y, 38, s1.r_24 / 128.0f, s1.g_25 / 128.0f, s1.b_26 / 128.0f, this._800d6cd8[triangleIndex] & 0x3f0, (sprite.cba_04 >>> 6 & 0x1ff) - this._800d6ce4[triangleIndex], u, v);
         } else { // Door indicators
           //LAB_800f3884
-          mapIndicator.renderDoorIndicator(indicatorIndex - 1, GPU.getOffsetX() + x, GPU.getOffsetY() + y, 38, s1.r_24 / 128.0f, s1.g_25 / 128.0f, s1.b_26 / 128.0f, 992, (sprite.cba_04 >>> 6 & 0x1ff) - this._800d6cc8[indicator._18[indicatorIndex - 1]], u, v);
+          this.mapIndicator.renderDoorIndicator(GPU.getOffsetX() + x, GPU.getOffsetY() + y, 38, s1.r_24 / 128.0f, s1.g_25 / 128.0f, s1.b_26 / 128.0f, 992, (sprite.cba_04 >>> 6 & 0x1ff) - this._800d6cc8[indicator._18[indicatorIndex - 1]], u, v);
         }
 
         //LAB_800f38b0
