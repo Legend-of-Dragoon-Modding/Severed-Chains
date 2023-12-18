@@ -649,7 +649,7 @@ public final class Unpacker {
    * contain the jump and just returns.
    */
   private static boolean drgn21_402_3_patcherDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    return "SECT/DRGN21.BIN/402/3".equals(name) && data.size() == 0xee4;
+    return ("SECT/DRGN21.BIN/402/3".equals(name) || "SECT/DRGN22.BIN/402/3".equals(name)) && data.size() == 0xee4;
   }
 
   private static Map<String, FileData> drgn21_402_3_patcher(final String name, final FileData data, final Set<String> flags) {
