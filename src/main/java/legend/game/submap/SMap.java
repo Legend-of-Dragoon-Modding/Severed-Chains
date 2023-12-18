@@ -6167,8 +6167,8 @@ public class SMap extends EngineState {
     while(snow != null) {
       //LAB_800ee3a0
       if(snow.y_18 + 128.0f <= 256.0f) {
-        snow.xAccumulator_24 += snow.stepX_1c;
-        snow.x_16 = snow.xAccumulator_24 + (snow.translationScaleX_10 * sin(snow.angle_08));
+        snow.xAccumulator_24 += snow.stepX_1c / (2.0f / vsyncMode_8007a3b8);
+        snow.x_16 = snow.xAccumulator_24 + ((snow.translationScaleX_10 * sin(snow.angle_08) / MathHelper.TWO_PI) / (2.0f / vsyncMode_8007a3b8));
 
         if(snow.x_16 < -200.0f) {
           snow.x_16 = 200.0f;
@@ -6189,7 +6189,7 @@ public class SMap extends EngineState {
           .pos(snow.x_16, snow.y_18, snow.size_14, snow.size_14)
         );
 
-        snow.angle_08 = (snow.angle_08 + snow.angleStep_0c) % MathHelper.TWO_PI;
+        snow.angle_08 = (snow.angle_08 + snow.angleStep_0c / (2.0f / vsyncMode_8007a3b8)) % MathHelper.TWO_PI;
       } else {
         //LAB_800ee52c
         this.wrapAroundSnowEffect(snow);
