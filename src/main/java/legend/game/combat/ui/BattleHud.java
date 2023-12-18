@@ -2113,6 +2113,10 @@ public class BattleHud {
           //LAB_800f5f94
           textType = 5;
           if((menu._02 & 0x2) != 0) {
+            if(this.battleUiSpellList == null) {
+              this.battleUiSpellList = new UiBox("Battle UI Spell List", 236, 130, 64, 14);
+            }
+
             this.battleUiSpellList.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
 
             final BattleEntity27c bent = this.setActiveCharacterSpell(menu.itemOrSpellId_1c);
@@ -2120,10 +2124,6 @@ public class BattleHud {
 
             menu.transforms.transfer.set(236, 130, 124.0f);
             RENDERER.queueOrthoOverlayModel(menu.mpObj, menu.transforms);
-
-            if(this.battleUiSpellList == null) {
-              this.battleUiSpellList = new UiBox("Battle UI Spell List", 236, 130, 64, 14);
-            }
           }
         } else {
           throw new RuntimeException("Undefined s1");
