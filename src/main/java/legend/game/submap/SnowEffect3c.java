@@ -1,6 +1,8 @@
 package legend.game.submap;
 
 public class SnowEffect3c {
+  public int tick;
+
   // /** Whether particle should render, code was written so that it always rendered */
   // public short _00;
 
@@ -13,6 +15,8 @@ public class SnowEffect3c {
 
   public float stepX_1c;
   public float stepY_20;
+  /** Not retail; randomized gaussian component of snow Y movement */
+  public float randY;
   /** 16.16 */
   public float xAccumulator_24;
   // /** 16.16 - not needed now because y and yAccum are always in lockstep */

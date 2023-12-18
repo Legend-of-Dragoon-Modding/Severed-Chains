@@ -6182,7 +6182,10 @@ public class SMap extends EngineState {
         }
 
         //LAB_800ee448
-        snow.y_18 += snow.stepY_20;
+        if(snow.tick % 8 == 0) {
+          snow.randY = (float)this.rand.nextGaussian(0.0f, 4.0f);
+        }
+        snow.y_18 += (snow.stepY_20 + snow.randY) / (2.0f / vsyncMode_8007a3b8);
 
         GPU.queueCommand(40, new GpuCommandQuad()
           .monochrome(snow.brightness_34)
@@ -6203,6 +6206,8 @@ public class SMap extends EngineState {
 
   @Method(0x800ee558L)
   private void initSnowEffect(final SnowEffect3c snow) {
+    snow.tick = this.snowEffectTick_800f9e68;
+
     snow.x_16 = this.rand.nextFloat(400.0f) - 200.0f + this.snowOffsetXTick_800f9e6a;
     snow.y_18 = this.rand.nextFloat(256.0f) - 128.0f;
 
@@ -6255,6 +6260,8 @@ public class SMap extends EngineState {
   /** Reuse snow effect when it reaches the bottom of the screen */
   @Method(0x800ee7b0L)
   private void wrapAroundSnowEffect(final SnowEffect3c snow) {
+    snow.tick = this.snowEffectTick_800f9e68;
+
     snow.x_16 = this.rand.nextFloat(400.0f) - 200.0f + this.snowWrapAroundOffsetXTick_800f9e6e;
     snow.y_18 = -128.0f;
 
