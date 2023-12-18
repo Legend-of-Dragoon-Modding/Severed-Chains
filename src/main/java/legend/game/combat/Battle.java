@@ -3934,7 +3934,14 @@ public class Battle extends EngineState {
   public FlowControl scriptRand(final RunningScript<?> script) {
     final int min = script.params_20[1].get();
     final int max = script.params_20[2].get();
-    script.params_20[0].set(seed_800fa754.nextInt(min, max));
+
+    // Yes, scripts do this
+    if(min == max) {
+      script.params_20[0].set(min);
+    } else {
+      script.params_20[0].set(seed_800fa754.nextInt(min, max));
+    }
+
     return FlowControl.CONTINUE;
   }
 
