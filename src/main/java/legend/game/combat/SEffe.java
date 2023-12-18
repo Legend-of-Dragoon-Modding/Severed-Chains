@@ -8175,7 +8175,7 @@ public final class SEffe {
 
   /** TODO renders other effects too? Burnout, more? Uses CTMD render pipeline */
   @Method(0x8011826cL)
-  public static void renderDeffTmd(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
+  public static void renderDeffTmd(final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state, final EffectManagerData6c<EffectManagerParams.AnimType> data) {
     final DeffTmdRenderer14 deffEffect = (DeffTmdRenderer14)data.effect_44;
 
     if(data.params_10.flags_00 >= 0) {
@@ -8257,16 +8257,17 @@ public final class SEffe {
       name = tmdType.name;
     }
 
-    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state = allocateEffectManager(
       "DEFF TMD " + name,
       script.scriptState_04,
       null,
       SEffe::renderDeffTmd,
       (s, manager) -> ((DeffTmdRenderer14)manager.effect_44).obj.delete(),
-      new DeffTmdRenderer14()
+      new DeffTmdRenderer14(),
+      new EffectManagerParams.AnimType()
     );
 
-    final EffectManagerData6c<EffectManagerParams.VoidType> manager = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerParams.AnimType> manager = state.innerStruct_00;
     manager.flags_04 = 0x300_0000;
 
     final DeffTmdRenderer14 effect = (DeffTmdRenderer14)manager.effect_44;
@@ -8338,16 +8339,17 @@ public final class SEffe {
       }
     }
 
-    final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager(
+    final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state = allocateEffectManager(
       objTable != null ? "Obj table renderer FUN_801184e4 " + objTable.name : "TMD renderer with no TMD? FUN_801184e4",
       script.scriptState_04,
       null,
       SEffe::renderDeffTmd,
       (s, manager) -> ((DeffTmdRenderer14)manager.effect_44).obj.delete(),
-      new DeffTmdRenderer14()
+      new DeffTmdRenderer14(),
+      new EffectManagerParams.AnimType()
     );
 
-    final EffectManagerData6c<EffectManagerParams.VoidType> s4 = state.innerStruct_00;
+    final EffectManagerData6c<EffectManagerParams.AnimType> s4 = state.innerStruct_00;
     s4.flags_04 = 0x300_0000;
 
     final DeffTmdRenderer14 s0 = (DeffTmdRenderer14)s4.effect_44;
