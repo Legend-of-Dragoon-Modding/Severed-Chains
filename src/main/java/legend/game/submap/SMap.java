@@ -247,7 +247,7 @@ public class SMap extends EngineState {
   /** Note: a negative value for some reason, counts up to 0 */
   private int ticksUntilEncountersAreEnabled_800c6ae4;
   public int encounterAccumulator_800c6ae8;
-  private final List<LatchStruct> latchList_800c6aec = new ArrayList<>();
+  private final List<CountdownLatch> latchList_800c6aec = new ArrayList<>();
 
   private int _800caaf4;
   private int _800caaf8;
@@ -293,8 +293,8 @@ public class SMap extends EngineState {
   private final GsRVIEW2 rview2_800cbd10 = new GsRVIEW2();
   private int _800cbd30;
   private int _800cbd34;
-  private LatchStruct screenOffsetLatch_800cbd38;
-  private LatchStruct geomOffsetLatch_800cbd3c;
+  private CountdownLatch screenOffsetLatch_800cbd38;
+  private CountdownLatch geomOffsetLatch_800cbd3c;
   private final MV screenToWorldMatrix_800cbd40 = new MV();
   private int minSobj_800cbd60;
   private int maxSobj_800cbd64;
@@ -4361,13 +4361,13 @@ public class SMap extends EngineState {
   @Method(0x800e4ff4L)
   private void resetLatches() {
     for(int i = 0; i < this.latchList_800c6aec.size(); i++) {
-      this.latchList_800c6aec.get(i).latched_00 = false;
+      this.latchList_800c6aec.get(i).tick();
     }
   }
 
   @Method(0x800e5084L)
-  private LatchStruct addLatch() {
-    final LatchStruct latch = new LatchStruct();
+  private CountdownLatch addLatch() {
+    final CountdownLatch latch = new CountdownLatch();
     this.latchList_800c6aec.add(latch);
     return latch;
   }
@@ -4442,7 +4442,7 @@ public class SMap extends EngineState {
     }
 
     //LAB_800e52b0
-    this.setScreenOffsetIfNotSet(screenOffsetX_800bed50, screenOffsetY_800bed54);
+    this.setScreenOffsetIfNotSet(1, screenOffsetX_800bed50, screenOffsetY_800bed54);
 
     mat.set(matrix_800bed30);
 
@@ -5149,11 +5149,11 @@ public class SMap extends EngineState {
 
     if(mode == 1 || mode == 2) {
       //LAB_800e695c
-      this.setGeomOffsetIfNotSet(x, y);
+      this.setGeomOffsetIfNotSet(3 - vsyncMode_8007a3b8, x, y);
     }
 
     if(mode == 2 || mode == 3) {
-      this.setScreenOffsetIfNotSet(x, y);
+      this.setScreenOffsetIfNotSet(3 - vsyncMode_8007a3b8, x, y);
     }
 
     //LAB_800e6988
@@ -5473,18 +5473,18 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800e7604L)
-  private void setGeomOffsetIfNotSet(final int x, final int y) {
-    if(!this.geomOffsetLatch_800cbd3c.latched_00) {
-      this.geomOffsetLatch_800cbd3c.latched_00 = true;
+  private void setGeomOffsetIfNotSet(final int latchTicks, final int x, final int y) {
+    if(this.geomOffsetLatch_800cbd3c.isOpen()) {
+      this.geomOffsetLatch_800cbd3c.latch(latchTicks);
       GTE.setScreenOffset(x, y);
     }
   }
 
   @Method(0x800e7650L)
-  private void setScreenOffsetIfNotSet(final int x, final int y) {
+  private void setScreenOffsetIfNotSet(final int latchTicks, final int x, final int y) {
     // Added null check - bug in game code
-    if(this.screenOffsetLatch_800cbd38 != null && !this.screenOffsetLatch_800cbd38.latched_00) {
-      this.screenOffsetLatch_800cbd38.latched_00 = true;
+    if(this.screenOffsetLatch_800cbd38 != null && this.screenOffsetLatch_800cbd38.isOpen()) {
+      this.screenOffsetLatch_800cbd38.latch(latchTicks);
       this.screenOffsetX_800cb568 = x;
       this.screenOffsetY_800cb56c = y;
     }
@@ -5788,8 +5788,8 @@ public class SMap extends EngineState {
 
   @Method(0x800e8104L)
   private void setCameraPos(final Vector3f cameraPos) {
-    if(!this.screenOffsetLatch_800cbd38.latched_00) {
-      this.screenOffsetLatch_800cbd38.latched_00 = true;
+    if(this.screenOffsetLatch_800cbd38.isOpen()) {
+      this.screenOffsetLatch_800cbd38.latch(1);
 
       final Vector2f transformed = new Vector2f();
       this.transformVertex(transformed, cameraPos);
@@ -5797,8 +5797,8 @@ public class SMap extends EngineState {
     }
 
     //LAB_800e8164
-    this.setScreenOffsetIfNotSet(this.screenOffsetX_800cb568, this.screenOffsetY_800cb56c);
-    this.setGeomOffsetIfNotSet(this.screenOffsetX_800cb568, this.screenOffsetY_800cb56c);
+    this.setScreenOffsetIfNotSet(1, this.screenOffsetX_800cb568, this.screenOffsetY_800cb56c);
+    this.setGeomOffsetIfNotSet(1, this.screenOffsetX_800cb568, this.screenOffsetY_800cb56c);
   }
 
   @Method(0x800e81a0L)
