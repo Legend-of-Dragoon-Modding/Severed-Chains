@@ -6789,7 +6789,7 @@ public final class SEffe {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "acceleration", description = "The attachment acceleration")
   @Method(0x80115014L)
   public static FlowControl scriptAddGenericAttachment(final RunningScript<?> script) {
-    addGenericAttachment(SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.classFor(EffectManagerParams.AnimType.class)), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    addGenericAttachment(SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     return FlowControl.CONTINUE;
   }
 
@@ -6804,7 +6804,7 @@ public final class SEffe {
     final int newValue = script.params_20[2].get();
     final int ticks = script.params_20[3].get();
 
-    final EffectManagerData6c<EffectManagerParams.AnimType> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.classFor(EffectManagerParams.AnimType.class));
+    final EffectManagerData6c<?> manager = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
 
     if(manager.hasAttachment(varIndex + 5)) {
       manager.removeAttachment(varIndex + 5);
