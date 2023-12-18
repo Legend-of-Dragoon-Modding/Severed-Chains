@@ -1,21 +1,24 @@
 package legend.game.submap;
 
 public class SnowEffect3c {
-  public short _00;
+  // /** Whether particle should render, code was written so that it always rendered */
+  // public short _00;
 
-  public int angle_08;
-  public int angleStep_0c;
-  public int _10;
-  public short size_14;
-  public short x_16;
-  public short y_18;
+  public float angle_08;
+  public float angleStep_0c;
+  public float translationScaleX_10;
+  public int size_14;
+  public float x_16;
+  public float y_18;
 
-  public int xStep_1c;
-  public int yStep_20;
-  public int xAccumulator_24;
-  public int yAccumulator_28;
+  public float stepX_1c;
+  public float stepY_20;
+  /** 16.16 */
+  public float xAccumulator_24;
+  // /** 16.16 - not needed now because y and yAccum are always in lockstep */
+  // public float yAccumulator_28;
 
-  public short colour_34;
+  public short brightness_34;
 
   public SnowEffect3c next_38;
 }
