@@ -6166,16 +6166,16 @@ public class SMap extends EngineState {
     //LAB_800ee38c
     while(snow != null) {
       //LAB_800ee3a0
-      if(snow.y_18 + 120.0f <= 240.0f) {
+      if(snow.y_18 + 128.0f <= 256.0f) {
         snow.xAccumulator_24 += snow.stepX_1c;
         snow.x_16 = snow.xAccumulator_24 + (snow.translationScaleX_10 * sin(snow.angle_08));
 
-        if(snow.x_16 < -192.0f) {
-          snow.x_16 = 192.0f;
-          snow.xAccumulator_24 = 192.0f;
+        if(snow.x_16 < -200.0f) {
+          snow.x_16 = 200.0f;
+          snow.xAccumulator_24 = 200.0f;
           snow.angle_08 = 0.0f;
           //LAB_800ee42c
-        } else if(snow.x_16 > 192.0f) {
+        } else if(snow.x_16 > 200.0f) {
           snow.x_16 = -200.0f;
           snow.xAccumulator_24 = -200.0f;
           snow.angle_08 = 0.0f;
@@ -6203,8 +6203,8 @@ public class SMap extends EngineState {
 
   @Method(0x800ee558L)
   private void initSnowEffect(final SnowEffect3c snow) {
-    snow.x_16 = this.rand.nextFloat(384.0f) - 192.0f + this.snowOffsetXTick_800f9e6a;
-    snow.y_18 = this.rand.nextFloat(240.0f) - 120.0f;
+    snow.x_16 = this.rand.nextFloat(400.0f) - 200.0f + this.snowOffsetXTick_800f9e6a;
+    snow.y_18 = this.rand.nextFloat(256.0f) - 128.0f;
 
     final SnowParticleData18 data = this.snowParticleData_800d4d20;
     final int stepXMax = data.stepXMax_10;
@@ -6255,8 +6255,8 @@ public class SMap extends EngineState {
   /** Reuse snow effect when it reaches the bottom of the screen */
   @Method(0x800ee7b0L)
   private void wrapAroundSnowEffect(final SnowEffect3c snow) {
-    snow.x_16 = this.rand.nextFloat(384.0f) - 192.0f + this.snowWrapAroundOffsetXTick_800f9e6e;
-    snow.y_18 = -120.0f;
+    snow.x_16 = this.rand.nextFloat(400.0f) - 200.0f + this.snowWrapAroundOffsetXTick_800f9e6e;
+    snow.y_18 = -128.0f;
 
     final SnowParticleData18 data = this.snowParticleData_800d4d20;
     final int stepXMax = data.stepXMax_10;
