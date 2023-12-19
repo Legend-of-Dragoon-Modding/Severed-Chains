@@ -2530,7 +2530,7 @@ public class Battle extends EngineState {
 
   @Method(0x800ca918L)
   public void unsetMonsterTextureSlotUsed(final int shift) {
-    this.usedMonsterTextureSlots_800c66c4 ^= ~(0x1 << shift);
+    this.usedMonsterTextureSlots_800c66c4 &= ~(0x1 << shift);
   }
 
   @Method(0x800cae44L)
