@@ -1448,23 +1448,17 @@ public class SMap extends EngineState {
 
     //LAB_800daaa8
     final MV lw = new MV();
-    final MV ls = new MV();
     for(int i = 0; i < model.modelParts_00.length; i++) {
       if((model.partInvisible_f4 & 1L << i) == 0) {
         final ModelPart10 dobj2 = model.modelParts_00[i];
 
-        GsGetLws(dobj2.coord2_04, lw, ls);
-        GsSetLightMatrix(lw);
-        GTE.setTransforms(ls);
-        Renderer.renderDobj2(dobj2, false, 0);
+        GsGetLw(dobj2.coord2_04, lw);
 
-        if(dobj2.obj != null) {
-          RENDERER.queueModel(dobj2.obj, lw)
-            .screenspaceOffset(this.screenOffsetX_800cb568 + 8, -this.screenOffsetY_800cb56c)
-            .lightDirection(lightDirectionMatrix_800c34e8)
-            .lightColour(lightColourMatrix_800c3508)
-            .backgroundColour(GTE.backgroundColour);
-        }
+        RENDERER.queueModel(dobj2.obj, lw)
+          .screenspaceOffset(this.screenOffsetX_800cb568 + 8, -this.screenOffsetY_800cb56c)
+          .lightDirection(lightDirectionMatrix_800c34e8)
+          .lightColour(lightColourMatrix_800c3508)
+          .backgroundColour(GTE.backgroundColour);
       }
     }
 
