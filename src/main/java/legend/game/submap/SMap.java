@@ -6050,7 +6050,7 @@ public class SMap extends EngineState {
             .invert();
           this.submapCutMatrix_800d4bb0
             .set(this.submapCutMatrix).setTranslation(this.submapCutMatrix.transfer)
-            .mul(inverseW2s);
+            .mulLocal(inverseW2s);
 
           this.submapModelLoadingStage_800f9e5a++;
           this.submapModelLoaded_800c686c = true;
