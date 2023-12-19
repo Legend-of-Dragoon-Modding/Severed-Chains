@@ -9,7 +9,7 @@ public class SnowEffect3c {
   public float angle_08;
   public float angleStep_0c;
   public float translationScaleX_10;
-  public int size_14;
+  public float size_14;
   public float x_16;
   public float y_18;
 
@@ -22,7 +22,7 @@ public class SnowEffect3c {
   // /** 16.16 - not needed now because y and yAccum are always in lockstep */
   // public float yAccumulator_28;
 
-  public short brightness_34;
+  public float brightness_34;
 
   public SnowEffect3c next_38;
 }

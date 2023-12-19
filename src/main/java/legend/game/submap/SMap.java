@@ -18,6 +18,7 @@ import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
 import legend.core.memory.Method;
 import legend.core.memory.types.IntRef;
+import legend.core.opengl.MeshObj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.EngineState;
@@ -6106,6 +6107,16 @@ public class SMap extends EngineState {
     //caseD_6
   }
 
+  private final MeshObj snowflake = new QuadBuilder("Snowflake")
+    .bpp(Bpp.BITS_4)
+    .clut(960, 464)
+    .monochrome(1.0f)
+    .translucency(Translucency.B_PLUS_F)
+    .vramPos(960, 320)
+    .size(1.0f, 1.0f)
+    .uvSize(24, 24)
+    .build();
+
   /** Used in Snow Field (disk 3) */
   @Method(0x800ee20cL)
   private void handleSnow() {
@@ -6162,6 +6173,7 @@ public class SMap extends EngineState {
   @Method(0x800ee368L)
   private void renderSnowEffect(final SnowEffect3c root) {
     SnowEffect3c snow = root.next_38;
+    final MV transforms = new MV();
 
     //LAB_800ee38c
     while(snow != null) {
@@ -6183,7 +6195,7 @@ public class SMap extends EngineState {
 
         //LAB_800ee448
         if(snow.tick % 8 == 0) {
-          snow.randY = (float)this.rand.nextGaussian(0.0f, 4.0f);
+          snow.randY = (float)this.rand.nextGaussian(0.0f, 2.0f);
         }
         snow.y_18 += (snow.stepY_20 + snow.randY) / (2.0f / vsyncMode_8007a3b8);
 
@@ -6191,6 +6203,11 @@ public class SMap extends EngineState {
           .monochrome(snow.brightness_34)
           .pos(snow.x_16, snow.y_18, snow.size_14, snow.size_14)
         );
+
+        transforms.scaling(snow.size_14);
+        transforms.transfer.set(GPU.getOffsetX() + snow.x_16, GPU.getOffsetY() + snow.y_18, 160.0f);
+        RENDERER.queueOrthoModel(this.snowflake, transforms)
+          .monochrome(snow.brightness_34);
 
         snow.angle_08 = (snow.angle_08 + snow.angleStep_0c / (2.0f / vsyncMode_8007a3b8)) % MathHelper.TWO_PI;
       } else {
@@ -6226,19 +6243,19 @@ public class SMap extends EngineState {
     float stepModifierY = 0.0f;
     final int tick = this.snowEffectTick_800f9e68;
     if(tick < 35) {
-      snow.size_14 = 3;
+      snow.size_14 = 4.0f;
       //LAB_800ee66c
     } else if(tick < 150) {
-      snow.size_14 = 2;
+      snow.size_14 = 3.0f;
       stepModifierY = data._14 / 3.0f;
       //LAB_800ee6ac
     } else if(tick < 256) {
-      snow.size_14 = 1;
+      snow.size_14 = 2.0f;
       stepModifierY = data._14 * 2.0f / 3.0f;
     }
 
     //LAB_800ee6e8
-    snow.brightness_34 = 0xff;
+    snow.brightness_34 = 2.0f;
     snow.stepY_20 = 32.0f / (data._14 + stepModifierY);
     snow.translationScaleX_10 = data.translationScaleX_0c;
     final float angle = this.rand.nextFloat(MathHelper.PI);
@@ -6276,21 +6293,21 @@ public class SMap extends EngineState {
 
     //LAB_800ee864
     snow.xAccumulator_24 = snow.x_16;
-    snow.brightness_34 = 0xd8;
+    snow.brightness_34 = 432.0f / 255.0f;
 
     final int tick = this.snowWrapAroundTick_800f9e6c;
     float stepModifierY = 0;
     if(tick == 0 || tick == 2 || tick == 4) {
       //LAB_800ee890
-      snow.size_14 = 1;
+      snow.size_14 = 2.0f;
       stepModifierY = data._14 * 2.0f / 3.0f;
       //LAB_800ee8c0
     } else if(tick == 1) {
-      snow.size_14 = 2;
+      snow.size_14 = 3.0f;
       stepModifierY = data._14 / 3.0f;
       //LAB_800ee8f4
     } else if(tick == 3) {
-      snow.size_14 = 3;
+      snow.size_14 = 4.0f;
     }
 
     //LAB_800ee900

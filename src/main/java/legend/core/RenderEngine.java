@@ -156,6 +156,7 @@ public class RenderEngine {
   public Obj chars;
   // Plain quads
   public final Map<Translucency, Obj> plainQuads = new EnumMap<>(Translucency.class);
+  public Obj opaqueQuad;
   // Simple quads
   public Obj centredQuadBPlusF;
   public Obj centredQuadBMinusF;
@@ -392,6 +393,12 @@ public class RenderEngine {
 
       this.plainQuads.put(translucency, obj);
     }
+
+    this.opaqueQuad = new QuadBuilder("Plain Quad Opaque")
+      .monochrome(1.0f)
+      .size(1.0f, 1.0f)
+      .build();
+    this.opaqueQuad.persistent = true;
 
     this.centredQuadBPlusF = new QuadBuilder("Centred Quad B+F")
       .translucency(Translucency.B_PLUS_F)
