@@ -139,14 +139,14 @@ public class SnowEffect {
 
       float stepYDivisorModifier = 0.0f;
       if(this.snowEffectTick < 35) {
-        inst.size_14 = 4.0f;
+        inst.size_14 = 3.0f;
         //LAB_800ee66c
       } else if(this.snowEffectTick < 150) {
-        inst.size_14 = 3.0f;
+        inst.size_14 = 2.0f;
         stepYDivisorModifier = this.particleData.stepYDivisor_14 / 3.0f;
         //LAB_800ee6ac
       } else if(this.snowEffectTick < 256) {
-        inst.size_14 = 2.0f;
+        inst.size_14 = 1.0f;
         stepYDivisorModifier = this.particleData.stepYDivisor_14 * 2.0f / 3.0f;
       }
 
@@ -197,15 +197,15 @@ public class SnowEffect {
     float stepYDivisorModifier = 0;
     if(tick == 0 || tick == 2 || tick == 4) {
       //LAB_800ee890
-      inst.size_14 = 2.0f;
+      inst.size_14 = 1.0f;
       stepYDivisorModifier = this.particleData.stepYDivisor_14 * 2.0f / 3.0f;
       //LAB_800ee8c0
     } else if(tick == 1) {
-      inst.size_14 = 3.0f;
+      inst.size_14 = 2.0f;
       stepYDivisorModifier = this.particleData.stepYDivisor_14 / 3.0f;
       //LAB_800ee8f4
     } else if(tick == 3) {
-      inst.size_14 = 4.0f;
+      inst.size_14 = 3.0f;
     }
 
     //LAB_800ee900
