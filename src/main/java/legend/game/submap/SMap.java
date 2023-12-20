@@ -4,7 +4,6 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.Config;
 import legend.core.MathHelper;
-import legend.core.Random;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.GpuCommandLine;
@@ -18,7 +17,6 @@ import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
 import legend.core.memory.Method;
 import legend.core.memory.types.IntRef;
-import legend.core.opengl.MeshObj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.EngineState;
@@ -179,8 +177,6 @@ import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 
 public class SMap extends EngineState {
-  private final Random rand = new Random();
-
   private int fmvIndex_800bf0dc;
 
   private EngineStateEnum afterFmvLoadingStage_800bf0ec = EngineStateEnum.PRELOAD_00;
@@ -312,7 +308,7 @@ public class SMap extends EngineState {
 
   private Structb0 _800d4bd0;
   private FileData _800d4bd4;
-  private SnowEffect3c snow_800d4bd8;
+  private SnowEffect snow_800d4bd8;
   private boolean submapCutModelAndAnimLoaded_800d4bdc;
   private boolean submapTextureAndMatrixLoaded_800d4be0;
   private boolean theEndTimLoaded_800d4be4;
@@ -323,8 +319,6 @@ public class SMap extends EngineState {
   private Tim theEndTim_800d4bf0;
 
   private final Model124 submapModel_800d4bf8 = new Model124("Submap");
-
-  private final SnowParticleData18 snowParticleData_800d4d20 = new SnowParticleData18();
 
   private final Model124 dustModel_800d4d40 = new Model124("Dust");
 
@@ -783,13 +777,6 @@ public class SMap extends EngineState {
   private final Vector2i tpage_800f9e5c = new Vector2i();
   private final Vector2i clut_800f9e5e = new Vector2i();
   private int snowState_800f9e60;
-
-  private int snowLoadingStage_800f9e64;
-
-  private int snowEffectTick_800f9e68;
-  private int snowOffsetXTick_800f9e6a;
-  private int snowWrapAroundTick_800f9e6c;
-  private int snowWrapAroundOffsetXTick_800f9e6e;
 
   private int _800f9e78;
 
@@ -6107,232 +6094,21 @@ public class SMap extends EngineState {
     //caseD_6
   }
 
-  private final MeshObj snowflake = new QuadBuilder("Snowflake")
-    .bpp(Bpp.BITS_4)
-    .clut(960, 464)
-    .monochrome(1.0f)
-    .translucency(Translucency.B_PLUS_F)
-    .vramPos(960, 320)
-    .size(1.0f, 1.0f)
-    .uvSize(24, 24)
-    .build();
-
   /** Used in Snow Field (disk 3) */
   @Method(0x800ee20cL)
   private void handleSnow() {
     if(this.submapEffectsState_800f9eac == -1) {
-      this.snowLoadingStage_800f9e64 = -1;
-    }
-
-    //LAB_800ee234
-    switch(this.snowLoadingStage_800f9e64) {
-      case 0 -> {
-        this.snow_800d4bd8 = new SnowEffect3c();
-        this.snowLoadingStage_800f9e64++;
+      if(this.snowState_800f9e60 != 0) {
+        this.snow_800d4bd8.deallocate();
+        this.snow_800d4bd8 = null;
       }
 
-      case 1 -> {
-        if(this.allocateSnowEffect(this.snow_800d4bd8)) {
-          //LAB_800ee2fc
-          this.snowLoadingStage_800f9e64++;
-        }
-      }
-
-      case 2 -> {
-        SnowEffect3c snow = this.snow_800d4bd8.next_38;
-
-        //LAB_800ee2d8
-        int count;
-        for(count = 0; snow != null; count++) {
-          this.initSnowEffect(snow);
-          snow = snow.next_38;
-        }
-
-        //LAB_800ee2f0
-        if(count >= 256) {
-          //LAB_800ee2fc
-          this.snowLoadingStage_800f9e64++;
-        }
-      }
-
-      case 3 -> this.renderSnowEffect(this.snow_800d4bd8);
-
-      case -1 -> {
-        if(this.snowState_800f9e60 != 0) {
-          this.deallocateSnowEffect(this.snow_800d4bd8);
-        }
-
-        //LAB_800ee348
-        this.snowState_800f9e60 = 0;
-        this.snowLoadingStage_800f9e64 = 0;
-      }
+      //LAB_800ee348
+      this.snowState_800f9e60 = 0;
+    } else {
+      this.snow_800d4bd8.render();
     }
     //LAB_800ee354
-  }
-
-  @Method(0x800ee368L)
-  private void renderSnowEffect(final SnowEffect3c root) {
-    SnowEffect3c snow = root.next_38;
-    final MV transforms = new MV();
-
-    //LAB_800ee38c
-    while(snow != null) {
-      //LAB_800ee3a0
-      if(snow.y_18 + 128.0f <= 256.0f) {
-        snow.xAccumulator_24 += snow.stepX_1c / (2.0f / vsyncMode_8007a3b8);
-        snow.x_16 = snow.xAccumulator_24 + ((snow.translationScaleX_10 * sin(snow.angle_08) / MathHelper.TWO_PI) / (2.0f / vsyncMode_8007a3b8));
-
-        if(snow.x_16 < -200.0f) {
-          snow.x_16 = 200.0f;
-          snow.xAccumulator_24 = 200.0f;
-          snow.angle_08 = 0.0f;
-          //LAB_800ee42c
-        } else if(snow.x_16 > 200.0f) {
-          snow.x_16 = -200.0f;
-          snow.xAccumulator_24 = -200.0f;
-          snow.angle_08 = 0.0f;
-        }
-
-        //LAB_800ee448
-        if(snow.tick % 8 == 0) {
-          snow.randY = (float)this.rand.nextGaussian(0.0f, 2.0f);
-        }
-        snow.y_18 += (snow.stepY_20 + snow.randY) / (2.0f / vsyncMode_8007a3b8);
-
-        GPU.queueCommand(40, new GpuCommandQuad()
-          .monochrome(snow.brightness_34)
-          .pos(snow.x_16, snow.y_18, snow.size_14, snow.size_14)
-        );
-
-        transforms.scaling(snow.size_14);
-        transforms.transfer.set(GPU.getOffsetX() + snow.x_16, GPU.getOffsetY() + snow.y_18, 160.0f);
-        RENDERER.queueOrthoModel(this.snowflake, transforms)
-          .monochrome(snow.brightness_34);
-
-        snow.angle_08 = (snow.angle_08 + snow.angleStep_0c / (2.0f / vsyncMode_8007a3b8)) % MathHelper.TWO_PI;
-      } else {
-        //LAB_800ee52c
-        this.wrapAroundSnowEffect(snow);
-      }
-
-      //LAB_800ee534
-      snow = snow.next_38;
-    }
-    //LAB_800ee544
-  }
-
-  @Method(0x800ee558L)
-  private void initSnowEffect(final SnowEffect3c snow) {
-    snow.tick = this.snowEffectTick_800f9e68;
-
-    snow.x_16 = this.rand.nextFloat(400.0f) - 200.0f + this.snowOffsetXTick_800f9e6a;
-    snow.y_18 = this.rand.nextFloat(256.0f) - 128.0f;
-
-    final SnowParticleData18 data = this.snowParticleData_800d4d20;
-    final int stepXMax = data.stepXMax_10;
-    if(stepXMax == 0) {
-      snow.stepX_1c = 0.0f;
-    } else {
-      //LAB_800ee62c
-      snow.stepX_1c = 32.0f / (stepXMax - this.rand.nextFloat(stepXMax) / 2.0f);
-    }
-
-    //LAB_800ee644
-    snow.xAccumulator_24 = snow.x_16;
-
-    float stepModifierY = 0.0f;
-    final int tick = this.snowEffectTick_800f9e68;
-    if(tick < 35) {
-      snow.size_14 = 4.0f;
-      //LAB_800ee66c
-    } else if(tick < 150) {
-      snow.size_14 = 3.0f;
-      stepModifierY = data._14 / 3.0f;
-      //LAB_800ee6ac
-    } else if(tick < 256) {
-      snow.size_14 = 2.0f;
-      stepModifierY = data._14 * 2.0f / 3.0f;
-    }
-
-    //LAB_800ee6e8
-    snow.brightness_34 = 2.0f;
-    snow.stepY_20 = 32.0f / (data._14 + stepModifierY);
-    snow.translationScaleX_10 = data.translationScaleX_0c;
-    final float angle = this.rand.nextFloat(MathHelper.PI);
-    data.angle_04 = angle;
-    snow.angle_08 = angle;
-
-    if(data.stepAngleMax_08 == 0) {
-      snow.angleStep_0c = 0.0f;
-    } else {
-      //LAB_800ee750
-      snow.angleStep_0c = this.rand.nextFloat(data.stepAngleMax_08);
-    }
-
-    //LAB_800ee770
-    this.snowEffectTick_800f9e68 = this.snowEffectTick_800f9e68 + 1 & 0xff;
-    this.snowOffsetXTick_800f9e6a = this.snowOffsetXTick_800f9e6a + 1 & 0xf;
-  }
-
-  /** Reuse snow effect when it reaches the bottom of the screen */
-  @Method(0x800ee7b0L)
-  private void wrapAroundSnowEffect(final SnowEffect3c snow) {
-    snow.tick = this.snowEffectTick_800f9e68;
-
-    snow.x_16 = this.rand.nextFloat(400.0f) - 200.0f + this.snowWrapAroundOffsetXTick_800f9e6e;
-    snow.y_18 = -128.0f;
-
-    final SnowParticleData18 data = this.snowParticleData_800d4d20;
-    final int stepXMax = data.stepXMax_10;
-    if(stepXMax == 0) {
-      snow.stepX_1c = 0.0f;
-    } else {
-      //LAB_800ee84c
-      snow.stepX_1c = 32.0f / (stepXMax - this.rand.nextFloat(stepXMax) / 2.0f);
-    }
-
-    //LAB_800ee864
-    snow.xAccumulator_24 = snow.x_16;
-    snow.brightness_34 = 432.0f / 255.0f;
-
-    final int tick = this.snowWrapAroundTick_800f9e6c;
-    float stepModifierY = 0;
-    if(tick == 0 || tick == 2 || tick == 4) {
-      //LAB_800ee890
-      snow.size_14 = 2.0f;
-      stepModifierY = data._14 * 2.0f / 3.0f;
-      //LAB_800ee8c0
-    } else if(tick == 1) {
-      snow.size_14 = 3.0f;
-      stepModifierY = data._14 / 3.0f;
-      //LAB_800ee8f4
-    } else if(tick == 3) {
-      snow.size_14 = 4.0f;
-    }
-
-    //LAB_800ee900
-    //LAB_800ee904
-    snow.stepY_20 = 32.0f / (data._14 + stepModifierY);
-    snow.translationScaleX_10 = data.translationScaleX_0c;
-    final float angle = this.rand.nextFloat(MathHelper.PI) / 32.0f;
-    data.angle_04 = angle;
-    snow.angle_08 = angle;
-
-    if(data.stepAngleMax_08 == 0) {
-      snow.angleStep_0c = 0.0f;
-    } else {
-      //LAB_800ee968
-      snow.angleStep_0c = this.rand.nextFloat(data.stepAngleMax_08);
-    }
-
-    //LAB_800ee988
-    this.snowWrapAroundTick_800f9e6c++;
-    if(this.snowWrapAroundTick_800f9e6c >= 6) {
-      this.snowWrapAroundTick_800f9e6c = 0;
-    }
-
-    //LAB_800ee9b4
-    this.snowWrapAroundOffsetXTick_800f9e6e = this.snowWrapAroundOffsetXTick_800f9e6e + 1 & 0xf;
   }
 
   @Method(0x800ee9e0L)
@@ -6456,31 +6232,6 @@ public class SMap extends EngineState {
     }
 
     GPU.uploadData15(imageRect, imageAddress);
-  }
-
-  @Method(0x800ef034L)
-  private boolean allocateSnowEffect(final SnowEffect3c root) {
-    SnowEffect3c current = root;
-
-    //LAB_800ef04c
-    for(int i = 0; i < 0x100; i++) {
-      current = new SnowEffect3c();
-      current.next_38 = root.next_38;
-      root.next_38 = current;
-    }
-
-    return current != null;
-  }
-
-  @Method(0x800ef090L)
-  private void deallocateSnowEffect(final SnowEffect3c a0) {
-    SnowEffect3c s0 = a0.next_38;
-
-    //LAB_800ef0b4
-    while(s0 != null) {
-      s0 = s0.next_38;
-      a0.next_38 = s0;
-    }
   }
 
   @Method(0x800ef0f8L)
@@ -7413,15 +7164,13 @@ public class SMap extends EngineState {
   }
 
   @ScriptDescription("Initializes fields for snow particle data.")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "Unused")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p3")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p4")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepAngleMax", description = "Maximum value for random angle step.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "translationScaleX", description = "Magnitude of additional x step based on the angle of the particle's trajectory.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepXMax", description = "Maximum value of random component used in calculating a particle's x step.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepYDivisor", description = "Value used in calculated the size of the y step.")
   @Method(0x800f2198L)
   private FlowControl scriptInitSnowParticleData(final RunningScript<?> script) {
-    final SnowParticleData18 snow = this.snowParticleData_800d4d20;
-
     this.snowState_800f9e60 = script.params_20[0].get();
 
     //LAB_800f21d0
@@ -7431,11 +7180,7 @@ public class SMap extends EngineState {
       }
 
       //LAB_800f2210
-      snow.angle_04 = 0.0f;
-      snow.stepAngleMax_08 = script.params_20[4].get();
-      snow.translationScaleX_0c = script.params_20[3].get();
-      snow.stepXMax_10 = script.params_20[1].get();
-      snow._14 = script.params_20[2].get();
+      this.snow_800d4bd8 = new SnowEffect(script.params_20[4].get(), script.params_20[3].get(), script.params_20[1].get(), script.params_20[2].get());
     }
 
     //LAB_800f2250
