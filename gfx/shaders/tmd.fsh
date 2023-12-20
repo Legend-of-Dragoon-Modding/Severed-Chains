@@ -47,33 +47,37 @@ void main() {
       outColour.a = 1.0;
     }
 
-    //NOTE: these only work for 4/8 bpp
-    int widthDivisor = 1 << int(2 - vertBpp);
-    int widthMask = widthDivisor - 1;
-    int indexShift = int(vertBpp + 2);
-    int indexMask = int(pow(16, vertBpp + 1) - 1);
+    vec4 texColour;
+    if(vertBpp == 0 || vertBpp == 1) {
+      int widthDivisor = 1 << int(2 - vertBpp);
+      int widthMask = widthDivisor - 1;
+      int indexShift = int(vertBpp + 2);
+      int indexMask = int(pow(16, vertBpp + 1) - 1);
 
-    // Calculate CLUT index
-    vec2 tpage;
-    if(tpageOverride.x != 0) {
-      tpage = tpageOverride;
+      // Calculate CLUT index
+      vec2 tpage;
+      if(tpageOverride.x != 0) {
+        tpage = tpageOverride;
+      } else {
+        tpage = vertTpage;
+      }
+
+      ivec2 uv = ivec2(tpage.x + (vertUv.x + uvOffset.x) / widthDivisor, tpage.y + vertUv.y + uvOffset.y);
+      ivec4 indexVec = ivec4(texelFetch(tex15, uv, 0));
+      int p = (indexVec.r >> ((int(tpage.x + vertUv.x) & widthMask) << indexShift)) & indexMask;
+
+      ivec2 clutUv;
+      if(clutOverride.x == 0) {
+        clutUv = ivec2(vertClut.x + p, vertClut.y);
+      } else {
+        clutUv = ivec2(clutOverride.x + p, clutOverride.y);
+      }
+
+      // Pull actual pixel colour from CLUT
+      texColour = texelFetch(tex24, clutUv, 0);
     } else {
-      tpage = vertTpage;
+      texColour = texelFetch(tex24, ivec2(vertUv), 0);
     }
-
-    ivec2 uv = ivec2(tpage.x + (vertUv.x + uvOffset.x) / widthDivisor, tpage.y + vertUv.y + uvOffset.y);
-    ivec4 indexVec = ivec4(texelFetch(tex15, uv, 0));
-    int p = (indexVec.r >> ((int(tpage.x + vertUv.x) & widthMask) << indexShift)) & indexMask;
-
-    ivec2 clutUv;
-    if(clutOverride.x == 0) {
-      clutUv = ivec2(vertClut.x + p, vertClut.y);
-    } else {
-      clutUv = ivec2(clutOverride.x + p, clutOverride.y);
-    }
-
-    // Pull actual pixel colour from CLUT
-    vec4 texColour = texelFetch(tex24, clutUv, 0);
 
     // Discard if (0, 0, 0)
     if(texColour.a == 0 && texColour.r == 0 && texColour.g == 0 && texColour.b == 0) {

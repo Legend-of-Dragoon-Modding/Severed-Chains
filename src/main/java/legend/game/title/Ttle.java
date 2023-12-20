@@ -3,15 +3,18 @@ package legend.game.title;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandQuad;
-import legend.core.gpu.ModelLoader;
 import legend.core.gpu.Rect4i;
-import legend.core.gpu.Renderable;
 import legend.core.gpu.VramTexture;
+import legend.core.gpu.VramTextureSingle;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.gte.TmdWithId;
 import legend.core.memory.Method;
+import legend.core.opengl.Obj;
+import legend.core.opengl.QuadBuilder;
+import legend.core.opengl.Texture;
+import legend.core.opengl.TmdObjLoader;
 import legend.core.opengl.Window;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
@@ -40,24 +43,19 @@ import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SAVES;
 import static legend.core.gpu.VramTextureLoader.palettesFromTim;
-import static legend.core.gpu.VramTextureLoader.palettesFromTims;
-import static legend.core.gpu.VramTextureLoader.stitch;
 import static legend.core.gpu.VramTextureLoader.stitchHorizontal;
 import static legend.core.gpu.VramTextureLoader.stitchVertical;
 import static legend.core.gpu.VramTextureLoader.textureFromPngOneChannelBlue;
 import static legend.core.gpu.VramTextureLoader.textureFromTim;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
-import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
-import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
+import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
-import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.GsSetRefView2L;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
@@ -65,20 +63,24 @@ import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
+import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
+import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
+import static org.lwjgl.opengl.GL11C.GL_RGBA;
+import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8_REV;
 
 public class Ttle extends EngineState {
   private TmdRenderingStruct _800c66d0;
   private final FireAnimationData20[] fireAnimation_800c66d4 = new FireAnimationData20[4];
   private int hasSavedGames;
   private int menuLoadingStage;
-  private int logoFadeInAmount;
+  private float logoFadeInAmount;
   private int logoFlashStage;
   private int logoFlashColour;
   private boolean backgroundInitialized;
   private int backgroundScrollAmount;
-  private int backgroundFadeInAmount;
+  private float backgroundFadeInAmount;
   private boolean copyrightInitialized;
-  private int copyrightFadeInAmount;
+  private float copyrightFadeInAmount;
   private boolean logoFireInitialized;
   private int flameColour;
   private int menuIdleTime;
@@ -94,28 +96,30 @@ public class Ttle extends EngineState {
   private int loadingStage;
   private int selectedMenuOption;
 
-  private static VramTexture backgroundTexture;
-  private static VramTexture[] backgroundPalettes;
-  private static Renderable backgroundRenderable;
-  private static VramTexture logoTexture;
-  private static VramTexture[] logoPalettes;
-  private static Renderable logoRenderable;
-  private static VramTexture menuTextTexture;
-  private static VramTexture[] menuTextPalettes;
-  private static final Renderable[] menuTextRenderables = new Renderable[3];
-  private static final Renderable[] menuTextBlurRenderables = new Renderable[3];
-  private static VramTexture tmTexture;
-  private static VramTexture[] tmPalettes;
-  private static Renderable tmRenderable;
-  private static VramTexture copyrightTexture;
-  private static VramTexture[] copyrightPalettes;
-  private static Renderable copyrightRenderable;
-  private static VramTexture fireTexture;
-  private static VramTexture[] firePalettes;
-  private static Renderable[] fireRenderable;
-  private static boolean texturesLoaded;
-  private static boolean fireLoaded;
-  private static boolean renderablesLoaded;
+  private Texture backgroundTex;
+  private Texture logoTex;
+  private Texture trademarkTex;
+  private final Texture[] menuTextTex = new Texture[3];
+  private Texture copyrightTex;
+  private Obj backgroundObj;
+  private Obj logoObj;
+  private Obj trademarkObj;
+  private Obj menuTextObj;
+  private Obj copyrightObj;
+
+  private VramTexture backgroundTexture;
+  private VramTexture[] backgroundPalettes;
+  private VramTexture logoTexture;
+  private VramTexture[] logoPalettes;
+  private VramTexture menuTextTexture;
+  private VramTexture[] menuTextPalettes;
+  private VramTexture tmTexture;
+  private VramTexture[] tmPalettes;
+  private VramTexture copyrightTexture;
+  private VramTexture[] copyrightPalettes;
+  private boolean texturesLoaded;
+  private boolean fireLoaded;
+  private boolean renderablesLoaded;
 
   private final int[] _800ce7b0 = {255, 1, 255, 255};
   private final int[] _800ce7f8 = {195, 131, 128, 80, 0, 64, 16, 56, 32, 64, 48, 96, 64, 80, 80, 32, 96, 32};
@@ -131,6 +135,7 @@ public class Ttle extends EngineState {
   public void tick() {
     switch(this.loadingStage) {
       case 0 -> this.initializeMainMenu();
+      case 1 -> this.loadTextures();
       case 3 -> this.renderMainMenu();
       case 4 -> this.fadeOutForNewGame();
       case 5 -> this.waitForSaveSelection();
@@ -148,7 +153,7 @@ public class Ttle extends EngineState {
     this.menuIdleTime = 0;
     this._800c6728 = 0;
     this._800c672c = 0;
-    this.logoFadeInAmount = 0;
+    this.logoFadeInAmount = 0.0f;
     this.backgroundInitialized = false;
     this.backgroundScrollAmount = -176;
     this.copyrightInitialized = false;
@@ -156,9 +161,9 @@ public class Ttle extends EngineState {
     this.logoFlashStage = 0;
     this.fadeOutTimer_800c6754 = 0;
 
-    texturesLoaded = false;
-    fireLoaded = false;
-    renderablesLoaded = false;
+    this.texturesLoaded = false;
+    this.fireLoaded = false;
+    this.renderablesLoaded = false;
 
     this.hasSavedGames = 0;
     this.selectedMenuOption = 0;
@@ -180,15 +185,103 @@ public class Ttle extends EngineState {
     //LAB_800c7d30
     for(int i = 0; i < 4; i++) {
       //LAB_800c7d4c
-      final Rect4i rect = new Rect4i(944 + i * 16, 256, 256, 64);
+      final Rect4i rect = new Rect4i(944 + i * 16, 256, 64, 64);
       this.fireAnimation_800c66d4[i] = this.FUN_800cdaa0(rect, this._800ce7b0[i]);
     }
 
     startFadeEffect(2, 15);
     GTE.setScreenOffset(0, 0);
-    this.loadingStage = 3;
+    this.loadingStage = 1;
 
     this.addInputHandlers();
+  }
+
+  private void loadTextures() {
+    if(!this.texturesLoaded) {
+      return;
+    }
+
+    this.backgroundTex = this.loadTexture((VramTextureSingle)this.backgroundTexture, (VramTextureSingle)this.backgroundPalettes[0]);
+    this.backgroundObj = new QuadBuilder("Title Screen Background")
+      .pos(0.0f, 0.0f, 1.0f)
+      .size(384.0f, 424.0f)
+      .bpp(Bpp.BITS_24)
+      .build();
+
+    this.logoTex = this.loadTexture((VramTextureSingle)this.logoTexture, (VramTextureSingle)this.logoPalettes[0]);
+    this.logoObj = new QuadBuilder("Title Screen Logo")
+      .pos(8.0f, 40.0f, 1.0f)
+      .size(352.0f, 88.0f)
+      .bpp(Bpp.BITS_24)
+      .translucency(Translucency.B_PLUS_F)
+      .build();
+
+    this.trademarkTex = this.loadTexture((VramTextureSingle)this.tmTexture, (VramTextureSingle)this.tmPalettes[0]);
+    this.trademarkObj = new QuadBuilder("Title Screen Trademark")
+      .pos(326.0f, 106.0f, 1.0f)
+      .size(16.0f, 8.0f)
+      .bpp(Bpp.BITS_24)
+      .translucency(Translucency.B_PLUS_F)
+      .build();
+
+    final QuadBuilder menuTextBuilder = new QuadBuilder("Title Screen Menu Text");
+    for(int i = 0; i < 3; i++) {
+      menuTextBuilder
+        .add()
+        .pos(192.0f + this._800ce8ac[i * 2], 120.0f + this._800ce8ac[i * 2 + 1] + 10, 100)
+        .size(this._800ce7f8[i * 2 + 1], 16.0f)
+        .uv(i == 0 ? 79 : 0, this._800ce7f8[i * 2])
+        .bpp(Bpp.BITS_24)
+        .translucency(Translucency.B_PLUS_F);
+    }
+
+    // Blurred backgrounds
+    for(int i = 0; i < 3; i++) {
+      menuTextBuilder
+        .add()
+        .pos(192.0f + this._800ce8ac[i * 2] - 8, 120.0f + this._800ce8ac[i * 2 + 1] + 10 - 8, 100)
+        .posSize(this._800ce840[i * 3 + 2], 31.0f)
+        .uvSize(this._800ce840[i * 3 + 2], 32.0f)
+        .uv(this._800ce840[i * 3], this._800ce840[i * 3 + 1])
+        .bpp(Bpp.BITS_24)
+        .translucency(Translucency.B_PLUS_F);
+    }
+
+    this.menuTextTex[0] = this.loadTexture((VramTextureSingle)this.menuTextTexture, (VramTextureSingle)this.menuTextPalettes[1]);
+    this.menuTextTex[1] = this.loadTexture((VramTextureSingle)this.menuTextTexture, (VramTextureSingle)this.menuTextPalettes[2]);
+    this.menuTextTex[2] = this.loadTexture((VramTextureSingle)this.menuTextTexture, (VramTextureSingle)this.menuTextPalettes[3]);
+    this.menuTextObj = menuTextBuilder.build();
+
+    this.copyrightTex = this.loadTexture((VramTextureSingle)this.copyrightTexture, (VramTextureSingle)this.copyrightPalettes[0]);
+    this.copyrightObj = new QuadBuilder("Title Screen Copyright")
+      .pos(4.0f, 200.0f, 1.0f)
+      .size(368.0f, 32.0f)
+      .bpp(Bpp.BITS_24)
+      .translucency(Translucency.B_PLUS_F)
+      .build();
+
+    this.loadingStage = 3;
+  }
+
+  //TODO this is dumb
+  private Texture loadTexture(final VramTextureSingle texture, final VramTextureSingle palette) {
+    final int[] backgroundData = palette.getData();
+
+    final int w = texture.rect.w();
+    final int h = texture.rect.h();
+    final int[] data = texture.getData();
+    final int[] newData = new int[data.length];
+
+    for(int i = 0; i < data.length; i++) {
+      newData[i] = backgroundData[data[i]];
+    }
+
+    return Texture.create(builder -> {
+      builder.data(newData, w, h);
+      builder.internalFormat(GL_RGBA);
+      builder.dataFormat(GL_RGBA);
+      builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
+    });
   }
 
   /**
@@ -209,39 +302,34 @@ public class Ttle extends EngineState {
    */
   @Method(0x800c7af0L)
   private void menuTexturesMrgLoaded(final List<FileData> files) {
-    backgroundTexture = stitchVertical(
+    this.backgroundTexture = stitchVertical(
       textureFromTim(new Tim(files.get(0))),
       textureFromTim(new Tim(files.get(1)))
     );
 
-    backgroundPalettes = palettesFromTim(new Tim(files.get(0)));
+    this.backgroundPalettes = palettesFromTim(new Tim(files.get(0)));
 
-    logoTexture = textureFromTim(new Tim(files.get(2)));
-    logoPalettes = palettesFromTim(new Tim(files.get(2)));
+    this.logoTexture = textureFromTim(new Tim(files.get(2)));
+    this.logoPalettes = palettesFromTim(new Tim(files.get(2)));
 
-    menuTextTexture = textureFromPngOneChannelBlue(Paths.get("gfx", "ui", "5718_3.png"));
-    menuTextPalettes = palettesFromTim(new Tim(files.get(3)));
+    this.menuTextTexture = textureFromPngOneChannelBlue(Paths.get("gfx", "ui", "5718_3.png"));
+    this.menuTextPalettes = palettesFromTim(new Tim(files.get(3)));
 
-    tmTexture = textureFromTim(new Tim(files.get(4)));
-    tmPalettes = palettesFromTim(new Tim(files.get(4)));
+    this.tmTexture = textureFromTim(new Tim(files.get(4)));
+    this.tmPalettes = palettesFromTim(new Tim(files.get(4)));
 
-    copyrightTexture = stitchHorizontal(
+    this.copyrightTexture = stitchHorizontal(
       textureFromTim(new Tim(files.get(5))),
       textureFromTim(new Tim(files.get(6)))
     );
 
-    copyrightPalettes = palettesFromTim(new Tim(files.get(5)));
+    this.copyrightPalettes = palettesFromTim(new Tim(files.get(5)));
 
-    fireTexture = stitch(
-      textureFromTim(new Tim(files.get(10))),
-      textureFromTim(new Tim(files.get(7))),
-      textureFromTim(new Tim(files.get(8))),
-      textureFromTim(new Tim(files.get(9)))
-    );
+    for(int i = 7; i < 11; i++) {
+      new Tim(files.get(i)).uploadToGpu();
+    }
 
-    firePalettes = palettesFromTims(new Tim(files.get(10)), new Tim(files.get(7)), new Tim(files.get(8)), new Tim(files.get(9)));
-
-    texturesLoaded = true;
+    this.texturesLoaded = true;
   }
 
   @Method(0x800c7c18L)
@@ -250,114 +338,15 @@ public class Ttle extends EngineState {
     this._800c66d0 = this.parseTmdFile(tmd);
     this.FUN_800cc0b0(this._800c66d0, null);
     this.setDobjAttributes(this._800c66d0, 0);
-    fireLoaded = true;
+    this.fireLoaded = true;
   }
 
   private void prepareRenderables() {
-    backgroundRenderable = ModelLoader.quad(
-      "Background",
-      -192, -120, orderingTableSize_1f8003c8 - 3,
-      384, 424,
-      0, 0,
-      384, 424,
-      0,
-      384, 0,
-      0, 0, 0,
-      null
-    )
-      .texture(backgroundTexture)
-      .palettes(backgroundPalettes)
-      .build();
-
-    logoRenderable = ModelLoader.quad(
-      "Logo",
-      -184, -80, orderingTableSize_1f8003c8 - 4,
-      352, 88,
-      0, 0,
-      352, 88,
-      1,
-      576, 256,
-      0, 0, 0,
-      Translucency.B_PLUS_F
-    )
-      .texture(logoTexture)
-      .palettes(logoPalettes)
-      .build();
-
-    tmRenderable = ModelLoader.quad(
-      "TM",
-      134, -14, orderingTableSize_1f8003c8 - 4,
-      16, 8,
-      0, 0,
-      16, 8,
-      80,
-      896, 240,
-      0, 0, 0,
-      Translucency.B_PLUS_F
-    )
-      .texture(tmTexture)
-      .palettes(tmPalettes)
-      .build();
-
-    Arrays.setAll(
-      menuTextRenderables,
-      i -> ModelLoader.quad(
-        "Text " + i,
-          this._800ce8ac[i * 2], this._800ce8ac[i * 2 + 1] + 10, 100,
-          this._800ce7f8[i * 2 + 1], 16,
-        i == 0 ? 79 : 0, this._800ce7f8[i * 2],
-          this._800ce7f8[i * 2 + 1], 16,
-        0,
-        0, 0,
-        0x80, 0x80, 0x80,
-        Translucency.B_PLUS_F
-      )
-        .texture(menuTextTexture)
-        .palettes(menuTextPalettes)
-        .build()
-    );
-
-    Arrays.setAll(
-      menuTextBlurRenderables,
-      i -> ModelLoader.quad(
-        "Text blur " + i,
-          this._800ce8ac[i * 2] - 8, this._800ce8ac[i * 2 + 1] + 10 - 8, 100,
-          this._800ce840[i * 3 + 2], 31,
-          this._800ce840[i * 3], this._800ce840[i * 3 + 1],
-          this._800ce840[i * 3 + 2], 32,
-        0,
-        0, 0,
-        0x80, 0x80, 0x80,
-        Translucency.B_PLUS_F
-      )
-      .texture(menuTextTexture)
-      .palettes(menuTextPalettes)
-      .build()
-    );
-
-    copyrightRenderable = ModelLoader.quad(
-      "Copyright",
-      -188, 80, 100,
-      368, 32,
-      0, 0,
-      368, 32,
-      64,
-      896, 0,
-      0, 0, 0,
-      Translucency.B_PLUS_F
-    )
-      .texture(copyrightTexture)
-      .palettes(copyrightPalettes)
-      .build();
-
-    fireRenderable = new Renderable[this._800c66d0.dobj2s_00.length];
     for(int i = 0; i < this._800c66d0.dobj2s_00.length; i++) {
-      fireRenderable[i] = ModelLoader
-        .fromTmd("Fire " + i, this._800c66d0.dobj2s_00[i].tmd_08)
-        .texture(fireTexture)
-        .palettes(firePalettes)
-        .build();
+      this._800c66d0.dobj2s_00[i].obj = TmdObjLoader.fromObjTable("Title Screen Fire " + i, this._800c66d0.dobj2s_00[i].tmd_08);
     }
+
+    this.renderablesLoaded = true;
   }
 
   @Method(0x800c7e50L)
@@ -373,7 +362,7 @@ public class Ttle extends EngineState {
       if(this._800c6728 == 2) {
         whichMenu_800bdc38 = WhichMenu.INIT_NEW_CAMPAIGN_MENU;
         removeInputHandlers();
-        this.deallocateFire();
+        this.deallocate();
         this._800c6728 = 3;
       }
     }
@@ -384,7 +373,7 @@ public class Ttle extends EngineState {
     if(whichMenu_800bdc38 == WhichMenu.NONE_0) {
       if(loadingNewGameState_800bdc34) {
         removeInputHandlers();
-        this.deallocateFire();
+        this.deallocate();
 
         Fmv.playCurrentFmv(2, EngineStateEnum.TRANSITION_TO_NEW_GAME_03);
         return;
@@ -395,10 +384,10 @@ public class Ttle extends EngineState {
         this.loadingStage = 0;
         vsyncMode_8007a3b8 = 2;
       } else {
-        this.renderMenuLogo();
-        this.renderMenuOptions();
-        this.renderMenuLogoFire();
         this.renderMenuBackground();
+        this.renderMenuOptions();
+        this.renderMenuLogo();
+        this.renderMenuLogoFire();
         this.renderCopyright();
       }
     }
@@ -416,7 +405,7 @@ public class Ttle extends EngineState {
       if(this._800c6728 == 2) {
         whichMenu_800bdc38 = WhichMenu.INIT_OPTIONS_MENU;
         removeInputHandlers();
-        this.deallocateFire();
+        this.deallocate();
         this._800c6728 = 3;
       }
     }
@@ -431,10 +420,10 @@ public class Ttle extends EngineState {
         this.loadingStage = 0;
         vsyncMode_8007a3b8 = 2;
       } else {
-        this.renderMenuLogo();
-        this.renderMenuOptions();
-        this.renderMenuLogoFire();
         this.renderMenuBackground();
+        this.renderMenuOptions();
+        this.renderMenuLogo();
+        this.renderMenuLogoFire();
         this.renderCopyright();
       }
     }
@@ -453,7 +442,7 @@ public class Ttle extends EngineState {
       if(this._800c6728 == 2) {
         whichMenu_800bdc38 = WhichMenu.INIT_CAMPAIGN_SELECTION_MENU;
         removeInputHandlers();
-        this.deallocateFire();
+        this.deallocate();
         this._800c6728 = 3;
       }
     }
@@ -483,10 +472,10 @@ public class Ttle extends EngineState {
         vsyncMode_8007a3b8 = 2;
       } else {
         //LAB_800c8108
-        this.renderMenuLogo();
-        this.renderMenuOptions();
-        this.renderMenuLogoFire();
         this.renderMenuBackground();
+        this.renderMenuOptions();
+        this.renderMenuLogo();
+        this.renderMenuLogoFire();
         this.renderCopyright();
       }
     }
@@ -501,16 +490,16 @@ public class Ttle extends EngineState {
     }
 
     //LAB_800c8174
-    this.renderMenuLogo();
-    this.renderMenuOptions();
-    this.renderMenuLogoFire();
     this.renderMenuBackground();
+    this.renderMenuOptions();
+    this.renderMenuLogo();
+    this.renderMenuLogoFire();
     this.renderCopyright();
 
     this.fadeOutTimer_800c6754++;
     if(this.fadeOutTimer_800c6754 > 15) {
       removeInputHandlers();
-      this.deallocateFire();
+      this.deallocate();
 
       Fmv.playCurrentFmv(0, EngineStateEnum.TITLE_02);
 
@@ -522,13 +511,16 @@ public class Ttle extends EngineState {
 
   @Method(0x800c8298L)
   private void renderMainMenu() {
-    if(!renderablesLoaded) {
-      if(!texturesLoaded || !fireLoaded) {
+    if(!this.renderablesLoaded) {
+      if(!this.texturesLoaded || !this.fireLoaded) {
         return;
       }
 
       this.prepareRenderables();
     }
+
+    //LAB_800c83c8
+    this.renderMenuBackground();
 
     if(this.menuLoadingStage == 0) {
       //LAB_800c82f0
@@ -542,7 +534,7 @@ public class Ttle extends EngineState {
       //LAB_800c831c
       this.renderMenuLogo();
 
-      if(this.logoFadeInAmount >= 128) {
+      if(this.logoFadeInAmount >= 1.0f) {
         this.menuLoadingStage = 2;
       }
 
@@ -564,8 +556,8 @@ public class Ttle extends EngineState {
           this.handleMainInput();
         }
 
-        this.renderMenuLogo();
         this.renderMenuOptions();
+        this.renderMenuLogo();
         this.renderMenuLogoFire();
         this.renderCopyright();
 
@@ -574,9 +566,6 @@ public class Ttle extends EngineState {
         }
       }
     }
-
-    //LAB_800c83c8
-    this.renderMenuBackground();
 
     if(this._800c6728 != 1) {
       this.menuIdleTime += 2;
@@ -614,7 +603,7 @@ public class Ttle extends EngineState {
 
       if(this.menuLoadingStage == 3) {
         if(this._800c672c < 3) {
-          for(int i = 0; i < menuTextRenderables.length; i++) {
+          for(int i = 0; i < 3; i++) {
             if(i == 1 && this.hasSavedGames != 1) {
               continue;
             }
@@ -661,7 +650,7 @@ public class Ttle extends EngineState {
         final float scaleY = h / GPU.getDisplayTextureHeight();
 
         if(this._800c672c < 3) {
-          for(int i = 0; i < menuTextRenderables.length; i++) {
+          for(int i = 0; i < 3; i++) {
             if(i == 1 && this.hasSavedGames != 1) {
               continue;
             }
@@ -707,7 +696,7 @@ public class Ttle extends EngineState {
 
         this.selectedMenuOption--;
         if(this.selectedMenuOption < 0) {
-          this.selectedMenuOption = menuTextRenderables.length - 1;
+          this.selectedMenuOption = 2;
         }
 
         if(this.selectedMenuOption == 1 && this.hasSavedGames != 1) {
@@ -719,7 +708,7 @@ public class Ttle extends EngineState {
         playSound(0, 1, 0, 0, (short)0, (short)0);
 
         this.selectedMenuOption++;
-        if(this.selectedMenuOption >= menuTextRenderables.length) {
+        if(this.selectedMenuOption >= 3) {
           this.selectedMenuOption = 0;
         }
 
@@ -746,7 +735,7 @@ public class Ttle extends EngineState {
     switch(this._800c672c) {
       case 0 -> {
         //LAB_800c86d8
-        for(int i = 0; i < menuTextRenderables.length; i++) {
+        for(int i = 0; i < 3; i++) {
           //LAB_800c86f4
           this.menuOptionTransparency[i] = 0;
         }
@@ -758,7 +747,7 @@ public class Ttle extends EngineState {
       case 1 -> {
         //LAB_800c8740
         //LAB_800c886c
-        for(int i = 0; i < menuTextRenderables.length; i++) {
+        for(int i = 0; i < 3; i++) {
           //LAB_800c875c
           this.menuOptionTransparency[i] += 4;
           if(this.selectedMenuOption == i) {
@@ -779,7 +768,7 @@ public class Ttle extends EngineState {
       case 2 -> {
         //LAB_800c8878
         //LAB_800c89e4
-        for(int i = 0; i < menuTextRenderables.length; i++) {
+        for(int i = 0; i < 3; i++) {
           //LAB_800c8894
           if(this.selectedMenuOption == i) {
             // Fade in selected item
@@ -826,7 +815,7 @@ public class Ttle extends EngineState {
     }
 
     //LAB_800c8a70
-    for(int i = 0; i < menuTextRenderables.length; i++) {
+    for(int i = 0; i < 3; i++) {
       final int colour;
       if(i != 1 || this.hasSavedGames == 1) {
         colour = this.menuOptionTransparency[i];
@@ -835,15 +824,17 @@ public class Ttle extends EngineState {
       }
 
       //LAB_800c8a8c
-      menuTextRenderables[i]
-        .recolourMono(colour)
-        .palette(this.selectedMenuOption == i ? 5 : 2)
-        .render();
+      RENDERER
+        .queueOrthoUnderlayModel(this.menuTextObj)
+        .monochrome(colour / 128.0f)
+        .texture(this.menuTextTex[2])
+        .vertices((i + 3) * 4, 4);
 
-      menuTextBlurRenderables[i]
-        .recolourMono(colour)
-        .palette(4)
-        .render();
+      RENDERER
+        .queueOrthoUnderlayModel(this.menuTextObj)
+        .monochrome(colour / 128.0f)
+        .texture(this.menuTextTex[this.selectedMenuOption == i ? 1 : 0])
+        .vertices(i * 4, 4);
     }
 
     //LAB_800c9390
@@ -853,55 +844,67 @@ public class Ttle extends EngineState {
   @Method(0x800cab48L)
   private void renderCopyright() {
     if(!this.copyrightInitialized) {
-      this.copyrightFadeInAmount = 0;
+      this.copyrightFadeInAmount = 0.0f;
       this.copyrightInitialized = true;
     }
 
     //LAB_800cab7c
-    this.copyrightFadeInAmount += 4;
-    if(this.copyrightFadeInAmount > 0x80) {
-      this.copyrightFadeInAmount = 0x80;
+    this.copyrightFadeInAmount += 8.0f / 255.0f;
+    if(this.copyrightFadeInAmount > 1.0f) {
+      this.copyrightFadeInAmount = 1.0f;
     }
 
     //LAB_800cabb8
     //LAB_800cabcc
     //LAB_800cabe8
-    copyrightRenderable.recolourMono(this.copyrightFadeInAmount).render();
+    RENDERER
+      .queueOrthoUnderlayModel(this.copyrightObj)
+      .monochrome(this.copyrightFadeInAmount)
+      .texture(this.copyrightTex);
   }
 
   @Method(0x800cadd0L)
   private void renderMenuLogo() {
-    this.logoFadeInAmount += 4;
-    if(this.logoFadeInAmount > 0x80) {
-      this.logoFadeInAmount = 0x80;
+    this.logoFadeInAmount += 8.0f / 255.0f;
+    if(this.logoFadeInAmount > 1.0f) {
+      this.logoFadeInAmount = 1.0f;
     }
 
     //LAB_800cae18
     //LAB_800cae2c
     //LAB_800cae48
-    logoRenderable.recolourMono(this.logoFadeInAmount).render();
-    tmRenderable.recolourMono(this.logoFadeInAmount).render();
+    RENDERER
+      .queueOrthoUnderlayModel(this.logoObj)
+      .monochrome(this.logoFadeInAmount)
+      .texture(this.logoTex);
+
+    RENDERER
+      .queueOrthoUnderlayModel(this.trademarkObj)
+      .monochrome(this.logoFadeInAmount)
+      .texture(this.trademarkTex);
   }
 
   @Method(0x800cb070L)
   private void renderMenuBackground() {
     if(!this.backgroundInitialized) {
       this.backgroundScrollAmount = -176;
-      this.backgroundFadeInAmount = 0;
+      this.backgroundFadeInAmount = 0.0f;
       this.backgroundInitialized = true;
     }
 
     //LAB_800cb0b0
-    this.backgroundFadeInAmount += 2;
-    if(this.backgroundFadeInAmount > 0x80) {
-      this.backgroundFadeInAmount = 0x80;
+    this.backgroundFadeInAmount += 4.0f / 255.0f;
+    if(this.backgroundFadeInAmount > 1.0f) {
+      this.backgroundFadeInAmount = 1.0f;
     }
 
     //LAB_800cb0ec
     //LAB_800cb100
-    backgroundRenderable
-      .recolourMono(this.backgroundFadeInAmount)
-      .render(0, this.backgroundScrollAmount);
+    RENDERER
+      .queueOrthoUnderlayModel(this.backgroundObj)
+      .texture(this.backgroundTex)
+      .screenspaceOffset(0.0f, -this.backgroundScrollAmount)
+      .monochrome(this.backgroundFadeInAmount);
 
     //LAB_800cb370
     this.backgroundScrollAmount++;
@@ -913,18 +916,28 @@ public class Ttle extends EngineState {
   }
 
   @Method(0x800cb69cL)
-  private void deallocateFire() {
+  private void deallocate() {
+    for(int i = 0; i < this._800c66d0.dobj2s_00.length; i++) {
+      this._800c66d0.dobj2s_00[i].delete();
+    }
+
     this._800c66d0 = null;
 
     for(int i = 0; i < 4; i++) {
       this.fireAnimation_800c66d4[i] = null;
     }
+
+    this.backgroundObj.delete();
+    this.logoObj.delete();
+    this.trademarkObj.delete();
+    this.menuTextObj.delete();
+    this.copyrightObj.delete();
   }
 
   @Method(0x800cb728L)
   private void renderMenuLogoFire() {
     final Vector3f rotation = new Vector3f(0.0f, -MathHelper.TWO_PI / 2.0f, 0.0f);
-    final Vector3f scale = new Vector3f(0.8544922f, 1.0f, 1.0f);
+    final Vector3f scale = new Vector3f(0.743f, 1.0f, 1.0f);
 
     if(!this.logoFireInitialized) {
       this.logoFireInitialized = true;
@@ -942,23 +955,21 @@ public class Ttle extends EngineState {
 
     final ModelPart10[] dobj2s = this._800c66d0.dobj2s_00;
     final GsCOORDINATE2[] coord2s = this._800c66d0.coord2s_04;
+    final MV lw = new MV();
 
     //LAB_800cb834
     for(int i = 0; i < this._800c66d0.count_08; i++) {
-      final MV sp10 = new MV();
-      final MV sp30 = new MV();
-
       //LAB_800cb85c
       this.FUN_800cc26c(rotation, coord2s[i]);
-      GsGetLws(dobj2s[i].coord2_04, sp10, sp30);
-      GsSetLightMatrix(sp10);
-      sp30.scaleLocal(scale);
-      GTE.setTransforms(sp30);
-      zOffset_1f8003e8 = 100;
-      fireRenderable[i]
-        .colourMultiplier(this.flameColour)
-        .render();
-      zOffset_1f8003e8 = 0;
+      GsGetLw(dobj2s[i].coord2_04, lw);
+      lw.scaleLocal(scale);
+
+      RENDERER.queueModel(this._800c66d0.dobj2s_00[i].obj, lw)
+        .monochrome(this.flameColour / 128.0f)
+        .screenspaceOffset(9.75f, -0.5f)
+        .lightDirection(lightDirectionMatrix_800c34e8)
+        .lightColour(lightColourMatrix_800c3508)
+        .backgroundColour(GTE.backgroundColour);
     }
 
     //LAB_800cb904
@@ -1114,9 +1125,9 @@ public class Ttle extends EngineState {
     }
 
     //LAB_800ce3d8
-    fireTexture.getRegion(sp10, fireAnimation.pixels_0c);
-    fireTexture.getRegion(sp18, fireAnimation.pixels_08);
-    fireTexture.setRegion(sp20, fireAnimation.pixels_0c);
-    fireTexture.setRegion(sp28, fireAnimation.pixels_08);
+    GPU.downloadData15(sp10, fireAnimation.pixels_0c);
+    GPU.downloadData15(sp18, fireAnimation.pixels_08);
+    GPU.uploadData15(sp20, fireAnimation.pixels_0c);
+    GPU.uploadData15(sp28, fireAnimation.pixels_08);
   }
 }

@@ -95,6 +95,8 @@ public final class Texture {
     });
   }
 
+  private static final int[] currentTextures = new int[32];
+
   final int id;
 
   public final int width;
@@ -164,8 +166,11 @@ public final class Texture {
   }
 
   public void use(final int activeTexture) {
-    glActiveTexture(GL_TEXTURE0 + activeTexture);
-    glBindTexture(GL_TEXTURE_2D, this.id);
+    if(currentTextures[activeTexture] != this.id) {
+      currentTextures[activeTexture] = this.id;
+      glActiveTexture(GL_TEXTURE0 + activeTexture);
+      glBindTexture(GL_TEXTURE_2D, this.id);
+    }
   }
 
   public void use() {

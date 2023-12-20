@@ -336,6 +336,27 @@ public class Gpu {
     }
   }
 
+  public void downloadData15(final Rect4i rect, final int[] out) {
+    final int rectX = rect.x;
+    final int rectY = rect.y;
+    final int rectW = rect.w;
+    final int rectH = rect.h;
+
+    assert rectX + rectW <= this.vramWidth : "Rect right (" + (rectX + rectW) + ") overflows VRAM width (" + this.vramWidth + ')';
+    assert rectY + rectH <= this.vramHeight : "Rect bottom (" + (rectY + rectH) + ") overflows VRAM height (" + this.vramHeight + ')';
+
+    LOGGER.debug("Copying (%d, %d, %d, %d) from VRAM to byte array", rectX, rectY, rectW, rectH);
+
+    synchronized(this.vramLock) {
+      int i = 0;
+      for(int y = rectY; y < rectY + rectH; y++) {
+        for(int x = rectX; x < rectX + rectW; x++) {
+          out[i++] = this.getPixel15(x, y);
+        }
+      }
+    }
+  }
+
   public void copyVramToVram(final int sourceX, final int sourceY, final int destX, final int destY, final int width, final int height) {
     LOGGER.debug("COPY VRAM VRAM from %d %d to %d %d size %d %d", sourceX, sourceY, destX, destY, width, height);
 

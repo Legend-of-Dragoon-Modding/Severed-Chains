@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -477,6 +478,7 @@ public class RenderEngine {
         RENDERER.setProjectionMode(ProjectionMode._2D);
         this.renderPoolTranslucent(this.orthoPool);
 
+        // If we're paused, don't reset the pool so that we keep rendering the same scene over and over again
         if(!this.paused) {
           this.modelPool.reset();
           this.orthoPool.reset();
@@ -567,7 +569,6 @@ public class RenderEngine {
     this.opaqueFrameBuffer.bind();
     this.tmdShader.use();
     this.tmdShaderDiscardTranslucency.set(1.0f);
-    GPU.useVramTexture();
 
     for(int i = 0; i < pool.size(); i++) {
       final QueuedModel entry = pool.get(i);
@@ -581,6 +582,7 @@ public class RenderEngine {
       if(entry.obj.shouldRender(null)) {
         glEnable(GL_CULL_FACE);
         updated = true;
+        entry.useTexture();
         entry.updateTransforms();
         entry.render(null);
       }
@@ -594,6 +596,7 @@ public class RenderEngine {
 
           if(!updated) {
             updated = true;
+            entry.useTexture();
             entry.updateTransforms();
           }
 
@@ -624,6 +627,7 @@ public class RenderEngine {
         this.tmdShaderClutOverride.set(entry.clutOverride);
         this.tmdShaderTpageOverride.set(entry.tpageOverride);
         this.tmdShaderUvOffset.set(entry.uvOffset);
+        entry.useTexture();
         entry.updateTransforms();
         entry.render(Translucency.B_PLUS_F);
       }
@@ -634,6 +638,7 @@ public class RenderEngine {
         this.tmdShaderClutOverride.set(entry.clutOverride);
         this.tmdShaderTpageOverride.set(entry.tpageOverride);
         this.tmdShaderUvOffset.set(entry.uvOffset);
+        entry.useTexture();
         entry.updateTransforms();
         entry.render(Translucency.B_MINUS_F);
       }
@@ -651,6 +656,7 @@ public class RenderEngine {
       final QueuedModel entry = pool.get(i);
 
       if(entry.obj.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
+        entry.useTexture();
         entry.updateTransforms();
         this.tmdShaderTransparentColour.set(entry.colour);
         this.tmdShaderTransparentClutOverride.set(entry.clutOverride);
@@ -671,6 +677,7 @@ public class RenderEngine {
     glDisable(GL_DEPTH_TEST);
     for(int i = 0; i < pool.size(); i++) {
       final QueuedModel entry = pool.get(i);
+      entry.useTexture();
       entry.updateTransforms();
       this.tmdShaderColour.set(entry.colour);
       this.tmdShaderClutOverride.set(entry.clutOverride);
@@ -1089,6 +1096,9 @@ public class RenderEngine {
     private int startVertex;
     private int vertexCount;
 
+    private final Texture[] textures = new Texture[32];
+    private boolean texturesUsed;
+
     public QueuedModel screenspaceOffset(final Vector2f offset) {
       this.screenspaceOffset.x = offset.x;
       this.screenspaceOffset.y = offset.y;
@@ -1162,6 +1172,16 @@ public class RenderEngine {
       return this;
     }
 
+    public QueuedModel texture(final Texture texture, final int textureUnit) {
+      this.textures[textureUnit] = texture;
+      this.texturesUsed = true;
+      return this;
+    }
+
+    public QueuedModel texture(final Texture texture) {
+      return this.texture(texture, 0);
+    }
+
     private void reset() {
       this.transforms.identity();
       this.lightTransforms.identity();
@@ -1172,6 +1192,20 @@ public class RenderEngine {
       this.uvOffset.zero();
       this.scissor.set(0, 0, 0, 0);
       this.vertexCount = 0;
+      Arrays.fill(this.textures, null);
+      this.texturesUsed = false;
+    }
+
+    private void useTexture() {
+      if(this.texturesUsed) {
+        for(int i = 0; i < this.textures.length; i++) {
+          if(this.textures[i] != null) {
+            this.textures[i].use(i);
+          }
+        }
+      } else {
+        GPU.useVramTexture();
+      }
     }
 
     private void updateTransforms() {
