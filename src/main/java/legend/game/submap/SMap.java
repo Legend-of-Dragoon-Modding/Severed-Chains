@@ -7179,8 +7179,10 @@ public class SMap extends EngineState {
         script.params_20[2].neg();
       }
 
+      final float stepAngleMax = script.params_20[4].get() / 4096.0f * MathHelper.TWO_PI;
+
       //LAB_800f2210
-      this.snow_800d4bd8 = new SnowEffect(script.params_20[4].get(), script.params_20[3].get(), script.params_20[1].get(), script.params_20[2].get());
+      this.snow_800d4bd8 = new SnowEffect(stepAngleMax, script.params_20[3].get(), script.params_20[1].get(), script.params_20[2].get());
     }
 
     //LAB_800f2250

@@ -28,12 +28,12 @@ public class SnowEffect {
     // /** Unused */
     // public short _02;
     public float angle_04;
-    public int stepAngleMax_08;
+    public float stepAngleMax_08;
     public int translationScaleX_0c;
     public int stepXMax_10;
     public int stepYDivisor_14;
 
-    private SnowParticleData18(final int stepAngleMax, final int translationScaleX, final int stepXMax, final int stepYDivisor) {
+    private SnowParticleData18(final float stepAngleMax, final int translationScaleX, final int stepXMax, final int stepYDivisor) {
       this.angle_04 = 0.0f;
       this.stepAngleMax_08 = stepAngleMax;
       this.translationScaleX_0c = translationScaleX;
@@ -43,8 +43,6 @@ public class SnowEffect {
   }
 
   private static class SnowParticleInstance3c {
-    public int tick;
-
     // /** Whether particle should render, code was written so that it always rendered */
     // public short _00;
 
@@ -57,8 +55,6 @@ public class SnowEffect {
 
     public float stepX_1c;
     public float stepY_20;
-    /** Not retail; randomized gaussian component of snow Y movement */
-    public float randY;
     /** 16.16 */
     public float xAccumulator_24;
     // /** 16.16 - not needed now because y and yAccum are always in lockstep */
@@ -69,7 +65,7 @@ public class SnowEffect {
     // public SnowParticleInstance3c next_38;
   }
 
-  public SnowEffect(final int stepAngleMax, final int translationScaleX, final int stepXMax, final int stepYDivisor) {
+  public SnowEffect(final float stepAngleMax, final int translationScaleX, final int stepXMax, final int stepYDivisor) {
     this.particleData = new SnowParticleData18(stepAngleMax, translationScaleX, stepXMax, stepYDivisor);
     this.initSnowEffect();
 
@@ -92,7 +88,7 @@ public class SnowEffect {
       //LAB_800ee3a0
       if(inst.y_18 + 128.0f <= 256.0f) {
         inst.xAccumulator_24 += inst.stepX_1c / (2.0f / vsyncMode_8007a3b8);
-        inst.x_16 = inst.xAccumulator_24 + ((inst.translationScaleX_10 * sin(inst.angle_08) / MathHelper.TWO_PI) / (2.0f / vsyncMode_8007a3b8));
+        inst.x_16 = inst.xAccumulator_24 + ((inst.translationScaleX_10 * sin(inst.angle_08) / (MathHelper.TWO_PI)) / (2.0f / vsyncMode_8007a3b8));
 
         if(inst.x_16 < -200.0f) {
           inst.x_16 = 200.0f;
@@ -106,10 +102,7 @@ public class SnowEffect {
         }
 
         //LAB_800ee448
-        if(inst.tick % 8 == 0) {
-          inst.randY = (float)this.rand.nextGaussian(0.0f, 2.5f);
-        }
-        inst.y_18 += (inst.stepY_20 + inst.randY) / (2.0f / vsyncMode_8007a3b8);
+        inst.y_18 += inst.stepY_20 / (2.0f / vsyncMode_8007a3b8);
 
         this.transforms.scaling(inst.size_14);
         this.transforms.transfer.set(GPU.getOffsetX() + inst.x_16, GPU.getOffsetY() + inst.y_18, 160.0f);
@@ -122,7 +115,6 @@ public class SnowEffect {
         this.wrapAroundSnowEffect(inst);
       }
       //LAB_800ee534
-      inst.tick++;
     }
     //LAB_800ee544
   }
@@ -130,7 +122,6 @@ public class SnowEffect {
   private void initSnowEffect() {
     for(int i = 0; i < this.particles.length; i++) {
       final SnowParticleInstance3c inst = new SnowParticleInstance3c();
-      inst.tick = this.snowEffectTick;
 
       inst.x_16 = this.rand.nextFloat(400.0f) - 200.0f + this.snowOffsetXTick;
       inst.y_18 = this.rand.nextFloat(256.0f) - 128.0f;
