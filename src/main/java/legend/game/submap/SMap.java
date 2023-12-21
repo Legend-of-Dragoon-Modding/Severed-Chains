@@ -76,7 +76,9 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
+import static legend.core.MathHelper.cos;
 import static legend.core.MathHelper.flEq;
+import static legend.core.MathHelper.psxDegToRad;
 import static legend.core.MathHelper.sin;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
@@ -1806,7 +1808,7 @@ public class SMap extends EngineState {
     //LAB_800def28
     this.caches_800c68e8.playerMovement_0c.set(movement).add(model.coord2_14.coord.transfer);
     final int reachX = Math.round(sin(angle) * -sobj.playerCollisionReach_1c0);
-    final int reachZ = Math.round(MathHelper.cos(angle) * -sobj.playerCollisionReach_1c0);
+    final int reachZ = Math.round(cos(angle) * -sobj.playerCollisionReach_1c0);
     final float colliderMinY = movement.y - sobj.playerCollisionSizeVertical_1bc;
     final float colliderMaxY = movement.y + sobj.playerCollisionSizeVertical_1bc;
 
@@ -3075,7 +3077,7 @@ public class SMap extends EngineState {
     final float reachZ;
     if(reach != 0) {
       reachX = sin(model.coord2_14.transforms.rotate.y) * -reach;
-      reachZ = MathHelper.cos(model.coord2_14.transforms.rotate.y) * -reach;
+      reachZ = cos(model.coord2_14.transforms.rotate.y) * -reach;
     } else {
       reachX = 0.0f;
       reachZ = 0.0f;
@@ -4152,7 +4154,7 @@ public class SMap extends EngineState {
     sobj.collidedWithSobjIndex_1a8 = -1;
 
     final int reachX = Math.round(sin(model.coord2_14.transforms.rotate.y) * -sobj.collisionReach_1b4);
-    final int reachZ = Math.round(MathHelper.cos(model.coord2_14.transforms.rotate.y) * -sobj.collisionReach_1b4);
+    final int reachZ = Math.round(cos(model.coord2_14.transforms.rotate.y) * -sobj.collisionReach_1b4);
     final float colliderMinY = model.coord2_14.coord.transfer.y - sobj.collisionSizeVertical_1b0;
     final float colliderMaxY = model.coord2_14.coord.transfer.y + sobj.collisionSizeVertical_1b0;
 
@@ -7179,10 +7181,9 @@ public class SMap extends EngineState {
         script.params_20[2].neg();
       }
 
-      final float stepAngleMax = script.params_20[4].get() / 4096.0f * MathHelper.TWO_PI;
-
       //LAB_800f2210
-      this.snow_800d4bd8 = new SnowEffect(stepAngleMax, script.params_20[3].get(), script.params_20[1].get(), script.params_20[2].get());
+      this.snow_800d4bd8 = new SnowEffect(psxDegToRad(script.params_20[4].get()), script.params_20[3].get(), script.params_20[1].get(), script.params_20[2].get());
+      this.snow_800d4bd8.initSnowEffect();
     }
 
     //LAB_800f2250
@@ -7530,7 +7531,7 @@ public class SMap extends EngineState {
       struct1.vert0_00.x = struct0.vert0_00.x;
       struct1.vert0_00.y = struct0.vert0_00.y;
       struct0.vert0_00.x = sp68 + (sp80 + this._800d6c78[fp]) * sin(struct0.rotation_28);
-      struct0.vert0_00.y = sp6a + (sp78 + this._800d6c78[fp]) * MathHelper.cos(struct0.rotation_28);
+      struct0.vert0_00.y = sp6a + (sp78 + this._800d6c78[fp]) * cos(struct0.rotation_28);
 
       if(struct0.fadeState_38 != 0) {
         struct0.colour_34 -= struct0.fadeAmount_2c;

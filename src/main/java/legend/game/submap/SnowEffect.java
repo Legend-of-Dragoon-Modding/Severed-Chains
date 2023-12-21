@@ -21,7 +21,7 @@ public class SnowEffect {
   private final SnowParticleData18 particleData;
   private final SnowParticleInstance3c[] particles = new SnowParticleInstance3c[256];
 
-  public final MeshObj particle;
+  public MeshObj particle;
   public final MV transforms = new MV();
 
   private static class SnowParticleData18 {
@@ -67,59 +67,9 @@ public class SnowEffect {
 
   public SnowEffect(final float stepAngleMax, final int translationScaleX, final int stepXMax, final int stepYDivisor) {
     this.particleData = new SnowParticleData18(stepAngleMax, translationScaleX, stepXMax, stepYDivisor);
-    this.initSnowEffect();
-
-    this.particle = new QuadBuilder("Snowflake")
-      .bpp(Bpp.BITS_4)
-      .clut(960, 464)
-      .monochrome(1.0f)
-      .translucency(Translucency.B_PLUS_F)
-      .vramPos(960, 320)
-      .size(1.0f, 1.0f)
-      .uvSize(24, 24)
-      .build();
   }
 
-  public void render() {
-    //LAB_800ee38c
-    for(int i = 0; i < this.particles.length; i++) {
-      final SnowParticleInstance3c inst = this.particles[i];
-
-      //LAB_800ee3a0
-      if(inst.y_18 + 128.0f <= 256.0f) {
-        inst.xAccumulator_24 += inst.stepX_1c / (2.0f / vsyncMode_8007a3b8);
-        inst.x_16 = inst.xAccumulator_24 + ((inst.translationScaleX_10 * sin(inst.angle_08) / (MathHelper.TWO_PI)) / (2.0f / vsyncMode_8007a3b8));
-
-        if(inst.x_16 < -200.0f) {
-          inst.x_16 = 200.0f;
-          inst.xAccumulator_24 = 200.0f;
-          inst.angle_08 = 0.0f;
-          //LAB_800ee42c
-        } else if(inst.x_16 > 200.0f) {
-          inst.x_16 = -200.0f;
-          inst.xAccumulator_24 = -200.0f;
-          inst.angle_08 = 0.0f;
-        }
-
-        //LAB_800ee448
-        inst.y_18 += inst.stepY_20 / (2.0f / vsyncMode_8007a3b8);
-
-        this.transforms.scaling(inst.size_14);
-        this.transforms.transfer.set(GPU.getOffsetX() + inst.x_16, GPU.getOffsetY() + inst.y_18, 160.0f);
-        RENDERER.queueOrthoModel(this.particle, this.transforms)
-          .monochrome(inst.brightness_34);
-
-        inst.angle_08 = (inst.angle_08 + inst.angleStep_0c / (2.0f / vsyncMode_8007a3b8)) % MathHelper.TWO_PI;
-      } else {
-        //LAB_800ee52c
-        this.wrapAroundSnowEffect(inst);
-      }
-      //LAB_800ee534
-    }
-    //LAB_800ee544
-  }
-
-  private void initSnowEffect() {
+  public void initSnowEffect() {
     for(int i = 0; i < this.particles.length; i++) {
       final SnowParticleInstance3c inst = new SnowParticleInstance3c();
 
@@ -174,6 +124,55 @@ public class SnowEffect {
 
     this.snowEffectTick = 0;
     this.snowOffsetXTick = 0;
+
+    this.particle = new QuadBuilder("Snowflake")
+      .bpp(Bpp.BITS_4)
+      .clut(960, 464)
+      .monochrome(1.0f)
+      .translucency(Translucency.B_PLUS_F)
+      .vramPos(960, 320)
+      .size(1.0f, 1.0f)
+      .uvSize(24, 24)
+      .build();
+  }
+
+  public void render() {
+    //LAB_800ee38c
+    for(int i = 0; i < this.particles.length; i++) {
+      final SnowParticleInstance3c inst = this.particles[i];
+
+      //LAB_800ee3a0
+      if(inst.y_18 + 128.0f <= 256.0f) {
+        inst.xAccumulator_24 += inst.stepX_1c / (2.0f / vsyncMode_8007a3b8);
+        inst.x_16 = inst.xAccumulator_24 + ((inst.translationScaleX_10 * sin(inst.angle_08) / (MathHelper.TWO_PI)) / (2.0f / vsyncMode_8007a3b8));
+
+        if(inst.x_16 < -200.0f) {
+          inst.x_16 = 200.0f;
+          inst.xAccumulator_24 = 200.0f;
+          inst.angle_08 = 0.0f;
+          //LAB_800ee42c
+        } else if(inst.x_16 > 200.0f) {
+          inst.x_16 = -200.0f;
+          inst.xAccumulator_24 = -200.0f;
+          inst.angle_08 = 0.0f;
+        }
+
+        //LAB_800ee448
+        inst.y_18 += inst.stepY_20 / (2.0f / vsyncMode_8007a3b8);
+
+        this.transforms.scaling(inst.size_14);
+        this.transforms.transfer.set(GPU.getOffsetX() + inst.x_16, GPU.getOffsetY() + inst.y_18, 160.0f);
+        RENDERER.queueOrthoModel(this.particle, this.transforms)
+          .monochrome(inst.brightness_34);
+
+        inst.angle_08 = (inst.angle_08 + inst.angleStep_0c / (2.0f / vsyncMode_8007a3b8)) % MathHelper.TWO_PI;
+      } else {
+        //LAB_800ee52c
+        this.wrapAroundSnowEffect(inst);
+      }
+      //LAB_800ee534
+    }
+    //LAB_800ee544
   }
 
   /** Reuse snow effect when it reaches the bottom of the screen */
