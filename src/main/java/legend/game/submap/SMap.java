@@ -4484,7 +4484,6 @@ public class SMap extends EngineState {
    */
   @Method(0x800e5330L)
   private void loadBackground(final String mapName, final List<FileData> files) {
-    this.backgroundLoaded_800cab10 = true;
     this.envTextures = new Tim[files.size() - 3];
 
     //LAB_800e5374
@@ -4499,6 +4498,7 @@ public class SMap extends EngineState {
 
     submapEnvState_80052c44 = 2;
     this._800cab20 = 2 * (3 - vsyncMode_8007a3b8);
+    this.backgroundLoaded_800cab10 = true;
   }
 
   @Method(0x800e5518L)
