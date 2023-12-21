@@ -2,6 +2,7 @@ package legend.game.submap;
 
 import legend.core.gte.MV;
 import legend.core.opengl.Obj;
+import legend.core.opengl.Texture;
 
 public class EnvironmentRenderingMetrics24 {
   public int tpage_04;
@@ -24,5 +25,6 @@ public class EnvironmentRenderingMetrics24 {
   public int flags_22;
 
   public Obj obj;
+  public Texture texture;
   public final MV transforms = new MV();
 }

@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.Config;
 import legend.core.MathHelper;
+import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.GpuCommandLine;
@@ -26,6 +27,7 @@ import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.modding.events.submap.SubmapEnvironmentTextureEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
@@ -72,6 +74,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
@@ -236,7 +239,7 @@ public class SMap extends EngineState {
   private TriangleIndicator140 triangleIndicator_800c69fc;
 
   /** TODO array, flags for submap objects - 0x80 means the model is the same as the previous one */
-  private final IntList submapObjectFlags_800c6a50 = new IntArrayList();
+  private final IntList sobjVramSlots_800c6a50 = new IntArrayList();
 
   private final Vector3f cameraPos_800c6aa0 = new Vector3f();
 
@@ -255,6 +258,7 @@ public class SMap extends EngineState {
   private NewRootStruct newrootPtr_800cab04;
 
   private boolean backgroundLoaded_800cab10;
+  private Tim[] envTextures;
 
   private int _800cab20;
   private MediumStruct _800cab24;
@@ -1452,13 +1456,15 @@ public class SMap extends EngineState {
       if((model.partInvisible_f4 & 1L << i) == 0) {
         final ModelPart10 dobj2 = model.modelParts_00[i];
 
-        GsGetLw(dobj2.coord2_04, lw);
+        if(dobj2.obj != null) { //TODO remove me
+          GsGetLw(dobj2.coord2_04, lw);
 
-        RENDERER.queueModel(dobj2.obj, lw)
-          .screenspaceOffset(this.screenOffsetX_800cb568 + 8, -this.screenOffsetY_800cb56c)
-          .lightDirection(lightDirectionMatrix_800c34e8)
-          .lightColour(lightColourMatrix_800c3508)
-          .backgroundColour(GTE.backgroundColour);
+          RENDERER.queueModel(dobj2.obj, lw)
+            .screenspaceOffset(this.screenOffsetX_800cb568 + 8, -this.screenOffsetY_800cb56c)
+            .lightDirection(lightDirectionMatrix_800c34e8)
+            .lightColour(lightColourMatrix_800c3508)
+            .backgroundColour(GTE.backgroundColour);
+        }
       }
     }
 
@@ -2357,7 +2363,7 @@ public class SMap extends EngineState {
     final int index = script.params_20[1].get();
 
     sobj.sobjIndex_12e = index;
-    model.vramSlot_9d = this.submapObjectFlags_800c6a50.getInt(index);
+    model.vramSlot_9d = this.sobjVramSlots_800c6a50.getInt(index);
 
     this.loadModelAndAnimation(model, this.submapAssets.objects.get(index).model, this.submapAssets.objects.get(index).animations.get(0));
 
@@ -3419,16 +3425,16 @@ public class SMap extends EngineState {
         submapController.loadScriptFile(this.submapAssets.script);
 
         //LAB_800e1a38
-        this.submapObjectFlags_800c6a50.clear();
+        this.sobjVramSlots_800c6a50.clear();
         for(int i = 0; i < this.sobjCount_800c6730; i++) {
-          this.submapObjectFlags_800c6a50.add(i + 0x81);
+          this.sobjVramSlots_800c6a50.add(i + 0x81);
 
           if(i + 1 == s3) {
-            this.submapObjectFlags_800c6a50.set(i, 0x92);
+            this.sobjVramSlots_800c6a50.set(i, 0x92);
           }
 
           if(i + 1 == s4) {
-            this.submapObjectFlags_800c6a50.set(i, 0x93);
+            this.sobjVramSlots_800c6a50.set(i, 0x93);
           }
 
           //LAB_800e1a80
@@ -3440,7 +3446,7 @@ public class SMap extends EngineState {
           //LAB_800e1ae0
           for(int n = i + 1; n < this.sobjCount_800c6730; n++) {
             if(this.submapAssets.objects.get(n).model == this.submapAssets.objects.get(i).model) {
-              this.submapObjectFlags_800c6a50.set(n, 0x80);
+              this.sobjVramSlots_800c6a50.set(n, 0x80);
             }
           }
         }
@@ -3459,7 +3465,7 @@ public class SMap extends EngineState {
           state.loadScriptFile(obj.script);
 
           final Model124 model = state.innerStruct_00.model_00;
-          model.vramSlot_9d = this.submapObjectFlags_800c6a50.getInt(i);
+          model.vramSlot_9d = this.sobjVramSlots_800c6a50.getInt(i);
 
           final CContainer tmd = this.submapAssets.objects.get(i).model;
           final TmdAnimationFile anim = obj.animations.get(0);
@@ -4479,10 +4485,12 @@ public class SMap extends EngineState {
   @Method(0x800e5330L)
   private void loadBackground(final String mapName, final List<FileData> files) {
     this.backgroundLoaded_800cab10 = true;
+    this.envTextures = new Tim[files.size() - 3];
 
     //LAB_800e5374
-    for(int i = 3; i < files.size(); i++) {
-      new Tim(files.get(i)).uploadToGpu();
+    for(int i = 0; i < files.size() - 3; i++) {
+      this.envTextures[i] = new Tim(files.get(i + 3));
+      this.envTextures[i].uploadToGpu();
     }
 
     //LAB_800e5430
@@ -4740,6 +4748,24 @@ public class SMap extends EngineState {
 
       case WAIT_FOR_ENVIRONMENT_6 -> {
         if(this.backgroundLoaded_800cab10) {
+          for(int i = 0; i < this.envTextureCount_800cb584; i++) {
+            final EnvironmentRenderingMetrics24 renderPacket = this.envRenderMetrics_800cb710[i];
+            for(int textureIndex = 0; textureIndex < this.envTextures.length; textureIndex++) {
+              final Tim texture = this.envTextures[textureIndex];
+              final Rect4i bounds = texture.getImageRect();
+
+              final int tpX = (renderPacket.tpage_04 & 0b1111) * 64;
+              final int tpY = (renderPacket.tpage_04 & 0b10000) != 0 ? 256 : 0;
+
+              if(MathHelper.inBox(tpX, tpY, bounds.x, bounds.y, bounds.w, bounds.h)) {
+                final SubmapEnvironmentTextureEvent event = EVENTS.postEvent(new SubmapEnvironmentTextureEvent(submapCut_80052c30, textureIndex + 3));
+                renderPacket.texture = event.texture;
+                break;
+              }
+            }
+          }
+
+          this.envTextures = null;
           this.smapLoadingStage_800cb430 = SubmapState.LOAD_MAP_POINTS_9;
         }
       }
@@ -5570,19 +5596,33 @@ public class SMap extends EngineState {
       final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[i];
 
       if(metrics.obj == null) {
-        metrics.obj = new QuadBuilder("BackgroundTexture (index " + i + ')')
-          .bpp(Bpp.of(metrics.tpage_04 >>> 7 & 0b11))
-          .clut(768, metrics.clut_16 >>> 6)
-          .vramPos((metrics.tpage_04 & 0b1111) * 64, (metrics.tpage_04 & 0b10000) != 0 ? 256 : 0)
-          .pos(metrics.offsetX_1c, metrics.offsetY_1e, metrics.z_20 * 4.0f)
-          .uv(metrics.u_14, metrics.v_15)
-          .size(metrics.w_18, metrics.h_1a)
-          .build();
+        if(metrics.texture == null) {
+          metrics.obj = new QuadBuilder("BackgroundTexture (index " + i + ')')
+            .bpp(Bpp.of(metrics.tpage_04 >>> 7 & 0b11))
+            .clut(768, metrics.clut_16 >>> 6)
+            .vramPos((metrics.tpage_04 & 0b1111) * 64, (metrics.tpage_04 & 0b10000) != 0 ? 256 : 0)
+            .pos(metrics.offsetX_1c, metrics.offsetY_1e, metrics.z_20 * 4.0f)
+            .uv(metrics.u_14, metrics.v_15)
+            .size(metrics.w_18, metrics.h_1a)
+            .build();
+        } else {
+          metrics.obj = new QuadBuilder("BackgroundTexture (index " + i + ')')
+            .bpp(Bpp.BITS_24)
+            .pos(metrics.offsetX_1c, metrics.offsetY_1e, metrics.z_20 * 4.0f)
+            .uv(metrics.u_14 * 8.0f, metrics.v_15 * 8.0f)
+            .uvSize(metrics.w_18 * 8.0f, metrics.h_1a * 8.0f)
+            .posSize(metrics.w_18, metrics.h_1a)
+            .build();
+        }
       }
 
       metrics.transforms.identity();
       metrics.transforms.transfer.set(GPU.getOffsetX() + this.submapOffsetX_800cb560 + this.screenOffsetX_800cb568, GPU.getOffsetY() + this.submapOffsetY_800cb564 + this.screenOffsetY_800cb56c, 0.0f);
-      RENDERER.queueOrthoModel(metrics.obj, metrics.transforms);
+      final RenderEngine.QueuedModel model = RENDERER.queueOrthoModel(metrics.obj, metrics.transforms);
+
+      if(metrics.texture != null) {
+        model.texture(metrics.texture);
+      }
     }
 
     //LAB_800e7a60
@@ -5672,14 +5712,24 @@ public class SMap extends EngineState {
         final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[this.envBackgroundTextureCount_800cb57c + i];
 
         if(metrics.obj == null) {
-          metrics.obj = new QuadBuilder("CutoutTexture (index " + i + ')')
-            .bpp(Bpp.of(metrics.tpage_04 >>> 7 & 0b11))
-            .clut(768, metrics.clut_16 >>> 6)
-            .vramPos((metrics.tpage_04 & 0b1111) * 64, (metrics.tpage_04 & 0b10000) != 0 ? 256 : 0)
-            .pos(metrics.offsetX_1c, metrics.offsetY_1e, 0.0f)
-            .uv(metrics.u_14, metrics.v_15)
-            .size(metrics.w_18, metrics.h_1a)
-            .build();
+          if(metrics.texture == null) {
+            metrics.obj = new QuadBuilder("CutoutTexture (index " + i + ')')
+              .bpp(Bpp.of(metrics.tpage_04 >>> 7 & 0b11))
+              .clut(768, metrics.clut_16 >>> 6)
+              .vramPos((metrics.tpage_04 & 0b1111) * 64, (metrics.tpage_04 & 0b10000) != 0 ? 256 : 0)
+              .pos(metrics.offsetX_1c, metrics.offsetY_1e, 0.0f)
+              .uv(metrics.u_14, metrics.v_15)
+              .size(metrics.w_18, metrics.h_1a)
+              .build();
+          } else {
+            metrics.obj = new QuadBuilder("CutoutTexture (index " + i + ')')
+              .bpp(Bpp.BITS_24)
+              .pos(metrics.offsetX_1c, metrics.offsetY_1e, 0.0f)
+              .uv(metrics.u_14 * 8.0f, metrics.v_15 * 8.0f)
+              .uvSize(metrics.w_18 * 8.0f, metrics.h_1a * 8.0f)
+              .posSize(metrics.w_18, metrics.h_1a)
+              .build();
+          }
         }
 
         // This was causing a problem when moving left from the room before Zackwell. Not sure if this is a retail issue or SC-specific. GH#332
@@ -5690,7 +5740,11 @@ public class SMap extends EngineState {
 
         metrics.transforms.identity();
         metrics.transforms.transfer.set(GPU.getOffsetX() + this.submapOffsetX_800cb560 + this.screenOffsetX_800cb568 + this.envForegroundMetrics_800cb590[i].x_00, GPU.getOffsetY() + this.submapOffsetY_800cb564 + this.screenOffsetY_800cb56c + this.envForegroundMetrics_800cb590[i].y_04, z * 4.0f);
-        RENDERER.queueOrthoModel(metrics.obj, metrics.transforms);
+        final RenderEngine.QueuedModel model = RENDERER.queueOrthoModel(metrics.obj, metrics.transforms);
+
+        if(metrics.texture != null) {
+          model.texture(metrics.texture);
+        }
       }
     }
 
