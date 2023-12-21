@@ -79,7 +79,10 @@ import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCRIPTS;
+import static legend.core.MathHelper.cos;
 import static legend.core.MathHelper.flEq;
+import static legend.core.MathHelper.psxDegToRad;
+import static legend.core.MathHelper.sin;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
@@ -94,8 +97,6 @@ import static legend.game.Scus94491BpeSegment.loadSubmapSounds;
 import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
 import static legend.game.Scus94491BpeSegment.reinitSound;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
-import static legend.game.Scus94491BpeSegment.rsin;
-import static legend.game.Scus94491BpeSegment.simpleRand;
 import static legend.game.Scus94491BpeSegment.startCurrentMusicSequence;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
@@ -313,7 +314,7 @@ public class SMap extends EngineState {
 
   private Structb0 _800d4bd0;
   private FileData _800d4bd4;
-  private SnowEffect3c snow_800d4bd8;
+  private SnowEffect snow_800d4bd8;
   private boolean submapCutModelAndAnimLoaded_800d4bdc;
   private boolean submapTextureAndMatrixLoaded_800d4be0;
   private boolean theEndTimLoaded_800d4be4;
@@ -324,8 +325,6 @@ public class SMap extends EngineState {
   private Tim theEndTim_800d4bf0;
 
   private final Model124 submapModel_800d4bf8 = new Model124("Submap");
-
-  private final SnowStruct18 snowStuff_800d4d20 = new SnowStruct18();
 
   private final Model124 dustModel_800d4d40 = new Model124("Dust");
 
@@ -783,14 +782,7 @@ public class SMap extends EngineState {
   private int submapModelLoadingStage_800f9e5a;
   private final Vector2i tpage_800f9e5c = new Vector2i();
   private final Vector2i clut_800f9e5e = new Vector2i();
-  private int _800f9e60;
-
-  private int snowLoadingStage_800f9e64;
-
-  private int _800f9e68;
-  private int _800f9e6a;
-  private int _800f9e6c;
-  private int _800f9e6e;
+  private int snowState_800f9e60;
 
   private int _800f9e78;
 
@@ -962,7 +954,7 @@ public class SMap extends EngineState {
     functions[773] = this::FUN_800f23ec;
     functions[774] = this::FUN_800f2780;
     functions[775] = this::scriptReinitializeSmokePlumeForIntermittentBursts;
-    functions[776] = this::FUN_800f2198;
+    functions[776] = this::scriptInitSnowParticleData;
     functions[777] = this::FUN_800f1eb8;
     functions[778] = this::scriptAllocateTriangleIndicatorArray;
     functions[779] = this::FUN_800f1b64;
@@ -1815,8 +1807,8 @@ public class SMap extends EngineState {
 
     //LAB_800def28
     this.caches_800c68e8.playerMovement_0c.set(movement).add(model.coord2_14.coord.transfer);
-    final int reachX = Math.round(MathHelper.sin(angle) * -sobj.playerCollisionReach_1c0);
-    final int reachZ = Math.round(MathHelper.cos(angle) * -sobj.playerCollisionReach_1c0);
+    final int reachX = Math.round(sin(angle) * -sobj.playerCollisionReach_1c0);
+    final int reachZ = Math.round(cos(angle) * -sobj.playerCollisionReach_1c0);
     final float colliderMinY = movement.y - sobj.playerCollisionSizeVertical_1bc;
     final float colliderMaxY = movement.y + sobj.playerCollisionSizeVertical_1bc;
 
@@ -3084,8 +3076,8 @@ public class SMap extends EngineState {
     final float reachX;
     final float reachZ;
     if(reach != 0) {
-      reachX = MathHelper.sin(model.coord2_14.transforms.rotate.y) * -reach;
-      reachZ = MathHelper.cos(model.coord2_14.transforms.rotate.y) * -reach;
+      reachX = sin(model.coord2_14.transforms.rotate.y) * -reach;
+      reachZ = cos(model.coord2_14.transforms.rotate.y) * -reach;
     } else {
       reachX = 0.0f;
       reachZ = 0.0f;
@@ -4161,8 +4153,8 @@ public class SMap extends EngineState {
 
     sobj.collidedWithSobjIndex_1a8 = -1;
 
-    final int reachX = Math.round(MathHelper.sin(model.coord2_14.transforms.rotate.y) * -sobj.collisionReach_1b4);
-    final int reachZ = Math.round(MathHelper.cos(model.coord2_14.transforms.rotate.y) * -sobj.collisionReach_1b4);
+    final int reachX = Math.round(sin(model.coord2_14.transforms.rotate.y) * -sobj.collisionReach_1b4);
+    final int reachZ = Math.round(cos(model.coord2_14.transforms.rotate.y) * -sobj.collisionReach_1b4);
     final float colliderMinY = model.coord2_14.coord.transfer.y - sobj.collisionSizeVertical_1b0;
     final float colliderMaxY = model.coord2_14.coord.transfer.y + sobj.collisionSizeVertical_1b0;
 
@@ -6156,220 +6148,17 @@ public class SMap extends EngineState {
   @Method(0x800ee20cL)
   private void handleSnow() {
     if(this.submapEffectsState_800f9eac == -1) {
-      this.snowLoadingStage_800f9e64 = -1;
+      if(this.snowState_800f9e60 != 0) {
+        this.snow_800d4bd8.deallocate();
+        this.snow_800d4bd8 = null;
+      }
+
+      //LAB_800ee348
+      this.snowState_800f9e60 = 0;
+    } else {
+      this.snow_800d4bd8.render();
     }
-
-    //LAB_800ee234
-    switch(this.snowLoadingStage_800f9e64) {
-      case 0 -> {
-        this.snow_800d4bd8 = new SnowEffect3c();
-        this.snowLoadingStage_800f9e64++;
-      }
-
-      case 1 -> {
-        if(this.allocateSnowEffect(this.snow_800d4bd8)) {
-          //LAB_800ee2fc
-          this.snowLoadingStage_800f9e64++;
-        }
-      }
-
-      case 2 -> {
-        SnowEffect3c snow = this.snow_800d4bd8.next_38;
-
-        //LAB_800ee2d8
-        int count;
-        for(count = 0; snow != null; count++) {
-          this.initSnowEffect(snow);
-          snow = snow.next_38;
-        }
-
-        //LAB_800ee2f0
-        if(count >= 256) {
-          //LAB_800ee2fc
-          this.snowLoadingStage_800f9e64++;
-        }
-      }
-
-      case 3 -> this.renderSnowEffect(this.snow_800d4bd8);
-
-      case -1 -> {
-        if(this._800f9e60 != 0) {
-          this.deallocateSnowEffect(this.snow_800d4bd8);
-        }
-
-        //LAB_800ee348
-        this._800f9e60 = 0;
-        this.snowLoadingStage_800f9e64 = 0;
-      }
-    }
-
     //LAB_800ee354
-  }
-
-  @Method(0x800ee368L)
-  private void renderSnowEffect(final SnowEffect3c root) {
-    SnowEffect3c snow = root.next_38;
-
-    //LAB_800ee38c
-    while(snow != null) {
-      if(snow._00 == 0) {
-        snow._00 = 1;
-      }
-
-      //LAB_800ee3a0
-      if(snow._00 == 1) {
-        if((snow.y_18 + 120 & 0xffff) < 241) {
-          snow.xAccumulator_24 += snow.xStep_1c;
-          snow.x_16 = (short)((snow.xAccumulator_24 >> 16) + (snow._10 * rsin(snow.angle_08) >> 12));
-
-          final short x = snow.x_16;
-          if(x < -192) {
-            snow.x_16 = 192;
-            snow.xAccumulator_24 = 0xc0_0000;
-            snow.angle_08 = 0;
-            //LAB_800ee42c
-          } else if(x > 0xc0) {
-            snow.x_16 = -192;
-            snow.xAccumulator_24 = -0xc0_0000;
-            snow.angle_08 = 0;
-          }
-
-          //LAB_800ee448
-          snow.yAccumulator_28 += snow.yStep_20;
-          snow.y_18 = (short)(snow.yAccumulator_28 >> 16);
-
-          GPU.queueCommand(40, new GpuCommandQuad()
-            .monochrome(snow.colour_34)
-            .pos(snow.x_16, snow.y_18, snow.size_14, snow.size_14)
-          );
-
-          snow.angle_08 += snow.angleStep_0c;
-          snow.angle_08 &= 0xfff;
-        } else {
-          //LAB_800ee52c
-          this.wrapAroundSnowEffect(snow);
-        }
-      }
-
-      //LAB_800ee534
-      snow = snow.next_38;
-    }
-
-    //LAB_800ee544
-  }
-
-  @Method(0x800ee558L)
-  private void initSnowEffect(final SnowEffect3c snow) {
-    snow._00 = 1;
-    snow.x_16 = (short)(rand() % 384 - 192 + this._800f9e6a);
-    snow.y_18 = (short)(rand() % 240 - 120);
-
-    final SnowStruct18 s1 = this.snowStuff_800d4d20;
-    int a0 = s1._10;
-    if(a0 == 0) {
-      snow.xStep_1c = 0;
-    } else {
-      //LAB_800ee62c
-      snow.xStep_1c = 0x20_0000 / (a0 - (simpleRand() * a0 / 2 >> 16));
-    }
-
-    //LAB_800ee644
-    snow.xAccumulator_24 = snow.x_16 << 16;
-
-    int s2 = 0;
-    a0 = this._800f9e68;
-    if(a0 < 35) {
-      snow.size_14 = 3;
-      //LAB_800ee66c
-    } else if(a0 < 150) {
-      snow.size_14 = 2;
-      s2 = s1._14 * 0x5555 >> 16;
-      //LAB_800ee6ac
-    } else if(a0 < 256) {
-      snow.size_14 = 1;
-      s2 = s1._14 * 0x5555 >> 15;
-    }
-
-    //LAB_800ee6e8
-    snow.colour_34 = 0xff;
-    snow.yAccumulator_28 = snow.y_18 << 16;
-    snow.yStep_20 = 0x20_0000 / (s1._14 + s2);
-    snow._10 = s1._0c;
-    final int angle = simpleRand() << 11 >> 16;
-    s1.angle_04 = angle;
-    snow.angle_08 = angle;
-
-    if(s1._08 == 0) {
-      snow.angleStep_0c = 0;
-    } else {
-      //LAB_800ee750
-      snow.angleStep_0c = simpleRand() * s1._08 >> 16;
-    }
-
-    //LAB_800ee770
-    this._800f9e68 = this._800f9e68 + 1 & 0xff;
-    this._800f9e6a = this._800f9e6a + 1 & 0x0f;
-  }
-
-  /** Reuse snow effect when it reaches the bottom of the screen */
-  @Method(0x800ee7b0L)
-  private void wrapAroundSnowEffect(final SnowEffect3c snow) {
-    snow._00 = 0;
-    snow.x_16 = (short)(rand() % 384 - 192 + this._800f9e6e);
-    snow.y_18 = (short)-120;
-
-    final SnowStruct18 s1 = this.snowStuff_800d4d20;
-    final int a0 = s1._10;
-    if(a0 == 0) {
-      snow.xStep_1c = 0;
-    } else {
-      //LAB_800ee84c
-      snow.xStep_1c = 0x20_0000 / (a0 - (simpleRand() * a0 / 2 >> 16));
-    }
-
-    //LAB_800ee864
-    snow.xAccumulator_24 = snow.x_16 << 16;
-    snow.yAccumulator_28 = snow.y_18 << 16;
-    snow.colour_34 = 0xd8;
-
-    final int v1 = this._800f9e6c;
-    int s2 = 0;
-    if(v1 == 0 || v1 == 2 || v1 == 4) {
-      //LAB_800ee890
-      snow.size_14 = 1;
-      s2 = s1._14 * 0x5555 >> 15;
-      //LAB_800ee8c0
-    } else if(v1 == 1) {
-      snow.size_14 = 2;
-      s2 = s1._14 * 0x5555 >> 16;
-      //LAB_800ee8f4
-    } else if(v1 == 3) {
-      snow.size_14 = 3;
-    }
-
-    //LAB_800ee900
-    //LAB_800ee904
-    snow.yStep_20 = 0x20_0000 / (s1._14 + s2);
-    snow._10 = s1._0c;
-    final int v0 = simpleRand() << 11 >> 16;
-    s1.angle_04 = v0;
-    snow.angle_08 = v0;
-
-    if(s1._08 == 0) {
-      snow.angleStep_0c = 0;
-    } else {
-      //LAB_800ee968
-      snow.angleStep_0c = simpleRand() * s1._08 >> 16;
-    }
-
-    //LAB_800ee988
-    this._800f9e6c++;
-    if(this._800f9e6c >= 6) {
-      this._800f9e6c = 0;
-    }
-
-    //LAB_800ee9b4
-    this._800f9e6e = this._800f9e6e + 1 & 0xf;
   }
 
   @Method(0x800ee9e0L)
@@ -6493,31 +6282,6 @@ public class SMap extends EngineState {
     }
 
     GPU.uploadData15(imageRect, imageAddress);
-  }
-
-  @Method(0x800ef034L)
-  private boolean allocateSnowEffect(final SnowEffect3c root) {
-    SnowEffect3c current = root;
-
-    //LAB_800ef04c
-    for(int i = 0; i < 0x100; i++) {
-      current = new SnowEffect3c();
-      current.next_38 = root.next_38;
-      root.next_38 = current;
-    }
-
-    return current != null;
-  }
-
-  @Method(0x800ef090L)
-  private void deallocateSnowEffect(final SnowEffect3c a0) {
-    SnowEffect3c s0 = a0.next_38;
-
-    //LAB_800ef0b4
-    while(s0 != null) {
-      s0 = s0.next_38;
-      a0.next_38 = s0;
-    }
   }
 
   @Method(0x800ef0f8L)
@@ -7449,40 +7213,28 @@ public class SMap extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Initialized parameters for snow")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p3")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p4")
+  @ScriptDescription("Initializes fields for snow particle data.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "unused")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepAngleMax", description = "Maximum value for random angle step.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "translationScaleX", description = "Magnitude of additional x step based on the angle of the particle's trajectory.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepXMax", description = "Maximum value of random component used in calculating a particle's x step.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepYDivisor", description = "Value used in calculated the size of the y step.")
   @Method(0x800f2198L)
-  private FlowControl FUN_800f2198(final RunningScript<?> script) {
-    final short a1 = (short)script.params_20[0].get();
-    final SnowStruct18 a2 = this.snowStuff_800d4d20;
+  private FlowControl scriptInitSnowParticleData(final RunningScript<?> script) {
+    this.snowState_800f9e60 = script.params_20[0].get();
 
-    a2._02 = a1;
-
-    if(a1 == 0) {
-      this._800f9e60 = 0;
-      //LAB_800f21d0
-    } else if(a1 == 1) {
-      this._800f9e60 = 1;
-
+    //LAB_800f21d0
+    if(this.snowState_800f9e60 == 1) {
       if(script.params_20[2].get() < 0) {
         script.params_20[2].neg();
       }
 
       //LAB_800f2210
-      a2.angle_04 = 0;
-      a2._08 = script.params_20[4].get();
-      a2._0c = script.params_20[3].get();
-      a2._10 = script.params_20[1].get();
-      a2._14 = script.params_20[2].get();
-      //LAB_800f2250
-    } else if(a1 == 2) {
-      this._800f9e60 = 2;
+      this.snow_800d4bd8 = new SnowEffect(psxDegToRad(script.params_20[4].get()), script.params_20[3].get(), script.params_20[1].get(), script.params_20[2].get());
+      this.snow_800d4bd8.initSnowEffect();
     }
 
+    //LAB_800f2250
     //LAB_800f225c
     return FlowControl.CONTINUE;
   }
@@ -7826,8 +7578,8 @@ public class SMap extends EngineState {
       struct2.vert0_00.y = struct1.vert0_00.y;
       struct1.vert0_00.x = struct0.vert0_00.x;
       struct1.vert0_00.y = struct0.vert0_00.y;
-      struct0.vert0_00.x = sp68 + (sp80 + this._800d6c78[fp]) * MathHelper.sin(struct0.rotation_28);
-      struct0.vert0_00.y = sp6a + (sp78 + this._800d6c78[fp]) * MathHelper.cos(struct0.rotation_28);
+      struct0.vert0_00.x = sp68 + (sp80 + this._800d6c78[fp]) * sin(struct0.rotation_28);
+      struct0.vert0_00.y = sp6a + (sp78 + this._800d6c78[fp]) * cos(struct0.rotation_28);
 
       if(struct0.fadeState_38 != 0) {
         struct0.colour_34 -= struct0.fadeAmount_2c;
@@ -8174,7 +7926,7 @@ public class SMap extends EngineState {
     if(this._800c6870 == -1) {
       this.smokePlumeEffect_800d5fd8.deallocate();
 
-      if(this._800f9e60 > 0 && this._800f9e60 < 3) {
+      if(this.snowState_800f9e60 == 1 || this.snowState_800f9e60 == 2) {
         this.handleSnow();
       }
 
@@ -8182,7 +7934,7 @@ public class SMap extends EngineState {
     } else {
       this.smokePlumeEffect_800d5fd8.tickAndRenderSmokePlumeEffect(this.screenOffsetX_800cb568, this.screenOffsetY_800cb56c);
 
-      if(this._800f9e60 == 1) {
+      if(this.snowState_800f9e60 == 1) {
         this.handleSnow();
       }
 
@@ -8194,7 +7946,7 @@ public class SMap extends EngineState {
   private void deallocateSmokeAndSnow() {
     this.smokePlumeEffect_800d5fd8.deallocate();
 
-    if(this._800f9e60 > 0 && this._800f9e60 < 3) {
+    if(this.snowState_800f9e60 == 1 || this.snowState_800f9e60 == 3) {
       this.handleSnow();
     }
 
