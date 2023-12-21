@@ -917,11 +917,13 @@ public class Ttle extends EngineState {
 
   @Method(0x800cb69cL)
   private void deallocate() {
-    for(int i = 0; i < this._800c66d0.dobj2s_00.length; i++) {
-      this._800c66d0.dobj2s_00[i].delete();
-    }
+    if(this._800c66d0 != null) {
+      for(int i = 0; i < this._800c66d0.dobj2s_00.length; i++) {
+        this._800c66d0.dobj2s_00[i].delete();
+      }
 
-    this._800c66d0 = null;
+      this._800c66d0 = null;
+    }
 
     for(int i = 0; i < 4; i++) {
       this.fireAnimation_800c66d4[i] = null;
