@@ -328,9 +328,9 @@ public class SMap extends EngineState {
 
   private final Model124 dustModel_800d4d40 = new Model124("Dust");
 
-  private final DustRenderData54 dust_800d4e68 = new DustRenderData54();
+  private final DustType1And2Particle54 dustType1And2_800d4e68 = new DustType1And2Particle54();
 
-  private final Struct20 _800d4ec0 = new Struct20();
+  private final DustType0Particle20 dustType0_800d4ec0 = new DustType0Particle20();
 
   private final SmokeParticleEffect smokeCloudEffect_800d4f50 = new SmokeParticleEffect();
 
@@ -433,10 +433,10 @@ public class SMap extends EngineState {
     new Vector3f(  2.0f, 0.0f,   8.0f),
     new Vector3f( 12.0f, 0.0f,   8.0f),
   };
-  private final int[] _800d6bdc = {96, 112, 64, 0};
+  private final int[] dustUs_800d6bdc = {96, 112, 64, 0};
   private final int[] dustTextureWidths_800d6bec = {15, 15, 31, 23};
   private final int[] dustTextureHeights_800d6bfc = {31, 31, 31, 23};
-  private final int[] _800d6c0c = {120, 0, 0, 0};
+  private final int[] brightnessTickInterval_800d6c0c = {120, 0, 0, 0};
 
   private final Vector3f _800d6c18 = new Vector3f(-8.0f, 0.0f, 0.0f);
   private final Vector3f _800d6c20 = new Vector3f( 8.0f, 0.0f, 0.0f);
@@ -1444,9 +1444,15 @@ public class SMap extends EngineState {
 
     //LAB_800daaa8
     final MV lw = new MV();
+    final MV ls = new MV();
     for(int i = 0; i < model.modelParts_00.length; i++) {
       if((model.partInvisible_f4 & 1L << i) == 0) {
         final ModelPart10 dobj2 = model.modelParts_00[i];
+
+        GsGetLws(dobj2.coord2_04, lw, ls);
+        GsSetLightMatrix(lw);
+        GTE.setTransforms(ls);
+        Renderer.renderDobj2(dobj2, false, 0);
 
         if(dobj2.obj != null) { //TODO remove me
           GsGetLw(dobj2.coord2_04, lw);
@@ -3153,7 +3159,7 @@ public class SMap extends EngineState {
       }
 
       //LAB_800e1390
-      this.FUN_800ef0f8(sobj.model_00, sobj._1d0);
+      this.tickDust(sobj.model_00, sobj.dustData_1d0);
     }
 
     //LAB_800e139c
@@ -3514,7 +3520,7 @@ public class SMap extends EngineState {
           }
 
           //LAB_800e1d60
-          this.FUN_800f04ac(state.innerStruct_00._1d0);
+          this.initDustData(state.innerStruct_00.dustData_1d0);
 
           for(final ModelPart10 part : model.modelParts_00) {
             part.obj = TmdObjLoader.fromObjTable("SobjModel (index " + i + ')', part.tmd_08);
@@ -4188,7 +4194,7 @@ public class SMap extends EngineState {
 
   @Method(0x800e4708L)
   private void renderSubmap() {
-    this.FUN_800f047c();
+    this.handleAndRenderDust();
     this.renderSubmapOverlays();
     this.handleAndRenderSubmapEffects();
     applyModelRotationAndScale(this.playerModel_800c6748);
@@ -6285,171 +6291,163 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800ef0f8L)
-  private void FUN_800ef0f8(final Model124 model, final BigSubStruct a1) {
-    if(!flEq(a1._1e.x, model.coord2_14.coord.transfer.x) || !flEq(a1._1e.y, model.coord2_14.coord.transfer.y) || !flEq(a1._1e.z, model.coord2_14.coord.transfer.z)) {
+  private void tickDust(final Model124 model, final DustData40 data) {
+    if(!flEq(data.transfer_1e.x, model.coord2_14.coord.transfer.x) || !flEq(data.transfer_1e.y, model.coord2_14.coord.transfer.y) || !flEq(data.transfer_1e.z, model.coord2_14.coord.transfer.z)) {
       //LAB_800ef154
-      if(a1._04 != 0) {
-        if(a1._00 % a1._30 == 0) {
-          final Struct20 a0 = this.FUN_800f03c0(this._800d4ec0);
-          a0._00 = 0;
-          a0._18 = (short)a1._38;
+      if(data.shouldRenderDustType0_04 != 0) {
+        if(data.tick_00 % data.countTicksInstantiationIntervalType0And2_30 == 0) {
+          final DustType0Particle20 inst = this.addDustType0(this.dustType0_800d4ec0);
+          inst.tick_00 = 0;
+          inst.maxTicks_18 = (short)data.maxTicks_38;
 
-          final int size = a1.size_28;
+          final int size = data.size_28;
           if(size < 0) {
-            a0.scale_08 = -size;
-            a0.scaleStep_04 = -a0.scaleStep_04 / 20.0f;
+            inst.size_08 = -size;
+            inst.stepSize_04 = -inst.stepSize_04 / 20.0f;
           } else if(size > 0) {
             //LAB_800ef1e0
-            a0.scale_08 = 0.0f;
-            a0.scaleStep_04 = size / 202.0f;
+            inst.size_08 = 0.0f;
+            inst.stepSize_04 = size / 202.0f;
           } else {
             //LAB_800ef214
-            a0.scale_08 = 0.0f;
-            a0.scaleStep_04 = 0.0f;
+            inst.size_08 = 0.0f;
+            inst.stepSize_04 = 0.0f;
           }
 
           //LAB_800ef21c
-          a0.transfer.set(model.coord2_14.coord.transfer);
+          inst.transfer.set(model.coord2_14.coord.transfer);
         }
       }
 
       //LAB_800ef240
-      if(a1._08 != 0) {
-        if(a1._00 % a1._34 == 0) {
+      if(data.shouldRenderDustType1_08 != 0) {
+        if(data.tick_00 % data.countTicksInstantiationIntervalType1_34 == 0) {
           //LAB_800ef394
-          final DustRenderData54 dust = this.addDust(this.dust_800d4e68);
+          final DustType1And2Particle54 inst = this.addDustType1And2(this.dustType1And2_800d4e68);
 
-          if(a1._10 != 0) {
+          if(data._10 != 0) {
             //LAB_800ef3e8
-            dust.renderMode_00 = 2;
-            dust.textureIndex_02 = 3;
+            inst.renderMode_00 = 2;
+            inst.textureIndex_02 = 3;
 
             //LAB_800ef3f8
           } else {
-            dust.renderMode_00 = 0;
-            dust.textureIndex_02 = (short)a1._1c;
+            inst.renderMode_00 = 0;
+            inst.textureIndex_02 = (short)data.textureIndexType1_1c;
 
-            final int v1 = a1._1c;
-            if(v1 == 0) {
-              a1._1c = 1;
-              //LAB_800ef3f8
-            } else if(v1 == 1) {
-              //LAB_800ef3d8
-              a1._1c = 0;
-            }
+            data.textureIndexType1_1c ^= 1;
           }
 
           //LAB_800ef3fc
-          dust.x_18 = this.screenOffsetX_800cb568;
-          dust.y_1c = this.screenOffsetY_800cb56c;
-          dust._04 = 0;
-          dust._06 = 150;
+          inst.x_18 = this.screenOffsetX_800cb568;
+          inst.y_1c = this.screenOffsetY_800cb56c;
+          inst.tick_04 = 0;
+          inst.maxTicks_06 = 150;
 
           final MV ls = new MV();
           GsGetLs(model.coord2_14, ls);
           GTE.setTransforms(ls);
 
-          final int type = dust.textureIndex_02;
-          if(type == 0) {
+          final int textureIndex = inst.textureIndex_02;
+          if(textureIndex == 0) {
             //LAB_800ef4b4
-            dust.z_4c = RotTransPers4(this._800d6b7c[4], this._800d6b7c[5], this._800d6b7c[6], this._800d6b7c[7], dust.v0_20, dust.v1_28, dust.v2_30, dust.v3_38);
-          } else if(type == 1) {
+            inst.z_4c = RotTransPers4(this._800d6b7c[4], this._800d6b7c[5], this._800d6b7c[6], this._800d6b7c[7], inst.sxy0_20, inst.sxy1_28, inst.sxy2_30, inst.sxy3_38);
+          } else if(textureIndex == 1) {
             //LAB_800ef484
             //LAB_800ef4b4
-            dust.z_4c = RotTransPers4(this._800d6b7c[8], this._800d6b7c[9], this._800d6b7c[10], this._800d6b7c[11], dust.v0_20, dust.v1_28, dust.v2_30, dust.v3_38);
-          } else if(type == 3) {
+            inst.z_4c = RotTransPers4(this._800d6b7c[8], this._800d6b7c[9], this._800d6b7c[10], this._800d6b7c[11], inst.sxy0_20, inst.sxy1_28, inst.sxy2_30, inst.sxy3_38);
+          } else if(textureIndex == 3) {
             //LAB_800ef4a0
             //LAB_800ef4b4
-            dust.z_4c = RotTransPers4(this._800d6b7c[0], this._800d6b7c[1], this._800d6b7c[2], this._800d6b7c[3], dust.v0_20, dust.v1_28, dust.v2_30, dust.v3_38);
+            inst.z_4c = RotTransPers4(this._800d6b7c[0], this._800d6b7c[1], this._800d6b7c[2], this._800d6b7c[3], inst.sxy0_20, inst.sxy1_28, inst.sxy2_30, inst.sxy3_38);
           }
 
           //LAB_800ef4ec
-          if(dust.z_4c < 41) {
-            dust.z_4c = 41;
+          if(inst.z_4c < 41) {
+            inst.z_4c = 41;
           }
 
           //LAB_800ef504
-          dust.colourStep_40 = 0x4_4444;
-          dust.colourAccumulator_44 = 0x80_0000;
-          dust.colour_48 = 0x80;
+          inst.stepBrightness_40 = 0x4_4444;
+          inst.brightnessAccumulator_44 = 0x80_0000;
+          inst.brightness_48 = 0x80;
         }
       }
 
       //LAB_800ef520
-      if(a1._0c != 0) {
-        if(a1._00 % a1._30 == 0) {
-          final DustRenderData54 dust = this.addDust(this.dust_800d4e68);
-          dust.renderMode_00 = 1;
-          dust.textureIndex_02 = 2;
-          dust.x_18 = this.screenOffsetX_800cb568;
-          dust.y_1c = this.screenOffsetY_800cb56c;
+      if(data.shouldRenderDustType2_0c != 0) {
+        if(data.tick_00 % data.countTicksInstantiationIntervalType0And2_30 == 0) {
+          final DustType1And2Particle54 inst = this.addDustType1And2(this.dustType1And2_800d4e68);
+          inst.renderMode_00 = 1;
+          inst.textureIndex_02 = 2;
+          inst.x_18 = this.screenOffsetX_800cb568;
+          inst.y_1c = this.screenOffsetY_800cb56c;
 
-          final Vector3f vert0 = new Vector3f(-a1.size_28, 0.0f, -a1.size_28);
-          final Vector3f vert1 = new Vector3f( a1.size_28, 0.0f, -a1.size_28);
-          final Vector3f vert2 = new Vector3f(-a1.size_28, 0.0f,  a1.size_28);
-          final Vector3f vert3 = new Vector3f( a1.size_28, 0.0f,  a1.size_28);
+          final Vector3f vert0 = new Vector3f(-data.size_28, 0.0f, -data.size_28);
+          final Vector3f vert1 = new Vector3f( data.size_28, 0.0f, -data.size_28);
+          final Vector3f vert2 = new Vector3f(-data.size_28, 0.0f,  data.size_28);
+          final Vector3f vert3 = new Vector3f( data.size_28, 0.0f,  data.size_28);
 
-          dust._04 = 0;
-          dust._06 = (short)a1._38;
+          inst.tick_04 = 0;
+          inst.maxTicks_06 = (short)data.maxTicks_38;
 
           final MV ls = new MV();
           GsGetLs(model.coord2_14, ls);
           GTE.setTransforms(ls);
 
           //TODO The real code actually passes the same reference for sxyz 1 and 2, is that a bug?
-          dust.z_4c = RotTransPers4(vert0, vert1, vert2, vert3, dust.v0_20, dust.v1_28, dust.v2_30, dust.v3_38);
+          inst.z_4c = RotTransPers4(vert0, vert1, vert2, vert3, inst.sxy0_20, inst.sxy1_28, inst.sxy2_30, inst.sxy3_38);
 
-          if(dust.z_4c < 41) {
-            dust.z_4c = 41;
+          if(inst.z_4c < 41) {
+            inst.z_4c = 41;
           }
 
           //LAB_800ef6a0
-          final float a0_0 = (dust.v3_38.x - dust.v0_20.x) / 2.0f;
-          dust._08 = a0_0;
-          dust._0c = a0_0 / a1._38;
-          dust._10 = 0;
+          final float halfSize = (inst.sxy3_38.x - inst.sxy0_20.x) / 2.0f;
+          inst.size_08 = halfSize;
+          inst.sizeStep_0c = halfSize / data.maxTicks_38;
 
-          dust.z0_26 = (dust.v3_38.x + dust.v0_20.x) / 2.0f;
-          dust.z1_2e = (dust.v3_38.y + dust.v0_20.y) / 2.0f;
+          inst.z0_26 = (inst.sxy3_38.x + inst.sxy0_20.x) / 2.0f;
+          inst.z1_2e = (inst.sxy3_38.y + inst.sxy0_20.y) / 2.0f;
 
-          dust.colourStep_40 = 0x80_0000 / a1._38;
-          dust.colourAccumulator_44 = 0x80_0000;
-          dust.colour_48 = 0x80;
+          inst.stepBrightness_40 = 0x80_0000 / data.maxTicks_38;
+          inst.brightnessAccumulator_44 = 0x80_0000;
+          inst.brightness_48 = 0x80;
         }
       }
 
       //LAB_800ef728
-      if(a1._18 == 1) {
+      if(data._18 == 1) {
         if(this._800c6870 != -1) {
-          this.FUN_800f0644(model, a1);
+          this.FUN_800f0644(model, data);
         }
       }
     }
 
     //LAB_800ef750
-    a1._1e.set(model.coord2_14.coord.transfer);
-    a1._00++;
+    data.transfer_1e.set(model.coord2_14.coord.transfer);
+    data.tick_00++;
   }
 
   @Method(0x800ef798L)
-  private void FUN_800ef798() {
-    Struct20 s1 = this._800d4ec0;
-    Struct20 s0 = s1.next_1c;
+  private void renderDustType0() {
+    DustType0Particle20 prev = this.dustType0_800d4ec0;
+    DustType0Particle20 inst = prev.next_1c;
 
     //LAB_800ef7c8
-    while(s0 != null) {
-      if(s0._00 >= s0._18) {
-        s1.next_1c = s0.next_1c;
-        s0 = s1.next_1c;
+    while(inst != null) {
+      if(inst.tick_00 >= inst.maxTicks_18) {
+        prev.next_1c = inst.next_1c;
+        inst = prev.next_1c;
       } else {
         //LAB_800ef804
-        s0.transfer.y--;
+        inst.transfer.y--;
 
-        this.dustModel_800d4d40.coord2_14.coord.transfer.set(s0.transfer);
+        this.dustModel_800d4d40.coord2_14.coord.transfer.set(inst.transfer);
 
-        s0.scale_08 += s0.scaleStep_04;
+        inst.size_08 += inst.stepSize_04;
 
-        this.dustModel_800d4d40.coord2_14.transforms.scale.set(s0.scale_08, s0.scale_08, s0.scale_08);
+        this.dustModel_800d4d40.coord2_14.transforms.scale.set(inst.size_08, inst.size_08, inst.size_08);
 
         applyModelRotationAndScale(this.dustModel_800d4d40);
         this.renderSmapModel(this.dustModel_800d4d40);
@@ -6457,48 +6455,43 @@ public class SMap extends EngineState {
         this.dustModel_800d4d40.remainingFrames_9e = 0;
         this.dustModel_800d4d40.interpolationFrameIndex = 0;
         this.dustModel_800d4d40.modelParts_00[0].coord2_04.flg--;
-        s0._00++;
+        inst.tick_00++;
 
-        s1 = s0;
-        s0 = s0.next_1c;
+        prev = inst;
+        inst = inst.next_1c;
       }
-
       //LAB_800ef888
     }
-
     //LAB_800ef894
   }
 
   @Method(0x800ef8acL)
-  private void renderDust() {
-    final int[] u = new int[4];
-    System.arraycopy(this._800d6bdc, 0, u, 0, 4);
-
+  private void renderDustType1And2() {
     final int[] v = new int[4];
     v[3] = 64; // Other values are 0
 
     //LAB_800ef9cc
-    DustRenderData54 s1 = this.dust_800d4e68;
-    DustRenderData54 s0 = s1.next_50;
-    while(s0 != null) {
-      if(s0._04 >= s0._06) {
-        s1.next_50 = s0.next_50;
-        s0 = s1.next_50;
+    DustType1And2Particle54 prev = this.dustType1And2_800d4e68;
+    DustType1And2Particle54 inst = prev.next_50;
+    while(inst != null) {
+      if(inst.tick_04 >= inst.maxTicks_06) {
+        prev.next_50 = inst.next_50;
+        inst = prev.next_50;
       } else {
         //LAB_800efa08
         final GpuCommandPoly cmd = new GpuCommandPoly(4);
 
-        final int mode = s0.renderMode_00;
+        final int mode = inst.renderMode_00;
         if(mode == 0 || mode == 2) {
           //LAB_800efa44
-          final int offsetX = this.screenOffsetX_800cb568 - s0.x_18;
-          final int offsetY = this.screenOffsetY_800cb56c - s0.y_1c;
+          final int offsetX = this.screenOffsetX_800cb568 - inst.x_18;
+          final int offsetY = this.screenOffsetY_800cb56c - inst.y_1c;
 
           cmd
-            .pos(0, offsetX + s0.v0_20.x, offsetY + s0.v0_20.y)
-            .pos(1, offsetX + s0.v1_28.x, offsetY + s0.v1_28.y)
-            .pos(2, offsetX + s0.v2_30.x, offsetY + s0.v2_30.y)
-            .pos(3, offsetX + s0.v3_38.x, offsetY + s0.v3_38.y);
+            .pos(0, offsetX + inst.sxy0_20.x, offsetY + inst.sxy0_20.y)
+            .pos(1, offsetX + inst.sxy1_28.x, offsetY + inst.sxy1_28.y)
+            .pos(2, offsetX + inst.sxy2_30.x, offsetY + inst.sxy2_30.y)
+            .pos(3, offsetX + inst.sxy3_38.x, offsetY + inst.sxy3_38.y);
 
           if(mode == 2) {
             cmd
@@ -6516,21 +6509,20 @@ public class SMap extends EngineState {
           }
         } else if(mode == 1) {
           //LAB_800efb7c
-          s0._08 += s0._0c;
-          s0._10 = s0._08;
-          s0.v0_20.x = s0.z0_26 - s0._08 / 2.0f;
-          s0.v0_20.y = s0.z1_2e - s0._08 / 2.0f;
-          final float x = this.screenOffsetX_800cb568 - s0.x_18 + s0.v0_20.x;
-          final float y = this.screenOffsetY_800cb56c - s0.y_1c + s0.v0_20.y;
+          inst.size_08 += inst.sizeStep_0c;
+          inst.sxy0_20.x = inst.z0_26 - inst.size_08 / 2.0f;
+          inst.sxy0_20.y = inst.z1_2e - inst.size_08 / 2.0f;
+          final float x = this.screenOffsetX_800cb568 - inst.x_18 + inst.sxy0_20.x;
+          final float y = this.screenOffsetY_800cb56c - inst.y_1c + inst.sxy0_20.y;
 
           cmd
             .pos(0, x, y)
-            .pos(1, x + s0._10, y)
-            .pos(2, x, y + s0._10)
-            .pos(3, x + s0._10, y + s0._10);
+            .pos(1, x + inst.size_08, y)
+            .pos(2, x, y + inst.size_08)
+            .pos(3, x + inst.size_08, y + inst.size_08);
 
-          if((s0._04 & 0x3) == 0) {
-            s0.z1_2e--;
+          if((inst.tick_04 & 0x3) == 0) {
+            inst.z1_2e--;
           }
 
           //LAB_800efc4c
@@ -6542,57 +6534,55 @@ public class SMap extends EngineState {
         }
 
         //LAB_800efc64
-        if(s0._04 >= this._800d6c0c[s0.renderMode_00]) {
-          s0.colourAccumulator_44 -= s0.colourStep_40;
+        if(inst.tick_04 >= this.brightnessTickInterval_800d6c0c[inst.renderMode_00]) {
+          inst.brightnessAccumulator_44 -= inst.stepBrightness_40;
 
-          final int colour = s0.colourAccumulator_44 >>> 16;
-          if(colour >= 0x100) {
-            s0.colour_48 = 0;
+          final int brightness = inst.brightnessAccumulator_44 >>> 16;
+          if(brightness >= 0x100) {
+            inst.brightness_48 = 0;
           } else {
-            s0.colour_48 = colour;
+            inst.brightness_48 = brightness;
           }
         }
 
         //LAB_800efcb8
         cmd
-          .monochrome(s0.colour_48)
-          .uv(0, u[s0.textureIndex_02], v[s0.textureIndex_02])
-          .uv(1, u[s0.textureIndex_02] + this.dustTextureWidths_800d6bec[s0.textureIndex_02], v[s0.textureIndex_02])
-          .uv(2, u[s0.textureIndex_02], v[s0.textureIndex_02] + this.dustTextureHeights_800d6bfc[s0.textureIndex_02])
-          .uv(3, u[s0.textureIndex_02] + this.dustTextureWidths_800d6bec[s0.textureIndex_02], v[s0.textureIndex_02] + this.dustTextureHeights_800d6bfc[s0.textureIndex_02]);
+          .monochrome(inst.brightness_48)
+          .uv(0, this.dustUs_800d6bdc[inst.textureIndex_02], v[inst.textureIndex_02])
+          .uv(1, this.dustUs_800d6bdc[inst.textureIndex_02] + this.dustTextureWidths_800d6bec[inst.textureIndex_02], v[inst.textureIndex_02])
+          .uv(2, this.dustUs_800d6bdc[inst.textureIndex_02], v[inst.textureIndex_02] + this.dustTextureHeights_800d6bfc[inst.textureIndex_02])
+          .uv(3, this.dustUs_800d6bdc[inst.textureIndex_02] + this.dustTextureWidths_800d6bec[inst.textureIndex_02], v[inst.textureIndex_02] + this.dustTextureHeights_800d6bfc[inst.textureIndex_02]);
 
-        GPU.queueCommand(s0.z_4c, cmd);
+        GPU.queueCommand(inst.z_4c, cmd);
 
-        s0._04++;
-        s1 = s0;
-        s0 = s0.next_50;
+        inst.tick_04++;
+        prev = inst;
+        inst = inst.next_50;
       }
-
       //LAB_800efe48
     }
-
     //LAB_800efe54
   }
 
   @Method(0x800f0370L)
   private void FUN_800f0370() {
     initModel(this.dustModel_800d4d40, this.dustTmd, this.dustAnimation);
-    this.dust_800d4e68.next_50 = null;
-    this._800d4ec0.next_1c = null;
+    this.dustType1And2_800d4e68.next_50 = null;
+    this.dustType0_800d4ec0.next_1c = null;
     this.FUN_800f0e60();
   }
 
   @Method(0x800f03c0L)
-  private Struct20 FUN_800f03c0(final Struct20 a0) {
-    final Struct20 v0 = new Struct20();
-    v0.next_1c = a0.next_1c;
-    a0.next_1c = v0;
-    return v0;
+  private DustType0Particle20 addDustType0(final DustType0Particle20 parent) {
+    final DustType0Particle20 child = new DustType0Particle20();
+    child.next_1c = parent.next_1c;
+    parent.next_1c = child;
+    return child;
   }
 
   @Method(0x800f0400L)
-  private DustRenderData54 addDust(final DustRenderData54 parent) {
-    final DustRenderData54 child = new DustRenderData54();
+  private DustType1And2Particle54 addDustType1And2(final DustType1And2Particle54 parent) {
+    final DustType1And2Particle54 child = new DustType1And2Particle54();
     child.next_50 = parent.next_50;
     parent.next_50 = child;
     return child;
@@ -6600,73 +6590,72 @@ public class SMap extends EngineState {
 
   @Method(0x800f0440L)
   private void deallocateDustAndSomething() {
-    this.FUN_800f058c();
-    this.deallocateDust();
+    this.deallocateDustType0();
+    this.deallocateDustType1And2();
     this.FUN_800f0e7c();
   }
 
   @Method(0x800f047cL)
-  private void FUN_800f047c() {
-    this.FUN_800ef798();
-    this.renderDust();
+  private void handleAndRenderDust() {
+    this.renderDustType0();
+    this.renderDustType1And2();
     this.FUN_800f0970();
   }
 
   @Method(0x800f04acL)
-  private void FUN_800f04ac(final BigSubStruct a0) {
-    a0._00 = 0;
-    a0._04 = 0;
-    a0._08 = 0;
-    a0._0c = 0;
-    a0._10 = 0;
-    a0._18 = 0;
-    a0._1c = 0;
-    a0._1e.zero();
-    a0.size_28 = 0;
-    a0._2c = 0;
-    a0._30 = 0;
-    a0._34 = 0;
-    a0._38 = 0;
-    a0.ptr_3c = null;
+  private void initDustData(final DustData40 dustData) {
+    dustData.tick_00 = 0;
+    dustData.shouldRenderDustType0_04 = 0;
+    dustData.shouldRenderDustType1_08 = 0;
+    dustData.shouldRenderDustType2_0c = 0;
+    dustData._10 = 0;
+    dustData._18 = 0;
+    dustData.textureIndexType1_1c = 0;
+    dustData.transfer_1e.zero();
+    dustData.size_28 = 0;
+    dustData._2c = 0;
+    dustData.countTicksInstantiationIntervalType0And2_30 = 0;
+    dustData.countTicksInstantiationIntervalType1_34 = 0;
+    dustData.maxTicks_38 = 0;
+    dustData.ptr_3c = null;
   }
 
   @Method(0x800f058cL)
-  private void FUN_800f058c() {
-    final Struct20 v1 = this._800d4ec0;
+  private void deallocateDustType0() {
+    final DustType0Particle20 prev = this.dustType0_800d4ec0;
 
-    if(v1.next_1c != null) {
+    if(prev.next_1c != null) {
       //LAB_800f05b4
-      Struct20 s0;
+      DustType0Particle20 next;
       do {
-        final Struct20 a0 = v1.next_1c;
-        s0 = a0.next_1c;
-        v1.next_1c = s0;
-      } while(s0 != null);
+        final DustType0Particle20 inst = prev.next_1c;
+        next = inst.next_1c;
+        prev.next_1c = next;
+      } while(next != null);
     }
 
     //LAB_800f05d4
   }
 
   @Method(0x800f05e8L)
-  private void deallocateDust() {
-    final DustRenderData54 v1 = this.dust_800d4e68;
+  private void deallocateDustType1And2() {
+    final DustType1And2Particle54 prev = this.dustType1And2_800d4e68;
 
-    if(v1.next_50 != null) {
+    if(prev.next_50 != null) {
       //LAB_800f0610
-      DustRenderData54 s0;
+      DustType1And2Particle54 next;
       do {
-        final DustRenderData54 a0 = v1.next_50;
-        s0 = a0.next_50;
-        v1.next_50 = s0;
-      } while(s0 != null);
+        final DustType1And2Particle54 inst = prev.next_50;
+        next = inst.next_50;
+        prev.next_50 = next;
+      } while(next != null);
     }
-
     //LAB_800f0630
   }
 
   @Method(0x800f0644L)
-  private void FUN_800f0644(final Model124 model, final BigSubStruct a1) {
-    if((a1._00 & 0x1) == 0) {
+  private void FUN_800f0644(final Model124 model, final DustData40 a1) {
+    if((a1.tick_00 & 0x1) == 0) {
       final Struct18 s2 = a1.ptr_3c;
 
       if(s2._01 < s2._00) {
@@ -6696,7 +6685,7 @@ public class SMap extends EngineState {
         s3.z_20 = GTE.getScreenZ(3) / 4.0f;
         PopMatrix();
 
-        s3._00 = 0;
+        s3.tick_00 = 0;
         s3.tpage_04 = GetTPage(Bpp.BITS_4, Translucency.of(s2.translucency_0c), 972, 320);
         this.FUN_800f0df0(s2, s3);
         s1.vert0_00.x -= this.screenOffsetX_800cb568;
@@ -6735,7 +6724,7 @@ public class SMap extends EngineState {
     //LAB_800f09c0
     while(s1 != null) {
       final Struct18 s2 = s1._2c;
-      if(s2._06 >= s1._00) {
+      if(s2._06 >= s1.tick_00) {
         final int tpage = s1.tpage_04;
 
         //LAB_800f0b04
@@ -6749,7 +6738,7 @@ public class SMap extends EngineState {
         final int r;
         final int g;
         final int b;
-        if(s2._02 - 1 >= s1._00) {
+        if(s2._02 - 1 >= s1.tick_00) {
           //LAB_800f0d0c
           r = s1.rAccumulator_14 >> 16;
           g = s1.gAccumulator_18 >> 16;
@@ -6768,7 +6757,7 @@ public class SMap extends EngineState {
         GPU.queueCommand(s1.z_20, cmd);
 
         s3 = s1;
-        s1._00++;
+        s1.tick_00++;
         s1 = s1.next_30;
       } else {
         s2._01--;
@@ -6980,7 +6969,7 @@ public class SMap extends EngineState {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[state.storage_44[0]].innerStruct_00;
     if(script.params_20[0].get() == 0 || this._800f9e78 >= 8) {
       //LAB_800f1698
-      sobj._1d0._18 = 0;
+      sobj.dustData_1d0._18 = 0;
     } else {
       //LAB_800f16a4
       final Struct18 a1 = this.FUN_800f0f20();
@@ -6995,8 +6984,8 @@ public class SMap extends EngineState {
       a1.g_11 = script.params_20[7].get();
       a1.b_12 = script.params_20[8].get();
       a1._14 = null;
-      sobj._1d0._18 = script.params_20[0].get();
-      sobj._1d0.ptr_3c = a1;
+      sobj.dustData_1d0._18 = script.params_20[0].get();
+      sobj.dustData_1d0.ptr_3c = a1;
       this._800f9e78++;
     }
 
@@ -7163,22 +7152,22 @@ public class SMap extends EngineState {
   @Method(0x800f1f9cL)
   private FlowControl FUN_800f1f9c(final RunningScript<?> script) {
     final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
-    sobj._1d0._04 = script.params_20[1].get();
-    sobj._1d0.size_28 = script.params_20[2].get();
-    sobj._1d0._30 = script.params_20[3].get();
+    sobj.dustData_1d0.shouldRenderDustType0_04 = script.params_20[1].get();
+    sobj.dustData_1d0.size_28 = script.params_20[2].get();
+    sobj.dustData_1d0.countTicksInstantiationIntervalType0And2_30 = script.params_20[3].get();
 
     if(script.params_20[4].get() == 0) {
-      sobj._1d0._38 = 1;
+      sobj.dustData_1d0.maxTicks_38 = 1;
     } else {
-      sobj._1d0._38 = script.params_20[4].get();
+      sobj.dustData_1d0.maxTicks_38 = script.params_20[4].get();
     }
 
     //LAB_800f2018
-    if(sobj._1d0._04 != 1) {
-      sobj._1d0._1e.zero();
-      sobj._1d0.size_28 = 1;
-      sobj._1d0._30 = 0;
-      sobj._1d0._38 = 0;
+    if(sobj.dustData_1d0.shouldRenderDustType0_04 != 1) {
+      sobj.dustData_1d0.transfer_1e.zero();
+      sobj.dustData_1d0.size_28 = 1;
+      sobj.dustData_1d0.countTicksInstantiationIntervalType0And2_30 = 0;
+      sobj.dustData_1d0.maxTicks_38 = 0;
     }
 
     //LAB_800f2040
@@ -7248,12 +7237,12 @@ public class SMap extends EngineState {
 
     final SubmapObject210 sobj2 = (SubmapObject210)scriptStatePtrArr_800bc1c0[sobj1.storage_44[0]].innerStruct_00; // Storage 0 is my script index, isn't this just getting the same state?
     if((script.params_20[0].get() - 1 & 0xffff_ffffL) < 2) {
-      sobj2._1d0._08 = 1;
-      sobj2._1d0._10 = 0;
-      sobj2._1d0._34 = 9;
+      sobj2.dustData_1d0.shouldRenderDustType1_08 = 1;
+      sobj2.dustData_1d0._10 = 0;
+      sobj2.dustData_1d0.countTicksInstantiationIntervalType1_34 = 9;
     } else {
       //LAB_800f22b8
-      sobj2._1d0._08 = 0;
+      sobj2.dustData_1d0.shouldRenderDustType1_08 = 0;
     }
 
     //LAB_800f22bc
@@ -7270,33 +7259,33 @@ public class SMap extends EngineState {
     final SubmapObject210 a0 = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[2].get()].innerStruct_00;
 
     int v1 = script.params_20[0].get();
-    a0._1d0._10 = v1;
+    a0.dustData_1d0._10 = v1;
     if(v1 == 0) {
       v1 = script.params_20[1].get();
 
       if(v1 == 0) {
-        a0._1d0._08 = 0;
-        a0._1d0._34 = 0;
+        a0.dustData_1d0.shouldRenderDustType1_08 = 0;
+        a0.dustData_1d0.countTicksInstantiationIntervalType1_34 = 0;
         //LAB_800f2328
       } else if(v1 == 1) {
-        a0._1d0._08 = v1;
-        a0._1d0._34 = a0._1d0._2c;
+        a0.dustData_1d0.shouldRenderDustType1_08 = v1;
+        a0.dustData_1d0.countTicksInstantiationIntervalType1_34 = a0.dustData_1d0._2c;
       }
       //LAB_800f2340
     } else if(v1 == 1) {
-      a0._1d0._08 = 1;
-      a0._1d0._2c = a0._1d0._34;
-      a0._1d0._34 = script.params_20[1].get();
+      a0.dustData_1d0.shouldRenderDustType1_08 = 1;
+      a0.dustData_1d0._2c = a0.dustData_1d0.countTicksInstantiationIntervalType1_34;
+      a0.dustData_1d0.countTicksInstantiationIntervalType1_34 = script.params_20[1].get();
 
-      if(a0._1d0._34 == 0) {
-        a0._1d0._34 = 1;
+      if(a0.dustData_1d0.countTicksInstantiationIntervalType1_34 == 0) {
+        a0.dustData_1d0.countTicksInstantiationIntervalType1_34 = 1;
       }
     }
 
     //LAB_800f2374
-    if(a0._1d0._10 >= 2) {
-      a0._1d0._08 = 0;
-      a0._1d0._1e.zero();
+    if(a0.dustData_1d0._10 >= 2) {
+      a0.dustData_1d0.shouldRenderDustType1_08 = 0;
+      a0.dustData_1d0.transfer_1e.zero();
     }
 
     //LAB_800f2398
@@ -7314,9 +7303,9 @@ public class SMap extends EngineState {
     final int v0 = script.params_20[0].get();
 
     if(v0 != 0) {
-      sobj._1d0._34 = v0;
+      sobj.dustData_1d0.countTicksInstantiationIntervalType1_34 = v0;
     } else {
-      sobj._1d0._34 = 1;
+      sobj.dustData_1d0.countTicksInstantiationIntervalType1_34 = 1;
     }
 
     //LAB_800f23e4
@@ -7336,23 +7325,23 @@ public class SMap extends EngineState {
 
     if(a2 == 1 || a2 == 3) {
       //LAB_800f2430
-      a1._1d0._0c = 1;
-      a1._1d0.size_28 = script.params_20[1].get();
-      a1._1d0._30 = script.params_20[2].get();
-      a1._1d0._38 = script.params_20[3].get();
+      a1.dustData_1d0.shouldRenderDustType2_0c = 1;
+      a1.dustData_1d0.size_28 = script.params_20[1].get();
+      a1.dustData_1d0.countTicksInstantiationIntervalType0And2_30 = script.params_20[2].get();
+      a1.dustData_1d0.maxTicks_38 = script.params_20[3].get();
 
-      if(a1._1d0._38 == 0) {
-        a1._1d0._38++;
+      if(a1.dustData_1d0.maxTicks_38 == 0) {
+        a1.dustData_1d0.maxTicks_38++;
       }
     } else {
       //LAB_800f2484
-      a1._1d0._0c = 0;
+      a1.dustData_1d0.shouldRenderDustType2_0c = 0;
     }
 
     //LAB_800f2488
-    if(a1._1d0._0c != 1) {
-      a1._1d0._0c = 0;
-      a1._1d0._1e.zero();
+    if(a1.dustData_1d0.shouldRenderDustType2_0c != 1) {
+      a1.dustData_1d0.shouldRenderDustType2_0c = 0;
+      a1.dustData_1d0.transfer_1e.zero();
     }
 
     //LAB_800f24a8
@@ -7406,7 +7395,7 @@ public class SMap extends EngineState {
     if(script.params_20[0].get() == 1) {
       this.FUN_800f0e7c();
       final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[v1.storage_44[0]].innerStruct_00;
-      sobj._1d0._18 = 0;
+      sobj.dustData_1d0._18 = 0;
     }
 
     //LAB_800f2604

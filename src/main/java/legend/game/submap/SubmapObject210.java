@@ -85,7 +85,7 @@ public class SubmapObject210 {
   public boolean ambientColourEnabled_1c8;
 
   public final Vector3f ambientColour_1ca = new Vector3f();
-  public final BigSubStruct _1d0 = new BigSubStruct();
+  public final DustData40 dustData_1d0 = new DustData40();
 
   public SubmapObject210(final String name) {
     this.model_00 = new Model124(name);

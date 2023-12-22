@@ -1,7 +1,7 @@
 package legend.game.submap;
 
 public class Struct34_2 {
-  public short _00;
+  public short tick_00;
 
   public int tpage_04;
   public int rStep_08;
