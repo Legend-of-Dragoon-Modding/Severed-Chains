@@ -548,17 +548,17 @@ public class SMap extends EngineState {
 
   private final UvAdjustmentMetrics14[] uvAdjustments_800f5930 = {
     new UvAdjustmentMetrics14(       0x0, 0xffffffff,      0x0, 0xffffffff,    0x0),
-	  new UvAdjustmentMetrics14(0x5c260000,  0x3c0ffff, 0x190000, 0xffe0ffff,   0x80),
-	  new UvAdjustmentMetrics14(0x5c270000,  0x3c0ffff, 0x190000, 0xffe0ffff,   0xc0),
-	  new UvAdjustmentMetrics14(0x7c240000,  0x3c0ffff, 0x190000, 0xffe0ffff, 0x8000),
-	  new UvAdjustmentMetrics14(0x7c250000,  0x3c0ffff, 0x190000, 0xffe0ffff, 0x8040),
-	  new UvAdjustmentMetrics14(0x7c260000,  0x3c0ffff, 0x190000, 0xffe0ffff, 0x8080),
-	  new UvAdjustmentMetrics14(0x7c270000,  0x3c0ffff, 0x190000, 0xffe0ffff, 0x80c0),
-	  new UvAdjustmentMetrics14(0x5c2a0000,  0x3c0ffff, 0x1a0000, 0xffe0ffff,   0x80),
-	  new UvAdjustmentMetrics14(0x5c2b0000,  0x3c0ffff, 0x1a0000, 0xffe0ffff,   0xc0),
-	  new UvAdjustmentMetrics14(0x7c280000,  0x3c0ffff, 0x1a0000, 0xffe0ffff, 0x8000),
-	  new UvAdjustmentMetrics14(0x7c290000,  0x3c0ffff, 0x1a0000, 0xffe0ffff, 0x8040),
-	  new UvAdjustmentMetrics14(0x7c2a0000,  0x3c0ffff, 0x1a0000, 0xffe0ffff, 0x8080),
+    new UvAdjustmentMetrics14(0x7c040000,  0x3c0ffff, 0x110000, 0xffe0ffff, 0x8000), // Dart
+	  new UvAdjustmentMetrics14(0x5c270000,  0x3c0ffff, 0x190000, 0xffe0ffff,   0xc0), // Shana
+	  new UvAdjustmentMetrics14(0x7c240000,  0x3c0ffff, 0x190000, 0xffe0ffff, 0x8000), // Meru
+	  new UvAdjustmentMetrics14(0x7c250000,  0x3c0ffff, 0x190000, 0xffe0ffff, 0x8040), // Rose
+	  new UvAdjustmentMetrics14(0x7c260000,  0x3c0ffff, 0x190000, 0xffe0ffff, 0x8080), // Albert
+	  new UvAdjustmentMetrics14(0x7c270000,  0x3c0ffff, 0x190000, 0xffe0ffff, 0x80c0), // Haschel
+	  new UvAdjustmentMetrics14(0x5c2a0000,  0x3c0ffff, 0x1a0000, 0xffe0ffff,   0x80), // Kongol
+	  new UvAdjustmentMetrics14(0x5c2b0000,  0x3c0ffff, 0x1a0000, 0xffe0ffff,   0xc0), // Miranda
+	  new UvAdjustmentMetrics14(0x7c280000,  0x3c0ffff, 0x1a0000, 0xffe0ffff, 0x8000), // 2 Dart 2 Furious
+	  new UvAdjustmentMetrics14(0x1c030000,  0x3c0ffff, 0x000000, 0xffe0ffff, 0x00c0), // Lavitz
+	  new UvAdjustmentMetrics14(0x1c0f0000,  0x3c0ffff, 0x030000, 0xffe0ffff, 0x00c0), // Lloyd
 	  new UvAdjustmentMetrics14(0x7c2b0000,  0x3c0ffff, 0x1a0000, 0xffe0ffff, 0x80c0),
 	  new UvAdjustmentMetrics14(0x5c2e0000,  0x3c0ffff, 0x1b0000, 0xffe0ffff,   0x80),
 	  new UvAdjustmentMetrics14(0x5c2f0000,  0x3c0ffff, 0x1b0000, 0xffe0ffff,   0xc0),
@@ -3359,6 +3359,16 @@ public class SMap extends EngineState {
 
           for(int i = 0; i < 3; i++) {
             this.submapAssets.pxls.add(new Tim(this.submapAssetsMrg_800c6878.get(objCount * 34 + i)));
+          }
+
+          final int[] files = {136, 137, 138, 374, 375, 376, 408, 409, 410};
+          for(int i = 0; i < files.length; i++) {
+            final Tim tim = new Tim(Unpacker.loadFile("../assets/" + files[i]));
+
+            final int x = i % 6 * 64;
+            final int y = i / 6 * 256;
+
+            GPU.uploadData15(new Rect4i(x, y, tim.getImageRect().w, tim.getImageRect().h), tim.getImageData());
           }
 
           this.mediaLoadingStage_800c68e4 = SubmapMediaState.PREPARE_TO_LOAD_SUBMAP_MODEL_7;
