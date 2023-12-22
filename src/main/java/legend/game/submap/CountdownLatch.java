@@ -4,7 +4,7 @@ public class CountdownLatch {
   private int counter_00;
 
   public boolean isOpen() {
-    return this.counter_00 != 0;
+    return this.counter_00 == 0;
   }
 
   public void latch(final int ticks) {
@@ -12,6 +12,8 @@ public class CountdownLatch {
   }
 
   public void tick() {
-    this.counter_00--;
+    if(this.counter_00 > 0) {
+      this.counter_00--;
+    }
   }
 }
