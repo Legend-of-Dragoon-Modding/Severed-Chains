@@ -2330,13 +2330,13 @@ public final class Scus94491BpeSegment_8002 {
   /** I think this method handles textboxes */
   @Method(0x800264b0L)
   public static void handleTextboxText(final int textboxIndex) {
-    final Textbox4c struct4c = textboxes_800be358[textboxIndex];
+    final Textbox4c textbox = textboxes_800be358[textboxIndex];
     final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
 
     switch(textboxText.state_00) {
       case _1 -> {
         //LAB_8002663c
-        if((textboxText.flags_08 & 0x1) == 0) {
+        if((textbox.flags_08 & 0x1) == 0) {
           switch(textboxText.type_04) {
             case 0 -> textboxText.state_00 = TextboxTextState._12;
 
@@ -2386,15 +2386,15 @@ public final class Scus94491BpeSegment_8002 {
         //LAB_800267d4
         if((textboxText.flags_08 & 0x1) != 0) {
           //LAB_800267f4
-          if(textboxText._3a >= textboxText.lines_1e - ((textboxText.flags_08 & TextboxText84.HAS_NAME) == 0 ? 1 : 2)) {
-            textboxText.flags_08 ^= 0x1;
-            textboxText._3a = 0;
-            setTextboxArrowPosition(textboxIndex, true);
-          } else {
+          if(textboxText._3a < textboxText.lines_1e - ((textboxText.flags_08 & TextboxText84.HAS_NAME) == 0 ? 1 : 2)) {
             //LAB_80026828
             textboxText.state_00 = TextboxTextState.SCROLL_TEXT_DOWN_9;
             textboxText._3a++;
             scrollTextboxDown(textboxIndex);
+          } else {
+            textboxText.flags_08 ^= 0x1;
+            textboxText._3a = 0;
+            setTextboxArrowPosition(textboxIndex, true);
           }
           //LAB_8002684c
         } else if((textboxText.flags_08 & 0x20) != 0) {
@@ -2443,7 +2443,7 @@ public final class Scus94491BpeSegment_8002 {
             for(int lineIndex = 0; lineIndex < 4; lineIndex++) {
               processTextboxLine(textboxIndex);
 
-              if(textboxText.state_00 == TextboxTextState.UNINITIALIZED_0 || textboxText.state_00 == TextboxTextState._1 || textboxText.state_00 == TextboxTextState._2 || textboxText.state_00 == TextboxTextState._3 || textboxText.state_00 == TextboxTextState.PROCESS_TEXT_4 || textboxText.state_00 == TextboxTextState.SCROLL_TEXT_5 || textboxText.state_00 == TextboxTextState._6 || textboxText.state_00 == TextboxTextState._15 || textboxText.state_00 == TextboxTextState._11 || textboxText.state_00 == TextboxTextState._13) {
+              if(textboxText.state_00 == TextboxTextState.SCROLL_TEXT_5 || textboxText.state_00 == TextboxTextState._6 || textboxText.state_00 == TextboxTextState._15 || textboxText.state_00 == TextboxTextState._11 || textboxText.state_00 == TextboxTextState._13) {
                 //LAB_8002698c
                 found = true;
                 break;
@@ -2493,8 +2493,9 @@ public final class Scus94491BpeSegment_8002 {
               if(textboxText.state_00 == TextboxTextState._15) {
                 textboxText._3a = 0;
                 textboxText.flags_08 |= 0x2;
+                break;
               }
-            } while(textboxText.state_00 != TextboxTextState.SCROLL_TEXT_5 && textboxText.state_00 != TextboxTextState._15);
+            } while(textboxText.state_00 != TextboxTextState.SCROLL_TEXT_5);
 
             //LAB_80026a8c
             textboxText.state_00 = TextboxTextState.SCROLL_TEXT_UP_10;
@@ -2529,7 +2530,7 @@ public final class Scus94491BpeSegment_8002 {
 
       case _12 -> {
         //LAB_80026af0
-        if(struct4c.state_00 == TextboxState.UNINITIALIZED_0) {
+        if(textbox.state_00 == TextboxState.UNINITIALIZED_0) {
           textboxText.delete();
           textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
         }
@@ -2633,21 +2634,15 @@ public final class Scus94491BpeSegment_8002 {
         do {
           processTextboxLine(textboxIndex);
 
-          if(textboxText.state_00 == TextboxTextState.SCROLL_TEXT_5) {
-            //LAB_80026d14
-            textboxText.state_00 = TextboxTextState._18;
-            break;
-          }
-
           if(textboxText.state_00 == TextboxTextState._15) {
-            textboxText.state_00 = TextboxTextState._18;
             textboxText._3a = 0;
             textboxText.flags_08 |= 0x102;
             break;
           }
-        } while(true);
+        } while(textboxText.state_00 != TextboxTextState.SCROLL_TEXT_5);
 
         //LAB_80026d64
+        textboxText.state_00 = TextboxTextState._18;
         textboxText.selectionIndex_6c = -1;
         textboxText.lines_1e--;
       }
