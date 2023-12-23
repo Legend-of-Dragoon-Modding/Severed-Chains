@@ -2147,6 +2147,11 @@ public class WMap extends EngineState {
         lw.transfer.add(0.0f, 1.0f, 0.0f);
       }
 
+      // Fix path/Dart's feet being underground (GH#864)
+      if(this.mapState_800c6798.continent_00 == Continent.ILLISA_BAY_3 || this.mapState_800c6798.continent_00 == Continent.DEATH_FRONTIER_6) {
+        lw.transfer.y += 6.0f;
+      }
+
       final RenderEngine.QueuedModel model = RENDERER.queueModel(dobj2.obj, lw);
 
       if(this.mapState_800c6798.continent_00.continentNum < 9 && i == 0) {

@@ -131,6 +131,11 @@ public class Ttle extends EngineState {
   private static Window.Events.OnPressedWithRepeatPulse onPressedWithRepeatPulse;
 
   @Override
+  public boolean allowsHighQualityProjection() {
+    return false;
+  }
+
+  @Override
   @Method(0x800c7798L)
   public void tick() {
     switch(this.loadingStage) {

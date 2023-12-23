@@ -977,6 +977,11 @@ public class SMap extends EngineState {
     return false;
   }
 
+  @Override
+  public boolean allowsHighQualityProjection() {
+    return false;
+  }
+
   @ScriptDescription("Adds a textbox to a submap object")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The textbox index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "submapObjectIndex", description = "The submap object, but may also have the flag 0x1000 set (unknown meaning)")
@@ -2092,7 +2097,7 @@ public class SMap extends EngineState {
   @Method(0x800df6a4L)
   private FlowControl scriptSetCameraPos(final RunningScript<?> script) {
     GTE.setTransforms(worldToScreenMatrix_800c3548);
-    this.setCameraPos(new Vector3f().set(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get())); // Retail bugfix - these were all 0
+    this.setCameraPos(3 - vsyncMode_8007a3b8, new Vector3f().set(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get())); // Retail bugfix - these were all 0
 
     //LAB_800df744
     for(int i = 0; i < this.sobjCount_800c6730; i++) {
@@ -2979,7 +2984,7 @@ public class SMap extends EngineState {
 
     if(sobj.cameraAttached_178) {
       GTE.setTransforms(worldToScreenMatrix_800c3548);
-      this.setCameraPos(model.coord2_14.coord.transfer);
+      this.setCameraPos(1, model.coord2_14.coord.transfer);
     }
 
     if(sobj.s_128 == 0) {
@@ -5837,9 +5842,9 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800e8104L)
-  private void setCameraPos(final Vector3f cameraPos) {
+  private void setCameraPos(final int latchTicks, final Vector3f cameraPos) {
     if(this.screenOffsetLatch_800cbd38.isOpen()) {
-      this.screenOffsetLatch_800cbd38.latch(1);
+      this.screenOffsetLatch_800cbd38.latch(latchTicks);
 
       final Vector2f transformed = new Vector2f();
       this.transformVertex(transformed, cameraPos);
@@ -5858,7 +5863,7 @@ public class SMap extends EngineState {
 
     final Vector3f avg = new Vector3f();
     this.collisionGeometry_800cbe08.get3dAverageOfSomething(index, avg);
-    this.setCameraPos(avg);
+    this.setCameraPos(1, avg);
   }
 
   @Method(0x800e828cL)

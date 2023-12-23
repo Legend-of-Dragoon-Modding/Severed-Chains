@@ -107,6 +107,7 @@ public class RenderEngine {
   public boolean usePs1Gpu = true;
 
   public boolean allowWidescreen;
+  public boolean allowHighQualityProjection;
   private float widescreenOrthoOffsetX;
 
   private Camera camera2d;
@@ -127,7 +128,6 @@ public class RenderEngine {
   // Order-independent translucency
   private Shader tmdShader;
   private Shader tmdShaderTransparent;
-  private Shader.UniformFloat tmdShaderProjectionPlaneDistance;
   private Shader.UniformVec3 tmdShaderColour;
   private Shader.UniformVec2 tmdShaderUvOffset;
   private Shader.UniformVec2 tmdShaderClutOverride;
@@ -202,6 +202,9 @@ public class RenderEngine {
 
   private float projectionWidth;
   private float projectionHeight;
+  private float projectionDepth;
+  private float aspectRatio;
+  private float fieldOfView;
   private float halfWidthInv;
   private float halfHeightInv;
 
@@ -213,6 +216,18 @@ public class RenderEngine {
     this.projectionHeight = height;
     this.halfWidthInv = 1.0f / (width / 2.0f);
     this.halfHeightInv = 1.0f / (height / 2.0f);
+    this.updateFieldOfView();
+  }
+
+  public void setProjectionDepth(final float depth) {
+    this.projectionDepth = depth;
+    this.updateFieldOfView();
+  }
+
+  private void updateFieldOfView() {
+    this.aspectRatio = 320.0f / this.projectionHeight;
+    final float halfWidth = this.projectionWidth / 2.0f;
+    this.fieldOfView = (float)(Math.atan(halfWidth / this.projectionDepth) * 2.0f / this.aspectRatio);
     this.updateProjections();
   }
 
@@ -302,7 +317,6 @@ public class RenderEngine {
       this.tmdShader.use();
       this.tmdShader.new UniformInt("tex24").set(0);
       this.tmdShader.new UniformInt("tex15").set(1);
-      this.tmdShaderProjectionPlaneDistance = this.tmdShader.new UniformFloat("h");
       this.tmdShaderColour = this.tmdShader.new UniformVec3("recolour");
       this.tmdShaderClutOverride = this.tmdShader.new UniformVec2("clutOverride");
       this.tmdShaderTpageOverride = this.tmdShader.new UniformVec2("tpageOverride");
@@ -579,7 +593,6 @@ public class RenderEngine {
 
     for(int i = 0; i < pool.size(); i++) {
       final QueuedModel entry = pool.get(i);
-      this.tmdShaderProjectionPlaneDistance.set(GTE.getProjectionPlaneDistance());
       this.tmdShaderColour.set(entry.colour);
       this.tmdShaderClutOverride.set(entry.clutOverride);
       this.tmdShaderTpageOverride.set(entry.tpageOverride);
@@ -629,7 +642,6 @@ public class RenderEngine {
       final QueuedModel entry = pool.get(i);
 
       if(entry.obj.shouldRender(Translucency.B_PLUS_F)) {
-        this.tmdShaderProjectionPlaneDistance.set(GTE.getProjectionPlaneDistance());
         this.tmdShaderColour.set(entry.colour);
         this.tmdShaderClutOverride.set(entry.clutOverride);
         this.tmdShaderTpageOverride.set(entry.tpageOverride);
@@ -640,7 +652,6 @@ public class RenderEngine {
       }
 
       if(entry.obj.shouldRender(Translucency.B_MINUS_F)) {
-        this.tmdShaderProjectionPlaneDistance.set(GTE.getProjectionPlaneDistance());
         this.tmdShaderColour.set(entry.colour.mul(-1.0f, this.tempColour));
         this.tmdShaderClutOverride.set(entry.clutOverride);
         this.tmdShaderTpageOverride.set(entry.tpageOverride);
@@ -736,20 +747,34 @@ public class RenderEngine {
   }
 
   public void setProjectionMode(final ProjectionMode projectionMode) {
+    final boolean highQualityProjection = this.allowHighQualityProjection && CONFIG.getConfig(CoreMod.HIGH_QUALITY_PROJECTION_CONFIG.get());
+
+    // znear
     this.projectionBuffer.put(0, 0.0f);
-    this.projectionBuffer.put(1, 1000000.0f);
+
+    // zfar
+    if(highQualityProjection) {
+      this.projectionBuffer.put(1, 1000000.0f);
+    } else {
+      this.projectionBuffer.put(1, GTE.getProjectionPlaneDistance());
+    }
 
     switch(projectionMode) {
       case _2D -> {
         glDisable(GL_CULL_FACE);
         this.setTransforms(this.camera2d, this.orthographicProjection);
-        this.projectionBuffer.put(2, 1.0f);
+        this.projectionBuffer.put(2, 0.0f); // Projection mode: ortho
       }
 
       case _3D -> {
         glEnable(GL_CULL_FACE);
         this.setTransforms(this.camera3d, this.perspectiveProjection);
-        this.projectionBuffer.put(2, 0.0f);
+
+        if(highQualityProjection) {
+          this.projectionBuffer.put(2, 2.0f); // projection mode: high quality perspective
+        } else {
+          this.projectionBuffer.put(2, 1.0f); // projection mode: PS1 perspective
+        }
       }
     }
 
@@ -914,19 +939,36 @@ public class RenderEngine {
     }
 
     // LOD uses a left-handed projection with a negated Y axis because reasons.
-    // Our perspective projection is actually a centred orthographic projection. We are doing a
-    // projection plane division in the vertex shader to emulate perspective division on the GTE.
-    if(this.allowWidescreen && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get())) {
-      final float ratio = this.width / (float)this.height;
-      final float w = this.projectionHeight * ratio;
-      final float h = this.projectionHeight;
-      this.perspectiveProjection.setOrthoLH(-w / 2.0f, w / 2.0f, h / 2.0f, -h / 2.0f, 0.1f, 1000000.0f);
-      this.orthographicProjection.setOrthoLH(0.0f, w * (this.projectionWidth / 320.0f), h, 0.0f, 0.1f, 1000000.0f);
-      this.widescreenOrthoOffsetX = (w - 320.0f) / 2.0f;
+    if(this.allowHighQualityProjection && (!CoreMod.HIGH_QUALITY_PROJECTION_CONFIG.isValid() || CONFIG.getConfig(CoreMod.HIGH_QUALITY_PROJECTION_CONFIG.get()))) {
+      if(this.allowWidescreen && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get())) {
+        final float ratio = this.width / (float)this.height;
+        final float w = this.projectionHeight * ratio;
+        final float h = this.projectionHeight;
+        this.perspectiveProjection.setPerspectiveLH(this.fieldOfView, ratio, 0.1f, 1000000.0f);
+        this.perspectiveProjection.negateY();
+        this.orthographicProjection.setOrthoLH(0.0f, w * (this.projectionWidth / 320.0f), h, 0.0f, 0.1f, 1000000.0f);
+        this.widescreenOrthoOffsetX = (w - 320.0f) / 2.0f;
+      } else {
+        this.perspectiveProjection.setPerspectiveLH(this.fieldOfView, this.aspectRatio, 0.1f, 1000000.0f);
+        this.perspectiveProjection.negateY();
+        this.orthographicProjection.setOrthoLH(0.0f, this.projectionWidth, this.projectionHeight, 0.0f, 0.1f, 1000000.0f);
+        this.widescreenOrthoOffsetX = 0.0f;
+      }
     } else {
-      this.perspectiveProjection.setOrthoLH(-this.projectionWidth / 2.0f, this.projectionWidth / 2.0f, this.projectionHeight / 2.0f, -this.projectionHeight / 2.0f, 0.1f, 1000000.0f);
-      this.orthographicProjection.setOrthoLH(0.0f, this.projectionWidth, this.projectionHeight, 0.0f, 0.1f, 1000000.0f);
-      this.widescreenOrthoOffsetX = 0.0f;
+      // Our perspective projection is actually a centred orthographic projection. We are doing a
+      // projection plane division in the vertex shader to emulate perspective division on the GTE.
+      if(this.allowWidescreen && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get())) {
+        final float ratio = this.width / (float)this.height;
+        final float w = this.projectionHeight * ratio;
+        final float h = this.projectionHeight;
+        this.perspectiveProjection.setOrthoLH(-w / 2.0f, w / 2.0f, h / 2.0f, -h / 2.0f, 0.1f, 1000000.0f);
+        this.orthographicProjection.setOrthoLH(0.0f, w * (this.projectionWidth / 320.0f), h, 0.0f, 0.1f, 1000000.0f);
+        this.widescreenOrthoOffsetX = (w - 320.0f) / 2.0f;
+      } else {
+        this.perspectiveProjection.setOrthoLH(-this.projectionWidth / 2.0f, this.projectionWidth / 2.0f, this.projectionHeight / 2.0f, -this.projectionHeight / 2.0f, 0.1f, 1000000.0f);
+        this.orthographicProjection.setOrthoLH(0.0f, this.projectionWidth, this.projectionHeight, 0.0f, 0.1f, 1000000.0f);
+        this.widescreenOrthoOffsetX = 0.0f;
+      }
     }
   }
 
