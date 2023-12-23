@@ -1,6 +1,6 @@
 package legend.game.submap;
 
-public class Struct34_2 {
+public class LawPodTrailSegment34 {
   public short tick_00;
 
   public int tpage_04;
@@ -11,8 +11,8 @@ public class Struct34_2 {
   public int gAccumulator_18;
   public int bAccumulator_1c;
   public float z_20;
-  public Struct14 _24;
-  public Struct14 _28;
-  public Struct18 _2c;
-  public Struct34_2 next_30;
+  public TrailSegmentVertices14 originVerts01_24;
+  public TrailSegmentVertices14 endpointVerts23_28;
+  public LawPodTrailData18 trailData_2c;
+  public LawPodTrailSegment34 next_30;
 }

@@ -217,7 +217,7 @@ public class SMap extends EngineState {
   private final Model124 playerModel_800c6748 = new Model124("Player");
   private boolean submapModelLoaded_800c686c;
   private boolean chapterTitleAnimationComplete_800c686e;
-  private int _800c6870;
+  private boolean unloadSubmapParticles_800c6870;
 
   private boolean submapAssetsLoaded_800c6874;
   private List<FileData> submapAssetsMrg_800c6878;
@@ -334,9 +334,9 @@ public class SMap extends EngineState {
 
   private final SmokeParticleEffect smokeCloudEffect_800d4f50 = new SmokeParticleEffect();
 
-  private final Struct34_2 _800d4f90 = new Struct34_2();
+  private final LawPodTrailSegment34 lawPodTrail_800d4f90 = new LawPodTrailSegment34();
 
-  private final Struct14 _800d4fd0 = new Struct14();
+  private final TrailSegmentVertices14 lawPodTrailVerts_800d4fd0 = new TrailSegmentVertices14();
 
   private final TriangleIndicator44[] _800d4ff0 = new TriangleIndicator44[21];
   {
@@ -438,8 +438,7 @@ public class SMap extends EngineState {
   private final int[] dustTextureHeights_800d6bfc = {31, 31, 31, 23};
   private final int[] brightnessTickInterval_800d6c0c = {120, 0, 0, 0};
 
-  private final Vector3f _800d6c18 = new Vector3f(-8.0f, 0.0f, 0.0f);
-  private final Vector3f _800d6c20 = new Vector3f( 8.0f, 0.0f, 0.0f);
+
   private final Vector3f savePointV0_800d6c28 = new Vector3f(-24.0f, -32.0f,  24.0f);
   private final Vector3f savePointV1_800d6c30 = new Vector3f( 24.0f, -32.0f,  24.0f);
   private final Vector3f savePointV2_800d6c38 = new Vector3f(-24.0f, -32.0f, -24.0f);
@@ -784,9 +783,9 @@ public class SMap extends EngineState {
   private final Vector2i clut_800f9e5e = new Vector2i();
   private int snowState_800f9e60;
 
-  private int _800f9e78;
+  private int lawPodTrailSegmentCount_800f9e78;
 
-  private final Struct18[] _800f9e7c = new Struct18[8];
+  private final LawPodTrailData18[] lawPodTrailSegments_800f9e7c = new LawPodTrailData18[8];
   private int momentaryIndicatorTicks_800f9e9c;
 
   private int _800f9ea0;
@@ -951,7 +950,7 @@ public class SMap extends EngineState {
     functions[770] = this::scriptAllocateSmokePlumeEffectData;
     functions[771] = this::FUN_800f2264;
     functions[772] = this::scriptAddSavePoint;
-    functions[773] = this::FUN_800f23ec;
+    functions[773] = this::scriptInitializeDustType2;
     functions[774] = this::FUN_800f2780;
     functions[775] = this::scriptReinitializeSmokePlumeForIntermittentBursts;
     functions[776] = this::scriptInitSnowParticleData;
@@ -963,11 +962,11 @@ public class SMap extends EngineState {
     functions[782] = this::scriptAllocateSmokeCloudData;
     functions[783] = this::scriptDeallocateSmokeCloudDataAndEffect;
     functions[784] = this::scriptSetSmokeCloudEffectStateToDontTick;
-    functions[785] = this::FUN_800f23a0;
-    functions[786] = this::FUN_800f1634;
+    functions[785] = this::scriptSetDustType1InstantiationInterval;
+    functions[786] = this::scriptInitLawPodTrail;
     functions[787] = this::FUN_800f22c4;
     functions[788] = this::FUN_800f2554;
-    functions[789] = this::FUN_800f25a8;
+    functions[789] = this::scriptDeallocateLawPodTrail;
     functions[790] = this::scriptAllocateUnusedSmokeEffectData;
     return functions;
   }
@@ -3164,7 +3163,7 @@ public class SMap extends EngineState {
       }
 
       //LAB_800e1390
-      this.tickDust(sobj.model_00, sobj.dustData_1d0);
+      this.tickDust(sobj.model_00, sobj.attachedEffectData_1d0);
     }
 
     //LAB_800e139c
@@ -3377,7 +3376,7 @@ public class SMap extends EngineState {
       }
 
       case PREPARE_TO_LOAD_SUBMAP_MODEL_7 -> {
-        this._800c6870 = 0;
+        this.unloadSubmapParticles_800c6870 = false;
         this.submapModelLoaded_800c686c = false;
         this.submapType_800c6968 = this.submapTypes_800f5cd4[submapCut_80052c30];
         this.mediaLoadingStage_800c68e4 = SubmapMediaState.LOAD_SUBMAP_MODEL_8;
@@ -3525,7 +3524,7 @@ public class SMap extends EngineState {
           }
 
           //LAB_800e1d60
-          this.initDustData(state.innerStruct_00.dustData_1d0);
+          this.initDustData(state.innerStruct_00.attachedEffectData_1d0);
 
           for(final ModelPart10 part : model.modelParts_00) {
             part.obj = TmdObjLoader.fromObjTable("SobjModel (index " + i + ')', part.tmd_08);
@@ -3677,7 +3676,7 @@ public class SMap extends EngineState {
 
     scriptDeallocateAllTextboxes(null);
 
-    this._800c6870 = -1;
+    this.unloadSubmapParticles_800c6870 = true;
     this.submapModelRenderers_800f5ad4[this.submapType_800c6968].run();
 
     this.submapEffectsState_800f9eac = -1;
@@ -5998,7 +5997,7 @@ public class SMap extends EngineState {
 
   @Method(0x800eddb4L)
   private void handleAndRenderSubmapModel() {
-    if(this._800c6870 == -1) {
+    if(this.unloadSubmapParticles_800c6870) {
       this.submapModelLoadingStage_800f9e5a = -1;
     }
 
@@ -6296,7 +6295,7 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800ef0f8L)
-  private void tickDust(final Model124 model, final DustData40 data) {
+  private void tickDust(final Model124 model, final AttachedSobjEffectData40 data) {
     if(!flEq(data.transfer_1e.x, model.coord2_14.coord.transfer.x) || !flEq(data.transfer_1e.y, model.coord2_14.coord.transfer.y) || !flEq(data.transfer_1e.z, model.coord2_14.coord.transfer.z)) {
       //LAB_800ef154
       if(data.shouldRenderDustType0_04 != 0) {
@@ -6422,9 +6421,9 @@ public class SMap extends EngineState {
       }
 
       //LAB_800ef728
-      if(data._18 == 1) {
-        if(this._800c6870 != -1) {
-          this.FUN_800f0644(model, data);
+      if(data.shouldRenderLawPodTrail_18) {
+        if(!this.unloadSubmapParticles_800c6870) {
+          this.tickLawPodTrail(model, data);
         }
       }
     }
@@ -6570,11 +6569,11 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800f0370L)
-  private void FUN_800f0370() {
+  private void initAttachedSobjEffects() {
     initModel(this.dustModel_800d4d40, this.dustTmd, this.dustAnimation);
     this.dustType1And2_800d4e68.next_50 = null;
     this.dustType0_800d4ec0.next_1c = null;
-    this.FUN_800f0e60();
+    this.initLawPodTrail();
   }
 
   @Method(0x800f03c0L)
@@ -6597,24 +6596,24 @@ public class SMap extends EngineState {
   private void deallocateDustAndSomething() {
     this.deallocateDustType0();
     this.deallocateDustType1And2();
-    this.FUN_800f0e7c();
+    this.deallocateLawPodTrail();
   }
 
   @Method(0x800f047cL)
   private void handleAndRenderDust() {
     this.renderDustType0();
     this.renderDustType1And2();
-    this.FUN_800f0970();
+    this.renderLawPodTrail();
   }
 
   @Method(0x800f04acL)
-  private void initDustData(final DustData40 dustData) {
+  private void initDustData(final AttachedSobjEffectData40 dustData) {
     dustData.tick_00 = 0;
     dustData.shouldRenderDustType0_04 = 0;
     dustData.shouldRenderDustType1_08 = 0;
     dustData.shouldRenderDustType2_0c = 0;
     dustData._10 = 0;
-    dustData._18 = 0;
+    dustData.shouldRenderLawPodTrail_18 = false;
     dustData.textureIndexType1_1c = 0;
     dustData.transfer_1e.zero();
     dustData.size_28 = 0;
@@ -6622,7 +6621,7 @@ public class SMap extends EngineState {
     dustData.countTicksInstantiationIntervalType0And2_30 = 0;
     dustData.countTicksInstantiationIntervalType1_34 = 0;
     dustData.maxTicks_38 = 0;
-    dustData.ptr_3c = null;
+    dustData.trailData_3c = null;
   }
 
   @Method(0x800f058cL)
@@ -6659,252 +6658,252 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800f0644L)
-  private void FUN_800f0644(final Model124 model, final DustData40 a1) {
-    if((a1.tick_00 & 0x1) == 0) {
-      final Struct18 s2 = a1.ptr_3c;
+  private void tickLawPodTrail(final Model124 model, final AttachedSobjEffectData40 data) {
+    if((data.tick_00 & 0x1) == 0) {
+      final LawPodTrailData18 trailData = data.trailData_3c;
 
-      if(s2._01 < s2._00) {
-        final Struct34_2 s0 = this._800d4f90;
-        final Struct34_2 s3 = new Struct34_2();
-        s3.next_30 = s0.next_30;
-        s0.next_30 = s3;
+      if(trailData.countSegments_01 < trailData.maxCountSegments_00) {
+        final LawPodTrailSegment34 prevSegment = this.lawPodTrail_800d4f90;
+        final LawPodTrailSegment34 segment = new LawPodTrailSegment34();
+        segment.next_30 = prevSegment.next_30;
+        prevSegment.next_30 = segment;
 
-        final Struct14 s4 = this._800d4fd0;
-        Struct14 s1 = new Struct14();
-        s1.next_10 = s4.next_10;
-        s4.next_10 = s1;
+        final TrailSegmentVertices14 verts = this.lawPodTrailVerts_800d4fd0;
+        TrailSegmentVertices14 newVerts = new TrailSegmentVertices14();
+        newVerts.next_10 = verts.next_10;
+        verts.next_10 = newVerts;
 
-        final MV sp0x20 = new MV();
-        GsGetLs(model.coord2_14, sp0x20);
+        final MV transforms = new MV();
+        GsGetLs(model.coord2_14, transforms);
 
         PushMatrix();
-        GTE.setTransforms(sp0x20);
-        GTE.perspectiveTransform(-s2.width_08, this._800d6c18.y, this._800d6c18.z);
-        s1.vert0_00.x = GTE.getScreenX(2);
-        s1.vert0_00.y = GTE.getScreenY(2);
-        s3.z_20 = GTE.getScreenZ(3) / 4.0f;
+        GTE.setTransforms(transforms);
+        GTE.perspectiveTransform(-trailData.width_08, 0.0f, 0.0f);
+        newVerts.vert0_00.x = GTE.getScreenX(2);
+        newVerts.vert0_00.y = GTE.getScreenY(2);
+        segment.z_20 = GTE.getScreenZ(3) / 4.0f;
 
-        GTE.perspectiveTransform(s2.width_08, this._800d6c20.y, this._800d6c20.z);
-        s1.vert1_08.x = GTE.getScreenX(2);
-        s1.vert1_08.y = GTE.getScreenY(2);
-        s3.z_20 = GTE.getScreenZ(3) / 4.0f;
+        GTE.perspectiveTransform(trailData.width_08, 0.0f, 0.0f);
+        newVerts.vert1_08.x = GTE.getScreenX(2);
+        newVerts.vert1_08.y = GTE.getScreenY(2);
+        segment.z_20 = GTE.getScreenZ(3) / 4.0f;
         PopMatrix();
 
-        s3.tick_00 = 0;
-        s3.tpage_04 = GetTPage(Bpp.BITS_4, Translucency.of(s2.translucency_0c), 972, 320);
-        this.FUN_800f0df0(s2, s3);
-        s1.vert0_00.x -= this.screenOffsetX_800cb568;
-        s1.vert0_00.y -= this.screenOffsetY_800cb56c;
-        s1.vert1_08.x -= this.screenOffsetX_800cb568;
-        s1.vert1_08.y -= this.screenOffsetY_800cb56c;
+        segment.tick_00 = 0;
+        segment.tpage_04 = GetTPage(Bpp.BITS_4, Translucency.of(trailData.translucency_0c), 972, 320);
+        this.initLawPodTrailSegmentColour(trailData, segment);
+        newVerts.vert0_00.x -= this.screenOffsetX_800cb568;
+        newVerts.vert0_00.y -= this.screenOffsetY_800cb56c;
+        newVerts.vert1_08.x -= this.screenOffsetX_800cb568;
+        newVerts.vert1_08.y -= this.screenOffsetY_800cb56c;
 
-        if(s2._01 == 0) {
-          s2._14 = s1;
-          s1 = new Struct14();
-          s1.next_10 = s4.next_10;
-          s4.next_10 = s1;
-          final Struct14 v1 = s2._14;
-          s1.vert0_00.set(v1.vert0_00);
-          s1.vert1_08.set(v1.vert1_08);
+        if(trailData.countSegments_01 == 0) {
+          trailData.currSegmentOriginVerts_14 = newVerts;
+          newVerts = new TrailSegmentVertices14();
+          newVerts.next_10 = verts.next_10;
+          verts.next_10 = newVerts;
+          final TrailSegmentVertices14 tempVerts = trailData.currSegmentOriginVerts_14;
+          newVerts.vert0_00.set(tempVerts.vert0_00);
+          newVerts.vert1_08.set(tempVerts.vert1_08);
         }
 
         //LAB_800f0928
-        s3._28 = s1;
-        s3._24 = s2._14;
-        s2._14 = s1;
-        s3._2c = s2;
-        s2._01++;
+        segment.endpointVerts23_28 = newVerts;
+        segment.originVerts01_24 = trailData.currSegmentOriginVerts_14;
+        trailData.currSegmentOriginVerts_14 = newVerts;
+        segment.trailData_2c = trailData;
+        trailData.countSegments_01++;
       }
     }
-
     //LAB_800f094c
   }
 
   @Method(0x800f0970L)
-  private void FUN_800f0970() {
-    Struct14 a0;
-    Struct34_2 s3 = this._800d4f90;
-    Struct34_2 s1 = s3.next_30;
+  private void renderLawPodTrail() {
+    TrailSegmentVertices14 childVerts;
+    LawPodTrailSegment34 prevSegment = this.lawPodTrail_800d4f90;
+    LawPodTrailSegment34 segment = prevSegment.next_30;
 
     //LAB_800f09c0
-    while(s1 != null) {
-      final Struct18 s2 = s1._2c;
-      if(s2._06 >= s1.tick_00) {
-        final int tpage = s1.tpage_04;
+    while(segment != null) {
+      final LawPodTrailData18 trailData = segment.trailData_2c;
+      if(segment.tick_00 <= trailData.maxTicks_06) {
+        final int tpage = segment.tpage_04;
 
         //LAB_800f0b04
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
           .translucent(Translucency.of(tpage >>> 5 & 0b11))
-          .pos(0, this.screenOffsetX_800cb568 + s1._24.vert0_00.x, this.screenOffsetY_800cb56c + s1._24.vert0_00.y)
-          .pos(1, this.screenOffsetX_800cb568 + s1._24.vert1_08.x, this.screenOffsetY_800cb56c + s1._24.vert1_08.y)
-          .pos(2, this.screenOffsetX_800cb568 + s1._28.vert0_00.x, this.screenOffsetY_800cb56c + s1._28.vert0_00.y)
-          .pos(3, this.screenOffsetX_800cb568 + s1._28.vert1_08.x, this.screenOffsetY_800cb56c + s1._28.vert1_08.y);
+          .pos(0, this.screenOffsetX_800cb568 + segment.originVerts01_24.vert0_00.x, this.screenOffsetY_800cb56c + segment.originVerts01_24.vert0_00.y)
+          .pos(1, this.screenOffsetX_800cb568 + segment.originVerts01_24.vert1_08.x, this.screenOffsetY_800cb56c + segment.originVerts01_24.vert1_08.y)
+          .pos(2, this.screenOffsetX_800cb568 + segment.endpointVerts23_28.vert0_00.x, this.screenOffsetY_800cb56c + segment.endpointVerts23_28.vert0_00.y)
+          .pos(3, this.screenOffsetX_800cb568 + segment.endpointVerts23_28.vert1_08.x, this.screenOffsetY_800cb56c + segment.endpointVerts23_28.vert1_08.y);
 
         final int r;
         final int g;
         final int b;
-        if(s2._02 - 1 >= s1.tick_00) {
+        if(segment.tick_00 <= trailData.colourTickDelay_02 - 1) {
           //LAB_800f0d0c
-          r = s1.rAccumulator_14 >> 16;
-          g = s1.gAccumulator_18 >> 16;
-          b = s1.bAccumulator_1c >> 16;
+          r = segment.rAccumulator_14 >> 16;
+          g = segment.gAccumulator_18 >> 16;
+          b = segment.bAccumulator_1c >> 16;
         } else {
-          s1.rAccumulator_14 -= s1.rStep_08;
-          s1.gAccumulator_18 -= s1.gStep_0c;
-          s1.bAccumulator_1c -= s1.bStep_10;
-          r = Math.max(0, s1.rAccumulator_14 >> 16);
-          g = Math.max(0, s1.gAccumulator_18 >> 16);
-          b = Math.max(0, s1.bAccumulator_1c >> 16);
+          segment.rAccumulator_14 -= segment.rStep_08;
+          segment.gAccumulator_18 -= segment.gStep_0c;
+          segment.bAccumulator_1c -= segment.bStep_10;
+          r = Math.max(0, segment.rAccumulator_14 >> 16);
+          g = Math.max(0, segment.gAccumulator_18 >> 16);
+          b = Math.max(0, segment.bAccumulator_1c >> 16);
         }
 
         //LAB_800f0d18
-        cmd.rgb(r, g, b);
-        GPU.queueCommand(s1.z_20, cmd);
+        cmd.rgb(0, r, g, b);
+        cmd.rgb(1, r, g, b);
+        cmd.rgb(2, b, g, r);
+        cmd.rgb(3, b, g, r);
+        GPU.queueCommand(segment.z_20, cmd);
 
-        s3 = s1;
-        s1.tick_00++;
-        s1 = s1.next_30;
+        prevSegment = segment;
+        segment.tick_00++;
+        segment = segment.next_30;
       } else {
-        s2._01--;
-        a0 = this._800d4fd0.next_10;
-        Struct14 v0 = s1._24;
-        Struct14 v1 = this._800d4fd0;
+        trailData.countSegments_01--;
+        childVerts = this.lawPodTrailVerts_800d4fd0.next_10;
+        TrailSegmentVertices14 currSegmentOriginVerts = segment.originVerts01_24;
+        TrailSegmentVertices14 parentVerts = this.lawPodTrailVerts_800d4fd0;
 
         //LAB_800f09fc
-        while(a0 != null) {
-          if(a0 == v0) {
+        while(childVerts != null) {
+          if(childVerts == currSegmentOriginVerts) {
             //LAB_800f0ae8
-            v1.next_10 = a0.next_10;
+            parentVerts.next_10 = childVerts.next_10;
             break;
           }
 
-          v1 = a0;
-          a0 = a0.next_10;
+          parentVerts = childVerts;
+          childVerts = childVerts.next_10;
         }
 
         //LAB_800f0a18
-        if(s2._01 == 0) {
-          a0 = this._800d4fd0.next_10;
-          v0 = s1._28;
-          v1 = this._800d4fd0;
+        if(trailData.countSegments_01 == 0) {
+          childVerts = this.lawPodTrailVerts_800d4fd0.next_10;
+          currSegmentOriginVerts = segment.endpointVerts23_28;
+          parentVerts = this.lawPodTrailVerts_800d4fd0;
 
           //LAB_800f0a38
-          while(a0 != null) {
-            if(a0 == v0) {
+          while(childVerts != null) {
+            if(childVerts == currSegmentOriginVerts) {
               //LAB_800f0acc
-              v0 = a0.next_10;
-              v1.next_10 = v0;
+              currSegmentOriginVerts = childVerts.next_10;
+              parentVerts.next_10 = currSegmentOriginVerts;
               break;
             }
 
-            v1 = a0;
-            a0 = a0.next_10;
+            parentVerts = childVerts;
+            childVerts = childVerts.next_10;
           }
 
           //LAB_800f0a54
         }
 
         //LAB_800f0a58
-        s3.next_30 = s1.next_30;
+        prevSegment.next_30 = segment.next_30;
 
-        s1 = s3.next_30;
-        if(s2._01 == 0) {
-          if(this._800d4f90.next_30.next_30 == null) {
+        segment = prevSegment.next_30;
+        if(trailData.countSegments_01 == 0) {
+          if(this.lawPodTrail_800d4f90.next_30.next_30 == null) {
             //LAB_800f0aa4
-            while(this._800d4fd0.next_10 != null) {
-              a0 = this._800d4fd0.next_10;
-              this._800d4fd0.next_10 = a0.next_10;
+            while(this.lawPodTrailVerts_800d4fd0.next_10 != null) {
+              childVerts = this.lawPodTrailVerts_800d4fd0.next_10;
+              this.lawPodTrailVerts_800d4fd0.next_10 = childVerts.next_10;
             }
           }
         }
       }
-
       //LAB_800f0d68
     }
 
     //LAB_800f0d74
-    if(this._800f9e78 == 0 && this._800d4f90.next_30 == null) {
+    if(this.lawPodTrailSegmentCount_800f9e78 == 0 && this.lawPodTrail_800d4f90.next_30 == null) {
       //LAB_800f0da8
-      while(this._800d4fd0.next_10 != null) {
-        a0 = this._800d4fd0.next_10;
-        this._800d4fd0.next_10 = a0.next_10;
+      while(this.lawPodTrailVerts_800d4fd0.next_10 != null) {
+        childVerts = this.lawPodTrailVerts_800d4fd0.next_10;
+        this.lawPodTrailVerts_800d4fd0.next_10 = childVerts.next_10;
       }
     }
-
     //LAB_800f0dc8
   }
 
   @Method(0x800f0df0L)
-  private void FUN_800f0df0(final Struct18 a0, final Struct34_2 a1) {
-    a1.rAccumulator_14 = a0.r_10 << 16;
-    a1.gAccumulator_18 = a0.g_11 << 16;
-    a1.bAccumulator_1c = a0.b_12 << 16;
-    a1.rStep_08 = a1.rAccumulator_14 / a0._04;
-    a1.gStep_0c = a1.gAccumulator_18 / a0._04;
-    a1.bStep_10 = a1.bAccumulator_1c / a0._04;
+  private void initLawPodTrailSegmentColour(final LawPodTrailData18 trailData, final LawPodTrailSegment34 segment) {
+    segment.rAccumulator_14 = trailData.r_10 << 16;
+    segment.gAccumulator_18 = trailData.g_11 << 16;
+    segment.bAccumulator_1c = trailData.b_12 << 16;
+    segment.rStep_08 = segment.rAccumulator_14 / trailData.countColourSteps_04;
+    segment.gStep_0c = segment.gAccumulator_18 / trailData.countColourSteps_04;
+    segment.bStep_10 = segment.bAccumulator_1c / trailData.countColourSteps_04;
   }
 
   @Method(0x800f0e60L)
-  private void FUN_800f0e60() {
-    this._800f9e78 = 0;
-    this._800d4f90.next_30 = null;
-    this._800d4fd0.next_10 = null;
+  private void initLawPodTrail() {
+    this.lawPodTrailSegmentCount_800f9e78 = 0;
+    this.lawPodTrail_800d4f90.next_30 = null;
+    this.lawPodTrailVerts_800d4fd0.next_10 = null;
   }
 
   @Method(0x800f0e7cL)
-  private void FUN_800f0e7c() {
-    final Struct34_2 s1 = this._800d4f90;
-    if(s1.next_30 != null) {
+  private void deallocateLawPodTrail() {
+    final LawPodTrailSegment34 parentSegment = this.lawPodTrail_800d4f90;
+    if(parentSegment.next_30 != null) {
       //LAB_800f0ea4
-      Struct34_2 s0;
+      LawPodTrailSegment34 tempSegment;
       do {
-        final Struct34_2 a0 = s1.next_30;
-        s0 = a0.next_30;
-        s1.next_30 = s0;
-      } while(s0 != null);
+        final LawPodTrailSegment34 childSegment = parentSegment.next_30;
+        tempSegment = childSegment.next_30;
+        parentSegment.next_30 = tempSegment;
+      } while(tempSegment != null);
     }
 
     //LAB_800f0ec8
-    final Struct14 s1_0 = this._800d4fd0;
+    final TrailSegmentVertices14 parentVerts = this.lawPodTrailVerts_800d4fd0;
 
-    if(s1_0.next_10 != null) {
+    if(parentVerts.next_10 != null) {
       //LAB_800f0edc
-      Struct14 s0;
+      TrailSegmentVertices14 tempVerts;
       do {
-        final Struct14 a0 = s1_0.next_10;
-        s0 = a0.next_10;
-        s1_0.next_10 = s0;
-      } while(s0 != null);
+        final TrailSegmentVertices14 childVerts = parentVerts.next_10;
+        tempVerts = childVerts.next_10;
+        parentVerts.next_10 = tempVerts;
+      } while(tempVerts != null);
     }
 
     //LAB_800f0efc
-    this.FUN_800f0fe8();
-    this._800f9e78 = 0;
+    this.clearLawPodTrailSegmentsList();
+    this.lawPodTrailSegmentCount_800f9e78 = 0;
   }
 
   @Method(0x800f0f20L)
-  private Struct18 FUN_800f0f20() {
-    Struct18 v1 = null;
+  private LawPodTrailData18 addLawPodTrailSegment() {
+    LawPodTrailData18 segment = null;
 
     //LAB_800f0f3c
-    for(int a0 = 0; a0 < 8; a0++) {
-      if(this._800f9e7c[a0] == null) {
-        v1 = new Struct18();
-        this._800f9e7c[a0] = v1;
+    for(int i = 0; i < 8; i++) {
+      if(this.lawPodTrailSegments_800f9e7c[i] == null) {
+        segment = new LawPodTrailData18();
+        this.lawPodTrailSegments_800f9e7c[i] = segment;
         break;
       }
     }
 
     //LAB_800f0f78
-    return v1;
+    return segment;
   }
 
   @Method(0x800f0fe8L)
-  private void FUN_800f0fe8() {
+  private void clearLawPodTrailSegmentsList() {
     for(int i = 0; i < 8; i++) {
-      if(this._800f9e7c[i] != null) {
-        this._800f9e7c[i] = null;
-        this._800f9e78--;
+      if(this.lawPodTrailSegments_800f9e7c[i] != null) {
+        this.lawPodTrailSegments_800f9e7c[i] = null;
+        this.lawPodTrailSegmentCount_800f9e78--;
       }
     }
   }
@@ -6955,7 +6954,7 @@ public class SMap extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown")
+  @ScriptDescription("Initializes the trail effect on the law pods in Zenebatos.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
@@ -6966,32 +6965,32 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "g")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "b")
   @Method(0x800f1634L)
-  private FlowControl FUN_800f1634(final RunningScript<?> script) {
+  private FlowControl scriptInitLawPodTrail(final RunningScript<?> script) {
     final ScriptState<?> state = script.scriptState_04;
 
     script.params_20[9] = new ScriptStorageParam(state, 0);
 
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[state.storage_44[0]].innerStruct_00;
-    if(script.params_20[0].get() == 0 || this._800f9e78 >= 8) {
+    if(script.params_20[0].get() == 0 || this.lawPodTrailSegmentCount_800f9e78 >= 8) {
       //LAB_800f1698
-      sobj.dustData_1d0._18 = 0;
+      sobj.attachedEffectData_1d0.shouldRenderLawPodTrail_18 = false;
     } else {
       //LAB_800f16a4
-      final Struct18 a1 = this.FUN_800f0f20();
-      a1._00 = script.params_20[1].get();
-      a1._01 = 0;
-      a1._02 = (short)script.params_20[2].get();
-      a1._04 = (short)script.params_20[3].get();
-      a1._06 = (short)(a1._02 + a1._04);
-      a1.width_08 = (short)script.params_20[4].get();
-      a1.translucency_0c = script.params_20[5].get();
-      a1.r_10 = script.params_20[6].get();
-      a1.g_11 = script.params_20[7].get();
-      a1.b_12 = script.params_20[8].get();
-      a1._14 = null;
-      sobj.dustData_1d0._18 = script.params_20[0].get();
-      sobj.dustData_1d0.ptr_3c = a1;
-      this._800f9e78++;
+      final LawPodTrailData18 segment = this.addLawPodTrailSegment();
+      segment.maxCountSegments_00 = script.params_20[1].get();
+      segment.countSegments_01 = 0;
+      segment.colourTickDelay_02 = script.params_20[2].get();
+      segment.countColourSteps_04 = script.params_20[3].get();
+      segment.maxTicks_06 = segment.colourTickDelay_02 + segment.countColourSteps_04;
+      segment.width_08 = script.params_20[4].get();
+      segment.translucency_0c = script.params_20[5].get();
+      segment.r_10 = script.params_20[6].get();
+      segment.g_11 = script.params_20[7].get();
+      segment.b_12 = script.params_20[8].get();
+      segment.currSegmentOriginVerts_14 = null;
+      sobj.attachedEffectData_1d0.shouldRenderLawPodTrail_18 = script.params_20[0].get() == 1;
+      sobj.attachedEffectData_1d0.trailData_3c = segment;
+      this.lawPodTrailSegmentCount_800f9e78++;
     }
 
     //LAB_800f1784
@@ -7157,22 +7156,22 @@ public class SMap extends EngineState {
   @Method(0x800f1f9cL)
   private FlowControl FUN_800f1f9c(final RunningScript<?> script) {
     final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
-    sobj.dustData_1d0.shouldRenderDustType0_04 = script.params_20[1].get();
-    sobj.dustData_1d0.size_28 = script.params_20[2].get();
-    sobj.dustData_1d0.countTicksInstantiationIntervalType0And2_30 = script.params_20[3].get();
+    sobj.attachedEffectData_1d0.shouldRenderDustType0_04 = script.params_20[1].get();
+    sobj.attachedEffectData_1d0.size_28 = script.params_20[2].get();
+    sobj.attachedEffectData_1d0.countTicksInstantiationIntervalType0And2_30 = script.params_20[3].get();
 
     if(script.params_20[4].get() == 0) {
-      sobj.dustData_1d0.maxTicks_38 = 1;
+      sobj.attachedEffectData_1d0.maxTicks_38 = 1;
     } else {
-      sobj.dustData_1d0.maxTicks_38 = script.params_20[4].get();
+      sobj.attachedEffectData_1d0.maxTicks_38 = script.params_20[4].get();
     }
 
     //LAB_800f2018
-    if(sobj.dustData_1d0.shouldRenderDustType0_04 != 1) {
-      sobj.dustData_1d0.transfer_1e.zero();
-      sobj.dustData_1d0.size_28 = 1;
-      sobj.dustData_1d0.countTicksInstantiationIntervalType0And2_30 = 0;
-      sobj.dustData_1d0.maxTicks_38 = 0;
+    if(sobj.attachedEffectData_1d0.shouldRenderDustType0_04 != 1) {
+      sobj.attachedEffectData_1d0.transfer_1e.zero();
+      sobj.attachedEffectData_1d0.size_28 = 1;
+      sobj.attachedEffectData_1d0.countTicksInstantiationIntervalType0And2_30 = 0;
+      sobj.attachedEffectData_1d0.maxTicks_38 = 0;
     }
 
     //LAB_800f2040
@@ -7242,12 +7241,12 @@ public class SMap extends EngineState {
 
     final SubmapObject210 sobj2 = (SubmapObject210)scriptStatePtrArr_800bc1c0[sobj1.storage_44[0]].innerStruct_00; // Storage 0 is my script index, isn't this just getting the same state?
     if((script.params_20[0].get() - 1 & 0xffff_ffffL) < 2) {
-      sobj2.dustData_1d0.shouldRenderDustType1_08 = 1;
-      sobj2.dustData_1d0._10 = 0;
-      sobj2.dustData_1d0.countTicksInstantiationIntervalType1_34 = 9;
+      sobj2.attachedEffectData_1d0.shouldRenderDustType1_08 = 1;
+      sobj2.attachedEffectData_1d0._10 = 0;
+      sobj2.attachedEffectData_1d0.countTicksInstantiationIntervalType1_34 = 9;
     } else {
       //LAB_800f22b8
-      sobj2.dustData_1d0.shouldRenderDustType1_08 = 0;
+      sobj2.attachedEffectData_1d0.shouldRenderDustType1_08 = 0;
     }
 
     //LAB_800f22bc
@@ -7264,89 +7263,78 @@ public class SMap extends EngineState {
     final SubmapObject210 a0 = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[2].get()].innerStruct_00;
 
     int v1 = script.params_20[0].get();
-    a0.dustData_1d0._10 = v1;
+    a0.attachedEffectData_1d0._10 = v1;
     if(v1 == 0) {
       v1 = script.params_20[1].get();
 
       if(v1 == 0) {
-        a0.dustData_1d0.shouldRenderDustType1_08 = 0;
-        a0.dustData_1d0.countTicksInstantiationIntervalType1_34 = 0;
+        a0.attachedEffectData_1d0.shouldRenderDustType1_08 = 0;
+        a0.attachedEffectData_1d0.countTicksInstantiationIntervalType1_34 = 0;
         //LAB_800f2328
       } else if(v1 == 1) {
-        a0.dustData_1d0.shouldRenderDustType1_08 = v1;
-        a0.dustData_1d0.countTicksInstantiationIntervalType1_34 = a0.dustData_1d0._2c;
+        a0.attachedEffectData_1d0.shouldRenderDustType1_08 = v1;
+        a0.attachedEffectData_1d0.countTicksInstantiationIntervalType1_34 = a0.attachedEffectData_1d0._2c;
       }
       //LAB_800f2340
     } else if(v1 == 1) {
-      a0.dustData_1d0.shouldRenderDustType1_08 = 1;
-      a0.dustData_1d0._2c = a0.dustData_1d0.countTicksInstantiationIntervalType1_34;
-      a0.dustData_1d0.countTicksInstantiationIntervalType1_34 = script.params_20[1].get();
+      a0.attachedEffectData_1d0.shouldRenderDustType1_08 = 1;
+      a0.attachedEffectData_1d0._2c = a0.attachedEffectData_1d0.countTicksInstantiationIntervalType1_34;
+      a0.attachedEffectData_1d0.countTicksInstantiationIntervalType1_34 = script.params_20[1].get();
 
-      if(a0.dustData_1d0.countTicksInstantiationIntervalType1_34 == 0) {
-        a0.dustData_1d0.countTicksInstantiationIntervalType1_34 = 1;
+      if(a0.attachedEffectData_1d0.countTicksInstantiationIntervalType1_34 == 0) {
+        a0.attachedEffectData_1d0.countTicksInstantiationIntervalType1_34 = 1;
       }
     }
 
     //LAB_800f2374
-    if(a0.dustData_1d0._10 >= 2) {
-      a0.dustData_1d0.shouldRenderDustType1_08 = 0;
-      a0.dustData_1d0.transfer_1e.zero();
+    if(a0.attachedEffectData_1d0._10 >= 2) {
+      a0.attachedEffectData_1d0.shouldRenderDustType1_08 = 0;
+      a0.attachedEffectData_1d0.transfer_1e.zero();
     }
 
     //LAB_800f2398
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptDescription("Sets the frequency of new dust type 1 attached sobj effect particles")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "instantiationInterval", description = "Frequency of instantiating new particles.")
   @Method(0x800f23a0L)
-  private FlowControl FUN_800f23a0(final RunningScript<?> script) {
+  private FlowControl scriptSetDustType1InstantiationInterval(final RunningScript<?> script) {
     script.params_20[1] = new ScriptStorageParam(script.scriptState_04, 0);
 
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.scriptState_04.storage_44[0]].innerStruct_00;
-
-    final int v0 = script.params_20[0].get();
-
-    if(v0 != 0) {
-      sobj.dustData_1d0.countTicksInstantiationIntervalType1_34 = v0;
-    } else {
-      sobj.dustData_1d0.countTicksInstantiationIntervalType1_34 = 1;
-    }
+    sobj.attachedEffectData_1d0.countTicksInstantiationIntervalType1_34 = Math.max(1, script.params_20[0].get());
 
     //LAB_800f23e4
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p3")
+  @ScriptDescription("Initializes dust type 2 attached sobj effect if mode is 1 or 3.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "Some kind of mode determining whether dust type 2 is initialized.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "size", description = "Size of the particle.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "instantiationInterval", description = "Frequency of instantiating new particles.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "maxTicks", description = "Number of ticks for which particle exists.")
   @Method(0x800f23ecL)
-  private FlowControl FUN_800f23ec(final RunningScript<?> script) {
+  private FlowControl scriptInitializeDustType2(final RunningScript<?> script) {
     script.params_20[4] = new ScriptStorageParam(script.scriptState_04, 0); //TODO Does nothing, why?
-    final int a2 = script.params_20[0].get();
-    final SubmapObject210 a1 = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.scriptState_04.storage_44[0]].innerStruct_00;
+    final int mode = script.params_20[0].get();
+    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.scriptState_04.storage_44[0]].innerStruct_00;
 
-    if(a2 == 1 || a2 == 3) {
+    if(mode == 1 || mode == 3) {
       //LAB_800f2430
-      a1.dustData_1d0.shouldRenderDustType2_0c = 1;
-      a1.dustData_1d0.size_28 = script.params_20[1].get();
-      a1.dustData_1d0.countTicksInstantiationIntervalType0And2_30 = script.params_20[2].get();
-      a1.dustData_1d0.maxTicks_38 = script.params_20[3].get();
-
-      if(a1.dustData_1d0.maxTicks_38 == 0) {
-        a1.dustData_1d0.maxTicks_38++;
-      }
+      sobj.attachedEffectData_1d0.shouldRenderDustType2_0c = 1;
+      sobj.attachedEffectData_1d0.size_28 = script.params_20[1].get();
+      sobj.attachedEffectData_1d0.countTicksInstantiationIntervalType0And2_30 = script.params_20[2].get();
+      sobj.attachedEffectData_1d0.maxTicks_38 = Math.max(1, script.params_20[3].get());
     } else {
       //LAB_800f2484
-      a1.dustData_1d0.shouldRenderDustType2_0c = 0;
+      sobj.attachedEffectData_1d0.shouldRenderDustType2_0c = 0;
     }
 
     //LAB_800f2488
-    if(a1.dustData_1d0.shouldRenderDustType2_0c != 1) {
-      a1.dustData_1d0.shouldRenderDustType2_0c = 0;
-      a1.dustData_1d0.transfer_1e.zero();
+    if(sobj.attachedEffectData_1d0.shouldRenderDustType2_0c != 1) {
+      sobj.attachedEffectData_1d0.shouldRenderDustType2_0c = 0;
+      sobj.attachedEffectData_1d0.transfer_1e.zero();
     }
 
     //LAB_800f24a8
@@ -7390,17 +7378,17 @@ public class SMap extends EngineState {
     throw new RuntimeException("Not implemented");
   }
 
-  @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptDescription("If param 0 is 1, deallocate the Zenebatos law pod trail effect.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "shouldDeallocate", description = "Deallocate trail effect when true.")
   @Method(0x800f25a8L)
-  private FlowControl FUN_800f25a8(final RunningScript<?> script) {
-    final ScriptState<?> v1 = script.scriptState_04;
-    script.params_20[1] = new ScriptStorageParam(v1, 0);
+  private FlowControl scriptDeallocateLawPodTrail(final RunningScript<?> script) {
+    final ScriptState<?> state = script.scriptState_04;
+    script.params_20[1] = new ScriptStorageParam(state, 0);
 
     if(script.params_20[0].get() == 1) {
-      this.FUN_800f0e7c();
-      final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[v1.storage_44[0]].innerStruct_00;
-      sobj.dustData_1d0._18 = 0;
+      this.deallocateLawPodTrail();
+      final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[state.storage_44[0]].innerStruct_00;
+      sobj.attachedEffectData_1d0.shouldRenderLawPodTrail_18 = false;
     }
 
     //LAB_800f2604
@@ -7917,7 +7905,7 @@ public class SMap extends EngineState {
 
   @Method(0x800f4354L)
   private void handleAndRenderSubmapEffects() {
-    if(this._800c6870 == -1) {
+    if(this.unloadSubmapParticles_800c6870) {
       this.smokePlumeEffect_800d5fd8.deallocate();
 
       if(this.snowState_800f9e60 == 1 || this.snowState_800f9e60 == 2) {
@@ -7975,11 +7963,10 @@ public class SMap extends EngineState {
       this.smokePlumeEffect_800d5fd8.effectShouldRender = false;
       this.initTriangleIndicators();
       this.initSavePoint();
-      this.FUN_800f0370();
+      this.initAttachedSobjEffects();
       this.submapEffectsLoadMode_800f9ea8++;
       this.submapEffectsState_800f9eac = 2;
     }
-
     //LAB_800f473c
   }
 
