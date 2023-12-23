@@ -521,6 +521,7 @@ public final class Scus94491BpeSegment {
     currentEngineState_8004dd04 = overlay.constructor_00.get();
     engineStateFunctions_8004e29c = currentEngineState_8004dd04.getScriptFunctions();
     RENDERER.allowWidescreen = currentEngineState_8004dd04.allowsWidescreen();
+    RENDERER.allowHighQualityProjection = currentEngineState_8004dd04.allowsHighQualityProjection();
     RENDERER.updateProjections();
   }
 

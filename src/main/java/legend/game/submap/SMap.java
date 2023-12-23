@@ -977,6 +977,11 @@ public class SMap extends EngineState {
     return false;
   }
 
+  @Override
+  public boolean allowsHighQualityProjection() {
+    return false;
+  }
+
   @ScriptDescription("Adds a textbox to a submap object")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The textbox index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "submapObjectIndex", description = "The submap object, but may also have the flag 0x1000 set (unknown meaning)")

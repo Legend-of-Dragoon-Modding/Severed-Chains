@@ -45,4 +45,8 @@ public abstract class EngineState {
   public boolean allowsWidescreen() {
     return true;
   }
+
+  public boolean allowsHighQualityProjection() {
+    return true;
+  }
 }

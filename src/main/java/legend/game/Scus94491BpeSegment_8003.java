@@ -843,7 +843,7 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003e958L)
   public static void InitGeom() {
-    GTE.setProjectionPlaneDistance(1000);
+    setProjectionPlaneDistance(1000);
     GTE.setScreenOffset(0, 0);
   }
 
@@ -883,6 +883,7 @@ public final class Scus94491BpeSegment_8003 {
 
   @Method(0x8003f8f0L) //Also 0x8003c6d0
   public static void setProjectionPlaneDistance(final float distance) {
+    RENDERER.setProjectionDepth(distance);
     GTE.setProjectionPlaneDistance(distance);
   }
 
