@@ -10,25 +10,25 @@ public class UvAdjustmentMetrics14 {
   };
 
   public final int index;
-  public final int clutMaskOff_00;
-  public final int clutMaskOn_04;
-  public final int tpageMaskOff_08;
-  public final int tpageMaskOn_0c;
+  public final int clutMaskOr_00;
+  public final int clutMaskAnd_04;
+  public final int tpageMaskOr_08;
+  public final int tpageMaskAnd_0c;
   public final int uvOffset_10;
 
-  public UvAdjustmentMetrics14(final int index, final int clutMaskOff, final int clutMaskOn, final int tpageMaskOff, final int tpageMaskOn, final int uvOffset) {
+  public UvAdjustmentMetrics14(final int index, final int clutMaskOr, final int clutMaskAnd, final int tpageMaskOr, final int tpageMaskAnd, final int uvOffset) {
     this.index = index;
-    this.clutMaskOff_00 = clutMaskOff;
-    this.clutMaskOn_04 = clutMaskOn;
-    this.tpageMaskOff_08 = tpageMaskOff;
-    this.tpageMaskOn_0c = tpageMaskOn;
+    this.clutMaskOr_00 = clutMaskOr;
+    this.clutMaskAnd_04 = clutMaskAnd;
+    this.tpageMaskOr_08 = tpageMaskOr;
+    this.tpageMaskAnd_0c = tpageMaskAnd;
     this.uvOffset_10 = uvOffset;
   }
 
   public void apply(final TmdObjTable1c.Primitive primitive) {
     for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & this.clutMaskOn_04 | this.clutMaskOff_00) + this.uvOffset_10);
-      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & this.tpageMaskOn_0c | this.tpageMaskOff_08) + this.uvOffset_10);
+      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & this.clutMaskAnd_04 | this.clutMaskOr_00) + this.uvOffset_10);
+      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & this.tpageMaskAnd_0c | this.tpageMaskOr_08) + this.uvOffset_10);
       MathHelper.set(data, 0x8, 4, MathHelper.get(data, 0x8, 4) + this.uvOffset_10);
 
       if((primitive.header() & 0x800_0000) != 0) { // Quad
