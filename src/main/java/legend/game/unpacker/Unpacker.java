@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -95,6 +94,9 @@ public final class Unpacker {
 
     // Savepoint etc. from SMAP
     transformers.put(Unpacker::smapAssetDiscriminator, Unpacker::smapAssetExtractor);
+
+    // Convert submap PXLs into individual TIMs
+    transformers.put(SubmapPxlTransformer::discriminator, SubmapPxlTransformer::transform);
 
     // Give Dart his hand back during oof
     transformers.put(Unpacker::drgn0_5546_1_patcherDiscriminator, Unpacker::drgn0_5546_1_patcher);
@@ -591,15 +593,15 @@ public final class Unpacker {
       i++;
     }
 
-    final StringBuilder sb = new StringBuilder();
+    final FileMap map = new FileMap();
 
     i = 0;
     for(final MrgArchive.Entry entry : archive) {
-      sb.append(i).append('=').append(entry.virtual() ? entry.parent() : i).append(';').append(entry.virtualSize()).append('\n');
+      map.addFile(Integer.toString(i), Integer.toString(entry.virtual() ? entry.parent() : i), entry.virtualSize());
       i++;
     }
 
-    files.put(name + "/mrg", new FileData(sb.toString().getBytes(StandardCharsets.US_ASCII)));
+    files.put(name + "/mrg", map.build());
 
     return files;
   }

@@ -219,12 +219,11 @@ public class SMap extends EngineState {
   private boolean chapterTitleAnimationComplete_800c686e;
   private int _800c6870;
 
-  private boolean submapAssetsLoaded_800c6874;
   private List<FileData> submapAssetsMrg_800c6878;
+  private List<FileData> submapTextures;
   private int chapterTitleOriginX_800c687c;
   private int chapterTitleOriginY_800c687e;
   public final ScriptState<SubmapObject210>[] sobjs_800c6880 = new ScriptState[20];
-  private boolean submapScriptsLoaded_800c68d0;
 
   private List<FileData> submapScriptsMrg_800c68d8;
   private SubmapAssets submapAssets;
@@ -3283,12 +3282,6 @@ public class SMap extends EngineState {
 
       // Load map assets
       case LOAD_SOBJ_ASSETS_AND_SCRIPTS_5 -> {
-        assert this.submapAssetsMrg_800c6878 == null : "Submap assets MRG was not empty";
-        assert this.submapScriptsMrg_800c68d8 == null : "Submap scripts MRG was not empty";
-
-        this.submapScriptsLoaded_800c68d0 = false;
-        this.submapAssetsLoaded_800c6874 = false;
-
         final IntRef drgnIndex = new IntRef();
         final IntRef fileIndex = new IntRef();
 
@@ -3302,6 +3295,9 @@ public class SMap extends EngineState {
           loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 1, files -> this.submapAssetsLoadedCallback(files, 0));
           // Submap scripts (file example: 696)
           loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 2, files -> this.submapAssetsLoadedCallback(files, 1));
+
+          // Textures
+          Unpacker.loadDirectory("SECT/DRGN%d.BIN/%d/textures".formatted(20 + drgnIndex.get(), fileIndex.get() + 1), files -> this.submapAssetsLoadedCallback(files, 2));
         }
 
         this.mediaLoadingStage_800c68e4 = SubmapMediaState.LOAD_SOBJS_6;
@@ -3309,7 +3305,7 @@ public class SMap extends EngineState {
 
       // Wait for map assets to load
       case LOAD_SOBJS_6 -> {
-        if(this.submapAssetsLoaded_800c6874 && this.submapScriptsLoaded_800c68d0) {
+        if(this.submapAssetsMrg_800c6878 != null && this.submapTextures != null && this.submapScriptsMrg_800c68d8 != null) {
           final int objCount = this.submapScriptsMrg_800c68d8.size() - 2;
 
           this.submapAssets = new SubmapAssets();
@@ -3362,9 +3358,7 @@ public class SMap extends EngineState {
             }
           }
 
-          for(int i = 0; i < 3; i++) {
-            this.submapAssets.pxls.add(new Tim(this.submapAssetsMrg_800c6878.get(objCount * 34 + i)));
-          }
+          this.submapTextures.stream().map(Tim::new).forEach(this.submapAssets.pxls::add);
 
           this.mediaLoadingStage_800c68e4 = SubmapMediaState.PREPARE_TO_LOAD_SUBMAP_MODEL_7;
         }
@@ -3408,14 +3402,19 @@ public class SMap extends EngineState {
         }
 
         //LAB_800e1914
-        this.submapAssets.pxls.get(0).uploadToGpu();
-        this.submapAssets.pxls.get(1).uploadToGpu();
+        for(int i = 0; i < this.submapAssets.pxls.size(); i++) {
+          final Tim tim = this.submapAssets.pxls.get(i);
+          final Rect4i imageRect = tim.getImageRect();
+          final Rect4i clutRect = tim.getClutRect();
 
-        final Tim tim = this.submapAssets.pxls.get(2);
-        final Rect4i imageRect = tim.getImageRect();
-        imageRect.h = 128;
+          imageRect.x += 576;
+          imageRect.y += 256;
+          clutRect.x += 576;
+          clutRect.y += 256;
 
-        GPU.uploadData15(imageRect, tim.getImageData());
+          GPU.uploadData15(imageRect, tim.getImageData());
+          GPU.uploadData15(clutRect, tim.getClutData());
+        }
 
         final ScriptState<Void> submapController = SCRIPTS.allocateScriptState(0, "Submap controller", 0, null);
         this.submapControllerState_800c6740 = submapController;
@@ -3668,6 +3667,7 @@ public class SMap extends EngineState {
     this.submapAssets = null;
     this.submapAssetsMrg_800c6878 = null;
     this.submapScriptsMrg_800c68d8 = null;
+    this.submapTextures = null;
 
     scriptDeallocateAllTextboxes(null);
 
@@ -4028,21 +4028,18 @@ public class SMap extends EngineState {
   private void submapAssetsLoadedCallback(final List<FileData> files, final int assetType) {
     switch(assetType) {
       // Submap assets
-      case 0x0 -> {
-        this.submapAssetsLoaded_800c6874 = true;
-        this.submapAssetsMrg_800c6878 = files;
-      }
+      case 0x0 -> this.submapAssetsMrg_800c6878 = files;
 
       // Submap scripts
-      case 0x1 -> {
-        this.submapScriptsLoaded_800c68d0 = true;
-        this.submapScriptsMrg_800c68d8 = files;
-      }
+      case 0x1 -> this.submapScriptsMrg_800c68d8 = files;
+
+      // Submap textures
+      case 0x2 -> this.submapTextures = files;
 
       // Chapter title cards
       case 0x10 -> {
-        this.chapterTitleCardLoaded_800c68e0 = true;
         this.chapterTitleCardMrg_800c6710 = files;
+        this.chapterTitleCardLoaded_800c68e0 = true;
       }
     }
   }
