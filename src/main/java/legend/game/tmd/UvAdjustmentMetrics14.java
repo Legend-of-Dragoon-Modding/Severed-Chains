@@ -4,7 +4,10 @@ import legend.core.MathHelper;
 import legend.core.gte.TmdObjTable1c;
 
 public class UvAdjustmentMetrics14 {
-  public static final UvAdjustmentMetrics14 NONE = new UvAdjustmentMetrics14(0, 0x0, 0xffff_ffff, 0x0, 0xffff_ffff, 0x0);
+  public static final UvAdjustmentMetrics14 NONE = new UvAdjustmentMetrics14(0, 0x0, 0xffff_ffff, 0x0, 0xffff_ffff, 0x0) {
+    @Override
+    public void apply(final TmdObjTable1c.Primitive primitive) { }
+  };
 
   public final int index;
   public final int clutMaskOff_00;
