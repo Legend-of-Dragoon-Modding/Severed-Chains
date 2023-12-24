@@ -7274,7 +7274,7 @@ public final class SEffe {
       final int uvs;
       if(!BattleObject.EM__.equals(bobj.magic_00)) {
         //LAB_8011604c
-        uvs = vramSlotUvs_800fb0ec[((BattleEntity27c)bobj).model_148.vramSlot_9d];
+        uvs = vramSlotUvs_800fb0ec[((BattleEntity27c)bobj).model_148.uvAdjustments_9d.index];
         u = (uvs & 0xf) << 6;
         v = (uvs & 0x10) << 4;
         w = 0x100;
@@ -7299,7 +7299,7 @@ public final class SEffe {
           }
         } else {
           //LAB_80115fd8
-          uvs = vramSlotUvs_800fb0ec[((ModelEffect13c)manager.effect_44).model_134.vramSlot_9d];
+          uvs = vramSlotUvs_800fb0ec[((ModelEffect13c)manager.effect_44).model_134.uvAdjustments_9d.index];
           u = (uvs & 0xf) << 6;
           v = (uvs & 0x10) << 4;
           w = 256;

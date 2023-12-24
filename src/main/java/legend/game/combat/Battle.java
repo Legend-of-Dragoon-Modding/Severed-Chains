@@ -106,6 +106,7 @@ import legend.game.sound.SoundFile;
 import legend.game.sound.SpuStruct08;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
+import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CContainer;
 import legend.game.types.CContainerSubfile2;
@@ -198,6 +199,7 @@ import static legend.game.Scus94491BpeSegment_8004.doNothingScript_8004f650;
 import static legend.game.Scus94491BpeSegment_8004.previousEngineState_8004dd28;
 import static legend.game.Scus94491BpeSegment_8004.sssqFadeOut;
 import static legend.game.Scus94491BpeSegment_8004.stopSoundSequence;
+import static legend.game.Scus94491BpeSegment_8005._8005027c;
 import static legend.game.Scus94491BpeSegment_8005.characterSoundFileIndices_800500f8;
 import static legend.game.Scus94491BpeSegment_8005.monsterSoundFileIndices_800500e8;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
@@ -4930,7 +4932,7 @@ public class Battle extends EngineState {
     model.zOffset_a0 = 0;
     model.coord2_14.coord.transfer.set(sp0x18);
 
-    if((tmd.header.flags & 0x2) == 0 && model.vramSlot_9d != 0) {
+    if((tmd.header.flags & 0x2) == 0) {
       adjustModelUvs(model);
     }
 
@@ -6437,9 +6439,9 @@ public class Battle extends EngineState {
     if(animatedTmdType.textureInfo_08 != null) {
       final DeffPart.TextureInfo textureInfo = animatedTmdType.textureInfo_08[0];
       final int tpage = GetTPage(Bpp.BITS_4, Translucency.HALF_B_PLUS_HALF_F, textureInfo.vramPos_00.x, textureInfo.vramPos_00.y);
-      model.vramSlot_9d = modelVramSlots_800fb06c[tpage];
+      model.uvAdjustments_9d = _8005027c[modelVramSlots_800fb06c[tpage]];
     } else {
-      model.vramSlot_9d = 0;
+      model.uvAdjustments_9d = UvAdjustmentMetrics14.NONE;
     }
 
     this.loadModelTmd(model, effect.extTmd_08);
@@ -6476,7 +6478,7 @@ public class Battle extends EngineState {
     effect.tmdType_04 = animatedTmdType;
     effect.extTmd_08 = animatedTmdType.tmd_0c;
     effect.anim_0c = animatedTmdType.anim_14;
-    effect.model_10.vramSlot_9d = 0;
+    effect.model_10.uvAdjustments_9d = UvAdjustmentMetrics14.NONE;
     effect.model_134 = effect.model_10;
     this.loadModelTmd(effect.model_134, effect.extTmd_08);
     effect.anim_0c.loadIntoModel(effect.model_134);
@@ -6496,7 +6498,7 @@ public class Battle extends EngineState {
     model.partCount_98 = a1.partCount_5dc;
     model.totalFrames_9a = a1.totalFrames_5de;
     model.animationState_9c = a1.animationState_5e0;
-    model.vramSlot_9d = 0;
+    model.uvAdjustments_9d = UvAdjustmentMetrics14.NONE;
     model.zOffset_a0 = 0x200;
     model.disableInterpolation_a2 = false;
     model.ub_a3 = 0;

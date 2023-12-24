@@ -4,6 +4,7 @@ import legend.core.gpu.Rect4i;
 import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
 import legend.game.tim.Tim;
+import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.CContainer;
 import legend.game.types.TmdAnimationFile;
 import legend.game.unpacker.Unpacker;
@@ -120,7 +121,7 @@ public final class Scus94491BpeSegment_800e {
     loadModelAndAnimation(shadowModel_800bda10, container, animation);
 
     shadowModel_800bda10.coord2_14.transforms.rotate.zero();
-    shadowModel_800bda10.vramSlot_9d = 0;
+    shadowModel_800bda10.uvAdjustments_9d = UvAdjustmentMetrics14.NONE;
     shadowModel_800bda10.shadowType_cc = 0;
   }
 

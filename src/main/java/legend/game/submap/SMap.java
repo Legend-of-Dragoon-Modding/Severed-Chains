@@ -1,7 +1,5 @@
 package legend.game.submap;
 
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.RenderEngine;
@@ -14,7 +12,6 @@ import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
 import legend.core.memory.Method;
 import legend.core.memory.types.IntRef;
@@ -238,8 +235,7 @@ public class SMap extends EngineState {
 
   private TriangleIndicator140 triangleIndicator_800c69fc;
 
-  /** TODO array, flags for submap objects - 0x80 means the model is the same as the previous one */
-  private final IntList sobjVramSlots_800c6a50 = new IntArrayList();
+  private final List<UvAdjustmentMetrics14> sobjVramSlots_800c6a50 = new ArrayList<>();
 
   private final Vector3f cameraPos_800c6aa0 = new Vector3f();
 
@@ -546,26 +542,26 @@ public class SMap extends EngineState {
   };
 
   private final UvAdjustmentMetrics14[] uvAdjustments_800f5930 = {
-    new UvAdjustmentMetrics14(       0x0, 0xffffffff,      0x0, 0xffffffff,    0x0),
-	  new UvAdjustmentMetrics14(0x5c260000,  0x3c0ffff, 0x190000, 0xffe0ffff,   0x80),
-	  new UvAdjustmentMetrics14(0x5c270000,  0x3c0ffff, 0x190000, 0xffe0ffff,   0xc0),
-	  new UvAdjustmentMetrics14(0x7c240000,  0x3c0ffff, 0x190000, 0xffe0ffff, 0x8000),
-	  new UvAdjustmentMetrics14(0x7c250000,  0x3c0ffff, 0x190000, 0xffe0ffff, 0x8040),
-	  new UvAdjustmentMetrics14(0x7c260000,  0x3c0ffff, 0x190000, 0xffe0ffff, 0x8080),
-	  new UvAdjustmentMetrics14(0x7c270000,  0x3c0ffff, 0x190000, 0xffe0ffff, 0x80c0),
-	  new UvAdjustmentMetrics14(0x5c2a0000,  0x3c0ffff, 0x1a0000, 0xffe0ffff,   0x80),
-	  new UvAdjustmentMetrics14(0x5c2b0000,  0x3c0ffff, 0x1a0000, 0xffe0ffff,   0xc0),
-	  new UvAdjustmentMetrics14(0x7c280000,  0x3c0ffff, 0x1a0000, 0xffe0ffff, 0x8000),
-	  new UvAdjustmentMetrics14(0x7c290000,  0x3c0ffff, 0x1a0000, 0xffe0ffff, 0x8040),
-	  new UvAdjustmentMetrics14(0x7c2a0000,  0x3c0ffff, 0x1a0000, 0xffe0ffff, 0x8080),
-	  new UvAdjustmentMetrics14(0x7c2b0000,  0x3c0ffff, 0x1a0000, 0xffe0ffff, 0x80c0),
-	  new UvAdjustmentMetrics14(0x5c2e0000,  0x3c0ffff, 0x1b0000, 0xffe0ffff,   0x80),
-	  new UvAdjustmentMetrics14(0x5c2f0000,  0x3c0ffff, 0x1b0000, 0xffe0ffff,   0xc0),
-	  new UvAdjustmentMetrics14(0x5c2c0000,  0x3c0ffff, 0x1b0000, 0xffe0ffff,    0x0),
-	  new UvAdjustmentMetrics14(0x5c2d0000,  0x3c0ffff, 0x1b0000, 0xffe0ffff,   0x40),
-	  new UvAdjustmentMetrics14(0x5c3f0000,  0x3c0ffff, 0x1f0000, 0xffe0ffff,   0xc0),
-	  new UvAdjustmentMetrics14(0x5c240000, 0x83c3ffff, 0x190000, 0xffe0ffff,    0x0),
-	  new UvAdjustmentMetrics14(0x5c280000, 0x83c3ffff, 0x1a0000, 0xffe0ffff,    0x0)
+    UvAdjustmentMetrics14.NONE,
+	  new UvAdjustmentMetrics14( 1, 0x5c260000,  0x3c0ffff, 0x190000, 0xffe0ffff,   0x80),
+	  new UvAdjustmentMetrics14( 2, 0x5c270000,  0x3c0ffff, 0x190000, 0xffe0ffff,   0xc0),
+	  new UvAdjustmentMetrics14( 3, 0x7c240000,  0x3c0ffff, 0x190000, 0xffe0ffff, 0x8000),
+	  new UvAdjustmentMetrics14( 4, 0x7c250000,  0x3c0ffff, 0x190000, 0xffe0ffff, 0x8040),
+	  new UvAdjustmentMetrics14( 5, 0x7c260000,  0x3c0ffff, 0x190000, 0xffe0ffff, 0x8080),
+	  new UvAdjustmentMetrics14( 6, 0x7c270000,  0x3c0ffff, 0x190000, 0xffe0ffff, 0x80c0),
+	  new UvAdjustmentMetrics14( 7, 0x5c2a0000,  0x3c0ffff, 0x1a0000, 0xffe0ffff,   0x80),
+	  new UvAdjustmentMetrics14( 8, 0x5c2b0000,  0x3c0ffff, 0x1a0000, 0xffe0ffff,   0xc0),
+	  new UvAdjustmentMetrics14( 9, 0x7c280000,  0x3c0ffff, 0x1a0000, 0xffe0ffff, 0x8000),
+	  new UvAdjustmentMetrics14(10, 0x7c290000,  0x3c0ffff, 0x1a0000, 0xffe0ffff, 0x8040),
+	  new UvAdjustmentMetrics14(11, 0x7c2a0000,  0x3c0ffff, 0x1a0000, 0xffe0ffff, 0x8080),
+	  new UvAdjustmentMetrics14(12, 0x7c2b0000,  0x3c0ffff, 0x1a0000, 0xffe0ffff, 0x80c0),
+	  new UvAdjustmentMetrics14(13, 0x5c2e0000,  0x3c0ffff, 0x1b0000, 0xffe0ffff,   0x80),
+	  new UvAdjustmentMetrics14(14, 0x5c2f0000,  0x3c0ffff, 0x1b0000, 0xffe0ffff,   0xc0),
+	  new UvAdjustmentMetrics14(15, 0x5c2c0000,  0x3c0ffff, 0x1b0000, 0xffe0ffff,    0x0),
+	  new UvAdjustmentMetrics14(16, 0x5c2d0000,  0x3c0ffff, 0x1b0000, 0xffe0ffff,   0x40),
+	  new UvAdjustmentMetrics14(17, 0x5c3f0000,  0x3c0ffff, 0x1f0000, 0xffe0ffff,   0xc0),
+	  new UvAdjustmentMetrics14(18, 0x5c240000, 0x83c3ffff, 0x190000, 0xffe0ffff,    0x0),
+	  new UvAdjustmentMetrics14(19, 0x5c280000, 0x83c3ffff, 0x1a0000, 0xffe0ffff,    0x0)
   };
 
   /**
@@ -1345,23 +1341,6 @@ public class SMap extends EngineState {
     this.restoreCharDataVitals(-1);
   }
 
-  @Method(0x800d9e64L)
-  private void adjustSmapUvs(final ModelPart10 dobj2, final int colourMap) {
-    final TmdObjTable1c objTable = dobj2.tmd_08;
-
-    //LAB_800d9e90
-    for(final TmdObjTable1c.Primitive primitive : objTable.primitives_10) {
-      final int header = primitive.header();
-      final int id = header & 0xff04_0000;
-
-      if(id == 0x3400_0000 || id == 0x3600_0000 || id == 0x3500_0000 || id == 0x3700_0000) {
-        this.adjustSmapTriPrimitiveUvs(primitive, colourMap & 0x7f);
-      } else if(id == 0x3c00_0000 || id == 0x3e00_0000 || id == 0x3d00_0000 || id == 0x3f00_0000) {
-        this.adjustSmapQuadPrimitiveUvs(primitive, colourMap & 0x7f);
-      }
-    }
-  }
-
   @Method(0x800da114L)
   private void animateSmapModel(final Model124 model) {
     final int interpolationFrameCount = (2 - vsyncMode_8007a3b8) * 2 + 1;
@@ -1416,31 +1395,6 @@ public class SMap extends EngineState {
     partCoord.flg--;
   }
 
-  @Method(0x800da6c8L)
-  private void adjustSmapTriPrimitiveUvs(final TmdObjTable1c.Primitive primitive, final int colourMap) {
-    final UvAdjustmentMetrics14 metrics = this.uvAdjustments_800f5930[colourMap];
-
-    //LAB_800da6e8
-    for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & metrics.clutMaskOn_04 | metrics.clutMaskOff_00) + metrics.uvOffset_10);
-      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & metrics.tpageMaskOn_0c | metrics.tpageMaskOff_08) + metrics.uvOffset_10);
-      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + metrics.uvOffset_10);
-    }
-  }
-
-  @Method(0x800da754L)
-  private void adjustSmapQuadPrimitiveUvs(final TmdObjTable1c.Primitive primitive, final int colourMap) {
-    final UvAdjustmentMetrics14 metrics = this.uvAdjustments_800f5930[colourMap];
-
-    //LAB_800da774
-    for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & metrics.clutMaskOn_04 | metrics.clutMaskOff_00) + metrics.uvOffset_10);
-      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & metrics.tpageMaskOn_0c | metrics.tpageMaskOff_08) + metrics.uvOffset_10);
-      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + metrics.uvOffset_10);
-      MathHelper.set(data, 0xc, 4,  MathHelper.get(data, 0xc, 4) + metrics.uvOffset_10);
-    }
-  }
-
   @Method(0x800daa3cL)
   private void renderSmapModel(final Model124 model) {
     zOffset_1f8003e8 = model.zOffset_a0;
@@ -1481,7 +1435,7 @@ public class SMap extends EngineState {
       smallerStruct.uba_04[index] = false;
     } else {
       //LAB_800ddeac
-      final int colourMap = struct.vramSlot_9d & 0x7f;
+      final int colourMap = struct.uvAdjustments_9d.index;
       final int x = _800503f8[colourMap];
       final int y = _80050424[colourMap] + 112;
 
@@ -2359,7 +2313,7 @@ public class SMap extends EngineState {
     final int index = script.params_20[1].get();
 
     sobj.sobjIndex_12e = index;
-    model.vramSlot_9d = this.sobjVramSlots_800c6a50.getInt(index);
+    model.uvAdjustments_9d = this.sobjVramSlots_800c6a50.get(index);
 
     this.loadModelAndAnimation(model, this.submapAssets.objects.get(index).model, this.submapAssets.objects.get(index).animations.get(0));
 
@@ -3423,14 +3377,14 @@ public class SMap extends EngineState {
         //LAB_800e1a38
         this.sobjVramSlots_800c6a50.clear();
         for(int i = 0; i < this.sobjCount_800c6730; i++) {
-          this.sobjVramSlots_800c6a50.add(i + 0x81);
+          this.sobjVramSlots_800c6a50.add(this.uvAdjustments_800f5930[i + 1]);
 
           if(i + 1 == s3) {
-            this.sobjVramSlots_800c6a50.set(i, 0x92);
+            this.sobjVramSlots_800c6a50.set(i, this.uvAdjustments_800f5930[18]);
           }
 
           if(i + 1 == s4) {
-            this.sobjVramSlots_800c6a50.set(i, 0x93);
+            this.sobjVramSlots_800c6a50.set(i, this.uvAdjustments_800f5930[19]);
           }
 
           //LAB_800e1a80
@@ -3442,7 +3396,7 @@ public class SMap extends EngineState {
           //LAB_800e1ae0
           for(int n = i + 1; n < this.sobjCount_800c6730; n++) {
             if(this.submapAssets.objects.get(n).model == this.submapAssets.objects.get(i).model) {
-              this.sobjVramSlots_800c6a50.set(n, 0x80);
+              this.sobjVramSlots_800c6a50.set(n, UvAdjustmentMetrics14.NONE);
             }
           }
         }
@@ -3461,7 +3415,8 @@ public class SMap extends EngineState {
           state.loadScriptFile(obj.script);
 
           final Model124 model = state.innerStruct_00.model_00;
-          model.vramSlot_9d = this.sobjVramSlots_800c6a50.getInt(i);
+          model.uvAdjustments_9d = this.sobjVramSlots_800c6a50.get(i);
+          model.uvAnimationSecondaryBank = true;
 
           final CContainer tmd = this.submapAssets.objects.get(i).model;
           final TmdAnimationFile anim = obj.animations.get(0);
@@ -4646,11 +4601,6 @@ public class SMap extends EngineState {
   @Method(0x800e5914L)
   public void tick() {
     this.executeSmapLoadingStage_2();
-  }
-
-  @Override
-  public void adjustModelPartUvs(final Model124 model, final ModelPart10 part) {
-    this.adjustSmapUvs(part, model.vramSlot_9d);
   }
 
   @Method(0x800e59a4L)
@@ -6116,7 +6066,8 @@ public class SMap extends EngineState {
       }
 
       case 0x4 -> {
-        this.submapModel_800d4bf8.vramSlot_9d = 0x91;
+        this.submapModel_800d4bf8.uvAdjustments_9d = this.uvAdjustments_800f5930[17];
+        this.submapModel_800d4bf8.uvAnimationSecondaryBank = true;
 
         initModel(this.submapModel_800d4bf8, this.submapCutModel, this.submapCutAnim);
 
