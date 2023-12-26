@@ -328,7 +328,7 @@ public class SMap extends EngineState {
 
   private final Model124 dustModel_800d4d40 = new Model124("Dust");
 
-  private final DustType1And2Particle54 dustType1And2_800d4e68 = new DustType1And2Particle54();
+  private final FootprintAndDustType2Particle54 footprintAndDustType2_800d4e68 = new FootprintAndDustType2Particle54();
 
   private final DustType0Particle20 dustType0_800d4ec0 = new DustType0Particle20();
 
@@ -419,7 +419,7 @@ public class SMap extends EngineState {
 
   private final Rect4i _800d6b48 = new Rect4i(576, 368, 16, 1);
 
-  private final Vector3f[] _800d6b7c = {
+  private final Vector3f[] footprintQuadVertices_800d6b7c = {
     new Vector3f(-10.0f, 0.0f, -22.0f),
     new Vector3f( 10.0f, 0.0f, -22.0f),
     new Vector3f(-10.0f, 0.0f,  22.0f),
@@ -948,7 +948,7 @@ public class SMap extends EngineState {
     functions[768] = this::FUN_800f2048;
     functions[769] = this::FUN_800f1f9c;
     functions[770] = this::scriptAllocateSmokePlumeEffectData;
-    functions[771] = this::FUN_800f2264;
+    functions[771] = this::scriptInitFootprints;
     functions[772] = this::scriptAddSavePoint;
     functions[773] = this::scriptInitializeDustType2;
     functions[774] = this::FUN_800f2780;
@@ -962,9 +962,9 @@ public class SMap extends EngineState {
     functions[782] = this::scriptAllocateSmokeCloudData;
     functions[783] = this::scriptDeallocateSmokeCloudDataAndEffect;
     functions[784] = this::scriptSetSmokeCloudEffectStateToDontTick;
-    functions[785] = this::scriptSetDustType1InstantiationInterval;
+    functions[785] = this::scriptSetFootprintsInstantiationInterval;
     functions[786] = this::scriptInitLawPodTrail;
-    functions[787] = this::FUN_800f22c4;
+    functions[787] = this::scriptChangeFootprintsMode;
     functions[788] = this::FUN_800f2554;
     functions[789] = this::scriptDeallocateLawPodTrail;
     functions[790] = this::scriptAllocateUnusedSmokeEffectData;
@@ -3163,7 +3163,7 @@ public class SMap extends EngineState {
       }
 
       //LAB_800e1390
-      this.tickDust(sobj.model_00, sobj.attachedEffectData_1d0);
+      this.tickAttachedSobjEffects(sobj.model_00, sobj.attachedEffectData_1d0);
     }
 
     //LAB_800e139c
@@ -3524,7 +3524,7 @@ public class SMap extends EngineState {
           }
 
           //LAB_800e1d60
-          this.initDustData(state.innerStruct_00.attachedEffectData_1d0);
+          this.initAttachedSobjEffectData(state.innerStruct_00.attachedEffectData_1d0);
 
           for(final ModelPart10 part : model.modelParts_00) {
             part.obj = TmdObjLoader.fromObjTable("SobjModel (index " + i + ')', part.tmd_08);
@@ -4198,7 +4198,7 @@ public class SMap extends EngineState {
 
   @Method(0x800e4708L)
   private void renderSubmap() {
-    this.handleAndRenderDust();
+    this.renderAttachedSobjEffects();
     this.renderSubmapOverlays();
     this.handleAndRenderSubmapEffects();
     applyModelRotationAndScale(this.playerModel_800c6748);
@@ -5597,6 +5597,17 @@ public class SMap extends EngineState {
     for(int i = 0; i < this.envBackgroundTextureCount_800cb57c; i++) {
       final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[i];
 
+      metrics.x_10 = this.submapOffsetX_800cb560 + this.screenOffsetX_800cb568 + metrics.offsetX_1c;
+      metrics.y_12 = this.submapOffsetY_800cb564 + this.screenOffsetY_800cb56c + metrics.offsetY_1e;
+
+      GPU.queueCommand(metrics.z_20, new GpuCommandQuad()
+        .rgb(metrics.r_0c, metrics.g_0d, metrics.b_0e)
+        .pos(metrics.x_10, metrics.y_12, metrics.w_18, metrics.h_1a)
+        .uv(metrics.u_14, metrics.v_15)
+        .clut((metrics.clut_16 & 0b111111) * 16, metrics.clut_16 >>> 6)
+        .vramPos((metrics.tpage_04 & 0b1111) * 64, (metrics.tpage_04 & 0b10000) != 0 ? 256 : 0)
+        .bpp(Bpp.of(metrics.tpage_04 >>> 7 & 0b11)));
+
       if(metrics.obj == null) {
         if(metrics.texture == null) {
           metrics.obj = new QuadBuilder("BackgroundTexture (index " + i + ')')
@@ -6295,11 +6306,11 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800ef0f8L)
-  private void tickDust(final Model124 model, final AttachedSobjEffectData40 data) {
+  private void tickAttachedSobjEffects(final Model124 model, final AttachedSobjEffectData40 data) {
     if(!flEq(data.transfer_1e.x, model.coord2_14.coord.transfer.x) || !flEq(data.transfer_1e.y, model.coord2_14.coord.transfer.y) || !flEq(data.transfer_1e.z, model.coord2_14.coord.transfer.z)) {
       //LAB_800ef154
-      if(data.shouldRenderDustType0_04 != 0) {
-        if(data.tick_00 % data.countTicksInstantiationIntervalType0And2_30 == 0) {
+      if(data.shouldRenderDustType0_04) {
+        if(data.tick_00 % data.instantiationIntervalDustType0And2_30 == 0) {
           final DustType0Particle20 inst = this.addDustType0(this.dustType0_800d4ec0);
           inst.tick_00 = 0;
           inst.maxTicks_18 = (short)data.maxTicks_38;
@@ -6324,12 +6335,12 @@ public class SMap extends EngineState {
       }
 
       //LAB_800ef240
-      if(data.shouldRenderDustType1_08 != 0) {
-        if(data.tick_00 % data.countTicksInstantiationIntervalType1_34 == 0) {
+      if(data.shouldRenderFootprints_08) {
+        if(data.tick_00 % data.instantiationIntervalFootprints_34 == 0) {
           //LAB_800ef394
-          final DustType1And2Particle54 inst = this.addDustType1And2(this.dustType1And2_800d4e68);
+          final FootprintAndDustType2Particle54 inst = this.addFootprintAndDustType2(this.footprintAndDustType2_800d4e68);
 
-          if(data._10 != 0) {
+          if(data.footprintMode_10 != 0) {
             //LAB_800ef3e8
             inst.renderMode_00 = 2;
             inst.textureIndex_02 = 3;
@@ -6337,7 +6348,7 @@ public class SMap extends EngineState {
             //LAB_800ef3f8
           } else {
             inst.renderMode_00 = 0;
-            inst.textureIndex_02 = (short)data.textureIndexType1_1c;
+            inst.textureIndex_02 = data.textureIndexType1_1c;
 
             data.textureIndexType1_1c ^= 1;
           }
@@ -6355,15 +6366,15 @@ public class SMap extends EngineState {
           final int textureIndex = inst.textureIndex_02;
           if(textureIndex == 0) {
             //LAB_800ef4b4
-            inst.z_4c = RotTransPers4(this._800d6b7c[4], this._800d6b7c[5], this._800d6b7c[6], this._800d6b7c[7], inst.sxy0_20, inst.sxy1_28, inst.sxy2_30, inst.sxy3_38);
+            inst.z_4c = RotTransPers4(this.footprintQuadVertices_800d6b7c[4], this.footprintQuadVertices_800d6b7c[5], this.footprintQuadVertices_800d6b7c[6], this.footprintQuadVertices_800d6b7c[7], inst.sxy0_20, inst.sxy1_28, inst.sxy2_30, inst.sxy3_38);
           } else if(textureIndex == 1) {
             //LAB_800ef484
             //LAB_800ef4b4
-            inst.z_4c = RotTransPers4(this._800d6b7c[8], this._800d6b7c[9], this._800d6b7c[10], this._800d6b7c[11], inst.sxy0_20, inst.sxy1_28, inst.sxy2_30, inst.sxy3_38);
+            inst.z_4c = RotTransPers4(this.footprintQuadVertices_800d6b7c[8], this.footprintQuadVertices_800d6b7c[9], this.footprintQuadVertices_800d6b7c[10], this.footprintQuadVertices_800d6b7c[11], inst.sxy0_20, inst.sxy1_28, inst.sxy2_30, inst.sxy3_38);
           } else if(textureIndex == 3) {
             //LAB_800ef4a0
             //LAB_800ef4b4
-            inst.z_4c = RotTransPers4(this._800d6b7c[0], this._800d6b7c[1], this._800d6b7c[2], this._800d6b7c[3], inst.sxy0_20, inst.sxy1_28, inst.sxy2_30, inst.sxy3_38);
+            inst.z_4c = RotTransPers4(this.footprintQuadVertices_800d6b7c[0], this.footprintQuadVertices_800d6b7c[1], this.footprintQuadVertices_800d6b7c[2], this.footprintQuadVertices_800d6b7c[3], inst.sxy0_20, inst.sxy1_28, inst.sxy2_30, inst.sxy3_38);
           }
 
           //LAB_800ef4ec
@@ -6379,9 +6390,9 @@ public class SMap extends EngineState {
       }
 
       //LAB_800ef520
-      if(data.shouldRenderDustType2_0c != 0) {
-        if(data.tick_00 % data.countTicksInstantiationIntervalType0And2_30 == 0) {
-          final DustType1And2Particle54 inst = this.addDustType1And2(this.dustType1And2_800d4e68);
+      if(data.shouldRenderDustType2_0c) {
+        if(data.tick_00 % data.instantiationIntervalDustType0And2_30 == 0) {
+          final FootprintAndDustType2Particle54 inst = this.addFootprintAndDustType2(this.footprintAndDustType2_800d4e68);
           inst.renderMode_00 = 1;
           inst.textureIndex_02 = 2;
           inst.x_18 = this.screenOffsetX_800cb568;
@@ -6470,13 +6481,13 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800ef8acL)
-  private void renderDustType1And2() {
+  private void renderFootprintsAndDustType2() {
     final int[] v = new int[4];
     v[3] = 64; // Other values are 0
 
     //LAB_800ef9cc
-    DustType1And2Particle54 prev = this.dustType1And2_800d4e68;
-    DustType1And2Particle54 inst = prev.next_50;
+    FootprintAndDustType2Particle54 prev = this.footprintAndDustType2_800d4e68;
+    FootprintAndDustType2Particle54 inst = prev.next_50;
     while(inst != null) {
       if(inst.tick_04 >= inst.maxTicks_06) {
         prev.next_50 = inst.next_50;
@@ -6571,7 +6582,7 @@ public class SMap extends EngineState {
   @Method(0x800f0370L)
   private void initAttachedSobjEffects() {
     initModel(this.dustModel_800d4d40, this.dustTmd, this.dustAnimation);
-    this.dustType1And2_800d4e68.next_50 = null;
+    this.footprintAndDustType2_800d4e68.next_50 = null;
     this.dustType0_800d4ec0.next_1c = null;
     this.initLawPodTrail();
   }
@@ -6585,43 +6596,43 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800f0400L)
-  private DustType1And2Particle54 addDustType1And2(final DustType1And2Particle54 parent) {
-    final DustType1And2Particle54 child = new DustType1And2Particle54();
+  private FootprintAndDustType2Particle54 addFootprintAndDustType2(final FootprintAndDustType2Particle54 parent) {
+    final FootprintAndDustType2Particle54 child = new FootprintAndDustType2Particle54();
     child.next_50 = parent.next_50;
     parent.next_50 = child;
     return child;
   }
 
   @Method(0x800f0440L)
-  private void deallocateDustAndSomething() {
+  private void deallocateAttachedSobjEffects() {
     this.deallocateDustType0();
-    this.deallocateDustType1And2();
+    this.deallocateFootprintsAndDustType2();
     this.deallocateLawPodTrail();
   }
 
   @Method(0x800f047cL)
-  private void handleAndRenderDust() {
+  private void renderAttachedSobjEffects() {
     this.renderDustType0();
-    this.renderDustType1And2();
+    this.renderFootprintsAndDustType2();
     this.renderLawPodTrail();
   }
 
   @Method(0x800f04acL)
-  private void initDustData(final AttachedSobjEffectData40 dustData) {
-    dustData.tick_00 = 0;
-    dustData.shouldRenderDustType0_04 = 0;
-    dustData.shouldRenderDustType1_08 = 0;
-    dustData.shouldRenderDustType2_0c = 0;
-    dustData._10 = 0;
-    dustData.shouldRenderLawPodTrail_18 = false;
-    dustData.textureIndexType1_1c = 0;
-    dustData.transfer_1e.zero();
-    dustData.size_28 = 0;
-    dustData._2c = 0;
-    dustData.countTicksInstantiationIntervalType0And2_30 = 0;
-    dustData.countTicksInstantiationIntervalType1_34 = 0;
-    dustData.maxTicks_38 = 0;
-    dustData.trailData_3c = null;
+  private void initAttachedSobjEffectData(final AttachedSobjEffectData40 data) {
+    data.tick_00 = 0;
+    data.shouldRenderDustType0_04 = false;
+    data.shouldRenderFootprints_08 = false;
+    data.shouldRenderDustType2_0c = false;
+    data.footprintMode_10 = 0;
+    data.shouldRenderLawPodTrail_18 = false;
+    data.textureIndexType1_1c = 0;
+    data.transfer_1e.zero();
+    data.size_28 = 0;
+    data.oldFootprintInstantiationInterval_2c = 0;
+    data.instantiationIntervalDustType0And2_30 = 0;
+    data.instantiationIntervalFootprints_34 = 0;
+    data.maxTicks_38 = 0;
+    data.trailData_3c = null;
   }
 
   @Method(0x800f058cL)
@@ -6642,14 +6653,14 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800f05e8L)
-  private void deallocateDustType1And2() {
-    final DustType1And2Particle54 prev = this.dustType1And2_800d4e68;
+  private void deallocateFootprintsAndDustType2() {
+    final FootprintAndDustType2Particle54 prev = this.footprintAndDustType2_800d4e68;
 
     if(prev.next_50 != null) {
       //LAB_800f0610
-      DustType1And2Particle54 next;
+      FootprintAndDustType2Particle54 next;
       do {
-        final DustType1And2Particle54 inst = prev.next_50;
+        final FootprintAndDustType2Particle54 inst = prev.next_50;
         next = inst.next_50;
         prev.next_50 = next;
       } while(next != null);
@@ -7156,9 +7167,9 @@ public class SMap extends EngineState {
   @Method(0x800f1f9cL)
   private FlowControl FUN_800f1f9c(final RunningScript<?> script) {
     final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
-    sobj.attachedEffectData_1d0.shouldRenderDustType0_04 = script.params_20[1].get();
+    sobj.attachedEffectData_1d0.shouldRenderDustType0_04 = script.params_20[1].get() == 1;
     sobj.attachedEffectData_1d0.size_28 = script.params_20[2].get();
-    sobj.attachedEffectData_1d0.countTicksInstantiationIntervalType0And2_30 = script.params_20[3].get();
+    sobj.attachedEffectData_1d0.instantiationIntervalDustType0And2_30 = script.params_20[3].get();
 
     if(script.params_20[4].get() == 0) {
       sobj.attachedEffectData_1d0.maxTicks_38 = 1;
@@ -7167,10 +7178,10 @@ public class SMap extends EngineState {
     }
 
     //LAB_800f2018
-    if(sobj.attachedEffectData_1d0.shouldRenderDustType0_04 != 1) {
+    if(!sobj.attachedEffectData_1d0.shouldRenderDustType0_04) {
       sobj.attachedEffectData_1d0.transfer_1e.zero();
       sobj.attachedEffectData_1d0.size_28 = 1;
-      sobj.attachedEffectData_1d0.countTicksInstantiationIntervalType0And2_30 = 0;
+      sobj.attachedEffectData_1d0.instantiationIntervalDustType0And2_30 = 0;
       sobj.attachedEffectData_1d0.maxTicks_38 = 0;
     }
 
@@ -7232,78 +7243,78 @@ public class SMap extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptDescription("Initializes footprints attached sobj effect when param 0 is 1 or 2.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "shouldRender", description = "Whether effect should initialize/render (occurs on 1 or 2).")
   @Method(0x800f2264L)
-  private FlowControl FUN_800f2264(final RunningScript<?> script) {
+  private FlowControl scriptInitFootprints(final RunningScript<?> script) {
     final ScriptState<?> sobj1 = script.scriptState_04;
     script.params_20[1] = new ScriptStorageParam(sobj1, 0); // Unused? Why?
 
     final SubmapObject210 sobj2 = (SubmapObject210)scriptStatePtrArr_800bc1c0[sobj1.storage_44[0]].innerStruct_00; // Storage 0 is my script index, isn't this just getting the same state?
-    if((script.params_20[0].get() - 1 & 0xffff_ffffL) < 2) {
-      sobj2.attachedEffectData_1d0.shouldRenderDustType1_08 = 1;
-      sobj2.attachedEffectData_1d0._10 = 0;
-      sobj2.attachedEffectData_1d0.countTicksInstantiationIntervalType1_34 = 9;
+    if((script.params_20[0].get() == 1 || script.params_20[0].get() == 2)) {
+      sobj2.attachedEffectData_1d0.shouldRenderFootprints_08 = true;
+      sobj2.attachedEffectData_1d0.footprintMode_10 = 0;
+      sobj2.attachedEffectData_1d0.instantiationIntervalFootprints_34 = 9;
     } else {
       //LAB_800f22b8
-      sobj2.attachedEffectData_1d0.shouldRenderDustType1_08 = 0;
+      sobj2.attachedEffectData_1d0.shouldRenderFootprints_08 = false;
     }
 
     //LAB_800f22bc
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
+  @ScriptDescription("Initializes footprint attached sobj effect. 0 = individual, 1 = skid")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "footprintMode", description = "Style of footprint (individual or skid).")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "instantiationTicks", description = "New number of ticks before a new particle is instantiated.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
   @Method(0x800f22c4L)
-  private FlowControl FUN_800f22c4(final RunningScript<?> script) {
+  private FlowControl scriptChangeFootprintsMode(final RunningScript<?> script) {
     script.params_20[2] = new ScriptStorageParam(script.scriptState_04, 0);
-    final SubmapObject210 a0 = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[2].get()].innerStruct_00;
+    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[2].get()].innerStruct_00;
 
-    int v1 = script.params_20[0].get();
-    a0.attachedEffectData_1d0._10 = v1;
-    if(v1 == 0) {
-      v1 = script.params_20[1].get();
+    final int footprintMode = script.params_20[0].get();
+    sobj.attachedEffectData_1d0.footprintMode_10 = footprintMode;
+    if(footprintMode == 0) {
+      final int newInterval = script.params_20[1].get();
 
-      if(v1 == 0) {
-        a0.attachedEffectData_1d0.shouldRenderDustType1_08 = 0;
-        a0.attachedEffectData_1d0.countTicksInstantiationIntervalType1_34 = 0;
+      if(newInterval == 0) {
+        sobj.attachedEffectData_1d0.shouldRenderFootprints_08 = false;
+        sobj.attachedEffectData_1d0.instantiationIntervalFootprints_34 = 0;
         //LAB_800f2328
-      } else if(v1 == 1) {
-        a0.attachedEffectData_1d0.shouldRenderDustType1_08 = v1;
-        a0.attachedEffectData_1d0.countTicksInstantiationIntervalType1_34 = a0.attachedEffectData_1d0._2c;
+      } else if(newInterval == 1) {
+        sobj.attachedEffectData_1d0.shouldRenderFootprints_08 = true;
+        sobj.attachedEffectData_1d0.instantiationIntervalFootprints_34 = sobj.attachedEffectData_1d0.oldFootprintInstantiationInterval_2c;
       }
       //LAB_800f2340
-    } else if(v1 == 1) {
-      a0.attachedEffectData_1d0.shouldRenderDustType1_08 = 1;
-      a0.attachedEffectData_1d0._2c = a0.attachedEffectData_1d0.countTicksInstantiationIntervalType1_34;
-      a0.attachedEffectData_1d0.countTicksInstantiationIntervalType1_34 = script.params_20[1].get();
+    } else if(footprintMode == 1) {
+      sobj.attachedEffectData_1d0.shouldRenderFootprints_08 = true;
+      sobj.attachedEffectData_1d0.oldFootprintInstantiationInterval_2c = sobj.attachedEffectData_1d0.instantiationIntervalFootprints_34;
+      sobj.attachedEffectData_1d0.instantiationIntervalFootprints_34 = script.params_20[1].get();
 
-      if(a0.attachedEffectData_1d0.countTicksInstantiationIntervalType1_34 == 0) {
-        a0.attachedEffectData_1d0.countTicksInstantiationIntervalType1_34 = 1;
+      if(sobj.attachedEffectData_1d0.instantiationIntervalFootprints_34 == 0) {
+        sobj.attachedEffectData_1d0.instantiationIntervalFootprints_34 = 1;
       }
     }
 
     //LAB_800f2374
-    if(a0.attachedEffectData_1d0._10 >= 2) {
-      a0.attachedEffectData_1d0.shouldRenderDustType1_08 = 0;
-      a0.attachedEffectData_1d0.transfer_1e.zero();
+    if(sobj.attachedEffectData_1d0.footprintMode_10 >= 2) {
+      sobj.attachedEffectData_1d0.shouldRenderFootprints_08 = false;
+      sobj.attachedEffectData_1d0.transfer_1e.zero();
     }
 
     //LAB_800f2398
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Sets the frequency of new dust type 1 attached sobj effect particles")
+  @ScriptDescription("Sets the frequency of footprint attached sobj effect particle instantiation.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "instantiationInterval", description = "Frequency of instantiating new particles.")
   @Method(0x800f23a0L)
-  private FlowControl scriptSetDustType1InstantiationInterval(final RunningScript<?> script) {
+  private FlowControl scriptSetFootprintsInstantiationInterval(final RunningScript<?> script) {
     script.params_20[1] = new ScriptStorageParam(script.scriptState_04, 0);
 
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.scriptState_04.storage_44[0]].innerStruct_00;
-    sobj.attachedEffectData_1d0.countTicksInstantiationIntervalType1_34 = Math.max(1, script.params_20[0].get());
+    sobj.attachedEffectData_1d0.instantiationIntervalFootprints_34 = Math.max(1, script.params_20[0].get());
 
     //LAB_800f23e4
     return FlowControl.CONTINUE;
@@ -7322,18 +7333,17 @@ public class SMap extends EngineState {
 
     if(mode == 1 || mode == 3) {
       //LAB_800f2430
-      sobj.attachedEffectData_1d0.shouldRenderDustType2_0c = 1;
+      sobj.attachedEffectData_1d0.shouldRenderDustType2_0c = true;
       sobj.attachedEffectData_1d0.size_28 = script.params_20[1].get();
-      sobj.attachedEffectData_1d0.countTicksInstantiationIntervalType0And2_30 = script.params_20[2].get();
+      sobj.attachedEffectData_1d0.instantiationIntervalDustType0And2_30 = script.params_20[2].get();
       sobj.attachedEffectData_1d0.maxTicks_38 = Math.max(1, script.params_20[3].get());
     } else {
       //LAB_800f2484
-      sobj.attachedEffectData_1d0.shouldRenderDustType2_0c = 0;
+      sobj.attachedEffectData_1d0.shouldRenderDustType2_0c = false;
     }
 
     //LAB_800f2488
-    if(sobj.attachedEffectData_1d0.shouldRenderDustType2_0c != 1) {
-      sobj.attachedEffectData_1d0.shouldRenderDustType2_0c = 0;
+    if(!sobj.attachedEffectData_1d0.shouldRenderDustType2_0c) {
       sobj.attachedEffectData_1d0.transfer_1e.zero();
     }
 
@@ -7943,7 +7953,7 @@ public class SMap extends EngineState {
       //LAB_800f4714
       this.deallocateSavePoint();
       this.deallocateSmokeAndSnow();
-      this.deallocateDustAndSomething();
+      this.deallocateAttachedSobjEffects();
       this.submapEffectsLoadMode_800f9ea8 = 0;
       this.submapEffectsState_800f9eac = 0;
       return;

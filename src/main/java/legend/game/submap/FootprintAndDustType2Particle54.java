@@ -3,9 +3,9 @@ package legend.game.submap;
 import org.joml.Vector2f;
 
 /** Example - horses running in new game cutscene */
-public class DustType1And2Particle54 {
+public class FootprintAndDustType2Particle54 {
   public short renderMode_00;
-  public short textureIndex_02;
+  public int textureIndex_02;
   public short tick_04;
   public short maxTicks_06;
   public float size_08;
@@ -27,5 +27,5 @@ public class DustType1And2Particle54 {
   public int brightnessAccumulator_44;
   public int brightness_48;
   public float z_4c;
-  public DustType1And2Particle54 next_50;
+  public FootprintAndDustType2Particle54 next_50;
 }
