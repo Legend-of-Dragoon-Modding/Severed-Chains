@@ -22,8 +22,6 @@ public final class SubmapPxlTransformer {
       MathHelper.get(data.data(), data.offset(), 4) == 0x11;
   }
 
-  //TODO high res Dart textures have two blocks that share a CLUT. If the CLUT is missing, use the one from the previous block.
-  //TODO need to be positioned based on rects
   public static Map<String, FileData> transform(final String name, final FileData data, final Set<String> flags) {
     final Map<String, FileData> files = new HashMap<>();
 
