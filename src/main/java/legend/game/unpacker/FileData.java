@@ -55,6 +55,10 @@ public record FileData(byte[] data, int offset, int size, int virtualSize, int r
     System.arraycopy(this.data, this.offset + srcOffset, dest, destOffset, size);
   }
 
+  public void copyFrom(final byte[] dest) {
+    this.copyFrom(0, dest, 0, this.size);
+  }
+
   public void copyTo(final int srcOffset, final byte[] src, final int destOffset, final int size) {
     this.checkBounds(destOffset, size);
     System.arraycopy(src, srcOffset, this.data, this.offset + destOffset, size);
