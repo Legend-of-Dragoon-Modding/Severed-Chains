@@ -436,7 +436,7 @@ public class SMap extends EngineState {
   private final int[] orthoDustUs_800d6bdc = {96, 112, 64, 0};
   private final int[] dustTextureWidths_800d6bec = {15, 15, 31, 23};
   private final int[] dustTextureHeights_800d6bfc = {31, 31, 31, 23};
-  private final int[] brightnessTickInterval_800d6c0c = {120, 0, 0, 0};
+  private final int[] particleFadeDelay_800d6c0c = {120, 0, 120};
 
 
   private final Vector3f savePointV0_800d6c28 = new Vector3f(-24.0f, -32.0f,  24.0f);
@@ -6310,7 +6310,7 @@ public class SMap extends EngineState {
     if(!flEq(data.transfer_1e.x, model.coord2_14.coord.transfer.x) || !flEq(data.transfer_1e.y, model.coord2_14.coord.transfer.y) || !flEq(data.transfer_1e.z, model.coord2_14.coord.transfer.z)) {
       //LAB_800ef154
       if(data.shouldRenderTmdDust_04) {
-        if(data.tick_00 % (data.instantiationIntervalDust30 * 2.0f / vsyncMode_8007a3b8) == 0) {
+        if(data.tick_00 % (data.instantiationIntervalDust30 * (3 - vsyncMode_8007a3b8)) == 0) {
           final TmdTrailParticle20 inst = this.addTmdDustParticle(this.tmdTrail_800d4ec0);
           inst.tick_00 = 0;
           inst.maxTicks_18 = data.maxTicks_38;
@@ -6336,7 +6336,7 @@ public class SMap extends EngineState {
 
       //LAB_800ef240
       if(data.shouldRenderFootprints_08) {
-        if(data.tick_00 % data.instantiationIntervalFootprints_34 == 0) {
+        if(data.tick_00 % (data.instantiationIntervalFootprints_34 * (3 - vsyncMode_8007a3b8)) == 0) {
           //LAB_800ef394
           final OrthoTrailParticle54 inst = this.addOrthoQuadTrailParticle(this.orthoQuadTrail);
 
@@ -6391,7 +6391,7 @@ public class SMap extends EngineState {
 
       //LAB_800ef520
       if(data.shouldRenderOrthoDust_0c) {
-        if(data.tick_00 % data.instantiationIntervalDust30 == 0) {
+        if(data.tick_00 % (data.instantiationIntervalDust30 - (3 - vsyncMode_8007a3b8)) == 0) {
           final OrthoTrailParticle54 inst = this.addOrthoQuadTrailParticle(this.orthoQuadTrail);
           inst.renderMode_00 = 1;
           inst.textureIndex_02 = 2;
@@ -6451,12 +6451,12 @@ public class SMap extends EngineState {
 
     //LAB_800ef7c8
     while(inst != null) {
-      if(inst.tick_00 >= inst.maxTicks_18 * 2.0f / vsyncMode_8007a3b8) {
+      if(inst.tick_00 >= inst.maxTicks_18 * (3 - vsyncMode_8007a3b8)) {
         prev.next_1c = inst.next_1c;
         inst = prev.next_1c;
       } else {
         //LAB_800ef804
-        inst.transfer.y -= 1.0f / (2.0f / vsyncMode_8007a3b8);
+        inst.transfer.y -= 1.0f / (3 - vsyncMode_8007a3b8);
 
         this.tmdDustModel_800d4d40.coord2_14.coord.transfer.set(inst.transfer);
 
@@ -6466,7 +6466,7 @@ public class SMap extends EngineState {
         if(inst.size_08 >= 8.0f) {
           inst.stepSize_04 = -inst.stepSize_04;
         }
-        inst.size_08 += inst.stepSize_04 / (2.0f / vsyncMode_8007a3b8);
+        inst.size_08 += inst.stepSize_04 / (3 - vsyncMode_8007a3b8);
 
         this.tmdDustModel_800d4d40.coord2_14.transforms.scale.set(inst.size_08, inst.size_08, inst.size_08);
 
@@ -6496,7 +6496,7 @@ public class SMap extends EngineState {
     OrthoTrailParticle54 prev = this.orthoQuadTrail;
     OrthoTrailParticle54 inst = prev.next_50;
     while(inst != null) {
-      if(inst.tick_04 >= inst.maxTicks_06) {
+      if(inst.tick_04 >= inst.maxTicks_06 * (3 - vsyncMode_8007a3b8)) {
         prev.next_50 = inst.next_50;
         inst = prev.next_50;
       } else {
@@ -6531,7 +6531,7 @@ public class SMap extends EngineState {
           }
         } else if(mode == 1) {
           //LAB_800efb7c
-          inst.size_08 += inst.sizeStep_0c;
+          inst.size_08 += inst.sizeStep_0c / (3 - vsyncMode_8007a3b8);
           inst.sxy0_20.x = inst.z0_26 - inst.size_08 / 2.0f;
           inst.sxy0_20.y = inst.z1_2e - inst.size_08 / 2.0f;
           final float x = this.screenOffsetX_800cb568 - inst.x_18 + inst.sxy0_20.x;
@@ -6544,7 +6544,7 @@ public class SMap extends EngineState {
             .pos(3, x + inst.size_08, y + inst.size_08);
 
           if((inst.tick_04 & 0x3) == 0) {
-            inst.z1_2e--;
+            inst.z1_2e -= 1.0f / (3 - vsyncMode_8007a3b8);
           }
 
           //LAB_800efc4c
@@ -6556,8 +6556,8 @@ public class SMap extends EngineState {
         }
 
         //LAB_800efc64
-        if(inst.tick_04 >= this.brightnessTickInterval_800d6c0c[inst.renderMode_00]) {
-          inst.brightnessAccumulator_44 -= inst.stepBrightness_40;
+        if(inst.tick_04 >= this.particleFadeDelay_800d6c0c[inst.renderMode_00] * (3 - vsyncMode_8007a3b8)) {
+          inst.brightnessAccumulator_44 -= inst.stepBrightness_40 / (3 - vsyncMode_8007a3b8);
 
           final int brightness = inst.brightnessAccumulator_44 >>> 16;
           if(brightness >= 0x100) {
