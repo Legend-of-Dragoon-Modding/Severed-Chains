@@ -7,4 +7,4 @@ then
   ./download-java
 fi
 
-"$JAVA" -cp "lod-game-@version@.jar:libs/*" legend.game.Main -ea -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma
+"$JAVA" -cp "lod-game-@version@.jar:libs/*" legend.game.Main -Xmx2G -ea -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma

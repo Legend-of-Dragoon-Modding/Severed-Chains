@@ -21,18 +21,21 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -67,7 +70,8 @@ public final class Unpacker {
 
   private static final FileData EMPTY_DIRECTORY_SENTINEL = new FileData(new byte[0]);
 
-  private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+  private static final int availableProcessors = Runtime.getRuntime().availableProcessors();
+  private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(availableProcessors);
   private static final AtomicInteger loadingCount = new AtomicInteger();
 
   /**
@@ -87,8 +91,8 @@ public final class Unpacker {
     transformers.put(Unpacker::drgn21_693_0_patcherDiscriminator, Unpacker::drgn21_693_0_patcher);
     transformers.put(Unpacker::drgn0_142_animPatcherDiscriminator, Unpacker::drgn0_142_animPatcher);
 
-    // Item, equipment, spells, XP
-    transformers.put(Unpacker::itemTableDiscriminator, Unpacker::itemTableExtractor);
+    // Item, equipment, spells, XP, and TIMs from lod_engine
+    transformers.put(Unpacker::lodEngineDiscriminator, Unpacker::lodEngineExtractor);
     transformers.put(Unpacker::equipmentAndXpDiscriminator, Unpacker::equipmentAndXpExtractor);
     transformers.put(Unpacker::spellsDiscriminator, Unpacker::spellsExtractor);
 
@@ -119,9 +123,6 @@ public final class Unpacker {
     transformers.put(Unpacker::playerScriptDamageCapsDiscriminator, Unpacker::playerScriptDamageCapsTransformer);
     transformers.put(Unpacker::enemyScriptDamageCapDiscriminator, Unpacker::enemyAndItemScriptDamageCapPatcher);
     transformers.put(Unpacker::itemScriptDamageCapDiscriminator, Unpacker::enemyAndItemScriptDamageCapPatcher);
-
-    // Extract a bunch of TIMs
-    transformers.put(Unpacker::lodEngineDiscriminator, Unpacker::lodEngineExtractor);
   }
 
   private static Consumer<String> statusListener = status -> { };
@@ -129,6 +130,7 @@ public final class Unpacker {
 
   public static void main(final String[] args) throws UnpackerException {
     unpack();
+    EXECUTOR.shutdown();
   }
 
   public static void stop() {
@@ -323,66 +325,13 @@ public final class Unpacker {
         final long start = System.nanoTime();
 
         statusListener.accept("Deleting old unpacked files...");
-        final Path gitIgnore = ROOT.resolve(".gitignore");
-
-        try(final Stream<Path> files = Files.walk(ROOT)) {
-          files
-            .sorted(Comparator.reverseOrder())
-            .filter(path -> {
-              try {
-                return !Files.isSameFile(path, gitIgnore);
-              } catch(final IOException ignored) {
-                return true;
-              }
-            })
-            .forEach(path -> {
-              try {
-                if(!Files.isSameFile(path, ROOT)) {
-                  Files.delete(path);
-                }
-              } catch(final IOException e) {
-                throw new UnpackerException("Failed to delete old unpacked files", e);
-              }
-            });
-        }
-
+        LOGGER.info("Deleting old unpacked files...");
+        deleteUnpack();
         LOGGER.info("Files deleted in %d seconds", (System.nanoTime() - start) / 1_000_000_000L);
       }
 
       final long start = System.nanoTime();
-
-      final IsoReader[] readers = new IsoReader[4];
-      int diskCount = 0;
-
-      try(final DirectoryStream<Path> children = Files.newDirectoryStream(Path.of("isos"))) {
-        for(final Path child : children) {
-          final Tuple<IsoReader, Integer> tuple = getIsoReader(child);
-
-          if(tuple != null) {
-            final int diskNum = tuple.b();
-
-            if(readers[diskNum] != null) {
-              LOGGER.warn("Found duplicate disk %d: %s", diskNum + 1, child);
-              continue;
-            }
-
-            LOGGER.info("Found disk %d: %s", diskNum + 1, child);
-            readers[diskNum] = tuple.a();
-            diskCount++;
-          }
-        }
-      }
-
-      if(diskCount < 4) {
-        for(int i = 0; i < readers.length; i++) {
-          if(readers[i] == null) {
-            LOGGER.error("Failed to find disk %d!", i + 1);
-          }
-        }
-
-        throw new UnpackerException("Failed to locate disk images");
-      }
-
+      final IsoReader[] readers = getIsoReaders();
       final DirectoryEntry[] roots = new DirectoryEntry[4];
       final DirectoryEntry root = loadRoot(readers[3], null);
 
@@ -390,24 +339,85 @@ public final class Unpacker {
         loadRoot(readers[i], root);
       }
 
-      final Map<String, DirectoryEntry> files = new HashMap<>();
-      getFiles(root, "", files);
+      final long fileTreeTime = System.nanoTime();
+      LOGGER.info("Populating initial file tree...");
 
-      files.entrySet()
-        .stream()
-        .filter(entry -> !Files.exists(ROOT.resolve(entry.getKey())))
-        .map(Unpacker::readFile)
-        .map(e -> transform(e.a(), e.b(), new HashSet<>()))
-        .forEach(Unpacker::writeFiles);
+      final PathNode files = new PathNode("", "", null, null);
+      final Queue<PathNode> transformationQueue = new LinkedList<>();
+      populateInitialFileTree(root, "", files, transformationQueue);
 
-      Files.writeString(ROOT.resolve("version"), Integer.toString(VERSION));
+      LOGGER.info("Initial file tree populated in %fs", (System.nanoTime() - fileTreeTime) / 1_000_000_000.0f);
 
-      LOGGER.info("Files unpacked in %d seconds", (System.nanoTime() - start) / 1_000_000_000L);
+      if(!transformationQueue.isEmpty()) {
+        final long leafTransformTime = System.nanoTime();
+        LOGGER.info("Performing leaf transformations...");
+
+        final Transformations transformations = new Transformations(files, transformationQueue);
+        final Set<String> flags = Collections.synchronizedSet(new HashSet<>());
+        final AtomicInteger activeThreads = new AtomicInteger();
+        final Object lock = new Object();
+
+        // Submit queued files to the executor in batches of 100
+        executeInParallel(activeThreads, lock, () -> {
+          int i = 0;
+          PathNode nodeToTransform;
+          while(i < 100 && (nodeToTransform = transformations.poll()) != null) {
+            transform(nodeToTransform, transformations, flags);
+            i++;
+          }
+        }, () -> !transformationQueue.isEmpty());
+
+        LOGGER.info("Leaf transformations completed in %fs", (System.nanoTime() - leafTransformTime) / 1_000_000_000.0f);
+
+        final Deque<PathNode> all = new ConcurrentLinkedDeque<>();
+        files.flatten(all);
+
+        final long writeTime = System.nanoTime();
+        LOGGER.info("Writing %d files...", all.size());
+
+        final AtomicInteger filesRemaining = new AtomicInteger(all.size());
+        executeInParallel(activeThreads, lock, () -> {
+          int i = 0;
+          PathNode node;
+          while(i < 100 && (node = all.poll()) != null) {
+            writeFile(node);
+            filesRemaining.decrementAndGet();
+            i++;
+          }
+        }, () -> filesRemaining.get() != 0);
+
+        LOGGER.info("Files written in %fs", (System.nanoTime() - writeTime) / 1_000_000_000.0f);
+
+        Files.writeString(ROOT.resolve("version"), Integer.toString(VERSION));
+      }
+
+      LOGGER.info("Files unpacked in %fs", (System.nanoTime() - start) / 1_000_000_000.0f);
     } catch(final UnpackerException e) {
       throw e;
     } catch(final Throwable e) {
       throw new UnpackerException(e);
     }
+  }
+
+  private static void executeInParallel(final AtomicInteger activeThreads, final Object lock, final Runnable action, final BooleanSupplier condition) throws InterruptedException {
+    do {
+      if(activeThreads.get() >= availableProcessors) {
+        synchronized(lock) {
+          lock.wait();
+        }
+      } else {
+        activeThreads.incrementAndGet();
+
+        EXECUTOR.execute(() -> {
+          action.run();
+          activeThreads.decrementAndGet();
+
+          synchronized(lock) {
+            lock.notifyAll();
+          }
+        });
+      }
+    } while(condition.getAsBoolean() || activeThreads.get() > 0);
   }
 
   private static int getUnpackVersion() throws IOException {
@@ -424,6 +434,67 @@ public final class Unpacker {
     } catch(final NumberFormatException e) {
       return 0;
     }
+  }
+
+  private static void deleteUnpack() throws IOException {
+    final Path gitIgnore = ROOT.resolve(".gitignore");
+
+    try(final Stream<Path> files = Files.walk(ROOT)) {
+      files
+        .sorted(Comparator.reverseOrder())
+        .filter(path -> {
+          try {
+            return !Files.isSameFile(path, gitIgnore);
+          } catch(final IOException ignored) {
+            return true;
+          }
+        })
+        .forEach(path -> {
+          try {
+            if(!Files.isSameFile(path, ROOT)) {
+              Files.delete(path);
+            }
+          } catch(final IOException e) {
+            throw new UnpackerException("Failed to delete old unpacked files", e);
+          }
+        });
+    }
+  }
+
+  private static IsoReader[] getIsoReaders() throws IOException {
+    final IsoReader[] readers = new IsoReader[4];
+    int diskCount = 0;
+
+    try(final DirectoryStream<Path> children = Files.newDirectoryStream(Path.of("isos"))) {
+      for(final Path child : children) {
+        final Tuple<IsoReader, Integer> tuple = getIsoReader(child);
+
+        if(tuple != null) {
+          final int diskNum = tuple.b();
+
+          if(readers[diskNum] != null) {
+            LOGGER.warn("Found duplicate disk %d: %s", diskNum + 1, child);
+            continue;
+          }
+
+          LOGGER.info("Found disk %d: %s", diskNum + 1, child);
+          readers[diskNum] = tuple.a();
+          diskCount++;
+        }
+      }
+    }
+
+    if(diskCount < 4) {
+      for(int i = 0; i < readers.length; i++) {
+        if(readers[i] == null) {
+          LOGGER.error("Failed to find disk %d!", i + 1);
+        }
+      }
+
+      throw new UnpackerException("Failed to locate disk images");
+    }
+
+    return readers;
   }
 
   private static Tuple<IsoReader, Integer> getIsoReader(final Path path) throws IOException {
@@ -503,91 +574,91 @@ public final class Unpacker {
     }
   }
 
-  private static void getFiles(final DirectoryEntry root, final String path, final Map<String, DirectoryEntry> files) {
+  private static void populateInitialFileTree(final DirectoryEntry root, final String path, final PathNode parent, final Queue<PathNode> transformationQueue) {
+    final String filename = path + root.name();
+
     if(!root.isDirectory()) {
-      files.put(path + root.name(), root);
+      if(!Files.exists(ROOT.resolve(filename))) {
+        final PathNode file = new PathNode(filename, root.name(), readFile(filename, root), parent);
+        parent.addChild(file);
+        transformationQueue.add(file);
+      }
     } else {
+      final PathNode dir;
+      final String newPath;
+
+      if(".".equals(root.name())) {
+        dir = parent;
+        newPath = "";
+      } else {
+        dir = new PathNode(filename, root.name(), null, null);
+        newPath = filename + '/';
+        parent.addChild(dir);
+      }
+
       for(final DirectoryEntry entry : root.children().values()) {
-        if(".".equals(root.name())) {
-          getFiles(entry, path, files);
-        } else {
-          getFiles(entry, path + root.name() + '/', files);
-        }
+        populateInitialFileTree(entry, newPath, dir, transformationQueue);
       }
     }
   }
 
-  private static Tuple<String, FileData> readFile(final Map.Entry<String, DirectoryEntry> e) {
-    statusListener.accept("Unpacking %s...".formatted(e.getKey()));
-
-    final DirectoryEntry entry = e.getValue();
+  private static FileData readFile(final String filename, final DirectoryEntry entry) {
+    statusListener.accept("Unpacking %s...".formatted(filename));
 
     synchronized(entry.reader()) {
-      final byte[] fileData = entry.reader().readSectors(entry.sector(), entry.length(), e.getKey().endsWith(".IKI") || e.getKey().endsWith(".XA"));
-      return new Tuple<>(e.getKey(), new FileData(fileData));
+      final byte[] fileData = entry.reader().readSectors(entry.sector(), entry.length(), filename.endsWith(".IKI") || filename.endsWith(".XA"));
+      return new FileData(fileData);
     }
   }
 
-  private static Map<String, FileData> transform(final String name, final FileData data, final Set<String> flags) {
+  private static void transform(final PathNode node, final Transformations transformations, final Set<String> flags) {
     if(shouldStop) {
       throw new UnpackerStoppedRuntimeException("Unpacking cancelled");
     }
-
-    final Map<String, FileData> entries = new HashMap<>();
-    boolean wasTransformed = false;
 
     for(final var entry : transformers.entrySet()) {
       final var discriminator = entry.getKey();
       final var transformer = entry.getValue();
 
-      if(discriminator.matches(name, data, flags)) {
-        wasTransformed = true;
-        transformer.transform(name, data, flags)
-          .entrySet().stream()
-          .map(e -> transform(e.getKey(), e.getValue(), flags))
-          .forEach(entries::putAll);
+      if(discriminator.matches(node, flags)) {
+        node.parent.children.remove(node.pathSegment);
+        transformer.transform(node, transformations, flags);
         break;
       }
     }
-
-    if(!wasTransformed) {
-      entries.put(name, data);
-    }
-
-    return entries;
   }
 
-  private static boolean decompressDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    if(ROOT_MRG.matcher(name).matches()) {
-      final int dirNum = Integer.parseInt(name.substring(15, 19));
+  private static boolean decompressDiscriminator(final PathNode node, final Set<String> flags) {
+    if(ROOT_MRG.matcher(node.fullPath).matches()) {
+      final int dirNum = Integer.parseInt(node.fullPath.substring(15, 19));
       if(dirNum >= 4031 && dirNum < 4103) {
         return false;
       }
     }
 
-    return data.size() >= 8 && MathHelper.get(data.data(), data.offset() + 4, 4) == 0x1a455042;
+    return node.data.size() >= 8 && node.data.readInt(0x4) == 0x1a455042;
   }
 
-  private static Map<String, FileData> decompress(final String name, final FileData data, final Set<String> flags) {
-    return Map.of(name, new FileData(Unpacker.decompress(data)));
+  private static void decompress(final PathNode node, final Transformations transformations, final Set<String> flags) {
+    transformations.replaceNode(node, new FileData(Unpacker.decompress(node.data)));
   }
 
-  private static boolean mrgDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    return data.size() >= 8 && MathHelper.get(data.data(), data.offset(), 4) == MrgArchive.MAGIC;
+  private static boolean mrgDiscriminator(final PathNode node, final Set<String> flags) {
+    return node.data.size() >= 8 && node.data.readInt(0x0) == MrgArchive.MAGIC;
   }
 
-  private static Map<String, FileData> unmrg(final String name, final FileData data, final Set<String> flags) {
-    final MrgArchive archive = new MrgArchive(data, name.matches("^SECT/DRGN(?:0|1|2[1234])?.BIN$"));
+  private static void unmrg(final PathNode node, final Transformations transformations, final Set<String> flags) {
+    final MrgArchive archive = new MrgArchive(node.data, node.pathSegment.matches("^DRGN(?:0|1|2[1234])?.BIN$"));
 
-    if(archive.getCount() == 0) {
-      return Map.of(name, EMPTY_DIRECTORY_SENTINEL);
-    }
+    //TODO
+//    if(archive.getCount() == 0) {
+//      return Map.of(name, EMPTY_DIRECTORY_SENTINEL);
+//    }
 
-    final Map<String, FileData> files = new HashMap<>();
     int i = 0;
     for(final MrgArchive.Entry entry : archive) {
       if(!entry.virtual()) {
-        files.put(name + '/' + i, data.slice(entry.offset(), entry.size()));
+        transformations.addChild(node, Integer.toString(i), node.data.slice(entry.offset(), entry.size()));
       }
 
       i++;
@@ -601,45 +672,36 @@ public final class Unpacker {
       i++;
     }
 
-    files.put(name + "/mrg", map.build());
-
-    return files;
+    transformations.addChild(node, "/mrg", map.build());
   }
 
-  private static boolean deffDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    return data.size() >= 8 && MathHelper.get(data.data(), data.offset(), 4) == 0x46464544;
+  private static boolean deffDiscriminator(final PathNode node, final Set<String> flags) {
+    return node.data.size() >= 8 && node.data.readInt(0x0) == 0x46464544;
   }
 
-  private static Map<String, FileData> undeff(final String name, final FileData data, final Set<String> flags) {
-    flags.add("DEFF");
+  private static void undeff(final PathNode node, final Transformations transformations, final Set<String> flags) {
+    final DeffArchive archive = new DeffArchive(node.data);
 
-    final DeffArchive archive = new DeffArchive(data);
+    //TODO
+//    if(archive.getCount() == 0) {
+//      return Map.of(name, EMPTY_DIRECTORY_SENTINEL);
+//    }
 
-    if(archive.getCount() == 0) {
-      return Map.of(name, EMPTY_DIRECTORY_SENTINEL);
-    }
-
-    final Map<String, FileData> files = new HashMap<>();
     int i = 0;
     for(final FileData entry : archive) {
-      files.put(name + '/' + i, entry);
+      transformations.addChild(node, Integer.toString(i), entry).flags.add("DEFF");
       i++;
     }
-
-    return files;
   }
 
-  private static boolean engineOverlayDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    return "SCUS_944.91".equals(name) && !flags.contains(name);
+  private static boolean engineOverlayDiscriminator(final PathNode node, final Set<String> flags) {
+    return "SCUS_944.91".equals(node.pathSegment) && !flags.contains(node.pathSegment);
   }
 
-  private static Map<String, FileData> engineOverlayExtractor(final String name, final FileData data, final Set<String> flags) {
-    flags.add(name);
-
-    return Map.of(
-      name, data,
-      "lod_engine", data.slice(0xa00, 0x36228)
-    );
+  private static void engineOverlayExtractor(final PathNode node, final Transformations transformations, final Set<String> flags) {
+    flags.add(node.pathSegment);
+    transformations.addNode(node);
+    transformations.addNode("lod_engine", node.data.slice(0xa00, 0x36228));
   }
 
   /**
@@ -650,15 +712,15 @@ public final class Unpacker {
    * adjacent in a MRG file. This patch extends the script to be long enough to
    * contain the jump and just returns.
    */
-  private static boolean drgn21_402_3_patcherDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    return ("SECT/DRGN21.BIN/402/3".equals(name) || "SECT/DRGN22.BIN/402/3".equals(name)) && data.size() == 0xee4;
+  private static boolean drgn21_402_3_patcherDiscriminator(final PathNode node, final Set<String> flags) {
+    return ("SECT/DRGN21.BIN/402/3".equals(node.fullPath) || "SECT/DRGN22.BIN/402/3".equals(node.fullPath)) && node.data.size() == 0xee4;
   }
 
-  private static Map<String, FileData> drgn21_402_3_patcher(final String name, final FileData data, final Set<String> flags) {
+  private static void drgn21_402_3_patcher(final PathNode node, final Transformations transformations, final Set<String> flags) {
     final byte[] newData = new byte[0x107c];
-    System.arraycopy(data.data(), data.offset(), newData, 0, data.size());
+    node.data.copyFrom(newData);
     newData[0x1078] = 0x49;
-    return Map.of(name, new FileData(newData));
+    transformations.replaceNode(node, new FileData(newData));
   }
 
   /**
@@ -668,16 +730,16 @@ public final class Unpacker {
    * extends the script and fills with ffffffff, which we read as a sentinel value
    * in {@link Scus94491BpeSegment#scriptReadGlobalFlag2}, and return 0 there.
    */
-  private static boolean drgn21_693_0_patcherDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    return "SECT/DRGN21.BIN/693/0".equals(name) && data.size() == 0x188;
+  private static boolean drgn21_693_0_patcherDiscriminator(final PathNode node, final Set<String> flags) {
+    return "SECT/DRGN21.BIN/693/0".equals(node.fullPath) && node.data.size() == 0x188;
   }
 
-  private static Map<String, FileData> drgn21_693_0_patcher(final String name, final FileData data, final Set<String> flags) {
+  private static void drgn21_693_0_patcher(final PathNode node, final Transformations transformations, final Set<String> flags) {
     final byte[] newData = new byte[0x190];
-    System.arraycopy(data.data(), data.offset(), newData, 0, data.size());
+    node.data.copyFrom(newData);
     MathHelper.set(newData, 0x188, 4, 0xffffffffL);
     MathHelper.set(newData, 0x18c, 4, 0xffffffffL);
-    return Map.of(name, new FileData(newData));
+    transformations.replaceNode(node, new FileData(newData));
   }
 
   /**
@@ -686,109 +748,83 @@ public final class Unpacker {
    * look closely at the top of her leg, you can see it. This injects extra
    * animation data for those missing objects made by DooMMetaL.
    */
-  private static boolean drgn0_142_animPatcherDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    return "SECT/DRGN0.BIN/142".equals(name) && data.size() == 0x1f0;
+  private static boolean drgn0_142_animPatcherDiscriminator(final PathNode node, final Set<String> flags) {
+    return "SECT/DRGN0.BIN/142".equals(node.fullPath) && node.data.size() == 0x1f0;
   }
 
-  private static Map<String, FileData> drgn0_142_animPatcher(final String name, final FileData data, final Set<String> flags) {
-    final byte[] newData = new byte[data.size() + 0xc * 2 * 2]; // 2 objects, 2 keyframes, 0xc table pitch
+  private static void drgn0_142_animPatcher(final PathNode node, final Transformations transformations, final Set<String> flags) {
+    final byte[] newData = new byte[node.data.size() + 0xc * 2 * 2]; // 2 objects, 2 keyframes, 0xc table pitch
     final byte[] frame = {0x0e, (byte)0xe0, (byte)0xfe, (byte)0xde, (byte)0xff, (byte)0x9d, 0x1d, 0x00, 0x28, 0x03, (byte)0xcb, 0x00};
     // Note: we only create data for object 21, object 22 can be all 0's since it's not visible
 
-    data.copyFrom(0, newData, 0, 0x100);
+    node.data.copyFrom(0, newData, 0, 0x100);
     System.arraycopy(frame, 0, newData, 0x100, frame.length); // obj 21
-    data.copyFrom(0x100, newData, 0x118, 0xf0);
+    node.data.copyFrom(0x100, newData, 0x118, 0xf0);
     System.arraycopy(frame, 0, newData, 0x208, frame.length); // obj 21
     newData[0xc] = 22;
 
-    return Map.of(name, new FileData(newData));
+    transformations.replaceNode(node, new FileData(newData));
   }
 
-  private static boolean itemTableDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    return "lod_engine".equals(name) && !flags.contains(name);
+  private static boolean equipmentAndXpDiscriminator(final PathNode node, final Set<String> flags) {
+    return "OVL/S_ITEM.OV_".equals(node.fullPath) && !flags.contains(node.fullPath);
   }
 
-  private static Map<String, FileData> itemTableExtractor(final String name, final FileData data, final Set<String> flags) {
-    flags.add(name);
+  private static void equipmentAndXpExtractor(final PathNode node, final Transformations transformations, final Set<String> flags) {
+    flags.add(node.fullPath);
 
-    final Map<String, FileData> files = new HashMap<>();
-    files.put(name, data);
-
-    for(int i = 0; i < 64; i++) {
-      files.put("items/%d.ditm".formatted(i), data.slice(0x3f2ac + i * 0xc, 0xc));
-    }
-
-    return files;
-  }
-
-  private static boolean equipmentAndXpDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    return "OVL/S_ITEM.OV_".equals(name) && !flags.contains("S_ITEM");
-  }
-
-  private static Map<String, FileData> equipmentAndXpExtractor(final String name, final FileData data, final Set<String> flags) {
-    flags.add("S_ITEM");
-
-    final Map<String, FileData> files = new HashMap<>();
-    files.put(name, data);
-    files.put("characters/kongol/xp", new FileData(data.data(), 0x17d78, 61 * 4));
-    files.put("characters/dart/xp", new FileData(data.data(), 0x17e6c, 61 * 4));
-    files.put("characters/haschel/xp", new FileData(data.data(), 0x17f60, 61 * 4));
-    files.put("characters/meru/xp", new FileData(data.data(), 0x18054, 61 * 4));
-    files.put("characters/lavitz/xp", new FileData(data.data(), 0x18148, 61 * 4));
-    files.put("characters/albert/xp", new FileData(data.data(), 0x18148, 61 * 4));
-    files.put("characters/rose/xp", new FileData(data.data(), 0x1823c, 61 * 4));
-    files.put("characters/shana/xp", new FileData(data.data(), 0x18330, 61 * 4));
-    files.put("characters/miranda/xp", new FileData(data.data(), 0x18330, 61 * 4));
+    transformations.addNode(node);
+    transformations.addNode("characters/kongol/xp", node.data.slice(0x17d78, 61 * 4));
+    transformations.addNode("characters/dart/xp", node.data.slice(0x17e6c, 61 * 4));
+    transformations.addNode("characters/haschel/xp", node.data.slice(0x17f60, 61 * 4));
+    transformations.addNode("characters/meru/xp", node.data.slice(0x18054, 61 * 4));
+    transformations.addNode("characters/lavitz/xp", node.data.slice(0x18148, 61 * 4));
+    transformations.addNode("characters/albert/xp", node.data.slice(0x18148, 61 * 4));
+    transformations.addNode("characters/rose/xp", node.data.slice(0x1823c, 61 * 4));
+    transformations.addNode("characters/shana/xp", node.data.slice(0x18330, 61 * 4));
+    transformations.addNode("characters/miranda/xp", node.data.slice(0x18330, 61 * 4));
 
     for(int i = 0; i < 192; i++) {
-      files.put("equipment/%d.deqp".formatted(i), data.slice(0x16878 + i * 0x1c, 0x1c));
+      transformations.addNode("equipment/%d.deqp".formatted(i), node.data.slice(0x16878 + i * 0x1c, 0x1c));
     }
-
-    return files;
   }
 
-  private static boolean spellsDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    return "OVL/BTTL.OV_".equals(name) && !flags.contains(name);
+  private static boolean spellsDiscriminator(final PathNode node, final Set<String> flags) {
+    return "OVL/BTTL.OV_".equals(node.fullPath) && !flags.contains(node.fullPath);
   }
 
-  private static Map<String, FileData> spellsExtractor(final String name, final FileData data, final Set<String> flags) {
-    flags.add(name);
+  private static void spellsExtractor(final PathNode node, final Transformations transformations, final Set<String> flags) {
+    flags.add(node.fullPath);
 
-    final Map<String, FileData> files = new HashMap<>();
-    files.put(name, data);
+    transformations.addNode(node);
 
     for(int i = 0; i < 128; i++) {
-      files.put("spells/%d.dspl".formatted(i), data.slice(0x33a30 + i * 0xc, 0xc));
+      transformations.addNode("spells/%d.dspl".formatted(i), node.data.slice(0x33a30 + i * 0xc, 0xc));
     }
-
-    return files;
   }
 
-  private static boolean smapAssetDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    return "OVL/SMAP.OV_".equals(name) && !flags.contains("SMAP");
+  private static boolean smapAssetDiscriminator(final PathNode node, final Set<String> flags) {
+    return "OVL/SMAP.OV_".equals(node.fullPath) && !flags.contains("SMAP");
   }
 
-  private static Map<String, FileData> smapAssetExtractor(final String name, final FileData data, final Set<String> flags) {
+  private static void smapAssetExtractor(final PathNode node, final Transformations transformations, final Set<String> flags) {
     flags.add("SMAP");
 
-    final Map<String, FileData> files = new HashMap<>();
-    files.put(name, data);
-    files.put("SUBMAP/savepoint", new FileData(data.data(), 0x10694, 0x904));
-    files.put("SUBMAP/darker_shadow.tim", getTimSize(data.slice(0x100b4)));
-    files.put("SUBMAP/alert.tim", getTimSize(data.slice(0x10214)));
-    files.put("SUBMAP/big_arrow.tim", getTimSize(data.slice(0x10f98)));
-    files.put("SUBMAP/small_arrow.tim", getTimSize(data.slice(0x115d8)));
-    files.put("SUBMAP/savepoint.tim", getTimSize(data.slice(0x11858)));
-    files.put("SUBMAP/800d8520.tim", getTimSize(data.slice(0x11e98)));
-    files.put("SUBMAP/800d85e0.tim", getTimSize(data.slice(0x11f58)));
-    files.put("SUBMAP/savepoint_big_circle.tim", getTimSize(data.slice(0x12098)));
-    files.put("SUBMAP/dust.tim", getTimSize(data.slice(0x122d8)));
-    files.put("SUBMAP/left_foot.tim", getTimSize(data.slice(0x12518)));
-    files.put("SUBMAP/right_foot.tim", getTimSize(data.slice(0x12658)));
-    files.put("SUBMAP/smoke_1.tim", getTimSize(data.slice(0x12798)));
-    files.put("SUBMAP/smoke_2.tim", getTimSize(data.slice(0x129d8)));
-
-    return files;
+    transformations.addNode(node);
+    transformations.addNode("SUBMAP/savepoint", node.data.slice(0x10694, 0x904));
+    transformations.addNode("SUBMAP/darker_shadow.tim", getTimSize(node.data.slice(0x100b4)));
+    transformations.addNode("SUBMAP/alert.tim", getTimSize(node.data.slice(0x10214)));
+    transformations.addNode("SUBMAP/big_arrow.tim", getTimSize(node.data.slice(0x10f98)));
+    transformations.addNode("SUBMAP/small_arrow.tim", getTimSize(node.data.slice(0x115d8)));
+    transformations.addNode("SUBMAP/savepoint.tim", getTimSize(node.data.slice(0x11858)));
+    transformations.addNode("SUBMAP/800d8520.tim", getTimSize(node.data.slice(0x11e98)));
+    transformations.addNode("SUBMAP/800d85e0.tim", getTimSize(node.data.slice(0x11f58)));
+    transformations.addNode("SUBMAP/savepoint_big_circle.tim", getTimSize(node.data.slice(0x12098)));
+    transformations.addNode("SUBMAP/dust.tim", getTimSize(node.data.slice(0x122d8)));
+    transformations.addNode("SUBMAP/left_foot.tim", getTimSize(node.data.slice(0x12518)));
+    transformations.addNode("SUBMAP/right_foot.tim", getTimSize(node.data.slice(0x12658)));
+    transformations.addNode("SUBMAP/smoke_1.tim", getTimSize(node.data.slice(0x12798)));
+    transformations.addNode("SUBMAP/smoke_2.tim", getTimSize(node.data.slice(0x129d8)));
   }
 
   /**
@@ -804,11 +840,11 @@ public final class Unpacker {
    * injects additional script ops to change the z offset of the object to stop it rendering
    * and then move it back.
    */
-  private static boolean drgn0_5546_1_patcherDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    return "SECT/DRGN0.BIN/5546/1".equals(name) && data.size() == 0x721c;
+  private static boolean drgn0_5546_1_patcherDiscriminator(final PathNode node, final Set<String> flags) {
+    return "SECT/DRGN0.BIN/5546/1".equals(node.fullPath) && node.data.size() == 0x721c;
   }
 
-  private static Map<String, FileData> drgn0_5546_1_patcher(final String name, final FileData data, final Set<String> flags) {
+  private static void drgn0_5546_1_patcher(final PathNode node, final Transformations transformations, final Set<String> flags) {
     final byte[] newData = new byte[0x7284];
     final int jump = 0x0000_0140;
     final byte[] address1 = {(byte)0x97, 0x0a, 0x00, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00};
@@ -826,13 +862,13 @@ public final class Unpacker {
     final int subfunc273params1a = 0xffff_f000;
     final int subfunc273params1b = 0xffff_fffa;
 
-    data.copyFrom(0, newData, 0, 0x47c0);
+    node.data.copyFrom(0, newData, 0, 0x47c0);
     MathHelper.set(newData, 0x47c0, 4, jump);
     System.arraycopy(address1, 0, newData, 0x47c4, address1.length);
-    data.copyFrom(0x47cd, newData, 0x47cd, 0x73f);
+    node.data.copyFrom(0x47cd, newData, 0x47cd, 0x73f);
     MathHelper.set(newData, 0x4f0c, 4, jump);
     System.arraycopy(address2, 0, newData, 0x4f10, address2.length);
-    data.copyFrom(0x4f15, newData, 0x4f15, 0x2307);
+    node.data.copyFrom(0x4f15, newData, 0x4f15, 0x2307);
     System.arraycopy(subfunc160a, 0, newData, 0x721c, subfunc160a.length);
     System.arraycopy(subfunc160params12a, 0, newData, 0x7224, subfunc160params12a.length);
     MathHelper.set(newData, 0x722c, 4, subfunc273);
@@ -851,40 +887,40 @@ public final class Unpacker {
     MathHelper.set(newData, 0x7278, 4, subfunc273params1b);
     MathHelper.set(newData, 0x727c, 4, jump);
     MathHelper.set(newData, 0x7280, 4, address4);
-    return Map.of(name, new FileData(newData));
+    transformations.replaceNode(node, new FileData(newData));
   }
 
   /**
    * The lava fish animation where it swims around the player is missing the last object
    */
-  private static boolean drgn0_3667_16_animPatcherDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    return "SECT/DRGN0.BIN/3667/16".equals(name) && data.size() == 0x538;
+  private static boolean drgn0_3667_16_animPatcherDiscriminator(final PathNode node, final Set<String> flags) {
+    return "SECT/DRGN0.BIN/3667/16".equals(node.fullPath) && node.data.size() == 0x538;
   }
 
-  private static Map<String, FileData> drgn0_3667_16_animPatcher(final String name, final FileData data, final Set<String> flags) {
-    return Map.of(name, new FileData(patchAnimation(data, 11)));
-  }
-
-  /**
-   * The lava fish animation where it swims around the player is missing the last object
-   */
-  private static boolean drgn0_3667_17_animPatcherDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    return "SECT/DRGN0.BIN/3667/17".equals(name) && data.size() == 0x178;
-  }
-
-  private static Map<String, FileData> drgn0_3667_17_animPatcher(final String name, final FileData data, final Set<String> flags) {
-    return Map.of(name, new FileData(patchAnimation(data, 11)));
+  private static void drgn0_3667_16_animPatcher(final PathNode node, final Transformations transformations, final Set<String> flags) {
+    transformations.replaceNode(node, new FileData(patchAnimation(node.data, 11)));
   }
 
   /**
    * The lava fish animation where it swims around the player is missing the last object
    */
-  private static boolean drgn0_3750_16_animPatcherDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    return "SECT/DRGN0.BIN/3750/16".equals(name) && data.size() == 0x538;
+  private static boolean drgn0_3667_17_animPatcherDiscriminator(final PathNode node, final Set<String> flags) {
+    return "SECT/DRGN0.BIN/3667/17".equals(node.fullPath) && node.data.size() == 0x178;
   }
 
-  private static Map<String, FileData> drgn0_3750_16_animPatcher(final String name, final FileData data, final Set<String> flags) {
-    return Map.of(name, new FileData(patchAnimation(data, 11)));
+  private static void drgn0_3667_17_animPatcher(final PathNode node, final Transformations transformations, final Set<String> flags) {
+    transformations.replaceNode(node, new FileData(patchAnimation(node.data, 11)));
+  }
+
+  /**
+   * The lava fish animation where it swims around the player is missing the last object
+   */
+  private static boolean drgn0_3750_16_animPatcherDiscriminator(final PathNode node, final Set<String> flags) {
+    return "SECT/DRGN0.BIN/3750/16".equals(node.fullPath) && node.data.size() == 0x538;
+  }
+
+  private static void drgn0_3750_16_animPatcher(final PathNode node, final Transformations transformations, final Set<String> flags) {
+    transformations.replaceNode(node, new FileData(patchAnimation(node.data, 11)));
   }
 
   /**
@@ -910,34 +946,34 @@ public final class Unpacker {
   /**
    * Every single enemy script has damage caps build into it for some reason
    */
-  private static boolean enemyScriptDamageCapDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    return name.startsWith("SECT/DRGN1.BIN/") && !flags.contains(name);
+  private static boolean enemyScriptDamageCapDiscriminator(final PathNode node, final Set<String> flags) {
+    return node.fullPath.startsWith("SECT/DRGN1.BIN/") && !flags.contains(node.fullPath);
   }
 
-  private static Map<String, FileData> enemyAndItemScriptDamageCapPatcher(final String name, final FileData data, final Set<String> flags) {
-    flags.add(name);
+  private static void enemyAndItemScriptDamageCapPatcher(final PathNode node, final Transformations transformations, final Set<String> flags) {
+    flags.add(node.fullPath);
 
-    for(int i = 0; i < data.size(); i += 4) {
-      if(data.readUShort(i) == 9999 && data.readUShort(i + 0x10) == 9999) {
-        data.writeInt(i, 999999999);
-        data.writeInt(i + 0x10, 999999999);
+    for(int i = 0; i < node.data.size(); i += 4) {
+      if(node.data.readUShort(i) == 9999 && node.data.readUShort(i + 0x10) == 9999) {
+        node.data.writeInt(i, 999999999);
+        node.data.writeInt(i + 0x10, 999999999);
         i += 0x10;
       }
     }
 
-    return Map.of(name, data);
+    transformations.addNode(node);
   }
 
   /**
    * Every single item script has damage caps build into it for some reason
    */
-  private static boolean itemScriptDamageCapDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    if(flags.contains(name)) {
+  private static boolean itemScriptDamageCapDiscriminator(final PathNode node, final Set<String> flags) {
+    if(flags.contains(node.fullPath)) {
       return false;
     }
 
-    if(ITEM_SCRIPT.matcher(name).matches()) {
-      final int fileId = Integer.parseInt(name, 15, name.indexOf('/', 16), 10);
+    if(ITEM_SCRIPT.matcher(node.fullPath).matches()) {
+      final int fileId = Integer.parseInt(node.fullPath, 15, node.fullPath.indexOf('/', 16), 10);
 
       return ((fileId & 0x1) == 0) && fileId >= 4140 && fileId <= 5500;
     }
@@ -952,19 +988,18 @@ public final class Unpacker {
    * alters the value of that param from 8 to 3, which is the index set by the same
    * function (800ee3c0) when the battle starts.
    */
-  private static boolean drgn1_343_patcherDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    return "SECT/DRGN1.BIN/343".equals(name) && data.size() == 0x3ab4 && data.readByte(0x3a70) == 0x8;
+  private static boolean drgn1_343_patcherDiscriminator(final PathNode node, final Set<String> flags) {
+    return "SECT/DRGN1.BIN/343".equals(node.fullPath) && node.data.size() == 0x3ab4 && node.data.readByte(0x3a70) == 0x8;
   }
 
-  private static Map<String, FileData> drgn1_343_patcher(final String name, final FileData data, final Set<String> flags) {
-    data.writeByte(0x3a70, 0x3);
-
-    return Map.of(name, data);
+  private static void drgn1_343_patcher(final PathNode node, final Transformations transformations, final Set<String> flags) {
+    node.data.writeByte(0x3a70, 0x3);
+    transformations.addNode(node);
   }
 
-  private static boolean playerCombatSoundEffectsDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    if(DRGN0_FILE.matcher(name).matches()) {
-      final int fileId = Integer.parseInt(name, 15, name.indexOf('/', 16), 10);
+  private static boolean playerCombatSoundEffectsDiscriminator(final PathNode node, final Set<String> flags) {
+    if(DRGN0_FILE.matcher(node.fullPath).matches()) {
+      final int fileId = Integer.parseInt(node.fullPath, 15, node.fullPath.indexOf('/', 16), 10);
 
       return fileId >= 752 && fileId <= 772;
     }
@@ -972,87 +1007,77 @@ public final class Unpacker {
     return false;
   }
 
-  private static Map<String, FileData> playerCombatSoundEffectsTransformer(final String name, final FileData data, final Set<String> flags) {
-    final Map<String, FileData> files = new HashMap<>();
+  private static void playerCombatSoundEffectsTransformer(final PathNode node, final Transformations transformations, final Set<String> flags) {
+    final String end = node.fullPath.substring(node.fullPath.lastIndexOf('/') + 1);
 
-    if(name.startsWith("SECT/DRGN0.BIN/752/0/")) {
-      files.put("characters/dart/sounds/combat/" + name.substring(name.lastIndexOf('/') + 1), data);
-    } else if(name.startsWith("SECT/DRGN0.BIN/752/1/")) {
-      files.put("characters/lavitz/sounds/combat/" + name.substring(name.lastIndexOf('/') + 1), data);
-    } else if(name.startsWith("SECT/DRGN0.BIN/752/2/")) {
-      files.put("characters/shana/sounds/combat/" + name.substring(name.lastIndexOf('/') + 1), data);
-    } else if(name.startsWith("SECT/DRGN0.BIN/753/2/")) {
-      files.put("characters/rose/sounds/combat/" + name.substring(name.lastIndexOf('/') + 1), data);
-    } else if(name.startsWith("SECT/DRGN0.BIN/754/2/")) {
-      files.put("characters/haschel/sounds/combat/" + name.substring(name.lastIndexOf('/') + 1), data);
-    } else if(name.startsWith("SECT/DRGN0.BIN/755/2/")) {
-      files.put("characters/meru/sounds/combat/" + name.substring(name.lastIndexOf('/') + 1), data);
-    } else if(name.startsWith("SECT/DRGN0.BIN/756/2/")) {
-      files.put("characters/kongol/sounds/combat/" + name.substring(name.lastIndexOf('/') + 1), data);
-    } else if(name.startsWith("SECT/DRGN0.BIN/757/2/")) {
-      files.put("characters/miranda/sounds/combat/" + name.substring(name.lastIndexOf('/') + 1), data);
-    } else if(name.startsWith("SECT/DRGN0.BIN/772/1/")) {
-      files.put("characters/albert/sounds/combat/" + name.substring(name.lastIndexOf('/') + 1), data);
+    if(node.fullPath.startsWith("SECT/DRGN0.BIN/752/0/")) {
+      transformations.addNode("characters/dart/sounds/combat/" + end, node.data);
+    } else if(node.fullPath.startsWith("SECT/DRGN0.BIN/752/1/")) {
+      transformations.addNode("characters/lavitz/sounds/combat/" + end, node.data);
+    } else if(node.fullPath.startsWith("SECT/DRGN0.BIN/752/2/")) {
+      transformations.addNode("characters/shana/sounds/combat/" + end, node.data);
+    } else if(node.fullPath.startsWith("SECT/DRGN0.BIN/753/2/")) {
+      transformations.addNode("characters/rose/sounds/combat/" + end, node.data);
+    } else if(node.fullPath.startsWith("SECT/DRGN0.BIN/754/2/")) {
+      transformations.addNode("characters/haschel/sounds/combat/" + end, node.data);
+    } else if(node.fullPath.startsWith("SECT/DRGN0.BIN/755/2/")) {
+      transformations.addNode("characters/meru/sounds/combat/" + end, node.data);
+    } else if(node.fullPath.startsWith("SECT/DRGN0.BIN/756/2/")) {
+      transformations.addNode("characters/kongol/sounds/combat/" + end, node.data);
+    } else if(node.fullPath.startsWith("SECT/DRGN0.BIN/757/2/")) {
+      transformations.addNode("characters/miranda/sounds/combat/" + end, node.data);
+    } else if(node.fullPath.startsWith("SECT/DRGN0.BIN/772/1/")) {
+      transformations.addNode("characters/albert/sounds/combat/" + end, node.data);
     }
-
-    return files;
   }
 
-  private static boolean playerCombatModelsAndTexturesDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    if(DRGN0_FILE.matcher(name).matches()) {
-      final int fileId = Integer.parseInt(name, 15, name.indexOf('/', 16), 10);
+  private static boolean playerCombatModelsAndTexturesDiscriminator(final PathNode node, final Set<String> flags) {
+    if(DRGN0_FILE.matcher(node.fullPath).matches()) {
+      final int fileId = Integer.parseInt(node.fullPath, 15, node.fullPath.indexOf('/', 16), 10);
 
-      return fileId >= 3993 && fileId <= 4010 && (!name.endsWith("mrg") || fileId % 2 == 0);
+      return fileId >= 3993 && fileId <= 4010 && (!node.fullPath.endsWith("mrg") || fileId % 2 == 0);
     }
 
     return false;
   }
 
-  private static Map<String, FileData> playerCombatModelsAndTexturesTransformer(final String name, final FileData data, final Set<String> flags) {
-    final Map<String, FileData> files = new HashMap<>();
-
+  private static void playerCombatModelsAndTexturesTransformer(final PathNode node, final Transformations transformations, final Set<String> flags) {
     for(int charId = 0; charId < 9; charId++) {
       final String charName = getCharacterName(charId).toLowerCase();
 
-      if(name.startsWith("SECT/DRGN0.BIN/%d".formatted(3993 + charId * 2))) {
-        files.put("characters/%s/textures/combat".formatted(charName), data);
-      } else if(name.startsWith("SECT/DRGN0.BIN/%d".formatted(3994 + charId * 2))) {
-        files.put("characters/%s/models/combat/%s".formatted(charName, name.substring(name.lastIndexOf('/') + 1)), data);
+      if(node.fullPath.startsWith("SECT/DRGN0.BIN/%d".formatted(3993 + charId * 2))) {
+        transformations.addNode("characters/%s/textures/combat".formatted(charName), node.data);
+      } else if(node.fullPath.startsWith("SECT/DRGN0.BIN/%d".formatted(3994 + charId * 2))) {
+        transformations.addNode("characters/%s/models/combat/%s".formatted(charName, node.fullPath.substring(node.fullPath.lastIndexOf('/') + 1)), node.data);
       }
     }
-
-    return files;
   }
 
-  private static boolean dragoonCombatModelsAndTexturesDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    if(DRGN0_FILE.matcher(name).matches()) {
-      final int fileId = Integer.parseInt(name, 15, name.indexOf('/', 16), 10);
+  private static boolean dragoonCombatModelsAndTexturesDiscriminator(final PathNode node, final Set<String> flags) {
+    if(DRGN0_FILE.matcher(node.fullPath).matches()) {
+      final int fileId = Integer.parseInt(node.fullPath, 15, node.fullPath.indexOf('/', 16), 10);
 
-      return fileId >= 4011 && fileId <= 4030 && (!name.endsWith("mrg") || fileId % 2 == 0);
+      return fileId >= 4011 && fileId <= 4030 && (!node.fullPath.endsWith("mrg") || fileId % 2 == 0);
     }
 
     return false;
   }
 
-  private static Map<String, FileData> dragoonCombatModelsAndTexturesTransformer(final String name, final FileData data, final Set<String> flags) {
-    final Map<String, FileData> files = new HashMap<>();
-
+  private static void dragoonCombatModelsAndTexturesTransformer(final PathNode node, final Transformations transformations, final Set<String> flags) {
     for(int charId = 0; charId < 10; charId++) {
       final String charName = getCharacterName(charId).toLowerCase();
 
-      if(name.startsWith("SECT/DRGN0.BIN/%d".formatted(4011 + charId * 2))) {
-        files.put("characters/%s/textures/dragoon".formatted(charName), data);
-      } else if(name.startsWith("SECT/DRGN0.BIN/%d".formatted(4012 + charId * 2))) {
-        files.put("characters/%s/models/dragoon/%s".formatted(charName, name.substring(name.lastIndexOf('/') + 1)), data);
+      if(node.fullPath.startsWith("SECT/DRGN0.BIN/%d".formatted(4011 + charId * 2))) {
+        transformations.addNode("characters/%s/textures/dragoon".formatted(charName), node.data);
+      } else if(node.fullPath.startsWith("SECT/DRGN0.BIN/%d".formatted(4012 + charId * 2))) {
+        transformations.addNode("characters/%s/models/dragoon/%s".formatted(charName, node.fullPath.substring(node.fullPath.lastIndexOf('/') + 1)), node.data);
       }
     }
-
-    return files;
   }
 
-  private static boolean skipPartyPermutationsDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    if(DRGN0_FILE.matcher(name).matches()) {
-      final int fileId = Integer.parseInt(name, 15, name.indexOf('/', 16), 10);
+  private static boolean skipPartyPermutationsDiscriminator(final PathNode node, final Set<String> flags) {
+    if(DRGN0_FILE.matcher(node.fullPath).matches()) {
+      final int fileId = Integer.parseInt(node.fullPath, 15, node.fullPath.indexOf('/', 16), 10);
 
       return fileId >= 3537 && fileId <= 3592;
     }
@@ -1060,67 +1085,66 @@ public final class Unpacker {
     return false;
   }
 
-  private static Map<String, FileData> skipPartyPermutationsTransformer(final String name, final FileData data, final Set<String> flags) {
-    return Map.of();
+  private static void skipPartyPermutationsTransformer(final PathNode node, final Transformations transformations, final Set<String> flags) {
+
   }
 
   /** Extracts some S_BTLD tables/scripts */
-  private static boolean extractBtldDataDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    return "OVL/S_BTLD.OV_".equals(name) && !flags.contains("S_BTLD");
+  private static boolean extractBtldDataDiscriminator(final PathNode node, final Set<String> flags) {
+    return "OVL/S_BTLD.OV_".equals(node.fullPath) && !flags.contains(node.fullPath);
   }
 
-  private static Map<String, FileData> extractBtldDataTransformer(final String name, final FileData data, final Set<String> flags) {
-    flags.add("S_BTLD");
+  private static void extractBtldDataTransformer(final PathNode node, final Transformations transformations, final Set<String> flags) {
+    flags.add(node.fullPath);
 
-    final Map<String, FileData> files = new HashMap<>();
-    files.put(name, data);
-    files.put("encounters", data.slice(0x68d8, 0x7000));
-    files.put("player_combat_script", data.slice(0x4, 0x68d4));
-    return files;
+    transformations.addNode(node);
+    transformations.addNode("encounters", node.data.slice(0x68d8, 0x7000));
+    transformations.addNode("player_combat_script", node.data.slice(0x4, 0x68d4));
   }
 
-  private static boolean playerScriptDamageCapsDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    return "player_combat_script".equals(name) && data.readInt(4) != MrgArchive.MAGIC && !flags.contains(name);
+  private static boolean playerScriptDamageCapsDiscriminator(final PathNode node, final Set<String> flags) {
+    return "player_combat_script".equals(node.fullPath) && node.data.readInt(4) != MrgArchive.MAGIC && !flags.contains(node.fullPath);
   }
 
-  private static Map<String, FileData> playerScriptDamageCapsTransformer(final String name, final FileData data, final Set<String> flags) {
-    flags.add(name);
+  private static void playerScriptDamageCapsTransformer(final PathNode node, final Transformations transformations, final Set<String> flags) {
+    flags.add(node.fullPath);
 
-    data.writeInt(0x9f0, 999999999);
-    data.writeInt(0xa00, 999999999);
-    data.writeInt(0x82b0, 999999999);
-    data.writeInt(0x82c0, 999999999);
-    data.writeInt(0xe190, 999999999);
-    data.writeInt(0xe1a0, 999999999);
-
-    return Map.of(name, data);
+    node.data.writeInt(0x9f0, 999999999);
+    node.data.writeInt(0xa00, 999999999);
+    node.data.writeInt(0x82b0, 999999999);
+    node.data.writeInt(0x82c0, 999999999);
+    node.data.writeInt(0xe190, 999999999);
+    node.data.writeInt(0xe1a0, 999999999);
+    transformations.addNode(node);
   }
 
-  private static boolean uiPatcherDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    return "SECT/DRGN0.BIN/6666".equals(name) && data.readByte(0x24a8) != 0;
+  private static boolean uiPatcherDiscriminator(final PathNode node, final Set<String> flags) {
+    return "SECT/DRGN0.BIN/6666".equals(node.fullPath) && node.data.readByte(0x24a8) != 0;
   }
 
-  private static Map<String, FileData> uiPatcherTransformer(final String name, final FileData data, final Set<String> flags) {
+  private static void uiPatcherTransformer(final PathNode node, final Transformations transformations, final Set<String> flags) {
     // Remove the baked-in slashes in the fractions for character cards
     for(int i = 0; i < 3; i++) {
-      data.writeByte(0x24a8 + i * 0x14, 0);
-      data.writeByte(0x24aa + i * 0x14, 0);
+      node.data.writeByte(0x24a8 + i * 0x14, 0);
+      node.data.writeByte(0x24aa + i * 0x14, 0);
     }
 
-    return Map.of(name, data);
+    transformations.addNode(node);
   }
 
-  private static boolean lodEngineDiscriminator(final String name, final FileData data, final Set<String> flags) {
-    return "lod_engine".equals(name);
+  private static boolean lodEngineDiscriminator(final PathNode node, final Set<String> flags) {
+    return "lod_engine".equals(node.fullPath);
   }
 
-  private static Map<String, FileData> lodEngineExtractor(final String name, final FileData data, final Set<String> flags) {
-    return Map.of(
-      "shadow.ctmd", data.slice(0x3d0, 0x14c),
-      "shadow.anim", data.slice(0x51c, 0x28),
-      "shadow.tim", getTimSize(data.slice(0x544)),
-      "font.tim", getTimSize(data.slice(0xb6744))
-    );
+  private static void lodEngineExtractor(final PathNode node, final Transformations transformations, final Set<String> flags) {
+    for(int i = 0; i < 64; i++) {
+      transformations.addNode("items/%d.ditm".formatted(i), node.data.slice(0x3f2ac + i * 0xc, 0xc));
+    }
+
+    transformations.addNode("shadow.ctmd", node.data.slice(0x3d0, 0x14c));
+    transformations.addNode("shadow.anim", node.data.slice(0x51c, 0x28));
+    transformations.addNode("shadow.tim", getTimSize(node.data.slice(0x544)));
+    transformations.addNode("font.tim", getTimSize(node.data.slice(0xb6744)));
   }
 
   private static FileData getTimSize(final FileData data) {
@@ -1136,19 +1160,15 @@ public final class Unpacker {
     return data.slice(0x0, imageAddr + data.readUShort(imageAddr));
   }
 
-  private static void writeFiles(final Map<String, FileData> files) {
-    files.forEach(Unpacker::writeFile);
-  }
-
-  private static void writeFile(final String name, final FileData data) {
-    if(data.realFileIndex() != -1) {
+  private static void writeFile(final PathNode node) {
+    if(node.data.realFileIndex() != -1) {
       return;
     }
 
-    final Path path = ROOT.resolve(name);
+    final Path path = ROOT.resolve(node.fullPath);
 
     try {
-      if(data == EMPTY_DIRECTORY_SENTINEL) {
+      if(node.data == EMPTY_DIRECTORY_SENTINEL) {
         Files.createDirectories(path);
         return;
       }
@@ -1156,7 +1176,7 @@ public final class Unpacker {
       Files.createDirectories(path.getParent());
 
       try(final OutputStream writer = Files.newOutputStream(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
-        writer.write(data.data(), data.offset(), data.size());
+        writer.write(node.data.data(), node.data.offset(), node.data.size());
       }
     } catch(final IOException ex) {
       throw new UnpackerException(ex);
@@ -1169,7 +1189,7 @@ public final class Unpacker {
       throw new RuntimeException("Attempted to decompress non-BPE segment");
     }
 
-    LOGGER.info("Decompressing BPE segment");
+//    LOGGER.info("Decompressing BPE segment");
 
     final byte[] dest = new byte[archive.readInt(0)];
 
@@ -1274,18 +1294,18 @@ public final class Unpacker {
       archiveOffset += 4;
     }
 
-    LOGGER.info("Archive size: %d, decompressed size: %d", archiveOffset, totalSize);
+//    LOGGER.info("Archive size: %d, decompressed size: %d", archiveOffset, totalSize);
 
     return dest;
   }
 
   @FunctionalInterface
   public interface Discriminator {
-    boolean matches(final String name, final FileData data, final Set<String> flags);
+    boolean matches(final PathNode node, final Set<String> flags);
   }
 
   @FunctionalInterface
   public interface Transformer {
-    Map<String, FileData> transform(final String name, final FileData data, final Set<String> flags);
+    void transform(final PathNode node, final Transformations transformations, final Set<String> flags);
   }
 }

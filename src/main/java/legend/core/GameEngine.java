@@ -215,6 +215,7 @@ public final class GameEngine {
     time = System.nanoTime();
     thread.start();
     RENDERER.init();
+    RENDERER.events().onShutdown(Unpacker::shutdownLoader);
     GPU.init();
     RENDERER.run();
 

@@ -1,11 +1,8 @@
 package legend.game.unpacker;
 
-import legend.core.MathHelper;
 import legend.core.gpu.Rect4i;
 import legend.game.tim.Tim;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -14,18 +11,16 @@ public final class SubmapPxlTransformer {
 
   private static final Pattern pattern = Pattern.compile("^SECT/DRGN2\\d\\.BIN/\\d+/\\d+$");
 
-  public static boolean discriminator(final String name, final FileData data, final Set<String> flags) {
+  public static boolean discriminator(final PathNode node, final Set<String> flags) {
     return
-      pattern.matcher(name).matches() &&
-      Integer.parseInt(name.substring(name.lastIndexOf('/', name.lastIndexOf('/') - 1) + 1, name.lastIndexOf('/'))) % 3 == 2 &&
-      data.size() > 4 &&
-      MathHelper.get(data.data(), data.offset(), 4) == 0x11;
+      pattern.matcher(node.fullPath).matches() &&
+      Integer.parseInt(node.fullPath.substring(node.fullPath.lastIndexOf('/', node.fullPath.lastIndexOf('/') - 1) + 1, node.fullPath.lastIndexOf('/'))) % 3 == 2 &&
+      node.data.size() > 4 &&
+      node.data.readInt(0x0) == 0x11;
   }
 
-  public static Map<String, FileData> transform(final String name, final FileData data, final Set<String> flags) {
-    final Map<String, FileData> files = new HashMap<>();
-
-    final Tim pxl = new Tim(data);
+  public static void transform(final PathNode node, final Transformations transformations, final Set<String> flags) {
+    final Tim pxl = new Tim(node.data);
     final Rect4i imageRect = pxl.getImageRect();
     final byte[] imageData = pxl.getImageData().getBytes();
 
@@ -71,10 +66,8 @@ public final class SubmapPxlTransformer {
           newClutData.copyTo((tileY * 128 + clutRow + newImageRect.h) * imageRect.w * 2 + tileX * 16 * 2, imageData, clutRow * newClutRect.w * 2, newClutRect.w * 2);
         }
 
-        files.put(name.substring(0, name.lastIndexOf('/')) + "/textures/" + name.substring(name.lastIndexOf('/') + 1) + '.' + tileY + '.' + tileX, newData);
+        transformations.addNode(node.fullPath.substring(0, node.fullPath.lastIndexOf('/')) + "/textures/" + node.fullPath.substring(node.fullPath.lastIndexOf('/') + 1) + '.' + tileY + '.' + tileX, newData);
       }
     }
-
-    return files;
   }
 }

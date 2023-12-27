@@ -438,7 +438,6 @@ public final class Scus94491BpeSegment {
     });
 
     RENDERER.events().onShutdown(() -> {
-      Unpacker.shutdownLoader();
       stopSound();
       SPU.stop();
       Platform.exit();

@@ -20,4 +20,4 @@ move ".\jdk17.0.7_7" ".\jdk"
 del ".\jdk.zip"
 
 : LAUNCH
-".\jdk\bin\java" -cp "lod-game-@version@.jar;libs/*" legend.game.MainWindows -ea -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma || pause
+".\jdk\bin\java" -cp "lod-game-@version@.jar;libs/*" legend.game.MainWindows -Xmx2G -ea -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma || pause
