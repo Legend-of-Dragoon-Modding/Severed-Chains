@@ -4,9 +4,9 @@ import org.joml.Vector3f;
 
 public class AttachedSobjEffectData40 {
   public int tick_00;
-  public boolean shouldRenderDustType0_04;
+  public boolean shouldRenderTmdDust_04;
   public boolean shouldRenderFootprints_08;
-  public boolean shouldRenderDustType2_0c;
+  public boolean shouldRenderOrthoDust_0c;
   public int footprintMode_10;
 
   public boolean shouldRenderLawPodTrail_18;
@@ -15,7 +15,7 @@ public class AttachedSobjEffectData40 {
 
   public int size_28;
   public int oldFootprintInstantiationInterval_2c;
-  public int instantiationIntervalDustType0And2_30;
+  public int instantiationIntervalDust30;
   public int instantiationIntervalFootprints_34;
   /** short */
   public int maxTicks_38;
