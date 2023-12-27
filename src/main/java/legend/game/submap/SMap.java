@@ -945,8 +945,8 @@ public class SMap extends EngineState {
     functions[702] = this::scriptIsChapterTitleCardLoaded;
     functions[703] = this::scriptSetTitleCardAnimationPauseTicks;
 
-    functions[768] = this::FUN_800f2048;
-    functions[769] = this::FUN_800f1f9c;
+    functions[768] = this::scriptSelfInitDustType0;
+    functions[769] = this::scriptInitDustType0;
     functions[770] = this::scriptAllocateSmokePlumeEffectData;
     functions[771] = this::scriptInitFootprints;
     functions[772] = this::scriptAddSavePoint;
@@ -6310,10 +6310,10 @@ public class SMap extends EngineState {
     if(!flEq(data.transfer_1e.x, model.coord2_14.coord.transfer.x) || !flEq(data.transfer_1e.y, model.coord2_14.coord.transfer.y) || !flEq(data.transfer_1e.z, model.coord2_14.coord.transfer.z)) {
       //LAB_800ef154
       if(data.shouldRenderDustType0_04) {
-        if(data.tick_00 % data.instantiationIntervalDustType0And2_30 == 0) {
+        if(data.tick_00 % (data.instantiationIntervalDustType0And2_30 * 2.0f / vsyncMode_8007a3b8) == 0) {
           final DustType0Particle20 inst = this.addDustType0(this.dustType0_800d4ec0);
           inst.tick_00 = 0;
-          inst.maxTicks_18 = (short)data.maxTicks_38;
+          inst.maxTicks_18 = data.maxTicks_38;
 
           final int size = data.size_28;
           if(size < 0) {
@@ -6322,7 +6322,7 @@ public class SMap extends EngineState {
           } else if(size > 0) {
             //LAB_800ef1e0
             inst.size_08 = 0.0f;
-            inst.stepSize_04 = size / 202.0f;
+            inst.stepSize_04 = size / 20.0f;
           } else {
             //LAB_800ef214
             inst.size_08 = 0.0f;
@@ -6451,16 +6451,22 @@ public class SMap extends EngineState {
 
     //LAB_800ef7c8
     while(inst != null) {
-      if(inst.tick_00 >= inst.maxTicks_18) {
+      if(inst.tick_00 >= inst.maxTicks_18 * 2.0f / vsyncMode_8007a3b8) {
         prev.next_1c = inst.next_1c;
         inst = prev.next_1c;
       } else {
         //LAB_800ef804
-        inst.transfer.y--;
+        inst.transfer.y -= 1.0f / (2.0f / vsyncMode_8007a3b8);
 
         this.dustModel_800d4d40.coord2_14.coord.transfer.set(inst.transfer);
 
-        inst.size_08 += inst.stepSize_04;
+        // In retail, the shrinking tail of the snow slide snow cloud animation occurs because size_08 is in .12
+        // and RotMatrixXyz writes everything as shorts, which turns scale negative above 0x7fff (>=8.0f).
+        // To implement this more smoothly, stepSize_04 is switched to negative once size_08 reaches 8.0f.
+        if(inst.size_08 >= 8.0f) {
+          inst.stepSize_04 = -inst.stepSize_04;
+        }
+        inst.size_08 += inst.stepSize_04 / (2.0f / vsyncMode_8007a3b8);
 
         this.dustModel_800d4d40.coord2_14.transforms.scale.set(inst.size_08, inst.size_08, inst.size_08);
 
@@ -6469,6 +6475,7 @@ public class SMap extends EngineState {
 
         this.dustModel_800d4d40.remainingFrames_9e = 0;
         this.dustModel_800d4d40.interpolationFrameIndex = 0;
+
         this.dustModel_800d4d40.modelParts_00[0].coord2_04.flg--;
         inst.tick_00++;
 
@@ -7165,7 +7172,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p3")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p4")
   @Method(0x800f1f9cL)
-  private FlowControl FUN_800f1f9c(final RunningScript<?> script) {
+  private FlowControl scriptInitDustType0(final RunningScript<?> script) {
     final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.attachedEffectData_1d0.shouldRenderDustType0_04 = script.params_20[1].get() == 1;
     sobj.attachedEffectData_1d0.size_28 = script.params_20[2].get();
@@ -7195,13 +7202,13 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p3")
   @Method(0x800f2048L)
-  private FlowControl FUN_800f2048(final RunningScript<?> script) {
+  private FlowControl scriptSelfInitDustType0(final RunningScript<?> script) {
     script.params_20[4] = script.params_20[3];
     script.params_20[3] = script.params_20[2];
     script.params_20[2] = script.params_20[1];
     script.params_20[1] = script.params_20[0];
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
-    return this.FUN_800f1f9c(script);
+    return this.scriptInitDustType0(script);
   }
 
   /** Re-initializes some values for Kadessa steam vents to be intermittent when Divine Dragon flies by. */
@@ -7327,7 +7334,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "maxTicks", description = "Number of ticks for which particle exists.")
   @Method(0x800f23ecL)
   private FlowControl scriptInitializeDustType2(final RunningScript<?> script) {
-    script.params_20[4] = new ScriptStorageParam(script.scriptState_04, 0); //TODO Does nothing, why?
+    script.params_20[4] = new ScriptStorageParam(script.scriptState_04, 0); // Does nothing, why?
     final int mode = script.params_20[0].get();
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.scriptState_04.storage_44[0]].innerStruct_00;
 
