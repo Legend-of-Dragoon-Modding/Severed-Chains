@@ -30,7 +30,6 @@ import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.submap.SMap.encounterData_800f64c4;
 import static legend.game.wmap.WmapStatics.directionalPathSegmentData_800f2248;
 
 public class DebuggerController {
@@ -307,17 +306,17 @@ public class DebuggerController {
 
   @FXML
   private void startEncounter(final ActionEvent event) {
-    encounterId_800bb0f8 = this.encounterId.getValue();
-
     if(currentEngineState_8004dd04 instanceof final SMap smap) {
+      smap.submap.generateEncounter();
+      encounterId_800bb0f8 = this.encounterId.getValue();
+
       if(Config.combatStage()) {
         battleStage_800bb0f4 = Config.getCombatStage();
-      } else {
-        battleStage_800bb0f4 = encounterData_800f64c4[submapCut_80052c30].stage_03;
       }
 
       smap.mapTransition(-1, 0);
     } else if(currentEngineState_8004dd04 instanceof final WMap wmap) {
+      encounterId_800bb0f8 = this.encounterId.getValue();
       final DirectionalPathSegmentData08 directionalPathSegment = directionalPathSegmentData_800f2248[wmap.mapState_800c6798.directionalPathIndex_12];
 
       if(Config.combatStage()) {

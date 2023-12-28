@@ -17,4 +17,11 @@ public abstract class Submap {
 
   public abstract void draw();
   public abstract void unload();
+
+  public abstract int getEncounterRate();
+  public abstract void generateEncounter();
+
+  public boolean hasEncounters() {
+    return this.getEncounterRate() != 0;
+  }
 }

@@ -218,7 +218,6 @@ public final class Scus94491BpeSegment_800b {
   public static final MV matrix_800bed30 = new MV();
   public static int screenOffsetX_800bed50;
   public static int screenOffsetY_800bed54;
-  public static boolean hasNoEncounters_800bed58;
 
   /**
    * Remains set for the duration of the button press

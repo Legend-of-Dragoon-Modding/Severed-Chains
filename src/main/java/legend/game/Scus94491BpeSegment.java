@@ -1484,31 +1484,6 @@ public final class Scus94491BpeSegment {
     sssqTempoScale_800bd100 = 0x100;
   }
 
-  @Method(0x80019610L)
-  public static void reinitSound() {
-    setMainVolume(0, 0);
-    setMaxSounds(8);
-    sssqSetReverbType(3);
-    sssqSetReverbVolume(0x30, 0x30);
-
-    for(int i = 0; i < 13; i++) {
-      unuseSoundFile(i);
-    }
-
-    FUN_8001aa64();
-    FUN_8001aa90();
-
-    queuedSounds_800bd110.clear();
-
-    for(int i = 0; i < 13; i++) {
-      soundFiles_800bcf80[i].used_00 = false;
-    }
-
-    encounterSoundEffects_800bd610._00 = 0;
-
-    sssqTempoScale_800bd100 = 0x100;
-  }
-
   @Method(0x80019710L)
   public static void prepareOverlay() {
     if(engineState_8004dd20 != EngineStateEnum.SUBMAP_05 && previousEngineState_8004dd28 == EngineStateEnum.SUBMAP_05) {
