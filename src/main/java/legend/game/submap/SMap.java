@@ -7,7 +7,6 @@ import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.GpuCommandLine;
 import legend.core.gpu.GpuCommandPoly;
-import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
@@ -34,7 +33,6 @@ import legend.game.scripting.ScriptState;
 import legend.game.scripting.ScriptStorageParam;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
-import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.AnimatedSprite08;
 import legend.game.types.AnmFile;
@@ -54,12 +52,10 @@ import legend.game.types.TextboxChar08;
 import legend.game.types.TextboxText84;
 import legend.game.types.TextboxType;
 import legend.game.types.TmdAnimationFile;
-import legend.game.types.TmdSubExtension;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import org.joml.Math;
-import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
@@ -85,7 +81,6 @@ import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.getSubmapMusicChange;
 import static legend.game.Scus94491BpeSegment.loadDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
-import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.loadMenuSounds;
 import static legend.game.Scus94491BpeSegment.loadMusicPackage;
@@ -133,8 +128,6 @@ import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd2
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.sssqFadeIn;
 import static legend.game.Scus94491BpeSegment_8005._80050274;
-import static legend.game.Scus94491BpeSegment_8005._800503f8;
-import static legend.game.Scus94491BpeSegment_8005._80050424;
 import static legend.game.Scus94491BpeSegment_8005._80052c40;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.renderBorder_80052b68;
@@ -211,7 +204,7 @@ public class SMap extends EngineState {
   public ScriptState<Void> submapControllerState_800c6740;
 
   private final Model124 playerModel_800c6748 = new Model124("Player");
-  private boolean submapModelLoaded_800c686c;
+
   private boolean chapterTitleAnimationComplete_800c686e;
   private boolean unloadSubmapModel_800c6870;
 
@@ -225,7 +218,7 @@ public class SMap extends EngineState {
 
   private SubmapMediaState mediaLoadingStage_800c68e4;
   private final SubmapCaches80 caches_800c68e8 = new SubmapCaches80();
-  private int submapType_800c6968;
+
   /** Index 31 tracks the current tick since indicator last enabled. Have not yet seen other elements set to anything but -1 */
   public final int[] indicatorTickCountArray_800c6970 = new int[32];
 
@@ -262,8 +255,7 @@ public class SMap extends EngineState {
 
   private int submapOffsetX_800cb560;
   private int submapOffsetY_800cb564;
-  private int screenOffsetX_800cb568;
-  private int screenOffsetY_800cb56c;
+  private final Vector2i screenOffset_800cb568 = new Vector2i();
   private int _800cb570;
   private int _800cb574;
   private int _800cb578;
@@ -299,21 +291,7 @@ public class SMap extends EngineState {
 
   private final MediumStruct _800d1a90 = new MediumStruct();
 
-  private final Matrix4f submapCutMatrix_800d4bb0 = new Matrix4f();
-
-  private Structb0 _800d4bd0;
-  private FileData _800d4bd4;
   private SnowEffect snow_800d4bd8;
-  private boolean submapCutModelAndAnimLoaded_800d4bdc;
-  private boolean submapTextureAndMatrixLoaded_800d4be0;
-  private boolean theEndTimLoaded_800d4be4;
-  private CContainer submapCutModel;
-  private TmdAnimationFile submapCutAnim;
-  private Tim submapCutTexture;
-  private MV submapCutMatrix;
-  private Tim theEndTim_800d4bf0;
-
-  private final Model124 submapModel_800d4bf8 = new Model124("Submap");
 
   private final Model124 dustModel_800d4d40 = new Model124("Dust");
 
@@ -405,8 +383,6 @@ public class SMap extends EngineState {
     48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48,
     48, 48, 48, 48, 48, 48, 48, 0,
   };
-
-  private final Rect4i _800d6b48 = new Rect4i(576, 368, 16, 1);
 
   private final Vector3f[] _800d6b7c = {
     new Vector3f(-10.0f, 0.0f, -22.0f),
@@ -533,47 +509,6 @@ public class SMap extends EngineState {
     new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
     new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
     new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-  };
-
-  /**
-   * 65 - {@link SMap#handleAndRenderSubmapModel()}
-   *
-   * All other indices are {@link SMap#noSubmapModel()}
-   */
-  private final Runnable[] submapModelRenderers_800f5ad4 = new Runnable[0x80];
-  {
-    Arrays.setAll(this.submapModelRenderers_800f5ad4, i -> this::noSubmapModel);
-    this.submapModelRenderers_800f5ad4[65] = this::handleAndRenderSubmapModel;
-  }
-  /**
-   * These are indices into the above table
-   *
-   * <ul>
-   *   <li>0 - submap has no model</li>
-   *   <li>65 - submap has model</li>
-   * </ul>
-   */
-  private final int[] submapTypes_800f5cd4 = {
-    0, 0, 0, 0, 0, 65, 65, 0, 0, 65, 0, 0, 0, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 0, 0, 0, 65, 65, 65, 65, 65, 65, 65, 65,
-    65, 65, 65, 65, 0, 0, 65, 0, 65, 0, 0, 0, 0, 0, 0, 0, 65, 65, 0, 65, 65, 0, 65, 65, 65, 65, 0, 0, 65, 0, 65, 0, 0, 65, 65, 65, 65, 65, 65, 65, 65, 0, 0, 0, 0, 0, 0, 0, 65, 65,
-    0, 0, 65, 0, 65, 65, 65, 65, 65, 65, 65, 65, 0, 0, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 0, 0, 0, 0, 0, 0, 65, 65, 0, 65, 65, 65, 65, 0, 0, 0, 0, 0, 65, 65, 65, 65, 65, 65, 0, 65,
-    65, 65, 0, 65, 65, 65, 65, 65, 0, 65, 65, 65, 65, 65, 65, 65, 65, 0, 0, 0, 0, 65, 65, 65, 0, 0, 0, 65, 0, 0, 65, 0, 65, 0, 0, 0, 0, 65, 65, 65, 65, 65, 0, 0, 0, 65, 65, 0, 65, 65,
-    65, 65, 65, 0, 65, 0, 0, 0, 0, 0, 65, 65, 0, 65, 65, 0, 0, 65, 65, 0, 0, 0, 0, 65, 65, 0, 0, 0, 65, 65, 65, 0, 0, 0, 0, 65, 65, 0, 65, 65, 65, 0, 65, 0, 65, 0, 65, 0, 0, 0,
-    0, 65, 65, 65, 65, 65, 65, 65, 65, 65, 0, 0, 65, 0, 0, 65, 65, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 65, 65, 0, 0, 0, 65, 65, 65, 0, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 0, 0,
-    0, 65, 65, 65, 65, 65, 0, 0, 65, 65, 65, 0, 0, 0, 0, 65, 0, 65, 0, 0, 0, 65, 65, 65, 65, 65, 0, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 0, 0, 0, 0, 65, 65, 65, 65, 65, 65, 65,
-    65, 0, 65, 65, 0, 0, 65, 65, 65, 65, 0, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 0, 0, 0, 0, 65, 65, 65, 65, 65, 65, 65, 65, 0, 0, 0, 0, 65, 0, 65, 65, 65, 65, 0,
-    65, 65, 65, 65, 65, 65, 0, 0, 0, 0, 0, 0, 0, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 0, 0, 0, 0, 0, 65, 65, 65, 65, 65, 65, 0, 0, 65, 65, 0, 65, 65, 0, 65, 65, 0,
-    0, 65, 0, 0, 0, 0, 0, 0, 65, 0, 0, 65, 0, 65, 0, 0, 65, 65, 65, 0, 65, 65, 0, 0, 0, 0, 65, 65, 65, 65, 65, 65, 65, 65, 65, 0, 0, 65, 65, 65, 65, 65, 65, 0, 65, 65, 65, 65, 65, 65,
-    0, 65, 65, 0, 0, 0, 0, 65, 65, 0, 0, 0, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 0, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65,
-    65, 65, 65, 0, 0, 0, 0, 0, 0, 0, 0, 65, 0, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 0, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65,
-    0, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 0, 65, 0, 0, 0, 65, 65, 65, 65, 65, 0, 0, 0, 0, 0, 65, 0, 65, 0, 65, 65, 65, 65, 0, 0, 65, 65,
-    0, 0, 0, 0, 65, 65, 0, 0, 65, 65, 65, 65, 65, 65, 0, 0, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 0, 65, 65, 65, 65, 65, 65, 65, 0, 65, 0, 65, 65, 0, 0, 65, 65, 65, 65, 65, 65, 65, 65,
-    65, 65, 65, 65, 0, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 0, 65, 65, 65, 65, 65, 65, 65, 65, 0, 0, 65, 65, 65, 65, 0, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 0, 0, 0, 65, 65, 65, 65, 0, 0, 0, 65, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 65, 65, 65, 65, 0, 0, 0, 0, 65, 65, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   };
 
   /** Related to indicator being disabled for cutscenes/conversations */
@@ -726,28 +661,6 @@ public class SMap extends EngineState {
     new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0),
   };
 
-  /** Seems to be missing one element at the end, there are 792 cuts */
-  private final int[] smapFileIndices_800f982c = {
-    0, 0, 0, 0, 0, 6674, 6676, 0, 0, 6678, 0, 0, 0, 6680, 6682, 6684, 6686, 6688, 6690, 6692, 6694, 6696, 6698, 6700, 6702, 6704, 6706, 6708, 6710, 6712, 6714, 6716, 6718, 6720, 6722, 6724, 6726, 6684, 6728, 0, 0, 0, 6730, 6732, 6734, 6736, 6738, 6740, 6742, 6744,
-    6746, 6748, 6750, 6752, 0, 0, 6682, 0, 6754, 0, 0, 0, 0, 0, 0, 0, 6754, 6756, 0, 6760, 6762, 0, 6764, 6766, 6768, 6770, 0, 0, 6772, 0, 6774, 0, 0, 6776, 6778, 6780, 6782, 6784, 6786, 6788, 6790, 0, 0, 0, 0, 0, 0, 0, 6792, 6794,
-    0, 0, 6796, 0, 6798, 6800, 6802, 6804, 6806, 6808, 6810, 6812, 0, 0, 6814, 6816, 6818, 6820, 6822, 6824, 6826, 6828, 6830, 6832, 0, 0, 0, 0, 0, 0, 6834, 6836, 0, 6838, 6840, 6842, 6844, 0, 0, 0, 0, 0, 6846, 6848, 6850, 6852, 6854, 6856, 0, 6858,
-    6860, 6862, 0, 6864, 6866, 6868, 6870, 6872, 0, 6874, 6876, 6878, 6880, 6872, 6868, 6866, 6870, 0, 0, 0, 0, 6882, 6884, 6886, 0, 0, 0, 6888, 0, 0, 6890, 0, 6892, 0, 0, 0, 0, 6894, 6896, 6898, 6900, 6902, 0, 0, 0, 6904, 6906, 0, 6908, 6910,
-    6912, 6914, 6916, 0, 6918, 0, 0, 0, 0, 0, 6920, 6922, 0, 6924, 6926, 0, 0, 6928, 6930, 0, 0, 0, 0, 6932, 6934, 0, 0, 0, 6936, 6938, 6940, 0, 0, 0, 0, 6942, 6940, 0, 6938, 6944, 6946, 0, 6948, 0, 6950, 0, 6952, 0, 0, 0,
-    0, 6954, 6956, 6958, 6960, 6962, 6964, 6966, 6968, 6944, 0, 0, 6970, 0, 0, 6972, 6974, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6976, 6978, 0, 0, 0, 6980, 6982, 6984, 0, 6986, 6988, 6990, 6992, 6994, 6996, 6998, 7000, 7002, 7004, 7006, 0, 0,
-    0, 7008, 7010, 7012, 7014, 7016, 0, 0, 7018, 7020, 7022, 0, 0, 0, 0, 7024, 0, 7026, 0, 0, 0, 7028, 7030, 7032, 7034, 7036, 0, 7038, 7038, 7040, 7042, 7044, 7046, 7048, 7050, 7052, 7054, 7056, 7058, 0, 0, 0, 0, 7060, 7062, 7064, 7062, 7066, 7068, 7070,
-    7072, 0, 7074, 7076, 0, 0, 7078, 7080, 7082, 7084, 0, 7086, 7088, 7090, 7092, 7094, 7096, 7098, 7100, 7102, 7104, 7106, 7108, 7110, 7112, 7114, 7114, 0, 0, 0, 0, 7116, 7118, 7120, 7122, 7124, 7126, 7128, 7130, 0, 0, 0, 0, 7132, 0, 7134, 7136, 7138, 7140, 0,
-    7142, 7144, 7146, 7148, 7150, 7152, 0, 0, 0, 0, 0, 0, 0, 7154, 7156, 7158, 7160, 7162, 7164, 7166, 7168, 7170, 7172, 7174, 7176, 7160, 7160, 7160, 0, 0, 0, 0, 0, 7178, 7180, 7182, 7184, 7186, 7188, 0, 0, 7190, 7192, 0, 7194, 7196, 0, 7198, 7200, 0,
-    0, 7202, 0, 0, 0, 0, 0, 0, 7204, 0, 0, 7206, 0, 7138, 0, 0, 7208, 7210, 7212, 0, 7214, 7216, 0, 0, 0, 0, 7214, 7218, 7220, 7222, 7224, 7226, 7228, 7230, 7232, 0, 0, 7234, 7236, 7238, 7240, 7242, 7244, 0, 7246, 7248, 7250, 7252, 7254, 7256,
-    0, 7258, 7260, 0, 0, 0, 0, 6782, 6782, 0, 0, 0, 7594, 7262, 7264, 7266, 7268, 7270, 7272, 7274, 7276, 7278, 7280, 7282, 7284, 7286, 0, 7288, 7290, 7292, 7294, 7296, 7298, 7300, 7302, 7304, 7306, 7308, 7310, 7312, 7314, 7316, 7318, 7320, 7322, 7324, 7326, 7328, 7330, 7332,
-    7334, 7336, 7338, 0, 0, 0, 0, 0, 0, 0, 0, 7586, 0, 7340, 7342, 7344, 7346, 7348, 7350, 7352, 7354, 7356, 7358, 7360, 7362, 7364, 7366, 7368, 7370, 7372, 7374, 7376, 7378, 7380, 7382, 7384, 7386, 7388, 0, 7390, 7392, 7394, 7396, 7398, 7376, 7520, 7400, 7402, 7404, 7406,
-    0, 7408, 7410, 7412, 7414, 7416, 7418, 7420, 7422, 7424, 7426, 7428, 7430, 7432, 7434, 7436, 7438, 7440, 7442, 7444, 7446, 7448, 7450, 0, 7452, 0, 0, 0, 7454, 7456, 7458, 6760, 7460, 0, 0, 0, 0, 0, 7462, 0, 7464, 0, 7466, 7468, 7470, 7472, 0, 0, 7474, 7476,
-    0, 0, 0, 0, 7214, 7214, 0, 0, 7478, 7480, 7482, 7484, 7486, 7488, 0, 0, 7490, 7492, 7494, 7496, 7498, 7500, 7502, 7504, 7506, 7508, 7510, 0, 7512, 6914, 6984, 7514, 7516, 7518, 7268, 0, 7542, 0, 7520, 6782, 0, 0, 7522, 7524, 7468, 6698, 7482, 7522, 7530, 7526,
-    7528, 7368, 7530, 7532, 0, 7534, 7536, 7538, 7540, 7542, 7544, 7546, 7548, 7550, 7552, 7554, 0, 7556, 7558, 7560, 7024, 7562, 7564, 7566, 7568, 0, 0, 7570, 7572, 7574, 7576, 0, 7578, 7580, 7582, 7584, 7586, 7588, 7590, 7592, 7524, 7566, 6680, 6896, 7542, 7594, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 7596, 0, 0, 0, 0, 7598, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7600, 0, 0, 0, 0, 0, 0, 0, 7602, 7604, 7606, 7608,
-  };
-  private int submapModelLoadingStage_800f9e5a;
-  private final Vector2i tpage_800f9e5c = new Vector2i();
-  private final Vector2i clut_800f9e5e = new Vector2i();
   private int snowState_800f9e60;
 
   private int _800f9e78;
@@ -1312,27 +1225,6 @@ public class SMap extends EngineState {
     this.restoreCharDataVitals(-1);
   }
 
-  @Method(0x800da114L)
-  private void animateSmapModel(final Model124 model) {
-    final int interpolationFrameCount = (2 - vsyncMode_8007a3b8) * 2 + 1;
-
-    if(model.smallerStructPtr_a4 != null) {
-      // Only apply texture animations for the keyframe of the middle interpolation frame
-      if(model.interpolationFrameIndex == 0 || model.interpolationFrameIndex == Math.ceil(interpolationFrameCount / 2.0f)) {
-        //LAB_800da138
-        for(int i = 0; i < 4; i++) {
-          if(model.smallerStructPtr_a4.uba_04[i]) {
-            this.FUN_800dde70(model, i);
-          }
-
-          //LAB_800da15c
-        }
-      }
-    }
-
-    animateModel(model, interpolationFrameCount);
-  }
-
   @Method(0x800da524L)
   private void renderSmapShadow(final Model124 model) {
     GsInitCoordinate2(model.coord2_14, shadowModel_800bda10.coord2_14);
@@ -1358,7 +1250,7 @@ public class SMap extends EngineState {
 
     RENDERER
       .queueModel(modelPart.obj, lw)
-      .screenspaceOffset(this.screenOffsetX_800cb568 + 8, -this.screenOffsetY_800cb56c)
+      .screenspaceOffset(this.screenOffset_800cb568.x + 8, -this.screenOffset_800cb568.y)
       .lightDirection(lightDirectionMatrix_800c34e8)
       .lightColour(lightColourMatrix_800c3508)
       .backgroundColour(GTE.backgroundColour);
@@ -1381,7 +1273,7 @@ public class SMap extends EngineState {
           GsGetLw(dobj2.coord2_04, lw);
 
           RENDERER.queueModel(dobj2.obj, lw)
-            .screenspaceOffset(this.screenOffsetX_800cb568 + 8, -this.screenOffsetY_800cb56c)
+            .screenspaceOffset(this.screenOffset_800cb568.x + 8, -this.screenOffset_800cb568.y)
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
             .backgroundColour(GTE.backgroundColour);
@@ -1395,51 +1287,6 @@ public class SMap extends EngineState {
     }
 
     //LAB_800dab4c
-  }
-
-  /** Used in pre-Melbu submap cutscene, Prairie, new game Rose cutscene (animates the cloud flicker by changing CLUT, pretty sure this is CLUT animation) */
-  @Method(0x800dde70L)
-  private void FUN_800dde70(final Model124 struct, final int index) {
-    final SmallerStruct smallerStruct = struct.smallerStructPtr_a4;
-
-    if(smallerStruct.tmdSubExtensionArr_20[index] == null) {
-      smallerStruct.uba_04[index] = false;
-    } else {
-      //LAB_800ddeac
-      final int colourMap = struct.uvAdjustments_9d.index;
-      final int x = _800503f8[colourMap];
-      final int y = _80050424[colourMap] + 112;
-
-      final TmdSubExtension v = smallerStruct.tmdSubExtensionArr_20[index];
-      int a1 = 0;
-
-      //LAB_800ddef8
-      for(int i = 0; i < smallerStruct.sa_08[index]; i++) {
-        a1 += 2;
-      }
-
-      //LAB_800ddf08
-      final int sourceYOffset = v.sa_04[a1];
-      a1++;
-
-      smallerStruct.sa_10[index]++;
-
-      if(smallerStruct.sa_10[index] == v.sa_04[a1]) {
-        smallerStruct.sa_10[index] = 0;
-
-        if(v.sa_04[a1 + 1] == -1) {
-          smallerStruct.sa_08[index] = 0;
-        } else {
-          //LAB_800ddf70
-          smallerStruct.sa_08[index]++;
-        }
-      }
-
-      //LAB_800ddf8c
-      GPU.queueCommand(1, new GpuCommandCopyVramToVram(x, y + sourceYOffset, x, y + smallerStruct.sa_18[index], 16, 1));
-    }
-
-    //LAB_800ddff4
   }
 
   @Override
@@ -1558,8 +1405,8 @@ public class SMap extends EngineState {
         indicator.x_40[i] = x;
         indicator.y_68[i] = y;
         indicator._18[i] = (short)script.params_20[1].get();
-        indicator.screenOffsetX_90[i] = this.screenOffsetX_800cb568;
-        indicator.screenOffsetY_e0[i] = this.screenOffsetY_800cb56c;
+        indicator.screenOffsetX_90[i] = this.screenOffset_800cb568.x;
+        indicator.screenOffsetY_e0[i] = this.screenOffset_800cb568.y;
         break;
       }
     }
@@ -1598,8 +1445,8 @@ public class SMap extends EngineState {
           indicator.x_40[i] = x;
           indicator.y_68[i] = y;
           indicator._18[i] = (short)ints.array(s0).get();
-          indicator.screenOffsetX_90[i] = this.screenOffsetX_800cb568;
-          indicator.screenOffsetY_e0[i] = this.screenOffsetY_800cb56c;
+          indicator.screenOffsetX_90[i] = this.screenOffset_800cb568.x;
+          indicator.screenOffsetY_e0[i] = this.screenOffset_800cb568.y;
           break;
         }
       }
@@ -2924,7 +2771,8 @@ public class SMap extends EngineState {
       applyModelRotationAndScale(model);
 
       if(!sobj.disableAnimation_12a) {
-        this.animateSmapModel(model);
+        final int interpolationFrameCount = (2 - vsyncMode_8007a3b8) * 2 + 1;
+        animateModel(model, interpolationFrameCount);
 
         if(sobj.animationFinished_12c && (sobj.flags_190 & 0x2000_0000) != 0) {
           sobj.animIndex_132 = 0;
@@ -3207,30 +3055,14 @@ public class SMap extends EngineState {
 
       // Load map assets
       case LOAD_SOBJ_ASSETS_AND_SCRIPTS_5 -> {
-        this.submap = new RetailSubmap(submapCut_80052c30, this.newrootPtr_800cab04);
-        this.submap.loadAssets(() -> this.mediaLoadingStage_800c68e4 = SubmapMediaState.PREPARE_TO_LOAD_SUBMAP_MODEL_7);
+        this.unloadSubmapModel_800c6870 = false;
+        this.submap = new RetailSubmap(submapCut_80052c30, this.newrootPtr_800cab04, this.screenOffset_800cb568);
+        this.submap.loadAssets(() -> this.mediaLoadingStage_800c68e4 = SubmapMediaState.FINALIZE_SUBMAP_LOADING_7);
         this.mediaLoadingStage_800c68e4 = SubmapMediaState.WAIT_FOR_SOBJ_ASSETS_AND_SCRIPTS_6;
       }
 
-      case PREPARE_TO_LOAD_SUBMAP_MODEL_7 -> {
-        this.unloadSubmapModel_800c6870 = false;
-        this.submapModelLoaded_800c686c = false;
-        this.submapType_800c6968 = this.submapTypes_800f5cd4[submapCut_80052c30];
-        this.mediaLoadingStage_800c68e4 = SubmapMediaState.LOAD_SUBMAP_MODEL_8;
-      }
-
-      case LOAD_SUBMAP_MODEL_8 -> {
-        this.submapModelRenderers_800f5ad4[this.submapType_800c6968].run();
-
-        if(this.submapModelLoaded_800c686c) {
-          //LAB_800e18a4
-          //LAB_800e18a8
-          this.mediaLoadingStage_800c68e4 = SubmapMediaState.FINALIZE_SUBMAP_LOADING_9;
-        }
-      }
-
       // Load submap objects
-      case FINALIZE_SUBMAP_LOADING_9 -> {
+      case FINALIZE_SUBMAP_LOADING_7 -> {
         FUN_800218f0();
 
         // Removed setting of unused sobjCount static
@@ -3461,12 +3293,11 @@ public class SMap extends EngineState {
     //LAB_800e2350
     _800bd7b0 = 1;
 
-    this.submap = null;
-
     scriptDeallocateAllTextboxes(null);
 
     this.unloadSubmapModel_800c6870 = true;
-    this.submapModelRenderers_800f5ad4[this.submapType_800c6968].run();
+    this.submap.unload();
+    this.submap = null;
 
     this.submapEffectsState_800f9eac = -1;
     this.reloadSubmapEffects();
@@ -3978,7 +3809,7 @@ public class SMap extends EngineState {
     this.renderSubmapOverlays();
     this.handleAndRenderSubmapEffects();
     applyModelRotationAndScale(this.playerModel_800c6748);
-    this.submapModelRenderers_800f5ad4[this.submapType_800c6968].run();
+    this.submap.draw();
   }
 
   /**
@@ -3995,11 +3826,6 @@ public class SMap extends EngineState {
     final float sy = GTE.getScreenY(2);
 
     this.mapIndicator.renderAlertIndicator(GPU.getOffsetX() + this.alertIndicatorMetrics_800f64b0.x0_00 + sx, GPU.getOffsetY() + this.alertIndicatorMetrics_800f64b0.y0_04 + sy, 37, this.alertIndicatorMetrics_800f64b0.u0_08, this.alertIndicatorMetrics_800f64b0.v0_0c);
-  }
-
-  @Method(0x800e4994L)
-  private void noSubmapModel() {
-    this.submapModelLoaded_800c686c = true;
   }
 
   @Method(0x800e49a4L)
@@ -4199,7 +4025,7 @@ public class SMap extends EngineState {
       Renderer.renderDobj2(this.collisionGeometry_800cbe08.dobj2Ptr_20, false, 0);
 
       RENDERER.queueModel(this.collisionGeometry_800cbe08.dobj2Ptr_20.obj, lw)
-        .screenspaceOffset(this.screenOffsetX_800cb568 + 8, -this.screenOffsetY_800cb56c)
+        .screenspaceOffset(this.screenOffset_800cb568.x + 8, -this.screenOffset_800cb568.y)
       ;
     } else if(this.collisionGeometry_800cbe08.dobj2Ptr_20.obj != null) {
       this.collisionGeometry_800cbe08.dobj2Ptr_20.obj.delete();
@@ -4413,8 +4239,8 @@ public class SMap extends EngineState {
       final SubmapObject210 sobj = this.sobjs_800c6880[0].innerStruct_00;
       final Model124 model = sobj.model_00;
 
-      screenOffsetX_800bed50 = this.screenOffsetX_800cb568;
-      screenOffsetY_800bed54 = this.screenOffsetY_800cb56c;
+      screenOffsetX_800bed50 = this.screenOffset_800cb568.x;
+      screenOffsetY_800bed54 = this.screenOffset_800cb568.y;
       submapCut_80052c3c = cut;
       matrix_800bed30.set(model.coord2_14.coord);
       matrix_800bed30.transfer.set(model.coord2_14.coord.transfer);
@@ -4903,8 +4729,8 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The camera Y offset")
   @Method(0x800e68b4L)
   private FlowControl scriptGetCameraOffset(final RunningScript<?> script) {
-    script.params_20[0].set(this.screenOffsetX_800cb568);
-    script.params_20[1].set(this.screenOffsetY_800cb56c);
+    script.params_20[0].set(this.screenOffset_800cb568.x);
+    script.params_20[1].set(this.screenOffset_800cb568.y);
     return FlowControl.CONTINUE;
   }
 
@@ -5255,8 +5081,8 @@ public class SMap extends EngineState {
     // Added null check - bug in game code
     if(this.screenOffsetLatch_800cbd38 != null && this.screenOffsetLatch_800cbd38.isOpen()) {
       this.screenOffsetLatch_800cbd38.latch(latchTicks);
-      this.screenOffsetX_800cb568 = x;
-      this.screenOffsetY_800cb56c = y;
+      this.screenOffset_800cb568.x = x;
+      this.screenOffset_800cb568.y = y;
     }
   }
 
@@ -5367,7 +5193,7 @@ public class SMap extends EngineState {
       }
 
       metrics.transforms.identity();
-      metrics.transforms.transfer.set(GPU.getOffsetX() + this.submapOffsetX_800cb560 + this.screenOffsetX_800cb568, GPU.getOffsetY() + this.submapOffsetY_800cb564 + this.screenOffsetY_800cb56c, 0.0f);
+      metrics.transforms.transfer.set(GPU.getOffsetX() + this.submapOffsetX_800cb560 + this.screenOffset_800cb568.x, GPU.getOffsetY() + this.submapOffsetY_800cb564 + this.screenOffset_800cb568.y, 0.0f);
       final RenderEngine.QueuedModel model = RENDERER.queueOrthoModel(metrics.obj, metrics.transforms);
 
       if(metrics.texture != null) {
@@ -5489,7 +5315,7 @@ public class SMap extends EngineState {
         }
 
         metrics.transforms.identity();
-        metrics.transforms.transfer.set(GPU.getOffsetX() + this.submapOffsetX_800cb560 + this.screenOffsetX_800cb568 + this.envForegroundMetrics_800cb590[i].x_00, GPU.getOffsetY() + this.submapOffsetY_800cb564 + this.screenOffsetY_800cb56c + this.envForegroundMetrics_800cb590[i].y_04, z * 4.0f);
+        metrics.transforms.transfer.set(GPU.getOffsetX() + this.submapOffsetX_800cb560 + this.screenOffset_800cb568.x + this.envForegroundMetrics_800cb590[i].x_00, GPU.getOffsetY() + this.submapOffsetY_800cb564 + this.screenOffset_800cb568.y + this.envForegroundMetrics_800cb590[i].y_04, z * 4.0f);
         final RenderEngine.QueuedModel model = RENDERER.queueOrthoModel(metrics.obj, metrics.transforms);
 
         if(metrics.texture != null) {
@@ -5510,47 +5336,47 @@ public class SMap extends EngineState {
   @Method(0x800e7f68L)
   private void calcGoodScreenOffset(final float x, final float y) {
     if(x < -80) {
-      this.screenOffsetX_800cb568 -= 80 + x;
+      this.screenOffset_800cb568.x -= 80 + x;
       //LAB_800e7f80
     } else if(x > 80) {
       //LAB_800e7f9c
-      this.screenOffsetX_800cb568 += 80 - x;
+      this.screenOffset_800cb568.x += 80 - x;
     }
 
     //LAB_800e7fa8
     if(y < -40) {
-      this.screenOffsetY_800cb56c -= 40 + y;
+      this.screenOffset_800cb568.y -= 40 + y;
       //LAB_800e7fbc
     } else if(y > 40) {
       //LAB_800e7fd4
-      this.screenOffsetY_800cb56c += 40 - y;
+      this.screenOffset_800cb568.y += 40 - y;
     }
 
     //LAB_800e7fdc
     if(this._800f7f0c) {
-      this.screenOffsetX_800cb568 += this._800cbd30;
-      this.screenOffsetY_800cb56c += this._800cbd34;
+      this.screenOffset_800cb568.x += this._800cbd30;
+      this.screenOffset_800cb568.y += this._800cbd34;
       this._800f7f0c = false;
       return;
     }
 
     //LAB_800e8030
-    if(this.screenOffsetX_800cb568 < this._800cb574) {
+    if(this.screenOffset_800cb568.x < this._800cb574) {
       //LAB_800e807c
-      this.screenOffsetX_800cb568 = this._800cb574;
+      this.screenOffset_800cb568.x = this._800cb574;
     } else {
       //LAB_800e8070
-      this.screenOffsetX_800cb568 = Math.min(this._800cb570, this.screenOffsetX_800cb568);
+      this.screenOffset_800cb568.x = Math.min(this._800cb570, this.screenOffset_800cb568.x);
     }
 
     //LAB_800e8080
     //LAB_800e8088
-    if(this.screenOffsetY_800cb56c < -this._800cb578) {
-      this.screenOffsetY_800cb56c = -this._800cb578;
+    if(this.screenOffset_800cb568.y < -this._800cb578) {
+      this.screenOffset_800cb568.y = -this._800cb578;
     } else {
       //LAB_800e80d0
       //LAB_800e80d8
-      this.screenOffsetY_800cb56c = Math.min(this._800cb578, this.screenOffsetY_800cb56c);
+      this.screenOffset_800cb568.y = Math.min(this._800cb578, this.screenOffset_800cb568.y);
     }
 
     //LAB_800e80dc
@@ -5595,8 +5421,8 @@ public class SMap extends EngineState {
     }
 
     //LAB_800e8164
-    this.setScreenOffsetIfNotSet(1, this.screenOffsetX_800cb568, this.screenOffsetY_800cb56c);
-    this.setGeomOffsetIfNotSet(1, this.screenOffsetX_800cb568, this.screenOffsetY_800cb56c);
+    this.setScreenOffsetIfNotSet(1, this.screenOffset_800cb568.x, this.screenOffset_800cb568.y);
+    this.setGeomOffsetIfNotSet(1, this.screenOffset_800cb568.x, this.screenOffset_800cb568.y);
   }
 
   @Method(0x800e81a0L)
@@ -5743,151 +5569,6 @@ public class SMap extends EngineState {
     return this._800d1a90;
   }
 
-  @Method(0x800eddb4L)
-  private void handleAndRenderSubmapModel() {
-    if(this.unloadSubmapModel_800c6870) {
-      this.submapModelLoadingStage_800f9e5a = -1;
-    }
-
-    //LAB_800ede14
-    switch(this.submapModelLoadingStage_800f9e5a + 1) {
-      case 0x0 -> {
-        this._800d4bd0 = null;
-        this._800d4bd4 = null;
-
-        this.submapModel_800d4bf8.deleteModelParts();
-
-        this.submapCutModel = null;
-        this.submapCutAnim = null;
-
-        this.submapModelLoadingStage_800f9e5a = 0;
-
-        //LAB_800ee1e4
-      }
-
-      case 0x1 -> {
-        this._800d4bd0 = null;
-        this._800d4bd4 = null;
-
-        if(submapCut_80052c30 == 673) { // End cutscene
-          this._800d4bd0 = new Structb0();
-          this._800d4bd4 = new FileData(new byte[0x20]);
-        }
-
-        //LAB_800edeb4
-        this.submapCutModelAndAnimLoaded_800d4bdc = false;
-        this.submapTextureAndMatrixLoaded_800d4be0 = false;
-        this.theEndTimLoaded_800d4be4 = false;
-        this.theEndTim_800d4bf0 = null;
-
-        final int fileIndex = this.smapFileIndices_800f982c[submapCut_80052c30];
-        if(fileIndex != 0) {
-          // File example: 7508
-          loadDrgnDir(0, fileIndex, files -> {
-            this.submapCutModelAndAnimLoaded_800d4bdc = true;
-
-            this.submapCutModel = new CContainer("DRGN0/" + fileIndex, files.get(0));
-            this.submapCutAnim = new TmdAnimationFile(files.get(1));
-          });
-
-          loadDrgnDir(0, fileIndex + 1, files -> {
-            this.submapTextureAndMatrixLoaded_800d4be0 = true;
-
-            this.submapCutTexture = new Tim(files.get(0));
-            this.submapCutMatrix = new MV();
-
-            final FileData matrixData = files.get(1);
-            this.submapCutMatrix.m00 = matrixData.readShort(0) / (float)0x1000;
-            this.submapCutMatrix.m10 = matrixData.readShort(2) / (float)0x1000;
-            this.submapCutMatrix.m20 = matrixData.readShort(4) / (float)0x1000;
-            this.submapCutMatrix.m01 = matrixData.readShort(6) / (float)0x1000;
-            this.submapCutMatrix.m11 = matrixData.readShort(8) / (float)0x1000;
-            this.submapCutMatrix.m21 = matrixData.readShort(10) / (float)0x1000;
-            this.submapCutMatrix.m02 = matrixData.readShort(12) / (float)0x1000;
-            this.submapCutMatrix.m12 = matrixData.readShort(14) / (float)0x1000;
-            this.submapCutMatrix.m22 = matrixData.readShort(16) / (float)0x1000;
-
-            for(int i = 0; i < 3; i++) {
-              this.submapCutMatrix.transfer.setComponent(i, matrixData.readShort(18 + i * 2));
-            }
-          });
-
-          if(submapCut_80052c30 == 673) { // End cutscene, loads "The End" TIM
-            loadDrgnFile(0, 7610, data -> {
-              this.theEndTimLoaded_800d4be4 = true;
-              this.theEndTim_800d4bf0 = new Tim(data);
-            });
-          }
-        }
-
-        this.submapModelLoadingStage_800f9e5a++;
-      }
-
-      case 0x2 -> {
-        if(this.submapCutModelAndAnimLoaded_800d4bdc && this.submapTextureAndMatrixLoaded_800d4be0) {
-          GPU.uploadData15(new Rect4i(1008, 256, this.submapCutTexture.getImageRect().w, this.submapCutTexture.getImageRect().h), this.submapCutTexture.getImageData());
-
-          // The submap cut model is rendered without using the camera matrix, so we multiply its transforms
-          // by the inverse of the camera matrix to cancel out the camera multiplication in the shader
-          final Matrix4f inverseW2s = new Matrix4f(worldToScreenMatrix_800c3548).setTranslation(worldToScreenMatrix_800c3548.transfer)
-            .invert();
-          this.submapCutMatrix_800d4bb0
-            .set(this.submapCutMatrix).setTranslation(this.submapCutMatrix.transfer)
-            .mulLocal(inverseW2s);
-
-          this.submapModelLoadingStage_800f9e5a++;
-          this.submapModelLoaded_800c686c = true;
-
-          this.submapCutTexture = null;
-          this.submapCutMatrix = null;
-        }
-      }
-
-      case 0x3 -> {
-        if(submapCut_80052c30 == 673) { // End cutscene
-          if(!this.theEndTimLoaded_800d4be4) {
-            break;
-          }
-
-          this.FUN_800f4244(this.theEndTim_800d4bf0, this.tpage_800f9e5c, this.clut_800f9e5e, Translucency.B_PLUS_F);
-          GPU.downloadData15(this._800d6b48, this._800d4bd4);
-        }
-
-        this.submapModelLoadingStage_800f9e5a++;
-      }
-
-      case 0x4 -> {
-        this.submapModel_800d4bf8.uvAdjustments_9d = new UvAdjustmentMetrics14(17, 0x5c3f0000, 0x3c0ffff, 0x1f0000, 0xffe0ffff, 0xc0); // 1008, 256, submap cut model
-        this.submapModel_800d4bf8.uvAnimationSecondaryBank = true;
-
-        initModel(this.submapModel_800d4bf8, this.submapCutModel, this.submapCutAnim);
-
-        for(int i = 0; i < this.submapModel_800d4bf8.modelParts_00.length; i++) {
-          this.submapModel_800d4bf8.modelParts_00[i].obj = TmdObjLoader.fromObjTable("Submap model part " + i, this.submapModel_800d4bf8.modelParts_00[i].tmd_08);
-        }
-
-        if(submapCut_80052c30 == 673) { // End cutscene
-          this.FUN_800eef6c(this._800d6b48, this._800d4bd4, this._800d4bd0);
-        }
-
-        //LAB_800ee10c
-        //LAB_800ee110
-        this.submapModelLoadingStage_800f9e5a++;
-      }
-
-      case 0x5 -> {
-        this.animateAndRenderSubmapModel(this.submapCutMatrix_800d4bb0);
-
-        if(this._800d4bd0 != null && this._800d4bd4 != null) {
-          this.FUN_800ee9e0(this._800d4bd4, this._800d4bd0, this.tpage_800f9e5c, this.clut_800f9e5e, Translucency.B_PLUS_F);
-          GPU.uploadData15(this._800d6b48, this._800d4bd4);
-        }
-      }
-    }
-
-    //caseD_6
-  }
-
   /** Used in Snow Field (disk 3) */
   @Method(0x800ee20cL)
   private void handleSnow() {
@@ -5903,129 +5584,6 @@ public class SMap extends EngineState {
       this.snow_800d4bd8.render();
     }
     //LAB_800ee354
-  }
-
-  @Method(0x800ee9e0L)
-  private void FUN_800ee9e0(final FileData a1, final Structb0 a2, final Vector2i tpage, final Vector2i clut, final Translucency transMode) {
-    if(a2._08 == 500) {
-      a2._00 = 1;
-      a2._02 = 0;
-      a2._06 = 1;
-    }
-
-    //LAB_800eea24
-    if(a2._00 != 0) {
-      if(a2._04 == 0) {
-        if(a2._02 == 0) {
-          a2._0c += 0x2_a800;
-
-          if(a2._0c >>> 16 >= 0x100) {
-            a2._0c = 0xff_0000;
-            a2._02 = 1;
-          }
-        } else {
-          //LAB_800eead8
-          a2._0c -= 0x2_a800;
-
-          if(a2._0c >>> 16 < 0x80) {
-            a2._0c = 0x80_0000;
-            a2._04 = 1;
-          }
-        }
-      } else {
-        //LAB_800eeb08
-        a2._0c = 0x80_0000;
-      }
-
-      //LAB_800eeb0c
-      GPU.queueCommand(40, new GpuCommandQuad()
-        .vramPos(tpage.x, tpage.y >= 256 ? 256 : 0)
-        .clut(clut.x, clut.y)
-        .monochrome(a2._0c >> 16)
-        .translucent(transMode)
-        .pos(-188, 18, 192, 72)
-        .uv(0, 128)
-      );
-    }
-
-    //LAB_800eeb78
-    if(a2._06 != 0) {
-      this.FUN_800eec10(a1, a2);
-
-      if(a2._08 == 561) {
-        a2._06 = 0;
-      }
-    }
-
-    //LAB_800eeba8
-    //LAB_800eebac
-    a2._08++;
-  }
-
-  @Method(0x800eec10L)
-  private void FUN_800eec10(final FileData a1, final Structb0 a2) {
-    //LAB_800eec1c
-    for(int i = 0; i < 16; i++) {
-      a2._50[i] += a2._10[i];
-
-      final int v1 = a2._90[i];
-      if(v1 < a2._50[i] >>> 16) {
-        a2._50[i] = v1 << 16;
-      }
-
-      //LAB_800eec5c
-      final int sp0 = a2._50[i] >> 16 << 10;
-      final int sp2 = a2._50[i] >> 16 << 5;
-      final int sp4 = a2._50[i] >> 16;
-      a1.writeShort(i * 0x2, 0x8000 | sp0 | sp2 | sp4);
-    }
-  }
-
-  @Method(0x800eece0L)
-  private void animateAndRenderSubmapModel(final Matrix4f matrix) {
-    this.submapModel_800d4bf8.coord2_14.coord.transfer.zero();
-    this.submapModel_800d4bf8.coord2_14.transforms.rotate.zero();
-
-    applyModelRotationAndScale(this.submapModel_800d4bf8);
-    this.animateSmapModel(this.submapModel_800d4bf8);
-    this.renderSubmapModel(this.submapModel_800d4bf8, matrix);
-  }
-
-  @Method(0x800eee48L)
-  private void renderSubmapModel(final Model124 model, final Matrix4f matrix) {
-    zOffset_1f8003e8 = model.zOffset_a0;
-    tmdGp0Tpage_1f8003ec = model.tpage_108;
-
-    final MV lw = new MV();
-
-    //LAB_800eee94
-    for(int i = 0; i < model.modelParts_00.length; i++) {
-      final ModelPart10 dobj2 = model.modelParts_00[i];
-
-      GsGetLw(dobj2.coord2_04, lw);
-
-      RENDERER.queueModel(dobj2.obj, matrix, lw)
-        .screenspaceOffset(this.screenOffsetX_800cb568 + 8, -this.screenOffsetY_800cb56c)
-        .lightDirection(lightDirectionMatrix_800c34e8)
-        .lightColour(lightColourMatrix_800c3508)
-        .backgroundColour(GTE.backgroundColour);
-    }
-
-    //LAB_800eef0c
-  }
-
-  @Method(0x800eef6cL)
-  private void FUN_800eef6c(final Rect4i imageRect, final FileData imageAddress, final Structb0 a2) {
-    //LAB_800eef94
-    for(int i = 0; i < 16; i++) {
-      //LAB_800eefac
-      a2._90[i] = imageAddress.readUShort(i * 0x2) & 0x1f;
-      a2._10[i] = (a2._90[i] << 16) / 60;
-      a2._50[i] = 0;
-      imageAddress.writeShort(i * 0x2, 0x8000);
-    }
-
-    GPU.uploadData15(imageRect, imageAddress);
   }
 
   @Method(0x800ef0f8L)
@@ -6084,8 +5642,8 @@ public class SMap extends EngineState {
           }
 
           //LAB_800ef3fc
-          dust.x_18 = this.screenOffsetX_800cb568;
-          dust.y_1c = this.screenOffsetY_800cb56c;
+          dust.x_18 = this.screenOffset_800cb568.x;
+          dust.y_1c = this.screenOffset_800cb568.y;
           dust._04 = 0;
           dust._06 = 150;
 
@@ -6125,8 +5683,8 @@ public class SMap extends EngineState {
           final DustRenderData54 dust = this.addDust(this.dust_800d4e68);
           dust.renderMode_00 = 1;
           dust.textureIndex_02 = 2;
-          dust.x_18 = this.screenOffsetX_800cb568;
-          dust.y_1c = this.screenOffsetY_800cb56c;
+          dust.x_18 = this.screenOffset_800cb568.x;
+          dust.y_1c = this.screenOffset_800cb568.y;
 
           final Vector3f vert0 = new Vector3f(-a1.size_28, 0.0f, -a1.size_28);
           final Vector3f vert1 = new Vector3f( a1.size_28, 0.0f, -a1.size_28);
@@ -6235,8 +5793,8 @@ public class SMap extends EngineState {
         final int mode = s0.renderMode_00;
         if(mode == 0 || mode == 2) {
           //LAB_800efa44
-          final int offsetX = this.screenOffsetX_800cb568 - s0.x_18;
-          final int offsetY = this.screenOffsetY_800cb56c - s0.y_1c;
+          final int offsetX = this.screenOffset_800cb568.x - s0.x_18;
+          final int offsetY = this.screenOffset_800cb568.y - s0.y_1c;
 
           cmd
             .pos(0, offsetX + s0.v0_20.x, offsetY + s0.v0_20.y)
@@ -6264,8 +5822,8 @@ public class SMap extends EngineState {
           s0._10 = s0._08;
           s0.v0_20.x = s0.z0_26 - s0._08 / 2.0f;
           s0.v0_20.y = s0.z1_2e - s0._08 / 2.0f;
-          final float x = this.screenOffsetX_800cb568 - s0.x_18 + s0.v0_20.x;
-          final float y = this.screenOffsetY_800cb56c - s0.y_1c + s0.v0_20.y;
+          final float x = this.screenOffset_800cb568.x - s0.x_18 + s0.v0_20.x;
+          final float y = this.screenOffset_800cb568.y - s0.y_1c + s0.v0_20.y;
 
           cmd
             .pos(0, x, y)
@@ -6443,10 +6001,10 @@ public class SMap extends EngineState {
         s3._00 = 0;
         s3.tpage_04 = GetTPage(Bpp.BITS_4, Translucency.of(s2.translucency_0c), 972, 320);
         this.FUN_800f0df0(s2, s3);
-        s1.vert0_00.x -= this.screenOffsetX_800cb568;
-        s1.vert0_00.y -= this.screenOffsetY_800cb56c;
-        s1.vert1_08.x -= this.screenOffsetX_800cb568;
-        s1.vert1_08.y -= this.screenOffsetY_800cb56c;
+        s1.vert0_00.x -= this.screenOffset_800cb568.x;
+        s1.vert0_00.y -= this.screenOffset_800cb568.y;
+        s1.vert1_08.x -= this.screenOffset_800cb568.x;
+        s1.vert1_08.y -= this.screenOffset_800cb568.y;
 
         if(s2._01 == 0) {
           s2._14 = s1;
@@ -6485,10 +6043,10 @@ public class SMap extends EngineState {
         //LAB_800f0b04
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
           .translucent(Translucency.of(tpage >>> 5 & 0b11))
-          .pos(0, this.screenOffsetX_800cb568 + s1._24.vert0_00.x, this.screenOffsetY_800cb56c + s1._24.vert0_00.y)
-          .pos(1, this.screenOffsetX_800cb568 + s1._24.vert1_08.x, this.screenOffsetY_800cb56c + s1._24.vert1_08.y)
-          .pos(2, this.screenOffsetX_800cb568 + s1._28.vert0_00.x, this.screenOffsetY_800cb56c + s1._28.vert0_00.y)
-          .pos(3, this.screenOffsetX_800cb568 + s1._28.vert1_08.x, this.screenOffsetY_800cb56c + s1._28.vert1_08.y);
+          .pos(0, this.screenOffset_800cb568.x + s1._24.vert0_00.x, this.screenOffset_800cb568.y + s1._24.vert0_00.y)
+          .pos(1, this.screenOffset_800cb568.x + s1._24.vert1_08.x, this.screenOffset_800cb568.y + s1._24.vert1_08.y)
+          .pos(2, this.screenOffset_800cb568.x + s1._28.vert0_00.x, this.screenOffset_800cb568.y + s1._28.vert0_00.y)
+          .pos(3, this.screenOffset_800cb568.x + s1._28.vert1_08.x, this.screenOffset_800cb568.y + s1._28.vert1_08.y);
 
         final int r;
         final int g;
@@ -6663,7 +6221,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "smokeData", description = "An array of data for the smoke plume particle data struct")
   @Method(0x800f1060L)
   private FlowControl scriptAllocateSmokePlumeEffectData(final RunningScript<?> script) {
-    this.smokePlumeEffect_800d5fd8.allocateSmokePlumeEffect(script, this.screenOffsetX_800cb568, this.screenOffsetY_800cb56c, this.texPages_800d6050[9], this.cluts_800d6068[9]);
+    this.smokePlumeEffect_800d5fd8.allocateSmokePlumeEffect(script, this.screenOffset_800cb568.x, this.screenOffset_800cb568.y, this.texPages_800d6050[9], this.cluts_800d6068[9]);
 
     //LAB_800f1250
     return FlowControl.CONTINUE;
@@ -6682,7 +6240,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sizeChange", description = "Amount the size of the particle changes over lifecycle.")
   @Method(0x800f1274L)
   private FlowControl scriptAllocateUnusedSmokeEffectData(final RunningScript<?> script) {
-    this.smokeCloudEffect_800d4f50.allocateUnusedSmokeEffect(script, this.screenOffsetX_800cb568, this.screenOffsetY_800cb56c, this.texPages_800d6050[6], this.cluts_800d6068[6]);
+    this.smokeCloudEffect_800d4f50.allocateUnusedSmokeEffect(script, this.screenOffset_800cb568.x, this.screenOffset_800cb568.y, this.texPages_800d6050[6], this.cluts_800d6068[6]);
 
     return FlowControl.CONTINUE;
   }
@@ -6803,8 +6361,8 @@ public class SMap extends EngineState {
       struct.vert3_18.y = y1;
 
       //LAB_800f1b04
-      struct.screenOffsetX_20 = this.screenOffsetX_800cb568;
-      struct.screenOffsetY_24 = this.screenOffsetY_800cb56c;
+      struct.screenOffsetX_20 = this.screenOffset_800cb568.x;
+      struct.screenOffsetY_24 = this.screenOffset_800cb568.y;
     }
 
     PopMatrix();
@@ -6843,8 +6401,8 @@ public class SMap extends EngineState {
       indicator._18[i] = (short)ints.array(s0++).get();
       indicator.x_40[i] = sx + ints.array(s0++).get();
       indicator.y_68[i] = sy + ints.array(s0++).get();
-      indicator.screenOffsetX_90[i] = this.screenOffsetX_800cb568;
-      indicator.screenOffsetY_e0[i] = this.screenOffsetY_800cb56c;
+      indicator.screenOffsetX_90[i] = this.screenOffset_800cb568.x;
+      indicator.screenOffsetY_e0[i] = this.screenOffset_800cb568.y;
     }
 
     //LAB_800f1cf0
@@ -6881,8 +6439,8 @@ public class SMap extends EngineState {
         indicator._18[i] = (short)script.params_20[1].get();
         indicator.x_40[i] = sx + script.params_20[2].get();
         indicator.y_68[i] = sy + script.params_20[3].get();
-        indicator.screenOffsetX_90[i] = this.screenOffsetX_800cb568;
-        indicator.screenOffsetY_e0[i] = this.screenOffsetY_800cb56c;
+        indicator.screenOffsetX_90[i] = this.screenOffset_800cb568.x;
+        indicator.screenOffsetY_e0[i] = this.screenOffset_800cb568.y;
         break;
       }
     }
@@ -7168,10 +6726,10 @@ public class SMap extends EngineState {
     final Param a0 = script.params_20[0];
     for(int a1 = 0; a0.array(i).get() != -1; a1++) {
       indicator._18[a1] = (short)a0.array(i++).get();
-      indicator.x_40[a1] = a0.array(i++).get() + this.screenOffsetX_800cb568;
-      indicator.y_68[a1] = a0.array(i++).get() + this.screenOffsetY_800cb56c;
-      indicator.screenOffsetX_90[a1] = this.screenOffsetX_800cb568;
-      indicator.screenOffsetY_e0[a1] = this.screenOffsetY_800cb56c;
+      indicator.x_40[a1] = a0.array(i++).get() + this.screenOffset_800cb568.x;
+      indicator.y_68[a1] = a0.array(i++).get() + this.screenOffset_800cb568.y;
+      indicator.screenOffsetX_90[a1] = this.screenOffset_800cb568.x;
+      indicator.screenOffsetY_e0[a1] = this.screenOffset_800cb568.y;
     }
 
     //LAB_800f26b4
@@ -7231,7 +6789,8 @@ public class SMap extends EngineState {
     model.coord2_14.coord.transfer.set(this.savePointPos_800d5622);
 
     applyModelRotationAndScale(model);
-    this.animateSmapModel(model);
+    final int interpolationFrameCount = (2 - vsyncMode_8007a3b8) * 2 + 1;
+    animateModel(model, interpolationFrameCount);
     this.renderSmapModel(model);
 
     GPU.queueCommand(1, new GpuCommandCopyVramToVram(984, 288 + this._800f9ea0, 992, 288, 8, 64 - this._800f9ea0));
@@ -7244,8 +6803,8 @@ public class SMap extends EngineState {
     for(int i = 0; i < 2; i++) {
       final SavePointRenderData44 s0 = this.savePoint_800d5598[i];
 
-      final int offsetX = this.screenOffsetX_800cb568 - s0.screenOffsetX_20;
-      final int offsetY = this.screenOffsetY_800cb56c - s0.screenOffsetY_24;
+      final int offsetX = this.screenOffset_800cb568.x - s0.screenOffsetX_20;
+      final int offsetY = this.screenOffset_800cb568.y - s0.screenOffsetY_24;
 
       final float x0 = offsetX + s0.vert0_00.x;
       final float y0 = offsetY + s0.vert0_00.y;
@@ -7384,8 +6943,8 @@ public class SMap extends EngineState {
 
   @Method(0x800f31bcL)
   private void handleTriangleIndicators() {
-    this.triangleIndicator_800c69fc.screenOffsetX_10 = this.screenOffsetX_800cb568;
-    this.triangleIndicator_800c69fc.screenOffsetY_14 = this.screenOffsetY_800cb56c;
+    this.triangleIndicator_800c69fc.screenOffsetX_10 = this.screenOffset_800cb568.x;
+    this.triangleIndicator_800c69fc.screenOffsetY_14 = this.screenOffset_800cb568.y;
 
     if(gameState_800babc8.indicatorsDisabled_4e3) {
       return;
@@ -7648,23 +7207,6 @@ public class SMap extends EngineState {
     a1.spriteGroup_04 = anmFile.spriteGroups;
   }
 
-  @Method(0x800f4244L)
-  private void FUN_800f4244(final Tim tim, final Vector2i tpageOut, final Vector2i clutOut, final Translucency transMode) {
-    //LAB_800f427c
-    if(tim.hasClut()) {
-      final Rect4i clutRect = tim.getClutRect();
-      clutOut.set(clutRect.x, clutRect.y);
-      GPU.uploadData15(clutRect, tim.getClutData());
-    }
-
-    //LAB_800f42d0
-    final Rect4i imageRect = tim.getImageRect();
-    tpageOut.set(imageRect.x, imageRect.y);
-    GPU.uploadData15(imageRect, tim.getImageData());
-
-    //LAB_800f4338
-  }
-
   @Method(0x800f4354L)
   private void handleAndRenderSubmapEffects() {
     if(this.unloadSubmapModel_800c6870) {
@@ -7676,13 +7218,13 @@ public class SMap extends EngineState {
 
       this.smokeCloudEffect_800d4f50.deallocate();
     } else {
-      this.smokePlumeEffect_800d5fd8.tickAndRenderSmokePlumeEffect(this.screenOffsetX_800cb568, this.screenOffsetY_800cb56c);
+      this.smokePlumeEffect_800d5fd8.tickAndRenderSmokePlumeEffect(this.screenOffset_800cb568.x, this.screenOffset_800cb568.y);
 
       if(this.snowState_800f9e60 == 1) {
         this.handleSnow();
       }
 
-      this.smokeCloudEffect_800d4f50.tickAndRenderSmokeCloudEffect(this.screenOffsetX_800cb568, this.screenOffsetY_800cb56c);
+      this.smokeCloudEffect_800d4f50.tickAndRenderSmokeCloudEffect(this.screenOffset_800cb568.x, this.screenOffset_800cb568.y);
     }
   }
 
