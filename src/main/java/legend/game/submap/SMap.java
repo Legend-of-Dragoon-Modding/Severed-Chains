@@ -3288,37 +3288,7 @@ public class SMap extends EngineState {
           }
 
           this.submapAssets.pxls.addAll(this.submapTextures);
-
-          int x = 576;
-          int y = 256;
-          for(int objIndex = 0; objIndex < objCount; objIndex++) {
-            final Tim tim = this.submapAssets.pxls.get(objIndex);
-
-            if(tim != null) {
-              final Rect4i imageRect = tim.getImageRect();
-              final Rect4i clutRect = tim.getClutRect();
-
-              imageRect.x = x;
-              imageRect.y = y;
-              clutRect.x = x;
-              clutRect.y = y + imageRect.h;
-
-              GPU.uploadData15(imageRect, tim.getImageData());
-              GPU.uploadData15(clutRect, tim.getClutData());
-
-              this.submapAssets.uvAdjustments.add(this.createUvAdjustments(objIndex, x, y));
-
-              x += tim.getImageRect().w;
-
-              if(x >= 768) {
-                x = 576;
-                y += 128;
-              }
-            } else {
-              this.submapAssets.uvAdjustments.add(UvAdjustmentMetrics14.NONE);
-            }
-          }
-
+          this.submapAssets.uploadToGpu();
           this.mediaLoadingStage_800c68e4 = SubmapMediaState.PREPARE_TO_LOAD_SUBMAP_MODEL_7;
         }
       }
@@ -3477,20 +3447,6 @@ public class SMap extends EngineState {
         }
       }
     }
-  }
-
-  private UvAdjustmentMetrics14 createUvAdjustments(final int index, final int x, final int y) {
-    final int clutX = x / 16;
-    final int clutY = y + 112;
-    final int tpageX = x / 64;
-    final int tpageY = y / 256;
-    final int u = x % 64 * 4;
-    final int v = y % 256;
-    final int clut = clutX | clutY << 6;
-    final int tpage = tpageX | tpageY << 4;
-    final int uv = u | v << 8;
-
-    return new UvAdjustmentMetrics14(index + 1, clut << 16, 0x3c0ffff, tpage << 16, 0xffe0ffff, uv);
   }
 
   /** Handles cutscene movement */
@@ -4026,8 +3982,7 @@ public class SMap extends EngineState {
   @Method(0x800e3facL)
   public void menuClosed() {
     if(!transitioningFromCombatToSubmap_800bd7b8) {
-      this.submapAssets.pxls.get(0).uploadToGpu();
-      this.submapAssets.pxls.get(1).uploadToGpu();
+      this.submapAssets.uploadToGpu();
     }
 
     //LAB_800e4008
