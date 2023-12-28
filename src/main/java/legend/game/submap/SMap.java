@@ -235,8 +235,6 @@ public class SMap extends EngineState {
 
   private TriangleIndicator140 triangleIndicator_800c69fc;
 
-  private final List<UvAdjustmentMetrics14> sobjVramSlots_800c6a50 = new ArrayList<>();
-
   private final Vector3f cameraPos_800c6aa0 = new Vector3f();
 
   private final Vector3f prevPlayerPos_800c6ab0 = new Vector3f();
@@ -2313,7 +2311,7 @@ public class SMap extends EngineState {
     final int index = script.params_20[1].get();
 
     sobj.sobjIndex_12e = index;
-    model.uvAdjustments_9d = this.sobjVramSlots_800c6a50.get(index);
+    model.uvAdjustments_9d = this.submapAssets.uvAdjustments.get(index);
 
     this.loadModelAndAnimation(model, this.submapAssets.objects.get(index).model, this.submapAssets.objects.get(index).animations.get(0));
 
@@ -3314,6 +3312,36 @@ public class SMap extends EngineState {
 
           this.submapAssets.pxls.addAll(this.submapTextures);
 
+          int x = 576;
+          int y = 256;
+          for(int objIndex = 0; objIndex < objCount; objIndex++) {
+            final Tim tim = this.submapAssets.pxls.get(objIndex);
+
+            if(tim != null) {
+              final Rect4i imageRect = tim.getImageRect();
+              final Rect4i clutRect = tim.getClutRect();
+
+              imageRect.x = x;
+              imageRect.y = y;
+              clutRect.x = x;
+              clutRect.y = y + imageRect.h;
+
+              GPU.uploadData15(imageRect, tim.getImageData());
+              GPU.uploadData15(clutRect, tim.getClutData());
+
+              this.submapAssets.uvAdjustments.add(this.createUvAdjustments(objIndex, x, y));
+
+              x += tim.getImageRect().w;
+
+              if(x >= 768) {
+                x = 576;
+                y += 128;
+              }
+            } else {
+              this.submapAssets.uvAdjustments.add(UvAdjustmentMetrics14.NONE);
+            }
+          }
+
           this.mediaLoadingStage_800c68e4 = SubmapMediaState.PREPARE_TO_LOAD_SUBMAP_MODEL_7;
         }
       }
@@ -3344,63 +3372,10 @@ public class SMap extends EngineState {
 
         this.firstMovement = true;
 
-        final long s3;
-        final long s4;
-        final byte[] lastEntry = this.submapAssets.lastEntry;
-        if(lastEntry.length != 4) {
-          s3 = MathHelper.get(lastEntry, 0, 4); // Second last int before padding
-          s4 = MathHelper.get(lastEntry, 4, 4); // Last int before padding
-        } else {
-          s3 = 0;
-          s4 = 0;
-        }
-
         //LAB_800e1914
-        for(int i = 0; i < this.submapAssets.pxls.size(); i++) {
-          final Tim tim = this.submapAssets.pxls.get(i);
-          final Rect4i imageRect = tim.getImageRect();
-          final Rect4i clutRect = tim.getClutRect();
-
-          imageRect.x += 576;
-          imageRect.y += 256;
-          clutRect.x += 576;
-          clutRect.y += 256;
-
-          GPU.uploadData15(imageRect, tim.getImageData());
-          GPU.uploadData15(clutRect, tim.getClutData());
-        }
-
         final ScriptState<Void> submapController = SCRIPTS.allocateScriptState(0, "Submap controller", 0, null);
         this.submapControllerState_800c6740 = submapController;
         submapController.loadScriptFile(this.submapAssets.script);
-
-        //LAB_800e1a38
-        this.sobjVramSlots_800c6a50.clear();
-        for(int i = 0; i < this.sobjCount_800c6730; i++) {
-          this.sobjVramSlots_800c6a50.add(this.uvAdjustments_800f5930[i + 1]);
-
-          if(i + 1 == s3) {
-            this.sobjVramSlots_800c6a50.set(i, this.uvAdjustments_800f5930[18]);
-          }
-
-          if(i + 1 == s4) {
-            this.sobjVramSlots_800c6a50.set(i, this.uvAdjustments_800f5930[19]);
-          }
-
-          //LAB_800e1a80
-        }
-
-        //LAB_800e1a8c
-        //LAB_800e1abc
-        // Some sobjs use the same model, we only want to adjust the metrics for the original
-        for(int i = 0; i < this.sobjCount_800c6730; i++) {
-          //LAB_800e1ae0
-          for(int n = i + 1; n < this.sobjCount_800c6730; n++) {
-            if(this.submapAssets.objects.get(n).model == this.submapAssets.objects.get(i).model) {
-              this.sobjVramSlots_800c6a50.set(n, UvAdjustmentMetrics14.NONE);
-            }
-          }
-        }
 
         //LAB_800e1b20
         //LAB_800e1b54
@@ -3416,7 +3391,7 @@ public class SMap extends EngineState {
           state.loadScriptFile(obj.script);
 
           final Model124 model = state.innerStruct_00.model_00;
-          model.uvAdjustments_9d = this.sobjVramSlots_800c6a50.get(i);
+          model.uvAdjustments_9d = this.submapAssets.uvAdjustments.get(i);
           model.uvAnimationSecondaryBank = true;
 
           final CContainer tmd = this.submapAssets.objects.get(i).model;
@@ -3525,6 +3500,20 @@ public class SMap extends EngineState {
         }
       }
     }
+  }
+
+  private UvAdjustmentMetrics14 createUvAdjustments(final int index, final int x, final int y) {
+    final int clutX = x / 16;
+    final int clutY = y + 112;
+    final int tpageX = x / 64;
+    final int tpageY = y / 256;
+    final int u = x % 64 * 4;
+    final int v = y % 256;
+    final int clut = clutX | clutY << 6;
+    final int tpage = tpageX | tpageY << 4;
+    final int uv = u | v << 8;
+
+    return new UvAdjustmentMetrics14(index + 1, clut << 16, 0x3c0ffff, tpage << 16, 0xffe0ffff, uv);
   }
 
   /** Handles cutscene movement */
@@ -3990,7 +3979,16 @@ public class SMap extends EngineState {
       case 0x1 -> this.submapScriptsMrg_800c68d8 = files;
 
       // Submap textures
-      case 0x2 -> this.submapTextures = files.stream().map(Tim::new).toList();
+      case 0x2 -> {
+        this.submapTextures = new ArrayList<>();
+        for(final FileData file : files) {
+          if(file.real()) {
+            this.submapTextures.add(new Tim(file));
+          } else {
+            this.submapTextures.add(null);
+          }
+        }
+      }
 
       // Chapter title cards
       case 0x10 -> {

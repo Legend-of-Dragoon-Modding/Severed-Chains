@@ -135,6 +135,11 @@ public record FileData(byte[] data, int offset, int size, int virtualSize, int r
     return new String(this.data, this.offset + offset + lengthSize, length, StandardCharsets.US_ASCII);
   }
 
+  public String readFixedLengthAscii(final int offset, final int length) {
+    this.checkBounds(offset, length);
+    return new String(this.data, this.offset + offset, length, StandardCharsets.US_ASCII);
+  }
+
   public void writeRegistryId(final int offset, final RegistryId id) {
     this.writeAscii(offset, id.toString());
   }

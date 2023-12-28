@@ -99,9 +99,6 @@ public final class Unpacker {
     // Savepoint etc. from SMAP
     transformers.put(Unpacker::smapAssetDiscriminator, Unpacker::smapAssetExtractor);
 
-    // Convert submap PXLs into individual TIMs
-    transformers.put(SubmapPxlTransformer::discriminator, SubmapPxlTransformer::transform);
-
     // Give Dart his hand back during oof
     transformers.put(Unpacker::drgn0_5546_1_patcherDiscriminator, Unpacker::drgn0_5546_1_patcher);
 
@@ -123,6 +120,12 @@ public final class Unpacker {
     transformers.put(Unpacker::playerScriptDamageCapsDiscriminator, Unpacker::playerScriptDamageCapsTransformer);
     transformers.put(Unpacker::enemyScriptDamageCapDiscriminator, Unpacker::enemyAndItemScriptDamageCapPatcher);
     transformers.put(Unpacker::itemScriptDamageCapDiscriminator, Unpacker::enemyAndItemScriptDamageCapPatcher);
+  }
+
+  private static final List<Transformer> postTransformers = new ArrayList<>();
+  static {
+    // Convert submap PXLs into individual TIMs
+    postTransformers.add(SubmapPxlTransformer::transform);
   }
 
   private static Consumer<String> statusListener = status -> { };
@@ -369,6 +372,15 @@ public final class Unpacker {
 
         LOGGER.info("Leaf transformations completed in %fs", (System.nanoTime() - leafTransformTime) / 1_000_000_000.0f);
 
+        final long branchTransformTime = System.nanoTime();
+        LOGGER.info("Performing branch transformations...");
+
+        for(final Transformer transformer : postTransformers) {
+          transformer.transform(files, transformations, flags);
+        }
+
+        LOGGER.info("Branch transformations completed in %fs", (System.nanoTime() - branchTransformTime) / 1_000_000_000.0f);
+
         final Deque<PathNode> all = new ConcurrentLinkedDeque<>();
         files.flatten(all);
 
@@ -403,7 +415,7 @@ public final class Unpacker {
     do {
       if(activeThreads.get() >= availableProcessors) {
         synchronized(lock) {
-          lock.wait();
+          lock.wait(100);
         }
       } else {
         activeThreads.incrementAndGet();
@@ -672,7 +684,7 @@ public final class Unpacker {
       i++;
     }
 
-    transformations.addChild(node, "/mrg", map.build());
+    transformations.addChild(node, "mrg", map.build());
   }
 
   private static boolean deffDiscriminator(final PathNode node, final Set<String> flags) {
