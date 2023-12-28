@@ -539,29 +539,6 @@ public class SMap extends EngineState {
     new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
   };
 
-  private final UvAdjustmentMetrics14[] uvAdjustments_800f5930 = {
-    UvAdjustmentMetrics14.NONE, // no change
-    new UvAdjustmentMetrics14( 1, 0x5c260000,  0x3c0ffff, 0x190000, 0xffe0ffff,   0x80), //  1, 608, 256, 2
-    new UvAdjustmentMetrics14( 2, 0x5c270000,  0x3c0ffff, 0x190000, 0xffe0ffff,   0xc0), //  2, 624, 256, 3
-    new UvAdjustmentMetrics14( 3, 0x7c240000,  0x3c0ffff, 0x190000, 0xffe0ffff, 0x8000), //  3, 576, 384, 12
-    new UvAdjustmentMetrics14( 4, 0x7c250000,  0x3c0ffff, 0x190000, 0xffe0ffff, 0x8040), //  4, 592, 384, 13
-    new UvAdjustmentMetrics14( 5, 0x7c260000,  0x3c0ffff, 0x190000, 0xffe0ffff, 0x8080), //  5, 608, 384, 14
-    new UvAdjustmentMetrics14( 6, 0x7c270000,  0x3c0ffff, 0x190000, 0xffe0ffff, 0x80c0), //  6, 624, 384, 15
-    new UvAdjustmentMetrics14( 7, 0x5c2a0000,  0x3c0ffff, 0x1a0000, 0xffe0ffff,   0x80), //  7, 672, 256, 6
-    new UvAdjustmentMetrics14( 8, 0x5c2b0000,  0x3c0ffff, 0x1a0000, 0xffe0ffff,   0xc0), //  8, 688, 256, 7
-    new UvAdjustmentMetrics14( 9, 0x7c280000,  0x3c0ffff, 0x1a0000, 0xffe0ffff, 0x8000), //  9, 640, 384, 16
-    new UvAdjustmentMetrics14(10, 0x7c290000,  0x3c0ffff, 0x1a0000, 0xffe0ffff, 0x8040), // 10, 656, 384, 17
-    new UvAdjustmentMetrics14(11, 0x7c2a0000,  0x3c0ffff, 0x1a0000, 0xffe0ffff, 0x8080), // 11, 672, 384, 18
-    new UvAdjustmentMetrics14(12, 0x7c2b0000,  0x3c0ffff, 0x1a0000, 0xffe0ffff, 0x80c0), // 12, 688, 384, 19
-    new UvAdjustmentMetrics14(13, 0x5c2e0000,  0x3c0ffff, 0x1b0000, 0xffe0ffff,   0x80), // 13, 736, 256, 10
-    new UvAdjustmentMetrics14(14, 0x5c2f0000,  0x3c0ffff, 0x1b0000, 0xffe0ffff,   0xc0), // 14, 752, 256, 11
-    new UvAdjustmentMetrics14(15, 0x5c2c0000,  0x3c0ffff, 0x1b0000, 0xffe0ffff,    0x0), // 15, 704, 256, 8
-    new UvAdjustmentMetrics14(16, 0x5c2d0000,  0x3c0ffff, 0x1b0000, 0xffe0ffff,   0x40), // 16, 720, 256, 9
-    new UvAdjustmentMetrics14(17, 0x5c3f0000,  0x3c0ffff, 0x1f0000, 0xffe0ffff,   0xc0), // 17, 1008, 256, submap cut model
-    new UvAdjustmentMetrics14(18, 0x5c240000, 0x83c3ffff, 0x190000, 0xffe0ffff,    0x0), // 18, 576, 256, 0-1
-    new UvAdjustmentMetrics14(19, 0x5c280000, 0x83c3ffff, 0x1a0000, 0xffe0ffff,    0x0), // 19, 640, 256, 4-5
-  };
-
   /**
    * 65 - {@link SMap#handleAndRenderSubmapModel()}
    *
@@ -6065,7 +6042,7 @@ public class SMap extends EngineState {
       }
 
       case 0x4 -> {
-        this.submapModel_800d4bf8.uvAdjustments_9d = this.uvAdjustments_800f5930[17];
+        this.submapModel_800d4bf8.uvAdjustments_9d = new UvAdjustmentMetrics14(17, 0x5c3f0000, 0x3c0ffff, 0x1f0000, 0xffe0ffff, 0xc0); // 1008, 256, submap cut model
         this.submapModel_800d4bf8.uvAnimationSecondaryBank = true;
 
         initModel(this.submapModel_800d4bf8, this.submapCutModel, this.submapCutAnim);
