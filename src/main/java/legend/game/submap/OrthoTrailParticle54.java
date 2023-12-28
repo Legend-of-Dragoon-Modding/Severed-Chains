@@ -22,10 +22,10 @@ public class OrthoTrailParticle54 {
   public final Vector2f sxy2_30 = new Vector2f();
   public final Vector2f sxy3_38 = new Vector2f();
   /** 16.16 fixed-point */
-  public int stepBrightness_40;
-  /** 16.16 fixed-point */
-  public int brightnessAccumulator_44;
-  public int brightness_48;
+  public float stepBrightness_40;
+  // /** 16.16 fixed-point */
+  // public int brightnessAccumulator_44; // No longer necessary
+  public float brightness_48;
   public float z_4c;
   public OrthoTrailParticle54 next_50;
 }

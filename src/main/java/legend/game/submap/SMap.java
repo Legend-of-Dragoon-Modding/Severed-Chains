@@ -6383,9 +6383,8 @@ public class SMap extends EngineState {
           }
 
           //LAB_800ef504
-          inst.stepBrightness_40 = 0x4_4444;
-          inst.brightnessAccumulator_44 = 0x80_0000;
-          inst.brightness_48 = 0x80;
+          inst.stepBrightness_40 = 0.5f / 30;
+          inst.brightness_48 = 0.5f;
         }
       }
 
@@ -6425,9 +6424,8 @@ public class SMap extends EngineState {
           inst.z0_26 = (inst.sxy3_38.x + inst.sxy0_20.x) / 2.0f;
           inst.z1_2e = (inst.sxy3_38.y + inst.sxy0_20.y) / 2.0f;
 
-          inst.stepBrightness_40 = 0x80_0000 / data.maxTicks_38;
-          inst.brightnessAccumulator_44 = 0x80_0000;
-          inst.brightness_48 = 0x80;
+          inst.stepBrightness_40 = 0.5f / data.maxTicks_38;
+          inst.brightness_48 = 0.5f;
         }
       }
 
@@ -6557,13 +6555,10 @@ public class SMap extends EngineState {
 
         //LAB_800efc64
         if(inst.tick_04 >= this.particleFadeDelay_800d6c0c[inst.renderMode_00] * (3 - vsyncMode_8007a3b8)) {
-          inst.brightnessAccumulator_44 -= inst.stepBrightness_40 / (3 - vsyncMode_8007a3b8);
+          inst.brightness_48 -= inst.stepBrightness_40 / (3 - vsyncMode_8007a3b8);
 
-          final int brightness = inst.brightnessAccumulator_44 >>> 16;
-          if(brightness >= 0x100) {
-            inst.brightness_48 = 0;
-          } else {
-            inst.brightness_48 = brightness;
+          if(inst.brightness_48 >= 1.0f || inst.brightness_48 < 0.0f) {
+            inst.brightness_48 = 0.0f;
           }
         }
 
