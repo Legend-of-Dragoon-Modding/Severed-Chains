@@ -5,61 +5,60 @@ import legend.core.memory.Method;
 import org.joml.Vector3i;
 import org.joml.Vector4i;
 
-import java.util.Map;
 import java.util.Set;
 
 public final class CtmdTransformer {
   private CtmdTransformer() { }
 
   /** Example file: 4146/0/0 */
-  public static boolean ctmdDiscriminator(final String name, final FileData data, final Set<String> flags) {
+  public static boolean ctmdDiscriminator(final PathNode node, final Set<String> flags) {
     // Check if in DEFF and if file is large enough
-    if(!flags.contains("DEFF") || data.size() < 0x14) {
+    if(!node.flags.contains("DEFF") || node.data.size() < 0x14) {
       return false;
     }
 
     // Check DEFF file type
-    final int type = data.readByte(3);
+    final int type = node.data.readByte(3);
     if(type != 0 && type != 1 && type != 2 && type != 3 && type != 4) {
       return false;
     }
 
-    final int containerOffset = data.readInt(0xc);
+    final int containerOffset = node.data.readInt(0xc);
 
     // Validate container offset
-    if(containerOffset < 0x10 || containerOffset >= data.size()) {
+    if(containerOffset < 0x10 || containerOffset >= node.data.size()) {
       return false;
     }
 
-    final int nextOffset = data.readInt(0x10);
+    final int nextOffset = node.data.readInt(0x10);
 
     // Invalid next file offset, probably not the right kind of file
-    if(nextOffset != 0 && nextOffset < containerOffset || nextOffset >= data.size()) {
+    if(nextOffset != 0 && nextOffset < containerOffset || nextOffset >= node.data.size()) {
       return false;
     }
 
     // Make sure we get the 0xc container format header, and the TMD header
-    if(data.readInt(containerOffset) != 0xc || data.readByte(containerOffset + 0xc) != 0x41) {
+    if(node.data.readInt(containerOffset) != 0xc || node.data.readByte(containerOffset + 0xc) != 0x41) {
       return false;
     }
 
     // Check CTMD flag
-    return (data.readInt(containerOffset + 0x10) & 0x2) != 0;
+    return (node.data.readInt(containerOffset + 0x10) & 0x2) != 0;
   }
 
-  public static Map<String, FileData> ctmdTransformer(final String name, final FileData data, final Set<String> flags) {
-    final int containerOffset = data.readInt(0xc);
-    int nextOffset = data.readInt(0x10);
+  public static void ctmdTransformer(final PathNode node, final Transformations transformations, final Set<String> flags) {
+    final int containerOffset = node.data.readInt(0xc);
+    int nextOffset = node.data.readInt(0x10);
 
     if(nextOffset == 0) {
-      final int type = data.readByte(3);
+      final int type = node.data.readByte(3);
 
       if(type == 1) {
-        nextOffset = data.readInt(0x14);
+        nextOffset = node.data.readInt(0x14);
       }
     }
 
-    final FileData containerData = data.slice(containerOffset, (nextOffset == containerOffset || nextOffset == 0 ? data.size() : nextOffset) - containerOffset);
+    final FileData containerData = node.data.slice(containerOffset, (nextOffset == containerOffset || nextOffset == 0 ? node.data.size() : nextOffset) - containerOffset);
     int ctmdEnd = containerData.size();
     for(int i = 0; i < 2; i++) {
       final int subfile = containerData.readInt(4 + i * 4);
@@ -215,11 +214,11 @@ public final class CtmdTransformer {
     final int newContainerSize = containerData.size() + tmdSizeDifference;
 
     final int containerSizeDifference = newContainerSize - containerData.size();
-    final int newSize = data.size() + containerSizeDifference;
+    final int newSize = node.data.size() + containerSizeDifference;
     final byte[] newData = new byte[newSize];
 
     // Copy data before what we modified
-    data.copyFrom(0, newData, 0, containerOffset);
+    node.data.copyFrom(0, newData, 0, containerOffset);
     containerData.copyFrom(0, newData, containerOffset, 0xc);
 
     // Adjust DEFF container pointers
@@ -253,9 +252,9 @@ public final class CtmdTransformer {
     containerData.copyFrom(ctmdEnd, newData, containerOffset + 0xc + tmdData.length, containerData.size() - ctmdEnd);
 
     // Copy unmodified data at the end of the DEFF container
-    data.copyFrom(containerOffset + containerData.size(), newData, containerOffset + newContainerSize, data.size() - containerOffset - containerData.size());
+    node.data.copyFrom(containerOffset + containerData.size(), newData, containerOffset + newContainerSize, node.data.size() - containerOffset - containerData.size());
 
-    return Map.of(name, new FileData(newData));
+    transformations.replaceNode(node, new FileData(newData));
   }
 
   /** Does not include header */
