@@ -1,17 +1,17 @@
 package legend.game.submap;
 
-import legend.game.tim.Tim;
 import legend.game.scripting.ScriptFile;
+import legend.game.tim.Tim;
 import legend.game.tmd.UvAdjustmentMetrics14;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SubmapAssets {
+public abstract class Submap {
   public ScriptFile script;
   public final List<SubmapObject> objects = new ArrayList<>();
   public final List<Tim> pxls = new ArrayList<>();
   public final List<UvAdjustmentMetrics14> uvAdjustments = new ArrayList<>();
-  /** TODO Two object indices that get special flags, needs research */
-  public byte[] lastEntry;
+
+  public abstract void loadAssets(final Runnable onLoaded);
 }

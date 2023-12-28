@@ -29,7 +29,6 @@ import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
-import legend.game.scripting.ScriptFile;
 import legend.game.scripting.ScriptParam;
 import legend.game.scripting.ScriptState;
 import legend.game.scripting.ScriptStorageParam;
@@ -214,16 +213,13 @@ public class SMap extends EngineState {
   private final Model124 playerModel_800c6748 = new Model124("Player");
   private boolean submapModelLoaded_800c686c;
   private boolean chapterTitleAnimationComplete_800c686e;
-  private int _800c6870;
+  private boolean unloadSubmapModel_800c6870;
 
-  private List<FileData> submapAssetsMrg_800c6878;
-  private List<Tim> submapTextures;
   private int chapterTitleOriginX_800c687c;
   private int chapterTitleOriginY_800c687e;
   public final ScriptState<SubmapObject210>[] sobjs_800c6880 = new ScriptState[20];
 
-  private List<FileData> submapScriptsMrg_800c68d8;
-  private SubmapAssets submapAssets;
+  private Submap submap;
 
   private boolean chapterTitleCardLoaded_800c68e0;
 
@@ -2288,9 +2284,9 @@ public class SMap extends EngineState {
     final int index = script.params_20[1].get();
 
     sobj.sobjIndex_12e = index;
-    model.uvAdjustments_9d = this.submapAssets.uvAdjustments.get(index);
+    model.uvAdjustments_9d = this.submap.uvAdjustments.get(index);
 
-    this.loadModelAndAnimation(model, this.submapAssets.objects.get(index).model, this.submapAssets.objects.get(index).animations.get(0));
+    this.loadModelAndAnimation(model, this.submap.objects.get(index).model, this.submap.objects.get(index).animations.get(0));
 
     for(final ModelPart10 part : model.modelParts_00) {
       part.obj = TmdObjLoader.fromObjTable("SobjModel (index " + index + ')', part.tmd_08);
@@ -2314,7 +2310,7 @@ public class SMap extends EngineState {
     model.disableInterpolation_a2 = false;
     model.ub_a3 = 0;
 
-    loadModelStandardAnimation(model, this.submapAssets.objects.get(sobj.sobjIndex_12e).animations.get(sobj.animIndex_132));
+    loadModelStandardAnimation(model, this.submap.objects.get(sobj.sobjIndex_12e).animations.get(sobj.animIndex_132));
 
     sobj.animationFinished_12c = false;
     sobj.flags_190 &= 0x9fff_ffff;
@@ -2623,7 +2619,7 @@ public class SMap extends EngineState {
     sobj.animIndex_132 = script.params_20[1].get();
     model.ub_a3 = 1;
     model.disableInterpolation_a2 = false;
-    loadModelStandardAnimation(model, this.submapAssets.objects.get(sobj.sobjIndex_12e).animations.get(sobj.animIndex_132));
+    loadModelStandardAnimation(model, this.submap.objects.get(sobj.sobjIndex_12e).animations.get(sobj.animIndex_132));
     sobj.animationFinished_12c = false;
     sobj.flags_190 &= 0x9fff_ffff;
     return FlowControl.CONTINUE;
@@ -2640,7 +2636,7 @@ public class SMap extends EngineState {
     sobj.animIndex_132 = script.params_20[1].get();
     model.ub_a3 = 0;
     model.disableInterpolation_a2 = true;
-    loadModelStandardAnimation(model, this.submapAssets.objects.get(sobj.sobjIndex_12e).animations.get(sobj.animIndex_132));
+    loadModelStandardAnimation(model, this.submap.objects.get(sobj.sobjIndex_12e).animations.get(sobj.animIndex_132));
     sobj.animationFinished_12c = false;
     sobj.flags_190 &= 0x9fff_ffff;
     return FlowControl.CONTINUE;
@@ -2932,7 +2928,7 @@ public class SMap extends EngineState {
 
         if(sobj.animationFinished_12c && (sobj.flags_190 & 0x2000_0000) != 0) {
           sobj.animIndex_132 = 0;
-          loadModelStandardAnimation(model, this.submapAssets.objects.get(sobj.sobjIndex_12e).animations.get(sobj.animIndex_132));
+          loadModelStandardAnimation(model, this.submap.objects.get(sobj.sobjIndex_12e).animations.get(sobj.animIndex_132));
           sobj.flags_190 &= 0x9fff_ffff;
         }
       }
@@ -3211,120 +3207,13 @@ public class SMap extends EngineState {
 
       // Load map assets
       case LOAD_SOBJ_ASSETS_AND_SCRIPTS_5 -> {
-        final IntRef drgnIndex = new IntRef();
-        final IntRef fileIndex = new IntRef();
-
-        this.getDrgnFileFromNewRoot(submapCut_80052c30, drgnIndex, fileIndex);
-
-        if(drgnIndex.get() == 1 || drgnIndex.get() == 2 || drgnIndex.get() == 3 || drgnIndex.get() == 4) {
-          //LAB_800e1720
-          //LAB_800e17c4
-          //LAB_800e17d8
-          // Submap data (file example: 695)
-          loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 1, files -> this.submapAssetsLoadedCallback(files, 0));
-          // Submap scripts (file example: 696)
-          loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 2, files -> this.submapAssetsLoadedCallback(files, 1));
-
-          // Textures
-          Unpacker.loadDirectory("SECT/DRGN%d.BIN/%d/textures".formatted(20 + drgnIndex.get(), fileIndex.get() + 1), files -> this.submapAssetsLoadedCallback(files, 2));
-        }
-
-        this.mediaLoadingStage_800c68e4 = SubmapMediaState.LOAD_SOBJS_6;
-      }
-
-      // Wait for map assets to load
-      case LOAD_SOBJS_6 -> {
-        if(this.submapAssetsMrg_800c6878 != null && this.submapTextures != null && this.submapScriptsMrg_800c68d8 != null) {
-          final int objCount = this.submapScriptsMrg_800c68d8.size() - 2;
-
-          this.submapAssets = new SubmapAssets();
-          this.submapAssets.lastEntry = this.submapScriptsMrg_800c68d8.get(objCount + 1).getBytes();
-          this.submapAssets.script = new ScriptFile("Submap controller", this.submapScriptsMrg_800c68d8.get(0).getBytes());
-
-          for(int objIndex = 0; objIndex < objCount; objIndex++) {
-            final byte[] scriptData = this.submapScriptsMrg_800c68d8.get(objIndex + 1).getBytes();
-
-            final FileData submapModel = this.submapAssetsMrg_800c6878.get(objIndex * 33);
-
-            final IntRef drgnIndex = new IntRef();
-            final IntRef fileIndex = new IntRef();
-            this.getDrgnFileFromNewRoot(submapCut_80052c30, drgnIndex, fileIndex);
-
-            final SubmapObject obj = new SubmapObject();
-            obj.script = new ScriptFile("Submap object %d (DRGN%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 2, objIndex + 1), scriptData);
-
-            if(submapModel.hasVirtualSize() && submapModel.real()) {
-              obj.model = new CContainer("Submap object %d (DRGN%d/%d/%d)".formatted(objIndex, drgnIndex.get(), fileIndex.get() + 1, objIndex * 33), new FileData(submapModel.getBytes()));
-            } else {
-              obj.model = null;
-            }
-
-            for(int animIndex = objIndex * 33 + 1; animIndex < (objIndex + 1) * 33; animIndex++) {
-              final FileData data = this.submapAssetsMrg_800c6878.get(animIndex);
-
-              // This is a stupid fix for a stupid retail bug where almost all
-              // sobj animations in DRGN24.938 are symlinked to a PXL file
-              // GH#292
-              if(data.readInt(0) == 0x11) {
-                obj.animations.add(null);
-                continue;
-              }
-
-              obj.animations.add(new TmdAnimationFile(data));
-            }
-
-            this.submapAssets.objects.add(obj);
-          }
-
-          // Get models that are symlinked
-          for(int objIndex = 0; objIndex < objCount; objIndex++) {
-            final SubmapObject obj = this.submapAssets.objects.get(objIndex);
-
-            if(obj.model == null) {
-              final FileData submapModel = this.submapAssetsMrg_800c6878.get(objIndex * 33);
-
-              obj.model = this.submapAssets.objects.get(submapModel.realFileIndex() / 33).model;
-            }
-          }
-
-          this.submapAssets.pxls.addAll(this.submapTextures);
-
-          int x = 576;
-          int y = 256;
-          for(int objIndex = 0; objIndex < objCount; objIndex++) {
-            final Tim tim = this.submapAssets.pxls.get(objIndex);
-
-            if(tim != null) {
-              final Rect4i imageRect = tim.getImageRect();
-              final Rect4i clutRect = tim.getClutRect();
-
-              imageRect.x = x;
-              imageRect.y = y;
-              clutRect.x = x;
-              clutRect.y = y + imageRect.h;
-
-              GPU.uploadData15(imageRect, tim.getImageData());
-              GPU.uploadData15(clutRect, tim.getClutData());
-
-              this.submapAssets.uvAdjustments.add(this.createUvAdjustments(objIndex, x, y));
-
-              x += tim.getImageRect().w;
-
-              if(x >= 768) {
-                x = 576;
-                y += 128;
-              }
-            } else {
-              this.submapAssets.uvAdjustments.add(UvAdjustmentMetrics14.NONE);
-            }
-          }
-
-          this.mediaLoadingStage_800c68e4 = SubmapMediaState.PREPARE_TO_LOAD_SUBMAP_MODEL_7;
-        }
+        this.submap = new RetailSubmap(submapCut_80052c30, this.newrootPtr_800cab04);
+        this.submap.loadAssets(() -> this.mediaLoadingStage_800c68e4 = SubmapMediaState.PREPARE_TO_LOAD_SUBMAP_MODEL_7);
+        this.mediaLoadingStage_800c68e4 = SubmapMediaState.WAIT_FOR_SOBJ_ASSETS_AND_SCRIPTS_6;
       }
 
       case PREPARE_TO_LOAD_SUBMAP_MODEL_7 -> {
-        this._800c6870 = 0;
+        this.unloadSubmapModel_800c6870 = false;
         this.submapModelLoaded_800c686c = false;
         this.submapType_800c6968 = this.submapTypes_800f5cd4[submapCut_80052c30];
         this.mediaLoadingStage_800c68e4 = SubmapMediaState.LOAD_SUBMAP_MODEL_8;
@@ -3345,19 +3234,19 @@ public class SMap extends EngineState {
         FUN_800218f0();
 
         // Removed setting of unused sobjCount static
-        this.sobjCount_800c6730 = this.submapAssets.objects.size();
+        this.sobjCount_800c6730 = this.submap.objects.size();
 
         this.firstMovement = true;
 
         //LAB_800e1914
         final ScriptState<Void> submapController = SCRIPTS.allocateScriptState(0, "Submap controller", 0, null);
         this.submapControllerState_800c6740 = submapController;
-        submapController.loadScriptFile(this.submapAssets.script);
+        submapController.loadScriptFile(this.submap.script);
 
         //LAB_800e1b20
         //LAB_800e1b54
         for(int i = 0; i < this.sobjCount_800c6730; i++) {
-          final SubmapObject obj = this.submapAssets.objects.get(i);
+          final SubmapObject obj = this.submap.objects.get(i);
 
           final String name = "Submap object " + i + " (file " + i * 33 + ')';
           final ScriptState<SubmapObject210> state = SCRIPTS.allocateScriptState(name, new SubmapObject210(name));
@@ -3368,10 +3257,10 @@ public class SMap extends EngineState {
           state.loadScriptFile(obj.script);
 
           final Model124 model = state.innerStruct_00.model_00;
-          model.uvAdjustments_9d = this.submapAssets.uvAdjustments.get(i);
+          model.uvAdjustments_9d = this.submap.uvAdjustments.get(i);
           model.uvAnimationSecondaryBank = true;
 
-          final CContainer tmd = this.submapAssets.objects.get(i).model;
+          final CContainer tmd = this.submap.objects.get(i).model;
           final TmdAnimationFile anim = obj.animations.get(0);
           initModel(model, tmd, anim);
 
@@ -3479,20 +3368,6 @@ public class SMap extends EngineState {
     }
   }
 
-  private UvAdjustmentMetrics14 createUvAdjustments(final int index, final int x, final int y) {
-    final int clutX = x / 16;
-    final int clutY = y + 112;
-    final int tpageX = x / 64;
-    final int tpageY = y / 256;
-    final int u = x % 64 * 4;
-    final int v = y % 256;
-    final int clut = clutX | clutY << 6;
-    final int tpage = tpageX | tpageY << 4;
-    final int uv = u | v << 8;
-
-    return new UvAdjustmentMetrics14(index + 1, clut << 16, 0x3c0ffff, tpage << 16, 0xffe0ffff, uv);
-  }
-
   /** Handles cutscene movement */
   @Method(0x800e1f90L)
   private boolean FUN_800e1f90(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
@@ -3586,14 +3461,11 @@ public class SMap extends EngineState {
     //LAB_800e2350
     _800bd7b0 = 1;
 
-    this.submapAssets = null;
-    this.submapAssetsMrg_800c6878 = null;
-    this.submapScriptsMrg_800c68d8 = null;
-    this.submapTextures = null;
+    this.submap = null;
 
     scriptDeallocateAllTextboxes(null);
 
-    this._800c6870 = -1;
+    this.unloadSubmapModel_800c6870 = true;
     this.submapModelRenderers_800f5ad4[this.submapType_800c6968].run();
 
     this.submapEffectsState_800f9eac = -1;
@@ -3949,24 +3821,6 @@ public class SMap extends EngineState {
   @Method(0x800e3d80L)
   private void submapAssetsLoadedCallback(final List<FileData> files, final int assetType) {
     switch(assetType) {
-      // Submap assets
-      case 0x0 -> this.submapAssetsMrg_800c6878 = files;
-
-      // Submap scripts
-      case 0x1 -> this.submapScriptsMrg_800c68d8 = files;
-
-      // Submap textures
-      case 0x2 -> {
-        this.submapTextures = new ArrayList<>();
-        for(final FileData file : files) {
-          if(file.real()) {
-            this.submapTextures.add(new Tim(file));
-          } else {
-            this.submapTextures.add(null);
-          }
-        }
-      }
-
       // Chapter title cards
       case 0x10 -> {
         this.chapterTitleCardMrg_800c6710 = files;
@@ -4026,8 +3880,8 @@ public class SMap extends EngineState {
   @Method(0x800e3facL)
   public void menuClosed() {
     if(!transitioningFromCombatToSubmap_800bd7b8) {
-      this.submapAssets.pxls.get(0).uploadToGpu();
-      this.submapAssets.pxls.get(1).uploadToGpu();
+      this.submap.pxls.get(0).uploadToGpu();
+      this.submap.pxls.get(1).uploadToGpu();
     }
 
     //LAB_800e4008
@@ -4644,7 +4498,7 @@ public class SMap extends EngineState {
         final IntRef drgnIndex = new IntRef();
         final IntRef fileIndex = new IntRef();
 
-        this.getDrgnFileFromNewRoot(submapCut_80052c30, drgnIndex, fileIndex);
+        this.newrootPtr_800cab04.getDrgnFile(submapCut_80052c30, drgnIndex, fileIndex);
         if(drgnIndex.get() != drgnBinIndex_800bc058) {
           //LAB_800e5c9c
           drgnBinIndex_800bc058 = drgnIndex.get();
@@ -4959,29 +4813,6 @@ public class SMap extends EngineState {
     //LAB_80020f20
     this.FUN_8002aae8();
     this.setIndicatorStatusAndResetIndicatorTickCountOnReenable();
-  }
-
-  @Method(0x800e6504L)
-  private void getDrgnFileFromNewRoot(final int submapCut, final IntRef drgnIndexOut, final IntRef fileIndexOut) {
-    final SubmapCutInfo entry = this.newrootPtr_800cab04.submapCutInfo_0000[submapCut];
-
-    final int drgnIndex1 = entry.earlyGameFile_00 >>> 13;
-    final int drgnIndex2 = entry.lateGameFile_02 >>> 13;
-
-    // Once you reach a certain chapter, some maps will load from a different disk (like Fletz with the docks in chapter 4)
-    final boolean useLateGameMap;
-    if(drgnIndex1 == drgnBinIndex_800bc058 - 1 || drgnIndex2 > gameState_800babc8.chapterIndex_98) {
-      drgnIndexOut.set(drgnIndex1);
-      useLateGameMap = false;
-    } else {
-      drgnIndexOut.set(drgnIndex2);
-      useLateGameMap = true;
-    }
-
-    final int t0 = drgnIndexOut.get() >= 0 && drgnIndexOut.get() <= 3 ? 4 : 0;
-
-    drgnIndexOut.incr();
-    fileIndexOut.set(((useLateGameMap ? entry.lateGameFile_02 : entry.earlyGameFile_00) & 0x1fff) * 3 + t0);
   }
 
   @Method(0x800e664cL)
@@ -5915,19 +5746,18 @@ public class SMap extends EngineState {
 
   @Method(0x800eddb4L)
   private void handleAndRenderSubmapModel() {
-    if(this._800c6870 == -1) {
+    if(this.unloadSubmapModel_800c6870) {
       this.submapModelLoadingStage_800f9e5a = -1;
     }
 
     //LAB_800ede14
     switch(this.submapModelLoadingStage_800f9e5a + 1) {
       case 0x0 -> {
-        this.submapModel_800d4bf8.deleteModelParts();
-
         this._800d4bd0 = null;
         this._800d4bd4 = null;
 
-        //LAB_800ee1b8
+        this.submapModel_800d4bf8.deleteModelParts();
+
         this.submapCutModel = null;
         this.submapCutAnim = null;
 
@@ -5943,21 +5773,9 @@ public class SMap extends EngineState {
         if(submapCut_80052c30 == 673) { // End cutscene
           this._800d4bd0 = new Structb0();
           this._800d4bd4 = new FileData(new byte[0x20]);
-
-          this._800d4bd0._00 = 0;
-          this._800d4bd0._02 = 0;
-          this._800d4bd0._04 = 0;
-          this._800d4bd0._06 = 0;
-          this._800d4bd0._08 = 0;
-          this._800d4bd0._0c = 0;
         }
 
         //LAB_800edeb4
-        assert this.submapCutModel == null;
-        assert this.submapCutAnim == null;
-        assert this.submapCutTexture == null;
-        assert this.submapCutMatrix == null;
-
         this.submapCutModelAndAnimLoaded_800d4bdc = false;
         this.submapTextureAndMatrixLoaded_800d4be0 = false;
         this.theEndTimLoaded_800d4be4 = false;
@@ -5980,8 +5798,6 @@ public class SMap extends EngineState {
             this.submapCutMatrix = new MV();
 
             final FileData matrixData = files.get(1);
-
-            //TODO this might be transposed
             this.submapCutMatrix.m00 = matrixData.readShort(0) / (float)0x1000;
             this.submapCutMatrix.m10 = matrixData.readShort(2) / (float)0x1000;
             this.submapCutMatrix.m20 = matrixData.readShort(4) / (float)0x1000;
@@ -6349,7 +6165,7 @@ public class SMap extends EngineState {
 
       //LAB_800ef728
       if(a1._18 == 1) {
-        if(this._800c6870 != -1) {
+        if(!this.unloadSubmapModel_800c6870) {
           this.FUN_800f0644(model, a1);
         }
       }
@@ -7852,7 +7668,7 @@ public class SMap extends EngineState {
 
   @Method(0x800f4354L)
   private void handleAndRenderSubmapEffects() {
-    if(this._800c6870 == -1) {
+    if(this.unloadSubmapModel_800c6870) {
       this.smokePlumeEffect_800d5fd8.deallocate();
 
       if(this.snowState_800f9e60 == 1 || this.snowState_800f9e60 == 2) {
