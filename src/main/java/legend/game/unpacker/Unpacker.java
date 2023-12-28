@@ -57,7 +57,7 @@ public final class Unpacker {
   private static final Pattern ITEM_SCRIPT = Pattern.compile("^SECT/DRGN0.BIN/\\d+/1.*");
 
   /** Update this any time we make a breaking change */
-  private static final int VERSION = 2;
+  private static final int VERSION = 3;
 
   static {
     System.setProperty("log4j.skipJansi", "false");
@@ -375,9 +375,7 @@ public final class Unpacker {
         final long branchTransformTime = System.nanoTime();
         LOGGER.info("Performing branch transformations...");
 
-        for(final Transformer transformer : postTransformers) {
-          transformer.transform(files, transformations, flags);
-        }
+        postTransformers.parallelStream().forEach(transformer -> transformer.transform(files, transformations, flags));
 
         LOGGER.info("Branch transformations completed in %fs", (System.nanoTime() - branchTransformTime) / 1_000_000_000.0f);
 
