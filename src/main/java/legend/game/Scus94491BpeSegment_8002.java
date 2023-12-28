@@ -43,7 +43,7 @@ import legend.game.sound.QueuedSound28;
 import legend.game.sound.SoundFile;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
-import legend.game.tmd.UvAdjustmentMetrics10;
+import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
@@ -118,7 +118,6 @@ import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.freeSequence;
 import static legend.game.Scus94491BpeSegment_8004.stopMusicSequence;
-import static legend.game.Scus94491BpeSegment_8005._8005027c;
 import static legend.game.Scus94491BpeSegment_8005._800503b0;
 import static legend.game.Scus94491BpeSegment_8005._800503d4;
 import static legend.game.Scus94491BpeSegment_8005._800503f8;
@@ -292,20 +291,14 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x80020468L)
-  public static void adjustPartUvs(final ModelPart10 dobj2, final int colourMap) {
+  public static void adjustPartUvs(final ModelPart10 dobj2, final UvAdjustmentMetrics14 metrics) {
     final TmdObjTable1c objTable = dobj2.tmd_08;
 
     for(final TmdObjTable1c.Primitive primitive : objTable.primitives_10) {
       final int command = primitive.header() & 0xff04_0000;
 
-      if(command == 0x3c00_0000 || command == 0x3e00_0000) {
-        FUN_800210c4(primitive, colourMap & 0x7f);
-      } else if(command == 0x3d00_0000 || command == 0x3f00_0000) {
-        FUN_8002117c(primitive, colourMap & 0x7f);
-      } else if(command == 0x3500_0000 || command == 0x3700_0000) {
-        FUN_80021120(primitive, colourMap & 0x7f);
-      } else if(command == 0x3400_0000 || command == 0x3600_0000) {
-        FUN_80021068(primitive, colourMap & 0x7f);
+      if(command == 0x3400_0000 || command == 0x3500_0000 || command == 0x3600_0000 || command == 0x3700_0000 || command == 0x3c00_0000 || command == 0x3d00_0000 || command == 0x3e00_0000 || command == 0x3f00_0000) {
+        metrics.apply(primitive);
       }
     }
   }
@@ -533,46 +526,6 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80020fd0
   }
 
-  @Method(0x80021068L)
-  public static void FUN_80021068(final TmdObjTable1c.Primitive primitive, final int colourMap) {
-    final UvAdjustmentMetrics10 a3 = _8005027c[colourMap];
-
-    for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, MathHelper.get(data, 0x0, 4) & a3.tpageMaskOn_0c | a3.tpageMaskOff_08);
-      MathHelper.set(data, 0x4, 4, MathHelper.get(data, 0x4, 4) & a3.clutMaskOn_04 | a3.clutMaskOff_00);
-    }
-  }
-
-  @Method(0x800210c4L)
-  public static void FUN_800210c4(final TmdObjTable1c.Primitive primitive, final int colourMap) {
-    final UvAdjustmentMetrics10 a3 = _8005027c[colourMap];
-
-    for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, MathHelper.get(data, 0x0, 4) & a3.tpageMaskOn_0c | a3.tpageMaskOff_08);
-      MathHelper.set(data, 0x4, 4, MathHelper.get(data, 0x4, 4) & a3.clutMaskOn_04 | a3.clutMaskOff_00);
-    }
-  }
-
-  @Method(0x8002117cL)
-  public static void FUN_8002117c(final TmdObjTable1c.Primitive primitive, final int colourMap) {
-    final UvAdjustmentMetrics10 a3 = _8005027c[colourMap];
-
-    for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, MathHelper.get(data, 0x0, 4) & a3.tpageMaskOn_0c | a3.tpageMaskOff_08);
-      MathHelper.set(data, 0x4, 4, MathHelper.get(data, 0x4, 4) & a3.clutMaskOn_04 | a3.clutMaskOff_00);
-    }
-  }
-
-  @Method(0x80021120L)
-  public static void FUN_80021120(final TmdObjTable1c.Primitive primitive, final int colourMap) {
-    final UvAdjustmentMetrics10 a3 = _8005027c[colourMap];
-
-    for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, MathHelper.get(data, 0x0, 4) & a3.tpageMaskOn_0c | a3.tpageMaskOff_08);
-      MathHelper.set(data, 0x4, 4, MathHelper.get(data, 0x4, 4) & a3.clutMaskOn_04 | a3.clutMaskOff_00);
-    }
-  }
-
   @Method(0x80021258L)
   public static void renderDobj2(final ModelPart10 dobj2) {
     if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
@@ -692,7 +645,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80021628L)
   public static void adjustModelUvs(final Model124 model) {
     for(final ModelPart10 dobj2 : model.modelParts_00) {
-      currentEngineState_8004dd04.adjustModelPartUvs(model, dobj2);
+      adjustPartUvs(dobj2, model.uvAdjustments_9d);
     }
   }
 
@@ -760,64 +713,64 @@ public final class Scus94491BpeSegment_8002 {
    * This method animates the fog in the first cutscene with Rose/Feyrbrand
    */
   @Method(0x80022018L)
-  public static void animateModelTextures(final Model124 a0, final int index) {
-    if(a0.ptrs_d0[index] == null) {
-      a0.animateTextures_ec[index] = false;
+  public static void animateModelTextures(final Model124 model, final int index) {
+    if(model.ptrs_d0[index] == null) {
+      model.animateTextures_ec[index] = false;
       return;
     }
 
     //LAB_80022068
     final int x;
     final int y;
-    if((a0.vramSlot_9d & 0x80) == 0) {
-      x = _800503b0[a0.vramSlot_9d];
-      y = _800503d4[a0.vramSlot_9d];
-    } else {
+    if(model.uvAnimationSecondaryBank) {
       //LAB_80022098
-      if(a0.vramSlot_9d == 0x80) {
+      if(model.uvAdjustments_9d == UvAdjustmentMetrics14.NONE) {
         return;
       }
 
-      x = _800503f8[a0.vramSlot_9d & 0x7f];
-      y = _80050424[a0.vramSlot_9d & 0x7f];
+      x = _800503f8[model.uvAdjustments_9d.index];
+      y = _80050424[model.uvAdjustments_9d.index];
+    } else {
+      x = _800503b0[model.uvAdjustments_9d.index];
+      y = _800503d4[model.uvAdjustments_9d.index];
     }
 
     //LAB_800220c0
-    if(a0.usArr_ba[index] != 0x5678) {
-      a0.usArr_ba[index]--;
-      if((short)a0.usArr_ba[index] != 0) {
+    if(model.usArr_ba[index] != 0x5678) {
+      model.usArr_ba[index]--;
+      if((short)model.usArr_ba[index] != 0) {
         return;
       }
 
       int s1 = 0;
-      a0.usArr_ba[index] = a0.ptrs_d0[index][s1++] & 0x7fff;
-      final int destX = a0.ptrs_d0[index][s1++] + x;
-      final int destY = a0.ptrs_d0[index][s1++] + y;
-      final short w = (short)(a0.ptrs_d0[index][s1++] / 4);
-      final short h = a0.ptrs_d0[index][s1++];
+      model.usArr_ba[index] = model.ptrs_d0[index][s1++] & 0x7fff;
+      final int destX = model.ptrs_d0[index][s1++] + x;
+      final int destY = model.ptrs_d0[index][s1++] + y;
+      final short w = (short)(model.ptrs_d0[index][s1++] / 4);
+      final short h = model.ptrs_d0[index][s1++];
 
       //LAB_80022154
-      for(int i = 0; i < a0.usArr_ac[index]; i++) {
+      for(int i = 0; i < model.usArr_ac[index]; i++) {
         s1 += 2;
       }
 
       //LAB_80022164
-      final short x2 = (short)(a0.ptrs_d0[index][s1++] + x);
-      final short y2 = (short)(a0.ptrs_d0[index][s1++] + y);
+      final short x2 = (short)(model.ptrs_d0[index][s1++] + x);
+      final short y2 = (short)(model.ptrs_d0[index][s1++] + y);
 
       GPU.queueCommand(1, new GpuCommandCopyVramToVram(x2, y2, destX & 0xffff, destY & 0xffff, w, h));
 
-      a0.usArr_ac[index]++;
+      model.usArr_ac[index]++;
 
-      final int v1 = a0.ptrs_d0[index][s1];
+      final int v1 = model.ptrs_d0[index][s1];
       if(v1 == -2) {
-        a0.animateTextures_ec[index] = false;
-        a0.usArr_ac[index] = 0;
+        model.animateTextures_ec[index] = false;
+        model.usArr_ac[index] = 0;
       }
 
       //LAB_800221f8
       if(v1 == -1) {
-        a0.usArr_ac[index] = 0;
+        model.usArr_ac[index] = 0;
       }
 
       return;
@@ -825,18 +778,18 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80022208
     int s1 = 1;
-    final int s6 = a0.ptrs_d0[index][s1++] + x;
-    final int s7 = a0.ptrs_d0[index][s1++] + y;
-    final int s5 = a0.ptrs_d0[index][s1++] / 4;
-    int s3 = a0.ptrs_d0[index][s1++];
-    final int v1 = a0.ptrs_d0[index][s1++];
-    int s0_0 = a0.ptrs_d0[index][s1];
+    final int s6 = model.ptrs_d0[index][s1++] + x;
+    final int s7 = model.ptrs_d0[index][s1++] + y;
+    final int s5 = model.ptrs_d0[index][s1++] / 4;
+    int s3 = model.ptrs_d0[index][s1++];
+    final int v1 = model.ptrs_d0[index][s1++];
+    int s0_0 = model.ptrs_d0[index][s1];
 
-    if((a0.usArr_ac[index] & 0xf) != 0) {
-      a0.usArr_ac[index]--;
+    if((model.usArr_ac[index] & 0xf) != 0) {
+      model.usArr_ac[index]--;
 
-      if(a0.usArr_ac[index] == 0) {
-        a0.usArr_ac[index] = s0_0;
+      if(model.usArr_ac[index] == 0) {
+        model.usArr_ac[index] = s0_0;
         s0_0 = 16;
       } else {
         //LAB_80022278

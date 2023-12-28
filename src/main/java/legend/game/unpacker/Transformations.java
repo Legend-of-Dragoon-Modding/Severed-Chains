@@ -48,7 +48,9 @@ public class Transformations {
 
   /** File will not be placed into the transformation queue */
   public void addUntransformableChild(final PathNode parent, final String pathSegment, final FileData data) {
-    this.insert(parent.fullPath + '/' + pathSegment, data);
+    synchronized(this.transformationQueue) {
+      this.insert(parent.fullPath + '/' + pathSegment, data);
+    }
   }
 
   private PathNode insert(String path, final FileData data) {

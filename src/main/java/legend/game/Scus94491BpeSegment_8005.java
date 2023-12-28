@@ -3,7 +3,7 @@ package legend.game;
 import legend.core.gte.MV;
 import legend.game.sound.ReverbConfig;
 import legend.game.sound.ReverbConfigAndLocation;
-import legend.game.tmd.UvAdjustmentMetrics10;
+import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.AdditionData0e;
 import legend.game.types.LodString;
 
@@ -42,25 +42,25 @@ public final class Scus94491BpeSegment_8005 {
 
   public static int _80050274 = -1;
 
-  public static final UvAdjustmentMetrics10[] _8005027c = {
-    new UvAdjustmentMetrics10(0x0, 0xffff_ffff, 0x0, 0xffff_ffff),
-    new UvAdjustmentMetrics10(0x15_0000, 0xffe0_ffff, 0x7c14_0000, 0x83c3_ffff),
-    new UvAdjustmentMetrics10(0x16_0000, 0xffe0_ffff, 0x7c18_0000, 0x83c3_ffff),
-    new UvAdjustmentMetrics10(0x17_0000, 0xffe0_ffff, 0x7c1c_0000, 0x83c3_ffff),
-    new UvAdjustmentMetrics10(0x18_0000, 0xffe0_ffff, 0x7c20_0000, 0x83c3_ffff),
-    new UvAdjustmentMetrics10(0x19_0000, 0xffe0_ffff, 0x7c24_0000, 0x83c3_ffff),
-    new UvAdjustmentMetrics10(0x1a_0000, 0xffe0_ffff, 0x7c28_0000, 0x83c3_ffff),
-    new UvAdjustmentMetrics10(0x19_0000, 0xffe0_ffff, 0x7c24_0000, 0x83c3_ffff),
-    new UvAdjustmentMetrics10(0x1a_0000, 0xffe0_ffff, 0x7c28_0000, 0x83c3_ffff),
-    new UvAdjustmentMetrics10(0x1b_0000, 0xffe0_ffff, 0x7c2c_0000, 0x83c3_ffff),
-    new UvAdjustmentMetrics10(0x0c_0000, 0xffe0_ffff, 0x3c30_0000, 0x83c3_ffff),
-    new UvAdjustmentMetrics10(0x0d_0000, 0xffe0_ffff, 0x3c34_0000, 0x83c3_ffff),
-    new UvAdjustmentMetrics10(0x0e_0000, 0xffe0_ffff, 0x3c38_0000, 0x83c3_ffff),
-    new UvAdjustmentMetrics10(0x0f_0000, 0xffe0_ffff, 0x3c3c_0000, 0x83c3_ffff),
-    new UvAdjustmentMetrics10(0x08_0000, 0xffe0_ffff, 0x3c20_0000, 0x83c3_ffff),
-    new UvAdjustmentMetrics10(0x09_0000, 0xffe0_ffff, 0x3c24_0000, 0x83c3_ffff),
-    new UvAdjustmentMetrics10(0x0a_0000, 0xffe0_ffff, 0x3c28_0000, 0x83c3_ffff),
-    new UvAdjustmentMetrics10(0x0b_0000, 0xffe0_ffff, 0x3c2c_0000, 0x83c3_ffff),
+  public static final UvAdjustmentMetrics14[] _8005027c = {
+    UvAdjustmentMetrics14.NONE,
+    new UvAdjustmentMetrics14( 1, 0x7c14_0000, 0x83c3_ffff, 0x15_0000, 0xffe0_ffff, 0x0),
+    new UvAdjustmentMetrics14( 2, 0x7c18_0000, 0x83c3_ffff, 0x16_0000, 0xffe0_ffff, 0x0),
+    new UvAdjustmentMetrics14( 3, 0x7c1c_0000, 0x83c3_ffff, 0x17_0000, 0xffe0_ffff, 0x0),
+    new UvAdjustmentMetrics14( 4, 0x7c20_0000, 0x83c3_ffff, 0x18_0000, 0xffe0_ffff, 0x0),
+    new UvAdjustmentMetrics14( 5, 0x7c24_0000, 0x83c3_ffff, 0x19_0000, 0xffe0_ffff, 0x0),
+    new UvAdjustmentMetrics14( 6, 0x7c28_0000, 0x83c3_ffff, 0x1a_0000, 0xffe0_ffff, 0x0),
+    new UvAdjustmentMetrics14( 7, 0x7c24_0000, 0x83c3_ffff, 0x19_0000, 0xffe0_ffff, 0x0),
+    new UvAdjustmentMetrics14( 8, 0x7c28_0000, 0x83c3_ffff, 0x1a_0000, 0xffe0_ffff, 0x0),
+    new UvAdjustmentMetrics14( 9, 0x7c2c_0000, 0x83c3_ffff, 0x1b_0000, 0xffe0_ffff, 0x0),
+    new UvAdjustmentMetrics14(10, 0x3c30_0000, 0x83c3_ffff, 0x0c_0000, 0xffe0_ffff, 0x0),
+    new UvAdjustmentMetrics14(11, 0x3c34_0000, 0x83c3_ffff, 0x0d_0000, 0xffe0_ffff, 0x0),
+    new UvAdjustmentMetrics14(12, 0x3c38_0000, 0x83c3_ffff, 0x0e_0000, 0xffe0_ffff, 0x0),
+    new UvAdjustmentMetrics14(13, 0x3c3c_0000, 0x83c3_ffff, 0x0f_0000, 0xffe0_ffff, 0x0),
+    new UvAdjustmentMetrics14(14, 0x3c20_0000, 0x83c3_ffff, 0x08_0000, 0xffe0_ffff, 0x0),
+    new UvAdjustmentMetrics14(15, 0x3c24_0000, 0x83c3_ffff, 0x09_0000, 0xffe0_ffff, 0x0),
+    new UvAdjustmentMetrics14(16, 0x3c28_0000, 0x83c3_ffff, 0x0a_0000, 0xffe0_ffff, 0x0),
+    new UvAdjustmentMetrics14(17, 0x3c2c_0000, 0x83c3_ffff, 0x0b_0000, 0xffe0_ffff, 0x0),
   };
 
   public static final int[] shadowScale_8005039c = {0x1800, 0x1800, 0x1000, 0xe00, 0x1600, 0x1300, 0xe00, 0x2000, 0x1300, 0x1500};

@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,7 +24,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -59,7 +57,7 @@ public final class Unpacker {
   private static final Pattern ITEM_SCRIPT = Pattern.compile("^SECT/DRGN0.BIN/\\d+/1.*");
 
   /** Update this any time we make a breaking change */
-  private static final int VERSION = 2;
+  private static final int VERSION = 3;
 
   static {
     System.setProperty("log4j.skipJansi", "false");
@@ -122,6 +120,12 @@ public final class Unpacker {
     transformers.put(Unpacker::playerScriptDamageCapsDiscriminator, Unpacker::playerScriptDamageCapsTransformer);
     transformers.put(Unpacker::enemyScriptDamageCapDiscriminator, Unpacker::enemyAndItemScriptDamageCapPatcher);
     transformers.put(Unpacker::itemScriptDamageCapDiscriminator, Unpacker::enemyAndItemScriptDamageCapPatcher);
+  }
+
+  private static final List<Transformer> postTransformers = new ArrayList<>();
+  static {
+    // Convert submap PXLs into individual TIMs
+    postTransformers.add(SubmapPxlTransformer::transform);
   }
 
   private static Consumer<String> statusListener = status -> { };
@@ -368,6 +372,13 @@ public final class Unpacker {
 
         LOGGER.info("Leaf transformations completed in %fs", (System.nanoTime() - leafTransformTime) / 1_000_000_000.0f);
 
+        final long branchTransformTime = System.nanoTime();
+        LOGGER.info("Performing branch transformations...");
+
+        postTransformers.parallelStream().forEach(transformer -> transformer.transform(files, transformations, flags));
+
+        LOGGER.info("Branch transformations completed in %fs", (System.nanoTime() - branchTransformTime) / 1_000_000_000.0f);
+
         final Deque<PathNode> all = new ConcurrentLinkedDeque<>();
         files.flatten(all);
 
@@ -402,7 +413,7 @@ public final class Unpacker {
     do {
       if(activeThreads.get() >= availableProcessors) {
         synchronized(lock) {
-          lock.wait();
+          lock.wait(100);
         }
       } else {
         activeThreads.incrementAndGet();
@@ -610,12 +621,10 @@ public final class Unpacker {
     }
   }
 
-  private static Map<String, FileData> transform(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void transform(final PathNode node, final Transformations transformations, final Set<String> flags) {
     if(shouldStop) {
       throw new UnpackerStoppedRuntimeException("Unpacking cancelled");
     }
-
-    final Map<String, FileData> entries = new HashMap<>();
 
     for(final var entry : transformers.entrySet()) {
       final var discriminator = entry.getKey();
@@ -627,8 +636,6 @@ public final class Unpacker {
         break;
       }
     }
-
-    return entries;
   }
 
   private static boolean decompressDiscriminator(final PathNode node, final Set<String> flags) {
@@ -667,15 +674,15 @@ public final class Unpacker {
       i++;
     }
 
-    final StringBuilder sb = new StringBuilder();
+    final FileMap map = new FileMap();
 
     i = 0;
     for(final MrgArchive.Entry entry : archive) {
-      sb.append(i).append('=').append(entry.virtual() ? entry.parent() : i).append(';').append(entry.virtualSize()).append('\n');
+      map.addFile(Integer.toString(i), Integer.toString(entry.virtual() ? entry.parent() : i), entry.virtualSize());
       i++;
     }
 
-    transformations.addChild(node, "mrg", new FileData(sb.toString().getBytes(StandardCharsets.US_ASCII)));
+    transformations.addChild(node, "mrg", map.build());
   }
 
   private static boolean deffDiscriminator(final PathNode node, final Set<String> flags) {

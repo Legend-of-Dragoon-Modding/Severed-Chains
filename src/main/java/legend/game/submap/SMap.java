@@ -1,7 +1,5 @@
 package legend.game.submap;
 
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.RenderEngine;
@@ -14,7 +12,6 @@ import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
 import legend.core.memory.Method;
 import legend.core.memory.types.IntRef;
@@ -219,12 +216,11 @@ public class SMap extends EngineState {
   private boolean chapterTitleAnimationComplete_800c686e;
   private int _800c6870;
 
-  private boolean submapAssetsLoaded_800c6874;
   private List<FileData> submapAssetsMrg_800c6878;
+  private List<Tim> submapTextures;
   private int chapterTitleOriginX_800c687c;
   private int chapterTitleOriginY_800c687e;
   public final ScriptState<SubmapObject210>[] sobjs_800c6880 = new ScriptState[20];
-  private boolean submapScriptsLoaded_800c68d0;
 
   private List<FileData> submapScriptsMrg_800c68d8;
   private SubmapAssets submapAssets;
@@ -238,9 +234,6 @@ public class SMap extends EngineState {
   public final int[] indicatorTickCountArray_800c6970 = new int[32];
 
   private TriangleIndicator140 triangleIndicator_800c69fc;
-
-  /** TODO array, flags for submap objects - 0x80 means the model is the same as the previous one */
-  private final IntList sobjVramSlots_800c6a50 = new IntArrayList();
 
   private final Vector3f cameraPos_800c6aa0 = new Vector3f();
 
@@ -544,29 +537,6 @@ public class SMap extends EngineState {
     new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
     new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
     new ShopStruct40(0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255),
-  };
-
-  private final UvAdjustmentMetrics14[] uvAdjustments_800f5930 = {
-    new UvAdjustmentMetrics14(       0x0, 0xffffffff,      0x0, 0xffffffff,    0x0),
-	  new UvAdjustmentMetrics14(0x5c260000,  0x3c0ffff, 0x190000, 0xffe0ffff,   0x80),
-	  new UvAdjustmentMetrics14(0x5c270000,  0x3c0ffff, 0x190000, 0xffe0ffff,   0xc0),
-	  new UvAdjustmentMetrics14(0x7c240000,  0x3c0ffff, 0x190000, 0xffe0ffff, 0x8000),
-	  new UvAdjustmentMetrics14(0x7c250000,  0x3c0ffff, 0x190000, 0xffe0ffff, 0x8040),
-	  new UvAdjustmentMetrics14(0x7c260000,  0x3c0ffff, 0x190000, 0xffe0ffff, 0x8080),
-	  new UvAdjustmentMetrics14(0x7c270000,  0x3c0ffff, 0x190000, 0xffe0ffff, 0x80c0),
-	  new UvAdjustmentMetrics14(0x5c2a0000,  0x3c0ffff, 0x1a0000, 0xffe0ffff,   0x80),
-	  new UvAdjustmentMetrics14(0x5c2b0000,  0x3c0ffff, 0x1a0000, 0xffe0ffff,   0xc0),
-	  new UvAdjustmentMetrics14(0x7c280000,  0x3c0ffff, 0x1a0000, 0xffe0ffff, 0x8000),
-	  new UvAdjustmentMetrics14(0x7c290000,  0x3c0ffff, 0x1a0000, 0xffe0ffff, 0x8040),
-	  new UvAdjustmentMetrics14(0x7c2a0000,  0x3c0ffff, 0x1a0000, 0xffe0ffff, 0x8080),
-	  new UvAdjustmentMetrics14(0x7c2b0000,  0x3c0ffff, 0x1a0000, 0xffe0ffff, 0x80c0),
-	  new UvAdjustmentMetrics14(0x5c2e0000,  0x3c0ffff, 0x1b0000, 0xffe0ffff,   0x80),
-	  new UvAdjustmentMetrics14(0x5c2f0000,  0x3c0ffff, 0x1b0000, 0xffe0ffff,   0xc0),
-	  new UvAdjustmentMetrics14(0x5c2c0000,  0x3c0ffff, 0x1b0000, 0xffe0ffff,    0x0),
-	  new UvAdjustmentMetrics14(0x5c2d0000,  0x3c0ffff, 0x1b0000, 0xffe0ffff,   0x40),
-	  new UvAdjustmentMetrics14(0x5c3f0000,  0x3c0ffff, 0x1f0000, 0xffe0ffff,   0xc0),
-	  new UvAdjustmentMetrics14(0x5c240000, 0x83c3ffff, 0x190000, 0xffe0ffff,    0x0),
-	  new UvAdjustmentMetrics14(0x5c280000, 0x83c3ffff, 0x1a0000, 0xffe0ffff,    0x0)
   };
 
   /**
@@ -1346,23 +1316,6 @@ public class SMap extends EngineState {
     this.restoreCharDataVitals(-1);
   }
 
-  @Method(0x800d9e64L)
-  private void adjustSmapUvs(final ModelPart10 dobj2, final int colourMap) {
-    final TmdObjTable1c objTable = dobj2.tmd_08;
-
-    //LAB_800d9e90
-    for(final TmdObjTable1c.Primitive primitive : objTable.primitives_10) {
-      final int header = primitive.header();
-      final int id = header & 0xff04_0000;
-
-      if(id == 0x3400_0000 || id == 0x3600_0000 || id == 0x3500_0000 || id == 0x3700_0000) {
-        this.adjustSmapTriPrimitiveUvs(primitive, colourMap & 0x7f);
-      } else if(id == 0x3c00_0000 || id == 0x3e00_0000 || id == 0x3d00_0000 || id == 0x3f00_0000) {
-        this.adjustSmapQuadPrimitiveUvs(primitive, colourMap & 0x7f);
-      }
-    }
-  }
-
   @Method(0x800da114L)
   private void animateSmapModel(final Model124 model) {
     final int interpolationFrameCount = (2 - vsyncMode_8007a3b8) * 2 + 1;
@@ -1417,31 +1370,6 @@ public class SMap extends EngineState {
     partCoord.flg--;
   }
 
-  @Method(0x800da6c8L)
-  private void adjustSmapTriPrimitiveUvs(final TmdObjTable1c.Primitive primitive, final int colourMap) {
-    final UvAdjustmentMetrics14 metrics = this.uvAdjustments_800f5930[colourMap];
-
-    //LAB_800da6e8
-    for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & metrics.clutMaskOn_04 | metrics.clutMaskOff_00) + metrics.uvOffset_10);
-      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & metrics.tpageMaskOn_0c | metrics.tpageMaskOff_08) + metrics.uvOffset_10);
-      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + metrics.uvOffset_10);
-    }
-  }
-
-  @Method(0x800da754L)
-  private void adjustSmapQuadPrimitiveUvs(final TmdObjTable1c.Primitive primitive, final int colourMap) {
-    final UvAdjustmentMetrics14 metrics = this.uvAdjustments_800f5930[colourMap];
-
-    //LAB_800da774
-    for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & metrics.clutMaskOn_04 | metrics.clutMaskOff_00) + metrics.uvOffset_10);
-      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & metrics.tpageMaskOn_0c | metrics.tpageMaskOff_08) + metrics.uvOffset_10);
-      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + metrics.uvOffset_10);
-      MathHelper.set(data, 0xc, 4,  MathHelper.get(data, 0xc, 4) + metrics.uvOffset_10);
-    }
-  }
-
   @Method(0x800daa3cL)
   private void renderSmapModel(final Model124 model) {
     zOffset_1f8003e8 = model.zOffset_a0;
@@ -1482,7 +1410,7 @@ public class SMap extends EngineState {
       smallerStruct.uba_04[index] = false;
     } else {
       //LAB_800ddeac
-      final int colourMap = struct.vramSlot_9d & 0x7f;
+      final int colourMap = struct.uvAdjustments_9d.index;
       final int x = _800503f8[colourMap];
       final int y = _80050424[colourMap] + 112;
 
@@ -2360,7 +2288,7 @@ public class SMap extends EngineState {
     final int index = script.params_20[1].get();
 
     sobj.sobjIndex_12e = index;
-    model.vramSlot_9d = this.sobjVramSlots_800c6a50.getInt(index);
+    model.uvAdjustments_9d = this.submapAssets.uvAdjustments.get(index);
 
     this.loadModelAndAnimation(model, this.submapAssets.objects.get(index).model, this.submapAssets.objects.get(index).animations.get(0));
 
@@ -3283,12 +3211,6 @@ public class SMap extends EngineState {
 
       // Load map assets
       case LOAD_SOBJ_ASSETS_AND_SCRIPTS_5 -> {
-        assert this.submapAssetsMrg_800c6878 == null : "Submap assets MRG was not empty";
-        assert this.submapScriptsMrg_800c68d8 == null : "Submap scripts MRG was not empty";
-
-        this.submapScriptsLoaded_800c68d0 = false;
-        this.submapAssetsLoaded_800c6874 = false;
-
         final IntRef drgnIndex = new IntRef();
         final IntRef fileIndex = new IntRef();
 
@@ -3302,6 +3224,9 @@ public class SMap extends EngineState {
           loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 1, files -> this.submapAssetsLoadedCallback(files, 0));
           // Submap scripts (file example: 696)
           loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 2, files -> this.submapAssetsLoadedCallback(files, 1));
+
+          // Textures
+          Unpacker.loadDirectory("SECT/DRGN%d.BIN/%d/textures".formatted(20 + drgnIndex.get(), fileIndex.get() + 1), files -> this.submapAssetsLoadedCallback(files, 2));
         }
 
         this.mediaLoadingStage_800c68e4 = SubmapMediaState.LOAD_SOBJS_6;
@@ -3309,7 +3234,7 @@ public class SMap extends EngineState {
 
       // Wait for map assets to load
       case LOAD_SOBJS_6 -> {
-        if(this.submapAssetsLoaded_800c6874 && this.submapScriptsLoaded_800c68d0) {
+        if(this.submapAssetsMrg_800c6878 != null && this.submapTextures != null && this.submapScriptsMrg_800c68d8 != null) {
           final int objCount = this.submapScriptsMrg_800c68d8.size() - 2;
 
           this.submapAssets = new SubmapAssets();
@@ -3362,8 +3287,36 @@ public class SMap extends EngineState {
             }
           }
 
-          for(int i = 0; i < 3; i++) {
-            this.submapAssets.pxls.add(new Tim(this.submapAssetsMrg_800c6878.get(objCount * 34 + i)));
+          this.submapAssets.pxls.addAll(this.submapTextures);
+
+          int x = 576;
+          int y = 256;
+          for(int objIndex = 0; objIndex < objCount; objIndex++) {
+            final Tim tim = this.submapAssets.pxls.get(objIndex);
+
+            if(tim != null) {
+              final Rect4i imageRect = tim.getImageRect();
+              final Rect4i clutRect = tim.getClutRect();
+
+              imageRect.x = x;
+              imageRect.y = y;
+              clutRect.x = x;
+              clutRect.y = y + imageRect.h;
+
+              GPU.uploadData15(imageRect, tim.getImageData());
+              GPU.uploadData15(clutRect, tim.getClutData());
+
+              this.submapAssets.uvAdjustments.add(this.createUvAdjustments(objIndex, x, y));
+
+              x += tim.getImageRect().w;
+
+              if(x >= 768) {
+                x = 576;
+                y += 128;
+              }
+            } else {
+              this.submapAssets.uvAdjustments.add(UvAdjustmentMetrics14.NONE);
+            }
           }
 
           this.mediaLoadingStage_800c68e4 = SubmapMediaState.PREPARE_TO_LOAD_SUBMAP_MODEL_7;
@@ -3396,57 +3349,10 @@ public class SMap extends EngineState {
 
         this.firstMovement = true;
 
-        final long s3;
-        final long s4;
-        final byte[] lastEntry = this.submapAssets.lastEntry;
-        if(lastEntry.length != 4) {
-          s3 = MathHelper.get(lastEntry, 0, 4); // Second last int before padding
-          s4 = MathHelper.get(lastEntry, 4, 4); // Last int before padding
-        } else {
-          s3 = 0;
-          s4 = 0;
-        }
-
         //LAB_800e1914
-        this.submapAssets.pxls.get(0).uploadToGpu();
-        this.submapAssets.pxls.get(1).uploadToGpu();
-
-        final Tim tim = this.submapAssets.pxls.get(2);
-        final Rect4i imageRect = tim.getImageRect();
-        imageRect.h = 128;
-
-        GPU.uploadData15(imageRect, tim.getImageData());
-
         final ScriptState<Void> submapController = SCRIPTS.allocateScriptState(0, "Submap controller", 0, null);
         this.submapControllerState_800c6740 = submapController;
         submapController.loadScriptFile(this.submapAssets.script);
-
-        //LAB_800e1a38
-        this.sobjVramSlots_800c6a50.clear();
-        for(int i = 0; i < this.sobjCount_800c6730; i++) {
-          this.sobjVramSlots_800c6a50.add(i + 0x81);
-
-          if(i + 1 == s3) {
-            this.sobjVramSlots_800c6a50.set(i, 0x92);
-          }
-
-          if(i + 1 == s4) {
-            this.sobjVramSlots_800c6a50.set(i, 0x93);
-          }
-
-          //LAB_800e1a80
-        }
-
-        //LAB_800e1a8c
-        //LAB_800e1abc
-        for(int i = 0; i < this.sobjCount_800c6730; i++) {
-          //LAB_800e1ae0
-          for(int n = i + 1; n < this.sobjCount_800c6730; n++) {
-            if(this.submapAssets.objects.get(n).model == this.submapAssets.objects.get(i).model) {
-              this.sobjVramSlots_800c6a50.set(n, 0x80);
-            }
-          }
-        }
 
         //LAB_800e1b20
         //LAB_800e1b54
@@ -3462,7 +3368,8 @@ public class SMap extends EngineState {
           state.loadScriptFile(obj.script);
 
           final Model124 model = state.innerStruct_00.model_00;
-          model.vramSlot_9d = this.sobjVramSlots_800c6a50.getInt(i);
+          model.uvAdjustments_9d = this.submapAssets.uvAdjustments.get(i);
+          model.uvAnimationSecondaryBank = true;
 
           final CContainer tmd = this.submapAssets.objects.get(i).model;
           final TmdAnimationFile anim = obj.animations.get(0);
@@ -3572,6 +3479,20 @@ public class SMap extends EngineState {
     }
   }
 
+  private UvAdjustmentMetrics14 createUvAdjustments(final int index, final int x, final int y) {
+    final int clutX = x / 16;
+    final int clutY = y + 112;
+    final int tpageX = x / 64;
+    final int tpageY = y / 256;
+    final int u = x % 64 * 4;
+    final int v = y % 256;
+    final int clut = clutX | clutY << 6;
+    final int tpage = tpageX | tpageY << 4;
+    final int uv = u | v << 8;
+
+    return new UvAdjustmentMetrics14(index + 1, clut << 16, 0x3c0ffff, tpage << 16, 0xffe0ffff, uv);
+  }
+
   /** Handles cutscene movement */
   @Method(0x800e1f90L)
   private boolean FUN_800e1f90(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
@@ -3668,6 +3589,7 @@ public class SMap extends EngineState {
     this.submapAssets = null;
     this.submapAssetsMrg_800c6878 = null;
     this.submapScriptsMrg_800c68d8 = null;
+    this.submapTextures = null;
 
     scriptDeallocateAllTextboxes(null);
 
@@ -4028,21 +3950,27 @@ public class SMap extends EngineState {
   private void submapAssetsLoadedCallback(final List<FileData> files, final int assetType) {
     switch(assetType) {
       // Submap assets
-      case 0x0 -> {
-        this.submapAssetsLoaded_800c6874 = true;
-        this.submapAssetsMrg_800c6878 = files;
-      }
+      case 0x0 -> this.submapAssetsMrg_800c6878 = files;
 
       // Submap scripts
-      case 0x1 -> {
-        this.submapScriptsLoaded_800c68d0 = true;
-        this.submapScriptsMrg_800c68d8 = files;
+      case 0x1 -> this.submapScriptsMrg_800c68d8 = files;
+
+      // Submap textures
+      case 0x2 -> {
+        this.submapTextures = new ArrayList<>();
+        for(final FileData file : files) {
+          if(file.real()) {
+            this.submapTextures.add(new Tim(file));
+          } else {
+            this.submapTextures.add(null);
+          }
+        }
       }
 
       // Chapter title cards
       case 0x10 -> {
-        this.chapterTitleCardLoaded_800c68e0 = true;
         this.chapterTitleCardMrg_800c6710 = files;
+        this.chapterTitleCardLoaded_800c68e0 = true;
       }
     }
   }
@@ -4649,11 +4577,6 @@ public class SMap extends EngineState {
   @Method(0x800e5914L)
   public void tick() {
     this.executeSmapLoadingStage_2();
-  }
-
-  @Override
-  public void adjustModelPartUvs(final Model124 model, final ModelPart10 part) {
-    this.adjustSmapUvs(part, model.vramSlot_9d);
   }
 
   @Method(0x800e59a4L)
@@ -6119,7 +6042,8 @@ public class SMap extends EngineState {
       }
 
       case 0x4 -> {
-        this.submapModel_800d4bf8.vramSlot_9d = 0x91;
+        this.submapModel_800d4bf8.uvAdjustments_9d = new UvAdjustmentMetrics14(17, 0x5c3f0000, 0x3c0ffff, 0x1f0000, 0xffe0ffff, 0xc0); // 1008, 256, submap cut model
+        this.submapModel_800d4bf8.uvAnimationSecondaryBank = true;
 
         initModel(this.submapModel_800d4bf8, this.submapCutModel, this.submapCutAnim);
 

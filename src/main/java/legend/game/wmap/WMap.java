@@ -9,7 +9,6 @@ import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.TmdObjTable1c;
 import legend.core.gte.TmdWithId;
 import legend.core.memory.Method;
 import legend.core.memory.types.IntRef;
@@ -27,7 +26,6 @@ import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.submap.EncounterRateMode;
 import legend.game.tim.Tim;
-import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.CContainer;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.LodString;
@@ -382,59 +380,6 @@ public class WMap extends EngineState {
   private int coolonWarpDestLabelY;
   private boolean shouldSetCoolonWarpDestLabelMetrics;
 
-  @Method(0x800c8844L)
-  private void adjustWmapUvs(final ModelPart10 dobj2, final int colourMapIndex) {
-    for(final TmdObjTable1c.Primitive primitive : dobj2.tmd_08.primitives_10) {
-      final int cmd = primitive.header() & 0xff04_0000;
-
-      if(cmd == 0x3700_0000) {
-        this.adjustWmapTriPrimitiveUvs(primitive, colourMapIndex & 0x7f);
-      } else if(cmd == 0x3e00_0000) {
-        this.adjustWmapQuadPrimitiveUvs(primitive, colourMapIndex & 0x7f);
-      } else if(cmd == 0x3d00_0000 || cmd == 0x3f00_0000) {
-        this.adjustWmapQuadPrimitiveUvs(primitive, colourMapIndex & 0x7f);
-      } else if(cmd == 0x3c00_0000) {
-        this.adjustWmapQuadPrimitiveUvs(primitive, colourMapIndex & 0x7f);
-      } else if(cmd == 0x3500_0000) {
-        this.adjustWmapTriPrimitiveUvs(primitive, colourMapIndex & 0x7f);
-      } else if(cmd == 0x3600_0000) {
-        this.adjustWmapTriPrimitiveUvs(primitive, colourMapIndex & 0x7f);
-      } else if(cmd == 0x3400_0000) {
-        this.adjustWmapTriPrimitiveUvs(primitive, colourMapIndex & 0x7f);
-      }
-    }
-  }
-
-  @Method(0x800c8d90L)
-  private void renderWmapShadow(final Model124 model) {
-    assert false;
-  }
-
-  @Method(0x800c9004L)
-  private void adjustWmapTriPrimitiveUvs(final TmdObjTable1c.Primitive primitive, final int colourMap) {
-    final UvAdjustmentMetrics14 metrics = tmdUvAdjustmentMetrics_800eee48[colourMap];
-
-    //LAB_800c9024
-    for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & metrics.clutMaskOn_04 | metrics.clutMaskOff_00) + metrics.uvOffset_10);
-      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & metrics.tpageMaskOn_0c | metrics.tpageMaskOff_08) + metrics.uvOffset_10);
-      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + metrics.uvOffset_10);
-    }
-  }
-
-  @Method(0x800c9090L)
-  private void adjustWmapQuadPrimitiveUvs(final TmdObjTable1c.Primitive primitive, final int colourMap) {
-    final UvAdjustmentMetrics14 metrics = tmdUvAdjustmentMetrics_800eee48[colourMap];
-
-    //LAB_800c90b0
-    for(final byte[] data : primitive.data()) {
-      MathHelper.set(data, 0x0, 4, (MathHelper.get(data, 0x0, 4) & metrics.clutMaskOn_04 | metrics.clutMaskOff_00) + metrics.uvOffset_10);
-      MathHelper.set(data, 0x4, 4, (MathHelper.get(data, 0x4, 4) & metrics.tpageMaskOn_0c | metrics.tpageMaskOff_08) + metrics.uvOffset_10);
-      MathHelper.set(data, 0x8, 4,  MathHelper.get(data, 0x8, 4) + metrics.uvOffset_10);
-      MathHelper.set(data, 0xc, 4,  MathHelper.get(data, 0xc, 4) + metrics.uvOffset_10);
-    }
-  }
-
   @Method(0x800c925cL)
   private void renderWmapModel(final Model124 model) {
     final MV lw = new MV();
@@ -460,11 +405,6 @@ public class WMap extends EngineState {
           .backgroundColour(GTE.backgroundColour)
           .screenspaceOffset(0, screenOffsetY);
       }
-    }
-
-    //LAB_800c9354
-    if(model.shadowType_cc != 0) {
-      this.renderWmapShadow(model);
     }
 
     //LAB_800c936c
@@ -503,11 +443,6 @@ public class WMap extends EngineState {
         this.handleMapTransitions();
       }
     }
-  }
-
-  @Override
-  public void adjustModelPartUvs(final Model124 model, final ModelPart10 part) {
-    this.adjustWmapUvs(part, model.vramSlot_9d);
   }
 
   /** Just the inventory menu right now, but we might add more later */
@@ -2961,7 +2896,8 @@ public class WMap extends EngineState {
       this.modelAndAnimData_800c66a8.models_0c[i] = new Model124("Player " + i);
       final int finalI = i;
       loadDrgnDir(0, 5714 + i, files -> this.loadPlayerAvatarModelFiles(files, finalI));
-      this.modelAndAnimData_800c66a8.models_0c[i].vramSlot_9d = playerAvatarVramSlots_800ef694[i] + 0x80;
+      this.modelAndAnimData_800c66a8.models_0c[i].uvAdjustments_9d = tmdUvAdjustmentMetrics_800eee48[playerAvatarVramSlots_800ef694[i]];
+      this.modelAndAnimData_800c66a8.models_0c[i].uvAnimationSecondaryBank = true;
     }
 
     //LAB_800dfbb4
