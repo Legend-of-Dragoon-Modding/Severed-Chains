@@ -14,4 +14,6 @@ public abstract class Submap {
   public final List<UvAdjustmentMetrics14> uvAdjustments = new ArrayList<>();
 
   public abstract void loadAssets(final Runnable onLoaded);
+  /** Called when textures need to be reloaded (e.g. after menus are closed) */
+  public abstract void restoreAssets();
 }

@@ -111,10 +111,29 @@ public class RetailSubmap extends Submap {
       }
     }
 
+    this.loadTextures();
+  }
+
+  @Override
+  public void restoreAssets() {
+    this.loadTextures();
+  }
+
+  private void handleAsyncLoad(final List<FileData> files, final List<FileData> dest, final AtomicInteger counter, final int expectedCount, final Runnable onLoaded) {
+    dest.addAll(files);
+
+    if(counter.incrementAndGet() == expectedCount) {
+      onLoaded.run();
+    }
+  }
+
+  private void loadTextures() {
+    this.uvAdjustments.clear();
+
     int x = 576;
     int y = 256;
-    for(int objIndex = 0; objIndex < objCount; objIndex++) {
-      final Tim tim = this.pxls.get(objIndex);
+    for(int pxlIndex = 0; pxlIndex < this.pxls.size(); pxlIndex++) {
+      final Tim tim = this.pxls.get(pxlIndex);
 
       if(tim != null) {
         final Rect4i imageRect = tim.getImageRect();
@@ -128,7 +147,7 @@ public class RetailSubmap extends Submap {
         GPU.uploadData15(imageRect, tim.getImageData());
         GPU.uploadData15(clutRect, tim.getClutData());
 
-        this.uvAdjustments.add(this.createUvAdjustments(objIndex, x, y));
+        this.uvAdjustments.add(this.createUvAdjustments(pxlIndex, x, y));
 
         x += tim.getImageRect().w;
 
@@ -139,14 +158,6 @@ public class RetailSubmap extends Submap {
       } else {
         this.uvAdjustments.add(UvAdjustmentMetrics14.NONE);
       }
-    }
-  }
-
-  private void handleAsyncLoad(final List<FileData> files, final List<FileData> dest, final AtomicInteger counter, final int expectedCount, final Runnable onLoaded) {
-    dest.addAll(files);
-
-    if(counter.incrementAndGet() == expectedCount) {
-      onLoaded.run();
     }
   }
 

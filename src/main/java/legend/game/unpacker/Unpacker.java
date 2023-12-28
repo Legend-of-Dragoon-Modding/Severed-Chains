@@ -660,10 +660,9 @@ public final class Unpacker {
   private static void unmrg(final PathNode node, final Transformations transformations, final Set<String> flags) {
     final MrgArchive archive = new MrgArchive(node.data, node.pathSegment.matches("^DRGN(?:0|1|2[1234])?.BIN$"));
 
-    //TODO
-//    if(archive.getCount() == 0) {
-//      return Map.of(name, EMPTY_DIRECTORY_SENTINEL);
-//    }
+    if(archive.getCount() == 0) {
+      transformations.addNode(node.fullPath, EMPTY_DIRECTORY_SENTINEL);
+    }
 
     int i = 0;
     for(final MrgArchive.Entry entry : archive) {
@@ -692,10 +691,9 @@ public final class Unpacker {
   private static void undeff(final PathNode node, final Transformations transformations, final Set<String> flags) {
     final DeffArchive archive = new DeffArchive(node.data);
 
-    //TODO
-//    if(archive.getCount() == 0) {
-//      return Map.of(name, EMPTY_DIRECTORY_SENTINEL);
-//    }
+    if(archive.getCount() == 0) {
+      transformations.addNode(node.fullPath, EMPTY_DIRECTORY_SENTINEL);
+    }
 
     int i = 0;
     for(final FileData entry : archive) {

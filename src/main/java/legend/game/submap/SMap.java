@@ -3880,8 +3880,7 @@ public class SMap extends EngineState {
   @Method(0x800e3facL)
   public void menuClosed() {
     if(!transitioningFromCombatToSubmap_800bd7b8) {
-      this.submap.pxls.get(0).uploadToGpu();
-      this.submap.pxls.get(1).uploadToGpu();
+      this.submap.restoreAssets();
     }
 
     //LAB_800e4008
