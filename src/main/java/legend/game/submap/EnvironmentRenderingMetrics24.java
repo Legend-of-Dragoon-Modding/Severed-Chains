@@ -11,6 +11,9 @@ public class EnvironmentRenderingMetrics24 {
   public int g_0d;
   public int b_0e;
 
+  public int x_10;
+  public int y_12;
+
   public int u_14;
   public int v_15;
   public int clut_16;
