@@ -327,9 +327,9 @@ public class SMap extends EngineState {
 
   private final SmokeParticleEffect smokeCloudEffect_800d4f50 = new SmokeParticleEffect();
 
-  private final LawPodTrailSegment34 lawPodTrail_800d4f90 = new LawPodTrailSegment34();
+  private final List<LawPodTrailSegment34> lawPodTrail_800d4f90 = new ArrayList<>();
 
-  private final TrailSegmentVertices14 lawPodTrailVerts_800d4fd0 = new TrailSegmentVertices14();
+  private final List<TrailSegmentVertices14> lawPodTrailVerts_800d4fd0 = new ArrayList<>();
 
   private final TriangleIndicator44[] _800d4ff0 = new TriangleIndicator44[21];
   {
@@ -6186,6 +6186,9 @@ public class SMap extends EngineState {
 
   @Method(0x800ef0f8L)
   private void tickAttachedSobjEffects(final Model124 model, final AttachedSobjEffectData40 data) {
+    if(model.name.contains("Submap object 3")) {
+      int x = 0;
+    }
     if(!flEq(data.transfer_1e.x, model.coord2_14.coord.transfer.x) || !flEq(data.transfer_1e.y, model.coord2_14.coord.transfer.y) || !flEq(data.transfer_1e.z, model.coord2_14.coord.transfer.z)) {
       //LAB_800ef154
       if(data.shouldRenderTmdDust_04) {
@@ -6551,19 +6554,12 @@ public class SMap extends EngineState {
 
   @Method(0x800f0644L)
   private void tickLawPodTrail(final Model124 model, final AttachedSobjEffectData40 data) {
-    if((data.tick_00 & 0x1) == 0) {
+    if((data.tick_00 & (3 - vsyncMode_8007a3b8)) == 0) {
       final LawPodTrailData18 trailData = data.trailData_3c;
 
       if(trailData.countSegments_01 < trailData.maxCountSegments_00) {
-        final LawPodTrailSegment34 prevSegment = this.lawPodTrail_800d4f90;
         final LawPodTrailSegment34 segment = new LawPodTrailSegment34();
-        segment.next_30 = prevSegment.next_30;
-        prevSegment.next_30 = segment;
-
-        final TrailSegmentVertices14 verts = this.lawPodTrailVerts_800d4fd0;
         TrailSegmentVertices14 newVerts = new TrailSegmentVertices14();
-        newVerts.next_10 = verts.next_10;
-        verts.next_10 = newVerts;
 
         final MV transforms = new MV();
         GsGetLs(model.coord2_14, transforms);
@@ -6592,11 +6588,8 @@ public class SMap extends EngineState {
         if(trailData.countSegments_01 == 0) {
           trailData.currSegmentOriginVerts_14 = newVerts;
           newVerts = new TrailSegmentVertices14();
-          newVerts.next_10 = verts.next_10;
-          verts.next_10 = newVerts;
-          final TrailSegmentVertices14 tempVerts = trailData.currSegmentOriginVerts_14;
-          newVerts.vert0_00.set(tempVerts.vert0_00);
-          newVerts.vert1_08.set(tempVerts.vert1_08);
+          newVerts.vert0_00.set(trailData.currSegmentOriginVerts_14.vert0_00);
+          newVerts.vert1_08.set(trailData.currSegmentOriginVerts_14.vert1_08);
         }
 
         //LAB_800f0928
@@ -6604,6 +6597,8 @@ public class SMap extends EngineState {
         segment.originVerts01_24 = trailData.currSegmentOriginVerts_14;
         trailData.currSegmentOriginVerts_14 = newVerts;
         segment.trailData_2c = trailData;
+        this.lawPodTrail_800d4f90.add(segment);
+        this.lawPodTrailVerts_800d4fd0.add(newVerts);
         trailData.countSegments_01++;
       }
     }
@@ -6612,12 +6607,9 @@ public class SMap extends EngineState {
 
   @Method(0x800f0970L)
   private void renderLawPodTrail() {
-    TrailSegmentVertices14 childVerts;
-    LawPodTrailSegment34 prevSegment = this.lawPodTrail_800d4f90;
-    LawPodTrailSegment34 segment = prevSegment.next_30;
-
     //LAB_800f09c0
-    while(segment != null) {
+    for(int i = 0; i < this.lawPodTrail_800d4f90.size(); i++) {
+      final LawPodTrailSegment34 segment = this.lawPodTrail_800d4f90.get(i);
       final LawPodTrailData18 trailData = segment.trailData_2c;
       if(segment.tick_00 <= trailData.maxTicks_06) {
         final int tpage = segment.tpage_04;
@@ -6630,84 +6622,53 @@ public class SMap extends EngineState {
           .pos(2, this.screenOffsetX_800cb568 + segment.endpointVerts23_28.vert0_00.x, this.screenOffsetY_800cb56c + segment.endpointVerts23_28.vert0_00.y)
           .pos(3, this.screenOffsetX_800cb568 + segment.endpointVerts23_28.vert1_08.x, this.screenOffsetY_800cb56c + segment.endpointVerts23_28.vert1_08.y);
 
-        final int r;
-        final int g;
-        final int b;
-        if(segment.tick_00 <= trailData.colourTickDelay_02 - 1) {
+        final Vector3f colour = new Vector3f();
+        if(segment.tick_00 > trailData.fadeDelay_02 - 1) {
           //LAB_800f0d0c
-          r = segment.rAccumulator_14 >> 16;
-          g = segment.gAccumulator_18 >> 16;
-          b = segment.bAccumulator_1c >> 16;
-        } else {
-          segment.rAccumulator_14 -= segment.rStep_08;
-          segment.gAccumulator_18 -= segment.gStep_0c;
-          segment.bAccumulator_1c -= segment.bStep_10;
-          r = Math.max(0, segment.rAccumulator_14 >> 16);
-          g = Math.max(0, segment.gAccumulator_18 >> 16);
-          b = Math.max(0, segment.bAccumulator_1c >> 16);
+          segment.colour_14.sub(segment.colourStep_08);
+          segment.colour_14.x = Math.max(0, segment.colour_14.x);
+          segment.colour_14.y = Math.max(0, segment.colour_14.y);
+          segment.colour_14.z = Math.max(0, segment.colour_14.z);
         }
 
         //LAB_800f0d18
-        cmd.rgb(0, r, g, b);
-        cmd.rgb(1, r, g, b);
-        cmd.rgb(2, b, g, r);
-        cmd.rgb(3, b, g, r);
+        cmd.rgb((int)(segment.colour_14.x * 255), (int)(segment.colour_14.y * 255), (int)(segment.colour_14.z * 255));
         GPU.queueCommand(segment.z_20, cmd);
 
-        prevSegment = segment;
         segment.tick_00++;
-        segment = segment.next_30;
       } else {
         trailData.countSegments_01--;
-        childVerts = this.lawPodTrailVerts_800d4fd0.next_10;
         TrailSegmentVertices14 currSegmentOriginVerts = segment.originVerts01_24;
-        TrailSegmentVertices14 parentVerts = this.lawPodTrailVerts_800d4fd0;
 
         //LAB_800f09fc
-        while(childVerts != null) {
-          if(childVerts == currSegmentOriginVerts) {
+        for(int j = 0; j < this.lawPodTrailVerts_800d4fd0.size(); j++) {
+          if(this.lawPodTrailVerts_800d4fd0.get(j) == currSegmentOriginVerts) {
             //LAB_800f0ae8
-            parentVerts.next_10 = childVerts.next_10;
+            this.lawPodTrailVerts_800d4fd0.remove(j);
             break;
           }
-
-          parentVerts = childVerts;
-          childVerts = childVerts.next_10;
         }
 
         //LAB_800f0a18
         if(trailData.countSegments_01 == 0) {
-          childVerts = this.lawPodTrailVerts_800d4fd0.next_10;
           currSegmentOriginVerts = segment.endpointVerts23_28;
-          parentVerts = this.lawPodTrailVerts_800d4fd0;
 
           //LAB_800f0a38
-          while(childVerts != null) {
-            if(childVerts == currSegmentOriginVerts) {
+          for(int j = 0; j < this.lawPodTrailVerts_800d4fd0.size(); j++) {
+            if(this.lawPodTrailVerts_800d4fd0.get(j) == currSegmentOriginVerts) {
               //LAB_800f0acc
-              currSegmentOriginVerts = childVerts.next_10;
-              parentVerts.next_10 = currSegmentOriginVerts;
+              this.lawPodTrailVerts_800d4fd0.remove(j);
               break;
             }
-
-            parentVerts = childVerts;
-            childVerts = childVerts.next_10;
           }
-
           //LAB_800f0a54
         }
 
         //LAB_800f0a58
-        prevSegment.next_30 = segment.next_30;
-
-        segment = prevSegment.next_30;
         if(trailData.countSegments_01 == 0) {
-          if(this.lawPodTrail_800d4f90.next_30.next_30 == null) {
+          if(this.lawPodTrail_800d4f90.size() == 2) {
             //LAB_800f0aa4
-            while(this.lawPodTrailVerts_800d4fd0.next_10 != null) {
-              childVerts = this.lawPodTrailVerts_800d4fd0.next_10;
-              this.lawPodTrailVerts_800d4fd0.next_10 = childVerts.next_10;
-            }
+            this.lawPodTrailVerts_800d4fd0.clear();
           }
         }
       }
@@ -6715,58 +6676,31 @@ public class SMap extends EngineState {
     }
 
     //LAB_800f0d74
-    if(this.lawPodTrailSegmentCount_800f9e78 == 0 && this.lawPodTrail_800d4f90.next_30 == null) {
+    if(this.lawPodTrailSegmentCount_800f9e78 == 0 && this.lawPodTrail_800d4f90.size() == 1) {
       //LAB_800f0da8
-      while(this.lawPodTrailVerts_800d4fd0.next_10 != null) {
-        childVerts = this.lawPodTrailVerts_800d4fd0.next_10;
-        this.lawPodTrailVerts_800d4fd0.next_10 = childVerts.next_10;
-      }
+      this.lawPodTrailVerts_800d4fd0.clear();
     }
     //LAB_800f0dc8
   }
 
   @Method(0x800f0df0L)
   private void initLawPodTrailSegmentColour(final LawPodTrailData18 trailData, final LawPodTrailSegment34 segment) {
-    segment.rAccumulator_14 = trailData.r_10 << 16;
-    segment.gAccumulator_18 = trailData.g_11 << 16;
-    segment.bAccumulator_1c = trailData.b_12 << 16;
-    segment.rStep_08 = segment.rAccumulator_14 / trailData.countColourSteps_04;
-    segment.gStep_0c = segment.gAccumulator_18 / trailData.countColourSteps_04;
-    segment.bStep_10 = segment.bAccumulator_1c / trailData.countColourSteps_04;
+    segment.colour_14.set(trailData.r_10 / 255.0f, trailData.g_11 / 255.0f, trailData.b_12 / 255.0f);
+    segment.colourStep_08.set(segment.colour_14).div(trailData.countFadeSteps_04);
   }
 
   @Method(0x800f0e60L)
   private void initLawPodTrail() {
     this.lawPodTrailSegmentCount_800f9e78 = 0;
-    this.lawPodTrail_800d4f90.next_30 = null;
-    this.lawPodTrailVerts_800d4fd0.next_10 = null;
   }
 
   @Method(0x800f0e7cL)
   private void deallocateLawPodTrail() {
-    final LawPodTrailSegment34 parentSegment = this.lawPodTrail_800d4f90;
-    if(parentSegment.next_30 != null) {
-      //LAB_800f0ea4
-      LawPodTrailSegment34 tempSegment;
-      do {
-        final LawPodTrailSegment34 childSegment = parentSegment.next_30;
-        tempSegment = childSegment.next_30;
-        parentSegment.next_30 = tempSegment;
-      } while(tempSegment != null);
-    }
+    this.lawPodTrail_800d4f90.clear();
 
     //LAB_800f0ec8
-    final TrailSegmentVertices14 parentVerts = this.lawPodTrailVerts_800d4fd0;
-
-    if(parentVerts.next_10 != null) {
-      //LAB_800f0edc
-      TrailSegmentVertices14 tempVerts;
-      do {
-        final TrailSegmentVertices14 childVerts = parentVerts.next_10;
-        tempVerts = childVerts.next_10;
-        parentVerts.next_10 = tempVerts;
-      } while(tempVerts != null);
-    }
+    //LAB_800f0edc
+    this.lawPodTrailVerts_800d4fd0.clear();
 
     //LAB_800f0efc
     this.clearLawPodTrailSegmentsList();
@@ -6847,10 +6781,10 @@ public class SMap extends EngineState {
   }
 
   @ScriptDescription("Initializes the trail effect on the law pods in Zenebatos.")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p3")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "shouldRender", description = "Whether law pod trail should be rendered")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "maxSegments", description = "Maximum number of trail segments.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "fadeDelay", description = "Number of ticks before segment begins to fade.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "fadeSteps", description = "Number of ticks over which to fadde segment.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "width")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "translucency")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "r")
@@ -6871,9 +6805,9 @@ public class SMap extends EngineState {
       final LawPodTrailData18 segment = this.addLawPodTrailSegment();
       segment.maxCountSegments_00 = script.params_20[1].get();
       segment.countSegments_01 = 0;
-      segment.colourTickDelay_02 = script.params_20[2].get();
-      segment.countColourSteps_04 = script.params_20[3].get();
-      segment.maxTicks_06 = segment.colourTickDelay_02 + segment.countColourSteps_04;
+      segment.fadeDelay_02 = script.params_20[2].get();
+      segment.countFadeSteps_04 = script.params_20[3].get();
+      segment.maxTicks_06 = segment.fadeDelay_02 + segment.countFadeSteps_04;
       segment.width_08 = script.params_20[4].get();
       segment.translucency_0c = script.params_20[5].get();
       segment.r_10 = script.params_20[6].get();

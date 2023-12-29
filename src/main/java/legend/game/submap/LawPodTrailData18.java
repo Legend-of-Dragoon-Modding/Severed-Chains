@@ -4,9 +4,9 @@ public class LawPodTrailData18 {
   public int maxCountSegments_00;
   public int countSegments_01;
   /** short */
-  public int colourTickDelay_02;
+  public int fadeDelay_02;
   /** short */
-  public int countColourSteps_04;
+  public int countFadeSteps_04;
   /** short */
   public int maxTicks_06;
   /** short */
