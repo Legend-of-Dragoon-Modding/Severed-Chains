@@ -7162,7 +7162,7 @@ public class SMap extends EngineState {
 
   @ScriptDescription("Initializes TMD dust particle attached sobj effect.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "shouldRender", description = "Whether effect should be rendered.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "shouldRender", description = "Whether effect should be rendered.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "size", description = "Maximum size of particles.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "instantiationTicks", description = "New number of ticks before a new particle is instantiated.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "maxTicks", description = "Number of ticks for which a particle exists.")
@@ -7391,7 +7391,7 @@ public class SMap extends EngineState {
   }
 
   @ScriptDescription("If param 0 is 1, deallocate the Zenebatos law pod trail effect.")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "shouldDeallocate", description = "Deallocate trail effect when true.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "shouldDeallocate", description = "Deallocate trail effect when true.")
   @Method(0x800f25a8L)
   private FlowControl scriptDeallocateLawPodTrail(final RunningScript<?> script) {
     final ScriptState<?> state = script.scriptState_04;
