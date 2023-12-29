@@ -2,10 +2,10 @@ package legend.game.submap;
 
 import org.joml.Vector2f;
 
-/** Example - horses running in new game cutscene */
-public class DustType1And2Particle54 {
+/** Used for ortho quad trail attached sobj effect particles (footprints and some kinds of dust). */
+public class OrthoTrailParticle54 {
   public short renderMode_00;
-  public short textureIndex_02;
+  public int textureIndex_02;
   public short tick_04;
   public short maxTicks_06;
   public float size_08;
@@ -22,10 +22,10 @@ public class DustType1And2Particle54 {
   public final Vector2f sxy2_30 = new Vector2f();
   public final Vector2f sxy3_38 = new Vector2f();
   /** 16.16 fixed-point */
-  public int stepBrightness_40;
-  /** 16.16 fixed-point */
-  public int brightnessAccumulator_44;
-  public int brightness_48;
+  public float stepBrightness_40;
+  // /** 16.16 fixed-point */
+  // public int brightnessAccumulator_44; // No longer necessary
+  public float brightness_48;
   public float z_4c;
-  public DustType1And2Particle54 next_50;
+  public OrthoTrailParticle54 next_50;
 }
