@@ -95,7 +95,7 @@ public class MapState100 {
   public int submapCutFrom_c4;
   /** Submap scene last visited (800c685e) */
   public int submapSceneFrom_c6;
-  /** Cut that will be entered from current location (short 800c6860) */
+  /** Cut that will be entered from current location, 999 means border crossing (short 800c6860) */
   public int submapCutTo_c8;
   /** Scene that will be entered from current location (short 800c6862) */
   public int submapSceneTo_ca;

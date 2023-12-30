@@ -11,12 +11,15 @@ public abstract class Submap {
   public final List<SubmapObject> objects = new ArrayList<>();
   public final List<UvAdjustmentMetrics14> uvAdjustments = new ArrayList<>();
 
+  public abstract void loadEnv(final Runnable onLoaded);
   public abstract void loadAssets(final Runnable onLoaded);
   /** Called when textures need to be reloaded (e.g. after menus are closed) */
   public abstract void restoreAssets();
 
   public abstract void draw();
   public abstract void unload();
+
+  public abstract void calcGoodScreenOffset(final float x, final float y);
 
   public abstract int getEncounterRate();
   public abstract void generateEncounter();

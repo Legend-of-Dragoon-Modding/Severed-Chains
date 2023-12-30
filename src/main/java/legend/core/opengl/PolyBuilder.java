@@ -23,6 +23,7 @@ public class PolyBuilder {
   private static final int VERTEX_SIZE = POS_SIZE + NORM_SIZE + UV_SIZE + TPAGE_SIZE + CLUT_SIZE + BPP_SIZE + COLOUR_SIZE + FLAGS_SIZE;
 
   private final String name;
+  private final int type;
   private final List<Vertex> vertices = new ArrayList<>();
   private final Vector2i vramPos = new Vector2i();
   private final Vector2i clut = new Vector2i();
@@ -33,7 +34,12 @@ public class PolyBuilder {
   private int flags;
 
   public PolyBuilder(final String name) {
+    this(name, GL_TRIANGLES);
+  }
+
+  public PolyBuilder(final String name, final int glType) {
     this.name = name;
+    this.type = glType;
   }
 
   public PolyBuilder addVertex(final Vector3f pos) {
@@ -145,7 +151,7 @@ public class PolyBuilder {
       this.setVertex(vertices, i);
     }
 
-    final Mesh mesh = new Mesh(GL_TRIANGLES, vertices, this.vertices.size());
+    final Mesh mesh = new Mesh(this.type, vertices, this.vertices.size());
 
     mesh.attribute(0, 0L, 3, VERTEX_SIZE);
 

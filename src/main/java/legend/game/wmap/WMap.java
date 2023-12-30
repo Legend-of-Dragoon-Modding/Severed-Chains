@@ -95,7 +95,7 @@ import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.previousEngineState_8004dd28;
-import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
+import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8007.clearRed_8007a3a8;
@@ -2638,7 +2638,7 @@ public class WMap extends EngineState {
           this.mapState_800c6798.submapCutTo_c8 = locations_800f0e34[coolonWarpDest_800ef228[modelAndAnimData.coolonDestIndex_222].locationIndex_10].submapCutFrom_04;
           this.mapState_800c6798.submapSceneTo_ca = locations_800f0e34[coolonWarpDest_800ef228[modelAndAnimData.coolonDestIndex_222].locationIndex_10].submapSceneFrom_06;
           submapCut_80052c30 = this.mapState_800c6798.submapCutTo_c8;
-          index_80052c38 = this.mapState_800c6798.submapSceneTo_ca;
+          collidedPrimitiveIndex_80052c38 = this.mapState_800c6798.submapSceneTo_ca;
           modelAndAnimData.fastTravelTransitionMode_250 = FastTravelTransitionMode.COOLON_ARRIVAL_3;
           previousEngineState_8004dd28 = null;
           this.coolonWarpDestLabelName = null;
@@ -4243,7 +4243,7 @@ public class WMap extends EngineState {
           }
 
           //LAB_800e69b8
-          index_80052c38 = continentIndex;
+          collidedPrimitiveIndex_80052c38 = continentIndex;
         }
 
         //LAB_800e69c4
@@ -4470,7 +4470,7 @@ public class WMap extends EngineState {
 
     //LAB_800e7ae4
     this.mapState_800c6798.submapCutFrom_c4 = submapCut_80052c30;
-    this.mapState_800c6798.submapSceneFrom_c6 = index_80052c38;
+    this.mapState_800c6798.submapSceneFrom_c6 = collidedPrimitiveIndex_80052c38;
 
     // If Debug Room Floor 1
     if(this.mapState_800c6798.submapCutFrom_c4 == 0 && this.mapState_800c6798.submapSceneFrom_c6 == 0) {

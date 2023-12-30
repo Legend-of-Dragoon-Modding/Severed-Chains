@@ -41,6 +41,7 @@ import legend.game.scripting.ScriptParam;
 import legend.game.sound.EncounterSoundEffects10;
 import legend.game.sound.QueuedSound28;
 import legend.game.sound.SoundFile;
+import legend.game.submap.SubmapEnvState;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.tmd.UvAdjustmentMetrics14;
@@ -124,14 +125,14 @@ import static legend.game.Scus94491BpeSegment_8005._800503b0;
 import static legend.game.Scus94491BpeSegment_8005._800503d4;
 import static legend.game.Scus94491BpeSegment_8005._800503f8;
 import static legend.game.Scus94491BpeSegment_8005._80050424;
-import static legend.game.Scus94491BpeSegment_8005._80052c40;
+import static legend.game.Scus94491BpeSegment_8005.shouldRestoreCameraPosition_80052c40;
 import static legend.game.Scus94491BpeSegment_8005.digits_80052b40;
-import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
+import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.monsterSoundFileIndices_800500e8;
 import static legend.game.Scus94491BpeSegment_8005.renderBorder_80052b68;
 import static legend.game.Scus94491BpeSegment_8005.shadowScale_8005039c;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
-import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c3c;
+import static legend.game.Scus94491BpeSegment_8005.submapCutBeforeBattle_80052c3c;
 import static legend.game.Scus94491BpeSegment_8005.submapEnvState_80052c44;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8005.textboxMode_80052b88;
@@ -4146,12 +4147,12 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002a9c0L)
   public static void FUN_8002a9c0() {
-    submapCut_80052c30 = 675;
+    submapCut_80052c30 = 675; // Opening
     submapScene_80052c34 = 4;
-    index_80052c38 = 0;
-    submapCut_80052c3c = -1;
-    _80052c40 = false;
-    submapEnvState_80052c44 = 2;
+    collidedPrimitiveIndex_80052c38 = 0;
+    submapCutBeforeBattle_80052c3c = -1;
+    shouldRestoreCameraPosition_80052c40 = false;
+    submapEnvState_80052c44 = SubmapEnvState.CHECK_TRANSITIONS_1_2;
   }
 
   @Method(0x8002bb38L)

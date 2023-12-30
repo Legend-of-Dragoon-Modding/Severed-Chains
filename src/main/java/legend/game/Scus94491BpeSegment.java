@@ -1206,7 +1206,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x800189b0L)
-  public static void FUN_800189b0() {
+  public static void transitionBackFromBattle() {
     if(Unpacker.getLoadingFileCount() == 0) {
       //LAB_800189e4
       //LAB_800189e8

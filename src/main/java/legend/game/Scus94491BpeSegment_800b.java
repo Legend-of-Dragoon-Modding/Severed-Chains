@@ -1,6 +1,5 @@
 package legend.game;
 
-import legend.core.gte.MV;
 import legend.game.combat.environment.BattleStage;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.combat.ui.BattleDissolveDarkeningMetrics10;
@@ -214,10 +213,6 @@ public final class Scus94491BpeSegment_800b {
   static {
     Arrays.setAll(stats_800be5f8, i -> new ActiveStatsa0());
   }
-
-  public static final MV matrix_800bed30 = new MV();
-  public static int screenOffsetX_800bed50;
-  public static int screenOffsetY_800bed54;
 
   /**
    * Remains set for the duration of the button press

@@ -1,21 +1,21 @@
 package legend.game.submap;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.Config;
+import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.GpuCommandLine;
 import legend.core.gpu.GpuCommandPoly;
-import legend.core.gpu.GpuCommandQuad;
-import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
-import legend.core.gte.TmdWithId;
+import legend.core.gte.TmdObjTable1c;
 import legend.core.memory.Method;
-import legend.core.memory.types.IntRef;
-import legend.core.opengl.QuadBuilder;
+import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
@@ -24,7 +24,6 @@ import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
-import legend.game.modding.events.submap.SubmapEnvironmentTextureEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
@@ -42,7 +41,6 @@ import legend.game.types.AnmSpriteMetrics14;
 import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GsF_LIGHT;
-import legend.game.types.GsRVIEW2;
 import legend.game.types.LodString;
 import legend.game.types.Model124;
 import legend.game.types.NewRootStruct;
@@ -67,7 +65,6 @@ import java.util.List;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.CONFIG;
-import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
@@ -116,21 +113,19 @@ import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8003.GsSetFlatLight;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
-import static legend.game.Scus94491BpeSegment_8003.GsSetSmapRefView2L;
 import static legend.game.Scus94491BpeSegment_8003.PopMatrix;
 import static legend.game.Scus94491BpeSegment_8003.PushMatrix;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
-import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8005._80050274;
-import static legend.game.Scus94491BpeSegment_8005._80052c40;
-import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
+import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.renderBorder_80052b68;
+import static legend.game.Scus94491BpeSegment_8005.shouldRestoreCameraPosition_80052c40;
+import static legend.game.Scus94491BpeSegment_8005.submapCutBeforeBattle_80052c3c;
 import static legend.game.Scus94491BpeSegment_8005.submapCutForSave_800cb450;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
-import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c3c;
 import static legend.game.Scus94491BpeSegment_8005.submapEnvState_80052c44;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8005.textboxMode_80052b88;
@@ -145,13 +140,9 @@ import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
-import static legend.game.Scus94491BpeSegment_800b.matrix_800bed30;
 import static legend.game.Scus94491BpeSegment_800b.musicLoaded_800bd782;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
-import static legend.game.Scus94491BpeSegment_800b.projectionPlaneDistance_800bd810;
 import static legend.game.Scus94491BpeSegment_800b.rview2_800bd7e8;
-import static legend.game.Scus94491BpeSegment_800b.screenOffsetX_800bed50;
-import static legend.game.Scus94491BpeSegment_800b.screenOffsetY_800bed54;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.sobjPositions_800bd818;
@@ -165,8 +156,12 @@ import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
+import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class SMap extends EngineState {
+  private final MV playerPositionBeforeBattle_800bed30 = new MV();
+  private final Vector2i screenOffsetBeforeBattle_800bed50 = new Vector2i();
+
   private int fmvIndex_800bf0dc;
 
   private EngineStateEnum afterFmvLoadingStage_800bf0ec = EngineStateEnum.PRELOAD_00;
@@ -224,7 +219,7 @@ public class SMap extends EngineState {
 
   private final Vector3f prevPlayerPos_800c6ab0 = new Vector3f();
   private float encounterMultiplier_800c6abc;
-  private final MV matrix_800c6ac0 = new MV();
+  private final MV playerPositionWhenLoadingSubmap_800c6ac0 = new MV();
   private int smapTicks_800c6ae0;
   /** Note: a negative value for some reason, counts up to 0 */
   private int ticksUntilEncountersAreEnabled_800c6ae4;
@@ -236,56 +231,21 @@ public class SMap extends EngineState {
 
   private NewRootStruct newrootPtr_800cab04;
 
-  private boolean backgroundLoaded_800cab10;
-  private Tim[] envTextures;
-
-  private int _800cab20;
-  private MediumStruct _800cab24;
+  private final MapTransitionData4c mapTransitionData_800cab24 = new MapTransitionData4c();
   private int mapTransitionTicks_800cab28;
 
   public SubmapState smapLoadingStage_800cb430 = SubmapState.INIT_0;
 
-  private boolean _800cb448;
+  private boolean returnedToSameSubmapAfterBattle_800cb448;
 
   private final int[] collisionAndTransitions_800cb460 = new int[64];
 
-  private int submapOffsetX_800cb560;
-  private int submapOffsetY_800cb564;
   private final Vector2i screenOffset_800cb568 = new Vector2i();
-  private int _800cb570;
-  private int _800cb574;
-  private int _800cb578;
-  private int envBackgroundTextureCount_800cb57c;
-  private int envForegroundTextureCount_800cb580;
-  private int envTextureCount_800cb584;
 
-  private final EnvironmentForegroundTextureMetrics[] envForegroundMetrics_800cb590 = new EnvironmentForegroundTextureMetrics[32];
-  private final EnvironmentRenderingMetrics24[] envRenderMetrics_800cb710 = new EnvironmentRenderingMetrics24[32];
-  {
-    Arrays.setAll(this.envForegroundMetrics_800cb590, i -> new EnvironmentForegroundTextureMetrics());
-    Arrays.setAll(this.envRenderMetrics_800cb710, i -> new EnvironmentRenderingMetrics24());
-  }
-
-  private final Vector3f[] _800cbb90 = new Vector3f[32];
-  {
-    Arrays.setAll(this._800cbb90, i -> new Vector3f());
-  }
-  private final float[] _800cbc90 = new float[32];
-
-  private final GsRVIEW2 rview2_800cbd10 = new GsRVIEW2();
-  private int _800cbd30;
-  private int _800cbd34;
   private CountdownLatch screenOffsetLatch_800cbd38;
   private CountdownLatch geomOffsetLatch_800cbd3c;
-  private final MV screenToWorldMatrix_800cbd40 = new MV();
-  private int minSobj_800cbd60;
-  private int maxSobj_800cbd64;
-  /** A copy of the WS matrix */
-  private final MV worldToScreenMatrix_800cbd68 = new MV();
 
   private final CollisionGeometry collisionGeometry_800cbe08 = new CollisionGeometry(this);
-
-  private final MediumStruct _800d1a90 = new MediumStruct();
 
   private SnowEffect snow_800d4bd8;
 
@@ -511,9 +471,9 @@ public class SMap extends EngineState {
 
   private final AlertIndicator14 alertIndicatorMetrics_800f64b0 = new AlertIndicator14(-12, 12, -12, 12, 24, 48, 64, 88);
 
-  private int _800f7e24;
+  private int playerPositionRestoreMode_800f7e24;
 
-  private final ChapterStruct08[] _800f7e2c = {
+  private final ChapterStruct08[] submapChapterDestinations_800f7e2c = {
     new ChapterStruct08(0, 0),
     new ChapterStruct08(709, 0),
     new ChapterStruct08(710, 0),
@@ -527,47 +487,44 @@ public class SMap extends EngineState {
    * </ul>
    */
   private int submapFlags_800f7e54;
-  /** A hard-coded list of submap cuts, related to submap bounds for camera control */
-  private final int[] _800f7e58 = {140, 142, 155, 193, 197, 253, 310, 434, 665, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 760, 761, 762, 765, 766, 767, 768, 769, 770, 771, 772, 773, 774, 775, 776, 777, 778, 780, 781, 782, 783, 784, 785, 786};
-
-  private boolean _800f7f0c;
 
   private final float[] oldRotations_800f7f6c = new float[8];
   private boolean firstMovement;
 
-  private final Struct14_2[] _800f7f74 = {
-    new Struct14_2(7, 13), new Struct14_2(624, 11), new Struct14_2(7, 16), new Struct14_2(11, 30), new Struct14_2(9, 9), new Struct14_2(696, 13), new Struct14_2(695, 4), new Struct14_2(13, 17),
-    new Struct14_2(38, 28), new Struct14_2(39, 25), new Struct14_2(44, 6), new Struct14_2(45, 1), new Struct14_2(54, 6), new Struct14_2(66, 41), new Struct14_2(95, 1), new Struct14_2(96, 1),
-    new Struct14_2(106, 10), new Struct14_2(106, 16), new Struct14_2(106, 20), new Struct14_2(111, 11), new Struct14_2(114, 0), new Struct14_2(122, 8), new Struct14_2(130, 17), new Struct14_2(133, 57),
-    new Struct14_2(132, 22), new Struct14_2(140, 2), new Struct14_2(153, 39), new Struct14_2(171, 1), new Struct14_2(201, 1), new Struct14_2(201, 32), new Struct14_2(744, 2), new Struct14_2(224, 35),
-    new Struct14_2(231, 1), new Struct14_2(233, 13), new Struct14_2(232, 11), new Struct14_2(239, 26), new Struct14_2(242, 3), new Struct14_2(251, 10), new Struct14_2(258, 10), new Struct14_2(256, 9),
-    new Struct14_2(261, 1), new Struct14_2(264, 28), new Struct14_2(297, 0), new Struct14_2(297, 3), new Struct14_2(301, 19), new Struct14_2(302, 19), new Struct14_2(301, 1), new Struct14_2(302, 1),
-    new Struct14_2(309, 32), new Struct14_2(311, 18), new Struct14_2(328, 54), new Struct14_2(330, 25), new Struct14_2(330, 19), new Struct14_2(339, 26), new Struct14_2(344, 17), new Struct14_2(344, 18),
-    new Struct14_2(341, 14), new Struct14_2(0, 0), new Struct14_2(342, 38), new Struct14_2(347, 31), new Struct14_2(349, 1), new Struct14_2(379, 0), new Struct14_2(0, 0), new Struct14_2(413, 1),
-    new Struct14_2(433, 3), new Struct14_2(434, 1), new Struct14_2(457, 0), new Struct14_2(459, 1), new Struct14_2(477, 0), new Struct14_2(787, 1), new Struct14_2(513, 1), new Struct14_2(526, 36),
-    new Struct14_2(528, 14), new Struct14_2(528, 13), new Struct14_2(539, 0), new Struct14_2(540, 19), new Struct14_2(572, 23), new Struct14_2(528, 15), new Struct14_2(563, 25), new Struct14_2(0, 0),
-    new Struct14_2(0, 0), new Struct14_2(15, 8), new Struct14_2(346, 1), new Struct14_2(529, 41), new Struct14_2(38, 7), new Struct14_2(994, 0), new Struct14_2(996, 0), new Struct14_2(993, 0),
-    new Struct14_2(992, 0), new Struct14_2(992, 0), new Struct14_2(990, 0), new Struct14_2(991, 0), new Struct14_2(285, 0), new Struct14_2(279, 31), new Struct14_2(527, 35), new Struct14_2(528, 15),
-    new Struct14_2(327, 54), new Struct14_2(97, 1), new Struct14_2(12, 30), new Struct14_2(0, 0), new Struct14_2(999, 0), new Struct14_2(999, 1), new Struct14_2(999, 2), new Struct14_2(0, 0),
-    new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0),
-    new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0),
-    new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0),
-    new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0),
-    new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0),
-    new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0),
-    new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0),
-    new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0),
-    new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0),
-    new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0),
-    new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0),
-    new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0),
-    new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0),
-    new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0),
-    new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0),
-    new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0),
-    new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0),
-    new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0),
-    new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0), new Struct14_2(0, 0),
+  /** Submap exits that lead to the world map */
+  private final SubmapWorldMapExits[] submapWorldMapExits_800f7f74 = {
+    new SubmapWorldMapExits(7, 13), new SubmapWorldMapExits(624, 11), new SubmapWorldMapExits(7, 16), new SubmapWorldMapExits(11, 30), new SubmapWorldMapExits(9, 9), new SubmapWorldMapExits(696, 13), new SubmapWorldMapExits(695, 4), new SubmapWorldMapExits(13, 17),
+    new SubmapWorldMapExits(38, 28), new SubmapWorldMapExits(39, 25), new SubmapWorldMapExits(44, 6), new SubmapWorldMapExits(45, 1), new SubmapWorldMapExits(54, 6), new SubmapWorldMapExits(66, 41), new SubmapWorldMapExits(95, 1), new SubmapWorldMapExits(96, 1),
+    new SubmapWorldMapExits(106, 10), new SubmapWorldMapExits(106, 16), new SubmapWorldMapExits(106, 20), new SubmapWorldMapExits(111, 11), new SubmapWorldMapExits(114, 0), new SubmapWorldMapExits(122, 8), new SubmapWorldMapExits(130, 17), new SubmapWorldMapExits(133, 57),
+    new SubmapWorldMapExits(132, 22), new SubmapWorldMapExits(140, 2), new SubmapWorldMapExits(153, 39), new SubmapWorldMapExits(171, 1), new SubmapWorldMapExits(201, 1), new SubmapWorldMapExits(201, 32), new SubmapWorldMapExits(744, 2), new SubmapWorldMapExits(224, 35),
+    new SubmapWorldMapExits(231, 1), new SubmapWorldMapExits(233, 13), new SubmapWorldMapExits(232, 11), new SubmapWorldMapExits(239, 26), new SubmapWorldMapExits(242, 3), new SubmapWorldMapExits(251, 10), new SubmapWorldMapExits(258, 10), new SubmapWorldMapExits(256, 9),
+    new SubmapWorldMapExits(261, 1), new SubmapWorldMapExits(264, 28), new SubmapWorldMapExits(297, 0), new SubmapWorldMapExits(297, 3), new SubmapWorldMapExits(301, 19), new SubmapWorldMapExits(302, 19), new SubmapWorldMapExits(301, 1), new SubmapWorldMapExits(302, 1),
+    new SubmapWorldMapExits(309, 32), new SubmapWorldMapExits(311, 18), new SubmapWorldMapExits(328, 54), new SubmapWorldMapExits(330, 25), new SubmapWorldMapExits(330, 19), new SubmapWorldMapExits(339, 26), new SubmapWorldMapExits(344, 17), new SubmapWorldMapExits(344, 18),
+    new SubmapWorldMapExits(341, 14), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(342, 38), new SubmapWorldMapExits(347, 31), new SubmapWorldMapExits(349, 1), new SubmapWorldMapExits(379, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(413, 1),
+    new SubmapWorldMapExits(433, 3), new SubmapWorldMapExits(434, 1), new SubmapWorldMapExits(457, 0), new SubmapWorldMapExits(459, 1), new SubmapWorldMapExits(477, 0), new SubmapWorldMapExits(787, 1), new SubmapWorldMapExits(513, 1), new SubmapWorldMapExits(526, 36),
+    new SubmapWorldMapExits(528, 14), new SubmapWorldMapExits(528, 13), new SubmapWorldMapExits(539, 0), new SubmapWorldMapExits(540, 19), new SubmapWorldMapExits(572, 23), new SubmapWorldMapExits(528, 15), new SubmapWorldMapExits(563, 25), new SubmapWorldMapExits(0, 0),
+    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(15, 8), new SubmapWorldMapExits(346, 1), new SubmapWorldMapExits(529, 41), new SubmapWorldMapExits(38, 7), new SubmapWorldMapExits(994, 0), new SubmapWorldMapExits(996, 0), new SubmapWorldMapExits(993, 0),
+    new SubmapWorldMapExits(992, 0), new SubmapWorldMapExits(992, 0), new SubmapWorldMapExits(990, 0), new SubmapWorldMapExits(991, 0), new SubmapWorldMapExits(285, 0), new SubmapWorldMapExits(279, 31), new SubmapWorldMapExits(527, 35), new SubmapWorldMapExits(528, 15),
+    new SubmapWorldMapExits(327, 54), new SubmapWorldMapExits(97, 1), new SubmapWorldMapExits(12, 30), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(999, 0), new SubmapWorldMapExits(999, 1), new SubmapWorldMapExits(999, 2), new SubmapWorldMapExits(0, 0),
+    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
+    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
+    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
+    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
+    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
+    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
+    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
+    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
+    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
+    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
+    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
+    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
+    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
+    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
+    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
+    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
+    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
+    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
+    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
   };
 
   private int snowState_800f9e60;
@@ -656,13 +613,13 @@ public class SMap extends EngineState {
     functions[258] = this::scriptSetCameraOffset;
     functions[259] = this::scriptGetCollisionAndTransitionInfo;
     functions[260] = this::FUN_800e69e8;
-    functions[261] = this::FUN_800e69f0;
-    functions[262] = this::FUN_800e6a28;
+    functions[261] = this::scriptBlockCollisionPrimitive;
+    functions[262] = this::scriptUnblockCollisionPrimitive;
     functions[263] = this::scriptSetEnvForegroundPosition;
     functions[264] = this::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject;
     functions[265] = this::scriptGetSetEncountersDisabled;
     functions[266] = this::FUN_800e6aa0;
-    functions[267] = this::FUN_800e6b64;
+    functions[267] = this::scriptGetCollisionPrimitivePos;
     functions[268] = this::FUN_800e6bd8;
     functions[269] = this::FUN_800e6be0;
     functions[270] = this::FUN_800e6cac;
@@ -983,66 +940,36 @@ public class SMap extends EngineState {
 
   /** Pulled from BPE segment */
   @Method(0x8002aae8L)
-  private boolean FUN_8002aae8() {
-    boolean s0 = false;
+  private void renderEnvironmentAndHandleTransitions() {
     switch(submapEnvState_80052c44) {
-      case 0 -> {
-        s0 = true;
+      case RENDER_AND_CHECK_TRANSITIONS_0:
         this.renderEnvironment();
-      }
 
-      case 1, 2 -> {
-        return false;
-      }
+      case CHECK_TRANSITIONS_1_2:
+        if((this.submapFlags_800f7e54 & 0x1) == 0) {
+          // If an encounter should start
+          if(this.handleEncounters()) {
+            this.mapTransition(-1, 0);
+          }
+        }
 
-      case 3 -> {
-        this.collisionGeometry_800cbe08.unloadCollision();
-        this.clearLatches();
-        this.unloadSmap();
-        this.FUN_800e4e5c();
+        //LAB_8002abdc
+        //LAB_8002abe0
+        // Handle map transitions
+        final int collisionAndTransitionInfo = this.getCollisionAndTransitionInfo(collidedPrimitiveIndex_80052c38);
+        if((collisionAndTransitionInfo & 0x10) != 0) {
+          this.mapTransition(collisionAndTransitionInfo >>> 22, collisionAndTransitionInfo >>> 16 & 0x3f);
+        }
+        break;
 
-        //LAB_8002ab98
-        submapEnvState_80052c44 = 2;
-      }
-
-      case 4 -> {
+      case RENDER_AND_UNLOAD_4_5:
         this.renderEnvironment();
-        this.collisionGeometry_800cbe08.unloadCollision();
-        this.clearLatches();
+
+      case UNLOAD_3:
         this.unloadSmap();
-        this.FUN_800e4e5c();
-
-        //LAB_8002ab98
-        submapEnvState_80052c44 = 2;
-      }
-
-      case 5 -> {
-        this.renderEnvironment();
-        this.collisionGeometry_800cbe08.unloadCollision();
-        this.clearLatches();
-        this.unloadSmap();
-        submapEnvState_80052c44 = 2;
-      }
+        submapEnvState_80052c44 = SubmapEnvState.CHECK_TRANSITIONS_1_2;
+        break;
     }
-
-    //caseD_6
-    if((this.submapFlags_800f7e54 & 0x1) == 0) {
-      // If an encounter should start
-      if(this.handleEncounters()) {
-        this.mapTransition(-1, 0);
-      }
-    }
-
-    //LAB_8002abdc
-    //LAB_8002abe0
-    final int collisionAndTransitionInfo = this.getCollisionAndTransitionInfo(index_80052c38);
-    if((collisionAndTransitionInfo & 0x10) != 0) {
-      this.mapTransition(collisionAndTransitionInfo >>> 22, collisionAndTransitionInfo >>> 16 & 0x3f);
-    }
-
-    //LAB_8002ac10
-    //LAB_8002ac14
-    return s0;
   }
 
   @Method(0x800d9b08L)
@@ -1275,16 +1202,16 @@ public class SMap extends EngineState {
       GTE.setTransforms(worldToScreenMatrix_800c3548);
       this.transformToWorldspace(worldspaceDeltaMovement, deltaMovement);
 
-      final int collisionResult = this.collisionGeometry_800cbe08.handleCollisionAndMovement(player.sobjIndex_12e != 0, playerModel.coord2_14.coord.transfer, worldspaceDeltaMovement);
-      if(collisionResult >= 0) {
-        if(this.FUN_800e6798(collisionResult) != 0) {
+      final int collidedPrimitiveIndex = this.collisionGeometry_800cbe08.handleCollisionAndMovement(player.sobjIndex_12e != 0, playerModel.coord2_14.coord.transfer, worldspaceDeltaMovement);
+      if(collidedPrimitiveIndex >= 0) {
+        if(this.isWalkable(collidedPrimitiveIndex)) {
           playerModel.coord2_14.coord.transfer.x += worldspaceDeltaMovement.x;
           playerModel.coord2_14.coord.transfer.y = worldspaceDeltaMovement.y;
           playerModel.coord2_14.coord.transfer.z += worldspaceDeltaMovement.z;
         }
 
         //LAB_800de2c8
-        player.ui_16c = collisionResult;
+        player.collidedPrimitiveIndex_16c = collidedPrimitiveIndex;
       }
 
       //LAB_800de2cc
@@ -1298,16 +1225,14 @@ public class SMap extends EngineState {
   }
 
   @ScriptDescription("Unknown, related to triangle indicators")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "collisionPrimitiveIndex")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
   @Method(0x800de334L)
   private FlowControl FUN_800de334(final RunningScript<?> script) {
-    final Vector3f sp0x10 = new Vector3f();
-    this.collisionGeometry_800cbe08.get3dAverageOfSomething(script.params_20[0].get(), sp0x10);
-    this.playerModel_800c6748.coord2_14.coord.transfer.set(sp0x10);
-    final MV lw = new MV();
+    this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(script.params_20[0].get(), this.playerModel_800c6748.coord2_14.coord.transfer);
+
     final MV ls = new MV();
-    GsGetLws(this.playerModel_800c6748.coord2_14, lw, ls);
+    GsGetLs(this.playerModel_800c6748.coord2_14, ls);
     GTE.setTransforms(ls);
     GTE.perspectiveTransform(0, 0, 0);
     final float x = GTE.getScreenX(2);
@@ -1334,20 +1259,17 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "p0")
   @Method(0x800de4b4L)
   private FlowControl FUN_800de4b4(final RunningScript<?> script) {
-    final Vector3f sp0x10 = new Vector3f();
-    final MV sp0x28 = new MV();
-    final MV sp0x48 = new MV();
+    final MV ls = new MV();
 
     final Param ints = script.params_20[0];
     int s0 = 0;
 
     //LAB_800de4f8
     while(ints.array(s0).get() != -1) {
-      this.collisionGeometry_800cbe08.get3dAverageOfSomething(ints.array(s0++).get(), sp0x10);
-      this.playerModel_800c6748.coord2_14.coord.transfer.set(sp0x10);
+      this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(ints.array(s0++).get(), this.playerModel_800c6748.coord2_14.coord.transfer);
 
-      GsGetLws(this.playerModel_800c6748.coord2_14, sp0x48, sp0x28);
-      GTE.setTransforms(sp0x28);
+      GsGetLs(this.playerModel_800c6748.coord2_14, ls);
+      GTE.setTransforms(ls);
       GTE.perspectiveTransform(0, 0, 0);
       final float x = GTE.getScreenX(2);
       final float y = GTE.getScreenY(2);
@@ -1486,7 +1408,7 @@ public class SMap extends EngineState {
 
       final int collisionResult = this.collisionGeometry_800cbe08.handleCollisionAndMovement(sobj.sobjIndex_12e != 0, model.coord2_14.coord.transfer, movement);
       if(collisionResult >= 0) {
-        this.FUN_800e6798(collisionResult); //TODO does nothing?
+        this.isWalkable(collisionResult); //TODO does nothing?
       }
 
       //LAB_800def08
@@ -2148,9 +2070,9 @@ public class SMap extends EngineState {
   private FlowControl FUN_800e00cc(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
-    final int v0 = this.collisionGeometry_800cbe08.FUN_800e9018(model.coord2_14.coord.transfer.x, model.coord2_14.coord.transfer.y, model.coord2_14.coord.transfer.z, 0);
-    script.params_20[1].set(v0);
-    sobj.ui_16c = v0;
+    final int collisionPrimitiveIndex = this.collisionGeometry_800cbe08.FUN_800e9018(model.coord2_14.coord.transfer.x, model.coord2_14.coord.transfer.y, model.coord2_14.coord.transfer.z, 0);
+    script.params_20[1].set(collisionPrimitiveIndex);
+    sobj.collidedPrimitiveIndex_16c = collisionPrimitiveIndex;
     return FlowControl.CONTINUE;
   }
 
@@ -2852,7 +2774,7 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800e13b0L)
-  private void executeSubmapMediaLoadingStage(final int index) {
+  private void executeSubmapMediaLoadingStage(final int collisionPrimitiveIndexForInitialPlayerPosition) {
     switch(this.mediaLoadingStage_800c68e4) {
       case LOAD_SHADOW_AND_RESET_LIGHTING_0 -> {
         new Tim(Unpacker.loadFile("shadow.tim")).uploadToGpu();
@@ -2884,7 +2806,7 @@ public class SMap extends EngineState {
       }
 
       case LOAD_MUSIC_1 -> {
-        if(index == -1) {
+        if(collisionPrimitiveIndexForInitialPlayerPosition == -1) {
           break;
         }
 
@@ -2971,7 +2893,6 @@ public class SMap extends EngineState {
       // Load map assets
       case LOAD_SOBJ_ASSETS_AND_SCRIPTS_5 -> {
         this.unloadSubmapParticles_800c6870 = false;
-        this.submap = new RetailSubmap(submapCut_80052c30, this.newrootPtr_800cab04, this.screenOffset_800cb568);
         this.submap.loadAssets(() -> this.mediaLoadingStage_800c68e4 = SubmapMediaState.FINALIZE_SUBMAP_LOADING_7);
         this.mediaLoadingStage_800c68e4 = SubmapMediaState.WAIT_FOR_SOBJ_ASSETS_AND_SCRIPTS_6;
       }
@@ -3026,7 +2947,7 @@ public class SMap extends EngineState {
           state.innerStruct_00.animIndex_132 = 0;
           state.innerStruct_00.movementStepY_134 = 0.0f;
           state.innerStruct_00.movementTicks_144 = 0;
-          state.innerStruct_00.ui_16c = -1;
+          state.innerStruct_00.collidedPrimitiveIndex_16c = -1;
           state.innerStruct_00.us_170 = 0;
           state.innerStruct_00.s_172 = 0;
           state.innerStruct_00.rotationFrames_188 = 0;
@@ -3058,7 +2979,7 @@ public class SMap extends EngineState {
 
           if(i == 0) {
             state.innerStruct_00.flags_190 = 0x1;
-            this.FUN_800e4d88(index, model);
+            this.restoreOrSetPlayerPosition(collisionPrimitiveIndexForInitialPlayerPosition, model);
           }
 
           //LAB_800e1d60
@@ -3129,28 +3050,28 @@ public class SMap extends EngineState {
     sobj.movementTicks_144--;
 
     if(sobj.s_172 == 0) {
-      final Vector3f sp0x20 = new Vector3f();
+      final Vector3f movement = new Vector3f();
 
       if((sobj.flags_190 & 0x1) != 0) { // Is player
         final Vector3f sp0x18 = new Vector3f();
         sp0x18.set(sobj.movementStep_148).mul(2.0f / vsyncMode_8007a3b8);
         GTE.setTransforms(worldToScreenMatrix_800c3548);
-        this.transformToWorldspace(sp0x20, sp0x18);
+        this.transformToWorldspace(movement, sp0x18);
       } else {
         //LAB_800e2134
-        sp0x20.set(sobj.movementStep_148).mul(2.0f / vsyncMode_8007a3b8);
+        movement.set(sobj.movementStep_148).mul(2.0f / vsyncMode_8007a3b8);
       }
 
       //LAB_800e2140
-      final int s3 = this.collisionGeometry_800cbe08.handleCollisionAndMovement(sobj.sobjIndex_12e != 0, model.coord2_14.coord.transfer, sp0x20);
-      if(s3 >= 0 && this.FUN_800e6798(s3) != 0) {
-        model.coord2_14.coord.transfer.x += sp0x20.x / (2.0f / vsyncMode_8007a3b8);
-        model.coord2_14.coord.transfer.y = sp0x20.y;
-        model.coord2_14.coord.transfer.z += sp0x20.z / (2.0f / vsyncMode_8007a3b8);
+      final int collidedPrimitiveIndex = this.collisionGeometry_800cbe08.handleCollisionAndMovement(sobj.sobjIndex_12e != 0, model.coord2_14.coord.transfer, movement);
+      if(collidedPrimitiveIndex >= 0 && this.isWalkable(collidedPrimitiveIndex)) {
+        model.coord2_14.coord.transfer.x += movement.x / (2.0f / vsyncMode_8007a3b8);
+        model.coord2_14.coord.transfer.y = movement.y;
+        model.coord2_14.coord.transfer.z += movement.z / (2.0f / vsyncMode_8007a3b8);
       }
 
       //LAB_800e21bc
-      sobj.ui_16c = s3;
+      sobj.collidedPrimitiveIndex_16c = collidedPrimitiveIndex;
     } else {
       //LAB_800e21c4
       model.coord2_14.coord.transfer.add(sobj.movementStep_148);
@@ -3171,14 +3092,10 @@ public class SMap extends EngineState {
 
   @Method(0x800e2220L)
   private void unloadSmap() {
-    this.submapControllerState_800c6740.deallocateWithChildren();
+    this.collisionGeometry_800cbe08.unloadCollision();
+    this.clearLatches();
 
-    for(final EnvironmentRenderingMetrics24 environmentRenderingMetrics24 : this.envRenderMetrics_800cb710) {
-      if(environmentRenderingMetrics24.obj != null) {
-        environmentRenderingMetrics24.obj.delete();
-        environmentRenderingMetrics24.obj = null;
-      }
-    }
+    this.submapControllerState_800c6740.deallocateWithChildren();
 
     if(this.chapterTitleCardMrg_800c6710 != null) {
       this.chapterTitleCardMrg_800c6710 = null;
@@ -3780,7 +3697,7 @@ public class SMap extends EngineState {
     // The first condition is to fix what we believe is caused by menus loading too fast in SC. Submaps still take several frames to initialize,
     // and if you spam triangle and escape immediately after the post-combat screen it's possible to get into this method when index_80052c38 is
     // still set to -1. See #304 for more details.
-    if(index_80052c38 >= 0 && index_80052c38 < 0x40 && this.collisionAndTransitions_800cb460[index_80052c38] != 0) {
+    if(collidedPrimitiveIndex_80052c38 >= 0 && collidedPrimitiveIndex_80052c38 < 0x40 && this.collisionAndTransitions_800cb460[collidedPrimitiveIndex_80052c38] != 0) {
       return false;
     }
 
@@ -3810,46 +3727,34 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800e4d00L)
-  private void FUN_800e4d00(final int submapCut, final int index) {
-    if(!this.FUN_800e5264(this.matrix_800c6ac0, submapCut)) {
-      //LAB_800e4d34
-      final Vector3f avg = new Vector3f();
-      this.collisionGeometry_800cbe08.get3dAverageOfSomething(index, avg);
-      this.matrix_800c6ac0.transfer.set(avg);
-      this._800f7e24 = 2;
+  private void restoreSubmapAfterBattleOrSetPositionToCollisionPrimitive(final int submapCut, final int collisionPrimitiveIndex) {
+    if(this.restoreSubmapAfterBattle(this.playerPositionWhenLoadingSubmap_800c6ac0, submapCut)) {
+      this.playerPositionRestoreMode_800f7e24 = 1;
     } else {
-      this._800f7e24 = 1;
+      //LAB_800e4d34
+      this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(collisionPrimitiveIndex, this.playerPositionWhenLoadingSubmap_800c6ac0.transfer);
+      this.playerPositionRestoreMode_800f7e24 = 2;
     }
 
     //LAB_800e4d74
   }
 
   @Method(0x800e4d88L)
-  private void FUN_800e4d88(final int index, final Model124 model) {
-    if(this._800f7e24 != 0) {
-      if(this._800f7e24 == 1) {
-        model.coord2_14.coord.set(this.matrix_800c6ac0);
-      } else {
-        //LAB_800e4e04
-        model.coord2_14.coord.transfer.set(this.matrix_800c6ac0.transfer);
-      }
-
-      //LAB_800e4e18
-      this._800f7e24 = 0;
-    } else {
+  private void restoreOrSetPlayerPosition(final int collisionPrimitiveIndexForPosition, final Model124 model) {
+    if(this.playerPositionRestoreMode_800f7e24 == 0) {
       //LAB_800e4e20
-      final Vector3f sp10 = new Vector3f();
-      this.collisionGeometry_800cbe08.get3dAverageOfSomething(index, sp10);
-      model.coord2_14.coord.transfer.set(sp10);
+      this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(collisionPrimitiveIndexForPosition, model.coord2_14.coord.transfer);
+    } else if(this.playerPositionRestoreMode_800f7e24 == 1) {
+      model.coord2_14.coord.set(this.playerPositionWhenLoadingSubmap_800c6ac0);
+    } else {
+      //LAB_800e4e04
+      model.coord2_14.coord.transfer.set(this.playerPositionWhenLoadingSubmap_800c6ac0.transfer);
     }
 
-    //LAB_800e4e4c
-  }
+    //LAB_800e4e18
+    this.playerPositionRestoreMode_800f7e24 = 0;
 
-  @Method(0x800e4e5cL)
-  private void FUN_800e4e5c() {
-    //LAB_800e4ecc
-    GPU.uploadData24(new Rect4i(640, 0, 368, 240), GPU.getDisplayBuffer().getData());
+    //LAB_800e4e4c
   }
 
   @Method(0x800e4ff4L)
@@ -3867,10 +3772,10 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800e5104L)
-  private void loadAndRenderSubmapModelAndEffects(final int index, final MediumStruct a1) {
-    this.executeSubmapMediaLoadingStage(index);
+  private void loadAndRenderSubmapModelAndEffects(final int collisionGeometryIndexForInitialPlayerPosition, final MapTransitionData4c mapTransitionData) {
+    this.executeSubmapMediaLoadingStage(collisionGeometryIndexForInitialPlayerPosition);
 
-    a1.callback_48.accept(a1);
+    mapTransitionData.collidedPrimitiveSetterCallback_48.accept(mapTransitionData);
 
     this.smapTicks_800c6ae0++;
 
@@ -3900,99 +3805,122 @@ public class SMap extends EngineState {
     }
 
     //LAB_800e5234
-    this.renderEnvironment(matrices, this.sobjCount_800c6730);
+    ((RetailSubmap)this.submap).renderEnvironment(matrices, this.sobjCount_800c6730);
+    this.renderCollisionDebug();
+  }
 
+  private void renderCollisionDebug() {
     if(enableCollisionDebug) {
-      if(this.collisionGeometry_800cbe08.dobj2Ptr_20.obj == null) {
-        this.collisionGeometry_800cbe08.dobj2Ptr_20.obj = TmdObjLoader.fromObjTable("EnvironmentSomethingModel", this.collisionGeometry_800cbe08.dobj2Ptr_20.tmd_08);
+      if(this.collisionGeometry_800cbe08.debugObj == null) {
+        final IntList offsets = new IntArrayList();
+        int vertexCount = 0;
+
+        final PolyBuilder builder = new PolyBuilder("Collision Model", GL_TRIANGLE_STRIP);
+        builder.translucency(Translucency.HALF_B_PLUS_HALF_F);
+
+        for(int i = 0; i < this.collisionGeometry_800cbe08.primitiveCount_0c; i++) {
+          offsets.add(vertexCount);
+
+          final CollisionPrimitiveInfo0c primitiveInfo = this.collisionGeometry_800cbe08.primitiveInfo_14[i];
+          final TmdObjTable1c.Primitive primitive = this.collisionGeometry_800cbe08.getPrimitiveForOffset(primitiveInfo.primitiveOffset_04  );
+          final int packetOffset = primitiveInfo.primitiveOffset_04 - primitive.offset();
+          final int packetIndex = packetOffset / (primitive.width() + 4);
+          final int remainder = packetOffset % (primitive.width() + 4);
+          final byte[] packet = primitive.data()[packetIndex];
+
+          for(int vertexIndex = 0; vertexIndex < primitiveInfo.vertexCount_00; vertexIndex++) {
+            builder.addVertex(this.collisionGeometry_800cbe08.verts_04[IoHelper.readUShort(packet, remainder + 2 + vertexIndex * 2)]);
+            vertexCount++;
+          }
+        }
+
+        offsets.add(vertexCount); // Add extra offset for easily calculating primitive vertex counts
+
+        this.collisionGeometry_800cbe08.debugObj = builder.build();
+        this.collisionGeometry_800cbe08.debugIndices = offsets.toIntArray();
       }
 
       final MV lw = new MV();
-      final MV ls = new MV();
-      GsGetLws(this.collisionGeometry_800cbe08.dobj2Ptr_20.coord2_04, lw, ls);
-      GsSetLightMatrix(lw);
-      GTE.setTransforms(ls);
-      Renderer.renderDobj2(this.collisionGeometry_800cbe08.dobj2Ptr_20, false, 0);
+      GsGetLw(this.collisionGeometry_800cbe08.dobj2Ptr_20.coord2_04, lw);
 
-      RENDERER.queueModel(this.collisionGeometry_800cbe08.dobj2Ptr_20.obj, lw)
-        .screenspaceOffset(this.screenOffset_800cb568.x + 8, -this.screenOffset_800cb568.y)
-      ;
-    } else if(this.collisionGeometry_800cbe08.dobj2Ptr_20.obj != null) {
-      this.collisionGeometry_800cbe08.dobj2Ptr_20.obj.delete();
-      this.collisionGeometry_800cbe08.dobj2Ptr_20.obj = null;
+      for(int i = 0; i < this.collisionGeometry_800cbe08.primitiveCount_0c; i++) {
+        final int vertexOffset = this.collisionGeometry_800cbe08.debugIndices[i];
+        final int vertexCount = this.collisionGeometry_800cbe08.debugIndices[i + 1] - vertexOffset;
+
+        final RenderEngine.QueuedModel model = RENDERER.queueModel(this.collisionGeometry_800cbe08.debugObj, lw)
+          .vertices(vertexOffset, vertexCount)
+          .screenspaceOffset(this.screenOffset_800cb568.x + 8, -this.screenOffset_800cb568.y)
+        ;
+
+        if((this.getCollisionAndTransitionInfo(i) & 0x1) != 0) {
+          model.colour(0.5f, 0.0f, 1.0f);
+        }
+
+        if((this.getCollisionAndTransitionInfo(i) & 0x2) != 0) {
+          model.colour(1.0f, 0.5f, 0.0f);
+        }
+
+        if((this.getCollisionAndTransitionInfo(i) & 0x4) != 0) {
+          model.colour(1.0f, 1.0f, 0.0f);
+        }
+
+        if(!this.isWalkable(i)) {
+          model.colour(1.0f, 0.0f, 0.0f);
+        }
+
+        if((this.getCollisionAndTransitionInfo(i) & 0x10) != 0) {
+          model.colour(0.0f, 1.0f, 0.0f);
+        }
+
+        if((this.getCollisionAndTransitionInfo(i) & 0x20) != 0) {
+          model.colour(0.0f, 1.0f, 1.0f);
+        }
+
+        for(int sobjIndex = 0; sobjIndex < this.sobjCount_800c6730; sobjIndex++) {
+          if(this.sobjs_800c6880[sobjIndex].innerStruct_00.collidedPrimitiveIndex_16c == i) {
+            model.colour(0.0f, 0.0f, sobjIndex == 0 ? 1.0f : 0.5f);
+          }
+        }
+
+        for(int n = 0; n < 256; n++) {
+          final SubmapWorldMapExits worldMapExits = this.submapWorldMapExits_800f7f74[n];
+
+          if(worldMapExits.submapCut_04 == submapCut_80052c30 && i == worldMapExits.primitiveIndex_06) {
+            model.colour(1.0f, 0.0f, 1.0f);
+            break;
+          }
+        }
+      }
+    } else if(this.collisionGeometry_800cbe08.debugObj != null) {
+      this.collisionGeometry_800cbe08.debugObj.delete();
+      this.collisionGeometry_800cbe08.debugObj = null;
+      this.collisionGeometry_800cbe08.debugIndices = null;
     }
   }
 
+  /** Restores camera when returning from battle */
   @Method(0x800e5264L)
-  private boolean FUN_800e5264(final MV mat, final int submapCut) {
-    if(submapCut_80052c3c != submapCut) {
-      this._800cb448 = false;
+  private boolean restoreSubmapAfterBattle(final MV mat, final int submapCut) {
+    if(submapCutBeforeBattle_80052c3c != submapCut) {
+      this.returnedToSameSubmapAfterBattle_800cb448 = false;
       return false;
     }
 
     //LAB_800e5294
-    if(!_80052c40) {
+    if(!shouldRestoreCameraPosition_80052c40) {
       return false;
     }
 
     //LAB_800e52b0
-    this.setScreenOffsetIfNotSet(1, screenOffsetX_800bed50, screenOffsetY_800bed54);
+    this.setScreenOffsetIfNotSet(1, this.screenOffsetBeforeBattle_800bed50.x, this.screenOffsetBeforeBattle_800bed50.y);
 
-    mat.set(matrix_800bed30);
+    mat.set(this.playerPositionBeforeBattle_800bed30);
 
-    _80052c40 = false;
-    this._800cb448 = true;
+    shouldRestoreCameraPosition_80052c40 = false;
+    this.returnedToSameSubmapAfterBattle_800cb448 = true;
 
     //LAB_800e5320
     return true;
-  }
-
-  /**
-   * Loads DRGN21 MRG @ 136653 - contains graphics for intro cutscene with Rose and Feyrbrand
-   *
-   * <ol start="0">
-   *   <li>
-   *     {@link EnvironmentFile} with 11 slices.
-   *     <ol start="0">
-   *       <li>Background slice 0</li>
-   *       <li>Background slice 1</li>
-   *       <li>Background slice 2</li>
-   *       <li>Background slice 3</li>
-   *       <li>Sky overlay 0</li>
-   *       <li>Sky overlay 1</li>
-   *       <li>Sky overlay 2</li>
-   *       <li>Sky overlay 3</li>
-   *       <li>Cliff overlay 0</li>
-   *       <li>Cliff overlay 1</li>
-   *       <li>Forest overlay</li>
-   *     </ol>
-   *   </li>
-   *   <li>Unknown - related to the TMD TODO</li>
-   *   <li>TMD - appears to be geometry of where Rose hops, and Feyrbrand's position?</li>
-   *   <li>Background slice 0</li>
-   *   <li>Background slice 1</li>
-   *   <li>Background slice 2</li>
-   *   <li>Background slice 3</li>
-   *   <li>Background overlays and animated sky (lightning bolt)</li>
-   * </ol>
-   */
-  @Method(0x800e5330L)
-  private void loadBackground(final String mapName, final List<FileData> files) {
-    this.envTextures = new Tim[files.size() - 3];
-
-    //LAB_800e5374
-    for(int i = 0; i < files.size() - 3; i++) {
-      this.envTextures[i] = new Tim(files.get(i + 3));
-      this.envTextures[i].uploadToGpu();
-    }
-
-    //LAB_800e5430
-    this.loadEnvironment(new EnvironmentFile(files.get(0)));
-    this.collisionGeometry_800cbe08.loadCollision(new TmdWithId("Background " + mapName, files.get(2)), files.get(1));
-
-    submapEnvState_80052c44 = 2;
-    this._800cab20 = 2 * (3 - vsyncMode_8007a3b8);
-    this.backgroundLoaded_800cab10 = true;
   }
 
   @Method(0x800e5518L)
@@ -4027,7 +3955,7 @@ public class SMap extends EngineState {
     }
 
     if(this.smapTicks_800c6ae0 > 15 * (3 - vsyncMode_8007a3b8)) {
-      this._800cb448 = false;
+      this.returnedToSameSubmapAfterBattle_800cb448 = false;
     }
 
     submapFullyLoaded_800bd7b4 = false;
@@ -4095,10 +4023,10 @@ public class SMap extends EngineState {
     if(newScene == 0x3fd) {
       whichMenu_800bdc38 = WhichMenu.INIT_SAVE_GAME_MENU_16;
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
-      this._800f7e2c[0]._04 = index_80052c38;
-      index_80052c38 = this._800f7e2c[gameState_800babc8.chapterIndex_98]._04;
-      submapCutForSave_800cb450 = this._800f7e2c[gameState_800babc8.chapterIndex_98]._00;
-      this._800cab24 = this.FUN_800ea974(-1);
+      this.submapChapterDestinations_800f7e2c[0].submapScene_04 = collidedPrimitiveIndex_80052c38;
+      collidedPrimitiveIndex_80052c38 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapScene_04;
+      submapCutForSave_800cb450 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapCut_00;
+      this.loadMapTransitionData(-1);
       SCRIPTS.pause();
       return true;
     }
@@ -4111,30 +4039,27 @@ public class SMap extends EngineState {
       return true;
     }
 
-    final int scene;
+    final int encounterId;
     if(newScene == 0) {
-      scene = encounterId_800bb0f8;
+      encounterId = encounterId_800bb0f8;
     } else {
       if(newScene > 0x1ff) {
         SCRIPTS.pause();
         return true;
       }
 
-      scene = newScene;
+      encounterId = newScene;
     }
 
-    encounterId_800bb0f8 = scene;
+    encounterId_800bb0f8 = encounterId;
 
     if(this.isScriptLoaded(0)) {
       final SubmapObject210 sobj = this.sobjs_800c6880[0].innerStruct_00;
-      final Model124 model = sobj.model_00;
 
-      screenOffsetX_800bed50 = this.screenOffset_800cb568.x;
-      screenOffsetY_800bed54 = this.screenOffset_800cb568.y;
-      submapCut_80052c3c = cut;
-      matrix_800bed30.set(model.coord2_14.coord);
-      matrix_800bed30.transfer.set(model.coord2_14.coord.transfer);
-      _80052c40 = true;
+      this.screenOffsetBeforeBattle_800bed50.set(this.screenOffset_800cb568);
+      submapCutBeforeBattle_80052c3c = cut;
+      this.playerPositionBeforeBattle_800bed30.set(sobj.model_00.coord2_14.coord);
+      shouldRestoreCameraPosition_80052c40 = true;
     }
 
     SCRIPTS.pause();
@@ -4145,27 +4070,13 @@ public class SMap extends EngineState {
   @Override
   @Method(0x800e5914L)
   public void tick() {
-    this.executeSmapLoadingStage_2();
-  }
-
-  @Method(0x800e59a4L)
-  private void executeSmapLoadingStage_2() {
-    this._800cab20--;
-
-    if(this._800cab20 >= 0) {
-      resizeDisplay(384, 240);
-      this._800caaf4 = submapCut_80052c30;
-      this._800caaf8 = submapScene_80052c34;
-      return;
-    }
-
     //LAB_800e5a30
     //LAB_800e5a34
     if(pregameLoadingStage_800bb10c == 0) {
       pregameLoadingStage_800bb10c = 1;
       this._800caaf4 = submapCut_80052c30;
       this._800caaf8 = submapScene_80052c34;
-      submapEnvState_80052c44 = 2;
+      submapEnvState_80052c44 = SubmapEnvState.CHECK_TRANSITIONS_1_2;
       this.smapLoadingStage_800cb430 = SubmapState.INIT_0;
     }
 
@@ -4179,7 +4090,7 @@ public class SMap extends EngineState {
         resizeDisplay(384, 240);
 
         //LAB_800e5b2c
-        submapEnvState_80052c44 = 2;
+        submapEnvState_80052c44 = SubmapEnvState.CHECK_TRANSITIONS_1_2;
         this.encounterAccumulator_800c6ae8 = 0;
         this.smapLoadingStage_800cb430 = SubmapState.LOAD_NEWROOT_1;
       }
@@ -4205,61 +4116,26 @@ public class SMap extends EngineState {
 
       case LOAD_ENVIRONMENT_3 -> {
         this.mapTransitionTicks_800cab28 = 0;
-        submapEnvState_80052c44 = 1;
+        submapEnvState_80052c44 = SubmapEnvState.CHECK_TRANSITIONS_1_2;
         this._800caaf4 = submapCut_80052c30;
         this._800caaf8 = submapScene_80052c34;
 
-        this.backgroundLoaded_800cab10 = false;
-
-        final IntRef drgnIndex = new IntRef();
-        final IntRef fileIndex = new IntRef();
-        this.newrootPtr_800cab04.getDrgnFile(submapCut_80052c30, drgnIndex, fileIndex);
-        drgnBinIndex_800bc058 = drgnIndex.get();
-        loadDrgnDir(2, fileIndex.get(), files -> this.loadBackground("DRGN2%d/%d".formatted(drgnIndex.get(), fileIndex.get()), files));
-
-        this.smapLoadingStage_800cb430 = SubmapState.WAIT_FOR_ENVIRONMENT_6;
+        this.submap = new RetailSubmap(submapCut_80052c30, this.newrootPtr_800cab04, this.screenOffset_800cb568, this.collisionGeometry_800cbe08);
+        this.submap.loadEnv(() -> this.smapLoadingStage_800cb430 = SubmapState.START_LOADING_MEDIA_10);
+        this.smapLoadingStage_800cb430 = SubmapState.WAIT_FOR_ENVIRONMENT;
       }
 
       case CHANGE_SUBMAP_4 -> {
-        this.loadAndRenderSubmapModelAndEffects(this._800caaf8, this._800cab24);
+        this.loadAndRenderSubmapModelAndEffects(this._800caaf8, this.mapTransitionData_800cab24);
         this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_SUBMAP_17;
       }
 
-      case WAIT_FOR_ENVIRONMENT_6 -> {
-        if(this.backgroundLoaded_800cab10) {
-          for(int i = 0; i < this.envTextureCount_800cb584; i++) {
-            final EnvironmentRenderingMetrics24 renderPacket = this.envRenderMetrics_800cb710[i];
-            for(int textureIndex = 0; textureIndex < this.envTextures.length; textureIndex++) {
-              final Tim texture = this.envTextures[textureIndex];
-              final Rect4i bounds = texture.getImageRect();
-
-              final int tpX = (renderPacket.tpage_04 & 0b1111) * 64;
-              final int tpY = (renderPacket.tpage_04 & 0b10000) != 0 ? 256 : 0;
-
-              if(MathHelper.inBox(tpX, tpY, bounds.x, bounds.y, bounds.w, bounds.h)) {
-                final SubmapEnvironmentTextureEvent event = EVENTS.postEvent(new SubmapEnvironmentTextureEvent(submapCut_80052c30, textureIndex + 3));
-                renderPacket.texture = event.texture;
-                break;
-              }
-            }
-          }
-
-          this.envTextures = null;
-          this.smapLoadingStage_800cb430 = SubmapState.LOAD_MAP_POINTS_9;
-        }
-      }
-
-      case LOAD_MAP_POINTS_9 -> {
-        this.FUN_800e4d00(submapCut_80052c30, submapScene_80052c34);
+      case START_LOADING_MEDIA_10 -> {
+        this.restoreSubmapAfterBattleOrSetPositionToCollisionPrimitive(submapCut_80052c30, submapScene_80052c34);
         this.initCamera(submapScene_80052c34);
         this.loadCollisionAndTransitions(submapCut_80052c30);
         this.clearSubmapFlags();
 
-        //LAB_800e5e20
-        this.smapLoadingStage_800cb430 = SubmapState.START_LOADING_MEDIA_10;
-      }
-
-      case START_LOADING_MEDIA_10 -> {
         this.mediaLoadingStage_800c68e4 = SubmapMediaState.LOAD_SHADOW_AND_RESET_LIGHTING_0;
         this.executeSubmapMediaLoadingStage(this._800caaf8);
         this.smapLoadingStage_800cb430 = SubmapState.FINISH_LOADING_AND_FADE_IN_11;
@@ -4274,24 +4150,24 @@ public class SMap extends EngineState {
         }
 
         if(this.isScriptLoaded(0)) {
-          this.sobjs_800c6880[0].innerStruct_00.ui_16c = this._800caaf8;
+          this.sobjs_800c6880[0].innerStruct_00.collidedPrimitiveIndex_16c = this._800caaf8;
         }
 
         //LAB_800e5e94
-        this.FUN_800e770c();
+        ((RetailSubmap)this.submap).resetSobjBounds();
         loadingNewGameState_800bdc34 = false;
-        submapEnvState_80052c44 = 0;
+        submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_CHECK_TRANSITIONS_0;
         startFadeEffect(2, 10);
-        this._800cab24 = this.FUN_800ea974(this._800caaf4);
+        this.loadMapTransitionData(this._800caaf4);
         SCRIPTS.resume();
         this.smapTicks_800c6ae0 = 0;
         this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
       }
 
       case RENDER_SUBMAP_12 -> {
-        submapEnvState_80052c44 = 0;
+        submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_CHECK_TRANSITIONS_0;
 
-        this.loadAndRenderSubmapModelAndEffects(this._800caaf8, this._800cab24);
+        this.loadAndRenderSubmapModelAndEffects(this._800caaf8, this.mapTransitionData_800cab24);
 
         if(Input.pressedThisFrame(InputAction.BUTTON_NORTH) && !gameState_800babc8.indicatorsDisabled_4e3) {
           this.mapTransition(-1, 0x3ff); // Open inv
@@ -4299,7 +4175,7 @@ public class SMap extends EngineState {
       }
 
       case LOAD_MENU_13 -> {
-        this.loadAndRenderSubmapModelAndEffects(this._800caaf8, this._800cab24);
+        this.loadAndRenderSubmapModelAndEffects(this._800caaf8, this.mapTransitionData_800cab24);
 
         submapFullyLoaded_800bd7b4 = false;
 
@@ -4323,7 +4199,7 @@ public class SMap extends EngineState {
 
       case RENDER_MENU_14 -> {
         final WhichMenu menu = whichMenu_800bdc38; // copy menu state since some of these functions may change it
-        submapEnvState_80052c44 = 2;
+        submapEnvState_80052c44 = SubmapEnvState.CHECK_TRANSITIONS_1_2;
 
         if(whichMenu_800bdc38 != WhichMenu.NONE_0) {
           loadAndRenderMenus();
@@ -4361,15 +4237,15 @@ public class SMap extends EngineState {
           case UNLOAD_SAVE_GAME_MENU_20:
             this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
             this._800f7e4c = false;
-            this.mapTransition(this._800f7e2c[gameState_800babc8.chapterIndex_98]._00, this._800f7e2c[gameState_800babc8.chapterIndex_98]._00);
-            index_80052c38 = this._800f7e2c[0]._04;
+            this.mapTransition(this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapCut_00, this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapCut_00);
+            collidedPrimitiveIndex_80052c38 = this.submapChapterDestinations_800f7e2c[0].submapScene_04;
             break;
         }
       }
 
       case UNLOAD_MENU_15 -> {
-        submapEnvState_80052c44 = 0;
-        this.loadAndRenderSubmapModelAndEffects(this._800caaf8, this._800cab24);
+        submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_CHECK_TRANSITIONS_0;
+        this.loadAndRenderSubmapModelAndEffects(this._800caaf8, this.mapTransitionData_800cab24);
         SCRIPTS.resume();
         this._800f7e4c = false;
         this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
@@ -4380,7 +4256,7 @@ public class SMap extends EngineState {
       }
 
       case TRANSITION_TO_SUBMAP_17 -> {
-        this.loadAndRenderSubmapModelAndEffects(this._800caaf8, this._800cab24);
+        this.loadAndRenderSubmapModelAndEffects(this._800caaf8, this.mapTransitionData_800cab24);
 
         if(this.isScriptLoaded(0)) {
           this.sobjs_800c6880[0].innerStruct_00.disableAnimation_12a = true;
@@ -4406,10 +4282,10 @@ public class SMap extends EngineState {
         this.smapLoadingStage_800cb430 = SubmapState.LOAD_ENVIRONMENT_3;
 
         //LAB_800e6248
-        if(this._800cb448) {
-          submapEnvState_80052c44 = 3;
+        if(this.returnedToSameSubmapAfterBattle_800cb448) {
+          submapEnvState_80052c44 = SubmapEnvState.UNLOAD_3;
         } else {
-          submapEnvState_80052c44 = 4;
+          submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
         }
 
         //LAB_800e624c
@@ -4418,7 +4294,7 @@ public class SMap extends EngineState {
       }
 
       case TRANSITION_TO_WORLD_MAP_18 -> {
-        this.loadAndRenderSubmapModelAndEffects(this._800caaf8, this._800cab24);
+        this.loadAndRenderSubmapModelAndEffects(this._800caaf8, this.mapTransitionData_800cab24);
 
         submapFullyLoaded_800bd7b4 = false;
 
@@ -4438,14 +4314,14 @@ public class SMap extends EngineState {
         //LAB_800e62cc
         engineStateOnceLoaded_8004dd24 = EngineStateEnum.WORLD_MAP_08;
         pregameLoadingStage_800bb10c = 0;
-        submapEnvState_80052c44 = 5;
+        submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
         this._800f7e4c = false;
         SCRIPTS.resume();
       }
 
       case TRANSITION_TO_COMBAT_19 -> {
-        this.loadAndRenderSubmapModelAndEffects(this._800caaf8, this._800cab24);
-        submapEnvState_80052c44 = 5;
+        this.loadAndRenderSubmapModelAndEffects(this._800caaf8, this.mapTransitionData_800cab24);
+        submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
         engineStateOnceLoaded_8004dd24 = EngineStateEnum.COMBAT_06;
         pregameLoadingStage_800bb10c = 0;
         this._800f7e4c = false;
@@ -4453,7 +4329,7 @@ public class SMap extends EngineState {
       }
 
       case TRANSITION_TO_TITLE_20 -> {
-        this.loadAndRenderSubmapModelAndEffects(this._800caaf8, this._800cab24);
+        this.loadAndRenderSubmapModelAndEffects(this._800caaf8, this.mapTransitionData_800cab24);
 
         submapFullyLoaded_800bd7b4 = false;
 
@@ -4476,7 +4352,7 @@ public class SMap extends EngineState {
         pregameLoadingStage_800bb10c = 0;
 
         //LAB_800e6484
-        submapEnvState_80052c44 = 5;
+        submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
 
         //LAB_800e6490
         this._800f7e4c = false;
@@ -4484,7 +4360,7 @@ public class SMap extends EngineState {
       }
 
       case TRANSITION_TO_FMV_21 -> {
-        this.loadAndRenderSubmapModelAndEffects(this._800caaf8, this._800cab24);
+        this.loadAndRenderSubmapModelAndEffects(this._800caaf8, this.mapTransitionData_800cab24);
 
         submapFullyLoaded_800bd7b4 = false;
 
@@ -4502,7 +4378,7 @@ public class SMap extends EngineState {
         }
 
         //LAB_800e63b0
-        submapEnvState_80052c44 = 5;
+        submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
         Fmv.playCurrentFmv(this.fmvIndex_800bf0dc, this.afterFmvLoadingStage_800bf0ec);
         pregameLoadingStage_800bb10c = 0;
         this._800f7e4c = false;
@@ -4515,7 +4391,7 @@ public class SMap extends EngineState {
   @Override
   public void postScriptTick() {
     //LAB_80020f20
-    this.FUN_8002aae8();
+    this.renderEnvironmentAndHandleTransitions();
     this.setIndicatorStatusAndResetIndicatorTickCountOnReenable();
   }
 
@@ -4539,14 +4415,23 @@ public class SMap extends EngineState {
     //LAB_800e671c
   }
 
+  /**
+   * @return <ul>
+   *   <li>0x8 - blocked</li>
+   *   <li>0x10 - map transition</li>
+   *   <li>0x20 - shop/inn</li>
+   *   <li>Bits 16-21 - submap scene for 0x10</li>
+   *   <li>Bits 22-31 - submap cut for 0x10</li>
+   * </ul>
+   */
   @Method(0x800e6730L)
-  public int getCollisionAndTransitionInfo(final int index) {
+  public int getCollisionAndTransitionInfo(final int collisionPrimitiveIndex) {
     // This did unsigned comparison, so -1 was >= 0x40
-    if(index < 0 || index >= 0x40) {
+    if(collisionPrimitiveIndex < 0 || collisionPrimitiveIndex >= 0x40) {
       return 0;
     }
 
-    return this.collisionAndTransitions_800cb460[index];
+    return this.collisionAndTransitions_800cb460[collisionPrimitiveIndex];
   }
 
   @Method(0x800e675cL)
@@ -4555,15 +4440,8 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800e6798L)
-  private int FUN_800e6798(final int index) {
-    final int v1 = this.getCollisionAndTransitionInfo(index);
-
-    if((v1 & 0x8) != 0) {
-      return 0;
-    }
-
-    //LAB_800e67c4
-    return 1;
+  private boolean isWalkable(final int collisionPrimitiveIndex) {
+    return (this.getCollisionAndTransitionInfo(collisionPrimitiveIndex) & 0x8) == 0;
   }
 
   @ScriptDescription("Transitions to another submap cut/scene (certain values have special meanings - FMVs, menus)")
@@ -4595,7 +4473,7 @@ public class SMap extends EngineState {
 
     //LAB_800e686c
     if(script.params_20[0].get() == 3) {
-      this.setEnvForegroundPosition(1024, 1024, script.params_20[1].get()); // Hide foreground object
+      ((RetailSubmap)this.submap).setEnvForegroundPosition(1024, 1024, script.params_20[1].get()); // Hide foreground object
     }
 
     //LAB_800e688c
@@ -4636,9 +4514,9 @@ public class SMap extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Gets collision and transition info (not fully understood, don't know what index is, or what the flags are)")
+  @ScriptDescription("Gets collision and transition info")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "flags", description = "The collision and transition info")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "collisionPrimitiveIndex", description = "The index")
   @Method(0x800e69a4L)
   private FlowControl scriptGetCollisionAndTransitionInfo(final RunningScript<?> script) {
     script.params_20[0].set(this.getCollisionAndTransitionInfo(script.params_20[1].get()));
@@ -4651,18 +4529,18 @@ public class SMap extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Sets collision and transition flag 0x8 (not fully understood, don't know what index is, or what the flags are)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The index")
+  @ScriptDescription("Sets a collision primitive as blocked")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "collisionPrimitiveIndex", description = "The index")
   @Method(0x800e69f0L)
-  private FlowControl FUN_800e69f0(final RunningScript<?> script) {
+  private FlowControl scriptBlockCollisionPrimitive(final RunningScript<?> script) {
     this.setCollisionAndTransitionInfo(this.getCollisionAndTransitionInfo(script.params_20[0].get()) | 0x8);
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Clears collision and transition flag 0x8 (not fully understood, don't know what index is, or what the flags are)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The index")
+  @ScriptDescription("Sets a collision primitive as unblocked")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "collisionPrimitiveIndex", description = "The index")
   @Method(0x800e6a28L)
-  private FlowControl FUN_800e6a28(final RunningScript<?> script) {
+  private FlowControl scriptUnblockCollisionPrimitive(final RunningScript<?> script) {
     this.setCollisionAndTransitionInfo(this.getCollisionAndTransitionInfo(script.params_20[0].get()) & 0xffff_fff7);
     return FlowControl.CONTINUE;
   }
@@ -4673,7 +4551,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "overlayIndex", description = "The overlay index")
   @Method(0x800e6a64L)
   private FlowControl scriptSetEnvForegroundPosition(final RunningScript<?> script) {
-    this.setEnvForegroundPosition(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
+    ((RetailSubmap)this.submap).setEnvForegroundPosition(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get());
     return FlowControl.CONTINUE;
   }
 
@@ -4684,7 +4562,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "out", description = "The overlay's Z position")
   @Method(0x800e6aa0L)
   private FlowControl FUN_800e6aa0(final RunningScript<?> script) {
-    script.params_20[3].set(this.FUN_800e7728(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get()));
+    script.params_20[3].set(((RetailSubmap)this.submap).FUN_800e7728(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get()));
     return FlowControl.CONTINUE;
   }
 
@@ -4708,21 +4586,19 @@ public class SMap extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, returns vector possibly related to collision")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The index")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X value")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y value")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z value")
+  @ScriptDescription("Gets the middle of a collision primitive")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "collisionPrimitiveIndex", description = "The collision primitive index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X position")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y position")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z position")
   @Method(0x800e6b64L)
-  private FlowControl FUN_800e6b64(final RunningScript<?> script) {
-    if(script.params_20[0].get() >= 0) {
-      final Vector3f sp0x10 = new Vector3f();
-      this.collisionGeometry_800cbe08.get3dAverageOfSomething(script.params_20[0].get(), sp0x10);
+  private FlowControl scriptGetCollisionPrimitivePos(final RunningScript<?> script) {
+    final Vector3f pos = new Vector3f();
+    this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(script.params_20[0].get(), pos);
 
-      script.params_20[1].set(Math.round(sp0x10.x));
-      script.params_20[2].set(Math.round(sp0x10.y));
-      script.params_20[3].set(Math.round(sp0x10.z));
-    }
+    script.params_20[1].set(Math.round(pos.x));
+    script.params_20[2].set(Math.round(pos.y));
+    script.params_20[3].set(Math.round(pos.z));
 
     //LAB_800e6bc8
     return FlowControl.CONTINUE;
@@ -4749,7 +4625,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "Y", description = "The camera Y offset")
   @Method(0x800e6cacL)
   private FlowControl FUN_800e6cac(final RunningScript<?> script) {
-    this.FUN_800e80e4(script.params_20[0].get(), script.params_20[1].get());
+    ((RetailSubmap)this.submap).FUN_800e80e4(script.params_20[0].get(), script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
@@ -4772,181 +4648,6 @@ public class SMap extends EngineState {
     this.submapFlags_800f7e54 = 0;
   }
 
-  @Method(0x800e6d58L)
-  private boolean FUN_800e6d58(final int submapCut) {
-    for(int i = 0; i < 45; i++) {
-      if(this._800f7e58[i] == submapCut) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  @Method(0x800e6d9cL)
-  private void calculateSubmapBounds(final EnvironmentStruct[] envs, final int backgroundTextureCount) {
-    int left = 0x7fff;
-    int right = -0x8000;
-    int top = 0x7fff;
-    int bottom = -0x8000;
-
-    //LAB_800e6dc8
-    for(int i = 0; i < backgroundTextureCount; i++) {
-      final EnvironmentStruct env = envs[i];
-
-      if(env.s_06 == 0x4e) {
-        if(right < env.pos_08.w + env.textureOffsetX_10) {
-          right = env.pos_08.w + env.textureOffsetX_10;
-        }
-
-        if(left > env.textureOffsetX_10) {
-          left = env.textureOffsetX_10;
-        }
-
-        if(bottom < env.pos_08.h + env.textureOffsetY_12) {
-          bottom = env.pos_08.h + env.textureOffsetY_12;
-        }
-
-        if(top > env.textureOffsetY_12) {
-          top = env.textureOffsetY_12;
-        }
-      }
-
-      //LAB_800e6e64
-    }
-
-    //LAB_800e6e74
-    final int width = right - left;
-    final int height = bottom - top;
-    this.submapOffsetX_800cb560 = -width / 2;
-    this.submapOffsetY_800cb564 = -height / 2;
-    this._800cb570 = (width - 384) / 2;
-
-    if(width == 384 && height == 256 || this.FUN_800e6d58(submapCut_80052c30)) {
-      this._800cb574 = (376 - width) / 2;
-    } else {
-      this._800cb574 = -this._800cb570;
-    }
-
-    this._800cb578 = (height - 240) / 2;
-  }
-
-  @Method(0x800e6f38L)
-  private void buildBackgroundRenderingPacket(final EnvironmentStruct[] env) {
-    //LAB_800e6f9c
-    for(int i = 0; i < this.envTextureCount_800cb584; i++) {
-      final EnvironmentStruct s0 = env[i];
-
-      int clutY = Math.abs(s0.clutY_22); // Negative means translucent
-      if(i < this.envBackgroundTextureCount_800cb57c) { // It's a background texture
-        if(clutY < 0x1f0 || clutY >= 0x200) {
-          clutY = i + 0x1f0;
-        }
-      } else { // It's a foreground texture
-        //LAB_800e7010
-        this._800cbb90[i - this.envBackgroundTextureCount_800cb57c].set(s0.svec_14);
-        this._800cbc90[i - this.envBackgroundTextureCount_800cb57c] = s0.ui_1c;
-      }
-
-      //LAB_800e7004
-      //LAB_800e7074
-      final EnvironmentRenderingMetrics24 renderPacket = this.envRenderMetrics_800cb710[i];
-
-      float z;
-      if(s0.s_06 == 0x4e) {
-        //LAB_800e7148
-        z = (0x1 << orderingTableBits_1f8003c0) - 1;
-      } else if(s0.s_06 == 0x4f) {
-        z = 40;
-      } else {
-        //LAB_800e7194
-        z =
-          worldToScreenMatrix_800c3548.m02 * s0.svec_00.x +
-            worldToScreenMatrix_800c3548.m12 * s0.svec_00.y +
-            worldToScreenMatrix_800c3548.m22 * s0.svec_00.z;
-        z += worldToScreenMatrix_800c3548.transfer.z;
-        z /= 1 << 16 - orderingTableBits_1f8003c0;
-      }
-
-      renderPacket.z_20 = Math.round(z);
-      renderPacket.tpage_04 = s0.tpage_20;
-      renderPacket.r_0c = 0x80;
-      renderPacket.g_0d = 0x80;
-      renderPacket.b_0e = 0x80;
-      renderPacket.u_14 = s0.pos_08.x;
-      renderPacket.v_15 = s0.pos_08.y;
-      renderPacket.clut_16 = clutY << 6 | 0x30;
-      renderPacket.w_18 = s0.pos_08.w;
-      renderPacket.h_1a = s0.pos_08.h;
-
-      //LAB_800e70ec
-      renderPacket.offsetX_1c = s0.textureOffsetX_10;
-      renderPacket.offsetY_1e = s0.textureOffsetY_12;
-
-      //LAB_800e7210
-      renderPacket.flags_22 &= 0x3fff;
-    }
-
-    //LAB_800e724c
-    this.calculateSubmapBounds(env, this.envBackgroundTextureCount_800cb57c);
-  }
-
-  @Method(0x800e728cL)
-  private void clearSmallValuesFromMatrix(final MV matrix) {
-    //LAB_800e72b4
-    for(int x = 0; x < 3; x++) {
-      //LAB_800e72c4
-      for(int y = 0; y < 3; y++) {
-        if(Math.abs(matrix.get(x, y)) < 0.015625f) {
-          matrix.set(x, y, 0.0f);
-        }
-
-        //LAB_800e72e8
-      }
-    }
-  }
-
-  @Method(0x800e7328L)
-  private void updateCamera() {
-    setProjectionPlaneDistance(projectionPlaneDistance_800bd810);
-    GsSetSmapRefView2L(this.rview2_800cbd10);
-    this.clearSmallValuesFromMatrix(worldToScreenMatrix_800c3548);
-    this.worldToScreenMatrix_800cbd68.set(worldToScreenMatrix_800c3548);
-    this.worldToScreenMatrix_800cbd68.transpose(this.screenToWorldMatrix_800cbd40);
-    rview2_800bd7e8.set(this.rview2_800cbd10);
-  }
-
-  @Method(0x800e7418L)
-  private void updateRview2(final Vector3f viewpoint, final Vector3f refpoint, final int rotation, final int projectionDistance) {
-    this.rview2_800cbd10.viewpoint_00.set(viewpoint);
-    this.rview2_800cbd10.refpoint_0c.set(refpoint);
-    this.rview2_800cbd10.viewpointTwist_18 = (short)rotation << 12;
-    this.rview2_800cbd10.super_1c = null;
-    projectionPlaneDistance_800bd810 = projectionDistance;
-
-    this.updateCamera();
-  }
-
-  @Method(0x800e7500L)
-  private void loadEnvironment(final EnvironmentFile envFile) {
-    this.envTextureCount_800cb584 = envFile.allTextureCount_14;
-    this.envBackgroundTextureCount_800cb57c = envFile.backgroundTextureCount_15;
-    this.envForegroundTextureCount_800cb580 = envFile.foregroundTextureCount_16;
-
-    this.updateRview2(
-      envFile.viewpoint_00,
-      envFile.refpoint_08,
-      envFile.rotation_12,
-      envFile.projectionDistance_10
-    );
-
-    this.buildBackgroundRenderingPacket(envFile.environments_18);
-
-    for(final EnvironmentForegroundTextureMetrics struct : this.envForegroundMetrics_800cb590) {
-      struct.clear();
-    }
-  }
-
   @Method(0x800e7604L)
   private void setGeomOffsetIfNotSet(final int latchTicks, final int x, final int y) {
     if(this.geomOffsetLatch_800cbd3c.isOpen()) {
@@ -4965,311 +4666,10 @@ public class SMap extends EngineState {
     }
   }
 
-  @Method(0x800e76b0L)
-  private void setEnvForegroundPosition(final int x, final int y, final int index) {
-    if(x == 1024 && y == 1024) {
-      this.envForegroundMetrics_800cb590[index].hidden_08 = true;
-      return;
-    }
-
-    //LAB_800e76e8
-    //LAB_800e76ec
-    this.envForegroundMetrics_800cb590[index].x_00 = x;
-    this.envForegroundMetrics_800cb590[index].y_04 = y;
-    this.envForegroundMetrics_800cb590[index].hidden_08 = false;
-  }
-
-  @Method(0x800e770cL)
-  private void FUN_800e770c() {
-    this.minSobj_800cbd60 = 0;
-    this.maxSobj_800cbd64 = this.sobjCount_800c6730;
-  }
-
-  @Method(0x800e7728L)
-  private int FUN_800e7728(final int mode, final int foregroundTextureIndex, int z) {
-    final int textureIndex = this.envBackgroundTextureCount_800cb57c + foregroundTextureIndex;
-
-    if(mode == 1 && foregroundTextureIndex == -1) {
-      //LAB_800e7780
-      for(int i = 0; i < this.envForegroundTextureCount_800cb580; i++) {
-        this.envRenderMetrics_800cb710[this.envBackgroundTextureCount_800cb57c + i].flags_22 &= 0x3fff;
-        this.envRenderMetrics_800cb710[this.envBackgroundTextureCount_800cb57c + i].flags_22 |= 0x4000;
-      }
-
-      //LAB_800e77b4
-      return this.envRenderMetrics_800cb710[textureIndex].z_20;
-    }
-
-    //LAB_800e77d8
-    if(textureIndex >= this.envRenderMetrics_800cb710.length) {
-      return -1;
-    }
-
-    if(mode == 0) {
-      //LAB_800e7860
-      this.envRenderMetrics_800cb710[textureIndex].flags_22 &= 0x3fff;
-    } else if(mode == 1) {
-      //LAB_800e77e8
-      //LAB_800e7830
-      this.envRenderMetrics_800cb710[textureIndex].flags_22 &= 0x3fff;
-      this.envRenderMetrics_800cb710[textureIndex].flags_22 |= 0x4000;
-      //LAB_800e7808
-    } else if(mode == 2) {
-      //LAB_800e788c
-      this.envRenderMetrics_800cb710[textureIndex].flags_22 &= 0x3fff;
-      this.envRenderMetrics_800cb710[textureIndex].flags_22 |= 0x8000;
-
-      if(z < 40) {
-        //LAB_800e78fc
-        z = 40;
-      } else if((0x1 << orderingTableBits_1f8003c0) - 1 < z) {
-        z = (0x1 << orderingTableBits_1f8003c0) - 1;
-      }
-
-      //LAB_800e7900
-      this.envRenderMetrics_800cb710[textureIndex].flags_22 &= 0xc000;
-      this.envRenderMetrics_800cb710[textureIndex].flags_22 |= z & 0x3fff;
-    } else if(mode == 5) {
-      this.minSobj_800cbd60 = foregroundTextureIndex;
-      this.maxSobj_800cbd64 = z + 1;
-    }
-
-    //LAB_800e7930
-    //LAB_800e7934
-    //LAB_800e7938
-    return this.envRenderMetrics_800cb710[textureIndex].z_20;
-  }
-
-  @Method(0x800e7954L)
-  private void renderEnvironment(final MV[] sobjMatrices, final int sobjCount) {
-    final float[] sobjZs = new float[sobjCount];
-    final float[] envZs = new float[this.envForegroundTextureCount_800cb580];
-
-    //LAB_800e79b8
-    // Render background
-    for(int i = 0; i < this.envBackgroundTextureCount_800cb57c; i++) {
-      final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[i];
-
-      metrics.x_10 = this.submapOffsetX_800cb560 + this.screenOffset_800cb568.x + metrics.offsetX_1c;
-      metrics.y_12 = this.submapOffsetY_800cb564 + this.screenOffset_800cb568.y + metrics.offsetY_1e;
-
-      GPU.queueCommand(metrics.z_20, new GpuCommandQuad()
-        .rgb(metrics.r_0c, metrics.g_0d, metrics.b_0e)
-        .pos(metrics.x_10, metrics.y_12, metrics.w_18, metrics.h_1a)
-        .uv(metrics.u_14, metrics.v_15)
-        .clut((metrics.clut_16 & 0b111111) * 16, metrics.clut_16 >>> 6)
-        .vramPos((metrics.tpage_04 & 0b1111) * 64, (metrics.tpage_04 & 0b10000) != 0 ? 256 : 0)
-        .bpp(Bpp.of(metrics.tpage_04 >>> 7 & 0b11)));
-
-      if(metrics.obj == null) {
-        if(metrics.texture == null) {
-          metrics.obj = new QuadBuilder("BackgroundTexture (index " + i + ')')
-            .bpp(Bpp.of(metrics.tpage_04 >>> 7 & 0b11))
-            .clut(768, metrics.clut_16 >>> 6)
-            .vramPos((metrics.tpage_04 & 0b1111) * 64, (metrics.tpage_04 & 0b10000) != 0 ? 256 : 0)
-            .pos(metrics.offsetX_1c, metrics.offsetY_1e, metrics.z_20 * 4.0f)
-            .uv(metrics.u_14, metrics.v_15)
-            .size(metrics.w_18, metrics.h_1a)
-            .build();
-        } else {
-          metrics.obj = new QuadBuilder("BackgroundTexture (index " + i + ')')
-            .bpp(Bpp.BITS_24)
-            .pos(metrics.offsetX_1c, metrics.offsetY_1e, metrics.z_20 * 4.0f)
-            .uv(metrics.u_14 * 8.0f, metrics.v_15 * 8.0f)
-            .uvSize(metrics.w_18 * 8.0f, metrics.h_1a * 8.0f)
-            .posSize(metrics.w_18, metrics.h_1a)
-            .build();
-        }
-      }
-
-      metrics.transforms.identity();
-      metrics.transforms.transfer.set(GPU.getOffsetX() + this.submapOffsetX_800cb560 + this.screenOffset_800cb568.x, GPU.getOffsetY() + this.submapOffsetY_800cb564 + this.screenOffset_800cb568.y, 0.0f);
-      final RenderEngine.QueuedModel model = RENDERER.queueOrthoModel(metrics.obj, metrics.transforms);
-
-      if(metrics.texture != null) {
-        model.texture(metrics.texture);
-      }
-    }
-
-    //LAB_800e7a60
-    //LAB_800e7a7c
-    for(int i = 0; i < sobjCount; i++) {
-      sobjZs[i] = (worldToScreenMatrix_800c3548.m02 * sobjMatrices[i].transfer.x +
-        worldToScreenMatrix_800c3548.m12 * sobjMatrices[i].transfer.y +
-        worldToScreenMatrix_800c3548.m22 * sobjMatrices[i].transfer.z + worldToScreenMatrix_800c3548.transfer.z) / (1 << 16 - orderingTableBits_1f8003c0);
-    }
-
-    //LAB_800e7b08
-    //LAB_800e7b40
-    for(int i = 0; i < this.envForegroundTextureCount_800cb580; i++) {
-      final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[this.envBackgroundTextureCount_800cb57c + i];
-
-      final int flags = (metrics.flags_22 & 0xc000) >> 14;
-      if(flags == 0x1) {
-        //LAB_800e7bb4
-        float minZ = Float.MAX_VALUE;
-        float maxZ = 0;
-
-        //LAB_800e7bbc
-        int positiveZCount = 0;
-        int negativeZCount = 0;
-
-        //LAB_800e7c0c
-        for(int sobjIndex = this.maxSobj_800cbd64 - 1; sobjIndex >= this.minSobj_800cbd60; sobjIndex--) {
-          final float v1_0 = this._800cbc90[i] +
-            this._800cbb90[i].x * sobjMatrices[sobjIndex].transfer.x +
-            this._800cbb90[i].y * sobjMatrices[sobjIndex].transfer.y +
-            this._800cbb90[i].z * sobjMatrices[sobjIndex].transfer.z;
-          final float sobjZ = sobjZs[sobjIndex];
-
-          if(sobjZ != 0xfffb) {
-            if(v1_0 < 0) {
-              negativeZCount++;
-              if(minZ > sobjZ) {
-                minZ = sobjZ;
-              }
-            } else {
-              //LAB_800e7cac
-              positiveZCount++;
-              if(maxZ < sobjZ) {
-                maxZ = sobjZ;
-              }
-            }
-          }
-        }
-
-        //LAB_800e7cd8
-        if(positiveZCount == 0) {
-          //LAB_800e7cf8
-          envZs[i] = Math.max(maxZ - 50, 40);
-          continue;
-        }
-
-        //LAB_800e7d00
-        if(negativeZCount == 0) {
-          //LAB_800e7d3c
-          envZs[i] = Math.min(maxZ + 50, (1 << orderingTableBits_1f8003c0) - 1);
-          continue;
-        }
-
-        //LAB_800e7d50
-        if(maxZ > metrics.z_20 || minZ < metrics.z_20) {
-          //LAB_800e7d64
-          envZs[i] = (maxZ + minZ) / 2;
-        } else {
-          //LAB_800e7d78
-          envZs[i] = metrics.z_20;
-        }
-
-        //LAB_800e7d80
-      } else if(flags == 0x2) {
-        envZs[i] = metrics.flags_22 & 0x3fff;
-      } else {
-        //LAB_800e7d78
-        envZs[i] = metrics.z_20;
-      }
-    }
-
-    //LAB_800e7d9c
-    //LAB_800e7de0
-    // Render overlays
-    for(int i = 0; i < this.envForegroundTextureCount_800cb580; i++) {
-      if(!this.envForegroundMetrics_800cb590[i].hidden_08) {
-        final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[this.envBackgroundTextureCount_800cb57c + i];
-
-        if(metrics.obj == null) {
-          if(metrics.texture == null) {
-            metrics.obj = new QuadBuilder("CutoutTexture (index " + i + ')')
-              .bpp(Bpp.of(metrics.tpage_04 >>> 7 & 0b11))
-              .clut(768, metrics.clut_16 >>> 6)
-              .vramPos((metrics.tpage_04 & 0b1111) * 64, (metrics.tpage_04 & 0b10000) != 0 ? 256 : 0)
-              .pos(metrics.offsetX_1c, metrics.offsetY_1e, 0.0f)
-              .uv(metrics.u_14, metrics.v_15)
-              .size(metrics.w_18, metrics.h_1a)
-              .build();
-          } else {
-            metrics.obj = new QuadBuilder("CutoutTexture (index " + i + ')')
-              .bpp(Bpp.BITS_24)
-              .pos(metrics.offsetX_1c, metrics.offsetY_1e, 0.0f)
-              .uv(metrics.u_14 * 8.0f, metrics.v_15 * 8.0f)
-              .uvSize(metrics.w_18 * 8.0f, metrics.h_1a * 8.0f)
-              .posSize(metrics.w_18, metrics.h_1a)
-              .build();
-          }
-        }
-
-        // This was causing a problem when moving left from the room before Zackwell. Not sure if this is a retail issue or SC-specific. GH#332
-        final float z = envZs[i];
-        if(z < 0) {
-          continue;
-        }
-
-        metrics.transforms.identity();
-        metrics.transforms.transfer.set(GPU.getOffsetX() + this.submapOffsetX_800cb560 + this.screenOffset_800cb568.x + this.envForegroundMetrics_800cb590[i].x_00, GPU.getOffsetY() + this.submapOffsetY_800cb564 + this.screenOffset_800cb568.y + this.envForegroundMetrics_800cb590[i].y_04, z * 4.0f);
-        final RenderEngine.QueuedModel model = RENDERER.queueOrthoModel(metrics.obj, metrics.transforms);
-
-        if(metrics.texture != null) {
-          model.texture(metrics.texture);
-        }
-      }
-    }
-
-    //LAB_800e7ed0
-  }
-
   @Method(0x800e7f00L)
   private void transformVertex(final Vector2f out, final Vector3f v0) {
     GTE.perspectiveTransform(v0);
     out.set(GTE.getScreenX(2), GTE.getScreenY(2));
-  }
-
-  @Method(0x800e7f68L)
-  private void calcGoodScreenOffset(final float x, final float y) {
-    if(x < -80) {
-      this.screenOffset_800cb568.x -= 80 + x;
-      //LAB_800e7f80
-    } else if(x > 80) {
-      //LAB_800e7f9c
-      this.screenOffset_800cb568.x += 80 - x;
-    }
-
-    //LAB_800e7fa8
-    if(y < -40) {
-      this.screenOffset_800cb568.y -= 40 + y;
-      //LAB_800e7fbc
-    } else if(y > 40) {
-      //LAB_800e7fd4
-      this.screenOffset_800cb568.y += 40 - y;
-    }
-
-    //LAB_800e7fdc
-    if(this._800f7f0c) {
-      this.screenOffset_800cb568.x += this._800cbd30;
-      this.screenOffset_800cb568.y += this._800cbd34;
-      this._800f7f0c = false;
-      return;
-    }
-
-    //LAB_800e8030
-    if(this.screenOffset_800cb568.x < this._800cb574) {
-      //LAB_800e807c
-      this.screenOffset_800cb568.x = this._800cb574;
-    } else {
-      //LAB_800e8070
-      this.screenOffset_800cb568.x = Math.min(this._800cb570, this.screenOffset_800cb568.x);
-    }
-
-    //LAB_800e8080
-    //LAB_800e8088
-    if(this.screenOffset_800cb568.y < -this._800cb578) {
-      this.screenOffset_800cb568.y = -this._800cb578;
-    } else {
-      //LAB_800e80d0
-      //LAB_800e80d8
-      this.screenOffset_800cb568.y = Math.min(this._800cb578, this.screenOffset_800cb568.y);
-    }
-
-    //LAB_800e80dc
   }
 
   @ScriptDescription("Sets collision metrics for a submap object (collision type unknown)")
@@ -5293,13 +4693,6 @@ public class SMap extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @Method(0x800e80e4L)
-  private void FUN_800e80e4(final int x, final int y) {
-    this._800cbd30 = x;
-    this._800cbd34 = y;
-    this._800f7f0c = true;
-  }
-
   @Method(0x800e8104L)
   private void setCameraPos(final int latchTicks, final Vector3f cameraPos) {
     if(this.screenOffsetLatch_800cbd38.isOpen()) {
@@ -5307,7 +4700,7 @@ public class SMap extends EngineState {
 
       final Vector2f transformed = new Vector2f();
       this.transformVertex(transformed, cameraPos);
-      this.calcGoodScreenOffset(transformed.x, transformed.y);
+      this.submap.calcGoodScreenOffset(transformed.x, transformed.y);
     }
 
     //LAB_800e8164
@@ -5316,13 +4709,13 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800e81a0L)
-  private void initCamera(final int index) {
+  private void initCamera(final int cameraCollisionPrimitiveIndex) {
     this.screenOffsetLatch_800cbd38 = this.addLatch();
     this.geomOffsetLatch_800cbd3c = this.addLatch();
 
-    final Vector3f avg = new Vector3f();
-    this.collisionGeometry_800cbe08.get3dAverageOfSomething(index, avg);
-    this.setCameraPos(1, avg);
+    final Vector3f pos = new Vector3f();
+    this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(cameraCollisionPrimitiveIndex, pos);
+    this.setCameraPos(1, pos);
   }
 
   @Method(0x800e828cL)
@@ -5334,12 +4727,11 @@ public class SMap extends EngineState {
 
   @Method(0x800e82ccL)
   private void transformToWorldspace(final Vector3f out, final Vector3f in) {
-    //TODO does this need to be transposed?
-    if(this.screenToWorldMatrix_800cbd40.m02 == 0.0f) {
+    if(((RetailSubmap)this.submap).screenToWorldMatrix_800cbd40.m02 == 0.0f) {
       out.set(in);
     } else {
       //LAB_800e8318
-      in.mul(this.screenToWorldMatrix_800cbd40, out);
+      in.mul(((RetailSubmap)this.submap).screenToWorldMatrix_800cbd40, out);
     }
 
     //LAB_800e833c
@@ -5388,15 +4780,15 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800ea84cL)
-  private void FUN_800ea84c(final MediumStruct a0) {
+  private void updateCollidedPrimitiveIndexAndCheckForWorldMapTransition(final MapTransitionData4c mapTransitionData) {
     if(this.isScriptLoaded(0)) {
-      if(a0._44) {
-        index_80052c38 = this.sobjs_800c6880[0].innerStruct_00.ui_16c;
+      if(mapTransitionData.shouldUpdateCollidedWith_44) {
+        collidedPrimitiveIndex_80052c38 = this.sobjs_800c6880[0].innerStruct_00.collidedPrimitiveIndex_16c;
 
         //LAB_800ea8d4
-        for(int i = 0; i < a0.count_40; i++) {
-          if(index_80052c38 == a0.arr_00[i]) {
-            a0._44 = false;
+        for(int i = 0; i < mapTransitionData.worldMapExitCount_40; i++) {
+          if(collidedPrimitiveIndex_80052c38 == mapTransitionData.worldMapExitPrimitiveIndices_00[i]) {
+            mapTransitionData.shouldUpdateCollidedWith_44 = false;
             break;
           }
 
@@ -5409,54 +4801,43 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800ea90cL)
-  private void FUN_800ea90c(final MediumStruct a0) {
+  private void updateCollidedPrimitiveIndex(final MapTransitionData4c a0) {
     if(this.isScriptLoaded(0)) {
-      index_80052c38 = this.sobjs_800c6880[0].innerStruct_00.ui_16c;
+      collidedPrimitiveIndex_80052c38 = this.sobjs_800c6880[0].innerStruct_00.collidedPrimitiveIndex_16c;
     }
   }
 
-  @Method(0x800ea96cL)
-  private void FUN_800ea96c(final MediumStruct a0) {
-    // no-op
-  }
-
+  /** Caches world map transition primitive indices and sets up the collided primitive setter callback */
   @Method(0x800ea974L)
-  private MediumStruct FUN_800ea974(final int a0) {
-    if(a0 < 0) {
-      this._800d1a90.callback_48 = this::FUN_800ea96c;
+  private void loadMapTransitionData(final int submapCut) {
+    final MapTransitionData4c mapTransitionData = this.mapTransitionData_800cab24;
+
+    if(submapCut < 0) {
+      mapTransitionData.collidedPrimitiveSetterCallback_48 = t -> { };
     } else {
       //LAB_800ea9a4
-      this._800d1a90.clear();
-
-      final MediumStruct a2 = this._800d1a90;
+      mapTransitionData.clear();
 
       //LAB_800ea9d8
-      for(int i = 0; i < 256; i++) {
-        if(a0 != 0) {
-          final Struct14_2 a3 = this._800f7f74[i];
-          if(a3._04 == a0) {
-            a2.arr_00[a2.count_40] = a3._06;
-            a2.count_40++;
+      if(submapCut != 0) {
+        for(int i = 0; i < 256; i++) {
+          final SubmapWorldMapExits exit = this.submapWorldMapExits_800f7f74[i];
+          if(exit.submapCut_04 == submapCut) {
+            mapTransitionData.worldMapExitPrimitiveIndices_00[mapTransitionData.worldMapExitCount_40] = exit.primitiveIndex_06;
+            mapTransitionData.worldMapExitCount_40++;
           }
         }
-
-        //LAB_800eaa20
       }
 
       //LAB_800eaa30
-      if(this._800d1a90.count_40 != 0) {
-        this._800d1a90.callback_48 = this::FUN_800ea84c;
-        this._800d1a90._44 = true;
+      if(mapTransitionData.worldMapExitCount_40 != 0) {
+        mapTransitionData.collidedPrimitiveSetterCallback_48 = this::updateCollidedPrimitiveIndexAndCheckForWorldMapTransition;
+        mapTransitionData.shouldUpdateCollidedWith_44 = true;
       } else {
         //LAB_800eaa5c
-        this._800d1a90.callback_48 = this::FUN_800ea90c;
+        mapTransitionData.collidedPrimitiveSetterCallback_48 = this::updateCollidedPrimitiveIndex;
       }
-
-      //LAB_800eaa6c
     }
-
-    //LAB_800eaa74
-    return this._800d1a90;
   }
 
   /** Used in Snow Field (disk 3) */
@@ -6261,7 +5642,7 @@ public class SMap extends EngineState {
     final Param ints = script.params_20[0];
     int s0 = 0;
     for(int i = 0; ints.array(s0).get() != -1; i++) {
-      this.collisionGeometry_800cbe08.get3dAverageOfSomething(ints.array(s0++).get(), sp0x10);
+      this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(ints.array(s0++).get(), sp0x10);
 
       sp0x18.coord.transfer.set(sp0x10);
       GsGetLs(sp0x18, sp0x70);
@@ -6294,7 +5675,7 @@ public class SMap extends EngineState {
     final GsCOORDINATE2 sp0x40 = new GsCOORDINATE2();
     GsInitCoordinate2(null, sp0x40);
     final Vector3f sp0x10 = new Vector3f();
-    this.collisionGeometry_800cbe08.get3dAverageOfSomething(script.params_20[0].get(), sp0x10);
+    this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(script.params_20[0].get(), sp0x10);
     sp0x40.coord.transfer.set(sp0x10);
     final MV sp0x20 = new MV();
     GsGetLs(sp0x40, sp0x20);

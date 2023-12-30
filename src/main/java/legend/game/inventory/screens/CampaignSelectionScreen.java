@@ -27,7 +27,7 @@ import static legend.game.SItem.menuStack;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
-import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
+import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -87,7 +87,7 @@ public class CampaignSelectionScreen extends MenuScreen {
 
       submapScene_80052c34 = gameState_800babc8.submapScene_a4;
       submapCut_80052c30 = gameState_800babc8.submapCut_a8;
-      index_80052c38 = gameState_800babc8.submapCut_a8;
+      collidedPrimitiveIndex_80052c38 = gameState_800babc8.submapCut_a8;
 
       if(gameState_800babc8.submapCut_a8 == 264) { // Somewhere in Home of Giganto
         submapScene_80052c34 = 53;

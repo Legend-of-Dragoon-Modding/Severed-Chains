@@ -299,7 +299,7 @@ public class Battle extends EngineState {
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link Scus94491BpeSegment#nextLoadingStage}</li>
    *   <li>{@link Scus94491BpeSegment#renderPostCombatScreen}</li>
-   *   <li>{@link Scus94491BpeSegment#FUN_800189b0}</li>
+   *   <li>{@link Scus94491BpeSegment#transitionBackFromBattle}</li>
    * </ol>
    */
   private final Runnable[] battleLoadingStage_8004f5d4 = {
@@ -335,7 +335,7 @@ public class Battle extends EngineState {
     Scus94491BpeSegment::waitForFilesToLoad,
     Scus94491BpeSegment::nextLoadingStage,
     Scus94491BpeSegment::renderPostCombatScreen,
-    Scus94491BpeSegment::FUN_800189b0,
+    Scus94491BpeSegment::transitionBackFromBattle,
   };
 
   private int currentPostCombatActionFrame_800c6690;
@@ -1696,9 +1696,9 @@ public class Battle extends EngineState {
       //LAB_800c8558
       postCombatMainCallbackIndex_800bc91c = postCombatMainCallbackIndex;
 
-      final int postCombatSubmapStage = this.currentStageData_800c6718.postCombatSubmapStage_0c;
-      if(postCombatSubmapStage != 0xff) {
-        submapScene_80052c34 = postCombatSubmapStage;
+      final int postCombatSubmapScene = this.currentStageData_800c6718.postCombatSubmapScene_0c;
+      if(postCombatSubmapScene != 0xff) {
+        submapScene_80052c34 = postCombatSubmapScene;
       }
 
       //LAB_800c8578

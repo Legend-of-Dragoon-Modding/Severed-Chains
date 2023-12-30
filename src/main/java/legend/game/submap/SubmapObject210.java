@@ -25,7 +25,7 @@ public class SubmapObject210 {
 //  public final Vector3f movementStep12_154 = new Vector3f();
 //  /** The total distance moved (.16) */
 //  public final Vector3f movementDistanceMoved12_160 = new Vector3f();
-  public int ui_16c;
+  public int collidedPrimitiveIndex_16c;
   public int us_170;
   public int s_172;
   public int s_174;

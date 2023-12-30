@@ -7,7 +7,7 @@ import org.joml.Vector3f;
 /** 0x24-bytes long */
 public class EnvironmentStruct {
   public final Vector3f svec_00;
-  /** Possible values: 0x4e, 0x4f, "anything else" (it's an else branch with no condition, but it's always been 0 in the files I've seen). First in-game cutscene has 0x4e for regular background textures and 0 for everything else. */
+  /** Possible values: 0x4e (background texture), 0x4f (possibly foreground texture?), "anything else" (it's an else branch with no condition, but it's always been 0 in the files I've seen). First in-game cutscene has 0x4e for regular background textures and 0 for everything else. */
   public short s_06;
   public final Rect4i pos_08;
   public short textureOffsetX_10;
