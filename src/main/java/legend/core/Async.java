@@ -11,7 +11,5 @@ public final class Async {
     if(counter.incrementAndGet() == totalCount) {
       onCompletion.run();
     }
-
-    System.out.printf("Load %d/%d%n", counter.get(), totalCount);
   }
 }
