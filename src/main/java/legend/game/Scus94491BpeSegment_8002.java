@@ -118,10 +118,6 @@ import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.freeSequence;
 import static legend.game.Scus94491BpeSegment_8004.stopMusicSequence;
-import static legend.game.Scus94491BpeSegment_8005._800503b0;
-import static legend.game.Scus94491BpeSegment_8005._800503d4;
-import static legend.game.Scus94491BpeSegment_8005._800503f8;
-import static legend.game.Scus94491BpeSegment_8005._80050424;
 import static legend.game.Scus94491BpeSegment_8005._80052c40;
 import static legend.game.Scus94491BpeSegment_8005.digits_80052b40;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
@@ -720,20 +716,13 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80022068
-    final int x;
-    final int y;
-    if(model.uvAnimationSecondaryBank) {
-      //LAB_80022098
-      if(model.uvAdjustments_9d == UvAdjustmentMetrics14.NONE) {
-        return;
-      }
-
-      x = _800503f8[model.uvAdjustments_9d.index];
-      y = _80050424[model.uvAdjustments_9d.index];
-    } else {
-      x = _800503b0[model.uvAdjustments_9d.index];
-      y = _800503d4[model.uvAdjustments_9d.index];
+    //LAB_80022098
+    if(model.uvAdjustments_9d == UvAdjustmentMetrics14.NONE) {
+      return;
     }
+
+    final int x = model.uvAdjustments_9d.tpageX;
+    final int y = model.uvAdjustments_9d.tpageY;
 
     //LAB_800220c0
     if(model.usArr_ba[index] != 0x5678) {

@@ -134,8 +134,6 @@ import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd2
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.sssqFadeIn;
 import static legend.game.Scus94491BpeSegment_8005._80050274;
-import static legend.game.Scus94491BpeSegment_8005._800503f8;
-import static legend.game.Scus94491BpeSegment_8005._80050424;
 import static legend.game.Scus94491BpeSegment_8005._80052c40;
 import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.renderBorder_80052b68;
@@ -1415,9 +1413,8 @@ public class SMap extends EngineState {
       smallerStruct.uba_04[index] = false;
     } else {
       //LAB_800ddeac
-      final int colourMap = struct.uvAdjustments_9d.index;
-      final int x = _800503f8[colourMap];
-      final int y = _80050424[colourMap] + 112;
+      final int x = struct.uvAdjustments_9d.clutX;
+      final int y = struct.uvAdjustments_9d.clutY;
 
       final TmdSubExtension v = smallerStruct.tmdSubExtensionArr_20[index];
       int a1 = 0;
@@ -3347,7 +3344,6 @@ public class SMap extends EngineState {
 
           final Model124 model = state.innerStruct_00.model_00;
           model.uvAdjustments_9d = this.submapAssets.uvAdjustments.get(i);
-          model.uvAnimationSecondaryBank = true;
 
           final CContainer tmd = this.submapAssets.objects.get(i).model;
           final TmdAnimationFile anim = obj.animations.get(0);
@@ -6016,8 +6012,7 @@ public class SMap extends EngineState {
       }
 
       case 0x4 -> {
-        this.submapModel_800d4bf8.uvAdjustments_9d = new UvAdjustmentMetrics14(17, 0x5c3f0000, 0x3c0ffff, 0x1f0000, 0xffe0ffff, 0xc0); // 1008, 256, submap cut model
-        this.submapModel_800d4bf8.uvAnimationSecondaryBank = true;
+        this.submapModel_800d4bf8.uvAdjustments_9d = new UvAdjustmentMetrics14(17, 1008, 256);
 
         initModel(this.submapModel_800d4bf8, this.submapCutModel, this.submapCutAnim);
 
