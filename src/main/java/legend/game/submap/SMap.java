@@ -6186,9 +6186,6 @@ public class SMap extends EngineState {
 
   @Method(0x800ef0f8L)
   private void tickAttachedSobjEffects(final Model124 model, final AttachedSobjEffectData40 data) {
-    if(model.name.contains("Submap object 3")) {
-      int x = 0;
-    }
     if(!flEq(data.transfer_1e.x, model.coord2_14.coord.transfer.x) || !flEq(data.transfer_1e.y, model.coord2_14.coord.transfer.y) || !flEq(data.transfer_1e.z, model.coord2_14.coord.transfer.z)) {
       //LAB_800ef154
       if(data.shouldRenderTmdDust_04) {
@@ -6213,6 +6210,7 @@ public class SMap extends EngineState {
 
           //LAB_800ef21c
           inst.transfer.set(model.coord2_14.coord.transfer);
+          data.transfer_1e.set(model.coord2_14.coord.transfer);
         }
       }
 
@@ -6267,6 +6265,7 @@ public class SMap extends EngineState {
           //LAB_800ef504
           inst.stepBrightness_40 = 0.5f / 30;
           inst.brightness_48 = 0.5f;
+          data.transfer_1e.set(model.coord2_14.coord.transfer);
         }
       }
 
@@ -6308,6 +6307,7 @@ public class SMap extends EngineState {
 
           inst.stepBrightness_40 = 0.5f / data.maxTicks_38;
           inst.brightness_48 = 0.5f;
+          data.transfer_1e.set(model.coord2_14.coord.transfer);
         }
       }
 
@@ -6320,7 +6320,6 @@ public class SMap extends EngineState {
     }
 
     //LAB_800ef750
-    data.transfer_1e.set(model.coord2_14.coord.transfer);
     data.tick_00++;
   }
 
@@ -6601,6 +6600,8 @@ public class SMap extends EngineState {
         this.lawPodTrailVerts_800d4fd0.add(newVerts);
         trailData.countSegments_01++;
       }
+
+      data.transfer_1e.set(model.coord2_14.coord.transfer);
     }
     //LAB_800f094c
   }
