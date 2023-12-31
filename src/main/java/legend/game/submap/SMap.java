@@ -141,8 +141,10 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.musicLoaded_800bd782;
+import static legend.game.Scus94491BpeSegment_800b.playerPositionBeforeBattle_800bed30;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.rview2_800bd7e8;
+import static legend.game.Scus94491BpeSegment_800b.screenOffsetBeforeBattle_800bed50;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static legend.game.Scus94491BpeSegment_800b.sobjPositions_800bd818;
@@ -159,9 +161,6 @@ import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class SMap extends EngineState {
-  private final MV playerPositionBeforeBattle_800bed30 = new MV();
-  private final Vector2i screenOffsetBeforeBattle_800bed50 = new Vector2i();
-
   private int fmvIndex_800bf0dc;
 
   private EngineStateEnum afterFmvLoadingStage_800bf0ec = EngineStateEnum.PRELOAD_00;
@@ -3914,9 +3913,9 @@ public class SMap extends EngineState {
     }
 
     //LAB_800e52b0
-    this.setScreenOffsetIfNotSet(1, this.screenOffsetBeforeBattle_800bed50.x, this.screenOffsetBeforeBattle_800bed50.y);
+    this.setScreenOffsetIfNotSet(1, screenOffsetBeforeBattle_800bed50.x, screenOffsetBeforeBattle_800bed50.y);
 
-    mat.set(this.playerPositionBeforeBattle_800bed30);
+    mat.set(playerPositionBeforeBattle_800bed30);
 
     shouldRestoreCameraPosition_80052c40 = false;
     this.returnedToSameSubmapAfterBattle_800cb448 = true;
@@ -4058,9 +4057,9 @@ public class SMap extends EngineState {
     if(this.isScriptLoaded(0)) {
       final SubmapObject210 sobj = this.sobjs_800c6880[0].innerStruct_00;
 
-      this.screenOffsetBeforeBattle_800bed50.set(this.screenOffset_800cb568);
+      screenOffsetBeforeBattle_800bed50.set(this.screenOffset_800cb568);
       submapCutBeforeBattle_80052c3c = cut;
-      this.playerPositionBeforeBattle_800bed30.set(sobj.model_00.coord2_14.coord);
+      playerPositionBeforeBattle_800bed30.set(sobj.model_00.coord2_14.coord);
       shouldRestoreCameraPosition_80052c40 = true;
     }
 

@@ -1,5 +1,6 @@
 package legend.game;
 
+import legend.core.gte.MV;
 import legend.game.combat.environment.BattleStage;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.combat.ui.BattleDissolveDarkeningMetrics10;
@@ -25,6 +26,7 @@ import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
 import legend.game.types.TextboxText84;
 import legend.game.types.UiFile;
+import org.joml.Vector2i;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -213,6 +215,10 @@ public final class Scus94491BpeSegment_800b {
   static {
     Arrays.setAll(stats_800be5f8, i -> new ActiveStatsa0());
   }
+
+  // These are outside of SMAP because they have to persist between engine states
+  public static final MV playerPositionBeforeBattle_800bed30 = new MV();
+  public static final Vector2i screenOffsetBeforeBattle_800bed50 = new Vector2i();
 
   /**
    * Remains set for the duration of the button press
