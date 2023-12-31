@@ -386,8 +386,7 @@ public class RetailSubmap extends Submap {
       .set(submapCutMatrix).setTranslation(submapCutMatrix.transfer)
       .mulLocal(inverseW2s);
 
-    this.submapModel_800d4bf8.uvAdjustments_9d = new UvAdjustmentMetrics14(17, 0x5c3f0000, 0x3c0ffff, 0x1f0000, 0xffe0ffff, 0xc0); // 1008, 256, submap cut model
-    this.submapModel_800d4bf8.uvAnimationSecondaryBank = true;
+    this.submapModel_800d4bf8.uvAdjustments_9d = new UvAdjustmentMetrics14(17, 1008, 256);
     initModel(this.submapModel_800d4bf8, this.submapCutModel, this.submapCutAnim);
   }
 
@@ -416,7 +415,7 @@ public class RetailSubmap extends Submap {
         GPU.uploadData15(imageRect, tim.getImageData());
         GPU.uploadData15(clutRect, tim.getClutData());
 
-        this.uvAdjustments.add(this.createUvAdjustments(pxlIndex, x, y));
+        this.uvAdjustments.add(new UvAdjustmentMetrics14(pxlIndex + 1, x, y));
 
         x += tim.getImageRect().w;
 
@@ -428,20 +427,6 @@ public class RetailSubmap extends Submap {
         this.uvAdjustments.add(UvAdjustmentMetrics14.NONE);
       }
     }
-  }
-
-  private UvAdjustmentMetrics14 createUvAdjustments(final int index, final int x, final int y) {
-    final int clutX = x / 16;
-    final int clutY = y + 112;
-    final int tpageX = x / 64;
-    final int tpageY = y / 256;
-    final int u = x % 64 * 4;
-    final int v = y % 256;
-    final int clut = clutX | clutY << 6;
-    final int tpage = tpageX | tpageY << 4;
-    final int uv = u | v << 8;
-
-    return new UvAdjustmentMetrics14(index + 1, clut << 16, 0x3c0ffff, tpage << 16, 0xffe0ffff, uv);
   }
 
   @Method(0x800e49a4L)

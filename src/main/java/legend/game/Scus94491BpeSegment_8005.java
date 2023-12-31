@@ -45,30 +45,26 @@ public final class Scus94491BpeSegment_8005 {
 
   public static final UvAdjustmentMetrics14[] _8005027c = {
     UvAdjustmentMetrics14.NONE,
-    new UvAdjustmentMetrics14( 1, 0x7c14_0000, 0x83c3_ffff, 0x15_0000, 0xffe0_ffff, 0x0),
-    new UvAdjustmentMetrics14( 2, 0x7c18_0000, 0x83c3_ffff, 0x16_0000, 0xffe0_ffff, 0x0),
-    new UvAdjustmentMetrics14( 3, 0x7c1c_0000, 0x83c3_ffff, 0x17_0000, 0xffe0_ffff, 0x0),
-    new UvAdjustmentMetrics14( 4, 0x7c20_0000, 0x83c3_ffff, 0x18_0000, 0xffe0_ffff, 0x0),
-    new UvAdjustmentMetrics14( 5, 0x7c24_0000, 0x83c3_ffff, 0x19_0000, 0xffe0_ffff, 0x0),
-    new UvAdjustmentMetrics14( 6, 0x7c28_0000, 0x83c3_ffff, 0x1a_0000, 0xffe0_ffff, 0x0),
-    new UvAdjustmentMetrics14( 7, 0x7c24_0000, 0x83c3_ffff, 0x19_0000, 0xffe0_ffff, 0x0),
-    new UvAdjustmentMetrics14( 8, 0x7c28_0000, 0x83c3_ffff, 0x1a_0000, 0xffe0_ffff, 0x0),
-    new UvAdjustmentMetrics14( 9, 0x7c2c_0000, 0x83c3_ffff, 0x1b_0000, 0xffe0_ffff, 0x0),
-    new UvAdjustmentMetrics14(10, 0x3c30_0000, 0x83c3_ffff, 0x0c_0000, 0xffe0_ffff, 0x0),
-    new UvAdjustmentMetrics14(11, 0x3c34_0000, 0x83c3_ffff, 0x0d_0000, 0xffe0_ffff, 0x0),
-    new UvAdjustmentMetrics14(12, 0x3c38_0000, 0x83c3_ffff, 0x0e_0000, 0xffe0_ffff, 0x0),
-    new UvAdjustmentMetrics14(13, 0x3c3c_0000, 0x83c3_ffff, 0x0f_0000, 0xffe0_ffff, 0x0),
-    new UvAdjustmentMetrics14(14, 0x3c20_0000, 0x83c3_ffff, 0x08_0000, 0xffe0_ffff, 0x0),
-    new UvAdjustmentMetrics14(15, 0x3c24_0000, 0x83c3_ffff, 0x09_0000, 0xffe0_ffff, 0x0),
-    new UvAdjustmentMetrics14(16, 0x3c28_0000, 0x83c3_ffff, 0x0a_0000, 0xffe0_ffff, 0x0),
-    new UvAdjustmentMetrics14(17, 0x3c2c_0000, 0x83c3_ffff, 0x0b_0000, 0xffe0_ffff, 0x0),
+    new UvAdjustmentMetrics14( 1, 320, 496, 320, 256),
+    new UvAdjustmentMetrics14( 2, 384, 496, 384, 256),
+    new UvAdjustmentMetrics14( 3, 448, 496, 448, 256),
+    new UvAdjustmentMetrics14( 4, 512, 496, 512, 256),
+    new UvAdjustmentMetrics14( 5, 576, 496, 576, 256),
+    new UvAdjustmentMetrics14( 6, 640, 496, 640, 256),
+    new UvAdjustmentMetrics14( 7, 576, 496, 576, 256),
+    new UvAdjustmentMetrics14( 8, 640, 496, 640, 256),
+    new UvAdjustmentMetrics14( 9, 704, 496, 704, 256),
+    new UvAdjustmentMetrics14(10, 768, 240, 768, 0),
+    new UvAdjustmentMetrics14(11, 832, 240, 832, 0),
+    new UvAdjustmentMetrics14(12, 896, 240, 896, 0),
+    new UvAdjustmentMetrics14(13, 960, 240, 960, 0),
+    new UvAdjustmentMetrics14(14, 512, 240, 512, 0),
+    new UvAdjustmentMetrics14(15, 576, 240, 576, 0),
+    new UvAdjustmentMetrics14(16, 640, 240, 640, 0),
+    new UvAdjustmentMetrics14(17, 704, 240, 704, 0),
   };
 
   public static final int[] shadowScale_8005039c = {0x1800, 0x1800, 0x1000, 0xe00, 0x1600, 0x1300, 0xe00, 0x2000, 0x1300, 0x1500};
-  public static final int[] _800503b0 = {0, 320, 384, 448, 512, 576, 640, 576, 640, 704, 768, 832, 896, 960, 512, 576, 640, 704};
-  public static final int[] _800503d4 = {0, 256, 256, 256, 256, 256, 256, 256, 256, 256, 0, 0, 0, 0, 0, 0, 0, 0};
-  public static final int[] _800503f8 = {576, 608, 624, 576, 592, 608, 624, 672, 688, 640, 656, 672, 688, 736, 752, 704, 720, 1008, 576, 640, 736, 704};
-  public static final int[] _80050424 = {256, 256, 256, 384, 384, 384, 384, 256, 256, 384, 384, 384, 384, 256, 256, 256, 256, 256, 256, 256, 256, 384};
 
   public static final LodString[] itemCombatDescriptions_80051758 = {
     new LodString(" "), new LodString("Detonates & attacks all."), new LodString("S attack(thunder, multi)."), new LodString("S attack(flame, multi)."), new LodString(" "),

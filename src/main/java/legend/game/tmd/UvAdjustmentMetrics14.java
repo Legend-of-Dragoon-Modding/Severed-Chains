@@ -4,25 +4,46 @@ import legend.core.MathHelper;
 import legend.core.gte.TmdObjTable1c;
 
 public class UvAdjustmentMetrics14 {
-  public static final UvAdjustmentMetrics14 NONE = new UvAdjustmentMetrics14(0, 0x0, 0xffff_ffff, 0x0, 0xffff_ffff, 0x0) {
+  public static final UvAdjustmentMetrics14 NONE = new UvAdjustmentMetrics14(0, 0, 0, 0, 0) {
     @Override
     public void apply(final TmdObjTable1c.Primitive primitive) { }
   };
 
   public final int index;
+
+  public final int clutX;
+  public final int clutY;
+  public final int tpageX;
+  public final int tpageY;
+
   public final int clutMaskOr_00;
   public final int clutMaskAnd_04;
   public final int tpageMaskOr_08;
   public final int tpageMaskAnd_0c;
   public final int uvOffset_10;
 
-  public UvAdjustmentMetrics14(final int index, final int clutMaskOr, final int clutMaskAnd, final int tpageMaskOr, final int tpageMaskAnd, final int uvOffset) {
+  public UvAdjustmentMetrics14(final int index, final int x, final int y) {
+    this(index, x, y + 112, x, y);
+  }
+
+  public UvAdjustmentMetrics14(final int index, final int clutX, final int clutY, final int tpageX, final int tpageY) {
+    final int u = tpageX % 64 * 4;
+    final int v = tpageY % 256;
+    final int clut = clutX / 16 | clutY << 6;
+    final int tpage = tpageX / 64 | tpageY / 256 << 4;
+    final int uv = u | v << 8;
+
+    this.clutX = clutX;
+    this.clutY = clutY;
+    this.tpageX = tpageX;
+    this.tpageY = tpageY;
+
     this.index = index;
-    this.clutMaskOr_00 = clutMaskOr;
-    this.clutMaskAnd_04 = clutMaskAnd;
-    this.tpageMaskOr_08 = tpageMaskOr;
-    this.tpageMaskAnd_0c = tpageMaskAnd;
-    this.uvOffset_10 = uvOffset;
+    this.clutMaskOr_00 = clut << 16;
+    this.clutMaskAnd_04 = 0x3c0ffff;
+    this.tpageMaskOr_08 = tpage << 16;
+    this.tpageMaskAnd_0c = 0xffe0ffff;
+    this.uvOffset_10 = uv;
   }
 
   public void apply(final TmdObjTable1c.Primitive primitive) {

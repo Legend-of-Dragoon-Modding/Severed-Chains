@@ -1367,7 +1367,7 @@ public class SMap extends EngineState {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj.movementDestination_138.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     sobj.movementTicks_144 = script.params_20[4].get() * (3 - vsyncMode_8007a3b8);
-    sobj.movementStepAccelerationY_18c = (script.params_20[5].get() + 5) / (2.0f / vsyncMode_8007a3b8);
+    sobj.movementStepAccelerationY_18c = (script.params_20[5].get() + 5) / (4.0f / (vsyncMode_8007a3b8 * vsyncMode_8007a3b8));
     sobj.movementStep_148.x = (sobj.movementDestination_138.x - sobj.model_00.coord2_14.coord.transfer.x) / sobj.movementTicks_144;
     sobj.movementStep_148.z = (sobj.movementDestination_138.z - sobj.model_00.coord2_14.coord.transfer.z) / sobj.movementTicks_144;
 
@@ -1375,7 +1375,10 @@ public class SMap extends EngineState {
     sobj.s_174 = sobj.s_172;
     sobj.s_172 = 1;
     sobj.us_170 = 2;
-    sobj.movementStepY_134 = ((sobj.movementDestination_138.y - sobj.model_00.coord2_14.coord.transfer.y) * 2 - sobj.movementTicks_144 * sobj.movementStepAccelerationY_18c * (sobj.movementTicks_144 - 1)) / (sobj.movementTicks_144 * 2);
+
+    final float stepY = (sobj.movementDestination_138.y - sobj.model_00.coord2_14.coord.transfer.y) / sobj.movementTicks_144;
+    sobj.movementStepY_134 = stepY - sobj.movementStepAccelerationY_18c / 2 * (sobj.movementTicks_144 - 1);
+
     this.sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(this::tickSobjMovement);
     return FlowControl.CONTINUE;
   }
@@ -2926,7 +2929,6 @@ public class SMap extends EngineState {
 
           final Model124 model = state.innerStruct_00.model_00;
           model.uvAdjustments_9d = this.submap.uvAdjustments.get(i);
-          model.uvAnimationSecondaryBank = true;
 
           final CContainer tmd = this.submap.objects.get(i).model;
           final TmdAnimationFile anim = obj.animations.get(0);
@@ -4942,7 +4944,7 @@ public class SMap extends EngineState {
 
       //LAB_800ef520
       if(data.shouldRenderOrthoDust_0c) {
-        if(data.tick_00 % (data.instantiationIntervalDust30 - (3 - vsyncMode_8007a3b8)) == 0) {
+        if(data.tick_00 % (data.instantiationIntervalDust30 * (3 - vsyncMode_8007a3b8)) == 0) {
           final OrthoTrailParticle54 inst = this.addOrthoQuadTrailParticle(this.orthoQuadTrail);
           inst.renderMode_00 = 1;
           inst.textureIndex_02 = 2;
