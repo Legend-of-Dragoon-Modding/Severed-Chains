@@ -238,6 +238,7 @@ public final class Fmv {
 
     oldFps = RENDERER.window().getFpsLimit();
     RENDERER.window().setFpsLimit(15);
+    RENDERER.setProjectionSize(320.0f, 240.0f);
 
     final Shader simpleShader = ShaderManager.getShader("simple");
     final Shader.UniformVec4 simpleShaderColour = simpleShader.new UniformVec4("recolour");

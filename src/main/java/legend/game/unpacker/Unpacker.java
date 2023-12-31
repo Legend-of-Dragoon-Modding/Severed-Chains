@@ -342,6 +342,8 @@ public final class Unpacker {
         loadRoot(readers[i], root);
       }
 
+      statusListener.accept("Loading disk images...");
+
       final long fileTreeTime = System.nanoTime();
       LOGGER.info("Populating initial file tree...");
 
@@ -352,6 +354,8 @@ public final class Unpacker {
       LOGGER.info("Initial file tree populated in %fs", (System.nanoTime() - fileTreeTime) / 1_000_000_000.0f);
 
       if(!transformationQueue.isEmpty()) {
+        statusListener.accept("Transforming files...");
+
         final long leafTransformTime = System.nanoTime();
         LOGGER.info("Performing leaf transformations...");
 
@@ -372,6 +376,8 @@ public final class Unpacker {
 
         LOGGER.info("Leaf transformations completed in %fs", (System.nanoTime() - leafTransformTime) / 1_000_000_000.0f);
 
+        statusListener.accept("Transforming directories...");
+
         final long branchTransformTime = System.nanoTime();
         LOGGER.info("Performing branch transformations...");
 
@@ -385,22 +391,23 @@ public final class Unpacker {
         final long writeTime = System.nanoTime();
         LOGGER.info("Writing %d files...", all.size());
 
-        final AtomicInteger filesRemaining = new AtomicInteger(all.size());
         executeInParallel(activeThreads, lock, () -> {
+          statusListener.accept("Writing %d files...".formatted(all.size()));
+
           int i = 0;
           PathNode node;
           while(i < 100 && (node = all.poll()) != null) {
             writeFile(node);
-            filesRemaining.decrementAndGet();
             i++;
           }
-        }, () -> filesRemaining.get() != 0);
+        }, () -> !all.isEmpty());
 
         LOGGER.info("Files written in %fs", (System.nanoTime() - writeTime) / 1_000_000_000.0f);
 
         Files.writeString(ROOT.resolve("version"), Integer.toString(VERSION));
       }
 
+      statusListener.accept("");
       LOGGER.info("Files unpacked in %fs", (System.nanoTime() - start) / 1_000_000_000.0f);
     } catch(final UnpackerException e) {
       throw e;
@@ -613,8 +620,6 @@ public final class Unpacker {
   }
 
   private static FileData readFile(final String filename, final DirectoryEntry entry) {
-    statusListener.accept("Unpacking %s...".formatted(filename));
-
     synchronized(entry.reader()) {
       final byte[] fileData = entry.reader().readSectors(entry.sector(), entry.length(), filename.endsWith(".IKI") || filename.endsWith(".XA"));
       return new FileData(fileData);

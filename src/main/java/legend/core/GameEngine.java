@@ -151,7 +151,6 @@ public final class GameEngine {
 
   private static Shader.UniformBuffer transforms2;
   private static final Matrix4f identity = new Matrix4f();
-  private static final Matrix4f backgroundTransforms = new Matrix4f();
   private static final Matrix4f textTransforms = new Matrix4f();
   private static final Matrix4f eyeTransforms = new Matrix4f();
   private static final Matrix4f loadingTransforms = new Matrix4f();
@@ -379,6 +378,7 @@ public final class GameEngine {
       onShutdown = null;
     }
 
+    RENDERER.usePs1Gpu = true;
     spuThread.start();
 
     synchronized(LOCK) {
@@ -397,9 +397,6 @@ public final class GameEngine {
   }
 
   private static void loadGfx() {
-    RENDERER.setProjectionSize(320.0f, 240.0f);
-    RENDERER.camera().moveTo(0.0f, 0.0f, -2.0f);
-
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -419,19 +416,19 @@ public final class GameEngine {
     eyeShaderTicks = eyeShader.new UniformFloat("ticks");
 
     eyeMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
-      0.0f, 0.0f, 0, 0, 0,
-      0.0f, 0.1f, 0, 0, 1,
-      0.1f, 0.0f, 0, 1, 0,
-      0.1f, 0.1f, 0, 1, 1,
+       0.0f,  0.0f, 1.0f, 0, 0,
+       0.0f, 32.0f, 1.0f, 0, 1,
+      32.0f,  0.0f, 1.0f, 1, 0,
+      32.0f, 32.0f, 1.0f, 1, 1,
     }, 4);
     eyeMesh.attribute(0, 0L, 3, 5);
     eyeMesh.attribute(1, 3L, 2, 5);
 
     loadingMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
-          0.0f, 0.0f, 0, 0, 0,
-          0.0f, 0.1f, 0, 0, 1,
-      0.40625f, 0.0f, 0, 1, 0,
-      0.40625f, 0.1f, 0, 1, 1,
+        0.0f,  0.0f, 1.0f, 0, 0,
+        0.0f, 32.0f, 1.0f, 0, 1,
+      130.0f,  0.0f, 1.0f, 1, 0,
+      130.0f, 32.0f, 1.0f, 1, 1,
     }, 4);
     loadingMesh.attribute(0, 0L, 3, 5);
     loadingMesh.attribute(1, 3L, 2, 5);
@@ -443,6 +440,8 @@ public final class GameEngine {
 
     onResize = RENDERER.events().onResize(GameEngine::windowResize);
     windowResize(RENDERER.window(), (int)(RENDERER.window().getWidth() * RENDERER.window().getScale()), (int)(RENDERER.window().getHeight() * RENDERER.window().getScale()));
+
+    RENDERER.usePs1Gpu = false;
     RENDERER.setRenderCallback(GameEngine::renderIntro);
 
     onKeyPress = RENDERER.events().onKeyPress((window, key, scancode, mods) -> skip());
@@ -465,6 +464,8 @@ public final class GameEngine {
   private static float eyeFade;
 
   private static void renderIntro() {
+    RENDERER.setProjectionMode(ProjectionMode._2D);
+
     final long deltaMs = (System.nanoTime() - time) / 1_000_000;
 
     if(deltaMs < 5000) {
@@ -503,7 +504,7 @@ public final class GameEngine {
 
     shader.use();
 
-    transforms2.set(backgroundTransforms);
+    transforms2.set(identity);
     shaderAlpha.set(fade1 * fade1 * fade1);
     title1Texture.use();
     fullScrenMesh.draw();
@@ -551,7 +552,7 @@ public final class GameEngine {
       fullScrenMesh.delete();
     }
 
-    final float aspect = (float)width / height;
+    final float aspect = 4.0f / 3.0f;
 
     float w = width;
     float h = w / aspect;
@@ -563,20 +564,24 @@ public final class GameEngine {
 
     screenWidth = w;
 
-    final float textureWidth = (float)title1Texture.width / title1Texture.height;
+    final float l = (width - w) / 2;
+    final float t = (height - h) / 2;
+    final float r = l + w;
+    final float b = t + h;
+
     fullScrenMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
-      -textureWidth, -1.0f, 0.0f, 0, 0,
-      -textureWidth,  1.0f, 0.0f, 0, 1,
-       textureWidth, -1.0f, 0.0f, 1, 0,
-       textureWidth,  1.0f, 0.0f, 1, 1,
+      l, t, 1.0f, 0, 0,
+      l, b, 1.0f, 0, 1,
+      r, t, 1.0f, 1, 0,
+      r, b, 1.0f, 1, 1,
     }, 4);
     fullScrenMesh.attribute(0, 0L, 3, 5);
     fullScrenMesh.attribute(1, 3L, 2, 5);
 
-    backgroundTransforms.translation(0.0f, 0.0f, 0.4f);
-    textTransforms.translation(0.0f, 0.0f, 0.3f);
-    loadingTransforms.translation(-0.85f * aspect + 0.075f, -0.88f, 0.2f);
-    eyeTransforms.translation(-0.85f * aspect, -0.85f, 0.1f);
+    eyeTransforms.translation(10.0f, height - 42.0f, 0.0f);
+    loadingTransforms.translation(46.0f, height - 42.0f, 0.0f);
+
+    RENDERER.setProjectionSize(width, height);
   }
 
   private static Shader loadShader(final Path vsh, final Path fsh) {
