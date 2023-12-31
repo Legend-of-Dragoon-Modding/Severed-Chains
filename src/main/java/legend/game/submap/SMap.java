@@ -6267,7 +6267,7 @@ public class SMap extends EngineState {
 
       //LAB_800ef520
       if(data.shouldRenderOrthoDust_0c) {
-        if(data.tick_00 % (data.instantiationIntervalDust30 - (3 - vsyncMode_8007a3b8)) == 0) {
+        if(data.tick_00 % (data.instantiationIntervalDust30 * (3 - vsyncMode_8007a3b8)) == 0) {
           final OrthoTrailParticle54 inst = this.addOrthoQuadTrailParticle(this.orthoQuadTrail);
           inst.renderMode_00 = 1;
           inst.textureIndex_02 = 2;
