@@ -37,6 +37,8 @@ public class CollisionGeometry {
   public final ModelPart10 dobj2Ptr_20 = new ModelPart10();
   public final GsCOORDINATE2 coord2Ptr_24 = new GsCOORDINATE2();
 
+  private final int[] collisionAndTransitions_800cb460 = new int[64];
+
   /** The collision primitive that the player is currently within */
   private int collidedPrimitiveIndex_800cbd94;
   private final Vector3f cachedPlayerMovement_800cbd98 = new Vector3f();
@@ -66,6 +68,34 @@ public class CollisionGeometry {
     }
 
     return this.primitives_10[primitivesIndex];
+  }
+
+  public void clearCollisionAndTransitionInfo() {
+    Arrays.fill(this.collisionAndTransitions_800cb460, 0);
+  }
+
+  /**
+   * @return <ul>
+   *   <li>0x8 - blocked</li>
+   *   <li>0x10 - map transition</li>
+   *   <li>0x20 - shop/inn</li>
+   *   <li>Bits 16-21 - submap scene for 0x10</li>
+   *   <li>Bits 22-31 - submap cut for 0x10</li>
+   * </ul>
+   */
+  @Method(0x800e6730L)
+  public int getCollisionAndTransitionInfo(final int collisionPrimitiveIndex) {
+    // This did unsigned comparison, so -1 was >= 0x40
+    if(collisionPrimitiveIndex < 0 || collisionPrimitiveIndex >= 0x40) {
+      return 0;
+    }
+
+    return this.collisionAndTransitions_800cb460[collisionPrimitiveIndex];
+  }
+
+  @Method(0x800e675cL)
+  public void setCollisionAndTransitionInfo(final int a0) {
+    this.collisionAndTransitions_800cb460[(a0 >> 8 & 0xfc) / 4] = a0;
   }
 
   @Method(0x800e866cL)
@@ -533,7 +563,7 @@ public class CollisionGeometry {
       }
 
       //LAB_800e9c58
-      if((this.smap.getCollisionAndTransitionInfo(s4) & 0x20) != 0) {
+      if((this.getCollisionAndTransitionInfo(s4) & 0x20) != 0) {
         return -1;
       }
 

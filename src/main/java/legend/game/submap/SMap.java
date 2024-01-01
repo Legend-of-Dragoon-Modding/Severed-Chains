@@ -74,21 +74,14 @@ import static legend.core.MathHelper.flEq;
 import static legend.core.MathHelper.psxDegToRad;
 import static legend.core.MathHelper.sin;
 import static legend.game.SItem.loadCharacterStats;
-import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
-import static legend.game.Scus94491BpeSegment.getSubmapMusicChange;
 import static legend.game.Scus94491BpeSegment.loadDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadFile;
-import static legend.game.Scus94491BpeSegment.loadMusicPackage;
-import static legend.game.Scus94491BpeSegment.loadSubmapSounds;
 import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
-import static legend.game.Scus94491BpeSegment.startCurrentMusicSequence;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
-import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
-import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800218f0;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
@@ -119,7 +112,6 @@ import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
 import static legend.game.Scus94491BpeSegment_8003.perspectiveTransform;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
-import static legend.game.Scus94491BpeSegment_8005._80050274;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.renderBorder_80052b68;
 import static legend.game.Scus94491BpeSegment_8005.shouldRestoreCameraPosition_80052c40;
@@ -132,7 +124,6 @@ import static legend.game.Scus94491BpeSegment_8005.textboxMode_80052b88;
 import static legend.game.Scus94491BpeSegment_8005.textboxTextType_80052ba8;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
-import static legend.game.Scus94491BpeSegment_800b._800bda08;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
@@ -225,8 +216,7 @@ public class SMap extends EngineState {
   public int encounterAccumulator_800c6ae8;
   private final List<CountdownLatch> latchList_800c6aec = new ArrayList<>();
 
-  private int _800caaf4;
-  private int _800caaf8;
+  private int currentSubmapScene_800caaf8;
 
   private NewRootStruct newrootPtr_800cab04;
 
@@ -236,8 +226,6 @@ public class SMap extends EngineState {
   public SubmapState smapLoadingStage_800cb430 = SubmapState.INIT_0;
 
   private boolean returnedToSameSubmapAfterBattle_800cb448;
-
-  private final int[] collisionAndTransitions_800cb460 = new int[64];
 
   private final Vector2i screenOffset_800cb568 = new Vector2i();
 
@@ -284,60 +272,6 @@ public class SMap extends EngineState {
 
   private final int[] texPages_800d6050 = new int[12];
   private final int[] cluts_800d6068 = new int[12];
-
-  /** Maps submap cuts to their submap */
-  private final int[] cutToSubmap_800d610c = {
-    1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4,
-    4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-    4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6,
-    6, 6, 6, 6, 6, 6, 6, 1, 4, 3, 8, 7, 7, 7, 7, 7,
-    7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-    8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9, 10,
-    10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11,
-    10, 10, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,
-    12, 12, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 14, 14, 14, 14,
-    14, 14, 14, 14, 14, 14, 14, 14, 14, 15, 15, 15, 15, 15, 15, 15,
-    15, 15, 15, 15, 15, 15, 15, 16, 16, 16, 16, 17, 17, 17, 17, 17,
-    17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 18, 18, 18, 18, 18,
-    18, 18, 18, 18, 18, 18, 18, 18, 18, 19, 19, 19, 19, 19, 19, 19,
-    19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 20, 20, 20,
-    20, 20, 20, 20, 20, 20, 20, 21, 21, 21, 19, 19, 20, 20, 20, 22,
-    22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 23, 23, 23, 23, 23,
-    23, 23, 23, 22, 20, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 25,
-    25, 25, 25, 25, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 27,
-    27, 27, 27, 27, 27, 27, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29,
-    29, 29, 29, 29, 29, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30,
-    30, 27, 27, 31, 31, 31, 31, 32, 32, 32, 32, 32, 32, 32, 32, 32,
-    32, 32, 32, 33, 33, 33, 33, 33, 33, 33, 33, 34, 34, 34, 34, 34,
-    34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 28, 28, 28, 35,
-    35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 36, 36, 37, 37, 37,
-    37, 37, 37, 37, 37, 34, 37, 37, 37, 38, 38, 38, 38, 38, 38, 38,
-    38, 38, 38, 38, 38, 38, 39, 39, 39, 39, 39, 39, 39, 40, 40, 40,
-    40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 41, 41, 41,
-    41, 42, 42, 42, 42, 42, 42, 42, 42, 43, 43, 43, 43, 43, 43, 43,
-    43, 43, 43, 43, 43, 43, 43, 43, 43, 44, 44, 44, 44, 44, 44, 44,
-    44, 45, 45, 45, 58, 58, 58, 58, 58, 58, 58, 58, 58, 46, 46, 46,
-    46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46,
-    46, 46, 46, 46, 46, 46, 46, 46, 47, 58, 58, 58, 58, 58, 48, 48,
-    49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49,
-    50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 51, 51, 51, 51, 51,
-    51, 51, 51, 51, 51, 51, 51, 51, 51, 48, 48, 48, 48, 48, 48, 48,
-    48, 56, 52, 53, 53, 53, 53, 53, 53, 54, 54, 54, 54, 54, 54, 54,
-    54, 54, 54, 54, 54, 54, 54, 55, 55, 55, 55, 55, 55, 55, 55, 55,
-    55, 55, 54, 53, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
-    56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 8,
-    2, 2, 10, 10, 9, 53, 28, 8, 10, 10, 14, 14, 14, 14, 14, 14,
-    4, 4, 4, 4, 4, 4, 14, 14, 49, 49, 58, 58, 58, 58, 58, 58,
-    13, 10, 18, 18, 18, 53, 20, 20, 20, 20, 20, 20, 20, 20, 32, 32,
-    58, 58, 10, 57, 57, 57, 28, 58, 58, 58, 58, 58, 58, 58, 58, 58,
-    58, 58, 58, 58, 36, 36, 3, 3, 3, 5, 20, 56, 53, 53, 20, 57,
-    57, 51, 51, 51, 51, 19, 32, 54, 54, 54, 54, 51, 13, 50, 50, 50,
-    30, 51, 51, 36, 36, 3, 10, 56, 56, 56, 56, 56, 56, 56, 56, 56,
-    56, 56, 56, 56, 5, 5, 3, 3, 19, 48, 48, 48, 48, 48, 48, 48,
-    48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48,
-    48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48,
-    48, 48, 48, 48, 48, 48, 48, 0,
-  };
 
   private final Vector3f[] footprintQuadVertices_800d6b7c = {
     new Vector3f(-10.0f, 0.0f, -22.0f),
@@ -490,42 +424,6 @@ public class SMap extends EngineState {
   private final float[] oldRotations_800f7f6c = new float[8];
   private boolean firstMovement;
 
-  /** Submap exits that lead to the world map */
-  private final SubmapWorldMapExits[] submapWorldMapExits_800f7f74 = {
-    new SubmapWorldMapExits(7, 13), new SubmapWorldMapExits(624, 11), new SubmapWorldMapExits(7, 16), new SubmapWorldMapExits(11, 30), new SubmapWorldMapExits(9, 9), new SubmapWorldMapExits(696, 13), new SubmapWorldMapExits(695, 4), new SubmapWorldMapExits(13, 17),
-    new SubmapWorldMapExits(38, 28), new SubmapWorldMapExits(39, 25), new SubmapWorldMapExits(44, 6), new SubmapWorldMapExits(45, 1), new SubmapWorldMapExits(54, 6), new SubmapWorldMapExits(66, 41), new SubmapWorldMapExits(95, 1), new SubmapWorldMapExits(96, 1),
-    new SubmapWorldMapExits(106, 10), new SubmapWorldMapExits(106, 16), new SubmapWorldMapExits(106, 20), new SubmapWorldMapExits(111, 11), new SubmapWorldMapExits(114, 0), new SubmapWorldMapExits(122, 8), new SubmapWorldMapExits(130, 17), new SubmapWorldMapExits(133, 57),
-    new SubmapWorldMapExits(132, 22), new SubmapWorldMapExits(140, 2), new SubmapWorldMapExits(153, 39), new SubmapWorldMapExits(171, 1), new SubmapWorldMapExits(201, 1), new SubmapWorldMapExits(201, 32), new SubmapWorldMapExits(744, 2), new SubmapWorldMapExits(224, 35),
-    new SubmapWorldMapExits(231, 1), new SubmapWorldMapExits(233, 13), new SubmapWorldMapExits(232, 11), new SubmapWorldMapExits(239, 26), new SubmapWorldMapExits(242, 3), new SubmapWorldMapExits(251, 10), new SubmapWorldMapExits(258, 10), new SubmapWorldMapExits(256, 9),
-    new SubmapWorldMapExits(261, 1), new SubmapWorldMapExits(264, 28), new SubmapWorldMapExits(297, 0), new SubmapWorldMapExits(297, 3), new SubmapWorldMapExits(301, 19), new SubmapWorldMapExits(302, 19), new SubmapWorldMapExits(301, 1), new SubmapWorldMapExits(302, 1),
-    new SubmapWorldMapExits(309, 32), new SubmapWorldMapExits(311, 18), new SubmapWorldMapExits(328, 54), new SubmapWorldMapExits(330, 25), new SubmapWorldMapExits(330, 19), new SubmapWorldMapExits(339, 26), new SubmapWorldMapExits(344, 17), new SubmapWorldMapExits(344, 18),
-    new SubmapWorldMapExits(341, 14), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(342, 38), new SubmapWorldMapExits(347, 31), new SubmapWorldMapExits(349, 1), new SubmapWorldMapExits(379, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(413, 1),
-    new SubmapWorldMapExits(433, 3), new SubmapWorldMapExits(434, 1), new SubmapWorldMapExits(457, 0), new SubmapWorldMapExits(459, 1), new SubmapWorldMapExits(477, 0), new SubmapWorldMapExits(787, 1), new SubmapWorldMapExits(513, 1), new SubmapWorldMapExits(526, 36),
-    new SubmapWorldMapExits(528, 14), new SubmapWorldMapExits(528, 13), new SubmapWorldMapExits(539, 0), new SubmapWorldMapExits(540, 19), new SubmapWorldMapExits(572, 23), new SubmapWorldMapExits(528, 15), new SubmapWorldMapExits(563, 25), new SubmapWorldMapExits(0, 0),
-    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(15, 8), new SubmapWorldMapExits(346, 1), new SubmapWorldMapExits(529, 41), new SubmapWorldMapExits(38, 7), new SubmapWorldMapExits(994, 0), new SubmapWorldMapExits(996, 0), new SubmapWorldMapExits(993, 0),
-    new SubmapWorldMapExits(992, 0), new SubmapWorldMapExits(992, 0), new SubmapWorldMapExits(990, 0), new SubmapWorldMapExits(991, 0), new SubmapWorldMapExits(285, 0), new SubmapWorldMapExits(279, 31), new SubmapWorldMapExits(527, 35), new SubmapWorldMapExits(528, 15),
-    new SubmapWorldMapExits(327, 54), new SubmapWorldMapExits(97, 1), new SubmapWorldMapExits(12, 30), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(999, 0), new SubmapWorldMapExits(999, 1), new SubmapWorldMapExits(999, 2), new SubmapWorldMapExits(0, 0),
-    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
-    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
-    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
-    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
-    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
-    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
-    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
-    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
-    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
-    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
-    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
-    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
-    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
-    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
-    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
-    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
-    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
-    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
-    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(0, 0),
-  };
-
   private int snowState_800f9e60;
 
   private int lawPodTrailSegmentCount_800f9e78;
@@ -560,6 +458,11 @@ public class SMap extends EngineState {
   };
 
   private final MapIndicator mapIndicator = new MapIndicator();
+
+  @Override
+  public void restoreMusicAfterMenu() {
+    this.submap.startMusic();
+  }
 
   @Override
   public Function<RunningScript, FlowControl>[] getScriptFunctions() {
@@ -955,7 +858,7 @@ public class SMap extends EngineState {
         //LAB_8002abdc
         //LAB_8002abe0
         // Handle map transitions
-        final int collisionAndTransitionInfo = this.getCollisionAndTransitionInfo(collidedPrimitiveIndex_80052c38);
+        final int collisionAndTransitionInfo = this.collisionGeometry_800cbe08.getCollisionAndTransitionInfo(collidedPrimitiveIndex_80052c38);
         if((collisionAndTransitionInfo & 0x10) != 0) {
           this.mapTransition(collisionAndTransitionInfo >>> 22, collisionAndTransitionInfo >>> 16 & 0x3f);
         }
@@ -2781,11 +2684,6 @@ public class SMap extends EngineState {
       case LOAD_SHADOW_AND_RESET_LIGHTING_0 -> {
         new Tim(Unpacker.loadFile("shadow.tim")).uploadToGpu();
 
-        if(_80050274 != submapCut_80052c30) {
-          _800bda08 = _80050274;
-          _80050274 = submapCut_80052c30;
-        }
-
         //LAB_800e1440
         this.GsF_LIGHT_0_800c66d8.direction_00.set(0.0f, 1.0f, 0.0f);
         this.GsF_LIGHT_0_800c66d8.r_0c = 0.5f;
@@ -2812,59 +2710,7 @@ public class SMap extends EngineState {
           break;
         }
 
-        final int oldSubmapIndex = submapId_800bd808;
-        submapId_800bd808 = this.cutToSubmap_800d610c[submapCut_80052c30];
-
-        //LAB_800e15b8
-        //LAB_800e15ac
-        //LAB_800e15b8
-        //LAB_800e15b8
-        if(submapId_800bd808 != oldSubmapIndex) { // Reload sounds when changing submap
-          stopAndResetSoundsAndSequences();
-          unloadSoundFile(4);
-          loadSubmapSounds(submapId_800bd808);
-        } else {
-          //LAB_800e1550
-          if(_800bda08 == submapCut_80052c30) {
-            //LAB_800e15d0
-            this.mediaLoadingStage_800c68e4 = SubmapMediaState.WAIT_FOR_MUSIC_2;
-            break;
-          }
-
-          //LAB_800e1594
-          //LAB_800e1584
-        }
-
-        musicLoaded_800bd782 = false;
-
-        final int ret = getSubmapMusicChange();
-        if(ret == -1) {
-          FUN_8001ae90();
-
-          //LAB_800e15b8
-          musicLoaded_800bd782 = true;
-          this.mediaLoadingStage_800c68e4 = SubmapMediaState.WAIT_FOR_MUSIC_2;
-          break;
-        }
-
-        if(ret == -2) {
-          startCurrentMusicSequence();
-
-          //LAB_800e15b8
-          musicLoaded_800bd782 = true;
-          this.mediaLoadingStage_800c68e4 = SubmapMediaState.WAIT_FOR_MUSIC_2;
-          break;
-        }
-
-        if(ret == -3) {
-          //LAB_800e15b8
-          musicLoaded_800bd782 = true;
-          this.mediaLoadingStage_800c68e4 = SubmapMediaState.WAIT_FOR_MUSIC_2;
-          break;
-        }
-
-        //LAB_800e15c0
-        loadMusicPackage(ret);
+        this.submap.loadMusicAndSounds();
         this.mediaLoadingStage_800c68e4 = SubmapMediaState.WAIT_FOR_MUSIC_2;
       }
 
@@ -3698,7 +3544,7 @@ public class SMap extends EngineState {
     // The first condition is to fix what we believe is caused by menus loading too fast in SC. Submaps still take several frames to initialize,
     // and if you spam triangle and escape immediately after the post-combat screen it's possible to get into this method when index_80052c38 is
     // still set to -1. See #304 for more details.
-    if(collidedPrimitiveIndex_80052c38 >= 0 && collidedPrimitiveIndex_80052c38 < 0x40 && this.collisionAndTransitions_800cb460[collidedPrimitiveIndex_80052c38] != 0) {
+    if(this.collisionGeometry_800cbe08.getCollisionAndTransitionInfo(collidedPrimitiveIndex_80052c38) != 0) {
       return false;
     }
 
@@ -3776,7 +3622,9 @@ public class SMap extends EngineState {
   private void loadAndRenderSubmapModelAndEffects(final int collisionGeometryIndexForInitialPlayerPosition, final MapTransitionData4c mapTransitionData) {
     this.executeSubmapMediaLoadingStage(collisionGeometryIndexForInitialPlayerPosition);
 
-    mapTransitionData.collidedPrimitiveSetterCallback_48.accept(mapTransitionData);
+    if(this.sobjs_800c6880[0] != null) {
+      mapTransitionData.run(this.sobjs_800c6880[0].innerStruct_00);
+    }
 
     this.smapTicks_800c6ae0++;
 
@@ -3853,15 +3701,15 @@ public class SMap extends EngineState {
           .screenspaceOffset(this.screenOffset_800cb568.x + 8, -this.screenOffset_800cb568.y)
         ;
 
-        if((this.getCollisionAndTransitionInfo(i) & 0x1) != 0) {
+        if((this.collisionGeometry_800cbe08.getCollisionAndTransitionInfo(i) & 0x1) != 0) {
           model.colour(0.5f, 0.0f, 1.0f);
         }
 
-        if((this.getCollisionAndTransitionInfo(i) & 0x2) != 0) {
+        if((this.collisionGeometry_800cbe08.getCollisionAndTransitionInfo(i) & 0x2) != 0) {
           model.colour(1.0f, 0.5f, 0.0f);
         }
 
-        if((this.getCollisionAndTransitionInfo(i) & 0x4) != 0) {
+        if((this.collisionGeometry_800cbe08.getCollisionAndTransitionInfo(i) & 0x4) != 0) {
           model.colour(1.0f, 1.0f, 0.0f);
         }
 
@@ -3869,11 +3717,11 @@ public class SMap extends EngineState {
           model.colour(1.0f, 0.0f, 0.0f);
         }
 
-        if((this.getCollisionAndTransitionInfo(i) & 0x10) != 0) {
+        if((this.collisionGeometry_800cbe08.getCollisionAndTransitionInfo(i) & 0x10) != 0) {
           model.colour(0.0f, 1.0f, 0.0f);
         }
 
-        if((this.getCollisionAndTransitionInfo(i) & 0x20) != 0) {
+        if((this.collisionGeometry_800cbe08.getCollisionAndTransitionInfo(i) & 0x20) != 0) {
           model.colour(0.0f, 1.0f, 1.0f);
         }
 
@@ -3883,14 +3731,7 @@ public class SMap extends EngineState {
           }
         }
 
-        for(int n = 0; n < 256; n++) {
-          final SubmapWorldMapExits worldMapExits = this.submapWorldMapExits_800f7f74[n];
-
-          if(worldMapExits.submapCut_04 == submapCut_80052c30 && i == worldMapExits.primitiveIndex_06) {
-            model.colour(1.0f, 0.0f, 1.0f);
-            break;
-          }
-        }
+        this.submap.applyCollisionDebugColour(i, model);
       }
     } else if(this.collisionGeometry_800cbe08.debugObj != null) {
       this.collisionGeometry_800cbe08.debugObj.delete();
@@ -3970,7 +3811,6 @@ public class SMap extends EngineState {
       this.mapTransitionTicks_800cab28++;
     }
 
-    final int cut = submapCut_80052c30;
     this._800f7e4c = true;
 
     if(newCut > 0x7ff) {
@@ -4004,7 +3844,7 @@ public class SMap extends EngineState {
       SCRIPTS.pause();
       whichMenu_800bdc38 = WhichMenu.INIT_CHAR_SWAP_MENU_21;
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
-      submapCutForSave_800cb450 = cut;
+      submapCutForSave_800cb450 = submapCut_80052c30;
       return true;
     }
 
@@ -4027,7 +3867,7 @@ public class SMap extends EngineState {
       this.submapChapterDestinations_800f7e2c[0].submapScene_04 = collidedPrimitiveIndex_80052c38;
       collidedPrimitiveIndex_80052c38 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapScene_04;
       submapCutForSave_800cb450 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapCut_00;
-      this.loadMapTransitionData(-1);
+      this.mapTransitionData_800cab24.clear();
       SCRIPTS.pause();
       return true;
     }
@@ -4036,7 +3876,7 @@ public class SMap extends EngineState {
       SCRIPTS.pause();
       whichMenu_800bdc38 = WhichMenu.INIT_INVENTORY_MENU_1;
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
-      submapCutForSave_800cb450 = cut;
+      submapCutForSave_800cb450 = submapCut_80052c30;
       return true;
     }
 
@@ -4058,7 +3898,7 @@ public class SMap extends EngineState {
       final SubmapObject210 sobj = this.sobjs_800c6880[0].innerStruct_00;
 
       screenOffsetBeforeBattle_800bed50.set(this.screenOffset_800cb568);
-      submapCutBeforeBattle_80052c3c = cut;
+      submapCutBeforeBattle_80052c3c = submapCut_80052c30;
       playerPositionBeforeBattle_800bed30.set(sobj.model_00.coord2_14.coord);
       shouldRestoreCameraPosition_80052c40 = true;
     }
@@ -4075,8 +3915,7 @@ public class SMap extends EngineState {
     //LAB_800e5a34
     if(pregameLoadingStage_800bb10c == 0) {
       pregameLoadingStage_800bb10c = 1;
-      this._800caaf4 = submapCut_80052c30;
-      this._800caaf8 = submapScene_80052c34;
+      this.currentSubmapScene_800caaf8 = submapScene_80052c34;
       submapEnvState_80052c44 = SubmapEnvState.CHECK_TRANSITIONS_1_2;
       this.smapLoadingStage_800cb430 = SubmapState.INIT_0;
     }
@@ -4118,8 +3957,7 @@ public class SMap extends EngineState {
       case LOAD_ENVIRONMENT_3 -> {
         this.mapTransitionTicks_800cab28 = 0;
         submapEnvState_80052c44 = SubmapEnvState.CHECK_TRANSITIONS_1_2;
-        this._800caaf4 = submapCut_80052c30;
-        this._800caaf8 = submapScene_80052c34;
+        this.currentSubmapScene_800caaf8 = submapScene_80052c34;
 
         this.submap = new RetailSubmap(submapCut_80052c30, this.newrootPtr_800cab04, this.screenOffset_800cb568, this.collisionGeometry_800cbe08);
         this.submap.loadEnv(() -> this.smapLoadingStage_800cb430 = SubmapState.START_LOADING_MEDIA_10);
@@ -4127,23 +3965,23 @@ public class SMap extends EngineState {
       }
 
       case CHANGE_SUBMAP_4 -> {
-        this.loadAndRenderSubmapModelAndEffects(this._800caaf8, this.mapTransitionData_800cab24);
+        this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
         this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_SUBMAP_17;
       }
 
       case START_LOADING_MEDIA_10 -> {
         this.restoreSubmapAfterBattleOrSetPositionToCollisionPrimitive(submapCut_80052c30, submapScene_80052c34);
         this.initCamera(submapScene_80052c34);
-        this.loadCollisionAndTransitions(submapCut_80052c30);
+        this.submap.loadCollisionAndTransitions();
         this.clearSubmapFlags();
 
         this.mediaLoadingStage_800c68e4 = SubmapMediaState.LOAD_SHADOW_AND_RESET_LIGHTING_0;
-        this.executeSubmapMediaLoadingStage(this._800caaf8);
+        this.executeSubmapMediaLoadingStage(this.currentSubmapScene_800caaf8);
         this.smapLoadingStage_800cb430 = SubmapState.FINISH_LOADING_AND_FADE_IN_11;
       }
 
       case FINISH_LOADING_AND_FADE_IN_11 -> {
-        this.executeSubmapMediaLoadingStage(this._800caaf8);
+        this.executeSubmapMediaLoadingStage(this.currentSubmapScene_800caaf8);
 
         // Wait for media to finish loading
         if(this.mediaLoadingStage_800c68e4 != SubmapMediaState.DONE) {
@@ -4151,7 +3989,7 @@ public class SMap extends EngineState {
         }
 
         if(this.isScriptLoaded(0)) {
-          this.sobjs_800c6880[0].innerStruct_00.collidedPrimitiveIndex_16c = this._800caaf8;
+          this.sobjs_800c6880[0].innerStruct_00.collidedPrimitiveIndex_16c = this.currentSubmapScene_800caaf8;
         }
 
         //LAB_800e5e94
@@ -4159,7 +3997,7 @@ public class SMap extends EngineState {
         loadingNewGameState_800bdc34 = false;
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_CHECK_TRANSITIONS_0;
         startFadeEffect(2, 10);
-        this.loadMapTransitionData(this._800caaf4);
+        this.submap.loadMapTransitionData(this.mapTransitionData_800cab24);
         SCRIPTS.resume();
         this.smapTicks_800c6ae0 = 0;
         this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
@@ -4168,7 +4006,7 @@ public class SMap extends EngineState {
       case RENDER_SUBMAP_12 -> {
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_CHECK_TRANSITIONS_0;
 
-        this.loadAndRenderSubmapModelAndEffects(this._800caaf8, this.mapTransitionData_800cab24);
+        this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
 
         if(Input.pressedThisFrame(InputAction.BUTTON_NORTH) && !gameState_800babc8.indicatorsDisabled_4e3) {
           this.mapTransition(-1, 0x3ff); // Open inv
@@ -4176,7 +4014,7 @@ public class SMap extends EngineState {
       }
 
       case LOAD_MENU_13 -> {
-        this.loadAndRenderSubmapModelAndEffects(this._800caaf8, this.mapTransitionData_800cab24);
+        this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
 
         submapFullyLoaded_800bd7b4 = false;
 
@@ -4246,7 +4084,7 @@ public class SMap extends EngineState {
 
       case UNLOAD_MENU_15 -> {
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_CHECK_TRANSITIONS_0;
-        this.loadAndRenderSubmapModelAndEffects(this._800caaf8, this.mapTransitionData_800cab24);
+        this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
         SCRIPTS.resume();
         this._800f7e4c = false;
         this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
@@ -4257,7 +4095,7 @@ public class SMap extends EngineState {
       }
 
       case TRANSITION_TO_SUBMAP_17 -> {
-        this.loadAndRenderSubmapModelAndEffects(this._800caaf8, this.mapTransitionData_800cab24);
+        this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
 
         if(this.isScriptLoaded(0)) {
           this.sobjs_800c6880[0].innerStruct_00.disableAnimation_12a = true;
@@ -4295,7 +4133,7 @@ public class SMap extends EngineState {
       }
 
       case TRANSITION_TO_WORLD_MAP_18 -> {
-        this.loadAndRenderSubmapModelAndEffects(this._800caaf8, this.mapTransitionData_800cab24);
+        this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
 
         submapFullyLoaded_800bd7b4 = false;
 
@@ -4321,7 +4159,7 @@ public class SMap extends EngineState {
       }
 
       case TRANSITION_TO_COMBAT_19 -> {
-        this.loadAndRenderSubmapModelAndEffects(this._800caaf8, this.mapTransitionData_800cab24);
+        this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
         submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_UNLOAD_4_5;
         engineStateOnceLoaded_8004dd24 = EngineStateEnum.COMBAT_06;
         pregameLoadingStage_800bb10c = 0;
@@ -4330,7 +4168,7 @@ public class SMap extends EngineState {
       }
 
       case TRANSITION_TO_TITLE_20 -> {
-        this.loadAndRenderSubmapModelAndEffects(this._800caaf8, this.mapTransitionData_800cab24);
+        this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
 
         submapFullyLoaded_800bd7b4 = false;
 
@@ -4361,7 +4199,7 @@ public class SMap extends EngineState {
       }
 
       case TRANSITION_TO_FMV_21 -> {
-        this.loadAndRenderSubmapModelAndEffects(this._800caaf8, this.mapTransitionData_800cab24);
+        this.loadAndRenderSubmapModelAndEffects(this.currentSubmapScene_800caaf8, this.mapTransitionData_800cab24);
 
         submapFullyLoaded_800bd7b4 = false;
 
@@ -4396,53 +4234,9 @@ public class SMap extends EngineState {
     this.setIndicatorStatusAndResetIndicatorTickCountOnReenable();
   }
 
-  @Method(0x800e664cL)
-  private void loadCollisionAndTransitions(final int submapCut) {
-    Arrays.fill(this.collisionAndTransitions_800cb460, 0);
-
-    final SubmapCutInfo entry = this.newrootPtr_800cab04.submapCutInfo_0000[submapCut];
-    final short offset = entry.collisionAndTransitionOffset_04;
-
-    if(offset < 0) {
-      return;
-    }
-
-    //LAB_800e66dc
-    for(int i = 0; i < entry.collisionAndTransitionCount_06; i++) {
-      final int v1 = this.newrootPtr_800cab04.collisionAndTransitions_2000[offset / 4 + i];
-      this.setCollisionAndTransitionInfo(v1);
-    }
-
-    //LAB_800e671c
-  }
-
-  /**
-   * @return <ul>
-   *   <li>0x8 - blocked</li>
-   *   <li>0x10 - map transition</li>
-   *   <li>0x20 - shop/inn</li>
-   *   <li>Bits 16-21 - submap scene for 0x10</li>
-   *   <li>Bits 22-31 - submap cut for 0x10</li>
-   * </ul>
-   */
-  @Method(0x800e6730L)
-  public int getCollisionAndTransitionInfo(final int collisionPrimitiveIndex) {
-    // This did unsigned comparison, so -1 was >= 0x40
-    if(collisionPrimitiveIndex < 0 || collisionPrimitiveIndex >= 0x40) {
-      return 0;
-    }
-
-    return this.collisionAndTransitions_800cb460[collisionPrimitiveIndex];
-  }
-
-  @Method(0x800e675cL)
-  private void setCollisionAndTransitionInfo(final int a0) {
-    this.collisionAndTransitions_800cb460[(a0 >> 8 & 0xfc) / 4] = a0;
-  }
-
   @Method(0x800e6798L)
   private boolean isWalkable(final int collisionPrimitiveIndex) {
-    return (this.getCollisionAndTransitionInfo(collisionPrimitiveIndex) & 0x8) == 0;
+    return (this.collisionGeometry_800cbe08.getCollisionAndTransitionInfo(collisionPrimitiveIndex) & 0x8) == 0;
   }
 
   @ScriptDescription("Transitions to another submap cut/scene (certain values have special meanings - FMVs, menus)")
@@ -4520,7 +4314,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "collisionPrimitiveIndex", description = "The index")
   @Method(0x800e69a4L)
   private FlowControl scriptGetCollisionAndTransitionInfo(final RunningScript<?> script) {
-    script.params_20[0].set(this.getCollisionAndTransitionInfo(script.params_20[1].get()));
+    script.params_20[0].set(this.collisionGeometry_800cbe08.getCollisionAndTransitionInfo(script.params_20[1].get()));
     return FlowControl.CONTINUE;
   }
 
@@ -4534,7 +4328,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "collisionPrimitiveIndex", description = "The index")
   @Method(0x800e69f0L)
   private FlowControl scriptBlockCollisionPrimitive(final RunningScript<?> script) {
-    this.setCollisionAndTransitionInfo(this.getCollisionAndTransitionInfo(script.params_20[0].get()) | 0x8);
+    this.collisionGeometry_800cbe08.setCollisionAndTransitionInfo(this.collisionGeometry_800cbe08.getCollisionAndTransitionInfo(script.params_20[0].get()) | 0x8);
     return FlowControl.CONTINUE;
   }
 
@@ -4542,7 +4336,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "collisionPrimitiveIndex", description = "The index")
   @Method(0x800e6a28L)
   private FlowControl scriptUnblockCollisionPrimitive(final RunningScript<?> script) {
-    this.setCollisionAndTransitionInfo(this.getCollisionAndTransitionInfo(script.params_20[0].get()) & 0xffff_fff7);
+    this.collisionGeometry_800cbe08.setCollisionAndTransitionInfo(this.collisionGeometry_800cbe08.getCollisionAndTransitionInfo(script.params_20[0].get()) & 0xffff_fff7);
     return FlowControl.CONTINUE;
   }
 
@@ -4778,67 +4572,6 @@ public class SMap extends EngineState {
 
     //LAB_800ea6dc
     return newRotation;
-  }
-
-  @Method(0x800ea84cL)
-  private void updateCollidedPrimitiveIndexAndCheckForWorldMapTransition(final MapTransitionData4c mapTransitionData) {
-    if(this.isScriptLoaded(0)) {
-      if(mapTransitionData.shouldUpdateCollidedWith_44) {
-        collidedPrimitiveIndex_80052c38 = this.sobjs_800c6880[0].innerStruct_00.collidedPrimitiveIndex_16c;
-
-        //LAB_800ea8d4
-        for(int i = 0; i < mapTransitionData.worldMapExitCount_40; i++) {
-          if(collidedPrimitiveIndex_80052c38 == mapTransitionData.worldMapExitPrimitiveIndices_00[i]) {
-            mapTransitionData.shouldUpdateCollidedWith_44 = false;
-            break;
-          }
-
-          //LAB_800ea8ec
-        }
-      }
-    }
-
-    //LAB_800ea8fc
-  }
-
-  @Method(0x800ea90cL)
-  private void updateCollidedPrimitiveIndex(final MapTransitionData4c a0) {
-    if(this.isScriptLoaded(0)) {
-      collidedPrimitiveIndex_80052c38 = this.sobjs_800c6880[0].innerStruct_00.collidedPrimitiveIndex_16c;
-    }
-  }
-
-  /** Caches world map transition primitive indices and sets up the collided primitive setter callback */
-  @Method(0x800ea974L)
-  private void loadMapTransitionData(final int submapCut) {
-    final MapTransitionData4c mapTransitionData = this.mapTransitionData_800cab24;
-
-    if(submapCut < 0) {
-      mapTransitionData.collidedPrimitiveSetterCallback_48 = t -> { };
-    } else {
-      //LAB_800ea9a4
-      mapTransitionData.clear();
-
-      //LAB_800ea9d8
-      if(submapCut != 0) {
-        for(int i = 0; i < 256; i++) {
-          final SubmapWorldMapExits exit = this.submapWorldMapExits_800f7f74[i];
-          if(exit.submapCut_04 == submapCut) {
-            mapTransitionData.worldMapExitPrimitiveIndices_00[mapTransitionData.worldMapExitCount_40] = exit.primitiveIndex_06;
-            mapTransitionData.worldMapExitCount_40++;
-          }
-        }
-      }
-
-      //LAB_800eaa30
-      if(mapTransitionData.worldMapExitCount_40 != 0) {
-        mapTransitionData.collidedPrimitiveSetterCallback_48 = this::updateCollidedPrimitiveIndexAndCheckForWorldMapTransition;
-        mapTransitionData.shouldUpdateCollidedWith_44 = true;
-      } else {
-        //LAB_800eaa5c
-        mapTransitionData.collidedPrimitiveSetterCallback_48 = this::updateCollidedPrimitiveIndex;
-      }
-    }
   }
 
   /** Used in Snow Field (disk 3) */

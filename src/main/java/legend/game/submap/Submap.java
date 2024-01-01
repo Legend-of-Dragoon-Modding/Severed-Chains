@@ -1,5 +1,6 @@
 package legend.game.submap;
 
+import legend.core.RenderEngine;
 import legend.game.scripting.ScriptFile;
 import legend.game.tmd.UvAdjustmentMetrics14;
 
@@ -16,6 +17,13 @@ public abstract class Submap {
   /** Called when textures need to be reloaded (e.g. after menus are closed) */
   public abstract void restoreAssets();
 
+  public abstract void loadMusicAndSounds();
+  public abstract void startMusic();
+
+  /** Caches world map transition primitive indices and sets up the collided primitive setter callback */
+  public abstract void loadMapTransitionData(final MapTransitionData4c transitionData);
+  public abstract void loadCollisionAndTransitions();
+
   public abstract void draw();
   public abstract void unload();
 
@@ -27,4 +35,8 @@ public abstract class Submap {
   public boolean hasEncounters() {
     return this.getEncounterRate() != 0;
   }
+
+  public abstract Runnable createPostBattleResume();
+
+  void applyCollisionDebugColour(final int collisionPrimitiveIndex, final RenderEngine.QueuedModel model) { }
 }

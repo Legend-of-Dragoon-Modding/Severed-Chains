@@ -183,6 +183,7 @@ import static legend.game.Scus94491BpeSegment_8002.loadPlayerModelAndAnimation;
 import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
 import static legend.game.Scus94491BpeSegment_8002.scriptDeallocateAllTextboxes;
 import static legend.game.Scus94491BpeSegment_8002.sortItems;
+import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
 import static legend.game.Scus94491BpeSegment_8002.takeItemId;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
@@ -582,6 +583,12 @@ public class Battle extends EngineState {
     }
 
     //LAB_80018734
+  }
+
+  @Override
+  public void restoreMusicAfterMenu() {
+    //LAB_8001e264
+    sssqResetStuff();
   }
 
   @Override

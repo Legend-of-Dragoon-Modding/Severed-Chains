@@ -102,7 +102,6 @@ import static legend.game.SItem.renderMenus;
 import static legend.game.SItem.textLength;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
 import static legend.game.Scus94491BpeSegment.FUN_8001d51c;
-import static legend.game.Scus94491BpeSegment.FUN_8001e010;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
@@ -113,7 +112,9 @@ import static legend.game.Scus94491BpeSegment.rectArray28_80010770;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.soundBufferOffset;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
+import static legend.game.Scus94491BpeSegment.startMenuMusic;
 import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
+import static legend.game.Scus94491BpeSegment.stopMenuMusic;
 import static legend.game.Scus94491BpeSegment.textboxBorderMetrics_800108b0;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
@@ -897,7 +898,7 @@ public final class Scus94491BpeSegment_8002 {
     if((getLoadedDrgnFiles() & 0x80L) == 0) {
       inventoryMenuState_800bdc28 = InventoryMenuState.INIT_0;
       whichMenu_800bdc38 = WhichMenu.WAIT_FOR_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_2;
-      FUN_8001e010(0);
+      startMenuMusic();
       SCRIPTS.stop();
       Scus94491BpeSegment_8002.destMenu = destMenu;
       Scus94491BpeSegment_8002.destScreen = destScreen;
@@ -962,7 +963,7 @@ public final class Scus94491BpeSegment_8002 {
         menuStack.popScreen();
 
         if(whichMenu_800bdc38 != WhichMenu.UNLOAD_SAVE_GAME_MENU_20) {
-          FUN_8001e010(-1);
+          stopMenuMusic();
         }
 
         SCRIPTS.start();
@@ -984,7 +985,7 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       case UNLOAD_INVENTORY_MENU_5, UNLOAD_SHOP_MENU_10, UNLOAD_TOO_MANY_ITEMS_MENU_35 -> {
-        FUN_8001e010(-1);
+        stopMenuMusic();
         SCRIPTS.start();
         whichMenu_800bdc38 = WhichMenu.NONE_0;
       }

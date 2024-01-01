@@ -380,6 +380,11 @@ public class WMap extends EngineState {
   private int coolonWarpDestLabelY;
   private boolean shouldSetCoolonWarpDestLabelMetrics;
 
+  @Override
+  public void restoreMusicAfterMenu() {
+    unloadSoundFile(8);
+  }
+
   @Method(0x800c925cL)
   private void renderWmapModel(final Model124 model) {
     final MV lw = new MV();

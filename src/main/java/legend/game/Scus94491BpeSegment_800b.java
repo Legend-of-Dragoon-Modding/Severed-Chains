@@ -151,7 +151,7 @@ public final class Scus94491BpeSegment_800b {
     Arrays.setAll(sobjPositions_800bd818, i -> new SobjPos14());
   }
 
-  public static int _800bda08;
+  public static int previousSubmapCut_800bda08;
   public static BattleStage stage_800bda0c;
   public static final Model124 shadowModel_800bda10 = new Model124("Shadow");
 

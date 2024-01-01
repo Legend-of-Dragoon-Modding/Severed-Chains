@@ -19,6 +19,7 @@ import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.CContainer;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.Model124;
+import legend.game.types.MoonMusic08;
 import legend.game.types.NewRootStruct;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
@@ -41,10 +42,16 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
+import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
+import static legend.game.Scus94491BpeSegment.loadMusicPackage;
+import static legend.game.Scus94491BpeSegment.loadSubmapSounds;
 import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
+import static legend.game.Scus94491BpeSegment.startCurrentMusicSequence;
+import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
+import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.animateModel;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
@@ -53,14 +60,21 @@ import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.GsSetSmapRefView2L;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
-import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
+import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.submapEnvState_80052c44;
+import static legend.game.Scus94491BpeSegment_8005.submapMusic_80050068;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
+import static legend.game.Scus94491BpeSegment_800b.currentSequenceData_800bd0f8;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
+import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+import static legend.game.Scus94491BpeSegment_800b.musicLoaded_800bd782;
+import static legend.game.Scus94491BpeSegment_800b.previousSubmapCut_800bda08;
 import static legend.game.Scus94491BpeSegment_800b.projectionPlaneDistance_800bd810;
 import static legend.game.Scus94491BpeSegment_800b.rview2_800bd7e8;
+import static legend.game.Scus94491BpeSegment_800b.soundFiles_800bcf80;
+import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
@@ -232,6 +246,103 @@ public class RetailSubmap extends Submap {
   }
 
   @Override
+  public void loadMusicAndSounds() {
+    final int oldSubmapId = submapId_800bd808;
+    submapId_800bd808 = this.cutToSubmap_800d610c[this.cut];
+
+    if(submapId_800bd808 != oldSubmapId) {
+      stopAndResetSoundsAndSequences();
+      unloadSoundFile(4);
+      loadSubmapSounds(submapId_800bd808);
+    }
+
+    if(submapId_800bd808 != oldSubmapId || previousSubmapCut_800bda08 != this.cut) {
+      musicLoaded_800bd782 = false;
+      this.startMusic();
+    }
+
+    previousSubmapCut_800bda08 = this.cut;
+  }
+
+  @Override
+  public void startMusic() {
+    final int musicIndex = this.getSubmapMusicChange();
+    if(musicIndex == -1) {
+      FUN_8001ae90();
+      musicLoaded_800bd782 = true;
+    } else if(musicIndex == -2) {
+      startCurrentMusicSequence();
+      musicLoaded_800bd782 = true;
+    } else if(musicIndex == -3) {
+      musicLoaded_800bd782 = true;
+    } else {
+      loadMusicPackage(musicIndex);
+    }
+  }
+
+  @Method(0x800ea84cL)
+  private void updateCollidedPrimitiveIndexAndCheckForWorldMapTransition(final SubmapObject210 sobj, final MapTransitionData4c mapTransitionData) {
+    if(mapTransitionData.shouldUpdateCollidedWith_44) {
+      collidedPrimitiveIndex_80052c38 = sobj.collidedPrimitiveIndex_16c;
+
+      //LAB_800ea8d4
+      for(int i = 0; i < mapTransitionData.worldMapExitCount_40; i++) {
+        if(collidedPrimitiveIndex_80052c38 == mapTransitionData.worldMapExitPrimitiveIndices_00[i]) {
+          mapTransitionData.shouldUpdateCollidedWith_44 = false;
+          break;
+        }
+
+        //LAB_800ea8ec
+      }
+    }
+
+    //LAB_800ea8fc
+  }
+
+  @Method(0x800ea90cL)
+  private void updateCollidedPrimitiveIndex(final SubmapObject210 sobj, final MapTransitionData4c mapTransitionData) {
+    collidedPrimitiveIndex_80052c38 = sobj.collidedPrimitiveIndex_16c;
+  }
+
+  @Override
+  @Method(0x800ea974L)
+  public void loadMapTransitionData(final MapTransitionData4c transitionData) {
+    //LAB_800ea9a4
+    transitionData.clear();
+
+    //LAB_800ea9d8
+    if(this.cut != 0) {
+      for(final SubmapWorldMapExits exit : this.submapWorldMapExits_800f7f74) {
+        if(exit.submapCut_04 == this.cut) {
+          transitionData.worldMapExitPrimitiveIndices_00[transitionData.worldMapExitCount_40] = exit.primitiveIndex_06;
+          transitionData.worldMapExitCount_40++;
+        }
+      }
+    }
+
+    //LAB_800eaa30
+    if(transitionData.worldMapExitCount_40 != 0) {
+      transitionData.collidedPrimitiveSetterCallback_48 = this::updateCollidedPrimitiveIndexAndCheckForWorldMapTransition;
+      transitionData.shouldUpdateCollidedWith_44 = true;
+    } else {
+      //LAB_800eaa5c
+      transitionData.collidedPrimitiveSetterCallback_48 = this::updateCollidedPrimitiveIndex;
+    }
+  }
+
+  @Override
+  void applyCollisionDebugColour(final int collisionPrimitiveIndex, final RenderEngine.QueuedModel model) {
+    for(int n = 0; n < this.submapWorldMapExits_800f7f74.length; n++) {
+      final SubmapWorldMapExits worldMapExits = this.submapWorldMapExits_800f7f74[n];
+
+      if(worldMapExits.submapCut_04 == this.cut && collisionPrimitiveIndex == worldMapExits.primitiveIndex_06) {
+        model.colour(1.0f, 0.0f, 1.0f);
+        break;
+      }
+    }
+  }
+
+  @Override
   public void draw() {
     if(!this.hasRenderer_800c6968) {
       return;
@@ -276,8 +387,13 @@ public class RetailSubmap extends Submap {
 
   @Override
   public void generateEncounter() {
-    encounterId_800bb0f8 = sceneEncounterIds_800f74c4[encounterData_800f64c4[submapCut_80052c30].scene_00][this.randomEncounterIndex()];
-    battleStage_800bb0f4 = encounterData_800f64c4[submapCut_80052c30].stage_03;
+    encounterId_800bb0f8 = sceneEncounterIds_800f74c4[encounterData_800f64c4[this.cut].scene_00][this.randomEncounterIndex()];
+    battleStage_800bb0f4 = encounterData_800f64c4[this.cut].stage_03;
+  }
+
+  @Override
+  public Runnable createPostBattleResume() {
+    return null;
   }
 
   private void prepareEnv() {
@@ -293,7 +409,7 @@ public class RetailSubmap extends Submap {
         final int tpY = (renderPacket.tpage_04 & 0b10000) != 0 ? 256 : 0;
 
         if(MathHelper.inBox(tpX, tpY, bounds.x, bounds.y, bounds.w, bounds.h)) {
-          final SubmapEnvironmentTextureEvent event = EVENTS.postEvent(new SubmapEnvironmentTextureEvent(submapCut_80052c30, textureIndex + 3));
+          final SubmapEnvironmentTextureEvent event = EVENTS.postEvent(new SubmapEnvironmentTextureEvent(this.cut, textureIndex + 3));
           renderPacket.texture = event.texture;
           break;
         }
@@ -463,6 +579,26 @@ public class RetailSubmap extends Submap {
     this.collisionGeometry.loadCollision(new TmdWithId("Background " + mapName, files.get(2)), files.get(1));
 
     submapEnvState_80052c44 = SubmapEnvState.CHECK_TRANSITIONS_1_2;
+  }
+
+  @Override
+  @Method(0x800e664cL)
+  public void loadCollisionAndTransitions() {
+    this.collisionGeometry.clearCollisionAndTransitionInfo();
+
+    final SubmapCutInfo entry = this.newRoot.submapCutInfo_0000[this.cut];
+    final short offset = entry.collisionAndTransitionOffset_04;
+
+    if(offset < 0) {
+      return;
+    }
+
+    //LAB_800e66dc
+    for(int i = 0; i < entry.collisionAndTransitionCount_06; i++) {
+      this.collisionGeometry.setCollisionAndTransitionInfo(this.newRoot.collisionAndTransitions_2000[offset / 4 + i]);
+    }
+
+    //LAB_800e671c
   }
 
   @Method(0x800e6d58L)
@@ -1079,6 +1215,368 @@ public class RetailSubmap extends Submap {
     //LAB_800f4338
   }
 
+  @Method(0x8001b3e4L)
+  private int getSoundCharId() {
+    if(soundFiles_800bcf80[11].used_00) {
+      return soundFiles_800bcf80[11].charId_02;
+    }
+
+    //LAB_8001b408
+    return -1;
+  }
+
+  @Method(0x8001c60cL)
+  private int getSubmapMusicChange() {
+    final int soundCharId = this.getSoundCharId();
+
+    final int musicIndex;
+    jmp_8001c7a0:
+    {
+      //LAB_8001c63c
+      SubmapMusic08 a2;
+      int a3;
+      for(a3 = 0, a2 = _8004fb00[a3]; a2.submapId_00 != 99 || a2.musicIndex_02 != 99; a3++, a2 = _8004fb00[a3]) { // I think 99 is just a sentinel value that means "end of list"
+        final int submapId = submapId_800bd808;
+
+        if(submapId == a2.submapId_00) {
+          //LAB_8001c680
+          for(int v1 = 0; v1 < a2.submapCuts_04.length; v1++) {
+            if(submapId == 57) { // Opening (Rose intro, Dart forest, horses)
+              if(a2.submapCuts_04[v1] != this.cut) {
+                continue;
+              }
+
+              if((gameState_800babc8._1a4[0] & 0x1) == 0) {
+                //LAB_8001c7cc
+                musicIndex = a2.musicIndex_02;
+                break jmp_8001c7a0;
+              }
+            }
+
+            //LAB_8001c6ac
+            if(a2.submapCuts_04[v1] == this.cut && (gameState_800babc8._1a4[a3 >>> 5] & 0x1 << (a3 & 0x1f)) != 0) {
+              //LAB_8001c7c0
+              musicIndex = a2.musicIndex_02;
+              break jmp_8001c7a0;
+            }
+
+            //LAB_8001c6e4
+          }
+        }
+
+        //LAB_8001c700
+      }
+
+      //LAB_8001c728
+      SubmapMusic08 a0;
+      for(a3 = 0, a0 = _8004fa98[a3]; a0.submapId_00 != 99 || a0.musicIndex_02 != 99; a3++, a0 = _8004fa98[a3]) {
+        if(submapId_800bd808 == a0.submapId_00) {
+          //LAB_8001c748
+          for(int v1 = 0; v1 < a0.submapCuts_04.length; v1++) {
+            if(a0.submapCuts_04[v1] == this.cut) {
+              //LAB_8001c7d8
+              return this.FUN_8001c84c(soundCharId, a0.musicIndex_02);
+            }
+          }
+        }
+
+        //LAB_8001c76c
+      }
+
+      musicIndex = this.getCurrentSubmapMusic();
+    }
+
+    //LAB_8001c7a0
+    final int v1 = this.FUN_8001c84c(soundCharId, musicIndex);
+    if(v1 != -2) {
+      return v1;
+    }
+
+    //LAB_8001c7ec
+    if(!currentSequenceData_800bd0f8.musicPlaying_028) {
+      return -2;
+    }
+
+    //LAB_8001c808
+    return -3;
+  }
+
+  @Method(0x8001c84cL)
+  private int FUN_8001c84c(final int a0, final int a1) {
+    if(a0 != a1) {
+      return a1;
+    }
+
+    if(a0 == -1) {
+      return -1;
+    }
+
+    return -2;
+  }
+
+  @Method(0x8001c874L)
+  private int getCurrentSubmapMusic() {
+    if(submapId_800bd808 == 56) { // Moon
+      for(int i = 0; ; i++) {
+        final MoonMusic08 moonMusic = moonMusic_8004ff10[i];
+
+        if(moonMusic.submapCut_00 == this.cut) {
+          return moonMusic.musicIndex_04;
+        }
+      }
+    }
+
+    //LAB_8001c8bc
+    return submapMusic_80050068[submapId_800bd808];
+  }
+
+  private static final SubmapMusic08[] _8004fa98 = {
+    new SubmapMusic08(8, 59, 83, 84),
+    new SubmapMusic08(19, 59, 204, 214, 211),
+    new SubmapMusic08(22, 59, 247),
+    new SubmapMusic08(32, 59, 332),
+    new SubmapMusic08(34, 59, 357),
+    new SubmapMusic08(49, 59, 515, 525),
+    new SubmapMusic08(8, 60, 78, 79, 80),
+    new SubmapMusic08(19, 60, 210, 209),
+    new SubmapMusic08(22, 60, 246),
+    new SubmapMusic08(30, 60, 316, 317),
+    new SubmapMusic08(32, 60, 335),
+    new SubmapMusic08(34, 60, 356, 361),
+    new SubmapMusic08(99, 99, 83, 84),
+  };
+  private static final SubmapMusic08[] _8004fb00 = {
+    new SubmapMusic08(57, -1, 675, 676, 677),
+    new SubmapMusic08(3, 70, 9, 10, 725),
+    new SubmapMusic08(3, 72, 694, 13),
+    new SubmapMusic08(3, 71, 695, 694, 742),
+    new SubmapMusic08(2, 66, 5, 6, 7, 624, 625),
+    new SubmapMusic08(4, 70, 14, 15),
+    new SubmapMusic08(5, 70, 38, 39),
+    new SubmapMusic08(5, 28, 697, 740, 741),
+    new SubmapMusic08(6, 72, 53),
+    new SubmapMusic08(10, 63, 95, 98, 99, 100, 101, 102, 103, 104, 105),
+    new SubmapMusic08(10, -1, 96),
+    new SubmapMusic08(10, -1, 657, 726),
+    new SubmapMusic08(10, 70, 674),
+    new SubmapMusic08(11, 70, 108),
+    new SubmapMusic08(11, 68, 109),
+    new SubmapMusic08(13, 68, 716),
+    new SubmapMusic08(14, 72, 140, 647),
+    new SubmapMusic08(14, -1, 149, 150, 151, 637, 638),
+    new SubmapMusic08(14, 61, 152, 634, 636, 639),
+    new SubmapMusic08(4, 67, 643, 27),
+    new SubmapMusic08(10, 70, 96, 112, 113, 657),
+    new SubmapMusic08(8, -1, 66),
+    new SubmapMusic08(8, -1, 68),
+    new SubmapMusic08(9, -1, 94),
+    new SubmapMusic08(17, -1, 181),
+    new SubmapMusic08(18, -1, 658, 659, 660),
+    new SubmapMusic08(57, 115, 703, 704),
+    new SubmapMusic08(5, -1, 41),
+    new SubmapMusic08(3, -1, 11),
+    new SubmapMusic08(3, 45, 696, 743),
+    new SubmapMusic08(12, 76, 120),
+    new SubmapMusic08(20, 81, 221, 223, 225, 226, 663, 665, 666, 667),
+    new SubmapMusic08(20, 70, 236),
+    new SubmapMusic08(20, -1, 236, 669),
+    new SubmapMusic08(20, 64, 238, 698),
+    new SubmapMusic08(20, 67, 702),
+    new SubmapMusic08(22, -1, 240),
+    new SubmapMusic08(23, 79, 255),
+    new SubmapMusic08(20, -1, 227),
+    new SubmapMusic08(46, 25, 496, 497, 498),
+    new SubmapMusic08(44, -1, 458),
+    new SubmapMusic08(49, 43, 512, 522),
+    new SubmapMusic08(56, -1, 733),
+    new SubmapMusic08(56, 75, 597, 598, 735, 736, 737),
+    new SubmapMusic08(53, 81, 701),
+    new SubmapMusic08(53, 70, 629, 700),
+    new SubmapMusic08(53, 38, 629),
+    new SubmapMusic08(34, 75, 348),
+    new SubmapMusic08(35, 68, 370),
+    new SubmapMusic08(35, -1, 372),
+    new SubmapMusic08(35, 70, 373, 374),
+    new SubmapMusic08(35, -1, 375),
+    new SubmapMusic08(34, 70, 349, 350, 355, 356),
+    new SubmapMusic08(34, 68, 389),
+    new SubmapMusic08(32, -1, 338, 670),
+    new SubmapMusic08(32, 114, 671),
+    new SubmapMusic08(32, -1, 710),
+    new SubmapMusic08(33, -1, 346),
+    new SubmapMusic08(37, -1, 381, 382),
+    new SubmapMusic08(36, 70, 692, 724),
+    new SubmapMusic08(37, 70, 388),
+    new SubmapMusic08(38, 70, 393),
+    new SubmapMusic08(35, -1, 376),
+    new SubmapMusic08(31, 71, 325, 324),
+    new SubmapMusic08(24, 63, 266),
+    new SubmapMusic08(14, -1, 647),
+    new SubmapMusic08(31, -1, 325),
+    new SubmapMusic08(34, 63, 354),
+    new SubmapMusic08(35, -1, 371),
+    new SubmapMusic08(54, -1, 711, 714),
+    new SubmapMusic08(54, 68, 713),
+    new SubmapMusic08(50, -1, 718, 719),
+    new SubmapMusic08(43, -1, 446),
+    new SubmapMusic08(43, 71, 447),
+    new SubmapMusic08(43, 68, 447),
+    new SubmapMusic08(24, -1, 266),
+    new SubmapMusic08(15, 74, 161),
+    new SubmapMusic08(3, 71, 696, 743),
+    new SubmapMusic08(22, 78, 244, 248, 259),
+    new SubmapMusic08(54, -1, 580),
+    new SubmapMusic08(28, 74, 678),
+    new SubmapMusic08(28, -1, 364),
+    new SubmapMusic08(27, 76, 288),
+    new SubmapMusic08(53, -1, 568),
+    new SubmapMusic08(19, 78, 216),
+    new SubmapMusic08(19, 81, 201, 202, 744),
+    new SubmapMusic08(20, -1, 664, 702),
+    new SubmapMusic08(30, -1, 312, 313, 314, 318),
+    new SubmapMusic08(28, -1, 297, 298, 299, 300, 364, 365, 366, 630, 678),
+    new SubmapMusic08(29, -1, 301, 302, 303, 304, 305, 308),
+    new SubmapMusic08(14, -1, 647, 646),
+    new SubmapMusic08(26, -1, 286),
+    new SubmapMusic08(58, -1, 672, 673),
+    new SubmapMusic08(40, -1, 423),
+    new SubmapMusic08(40, -1, 419),
+    new SubmapMusic08(40, 71, 424),
+    new SubmapMusic08(36, 28, 692, 693, 723),
+    new SubmapMusic08(43, 70, 446),
+    new SubmapMusic08(43, 75, 445, 449, 451, 452),
+    new SubmapMusic08(46, 74, 499, 500, 501, 502),
+    new SubmapMusic08(4, 63, 24),
+    new SubmapMusic08(4, -1, 27),
+    new SubmapMusic08(4, 70, 27),
+    new SubmapMusic08(4, 70, 15, 56),
+    new SubmapMusic08(4, -1, 36),
+    new SubmapMusic08(32, 63, 329),
+    new SubmapMusic08(33, 81, 343),
+    new SubmapMusic08(33, 68, 343),
+    new SubmapMusic08(33, -1, 345),
+    new SubmapMusic08(9, -1, 94),
+    new SubmapMusic08(18, -1, 200),
+    new SubmapMusic08(53, 70, 563, 564, 565, 566, 567, 568, 629, 595),
+    new SubmapMusic08(51, 66, 715, 722),
+    new SubmapMusic08(55, -1, 588),
+    new SubmapMusic08(55, -1, 593),
+    new SubmapMusic08(27, -1, 295),
+    new SubmapMusic08(49, 39, 525),
+    new SubmapMusic08(54, 63, 580),
+    new SubmapMusic08(54, 75, 714),
+    new SubmapMusic08(54, 81, 580, 581, 594),
+    new SubmapMusic08(54, -1, 570, 571, 572, 573, 574, 576, 578, 579, 582, 711, 712),
+    new SubmapMusic08(43, -1, 446),
+    new SubmapMusic08(54, -1, 575, 577, 580),
+    new SubmapMusic08(5, 20, 38, 39, 40, 41, 42, 43, 44),
+    new SubmapMusic08(46, -1, 486, 488, 489, 491),
+    new SubmapMusic08(56, -1, 607),
+    new SubmapMusic08(56, -1, 561),
+    new SubmapMusic08(27, -1, 322),
+    new SubmapMusic08(3, -1, 743),
+    new SubmapMusic08(99, 99, 675, 676, 677),
+  };
+  private static final MoonMusic08[] moonMusic_8004ff10 = {
+    new MoonMusic08(561, 56),
+    new MoonMusic08(596, 45),
+    new MoonMusic08(597, 56),
+    new MoonMusic08(598, -1),
+    new MoonMusic08(599, 79),
+    new MoonMusic08(600, 79),
+    new MoonMusic08(601, 60),
+    new MoonMusic08(602, 79),
+    new MoonMusic08(603, 79),
+    new MoonMusic08(604, 79),
+    new MoonMusic08(605, 20),
+    new MoonMusic08(606, 23),
+    new MoonMusic08(607, 23),
+    new MoonMusic08(608, 72),
+    new MoonMusic08(609, 72),
+    new MoonMusic08(610, 72),
+    new MoonMusic08(611, 72),
+    new MoonMusic08(612, 21),
+    new MoonMusic08(613, 21),
+    new MoonMusic08(614, 21),
+    new MoonMusic08(615, 47),
+    new MoonMusic08(616, 47),
+    new MoonMusic08(617, 47),
+    new MoonMusic08(618, 47),
+    new MoonMusic08(619, 29),
+    new MoonMusic08(620, 29),
+    new MoonMusic08(621, 45),
+    new MoonMusic08(622, 39),
+    new MoonMusic08(699, 79),
+    new MoonMusic08(727, 39),
+    new MoonMusic08(728, 39),
+    new MoonMusic08(729, 63),
+    new MoonMusic08(730, -1),
+    new MoonMusic08(731, -1),
+    new MoonMusic08(732, 79),
+    new MoonMusic08(733, 79),
+    new MoonMusic08(734, 56),
+    new MoonMusic08(735, 56),
+    new MoonMusic08(736, 56),
+    new MoonMusic08(737, 56),
+    new MoonMusic08(738, 21),
+    new MoonMusic08(739, 72),
+    new MoonMusic08(-1, -1),
+  };
+
+  /** Maps submap cuts to their submap */
+  private final int[] cutToSubmap_800d610c = {
+    1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4,
+    4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+    4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6,
+    6, 6, 6, 6, 6, 6, 6, 1, 4, 3, 8, 7, 7, 7, 7, 7,
+    7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+    8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9, 10,
+    10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11,
+    10, 10, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,
+    12, 12, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 14, 14, 14, 14,
+    14, 14, 14, 14, 14, 14, 14, 14, 14, 15, 15, 15, 15, 15, 15, 15,
+    15, 15, 15, 15, 15, 15, 15, 16, 16, 16, 16, 17, 17, 17, 17, 17,
+    17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 18, 18, 18, 18, 18,
+    18, 18, 18, 18, 18, 18, 18, 18, 18, 19, 19, 19, 19, 19, 19, 19,
+    19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 19, 20, 20, 20,
+    20, 20, 20, 20, 20, 20, 20, 21, 21, 21, 19, 19, 20, 20, 20, 22,
+    22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 23, 23, 23, 23, 23,
+    23, 23, 23, 22, 20, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 25,
+    25, 25, 25, 25, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 27,
+    27, 27, 27, 27, 27, 27, 27, 27, 27, 28, 28, 28, 28, 29, 29, 29,
+    29, 29, 29, 29, 29, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30,
+    30, 27, 27, 31, 31, 31, 31, 32, 32, 32, 32, 32, 32, 32, 32, 32,
+    32, 32, 32, 33, 33, 33, 33, 33, 33, 33, 33, 34, 34, 34, 34, 34,
+    34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 34, 28, 28, 28, 35,
+    35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 35, 36, 36, 37, 37, 37,
+    37, 37, 37, 37, 37, 34, 37, 37, 37, 38, 38, 38, 38, 38, 38, 38,
+    38, 38, 38, 38, 38, 38, 39, 39, 39, 39, 39, 39, 39, 40, 40, 40,
+    40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 41, 41, 41,
+    41, 42, 42, 42, 42, 42, 42, 42, 42, 43, 43, 43, 43, 43, 43, 43,
+    43, 43, 43, 43, 43, 43, 43, 43, 43, 44, 44, 44, 44, 44, 44, 44,
+    44, 45, 45, 45, 58, 58, 58, 58, 58, 58, 58, 58, 58, 46, 46, 46,
+    46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46, 46,
+    46, 46, 46, 46, 46, 46, 46, 46, 47, 58, 58, 58, 58, 58, 48, 48,
+    49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49, 49,
+    50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 51, 51, 51, 51, 51,
+    51, 51, 51, 51, 51, 51, 51, 51, 51, 48, 48, 48, 48, 48, 48, 48,
+    48, 56, 52, 53, 53, 53, 53, 53, 53, 54, 54, 54, 54, 54, 54, 54,
+    54, 54, 54, 54, 54, 54, 54, 55, 55, 55, 55, 55, 55, 55, 55, 55,
+    55, 55, 54, 53, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56,
+    56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 8,
+    2, 2, 10, 10, 9, 53, 28, 8, 10, 10, 14, 14, 14, 14, 14, 14,
+    4, 4, 4, 4, 4, 4, 14, 14, 49, 49, 58, 58, 58, 58, 58, 58,
+    13, 10, 18, 18, 18, 53, 20, 20, 20, 20, 20, 20, 20, 20, 32, 32,
+    58, 58, 10, 57, 57, 57, 28, 58, 58, 58, 58, 58, 58, 58, 58, 58,
+    58, 58, 58, 58, 36, 36, 3, 3, 3, 5, 20, 56, 53, 53, 20, 57,
+    57, 51, 51, 51, 51, 19, 32, 54, 54, 54, 54, 51, 13, 50, 50, 50,
+    30, 51, 51, 36, 36, 3, 10, 56, 56, 56, 56, 56, 56, 56, 56, 56,
+    56, 56, 56, 56, 5, 5, 3, 3, 19, 48, 48, 48, 48, 48, 48, 48,
+    48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48,
+    48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48,
+    48, 48, 48, 48, 48, 48, 48, 0,
+  };
+
   /**
    * These are indices into the above table
    *
@@ -1198,6 +1696,23 @@ public class RetailSubmap extends Submap {
 
   /** A hard-coded list of submap cuts, related to submap bounds for camera control */
   private final int[] _800f7e58 = {140, 142, 155, 193, 197, 253, 310, 434, 665, 747, 748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 760, 761, 762, 765, 766, 767, 768, 769, 770, 771, 772, 773, 774, 775, 776, 777, 778, 780, 781, 782, 783, 784, 785, 786};
+
+  /** Submap exits that lead to the world map */
+  private final SubmapWorldMapExits[] submapWorldMapExits_800f7f74 = {
+    new SubmapWorldMapExits(7, 13), new SubmapWorldMapExits(624, 11), new SubmapWorldMapExits(7, 16), new SubmapWorldMapExits(11, 30), new SubmapWorldMapExits(9, 9), new SubmapWorldMapExits(696, 13), new SubmapWorldMapExits(695, 4), new SubmapWorldMapExits(13, 17),
+    new SubmapWorldMapExits(38, 28), new SubmapWorldMapExits(39, 25), new SubmapWorldMapExits(44, 6), new SubmapWorldMapExits(45, 1), new SubmapWorldMapExits(54, 6), new SubmapWorldMapExits(66, 41), new SubmapWorldMapExits(95, 1), new SubmapWorldMapExits(96, 1),
+    new SubmapWorldMapExits(106, 10), new SubmapWorldMapExits(106, 16), new SubmapWorldMapExits(106, 20), new SubmapWorldMapExits(111, 11), new SubmapWorldMapExits(114, 0), new SubmapWorldMapExits(122, 8), new SubmapWorldMapExits(130, 17), new SubmapWorldMapExits(133, 57),
+    new SubmapWorldMapExits(132, 22), new SubmapWorldMapExits(140, 2), new SubmapWorldMapExits(153, 39), new SubmapWorldMapExits(171, 1), new SubmapWorldMapExits(201, 1), new SubmapWorldMapExits(201, 32), new SubmapWorldMapExits(744, 2), new SubmapWorldMapExits(224, 35),
+    new SubmapWorldMapExits(231, 1), new SubmapWorldMapExits(233, 13), new SubmapWorldMapExits(232, 11), new SubmapWorldMapExits(239, 26), new SubmapWorldMapExits(242, 3), new SubmapWorldMapExits(251, 10), new SubmapWorldMapExits(258, 10), new SubmapWorldMapExits(256, 9),
+    new SubmapWorldMapExits(261, 1), new SubmapWorldMapExits(264, 28), new SubmapWorldMapExits(297, 0), new SubmapWorldMapExits(297, 3), new SubmapWorldMapExits(301, 19), new SubmapWorldMapExits(302, 19), new SubmapWorldMapExits(301, 1), new SubmapWorldMapExits(302, 1),
+    new SubmapWorldMapExits(309, 32), new SubmapWorldMapExits(311, 18), new SubmapWorldMapExits(328, 54), new SubmapWorldMapExits(330, 25), new SubmapWorldMapExits(330, 19), new SubmapWorldMapExits(339, 26), new SubmapWorldMapExits(344, 17), new SubmapWorldMapExits(344, 18),
+    new SubmapWorldMapExits(341, 14), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(342, 38), new SubmapWorldMapExits(347, 31), new SubmapWorldMapExits(349, 1), new SubmapWorldMapExits(379, 0), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(413, 1),
+    new SubmapWorldMapExits(433, 3), new SubmapWorldMapExits(434, 1), new SubmapWorldMapExits(457, 0), new SubmapWorldMapExits(459, 1), new SubmapWorldMapExits(477, 0), new SubmapWorldMapExits(787, 1), new SubmapWorldMapExits(513, 1), new SubmapWorldMapExits(526, 36),
+    new SubmapWorldMapExits(528, 14), new SubmapWorldMapExits(528, 13), new SubmapWorldMapExits(539, 0), new SubmapWorldMapExits(540, 19), new SubmapWorldMapExits(572, 23), new SubmapWorldMapExits(528, 15), new SubmapWorldMapExits(563, 25), new SubmapWorldMapExits(0, 0),
+    new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(15, 8), new SubmapWorldMapExits(346, 1), new SubmapWorldMapExits(529, 41), new SubmapWorldMapExits(38, 7), new SubmapWorldMapExits(994, 0), new SubmapWorldMapExits(996, 0), new SubmapWorldMapExits(993, 0),
+    new SubmapWorldMapExits(992, 0), new SubmapWorldMapExits(992, 0), new SubmapWorldMapExits(990, 0), new SubmapWorldMapExits(991, 0), new SubmapWorldMapExits(285, 0), new SubmapWorldMapExits(279, 31), new SubmapWorldMapExits(527, 35), new SubmapWorldMapExits(528, 15),
+    new SubmapWorldMapExits(327, 54), new SubmapWorldMapExits(97, 1), new SubmapWorldMapExits(12, 30), new SubmapWorldMapExits(0, 0), new SubmapWorldMapExits(999, 0), new SubmapWorldMapExits(999, 1), new SubmapWorldMapExits(999, 2), new SubmapWorldMapExits(0, 0),
+  };
 
   /** Seems to be missing one element at the end, there are 792 cuts */
   private static final int[] smapFileIndices_800f982c = {
