@@ -95,7 +95,7 @@ public class GameVarParam extends Param {
       case 65 -> ((SMap)currentEngineState_8004dd04).submapControllerState_800c6740.index;
       case 66 -> ((SMap)currentEngineState_8004dd04).sobjCount_800c6730;
       case 67 -> Scus94491BpeSegment_800b._800bd7b0;
-      case 68 -> Scus94491BpeSegment_800b._800bda08;
+      case 68 -> Scus94491BpeSegment_800b.previousSubmapCut_800bda08;
       case 69 -> Scus94491BpeSegment_8005.submapCut_80052c30;
       case 70 -> Scus94491BpeSegment_8005.submapScene_80052c34;
 //      case 71 -> SMap._800cb44c;
@@ -225,7 +225,7 @@ public class GameVarParam extends Param {
       case 65 -> ((SMap)currentEngineState_8004dd04).submapControllerState_800c6740 = (ScriptState<Void>)scriptStatePtrArr_800bc1c0[val];
       case 66 -> ((SMap)currentEngineState_8004dd04).sobjCount_800c6730 = val;
       case 67 -> Scus94491BpeSegment_800b._800bd7b0 = val;
-      case 68 -> Scus94491BpeSegment_800b._800bda08 = val;
+      case 68 -> Scus94491BpeSegment_800b.previousSubmapCut_800bda08 = val;
       case 69 -> Scus94491BpeSegment_8005.submapCut_80052c30 = val;
       case 70 -> Scus94491BpeSegment_8005.submapScene_80052c34 = val;
 //      case 71 -> SMap._800cb44c;

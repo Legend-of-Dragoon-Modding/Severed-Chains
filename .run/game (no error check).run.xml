@@ -2,7 +2,7 @@
   <configuration default="false" name="game (no error check)" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="legend.game.Main" />
     <module name="lod-game.main" />
-    <option name="VM_PARAMETERS" value="-Xms1g -Xmx1g -ea -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma" />
+    <option name="VM_PARAMETERS" value="-Xms1g -Xmx2g -ea -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma" />
     <method v="2">
       <option name="MakeNoErrorCheck" enabled="true" />
     </method>

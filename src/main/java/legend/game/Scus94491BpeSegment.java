@@ -38,11 +38,9 @@ import legend.game.sound.SoundFileIndices;
 import legend.game.sound.SpuStruct08;
 import legend.game.sound.Sshd;
 import legend.game.sound.Sssq;
-import legend.game.submap.SubmapMusic08;
 import legend.game.types.CharacterData2c;
 import legend.game.types.Flags;
 import legend.game.types.McqHeader;
-import legend.game.types.MoonMusic08;
 import legend.game.types.OverlayStruct;
 import legend.game.types.Struct0e;
 import legend.game.types.Struct10;
@@ -89,8 +87,6 @@ import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004._8004dd48;
 import static legend.game.Scus94491BpeSegment_8004._8004f658;
 import static legend.game.Scus94491BpeSegment_8004._8004f6e4;
-import static legend.game.Scus94491BpeSegment_8004._8004fa98;
-import static legend.game.Scus94491BpeSegment_8004._8004fb00;
 import static legend.game.Scus94491BpeSegment_8004.battleStartDelayTicks_8004f6ec;
 import static legend.game.Scus94491BpeSegment_8004.changeSequenceVolumeOverTime;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
@@ -104,7 +100,6 @@ import static legend.game.Scus94491BpeSegment_8004.height_8004dd34;
 import static legend.game.Scus94491BpeSegment_8004.initSpu;
 import static legend.game.Scus94491BpeSegment_8004.loadSshdAndSoundbank;
 import static legend.game.Scus94491BpeSegment_8004.loadSssq;
-import static legend.game.Scus94491BpeSegment_8004.moonMusic_8004ff10;
 import static legend.game.Scus94491BpeSegment_8004.previousEngineState_8004dd28;
 import static legend.game.Scus94491BpeSegment_8004.reinitOrderingTableBits_8004dd38;
 import static legend.game.Scus94491BpeSegment_8004.setMainVolume;
@@ -133,8 +128,6 @@ import static legend.game.Scus94491BpeSegment_8005.characterSoundFileIndices_800
 import static legend.game.Scus94491BpeSegment_8005.combatMusicFileIndices_800501bc;
 import static legend.game.Scus94491BpeSegment_8005.combatSoundEffectsTypes_8005019c;
 import static legend.game.Scus94491BpeSegment_8005.monsterSoundFileIndices_800500e8;
-import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
-import static legend.game.Scus94491BpeSegment_8005.submapMusic_80050068;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_8007.clearRed_8007a3a8;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
@@ -1206,7 +1199,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x800189b0L)
-  public static void FUN_800189b0() {
+  public static void transitionBackFromBattle() {
     if(Unpacker.getLoadingFileCount() == 0) {
       //LAB_800189e4
       //LAB_800189e8
@@ -1462,31 +1455,6 @@ public final class Scus94491BpeSegment {
   public static void initSound() {
     initSpu();
     sssqFadeIn(0, 0);
-    setMaxSounds(8);
-    sssqSetReverbType(3);
-    sssqSetReverbVolume(0x30, 0x30);
-
-    for(int i = 0; i < 13; i++) {
-      unuseSoundFile(i);
-    }
-
-    FUN_8001aa64();
-    FUN_8001aa90();
-
-    queuedSounds_800bd110.clear();
-
-    for(int i = 0; i < 13; i++) {
-      soundFiles_800bcf80[i].used_00 = false;
-    }
-
-    encounterSoundEffects_800bd610._00 = 0;
-
-    sssqTempoScale_800bd100 = 0x100;
-  }
-
-  @Method(0x80019610L)
-  public static void reinitSound() {
-    setMainVolume(0, 0);
     setMaxSounds(8);
     sssqSetReverbType(3);
     sssqSetReverbVolume(0x30, 0x30);
@@ -1995,16 +1963,6 @@ public final class Scus94491BpeSegment {
     return FlowControl.CONTINUE;
   }
 
-  @Method(0x8001b3e4L)
-  public static int FUN_8001b3e4() {
-    if(soundFiles_800bcf80[11].used_00) {
-      return soundFiles_800bcf80[11].charId_02;
-    }
-
-    //LAB_8001b408
-    return -1;
-  }
-
   @Method(0x8001b410L)
   public static void tickAndRenderTransitionIntoBattle() {
     if(_8004f6e4 == -1) {
@@ -2210,111 +2168,6 @@ public final class Scus94491BpeSegment {
   @Method(0x8001c604L)
   public static FlowControl FUN_8001c604(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
-  }
-
-  @Method(0x8001c60cL)
-  public static int getSubmapMusicChange() {
-    final int s0 = FUN_8001b3e4();
-
-    final int musicIndex;
-    jmp_8001c7a0:
-    {
-      //LAB_8001c63c
-      SubmapMusic08 a2;
-      int a3;
-      for(a3 = 0, a2 = _8004fb00[a3]; a2.submapCut_00 != 99 || a2.musicIndex_02 != 99; a3++, a2 = _8004fb00[a3]) { // I think 99 is just a sentinel value that means "end of list"
-        final int submapId = submapId_800bd808;
-
-        if(submapId == a2.submapCut_00) {
-          //LAB_8001c680
-          for(int v1 = 0; v1 < a2.submapCuts_04.length; v1++) {
-            if(submapId == 57) { // Opening (Rose intro, Dart forest, horses)
-              if(a2.submapCuts_04[v1] != submapCut_80052c30) {
-                continue;
-              }
-
-              if((gameState_800babc8._1a4[0] & 0x1) == 0) {
-                //LAB_8001c7cc
-                musicIndex = a2.musicIndex_02;
-                break jmp_8001c7a0;
-              }
-            }
-
-            //LAB_8001c6ac
-            if(a2.submapCuts_04[v1] == submapCut_80052c30 && (gameState_800babc8._1a4[a3 >>> 5] & 0x1 << (a3 & 0x1f)) != 0) {
-              //LAB_8001c7c0
-              musicIndex = a2.musicIndex_02;
-              break jmp_8001c7a0;
-            }
-
-            //LAB_8001c6e4
-          }
-        }
-
-        //LAB_8001c700
-      }
-
-      //LAB_8001c728
-      SubmapMusic08 a0;
-      for(a3 = 0, a0 = _8004fa98[a3]; a0.submapCut_00 != 99 || a0.musicIndex_02 != 99; a3++, a0 = _8004fa98[a3]) {
-        if(submapId_800bd808 == a0.submapCut_00) {
-          //LAB_8001c748
-          for(int v1 = 0; v1 < a0.submapCuts_04.length; v1++) {
-            if(a0.submapCuts_04[v1] == submapCut_80052c30) {
-              //LAB_8001c7d8
-              return FUN_8001c84c(s0, a0.musicIndex_02);
-            }
-          }
-        }
-
-        //LAB_8001c76c
-      }
-
-      musicIndex = getCurrentSubmapMusic();
-    }
-
-    //LAB_8001c7a0
-    final int v1 = FUN_8001c84c(s0, musicIndex);
-    if(v1 != -2) {
-      return v1;
-    }
-
-    //LAB_8001c7ec
-    if(!currentSequenceData_800bd0f8.musicPlaying_028) {
-      return -2;
-    }
-
-    //LAB_8001c808
-    return -3;
-  }
-
-  @Method(0x8001c84cL)
-  public static int FUN_8001c84c(final int a0, final int a1) {
-    if(a0 != a1) {
-      return a1;
-    }
-
-    if(a0 == -1) {
-      return -1;
-    }
-
-    return -2;
-  }
-
-  @Method(0x8001c874L)
-  public static int getCurrentSubmapMusic() {
-    if(submapId_800bd808 == 56) { // Moon
-      for(int i = 0; ; i++) {
-        final MoonMusic08 moonMusic = moonMusic_8004ff10[i];
-
-        if(moonMusic.submapCut_00 == submapCut_80052c30) {
-          return moonMusic.musicIndex_04;
-        }
-      }
-    }
-
-    //LAB_8001c8bc
-    return submapMusic_80050068[submapId_800bd808];
   }
 
   @Method(0x8001cae0L)
@@ -2721,82 +2574,43 @@ public final class Scus94491BpeSegment {
     };
   }
 
+  /** FUN_8001e010 with param 0 */
   @Method(0x8001e010L)
-  public static void FUN_8001e010(final int a0) {
-    if(a0 == 0) {
-      //LAB_8001e054
-      copyPlayingSounds(queuedSounds_800bd110, playingSoundsBackup_800bca78);
-      stopAndResetSoundsAndSequences();
-      unloadSoundFile(8);
-      unloadSoundFile(8);
+  public static void startMenuMusic() {
+    //LAB_8001e054
+    copyPlayingSounds(queuedSounds_800bd110, playingSoundsBackup_800bca78);
+    stopAndResetSoundsAndSequences();
+    unloadSoundFile(8);
+    unloadSoundFile(8);
 
-      loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x80);
-      loadDrgnDir(0, 5815, files -> musicPackageLoadedCallback(files, 5815));
-      //LAB_8001e044
-    } else if(a0 == 1) {
-      //LAB_8001e094
-      stopAndResetSoundsAndSequences();
-      unloadSoundFile(8);
-      unloadSoundFile(8);
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x80);
+    loadDrgnDir(0, 5815, files -> musicPackageLoadedCallback(files, 5815));
+  }
 
-      //LAB_8001e0bc
-      loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x80);
-      loadDrgnDir(0, 5900, files -> musicPackageLoadedCallback(files, 5900));
-    } else if(a0 == -1) {
-      //LAB_8001e0f8
-      if(loadingNewGameState_800bdc34) {
-        if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08 && gameState_800babc8.isOnWorldMap_4e4) {
-          sssqResetStuff();
-          unloadSoundFile(8);
-          loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x80);
-          loadDrgnDir(0, 5850, files -> musicPackageLoadedCallback(files, 5850));
-        }
-      } else {
-        //LAB_8001e160
-        unloadEncounterSoundEffects();
+  /** FUN_8001e010 with param -1 */
+  @Method(0x8001e010L)
+  public static void stopMenuMusic() {
+    //LAB_8001e044
+    //LAB_8001e0f8
+    if(loadingNewGameState_800bdc34) {
+      if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08 && gameState_800babc8.isOnWorldMap_4e4) {
+        sssqResetStuff();
         unloadSoundFile(8);
-
-        final EngineStateEnum engineState = engineState_8004dd20;
-        if(engineState == EngineStateEnum.SUBMAP_05) {
-          //LAB_8001e1ac
-          final int musicIndex = getSubmapMusicChange();
-          //LAB_8001e1dc
-          if(musicIndex == -1) {
-            FUN_8001ae90();
-            musicLoaded_800bd782 = true;
-          } else if(musicIndex == -2) {
-            //LAB_8001e1f4
-            startCurrentMusicSequence();
-
-            //LAB_8001e200
-            musicLoaded_800bd782 = true;
-          } else if(musicIndex == -3) {
-            musicLoaded_800bd782 = true;
-          } else {
-            //LAB_8001e1dc
-            //LAB_8001e20c
-            unloadSoundFile(8);
-            final int fileIndex = 5815 + musicIndex * 5;
-
-            //LAB_8001e23c
-            loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x80);
-            loadDrgnDir(0, fileIndex, files -> musicPackageLoadedCallback(files, fileIndex));
-          }
-        } else if(engineState == EngineStateEnum.COMBAT_06) {
-          //LAB_8001e264
-          sssqResetStuff();
-        } else if(engineState == EngineStateEnum.WORLD_MAP_08) {
-          unloadSoundFile(8);
-        }
+        loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x80);
+        loadDrgnDir(0, 5850, files -> musicPackageLoadedCallback(files, 5850));
       }
+    } else {
+      //LAB_8001e160
+      unloadEncounterSoundEffects();
+      unloadSoundFile(8);
 
-      //LAB_8001e26c
-      stopAndResetSoundsAndSequences();
-      copyPlayingSounds(playingSoundsBackup_800bca78, queuedSounds_800bd110);
-      playingSoundsBackup_800bca78.clear();
+      currentEngineState_8004dd04.restoreMusicAfterMenu();
     }
 
-    //LAB_8001e288
+    //LAB_8001e26c
+    stopAndResetSoundsAndSequences();
+    copyPlayingSounds(playingSoundsBackup_800bca78, queuedSounds_800bd110);
+    playingSoundsBackup_800bca78.clear();
   }
 
   /**

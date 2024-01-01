@@ -23,6 +23,10 @@ public abstract class EngineState {
 
   }
 
+  public void restoreMusicAfterMenu() {
+
+  }
+
   public Function<RunningScript, FlowControl>[] getScriptFunctions() {
     return this.functions;
   }

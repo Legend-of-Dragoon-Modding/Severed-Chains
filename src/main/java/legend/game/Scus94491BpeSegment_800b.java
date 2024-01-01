@@ -26,6 +26,7 @@ import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
 import legend.game.types.TextboxText84;
 import legend.game.types.UiFile;
+import org.joml.Vector2i;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -150,7 +151,7 @@ public final class Scus94491BpeSegment_800b {
     Arrays.setAll(sobjPositions_800bd818, i -> new SobjPos14());
   }
 
-  public static int _800bda08;
+  public static int previousSubmapCut_800bda08;
   public static BattleStage stage_800bda0c;
   public static final Model124 shadowModel_800bda10 = new Model124("Shadow");
 
@@ -215,10 +216,9 @@ public final class Scus94491BpeSegment_800b {
     Arrays.setAll(stats_800be5f8, i -> new ActiveStatsa0());
   }
 
-  public static final MV matrix_800bed30 = new MV();
-  public static int screenOffsetX_800bed50;
-  public static int screenOffsetY_800bed54;
-  public static boolean hasNoEncounters_800bed58;
+  // These are outside of SMAP because they have to persist between engine states
+  public static final MV playerPositionBeforeBattle_800bed30 = new MV();
+  public static final Vector2i screenOffsetBeforeBattle_800bed50 = new Vector2i();
 
   /**
    * Remains set for the duration of the button press

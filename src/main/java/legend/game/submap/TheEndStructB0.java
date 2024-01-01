@@ -1,6 +1,6 @@
 package legend.game.submap;
 
-public class Structb0 {
+public class TheEndStructB0 {
   public short _00;
   public short _02;
   public short _04;
