@@ -15,7 +15,7 @@ public class AttachedSobjEffectData40 {
 
   public int size_28;
   public int oldFootprintInstantiationInterval_2c;
-  public int instantiationIntervalDust30;
+  public int instantiationIntervalDust_30;
   public int instantiationIntervalFootprints_34;
   /** short */
   public int maxTicks_38;
