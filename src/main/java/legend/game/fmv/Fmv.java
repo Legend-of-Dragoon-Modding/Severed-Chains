@@ -27,6 +27,7 @@ import java.util.Arrays;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
+import static legend.game.Scus94491BpeSegment_8003.GsInitGraph;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
@@ -238,7 +239,7 @@ public final class Fmv {
 
     oldFps = RENDERER.window().getFpsLimit();
     RENDERER.window().setFpsLimit(15);
-    RENDERER.setProjectionSize(320.0f, 240.0f);
+    GsInitGraph(320, 240);
 
     final Shader simpleShader = ShaderManager.getShader("simple");
     final Shader.UniformVec4 simpleShaderColour = simpleShader.new UniformVec4("recolour");
