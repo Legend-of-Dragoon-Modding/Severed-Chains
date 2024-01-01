@@ -58,6 +58,7 @@ import static legend.game.SItem.shanaXpTable_80113aa8;
 import static legend.game.Scus94491BpeSegment.gameLoop;
 import static legend.game.Scus94491BpeSegment.startSound;
 import static legend.game.Scus94491BpeSegment_8002.initTextboxGeometry;
+import static legend.game.Scus94491BpeSegment_8003.GsInitGraph;
 import static legend.game.Scus94491BpeSegment_800b.shadowModel_800bda10;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
@@ -581,7 +582,7 @@ public final class GameEngine {
     eyeTransforms.translation(10.0f, height - 42.0f, 0.0f);
     loadingTransforms.translation(46.0f, height - 42.0f, 0.0f);
 
-    RENDERER.setProjectionSize(width, height);
+    GsInitGraph(width, height);
   }
 
   private static Shader loadShader(final Path vsh, final Path fsh) {
