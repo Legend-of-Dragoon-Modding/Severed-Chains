@@ -42,8 +42,6 @@ public class Model124 {
   public int animationState_9c;
   /** ubyte */
   public UvAdjustmentMetrics14 uvAdjustments_9d = UvAdjustmentMetrics14.NONE;
-  /** Controls whether to look for textures in the primary or secondary bank (SMAP/WMAP only use secondary) */
-  public boolean uvAnimationSecondaryBank;
   /** short */
   public int remainingFrames_9e;
   public int interpolationFrameIndex;
@@ -148,7 +146,6 @@ public class Model124 {
     this.totalFrames_9a = other.totalFrames_9a;
     this.animationState_9c = other.animationState_9c;
     this.uvAdjustments_9d = other.uvAdjustments_9d;
-    this.uvAnimationSecondaryBank = other.uvAnimationSecondaryBank;
     this.remainingFrames_9e = other.remainingFrames_9e;
     this.zOffset_a0 = other.zOffset_a0;
     this.disableInterpolation_a2 = other.disableInterpolation_a2;

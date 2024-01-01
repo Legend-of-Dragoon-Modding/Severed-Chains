@@ -64,7 +64,7 @@ public final class TextStream {
     float x = xOffset;
 
     for(final TextStreamable streamable : this.elements) {
-      this.transforms.translation(x, yOffset, 0.0f);
+      this.transforms.translation(x, yOffset, 1.0f);
       this.transforms.get(this.transformsBuffer);
       this.transforms2.set(this.transformsBuffer);
 

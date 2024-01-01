@@ -36,7 +36,7 @@ public class SubmapAssets {
         GPU.uploadData15(imageRect, tim.getImageData());
         GPU.uploadData15(clutRect, tim.getClutData());
 
-        this.uvAdjustments.add(this.createUvAdjustments(pxlIndex, x, y));
+        this.uvAdjustments.add(new UvAdjustmentMetrics14(pxlIndex + 1, x, y));
 
         x += tim.getImageRect().w;
 
@@ -48,19 +48,5 @@ public class SubmapAssets {
         this.uvAdjustments.add(UvAdjustmentMetrics14.NONE);
       }
     }
-  }
-
-  private UvAdjustmentMetrics14 createUvAdjustments(final int index, final int x, final int y) {
-    final int clutX = x / 16;
-    final int clutY = y + 112;
-    final int tpageX = x / 64;
-    final int tpageY = y / 256;
-    final int u = x % 64 * 4;
-    final int v = y % 256;
-    final int clut = clutX | clutY << 6;
-    final int tpage = tpageX | tpageY << 4;
-    final int uv = u | v << 8;
-
-    return new UvAdjustmentMetrics14(index + 1, clut << 16, 0x3c0ffff, tpage << 16, 0xffe0ffff, uv);
   }
 }

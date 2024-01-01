@@ -17,7 +17,11 @@ public final class SubmapPxlTransformer {
       final PathNode drgn = root.children.get("SECT").children.get("DRGN2" + drgnIndex + ".BIN");
 
       if(drgn != null) { // If we're doing a partial unpack, we might not have all DRGN2x
-        for(int submapCutIndex = 1; submapCutIndex < drgn.children.size(); submapCutIndex += 3) {
+        final FileData mrg = drgn.children.get("mrg").data;
+        final String mrgContents = mrg.readFixedLengthAscii(0x0, mrg.size());
+        final int mrgEntries = (int)mrgContents.lines().count();
+
+        for(int submapCutIndex = 1; submapCutIndex < mrgEntries; submapCutIndex += 3) {
           final PathNode submapCutAssets = drgn.children.get(Integer.toString(submapCutIndex + 1));
 
           if(submapCutAssets != null) { // DRGN21/180 has no assets?
