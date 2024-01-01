@@ -61,6 +61,7 @@ import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.GsSetSmapRefView2L;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
+import static legend.game.Scus94491BpeSegment_8005.submapCutBeforeBattle_80052c3c;
 import static legend.game.Scus94491BpeSegment_8005.submapEnvState_80052c44;
 import static legend.game.Scus94491BpeSegment_8005.submapMusic_80050068;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
@@ -392,8 +393,13 @@ public class RetailSubmap extends Submap {
   }
 
   @Override
-  public Runnable createPostBattleResume() {
-    return null;
+  public void storeStateBeforeBattle() {
+    submapCutBeforeBattle_80052c3c = this.cut;
+  }
+
+  @Override
+  public boolean isReturningToSameMapAfterBattle() {
+    return submapCutBeforeBattle_80052c3c == this.cut;
   }
 
   private void prepareEnv() {

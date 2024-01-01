@@ -36,7 +36,8 @@ public abstract class Submap {
     return this.getEncounterRate() != 0;
   }
 
-  public abstract Runnable createPostBattleResume();
+  public abstract void storeStateBeforeBattle();
+  public abstract boolean isReturningToSameMapAfterBattle();
 
   void applyCollisionDebugColour(final int collisionPrimitiveIndex, final RenderEngine.QueuedModel model) { }
 }

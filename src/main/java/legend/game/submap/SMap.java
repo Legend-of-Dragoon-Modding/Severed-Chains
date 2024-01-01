@@ -115,7 +115,6 @@ import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.renderBorder_80052b68;
 import static legend.game.Scus94491BpeSegment_8005.shouldRestoreCameraPosition_80052c40;
-import static legend.game.Scus94491BpeSegment_8005.submapCutBeforeBattle_80052c3c;
 import static legend.game.Scus94491BpeSegment_8005.submapCutForSave_800cb450;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8005.submapEnvState_80052c44;
@@ -3574,8 +3573,8 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800e4d00L)
-  private void restoreSubmapAfterBattleOrSetPositionToCollisionPrimitive(final int submapCut, final int collisionPrimitiveIndex) {
-    if(this.restoreSubmapAfterBattle(this.playerPositionWhenLoadingSubmap_800c6ac0, submapCut)) {
+  private void restoreSubmapAfterBattleOrSetPositionToCollisionPrimitive(final int collisionPrimitiveIndex) {
+    if(this.restoreSubmapAfterBattle(this.playerPositionWhenLoadingSubmap_800c6ac0)) {
       this.playerPositionRestoreMode_800f7e24 = 1;
     } else {
       //LAB_800e4d34
@@ -3742,8 +3741,8 @@ public class SMap extends EngineState {
 
   /** Restores camera when returning from battle */
   @Method(0x800e5264L)
-  private boolean restoreSubmapAfterBattle(final MV mat, final int submapCut) {
-    if(submapCutBeforeBattle_80052c3c != submapCut) {
+  private boolean restoreSubmapAfterBattle(final MV mat) {
+    if(!this.submap.isReturningToSameMapAfterBattle()) {
       this.returnedToSameSubmapAfterBattle_800cb448 = false;
       return false;
     }
@@ -3775,9 +3774,9 @@ public class SMap extends EngineState {
    *
    * <ul>
    *   <li>Scene 0x3fa - char swap</li>
-   *   <li>Scene 0x3fb - ?</li>
+   *   <li>Scene 0x3fb - return to title</li>
    *   <li>Scene 0x3fc - too many items</li>
-   *   <li>Scene 0x3fd - save</li>
+   *   <li>Scene 0x3fd - save at end of chapter</li>
    *   <li>Scene 0x3fe - shop</li>
    *   <li>Scene 0x3ff - inventory</li>
    * </ul>
@@ -3833,13 +3832,6 @@ public class SMap extends EngineState {
       return true;
     }
 
-    if(newScene == 0x3fc) {
-      SCRIPTS.pause();
-      whichMenu_800bdc38 = WhichMenu.INIT_TOO_MANY_ITEMS_MENU_31;
-      this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
-      return true;
-    }
-
     if(newScene == 0x3fa) {
       SCRIPTS.pause();
       whichMenu_800bdc38 = WhichMenu.INIT_CHAR_SWAP_MENU_21;
@@ -3854,6 +3846,24 @@ public class SMap extends EngineState {
       return true;
     }
 
+    if(newScene == 0x3fc) {
+      SCRIPTS.pause();
+      whichMenu_800bdc38 = WhichMenu.INIT_TOO_MANY_ITEMS_MENU_31;
+      this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
+      return true;
+    }
+
+    if(newScene == 0x3fd) {
+      SCRIPTS.pause();
+      this.submapChapterDestinations_800f7e2c[0].submapScene_04 = collidedPrimitiveIndex_80052c38;
+      collidedPrimitiveIndex_80052c38 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapScene_04;
+      submapCutForSave_800cb450 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapCut_00;
+      this.mapTransitionData_800cab24.clear();
+      whichMenu_800bdc38 = WhichMenu.INIT_SAVE_GAME_MENU_16;
+      this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
+      return true;
+    }
+
     if(newScene == 0x3fe) {
       SCRIPTS.pause();
       whichMenu_800bdc38 = WhichMenu.INIT_SHOP_MENU_6;
@@ -3861,22 +3871,11 @@ public class SMap extends EngineState {
       return true;
     }
 
-    if(newScene == 0x3fd) {
-      whichMenu_800bdc38 = WhichMenu.INIT_SAVE_GAME_MENU_16;
-      this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
-      this.submapChapterDestinations_800f7e2c[0].submapScene_04 = collidedPrimitiveIndex_80052c38;
-      collidedPrimitiveIndex_80052c38 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapScene_04;
-      submapCutForSave_800cb450 = this.submapChapterDestinations_800f7e2c[gameState_800babc8.chapterIndex_98].submapCut_00;
-      this.mapTransitionData_800cab24.clear();
-      SCRIPTS.pause();
-      return true;
-    }
-
     if(newScene == 0x3ff) {
       SCRIPTS.pause();
+      submapCutForSave_800cb450 = submapCut_80052c30;
       whichMenu_800bdc38 = WhichMenu.INIT_INVENTORY_MENU_1;
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
-      submapCutForSave_800cb450 = submapCut_80052c30;
       return true;
     }
 
@@ -3898,7 +3897,7 @@ public class SMap extends EngineState {
       final SubmapObject210 sobj = this.sobjs_800c6880[0].innerStruct_00;
 
       screenOffsetBeforeBattle_800bed50.set(this.screenOffset_800cb568);
-      submapCutBeforeBattle_80052c3c = submapCut_80052c30;
+      this.submap.storeStateBeforeBattle();
       playerPositionBeforeBattle_800bed30.set(sobj.model_00.coord2_14.coord);
       shouldRestoreCameraPosition_80052c40 = true;
     }
@@ -3970,7 +3969,7 @@ public class SMap extends EngineState {
       }
 
       case START_LOADING_MEDIA_10 -> {
-        this.restoreSubmapAfterBattleOrSetPositionToCollisionPrimitive(submapCut_80052c30, submapScene_80052c34);
+        this.restoreSubmapAfterBattleOrSetPositionToCollisionPrimitive(submapScene_80052c34);
         this.initCamera(submapScene_80052c34);
         this.submap.loadCollisionAndTransitions();
         this.clearSubmapFlags();
