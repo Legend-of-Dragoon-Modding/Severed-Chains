@@ -1,6 +1,5 @@
 package legend.game.submap;
 
-import legend.core.MathHelper;
 import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandQuad;
@@ -119,12 +118,8 @@ public class RetailSubmap extends Submap {
   private int _800cbd30;
   private int _800cbd34;
 
-  public final MV screenToWorldMatrix_800cbd40 = new MV();
-
   private int minSobj_800cbd60;
   private int maxSobj_800cbd64;
-  /** A copy of the WS matrix */
-  private final MV worldToScreenMatrix_800cbd68 = new MV();
 
   private final Matrix4f submapCutMatrix_800d4bb0 = new Matrix4f();
 
@@ -153,6 +148,8 @@ public class RetailSubmap extends Submap {
     this.hasRenderer_800c6968 = submapTypes_800f5cd4[cut] == 65;
     this.screenOffset = screenOffset;
     this.collisionGeometry = collisionGeometry;
+
+    this.loadCollisionAndTransitions();
   }
 
   @Override
@@ -167,7 +164,6 @@ public class RetailSubmap extends Submap {
     drgnBinIndex_800bc058 = drgnIndex.get();
     loadDrgnDir(2, fileIndex.get(), files -> {
       this.loadBackground("DRGN2%d/%d".formatted(drgnIndex.get(), fileIndex.get()), files);
-      this.prepareEnv();
       onLoaded.run();
     });
   }
@@ -402,29 +398,6 @@ public class RetailSubmap extends Submap {
     return submapCutBeforeBattle_80052c3c == this.cut;
   }
 
-  private void prepareEnv() {
-    LOGGER.info("Submap cut %d preparing environment", this.cut);
-
-    for(int i = 0; i < this.envTextureCount_800cb584; i++) {
-      final EnvironmentRenderingMetrics24 renderPacket = this.envRenderMetrics_800cb710[i];
-      for(int textureIndex = 0; textureIndex < this.envTextures.length; textureIndex++) {
-        final Tim texture = this.envTextures[textureIndex];
-        final Rect4i bounds = texture.getImageRect();
-
-        final int tpX = (renderPacket.tpage_04 & 0b1111) * 64;
-        final int tpY = (renderPacket.tpage_04 & 0b10000) != 0 ? 256 : 0;
-
-        if(MathHelper.inBox(tpX, tpY, bounds.x, bounds.y, bounds.w, bounds.h)) {
-          final SubmapEnvironmentTextureEvent event = EVENTS.postEvent(new SubmapEnvironmentTextureEvent(this.cut, textureIndex + 3));
-          renderPacket.texture = event.texture;
-          break;
-        }
-      }
-    }
-
-    this.envTextures = null;
-  }
-
   private void prepareSobjs(final List<FileData> assets, final List<FileData> scripts, final List<FileData> textures) {
     LOGGER.info("Submap cut %d preparing sobjs", this.cut);
 
@@ -587,9 +560,8 @@ public class RetailSubmap extends Submap {
     submapEnvState_80052c44 = SubmapEnvState.CHECK_TRANSITIONS_1_2;
   }
 
-  @Override
   @Method(0x800e664cL)
-  public void loadCollisionAndTransitions() {
+  private void loadCollisionAndTransitions() {
     this.collisionGeometry.clearCollisionAndTransitionInfo();
 
     final SubmapCutInfo entry = this.newRoot.submapCutInfo_0000[this.cut];
@@ -605,6 +577,35 @@ public class RetailSubmap extends Submap {
     }
 
     //LAB_800e671c
+  }
+
+  @Override
+  public void prepareEnv() {
+    LOGGER.info("Submap cut %d preparing environment", this.cut);
+
+    for(int i = 0; i < this.envTextureCount_800cb584; i++) {
+      final EnvironmentRenderingMetrics24 renderPacket = this.envRenderMetrics_800cb710[i];
+      for(int textureIndex = 0; textureIndex < this.envTextures.length; textureIndex++) {
+        final Tim texture = this.envTextures[textureIndex];
+        final Rect4i bounds = texture.getImageRect();
+
+        final int tpX = (renderPacket.tpage_04 & 0b1111) * 64;
+        final int tpY = (renderPacket.tpage_04 & 0b10000) != 0 ? 256 : 0;
+
+        if(bounds.contains(tpX,  tpY)) {
+          final SubmapEnvironmentTextureEvent event = EVENTS.postEvent(new SubmapEnvironmentTextureEvent(this.cut, textureIndex + 3));
+          renderPacket.texture = event.texture;
+          break;
+        }
+      }
+    }
+
+    this.envTextures = null;
+  }
+
+  @Override
+  public void finishLoading() {
+    this.resetSobjBounds();
   }
 
   @Method(0x800e6d58L)
@@ -746,8 +747,6 @@ public class RetailSubmap extends Submap {
     setProjectionPlaneDistance(projectionPlaneDistance_800bd810);
     GsSetSmapRefView2L(this.rview2_800cbd10);
     this.clearSmallValuesFromMatrix(worldToScreenMatrix_800c3548);
-    this.worldToScreenMatrix_800cbd68.set(worldToScreenMatrix_800c3548);
-    this.worldToScreenMatrix_800cbd68.transpose(this.screenToWorldMatrix_800cbd40);
     rview2_800bd7e8.set(this.rview2_800cbd10);
   }
 
@@ -857,9 +856,10 @@ public class RetailSubmap extends Submap {
     return this.envRenderMetrics_800cb710[textureIndex].z_20;
   }
 
+  @Override
   @Method(0x800e7954L)
-  public void renderEnvironment(final MV[] sobjMatrices, final int sobjCount) {
-    final float[] sobjZs = new float[sobjCount];
+  public void drawEnv(final MV[] sobjMatrices) {
+    final float[] sobjZs = new float[sobjMatrices.length];
     final float[] envZs = new float[this.envForegroundTextureCount_800cb580];
 
     //LAB_800e79b8
@@ -899,7 +899,7 @@ public class RetailSubmap extends Submap {
 
     //LAB_800e7a60
     //LAB_800e7a7c
-    for(int i = 0; i < sobjCount; i++) {
+    for(int i = 0; i < sobjMatrices.length; i++) {
       sobjZs[i] = (worldToScreenMatrix_800c3548.m02 * sobjMatrices[i].transfer.x +
         worldToScreenMatrix_800c3548.m12 * sobjMatrices[i].transfer.y +
         worldToScreenMatrix_800c3548.m22 * sobjMatrices[i].transfer.z + worldToScreenMatrix_800c3548.transfer.z) / (1 << 16 - orderingTableBits_1f8003c0);

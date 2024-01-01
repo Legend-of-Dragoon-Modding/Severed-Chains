@@ -230,6 +230,7 @@ public class SMap extends EngineState {
 
   private CountdownLatch screenOffsetLatch_800cbd38;
   private CountdownLatch geomOffsetLatch_800cbd3c;
+  private final MV screenToWorldMatrix_800cbd40 = new MV();
 
   private final CollisionGeometry collisionGeometry_800cbe08 = new CollisionGeometry(this);
 
@@ -3653,7 +3654,7 @@ public class SMap extends EngineState {
     }
 
     //LAB_800e5234
-    ((RetailSubmap)this.submap).renderEnvironment(matrices, this.sobjCount_800c6730);
+    this.submap.drawEnv(matrices);
     this.renderCollisionDebug();
   }
 
@@ -3969,9 +3970,11 @@ public class SMap extends EngineState {
       }
 
       case START_LOADING_MEDIA_10 -> {
+        worldToScreenMatrix_800c3548.transpose(this.screenToWorldMatrix_800cbd40);
+
+        this.submap.prepareEnv();
         this.restoreSubmapAfterBattleOrSetPositionToCollisionPrimitive(submapScene_80052c34);
         this.initCamera(submapScene_80052c34);
-        this.submap.loadCollisionAndTransitions();
         this.clearSubmapFlags();
 
         this.mediaLoadingStage_800c68e4 = SubmapMediaState.LOAD_SHADOW_AND_RESET_LIGHTING_0;
@@ -3992,11 +3995,10 @@ public class SMap extends EngineState {
         }
 
         //LAB_800e5e94
-        ((RetailSubmap)this.submap).resetSobjBounds();
         loadingNewGameState_800bdc34 = false;
-        submapEnvState_80052c44 = SubmapEnvState.RENDER_AND_CHECK_TRANSITIONS_0;
-        startFadeEffect(2, 10);
         this.submap.loadMapTransitionData(this.mapTransitionData_800cab24);
+        this.submap.finishLoading();
+        startFadeEffect(2, 10);
         SCRIPTS.resume();
         this.smapTicks_800c6ae0 = 0;
         this.smapLoadingStage_800cb430 = SubmapState.RENDER_SUBMAP_12;
@@ -4521,11 +4523,11 @@ public class SMap extends EngineState {
 
   @Method(0x800e82ccL)
   private void transformToWorldspace(final Vector3f out, final Vector3f in) {
-    if(((RetailSubmap)this.submap).screenToWorldMatrix_800cbd40.m02 == 0.0f) {
+    if(this.screenToWorldMatrix_800cbd40.m02 == 0.0f) {
       out.set(in);
     } else {
       //LAB_800e8318
-      in.mul(((RetailSubmap)this.submap).screenToWorldMatrix_800cbd40, out);
+      in.mul(this.screenToWorldMatrix_800cbd40, out);
     }
 
     //LAB_800e833c

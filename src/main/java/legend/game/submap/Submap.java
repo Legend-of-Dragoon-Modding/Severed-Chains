@@ -1,6 +1,7 @@
 package legend.game.submap;
 
 import legend.core.RenderEngine;
+import legend.core.gte.MV;
 import legend.game.scripting.ScriptFile;
 import legend.game.tmd.UvAdjustmentMetrics14;
 
@@ -22,9 +23,12 @@ public abstract class Submap {
 
   /** Caches world map transition primitive indices and sets up the collided primitive setter callback */
   public abstract void loadMapTransitionData(final MapTransitionData4c transitionData);
-  public abstract void loadCollisionAndTransitions();
+
+  public abstract void prepareEnv();
+  public abstract void finishLoading();
 
   public abstract void draw();
+  public abstract void drawEnv(final MV[] sobjMatrices);
   public abstract void unload();
 
   public abstract void calcGoodScreenOffset(final float x, final float y);
