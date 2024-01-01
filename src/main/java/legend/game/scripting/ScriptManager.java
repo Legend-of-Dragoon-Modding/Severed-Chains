@@ -9,6 +9,9 @@ import org.apache.logging.log4j.MarkerManager;
 import javax.annotation.Nullable;
 
 import static legend.core.GameEngine.EVENTS;
+import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
+import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
+import static legend.game.Scus94491BpeSegment_800b.repeat_800bee98;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 
 public class ScriptManager {
@@ -22,9 +25,24 @@ public class ScriptManager {
   private int framesPerTick;
   private int currentTicks;
 
+  /** Accumulates joypad input on script engine off frames */
+  public int joypadInput;
+  /** Accumulates joypad press on script engine off frames */
+  public int joypadPress;
+  /** Accumulates joypad repeat on script engine off frames */
+  public int joypadRepeat;
+
   public void tick() {
+    this.joypadInput |= input_800bee90;
+    this.joypadPress |= press_800bee94;
+    this.joypadRepeat |= repeat_800bee98;
+
     if(this.currentTicks == 0) {
       this.executeScriptFrame();
+
+      this.joypadInput = 0;
+      this.joypadPress = 0;
+      this.joypadRepeat = 0;
     }
 
     this.executeScriptTickers();

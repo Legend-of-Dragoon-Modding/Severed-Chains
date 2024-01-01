@@ -15,6 +15,7 @@ import legend.game.submap.SMap;
 import legend.game.submap.SubmapObject210;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
@@ -32,8 +33,8 @@ public class GameVarParam extends Param {
       case 0 -> Scus94491BpeSegment_8004.engineState_8004dd20.ordinal();
       case 1 -> Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
       case 2 -> Scus94491BpeSegment_800b.tickCount_800bb0fc;
-      case 3 -> Scus94491BpeSegment_800b.input_800bee90;
-      case 4 -> Scus94491BpeSegment_800b.press_800bee94;
+      case 3 -> SCRIPTS.joypadInput;
+      case 4 -> SCRIPTS.joypadPress;
       case 5 -> Scus94491BpeSegment_800b.gameState_800babc8.gold_94;
       case 6 -> Scus94491BpeSegment_800b.gameState_800babc8.scriptData_08[0];
       case 7 -> Scus94491BpeSegment_8007.clearRed_8007a3a8;
@@ -54,7 +55,7 @@ public class GameVarParam extends Param {
       case 22 -> Scus94491BpeSegment_800b.gameState_800babc8.submapCut_a8;
       case 24 -> Scus94491BpeSegment_800b.gameState_800babc8._b0;
       case 25 -> Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
-      case 26 -> Scus94491BpeSegment_800b.repeat_800bee98;
+      case 26 -> SCRIPTS.joypadRepeat;
       case 27 -> Scus94491BpeSegment_800b.analogInput_800beebc;
       case 28 -> Scus94491BpeSegment_800b.analogAngle_800bee9c;
       case 29 -> Scus94491BpeSegment_800b._800beea4;
