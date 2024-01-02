@@ -1107,9 +1107,9 @@ public class SMap extends EngineState {
       final int collidedPrimitiveIndex = this.collisionGeometry_800cbe08.handleCollisionAndMovement(player.sobjIndex_12e != 0, playerModel.coord2_14.coord.transfer, worldspaceDeltaMovement);
       if(collidedPrimitiveIndex >= 0) {
         if(this.isWalkable(collidedPrimitiveIndex)) {
-          playerModel.coord2_14.coord.transfer.x += worldspaceDeltaMovement.x;
+          player.movementTicks_144 = 2 / vsyncMode_8007a3b8;
+          player.movementStep_148.set(worldspaceDeltaMovement).div(player.movementTicks_144);
           playerModel.coord2_14.coord.transfer.y = worldspaceDeltaMovement.y;
-          playerModel.coord2_14.coord.transfer.z += worldspaceDeltaMovement.z;
         }
 
         //LAB_800de2c8
@@ -1118,7 +1118,7 @@ public class SMap extends EngineState {
 
       //LAB_800de2cc
       player.us_170 = 0;
-      this.sobjs_800c6880[player.sobjIndex_130].setTempTicker(this::FUN_800e3e60);
+      this.sobjs_800c6880[player.sobjIndex_130].setTempTicker(this::tickBasicMovement);
       this.caches_800c68e8.playerPos_00.set(worldspaceDeltaMovement);
     }
 
@@ -3356,9 +3356,11 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800e3e60L)
-  private boolean FUN_800e3e60(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
-    sobj.us_170 = 0;
-    return true;
+  private boolean tickBasicMovement(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
+    sobj.model_00.coord2_14.coord.transfer.x += sobj.movementStep_148.x;
+    sobj.model_00.coord2_14.coord.transfer.z += sobj.movementStep_148.z;
+    sobj.movementTicks_144--;
+    return sobj.movementTicks_144 <= 0;
   }
 
   /** Used in teleporter just before Melbu */
