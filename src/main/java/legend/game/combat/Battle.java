@@ -1749,13 +1749,13 @@ public class Battle extends EngineState {
     this.setStageHasNoModel();
 
     if(files.get(0).size() > 0 && files.get(1).size() > 0 && files.get(2).size() > 0) {
-      this._800c6754 = 1;
-      this.stageHasModel_800c66b8 = true;
-
       final BattleStage stage = battlePreloadedEntities_1f8003f4.stage_963c;
       this.loadStageTmd(stage, new CContainer(modelName, files.get(0), 10), new TmdAnimationFile(files.get(1)));
       stage.coord2_558.coord.transfer.set(0, 0, 0);
       stage.param_5a8.rotate.set(0.0f, MathHelper.TWO_PI / 4.0f, 0.0f);
+
+      this._800c6754 = 1;
+      this.stageHasModel_800c66b8 = true;
     }
 
     //LAB_800c8818
