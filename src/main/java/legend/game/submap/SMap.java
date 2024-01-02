@@ -1107,9 +1107,14 @@ public class SMap extends EngineState {
       final int collidedPrimitiveIndex = this.collisionGeometry_800cbe08.handleCollisionAndMovement(player.sobjIndex_12e != 0, playerModel.coord2_14.coord.transfer, worldspaceDeltaMovement);
       if(collidedPrimitiveIndex >= 0) {
         if(this.isWalkable(collidedPrimitiveIndex)) {
-          player.movementTicks_144 = 2 / vsyncMode_8007a3b8;
-          player.movementStep_148.set(worldspaceDeltaMovement).div(player.movementTicks_144);
+          playerModel.coord2_14.coord.transfer.x += worldspaceDeltaMovement.x;
           playerModel.coord2_14.coord.transfer.y = worldspaceDeltaMovement.y;
+          playerModel.coord2_14.coord.transfer.z += worldspaceDeltaMovement.z;
+//          player.movementTicksTotal = 2 / vsyncMode_8007a3b8;
+//          player.movementTicks_144 = 0;
+//          player.movementStart.set(playerModel.coord2_14.coord.transfer);
+//          player.movementStart.add(worldspaceDeltaMovement, player.movementDestination_138);
+//          script.scriptState_04.setTempTicker(this::tickBasicMovement);
         }
 
         //LAB_800de2c8
@@ -1118,7 +1123,7 @@ public class SMap extends EngineState {
 
       //LAB_800de2cc
       player.us_170 = 0;
-      this.sobjs_800c6880[player.sobjIndex_130].setTempTicker(this::tickBasicMovement);
+      script.scriptState_04.setTempTicker(this::tickBasicMovement);
       this.caches_800c68e8.playerPos_00.set(worldspaceDeltaMovement);
     }
 
@@ -1975,7 +1980,7 @@ public class SMap extends EngineState {
   private FlowControl FUN_800e00cc(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
-    final int collisionPrimitiveIndex = this.collisionGeometry_800cbe08.FUN_800e9018(model.coord2_14.coord.transfer.x, model.coord2_14.coord.transfer.y, model.coord2_14.coord.transfer.z, 0);
+    final int collisionPrimitiveIndex = this.collisionGeometry_800cbe08.FUN_800e9018(model.coord2_14.coord.transfer.x, model.coord2_14.coord.transfer.y, model.coord2_14.coord.transfer.z, false);
     script.params_20[1].set(collisionPrimitiveIndex);
     sobj.collidedPrimitiveIndex_16c = collisionPrimitiveIndex;
     return FlowControl.CONTINUE;
@@ -3357,10 +3362,10 @@ public class SMap extends EngineState {
 
   @Method(0x800e3e60L)
   private boolean tickBasicMovement(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
-    sobj.model_00.coord2_14.coord.transfer.x += sobj.movementStep_148.x;
-    sobj.model_00.coord2_14.coord.transfer.z += sobj.movementStep_148.z;
-    sobj.movementTicks_144--;
-    return sobj.movementTicks_144 <= 0;
+//    sobj.movementStart.lerp(sobj.movementDestination_138, (sobj.movementTicks_144 + 1.0f) / sobj.movementTicksTotal, sobj.model_00.coord2_14.coord.transfer);
+//    sobj.movementTicks_144++;
+//    return sobj.movementTicks_144 >= sobj.movementTicksTotal;
+    return true;
   }
 
   /** Used in teleporter just before Melbu */
@@ -3702,6 +3707,10 @@ public class SMap extends EngineState {
           .vertices(vertexOffset, vertexCount)
           .screenspaceOffset(this.screenOffset_800cb568.x + 8, -this.screenOffset_800cb568.y)
         ;
+
+        if(!this.collisionGeometry_800cbe08.primitiveInfo_14[i].flatEnoughToWalkOn_01) {
+          model.colour(0.5f, 0.0f, 0.0f);
+        }
 
         if((this.collisionGeometry_800cbe08.getCollisionAndTransitionInfo(i) & 0x1) != 0) {
           model.colour(0.5f, 0.0f, 1.0f);

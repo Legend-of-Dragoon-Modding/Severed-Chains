@@ -31,8 +31,8 @@ public class CollisionGeometry {
   public TmdObjTable1c.Primitive[] primitives_10;
   /** One entry per primitive */
   public CollisionPrimitiveInfo0c[] primitiveInfo_14;
-  /** One entry per primitive */
-  public SomethingStructSub0c_2[] ptr_18;
+  /** One entry per vertex per primitive */
+  public CollisionVertexInfo0c[] vertexInfo_18;
 //  public TmdWithId tmdPtr_1c;
   public final ModelPart10 dobj2Ptr_20 = new ModelPart10();
   public final GsCOORDINATE2 coord2Ptr_24 = new GsCOORDINATE2();
@@ -99,11 +99,11 @@ public class CollisionGeometry {
   }
 
   @Method(0x800e866cL)
-  private void FUN_800e866c() {
+  private void checkForSteepCollision() {
     //LAB_800e86a4
     for(int i = 0; i < this.primitiveCount_0c; i++) {
       final float y = Math.abs(this.normals_08[i].y);
-      this.primitiveInfo_14[i].bool_01 = y > 0x400;
+      this.primitiveInfo_14[i].flatEnoughToWalkOn_01 = y > 0x400;
     }
 
     //LAB_800e86f0
@@ -172,11 +172,11 @@ public class CollisionGeometry {
     }
 
     this.primitiveInfo_14 = new CollisionPrimitiveInfo0c[this.primitiveCount_0c];
-    this.ptr_18 = new SomethingStructSub0c_2[this.primitiveCount_0c * 4];
+    this.vertexInfo_18 = new CollisionVertexInfo0c[this.primitiveCount_0c * 4];
 
     final FileData finalA1 = a1;
     Arrays.setAll(this.primitiveInfo_14, i -> new CollisionPrimitiveInfo0c(finalA1.slice(i * 0xc, 0xc)));
-    Arrays.setAll(this.ptr_18, i -> new SomethingStructSub0c_2(finalA1.slice((this.primitiveCount_0c + i) * 0xc, 0xc)));
+    Arrays.setAll(this.vertexInfo_18, i -> new CollisionVertexInfo0c(finalA1.slice((this.primitiveCount_0c + i) * 0xc, 0xc)));
   }
 
   @Method(0x800e8bd8L)
@@ -207,7 +207,7 @@ public class CollisionGeometry {
 
     this.collisionLoaded_800f7f14 = true;
 
-    this.FUN_800e866c();
+    this.checkForSteepCollision();
   }
 
   @Method(0x800e8e50L)
@@ -228,20 +228,20 @@ public class CollisionGeometry {
   }
 
   @Method(0x800e9018L)
-  public int FUN_800e9018(final float x, final float y, final float z, final int a3) {
+  public int FUN_800e9018(final float x, final float y, final float z, final boolean checkSteepness) {
     int collisionPrimitiveIndexCount = 0;
 
     //LAB_800e9040
     for(int collisionPrimitiveIndex = 0; collisionPrimitiveIndex < this.primitiveCount_0c; collisionPrimitiveIndex++) {
       final CollisionPrimitiveInfo0c collisionInfo = this.primitiveInfo_14[collisionPrimitiveIndex];
-      if(a3 != 1 || collisionInfo.bool_01) {
+      if(!checkSteepness || collisionInfo.flatEnoughToWalkOn_01) {
         //LAB_800e9078
         //LAB_800e90a0
         boolean v0 = true;
         for(int vertexIndex = 0; vertexIndex < collisionInfo.vertexCount_00; vertexIndex++) {
-          final SomethingStructSub0c_2 a0 = this.ptr_18[collisionInfo._02 + vertexIndex];
+          final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[collisionInfo.vertexInfoOffset_02 + vertexIndex];
 
-          if(a0.x_00 * x + a0.z_02 * z + a0._04 < 0) {
+          if(vertexInfo.x_00 * x + vertexInfo.z_02 * z + vertexInfo._04 < 0) {
             //LAB_800e910c
             v0 = false;
             break;
@@ -276,10 +276,9 @@ public class CollisionGeometry {
       final int collisionPrimitiveIndex = this.collisionPrimitiveIndices_800cbe48[i];
       final CollisionPrimitiveInfo0c t5 = this.primitiveInfo_14[collisionPrimitiveIndex];
 
-      float v1 = -this.normals_08[collisionPrimitiveIndex].x * x - this.normals_08[collisionPrimitiveIndex].z * z - t5._08;
-
+      float v1;
       if(this.normals_08[collisionPrimitiveIndex].y != 0) {
-        v1 /= this.normals_08[collisionPrimitiveIndex].y;
+        v1 = -(this.normals_08[collisionPrimitiveIndex].x * x + this.normals_08[collisionPrimitiveIndex].z * z + t5._08) / this.normals_08[collisionPrimitiveIndex].y;
       } else {
         v1 = 0;
       }
@@ -371,13 +370,13 @@ public class CollisionGeometry {
 
     //LAB_800e9538
     for(int primitiveIndex = 0; primitiveIndex < this.primitiveCount_0c; primitiveIndex++) {
-      if(this.primitiveInfo_14[primitiveIndex].bool_01) {
+      if(this.primitiveInfo_14[primitiveIndex].flatEnoughToWalkOn_01) {
         //LAB_800e9594
         boolean found = false;
         for(int i = 0; i < this.primitiveInfo_14[primitiveIndex].vertexCount_00; i++) {
-          final SomethingStructSub0c_2 struct = this.ptr_18[this.primitiveInfo_14[primitiveIndex]._02 + i];
+          final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[this.primitiveInfo_14[primitiveIndex].vertexInfoOffset_02 + i];
 
-          if(struct.x_00 * x + struct.z_02 * z + struct._04 < 0) {
+          if(vertexInfo.x_00 * x + vertexInfo.z_02 * z + vertexInfo._04 < 0) {
             //LAB_800e9604
             found = true;
             break;
@@ -466,13 +465,13 @@ public class CollisionGeometry {
       t0 = 0;
 
       //LAB_800e992c
-      for(int n = 0; n < this.primitiveCount_0c; n++) {
-        if(this.primitiveInfo_14[n].bool_01) {
+      for(int primitiveIndex = 0; primitiveIndex < this.primitiveCount_0c; primitiveIndex++) {
+        if(this.primitiveInfo_14[primitiveIndex].flatEnoughToWalkOn_01) {
           //LAB_800e9988
           boolean found = false;
-          for(int i = 0; i < this.primitiveInfo_14[n].vertexCount_00; i++) {
-            final SomethingStructSub0c_2 struct = this.ptr_18[this.primitiveInfo_14[n]._02 + i];
-            if(struct.x_00 * endX + struct.z_02 * endZ + struct._04 < 0) {
+          for(int vertexIndex = 0; vertexIndex < this.primitiveInfo_14[primitiveIndex].vertexCount_00; vertexIndex++) {
+            final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[this.primitiveInfo_14[primitiveIndex].vertexInfoOffset_02 + vertexIndex];
+            if(vertexInfo.x_00 * endX + vertexInfo.z_02 * endZ + vertexInfo._04 < 0) {
               //LAB_800e99f4
               found = true;
               break;
@@ -481,7 +480,7 @@ public class CollisionGeometry {
 
           //LAB_800e99d8
           if(!found) {
-            this.collisionPrimitiveIndices_800cbe48[t0] = n;
+            this.collisionPrimitiveIndices_800cbe48[t0] = primitiveIndex;
             t0++;
           }
         }
@@ -529,9 +528,9 @@ public class CollisionGeometry {
 
         //LAB_800e9b50
         for(s1 = 0; s1 < struct.vertexCount_00; s1++) {
-          final SomethingStructSub0c_2 struct2 = this.ptr_18[struct._02 + s1];
-          if(struct2._08 != 0) {
-            if(Math.abs((struct2.x_00 * endX + struct2.z_02 * endZ + struct2._04) / 0x400) < 10) {
+          final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[struct.vertexInfoOffset_02 + s1];
+          if(vertexInfo._08 != 0) {
+            if(Math.abs((vertexInfo.x_00 * endX + vertexInfo.z_02 * endZ + vertexInfo._04) / 0x400) < 10) {
               v0 = s1;
               break;
             }
@@ -574,12 +573,12 @@ public class CollisionGeometry {
         final float endZ2 = z + movement.z * i;
 
         //LAB_800e9ce8
-        for(int a1_0 = 0; a1_0 < this.primitiveInfo_14[s4].vertexCount_00; a1_0++) {
-          final SomethingStructSub0c_2 struct = this.ptr_18[this.primitiveInfo_14[s4]._02 + a1_0];
+        for(int vertexIndex = 0; vertexIndex < this.primitiveInfo_14[s4].vertexCount_00; vertexIndex++) {
+          final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[this.primitiveInfo_14[s4].vertexInfoOffset_02 + vertexIndex];
 
-          if(struct._08 != 0) {
-            if((struct.x_00 * endX2 + struct.z_02 * endZ2 + struct._04) / 0x400 <= 0) {
-              a1 = a1_0;
+          if(vertexInfo._08 != 0) {
+            if((vertexInfo.x_00 * endX2 + vertexInfo.z_02 * endZ2 + vertexInfo._04) / 0x400 <= 0) {
+              a1 = vertexIndex;
               break;
             }
           }
@@ -597,9 +596,9 @@ public class CollisionGeometry {
         s2 = s4;
 
         //LAB_800e9e7c
-        final SomethingStructSub0c_2 struct = this.ptr_18[this.primitiveInfo_14[s4]._02 + a1];
+        final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[this.primitiveInfo_14[s4].vertexInfoOffset_02 + a1];
         final float angle1 = MathHelper.atan2(endZ - z, endX - x);
-        float angle2 = MathHelper.atan2(-struct.x_00, struct.z_02);
+        float angle2 = MathHelper.atan2(-vertexInfo.x_00, vertexInfo.z_02);
         float angleDeltaAbs = Math.abs(angle1 - angle2);
         if(angleDeltaAbs > MathHelper.PI) {
           angleDeltaAbs = MathHelper.TWO_PI - angleDeltaAbs;
@@ -662,18 +661,18 @@ public class CollisionGeometry {
             break;
           }
 
-          t0 = 0;
+          int collisionPrimitiveCount = 0;
 
           //LAB_800ea064
           for(int i = 0; i < this.primitiveCount_0c; i++) {
-            final CollisionPrimitiveInfo0c a1_0 = this.primitiveInfo_14[i];
+            final CollisionPrimitiveInfo0c collisionPrimitive = this.primitiveInfo_14[i];
 
-            if(a1_0.bool_01) {
+            if(collisionPrimitive.flatEnoughToWalkOn_01) {
               //LAB_800ea0c4
               boolean found = false;
-              for(int n = 0; n < a1_0.vertexCount_00; n++) {
-                final SomethingStructSub0c_2 a0_0 = this.ptr_18[a1_0._02 + n];
-                if(a0_0.x_00 * offsetX + a0_0.z_02 * offsetZ + a0_0._04 < 0) {
+              for(int vertexIndex = 0; vertexIndex < collisionPrimitive.vertexCount_00; vertexIndex++) {
+                final CollisionVertexInfo0c vertexInfo2 = this.vertexInfo_18[collisionPrimitive.vertexInfoOffset_02 + vertexIndex];
+                if(vertexInfo2.x_00 * offsetX + vertexInfo2.z_02 * offsetZ + vertexInfo2._04 < 0) {
                   //LAB_800ea130
                   found = true;
                   break;
@@ -682,8 +681,8 @@ public class CollisionGeometry {
 
               //LAB_800ea114
               if(!found) {
-                this.collisionPrimitiveIndices_800cbe48[t0] = i;
-                t0++;
+                this.collisionPrimitiveIndices_800cbe48[collisionPrimitiveCount] = i;
+                collisionPrimitiveCount++;
               }
             }
 
@@ -691,9 +690,9 @@ public class CollisionGeometry {
           }
 
           //LAB_800ea138
-          if(t0 == 0) {
+          if(collisionPrimitiveCount == 0) {
             s2 = -1;
-          } else if(t0 == 1) {
+          } else if(collisionPrimitiveCount == 1) {
             s2 = this.collisionPrimitiveIndices_800cbe48[0];
           } else {
             //LAB_800ea158
@@ -701,7 +700,7 @@ public class CollisionGeometry {
             int t2 = -1;
 
             //LAB_800ea17c
-            for(int i = 0; i < t0; i++) {
+            for(int i = 0; i < collisionPrimitiveCount; i++) {
               final int primitiveIndex = this.collisionPrimitiveIndices_800cbe48[i];
               final Vector3f normal = this.normals_08[primitiveIndex];
 

@@ -15,10 +15,12 @@ public class SubmapObject210 {
   public int animIndex_132;
   /** Forced movement Y step */
   public float movementStepY_134;
+  public final Vector3f movementStart = new Vector3f();
   /** Forced movement destination */
   public final Vector3f movementDestination_138 = new Vector3f();
   /** Number of frames for forced movement */
   public int movementTicks_144;
+  public int movementTicksTotal;
   /** Forced movement step */
   public final Vector3f movementStep_148 = new Vector3f();
 //  /** Same as {@link #movementStep_148} but .16 */
