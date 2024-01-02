@@ -4231,7 +4231,10 @@ public class SMap extends EngineState {
   @Override
   public void postScriptTick() {
     //LAB_80020f20
-    this.renderEnvironmentAndHandleTransitions();
+    if(submapFullyLoaded_800bd7b4) {
+      this.renderEnvironmentAndHandleTransitions();
+    }
+
     this.setIndicatorStatusAndResetIndicatorTickCountOnReenable();
   }
 

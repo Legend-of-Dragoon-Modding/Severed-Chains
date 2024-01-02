@@ -345,12 +345,6 @@ public class RetailSubmap extends Submap {
       return;
     }
 
-    if(this.submapModel_800d4bf8.modelParts_00[0].obj == null) {
-      for(int i = 0; i < this.submapModel_800d4bf8.modelParts_00.length; i++) {
-        this.submapModel_800d4bf8.modelParts_00[i].obj = TmdObjLoader.fromObjTable("Submap model part " + i, this.submapModel_800d4bf8.modelParts_00[i].tmd_08);
-      }
-    }
-
     if(this.theEndStruct_800d4bd0 != null && this.theEndClut_800d4bd4 != null) {
       this.FUN_800ee9e0(this.theEndClut_800d4bd4, this.theEndStruct_800d4bd0, this.tpage_800f9e5c, this.clut_800f9e5e, Translucency.B_PLUS_F);
       GPU.uploadData15(this.theEndClutRect_800d6b48, this.theEndClut_800d4bd4);
@@ -1158,6 +1152,16 @@ public class RetailSubmap extends Submap {
 
   @Method(0x800eece0L)
   private void animateAndRenderSubmapModel(final Matrix4f matrix) {
+    if(!this.hasRenderer_800c6968) {
+      return;
+    }
+
+    if(this.submapModel_800d4bf8.modelParts_00[0].obj == null) {
+      for(int i = 0; i < this.submapModel_800d4bf8.modelParts_00.length; i++) {
+        this.submapModel_800d4bf8.modelParts_00[i].obj = TmdObjLoader.fromObjTable("Submap model part " + i, this.submapModel_800d4bf8.modelParts_00[i].tmd_08);
+      }
+    }
+
     this.submapModel_800d4bf8.coord2_14.coord.transfer.zero();
     this.submapModel_800d4bf8.coord2_14.transforms.rotate.zero();
 
