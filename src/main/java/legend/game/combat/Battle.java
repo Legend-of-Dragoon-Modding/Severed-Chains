@@ -8555,7 +8555,7 @@ public class Battle extends EngineState {
     }
 
     //LAB_800f99c0
-    script.params_20[1].set(itemId);
+    script.params_20[1].set(itemId + 192);
     return FlowControl.CONTINUE;
   }
 
