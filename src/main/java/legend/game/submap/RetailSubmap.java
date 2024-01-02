@@ -452,7 +452,7 @@ public class RetailSubmap extends Submap {
     }
 
     for(final FileData file : textures) {
-      if(file.real()) {
+      if(file != null && file.real()) {
         this.pxls.add(new Tim(file));
       } else {
         this.pxls.add(null);

@@ -214,6 +214,14 @@ public final class Unpacker {
           }
 
           final int virtual = Integer.parseInt(parts[0]);
+
+          // Indicates no file
+          if(parts[1].isBlank()) {
+            fileMap.put(virtual, -1);
+            virtualSizeMap.put(virtual, 0);
+            return;
+          }
+
           final int real = Integer.parseInt(parts[1]);
           fileMap.put(virtual, real);
           virtualSizeMap.put(virtual, Integer.parseInt(parts[2]));
@@ -225,6 +233,12 @@ public final class Unpacker {
         for(final var entry : fileMap.int2IntEntrySet()) {
           final int virtual = entry.getIntKey();
           final int real = entry.getIntValue();
+
+          // No file
+          if(real == -1) {
+            files.add(null);
+            continue;
+          }
 
           try {
             final Path file = dir.resolve(String.valueOf(real));
@@ -245,7 +259,7 @@ public final class Unpacker {
           final int virtual = entry.getIntKey();
           int real = entry.getIntValue();
 
-          if(virtual == real) {
+          if(virtual == real || real == -1) {
             continue;
           }
 
