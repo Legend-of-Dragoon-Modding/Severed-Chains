@@ -351,8 +351,6 @@ public class RetailSubmap extends Submap {
       }
     }
 
-    this.animateAndRenderSubmapModel(this.submapCutMatrix_800d4bb0);
-
     if(this.theEndStruct_800d4bd0 != null && this.theEndClut_800d4bd4 != null) {
       this.FUN_800ee9e0(this.theEndClut_800d4bd4, this.theEndStruct_800d4bd0, this.tpage_800f9e5c, this.clut_800f9e5e, Translucency.B_PLUS_F);
       GPU.uploadData15(this.theEndClutRect_800d6b48, this.theEndClut_800d4bd4);
@@ -859,6 +857,8 @@ public class RetailSubmap extends Submap {
   @Override
   @Method(0x800e7954L)
   public void drawEnv(final MV[] sobjMatrices) {
+    this.animateAndRenderSubmapModel(this.submapCutMatrix_800d4bb0);
+
     final float[] sobjZs = new float[sobjMatrices.length];
     final float[] envZs = new float[this.envForegroundTextureCount_800cb580];
 
