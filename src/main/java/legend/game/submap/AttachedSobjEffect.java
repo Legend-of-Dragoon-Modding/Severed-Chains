@@ -3,12 +3,12 @@ package legend.game.submap;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.MV;
-import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
+import legend.core.opengl.Obj;
+import legend.core.opengl.TmdObjLoader;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptState;
 import legend.game.scripting.ScriptStorageParam;
-import legend.game.tmd.Renderer;
 import legend.game.types.CContainer;
 import legend.game.types.Model124;
 import legend.game.types.TmdAnimationFile;
@@ -30,8 +30,6 @@ import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8003.GetTPage;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
-import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
-import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
 import static legend.game.Scus94491BpeSegment_8003.PopMatrix;
 import static legend.game.Scus94491BpeSegment_8003.PushMatrix;
 import static legend.game.Scus94491BpeSegment_8003.RotTransPers4;
@@ -72,36 +70,8 @@ public class AttachedSobjEffect {
   private int lawPodTrailCount_800f9e78;
   private final LawPodTrailData18[] lawPodTrailsData_800f9e7c = new LawPodTrailData18[8];
 
-  // TODO Clean this up
-  @Method(0x800daa3cL)
-  private void renderSmapModel(final Model124 model, final int screenOffsetX, final int screenOffsetY) {
-    zOffset_1f8003e8 = model.zOffset_a0;
-    tmdGp0Tpage_1f8003ec = model.tpage_108;
-
-    //LAB_800daaa8
-    final MV lw = new MV();
-    final MV ls = new MV();
-    for(int i = 0; i < model.modelParts_00.length; i++) {
-      if((model.partInvisible_f4 & 1L << i) == 0) {
-        final ModelPart10 dobj2 = model.modelParts_00[i];
-
-        GsGetLws(dobj2.coord2_04, lw, ls);
-        GsSetLightMatrix(lw);
-        GTE.setTransforms(ls);
-        Renderer.renderDobj2(dobj2, false, 0);
-
-        if(dobj2.obj != null) {
-          GsGetLw(dobj2.coord2_04, lw);
-
-          RENDERER.queueModel(dobj2.obj, lw)
-            .screenspaceOffset(screenOffsetX + 8, -screenOffsetY)
-            .lightDirection(lightDirectionMatrix_800c34e8)
-            .lightColour(lightColourMatrix_800c3508)
-            .backgroundColour(GTE.backgroundColour);
-        }
-      }
-    }
-  }
+  private final MV transforms = new MV();
+  private Obj dust;
 
   @Method(0x800f0e60L)
   private void initLawPodTrail() {
@@ -140,6 +110,10 @@ public class AttachedSobjEffect {
   public void initAttachedSobjEffects() {
     initModel(this.tmdDustModel_800d4d40, this.dustTmd, this.dustAnimation);
     this.tmdTrail_800d4ec0.clear();
+    if(this.dust == null) {
+      this.dust = TmdObjLoader.fromObjTable("DustTmd", this.dustTmd.tmdPtr_00.tmd.objTable[0]);
+
+    }
     this.orthoQuadTrail_800d4e68.clear();
     this.initLawPodTrail();
   }
@@ -423,7 +397,17 @@ public class AttachedSobjEffect {
         this.tmdDustModel_800d4d40.coord2_14.transforms.scale.set(inst.size_08, inst.size_08, inst.size_08);
 
         applyModelRotationAndScale(this.tmdDustModel_800d4d40);
-        this.renderSmapModel(this.tmdDustModel_800d4d40, screenOffsetX, screenOffsetY);
+        if(this.dust != null) {
+          zOffset_1f8003e8 = this.tmdDustModel_800d4d40.zOffset_a0;
+          tmdGp0Tpage_1f8003ec = this.tmdDustModel_800d4d40.tpage_108;
+          GsGetLw(this.tmdDustModel_800d4d40.modelParts_00[0].coord2_04, this.transforms);
+
+          RENDERER.queueModel(this.dust, this.transforms)
+            .screenspaceOffset(screenOffsetX + 8, -screenOffsetY)
+            .lightDirection(lightDirectionMatrix_800c34e8)
+            .lightColour(lightColourMatrix_800c3508)
+            .backgroundColour(GTE.backgroundColour);
+        }
 
         this.tmdDustModel_800d4d40.remainingFrames_9e = 0;
         this.tmdDustModel_800d4d40.interpolationFrameIndex = 0;
@@ -520,9 +504,6 @@ public class AttachedSobjEffect {
         GPU.queueCommand(inst.z_4c, cmd);
         inst.tick_04++;
       } else {
-        if(i == 0) {
-          int x = 0;
-        }
         inst.used = false;
       }
     }

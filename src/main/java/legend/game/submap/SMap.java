@@ -3369,8 +3369,6 @@ public class SMap extends EngineState {
           }
 
           //LAB_800e1d60
-          this.initAttachedSobjEffectData(state.innerStruct_00.attachedEffectData_1d0);
-
           for(final ModelPart10 part : model.modelParts_00) {
             part.obj = TmdObjLoader.fromObjTable("SobjModel (index " + i + ')', part.tmd_08);
           }
@@ -6149,24 +6147,6 @@ public class SMap extends EngineState {
     }
 
     GPU.uploadData15(imageRect, imageAddress);
-  }
-
-  @Method(0x800f04acL)
-  private void initAttachedSobjEffectData(final AttachedSobjEffectData40 data) {
-    data.tick_00 = 0;
-    data.shouldRenderTmdDust_04 = false;
-    data.shouldRenderFootprints_08 = false;
-    data.shouldRenderOrthoDust_0c = false;
-    data.footprintMode_10 = 0;
-    data.shouldRenderLawPodTrail_18 = false;
-    data.textureIndexType1_1c = 0;
-    data.transfer_1e.zero();
-    data.size_28 = 0;
-    data.oldFootprintInstantiationInterval_2c = 0;
-    data.instantiationIntervalDust_30 = 0;
-    data.instantiationIntervalFootprints_34 = 0;
-    data.maxTicks_38 = 0;
-    data.trailData_3c = null;
   }
 
   @ScriptDescription("Allocates/initializes static struct containing smoke plume particle data.")
