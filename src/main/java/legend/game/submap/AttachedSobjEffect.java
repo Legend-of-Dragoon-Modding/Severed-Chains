@@ -17,7 +17,6 @@ import org.joml.Math;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static legend.core.GameEngine.GPU;
@@ -67,13 +66,11 @@ public class AttachedSobjEffect {
   public CContainer dustTmd;
   public TmdAnimationFile dustAnimation;
   private final Model124 tmdDustModel_800d4d40 = new Model124("Dust");
-  private int firstEmptyOrthoQuadIndex;
-  public OrthoTrailParticle54[] orthoQuadTrail_800d4e68;
-  private final TmdTrailParticle20 tmdTrail_800d4ec0 = new TmdTrailParticle20();
+  private final List<OrthoTrailParticle54> orthoQuadTrail_800d4e68 = new ArrayList<>();
+  private final List<TmdTrailParticle20> tmdTrail_800d4ec0 = new ArrayList<>();
   private final List<LawPodTrailSegment34> lawPodTrail_800d4f90 = new ArrayList<>();
-  private final List<TrailSegmentVertices14> lawPodTrailVerts_800d4fd0 = new ArrayList<>();
-  private int lawPodTrailSegmentCount_800f9e78;
-  private final LawPodTrailData18[] lawPodTrailSegments_800f9e7c = new LawPodTrailData18[8];
+  private int lawPodTrailCount_800f9e78;
+  private final LawPodTrailData18[] lawPodTrailsData_800f9e7c = new LawPodTrailData18[8];
 
   // TODO Clean this up
   @Method(0x800daa3cL)
@@ -106,10 +103,10 @@ public class AttachedSobjEffect {
     }
   }
 
-  public void initOrthoQuadTrail(final int maxTicks, final int instantiationInterval) {
-    final int instCount = (int)Math.ceil((float)maxTicks / instantiationInterval);
-    this.orthoQuadTrail_800d4e68 = new OrthoTrailParticle54[instCount];
-    Arrays.setAll(this.orthoQuadTrail_800d4e68, val -> new OrthoTrailParticle54());
+  @Method(0x800f0e60L)
+  private void initLawPodTrail() {
+    this.lawPodTrail_800d4f90.clear();
+    this.lawPodTrailCount_800f9e78 = 0;
   }
 
   public void initLawPodTrail(final RunningScript<?> script) {
@@ -118,91 +115,101 @@ public class AttachedSobjEffect {
     script.params_20[9] = new ScriptStorageParam(state, 0);
 
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[state.storage_44[0]].innerStruct_00;
-    if(script.params_20[0].get() == 0 || this.lawPodTrailSegmentCount_800f9e78 >= 8) {
+    if(script.params_20[0].get() == 0 || this.lawPodTrailCount_800f9e78 >= 8) {
       //LAB_800f1698
       sobj.attachedEffectData_1d0.shouldRenderLawPodTrail_18 = false;
     } else {
       //LAB_800f16a4
-      final LawPodTrailData18 segment = this.addLawPodTrailSegment();
-      segment.maxCountSegments_00 = script.params_20[1].get();
-      segment.countSegments_01 = 0;
-      segment.fadeDelay_02 = script.params_20[2].get();
-      segment.countFadeSteps_04 = script.params_20[3].get();
-      segment.maxTicks_06 = segment.fadeDelay_02 + segment.countFadeSteps_04;
-      segment.width_08 = script.params_20[4].get();
-      segment.translucency_0c = script.params_20[5].get();
-      segment.r_10 = script.params_20[6].get();
-      segment.g_11 = script.params_20[7].get();
-      segment.b_12 = script.params_20[8].get();
-      segment.currSegmentOriginVerts_14 = null;
+      final LawPodTrailData18 trail = this.addLawPodTrail();
+      trail.maxCountSegments_00 = script.params_20[1].get();
+      trail.countSegments_01 = 0;
+      trail.fadeDelay_02 = script.params_20[2].get();
+      trail.countFadeSteps_04 = script.params_20[3].get();
+      trail.maxTicks_06 = trail.fadeDelay_02 + trail.countFadeSteps_04;
+      trail.width_08 = script.params_20[4].get();
+      trail.translucency_0c = script.params_20[5].get();
+      trail.colour_10.set(script.params_20[6].get(), script.params_20[7].get(), script.params_20[8].get()).div(255.0f);
+      trail.currSegmentOriginVerts_14.zero();
       sobj.attachedEffectData_1d0.shouldRenderLawPodTrail_18 = script.params_20[0].get() == 1;
-      sobj.attachedEffectData_1d0.trailData_3c = segment;
-      this.lawPodTrailSegmentCount_800f9e78++;
+      sobj.attachedEffectData_1d0.trailData_3c = trail;
+      this.lawPodTrailCount_800f9e78++;
     }
   }
 
   @Method(0x800f0370L)
   public void initAttachedSobjEffects() {
     initModel(this.tmdDustModel_800d4d40, this.dustTmd, this.dustAnimation);
-    this.tmdTrail_800d4ec0.next_1c = null;
-    // this.initLawPodTrail();
-  }
-
-  @Method(0x800f03c0L)
-  private TmdTrailParticle20 addTmdDustParticle(final TmdTrailParticle20 parent) {
-    final TmdTrailParticle20 child = new TmdTrailParticle20();
-    child.next_1c = parent.next_1c;
-    parent.next_1c = child;
-    return child;
-  }
-
-  @Method(0x800f0400L)
-  private OrthoTrailParticle54 addOrthoQuadTrailParticle(final OrthoTrailParticle54 parent) {
-    final OrthoTrailParticle54 child = new OrthoTrailParticle54();
-    child.next_50 = parent.next_50;
-    parent.next_50 = child;
-    return child;
+    this.tmdTrail_800d4ec0.clear();
+    this.orthoQuadTrail_800d4e68.clear();
+    this.initLawPodTrail();
   }
 
   @Method(0x800f0440L)
   public void deallocateAttachedSobjEffects() {
-    this.deallocateTmdTrail();
-    this.deallocateOrthoQuadTrail();
+    this.tmdTrail_800d4ec0.clear();
+    this.orthoQuadTrail_800d4e68.clear();
     this.deallocateLawPodTrail();
   }
 
   @Method(0x800f047cL)
   public void renderAttachedSobjEffects(final int screenOffsetX, final int screenOffsetY) {
-    this.renderTmdTrail(screenOffsetX, screenOffsetY);
+    if(!this.tmdTrail_800d4ec0.isEmpty()) {
+      this.renderTmdTrail(screenOffsetX, screenOffsetY);
+    }
 
-    if(this.orthoQuadTrail_800d4e68 != null) {
+    if(!this.orthoQuadTrail_800d4e68.isEmpty()) {
       this.renderOrthoQuadTrailEffects(screenOffsetX, screenOffsetY);
     }
 
-    this.renderLawPodTrail(screenOffsetX, screenOffsetY);
+    if(!this.lawPodTrail_800d4f90.isEmpty()) {
+      this.renderLawPodTrail(screenOffsetX, screenOffsetY);
+    }
   }
 
-  @Method(0x800f058cL)
-  private void deallocateTmdTrail() {
-    final TmdTrailParticle20 prev = this.tmdTrail_800d4ec0;
-
-    if(prev.next_1c != null) {
-      //LAB_800f05b4
-      TmdTrailParticle20 next;
-      do {
-        final TmdTrailParticle20 inst = prev.next_1c;
-        next = inst.next_1c;
-        prev.next_1c = next;
-      } while(next != null);
+  private TmdTrailParticle20 addTmdTrailParticle() {
+    TmdTrailParticle20 inst;
+    for(int i = 0; i < this.tmdTrail_800d4ec0.size(); i++) {
+      inst = this.tmdTrail_800d4ec0.get(i);
+      if(!inst.used) {
+        inst.used = true;
+        return inst;
+      }
     }
 
-    //LAB_800f05d4
+    inst = new TmdTrailParticle20();
+    this.tmdTrail_800d4ec0.add(inst);
+    return inst;
   }
 
-  @Method(0x800f05e8L)
-  private void deallocateOrthoQuadTrail() {
-    //LAB_800f0630
-    this.orthoQuadTrail_800d4e68 = null;
+  private OrthoTrailParticle54 addOrthoTrailParticle() {
+    OrthoTrailParticle54 inst;
+    for(int i = 0; i < this.orthoQuadTrail_800d4e68.size(); i++) {
+      inst = this.orthoQuadTrail_800d4e68.get(i);
+      if(!inst.used) {
+        inst.used = true;
+        return inst;
+      }
+    }
+
+    inst = new OrthoTrailParticle54();
+    this.orthoQuadTrail_800d4e68.add(inst);
+    return inst;
+  }
+
+  private LawPodTrailSegment34 addLawPodTrailSegment() {
+    LawPodTrailSegment34 inst;
+    int i = 0;
+    for(; i < this.lawPodTrail_800d4f90.size(); i++) {
+      inst = this.lawPodTrail_800d4f90.get(i);
+      if(!inst.used) {
+        inst.used = true;
+        return inst;
+      }
+    }
+
+    inst = new LawPodTrailSegment34();
+    this.lawPodTrail_800d4f90.add(inst);
+    return inst;
   }
 
   @Method(0x800ef0f8L)
@@ -211,7 +218,8 @@ public class AttachedSobjEffect {
       //LAB_800ef154
       if(data.shouldRenderTmdDust_04) {
         if(data.tick_00 % (data.instantiationIntervalDust_30 * (3 - vsyncMode_8007a3b8)) == 0) {
-          final TmdTrailParticle20 inst = this.addTmdDustParticle(this.tmdTrail_800d4ec0);
+          final TmdTrailParticle20 inst = this.addTmdTrailParticle();
+
           inst.tick_00 = 0;
           inst.maxTicks_18 = data.maxTicks_38;
 
@@ -231,7 +239,6 @@ public class AttachedSobjEffect {
 
           //LAB_800ef21c
           inst.transfer.set(model.coord2_14.coord.transfer);
-          data.transfer_1e.set(model.coord2_14.coord.transfer);
         }
       }
 
@@ -239,7 +246,7 @@ public class AttachedSobjEffect {
       if(data.shouldRenderFootprints_08) {
         if(data.tick_00 % (data.instantiationIntervalFootprints_34 * (3 - vsyncMode_8007a3b8)) == 0) {
           //LAB_800ef394
-          final OrthoTrailParticle54 inst = this.orthoQuadTrail_800d4e68[this.firstEmptyOrthoQuadIndex];
+          final OrthoTrailParticle54 inst = this.addOrthoTrailParticle();
 
           if(data.footprintMode_10 != 0) {
             //LAB_800ef3e8
@@ -286,15 +293,13 @@ public class AttachedSobjEffect {
           //LAB_800ef504
           inst.stepBrightness_40 = 0.5f / 30;
           inst.brightness_48 = 0.5f;
-          data.transfer_1e.set(model.coord2_14.coord.transfer);
-          this.firstEmptyOrthoQuadIndex = (this.firstEmptyOrthoQuadIndex + 1) % this.orthoQuadTrail_800d4e68.length;
         }
       }
 
       //LAB_800ef520
       if(data.shouldRenderOrthoDust_0c) {
-        if(data.tick_00 % (data.instantiationIntervalDust_30 - (3 - vsyncMode_8007a3b8)) == 0) {
-          final OrthoTrailParticle54 inst = this.orthoQuadTrail_800d4e68[this.firstEmptyOrthoQuadIndex];
+        if(data.tick_00 % (data.instantiationIntervalDust_30 * (3 - vsyncMode_8007a3b8)) == 0) {
+          final OrthoTrailParticle54 inst = this.addOrthoTrailParticle();
           inst.renderMode_00 = 1;
           inst.textureIndex_02 = 2;
           inst.x_18 = screenOffsetX;
@@ -306,7 +311,7 @@ public class AttachedSobjEffect {
           final Vector3f vert3 = new Vector3f( data.size_28, 0.0f,  data.size_28);
 
           inst.tick_04 = 0;
-          inst.maxTicks_06 = (short)data.maxTicks_38;
+          inst.maxTicks_06 = data.maxTicks_38;
 
           final MV ls = new MV();
           GsGetLs(model.coord2_14, ls);
@@ -329,8 +334,6 @@ public class AttachedSobjEffect {
 
           inst.stepBrightness_40 = 0.5f / data.maxTicks_38;
           inst.brightness_48 = 0.5f;
-          data.transfer_1e.set(model.coord2_14.coord.transfer);
-          this.firstEmptyOrthoQuadIndex = (this.firstEmptyOrthoQuadIndex + 1) % this.orthoQuadTrail_800d4e68.length;
         }
       }
 
@@ -343,17 +346,18 @@ public class AttachedSobjEffect {
     }
 
     //LAB_800ef750
+    data.transfer_1e.set(model.coord2_14.coord.transfer);
     data.tick_00++;
   }
 
   @Method(0x800f0644L)
   private void tickLawPodTrail(final Model124 model, final AttachedSobjEffectData40 data, final int screenOffsetX, final int screenOffsetY) {
-    if((data.tick_00 & (3 - vsyncMode_8007a3b8)) == 0) {
+    if((data.tick_00 % (3 - vsyncMode_8007a3b8)) == 0) {
       final LawPodTrailData18 trailData = data.trailData_3c;
 
       if(trailData.countSegments_01 < trailData.maxCountSegments_00) {
-        final LawPodTrailSegment34 segment = new LawPodTrailSegment34();
-        TrailSegmentVertices14 newVerts = new TrailSegmentVertices14();
+        final LawPodTrailSegment34 segment = this.addLawPodTrailSegment();
+        TrailSegmentVertices14 newVerts = segment.endpointVerts23_28;
 
         final MV transforms = new MV();
         GsGetLs(model.coord2_14, transforms);
@@ -380,20 +384,16 @@ public class AttachedSobjEffect {
         newVerts.vert1_08.y -= screenOffsetY;
 
         if(trailData.countSegments_01 == 0) {
-          trailData.currSegmentOriginVerts_14 = newVerts;
+          trailData.currSegmentOriginVerts_14.set(newVerts);
           newVerts = new TrailSegmentVertices14();
-          newVerts.vert0_00.set(trailData.currSegmentOriginVerts_14.vert0_00);
-          newVerts.vert1_08.set(trailData.currSegmentOriginVerts_14.vert1_08);
+          newVerts.set(trailData.currSegmentOriginVerts_14);
+          segment.endpointVerts23_28.set(newVerts);
         }
 
         //LAB_800f0928
-        segment.endpointVerts23_28 = newVerts;
-        segment.originVerts01_24 = trailData.currSegmentOriginVerts_14;
-        trailData.currSegmentOriginVerts_14 = newVerts;
+        segment.originVerts01_24.set(trailData.currSegmentOriginVerts_14);
+        trailData.currSegmentOriginVerts_14.set(newVerts);
         segment.trailData_2c = trailData;
-        this.lawPodTrail_800d4f90.add(segment);
-        this.lawPodTrailVerts_800d4fd0.add(newVerts);
-        data.transfer_1e.set(model.coord2_14.coord.transfer);
         trailData.countSegments_01++;
       }
     }
@@ -402,15 +402,11 @@ public class AttachedSobjEffect {
 
   @Method(0x800ef798L)
   private void renderTmdTrail(final int screenOffsetX, final int screenOffsetY) {
-    TmdTrailParticle20 prev = this.tmdTrail_800d4ec0;
-    TmdTrailParticle20 inst = prev.next_1c;
-
     //LAB_800ef7c8
-    while(inst != null) {
-      if(inst.tick_00 >= inst.maxTicks_18 * (3 - vsyncMode_8007a3b8)) {
-        prev.next_1c = inst.next_1c;
-        inst = prev.next_1c;
-      } else {
+    for(int i = this.tmdTrail_800d4ec0.size() - 1; i >= 0; i--) {
+      final TmdTrailParticle20 inst = this.tmdTrail_800d4ec0.get(i);
+
+      if(inst.tick_00 < inst.maxTicks_18 * (3 - vsyncMode_8007a3b8)) {
         //LAB_800ef804
         inst.transfer.y -= 1.0f / (3 - vsyncMode_8007a3b8);
 
@@ -434,9 +430,8 @@ public class AttachedSobjEffect {
 
         this.tmdDustModel_800d4d40.modelParts_00[0].coord2_04.flg--;
         inst.tick_00++;
-
-        prev = inst;
-        inst = inst.next_1c;
+      } else {
+        inst.used = false;
       }
       //LAB_800ef888
     }
@@ -446,10 +441,10 @@ public class AttachedSobjEffect {
   @Method(0x800ef8acL)
   private void renderOrthoQuadTrailEffects(final int screenOffsetX, final int screenOffsetY) {
     //LAB_800ef9cc
-    for(int i = 0; i < this.orthoQuadTrail_800d4e68.length; i++) {
+    for(int i = 0; i < this.orthoQuadTrail_800d4e68.size(); i++) {
       //LAB_800efa08
-      final OrthoTrailParticle54 inst = this.orthoQuadTrail_800d4e68[i];
-      if(inst.tick_04 < inst.maxTicks_06) {
+      final OrthoTrailParticle54 inst = this.orthoQuadTrail_800d4e68.get(i);
+      if(inst.tick_04 < inst.maxTicks_06 * (3 - vsyncMode_8007a3b8)) {
         final GpuCommandPoly cmd = new GpuCommandPoly(4);
 
         final int mode = inst.renderMode_00;
@@ -524,6 +519,11 @@ public class AttachedSobjEffect {
 
         GPU.queueCommand(inst.z_4c, cmd);
         inst.tick_04++;
+      } else {
+        if(i == 0) {
+          int x = 0;
+        }
+        inst.used = false;
       }
     }
     //LAB_800efe48
@@ -547,7 +547,6 @@ public class AttachedSobjEffect {
           .pos(2, screenOffsetX + segment.endpointVerts23_28.vert0_00.x, screenOffsetY + segment.endpointVerts23_28.vert0_00.y)
           .pos(3, screenOffsetX + segment.endpointVerts23_28.vert1_08.x, screenOffsetY + segment.endpointVerts23_28.vert1_08.y);
 
-        final Vector3f colour = new Vector3f();
         if(segment.tick_00 > trailData.fadeDelay_02 - 1) {
           //LAB_800f0d0c
           segment.colour_14.sub(segment.colourStep_08);
@@ -562,55 +561,18 @@ public class AttachedSobjEffect {
 
         segment.tick_00++;
       } else {
+        segment.used = false;
         trailData.countSegments_01--;
-        TrailSegmentVertices14 currSegmentOriginVerts = segment.originVerts01_24;
-
-        //LAB_800f09fc
-        for(int j = 0; j < this.lawPodTrailVerts_800d4fd0.size(); j++) {
-          if(this.lawPodTrailVerts_800d4fd0.get(j) == currSegmentOriginVerts) {
-            //LAB_800f0ae8
-            this.lawPodTrailVerts_800d4fd0.remove(j);
-            break;
-          }
-        }
-
-        //LAB_800f0a18
-        if(trailData.countSegments_01 == 0) {
-          currSegmentOriginVerts = segment.endpointVerts23_28;
-
-          //LAB_800f0a38
-          for(int j = 0; j < this.lawPodTrailVerts_800d4fd0.size(); j++) {
-            if(this.lawPodTrailVerts_800d4fd0.get(j) == currSegmentOriginVerts) {
-              //LAB_800f0acc
-              this.lawPodTrailVerts_800d4fd0.remove(j);
-              break;
-            }
-          }
-          //LAB_800f0a54
-        }
-
-        //LAB_800f0a58
-        if(trailData.countSegments_01 == 0) {
-          if(this.lawPodTrail_800d4f90.size() == 2) {
-            //LAB_800f0aa4
-            this.lawPodTrailVerts_800d4fd0.clear();
-          }
-        }
       }
       //LAB_800f0d68
     }
-
     //LAB_800f0d74
-    if(this.lawPodTrailSegmentCount_800f9e78 == 0 && this.lawPodTrail_800d4f90.size() == 1) {
-      //LAB_800f0da8
-      this.lawPodTrailVerts_800d4fd0.clear();
-    }
     //LAB_800f0dc8
   }
 
   @Method(0x800f0df0L)
   private void initLawPodTrailSegmentColour(final LawPodTrailData18 trailData, final LawPodTrailSegment34 segment) {
-    segment.colour_14.set(trailData.r_10 / 255.0f, trailData.g_11 / 255.0f, trailData.b_12 / 255.0f);
+    segment.colour_14.set(trailData.colour_10);
     segment.colourStep_08.set(segment.colour_14).div(trailData.countFadeSteps_04);
   }
 
@@ -631,36 +593,34 @@ public class AttachedSobjEffect {
 
     //LAB_800f0ec8
     //LAB_800f0edc
-    this.lawPodTrailVerts_800d4fd0.clear();
-
     //LAB_800f0efc
     this.clearLawPodTrailSegmentsList();
-    this.lawPodTrailSegmentCount_800f9e78 = 0;
+    this.lawPodTrailCount_800f9e78 = 0;
   }
 
   @Method(0x800f0f20L)
-  private LawPodTrailData18 addLawPodTrailSegment() {
-    LawPodTrailData18 segment = null;
+  private LawPodTrailData18 addLawPodTrail() {
+    LawPodTrailData18 data = null;
 
     //LAB_800f0f3c
     for(int i = 0; i < 8; i++) {
-      if(this.lawPodTrailSegments_800f9e7c[i] == null) {
-        segment = new LawPodTrailData18();
-        this.lawPodTrailSegments_800f9e7c[i] = segment;
+      if(this.lawPodTrailsData_800f9e7c[i] == null) {
+        data = new LawPodTrailData18();
+        this.lawPodTrailsData_800f9e7c[i] = data;
         break;
       }
     }
 
     //LAB_800f0f78
-    return segment;
+    return data;
   }
 
   @Method(0x800f0fe8L)
   private void clearLawPodTrailSegmentsList() {
     for(int i = 0; i < 8; i++) {
-      if(this.lawPodTrailSegments_800f9e7c[i] != null) {
-        this.lawPodTrailSegments_800f9e7c[i] = null;
-        this.lawPodTrailSegmentCount_800f9e78--;
+      if(this.lawPodTrailsData_800f9e7c[i] != null) {
+        this.lawPodTrailsData_800f9e7c[i] = null;
+        this.lawPodTrailCount_800f9e78--;
       }
     }
   }

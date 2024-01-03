@@ -4,10 +4,12 @@ import org.joml.Vector2f;
 
 /** Used for ortho quad trail attached sobj effect particles (footprints and some kinds of dust). */
 public class OrthoTrailParticle54 {
-  public short renderMode_00;
+  public boolean used;
+
+  public int renderMode_00;
   public int textureIndex_02;
-  public short tick_04;
-  public short maxTicks_06;
+  public int tick_04;
+  public int maxTicks_06;
   public float size_08;
   public float sizeStep_0c;
   // Appears to just be a second size attribute
@@ -27,5 +29,9 @@ public class OrthoTrailParticle54 {
   // public int brightnessAccumulator_44; // No longer necessary
   public float brightness_48;
   public float z_4c;
-  public OrthoTrailParticle54 next_50;
+  // public OrthoTrailParticle54 next_50;
+
+  public OrthoTrailParticle54() {
+    this.used = true;
+  }
 }

@@ -1,5 +1,7 @@
 package legend.game.submap;
 
+import org.joml.Vector3f;
+
 public class LawPodTrailData18 {
   public int maxCountSegments_00;
   public int countSegments_01;
@@ -13,9 +15,8 @@ public class LawPodTrailData18 {
   public int width_08;
 
   public int translucency_0c;
-  public int r_10;
-  public int g_11;
-  public int b_12;
+  /** was 3 bytes */
+  public Vector3f colour_10 = new Vector3f();
 
-  public TrailSegmentVertices14 currSegmentOriginVerts_14;
+  public TrailSegmentVertices14 currSegmentOriginVerts_14 = new TrailSegmentVertices14();
 }

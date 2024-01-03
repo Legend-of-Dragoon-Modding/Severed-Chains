@@ -6169,11 +6169,6 @@ public class SMap extends EngineState {
     data.trailData_3c = null;
   }
 
-  //@Method(0x800f0e60L)
-  //private void initLawPodTrail() {
-  //  this.lawPodTrailSegmentCount_800f9e78 = 0;
-  //}
-
   @ScriptDescription("Allocates/initializes static struct containing smoke plume particle data.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "smokeData", description = "An array of data for the smoke plume particle data struct")
   @Method(0x800f1060L)
@@ -6485,8 +6480,6 @@ public class SMap extends EngineState {
       sobj2.attachedEffectData_1d0.shouldRenderFootprints_08 = true;
       sobj2.attachedEffectData_1d0.footprintMode_10 = 0;
       sobj2.attachedEffectData_1d0.instantiationIntervalFootprints_34 = 9;
-
-      this.attachedSobjEffect.initOrthoQuadTrail(150, sobj2.attachedEffectData_1d0.instantiationIntervalFootprints_34);
     } else {
       //LAB_800f22b8
       sobj2.attachedEffectData_1d0.shouldRenderFootprints_08 = false;
@@ -6517,8 +6510,6 @@ public class SMap extends EngineState {
       } else if(newInterval == 1) {
         sobj.attachedEffectData_1d0.shouldRenderFootprints_08 = true;
         sobj.attachedEffectData_1d0.instantiationIntervalFootprints_34 = sobj.attachedEffectData_1d0.oldFootprintInstantiationInterval_2c;
-
-        this.attachedSobjEffect.initOrthoQuadTrail(150, sobj.attachedEffectData_1d0.instantiationIntervalFootprints_34);
       }
       //LAB_800f2340
     } else if(footprintMode == 1) {
@@ -6529,8 +6520,6 @@ public class SMap extends EngineState {
       if(sobj.attachedEffectData_1d0.instantiationIntervalFootprints_34 == 0) {
         sobj.attachedEffectData_1d0.instantiationIntervalFootprints_34 = 1;
       }
-
-      this.attachedSobjEffect.initOrthoQuadTrail(150, sobj.attachedEffectData_1d0.instantiationIntervalFootprints_34);
     }
 
     //LAB_800f2374
@@ -6551,8 +6540,6 @@ public class SMap extends EngineState {
 
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.scriptState_04.storage_44[0]].innerStruct_00;
     sobj.attachedEffectData_1d0.instantiationIntervalFootprints_34 = Math.max(1, script.params_20[0].get());
-
-    this.attachedSobjEffect.initOrthoQuadTrail(150, sobj.attachedEffectData_1d0.instantiationIntervalFootprints_34);
 
     //LAB_800f23e4
     return FlowControl.CONTINUE;
