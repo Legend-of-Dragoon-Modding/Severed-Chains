@@ -1,7 +1,5 @@
 package legend.game.submap;
 
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.Config;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
@@ -3668,15 +3666,12 @@ public class SMap extends EngineState {
   private void renderCollisionDebug() {
     if(enableCollisionDebug) {
       if(this.collisionGeometry_800cbe08.debugObj == null) {
-        final IntList offsets = new IntArrayList();
-        int vertexCount = 0;
+        final List<Vector3f> offsets = new ArrayList<>();
 
         final PolyBuilder builder = new PolyBuilder("Collision Model", GL_TRIANGLE_STRIP);
         builder.translucency(Translucency.HALF_B_PLUS_HALF_F);
 
         for(int i = 0; i < this.collisionGeometry_800cbe08.primitiveCount_0c; i++) {
-          offsets.add(vertexCount);
-
           final CollisionPrimitiveInfo0c primitiveInfo = this.collisionGeometry_800cbe08.primitiveInfo_14[i];
           final TmdObjTable1c.Primitive primitive = this.collisionGeometry_800cbe08.getPrimitiveForOffset(primitiveInfo.primitiveOffset_04  );
           final int packetOffset = primitiveInfo.primitiveOffset_04 - primitive.offset();
@@ -3685,30 +3680,31 @@ public class SMap extends EngineState {
           final byte[] packet = primitive.data()[packetIndex];
 
           for(int vertexIndex = 0; vertexIndex < primitiveInfo.vertexCount_00; vertexIndex++) {
-            builder.addVertex(this.collisionGeometry_800cbe08.verts_04[IoHelper.readUShort(packet, remainder + 2 + vertexIndex * 2)]);
-            vertexCount++;
+            final Vector3f vertex = this.collisionGeometry_800cbe08.verts_04[IoHelper.readUShort(packet, remainder + 2 + vertexIndex * 2)];
+            builder.addVertex(vertex);
+            offsets.add(vertex);
           }
         }
 
-        offsets.add(vertexCount); // Add extra offset for easily calculating primitive vertex counts
-
         this.collisionGeometry_800cbe08.debugObj = builder.build();
-        this.collisionGeometry_800cbe08.debugIndices = offsets.toIntArray();
+        this.collisionGeometry_800cbe08.debugVertices = offsets.toArray(Vector3f[]::new);
       }
 
       final MV lw = new MV();
       GsGetLw(this.collisionGeometry_800cbe08.dobj2Ptr_20.coord2_04, lw);
 
+      final Vector3f worldspace = new Vector3f();
+      final Vector2f screenspace = new Vector2f();
+
       for(int i = 0; i < this.collisionGeometry_800cbe08.primitiveCount_0c; i++) {
-        final int vertexOffset = this.collisionGeometry_800cbe08.debugIndices[i];
-        final int vertexCount = this.collisionGeometry_800cbe08.debugIndices[i + 1] - vertexOffset;
+        final CollisionPrimitiveInfo0c primitiveInfo = this.collisionGeometry_800cbe08.primitiveInfo_14[i];
 
         final RenderEngine.QueuedModel model = RENDERER.queueModel(this.collisionGeometry_800cbe08.debugObj, lw)
-          .vertices(vertexOffset, vertexCount)
+          .vertices(primitiveInfo.vertexInfoOffset_02, primitiveInfo.vertexCount_00)
           .screenspaceOffset(this.screenOffset_800cb568.x + 8, -this.screenOffset_800cb568.y)
         ;
 
-        if(!this.collisionGeometry_800cbe08.primitiveInfo_14[i].flatEnoughToWalkOn_01) {
+        if(!primitiveInfo.flatEnoughToWalkOn_01) {
           model.colour(0.5f, 0.0f, 0.0f);
         }
 
@@ -3747,7 +3743,7 @@ public class SMap extends EngineState {
     } else if(this.collisionGeometry_800cbe08.debugObj != null) {
       this.collisionGeometry_800cbe08.debugObj.delete();
       this.collisionGeometry_800cbe08.debugObj = null;
-      this.collisionGeometry_800cbe08.debugIndices = null;
+      this.collisionGeometry_800cbe08.debugVertices = null;
     }
   }
 

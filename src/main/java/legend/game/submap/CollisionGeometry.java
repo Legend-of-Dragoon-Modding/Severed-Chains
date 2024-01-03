@@ -53,7 +53,7 @@ public class CollisionGeometry {
   private boolean collisionLoaded_800f7f14;
 
   public Obj debugObj;
-  public int[] debugIndices;
+  public Vector3f[] debugVertices;
 
   public CollisionGeometry(final SMap smap) {
     this.smap = smap;
@@ -136,11 +136,11 @@ public class CollisionGeometry {
   }
 
   @Method(0x800e8990L)
-  public int FUN_800e8990(final float x, final float z) {
+  public int getClosestCollisionPrimitive(final float x, final float z) {
     final Vector3f vec = new Vector3f();
 
-    int farthestIndex = 0;
-    float farthest = Float.MAX_VALUE;
+    int closestIndex = 0;
+    float closest = Float.MAX_VALUE;
 
     //LAB_800e89b8
     for(int i = 0; i < this.primitiveCount_0c; i++) {
@@ -150,16 +150,16 @@ public class CollisionGeometry {
       final float dx = x - vec.x;
       final float dz = z - vec.z;
       final float distSqr = dx * dx + dz * dz;
-      if(distSqr < farthest) {
-        farthest = distSqr;
-        farthestIndex = i;
+      if(closest > distSqr) {
+        closest = distSqr;
+        closestIndex = i;
       }
 
       //LAB_800e8b2c
     }
 
     //LAB_800e8b34
-    return farthestIndex;
+    return closestIndex;
   }
 
   @Method(0x800e8b40L)
@@ -218,7 +218,7 @@ public class CollisionGeometry {
     if(this.debugObj != null) {
       this.debugObj.delete();
       this.debugObj = null;
-      this.debugIndices = null;
+      this.debugVertices = null;
     }
   }
 
@@ -237,19 +237,19 @@ public class CollisionGeometry {
       if(!checkSteepness || collisionInfo.flatEnoughToWalkOn_01) {
         //LAB_800e9078
         //LAB_800e90a0
-        boolean v0 = true;
+        boolean found = false;
         for(int vertexIndex = 0; vertexIndex < collisionInfo.vertexCount_00; vertexIndex++) {
           final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[collisionInfo.vertexInfoOffset_02 + vertexIndex];
 
           if(vertexInfo.x_00 * x + vertexInfo.z_02 * z + vertexInfo._04 < 0) {
             //LAB_800e910c
-            v0 = false;
+            found = true;
             break;
           }
         }
 
         //LAB_800e90f0
-        if(v0) {
+        if(!found) {
           this.collisionPrimitiveIndices_800cbe48[collisionPrimitiveIndexCount] = collisionPrimitiveIndex;
           collisionPrimitiveIndexCount++;
         }
@@ -274,11 +274,11 @@ public class CollisionGeometry {
     //LAB_800e9164
     for(int i = 0; i < collisionPrimitiveIndexCount; i++) {
       final int collisionPrimitiveIndex = this.collisionPrimitiveIndices_800cbe48[i];
-      final CollisionPrimitiveInfo0c t5 = this.primitiveInfo_14[collisionPrimitiveIndex];
+      final CollisionPrimitiveInfo0c collisionInfo = this.primitiveInfo_14[collisionPrimitiveIndex];
 
       float v1;
       if(this.normals_08[collisionPrimitiveIndex].y != 0) {
-        v1 = -(this.normals_08[collisionPrimitiveIndex].x * x + this.normals_08[collisionPrimitiveIndex].z * z + t5._08) / this.normals_08[collisionPrimitiveIndex].y;
+        v1 = -(this.normals_08[collisionPrimitiveIndex].x * x + this.normals_08[collisionPrimitiveIndex].z * z + collisionInfo._08) / this.normals_08[collisionPrimitiveIndex].y;
       } else {
         v1 = 0;
       }
@@ -337,11 +337,6 @@ public class CollisionGeometry {
    */
   @Method(0x800e9430L)
   private int handleMovementAndCollision(final float x, final float y, final float z, final Vector3f movement) {
-    int a1;
-    int s1;
-    int s2;
-    final int s4;
-
     if(this.smap.smapLoadingStage_800cb430 != SubmapState.RENDER_SUBMAP_12) {
       return -1;
     }
@@ -349,9 +344,6 @@ public class CollisionGeometry {
     if(flEq(movement.x, 0.0f) && flEq(movement.z, 0.0f)) {
       return -1;
     }
-
-    final Vector3f sp0x28 = new Vector3f();
-    int s3 = 0;
 
     //LAB_800e94a4
     final int distanceMultiplier;
@@ -365,161 +357,28 @@ public class CollisionGeometry {
     //LAB_800e94ec
     final float endX = x + movement.x;
     final float endZ = z + movement.z;
-    final float t6 = y - 20;
-    int t0 = 0;
-
-    //LAB_800e9538
-    for(int primitiveIndex = 0; primitiveIndex < this.primitiveCount_0c; primitiveIndex++) {
-      if(this.primitiveInfo_14[primitiveIndex].flatEnoughToWalkOn_01) {
-        //LAB_800e9594
-        boolean found = false;
-        for(int i = 0; i < this.primitiveInfo_14[primitiveIndex].vertexCount_00; i++) {
-          final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[this.primitiveInfo_14[primitiveIndex].vertexInfoOffset_02 + i];
-
-          if(vertexInfo.x_00 * x + vertexInfo.z_02 * z + vertexInfo._04 < 0) {
-            //LAB_800e9604
-            found = true;
-            break;
-          }
-        }
-
-        //LAB_800e95e8
-        if(!found) {
-          this.collisionPrimitiveIndices_800cbe48[t0] = primitiveIndex;
-          t0++;
-        }
-      }
-
-      //LAB_800e95fc
-    }
 
     //LAB_800e960c
-    if(t0 == 0) {
-      s4 = -1;
-    } else if(t0 == 1) {
-      s4 = this.collisionPrimitiveIndices_800cbe48[0];
-    } else {
-      //LAB_800e962c
-      float t1 = Float.MAX_VALUE;
-      int t2 = -1;
-
-      //LAB_800e965c
-      for(int i = 0; i < t0; i++) {
-        final int primitiveIndex = this.collisionPrimitiveIndices_800cbe48[i];
-        final Vector3f normal = this.normals_08[primitiveIndex];
-        final float v1 = (-normal.x * x - normal.z * z - this.primitiveInfo_14[primitiveIndex]._08) / normal.y - t6;
-
-        if(v1 > 0 && v1 < t1) {
-          t2 = primitiveIndex;
-          t1 = v1;
-        }
-
-        //LAB_800e96e8
-      }
-
-      //LAB_800e96f8
-      if(t1 != Float.MAX_VALUE) {
-        s4 = t2;
-      } else {
-        //LAB_800e9708
-        s4 = -1;
-      }
-
-      //LAB_800e970c
-    }
+    final int s4 = this.FUN_800e9018(x, y, z, true);
 
     //LAB_800e9710
+    int s3 = 0;
     if(s4 < 0) {
-      final int primitiveIndex = this.FUN_800e8990(x, z);
+      final int closestPrimitiveIndex = this.getClosestCollisionPrimitive(x, z);
 
       //LAB_800e975c
       //LAB_800e9764
-      sp0x28.zero();
-
-      if(!this.collisionLoaded_800f7f14 || primitiveIndex < 0 || primitiveIndex >= this.primitiveCount_0c) {
-        //LAB_800e9774
-        final CollisionPrimitiveInfo0c ss2 = this.primitiveInfo_14[primitiveIndex];
-        final TmdObjTable1c.Primitive primitive = this.getPrimitiveForOffset(ss2.primitiveOffset_04);
-        final int packetOffset = ss2.primitiveOffset_04 - primitive.offset();
-        final int packetIndex = packetOffset / (primitive.width() + 4);
-        final int remainder = packetOffset % (primitive.width() + 4);
-        final byte[] packet = primitive.data()[packetIndex];
-
-        //LAB_800e97c4
-        for(int i = 0; i < this.primitiveInfo_14[primitiveIndex].vertexCount_00; i++) {
-          sp0x28.add(this.verts_04[IoHelper.readUShort(packet, remainder + 2 + i * 2)]);
-        }
-
-        //LAB_800e9828
-        sp0x28.div(this.primitiveInfo_14[primitiveIndex].vertexCount_00);
-      }
+      final Vector3f middle = new Vector3f();
+      this.getMiddleOfCollisionPrimitive(closestPrimitiveIndex, middle);
+      final Vector3f normal = this.normals_08[closestPrimitiveIndex];
 
       //LAB_800e9870
-      movement.x = Math.round(sp0x28.x - x);
-      movement.z = Math.round(sp0x28.z - z);
-
-      final Vector3f normal = this.normals_08[primitiveIndex];
-      movement.y = (-normal.x * sp0x28.x - normal.z * sp0x28.z - this.primitiveInfo_14[primitiveIndex]._08) / normal.y;
+      movement.x = Math.round(middle.x - x);
+      movement.z = Math.round(middle.z - z);
+      movement.y = -(normal.x * middle.x + normal.z * middle.z + this.primitiveInfo_14[closestPrimitiveIndex]._08) / normal.y;
     } else {
       //LAB_800e990c
-      t0 = 0;
-
-      //LAB_800e992c
-      for(int primitiveIndex = 0; primitiveIndex < this.primitiveCount_0c; primitiveIndex++) {
-        if(this.primitiveInfo_14[primitiveIndex].flatEnoughToWalkOn_01) {
-          //LAB_800e9988
-          boolean found = false;
-          for(int vertexIndex = 0; vertexIndex < this.primitiveInfo_14[primitiveIndex].vertexCount_00; vertexIndex++) {
-            final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[this.primitiveInfo_14[primitiveIndex].vertexInfoOffset_02 + vertexIndex];
-            if(vertexInfo.x_00 * endX + vertexInfo.z_02 * endZ + vertexInfo._04 < 0) {
-              //LAB_800e99f4
-              found = true;
-              break;
-            }
-          }
-
-          //LAB_800e99d8
-          if(!found) {
-            this.collisionPrimitiveIndices_800cbe48[t0] = primitiveIndex;
-            t0++;
-          }
-        }
-
-        //LAB_800e99ec
-      }
-
-      //LAB_800e99fc
-      if(t0 == 0) {
-        s3 = -1;
-      } else if(t0 == 1) {
-        s3 = this.collisionPrimitiveIndices_800cbe48[0];
-      } else {
-        //LAB_800e9a1c
-        float t1 = Float.MAX_VALUE;
-        int t2 = -1;
-
-        //LAB_800e9a4c
-        for(int n = 0; n < t0; n++) {
-          final int primitiveIndex = this.collisionPrimitiveIndices_800cbe48[n];
-          final Vector3f normal = this.normals_08[primitiveIndex];
-
-          final float v1 = (-normal.x * endX - normal.z * endZ - this.primitiveInfo_14[primitiveIndex]._08) / normal.y - t6;
-          if(v1 > 0 && v1 < t1) {
-            t2 = primitiveIndex;
-            t1 = v1;
-          }
-
-          //LAB_800e9ad4
-        }
-
-        //LAB_800e9ae4
-        if(t1 != Float.MAX_VALUE) {
-          s3 = t2;
-        } else {
-          //LAB_800e9af4
-          s3 = -1;
-        }
-      }
+      s3 = this.FUN_800e9018(endX, y, endZ, true);
 
       //LAB_800e9afc
       int v0 = -1;
@@ -527,11 +386,11 @@ public class CollisionGeometry {
         final CollisionPrimitiveInfo0c struct = this.primitiveInfo_14[s3];
 
         //LAB_800e9b50
-        for(s1 = 0; s1 < struct.vertexCount_00; s1++) {
-          final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[struct.vertexInfoOffset_02 + s1];
+        for(int vertexIndex = 0; vertexIndex < struct.vertexCount_00; vertexIndex++) {
+          final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[struct.vertexInfoOffset_02 + vertexIndex];
           if(vertexInfo._08 != 0) {
             if(Math.abs((vertexInfo.x_00 * endX + vertexInfo.z_02 * endZ + vertexInfo._04) / 0x400) < 10) {
-              v0 = s1;
+              v0 = vertexIndex;
               break;
             }
           }
@@ -540,14 +399,14 @@ public class CollisionGeometry {
 
       //LAB_800e9bbc
       //LAB_800e9bc0
-      if(s3 >= 0 && v0 < 0) {
+      if(s3 >= 0 && v0 == -1) {
         final Vector3f normal = this.normals_08[s3];
         final CollisionPrimitiveInfo0c struct = this.primitiveInfo_14[s3];
 
         // This causes Dart to move up/down a slope
-        if(Math.abs(y - (-normal.x * endX - normal.z * endZ - struct._08) / normal.y) < 50) {
+        if(Math.abs(y + (normal.x * endX + normal.z * endZ + struct._08) / normal.y) < 50) {
           //LAB_800e9e64
-          movement.y = (-normal.x * (x + movement.x) - normal.z * (z + movement.z) - struct._08) / normal.y;
+          movement.y = -(normal.x * (x + movement.x) + normal.z * (z + movement.z) + struct._08) / normal.y;
 
           //LAB_800ea390
           //LAB_800ea3b4
@@ -562,12 +421,12 @@ public class CollisionGeometry {
       }
 
       //LAB_800e9c58
-      if((this.getCollisionAndTransitionInfo(s4) & 0x20) != 0) {
+      if((this.getCollisionAndTransitionInfo(s4) & 0x20) != 0) { // shop/inn
         return -1;
       }
 
       //LAB_800e9ca0
-      a1 = -1;
+      int a1 = -1;
       for(int i = 1; i < 4; i++) {
         final float endX2 = x + movement.x * i;
         final float endZ2 = z + movement.z * i;
@@ -593,7 +452,7 @@ public class CollisionGeometry {
 
       if(a1 >= 0) {
         //LAB_800e9e78
-        s2 = s4;
+        int s2 = s4;
 
         //LAB_800e9e7c
         final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[this.primitiveInfo_14[s4].vertexInfoOffset_02 + a1];
@@ -630,22 +489,17 @@ public class CollisionGeometry {
           //LAB_800e9fb4
           direction = 1;
         } else {
-          direction = 0;
+          direction = -1;
         }
 
         //LAB_800e9fbc
-        final float angleStep;
-        if(direction == 0) {
-          angleStep = -0.09817477f; // 5.625 degrees
-        } else {
-          angleStep = 0.09817477f; // 5.625 degrees
-        }
+        final float angleStep = 0.09817477f * direction; // 5.625 degrees
 
         //LAB_800e9fd0
         angle2 -= angleStep;
 
         //LAB_800e9ff4
-        s1 = 8;
+        int i = 8;
         float offsetX;
         float offsetZ;
         do {
@@ -656,71 +510,12 @@ public class CollisionGeometry {
           offsetX = x + cos * distanceMultiplier;
           offsetZ = z + sin * distanceMultiplier;
 
-          s1--;
-          if(s1 <= 0) {
+          i--;
+          if(i <= 0) {
             break;
           }
 
-          int collisionPrimitiveCount = 0;
-
-          //LAB_800ea064
-          for(int i = 0; i < this.primitiveCount_0c; i++) {
-            final CollisionPrimitiveInfo0c collisionPrimitive = this.primitiveInfo_14[i];
-
-            if(collisionPrimitive.flatEnoughToWalkOn_01) {
-              //LAB_800ea0c4
-              boolean found = false;
-              for(int vertexIndex = 0; vertexIndex < collisionPrimitive.vertexCount_00; vertexIndex++) {
-                final CollisionVertexInfo0c vertexInfo2 = this.vertexInfo_18[collisionPrimitive.vertexInfoOffset_02 + vertexIndex];
-                if(vertexInfo2.x_00 * offsetX + vertexInfo2.z_02 * offsetZ + vertexInfo2._04 < 0) {
-                  //LAB_800ea130
-                  found = true;
-                  break;
-                }
-              }
-
-              //LAB_800ea114
-              if(!found) {
-                this.collisionPrimitiveIndices_800cbe48[collisionPrimitiveCount] = i;
-                collisionPrimitiveCount++;
-              }
-            }
-
-            //LAB_800ea128
-          }
-
-          //LAB_800ea138
-          if(collisionPrimitiveCount == 0) {
-            s2 = -1;
-          } else if(collisionPrimitiveCount == 1) {
-            s2 = this.collisionPrimitiveIndices_800cbe48[0];
-          } else {
-            //LAB_800ea158
-            float t1 = Float.MAX_VALUE;
-            int t2 = -1;
-
-            //LAB_800ea17c
-            for(int i = 0; i < collisionPrimitiveCount; i++) {
-              final int primitiveIndex = this.collisionPrimitiveIndices_800cbe48[i];
-              final Vector3f normal = this.normals_08[primitiveIndex];
-
-              final float v1_0 = (-normal.x * offsetX - normal.z * offsetZ - this.primitiveInfo_14[primitiveIndex]._08) / normal.y - t6;
-              if(v1_0 > 0 && v1_0 < t1) {
-                t2 = primitiveIndex;
-                t1 = v1_0;
-              }
-
-              //LAB_800ea204
-            }
-
-            //LAB_800ea214
-            if(t1 != Float.MAX_VALUE) {
-              s2 = t2;
-            } else {
-              //LAB_800ea224
-              s2 = -1;
-            }
-          }
+          s2 = this.FUN_800e9018(offsetX, y, offsetZ, true);
 
           //LAB_800ea22c
         } while(s2 < 0);
@@ -733,13 +528,13 @@ public class CollisionGeometry {
         //LAB_800ea234
         final Vector3f normal = this.normals_08[s2];
 
-        if(Math.abs(y - (-normal.x * offsetX - normal.z * offsetZ - this.primitiveInfo_14[s2]._08) / normal.y) >= 50) {
+        if(Math.abs(y + (normal.x * offsetX + normal.z * offsetZ + this.primitiveInfo_14[s2]._08) / normal.y) >= 50) {
           return -1;
         }
 
-        movement.y = (-normal.x * offsetX - normal.z * offsetZ - this.primitiveInfo_14[s2]._08) / normal.y;
         movement.x = offsetX - x;
         movement.z = offsetZ - z;
+        movement.y = -(normal.x * offsetX + normal.z * offsetZ + this.primitiveInfo_14[s2]._08) / normal.y;
 
         return s2;
       }
@@ -750,7 +545,7 @@ public class CollisionGeometry {
 
       final Vector3f normal = this.normals_08[s3];
 
-      if(Math.abs(y - (-normal.x * endX - normal.z * endZ - this.primitiveInfo_14[s3]._08) / normal.y) >= 50) {
+      if(Math.abs(y + (normal.x * endX + normal.z * endZ + this.primitiveInfo_14[s3]._08) / normal.y) >= 50) {
         return -1;
       }
 
@@ -758,7 +553,7 @@ public class CollisionGeometry {
       final CollisionPrimitiveInfo0c struct = this.primitiveInfo_14[s3];
 
       //LAB_800e9e64
-      movement.y = (-normal.x * (x + movement.x) - normal.z * (z + movement.z) - struct._08) / normal.y;
+      movement.y = -(normal.x * (x + movement.x) + normal.z * (z + movement.z) + struct._08) / normal.y;
     }
 
     //LAB_800ea390
