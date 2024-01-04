@@ -2,6 +2,7 @@ package legend.game.unpacker;
 
 import legend.core.MathHelper;
 import legend.core.gpu.Rect4i;
+import legend.core.gte.MV;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 import org.legendofdragoon.modloader.registries.RegistryId;
@@ -176,6 +177,25 @@ public record FileData(byte[] data, int offset, int size, int virtualSize, int r
   public Vector3i readColour(final int offset, final Vector3i colour) {
     this.checkBounds(offset, 3);
     return colour.set(this.readUByte(offset), this.readUByte(offset + 0x1), this.readUByte(offset + 0x2));
+  }
+
+  public MV readMv(final int offset, final MV mv) {
+    this.checkBounds(offset, 0x18);
+    mv.m00 = this.readShort(offset) / (float)0x1000;
+    mv.m10 = this.readShort(offset + 2) / (float)0x1000;
+    mv.m20 = this.readShort(offset + 4) / (float)0x1000;
+    mv.m01 = this.readShort(offset + 6) / (float)0x1000;
+    mv.m11 = this.readShort(offset + 8) / (float)0x1000;
+    mv.m21 = this.readShort(offset + 10) / (float)0x1000;
+    mv.m02 = this.readShort(offset + 12) / (float)0x1000;
+    mv.m12 = this.readShort(offset + 14) / (float)0x1000;
+    mv.m22 = this.readShort(offset + 16) / (float)0x1000;
+
+    for(int i = 0; i < 3; i++) {
+      mv.transfer.setComponent(i, this.readShort(offset + 18 + i * 2));
+    }
+
+    return mv;
   }
 
   private void checkBounds(final int offset, final int size) {

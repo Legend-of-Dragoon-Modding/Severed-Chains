@@ -41,6 +41,7 @@ import legend.game.scripting.ScriptParam;
 import legend.game.sound.EncounterSoundEffects10;
 import legend.game.sound.QueuedSound28;
 import legend.game.sound.SoundFile;
+import legend.game.submap.SubmapEnvState;
 import legend.game.tim.Tim;
 import legend.game.tmd.Renderer;
 import legend.game.tmd.UvAdjustmentMetrics14;
@@ -55,6 +56,7 @@ import legend.game.types.Model124;
 import legend.game.types.ModelPartTransforms0c;
 import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
+import legend.game.types.SmallerStruct;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
 import legend.game.types.TextboxBorderMetrics0c;
@@ -64,6 +66,7 @@ import legend.game.types.TextboxText84;
 import legend.game.types.TextboxTextState;
 import legend.game.types.TextboxType;
 import legend.game.types.TmdAnimationFile;
+import legend.game.types.TmdSubExtension;
 import legend.game.types.Translucency;
 import legend.game.types.UiPart;
 import legend.game.types.UiType;
@@ -99,7 +102,6 @@ import static legend.game.SItem.renderMenus;
 import static legend.game.SItem.textLength;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
 import static legend.game.Scus94491BpeSegment.FUN_8001d51c;
-import static legend.game.Scus94491BpeSegment.FUN_8001e010;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
@@ -110,7 +112,9 @@ import static legend.game.Scus94491BpeSegment.rectArray28_80010770;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.soundBufferOffset;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
+import static legend.game.Scus94491BpeSegment.startMenuMusic;
 import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
+import static legend.game.Scus94491BpeSegment.stopMenuMusic;
 import static legend.game.Scus94491BpeSegment.textboxBorderMetrics_800108b0;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
@@ -118,14 +122,14 @@ import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
 import static legend.game.Scus94491BpeSegment_8004.freeSequence;
 import static legend.game.Scus94491BpeSegment_8004.stopMusicSequence;
-import static legend.game.Scus94491BpeSegment_8005._80052c40;
+import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.digits_80052b40;
-import static legend.game.Scus94491BpeSegment_8005.index_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.monsterSoundFileIndices_800500e8;
 import static legend.game.Scus94491BpeSegment_8005.renderBorder_80052b68;
 import static legend.game.Scus94491BpeSegment_8005.shadowScale_8005039c;
+import static legend.game.Scus94491BpeSegment_8005.shouldRestoreCameraPosition_80052c40;
+import static legend.game.Scus94491BpeSegment_8005.submapCutBeforeBattle_80052c3c;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
-import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c3c;
 import static legend.game.Scus94491BpeSegment_8005.submapEnvState_80052c44;
 import static legend.game.Scus94491BpeSegment_8005.submapScene_80052c34;
 import static legend.game.Scus94491BpeSegment_8005.textboxMode_80052b88;
@@ -378,6 +382,17 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80020bf0
     // Only apply texture animations for the keyframe of the middle interpolation frame
     if(model.interpolationFrameIndex == 0 || model.interpolationFrameIndex == Math.ceil(interpolationFrameCount / 2.0f)) {
+      if(model.smallerStructPtr_a4 != null) {
+        //LAB_800da138
+        for(int i = 0; i < 4; i++) {
+          if(model.smallerStructPtr_a4.uba_04[i]) {
+            FUN_800dde70(model, i);
+          }
+
+          //LAB_800da15c
+        }
+      }
+
       for(int i = 0; i < 7; i++) {
         if(model.animateTextures_ec[i]) {
           animateModelTextures(model, i);
@@ -480,6 +495,50 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80020e98
 
     //LAB_80020ea8
+  }
+
+  /** (pulled from SMAP) Used in pre-Melbu submap cutscene, Prairie, new game Rose cutscene (animates the cloud flicker by changing CLUT, pretty sure this is CLUT animation) */
+  @Method(0x800dde70L)
+  private static void FUN_800dde70(final Model124 struct, final int index) {
+    final SmallerStruct smallerStruct = struct.smallerStructPtr_a4;
+
+    if(smallerStruct.tmdSubExtensionArr_20[index] == null) {
+      smallerStruct.uba_04[index] = false;
+    } else {
+      //LAB_800ddeac
+      final int x = struct.uvAdjustments_9d.clutX;
+      final int y = struct.uvAdjustments_9d.clutY;
+
+      final TmdSubExtension v = smallerStruct.tmdSubExtensionArr_20[index];
+      int a1 = 0;
+
+      //LAB_800ddef8
+      for(int i = 0; i < smallerStruct.sa_08[index]; i++) {
+        a1 += 2;
+      }
+
+      //LAB_800ddf08
+      final int sourceYOffset = v.sa_04[a1];
+      a1++;
+
+      smallerStruct.sa_10[index]++;
+
+      if(smallerStruct.sa_10[index] == v.sa_04[a1]) {
+        smallerStruct.sa_10[index] = 0;
+
+        if(v.sa_04[a1 + 1] == -1) {
+          smallerStruct.sa_08[index] = 0;
+        } else {
+          //LAB_800ddf70
+          smallerStruct.sa_08[index]++;
+        }
+      }
+
+      //LAB_800ddf8c
+      GPU.queueCommand(1, new GpuCommandCopyVramToVram(x, y + sourceYOffset, x, y + smallerStruct.sa_18[index], 16, 1));
+    }
+
+    //LAB_800ddff4
   }
 
   @Method(0x80020ed8L)
@@ -839,7 +898,7 @@ public final class Scus94491BpeSegment_8002 {
     if((getLoadedDrgnFiles() & 0x80L) == 0) {
       inventoryMenuState_800bdc28 = InventoryMenuState.INIT_0;
       whichMenu_800bdc38 = WhichMenu.WAIT_FOR_MUSIC_TO_LOAD_AND_LOAD_S_ITEM_2;
-      FUN_8001e010(0);
+      startMenuMusic();
       SCRIPTS.stop();
       Scus94491BpeSegment_8002.destMenu = destMenu;
       Scus94491BpeSegment_8002.destScreen = destScreen;
@@ -904,7 +963,7 @@ public final class Scus94491BpeSegment_8002 {
         menuStack.popScreen();
 
         if(whichMenu_800bdc38 != WhichMenu.UNLOAD_SAVE_GAME_MENU_20) {
-          FUN_8001e010(-1);
+          stopMenuMusic();
         }
 
         SCRIPTS.start();
@@ -926,7 +985,7 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       case UNLOAD_INVENTORY_MENU_5, UNLOAD_SHOP_MENU_10, UNLOAD_TOO_MANY_ITEMS_MENU_35 -> {
-        FUN_8001e010(-1);
+        stopMenuMusic();
         SCRIPTS.start();
         whichMenu_800bdc38 = WhichMenu.NONE_0;
       }
@@ -4077,12 +4136,12 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x8002a9c0L)
   public static void FUN_8002a9c0() {
-    submapCut_80052c30 = 675;
+    submapCut_80052c30 = 675; // Opening
     submapScene_80052c34 = 4;
-    index_80052c38 = 0;
-    submapCut_80052c3c = -1;
-    _80052c40 = false;
-    submapEnvState_80052c44 = 2;
+    collidedPrimitiveIndex_80052c38 = 0;
+    submapCutBeforeBattle_80052c3c = -1;
+    shouldRestoreCameraPosition_80052c40 = false;
+    submapEnvState_80052c44 = SubmapEnvState.CHECK_TRANSITIONS_1_2;
   }
 
   @Method(0x8002bb38L)

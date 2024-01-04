@@ -1,7 +1,7 @@
 #version 420 core
 
 // shader inputs
-in vec2 vertUv;
+smooth in vec2 vertUv;
 
 // shader outputs
 layout(location = 0) out vec4 frag;

@@ -165,8 +165,10 @@ public class Model124 {
   }
 
   public void deleteModelParts() {
-    for(final ModelPart10 part : this.modelParts_00) {
-      part.delete();
+    if(this.modelParts_00 != null) {
+      for(final ModelPart10 part : this.modelParts_00) {
+        part.delete();
+      }
     }
   }
 }

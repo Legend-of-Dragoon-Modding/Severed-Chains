@@ -100,8 +100,10 @@ public final class SubmapPxlTransformer {
           }
         }
 
+        // Sobj 16 will actually point to the submap animated overlay vram slot (1008, 256), unsure if there's anything else that would get here
         if(!found) {
           LOGGER.warn("Failed to find texture for %s sobj %d", submapCutAssets.fullPath, sobjIndex);
+          textureMap.addFile(Integer.toString(sobjIndex), "", 0); // Add null file to map
         }
       } else {
         textureMap.addFile(Integer.toString(sobjIndex), Integer.toString(Integer.parseInt(modelFileIndex) / 33), 0);
@@ -133,7 +135,7 @@ public final class SubmapPxlTransformer {
 
     newData.writeInt(0x0, 0x10);
     newData.writeInt(0x4, 0x8); // 4 BPP, CLUT
-    newData.writeInt(0x8, 0x20c); // Image data offset
+    newData.writeInt(0x8, 0xc + 16 * 16 * 2); // Image data offset
     newData.writeShort(0xc, 0); // CLUT rect X
     newData.writeShort(0xe, tileRect.h - 16); // CLUT rect Y
     newData.writeShort(0x10, 16); // CLUT rect W
