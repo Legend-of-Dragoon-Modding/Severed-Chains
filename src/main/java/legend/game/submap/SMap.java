@@ -2644,7 +2644,7 @@ public class SMap extends EngineState {
       }
 
       //LAB_800e1390
-      this.attachedSobjEffect.tickAttachedSobjEffects(sobj.model_00, sobj.attachedEffectData_1d0, this.unloadSubmapParticles_800c6870, this.screenOffsetX_800cb568, this.screenOffsetY_800cb56c);
+      this.attachedSobjEffect.tickAttachedSobjEffects(sobj.model_00, sobj.attachedEffectData_1d0, this.unloadSubmapParticles_800c6870, this.screenOffset_800cb568.x, this.screenOffset_800cb568.y);
     }
 
     //LAB_800e139c
@@ -3456,7 +3456,7 @@ public class SMap extends EngineState {
 
   @Method(0x800e4708L)
   private void renderSubmap() {
-    this.attachedSobjEffect.renderAttachedSobjEffects(this.screenOffsetX_800cb568, this.screenOffsetY_800cb56c);
+    this.attachedSobjEffect.renderAttachedSobjEffects(this.screenOffset_800cb568.x, this.screenOffset_800cb568.y);
     this.renderSubmapOverlays();
     this.handleAndRenderSubmapEffects();
     applyModelRotationAndScale(this.playerModel_800c6748);
