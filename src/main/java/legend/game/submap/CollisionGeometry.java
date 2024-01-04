@@ -53,7 +53,6 @@ public class CollisionGeometry {
   private boolean collisionLoaded_800f7f14;
 
   public Obj debugObj;
-  public Vector3f[] debugVertices;
 
   public CollisionGeometry(final SMap smap) {
     this.smap = smap;
@@ -218,7 +217,6 @@ public class CollisionGeometry {
     if(this.debugObj != null) {
       this.debugObj.delete();
       this.debugObj = null;
-      this.debugVertices = null;
     }
   }
 

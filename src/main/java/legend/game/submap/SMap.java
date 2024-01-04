@@ -3666,7 +3666,6 @@ public class SMap extends EngineState {
   private void renderCollisionDebug() {
     if(enableCollisionDebug) {
       if(this.collisionGeometry_800cbe08.debugObj == null) {
-        final List<Vector3f> offsets = new ArrayList<>();
 
         final PolyBuilder builder = new PolyBuilder("Collision Model", GL_TRIANGLE_STRIP);
         builder.translucency(Translucency.HALF_B_PLUS_HALF_F);
@@ -3680,21 +3679,15 @@ public class SMap extends EngineState {
           final byte[] packet = primitive.data()[packetIndex];
 
           for(int vertexIndex = 0; vertexIndex < primitiveInfo.vertexCount_00; vertexIndex++) {
-            final Vector3f vertex = this.collisionGeometry_800cbe08.verts_04[IoHelper.readUShort(packet, remainder + 2 + vertexIndex * 2)];
-            builder.addVertex(vertex);
-            offsets.add(vertex);
+            builder.addVertex(this.collisionGeometry_800cbe08.verts_04[IoHelper.readUShort(packet, remainder + 2 + vertexIndex * 2)]);
           }
         }
 
         this.collisionGeometry_800cbe08.debugObj = builder.build();
-        this.collisionGeometry_800cbe08.debugVertices = offsets.toArray(Vector3f[]::new);
       }
 
       final MV lw = new MV();
       GsGetLw(this.collisionGeometry_800cbe08.dobj2Ptr_20.coord2_04, lw);
-
-      final Vector3f worldspace = new Vector3f();
-      final Vector2f screenspace = new Vector2f();
 
       for(int i = 0; i < this.collisionGeometry_800cbe08.primitiveCount_0c; i++) {
         final CollisionPrimitiveInfo0c primitiveInfo = this.collisionGeometry_800cbe08.primitiveInfo_14[i];
@@ -3743,7 +3736,6 @@ public class SMap extends EngineState {
     } else if(this.collisionGeometry_800cbe08.debugObj != null) {
       this.collisionGeometry_800cbe08.debugObj.delete();
       this.collisionGeometry_800cbe08.debugObj = null;
-      this.collisionGeometry_800cbe08.debugVertices = null;
     }
   }
 
