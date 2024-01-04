@@ -4,7 +4,9 @@ import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
+import legend.core.opengl.MeshObj;
 import legend.core.opengl.Obj;
+import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptState;
@@ -37,6 +39,7 @@ import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
+import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class AttachedSobjEffect {
   private final Vector3f[] footprintQuadVertices_800d6b7c = {
@@ -53,13 +56,10 @@ public class AttachedSobjEffect {
     new Vector3f(  2.0f, 0.0f,   8.0f),
     new Vector3f( 12.0f, 0.0f,   8.0f),
   };
-  private final int[] orthoTrailUs_800d6bdc = {96, 112, 64, 0};
-  private final int[] dustTextureWidths_800d6bec = {15, 15, 31, 23};
-  private final int[] dustTextureHeights_800d6bfc = {31, 31, 31, 23};
+  private final int[] orthoTrailUs_800d6bdc = {96, 112, 0, 64};
+  private final int[] dustTextureWidths_800d6bec = {15, 15, 23, 31};
+  private final int[] dustTextureHeights_800d6bfc = {31, 31, 23, 31};
   private final int[] particleFadeDelay_800d6c0c = {120, 0, 120};
-
-  private final int[] tpages = {63, 95};
-  private final int[] cluts = {29820, 30270};
 
   public CContainer dustTmd;
   public TmdAnimationFile dustAnimation;
@@ -71,7 +71,9 @@ public class AttachedSobjEffect {
   private final LawPodTrailData18[] lawPodTrailsData_800f9e7c = new LawPodTrailData18[8];
 
   private final MV transforms = new MV();
-  private Obj dust;
+  private Obj tmdDust;
+  private MeshObj footprints;
+  private MeshObj quadDust;
 
   @Method(0x800f0e60L)
   private void initLawPodTrail() {
@@ -109,10 +111,57 @@ public class AttachedSobjEffect {
   @Method(0x800f0370L)
   public void initAttachedSobjEffects() {
     initModel(this.tmdDustModel_800d4d40, this.dustTmd, this.dustAnimation);
+    if(this.tmdDust == null) {
+      this.tmdDust = TmdObjLoader.fromObjTable("DustTmd", this.dustTmd.tmdPtr_00.tmd.objTable[0]);
+    }
     this.tmdTrail_800d4ec0.clear();
-    if(this.dust == null) {
-      this.dust = TmdObjLoader.fromObjTable("DustTmd", this.dustTmd.tmdPtr_00.tmd.objTable[0]);
-
+    if(this.footprints == null) {
+      final PolyBuilder builder = new PolyBuilder("OrthoTrailParticles", GL_TRIANGLE_STRIP)
+        .bpp(Bpp.BITS_4)
+        .translucency(Translucency.B_MINUS_F)
+        .clut(992, 472)
+        .vramPos(960, 256)
+        .addVertex(this.footprintQuadVertices_800d6b7c[4])
+        .uv(96, 0)
+        .monochrome(1.0f)
+        .addVertex(this.footprintQuadVertices_800d6b7c[5])
+        .uv(112, 0)
+        .monochrome(1.0f)
+        .addVertex(this.footprintQuadVertices_800d6b7c[6])
+        .uv(96, 32)
+        .monochrome(1.0f)
+        .addVertex(this.footprintQuadVertices_800d6b7c[7])
+        .uv(112, 32)
+        .monochrome(1.0f)
+        .addVertex(this.footprintQuadVertices_800d6b7c[8])
+        .uv(112, 0)
+        .monochrome(1.0f)
+        .addVertex(this.footprintQuadVertices_800d6b7c[9])
+        .uv(128, 0)
+        .monochrome(1.0f)
+        .addVertex(this.footprintQuadVertices_800d6b7c[10])
+        .uv(112, 32)
+        .monochrome(1.0f)
+        .addVertex(this.footprintQuadVertices_800d6b7c[11])
+        .uv(128, 32)
+        .monochrome(1.0f)
+        .addVertex(this.footprintQuadVertices_800d6b7c[0])
+        .clutOverride(960, 464)
+        .uv(0, 64)
+        .monochrome(1.0f)
+        .addVertex(this.footprintQuadVertices_800d6b7c[1])
+        .clutOverride(960, 464)
+        .uv(24, 64)
+        .monochrome(1.0f)
+        .addVertex(this.footprintQuadVertices_800d6b7c[2])
+        .clutOverride(960, 464)
+        .uv(0, 88)
+        .monochrome(1.0f)
+        .addVertex(this.footprintQuadVertices_800d6b7c[3])
+        .clutOverride(960, 464)
+        .uv(24, 88)
+        .monochrome(1.0f);
+      this.footprints = builder.build();
     }
     this.orthoQuadTrail_800d4e68.clear();
     this.initLawPodTrail();
@@ -225,7 +274,7 @@ public class AttachedSobjEffect {
           if(data.footprintMode_10 != 0) {
             //LAB_800ef3e8
             inst.renderMode_00 = 2;
-            inst.textureIndex_02 = 3;
+            inst.textureIndex_02 = 2;
 
             //LAB_800ef3f8
           } else {
@@ -244,14 +293,17 @@ public class AttachedSobjEffect {
           final MV ls = new MV();
           GsGetLs(model.coord2_14, ls);
           GTE.setTransforms(ls);
+          GsGetLw(model.coord2_14, inst.lw);
 
           final int textureIndex = inst.textureIndex_02;
           if(textureIndex == 0) {
             //LAB_800ef4b4
+            //inst.lw.transfer.add(-12, 0, -8);
             inst.z_4c = RotTransPers4(this.footprintQuadVertices_800d6b7c[4], this.footprintQuadVertices_800d6b7c[5], this.footprintQuadVertices_800d6b7c[6], this.footprintQuadVertices_800d6b7c[7], inst.sxy0_20, inst.sxy1_28, inst.sxy2_30, inst.sxy3_38);
           } else if(textureIndex == 1) {
             //LAB_800ef484
             //LAB_800ef4b4
+            //inst.lw.transfer.add(2, 0, -8);
             inst.z_4c = RotTransPers4(this.footprintQuadVertices_800d6b7c[8], this.footprintQuadVertices_800d6b7c[9], this.footprintQuadVertices_800d6b7c[10], this.footprintQuadVertices_800d6b7c[11], inst.sxy0_20, inst.sxy1_28, inst.sxy2_30, inst.sxy3_38);
           } else if(textureIndex == 3) {
             //LAB_800ef4a0
@@ -267,6 +319,7 @@ public class AttachedSobjEffect {
           //LAB_800ef504
           inst.stepBrightness_40 = 0.5f / 30;
           inst.brightness_48 = 0.5f;
+          data.transfer_1e.set(model.coord2_14.coord.transfer);
         }
       }
 
@@ -275,7 +328,7 @@ public class AttachedSobjEffect {
         if(data.tick_00 % (data.instantiationIntervalDust_30 * (3 - vsyncMode_8007a3b8)) == 0) {
           final OrthoTrailParticle54 inst = this.addOrthoTrailParticle();
           inst.renderMode_00 = 1;
-          inst.textureIndex_02 = 2;
+          inst.textureIndex_02 = 3;
           inst.x_18 = screenOffsetX;
           inst.y_1c = screenOffsetY;
 
@@ -320,7 +373,6 @@ public class AttachedSobjEffect {
     }
 
     //LAB_800ef750
-    data.transfer_1e.set(model.coord2_14.coord.transfer);
     data.tick_00++;
   }
 
@@ -397,12 +449,12 @@ public class AttachedSobjEffect {
         this.tmdDustModel_800d4d40.coord2_14.transforms.scale.set(inst.size_08, inst.size_08, inst.size_08);
 
         applyModelRotationAndScale(this.tmdDustModel_800d4d40);
-        if(this.dust != null) {
+        if(this.tmdDust != null) {
           zOffset_1f8003e8 = this.tmdDustModel_800d4d40.zOffset_a0;
           tmdGp0Tpage_1f8003ec = this.tmdDustModel_800d4d40.tpage_108;
           GsGetLw(this.tmdDustModel_800d4d40.modelParts_00[0].coord2_04, this.transforms);
 
-          RENDERER.queueModel(this.dust, this.transforms)
+          RENDERER.queueModel(this.tmdDust, this.transforms)
             .screenspaceOffset(screenOffsetX + 8, -screenOffsetY)
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
@@ -452,10 +504,10 @@ public class AttachedSobjEffect {
           } else {
             //LAB_800efb64
             cmd
-              .clut((this.cluts[1] & 0b111111) * 16, this.cluts[1] >>> 6)
-              .vramPos((this.tpages[1] & 0b1111) * 64, (this.tpages[1] & 0b10000) != 0 ? 256 : 0)
-              .translucent(Translucency.of(this.tpages[1] >>> 5 & 0b11))
-              .bpp(Bpp.of(this.tpages[1] >>> 7 & 0b11));
+              .clut(992, 472)
+              .vramPos(960, 256)
+              .bpp(Bpp.BITS_4)
+              .translucent(Translucency.B_MINUS_F);
           }
         } else if(mode == 1) {
           //LAB_800efb7c
@@ -477,10 +529,10 @@ public class AttachedSobjEffect {
 
           //LAB_800efc4c
           cmd
-            .clut((this.cluts[0] & 0b111111) * 16, this.cluts[0] >>> 6)
-            .vramPos((this.tpages[0] & 0b1111) * 64, (this.tpages[0] & 0b10000) != 0 ? 256 : 0)
-            .translucent(Translucency.of(this.tpages[0] >>> 5 & 0b11))
-            .bpp(Bpp.of(this.tpages[0] >>> 7 & 0b11));
+            .clut(960, 466)
+            .vramPos(960, 256)
+            .bpp(Bpp.BITS_4)
+            .translucent(Translucency.B_PLUS_F);
         }
 
         //LAB_800efc64
@@ -493,7 +545,7 @@ public class AttachedSobjEffect {
         }
 
         //LAB_800efcb8
-        final int v = inst.textureIndex_02 == 3 ? 64 : 0;
+        final int v = inst.textureIndex_02 == 2 ? 64 : 0;
         cmd
           .monochrome(inst.brightness_48)
           .uv(0, this.orthoTrailUs_800d6bdc[inst.textureIndex_02], v)
@@ -502,6 +554,10 @@ public class AttachedSobjEffect {
           .uv(3, this.orthoTrailUs_800d6bdc[inst.textureIndex_02] + this.dustTextureWidths_800d6bec[inst.textureIndex_02], v + this.dustTextureHeights_800d6bfc[inst.textureIndex_02]);
 
         GPU.queueCommand(inst.z_4c, cmd);
+        RENDERER.queueModel(this.footprints, inst.lw)
+          .vertices(inst.textureIndex_02 * 4, 4)
+          .monochrome(inst.brightness_48)
+          .screenspaceOffset(screenOffsetX + 8, -screenOffsetY);
         inst.tick_04++;
       } else {
         inst.used = false;

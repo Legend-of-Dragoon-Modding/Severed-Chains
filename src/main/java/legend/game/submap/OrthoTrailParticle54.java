@@ -1,5 +1,6 @@
 package legend.game.submap;
 
+import legend.core.gte.MV;
 import org.joml.Vector2f;
 
 /** Used for ortho quad trail attached sobj effect particles (footprints and some kinds of dust). */
@@ -17,6 +18,7 @@ public class OrthoTrailParticle54 {
 
   public int x_18;
   public int y_1c;
+  public MV lw = new MV();
   public final Vector2f sxy0_20 = new Vector2f();
   public float z0_26;
   public final Vector2f sxy1_28 = new Vector2f();
