@@ -460,7 +460,6 @@ public class CollisionGeometry {
     // Handle sliding along collision
     if(a1 != -1) {
       //LAB_800e9e78
-      int s2 = currentPrimitiveIndex;
 
       //LAB_800e9e7c
       final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[this.primitiveInfo_14[currentPrimitiveIndex].vertexInfoOffset_02 + a1];
@@ -507,10 +506,10 @@ public class CollisionGeometry {
       angle2 -= angleStep;
 
       //LAB_800e9ff4
-      int i = 8;
-      float offsetX;
-      float offsetZ;
-      do {
+      int s2 = -1;
+      float offsetX = 0.0f;
+      float offsetZ = 0.0f;
+      for(int i = 0; i < 8 && s2 == -1; i++) {
         angle2 += angleStep;
 
         final float sin = MathHelper.sin(angle2);
@@ -518,15 +517,10 @@ public class CollisionGeometry {
         offsetX = x + cos * distanceMultiplier;
         offsetZ = z + sin * distanceMultiplier;
 
-        i--;
-        if(i <= 0) {
-          break;
-        }
-
         s2 = this.getCollisionPrimitiveAtPoint(offsetX, y, offsetZ, true);
 
         //LAB_800ea22c
-      } while(s2 < 0);
+      }
 
       //LAB_800ea254
       if(s2 < 0) {
@@ -543,6 +537,11 @@ public class CollisionGeometry {
       movement.x = offsetX - x;
       movement.z = offsetZ - z;
       movement.y = -(normal.x * offsetX + normal.z * offsetZ + this.primitiveInfo_14[s2]._08) / normal.y;
+
+      if(!this.dartRotationWasUpdated_800d1a8c) {
+        this.dartRotationWasUpdated_800d1a8c = true;
+        this.dartRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(movement.x, movement.z) + MathHelper.PI, MathHelper.TWO_PI);
+      }
 
       return s2;
     }
