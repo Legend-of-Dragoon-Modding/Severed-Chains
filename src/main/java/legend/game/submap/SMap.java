@@ -146,6 +146,7 @@ import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
+import static org.lwjgl.opengl.GL11C.GL_LINES;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class SMap extends EngineState {
@@ -1978,7 +1979,7 @@ public class SMap extends EngineState {
   private FlowControl FUN_800e00cc(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
-    final int collisionPrimitiveIndex = this.collisionGeometry_800cbe08.FUN_800e9018(model.coord2_14.coord.transfer.x, model.coord2_14.coord.transfer.y, model.coord2_14.coord.transfer.z, false);
+    final int collisionPrimitiveIndex = this.collisionGeometry_800cbe08.getCollisionPrimitiveAtPoint(model.coord2_14.coord.transfer.x, model.coord2_14.coord.transfer.y, model.coord2_14.coord.transfer.z, false);
     script.params_20[1].set(collisionPrimitiveIndex);
     sobj.collidedPrimitiveIndex_16c = collisionPrimitiveIndex;
     return FlowControl.CONTINUE;
@@ -3666,9 +3667,12 @@ public class SMap extends EngineState {
   private void renderCollisionDebug() {
     if(enableCollisionDebug) {
       if(this.collisionGeometry_800cbe08.debugObj == null) {
+        final List<Vector3f> vertices = new ArrayList<>();
 
         final PolyBuilder builder = new PolyBuilder("Collision Model", GL_TRIANGLE_STRIP);
         builder.translucency(Translucency.HALF_B_PLUS_HALF_F);
+
+        final PolyBuilder lines = new PolyBuilder("Collision Normals Probably", GL_LINES);
 
         for(int i = 0; i < this.collisionGeometry_800cbe08.primitiveCount_0c; i++) {
           final CollisionPrimitiveInfo0c primitiveInfo = this.collisionGeometry_800cbe08.primitiveInfo_14[i];
@@ -3679,15 +3683,32 @@ public class SMap extends EngineState {
           final byte[] packet = primitive.data()[packetIndex];
 
           for(int vertexIndex = 0; vertexIndex < primitiveInfo.vertexCount_00; vertexIndex++) {
-            builder.addVertex(this.collisionGeometry_800cbe08.verts_04[IoHelper.readUShort(packet, remainder + 2 + vertexIndex * 2)]);
+            final Vector3f vertex = this.collisionGeometry_800cbe08.verts_04[IoHelper.readUShort(packet, remainder + 2 + vertexIndex * 2)];
+            builder.addVertex(vertex);
+            vertices.add(vertex);
+
+            final Vector2f normals = new Vector2f(this.collisionGeometry_800cbe08.vertexInfo_18[vertexIndex].x_00, this.collisionGeometry_800cbe08.vertexInfo_18[vertexIndex].z_02)
+              .normalize()
+              .mul(10.0f);
+
+            lines
+              .addVertex(vertex)
+              .addVertex(vertex.add(normals.x, 0.0f, normals.y, new Vector3f()));
           }
         }
 
         this.collisionGeometry_800cbe08.debugObj = builder.build();
+        this.collisionGeometry_800cbe08.debugLines = lines.build();
+        this.collisionGeometry_800cbe08.debugVertices = vertices.toArray(Vector3f[]::new);
       }
 
+      final Vector2f transformed = new Vector2f();
+      final Vector3f middle = new Vector3f();
+
       final MV lw = new MV();
-      GsGetLw(this.collisionGeometry_800cbe08.dobj2Ptr_20.coord2_04, lw);
+      final MV ls = new MV();
+      GsGetLws(this.collisionGeometry_800cbe08.dobj2Ptr_20.coord2_04, lw, ls);
+      GTE.setTransforms(ls);
 
       for(int i = 0; i < this.collisionGeometry_800cbe08.primitiveCount_0c; i++) {
         final CollisionPrimitiveInfo0c primitiveInfo = this.collisionGeometry_800cbe08.primitiveInfo_14[i];
@@ -3695,6 +3716,7 @@ public class SMap extends EngineState {
         final RenderEngine.QueuedModel model = RENDERER.queueModel(this.collisionGeometry_800cbe08.debugObj, lw)
           .vertices(primitiveInfo.vertexInfoOffset_02, primitiveInfo.vertexCount_00)
           .screenspaceOffset(this.screenOffset_800cb568.x + 8, -this.screenOffset_800cb568.y)
+          .depthOffset(-1.0f)
         ;
 
         if(!primitiveInfo.flatEnoughToWalkOn_01) {
@@ -3732,10 +3754,28 @@ public class SMap extends EngineState {
         }
 
         this.submap.applyCollisionDebugColour(i, model);
+
+        if(this.sobjs_800c6880[0].innerStruct_00.collidedPrimitiveIndex_16c != -1) {
+          final CollisionPrimitiveInfo0c collidedPrimitive = this.collisionGeometry_800cbe08.primitiveInfo_14[this.sobjs_800c6880[0].innerStruct_00.collidedPrimitiveIndex_16c];
+
+          RENDERER.queueModel(this.collisionGeometry_800cbe08.debugLines)
+            .colour(1.0f, 0.0f, 0.0f)
+            .screenspaceOffset(this.screenOffset_800cb568.x + 8, -this.screenOffset_800cb568.y)
+            .vertices(collidedPrimitive.vertexInfoOffset_02 * 2, collidedPrimitive.vertexCount_00 * 2)
+            .depthOffset(-1.0f);
+        }
+
+//        this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(i, middle);
+//        this.transformVertex(transformed, middle);
+//        final LodString text = new LodString(Integer.toString(i));
+//        renderText(text, transformed.x + centreScreenX_1f8003dc - textWidth(text) / 2.0f, transformed.y + centreScreenY_1f8003de - 6, TextColour.LIME, 0);
       }
     } else if(this.collisionGeometry_800cbe08.debugObj != null) {
       this.collisionGeometry_800cbe08.debugObj.delete();
       this.collisionGeometry_800cbe08.debugObj = null;
+      this.collisionGeometry_800cbe08.debugLines.delete();
+      this.collisionGeometry_800cbe08.debugLines = null;
+      this.collisionGeometry_800cbe08.debugVertices = null;
     }
   }
 
