@@ -565,7 +565,7 @@ public class SMap extends EngineState {
     functions[675] = this::scriptToggleAnimationDisabled;
     functions[676] = this::scriptIsAnimationFinished;
     functions[677] = this::scriptFacePoint;
-    functions[678] = this::FUN_800e0094;
+    functions[678] = this::scriptSetSobjHidden;
     functions[679] = this::FUN_800de668;
     functions[680] = this::FUN_800de944;
     functions[681] = this::FUN_800e00cc;
@@ -1487,7 +1487,7 @@ public class SMap extends EngineState {
   private FlowControl FUN_800df410(final RunningScript<?> script) {
     script.params_20[1] = script.params_20[0];
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
-    return this.FUN_800e0094(script);
+    return this.scriptSetSobjHidden(script);
   }
 
   @ScriptDescription("Something to do with forced movement. Used when Dart is halfway through his jump animation in volcano.")
@@ -1959,13 +1959,13 @@ public class SMap extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Set us_128 on a submap object")
+  @ScriptDescription("Set whether or not a submap object is hidden")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "value", description = "The new value")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "hidden", description = "True to hide, false otherwise")
   @Method(0x800e0094L)
-  private FlowControl FUN_800e0094(final RunningScript<?> a0) {
+  private FlowControl scriptSetSobjHidden(final RunningScript<?> a0) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
-    sobj.s_128 = a0.params_20[1].get();
+    sobj.hidden_128 = a0.params_20[1].get() != 0;
     return FlowControl.CONTINUE;
   }
 
@@ -2501,7 +2501,7 @@ public class SMap extends EngineState {
       this.setCameraPos(1, model.coord2_14.coord.transfer);
     }
 
-    if(sobj.s_128 == 0) {
+    if(!sobj.hidden_128) {
       if(sobj.rotationFrames_188 != 0) {
         sobj.rotationFrames_188--;
         model.coord2_14.transforms.rotate.add(sobj.rotationAmount_17c);
@@ -2630,7 +2630,7 @@ public class SMap extends EngineState {
 
   @Method(0x800e123cL)
   private void submapObjectRenderer(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
-    if(sobj.s_128 == 0) {
+    if(!sobj.hidden_128) {
       if(sobj.flatLightingEnabled_1c4) {
         final GsF_LIGHT light = new GsF_LIGHT();
 
@@ -2787,7 +2787,7 @@ public class SMap extends EngineState {
           }
 
           //LAB_800e1c50
-          state.innerStruct_00.s_128 = 0;
+          state.innerStruct_00.hidden_128 = false;
           state.innerStruct_00.disableAnimation_12a = false;
           state.innerStruct_00.animationFinished_12c = false;
           state.innerStruct_00.sobjIndex_12e = i;
