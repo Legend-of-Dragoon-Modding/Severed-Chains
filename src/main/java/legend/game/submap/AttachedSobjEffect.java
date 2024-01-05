@@ -7,6 +7,7 @@ import legend.core.memory.Method;
 import legend.core.opengl.MeshObj;
 import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;
+import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptState;
@@ -116,7 +117,7 @@ public class AttachedSobjEffect {
     }
     this.tmdTrail_800d4ec0.clear();
     if(this.footprints == null) {
-      final PolyBuilder builder = new PolyBuilder("OrthoTrailParticles", GL_TRIANGLE_STRIP)
+      final PolyBuilder builder = new PolyBuilder("Footprints", GL_TRIANGLE_STRIP)
         .bpp(Bpp.BITS_4)
         .translucency(Translucency.B_MINUS_F)
         .clut(992, 472)
@@ -162,6 +163,18 @@ public class AttachedSobjEffect {
         .uv(24, 88)
         .monochrome(1.0f);
       this.footprints = builder.build();
+    }
+    if(this.quadDust == null) {
+      final QuadBuilder builder = new QuadBuilder("DustQuad")
+        .bpp(Bpp.BITS_4)
+        .translucency(Translucency.B_PLUS_F)
+        .clut(960, 465)
+        .vramPos(960, 256)
+        .monochrome(1.0f)
+        .uv(64, 0)
+        .uvSize(32, 32)
+        .posSize(1.0f, 1.0f);
+      this.quadDust = builder.build();
     }
     this.orthoQuadTrail_800d4e68.clear();
     this.initLawPodTrail();
@@ -298,12 +311,10 @@ public class AttachedSobjEffect {
           final int textureIndex = inst.textureIndex_02;
           if(textureIndex == 0) {
             //LAB_800ef4b4
-            //inst.lw.transfer.add(-12, 0, -8);
             inst.z_4c = RotTransPers4(this.footprintQuadVertices_800d6b7c[4], this.footprintQuadVertices_800d6b7c[5], this.footprintQuadVertices_800d6b7c[6], this.footprintQuadVertices_800d6b7c[7], inst.sxy0_20, inst.sxy1_28, inst.sxy2_30, inst.sxy3_38);
           } else if(textureIndex == 1) {
             //LAB_800ef484
             //LAB_800ef4b4
-            //inst.lw.transfer.add(2, 0, -8);
             inst.z_4c = RotTransPers4(this.footprintQuadVertices_800d6b7c[8], this.footprintQuadVertices_800d6b7c[9], this.footprintQuadVertices_800d6b7c[10], this.footprintQuadVertices_800d6b7c[11], inst.sxy0_20, inst.sxy1_28, inst.sxy2_30, inst.sxy3_38);
           } else if(textureIndex == 3) {
             //LAB_800ef4a0
@@ -319,7 +330,6 @@ public class AttachedSobjEffect {
           //LAB_800ef504
           inst.stepBrightness_40 = 0.5f / 30;
           inst.brightness_48 = 0.5f;
-          data.transfer_1e.set(model.coord2_14.coord.transfer);
         }
       }
 
@@ -340,9 +350,8 @@ public class AttachedSobjEffect {
           inst.tick_04 = 0;
           inst.maxTicks_06 = data.maxTicks_38;
 
-          final MV ls = new MV();
-          GsGetLs(model.coord2_14, ls);
-          GTE.setTransforms(ls);
+          GsGetLs(model.coord2_14, inst.lw);
+          GTE.setTransforms(inst.lw);
 
           //TODO The real code actually passes the same reference for sxyz 1 and 2, is that a bug?
           inst.z_4c = RotTransPers4(vert0, vert1, vert2, vert3, inst.sxy0_20, inst.sxy1_28, inst.sxy2_30, inst.sxy3_38);
@@ -356,8 +365,8 @@ public class AttachedSobjEffect {
           inst.size_08 = halfSize;
           inst.sizeStep_0c = halfSize / data.maxTicks_38;
 
-          inst.z0_26 = (inst.sxy3_38.x + inst.sxy0_20.x) / 2.0f;
-          inst.z1_2e = (inst.sxy3_38.y + inst.sxy0_20.y) / 2.0f;
+          inst.centerX_26 = (inst.sxy3_38.x + inst.sxy0_20.x) / 2.0f;
+          inst.centerY_2e = (inst.sxy3_38.y + inst.sxy0_20.y) / 2.0f;
 
           inst.stepBrightness_40 = 0.5f / data.maxTicks_38;
           inst.brightness_48 = 0.5f;
@@ -374,6 +383,7 @@ public class AttachedSobjEffect {
 
     //LAB_800ef750
     data.tick_00++;
+    data.transfer_1e.set(model.coord2_14.coord.transfer);
   }
 
   @Method(0x800f0644L)
@@ -512,8 +522,8 @@ public class AttachedSobjEffect {
         } else if(mode == 1) {
           //LAB_800efb7c
           inst.size_08 += inst.sizeStep_0c / (3 - vsyncMode_8007a3b8);
-          inst.sxy0_20.x = inst.z0_26 - inst.size_08 / 2.0f;
-          inst.sxy0_20.y = inst.z1_2e - inst.size_08 / 2.0f;
+          inst.sxy0_20.x = inst.centerX_26 - inst.size_08 / 2.0f;
+          inst.sxy0_20.y = inst.centerY_2e - inst.size_08 / 2.0f;
           final float x = screenOffsetX - inst.x_18 + inst.sxy0_20.x;
           final float y = screenOffsetY - inst.y_1c + inst.sxy0_20.y;
 
@@ -524,12 +534,12 @@ public class AttachedSobjEffect {
             .pos(3, x + inst.size_08, y + inst.size_08);
 
           if((inst.tick_04 & 0x3) == 0) {
-            inst.z1_2e -= 1.0f / (3 - vsyncMode_8007a3b8);
+            inst.centerY_2e -= 1.0f / (3 - vsyncMode_8007a3b8);
           }
 
           //LAB_800efc4c
           cmd
-            .clut(960, 466)
+            .clut(960, 465)
             .vramPos(960, 256)
             .bpp(Bpp.BITS_4)
             .translucent(Translucency.B_PLUS_F);
@@ -554,10 +564,17 @@ public class AttachedSobjEffect {
           .uv(3, this.orthoTrailUs_800d6bdc[inst.textureIndex_02] + this.dustTextureWidths_800d6bec[inst.textureIndex_02], v + this.dustTextureHeights_800d6bfc[inst.textureIndex_02]);
 
         GPU.queueCommand(inst.z_4c, cmd);
-        RENDERER.queueModel(this.footprints, inst.lw)
-          .vertices(inst.textureIndex_02 * 4, 4)
-          .monochrome(inst.brightness_48)
-          .screenspaceOffset(screenOffsetX + 8, -screenOffsetY);
+        if(inst.textureIndex_02 == 3) {
+          inst.lw.scaling(inst.size_08);
+          inst.lw.transfer.set(GPU.getOffsetX() + screenOffsetX - inst.x_18 + inst.sxy0_20.x, GPU.getOffsetY() + screenOffsetY - inst.y_1c + inst.sxy0_20.y, inst.z_4c * 4.0f);
+          RENDERER.queueOrthoModel(this.quadDust, inst.lw)
+            .monochrome(inst.brightness_48);
+        } else {
+          RENDERER.queueModel(this.footprints, inst.lw)
+            .vertices(inst.textureIndex_02 * 4, 4)
+            .monochrome(inst.brightness_48)
+            .screenspaceOffset(screenOffsetX + 8, -screenOffsetY);
+        }
         inst.tick_04++;
       } else {
         inst.used = false;

@@ -20,9 +20,9 @@ public class OrthoTrailParticle54 {
   public int y_1c;
   public MV lw = new MV();
   public final Vector2f sxy0_20 = new Vector2f();
-  public float z0_26;
+  public float centerX_26;
   public final Vector2f sxy1_28 = new Vector2f();
-  public float z1_2e;
+  public float centerY_2e;
   public final Vector2f sxy2_30 = new Vector2f();
   public final Vector2f sxy3_38 = new Vector2f();
   /** 16.16 fixed-point */
