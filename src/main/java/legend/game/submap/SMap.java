@@ -1106,14 +1106,14 @@ public class SMap extends EngineState {
       final int collidedPrimitiveIndex = this.collisionGeometry_800cbe08.handleCollisionAndMovement(player.sobjIndex_12e != 0, playerModel.coord2_14.coord.transfer, worldspaceDeltaMovement);
       if(collidedPrimitiveIndex >= 0) {
         if(this.isWalkable(collidedPrimitiveIndex)) {
-          playerModel.coord2_14.coord.transfer.x += worldspaceDeltaMovement.x;
           playerModel.coord2_14.coord.transfer.y = worldspaceDeltaMovement.y;
-          playerModel.coord2_14.coord.transfer.z += worldspaceDeltaMovement.z;
-//          player.movementTicksTotal = 2 / vsyncMode_8007a3b8;
-//          player.movementTicks_144 = 0;
-//          player.movementStart.set(playerModel.coord2_14.coord.transfer);
-//          player.movementStart.add(worldspaceDeltaMovement, player.movementDestination_138);
-//          script.scriptState_04.setTempTicker(this::tickBasicMovement);
+          worldspaceDeltaMovement.y = 0;
+
+          player.movementTicksTotal = 2 / vsyncMode_8007a3b8;
+          player.movementTicks_144 = 0;
+          player.movementStart.set(playerModel.coord2_14.coord.transfer);
+          player.movementStart.add(worldspaceDeltaMovement, player.movementDestination_138);
+          script.scriptState_04.setTempTicker(this::tickBasicMovement);
         }
 
         //LAB_800de2c8
@@ -1122,7 +1122,7 @@ public class SMap extends EngineState {
 
       //LAB_800de2cc
       player.us_170 = 0;
-      script.scriptState_04.setTempTicker(this::tickBasicMovement);
+//      script.scriptState_04.setTempTicker(this::tickBasicMovement);
       this.caches_800c68e8.playerPos_00.set(worldspaceDeltaMovement);
     }
 
@@ -1315,10 +1315,7 @@ public class SMap extends EngineState {
       GTE.setTransforms(worldToScreenMatrix_800c3548);
       this.transformToWorldspace(movement, deltaMovement);
 
-      final int collisionResult = this.collisionGeometry_800cbe08.handleCollisionAndMovement(sobj.sobjIndex_12e != 0, model.coord2_14.coord.transfer, movement);
-      if(collisionResult >= 0) {
-        this.isWalkable(collisionResult); //TODO does nothing?
-      }
+      this.collisionGeometry_800cbe08.handleCollisionAndMovement(sobj.sobjIndex_12e != 0, model.coord2_14.coord.transfer, movement);
 
       //LAB_800def08
       angle = MathHelper.positiveAtan2(movement.z, movement.x);
@@ -3361,10 +3358,9 @@ public class SMap extends EngineState {
 
   @Method(0x800e3e60L)
   private boolean tickBasicMovement(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
-//    sobj.movementStart.lerp(sobj.movementDestination_138, (sobj.movementTicks_144 + 1.0f) / sobj.movementTicksTotal, sobj.model_00.coord2_14.coord.transfer);
-//    sobj.movementTicks_144++;
-//    return sobj.movementTicks_144 >= sobj.movementTicksTotal;
-    return true;
+    sobj.movementStart.lerp(sobj.movementDestination_138, (sobj.movementTicks_144 + 1.0f) / sobj.movementTicksTotal, sobj.model_00.coord2_14.coord.transfer);
+    sobj.movementTicks_144++;
+    return sobj.movementTicks_144 >= sobj.movementTicksTotal;
   }
 
   /** Used in teleporter just before Melbu */
