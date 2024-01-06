@@ -6500,8 +6500,8 @@ public class Battle extends EngineState {
     model.coord2_14.set(a1.coord2_558);
     model.coord2_14.transforms.set(a1.param_5a8);
 
-    model.partTransforms_90 = a1.rotTrans_5d4;
-    model.partTransforms_94 = a1.rotTrans_5d8;
+    model.originalKeyframes_90 = a1.rotTrans_5d4;
+    model.currentKeyframe_94 = 0;
     model.partCount_98 = a1.partCount_5dc;
     model.totalFrames_9a = a1.totalFrames_5de;
     model.animationState_9c = a1.animationState_5e0;
