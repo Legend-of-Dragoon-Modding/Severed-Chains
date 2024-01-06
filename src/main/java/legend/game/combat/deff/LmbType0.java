@@ -27,7 +27,7 @@ public class LmbType0 extends Lmb {
     model.totalFrames_9a = this.partAnimations_08[0].count_04 * 2;
     model.animationState_9c = 1;
     model.remainingFrames_9e = this.partAnimations_08[0].count_04 * 2;
-    model.interpolationFrameIndex = 0;
+    model.subFrameIndex = 0;
   }
 
   @Override
@@ -59,7 +59,7 @@ public class LmbType0 extends Lmb {
 
     //LAB_800dd700
     model.remainingFrames_9e = remainingFrames - 1;
-    model.interpolationFrameIndex = 0;
+    model.subFrameIndex = 0;
 
     //LAB_800dd720
     for(int i = 0; i < count; i++) {

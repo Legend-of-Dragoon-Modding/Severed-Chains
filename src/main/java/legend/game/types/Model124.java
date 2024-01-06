@@ -23,9 +23,8 @@ public class Model124 {
 //  public final Transforms transforms_64 = new Transforms(); // Use coord2_14.transforms
 //  public Tmd tmd_8c;
   /** [keyframe][part] */
-  public ModelPartTransforms0c[][] partTransforms_90;
-  /** [keyframe][part] One entry for each TMD object (tmdNobj_ca) */
-  public ModelPartTransforms0c[][] partTransforms_94;
+  public ModelPartTransforms0c[][] originalKeyframes_90;
+  public int currentKeyframe_94;
 
   /** short */
   public int partCount_98;
@@ -44,7 +43,7 @@ public class Model124 {
   public UvAdjustmentMetrics14 uvAdjustments_9d = UvAdjustmentMetrics14.NONE;
   /** short */
   public int remainingFrames_9e;
-  public int interpolationFrameIndex;
+  public int subFrameIndex;
   /** short */
   public int zOffset_a0;
   /** Always 0 except sometimes on submaps (ubyte) */
@@ -140,8 +139,8 @@ public class Model124 {
     this.modelParts_00 = other.modelParts_00;
     this.anim_08 = other.anim_08;
     this.coord2_14.set(other.coord2_14);
-    this.partTransforms_90 = other.partTransforms_90;
-    this.partTransforms_94 = other.partTransforms_94;
+    this.originalKeyframes_90 = other.originalKeyframes_90;
+    this.currentKeyframe_94 = other.currentKeyframe_94;
     this.partCount_98 = other.partCount_98;
     this.totalFrames_9a = other.totalFrames_9a;
     this.animationState_9c = other.animationState_9c;
