@@ -53,6 +53,7 @@ public class CollisionGeometry {
   private boolean collisionLoaded_800f7f14;
 
   public Obj debugObj;
+  public Obj debugLines;
   public Vector3f[] debugVertices;
 
   public CollisionGeometry(final SMap smap) {
@@ -136,7 +137,7 @@ public class CollisionGeometry {
   }
 
   @Method(0x800e8990L)
-  public int getClosestCollisionPrimitive(final float x, final float z) {
+  public int getClosestCollisionPrimitive(final float x, final float y, final float z) {
     final Vector3f vec = new Vector3f();
 
     int closestIndex = 0;
@@ -148,8 +149,9 @@ public class CollisionGeometry {
 
       //LAB_800e8ae4
       final float dx = x - vec.x;
+      final float dy = y - vec.y;
       final float dz = z - vec.z;
-      final float distSqr = dx * dx + dz * dz;
+      final float distSqr = dx * dx + dy * dy + dz * dz;
       if(closest > distSqr) {
         closest = distSqr;
         closestIndex = i;
@@ -218,6 +220,8 @@ public class CollisionGeometry {
     if(this.debugObj != null) {
       this.debugObj.delete();
       this.debugObj = null;
+      this.debugLines.delete();
+      this.debugLines = null;
       this.debugVertices = null;
     }
   }
@@ -228,13 +232,18 @@ public class CollisionGeometry {
   }
 
   @Method(0x800e9018L)
-  public int FUN_800e9018(final float x, final float y, final float z, final boolean checkSteepness) {
+  public int getCollisionPrimitiveAtPoint(final float x, final float y, final float z, final boolean checkSteepness) {
     int collisionPrimitiveIndexCount = 0;
+    final Vector3f middle = new Vector3f();
 
     //LAB_800e9040
     for(int collisionPrimitiveIndex = 0; collisionPrimitiveIndex < this.primitiveCount_0c; collisionPrimitiveIndex++) {
       final CollisionPrimitiveInfo0c collisionInfo = this.primitiveInfo_14[collisionPrimitiveIndex];
-      if(!checkSteepness || collisionInfo.flatEnoughToWalkOn_01) {
+      this.getMiddleOfCollisionPrimitive(collisionPrimitiveIndex, middle);
+
+      // This method did not check the Y value at all, meaning if you had collision primitives on
+      // top of each other (like in Kazas) you could get stuck on one at a very different depth
+      if((!checkSteepness || collisionInfo.flatEnoughToWalkOn_01) && Math.abs(middle.y - y) < 150.0f) {
         //LAB_800e9078
         //LAB_800e90a0
         boolean found = false;
@@ -268,7 +277,7 @@ public class CollisionGeometry {
     }
 
     //LAB_800e9134
-    float min = Float.MAX_VALUE;
+    float minY = Float.MAX_VALUE;
     int minIndex = -1;
 
     //LAB_800e9164
@@ -276,24 +285,24 @@ public class CollisionGeometry {
       final int collisionPrimitiveIndex = this.collisionPrimitiveIndices_800cbe48[i];
       final CollisionPrimitiveInfo0c collisionInfo = this.primitiveInfo_14[collisionPrimitiveIndex];
 
-      float v1;
+      float collisionY;
       if(this.normals_08[collisionPrimitiveIndex].y != 0) {
-        v1 = -(this.normals_08[collisionPrimitiveIndex].x * x + this.normals_08[collisionPrimitiveIndex].z * z + collisionInfo._08) / this.normals_08[collisionPrimitiveIndex].y;
+        collisionY = -(this.normals_08[collisionPrimitiveIndex].x * x + this.normals_08[collisionPrimitiveIndex].z * z + collisionInfo._08) / this.normals_08[collisionPrimitiveIndex].y;
       } else {
-        v1 = 0;
+        collisionY = 0;
       }
 
-      v1 -= y - 20;
-      if(v1 > 0 && v1 < min) {
+      collisionY -= y - 20;
+      if(collisionY > 0 && collisionY < minY) {
         minIndex = collisionPrimitiveIndex;
-        min = v1;
+        minY = collisionY;
       }
 
       //LAB_800e91ec
     }
 
     //LAB_800e91fc
-    if(min == Float.MAX_VALUE) {
+    if(minY == Float.MAX_VALUE) {
       //LAB_800e920c
       return -1;
     }
@@ -355,16 +364,12 @@ public class CollisionGeometry {
     }
 
     //LAB_800e94ec
-    final float endX = x + movement.x;
-    final float endZ = z + movement.z;
-
-    //LAB_800e960c
-    final int s4 = this.FUN_800e9018(x, y, z, true);
+    //LAB_800e960cdd
+    final int currentPrimitiveIndex = this.getCollisionPrimitiveAtPoint(x, y, z, true);
 
     //LAB_800e9710
-    int s3 = 0;
-    if(s4 < 0) {
-      final int closestPrimitiveIndex = this.getClosestCollisionPrimitive(x, z);
+    if(currentPrimitiveIndex == -1) {
+      final int closestPrimitiveIndex = this.getClosestCollisionPrimitive(x, y, z);
 
       //LAB_800e975c
       //LAB_800e9764
@@ -376,37 +381,45 @@ public class CollisionGeometry {
       movement.x = Math.round(middle.x - x);
       movement.z = Math.round(middle.z - z);
       movement.y = -(normal.x * middle.x + normal.z * middle.z + this.primitiveInfo_14[closestPrimitiveIndex]._08) / normal.y;
-    } else {
-      //LAB_800e990c
-      s3 = this.FUN_800e9018(endX, y, endZ, true);
 
-      //LAB_800e9afc
+      //LAB_800ea390
+      //LAB_800ea3b4
+      if(!this.dartRotationWasUpdated_800d1a8c) {
+        this.dartRotationWasUpdated_800d1a8c = true;
+        this.dartRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(movement.x, movement.z) + MathHelper.PI, MathHelper.TWO_PI);
+      }
+
+      //LAB_800ea3e0
+      return closestPrimitiveIndex;
+    }
+
+    final float endX = x + movement.x;
+    final float endZ = z + movement.z;
+
+    //LAB_800e990c
+    final int destinationPrimitiveIndex = this.getCollisionPrimitiveAtPoint(endX, y, endZ, true);
+
+    //LAB_800e9afc
+    if(destinationPrimitiveIndex >= 0) {
+      final CollisionPrimitiveInfo0c destinationPrimitive = this.primitiveInfo_14[destinationPrimitiveIndex];
+
+      //LAB_800e9b50
       int v0 = -1;
-      if(s3 >= 0) {
-        final CollisionPrimitiveInfo0c struct = this.primitiveInfo_14[s3];
-
-        //LAB_800e9b50
-        for(int vertexIndex = 0; vertexIndex < struct.vertexCount_00; vertexIndex++) {
-          final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[struct.vertexInfoOffset_02 + vertexIndex];
-          if(vertexInfo._08 != 0) {
-            if(Math.abs((vertexInfo.x_00 * endX + vertexInfo.z_02 * endZ + vertexInfo._04) / 0x400) < 10) {
-              v0 = vertexIndex;
-              break;
-            }
-          }
+      for(int vertexIndex = 0; vertexIndex < destinationPrimitive.vertexCount_00; vertexIndex++) {
+        final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[destinationPrimitive.vertexInfoOffset_02 + vertexIndex];
+        if(vertexInfo._08 && Math.abs((vertexInfo.x_00 * endX + vertexInfo.z_02 * endZ + vertexInfo._04) / 0x400) < 10) {
+          v0 = vertexIndex;
+          break;
         }
       }
 
-      //LAB_800e9bbc
-      //LAB_800e9bc0
-      if(s3 >= 0 && v0 == -1) {
-        final Vector3f normal = this.normals_08[s3];
-        final CollisionPrimitiveInfo0c struct = this.primitiveInfo_14[s3];
+      if(v0 == -1) {
+        final Vector3f normal = this.normals_08[destinationPrimitiveIndex];
 
         // This causes Dart to move up/down a slope
-        if(Math.abs(y + (normal.x * endX + normal.z * endZ + struct._08) / normal.y) < 50) {
+        if(Math.abs(y + (normal.x * endX + normal.z * endZ + destinationPrimitive._08) / normal.y) < 50) {
           //LAB_800e9e64
-          movement.y = -(normal.x * (x + movement.x) + normal.z * (z + movement.z) + struct._08) / normal.y;
+          movement.y = -(normal.x * (x + movement.x) + normal.z * (z + movement.z) + destinationPrimitive._08) / normal.y;
 
           //LAB_800ea390
           //LAB_800ea3b4
@@ -416,145 +429,138 @@ public class CollisionGeometry {
           }
 
           //LAB_800ea3e0
-          return s3;
+          return destinationPrimitiveIndex;
         }
       }
+    }
 
-      //LAB_800e9c58
-      if((this.getCollisionAndTransitionInfo(s4) & 0x20) != 0) { // shop/inn
-        return -1;
-      }
+    //LAB_800e9c58
+    // This disables "sliding" along collision boundaries if you're standing in a shop/inn primitive
+    if((this.getCollisionAndTransitionInfo(currentPrimitiveIndex) & 0x20) != 0) {
+      return -1;
+    }
 
-      //LAB_800e9ca0
-      int a1 = -1;
-      for(int i = 1; i < 4; i++) {
-        final float endX2 = x + movement.x * i;
-        final float endZ2 = z + movement.z * i;
+    //LAB_800e9ca0
+    int a1 = -1;
+    for(int i = 1; i < 4 && a1 == -1; i++) {
+      final float endX2 = x + movement.x * i;
+      final float endZ2 = z + movement.z * i;
 
-        //LAB_800e9ce8
-        for(int vertexIndex = 0; vertexIndex < this.primitiveInfo_14[s4].vertexCount_00; vertexIndex++) {
-          final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[this.primitiveInfo_14[s4].vertexInfoOffset_02 + vertexIndex];
+      //LAB_800e9ce8
+      for(int vertexIndex = 0; vertexIndex < this.primitiveInfo_14[currentPrimitiveIndex].vertexCount_00; vertexIndex++) {
+        final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[this.primitiveInfo_14[currentPrimitiveIndex].vertexInfoOffset_02 + vertexIndex];
 
-          if(vertexInfo._08 != 0) {
-            if((vertexInfo.x_00 * endX2 + vertexInfo.z_02 * endZ2 + vertexInfo._04) / 0x400 <= 0) {
-              a1 = vertexIndex;
-              break;
-            }
-          }
-        }
-
-        //LAB_800e9d44
-        //LAB_800e9d48
-        if(a1 >= 0) {
+        if(vertexInfo._08 && (vertexInfo.x_00 * endX2 + vertexInfo.z_02 * endZ2 + vertexInfo._04) / 0x400 <= 0) {
+          a1 = vertexIndex;
           break;
         }
       }
-
-      if(a1 >= 0) {
-        //LAB_800e9e78
-        int s2 = s4;
-
-        //LAB_800e9e7c
-        final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[this.primitiveInfo_14[s4].vertexInfoOffset_02 + a1];
-        final float angle1 = MathHelper.atan2(endZ - z, endX - x);
-        float angle2 = MathHelper.atan2(-vertexInfo.x_00, vertexInfo.z_02);
-        float angleDeltaAbs = Math.abs(angle1 - angle2);
-        if(angleDeltaAbs > MathHelper.PI) {
-          angleDeltaAbs = MathHelper.TWO_PI - angleDeltaAbs;
-        }
-
-        //LAB_800e9f38
-        // About 73 to 107 degrees (90 +- 17)
-        final float baseAngle = MathHelper.PI / 2.0f; // 90 degrees
-        final float deviation = 0.29670597283903602807702743064306f; // 17 degrees
-        if(angleDeltaAbs >= baseAngle - deviation && angleDeltaAbs <= baseAngle + deviation) {
-          return -1;
-        }
-
-        if(angleDeltaAbs > baseAngle) {
-          if(angle2 > 0) {
-            angle2 -= MathHelper.PI;
-          } else {
-            //LAB_800e9f6c
-            angle2 += MathHelper.PI;
-          }
-        }
-
-        //LAB_800e9f70
-        final float angleDelta = angle2 - angle1;
-
-        //LAB_800e9f98
-        final int direction;
-        if(angleDelta > 0 && angleDelta < MathHelper.PI / 2.0f || angleDelta < -MathHelper.PI) {
-          //LAB_800e9fb4
-          direction = 1;
-        } else {
-          direction = -1;
-        }
-
-        //LAB_800e9fbc
-        final float angleStep = 0.09817477f * direction; // 5.625 degrees
-
-        //LAB_800e9fd0
-        angle2 -= angleStep;
-
-        //LAB_800e9ff4
-        int i = 8;
-        float offsetX;
-        float offsetZ;
-        do {
-          angle2 += angleStep;
-
-          final float sin = MathHelper.sin(angle2);
-          final float cos = MathHelper.cosFromSin(sin, angle2);
-          offsetX = x + cos * distanceMultiplier;
-          offsetZ = z + sin * distanceMultiplier;
-
-          i--;
-          if(i <= 0) {
-            break;
-          }
-
-          s2 = this.FUN_800e9018(offsetX, y, offsetZ, true);
-
-          //LAB_800ea22c
-        } while(s2 < 0);
-
-        //LAB_800ea254
-        if(s2 < 0) {
-          return -1;
-        }
-
-        //LAB_800ea234
-        final Vector3f normal = this.normals_08[s2];
-
-        if(Math.abs(y + (normal.x * offsetX + normal.z * offsetZ + this.primitiveInfo_14[s2]._08) / normal.y) >= 50) {
-          return -1;
-        }
-
-        movement.x = offsetX - x;
-        movement.z = offsetZ - z;
-        movement.y = -(normal.x * offsetX + normal.z * offsetZ + this.primitiveInfo_14[s2]._08) / normal.y;
-
-        return s2;
-      }
-
-      if(s3 < 0) {
-        return -1;
-      }
-
-      final Vector3f normal = this.normals_08[s3];
-
-      if(Math.abs(y + (normal.x * endX + normal.z * endZ + this.primitiveInfo_14[s3]._08) / normal.y) >= 50) {
-        return -1;
-      }
-
-      //LAB_800e9df4
-      final CollisionPrimitiveInfo0c struct = this.primitiveInfo_14[s3];
-
-      //LAB_800e9e64
-      movement.y = -(normal.x * (x + movement.x) + normal.z * (z + movement.z) + struct._08) / normal.y;
     }
+
+    // Handle sliding along collision
+    if(a1 != -1) {
+      //LAB_800e9e78
+
+      //LAB_800e9e7c
+      final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[this.primitiveInfo_14[currentPrimitiveIndex].vertexInfoOffset_02 + a1];
+      final float angle1 = MathHelper.atan2(endZ - z, endX - x);
+      float angle2 = MathHelper.atan2(-vertexInfo.x_00, vertexInfo.z_02);
+      float angleDeltaAbs = Math.abs(angle1 - angle2);
+      if(angleDeltaAbs > MathHelper.PI) {
+        angleDeltaAbs = MathHelper.TWO_PI - angleDeltaAbs;
+      }
+
+      //LAB_800e9f38
+      // About 73 to 107 degrees (90 +- 17)
+      final float baseAngle = MathHelper.PI / 2.0f; // 90 degrees
+      final float deviation = 0.29670597283903602807702743064306f; // 17 degrees
+      if(angleDeltaAbs >= baseAngle - deviation && angleDeltaAbs <= baseAngle + deviation) {
+        return -1;
+      }
+
+      if(angleDeltaAbs > baseAngle) {
+        if(angle2 > 0) {
+          angle2 -= MathHelper.PI;
+        } else {
+          //LAB_800e9f6c
+          angle2 += MathHelper.PI;
+        }
+      }
+
+      //LAB_800e9f70
+      final float angleDelta = angle2 - angle1;
+
+      //LAB_800e9f98
+      final int direction;
+      if(angleDelta > 0 && angleDelta < MathHelper.PI / 2.0f || angleDelta < -MathHelper.PI) {
+        //LAB_800e9fb4
+        direction = 1;
+      } else {
+        direction = -1;
+      }
+
+      //LAB_800e9fbc
+      final float angleStep = 0.09817477f * direction; // 5.625 degrees
+
+      //LAB_800e9fd0
+      angle2 -= angleStep;
+
+      //LAB_800e9ff4
+      int s2 = -1;
+      float offsetX = 0.0f;
+      float offsetZ = 0.0f;
+      for(int i = 0; i < 8 && s2 == -1; i++) {
+        angle2 += angleStep;
+
+        final float sin = MathHelper.sin(angle2);
+        final float cos = MathHelper.cosFromSin(sin, angle2);
+        offsetX = x + cos * distanceMultiplier;
+        offsetZ = z + sin * distanceMultiplier;
+
+        s2 = this.getCollisionPrimitiveAtPoint(offsetX, y, offsetZ, true);
+
+        //LAB_800ea22c
+      }
+
+      //LAB_800ea254
+      if(s2 < 0) {
+        return -1;
+      }
+
+      //LAB_800ea234
+      final Vector3f normal = this.normals_08[s2];
+
+      if(Math.abs(y + (normal.x * offsetX + normal.z * offsetZ + this.primitiveInfo_14[s2]._08) / normal.y) >= 50) {
+        return -1;
+      }
+
+      movement.x = offsetX - x;
+      movement.z = offsetZ - z;
+      movement.y = -(normal.x * offsetX + normal.z * offsetZ + this.primitiveInfo_14[s2]._08) / normal.y;
+
+      if(!this.dartRotationWasUpdated_800d1a8c) {
+        this.dartRotationWasUpdated_800d1a8c = true;
+        this.dartRotationAfterCollision_800d1a84 = MathHelper.floorMod(MathHelper.atan2(movement.x, movement.z) + MathHelper.PI, MathHelper.TWO_PI);
+      }
+
+      return s2;
+    }
+
+    if(destinationPrimitiveIndex < 0) {
+      return -1;
+    }
+
+    final Vector3f normal = this.normals_08[destinationPrimitiveIndex];
+
+    if(Math.abs(y + (normal.x * endX + normal.z * endZ + this.primitiveInfo_14[destinationPrimitiveIndex]._08) / normal.y) >= 50) {
+      return -1;
+    }
+
+    //LAB_800e9df4
+    final CollisionPrimitiveInfo0c struct = this.primitiveInfo_14[destinationPrimitiveIndex];
+
+    //LAB_800e9e64
+    movement.y = -(normal.x * (x + movement.x) + normal.z * (z + movement.z) + struct._08) / normal.y;
 
     //LAB_800ea390
     //LAB_800ea3b4
@@ -564,6 +570,6 @@ public class CollisionGeometry {
     }
 
     //LAB_800ea3e0
-    return s3;
+    return destinationPrimitiveIndex;
   }
 }

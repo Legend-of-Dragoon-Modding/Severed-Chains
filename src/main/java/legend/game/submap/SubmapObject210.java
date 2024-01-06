@@ -6,7 +6,7 @@ import org.joml.Vector3f;
 public class SubmapObject210 {
   public final Model124 model_00;
 
-  public int s_128;
+  public boolean hidden_128;
   public boolean disableAnimation_12a;
   public boolean animationFinished_12c;
   public int sobjIndex_12e;

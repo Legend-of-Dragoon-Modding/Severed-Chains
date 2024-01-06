@@ -146,6 +146,7 @@ import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
+import static org.lwjgl.opengl.GL11C.GL_LINES;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class SMap extends EngineState {
@@ -532,7 +533,7 @@ public class SMap extends EngineState {
     functions[675] = this::scriptToggleAnimationDisabled;
     functions[676] = this::scriptIsAnimationFinished;
     functions[677] = this::scriptFacePoint;
-    functions[678] = this::FUN_800e0094;
+    functions[678] = this::scriptSetSobjHidden;
     functions[679] = this::FUN_800de668;
     functions[680] = this::FUN_800de944;
     functions[681] = this::FUN_800e00cc;
@@ -1074,14 +1075,14 @@ public class SMap extends EngineState {
       final int collidedPrimitiveIndex = this.collisionGeometry_800cbe08.handleCollisionAndMovement(player.sobjIndex_12e != 0, playerModel.coord2_14.coord.transfer, worldspaceDeltaMovement);
       if(collidedPrimitiveIndex >= 0) {
         if(this.isWalkable(collidedPrimitiveIndex)) {
-          playerModel.coord2_14.coord.transfer.x += worldspaceDeltaMovement.x;
           playerModel.coord2_14.coord.transfer.y = worldspaceDeltaMovement.y;
-          playerModel.coord2_14.coord.transfer.z += worldspaceDeltaMovement.z;
-//          player.movementTicksTotal = 2 / vsyncMode_8007a3b8;
-//          player.movementTicks_144 = 0;
-//          player.movementStart.set(playerModel.coord2_14.coord.transfer);
-//          player.movementStart.add(worldspaceDeltaMovement, player.movementDestination_138);
-//          script.scriptState_04.setTempTicker(this::tickBasicMovement);
+          worldspaceDeltaMovement.y = 0;
+
+          player.movementTicksTotal = 2 / vsyncMode_8007a3b8;
+          player.movementTicks_144 = 0;
+          player.movementStart.set(playerModel.coord2_14.coord.transfer);
+          player.movementStart.add(worldspaceDeltaMovement, player.movementDestination_138);
+          script.scriptState_04.setTempTicker(this::tickBasicMovement);
         }
 
         //LAB_800de2c8
@@ -1090,7 +1091,7 @@ public class SMap extends EngineState {
 
       //LAB_800de2cc
       player.us_170 = 0;
-      script.scriptState_04.setTempTicker(this::tickBasicMovement);
+//      script.scriptState_04.setTempTicker(this::tickBasicMovement);
       this.caches_800c68e8.playerPos_00.set(worldspaceDeltaMovement);
     }
 
@@ -1284,10 +1285,7 @@ public class SMap extends EngineState {
       GTE.setTransforms(worldToScreenMatrix_800c3548);
       this.transformToWorldspace(movement, deltaMovement);
 
-      final int collisionResult = this.collisionGeometry_800cbe08.handleCollisionAndMovement(sobj.sobjIndex_12e != 0, model.coord2_14.coord.transfer, movement);
-      if(collisionResult >= 0) {
-        this.isWalkable(collisionResult); //TODO does nothing?
-      }
+      this.collisionGeometry_800cbe08.handleCollisionAndMovement(sobj.sobjIndex_12e != 0, model.coord2_14.coord.transfer, movement);
 
       //LAB_800def08
       angle = MathHelper.positiveAtan2(movement.z, movement.x);
@@ -1459,7 +1457,7 @@ public class SMap extends EngineState {
   private FlowControl FUN_800df410(final RunningScript<?> script) {
     script.params_20[1] = script.params_20[0];
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
-    return this.FUN_800e0094(script);
+    return this.scriptSetSobjHidden(script);
   }
 
   @ScriptDescription("Something to do with forced movement. Used when Dart is halfway through his jump animation in volcano.")
@@ -1931,13 +1929,13 @@ public class SMap extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Set us_128 on a submap object")
+  @ScriptDescription("Set whether or not a submap object is hidden")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "value", description = "The new value")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "hidden", description = "True to hide, false otherwise")
   @Method(0x800e0094L)
-  private FlowControl FUN_800e0094(final RunningScript<?> a0) {
+  private FlowControl scriptSetSobjHidden(final RunningScript<?> a0) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[a0.params_20[0].get()].innerStruct_00;
-    sobj.s_128 = a0.params_20[1].get();
+    sobj.hidden_128 = a0.params_20[1].get() != 0;
     return FlowControl.CONTINUE;
   }
 
@@ -1948,7 +1946,7 @@ public class SMap extends EngineState {
   private FlowControl FUN_800e00cc(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
-    final int collisionPrimitiveIndex = this.collisionGeometry_800cbe08.FUN_800e9018(model.coord2_14.coord.transfer.x, model.coord2_14.coord.transfer.y, model.coord2_14.coord.transfer.z, false);
+    final int collisionPrimitiveIndex = this.collisionGeometry_800cbe08.getCollisionPrimitiveAtPoint(model.coord2_14.coord.transfer.x, model.coord2_14.coord.transfer.y, model.coord2_14.coord.transfer.z, false);
     script.params_20[1].set(collisionPrimitiveIndex);
     sobj.collidedPrimitiveIndex_16c = collisionPrimitiveIndex;
     return FlowControl.CONTINUE;
@@ -2473,7 +2471,7 @@ public class SMap extends EngineState {
       this.setCameraPos(1, model.coord2_14.coord.transfer);
     }
 
-    if(sobj.s_128 == 0) {
+    if(!sobj.hidden_128) {
       if(sobj.rotationFrames_188 != 0) {
         sobj.rotationFrames_188--;
         model.coord2_14.transforms.rotate.add(sobj.rotationAmount_17c);
@@ -2602,7 +2600,7 @@ public class SMap extends EngineState {
 
   @Method(0x800e123cL)
   private void submapObjectRenderer(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
-    if(sobj.s_128 == 0) {
+    if(!sobj.hidden_128) {
       if(sobj.flatLightingEnabled_1c4) {
         final GsF_LIGHT light = new GsF_LIGHT();
 
@@ -2759,7 +2757,7 @@ public class SMap extends EngineState {
           }
 
           //LAB_800e1c50
-          state.innerStruct_00.s_128 = 0;
+          state.innerStruct_00.hidden_128 = false;
           state.innerStruct_00.disableAnimation_12a = false;
           state.innerStruct_00.animationFinished_12c = false;
           state.innerStruct_00.sobjIndex_12e = i;
@@ -3328,10 +3326,9 @@ public class SMap extends EngineState {
 
   @Method(0x800e3e60L)
   private boolean tickBasicMovement(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
-//    sobj.movementStart.lerp(sobj.movementDestination_138, (sobj.movementTicks_144 + 1.0f) / sobj.movementTicksTotal, sobj.model_00.coord2_14.coord.transfer);
-//    sobj.movementTicks_144++;
-//    return sobj.movementTicks_144 >= sobj.movementTicksTotal;
-    return true;
+    sobj.movementStart.lerp(sobj.movementDestination_138, (sobj.movementTicks_144 + 1.0f) / sobj.movementTicksTotal, sobj.model_00.coord2_14.coord.transfer);
+    sobj.movementTicks_144++;
+    return sobj.movementTicks_144 >= sobj.movementTicksTotal;
   }
 
   /** Used in teleporter just before Melbu */
@@ -3634,10 +3631,12 @@ public class SMap extends EngineState {
   private void renderCollisionDebug() {
     if(enableCollisionDebug) {
       if(this.collisionGeometry_800cbe08.debugObj == null) {
-        final List<Vector3f> offsets = new ArrayList<>();
+        final List<Vector3f> vertices = new ArrayList<>();
 
         final PolyBuilder builder = new PolyBuilder("Collision Model", GL_TRIANGLE_STRIP);
         builder.translucency(Translucency.HALF_B_PLUS_HALF_F);
+
+        final PolyBuilder lines = new PolyBuilder("Collision Normals Probably", GL_LINES);
 
         for(int i = 0; i < this.collisionGeometry_800cbe08.primitiveCount_0c; i++) {
           final CollisionPrimitiveInfo0c primitiveInfo = this.collisionGeometry_800cbe08.primitiveInfo_14[i];
@@ -3650,19 +3649,30 @@ public class SMap extends EngineState {
           for(int vertexIndex = 0; vertexIndex < primitiveInfo.vertexCount_00; vertexIndex++) {
             final Vector3f vertex = this.collisionGeometry_800cbe08.verts_04[IoHelper.readUShort(packet, remainder + 2 + vertexIndex * 2)];
             builder.addVertex(vertex);
-            offsets.add(vertex);
+            vertices.add(vertex);
+
+            final Vector2f normals = new Vector2f(this.collisionGeometry_800cbe08.vertexInfo_18[vertexIndex].x_00, this.collisionGeometry_800cbe08.vertexInfo_18[vertexIndex].z_02)
+              .normalize()
+              .mul(10.0f);
+
+            lines
+              .addVertex(vertex)
+              .addVertex(vertex.add(normals.x, 0.0f, normals.y, new Vector3f()));
           }
         }
 
         this.collisionGeometry_800cbe08.debugObj = builder.build();
-        this.collisionGeometry_800cbe08.debugVertices = offsets.toArray(Vector3f[]::new);
+        this.collisionGeometry_800cbe08.debugLines = lines.build();
+        this.collisionGeometry_800cbe08.debugVertices = vertices.toArray(Vector3f[]::new);
       }
 
-      final MV lw = new MV();
-      GsGetLw(this.collisionGeometry_800cbe08.dobj2Ptr_20.coord2_04, lw);
+      final Vector2f transformed = new Vector2f();
+      final Vector3f middle = new Vector3f();
 
-      final Vector3f worldspace = new Vector3f();
-      final Vector2f screenspace = new Vector2f();
+      final MV lw = new MV();
+      final MV ls = new MV();
+      GsGetLws(this.collisionGeometry_800cbe08.dobj2Ptr_20.coord2_04, lw, ls);
+      GTE.setTransforms(ls);
 
       for(int i = 0; i < this.collisionGeometry_800cbe08.primitiveCount_0c; i++) {
         final CollisionPrimitiveInfo0c primitiveInfo = this.collisionGeometry_800cbe08.primitiveInfo_14[i];
@@ -3670,6 +3680,7 @@ public class SMap extends EngineState {
         final RenderEngine.QueuedModel model = RENDERER.queueModel(this.collisionGeometry_800cbe08.debugObj, lw)
           .vertices(primitiveInfo.vertexInfoOffset_02, primitiveInfo.vertexCount_00)
           .screenspaceOffset(this.screenOffset_800cb568.x + 8, -this.screenOffset_800cb568.y)
+          .depthOffset(-1.0f)
         ;
 
         if(!primitiveInfo.flatEnoughToWalkOn_01) {
@@ -3707,10 +3718,27 @@ public class SMap extends EngineState {
         }
 
         this.submap.applyCollisionDebugColour(i, model);
+
+        if(this.sobjs_800c6880[0].innerStruct_00.collidedPrimitiveIndex_16c != -1) {
+          final CollisionPrimitiveInfo0c collidedPrimitive = this.collisionGeometry_800cbe08.primitiveInfo_14[this.sobjs_800c6880[0].innerStruct_00.collidedPrimitiveIndex_16c];
+
+          RENDERER.queueModel(this.collisionGeometry_800cbe08.debugLines)
+            .colour(1.0f, 0.0f, 0.0f)
+            .screenspaceOffset(this.screenOffset_800cb568.x + 8, -this.screenOffset_800cb568.y)
+            .vertices(collidedPrimitive.vertexInfoOffset_02 * 2, collidedPrimitive.vertexCount_00 * 2)
+            .depthOffset(-1.0f);
+        }
+
+//        this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(i, middle);
+//        this.transformVertex(transformed, middle);
+//        final LodString text = new LodString(Integer.toString(i));
+//        renderText(text, transformed.x + centreScreenX_1f8003dc - textWidth(text) / 2.0f, transformed.y + centreScreenY_1f8003de - 6, TextColour.LIME, 0);
       }
     } else if(this.collisionGeometry_800cbe08.debugObj != null) {
       this.collisionGeometry_800cbe08.debugObj.delete();
       this.collisionGeometry_800cbe08.debugObj = null;
+      this.collisionGeometry_800cbe08.debugLines.delete();
+      this.collisionGeometry_800cbe08.debugLines = null;
       this.collisionGeometry_800cbe08.debugVertices = null;
     }
   }
