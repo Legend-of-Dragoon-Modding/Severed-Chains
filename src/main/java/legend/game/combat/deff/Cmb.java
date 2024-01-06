@@ -4,7 +4,7 @@ import legend.core.MathHelper;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.game.types.Model124;
-import legend.game.types.ModelPartTransforms0c;
+import legend.game.types.Keyframe0c;
 import legend.game.types.TmdAnimationFile;
 import legend.game.unpacker.FileData;
 import org.joml.Math;
@@ -56,8 +56,8 @@ public class Cmb extends TmdAnimationFile {
 
     //LAB_800de270
     for(int i = 0; i < this.modelPartCount_0c; i++) {
-      final ModelPartTransforms0c v1 = this.partTransforms_10[0][i];
-      final ModelPartTransforms0c a1_0 = anim.transforms_08[i];
+      final Keyframe0c v1 = this.partTransforms_10[0][i];
+      final Keyframe0c a1_0 = anim.transforms_08[i];
       a1_0.rotate_00.set(v1.rotate_00);
       a1_0.translate_06.set(v1.translate_06);
     }
@@ -116,8 +116,8 @@ public class Cmb extends TmdAnimationFile {
     if(frameIndex > a1_0) {
       //LAB_800dde88
       for(int partIndex = 0; partIndex < modelPartCount; partIndex++) {
-        final ModelPartTransforms0c fileTransforms = this.partTransforms_10[0][partIndex];
-        final ModelPartTransforms0c modelTransforms = cmbAnim.transforms_08[partIndex];
+        final Keyframe0c fileTransforms = this.partTransforms_10[0][partIndex];
+        final Keyframe0c modelTransforms = cmbAnim.transforms_08[partIndex];
 
         modelTransforms.rotate_00.set(fileTransforms.rotate_00);
         modelTransforms.translate_06.set(fileTransforms.translate_06);
@@ -134,7 +134,7 @@ public class Cmb extends TmdAnimationFile {
       //LAB_800ddf2c
       for(int partIndex = 0; partIndex < modelPartCount; partIndex++) {
         final Cmb.SubTransforms08 subTransforms = this.subTransforms[frameIndex][partIndex];
-        final ModelPartTransforms0c modelTransforms = cmbAnim.transforms_08[partIndex];
+        final Keyframe0c modelTransforms = cmbAnim.transforms_08[partIndex];
 
         modelTransforms.rotate_00.add(subTransforms.rot_01);
         modelTransforms.translate_06.add(subTransforms.trans_05);
@@ -149,7 +149,7 @@ public class Cmb extends TmdAnimationFile {
       //LAB_800de050
       for(int i = 0; i < count; i++) {
         final Cmb.SubTransforms08 subTransforms = this.subTransforms[a1_0][i];
-        final ModelPartTransforms0c modelTransforms = cmbAnim.transforms_08[i];
+        final Keyframe0c modelTransforms = cmbAnim.transforms_08[i];
 
         final MV modelPartMatrix = model.modelParts_00[i].coord2_04.coord;
         modelPartMatrix.rotationZYX(modelTransforms.rotate_00);
@@ -167,7 +167,7 @@ public class Cmb extends TmdAnimationFile {
     } else {
       //LAB_800de164
       for(int i = 0; i < count; i++) {
-        final ModelPartTransforms0c modelTransforms = cmbAnim.transforms_08[i];
+        final Keyframe0c modelTransforms = cmbAnim.transforms_08[i];
         final MV modelPartMatrix = model.modelParts_00[i].coord2_04.coord;
         modelPartMatrix.rotationZYX(modelTransforms.rotate_00);
         modelPartMatrix.transfer.set(modelTransforms.translate_06);

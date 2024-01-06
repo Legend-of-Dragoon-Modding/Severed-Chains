@@ -557,8 +557,8 @@ public final class Scus94491BpeSegment_8002 {
       final GsCOORDINATE2 coord2 = model.modelParts_00[i].coord2_04;
       final Transforms params = coord2.transforms;
 
-      params.rotate.set(model.originalKeyframes_90[model.currentKeyframe_94][i].rotate_00);
-      params.trans.set(model.originalKeyframes_90[model.currentKeyframe_94][i].translate_06);
+      params.rotate.set(model.keyframes_90[model.currentKeyframe_94][i].rotate_00);
+      params.trans.set(model.keyframes_90[model.currentKeyframe_94][i].translate_06);
 
       coord2.coord.rotationZYX(params.rotate);
       coord2.coord.transfer.set(params.trans);
@@ -573,8 +573,9 @@ public final class Scus94491BpeSegment_8002 {
       final Transforms params = coord2.transforms;
 
       final float interpolationScale = (model.subFrameIndex + 1.0f) / (interpolationFrameCount + 1.0f);
-      params.trans.lerp(model.originalKeyframes_90[model.currentKeyframe_94][i].translate_06, interpolationScale, coord2.coord.transfer);
-      coord2.coord.rotationZYX(params.rotate);
+      params.trans.lerp(model.keyframes_90[model.currentKeyframe_94][i].translate_06, interpolationScale, coord2.coord.transfer);
+      params.quat.nlerp(model.keyframes_90[model.currentKeyframe_94][i].quat, interpolationScale, params.quat);
+      coord2.coord.rotation(params.quat);
     }
   }
 
@@ -603,7 +604,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x80021584L)
   public static void loadModelStandardAnimation(final Model124 model, final TmdAnimationFile tmdAnimFile) {
     model.anim_08 = model.new StandardAnim(tmdAnimFile);
-    model.originalKeyframes_90 = tmdAnimFile.partTransforms_10;
+    model.keyframes_90 = tmdAnimFile.partTransforms_10;
     model.currentKeyframe_94 = 0;
     model.partCount_98 = tmdAnimFile.modelPartCount_0c;
     model.totalFrames_9a = tmdAnimFile.totalFrames_0e;

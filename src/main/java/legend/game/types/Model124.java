@@ -23,7 +23,7 @@ public class Model124 {
 //  public final Transforms transforms_64 = new Transforms(); // Use coord2_14.transforms
 //  public Tmd tmd_8c;
   /** [keyframe][part] */
-  public ModelPartTransforms0c[][] originalKeyframes_90;
+  public Keyframe0c[][] keyframes_90;
   public int currentKeyframe_94;
 
   /** short */
@@ -108,12 +108,12 @@ public class Model124 {
   public class CmbAnim extends AnimType {
     public int animationTicks_00;
     public final Cmb cmb_04;
-    public final ModelPartTransforms0c[] transforms_08;
+    public final Keyframe0c[] transforms_08;
 
     public CmbAnim(final Cmb cmb, final int count) {
       this.cmb_04 = cmb;
-      this.transforms_08 = new ModelPartTransforms0c[count];
-      Arrays.setAll(this.transforms_08, i -> new ModelPartTransforms0c());
+      this.transforms_08 = new Keyframe0c[count];
+      Arrays.setAll(this.transforms_08, i -> new Keyframe0c());
     }
 
     @Override
@@ -139,7 +139,7 @@ public class Model124 {
     this.modelParts_00 = other.modelParts_00;
     this.anim_08 = other.anim_08;
     this.coord2_14.set(other.coord2_14);
-    this.originalKeyframes_90 = other.originalKeyframes_90;
+    this.keyframes_90 = other.keyframes_90;
     this.currentKeyframe_94 = other.currentKeyframe_94;
     this.partCount_98 = other.partCount_98;
     this.totalFrames_9a = other.totalFrames_9a;
