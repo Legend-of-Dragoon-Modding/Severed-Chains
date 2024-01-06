@@ -1185,11 +1185,12 @@ public class SMap extends EngineState {
     sobj.us_170 = 1;
 
     if(sobj.movementTicks_144 != 0) {
-      // GH#777: These are load-bearing casts
+      // GH#777: There were formerly casts here to fix this issue, but they caused problems with some model
+      //  animation positioning, and collision fixes seem to have also resolved GH#777 without the casts.
       sobj.movementStep_148.set(
-        (float)(int)(sobj.movementDestination_138.x - model.coord2_14.coord.transfer.x) / sobj.movementTicks_144,
-        (float)(int)(sobj.movementDestination_138.y - model.coord2_14.coord.transfer.y) / sobj.movementTicks_144,
-        (float)(int)(sobj.movementDestination_138.z - model.coord2_14.coord.transfer.z) / sobj.movementTicks_144
+        (sobj.movementDestination_138.x - model.coord2_14.coord.transfer.x) / sobj.movementTicks_144,
+        (sobj.movementDestination_138.y - model.coord2_14.coord.transfer.y) / sobj.movementTicks_144,
+        (sobj.movementDestination_138.z - model.coord2_14.coord.transfer.z) / sobj.movementTicks_144
       );
     } else {
       sobj.movementStep_148.zero();
