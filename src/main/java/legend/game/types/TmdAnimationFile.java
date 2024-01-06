@@ -75,7 +75,7 @@ public class TmdAnimationFile extends Anim {
 
     //LAB_800dd5f0
     model.remainingFrames_9e = totalFrames - frame - 1;
-    model.interpolationFrameIndex = 0;
+    model.subFrameIndex = 0;
 
     if(model.remainingFrames_9e == 0) {
       model.animationState_9c = 0;

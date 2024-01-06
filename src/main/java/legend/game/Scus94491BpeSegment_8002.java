@@ -381,7 +381,7 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80020be8
     //LAB_80020bf0
     // Only apply texture animations for the keyframe of the middle interpolation frame
-    if(model.interpolationFrameIndex == 0 || model.interpolationFrameIndex == Math.ceil(interpolationFrameCount / 2.0f)) {
+    if(model.subFrameIndex == 0 || model.subFrameIndex == Math.ceil(interpolationFrameCount / 2.0f)) {
       if(model.smallerStructPtr_a4 != null) {
         //LAB_800da138
         for(int i = 0; i < 4; i++) {
@@ -419,7 +419,7 @@ public final class Scus94491BpeSegment_8002 {
         model.remainingFrames_9e = model.totalFrames_9a;
       }
 
-      model.interpolationFrameIndex = 0;
+      model.subFrameIndex = 0;
 
       //LAB_80020c7c
       model.animationState_9c = 1;
@@ -429,22 +429,15 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80020c90
     final ModelPartTransforms0c[][] transforms = model.partTransforms_94;
 
-    if(model.interpolationFrameIndex != interpolationFrameCount && !model.disableInterpolation_a2) { // Interpolation frame
-      if(model.ub_a3 == 0) { // Only set to 1 sometimes on submaps?
+    if(model.subFrameIndex != interpolationFrameCount) { // Interpolation frame
+      if(model.ub_a3 == 0 && !model.disableInterpolation_a2) { // Only set to 1 sometimes on submaps?
         //LAB_80020ce0
         for(int i = 0; i < model.modelParts_00.length; i++) {
           final GsCOORDINATE2 coord2 = model.modelParts_00[i].coord2_04;
           final Transforms params = coord2.transforms;
 
-          final float interpolationScale = (model.interpolationFrameIndex + 1.0f) / (interpolationFrameCount + 1.0f);
-
-          params.trans.set(
-            Math.lerp(params.trans.x, transforms[0][i].translate_06.x, interpolationScale),
-            Math.lerp(params.trans.y, transforms[0][i].translate_06.y, interpolationScale),
-            Math.lerp(params.trans.z, transforms[0][i].translate_06.z, interpolationScale)
-          );
-
-          coord2.coord.transfer.set(params.trans);
+          final float interpolationScale = (model.subFrameIndex + 1.0f) / (interpolationFrameCount + 1.0f);
+          params.trans.lerp(transforms[0][i].translate_06, interpolationScale, coord2.coord.transfer);
           coord2.coord.rotationZYX(params.rotate);
         }
 
@@ -458,18 +451,13 @@ public final class Scus94491BpeSegment_8002 {
 
           params.rotate.set(transforms[0][i].rotate_00);
           params.trans.set(transforms[0][i].translate_06);
-          coord2.coord.transfer.set(params.trans);
+
           coord2.coord.rotationZYX(params.rotate);
+          coord2.coord.transfer.set(params.trans);
         }
 
         //LAB_80020dfc
       }
-
-      if(model.interpolationFrameIndex == 0) {
-        model.remainingFrames_9e--;
-      }
-
-      model.interpolationFrameIndex++;
 
       //LAB_80020e00
     } else {
@@ -480,20 +468,27 @@ public final class Scus94491BpeSegment_8002 {
         final Transforms params = coord2.transforms;
 
         params.rotate.set(transforms[0][i].rotate_00);
-        coord2.coord.rotationZYX(params.rotate);
-
         params.trans.set(transforms[0][i].translate_06);
+
+        coord2.coord.rotationZYX(params.rotate);
         coord2.coord.transfer.set(params.trans);
       }
 
       //LAB_80020e94
       model.partTransforms_94 = Arrays.copyOfRange(transforms, 1, transforms.length);
-      model.interpolationFrameIndex = 0;
+    }
+
+    if(model.subFrameIndex == interpolationFrameCount) {
       model.remainingFrames_9e--;
+      model.subFrameIndex = 0;
+    } else if(model.subFrameIndex == interpolationFrameCount / 2) {
+      model.remainingFrames_9e--;
+      model.subFrameIndex++;
+    } else {
+      model.subFrameIndex++;
     }
 
     //LAB_80020e98
-
     //LAB_80020ea8
   }
 
@@ -690,7 +685,7 @@ public final class Scus94491BpeSegment_8002 {
       model.remainingFrames_9e = model.totalFrames_9a;
     }
 
-    model.interpolationFrameIndex = 0;
+    model.subFrameIndex = 0;
 
     //LAB_80021608
     model.animationState_9c = 1;

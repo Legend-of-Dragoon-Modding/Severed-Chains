@@ -52,7 +52,7 @@ public class Cmb extends TmdAnimationFile {
     model.totalFrames_9a = this.totalFrames_0e * 2;
     model.animationState_9c = 1;
     model.remainingFrames_9e = this.totalFrames_0e * 2;
-    model.interpolationFrameIndex = 0;
+    model.subFrameIndex = 0;
 
     //LAB_800de270
     for(int i = 0; i < this.modelPartCount_0c; i++) {
@@ -110,7 +110,7 @@ public class Cmb extends TmdAnimationFile {
       }
     }
 
-    model.interpolationFrameIndex = 0;
+    model.subFrameIndex = 0;
 
     //LAB_800dde60
     if(frameIndex > a1_0) {

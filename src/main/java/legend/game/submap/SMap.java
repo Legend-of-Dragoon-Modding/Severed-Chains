@@ -4794,7 +4794,7 @@ public class SMap extends EngineState {
         this.renderSmapModel(this.tmdDustModel_800d4d40);
 
         this.tmdDustModel_800d4d40.remainingFrames_9e = 0;
-        this.tmdDustModel_800d4d40.interpolationFrameIndex = 0;
+        this.tmdDustModel_800d4d40.subFrameIndex = 0;
 
         this.tmdDustModel_800d4d40.modelParts_00[0].coord2_04.flg--;
         inst.tick_00++;

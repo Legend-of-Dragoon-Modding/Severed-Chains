@@ -44,7 +44,7 @@ public class Model124 {
   public UvAdjustmentMetrics14 uvAdjustments_9d = UvAdjustmentMetrics14.NONE;
   /** short */
   public int remainingFrames_9e;
-  public int interpolationFrameIndex;
+  public int subFrameIndex;
   /** short */
   public int zOffset_a0;
   /** Always 0 except sometimes on submaps (ubyte) */
