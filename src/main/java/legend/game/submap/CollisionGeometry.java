@@ -243,7 +243,7 @@ public class CollisionGeometry {
 
       // This method did not check the Y value at all, meaning if you had collision primitives on
       // top of each other (like in Kazas) you could get stuck on one at a very different depth
-      if((!checkSteepness || collisionInfo.flatEnoughToWalkOn_01) && Math.abs(middle.y - y) < 50.0f) {
+      if((!checkSteepness || collisionInfo.flatEnoughToWalkOn_01) && Math.abs(middle.y - y) < 150.0f) {
         //LAB_800e9078
         //LAB_800e90a0
         boolean found = false;
