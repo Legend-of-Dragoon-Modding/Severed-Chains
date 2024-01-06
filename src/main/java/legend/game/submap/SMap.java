@@ -1217,11 +1217,11 @@ public class SMap extends EngineState {
     sobj.us_170 = 1;
 
     if(sobj.movementTicks_144 != 0) {
-      // GH#777: These are load-bearing casts
+      // GH#777: These are load-bearing casts // NOTE: no longer needed due to collision code improvements
       sobj.movementStep_148.set(
-        (float)(int)(sobj.movementDestination_138.x - model.coord2_14.coord.transfer.x) / sobj.movementTicks_144,
-        (float)(int)(sobj.movementDestination_138.y - model.coord2_14.coord.transfer.y) / sobj.movementTicks_144,
-        (float)(int)(sobj.movementDestination_138.z - model.coord2_14.coord.transfer.z) / sobj.movementTicks_144
+        (sobj.movementDestination_138.x - model.coord2_14.coord.transfer.x) / sobj.movementTicks_144,
+        (sobj.movementDestination_138.y - model.coord2_14.coord.transfer.y) / sobj.movementTicks_144,
+        (sobj.movementDestination_138.z - model.coord2_14.coord.transfer.z) / sobj.movementTicks_144
       );
     } else {
       sobj.movementStep_148.zero();
@@ -1414,12 +1414,25 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The new Y coordinate")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The new Z coordinate")
   @Method(0x800df258L)
-  private FlowControl scriptSetModelPosition(final RunningScript<?> script) {
+  private FlowControl scriptSetModelPosition(final RunningScript<SubmapObject210> script) {
+    final int x = script.params_20[1].get();
+    final int y = script.params_20[2].get();
+    final int z = script.params_20[3].get();
+
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
-    model.coord2_14.coord.transfer.x = script.params_20[1].get();
-    model.coord2_14.coord.transfer.y = script.params_20[2].get();
-    model.coord2_14.coord.transfer.z = script.params_20[3].get();
+
+    if(sobj.lastMovementTick < this.smapTicks_800c6ae0 - 2 / vsyncMode_8007a3b8) {
+      model.coord2_14.coord.transfer.set(x, y, z);
+    } else {
+      sobj.movementTicksTotal = 2 / vsyncMode_8007a3b8;
+      sobj.movementTicks_144 = 0;
+      sobj.movementStart.set(model.coord2_14.coord.transfer);
+      sobj.movementDestination_138.set(x, y, z);
+      script.scriptState_04.setTempTicker(this::tickBasicMovement);
+    }
+
+    sobj.lastMovementTick = this.smapTicks_800c6ae0;
     sobj.us_170 = 0;
     return FlowControl.CONTINUE;
   }
@@ -1445,10 +1458,25 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The new Y rotation (PSX degrees)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The new Z rotation (PSX degrees)")
   @Method(0x800df314L)
-  private FlowControl scriptSetModelRotate(final RunningScript<?> script) {
+  private FlowControl scriptSetModelRotate(final RunningScript<SubmapObject210> script) {
+    final float x = MathHelper.psxDegToRad(script.params_20[1].get());
+    final float y = MathHelper.psxDegToRad(script.params_20[2].get());
+    final float z = MathHelper.psxDegToRad(script.params_20[3].get());
+
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
-    model.coord2_14.transforms.rotate.set(MathHelper.psxDegToRad(script.params_20[1].get()), MathHelper.psxDegToRad(script.params_20[2].get()), MathHelper.psxDegToRad(script.params_20[3].get()));
+
+    if(sobj.lastRotationTick < this.smapTicks_800c6ae0 - 2 / vsyncMode_8007a3b8) {
+      model.coord2_14.transforms.rotate.set(x, y, z);
+    } else {
+      sobj.rotationTicksTotal = 2 / vsyncMode_8007a3b8;
+      sobj.rotationTicks = 0;
+      sobj.rotationStart.set(model.coord2_14.transforms.rotate);
+      sobj.rotationDestination.set(x, y, z);
+      script.scriptState_04.setTempTicker(this::tickBasicMovement);
+    }
+
+    sobj.lastRotationTick = this.smapTicks_800c6ae0;
     sobj.rotationFrames_188 = 0;
     return FlowControl.CONTINUE;
   }
@@ -1473,7 +1501,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y position to face")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z position to face")
   @Method(0x800df3d0L)
-  private FlowControl scriptSelfFacePoint(final RunningScript<?> script) {
+  private FlowControl scriptSelfFacePoint(final RunningScript<SubmapObject210> script) {
     script.params_20[3] = script.params_20[2];
     script.params_20[2] = script.params_20[1];
     script.params_20[1] = script.params_20[0];
@@ -1944,7 +1972,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "The Y position to face (unused)")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The Z position to face")
   @Method(0x800e0018L)
-  private FlowControl scriptFacePoint(final RunningScript<?> script) {
+  private FlowControl scriptFacePoint(final RunningScript<SubmapObject210> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
@@ -1952,7 +1980,19 @@ public class SMap extends EngineState {
     final float deltaZ = script.params_20[3].get() - model.coord2_14.coord.transfer.z;
 
     if(deltaX != 0.0f || deltaZ != 0.0f) {
-      model.coord2_14.transforms.rotate.y = MathHelper.positiveAtan2(deltaZ, deltaX);
+      final float destAngle = MathHelper.positiveAtan2(deltaZ, deltaX);
+
+      if(sobj.lastRotationTick < this.smapTicks_800c6ae0 - 2 / vsyncMode_8007a3b8 || Math.abs(model.coord2_14.transforms.rotate.y - destAngle) > MathHelper.PI / 6.0f) {
+        model.coord2_14.transforms.rotate.y = destAngle;
+      } else {
+        sobj.rotationTicksTotal = 2 / vsyncMode_8007a3b8;
+        sobj.rotationTicks = 0;
+        sobj.rotationStart.set(model.coord2_14.transforms.rotate);
+        sobj.rotationDestination.set(model.coord2_14.transforms.rotate).y = destAngle;
+        script.scriptState_04.setTempTicker(this::tickBasicMovement);
+      }
+
+      sobj.lastRotationTick = this.smapTicks_800c6ae0;
     }
 
     sobj.rotationFrames_188 = 0;
@@ -3358,9 +3398,17 @@ public class SMap extends EngineState {
 
   @Method(0x800e3e60L)
   private boolean tickBasicMovement(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
-    sobj.movementStart.lerp(sobj.movementDestination_138, (sobj.movementTicks_144 + 1.0f) / sobj.movementTicksTotal, sobj.model_00.coord2_14.coord.transfer);
-    sobj.movementTicks_144++;
-    return sobj.movementTicks_144 >= sobj.movementTicksTotal;
+    if(sobj.movementTicks_144 < sobj.movementTicksTotal) {
+      sobj.movementStart.lerp(sobj.movementDestination_138, (sobj.movementTicks_144 + 1.0f) / sobj.movementTicksTotal, sobj.model_00.coord2_14.coord.transfer);
+      sobj.movementTicks_144++;
+    }
+
+    if(sobj.rotationTicks < sobj.rotationTicksTotal) {
+      sobj.rotationStart.lerp(sobj.rotationDestination, (sobj.rotationTicks + 1.0f) / sobj.rotationTicksTotal, sobj.model_00.coord2_14.transforms.rotate);
+      sobj.rotationTicks++;
+    }
+
+    return sobj.movementTicks_144 >= sobj.movementTicksTotal && sobj.rotationTicks >= sobj.rotationTicksTotal;
   }
 
   /** Used in teleporter just before Melbu */

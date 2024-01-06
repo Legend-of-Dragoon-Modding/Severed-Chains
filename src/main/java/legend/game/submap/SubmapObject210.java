@@ -21,6 +21,14 @@ public class SubmapObject210 {
   /** Number of frames for forced movement */
   public int movementTicks_144;
   public int movementTicksTotal;
+  public int lastMovementTick = Integer.MIN_VALUE;
+  public final Vector3f rotationStart = new Vector3f();
+  /** Forced movement destination */
+  public final Vector3f rotationDestination = new Vector3f();
+  /** Number of frames for forced movement */
+  public int rotationTicks;
+  public int rotationTicksTotal;
+  public int lastRotationTick = Integer.MIN_VALUE;
   /** Forced movement step */
   public final Vector3f movementStep_148 = new Vector3f();
 //  /** Same as {@link #movementStep_148} but .16 */
