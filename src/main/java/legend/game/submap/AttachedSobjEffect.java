@@ -227,6 +227,7 @@ public class AttachedSobjEffect {
           }
 
           //LAB_800ef21c
+          inst.transfer.set(model.coord2_14.coord.transfer);
         }
       }
 
@@ -303,8 +304,8 @@ public class AttachedSobjEffect {
     }
 
     //LAB_800ef750
-    data.tick_00++;
     data.transfer_1e.set(model.coord2_14.coord.transfer);
+    data.tick_00++;
   }
 
   @Method(0x800f0644L)
@@ -390,7 +391,6 @@ public class AttachedSobjEffect {
           .backgroundColour(GTE.backgroundColour);
 
         this.tmdDustModel_800d4d40.remainingFrames_9e = 0;
-        this.tmdDustModel_800d4d40.interpolationFrameIndex = 0;
 
         this.tmdDustModel_800d4d40.modelParts_00[0].coord2_04.flg--;
         inst.tick_00++;
