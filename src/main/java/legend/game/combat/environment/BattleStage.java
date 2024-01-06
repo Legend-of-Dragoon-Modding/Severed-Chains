@@ -5,7 +5,7 @@ import legend.core.gte.ModelPart10;
 import legend.core.gte.Tmd;
 import legend.core.gte.Transforms;
 import legend.game.types.CContainerSubfile2;
-import legend.game.types.ModelPartTransforms0c;
+import legend.game.types.Keyframe0c;
 
 public class BattleStage {
   public ModelPart10[] dobj2s_00;
@@ -16,9 +16,9 @@ public class BattleStage {
   public final Transforms param_5a8 = new Transforms();
   public Tmd tmd_5d0;
   /** [keyframe][part] */
-  public ModelPartTransforms0c[][] rotTrans_5d4;
+  public Keyframe0c[][] rotTrans_5d4;
   /** [keyframe][part] */
-  public ModelPartTransforms0c[][] rotTrans_5d8;
+  public Keyframe0c[][] rotTrans_5d8;
   /** short */
   public int partCount_5dc;
   /** short */

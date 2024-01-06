@@ -114,7 +114,7 @@ import legend.game.types.CharacterData2c;
 import legend.game.types.LodString;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
-import legend.game.types.ModelPartTransforms0c;
+import legend.game.types.Keyframe0c;
 import legend.game.types.SpellStats0c;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
@@ -6500,7 +6500,7 @@ public class Battle extends EngineState {
     model.coord2_14.set(a1.coord2_558);
     model.coord2_14.transforms.set(a1.param_5a8);
 
-    model.originalKeyframes_90 = a1.rotTrans_5d4;
+    model.keyframes_90 = a1.rotTrans_5d4;
     model.currentKeyframe_94 = 0;
     model.partCount_98 = a1.partCount_5dc;
     model.totalFrames_9a = a1.totalFrames_5de;
@@ -7296,7 +7296,7 @@ public class Battle extends EngineState {
   public void applyStagePartAnimations(final BattleStage stage) {
     //LAB_800ec688
     for(int i = 0; i < stage.partCount_5dc; i++) {
-      final ModelPartTransforms0c rotTrans = stage.rotTrans_5d8[0][i];
+      final Keyframe0c rotTrans = stage.rotTrans_5d8[0][i];
       final GsCOORDINATE2 coord2 = stage.dobj2s_00[i].coord2_04;
       final Transforms param = coord2.transforms;
 
