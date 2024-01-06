@@ -1,5 +1,6 @@
 package legend.game.submap;
 
+import legend.core.gte.MV;
 import legend.game.PoolList;
 import org.joml.Vector3f;
 
@@ -8,6 +9,7 @@ import org.joml.Vector3f;
  */
 public class TmdTrailParticle20 implements PoolList.Usable {
   private boolean used;
+  public MV transforms = new MV();
 
   public int tick_00;
   public float stepSize_04;

@@ -66,7 +66,6 @@ public class AttachedSobjEffect {
   private int lawPodTrailCount_800f9e78;
   private final LawPodTrailData18[] lawPodTrailsData_800f9e7c = new LawPodTrailData18[8];
 
-  private final MV transforms = new MV();
   private Obj tmdDust;
   private MeshObj footprints;
   private MeshObj quadDust;
@@ -382,9 +381,9 @@ public class AttachedSobjEffect {
         applyModelRotationAndScale(this.tmdDustModel_800d4d40);
         zOffset_1f8003e8 = this.tmdDustModel_800d4d40.zOffset_a0;
         tmdGp0Tpage_1f8003ec = this.tmdDustModel_800d4d40.tpage_108;
-        GsGetLw(this.tmdDustModel_800d4d40.modelParts_00[0].coord2_04, this.transforms);
+        GsGetLw(this.tmdDustModel_800d4d40.modelParts_00[0].coord2_04, inst.transforms);
 
-        RENDERER.queueModel(this.tmdDust, this.transforms)
+        RENDERER.queueModel(this.tmdDust, inst.transforms)
           .screenspaceOffset(screenOffsetX + 8, -screenOffsetY)
           .lightDirection(lightDirectionMatrix_800c34e8)
           .lightColour(lightColourMatrix_800c3508)
