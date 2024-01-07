@@ -68,7 +68,7 @@ public class AttachedSobjEffect {
 
     this.footprintTrail.clear();
     if(this.footprints == null) {
-      final PolyBuilder builder = new PolyBuilder("Footprints", GL_TRIANGLE_STRIP)
+      this.footprints = new PolyBuilder("Footprints", GL_TRIANGLE_STRIP)
         .bpp(Bpp.BITS_4)
         .translucency(Translucency.B_MINUS_F)
         .clut(992, 472)
@@ -112,13 +112,13 @@ public class AttachedSobjEffect {
         .addVertex( 10.0f, 0.0f,  22.0f)
         .clutOverride(960, 464)
         .uv(24, 88)
-        .monochrome(1.0f);
-      this.footprints = builder.build();
+        .monochrome(1.0f)
+        .build();
     }
 
     this.orthoDustTrail_800d4e68.clear();
     if(this.quadDust == null) {
-      final QuadBuilder builder = new QuadBuilder("DustQuad")
+      this.quadDust = new QuadBuilder("DustQuad")
         .bpp(Bpp.BITS_4)
         .translucency(Translucency.B_PLUS_F)
         .clut(960, 465)
@@ -126,8 +126,8 @@ public class AttachedSobjEffect {
         .monochrome(1.0f)
         .uv(64, 0)
         .uvSize(32, 32)
-        .posSize(1.0f, 1.0f);
-      this.quadDust = builder.build();
+        .posSize(1.0f, 1.0f)
+        .build();
     }
 
     this.lawPodTrail_800d4f90.clear();
