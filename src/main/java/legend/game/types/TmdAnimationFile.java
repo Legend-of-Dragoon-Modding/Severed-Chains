@@ -5,7 +5,7 @@ import legend.game.combat.deff.Anim;
 import legend.game.unpacker.FileData;
 
 import static legend.game.Scus94491BpeSegment_8002.applyInterpolationFrame;
-import static legend.game.Scus94491BpeSegment_8002.applyModelPartTransforms;
+import static legend.game.Scus94491BpeSegment_8002.applyKeyframe;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 
 public class TmdAnimationFile extends Anim {
@@ -54,7 +54,7 @@ public class TmdAnimationFile extends Anim {
       totalFrames = model.totalFrames_9a / 2;
       frame = animationTicks % totalFrames;
       model.currentKeyframe_94 = frame;
-      applyModelPartTransforms(model);
+      applyKeyframe(model);
     } else {
       //LAB_800dd568
       totalFrames = model.totalFrames_9a;
@@ -62,7 +62,7 @@ public class TmdAnimationFile extends Anim {
       model.currentKeyframe_94 = frame / 2;
 
       if((frame & 0x1) == 0 || frame == model.totalFrames_9a - 1 || model.ub_a3 != 0) {
-        applyModelPartTransforms(model);
+        applyKeyframe(model);
       } else {
         applyInterpolationFrame(model, 2);
       }

@@ -415,7 +415,7 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80020c90
     if(model.subFrameIndex == framesPerKeyframe - 1) {
-      applyModelPartTransforms(model);
+      applyKeyframe(model);
       model.currentKeyframe_94++;
       model.remainingFrames_9e--;
       model.subFrameIndex = 0;
@@ -536,7 +536,7 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x800212d8L)
-  public static void applyModelPartTransforms(final Model124 model) {
+  public static void applyKeyframe(final Model124 model) {
     //LAB_80021320
     for(int i = 0; i < model.modelParts_00.length; i++) {
       final GsCOORDINATE2 coord2 = model.modelParts_00[i].coord2_04;
@@ -595,7 +595,7 @@ public final class Scus94491BpeSegment_8002 {
     model.totalFrames_9a = tmdAnimFile.totalFrames_0e;
     model.animationState_9c = 0;
 
-    applyModelPartTransforms(model);
+    applyKeyframe(model);
 
     model.remainingFrames_9e = model.totalFrames_9a / 2;
     model.subFrameIndex = 0;
