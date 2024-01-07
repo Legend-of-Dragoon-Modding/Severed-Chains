@@ -373,14 +373,14 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80020b98L)
   public static void animateModel(final Model124 model) {
-    animateModel(model, 1);
+    animateModel(model, 2);
   }
 
-  public static void animateModel(final Model124 model, final int interpolationFrameCount) {
+  public static void animateModel(final Model124 model, final int framesPerKeyframe) {
     //LAB_80020be8
     //LAB_80020bf0
     // Only apply texture animations for the keyframe of the middle interpolation frame
-    if(model.subFrameIndex == 0 || model.subFrameIndex == interpolationFrameCount / 2) {
+    if(model.subFrameIndex == 0 || model.subFrameIndex == framesPerKeyframe / 2) {
       if(model.smallerStructPtr_a4 != null) {
         //LAB_800da138
         for(int i = 0; i < 4; i++) {
@@ -407,35 +407,20 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80020c3c
     if(model.animationState_9c == 0) {
-      if(model.disableInterpolation_a2) {
-        //LAB_80020c68
-        model.remainingFrames_9e = model.totalFrames_9a / 2;
-      } else {
-        model.remainingFrames_9e = model.totalFrames_9a;
-      }
-
-      model.subFrameIndex = 0;
-
-      //LAB_80020c7c
       model.animationState_9c = 1;
+      model.remainingFrames_9e = model.totalFrames_9a / 2;
       model.currentKeyframe_94 = 0;
+      model.subFrameIndex = 0;
     }
 
     //LAB_80020c90
-    if(model.subFrameIndex == interpolationFrameCount || model.disableInterpolation_a2 || model.ub_a3 != 0) {
+    if(model.subFrameIndex == framesPerKeyframe - 1) {
       applyModelPartTransforms(model);
-    } else {
-      applyInterpolationFrame(model, interpolationFrameCount);
-    }
-
-    if(model.subFrameIndex == interpolationFrameCount) {
       model.currentKeyframe_94++;
       model.remainingFrames_9e--;
       model.subFrameIndex = 0;
-    } else if(model.subFrameIndex == interpolationFrameCount / 2) {
-      model.remainingFrames_9e--;
-      model.subFrameIndex++;
     } else {
+      applyInterpolationFrame(model, framesPerKeyframe);
       model.subFrameIndex++;
     }
 
@@ -566,13 +551,13 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x800213c4L)
-  public static void applyInterpolationFrame(final Model124 model, final int interpolationFrameCount) {
+  public static void applyInterpolationFrame(final Model124 model, final int framesPerKeyframe) {
     //LAB_80021404
     for(int i = 0; i < model.modelParts_00.length; i++) {
       final GsCOORDINATE2 coord2 = model.modelParts_00[i].coord2_04;
       final Transforms params = coord2.transforms;
 
-      final float interpolationScale = (model.subFrameIndex + 1.0f) / (interpolationFrameCount + 1.0f);
+      final float interpolationScale = (model.subFrameIndex + 1.0f) / framesPerKeyframe;
       params.trans.lerp(model.keyframes_90[model.currentKeyframe_94][i].translate_06, interpolationScale, coord2.coord.transfer);
       params.quat.nlerp(model.keyframes_90[model.currentKeyframe_94][i].quat, interpolationScale, params.quat);
       coord2.coord.rotation(params.quat);
@@ -612,16 +597,8 @@ public final class Scus94491BpeSegment_8002 {
 
     applyModelPartTransforms(model);
 
-    if(model.disableInterpolation_a2) {
-      //LAB_800215e8
-      model.remainingFrames_9e = model.totalFrames_9a / 2;
-    } else {
-      model.remainingFrames_9e = model.totalFrames_9a;
-    }
-
+    model.remainingFrames_9e = model.totalFrames_9a / 2;
     model.subFrameIndex = 0;
-
-    //LAB_80021608
     model.animationState_9c = 1;
     model.currentKeyframe_94 = 0;
   }

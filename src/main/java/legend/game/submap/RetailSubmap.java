@@ -1165,9 +1165,8 @@ public class RetailSubmap extends Submap {
     this.submapModel_800d4bf8.coord2_14.coord.transfer.zero();
     this.submapModel_800d4bf8.coord2_14.transforms.rotate.zero();
 
-    final int interpolationFrameCount = (2 - vsyncMode_8007a3b8) * 2 + 1;
     applyModelRotationAndScale(this.submapModel_800d4bf8);
-    animateModel(this.submapModel_800d4bf8, interpolationFrameCount);
+    animateModel(this.submapModel_800d4bf8, 4 / vsyncMode_8007a3b8);
     this.renderSubmapModel(this.submapModel_800d4bf8, matrix);
   }
 

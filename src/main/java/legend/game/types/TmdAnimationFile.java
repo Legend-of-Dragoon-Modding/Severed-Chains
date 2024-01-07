@@ -61,10 +61,10 @@ public class TmdAnimationFile extends Anim {
       frame = animationTicks % totalFrames;
       model.currentKeyframe_94 = frame / 2;
 
-      if((frame & 0x1) != 0 && frame != model.totalFrames_9a - 1 && model.ub_a3 == 0) { // Interpolation frame
-        applyInterpolationFrame(model, 1);
-      } else {
+      if((frame & 0x1) == 0 || frame == model.totalFrames_9a - 1 || model.ub_a3 != 0) {
         applyModelPartTransforms(model);
+      } else {
+        applyInterpolationFrame(model, 2);
       }
     }
 

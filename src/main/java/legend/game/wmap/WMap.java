@@ -2995,7 +2995,7 @@ public class WMap extends EngineState {
 
     //LAB_800e02e0
     applyModelRotationAndScale(modelAndAnimData.models_0c[modelAndAnimData.modelIndex_1e4]);
-    animateModel(modelAndAnimData.models_0c[modelAndAnimData.modelIndex_1e4], 4 - vsyncMode_8007a3b8);
+    animateModel(modelAndAnimData.models_0c[modelAndAnimData.modelIndex_1e4], 4 / vsyncMode_8007a3b8);
 
     final int modelIndex = modelAndAnimData.modelIndex_1e4;
     if(modelIndex == 0) {

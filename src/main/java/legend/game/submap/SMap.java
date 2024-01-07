@@ -2554,8 +2554,7 @@ public class SMap extends EngineState {
       applyModelRotationAndScale(model);
 
       if(!sobj.disableAnimation_12a) {
-        final int interpolationFrameCount = (2 - vsyncMode_8007a3b8) * 2 + 1;
-        animateModel(model, interpolationFrameCount);
+        animateModel(model, 4 / vsyncMode_8007a3b8);
 
         if(sobj.animationFinished_12c && (sobj.flags_190 & 0x2000_0000) != 0) {
           sobj.animIndex_132 = 0;
@@ -5851,8 +5850,7 @@ public class SMap extends EngineState {
     model.coord2_14.coord.transfer.set(this.savePointPos_800d5622);
 
     applyModelRotationAndScale(model);
-    final int interpolationFrameCount = (2 - vsyncMode_8007a3b8) * 2 + 1;
-    animateModel(model, interpolationFrameCount);
+    animateModel(model, 4 / vsyncMode_8007a3b8);
     this.renderSmapModel(model);
 
     GPU.queueCommand(1, new GpuCommandCopyVramToVram(984, 288 + this._800f9ea0, 992, 288, 8, 64 - this._800f9ea0));

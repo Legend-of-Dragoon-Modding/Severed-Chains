@@ -91,15 +91,15 @@ public class Cmb extends TmdAnimationFile {
     final int isInterpolationFrame;
     if(model.disableInterpolation_a2) {
       isInterpolationFrame = 0;
-      a1_0 = (animationTicks << 1) % model.totalFrames_9a >>> 1;
-      frameIndex = (cmbAnim.animationTicks_00 << 1) % model.totalFrames_9a >> 1;
-      model.remainingFrames_9e = (model.totalFrames_9a >> 1) - a1_0 - 1;
+      a1_0 = (animationTicks * 2) % model.totalFrames_9a / 2;
+      frameIndex = (cmbAnim.animationTicks_00 * 2) % model.totalFrames_9a / 2;
+      model.remainingFrames_9e = model.totalFrames_9a / 2 - a1_0 - 1;
     } else {
       //LAB_800dde1c
       // This modulo has to be unsigned due to a bug causing the number of ticks
       // to go negative. This matches the retail behaviour (it uses divu).
       final int frame = (int)((animationTicks & 0xffff_ffffL) % model.totalFrames_9a);
-      isInterpolationFrame = (animationTicks & 0x1) << 11; // Dunno why this is shifted, makes no difference
+      isInterpolationFrame = animationTicks & 0x1;
       a1_0 = frame >>> 1;
       frameIndex = cmbAnim.animationTicks_00 % model.totalFrames_9a >> 1;
       model.remainingFrames_9e = model.totalFrames_9a - frame - 1;
