@@ -6,12 +6,13 @@ import legend.core.memory.Method;
 import legend.game.tim.Tim;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
-import org.joml.Vector2i;
+import org.joml.Vector2f;
 
 import java.util.List;
 
 import static legend.core.GameEngine.GPU;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
+import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 
 public class ChapterTitleCard {
   private enum ChapterTitleState {
@@ -24,13 +25,13 @@ public class ChapterTitleCard {
 
   private ChapterTitleState chapterTitleState_800c6708;
   private int chapterTitleAnimationTicksRemaining_800c670a;
-  private final Vector2i chapterTitleDropShadowOffset_800c670c = new Vector2i();
+  private final Vector2f chapterTitleDropShadowOffset_800c670c = new Vector2f();
   private List<FileData> chapterTitleCardMrg_800c6710;
-  private final Vector2i chapterTitleNumberOffset_800c6714 = new Vector2i();
-  private final Vector2i chapterTitleNameOffset_800c671c = new Vector2i();
+  private final Vector2f chapterTitleNumberOffset_800c6714 = new Vector2f();
+  private final Vector2f chapterTitleNameOffset_800c671c = new Vector2f();
   /** Inverted condition from retail */
   private boolean chapterTitleIsTranslucent_800c6724;
-  private int chapterTitleBrightness_800c6728;
+  private float chapterTitleBrightness_800c6728;
 
   /**
    * Lower 4 bits are chapter title num (starting at 1), used for displaying chapter title cards
@@ -42,7 +43,7 @@ public class ChapterTitleCard {
 
   private boolean chapterTitleAnimationComplete_800c686e;
 
-  private final Vector2i chapterTitleOrigin_800c687c = new Vector2i();
+  private final Vector2f chapterTitleOrigin_800c687c = new Vector2f();
 
   private boolean chapterTitleCardLoaded_800c68e0;
 
@@ -130,75 +131,75 @@ public class ChapterTitleCard {
           new Tim(this.chapterTitleCardMrg_800c6710.get(13)).uploadToGpu();
 
           //LAB_800e2980
-          this.chapterTitleBrightness_800c6728 = 0;
+          this.chapterTitleBrightness_800c6728 = 0.0f;
           this.chapterTitleIsTranslucent_800c6724 = true;
-          this.chapterTitleNumberOffset_800c6714.set(32, 16);
-          this.chapterTitleNameOffset_800c671c.set(64, 16);
+          this.chapterTitleNumberOffset_800c6714.set(32.0f, 16.0f);
+          this.chapterTitleNameOffset_800c671c.set(64.0f, 16.0f);
           this.chapterTitleAnimationTicksRemaining_800c670a++;
-        } else if(currentTick == 33) {
+        } else if(currentTick == 33 * (3 - vsyncMode_8007a3b8)) {
           //LAB_800e3070
           this.chapterTitleIsTranslucent_800c6724 = false;
-          this.chapterTitleNameOffset_800c671c.set(0, 0);
-          this.chapterTitleNumberOffset_800c6714.set(0, 0);
-          this.chapterTitleBrightness_800c6728 = 128;
+          this.chapterTitleNameOffset_800c671c.set(0.0f, 0.0f);
+          this.chapterTitleNumberOffset_800c6714.set(0.0f, 0.0f);
+          this.chapterTitleBrightness_800c6728 = 0.5f;
           this.chapterTitleAnimationTicksRemaining_800c670a++;
-          this.chapterTitleDropShadowOffset_800c670c.set(1, 0);
-        } else if(currentTick == 34) {
+          this.chapterTitleDropShadowOffset_800c670c.set(1.0f, 0.0f);
+        } else if(currentTick == 34 * (3 - vsyncMode_8007a3b8)) {
           //LAB_800e30c0
-          this.chapterTitleDropShadowOffset_800c670c.x++;
+          this.chapterTitleDropShadowOffset_800c670c.x = this.chapterTitleDropShadowOffset_800c670c.x + 1.0f / (3 - vsyncMode_8007a3b8);
 
-          if(this.chapterTitleDropShadowOffset_800c670c.x == 3) {
-            this.chapterTitleDropShadowOffset_800c670c.y = 1;
+          if(this.chapterTitleDropShadowOffset_800c670c.x >= 3) {
+            this.chapterTitleDropShadowOffset_800c670c.y = 1.0f;
             this.chapterTitleAnimationTicksRemaining_800c670a++;
           }
-        } else if(currentTick == 35) {
+        } else if(currentTick == 35 * (3 - vsyncMode_8007a3b8)) {
           //LAB_800e30f8
           this.chapterTitleAnimationPauseTicksRemaining_800c673c--;
 
           if(this.chapterTitleAnimationPauseTicksRemaining_800c673c == 0) {
             this.chapterTitleAnimationTicksRemaining_800c670a = 201;
           }
-        } else if(currentTick == 233) {
+        } else if(currentTick == 233 * (3 - vsyncMode_8007a3b8)) {
           //LAB_800e376c
           this.chapterTitleCardMrg_800c6710 = null;
           this.chapterTitleState_800c6708 = ChapterTitleState.COMPLETE;
-        } else if(currentTick > 35) {
+        } else if(currentTick > 35 * (3 - vsyncMode_8007a3b8)) {
           //LAB_800e2828
-          if(currentTick < 233) {
-            if(currentTick >= 201) {
+          if(currentTick < 233 * (3 - vsyncMode_8007a3b8)) {
+            if(currentTick >= 201 * (3 - vsyncMode_8007a3b8)) {
               //LAB_800e311c
-              if(currentTick == 212) {
+              if(currentTick == 212 * (3 - vsyncMode_8007a3b8)) {
                 new Tim(this.chapterTitleCardMrg_800c6710.get(1)).uploadToGpu();
                 new Tim(this.chapterTitleCardMrg_800c6710.get(9)).uploadToGpu();
 
                 //LAB_800e3248
                 //LAB_800e3254
-              } else if(currentTick == 216) {
+              } else if(currentTick == 216 * (3 - vsyncMode_8007a3b8)) {
                 new Tim(this.chapterTitleCardMrg_800c6710.get(2)).uploadToGpu();
                 new Tim(this.chapterTitleCardMrg_800c6710.get(10)).uploadToGpu();
 
                 //LAB_800e3384
                 //LAB_800e3390
-              } else if(currentTick == 220) {
+              } else if(currentTick == 220 * (3 - vsyncMode_8007a3b8)) {
                 new Tim(this.chapterTitleCardMrg_800c6710.get(3)).uploadToGpu();
                 new Tim(this.chapterTitleCardMrg_800c6710.get(11)).uploadToGpu();
 
                 //LAB_800e34c0
                 //LAB_800e34cc
-              } else if(currentTick == 224) {
+              } else if(currentTick == 224 * (3 - vsyncMode_8007a3b8)) {
                 new Tim(this.chapterTitleCardMrg_800c6710.get(4)).uploadToGpu();
                 new Tim(this.chapterTitleCardMrg_800c6710.get(12)).uploadToGpu();
 
                 //LAB_800e35fc
                 //LAB_800e3608
-              } else if(currentTick == 228) {
+              } else if(currentTick == 228 * (3 - vsyncMode_8007a3b8)) {
                 new Tim(this.chapterTitleCardMrg_800c6710.get(5)).uploadToGpu();
                 new Tim(this.chapterTitleCardMrg_800c6710.get(13)).uploadToGpu();
               }
 
               //LAB_800e3744
               this.chapterTitleIsTranslucent_800c6724 = true;
-              this.chapterTitleBrightness_800c6728 -= 4;
+              this.chapterTitleBrightness_800c6728 = this.chapterTitleBrightness_800c6728 - 4.0f / 255.0f / (3 - vsyncMode_8007a3b8);
             }
 
             //LAB_800e3790
@@ -206,31 +207,31 @@ public class ChapterTitleCard {
           }
         } else if(currentTick > 0) {
           //LAB_800e29d4
-          if(currentTick == 4) {
+          if(currentTick == 4 * (3 - vsyncMode_8007a3b8)) {
             new Tim(this.chapterTitleCardMrg_800c6710.get(4)).uploadToGpu();
             new Tim(this.chapterTitleCardMrg_800c6710.get(12)).uploadToGpu();
 
             //LAB_800e2afc
             //LAB_800e2b08
-          } else if(currentTick == 8) {
+          } else if(currentTick == 8 * (3 - vsyncMode_8007a3b8)) {
             new Tim(this.chapterTitleCardMrg_800c6710.get(3)).uploadToGpu();
             new Tim(this.chapterTitleCardMrg_800c6710.get(11)).uploadToGpu();
 
             //LAB_800e2c38
             //LAB_800e2c44
-          } else if(currentTick == 12) {
+          } else if(currentTick == 12 * (3 - vsyncMode_8007a3b8)) {
             new Tim(this.chapterTitleCardMrg_800c6710.get(2)).uploadToGpu();
             new Tim(this.chapterTitleCardMrg_800c6710.get(10)).uploadToGpu();
 
             //LAB_800e2d74
             //LAB_800e2d80
-          } else if(currentTick == 16) {
+          } else if(currentTick == 16 * (3 - vsyncMode_8007a3b8)) {
             new Tim(this.chapterTitleCardMrg_800c6710.get(1)).uploadToGpu();
             new Tim(this.chapterTitleCardMrg_800c6710.get(9)).uploadToGpu();
 
             //LAB_800e2eb0
             //LAB_800e2ebc
-          } else if(currentTick == 20) {
+          } else if(currentTick == 20 * (3 - vsyncMode_8007a3b8)) {
             new Tim(this.chapterTitleCardMrg_800c6710.get(0)).uploadToGpu();
             new Tim(this.chapterTitleCardMrg_800c6710.get(8)).uploadToGpu();
 
@@ -238,14 +239,14 @@ public class ChapterTitleCard {
           }
 
           //LAB_800e2ff8
-          this.chapterTitleBrightness_800c6728 += 4;
-          this.chapterTitleNumberOffset_800c6714.x--;
-          this.chapterTitleNameOffset_800c671c.x -= 2;
+          this.chapterTitleBrightness_800c6728 = this.chapterTitleBrightness_800c6728 + 4.0f / 255.0f / (3 - vsyncMode_8007a3b8);
+          this.chapterTitleNumberOffset_800c6714.x = this.chapterTitleNumberOffset_800c6714.x - 1.0f / (3 - vsyncMode_8007a3b8);
+          this.chapterTitleNameOffset_800c671c.x = this.chapterTitleNameOffset_800c671c.x - 2.0f / (3 - vsyncMode_8007a3b8);
 
           // Decrement Y-offset every other tick
           if((this.chapterTitleAnimationTicksRemaining_800c670a & 0x1) == 0) {
-            this.chapterTitleNumberOffset_800c6714.y--;
-            this.chapterTitleNameOffset_800c671c.y--;
+            this.chapterTitleNumberOffset_800c6714.y = this.chapterTitleNumberOffset_800c6714.y - 1.0f / (3 - vsyncMode_8007a3b8);
+            this.chapterTitleNameOffset_800c671c.y = this.chapterTitleNameOffset_800c671c.y - 1.0f / (3 - vsyncMode_8007a3b8);
           }
 
           //LAB_800e3038
@@ -257,10 +258,10 @@ public class ChapterTitleCard {
         }
 
         //LAB_800e37a0
-        int left = this.chapterTitleOrigin_800c687c.x + this.chapterTitleNumberOffset_800c6714.x - 58;
-        int top = this.chapterTitleOrigin_800c687c.y + this.chapterTitleNumberOffset_800c6714.y - 66;
-        int right = this.chapterTitleOrigin_800c687c.x - (this.chapterTitleNumberOffset_800c6714.x - 34);
-        int bottom = this.chapterTitleOrigin_800c687c.y - (this.chapterTitleNumberOffset_800c6714.y + 30);
+        float left = this.chapterTitleOrigin_800c687c.x + this.chapterTitleNumberOffset_800c6714.x - 58;
+        float top = this.chapterTitleOrigin_800c687c.y + this.chapterTitleNumberOffset_800c6714.y - 66;
+        float right = this.chapterTitleOrigin_800c687c.x - (this.chapterTitleNumberOffset_800c6714.x - 34);
+        float bottom = this.chapterTitleOrigin_800c687c.y - (this.chapterTitleNumberOffset_800c6714.y + 30);
 
         // Chapter number text
         final GpuCommandPoly cmd1 = new GpuCommandPoly(4)
@@ -383,10 +384,9 @@ public class ChapterTitleCard {
       case COMPLETE:
         //LAB_800e3c60
         this.chapterTitleNum_800c6738 = 0;
-        this.chapterTitleOrigin_800c687c.y = 0;
-        this.chapterTitleOrigin_800c687c.x = 0;
+        this.chapterTitleOrigin_800c687c.set(0.0f, 0.0f);
         this.chapterTitleCardLoaded_800c68e0 = false;
-        this.chapterTitleDropShadowOffset_800c670c.x = 0;
+        this.chapterTitleDropShadowOffset_800c670c.x = 0.0f;
         this.chapterTitleAnimationTicksRemaining_800c670a = 0;
         this.chapterTitleState_800c6708 = ChapterTitleState.LOAD;
         this.chapterTitleAnimationComplete_800c686e = true;
