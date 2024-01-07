@@ -42,21 +42,6 @@ import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class AttachedSobjEffect {
-  private final Vector3f[] footprintQuadVertices_800d6b7c = {
-    new Vector3f(-10.0f, 0.0f, -22.0f),
-    new Vector3f( 10.0f, 0.0f, -22.0f),
-    new Vector3f(-10.0f, 0.0f,  22.0f),
-    new Vector3f( 10.0f, 0.0f,  22.0f),
-    new Vector3f(-12.0f, 0.0f, - 8.0f),
-    new Vector3f(- 2.0f, 0.0f, - 8.0f),
-    new Vector3f(-12.0f, 0.0f,   8.0f),
-    new Vector3f(- 2.0f, 0.0f,   8.0f),
-    new Vector3f(  2.0f, 0.0f, - 8.0f),
-    new Vector3f( 12.0f, 0.0f, - 8.0f),
-    new Vector3f(  2.0f, 0.0f,   8.0f),
-    new Vector3f( 12.0f, 0.0f,   8.0f),
-  };
-
   public CContainer dustTmd;
   public TmdAnimationFile dustAnimation;
   private final Model124 tmdDustModel_800d4d40 = new Model124("Dust");
@@ -88,43 +73,43 @@ public class AttachedSobjEffect {
         .translucency(Translucency.B_MINUS_F)
         .clut(992, 472)
         .vramPos(960, 256)
-        .addVertex(this.footprintQuadVertices_800d6b7c[4])
+        .addVertex(-12.0f, 0.0f, - 8.0f)
         .uv(96, 0)
         .monochrome(1.0f)
-        .addVertex(this.footprintQuadVertices_800d6b7c[5])
+        .addVertex(- 2.0f, 0.0f, - 8.0f)
         .uv(112, 0)
         .monochrome(1.0f)
-        .addVertex(this.footprintQuadVertices_800d6b7c[6])
+        .addVertex(-12.0f, 0.0f,   8.0f)
         .uv(96, 32)
         .monochrome(1.0f)
-        .addVertex(this.footprintQuadVertices_800d6b7c[7])
+        .addVertex(- 2.0f, 0.0f,   8.0f)
         .uv(112, 32)
         .monochrome(1.0f)
-        .addVertex(this.footprintQuadVertices_800d6b7c[8])
+        .addVertex(  2.0f, 0.0f, - 8.0f)
         .uv(112, 0)
         .monochrome(1.0f)
-        .addVertex(this.footprintQuadVertices_800d6b7c[9])
+        .addVertex( 12.0f, 0.0f, - 8.0f)
         .uv(128, 0)
         .monochrome(1.0f)
-        .addVertex(this.footprintQuadVertices_800d6b7c[10])
+        .addVertex(  2.0f, 0.0f,   8.0f)
         .uv(112, 32)
         .monochrome(1.0f)
-        .addVertex(this.footprintQuadVertices_800d6b7c[11])
+        .addVertex( 12.0f, 0.0f,   8.0f)
         .uv(128, 32)
         .monochrome(1.0f)
-        .addVertex(this.footprintQuadVertices_800d6b7c[0])
+        .addVertex(-10.0f, 0.0f, -22.0f)
         .clutOverride(960, 464)
         .uv(0, 64)
         .monochrome(1.0f)
-        .addVertex(this.footprintQuadVertices_800d6b7c[1])
+        .addVertex( 10.0f, 0.0f, -22.0f)
         .clutOverride(960, 464)
         .uv(24, 64)
         .monochrome(1.0f)
-        .addVertex(this.footprintQuadVertices_800d6b7c[2])
+        .addVertex(-10.0f, 0.0f,  22.0f)
         .clutOverride(960, 464)
         .uv(0, 88)
         .monochrome(1.0f)
-        .addVertex(this.footprintQuadVertices_800d6b7c[3])
+        .addVertex( 10.0f, 0.0f,  22.0f)
         .clutOverride(960, 464)
         .uv(24, 88)
         .monochrome(1.0f);
