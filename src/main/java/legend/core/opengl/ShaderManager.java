@@ -6,15 +6,16 @@ import java.util.Map;
 public final class ShaderManager {
   private ShaderManager() { }
 
-  private static final Map<String, Shader> shaders = new HashMap<>();
+  private static final Map<ShaderType, Shader> shaders = new HashMap<>();
   private static final Map<String, Shader.UniformBuffer> uniformBuffers = new HashMap<>();
 
-  public static Shader getShader(final String name) {
-    return shaders.get(name);
+  public static <Options extends ShaderOptions<Options>> Shader<Options> getShader(final ShaderType<Options> type) {
+    return shaders.get(type);
   }
 
-  public static Shader addShader(final String name, final Shader shader) {
-    shaders.put(name, shader);
+  public static <Options extends ShaderOptions<Options>> Shader<Options> addShader(final ShaderType<Options> type) {
+    final Shader<Options> shader = type.shaderConstructor.apply(type.optionsConstructor);
+    shaders.put(type, shader);
     return shader;
   }
 
@@ -28,8 +29,12 @@ public final class ShaderManager {
   }
 
   public static void delete() {
-    for(final Shader shader : shaders.values()) {
+    for(final Shader<?> shader : shaders.values()) {
       shader.delete();
+    }
+
+    for(final Shader.UniformBuffer buffer : uniformBuffers.values()) {
+      buffer.delete();
     }
 
     shaders.clear();

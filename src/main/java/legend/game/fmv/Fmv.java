@@ -2,10 +2,12 @@ package legend.game.fmv;
 
 import legend.core.MathHelper;
 import legend.core.ProjectionMode;
+import legend.core.RenderEngine;
 import legend.core.opengl.FrameBuffer;
 import legend.core.opengl.Mesh;
 import legend.core.opengl.Shader;
 import legend.core.opengl.ShaderManager;
+import legend.core.opengl.SimpleShaderOptions;
 import legend.core.opengl.Texture;
 import legend.core.opengl.Window;
 import legend.core.spu.XaAdpcm;
@@ -241,8 +243,8 @@ public final class Fmv {
     RENDERER.window().setFpsLimit(15);
     GsInitGraph(320, 240);
 
-    final Shader simpleShader = ShaderManager.getShader("simple");
-    final Shader.UniformVec4 simpleShaderColour = simpleShader.new UniformVec4("recolour");
+    final Shader<SimpleShaderOptions> simpleShader = ShaderManager.getShader(RenderEngine.SIMPLE_SHADER);
+    final SimpleShaderOptions simpleShaderOptions = simpleShader.makeOptions();
 
     try {
       sound = AudioSystem.getSourceDataLine(new AudioFormat(37800, 16, 2, true, false));
@@ -460,7 +462,7 @@ public final class Fmv {
       RENDERER.setProjectionMode(ProjectionMode._2D);
 
       simpleShader.use();
-      simpleShaderColour.set(1.0f, 1.0f, 1.0f, 1.0f);
+      simpleShaderOptions.recolour(1.0f, 1.0f, 1.0f, 1.0f);
       displayTexture.use();
       displayTexture.data(0, 0, frameHeader.getWidth(), frameHeader.getHeight(), framePixels);
       fullScrenMesh.draw();

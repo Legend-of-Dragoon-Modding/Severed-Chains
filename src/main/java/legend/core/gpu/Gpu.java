@@ -7,6 +7,7 @@ import legend.core.RenderEngine;
 import legend.core.opengl.Mesh;
 import legend.core.opengl.Shader;
 import legend.core.opengl.ShaderManager;
+import legend.core.opengl.SimpleShaderOptions;
 import legend.core.opengl.Texture;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
@@ -54,8 +55,8 @@ public class Gpu {
   private Texture vramTexture24;
   private boolean vramDirty;
 
-  private Shader vramShader;
-  private Shader.UniformVec4 vramShaderColour;
+  private Shader<SimpleShaderOptions> vramShader;
+  private SimpleShaderOptions vramShaderOptions;
 
   private Texture displayTexture;
   private Mesh displayMesh;
@@ -104,8 +105,8 @@ public class Gpu {
       }
     });
 
-    this.vramShader = ShaderManager.getShader("simple");
-    this.vramShaderColour = this.vramShader.new UniformVec4("recolour");
+    this.vramShader = ShaderManager.getShader(RenderEngine.SIMPLE_SHADER);
+    this.vramShaderOptions = this.vramShader.makeOptions();
 
     this.vramTexture15 = Texture.create(builder -> {
       builder.size(1024, 512);
@@ -466,7 +467,7 @@ public class Gpu {
     glDisable(GL_BLEND);
 
     this.vramShader.use();
-    this.vramShaderColour.set(1.0f, 1.0f, 1.0f, 1.0f);
+    this.vramShaderOptions.recolour(1.0f, 1.0f, 1.0f, 1.0f);
     this.displayTexture.use();
     this.displayMesh.draw();
   }
@@ -477,7 +478,7 @@ public class Gpu {
     glDisable(GL_BLEND);
 
     this.vramShader.use();
-    this.vramShaderColour.set(1.0f, 1.0f, 1.0f, 1.0f);
+    this.vramShaderOptions.recolour(1.0f, 1.0f, 1.0f, 1.0f);
     this.vramTexture24.use();
     this.displayMesh.draw();
   }

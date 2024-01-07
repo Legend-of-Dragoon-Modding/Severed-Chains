@@ -5,6 +5,9 @@ import legend.core.gte.Gte;
 import legend.core.opengl.Mesh;
 import legend.core.opengl.Shader;
 import legend.core.opengl.ShaderManager;
+import legend.core.opengl.ShaderOptions;
+import legend.core.opengl.ShaderType;
+import legend.core.opengl.SimpleShaderOptions;
 import legend.core.opengl.Texture;
 import legend.core.opengl.TmdObjLoader;
 import legend.core.opengl.Window;
@@ -130,15 +133,25 @@ public final class GameEngine {
   private static Window.Events.Click onMouseRelease;
   private static Runnable onShutdown;
 
-  private static Shader shader;
-  private static Shader.UniformFloat shaderAlpha;
+  private static final ShaderType<EyeShaderOptions> EYE_SHADER = new ShaderType<>(
+    options -> RenderEngine.loadShader("simple", "loading", options),
+    shader -> {
+      shader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
+      shader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
+      final Shader<EyeShaderOptions>.UniformFloat alpha = shader.new UniformFloat("alpha");
+      final Shader<EyeShaderOptions>.UniformFloat ticks = shader.new UniformFloat("ticks");
+      return () -> new EyeShaderOptions(alpha, ticks);
+    }
+  );
+
+  private static Shader<SimpleShaderOptions> shader;
+  private static SimpleShaderOptions shaderOptions;
   private static Texture title1Texture;
   private static Texture title2Texture;
   private static Mesh fullScrenMesh;
 
-  private static Shader eyeShader;
-  private static Shader.UniformFloat eyeShaderAlpha;
-  private static Shader.UniformFloat eyeShaderTicks;
+  private static Shader<EyeShaderOptions> eyeShader;
+  private static EyeShaderOptions eyeOptions;
   private static Texture eye;
   private static Mesh eyeMesh;
 
@@ -309,10 +322,9 @@ public final class GameEngine {
     identity.get(transforms2Buffer);
     transforms2.set(transforms2Buffer);
 
-    shaderAlpha = null;
+    shaderOptions = null;
 
     if(shader != null) {
-      shader.delete();
       shader = null;
     }
 
@@ -331,8 +343,7 @@ public final class GameEngine {
       fullScrenMesh = null;
     }
 
-    eyeShaderAlpha = null;
-    eyeShaderTicks = null;
+    eyeOptions = null;
 
     if(eyeShader != null) {
       eyeShader.delete();
@@ -406,19 +417,16 @@ public final class GameEngine {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     final Path vsh = Paths.get("gfx", "shaders", "simple.vsh");
-    shader = loadShader(vsh, Paths.get("gfx", "shaders", "title.fsh"));
-    shader.use();
-    shaderAlpha = shader.new UniformFloat("alpha");
+    shader = ShaderManager.getShader(RenderEngine.SIMPLE_SHADER);
+    shaderOptions = shader.makeOptions();
 
     title1Texture = Texture.filteredPng(Path.of(".", "gfx", "textures", "intro", "title1.png"));
     title2Texture = Texture.filteredPng(Path.of(".", "gfx", "textures", "intro", "title2.png"));
     loadingTexture = Texture.png(Path.of(".", "gfx", "textures", "intro", "loading.png"));
     eye = Texture.png(Path.of(".", "gfx", "textures", "loading.png"));
 
-    eyeShader = loadShader(vsh, Paths.get("gfx", "shaders", "loading.fsh"));
-    eyeShader.use();
-    eyeShaderAlpha = eyeShader.new UniformFloat("alpha");
-    eyeShaderTicks = eyeShader.new UniformFloat("ticks");
+    eyeShader = ShaderManager.addShader(EYE_SHADER);
+    eyeOptions = eyeShader.makeOptions();
 
     eyeMesh = new Mesh(GL_TRIANGLE_STRIP, new float[] {
        0.0f,  0.0f, 1.0f, 0, 0,
@@ -508,16 +516,17 @@ public final class GameEngine {
     }
 
     shader.use();
+    shaderOptions.shiftUv(0.0f, 0.0f);
 
     identity.get(transforms2Buffer);
     transforms2.set(transforms2Buffer);
-    shaderAlpha.set(fade1 * fade1 * fade1);
+    shaderOptions.recolour(fade1 * fade1 * fade1);
     title1Texture.use();
     fullScrenMesh.draw();
 
     textTransforms.get(transforms2Buffer);
     transforms2.set(transforms2Buffer);
-    shaderAlpha.set(fade2 * fade2 * fade2);
+    shaderOptions.recolour(fade2 * fade2 * fade2);
     title2Texture.use();
     fullScrenMesh.draw();
 
@@ -525,15 +534,15 @@ public final class GameEngine {
       eyeTransforms.get(transforms2Buffer);
       transforms2.set(transforms2Buffer);
       eyeShader.use();
-      eyeShaderAlpha.set(eyeFade);
-      eyeShaderTicks.set(deltaMs / 10_000.0f);
+      eyeOptions.alpha(eyeFade);
+      eyeOptions.ticks(deltaMs / 10_000.0f);
       eye.use();
       eyeMesh.draw();
 
       loadingTransforms.get(transforms2Buffer);
       transforms2.set(transforms2Buffer);
       shader.use();
-      shaderAlpha.set(loadingFade);
+      shaderOptions.recolour(loadingFade);
       loadingTexture.use();
       loadingMesh.draw();
     }
@@ -593,17 +602,23 @@ public final class GameEngine {
     GsInitGraph(width, height);
   }
 
-  private static Shader loadShader(final Path vsh, final Path fsh) {
-    final Shader shader;
+  private static class EyeShaderOptions implements ShaderOptions<EyeShaderOptions> {
+    private final Shader<EyeShaderOptions>.UniformFloat alphaUniform;
+    private final Shader<EyeShaderOptions>.UniformFloat ticksUniform;
 
-    try {
-      shader = new Shader(vsh, fsh);
-    } catch(final IOException e) {
-      throw new RuntimeException("Failed to load vram shader", e);
+    private EyeShaderOptions(final Shader<EyeShaderOptions>.UniformFloat alphaUniform, final Shader<EyeShaderOptions>.UniformFloat ticksUniform) {
+      this.alphaUniform = alphaUniform;
+      this.ticksUniform = ticksUniform;
     }
 
-    shader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
-    shader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
-    return shader;
+    public EyeShaderOptions alpha(final float alpha) {
+      this.alphaUniform.set(alpha);
+      return this;
+    }
+
+    public EyeShaderOptions ticks(final float ticks) {
+      this.ticksUniform.set(ticks);
+      return this;
+    }
   }
 }

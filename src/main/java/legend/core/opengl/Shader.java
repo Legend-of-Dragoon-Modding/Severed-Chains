@@ -10,13 +10,14 @@ import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static org.lwjgl.opengl.GL15C.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL15C.glBindBuffer;
 import static org.lwjgl.opengl.GL15C.glBufferData;
 import static org.lwjgl.opengl.GL15C.glBufferSubData;
+import static org.lwjgl.opengl.GL15C.glDeleteBuffers;
 import static org.lwjgl.opengl.GL15C.glGenBuffers;
 import static org.lwjgl.opengl.GL20C.GL_COMPILE_STATUS;
 import static org.lwjgl.opengl.GL20C.GL_FRAGMENT_SHADER;
@@ -50,19 +51,19 @@ import static org.lwjgl.opengl.GL31C.GL_UNIFORM_BUFFER;
 import static org.lwjgl.opengl.GL31C.glGetUniformBlockIndex;
 import static org.lwjgl.opengl.GL31C.glUniformBlockBinding;
 
-public class Shader {
+public class Shader<Options extends ShaderOptions<Options>> {
   private static final Logger LOGGER = LogManager.getLogger(Shader.class.getName());
 
-  private final Map<String, Uniform> uniforms = new HashMap<>();
-
+  private final Supplier<Options> options;
   private final int shader;
 
-  public Shader(final Path vert, final Path frag) throws IOException {
+  public Shader(final Path vert, final Path frag, final Function<Shader<Options>, Supplier<Options>> options) throws IOException {
     final int vsh = this.compileShader(vert, GL_VERTEX_SHADER);
     final int fsh = this.compileShader(frag, GL_FRAGMENT_SHADER);
     this.shader = this.linkProgram(vsh, fsh);
     glDeleteShader(vsh);
     glDeleteShader(fsh);
+    this.options = options.apply(this);
   }
 
   private int compileShader(final Path file, final int type) throws IOException {
@@ -90,6 +91,10 @@ public class Shader {
     return shader;
   }
 
+  public Options makeOptions() {
+    return this.options.get();
+  }
+
   public void bindUniformBlock(final CharSequence name, final int binding) {
     final int index = glGetUniformBlockIndex(this.shader, name);
 
@@ -98,16 +103,6 @@ public class Shader {
     } else {
       glUniformBlockBinding(this.shader, index, binding);
     }
-  }
-
-  public Uniform bindUniform(final String name) {
-    final Uniform uniform = new Uniform(name);
-    this.uniforms.put(name, uniform);
-    return uniform;
-  }
-
-  public Uniform getUniform(final String name) {
-    return this.uniforms.get(name);
   }
 
   public void use() {
@@ -146,6 +141,10 @@ public class Shader {
       glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
       glBindBufferBase(GL_UNIFORM_BUFFER, binding, this.id);
+    }
+
+    public void delete() {
+      glDeleteBuffers(this.id);
     }
 
     public void set(final FloatBuffer buffer) {

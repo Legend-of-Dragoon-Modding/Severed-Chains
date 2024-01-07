@@ -15,8 +15,6 @@ layout(std140) uniform transforms2 {
 };
 
 void main() {
-  vec4 pos = vec4(inPos, 1.0);
-
-  gl_Position = projection * camera * model * pos;
+  gl_Position = projection * camera * model * vec4(inPos, 1.0);
   vertUv = inUv;
 }

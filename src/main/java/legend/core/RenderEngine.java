@@ -4,6 +4,7 @@ import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
 import legend.core.opengl.BasicCamera;
 import legend.core.opengl.Camera;
+import legend.core.opengl.FontShaderOptions;
 import legend.core.opengl.FrameBuffer;
 import legend.core.opengl.LegacyTextBuilder;
 import legend.core.opengl.LineBuilder;
@@ -13,7 +14,12 @@ import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.QuaternionCamera;
 import legend.core.opengl.Shader;
 import legend.core.opengl.ShaderManager;
+import legend.core.opengl.ShaderOptions;
+import legend.core.opengl.ShaderType;
+import legend.core.opengl.SimpleShaderOptions;
 import legend.core.opengl.Texture;
+import legend.core.opengl.TmdShaderOptions;
+import legend.core.opengl.VoidShaderOptions;
 import legend.core.opengl.Window;
 import legend.core.opengl.fonts.Font;
 import legend.core.opengl.fonts.FontManager;
@@ -36,6 +42,8 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
@@ -124,25 +132,73 @@ public class RenderEngine {
   private final FloatBuffer lightBuffer = BufferUtils.createFloatBuffer(4 * 4 * 2 + 4);
   private final FloatBuffer projectionBuffer = BufferUtils.createFloatBuffer(3);
 
+  public static final ShaderType<SimpleShaderOptions> SIMPLE_SHADER = new ShaderType<>(
+    options -> loadShader("simple", "simple", options),
+    shader -> {
+      shader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
+      shader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
+      final Shader<SimpleShaderOptions>.UniformVec2 shiftUv = shader.new UniformVec2("shiftUv");
+      final Shader<SimpleShaderOptions>.UniformVec4 recolour = shader.new UniformVec4("recolour");
+      return () -> new SimpleShaderOptions(shiftUv, recolour);
+    }
+  );
+
+  public static final ShaderType<FontShaderOptions> FONT_SHADER = new ShaderType<>(
+    options -> loadShader("simple", "font", options),
+    shader -> {
+      shader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
+      shader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
+      final Shader<FontShaderOptions>.UniformVec3 colour = shader.new UniformVec3("colour");
+      return () -> new FontShaderOptions(colour);
+    }
+  );
+
+  public static final ShaderType<TmdShaderOptions> TMD_SHADER = new ShaderType<>(
+    options -> loadShader("tmd", "tmd", options),
+    shader -> {
+      shader.use();
+      shader.new UniformInt("tex24").set(0);
+      shader.new UniformInt("tex15").set(1);
+      shader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
+      shader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
+      shader.bindUniformBlock("lighting", Shader.UniformBuffer.LIGHTING);
+      shader.bindUniformBlock("projectionInfo", Shader.UniformBuffer.PROJECTION_INFO);
+      final Shader<TmdShaderOptions>.UniformVec3 recolour = shader.new UniformVec3("recolour");
+      final Shader<TmdShaderOptions>.UniformVec2 uvOffset = shader.new UniformVec2("uvOffset");
+      final Shader<TmdShaderOptions>.UniformVec2 clutOverride = shader.new UniformVec2("clutOverride");
+      final Shader<TmdShaderOptions>.UniformVec2 tpageOverride = shader.new UniformVec2("tpageOverride");
+      final Shader<TmdShaderOptions>.UniformFloat discardTranslucency = shader.new UniformFloat("discardTranslucency");
+      return () -> new TmdShaderOptions(recolour, uvOffset, clutOverride, tpageOverride, discardTranslucency);
+    }
+  );
+
+  public static final ShaderType<TmdShaderOptions> TMD_OIT_SHADER = new ShaderType<>(
+    options -> loadShader("tmd", "tmd-transparent", options),
+    shader -> {
+      shader.use();
+      shader.new UniformInt("tex24").set(0);
+      shader.new UniformInt("tex15").set(1);
+      shader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
+      shader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
+      shader.bindUniformBlock("lighting", Shader.UniformBuffer.LIGHTING);
+      shader.bindUniformBlock("projectionInfo", Shader.UniformBuffer.PROJECTION_INFO);
+      final Shader<TmdShaderOptions>.UniformVec3 recolour = shader.new UniformVec3("recolour");
+      final Shader<TmdShaderOptions>.UniformVec2 uvOffset = shader.new UniformVec2("uvOffset");
+      final Shader<TmdShaderOptions>.UniformVec2 clutOverride = shader.new UniformVec2("clutOverride");
+      final Shader<TmdShaderOptions>.UniformVec2 tpageOverride = shader.new UniformVec2("tpageOverride");
+      final Shader<TmdShaderOptions>.UniformFloat discardTranslucency = shader.new UniformFloat("discardTranslucency");
+      return () -> new TmdShaderOptions(recolour, uvOffset, clutOverride, tpageOverride, discardTranslucency);
+    }
+  );
+
+  public static final ShaderType<VoidShaderOptions> COMPOSITE_SHADER = new ShaderType<>(options -> loadShader("post", "composite", options), shader -> () -> VoidShaderOptions.INSTANCE);
+  public static final ShaderType<VoidShaderOptions> SCREEN_SHADER = new ShaderType<>(options -> loadShader("post", "screen", options), shader -> () -> VoidShaderOptions.INSTANCE);
+
   // Order-independent translucency
-  private Shader tmdShader;
-  private Shader tmdShaderTransparent;
-  private Shader.UniformVec3 tmdShaderColour;
-  private Shader.UniformVec2 tmdShaderUvOffset;
-  private Shader.UniformVec2 tmdShaderClutOverride;
-  private Shader.UniformVec2 tmdShaderTpageOverride;
-  private Shader.UniformVec3 tmdShaderTransparentColour;
-  private Shader.UniformVec2 tmdShaderTransparentUvOffset;
-  private Shader.UniformVec2 tmdShaderTransparentClutOverride;
-  private Shader.UniformVec2 tmdShaderTransparentTpageOverride;
-  /**
-   * <ul>
-   *   <li>0: regular rendering, anything rendered will pass through the shader</li>
-   *   <li>1: discard translucent pixels, used for rendering translucent primitives that have translucency disabled in their textures</li>
-   *   <li>2: discard non-translucent pixels, used to render B+F and B-F primitives since they don't need to go through the OIT shader</li>
-   * </ul>
-   */
-  private Shader.UniformFloat tmdShaderDiscardTranslucency;
+  private Shader<TmdShaderOptions> tmdShader;
+  private Shader<TmdShaderOptions> tmdOitShader;
+  private TmdShaderOptions tmdShaderOptions;
+  private TmdShaderOptions tmdOitShaderOptions;
   private FrameBuffer opaqueFrameBuffer;
   private FrameBuffer transparentFrameBuffer;
   private Texture opaqueTexture;
@@ -282,6 +338,14 @@ public class RenderEngine {
     Obj.clearObjList(true);
   }
 
+  public static <Options extends ShaderOptions<Options>> Shader<Options> loadShader(final String vsh, final String fsh, final Function<Shader<Options>, Supplier<Options>> options) {
+    try {
+      return new Shader<>(Paths.get("gfx/shaders/" + vsh + ".vsh"), Paths.get("gfx/shaders/" + fsh + ".fsh"), options);
+    } catch(final IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
   public void init() {
     this.camera2d = new BasicCamera(0.0f, 0.0f);
     this.camera3d = new QuaternionCamera(0.0f, 0.0f, 0.0f);
@@ -296,66 +360,16 @@ public class RenderEngine {
     this.window.events.onKeyPress(this::onKeyPress);
     this.window.events.onKeyRelease(this::onKeyRelease);
 
-    final Shader simpleShader;
-    try {
-      simpleShader = new Shader(Paths.get("gfx/shaders/simple.vsh"), Paths.get("gfx/shaders/simple.fsh"));
-      simpleShader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
-      simpleShader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
-      ShaderManager.addShader("simple", simpleShader);
-    } catch(final IOException e) {
-      throw new RuntimeException("Failed to load simple shader", e);
-    }
+    ShaderManager.addShader(SIMPLE_SHADER);
+    ShaderManager.addShader(FONT_SHADER);
+    final Shader<VoidShaderOptions> compositeShader = ShaderManager.addShader(COMPOSITE_SHADER);
+    final Shader<VoidShaderOptions> screenShader = ShaderManager.addShader(SCREEN_SHADER);
+    this.tmdShader = ShaderManager.addShader(TMD_SHADER);
+    this.tmdOitShader = ShaderManager.addShader(TMD_OIT_SHADER);
+    this.tmdShaderOptions = this.tmdShader.makeOptions();
+    this.tmdOitShaderOptions = this.tmdOitShader.makeOptions();
 
     try {
-      this.tmdShader = new Shader(Paths.get("gfx/shaders/tmd.vsh"), Paths.get("gfx/shaders/tmd.fsh"));
-      this.tmdShader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
-      this.tmdShader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
-      this.tmdShader.bindUniformBlock("lighting", Shader.UniformBuffer.LIGHTING);
-      this.tmdShader.bindUniformBlock("projectionInfo", Shader.UniformBuffer.PROJECTION_INFO);
-
-      this.tmdShader.use();
-      this.tmdShader.new UniformInt("tex24").set(0);
-      this.tmdShader.new UniformInt("tex15").set(1);
-      this.tmdShaderColour = this.tmdShader.new UniformVec3("recolour");
-      this.tmdShaderClutOverride = this.tmdShader.new UniformVec2("clutOverride");
-      this.tmdShaderTpageOverride = this.tmdShader.new UniformVec2("tpageOverride");
-      this.tmdShaderUvOffset = this.tmdShader.new UniformVec2("uvOffset");
-      this.tmdShaderDiscardTranslucency = this.tmdShader.new UniformFloat("discardTranslucency");
-      this.tmdShaderDiscardTranslucency.set(1.0f);
-
-      ShaderManager.addShader("tmd", this.tmdShader);
-    } catch(final IOException e) {
-      throw new RuntimeException("Failed to load TMD shader", e);
-    }
-
-    try {
-      this.tmdShaderTransparent = new Shader(Paths.get("gfx/shaders/tmd.vsh"), Paths.get("gfx/shaders/tmd-transparent.fsh"));
-      this.tmdShaderTransparent.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
-      this.tmdShaderTransparent.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
-      this.tmdShaderTransparent.bindUniformBlock("lighting", Shader.UniformBuffer.LIGHTING);
-      this.tmdShaderTransparent.bindUniformBlock("projectionInfo", Shader.UniformBuffer.PROJECTION_INFO);
-
-      this.tmdShaderTransparent.use();
-      this.tmdShaderTransparent.new UniformInt("tex24").set(0);
-      this.tmdShaderTransparent.new UniformInt("tex15").set(1);
-      this.tmdShaderTransparentColour = this.tmdShaderTransparent.new UniformVec3("recolour");
-      this.tmdShaderTransparentClutOverride = this.tmdShaderTransparent.new UniformVec2("clutOverride");
-      this.tmdShaderTransparentTpageOverride = this.tmdShaderTransparent.new UniformVec2("tpageOverride");
-      this.tmdShaderTransparentUvOffset = this.tmdShaderTransparent.new UniformVec2("uvOffset");
-
-      ShaderManager.addShader("tmd-transparent", this.tmdShaderTransparent);
-    } catch(final IOException e) {
-      throw new RuntimeException("Failed to load TMD shader", e);
-    }
-
-    try {
-      final Shader fontShader = new Shader(Paths.get("gfx/shaders/font.vsh"), Paths.get("gfx/shaders/font.fsh"));
-      fontShader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
-      fontShader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
-      fontShader.use();
-      fontShader.bindUniform("colour");
-      ShaderManager.addShader("font", fontShader);
-
       FontManager.add("default", new Font(Paths.get("gfx/fonts/consolas.ttf")));
     } catch(final IOException e) {
       throw new RuntimeException("Failed to load font", e);
@@ -365,20 +379,6 @@ public class RenderEngine {
     this.transforms2Uniform = ShaderManager.addUniformBuffer("transforms2", new Shader.UniformBuffer((long)this.transforms2Buffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM2));
     this.lightUniform = ShaderManager.addUniformBuffer("lighting", new Shader.UniformBuffer((long)this.lightBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.LIGHTING));
     this.projectionUniform = ShaderManager.addUniformBuffer("projectionInfo", new Shader.UniformBuffer((long)this.projectionBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.PROJECTION_INFO));
-
-    final Shader compositeShader;
-    try {
-      compositeShader = new Shader(Paths.get("gfx/shaders/post.vsh"), Paths.get("gfx/shaders/composite.fsh"));
-    } catch(final IOException e) {
-      throw new RuntimeException("Failed to composite shader", e);
-    }
-
-    final Shader screenShader;
-    try {
-      screenShader = new Shader(Paths.get("gfx/shaders/post.vsh"), Paths.get("gfx/shaders/screen.fsh"));
-    } catch(final IOException e) {
-      throw new RuntimeException("Failed to composite shader", e);
-    }
 
     final Mesh postQuad = new Mesh(GL_TRIANGLES, new float[] {
       -1.0f, -1.0f,  0.0f, 0.0f,
@@ -584,14 +584,14 @@ public class RenderEngine {
 
     this.opaqueFrameBuffer.bind();
     this.tmdShader.use();
-    this.tmdShaderDiscardTranslucency.set(1.0f);
+    this.tmdShaderOptions.discardMode(1);
 
     for(int i = 0; i < pool.size(); i++) {
       final QueuedModel entry = pool.get(i);
-      this.tmdShaderColour.set(entry.colour);
-      this.tmdShaderClutOverride.set(entry.clutOverride);
-      this.tmdShaderTpageOverride.set(entry.tpageOverride);
-      this.tmdShaderUvOffset.set(entry.uvOffset);
+      this.tmdShaderOptions.colour(entry.colour);
+      this.tmdShaderOptions.clut(entry.clutOverride);
+      this.tmdShaderOptions.tpage(entry.tpageOverride);
+      this.tmdShaderOptions.uvOffset(entry.uvOffset);
       boolean updated = false;
 
       if(entry.obj.shouldRender(null)) {
@@ -630,27 +630,27 @@ public class RenderEngine {
     // Also renders B-F by negating the colour value and rendering as B+F
     this.opaqueFrameBuffer.bind();
     this.tmdShader.use();
-    this.tmdShaderDiscardTranslucency.set(2.0f);
+    this.tmdShaderOptions.discardMode(2);
     Translucency.B_PLUS_F.setGlState();
 
     for(int i = 0; i < pool.size(); i++) {
       final QueuedModel entry = pool.get(i);
 
       if(entry.obj.shouldRender(Translucency.B_PLUS_F)) {
-        this.tmdShaderColour.set(entry.colour);
-        this.tmdShaderClutOverride.set(entry.clutOverride);
-        this.tmdShaderTpageOverride.set(entry.tpageOverride);
-        this.tmdShaderUvOffset.set(entry.uvOffset);
+        this.tmdShaderOptions.colour(entry.colour);
+        this.tmdShaderOptions.clut(entry.clutOverride);
+        this.tmdShaderOptions.tpage(entry.tpageOverride);
+        this.tmdShaderOptions.uvOffset(entry.uvOffset);
         entry.useTexture();
         entry.updateTransforms();
         entry.render(Translucency.B_PLUS_F);
       }
 
       if(entry.obj.shouldRender(Translucency.B_MINUS_F)) {
-        this.tmdShaderColour.set(entry.colour.mul(-1.0f, this.tempColour));
-        this.tmdShaderClutOverride.set(entry.clutOverride);
-        this.tmdShaderTpageOverride.set(entry.tpageOverride);
-        this.tmdShaderUvOffset.set(entry.uvOffset);
+        this.tmdShaderOptions.colour(entry.colour.mul(-1.0f, this.tempColour));
+        this.tmdShaderOptions.clut(entry.clutOverride);
+        this.tmdShaderOptions.tpage(entry.tpageOverride);
+        this.tmdShaderOptions.uvOffset(entry.uvOffset);
         entry.useTexture();
         entry.updateTransforms();
         entry.render(Translucency.B_MINUS_F);
@@ -663,7 +663,7 @@ public class RenderEngine {
     glBlendEquation(GL_FUNC_ADD);
 
     this.transparentFrameBuffer.bind();
-    this.tmdShaderTransparent.use();
+    this.tmdOitShader.use();
 
     for(int i = 0; i < pool.size(); i++) {
       final QueuedModel entry = pool.get(i);
@@ -671,10 +671,10 @@ public class RenderEngine {
       if(entry.obj.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
         entry.useTexture();
         entry.updateTransforms();
-        this.tmdShaderTransparentColour.set(entry.colour);
-        this.tmdShaderTransparentClutOverride.set(entry.clutOverride);
-        this.tmdShaderTransparentTpageOverride.set(entry.tpageOverride);
-        this.tmdShaderTransparentUvOffset.set(entry.uvOffset);
+        this.tmdOitShaderOptions.colour(entry.colour);
+        this.tmdOitShaderOptions.clut(entry.clutOverride);
+        this.tmdOitShaderOptions.tpage(entry.tpageOverride);
+        this.tmdOitShaderOptions.uvOffset(entry.uvOffset);
         entry.render(Translucency.HALF_B_PLUS_HALF_F);
       }
     }
@@ -692,24 +692,24 @@ public class RenderEngine {
       final QueuedModel entry = pool.get(i);
       entry.useTexture();
       entry.updateTransforms();
-      this.tmdShaderColour.set(entry.colour);
-      this.tmdShaderClutOverride.set(entry.clutOverride);
-      this.tmdShaderTpageOverride.set(entry.tpageOverride);
-      this.tmdShaderUvOffset.set(entry.uvOffset);
+      this.tmdShaderOptions.colour(entry.colour);
+      this.tmdShaderOptions.clut(entry.clutOverride);
+      this.tmdShaderOptions.tpage(entry.tpageOverride);
+      this.tmdShaderOptions.uvOffset(entry.uvOffset);
 
       if(entry.scissor.w != 0) {
         glEnable(GL_SCISSOR_TEST);
         glScissor((int)(entry.scissor.x * widthScale), this.window.getHeight() - (int)(entry.scissor.y * heightScale), (int)(entry.scissor.w * widthScale), (int)(entry.scissor.h * heightScale));
       }
 
-      this.tmdShaderDiscardTranslucency.set(0.0f);
+      this.tmdShaderOptions.discardMode(0);
       glDisable(GL_BLEND);
 
       if(entry.obj.shouldRender(null)) {
         entry.render(null);
       }
 
-      this.tmdShaderDiscardTranslucency.set(1.0f);
+      this.tmdShaderOptions.discardMode(1);
 
       for(int translucencyIndex = 0; translucencyIndex < Translucency.FOR_RENDERING.length; translucencyIndex++) {
         final Translucency translucency = Translucency.FOR_RENDERING[translucencyIndex];
@@ -719,7 +719,7 @@ public class RenderEngine {
         }
       }
 
-      this.tmdShaderDiscardTranslucency.set(2.0f);
+      this.tmdShaderOptions.discardMode(2);
       glEnable(GL_BLEND);
 
       for(int translucencyIndex = 0; translucencyIndex < Translucency.FOR_RENDERING.length; translucencyIndex++) {

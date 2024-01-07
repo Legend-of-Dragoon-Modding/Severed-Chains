@@ -1,8 +1,8 @@
 package legend.core.opengl.fonts;
 
 import legend.core.GameEngine;
+import legend.core.opengl.FontShaderOptions;
 import legend.core.opengl.Mesh;
-import legend.core.opengl.Shader;
 
 public class TextStreamText implements TextStreamable {
   private final Mesh drawable;
@@ -24,7 +24,7 @@ public class TextStreamText implements TextStreamable {
   }
 
   @Override
-  public float draw(final Shader.UniformVec3 colourUniform) {
+  public float draw(final FontShaderOptions shaderOptions) {
     this.drawable.draw();
     return this.width;
   }

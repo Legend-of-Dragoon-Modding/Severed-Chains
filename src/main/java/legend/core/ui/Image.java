@@ -1,10 +1,12 @@
 package legend.core.ui;
 
+import legend.core.RenderEngine;
 import legend.core.gpu.Rect4i;
 import legend.core.opengl.MatrixStack;
 import legend.core.opengl.Mesh;
 import legend.core.opengl.Shader;
 import legend.core.opengl.ShaderManager;
+import legend.core.opengl.SimpleShaderOptions;
 import legend.core.opengl.Texture;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
@@ -26,9 +28,8 @@ public class Image extends Control {
   private ScaleMode scaleMode = ScaleMode.SCALE;
 
   private Shader.UniformBuffer transforms2;
-  private Shader shader;
-  private Shader.UniformVec2 uniformUv;
-  private Shader.UniformVec4 uniformColour;
+  private Shader<SimpleShaderOptions> shader;
+  private SimpleShaderOptions shaderOptions;
   private final FloatBuffer transformsBuffer = BufferUtils.createFloatBuffer(4 * 4);
   private final Texture texture;
   private final Rect4i uv;
@@ -93,9 +94,8 @@ public class Image extends Control {
   @Override
   protected void initialize() {
     this.transforms2 = ShaderManager.getUniformBuffer("transforms2");
-    this.shader = ShaderManager.getShader("simple");
-    this.uniformUv = this.shader.new UniformVec2("shiftUv");
-    this.uniformColour = this.shader.new UniformVec4("recolour");
+    this.shader = ShaderManager.getShader(RenderEngine.SIMPLE_SHADER);
+    this.shaderOptions = this.shader.makeOptions();
   }
 
   @Override
@@ -226,11 +226,11 @@ public class Image extends Control {
     this.blendingMode.use();
 
     this.shader.use();
-    this.uniformUv.set(this.uvOffset.x / this.texture.width, this.uvOffset.y / this.texture.height);
-    this.uniformColour.set(this.colour);
+    this.shaderOptions.shiftUv(this.uvOffset.x / this.texture.width, this.uvOffset.y / this.texture.height);
+    this.shaderOptions.recolour(this.colour);
     this.texture.use();
     this.mesh.draw();
-    this.uniformUv.set(0, 0);
+    this.shaderOptions.shiftUv(0, 0);
   }
 
   public enum ScaleMode {

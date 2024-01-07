@@ -1,6 +1,6 @@
 package legend.core.opengl.fonts;
 
-import legend.core.opengl.Shader;
+import legend.core.opengl.FontShaderOptions;
 import org.joml.Vector3f;
 
 public class TextStreamColour implements TextStreamable {
@@ -30,8 +30,8 @@ public class TextStreamColour implements TextStreamable {
   }
 
   @Override
-  public float draw(final Shader.UniformVec3 colourUniform) {
-    colourUniform.set(this.colour);
+  public float draw(final FontShaderOptions shaderOptions) {
+    shaderOptions.colour(this.colour);
     return 0;
   }
 }

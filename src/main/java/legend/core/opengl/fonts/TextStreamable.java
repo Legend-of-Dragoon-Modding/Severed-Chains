@@ -1,9 +1,9 @@
 package legend.core.opengl.fonts;
 
-import legend.core.opengl.Shader;
+import legend.core.opengl.FontShaderOptions;
 
 public interface TextStreamable {
   void delete();
   float width();
-  float draw(final Shader.UniformVec3 colourUniform);
+  float draw(final FontShaderOptions shaderOptions);
 }

@@ -1,5 +1,7 @@
 package legend.core.opengl.fonts;
 
+import legend.core.RenderEngine;
+import legend.core.opengl.FontShaderOptions;
 import legend.core.opengl.Shader;
 import legend.core.opengl.ShaderManager;
 import org.joml.Matrix4f;
@@ -21,24 +23,24 @@ public final class TextStream {
   }
 
   private final Font font;
-  private final Shader shader;
+  private final Shader<FontShaderOptions> shader;
+  private final FontShaderOptions options;
   private final Shader.UniformBuffer transforms2;
-  private final Shader.UniformVec3 colour;
   private final FloatBuffer transformsBuffer = BufferUtils.createFloatBuffer(4 * 4);
   private final Matrix4f transforms = new Matrix4f();
   private final TextStreamable[] elements;
 
   private TextStream(final Font font, final TextStreamable[] elements) {
     this.font = font;
-    this.shader = ShaderManager.getShader("font");
+    this.shader = ShaderManager.getShader(RenderEngine.FONT_SHADER);
+    this.options = this.shader.makeOptions();
     this.transforms2 = ShaderManager.getUniformBuffer("transforms2");
-    this.colour = this.shader.new UniformVec3("colour");
     this.elements = elements;
   }
 
   public void setColour(final float r, final float g, final float b) {
     this.shader.use();
-    this.colour.set(r, g, b);
+    this.options.colour.set(r, g, b);
   }
 
   public void delete() {
@@ -68,7 +70,7 @@ public final class TextStream {
       this.transforms.get(this.transformsBuffer);
       this.transforms2.set(this.transformsBuffer);
 
-      x += streamable.draw(this.colour);
+      x += streamable.draw(this.options);
     }
   }
 
