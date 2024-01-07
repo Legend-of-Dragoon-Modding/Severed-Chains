@@ -78,24 +78,28 @@ public class PolyBuilder {
     return this;
   }
 
+  /** Sets clut to be used for full poly if not none specified per-vertex. */
   public PolyBuilder clut(final Vector2i clut) {
     this.clut.set(clut);
     this.flags |= TmdObjLoader.TEXTURED_FLAG;
     return this;
   }
 
+  /** Sets clut to be used for full poly if not none specified per-vertex. */
   public PolyBuilder clut(final int x, final int y) {
     this.clut.set(x, y);
     this.flags |= TmdObjLoader.TEXTURED_FLAG;
     return this;
   }
 
+  /** Specifies the clut to use for a specific vertex. Used to pack polys using different cluts into single Obj. */
   public PolyBuilder clutOverride(final Vector2i clut) {
     this.current.clut = new Vector2i().set(clut);
     this.flags |= TmdObjLoader.TEXTURED_FLAG;
     return this;
   }
 
+  /** Specifies the clut to use for a specific vertex. Used to pack polys using different cluts into single Obj. */
   public PolyBuilder clutOverride(final int x, final int y) {
     this.current.clut = new Vector2i().set(x, y);
     this.flags |= TmdObjLoader.TEXTURED_FLAG;
