@@ -3,6 +3,8 @@ package legend.game.submap;
 import legend.game.types.Model124;
 import org.joml.Vector3f;
 
+import static legend.game.submap.AttachedSobjEffect.AttachedSobjEffectData40;
+
 public class SubmapObject210 {
   public final Model124 model_00;
 

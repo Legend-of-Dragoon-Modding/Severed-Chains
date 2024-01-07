@@ -18,6 +18,7 @@ import legend.game.types.Model124;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import org.joml.Math;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import static legend.core.GameEngine.GPU;
@@ -556,6 +557,177 @@ public class AttachedSobjEffect {
         this.lawPodTrailsData_800f9e7c[i] = null;
         this.lawPodTrailCount_800f9e78--;
       }
+    }
+  }
+
+  public static class AttachedSobjEffectData40 {
+    public int tick_00;
+    public boolean shouldRenderTmdDust_04;
+    public boolean shouldRenderFootprints_08;
+    public boolean shouldRenderOrthoDust_0c;
+    public int footprintMode_10;
+
+    public boolean shouldRenderLawPodTrail_18;
+    public int textureIndexType1_1c;
+    public final Vector3f transfer_1e = new Vector3f();
+
+    public int size_28;
+    public int oldFootprintInstantiationInterval_2c;
+    public int instantiationIntervalDust_30;
+    public int instantiationIntervalFootprints_34;
+    /** short */
+    public int maxTicks_38;
+
+    public LawPodTrailData18 trailData_3c;
+
+    public AttachedSobjEffectData40() {
+      this.tick_00 = 0;
+      this.shouldRenderTmdDust_04 = false;
+      this.shouldRenderFootprints_08 = false;
+      this.shouldRenderOrthoDust_0c = false;
+      this.footprintMode_10 = 0;
+      this.shouldRenderLawPodTrail_18 = false;
+      this.textureIndexType1_1c = 0;
+      this.transfer_1e.zero();
+      this.size_28 = 0;
+      this.oldFootprintInstantiationInterval_2c = 0;
+      this.instantiationIntervalDust_30 = 0;
+      this.instantiationIntervalFootprints_34 = 0;
+      this.maxTicks_38 = 0;
+      this.trailData_3c = null;}
+  }
+
+  /** Used for ortho quad trail attached sobj effect particles (footprints and some kinds of dust). */
+  public static class OrthoTrailParticle54 implements PoolList.Usable {
+    private boolean used;
+    public MV transforms = new MV();
+
+    // public int renderMode_00;
+    public int tick_04;
+    public int maxTicks_06;
+    // Appears to just be a second size attribute
+    // public float _10;
+
+    /** 16.16 fixed-point */
+    public float stepBrightness_40;
+    // /** 16.16 fixed-point */
+    // public int brightnessAccumulator_44; // No longer necessary
+    public float brightness_48;
+    // public OrthoTrailParticle54 next_50;
+
+    public OrthoTrailParticle54() {
+      this.use();
+    }
+
+    @Override
+    public boolean used() {
+      return this.used;
+    }
+
+    @Override
+    public void use() {
+      this.used = true;
+    }
+
+    @Override
+    public void free() {
+      this.used = false;
+    }
+  }
+
+  /** Split off from original OrthoTrailParticle54 */
+  public static class FootprintParticle54 extends OrthoTrailParticle54 {
+    public int textureIndex_02;
+  }
+
+  /** Split off from original OrthoTrailParticle54 */
+  public static class OrthoDustParticle54 extends OrthoTrailParticle54 {
+    public float size_08;
+    public float sizeStep_0c;
+
+    public int x_18;
+    public int y_1c;
+    public final Vector2f sxy0_20 = new Vector2f();
+    public float centerX_26;
+    public final Vector2f sxy1_28 = new Vector2f();
+    public float centerY_2e;
+    public final Vector2f sxy2_30 = new Vector2f();
+    public final Vector2f sxy3_38 = new Vector2f();
+
+    public float z_4c;
+  }
+
+  public static class LawPodTrailSegment34 implements PoolList.Usable {
+    private boolean used;
+
+    /** short */
+    public int tick_00;
+
+    public int tpage_04;
+    public Vector3f colourStep_08 = new Vector3f();
+    public Vector3f colour_14 = new Vector3f();
+    public float z_20;
+    public TrailSegmentVertices14 originVerts01_24 = new TrailSegmentVertices14();
+    public TrailSegmentVertices14 endpointVerts23_28 = new TrailSegmentVertices14();
+    public LawPodTrailData18 trailData_2c;
+    // public LawPodTrailSegment34 next_30;
+
+    public LawPodTrailSegment34() {
+      this.use();
+    }
+
+    @Override
+    public boolean used() {
+      return this.used;
+    }
+
+    @Override
+    public void use() {
+      this.used = true;
+    }
+
+    @Override
+    public void free() {
+      this.used = false;
+    }
+  }
+
+  public static class LawPodTrailData18 {
+    public int maxCountSegments_00;
+    public int countSegments_01;
+    /** short */
+    public int fadeDelay_02;
+    /** short */
+    public int countFadeSteps_04;
+    /** short */
+    public int maxTicks_06;
+    /** short */
+    public int width_08;
+
+    public int translucency_0c;
+    /** was 3 bytes */
+    public Vector3f colour_10 = new Vector3f();
+
+    public TrailSegmentVertices14 currSegmentOriginVerts_14 = new TrailSegmentVertices14();
+  }
+
+  public static class TrailSegmentVertices14 {
+    public boolean used;
+
+    public final Vector2f vert0_00 = new Vector2f();
+
+    public final Vector2f vert1_08 = new Vector2f();
+
+    // public TrailSegmentVertices14 next_10;
+
+    public void set(final TrailSegmentVertices14 other) {
+      this.vert0_00.set(other.vert0_00);
+      this.vert1_08.set(other.vert1_08);
+    }
+
+    public void zero() {
+      this.vert0_00.set(0.0f, 0.0f);
+      this.vert1_08.set(0.0f, 0.0f);
     }
   }
 }
