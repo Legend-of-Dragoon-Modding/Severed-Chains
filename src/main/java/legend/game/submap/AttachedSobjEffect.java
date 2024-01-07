@@ -597,6 +597,38 @@ public class AttachedSobjEffect {
       this.trailData_3c = null;}
   }
 
+  /** Used for dust trail attached sobj effect particles that use TMD models. */
+  public static class TmdTrailParticle20 implements PoolList.Usable {
+    private boolean used;
+    public MV transforms = new MV();
+
+    public int tick_00;
+    public float stepSize_04;
+    public float size_08;
+    public final Vector3f transfer = new Vector3f();
+    public int maxTicks_18;
+    //public TmdTrailParticle20 next_1c;
+
+    public TmdTrailParticle20() {
+      this.use();
+    }
+
+    @Override
+    public boolean used() {
+      return this.used;
+    }
+
+    @Override
+    public void use() {
+      this.used = true;
+    }
+
+    @Override
+    public void free() {
+      this.used = false;
+    }
+  }
+
   /** Used for ortho quad trail attached sobj effect particles (footprints and some kinds of dust). */
   public static class OrthoTrailParticle54 implements PoolList.Usable {
     private boolean used;
