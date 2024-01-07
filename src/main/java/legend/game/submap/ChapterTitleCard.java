@@ -1,8 +1,10 @@
 package legend.game.submap;
 
 import legend.core.gpu.Bpp;
-import legend.core.gpu.GpuCommandPoly;
+import legend.core.gte.MV;
 import legend.core.memory.Method;
+import legend.core.opengl.MeshObj;
+import legend.core.opengl.QuadBuilder;
 import legend.game.tim.Tim;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
@@ -11,6 +13,7 @@ import org.joml.Vector2f;
 import java.util.List;
 
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 
@@ -46,6 +49,12 @@ public class ChapterTitleCard {
   private final Vector2f chapterTitleOrigin_800c687c = new Vector2f();
 
   private boolean chapterTitleCardLoaded_800c68e0;
+
+  private MeshObj number;
+  private MeshObj numberShadow;
+  private MeshObj name;
+  private MeshObj nameShadow;
+  private final MV transforms = new MV();
 
   public ChapterTitleCard() {
     this.chapterTitleState_800c6708 = ChapterTitleState.LOAD;
@@ -97,6 +106,86 @@ public class ChapterTitleCard {
     this.chapterTitleAnimationPauseTicksRemaining_800c673c = ticks;
   }
 
+  private void buildChapterTitleCard() {
+    this.number = new QuadBuilder("ChapterCardNumber")
+      .bpp(Bpp.BITS_4)
+      .clut(512, 510)
+      .vramPos(512, 256)
+      .monochrome(1.0f)
+      .uv(0, 64)
+      .uvSize(92, 36)
+      .posSize(1.0f, 1.0f)
+      .add()
+      .bpp(Bpp.BITS_4)
+      .translucency(Translucency.B_PLUS_F)
+      .clut(512, 510)
+      .vramPos(512, 256)
+      .monochrome(1.0f)
+      .uv(0, 64)
+      .uvSize(92, 36)
+      .posSize(1.0f, 1.0f)
+      .build();
+
+    this.numberShadow = new QuadBuilder("ChapterCardNumberShadow")
+      .bpp(Bpp.BITS_4)
+      .translucency(Translucency.B_PLUS_F)
+      .clut(512, 511)
+      .vramPos(512, 256)
+      .monochrome(1.0f)
+      .uv(0, 64)
+      .uvSize(92, 36)
+      .posSize(1.0f, 1.0f)
+      .add()
+      .bpp(Bpp.BITS_4)
+      .translucency(Translucency.B_MINUS_F)
+      .clut(512, 511)
+      .vramPos(512, 256)
+      .monochrome(1.0f)
+      .uv(0, 64)
+      .uvSize(92, 36)
+      .posSize(1.0f, 1.0f)
+      .build();
+
+    this.name = new QuadBuilder("ChapterCardName")
+      .bpp(Bpp.BITS_4)
+      .clut(512, 508)
+      .vramPos(512, 256)
+      .monochrome(1.0f)
+      .uv(0, 0)
+      .uvSize(256, 61)
+      .posSize(1.0f, 1.0f)
+      .add()
+      .bpp(Bpp.BITS_4)
+      .translucency(Translucency.B_PLUS_F)
+      .clut(512, 508)
+      .vramPos(512, 256)
+      .monochrome(1.0f)
+      .uv(0, 0)
+      .uvSize(256, 61)
+      .posSize(1.0f, 1.0f)
+      .build();
+
+    this.nameShadow = new QuadBuilder("ChapterCardNameShadow")
+      .bpp(Bpp.BITS_4)
+      .translucency(Translucency.B_PLUS_F)
+      .clut(512, 509)
+      .vramPos(512, 256)
+      .monochrome(1.0f)
+      .uv(0, 0)
+      .uvSize(256, 61)
+      .posSize(1.0f, 1.0f)
+      .add()
+      .bpp(Bpp.BITS_4)
+      .translucency(Translucency.B_MINUS_F)
+      .clut(512, 509)
+      .vramPos(512, 256)
+      .monochrome(1.0f)
+      .uv(0, 0)
+      .uvSize(256, 61)
+      .posSize(1.0f, 1.0f)
+      .build();
+  }
+
   @Method(0x800e2648L)
   public void handleAndRenderChapterTitle() {
     if(this.chapterTitleNum_800c6738 == 0){
@@ -115,6 +204,7 @@ public class ChapterTitleCard {
       case WAIT:
         //LAB_800e27b8
         if(this.chapterTitleCardLoaded_800c68e0 && (this.chapterTitleNum_800c6738 & 0x80) != 0) {
+          this.buildChapterTitleCard();
           this.chapterTitleState_800c6708 = ChapterTitleState.RENDER;
         }
 
@@ -257,126 +347,57 @@ public class ChapterTitleCard {
           this.chapterTitleAnimationTicksRemaining_800c670a++;
         }
 
-        //LAB_800e37a0
-        float left = this.chapterTitleOrigin_800c687c.x + this.chapterTitleNumberOffset_800c6714.x - 58;
-        float top = this.chapterTitleOrigin_800c687c.y + this.chapterTitleNumberOffset_800c6714.y - 66;
-        float right = this.chapterTitleOrigin_800c687c.x - (this.chapterTitleNumberOffset_800c6714.x - 34);
-        float bottom = this.chapterTitleOrigin_800c687c.y - (this.chapterTitleNumberOffset_800c6714.y + 30);
-
-        // Chapter number text
-        final GpuCommandPoly cmd1 = new GpuCommandPoly(4)
-          .bpp(Bpp.BITS_4)
-          .monochrome(this.chapterTitleBrightness_800c6728)
-          .clut(512, 510)
-          .vramPos(512, 256)
-          .uv(0, 0, 64)
-          .uv(1, 91, 64)
-          .uv(2, 0, 99)
-          .uv(3, 91, 99)
-          .pos(0, left, top)
-          .pos(1, right, top)
-          .pos(2, left, bottom)
-          .pos(3, right, bottom);
-
-        if(this.chapterTitleIsTranslucent_800c6724) {
-          cmd1.translucent(Translucency.B_PLUS_F);
-        }
-
-        GPU.queueCommand(28, cmd1);
-
-        left = this.chapterTitleOrigin_800c687c.x - (this.chapterTitleNameOffset_800c671c.x + 140);
-        top = this.chapterTitleOrigin_800c687c.y - (this.chapterTitleNameOffset_800c671c.y + 16);
-        right = this.chapterTitleOrigin_800c687c.x + this.chapterTitleNameOffset_800c671c.x + 116;
-        bottom = this.chapterTitleOrigin_800c687c.y + this.chapterTitleNameOffset_800c671c.y + 45;
-
-        // Chapter name text
-        final GpuCommandPoly cmd2 = new GpuCommandPoly(4)
-          .bpp(Bpp.BITS_4)
-          .monochrome(this.chapterTitleBrightness_800c6728)
-          .clut(512, 508)
-          .vramPos(512, 256)
-          .uv(0, 0, 0)
-          .uv(1, 255, 0)
-          .uv(2, 0, 60)
-          .uv(3, 255, 60)
-          .pos(0, left, top)
-          .pos(1, right, top)
-          .pos(2, left, bottom)
-          .pos(3, right, bottom);
-
-        if(this.chapterTitleIsTranslucent_800c6724) {
-          cmd2.translucent(Translucency.B_PLUS_F);
-        }
-
-        GPU.queueCommand(28, cmd2);
-
+        float left;
+        float top;
+        float right;
+        float bottom;
         if(this.chapterTitleDropShadowOffset_800c670c.x != 0) {
           left = this.chapterTitleDropShadowOffset_800c670c.x + this.chapterTitleOrigin_800c687c.x + this.chapterTitleNumberOffset_800c6714.x - 58;
           top = this.chapterTitleDropShadowOffset_800c670c.y + this.chapterTitleOrigin_800c687c.y + this.chapterTitleNumberOffset_800c6714.y - 66;
           right = this.chapterTitleDropShadowOffset_800c670c.x + this.chapterTitleOrigin_800c687c.x - (this.chapterTitleNumberOffset_800c6714.x - 34);
           bottom = this.chapterTitleDropShadowOffset_800c670c.y + this.chapterTitleOrigin_800c687c.y - (this.chapterTitleNumberOffset_800c6714.y + 30);
 
-          // Chapter number drop shadow
-          final GpuCommandPoly cmd3 = new GpuCommandPoly(4)
-            .bpp(Bpp.BITS_4)
-            .translucent(Translucency.HALF_B_PLUS_HALF_F)
-            .monochrome(this.chapterTitleBrightness_800c6728)
-            .clut(512, 511)
-            .vramPos(512, 256)
-            .uv(0, 0, 64)
-            .uv(1, 91, 64)
-            .uv(2, 0, 99)
-            .uv(3, 91, 99)
-            .pos(0, left, top)
-            .pos(1, right, top)
-            .pos(2, left, bottom)
-            .pos(3, right, bottom);
-
-          if((this.chapterTitleNum_800c6738 & 0xf) - 2 < 3) {
-            cmd3.translucent(Translucency.B_MINUS_F);
-          }
-
-          //LAB_800e3afc
-          if((this.chapterTitleNum_800c6738 & 0xf) == 1) {
-            cmd3.translucent(Translucency.B_PLUS_F);
-          }
-
           //LAB_800e3b14
-          GPU.queueCommand(28, cmd3);
+          this.transforms.scaling(right - left, bottom - top, 1.0f);
+          this.transforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 112.0f);
+          RENDERER.queueOrthoModel(this.numberShadow, this.transforms)
+            .vertices((this.chapterTitleNum_800c6738 & 0xf) == 1 ? 0 : 4, 4)
+            .monochrome(this.chapterTitleBrightness_800c6728);
 
           left = this.chapterTitleDropShadowOffset_800c670c.x + this.chapterTitleOrigin_800c687c.x - (this.chapterTitleNameOffset_800c671c.x + 140);
           top = this.chapterTitleDropShadowOffset_800c670c.y + this.chapterTitleOrigin_800c687c.y - (this.chapterTitleNameOffset_800c671c.y + 16);
           right = this.chapterTitleDropShadowOffset_800c670c.x + this.chapterTitleOrigin_800c687c.x + this.chapterTitleNameOffset_800c671c.x + 116;
           bottom = this.chapterTitleDropShadowOffset_800c670c.y + this.chapterTitleOrigin_800c687c.y + this.chapterTitleNameOffset_800c671c.y + 45;
 
-          // Chapter name drop shadow
-          final GpuCommandPoly cmd4 = new GpuCommandPoly(4)
-            .bpp(Bpp.BITS_4)
-            .translucent(Translucency.HALF_B_PLUS_HALF_F)
-            .monochrome(this.chapterTitleBrightness_800c6728)
-            .clut(512, 509)
-            .vramPos(512, 256)
-            .uv(0, 0, 0)
-            .uv(1, 255, 0)
-            .uv(2, 0, 60)
-            .uv(3, 255, 60)
-            .pos(0, left, top)
-            .pos(1, right, top)
-            .pos(2, left, bottom)
-            .pos(3, right, bottom);
-
-          if((this.chapterTitleNum_800c6738 & 0xf) - 2 < 3) {
-            cmd4.translucent(Translucency.B_MINUS_F);
-          }
-
-          //LAB_800e3c20
-          if((this.chapterTitleNum_800c6738 & 0xf) == 1) {
-            cmd4.translucent(Translucency.B_PLUS_F);
-          }
-
-          //LAB_800e3c3c
-          GPU.queueCommand(28, cmd4);
+          this.transforms.scaling(right - left, bottom - top, 1.0f);
+          this.transforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 112.0f);
+          RENDERER.queueOrthoModel(this.nameShadow, this.transforms)
+            .vertices((this.chapterTitleNum_800c6738 & 0xf) == 1 ? 0 : 4, 4)
+            .monochrome(this.chapterTitleBrightness_800c6728);
         }
+
+        //LAB_800e37a0
+        left = this.chapterTitleOrigin_800c687c.x + this.chapterTitleNumberOffset_800c6714.x - 58;
+        top = this.chapterTitleOrigin_800c687c.y + this.chapterTitleNumberOffset_800c6714.y - 66;
+        right = this.chapterTitleOrigin_800c687c.x - (this.chapterTitleNumberOffset_800c6714.x - 34);
+        bottom = this.chapterTitleOrigin_800c687c.y - (this.chapterTitleNumberOffset_800c6714.y + 30);
+
+        this.transforms.scaling(right - left, bottom - top, 1.0f);
+        this.transforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 112.0f);
+        RENDERER.queueOrthoModel(this.number, this.transforms)
+          .vertices(this.chapterTitleIsTranslucent_800c6724 ? 4 : 0, 4)
+          .monochrome(this.chapterTitleBrightness_800c6728);
+
+        left = this.chapterTitleOrigin_800c687c.x - (this.chapterTitleNameOffset_800c671c.x + 140);
+        top = this.chapterTitleOrigin_800c687c.y - (this.chapterTitleNameOffset_800c671c.y + 16);
+        right = this.chapterTitleOrigin_800c687c.x + this.chapterTitleNameOffset_800c671c.x + 116;
+        bottom = this.chapterTitleOrigin_800c687c.y + this.chapterTitleNameOffset_800c671c.y + 45;
+
+        this.transforms.scaling(right - left, bottom - top, 1.0f);
+        this.transforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 112.0f);
+        RENDERER.queueOrthoModel(this.name, this.transforms)
+          .vertices(this.chapterTitleIsTranslucent_800c6724 ? 4 : 0, 4)
+          .monochrome(this.chapterTitleBrightness_800c6728);
 
         break;
 
@@ -390,6 +411,7 @@ public class ChapterTitleCard {
         this.chapterTitleAnimationTicksRemaining_800c670a = 0;
         this.chapterTitleState_800c6708 = ChapterTitleState.LOAD;
         this.chapterTitleAnimationComplete_800c686e = true;
+        this.deleteChapterTitleCard();
     }
   }
 
@@ -399,6 +421,28 @@ public class ChapterTitleCard {
     if(assetType == 0x10) {
       this.chapterTitleCardMrg_800c6710 = files;
       this.chapterTitleCardLoaded_800c68e0 = true;
+    }
+  }
+
+  private void deleteChapterTitleCard() {
+    if(this.number != null) {
+      this.number.delete();
+      this.number = null;
+    }
+
+    if(this.numberShadow != null) {
+      this.numberShadow.delete();
+      this.numberShadow = null;
+    }
+
+    if(this.name != null) {
+      this.name.delete();
+      this.name = null;
+    }
+
+    if(this.nameShadow != null) {
+      this.nameShadow.delete();
+      this.nameShadow = null;
     }
   }
 }
