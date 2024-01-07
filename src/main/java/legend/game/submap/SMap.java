@@ -2423,7 +2423,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
   @Method(0x800e0c9cL)
   private FlowControl scriptSetTitleCardAnimationPauseTicks(final RunningScript<?> script) {
-    this.chapterTitleCard.setchapterTitleAnimationPauseTicksRemaining(script.params_20[0].get());
+    this.chapterTitleCard.setChapterTitleAnimationPauseTicksRemaining(script.params_20[0].get());
     return FlowControl.CONTINUE;
   }
 

@@ -50,10 +50,10 @@ public class ChapterTitleCard {
 
   private boolean chapterTitleCardLoaded_800c68e0;
 
-  private MeshObj number;
-  private MeshObj numberShadow;
-  private MeshObj name;
-  private MeshObj nameShadow;
+  private MeshObj text;
+  private MeshObj textTransparent;
+  private MeshObj shadowBpf;
+  private MeshObj shadowBmf;
   private final MV transforms = new MV();
 
   public ChapterTitleCard() {
@@ -102,12 +102,13 @@ public class ChapterTitleCard {
     this.chapterTitleOrigin_800c687c.set(x, y);
   }
 
-  public void setchapterTitleAnimationPauseTicksRemaining(final int ticks) {
+  public void setChapterTitleAnimationPauseTicksRemaining(final int ticks) {
     this.chapterTitleAnimationPauseTicksRemaining_800c673c = ticks;
   }
 
   private void buildChapterTitleCard() {
-    this.number = new QuadBuilder("ChapterCardNumber")
+    this.text = new QuadBuilder("ChapterCardText")
+      // Number
       .bpp(Bpp.BITS_4)
       .clut(512, 510)
       .vramPos(512, 256)
@@ -115,38 +116,8 @@ public class ChapterTitleCard {
       .uv(0, 64)
       .uvSize(92, 36)
       .posSize(1.0f, 1.0f)
+      // Name
       .add()
-      .bpp(Bpp.BITS_4)
-      .translucency(Translucency.B_PLUS_F)
-      .clut(512, 510)
-      .vramPos(512, 256)
-      .monochrome(1.0f)
-      .uv(0, 64)
-      .uvSize(92, 36)
-      .posSize(1.0f, 1.0f)
-      .build();
-
-    this.numberShadow = new QuadBuilder("ChapterCardNumberShadow")
-      .bpp(Bpp.BITS_4)
-      .translucency(Translucency.B_PLUS_F)
-      .clut(512, 511)
-      .vramPos(512, 256)
-      .monochrome(1.0f)
-      .uv(0, 64)
-      .uvSize(92, 36)
-      .posSize(1.0f, 1.0f)
-      .add()
-      .bpp(Bpp.BITS_4)
-      .translucency(Translucency.B_MINUS_F)
-      .clut(512, 511)
-      .vramPos(512, 256)
-      .monochrome(1.0f)
-      .uv(0, 64)
-      .uvSize(92, 36)
-      .posSize(1.0f, 1.0f)
-      .build();
-
-    this.name = new QuadBuilder("ChapterCardName")
       .bpp(Bpp.BITS_4)
       .clut(512, 508)
       .vramPos(512, 256)
@@ -154,6 +125,19 @@ public class ChapterTitleCard {
       .uv(0, 0)
       .uvSize(256, 61)
       .posSize(1.0f, 1.0f)
+      .build();
+
+    this.textTransparent = new QuadBuilder("ChapterCardTextTransparent")
+      // Number
+      .bpp(Bpp.BITS_4)
+      .translucency(Translucency.B_PLUS_F)
+      .clut(512, 510)
+      .vramPos(512, 256)
+      .monochrome(1.0f)
+      .uv(0, 64)
+      .uvSize(92, 36)
+      .posSize(1.0f, 1.0f)
+      // Name
       .add()
       .bpp(Bpp.BITS_4)
       .translucency(Translucency.B_PLUS_F)
@@ -165,7 +149,18 @@ public class ChapterTitleCard {
       .posSize(1.0f, 1.0f)
       .build();
 
-    this.nameShadow = new QuadBuilder("ChapterCardNameShadow")
+    this.shadowBpf = new QuadBuilder("ChapterCardShadowB+F")
+      // Number
+      .bpp(Bpp.BITS_4)
+      .translucency(Translucency.B_PLUS_F)
+      .clut(512, 511)
+      .vramPos(512, 256)
+      .monochrome(1.0f)
+      .uv(0, 64)
+      .uvSize(92, 36)
+      .posSize(1.0f, 1.0f)
+      // Name
+      .add()
       .bpp(Bpp.BITS_4)
       .translucency(Translucency.B_PLUS_F)
       .clut(512, 509)
@@ -174,6 +169,19 @@ public class ChapterTitleCard {
       .uv(0, 0)
       .uvSize(256, 61)
       .posSize(1.0f, 1.0f)
+      .build();
+
+    this.shadowBmf = new QuadBuilder("ChapterCardShadowB-F")
+      // Number
+      .bpp(Bpp.BITS_4)
+      .translucency(Translucency.B_MINUS_F)
+      .clut(512, 511)
+      .vramPos(512, 256)
+      .monochrome(1.0f)
+      .uv(0, 64)
+      .uvSize(92, 36)
+      .posSize(1.0f, 1.0f)
+      // Name
       .add()
       .bpp(Bpp.BITS_4)
       .translucency(Translucency.B_MINUS_F)
@@ -352,6 +360,8 @@ public class ChapterTitleCard {
         float right;
         float bottom;
         if(this.chapterTitleDropShadowOffset_800c670c.x != 0) {
+          final MeshObj shadow = (this.chapterTitleNum_800c6738 & 0xf) == 1 ? this.shadowBpf : this.shadowBmf;
+
           left = this.chapterTitleDropShadowOffset_800c670c.x + this.chapterTitleOrigin_800c687c.x + this.chapterTitleNumberOffset_800c6714.x - 58;
           top = this.chapterTitleDropShadowOffset_800c670c.y + this.chapterTitleOrigin_800c687c.y + this.chapterTitleNumberOffset_800c6714.y - 66;
           right = this.chapterTitleDropShadowOffset_800c670c.x + this.chapterTitleOrigin_800c687c.x - (this.chapterTitleNumberOffset_800c6714.x - 34);
@@ -360,8 +370,8 @@ public class ChapterTitleCard {
           //LAB_800e3b14
           this.transforms.scaling(right - left, bottom - top, 1.0f);
           this.transforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 112.0f);
-          RENDERER.queueOrthoModel(this.numberShadow, this.transforms)
-            .vertices((this.chapterTitleNum_800c6738 & 0xf) == 1 ? 0 : 4, 4)
+          RENDERER.queueOrthoModel(shadow, this.transforms)
+            .vertices(0, 4)
             .monochrome(this.chapterTitleBrightness_800c6728);
 
           left = this.chapterTitleDropShadowOffset_800c670c.x + this.chapterTitleOrigin_800c687c.x - (this.chapterTitleNameOffset_800c671c.x + 140);
@@ -371,10 +381,12 @@ public class ChapterTitleCard {
 
           this.transforms.scaling(right - left, bottom - top, 1.0f);
           this.transforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 112.0f);
-          RENDERER.queueOrthoModel(this.nameShadow, this.transforms)
-            .vertices((this.chapterTitleNum_800c6738 & 0xf) == 1 ? 0 : 4, 4)
+          RENDERER.queueOrthoModel(shadow, this.transforms)
+            .vertices(4, 4)
             .monochrome(this.chapterTitleBrightness_800c6728);
         }
+
+        final MeshObj text = this.chapterTitleIsTranslucent_800c6724 ? this.textTransparent : this.text;
 
         //LAB_800e37a0
         left = this.chapterTitleOrigin_800c687c.x + this.chapterTitleNumberOffset_800c6714.x - 58;
@@ -384,8 +396,8 @@ public class ChapterTitleCard {
 
         this.transforms.scaling(right - left, bottom - top, 1.0f);
         this.transforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 112.0f);
-        RENDERER.queueOrthoModel(this.number, this.transforms)
-          .vertices(this.chapterTitleIsTranslucent_800c6724 ? 4 : 0, 4)
+        RENDERER.queueOrthoModel(text, this.transforms)
+          .vertices(0, 4)
           .monochrome(this.chapterTitleBrightness_800c6728);
 
         left = this.chapterTitleOrigin_800c687c.x - (this.chapterTitleNameOffset_800c671c.x + 140);
@@ -395,8 +407,8 @@ public class ChapterTitleCard {
 
         this.transforms.scaling(right - left, bottom - top, 1.0f);
         this.transforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 112.0f);
-        RENDERER.queueOrthoModel(this.name, this.transforms)
-          .vertices(this.chapterTitleIsTranslucent_800c6724 ? 4 : 0, 4)
+        RENDERER.queueOrthoModel(text, this.transforms)
+          .vertices(4, 4)
           .monochrome(this.chapterTitleBrightness_800c6728);
 
         break;
@@ -425,24 +437,24 @@ public class ChapterTitleCard {
   }
 
   private void deleteChapterTitleCard() {
-    if(this.number != null) {
-      this.number.delete();
-      this.number = null;
+    if(this.text != null) {
+      this.text.delete();
+      this.text = null;
     }
 
-    if(this.numberShadow != null) {
-      this.numberShadow.delete();
-      this.numberShadow = null;
+    if(this.textTransparent != null) {
+      this.textTransparent.delete();
+      this.textTransparent = null;
     }
 
-    if(this.name != null) {
-      this.name.delete();
-      this.name = null;
+    if(this.shadowBpf != null) {
+      this.shadowBpf.delete();
+      this.shadowBpf = null;
     }
 
-    if(this.nameShadow != null) {
-      this.nameShadow.delete();
-      this.nameShadow = null;
+    if(this.shadowBmf != null) {
+      this.shadowBmf.delete();
+      this.shadowBmf = null;
     }
   }
 }
