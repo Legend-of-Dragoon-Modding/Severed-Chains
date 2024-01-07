@@ -70,46 +70,17 @@ public class AttachedSobjEffect {
   private MeshObj footprints;
   private MeshObj quadDust;
 
-  @Method(0x800f0e60L)
-  private void initLawPodTrail() {
-    this.lawPodTrail_800d4f90.clear();
-    this.lawPodTrailCount_800f9e78 = 0;
-  }
-
-  public void initLawPodTrail(final RunningScript<?> script) {
-    final ScriptState<?> state = script.scriptState_04;
-
-    script.params_20[9] = new ScriptStorageParam(state, 0);
-
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[state.storage_44[0]].innerStruct_00;
-    if(script.params_20[0].get() == 0 || this.lawPodTrailCount_800f9e78 >= 8) {
-      //LAB_800f1698
-      sobj.attachedEffectData_1d0.shouldRenderLawPodTrail_18 = false;
-    } else {
-      //LAB_800f16a4
-      final LawPodTrailData18 trail = this.addLawPodTrail();
-      trail.maxCountSegments_00 = script.params_20[1].get();
-      trail.countSegments_01 = 0;
-      trail.fadeDelay_02 = script.params_20[2].get();
-      trail.countFadeSteps_04 = script.params_20[3].get();
-      trail.maxTicks_06 = trail.fadeDelay_02 + trail.countFadeSteps_04;
-      trail.width_08 = script.params_20[4].get();
-      trail.translucency_0c = script.params_20[5].get();
-      trail.colour_10.set(script.params_20[6].get(), script.params_20[7].get(), script.params_20[8].get()).div(255.0f);
-      trail.currSegmentOriginVerts_14.zero();
-      sobj.attachedEffectData_1d0.shouldRenderLawPodTrail_18 = script.params_20[0].get() == 1;
-      sobj.attachedEffectData_1d0.trailData_3c = trail;
-      this.lawPodTrailCount_800f9e78++;
-    }
-  }
+  // TODO Still need to implement law pod trail in opengl, but requires custom shader
 
   @Method(0x800f0370L)
   public void initAttachedSobjEffects() {
+    this.tmdTrail_800d4ec0.clear();
     initModel(this.tmdDustModel_800d4d40, this.dustTmd, this.dustAnimation);
     if(this.tmdDust == null) {
       this.tmdDust = TmdObjLoader.fromObjTable("DustTmd", this.dustTmd.tmdPtr_00.tmd.objTable[0]);
     }
-    this.tmdTrail_800d4ec0.clear();
+
+    this.footprintTrail.clear();
     if(this.footprints == null) {
       final PolyBuilder builder = new PolyBuilder("Footprints", GL_TRIANGLE_STRIP)
         .bpp(Bpp.BITS_4)
@@ -158,6 +129,8 @@ public class AttachedSobjEffect {
         .monochrome(1.0f);
       this.footprints = builder.build();
     }
+
+    this.orthoDustTrail_800d4e68.clear();
     if(this.quadDust == null) {
       final QuadBuilder builder = new QuadBuilder("DustQuad")
         .bpp(Bpp.BITS_4)
@@ -170,34 +143,54 @@ public class AttachedSobjEffect {
         .posSize(1.0f, 1.0f);
       this.quadDust = builder.build();
     }
-    this.orthoDustTrail_800d4e68.clear();
-    this.initLawPodTrail();
+
+    this.lawPodTrail_800d4f90.clear();
+    this.lawPodTrailCount_800f9e78 = 0;
   }
 
-  @Method(0x800f0440L)
-  public void deallocateAttachedSobjEffects() {
-    this.tmdTrail_800d4ec0.clear();
-    this.orthoDustTrail_800d4e68.clear();
-    this.deallocateLawPodTrail();
+  /** Script method to initialize law pod trail. */
+  public void initLawPodTrail(final RunningScript<?> script) {
+    final ScriptState<?> state = script.scriptState_04;
+
+    script.params_20[9] = new ScriptStorageParam(state, 0);
+
+    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[state.storage_44[0]].innerStruct_00;
+    if(script.params_20[0].get() == 0 || this.lawPodTrailCount_800f9e78 >= 8) {
+      //LAB_800f1698
+      sobj.attachedEffectData_1d0.shouldRenderLawPodTrail_18 = false;
+    } else {
+      //LAB_800f16a4
+      final LawPodTrailData18 trail = this.addLawPodTrail();
+      trail.maxCountSegments_00 = script.params_20[1].get();
+      trail.countSegments_01 = 0;
+      trail.fadeDelay_02 = script.params_20[2].get();
+      trail.countFadeSteps_04 = script.params_20[3].get();
+      trail.maxTicks_06 = trail.fadeDelay_02 + trail.countFadeSteps_04;
+      trail.width_08 = script.params_20[4].get();
+      trail.translucency_0c = script.params_20[5].get();
+      trail.colour_10.set(script.params_20[6].get(), script.params_20[7].get(), script.params_20[8].get()).div(255.0f);
+      trail.currSegmentOriginVerts_14.zero();
+      sobj.attachedEffectData_1d0.shouldRenderLawPodTrail_18 = script.params_20[0].get() == 1;
+      sobj.attachedEffectData_1d0.trailData_3c = trail;
+      this.lawPodTrailCount_800f9e78++;
+    }
   }
 
-  @Method(0x800f047cL)
-  public void renderAttachedSobjEffects(final int screenOffsetX, final int screenOffsetY) {
-    if(!this.tmdTrail_800d4ec0.isEmpty()) {
-      this.renderTmdTrail(screenOffsetX, screenOffsetY);
+  @Method(0x800f0f20L)
+  private LawPodTrailData18 addLawPodTrail() {
+    LawPodTrailData18 data = null;
+
+    //LAB_800f0f3c
+    for(int i = 0; i < 8; i++) {
+      if(this.lawPodTrailsData_800f9e7c[i] == null) {
+        data = new LawPodTrailData18();
+        this.lawPodTrailsData_800f9e7c[i] = data;
+        break;
+      }
     }
 
-    if(!this.footprintTrail.isEmpty()) {
-      this.renderFootprints(screenOffsetX, screenOffsetY);
-    }
-
-    if(!this.orthoDustTrail_800d4e68.isEmpty()) {
-        this.renderOrthoDustTrailEffect(screenOffsetX, screenOffsetY);
-    }
-
-    if(!this.lawPodTrail_800d4f90.isEmpty()) {
-      this.renderLawPodTrail(screenOffsetX, screenOffsetY);
-    }
+    //LAB_800f0f78
+    return data;
   }
 
   @Method(0x800ef0f8L)
@@ -334,7 +327,8 @@ public class AttachedSobjEffect {
 
         segment.tick_00 = 0;
         segment.tpage_04 = GetTPage(Bpp.BITS_4, Translucency.of(trailData.translucency_0c), 972, 320);
-        this.initLawPodTrailSegmentColour(trailData, segment);
+        segment.colour_14.set(trailData.colour_10);
+        segment.colourStep_08.set(segment.colour_14).div(trailData.countFadeSteps_04);
         newVerts.vert0_00.x -= screenOffsetX;
         newVerts.vert0_00.y -= screenOffsetY;
         newVerts.vert1_08.x -= screenOffsetX;
@@ -355,6 +349,25 @@ public class AttachedSobjEffect {
       }
     }
     //LAB_800f094c
+  }
+
+  @Method(0x800f047cL)
+  public void renderAttachedSobjEffects(final int screenOffsetX, final int screenOffsetY) {
+    if(!this.tmdTrail_800d4ec0.isEmpty()) {
+      this.renderTmdTrail(screenOffsetX, screenOffsetY);
+    }
+
+    if(!this.footprintTrail.isEmpty()) {
+      this.renderFootprints(screenOffsetX, screenOffsetY);
+    }
+
+    if(!this.orthoDustTrail_800d4e68.isEmpty()) {
+      this.renderOrthoDustTrailEffect(screenOffsetX, screenOffsetY);
+    }
+
+    if(!this.lawPodTrail_800d4f90.isEmpty()) {
+      this.renderLawPodTrail(screenOffsetX, screenOffsetY);
+    }
   }
 
   @Method(0x800ef798L)
@@ -499,12 +512,30 @@ public class AttachedSobjEffect {
     //LAB_800f0dc8
   }
 
-  @Method(0x800f0df0L)
-  private void initLawPodTrailSegmentColour(final LawPodTrailData18 trailData, final LawPodTrailSegment34 segment) {
-    segment.colour_14.set(trailData.colour_10);
-    segment.colourStep_08.set(segment.colour_14).div(trailData.countFadeSteps_04);
+  @Method(0x800f0440L)
+  public void deallocateAttachedSobjEffects() {
+    this.tmdTrail_800d4ec0.clear();
+    if(this.tmdDust != null) {
+      this.tmdDust.delete();
+      this.tmdDust = null;
+    }
+
+    this.footprintTrail.clear();
+    if(this.footprints != null) {
+      this.footprints.delete();
+      this.footprints = null;
+    }
+
+    this.orthoDustTrail_800d4e68.clear();
+    if(this.quadDust != null) {
+      this.quadDust.delete();
+      this.quadDust = null;
+    }
+
+    this.deallocateLawPodTrail();
   }
 
+  /** Script method to deallocate law pod trail individually. */
   public void deallocateLawPodTrail(final RunningScript<?> script) {
     final ScriptState<?> state = script.scriptState_04;
     script.params_20[1] = new ScriptStorageParam(state, 0);
@@ -519,33 +550,7 @@ public class AttachedSobjEffect {
   @Method(0x800f0e7cL)
   private void deallocateLawPodTrail() {
     this.lawPodTrail_800d4f90.clear();
-
-    //LAB_800f0ec8
-    //LAB_800f0edc
-    //LAB_800f0efc
-    this.clearLawPodTrailSegmentsList();
     this.lawPodTrailCount_800f9e78 = 0;
-  }
-
-  @Method(0x800f0f20L)
-  private LawPodTrailData18 addLawPodTrail() {
-    LawPodTrailData18 data = null;
-
-    //LAB_800f0f3c
-    for(int i = 0; i < 8; i++) {
-      if(this.lawPodTrailsData_800f9e7c[i] == null) {
-        data = new LawPodTrailData18();
-        this.lawPodTrailsData_800f9e7c[i] = data;
-        break;
-      }
-    }
-
-    //LAB_800f0f78
-    return data;
-  }
-
-  @Method(0x800f0fe8L)
-  private void clearLawPodTrailSegmentsList() {
     for(int i = 0; i < 8; i++) {
       if(this.lawPodTrailsData_800f9e7c[i] != null) {
         this.lawPodTrailsData_800f9e7c[i] = null;
