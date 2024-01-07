@@ -65,11 +65,6 @@ public class BasicCamera implements Camera {
   }
 
   @Override
-  public void get(final Shader.UniformMat4 uniform) {
-
-  }
-
-  @Override
   public void get(final FloatBuffer buffer) {
     this.view.get(buffer);
   }
@@ -87,15 +82,5 @@ public class BasicCamera implements Camera {
   @Override
   public Vector3fc getPos() {
     return null;
-  }
-
-  @Override
-  public void getPos(final FloatBuffer buffer) {
-
-  }
-
-  @Override
-  public void getPos(final int index, final FloatBuffer buffer) {
-
   }
 }

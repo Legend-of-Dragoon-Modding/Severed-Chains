@@ -2,11 +2,9 @@ package legend.core.opengl;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joml.Matrix4fc;
 import org.joml.Vector2fc;
 import org.joml.Vector3fc;
 import org.joml.Vector4fc;
-import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
@@ -45,7 +43,6 @@ import static org.lwjgl.opengl.GL20C.glUniform3f;
 import static org.lwjgl.opengl.GL20C.glUniform3fv;
 import static org.lwjgl.opengl.GL20C.glUniform4f;
 import static org.lwjgl.opengl.GL20C.glUniform4fv;
-import static org.lwjgl.opengl.GL20C.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL20C.glUseProgram;
 import static org.lwjgl.opengl.GL30C.glBindBufferBase;
 import static org.lwjgl.opengl.GL31C.GL_INVALID_INDEX;
@@ -121,8 +118,6 @@ public class Shader {
     glDeleteProgram(this.shader);
   }
 
-  private final FloatBuffer floatBuffer16 = BufferUtils.createFloatBuffer(16);
-
   private class Uniform {
     final int loc;
 
@@ -161,47 +156,6 @@ public class Shader {
       glBindBuffer(GL_UNIFORM_BUFFER, this.id);
       glBufferSubData(GL_UNIFORM_BUFFER, offset, buffer);
       glBindBuffer(GL_UNIFORM_BUFFER, 0);
-    }
-
-    public void set(final Matrix4fc mat) {
-      this.set(0L, mat);
-    }
-
-    public void set(final long offset, final Matrix4fc matrix) {
-      //TODO: zero instantiation
-      final FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
-      matrix.get(buffer);
-
-      this.set(offset, buffer);
-    }
-
-    public void set(final float value) {
-      this.set(0L, value);
-    }
-
-    public void set(final long offset, final float value) {
-      //TODO: zero instantiation
-      final FloatBuffer buffer = BufferUtils.createFloatBuffer(1);
-      buffer.put(value);
-      buffer.flip();
-
-      this.set(offset, buffer);
-    }
-  }
-
-  public class UniformMat4 extends Uniform {
-    public UniformMat4(final String name) {
-      super(name);
-    }
-
-    public void set(final FloatBuffer buffer) {
-      glUniformMatrix4fv(this.loc, false, buffer);
-    }
-
-    public void set(final Matrix4fc mat) {
-      Shader.this.floatBuffer16.clear();
-      mat.get(Shader.this.floatBuffer16);
-      this.set(Shader.this.floatBuffer16);
     }
   }
 

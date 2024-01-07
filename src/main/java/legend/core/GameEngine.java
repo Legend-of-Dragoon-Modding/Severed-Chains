@@ -38,8 +38,10 @@ import org.joml.Matrix4f;
 import org.legendofdragoon.modloader.ModManager;
 import org.legendofdragoon.modloader.events.EventManager;
 import org.legendofdragoon.modloader.i18n.LangManager;
+import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
+import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -151,6 +153,7 @@ public final class GameEngine {
   private static float screenWidth;
 
   private static Shader.UniformBuffer transforms2;
+  private static FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer(4 * 4 + 3);
   private static final Matrix4f identity = new Matrix4f();
   private static final Matrix4f textTransforms = new Matrix4f();
   private static final Matrix4f eyeTransforms = new Matrix4f();
@@ -303,7 +306,8 @@ public final class GameEngine {
 
   private static void transitionToGame() {
     glDisable(GL_BLEND);
-    transforms2.set(identity);
+    identity.get(transforms2Buffer);
+    transforms2.set(transforms2Buffer);
 
     shaderAlpha = null;
 
@@ -505,25 +509,29 @@ public final class GameEngine {
 
     shader.use();
 
-    transforms2.set(identity);
+    identity.get(transforms2Buffer);
+    transforms2.set(transforms2Buffer);
     shaderAlpha.set(fade1 * fade1 * fade1);
     title1Texture.use();
     fullScrenMesh.draw();
 
-    transforms2.set(textTransforms);
+    textTransforms.get(transforms2Buffer);
+    transforms2.set(transforms2Buffer);
     shaderAlpha.set(fade2 * fade2 * fade2);
     title2Texture.use();
     fullScrenMesh.draw();
 
     if(loading) {
-      transforms2.set(eyeTransforms);
+      eyeTransforms.get(transforms2Buffer);
+      transforms2.set(transforms2Buffer);
       eyeShader.use();
       eyeShaderAlpha.set(eyeFade);
       eyeShaderTicks.set(deltaMs / 10_000.0f);
       eye.use();
       eyeMesh.draw();
 
-      transforms2.set(loadingTransforms);
+      loadingTransforms.get(transforms2Buffer);
+      transforms2.set(transforms2Buffer);
       shader.use();
       shaderAlpha.set(loadingFade);
       loadingTexture.use();

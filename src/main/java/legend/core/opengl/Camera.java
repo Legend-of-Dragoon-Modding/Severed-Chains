@@ -16,11 +16,8 @@ public interface Camera {
   void jump(final float amount);
   void look(final float yaw, final float pitch);
   void lookAt(final Vector3f position, final Vector3f reference);
-  void get(final Shader.UniformMat4 uniform);
   void get(final FloatBuffer buffer);
   void get(final int index, final FloatBuffer buffer);
   Matrix4f getView();
   Vector3fc getPos();
-  void getPos(final FloatBuffer buffer);
-  void getPos(final int index, final FloatBuffer buffer);
 }

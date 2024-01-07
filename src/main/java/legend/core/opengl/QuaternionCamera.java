@@ -100,11 +100,6 @@ public class QuaternionCamera implements Camera {
   }
 
   @Override
-  public void get(final Shader.UniformMat4 uniform) {
-    uniform.set(this.view);
-  }
-
-  @Override
   public void get(final FloatBuffer buffer) {
     this.view.get(buffer);
   }
@@ -122,15 +117,5 @@ public class QuaternionCamera implements Camera {
   @Override
   public Vector3fc getPos() {
     return this.pos;
-  }
-
-  @Override
-  public void getPos(final FloatBuffer buffer) {
-    this.pos.get(buffer);
-  }
-
-  @Override
-  public void getPos(final int index, final FloatBuffer buffer) {
-    this.pos.get(index, buffer);
   }
 }

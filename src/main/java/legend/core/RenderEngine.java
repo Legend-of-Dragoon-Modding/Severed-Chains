@@ -119,7 +119,6 @@ public class RenderEngine {
   private Shader.UniformBuffer projectionUniform;
   private final Matrix4f perspectiveProjection = new Matrix4f();
   private final Matrix4f orthographicProjection = new Matrix4f();
-  private final Matrix4f transforms = new Matrix4f();
   private final FloatBuffer transformsBuffer = BufferUtils.createFloatBuffer(4 * 4 * 2);
   private final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer(4 * 4 + 3);
   private final FloatBuffer lightBuffer = BufferUtils.createFloatBuffer(4 * 4 * 2 + 4);
@@ -454,10 +453,6 @@ public class RenderEngine {
       this.pre();
 
       EVENTS.clearStaleRefs();
-
-      // Restore model buffer to identity
-      this.transforms.identity();
-      this.transforms2Uniform.set(this.transforms);
 
       if(!this.paused) {
         this.renderCallback.run();
