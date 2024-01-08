@@ -41,6 +41,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.SEQUENCER;
 import static legend.core.GameEngine.SPU;
 import static legend.game.Scus94491BpeSegment_8005.reverbConfigs_80059f7c;
@@ -522,6 +523,11 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004c390L)
   public static long freeSequence(final SequenceData124 sequenceData) {
+    // TODO proper cleanup
+    if(sequenceData == null) {
+      return 0;
+    }
+
     if(sequenceData.musicPlaying_028) {
       assert false : "Error";
       return -0x1L;
@@ -750,6 +756,10 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004cf8cL)
   public static void startMusicSequence(final SequenceData124 sequenceData) {
+    if(sequenceData == null) {
+      return;
+    }
+
     final PlayableSound0c playableSound = sequenceData.playableSound_020;
 
     sshdPtr_800c4ac0 = playableSound.sshdPtr_04;
@@ -769,6 +779,13 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004d034L)
   public static void stopMusicSequence(final SequenceData124 sequenceData, final int mode) {
+    // TODO this needs to somehow play the end battle song
+    if(sequenceData == null) {
+      AUDIO_THREAD.unloadMusic();
+
+      return;
+    }
+
     boolean resetAdsr = false;
     final PlayableSound0c playableSound = sequenceData.playableSound_020;
     final Sshd sshd = playableSound.sshdPtr_04;
@@ -868,6 +885,11 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004d2fcL)
   public static int startSequenceAndChangeVolumeOverTime(final SequenceData124 sequenceData, final short transitionTime, final short newVolume) {
+    // TODO this should do the else if part
+    if(true) {
+      return -1;
+    }
+
     sssqReader_800c667c = sequenceData.sssqReader_010;
 
     int ret = -1;

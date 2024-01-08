@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static legend.core.Async.allLoaded;
+import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
@@ -1230,8 +1231,7 @@ public class RetailSubmap extends Submap {
       return soundFiles_800bcf80[11].charId_02;
     }
 
-    //LAB_8001b408
-    return -1;
+    return AUDIO_THREAD.getSongId();
   }
 
   @Method(0x8001c60cL)
@@ -1302,7 +1302,8 @@ public class RetailSubmap extends Submap {
     }
 
     //LAB_8001c7ec
-    if(!currentSequenceData_800bd0f8.musicPlaying_028) {
+    // TODO we should probably directly call audioThread, but something else might be playing
+    if(currentSequenceData_800bd0f8 != null && !currentSequenceData_800bd0f8.musicPlaying_028) {
       return -2;
     }
 
