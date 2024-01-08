@@ -260,9 +260,12 @@ public final class Fmv {
     RENDERER.usePs1Gpu = false;
 
     oldRenderer = RENDERER.setRenderCallback(() -> {
-      if(Input.pressedThisFrame(InputAction.BUTTON_CENTER_2)
-        || Input.pressedThisFrame(InputAction.BUTTON_NORTH) || Input.pressedThisFrame(InputAction.BUTTON_SOUTH)
-        || Input.pressedThisFrame(InputAction.BUTTON_EAST) || Input.pressedThisFrame(InputAction.BUTTON_WEST)) {
+      if(Input.pressedThisFrame(
+        InputAction.BUTTON_CENTER_2,
+        InputAction.BUTTON_NORTH,
+        InputAction.BUTTON_SOUTH,
+        InputAction.BUTTON_EAST,
+        InputAction.BUTTON_WEST)) {
         shouldStop = true;
       }
 

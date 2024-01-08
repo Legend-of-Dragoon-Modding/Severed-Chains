@@ -71,7 +71,7 @@ public class GameOver extends EngineState {
 
       // Game Over Screen
       case 4 -> {
-        if(Input.pressedThisFrame(InputAction.BUTTON_CENTER_2) || Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
+        if(Input.pressedThisFrame(InputAction.BUTTON_CENTER_2, InputAction.BUTTON_SOUTH)) {
           Scus94491BpeSegment_8002.playSound(2);
           this.loadingStage = 5;
           startFadeEffect(1, 10);

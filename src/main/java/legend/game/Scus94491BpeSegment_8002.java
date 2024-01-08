@@ -2568,7 +2568,7 @@ public final class Scus94491BpeSegment_8002 {
           //LAB_80026df0
           if((input_800bee90 & 0x4000) == 0) {
             //LAB_80026ee8
-            if(Input.getButtonState(InputAction.DPAD_UP) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
+            if(Input.getButtonState(InputAction.DPAD_UP, InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
               if((textboxText.flags_08 & 0x100) == 0 || textboxText.selectionLine_68 != 0) {
                 //LAB_80026f38
                 Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
@@ -2659,7 +2659,7 @@ public final class Scus94491BpeSegment_8002 {
               Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
 
               //LAB_80026ee8
-              if(Input.getButtonState(InputAction.DPAD_UP) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
+              if(Input.getButtonState(InputAction.DPAD_UP, InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
                 if((textboxText.flags_08 & 0x100) == 0 || textboxText.selectionLine_68 != 0) {
                   //LAB_80026f38
                   Scus94491BpeSegment.playSound(0, 1, 0, 0, (short)0, (short)0);
@@ -2861,7 +2861,7 @@ public final class Scus94491BpeSegment_8002 {
           textboxText.selectionIndex_6c = textboxText.selectionLine_68 - textboxText.minSelectionLine_72;
         } else {
           //LAB_800273bc
-          if(Input.getButtonState(InputAction.DPAD_UP) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
+          if(Input.getButtonState(InputAction.DPAD_UP, InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
             textboxText.ticksUntilStateTransition_64 = 4;
             textboxText.selectionLine_68--;
 
@@ -2875,7 +2875,7 @@ public final class Scus94491BpeSegment_8002 {
           }
 
           //LAB_80027420
-          if(Input.getButtonState(InputAction.DPAD_DOWN) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
+          if(Input.getButtonState(InputAction.DPAD_DOWN, InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
             textboxText.ticksUntilStateTransition_64 = 4;
             textboxText.selectionLine_68++;
 

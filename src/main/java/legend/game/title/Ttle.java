@@ -696,7 +696,7 @@ public class Ttle extends EngineState {
         playSound(0, 2, 0, 0, (short)0, (short)0);
 
         this._800c672c = 3;
-      } else if(Input.pressedThisFrame(InputAction.DPAD_UP) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_UP)) { // Menu button up
+      } else if(Input.pressedThisFrame(InputAction.DPAD_UP, InputAction.JOYSTICK_LEFT_BUTTON_UP)) { // Menu button up
         playSound(0, 1, 0, 0, (short)0, (short)0);
 
         this.selectedMenuOption--;
@@ -709,7 +709,7 @@ public class Ttle extends EngineState {
         }
 
         this._800c672c = 2;
-      } else if(Input.pressedThisFrame(InputAction.DPAD_DOWN) || Input.pressedThisFrame(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) { // Menu button down
+      } else if(Input.pressedThisFrame(InputAction.DPAD_DOWN, InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) { // Menu button down
         playSound(0, 1, 0, 0, (short)0, (short)0);
 
         this.selectedMenuOption++;

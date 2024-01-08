@@ -137,31 +137,51 @@ public final class Input {
     controllerManager.init();
   }
 
-  public static boolean pressedThisFrame(final InputAction targetKey) {
+  /**
+   * Returns true if any of the target keys were pressed this frame.
+   * @param targetKeys The keys to check.
+   * @return True if any of the target keys were pressed this frame.
+   */
+  public static boolean pressedThisFrame(final InputAction ...targetKeys) {
     for(final var entry : pressedThisFrame.object2BooleanEntrySet()) {
-      if(entry.getKey().getInputAction() == targetKey) {
-        return entry.getBooleanValue();
+      for (final var targetKey : targetKeys) {
+        if(entry.getKey().getInputAction() == targetKey) {
+          return entry.getBooleanValue();
+        }
       }
     }
 
     return false;
   }
 
-  public static boolean pressedWithRepeatPulse(final InputAction targetKey) {
+  /**
+   * Returns true if any of the target keys are pressed this frame or are being repeatedly pressed.
+   * @param targetKeys The keys to check.
+   * @return True if any of the target keys are pressed this frame or are being repeatedly pressed.
+   */
+  public static boolean pressedWithRepeatPulse(final InputAction ...targetKeys) {
     for(final InputBinding inputBinding : activeController.bindings) {
-      if(inputBinding.getInputAction() == targetKey) {
-        if(inputBinding.getState() == InputState.PRESSED_THIS_FRAME || inputBinding.getState() == InputState.PRESSED_REPEAT) {
-          return true;
+      for(final var targetKey : targetKeys) {
+        if(inputBinding.getInputAction() == targetKey) {
+          if(inputBinding.getState() == InputState.PRESSED_THIS_FRAME || inputBinding.getState() == InputState.PRESSED_REPEAT) {
+            return true;
+          }
         }
       }
     }
     return false;
   }
 
-  public static boolean getButtonState(final InputAction targetInput) {
+  /**
+   * Returns true if any of the target keys are being held down.
+   * @param targetInputs The keys to check.
+   * @return True if any of the target keys are being held down.
+   */
+  public static boolean getButtonState(final InputAction ...targetInputs) {
     for(final InputBinding inputBinding : activeController.bindings) {
-      if(inputBinding.getInputAction() == targetInput) {
-        if(inputBinding.getState().pressed) {
+      for (final var targetInput : targetInputs) {
+        if(inputBinding.getInputAction() == targetInput &&
+          inputBinding.getState().pressed) {
           return true;
         }
       }
