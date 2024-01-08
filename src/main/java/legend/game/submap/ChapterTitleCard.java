@@ -3,7 +3,7 @@ package legend.game.submap;
 import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
-import legend.core.opengl.MeshObj;
+import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.game.tim.Tim;
 import legend.game.types.Translucency;
@@ -27,7 +27,7 @@ public class ChapterTitleCard {
   private final int[] chapterCardDirs = {6670, 6671, 6672, 6673};
 
   private ChapterTitleState chapterTitleState_800c6708;
-  private int chapterTitleAnimationTicksRemaining_800c670a;
+  private int chapterTitleAnimationTick_800c670a;
   private final Vector2f chapterTitleDropShadowOffset_800c670c = new Vector2f();
   private List<FileData> chapterTitleCardMrg_800c6710;
   private final Vector2f chapterTitleNumberOffset_800c6714 = new Vector2f();
@@ -36,11 +36,9 @@ public class ChapterTitleCard {
   private boolean chapterTitleIsTranslucent_800c6724;
   private float chapterTitleBrightness_800c6728;
 
-  /**
-   * Lower 4 bits are chapter title num (starting at 1), used for displaying chapter title cards
-   * 0x80 bit indicates that the origin XY of the title card have been set and the animation is ready to start rendering
-   */
   private int chapterTitleNum_800c6738;
+  /** Split bit 0x80 off of chapterTitleNum_800c6738. */
+  private boolean readyToAnimate;
 
   private int chapterTitleAnimationPauseTicksRemaining_800c673c;
 
@@ -50,17 +48,18 @@ public class ChapterTitleCard {
 
   private boolean chapterTitleCardLoaded_800c68e0;
 
-  private MeshObj text;
-  private MeshObj textTransparent;
-  private MeshObj shadowBpf;
-  private MeshObj shadowBmf;
+  private Obj text;
+  private Obj textTransparent;
+  private Obj shadowBpf;
+  private Obj shadowBmf;
   private final MV transforms = new MV();
 
   public ChapterTitleCard() {
     this.chapterTitleState_800c6708 = ChapterTitleState.LOAD;
-    this.chapterTitleAnimationTicksRemaining_800c670a = 0;
+    this.chapterTitleAnimationTick_800c670a = 0;
     this.chapterTitleCardMrg_800c6710 = null;
     this.chapterTitleNum_800c6738 = 0;
+    this.readyToAnimate = false;
     this.chapterTitleAnimationPauseTicksRemaining_800c673c = 60;
     this.chapterTitleAnimationComplete_800c686e = false;
     this.chapterTitleCardLoaded_800c68e0 = false;
@@ -90,12 +89,12 @@ public class ChapterTitleCard {
     this.chapterTitleAnimationComplete_800c686e = false;
   }
 
-  public int getChapterNum() {
-    return this.chapterTitleNum_800c6738;
-  }
-
   public void setChapterNum(final int num) {
     this.chapterTitleNum_800c6738 = num;
+  }
+
+  public void setReadyToAnimate() {
+    this.readyToAnimate = true;
   }
 
   public void setChapterTitleOrigin(final int x, final int y) {
@@ -196,7 +195,7 @@ public class ChapterTitleCard {
 
   @Method(0x800e2648L)
   public void handleAndRenderChapterTitle() {
-    if(this.chapterTitleNum_800c6738 == 0){
+    if(this.chapterTitleNum_800c6738 == 0) {
       return;
     }
 
@@ -211,7 +210,7 @@ public class ChapterTitleCard {
 
       case WAIT:
         //LAB_800e27b8
-        if(this.chapterTitleCardLoaded_800c68e0 && (this.chapterTitleNum_800c6738 & 0x80) != 0) {
+        if(this.chapterTitleCardLoaded_800c68e0 && this.readyToAnimate) {
           this.buildChapterTitleCard();
           this.chapterTitleState_800c6708 = ChapterTitleState.RENDER;
         }
@@ -220,7 +219,7 @@ public class ChapterTitleCard {
 
       case RENDER:
         //LAB_800e27e8
-        final int currentTick = this.chapterTitleAnimationTicksRemaining_800c670a;
+        final int currentTick = this.chapterTitleAnimationTick_800c670a;
 
         //LAB_800e284c
         if(currentTick == 0) {
@@ -233,14 +232,14 @@ public class ChapterTitleCard {
           this.chapterTitleIsTranslucent_800c6724 = true;
           this.chapterTitleNumberOffset_800c6714.set(32.0f, 16.0f);
           this.chapterTitleNameOffset_800c671c.set(64.0f, 16.0f);
-          this.chapterTitleAnimationTicksRemaining_800c670a++;
+          this.chapterTitleAnimationTick_800c670a++;
         } else if(currentTick == 33 * (3 - vsyncMode_8007a3b8)) {
           //LAB_800e3070
           this.chapterTitleIsTranslucent_800c6724 = false;
           this.chapterTitleNameOffset_800c671c.set(0.0f, 0.0f);
           this.chapterTitleNumberOffset_800c6714.set(0.0f, 0.0f);
           this.chapterTitleBrightness_800c6728 = 0.5f;
-          this.chapterTitleAnimationTicksRemaining_800c670a++;
+          this.chapterTitleAnimationTick_800c670a++;
           this.chapterTitleDropShadowOffset_800c670c.set(1.0f, 0.0f);
         } else if(currentTick == 34 * (3 - vsyncMode_8007a3b8)) {
           //LAB_800e30c0
@@ -248,14 +247,14 @@ public class ChapterTitleCard {
 
           if(this.chapterTitleDropShadowOffset_800c670c.x >= 3) {
             this.chapterTitleDropShadowOffset_800c670c.y = 1.0f;
-            this.chapterTitleAnimationTicksRemaining_800c670a++;
+            this.chapterTitleAnimationTick_800c670a++;
           }
         } else if(currentTick == 35 * (3 - vsyncMode_8007a3b8)) {
           //LAB_800e30f8
           this.chapterTitleAnimationPauseTicksRemaining_800c673c--;
 
           if(this.chapterTitleAnimationPauseTicksRemaining_800c673c == 0) {
-            this.chapterTitleAnimationTicksRemaining_800c670a = 201;
+            this.chapterTitleAnimationTick_800c670a = 201;
           }
         } else if(currentTick == 233 * (3 - vsyncMode_8007a3b8)) {
           //LAB_800e376c
@@ -301,7 +300,7 @@ public class ChapterTitleCard {
             }
 
             //LAB_800e3790
-            this.chapterTitleAnimationTicksRemaining_800c670a++;
+            this.chapterTitleAnimationTick_800c670a++;
           }
         } else if(currentTick > 0) {
           //LAB_800e29d4
@@ -342,17 +341,15 @@ public class ChapterTitleCard {
           this.chapterTitleNameOffset_800c671c.x = this.chapterTitleNameOffset_800c671c.x - 2.0f / (3 - vsyncMode_8007a3b8);
 
           // Decrement Y-offset every other tick
-          if((this.chapterTitleAnimationTicksRemaining_800c670a & 0x1) == 0) {
-            this.chapterTitleNumberOffset_800c6714.y = this.chapterTitleNumberOffset_800c6714.y - 1.0f / (3 - vsyncMode_8007a3b8);
-            this.chapterTitleNameOffset_800c671c.y = this.chapterTitleNameOffset_800c671c.y - 1.0f / (3 - vsyncMode_8007a3b8);
-          }
+          this.chapterTitleNumberOffset_800c6714.y = this.chapterTitleNumberOffset_800c6714.y - 0.5f / (3 - vsyncMode_8007a3b8);
+          this.chapterTitleNameOffset_800c671c.y = this.chapterTitleNameOffset_800c671c.y - 0.5f / (3 - vsyncMode_8007a3b8);
 
           //LAB_800e3038
           //LAB_800e3064
-          this.chapterTitleAnimationTicksRemaining_800c670a++;
+          this.chapterTitleAnimationTick_800c670a++;
         } else {
           //LAB_800e3790
-          this.chapterTitleAnimationTicksRemaining_800c670a++;
+          this.chapterTitleAnimationTick_800c670a++;
         }
 
         float left;
@@ -360,7 +357,7 @@ public class ChapterTitleCard {
         float right;
         float bottom;
         if(this.chapterTitleDropShadowOffset_800c670c.x != 0) {
-          final MeshObj shadow = (this.chapterTitleNum_800c6738 & 0xf) == 1 ? this.shadowBpf : this.shadowBmf;
+          final Obj shadow = this.chapterTitleNum_800c6738 == 1 ? this.shadowBpf : this.shadowBmf;
 
           left = this.chapterTitleDropShadowOffset_800c670c.x + this.chapterTitleOrigin_800c687c.x + this.chapterTitleNumberOffset_800c6714.x - 58;
           top = this.chapterTitleDropShadowOffset_800c670c.y + this.chapterTitleOrigin_800c687c.y + this.chapterTitleNumberOffset_800c6714.y - 66;
@@ -386,7 +383,7 @@ public class ChapterTitleCard {
             .monochrome(this.chapterTitleBrightness_800c6728);
         }
 
-        final MeshObj text = this.chapterTitleIsTranslucent_800c6724 ? this.textTransparent : this.text;
+        final Obj text = this.chapterTitleIsTranslucent_800c6724 ? this.textTransparent : this.text;
 
         //LAB_800e37a0
         left = this.chapterTitleOrigin_800c687c.x + this.chapterTitleNumberOffset_800c6714.x - 58;
@@ -417,10 +414,11 @@ public class ChapterTitleCard {
       case COMPLETE:
         //LAB_800e3c60
         this.chapterTitleNum_800c6738 = 0;
+        this.readyToAnimate = false;
         this.chapterTitleOrigin_800c687c.set(0.0f, 0.0f);
         this.chapterTitleCardLoaded_800c68e0 = false;
         this.chapterTitleDropShadowOffset_800c670c.x = 0.0f;
-        this.chapterTitleAnimationTicksRemaining_800c670a = 0;
+        this.chapterTitleAnimationTick_800c670a = 0;
         this.chapterTitleState_800c6708 = ChapterTitleState.LOAD;
         this.chapterTitleAnimationComplete_800c686e = true;
         this.deleteChapterTitleCard();

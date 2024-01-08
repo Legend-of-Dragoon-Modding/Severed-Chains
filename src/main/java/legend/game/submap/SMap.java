@@ -2405,7 +2405,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "originY", description = "Y origin position of chapter title")
   @Method(0x800e0c40L)
   private FlowControl scriptSetChapterTitleCardReadyToRender(final RunningScript<?> script) {
-    this.chapterTitleCard.setChapterNum(this.chapterTitleCard.getChapterNum() | 0x80);
+    this.chapterTitleCard.setReadyToAnimate();
     this.chapterTitleCard.setChapterTitleAnimationNotComplete();
     this.chapterTitleCard.setChapterTitleOrigin(script.params_20[0].get(), script.params_20[1].get());
     return FlowControl.CONTINUE;
