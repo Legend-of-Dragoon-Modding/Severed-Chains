@@ -441,9 +441,7 @@ public class AttachedSobjEffect {
         inst.sxy0_20.x = inst.centerX_26 - inst.size_08 / 2.0f;
         inst.sxy0_20.y = inst.centerY_2e - inst.size_08 / 2.0f;
 
-        if((inst.tick_04 & 0x3) == 0) {
-          inst.centerY_2e -= 1.0f / (3 - vsyncMode_8007a3b8);
-        }
+        inst.centerY_2e -= 0.25f / (3 - vsyncMode_8007a3b8);
 
         inst.transforms.scaling(inst.size_08);
         inst.transforms.transfer.set(GPU.getOffsetX() + screenOffsetX - inst.x_18 + inst.sxy0_20.x, GPU.getOffsetY() + screenOffsetY - inst.y_1c + inst.sxy0_20.y, inst.z_4c * 4.0f);
