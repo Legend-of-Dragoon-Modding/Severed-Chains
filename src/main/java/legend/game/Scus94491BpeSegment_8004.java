@@ -918,6 +918,11 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004d41cL)
   public static int changeSequenceVolumeOverTime(final SequenceData124 sequenceData, final int transitionTime, final int newVolume) {
+    // TODO proper volumeOverTime
+    if(sequenceData == null) {
+      return -1;
+    }
+
     assert (short)transitionTime >= 0;
     assert (short)newVolume >= 0;
 
