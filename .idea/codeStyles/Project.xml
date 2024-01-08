@@ -43,6 +43,7 @@
       <option name="SPACE_BEFORE_CATCH_PARENTHESES" value="false" />
       <option name="SPACE_BEFORE_SWITCH_PARENTHESES" value="false" />
       <option name="SPACE_BEFORE_SYNCHRONIZED_PARENTHESES" value="false" />
+      <option name="SPACE_BEFORE_ARRAY_INITIALIZER_LBRACE" value="true" />
       <option name="KEEP_SIMPLE_LAMBDAS_IN_ONE_LINE" value="true" />
       <option name="IF_BRACE_FORCE" value="3" />
       <option name="DOWHILE_BRACE_FORCE" value="3" />

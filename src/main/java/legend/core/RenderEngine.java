@@ -249,10 +249,11 @@ public class RenderEngine {
 
   private boolean wireframeMode;
 
-  private final QueuePool modelPool = new QueuePool();
-  private final QueuePool orthoPool = new QueuePool();
-  private final QueuePool orthoUnderlayPool = new QueuePool();
-  private final QueuePool orthoOverlayPool = new QueuePool();
+  private final QueuePool<QueuedModel<VoidShaderOptions>> modelPool = new QueuePool<>(QueuedModel::new);
+  private final QueuePool<QueuedModel<VoidShaderOptions>> orthoPool = new QueuePool<>(QueuedModel::new);
+  private final QueuePool<QueuedModel<VoidShaderOptions>> orthoUnderlayPool = new QueuePool<>(QueuedModel::new);
+  private final QueuePool<QueuedModel<VoidShaderOptions>> orthoOverlayPool = new QueuePool<>(QueuedModel::new);
+  private final QueuePool<QueuedModel> shaderPool = new QueuePool<>(QueuedModel::new);
   private final Vector3f tempColour = new Vector3f();
 
   private float projectionWidth;
@@ -484,6 +485,7 @@ public class RenderEngine {
 
         RENDERER.setProjectionMode(ProjectionMode._3D);
         this.renderPool(this.modelPool);
+        this.renderShaderPool();
 
         RENDERER.setProjectionMode(ProjectionMode._2D);
         this.renderPool(this.orthoPool);
@@ -498,6 +500,7 @@ public class RenderEngine {
         if(!this.paused) {
           this.modelPool.reset();
           this.orthoPool.reset();
+          this.shaderPool.reset();
         }
 
         // set render states
@@ -544,6 +547,7 @@ public class RenderEngine {
         this.orthoOverlayPool.reset();
         this.orthoPool.reset();
         this.modelPool.reset();
+        this.shaderPool.reset();
       }
 
       this.fps = 1.0f / ((System.nanoTime() - this.lastFrame) / (1_000_000_000 / 30.0f)) * 30.0f;
@@ -576,7 +580,23 @@ public class RenderEngine {
     });
   }
 
-  private void renderPool(final QueuePool pool) {
+  private void renderShaderPool() {
+    glDisable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
+
+    for(int i = 0; i < this.shaderPool.size(); i++) {
+      final QueuedModel<?> entry = this.shaderPool.get(i);
+
+      entry.useTexture();
+      entry.updateTransforms();
+
+      entry.shader.use();
+      entry.shaderOptions.apply();
+      entry.render(null);
+    }
+  }
+
+  private void renderPool(final QueuePool<QueuedModel<VoidShaderOptions>> pool) {
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     glDepthMask(true);
@@ -587,7 +607,7 @@ public class RenderEngine {
     this.tmdShaderOptions.discardMode(1);
 
     for(int i = 0; i < pool.size(); i++) {
-      final QueuedModel entry = pool.get(i);
+      final QueuedModel<VoidShaderOptions> entry = pool.get(i);
       this.tmdShaderOptions.colour(entry.colour);
       this.tmdShaderOptions.clut(entry.clutOverride);
       this.tmdShaderOptions.tpage(entry.tpageOverride);
@@ -621,7 +641,7 @@ public class RenderEngine {
     }
   }
 
-  private void renderPoolTranslucent(final QueuePool pool) {
+  private void renderPoolTranslucent(final QueuePool<QueuedModel<VoidShaderOptions>> pool) {
     glDepthMask(false);
     glDisable(GL_CULL_FACE);
     glEnable(GL_BLEND);
@@ -634,7 +654,7 @@ public class RenderEngine {
     Translucency.B_PLUS_F.setGlState();
 
     for(int i = 0; i < pool.size(); i++) {
-      final QueuedModel entry = pool.get(i);
+      final QueuedModel<VoidShaderOptions> entry = pool.get(i);
 
       if(entry.obj.shouldRender(Translucency.B_PLUS_F)) {
         this.tmdShaderOptions.colour(entry.colour);
@@ -666,7 +686,7 @@ public class RenderEngine {
     this.tmdOitShader.use();
 
     for(int i = 0; i < pool.size(); i++) {
-      final QueuedModel entry = pool.get(i);
+      final QueuedModel<VoidShaderOptions> entry = pool.get(i);
 
       if(entry.obj.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
         entry.useTexture();
@@ -680,7 +700,7 @@ public class RenderEngine {
     }
   }
 
-  private void render2dPool(final QueuePool pool) {
+  private void render2dPool(final QueuePool<QueuedModel<VoidShaderOptions>> pool) {
     this.tmdShader.use();
     GPU.useVramTexture();
 
@@ -689,7 +709,7 @@ public class RenderEngine {
 
     glDisable(GL_DEPTH_TEST);
     for(int i = 0; i < pool.size(); i++) {
-      final QueuedModel entry = pool.get(i);
+      final QueuedModel<VoidShaderOptions> entry = pool.get(i);
       entry.useTexture();
       entry.updateTransforms();
       this.tmdShaderOptions.colour(entry.colour);
@@ -782,15 +802,15 @@ public class RenderEngine {
     this.transformsUniform.set(this.transformsBuffer);
   }
 
-  public QueuedModel queueModel(final Obj obj) {
-    final QueuedModel entry = this.modelPool.acquire();
+  public QueuedModel<VoidShaderOptions> queueModel(final Obj obj) {
+    final QueuedModel<VoidShaderOptions> entry = this.modelPool.acquire();
     entry.reset();
     entry.obj = obj;
     return entry;
   }
 
-  public QueuedModel queueModel(final Obj obj, final MV mv) {
-    final QueuedModel entry = this.modelPool.acquire();
+  public QueuedModel<VoidShaderOptions> queueModel(final Obj obj, final MV mv) {
+    final QueuedModel<VoidShaderOptions> entry = this.modelPool.acquire();
     entry.reset();
     entry.obj = obj;
     entry.transforms.set(mv).setTranslation(mv.transfer);
@@ -798,8 +818,8 @@ public class RenderEngine {
     return entry;
   }
 
-  public QueuedModel queueModel(final Obj obj, final MV mv, final MV lightMv) {
-    final QueuedModel entry = this.modelPool.acquire();
+  public QueuedModel<VoidShaderOptions> queueModel(final Obj obj, final MV mv, final MV lightMv) {
+    final QueuedModel<VoidShaderOptions> entry = this.modelPool.acquire();
     entry.reset();
     entry.obj = obj;
     entry.transforms.set(mv).setTranslation(mv.transfer);
@@ -807,8 +827,8 @@ public class RenderEngine {
     return entry;
   }
 
-  public QueuedModel queueModel(final Obj obj, final Matrix4f mv) {
-    final QueuedModel entry = this.modelPool.acquire();
+  public QueuedModel<VoidShaderOptions> queueModel(final Obj obj, final Matrix4f mv) {
+    final QueuedModel<VoidShaderOptions> entry = this.modelPool.acquire();
     entry.reset();
     entry.obj = obj;
     entry.transforms.set(mv);
@@ -816,8 +836,8 @@ public class RenderEngine {
     return entry;
   }
 
-  public QueuedModel queueModel(final Obj obj, final Matrix4f mv, final MV lightMv) {
-    final QueuedModel entry = this.modelPool.acquire();
+  public QueuedModel<VoidShaderOptions> queueModel(final Obj obj, final Matrix4f mv, final MV lightMv) {
+    final QueuedModel<VoidShaderOptions> entry = this.modelPool.acquire();
     entry.reset();
     entry.obj = obj;
     entry.transforms.set(mv);
@@ -825,24 +845,24 @@ public class RenderEngine {
     return entry;
   }
 
-  public QueuedModel queueOrthoModel(final Obj obj) {
+  public QueuedModel<VoidShaderOptions> queueOrthoModel(final Obj obj) {
     if(obj == null) {
       throw new IllegalArgumentException("obj is null");
     }
 
-    final QueuedModel entry = this.orthoPool.acquire();
+    final QueuedModel<VoidShaderOptions> entry = this.orthoPool.acquire();
     entry.reset();
     entry.transforms.setTranslation(this.widescreenOrthoOffsetX, 0.0f, 0.0f);
     entry.obj = obj;
     return entry;
   }
 
-  public QueuedModel queueOrthoModel(final Obj obj, final MV mv) {
+  public QueuedModel<VoidShaderOptions> queueOrthoModel(final Obj obj, final MV mv) {
     if(obj == null) {
       throw new IllegalArgumentException("obj is null");
     }
 
-    final QueuedModel entry = this.orthoPool.acquire();
+    final QueuedModel<VoidShaderOptions> entry = this.orthoPool.acquire();
     entry.reset();
     entry.obj = obj;
     entry.transforms.set(mv).setTranslation(mv.transfer.x + this.widescreenOrthoOffsetX, mv.transfer.y, mv.transfer.z);
@@ -850,24 +870,24 @@ public class RenderEngine {
     return entry;
   }
 
-  public QueuedModel queueOrthoOverlayModel(final Obj obj) {
+  public QueuedModel<VoidShaderOptions> queueOrthoOverlayModel(final Obj obj) {
     if(obj == null) {
       throw new IllegalArgumentException("obj is null");
     }
 
-    final QueuedModel entry = this.orthoOverlayPool.acquire();
+    final QueuedModel<VoidShaderOptions> entry = this.orthoOverlayPool.acquire();
     entry.reset();
     entry.transforms.setTranslation(this.widescreenOrthoOffsetX, 0.0f, 0.0f);
     entry.obj = obj;
     return entry;
   }
 
-  public QueuedModel queueOrthoOverlayModel(final Obj obj, final MV mv) {
+  public QueuedModel<VoidShaderOptions> queueOrthoOverlayModel(final Obj obj, final MV mv) {
     if(obj == null) {
       throw new IllegalArgumentException("obj is null");
     }
 
-    final QueuedModel entry = this.orthoOverlayPool.acquire();
+    final QueuedModel<VoidShaderOptions> entry = this.orthoOverlayPool.acquire();
     entry.reset();
     entry.obj = obj;
     entry.transforms.set(mv).setTranslation(mv.transfer.x + this.widescreenOrthoOffsetX, mv.transfer.y, mv.transfer.z);
@@ -875,27 +895,47 @@ public class RenderEngine {
     return entry;
   }
 
-  public QueuedModel queueOrthoUnderlayModel(final Obj obj) {
+  public QueuedModel<VoidShaderOptions> queueOrthoUnderlayModel(final Obj obj) {
     if(obj == null) {
       throw new IllegalArgumentException("obj is null");
     }
 
-    final QueuedModel entry = this.orthoUnderlayPool.acquire();
+    final QueuedModel<VoidShaderOptions> entry = this.orthoUnderlayPool.acquire();
     entry.reset();
     entry.transforms.setTranslation(this.widescreenOrthoOffsetX, 0.0f, 0.0f);
     entry.obj = obj;
     return entry;
   }
 
-  public QueuedModel queueOrthoUnderlayModel(final Obj obj, final MV mv) {
+  public QueuedModel<VoidShaderOptions> queueOrthoUnderlayModel(final Obj obj, final MV mv) {
     if(obj == null) {
       throw new IllegalArgumentException("obj is null");
     }
 
-    final QueuedModel entry = this.orthoUnderlayPool.acquire();
+    final QueuedModel<VoidShaderOptions> entry = this.orthoUnderlayPool.acquire();
     entry.reset();
     entry.obj = obj;
     entry.transforms.set(mv).setTranslation(mv.transfer.x + this.widescreenOrthoOffsetX, mv.transfer.y, mv.transfer.z);
+    entry.lightTransforms.set(entry.transforms);
+    return entry;
+  }
+
+  public <Options extends ShaderOptions<Options>> QueuedModel<Options> queueModel(final Obj obj, final ShaderType<Options> shaderType) {
+    final QueuedModel<Options> entry = this.shaderPool.acquire();
+    entry.reset();
+    entry.obj = obj;
+    entry.shader = ShaderManager.getShader(shaderType);
+    entry.shaderOptions = entry.shader.makeOptions();
+    return entry;
+  }
+
+  public <Options extends ShaderOptions<Options>> QueuedModel<Options> queueModel(final Obj obj, final MV mv, final ShaderType<Options> shaderType) {
+    final QueuedModel<Options> entry = this.shaderPool.acquire();
+    entry.reset();
+    entry.obj = obj;
+    entry.shader = ShaderManager.getShader(shaderType);
+    entry.shaderOptions = entry.shader.makeOptions();
+    entry.transforms.set(mv).setTranslation(mv.transfer);
     entry.lightTransforms.set(entry.transforms);
     return entry;
   }
@@ -1121,7 +1161,7 @@ public class RenderEngine {
     }
   }
 
-  public class QueuedModel {
+  public class QueuedModel<Options extends ShaderOptions<Options>> {
     private Obj obj;
     private final Matrix4f transforms = new Matrix4f();
     private final Matrix4f lightTransforms = new Matrix4f();
@@ -1137,96 +1177,105 @@ public class RenderEngine {
 
     private final Rect4i scissor = new Rect4i();
 
+    private Shader<Options> shader;
+    private Options shaderOptions;
+
     private int startVertex;
     private int vertexCount;
 
     private final Texture[] textures = new Texture[32];
     private boolean texturesUsed;
 
-    public QueuedModel screenspaceOffset(final Vector2f offset) {
+    public Options options() {
+      return this.shaderOptions;
+    }
+
+    public QueuedModel<Options> screenspaceOffset(final Vector2f offset) {
       this.screenspaceOffset.x = offset.x;
       this.screenspaceOffset.y = offset.y;
       return this;
     }
 
-    public QueuedModel screenspaceOffset(final float x, final float y) {
+    public QueuedModel<Options> screenspaceOffset(final float x, final float y) {
       this.screenspaceOffset.x = x * RenderEngine.this.halfWidthInv;
       this.screenspaceOffset.y = y * RenderEngine.this.halfHeightInv;
       return this;
     }
 
-    public QueuedModel depthOffset(final float z) {
+    public QueuedModel<Options> depthOffset(final float z) {
       this.screenspaceOffset.z = z;
       return this;
     }
 
-    public QueuedModel colour(final Vector3f colour) {
+    public QueuedModel<Options> colour(final Vector3f colour) {
       this.colour.set(colour);
       return this;
     }
 
-    public QueuedModel colour(final float r, final float g, final float b) {
+    public QueuedModel<Options> colour(final float r, final float g, final float b) {
       this.colour.set(r, g, b);
       return this;
     }
 
-    public QueuedModel monochrome(final float shade) {
+    public QueuedModel<Options> monochrome(final float shade) {
       this.colour.set(shade);
       return this;
     }
 
-    public QueuedModel clutOverride(final float x, final float y) {
+    public QueuedModel<Options> clutOverride(final float x, final float y) {
       this.clutOverride.set(x, y);
       return this;
     }
 
-    public QueuedModel tpageOverride(final float x, final float y) {
+    public QueuedModel<Options> tpageOverride(final float x, final float y) {
       this.tpageOverride.set(x, y);
       return this;
     }
 
-    public QueuedModel uvOffset(final float x, final float y) {
+    public QueuedModel<Options> uvOffset(final float x, final float y) {
       this.uvOffset.set(x, y);
       return this;
     }
 
-    public QueuedModel lightDirection(final Matrix3f lightDirection) {
+    public QueuedModel<Options> lightDirection(final Matrix3f lightDirection) {
       this.lightDirection.set(lightDirection).mul(this.lightTransforms).setTranslation(0.0f, 0.0f, 0.0f);
       return this;
     }
 
-    public QueuedModel lightColour(final Matrix3f lightColour) {
+    public QueuedModel<Options> lightColour(final Matrix3f lightColour) {
       this.lightColour.set(lightColour);
       return this;
     }
 
-    public QueuedModel backgroundColour(final Vector3f backgroundColour) {
+    public QueuedModel<Options> backgroundColour(final Vector3f backgroundColour) {
       this.backgroundColour.set(backgroundColour, 0.0f);
       return this;
     }
 
-    public QueuedModel scissor(final int x, final int y, final int w, final int h) {
+    public QueuedModel<Options> scissor(final int x, final int y, final int w, final int h) {
       this.scissor.set(x, y, w, h);
       return this;
     }
 
-    public QueuedModel vertices(final int startVertex, final int vertexCount) {
+    public QueuedModel<Options> vertices(final int startVertex, final int vertexCount) {
       this.startVertex = startVertex;
       this.vertexCount = vertexCount;
       return this;
     }
 
-    public QueuedModel texture(final Texture texture, final int textureUnit) {
+    public QueuedModel<Options> texture(final Texture texture, final int textureUnit) {
       this.textures[textureUnit] = texture;
       this.texturesUsed = true;
       return this;
     }
 
-    public QueuedModel texture(final Texture texture) {
+    public QueuedModel<Options> texture(final Texture texture) {
       return this.texture(texture, 0);
     }
 
     private void reset() {
+      this.shader = null;
+      this.shaderOptions = null;
       this.transforms.identity();
       this.lightTransforms.identity();
       this.screenspaceOffset.zero();
@@ -1268,11 +1317,16 @@ public class RenderEngine {
     }
   }
 
-  private class QueuePool {
-    private final List<QueuedModel> queue = new ArrayList<>();
+  private static class QueuePool<T> {
+    private final List<T> queue = new ArrayList<>();
+    private final Supplier<T> constructor;
     private int index;
 
-    public QueuedModel get(final int index) {
+    private QueuePool(final Supplier<T> constructor) {
+      this.constructor = constructor;
+    }
+
+    public T get(final int index) {
       return this.queue.get(index);
     }
 
@@ -1280,9 +1334,9 @@ public class RenderEngine {
       return this.index;
     }
 
-    public QueuedModel acquire() {
+    public T acquire() {
       if(this.index >= this.queue.size()) {
-        final QueuedModel entry = new QueuedModel();
+        final T entry = this.constructor.get();
         this.queue.add(entry);
         this.index++;
         return entry;

@@ -468,6 +468,7 @@ public class Gpu {
 
     this.vramShader.use();
     this.vramShaderOptions.recolour(1.0f, 1.0f, 1.0f, 1.0f);
+    this.vramShaderOptions.apply();
     this.displayTexture.use();
     this.displayMesh.draw();
   }
@@ -479,6 +480,7 @@ public class Gpu {
 
     this.vramShader.use();
     this.vramShaderOptions.recolour(1.0f, 1.0f, 1.0f, 1.0f);
+    this.vramShaderOptions.apply();
     this.vramTexture24.use();
     this.displayMesh.draw();
   }

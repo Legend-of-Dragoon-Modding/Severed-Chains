@@ -166,7 +166,7 @@ public final class GameEngine {
   private static float screenWidth;
 
   private static Shader.UniformBuffer transforms2;
-  private static FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer(4 * 4 + 3);
+  private static final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer(4 * 4 + 3);
   private static final Matrix4f identity = new Matrix4f();
   private static final Matrix4f textTransforms = new Matrix4f();
   private static final Matrix4f eyeTransforms = new Matrix4f();
@@ -517,16 +517,19 @@ public final class GameEngine {
 
     shader.use();
     shaderOptions.shiftUv(0.0f, 0.0f);
+    shaderOptions.apply();
 
     identity.get(transforms2Buffer);
     transforms2.set(transforms2Buffer);
     shaderOptions.recolour(fade1 * fade1 * fade1);
+    shaderOptions.apply();
     title1Texture.use();
     fullScrenMesh.draw();
 
     textTransforms.get(transforms2Buffer);
     transforms2.set(transforms2Buffer);
     shaderOptions.recolour(fade2 * fade2 * fade2);
+    shaderOptions.apply();
     title2Texture.use();
     fullScrenMesh.draw();
 
@@ -536,6 +539,7 @@ public final class GameEngine {
       eyeShader.use();
       eyeOptions.alpha(eyeFade);
       eyeOptions.ticks(deltaMs / 10_000.0f);
+      eyeOptions.apply();
       eye.use();
       eyeMesh.draw();
 
@@ -543,6 +547,7 @@ public final class GameEngine {
       transforms2.set(transforms2Buffer);
       shader.use();
       shaderOptions.recolour(loadingFade);
+      shaderOptions.apply();
       loadingTexture.use();
       loadingMesh.draw();
     }
@@ -606,19 +611,28 @@ public final class GameEngine {
     private final Shader<EyeShaderOptions>.UniformFloat alphaUniform;
     private final Shader<EyeShaderOptions>.UniformFloat ticksUniform;
 
+    private float alpha;
+    private float ticks;
+
     private EyeShaderOptions(final Shader<EyeShaderOptions>.UniformFloat alphaUniform, final Shader<EyeShaderOptions>.UniformFloat ticksUniform) {
       this.alphaUniform = alphaUniform;
       this.ticksUniform = ticksUniform;
     }
 
     public EyeShaderOptions alpha(final float alpha) {
-      this.alphaUniform.set(alpha);
+      this.alpha = alpha;
       return this;
     }
 
     public EyeShaderOptions ticks(final float ticks) {
-      this.ticksUniform.set(ticks);
+      this.ticks = ticks;
       return this;
+    }
+
+    @Override
+    public void apply() {
+      this.alphaUniform.set(this.alpha);
+      this.ticksUniform.set(this.ticks);
     }
   }
 }

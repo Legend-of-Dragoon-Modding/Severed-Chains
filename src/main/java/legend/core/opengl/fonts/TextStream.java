@@ -40,7 +40,8 @@ public final class TextStream {
 
   public void setColour(final float r, final float g, final float b) {
     this.shader.use();
-    this.options.colour.set(r, g, b);
+    this.options.colour(r, g, b);
+    this.options.apply();
   }
 
   public void delete() {

@@ -463,6 +463,7 @@ public final class Fmv {
 
       simpleShader.use();
       simpleShaderOptions.recolour(1.0f, 1.0f, 1.0f, 1.0f);
+      simpleShaderOptions.apply();
       displayTexture.use();
       displayTexture.data(0, 0, frameHeader.getWidth(), frameHeader.getHeight(), framePixels);
       fullScrenMesh.draw();

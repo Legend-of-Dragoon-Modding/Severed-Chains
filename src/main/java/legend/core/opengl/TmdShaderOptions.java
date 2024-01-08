@@ -23,8 +23,8 @@ public class TmdShaderOptions implements ShaderOptions<TmdShaderOptions> {
     return this;
   }
 
-  public TmdShaderOptions uvOffset(final Vector2f uvOffset) {
-    this.uvOffsetUniform.set(uvOffset);
+  public TmdShaderOptions uvOffset(final Vector2f colour) {
+    this.uvOffsetUniform.set(colour);
     return this;
   }
 
@@ -48,5 +48,10 @@ public class TmdShaderOptions implements ShaderOptions<TmdShaderOptions> {
   public TmdShaderOptions discardMode(final int discardMode) {
     this.discardTranslucency.set(discardMode);
     return this;
+  }
+
+  @Override
+  public void apply() {
+
   }
 }

@@ -228,9 +228,9 @@ public class Image extends Control {
     this.shader.use();
     this.shaderOptions.shiftUv(this.uvOffset.x / this.texture.width, this.uvOffset.y / this.texture.height);
     this.shaderOptions.recolour(this.colour);
+    this.shaderOptions.apply();
     this.texture.use();
     this.mesh.draw();
-    this.shaderOptions.shiftUv(0, 0);
   }
 
   public enum ScaleMode {
