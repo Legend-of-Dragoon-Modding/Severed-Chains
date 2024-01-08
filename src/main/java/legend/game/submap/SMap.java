@@ -50,7 +50,6 @@ import legend.game.types.TextboxText84;
 import legend.game.types.TextboxType;
 import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
-import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import org.joml.Math;
 import org.joml.Vector2f;
@@ -74,7 +73,6 @@ import static legend.core.MathHelper.sin;
 import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDir;
-import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadFile;
 import static legend.game.Scus94491BpeSegment.orderingTableBits_1f8003c0;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
@@ -157,43 +155,18 @@ public class SMap extends EngineState {
   private final GsF_LIGHT GsF_LIGHT_0_800c66d8 = new GsF_LIGHT();
   private final GsF_LIGHT GsF_LIGHT_1_800c66e8 = new GsF_LIGHT();
   private final GsF_LIGHT GsF_LIGHT_2_800c66f8 = new GsF_LIGHT();
-  private int chapterTitleState_800c6708;
-  private int chapterTitleAnimationTicksRemaining_800c670a;
-  private int chapterTitleDropShadowOffsetX_800c670c;
-  private int chapterTitleDropShadowOffsetY_800c670e;
-  private List<FileData> chapterTitleCardMrg_800c6710;
-  private int chapterTitleNumberOffsetX_800c6714;
-  private int chapterTitleNumberOffsetY_800c6718;
-  private int chapterTitleNameOffsetX_800c671c;
-  private int chapterTitleNameOffsetY_800c6720;
-  /** Inverted condition from retail */
-  private boolean chapterTitleIsTranslucent_800c6724;
-  private int chapterTitleBrightness_800c6728;
 
   public int sobjCount_800c6730;
 
-  /**
-   * Lower 4 bits are chapter title num (starting at 1), used for displaying chapter title cards
-   *
-   * 0x80 bit indicates that the origin XY of the title card have been set and the animation is ready to start rendering
-   */
-  private int chapterTitleNum_800c6738;
-
-  private int chapterTitleAnimationPauseTicksRemaining_800c673c;
   public ScriptState<Void> submapControllerState_800c6740;
 
   private final Model124 playerModel_800c6748 = new Model124("Player");
 
-  private boolean chapterTitleAnimationComplete_800c686e;
   private boolean unloadSubmapParticles_800c6870;
 
-  private int chapterTitleOriginX_800c687c;
-  private int chapterTitleOriginY_800c687e;
   public final ScriptState<SubmapObject210>[] sobjs_800c6880 = new ScriptState[20];
 
   public Submap submap;
-
-  private boolean chapterTitleCardLoaded_800c68e0;
 
   private SubmapMediaState mediaLoadingStage_800c68e4;
   private final SubmapCaches80 caches_800c68e8 = new SubmapCaches80();
@@ -301,10 +274,7 @@ public class SMap extends EngineState {
   private final int[] _800d6c58 = {0x200, 0x800, 0x400, 0x800, 0x100, 0x61c, 0x960, 0xe10};
   private final int[] _800d6c78 = {6, 4, 5, 3, 5, 7, 5, 6};
   private final int[] savePointFloatiesRotations_800d6c88 = {-14, -55, 22, 16, -28, -14, 24, 27};
-  private final int dartArrowU_800d6ca8 = 0;
-  private final int dartArrowV_800d6cac = 96;
-  private final int doorArrowU_800d6cb0 = 128;
-  private final int doorArrowV_800d6cb4 = 0;
+
   private final Vector3f bottom_800d6cb8 = new Vector3f();
   private final Vector3f top_800d6cc0 = new Vector3f(0.0f, 40.0f, 0.0f);
   private final int[] _800d6cc8 = {206, 206, 207, 208};
@@ -457,6 +427,7 @@ public class SMap extends EngineState {
   };
 
   private final MapIndicator mapIndicator = new MapIndicator();
+  private final ChapterTitleCard chapterTitleCard = new ChapterTitleCard();
 
   @Override
   public void restoreMusicAfterMenu() {
@@ -2416,8 +2387,8 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "titleNum", description = "The title card index")
   @Method(0x800e0c00L)
   private FlowControl scriptLoadChapterTitleCard(final RunningScript<?> script) {
-    this.chapterTitleCardLoaded_800c68e0 = false;
-    this.chapterTitleNum_800c6738 = script.params_20[0].get();
+    this.chapterTitleCard.setChapterTitleCardNotLoaded();
+    this.chapterTitleCard.setChapterNum(script.params_20[0].get());
     return FlowControl.CONTINUE;
   }
 
@@ -2425,7 +2396,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "loaded", description = "True if loaded, false otherwise")
   @Method(0x800e0c24L)
   private FlowControl scriptIsChapterTitleCardLoaded(final RunningScript<?> script) {
-    script.params_20[0].set(this.chapterTitleCardLoaded_800c68e0 ? 1 : 0);
+    script.params_20[0].set(this.chapterTitleCard.isChapterTitleCardLoaded());
     return FlowControl.CONTINUE;
   }
 
@@ -2434,10 +2405,9 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "originY", description = "Y origin position of chapter title")
   @Method(0x800e0c40L)
   private FlowControl scriptSetChapterTitleCardReadyToRender(final RunningScript<?> script) {
-    this.chapterTitleNum_800c6738 |= 0x80;
-    this.chapterTitleAnimationComplete_800c686e = false;
-    this.chapterTitleOriginX_800c687c = script.params_20[0].get();
-    this.chapterTitleOriginY_800c687e = script.params_20[1].get();
+    this.chapterTitleCard.setReadyToAnimate();
+    this.chapterTitleCard.setChapterTitleAnimationNotComplete();
+    this.chapterTitleCard.setChapterTitleOrigin(script.params_20[0].get(), script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
@@ -2445,7 +2415,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "complete", description = "0 = not complete, 1 = complete")
   @Method(0x800e0c80L)
   private FlowControl scriptGetChapterTitleCardAnimationComplete(final RunningScript<?> script) {
-    script.params_20[0].set(this.chapterTitleAnimationComplete_800c686e ? 1 : 0);
+    script.params_20[0].set(this.chapterTitleCard.isChapterTitleAnimationComplete());
     return FlowControl.CONTINUE;
   }
 
@@ -2453,7 +2423,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks")
   @Method(0x800e0c9cL)
   private FlowControl scriptSetTitleCardAnimationPauseTicks(final RunningScript<?> script) {
-    this.chapterTitleAnimationPauseTicksRemaining_800c673c = script.params_20[0].get();
+    this.chapterTitleCard.setChapterTitleAnimationPauseTicksRemaining(script.params_20[0].get());
     return FlowControl.CONTINUE;
   }
 
@@ -2878,23 +2848,6 @@ public class SMap extends EngineState {
         }
 
         //LAB_800e1d88
-        this.chapterTitleState_800c6708 = 0;
-        this.chapterTitleAnimationTicksRemaining_800c670a = 0;
-        this.chapterTitleDropShadowOffsetX_800c670c = 0;
-        this.chapterTitleDropShadowOffsetY_800c670e = 0;
-        this.chapterTitleCardMrg_800c6710 = null;
-        this.chapterTitleNumberOffsetX_800c6714 = 0;
-        this.chapterTitleNumberOffsetY_800c6718 = 0;
-        this.chapterTitleNameOffsetX_800c671c = 0;
-        this.chapterTitleNameOffsetY_800c6720 = 0;
-
-        this.chapterTitleNum_800c6738 = 0;
-        this.chapterTitleAnimationPauseTicksRemaining_800c673c = 60;
-
-        this.chapterTitleAnimationComplete_800c686e = false;
-        this.chapterTitleOriginX_800c687c = 0;
-        this.chapterTitleOriginY_800c687e = 0;
-        this.chapterTitleCardLoaded_800c68e0 = false;
         this.mediaLoadingStage_800c68e4 = SubmapMediaState.DONE;
 
         this.triangleIndicator_800c69fc = new TriangleIndicator140();
@@ -2916,9 +2869,7 @@ public class SMap extends EngineState {
         //LAB_800e1f40
         submapFullyLoaded_800bd7b4 = true;
 
-        if(this.chapterTitleNum_800c6738 != 0) {
-          this.handleAndRenderChapterTitle();
-        }
+        this.chapterTitleCard.handleAndRenderChapterTitle();
       }
     }
   }
@@ -2984,8 +2935,8 @@ public class SMap extends EngineState {
 
     this.submapControllerState_800c6740.deallocateWithChildren();
 
-    if(this.chapterTitleCardMrg_800c6710 != null) {
-      this.chapterTitleCardMrg_800c6710 = null;
+    if(!this.chapterTitleCard.isMrgNull()) {
+      this.chapterTitleCard.setMrgNull();
     }
 
     //LAB_800e226c
@@ -3045,338 +2996,6 @@ public class SMap extends EngineState {
 
     GTE.perspectiveTransform(20, 0, 0);
     caches.bottomRight_60.set(GTE.getScreenX(2) + 192, GTE.getScreenY(2) + 128);
-  }
-
-  @Method(0x800e2648L)
-  private void handleAndRenderChapterTitle() {
-    final int chapterTitleState = this.chapterTitleState_800c6708;
-
-    if(chapterTitleState == 0) {
-      //LAB_800e26c0
-      final int chapterTitleNum = this.chapterTitleNum_800c6738;
-
-      if(chapterTitleNum == 1) {
-        //LAB_800e2700
-        //LAB_800e2794
-        loadDrgnDir(0, 6670, files -> this.submapAssetsLoadedCallback(files, 0x10));
-      } else if(chapterTitleNum == 2) {
-        //LAB_800e2728
-        //LAB_800e2794
-        loadDrgnDir(0, 6671, files -> this.submapAssetsLoadedCallback(files, 0x10));
-        //LAB_800e26e8
-      } else if(chapterTitleNum == 3) {
-        //LAB_800e2750
-        //LAB_800e2794
-        loadDrgnDir(0, 6672, files -> this.submapAssetsLoadedCallback(files, 0x10));
-      } else if(chapterTitleNum == 4) {
-        //LAB_800e2778
-        //LAB_800e2794
-        loadDrgnDir(0, 6673, files -> this.submapAssetsLoadedCallback(files, 0x10));
-      }
-
-      //LAB_800e27a4
-      this.chapterTitleState_800c6708++;
-      return;
-    }
-
-    if(chapterTitleState == 1) {
-      //LAB_800e27b8
-      if(this.chapterTitleCardLoaded_800c68e0 && (this.chapterTitleNum_800c6738 & 0x80) != 0) {
-        this.chapterTitleState_800c6708++;
-      }
-
-      return;
-    }
-
-    if(chapterTitleState == 2) {
-      //LAB_800e27e8
-      final long currentTick = this.chapterTitleAnimationTicksRemaining_800c670a;
-
-      //LAB_800e284c
-      if(currentTick == 0) {
-        //LAB_800e2860
-        new Tim(this.chapterTitleCardMrg_800c6710.get(5)).uploadToGpu();
-        new Tim(this.chapterTitleCardMrg_800c6710.get(13)).uploadToGpu();
-
-        //LAB_800e2980
-        this.chapterTitleBrightness_800c6728 = 0;
-        this.chapterTitleIsTranslucent_800c6724 = true;
-        this.chapterTitleNumberOffsetX_800c6714 = 32;
-        this.chapterTitleNumberOffsetY_800c6718 = 16;
-        this.chapterTitleNameOffsetX_800c671c = 64;
-        this.chapterTitleNameOffsetY_800c6720 = 16;
-        this.chapterTitleAnimationTicksRemaining_800c670a++;
-      } else if(currentTick == 34) {
-        //LAB_800e30c0
-        this.chapterTitleDropShadowOffsetX_800c670c++;
-
-        if(this.chapterTitleDropShadowOffsetX_800c670c == 3) {
-          this.chapterTitleDropShadowOffsetY_800c670e = 1;
-          this.chapterTitleAnimationTicksRemaining_800c670a++;
-        }
-      } else if(currentTick == 35) {
-        //LAB_800e30f8
-        this.chapterTitleAnimationPauseTicksRemaining_800c673c--;
-
-        if(this.chapterTitleAnimationPauseTicksRemaining_800c673c == 0) {
-          this.chapterTitleAnimationTicksRemaining_800c670a = 201;
-        }
-      } else if(currentTick == 233) {
-        //LAB_800e376c
-        this.chapterTitleCardMrg_800c6710 = null;
-        this.chapterTitleState_800c6708++;
-      } else if(currentTick >= 35) {
-        //LAB_800e2828
-        if(currentTick < 233) {
-          if(currentTick >= 201) {
-            //LAB_800e311c
-            if(currentTick == 212) {
-              new Tim(this.chapterTitleCardMrg_800c6710.get(1)).uploadToGpu();
-              new Tim(this.chapterTitleCardMrg_800c6710.get(9)).uploadToGpu();
-
-              //LAB_800e3248
-              //LAB_800e3254
-            } else if(currentTick == 216) {
-              new Tim(this.chapterTitleCardMrg_800c6710.get(2)).uploadToGpu();
-              new Tim(this.chapterTitleCardMrg_800c6710.get(10)).uploadToGpu();
-
-              //LAB_800e3384
-              //LAB_800e3390
-            } else if(currentTick == 220) {
-              new Tim(this.chapterTitleCardMrg_800c6710.get(3)).uploadToGpu();
-              new Tim(this.chapterTitleCardMrg_800c6710.get(11)).uploadToGpu();
-
-              //LAB_800e34c0
-              //LAB_800e34cc
-            } else if(currentTick == 224) {
-              new Tim(this.chapterTitleCardMrg_800c6710.get(4)).uploadToGpu();
-              new Tim(this.chapterTitleCardMrg_800c6710.get(12)).uploadToGpu();
-
-              //LAB_800e35fc
-              //LAB_800e3608
-            } else if(currentTick == 228) {
-              new Tim(this.chapterTitleCardMrg_800c6710.get(5)).uploadToGpu();
-              new Tim(this.chapterTitleCardMrg_800c6710.get(13)).uploadToGpu();
-            }
-
-            //LAB_800e3744
-            this.chapterTitleIsTranslucent_800c6724 = true;
-            this.chapterTitleBrightness_800c6728 -= 4;
-          }
-
-          //LAB_800e3790
-          this.chapterTitleAnimationTicksRemaining_800c670a++;
-        }
-      } else if(currentTick >= 33) {
-        //LAB_800e3070
-        this.chapterTitleIsTranslucent_800c6724 = false;
-        this.chapterTitleNameOffsetY_800c6720 = 0;
-        this.chapterTitleNameOffsetX_800c671c = 0;
-        this.chapterTitleNumberOffsetY_800c6718 = 0;
-        this.chapterTitleNumberOffsetX_800c6714 = 0;
-        this.chapterTitleBrightness_800c6728 = 128;
-        this.chapterTitleAnimationTicksRemaining_800c670a++;
-        this.chapterTitleDropShadowOffsetX_800c670c = 1;
-        this.chapterTitleDropShadowOffsetY_800c670e = 0;
-      } else if((int)currentTick > 0) {
-        //LAB_800e29d4
-        if(currentTick == 4) {
-          new Tim(this.chapterTitleCardMrg_800c6710.get(4)).uploadToGpu();
-          new Tim(this.chapterTitleCardMrg_800c6710.get(12)).uploadToGpu();
-
-          //LAB_800e2afc
-          //LAB_800e2b08
-        } else if(currentTick == 8) {
-          new Tim(this.chapterTitleCardMrg_800c6710.get(3)).uploadToGpu();
-          new Tim(this.chapterTitleCardMrg_800c6710.get(11)).uploadToGpu();
-
-          //LAB_800e2c38
-          //LAB_800e2c44
-        } else if(currentTick == 12) {
-          new Tim(this.chapterTitleCardMrg_800c6710.get(2)).uploadToGpu();
-          new Tim(this.chapterTitleCardMrg_800c6710.get(10)).uploadToGpu();
-
-          //LAB_800e2d74
-          //LAB_800e2d80
-        } else if(currentTick == 16) {
-          new Tim(this.chapterTitleCardMrg_800c6710.get(1)).uploadToGpu();
-          new Tim(this.chapterTitleCardMrg_800c6710.get(9)).uploadToGpu();
-
-          //LAB_800e2eb0
-          //LAB_800e2ebc
-        } else if(currentTick == 20) {
-          new Tim(this.chapterTitleCardMrg_800c6710.get(0)).uploadToGpu();
-          new Tim(this.chapterTitleCardMrg_800c6710.get(8)).uploadToGpu();
-
-          //LAB_800e2fec
-        }
-
-        //LAB_800e2ff8
-        this.chapterTitleBrightness_800c6728 += 4;
-        this.chapterTitleNumberOffsetX_800c6714--;
-        this.chapterTitleNameOffsetX_800c671c -= 2;
-
-        // Decrement Y-offset every other tick
-        if((this.chapterTitleAnimationTicksRemaining_800c670a & 0x1) == 0) {
-          this.chapterTitleNumberOffsetY_800c6718--;
-          this.chapterTitleNameOffsetY_800c6720--;
-        }
-
-        //LAB_800e3038
-        //LAB_800e3064
-        this.chapterTitleAnimationTicksRemaining_800c670a++;
-      } else {
-        //LAB_800e3790
-        this.chapterTitleAnimationTicksRemaining_800c670a++;
-      }
-
-      //LAB_800e37a0
-      int left = this.chapterTitleOriginX_800c687c + this.chapterTitleNumberOffsetX_800c6714 - 58;
-      int top = this.chapterTitleOriginY_800c687e + this.chapterTitleNumberOffsetY_800c6718 - 66;
-      int right = this.chapterTitleOriginX_800c687c - (this.chapterTitleNumberOffsetX_800c6714 - 34);
-      int bottom = this.chapterTitleOriginY_800c687e - (this.chapterTitleNumberOffsetY_800c6718 + 30);
-
-      // Chapter number text
-      final GpuCommandPoly cmd1 = new GpuCommandPoly(4)
-        .bpp(Bpp.BITS_4)
-        .monochrome(this.chapterTitleBrightness_800c6728)
-        .clut(512, 510)
-        .vramPos(512, 256)
-        .uv(0,  0, 64)
-        .uv(1, 91, 64)
-        .uv(2,  0, 99)
-        .uv(3, 91, 99)
-        .pos(0, left, top)
-        .pos(1, right, top)
-        .pos(2, left, bottom)
-        .pos(3, right, bottom);
-
-      if(this.chapterTitleIsTranslucent_800c6724) {
-        cmd1.translucent(Translucency.B_PLUS_F);
-      }
-
-      GPU.queueCommand(28, cmd1);
-
-      left = this.chapterTitleOriginX_800c687c - (this.chapterTitleNameOffsetX_800c671c + 140);
-      top = this.chapterTitleOriginY_800c687e - (this.chapterTitleNameOffsetY_800c6720 + 16);
-      right = this.chapterTitleOriginX_800c687c + this.chapterTitleNameOffsetX_800c671c + 116;
-      bottom = this.chapterTitleOriginY_800c687e + this.chapterTitleNameOffsetY_800c6720 + 45;
-
-      // Chapter name text
-      final GpuCommandPoly cmd2 = new GpuCommandPoly(4)
-        .bpp(Bpp.BITS_4)
-        .monochrome(this.chapterTitleBrightness_800c6728)
-        .clut(512, 508)
-        .vramPos(512, 256)
-        .uv(0,   0,  0)
-        .uv(1, 255,  0)
-        .uv(2,   0, 60)
-        .uv(3, 255, 60)
-        .pos(0, left, top)
-        .pos(1, right, top)
-        .pos(2, left, bottom)
-        .pos(3, right, bottom);
-
-      if(this.chapterTitleIsTranslucent_800c6724) {
-        cmd2.translucent(Translucency.B_PLUS_F);
-      }
-
-      GPU.queueCommand(28, cmd2);
-
-      if(this.chapterTitleDropShadowOffsetX_800c670c != 0) {
-        left = this.chapterTitleDropShadowOffsetX_800c670c + this.chapterTitleOriginX_800c687c + this.chapterTitleNumberOffsetX_800c6714 - 58;
-        top = this.chapterTitleDropShadowOffsetY_800c670e + this.chapterTitleOriginY_800c687e + this.chapterTitleNumberOffsetY_800c6718 - 66;
-        right = this.chapterTitleDropShadowOffsetX_800c670c + this.chapterTitleOriginX_800c687c - (this.chapterTitleNumberOffsetX_800c6714 - 34);
-        bottom = this.chapterTitleDropShadowOffsetY_800c670e + this.chapterTitleOriginY_800c687e - (this.chapterTitleNumberOffsetY_800c6718 + 30);
-
-        // Chapter number drop shadow
-        final GpuCommandPoly cmd3 = new GpuCommandPoly(4)
-          .bpp(Bpp.BITS_4)
-          .translucent(Translucency.HALF_B_PLUS_HALF_F)
-          .monochrome(this.chapterTitleBrightness_800c6728)
-          .clut(512, 511)
-          .vramPos(512, 256)
-          .uv(0,  0, 64)
-          .uv(1, 91, 64)
-          .uv(2,  0, 99)
-          .uv(3, 91, 99)
-          .pos(0, left, top)
-          .pos(1, right, top)
-          .pos(2, left, bottom)
-          .pos(3, right, bottom);
-
-        if((this.chapterTitleNum_800c6738 & 0xf) - 2 < 3) {
-          cmd3.translucent(Translucency.B_MINUS_F);
-        }
-
-        //LAB_800e3afc
-        if((this.chapterTitleNum_800c6738 & 0xf) == 1) {
-          cmd3.translucent(Translucency.B_PLUS_F);
-        }
-
-        //LAB_800e3b14
-        GPU.queueCommand(28, cmd3);
-
-        left = this.chapterTitleDropShadowOffsetX_800c670c + this.chapterTitleOriginX_800c687c - (this.chapterTitleNameOffsetX_800c671c + 140);
-        top = this.chapterTitleDropShadowOffsetY_800c670e + this.chapterTitleOriginY_800c687e - (this.chapterTitleNameOffsetY_800c6720 + 16);
-        right = this.chapterTitleDropShadowOffsetX_800c670c + this.chapterTitleOriginX_800c687c + this.chapterTitleNameOffsetX_800c671c + 116;
-        bottom = this.chapterTitleDropShadowOffsetY_800c670e + this.chapterTitleOriginY_800c687e + this.chapterTitleNameOffsetY_800c6720 + 45;
-
-        // Chapter name drop shadow
-        final GpuCommandPoly cmd4 = new GpuCommandPoly(4)
-          .bpp(Bpp.BITS_4)
-          .translucent(Translucency.HALF_B_PLUS_HALF_F)
-          .monochrome(this.chapterTitleBrightness_800c6728)
-          .clut(512, 509)
-          .vramPos(512, 256)
-          .uv(0,   0,  0)
-          .uv(1, 255,  0)
-          .uv(2,   0, 60)
-          .uv(3, 255, 60)
-          .pos(0, left, top)
-          .pos(1, right, top)
-          .pos(2, left, bottom)
-          .pos(3, right, bottom);
-
-        if((this.chapterTitleNum_800c6738 & 0xf) - 2 < 3) {
-          cmd4.translucent(Translucency.B_MINUS_F);
-        }
-
-        //LAB_800e3c20
-        if((this.chapterTitleNum_800c6738 & 0xf) == 1) {
-          cmd4.translucent(Translucency.B_PLUS_F);
-        }
-
-        //LAB_800e3c3c
-        GPU.queueCommand(28, cmd4);
-      }
-
-      return;
-    }
-
-    //LAB_800e26a4
-    if(chapterTitleState == 3) {
-      //LAB_800e3c60
-      this.chapterTitleNum_800c6738 = 0;
-      this.chapterTitleOriginY_800c687e = 0;
-      this.chapterTitleOriginX_800c687c = 0;
-      this.chapterTitleCardLoaded_800c68e0 = false;
-      this.chapterTitleDropShadowOffsetX_800c670c = 0;
-      this.chapterTitleAnimationTicksRemaining_800c670a = 0;
-      this.chapterTitleState_800c6708 = 0;
-      this.chapterTitleAnimationComplete_800c686e = true;
-    }
-  }
-
-  @Method(0x800e3d80L)
-  private void submapAssetsLoadedCallback(final List<FileData> files, final int assetType) {
-    switch(assetType) {
-      // Chapter title cards
-      case 0x10 -> {
-        this.chapterTitleCardMrg_800c6710 = files;
-        this.chapterTitleCardLoaded_800c68e0 = true;
-      }
-    }
   }
 
   @Method(0x800e3df4L)
@@ -3865,17 +3484,17 @@ public class SMap extends EngineState {
    * </ul>
    */
   @Method(0x800e5534L)
-  public boolean mapTransition(final int newCut, final int newScene) {
+  public void mapTransition(final int newCut, final int newScene) {
     if(this.smapLoadingStage_800cb430 != SubmapState.RENDER_SUBMAP_12) {
-      return false;
+      return;
     }
 
     if(this.smapTicks_800c6ae0 < 3 * (3 - vsyncMode_8007a3b8)) {
-      return false;
+      return;
     }
 
     if(this._800f7e4c || (loadedDrgnFiles_800bcf78.get() & 0x82) != 0) {
-      return false;
+      return;
     }
 
     if(this.smapTicks_800c6ae0 > 15 * (3 - vsyncMode_8007a3b8)) {
@@ -3899,12 +3518,12 @@ public class SMap extends EngineState {
       this.fmvIndex_800bf0dc = newCut - 0x800;
       this.afterFmvLoadingStage_800bf0ec = EngineStateEnum.values()[newScene];
       this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_FMV_21;
-      return true;
+      return;
     }
 
     if(newCut >= 0 && newCut < 2) {
       this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_WORLD_MAP_18;
-      return true;
+      return;
     }
 
     if(newCut > -1) {
@@ -3912,7 +3531,7 @@ public class SMap extends EngineState {
       submapScene_80052c34 = newScene;
       this.smapLoadingStage_800cb430 = SubmapState.CHANGE_SUBMAP_4;
       submapCutForSave_800cb450 = newCut;
-      return true;
+      return;
     }
 
     if(newScene == 0x3fa) {
@@ -3920,20 +3539,20 @@ public class SMap extends EngineState {
       whichMenu_800bdc38 = WhichMenu.INIT_CHAR_SWAP_MENU_21;
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
       submapCutForSave_800cb450 = submapCut_80052c30;
-      return true;
+      return;
     }
 
     if(newScene == 0x3fb) {
       SCRIPTS.pause();
       this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_TITLE_20;
-      return true;
+      return;
     }
 
     if(newScene == 0x3fc) {
       SCRIPTS.pause();
       whichMenu_800bdc38 = WhichMenu.INIT_TOO_MANY_ITEMS_MENU_31;
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
-      return true;
+      return;
     }
 
     if(newScene == 0x3fd) {
@@ -3944,14 +3563,14 @@ public class SMap extends EngineState {
       this.mapTransitionData_800cab24.clear();
       whichMenu_800bdc38 = WhichMenu.INIT_SAVE_GAME_MENU_16;
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
-      return true;
+      return;
     }
 
     if(newScene == 0x3fe) {
       SCRIPTS.pause();
       whichMenu_800bdc38 = WhichMenu.INIT_SHOP_MENU_6;
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
-      return true;
+      return;
     }
 
     if(newScene == 0x3ff) {
@@ -3959,7 +3578,7 @@ public class SMap extends EngineState {
       submapCutForSave_800cb450 = submapCut_80052c30;
       whichMenu_800bdc38 = WhichMenu.INIT_INVENTORY_MENU_1;
       this.smapLoadingStage_800cb430 = SubmapState.LOAD_MENU_13;
-      return true;
+      return;
     }
 
     final int encounterId;
@@ -3968,7 +3587,7 @@ public class SMap extends EngineState {
     } else {
       if(newScene > 0x1ff) {
         SCRIPTS.pause();
-        return true;
+        return;
       }
 
       encounterId = newScene;
@@ -3987,7 +3606,6 @@ public class SMap extends EngineState {
 
     SCRIPTS.pause();
     this.smapLoadingStage_800cb430 = SubmapState.TRANSITION_TO_COMBAT_19;
-    return true;
   }
 
   @Override
@@ -6223,15 +5841,15 @@ public class SMap extends EngineState {
       if(i == 0) {
         t2.tpage_18 = this.texPages_800d6050[0];
         t2.clut_1a = this.cluts_800d6068[0];
-        t2.u_1c = this.dartArrowU_800d6ca8;
-        t2.v_20 = this.dartArrowV_800d6cac;
+        t2.u_1c = 0;
+        t2.v_20 = 96;
         anm = anm1;
       } else {
         //LAB_800f3bfc
         t2.tpage_18 = this.texPages_800d6050[1];
         t2.clut_1a = this.cluts_800d6068[1];
-        t2.u_1c = this.doorArrowU_800d6cb0;
-        t2.v_20 = this.doorArrowV_800d6cb4;
+        t2.u_1c = 128;
+        t2.v_20 = 0;
         anm = anm2;
       }
 

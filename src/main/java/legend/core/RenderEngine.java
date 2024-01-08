@@ -53,7 +53,9 @@ import static legend.core.GameEngine.RENDERER;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F10;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F11;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F9;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_M;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
@@ -266,6 +268,8 @@ public class RenderEngine {
 
   private boolean togglePause;
   private boolean paused;
+  private boolean frameAdvanceSingle;
+  private boolean frameAdvance;
 
   public void setProjectionSize(final float width, final float height) {
     this.projectionWidth = width;
@@ -455,20 +459,36 @@ public class RenderEngine {
 
       EVENTS.clearStaleRefs();
 
-      if(!this.paused) {
-        this.renderCallback.run();
-      }
-
       if(this.togglePause) {
         this.togglePause = false;
         this.paused = !this.paused;
 
         if(!this.paused) {
+          this.frameAdvanceSingle = false;
+          this.frameAdvance = false;
           this.modelPool.reset();
           this.orthoPool.reset();
           this.orthoOverlayPool.reset();
           this.orthoUnderlayPool.reset();
+        } else {
+          this.renderCallback.run();
         }
+      }
+
+      if(this.frameAdvanceSingle || this.frameAdvance) {
+        this.modelPool.reset();
+        this.orthoPool.reset();
+        this.orthoOverlayPool.reset();
+        this.orthoUnderlayPool.reset();
+        this.shaderPool.reset();
+        this.renderCallback.run();
+        if(this.frameAdvanceSingle) {
+          this.frameAdvanceSingle = false;
+        }
+      }
+
+      if(!this.paused) {
+        this.renderCallback.run();
       }
 
       if(legacyMode == 0 && this.usePs1Gpu) {
@@ -1134,6 +1154,14 @@ public class RenderEngine {
       }
     } else if(key == GLFW_KEY_F11) {
       this.togglePause = !this.togglePause;
+    } else if(key == GLFW_KEY_F9) {
+      if(this.paused) {
+        this.frameAdvanceSingle = true;
+      }
+    } else if(key == GLFW_KEY_F10) {
+      if(this.paused) {
+        this.frameAdvance = true;
+      }
     }
 
     if(key == GLFW_KEY_M) {
@@ -1158,6 +1186,8 @@ public class RenderEngine {
         case GLFW_KEY_SPACE -> this.movingUp = false;
         case GLFW_KEY_LEFT_SHIFT -> this.movingDown = false;
       }
+    } else if (key == GLFW_KEY_F10) {
+      this.frameAdvance = false;
     }
   }
 
