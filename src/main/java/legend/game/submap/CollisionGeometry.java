@@ -234,33 +234,35 @@ public class CollisionGeometry {
   @Method(0x800e9018L)
   public int getCollisionPrimitiveAtPoint(final float x, final float y, final float z, final boolean checkSteepness) {
     int collisionPrimitiveIndexCount = 0;
-    final Vector3f middle = new Vector3f();
 
     //LAB_800e9040
     for(int collisionPrimitiveIndex = 0; collisionPrimitiveIndex < this.primitiveCount_0c; collisionPrimitiveIndex++) {
       final CollisionPrimitiveInfo0c collisionInfo = this.primitiveInfo_14[collisionPrimitiveIndex];
-      this.getMiddleOfCollisionPrimitive(collisionPrimitiveIndex, middle);
 
       // This method did not check the Y value at all, meaning if you had collision primitives on
       // top of each other (like in Kazas) you could get stuck on one at a very different depth
-      if((!checkSteepness || collisionInfo.flatEnoughToWalkOn_01) && Math.abs(middle.y - y) < 150.0f) {
-        //LAB_800e9078
-        //LAB_800e90a0
-        boolean found = false;
-        for(int vertexIndex = 0; vertexIndex < collisionInfo.vertexCount_00; vertexIndex++) {
-          final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[collisionInfo.vertexInfoOffset_02 + vertexIndex];
+      if(!checkSteepness || collisionInfo.flatEnoughToWalkOn_01) {
+        // Calculate the Y position of the geometry at the given point
+        final float primitiveY = -(this.normals_08[collisionPrimitiveIndex].x * x + this.normals_08[collisionPrimitiveIndex].z * z + collisionInfo._08) / this.normals_08[collisionPrimitiveIndex].y;
+        if(Math.abs(primitiveY - y) < 50.0f) {
+          //LAB_800e9078
+          //LAB_800e90a0
+          boolean found = false;
+          for(int vertexIndex = 0; vertexIndex < collisionInfo.vertexCount_00; vertexIndex++) {
+            final CollisionVertexInfo0c vertexInfo = this.vertexInfo_18[collisionInfo.vertexInfoOffset_02 + vertexIndex];
 
-          if(vertexInfo.x_00 * x + vertexInfo.z_02 * z + vertexInfo._04 < 0) {
-            //LAB_800e910c
-            found = true;
-            break;
+            if(vertexInfo.x_00 * x + vertexInfo.z_02 * z + vertexInfo._04 < 0) {
+              //LAB_800e910c
+              found = true;
+              break;
+            }
           }
-        }
 
-        //LAB_800e90f0
-        if(!found) {
-          this.collisionPrimitiveIndices_800cbe48[collisionPrimitiveIndexCount] = collisionPrimitiveIndex;
-          collisionPrimitiveIndexCount++;
+          //LAB_800e90f0
+          if(!found) {
+            this.collisionPrimitiveIndices_800cbe48[collisionPrimitiveIndexCount] = collisionPrimitiveIndex;
+            collisionPrimitiveIndexCount++;
+          }
         }
       }
 

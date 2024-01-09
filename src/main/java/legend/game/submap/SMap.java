@@ -1054,7 +1054,7 @@ public class SMap extends EngineState {
           player.interpMovementTicksTotal = 2 / vsyncMode_8007a3b8;
           player.interpMovementTicks = 0;
           player.interpMovementStart.set(playerModel.coord2_14.coord.transfer);
-          player.interpMovementStart.add(worldspaceDeltaMovement, player.movementDestination_138);
+          player.interpMovementStart.add(worldspaceDeltaMovement, player.interpMovementDest);
           player.lastMovementTick = this.smapTicks_800c6ae0;
         }
 
