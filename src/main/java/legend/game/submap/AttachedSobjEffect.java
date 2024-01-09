@@ -577,7 +577,8 @@ public class AttachedSobjEffect {
       this.instantiationIntervalDust_30 = 0;
       this.instantiationIntervalFootprints_34 = 0;
       this.maxTicks_38 = 0;
-      this.trailData_3c = null;}
+      this.trailData_3c = null;
+    }
   }
 
   /** Used for dust trail attached sobj effect particles that use TMD models. */
