@@ -1077,14 +1077,16 @@ public class SMap extends EngineState {
       final int collidedPrimitiveIndex = this.collisionGeometry_800cbe08.handleCollisionAndMovement(player.sobjIndex_12e != 0, playerModel.coord2_14.coord.transfer, worldspaceDeltaMovement);
       if(collidedPrimitiveIndex >= 0) {
         if(this.isWalkable(collidedPrimitiveIndex)) {
+          player.finishInterpolatedMovement();
+
           playerModel.coord2_14.coord.transfer.y = worldspaceDeltaMovement.y;
           worldspaceDeltaMovement.y = 0;
 
-          player.movementTicksTotal = 2 / vsyncMode_8007a3b8;
-          player.movementTicks_144 = 0;
-          player.movementStart.set(playerModel.coord2_14.coord.transfer);
-          player.movementStart.add(worldspaceDeltaMovement, player.movementDestination_138);
-          script.scriptState_04.setTempTicker(this::tickBasicMovement);
+          player.interpMovementTicksTotal = 2 / vsyncMode_8007a3b8;
+          player.interpMovementTicks = 0;
+          player.interpMovementStart.set(playerModel.coord2_14.coord.transfer);
+          player.interpMovementStart.add(worldspaceDeltaMovement, player.movementDestination_138);
+          player.lastMovementTick = this.smapTicks_800c6ae0;
         }
 
         //LAB_800de2c8
@@ -1093,7 +1095,6 @@ public class SMap extends EngineState {
 
       //LAB_800de2cc
       player.us_170 = 0;
-//      script.scriptState_04.setTempTicker(this::tickBasicMovement);
       this.caches_800c68e8.playerPos_00.set(worldspaceDeltaMovement);
     }
 
@@ -1182,6 +1183,8 @@ public class SMap extends EngineState {
   private FlowControl FUN_800de668(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
+
+    sobj.finishInterpolatedMovement();
     sobj.movementDestination_138.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     sobj.movementTicks_144 = script.params_20[4].get() * (3 - vsyncMode_8007a3b8);
 
@@ -1217,6 +1220,7 @@ public class SMap extends EngineState {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
+    sobj.finishInterpolatedMovement();
     sobj.movementDestination_138.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     sobj.movementTicks_144 = script.params_20[4].get() * (3 - vsyncMode_8007a3b8);
 
@@ -1242,6 +1246,8 @@ public class SMap extends EngineState {
   @Method(0x800deba0L)
   private FlowControl FUN_800deba0(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+
+    sobj.finishInterpolatedMovement();
     sobj.movementDestination_138.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     sobj.movementTicks_144 = script.params_20[4].get() * (3 - vsyncMode_8007a3b8);
     sobj.movementStepAccelerationY_18c = (script.params_20[5].get() + 5) / (4.0f / (vsyncMode_8007a3b8 * vsyncMode_8007a3b8));
@@ -1393,14 +1399,19 @@ public class SMap extends EngineState {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
-    if(sobj.lastMovementTick < this.smapTicks_800c6ae0 - 2 / vsyncMode_8007a3b8) {
+    if(sobj.sobjIndex_130 == 0) {
+      System.out.printf("Pos (%f, %f, %f) -> (%d, %d, %d), ticks %d, %d%n", model.coord2_14.coord.transfer.x, model.coord2_14.coord.transfer.y, model.coord2_14.coord.transfer.z, x, y, z, sobj.lastMovementTick, this.smapTicks_800c6ae0);
+    }
+
+    sobj.finishInterpolatedMovement();
+
+    if(sobj.lastMovementTick != this.smapTicks_800c6ae0 - 2 / vsyncMode_8007a3b8) {
       model.coord2_14.coord.transfer.set(x, y, z);
     } else {
-      sobj.movementTicksTotal = 2 / vsyncMode_8007a3b8;
-      sobj.movementTicks_144 = 0;
-      sobj.movementStart.set(model.coord2_14.coord.transfer);
-      sobj.movementDestination_138.set(x, y, z);
-      script.scriptState_04.setTempTicker(this::tickBasicMovement);
+      sobj.interpMovementTicksTotal = 2 / vsyncMode_8007a3b8;
+      sobj.interpMovementTicks = 0;
+      sobj.interpMovementStart.set(model.coord2_14.coord.transfer);
+      sobj.interpMovementDest.set(x, y, z);
     }
 
     sobj.lastMovementTick = this.smapTicks_800c6ae0;
@@ -1437,14 +1448,15 @@ public class SMap extends EngineState {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
-    if(sobj.lastRotationTick < this.smapTicks_800c6ae0 - 2 / vsyncMode_8007a3b8) {
+    sobj.finishInterpolatedRotation();
+
+    if(sobj.lastRotationTick != this.smapTicks_800c6ae0 - 2 / vsyncMode_8007a3b8) {
       model.coord2_14.transforms.rotate.set(x, y, z);
     } else {
-      sobj.rotationTicksTotal = 2 / vsyncMode_8007a3b8;
-      sobj.rotationTicks = 0;
-      sobj.rotationStart.set(model.coord2_14.transforms.rotate);
-      sobj.rotationDestination.set(x, y, z);
-      script.scriptState_04.setTempTicker(this::tickBasicMovement);
+      sobj.interpRotationTicksTotal = 2 / vsyncMode_8007a3b8;
+      sobj.interpRotationTicks = 0;
+      sobj.interpRotationStart.set(model.coord2_14.transforms.rotate);
+      sobj.interpRotationDest.set(x, y, z);
     }
 
     sobj.lastRotationTick = this.smapTicks_800c6ae0;
@@ -1646,6 +1658,7 @@ public class SMap extends EngineState {
       return FlowControl.CONTINUE;
     }
 
+    sobj.finishInterpolatedRotation();
     sobj.rotationAmount_17c.set(
       MathHelper.psxDegToRad(script.params_20[1].get()) / frames,
       MathHelper.psxDegToRad(script.params_20[2].get()) / frames,
@@ -1668,6 +1681,8 @@ public class SMap extends EngineState {
   @Method(0x800df890L)
   private FlowControl scriptRotateSobjAbsolute(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+
+    sobj.finishInterpolatedRotation();
     sobj.rotationAmount_17c.set(
       MathHelper.psxDegToRad(script.params_20[1].get()) / (2.0f / vsyncMode_8007a3b8),
       MathHelper.psxDegToRad(script.params_20[2].get()) / (2.0f / vsyncMode_8007a3b8),
@@ -1883,6 +1898,8 @@ public class SMap extends EngineState {
 
     sobj.animationFinished_12c = false;
     sobj.rotationFrames_188 = 0;
+    sobj.lastMovementTick = Integer.MIN_VALUE;
+    sobj.lastRotationTick = Integer.MIN_VALUE;
 
     return FlowControl.CONTINUE;
   }
@@ -1953,14 +1970,15 @@ public class SMap extends EngineState {
     if(deltaX != 0.0f || deltaZ != 0.0f) {
       final float destAngle = MathHelper.positiveAtan2(deltaZ, deltaX);
 
-      if(sobj.lastRotationTick < this.smapTicks_800c6ae0 - 2 / vsyncMode_8007a3b8 || Math.abs(model.coord2_14.transforms.rotate.y - destAngle) > MathHelper.PI / 6.0f) {
+      sobj.finishInterpolatedRotation();
+
+      if(sobj.lastRotationTick != this.smapTicks_800c6ae0 - 2 / vsyncMode_8007a3b8 || Math.abs(model.coord2_14.transforms.rotate.y - destAngle) > MathHelper.PI / 6.0f) {
         model.coord2_14.transforms.rotate.y = destAngle;
       } else {
-        sobj.rotationTicksTotal = 2 / vsyncMode_8007a3b8;
-        sobj.rotationTicks = 0;
-        sobj.rotationStart.set(model.coord2_14.transforms.rotate);
-        sobj.rotationDestination.set(model.coord2_14.transforms.rotate).y = destAngle;
-        script.scriptState_04.setTempTicker(this::tickBasicMovement);
+        sobj.interpRotationTicksTotal = 2 / vsyncMode_8007a3b8;
+        sobj.interpRotationTicks = 0;
+        sobj.interpRotationStart.set(model.coord2_14.transforms.rotate);
+        sobj.interpRotationDest.set(model.coord2_14.transforms.rotate).y = destAngle;
       }
 
       sobj.lastRotationTick = this.smapTicks_800c6ae0;
@@ -2511,6 +2529,24 @@ public class SMap extends EngineState {
       this.setCameraPos(1, model.coord2_14.coord.transfer);
     }
 
+    if(sobj.interpMovementTicks < sobj.interpMovementTicksTotal) {
+      sobj.interpMovementStart.lerp(sobj.interpMovementDest, (sobj.interpMovementTicks + 1.0f) / sobj.interpMovementTicksTotal, sobj.model_00.coord2_14.coord.transfer);
+      sobj.interpMovementTicks++;
+    }
+
+    if(sobj.interpMovementTicks >= sobj.interpMovementTicksTotal) {
+      sobj.interpMovementTicksTotal = 0;
+    }
+
+    if(sobj.interpRotationTicks < sobj.interpRotationTicksTotal) {
+      sobj.interpRotationStart.lerp(sobj.interpRotationDest, (sobj.interpRotationTicks + 1.0f) / sobj.interpRotationTicksTotal, sobj.model_00.coord2_14.transforms.rotate);
+      sobj.interpRotationTicks++;
+    }
+
+    if(sobj.interpRotationTicks >= sobj.interpRotationTicksTotal) {
+      sobj.interpRotationTicksTotal = 0;
+    }
+
     if(!sobj.hidden_128) {
       if(sobj.rotationFrames_188 != 0) {
         sobj.rotationFrames_188--;
@@ -2796,19 +2832,9 @@ public class SMap extends EngineState {
           }
 
           //LAB_800e1c50
-          state.innerStruct_00.hidden_128 = false;
-          state.innerStruct_00.disableAnimation_12a = false;
-          state.innerStruct_00.animationFinished_12c = false;
           state.innerStruct_00.sobjIndex_12e = i;
           state.innerStruct_00.sobjIndex_130 = i;
-          state.innerStruct_00.animIndex_132 = 0;
-          state.innerStruct_00.movementStepY_134 = 0.0f;
-          state.innerStruct_00.movementTicks_144 = 0;
           state.innerStruct_00.collidedPrimitiveIndex_16c = -1;
-          state.innerStruct_00.us_170 = 0;
-          state.innerStruct_00.s_172 = 0;
-          state.innerStruct_00.rotationFrames_188 = 0;
-          state.innerStruct_00.showAlertIndicator_194 = false;
           state.innerStruct_00.collidedWithSobjIndex_19c = -1;
           state.innerStruct_00.collisionSizeHorizontal_1a0 = 20;
           state.innerStruct_00.collisionSizeVertical_1a4 = 20;
@@ -2832,7 +2858,6 @@ public class SMap extends EngineState {
           model.coord2_14.transforms.rotate.set(pos.rot_0c);
 
           state.innerStruct_00.movementStepAccelerationY_18c = 7 / (2.0f / vsyncMode_8007a3b8);
-          state.innerStruct_00.flags_190 = 0;
 
           if(i == 0) {
             state.innerStruct_00.flags_190 = 0x1;
@@ -3012,21 +3037,6 @@ public class SMap extends EngineState {
     sobj.model_00.deleteModelParts();
 
     //LAB_800e3e48
-  }
-
-  @Method(0x800e3e60L)
-  private boolean tickBasicMovement(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
-    if(sobj.movementTicks_144 < sobj.movementTicksTotal) {
-      sobj.movementStart.lerp(sobj.movementDestination_138, (sobj.movementTicks_144 + 1.0f) / sobj.movementTicksTotal, sobj.model_00.coord2_14.coord.transfer);
-      sobj.movementTicks_144++;
-    }
-
-    if(sobj.rotationTicks < sobj.rotationTicksTotal) {
-      sobj.rotationStart.lerp(sobj.rotationDestination, (sobj.rotationTicks + 1.0f) / sobj.rotationTicksTotal, sobj.model_00.coord2_14.transforms.rotate);
-      sobj.rotationTicks++;
-    }
-
-    return sobj.movementTicks_144 >= sobj.movementTicksTotal && sobj.rotationTicks >= sobj.rotationTicksTotal;
   }
 
   /** Used in teleporter just before Melbu */

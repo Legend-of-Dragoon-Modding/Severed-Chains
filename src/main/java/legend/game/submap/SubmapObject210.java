@@ -15,20 +15,10 @@ public class SubmapObject210 {
   public int animIndex_132;
   /** Forced movement Y step */
   public float movementStepY_134;
-  public final Vector3f movementStart = new Vector3f();
   /** Forced movement destination */
   public final Vector3f movementDestination_138 = new Vector3f();
   /** Number of frames for forced movement */
   public int movementTicks_144;
-  public int movementTicksTotal;
-  public int lastMovementTick = Integer.MIN_VALUE;
-  public final Vector3f rotationStart = new Vector3f();
-  /** Forced movement destination */
-  public final Vector3f rotationDestination = new Vector3f();
-  /** Number of frames for forced movement */
-  public int rotationTicks;
-  public int rotationTicksTotal;
-  public int lastRotationTick = Integer.MIN_VALUE;
   /** Forced movement step */
   public final Vector3f movementStep_148 = new Vector3f();
 //  /** Same as {@link #movementStep_148} but .16 */
@@ -39,6 +29,17 @@ public class SubmapObject210 {
   public int us_170;
   public int s_172;
   public int s_174;
+
+  public final Vector3f interpMovementStart = new Vector3f();
+  public final Vector3f interpMovementDest = new Vector3f();
+  public int interpMovementTicks;
+  public int interpMovementTicksTotal;
+  public int lastMovementTick = Integer.MIN_VALUE;
+  public final Vector3f interpRotationStart = new Vector3f();
+  public final Vector3f interpRotationDest = new Vector3f();
+  public int interpRotationTicks;
+  public int interpRotationTicksTotal;
+  public int lastRotationTick = Integer.MIN_VALUE;
 
   /** Only one sobj may have this value set at a time */
   public boolean cameraAttached_178;
@@ -99,6 +100,22 @@ public class SubmapObject210 {
 
   public SubmapObject210(final String name) {
     this.model_00 = new Model124(name);
+  }
+
+  public void finishInterpolatedMovement() {
+    if(this.interpMovementTicksTotal != 0) {
+      this.model_00.coord2_14.coord.transfer.set(this.interpMovementDest);
+      this.interpMovementTicksTotal = 0;
+      this.lastMovementTick = Integer.MIN_VALUE;
+    }
+  }
+
+  public void finishInterpolatedRotation() {
+    if(this.interpRotationTicksTotal != 0) {
+      this.model_00.coord2_14.transforms.rotate.set(this.interpRotationDest);
+      this.interpRotationTicksTotal = 0;
+      this.lastRotationTick = Integer.MIN_VALUE;
+    }
   }
 
   @Override
