@@ -3353,7 +3353,7 @@ public final class Scus94491BpeSegment_8002 {
           final int height = 12 - scrollH;
 
           textboxText.transforms.identity();
-          textboxText.transforms.transfer.set(GPU.getOffsetX() + x, GPU.getOffsetY() + y - scrollH, textboxText.z_0c * 4.0f);
+          textboxText.transforms.transfer.set(GPU.getOffsetX() + (int)x, GPU.getOffsetY() + (int)y - scrollH, textboxText.z_0c * 4.0f);
           RENDERER.queueOrthoOverlayModel(RENDERER.chars, textboxText.transforms)
             .vertices(chr.char_06 * 4, 4)
             .colour(chr.colour_04.r / 255.0f, chr.colour_04.g / 255.0f, chr.colour_04.b / 255.0f)
