@@ -331,7 +331,7 @@ public final class TmdObjLoader {
     return new MeshObj(name, meshes, backfaceCulling);
   }
 
-  private static void getTranslucencySizes(final String name, final TmdObjTable1c objTable, final int specialFlags, final float[][] vertices, final int[][] indices, @Nullable Translucency translucency) {
+  private static void getTranslucencySizes(final String name, final TmdObjTable1c objTable, final int specialFlags, final float[][] vertices, final int[][] indices, @Nullable Translucency translucencyOverride) {
     // Extra element 0 means none
     final int translucencyCount = Translucency.values().length + 1;
     final int[] vertexSizes = new int[translucencyCount];
@@ -356,7 +356,9 @@ public final class TmdObjLoader {
       vertexSize += FLAGS_SIZE;
 
       for(final byte[] data : primitive.data()) {
-        if(translucent && (textured || translucency != null)) {
+        if(translucent && (textured || translucencyOverride != null)) {
+          Translucency translucency = translucencyOverride;
+
           if(textured) {
             final int tpage = IoHelper.readUShort(data, 6);
             translucency = Translucency.of(tpage >>> 5 & 0b11);
@@ -365,7 +367,7 @@ public final class TmdObjLoader {
           vertexSizes[translucency.ordinal() + 1] += vertexSize * vertexCount;
           indexSizes[translucency.ordinal() + 1] += quad ? 6 : 3;
         } else {
-          if(translucency != null) {
+          if(translucencyOverride != null) {
             LOGGER.warn("%s has translucent untextured face but no translucency override!", name);
           }
 
