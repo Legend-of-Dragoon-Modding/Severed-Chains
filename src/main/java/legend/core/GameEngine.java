@@ -400,8 +400,8 @@ public final class GameEngine {
     synchronized(LOCK) {
       Input.init();
 
+      TmdObjLoader.fromModel("Shadow", shadowModel_800bda10);
       for(int i = 0; i < shadowModel_800bda10.modelParts_00.length; i++) {
-        shadowModel_800bda10.modelParts_00[i].obj = TmdObjLoader.fromObjTable("Shadow " + i, shadowModel_800bda10.modelParts_00[i].tmd_08);
         shadowModel_800bda10.modelParts_00[i].obj.persistent = true;
       }
 

@@ -7370,11 +7370,9 @@ public final class SEffe {
     if(type == 0x300_0000) {
       //LAB_80116708
       final TmdObjTable1c tmdObjTable;
-      final Obj obj;
       // If we already have it cached
       if(effect.deffTmdFlags_48 == deffFlags) {
         tmdObjTable = effect.deffTmdObjTable_4c;
-        obj = effect.obj;
       } else {
         //LAB_80116724
         if((deffFlags & 0xf_ff00) == 0xf_ff00) {
@@ -7394,11 +7392,10 @@ public final class SEffe {
         }
 
         effect.obj = TmdObjLoader.fromObjTable(manager.name, effect.deffTmdObjTable_4c);
-        obj = effect.obj;
       }
 
       //LAB_80116778
-      renderTmdSpriteEffect(tmdObjTable, obj, manager.params_10, sp0x10);
+      renderTmdSpriteEffect(tmdObjTable, effect.obj, manager.params_10, sp0x10);
     } else if(type == 0x400_0000) {
       if(effect.deffSpriteFlags_50 != deffFlags) {
         //LAB_801162e8

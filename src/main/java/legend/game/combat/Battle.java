@@ -2121,12 +2121,7 @@ public class Battle extends EngineState {
       initModel(model, tmd, anim);
     }
 
-    for(int i = 0; i < model.modelParts_00.length; i++) {
-      model.modelParts_00[i].obj = TmdObjLoader.fromObjTable(
-        "CombatantModel (index " + combatant.charSlot_19c + ')' + " (part " + i + ')',
-        tmd.tmdPtr_00.tmd.objTable[i]
-      );
-    }
+    TmdObjLoader.fromModel("CombatantModel (index " + combatant.charSlot_19c + ')', model);
 
     //LAB_800c9680
     combatant.assets_14[0]._09++;
@@ -4949,9 +4944,7 @@ public class Battle extends EngineState {
     model.shadowSize_10c.set(1.0f, 1.0f, 1.0f);
     model.shadowOffset_118.zero();
 
-    for(int i = 0; i < model.modelParts_00.length; i++) {
-      model.modelParts_00[i].obj = TmdObjLoader.fromObjTable("BattleModel (part" + i + ')', tmd.objTable[i]);
-    }
+    TmdObjLoader.fromModel("BattleModel", model);
   }
 
   @Method(0x800e45c0L)

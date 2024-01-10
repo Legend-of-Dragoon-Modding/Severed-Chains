@@ -2,10 +2,12 @@ package legend.core.opengl;
 
 import legend.core.IoHelper;
 import legend.core.MathHelper;
+import legend.core.gte.ModelPart10;
 import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable1c;
 import legend.game.tmd.Polygon;
 import legend.game.tmd.Vertex;
+import legend.game.types.Model124;
 import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,6 +52,17 @@ public final class TmdObjLoader {
     return objs;
   }
 
+  public static void fromModel(final String name, final Model124 model) {
+    fromModel(name, model, 0);
+  }
+
+  public static void fromModel(final String name, final Model124 model, final int specialFlags) {
+    for(int i = 0; i < model.modelParts_00.length; i++) {
+      final ModelPart10 part = model.modelParts_00[i];
+      part.obj = TmdObjLoader.fromObjTable(name + " part " + i, part.tmd_08, Translucency.of(model.tpage_108 >>> 5 & 0b11));
+    }
+  }
+
   public static MeshObj fromObjTable(final String name, final TmdObjTable1c objTable) {
     return fromObjTable(name, objTable, 0);
   }
@@ -66,7 +79,7 @@ public final class TmdObjLoader {
     final int translucencyCount = Translucency.values().length + 1;
     final float[][] allVertices = new float[translucencyCount][];
     final int[][] allIndices = new int[translucencyCount][];
-    getTranslucencySizes(objTable, specialFlags, allVertices, allIndices, translucency);
+    getTranslucencySizes(name, objTable, specialFlags, allVertices, allIndices, translucency);
     final int[] vertexIndices = new int[translucencyCount];
     final int[] vertexOffsets = new int[translucencyCount];
     final int[] indexOffsets = new int[translucencyCount];
@@ -146,7 +159,7 @@ public final class TmdObjLoader {
 
             primitivesOffset += 2;
           }
-        } else if(translucent) {
+        } else if(translucent && translucency != null) {
           translucencyIndex = translucency.ordinal() + 1;
           vertices = allVertices[translucencyIndex];
           indices = allIndices[translucencyIndex];
@@ -258,7 +271,10 @@ public final class TmdObjLoader {
           if(translucent) {
             if(!textured || uniformLit) {
               backfaceCulling = false;
-              flags |= TRANSLUCENCY_FLAG << translucency.ordinal();
+
+              if(translucency != null) {
+                flags |= TRANSLUCENCY_FLAG << translucency.ordinal();
+              }
             } else { // Only textured primitives have tpages
               flags |= TRANSLUCENCY_FLAG << (poly.tpage >>> 5 & 0b11);
             }
@@ -315,7 +331,7 @@ public final class TmdObjLoader {
     return new MeshObj(name, meshes, backfaceCulling);
   }
 
-  private static void getTranslucencySizes(final TmdObjTable1c objTable, final int specialFlags, final float[][] vertices, final int[][] indices, @Nullable Translucency translucency) {
+  private static void getTranslucencySizes(final String name, final TmdObjTable1c objTable, final int specialFlags, final float[][] vertices, final int[][] indices, @Nullable Translucency translucency) {
     // Extra element 0 means none
     final int translucencyCount = Translucency.values().length + 1;
     final int[] vertexSizes = new int[translucencyCount];
@@ -340,7 +356,7 @@ public final class TmdObjLoader {
       vertexSize += FLAGS_SIZE;
 
       for(final byte[] data : primitive.data()) {
-        if(translucent) {
+        if(translucent && (textured || translucency != null)) {
           if(textured) {
             final int tpage = IoHelper.readUShort(data, 6);
             translucency = Translucency.of(tpage >>> 5 & 0b11);
@@ -349,6 +365,10 @@ public final class TmdObjLoader {
           vertexSizes[translucency.ordinal() + 1] += vertexSize * vertexCount;
           indexSizes[translucency.ordinal() + 1] += quad ? 6 : 3;
         } else {
+          if(translucency != null) {
+            LOGGER.warn("%s has translucent untextured face but no translucency override!", name);
+          }
+
           vertexSizes[0] += vertexSize * vertexCount;
           indexSizes[0] += quad ? 6 : 3;
         }

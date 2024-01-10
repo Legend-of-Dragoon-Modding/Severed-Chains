@@ -1158,9 +1158,7 @@ public class RetailSubmap extends Submap {
     }
 
     if(this.submapModel_800d4bf8.modelParts_00[0].obj == null) {
-      for(int i = 0; i < this.submapModel_800d4bf8.modelParts_00.length; i++) {
-        this.submapModel_800d4bf8.modelParts_00[i].obj = TmdObjLoader.fromObjTable("Submap model part " + i, this.submapModel_800d4bf8.modelParts_00[i].tmd_08);
-      }
+      TmdObjLoader.fromModel("Submap model", this.submapModel_800d4bf8);
     }
 
     this.submapModel_800d4bf8.coord2_14.coord.transfer.zero();
