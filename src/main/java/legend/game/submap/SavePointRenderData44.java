@@ -7,8 +7,8 @@ public class SavePointRenderData44 {
   public final Vector2f vert1_08 = new Vector2f();
   public final Vector2f vert2_10 = new Vector2f();
   public final Vector2f vert3_18 = new Vector2f();
-  public int screenOffsetX_20;
-  public int screenOffsetY_24;
+  public float screenOffsetX_20;
+  public float screenOffsetY_24;
   public float rotation_28;
   public float fadeAmount_2c;
 //  /** 16.16 fixed-point */

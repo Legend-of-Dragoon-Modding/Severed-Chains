@@ -53,7 +53,6 @@ import legend.game.types.Translucency;
 import legend.game.unpacker.Unpacker;
 import org.joml.Math;
 import org.joml.Vector2f;
-import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
@@ -198,7 +197,17 @@ public class SMap extends EngineState {
 
   private boolean returnedToSameSubmapAfterBattle_800cb448;
 
-  private final Vector2i screenOffset_800cb568 = new Vector2i();
+  private final Vector2f screenOffset_800cb568 = new Vector2f();
+  private final Vector2f screenOffsetStart = new Vector2f();
+  private final Vector2f screenOffsetDest = new Vector2f();
+  private int screenOffsetTicks;
+  private int screenOffsetTicksTotal;
+
+  private final Vector2f geomOffset = new Vector2f();
+  private final Vector2f geomOffsetStart = new Vector2f();
+  private final Vector2f geomOffsetDest = new Vector2f();
+  private int geomOffsetTicks;
+  private int geomOffsetTicksTotal;
 
   private CountdownLatch screenOffsetLatch_800cbd38;
   private CountdownLatch geomOffsetLatch_800cbd3c;
@@ -208,17 +217,8 @@ public class SMap extends EngineState {
 
   private SnowEffect snow_800d4bd8;
 
-  private final Model124 tmdDustModel_800d4d40 = new Model124("Dust");
-
-  private final OrthoTrailParticle54 orthoQuadTrail = new OrthoTrailParticle54();
-
-  private final TmdTrailParticle20 tmdTrail_800d4ec0 = new TmdTrailParticle20();
 
   private final SmokeParticleEffect smokeCloudEffect_800d4f50 = new SmokeParticleEffect();
-
-  private final LawPodTrailSegment34 lawPodTrail_800d4f90 = new LawPodTrailSegment34();
-
-  private final TrailSegmentVertices14 lawPodTrailVerts_800d4fd0 = new TrailSegmentVertices14();
 
   private final TriangleIndicator44[] _800d4ff0 = new TriangleIndicator44[21];
   {
@@ -245,26 +245,6 @@ public class SMap extends EngineState {
   private final int[] texPages_800d6050 = new int[12];
   private final int[] cluts_800d6068 = new int[12];
 
-  private final Vector3f[] footprintQuadVertices_800d6b7c = {
-    new Vector3f(-10.0f, 0.0f, -22.0f),
-    new Vector3f( 10.0f, 0.0f, -22.0f),
-    new Vector3f(-10.0f, 0.0f,  22.0f),
-    new Vector3f( 10.0f, 0.0f,  22.0f),
-    new Vector3f(-12.0f, 0.0f, - 8.0f),
-    new Vector3f(- 2.0f, 0.0f, - 8.0f),
-    new Vector3f(-12.0f, 0.0f,   8.0f),
-    new Vector3f(- 2.0f, 0.0f,   8.0f),
-    new Vector3f(  2.0f, 0.0f, - 8.0f),
-    new Vector3f( 12.0f, 0.0f, - 8.0f),
-    new Vector3f(  2.0f, 0.0f,   8.0f),
-    new Vector3f( 12.0f, 0.0f,   8.0f),
-  };
-  private final int[] orthoDustUs_800d6bdc = {96, 112, 64, 0};
-  private final int[] dustTextureWidths_800d6bec = {15, 15, 31, 23};
-  private final int[] dustTextureHeights_800d6bfc = {31, 31, 31, 23};
-  private final int[] particleFadeDelay_800d6c0c = {120, 0, 120};
-
-
   private final Vector3f savePointV0_800d6c28 = new Vector3f(-24.0f, -32.0f,  24.0f);
   private final Vector3f savePointV1_800d6c30 = new Vector3f( 24.0f, -32.0f,  24.0f);
   private final Vector3f savePointV2_800d6c38 = new Vector3f(-24.0f, -32.0f, -24.0f);
@@ -286,8 +266,6 @@ public class SMap extends EngineState {
   private AnmFile savepointAnm2;
   private CContainer savepointTmd;
   private TmdAnimationFile savepointAnimation;
-  private CContainer dustTmd;
-  private TmdAnimationFile dustAnimation;
 
   private final String bigArrow_800d7620 = "big_arrow.tim";
   private final String smallArrow_800d7c60 = "small_arrow.tim";
@@ -395,9 +373,6 @@ public class SMap extends EngineState {
 
   private int snowState_800f9e60;
 
-  private int lawPodTrailSegmentCount_800f9e78;
-
-  private final LawPodTrailData18[] lawPodTrailSegments_800f9e7c = new LawPodTrailData18[8];
   private int momentaryIndicatorTicks_800f9e9c;
 
   private int _800f9ea0;
@@ -428,6 +403,8 @@ public class SMap extends EngineState {
 
   private final MapIndicator mapIndicator = new MapIndicator();
   private final ChapterTitleCard chapterTitleCard = new ChapterTitleCard();
+
+  private final AttachedSobjEffect attachedSobjEffect = new AttachedSobjEffect();
 
   @Override
   public void restoreMusicAfterMenu() {
@@ -966,6 +943,7 @@ public class SMap extends EngineState {
     partCoord.flg--;
   }
 
+  // TODO Clean this up
   @Method(0x800daa3cL)
   private void renderSmapModel(final Model124 model) {
     zOffset_1f8003e8 = model.zOffset_a0;
@@ -1077,14 +1055,16 @@ public class SMap extends EngineState {
       final int collidedPrimitiveIndex = this.collisionGeometry_800cbe08.handleCollisionAndMovement(player.sobjIndex_12e != 0, playerModel.coord2_14.coord.transfer, worldspaceDeltaMovement);
       if(collidedPrimitiveIndex >= 0) {
         if(this.isWalkable(collidedPrimitiveIndex)) {
+          player.finishInterpolatedMovement();
+
           playerModel.coord2_14.coord.transfer.y = worldspaceDeltaMovement.y;
           worldspaceDeltaMovement.y = 0;
 
-          player.movementTicksTotal = 2 / vsyncMode_8007a3b8;
-          player.movementTicks_144 = 0;
-          player.movementStart.set(playerModel.coord2_14.coord.transfer);
-          player.movementStart.add(worldspaceDeltaMovement, player.movementDestination_138);
-          script.scriptState_04.setTempTicker(this::tickBasicMovement);
+          player.interpMovementTicksTotal = 2 / vsyncMode_8007a3b8;
+          player.interpMovementTicks = 0;
+          player.interpMovementStart.set(playerModel.coord2_14.coord.transfer);
+          player.interpMovementStart.add(worldspaceDeltaMovement, player.interpMovementDest);
+          player.lastMovementTick = this.smapTicks_800c6ae0;
         }
 
         //LAB_800de2c8
@@ -1093,7 +1073,6 @@ public class SMap extends EngineState {
 
       //LAB_800de2cc
       player.us_170 = 0;
-//      script.scriptState_04.setTempTicker(this::tickBasicMovement);
       this.caches_800c68e8.playerPos_00.set(worldspaceDeltaMovement);
     }
 
@@ -1182,6 +1161,8 @@ public class SMap extends EngineState {
   private FlowControl FUN_800de668(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
+
+    sobj.finishInterpolatedMovement();
     sobj.movementDestination_138.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     sobj.movementTicks_144 = script.params_20[4].get() * (3 - vsyncMode_8007a3b8);
 
@@ -1217,6 +1198,7 @@ public class SMap extends EngineState {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
+    sobj.finishInterpolatedMovement();
     sobj.movementDestination_138.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     sobj.movementTicks_144 = script.params_20[4].get() * (3 - vsyncMode_8007a3b8);
 
@@ -1242,6 +1224,8 @@ public class SMap extends EngineState {
   @Method(0x800deba0L)
   private FlowControl FUN_800deba0(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+
+    sobj.finishInterpolatedMovement();
     sobj.movementDestination_138.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
     sobj.movementTicks_144 = script.params_20[4].get() * (3 - vsyncMode_8007a3b8);
     sobj.movementStepAccelerationY_18c = (script.params_20[5].get() + 5) / (4.0f / (vsyncMode_8007a3b8 * vsyncMode_8007a3b8));
@@ -1393,14 +1377,15 @@ public class SMap extends EngineState {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
-    if(sobj.lastMovementTick < this.smapTicks_800c6ae0 - 2 / vsyncMode_8007a3b8) {
+    sobj.finishInterpolatedMovement();
+
+    if(sobj.lastMovementTick != this.smapTicks_800c6ae0 - 2 / vsyncMode_8007a3b8) {
       model.coord2_14.coord.transfer.set(x, y, z);
     } else {
-      sobj.movementTicksTotal = 2 / vsyncMode_8007a3b8;
-      sobj.movementTicks_144 = 0;
-      sobj.movementStart.set(model.coord2_14.coord.transfer);
-      sobj.movementDestination_138.set(x, y, z);
-      script.scriptState_04.setTempTicker(this::tickBasicMovement);
+      sobj.interpMovementTicksTotal = 2 / vsyncMode_8007a3b8;
+      sobj.interpMovementTicks = 0;
+      sobj.interpMovementStart.set(model.coord2_14.coord.transfer);
+      sobj.interpMovementDest.set(x, y, z);
     }
 
     sobj.lastMovementTick = this.smapTicks_800c6ae0;
@@ -1437,14 +1422,15 @@ public class SMap extends EngineState {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
-    if(sobj.lastRotationTick < this.smapTicks_800c6ae0 - 2 / vsyncMode_8007a3b8) {
+    sobj.finishInterpolatedRotation();
+
+    if(sobj.lastRotationTick != this.smapTicks_800c6ae0 - 2 / vsyncMode_8007a3b8) {
       model.coord2_14.transforms.rotate.set(x, y, z);
     } else {
-      sobj.rotationTicksTotal = 2 / vsyncMode_8007a3b8;
-      sobj.rotationTicks = 0;
-      sobj.rotationStart.set(model.coord2_14.transforms.rotate);
-      sobj.rotationDestination.set(x, y, z);
-      script.scriptState_04.setTempTicker(this::tickBasicMovement);
+      sobj.interpRotationTicksTotal = 2 / vsyncMode_8007a3b8;
+      sobj.interpRotationTicks = 0;
+      sobj.interpRotationStart.set(model.coord2_14.transforms.rotate);
+      sobj.interpRotationDest.set(x, y, z);
     }
 
     sobj.lastRotationTick = this.smapTicks_800c6ae0;
@@ -1646,6 +1632,7 @@ public class SMap extends EngineState {
       return FlowControl.CONTINUE;
     }
 
+    sobj.finishInterpolatedRotation();
     sobj.rotationAmount_17c.set(
       MathHelper.psxDegToRad(script.params_20[1].get()) / frames,
       MathHelper.psxDegToRad(script.params_20[2].get()) / frames,
@@ -1668,6 +1655,8 @@ public class SMap extends EngineState {
   @Method(0x800df890L)
   private FlowControl scriptRotateSobjAbsolute(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
+
+    sobj.finishInterpolatedRotation();
     sobj.rotationAmount_17c.set(
       MathHelper.psxDegToRad(script.params_20[1].get()) / (2.0f / vsyncMode_8007a3b8),
       MathHelper.psxDegToRad(script.params_20[2].get()) / (2.0f / vsyncMode_8007a3b8),
@@ -1878,11 +1867,13 @@ public class SMap extends EngineState {
     this.loadModelAndAnimation(model, this.submap.objects.get(index).model, this.submap.objects.get(index).animations.get(0));
 
     for(final ModelPart10 part : model.modelParts_00) {
-      part.obj = TmdObjLoader.fromObjTable("SobjModel (index " + index + ')', part.tmd_08);
+      part.obj = TmdObjLoader.fromObjTable("SobjModel (index " + index + ')', part.tmd_08, Translucency.of(model.tpage_108 >>> 5 & 0b11));
     }
 
     sobj.animationFinished_12c = false;
     sobj.rotationFrames_188 = 0;
+    sobj.lastMovementTick = Integer.MIN_VALUE;
+    sobj.lastRotationTick = Integer.MIN_VALUE;
 
     return FlowControl.CONTINUE;
   }
@@ -1953,14 +1944,15 @@ public class SMap extends EngineState {
     if(deltaX != 0.0f || deltaZ != 0.0f) {
       final float destAngle = MathHelper.positiveAtan2(deltaZ, deltaX);
 
-      if(sobj.lastRotationTick < this.smapTicks_800c6ae0 - 2 / vsyncMode_8007a3b8 || Math.abs(model.coord2_14.transforms.rotate.y - destAngle) > MathHelper.PI / 6.0f) {
+      sobj.finishInterpolatedRotation();
+
+      if(sobj.lastRotationTick != this.smapTicks_800c6ae0 - 2 / vsyncMode_8007a3b8 || Math.abs(model.coord2_14.transforms.rotate.y - destAngle) > MathHelper.PI / 6.0f) {
         model.coord2_14.transforms.rotate.y = destAngle;
       } else {
-        sobj.rotationTicksTotal = 2 / vsyncMode_8007a3b8;
-        sobj.rotationTicks = 0;
-        sobj.rotationStart.set(model.coord2_14.transforms.rotate);
-        sobj.rotationDestination.set(model.coord2_14.transforms.rotate).y = destAngle;
-        script.scriptState_04.setTempTicker(this::tickBasicMovement);
+        sobj.interpRotationTicksTotal = 2 / vsyncMode_8007a3b8;
+        sobj.interpRotationTicks = 0;
+        sobj.interpRotationStart.set(model.coord2_14.transforms.rotate);
+        sobj.interpRotationDest.set(model.coord2_14.transforms.rotate).y = destAngle;
       }
 
       sobj.lastRotationTick = this.smapTicks_800c6ae0;
@@ -2511,6 +2503,24 @@ public class SMap extends EngineState {
       this.setCameraPos(1, model.coord2_14.coord.transfer);
     }
 
+    if(sobj.interpMovementTicks < sobj.interpMovementTicksTotal) {
+      sobj.interpMovementStart.lerp(sobj.interpMovementDest, (sobj.interpMovementTicks + 1.0f) / sobj.interpMovementTicksTotal, sobj.model_00.coord2_14.coord.transfer);
+      sobj.interpMovementTicks++;
+    }
+
+    if(sobj.interpMovementTicks >= sobj.interpMovementTicksTotal) {
+      sobj.interpMovementTicksTotal = 0;
+    }
+
+    if(sobj.interpRotationTicks < sobj.interpRotationTicksTotal) {
+      sobj.interpRotationStart.lerp(sobj.interpRotationDest, (sobj.interpRotationTicks + 1.0f) / sobj.interpRotationTicksTotal, sobj.model_00.coord2_14.transforms.rotate);
+      sobj.interpRotationTicks++;
+    }
+
+    if(sobj.interpRotationTicks >= sobj.interpRotationTicksTotal) {
+      sobj.interpRotationTicksTotal = 0;
+    }
+
     if(!sobj.hidden_128) {
       if(sobj.rotationFrames_188 != 0) {
         sobj.rotationFrames_188--;
@@ -2682,7 +2692,7 @@ public class SMap extends EngineState {
       }
 
       //LAB_800e1390
-      this.tickAttachedSobjEffects(sobj.model_00, sobj.attachedEffectData_1d0);
+      this.attachedSobjEffect.tickAttachedSobjEffects(sobj.model_00, sobj.attachedEffectData_1d0, this.unloadSubmapParticles_800c6870, this.screenOffset_800cb568.x, this.screenOffset_800cb568.y);
     }
 
     //LAB_800e139c
@@ -2796,19 +2806,9 @@ public class SMap extends EngineState {
           }
 
           //LAB_800e1c50
-          state.innerStruct_00.hidden_128 = false;
-          state.innerStruct_00.disableAnimation_12a = false;
-          state.innerStruct_00.animationFinished_12c = false;
           state.innerStruct_00.sobjIndex_12e = i;
           state.innerStruct_00.sobjIndex_130 = i;
-          state.innerStruct_00.animIndex_132 = 0;
-          state.innerStruct_00.movementStepY_134 = 0.0f;
-          state.innerStruct_00.movementTicks_144 = 0;
           state.innerStruct_00.collidedPrimitiveIndex_16c = -1;
-          state.innerStruct_00.us_170 = 0;
-          state.innerStruct_00.s_172 = 0;
-          state.innerStruct_00.rotationFrames_188 = 0;
-          state.innerStruct_00.showAlertIndicator_194 = false;
           state.innerStruct_00.collidedWithSobjIndex_19c = -1;
           state.innerStruct_00.collisionSizeHorizontal_1a0 = 20;
           state.innerStruct_00.collisionSizeVertical_1a4 = 20;
@@ -2832,7 +2832,6 @@ public class SMap extends EngineState {
           model.coord2_14.transforms.rotate.set(pos.rot_0c);
 
           state.innerStruct_00.movementStepAccelerationY_18c = 7 / (2.0f / vsyncMode_8007a3b8);
-          state.innerStruct_00.flags_190 = 0;
 
           if(i == 0) {
             state.innerStruct_00.flags_190 = 0x1;
@@ -2840,10 +2839,8 @@ public class SMap extends EngineState {
           }
 
           //LAB_800e1d60
-          this.initAttachedSobjEffectData(state.innerStruct_00.attachedEffectData_1d0);
-
           for(final ModelPart10 part : model.modelParts_00) {
-            part.obj = TmdObjLoader.fromObjTable("SobjModel (index " + i + ')', part.tmd_08);
+            part.obj = TmdObjLoader.fromObjTable("SobjModel (index " + i + ')', part.tmd_08, Translucency.of(model.tpage_108 >>> 5 & 0b11));
           }
         }
 
@@ -3014,21 +3011,6 @@ public class SMap extends EngineState {
     //LAB_800e3e48
   }
 
-  @Method(0x800e3e60L)
-  private boolean tickBasicMovement(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
-    if(sobj.movementTicks_144 < sobj.movementTicksTotal) {
-      sobj.movementStart.lerp(sobj.movementDestination_138, (sobj.movementTicks_144 + 1.0f) / sobj.movementTicksTotal, sobj.model_00.coord2_14.coord.transfer);
-      sobj.movementTicks_144++;
-    }
-
-    if(sobj.rotationTicks < sobj.rotationTicksTotal) {
-      sobj.rotationStart.lerp(sobj.rotationDestination, (sobj.rotationTicks + 1.0f) / sobj.rotationTicksTotal, sobj.model_00.coord2_14.transforms.rotate);
-      sobj.rotationTicks++;
-    }
-
-    return sobj.movementTicks_144 >= sobj.movementTicksTotal && sobj.rotationTicks >= sobj.rotationTicksTotal;
-  }
-
   /** Used in teleporter just before Melbu */
   @Method(0x800e3e74L)
   private boolean tickSobjMovement(final ScriptState<SubmapObject210> state, final SubmapObject210 sobj) {
@@ -3152,7 +3134,7 @@ public class SMap extends EngineState {
 
   @Method(0x800e4708L)
   private void renderSubmap() {
-    this.renderAttachedSobjEffects();
+    this.attachedSobjEffect.renderAttachedSobjEffects(this.screenOffset_800cb568.x, this.screenOffset_800cb568.y);
     this.renderSubmapOverlays();
     this.handleAndRenderSubmapEffects();
     applyModelRotationAndScale(this.playerModel_800c6748);
@@ -3642,8 +3624,8 @@ public class SMap extends EngineState {
           this.savepointAnm2 = new AnmFile(files.get(1));
           this.savepointTmd = new CContainer("Savepoint", files.get(2));
           this.savepointAnimation = new TmdAnimationFile(files.get(3));
-          this.dustTmd = new CContainer("Dust", files.get(4));
-          this.dustAnimation = new TmdAnimationFile(files.get(5));
+          this.attachedSobjEffect.dustTmd = new CContainer("Dust", files.get(4));
+          this.attachedSobjEffect.dustAnimation = new TmdAnimationFile(files.get(5));
         });
         this.smapLoadingStage_800cb430 = SubmapState.WAIT_FOR_NEWROOT_2;
       }
@@ -3933,6 +3915,18 @@ public class SMap extends EngineState {
     //LAB_80020f20
     this.renderEnvironmentAndHandleTransitions();
     this.setIndicatorStatusAndResetIndicatorTickCountOnReenable();
+
+    if(this.screenOffsetTicks < this.screenOffsetTicksTotal) {
+      this.screenOffsetStart.lerp(this.screenOffsetDest, (this.screenOffsetTicks + 1.0f) / this.screenOffsetTicksTotal, this.screenOffset_800cb568);
+      this.screenOffsetTicks++;
+    }
+
+    if(this.geomOffsetTicks < this.geomOffsetTicksTotal) {
+      this.geomOffsetStart.lerp(this.geomOffsetDest, (this.geomOffsetTicks + 1.0f) / this.geomOffsetTicksTotal, this.geomOffset);
+      this.geomOffsetTicks++;
+
+      GTE.setScreenOffset(this.geomOffset.x, this.geomOffset.y);
+    }
   }
 
   @Method(0x800e6798L)
@@ -3982,8 +3976,8 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The camera Y offset")
   @Method(0x800e68b4L)
   private FlowControl scriptGetCameraOffset(final RunningScript<?> script) {
-    script.params_20[0].set(this.screenOffset_800cb568.x);
-    script.params_20[1].set(this.screenOffset_800cb568.y);
+    script.params_20[0].set((int)this.screenOffset_800cb568.x);
+    script.params_20[1].set((int)this.screenOffset_800cb568.y);
     return FlowControl.CONTINUE;
   }
 
@@ -4145,20 +4139,26 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800e7604L)
-  private void setGeomOffsetIfNotSet(final int latchTicks, final int x, final int y) {
+  private void setGeomOffsetIfNotSet(final int latchTicks, final float x, final float y) {
     if(this.geomOffsetLatch_800cbd3c.isOpen()) {
       this.geomOffsetLatch_800cbd3c.latch(latchTicks);
-      GTE.setScreenOffset(x, y);
+      GTE.getScreenOffset(this.geomOffset);
+      this.geomOffsetStart.set(this.geomOffset);
+      this.geomOffsetDest.set(x, y);
+      this.geomOffsetTicksTotal = latchTicks;
+      this.geomOffsetTicks = 0;
     }
   }
 
   @Method(0x800e7650L)
-  private void setScreenOffsetIfNotSet(final int latchTicks, final int x, final int y) {
+  private void setScreenOffsetIfNotSet(final int latchTicks, final float x, final float y) {
     // Added null check - bug in game code
     if(this.screenOffsetLatch_800cbd38 != null && this.screenOffsetLatch_800cbd38.isOpen()) {
       this.screenOffsetLatch_800cbd38.latch(latchTicks);
-      this.screenOffset_800cb568.x = x;
-      this.screenOffset_800cb568.y = y;
+      this.screenOffsetStart.set(this.screenOffset_800cb568);
+      this.screenOffsetDest.set(x, y);
+      this.screenOffsetTicksTotal = latchTicks;
+      this.screenOffsetTicks = 0;
     }
   }
 
@@ -4191,17 +4191,14 @@ public class SMap extends EngineState {
 
   @Method(0x800e8104L)
   private void setCameraPos(final int latchTicks, final Vector3f cameraPos) {
-    if(this.screenOffsetLatch_800cbd38.isOpen()) {
-      this.screenOffsetLatch_800cbd38.latch(latchTicks);
-
-      final Vector2f transformed = new Vector2f();
-      this.transformVertex(transformed, cameraPos);
-      this.submap.calcGoodScreenOffset(transformed.x, transformed.y);
-    }
+    final Vector2f transformed = new Vector2f();
+    final Vector2f offset = new Vector2f(this.screenOffsetDest);
+    this.transformVertex(transformed, cameraPos);
+    this.submap.calcGoodScreenOffset(transformed.x, transformed.y, offset);
 
     //LAB_800e8164
-    this.setScreenOffsetIfNotSet(1, this.screenOffset_800cb568.x, this.screenOffset_800cb568.y);
-    this.setGeomOffsetIfNotSet(1, this.screenOffset_800cb568.x, this.screenOffset_800cb568.y);
+    this.setScreenOffsetIfNotSet(latchTicks, offset.x, offset.y);
+    this.setGeomOffsetIfNotSet(latchTicks, offset.x, offset.y);
   }
 
   @Method(0x800e81a0L)
@@ -4292,622 +4289,6 @@ public class SMap extends EngineState {
     //LAB_800ee354
   }
 
-  @Method(0x800ef0f8L)
-  private void tickAttachedSobjEffects(final Model124 model, final AttachedSobjEffectData40 data) {
-    if(!flEq(data.transfer_1e.x, model.coord2_14.coord.transfer.x) || !flEq(data.transfer_1e.y, model.coord2_14.coord.transfer.y) || !flEq(data.transfer_1e.z, model.coord2_14.coord.transfer.z)) {
-      //LAB_800ef154
-      if(data.shouldRenderTmdDust_04) {
-        if(data.tick_00 % (data.instantiationIntervalDust30 * (3 - vsyncMode_8007a3b8)) == 0) {
-          final TmdTrailParticle20 inst = this.addTmdDustParticle(this.tmdTrail_800d4ec0);
-          inst.tick_00 = 0;
-          inst.maxTicks_18 = data.maxTicks_38;
-
-          final int size = data.size_28;
-          if(size < 0) {
-            inst.size_08 = -size;
-            inst.stepSize_04 = -inst.stepSize_04 / 20.0f;
-          } else if(size > 0) {
-            //LAB_800ef1e0
-            inst.size_08 = 0.0f;
-            inst.stepSize_04 = size / 20.0f;
-          } else {
-            //LAB_800ef214
-            inst.size_08 = 0.0f;
-            inst.stepSize_04 = 0.0f;
-          }
-
-          //LAB_800ef21c
-          inst.transfer.set(model.coord2_14.coord.transfer);
-        }
-      }
-
-      //LAB_800ef240
-      if(data.shouldRenderFootprints_08) {
-        if(data.tick_00 % (data.instantiationIntervalFootprints_34 * (3 - vsyncMode_8007a3b8)) == 0) {
-          //LAB_800ef394
-          final OrthoTrailParticle54 inst = this.addOrthoQuadTrailParticle(this.orthoQuadTrail);
-
-          if(data.footprintMode_10 != 0) {
-            //LAB_800ef3e8
-            inst.renderMode_00 = 2;
-            inst.textureIndex_02 = 3;
-
-            //LAB_800ef3f8
-          } else {
-            inst.renderMode_00 = 0;
-            inst.textureIndex_02 = data.textureIndexType1_1c;
-
-            data.textureIndexType1_1c ^= 1;
-          }
-
-          //LAB_800ef3fc
-          inst.x_18 = this.screenOffset_800cb568.x;
-          inst.y_1c = this.screenOffset_800cb568.y;
-          inst.tick_04 = 0;
-          inst.maxTicks_06 = 150;
-
-          final MV ls = new MV();
-          GsGetLs(model.coord2_14, ls);
-          GTE.setTransforms(ls);
-
-          final int textureIndex = inst.textureIndex_02;
-          if(textureIndex == 0) {
-            //LAB_800ef4b4
-            inst.z_4c = RotTransPers4(this.footprintQuadVertices_800d6b7c[4], this.footprintQuadVertices_800d6b7c[5], this.footprintQuadVertices_800d6b7c[6], this.footprintQuadVertices_800d6b7c[7], inst.sxy0_20, inst.sxy1_28, inst.sxy2_30, inst.sxy3_38);
-          } else if(textureIndex == 1) {
-            //LAB_800ef484
-            //LAB_800ef4b4
-            inst.z_4c = RotTransPers4(this.footprintQuadVertices_800d6b7c[8], this.footprintQuadVertices_800d6b7c[9], this.footprintQuadVertices_800d6b7c[10], this.footprintQuadVertices_800d6b7c[11], inst.sxy0_20, inst.sxy1_28, inst.sxy2_30, inst.sxy3_38);
-          } else if(textureIndex == 3) {
-            //LAB_800ef4a0
-            //LAB_800ef4b4
-            inst.z_4c = RotTransPers4(this.footprintQuadVertices_800d6b7c[0], this.footprintQuadVertices_800d6b7c[1], this.footprintQuadVertices_800d6b7c[2], this.footprintQuadVertices_800d6b7c[3], inst.sxy0_20, inst.sxy1_28, inst.sxy2_30, inst.sxy3_38);
-          }
-
-          //LAB_800ef4ec
-          if(inst.z_4c < 41) {
-            inst.z_4c = 41;
-          }
-
-          //LAB_800ef504
-          inst.stepBrightness_40 = 0.5f / 30;
-          inst.brightness_48 = 0.5f;
-        }
-      }
-
-      //LAB_800ef520
-      if(data.shouldRenderOrthoDust_0c) {
-        if(data.tick_00 % (data.instantiationIntervalDust30 * (3 - vsyncMode_8007a3b8)) == 0) {
-          final OrthoTrailParticle54 inst = this.addOrthoQuadTrailParticle(this.orthoQuadTrail);
-          inst.renderMode_00 = 1;
-          inst.textureIndex_02 = 2;
-          inst.x_18 = this.screenOffset_800cb568.x;
-          inst.y_1c = this.screenOffset_800cb568.y;
-
-          final Vector3f vert0 = new Vector3f(-data.size_28, 0.0f, -data.size_28);
-          final Vector3f vert1 = new Vector3f( data.size_28, 0.0f, -data.size_28);
-          final Vector3f vert2 = new Vector3f(-data.size_28, 0.0f,  data.size_28);
-          final Vector3f vert3 = new Vector3f( data.size_28, 0.0f,  data.size_28);
-
-          inst.tick_04 = 0;
-          inst.maxTicks_06 = (short)data.maxTicks_38;
-
-          final MV ls = new MV();
-          GsGetLs(model.coord2_14, ls);
-          GTE.setTransforms(ls);
-
-          //TODO The real code actually passes the same reference for sxyz 1 and 2, is that a bug?
-          inst.z_4c = RotTransPers4(vert0, vert1, vert2, vert3, inst.sxy0_20, inst.sxy1_28, inst.sxy2_30, inst.sxy3_38);
-
-          if(inst.z_4c < 41) {
-            inst.z_4c = 41;
-          }
-
-          //LAB_800ef6a0
-          final float halfSize = (inst.sxy3_38.x - inst.sxy0_20.x) / 2.0f;
-          inst.size_08 = halfSize;
-          inst.sizeStep_0c = halfSize / data.maxTicks_38;
-
-          inst.z0_26 = (inst.sxy3_38.x + inst.sxy0_20.x) / 2.0f;
-          inst.z1_2e = (inst.sxy3_38.y + inst.sxy0_20.y) / 2.0f;
-
-          inst.stepBrightness_40 = 0.5f / data.maxTicks_38;
-          inst.brightness_48 = 0.5f;
-        }
-      }
-
-      //LAB_800ef728
-      if(data.shouldRenderLawPodTrail_18) {
-        if(!this.unloadSubmapParticles_800c6870) {
-          this.tickLawPodTrail(model, data);
-        }
-      }
-    }
-
-    //LAB_800ef750
-    data.transfer_1e.set(model.coord2_14.coord.transfer);
-    data.tick_00++;
-  }
-
-  @Method(0x800ef798L)
-  private void renderTmdTrail() {
-    TmdTrailParticle20 prev = this.tmdTrail_800d4ec0;
-    TmdTrailParticle20 inst = prev.next_1c;
-
-    //LAB_800ef7c8
-    while(inst != null) {
-      if(inst.tick_00 >= inst.maxTicks_18 * (3 - vsyncMode_8007a3b8)) {
-        prev.next_1c = inst.next_1c;
-        inst = prev.next_1c;
-      } else {
-        //LAB_800ef804
-        inst.transfer.y -= 1.0f / (3 - vsyncMode_8007a3b8);
-
-        this.tmdDustModel_800d4d40.coord2_14.coord.transfer.set(inst.transfer);
-
-        // In retail, the shrinking tail of the snow slide snow cloud animation occurs because size_08 is in .12
-        // and RotMatrixXyz writes everything as shorts, which turns scale negative above 0x7fff (>=8.0f).
-        // To implement this more smoothly, stepSize_04 is switched to negative once size_08 reaches 8.0f.
-        if(inst.size_08 >= 8.0f) {
-          inst.stepSize_04 = -inst.stepSize_04;
-        }
-        inst.size_08 += inst.stepSize_04 / (3 - vsyncMode_8007a3b8);
-
-        this.tmdDustModel_800d4d40.coord2_14.transforms.scale.set(inst.size_08, inst.size_08, inst.size_08);
-
-        applyModelRotationAndScale(this.tmdDustModel_800d4d40);
-        this.renderSmapModel(this.tmdDustModel_800d4d40);
-
-        this.tmdDustModel_800d4d40.remainingFrames_9e = 0;
-        this.tmdDustModel_800d4d40.subFrameIndex = 0;
-
-        this.tmdDustModel_800d4d40.modelParts_00[0].coord2_04.flg--;
-        inst.tick_00++;
-
-        prev = inst;
-        inst = inst.next_1c;
-      }
-      //LAB_800ef888
-    }
-    //LAB_800ef894
-  }
-
-  @Method(0x800ef8acL)
-  private void renderOrthoQuadTrailEffects() {
-    final int[] v = new int[4];
-    v[3] = 64; // Other values are 0
-
-    //LAB_800ef9cc
-    OrthoTrailParticle54 prev = this.orthoQuadTrail;
-    OrthoTrailParticle54 inst = prev.next_50;
-    while(inst != null) {
-      if(inst.tick_04 >= inst.maxTicks_06 * (3 - vsyncMode_8007a3b8)) {
-        prev.next_50 = inst.next_50;
-        inst = prev.next_50;
-      } else {
-        //LAB_800efa08
-        final GpuCommandPoly cmd = new GpuCommandPoly(4);
-
-        final int mode = inst.renderMode_00;
-        if(mode == 0 || mode == 2) {
-          //LAB_800efa44
-          final int offsetX = this.screenOffset_800cb568.x - inst.x_18;
-          final int offsetY = this.screenOffset_800cb568.y - inst.y_1c;
-
-          cmd
-            .pos(0, offsetX + inst.sxy0_20.x, offsetY + inst.sxy0_20.y)
-            .pos(1, offsetX + inst.sxy1_28.x, offsetY + inst.sxy1_28.y)
-            .pos(2, offsetX + inst.sxy2_30.x, offsetY + inst.sxy2_30.y)
-            .pos(3, offsetX + inst.sxy3_38.x, offsetY + inst.sxy3_38.y);
-
-          if(mode == 2) {
-            cmd
-              .clut(960, 464)
-              .vramPos(960, 256)
-              .bpp(Bpp.BITS_4)
-              .translucent(Translucency.B_MINUS_F);
-          } else {
-            //LAB_800efb64
-            cmd
-              .clut((this.cluts_800d6068[7] & 0b111111) * 16, this.cluts_800d6068[7] >>> 6)
-              .vramPos((this.texPages_800d6050[7] & 0b1111) * 64, (this.texPages_800d6050[7] & 0b10000) != 0 ? 256 : 0)
-              .translucent(Translucency.of(this.texPages_800d6050[7] >>> 5 & 0b11))
-              .bpp(Bpp.of(this.texPages_800d6050[7] >>> 7 & 0b11));
-          }
-        } else if(mode == 1) {
-          //LAB_800efb7c
-          inst.size_08 += inst.sizeStep_0c / (3 - vsyncMode_8007a3b8);
-          inst.sxy0_20.x = inst.z0_26 - inst.size_08 / 2.0f;
-          inst.sxy0_20.y = inst.z1_2e - inst.size_08 / 2.0f;
-          final float x = this.screenOffset_800cb568.x - inst.x_18 + inst.sxy0_20.x;
-          final float y = this.screenOffset_800cb568.y - inst.y_1c + inst.sxy0_20.y;
-
-          cmd
-            .pos(0, x, y)
-            .pos(1, x + inst.size_08, y)
-            .pos(2, x, y + inst.size_08)
-            .pos(3, x + inst.size_08, y + inst.size_08);
-
-          if((inst.tick_04 & 0x3) == 0) {
-            inst.z1_2e -= 1.0f / (3 - vsyncMode_8007a3b8);
-          }
-
-          //LAB_800efc4c
-          cmd
-            .clut((this.cluts_800d6068[6] & 0b111111) * 16, this.cluts_800d6068[6] >>> 6)
-            .vramPos((this.texPages_800d6050[6] & 0b1111) * 64, (this.texPages_800d6050[6] & 0b10000) != 0 ? 256 : 0)
-            .translucent(Translucency.of(this.texPages_800d6050[6] >>> 5 & 0b11))
-            .bpp(Bpp.of(this.texPages_800d6050[6] >>> 7 & 0b11));
-        }
-
-        //LAB_800efc64
-        if(inst.tick_04 >= this.particleFadeDelay_800d6c0c[inst.renderMode_00] * (3 - vsyncMode_8007a3b8)) {
-          inst.brightness_48 -= inst.stepBrightness_40 / (3 - vsyncMode_8007a3b8);
-
-          if(inst.brightness_48 >= 1.0f || inst.brightness_48 < 0.0f) {
-            inst.brightness_48 = 0.0f;
-          }
-        }
-
-        //LAB_800efcb8
-        cmd
-          .monochrome(inst.brightness_48)
-          .uv(0, this.orthoDustUs_800d6bdc[inst.textureIndex_02], v[inst.textureIndex_02])
-          .uv(1, this.orthoDustUs_800d6bdc[inst.textureIndex_02] + this.dustTextureWidths_800d6bec[inst.textureIndex_02], v[inst.textureIndex_02])
-          .uv(2, this.orthoDustUs_800d6bdc[inst.textureIndex_02], v[inst.textureIndex_02] + this.dustTextureHeights_800d6bfc[inst.textureIndex_02])
-          .uv(3, this.orthoDustUs_800d6bdc[inst.textureIndex_02] + this.dustTextureWidths_800d6bec[inst.textureIndex_02], v[inst.textureIndex_02] + this.dustTextureHeights_800d6bfc[inst.textureIndex_02]);
-
-        GPU.queueCommand(inst.z_4c, cmd);
-
-        inst.tick_04++;
-        prev = inst;
-        inst = inst.next_50;
-      }
-      //LAB_800efe48
-    }
-    //LAB_800efe54
-  }
-
-  @Method(0x800f0370L)
-  private void initAttachedSobjEffects() {
-    initModel(this.tmdDustModel_800d4d40, this.dustTmd, this.dustAnimation);
-    this.orthoQuadTrail.next_50 = null;
-    this.tmdTrail_800d4ec0.next_1c = null;
-    this.initLawPodTrail();
-  }
-
-  @Method(0x800f03c0L)
-  private TmdTrailParticle20 addTmdDustParticle(final TmdTrailParticle20 parent) {
-    final TmdTrailParticle20 child = new TmdTrailParticle20();
-    child.next_1c = parent.next_1c;
-    parent.next_1c = child;
-    return child;
-  }
-
-  @Method(0x800f0400L)
-  private OrthoTrailParticle54 addOrthoQuadTrailParticle(final OrthoTrailParticle54 parent) {
-    final OrthoTrailParticle54 child = new OrthoTrailParticle54();
-    child.next_50 = parent.next_50;
-    parent.next_50 = child;
-    return child;
-  }
-
-  @Method(0x800f0440L)
-  private void deallocateAttachedSobjEffects() {
-    this.deallocateTmdTrail();
-    this.deallocateOrthoQuadTrail();
-    this.deallocateLawPodTrail();
-  }
-
-  @Method(0x800f047cL)
-  private void renderAttachedSobjEffects() {
-    this.renderTmdTrail();
-    this.renderOrthoQuadTrailEffects();
-    this.renderLawPodTrail();
-  }
-
-  @Method(0x800f04acL)
-  private void initAttachedSobjEffectData(final AttachedSobjEffectData40 data) {
-    data.tick_00 = 0;
-    data.shouldRenderTmdDust_04 = false;
-    data.shouldRenderFootprints_08 = false;
-    data.shouldRenderOrthoDust_0c = false;
-    data.footprintMode_10 = 0;
-    data.shouldRenderLawPodTrail_18 = false;
-    data.textureIndexType1_1c = 0;
-    data.transfer_1e.zero();
-    data.size_28 = 0;
-    data.oldFootprintInstantiationInterval_2c = 0;
-    data.instantiationIntervalDust30 = 0;
-    data.instantiationIntervalFootprints_34 = 0;
-    data.maxTicks_38 = 0;
-    data.trailData_3c = null;
-  }
-
-  @Method(0x800f058cL)
-  private void deallocateTmdTrail() {
-    final TmdTrailParticle20 prev = this.tmdTrail_800d4ec0;
-
-    if(prev.next_1c != null) {
-      //LAB_800f05b4
-      TmdTrailParticle20 next;
-      do {
-        final TmdTrailParticle20 inst = prev.next_1c;
-        next = inst.next_1c;
-        prev.next_1c = next;
-      } while(next != null);
-    }
-
-    //LAB_800f05d4
-  }
-
-  @Method(0x800f05e8L)
-  private void deallocateOrthoQuadTrail() {
-    final OrthoTrailParticle54 prev = this.orthoQuadTrail;
-
-    if(prev.next_50 != null) {
-      //LAB_800f0610
-      OrthoTrailParticle54 next;
-      do {
-        final OrthoTrailParticle54 inst = prev.next_50;
-        next = inst.next_50;
-        prev.next_50 = next;
-      } while(next != null);
-    }
-    //LAB_800f0630
-  }
-
-  @Method(0x800f0644L)
-  private void tickLawPodTrail(final Model124 model, final AttachedSobjEffectData40 data) {
-    if((data.tick_00 & 0x1) == 0) {
-      final LawPodTrailData18 trailData = data.trailData_3c;
-
-      if(trailData.countSegments_01 < trailData.maxCountSegments_00) {
-        final LawPodTrailSegment34 prevSegment = this.lawPodTrail_800d4f90;
-        final LawPodTrailSegment34 segment = new LawPodTrailSegment34();
-        segment.next_30 = prevSegment.next_30;
-        prevSegment.next_30 = segment;
-
-        final TrailSegmentVertices14 verts = this.lawPodTrailVerts_800d4fd0;
-        TrailSegmentVertices14 newVerts = new TrailSegmentVertices14();
-        newVerts.next_10 = verts.next_10;
-        verts.next_10 = newVerts;
-
-        final MV transforms = new MV();
-        GsGetLs(model.coord2_14, transforms);
-
-        PushMatrix();
-        GTE.setTransforms(transforms);
-        GTE.perspectiveTransform(-trailData.width_08, 0.0f, 0.0f);
-        newVerts.vert0_00.x = GTE.getScreenX(2);
-        newVerts.vert0_00.y = GTE.getScreenY(2);
-        segment.z_20 = GTE.getScreenZ(3) / 4.0f;
-
-        GTE.perspectiveTransform(trailData.width_08, 0.0f, 0.0f);
-        newVerts.vert1_08.x = GTE.getScreenX(2);
-        newVerts.vert1_08.y = GTE.getScreenY(2);
-        segment.z_20 = GTE.getScreenZ(3) / 4.0f;
-        PopMatrix();
-
-        segment.tick_00 = 0;
-        segment.tpage_04 = GetTPage(Bpp.BITS_4, Translucency.of(trailData.translucency_0c), 972, 320);
-        this.initLawPodTrailSegmentColour(trailData, segment);
-        newVerts.vert0_00.x -= this.screenOffset_800cb568.x;
-        newVerts.vert0_00.y -= this.screenOffset_800cb568.y;
-        newVerts.vert1_08.x -= this.screenOffset_800cb568.x;
-        newVerts.vert1_08.y -= this.screenOffset_800cb568.y;
-
-        if(trailData.countSegments_01 == 0) {
-          trailData.currSegmentOriginVerts_14 = newVerts;
-          newVerts = new TrailSegmentVertices14();
-          newVerts.next_10 = verts.next_10;
-          verts.next_10 = newVerts;
-          final TrailSegmentVertices14 tempVerts = trailData.currSegmentOriginVerts_14;
-          newVerts.vert0_00.set(tempVerts.vert0_00);
-          newVerts.vert1_08.set(tempVerts.vert1_08);
-        }
-
-        //LAB_800f0928
-        segment.endpointVerts23_28 = newVerts;
-        segment.originVerts01_24 = trailData.currSegmentOriginVerts_14;
-        trailData.currSegmentOriginVerts_14 = newVerts;
-        segment.trailData_2c = trailData;
-        trailData.countSegments_01++;
-      }
-    }
-    //LAB_800f094c
-  }
-
-  @Method(0x800f0970L)
-  private void renderLawPodTrail() {
-    TrailSegmentVertices14 childVerts;
-    LawPodTrailSegment34 prevSegment = this.lawPodTrail_800d4f90;
-    LawPodTrailSegment34 segment = prevSegment.next_30;
-
-    //LAB_800f09c0
-    while(segment != null) {
-      final LawPodTrailData18 trailData = segment.trailData_2c;
-      if(segment.tick_00 <= trailData.maxTicks_06) {
-        final int tpage = segment.tpage_04;
-
-        //LAB_800f0b04
-        final GpuCommandPoly cmd = new GpuCommandPoly(4)
-          .translucent(Translucency.of(tpage >>> 5 & 0b11))
-          .pos(0, this.screenOffset_800cb568.x + segment.originVerts01_24.vert0_00.x, this.screenOffset_800cb568.y + segment.originVerts01_24.vert0_00.y)
-          .pos(1, this.screenOffset_800cb568.x + segment.originVerts01_24.vert1_08.x, this.screenOffset_800cb568.y + segment.originVerts01_24.vert1_08.y)
-          .pos(2, this.screenOffset_800cb568.x + segment.endpointVerts23_28.vert0_00.x, this.screenOffset_800cb568.y + segment.endpointVerts23_28.vert0_00.y)
-          .pos(3, this.screenOffset_800cb568.x + segment.endpointVerts23_28.vert1_08.x, this.screenOffset_800cb568.y + segment.endpointVerts23_28.vert1_08.y);
-
-        final int r;
-        final int g;
-        final int b;
-        if(segment.tick_00 <= trailData.colourTickDelay_02 - 1) {
-          //LAB_800f0d0c
-          r = segment.rAccumulator_14 >> 16;
-          g = segment.gAccumulator_18 >> 16;
-          b = segment.bAccumulator_1c >> 16;
-        } else {
-          segment.rAccumulator_14 -= segment.rStep_08;
-          segment.gAccumulator_18 -= segment.gStep_0c;
-          segment.bAccumulator_1c -= segment.bStep_10;
-          r = Math.max(0, segment.rAccumulator_14 >> 16);
-          g = Math.max(0, segment.gAccumulator_18 >> 16);
-          b = Math.max(0, segment.bAccumulator_1c >> 16);
-        }
-
-        //LAB_800f0d18
-        cmd.rgb(0, r, g, b);
-        cmd.rgb(1, r, g, b);
-        cmd.rgb(2, b, g, r);
-        cmd.rgb(3, b, g, r);
-        GPU.queueCommand(segment.z_20, cmd);
-
-        prevSegment = segment;
-        segment.tick_00++;
-        segment = segment.next_30;
-      } else {
-        trailData.countSegments_01--;
-        childVerts = this.lawPodTrailVerts_800d4fd0.next_10;
-        TrailSegmentVertices14 currSegmentOriginVerts = segment.originVerts01_24;
-        TrailSegmentVertices14 parentVerts = this.lawPodTrailVerts_800d4fd0;
-
-        //LAB_800f09fc
-        while(childVerts != null) {
-          if(childVerts == currSegmentOriginVerts) {
-            //LAB_800f0ae8
-            parentVerts.next_10 = childVerts.next_10;
-            break;
-          }
-
-          parentVerts = childVerts;
-          childVerts = childVerts.next_10;
-        }
-
-        //LAB_800f0a18
-        if(trailData.countSegments_01 == 0) {
-          childVerts = this.lawPodTrailVerts_800d4fd0.next_10;
-          currSegmentOriginVerts = segment.endpointVerts23_28;
-          parentVerts = this.lawPodTrailVerts_800d4fd0;
-
-          //LAB_800f0a38
-          while(childVerts != null) {
-            if(childVerts == currSegmentOriginVerts) {
-              //LAB_800f0acc
-              currSegmentOriginVerts = childVerts.next_10;
-              parentVerts.next_10 = currSegmentOriginVerts;
-              break;
-            }
-
-            parentVerts = childVerts;
-            childVerts = childVerts.next_10;
-          }
-
-          //LAB_800f0a54
-        }
-
-        //LAB_800f0a58
-        prevSegment.next_30 = segment.next_30;
-
-        segment = prevSegment.next_30;
-        if(trailData.countSegments_01 == 0) {
-          if(this.lawPodTrail_800d4f90.next_30.next_30 == null) {
-            //LAB_800f0aa4
-            while(this.lawPodTrailVerts_800d4fd0.next_10 != null) {
-              childVerts = this.lawPodTrailVerts_800d4fd0.next_10;
-              this.lawPodTrailVerts_800d4fd0.next_10 = childVerts.next_10;
-            }
-          }
-        }
-      }
-      //LAB_800f0d68
-    }
-
-    //LAB_800f0d74
-    if(this.lawPodTrailSegmentCount_800f9e78 == 0 && this.lawPodTrail_800d4f90.next_30 == null) {
-      //LAB_800f0da8
-      while(this.lawPodTrailVerts_800d4fd0.next_10 != null) {
-        childVerts = this.lawPodTrailVerts_800d4fd0.next_10;
-        this.lawPodTrailVerts_800d4fd0.next_10 = childVerts.next_10;
-      }
-    }
-    //LAB_800f0dc8
-  }
-
-  @Method(0x800f0df0L)
-  private void initLawPodTrailSegmentColour(final LawPodTrailData18 trailData, final LawPodTrailSegment34 segment) {
-    segment.rAccumulator_14 = trailData.r_10 << 16;
-    segment.gAccumulator_18 = trailData.g_11 << 16;
-    segment.bAccumulator_1c = trailData.b_12 << 16;
-    segment.rStep_08 = segment.rAccumulator_14 / trailData.countColourSteps_04;
-    segment.gStep_0c = segment.gAccumulator_18 / trailData.countColourSteps_04;
-    segment.bStep_10 = segment.bAccumulator_1c / trailData.countColourSteps_04;
-  }
-
-  @Method(0x800f0e60L)
-  private void initLawPodTrail() {
-    this.lawPodTrailSegmentCount_800f9e78 = 0;
-    this.lawPodTrail_800d4f90.next_30 = null;
-    this.lawPodTrailVerts_800d4fd0.next_10 = null;
-  }
-
-  @Method(0x800f0e7cL)
-  private void deallocateLawPodTrail() {
-    final LawPodTrailSegment34 parentSegment = this.lawPodTrail_800d4f90;
-    if(parentSegment.next_30 != null) {
-      //LAB_800f0ea4
-      LawPodTrailSegment34 tempSegment;
-      do {
-        final LawPodTrailSegment34 childSegment = parentSegment.next_30;
-        tempSegment = childSegment.next_30;
-        parentSegment.next_30 = tempSegment;
-      } while(tempSegment != null);
-    }
-
-    //LAB_800f0ec8
-    final TrailSegmentVertices14 parentVerts = this.lawPodTrailVerts_800d4fd0;
-
-    if(parentVerts.next_10 != null) {
-      //LAB_800f0edc
-      TrailSegmentVertices14 tempVerts;
-      do {
-        final TrailSegmentVertices14 childVerts = parentVerts.next_10;
-        tempVerts = childVerts.next_10;
-        parentVerts.next_10 = tempVerts;
-      } while(tempVerts != null);
-    }
-
-    //LAB_800f0efc
-    this.clearLawPodTrailSegmentsList();
-    this.lawPodTrailSegmentCount_800f9e78 = 0;
-  }
-
-  @Method(0x800f0f20L)
-  private LawPodTrailData18 addLawPodTrailSegment() {
-    LawPodTrailData18 segment = null;
-
-    //LAB_800f0f3c
-    for(int i = 0; i < 8; i++) {
-      if(this.lawPodTrailSegments_800f9e7c[i] == null) {
-        segment = new LawPodTrailData18();
-        this.lawPodTrailSegments_800f9e7c[i] = segment;
-        break;
-      }
-    }
-
-    //LAB_800f0f78
-    return segment;
-  }
-
-  @Method(0x800f0fe8L)
-  private void clearLawPodTrailSegmentsList() {
-    for(int i = 0; i < 8; i++) {
-      if(this.lawPodTrailSegments_800f9e7c[i] != null) {
-        this.lawPodTrailSegments_800f9e7c[i] = null;
-        this.lawPodTrailSegmentCount_800f9e78--;
-      }
-    }
-  }
-
   @ScriptDescription("Allocates/initializes static struct containing smoke plume particle data.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "smokeData", description = "An array of data for the smoke plume particle data struct")
   @Method(0x800f1060L)
@@ -4955,10 +4336,10 @@ public class SMap extends EngineState {
   }
 
   @ScriptDescription("Initializes the trail effect on the law pods in Zenebatos.")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p3")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "shouldRender", description = "Whether law pod trail should be rendered")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "maxSegments", description = "Maximum number of trail segments.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "fadeDelay", description = "Number of ticks before segment begins to fade.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "fadeSteps", description = "Number of ticks over which to fadde segment.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "width")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "translucency")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "r")
@@ -4966,32 +4347,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "b")
   @Method(0x800f1634L)
   private FlowControl scriptInitLawPodTrail(final RunningScript<?> script) {
-    final ScriptState<?> state = script.scriptState_04;
-
-    script.params_20[9] = new ScriptStorageParam(state, 0);
-
-    final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[state.storage_44[0]].innerStruct_00;
-    if(script.params_20[0].get() == 0 || this.lawPodTrailSegmentCount_800f9e78 >= 8) {
-      //LAB_800f1698
-      sobj.attachedEffectData_1d0.shouldRenderLawPodTrail_18 = false;
-    } else {
-      //LAB_800f16a4
-      final LawPodTrailData18 segment = this.addLawPodTrailSegment();
-      segment.maxCountSegments_00 = script.params_20[1].get();
-      segment.countSegments_01 = 0;
-      segment.colourTickDelay_02 = script.params_20[2].get();
-      segment.countColourSteps_04 = script.params_20[3].get();
-      segment.maxTicks_06 = segment.colourTickDelay_02 + segment.countColourSteps_04;
-      segment.width_08 = script.params_20[4].get();
-      segment.translucency_0c = script.params_20[5].get();
-      segment.r_10 = script.params_20[6].get();
-      segment.g_11 = script.params_20[7].get();
-      segment.b_12 = script.params_20[8].get();
-      segment.currSegmentOriginVerts_14 = null;
-      sobj.attachedEffectData_1d0.shouldRenderLawPodTrail_18 = script.params_20[0].get() == 1;
-      sobj.attachedEffectData_1d0.trailData_3c = segment;
-      this.lawPodTrailSegmentCount_800f9e78++;
-    }
+    this.attachedSobjEffect.initLawPodTrail(script);
 
     //LAB_800f1784
     return FlowControl.CONTINUE;
@@ -5158,7 +4514,7 @@ public class SMap extends EngineState {
     final SubmapObject210 sobj = SCRIPTS.getObject(script.params_20[0].get(), SubmapObject210.class);
     sobj.attachedEffectData_1d0.shouldRenderTmdDust_04 = script.params_20[1].get() == 1;
     sobj.attachedEffectData_1d0.size_28 = script.params_20[2].get();
-    sobj.attachedEffectData_1d0.instantiationIntervalDust30 = script.params_20[3].get();
+    sobj.attachedEffectData_1d0.instantiationIntervalDust_30 = script.params_20[3].get();
 
     if(script.params_20[4].get() == 0) {
       sobj.attachedEffectData_1d0.maxTicks_38 = 1;
@@ -5170,7 +4526,7 @@ public class SMap extends EngineState {
     if(!sobj.attachedEffectData_1d0.shouldRenderTmdDust_04) {
       sobj.attachedEffectData_1d0.transfer_1e.zero();
       sobj.attachedEffectData_1d0.size_28 = 1;
-      sobj.attachedEffectData_1d0.instantiationIntervalDust30 = 0;
+      sobj.attachedEffectData_1d0.instantiationIntervalDust_30 = 0;
       sobj.attachedEffectData_1d0.maxTicks_38 = 0;
     }
 
@@ -5253,7 +4609,7 @@ public class SMap extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Initializes footprint attached sobj effect. 0 = individual, 1 = skid")
+  @ScriptDescription("Re-initializes footprint attached sobj effect. 0 = individual, 1 = skid")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "footprintMode", description = "Style of footprint (individual or skid).")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "instantiationTicks", description = "New number of ticks before a new particle is instantiated.")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "sobjIndex", description = "The SubmapObject210 script index")
@@ -5324,7 +4680,7 @@ public class SMap extends EngineState {
       //LAB_800f2430
       sobj.attachedEffectData_1d0.shouldRenderOrthoDust_0c = true;
       sobj.attachedEffectData_1d0.size_28 = script.params_20[1].get();
-      sobj.attachedEffectData_1d0.instantiationIntervalDust30 = script.params_20[2].get();
+      sobj.attachedEffectData_1d0.instantiationIntervalDust_30 = script.params_20[2].get();
       sobj.attachedEffectData_1d0.maxTicks_38 = Math.max(1, script.params_20[3].get());
     } else {
       //LAB_800f2484
@@ -5381,14 +4737,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "shouldDeallocate", description = "Deallocate trail effect when true.")
   @Method(0x800f25a8L)
   private FlowControl scriptDeallocateLawPodTrail(final RunningScript<?> script) {
-    final ScriptState<?> state = script.scriptState_04;
-    script.params_20[1] = new ScriptStorageParam(state, 0);
-
-    if(script.params_20[0].get() == 1) {
-      this.deallocateLawPodTrail();
-      final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[state.storage_44[0]].innerStruct_00;
-      sobj.attachedEffectData_1d0.shouldRenderLawPodTrail_18 = false;
-    }
+    this.attachedSobjEffect.deallocateLawPodTrail(script);
 
     //LAB_800f2604
     return FlowControl.CONTINUE;
@@ -5481,8 +4830,8 @@ public class SMap extends EngineState {
     for(int i = 0; i < 2; i++) {
       final SavePointRenderData44 s0 = this.savePoint_800d5598[i];
 
-      final int offsetX = this.screenOffset_800cb568.x - s0.screenOffsetX_20;
-      final int offsetY = this.screenOffset_800cb568.y - s0.screenOffsetY_24;
+      final float offsetX = this.screenOffset_800cb568.x - s0.screenOffsetX_20;
+      final float offsetY = this.screenOffset_800cb568.y - s0.screenOffsetY_24;
 
       final float x0 = offsetX + s0.vert0_00.x;
       final float y0 = offsetY + s0.vert0_00.y;
@@ -5925,7 +5274,7 @@ public class SMap extends EngineState {
       //LAB_800f4714
       this.deallocateSavePoint();
       this.deallocateSmokeAndSnow();
-      this.deallocateAttachedSobjEffects();
+      this.attachedSobjEffect.deallocateAttachedSobjEffects();
       this.submapEffectsLoadMode_800f9ea8 = 0;
       this.submapEffectsState_800f9eac = 0;
       return;
@@ -5945,7 +5294,7 @@ public class SMap extends EngineState {
       this.smokePlumeEffect_800d5fd8.effectShouldRender = false;
       this.initTriangleIndicators();
       this.initSavePoint();
-      this.initAttachedSobjEffects();
+      this.attachedSobjEffect.initAttachedSobjEffects();
       this.submapEffectsLoadMode_800f9ea8++;
       this.submapEffectsState_800f9eac = 2;
     }

@@ -6,10 +6,21 @@ import javax.annotation.Nullable;
 
 public class MeshObj extends Obj {
   private final Mesh[] meshes;
+  private final boolean backfaceCulling;
 
   public MeshObj(final String name, final Mesh[] meshes) {
+    this(name, meshes, true);
+  }
+
+  public MeshObj(final String name, final Mesh[] meshes, final boolean backfaceCulling) {
     super(name);
     this.meshes = meshes;
+    this.backfaceCulling = backfaceCulling;
+  }
+
+  @Override
+  public boolean useBackfaceCulling() {
+    return this.backfaceCulling;
   }
 
   @Override

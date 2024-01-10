@@ -78,14 +78,30 @@ public class PolyBuilder {
     return this;
   }
 
+  /** Sets clut to be used for full poly if not none specified per-vertex. */
   public PolyBuilder clut(final Vector2i clut) {
     this.clut.set(clut);
     this.flags |= TmdObjLoader.TEXTURED_FLAG;
     return this;
   }
 
+  /** Sets clut to be used for full poly if not none specified per-vertex. */
   public PolyBuilder clut(final int x, final int y) {
     this.clut.set(x, y);
+    this.flags |= TmdObjLoader.TEXTURED_FLAG;
+    return this;
+  }
+
+  /** Specifies the clut to use for a specific vertex. Used to pack polys using different cluts into single Obj. */
+  public PolyBuilder clutOverride(final Vector2i clut) {
+    this.current.clut = new Vector2i().set(clut);
+    this.flags |= TmdObjLoader.TEXTURED_FLAG;
+    return this;
+  }
+
+  /** Specifies the clut to use for a specific vertex. Used to pack polys using different cluts into single Obj. */
+  public PolyBuilder clutOverride(final int x, final int y) {
+    this.current.clut = new Vector2i().set(x, y);
     this.flags |= TmdObjLoader.TEXTURED_FLAG;
     return this;
   }
@@ -133,8 +149,13 @@ public class PolyBuilder {
     vertices[i++] = vert.uv.y;
     vertices[i++] = this.vramPos.x;
     vertices[i++] = this.vramPos.y;
-    vertices[i++] = this.clut.x;
-    vertices[i++] = this.clut.y;
+    if(vert.clut == null) {
+      vertices[i++] = this.clut.x;
+      vertices[i++] = this.clut.y;
+    } else {
+      vertices[i++] = vert.clut.x;
+      vertices[i++] = vert.clut.y;
+    }
     vertices[i++] = this.bpp != null ? this.bpp.ordinal() : 0;
     vertices[i++] = vert.colour.x;
     vertices[i++] = vert.colour.y;
@@ -199,6 +220,7 @@ public class PolyBuilder {
     private final Vector3f pos = new Vector3f();
     private final Vector2f uv = new Vector2f();
     private final Vector3f colour = new Vector3f();
+    private Vector2i clut;
 
     private Vertex(final float x, final float y, final float z) {
       this.pos.set(x, y, z);

@@ -49,7 +49,7 @@ public class SmokeParticleEffect {
   private MeshObj particle;
   private final MV transforms = new MV();
 
-  public void allocateSmokePlumeEffect(final RunningScript<?> script, final int screenOffsetX, final int screenOffsetY, final int tpage, final int clut) {
+  public void allocateSmokePlumeEffect(final RunningScript<?> script, final float screenOffsetX, final float screenOffsetY, final int tpage, final int clut) {
     if(!this.effectShouldRender) {
       final MV transforms = new MV();
       final GsCOORDINATE2 coord2 = new GsCOORDINATE2();
@@ -152,7 +152,7 @@ public class SmokeParticleEffect {
     }
   }
 
-  public void allocateUnusedSmokeEffect(final RunningScript<?> script, final int screenOffsetX, final int screenOffsetY, final int tpage, final int clut) {
+  public void allocateUnusedSmokeEffect(final RunningScript<?> script, final float screenOffsetX, final float screenOffsetY, final int tpage, final int clut) {
     this.effectShouldRender = true;
 
     final SmokeEffectData34 inst = new SmokeEffectData34();
@@ -241,14 +241,14 @@ public class SmokeParticleEffect {
     }
   }
 
-  public void tickAndRenderSmokePlumeEffect(final int screenOffsetX, final int screenOffsetY) {
+  public void tickAndRenderSmokePlumeEffect(final float screenOffsetX, final float screenOffsetY) {
     if(this.effectShouldRender) {
       this.tickSmokePlume();
       this.renderSmokePlume(screenOffsetX, screenOffsetY);
     }
   }
 
-  public void tickAndRenderSmokeCloudEffect(final int screenOffsetX, final int screenOffsetY) {
+  public void tickAndRenderSmokeCloudEffect(final float screenOffsetX, final float screenOffsetY) {
     if(this.effectShouldRender || this.smokeCloudState != SmokeParticleEffect.SmokeCloudState.UNINITIALIZED) {
       this.tickSmokeCloud(screenOffsetX, screenOffsetY);
       this.renderSmokeCloud(screenOffsetX, screenOffsetY);
@@ -343,7 +343,7 @@ public class SmokeParticleEffect {
     //LAB_800f41bc
   }
 
-  private void tickSmokeCloud(final int screenOffsetX, final int screenOffsetY) {
+  private void tickSmokeCloud(final float screenOffsetX, final float screenOffsetY) {
     if(this.effectShouldRender) {
       //LAB_800f0100
       for(int i = 0; i < this.smokeEffectData.size(); i++) {
@@ -410,7 +410,7 @@ public class SmokeParticleEffect {
     //LAB_800f0344
   }
 
-  private void renderSmokeCloud(final int screenOffsetX, final int screenOffsetY) {
+  private void renderSmokeCloud(final float screenOffsetX, final float screenOffsetY) {
     //LAB_800efecc
     for(int i = this.particles.length - 1; i >= 0; i--) {
       final SmokeParticleInstance3c inst = this.particles[i];

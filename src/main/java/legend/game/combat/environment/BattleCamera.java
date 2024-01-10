@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.joml.Math;
-import org.joml.Vector2i;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
@@ -132,7 +132,7 @@ public class BattleCamera {
 
   private final MV cameraTransformMatrix_800c6798 = new MV();
 
-  public final Vector2i screenOffset_800c67bc = new Vector2i();
+  public final Vector2f screenOffset_800c67bc = new Vector2f();
 
   private int wobbleFramesRemaining_800c67c4;
 

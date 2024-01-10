@@ -819,9 +819,7 @@ public class WMap extends EngineState {
 
         // Init OpenGL models
         for(int i = 0; i < 4; i++) {
-          for(final ModelPart10 part : this.modelAndAnimData_800c66a8.models_0c[i].modelParts_00) {
-            part.obj = TmdObjLoader.fromObjTable("WmapEntityModel (index " + i + ')', part.tmd_08);
-          }
+          TmdObjLoader.fromModel("WmapEntityModel (index " + i + ')', this.modelAndAnimData_800c66a8.models_0c[i]);
         }
 
         this.playerState_800c669c = PlayerState.NOOP_4;

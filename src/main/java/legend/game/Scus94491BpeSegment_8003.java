@@ -16,7 +16,6 @@ import org.joml.Math;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
-import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
@@ -872,7 +871,7 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003f8a0L)
-  public static void getScreenOffset(final Vector2i offset) {
+  public static void getScreenOffset(final Vector2f offset) {
     GTE.getScreenOffset(offset);
   }
 
