@@ -180,7 +180,7 @@ public class AttachedSobjEffect {
   }
 
   @Method(0x800ef0f8L)
-  public void tickAttachedSobjEffects(final Model124 model, final AttachedSobjEffectData40 data, final boolean unloadSubmapParticles, final int screenOffsetX, final int screenOffsetY) {
+  public void tickAttachedSobjEffects(final Model124 model, final AttachedSobjEffectData40 data, final boolean unloadSubmapParticles, final float screenOffsetX, final float screenOffsetY) {
     if(!flEq(data.transfer_1e.x, model.coord2_14.coord.transfer.x) || !flEq(data.transfer_1e.y, model.coord2_14.coord.transfer.y) || !flEq(data.transfer_1e.z, model.coord2_14.coord.transfer.z)) {
       //LAB_800ef154
       if(data.shouldRenderTmdDust_04) {
@@ -287,7 +287,7 @@ public class AttachedSobjEffect {
   }
 
   @Method(0x800f0644L)
-  private void tickLawPodTrail(final Model124 model, final AttachedSobjEffectData40 data, final int screenOffsetX, final int screenOffsetY) {
+  private void tickLawPodTrail(final Model124 model, final AttachedSobjEffectData40 data, final float screenOffsetX, final float screenOffsetY) {
     if((data.tick_00 % (3 - vsyncMode_8007a3b8)) == 0) {
       final LawPodTrailData18 trailData = data.trailData_3c;
 
@@ -338,7 +338,7 @@ public class AttachedSobjEffect {
   }
 
   @Method(0x800f047cL)
-  public void renderAttachedSobjEffects(final int screenOffsetX, final int screenOffsetY) {
+  public void renderAttachedSobjEffects(final float screenOffsetX, final float screenOffsetY) {
     if(!this.tmdTrail_800d4ec0.isEmpty()) {
       this.renderTmdTrail(screenOffsetX, screenOffsetY);
     }
@@ -357,7 +357,7 @@ public class AttachedSobjEffect {
   }
 
   @Method(0x800ef798L)
-  private void renderTmdTrail(final int screenOffsetX, final int screenOffsetY) {
+  private void renderTmdTrail(final float screenOffsetX, final float screenOffsetY) {
     //LAB_800ef7c8
     for(int i = 0; i < this.tmdTrail_800d4ec0.size(); i++) {
       final TmdTrailParticle20 inst = this.tmdTrail_800d4ec0.get(i);
@@ -400,7 +400,7 @@ public class AttachedSobjEffect {
     //LAB_800ef894
   }
 
-  private void renderFootprints(final int screenOffsetX, final int screenOffsetY) {
+  private void renderFootprints(final float screenOffsetX, final float screenOffsetY) {
     for(int i = 0; i < this.footprintTrail.size(); i++) {
       final FootprintParticle54 inst = this.footprintTrail.get(i);
       if(inst.tick_04 < inst.maxTicks_06 * (3 - vsyncMode_8007a3b8)) {
@@ -423,7 +423,7 @@ public class AttachedSobjEffect {
     }
   }
 
-  private void renderOrthoDustTrailEffect(final int screenOffsetX, final int screenOffsetY) {
+  private void renderOrthoDustTrailEffect(final float screenOffsetX, final float screenOffsetY) {
     //LAB_800ef9cc
     for(int i = 0; i < this.orthoDustTrail_800d4e68.size(); i++) {
       //LAB_800efa08
@@ -457,7 +457,7 @@ public class AttachedSobjEffect {
   }
 
   @Method(0x800f0970L)
-  private void renderLawPodTrail(final int screenOffsetX, final int screenOffsetY) {
+  private void renderLawPodTrail(final float screenOffsetX, final float screenOffsetY) {
     //LAB_800f09c0
     for(int i = 0; i < this.lawPodTrail_800d4f90.size(); i++) {
       final LawPodTrailSegment34 segment = this.lawPodTrail_800d4f90.get(i);
@@ -661,8 +661,8 @@ public class AttachedSobjEffect {
     public float size_08;
     public float sizeStep_0c;
 
-    public int x_18;
-    public int y_1c;
+    public float x_18;
+    public float y_1c;
     public final Vector2f sxy0_20 = new Vector2f();
     public float centerX_26;
     public final Vector2f sxy1_28 = new Vector2f();

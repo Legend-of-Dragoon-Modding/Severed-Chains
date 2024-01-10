@@ -4,6 +4,7 @@ import legend.core.RenderEngine;
 import legend.core.gte.MV;
 import legend.game.scripting.ScriptFile;
 import legend.game.tmd.UvAdjustmentMetrics14;
+import org.joml.Vector2f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,7 @@ public abstract class Submap {
   public abstract void drawEnv(final MV[] sobjMatrices);
   public abstract void unload();
 
-  public abstract void calcGoodScreenOffset(final float x, final float y);
+  public abstract void calcGoodScreenOffset(final float x, final float y, final Vector2f out);
 
   public abstract int getEncounterRate();
   public abstract void generateEncounter();

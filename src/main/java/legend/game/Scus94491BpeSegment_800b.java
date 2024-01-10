@@ -26,7 +26,7 @@ import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
 import legend.game.types.TextboxText84;
 import legend.game.types.UiFile;
-import org.joml.Vector2i;
+import org.joml.Vector2f;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -218,7 +218,7 @@ public final class Scus94491BpeSegment_800b {
 
   // These are outside of SMAP because they have to persist between engine states
   public static final MV playerPositionBeforeBattle_800bed30 = new MV();
-  public static final Vector2i screenOffsetBeforeBattle_800bed50 = new Vector2i();
+  public static final Vector2f screenOffsetBeforeBattle_800bed50 = new Vector2f();
 
   /**
    * Remains set for the duration of the button press

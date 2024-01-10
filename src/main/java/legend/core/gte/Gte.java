@@ -3,7 +3,6 @@ package legend.core.gte;
 import legend.core.MathHelper;
 import org.joml.Matrix3f;
 import org.joml.Vector2f;
-import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
@@ -42,7 +41,7 @@ public class Gte {
   private final Matrix3f lightColour = new Matrix3f();
   private final Vector3f translation = new Vector3f();          //R37-39
   public final Vector3f backgroundColour = new Vector3f();          //R45-47
-  private final Vector2i screenOffset = new Vector2i();          //R56 57 60
+  private final Vector2f screenOffset = new Vector2f();          //R56 57 60
   private float H;                   //R58
   private long FLAG;                  //R63
 
@@ -230,12 +229,12 @@ public class Gte {
   }
 
   /** Control register 24/25 screen offset X/Y */
-  public void getScreenOffset(final Vector2i out) {
+  public void getScreenOffset(final Vector2f out) {
     out.set(this.screenOffset);
   }
 
   /** Control register 24/25 screen offset */
-  public void setScreenOffset(final int x, final int y) {
+  public void setScreenOffset(final float x, final float y) {
     this.screenOffset.set(x, y);
   }
 

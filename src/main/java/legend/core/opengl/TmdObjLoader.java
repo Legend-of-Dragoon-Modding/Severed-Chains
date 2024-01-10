@@ -11,6 +11,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Vector3f;
 
+import javax.annotation.Nullable;
+
 import static legend.game.Scus94491BpeSegment.tmdGp0CommandId_1f8003ee;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
@@ -52,11 +54,19 @@ public final class TmdObjLoader {
     return fromObjTable(name, objTable, 0);
   }
 
+  public static MeshObj fromObjTable(final String name, final TmdObjTable1c objTable, final Translucency translucency) {
+    return fromObjTable(name, objTable, 0, translucency);
+  }
+
   public static MeshObj fromObjTable(final String name, final TmdObjTable1c objTable, final int specialFlags) {
+    return fromObjTable(name, objTable, specialFlags, null);
+  }
+
+  public static MeshObj fromObjTable(final String name, final TmdObjTable1c objTable, final int specialFlags, @Nullable final Translucency translucency) {
     final int translucencyCount = Translucency.values().length + 1;
     final float[][] allVertices = new float[translucencyCount][];
     final int[][] allIndices = new int[translucencyCount][];
-    getTranslucencySizes(objTable, specialFlags, allVertices, allIndices);
+    getTranslucencySizes(objTable, specialFlags, allVertices, allIndices, translucency);
     final int[] vertexIndices = new int[translucencyCount];
     final int[] vertexOffsets = new int[translucencyCount];
     final int[] indexOffsets = new int[translucencyCount];
@@ -66,6 +76,10 @@ public final class TmdObjLoader {
     vertexSize += UV_SIZE + TPAGE_SIZE + CLUT_SIZE + BPP_SIZE;
     vertexSize += COLOUR_SIZE;
     vertexSize += FLAGS_SIZE;
+
+    // Backface culling is on by default for opaque primitives. LOD sets some untextured primitives to translucent
+    // even though the translucency settings can only come from textures in order to disable backface culling
+    boolean backfaceCulling = true;
 
     for(int primitiveIndex = 0; primitiveIndex < objTable.primitives_10.length; primitiveIndex++) {
       final TmdObjTable1c.Primitive primitive = objTable.primitives_10[primitiveIndex];
@@ -77,6 +91,7 @@ public final class TmdObjLoader {
         throw new RuntimeException("Unsupported primitive type");
       }
 
+      //TODO more uses for ctmd and uniformLit (battle lighting)
       final boolean ctmd = (specialFlags & 0x20) != 0;
       final boolean uniformLit = (specialFlags & 0x10) != 0;
       final boolean shaded = (command & 0x4_0000) != 0;
@@ -131,6 +146,10 @@ public final class TmdObjLoader {
 
             primitivesOffset += 2;
           }
+        } else if(translucent) {
+          translucencyIndex = translucency.ordinal() + 1;
+          vertices = allVertices[translucencyIndex];
+          indices = allIndices[translucencyIndex];
         }
 
         if(shaded || !lit) {
@@ -237,7 +256,12 @@ public final class TmdObjLoader {
           }
 
           if(translucent) {
-            flags |= TRANSLUCENCY_FLAG << (poly.tpage >>> 5 & 0b11);
+            if(!textured || uniformLit) {
+              backfaceCulling = false;
+              flags |= TRANSLUCENCY_FLAG << translucency.ordinal();
+            } else { // Only textured primitives have tpages
+              flags |= TRANSLUCENCY_FLAG << (poly.tpage >>> 5 & 0b11);
+            }
           }
 
           vertices[vertexOffsets[translucencyIndex]++] = flags;
@@ -288,10 +312,10 @@ public final class TmdObjLoader {
       }
     }
 
-    return new MeshObj(name, meshes);
+    return new MeshObj(name, meshes, backfaceCulling);
   }
 
-  private static void getTranslucencySizes(final TmdObjTable1c objTable, final int specialFlags, final float[][] vertices, final int[][] indices) {
+  private static void getTranslucencySizes(final TmdObjTable1c objTable, final int specialFlags, final float[][] vertices, final int[][] indices, @Nullable Translucency translucency) {
     // Extra element 0 means none
     final int translucencyCount = Translucency.values().length + 1;
     final int[] vertexSizes = new int[translucencyCount];
@@ -316,15 +340,17 @@ public final class TmdObjLoader {
       vertexSize += FLAGS_SIZE;
 
       for(final byte[] data : primitive.data()) {
-        if(!translucent || !textured) {
+        if(translucent) {
+          if(textured) {
+            final int tpage = IoHelper.readUShort(data, 6);
+            translucency = Translucency.of(tpage >>> 5 & 0b11);
+          }
+
+          vertexSizes[translucency.ordinal() + 1] += vertexSize * vertexCount;
+          indexSizes[translucency.ordinal() + 1] += quad ? 6 : 3;
+        } else {
           vertexSizes[0] += vertexSize * vertexCount;
           indexSizes[0] += quad ? 6 : 3;
-        } else {
-          final int tpage = IoHelper.readUShort(data, 6);
-          final int translucency = tpage >>> 5 & 0b11;
-
-          vertexSizes[translucency + 1] += vertexSize * vertexCount;
-          indexSizes[translucency + 1] += quad ? 6 : 3;
         }
       }
     }

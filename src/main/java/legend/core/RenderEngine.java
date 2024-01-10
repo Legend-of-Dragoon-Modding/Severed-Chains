@@ -621,6 +621,9 @@ public class RenderEngine {
     glDepthFunc(GL_LESS);
     glDepthMask(true);
     glDisable(GL_BLEND);
+    glEnable(GL_CULL_FACE);
+
+    boolean backfaceCulling = true;
 
     this.opaqueFrameBuffer.bind();
     this.tmdShader.use();
@@ -635,7 +638,16 @@ public class RenderEngine {
       boolean updated = false;
 
       if(entry.obj.shouldRender(null)) {
-        glEnable(GL_CULL_FACE);
+        if(backfaceCulling != entry.obj.useBackfaceCulling()) {
+          backfaceCulling = entry.obj.useBackfaceCulling();
+
+          if(backfaceCulling) {
+            glEnable(GL_CULL_FACE);
+          } else {
+            glDisable(GL_CULL_FACE);
+          }
+        }
+
         updated = true;
         entry.useTexture();
         entry.updateTransforms();
@@ -647,7 +659,10 @@ public class RenderEngine {
         final Translucency translucency = Translucency.FOR_RENDERING[translucencyIndex];
 
         if(entry.obj.shouldRender(translucency)) {
-          glDisable(GL_CULL_FACE);
+          if(backfaceCulling) {
+            backfaceCulling = false;
+            glDisable(GL_CULL_FACE);
+          }
 
           if(!updated) {
             updated = true;
@@ -662,7 +677,7 @@ public class RenderEngine {
   }
 
   private void renderPoolTranslucent(final QueuePool<QueuedModel<VoidShaderOptions>> pool) {
-    glDepthMask(false);
+    glDepthMask(true);
     glDisable(GL_CULL_FACE);
     glEnable(GL_BLEND);
 
@@ -698,6 +713,7 @@ public class RenderEngine {
     }
 
     // Order-independent translucency for (B+F)/2
+    glDepthMask(false);
     glBlendFunci(0, GL_ONE, GL_ONE);
     glBlendFunci(1, GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
     glBlendEquation(GL_FUNC_ADD);
@@ -1344,6 +1360,11 @@ public class RenderEngine {
 
     private void render(final Translucency translucency) {
       this.obj.render(translucency, this.startVertex, this.vertexCount);
+    }
+
+    @Override
+    public String toString() {
+      return this.obj.toString();
     }
   }
 

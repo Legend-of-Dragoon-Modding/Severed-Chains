@@ -47,6 +47,15 @@ public abstract class Obj {
     }
   }
 
+  public boolean useBackfaceCulling() {
+    return true;
+  }
+
   public abstract boolean shouldRender(@Nullable final Translucency translucency);
   public abstract void render(@Nullable final Translucency translucency, final int startVertex, final int vertexCount);
+
+  @Override
+  public String toString() {
+    return this.getClass().getSimpleName() + ' ' + this.name;
+  }
 }

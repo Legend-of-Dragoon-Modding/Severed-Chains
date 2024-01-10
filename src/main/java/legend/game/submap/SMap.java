@@ -53,7 +53,6 @@ import legend.game.types.Translucency;
 import legend.game.unpacker.Unpacker;
 import org.joml.Math;
 import org.joml.Vector2f;
-import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
@@ -198,7 +197,17 @@ public class SMap extends EngineState {
 
   private boolean returnedToSameSubmapAfterBattle_800cb448;
 
-  private final Vector2i screenOffset_800cb568 = new Vector2i();
+  private final Vector2f screenOffset_800cb568 = new Vector2f();
+  private final Vector2f screenOffsetStart = new Vector2f();
+  private final Vector2f screenOffsetDest = new Vector2f();
+  private int screenOffsetTicks;
+  private int screenOffsetTicksTotal;
+
+  private final Vector2f geomOffset = new Vector2f();
+  private final Vector2f geomOffsetStart = new Vector2f();
+  private final Vector2f geomOffsetDest = new Vector2f();
+  private int geomOffsetTicks;
+  private int geomOffsetTicksTotal;
 
   private CountdownLatch screenOffsetLatch_800cbd38;
   private CountdownLatch geomOffsetLatch_800cbd3c;
@@ -1368,10 +1377,6 @@ public class SMap extends EngineState {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
-    if(sobj.sobjIndex_130 == 0) {
-      System.out.printf("Pos (%f, %f, %f) -> (%d, %d, %d), ticks %d, %d%n", model.coord2_14.coord.transfer.x, model.coord2_14.coord.transfer.y, model.coord2_14.coord.transfer.z, x, y, z, sobj.lastMovementTick, this.smapTicks_800c6ae0);
-    }
-
     sobj.finishInterpolatedMovement();
 
     if(sobj.lastMovementTick != this.smapTicks_800c6ae0 - 2 / vsyncMode_8007a3b8) {
@@ -1862,7 +1867,7 @@ public class SMap extends EngineState {
     this.loadModelAndAnimation(model, this.submap.objects.get(index).model, this.submap.objects.get(index).animations.get(0));
 
     for(final ModelPart10 part : model.modelParts_00) {
-      part.obj = TmdObjLoader.fromObjTable("SobjModel (index " + index + ')', part.tmd_08);
+      part.obj = TmdObjLoader.fromObjTable("SobjModel (index " + index + ')', part.tmd_08, Translucency.of(model.tpage_108 >>> 5 & 0b11));
     }
 
     sobj.animationFinished_12c = false;
@@ -2835,7 +2840,7 @@ public class SMap extends EngineState {
 
           //LAB_800e1d60
           for(final ModelPart10 part : model.modelParts_00) {
-            part.obj = TmdObjLoader.fromObjTable("SobjModel (index " + i + ')', part.tmd_08);
+            part.obj = TmdObjLoader.fromObjTable("SobjModel (index " + i + ')', part.tmd_08, Translucency.of(model.tpage_108 >>> 5 & 0b11));
           }
         }
 
@@ -3910,6 +3915,18 @@ public class SMap extends EngineState {
     //LAB_80020f20
     this.renderEnvironmentAndHandleTransitions();
     this.setIndicatorStatusAndResetIndicatorTickCountOnReenable();
+
+    if(this.screenOffsetTicks < this.screenOffsetTicksTotal) {
+      this.screenOffsetStart.lerp(this.screenOffsetDest, (this.screenOffsetTicks + 1.0f) / this.screenOffsetTicksTotal, this.screenOffset_800cb568);
+      this.screenOffsetTicks++;
+    }
+
+    if(this.geomOffsetTicks < this.geomOffsetTicksTotal) {
+      this.geomOffsetStart.lerp(this.geomOffsetDest, (this.geomOffsetTicks + 1.0f) / this.geomOffsetTicksTotal, this.geomOffset);
+      this.geomOffsetTicks++;
+
+      GTE.setScreenOffset(this.geomOffset.x, this.geomOffset.y);
+    }
   }
 
   @Method(0x800e6798L)
@@ -3959,8 +3976,8 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The camera Y offset")
   @Method(0x800e68b4L)
   private FlowControl scriptGetCameraOffset(final RunningScript<?> script) {
-    script.params_20[0].set(this.screenOffset_800cb568.x);
-    script.params_20[1].set(this.screenOffset_800cb568.y);
+    script.params_20[0].set((int)this.screenOffset_800cb568.x);
+    script.params_20[1].set((int)this.screenOffset_800cb568.y);
     return FlowControl.CONTINUE;
   }
 
@@ -4122,20 +4139,26 @@ public class SMap extends EngineState {
   }
 
   @Method(0x800e7604L)
-  private void setGeomOffsetIfNotSet(final int latchTicks, final int x, final int y) {
+  private void setGeomOffsetIfNotSet(final int latchTicks, final float x, final float y) {
     if(this.geomOffsetLatch_800cbd3c.isOpen()) {
       this.geomOffsetLatch_800cbd3c.latch(latchTicks);
-      GTE.setScreenOffset(x, y);
+      GTE.getScreenOffset(this.geomOffset);
+      this.geomOffsetStart.set(this.geomOffset);
+      this.geomOffsetDest.set(x, y);
+      this.geomOffsetTicksTotal = latchTicks;
+      this.geomOffsetTicks = 0;
     }
   }
 
   @Method(0x800e7650L)
-  private void setScreenOffsetIfNotSet(final int latchTicks, final int x, final int y) {
+  private void setScreenOffsetIfNotSet(final int latchTicks, final float x, final float y) {
     // Added null check - bug in game code
     if(this.screenOffsetLatch_800cbd38 != null && this.screenOffsetLatch_800cbd38.isOpen()) {
       this.screenOffsetLatch_800cbd38.latch(latchTicks);
-      this.screenOffset_800cb568.x = x;
-      this.screenOffset_800cb568.y = y;
+      this.screenOffsetStart.set(this.screenOffset_800cb568);
+      this.screenOffsetDest.set(x, y);
+      this.screenOffsetTicksTotal = latchTicks;
+      this.screenOffsetTicks = 0;
     }
   }
 
@@ -4168,17 +4191,14 @@ public class SMap extends EngineState {
 
   @Method(0x800e8104L)
   private void setCameraPos(final int latchTicks, final Vector3f cameraPos) {
-    if(this.screenOffsetLatch_800cbd38.isOpen()) {
-      this.screenOffsetLatch_800cbd38.latch(latchTicks);
-
-      final Vector2f transformed = new Vector2f();
-      this.transformVertex(transformed, cameraPos);
-      this.submap.calcGoodScreenOffset(transformed.x, transformed.y);
-    }
+    final Vector2f transformed = new Vector2f();
+    final Vector2f offset = new Vector2f(this.screenOffsetDest);
+    this.transformVertex(transformed, cameraPos);
+    this.submap.calcGoodScreenOffset(transformed.x, transformed.y, offset);
 
     //LAB_800e8164
-    this.setScreenOffsetIfNotSet(1, this.screenOffset_800cb568.x, this.screenOffset_800cb568.y);
-    this.setGeomOffsetIfNotSet(1, this.screenOffset_800cb568.x, this.screenOffset_800cb568.y);
+    this.setScreenOffsetIfNotSet(latchTicks, offset.x, offset.y);
+    this.setGeomOffsetIfNotSet(latchTicks, offset.x, offset.y);
   }
 
   @Method(0x800e81a0L)
@@ -4810,8 +4830,8 @@ public class SMap extends EngineState {
     for(int i = 0; i < 2; i++) {
       final SavePointRenderData44 s0 = this.savePoint_800d5598[i];
 
-      final int offsetX = this.screenOffset_800cb568.x - s0.screenOffsetX_20;
-      final int offsetY = this.screenOffset_800cb568.y - s0.screenOffsetY_24;
+      final float offsetX = this.screenOffset_800cb568.x - s0.screenOffsetX_20;
+      final float offsetY = this.screenOffset_800cb568.y - s0.screenOffsetY_24;
 
       final float x0 = offsetX + s0.vert0_00.x;
       final float y0 = offsetY + s0.vert0_00.y;

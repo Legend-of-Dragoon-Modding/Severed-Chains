@@ -28,6 +28,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Math;
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
@@ -84,7 +85,7 @@ public class RetailSubmap extends Submap {
 
   public final int cut;
   private final NewRootStruct newRoot;
-  private final Vector2i screenOffset;
+  private final Vector2f screenOffset;
   private final CollisionGeometry collisionGeometry;
 
   private final List<Tim> pxls = new ArrayList<>();
@@ -141,7 +142,7 @@ public class RetailSubmap extends Submap {
 
   private Tim[] envTextures;
 
-  public RetailSubmap(final int cut, final NewRootStruct newRoot, final Vector2i screenOffset, final CollisionGeometry collisionGeometry) {
+  public RetailSubmap(final int cut, final NewRootStruct newRoot, final Vector2f screenOffset, final CollisionGeometry collisionGeometry) {
     this.cut = cut;
     this.newRoot = newRoot;
 
@@ -1019,49 +1020,49 @@ public class RetailSubmap extends Submap {
 
   @Override
   @Method(0x800e7f68L)
-  public void calcGoodScreenOffset(final float x, final float y) {
+  public void calcGoodScreenOffset(final float x, final float y, final Vector2f out) {
     if(x < -80) {
-      this.screenOffset.x -= 80 + x;
+      out.x -= 80 + x;
       //LAB_800e7f80
     } else if(x > 80) {
       //LAB_800e7f9c
-      this.screenOffset.x += 80 - x;
+      out.x += 80 - x;
     }
 
     //LAB_800e7fa8
     if(y < -40) {
-      this.screenOffset.y -= 40 + y;
+      out.y -= 40 + y;
       //LAB_800e7fbc
     } else if(y > 40) {
       //LAB_800e7fd4
-      this.screenOffset.y += 40 - y;
+      out.y += 40 - y;
     }
 
     //LAB_800e7fdc
     if(this._800f7f0c) {
-      this.screenOffset.x += this._800cbd30;
-      this.screenOffset.y += this._800cbd34;
+      out.x += this._800cbd30;
+      out.y += this._800cbd34;
       this._800f7f0c = false;
       return;
     }
 
     //LAB_800e8030
-    if(this.screenOffset.x < this._800cb574) {
+    if(out.x < this._800cb574) {
       //LAB_800e807c
-      this.screenOffset.x = this._800cb574;
+      out.x = this._800cb574;
     } else {
       //LAB_800e8070
-      this.screenOffset.x = Math.min(this._800cb570, this.screenOffset.x);
+      out.x = Math.min(this._800cb570, out.x);
     }
 
     //LAB_800e8080
     //LAB_800e8088
-    if(this.screenOffset.y < -this._800cb578) {
-      this.screenOffset.y = -this._800cb578;
+    if(out.y < -this._800cb578) {
+      out.y = -this._800cb578;
     } else {
       //LAB_800e80d0
       //LAB_800e80d8
-      this.screenOffset.y = Math.min(this._800cb578, this.screenOffset.y);
+      out.y = Math.min(this._800cb578, out.y);
     }
 
     //LAB_800e80dc

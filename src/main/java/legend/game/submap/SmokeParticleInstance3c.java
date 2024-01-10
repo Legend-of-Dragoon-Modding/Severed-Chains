@@ -8,9 +8,9 @@ public class SmokeParticleInstance3c {
   public int countTicksParticleLifecycle_06;
 
   /** Used with current screen offset to maintain effect position when camera moves (short) */
-  public int initialScreenOffsetX_0c;
+  public float initialScreenOffsetX_0c;
   /** Used with current screen offset to maintain effect position when camera moves (short) */
-  public int initialScreenOffsetY_0e;
+  public float initialScreenOffsetY_0e;
   /** 16.16 fixed-point */
   public float offsetX_10;
   /** 16.16 fixed-point */
