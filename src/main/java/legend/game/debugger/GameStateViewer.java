@@ -29,6 +29,8 @@ public class GameStateViewer extends Application {
 
     stage.setTitle("GameState Viewer");
     stage.setScene(scene);
+    stage.setX(Debugger.getStage().getX() + ((Debugger.getStage().getWidth() - root.prefWidth(-1)) / 2));
+    stage.setY(Debugger.getStage().getY() + (Debugger.getStage().getHeight()  / 8));
     stage.show();
     GameStateViewer.stage = stage;
   }

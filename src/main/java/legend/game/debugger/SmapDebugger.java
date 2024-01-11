@@ -15,6 +15,8 @@ public class SmapDebugger extends Application {
 
     stage.setTitle("Submap Debugger");
     stage.setScene(scene);
+    stage.setX(Debugger.getStage().getX() + ((Debugger.getStage().getWidth() - root.prefWidth(-1)) / 2));
+    stage.setY(Debugger.getStage().getY() + ((Debugger.getStage().getHeight() - root.prefHeight(-1)) / 2));
     stage.show();
   }
 }
