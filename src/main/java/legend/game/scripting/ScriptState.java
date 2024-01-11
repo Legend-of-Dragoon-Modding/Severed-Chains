@@ -855,6 +855,11 @@ public class ScriptState<T> {
   /** Note: reduces likelihood of overflow at cost of precision */
   @Method(0x80016b5cL)
   public FlowControl scriptDivide12() {
+    if(this.context.params_20[0].get() == 0) {
+      this.context.params_20[1].set(0);
+      return FlowControl.CONTINUE;
+    }
+
     this.context.params_20[1].set(((this.context.params_20[1].get() << 4) / this.context.params_20[0].get()) << 8);
     return FlowControl.CONTINUE;
   }
@@ -862,6 +867,11 @@ public class ScriptState<T> {
   /** Note: reduces likelihood of overflow at cost of precision */
   @Method(0x80016b8cL)
   public FlowControl scriptDivide2_12() {
+    if(this.context.params_20[1].get() == 0) {
+      this.context.params_20[1].set(0);
+      return FlowControl.CONTINUE;
+    }
+
     this.context.params_20[1].set(((this.context.params_20[0].get() << 4) / this.context.params_20[1].get()) << 8);
     return FlowControl.CONTINUE;
   }
