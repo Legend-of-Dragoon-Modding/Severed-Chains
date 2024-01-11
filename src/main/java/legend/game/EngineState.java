@@ -39,6 +39,10 @@ public abstract class EngineState {
 
   }
 
+  public boolean renderTextOnTopOfAllBoxes() {
+    return true;
+  }
+
   public boolean allowsWidescreen() {
     return true;
   }

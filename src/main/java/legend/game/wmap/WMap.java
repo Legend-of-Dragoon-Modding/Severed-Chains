@@ -381,6 +381,11 @@ public class WMap extends EngineState {
   private boolean shouldSetCoolonWarpDestLabelMetrics;
 
   @Override
+  public boolean renderTextOnTopOfAllBoxes() {
+    return false;
+  }
+
+  @Override
   public void restoreMusicAfterMenu() {
     unloadSoundFile(8);
   }

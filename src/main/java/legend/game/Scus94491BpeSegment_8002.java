@@ -2557,8 +2557,6 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_8002659c
       case _18 -> {
         //LAB_80026d94
-        renderTextboxSelection(textboxIndex, textboxText.selectionLine_60);
-
         if((press_800bee94 & 0x20) != 0) {
           Scus94491BpeSegment.playSound(0, 2, 0, 0, (short)0, (short)0);
           textboxText.delete();
@@ -2755,7 +2753,6 @@ public final class Scus94491BpeSegment_8002 {
 
       case _19 -> {
         //LAB_8002711c
-        renderTextboxSelection(textboxIndex, textboxText.selectionLine_68);
         textboxText.ticksUntilStateTransition_64--;
 
         if(textboxText.ticksUntilStateTransition_64 == 0) {
@@ -2852,8 +2849,6 @@ public final class Scus94491BpeSegment_8002 {
 
       case SELECTION_22 -> {
         //LAB_80027354
-        renderTextboxSelection(textboxIndex, textboxText.selectionLine_68);
-
         if((press_800bee94 & 0x20) != 0) {
           Scus94491BpeSegment.playSound(0, 2, 0, 0, (short)0, (short)0);
           textboxText.delete();
@@ -3768,18 +3763,28 @@ public final class Scus94491BpeSegment_8002 {
         renderTextboxBackground(i);
       }
 
-      //LAB_8002a134
-      final TextboxText84 text = textboxText_800bdf38[i];
-      if(text.state_00 != TextboxTextState.UNINITIALIZED_0) {
-        switch(text.state_00) {
-          case _18 -> renderTextboxSelection(i, text.selectionLine_60);
-          case _19, SELECTION_22 -> renderTextboxSelection(i, text.selectionLine_68);
-        }
-
-        renderTextboxText(i);
-        renderTextboxArrow(i);
+      if(!currentEngineState_8004dd04.renderTextOnTopOfAllBoxes()) {
+        renderTextboxOverlays(i);
       }
-      //LAB_8002a154
+    }
+
+    if(currentEngineState_8004dd04.renderTextOnTopOfAllBoxes()) {
+      for(int i = 0; i < 8; i++) {
+        renderTextboxOverlays(i);
+      }
+    }
+  }
+
+  private static void renderTextboxOverlays(final int textboxIndex) {
+    final TextboxText84 text = textboxText_800bdf38[textboxIndex];
+    if(text.state_00 != TextboxTextState.UNINITIALIZED_0) {
+      switch(text.state_00) {
+        case _18 -> renderTextboxSelection(textboxIndex, text.selectionLine_60);
+        case _19, SELECTION_22 -> renderTextboxSelection(textboxIndex, text.selectionLine_68);
+      }
+
+      renderTextboxText(textboxIndex);
+      renderTextboxArrow(textboxIndex);
     }
   }
 
