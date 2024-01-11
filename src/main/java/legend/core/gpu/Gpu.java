@@ -13,8 +13,11 @@ import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Matrix4f;
+import org.lwjgl.BufferUtils;
 
 import javax.annotation.Nullable;
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -57,6 +60,9 @@ public class Gpu {
 
   private Shader<SimpleShaderOptions> vramShader;
   private SimpleShaderOptions vramShaderOptions;
+  private Shader.UniformBuffer transforms2Uniform;
+  private final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer(4 * 4 + 3);
+  private final Matrix4f identity = new Matrix4f();
 
   private Texture displayTexture;
   private Mesh displayMesh;
@@ -107,6 +113,8 @@ public class Gpu {
 
     this.vramShader = ShaderManager.getShader(RenderEngine.SIMPLE_SHADER);
     this.vramShaderOptions = this.vramShader.makeOptions();
+
+    this.transforms2Uniform = ShaderManager.getUniformBuffer("transforms2");
 
     this.vramTexture15 = Texture.create(builder -> {
       builder.size(1024, 512);
@@ -466,6 +474,9 @@ public class Gpu {
 
     glDisable(GL_BLEND);
 
+    this.identity.get(this.transforms2Buffer);
+    this.transforms2Uniform.set(this.transforms2Buffer);
+
     this.vramShader.use();
     this.vramShaderOptions.recolour(1.0f, 1.0f, 1.0f, 1.0f);
     this.vramShaderOptions.apply();
@@ -477,6 +488,9 @@ public class Gpu {
     RENDERER.setProjectionMode(ProjectionMode._2D);
 
     glDisable(GL_BLEND);
+
+    this.identity.get(this.transforms2Buffer);
+    this.transforms2Uniform.set(this.transforms2Buffer);
 
     this.vramShader.use();
     this.vramShaderOptions.recolour(1.0f, 1.0f, 1.0f, 1.0f);
