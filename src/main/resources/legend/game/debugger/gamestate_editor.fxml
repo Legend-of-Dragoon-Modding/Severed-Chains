@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="400.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="legend.game.debugger.GameStateEditorController">
+<VBox prefHeight="675.0" prefWidth="840.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="legend.game.debugger.GameStateEditorController">
     <AnchorPane VBox.vgrow="ALWAYS">
         <HBox prefHeight="400.0" prefWidth="200.0">
             <VBox>

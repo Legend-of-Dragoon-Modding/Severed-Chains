@@ -32,4 +32,8 @@ public class Debugger extends Application {
     stage.show();
     Debugger.stage = stage;
   }
+
+  public static Stage getStage() {
+    return Debugger.stage;
+  }
 }
