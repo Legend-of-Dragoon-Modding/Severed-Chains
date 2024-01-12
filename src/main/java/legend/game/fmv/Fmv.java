@@ -18,22 +18,26 @@ import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Matrix4f;
+import org.joml.Vector2f;
+import org.lwjgl.BufferUtils;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.util.Arrays;
 
-import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
-import static legend.game.Scus94491BpeSegment_8003.GsInitGraph;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
+import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
+import static org.lwjgl.opengl.GL11C.glDisable;
 
 public final class Fmv {
   private Fmv() { }
@@ -214,6 +218,10 @@ public final class Fmv {
 
   private static Mesh fullScrenMesh;
   private static Texture displayTexture;
+  private static Shader.UniformBuffer transforms2Uniform;
+  private static final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer(4 * 4 + 3);
+  private static final Matrix4f identity = new Matrix4f();
+  private static final Vector2f oldProjectionSize = new Vector2f();
 
   public static void playCurrentFmv(final int fmvIndex, final EngineStateEnum afterFmvState) {
     sssqResetStuff();
@@ -241,10 +249,13 @@ public final class Fmv {
 
     oldFps = RENDERER.window().getFpsLimit();
     RENDERER.window().setFpsLimit(15);
-    GsInitGraph(320, 240);
+    oldProjectionSize.set(RENDERER.getProjectionSize());
+    RENDERER.setProjectionSize(320.0f, 240.0f);
 
     final Shader<SimpleShaderOptions> simpleShader = ShaderManager.getShader(RenderEngine.SIMPLE_SHADER);
     final SimpleShaderOptions simpleShaderOptions = simpleShader.makeOptions();
+
+    transforms2Uniform = ShaderManager.getUniformBuffer("transforms2");
 
     try {
       sound = AudioSystem.getSourceDataLine(new AudioFormat(37800, 16, 2, true, false));
@@ -271,6 +282,8 @@ public final class Fmv {
       if(shouldStop) {
         stop();
       }
+
+      glDisable(GL_BLEND);
 
       int demuxedSize = 0;
 
@@ -461,6 +474,9 @@ public final class Fmv {
       FrameBuffer.unbind();
       RENDERER.setProjectionMode(ProjectionMode._2D);
 
+      identity.get(transforms2Buffer);
+      transforms2Uniform.set(transforms2Buffer);
+
       simpleShader.use();
       simpleShaderOptions.recolour(1.0f, 1.0f, 1.0f, 1.0f);
       simpleShaderOptions.apply();
@@ -500,6 +516,7 @@ public final class Fmv {
       RENDERER.usePs1Gpu = true;
       RENDERER.setRenderCallback(oldRenderer);
       RENDERER.window().setFpsLimit(oldFps);
+      RENDERER.setProjectionSize(oldProjectionSize.x, oldProjectionSize.y);
       oldRenderer = null;
 
       if(sound != null) {
@@ -514,7 +531,7 @@ public final class Fmv {
       fullScrenMesh.delete();
     }
 
-    width = GPU.getDisplayTextureWidth();
+    width = (int)RENDERER.getProjectionSize().x;
     height = 240;
 
     final float aspect = 4.0f / 3.0f;

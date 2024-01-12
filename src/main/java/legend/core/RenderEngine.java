@@ -279,6 +279,10 @@ public class RenderEngine {
     this.updateFieldOfView();
   }
 
+  public Vector2f getProjectionSize() {
+    return new Vector2f(this.projectionWidth, this.projectionHeight);
+  }
+
   public void setProjectionDepth(final float depth) {
     this.projectionDepth = depth;
     this.updateFieldOfView();
