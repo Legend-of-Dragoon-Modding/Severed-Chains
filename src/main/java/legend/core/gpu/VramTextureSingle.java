@@ -1,10 +1,15 @@
 package legend.core.gpu;
 
+import legend.core.opengl.Texture;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+
+import static org.lwjgl.opengl.GL11C.GL_RGBA;
+import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8_REV;
 
 public class VramTextureSingle extends VramTexture {
   private final int[] data;
@@ -85,6 +90,34 @@ public class VramTextureSingle extends VramTexture {
     if(y >= this.rect.h()) {
       throw new IllegalArgumentException("Y out of bounds (%d >= %d)".formatted(y, this.rect.h()));
     }
+  }
+
+  public int[] applyPalette(final VramTextureSingle palette, final Rect4i region) {
+    final int[] paletteData = palette.getData();
+    final int[] data = this.getData();
+    final int[] newData = new int[region.w * region.h];
+    int i = 0;
+
+    for(int y = 0; y < region.h; y++) {
+      for(int x = 0; x < region.w; x++) {
+        newData[i++] = paletteData[data[(region.y + y) * this.rect.w + region.x + x]];
+      }
+    }
+
+    return newData;
+  }
+
+  public Texture createOpenglTexture(final VramTextureSingle palette, final Rect4i region) {
+    return Texture.create(builder -> {
+      builder.data(this.applyPalette(palette, region), this.rect.w(), this.rect.h());
+      builder.internalFormat(GL_RGBA);
+      builder.dataFormat(GL_RGBA);
+      builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
+    });
+  }
+
+  public Texture createOpenglTexture(final VramTextureSingle palette) {
+    return this.createOpenglTexture(palette, new Rect4i(0, 0, this.rect.w, this.rect.h));
   }
 
   public void dumpToFile() {

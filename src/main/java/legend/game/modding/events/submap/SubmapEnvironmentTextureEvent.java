@@ -4,11 +4,10 @@ import legend.core.opengl.Texture;
 
 public class SubmapEnvironmentTextureEvent extends SubmapEvent {
   public final int submapCut;
-  public final int index;
-  public Texture texture;
+  public Texture background;
+  public Texture[] foregrounds;
 
-  public SubmapEnvironmentTextureEvent(final int submapCut, final int index) {
+  public SubmapEnvironmentTextureEvent(final int submapCut) {
     this.submapCut = submapCut;
-    this.index = index;
   }
 }

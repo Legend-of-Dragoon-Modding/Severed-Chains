@@ -4,12 +4,16 @@ import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.Rect4i;
+import legend.core.gpu.VramTextureLoader;
+import legend.core.gpu.VramTextureSingle;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.gte.TmdWithId;
 import legend.core.memory.Method;
 import legend.core.memory.types.IntRef;
+import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
+import legend.core.opengl.Texture;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.modding.events.submap.SubmapEnvironmentTextureEvent;
 import legend.game.scripting.ScriptFile;
@@ -79,6 +83,8 @@ import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
+import static org.lwjgl.opengl.GL11C.GL_RGBA;
+import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8_REV;
 
 public class RetailSubmap extends Submap {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
@@ -141,6 +147,11 @@ public class RetailSubmap extends Submap {
   private final Vector2i clut_800f9e5e = new Vector2i();
 
   private Tim[] envTextures;
+  private Texture backgroundTexture;
+  private Rect4i backgroundRect;
+  private Obj backgroundObj;
+  private final MV backgroundTransforms = new MV();
+  private Texture[] foregroundTextures;
 
   public RetailSubmap(final int cut, final NewRootStruct newRoot, final Vector2f screenOffset, final CollisionGeometry collisionGeometry) {
     this.cut = cut;
@@ -359,10 +370,28 @@ public class RetailSubmap extends Submap {
 
     this.submapModel_800d4bf8.deleteModelParts();
 
-    for(final EnvironmentRenderingMetrics24 environmentRenderingMetrics24 : this.envRenderMetrics_800cb710) {
-      if(environmentRenderingMetrics24.obj != null) {
-        environmentRenderingMetrics24.obj.delete();
-        environmentRenderingMetrics24.obj = null;
+    if(this.backgroundObj != null) {
+      this.backgroundObj.delete();
+      this.backgroundObj = null;
+    }
+
+    if(this.backgroundTexture != null) {
+      this.backgroundTexture.delete();
+      this.backgroundTexture = null;
+    }
+
+    for(int i = 0; i < this.foregroundTextures.length; i++) {
+      if(this.foregroundTextures[i] != null) {
+        this.foregroundTextures[i].delete();
+      }
+    }
+
+    this.foregroundTextures = null;
+
+    for(final EnvironmentRenderingMetrics24 metrics : this.envRenderMetrics_800cb710) {
+      if(metrics.obj != null) {
+        metrics.obj.delete();
+        metrics.obj = null;
       }
     }
 
@@ -572,24 +601,94 @@ public class RetailSubmap extends Submap {
     //LAB_800e671c
   }
 
+  /** We stitch all the backgrounds together and make every foreground the full size of the background so that no lines appear between pieces */
   @Override
   public void prepareEnv() {
     LOGGER.info("Submap cut %d preparing environment", this.cut);
 
+    final Tim[] tims = new Tim[this.envTextureCount_800cb584];
+    final Rect4i[] rects = new Rect4i[this.envTextureCount_800cb584];
+
     for(int i = 0; i < this.envTextureCount_800cb584; i++) {
-      final EnvironmentRenderingMetrics24 renderPacket = this.envRenderMetrics_800cb710[i];
+      final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[i];
       for(int textureIndex = 0; textureIndex < this.envTextures.length; textureIndex++) {
         final Tim texture = this.envTextures[textureIndex];
         final Rect4i bounds = texture.getImageRect();
 
-        final int tpX = (renderPacket.tpage_04 & 0b1111) * 64;
-        final int tpY = (renderPacket.tpage_04 & 0b10000) != 0 ? 256 : 0;
+        final int tpX = (metrics.tpage_04 & 0b1111) * 64;
+        final int tpY = (metrics.tpage_04 & 0b10000) != 0 ? 256 : 0;
 
-        if(bounds.contains(tpX,  tpY)) {
-          final SubmapEnvironmentTextureEvent event = EVENTS.postEvent(new SubmapEnvironmentTextureEvent(this.cut, textureIndex + 3));
-          renderPacket.texture = event.texture;
+        if(bounds.contains(tpX, tpY)) {
+          tims[i] = texture;
+          rects[i] = new Rect4i(metrics.offsetX_1c, metrics.offsetY_1e, metrics.w_18, metrics.h_1a);
           break;
         }
+      }
+    }
+
+    final SubmapEnvironmentTextureEvent event = EVENTS.postEvent(new SubmapEnvironmentTextureEvent(this.cut));
+
+    this.backgroundRect = Rect4i.bound(rects);
+
+    if(event.background != null) {
+      this.backgroundTexture = event.background;
+    } else {
+      this.backgroundTexture = Texture.create(builder -> {
+        builder.size(this.backgroundRect.w, this.backgroundRect.h);
+        builder.internalFormat(GL_RGBA);
+        builder.dataFormat(GL_RGBA);
+        builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
+      });
+
+      // Arrange the segments of the background textures into one texture
+      for(int i = 0; i < this.envBackgroundTextureCount_800cb57c; i++) {
+        final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[i];
+        final VramTextureSingle texture = (VramTextureSingle)VramTextureLoader.textureFromTim(tims[i]);
+        final VramTextureSingle palette = (VramTextureSingle)VramTextureLoader.palettesFromTim(tims[i])[0];
+
+        final Rect4i rect = rects[i];
+        final int[] data = texture.applyPalette(palette, new Rect4i(metrics.u_14, metrics.v_15, rect.w, rect.h));
+
+        // Set alpha so the fragments don't get culled
+        for(int n = 0; n < data.length; n++) {
+          if(data[n] != 0) {
+            data[n] |= 0xff << 24;
+          }
+        }
+
+        this.backgroundTexture.data(metrics.offsetX_1c - this.backgroundRect.x, metrics.offsetY_1e - this.backgroundRect.y, rect.w, rect.h, data);
+      }
+    }
+
+    if(event.foregrounds != null && event.foregrounds.length == this.envForegroundTextureCount_800cb580) {
+      this.foregroundTextures = event.foregrounds;
+    } else {
+      // Create one texture per foreground and position the foreground in the correct spot
+      final int[] empty = new int[this.backgroundRect.w * this.backgroundRect.h];
+      this.foregroundTextures = new Texture[this.envForegroundTextureCount_800cb580];
+      for(int i = 0; i < this.envForegroundTextureCount_800cb580; i++) {
+        final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[this.envBackgroundTextureCount_800cb57c + i];
+        final VramTextureSingle texture = (VramTextureSingle)VramTextureLoader.textureFromTim(tims[this.envBackgroundTextureCount_800cb57c + i]);
+        final VramTextureSingle palette = (VramTextureSingle)VramTextureLoader.palettesFromTim(tims[this.envBackgroundTextureCount_800cb57c + i])[0];
+
+        final Rect4i rect = rects[this.envBackgroundTextureCount_800cb57c + i];
+        final int[] data = texture.applyPalette(palette, new Rect4i(metrics.u_14, metrics.v_15, rect.w, rect.h));
+
+        // Set alpha so the fragments don't get culled
+        for(int n = 0; n < data.length; n++) {
+          if(data[n] != 0) {
+            data[n] |= 0xff << 24;
+          }
+        }
+
+        this.foregroundTextures[i] = Texture.create(builder -> {
+          builder.data(empty, this.backgroundRect.w, this.backgroundRect.h);
+          builder.internalFormat(GL_RGBA);
+          builder.dataFormat(GL_RGBA);
+          builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
+        });
+
+        this.foregroundTextures[i].data(metrics.offsetX_1c - this.backgroundRect.x, metrics.offsetY_1e - this.backgroundRect.y, rect.w, rect.h, data);
       }
     }
 
@@ -691,8 +790,8 @@ public class RetailSubmap extends Submap {
         //LAB_800e7194
         z =
           worldToScreenMatrix_800c3548.m02 * s0.svec_00.x +
-            worldToScreenMatrix_800c3548.m12 * s0.svec_00.y +
-            worldToScreenMatrix_800c3548.m22 * s0.svec_00.z;
+          worldToScreenMatrix_800c3548.m12 * s0.svec_00.y +
+          worldToScreenMatrix_800c3548.m22 * s0.svec_00.z;
         z += worldToScreenMatrix_800c3548.transfer.z;
         z /= 1 << 16 - orderingTableBits_1f8003c0;
       }
@@ -859,38 +958,21 @@ public class RetailSubmap extends Submap {
 
     //LAB_800e79b8
     // Render background
-    for(int i = 0; i < this.envBackgroundTextureCount_800cb57c; i++) {
-      final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[i];
-
-      if(metrics.obj == null) {
-        if(metrics.texture == null) {
-          metrics.obj = new QuadBuilder("BackgroundTexture (index " + i + ')')
-            .bpp(Bpp.of(metrics.tpage_04 >>> 7 & 0b11))
-            .clut(768, metrics.clut_16 >>> 6)
-            .vramPos((metrics.tpage_04 & 0b1111) * 64, (metrics.tpage_04 & 0b10000) != 0 ? 256 : 0)
-            .pos(metrics.offsetX_1c, metrics.offsetY_1e, metrics.z_20 * 4.0f)
-            .uv(metrics.u_14, metrics.v_15)
-            .size(metrics.w_18, metrics.h_1a)
-            .build();
-        } else {
-          metrics.obj = new QuadBuilder("BackgroundTexture (index " + i + ')')
-            .bpp(Bpp.BITS_24)
-            .pos(metrics.offsetX_1c, metrics.offsetY_1e, metrics.z_20 * 4.0f)
-            .uv(metrics.u_14 * 8.0f, metrics.v_15 * 8.0f)
-            .uvSize(metrics.w_18 * 8.0f, metrics.h_1a * 8.0f)
-            .posSize(metrics.w_18, metrics.h_1a)
-            .build();
-        }
-      }
-
-      metrics.transforms.identity();
-      metrics.transforms.transfer.set(GPU.getOffsetX() + this.submapOffsetX_800cb560 + this.screenOffset.x, GPU.getOffsetY() + this.submapOffsetY_800cb564 + this.screenOffset.y, 0.0f);
-      final RenderEngine.QueuedModel model = RENDERER.queueOrthoModel(metrics.obj, metrics.transforms);
-
-      if(metrics.texture != null) {
-        model.texture(metrics.texture);
-      }
+    if(this.backgroundObj == null) {
+      this.backgroundObj = new QuadBuilder("Submap background")
+        .bpp(Bpp.BITS_24)
+        .pos(this.backgroundRect.x, this.backgroundRect.y, ((0x1 << orderingTableBits_1f8003c0) - 1) * 4.0f)
+        .posSize(this.backgroundRect.w, this.backgroundRect.h)
+        .uvSize(this.backgroundTexture.width, this.backgroundTexture.height)
+        .build();
     }
+
+    this.backgroundTransforms.identity();
+    this.backgroundTransforms.transfer.set(GPU.getOffsetX() + this.submapOffsetX_800cb560 + this.screenOffset.x, GPU.getOffsetY() + this.submapOffsetY_800cb564 + this.screenOffset.y, 0.0f);
+
+    RENDERER
+      .queueOrthoModel(this.backgroundObj, this.backgroundTransforms)
+      .texture(this.backgroundTexture);
 
     //LAB_800e7a60
     //LAB_800e7a7c
@@ -979,24 +1061,12 @@ public class RetailSubmap extends Submap {
         final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[this.envBackgroundTextureCount_800cb57c + i];
 
         if(metrics.obj == null) {
-          if(metrics.texture == null) {
-            metrics.obj = new QuadBuilder("CutoutTexture (index " + i + ')')
-              .bpp(Bpp.of(metrics.tpage_04 >>> 7 & 0b11))
-              .clut(768, metrics.clut_16 >>> 6)
-              .vramPos((metrics.tpage_04 & 0b1111) * 64, (metrics.tpage_04 & 0b10000) != 0 ? 256 : 0)
-              .pos(metrics.offsetX_1c, metrics.offsetY_1e, 0.0f)
-              .uv(metrics.u_14, metrics.v_15)
-              .size(metrics.w_18, metrics.h_1a)
-              .build();
-          } else {
-            metrics.obj = new QuadBuilder("CutoutTexture (index " + i + ')')
-              .bpp(Bpp.BITS_24)
-              .pos(metrics.offsetX_1c, metrics.offsetY_1e, 0.0f)
-              .uv(metrics.u_14 * 8.0f, metrics.v_15 * 8.0f)
-              .uvSize(metrics.w_18 * 8.0f, metrics.h_1a * 8.0f)
-              .posSize(metrics.w_18, metrics.h_1a)
-              .build();
-          }
+          metrics.obj = new QuadBuilder("CutoutTexture (index " + i + ')')
+            .bpp(Bpp.BITS_24)
+            .pos(this.backgroundRect.x, this.backgroundRect.y, 0.0f)
+            .posSize(this.backgroundRect.w, this.backgroundRect.h)
+            .uvSize(this.foregroundTextures[i].width, this.foregroundTextures[i].height)
+            .build();
         }
 
         // This was causing a problem when moving left from the room before Zackwell. Not sure if this is a retail issue or SC-specific. GH#332
@@ -1005,13 +1075,11 @@ public class RetailSubmap extends Submap {
           continue;
         }
 
-        metrics.transforms.identity();
-        metrics.transforms.transfer.set(GPU.getOffsetX() + this.submapOffsetX_800cb560 + this.screenOffset.x + this.envForegroundMetrics_800cb590[i].x_00, GPU.getOffsetY() + this.submapOffsetY_800cb564 + this.screenOffset.y + this.envForegroundMetrics_800cb590[i].y_04, z * 4.0f);
-        final RenderEngine.QueuedModel model = RENDERER.queueOrthoModel(metrics.obj, metrics.transforms);
-
-        if(metrics.texture != null) {
-          model.texture(metrics.texture);
-        }
+        this.backgroundTransforms.identity();
+        this.backgroundTransforms.transfer.set(GPU.getOffsetX() + this.submapOffsetX_800cb560 + this.screenOffset.x + this.envForegroundMetrics_800cb590[i].x_00, GPU.getOffsetY() + this.submapOffsetY_800cb564 + this.screenOffset.y + this.envForegroundMetrics_800cb590[i].y_04, z * 4.0f);
+        RENDERER
+          .queueOrthoModel(metrics.obj, this.backgroundTransforms)
+          .texture(this.foregroundTextures[i]);
       }
     }
 

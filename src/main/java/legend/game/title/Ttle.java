@@ -65,8 +65,6 @@ import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
-import static org.lwjgl.opengl.GL11C.GL_RGBA;
-import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8_REV;
 
 public class Ttle extends EngineState {
   private TmdRenderingStruct _800c66d0;
@@ -206,14 +204,14 @@ public class Ttle extends EngineState {
       return;
     }
 
-    this.backgroundTex = this.loadTexture((VramTextureSingle)this.backgroundTexture, (VramTextureSingle)this.backgroundPalettes[0]);
+    this.backgroundTex = ((VramTextureSingle)this.backgroundTexture).createOpenglTexture((VramTextureSingle)this.backgroundPalettes[0]);
     this.backgroundObj = new QuadBuilder("Title Screen Background")
       .pos(0.0f, 0.0f, 1.0f)
       .size(384.0f, 424.0f)
       .bpp(Bpp.BITS_24)
       .build();
 
-    this.logoTex = this.loadTexture((VramTextureSingle)this.logoTexture, (VramTextureSingle)this.logoPalettes[0]);
+    this.logoTex = ((VramTextureSingle)this.logoTexture).createOpenglTexture((VramTextureSingle)this.logoPalettes[0]);
     this.logoObj = new QuadBuilder("Title Screen Logo")
       .pos(8.0f, 40.0f, 1.0f)
       .size(352.0f, 88.0f)
@@ -221,7 +219,7 @@ public class Ttle extends EngineState {
       .translucency(Translucency.B_PLUS_F)
       .build();
 
-    this.trademarkTex = this.loadTexture((VramTextureSingle)this.tmTexture, (VramTextureSingle)this.tmPalettes[0]);
+    this.trademarkTex = ((VramTextureSingle)this.tmTexture).createOpenglTexture((VramTextureSingle)this.tmPalettes[0]);
     this.trademarkObj = new QuadBuilder("Title Screen Trademark")
       .pos(326.0f, 106.0f, 1.0f)
       .size(16.0f, 8.0f)
@@ -252,12 +250,12 @@ public class Ttle extends EngineState {
         .translucency(Translucency.B_PLUS_F);
     }
 
-    this.menuTextTex[0] = this.loadTexture((VramTextureSingle)this.menuTextTexture, (VramTextureSingle)this.menuTextPalettes[1]);
-    this.menuTextTex[1] = this.loadTexture((VramTextureSingle)this.menuTextTexture, (VramTextureSingle)this.menuTextPalettes[2]);
-    this.menuTextTex[2] = this.loadTexture((VramTextureSingle)this.menuTextTexture, (VramTextureSingle)this.menuTextPalettes[3]);
+    this.menuTextTex[0] = ((VramTextureSingle)this.menuTextTexture).createOpenglTexture((VramTextureSingle)this.menuTextPalettes[1]);
+    this.menuTextTex[1] = ((VramTextureSingle)this.menuTextTexture).createOpenglTexture((VramTextureSingle)this.menuTextPalettes[2]);
+    this.menuTextTex[2] = ((VramTextureSingle)this.menuTextTexture).createOpenglTexture((VramTextureSingle)this.menuTextPalettes[3]);
     this.menuTextObj = menuTextBuilder.build();
 
-    this.copyrightTex = this.loadTexture((VramTextureSingle)this.copyrightTexture, (VramTextureSingle)this.copyrightPalettes[0]);
+    this.copyrightTex = ((VramTextureSingle)this.copyrightTexture).createOpenglTexture((VramTextureSingle)this.copyrightPalettes[0]);
     this.copyrightObj = new QuadBuilder("Title Screen Copyright")
       .pos(4.0f, 200.0f, 1.0f)
       .size(368.0f, 32.0f)
@@ -266,27 +264,6 @@ public class Ttle extends EngineState {
       .build();
 
     this.loadingStage = 3;
-  }
-
-  //TODO this is dumb
-  private Texture loadTexture(final VramTextureSingle texture, final VramTextureSingle palette) {
-    final int[] backgroundData = palette.getData();
-
-    final int w = texture.rect.w();
-    final int h = texture.rect.h();
-    final int[] data = texture.getData();
-    final int[] newData = new int[data.length];
-
-    for(int i = 0; i < data.length; i++) {
-      newData[i] = backgroundData[data[i]];
-    }
-
-    return Texture.create(builder -> {
-      builder.data(newData, w, h);
-      builder.internalFormat(GL_RGBA);
-      builder.dataFormat(GL_RGBA);
-      builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
-    });
   }
 
   /**
