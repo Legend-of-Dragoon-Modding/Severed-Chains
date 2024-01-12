@@ -203,7 +203,7 @@ public class RetailSubmap extends Submap {
       final int cutFileIndex = smapFileIndices_800f982c[this.cut];
 
       final AtomicInteger loadedCount = new AtomicInteger();
-      final int expectedCount = cutFileIndex == 0 ? 1 : this.cut != 673 ? 2 : 3;
+      final int expectedCount = cutFileIndex == 0 ? 1 : 2;
 
       // Load sobj assets
       final List<FileData> assets = new ArrayList<>();
