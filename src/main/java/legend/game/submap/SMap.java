@@ -945,7 +945,7 @@ public class SMap extends EngineState {
 
   // TODO Clean this up
   @Method(0x800daa3cL)
-  private void renderSmapModel(final Model124 model) {
+  public void renderSmapModel(final Model124 model) {
     zOffset_1f8003e8 = model.zOffset_a0;
     tmdGp0Tpage_1f8003ec = model.tpage_108;
 
@@ -2839,9 +2839,7 @@ public class SMap extends EngineState {
           }
 
           //LAB_800e1d60
-          for(final ModelPart10 part : model.modelParts_00) {
-            part.obj = TmdObjLoader.fromObjTable("SobjModel (index " + i + ')', part.tmd_08, Translucency.of(model.tpage_108 >>> 5 & 0b11));
-          }
+          TmdObjLoader.fromModel("SobjModel (index " + i + ')', model);
         }
 
         //LAB_800e1d88

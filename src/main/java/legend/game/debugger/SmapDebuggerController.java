@@ -177,6 +177,17 @@ public class SmapDebuggerController {
     scriptDebugger.preselectScript(state.index).start(new Stage());
   }
 
+  public void openModelViewer(final ActionEvent event) throws Exception {
+    if(this.sobjList.getSelectionModel().getSelectedIndex() < 0) {
+      return;
+    }
+
+    final ScriptState<SubmapObject210> state = ((SMap)currentEngineState_8004dd04).sobjs_800c6880[this.sobjList.getSelectionModel().getSelectedIndex()];
+
+    final SmapModelDebugger modelDebugger = new SmapModelDebugger();
+    modelDebugger.setSobj(state.innerStruct_00).start(new Stage());
+  }
+
   public void refreshValues(final ActionEvent event) {
     this.displayStats(this.sobjList.getSelectionModel().getSelectedIndex());
   }
