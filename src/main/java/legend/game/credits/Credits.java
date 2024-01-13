@@ -541,7 +541,7 @@ public class Credits extends EngineState {
         final CreditStruct1c prevCredit = this.credits_800d1af8[prevCreditSlot];
 
         if(credit.scroll_12 < 64) {
-          if(credit.type_08 == 3) {
+          if(prevCredit.type_08 == 3) {
             credit.y_0c = -credit.height_10 / 2 + 13;
             credit.colour_00.x = rsin(credit.scroll_12 * 16) * 118 >> 12;
             credit.colour_00.y = rsin(credit.scroll_12 * 16) * 107 >> 12;
