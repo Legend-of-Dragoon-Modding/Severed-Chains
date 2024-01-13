@@ -648,12 +648,13 @@ public class RetailSubmap extends Submap {
     final SubmapEnvironmentTextureEvent event = EVENTS.postEvent(new SubmapEnvironmentTextureEvent(this.cut));
 
     this.backgroundRect = Rect4i.bound(rects);
+    final int[] empty = new int[this.backgroundRect.w * this.backgroundRect.h];
 
     if(event.background != null) {
       this.backgroundTexture = event.background;
     } else {
       this.backgroundTexture = Texture.create(builder -> {
-        builder.size(this.backgroundRect.w, this.backgroundRect.h);
+        builder.data(empty, this.backgroundRect.w, this.backgroundRect.h);
         builder.internalFormat(GL_RGBA);
         builder.dataFormat(GL_RGBA);
         builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
@@ -683,7 +684,6 @@ public class RetailSubmap extends Submap {
       this.foregroundTextures = event.foregrounds;
     } else {
       // Create one texture per foreground and position the foreground in the correct spot
-      final int[] empty = new int[this.backgroundRect.w * this.backgroundRect.h];
       this.foregroundTextures = new Texture[this.envForegroundTextureCount_800cb580];
       for(int i = 0; i < this.envForegroundTextureCount_800cb580; i++) {
         final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[this.envBackgroundTextureCount_800cb57c + i];
