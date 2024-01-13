@@ -515,8 +515,9 @@ public class RetailSubmap extends Submap {
   private void loadTextures() {
     this.uvAdjustments.clear();
 
-    int x = 576;
-    int y = 256;
+    final boolean[] usedSlots = new boolean[this.pxls.size()];
+
+    outer:
     for(int pxlIndex = 0; pxlIndex < this.pxls.size(); pxlIndex++) {
       final Tim tim = this.pxls.get(pxlIndex);
 
@@ -524,22 +525,40 @@ public class RetailSubmap extends Submap {
         final Rect4i imageRect = tim.getImageRect();
         final Rect4i clutRect = tim.getClutRect();
 
-        imageRect.x = x;
-        imageRect.y = y;
-        clutRect.x = x;
-        clutRect.y = y + imageRect.h;
+        final int neededSlots = imageRect.w / 16;
 
-        GPU.uploadData15(imageRect, tim.getImageData());
-        GPU.uploadData15(clutRect, tim.getClutData());
+        // We increment by neededSlots so that wide textures only land on even slots
+        for(int slotIndex = 0; slotIndex < 20; slotIndex += neededSlots) {
+          boolean free = true;
+          for(int i = 0; i < neededSlots; i++) {
+            if(usedSlots[slotIndex + i]) {
+              free = false;
+              break;
+            }
+          }
 
-        this.uvAdjustments.add(new UvAdjustmentMetrics14(pxlIndex + 1, x, y));
+          if(free) {
+            for(int i = 0; i < neededSlots; i++) {
+              usedSlots[slotIndex + i] = true;
+            }
 
-        x += tim.getImageRect().w;
+            final int x = 576 + slotIndex % 12 * 16;
+            final int y = 256 + slotIndex / 12 * 128;
 
-        if(x >= 768) {
-          x = 576;
-          y += 128;
+            imageRect.x = x;
+            imageRect.y = y;
+            clutRect.x = x;
+            clutRect.y = y + imageRect.h;
+
+            GPU.uploadData15(imageRect, tim.getImageData());
+            GPU.uploadData15(clutRect, tim.getClutData());
+
+            this.uvAdjustments.add(new UvAdjustmentMetrics14(pxlIndex + 1, x, y));
+            continue outer;
+          }
         }
+
+        throw new RuntimeException("Failed to find available texture slot for sobj texture " + pxlIndex);
       } else {
         this.uvAdjustments.add(UvAdjustmentMetrics14.NONE);
       }
