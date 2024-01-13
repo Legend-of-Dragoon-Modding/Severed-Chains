@@ -26,6 +26,13 @@ import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd2
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 
 public class Credits extends EngineState {
+  public enum CreditsType {
+    MAJOR_HEADER_0,
+    MINOR_HEADER_1,
+    NAME_2,
+    DIRECTOR_3,
+    UNUSED_4, // May have been for "The End" originally
+  }
   private List<FileData> creditTims_800d1ae0;
   private int fadeOutTicks_800d1ae4;
   private boolean creditTimsLoaded_800d1ae8;
@@ -34,9 +41,9 @@ public class Credits extends EngineState {
 
   private int loadingStage;
 
-  private final CreditStruct1c[] credits_800d1af8 = new CreditStruct1c[16];
+  private final CreditData1c[] credits_800d1af8 = new CreditData1c[16];
   {
-    Arrays.setAll(this.credits_800d1af8, i -> new CreditStruct1c());
+    Arrays.setAll(this.credits_800d1af8, i -> new CreditData1c());
   }
 
   /**
@@ -57,96 +64,96 @@ public class Credits extends EngineState {
     this.creditsStates_800f9378[4] = this::deallocateCreditsAndTransitionToTheEndSubmap;
   }
 
-  private static final CreditType08[] creditTypes_800f93b0 = {
-    new CreditType08(0, 3),
-    new CreditType08(1, 3),
-    new CreditType08(2, 0),
-    new CreditType08(4, 0),
-    new CreditType08(6, 0),
-    new CreditType08(8, 1),
-    new CreditType08(10, 1),
-    new CreditType08(12, 1),
-    new CreditType08(14, 1),
-    new CreditType08(26, 0),
-    new CreditType08(28, 1),
-    new CreditType08(32, 1),
-    new CreditType08(34, 0),
-    new CreditType08(36, 0),
-    new CreditType08(38, 1),
-    new CreditType08(40, 1),
-    new CreditType08(44, 0),
-    new CreditType08(46, 1),
-    new CreditType08(48, 1),
-    new CreditType08(51, 1),
-    new CreditType08(53, 1),
-    new CreditType08(55, 1),
-    new CreditType08(57, 1),
-    new CreditType08(59, 1),
-    new CreditType08(61, 1),
-    new CreditType08(70, 0),
-    new CreditType08(72, 1),
-    new CreditType08(74, 1),
-    new CreditType08(86, 1),
-    new CreditType08(88, 1),
-    new CreditType08(90, 1),
-    new CreditType08(92, 1),
-    new CreditType08(94, 0),
-    new CreditType08(96, 1),
-    new CreditType08(103, 1),
-    new CreditType08(107, 1),
-    new CreditType08(111, 1),
-    new CreditType08(120, 1),
-    new CreditType08(125, 1),
-    new CreditType08(128, 1),
-    new CreditType08(153, 1),
-    new CreditType08(159, 0),
-    new CreditType08(161, 1),
-    new CreditType08(163, 1),
-    new CreditType08(166, 1),
-    new CreditType08(169, 1),
-    new CreditType08(172, 1),
-    new CreditType08(175, 1),
-    new CreditType08(177, 1),
-    new CreditType08(201, 1),
-    new CreditType08(212, 1),
-    new CreditType08(217, 1),
-    new CreditType08(220, 1),
-    new CreditType08(223, 1),
-    new CreditType08(227, 0),
-    new CreditType08(230, 1),
-    new CreditType08(235, 1),
-    new CreditType08(237, 1),
-    new CreditType08(244, 1),
-    new CreditType08(248, 0),
-    new CreditType08(251, 0),
-    new CreditType08(264, 0),
-    new CreditType08(266, 1),
-    new CreditType08(268, 1),
-    new CreditType08(270, 0),
-    new CreditType08(271, 0),
-    new CreditType08(273, 1),
-    new CreditType08(275, 1),
-    new CreditType08(277, 1),
-    new CreditType08(279, 1),
-    new CreditType08(281, 1),
-    new CreditType08(283, 1),
-    new CreditType08(285, 1),
-    new CreditType08(287, 1),
-    new CreditType08(289, 1),
-    new CreditType08(293, 0),
-    new CreditType08(294, 1),
-    new CreditType08(297, 1),
-    new CreditType08(301, 1),
-    new CreditType08(303, 1),
-    new CreditType08(305, 1),
-    new CreditType08(309, 1),
-    new CreditType08(322, 1),
-    new CreditType08(324, 1),
-    new CreditType08(326, 1),
-    new CreditType08(328, 0),
-    new CreditType08(344, 0),
+  private static final CreditHeader08[] creditHeaderEntries_800f93b0 = {
+    new CreditHeader08(  0, CreditsType.DIRECTOR_3),
+    new CreditHeader08(  1, CreditsType.DIRECTOR_3),
+    new CreditHeader08(  2, CreditsType.MAJOR_HEADER_0),
+    new CreditHeader08(  4, CreditsType.MAJOR_HEADER_0),
+    new CreditHeader08(  6, CreditsType.MAJOR_HEADER_0),
+    new CreditHeader08(  8, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08( 10, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08( 12, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08( 14, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08( 26, CreditsType.MAJOR_HEADER_0),
+    new CreditHeader08( 28, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08( 32, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08( 34, CreditsType.MAJOR_HEADER_0),
+    new CreditHeader08( 36, CreditsType.MAJOR_HEADER_0),
+    new CreditHeader08( 38, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08( 40, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08( 44, CreditsType.MAJOR_HEADER_0),
+    new CreditHeader08( 46, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08( 48, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08( 51, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08( 53, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08( 55, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08( 57, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08( 59, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08( 61, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08( 70, CreditsType.MAJOR_HEADER_0),
+    new CreditHeader08( 72, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08( 74, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08( 86, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08( 88, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08( 90, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08( 92, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08( 94, CreditsType.MAJOR_HEADER_0),
+    new CreditHeader08( 96, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(103, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(107, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(111, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(120, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(125, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(128, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(153, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(159, CreditsType.MAJOR_HEADER_0),
+    new CreditHeader08(161, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(163, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(166, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(169, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(172, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(175, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(177, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(201, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(212, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(217, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(220, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(223, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(227, CreditsType.MAJOR_HEADER_0),
+    new CreditHeader08(230, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(235, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(237, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(244, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(248, CreditsType.MAJOR_HEADER_0),
+    new CreditHeader08(251, CreditsType.MAJOR_HEADER_0),
+    new CreditHeader08(264, CreditsType.MAJOR_HEADER_0),
+    new CreditHeader08(266, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(268, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(270, CreditsType.MAJOR_HEADER_0),
+    new CreditHeader08(271, CreditsType.MAJOR_HEADER_0),
+    new CreditHeader08(273, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(275, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(277, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(279, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(281, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(283, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(285, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(287, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(289, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(293, CreditsType.MAJOR_HEADER_0),
+    new CreditHeader08(294, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(297, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(301, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(303, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(305, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(309, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(322, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(324, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(326, CreditsType.MINOR_HEADER_1),
+    new CreditHeader08(328, CreditsType.MAJOR_HEADER_0),
+    new CreditHeader08(344, CreditsType.MAJOR_HEADER_0),
   };
-  private static final Vector2i[] creditPos_800f9670 = {
+  private static final Vector2i[] creditVramPos_800f9670 = {
     new Vector2i(0x200, 0),
     new Vector2i(0x200, 0x40),
     new Vector2i(0x200, 0x80),
@@ -178,7 +185,7 @@ public class Credits extends EngineState {
 
     //LAB_800eab00
     for(int creditSlot = 0; creditSlot < 16; creditSlot++) {
-      final CreditStruct1c credit = this.credits_800d1af8[creditSlot];
+      final CreditData1c credit = this.credits_800d1af8[creditSlot];
 
       //LAB_800eab1c
       credit.colour_00.set(0x80, 0x80, 0x80);
@@ -192,7 +199,7 @@ public class Credits extends EngineState {
     this.credits_800d1af8[0].prevCreditSlot_04 = 15;
     for(int i = 1; i < 16; i++) {
       //LAB_800eac3c
-      final CreditStruct1c credit = this.credits_800d1af8[i];
+      final CreditData1c credit = this.credits_800d1af8[i];
       credit.prevCreditSlot_04 = i - 1;
     }
 
@@ -220,7 +227,6 @@ public class Credits extends EngineState {
       startFadeEffect(2, 15);
       this.loadingStage++;
     }
-
     //LAB_800ead9c
   }
 
@@ -232,7 +238,6 @@ public class Credits extends EngineState {
       startFadeEffect(1, 15);
       this.loadingStage++;
     }
-
     //LAB_800eae28
   }
 
@@ -244,7 +249,6 @@ public class Credits extends EngineState {
       //LAB_800eaea0
       this.loadingStage++;
     }
-
     //LAB_800eaeac
   }
 
@@ -294,7 +298,7 @@ public class Credits extends EngineState {
         return true;
       }
 
-      final CreditStruct1c credit = this.credits_800d1af8[creditSlot];
+      final CreditData1c credit = this.credits_800d1af8[creditSlot];
 
       //LAB_800eb358
       final int state = credit.state_16;
@@ -352,22 +356,22 @@ public class Credits extends EngineState {
 
     //LAB_800ebc64
     int i;
-    for(i = 0; i < creditTypes_800f93b0.length; i++) {
+    for(i = 0; i < creditHeaderEntries_800f93b0.length; i++) {
       //LAB_800ebcb0
-      if(creditTypes_800f93b0[i].creditIndex_00 == this.creditIndex_800d1af0) {
+      if(creditHeaderEntries_800f93b0[i].creditIndex_00 == this.creditIndex_800d1af0) {
         found = true;
         break;
       }
     }
 
-    final CreditStruct1c credit = this.credits_800d1af8[creditSlot];
+    final CreditData1c credit = this.credits_800d1af8[creditSlot];
 
     //LAB_800ebd08
     if(found) {
-      credit.type_08 = creditTypes_800f93b0[i].type_04;
+      credit.type_08 = creditHeaderEntries_800f93b0[i].type_04;
     } else {
       //LAB_800ebd6c
-      credit.type_08 = 2;
+      credit.type_08 = CreditsType.NAME_2;
     }
 
     //LAB_800ebd94
@@ -377,7 +381,7 @@ public class Credits extends EngineState {
 
     //LAB_800ebdb4
     final int prevCreditSlot = credit.prevCreditSlot_04;
-    final CreditStruct1c prevCredit = this.credits_800d1af8[prevCreditSlot];
+    final CreditData1c prevCredit = this.credits_800d1af8[prevCreditSlot];
 
     if(prevCredit.state_16 == 0) {
       return false;
@@ -385,103 +389,101 @@ public class Credits extends EngineState {
 
     //LAB_800ebe1c
     switch(credit.type_08) {
-      case 0 -> {
-        final int type = prevCredit.type_08;
-
-        if(type == 0 || type == 1 || type == 2) {
-          //LAB_800ebee4
-          if(prevCredit.scroll_12 >= 66) {
-            return true;
+      case MAJOR_HEADER_0 -> {
+        switch(prevCredit.type_08) {
+          case MAJOR_HEADER_0, MINOR_HEADER_1, NAME_2 -> {
+            //LAB_800ebee4
+            if(prevCredit.scroll_12 >= 66) {
+              return true;
+            }
           }
 
           //LAB_800ebf24
-        } else if(type == 3) {
-          //LAB_800ebf2c
-          if(prevCredit.scroll_12 >= 64) {
-            return true;
+          case DIRECTOR_3 -> {
+            //LAB_800ebf2c
+            if(prevCredit.scroll_12 >= 64) {
+              return true;
+            }
           }
 
           //LAB_800ebf6c
           //LAB_800ebed0
-        } else if(type == 4) {
-          //LAB_800ebf74
-          if(prevCredit.scroll_12 >= 144) {
-            return true;
+          case UNUSED_4 -> {
+            //LAB_800ebf74
+            if(prevCredit.scroll_12 >= 144) {
+              return true;
+            }
           }
-
           //LAB_800ebfb4
         }
-
         //LAB_800ebfbc
       }
 
-      case 1 -> {
-        final int type = prevCredit.type_08;
-
-        if(type == 0 || type == 1 || type == 2) {
-          //LAB_800ec024
-          if(prevCredit.scroll_12 >= 36) {
-            return true;
+      case MINOR_HEADER_1 -> {
+        switch(prevCredit.type_08) {
+          case MAJOR_HEADER_0, MINOR_HEADER_1, NAME_2 -> {
+            //LAB_800ec024
+            if(prevCredit.scroll_12 >= 36) {
+              return true;
+            }
           }
 
           //LAB_800ec064
-        } else if(type == 3) {
-          //LAB_800ec06c
-          if(prevCredit.scroll_12 >= 64) {
-            return true;
+          case DIRECTOR_3 -> {
+            //LAB_800ec06c
+            if(prevCredit.scroll_12 >= 64) {
+              return true;
+            }
           }
 
           //LAB_800ec0ac
           //LAB_800ec010
-        } else if(type == 4) {
-          //LAB_800ec0b4
-          if(prevCredit.scroll_12 >= 144) {
-            return true;
+          case UNUSED_4 -> {
+            //LAB_800ec0b4
+            if(prevCredit.scroll_12 >= 144) {
+              return true;
+            }
           }
-
           //LAB_800ec0f4
         }
-
         //LAB_800ec0fc
       }
 
-      case 2 -> {
+      case NAME_2 -> {
         switch(prevCredit.type_08) {
-          case 0, 1 -> {
+          case MAJOR_HEADER_0, MINOR_HEADER_1 -> {
             if(prevCredit.scroll_12 >= 27) {
               return true;
             }
           }
 
           //LAB_800ec1ac
-          case 2 -> {
+          case NAME_2 -> {
             if(prevCredit.scroll_12 >= 23) {
               return true;
             }
           }
 
           //LAB_800ec1f4
-          case 3 -> {
+          case DIRECTOR_3 -> {
             if(prevCredit.scroll_12 >= 80) {
               return true;
             }
           }
 
           //LAB_800ec23c
-          case 4 -> {
+          case UNUSED_4 -> {
             if(prevCredit.scroll_12 >= 144) {
               return true;
             }
           }
-
           //LAB_800ec284
         }
-
         //LAB_800ec28c
       }
 
-      case 3 -> {
-        if(prevCredit.type_08 == 3) {
+      case DIRECTOR_3 -> {
+        if(prevCredit.type_08 == CreditsType.DIRECTOR_3) {
           return true;
         }
 
@@ -489,15 +491,13 @@ public class Credits extends EngineState {
         if(prevCredit.scroll_12 > 16) {
           return true;
         }
-
         //LAB_800ec310
       }
 
-      case 4 -> {
+      case UNUSED_4 -> {
         if(prevCredit.scroll_12 >= 130) {
           return true;
         }
-
         //LAB_800ec358
       }
     }
@@ -509,12 +509,12 @@ public class Credits extends EngineState {
 
   @Method(0x800ec37cL)
   private void moveCredits(final int creditSlot) {
-    final CreditStruct1c credit = this.credits_800d1af8[creditSlot];
+    final CreditData1c credit = this.credits_800d1af8[creditSlot];
 
     final int scroll = credit.scroll_12;
 
     switch(credit.type_08) {
-      case 0, 1 -> {
+      case MAJOR_HEADER_0, MINOR_HEADER_1 -> {
         credit.y_0c = 136 - scroll;
         credit.colour_00.set(192, 93, 81);
 
@@ -525,7 +525,7 @@ public class Credits extends EngineState {
       }
 
       //LAB_800ec51c
-      case 2 -> {
+      case NAME_2 -> {
         credit.y_0c = 136 - scroll;
         credit.colour_00.set(118, 107, 195);
 
@@ -536,12 +536,12 @@ public class Credits extends EngineState {
       }
 
       //LAB_800ec620
-      case 3 -> {
+      case DIRECTOR_3 -> {
         final int prevCreditSlot = credit.prevCreditSlot_04;
-        final CreditStruct1c prevCredit = this.credits_800d1af8[prevCreditSlot];
+        final CreditData1c prevCredit = this.credits_800d1af8[prevCreditSlot];
 
         if(credit.scroll_12 < 64) {
-          if(prevCredit.type_08 == 3) {
+          if(prevCredit.type_08 == CreditsType.DIRECTOR_3) {
             credit.y_0c = -credit.height_10 / 2 + 13;
             credit.colour_00.x = rsin(credit.scroll_12 * 16) * 118 >> 12;
             credit.colour_00.y = rsin(credit.scroll_12 * 16) * 107 >> 12;
@@ -553,19 +553,18 @@ public class Credits extends EngineState {
             credit.colour_00.y = rsin(credit.scroll_12 * 16) * 93 >> 12;
             credit.colour_00.z = rsin(credit.scroll_12 * 16) * 81 >> 12;
           }
-
           //LAB_800eca68
         } else {
           //LAB_800eca70
           credit.brightnessAngle_14++;
 
-          final int sp14 = credit.brightnessAngle_14;
-          if(prevCredit.type_08 == 3) {
-            credit.y_0c = -credit.height_10 / 2 - sp14 + 13;
+          final int brightnessAngle = credit.brightnessAngle_14;
+          if(prevCredit.type_08 == CreditsType.DIRECTOR_3) {
+            credit.y_0c = -credit.height_10 / 2 - brightnessAngle + 13;
             credit.colour_00.set(118, 107, 195);
           } else {
             //LAB_800ecc2c
-            credit.y_0c = -credit.height_10 / 2 - sp14 - 13;
+            credit.y_0c = -credit.height_10 / 2 - brightnessAngle - 13;
             credit.colour_00.set(192, 93, 81);
           }
 
@@ -578,7 +577,7 @@ public class Credits extends EngineState {
       }
 
       //LAB_800ecd90
-      case 4 -> {
+      case UNUSED_4 -> {
         if(credit.y_0c < -credit.height_10 / 2 && scroll != 0) {
           credit.brightnessAngle_14 += 6;
           final int brightnessAngle = credit.brightnessAngle_14;
@@ -591,7 +590,6 @@ public class Credits extends EngineState {
             credit.state_16 = 3;
             this.creditsPassed_800d1aec++;
           }
-
           //LAB_800ecff8
         } else {
           //LAB_800ed000
@@ -599,10 +597,8 @@ public class Credits extends EngineState {
           credit.colour_00.set(0x80, 0x80, 0x80);
         }
       }
-
       //LAB_800ed0a8
     }
-
     //LAB_800ed0b0
   }
 
@@ -615,7 +611,6 @@ public class Credits extends EngineState {
         this.loadCreditTim(creditSlot);
       }
     }
-
     //LAB_800ed150
   }
 
@@ -629,12 +624,12 @@ public class Credits extends EngineState {
       this.creditIndex_800d1af0 = 357;
     }
 
-    final CreditStruct1c credit = this.credits_800d1af8[creditSlot];
+    final CreditData1c credit = this.credits_800d1af8[creditSlot];
 
     //LAB_800ed1f8
     final Rect4i imageRect = tim.getImageRect();
-    imageRect.x = creditPos_800f9670[creditSlot].x;
-    imageRect.y = creditPos_800f9670[creditSlot].y;
+    imageRect.x = creditVramPos_800f9670[creditSlot].x;
+    imageRect.y = creditVramPos_800f9670[creditSlot].y;
 
     credit.width_0e = imageRect.w;
     credit.height_10 = imageRect.h;
@@ -644,7 +639,6 @@ public class Credits extends EngineState {
     if(tim.hasClut()) {
       GPU.uploadData15(new Rect4i(896, creditSlot, 16, 1), tim.getClutData());
     }
-
     //LAB_800ed32c
   }
 
