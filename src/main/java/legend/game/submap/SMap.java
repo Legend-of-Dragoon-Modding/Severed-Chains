@@ -425,7 +425,7 @@ public class SMap extends EngineState {
     functions[96] = this::scriptSelfLoadSobjModelAndAnimation;
     functions[97] = this::scriptSelfLoadSobjAnimation;
     functions[98] = this::scriptSelfGetSobjAnimation;
-    functions[99] = this::FUN_800df1f8;
+    functions[99] = this::scriptSelfToggleAnimationDisabled;
     functions[100] = this::FUN_800df228;
     functions[101] = this::scriptSetModelPosition;
     functions[102] = this::scriptReadModelPosition;
@@ -433,8 +433,8 @@ public class SMap extends EngineState {
     functions[104] = this::scriptReadModelRotate;
     functions[105] = this::scriptSelfFacePoint;
     functions[106] = this::FUN_800df410;
-    functions[107] = this::FUN_800df440;
-    functions[108] = this::FUN_800df488;
+    functions[107] = this::scriptSelfMoveToPosition;
+    functions[108] = this::scriptSelfMoveAlongArc;
     functions[109] = this::FUN_800df4d0;
     functions[110] = this::FUN_800df500;
     functions[111] = this::FUN_800df530;
@@ -514,8 +514,8 @@ public class SMap extends EngineState {
     functions[676] = this::scriptIsAnimationFinished;
     functions[677] = this::scriptFacePoint;
     functions[678] = this::scriptSetSobjHidden;
-    functions[679] = this::FUN_800de668;
-    functions[680] = this::FUN_800de944;
+    functions[679] = this::scriptSobjMoveToPosition;
+    functions[680] = this::scriptSobjMoveAlongArc;
     functions[681] = this::FUN_800e00cc;
     functions[682] = this::FUN_800e0148;
     functions[683] = this::FUN_800e01bc;
@@ -1151,14 +1151,14 @@ public class SMap extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Something to do with forced movement. Used when Dart is halfway through his jump animation in volcano.")
+  @ScriptDescription("Moves a sobj to a position over a number of frames")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "Possibly movement destination X")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "Possibly movement destination Y")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "Possibly movement destination Z")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "i_144", description = "Possibly movement frames")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "Movement destination X")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "Movement destination Y")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "Movement destination Z")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "movementTicks", description = "The number of frames over which to move")
   @Method(0x800de668L)
-  private FlowControl FUN_800de668(final RunningScript<?> script) {
+  private FlowControl scriptSobjMoveToPosition(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
@@ -1183,7 +1183,7 @@ public class SMap extends EngineState {
     //LAB_800de8e8
     this.sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(this::FUN_800e1f90);
 
-    sobj.flags_190 &= 0x7fff_ffff;
+    sobj.flags_190 &= ~0x8000_0000;
     return FlowControl.CONTINUE;
   }
 
@@ -1194,7 +1194,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "Movement destination Z")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks", description = "Movement ticks")
   @Method(0x800de944L)
-  private FlowControl FUN_800de944(final RunningScript<?> script) {
+  private FlowControl scriptSobjMoveAlongArc(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
@@ -1345,10 +1345,10 @@ public class SMap extends EngineState {
     return this.scriptGetSobjAnimation(script);
   }
 
-  @ScriptDescription("Set us_12a on this submap object")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "value", description = "The new value")
+  @ScriptDescription("Set whether or not a sobj's animation is disabled")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "disabled", description = "Whether or not the animation is disabled")
   @Method(0x800df1f8L)
-  private FlowControl FUN_800df1f8(final RunningScript<?> script) {
+  private FlowControl scriptSelfToggleAnimationDisabled(final RunningScript<?> script) {
     script.params_20[1] = script.params_20[0];
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
     return this.scriptToggleAnimationDisabled(script);
@@ -1401,10 +1401,17 @@ public class SMap extends EngineState {
   @Method(0x800df2b8L)
   private FlowControl scriptReadModelPosition(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    final Model124 model = sobj.model_00;
-    script.params_20[1].set(Math.round(model.coord2_14.coord.transfer.x));
-    script.params_20[2].set(Math.round(model.coord2_14.coord.transfer.y));
-    script.params_20[3].set(Math.round(model.coord2_14.coord.transfer.z));
+
+    final Vector3f pos;
+    if(sobj.interpMovementTicksTotal != 0) {
+      pos = sobj.interpMovementDest;
+    } else {
+      pos = sobj.model_00.coord2_14.coord.transfer;
+    }
+
+    script.params_20[1].set(Math.round(pos.x));
+    script.params_20[2].set(Math.round(pos.y));
+    script.params_20[3].set(Math.round(pos.z));
     return FlowControl.CONTINUE;
   }
 
@@ -1475,19 +1482,19 @@ public class SMap extends EngineState {
     return this.scriptSetSobjHidden(script);
   }
 
-  @ScriptDescription("Something to do with forced movement. Used when Dart is halfway through his jump animation in volcano.")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "Use unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "Use unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "Use unknown")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "i_144", description = "Use unknown")
+  @ScriptDescription("Moves this sobj to a position over a number of frames")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "Movement destination X")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "Movement destination Y")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "Movement destination Z")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "movementTicks", description = "The number of frames over which to move")
   @Method(0x800df440L)
-  private FlowControl FUN_800df440(final RunningScript<?> script) {
+  private FlowControl scriptSelfMoveToPosition(final RunningScript<?> script) {
     script.params_20[4] = script.params_20[3];
     script.params_20[3] = script.params_20[2];
     script.params_20[2] = script.params_20[1];
     script.params_20[1] = script.params_20[0];
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
-    return this.FUN_800de668(script);
+    return this.scriptSobjMoveToPosition(script);
   }
 
   @ScriptDescription("Something to do with forced movement. Used when Dart is halfway through his jump animation in volcano.")
@@ -1496,13 +1503,13 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "Use unknown")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "i_144", description = "Use unknown")
   @Method(0x800df488L)
-  private FlowControl FUN_800df488(final RunningScript<?> script) {
+  private FlowControl scriptSelfMoveAlongArc(final RunningScript<?> script) {
     script.params_20[4] = script.params_20[3];
     script.params_20[3] = script.params_20[2];
     script.params_20[2] = script.params_20[1];
     script.params_20[1] = script.params_20[0];
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
-    return this.FUN_800de944(script);
+    return this.scriptSobjMoveAlongArc(script);
   }
 
   @ScriptDescription("Unknown")
@@ -1893,7 +1900,7 @@ public class SMap extends EngineState {
     loadModelStandardAnimation(model, this.submap.objects.get(sobj.sobjIndex_12e).animations.get(sobj.animIndex_132));
 
     sobj.animationFinished_12c = false;
-    sobj.flags_190 &= 0x9fff_ffff;
+    sobj.flags_190 &= ~0x6000_0000;
 
     return FlowControl.CONTINUE;
   }
@@ -1908,7 +1915,7 @@ public class SMap extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Set us_12a on a submap object")
+  @ScriptDescription("Set whether or not a sobj's animation is disabled")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "disabled", description = "Whether or not the animation is disabled")
   @Method(0x800dffa4L)
@@ -2214,7 +2221,7 @@ public class SMap extends EngineState {
     model.disableInterpolation_a2 = false;
     loadModelStandardAnimation(model, this.submap.objects.get(sobj.sobjIndex_12e).animations.get(sobj.animIndex_132));
     sobj.animationFinished_12c = false;
-    sobj.flags_190 &= 0x9fff_ffff;
+    sobj.flags_190 &= ~0x6000_0000;
     return FlowControl.CONTINUE;
   }
 
@@ -2231,7 +2238,7 @@ public class SMap extends EngineState {
     model.disableInterpolation_a2 = true;
     loadModelStandardAnimation(model, this.submap.objects.get(sobj.sobjIndex_12e).animations.get(sobj.animIndex_132));
     sobj.animationFinished_12c = false;
-    sobj.flags_190 &= 0x9fff_ffff;
+    sobj.flags_190 &= ~0x6000_0000;
     return FlowControl.CONTINUE;
   }
 
@@ -2539,7 +2546,7 @@ public class SMap extends EngineState {
         if(sobj.animationFinished_12c && (sobj.flags_190 & 0x2000_0000) != 0) {
           sobj.animIndex_132 = 0;
           loadModelStandardAnimation(model, this.submap.objects.get(sobj.sobjIndex_12e).animations.get(sobj.animIndex_132));
-          sobj.flags_190 &= 0x9fff_ffff;
+          sobj.flags_190 &= ~0x6000_0000;
         }
       }
     }
