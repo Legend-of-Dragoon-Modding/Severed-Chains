@@ -515,7 +515,7 @@ public class RetailSubmap extends Submap {
   private void loadTextures() {
     this.uvAdjustments.clear();
 
-    final boolean[] usedSlots = new boolean[this.pxls.size()];
+    final boolean[] usedSlots = new boolean[this.pxls.size() * 2];
 
     outer:
     for(int pxlIndex = 0; pxlIndex < this.pxls.size(); pxlIndex++) {
