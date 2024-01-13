@@ -4,6 +4,7 @@ import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.Rect4i;
 import legend.core.memory.Method;
+import legend.game.credits.CreditData1c.CreditState;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
 import legend.game.tim.Tim;
@@ -191,7 +192,7 @@ public class Credits extends EngineState {
       credit.colour_00.set(0x80, 0x80, 0x80);
       credit.scroll_12 = 0;
       credit.brightnessAngle_14 = 0;
-      credit.state_16 = 0;
+      credit.state_16 = CreditState.LOAD_0;
     }
 
     //LAB_800eac18
@@ -301,46 +302,51 @@ public class Credits extends EngineState {
       final CreditData1c credit = this.credits_800d1af8[creditSlot];
 
       //LAB_800eb358
-      final int state = credit.state_16;
-      if(state == 0) {
-        //LAB_800eb3b8
-        if(this.shouldLoadNewCredit(creditSlot)) {
-          credit.state_16 = 2;
-          this.loadCreditTims(creditSlot);
+      switch(credit.state_16) {
+        case LOAD_0 -> {
+          //LAB_800eb3b8
+          if(this.shouldLoadNewCredit(creditSlot)) {
+            credit.state_16 = CreditState.RENDER_2;
+            this.loadCreditTims(creditSlot);
+          }
         }
-      } else if(state == 2) {
-        //LAB_800eb408
-        this.moveCredits(creditSlot);
 
-        final int w = credit.width_0e * 4;
-        final int h = credit.height_10;
-        final int x = -w / 2 - 8;
-        final int y = credit.y_0c;
-        final int clut = creditSlot << 6 | 0x38;
+        case RENDER_2 -> {
+          //LAB_800eb408
+          this.moveCredits(creditSlot);
 
-        //LAB_800eb8e8
-        this.renderQuad(
-          Bpp.BITS_4, creditSlot / 8 * 128 + 512 & 0x3c0, 0, clut,
-          credit.colour_00.x, credit.colour_00.y, credit.colour_00.z,
-          0, creditSlot % 8 * 64,
-          w, h,
-          x, y,
-          w, h,
-          orderingTableSize_1f8003c8 - 3
-        );
+          final int w = credit.width_0e * 4;
+          final int h = credit.height_10;
+          final int x = -w / 2 - 8;
+          final int y = credit.y_0c;
+          final int clut = creditSlot << 6 | 0x38;
 
-        //LAB_800eba4c
-        credit.scroll_12++;
-        //LAB_800eb3a4
-      } else if(state == 3) {
-        //LAB_800ebabc
-        if(this.credits_800d1af8[(creditSlot + 1) % 16].state_16 != 0) {
-          credit.scroll_12 = 0;
-          credit.brightnessAngle_14 = 0;
-          credit.state_16 = 0;
-        } else {
-          //LAB_800ebb84
+          //LAB_800eb8e8
+          this.renderQuad(
+            Bpp.BITS_4, creditSlot / 8 * 128 + 512 & 0x3c0, 0, clut,
+            credit.colour_00.x, credit.colour_00.y, credit.colour_00.z,
+            0, creditSlot % 8 * 64,
+            w, h,
+            x, y,
+            w, h,
+            orderingTableSize_1f8003c8 - 3
+          );
+
+          //LAB_800eba4c
           credit.scroll_12++;
+        }
+
+        //LAB_800eb3a4
+        case PASSED_3 -> {
+          //LAB_800ebabc
+          if(this.credits_800d1af8[(creditSlot + 1) % 16].state_16 != CreditState.LOAD_0) {
+            credit.scroll_12 = 0;
+            credit.brightnessAngle_14 = 0;
+            credit.state_16 = CreditState.LOAD_0;
+          } else {
+            //LAB_800ebb84
+            credit.scroll_12++;
+          }
         }
       }
     }
@@ -383,7 +389,7 @@ public class Credits extends EngineState {
     final int prevCreditSlot = credit.prevCreditSlot_04;
     final CreditData1c prevCredit = this.credits_800d1af8[prevCreditSlot];
 
-    if(prevCredit.state_16 == 0) {
+    if(prevCredit.state_16 == CreditState.LOAD_0) {
       return false;
     }
 
@@ -519,7 +525,7 @@ public class Credits extends EngineState {
         credit.colour_00.set(192, 93, 81);
 
         if(scroll > 304) {
-          credit.state_16 = 3;
+          credit.state_16 = CreditState.PASSED_3;
           this.creditsPassed_800d1aec++;
         }
       }
@@ -530,7 +536,7 @@ public class Credits extends EngineState {
         credit.colour_00.set(118, 107, 195);
 
         if(scroll > 304) {
-          credit.state_16 = 3;
+          credit.state_16 = CreditState.PASSED_3;
           this.creditsPassed_800d1aec++;
         }
       }
@@ -570,7 +576,7 @@ public class Credits extends EngineState {
 
           //LAB_800ecd1c
           if(credit.y_0c < -184) {
-            credit.state_16 = 3;
+            credit.state_16 = CreditState.PASSED_3;
             this.creditsPassed_800d1aec++;
           }
         }
@@ -587,7 +593,7 @@ public class Credits extends EngineState {
 
           if(brightnessAngle > 0x400) {
             credit.colour_00.set(0, 0, 0);
-            credit.state_16 = 3;
+            credit.state_16 = CreditState.PASSED_3;
             this.creditsPassed_800d1aec++;
           }
           //LAB_800ecff8

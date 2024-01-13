@@ -4,6 +4,13 @@ import legend.game.credits.Credits.CreditsType;
 import org.joml.Vector3i;
 
 public class CreditData1c {
+  public enum CreditState {
+    LOAD_0,
+    NONE_1,
+    RENDER_2,
+    PASSED_3,
+  }
+
   public final Vector3i colour_00 = new Vector3i();
   public int prevCreditSlot_04;
   public CreditsType type_08;
@@ -19,5 +26,5 @@ public class CreditData1c {
    *   <li>3 - off screen</li>
    * </ul>
    */
-  public int state_16;
+  public CreditState state_16;
 }
