@@ -381,6 +381,11 @@ public class WMap extends EngineState {
   private boolean shouldSetCoolonWarpDestLabelMetrics;
 
   @Override
+  public int tickMultiplier() {
+    return 3;
+  }
+
+  @Override
   public boolean renderTextOnTopOfAllBoxes() {
     return false;
   }

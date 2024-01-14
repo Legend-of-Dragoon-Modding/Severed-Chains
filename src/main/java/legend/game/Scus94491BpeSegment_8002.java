@@ -3894,7 +3894,7 @@ public final class Scus94491BpeSegment_8002 {
 
     if((arrow.flags_00 & TextboxArrow0c.ARROW_VISIBLE) != 0) {
       if((textboxText_800bdf38[textboxIndex].flags_08 & TextboxText84.SHOW_ARROW) != 0) {
-        if((tickCount_800bb0fc % (2 * (3 - vsyncMode_8007a3b8))) == 0) {
+        if(tickCount_800bb0fc % (2 * currentEngineState_8004dd04.tickMultiplier()) == 0) {
           arrow.spriteIndex_08++;
         }
 
