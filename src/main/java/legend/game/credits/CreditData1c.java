@@ -11,6 +11,8 @@ public class CreditData1c {
     PASSED_3,
   }
 
+  public int index;
+
   public final Vector3i colour_00 = new Vector3i();
   public int prevCreditSlot_04;
   public CreditsType type_08;

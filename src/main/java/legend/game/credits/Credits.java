@@ -1,21 +1,28 @@
 package legend.game.credits;
 
+import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.Rect4i;
+import legend.core.gte.MV;
 import legend.core.memory.Method;
-import legend.game.credits.CreditData1c.CreditState;
+import legend.core.opengl.Obj;
+import legend.core.opengl.PolyBuilder;
+import legend.core.opengl.QuadBuilder;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
+import legend.game.credits.CreditData1c.CreditState;
 import legend.game.tim.Tim;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import org.joml.Vector2i;
+import org.joml.Vector3f;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.orderingTableSize_1f8003c8;
 import static legend.game.Scus94491BpeSegment.rcos;
@@ -25,6 +32,7 @@ import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.playXaAudio;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
+import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class Credits extends EngineState {
   public enum CreditsType {
@@ -173,6 +181,10 @@ public class Credits extends EngineState {
     new Vector2i(0x280, 0x1c0),
   };
 
+  private final MV transforms = new MV();
+  private Obj gradient;
+  private Obj credits;
+
   @Override
   @Method(0x800eaa88L)
   public void tick() {
@@ -211,6 +223,19 @@ public class Credits extends EngineState {
 
     this.creditTimsLoaded_800d1ae8 = false;
     loadDrgnDir(0, 5720, this::creditsLoaded);
+
+    this.gradient = new PolyBuilder("CreditsGradient", GL_TRIANGLE_STRIP)
+      .translucency(Translucency.B_MINUS_F)
+      .addVertex(-192, -120, 0)
+      .monochrome(1.0f)
+      .addVertex(-192, -64, 0)
+      .monochrome(0.0f)
+      .addVertex(192, -120, 0)
+      .monochrome(1.0f)
+      .addVertex(192, -64, 0)
+      .monochrome(0.0f)
+      .build();
+
     this.loadingStage++;
   }
 
@@ -226,6 +251,25 @@ public class Credits extends EngineState {
       //LAB_800ead7c
       playXaAudio(3, 3, 1);
       startFadeEffect(2, 15);
+
+      final QuadBuilder builder = new QuadBuilder("Credits");
+
+      int creditSlot = 0;
+      for(int i = 0; i < this.creditTims_800d1ae0.size(); i ++) {
+        final Rect4i credit = new Tim(this.creditTims_800d1ae0.get(i)).getImageRect();
+        builder.add()
+          .bpp(Bpp.BITS_4)
+          .vramPos(creditSlot / 8 * 128 + 512 & 0x3c0, 0)
+          .clut(896, creditSlot)
+          .monochrome(1.0f)
+          .uv(0, creditSlot % 8 * 64)
+          .size(credit.w * 4, credit.h);
+
+        creditSlot = (creditSlot + 1) % 16;
+      }
+
+      this.credits = builder.build();
+      GPU.clearData(512, 0, 256, 512);
       this.loadingStage++;
     }
     //LAB_800ead9c
@@ -257,6 +301,16 @@ public class Credits extends EngineState {
   private void deallocateCreditsAndTransitionToTheEndSubmap() {
     //LAB_800eaedc
     this.creditTims_800d1ae0 = null;
+
+    if(this.gradient != null) {
+      this.gradient.delete();
+      this.gradient = null;
+    }
+
+    if(this.credits != null) {
+      this.credits.delete();
+      this.credits = null;
+    }
     engineStateOnceLoaded_8004dd24 = EngineStateEnum.SUBMAP_05;
 
     //LAB_800eaf14
@@ -264,6 +318,10 @@ public class Credits extends EngineState {
 
   @Method(0x800eaf24L)
   private void renderCreditsGradient() {
+    this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 40.0f);
+    RENDERER.queueOrthoModel(this.gradient, this.transforms);
+    this.transforms.rotate(MathHelper.PI, 0, 0, 0);
+    RENDERER.queueOrthoModel(this.gradient, this.transforms);
     GPU.queueCommand(10, new GpuCommandPoly(4)
       .translucent(Translucency.B_MINUS_F)
       .monochrome(0, 0xff)
@@ -307,7 +365,7 @@ public class Credits extends EngineState {
           //LAB_800eb3b8
           if(this.shouldLoadNewCredit(creditSlot)) {
             credit.state_16 = CreditState.RENDER_2;
-            this.loadCreditTims(creditSlot);
+            this.loadCreditTim(creditSlot);
           }
         }
 
@@ -322,6 +380,12 @@ public class Credits extends EngineState {
           final int clut = creditSlot << 6 | 0x38;
 
           //LAB_800eb8e8
+
+          this.transforms.identity();
+          this.transforms.transfer.set(GPU.getOffsetX() + x, GPU.getOffsetY() +  y, (orderingTableSize_1f8003c8 - 3) * 4.0f);
+          RENDERER.queueOrthoModel(this.credits, this.transforms)
+            .vertices(credit.index * 4, 4)
+            .colour(new Vector3f().set(credit.colour_00).div(255.0f));
           this.renderQuad(
             Bpp.BITS_4, creditSlot / 8 * 128 + 512 & 0x3c0, 0, clut,
             credit.colour_00.x, credit.colour_00.y, credit.colour_00.z,
@@ -608,42 +672,36 @@ public class Credits extends EngineState {
     //LAB_800ed0b0
   }
 
-  @Method(0x800ed0c4L)
-  private void loadCreditTims(final int creditSlot) {
+  @Method(0x800ed160L)
+  private void loadCreditTim(final int creditSlot) {
     if(this.creditIndex_800d1af0 < this.creditTims_800d1ae0.size()) {
       //LAB_800ed100
       if(this.creditTims_800d1ae0.get(this.creditIndex_800d1af0).size() != 0) {
-        //LAB_800ed138
-        this.loadCreditTim(creditSlot);
+        final Tim tim = new Tim(this.creditTims_800d1ae0.get(this.creditIndex_800d1af0));
+
+        this.creditIndex_800d1af0++;
+
+        if(this.creditIndex_800d1af0 > 357) {
+          this.creditIndex_800d1af0 = 357;
+        }
+
+        final CreditData1c credit = this.credits_800d1af8[creditSlot];
+        credit.index = this.creditIndex_800d1af0 - 1;
+
+        //LAB_800ed1f8
+        final Rect4i imageRect = tim.getImageRect();
+        imageRect.x = creditVramPos_800f9670[creditSlot].x;
+        imageRect.y = creditVramPos_800f9670[creditSlot].y;
+
+        credit.width_0e = imageRect.w;
+        credit.height_10 = imageRect.h;
+
+        GPU.uploadData15(imageRect, tim.getImageData());
+
+        if(tim.hasClut()) {
+          GPU.uploadData15(new Rect4i(896, creditSlot, 16, 1), tim.getClutData());
+        }
       }
-    }
-    //LAB_800ed150
-  }
-
-  @Method(0x800ed160L)
-  private void loadCreditTim(final int creditSlot) {
-    final Tim tim = new Tim(this.creditTims_800d1ae0.get(this.creditIndex_800d1af0));
-
-    this.creditIndex_800d1af0++;
-
-    if(this.creditIndex_800d1af0 > 357) {
-      this.creditIndex_800d1af0 = 357;
-    }
-
-    final CreditData1c credit = this.credits_800d1af8[creditSlot];
-
-    //LAB_800ed1f8
-    final Rect4i imageRect = tim.getImageRect();
-    imageRect.x = creditVramPos_800f9670[creditSlot].x;
-    imageRect.y = creditVramPos_800f9670[creditSlot].y;
-
-    credit.width_0e = imageRect.w;
-    credit.height_10 = imageRect.h;
-
-    GPU.uploadData15(imageRect, tim.getImageData());
-
-    if(tim.hasClut()) {
-      GPU.uploadData15(new Rect4i(896, creditSlot, 16, 1), tim.getClutData());
     }
     //LAB_800ed32c
   }
