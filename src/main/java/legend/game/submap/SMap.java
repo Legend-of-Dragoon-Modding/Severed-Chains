@@ -1057,8 +1057,8 @@ public class SMap extends EngineState {
         if(this.isWalkable(collidedPrimitiveIndex)) {
           player.finishInterpolatedMovement();
 
-          playerModel.coord2_14.coord.transfer.y = worldspaceDeltaMovement.y;
-          worldspaceDeltaMovement.y = 0;
+          // Collision returns Y value as destination rather than delta, so convert it to a delta
+          worldspaceDeltaMovement.y -= playerModel.coord2_14.coord.transfer.y;
 
           player.interpMovementTicksTotal = 2 / vsyncMode_8007a3b8;
           player.interpMovementTicks = 0;
