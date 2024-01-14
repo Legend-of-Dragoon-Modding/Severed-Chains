@@ -1195,21 +1195,24 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "ticks", description = "Movement ticks")
   @Method(0x800de944L)
   private FlowControl scriptSobjMoveAlongArc(final RunningScript<?> script) {
+    final int movementTicks = script.params_20[4].get();
+
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
 
     sobj.finishInterpolatedMovement();
     sobj.movementDestination_138.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
-    sobj.movementTicks_144 = script.params_20[4].get() * (3 - vsyncMode_8007a3b8);
+    sobj.movementTicks_144 = movementTicks * (3 - vsyncMode_8007a3b8);
 
     sobj.movementStep_148.x = (sobj.movementDestination_138.x - model.coord2_14.coord.transfer.x) / sobj.movementTicks_144;
     sobj.movementStep_148.z = (sobj.movementDestination_138.z - model.coord2_14.coord.transfer.z) / sobj.movementTicks_144;
 
     //LAB_800dea34
-    sobj.movementStepY_134 = ((sobj.movementDestination_138.y - model.coord2_14.coord.transfer.y) * 2 - sobj.movementTicks_144 * 7 * (sobj.movementTicks_144 - 1)) / (sobj.movementTicks_144 * 2);
+    final float deltaY = sobj.movementDestination_138.y - model.coord2_14.coord.transfer.y;
+    sobj.movementStepY_134 = (deltaY * 2 - movementTicks * 7 * (movementTicks - 1)) / (movementTicks * 2) / (3 - vsyncMode_8007a3b8);
     sobj.us_170 = 2;
     sobj.s_172 = 1;
-    sobj.movementStepAccelerationY_18c = 7 / (2.0f / vsyncMode_8007a3b8);
+    sobj.movementStepAccelerationY_18c = 7 / (4.0f / (vsyncMode_8007a3b8 * vsyncMode_8007a3b8));
     this.sobjs_800c6880[sobj.sobjIndex_130].setTempTicker(this::tickSobjMovement);
     return FlowControl.CONTINUE;
   }
