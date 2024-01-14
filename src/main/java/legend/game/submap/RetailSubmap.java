@@ -649,7 +649,7 @@ public class RetailSubmap extends Submap {
       }
     }
 
-    final SubmapEnvironmentTextureEvent event = EVENTS.postEvent(new SubmapEnvironmentTextureEvent(this.cut));
+    final SubmapEnvironmentTextureEvent event = EVENTS.postEvent(new SubmapEnvironmentTextureEvent(drgnBinIndex_800bc058, this.cut));
 
     this.backgroundRect = Rect4i.bound(rects);
     final int[] empty = new int[this.backgroundRect.w * this.backgroundRect.h];
