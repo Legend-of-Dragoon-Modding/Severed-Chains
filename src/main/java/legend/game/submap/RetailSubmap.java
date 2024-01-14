@@ -686,36 +686,34 @@ public class RetailSubmap extends Submap {
       }
     }
 
-    if(event.foregrounds != null && event.foregrounds.length == this.envForegroundTextureCount_800cb580) {
-      this.foregroundTextures = event.foregrounds;
-    } else {
-      // Create one texture per foreground and position the foreground in the correct spot
-      this.foregroundTextures = new Texture[this.envForegroundTextureCount_800cb580];
-      for(int i = 0; i < this.envForegroundTextureCount_800cb580; i++) {
-        if(tims[this.envBackgroundTextureCount_800cb57c + i] != null) {
-          final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[this.envBackgroundTextureCount_800cb57c + i];
-          final VramTextureSingle texture = (VramTextureSingle)VramTextureLoader.textureFromTim(tims[this.envBackgroundTextureCount_800cb57c + i]);
-          final VramTextureSingle palette = (VramTextureSingle)VramTextureLoader.palettesFromTim(tims[this.envBackgroundTextureCount_800cb57c + i])[0];
+    this.foregroundTextures = event.foregrounds;
 
-          final Rect4i rect = rects[this.envBackgroundTextureCount_800cb57c + i];
-          final int[] data = texture.applyPalette(palette, new Rect4i(metrics.u_14, metrics.v_15, rect.w, rect.h));
+    // Create one texture per foreground and position the foreground in the correct spot
+    for(int i = 0; i < this.envForegroundTextureCount_800cb580; i++) {
+      if(this.foregroundTextures[i] == null && tims[this.envBackgroundTextureCount_800cb57c + i] != null) {
+        final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[this.envBackgroundTextureCount_800cb57c + i];
+        final VramTextureSingle texture = (VramTextureSingle)VramTextureLoader.textureFromTim(tims[this.envBackgroundTextureCount_800cb57c + i]);
+        final VramTextureSingle palette = (VramTextureSingle)VramTextureLoader.palettesFromTim(tims[this.envBackgroundTextureCount_800cb57c + i])[0];
 
-          // Set alpha so the fragments don't get culled
-          for(int n = 0; n < data.length; n++) {
-            if(data[n] != 0) {
-              data[n] |= 0xff << 24;
-            }
+        final Rect4i rect = rects[this.envBackgroundTextureCount_800cb57c + i];
+        final Rect4i appliedRect = new Rect4i(metrics.u_14, metrics.v_15, rect.w, rect.h);
+        final int[] data = texture.applyPalette(palette, appliedRect);
+
+        // Set alpha so the fragments don't get culled
+        for(int n = 0; n < data.length; n++) {
+          if(data[n] != 0) {
+            data[n] |= 0xff << 24;
           }
-
-          this.foregroundTextures[i] = Texture.create(builder -> {
-            builder.data(empty, this.backgroundRect.w, this.backgroundRect.h);
-            builder.internalFormat(GL_RGBA);
-            builder.dataFormat(GL_RGBA);
-            builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
-          });
-
-          this.foregroundTextures[i].data(metrics.offsetX_1c - this.backgroundRect.x, metrics.offsetY_1e - this.backgroundRect.y, rect.w, rect.h, data);
         }
+
+        this.foregroundTextures[i] = Texture.create(builder -> {
+          builder.data(empty, this.backgroundRect.w, this.backgroundRect.h);
+          builder.internalFormat(GL_RGBA);
+          builder.dataFormat(GL_RGBA);
+          builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
+        });
+
+        this.foregroundTextures[i].data(metrics.offsetX_1c - this.backgroundRect.x, metrics.offsetY_1e - this.backgroundRect.y, rect.w, rect.h, data);
       }
     }
 
