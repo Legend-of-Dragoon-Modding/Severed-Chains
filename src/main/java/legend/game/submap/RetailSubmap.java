@@ -697,6 +697,16 @@ public class RetailSubmap extends Submap {
 
         final Rect4i rect = rects[this.envBackgroundTextureCount_800cb57c + i];
         final Rect4i appliedRect = new Rect4i(metrics.u_14, metrics.v_15, rect.w, rect.h);
+
+        // Neet flashback in lumberjack's shack (DRGN21/712) has a busted cutout that's way taller than the texture
+        if(appliedRect.right() > texture.rect.w) {
+          appliedRect.w = texture.rect.w - appliedRect.x;
+        }
+
+        if(appliedRect.bottom() > texture.rect.h) {
+          appliedRect.h = texture.rect.h - appliedRect.y;
+        }
+
         final int[] data = texture.applyPalette(palette, appliedRect);
 
         // Set alpha so the fragments don't get culled
@@ -713,7 +723,7 @@ public class RetailSubmap extends Submap {
           builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
         });
 
-        this.foregroundTextures[i].data(metrics.offsetX_1c - this.backgroundRect.x, metrics.offsetY_1e - this.backgroundRect.y, rect.w, rect.h, data);
+        this.foregroundTextures[i].data(metrics.offsetX_1c - this.backgroundRect.x, metrics.offsetY_1e - this.backgroundRect.y, appliedRect.w, appliedRect.h, data);
       }
     }
 
