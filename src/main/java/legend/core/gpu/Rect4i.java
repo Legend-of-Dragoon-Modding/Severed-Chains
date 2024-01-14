@@ -50,6 +50,10 @@ public final class Rect4i {
     int maxY = Integer.MIN_VALUE;
 
     for(final Rect4i rect : rects) {
+      if(rect == null) {
+        continue;
+      }
+
       if(rect.x < minX) {
         minX = rect.x;
       }

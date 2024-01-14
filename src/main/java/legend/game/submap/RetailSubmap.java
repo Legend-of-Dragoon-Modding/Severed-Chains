@@ -643,6 +643,10 @@ public class RetailSubmap extends Submap {
           break;
         }
       }
+
+      if(rects[i] == null) {
+        LOGGER.warn("Failed to find texture for env slot %d", i);
+      }
     }
 
     final SubmapEnvironmentTextureEvent event = EVENTS.postEvent(new SubmapEnvironmentTextureEvent(this.cut));
@@ -662,21 +666,23 @@ public class RetailSubmap extends Submap {
 
       // Arrange the segments of the background textures into one texture
       for(int i = 0; i < this.envBackgroundTextureCount_800cb57c; i++) {
-        final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[i];
-        final VramTextureSingle texture = (VramTextureSingle)VramTextureLoader.textureFromTim(tims[i]);
-        final VramTextureSingle palette = (VramTextureSingle)VramTextureLoader.palettesFromTim(tims[i])[0];
+        if(tims[i] != null) {
+          final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[i];
+          final VramTextureSingle texture = (VramTextureSingle)VramTextureLoader.textureFromTim(tims[i]);
+          final VramTextureSingle palette = (VramTextureSingle)VramTextureLoader.palettesFromTim(tims[i])[0];
 
-        final Rect4i rect = rects[i];
-        final int[] data = texture.applyPalette(palette, new Rect4i(metrics.u_14, metrics.v_15, rect.w, rect.h));
+          final Rect4i rect = rects[i];
+          final int[] data = texture.applyPalette(palette, new Rect4i(metrics.u_14, metrics.v_15, rect.w, rect.h));
 
-        // Set alpha so the fragments don't get culled
-        for(int n = 0; n < data.length; n++) {
-          if(data[n] != 0) {
-            data[n] |= 0xff << 24;
+          // Set alpha so the fragments don't get culled
+          for(int n = 0; n < data.length; n++) {
+            if(data[n] != 0) {
+              data[n] |= 0xff << 24;
+            }
           }
-        }
 
-        this.backgroundTexture.data(metrics.offsetX_1c - this.backgroundRect.x, metrics.offsetY_1e - this.backgroundRect.y, rect.w, rect.h, data);
+          this.backgroundTexture.data(metrics.offsetX_1c - this.backgroundRect.x, metrics.offsetY_1e - this.backgroundRect.y, rect.w, rect.h, data);
+        }
       }
     }
 
@@ -686,28 +692,30 @@ public class RetailSubmap extends Submap {
       // Create one texture per foreground and position the foreground in the correct spot
       this.foregroundTextures = new Texture[this.envForegroundTextureCount_800cb580];
       for(int i = 0; i < this.envForegroundTextureCount_800cb580; i++) {
-        final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[this.envBackgroundTextureCount_800cb57c + i];
-        final VramTextureSingle texture = (VramTextureSingle)VramTextureLoader.textureFromTim(tims[this.envBackgroundTextureCount_800cb57c + i]);
-        final VramTextureSingle palette = (VramTextureSingle)VramTextureLoader.palettesFromTim(tims[this.envBackgroundTextureCount_800cb57c + i])[0];
+        if(tims[this.envBackgroundTextureCount_800cb57c + i] != null) {
+          final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[this.envBackgroundTextureCount_800cb57c + i];
+          final VramTextureSingle texture = (VramTextureSingle)VramTextureLoader.textureFromTim(tims[this.envBackgroundTextureCount_800cb57c + i]);
+          final VramTextureSingle palette = (VramTextureSingle)VramTextureLoader.palettesFromTim(tims[this.envBackgroundTextureCount_800cb57c + i])[0];
 
-        final Rect4i rect = rects[this.envBackgroundTextureCount_800cb57c + i];
-        final int[] data = texture.applyPalette(palette, new Rect4i(metrics.u_14, metrics.v_15, rect.w, rect.h));
+          final Rect4i rect = rects[this.envBackgroundTextureCount_800cb57c + i];
+          final int[] data = texture.applyPalette(palette, new Rect4i(metrics.u_14, metrics.v_15, rect.w, rect.h));
 
-        // Set alpha so the fragments don't get culled
-        for(int n = 0; n < data.length; n++) {
-          if(data[n] != 0) {
-            data[n] |= 0xff << 24;
+          // Set alpha so the fragments don't get culled
+          for(int n = 0; n < data.length; n++) {
+            if(data[n] != 0) {
+              data[n] |= 0xff << 24;
+            }
           }
+
+          this.foregroundTextures[i] = Texture.create(builder -> {
+            builder.data(empty, this.backgroundRect.w, this.backgroundRect.h);
+            builder.internalFormat(GL_RGBA);
+            builder.dataFormat(GL_RGBA);
+            builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
+          });
+
+          this.foregroundTextures[i].data(metrics.offsetX_1c - this.backgroundRect.x, metrics.offsetY_1e - this.backgroundRect.y, rect.w, rect.h, data);
         }
-
-        this.foregroundTextures[i] = Texture.create(builder -> {
-          builder.data(empty, this.backgroundRect.w, this.backgroundRect.h);
-          builder.internalFormat(GL_RGBA);
-          builder.dataFormat(GL_RGBA);
-          builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
-        });
-
-        this.foregroundTextures[i].data(metrics.offsetX_1c - this.backgroundRect.x, metrics.offsetY_1e - this.backgroundRect.y, rect.w, rect.h, data);
       }
     }
 
@@ -1076,7 +1084,7 @@ public class RetailSubmap extends Submap {
     //LAB_800e7de0
     // Render overlays
     for(int i = 0; i < this.envForegroundTextureCount_800cb580; i++) {
-      if(!this.envForegroundMetrics_800cb590[i].hidden_08) {
+      if(!this.envForegroundMetrics_800cb590[i].hidden_08 && this.foregroundTextures[i] != null) {
         final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[this.envBackgroundTextureCount_800cb57c + i];
 
         if(metrics.obj == null) {
