@@ -276,9 +276,10 @@ public class Credits extends EngineState {
 
   @Method(0x800eadfcL)
   private void renderCredits() {
+  final boolean creditsComplete = this.loadAndRenderCredits();
     this.renderCreditsGradient();
 
-    if(this.loadAndRenderCredits()) {
+    if(creditsComplete) {
       startFadeEffect(1, 15);
       this.loadingStage++;
     }
@@ -318,9 +319,9 @@ public class Credits extends EngineState {
   @Method(0x800eaf24L)
   private void renderCreditsGradient() {
     this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 40.0f);
-    RENDERER.queueOrthoModel(this.gradient, this.transforms);
+    RENDERER.queueOrthoOverlayModel(this.gradient, this.transforms);
     this.transforms.rotate(MathHelper.PI, 0, 0, 0);
-    RENDERER.queueOrthoModel(this.gradient, this.transforms);
+    RENDERER.queueOrthoOverlayModel(this.gradient, this.transforms);
     GPU.queueCommand(10, new GpuCommandPoly(4)
       .translucent(Translucency.B_MINUS_F)
       .monochrome(0, 0xff)
@@ -382,7 +383,7 @@ public class Credits extends EngineState {
 
           this.transforms.identity();
           this.transforms.transfer.set(GPU.getOffsetX() + x, GPU.getOffsetY() +  y, (orderingTableSize_1f8003c8 - 3) * 4.0f);
-          RENDERER.queueOrthoModel(this.credits, this.transforms)
+          RENDERER.queueOrthoOverlayModel(this.credits, this.transforms)
             .vertices(credit.index * 4, 4)
             .colour(credit.colour_00);
           this.renderQuad(
