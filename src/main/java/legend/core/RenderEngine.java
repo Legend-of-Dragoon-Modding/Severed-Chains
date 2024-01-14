@@ -681,7 +681,7 @@ public class RenderEngine {
   }
 
   private void renderPoolTranslucent(final QueuePool<QueuedModel<VoidShaderOptions>> pool) {
-    glDepthMask(true);
+    glDepthMask(false);
     glDisable(GL_CULL_FACE);
     glEnable(GL_BLEND);
 
@@ -717,7 +717,6 @@ public class RenderEngine {
     }
 
     // Order-independent translucency for (B+F)/2
-    glDepthMask(false);
     glBlendFunci(0, GL_ONE, GL_ONE);
     glBlendFunci(1, GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
     glBlendEquation(GL_FUNC_ADD);
