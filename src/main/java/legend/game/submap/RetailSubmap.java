@@ -36,6 +36,9 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -698,6 +701,14 @@ public class RetailSubmap extends Submap {
         final Rect4i rect = rects[this.envBackgroundTextureCount_800cb57c + i];
         final Rect4i appliedRect = new Rect4i(metrics.u_14, metrics.v_15, rect.w, rect.h);
         final int[] data = texture.applyPalette(palette, appliedRect);
+
+        try {
+          final Path path = Path.of("./dump/" + drgnBinIndex_800bc058 + '/' + this.cut + '/' + i + '-' + rect.x + 'x' + rect.y + ".png");
+          Files.createDirectories(path.getParent());
+          VramTextureSingle.dumpToFile(appliedRect, data, path);
+        } catch(final IOException e) {
+          throw new RuntimeException(e);
+        }
 
         // Set alpha so the fragments don't get culled
         for(int n = 0; n < data.length; n++) {

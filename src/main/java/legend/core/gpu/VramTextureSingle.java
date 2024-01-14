@@ -4,8 +4,9 @@ import legend.core.opengl.Texture;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 
 import static org.lwjgl.opengl.GL11C.GL_RGBA;
@@ -120,13 +121,14 @@ public class VramTextureSingle extends VramTexture {
     return this.createOpenglTexture(palette, new Rect4i(0, 0, this.rect.w, this.rect.h));
   }
 
-  public void dumpToFile() {
-    final BufferedImage image = new BufferedImage(this.rect.w(), this.rect.h(), BufferedImage.TYPE_INT_RGB);
+  public static void dumpToFile(final Rect4i rect, final int[] data, final Path path) {
+    final BufferedImage image = new BufferedImage(rect.w(), rect.h(), BufferedImage.TYPE_INT_RGB);
 
-    image.setRGB(0, 0, this.rect.w(), this.rect.h(), this.data, 0, this.rect.w());
+    image.setRGB(0, 0, rect.w(), rect.h(), data, 0, rect.w());
 
     try {
-      ImageIO.write(image, "png", new File("dump.png"));
+      Files.deleteIfExists(path);
+      ImageIO.write(image, "png", path.toFile());
     } catch(final IOException e) {
       throw new RuntimeException(e);
     }
