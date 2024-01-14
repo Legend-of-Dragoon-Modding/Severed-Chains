@@ -124,7 +124,16 @@ public class VramTextureSingle extends VramTexture {
   public static void dumpToFile(final Rect4i rect, final int[] data, final Path path) {
     final BufferedImage image = new BufferedImage(rect.w(), rect.h(), BufferedImage.TYPE_INT_RGB);
 
-    image.setRGB(0, 0, rect.w(), rect.h(), data, 0, rect.w());
+    final int[] newData = Arrays.copyOf(data, data.length);
+    for(int i = 0; i < newData.length; i++) {
+      final int b = newData[i]        & 0xff;
+      final int g = newData[i] >>>  8 & 0xff;
+      final int r = newData[i] >>> 16 & 0xff;
+      final int a = newData[i] >>> 24 & 0xff;
+      newData[i] = a << 24 | b << 16 | g << 8 | r;
+    }
+
+    image.setRGB(0, 0, rect.w(), rect.h(), newData, 0, rect.w());
 
     try {
       Files.deleteIfExists(path);
