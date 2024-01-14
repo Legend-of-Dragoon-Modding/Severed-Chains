@@ -24,6 +24,7 @@ import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
 import legend.game.combat.environment.StageData2c;
 import legend.game.debugger.Debugger;
 import legend.game.inventory.WhichMenu;
+import legend.game.modding.events.RenderEvent;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
@@ -57,6 +58,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 import static legend.core.GameEngine.SCREENS;
@@ -345,6 +347,9 @@ public final class Scus94491BpeSegment {
     scriptFunctionDescriptions.put(82, r -> "deallocate children; pause; rewind;");
     scriptFunctionDescriptions.put(83, r -> "deallocate %s (p0);%s".formatted(r.params_20[0], r.scriptState_04.index == r.params_20[0].get() ? "; pause; rewind;" : ""));
   }
+
+  private static final RenderEvent RENDER_EVENT = new RenderEvent();
+
   @Method(0x80011e1cL)
   public static void gameLoop() {
     RENDERER.events().onKeyPress((window, key, scancode, mods) -> {
@@ -398,6 +403,8 @@ public final class Scus94491BpeSegment {
       if(currentEngineState_8004dd04 != null) {
         currentEngineState_8004dd04.tick();
       }
+
+      EVENTS.postEvent(RENDER_EVENT);
 
       SCREENS.render(RENDERER, matrixStack, scissorStack);
 
