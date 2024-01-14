@@ -16,7 +16,6 @@ import legend.game.tim.Tim;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import org.joml.Vector2i;
-import org.joml.Vector3f;
 
 import java.util.Arrays;
 import java.util.List;
@@ -201,7 +200,7 @@ public class Credits extends EngineState {
       final CreditData1c credit = this.credits_800d1af8[creditSlot];
 
       //LAB_800eab1c
-      credit.colour_00.set(0x80, 0x80, 0x80);
+      credit.colour_00.set(0.5f);
       credit.scroll_12 = 0;
       credit.brightnessAngle_14 = 0;
       credit.state_16 = CreditState.LOAD_0;
@@ -385,10 +384,10 @@ public class Credits extends EngineState {
           this.transforms.transfer.set(GPU.getOffsetX() + x, GPU.getOffsetY() +  y, (orderingTableSize_1f8003c8 - 3) * 4.0f);
           RENDERER.queueOrthoModel(this.credits, this.transforms)
             .vertices(credit.index * 4, 4)
-            .colour(new Vector3f().set(credit.colour_00).div(255.0f));
+            .colour(credit.colour_00);
           this.renderQuad(
             Bpp.BITS_4, creditSlot / 8 * 128 + 512 & 0x3c0, 0, clut,
-            credit.colour_00.x, credit.colour_00.y, credit.colour_00.z,
+            Math.round(credit.colour_00.x * 255), Math.round(credit.colour_00.y * 255), Math.round(credit.colour_00.z * 255),
             0, creditSlot % 8 * 64,
             w, h,
             x, y,
@@ -586,7 +585,7 @@ public class Credits extends EngineState {
     switch(credit.type_08) {
       case MAJOR_HEADER_0, MINOR_HEADER_1 -> {
         credit.y_0c = 136 - scroll;
-        credit.colour_00.set(192, 93, 81);
+        credit.colour_00.set(192.0f / 255.0f, 93.0f / 255.0f, 81.0f / 255.0f);
 
         if(scroll > 304) {
           credit.state_16 = CreditState.PASSED_3;
@@ -597,7 +596,7 @@ public class Credits extends EngineState {
       //LAB_800ec51c
       case NAME_2 -> {
         credit.y_0c = 136 - scroll;
-        credit.colour_00.set(118, 107, 195);
+        credit.colour_00.set(118.0f / 255.0f, 107.0f / 255.0f, 195.0f / 255.0f);
 
         if(scroll > 304) {
           credit.state_16 = CreditState.PASSED_3;
@@ -613,15 +612,15 @@ public class Credits extends EngineState {
         if(credit.scroll_12 < 64) {
           if(prevCredit.type_08 == CreditsType.DIRECTOR_3) {
             credit.y_0c = -credit.height_10 / 2 + 13;
-            credit.colour_00.x = rsin(credit.scroll_12 * 16) * 118 >> 12;
-            credit.colour_00.y = rsin(credit.scroll_12 * 16) * 107 >> 12;
-            credit.colour_00.z = rsin(credit.scroll_12 * 16) * 195 >> 12;
+            credit.colour_00.x = (rsin(credit.scroll_12 * 16) * 118 >> 12) / 255.0f;
+            credit.colour_00.y = (rsin(credit.scroll_12 * 16) * 107 >> 12) / 255.0f;
+            credit.colour_00.z = (rsin(credit.scroll_12 * 16) * 195 >> 12) / 255.0f;
           } else {
             //LAB_800ec89c
             credit.y_0c = -credit.height_10 / 2 - 13;
-            credit.colour_00.x = rsin(credit.scroll_12 * 16) * 192 >> 12;
-            credit.colour_00.y = rsin(credit.scroll_12 * 16) * 93 >> 12;
-            credit.colour_00.z = rsin(credit.scroll_12 * 16) * 81 >> 12;
+            credit.colour_00.x = (rsin(credit.scroll_12 * 16) * 192 >> 12) / 255.0f;
+            credit.colour_00.y = (rsin(credit.scroll_12 * 16) * 93 >> 12) / 255.0f;
+            credit.colour_00.z = (rsin(credit.scroll_12 * 16) * 81 >> 12) / 255.0f;
           }
           //LAB_800eca68
         } else {
@@ -631,11 +630,11 @@ public class Credits extends EngineState {
           final int brightnessAngle = credit.brightnessAngle_14;
           if(prevCredit.type_08 == CreditsType.DIRECTOR_3) {
             credit.y_0c = -credit.height_10 / 2 - brightnessAngle + 13;
-            credit.colour_00.set(118, 107, 195);
+            credit.colour_00.set(118.0f / 255.0f, 107.0f / 255.0f, 195.0f / 255.0f);
           } else {
             //LAB_800ecc2c
             credit.y_0c = -credit.height_10 / 2 - brightnessAngle - 13;
-            credit.colour_00.set(192, 93, 81);
+            credit.colour_00.set(192.0f / 255.0f, 93.0f / 255.0f, 81.0f / 255.0f);
           }
 
           //LAB_800ecd1c
@@ -651,12 +650,12 @@ public class Credits extends EngineState {
         if(credit.y_0c < -credit.height_10 / 2 && scroll != 0) {
           credit.brightnessAngle_14 += 6;
           final int brightnessAngle = credit.brightnessAngle_14;
-          credit.colour_00.x = rcos(brightnessAngle) * 128 >> 12;
-          credit.colour_00.y = rcos(brightnessAngle) * 128 >> 12;
-          credit.colour_00.z = rcos(brightnessAngle) * 128 >> 12;
+          credit.colour_00.x = (rcos(brightnessAngle) * 128 >> 12) / 255.0f;
+          credit.colour_00.y = (rcos(brightnessAngle) * 128 >> 12) / 255.0f;
+          credit.colour_00.z = (rcos(brightnessAngle) * 128 >> 12) / 255.0f;
 
           if(brightnessAngle > 0x400) {
-            credit.colour_00.set(0, 0, 0);
+            credit.colour_00.set(0.0f, 0.0f, 0.0f);
             credit.state_16 = CreditState.PASSED_3;
             this.creditsPassed_800d1aec++;
           }
@@ -664,7 +663,7 @@ public class Credits extends EngineState {
         } else {
           //LAB_800ed000
           credit.y_0c = 136 - scroll;
-          credit.colour_00.set(0x80, 0x80, 0x80);
+          credit.colour_00.set(0.5f);
         }
       }
       //LAB_800ed0a8

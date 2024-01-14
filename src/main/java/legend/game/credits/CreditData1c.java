@@ -1,7 +1,7 @@
 package legend.game.credits;
 
 import legend.game.credits.Credits.CreditsType;
-import org.joml.Vector3i;
+import org.joml.Vector3f;
 
 public class CreditData1c {
   public enum CreditState {
@@ -13,7 +13,7 @@ public class CreditData1c {
 
   public int index;
 
-  public final Vector3i colour_00 = new Vector3i();
+  public final Vector3f colour_00 = new Vector3f();
   public int prevCreditSlot_04;
   public CreditsType type_08;
   public int y_0c;
