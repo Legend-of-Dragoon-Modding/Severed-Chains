@@ -11,6 +11,8 @@ import legend.core.opengl.QuadBuilder;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
 import legend.game.credits.CreditData1c.CreditState;
+import legend.game.input.Input;
+import legend.game.input.InputAction;
 import legend.game.tim.Tim;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
@@ -186,6 +188,11 @@ public class Credits extends EngineState {
   @Override
   @Method(0x800eaa88L)
   public void tick() {
+    if(Input.pressedThisFrame(InputAction.BUTTON_CENTER_2)
+      || Input.pressedThisFrame(InputAction.BUTTON_NORTH) || Input.pressedThisFrame(InputAction.BUTTON_SOUTH)
+      || Input.pressedThisFrame(InputAction.BUTTON_EAST) || Input.pressedThisFrame(InputAction.BUTTON_WEST)) {
+      this.loadingStage = 4;
+    }
     this.creditsStates_800f9378[this.loadingStage].run();
   }
 
