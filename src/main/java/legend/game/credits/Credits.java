@@ -338,10 +338,12 @@ public class Credits extends EngineState {
       //LAB_800eb358
       switch(credit.state_16) {
         case LOAD_0 -> {
-          //LAB_800eb3b8
-          if(this.shouldLoadNewCredit(creditSlot)) {
-            credit.state_16 = CreditState.RENDER_2;
-            this.loadCreditTim(creditSlot);
+          if(this.creditIndex_800d1af0 < 357) {
+            //LAB_800eb3b8
+            if(this.shouldLoadNewCredit(creditSlot)) {
+              credit.state_16 = CreditState.RENDER_2;
+              this.loadCreditTim(creditSlot);
+            }
           }
         }
 
