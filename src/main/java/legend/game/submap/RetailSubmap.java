@@ -130,8 +130,8 @@ public class RetailSubmap extends Submap {
 
   private final Matrix4f submapCutMatrix_800d4bb0 = new Matrix4f();
 
-  private TheEndStructB0 theEndStruct_800d4bd0;
-  private FileData theEndClut_800d4bd4;
+  private TheEndEffectDatab0 theEndData_800d4bd0;
+  private FileData theEndClutData_800d4bd4;
 
   private CContainer submapCutModel;
   private TmdAnimationFile submapCutAnim;
@@ -184,13 +184,13 @@ public class RetailSubmap extends Submap {
   public void loadAssets(final Runnable onLoaded) {
     LOGGER.info("Loading submap cut %d assets", this.cut);
 
-    this.theEndStruct_800d4bd0 = null;
-    this.theEndClut_800d4bd4 = null;
+    this.theEndData_800d4bd0 = null;
+    this.theEndClutData_800d4bd4 = null;
     this.theEndTim_800d4bf0 = null;
 
     if(this.cut == 673) { // End cutscene
-      this.theEndStruct_800d4bd0 = new TheEndStructB0();
-      this.theEndClut_800d4bd4 = new FileData(new byte[0x20]);
+      this.theEndData_800d4bd0 = new TheEndEffectDatab0();
+      this.theEndClutData_800d4bd4 = new FileData(new byte[0x20]);
     }
 
     //LAB_800edeb4
@@ -203,7 +203,7 @@ public class RetailSubmap extends Submap {
       final int cutFileIndex = smapFileIndices_800f982c[this.cut];
 
       final AtomicInteger loadedCount = new AtomicInteger();
-      final int expectedCount = cutFileIndex == 0 ? 1 : this.cut != 673 ? 2 : 3;
+      final int expectedCount = cutFileIndex == 0 ? 1 : 2;
 
       // Load sobj assets
       final List<FileData> assets = new ArrayList<>();
@@ -357,16 +357,16 @@ public class RetailSubmap extends Submap {
       return;
     }
 
-    if(this.theEndStruct_800d4bd0 != null && this.theEndClut_800d4bd4 != null) {
-      this.FUN_800ee9e0(this.theEndClut_800d4bd4, this.theEndStruct_800d4bd0, this.tpage_800f9e5c, this.clut_800f9e5e, Translucency.B_PLUS_F);
-      GPU.uploadData15(this.theEndClutRect_800d6b48, this.theEndClut_800d4bd4);
+    if(this.theEndData_800d4bd0 != null && this.theEndClutData_800d4bd4 != null) {
+      this.renderTheEnd(this.theEndClutData_800d4bd4, this.theEndData_800d4bd0, this.tpage_800f9e5c, this.clut_800f9e5e);
+      GPU.uploadData15(this.theEndClutRect_800d6b48, this.theEndClutData_800d4bd4);
     }
   }
 
   @Override
   public void unload() {
-    this.theEndStruct_800d4bd0 = null;
-    this.theEndClut_800d4bd4 = null;
+    this.theEndData_800d4bd0 = null;
+    this.theEndClutData_800d4bd4 = null;
 
     this.submapModel_800d4bf8.deleteModelParts();
 
@@ -489,8 +489,8 @@ public class RetailSubmap extends Submap {
 
     if(this.cut == 673) { // End cutscene
       this.uploadTheEndTim(this.theEndTim_800d4bf0, this.tpage_800f9e5c, this.clut_800f9e5e);
-      GPU.downloadData15(this.theEndClutRect_800d6b48, this.theEndClut_800d4bd4);
-      this.FUN_800eef6c(this.theEndClutRect_800d6b48, this.theEndClut_800d4bd4, this.theEndStruct_800d4bd0);
+      GPU.downloadData15(this.theEndClutRect_800d6b48, this.theEndClutData_800d4bd4);
+      this.initTheEndClutAnimation(this.theEndClutRect_800d6b48, this.theEndClutData_800d4bd4, this.theEndData_800d4bd0);
     }
 
     GPU.uploadData15(new Rect4i(1008, 256, submapCutTexture.getImageRect().w, submapCutTexture.getImageRect().h), submapCutTexture.getImageData());
@@ -1144,78 +1144,78 @@ public class RetailSubmap extends Submap {
   }
 
   @Method(0x800ee9e0L)
-  private void FUN_800ee9e0(final FileData a1, final TheEndStructB0 a2, final Vector2i tpage, final Vector2i clut, final Translucency transMode) {
-    if(a2._08 == 500) {
-      a2._00 = 1;
-      a2._02 = 0;
-      a2._06 = 1;
+  private void renderTheEnd(final FileData clutData, final TheEndEffectDatab0 theEnd, final Vector2i tpage, final Vector2i clut) {
+    if(theEnd.tick_08 == 500 * (3 - vsyncMode_8007a3b8)) {
+      theEnd.shouldRender_00 = true;
+      theEnd.shouldBrighten_02 = true;
+      theEnd.shouldTickClut_06 = true;
     }
 
     //LAB_800eea24
-    if(a2._00 != 0) {
-      if(a2._04 == 0) {
-        if(a2._02 == 0) {
-          a2._0c += 0x2_a800;
+    if(theEnd.shouldRender_00) {
+      if(theEnd.shouldAdjustBrightness_04) {
+        if(theEnd.shouldBrighten_02) {
+          theEnd.brightness_0c += 0x2_a800;
 
-          if(a2._0c >>> 16 >= 0x100) {
-            a2._0c = 0xff_0000;
-            a2._02 = 1;
+          if(theEnd.brightness_0c >>> 16 >= 0x100) {
+            theEnd.brightness_0c = 0xff_0000;
+            theEnd.shouldBrighten_02 = false;
           }
         } else {
           //LAB_800eead8
-          a2._0c -= 0x2_a800;
+          theEnd.brightness_0c -= 0x2_a800;
 
-          if(a2._0c >>> 16 < 0x80) {
-            a2._0c = 0x80_0000;
-            a2._04 = 1;
+          if(theEnd.brightness_0c >>> 16 < 0x80) {
+            theEnd.brightness_0c = 0x80_0000;
+            theEnd.shouldAdjustBrightness_04 = false;
           }
         }
       } else {
         //LAB_800eeb08
-        a2._0c = 0x80_0000;
+        theEnd.brightness_0c = 0x80_0000;
       }
 
       //LAB_800eeb0c
       GPU.queueCommand(40, new GpuCommandQuad()
         .vramPos(tpage.x, tpage.y >= 256 ? 256 : 0)
         .clut(clut.x, clut.y)
-        .monochrome(a2._0c >> 16)
-        .translucent(transMode)
+        .monochrome(theEnd.brightness_0c >> 16)
+        .translucent(Translucency.B_PLUS_F)
         .pos(-188, 18, 192, 72)
         .uv(0, 128)
       );
     }
 
     //LAB_800eeb78
-    if(a2._06 != 0) {
-      this.FUN_800eec10(a1, a2);
+    if(theEnd.shouldTickClut_06) {
+      this.tickTheEndClut(clutData, theEnd);
 
-      if(a2._08 == 561) {
-        a2._06 = 0;
+      if(theEnd.tick_08 == 561 * (3 - vsyncMode_8007a3b8)) {
+        theEnd.shouldTickClut_06 = false;
       }
     }
 
     //LAB_800eeba8
     //LAB_800eebac
-    a2._08++;
+    theEnd.tick_08++;
   }
 
   @Method(0x800eec10L)
-  private void FUN_800eec10(final FileData a1, final TheEndStructB0 a2) {
+  private void tickTheEndClut(final FileData clutData, final TheEndEffectDatab0 theEnd) {
     //LAB_800eec1c
     for(int i = 0; i < 16; i++) {
-      a2._50[i] += a2._10[i];
+      theEnd.currClut_50[i] += theEnd.clutStep_10[i];
 
-      final int v1 = a2._90[i];
-      if(v1 < a2._50[i] >>> 16) {
-        a2._50[i] = v1 << 16;
+      final int v1 = theEnd.finalClut_90[i];
+      if(v1 < theEnd.currClut_50[i] >>> 16) {
+        theEnd.currClut_50[i] = v1 << 16;
       }
 
       //LAB_800eec5c
-      final int sp0 = a2._50[i] >> 16 << 10;
-      final int sp2 = a2._50[i] >> 16 << 5;
-      final int sp4 = a2._50[i] >> 16;
-      a1.writeShort(i * 0x2, 0x8000 | sp0 | sp2 | sp4);
+      final int b = theEnd.currClut_50[i] >> 16 << 10;
+      final int g = theEnd.currClut_50[i] >> 16 << 5;
+      final int r = theEnd.currClut_50[i] >> 16;
+      clutData.writeShort(i * 0x2, 0x8000 | b | g | r);
     }
   }
 
@@ -1256,22 +1256,21 @@ public class RetailSubmap extends Submap {
         .lightColour(lightColourMatrix_800c3508)
         .backgroundColour(GTE.backgroundColour);
     }
-
     //LAB_800eef0c
   }
 
   @Method(0x800eef6cL)
-  private void FUN_800eef6c(final Rect4i imageRect, final FileData imageAddress, final TheEndStructB0 a2) {
+  private void initTheEndClutAnimation(final Rect4i imageRect, final FileData clutData, final TheEndEffectDatab0 theEnd) {
     //LAB_800eef94
     for(int i = 0; i < 16; i++) {
       //LAB_800eefac
-      a2._90[i] = imageAddress.readUShort(i * 0x2) & 0x1f;
-      a2._10[i] = (a2._90[i] << 16) / 60;
-      a2._50[i] = 0;
-      imageAddress.writeShort(i * 0x2, 0x8000);
+      theEnd.finalClut_90[i] = clutData.readUShort(i * 0x2) & 0x1f;
+      theEnd.clutStep_10[i] = (theEnd.finalClut_90[i] << 16) / 60;
+      theEnd.currClut_50[i] = 0;
+      clutData.writeShort(i * 0x2, 0x8000);
     }
 
-    GPU.uploadData15(imageRect, imageAddress);
+    GPU.uploadData15(imageRect, clutData);
   }
 
   @Method(0x800f4244L)
