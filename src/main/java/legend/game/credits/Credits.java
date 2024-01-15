@@ -10,13 +10,13 @@ import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
-import legend.game.credits.CreditData1c.CreditState;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.tim.Tim;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import org.joml.Vector2i;
+import org.joml.Vector3f;
 
 import java.util.Arrays;
 import java.util.List;
@@ -42,6 +42,14 @@ public class Credits extends EngineState {
     DIRECTOR_3,
     UNUSED_4, // May have been for "The End" originally
   }
+
+  public enum CreditState {
+    LOAD_0,
+    NONE_1,
+    RENDER_2,
+    PASSED_3,
+  }
+
   private List<FileData> creditTims_800d1ae0;
   private int fadeOutTicks_800d1ae4;
   private boolean creditTimsLoaded_800d1ae8;
@@ -292,102 +300,6 @@ public class Credits extends EngineState {
     //LAB_800eae28
   }
 
-  @Method(0x800eae6cL)
-  private void waitForCreditsFadeOut() {
-    this.fadeOutTicks_800d1ae4++;
-
-    if(this.fadeOutTicks_800d1ae4 >= 16 * (3 - vsyncMode_8007a3b8)) {
-      //LAB_800eaea0
-      this.loadingStage++;
-    }
-    //LAB_800eaeac
-  }
-
-  @Method(0x800eaeb8L)
-  private void deallocateCreditsAndTransitionToTheEndSubmap() {
-    //LAB_800eaedc
-    this.creditTims_800d1ae0 = null;
-
-    if(this.gradient != null) {
-      this.gradient.delete();
-      this.gradient = null;
-    }
-
-    if(this.credits != null) {
-      this.credits.delete();
-      this.credits = null;
-    }
-    engineStateOnceLoaded_8004dd24 = EngineStateEnum.SUBMAP_05;
-
-    //LAB_800eaf14
-  }
-
-  @Method(0x800eaf24L)
-  private void renderCreditsGradient() {
-    this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 40.0f);
-    RENDERER.queueOrthoOverlayModel(this.gradient, this.transforms);
-    this.transforms.rotate(MathHelper.PI, 0, 0, 0);
-    RENDERER.queueOrthoOverlayModel(this.gradient, this.transforms);
-  }
-
-  @Method(0x800eb304L)
-  private boolean loadAndRenderCredits() {
-    //LAB_800eb318
-    //LAB_800ebc0c
-    for(int creditSlot = 0; creditSlot < 16; creditSlot++) {
-      //LAB_800eb334
-      if(this.creditsPassed_800d1aec >= 357) {
-        return true;
-      }
-
-      final CreditData1c credit = this.credits_800d1af8[creditSlot];
-
-      //LAB_800eb358
-      switch(credit.state_16) {
-        case LOAD_0 -> {
-          if(this.creditIndex_800d1af0 < 357) {
-            //LAB_800eb3b8
-            if(this.shouldLoadNewCredit(creditSlot)) {
-              credit.state_16 = CreditState.RENDER_2;
-              this.loadCreditTim(creditSlot);
-            }
-          }
-        }
-
-        case RENDER_2 -> {
-          //LAB_800eb408
-          this.moveCredits(creditSlot);
-
-          final float w = credit.width_0e * 4;
-          final float x = -w / 2 - 8;
-          final float y = credit.y_0c;
-
-          //LAB_800eb8e8
-          this.renderQuad(credit, x, y);
-
-          //LAB_800eba4c
-          credit.scroll_12 = credit.scroll_12 + 1.0f / (3 - vsyncMode_8007a3b8);
-        }
-
-        //LAB_800eb3a4
-        case PASSED_3 -> {
-          //LAB_800ebabc
-          if(this.credits_800d1af8[(creditSlot + 1) % 16].state_16 != CreditState.LOAD_0) {
-            credit.scroll_12 = 0.0f;
-            credit.brightnessAngle_14 = 0.0f;
-            credit.state_16 = CreditState.LOAD_0;
-          } else {
-            //LAB_800ebb84
-            credit.scroll_12 = credit.scroll_12 + 1.0f / (3 - vsyncMode_8007a3b8);
-          }
-        }
-      }
-    }
-
-    //LAB_800ebc18
-    return false;
-  }
-
   @Method(0x800ebc2cL)
   private boolean shouldLoadNewCredit(final int creditSlot) {
     //LAB_800ebc5c
@@ -546,6 +458,40 @@ public class Credits extends EngineState {
     return false;
   }
 
+  @Method(0x800ed160L)
+  private void loadCreditTim(final int creditSlot) {
+    if(this.creditIndex_800d1af0 < this.creditTims_800d1ae0.size()) {
+      //LAB_800ed100
+      if(this.creditTims_800d1ae0.get(this.creditIndex_800d1af0).size() != 0) {
+        final Tim tim = new Tim(this.creditTims_800d1ae0.get(this.creditIndex_800d1af0));
+
+        this.creditIndex_800d1af0++;
+
+        if(this.creditIndex_800d1af0 > 357) {
+          this.creditIndex_800d1af0 = 357;
+        }
+
+        final CreditData1c credit = this.credits_800d1af8[creditSlot];
+        credit.index = this.creditIndex_800d1af0 - 1;
+
+        //LAB_800ed1f8
+        final Rect4i imageRect = tim.getImageRect();
+        imageRect.x = creditVramPos_800f9670[creditSlot].x;
+        imageRect.y = creditVramPos_800f9670[creditSlot].y;
+
+        credit.width_0e = imageRect.w;
+        credit.height_10 = imageRect.h;
+
+        GPU.uploadData15(imageRect, tim.getImageData());
+
+        if(tim.hasClut()) {
+          GPU.uploadData15(new Rect4i(896, creditSlot, 16, 1), tim.getClutData());
+        }
+      }
+    }
+    //LAB_800ed32c
+  }
+
   @Method(0x800ec37cL)
   private void moveCredits(final int creditSlot) {
     final CreditData1c credit = this.credits_800d1af8[creditSlot];
@@ -641,38 +587,70 @@ public class Credits extends EngineState {
     //LAB_800ed0b0
   }
 
-  @Method(0x800ed160L)
-  private void loadCreditTim(final int creditSlot) {
-    if(this.creditIndex_800d1af0 < this.creditTims_800d1ae0.size()) {
-      //LAB_800ed100
-      if(this.creditTims_800d1ae0.get(this.creditIndex_800d1af0).size() != 0) {
-        final Tim tim = new Tim(this.creditTims_800d1ae0.get(this.creditIndex_800d1af0));
+  @Method(0x800eaf24L)
+  private void renderCreditsGradient() {
+    this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 40.0f);
+    RENDERER.queueOrthoOverlayModel(this.gradient, this.transforms);
+    this.transforms.rotate(MathHelper.PI, 0, 0, 0);
+    RENDERER.queueOrthoOverlayModel(this.gradient, this.transforms);
+  }
 
-        this.creditIndex_800d1af0++;
+  @Method(0x800eb304L)
+  private boolean loadAndRenderCredits() {
+    //LAB_800eb318
+    //LAB_800ebc0c
+    for(int creditSlot = 0; creditSlot < 16; creditSlot++) {
+      //LAB_800eb334
+      if(this.creditsPassed_800d1aec >= 357) {
+        return true;
+      }
 
-        if(this.creditIndex_800d1af0 > 357) {
-          this.creditIndex_800d1af0 = 357;
+      final CreditData1c credit = this.credits_800d1af8[creditSlot];
+
+      //LAB_800eb358
+      switch(credit.state_16) {
+        case LOAD_0 -> {
+          if(this.creditIndex_800d1af0 < 357) {
+            //LAB_800eb3b8
+            if(this.shouldLoadNewCredit(creditSlot)) {
+              credit.state_16 = CreditState.RENDER_2;
+              this.loadCreditTim(creditSlot);
+            }
+          }
         }
 
-        final CreditData1c credit = this.credits_800d1af8[creditSlot];
-        credit.index = this.creditIndex_800d1af0 - 1;
+        case RENDER_2 -> {
+          //LAB_800eb408
+          this.moveCredits(creditSlot);
 
-        //LAB_800ed1f8
-        final Rect4i imageRect = tim.getImageRect();
-        imageRect.x = creditVramPos_800f9670[creditSlot].x;
-        imageRect.y = creditVramPos_800f9670[creditSlot].y;
+          final float w = credit.width_0e * 4;
+          final float x = -w / 2 - 8;
+          final float y = credit.y_0c;
 
-        credit.width_0e = imageRect.w;
-        credit.height_10 = imageRect.h;
+          //LAB_800eb8e8
+          this.renderQuad(credit, x, y);
 
-        GPU.uploadData15(imageRect, tim.getImageData());
+          //LAB_800eba4c
+          credit.scroll_12 = credit.scroll_12 + 1.0f / (3 - vsyncMode_8007a3b8);
+        }
 
-        if(tim.hasClut()) {
-          GPU.uploadData15(new Rect4i(896, creditSlot, 16, 1), tim.getClutData());
+        //LAB_800eb3a4
+        case PASSED_3 -> {
+          //LAB_800ebabc
+          if(this.credits_800d1af8[(creditSlot + 1) % 16].state_16 != CreditState.LOAD_0) {
+            credit.scroll_12 = 0.0f;
+            credit.brightnessAngle_14 = 0.0f;
+            credit.state_16 = CreditState.LOAD_0;
+          } else {
+            //LAB_800ebb84
+            credit.scroll_12 = credit.scroll_12 + 1.0f / (3 - vsyncMode_8007a3b8);
+          }
         }
       }
     }
-    //LAB_800ed32c
+
+    //LAB_800ebc18
+    return false;
   }
 
   @Method(0x800ed3b0L)
@@ -682,5 +660,66 @@ public class Credits extends EngineState {
     RENDERER.queueOrthoOverlayModel(this.credits, this.transforms)
       .vertices(credit.index * 4, 4)
       .colour(credit.colour_00);
+  }
+
+  @Method(0x800eae6cL)
+  private void waitForCreditsFadeOut() {
+    this.fadeOutTicks_800d1ae4++;
+
+    if(this.fadeOutTicks_800d1ae4 >= 16 * (3 - vsyncMode_8007a3b8)) {
+      //LAB_800eaea0
+      this.loadingStage++;
+    }
+    //LAB_800eaeac
+  }
+
+  @Method(0x800eaeb8L)
+  private void deallocateCreditsAndTransitionToTheEndSubmap() {
+    //LAB_800eaedc
+    this.creditTims_800d1ae0 = null;
+
+    if(this.gradient != null) {
+      this.gradient.delete();
+      this.gradient = null;
+    }
+
+    if(this.credits != null) {
+      this.credits.delete();
+      this.credits = null;
+    }
+    engineStateOnceLoaded_8004dd24 = EngineStateEnum.SUBMAP_05;
+
+    //LAB_800eaf14
+  }
+
+  public static class CreditHeader08 {
+    public final int creditIndex_00;
+    public final CreditsType type_04;
+
+    public CreditHeader08(final int creditIndex, final Credits.CreditsType type) {
+      this.creditIndex_00 = creditIndex;
+      this.type_04 = type;
+    }
+  }
+
+  public static class CreditData1c {
+    public int index;
+
+    public final Vector3f colour_00 = new Vector3f();
+    public int prevCreditSlot_04;
+    public CreditsType type_08;
+    public float y_0c;
+    public float width_0e;
+    public float height_10;
+    public float scroll_12;
+    public float brightnessAngle_14;
+    /**
+     * <ul>
+     *   <li>0 - load</li>
+     *   <li>2 - render</li>
+     *   <li>3 - off screen</li>
+     * </ul>
+     */
+    public CreditState state_16;
   }
 }
