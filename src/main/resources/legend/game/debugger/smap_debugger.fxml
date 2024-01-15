@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="legend.game.debugger.SmapDebuggerController">
+<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="legend.game.debugger.SmapDebuggerController">
     <AnchorPane VBox.vgrow="ALWAYS">
         <HBox prefHeight="400.0" prefWidth="640.0">
          <children>
@@ -44,6 +44,12 @@
                               <Insets />
                            </HBox.margin>
                         </Separator>
+                        <Button fx:id="viewAnimations" mnemonicParsing="false" onAction="#openModelViewer" prefHeight="26.0" prefWidth="76.0" text="Animations" />
+                        <Separator orientation="VERTICAL" prefHeight="200.0">
+                           <HBox.margin>
+                              <Insets left="3.0" />
+                           </HBox.margin>
+                        </Separator>
                         <Button fx:id="refreshStats" mnemonicParsing="false" onAction="#refreshValues" prefHeight="32.0" prefWidth="56.0" text="Refresh">
                            <HBox.margin>
                               <Insets />
@@ -51,7 +57,7 @@
                         </Button>
                         <Separator orientation="VERTICAL" prefHeight="200.0">
                            <HBox.margin>
-                              <Insets left="3.0" right="3.0" />
+                              <Insets left="3.0" />
                            </HBox.margin>
                         </Separator>
                         <CheckBox fx:id="renderCollision" mnemonicParsing="false" onAction="#renderCollisionClick" text="Render collision" />

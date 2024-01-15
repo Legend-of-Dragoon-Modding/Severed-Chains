@@ -23,6 +23,11 @@ public abstract class EngineState {
 
   }
 
+  /** The amount we've multiplied this engine state's frame rate by (e.g. world map was 20FPS, we multiplied it by 3 to bring it to 60FPS) */
+  public int tickMultiplier() {
+    return 2;
+  }
+
   public void restoreMusicAfterMenu() {
 
   }
