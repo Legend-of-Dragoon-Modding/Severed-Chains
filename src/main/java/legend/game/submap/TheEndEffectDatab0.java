@@ -13,7 +13,7 @@ public class TheEndEffectDatab0 {
   public int tick_08;
 
   /** .16 */
-  public int brightness_0c;
+  public float brightness_0c;
   /** .16 */
   public final int[] clutStep_10 = new int[16];
   /** .16 */

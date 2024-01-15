@@ -1190,31 +1190,31 @@ public class RetailSubmap extends Submap {
     if(theEnd.shouldRender_00) {
       if(theEnd.shouldAdjustBrightness_04) {
         if(theEnd.shouldBrighten_02) {
-          theEnd.brightness_0c += 0x2_a800;
+          theEnd.brightness_0c += (17.0f / 1632.0f) / (3 - vsyncMode_8007a3b8);
 
-          if(theEnd.brightness_0c >>> 16 >= 0x100) {
-            theEnd.brightness_0c = 0xff_0000;
+          if(theEnd.brightness_0c > 1.0f) {
+            theEnd.brightness_0c = 1.0f;
             theEnd.shouldBrighten_02 = false;
           }
         } else {
           //LAB_800eead8
-          theEnd.brightness_0c -= 0x2_a800;
+          theEnd.brightness_0c -= (17.0f / 1632.0f) / (3 - vsyncMode_8007a3b8);
 
-          if(theEnd.brightness_0c >>> 16 < 0x80) {
-            theEnd.brightness_0c = 0x80_0000;
+          if(theEnd.brightness_0c < 0.5f) {
+            theEnd.brightness_0c = 0.5f;
             theEnd.shouldAdjustBrightness_04 = false;
           }
         }
       } else {
         //LAB_800eeb08
-        theEnd.brightness_0c = 0x80_0000;
+        theEnd.brightness_0c = 0.5f;
       }
 
       //LAB_800eeb0c
       GPU.queueCommand(40, new GpuCommandQuad()
         .vramPos(tpage.x, tpage.y >= 256 ? 256 : 0)
         .clut(clut.x, clut.y)
-        .monochrome(theEnd.brightness_0c >> 16)
+        .monochrome(theEnd.brightness_0c)
         .translucent(Translucency.B_PLUS_F)
         .pos(-188, 18, 192, 72)
         .uv(0, 128)

@@ -385,7 +385,7 @@ public final class Scus94491BpeSegment_8002 {
         //LAB_800da138
         for(int i = 0; i < 4; i++) {
           if(model.smallerStructPtr_a4.uba_04[i]) {
-            FUN_800dde70(model, i);
+            animateSubmapModelClut(model, i);
           }
         }
       }
@@ -423,22 +423,21 @@ public final class Scus94491BpeSegment_8002 {
       applyInterpolationFrame(model, framesPerKeyframe);
       model.subFrameIndex++;
     }
-
     //LAB_80020e98
     //LAB_80020ea8
   }
 
   /** (pulled from SMAP) Used in pre-Melbu submap cutscene, Prairie, new game Rose cutscene (animates the cloud flicker by changing CLUT, pretty sure this is CLUT animation) */
   @Method(0x800dde70L)
-  private static void FUN_800dde70(final Model124 struct, final int index) {
-    final SmallerStruct smallerStruct = struct.smallerStructPtr_a4;
+  private static void animateSubmapModelClut(final Model124 model, final int index) {
+    final SmallerStruct smallerStruct = model.smallerStructPtr_a4;
 
     if(smallerStruct.tmdSubExtensionArr_20[index] == null) {
       smallerStruct.uba_04[index] = false;
     } else {
       //LAB_800ddeac
-      final int x = struct.uvAdjustments_9d.clutX;
-      final int y = struct.uvAdjustments_9d.clutY;
+      final int x = model.uvAdjustments_9d.clutX;
+      final int y = model.uvAdjustments_9d.clutY;
 
       final TmdSubExtension v = smallerStruct.tmdSubExtensionArr_20[index];
       int a1 = 0;
@@ -468,7 +467,6 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_800ddf8c
       GPU.queueCommand(1, new GpuCommandCopyVramToVram(x, y + sourceYOffset, x, y + smallerStruct.sa_18[index], 16, 1));
     }
-
     //LAB_800ddff4
   }
 

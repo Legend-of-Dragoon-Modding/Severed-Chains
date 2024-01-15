@@ -6,8 +6,6 @@ import legend.core.gpu.Rect4i;
 import legend.core.memory.Method;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
-import legend.game.input.Input;
-import legend.game.input.InputAction;
 import legend.game.tim.Tim;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
@@ -170,9 +168,6 @@ public class Credits extends EngineState {
   @Override
   @Method(0x800eaa88L)
   public void tick() {
-    if(Input.pressedThisFrame(InputAction.BUTTON_SOUTH)) {
-      this.loadingStage = 4;
-    }
     this.creditsStates_800f9378[this.loadingStage].run();
   }
 
