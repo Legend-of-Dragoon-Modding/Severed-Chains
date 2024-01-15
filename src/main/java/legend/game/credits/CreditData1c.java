@@ -16,11 +16,11 @@ public class CreditData1c {
   public final Vector3f colour_00 = new Vector3f();
   public int prevCreditSlot_04;
   public CreditsType type_08;
-  public int y_0c;
-  public int width_0e;
-  public int height_10;
-  public int scroll_12;
-  public int brightnessAngle_14;
+  public float y_0c;
+  public float width_0e;
+  public float height_10;
+  public float scroll_12;
+  public float brightnessAngle_14;
   /**
    * <ul>
    *   <li>0 - load</li>
