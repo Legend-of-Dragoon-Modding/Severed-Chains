@@ -327,7 +327,7 @@ public final class Scus94491BpeSegment_8002 {
 
       //LAB_800207d4
       for(int i = 0; i < 7; i++) {
-        model.ptrs_d0[i] = model.ptr_a8._00[i];
+        model.animationMetrics_d0[i] = model.ptr_a8._00[i];
         FUN_8002246c(model, i);
       }
     } else {
@@ -336,7 +336,7 @@ public final class Scus94491BpeSegment_8002 {
 
       //LAB_80020828
       for(int i = 0; i < 7; i++) {
-        model.ptrs_d0[i] = null;
+        model.animationMetrics_d0[i] = null;
       }
     }
 
@@ -675,7 +675,7 @@ public final class Scus94491BpeSegment_8002 {
    */
   @Method(0x80022018L)
   public static void animateModelTextures(final Model124 model, final int index) {
-    if(model.ptrs_d0[index] == null) {
+    if(model.animationMetrics_d0[index] == null) {
       model.animateTextures_ec[index] = false;
       return;
     }
@@ -686,8 +686,8 @@ public final class Scus94491BpeSegment_8002 {
       return;
     }
 
-    final int x = model.uvAdjustments_9d.tpageX;
-    final int y = model.uvAdjustments_9d.tpageY;
+    final int vramX = model.uvAdjustments_9d.tpageX;
+    final int vramY = model.uvAdjustments_9d.tpageY;
 
     //LAB_800220c0
     if(model.usArr_ba[index] != 0x5678) {
@@ -696,27 +696,27 @@ public final class Scus94491BpeSegment_8002 {
         return;
       }
 
-      int s1 = 0;
-      model.usArr_ba[index] = model.ptrs_d0[index][s1++] & 0x7fff;
-      final int destX = model.ptrs_d0[index][s1++] + x;
-      final int destY = model.ptrs_d0[index][s1++] + y;
-      final short w = (short)(model.ptrs_d0[index][s1++] / 4);
-      final short h = model.ptrs_d0[index][s1++];
+      int metricsIndex = 0;
+      model.usArr_ba[index] = model.animationMetrics_d0[index][metricsIndex++] & 0x7fff;
+      final int destX = model.animationMetrics_d0[index][metricsIndex++] + vramX;
+      final int destY = model.animationMetrics_d0[index][metricsIndex++] + vramY;
+      final short w = (short)(model.animationMetrics_d0[index][metricsIndex++] / 4);
+      final short h = model.animationMetrics_d0[index][metricsIndex++];
 
       //LAB_80022154
       for(int i = 0; i < model.usArr_ac[index]; i++) {
-        s1 += 2;
+        metricsIndex += 2;
       }
 
       //LAB_80022164
-      final short x2 = (short)(model.ptrs_d0[index][s1++] + x);
-      final short y2 = (short)(model.ptrs_d0[index][s1++] + y);
+      final short x2 = (short)(model.animationMetrics_d0[index][metricsIndex++] + vramX);
+      final short y2 = (short)(model.animationMetrics_d0[index][metricsIndex++] + vramY);
 
       GPU.queueCommand(1, new GpuCommandCopyVramToVram(x2, y2, destX & 0xffff, destY & 0xffff, w, h));
 
       model.usArr_ac[index]++;
 
-      final int v1 = model.ptrs_d0[index][s1];
+      final int v1 = model.animationMetrics_d0[index][metricsIndex];
       if(v1 == -2) {
         model.animateTextures_ec[index] = false;
         model.usArr_ac[index] = 0;
@@ -731,67 +731,66 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80022208
-    int s1 = 1;
-    final int s6 = model.ptrs_d0[index][s1++] + x;
-    final int s7 = model.ptrs_d0[index][s1++] + y;
-    final int s5 = model.ptrs_d0[index][s1++] / 4;
-    int s3 = model.ptrs_d0[index][s1++];
-    final int v1 = model.ptrs_d0[index][s1++];
-    int s0_0 = model.ptrs_d0[index][s1];
+    int metricsIndex = 1;
+    final int x = model.animationMetrics_d0[index][metricsIndex++] + vramX;
+    final int y = model.animationMetrics_d0[index][metricsIndex++] + vramY;
+    final int w = model.animationMetrics_d0[index][metricsIndex++] / 4;
+    int h = model.animationMetrics_d0[index][metricsIndex++];
+    final int copyMode = model.animationMetrics_d0[index][metricsIndex++];
+    int secondaryYOffsetH = model.animationMetrics_d0[index][metricsIndex];
 
     if((model.usArr_ac[index] & 0xf) != 0) {
       model.usArr_ac[index]--;
 
       if(model.usArr_ac[index] == 0) {
-        model.usArr_ac[index] = s0_0;
-        s0_0 = 16;
+        model.usArr_ac[index] = secondaryYOffsetH;
+        secondaryYOffsetH = 16;
       } else {
         //LAB_80022278
-        s0_0 = 0;
+        secondaryYOffsetH = 0;
       }
     }
 
     //LAB_8002227c
-    if((short)s0_0 == 0) {
+    if((short)secondaryYOffsetH == 0) {
       return;
     }
 
-    GPU.queueCommand(1, new GpuCommandCopyVramToVram(960, 256, s6 & 0xffff, s7 & 0xffff, s5, s3));
+    GPU.queueCommand(1, new GpuCommandCopyVramToVram(960, 256, x & 0xffff, y & 0xffff, w, h));
 
-    s0_0 /= 16;
-    s3 -= s0_0;
+    secondaryYOffsetH /= 16;
+    h -= secondaryYOffsetH;
 
-    if((short)v1 == 0) {
-      GPU.queueCommand(1, new GpuCommandCopyVramToVram(s6, s7 + s3, 960, 256, s5, s0_0));
-      GPU.queueCommand(1, new GpuCommandCopyVramToVram(s6, s7, 960, s0_0 + 256, s5, s3));
+    if((short)copyMode == 0) {
+      GPU.queueCommand(1, new GpuCommandCopyVramToVram(x, y + h, 960, 256, w, secondaryYOffsetH));
+      GPU.queueCommand(1, new GpuCommandCopyVramToVram(x, y, 960, secondaryYOffsetH + 256, w, h));
     } else {
       //LAB_80022358
-      GPU.queueCommand(1, new GpuCommandCopyVramToVram(s6, s7, 960, s3 + 256, s5, s0_0));
-      GPU.queueCommand(1, new GpuCommandCopyVramToVram(s6, s7 + s0_0, 960, 256, s5, s3));
+      GPU.queueCommand(1, new GpuCommandCopyVramToVram(x, y, 960, h + 256, w, secondaryYOffsetH));
+      GPU.queueCommand(1, new GpuCommandCopyVramToVram(x, y + secondaryYOffsetH, 960, 256, w, h));
     }
-
     //LAB_80022440
   }
 
   @Method(0x8002246cL)
-  public static void FUN_8002246c(final Model124 a0, final int a1) {
-    if(a0.ptrs_d0[a1] == null) {
-      a0.animateTextures_ec[a1] = false;
+  public static void FUN_8002246c(final Model124 model, final int index) {
+    if(model.animationMetrics_d0[index] == null) {
+      model.animateTextures_ec[index] = false;
       return;
     }
 
     //LAB_80022490
-    a0.usArr_ac[a1] = 0;
-    a0.usArr_ba[a1] = a0.ptrs_d0[a1][0] & 0x3fff;
+    model.usArr_ac[index] = 0;
+    model.usArr_ba[index] = model.animationMetrics_d0[index][0] & 0x3fff;
 
     //LAB_800224d0
-    a0.animateTextures_ec[a1] = (a0.ptrs_d0[a1][0] & 0x8000) != 0;
+    model.animateTextures_ec[index] = (model.animationMetrics_d0[index][0] & 0x8000) != 0;
 
     //LAB_800224d8
-    if((a0.ptrs_d0[a1][0] & 0x4000) != 0) {
-      a0.usArr_ba[a1] = 0x5678;
-      a0.usArr_ac[a1] = a0.ptrs_d0[a1][6];
-      a0.animateTextures_ec[a1] = true;
+    if((model.animationMetrics_d0[index][0] & 0x4000) != 0) {
+      model.usArr_ba[index] = 0x5678;
+      model.usArr_ac[index] = model.animationMetrics_d0[index][6];
+      model.animateTextures_ec[index] = true;
     }
 
     //LAB_80022510
