@@ -99,9 +99,9 @@ public class TheEndEffectDatab0 {
     for(int i = 0; i < 16; i++) {
       this.currClut_50[i] += (int)((float)this.clutStep_10[i] / (3 - vsyncMode_8007a3b8));
 
-      final int v1 = this.finalClut_90[i];
-      if(v1 < this.currClut_50[i] >>> 16) {
-        this.currClut_50[i] = v1 << 16;
+      final int maxColour = this.finalClut_90[i];
+      if(maxColour < this.currClut_50[i] >>> 16) {
+        this.currClut_50[i] = maxColour << 16;
       }
 
       //LAB_800eec5c
@@ -135,7 +135,7 @@ public class TheEndEffectDatab0 {
     if(this.shouldRender_00) {
       if(this.shouldAdjustBrightness_04) {
         if(this.shouldBrighten_02) {
-          this.brightness_0c += (17.0f / 1632.0f) / (3 - vsyncMode_8007a3b8);
+          this.brightness_0c += (1.0f / 96.0f) / (3 - vsyncMode_8007a3b8);
 
           if(this.brightness_0c > 1.0f) {
             this.brightness_0c = 1.0f;
@@ -143,7 +143,7 @@ public class TheEndEffectDatab0 {
           }
         } else {
           //LAB_800eead8
-          this.brightness_0c -= (17.0f / 1632.0f) / (3 - vsyncMode_8007a3b8);
+          this.brightness_0c -= (1.0f / 96.0f) / (3 - vsyncMode_8007a3b8);
 
           if(this.brightness_0c < 0.5f) {
             this.brightness_0c = 0.5f;
