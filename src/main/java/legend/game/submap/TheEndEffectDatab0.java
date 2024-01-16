@@ -174,4 +174,10 @@ public class TheEndEffectDatab0 {
     //LAB_800eebac
     this.tick_08++;
   }
+
+  public void deallocate() {
+    if(this.text != null) {
+      this.text.delete();
+    }
+  }
 }

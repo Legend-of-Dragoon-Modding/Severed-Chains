@@ -353,7 +353,10 @@ public class RetailSubmap extends Submap {
 
   @Override
   public void unload() {
-    this.theEnd_800d4bd0 = null;
+    if(this.theEnd_800d4bd0 != null) {
+      this.theEnd_800d4bd0.deallocate();
+      this.theEnd_800d4bd0 = null;
+    }
 
     this.submapModel_800d4bf8.deleteModelParts();
 
