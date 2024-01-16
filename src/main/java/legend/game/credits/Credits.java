@@ -534,9 +534,9 @@ public class Credits extends EngineState {
           } else {
             //LAB_800ec89c
             credit.y_0c = -credit.height_10 / 2 - 13;
-            credit.colour_00.x = sin((credit.scroll_12 * 16.0f / 4096.0f) * MathHelper.TWO_PI) * (192.0f / 255.0f);
-            credit.colour_00.y = sin((credit.scroll_12 * 16.0f / 4096.0f) * MathHelper.TWO_PI) * (93.0f / 255.0f);
-            credit.colour_00.z = sin((credit.scroll_12 * 16.0f / 4096.0f) * MathHelper.TWO_PI) * (81.0f / 255.0f);
+            credit.colour_00.x = sin(MathHelper.psxDegToRad(credit.scroll_12 * 16.0f)) * (192.0f / 255.0f);
+            credit.colour_00.y = sin(MathHelper.psxDegToRad(credit.scroll_12 * 16.0f)) * (93.0f / 255.0f);
+            credit.colour_00.z = sin(MathHelper.psxDegToRad(credit.scroll_12 * 16.0f)) * (81.0f / 255.0f);
           }
           //LAB_800eca68
         } else {
@@ -566,9 +566,9 @@ public class Credits extends EngineState {
         if(credit.y_0c < -credit.height_10 / 2 && scroll != 0) {
           credit.brightnessAngle_14 += 6.0f / (3 - vsyncMode_8007a3b8);
           final float brightnessAngle = credit.brightnessAngle_14;
-          credit.colour_00.x = cos((brightnessAngle / 4096.0f) * MathHelper.TWO_PI) * 0.5f;
-          credit.colour_00.y = cos((brightnessAngle / 4096.0f) * MathHelper.TWO_PI) * 0.5f;
-          credit.colour_00.z = cos((brightnessAngle / 4096.0f) * MathHelper.TWO_PI) * 0.5f;
+          credit.colour_00.x = cos(MathHelper.psxDegToRad(brightnessAngle)) * 0.5f;
+          credit.colour_00.y = cos(MathHelper.psxDegToRad(brightnessAngle)) * 0.5f;
+          credit.colour_00.z = cos(MathHelper.psxDegToRad(brightnessAngle)) * 0.5f;
 
           if(credit.colour_00.x < 0.0f) {
             credit.colour_00.set(0.0f, 0.0f, 0.0f);
