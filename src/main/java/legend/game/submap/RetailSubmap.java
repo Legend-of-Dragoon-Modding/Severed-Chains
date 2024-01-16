@@ -2,7 +2,6 @@ package legend.game.submap;
 
 import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
-import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.Rect4i;
 import legend.core.gpu.VramTextureLoader;
 import legend.core.gpu.VramTextureSingle;
@@ -25,7 +24,6 @@ import legend.game.types.Model124;
 import legend.game.types.MoonMusic08;
 import legend.game.types.NewRootStruct;
 import legend.game.types.TmdAnimationFile;
-import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
@@ -33,7 +31,6 @@ import org.apache.logging.log4j.Logger;
 import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
-import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
@@ -130,21 +127,15 @@ public class RetailSubmap extends Submap {
 
   private final Matrix4f submapCutMatrix_800d4bb0 = new Matrix4f();
 
-  private TheEndEffectDatab0 theEndData_800d4bd0;
-  private FileData theEndClutData_800d4bd4;
+  private TheEndEffectDatab0 theEnd_800d4bd0;
 
   private CContainer submapCutModel;
   private TmdAnimationFile submapCutAnim;
-  private Tim theEndTim_800d4bf0;
 
   private final Model124 submapModel_800d4bf8 = new Model124("Submap");
 
-  private final Rect4i theEndClutRect_800d6b48 = new Rect4i(576, 368, 16, 1);
 
   private boolean _800f7f0c;
-
-  private final Vector2i tpage_800f9e5c = new Vector2i();
-  private final Vector2i clut_800f9e5e = new Vector2i();
 
   private Tim[] envTextures;
   private Texture backgroundTexture;
@@ -184,13 +175,10 @@ public class RetailSubmap extends Submap {
   public void loadAssets(final Runnable onLoaded) {
     LOGGER.info("Loading submap cut %d assets", this.cut);
 
-    this.theEndData_800d4bd0 = null;
-    this.theEndClutData_800d4bd4 = null;
-    this.theEndTim_800d4bf0 = null;
+    this.theEnd_800d4bd0 = null;
 
     if(this.cut == 673) { // End cutscene
-      this.theEndData_800d4bd0 = new TheEndEffectDatab0();
-      this.theEndClutData_800d4bd4 = new FileData(new byte[0x20]);
+      this.theEnd_800d4bd0 = new TheEndEffectDatab0();
     }
 
     //LAB_800edeb4
@@ -232,7 +220,7 @@ public class RetailSubmap extends Submap {
         if(this.cut == 673) { // End cutscene, loads "The End" TIM
           loadDrgnFile(0, 7610, file -> allLoaded(cutCount, expectedCutCount, () -> {
             LOGGER.info("Submap cut %d the end texture loaded", this.cut);
-            this.theEndTim_800d4bf0 = new Tim(file);
+            this.theEnd_800d4bd0.setTim(new Tim(file));
           }, prepareMapAndComplete));
         }
 
@@ -357,16 +345,15 @@ public class RetailSubmap extends Submap {
       return;
     }
 
-    if(this.theEndData_800d4bd0 != null && this.theEndClutData_800d4bd4 != null) {
-      this.renderTheEnd(this.theEndClutData_800d4bd4, this.theEndData_800d4bd0, this.tpage_800f9e5c, this.clut_800f9e5e);
-      GPU.uploadData15(this.theEndClutRect_800d6b48, this.theEndClutData_800d4bd4);
+    if(this.theEnd_800d4bd0 != null) {
+      this.theEnd_800d4bd0.renderTheEnd();
+      GPU.uploadData15(this.theEnd_800d4bd0.getClutRect(), this.theEnd_800d4bd0.getClutData());
     }
   }
 
   @Override
   public void unload() {
-    this.theEndData_800d4bd0 = null;
-    this.theEndClutData_800d4bd4 = null;
+    this.theEnd_800d4bd0 = null;
 
     this.submapModel_800d4bf8.deleteModelParts();
 
@@ -488,9 +475,7 @@ public class RetailSubmap extends Submap {
     LOGGER.info("Submap cut %d preparing map", this.cut);
 
     if(this.cut == 673) { // End cutscene
-      this.uploadTheEndTim(this.theEndTim_800d4bf0, this.tpage_800f9e5c, this.clut_800f9e5e);
-      GPU.downloadData15(this.theEndClutRect_800d6b48, this.theEndClutData_800d4bd4);
-      this.initTheEndClutAnimation(this.theEndClutRect_800d6b48, this.theEndClutData_800d4bd4, this.theEndData_800d4bd0);
+      this.theEnd_800d4bd0.uploadTheEndTim();
     }
 
     GPU.uploadData15(new Rect4i(1008, 256, submapCutTexture.getImageRect().w, submapCutTexture.getImageRect().h), submapCutTexture.getImageData());
@@ -562,6 +547,11 @@ public class RetailSubmap extends Submap {
       } else {
         this.uvAdjustments.add(UvAdjustmentMetrics14.NONE);
       }
+    }
+
+    if(this.cut == 673) {
+      GPU.downloadData15(this.theEnd_800d4bd0.getClutRect(), this.theEnd_800d4bd0.getClutData());
+      this.theEnd_800d4bd0.initTheEndClutAnimation();
     }
   }
 
@@ -1178,82 +1168,6 @@ public class RetailSubmap extends Submap {
     this._800f7f0c = true;
   }
 
-  @Method(0x800ee9e0L)
-  private void renderTheEnd(final FileData clutData, final TheEndEffectDatab0 theEnd, final Vector2i tpage, final Vector2i clut) {
-    if(theEnd.tick_08 == 500 * (3 - vsyncMode_8007a3b8)) {
-      theEnd.shouldRender_00 = true;
-      theEnd.shouldBrighten_02 = true;
-      theEnd.shouldTickClut_06 = true;
-    }
-
-    //LAB_800eea24
-    if(theEnd.shouldRender_00) {
-      if(theEnd.shouldAdjustBrightness_04) {
-        if(theEnd.shouldBrighten_02) {
-          theEnd.brightness_0c += (17.0f / 1632.0f) / (3 - vsyncMode_8007a3b8);
-
-          if(theEnd.brightness_0c > 1.0f) {
-            theEnd.brightness_0c = 1.0f;
-            theEnd.shouldBrighten_02 = false;
-          }
-        } else {
-          //LAB_800eead8
-          theEnd.brightness_0c -= (17.0f / 1632.0f) / (3 - vsyncMode_8007a3b8);
-
-          if(theEnd.brightness_0c < 0.5f) {
-            theEnd.brightness_0c = 0.5f;
-            theEnd.shouldAdjustBrightness_04 = false;
-          }
-        }
-      } else {
-        //LAB_800eeb08
-        theEnd.brightness_0c = 0.5f;
-      }
-
-      //LAB_800eeb0c
-      GPU.queueCommand(40, new GpuCommandQuad()
-        .vramPos(tpage.x, tpage.y >= 256 ? 256 : 0)
-        .clut(clut.x, clut.y)
-        .monochrome(theEnd.brightness_0c)
-        .translucent(Translucency.B_PLUS_F)
-        .pos(-188, 18, 192, 72)
-        .uv(0, 128)
-      );
-    }
-
-    //LAB_800eeb78
-    if(theEnd.shouldTickClut_06) {
-      this.tickTheEndClut(clutData, theEnd);
-
-      if(theEnd.tick_08 == 561 * (3 - vsyncMode_8007a3b8)) {
-        theEnd.shouldTickClut_06 = false;
-      }
-    }
-
-    //LAB_800eeba8
-    //LAB_800eebac
-    theEnd.tick_08++;
-  }
-
-  @Method(0x800eec10L)
-  private void tickTheEndClut(final FileData clutData, final TheEndEffectDatab0 theEnd) {
-    //LAB_800eec1c
-    for(int i = 0; i < 16; i++) {
-      theEnd.currClut_50[i] += theEnd.clutStep_10[i];
-
-      final int v1 = theEnd.finalClut_90[i];
-      if(v1 < theEnd.currClut_50[i] >>> 16) {
-        theEnd.currClut_50[i] = v1 << 16;
-      }
-
-      //LAB_800eec5c
-      final int b = theEnd.currClut_50[i] >> 16 << 10;
-      final int g = theEnd.currClut_50[i] >> 16 << 5;
-      final int r = theEnd.currClut_50[i] >> 16;
-      clutData.writeShort(i * 0x2, 0x8000 | b | g | r);
-    }
-  }
-
   @Method(0x800eece0L)
   private void animateAndRenderSubmapModel(final Matrix4f matrix) {
     if(!this.hasRenderer_800c6968) {
@@ -1292,37 +1206,6 @@ public class RetailSubmap extends Submap {
         .backgroundColour(GTE.backgroundColour);
     }
     //LAB_800eef0c
-  }
-
-  @Method(0x800eef6cL)
-  private void initTheEndClutAnimation(final Rect4i imageRect, final FileData clutData, final TheEndEffectDatab0 theEnd) {
-    //LAB_800eef94
-    for(int i = 0; i < 16; i++) {
-      //LAB_800eefac
-      theEnd.finalClut_90[i] = clutData.readUShort(i * 0x2) & 0x1f;
-      theEnd.clutStep_10[i] = (theEnd.finalClut_90[i] << 16) / 60;
-      theEnd.currClut_50[i] = 0;
-      clutData.writeShort(i * 0x2, 0x8000);
-    }
-
-    GPU.uploadData15(imageRect, clutData);
-  }
-
-  @Method(0x800f4244L)
-  private void uploadTheEndTim(final Tim tim, final Vector2i tpageOut, final Vector2i clutOut) {
-    //LAB_800f427c
-    if(tim.hasClut()) {
-      final Rect4i clutRect = tim.getClutRect();
-      clutOut.set(clutRect.x, clutRect.y);
-      GPU.uploadData15(clutRect, tim.getClutData());
-    }
-
-    //LAB_800f42d0
-    final Rect4i imageRect = tim.getImageRect();
-    tpageOut.set(imageRect.x, imageRect.y);
-    GPU.uploadData15(imageRect, tim.getImageData());
-
-    //LAB_800f4338
   }
 
   @Method(0x8001b3e4L)
