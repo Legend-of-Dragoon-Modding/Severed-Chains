@@ -38,10 +38,10 @@ public class TheEndEffectDatab0 {
   /** .16 */
   private float brightness_0c;
   /** .16 */
-  private final int[] clutStep_10 = new int[16];
+  private final float[] clutStep_10 = new float[16];
   /** .16 */
-  private final int[] currClut_50 = new int[16];
-  private final int[] finalClut_90 = new int[16];
+  private final float[] currClut_50 = new float[16];
+  private final float[] finalClut_90 = new float[16];
 
   private final MV transforms = new MV();
   private Obj text;
@@ -70,8 +70,8 @@ public class TheEndEffectDatab0 {
     for(int i = 0; i < 16; i++) {
       //LAB_800eefac
       this.finalClut_90[i] = this.clutData_800d4bd4.readUShort(i * 0x2) & 0x1f;
-      this.clutStep_10[i] = (this.finalClut_90[i] << 16) / 60;
-      this.currClut_50[i] = 0;
+      this.clutStep_10[i] = this.finalClut_90[i] / 60.0f;
+      this.currClut_50[i] = 0.0f;
       this.clutData_800d4bd4.writeShort(i * 0x2, 0x8000);
     }
 
@@ -97,17 +97,17 @@ public class TheEndEffectDatab0 {
   public void tickFlameClutAnimation() {
     //LAB_800eec1c
     for(int i = 0; i < 16; i++) {
-      this.currClut_50[i] += (int)((float)this.clutStep_10[i] / (3 - vsyncMode_8007a3b8));
+      this.currClut_50[i] += this.clutStep_10[i] / (3 - vsyncMode_8007a3b8);
 
-      final int maxColour = this.finalClut_90[i];
-      if(maxColour < this.currClut_50[i] >>> 16) {
-        this.currClut_50[i] = maxColour << 16;
+      final float maxColour = this.finalClut_90[i];
+      if(maxColour < this.currClut_50[i]) {
+        this.currClut_50[i] = maxColour;
       }
 
       //LAB_800eec5c
-      final int b = this.currClut_50[i] >> 16 << 10;
-      final int g = this.currClut_50[i] >> 16 << 5;
-      final int r = this.currClut_50[i] >> 16;
+      final int b = (int)(this.currClut_50[i]) << 10;
+      final int g = (int)(this.currClut_50[i]) << 5;
+      final int r = (int)(this.currClut_50[i]);
       this.clutData_800d4bd4.writeShort(i * 0x2, 0x8000 | b | g | r);
     }
   }
