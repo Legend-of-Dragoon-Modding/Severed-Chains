@@ -1,14 +1,18 @@
 package legend.game.submap;
 
-import legend.core.gpu.GpuCommandQuad;
+import legend.core.gpu.Bpp;
 import legend.core.gpu.Rect4i;
+import legend.core.gte.MV;
 import legend.core.memory.Method;
+import legend.core.opengl.Obj;
+import legend.core.opengl.QuadBuilder;
 import legend.game.tim.Tim;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import org.joml.Vector2i;
 
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 
 public class TheEndEffectDatab0 {
@@ -39,6 +43,9 @@ public class TheEndEffectDatab0 {
   private final int[] currClut_50 = new int[16];
   private final int[] finalClut_90 = new int[16];
 
+  private final MV transforms = new MV();
+  private Obj text;
+
   public TheEndEffectDatab0() {
     this.shouldBrighten_02 = true;
     this.shouldAdjustBrightness_04 = true;
@@ -58,7 +65,7 @@ public class TheEndEffectDatab0 {
   }
 
   @Method(0x800eef6cL)
-  public void initTheEndClutAnimation() {
+  public void initFlameClutAnimation() {
     //LAB_800eef94
     for(int i = 0; i < 16; i++) {
       //LAB_800eefac
@@ -87,7 +94,7 @@ public class TheEndEffectDatab0 {
   }
 
   @Method(0x800eec10L)
-  public void tickFlameClut() {
+  public void tickFlameClutAnimation() {
     //LAB_800eec1c
     for(int i = 0; i < 16; i++) {
       this.currClut_50[i] += (int)((float)this.clutStep_10[i] / (3 - vsyncMode_8007a3b8));
@@ -106,11 +113,22 @@ public class TheEndEffectDatab0 {
   }
 
   @Method(0x800ee9e0L)
-  public void renderTheEnd() {
+  public void render() {
     if(this.tick_08 == 500 * (3 - vsyncMode_8007a3b8)) {
       this.shouldRender_00 = true;
       this.shouldBrighten_02 = true;
       this.shouldTickClut_06 = true;
+
+      this.text = new QuadBuilder("TheEnd")
+        .bpp(Bpp.BITS_4)
+        .vramPos(this.tpage_800f9e5c.x, this.tpage_800f9e5c.y >= 256 ? 256 : 0)
+        .clut(this.clut_800f9e5e.x, this.clut_800f9e5e.y)
+        .translucency(Translucency.B_PLUS_F)
+        .monochrome(1.0f)
+        .uv(0, 128)
+        .pos(-188.0f, 18.0f, 160.0f)
+        .size(192.0f, 72.0f)
+        .build();
     }
 
     //LAB_800eea24
@@ -138,19 +156,14 @@ public class TheEndEffectDatab0 {
       }
 
       //LAB_800eeb0c
-      GPU.queueCommand(40, new GpuCommandQuad()
-        .vramPos(this.tpage_800f9e5c.x, this.tpage_800f9e5c.y >= 256 ? 256 : 0)
-        .clut(this.clut_800f9e5e.x, this.clut_800f9e5e.y)
-        .monochrome(this.brightness_0c)
-        .translucent(Translucency.B_PLUS_F)
-        .pos(-188, 18, 192, 72)
-        .uv(0, 128)
-      );
+      this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 0.0f);
+      RENDERER.queueOrthoModel(this.text, this.transforms)
+        .monochrome(this.brightness_0c);
     }
 
     //LAB_800eeb78
     if(this.shouldTickClut_06) {
-      this.tickFlameClut();
+      this.tickFlameClutAnimation();
 
       if(this.tick_08 == 561 * (3 - vsyncMode_8007a3b8)) {
         this.shouldTickClut_06 = false;

@@ -346,7 +346,7 @@ public class RetailSubmap extends Submap {
     }
 
     if(this.theEnd_800d4bd0 != null) {
-      this.theEnd_800d4bd0.renderTheEnd();
+      this.theEnd_800d4bd0.render();
       GPU.uploadData15(this.theEnd_800d4bd0.getClutRect(), this.theEnd_800d4bd0.getClutData());
     }
   }
@@ -551,7 +551,7 @@ public class RetailSubmap extends Submap {
 
     if(this.cut == 673) {
       GPU.downloadData15(this.theEnd_800d4bd0.getClutRect(), this.theEnd_800d4bd0.getClutData());
-      this.theEnd_800d4bd0.initTheEndClutAnimation();
+      this.theEnd_800d4bd0.initFlameClutAnimation();
     }
   }
 
