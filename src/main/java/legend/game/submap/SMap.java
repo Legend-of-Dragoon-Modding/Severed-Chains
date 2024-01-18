@@ -2475,7 +2475,7 @@ public class SMap extends EngineState {
 
       //LAB_800e0eac
       for(int i = 0; i < 7; i++) {
-        model.ptrs_d0[i] = model.ptr_a8._00[i];
+        model.animationMetrics_d0[i] = model.ptr_a8._00[i];
         FUN_8002246c(model, i);
       }
     } else {
@@ -2484,7 +2484,7 @@ public class SMap extends EngineState {
 
       //LAB_800e0f00
       for(int i = 0; i < 7; i++) {
-        model.ptrs_d0[i] = null;
+        model.animationMetrics_d0[i] = null;
       }
     }
 
