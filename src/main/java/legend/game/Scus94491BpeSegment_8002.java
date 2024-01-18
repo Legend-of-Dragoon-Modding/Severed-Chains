@@ -414,13 +414,13 @@ public final class Scus94491BpeSegment_8002 {
     }
 
     //LAB_80020c90
-    if(model.subFrameIndex == framesPerKeyframe - 1) {
+    if(model.subFrameIndex == framesPerKeyframe - 1 || model.disableInterpolation_a2 && model.subFrameIndex == framesPerKeyframe / 2 - 1) {
       applyKeyframe(model);
       model.currentKeyframe_94++;
       model.remainingFrames_9e--;
       model.subFrameIndex = 0;
     } else {
-      applyInterpolationFrame(model, framesPerKeyframe);
+      applyInterpolationFrame(model, model.disableInterpolation_a2 ? framesPerKeyframe / 2 : framesPerKeyframe);
       model.subFrameIndex++;
     }
     //LAB_80020e98
