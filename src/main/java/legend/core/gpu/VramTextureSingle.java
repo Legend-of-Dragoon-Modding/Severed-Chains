@@ -121,17 +121,22 @@ public class VramTextureSingle extends VramTexture {
     return this.createOpenglTexture(palette, new Rect4i(0, 0, this.rect.w, this.rect.h));
   }
 
-  public static void dumpToFile(final Rect4i rect, final int[] data, final Path path) {
+  public static void dumpToFile(final Rect4i rect, final int[] data, final Path path, boolean convert15To24) {
     final BufferedImage image = new BufferedImage(rect.w(), rect.h(), BufferedImage.TYPE_INT_ARGB);
 
-    final int[] newData = Arrays.copyOf(data, data.length);
-    for(int i = 0; i < newData.length; i++) {
-      if(newData[i] != 0) {
-        final int b = newData[i] & 0xff;
-        final int g = newData[i] >>> 8 & 0xff;
-        final int r = newData[i] >>> 16 & 0xff;
-        newData[i] = 0xff << 24 | b << 16 | g << 8 | r;
+    final int[] newData;
+    if(convert15To24) {
+      newData = Arrays.copyOf(data, data.length);
+      for(int i = 0; i < newData.length; i++) {
+        if(newData[i] != 0) {
+          final int b = newData[i] & 0xff;
+          final int g = newData[i] >>> 8 & 0xff;
+          final int r = newData[i] >>> 16 & 0xff;
+          newData[i] = 0xff << 24 | b << 16 | g << 8 | r;
+        }
       }
+    } else {
+      newData = data;
     }
 
     image.setRGB(0, 0, rect.w(), rect.h(), newData, 0, rect.w());

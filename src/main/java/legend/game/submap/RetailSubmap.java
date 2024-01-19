@@ -2,6 +2,7 @@ package legend.game.submap;
 
 import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
+import legend.core.gpu.ModelTextureDumper;
 import legend.core.gpu.Rect4i;
 import legend.core.gpu.VramTextureLoader;
 import legend.core.gpu.VramTextureSingle;
@@ -545,6 +546,15 @@ public class RetailSubmap extends Submap {
             GPU.uploadData15(clutRect, tim.getClutData());
 
             this.uvAdjustments.add(new UvAdjustmentMetrics14(pxlIndex + 1, x, y));
+
+            final Path path = Path.of("./dump/" + drgnBinIndex_800bc058 + '/' + this.cut + "/model" + pxlIndex + ".png");
+            try {
+              Files.createDirectories(path.getParent());
+            } catch(final IOException e) {
+              throw new RuntimeException(e);
+            }
+            ModelTextureDumper.dumpTmd(this.objects.get(pxlIndex).model.tmdPtr_00.tmd, tim, path);
+
             continue outer;
           }
         }
@@ -708,7 +718,7 @@ public class RetailSubmap extends Submap {
         try {
           final Path path = Path.of("./dump/" + drgnBinIndex_800bc058 + '/' + this.cut + '/' + i + '-' + rect.x + 'x' + rect.y + ".png");
           Files.createDirectories(path.getParent());
-          VramTextureSingle.dumpToFile(appliedRect, data, path);
+          VramTextureSingle.dumpToFile(appliedRect, data, path, true);
         } catch(final IOException e) {
           throw new RuntimeException(e);
         }
