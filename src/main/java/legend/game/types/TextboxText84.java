@@ -80,7 +80,7 @@ public class TextboxText84 {
   public int _3e;
   public int _40;
 
-  public int _44;
+  public int pauseTimer_44;
   public final int[] digits_46 = new int[10];
   public TextboxChar08[] chars_58;
   public TextboxTextState _5c;

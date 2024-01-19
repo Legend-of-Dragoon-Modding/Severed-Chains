@@ -426,7 +426,7 @@ public class SMap extends EngineState {
     functions[97] = this::scriptSelfLoadSobjAnimation;
     functions[98] = this::scriptSelfGetSobjAnimation;
     functions[99] = this::scriptSelfToggleAnimationDisabled;
-    functions[100] = this::FUN_800df228;
+    functions[100] = this::scriptSelfIsAnimationFinished;
     functions[101] = this::scriptSetModelPosition;
     functions[102] = this::scriptReadModelPosition;
     functions[103] = this::scriptSetModelRotate;
@@ -1360,7 +1360,7 @@ public class SMap extends EngineState {
   @ScriptDescription("Get us_12a from this submap object")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The value")
   @Method(0x800df228L)
-  private FlowControl FUN_800df228(final RunningScript<?> script) {
+  private FlowControl scriptSelfIsAnimationFinished(final RunningScript<?> script) {
     script.params_20[1] = script.params_20[0];
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
     return this.scriptIsAnimationFinished(script);
@@ -1880,7 +1880,7 @@ public class SMap extends EngineState {
       part.obj = TmdObjLoader.fromObjTable("SobjModel (index " + index + ')', part.tmd_08, Translucency.of(model.tpage_108 >>> 5 & 0b11));
     }
 
-    sobj.animationFinished_12c = false;
+    sobj.animationFinishedFrames_12c = 0;
     sobj.rotationFrames_188 = 0;
     sobj.lastMovementTick = Integer.MIN_VALUE;
     sobj.lastRotationTick = Integer.MIN_VALUE;
@@ -1902,7 +1902,7 @@ public class SMap extends EngineState {
 
     loadModelStandardAnimation(model, this.submap.objects.get(sobj.sobjIndex_12e).animations.get(sobj.animIndex_132));
 
-    sobj.animationFinished_12c = false;
+    sobj.animationFinishedFrames_12c = 0;
     sobj.flags_190 &= ~0x6000_0000;
 
     return FlowControl.CONTINUE;
@@ -1934,7 +1934,7 @@ public class SMap extends EngineState {
   @Method(0x800dffdcL)
   private FlowControl scriptIsAnimationFinished(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    script.params_20[1].set(sobj.animationFinished_12c ? 1 : 0);
+    script.params_20[1].set(sobj.animationFinishedFrames_12c != 0 ? 1 : 0);
     return FlowControl.CONTINUE;
   }
 
@@ -2223,7 +2223,7 @@ public class SMap extends EngineState {
     model.ub_a3 = 1;
     model.disableInterpolation_a2 = false;
     loadModelStandardAnimation(model, this.submap.objects.get(sobj.sobjIndex_12e).animations.get(sobj.animIndex_132));
-    sobj.animationFinished_12c = false;
+    sobj.animationFinishedFrames_12c = 0;
     sobj.flags_190 &= ~0x6000_0000;
     return FlowControl.CONTINUE;
   }
@@ -2240,7 +2240,7 @@ public class SMap extends EngineState {
     model.ub_a3 = 0;
     model.disableInterpolation_a2 = true;
     loadModelStandardAnimation(model, this.submap.objects.get(sobj.sobjIndex_12e).animations.get(sobj.animIndex_132));
-    sobj.animationFinished_12c = false;
+    sobj.animationFinishedFrames_12c = 0;
     sobj.flags_190 &= ~0x6000_0000;
     return FlowControl.CONTINUE;
   }
@@ -2546,7 +2546,7 @@ public class SMap extends EngineState {
       if(!sobj.disableAnimation_12a) {
         animateModel(model, 4 / vsyncMode_8007a3b8);
 
-        if(sobj.animationFinished_12c && (sobj.flags_190 & 0x2000_0000) != 0) {
+        if(sobj.animationFinishedFrames_12c != 0 && (sobj.flags_190 & 0x2000_0000) != 0) {
           sobj.animIndex_132 = 0;
           loadModelStandardAnimation(model, this.submap.objects.get(sobj.sobjIndex_12e).animations.get(sobj.animIndex_132));
           sobj.flags_190 &= ~0x6000_0000;
@@ -2555,13 +2555,13 @@ public class SMap extends EngineState {
     }
 
     if(model.remainingFrames_9e == 0) {
-      sobj.animationFinished_12c = true;
+      sobj.animationFinishedFrames_12c = 3 - vsyncMode_8007a3b8;
 
       if((sobj.flags_190 & 0x4000_0000) != 0) {
         sobj.disableAnimation_12a = true;
       }
-    } else {
-      sobj.animationFinished_12c = false;
+    } else if(sobj.animationFinishedFrames_12c != 0) {
+      sobj.animationFinishedFrames_12c--;
     }
 
     if(sobj.showAlertIndicator_194) {

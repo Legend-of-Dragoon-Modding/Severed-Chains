@@ -1884,7 +1884,7 @@ public final class Scus94491BpeSegment_8002 {
 
     if(textboxText.state_00 == TextboxTextState._13) {
       textboxText.state_00 = TextboxTextState.TRANSITION_AFTER_TIMEOUT_23;
-      textboxText.ticksUntilStateTransition_64 = 10;
+      textboxText.ticksUntilStateTransition_64 = 10 * currentEngineState_8004dd04.tickMultiplier();
       textboxText.stateAfterTransition_78 = TextboxTextState.SELECTION_22;
       Scus94491BpeSegment.playSound(0, 4, 0, 0, (short)0, (short)0);
     }
@@ -1985,7 +1985,7 @@ public final class Scus94491BpeSegment_8002 {
     textboxText._3c = 0;
     textboxText._3e = 1;
     textboxText._40 = 0;
-    textboxText._44 = 0;
+    textboxText.pauseTimer_44 = 0;
 
     final Textbox4c struct4c = textboxes_800be358[a0];
     textboxText.x_14 = struct4c.x_14;
@@ -2258,7 +2258,7 @@ public final class Scus94491BpeSegment_8002 {
               textboxText.scrollSpeed_2a = 1;
               textboxText.charX_34 = 0;
               textboxText.charY_36 = 0;
-              textboxText.ticksUntilStateTransition_64 = 10;
+              textboxText.ticksUntilStateTransition_64 = 10 * currentEngineState_8004dd04.tickMultiplier();
               textboxText.stateAfterTransition_78 = TextboxTextState._17;
               Scus94491BpeSegment.playSound(0, 4, 0, 0, (short)0, (short)0);
             }
@@ -2365,11 +2365,11 @@ public final class Scus94491BpeSegment_8002 {
         }
       }
 
-      case _8 -> {
+      case WAIT_FOR_PAUSE_8 -> {
         //LAB_800269cc
-        if(textboxText._44 > 0) {
+        if(textboxText.pauseTimer_44 > 0) {
           //LAB_800269e8
-          textboxText._44--;
+          textboxText.pauseTimer_44--;
         } else {
           //LAB_800269e0
           textboxText.state_00 = TextboxTextState.PROCESS_TEXT_4;
@@ -2472,7 +2472,7 @@ public final class Scus94491BpeSegment_8002 {
         if((textboxText.flags_08 & TextboxText84.SELECTION) != 0) {
           setTextboxArrowPosition(textboxIndex, false);
           textboxText.state_00 = TextboxTextState.TRANSITION_AFTER_TIMEOUT_23;
-          textboxText.ticksUntilStateTransition_64 = 10;
+          textboxText.ticksUntilStateTransition_64 = 10 * currentEngineState_8004dd04.tickMultiplier();
           textboxText.stateAfterTransition_78 = TextboxTextState.SELECTION_22;
           textboxText.selectionLine_68 = textboxText.minSelectionLine_72;
           Scus94491BpeSegment.playSound(0, 4, 0, 0, (short)0, (short)0);
@@ -2572,7 +2572,7 @@ public final class Scus94491BpeSegment_8002 {
                 if(textboxText.selectionLine_60 > 0) {
                   textboxText.state_00 = TextboxTextState._19;
                   textboxText.selectionLine_60--;
-                  textboxText.ticksUntilStateTransition_64 = 4;
+                  textboxText.ticksUntilStateTransition_64 = 4 * currentEngineState_8004dd04.tickMultiplier();
                   textboxText.selectionLine_68--;
                 } else {
                   //LAB_80026f88
@@ -2643,7 +2643,7 @@ public final class Scus94491BpeSegment_8002 {
 
           textboxText.state_00 = TextboxTextState._19;
           textboxText.selectionLine_60++;
-          textboxText.ticksUntilStateTransition_64 = 4;
+          textboxText.ticksUntilStateTransition_64 = 4 * currentEngineState_8004dd04.tickMultiplier();
           textboxText.selectionLine_68++;
 
           if((textboxText.flags_08 & 0x100) == 0 || textboxText.charY_36 + 1 != textboxText.selectionLine_68) {
@@ -2663,7 +2663,7 @@ public final class Scus94491BpeSegment_8002 {
                   if(textboxText.selectionLine_60 > 0) {
                     textboxText.state_00 = TextboxTextState._19;
                     textboxText.selectionLine_60--;
-                    textboxText.ticksUntilStateTransition_64 = 4;
+                    textboxText.ticksUntilStateTransition_64 = 4 * currentEngineState_8004dd04.tickMultiplier();
                     textboxText.selectionLine_68--;
                   } else {
                     //LAB_80026f88
@@ -2763,7 +2763,7 @@ public final class Scus94491BpeSegment_8002 {
 
       case _20 -> {
         //LAB_8002715c
-        textboxText.scrollAmount_2c += 4;
+        textboxText.scrollAmount_2c += 4 / currentEngineState_8004dd04.tickMultiplier();
 
         if(textboxText.scrollAmount_2c >= 12) {
           advanceTextbox(textboxIndex);
@@ -2806,7 +2806,7 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_800265f4
       case _21 -> {
         //LAB_8002727c
-        textboxText.scrollAmount_2c -= 4;
+        textboxText.scrollAmount_2c -= 4 / currentEngineState_8004dd04.tickMultiplier();
         if(textboxText.scrollAmount_2c <= 0) {
           textboxText.charY_36 = 0;
           textboxText.scrollAmount_2c = 0;
@@ -2854,7 +2854,7 @@ public final class Scus94491BpeSegment_8002 {
         } else {
           //LAB_800273bc
           if(Input.getButtonState(InputAction.DPAD_UP) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_UP)) {
-            textboxText.ticksUntilStateTransition_64 = 4;
+            textboxText.ticksUntilStateTransition_64 = 4 * currentEngineState_8004dd04.tickMultiplier();
             textboxText.selectionLine_68--;
 
             if(textboxText.selectionLine_68 < textboxText.minSelectionLine_72) {
@@ -2868,7 +2868,7 @@ public final class Scus94491BpeSegment_8002 {
 
           //LAB_80027420
           if(Input.getButtonState(InputAction.DPAD_DOWN) || Input.getButtonState(InputAction.JOYSTICK_LEFT_BUTTON_DOWN)) {
-            textboxText.ticksUntilStateTransition_64 = 4;
+            textboxText.ticksUntilStateTransition_64 = 4 * currentEngineState_8004dd04.tickMultiplier();
             textboxText.selectionLine_68++;
 
             if(textboxText.selectionLine_68 > textboxText.maxSelectionLine_70) {
@@ -2889,7 +2889,7 @@ public final class Scus94491BpeSegment_8002 {
         textboxText.ticksUntilStateTransition_64--;
 
         if(textboxText.ticksUntilStateTransition_64 == 0) {
-          textboxText.ticksUntilStateTransition_64 = 4;
+          textboxText.ticksUntilStateTransition_64 = 4 * currentEngineState_8004dd04.tickMultiplier();
           textboxText.state_00 = textboxText.stateAfterTransition_78;
         }
       }
@@ -3043,8 +3043,8 @@ public final class Scus94491BpeSegment_8002 {
         }
 
         case TextboxText84.PAUSE -> {
-          textboxText.state_00 = TextboxTextState._8;
-          textboxText._44 = 60 / vsyncMode_8007a3b8 * (chr & 0xff);
+          textboxText.state_00 = TextboxTextState.WAIT_FOR_PAUSE_8;
+          textboxText.pauseTimer_44 = 60 / vsyncMode_8007a3b8 * (chr & 0xff);
           parseMore = false;
         }
 

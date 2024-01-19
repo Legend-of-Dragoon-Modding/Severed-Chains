@@ -9,7 +9,7 @@ public enum TextboxTextState {
   SCROLL_TEXT_5,
   _6,
   _7,
-  _8,
+  WAIT_FOR_PAUSE_8,
   SCROLL_TEXT_DOWN_9,
   SCROLL_TEXT_UP_10,
   _11,
