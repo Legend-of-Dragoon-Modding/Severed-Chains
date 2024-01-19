@@ -89,13 +89,15 @@ public class SmapModelDebuggerController {
   }
 
   public void setSobj(final SubmapObject210 sobj) {
+    this.smap = ((SMap)currentEngineState_8004dd04);
+
     this.model = new Model124("Animation viewer");
-    this.model.coord2_14.coord.transfer.set(sobj.model_00.coord2_14.coord.transfer);
+    this.model.coord2_14.coord.transfer.set(this.smap.sobjs_800c6880[0].innerStruct_00.model_00.coord2_14.coord.transfer);
+    this.model.coord2_14.transforms.set(this.smap.sobjs_800c6880[0].innerStruct_00.model_00.coord2_14.transforms);
 
     this.sobjName.setText(sobj.model_00.name);
     this.anims.clear();
 
-    this.smap = ((SMap)currentEngineState_8004dd04);
     final SubmapObject assets = this.smap.submap.objects.get(sobj.sobjIndex_12e);
 
     for(int i = 0; i < assets.animations.size(); i++) {
@@ -121,7 +123,7 @@ public class SmapModelDebuggerController {
 
     this.animList.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
       final int index = newValue.intValue();
-      this.loadAnimation(assets.model, assets.animations.get(index), this.smap.submap.uvAdjustments.get(sobj.sobjIndex_12e));
+      this.loadAnimation(assets.model, assets.animations.get(index), sobj.model_00.uvAdjustments_9d);
     });
 
     this.animList.getSelectionModel().select(0);
@@ -173,7 +175,7 @@ public class SmapModelDebuggerController {
   private void loadAnimation(final CContainer tmd, final TmdAnimationFile animation, final UvAdjustmentMetrics14 uvAdjustments) {
     synchronized(this) {
       this.freezeUpdates = true;
-      this.model.uvAdjustments_9d = uvAdjustments;
+      this.model.uvAdjustments_9d = UvAdjustmentMetrics14.NONE;
       initModel(this.model, tmd, animation);
       loadModelStandardAnimation(this.model, animation);
       this.model.animationState_9c = this.paused.isSelected() ? 2 : 1;

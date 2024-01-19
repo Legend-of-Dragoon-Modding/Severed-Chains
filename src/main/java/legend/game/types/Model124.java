@@ -67,7 +67,7 @@ public class Model124 {
   /** byte */
   public int modelPartWithShadowIndex_cd;
 
-  public final short[][] ptrs_d0 = new short[7][];
+  public final short[][] animationMetrics_d0 = new short[7][];
   /** ubyte */
   public final boolean[] animateTextures_ec = new boolean[7];
 
@@ -155,7 +155,7 @@ public class Model124 {
     System.arraycopy(other.usArr_ba, 0, this.usArr_ba, 0, 7);
     this.shadowType_cc = other.shadowType_cc;
     this.modelPartWithShadowIndex_cd = other.modelPartWithShadowIndex_cd;
-    System.arraycopy(other.ptrs_d0, 0, this.ptrs_d0, 0, 7);
+    System.arraycopy(other.animationMetrics_d0, 0, this.animationMetrics_d0, 0, 7);
     System.arraycopy(other.animateTextures_ec, 0, this.animateTextures_ec, 0, 7);
     this.partInvisible_f4 = other.partInvisible_f4;
     this.tpage_108 = other.tpage_108;

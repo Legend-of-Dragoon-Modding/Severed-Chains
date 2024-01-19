@@ -135,7 +135,7 @@ public class LodMod {
     final Map<EquipmentSlot, Equipment> shana = event.gameState.charData_32c[2].equipment_14;
     shana.put(EquipmentSlot.WEAPON, LodEquipment.SHORT_BOW.get());
     shana.put(EquipmentSlot.HELMET, LodEquipment.FELT_HAT.get());
-    shana.put(EquipmentSlot.ARMOUR, LodEquipment.LEATHER_JACKET.get());
+    shana.put(EquipmentSlot.ARMOUR, LodEquipment.CLOTHES.get());
     shana.put(EquipmentSlot.BOOTS, LodEquipment.LEATHER_SHOES.get());
     shana.put(EquipmentSlot.ACCESSORY, LodEquipment.BRACELET.get());
 

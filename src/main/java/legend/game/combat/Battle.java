@@ -568,6 +568,11 @@ public class Battle extends EngineState {
   public static final int[] modelVramSlots_800fb06c = {0, 0, 0, 0, 0, 0, 0, 0, 14, 15, 16, 17, 10, 11, 12, 13, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 0, 0, 0, 0, 0};
 
   @Override
+  public int tickMultiplier() {
+    return 1;
+  }
+
+  @Override
   @Method(0x800186a0L)
   public void tick() {
     if(battleLoaded_800bc94c) {
