@@ -10,7 +10,8 @@ public class SubmapObject210 {
 
   public boolean hidden_128;
   public boolean disableAnimation_12a;
-  public boolean animationFinished_12c;
+  /** We need to hold the "animation finished" state for long enough for the script engine to tick and read it, so we set it to N frames and count back down to 0 */
+  public int animationFinishedFrames_12c;
   public int sobjIndex_12e;
   /** The script index of this sobj */
   public int sobjIndex_130;
