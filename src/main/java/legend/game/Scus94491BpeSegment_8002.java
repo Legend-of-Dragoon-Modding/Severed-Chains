@@ -1976,13 +1976,12 @@ public final class Scus94491BpeSegment_8002 {
     textboxText.flags_08 = 0;
     textboxText.z_0c = 13;
     textboxText.textColour_28 = TextColour.WHITE;
-    textboxText.scrollSpeed_2a = 2;
-    textboxText.scrollAmount_2c = 0;
+    textboxText.scrollSpeed_2a = 2.0f / currentEngineState_8004dd04.tickMultiplier();
+    textboxText.scrollAmount_2c = 0.0f;
     textboxText.charIndex_30 = 0;
     textboxText.charX_34 = 0;
     textboxText.charY_36 = 0;
-    textboxText._3a = 0;
-    textboxText._3c = 0;
+    textboxText._3a = 0.0f;
     textboxText._3e = 1;
     textboxText._40 = 0;
     textboxText.pauseTimer_44 = 0;
@@ -2011,6 +2010,8 @@ public final class Scus94491BpeSegment_8002 {
     textboxText.stateAfterTransition_78 = TextboxTextState.UNINITIALIZED_0;
     textboxText.element_7c = 0;
     textboxText.digitIndex_80 = 0;
+
+    textboxText.waitTicks = 0;
   }
 
   @Method(0x80025a04L)
@@ -2247,7 +2248,7 @@ public final class Scus94491BpeSegment_8002 {
             case 2 -> {
               textboxText.state_00 = TextboxTextState.SCROLL_TEXT_UP_10;
               textboxText.flags_08 |= 0x1;
-              textboxText.scrollSpeed_2a = 1;
+              textboxText.scrollSpeed_2a = 1.0f / currentEngineState_8004dd04.tickMultiplier();
               textboxText.charX_34 = 0;
               textboxText.charY_36 = textboxText.lines_1e;
             }
@@ -2255,7 +2256,7 @@ public final class Scus94491BpeSegment_8002 {
             case 3 -> {
               textboxText.state_00 = TextboxTextState.TRANSITION_AFTER_TIMEOUT_23;
               textboxText.flags_08 |= 0x1;
-              textboxText.scrollSpeed_2a = 1;
+              textboxText.scrollSpeed_2a = 1.0f / currentEngineState_8004dd04.tickMultiplier();
               textboxText.charX_34 = 0;
               textboxText.charY_36 = 0;
               textboxText.ticksUntilStateTransition_64 = 10 * currentEngineState_8004dd04.tickMultiplier();
@@ -2293,11 +2294,11 @@ public final class Scus94491BpeSegment_8002 {
           if(textboxText._3a < textboxText.lines_1e - ((textboxText.flags_08 & TextboxText84.HAS_NAME) == 0 ? 1 : 2)) {
             //LAB_80026828
             textboxText.state_00 = TextboxTextState.SCROLL_TEXT_DOWN_9;
-            textboxText._3a++;
+            textboxText._3a += 1.0f / currentEngineState_8004dd04.tickMultiplier();
             scrollTextboxDown(textboxIndex);
           } else {
             textboxText.flags_08 ^= 0x1;
-            textboxText._3a = 0;
+            textboxText._3a = 0.0f;
             setTextboxArrowPosition(textboxIndex, true);
           }
           //LAB_8002684c
@@ -2395,7 +2396,7 @@ public final class Scus94491BpeSegment_8002 {
               processTextboxLine(textboxIndex);
 
               if(textboxText.state_00 == TextboxTextState._15) {
-                textboxText._3a = 0;
+                textboxText._3a = 0.0f;
                 textboxText.flags_08 |= 0x2;
                 break;
               }
@@ -2404,9 +2405,9 @@ public final class Scus94491BpeSegment_8002 {
             //LAB_80026a8c
             textboxText.state_00 = TextboxTextState.SCROLL_TEXT_UP_10;
           } else {
-            textboxText._3a++;
+            textboxText._3a += 1.0f / currentEngineState_8004dd04.tickMultiplier();
 
-            if(textboxText._3a >= textboxText.lines_1e + 1) {
+            if(MathHelper.flEq(textboxText._3a, textboxText.lines_1e + 1) || textboxText._3a > textboxText.lines_1e + 1) {
               textboxText.delete();
               textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
             }
@@ -2424,7 +2425,7 @@ public final class Scus94491BpeSegment_8002 {
           textboxText.flags_08 ^= 0x1;
           textboxText.charX_34 = 0;
           textboxText.charY_36 = 0;
-          textboxText._3a = 0;
+          textboxText._3a = 0.0f;
 
           if((textboxText.flags_08 & 0x8) != 0) {
             textboxText.state_00 = TextboxTextState._13;
@@ -2492,7 +2493,7 @@ public final class Scus94491BpeSegment_8002 {
               clearTextboxChars(textboxIndex);
               textboxText.charX_34 = 0;
               textboxText.charY_36 = 0;
-              textboxText._3a = 0;
+              textboxText._3a = 0.0f;
               textboxText.state_00 = TextboxTextState._13;
               textboxText.flags_08 ^= 0x1;
             } else if(textboxText._5c == TextboxTextState._15) {
@@ -2539,7 +2540,7 @@ public final class Scus94491BpeSegment_8002 {
           processTextboxLine(textboxIndex);
 
           if(textboxText.state_00 == TextboxTextState._15) {
-            textboxText._3a = 0;
+            textboxText._3a = 0.0f;
             textboxText.flags_08 |= 0x102;
             break;
           }
@@ -2578,21 +2579,21 @@ public final class Scus94491BpeSegment_8002 {
                   //LAB_80026f88
                   if((textboxText.flags_08 & 0x2) != 0) {
                     // TODO not sure about this block of code
-                    if(textboxText._3a == 1) {
+                    if(MathHelper.flEq(textboxText._3a, 1.0f)) {
                       extraLines = 1;
                     } else {
-                      if(textboxText._3a == 0) {
+                      if(MathHelper.flEq(textboxText._3a, 0.0f)) {
                         //LAB_80026fbc
                         extraLines = 2;
                       }
 
                       //LAB_80026fc0
-                      textboxText._3a = 0;
+                      textboxText._3a = 0.0f;
                       textboxText.flags_08 ^= 0x2;
                     }
 
                     //LAB_80026fe8
-                    textboxText._3a--;
+                    textboxText._3a -= 1.0f / currentEngineState_8004dd04.tickMultiplier();
                   }
 
                   //LAB_80027014
@@ -2602,7 +2603,7 @@ public final class Scus94491BpeSegment_8002 {
                     textboxText.selectionLine_68 = 0;
                   } else {
                     //LAB_80027044
-                    textboxText.scrollAmount_2c = 12;
+                    textboxText.scrollAmount_2c = 12.0f;
                     rewindTextbox(textboxIndex);
 
                     final LodString str = textboxText.str_24;
@@ -2669,21 +2670,21 @@ public final class Scus94491BpeSegment_8002 {
                     //LAB_80026f88
                     if((textboxText.flags_08 & 0x2) != 0) {
                       // TODO not sure about this block of code
-                      if(textboxText._3a == 1) {
+                      if(MathHelper.flEq(textboxText._3a, 1.0f)) {
                         extraLines = 1;
                       } else {
-                        if(textboxText._3a == 0) {
+                        if(MathHelper.flEq(textboxText._3a, 0.0f)) {
                           //LAB_80026fbc
                           extraLines = 2;
                         }
 
                         //LAB_80026fc0
-                        textboxText._3a = 0;
+                        textboxText._3a = 0.0f;
                         textboxText.flags_08 ^= 0x2;
                       }
 
                       //LAB_80026fe8
-                      textboxText._3a--;
+                      textboxText._3a -= 1.0f / currentEngineState_8004dd04.tickMultiplier();
                     }
 
                     //LAB_80027014
@@ -2693,7 +2694,7 @@ public final class Scus94491BpeSegment_8002 {
                       textboxText.selectionLine_68 = 0;
                     } else {
                       //LAB_80027044
-                      textboxText.scrollAmount_2c = 12;
+                      textboxText.scrollAmount_2c = 12.0f;
                       rewindTextbox(textboxIndex);
 
                       final LodString str = textboxText.str_24;
@@ -2733,9 +2734,9 @@ public final class Scus94491BpeSegment_8002 {
             } else {
               textboxText.selectionLine_60 = textboxText_800bdf38[textboxIndex].lines_1e - 1;
               textboxText.state_00 = TextboxTextState._20;
-              textboxText.scrollAmount_2c = 0;
+              textboxText.scrollAmount_2c = 0.0f;
 
-              if(textboxText._3a == 1) {
+              if(textboxText._3a == 1.0f) {
                 textboxText.state_00 = TextboxTextState._18;
                 textboxText.selectionLine_68--;
               }
@@ -2763,12 +2764,12 @@ public final class Scus94491BpeSegment_8002 {
 
       case _20 -> {
         //LAB_8002715c
-        textboxText.scrollAmount_2c += 4 / currentEngineState_8004dd04.tickMultiplier();
+        textboxText.scrollAmount_2c += 4.0f / currentEngineState_8004dd04.tickMultiplier();
 
-        if(textboxText.scrollAmount_2c >= 12) {
+        if(textboxText.scrollAmount_2c >= 12.0f) {
           advanceTextbox(textboxIndex);
           textboxText.flags_08 |= 0x4;
-          textboxText.scrollAmount_2c -= 12;
+          textboxText.scrollAmount_2c -= 12.0f;
           textboxText.charY_36 = textboxText.lines_1e;
         }
 
@@ -2783,15 +2784,15 @@ public final class Scus94491BpeSegment_8002 {
               processTextboxLine(textboxIndex);
 
               if(textboxText.state_00 == TextboxTextState._15) {
-                textboxText._3a = 0;
+                textboxText._3a = 0.0f;
                 textboxText.flags_08 |= 0x2;
                 break;
               }
             } while(textboxText.state_00 != TextboxTextState.SCROLL_TEXT_5);
           } else {
-            textboxText._3a++;
+            textboxText._3a += 1.0f / currentEngineState_8004dd04.tickMultiplier();
 
-            if(textboxText._3a >= textboxText.lines_1e + 1) {
+            if(MathHelper.flEq(textboxText._3a, textboxText.lines_1e + 1) || textboxText._3a > textboxText.lines_1e + 1) {
               textboxText.delete();
               textboxText.state_00 = TextboxTextState.UNINITIALIZED_0;
             }
@@ -2806,10 +2807,10 @@ public final class Scus94491BpeSegment_8002 {
       //LAB_800265f4
       case _21 -> {
         //LAB_8002727c
-        textboxText.scrollAmount_2c -= 4 / currentEngineState_8004dd04.tickMultiplier();
-        if(textboxText.scrollAmount_2c <= 0) {
+        textboxText.scrollAmount_2c -= 4.0f / currentEngineState_8004dd04.tickMultiplier();
+        if(textboxText.scrollAmount_2c <= 0.0f) {
           textboxText.charY_36 = 0;
-          textboxText.scrollAmount_2c = 0;
+          textboxText.scrollAmount_2c = 0.0f;
           textboxText.state_00 = TextboxTextState._18;
           textboxText.flags_08 |= 0x4;
         }
@@ -2902,6 +2903,15 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x800274f0L)
   public static void processTextboxLine(final int textboxIndex) {
     final TextboxText84 textboxText = textboxText_800bdf38[textboxIndex];
+
+    // This code would be really tricky to make work at 60 FPS, but there isn't any harm in just slowing it down
+    if(textboxText.waitTicks != 0) {
+      textboxText.waitTicks--;
+      return;
+    }
+
+    textboxText.waitTicks = currentEngineState_8004dd04.tickMultiplier();
+
     final LodString str = textboxText.str_24;
 
     if((textboxText.flags_08 & TextboxText84.SHOW_VAR) != 0) {
@@ -2909,7 +2919,6 @@ public final class Scus94491BpeSegment_8002 {
       appendTextboxChar(textboxIndex, textboxText.charX_34, textboxText.charY_36, textboxText.textColour_28, textboxText.digits_46[digitIndex]);
 
       textboxText.charX_34++;
-      textboxText._3c++;
       textboxText.digitIndex_80++;
 
       if(textboxText.charX_34 < textboxText.chars_1c) {
@@ -3135,7 +3144,6 @@ public final class Scus94491BpeSegment_8002 {
           appendTextboxChar(textboxIndex, textboxText.charX_34, textboxText.charY_36, textboxText.textColour_28, chr);
 
           textboxText.charX_34++;
-          textboxText._3c++;
 
           if(textboxText.charX_34 < textboxText.chars_1c) {
             //LAB_80027d28
@@ -3317,7 +3325,7 @@ public final class Scus94491BpeSegment_8002 {
         int scrollH = 0;
         if((textboxText.flags_08 & 0x1) != 0) {
           if(i >= firstCharInLineIndex && i < lastCharInLineIndex) {
-            final int scroll = textboxText.scrollAmount_2c;
+            final int scroll = Math.round(textboxText.scrollAmount_2c);
             scrollY = -scroll;
             scrollH = scroll;
           }
@@ -3325,7 +3333,7 @@ public final class Scus94491BpeSegment_8002 {
           //LAB_800283c4
           if(i >= textboxText.chars_1c * textboxText.lines_1e && i < textboxText.chars_1c * (textboxText.lines_1e + 1)) {
             scrollY = 0;
-            scrollH = 12 - textboxText.scrollAmount_2c;
+            scrollH = 12 - Math.round(textboxText.scrollAmount_2c);
           }
         }
 
@@ -3365,10 +3373,10 @@ public final class Scus94491BpeSegment_8002 {
 
     textboxText.scrollAmount_2c += textboxText.scrollSpeed_2a;
 
-    if(textboxText.scrollAmount_2c >= 12) {
+    if(textboxText.scrollAmount_2c >= 12.0f) {
       advanceTextbox(textboxIndex);
       textboxText.state_00 = TextboxTextState.PROCESS_TEXT_4;
-      textboxText.scrollAmount_2c = 0;
+      textboxText.scrollAmount_2c = 0.0f;
       textboxText.charY_36--;
     }
 
@@ -3382,10 +3390,10 @@ public final class Scus94491BpeSegment_8002 {
 
       textboxText.scrollAmount_2c += textboxText.scrollSpeed_2a;
 
-      if(textboxText.scrollAmount_2c >= 12) {
+      if(textboxText.scrollAmount_2c >= 12.0f) {
         advanceTextbox(textboxIndex);
         textboxText.flags_08 |= 0x4;
-        textboxText.scrollAmount_2c -= 12;
+        textboxText.scrollAmount_2c -= 12.0f;
         textboxText.charY_36 = textboxText.lines_1e;
       }
     }
