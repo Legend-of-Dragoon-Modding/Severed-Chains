@@ -72,8 +72,6 @@ public final class AudioThread implements Runnable {
     this.running = true;
     this.paused = false;
 
-    long time = System.nanoTime();
-
     while(this.running) {
       while(this.paused) {
         try {
@@ -82,13 +80,27 @@ public final class AudioThread implements Runnable {
 
         }
       }
+      final long time = System.nanoTime();
 
-      this.sequencer.tick();
+      this.sequencer.processBuffers();
+
+      this.sequencer.processMusicQueue();
+
+      final int sequencerBuffersToQueue = this.sequencer.buffersToQueue();
+
+      final int passes = Math.max(sequencerBuffersToQueue, 0);
+
+      for(int i = 0; i < passes; i++) {
+
+        if( i < sequencerBuffersToQueue) {
+          this.sequencer.tick();
+        }
+
+      }
 
       final long interval = System.nanoTime() - time;
       final int toSleep = (int)(Math.max(0, this.nanosPerTick - interval) / 1_000_000);
       DebugHelper.sleep(toSleep);
-      time += this.nanosPerTick;
     }
 
     this.sequencer.destroy();

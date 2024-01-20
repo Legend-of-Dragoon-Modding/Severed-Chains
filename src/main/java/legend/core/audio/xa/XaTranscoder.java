@@ -1,5 +1,6 @@
 package legend.core.audio.xa;
 
+import legend.core.MathHelper;
 import legend.core.audio.opus.OpusFile;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.PathNode;
@@ -73,7 +74,7 @@ public class XaTranscoder {
       this.reset();
 
       this.opusFile = new OpusFile((byte)this.channels, PRE_SKIP, 37800);
-      this.opusFile.addComment("tracknumber=%d".formatted(track));
+      this.opusFile.addComment("tracknumber=%d".formatted(track + 1));
       this.opusFile.addComment("totaltracks=%d".formatted(interleaveMode));
       this.opusFile.addComment("album=" + node.fullPath);
 
@@ -146,7 +147,7 @@ public class XaTranscoder {
     for(int i = 0; i < 28; i++) {
       final int t = signed4bit((byte)(xaAdPcm.readUByte(position + 16 + blk + i * 4) >> nibble * 4 & 0x0f));
       final int s = (t << shift) + (this.old[lr] * f0 + this.older[lr] * f1 + 32) / 64;
-      final short sample = (short)s;
+      final short sample = (short)MathHelper.clamp(s, -0x8000, 0x7fff);
 
       this.sourceBuffer[lr][this.sourceBufferPosition + i] = sample;
       this.older[lr] = this.old[lr];
@@ -171,7 +172,7 @@ public class XaTranscoder {
           + interpolationWeights[2] * this.sourceBuffer[channel][samplePosition + 2]
           + interpolationWeights[3] * this.sourceBuffer[channel][samplePosition + 3];
 
-        this.opusInputBuffer.put(this.opusInputBufferPosition++, (short) sample);
+        this.opusInputBuffer.put(this.opusInputBufferPosition++, (short) MathHelper.clamp((int)sample, -0x8000, 0x7fff));
       }
 
       this.interpolationCounter += 63;
@@ -189,7 +190,6 @@ public class XaTranscoder {
     final int encoded = Opus.opus_encode(this.encoder, this.opusInputBuffer, OPUS_FRAME_SIZE, this.opusOutputBuffer);
 
     final byte[] bytes = new byte[encoded];
-    this.opusOutputBuffer.position(0);
     this.opusOutputBuffer.get(bytes, 0, encoded);
     this.opusFile.addOpusSegment(bytes);
 

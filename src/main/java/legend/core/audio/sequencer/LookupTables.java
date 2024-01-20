@@ -50,15 +50,15 @@ final class LookupTables {
     final int interpolationStep = 1 << interpolationBitDepth;
     this.interpolationWeights = new float[interpolationStep][];
     for(int i = 0; i < this.interpolationWeights.length; i++) {
-      final float pow1 = i / (float)this.interpolationWeights.length;
-      final float pow2 = pow1 * pow1;
-      final float pow3 = pow2 * pow1;
+      final double pow1 = i / (double)this.interpolationWeights.length;
+      final double pow2 = pow1 * pow1;
+      final double pow3 = pow2 * pow1;
 
       this.interpolationWeights[i] = new float[] {
-        0.45f * (-pow3 + 2 * pow2 - pow1),
-        0.45f * (3 * pow3 - 5 * pow2 + 2),
-        0.45f * (-3 * pow3 + 4 * pow2 + pow1),
-        0.45f * (pow3 - pow2)
+        (float)(0.45d * (-pow3 + 2 * pow2 - pow1)),
+        (float)(0.45d * (3 * pow3 - 5 * pow2 + 2)),
+        (float)(0.45d * (-3 * pow3 + 4 * pow2 + pow1)),
+        (float)(0.45d * (pow3 - pow2))
       };
     }
   }

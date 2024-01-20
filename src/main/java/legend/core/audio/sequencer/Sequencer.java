@@ -34,6 +34,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static legend.game.Scus94491BpeSegment_8005.reverbConfigs_80059f7c;
 import static org.lwjgl.openal.AL10.AL_BUFFERS_PROCESSED;
+import static org.lwjgl.openal.AL10.AL_BUFFERS_QUEUED;
 import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
 import static org.lwjgl.openal.AL10.AL_PLAYING;
 import static org.lwjgl.openal.AL10.AL_SOURCE_STATE;
@@ -45,6 +46,7 @@ import static org.lwjgl.openal.AL10.alGenSources;
 import static org.lwjgl.openal.AL10.alGetSourcei;
 import static org.lwjgl.openal.AL10.alSourcePlay;
 import static org.lwjgl.openal.AL10.alSourceQueueBuffers;
+import static org.lwjgl.openal.AL10.alSourceStop;
 import static org.lwjgl.openal.AL10.alSourceUnqueueBuffers;
 
 public final class Sequencer {
@@ -127,8 +129,6 @@ public final class Sequencer {
   }
 
   public void tick() {
-    this.processBuffers();
-
     for(int sample = 0; sample < this.outputBuffer.length; sample += 2) {
       this.clearFinishedVoices();
 
@@ -164,7 +164,17 @@ public final class Sequencer {
 
     // Restarts playback, if stopped
     this.play();
+  }
 
+  public int buffersToQueue() {
+    if(this.backgroundMusic == null) {
+      return 0;
+    }
+
+    return BUFFER_COUNT - 1 - alGetSourcei(this.sourceId, AL_BUFFERS_QUEUED);
+  }
+
+  public void processMusicQueue() {
     this.bgmLock.lock();
     try {
       if(this.unload) {
@@ -176,6 +186,10 @@ public final class Sequencer {
         }
 
         this.playingVoices = 0;
+
+        alSourceStop(this.sourceId);
+
+        this.processBuffers();
       }
 
       if(!this.backgroundMusicQueue.isEmpty()) {
@@ -458,7 +472,7 @@ public final class Sequencer {
     this.backgroundMusic = null;
   }
 
-  private void processBuffers() {
+  public void processBuffers() {
     final int processedBufferCount = alGetSourcei(this.sourceId, AL_BUFFERS_PROCESSED);
 
     for(int buffer = 0; buffer < processedBufferCount; buffer++) {
@@ -485,6 +499,15 @@ public final class Sequencer {
   }
 
   public void destroy() {
+    alSourceStop(this.sourceId);
+
+    final int processedBufferCount = alGetSourcei(this.sourceId, AL_BUFFERS_PROCESSED);
+
+    for(int buffer = 0; buffer < processedBufferCount; buffer++) {
+      final int processedBufferName = alSourceUnqueueBuffers(this.sourceId);
+      alDeleteBuffers(processedBufferName);
+    }
+
     alDeleteBuffers(this.buffers);
     alDeleteSources(this.sourceId);
   }
