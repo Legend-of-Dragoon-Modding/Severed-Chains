@@ -432,7 +432,7 @@ public class SMap extends EngineState {
     functions[103] = this::scriptSetModelRotate;
     functions[104] = this::scriptReadModelRotate;
     functions[105] = this::scriptSelfFacePoint;
-    functions[106] = this::FUN_800df410;
+    functions[106] = this::scriptSelfSetSobjHidden;
     functions[107] = this::scriptSelfMoveToPosition;
     functions[108] = this::scriptSelfMoveAlongArc;
     functions[109] = this::FUN_800df4d0;
@@ -1479,7 +1479,7 @@ public class SMap extends EngineState {
   @ScriptDescription("Set us_128 on a submap object")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "value", description = "The new value")
   @Method(0x800df410L)
-  private FlowControl FUN_800df410(final RunningScript<?> script) {
+  private FlowControl scriptSelfSetSobjHidden(final RunningScript<?> script) {
     script.params_20[1] = script.params_20[0];
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
     return this.scriptSetSobjHidden(script);
