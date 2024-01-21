@@ -710,6 +710,16 @@ public class RenderEngine {
         entry.updateTransforms();
         entry.render(Translucency.B_MINUS_F);
       }
+
+      if(entry.obj.shouldRender(Translucency.B_PLUS_QUARTER_F)) {
+        this.tmdShaderOptions.colour(entry.colour.mul(0.25f, this.tempColour));
+        this.tmdShaderOptions.clut(entry.clutOverride);
+        this.tmdShaderOptions.tpage(entry.tpageOverride);
+        this.tmdShaderOptions.uvOffset(entry.uvOffset);
+        entry.useTexture();
+        entry.updateTransforms();
+        entry.render(Translucency.B_PLUS_QUARTER_F);
+      }
     }
 
     // Order-independent translucency for (B+F)/2
