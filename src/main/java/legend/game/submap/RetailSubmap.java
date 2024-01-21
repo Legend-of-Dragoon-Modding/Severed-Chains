@@ -257,8 +257,6 @@ public class RetailSubmap extends Submap {
       musicLoaded_800bd782 = false;
       this.startMusic();
     }
-
-    previousSubmapCut_800bda08 = this.cut;
   }
 
   @Override
@@ -353,6 +351,8 @@ public class RetailSubmap extends Submap {
 
   @Override
   public void unload() {
+    previousSubmapCut_800bda08 = this.cut;
+
     if(this.theEnd_800d4bd0 != null) {
       this.theEnd_800d4bd0.deallocate();
       this.theEnd_800d4bd0 = null;

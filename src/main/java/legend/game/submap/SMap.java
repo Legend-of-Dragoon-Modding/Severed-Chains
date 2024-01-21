@@ -4003,7 +4003,7 @@ public class SMap extends EngineState {
       this.setGeomOffsetIfNotSet(3 - vsyncMode_8007a3b8, x, y);
     }
 
-    if(mode == 2 || mode == 3) {
+    if(mode != 1) {
       this.setScreenOffsetIfNotSet(3 - vsyncMode_8007a3b8, x, y);
     }
 
