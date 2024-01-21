@@ -55,16 +55,16 @@ void main() {
 
   gl_Position = camera * model * pos;
 
-  if(projectionMode != 2) {
+  if(projectionMode == 1) { // Low quality submap projection
     // Projection plane division
     float z = clamp(gl_Position.z, 0, 65536);
-    if(projectionMode == 1 && z != 0) {
+    if(z != 0) {
       gl_Position.xy *= zfar / z;
     }
   }
 
+  gl_Position.xy += screenOffset.xy;
   gl_Position = projection * gl_Position;
-  gl_Position.xy += screenOffset.xy * gl_Position.w;
   vertUv = inUv;
   vertTpage = inTpage;
   vertClut = inClut;

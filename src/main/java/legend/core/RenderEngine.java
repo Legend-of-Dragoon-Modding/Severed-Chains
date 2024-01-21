@@ -263,8 +263,6 @@ public class RenderEngine {
   private float projectionDepth;
   private float aspectRatio;
   private float fieldOfView;
-  private float halfWidthInv;
-  private float halfHeightInv;
 
   private boolean togglePause;
   private boolean paused;
@@ -274,8 +272,6 @@ public class RenderEngine {
   public void setProjectionSize(final float width, final float height) {
     this.projectionWidth = width;
     this.projectionHeight = height;
-    this.halfWidthInv = 1.0f / (width / 2.0f);
-    this.halfHeightInv = 1.0f / (height / 2.0f);
     this.updateFieldOfView();
   }
 
@@ -1246,8 +1242,8 @@ public class RenderEngine {
     }
 
     public QueuedModel<Options> screenspaceOffset(final float x, final float y) {
-      this.screenspaceOffset.x = x * RenderEngine.this.halfWidthInv;
-      this.screenspaceOffset.y = y * RenderEngine.this.halfHeightInv;
+      this.screenspaceOffset.x = x;
+      this.screenspaceOffset.y = y;
       return this;
     }
 

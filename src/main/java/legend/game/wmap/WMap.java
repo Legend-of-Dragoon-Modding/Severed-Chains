@@ -411,7 +411,7 @@ public class WMap extends EngineState {
 
         float screenOffsetY = 0.0f;
         if(this.modelAndAnimData_800c66a8.zoomState_1f8 == ZoomState.WORLD_3 || this.modelAndAnimData_800c66a8.coolonWarpState_220.state > 2) {
-          screenOffsetY = 8.0f; // Needs adjustment since we shifted the world map MCQ 8 pixels down
+          screenOffsetY = -8.0f; // Needs adjustment since we shifted the world map MCQ 8 pixels down
         }
 
         RENDERER.queueModel(dobj2.obj, lw)

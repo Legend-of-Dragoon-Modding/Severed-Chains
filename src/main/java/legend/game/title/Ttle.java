@@ -885,7 +885,7 @@ public class Ttle extends EngineState {
     RENDERER
       .queueOrthoUnderlayModel(this.backgroundObj)
       .texture(this.backgroundTex)
-      .screenspaceOffset(0.0f, -this.backgroundScrollAmount)
+      .screenspaceOffset(0.0f, this.backgroundScrollAmount)
       .monochrome(this.backgroundFadeInAmount);
 
     //LAB_800cb370
@@ -950,7 +950,7 @@ public class Ttle extends EngineState {
 
       RENDERER.queueModel(this._800c66d0.dobj2s_00[i].obj, lw)
         .monochrome(this.flameColour / 128.0f)
-        .screenspaceOffset(9.75f, -0.5f)
+        .screenspaceOffset(9.75f, 0.5f)
         .lightDirection(lightDirectionMatrix_800c34e8)
         .lightColour(lightColourMatrix_800c3508)
         .backgroundColour(GTE.backgroundColour);
