@@ -935,7 +935,7 @@ public class SMap extends EngineState {
 
     RENDERER
       .queueModel(modelPart.obj, lw)
-      .screenspaceOffset(this.screenOffset_800cb568.x + 8, this.screenOffset_800cb568.y)
+      .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
       .lightDirection(lightDirectionMatrix_800c34e8)
       .lightColour(lightColourMatrix_800c3508)
       .backgroundColour(GTE.backgroundColour);
@@ -965,7 +965,7 @@ public class SMap extends EngineState {
           GsGetLw(dobj2.coord2_04, lw);
 
           RENDERER.queueModel(dobj2.obj, lw)
-            .screenspaceOffset(this.screenOffset_800cb568.x + 8, this.screenOffset_800cb568.y)
+            .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
             .backgroundColour(GTE.backgroundColour);
@@ -3367,7 +3367,7 @@ public class SMap extends EngineState {
 
         final RenderEngine.QueuedModel model = RENDERER.queueModel(this.collisionGeometry_800cbe08.debugObj, lw)
           .vertices(primitiveInfo.vertexInfoOffset_02, primitiveInfo.vertexCount_00)
-          .screenspaceOffset(this.screenOffset_800cb568.x + 8, this.screenOffset_800cb568.y)
+          .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
           .depthOffset(-1.0f)
         ;
 
@@ -3412,7 +3412,7 @@ public class SMap extends EngineState {
 
           RENDERER.queueModel(this.collisionGeometry_800cbe08.debugLines)
             .colour(1.0f, 0.0f, 0.0f)
-            .screenspaceOffset(this.screenOffset_800cb568.x + 8, this.screenOffset_800cb568.y)
+            .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
             .vertices(collidedPrimitive.vertexInfoOffset_02 * 2, collidedPrimitive.vertexCount_00 * 2)
             .depthOffset(-1.0f);
         }

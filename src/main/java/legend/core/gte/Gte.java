@@ -233,6 +233,16 @@ public class Gte {
     out.set(this.screenOffset);
   }
 
+  /** Control register 24 screen offset X */
+  public float getScreenOffsetX() {
+    return this.screenOffset.x;
+  }
+
+  /** Control register 25 screen offset X */
+  public float getScreenOffsetY() {
+    return this.screenOffset.y;
+  }
+
   /** Control register 24/25 screen offset */
   public void setScreenOffset(final float x, final float y) {
     this.screenOffset.set(x, y);

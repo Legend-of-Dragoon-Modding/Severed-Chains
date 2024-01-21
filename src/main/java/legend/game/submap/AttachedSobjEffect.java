@@ -383,7 +383,7 @@ public class AttachedSobjEffect {
         GsGetLw(this.tmdDustModel_800d4d40.modelParts_00[0].coord2_04, inst.transforms);
 
         RENDERER.queueModel(this.tmdDust, inst.transforms)
-          .screenspaceOffset(screenOffsetX + 8, screenOffsetY)
+          .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
           .lightDirection(lightDirectionMatrix_800c34e8)
           .lightColour(lightColourMatrix_800c3508)
           .backgroundColour(GTE.backgroundColour);
@@ -415,7 +415,7 @@ public class AttachedSobjEffect {
         RENDERER.queueModel(this.footprints, inst.transforms)
           .vertices(inst.textureIndex_02 * 4, 4)
           .monochrome(inst.brightness_48)
-          .screenspaceOffset(screenOffsetX + 8, screenOffsetY);
+          .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120);
         inst.tick_04++;
       } else {
         inst.free();

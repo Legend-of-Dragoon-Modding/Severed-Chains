@@ -1203,7 +1203,7 @@ public class RetailSubmap extends Submap {
       GsGetLw(dobj2.coord2_04, lw);
 
       RENDERER.queueModel(dobj2.obj, matrix, lw)
-        .screenspaceOffset(this.screenOffset.x + 8, this.screenOffset.y)
+        .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
         .lightDirection(lightDirectionMatrix_800c34e8)
         .lightColour(lightColourMatrix_800c3508)
         .backgroundColour(GTE.backgroundColour);
