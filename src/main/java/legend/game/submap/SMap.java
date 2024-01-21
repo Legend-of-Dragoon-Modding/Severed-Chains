@@ -1382,7 +1382,8 @@ public class SMap extends EngineState {
 
     sobj.finishInterpolatedMovement();
 
-    if(sobj.lastMovementTick != this.smapTicks_800c6ae0 - 2 / vsyncMode_8007a3b8) {
+    // Don't apply interpolation if the last movement was more than one script engine tick ago, or if movement is more than 256 units away
+    if(sobj.lastMovementTick != this.smapTicks_800c6ae0 - 2 / vsyncMode_8007a3b8 || model.coord2_14.coord.transfer.distanceSquared(x, y, z) > 65536.0f) {
       model.coord2_14.coord.transfer.set(x, y, z);
     } else {
       sobj.interpMovementTicksTotal = 2 / vsyncMode_8007a3b8;
