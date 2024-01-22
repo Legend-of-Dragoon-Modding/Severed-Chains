@@ -435,7 +435,7 @@ public class SMap extends EngineState {
     functions[106] = this::scriptSelfSetSobjHidden;
     functions[107] = this::scriptSelfMoveToPosition;
     functions[108] = this::scriptSelfMoveAlongArc;
-    functions[109] = this::FUN_800df4d0;
+    functions[109] = this::scriptCheckSelfCollision;
     functions[110] = this::FUN_800df500;
     functions[111] = this::FUN_800df530;
     functions[112] = this::FUN_800df560;
@@ -516,7 +516,7 @@ public class SMap extends EngineState {
     functions[678] = this::scriptSetSobjHidden;
     functions[679] = this::scriptSobjMoveToPosition;
     functions[680] = this::scriptSobjMoveAlongArc;
-    functions[681] = this::FUN_800e00cc;
+    functions[681] = this::scriptCheckSobjCollision;
     functions[682] = this::FUN_800e0148;
     functions[683] = this::FUN_800e01bc;
     functions[684] = this::scriptEnableTextureAnimation;
@@ -1516,13 +1516,13 @@ public class SMap extends EngineState {
     return this.scriptSobjMoveAlongArc(script);
   }
 
-  @ScriptDescription("Unknown")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "Return value")
+  @ScriptDescription("Updates the collision primitive for this submap object and returns the primitive index")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "collisionPrimitiveIndex", description = "The collision primitive index that the submap object is intersecting")
   @Method(0x800df4d0L)
-  private FlowControl FUN_800df4d0(final RunningScript<?> script) {
+  private FlowControl scriptCheckSelfCollision(final RunningScript<?> script) {
     script.params_20[1] = script.params_20[0];
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
-    return this.FUN_800e00cc(script);
+    return this.scriptCheckSobjCollision(script);
   }
 
   @ScriptDescription("Unknown")
@@ -1983,11 +1983,11 @@ public class SMap extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown")
+  @ScriptDescription("Updates the collision primitive for the given submap object and returns the primitive index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "Return value")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "collisionPrimitiveIndex", description = "The collision primitive index that the submap object is intersecting")
   @Method(0x800e00ccL)
-  private FlowControl FUN_800e00cc(final RunningScript<?> script) {
+  private FlowControl scriptCheckSobjCollision(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     final Model124 model = sobj.model_00;
     final int collisionPrimitiveIndex = this.collisionGeometry_800cbe08.getCollisionPrimitiveAtPoint(model.coord2_14.coord.transfer.x, model.coord2_14.coord.transfer.y, model.coord2_14.coord.transfer.z, false);
