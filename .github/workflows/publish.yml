@@ -40,7 +40,7 @@ jobs:
         path: meta
 
     - name: Build meta scraper
-      run: ./meta/gradlew build
+      run: ./meta/gradlew build -Dorg.gradle.project.buildDir=./meta/build
 
     - run: ls ./meta/build/libs
 
