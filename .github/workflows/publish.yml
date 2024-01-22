@@ -42,6 +42,8 @@ jobs:
     - name: Build meta scraper
       run: ./meta/gradlew build
 
+    - run: ls ./meta/build/libs
+
     - name: Run meta scraper
       env:
         HOST: ${{ secrets.META_HOST }}
