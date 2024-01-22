@@ -45,6 +45,8 @@ jobs:
       run: ./meta/gradlew build
 
     - run: cd ..
+    - run: ls ./meta
+    - run: ls ./meta/build
     - run: ls ./meta/build/libs
 
     - name: Run meta scraper
