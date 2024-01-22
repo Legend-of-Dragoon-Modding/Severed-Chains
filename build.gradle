@@ -17,10 +17,10 @@ if(project.ext.hash == null) {
 group 'legend'
 version project.ext.hash
 
-sourceCompatibility = targetCompatibility = 1.17
+sourceCompatibility = targetCompatibility = 1.21
 compileJava.options.encoding = 'UTF-8'
 
-project.ext.lwjglVersion = "3.3.2"
+project.ext.lwjglVersion = "3.3.3"
 project.ext.jomlVersion = "1.10.5"
 
 final def operatingSystem = hasProperty("os") ? OperatingSystem.forName(os) : OperatingSystem.current()
@@ -54,7 +54,7 @@ repositories {
 }
 
 dependencies {
-  api group: 'org.legendofdragoon', name: 'mod-loader', version: '1.0'
+  api group: 'org.legendofdragoon', name: 'mod-loader', version: '2.0'
 
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.14.1'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.17.1'
@@ -109,20 +109,21 @@ jar {
 
 task sourceJar(type: Jar) {
   from sourceSets.main.allJava
+  archiveClassifier = "sources"
 }
 
 task clearOutput(type: Delete) {
-  delete "${buildDir}/libs/libs"
-  delete "${buildDir}/libs/**"
+  delete layout.buildDirectory.dir("libs/libs")
+  delete layout.buildDirectory.file("libs/**")
 }
 
 task copyLibs(type: Copy) {
   from configurations.compileClasspath + configurations.runtimeClasspath
-  into "${buildDir}/libs/libs"
+  into layout.buildDirectory.dir("libs/libs")
 }
 
 task copySupportFiles(type: Copy) {
-  into "${buildDir}/libs"
+  into layout.buildDirectory.dir("libs")
 
   into("gfx") {
     from 'gfx'
@@ -175,9 +176,7 @@ publishing {
         name = 'LoD Engine'
       }
 
-      artifact sourceJar {
-        classifier "sources"
-      }
+      artifact sourceJar
     }
   }
 }

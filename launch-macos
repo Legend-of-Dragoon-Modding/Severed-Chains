@@ -3,7 +3,7 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd $SCRIPT_DIR
 
-JAVA=./jdk/Contents/Home/bin/java
+JAVA=./jdk21/Contents/Home/bin/java
 
 if [[ ! -f $JAVA ]]
 then
