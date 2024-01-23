@@ -39,6 +39,9 @@ jobs:
         repository: Legend-of-Dragoon-Modding/Severed-Chains-Metadata-Utility
         path: meta
 
+    - run: ls
+    - run: ls ./meta
+
     - name: Build meta scraper
       working-directory: ./meta
       run: ./gradlew build
