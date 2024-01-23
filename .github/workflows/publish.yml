@@ -37,7 +37,6 @@ jobs:
     - run: ls /home/runner/.m2/repository
     - run: ls /home/runner/.m2/repository/legend
     - run: ls /home/runner/.m2/repository/legend/lod
-    - run: ls /home/runner/.m2/repository/legend/lod/snapshot
 
     - name: Clone meta scraper
       uses: actions/checkout@v4
