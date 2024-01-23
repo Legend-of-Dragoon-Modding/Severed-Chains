@@ -33,34 +33,18 @@ jobs:
     - name: Publish to maven local
       run: ./gradlew publishToMavenLocal
 
-    - run: ls /home/runner/.m2
-    - run: ls /home/runner/.m2/repository
-    - run: ls /home/runner/.m2/repository/legend
-    - run: ls /home/runner/.m2/repository/legend/lod
-
     - name: Clone meta scraper
       uses: actions/checkout@v4
       with:
         repository: Legend-of-Dragoon-Modding/Severed-Chains-Metadata-Utility
         path: meta
 
-    - run: ls
-    - run: ls ./meta
-
     - name: Build meta scraper
       working-directory: ./meta
       run: ./gradlew build
 
-    - run: ls ./meta
-    - run: ls ./meta/build
-    - run: ls ./meta/build/libs
-
     - name: Create meta output directory
       run: mkdir ./meta-output
-
-    - env:
-        USERNAME: ${{ secrets.META_USERNAME }}
-      run: echo "$USERNAME"
 
     - name: Run meta scraper
       env:
@@ -69,8 +53,6 @@ jobs:
         PASSWORD: ${{ secrets.META_PASSWORD }}
       working-directory: ./meta-output
       run: java --add-exports java.base/jdk.internal.access=ALL-UNNAMED --add-opens java.base/jdk.internal.access=ALL-UNNAMED --add-exports java.base/jdk.internal.reflect=ALL-UNNAMED -jar ../meta/build/libs/sc-meta-scraper-1.0.jar --host "$HOST" --username "$USERNAME" --password "$PASSWORD"
-
-    - run: ls ./meta-output
 
     - name: Build Windows x64 with Gradle
       run: ./gradlew build -Pos=windows -Parch=x86_64
