@@ -39,22 +39,26 @@ jobs:
         repository: Legend-of-Dragoon-Modding/Severed-Chains-Metadata-Utility
         path: meta
 
-    - run: cd ./meta
-
     - name: Build meta scraper
+      working-directory: ./meta
       run: ./meta/gradlew build
 
-    - run: cd ..
     - run: ls ./meta
     - run: ls ./meta/build
     - run: ls ./meta/build/libs
+
+    - name: Create meta output directory
+      run: mkdir ./meta-output
 
     - name: Run meta scraper
       env:
         HOST: ${{ secrets.META_HOST }}
         USERNAME: ${{ secrets.META_USERNAME }}
         PASSWORD: ${{ secrets.META_PASSWORD }}
+      working-directory: ./meta-output
       run: java -jar ./meta/build/libs/sc-meta-scraper-1.0.jar --add-exports java.base/jdk.internal.access=ALL-UNNAMED --add-opens java.base/jdk.internal.access=ALL-UNNAMED --add-exports java.base/jdk.internal.reflect=ALL-UNNAMED --host "$HOST" --username "$USERNAME" --password "$PASSWORD"
+
+    - run: ls ./meta-output
 
     - name: Build Windows x64 with Gradle
       run: ./gradlew build -Pos=windows -Parch=x86_64
