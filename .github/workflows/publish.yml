@@ -58,6 +58,10 @@ jobs:
     - name: Create meta output directory
       run: mkdir ./meta-output
 
+    - env:
+        USERNAME: ${{ secrets.META_USERNAME }}
+      run: echo "$USERNAME"
+
     - name: Run meta scraper
       env:
         HOST: ${{ secrets.META_HOST }}
