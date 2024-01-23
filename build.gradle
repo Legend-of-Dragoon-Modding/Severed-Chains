@@ -3,7 +3,7 @@ import org.gradle.internal.os.OperatingSystem
 
 plugins {
   id 'java'
-  id 'org.openjfx.javafxplugin' version '0.0.14'
+  id 'org.openjfx.javafxplugin' version '0.1.0'
   id 'java-library'
   id 'maven-publish'
 }
@@ -91,7 +91,7 @@ dependencies {
 }
 
 javafx {
-  version = "18.0.2"
+  version = "21.0.2"
   modules = ['javafx.controls', 'javafx.fxml']
 }
 
