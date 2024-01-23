@@ -41,7 +41,7 @@ jobs:
 
     - name: Build meta scraper
       working-directory: ./meta
-      run: ./meta/gradlew build
+      run: ./gradlew build
 
     - run: ls ./meta
     - run: ls ./meta/build
@@ -56,7 +56,7 @@ jobs:
         USERNAME: ${{ secrets.META_USERNAME }}
         PASSWORD: ${{ secrets.META_PASSWORD }}
       working-directory: ./meta-output
-      run: java -jar ./meta/build/libs/sc-meta-scraper-1.0.jar --add-exports java.base/jdk.internal.access=ALL-UNNAMED --add-opens java.base/jdk.internal.access=ALL-UNNAMED --add-exports java.base/jdk.internal.reflect=ALL-UNNAMED --host "$HOST" --username "$USERNAME" --password "$PASSWORD"
+      run: java -jar ../meta/build/libs/sc-meta-scraper-1.0.jar --add-exports java.base/jdk.internal.access=ALL-UNNAMED --add-opens java.base/jdk.internal.access=ALL-UNNAMED --add-exports java.base/jdk.internal.reflect=ALL-UNNAMED --host "$HOST" --username "$USERNAME" --password "$PASSWORD"
 
     - run: ls ./meta-output
 
