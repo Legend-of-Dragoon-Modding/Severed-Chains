@@ -111,7 +111,7 @@ import static org.lwjgl.opengl.GL30C.glClearBufferfv;
 import static org.lwjgl.opengl.GL40C.glBlendFunci;
 
 public class RenderEngine {
-  private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Logger LOGGER = LogManager.getFormatterLogger(RenderEngine.class);
 
   public static int legacyMode;
   public boolean usePs1Gpu = true;

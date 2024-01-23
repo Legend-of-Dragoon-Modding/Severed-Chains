@@ -28,7 +28,7 @@ import static legend.core.GameEngine.CONFIG;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 
 public final class SaveManager {
-  private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Logger LOGGER = LogManager.getFormatterLogger(SaveManager.class);
 
   private static final Slugify slug = Slugify.builder().underscoreSeparator(true).customReplacement("'", "").build();
 

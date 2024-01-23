@@ -84,7 +84,7 @@ import static org.lwjgl.opengl.GL11C.GL_RGBA;
 import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_INT_8_8_8_8_REV;
 
 public class RetailSubmap extends Submap {
-  private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Logger LOGGER = LogManager.getFormatterLogger(RetailSubmap.class);
 
   public final int cut;
   private final NewRootStruct newRoot;

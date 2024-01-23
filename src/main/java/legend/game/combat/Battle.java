@@ -257,7 +257,7 @@ import static legend.game.combat.environment.BattleCamera.UPDATE_VIEWPOINT;
 import static legend.game.combat.environment.StageData.stageData_80109a98;
 
 public class Battle extends EngineState {
-  private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Logger LOGGER = LogManager.getFormatterLogger(Battle.class);
   private static final Marker CAMERA = MarkerManager.getMarker("CAMERA");
   private static final Marker DEFF = MarkerManager.getMarker("DEFF");
 

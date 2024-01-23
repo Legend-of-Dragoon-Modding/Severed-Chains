@@ -26,7 +26,7 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 
 public class SaveGameScreen extends MenuScreen {
-  private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Logger LOGGER = LogManager.getFormatterLogger(SaveGameScreen.class);
 
   private static final LodString Overwrite_save_8011c9e8 = new LodString("Overwrite save?");
 

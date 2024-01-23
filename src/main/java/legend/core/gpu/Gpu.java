@@ -39,7 +39,7 @@ import static org.lwjgl.opengl.GL30C.GL_R32UI;
 import static org.lwjgl.opengl.GL30C.GL_RED_INTEGER;
 
 public class Gpu {
-  private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Logger LOGGER = LogManager.getFormatterLogger(Gpu.class);
 
   private static final int STANDARD_VRAM_WIDTH = 1024;
   private static final int STANDARD_VRAM_HEIGHT = 512;

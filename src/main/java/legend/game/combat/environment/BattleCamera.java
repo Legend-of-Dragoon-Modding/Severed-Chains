@@ -24,7 +24,7 @@ import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.combat.Battle.ZERO;
 
 public class BattleCamera {
-  private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Logger LOGGER = LogManager.getFormatterLogger(BattleCamera.class);
   private static final Marker CAMERA = MarkerManager.getMarker("CAMERA");
 
   public static final int UPDATE_VIEWPOINT = 0x1;

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Obj {
-  private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Logger LOGGER = LogManager.getFormatterLogger(Obj.class);
   private static boolean shouldLog = true;
 
   private static final List<Obj> objList = new ArrayList<>();

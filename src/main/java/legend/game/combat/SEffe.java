@@ -169,7 +169,7 @@ import static legend.game.combat.Battle.stageDarkening_800c6958;
 public final class SEffe {
   private SEffe() { }
 
-  private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Logger LOGGER = LogManager.getFormatterLogger(SEffe.class);
   private static final Marker EFFECTS = MarkerManager.getMarker("EFFECTS");
 
   private static final GsF_LIGHT defaultLight_800c6ddc = new GsF_LIGHT(1.0f, 1.0f, 1.0f);

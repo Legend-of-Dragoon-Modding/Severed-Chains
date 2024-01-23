@@ -21,7 +21,7 @@ import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 public final class TmdObjLoader {
   private TmdObjLoader() { }
 
-  private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Logger LOGGER = LogManager.getFormatterLogger(TmdObjLoader.class);
 
   public static final int POS_SIZE = 3;
   public static final int NORM_SIZE = 3;

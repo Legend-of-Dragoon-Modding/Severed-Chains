@@ -37,7 +37,7 @@ import static legend.game.Scus94491BpeSegment_800c.volumeRamp_800c4ab0;
 import static legend.game.Scus94491BpeSegment_800c.waveforms_800c4ab8;
 
 public class Sequencer {
-  private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Logger LOGGER = LogManager.getFormatterLogger(Sequencer.class);
   private static final Marker SEQUENCE_MARKER = MarkerManager.getMarker("SEQUENCE");
 
   private final Object lock = new Object();

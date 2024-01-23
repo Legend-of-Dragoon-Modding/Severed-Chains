@@ -1,7 +1,5 @@
 package legend.core;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.joml.Vector3f;
 
 import java.io.IOException;
@@ -16,8 +14,6 @@ import static org.lwjgl.system.MemoryUtil.memSlice;
 
 public final class IoHelper {
   private IoHelper() { }
-
-  private static final Logger LOGGER = LogManager.getFormatterLogger();
 
   public static boolean getPackedFlag(final int[] array, final int packed) {
     return (array[packed >>> 5] & 0x1 << (packed & 0x1f)) != 0;

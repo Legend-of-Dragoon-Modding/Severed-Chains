@@ -20,7 +20,7 @@ import static legend.core.MathHelper.flEq;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 
 public class CollisionGeometry {
-  private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Logger LOGGER = LogManager.getFormatterLogger(CollisionGeometry.class);
 
   private final SMap smap;
 
