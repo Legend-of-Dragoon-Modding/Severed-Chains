@@ -50,11 +50,12 @@ println "Building for " + operatingSystem.familyName + " " + architecture
 
 repositories {
   mavenCentral()
-  mavenLocal()
+//  mavenLocal()
 }
 
 dependencies {
   api group: 'org.legendofdragoon', name: 'mod-loader', version: '2.0.1'
+  api group: 'org.legendofdragoon', name: 'script-recompiler', version: '0.1.0'
 
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.14.1'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.17.1'
@@ -73,6 +74,9 @@ dependencies {
   runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
   runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
   api "org.joml:joml:${jomlVersion}"
+
+  implementation group: 'com.opencsv', name: 'opencsv', version: '5.9'
+  implementation group: 'io.github.java-diff-utils', name: 'java-diff-utils', version: '4.12'
 
   api group: 'com.github.slugify', name: 'slugify', version: '3.0.4'
 
@@ -127,6 +131,10 @@ task copySupportFiles(type: Copy) {
 
   into("gfx") {
     from 'gfx'
+  }
+
+  into("patches") {
+    from 'patches'
   }
 
   into(".") {

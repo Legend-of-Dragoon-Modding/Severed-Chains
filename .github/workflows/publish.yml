@@ -43,16 +43,13 @@ jobs:
       working-directory: ./meta
       run: ./gradlew build
 
-    - name: Create meta output directory
-      run: mkdir ./meta-output
-
     - name: Run meta scraper
       env:
         HOST: ${{ secrets.META_HOST }}
         USERNAME: ${{ secrets.META_USERNAME }}
         PASSWORD: ${{ secrets.META_PASSWORD }}
-      working-directory: ./meta-output
-      run: java --add-exports java.base/jdk.internal.access=ALL-UNNAMED --add-opens java.base/jdk.internal.access=ALL-UNNAMED --add-exports java.base/jdk.internal.reflect=ALL-UNNAMED -jar ../meta/build/libs/sc-meta-scraper-1.0.jar --host "$HOST" --username "$USERNAME" --password "$PASSWORD"
+      working-directory: ./patches/meta
+      run: java --add-exports java.base/jdk.internal.access=ALL-UNNAMED --add-opens java.base/jdk.internal.access=ALL-UNNAMED --add-exports java.base/jdk.internal.reflect=ALL-UNNAMED -jar ../../meta/build/libs/sc-meta-scraper-1.0.jar --host "$HOST" --username "$USERNAME" --password "$PASSWORD"
 
     - name: Build Windows x64 with Gradle
       run: ./gradlew build -Pos=windows -Parch=x86_64
