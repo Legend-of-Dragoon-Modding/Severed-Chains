@@ -1839,12 +1839,12 @@ public class Battle extends EngineState {
     }
 
     loadDrgnDir(0, 2497 + stage, files -> {
-      if(files.get(0).hasVirtualSize()) {
-        this.loadStageMcq(new McqHeader(files.get(0)));
+      if(files.get(1).hasVirtualSize()) {
+        this.loadStageMcq(new McqHeader(files.get(1)));
       }
 
-      if(files.get(1).size() != 0) {
-        this.loadStageTim(files.get(1));
+      if(files.get(2).size() != 0) {
+        this.loadStageTim(files.get(2));
       }
     });
 
