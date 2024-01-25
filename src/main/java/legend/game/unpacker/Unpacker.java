@@ -251,6 +251,8 @@ public final class Unpacker {
               } else {
                 files.add(null);
               }
+            } else if(Files.isDirectory(file)) {
+              files.add(new FileData(new byte[0]));
             }
           } catch(final IOException e) {
             throw new RuntimeException("Failed to load directory " + name, e);
