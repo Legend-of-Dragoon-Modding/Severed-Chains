@@ -207,14 +207,16 @@ public class Ttle extends EngineState {
     this.backgroundTex = ((VramTextureSingle)this.backgroundTexture).createOpenglTexture((VramTextureSingle)this.backgroundPalettes[0]);
     this.backgroundObj = new QuadBuilder("Title Screen Background")
       .pos(0.0f, 0.0f, 1.0f)
-      .size(384.0f, 424.0f)
+      .posSize(384.0f, 424.0f)
+      .uvSize(1.0f, 1.0f)
       .bpp(Bpp.BITS_24)
       .build();
 
     this.logoTex = ((VramTextureSingle)this.logoTexture).createOpenglTexture((VramTextureSingle)this.logoPalettes[0]);
     this.logoObj = new QuadBuilder("Title Screen Logo")
       .pos(8.0f, 40.0f, 1.0f)
-      .size(352.0f, 88.0f)
+      .posSize(352.0f, 88.0f)
+      .uvSize(1.0f, 1.0f)
       .bpp(Bpp.BITS_24)
       .translucency(Translucency.B_PLUS_F)
       .build();
@@ -222,7 +224,8 @@ public class Ttle extends EngineState {
     this.trademarkTex = ((VramTextureSingle)this.tmTexture).createOpenglTexture((VramTextureSingle)this.tmPalettes[0]);
     this.trademarkObj = new QuadBuilder("Title Screen Trademark")
       .pos(326.0f, 106.0f, 1.0f)
-      .size(16.0f, 8.0f)
+      .posSize(16.0f, 8.0f)
+      .uvSize(1.0f, 1.0f)
       .bpp(Bpp.BITS_24)
       .translucency(Translucency.B_PLUS_F)
       .build();
@@ -232,8 +235,9 @@ public class Ttle extends EngineState {
       menuTextBuilder
         .add()
         .pos(192.0f + this._800ce8ac[i * 2], 120.0f + this._800ce8ac[i * 2 + 1] + 10, 100)
-        .size(this._800ce7f8[i * 2 + 1], 16.0f)
-        .uv(i == 0 ? 79 : 0, this._800ce7f8[i * 2])
+        .posSize(this._800ce7f8[i * 2 + 1], 16.0f)
+        .uvSize((float)this._800ce7f8[i * 2 + 1] / this.menuTextTexture.rect.w, 16.0f / this.menuTextTexture.rect.h)
+        .uv(i == 0 ? 79.0f / this.menuTextTexture.rect.w : 0, (float)this._800ce7f8[i * 2] / this.menuTextTexture.rect.h)
         .bpp(Bpp.BITS_24)
         .translucency(Translucency.B_PLUS_F);
     }
@@ -244,8 +248,8 @@ public class Ttle extends EngineState {
         .add()
         .pos(192.0f + this._800ce8ac[i * 2] - 8, 120.0f + this._800ce8ac[i * 2 + 1] + 10 - 8, 100)
         .posSize(this._800ce840[i * 3 + 2], 31.0f)
-        .uvSize(this._800ce840[i * 3 + 2], 32.0f)
-        .uv(this._800ce840[i * 3], this._800ce840[i * 3 + 1])
+        .uvSize((float)this._800ce840[i * 3 + 2] / this.menuTextTexture.rect.w, 32.0f / this.menuTextTexture.rect.h)
+        .uv((float)this._800ce840[i * 3] / this.menuTextTexture.rect.w, (float)this._800ce840[i * 3 + 1] / this.menuTextTexture.rect.h)
         .bpp(Bpp.BITS_24)
         .translucency(Translucency.B_PLUS_F);
     }
@@ -259,6 +263,7 @@ public class Ttle extends EngineState {
     this.copyrightObj = new QuadBuilder("Title Screen Copyright")
       .pos(4.0f, 200.0f, 1.0f)
       .size(368.0f, 32.0f)
+      .uvSize(1.0f, 1.0f)
       .bpp(Bpp.BITS_24)
       .translucency(Translucency.B_PLUS_F)
       .build();

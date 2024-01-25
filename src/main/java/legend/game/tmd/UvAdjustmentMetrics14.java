@@ -9,6 +9,15 @@ public class UvAdjustmentMetrics14 {
     public void apply(final TmdObjTable1c.Primitive primitive) { }
   };
 
+  public static final UvAdjustmentMetrics14 PNG = new UvAdjustmentMetrics14(0, 0, 0, 0, 0) {
+    @Override
+    public void apply(final TmdObjTable1c.Primitive primitive) {
+      for(final byte[] data : primitive.data()) {
+        MathHelper.set(data, 0x4, 4, MathHelper.get(data, 0x4, 4) & 0x60_ffff | 0x180_0000); // 24bpp
+      }
+    }
+  };
+
   public final int index;
 
   public final int clutX;

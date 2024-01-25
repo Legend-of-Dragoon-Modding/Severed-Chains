@@ -2,6 +2,7 @@ package legend.core.opengl;
 
 import legend.core.IoHelper;
 import legend.core.MathHelper;
+import legend.core.gpu.Bpp;
 import legend.core.gte.ModelPart10;
 import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable1c;
@@ -53,13 +54,13 @@ public final class TmdObjLoader {
   }
 
   public static void fromModel(final String name, final Model124 model) {
-    fromModel(name, model, 0);
+    fromModel(name, model, 0, 0);
   }
 
-  public static void fromModel(final String name, final Model124 model, final int specialFlags) {
+  public static void fromModel(final String name, final Model124 model, final int textureWidth, final int textureHeight) {
     for(int i = 0; i < model.modelParts_00.length; i++) {
       final ModelPart10 part = model.modelParts_00[i];
-      part.obj = TmdObjLoader.fromObjTable(name + " part " + i, part.tmd_08, Translucency.of(model.tpage_108 >>> 5 & 0b11));
+      part.obj = TmdObjLoader.fromObjTable(name + " part " + i, part.tmd_08, 0, textureWidth, textureHeight, Translucency.of(model.tpage_108 >>> 5 & 0b11));
     }
   }
 
@@ -68,14 +69,14 @@ public final class TmdObjLoader {
   }
 
   public static MeshObj fromObjTable(final String name, final TmdObjTable1c objTable, final Translucency translucency) {
-    return fromObjTable(name, objTable, 0, translucency);
+    return fromObjTable(name, objTable, 0, 0, 0, translucency);
   }
 
   public static MeshObj fromObjTable(final String name, final TmdObjTable1c objTable, final int specialFlags) {
-    return fromObjTable(name, objTable, specialFlags, null);
+    return fromObjTable(name, objTable, specialFlags, 0, 0, null);
   }
 
-  public static MeshObj fromObjTable(final String name, final TmdObjTable1c objTable, final int specialFlags, @Nullable final Translucency translucency) {
+  public static MeshObj fromObjTable(final String name, final TmdObjTable1c objTable, final int specialFlags, final int textureWidth, final int textureHeight, @Nullable final Translucency translucency) {
     final int translucencyCount = Translucency.values().length + 1;
     final float[][] allVertices = new float[translucencyCount][];
     final int[][] allIndices = new int[translucencyCount][];
@@ -227,19 +228,26 @@ public final class TmdObjLoader {
           }
 
           if(textured) {
-            final int bpp = poly.tpage >>> 7 & 0b11;
+            final Bpp bpp = Bpp.of(poly.tpage >>> 7 & 0b11);
 
-            if(bpp >= 2) {
-              throw new RuntimeException("Only 4/8 BPP supported");
+            // 24bpp textures use normalized coordinates
+            if(bpp == Bpp.BITS_24) {
+              if((textureWidth | textureHeight) == 0) {
+                throw new RuntimeException("24bpp textures must have texture width/height specified");
+              }
+
+              vertices[vertexOffsets[translucencyIndex]++] = (float)vertex.u / textureWidth;
+              vertices[vertexOffsets[translucencyIndex]++] = (float)vertex.v / textureHeight;
+            } else {
+              vertices[vertexOffsets[translucencyIndex]++] = vertex.u;
+              vertices[vertexOffsets[translucencyIndex]++] = vertex.v;
             }
 
-            vertices[vertexOffsets[translucencyIndex]++] = vertex.u;
-            vertices[vertexOffsets[translucencyIndex]++] = vertex.v;
             vertices[vertexOffsets[translucencyIndex]++] = (poly.tpage & 0b1111) * 64;
             vertices[vertexOffsets[translucencyIndex]++] = (poly.tpage & 0b10000) != 0 ? 256 : 0;
             vertices[vertexOffsets[translucencyIndex]++] = (poly.clut & 0b111111) * 16;
             vertices[vertexOffsets[translucencyIndex]++] = poly.clut >>> 6;
-            vertices[vertexOffsets[translucencyIndex]++] = bpp;
+            vertices[vertexOffsets[translucencyIndex]++] = bpp.ordinal();
           } else {
             vertexOffsets[translucencyIndex] += UV_SIZE + TPAGE_SIZE + CLUT_SIZE + BPP_SIZE;
           }

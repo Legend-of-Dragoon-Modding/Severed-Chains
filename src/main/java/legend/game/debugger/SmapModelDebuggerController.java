@@ -206,7 +206,7 @@ public class SmapModelDebuggerController {
 
         animateModel(this.model, 4 / vsyncMode_8007a3b8);
         applyModelRotationAndScale(this.model);
-        this.smap.renderSmapModel(this.model);
+        this.smap.renderSmapModel(this.model, null);
 
         Platform.runLater(() -> {
           this.freezeUpdates = true;

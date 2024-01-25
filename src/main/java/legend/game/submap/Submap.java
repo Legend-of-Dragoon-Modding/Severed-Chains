@@ -26,6 +26,7 @@ public abstract class Submap {
   public abstract void loadMapTransitionData(final MapTransitionData4c transitionData);
 
   public abstract void prepareEnv();
+  public abstract void prepareSobjModel(final SubmapObject210 sobj);
   public abstract void finishLoading();
 
   public abstract void draw();

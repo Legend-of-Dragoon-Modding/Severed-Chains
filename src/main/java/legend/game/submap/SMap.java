@@ -14,7 +14,7 @@ import legend.core.gte.ModelPart10;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.memory.Method;
 import legend.core.opengl.PolyBuilder;
-import legend.core.opengl.TmdObjLoader;
+import legend.core.opengl.Texture;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
 import legend.game.fmv.Fmv;
@@ -55,6 +55,7 @@ import org.joml.Math;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -945,7 +946,7 @@ public class SMap extends EngineState {
 
   // TODO Clean this up
   @Method(0x800daa3cL)
-  public void renderSmapModel(final Model124 model) {
+  public void renderSmapModel(final Model124 model, @Nullable final Texture texture) {
     zOffset_1f8003e8 = model.zOffset_a0;
     tmdGp0Tpage_1f8003ec = model.tpage_108;
 
@@ -964,11 +965,15 @@ public class SMap extends EngineState {
         if(dobj2.obj != null) { //TODO remove me
           GsGetLw(dobj2.coord2_04, lw);
 
-          RENDERER.queueModel(dobj2.obj, lw)
+          final RenderEngine.QueuedModel<?> queue = RENDERER.queueModel(dobj2.obj, lw)
             .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
             .backgroundColour(GTE.backgroundColour);
+
+          if(texture != null) {
+            queue.texture(texture);
+          }
         }
       }
     }
@@ -1876,10 +1881,7 @@ public class SMap extends EngineState {
     model.uvAdjustments_9d = this.submap.uvAdjustments.get(index);
 
     this.loadModelAndAnimation(model, this.submap.objects.get(index).model, this.submap.objects.get(index).animations.get(0));
-
-    for(final ModelPart10 part : model.modelParts_00) {
-      part.obj = TmdObjLoader.fromObjTable("SobjModel (index " + index + ')', part.tmd_08, Translucency.of(model.tpage_108 >>> 5 & 0b11));
-    }
+    this.submap.prepareSobjModel(sobj);
 
     sobj.animationFinishedFrames_12c = 0;
     sobj.rotationFrames_188 = 0;
@@ -2689,7 +2691,7 @@ public class SMap extends EngineState {
       }
 
       //LAB_800e1334
-      this.renderSmapModel(sobj.model_00);
+      this.renderSmapModel(sobj.model_00, sobj.texture);
 
       if(sobj.flatLightingEnabled_1c4) {
         GsSetFlatLight(0, this.GsF_LIGHT_0_800c66d8);
@@ -2850,7 +2852,7 @@ public class SMap extends EngineState {
           }
 
           //LAB_800e1d60
-          TmdObjLoader.fromModel("SobjModel (index " + i + ')', model);
+          this.submap.prepareSobjModel(state.innerStruct_00);
         }
 
         //LAB_800e1d88
@@ -3013,6 +3015,11 @@ public class SMap extends EngineState {
       }
 
       //LAB_800e3e38
+    }
+
+    if(sobj.texture != null) {
+      sobj.texture.delete();
+      sobj.texture = null;
     }
 
     sobj.model_00.deleteModelParts();
@@ -4827,7 +4834,7 @@ public class SMap extends EngineState {
 
     applyModelRotationAndScale(model);
     animateModel(model, 4 / vsyncMode_8007a3b8);
-    this.renderSmapModel(model);
+    this.renderSmapModel(model, null);
 
     GPU.queueCommand(1, new GpuCommandCopyVramToVram(984, 288 + this._800f9ea0, 992, 288, 8, 64 - this._800f9ea0));
     GPU.queueCommand(1, new GpuCommandCopyVramToVram(984, 288, 992, 352 - this._800f9ea0, 8, this._800f9ea0));

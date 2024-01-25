@@ -1,5 +1,7 @@
 package legend.game.submap;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Rect4i;
@@ -15,6 +17,7 @@ import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.modding.events.submap.SubmapEnvironmentTextureEvent;
+import legend.game.modding.events.submap.SubmapObjectTextureEvent;
 import legend.game.scripting.ScriptFile;
 import legend.game.tim.Tim;
 import legend.game.tmd.UvAdjustmentMetrics14;
@@ -37,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import static legend.core.Async.allLoaded;
 import static legend.core.GameEngine.EVENTS;
@@ -134,7 +138,6 @@ public class RetailSubmap extends Submap {
 
   private final Model124 submapModel_800d4bf8 = new Model124("Submap");
 
-
   private boolean _800f7f0c;
 
   private Tim[] envTextures;
@@ -143,6 +146,7 @@ public class RetailSubmap extends Submap {
   private Obj backgroundObj;
   private final MV backgroundTransforms = new MV();
   private Texture[] foregroundTextures;
+  private final Int2ObjectMap<Consumer<Texture.Builder>> sobjTextureOverrides = new Int2ObjectOpenHashMap<>();
 
   public RetailSubmap(final int cut, final NewRootStruct newRoot, final Vector2f screenOffset, final CollisionGeometry collisionGeometry) {
     this.cut = cut;
@@ -496,11 +500,25 @@ public class RetailSubmap extends Submap {
   }
 
   @Override
+  public void prepareSobjModel(final SubmapObject210 sobj) {
+    if(this.sobjTextureOverrides.containsKey(sobj.sobjIndex_12e)) {
+      sobj.texture = Texture.create(this.sobjTextureOverrides.get(sobj.sobjIndex_12e));
+      final Tim oldTexture = this.pxls.get(sobj.sobjIndex_12e);
+      TmdObjLoader.fromModel("SobjModel (index " + sobj.sobjIndex_12e + ')', sobj.model_00, oldTexture.getImageRect().w * oldTexture.getBpp().widthDivisor, oldTexture.getImageRect().h);
+    } else {
+      TmdObjLoader.fromModel("SobjModel (index " + sobj.sobjIndex_12e + ')', sobj.model_00);
+    }
+  }
+
+  @Override
   public void restoreAssets() {
     this.loadTextures();
   }
 
   private void loadTextures() {
+    this.sobjTextureOverrides.clear();
+    this.sobjTextureOverrides.putAll(EVENTS.postEvent(new SubmapObjectTextureEvent(drgnBinIndex_800bc058, this.cut)).textures);
+
     this.uvAdjustments.clear();
 
     final boolean[] usedSlots = new boolean[this.pxls.size() * 2];
@@ -541,7 +559,12 @@ public class RetailSubmap extends Submap {
             GPU.uploadData15(imageRect, tim.getImageData());
             GPU.uploadData15(clutRect, tim.getClutData());
 
-            this.uvAdjustments.add(new UvAdjustmentMetrics14(pxlIndex + 1, x, y));
+            if(this.sobjTextureOverrides.containsKey(pxlIndex)) {
+              this.uvAdjustments.add(UvAdjustmentMetrics14.PNG);
+            } else {
+              this.uvAdjustments.add(new UvAdjustmentMetrics14(pxlIndex + 1, x, y));
+            }
+
             continue outer;
           }
         }
@@ -991,7 +1014,7 @@ public class RetailSubmap extends Submap {
         .bpp(Bpp.BITS_24)
         .pos(this.backgroundRect.x, this.backgroundRect.y, ((0x1 << orderingTableBits_1f8003c0) - 1) * 4.0f)
         .posSize(this.backgroundRect.w, this.backgroundRect.h)
-        .uvSize(this.backgroundTexture.width, this.backgroundTexture.height)
+        .uvSize(1.0f, 1.0f)
         .build();
     }
 
@@ -1093,7 +1116,7 @@ public class RetailSubmap extends Submap {
             .bpp(Bpp.BITS_24)
             .pos(this.backgroundRect.x, this.backgroundRect.y, 0.0f)
             .posSize(this.backgroundRect.w, this.backgroundRect.h)
-            .uvSize(this.foregroundTextures[i].width, this.foregroundTextures[i].height)
+            .uvSize(1.0f, 1.0f)
             .build();
         }
 

@@ -82,7 +82,7 @@ void main() {
       // Pull actual pixel colour from CLUT
       texColour = texelFetch(tex24, clutUv, 0);
     } else {
-      texColour = texelFetch(tex24, ivec2(vertUv), 0);
+      texColour = texture(tex24, vertUv);
     }
 
     // If texture pixel translucency bit is not set, pixel is opaque and we've already rendered it

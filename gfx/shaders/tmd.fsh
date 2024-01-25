@@ -87,7 +87,7 @@ void main() {
         discard;
       }
     } else {
-      texColour = texelFetch(tex24, ivec2(vertUv + uvOffset), 0);
+      texColour = texture(tex24, vertUv);
 
       if(texColour.a == 0) {
         discard;
