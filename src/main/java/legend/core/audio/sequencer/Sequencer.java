@@ -57,13 +57,13 @@ public final class Sequencer {
   private final Voice[] voices;
   private int playingVoices;
   private final int[] voiceOutputBuffer = new int[2];
+  private final int[] voiceReverbBuffer = new int[2];
   // TODO consider making this variable length for mono, but it might be better to simply always playback as stereo, just with down mixing
   private final short[] outputBuffer;
 
   private final Reverberizer reverb = new Reverberizer();
-  private float reverbVolumeLeft;
-  private float reverbVolumeRight;
-  private final float[] reverbOutputBuffer = new float[2];
+  private float reverbVolumeLeft = 0x3000 / 32_768f;
+  private float reverbVolumeRight = 0x3000 / 32_768f;
 
   /** Use powers of 2 to avoid % operator */
   private static final int BUFFER_COUNT = 4;
@@ -134,36 +134,25 @@ public final class Sequencer {
 
       this.tickSequence();
 
-      int left = 0;
-      int right = 0;
-
-      this.reverbOutputBuffer[0] = 0.0f;
-      this.reverbOutputBuffer[1] = 0.0f;
-
       this.handleFadeInOut();
 
+      this.voiceOutputBuffer[0] = 0;
+      this.voiceOutputBuffer[1] = 0;
+
+      this.voiceReverbBuffer[0] = 0;
+      this.voiceReverbBuffer[1] = 0;
+
       for(final Voice voice : this.voices) {
-        voice.tick(this.voiceOutputBuffer);
-
-        left += this.voiceOutputBuffer[0];
-        right += this.voiceOutputBuffer[1];
-
-        if(voice.getLayer() != null && voice.getLayer().isReverb()) {
-          this.reverbOutputBuffer[0] += this.voiceOutputBuffer[0] / 32_768f;
-          this.reverbOutputBuffer[1] += this.voiceOutputBuffer[1] / 32_768f;
-        }
+        voice.tick(this.voiceOutputBuffer, this.voiceReverbBuffer);
       }
 
-      this.reverb.processReverb(this.reverbOutputBuffer[0], this.reverbOutputBuffer[1]);
+      this.reverb.processReverb(this.voiceReverbBuffer[0] / 32_768f, this.voiceReverbBuffer[1] / 32_768f);
 
-      this.outputBuffer[sample] = (short)MathHelper.clamp((int)((left + (this.reverb.getOutputLeft() * this.reverbVolumeLeft)) * this.mainVolumeLeft), -0x8000, 0x7fff);
-      this.outputBuffer[sample + 1] = (short)MathHelper.clamp((int)((right + (this.reverb.getOutputRight() * this.reverbVolumeRight)) * this.mainVolumeRight), -0x8000, 0x7fff);
+      this.outputBuffer[sample] = (short)MathHelper.clamp((int)((this.voiceOutputBuffer[0] + (this.reverb.getOutputLeft() * this.reverbVolumeLeft)) * this.mainVolumeLeft), -0x8000, 0x7fff);
+      this.outputBuffer[sample + 1] = (short)MathHelper.clamp((int)((this.voiceOutputBuffer[1] + (this.reverb.getOutputRight() * this.reverbVolumeRight)) * this.mainVolumeRight), -0x8000, 0x7fff);
     }
 
     this.bufferOutput();
-
-    // Restarts playback, if stopped
-    this.play();
   }
 
   public int buffersToQueue() {
@@ -463,7 +452,7 @@ public final class Sequencer {
     this.reverb.setConfig(config);
   }
 
-  private void setReverbVolume(final int reverbVolumeLeft, final int reverbVolumeRight) {
+  public void setReverbVolume(final int reverbVolumeLeft, final int reverbVolumeRight) {
     this.reverbVolumeLeft = (reverbVolumeLeft << 8) / 32768.0f;
     this.reverbVolumeRight = (reverbVolumeRight << 8) / 32768.0f;
   }
@@ -490,7 +479,7 @@ public final class Sequencer {
     this.bufferIndex &= BUFFER_COUNT - 1;
   }
 
-  private void play() {
+  public void play() {
     if(alGetSourcei(this.sourceId, AL_SOURCE_STATE) == AL_PLAYING) {
       return;
     }

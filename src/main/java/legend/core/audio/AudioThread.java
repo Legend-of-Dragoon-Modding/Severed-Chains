@@ -98,6 +98,9 @@ public final class AudioThread implements Runnable {
 
       }
 
+      // Restarts playback if stopped
+      this.sequencer.play();
+
       final long interval = System.nanoTime() - time;
       final int toSleep = (int)(Math.max(0, this.nanosPerTick - interval) / 1_000_000);
       DebugHelper.sleep(toSleep);
@@ -128,6 +131,10 @@ public final class AudioThread implements Runnable {
 
   public synchronized void setMainVolume(final int left, final int right) {
     this.sequencer.setMainVolume(left, right);
+  }
+
+  public synchronized void setReverbVolume(final int left, final int right) {
+    this.sequencer.setReverbVolume(left, right);
   }
 
   public synchronized void fadeIn(final int time, final int volume) {

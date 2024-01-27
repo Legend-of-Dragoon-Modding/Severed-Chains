@@ -586,6 +586,7 @@ public final class Scus94491BpeSegment_8004 {
     SPU.clearKeyOn();
     SPU.setReverbVolume(0, 0);
     SPU.disableReverb();
+    AUDIO_THREAD.setReverbVolume(0, 0);
   }
 
   /**
@@ -596,6 +597,7 @@ public final class Scus94491BpeSegment_8004 {
     if(soundEnv_800c6630.reverbType_34 != 0 && left < 0x80 && right < 0x80) {
       //LAB_8004c5d0
       SPU.setReverbVolume(left << 8, right << 8);
+      AUDIO_THREAD.setReverbVolume(left << 8, right << 8);
     }
 
     //LAB_8004c5d8
