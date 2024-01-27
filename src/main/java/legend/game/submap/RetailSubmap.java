@@ -475,6 +475,8 @@ public class RetailSubmap extends Submap {
       }
     }
 
+    this.loadTextureOverrides();
+    this.calculateTextureLocations();
     this.loadTextures();
   }
 
@@ -515,10 +517,12 @@ public class RetailSubmap extends Submap {
     this.loadTextures();
   }
 
-  private void loadTextures() {
+  private void loadTextureOverrides() {
     this.sobjTextureOverrides.clear();
     this.sobjTextureOverrides.putAll(EVENTS.postEvent(new SubmapObjectTextureEvent(drgnBinIndex_800bc058, this.cut)).textures);
+  }
 
+  private void calculateTextureLocations() {
     this.uvAdjustments.clear();
 
     final boolean[] usedSlots = new boolean[this.pxls.size() * 2];
@@ -528,10 +532,7 @@ public class RetailSubmap extends Submap {
       final Tim tim = this.pxls.get(pxlIndex);
 
       if(tim != null) {
-        final Rect4i imageRect = tim.getImageRect();
-        final Rect4i clutRect = tim.getClutRect();
-
-        final int neededSlots = imageRect.w / 16;
+        final int neededSlots = tim.getImageRect().w / 16;
 
         // We increment by neededSlots so that wide textures only land on even slots
         for(int slotIndex = 0; slotIndex < 20; slotIndex += neededSlots) {
@@ -551,14 +552,6 @@ public class RetailSubmap extends Submap {
             final int x = 576 + slotIndex % 12 * 16;
             final int y = 256 + slotIndex / 12 * 128;
 
-            imageRect.x = x;
-            imageRect.y = y;
-            clutRect.x = x;
-            clutRect.y = y + imageRect.h;
-
-            GPU.uploadData15(imageRect, tim.getImageData());
-            GPU.uploadData15(clutRect, tim.getClutData());
-
             if(this.sobjTextureOverrides.containsKey(pxlIndex)) {
               this.uvAdjustments.add(UvAdjustmentMetrics14.PNG);
             } else {
@@ -572,6 +565,25 @@ public class RetailSubmap extends Submap {
         throw new RuntimeException("Failed to find available texture slot for sobj texture " + pxlIndex);
       } else {
         this.uvAdjustments.add(UvAdjustmentMetrics14.NONE);
+      }
+    }
+  }
+
+  private void loadTextures() {
+    for(final UvAdjustmentMetrics14 uvAdjustment : this.uvAdjustments) {
+      if(uvAdjustment.index != 0) {
+        final Tim tim = this.pxls.get(uvAdjustment.index - 1);
+
+        final Rect4i imageRect = tim.getImageRect();
+        final Rect4i clutRect = tim.getClutRect();
+
+        imageRect.x = uvAdjustment.tpageX;
+        imageRect.y = uvAdjustment.tpageY;
+        clutRect.x = uvAdjustment.clutX;
+        clutRect.y = uvAdjustment.clutY;
+
+        GPU.uploadData15(imageRect, tim.getImageData());
+        GPU.uploadData15(clutRect, tim.getClutData());
       }
     }
 
