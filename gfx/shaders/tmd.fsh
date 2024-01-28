@@ -81,17 +81,13 @@ void main() {
 
       // Pull actual pixel colour from CLUT
       texColour = texelFetch(tex24, clutUv, 0);
-
-      // Discard if (0, 0, 0)
-      if(texColour.a == 0 && texColour.r == 0 && texColour.g == 0 && texColour.b == 0) {
-        discard;
-      }
     } else {
       texColour = texture(tex24, vertUv);
+    }
 
-      if(texColour.a == 0) {
-        discard;
-      }
+    // Discard if (0, 0, 0)
+    if(texColour.a == 0 && texColour.r == 0 && texColour.g == 0 && texColour.b == 0) {
+      discard;
     }
 
     // If translucent primitive and texture pixel translucency bit is set, pixel is translucent so we defer rendering
