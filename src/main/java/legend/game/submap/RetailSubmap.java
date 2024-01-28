@@ -38,7 +38,9 @@ import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -475,6 +477,12 @@ public class RetailSubmap extends Submap {
       }
     }
 
+    for(int i = 0; i < textures.size(); i++) {
+      if(this.pxls.get(i) == null) {
+        this.pxls.set(i, this.pxls.get(textures.get(i).realFileIndex()));
+      }
+    }
+
     this.loadTextureOverrides();
     this.calculateTextureLocations();
     this.loadTextures();
@@ -526,12 +534,15 @@ public class RetailSubmap extends Submap {
     this.uvAdjustments.clear();
 
     final boolean[] usedSlots = new boolean[this.pxls.size() * 2];
+    final Set<Tim> visited = new HashSet<>();
 
     outer:
     for(int pxlIndex = 0; pxlIndex < this.pxls.size(); pxlIndex++) {
       final Tim tim = this.pxls.get(pxlIndex);
 
-      if(tim != null) {
+      if(!visited.contains(tim)) {
+        visited.add(tim);
+
         final int neededSlots = tim.getImageRect().w / 16;
 
         // We increment by neededSlots so that wide textures only land on even slots
