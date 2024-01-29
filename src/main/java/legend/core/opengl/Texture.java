@@ -96,6 +96,16 @@ public final class Texture {
     });
   }
 
+  public static void unbind() {
+    for(int i = 0; i < currentTextures.length; i++) {
+      if(currentTextures[i] != 0) {
+        currentTextures[i] = 0;
+        glActiveTexture(GL_TEXTURE0 + i);
+        glBindTexture(GL_TEXTURE_2D, 0);
+      }
+    }
+  }
+
   private static final int[] currentTextures = new int[32];
 
   final int id;

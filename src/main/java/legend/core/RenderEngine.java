@@ -540,6 +540,9 @@ public class RenderEngine {
         this.revealTexture.use(1);
         postQuad.draw();
 
+        RENDERER.setProjectionMode(ProjectionMode._2D);
+        this.render2dPool(this.orthoOverlayPool);
+
         // draw to backbuffer (final pass)
         // -----
 
@@ -560,8 +563,8 @@ public class RenderEngine {
         this.opaqueTexture.use();
         postQuad.draw();
 
-        RENDERER.setProjectionMode(ProjectionMode._2D);
-        this.render2dPool(this.orthoOverlayPool);
+        // If we don't unbind the framebuffer textures, window resizing will crash since it has to resize the framebuffer
+        Texture.unbind();
       } else if(!this.paused) {
         this.orthoUnderlayPool.reset();
         this.orthoOverlayPool.reset();
