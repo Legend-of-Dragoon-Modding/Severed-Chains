@@ -10,7 +10,9 @@ import org.lwjgl.nuklear.NkDrawCommand;
 import org.lwjgl.nuklear.NkDrawNullTexture;
 import org.lwjgl.nuklear.NkDrawVertexLayoutElement;
 import org.lwjgl.nuklear.NkMouse;
+import org.lwjgl.nuklear.NkPluginFilterI;
 import org.lwjgl.nuklear.NkVec2;
+import org.lwjgl.nuklear.Nuklear;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.Platform;
 
@@ -169,12 +171,16 @@ import static org.lwjgl.system.MemoryStack.stackGet;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 import static org.lwjgl.system.MemoryUtil.memAddress;
+import static org.lwjgl.system.MemoryUtil.memAddressSafe;
 import static org.lwjgl.system.MemoryUtil.memCopy;
 import static org.lwjgl.system.MemoryUtil.nmemAllocChecked;
 import static org.lwjgl.system.MemoryUtil.nmemFree;
 
 public class GuiManager {
   private static final Logger LOGGER = LogManager.getLogger(GuiManager.class.getName());
+
+  public static final long FILTER_ASCII = memAddressSafe((NkPluginFilterI)Nuklear::nnk_filter_ascii);
+  public static final long FILTER_DECIMAL = memAddressSafe((NkPluginFilterI)Nuklear::nnk_filter_decimal);
 
   private static final int MAX_VERTEX_BUFFER = 512 * 1024;
   private static final int MAX_ELEMENT_BUFFER = 128 * 1024;
@@ -460,8 +466,8 @@ public class GuiManager {
           .line_AA(NK_ANTI_ALIASING_ON);
 
         // setup buffers to load vertices and elements
-        final NkBuffer vbuf = NkBuffer.mallocStack(stack);
-        final NkBuffer ebuf = NkBuffer.mallocStack(stack);
+        final NkBuffer vbuf = NkBuffer.malloc(stack);
+        final NkBuffer ebuf = NkBuffer.malloc(stack);
 
         nk_buffer_init_fixed(vbuf, vertices/*, max_vertex_buffer*/);
         nk_buffer_init_fixed(ebuf, elements/*, max_element_buffer*/);
@@ -520,7 +526,7 @@ public class GuiManager {
   private void mouseScroll(final Window window, final double deltaX, final double deltaY) {
     try(final MemoryStack stack = stackPush()) {
       final NkVec2 scroll = NkVec2
-        .mallocStack(stack)
+        .malloc(stack)
         .x((float)deltaX)
         .y((float)deltaY);
 
