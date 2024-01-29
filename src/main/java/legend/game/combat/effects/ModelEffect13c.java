@@ -85,10 +85,13 @@ public class ModelEffect13c implements Effect {
         zMax_1f8003cc = oldZMax;
         zMin = oldZMin;
 
-        RENDERER.queueModel(part.obj, lw)
-          .lightDirection(lightDirectionMatrix_800c34e8)
-          .lightColour(lightColourMatrix_800c3508)
-          .backgroundColour(GTE.backgroundColour);
+        //TODO remove
+        if(part.obj != null) {
+          RENDERER.queueModel(part.obj, lw)
+            .lightDirection(lightDirectionMatrix_800c34e8)
+            .lightColour(lightColourMatrix_800c3508)
+            .backgroundColour(GTE.backgroundColour);
+        }
 
         part.attribute_00 = oldAttrib;
       }
