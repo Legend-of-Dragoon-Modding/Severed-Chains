@@ -37,7 +37,7 @@ public class WmapPromptPopup {
   private final Vector3f promptTranslation = new Vector3f();
 
   private final List<TextObj> options = new ArrayList<>();
-  private int menuSelectorOptionIndex = 0;
+  private int menuSelectorOptionIndex;
   private float optionSpacing = 20.0f;
   private final Vector3f optionsTranslation = new Vector3f();
 
@@ -61,8 +61,8 @@ public class WmapPromptPopup {
     this.prompt = this.buildText(prompt);
     final int lines = (int)prompt.lines().count();
     this.promptTranslation.set(240.0f, 140.0f - lines * 7, textZ);
-    this.optionsTranslation.set(240.0f, 170.0f, textZ);
-    this.altTextTranslation.set(240.0f, 31.0f, textZ);
+    this.optionsTranslation.set(240.0f, 170.0f, textZ - 2.0f);
+    this.altTextTranslation.set(240.0f, 31.0f, textZ - 2.0f);
     this.thumbnailTranslation.set(0.0f, 0.0f, textZ + 4.0f);
     this.currentThumbnailBrightness = 1.0f;
     this.previousThumbnailBrightness = 0.0f;
@@ -262,7 +262,7 @@ public class WmapPromptPopup {
       //LAB_800ce5c8
       highlight.transforms.identity();
       highlight.transforms.transfer.set(x, y, highlight.z_3e);
-      RENDERER.queueOrthoOverlayModel(highlight.highlight, highlight.transforms)
+      RENDERER.queueOrthoModel(highlight.highlight, highlight.transforms)
         .vertices(i * 4, 4)
         .monochrome(highlight.currentBrightness_34);
     }
@@ -279,33 +279,31 @@ public class WmapPromptPopup {
 
     if(this.thumbnail != null) {
       this.transforms.transfer.set(this.thumbnailTranslation);
-      RENDERER.queueOrthoOverlayModel(this.thumbnail, this.transforms);
+      RENDERER.queueOrthoModel(this.thumbnail, this.transforms);
     }
 
     if(this.prompt != null) {
       this.transforms.transfer.set(this.promptTranslation);
-      RENDERER.queueOrthoOverlayModel(this.prompt, this.transforms);
+      RENDERER.queueOrthoModel(this.prompt, this.transforms);
     }
 
     if(!this.options.isEmpty()) {
-      TextObj option;
       this.transforms.transfer.set(this.optionsTranslation);
       for(int i = 0; i < this.options.size(); i++) {
-        option = this.options.get(i);
+        final TextObj option = this.options.get(i);
         if(option != null) {
-          RENDERER.queueOrthoOverlayModel(option, this.transforms);
+          RENDERER.queueOrthoModel(option, this.transforms);
           this.transforms.transfer.y += this.optionSpacing;
         }
       }
     }
 
     if(this.renderAltText && !this.altText.isEmpty()) {
-      TextObj altText;
       this.transforms.transfer.set(this.altTextTranslation);
       for(int i = 0; i < this.altText.size(); i++) {
-        altText = this.altText.get(i);
+        final TextObj altText = this.altText.get(i);
         if(altText != null) {
-          RENDERER.queueOrthoOverlayModel(altText, this.transforms);
+          RENDERER.queueOrthoModel(altText, this.transforms);
           this.transforms.transfer.y += this.altTextSpacing;
         }
       }

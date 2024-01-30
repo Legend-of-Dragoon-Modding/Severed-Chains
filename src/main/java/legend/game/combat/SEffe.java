@@ -2281,7 +2281,7 @@ public final class SEffe {
 
         effect.transforms.scaling(squareSize * 2.0f, squareSize * 2.0f, 1.0f);
         effect.transforms.transfer.set(GPU.getOffsetX() + squareSize, GPU.getOffsetY() + squareSize + 30.0f, 120.0f);
-        final RenderEngine.QueuedModel model = RENDERER.queueOrthoOverlayModel(RENDERER.centredQuadBPlusF, effect.transforms);
+        final RenderEngine.QueuedModel<?> model = RENDERER.queueOrthoModel(RENDERER.centredQuadBPlusF, effect.transforms);
 
         if(completionState == 1) {  // Success
           model.monochrome(1.0f);
@@ -2318,7 +2318,7 @@ public final class SEffe {
       .scaling(10.0f, borderSize, 1.0f)
       .rotateLocalZ(angle);
 
-    RENDERER.queueOrthoOverlayModel(effect.reticleBorderShadow, effect.transforms)
+    RENDERER.queueOrthoModel(effect.reticleBorderShadow, effect.transforms)
       .monochrome(colour / 255.0f);
   }
 
@@ -2337,13 +2337,13 @@ public final class SEffe {
           .rotateZ(borderOverlay.angleModifier_02);
         effect.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY() + 30.0f, 120.0f);
 
-        final RenderEngine.QueuedModel model;
+        final RenderEngine.QueuedModel<?> model;
 
         // Set translucent if button press is failure and border sideEffects_0d not innermost rotating border or target (15)
         if((borderOverlay.sideEffects_0d == 0 || borderOverlay.sideEffects_0d == -1) && currentHitCompletionState >= 0) {
-          model = RENDERER.queueOrthoOverlayModel(RENDERER.lineBox, effect.transforms);
+          model = RENDERER.queueOrthoModel(RENDERER.lineBox, effect.transforms);
         } else {
-          model = RENDERER.queueOrthoOverlayModel(RENDERER.lineBoxBPlusF, effect.transforms);
+          model = RENDERER.queueOrthoModel(RENDERER.lineBoxBPlusF, effect.transforms);
         }
 
         if(hitArray[hitNum].isCounter_1c && borderNum != 16) {

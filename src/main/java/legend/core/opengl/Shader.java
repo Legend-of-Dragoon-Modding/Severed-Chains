@@ -130,7 +130,6 @@ public class Shader<Options extends ShaderOptions<Options>> {
     public static final int TRANSFORM2 = 1;
     public static final int LIGHTING = 2;
     public static final int PROJECTION_INFO = 3;
-    public static final int TMD_INFO = 4;
 
     private final int id;
 

@@ -822,10 +822,10 @@ public final class SItem {
 
     //LAB_80103d24
     //LAB_80103d28
+    Scus94491BpeSegment_8002.renderText(text, x    , y    , colour, 0);
     Scus94491BpeSegment_8002.renderText(text, x    , y + 1, shadowColour, 0);
     Scus94491BpeSegment_8002.renderText(text, x + 1, y    , shadowColour, 0);
     Scus94491BpeSegment_8002.renderText(text, x + 1, y + 1, shadowColour, 0);
-    Scus94491BpeSegment_8002.renderText(text, x    , y    , colour, 0);
   }
 
   @Method(0x80103dd4L)

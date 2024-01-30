@@ -1574,10 +1574,10 @@ public final class Scus94491BpeSegment_8002 {
           if(renderable.uiType_20.obj != null) {
             final MV transforms = new MV();
             transforms.scaling(width, height, 1.0f);
-            transforms.transfer.set(x1 + renderable.baseX + centreX - 8 + (width < 0 ? 1.0f : 0.0f), y1 + renderable.baseY + 120.0f + (height < 0 ? 1.0f : 0.0f), renderable.z_3c * 4.0f);
+            transforms.transfer.set(x1 + renderable.baseX + centreX - 8 + (width < 0 ? 1.0f : 0.0f), y1 + renderable.baseY + 120.0f + (height < 0 ? 1.0f : 0.0f), renderable.z_3c * 4.0f - Math.lerp(0.0f, 3.9f, (metricsIndex + 1.0f) / metricses.length));
 
             RENDERER
-              .queueOrthoOverlayModel(renderable.uiType_20.obj, transforms)
+              .queueOrthoModel(renderable.uiType_20.obj, transforms)
               .vertices(metrics.vertexStart, 4)
               .tpageOverride((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
               .clutOverride((clut & 0b111111) * 16, clut >>> 6);
@@ -2168,7 +2168,7 @@ public final class Scus94491BpeSegment_8002 {
           textbox.updateBorder = true;
         }
 
-        RENDERER.queueOrthoOverlayModel(textboxBackgroundObj, textbox.backgroundTransforms);
+        RENDERER.queueOrthoModel(textboxBackgroundObj, textbox.backgroundTransforms);
 
         if(textbox.renderBorder_06) {
           renderTextboxBorder(textboxIndex, textbox.x_14 - textbox.width_1c, textbox.y_16 - textbox.height_1e, textbox.x_14 + textbox.width_1c, textbox.y_16 + textbox.height_1e);
@@ -2224,7 +2224,7 @@ public final class Scus94491BpeSegment_8002 {
           .scaling((right - left) / 16.0f, (bottom - top) / 16.0f, 1.0f);
       }
 
-      RENDERER.queueOrthoOverlayModel(textboxBorderObjs[borderIndex], textbox.borderTransforms[borderIndex]);
+      RENDERER.queueOrthoModel(textboxBorderObjs[borderIndex], textbox.borderTransforms[borderIndex]);
     }
 
     textbox.oldScaleW = textbox.animationWidth_20;
@@ -3354,7 +3354,7 @@ public final class Scus94491BpeSegment_8002 {
 
           textboxText.transforms.identity();
           textboxText.transforms.transfer.set(GPU.getOffsetX() + (int)x, GPU.getOffsetY() + (int)y - scrollH, textboxText.z_0c * 4.0f);
-          RENDERER.queueOrthoOverlayModel(RENDERER.chars, textboxText.transforms)
+          RENDERER.queueOrthoModel(RENDERER.chars, textboxText.transforms)
             .vertices(chr.char_06 * 4, 4)
             .colour(chr.colour_04.r / 255.0f, chr.colour_04.g / 255.0f, chr.colour_04.b / 255.0f)
             .scissor(GPU.getOffsetX() + (int)x, GPU.getOffsetY() + (int)y + height, 8, height);
@@ -3461,7 +3461,7 @@ public final class Scus94491BpeSegment_8002 {
 
     textboxSelectionTransforms.scaling(width, 1.0f, 1.0f);
     textboxSelectionTransforms.transfer.set(x - width / 2.0f, y, textbox.z_0c);
-    RENDERER.queueOrthoOverlayModel(textboxSelectionObj, textboxSelectionTransforms);
+    RENDERER.queueOrthoModel(textboxSelectionObj, textboxSelectionTransforms);
   }
 
   private static final MV textTransforms = new MV();
@@ -3503,7 +3503,7 @@ public final class Scus94491BpeSegment_8002 {
         }
 
         textTransforms.transfer.set(x + lineIndex * 8 - glyphNudge, y, textZ_800bdf00 * 4.0f);
-        RENDERER.queueOrthoOverlayModel(RENDERER.chars, textTransforms)
+        RENDERER.queueOrthoModel(RENDERER.chars, textTransforms)
           .vertices(c * 4, 4)
           .colour(colour.r / 255.0f, colour.g / 255.0f, colour.b / 255.0f);
 
@@ -3585,7 +3585,7 @@ public final class Scus94491BpeSegment_8002 {
       if((textboxText.flags_08 & TextboxText84.SHOW_ARROW) != 0) {
         textboxArrowTransforms.scaling(1.0f, 0.875f, 1.0f);
         textboxArrowTransforms.transfer.set(arrow.x_04, arrow.y_06,  textboxText.z_0c);
-        RENDERER.queueOrthoOverlayModel(textboxArrowObjs[arrow.spriteIndex_08], textboxArrowTransforms);
+        RENDERER.queueOrthoModel(textboxArrowObjs[arrow.spriteIndex_08], textboxArrowTransforms);
       }
     }
 

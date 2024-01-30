@@ -125,12 +125,12 @@ public class UiBox {
   }
 
   public void render(final float r, final float g, final float b) {
-    RENDERER.queueOrthoOverlayModel(this.hudBackgroundButDarkerObj);
-    RENDERER.queueOrthoOverlayModel(this.hudBackgroundObj)
+    RENDERER.queueOrthoModel(this.hudBackgroundButDarkerObj);
+    RENDERER.queueOrthoModel(this.hudBackgroundObj)
       .colour(r, g, b);
 
     for(int i = 0; i < this.hudBackgroundBorders.length; i++) {
-      RENDERER.queueOrthoOverlayModel(this.hudBackgroundBorders[i]);
+      RENDERER.queueOrthoModel(this.hudBackgroundBorders[i]);
     }
   }
 

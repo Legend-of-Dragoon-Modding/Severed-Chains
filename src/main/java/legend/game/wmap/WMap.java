@@ -730,11 +730,11 @@ public class WMap extends EngineState {
             2,
             true,
             Translucency.B_PLUS_F,
-            52.0f
+            51.0f
           )
         );
       this.coolonPromptPopup.setTranslation(WmapPromptPopup.ObjFields.PROMPT, 240.0f, 41.0f, textZ_800bdf00 * 4.0f);
-      this.coolonPromptPopup.setTranslation(WmapPromptPopup.ObjFields.OPTIONS, 240.0f, 57.0f, textZ_800bdf00 * 4.0f);
+      this.coolonPromptPopup.setTranslation(WmapPromptPopup.ObjFields.OPTIONS, 240.0f, 57.0f, textZ_800bdf00 * 4.0f - 2.0f);
       this.coolonPromptPopup.setOptionSpacing(16.0f);
     }
   }
@@ -1836,7 +1836,7 @@ public class WMap extends EngineState {
     //LAB_800d6950
     // Continent name
     this.modelAndAnimData_800c66a8.mapOverlayTransforms.identity();
-    RENDERER.queueOrthoOverlayModel(this.modelAndAnimData_800c66a8.mapContinentNameObj, this.modelAndAnimData_800c66a8.mapOverlayTransforms)
+    RENDERER.queueOrthoModel(this.modelAndAnimData_800c66a8.mapContinentNameObj, this.modelAndAnimData_800c66a8.mapOverlayTransforms)
       .monochrome(this.modelAndAnimData_800c66a8.mapTextureBrightness_20);
 
     this.modelAndAnimData_800c66a8.mapTextureBrightness_20 += 0.25f / (3.0f / vsyncMode_8007a3b8);
@@ -2100,7 +2100,7 @@ public class WMap extends EngineState {
         lw.transfer.y += 6.0f;
       }
 
-      final RenderEngine.QueuedModel model = RENDERER.queueModel(dobj2.obj, lw);
+      final RenderEngine.QueuedModel<?> model = RENDERER.queueModel(dobj2.obj, lw);
 
       if(this.mapState_800c6798.continent_00.continentNum < 9 && i == 0) {
         model.clutOverride(1008, waterClutYs_800ef348[(int)this.modelAndAnimData_800c66a8.clutYIndex_28]);
@@ -2750,8 +2750,8 @@ public class WMap extends EngineState {
     }
 
     //LAB_800dc114
-    this.mcqTransforms.transfer.set(0.0f, -8.0f, 10);
-    RENDERER.queueOrthoUnderlayModel(this.mcqObj, this.mcqTransforms)
+    this.mcqTransforms.transfer.set(0.0f, -8.0f, 60000.0f);
+    RENDERER.queueOrthoModel(this.mcqObj, this.mcqTransforms)
       .monochrome(this.mcqBrightness_800ef1a4);
 
     //LAB_800dc164
@@ -3860,8 +3860,8 @@ public class WMap extends EngineState {
     }
 
     //LAB_800e4f04
-    this.mcqTransforms.transfer.set(0.0f, -8.0f, 10);
-    RENDERER.queueOrthoUnderlayModel(this.mcqObj, this.mcqTransforms)
+    this.mcqTransforms.transfer.set(0.0f, -8.0f, 60000.0f);
+    RENDERER.queueOrthoModel(this.mcqObj, this.mcqTransforms)
       .monochrome(this.mcqColour_800c6794);
 
     //LAB_800e4f50
@@ -3976,7 +3976,7 @@ public class WMap extends EngineState {
               .addOptionText(dest1)
               .addOptionText(dest2);
             this.wmapLocationPromptPopup.setOptionSpacing(18.0f);
-            this.wmapLocationPromptPopup.setTranslation(WmapPromptPopup.ObjFields.OPTIONS, 240.0f, 164.0f, textZ_800bdf00 * 4.0f);
+            this.wmapLocationPromptPopup.setTranslation(WmapPromptPopup.ObjFields.OPTIONS, 240.0f, 164.0f, textZ_800bdf00 * 4.0f - 2.0f);
           } else {
             this.wmapLocationPromptPopup.addOptionText("Enter");
           }
@@ -3992,9 +3992,8 @@ public class WMap extends EngineState {
 
           if(servicesCount == 0) {
             this.wmapLocationPromptPopup.addAltText("No facilities");
-            this.wmapLocationPromptPopup.setTranslation(WmapPromptPopup.ObjFields.ALT_TEXT, 240.0f, 63.0f, textZ_800bdf00 * 4.0f);
+            this.wmapLocationPromptPopup.setTranslation(WmapPromptPopup.ObjFields.ALT_TEXT, 240.0f, 63.0f, textZ_800bdf00 * 4.0f - 2.0f);
           }
-
 
           this.wmapLocationPromptPopup.setHighlight(
             WmapPromptPopup.HighlightMode.SHADOW,
@@ -4007,9 +4006,10 @@ public class WMap extends EngineState {
               4,
               true,
               Translucency.B_MINUS_F,
-              56.0f
+              55.0f
             )
           );
+
           this.wmapLocationPromptPopup.setHighlight(
             WmapPromptPopup.HighlightMode.SELECTOR,
             new WmapMenuTextHighlight40(
@@ -4021,7 +4021,7 @@ public class WMap extends EngineState {
               2,
               true,
               Translucency.B_PLUS_F,
-              52.0f
+              51.0f
             )
           );
         }
@@ -4457,8 +4457,8 @@ public class WMap extends EngineState {
     for(int i = 0; i < lines.length; i++) {
       final LodString line = new LodString(lines[i]);
       final int textWidth = textWidth(line);
-      renderText(line, x - textWidth / 2.0f + 1, y + i * 12 + 1, TextColour.BLACK, trim);
       renderText(line, x - textWidth / 2.0f, y + i * 12, colour, trim);
+      renderText(line, x - textWidth / 2.0f + 1, y + i * 12 + 1, TextColour.BLACK, trim);
     }
   }
 

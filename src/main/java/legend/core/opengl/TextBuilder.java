@@ -60,10 +60,10 @@ public class TextBuilder {
         this.newLine();
         currentLineWidth = 0;
       } else if(chr != ' ' || currentLineWidth != 0) {
-          this.chars.add(LodString.toLodChar(chr));
-          charWidth = charWidth(chr);
-          this.addToWidth(charWidth);
-          currentLineWidth += charWidth;
+        this.chars.add(LodString.toLodChar(chr));
+        charWidth = charWidth(chr);
+        this.addToWidth(charWidth);
+        currentLineWidth += charWidth;
       }
     }
 
@@ -147,7 +147,7 @@ public class TextBuilder {
           final int v = this.trim >= 0 ? v1 : v1 - this.trim;
           final int h = this.trim >= 0 ? 12 - this.trim : 12 + this.trim;
 
-          if(i == 0 && this.shadowed) {
+          if(i == 1 && this.shadowed) {
             vertexIndex = this.setVertices(
               vertices, vertexIndex,
               x + charIndex * 8 - glyphNudge + 1.0f, lineIndex * 12 + 1.0f,
@@ -165,12 +165,12 @@ public class TextBuilder {
             );
           }
 
-          indices[indexIndex++] = indicesVertexIndex + 2;
-          indices[indexIndex++] = indicesVertexIndex + 1;
           indices[indexIndex++] = indicesVertexIndex;
           indices[indexIndex++] = indicesVertexIndex + 1;
           indices[indexIndex++] = indicesVertexIndex + 2;
           indices[indexIndex++] = indicesVertexIndex + 3;
+          indices[indexIndex++] = indicesVertexIndex + 2;
+          indices[indexIndex++] = indicesVertexIndex + 1;
           indicesVertexIndex += 4;
 
           glyphNudge += switch(c) {

@@ -33,7 +33,7 @@ public class ZoomOverlay {
         .bpp(Bpp.BITS_4)
         .clut(640, 502)
         .vramPos(640, 256)
-        .pos(GPU.getOffsetX() + zoomUiMetrics_800ef104[i].x_00 + 88.0f, GPU.getOffsetY() + zoomUiMetrics_800ef104[i].y_01 - 96.0f, 80.0f)
+        .pos(GPU.getOffsetX() + zoomUiMetrics_800ef104[i].x_00 + 88.0f, GPU.getOffsetY() + zoomUiMetrics_800ef104[i].y_01 - 96.0f, 79.0f)
         .size(zoomUiMetrics_800ef104[i].w_04, zoomUiMetrics_800ef104[i].h_05)
         .uv(zoomUiMetrics_800ef104[i].u_02, zoomUiMetrics_800ef104[i].v_03)
         .translucency(Translucency.HALF_B_PLUS_HALF_F)
@@ -68,8 +68,8 @@ public class ZoomOverlay {
       case WORLD_3, TRANSITION_MODEL_IN_4 -> 4;
     };
 
-    for(int i = 4; i >= 0; i--) {
-      final RenderEngine.QueuedModel model = RENDERER.queueOrthoOverlayModel(this.overlayOpaque)
+    for(int i = 0; i < 5; i++) {
+      final RenderEngine.QueuedModel<?> model = RENDERER.queueOrthoModel(this.overlayOpaque)
         .vertices(i * 4, 4);
 
       if(i + 2 == currentZoomLevel) {
@@ -77,8 +77,8 @@ public class ZoomOverlay {
       }
     }
 
-    for(int i = 1; i >= 0; i--) {
-      RENDERER.queueOrthoOverlayModel(this.overlayTranslucent)
+    for(int i = 0; i < 2; i++) {
+      RENDERER.queueOrthoModel(this.overlayTranslucent)
         .vertices(i * 4, 4);
     }
   }

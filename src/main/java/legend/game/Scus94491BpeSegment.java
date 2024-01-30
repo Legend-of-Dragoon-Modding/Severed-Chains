@@ -731,10 +731,10 @@ public final class Scus94491BpeSegment {
     // This causes the bright flash of light from the lightning, etc.
     if(fullScreenEffect_800bb140.red0_20 != 0 || fullScreenEffect_800bb140.green0_1c != 0 || fullScreenEffect_800bb140.blue0_14 != 0) {
       fullScreenEffect_800bb140.transforms.scaling(displayWidth_1f8003e0, displayHeight_1f8003e4, 1.0f);
-      fullScreenEffect_800bb140.transforms.transfer.set(0.0f, 0.0f, 999.0f);
+      fullScreenEffect_800bb140.transforms.transfer.set(0.0f, 0.0f, 30.0f);
 
       //LAB_800139c4
-      RENDERER.queueOrthoOverlayModel(RENDERER.plainQuads.get(Translucency.B_PLUS_F), fullScreenEffect_800bb140.transforms)
+      RENDERER.queueOrthoModel(RENDERER.plainQuads.get(Translucency.B_PLUS_F), fullScreenEffect_800bb140.transforms)
         .colour(fullScreenEffect_800bb140.red0_20 / 255.0f, fullScreenEffect_800bb140.green0_1c / 255.0f, fullScreenEffect_800bb140.blue0_14 / 255.0f);
     }
 
@@ -743,10 +743,10 @@ public final class Scus94491BpeSegment {
     // This causes the screen darkening from the lightning, etc.
     if(fullScreenEffect_800bb140.red1_18 != 0 || fullScreenEffect_800bb140.green1_10 != 0 || fullScreenEffect_800bb140.blue1_0c != 0) {
       fullScreenEffect_800bb140.transforms.scaling(displayWidth_1f8003e0, displayHeight_1f8003e4, 1.0f);
-      fullScreenEffect_800bb140.transforms.transfer.set(0.0f, 0.0f, 999.0f);
+      fullScreenEffect_800bb140.transforms.transfer.set(0.0f, 0.0f, 30.0f);
 
       //LAB_80013b10
-      RENDERER.queueOrthoOverlayModel(RENDERER.plainQuads.get(Translucency.B_MINUS_F), fullScreenEffect_800bb140.transforms)
+      RENDERER.queueOrthoModel(RENDERER.plainQuads.get(Translucency.B_MINUS_F), fullScreenEffect_800bb140.transforms)
         .colour(fullScreenEffect_800bb140.red1_18 / 255.0f, fullScreenEffect_800bb140.green1_10 / 255.0f, fullScreenEffect_800bb140.blue1_0c / 255.0f);
     }
 
@@ -758,7 +758,7 @@ public final class Scus94491BpeSegment {
     fullScreenEffect_800bb140.transforms.scaling(displayWidth_1f8003e0, displayHeight_1f8003e4, 1.0f);
     fullScreenEffect_800bb140.transforms.transfer.set(0.0f, 0.0f, 120.0f);
 
-    RENDERER.queueOrthoOverlayModel(RENDERER.plainQuads.get(transMode), fullScreenEffect_800bb140.transforms)
+    RENDERER.queueOrthoModel(RENDERER.plainQuads.get(transMode), fullScreenEffect_800bb140.transforms)
       .monochrome(colour / 255.0f);
   }
 

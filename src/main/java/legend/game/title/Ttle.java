@@ -206,7 +206,7 @@ public class Ttle extends EngineState {
 
     this.backgroundTex = ((VramTextureSingle)this.backgroundTexture).createOpenglTexture((VramTextureSingle)this.backgroundPalettes[0]);
     this.backgroundObj = new QuadBuilder("Title Screen Background")
-      .pos(0.0f, 0.0f, 1.0f)
+      .pos(0.0f, 0.0f, 60000.0f)
       .posSize(384.0f, 424.0f)
       .uvSize(1.0f, 1.0f)
       .bpp(Bpp.BITS_24)
@@ -214,7 +214,7 @@ public class Ttle extends EngineState {
 
     this.logoTex = ((VramTextureSingle)this.logoTexture).createOpenglTexture((VramTextureSingle)this.logoPalettes[0]);
     this.logoObj = new QuadBuilder("Title Screen Logo")
-      .pos(8.0f, 40.0f, 1.0f)
+      .pos(8.0f, 40.0f, 10000.0f)
       .posSize(352.0f, 88.0f)
       .uvSize(1.0f, 1.0f)
       .bpp(Bpp.BITS_24)
@@ -223,7 +223,7 @@ public class Ttle extends EngineState {
 
     this.trademarkTex = ((VramTextureSingle)this.tmTexture).createOpenglTexture((VramTextureSingle)this.tmPalettes[0]);
     this.trademarkObj = new QuadBuilder("Title Screen Trademark")
-      .pos(326.0f, 106.0f, 1.0f)
+      .pos(326.0f, 106.0f, 99.0f)
       .posSize(16.0f, 8.0f)
       .uvSize(1.0f, 1.0f)
       .bpp(Bpp.BITS_24)
@@ -234,7 +234,7 @@ public class Ttle extends EngineState {
     for(int i = 0; i < 3; i++) {
       menuTextBuilder
         .add()
-        .pos(192.0f + this._800ce8ac[i * 2], 120.0f + this._800ce8ac[i * 2 + 1] + 10, 100)
+        .pos(192.0f + this._800ce8ac[i * 2], 120.0f + this._800ce8ac[i * 2 + 1] + 10, 100.0f)
         .posSize(this._800ce7f8[i * 2 + 1], 16.0f)
         .uvSize((float)this._800ce7f8[i * 2 + 1] / this.menuTextTexture.rect.w, 16.0f / this.menuTextTexture.rect.h)
         .uv(i == 0 ? 79.0f / this.menuTextTexture.rect.w : 0, (float)this._800ce7f8[i * 2] / this.menuTextTexture.rect.h)
@@ -246,7 +246,7 @@ public class Ttle extends EngineState {
     for(int i = 0; i < 3; i++) {
       menuTextBuilder
         .add()
-        .pos(192.0f + this._800ce8ac[i * 2] - 8, 120.0f + this._800ce8ac[i * 2 + 1] + 10 - 8, 100)
+        .pos(192.0f + this._800ce8ac[i * 2] - 8, 120.0f + this._800ce8ac[i * 2 + 1] + 10 - 8, 101.0f)
         .posSize(this._800ce840[i * 3 + 2], 31.0f)
         .uvSize((float)this._800ce840[i * 3 + 2] / this.menuTextTexture.rect.w, 32.0f / this.menuTextTexture.rect.h)
         .uv((float)this._800ce840[i * 3] / this.menuTextTexture.rect.w, (float)this._800ce840[i * 3 + 1] / this.menuTextTexture.rect.h)
@@ -261,7 +261,7 @@ public class Ttle extends EngineState {
 
     this.copyrightTex = ((VramTextureSingle)this.copyrightTexture).createOpenglTexture((VramTextureSingle)this.copyrightPalettes[0]);
     this.copyrightObj = new QuadBuilder("Title Screen Copyright")
-      .pos(4.0f, 200.0f, 1.0f)
+      .pos(4.0f, 200.0f, 100.0f)
       .size(368.0f, 32.0f)
       .uvSize(1.0f, 1.0f)
       .bpp(Bpp.BITS_24)
@@ -812,13 +812,13 @@ public class Ttle extends EngineState {
 
       //LAB_800c8a8c
       RENDERER
-        .queueOrthoUnderlayModel(this.menuTextObj)
+        .queueOrthoModel(this.menuTextObj)
         .monochrome(colour / 128.0f)
         .texture(this.menuTextTex[2])
         .vertices((i + 3) * 4, 4);
 
       RENDERER
-        .queueOrthoUnderlayModel(this.menuTextObj)
+        .queueOrthoModel(this.menuTextObj)
         .monochrome(colour / 128.0f)
         .texture(this.menuTextTex[this.selectedMenuOption == i ? 1 : 0])
         .vertices(i * 4, 4);
@@ -845,7 +845,7 @@ public class Ttle extends EngineState {
     //LAB_800cabcc
     //LAB_800cabe8
     RENDERER
-      .queueOrthoUnderlayModel(this.copyrightObj)
+      .queueOrthoModel(this.copyrightObj)
       .monochrome(this.copyrightFadeInAmount)
       .texture(this.copyrightTex);
   }
@@ -861,12 +861,12 @@ public class Ttle extends EngineState {
     //LAB_800cae2c
     //LAB_800cae48
     RENDERER
-      .queueOrthoUnderlayModel(this.logoObj)
+      .queueOrthoModel(this.logoObj)
       .monochrome(this.logoFadeInAmount)
       .texture(this.logoTex);
 
     RENDERER
-      .queueOrthoUnderlayModel(this.trademarkObj)
+      .queueOrthoModel(this.trademarkObj)
       .monochrome(this.logoFadeInAmount)
       .texture(this.trademarkTex);
   }
@@ -888,7 +888,7 @@ public class Ttle extends EngineState {
     //LAB_800cb0ec
     //LAB_800cb100
     RENDERER
-      .queueOrthoUnderlayModel(this.backgroundObj)
+      .queueOrthoModel(this.backgroundObj)
       .texture(this.backgroundTex)
       .screenspaceOffset(0.0f, this.backgroundScrollAmount)
       .monochrome(this.backgroundFadeInAmount);
