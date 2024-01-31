@@ -24,6 +24,9 @@ uniform float modelIndex;
 struct ModelTransforms {
   mat4 model;
   vec4 screenOffset;
+};
+
+struct Light {
   mat4 lightDirection;
   mat4 lightColour;
   vec4 backgroundColour;
@@ -35,7 +38,11 @@ layout(std140) uniform transforms {
 };
 
 layout(std140) uniform transforms2 {
-  ModelTransforms[] modelTransforms;
+  ModelTransforms[450] modelTransforms;
+};
+
+layout(std140) uniform lighting {
+  Light[450] lights;
 };
 
 layout(std140) uniform projectionInfo {
@@ -52,10 +59,11 @@ void main() {
   vertColour = inColour;
 
   ModelTransforms t = modelTransforms[int(modelIndex)];
+  Light l = lights[int(modelIndex)];
 
   // Lit
   if((int(inFlags) & 0x1) != 0) {
-    vertColour = min((t.lightColour * max(t.lightDirection * vec4(inNorm, 1.0), 0.0) + t.backgroundColour) * vertColour, 1.0);
+    vertColour = min((l.lightColour * max(l.lightDirection * vec4(inNorm, 1.0), 0.0) + l.backgroundColour) * vertColour, 1.0);
   }
 
   gl_Position = camera * t.model * pos;

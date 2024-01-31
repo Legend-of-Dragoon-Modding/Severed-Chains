@@ -109,11 +109,13 @@ public class RenderEngine {
   private Window window;
   private Shader.UniformBuffer transformsUniform;
   private Shader.UniformBuffer transforms2Uniform;
+  private Shader.UniformBuffer lightUniform;
   private Shader.UniformBuffer projectionUniform;
   private final Matrix4f perspectiveProjection = new Matrix4f();
   private final Matrix4f orthographicProjection = new Matrix4f();
   private final FloatBuffer transformsBuffer = BufferUtils.createFloatBuffer(4 * 4 * 2);
-  private final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer((4 * 4 * 3 + 4 * 2) * 1000);
+  private final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer((4 * 4 * 3 + 4 * 2) * 450);
+  private final FloatBuffer lightBuffer = BufferUtils.createFloatBuffer((4 * 4 * 2 + 4) * 450);
   private final FloatBuffer projectionBuffer = BufferUtils.createFloatBuffer(3);
 
   public static final ShaderType<SimpleShaderOptions> SIMPLE_SHADER = new ShaderType<>(
@@ -145,6 +147,7 @@ public class RenderEngine {
       shader.new UniformInt("tex15").set(1);
       shader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
       shader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
+      shader.bindUniformBlock("lighting", Shader.UniformBuffer.LIGHTING);
       shader.bindUniformBlock("projectionInfo", Shader.UniformBuffer.PROJECTION_INFO);
       final Shader<TmdShaderOptions>.UniformFloat modelIndex = shader.new UniformFloat("modelIndex");
       final Shader<TmdShaderOptions>.UniformVec3 recolour = shader.new UniformVec3("recolour");
@@ -333,6 +336,7 @@ public class RenderEngine {
 
     this.transformsUniform = new Shader.UniformBuffer((long)this.transformsBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM);
     this.transforms2Uniform = ShaderManager.addUniformBuffer("transforms2", new Shader.UniformBuffer((long)this.transforms2Buffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM2));
+    this.lightUniform = ShaderManager.addUniformBuffer("lighting", new Shader.UniformBuffer((long)this.lightBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.LIGHTING));
     this.projectionUniform = ShaderManager.addUniformBuffer("projectionInfo", new Shader.UniformBuffer((long)this.projectionBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.PROJECTION_INFO));
 
     final Mesh postQuad = new Mesh(GL_TRIANGLES, new float[] {
@@ -446,16 +450,15 @@ public class RenderEngine {
         }
 
         for(int i = 0; i < this.modelPool.size(); i++) {
-          final QueuedModel<?> model = this.modelPool.get(i);
-          model.storeTransforms(this.transforms2Buffer);
+          this.modelPool.get(i).storeTransforms(this.transforms2Buffer, this.lightBuffer);
         }
 
         for(int i = 0; i < this.orthoPool.size(); i++) {
-          final QueuedModel<?> model = this.orthoPool.get(i);
-          model.storeTransforms(this.transforms2Buffer);
+          this.orthoPool.get(i).storeTransforms(this.transforms2Buffer, this.lightBuffer);
         }
 
         this.transforms2Uniform.set(this.transforms2Buffer);
+        this.lightUniform.set(this.lightBuffer);
 
         this.opaqueFrameBuffer.bind();
         this.clear();
@@ -1189,14 +1192,14 @@ public class RenderEngine {
       }
     }
 
-    private void storeTransforms(final FloatBuffer buffer) {
-      this.transforms.get(this.modelIndex * 56, buffer);
-      this.screenspaceOffset.get(this.modelIndex * 56 + 16, buffer);
+    private void storeTransforms(final FloatBuffer transforms2Buffer, final FloatBuffer lightingBuffer) {
+      this.transforms.get(this.modelIndex * 20, transforms2Buffer);
+      this.screenspaceOffset.get(this.modelIndex * 20 + 16, transforms2Buffer);
 
       if(this.lightUsed) {
-        this.lightDirection.get(this.modelIndex * 56 + 20, buffer);
-        this.lightColour.get(this.modelIndex * 56 + 36, buffer);
-        this.backgroundColour.get(this.modelIndex * 56 + 52, buffer);
+        this.lightDirection.get(this.modelIndex * 36, lightingBuffer);
+        this.lightColour.get(this.modelIndex * 36 + 16, lightingBuffer);
+        this.backgroundColour.get(this.modelIndex * 36 + 32, lightingBuffer);
       }
     }
 
