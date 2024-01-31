@@ -19,20 +19,23 @@ flat out float vertFlags;
 smooth out float depth;
 smooth out float depthOffset;
 
+uniform float modelIndex;
+
+struct ModelTransforms {
+  mat4 model;
+  vec4 screenOffset;
+  mat4 lightDirection;
+  mat4 lightColour;
+  vec4 backgroundColour;
+};
+
 layout(std140) uniform transforms {
   mat4 camera;
   mat4 projection;
 };
 
 layout(std140) uniform transforms2 {
-  mat4 model;
-  vec3 screenOffset;
-};
-
-layout(std140) uniform lighting {
-  mat4 lightDirection;
-  mat4 lightColour;
-  vec4 backgroundColour;
+  ModelTransforms[] modelTransforms;
 };
 
 layout(std140) uniform projectionInfo {
@@ -48,12 +51,14 @@ void main() {
 
   vertColour = inColour;
 
+  ModelTransforms t = modelTransforms[int(modelIndex)];
+
   // Lit
   if((int(inFlags) & 0x1) != 0) {
-    vertColour = min((lightColour * max(lightDirection * vec4(inNorm, 1.0), 0.0) + backgroundColour) * vertColour, 1.0);
+    vertColour = min((t.lightColour * max(t.lightDirection * vec4(inNorm, 1.0), 0.0) + t.backgroundColour) * vertColour, 1.0);
   }
 
-  gl_Position = camera * model * pos;
+  gl_Position = camera * t.model * pos;
 
   if(projectionMode == 1) { // Low quality submap projection
     // Projection plane division
@@ -63,7 +68,7 @@ void main() {
     }
   }
 
-  gl_Position.xy += screenOffset.xy;
+  gl_Position.xy += t.screenOffset.xy;
   gl_Position = projection * gl_Position;
   vertUv = inUv;
   vertTpage = inTpage;
@@ -72,5 +77,5 @@ void main() {
   vertFlags = inFlags;
 
   depth = gl_Position.z;
-  depthOffset = screenOffset.z;
+  depthOffset = t.screenOffset.z;
 }

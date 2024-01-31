@@ -166,7 +166,7 @@ public final class GameEngine {
   private static float screenWidth;
 
   private static Shader.UniformBuffer transforms2;
-  private static final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer(4 * 4 + 3);
+  private static final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer(4 * 4 + 4);
   private static final Matrix4f identity = new Matrix4f();
   private static final Matrix4f textTransforms = new Matrix4f();
   private static final Matrix4f eyeTransforms = new Matrix4f();

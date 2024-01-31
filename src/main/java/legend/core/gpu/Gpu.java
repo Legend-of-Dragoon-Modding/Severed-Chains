@@ -61,7 +61,7 @@ public class Gpu {
   private Shader<SimpleShaderOptions> vramShader;
   private SimpleShaderOptions vramShaderOptions;
   private Shader.UniformBuffer transforms2Uniform;
-  private final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer(4 * 4 + 3);
+  private final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer(4 * 4 + 4);
   private final Matrix4f identity = new Matrix4f();
 
   private Texture displayTexture;

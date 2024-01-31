@@ -109,13 +109,11 @@ public class RenderEngine {
   private Window window;
   private Shader.UniformBuffer transformsUniform;
   private Shader.UniformBuffer transforms2Uniform;
-  private Shader.UniformBuffer lightUniform;
   private Shader.UniformBuffer projectionUniform;
   private final Matrix4f perspectiveProjection = new Matrix4f();
   private final Matrix4f orthographicProjection = new Matrix4f();
   private final FloatBuffer transformsBuffer = BufferUtils.createFloatBuffer(4 * 4 * 2);
-  private final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer(4 * 4 + 3);
-  private final FloatBuffer lightBuffer = BufferUtils.createFloatBuffer(4 * 4 * 2 + 4);
+  private final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer((4 * 4 * 3 + 4 * 2) * 1000);
   private final FloatBuffer projectionBuffer = BufferUtils.createFloatBuffer(3);
 
   public static final ShaderType<SimpleShaderOptions> SIMPLE_SHADER = new ShaderType<>(
@@ -147,14 +145,14 @@ public class RenderEngine {
       shader.new UniformInt("tex15").set(1);
       shader.bindUniformBlock("transforms", Shader.UniformBuffer.TRANSFORM);
       shader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
-      shader.bindUniformBlock("lighting", Shader.UniformBuffer.LIGHTING);
       shader.bindUniformBlock("projectionInfo", Shader.UniformBuffer.PROJECTION_INFO);
+      final Shader<TmdShaderOptions>.UniformFloat modelIndex = shader.new UniformFloat("modelIndex");
       final Shader<TmdShaderOptions>.UniformVec3 recolour = shader.new UniformVec3("recolour");
       final Shader<TmdShaderOptions>.UniformVec2 uvOffset = shader.new UniformVec2("uvOffset");
       final Shader<TmdShaderOptions>.UniformVec2 clutOverride = shader.new UniformVec2("clutOverride");
       final Shader<TmdShaderOptions>.UniformVec2 tpageOverride = shader.new UniformVec2("tpageOverride");
       final Shader<TmdShaderOptions>.UniformFloat discardTranslucency = shader.new UniformFloat("discardTranslucency");
-      return () -> new TmdShaderOptions(recolour, uvOffset, clutOverride, tpageOverride, discardTranslucency);
+      return () -> new TmdShaderOptions(modelIndex, recolour, uvOffset, clutOverride, tpageOverride, discardTranslucency);
     }
   );
 
@@ -212,6 +210,7 @@ public class RenderEngine {
   private final QueuePool<QueuedModel> shaderPool = new QueuePool<>(QueuedModel::new);
   private final Vector3f tempColour = new Vector3f();
   private boolean needsSorting;
+  private int modelIndex;
 
   private float projectionWidth;
   private float projectionHeight;
@@ -334,7 +333,6 @@ public class RenderEngine {
 
     this.transformsUniform = new Shader.UniformBuffer((long)this.transformsBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM);
     this.transforms2Uniform = ShaderManager.addUniformBuffer("transforms2", new Shader.UniformBuffer((long)this.transforms2Buffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM2));
-    this.lightUniform = ShaderManager.addUniformBuffer("lighting", new Shader.UniformBuffer((long)this.lightBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.LIGHTING));
     this.projectionUniform = ShaderManager.addUniformBuffer("projectionInfo", new Shader.UniformBuffer((long)this.projectionBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.PROJECTION_INFO));
 
     final Mesh postQuad = new Mesh(GL_TRIANGLES, new float[] {
@@ -411,6 +409,8 @@ public class RenderEngine {
 
       EVENTS.clearStaleRefs();
 
+      this.modelIndex = 0;
+
       if(this.togglePause) {
         this.togglePause = false;
         this.paused = !this.paused;
@@ -444,6 +444,18 @@ public class RenderEngine {
           this.sortOrthoPool();
           this.needsSorting = false;
         }
+
+        for(int i = 0; i < this.modelPool.size(); i++) {
+          final QueuedModel<?> model = this.modelPool.get(i);
+          model.storeTransforms(this.transforms2Buffer);
+        }
+
+        for(int i = 0; i < this.orthoPool.size(); i++) {
+          final QueuedModel<?> model = this.orthoPool.get(i);
+          model.storeTransforms(this.transforms2Buffer);
+        }
+
+        this.transforms2Uniform.set(this.transforms2Buffer);
 
         this.opaqueFrameBuffer.bind();
         this.clear();
@@ -531,7 +543,6 @@ public class RenderEngine {
       final QueuedModel<?> entry = this.shaderPool.get(i);
 
       entry.useTexture();
-      entry.updateTransforms();
 
       entry.shader.use();
       entry.shaderOptions.apply();
@@ -561,6 +572,7 @@ public class RenderEngine {
 
     for(int i = 0; i < pool.size(); i++) {
       final QueuedModel<VoidShaderOptions> entry = pool.get(i);
+      this.tmdShaderOptions.modelIndex(entry.modelIndex);
       this.tmdShaderOptions.colour(entry.colour);
       this.tmdShaderOptions.clut(entry.clutOverride);
       this.tmdShaderOptions.tpage(entry.tpageOverride);
@@ -580,7 +592,6 @@ public class RenderEngine {
 
         updated = true;
         entry.useTexture();
-        entry.updateTransforms();
         entry.render(null);
       }
 
@@ -597,7 +608,6 @@ public class RenderEngine {
           if(!updated) {
             updated = true;
             entry.useTexture();
-            entry.updateTransforms();
           }
 
           entry.render(translucency);
@@ -627,11 +637,11 @@ public class RenderEngine {
       final QueuedModel<VoidShaderOptions> entry = pool.get(i);
 
       if(entry.obj.hasTranslucency()) {
+        this.tmdShaderOptions.modelIndex(entry.modelIndex);
         this.tmdShaderOptions.clut(entry.clutOverride);
         this.tmdShaderOptions.tpage(entry.tpageOverride);
         this.tmdShaderOptions.uvOffset(entry.uvOffset);
         entry.useTexture();
-        entry.updateTransforms();
 
         if(entry.obj.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
           Translucency.HALF_B_PLUS_HALF_F.setGlState();
@@ -1046,6 +1056,7 @@ public class RenderEngine {
     private final Matrix4f lightColour = new Matrix4f();
     private final Vector4f backgroundColour = new Vector4f();
     private boolean lightUsed;
+    private int modelIndex;
 
     private final Rect4i scissor = new Rect4i();
 
@@ -1163,6 +1174,7 @@ public class RenderEngine {
       Arrays.fill(this.textures, null);
       this.texturesUsed = false;
       this.lightUsed = false;
+      this.modelIndex = RenderEngine.this.modelIndex++;
     }
 
     private void useTexture() {
@@ -1177,16 +1189,14 @@ public class RenderEngine {
       }
     }
 
-    private void updateTransforms() {
-      this.transforms.get(RenderEngine.this.transforms2Buffer);
-      this.screenspaceOffset.get(16, RenderEngine.this.transforms2Buffer);
-      RenderEngine.this.transforms2Uniform.set(RenderEngine.this.transforms2Buffer);
+    private void storeTransforms(final FloatBuffer buffer) {
+      this.transforms.get(this.modelIndex * 56, buffer);
+      this.screenspaceOffset.get(this.modelIndex * 56 + 16, buffer);
 
       if(this.lightUsed) {
-        this.lightDirection.get(RenderEngine.this.lightBuffer);
-        this.lightColour.get(16, RenderEngine.this.lightBuffer);
-        this.backgroundColour.get(32, RenderEngine.this.lightBuffer);
-        RenderEngine.this.lightUniform.set(RenderEngine.this.lightBuffer);
+        this.lightDirection.get(this.modelIndex * 56 + 20, buffer);
+        this.lightColour.get(this.modelIndex * 56 + 36, buffer);
+        this.backgroundColour.get(this.modelIndex * 56 + 52, buffer);
       }
     }
 

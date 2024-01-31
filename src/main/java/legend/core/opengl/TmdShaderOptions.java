@@ -4,18 +4,25 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 public class TmdShaderOptions implements ShaderOptions<TmdShaderOptions> {
+  private final Shader<TmdShaderOptions>.UniformFloat modelIndex;
   private final Shader<TmdShaderOptions>.UniformVec3 colourUniform;
   private final Shader<TmdShaderOptions>.UniformVec2 uvOffsetUniform;
   private final Shader<TmdShaderOptions>.UniformVec2 clutUniform;
   private final Shader<TmdShaderOptions>.UniformVec2 tpageUniform;
   private final Shader<TmdShaderOptions>.UniformFloat discardTranslucency;
 
-  public TmdShaderOptions(final Shader<TmdShaderOptions>.UniformVec3 colourUniform, final Shader<TmdShaderOptions>.UniformVec2 uvOffsetUniform, final Shader<TmdShaderOptions>.UniformVec2 clutUniform, final Shader<TmdShaderOptions>.UniformVec2 tpageUniform, final Shader<TmdShaderOptions>.UniformFloat discardTranslucency) {
+  public TmdShaderOptions(final Shader<TmdShaderOptions>.UniformFloat modelIndex, final Shader<TmdShaderOptions>.UniformVec3 colourUniform, final Shader<TmdShaderOptions>.UniformVec2 uvOffsetUniform, final Shader<TmdShaderOptions>.UniformVec2 clutUniform, final Shader<TmdShaderOptions>.UniformVec2 tpageUniform, final Shader<TmdShaderOptions>.UniformFloat discardTranslucency) {
+    this.modelIndex = modelIndex;
     this.colourUniform = colourUniform;
     this.uvOffsetUniform = uvOffsetUniform;
     this.clutUniform = clutUniform;
     this.tpageUniform = tpageUniform;
     this.discardTranslucency = discardTranslucency;
+  }
+
+  public TmdShaderOptions modelIndex(final float modelIndex) {
+    this.modelIndex.set(modelIndex);
+    return this;
   }
 
   public TmdShaderOptions colour(final Vector3f colour) {
