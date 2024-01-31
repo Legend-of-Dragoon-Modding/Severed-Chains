@@ -36,7 +36,7 @@ public enum Translucency {
   ;
 
   public static final Translucency[] FOR_RENDERING = {HALF_B_PLUS_HALF_F, B_PLUS_F, B_MINUS_F};
-  public static final Translucency[] ORDER_DEPENDENT = {HALF_B_PLUS_HALF_F, B_MINUS_F};
+  public static final Translucency[] ORDER_DEPENDENT = {HALF_B_PLUS_HALF_F};
 
   /** NOTE: returns null if value is -1 */
   @Nonnull

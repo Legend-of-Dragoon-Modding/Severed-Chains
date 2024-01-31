@@ -211,9 +211,8 @@ public class Gpu {
       this.displayChanged = false;
     }
 
-    this.displayTexture.data(0, 0, this.displayTexture.width, this.displayTexture.height, this.getDisplayBuffer().getData());
-
     if(RenderEngine.legacyMode == 1) {
+      this.displayTexture.data(0, 0, this.displayTexture.width, this.displayTexture.height, this.getDisplayBuffer().getData());
       this.drawDisplay();
     } else if(RenderEngine.legacyMode == 2) {
       this.drawVram();

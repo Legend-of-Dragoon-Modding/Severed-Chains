@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 public class MeshObj extends Obj {
   private final Mesh[] meshes;
   private final boolean backfaceCulling;
+  private final boolean hasTranslucency;
 
   public MeshObj(final String name, final Mesh[] meshes) {
     this(name, meshes, true);
@@ -16,11 +17,26 @@ public class MeshObj extends Obj {
     super(name);
     this.meshes = meshes;
     this.backfaceCulling = backfaceCulling;
+
+    boolean hasTranslucency = false;
+    for(int i = 1; i < meshes.length; i++) {
+      if(meshes[i] != null) {
+        hasTranslucency = true;
+        break;
+      }
+    }
+
+    this.hasTranslucency = hasTranslucency;
   }
 
   @Override
   public boolean useBackfaceCulling() {
     return this.backfaceCulling;
+  }
+
+  @Override
+  public boolean hasTranslucency() {
+    return this.hasTranslucency;
   }
 
   @Override

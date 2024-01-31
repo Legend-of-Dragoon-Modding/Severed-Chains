@@ -13,6 +13,11 @@ public class TextObj extends Obj {
   }
 
   @Override
+  public boolean hasTranslucency() {
+    return false;
+  }
+
+  @Override
   public boolean shouldRender(@Nullable final Translucency translucency) {
     return !this.deleted && translucency == null;
   }
