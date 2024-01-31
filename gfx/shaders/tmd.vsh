@@ -28,7 +28,7 @@ struct ModelTransforms {
 
 struct Light {
   mat4 lightDirection;
-  mat4 lightColour;
+  mat3 lightColour;
   vec4 backgroundColour;
 };
 
@@ -37,12 +37,14 @@ layout(std140) uniform transforms {
   mat4 projection;
 };
 
+/** 20-float (80-byte) stride */
 layout(std140) uniform transforms2 {
-  ModelTransforms[450] modelTransforms;
+  ModelTransforms[128] modelTransforms;
 };
 
+/** 32-float (128-byte) stride */
 layout(std140) uniform lighting {
-  Light[450] lights;
+  Light[128] lights;
 };
 
 layout(std140) uniform projectionInfo {
@@ -63,7 +65,7 @@ void main() {
 
   // Lit
   if((int(inFlags) & 0x1) != 0) {
-    vertColour = min((l.lightColour * max(l.lightDirection * vec4(inNorm, 1.0), 0.0) + l.backgroundColour) * vertColour, 1.0);
+    vertColour.rgb = min((l.lightColour * max(l.lightDirection * vec4(inNorm, 1.0), 0.0).rgb + l.backgroundColour.rgb) * vertColour.rgb, 1.0);
   }
 
   gl_Position = camera * t.model * pos;

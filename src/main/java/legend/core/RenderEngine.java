@@ -114,8 +114,8 @@ public class RenderEngine {
   private final Matrix4f perspectiveProjection = new Matrix4f();
   private final Matrix4f orthographicProjection = new Matrix4f();
   private final FloatBuffer transformsBuffer = BufferUtils.createFloatBuffer(4 * 4 * 2);
-  private final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer((4 * 4 * 3 + 4 * 2) * 450);
-  private final FloatBuffer lightBuffer = BufferUtils.createFloatBuffer((4 * 4 * 2 + 4) * 450);
+  private final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer((4 * 4 + 4) * 128);
+  private final FloatBuffer lightBuffer = BufferUtils.createFloatBuffer((4 * 4 + 3 * 4 + 4) * 128); // 3*4 since glsl std140 means mat3's are basically 3 vec4s
   private final FloatBuffer projectionBuffer = BufferUtils.createFloatBuffer(3);
 
   public static final ShaderType<SimpleShaderOptions> SIMPLE_SHADER = new ShaderType<>(
@@ -213,7 +213,6 @@ public class RenderEngine {
   private final QueuePool<QueuedModel> shaderPool = new QueuePool<>(QueuedModel::new);
   private final Vector3f tempColour = new Vector3f();
   private boolean needsSorting;
-  private int modelIndex;
 
   private float projectionWidth;
   private float projectionHeight;
@@ -413,8 +412,6 @@ public class RenderEngine {
 
       EVENTS.clearStaleRefs();
 
-      this.modelIndex = 0;
-
       if(this.togglePause) {
         this.togglePause = false;
         this.paused = !this.paused;
@@ -448,17 +445,6 @@ public class RenderEngine {
           this.sortOrthoPool();
           this.needsSorting = false;
         }
-
-        for(int i = 0; i < this.modelPool.size(); i++) {
-          this.modelPool.get(i).storeTransforms(this.transforms2Buffer, this.lightBuffer);
-        }
-
-        for(int i = 0; i < this.orthoPool.size(); i++) {
-          this.orthoPool.get(i).storeTransforms(this.transforms2Buffer, this.lightBuffer);
-        }
-
-        this.transforms2Uniform.set(this.transforms2Buffer);
-        this.lightUniform.set(this.lightBuffer);
 
         this.opaqueFrameBuffer.bind();
         this.clear();
@@ -574,8 +560,20 @@ public class RenderEngine {
     this.tmdShaderOptions.discardMode(1);
 
     for(int i = 0; i < pool.size(); i++) {
+      final int modelIndex = i & 0x7f;
+
+      // Load the next 128 model transforms into the buffers
+      if(modelIndex == 0) {
+        for(int storeIndex = 0; storeIndex < Math.min(128, pool.size() - i); storeIndex++) {
+          pool.get(i + storeIndex).storeTransforms(storeIndex, this.transforms2Buffer, this.lightBuffer);
+        }
+
+        this.transforms2Uniform.set(this.transforms2Buffer);
+        this.lightUniform.set(this.lightBuffer);
+      }
+
       final QueuedModel<VoidShaderOptions> entry = pool.get(i);
-      this.tmdShaderOptions.modelIndex(entry.modelIndex);
+      this.tmdShaderOptions.modelIndex(modelIndex);
       this.tmdShaderOptions.colour(entry.colour);
       this.tmdShaderOptions.clut(entry.clutOverride);
       this.tmdShaderOptions.tpage(entry.tpageOverride);
@@ -637,10 +635,22 @@ public class RenderEngine {
     Translucency.B_PLUS_F.setGlState();
 
     for(int i = 0; i < pool.size(); i++) {
+      final int modelIndex = i & 0x7f;
+
+      // Load the next 128 model transforms into the buffers
+      if(modelIndex == 0) {
+        for(int storeIndex = 0; storeIndex < Math.min(128, pool.size() - i); storeIndex++) {
+          pool.get(i + storeIndex).storeTransforms(storeIndex, this.transforms2Buffer, this.lightBuffer);
+        }
+
+        this.transforms2Uniform.set(this.transforms2Buffer);
+        this.lightUniform.set(this.lightBuffer);
+      }
+
       final QueuedModel<VoidShaderOptions> entry = pool.get(i);
 
       if(entry.obj.hasTranslucency()) {
-        this.tmdShaderOptions.modelIndex(entry.modelIndex);
+        this.tmdShaderOptions.modelIndex(modelIndex);
         this.tmdShaderOptions.clut(entry.clutOverride);
         this.tmdShaderOptions.tpage(entry.tpageOverride);
         this.tmdShaderOptions.uvOffset(entry.uvOffset);
@@ -1056,10 +1066,9 @@ public class RenderEngine {
     private final Vector2f uvOffset = new Vector2f();
 
     private final Matrix4f lightDirection = new Matrix4f();
-    private final Matrix4f lightColour = new Matrix4f();
+    private final Matrix3f lightColour = new Matrix3f();
     private final Vector4f backgroundColour = new Vector4f();
     private boolean lightUsed;
-    private int modelIndex;
 
     private final Rect4i scissor = new Rect4i();
 
@@ -1177,7 +1186,6 @@ public class RenderEngine {
       Arrays.fill(this.textures, null);
       this.texturesUsed = false;
       this.lightUsed = false;
-      this.modelIndex = RenderEngine.this.modelIndex++;
     }
 
     private void useTexture() {
@@ -1192,14 +1200,14 @@ public class RenderEngine {
       }
     }
 
-    private void storeTransforms(final FloatBuffer transforms2Buffer, final FloatBuffer lightingBuffer) {
-      this.transforms.get(this.modelIndex * 20, transforms2Buffer);
-      this.screenspaceOffset.get(this.modelIndex * 20 + 16, transforms2Buffer);
+    private void storeTransforms(final int modelIndex, final FloatBuffer transforms2Buffer, final FloatBuffer lightingBuffer) {
+      this.transforms.get(modelIndex * 20, transforms2Buffer);
+      this.screenspaceOffset.get(modelIndex * 20 + 16, transforms2Buffer);
 
       if(this.lightUsed) {
-        this.lightDirection.get(this.modelIndex * 36, lightingBuffer);
-        this.lightColour.get(this.modelIndex * 36 + 16, lightingBuffer);
-        this.backgroundColour.get(this.modelIndex * 36 + 32, lightingBuffer);
+        this.lightDirection.get(modelIndex * 32, lightingBuffer);
+        this.lightColour.get(modelIndex * 32 + 16, lightingBuffer);
+        this.backgroundColour.get(modelIndex * 32 + 28, lightingBuffer);
       }
     }
 
