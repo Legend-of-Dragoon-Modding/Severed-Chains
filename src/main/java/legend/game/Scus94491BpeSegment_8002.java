@@ -3460,7 +3460,7 @@ public final class Scus94491BpeSegment_8002 {
     final float y = textbox.y_16 + selectionLine * 12 - (textbox.lines_1a - 1) * 6;
 
     textboxSelectionTransforms.scaling(width, 1.0f, 1.0f);
-    textboxSelectionTransforms.transfer.set(x - width / 2.0f, y, textbox.z_0c);
+    textboxSelectionTransforms.transfer.set(x - width / 2.0f, y, textbox.z_0c * 4.0f);
     RENDERER.queueOrthoModel(textboxSelectionObj, textboxSelectionTransforms);
   }
 
