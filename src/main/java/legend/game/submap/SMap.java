@@ -256,8 +256,8 @@ public class SMap extends EngineState {
 
   private final Vector3f bottom_800d6cb8 = new Vector3f();
   private final Vector3f top_800d6cc0 = new Vector3f(0.0f, 40.0f, 0.0f);
-  private final int[] _800d6cc8 = {206, 206, 207, 208};
-  private final int[] _800d6cd8 = {992, 992, 976};
+  private final int[] indicatorTypeClutXs_800d6cc8 = {206, 206, 207, 208};
+  private final int[] playerIndicatorClutXs_800d6cd8 = {992, 992, 976};
   private final int[] _800d6ce4 = {208, 207, 8};
   private final Translucency[] miscTextureTransModes_800d6cf0 = {Translucency.B_PLUS_F, Translucency.B_PLUS_F, Translucency.B_PLUS_F, Translucency.B_PLUS_F, Translucency.B_PLUS_QUARTER_F, Translucency.B_PLUS_F, Translucency.B_PLUS_F, Translucency.B_MINUS_F, Translucency.B_MINUS_F, Translucency.B_PLUS_F, Translucency.B_PLUS_F};
 
@@ -480,9 +480,9 @@ public class SMap extends EngineState {
     functions[292] = this::scriptScaleUniform;
     functions[293] = this::scriptSetModelZOffset;
     functions[294] = this::scriptSelfSetSobjFlag;
-    functions[295] = this::FUN_800dfd10;
-    functions[296] = this::FUN_800de334;
-    functions[297] = this::FUN_800de4b4;
+    functions[295] = this::scriptSelfGetSobjFlag;
+    functions[296] = this::scriptAddTriangleIndicator;
+    functions[297] = this::scriptAddTriangleIndicators;
     functions[298] = this::scriptShowAlertIndicator;
     functions[299] = this::scriptHideAlertIndicator;
     functions[300] = this::FUN_800dfd48;
@@ -1083,11 +1083,11 @@ public class SMap extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, related to triangle indicators")
+  @ScriptDescription("Adds a triangle indicator at a collision primitive")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "collisionPrimitiveIndex")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "indicatorType")
   @Method(0x800de334L)
-  private FlowControl FUN_800de334(final RunningScript<?> script) {
+  private FlowControl scriptAddTriangleIndicator(final RunningScript<?> script) {
     this.collisionGeometry_800cbe08.getMiddleOfCollisionPrimitive(script.params_20[0].get(), this.playerModel_800c6748.coord2_14.coord.transfer);
 
     final MV ls = new MV();
@@ -1100,10 +1100,10 @@ public class SMap extends EngineState {
     //LAB_800de438
     final TriangleIndicator140 indicator = this.triangleIndicator_800c69fc;
     for(int i = 0; i < 20; i++) {
-      if(indicator._18[i] == -1) {
+      if(indicator.indicatorType_18[i] == -1) {
         indicator.x_40[i] = x;
         indicator.y_68[i] = y;
-        indicator._18[i] = (short)script.params_20[1].get();
+        indicator.indicatorType_18[i] = (short)script.params_20[1].get();
         indicator.screenOffsetX_90[i] = this.screenOffset_800cb568.x;
         indicator.screenOffsetY_e0[i] = this.screenOffset_800cb568.y;
         break;
@@ -1114,10 +1114,10 @@ public class SMap extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, related to triangle indicators")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "p0")
+  @ScriptDescription("Adds one or more triangle indicators")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT_ARRAY, name = "dataStream", description = "Param-encoded indicator structures")
   @Method(0x800de4b4L)
-  private FlowControl FUN_800de4b4(final RunningScript<?> script) {
+  private FlowControl scriptAddTriangleIndicators(final RunningScript<?> script) {
     final MV ls = new MV();
 
     final Param ints = script.params_20[0];
@@ -1137,10 +1137,10 @@ public class SMap extends EngineState {
       for(int i = 0; i < 20; i++) {
         final TriangleIndicator140 indicator = this.triangleIndicator_800c69fc;
 
-        if(indicator._18[i] == -1) {
+        if(indicator.indicatorType_18[i] == -1) {
           indicator.x_40[i] = x;
           indicator.y_68[i] = y;
-          indicator._18[i] = (short)ints.array(s0).get();
+          indicator.indicatorType_18[i] = (short)ints.array(s0).get();
           indicator.screenOffsetX_90[i] = this.screenOffset_800cb568.x;
           indicator.screenOffsetY_e0[i] = this.screenOffset_800cb568.y;
           break;
@@ -1830,7 +1830,7 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bitIndex", description = "The flag to get")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.BOOL, name = "value", description = "The flag value")
   @Method(0x800dfd10L)
-  private FlowControl FUN_800dfd10(final RunningScript<?> script) {
+  private FlowControl scriptSelfGetSobjFlag(final RunningScript<?> script) {
     script.params_20[2] = script.params_20[1];
     script.params_20[1] = script.params_20[0];
     script.params_20[0] = new ScriptStorageParam(script.scriptState_04, 0);
@@ -4459,7 +4459,7 @@ public class SMap extends EngineState {
       final float sy = GTE.getScreenY(2);
       PopMatrix();
 
-      indicator._18[i] = (short)ints.array(s0++).get();
+      indicator.indicatorType_18[i] = (short)ints.array(s0++).get();
       indicator.x_40[i] = sx + ints.array(s0++).get();
       indicator.y_68[i] = sy + ints.array(s0++).get();
       indicator.screenOffsetX_90[i] = this.screenOffset_800cb568.x;
@@ -4496,8 +4496,8 @@ public class SMap extends EngineState {
     for(int i = 0; i < 20; i++) {
       final TriangleIndicator140 indicator = this.triangleIndicator_800c69fc;
 
-      if(indicator._18[i] == -1) {
-        indicator._18[i] = (short)script.params_20[1].get();
+      if(indicator.indicatorType_18[i] == -1) {
+        indicator.indicatorType_18[i] = (short)script.params_20[1].get();
         indicator.x_40[i] = sx + script.params_20[2].get();
         indicator.y_68[i] = sy + script.params_20[3].get();
         indicator.screenOffsetX_90[i] = this.screenOffset_800cb568.x;
@@ -4767,7 +4767,7 @@ public class SMap extends EngineState {
     int i = 0;
     final Param a0 = script.params_20[0];
     for(int a1 = 0; a0.array(i).get() != -1; a1++) {
-      indicator._18[a1] = (short)a0.array(i++).get();
+      indicator.indicatorType_18[a1] = (short)a0.array(i++).get();
       indicator.x_40[a1] = a0.array(i++).get() + this.screenOffset_800cb568.x;
       indicator.y_68[a1] = a0.array(i++).get() + this.screenOffset_800cb568.y;
       indicator.screenOffsetX_90[a1] = this.screenOffset_800cb568.x;
@@ -5086,7 +5086,7 @@ public class SMap extends EngineState {
         // Door indicators
 
         //LAB_800f35f4
-        if(indicator._18[indicatorIndex - 1] < 0) {
+        if(indicator.indicatorType_18[indicatorIndex - 1] < 0) {
           break;
         }
 
@@ -5132,10 +5132,10 @@ public class SMap extends EngineState {
 
         if(indicatorIndex == 0) { // Player indicator
           final int triangleIndex = this.getEncounterTriangleColour();
-          this.mapIndicator.renderPlayerIndicator(GPU.getOffsetX() + x, GPU.getOffsetY() + y, 38, s1.r_24 / 128.0f, s1.g_25 / 128.0f, s1.b_26 / 128.0f, this._800d6cd8[triangleIndex] & 0x3f0, (sprite.cba_04 >>> 6 & 0x1ff) - this._800d6ce4[triangleIndex], u, v);
+          this.mapIndicator.renderPlayerIndicator(GPU.getOffsetX() + x, GPU.getOffsetY() + y, 38, s1.r_24 / 128.0f, s1.g_25 / 128.0f, s1.b_26 / 128.0f, this.playerIndicatorClutXs_800d6cd8[triangleIndex] & 0x3f0, (sprite.cba_04 >>> 6 & 0x1ff) - this._800d6ce4[triangleIndex], u, v);
         } else { // Door indicators
           //LAB_800f3884
-          this.mapIndicator.renderDoorIndicator(GPU.getOffsetX() + x, GPU.getOffsetY() + y, 38, s1.r_24 / 128.0f, s1.g_25 / 128.0f, s1.b_26 / 128.0f, 992, (sprite.cba_04 >>> 6 & 0x1ff) - this._800d6cc8[indicator._18[indicatorIndex - 1]], u, v);
+          this.mapIndicator.renderDoorIndicator(GPU.getOffsetX() + x, GPU.getOffsetY() + y, 38, s1.r_24 / 128.0f, s1.g_25 / 128.0f, s1.b_26 / 128.0f, 992, (sprite.cba_04 >>> 6 & 0x1ff) - this.indicatorTypeClutXs_800d6cc8[indicator.indicatorType_18[indicatorIndex - 1]], u, v);
         }
 
         //LAB_800f38b0
@@ -5190,7 +5190,7 @@ public class SMap extends EngineState {
 
     //LAB_800f3b24
     for(int i = 0; i < 20; i++) {
-      indicator._18[i] = -1;
+      indicator.indicatorType_18[i] = -1;
     }
   }
 
