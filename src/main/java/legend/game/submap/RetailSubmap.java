@@ -949,16 +949,29 @@ public class RetailSubmap extends Submap {
 
   @Method(0x800e76b0L)
   public void setEnvForegroundPosition(final int x, final int y, final int index) {
+    final EnvironmentForegroundTextureMetrics foreground = this.envForegroundMetrics_800cb590[index];
+
     if(x == 1024 && y == 1024) {
-      this.envForegroundMetrics_800cb590[index].hidden_08 = true;
+      foreground.hidden_08 = true;
       return;
     }
 
     //LAB_800e76e8
     //LAB_800e76ec
-    this.envForegroundMetrics_800cb590[index].x_00 = x;
-    this.envForegroundMetrics_800cb590[index].y_04 = y;
-    this.envForegroundMetrics_800cb590[index].hidden_08 = false;
+    foreground.startX = foreground.destX;
+    foreground.startY = foreground.destY;
+    foreground.destX = x;
+    foreground.destY = y;
+    foreground.ticksTotal = 3 - vsyncMode_8007a3b8;
+    foreground.ticks = 0;
+
+    if(!foreground.positionWasSet) {
+      foreground.startX = x;
+      foreground.startY = y;
+      foreground.positionWasSet = true;
+    }
+
+    foreground.hidden_08 = false;
   }
 
   @Method(0x800e770cL)
@@ -1131,7 +1144,9 @@ public class RetailSubmap extends Submap {
     //LAB_800e7de0
     // Render overlays
     for(int i = 0; i < this.envForegroundTextureCount_800cb580; i++) {
-      if(!this.envForegroundMetrics_800cb590[i].hidden_08 && this.foregroundTextures[i] != null) {
+      final EnvironmentForegroundTextureMetrics foreground = this.envForegroundMetrics_800cb590[i];
+
+      if(!foreground.hidden_08 && this.foregroundTextures[i] != null) {
         final EnvironmentRenderingMetrics24 metrics = this.envRenderMetrics_800cb710[this.envBackgroundTextureCount_800cb57c + i];
 
         if(metrics.obj == null) {
@@ -1149,8 +1164,20 @@ public class RetailSubmap extends Submap {
           continue;
         }
 
+        final float x;
+        final float y;
+
+        if(foreground.ticks < foreground.ticksTotal) {
+          x = Math.lerp(foreground.startX, foreground.destX, (foreground.ticks + 1.0f) / foreground.ticksTotal);
+          y = Math.lerp(foreground.startY, foreground.destY, (foreground.ticks + 1.0f) / foreground.ticksTotal);
+          foreground.ticks++;
+        } else {
+          x = foreground.destX;
+          y = foreground.destY;
+        }
+
         this.backgroundTransforms.identity();
-        this.backgroundTransforms.transfer.set(GPU.getOffsetX() + this.submapOffsetX_800cb560 + this.screenOffset.x + this.envForegroundMetrics_800cb590[i].x_00, GPU.getOffsetY() + this.submapOffsetY_800cb564 + this.screenOffset.y + this.envForegroundMetrics_800cb590[i].y_04, z * 4.0f);
+        this.backgroundTransforms.transfer.set(GPU.getOffsetX() + this.submapOffsetX_800cb560 + this.screenOffset.x + x, GPU.getOffsetY() + this.submapOffsetY_800cb564 + this.screenOffset.y + y, z * 4.0f);
         RENDERER
           .queueOrthoModel(metrics.obj, this.backgroundTransforms)
           .texture(this.foregroundTextures[i]);
