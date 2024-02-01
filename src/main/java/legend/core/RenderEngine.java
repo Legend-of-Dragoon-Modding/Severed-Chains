@@ -494,7 +494,7 @@ public class RenderEngine {
         this.shaderPool.reset();
       }
 
-      this.fps = 1.0f / ((System.nanoTime() - this.lastFrame) / (1_000_000_000 / 30.0f)) * 30.0f;
+      this.fps = 1_000_000_000.0f / (System.nanoTime() - this.lastFrame);
       this.lastFrame = System.nanoTime();
       this.vsyncCount += 60.0d * Config.getGameSpeedMultiplier() / this.window.getFpsLimit();
 
