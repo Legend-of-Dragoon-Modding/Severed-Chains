@@ -13,7 +13,7 @@ public abstract class Obj {
   private static boolean shouldLog = true;
 
   private static final List<Obj> objList = new ArrayList<>();
-  private final String name;
+  public final String name;
   protected boolean deleted;
   /** This Obj won't be deleted on state transition */
   public boolean persistent;
