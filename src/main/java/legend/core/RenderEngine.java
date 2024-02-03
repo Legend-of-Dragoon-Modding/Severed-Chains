@@ -78,6 +78,7 @@ import static org.lwjgl.opengl.GL11C.GL_LINE;
 import static org.lwjgl.opengl.GL11C.GL_LINEAR;
 import static org.lwjgl.opengl.GL11C.GL_LINE_SMOOTH;
 import static org.lwjgl.opengl.GL11C.GL_RGBA;
+import static org.lwjgl.opengl.GL11C.GL_SCISSOR_TEST;
 import static org.lwjgl.opengl.GL11C.GL_STENCIL_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11C.glClear;
@@ -88,6 +89,7 @@ import static org.lwjgl.opengl.GL11C.glDisable;
 import static org.lwjgl.opengl.GL11C.glEnable;
 import static org.lwjgl.opengl.GL11C.glLineWidth;
 import static org.lwjgl.opengl.GL11C.glPolygonMode;
+import static org.lwjgl.opengl.GL11C.glScissor;
 import static org.lwjgl.opengl.GL11C.glViewport;
 import static org.lwjgl.opengl.GL30C.GL_COLOR_ATTACHMENT0;
 import static org.lwjgl.opengl.GL30C.GL_DEPTH_ATTACHMENT;
@@ -559,6 +561,8 @@ public class RenderEngine {
     this.tmdShader.use();
     this.tmdShaderOptions.discardMode(1);
 
+    final float scale = this.window.getHeight() / this.projectionHeight;
+
     for(int i = 0; i < pool.size(); i++) {
       final int modelIndex = i & 0x7f;
 
@@ -579,6 +583,11 @@ public class RenderEngine {
       this.tmdShaderOptions.tpage(entry.tpageOverride);
       this.tmdShaderOptions.uvOffset(entry.uvOffset);
       boolean updated = false;
+
+      if(entry.scissor.w != 0) {
+        glEnable(GL_SCISSOR_TEST);
+        glScissor((int)((entry.scissor.x + this.widescreenOrthoOffsetX) * scale), this.window.getHeight() - (int)(entry.scissor.y * scale), (int)(entry.scissor.w * scale), (int)(entry.scissor.h * scale));
+      }
 
       if(entry.obj.shouldRender(null)) {
         if(backfaceCulling != entry.obj.useBackfaceCulling()) {
@@ -613,6 +622,10 @@ public class RenderEngine {
 
           entry.render(translucency);
         }
+      }
+
+      if(entry.scissor.w != 0) {
+        glDisable(GL_SCISSOR_TEST);
       }
     }
   }
