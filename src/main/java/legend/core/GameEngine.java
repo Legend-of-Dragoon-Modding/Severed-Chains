@@ -217,12 +217,6 @@ public final class GameEngine {
 
           loadXpTables();
 
-          // Find and load all mods so their global config can be shown in the title screen options menu
-          MOD_ACCESS.findMods();
-          bootMods(MODS.getAllModIds());
-
-          ConfigStorage.loadConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
-
           Scus94491BpeSegment_8002.start();
           loading = false;
         }
@@ -233,6 +227,13 @@ public final class GameEngine {
 
     time = System.nanoTime();
     thread.start();
+
+    // Find and load all mods so their global config can be shown in the title screen options menu
+    MOD_ACCESS.findMods();
+    bootMods(MODS.getAllModIds());
+
+    ConfigStorage.loadConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
+
     RENDERER.init();
     RENDERER.events().onShutdown(Unpacker::shutdownLoader);
     GPU.init();

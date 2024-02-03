@@ -10,6 +10,7 @@ lod-core.config.controller_deadzone.label=Controller Deadzone
 lod-core.config.receive_input_on_inactive_window.label=Receive Input on Inactive Window
 lod-core.config.allow_widescreen.label=Allow Widescreen When Possible
 lod-core.config.high_quality_projection.label=Use High Quality Projection When Possible
+lod-core.config.fullscreen.label=Fullscreen
 
 # Campaign config
 lod-core.config.indicator_mode.label=Indicator Mode
