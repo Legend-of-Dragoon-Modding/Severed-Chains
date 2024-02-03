@@ -1,0 +1,4 @@
+--- original
++++ modified
+@@ -137,0 +137,1 @@
++jmp_cmp ==, stor[8], 0xf1, inl[:LABEL_26] ; operand, left, right, addr

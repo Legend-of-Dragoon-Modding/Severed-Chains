@@ -1,8 +1,11 @@
-package legend.game.unpacker;
+package legend.game.unpacker.scripts;
 
 import com.github.difflib.patch.PatchFailedException;
-import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
+import legend.game.unpacker.FileData;
+import legend.game.unpacker.PathNode;
+import legend.game.unpacker.Transformations;
+import legend.game.unpacker.UnpackerException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.legendofdragoon.scripting.Compiler;
@@ -16,16 +19,15 @@ import org.legendofdragoon.scripting.meta.NoSuchVersionException;
 import org.legendofdragoon.scripting.tokens.Script;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static legend.core.IoHelper.intsToBytes;
+import static legend.core.IoHelper.loadCsvFile;
 
 public final class ScriptTransformer {
   private ScriptTransformer() { }
@@ -96,21 +98,5 @@ public final class ScriptTransformer {
     final byte[] recompiledSource = intsToBytes(compiler.compile(lexedDecompiledSource));
 
     transformations.replaceNode(node, new FileData(recompiledSource));
-  }
-
-  private static List<String[]> loadCsvFile(final Path file) throws IOException, CsvException {
-    return loadCsv(Files.newInputStream(file));
-  }
-
-  private static List<String[]> loadCsv(final InputStream input) throws IOException, CsvException {
-    try(final CSVReader reader = new CSVReader(new InputStreamReader(input))) {
-      return reader.readAll();
-    }
-  }
-
-  private static byte[] intsToBytes(final int[] ints) {
-    final ByteBuffer buffer = ByteBuffer.allocate(ints.length * 0x4).order(ByteOrder.LITTLE_ENDIAN);
-    buffer.asIntBuffer().put(ints);
-    return buffer.array();
   }
 }

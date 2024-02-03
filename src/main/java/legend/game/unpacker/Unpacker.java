@@ -6,6 +6,7 @@ import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.Tuple;
 import legend.game.Scus94491BpeSegment;
+import legend.game.unpacker.scripts.ScriptTransformer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

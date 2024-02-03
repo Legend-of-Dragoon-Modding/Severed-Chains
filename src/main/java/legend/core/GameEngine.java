@@ -35,6 +35,7 @@ import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import legend.game.unpacker.UnpackerException;
 import legend.game.unpacker.UnpackerStoppedRuntimeException;
+import legend.game.unpacker.scripts.ScriptPatcher;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4f;
@@ -211,6 +212,8 @@ public final class GameEngine {
             LOGGER.info("Unpacking stopped");
             return;
           }
+
+          new ScriptPatcher(Path.of("./patches"), Path.of("./files"), Path.of("./files/patches")).apply();
 
           loadXpTables();
 
