@@ -478,7 +478,7 @@ public class RetailSubmap extends Submap {
     }
 
     for(int i = 0; i < textures.size(); i++) {
-      if(this.pxls.get(i) == null) {
+      if(this.pxls.get(i) == null && textures.get(i) != null) {
         this.pxls.set(i, this.pxls.get(textures.get(i).realFileIndex()));
       }
     }
@@ -538,6 +538,12 @@ public class RetailSubmap extends Submap {
 
     outer:
     for(int pxlIndex = 0; pxlIndex < this.pxls.size(); pxlIndex++) {
+      // sobj 16 uses the submap overlay texture
+      if(pxlIndex == 16) {
+        this.uvAdjustments.add(new UvAdjustmentMetrics14(pxlIndex + 1, 1008, 256));
+        continue ;
+      }
+
       final Tim tim = this.pxls.get(pxlIndex);
 
       if(!visited.contains(tim)) {
@@ -585,16 +591,18 @@ public class RetailSubmap extends Submap {
       if(uvAdjustment.index != 0) {
         final Tim tim = this.pxls.get(uvAdjustment.index - 1);
 
-        final Rect4i imageRect = tim.getImageRect();
-        final Rect4i clutRect = tim.getClutRect();
+        if(tim != null) {
+          final Rect4i imageRect = tim.getImageRect();
+          final Rect4i clutRect = tim.getClutRect();
 
-        imageRect.x = uvAdjustment.tpageX;
-        imageRect.y = uvAdjustment.tpageY;
-        clutRect.x = uvAdjustment.clutX;
-        clutRect.y = uvAdjustment.clutY;
+          imageRect.x = uvAdjustment.tpageX;
+          imageRect.y = uvAdjustment.tpageY;
+          clutRect.x = uvAdjustment.clutX;
+          clutRect.y = uvAdjustment.clutY;
 
-        GPU.uploadData15(imageRect, tim.getImageData());
-        GPU.uploadData15(clutRect, tim.getClutData());
+          GPU.uploadData15(imageRect, tim.getImageData());
+          GPU.uploadData15(clutRect, tim.getClutData());
+        }
       }
     }
 
