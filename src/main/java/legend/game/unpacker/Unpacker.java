@@ -6,7 +6,6 @@ import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.Tuple;
 import legend.game.Scus94491BpeSegment;
-import legend.game.unpacker.scripts.ScriptTransformer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -121,9 +120,6 @@ public final class Unpacker {
     transformers.put(Unpacker::playerScriptDamageCapsDiscriminator, Unpacker::playerScriptDamageCapsTransformer);
     transformers.put(Unpacker::enemyScriptDamageCapDiscriminator, Unpacker::enemyAndItemScriptDamageCapPatcher);
     transformers.put(Unpacker::itemScriptDamageCapDiscriminator, Unpacker::enemyAndItemScriptDamageCapPatcher);
-
-    // Apply script patches
-    transformers.put(ScriptTransformer::discriminator, ScriptTransformer::transformer);
   }
 
   private static final List<Transformer> postTransformers = new ArrayList<>();
