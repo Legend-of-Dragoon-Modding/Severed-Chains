@@ -121,7 +121,7 @@ public class ScriptPatcher {
   }
 
   public void unpatchFile(final String source, final String patch) throws IOException {
-    this.unpatchFile(this.filesDir.resolve(source), this.patchesDir.resolve(patch));
+    this.unpatchFile(this.filesDir.resolve(source), this.cacheDir.resolve(patch));
   }
 
   public void unpatchFile(final Path sourceFile, final Path patchFile) throws IOException {
