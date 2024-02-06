@@ -561,7 +561,9 @@ public class RenderEngine {
     this.tmdShader.use();
     this.tmdShaderOptions.discardMode(1);
 
-    final float scale = this.window.getHeight() / this.projectionHeight;
+    final boolean widescreen = this.allowWidescreen && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get());
+    final float w = this.window.getWidth() / this.projectionWidth;
+    final float h = this.window.getHeight() / this.projectionHeight;
 
     for(int i = 0; i < pool.size(); i++) {
       final int modelIndex = i & 0x7f;
@@ -586,7 +588,12 @@ public class RenderEngine {
 
       if(entry.scissor.w != 0) {
         glEnable(GL_SCISSOR_TEST);
-        glScissor((int)((entry.scissor.x + this.widescreenOrthoOffsetX) * scale), this.window.getHeight() - (int)(entry.scissor.y * scale), (int)(entry.scissor.w * scale), (int)(entry.scissor.h * scale));
+
+        if(widescreen) {
+          glScissor((int)((entry.scissor.x + this.widescreenOrthoOffsetX) * h * (320.0f / this.projectionWidth)), this.window.getHeight() - (int)(entry.scissor.y * h), (int)(entry.scissor.w * h * (320.0f / this.projectionWidth)), (int)(entry.scissor.h * h));
+        } else {
+          glScissor((int)((entry.scissor.x + this.widescreenOrthoOffsetX) * w), this.window.getHeight() - (int)(entry.scissor.y * h), (int)(entry.scissor.w * w), (int)(entry.scissor.h * h));
+        }
       }
 
       if(entry.obj.shouldRender(null)) {
@@ -904,20 +911,21 @@ public class RenderEngine {
 
     // LOD uses a left-handed projection with a negated Y axis because reasons.
     if(this.allowHighQualityProjection && (!CoreMod.HIGH_QUALITY_PROJECTION_CONFIG.isValid() || CONFIG.getConfig(CoreMod.HIGH_QUALITY_PROJECTION_CONFIG.get()))) {
+      final float ratio;
       if(this.allowWidescreen && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get())) {
-        final float ratio = this.width / (float)this.height;
+        ratio = this.width / (float)this.height;
         final float w = this.projectionHeight * ratio;
         final float h = this.projectionHeight;
-        this.perspectiveProjection.setPerspectiveLH(this.fieldOfView, ratio, 0.1f, 1000000.0f);
-        this.perspectiveProjection.negateY();
         this.orthographicProjection.setOrthoLH(0.0f, w * (this.projectionWidth / 320.0f), h, 0.0f, 0.0f, 1000000.0f);
         this.widescreenOrthoOffsetX = (w - 320.0f) / 2.0f;
       } else {
-        this.perspectiveProjection.setPerspectiveLH(this.fieldOfView, this.aspectRatio, 0.1f, 1000000.0f);
-        this.perspectiveProjection.negateY();
+        ratio = this.aspectRatio;
         this.orthographicProjection.setOrthoLH(0.0f, this.projectionWidth, this.projectionHeight, 0.0f, 0.0f, 1000000.0f);
         this.widescreenOrthoOffsetX = 0.0f;
       }
+
+      this.perspectiveProjection.setPerspectiveLH(this.fieldOfView, ratio, 0.1f, 1000000.0f);
+      this.perspectiveProjection.negateY();
     } else {
       // Our perspective projection is actually a centred orthographic projection. We are doing a
       // projection plane division in the vertex shader to emulate perspective division on the GTE.
