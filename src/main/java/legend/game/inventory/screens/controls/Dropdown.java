@@ -191,12 +191,14 @@ public class Dropdown extends Control {
 
     @Override
     protected void render() {
+      final int oldZ = textZ_800bdf00;
+      textZ_800bdf00 = Dropdown.this.panel.getZ() - 1;
+
       for(int i = 0; i < Dropdown.this.options.size(); i++) {
-        final int oldZ = textZ_800bdf00;
-        textZ_800bdf00 = Dropdown.this.panel.getZ() - 1;
         renderText(new LodString(Dropdown.this.options.get(i)), Dropdown.this.panel.getX() + 10, Dropdown.this.panel.getY() + 10 + i * 16, TextColour.BROWN);
-        textZ_800bdf00 = oldZ;
       }
+
+      textZ_800bdf00 = oldZ;
     }
 
     @Override

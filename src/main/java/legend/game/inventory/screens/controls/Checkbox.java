@@ -1,48 +1,40 @@
 package legend.game.inventory.screens.controls;
 
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
-import legend.core.gpu.ModelLoader;
-import legend.core.gpu.Renderable;
-import legend.core.gpu.VramTextureLoader;
+import legend.core.RenderEngine;
+import legend.core.gpu.Bpp;
+import legend.core.gte.MV;
+import legend.core.opengl.Obj;
+import legend.core.opengl.QuadBuilder;
+import legend.core.opengl.Texture;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.InputPropagation;
 
 import java.nio.file.Path;
 
-import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
-import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
+import static legend.core.GameEngine.RENDERER;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
 public class Checkbox extends Control {
-  private final Renderable uncheckedRenderable;
-  private final Renderable checkedRenderable;
+  private final Obj obj;
+  private final MV transforms = new MV();
+
+  private final Texture uncheckedTexture;
+  private final Texture checkedTexture;
 
   private Label.HorizontalAlign horizontalAlign = Label.HorizontalAlign.CENTRE;
   private Label.VerticalAlign verticalAlign = Label.VerticalAlign.CENTRE;
   private boolean checked;
 
   public Checkbox() {
-    this.uncheckedRenderable = ModelLoader.quad(
-      "unchecked",
-      -displayWidth_1f8003e0 / 2, -displayHeight_1f8003e4 / 2, 0, 14, 14,
-      0, 0, 14, 14,
-      0, 0, 0,
-      0x80, 0x80, 0x80,
-      null
-    )
-      .texture(VramTextureLoader.textureFromPng(Path.of("gfx", "ui", "checkbox.png")))
-      .build();
+    this.uncheckedTexture = Texture.png(Path.of("gfx", "ui", "checkbox.png"));
+    this.checkedTexture = Texture.png(Path.of("gfx", "ui", "checkbox_checked.png"));
 
-    this.checkedRenderable = ModelLoader.quad(
-      "checked",
-      -displayWidth_1f8003e0 / 2, -displayHeight_1f8003e4 / 2, 0, 14, 14,
-      0, 0, 14, 14,
-      0, 0, 0,
-      0x80, 0x80, 0x80,
-      null
-    )
-      .texture(VramTextureLoader.textureFromPng(Path.of("gfx", "ui", "checkbox_checked.png")))
+    this.obj = new QuadBuilder("Checkbox")
+      .bpp(Bpp.BITS_24)
+      .posSize(14.0f, 14.0f)
+      .uvSize(1.0f, 1.0f)
       .build();
 
     this.setSize(14, 14);
@@ -100,10 +92,14 @@ public class Checkbox extends Control {
       case BOTTOM -> controlY + this.getHeight() - 14;
     };
 
+    this.transforms.transfer.set(x, y, this.getZ() * 4.0f);
+    final RenderEngine.QueuedModel<?> model = RENDERER
+      .queueOrthoModel(this.obj, this.transforms);
+
     if(this.checked) {
-      this.checkedRenderable.render(x, y, this.getZ());
+      model.texture(this.checkedTexture);
     } else {
-      this.uncheckedRenderable.render(x, y, this.getZ());
+      model.texture(this.uncheckedTexture);
     }
   }
 
