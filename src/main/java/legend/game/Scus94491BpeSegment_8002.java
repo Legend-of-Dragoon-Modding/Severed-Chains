@@ -540,10 +540,10 @@ public final class Scus94491BpeSegment_8002 {
       final GsCOORDINATE2 coord2 = model.modelParts_00[i].coord2_04;
       final Transforms params = coord2.transforms;
 
-      params.rotate.set(model.keyframes_90[model.currentKeyframe_94][i].rotate_00);
+      params.quat.set(model.keyframes_90[model.currentKeyframe_94][i].quat);
       params.trans.set(model.keyframes_90[model.currentKeyframe_94][i].translate_06);
 
-      coord2.coord.rotationZYX(params.rotate);
+      coord2.coord.rotation(params.quat);
       coord2.coord.transfer.set(params.trans);
     }
   }
