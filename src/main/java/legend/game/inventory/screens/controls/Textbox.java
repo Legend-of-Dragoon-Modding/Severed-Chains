@@ -1,18 +1,18 @@
 package legend.game.inventory.screens.controls;
 
 import legend.core.MathHelper;
-import legend.core.gpu.GpuCommandLine;
+import legend.core.gte.MV;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.InputPropagation;
 import legend.game.inventory.screens.TextColour;
-import legend.game.inventory.screens.TextRenderable;
-import legend.game.inventory.screens.TextRenderer;
+import legend.game.types.LodString;
 
-import static legend.core.GameEngine.GPU;
-import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
+import static legend.core.GameEngine.RENDERER;
+import static legend.game.SItem.renderText;
 import static legend.game.Scus94491BpeSegment_8002.charWidth;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
+import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_BACKSPACE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
@@ -23,8 +23,8 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
 
 public class Textbox extends Control {
   private final Panel background;
+  private final MV transforms = new MV();
   private String text;
-  private TextRenderable textRenderable;
   private int maxLength = -1;
 
   private int caretIndex;
@@ -76,24 +76,24 @@ public class Textbox extends Control {
 
   private void updateText(final String text) {
     this.text = text;
-    this.textRenderable = TextRenderer.prepareShadowText(text, 0, 0, TextColour.BROWN);
   }
 
   @Override
   protected void render(final int x, final int y) {
-    this.textRenderable.render(x + 4, y + (this.getHeight() - 11) / 2 + 1, this.getZ() - 1);
+    final int oldZ = textZ_800bdf00;
+    textZ_800bdf00 = this.getZ() - 1;
+    renderText(new LodString(this.text), x + 4, y + (this.getHeight() - 11) / 2 + 1, TextColour.BROWN);
+    textZ_800bdf00 = oldZ;
 
     if(this.hasFocus()) {
-      final int offsetX = -displayWidth_1f8003e0 / 2;
-      final int offsetY = -120;
-      final int caretX = x + offsetX + 4 + this.caretX;
-      final int caretY = y + offsetY + 3;
+      final int caretX = x + 4 + this.caretX;
+      final int caretY = y + 3;
 
-      GPU.queueCommand(this.getZ() - 1, new GpuCommandLine()
-        .pos(0, caretX, caretY)
-        .pos(1, caretX, caretY + this.getHeight() - 7)
-        .rgb(0xa0, 0x80, 0x50)
-      );
+      this.transforms.scaling(1.0f, this.getHeight() - 5.0f, 1.0f);
+      this.transforms.transfer.set(caretX, caretY, this.getZ() - 1.0f);
+      RENDERER
+        .queueOrthoModel(RENDERER.opaqueQuad, this.transforms)
+        .colour(0xa0 / 255.0f, 0x80 / 255.0f, 0x50 / 255.0f);
     }
   }
 
