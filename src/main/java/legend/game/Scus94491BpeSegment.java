@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import legend.core.Config;
 import legend.core.DebugHelper;
 import legend.core.MathHelper;
+import legend.core.audio.sequencer.assets.BackgroundMusic;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Gpu;
 import legend.core.gpu.GpuCommandPoly;
@@ -58,6 +59,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
@@ -440,6 +442,7 @@ public final class Scus94491BpeSegment {
     RENDERER.events().onShutdown(() -> {
       stopSound();
       SPU.stop();
+      AUDIO_THREAD.stop();
       Platform.exit();
     });
   }
@@ -2453,7 +2456,7 @@ public final class Scus94491BpeSegment {
       } else {
         //LAB_8001da58
         fileIndex = combatMusicFileIndices_800501bc[stageData.musicIndex_04 & 0x1f];
-        callback = files -> FUN_8001fb44(files, "Encounter music %d (file %d)".formatted(stageData.musicIndex_04 & 0x1f, fileIndex), 0);
+        callback = files -> FUN_8001fb44(files, fileIndex, 0);
       }
 
       //LAB_8001daa4
@@ -2468,31 +2471,16 @@ public final class Scus94491BpeSegment {
     LOGGER.info("Music package %d loaded", fileIndex);
     musicFileIndex_800bd0fc = fileIndex;
 
-    int i = 0;
-    final SoundFile sound = soundFiles_800bcf80[11];
-    sound.used_00 = true;
-    sound.name = "Music package (file %d)".formatted(fileIndex);
-    sound.charId_02 = files.get(i++).readShort(0);
+    AUDIO_THREAD.loadBackgroundMusic(new BackgroundMusic(files, fileIndex));
 
-    if(files.size() == 5) {
-      sound.numberOfExtraSoundbanks_18 = files.get(i++).readUByte(0) - 1;
-    }
+    AUDIO_THREAD.startSequence();
 
-    final Sssq sssq = new Sssq(files.get(i++));
-    final Sshd sshd = new Sshd(files.get(i++));
-    final FileData soundbank = files.get(i);
-    sound.spuRamOffset_14 = soundbank.size();
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, soundbank, sshd, 0x2_1f70);
-    currentSequenceData_800bd0f8 = loadSssq(sound.playableSound_10, sssq);
-
-    if(files.size() == 5) {
-      loadExtraSoundbanks();
-    } else {
-      FUN_8001fa18();
-    }
+    musicLoaded_800bd782 = true;
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_ff7f);
 
     //LAB_8001dda0
-    setSequenceVolume(40);
+    // TODO verify volumes
+    // setSequenceVolume(40);
     _800bd0f0 = 2;
   }
 
@@ -2500,7 +2488,7 @@ public final class Scus94491BpeSegment {
   public static void FUN_8001ddd8() {
     final EncounterSoundEffects10 encounterSoundEffects = encounterSoundEffects_800bd610;
 
-    startMusicSequence(currentSequenceData_800bd0f8);
+    AUDIO_THREAD.startSequence();
     encounterSoundEffects._00 = 2;
     encounterSoundEffects.sequenceData_0c = loadSssq(soundFiles_800bcf80[encounterSoundEffects.soundFileIndex].playableSound_10, encounterSoundEffects.sssq_08);
     musicLoaded_800bd782 = true;
@@ -2702,8 +2690,7 @@ public final class Scus94491BpeSegment {
 
       case 8 -> {
         if(_800bd0f0 != 0) {
-          stopMusicSequence(currentSequenceData_800bd0f8, 1);
-          freeSequence(currentSequenceData_800bd0f8);
+          AUDIO_THREAD.unloadMusic();
 
           //LAB_8001e56c
           _800bd0f0 = 0;
@@ -3068,18 +3055,16 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001fb44L)
-  public static void FUN_8001fb44(final List<FileData> files, final String soundName, final int param) {
+  public static void FUN_8001fb44(final List<FileData> files, final int fileIndex, final int param) {
+    // This has to be done because of victory music
     final SoundFile sound = soundFiles_800bcf80[11];
-    sound.name = soundName;
-    sound.used_00 = true;
-
-    sound.charId_02 = files.get(0).readShort(0);
 
     //LAB_8001fbcc
     sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(files.get(2)), 0x2_1f70);
 
-    currentSequenceData_800bd0f8 = loadSssq(sound.playableSound_10, new Sssq(files.get(1)));
-    setSequenceVolume(40);
+    AUDIO_THREAD.loadBackgroundMusic(new BackgroundMusic(files, fileIndex));
+    // TODO verify volumes
+    // setSequenceVolume(40);
     _800bd0f0 = 2;
 
     if(param == 0) {

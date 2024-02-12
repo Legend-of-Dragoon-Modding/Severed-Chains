@@ -41,6 +41,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.SEQUENCER;
 import static legend.core.GameEngine.SPU;
 import static legend.game.Scus94491BpeSegment_8005.reverbConfigs_80059f7c;
@@ -580,6 +581,8 @@ public final class Scus94491BpeSegment_8004 {
     SPU.clearKeyOn();
     SPU.setReverbVolume(0, 0);
     SPU.disableReverb();
+    // TODO DisableReverb (might not be necessary, since we are not actually ticking??)
+    AUDIO_THREAD.setReverbVolume(0, 0);
   }
 
   /**
@@ -590,6 +593,7 @@ public final class Scus94491BpeSegment_8004 {
     if(soundEnv_800c6630.reverbType_34 != 0 && left < 0x80 && right < 0x80) {
       //LAB_8004c5d0
       SPU.setReverbVolume(left << 8, right << 8);
+      AUDIO_THREAD.setReverbVolume(left << 8, right << 8);
     }
 
     //LAB_8004c5d8
@@ -731,6 +735,8 @@ public final class Scus94491BpeSegment_8004 {
 
     //LAB_8004cd30
     //LAB_8004cd34
+
+    AUDIO_THREAD.fadeIn(fadeTime, maxVol);
     return 0;
   }
 
@@ -741,6 +747,8 @@ public final class Scus94491BpeSegment_8004 {
       soundEnv_800c6630.fadeTime_2c = fadeTime;
       soundEnv_800c6630.fadeOutVolL_30 = SPU.getMainVolumeLeft() >>> 8;
       soundEnv_800c6630.fadeOutVolR_32 = SPU.getMainVolumeRight() >>> 8;
+
+      AUDIO_THREAD.fadeOut(fadeTime);
       return 0;
     }
 
@@ -750,6 +758,12 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004cf8cL)
   public static void startMusicSequence(final SequenceData124 sequenceData) {
+    if(sequenceData == null) {
+      AUDIO_THREAD.startSequence();
+
+      return;
+    }
+
     final PlayableSound0c playableSound = sequenceData.playableSound_020;
 
     sshdPtr_800c4ac0 = playableSound.sshdPtr_04;
@@ -769,6 +783,12 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004d034L)
   public static void stopMusicSequence(final SequenceData124 sequenceData, final int mode) {
+    if(sequenceData == null) {
+      AUDIO_THREAD.stopSequence();
+
+      return;
+    }
+
     boolean resetAdsr = false;
     final PlayableSound0c playableSound = sequenceData.playableSound_020;
     final Sshd sshd = playableSound.sshdPtr_04;
@@ -868,6 +888,14 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004d2fcL)
   public static int startSequenceAndChangeVolumeOverTime(final SequenceData124 sequenceData, final short transitionTime, final short newVolume) {
+    if(sequenceData == null) {
+//      AUDIO_THREAD.fadeIn(transitionTime, newVolume);
+      AUDIO_THREAD.startSequence();
+
+      return -1;
+    }
+
+
     sssqReader_800c667c = sequenceData.sssqReader_010;
 
     int ret = -1;
@@ -907,6 +935,11 @@ public final class Scus94491BpeSegment_8004 {
 
     if(newVolume >= 0x80) {
       assert false : "Error";
+      return -1;
+    }
+
+    // TODO this is called during dragoon transformation
+    if(sequenceData == null) {
       return -1;
     }
 
