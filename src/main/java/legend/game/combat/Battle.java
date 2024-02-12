@@ -3934,22 +3934,24 @@ public class Battle extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Generates a random number using the Mersenne Twister algorithm")
+  @ScriptDescription("Generates a random number")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value", description = "The random number")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "min", description = "The minimum value (inclusive)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "max", description = "The maximum value (exclusive)")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "max", description = "The maximum value (inclusive)")
   @Method(0x800cee50L)
   public FlowControl scriptRand(final RunningScript<?> script) {
     final int min = script.params_20[1].get();
     final int max = script.params_20[2].get();
+    final int range = max - min;
 
-    // Yes, scripts do this
-    if(min == max) {
-      script.params_20[0].set(min);
+    final int rand;
+    if(range >= 0) {
+      rand = seed_800fa754.nextInt(range + 1) + min;
     } else {
-      script.params_20[0].set(seed_800fa754.nextInt(min, max));
+      rand = -seed_800fa754.nextInt(-range + 1) + min;
     }
 
+    script.params_20[0].set(rand);
     return FlowControl.CONTINUE;
   }
 

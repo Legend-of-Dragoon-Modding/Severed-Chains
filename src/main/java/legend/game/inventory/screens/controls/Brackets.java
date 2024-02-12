@@ -66,6 +66,7 @@ public class Brackets extends Control {
 
     if(this.background.uiType_20.obj != null) {
       this.background.uiType_20.obj.delete();
+      this.background.uiType_20.obj = null;
     }
   }
 

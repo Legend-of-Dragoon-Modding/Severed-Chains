@@ -6,8 +6,6 @@ import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.InputPropagation;
 import legend.game.inventory.screens.MenuScreen;
 import legend.game.inventory.screens.TextColour;
-import legend.game.inventory.screens.TextRenderable;
-import legend.game.inventory.screens.TextRenderer;
 import legend.game.types.LodString;
 
 import java.util.ArrayList;
@@ -174,8 +172,6 @@ public class Dropdown extends Control {
   @FunctionalInterface public interface Selection { void selection(final int index); }
 
   private class DropdownScreen extends MenuScreen {
-    private final TextRenderable[] textRenderables = new TextRenderable[Dropdown.this.options.size()];
-
     private DropdownScreen() {
       final Panel panel = Dropdown.this.panel;
 
@@ -191,17 +187,18 @@ public class Dropdown extends Control {
       }
 
       panel.setWidth(Dropdown.this.getWidth() + 18);
-
-      for(int i = 0; i < this.textRenderables.length; i++) {
-        this.textRenderables[i] = TextRenderer.prepareShadowText(Dropdown.this.options.get(i), 0, 0, TextColour.BROWN);
-      }
     }
 
     @Override
     protected void render() {
+      final int oldZ = textZ_800bdf00;
+      textZ_800bdf00 = Dropdown.this.panel.getZ() - 1;
+
       for(int i = 0; i < Dropdown.this.options.size(); i++) {
-        this.textRenderables[i].render(Dropdown.this.panel.getX() + 10, Dropdown.this.panel.getY() + 10 + i * 16, Dropdown.this.panel.getZ() - 1);
+        renderText(new LodString(Dropdown.this.options.get(i)), Dropdown.this.panel.getX() + 10, Dropdown.this.panel.getY() + 10 + i * 16, TextColour.BROWN);
       }
+
+      textZ_800bdf00 = oldZ;
     }
 
     @Override

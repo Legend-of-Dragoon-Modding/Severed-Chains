@@ -45,7 +45,7 @@ public class OptionsScreen extends VerticalLayoutScreen {
 
         if(validLocations.contains(configEntry.storageLocation) && configEntry.hasEditControl()) {
           //noinspection unchecked
-          this.addRow(label, configEntry.makeEditControl(config.getConfig(configEntry), config));
+          this.addRow(label, configEntry.makeEditControl(config.getConfig(configEntry), config)).setZ(35);
         }
       });
   }
