@@ -26,11 +26,7 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import static legend.game.Scus94491BpeSegment_8005.reverbConfigs_80059f7c;
 import static org.lwjgl.openal.AL10.AL_BUFFERS_PROCESSED;
@@ -80,12 +76,15 @@ public final class Sequencer {
   private int fadeTime;
   private int fadeCounter;
 
+  private boolean volumeChanging;
+  private int newVolume;
+  private int oldVolume;
+  private int volumeChangingTimeTotal;
+  private int volumeChangingTimeRemaining;
+
   private final Map<Class, CommandCallback> commandCallbackMap = new HashMap<>();
 
   private BackgroundMusic backgroundMusic;
-  private final Queue<BackgroundMusic> backgroundMusicQueue = new LinkedList<>();
-  private final Lock bgmLock = new ReentrantLock();
-  private boolean unload;
   private int samplesToProcess;
   private boolean playing;
 
@@ -135,6 +134,8 @@ public final class Sequencer {
 
       this.tickSequence();
 
+      this.handleVolumeChanging();
+
       this.handleFadeInOut();
 
       this.voiceOutputBuffer[0] = 0;
@@ -166,49 +167,6 @@ public final class Sequencer {
     }
 
     return alGetSourcei(this.sourceId, AL_BUFFERS_QUEUED) < 4;
-  }
-
-  public int buffersToQueue() {
-    if(!this.playing || this.backgroundMusic == null) {
-      return 0;
-    }
-
-    return BUFFER_COUNT - alGetSourcei(this.sourceId, AL_BUFFERS_QUEUED);
-  }
-
-  public void processMusicQueue() {
-    this.bgmLock.lock();
-    try {
-      if(this.unload) {
-        this.unload = false;
-        this.playing = false;
-
-        this.backgroundMusic = null;
-        for(final Voice voice : this.voices) {
-          voice.clear();
-        }
-
-        this.playingVoices = 0;
-
-        alSourceStop(this.sourceId);
-
-        this.processBuffers();
-      }
-
-      if(!this.backgroundMusicQueue.isEmpty()) {
-        for(final Voice voice : this.voices) {
-          voice.clear();
-        }
-
-        this.playingVoices = 0;
-
-        this.backgroundMusic = this.backgroundMusicQueue.remove();
-        // TODO this shouldn't be happening, but some race conditions for now
-        this.playing = true;
-      }
-    } finally {
-      this.bgmLock.unlock();
-    }
   }
 
   private void clearFinishedVoices() {
@@ -550,6 +508,27 @@ public final class Sequencer {
     }
   }
 
+  private void handleVolumeChanging() {
+    if(!this.volumeChanging)  {
+      return;
+    }
+
+    if(this.volumeChangingTimeRemaining <= 0) {
+      this.volumeChanging = false;
+      this.backgroundMusic.setVolume(this.newVolume);
+      return;
+    }
+
+    this.backgroundMusic.setVolume(this.newVolume + (this.oldVolume - this.newVolume) * this.volumeChangingTimeRemaining / this.volumeChangingTimeTotal);
+    this.volumeChangingTimeRemaining--;
+
+    for(final Voice voice : this.voices) {
+      if(voice.isUsed()) {
+        voice.updateVolume();
+      }
+    }
+  }
+
   public void fadeIn(final int time, final int volume) {
     this.fadeTime = time;
     this.fadeInVolume = volume;
@@ -572,11 +551,13 @@ public final class Sequencer {
   }
 
   public void loadBackgroundMusic(final BackgroundMusic backgroundMusic) {
-    this.backgroundMusicQueue.add(backgroundMusic);
+    this.backgroundMusic = backgroundMusic;
   }
 
   public void unloadMusic() {
-    this.unload = true;
+    this.stopSequence();
+
+    this.backgroundMusic = null;
   }
 
   public void startSequence() {
@@ -585,5 +566,52 @@ public final class Sequencer {
 
   public void stopSequence() {
     this.playing = false;
+    alSourceStop(this.sourceId);
+
+    for(final Voice voice : this.voices) {
+      voice.clear();
+
+      this.playingVoices = 0;
+    }
+  }
+
+  public int getSequenceVolume() {
+    return this.backgroundMusic.getVolume();
+  }
+
+  public int setSequenceVolume(final int volume) {
+    if(this.backgroundMusic == null) {
+      return -1;
+    }
+
+    final int oldVolume = this.backgroundMusic.getVolume();
+
+    this.backgroundMusic.setVolume(volume);
+
+    for(final Voice voice : this.voices) {
+      if(voice.isUsed()) {
+        voice.updateVolume();
+      }
+    }
+
+    return oldVolume;
+  }
+
+  public int changeSequenceVolumeOverTime(final int volume, final int time) {
+    if(this.backgroundMusic == null) {
+      return -1;
+    }
+
+    this.volumeChanging = true;
+    this.newVolume = volume;
+    this.oldVolume = this.backgroundMusic.getVolume();
+    this.volumeChangingTimeTotal = time;
+    this.volumeChangingTimeRemaining = time;
+
+    return this.oldVolume;
+  }
+
+  public boolean isPlaying() {
+    return this.playing;
   }
 }

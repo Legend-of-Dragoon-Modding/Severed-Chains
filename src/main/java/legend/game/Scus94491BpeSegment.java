@@ -1504,6 +1504,7 @@ public final class Scus94491BpeSegment {
     switch(engineState_8004dd20) {
       case TITLE_02 -> {
         setMainVolume(0x7f, 0x7f);
+        AUDIO_THREAD.setMainVolume(0x7f, 0x7f);
         sssqResetStuff();
         FUN_8001aa90();
 
@@ -1881,6 +1882,7 @@ public final class Scus94491BpeSegment {
   @Method(0x8001b14cL)
   public static FlowControl scriptSetMainVolume(final RunningScript<?> script) {
     setMainVolume((short)script.params_20[0].get(), (short)script.params_20[1].get());
+    AUDIO_THREAD.setMainVolume((short)script.params_20[0].get(), (short)script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
@@ -1902,7 +1904,7 @@ public final class Scus94491BpeSegment {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "volume", description = "The volume")
   @Method(0x8001b1ecL)
   public static FlowControl scriptGetSequenceVolume(final RunningScript<?> script) {
-    script.params_20[0].set(sequenceVolume_800bd108);
+    script.params_20[0].set(AUDIO_THREAD.getSequenceVolume());
     return FlowControl.CONTINUE;
   }
 
@@ -2473,14 +2475,13 @@ public final class Scus94491BpeSegment {
 
     AUDIO_THREAD.loadBackgroundMusic(new BackgroundMusic(files, fileIndex));
 
+    AUDIO_THREAD.setSequenceVolume(40);
+
     AUDIO_THREAD.startSequence();
 
     musicLoaded_800bd782 = true;
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_ff7f);
 
-    //LAB_8001dda0
-    // TODO verify volumes
-    // setSequenceVolume(40);
     _800bd0f0 = 2;
   }
 
@@ -3063,8 +3064,9 @@ public final class Scus94491BpeSegment {
     sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(files.get(2)), 0x2_1f70);
 
     AUDIO_THREAD.loadBackgroundMusic(new BackgroundMusic(files, fileIndex));
-    // TODO verify volumes
-    // setSequenceVolume(40);
+
+    AUDIO_THREAD.setSequenceVolume(40);
+
     _800bd0f0 = 2;
 
     if(param == 0) {

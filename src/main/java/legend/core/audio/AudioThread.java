@@ -1,6 +1,5 @@
 package legend.core.audio;
 
-import it.unimi.dsi.fastutil.longs.LongArrayList;
 import legend.core.DebugHelper;
 import legend.core.audio.opus.XaPlayer;
 import legend.core.audio.sequencer.Sequencer;
@@ -91,8 +90,6 @@ public final class AudioThread implements Runnable {
       this.sequencer.processBuffers();
       this.xaPlayer.processBuffers();
 
-      this.sequencer.processMusicQueue();
-
       final boolean canBgmBuffer = this.sequencer.canBuffer();
       final boolean canXaBuffer = this.xaPlayer.canBuffer();
 
@@ -139,6 +136,18 @@ public final class AudioThread implements Runnable {
     this.sequencer.setMainVolume(left, right);
   }
 
+  public synchronized int getSequenceVolume() {
+    return this.sequencer.getSequenceVolume();
+  }
+
+  public synchronized int setSequenceVolume(final int volume) {
+    return this.sequencer.setSequenceVolume(volume);
+  }
+
+  public synchronized int changeSequenceVolumeOverTime(final int volume, final int time) {
+    return this.sequencer.changeSequenceVolumeOverTime(volume, time);
+  }
+
   public synchronized void setReverbVolume(final int left, final int right) {
     this.sequencer.setReverbVolume(left, right);
   }
@@ -161,5 +170,9 @@ public final class AudioThread implements Runnable {
 
   public synchronized void loadXa(final FileData fileData) {
     this.xaPlayer.loadXa(fileData);
+  }
+
+  public synchronized boolean isMusicPlaying() {
+    return this.sequencer.isPlaying();
   }
 }

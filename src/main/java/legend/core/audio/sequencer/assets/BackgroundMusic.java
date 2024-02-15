@@ -10,13 +10,14 @@ import java.util.List;
 public final class BackgroundMusic {
   private final int songId;
 
-  private final int volume;
+  private int volume;
   private final int tickPerQuarterNote;
   private double samplesPerTick;
 
   private final byte[][] breathControls;
   private final byte[] velocityRamp = new byte[0x80];
 
+  private final Channel[] channels;
   private final Command[] sequence;
   private int sequencePosition;
 
@@ -67,12 +68,12 @@ public final class BackgroundMusic {
 
     final SoundFont soundFont = new SoundFont(sshd.slice(subfileOffsets[0], subfileOffsets[1] - subfileOffsets[0]), soundBank);
 
-    final Channel[] channels = new Channel[0x10];
-    for(int channel = 0; channel < channels.length; channel++) {
-      channels[channel] = new Channel(sssq.slice(16 + channel * 16, 16), this.volume, soundFont);
+    this.channels = new Channel[0x10];
+    for(int channel = 0; channel < this.channels.length; channel++) {
+      this.channels[channel] = new Channel(sssq.slice(16 + channel * 16, 16), this.volume, soundFont);
     }
 
-    this.sequence = SequenceBuilder.create(sssq.slice(0x110), channels);
+    this.sequence = SequenceBuilder.create(sssq.slice(0x110), this.channels);
 
     sshd.copyFrom(subfileOffsets[1] + 2, this.velocityRamp, 0, 0x80);
 
@@ -173,5 +174,13 @@ public final class BackgroundMusic {
 
     this.sequencePosition = this.repeatPosition;
     this.repeat = false;
+  }
+
+  public void setVolume(final int volume) {
+    this.volume = volume;
+
+    for(final Channel channel : this.channels) {
+      channel.changeVolume(channel.getVolume(), this.volume);
+    }
   }
 }
