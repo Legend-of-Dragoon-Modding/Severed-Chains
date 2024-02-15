@@ -3234,6 +3234,10 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "selectedAction", description = "The action the player has selected")
   @Method(0x800cca34L)
   public FlowControl scriptSetUpAndHandleCombatMenu(final RunningScript<BattleEntity27c> script) {
+    if(this.hud.spellAndItemMenu_800c6b60.menuType_0a == 2) {
+      return FlowControl.PAUSE_AND_REWIND;
+    }
+
     final int displayableIconsBitset = script.params_20[0].get();
 
     if(this.currentDisplayableIconsBitset_800c675c != displayableIconsBitset || (script.scriptState_04.storage_44[7] & 0x1000) != 0) {
