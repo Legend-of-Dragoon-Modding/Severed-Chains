@@ -209,9 +209,15 @@ public final class Sequencer {
       }
 
       this.samplesToProcess = (int)(command.getDeltaTime() * this.backgroundMusic.getSamplesPerTick());
+
+      if(this.samplesToProcess != 0) {
+        if(this.backgroundMusic.handleRepeat()) {
+          this.samplesToProcess = 0;
+        }
+      }
     }
 
-    this.backgroundMusic.handleRepeat();
+
 
     LOGGER.info(SEQUENCER_MARKER, "Delta Time %d samples", this.samplesToProcess);
   }

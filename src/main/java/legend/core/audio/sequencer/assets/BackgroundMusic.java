@@ -193,13 +193,15 @@ public final class BackgroundMusic {
     this.sequencePosition = 0;
   }
 
-  public void handleRepeat() {
+  public boolean handleRepeat() {
     if(!this.repeat) {
-      return;
+      return false;
     }
 
     this.sequencePosition = this.repeatPosition;
     this.repeat = false;
+
+    return true;
   }
 
   public void setVolume(final int volume) {

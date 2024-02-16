@@ -2453,14 +2453,17 @@ public final class Scus94491BpeSegment {
 
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x80);
 
+    final int fileId;
     final Consumer<List<FileData>> callback;
-    if(musicIndex == 0x13) {
+    if(victoryType == 732) {
       callback = files -> musicPackageLoadedCallback(files, victoryType);
+      fileId = victoryType;
     } else {
       callback = files -> FUN_8001fb44(files, musicIndex, victoryType);
+      fileId = musicIndex;
     }
 
-    loadDrgnDir(0, musicIndex == 0x13 ? victoryType : combatMusicFileIndices_800501bc[musicIndex], callback);
+    loadDrgnDir(0, fileId, callback);
   }
 
   @Method(0x8001dabcL)
@@ -2508,8 +2511,8 @@ public final class Scus94491BpeSegment {
       //LAB_8001df8c
       unloadSoundFile(8);
 
-      final int musicIndex = combatSoundEffectsTypes_8005019c[stageData.musicIndex_04 & 0x1f];
-      final int victoryType = switch(musicIndex) {
+      final int musicIndex = combatMusicFileIndices_800501bc[stageData.musicIndex_04 & 0x1f];
+      final int victoryType = switch(combatSoundEffectsTypes_8005019c[stageData.musicIndex_04 & 0x1f]) {
         case 0xc -> 696;
         case 0xd -> 697;
         case 0xe -> 698;
