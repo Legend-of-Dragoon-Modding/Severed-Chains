@@ -166,6 +166,7 @@ import static legend.game.Scus94491BpeSegment_800b.sssqTempoScale_800bd100;
 import static legend.game.Scus94491BpeSegment_800b.sssqTempo_800bd104;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
+import static legend.game.Scus94491BpeSegment_800b.victoryMusic;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
 import static legend.game.combat.environment.StageData.stageData_80109a98;
@@ -1809,7 +1810,9 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001af00L)
   public static void startEncounterSounds() {
-    startMusicSequence(encounterSoundEffects_800bd610.sequenceData_0c);
+    AUDIO_THREAD.loadBackgroundMusic(victoryMusic);
+
+    AUDIO_THREAD.startSequence();
   }
 
   @ScriptDescription("Starts the encounter sounds sequence")
@@ -2443,29 +2446,21 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001d9d0L)
-  public static void loadEncounterMusic() {
-    final StageData2c stageData = stageData_80109a98[encounterId_800bb0f8];
-
-    if(stageData.musicIndex_04 != 0xff) {
-      loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x80);
-
-      final int fileIndex;
-      final Consumer<List<FileData>> callback;
-      if((stageData.musicIndex_04 & 0x1f) == 0x13) {
-        unloadSoundFile(8);
-        fileIndex = 732;
-        callback = files -> musicPackageLoadedCallback(files, 732);
-      } else {
-        //LAB_8001da58
-        fileIndex = combatMusicFileIndices_800501bc[stageData.musicIndex_04 & 0x1f];
-        callback = files -> FUN_8001fb44(files, fileIndex, 0);
-      }
-
-      //LAB_8001daa4
-      loadDrgnDir(0, fileIndex, callback);
+  public static void loadEncounterMusic(final int musicIndex, final int victoryType) {
+    if(victoryType == -1) {
+      return;
     }
 
-    //LAB_8001daac
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x80);
+
+    final Consumer<List<FileData>> callback;
+    if(musicIndex == 0x13) {
+      callback = files -> musicPackageLoadedCallback(files, victoryType);
+    } else {
+      callback = files -> FUN_8001fb44(files, musicIndex, victoryType);
+    }
+
+    loadDrgnDir(0, musicIndex == 0x13 ? victoryType : combatMusicFileIndices_800501bc[musicIndex], callback);
   }
 
   @Method(0x8001dabcL)
@@ -2513,28 +2508,21 @@ public final class Scus94491BpeSegment {
       //LAB_8001df8c
       unloadSoundFile(8);
 
-      final int type = combatSoundEffectsTypes_8005019c[stageData.musicIndex_04 & 0x1f];
-      if(type == 0xc) {
-        loadEncounterSoundEffects(696);
-      } else if(type == 0xd) {
-        //LAB_8001df68
-        loadEncounterSoundEffects(697);
-      } else if(type == 0xe) {
-        //LAB_8001df70
-        loadEncounterSoundEffects(698);
-      } else if(type == 0xf) {
-        //LAB_8001df78
-        loadEncounterSoundEffects(699);
-        //LAB_8001df44
-      } else if(type == 0x56) {
-        //LAB_8001df84
-        loadEncounterSoundEffects(700);
-      } else if(type == 0x58) {
-        //LAB_8001df80
-        loadEncounterSoundEffects(701);
-      }
+      final int musicIndex = combatSoundEffectsTypes_8005019c[stageData.musicIndex_04 & 0x1f];
+      final int victoryType = switch(musicIndex) {
+        case 0xc -> 696;
+        case 0xd -> 697;
+        case 0xe -> 698;
+        case 0xf -> 699;
+        case 0x13 -> 732;
+        case 0x56 -> 700;
+        case 0x58 -> 701;
+        default -> -1;
+      };
 
-      loadEncounterMusic();
+      loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x4000);
+
+      loadEncounterMusic(musicIndex, victoryType);
     }
 
     //LAB_8001df9c
@@ -3056,25 +3044,31 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001fb44L)
-  public static void FUN_8001fb44(final List<FileData> files, final int fileIndex, final int param) {
-    // This has to be done because of victory music
-    final SoundFile sound = soundFiles_800bcf80[11];
+  public static void FUN_8001fb44(final List<FileData> files, final int fileIndex, final int victoryType) {
+    final BackgroundMusic bgm = new BackgroundMusic(files, fileIndex);
+    bgm.setVolume(40);
 
-    //LAB_8001fbcc
-    sound.playableSound_10 = loadSshdAndSoundbank(sound.name, files.get(3), new Sshd(files.get(2)), 0x2_1f70);
+    final Consumer<List<FileData>> callback = victoryFiles -> loadVictoryMusic(victoryFiles, bgm);
 
-    AUDIO_THREAD.loadBackgroundMusic(new BackgroundMusic(files, fileIndex));
+    loadDrgnDir(0, victoryType, callback);
 
-    AUDIO_THREAD.setSequenceVolume(40);
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_bfff);
+
+    AUDIO_THREAD.loadBackgroundMusic(bgm);
 
     _800bd0f0 = 2;
 
-    if(param == 0) {
-      FUN_8001ddd8();
-    } else {
-      //LAB_8001fbc4
-      FUN_8001fc54();
-    }
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_ff7f);
+
+    AUDIO_THREAD.startSequence();
+
+    musicLoaded_800bd782 = true;
+  }
+
+  private static void loadVictoryMusic(final List<FileData> files, final BackgroundMusic battleMusic) {
+    victoryMusic = battleMusic.createVictoryMusic(files);
+
+    victoryMusic.setVolume(40);
   }
 
   @Method(0x8001fc54L)

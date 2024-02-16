@@ -1,5 +1,6 @@
 package legend.game;
 
+import legend.core.audio.sequencer.assets.BackgroundMusic;
 import legend.core.gte.MV;
 import legend.game.combat.environment.BattleStage;
 import legend.game.combat.types.EnemyDrop;
@@ -125,6 +126,7 @@ public final class Scus94491BpeSegment_800b {
   public static final Queue<QueuedSound28> queuedSounds_800bd110 = new LinkedList<>();
   /** NOTE: this used to be an array, but only the 6th element was used */
   public static final EncounterSoundEffects10 encounterSoundEffects_800bd610 = new EncounterSoundEffects10();
+  public static BackgroundMusic victoryMusic;
 
   public static final BattleDissolveDarkeningMetrics10 dissolveDarkening_800bd700 = new BattleDissolveDarkeningMetrics10();
   public static int _800bd710;

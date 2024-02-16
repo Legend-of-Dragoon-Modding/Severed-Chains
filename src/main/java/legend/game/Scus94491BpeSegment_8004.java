@@ -743,25 +743,8 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004cf8cL)
   public static void startMusicSequence(@Nullable final SequenceData124 sequenceData) {
-    // TODO this can start the victory music
     if(sequenceData != null) {
-      final PlayableSound0c playableSound = sequenceData.playableSound_020;
-
-      sshdPtr_800c4ac0 = playableSound.sshdPtr_04;
-
-      if(sequenceData.musicLoaded_027) {
-        if(sshdPtr_800c4ac0.hasSubfile(0)) {
-          if(playableSound.used_00) {
-            sequenceData.musicPlaying_028 = true;
-            sequenceData._0e8 = false;
-          }
-        }
-      }
-
-      //LAB_8004d02c
-      sequenceData._018 = false;
-
-      return;
+      throw new RuntimeException("startMusicSequence 0x8004cf8cL sequence not null");
     }
 
     AUDIO_THREAD.startSequence();

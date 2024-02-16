@@ -20,6 +20,7 @@ public final class BackgroundMusic {
   private final Channel[] channels;
   private final Command[] sequence;
   private int sequencePosition;
+  private final SoundFont soundFont;
 
   private int nrpn;
   private int lsbType;
@@ -66,11 +67,11 @@ public final class BackgroundMusic {
     this.tickPerQuarterNote = sssq.readUShort(0x2);
     this.setTempo(sssq.readUShort(0x4));
 
-    final SoundFont soundFont = new SoundFont(sshd.slice(subfileOffsets[0], subfileOffsets[1] - subfileOffsets[0]), soundBank);
+    this.soundFont = new SoundFont(sshd.slice(subfileOffsets[0], subfileOffsets[1] - subfileOffsets[0]), soundBank);
 
     this.channels = new Channel[0x10];
     for(int channel = 0; channel < this.channels.length; channel++) {
-      this.channels[channel] = new Channel(sssq.slice(16 + channel * 16, 16), this.volume, soundFont);
+      this.channels[channel] = new Channel(sssq.slice(16 + channel * 16, 16), this.volume, this.soundFont);
     }
 
     this.sequence = SequenceBuilder.create(sssq.slice(0x110), this.channels);
@@ -86,6 +87,31 @@ public final class BackgroundMusic {
     for(int i = 0; i < this.breathControls.length; i++) {
       this.breathControls[i] = sshd.slice(subfileOffsets[2] + sshd.readUShort(2 + i * 2 + subfileOffsets[2]), 0x40).getBytes();
     }
+  }
+
+  private BackgroundMusic(final List<FileData> files, final byte[][] breathControls, final byte[] velocityRamp, final SoundFont soundFont) {
+    this.songId = files.get(0).readUShort(0);
+
+    this.breathControls = breathControls;
+    System.arraycopy(velocityRamp, 0, this.velocityRamp, 0, velocityRamp.length);
+    this.soundFont = soundFont;
+
+    final FileData sssq = files.get(2);
+
+    this.volume = sssq.readUByte(0x0);
+    this.tickPerQuarterNote = sssq.readUShort(0x2);
+    this.setTempo(sssq.readUShort(0x4));
+
+    this.channels = new Channel[0x10];
+    for(int channel = 0; channel < this.channels.length; channel++) {
+      this.channels[channel] = new Channel(sssq.slice(16 + channel * 16, 16), this.volume, this.soundFont);
+    }
+
+    this.sequence = SequenceBuilder.create(sssq.slice(0x110), this.channels);
+  }
+
+  public BackgroundMusic createVictoryMusic(final List<FileData> files) {
+    return new BackgroundMusic(files, this.breathControls, this.velocityRamp, this.soundFont);
   }
 
   public Command getNextCommand() {
