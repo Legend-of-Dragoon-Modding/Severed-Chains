@@ -3004,9 +3004,14 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001f708L)
   public static void loadWmapMusic(final int chapterIndex) {
+    final int fileIndex = 5850 + chapterIndex * 5;
+
+    if(AUDIO_THREAD.getSongId() - 7 == chapterIndex) {
+      return;
+    }
+
     unloadSoundFile(8);
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x80);
-    final int fileIndex = 5850 + chapterIndex * 5;
     loadDrgnDir(0, fileIndex, files -> musicPackageLoadedCallback(files, fileIndex));
   }
 
