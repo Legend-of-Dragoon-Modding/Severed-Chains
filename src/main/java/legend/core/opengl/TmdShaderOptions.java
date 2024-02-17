@@ -1,5 +1,6 @@
 package legend.core.opengl;
 
+import legend.game.types.Translucency;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -9,14 +10,16 @@ public class TmdShaderOptions implements ShaderOptions<TmdShaderOptions> {
   private final Shader<TmdShaderOptions>.UniformVec2 uvOffsetUniform;
   private final Shader<TmdShaderOptions>.UniformVec2 clutUniform;
   private final Shader<TmdShaderOptions>.UniformVec2 tpageUniform;
+  private final Shader<TmdShaderOptions>.UniformFloat translucency;
   private final Shader<TmdShaderOptions>.UniformFloat discardTranslucency;
 
-  public TmdShaderOptions(final Shader<TmdShaderOptions>.UniformFloat modelIndex, final Shader<TmdShaderOptions>.UniformVec3 colourUniform, final Shader<TmdShaderOptions>.UniformVec2 uvOffsetUniform, final Shader<TmdShaderOptions>.UniformVec2 clutUniform, final Shader<TmdShaderOptions>.UniformVec2 tpageUniform, final Shader<TmdShaderOptions>.UniformFloat discardTranslucency) {
+  public TmdShaderOptions(final Shader<TmdShaderOptions>.UniformFloat modelIndex, final Shader<TmdShaderOptions>.UniformVec3 colourUniform, final Shader<TmdShaderOptions>.UniformVec2 uvOffsetUniform, final Shader<TmdShaderOptions>.UniformVec2 clutUniform, final Shader<TmdShaderOptions>.UniformVec2 tpageUniform, final Shader<TmdShaderOptions>.UniformFloat translucency, final Shader<TmdShaderOptions>.UniformFloat discardTranslucency) {
     this.modelIndex = modelIndex;
     this.colourUniform = colourUniform;
     this.uvOffsetUniform = uvOffsetUniform;
     this.clutUniform = clutUniform;
     this.tpageUniform = tpageUniform;
+    this.translucency = translucency;
     this.discardTranslucency = discardTranslucency;
   }
 
@@ -42,6 +45,16 @@ public class TmdShaderOptions implements ShaderOptions<TmdShaderOptions> {
 
   public TmdShaderOptions tpage(final Vector2f tpage) {
     this.tpageUniform.set(tpage);
+    return this;
+  }
+
+  public TmdShaderOptions opaque() {
+    this.translucency.set(0);
+    return this;
+  }
+
+  public TmdShaderOptions translucency(final Translucency translucency) {
+    this.translucency.set(translucency.ordinal() + 1);
     return this;
   }
 

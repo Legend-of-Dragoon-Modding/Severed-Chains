@@ -156,8 +156,9 @@ public class RenderEngine {
       final Shader<TmdShaderOptions>.UniformVec2 uvOffset = shader.new UniformVec2("uvOffset");
       final Shader<TmdShaderOptions>.UniformVec2 clutOverride = shader.new UniformVec2("clutOverride");
       final Shader<TmdShaderOptions>.UniformVec2 tpageOverride = shader.new UniformVec2("tpageOverride");
+      final Shader<TmdShaderOptions>.UniformFloat translucency = shader.new UniformFloat("translucency");
       final Shader<TmdShaderOptions>.UniformFloat discardTranslucency = shader.new UniformFloat("discardTranslucency");
-      return () -> new TmdShaderOptions(modelIndex, recolour, uvOffset, clutOverride, tpageOverride, discardTranslucency);
+      return () -> new TmdShaderOptions(modelIndex, recolour, uvOffset, clutOverride, tpageOverride, translucency, discardTranslucency);
     }
   );
 
@@ -584,6 +585,7 @@ public class RenderEngine {
       this.tmdShaderOptions.clut(entry.clutOverride);
       this.tmdShaderOptions.tpage(entry.tpageOverride);
       this.tmdShaderOptions.uvOffset(entry.uvOffset);
+      this.tmdShaderOptions.opaque();
       boolean updated = false;
 
       if(entry.scissor.w != 0) {
@@ -596,7 +598,7 @@ public class RenderEngine {
         }
       }
 
-      if(entry.obj.shouldRender(null)) {
+      if(entry.shouldRender(null)) {
         if(backfaceCulling != entry.obj.useBackfaceCulling()) {
           backfaceCulling = entry.obj.useBackfaceCulling();
 
@@ -616,7 +618,9 @@ public class RenderEngine {
       for(int translucencyIndex = 0; translucencyIndex < Translucency.FOR_RENDERING.length; translucencyIndex++) {
         final Translucency translucency = Translucency.FOR_RENDERING[translucencyIndex];
 
-        if(entry.obj.shouldRender(translucency)) {
+        if(entry.shouldRender(translucency)) {
+          this.tmdShaderOptions.translucency(translucency);
+
           if(backfaceCulling) {
             backfaceCulling = false;
             glDisable(GL_CULL_FACE);
@@ -648,10 +652,9 @@ public class RenderEngine {
     glDisable(GL_CULL_FACE);
     glEnable(GL_BLEND);
 
-    // Render B+F (implicitly order-independent, because it's all addition)
-    // Also renders B-F by negating the colour value and rendering as B+F
     this.tmdShader.use();
     this.tmdShaderOptions.discardMode(2);
+    this.tmdShaderOptions.translucency(Translucency.B_PLUS_F);
     Translucency.B_PLUS_F.setGlState();
 
     for(int i = 0; i < pool.size(); i++) {
@@ -669,31 +672,33 @@ public class RenderEngine {
 
       final QueuedModel<VoidShaderOptions> entry = pool.get(i);
 
-      if(entry.obj.hasTranslucency()) {
+      if(entry.hasTranslucency()) {
         this.tmdShaderOptions.modelIndex(modelIndex);
         this.tmdShaderOptions.clut(entry.clutOverride);
         this.tmdShaderOptions.tpage(entry.tpageOverride);
         this.tmdShaderOptions.uvOffset(entry.uvOffset);
         entry.useTexture();
 
-        if(entry.obj.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
+        if(entry.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
           Translucency.HALF_B_PLUS_HALF_F.setGlState();
+          this.tmdShaderOptions.translucency(Translucency.HALF_B_PLUS_HALF_F);
           this.tmdShaderOptions.colour(entry.colour);
           entry.render(Translucency.HALF_B_PLUS_HALF_F);
+          this.tmdShaderOptions.translucency(Translucency.B_PLUS_F);
           Translucency.B_PLUS_F.setGlState();
         }
 
-        if(entry.obj.shouldRender(Translucency.B_PLUS_F)) {
+        if(entry.shouldRender(Translucency.B_PLUS_F)) {
           this.tmdShaderOptions.colour(entry.colour);
           entry.render(Translucency.B_PLUS_F);
         }
 
-        if(entry.obj.shouldRender(Translucency.B_MINUS_F)) {
+        if(entry.shouldRender(Translucency.B_MINUS_F)) {
           this.tmdShaderOptions.colour(entry.colour.mul(-1.0f, this.tempColour));
           entry.render(Translucency.B_MINUS_F);
         }
 
-        if(entry.obj.shouldRender(Translucency.B_PLUS_QUARTER_F)) {
+        if(entry.shouldRender(Translucency.B_PLUS_QUARTER_F)) {
           this.tmdShaderOptions.colour(entry.colour.mul(0.25f, this.tempColour));
           entry.render(Translucency.B_PLUS_QUARTER_F);
         }
@@ -1102,6 +1107,9 @@ public class RenderEngine {
     private final Texture[] textures = new Texture[32];
     private boolean texturesUsed;
 
+    private Translucency translucency;
+    private boolean hasTranslucency;
+
     public Options options() {
       return this.shaderOptions;
     }
@@ -1192,6 +1200,12 @@ public class RenderEngine {
       return this.texture(texture, 0);
     }
 
+    public QueuedModel<Options> translucency(final Translucency translucency) {
+      this.translucency = translucency;
+      this.hasTranslucency = true;
+      return this;
+    }
+
     private void reset() {
       this.shader = null;
       this.shaderOptions = null;
@@ -1205,6 +1219,7 @@ public class RenderEngine {
       this.scissor.set(0, 0, 0, 0);
       this.vertexCount = 0;
       Arrays.fill(this.textures, null);
+      this.hasTranslucency = false;
       this.texturesUsed = false;
       this.lightUsed = false;
     }
@@ -1221,6 +1236,14 @@ public class RenderEngine {
       }
     }
 
+    public boolean hasTranslucency() {
+      return this.hasTranslucency || this.obj.hasTranslucency();
+    }
+
+    public boolean shouldRender(final Translucency translucency) {
+      return this.hasTranslucency && this.translucency == translucency || this.obj.shouldRender(translucency);
+    }
+
     private void storeTransforms(final int modelIndex, final FloatBuffer transforms2Buffer, final FloatBuffer lightingBuffer) {
       this.transforms.get(modelIndex * 20, transforms2Buffer);
       this.screenspaceOffset.get(modelIndex * 20 + 16, transforms2Buffer);
@@ -1233,7 +1256,12 @@ public class RenderEngine {
     }
 
     private void render(final Translucency translucency) {
-      this.obj.render(translucency, this.startVertex, this.vertexCount);
+      if(this.hasTranslucency) {
+        // Translucency override
+        this.obj.render(this.startVertex, this.vertexCount);
+      } else {
+        this.obj.render(translucency, this.startVertex, this.vertexCount);
+      }
     }
 
     @Override

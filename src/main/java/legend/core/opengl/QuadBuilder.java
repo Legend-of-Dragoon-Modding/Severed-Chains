@@ -198,7 +198,6 @@ public class QuadBuilder {
   public QuadBuilder translucency(final Translucency translucency) {
     this.addFirstQuad();
     this.translucency = translucency;
-    this.flags |= TmdObjLoader.TRANSLUCENCY_FLAG << translucency.ordinal();
     return this;
   }
 

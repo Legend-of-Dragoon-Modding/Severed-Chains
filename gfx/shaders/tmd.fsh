@@ -20,6 +20,7 @@ uniform vec3 recolour;
 uniform vec2 clutOverride;
 uniform vec2 tpageOverride;
 uniform vec2 uvOffset;
+uniform float translucency;
 uniform float discardTranslucency;
 uniform sampler2D tex24;
 uniform usampler2D tex15;
@@ -91,14 +92,14 @@ void main() {
     }
 
     // If translucent primitive and texture pixel translucency bit is set, pixel is translucent so we defer rendering
-    if(discardTranslucency == 1 && (flags & ~0x7) != 0 && texColour.a != 0 || discardTranslucency == 2 && ((flags & ~0x7) == 0 || texColour.a == 0)) {
+    if(discardTranslucency == 1 && translucency != 0 && texColour.a != 0 || discardTranslucency == 2 && (translucency == 0 || texColour.a == 0)) {
       discard;
     }
 
     outColour *= texColour;
   } else {
     // Untextured translucent primitives don't have a translucency bit so we always discard during the appropriate discard modes
-    if(discardTranslucency == 1 && (flags & ~0x7) != 0 || discardTranslucency == 2 && (flags & ~0x7) == 0) {
+    if(discardTranslucency == 1 && translucency != 0 || discardTranslucency == 2 && translucency == 0) {
       discard;
     }
   }
@@ -106,7 +107,7 @@ void main() {
   outColour.rgb *= recolour;
 
   // The or condition is to disable translucency if a texture's pixel has alpha disabled
-  if((flags & 0x8) != 0 && ((flags & 0x2) == 0 || outColour.a != 0)) { // (B+F)/2 translucency
+  if(translucency == 1 && ((flags & 0x2) == 0 || outColour.a != 0)) { // (B+F)/2 translucency
     outColour.a = 0.5;
   } else {
     outColour.a = 1.0;

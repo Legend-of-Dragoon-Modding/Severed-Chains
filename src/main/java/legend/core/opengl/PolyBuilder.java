@@ -132,7 +132,6 @@ public class PolyBuilder {
 
   public PolyBuilder translucency(final Translucency translucency) {
     this.translucency = translucency;
-    this.flags |= TmdObjLoader.TRANSLUCENCY_FLAG << translucency.ordinal();
     return this;
   }
 

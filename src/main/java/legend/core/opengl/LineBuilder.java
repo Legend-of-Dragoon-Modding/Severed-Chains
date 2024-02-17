@@ -21,7 +21,6 @@ public class LineBuilder {
   private final String name;
   private final List<Vector3f> pos = new ArrayList<>();
   private Translucency translucency;
-  private int flags;
   private boolean closed;
 
   public LineBuilder(final String name) {
@@ -39,7 +38,6 @@ public class LineBuilder {
 
   public LineBuilder translucency(final Translucency translucency) {
     this.translucency = translucency;
-    this.flags |= TmdObjLoader.TRANSLUCENCY_FLAG << translucency.ordinal();
     return this;
   }
 
@@ -63,7 +61,7 @@ public class LineBuilder {
       vertices[i * vertexSize    ] = pos.x;
       vertices[i * vertexSize + 1] = pos.y;
       vertices[i * vertexSize + 2] = pos.z;
-      vertices[(i + 1) * vertexSize - 1] = this.flags;
+      vertices[(i + 1) * vertexSize - 1] = 0; // flags
     }
 
     final Mesh mesh = new Mesh(this.closed ? GL_LINE_LOOP : GL_LINE_STRIP, vertices, this.pos.size());

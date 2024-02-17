@@ -53,6 +53,15 @@ public class MeshObj extends Obj {
   }
 
   @Override
+  public void render(final int startVertex, final int vertexCount) {
+    for(int i = 0; i < this.meshes.length; i++) {
+      if(this.meshes[i] != null) {
+        this.meshes[i].draw(startVertex, vertexCount);
+      }
+    }
+  }
+
+  @Override
   public void render(@Nullable final Translucency translucency, final int startVertex, final int vertexCount) {
     if(translucency == null) {
       this.meshes[0].draw(startVertex, vertexCount);

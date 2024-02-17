@@ -37,7 +37,6 @@ public final class TmdObjLoader {
   public static final int LIT_FLAG = 0x1;
   public static final int TEXTURED_FLAG = 0x2;
   public static final int COLOURED_FLAG = 0x4;
-  public static final int TRANSLUCENCY_FLAG = 0x8;
 
   public static Obj[] fromTmd(final String name, final Tmd tmd) {
     return fromTmd(name, tmd, 0);
@@ -279,12 +278,6 @@ public final class TmdObjLoader {
           if(translucent) {
             if(!textured || uniformLit) {
               backfaceCulling = false;
-
-              if(translucency != null) {
-                flags |= TRANSLUCENCY_FLAG << translucency.ordinal();
-              }
-            } else { // Only textured primitives have tpages
-              flags |= TRANSLUCENCY_FLAG << (poly.tpage >>> 5 & 0b11);
             }
           }
 

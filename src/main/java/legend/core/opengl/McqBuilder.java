@@ -181,16 +181,9 @@ public class McqBuilder {
     vertices[offset++] = 0; // bpp
     vertices[offset++] = 0; // \
     vertices[offset++] = 0; // | colour
+    vertices[offset++] = 0; // |
     vertices[offset++] = 0; // /
-
-    if(this.translucency == null) {
-      vertices[offset++] = 0;
-      vertices[offset++] = this.flags;
-    } else {
-      vertices[offset++] = this.translucency.ordinal();
-      vertices[offset++] = this.flags | TmdObjLoader.TRANSLUCENCY_FLAG << this.translucency.ordinal();
-    }
-
+    vertices[offset++] = this.flags;
     return offset;
   }
 }
