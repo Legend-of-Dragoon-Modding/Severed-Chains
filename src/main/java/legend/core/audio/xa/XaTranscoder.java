@@ -184,7 +184,7 @@ public class XaTranscoder {
           + interpolationWeights[2] * this.sourceBuffer[channel][samplePosition + 2]
           + interpolationWeights[3] * this.sourceBuffer[channel][samplePosition + 3];
 
-        this.opusInputBuffer.put(this.opusInputBufferPosition++, (short) MathHelper.clamp((int)sample, -0x8000, 0x7fff));
+        this.opusInputBuffer.put(this.opusInputBufferPosition++, (short) MathHelper.clamp((int)sample >> 1, -0x8000, 0x7fff));
       }
 
       this.interpolationCounter += 63;

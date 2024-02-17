@@ -9,7 +9,7 @@ public final class Instrument {
   private final Type type;
   private final InstrumentLayer[] layers;
 
-  private final int volume;
+  private final float volume;
   private final int pan;
   // 0x03 unused
   private final int pitchBendMultiplier;
@@ -27,7 +27,7 @@ public final class Instrument {
       this.layers[layer] = new InstrumentLayer(data.slice(8 + layer * 16, 16), soundBank);
     }
 
-    this.volume = data.readUByte(0x01);
+    this.volume = data.readUByte(0x01) / 128f;
     this.pan = data.readUByte(0x02);
     // 0x03 unused
     this.pitchBendMultiplier = data.readUByte(0x04);
@@ -56,7 +56,7 @@ public final class Instrument {
     return layers;
   }
 
-  public int getVolume() {
+  public float getVolume() {
     return this.volume;
   }
 

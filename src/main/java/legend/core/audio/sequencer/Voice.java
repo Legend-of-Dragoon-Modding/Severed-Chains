@@ -32,7 +32,7 @@ final class Voice {
   /** playingNote.noteNumber_02 */
   private int note;
   /** playingNote.velocityVolume_2c */
-  private int velocityVolume;
+  private float velocityVolume;
   private int pitchBendMultiplier;
   private boolean isModulation;
   private int modulation;
@@ -143,7 +143,7 @@ final class Voice {
     this.instrument = instrument;
     this.layer = layer;
     this.note = note;
-    this.velocityVolume = velocityVolume;
+    this.velocityVolume = velocityVolume / 128f;
     this.pitchBendMultiplier = this.layer.isPitchBendMultiplierFromInstrument() ? this.instrument.getPitchBendMultiplier() : this.layer.getPitchBendMultiplier();
     this.breathControls = breathControls;
     this.breath = this.channel.getBreath();
@@ -253,20 +253,21 @@ final class Voice {
   }
 
   private void calculateVolume() {
-    float volume = this.channel.getAdjustedVolume() * this.instrument.getVolume() * this.layer.getVolume() * this.velocityVolume;
-    volume /= 0x4000;
+    final float volume = this.channel.getAdjustedVolume() * this.instrument.getVolume() * this.layer.getVolume() * this.velocityVolume;
 
     final float volumeL = volume * this.calculatePan(true);
     final float volumeR = volume * this.calculatePan(false);
 
     if(this.layer.getLockedVolume() == 0) {
-      this.volumeLeft = volumeL / 0x8000;
-      this.volumeRight = volumeR / 0x8000;
+      this.volumeLeft = volumeL;
+      this.volumeRight = volumeR;
 
       return;
     }
-    this.volumeLeft = (float)((this.layer.getLockedVolume() << 8) | ((int)volumeL >> 7)) / 0x8000;
-    this.volumeRight = (float)((this.layer.getLockedVolume() << 8) | ((int)volumeR >> 7)) / 0x8000;
+
+    // TODO this should be verified with calculateVolume 0x80048ab8L. Note that because we are not using the Volume registers, this should return 2x the original value. However, it doesn't seem to be hit in game.
+    this.volumeLeft = (float)((this.layer.getLockedVolume() << 8) | ((int)(volumeL * 0x80))) / 0x4000;
+    this.volumeRight = (float)((this.layer.getLockedVolume() << 8) | ((int)(volumeR * 0x80))) / 0x4000;
   }
 
   void updateVolume() {

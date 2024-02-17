@@ -11,7 +11,7 @@ public final class Channel {
   private int pitchBend;
   private int priority;
   private int breath;
-  private int adjustedVolume;
+  private float adjustedVolume;
 
   private final SoundFont soundFont;
 
@@ -34,7 +34,7 @@ public final class Channel {
     this.priority = data.readUByte(0x0b);
     this.breath = data.readUByte(0x0c);
 
-    this.adjustedVolume = data.readUByte(0x0e);
+    this.adjustedVolume = data.readUByte(0x0e) / 128f;
   }
 
   public int getIndex() {
@@ -55,7 +55,7 @@ public final class Channel {
 
   public void changeVolume(final int volume, final int sssqVolume) {
     this.volume = volume;
-    this.adjustedVolume = (volume * sssqVolume) / 0x80;
+    this.adjustedVolume = (volume * sssqVolume) / 16384f;
   }
 
   public void setVolume(final int volume) {
@@ -103,7 +103,7 @@ public final class Channel {
 
 
 
-  public int getAdjustedVolume() {
+  public float getAdjustedVolume() {
     return this.adjustedVolume;
   }
 

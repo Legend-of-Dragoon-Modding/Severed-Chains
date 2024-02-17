@@ -11,7 +11,7 @@ public final class InstrumentLayer {
   private final byte[] soundBankEntry;
   private final AdsrPhase[] adsr;
   private final int lockedVolume;
-  private final int volume;
+  private final float volume;
   private final int pan;
   private final int pitchBendMultiplier;
   private final int breathControlIndex;
@@ -33,7 +33,7 @@ public final class InstrumentLayer {
     this.soundBankEntry = soundBank.getEntry(data.readUShort(0x04) * 8);
     this.adsr = AdsrPhase.getPhases(data.readUShort(0x06), data.readUShort(0x08));
     this.lockedVolume = data.readUByte(0x0A);
-    this.volume = data.readUByte(0x0B);
+    this.volume = data.readUByte(0x0B) / 128f;
     this.pan = data.readUByte(0x0C);
     this.pitchBendMultiplier = data.readUByte(0x0D);
     this.breathControlIndex = data.readUByte(0x0E);
@@ -71,7 +71,7 @@ public final class InstrumentLayer {
     return this.lockedVolume;
   }
 
-  public int getVolume() {
+  public float getVolume() {
     return this.volume;
   }
 
