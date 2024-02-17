@@ -16,9 +16,16 @@ flat out float vertBpp;
 smooth out vec4 vertColour;
 flat out float vertFlags;
 
+flat out float widthMultiplier;
+flat out int widthMask;
+flat out int indexShift;
+flat out int indexMask;
+
 smooth out float depth;
 smooth out float depthOffset;
 
+uniform vec2 clutOverride;
+uniform vec2 tpageOverride;
 uniform float modelIndex;
 
 struct ModelTransforms {
@@ -51,6 +58,7 @@ layout(std140) uniform projectionInfo {
   float znear;
   /** PS1 projection plane distance (H) when in PS1 perspective mode */
   float zfar;
+  float zdiffInv;
   /** 0: ortho, 1: PS1 perspective, 2: modern perspective */
   float projectionMode;
 };
@@ -58,14 +66,49 @@ layout(std140) uniform projectionInfo {
 void main() {
   vec4 pos = vec4(inPos, 1.0);
 
-  vertColour = inColour;
+  int flags = int(inFlags);
+  bool lit = (flags & 0x1) != 0;
+  bool textured = (flags & 0x2) != 0;
+  bool coloured = (flags & 0x4) != 0;
 
   ModelTransforms t = modelTransforms[int(modelIndex)];
   Light l = lights[int(modelIndex)];
 
   // Lit
-  if((int(inFlags) & 0x1) != 0) {
-    vertColour.rgb = min((l.lightColour * max(l.lightDirection * vec4(inNorm, 1.0), 0.0).rgb + l.backgroundColour.rgb) * vertColour.rgb, 1.0);
+  if(lit) {
+    vertColour.rgb = min((l.lightColour * max(l.lightDirection * vec4(inNorm, 1.0), 0.0).rgb + l.backgroundColour.rgb) * inColour.rgb, 1.0);
+  } else if(coloured) {
+    vertColour = inColour;
+  } else {
+    vertColour = vec4(1.0, 1.0, 1.0, 1.0);
+  }
+
+  if(textured) {
+    if(coloured) {
+      // Texture recolouring uses an RGB range of 0..128 or 0.0..0.5 so we multiply by 2
+      vertColour.rgb *= 2.0;
+      vertColour.a = 1.0;
+    }
+
+    if(clutOverride.x == 0) {
+      vertTpage = inTpage;
+    } else {
+      vertTpage = tpageOverride;
+    }
+
+    if(clutOverride.x == 0) {
+      vertClut = inClut;
+    } else {
+      vertClut = clutOverride;
+    }
+
+    if(inBpp == 0 || inBpp == 1) {
+      int widthDivisor = 1 << int(2 - inBpp);
+      widthMultiplier = 1.0 / widthDivisor;
+      widthMask = widthDivisor - 1;
+      indexShift = int(inBpp + 2);
+      indexMask = int(pow(16, inBpp + 1) - 1);
+    }
   }
 
   gl_Position = camera * t.model * pos;
@@ -81,8 +124,6 @@ void main() {
   gl_Position.xy += t.screenOffset.xy;
   gl_Position = projection * gl_Position;
   vertUv = inUv;
-  vertTpage = inTpage;
-  vertClut = inClut;
   vertBpp = inBpp;
   vertFlags = inFlags;
 

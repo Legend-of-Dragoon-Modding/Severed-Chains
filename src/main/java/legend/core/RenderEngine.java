@@ -118,7 +118,7 @@ public class RenderEngine {
   private final FloatBuffer transformsBuffer = BufferUtils.createFloatBuffer(4 * 4 * 2);
   private final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer((4 * 4 + 4) * 128);
   private final FloatBuffer lightBuffer = BufferUtils.createFloatBuffer((4 * 4 + 3 * 4 + 4) * 128); // 3*4 since glsl std140 means mat3's are basically 3 vec4s
-  private final FloatBuffer projectionBuffer = BufferUtils.createFloatBuffer(3);
+  private final FloatBuffer projectionBuffer = BufferUtils.createFloatBuffer(4);
 
   public static final ShaderType<SimpleShaderOptions> SIMPLE_SHADER = new ShaderType<>(
     options -> loadShader("simple", "simple", options),
@@ -715,15 +715,17 @@ public class RenderEngine {
     // zfar
     if(highQualityProjection) {
       this.projectionBuffer.put(1, 1000000.0f);
+      this.projectionBuffer.put(2, 1.0f / 1000000.0f);
     } else {
       this.projectionBuffer.put(1, GTE.getProjectionPlaneDistance());
+      this.projectionBuffer.put(2, 1.0f / GTE.getProjectionPlaneDistance());
     }
 
     switch(projectionMode) {
       case _2D -> {
         glDisable(GL_CULL_FACE);
         this.setTransforms(this.camera2d, this.orthographicProjection);
-        this.projectionBuffer.put(2, 0.0f); // Projection mode: ortho
+        this.projectionBuffer.put(3, 0.0f); // Projection mode: ortho
       }
 
       case _3D -> {
@@ -731,9 +733,9 @@ public class RenderEngine {
         this.setTransforms(this.camera3d, this.perspectiveProjection);
 
         if(highQualityProjection) {
-          this.projectionBuffer.put(2, 2.0f); // projection mode: high quality perspective
+          this.projectionBuffer.put(3, 2.0f); // projection mode: high quality perspective
         } else {
-          this.projectionBuffer.put(2, 1.0f); // projection mode: PS1 perspective
+          this.projectionBuffer.put(3, 1.0f); // projection mode: PS1 perspective
         }
       }
     }

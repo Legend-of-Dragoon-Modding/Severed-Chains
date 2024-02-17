@@ -7,18 +7,22 @@ flat in float vertBpp;
 smooth in vec4 vertColour;
 flat in float vertFlags;
 
+flat in float widthMultiplier;
+flat in int widthMask;
+flat in int indexShift;
+flat in int indexMask;
+
 smooth in float depth;
 smooth in float depthOffset;
 
 layout(std140) uniform projectionInfo {
   float znear;
   float zfar;
+  float zdiffInv;
   float projectionMode;
 };
 
 uniform vec3 recolour;
-uniform vec2 clutOverride;
-uniform vec2 tpageOverride;
 uniform vec2 uvOffset;
 uniform float translucency;
 uniform float discardTranslucency;
@@ -30,7 +34,7 @@ layout(location = 0) out vec4 outColour;
 void main() {
   // Linearize depth for perspective transforms so that we can render ortho models at specific depths
   if(projectionMode == 2) {
-    gl_FragDepth = (depth - znear) / (zfar - znear);
+    gl_FragDepth = (depth - znear) * zdiffInv;
   } else {
     gl_FragDepth = gl_FragCoord.z;
   }
@@ -39,49 +43,19 @@ void main() {
 
   int flags = int(vertFlags);
 
-  outColour = vec4(1.0, 1.0, 1.0, 1.0);
-
-  // Vertex colour or lit
-  if((flags & 0x5) != 0) {
-    outColour = vertColour;
-  }
+  outColour = vertColour;
 
   // Textured
   if((flags & 0x2) != 0) {
-    // Texture recolouring uses an RGB range of 0..128 or 0.0..0.5 so we multiply by 2
-    if((flags & 0x4) != 0) {
-      outColour.rgb *= 2.0;
-      outColour.a = 1.0;
-    }
-
     vec4 texColour;
     if(vertBpp == 0 || vertBpp == 1) {
-      int widthDivisor = 1 << int(2 - vertBpp);
-      int widthMask = widthDivisor - 1;
-      int indexShift = int(vertBpp + 2);
-      int indexMask = int(pow(16, vertBpp + 1) - 1);
-
       // Calculate CLUT index
-      vec2 tpage;
-      if(tpageOverride.x != 0) {
-        tpage = tpageOverride;
-      } else {
-        tpage = vertTpage;
-      }
-
-      ivec2 uv = ivec2(tpage.x + (vertUv.x + uvOffset.x) / widthDivisor, tpage.y + vertUv.y + uvOffset.y);
+      ivec2 uv = ivec2(vertTpage.x + (vertUv.x + uvOffset.x) * widthMultiplier, vertTpage.y + vertUv.y + uvOffset.y);
       ivec4 indexVec = ivec4(texelFetch(tex15, uv, 0));
-      int p = (indexVec.r >> ((int(tpage.x + vertUv.x) & widthMask) << indexShift)) & indexMask;
-
-      ivec2 clutUv;
-      if(clutOverride.x == 0) {
-        clutUv = ivec2(vertClut.x + p, vertClut.y);
-      } else {
-        clutUv = ivec2(clutOverride.x + p, clutOverride.y);
-      }
+      int p = (indexVec.r >> ((int(vertTpage.x + vertUv.x) & widthMask) << indexShift)) & indexMask;
 
       // Pull actual pixel colour from CLUT
-      texColour = texelFetch(tex24, clutUv, 0);
+      texColour = texelFetch(tex24, ivec2(vertClut.x + p, vertClut.y), 0);
     } else {
       texColour = texture(tex24, vertUv);
     }
