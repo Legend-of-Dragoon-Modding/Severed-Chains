@@ -3006,7 +3006,7 @@ public final class Scus94491BpeSegment {
   public static void loadWmapMusic(final int chapterIndex) {
     final int fileIndex = 5850 + chapterIndex * 5;
 
-    if(AUDIO_THREAD.getSongId() - 7 == chapterIndex) {
+    if(AUDIO_THREAD.getSongId() * 5 + 5815 == fileIndex) {
       return;
     }
 
