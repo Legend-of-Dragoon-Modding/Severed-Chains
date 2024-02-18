@@ -92,7 +92,7 @@ void main() {
       vertColour.a = 1.0;
     }
 
-    if(clutOverride.x == 0) {
+    if(tpageOverride.x == 0) {
       vertTpage = vec2((intTpage & 0xf) * 64, (intTpage & 0x10) != 0 ? 256 : 0);
     } else {
       vertTpage = tpageOverride;
