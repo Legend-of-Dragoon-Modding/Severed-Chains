@@ -1,8 +1,10 @@
 package legend.core.opengl;
 
+import legend.core.gpu.Bpp;
 import legend.game.types.Translucency;
 
-import static legend.core.opengl.TmdObjLoader.BPP_SIZE;
+import static legend.core.MathHelper.makeClut;
+import static legend.core.MathHelper.makeTpage;
 import static legend.core.opengl.TmdObjLoader.CLUT_SIZE;
 import static legend.core.opengl.TmdObjLoader.COLOURED_FLAG;
 import static legend.core.opengl.TmdObjLoader.COLOUR_SIZE;
@@ -30,11 +32,8 @@ public class LegacyTextBuilder {
     vertices[offset++] = 0.0f;
     vertices[offset++] = u;
     vertices[offset++] = v;
-    vertices[offset++] = 832.0f; // tpx
-    vertices[offset++] = 256.0f; // tpy
-    vertices[offset++] = 832.0f; // clx
-    vertices[offset++] = 480.0f; // cly
-    vertices[offset++] = 0.0f; // bpp
+    vertices[offset++] = makeTpage(832, 256, Bpp.BITS_4, null);
+    vertices[offset++] = makeClut(832, 480);
     vertices[offset++] = 1.0f; // r
     vertices[offset++] = 1.0f; // g
     vertices[offset++] = 1.0f; // b
@@ -57,7 +56,7 @@ public class LegacyTextBuilder {
     // x y z nx ny nz u v tpx tpy clx cly bpp r g b m flags
     int vertexSize = POS_SIZE;
     vertexSize += NORM_SIZE;
-    vertexSize += UV_SIZE + TPAGE_SIZE + CLUT_SIZE + BPP_SIZE;
+    vertexSize += UV_SIZE + TPAGE_SIZE + CLUT_SIZE;
     vertexSize += COLOUR_SIZE;
     vertexSize += FLAGS_SIZE;
 
@@ -89,10 +88,6 @@ public class LegacyTextBuilder {
     mesh.attribute(meshIndex, meshOffset, CLUT_SIZE, vertexSize);
     meshIndex++;
     meshOffset += CLUT_SIZE;
-
-    mesh.attribute(meshIndex, meshOffset, BPP_SIZE, vertexSize);
-    meshIndex++;
-    meshOffset += BPP_SIZE;
 
     mesh.attribute(meshIndex, meshOffset, COLOUR_SIZE, vertexSize);
     meshIndex++;

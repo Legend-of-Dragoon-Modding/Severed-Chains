@@ -6,7 +6,6 @@ import org.joml.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
 
-import static legend.core.opengl.TmdObjLoader.BPP_SIZE;
 import static legend.core.opengl.TmdObjLoader.CLUT_SIZE;
 import static legend.core.opengl.TmdObjLoader.COLOUR_SIZE;
 import static legend.core.opengl.TmdObjLoader.FLAGS_SIZE;
@@ -50,7 +49,7 @@ public class LineBuilder {
   public MeshObj build() {
     int vertexSize = POS_SIZE;
     vertexSize += NORM_SIZE;
-    vertexSize += UV_SIZE + TPAGE_SIZE + CLUT_SIZE + BPP_SIZE;
+    vertexSize += UV_SIZE + TPAGE_SIZE + CLUT_SIZE;
     vertexSize += COLOUR_SIZE;
     vertexSize += FLAGS_SIZE;
 
@@ -86,10 +85,6 @@ public class LineBuilder {
     mesh.attribute(meshIndex, meshOffset, CLUT_SIZE, vertexSize);
     meshIndex++;
     meshOffset += CLUT_SIZE;
-
-    mesh.attribute(meshIndex, meshOffset, BPP_SIZE, vertexSize);
-    meshIndex++;
-    meshOffset += BPP_SIZE;
 
     mesh.attribute(meshIndex, meshOffset, COLOUR_SIZE, vertexSize);
     meshIndex++;

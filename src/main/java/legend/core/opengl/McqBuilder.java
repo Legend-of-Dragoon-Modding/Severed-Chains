@@ -1,10 +1,12 @@
 package legend.core.opengl;
 
+import legend.core.gpu.Bpp;
 import legend.game.types.McqHeader;
 import legend.game.types.Translucency;
 import org.joml.Vector2i;
 
-import static legend.core.opengl.TmdObjLoader.BPP_SIZE;
+import static legend.core.MathHelper.makeClut;
+import static legend.core.MathHelper.makeTpage;
 import static legend.core.opengl.TmdObjLoader.CLUT_SIZE;
 import static legend.core.opengl.TmdObjLoader.COLOUR_SIZE;
 import static legend.core.opengl.TmdObjLoader.FLAGS_SIZE;
@@ -60,7 +62,7 @@ public class McqBuilder {
 
     int vertexSize = POS_SIZE;
     vertexSize += NORM_SIZE;
-    vertexSize += UV_SIZE + TPAGE_SIZE + CLUT_SIZE + BPP_SIZE;
+    vertexSize += UV_SIZE + TPAGE_SIZE + CLUT_SIZE;
     vertexSize += COLOUR_SIZE;
     vertexSize += FLAGS_SIZE;
 
@@ -136,10 +138,6 @@ public class McqBuilder {
     meshIndex++;
     meshOffset += CLUT_SIZE;
 
-    mesh.attribute(meshIndex, meshOffset, BPP_SIZE, vertexSize);
-    meshIndex++;
-    meshOffset += BPP_SIZE;
-
     mesh.attribute(meshIndex, meshOffset, COLOUR_SIZE, vertexSize);
     meshIndex++;
     meshOffset += COLOUR_SIZE;
@@ -157,7 +155,7 @@ public class McqBuilder {
     return new MeshObj(this.name, meshes);
   }
 
-  private int setVertices(final float[] vertices, int offset, final float x, final float y, final float u, final float v, final float w, final float h, final float clx, final float cly, final float tpx, final float tpy) {
+  private int setVertices(final float[] vertices, int offset, final float x, final float y, final float u, final float v, final float w, final float h, final int clx, final int cly, final int tpx, final int tpy) {
     offset = this.setVertex(vertices, offset, x, y, u, v, clx, cly, tpx, tpy);
     offset = this.setVertex(vertices, offset, x, y + h, u, v + h, clx, cly, tpx, tpy);
     offset = this.setVertex(vertices, offset, x + w, y, u + w, v, clx, cly, tpx, tpy);
@@ -165,7 +163,7 @@ public class McqBuilder {
     return offset;
   }
 
-  private int setVertex(final float[] vertices, int offset, final float x, final float y, final float u, final float v, final float clx, final float cly, final float tpx, final float tpy) {
+  private int setVertex(final float[] vertices, int offset, final float x, final float y, final float u, final float v, final int clx, final int cly, final int tpx, final int tpy) {
     vertices[offset++] = x;
     vertices[offset++] = y;
     vertices[offset++] = 0.0f; // z
@@ -174,11 +172,8 @@ public class McqBuilder {
     vertices[offset++] = 0.0f; // /
     vertices[offset++] = u;
     vertices[offset++] = v;
-    vertices[offset++] = tpx;
-    vertices[offset++] = tpy;
-    vertices[offset++] = clx;
-    vertices[offset++] = cly;
-    vertices[offset++] = 0; // bpp
+    vertices[offset++] = makeTpage(tpx, tpy, Bpp.BITS_4, null);
+    vertices[offset++] = makeClut(clx, cly);
     vertices[offset++] = 0; // \
     vertices[offset++] = 0; // | colour
     vertices[offset++] = 0; // |

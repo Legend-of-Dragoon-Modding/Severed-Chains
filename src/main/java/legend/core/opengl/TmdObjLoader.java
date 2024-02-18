@@ -29,14 +29,14 @@ public final class TmdObjLoader {
   public static final int UV_SIZE = 2;
   public static final int COLOUR_SIZE = 4;
   //TODO this isn't great, clut/tpage is only set per face, but we're uploading it per vertex
-  public static final int TPAGE_SIZE = 2;
-  public static final int CLUT_SIZE = 2;
-  public static final int BPP_SIZE = 1;
+  public static final int TPAGE_SIZE = 1;
+  public static final int CLUT_SIZE = 1;
   public static final int FLAGS_SIZE = 1;
 
   public static final int LIT_FLAG = 0x1;
   public static final int TEXTURED_FLAG = 0x2;
   public static final int COLOURED_FLAG = 0x4;
+  public static final int TRANSLUCENT_FLAG = 0x8;
 
   public static Obj[] fromTmd(final String name, final Tmd tmd) {
     return fromTmd(name, tmd, 0);
@@ -86,7 +86,7 @@ public final class TmdObjLoader {
 
     int vertexSize = POS_SIZE;
     vertexSize += NORM_SIZE;
-    vertexSize += UV_SIZE + TPAGE_SIZE + CLUT_SIZE + BPP_SIZE;
+    vertexSize += UV_SIZE + TPAGE_SIZE + CLUT_SIZE;
     vertexSize += COLOUR_SIZE;
     vertexSize += FLAGS_SIZE;
 
@@ -242,13 +242,10 @@ public final class TmdObjLoader {
               vertices[vertexOffsets[translucencyIndex]++] = vertex.v;
             }
 
-            vertices[vertexOffsets[translucencyIndex]++] = (poly.tpage & 0b1111) * 64;
-            vertices[vertexOffsets[translucencyIndex]++] = (poly.tpage & 0b10000) != 0 ? 256 : 0;
-            vertices[vertexOffsets[translucencyIndex]++] = (poly.clut & 0b111111) * 16;
-            vertices[vertexOffsets[translucencyIndex]++] = poly.clut >>> 6;
-            vertices[vertexOffsets[translucencyIndex]++] = bpp.ordinal();
+            vertices[vertexOffsets[translucencyIndex]++] = poly.tpage;
+            vertices[vertexOffsets[translucencyIndex]++] = poly.clut;
           } else {
-            vertexOffsets[translucencyIndex] += UV_SIZE + TPAGE_SIZE + CLUT_SIZE + BPP_SIZE;
+            vertexOffsets[translucencyIndex] += UV_SIZE + TPAGE_SIZE + CLUT_SIZE;
           }
 
           if(coloured) {
@@ -315,10 +312,6 @@ public final class TmdObjLoader {
         meshIndex++;
         meshOffset += CLUT_SIZE;
 
-        mesh.attribute(meshIndex, meshOffset, BPP_SIZE, vertexSize);
-        meshIndex++;
-        meshOffset += BPP_SIZE;
-
         mesh.attribute(meshIndex, meshOffset, COLOUR_SIZE, vertexSize);
         meshIndex++;
         meshOffset += COLOUR_SIZE;
@@ -352,7 +345,7 @@ public final class TmdObjLoader {
 
       int vertexSize = POS_SIZE;
       vertexSize += NORM_SIZE;
-      vertexSize += UV_SIZE + TPAGE_SIZE + CLUT_SIZE + BPP_SIZE;
+      vertexSize += UV_SIZE + TPAGE_SIZE + CLUT_SIZE;
       vertexSize += COLOUR_SIZE;
       vertexSize += FLAGS_SIZE;
 

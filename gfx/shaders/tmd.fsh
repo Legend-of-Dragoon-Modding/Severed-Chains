@@ -3,9 +3,9 @@
 smooth in vec2 vertUv;
 flat in vec2 vertTpage;
 flat in vec2 vertClut;
-flat in float vertBpp;
+flat in int vertBpp;
 smooth in vec4 vertColour;
-flat in float vertFlags;
+flat in int vertFlags;
 
 flat in float widthMultiplier;
 flat in int widthMask;
@@ -41,12 +41,10 @@ void main() {
 
   gl_FragDepth += depthOffset;
 
-  int flags = int(vertFlags);
-
   outColour = vertColour;
 
   // Textured
-  if((flags & 0x2) != 0) {
+  if((vertFlags & 0x2) != 0) {
     vec4 texColour;
     if(vertBpp == 0 || vertBpp == 1) {
       // Calculate CLUT index
@@ -81,7 +79,7 @@ void main() {
   outColour.rgb *= recolour;
 
   // The or condition is to disable translucency if a texture's pixel has alpha disabled
-  if(translucency == 1 && ((flags & 0x2) == 0 || outColour.a != 0)) { // (B+F)/2 translucency
+  if(translucency == 1 && ((vertFlags & 0x2) == 0 || outColour.a != 0)) { // (B+F)/2 translucency
     outColour.a = 0.5;
   } else {
     outColour.a = 1.0;

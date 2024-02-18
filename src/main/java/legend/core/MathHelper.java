@@ -1,6 +1,10 @@
 package legend.core;
 
+import legend.core.gpu.Bpp;
+import legend.game.types.Translucency;
 import org.joml.Vector3f;
+
+import javax.annotation.Nullable;
 
 public final class MathHelper {
   private MathHelper() { }
@@ -34,6 +38,20 @@ public final class MathHelper {
 
   public static boolean contains(final int value, final int min, final int max) {
     return value >= min && value < max;
+  }
+
+  public static int makeTpage(final int vramX, final int vramY, final Bpp bpp, @Nullable final Translucency translucency) {
+    int tpage = vramX / 64 | vramY / 256 << 4 | bpp.ordinal() << 7;
+
+    if(translucency != null) {
+      tpage |= translucency.ordinal() << 5;
+    }
+
+    return tpage;
+  }
+
+  public static int makeClut(final int clutX, final int clutY) {
+    return clutX / 16 | clutY << 6;
   }
 
   public static int colour15To24(final int colour) {

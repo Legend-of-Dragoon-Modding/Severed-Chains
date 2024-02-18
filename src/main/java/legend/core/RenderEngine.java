@@ -615,23 +615,25 @@ public class RenderEngine {
       }
 
       // First pass of translucency rendering - renders opaque pixels with translucency bit not set for translucent primitives
-      for(int translucencyIndex = 0; translucencyIndex < Translucency.FOR_RENDERING.length; translucencyIndex++) {
-        final Translucency translucency = Translucency.FOR_RENDERING[translucencyIndex];
+      if(entry.hasTranslucency()) {
+        for(int translucencyIndex = 0; translucencyIndex < Translucency.FOR_RENDERING.length; translucencyIndex++) {
+          final Translucency translucency = Translucency.FOR_RENDERING[translucencyIndex];
 
-        if(entry.shouldRender(translucency)) {
-          this.tmdShaderOptions.translucency(translucency);
+          if(entry.shouldRender(translucency)) {
+            this.tmdShaderOptions.translucency(translucency);
 
-          if(backfaceCulling) {
-            backfaceCulling = false;
-            glDisable(GL_CULL_FACE);
+            if(backfaceCulling) {
+              backfaceCulling = false;
+              glDisable(GL_CULL_FACE);
+            }
+
+            if(!updated) {
+              updated = true;
+              entry.useTexture();
+            }
+
+            entry.render(translucency);
           }
-
-          if(!updated) {
-            updated = true;
-            entry.useTexture();
-          }
-
-          entry.render(translucency);
         }
       }
 
