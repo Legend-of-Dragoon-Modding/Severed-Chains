@@ -26,6 +26,8 @@ uniform vec3 recolour;
 uniform vec2 uvOffset;
 uniform float translucency;
 uniform float discardTranslucency;
+uniform int tmdTranslucency;
+uniform int ctmdFlags;
 uniform sampler2D tex24;
 uniform usampler2D tex15;
 
@@ -41,10 +43,20 @@ void main() {
 
   gl_FragDepth += depthOffset;
 
+  //TODO implement uniform lighting
+  bool ctmd = (ctmdFlags & 0x20) != 0;
+  bool uniformLit = (ctmdFlags & 0x10) != 0;
+  bool translucent = (vertFlags & 0x8) != 0 || (ctmdFlags & 0x2) != 0;
+  bool textured = (vertFlags & 0x2) != 0;
   outColour = vertColour;
 
+  int translucencyMode = int(translucency);
+  if(translucent && (!textured || uniformLit)) {
+    translucencyMode = tmdTranslucency + 1;
+  }
+
   // Textured
-  if((vertFlags & 0x2) != 0) {
+  if(textured) {
     vec4 texColour;
     if(vertBpp == 0 || vertBpp == 1) {
       // Calculate CLUT index
@@ -64,14 +76,14 @@ void main() {
     }
 
     // If translucent primitive and texture pixel translucency bit is set, pixel is translucent so we defer rendering
-    if(discardTranslucency == 1 && translucency != 0 && texColour.a != 0 || discardTranslucency == 2 && (translucency == 0 || texColour.a == 0)) {
+    if(discardTranslucency == 1 && translucencyMode != 0 && texColour.a != 0 || discardTranslucency == 2 && (translucencyMode == 0 || texColour.a == 0)) {
       discard;
     }
 
     outColour *= texColour;
   } else {
     // Untextured translucent primitives don't have a translucency bit so we always discard during the appropriate discard modes
-    if(discardTranslucency == 1 && translucency != 0 || discardTranslucency == 2 && translucency == 0) {
+    if(discardTranslucency == 1 && translucencyMode != 0 || discardTranslucency == 2 && translucencyMode == 0) {
       discard;
     }
   }
@@ -79,7 +91,7 @@ void main() {
   outColour.rgb *= recolour;
 
   // The or condition is to disable translucency if a texture's pixel has alpha disabled
-  if(translucency == 1 && ((vertFlags & 0x2) == 0 || outColour.a != 0)) { // (B+F)/2 translucency
+  if(translucencyMode == 1 && (!textured || outColour.a != 0)) { // (B+F)/2 translucency
     outColour.a = 0.5;
   } else {
     outColour.a = 1.0;

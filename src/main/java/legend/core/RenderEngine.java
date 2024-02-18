@@ -51,6 +51,7 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
+import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
@@ -158,7 +159,9 @@ public class RenderEngine {
       final Shader<TmdShaderOptions>.UniformVec2 tpageOverride = shader.new UniformVec2("tpageOverride");
       final Shader<TmdShaderOptions>.UniformFloat translucency = shader.new UniformFloat("translucency");
       final Shader<TmdShaderOptions>.UniformFloat discardTranslucency = shader.new UniformFloat("discardTranslucency");
-      return () -> new TmdShaderOptions(modelIndex, recolour, uvOffset, clutOverride, tpageOverride, translucency, discardTranslucency);
+      final Shader<TmdShaderOptions>.UniformInt tmdTranslucency = shader.new UniformInt("tmdTranslucency");
+      final Shader<TmdShaderOptions>.UniformInt ctmdFlags = shader.new UniformInt("ctmdFlags");
+      return () -> new TmdShaderOptions(modelIndex, recolour, uvOffset, clutOverride, tpageOverride, translucency, discardTranslucency, tmdTranslucency, ctmdFlags);
     }
   );
 
@@ -586,6 +589,8 @@ public class RenderEngine {
       this.tmdShaderOptions.tpage(entry.tpageOverride);
       this.tmdShaderOptions.uvOffset(entry.uvOffset);
       this.tmdShaderOptions.opaque();
+      this.tmdShaderOptions.ctmdFlags(entry.ctmdFlags);
+      this.tmdShaderOptions.tmdTranslucency(entry.tmdTranslucency);
       boolean updated = false;
 
       if(entry.scissor.w != 0) {
@@ -679,6 +684,8 @@ public class RenderEngine {
         this.tmdShaderOptions.clut(entry.clutOverride);
         this.tmdShaderOptions.tpage(entry.tpageOverride);
         this.tmdShaderOptions.uvOffset(entry.uvOffset);
+        this.tmdShaderOptions.ctmdFlags(entry.ctmdFlags);
+        this.tmdShaderOptions.tmdTranslucency(entry.tmdTranslucency);
         entry.useTexture();
 
         if(entry.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
@@ -1114,6 +1121,9 @@ public class RenderEngine {
     private Translucency translucency;
     private boolean hasTranslucency;
 
+    private int tmdTranslucency;
+    private int ctmdFlags;
+
     public Options options() {
       return this.shaderOptions;
     }
@@ -1210,6 +1220,11 @@ public class RenderEngine {
       return this;
     }
 
+    public QueuedModel<Options> ctmdFlags(final int ctmdFlags) {
+      this.ctmdFlags = ctmdFlags;
+      return this;
+    }
+
     private void reset() {
       this.shader = null;
       this.shaderOptions = null;
@@ -1226,6 +1241,8 @@ public class RenderEngine {
       this.hasTranslucency = false;
       this.texturesUsed = false;
       this.lightUsed = false;
+      this.tmdTranslucency = tmdGp0Tpage_1f8003ec >>> 5 & 0b11;
+      this.ctmdFlags = 0;
     }
 
     private void useTexture() {
@@ -1241,11 +1258,11 @@ public class RenderEngine {
     }
 
     public boolean hasTranslucency() {
-      return this.hasTranslucency || this.obj.hasTranslucency();
+      return this.hasTranslucency || (this.ctmdFlags & 0x2) != 0 || this.obj.hasTranslucency();
     }
 
     public boolean shouldRender(final Translucency translucency) {
-      return this.hasTranslucency && this.translucency == translucency || this.obj.shouldRender(translucency);
+      return this.hasTranslucency && this.translucency == translucency || (this.ctmdFlags & 0x2) != 0 && this.tmdTranslucency == translucency.ordinal() || this.obj.shouldRender(translucency);
     }
 
     private void storeTransforms(final int modelIndex, final FloatBuffer transforms2Buffer, final FloatBuffer lightingBuffer) {
@@ -1260,7 +1277,7 @@ public class RenderEngine {
     }
 
     private void render(final Translucency translucency) {
-      if(this.hasTranslucency) {
+      if(this.hasTranslucency || (this.ctmdFlags & 0x2) != 0) {
         // Translucency override
         this.obj.render(this.startVertex, this.vertexCount);
       } else {

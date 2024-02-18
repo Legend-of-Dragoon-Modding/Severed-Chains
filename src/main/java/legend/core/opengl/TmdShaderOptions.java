@@ -12,8 +12,10 @@ public class TmdShaderOptions implements ShaderOptions<TmdShaderOptions> {
   private final Shader<TmdShaderOptions>.UniformVec2 tpageUniform;
   private final Shader<TmdShaderOptions>.UniformFloat translucency;
   private final Shader<TmdShaderOptions>.UniformFloat discardTranslucency;
+  private final Shader<TmdShaderOptions>.UniformInt tmdTranslucency;
+  private final Shader<TmdShaderOptions>.UniformInt ctmdFlags;
 
-  public TmdShaderOptions(final Shader<TmdShaderOptions>.UniformFloat modelIndex, final Shader<TmdShaderOptions>.UniformVec3 colourUniform, final Shader<TmdShaderOptions>.UniformVec2 uvOffsetUniform, final Shader<TmdShaderOptions>.UniformVec2 clutUniform, final Shader<TmdShaderOptions>.UniformVec2 tpageUniform, final Shader<TmdShaderOptions>.UniformFloat translucency, final Shader<TmdShaderOptions>.UniformFloat discardTranslucency) {
+  public TmdShaderOptions(final Shader<TmdShaderOptions>.UniformFloat modelIndex, final Shader<TmdShaderOptions>.UniformVec3 colourUniform, final Shader<TmdShaderOptions>.UniformVec2 uvOffsetUniform, final Shader<TmdShaderOptions>.UniformVec2 clutUniform, final Shader<TmdShaderOptions>.UniformVec2 tpageUniform, final Shader<TmdShaderOptions>.UniformFloat translucency, final Shader<TmdShaderOptions>.UniformFloat discardTranslucency, final Shader<TmdShaderOptions>.UniformInt tmdTranslucency, final Shader<TmdShaderOptions>.UniformInt ctmdFlags) {
     this.modelIndex = modelIndex;
     this.colourUniform = colourUniform;
     this.uvOffsetUniform = uvOffsetUniform;
@@ -21,6 +23,8 @@ public class TmdShaderOptions implements ShaderOptions<TmdShaderOptions> {
     this.tpageUniform = tpageUniform;
     this.translucency = translucency;
     this.discardTranslucency = discardTranslucency;
+    this.tmdTranslucency = tmdTranslucency;
+    this.ctmdFlags = ctmdFlags;
   }
 
   public TmdShaderOptions modelIndex(final float modelIndex) {
@@ -55,6 +59,16 @@ public class TmdShaderOptions implements ShaderOptions<TmdShaderOptions> {
 
   public TmdShaderOptions translucency(final Translucency translucency) {
     this.translucency.set(translucency.ordinal() + 1);
+    return this;
+  }
+
+  public TmdShaderOptions tmdTranslucency(final int translucency) {
+    this.tmdTranslucency.set(translucency);
+    return this;
+  }
+
+  public TmdShaderOptions ctmdFlags(final int flags) {
+    this.ctmdFlags.set(flags);
     return this;
   }
 

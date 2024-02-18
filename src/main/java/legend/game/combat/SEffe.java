@@ -511,7 +511,8 @@ public final class SEffe {
     RENDERER.queueModel(obj, sp0x10)
       .lightDirection(lightDirectionMatrix_800c34e8)
       .lightColour(lightColourMatrix_800c3508)
-      .backgroundColour(GTE.backgroundColour);
+      .backgroundColour(GTE.backgroundColour)
+      .ctmdFlags(0x20);
 
     //LAB_800de528
   }

@@ -13,6 +13,7 @@ import static legend.core.opengl.TmdObjLoader.FLAGS_SIZE;
 import static legend.core.opengl.TmdObjLoader.NORM_SIZE;
 import static legend.core.opengl.TmdObjLoader.POS_SIZE;
 import static legend.core.opengl.TmdObjLoader.TPAGE_SIZE;
+import static legend.core.opengl.TmdObjLoader.TRANSLUCENT_FLAG;
 import static legend.core.opengl.TmdObjLoader.UV_SIZE;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
@@ -22,7 +23,7 @@ public class McqBuilder {
   private final Vector2i vramOffset = new Vector2i();
   private Translucency translucency;
 
-  private final int flags = TmdObjLoader.TEXTURED_FLAG;
+  private int flags = TmdObjLoader.TEXTURED_FLAG;
 
   public McqBuilder(final String name, final McqHeader mcq) {
     this.name = name;
@@ -36,6 +37,7 @@ public class McqBuilder {
 
   public McqBuilder translucency(final Translucency translucency) {
     this.translucency = translucency;
+    this.flags |= TRANSLUCENT_FLAG;
     return this;
   }
 

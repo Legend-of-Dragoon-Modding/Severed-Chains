@@ -18,6 +18,7 @@ import static legend.core.opengl.TmdObjLoader.FLAGS_SIZE;
 import static legend.core.opengl.TmdObjLoader.NORM_SIZE;
 import static legend.core.opengl.TmdObjLoader.POS_SIZE;
 import static legend.core.opengl.TmdObjLoader.TPAGE_SIZE;
+import static legend.core.opengl.TmdObjLoader.TRANSLUCENT_FLAG;
 import static legend.core.opengl.TmdObjLoader.UV_SIZE;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
@@ -199,6 +200,7 @@ public class QuadBuilder {
   public QuadBuilder translucency(final Translucency translucency) {
     this.addFirstQuad();
     this.translucency = translucency;
+    this.flags |= TRANSLUCENT_FLAG;
     return this;
   }
 

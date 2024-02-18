@@ -10,19 +10,13 @@ import legend.game.tmd.Polygon;
 import legend.game.tmd.Vertex;
 import legend.game.types.Model124;
 import legend.game.types.Translucency;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.joml.Vector3f;
-
-import javax.annotation.Nullable;
 
 import static legend.game.Scus94491BpeSegment.tmdGp0CommandId_1f8003ee;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
 public final class TmdObjLoader {
   private TmdObjLoader() { }
-
-  private static final Logger LOGGER = LogManager.getFormatterLogger(TmdObjLoader.class);
 
   public static final int POS_SIZE = 3;
   public static final int NORM_SIZE = 3;
@@ -59,7 +53,7 @@ public final class TmdObjLoader {
   public static void fromModel(final String name, final Model124 model, final int textureWidth, final int textureHeight) {
     for(int i = 0; i < model.modelParts_00.length; i++) {
       final ModelPart10 part = model.modelParts_00[i];
-      part.obj = TmdObjLoader.fromObjTable(name + " part " + i, part.tmd_08, 0, textureWidth, textureHeight, Translucency.of(model.tpage_108 >>> 5 & 0b11));
+      part.obj = TmdObjLoader.fromObjTable(name + " part " + i, part.tmd_08, 0, textureWidth, textureHeight);
     }
   }
 
@@ -67,19 +61,15 @@ public final class TmdObjLoader {
     return fromObjTable(name, objTable, 0);
   }
 
-  public static MeshObj fromObjTable(final String name, final TmdObjTable1c objTable, final Translucency translucency) {
-    return fromObjTable(name, objTable, 0, 0, 0, translucency);
-  }
-
   public static MeshObj fromObjTable(final String name, final TmdObjTable1c objTable, final int specialFlags) {
-    return fromObjTable(name, objTable, specialFlags, 0, 0, null);
+    return fromObjTable(name, objTable, specialFlags, 0, 0);
   }
 
-  public static MeshObj fromObjTable(final String name, final TmdObjTable1c objTable, final int specialFlags, final int textureWidth, final int textureHeight, @Nullable final Translucency translucency) {
+  public static MeshObj fromObjTable(final String name, final TmdObjTable1c objTable, final int specialFlags, final int textureWidth, final int textureHeight) {
     final int translucencyCount = Translucency.values().length + 1;
     final float[][] allVertices = new float[translucencyCount][];
     final int[][] allIndices = new int[translucencyCount][];
-    getTranslucencySizes(name, objTable, specialFlags, allVertices, allIndices, translucency);
+    getTranslucencySizes(objTable, specialFlags, allVertices, allIndices);
     final int[] vertexIndices = new int[translucencyCount];
     final int[] vertexOffsets = new int[translucencyCount];
     final int[] indexOffsets = new int[translucencyCount];
@@ -159,8 +149,8 @@ public final class TmdObjLoader {
 
             primitivesOffset += 2;
           }
-        } else if(translucent && translucency != null) {
-          translucencyIndex = translucency.ordinal() + 1;
+        } else if(translucent) {
+          translucencyIndex = Translucency.B_PLUS_F.ordinal() + 1;
           vertices = allVertices[translucencyIndex];
           indices = allIndices[translucencyIndex];
         }
@@ -273,6 +263,7 @@ public final class TmdObjLoader {
           }
 
           if(translucent) {
+            flags |= TRANSLUCENT_FLAG;
             if(!textured || uniformLit) {
               backfaceCulling = false;
             }
@@ -325,7 +316,7 @@ public final class TmdObjLoader {
     return new MeshObj(name, meshes, backfaceCulling);
   }
 
-  private static void getTranslucencySizes(final String name, final TmdObjTable1c objTable, final int specialFlags, final float[][] vertices, final int[][] indices, @Nullable Translucency translucencyOverride) {
+  private static void getTranslucencySizes(final TmdObjTable1c objTable, final int specialFlags, final float[][] vertices, final int[][] indices) {
     // Extra element 0 means none
     final int translucencyCount = Translucency.values().length + 1;
     final int[] vertexSizes = new int[translucencyCount];
@@ -350,21 +341,16 @@ public final class TmdObjLoader {
       vertexSize += FLAGS_SIZE;
 
       for(final byte[] data : primitive.data()) {
-        if(translucent && (textured || translucencyOverride != null)) {
-          Translucency translucency = translucencyOverride;
-
-          if(textured) {
-            final int tpage = IoHelper.readUShort(data, 6);
-            translucency = Translucency.of(tpage >>> 5 & 0b11);
-          }
-
+        if(translucent && textured) {
+          final int tpage = IoHelper.readUShort(data, 6);
+          final Translucency translucency = Translucency.of(tpage >>> 5 & 0b11);
           vertexSizes[translucency.ordinal() + 1] += vertexSize * vertexCount;
           indexSizes[translucency.ordinal() + 1] += quad ? 6 : 3;
+        } else if(translucent) {
+          // Dunno if this is gonna work everywhere... if set to translucent but untextured, default to B+F
+          vertexSizes[Translucency.B_PLUS_F.ordinal() + 1] += vertexSize * vertexCount;
+          indexSizes[Translucency.B_PLUS_F.ordinal() + 1] += quad ? 6 : 3;
         } else {
-          if(translucencyOverride != null) {
-            LOGGER.warn("%s has translucent untextured face but no translucency override!", name);
-          }
-
           vertexSizes[0] += vertexSize * vertexCount;
           indexSizes[0] += quad ? 6 : 3;
         }

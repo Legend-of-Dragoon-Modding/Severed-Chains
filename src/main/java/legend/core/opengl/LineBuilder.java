@@ -12,6 +12,7 @@ import static legend.core.opengl.TmdObjLoader.FLAGS_SIZE;
 import static legend.core.opengl.TmdObjLoader.NORM_SIZE;
 import static legend.core.opengl.TmdObjLoader.POS_SIZE;
 import static legend.core.opengl.TmdObjLoader.TPAGE_SIZE;
+import static legend.core.opengl.TmdObjLoader.TRANSLUCENT_FLAG;
 import static legend.core.opengl.TmdObjLoader.UV_SIZE;
 import static org.lwjgl.opengl.GL11C.GL_LINE_LOOP;
 import static org.lwjgl.opengl.GL11C.GL_LINE_STRIP;
@@ -20,6 +21,7 @@ public class LineBuilder {
   private final String name;
   private final List<Vector3f> pos = new ArrayList<>();
   private Translucency translucency;
+  private int flags;
   private boolean closed;
 
   public LineBuilder(final String name) {
@@ -37,6 +39,7 @@ public class LineBuilder {
 
   public LineBuilder translucency(final Translucency translucency) {
     this.translucency = translucency;
+    this.flags |= TRANSLUCENT_FLAG;
     return this;
   }
 
@@ -60,7 +63,7 @@ public class LineBuilder {
       vertices[i * vertexSize    ] = pos.x;
       vertices[i * vertexSize + 1] = pos.y;
       vertices[i * vertexSize + 2] = pos.z;
-      vertices[(i + 1) * vertexSize - 1] = 0; // flags
+      vertices[(i + 1) * vertexSize - 1] = this.flags;
     }
 
     final Mesh mesh = new Mesh(this.closed ? GL_LINE_LOOP : GL_LINE_STRIP, vertices, this.pos.size());
