@@ -829,7 +829,8 @@ public class ParticleManager {
       RENDERER.queueModel(obj, transformMatrix)
         .lightDirection(lightDirectionMatrix_800c34e8)
         .lightColour(lightColourMatrix_800c3508)
-        .backgroundColour(GTE.backgroundColour);
+        .backgroundColour(GTE.backgroundColour)
+        .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11);
 
       if((particleMetrics.flags_00 & 0x40) == 0) {
         FUN_800e62a8();

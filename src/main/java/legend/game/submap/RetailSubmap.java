@@ -1287,7 +1287,8 @@ public class RetailSubmap extends Submap {
         .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
         .lightDirection(lightDirectionMatrix_800c34e8)
         .lightColour(lightColourMatrix_800c3508)
-        .backgroundColour(GTE.backgroundColour);
+        .backgroundColour(GTE.backgroundColour)
+        .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11);
     }
     //LAB_800eef0c
   }

@@ -639,7 +639,8 @@ public abstract class BattleEntity27c extends BattleObject {
           RENDERER.queueModel(model.modelParts_00[i].obj, lw)
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
-            .backgroundColour(GTE.backgroundColour);
+            .backgroundColour(GTE.backgroundColour)
+            .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11);
         }
       }
     }

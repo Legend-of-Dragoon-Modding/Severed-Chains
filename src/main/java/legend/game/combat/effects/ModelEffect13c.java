@@ -90,7 +90,8 @@ public class ModelEffect13c implements Effect {
           RENDERER.queueModel(part.obj, lw)
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
-            .backgroundColour(GTE.backgroundColour);
+            .backgroundColour(GTE.backgroundColour)
+            .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11);
         }
 
         part.attribute_00 = oldAttrib;

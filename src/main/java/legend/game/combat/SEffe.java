@@ -512,7 +512,8 @@ public final class SEffe {
       .lightDirection(lightDirectionMatrix_800c34e8)
       .lightColour(lightColourMatrix_800c3508)
       .backgroundColour(GTE.backgroundColour)
-      .ctmdFlags(0x20);
+      .ctmdFlags(0x20)
+      .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11);
 
     //LAB_800de528
   }
@@ -8223,7 +8224,8 @@ public final class SEffe {
         RENDERER.queueModel(deffEffect.obj, sp0x10)
           .lightDirection(lightDirectionMatrix_800c34e8)
           .lightColour(lightColourMatrix_800c3508)
-          .backgroundColour(GTE.backgroundColour);
+          .backgroundColour(GTE.backgroundColour)
+          .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11);
       } else {
         //LAB_80118370
         renderTmdSpriteEffect(deffEffect.tmd_08, deffEffect.obj, data.params_10, sp0x10);

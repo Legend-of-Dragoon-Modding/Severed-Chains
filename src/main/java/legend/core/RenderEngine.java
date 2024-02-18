@@ -51,7 +51,6 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
@@ -1225,6 +1224,11 @@ public class RenderEngine {
       return this;
     }
 
+    public QueuedModel<Options> tmdTranslucency(final int tmdTranslucency) {
+      this.tmdTranslucency = tmdTranslucency;
+      return this;
+    }
+
     private void reset() {
       this.shader = null;
       this.shaderOptions = null;
@@ -1241,7 +1245,7 @@ public class RenderEngine {
       this.hasTranslucency = false;
       this.texturesUsed = false;
       this.lightUsed = false;
-      this.tmdTranslucency = tmdGp0Tpage_1f8003ec >>> 5 & 0b11;
+      this.tmdTranslucency = 0;
       this.ctmdFlags = 0;
     }
 

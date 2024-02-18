@@ -967,7 +967,8 @@ public class SMap extends EngineState {
             .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
-            .backgroundColour(GTE.backgroundColour);
+            .backgroundColour(GTE.backgroundColour)
+            .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11);
 
           if(texture != null) {
             queue.texture(texture);
@@ -3371,7 +3372,7 @@ public class SMap extends EngineState {
       for(int i = 0; i < this.collisionGeometry_800cbe08.primitiveCount_0c; i++) {
         final CollisionPrimitiveInfo0c primitiveInfo = this.collisionGeometry_800cbe08.primitiveInfo_14[i];
 
-        final RenderEngine.QueuedModel model = RENDERER.queueModel(this.collisionGeometry_800cbe08.debugObj, lw)
+        final RenderEngine.QueuedModel<?> model = RENDERER.queueModel(this.collisionGeometry_800cbe08.debugObj, lw)
           .vertices(primitiveInfo.vertexInfoOffset_02, primitiveInfo.vertexCount_00)
           .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
           .depthOffset(-1.0f)
