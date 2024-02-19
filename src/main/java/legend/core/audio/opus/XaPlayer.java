@@ -140,9 +140,11 @@ public final class XaPlayer {
 
   public void destroy() {
     this.playing = false;
-    this.unloadOpusFile();
-
     alSourceStop(this.sourceId);
+
+    if(this.opusFileData != null) {
+      this.unloadOpusFile();
+    }
 
     final int processedBufferCount = alGetSourcei(this.sourceId, AL_BUFFERS_PROCESSED);
 

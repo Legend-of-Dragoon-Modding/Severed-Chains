@@ -4,6 +4,8 @@ import legend.core.MathHelper;
 import legend.core.spu.Reverb;
 import legend.game.sound.ReverbConfig;
 
+import java.util.Arrays;
+
 final class Reverberizer {
   private final Reverb reverb = new Reverb();
   private final float[] reverbWorkArea = new float[0x40_000];
@@ -119,5 +121,9 @@ final class Reverberizer {
 
   float getOutputRight() {
     return this.outputRight;
+  }
+
+  void clear() {
+    Arrays.fill(this.reverbWorkArea, 0);
   }
 }

@@ -594,6 +594,9 @@ public final class Sequencer {
 
       this.playingVoices = 0;
     }
+
+    // TODO this isn't the greatest solution, but it does stop reverb from bleeding into the next sequence
+    this.reverb.clear();
   }
 
   public int getSequenceVolume() {
