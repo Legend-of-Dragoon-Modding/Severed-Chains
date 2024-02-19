@@ -14,8 +14,9 @@ public class TmdShaderOptions implements ShaderOptions<TmdShaderOptions> {
   private final Shader<TmdShaderOptions>.UniformFloat discardTranslucency;
   private final Shader<TmdShaderOptions>.UniformInt tmdTranslucency;
   private final Shader<TmdShaderOptions>.UniformInt ctmdFlags;
+  private final Shader<TmdShaderOptions>.UniformVec3 battleColour;
 
-  public TmdShaderOptions(final Shader<TmdShaderOptions>.UniformFloat modelIndex, final Shader<TmdShaderOptions>.UniformVec3 colourUniform, final Shader<TmdShaderOptions>.UniformVec2 uvOffsetUniform, final Shader<TmdShaderOptions>.UniformVec2 clutUniform, final Shader<TmdShaderOptions>.UniformVec2 tpageUniform, final Shader<TmdShaderOptions>.UniformFloat translucency, final Shader<TmdShaderOptions>.UniformFloat discardTranslucency, final Shader<TmdShaderOptions>.UniformInt tmdTranslucency, final Shader<TmdShaderOptions>.UniformInt ctmdFlags) {
+  public TmdShaderOptions(final Shader<TmdShaderOptions>.UniformFloat modelIndex, final Shader<TmdShaderOptions>.UniformVec3 colourUniform, final Shader<TmdShaderOptions>.UniformVec2 uvOffsetUniform, final Shader<TmdShaderOptions>.UniformVec2 clutUniform, final Shader<TmdShaderOptions>.UniformVec2 tpageUniform, final Shader<TmdShaderOptions>.UniformFloat translucency, final Shader<TmdShaderOptions>.UniformFloat discardTranslucency, final Shader<TmdShaderOptions>.UniformInt tmdTranslucency, final Shader<TmdShaderOptions>.UniformInt ctmdFlags, final Shader<TmdShaderOptions>.UniformVec3 battleColour) {
     this.modelIndex = modelIndex;
     this.colourUniform = colourUniform;
     this.uvOffsetUniform = uvOffsetUniform;
@@ -25,6 +26,7 @@ public class TmdShaderOptions implements ShaderOptions<TmdShaderOptions> {
     this.discardTranslucency = discardTranslucency;
     this.tmdTranslucency = tmdTranslucency;
     this.ctmdFlags = ctmdFlags;
+    this.battleColour = battleColour;
   }
 
   public TmdShaderOptions modelIndex(final float modelIndex) {
@@ -69,6 +71,11 @@ public class TmdShaderOptions implements ShaderOptions<TmdShaderOptions> {
 
   public TmdShaderOptions ctmdFlags(final int flags) {
     this.ctmdFlags.set(flags);
+    return this;
+  }
+
+  public TmdShaderOptions battleColour(final Vector3f colour) {
+    this.battleColour.set(colour);
     return this;
   }
 

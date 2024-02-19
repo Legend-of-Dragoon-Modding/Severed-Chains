@@ -26,6 +26,8 @@ smooth out float depthOffset;
 uniform vec2 clutOverride;
 uniform vec2 tpageOverride;
 uniform float modelIndex;
+uniform int ctmdFlags;
+uniform vec3 battleColour;
 
 struct ModelTransforms {
   mat4 model;
@@ -66,15 +68,20 @@ void main() {
   vec4 pos = vec4(inPos, 1.0);
 
   vertFlags = int(inFlags);
-  bool lit = (vertFlags & 0x1) != 0;
-  bool textured = (vertFlags & 0x2) != 0;
+  bool ctmd = (ctmdFlags & 0x20) != 0;
+  bool uniformLit = (ctmdFlags & 0x10) != 0;
+  bool translucent = (vertFlags & 0x8) != 0 || (ctmdFlags & 0x2) != 0;
   bool coloured = (vertFlags & 0x4) != 0;
+  bool textured = (vertFlags & 0x2) != 0;
+  bool lit = (vertFlags & 0x1) != 0;
 
   ModelTransforms t = modelTransforms[int(modelIndex)];
   Light l = lights[int(modelIndex)];
 
   // Lit
-  if(lit) {
+  if(textured && translucent && !lit && (ctmd || uniformLit)) {
+    vertColour.rgb = inColour.rgb * battleColour.rgb;
+  } else if(lit) {
     vertColour.rgb = min((l.lightColour * max(l.lightDirection * vec4(inNorm, 1.0), 0.0).rgb + l.backgroundColour.rgb) * inColour.rgb, 1.0);
   } else if(coloured) {
     vertColour = inColour;

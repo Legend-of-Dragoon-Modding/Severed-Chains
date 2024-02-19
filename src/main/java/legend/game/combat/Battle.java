@@ -4975,7 +4975,7 @@ public class Battle extends EngineState {
   @Method(0x800e46c8L)
   public void resetLights() {
     final BattleLightStruct64 v1 = this._800c6930;
-    v1.colour_00.set(0x800, 0x800, 0x800);
+    v1.colour_00.set(0.5f, 0.5f, 0.5f);
 
     final BttlLightStruct84 a0 = this.lights_800c692c[0];
     a0.light_00.direction_00.set(0.0f, 1.0f, 0.0f);
@@ -7284,7 +7284,9 @@ public class Battle extends EngineState {
           RENDERER.queueModel(part.obj, lw)
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
-            .backgroundColour(GTE.backgroundColour);
+            .backgroundColour(GTE.backgroundColour)
+            .ctmdFlags((part.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
+            .battleColour(this._800c6930.colour_00);
         }
       }
 

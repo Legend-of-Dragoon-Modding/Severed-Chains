@@ -3,6 +3,7 @@ package legend.game.combat.effects;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
+import legend.game.combat.Battle;
 import legend.game.combat.deff.Anim;
 import legend.game.combat.deff.DeffPart;
 import legend.game.scripting.ScriptState;
@@ -20,6 +21,7 @@ import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8002.animateModelTextures;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.combat.SEffe.FUN_800e60e0;
@@ -91,7 +93,9 @@ public class ModelEffect13c implements Effect {
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
             .backgroundColour(GTE.backgroundColour)
-            .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11);
+            .ctmdFlags((part.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
+            .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
+            .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
         }
 
         part.attribute_00 = oldAttrib;

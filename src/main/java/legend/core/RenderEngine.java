@@ -23,6 +23,7 @@ import legend.core.opengl.VoidShaderOptions;
 import legend.core.opengl.Window;
 import legend.core.opengl.fonts.Font;
 import legend.core.opengl.fonts.FontManager;
+import legend.game.combat.Battle;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.types.Translucency;
 import org.apache.logging.log4j.LogManager;
@@ -34,6 +35,7 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.file.Paths;
@@ -51,6 +53,7 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
@@ -160,7 +163,8 @@ public class RenderEngine {
       final Shader<TmdShaderOptions>.UniformFloat discardTranslucency = shader.new UniformFloat("discardTranslucency");
       final Shader<TmdShaderOptions>.UniformInt tmdTranslucency = shader.new UniformInt("tmdTranslucency");
       final Shader<TmdShaderOptions>.UniformInt ctmdFlags = shader.new UniformInt("ctmdFlags");
-      return () -> new TmdShaderOptions(modelIndex, recolour, uvOffset, clutOverride, tpageOverride, translucency, discardTranslucency, tmdTranslucency, ctmdFlags);
+      final Shader<TmdShaderOptions>.UniformVec3 battleColour = shader.new UniformVec3("battleColour");
+      return () -> new TmdShaderOptions(modelIndex, recolour, uvOffset, clutOverride, tpageOverride, translucency, discardTranslucency, tmdTranslucency, ctmdFlags, battleColour);
     }
   );
 
@@ -454,6 +458,12 @@ public class RenderEngine {
         this.opaqueFrameBuffer.bind();
         this.clear();
 
+        // Gross hack bro
+        if(currentEngineState_8004dd04 instanceof final Battle battle && battle._800c6930 != null) {
+          this.tmdShader.use();
+          this.tmdShaderOptions.battleColour(battle._800c6930.colour_00);
+        }
+
         RENDERER.setProjectionMode(ProjectionMode._3D);
         this.renderPool(this.modelPool);
         this.renderShaderPool();
@@ -590,6 +600,7 @@ public class RenderEngine {
       this.tmdShaderOptions.opaque();
       this.tmdShaderOptions.ctmdFlags(entry.ctmdFlags);
       this.tmdShaderOptions.tmdTranslucency(entry.tmdTranslucency);
+      this.tmdShaderOptions.battleColour(entry.battleColour);
       boolean updated = false;
 
       if(entry.scissor.w != 0) {
@@ -685,6 +696,7 @@ public class RenderEngine {
         this.tmdShaderOptions.uvOffset(entry.uvOffset);
         this.tmdShaderOptions.ctmdFlags(entry.ctmdFlags);
         this.tmdShaderOptions.tmdTranslucency(entry.tmdTranslucency);
+        this.tmdShaderOptions.battleColour(entry.battleColour);
         entry.useTexture();
 
         if(entry.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
@@ -1122,6 +1134,7 @@ public class RenderEngine {
 
     private int tmdTranslucency;
     private int ctmdFlags;
+    private final Vector3f battleColour = new Vector3f();
 
     public Options options() {
       return this.shaderOptions;
@@ -1229,6 +1242,11 @@ public class RenderEngine {
       return this;
     }
 
+    public QueuedModel<Options> battleColour(final Vector3f colour) {
+      this.battleColour.set(colour);
+      return this;
+    }
+
     private void reset() {
       this.shader = null;
       this.shaderOptions = null;
@@ -1247,6 +1265,7 @@ public class RenderEngine {
       this.lightUsed = false;
       this.tmdTranslucency = 0;
       this.ctmdFlags = 0;
+      this.battleColour.zero();
     }
 
     private void useTexture() {
@@ -1265,8 +1284,8 @@ public class RenderEngine {
       return this.hasTranslucency || (this.ctmdFlags & 0x2) != 0 || this.obj.hasTranslucency();
     }
 
-    public boolean shouldRender(final Translucency translucency) {
-      return this.hasTranslucency && this.translucency == translucency || (this.ctmdFlags & 0x2) != 0 && this.tmdTranslucency == translucency.ordinal() || this.obj.shouldRender(translucency);
+    public boolean shouldRender(@Nullable final Translucency translucency) {
+      return this.hasTranslucency && this.translucency == translucency || (this.ctmdFlags & 0x2) != 0 && translucency != null && this.tmdTranslucency == translucency.ordinal() || this.obj.shouldRender(translucency);
     }
 
     private void storeTransforms(final int modelIndex, final FloatBuffer transforms2Buffer, final FloatBuffer lightingBuffer) {
