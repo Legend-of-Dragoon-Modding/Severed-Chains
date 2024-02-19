@@ -7,6 +7,7 @@ import legend.game.characters.Element;
 import legend.game.characters.ElementSet;
 import legend.game.characters.StatCollection;
 import legend.game.characters.StatType;
+import legend.game.combat.Battle;
 import legend.game.combat.types.AttackType;
 import legend.game.combat.types.BattleObject;
 import legend.game.combat.types.CombatantStruct1a8;
@@ -36,6 +37,7 @@ import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLs;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLws;
 import static legend.game.Scus94491BpeSegment_8003.GsSetLightMatrix;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
 import static legend.game.Scus94491BpeSegment_8005._8005027c;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
@@ -639,7 +641,10 @@ public abstract class BattleEntity27c extends BattleObject {
           RENDERER.queueModel(model.modelParts_00[i].obj, lw)
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
-            .backgroundColour(GTE.backgroundColour);
+            .backgroundColour(GTE.backgroundColour)
+            .ctmdFlags((part.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
+            .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
+            .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
         }
       }
     }

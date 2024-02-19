@@ -23,6 +23,8 @@ import legend.game.combat.environment.CombatPortraitBorderMetrics0c;
 import legend.game.combat.environment.NameAndPortraitDisplayMetrics0c;
 import legend.game.combat.environment.SpBarBorderMetrics04;
 import legend.game.combat.types.BattleHudStatLabelMetrics0c;
+import legend.game.input.Input;
+import legend.game.input.InputAction;
 import legend.game.inventory.Item;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
@@ -46,13 +48,17 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.RENDERER;
+import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.playSound;
 import static legend.game.Scus94491BpeSegment_8002.intToStr;
 import static legend.game.Scus94491BpeSegment_8002.takeItemId;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
+import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
+import static legend.game.Scus94491BpeSegment_8004.additionOffsets_8004f5ac;
 import static legend.game.Scus94491BpeSegment_8004.itemStats_8004f2ac;
+import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.characterStatsLoaded_800be5d0;
@@ -61,8 +67,10 @@ import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
 import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
+import static legend.game.combat.Battle.additionNames_800fa8d4;
 import static legend.game.combat.Battle.melbuStageToMonsterNameIndices_800c6f30;
 import static legend.game.combat.Battle.spellStats_800fa0b8;
+import static legend.game.combat.SBtld.loadAdditions;
 
 public class BattleHud {
   private static final int[] repeatItemIds_800c6e34 = {224, 227, 228, 230, 232, 235, 236, 237, 238};
@@ -167,6 +175,7 @@ public class BattleHud {
   private final BattleHudCharacterDisplay3c[] activePartyBattleHudCharacterDisplays_800c6c40 = new BattleHudCharacterDisplay3c[3];
 
   private final List<CombatItem02> combatItems_800c6988 = new ArrayList<>();
+  private final List<String> combatAdditions = new ArrayList<>();
 
   private final Battle battle;
 
@@ -482,6 +491,15 @@ public class BattleHud {
         final int y = battleHudYOffsets_800fb198[this.battleHudYOffsetIndex_800c6c38];
         charDisplay.y_0a = y;
         displayStats.y_02 = y;
+      }
+
+      if(Input.pressedThisFrame(InputAction.BUTTON_NORTH)) {
+        if(additionCounts_8004f5c0[this.battle.currentTurnBent_800c66c8.innerStruct_00.charId_272] != 0) {
+          playSound(0, 2, 0, 0, (short)0, (short)0);
+          this.initSpellAndItemMenu((PlayerBattleEntity)this.battle.currentTurnBent_800c66c8.innerStruct_00, 2);
+        } else {
+          playSound(0, 40, 0, 0, (short)0, (short)0);
+        }
       }
 
       //LAB_800efd00
@@ -1389,11 +1407,11 @@ public class BattleHud {
     this.spellAndItemMenu_800c6b60.x_04 = 160;
     this.spellAndItemMenu_800c6b60.y_06 = 144;
     this.spellAndItemMenu_800c6b60.player_08 = player;
-    this.spellAndItemMenu_800c6b60.menuType_0a = (short)(menuType & 0x1);
+    this.spellAndItemMenu_800c6b60.menuType_0a = (short)menuType;
     this.spellAndItemMenu_800c6b60._0c = 0x20;
     this.spellAndItemMenu_800c6b60._0e = 0x2b;
-    this.spellAndItemMenu_800c6b60._10 = 0;
-    this.spellAndItemMenu_800c6b60._12 = 0;
+    this.spellAndItemMenu_800c6b60.width_10 = 0;
+    this.spellAndItemMenu_800c6b60.height_12 = 0;
     this.spellAndItemMenu_800c6b60._14 = 0x1;
     this.spellAndItemMenu_800c6b60._16 = 0x1000;
     this.spellAndItemMenu_800c6b60.textX_18 = 0;
@@ -1423,7 +1441,8 @@ public class BattleHud {
       this.spellAndItemMenu_800c6b60.count_22 = spellIndex;
     } else if(menuType == 2) {
       //LAB_800f4b4c
-      this.spellAndItemMenu_800c6b60.count_22 = 0;
+      this.prepareAdditionList(player.charId_272);
+      this.spellAndItemMenu_800c6b60.count_22 = (short)this.combatAdditions.size();
     }
 
     //LAB_800f4b50
@@ -1456,12 +1475,12 @@ public class BattleHud {
       case 1 -> {
         this.spellAndItemMenu_800c6b60._90 = 0;
         this.spellAndItemMenu_800c6b60._a0 = 0;
-        this.spellAndItemMenu_800c6b60._12 = 0;
-        this.spellAndItemMenu_800c6b60._10 = 0;
+        this.spellAndItemMenu_800c6b60.height_12 = 0;
+        this.spellAndItemMenu_800c6b60.width_10 = 0;
 
         if(this.spellAndItemMenu_800c6b60.menuType_0a == 0) {
           this.spellAndItemMenu_800c6b60.listScroll_24 = this.spellAndItemMenu_800c6b60._26;
-          this.spellAndItemMenu_800c6b60._02 |= 0x20;
+          this.spellAndItemMenu_800c6b60.flags_02 |= 0x20;
           this.spellAndItemMenu_800c6b60.listIndex_1e = this.spellAndItemMenu_800c6b60._28;
           this.spellAndItemMenu_800c6b60._20 = this.spellAndItemMenu_800c6b60._2a;
           this.spellAndItemMenu_800c6b60._94 = this.spellAndItemMenu_800c6b60._2c;
@@ -1487,11 +1506,11 @@ public class BattleHud {
         //LAB_800f4cb4
         this.spellAndItemMenu_800c6b60.itemOrSpellId_1c = (short)this.getItemOrSpellId();
         this.spellAndItemMenu_800c6b60.menuState_00 = 7;
-        this.spellAndItemMenu_800c6b60._02 |= 0x40;
+        this.spellAndItemMenu_800c6b60.flags_02 |= 0x40;
       }
 
       case 2 -> {
-        this.spellAndItemMenu_800c6b60._02 &= 0xfcff;
+        this.spellAndItemMenu_800c6b60.flags_02 &= 0xfcff;
         this.spellAndItemMenu_800c6b60.itemOrSpellId_1c = (short)this.getItemOrSpellId();
 
         if((press_800bee94 & 0x4) != 0) { // L1
@@ -1585,7 +1604,7 @@ public class BattleHud {
             }
 
             this.spellAndItemMenu_800c6b60.menuState_00 = 3;
-            this.spellAndItemMenu_800c6b60._02 |= 0x200;
+            this.spellAndItemMenu_800c6b60.flags_02 |= 0x200;
             this.spellAndItemMenu_800c6b60._80 = 5;
             this.spellAndItemMenu_800c6b60._7c = this.spellAndItemMenu_800c6b60._20;
             this.spellAndItemMenu_800c6b60._20 += 5;
@@ -1613,7 +1632,7 @@ public class BattleHud {
                 this.spellAndItemMenu_800c6b60._7c = this.spellAndItemMenu_800c6b60._20;
                 this.spellAndItemMenu_800c6b60._20 -= 5;
                 this.spellAndItemMenu_800c6b60.listIndex_1e++;
-                this.spellAndItemMenu_800c6b60._02 |= 0x100;
+                this.spellAndItemMenu_800c6b60.flags_02 |= 0x100;
               }
             }
           }
@@ -1644,7 +1663,7 @@ public class BattleHud {
             //LAB_800f5108
             //LAB_800f5128
             this.spellAndItemMenu_800c6b60.itemTargetAll_800c69c8 = (player.item_d4.target_00 & 0x2) != 0;
-          } else {
+          } else if(this.spellAndItemMenu_800c6b60.menuType_0a == 1) {
             //LAB_800f5134
             final PlayerBattleEntity caster = this.spellAndItemMenu_800c6b60.player_08;
             caster.setActiveSpell(this.spellAndItemMenu_800c6b60.itemOrSpellId_1c);
@@ -1658,19 +1677,29 @@ public class BattleHud {
 
             //LAB_800f517c
             this.clearFloatingNumber(0);
+          } else {
+            playSound(0, 2, 0, 0, (short)0, (short)0);
+            player.combatant_144.mrg_04 = null;
+            gameState_800babc8.charData_32c[player.charId_272].selectedAddition_19 = additionOffsets_8004f5ac[player.charId_272] + this.spellAndItemMenu_800c6b60.itemOrSpellId_1c;
+            loadCharacterStats();
+            loadAdditions();
+            this.battle.loadAttackAnimations(player.combatant_144);
+            this.spellAndItemMenu_800c6b60.menuState_00 = 8;
+            this.spellAndItemMenu_800c6b60.flags_02 &= 0xfff7;
+            break;
           }
 
           //LAB_800f5190
           playSound(0, 2, 0, 0, (short)0, (short)0);
           this.spellAndItemMenu_800c6b60._8c = 0;
-          this.spellAndItemMenu_800c6b60._02 |= 0x4;
+          this.spellAndItemMenu_800c6b60.flags_02 |= 0x4;
           if(this.spellAndItemMenu_800c6b60.menuType_0a == 0) {
             this.spellAndItemMenu_800c6b60._94 = this.spellAndItemMenu_800c6b60._1a - this.spellAndItemMenu_800c6b60._20;
           }
 
           //LAB_800f51e8
           this.spellAndItemMenu_800c6b60.menuState_00 = 6;
-          this.spellAndItemMenu_800c6b60._02 &= 0xfffd;
+          this.spellAndItemMenu_800c6b60.flags_02 &= 0xfffd;
           break;
         }
 
@@ -1678,7 +1707,7 @@ public class BattleHud {
         if((press_800bee94 & 0x40) != 0) { // O
           playSound(0, 3, 0, 0, (short)0, (short)0);
           this.spellAndItemMenu_800c6b60.menuState_00 = 8;
-          this.spellAndItemMenu_800c6b60._02 &= 0xfff7;
+          this.spellAndItemMenu_800c6b60.flags_02 &= 0xfff7;
         }
       }
 
@@ -1786,34 +1815,34 @@ public class BattleHud {
           //LAB_800f54b4
           playSound(0, 0, 3, 0, (short)0, (short)0);
           this.spellAndItemMenu_800c6b60.menuState_00 = 7;
-          this.spellAndItemMenu_800c6b60._02 &= 0xfffb;
-          this.spellAndItemMenu_800c6b60._02 |= 0x20;
+          this.spellAndItemMenu_800c6b60.flags_02 &= 0xfffb;
+          this.spellAndItemMenu_800c6b60.flags_02 |= 0x20;
         }
       }
 
       case 7 -> {
-        if(this.spellAndItemMenu_800c6b60.menuType_0a != 0) {
-          s0 = 0x80;
+        if(this.spellAndItemMenu_800c6b60.menuType_0a == 1) {
+          s0 = 128;
         } else {
-          s0 = 0xba;
+          s0 = 186;
         }
 
         this.spellAndItemMenu_800c6b60.menuState_00 = 2;
         playSound(0, 4, 0, 0, (short)0, (short)0);
-        this.spellAndItemMenu_800c6b60._12 = 0x52;
-        this.spellAndItemMenu_800c6b60._10 = s0;
+        this.spellAndItemMenu_800c6b60.width_10 = s0;
+        this.spellAndItemMenu_800c6b60.height_12 = 82;
         this.spellAndItemMenu_800c6b60.textX_18 = (short)(this.spellAndItemMenu_800c6b60.x_04 - s0 / 2 + 9);
-        v0 = (this.spellAndItemMenu_800c6b60.y_06 - this.spellAndItemMenu_800c6b60._12) - 16;
+        v0 = (this.spellAndItemMenu_800c6b60.y_06 - this.spellAndItemMenu_800c6b60.height_12) - 16;
         this.spellAndItemMenu_800c6b60._1a = (short)v0;
         this.spellAndItemMenu_800c6b60._20 = (short)v0;
-        this.spellAndItemMenu_800c6b60._02 |= 0xb;
-        if((this.spellAndItemMenu_800c6b60._02 & 0x20) != 0) {
+        this.spellAndItemMenu_800c6b60.flags_02 |= 0xb;
+        if((this.spellAndItemMenu_800c6b60.flags_02 & 0x20) != 0) {
           v0 = v0 - this.spellAndItemMenu_800c6b60._94;
           this.spellAndItemMenu_800c6b60._20 = (short)v0;
         }
 
         //LAB_800f5588
-        if(this.spellAndItemMenu_800c6b60.menuType_0a != 0) {
+        if(this.spellAndItemMenu_800c6b60.menuType_0a == 1) {
           this.spellAndItemMenu_800c6b60.itemOrSpellId_1c = (short)this.getItemOrSpellId();
           this.spellAndItemMenu_800c6b60.player_08.setActiveSpell(this.spellAndItemMenu_800c6b60.itemOrSpellId_1c);
           this.addFloatingNumber(0, 1, 0, this.spellAndItemMenu_800c6b60.player_08.spell_94.mp_06, 280, 135, 0, 1);
@@ -1825,9 +1854,9 @@ public class BattleHud {
         this.spellAndItemMenu_800c6b60.itemTargetType_800c6b68 = 0;
         this.spellAndItemMenu_800c6b60._a0 = -1;
         this.spellAndItemMenu_800c6b60.menuState_00 = 9;
-        this.spellAndItemMenu_800c6b60._12 = 0;
-        this.spellAndItemMenu_800c6b60._10 = 0;
-        this.spellAndItemMenu_800c6b60._02 &= 0xfffc;
+        this.spellAndItemMenu_800c6b60.height_12 = 0;
+        this.spellAndItemMenu_800c6b60.width_10 = 0;
+        this.spellAndItemMenu_800c6b60.flags_02 &= 0xfffc;
         this.clearFloatingNumber(0);
       }
 
@@ -1843,6 +1872,11 @@ public class BattleHud {
 
         //LAB_800f568c
         this.spellAndItemMenu_800c6b60.clear();
+
+        if(this.battleUiItemSpellList != null) {
+          this.battleUiItemSpellList.delete();
+          this.battleUiItemSpellList = null;
+        }
       }
     }
 
@@ -1882,6 +1916,10 @@ public class BattleHud {
       }
 
       return spellIndex;
+    }
+
+    if(this.spellAndItemMenu_800c6b60.menuType_0a == 2) {
+      return this.spellAndItemMenu_800c6b60.listScroll_24 + this.spellAndItemMenu_800c6b60.listIndex_1e;
     }
 
     throw new RuntimeException("Undefined a0");
@@ -1987,6 +2025,8 @@ public class BattleHud {
         if(bent.stats.getStat(CoreMod.MP_STAT.get()).getCurrent() < bent.spell_94.mp_06) {
           textColour = TextColour.GREY;
         }
+      } else if(type == 2) {
+        name = new LodString(this.combatAdditions.get(sp7c));
       } else {
         throw new RuntimeException("Undefined s3");
       }
@@ -2001,7 +2041,7 @@ public class BattleHud {
         }
 
         //LAB_800f5bb4
-        if((menu._02 & 0x4) != 0) {
+        if((menu.flags_02 & 0x4) != 0) {
           trim = (short)menu._8c;
         }
 
@@ -2012,7 +2052,7 @@ public class BattleHud {
           Scus94491BpeSegment_8002.renderText(sp0x40, menu.textX_18 + 128, y1, textColour, trim);
         }
       } else if(y2 < y1 + 12) {
-        if((menu._02 & 0x4) != 0) {
+        if((menu.flags_02 & 0x4) != 0) {
           trim = menu._8c;
         } else {
           trim = y1 - y2;
@@ -2038,29 +2078,30 @@ public class BattleHud {
    * This includes:
    *   - Item and Dragoon magic backgrounds, scroll arrows, and text
    *   - Item and Dragoon magic description background and text
-   *   - Dragoon magic MP cost background and normal text (excluding the number value) */
+   *   - Dragoon magic MP cost background and normal text (excluding the number value)
+   */
   @Method(0x800f5c94L)
   public void drawItemMenuElements() {
     final SpellAndItemMenuA4 menu = this.spellAndItemMenu_800c6b60;
     menu.init();
     menu.transforms.identity();
 
-    if(menu.menuState_00 != 0 && (menu._02 & 0x1) != 0) {
-      if((menu._02 & 0x2) != 0) {
+    if(menu.menuState_00 != 0 && (menu.flags_02 & 0x1) != 0) {
+      if((menu.flags_02 & 0x2) != 0) {
         //LAB_800f5ee8
         //Item menu
-        final int a2 = menu._10 + 6;
-        final int a3 = menu._12 + 17;
+        final int w = menu.width_10 + 6;
+        final int h = menu.height_12 + 17;
 
         if(this.battleUiItemSpellList == null) {
-          this.battleUiItemSpellList = new UiBox("Battle UI Item/Spell List", menu.x_04 - a2 / 2, menu.y_06 - a3, a2, a3);
+          this.battleUiItemSpellList = new UiBox("Battle UI Item/Spell List", menu.x_04 - w / 2, menu.y_06 - h, w, h);
         }
 
         this.battleUiItemSpellList.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
 
         this.renderList(menu.menuType_0a);
 
-        if((menu._02 & 0x8) != 0) {
+        if((menu.flags_02 & 0x8) != 0) {
           //LAB_800f5d78
           //LAB_800f5d90
           menu.transforms.transfer.set(menu.textX_18 - 16, menu._1a + menu.listScroll_24 * 14 + 2, 124.0f);
@@ -2075,7 +2116,7 @@ public class BattleHud {
 
           //LAB_800f5e00
           final int s1;
-          if((menu._02 & 0x100) != 0) {
+          if((menu.flags_02 & 0x100) != 0) {
             s1 = 2;
           } else {
             s1 = 0;
@@ -2083,7 +2124,7 @@ public class BattleHud {
 
           //LAB_800f5e18
           final int t0;
-          if((menu._02 & 0x200) != 0) {
+          if((menu.flags_02 & 0x200) != 0) {
             t0 = -2;
           } else {
             t0 = 0;
@@ -2104,7 +2145,7 @@ public class BattleHud {
       }
 
       //LAB_800f5f50
-      if((menu._02 & 0x40) != 0) {
+      if((menu.flags_02 & 0x40) != 0) {
         final int textType;
         if(menu.menuType_0a == 0) { // Item
           //LAB_800f5f8c
@@ -2112,7 +2153,7 @@ public class BattleHud {
         } else if(menu.menuType_0a == 1) { // Spell
           //LAB_800f5f94
           textType = 5;
-          if((menu._02 & 0x2) != 0) {
+          if((menu.flags_02 & 0x2) != 0) {
             if(this.battleUiSpellList == null) {
               this.battleUiSpellList = new UiBox("Battle UI Spell List", 236, 130, 64, 14);
             }
@@ -2125,6 +2166,8 @@ public class BattleHud {
             menu.transforms.transfer.set(236, 130, 124.0f);
             RENDERER.queueOrthoModel(menu.mpObj, menu.transforms);
           }
+        } else if(menu.menuType_0a == 2) { // Addition
+          textType = 6;
         } else {
           throw new RuntimeException("Undefined s1");
         }
@@ -2360,6 +2403,8 @@ public class BattleHud {
           this.battleMenu_800c6c34.iconStateIndex_26 = 0;
           break;
         }
+
+        //TODO handle triangle here
 
         // Input for pressing X on menu bar
         //LAB_800f671c
@@ -2777,6 +2822,30 @@ public class BattleHud {
     }
   }
 
+  public void prepareAdditionList(final int charId) {
+    //LAB_800f83dc
+    this.combatAdditions.clear();
+
+    //LAB_800f8420
+    for(int additionSlot = 0; additionSlot < additionCounts_8004f5c0[charId]; additionSlot++) {
+      final int additionOffset = additionOffsets_8004f5ac[charId];
+
+      final int level = additionData_80052884[additionOffset + additionSlot].level_00;
+
+      if(level == -1 && (gameState_800babc8.charData_32c[charId].partyFlags_04 & 0x40) != 0) {
+        final String additionName = additionNames_800fa8d4[additionOffset + additionSlot];
+        this.combatAdditions.add(additionName);
+      } else if(level > 0 && level <= gameState_800babc8.charData_32c[charId].level_12) {
+        final String additionName = additionNames_800fa8d4[additionOffset + additionSlot];
+        this.combatAdditions.add(additionName);
+
+        if(gameState_800babc8.charData_32c[charId].additionLevels_1a[additionSlot] == 0) {
+          gameState_800babc8.charData_32c[charId].additionLevels_1a[additionSlot] = 1;
+        }
+      }
+    }
+  }
+
   @Method(0x800f8568L)
   private LodString getTargetEnemyName(final BattleEntity27c target, final LodString targetName) {
     // Seems to be special-case handling to replace Tentacle, since the Melbu fight has more enemies than the engine can handle
@@ -2842,6 +2911,10 @@ public class BattleHud {
       str = new LodString(itemStats_8004f2ac[textIndex].combatDescription);
     } else if(textType == 5) {
       str = new LodString(spellStats_800fa0b8[textIndex].combatDescription);
+    } else if(textType == 6) {
+      final SpellAndItemMenuA4 menu = this.spellAndItemMenu_800c6b60;
+      final int additionOffset = additionOffsets_8004f5ac[menu.player_08.charId_272];
+      str = new LodString(additionNames_800fa8d4[additionOffset + textIndex]);
     } else {
       throw new IllegalArgumentException("Only supports textType 4/5");
     }

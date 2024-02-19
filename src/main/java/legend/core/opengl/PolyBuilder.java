@@ -9,18 +9,20 @@ import org.joml.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
 
-import static legend.core.opengl.TmdObjLoader.BPP_SIZE;
+import static legend.core.MathHelper.makeClut;
+import static legend.core.MathHelper.makeTpage;
 import static legend.core.opengl.TmdObjLoader.CLUT_SIZE;
 import static legend.core.opengl.TmdObjLoader.COLOUR_SIZE;
 import static legend.core.opengl.TmdObjLoader.FLAGS_SIZE;
 import static legend.core.opengl.TmdObjLoader.NORM_SIZE;
 import static legend.core.opengl.TmdObjLoader.POS_SIZE;
 import static legend.core.opengl.TmdObjLoader.TPAGE_SIZE;
+import static legend.core.opengl.TmdObjLoader.TRANSLUCENT_FLAG;
 import static legend.core.opengl.TmdObjLoader.UV_SIZE;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
 public class PolyBuilder {
-  private static final int VERTEX_SIZE = POS_SIZE + NORM_SIZE + UV_SIZE + TPAGE_SIZE + CLUT_SIZE + BPP_SIZE + COLOUR_SIZE + FLAGS_SIZE;
+  private static final int VERTEX_SIZE = POS_SIZE + NORM_SIZE + UV_SIZE + TPAGE_SIZE + CLUT_SIZE + COLOUR_SIZE + FLAGS_SIZE;
 
   private final String name;
   private final int type;
@@ -28,7 +30,7 @@ public class PolyBuilder {
   private final Vector2i vramPos = new Vector2i();
   private final Vector2i clut = new Vector2i();
   private Vertex current;
-  private Bpp bpp;
+  private Bpp bpp = Bpp.BITS_4;
   private Translucency translucency;
 
   private int flags;
@@ -132,7 +134,7 @@ public class PolyBuilder {
 
   public PolyBuilder translucency(final Translucency translucency) {
     this.translucency = translucency;
-    this.flags |= TmdObjLoader.TRANSLUCENCY_FLAG << translucency.ordinal();
+    this.flags |= TRANSLUCENT_FLAG;
     return this;
   }
 
@@ -147,16 +149,12 @@ public class PolyBuilder {
     vertices[i++] = 0.0f;
     vertices[i++] = vert.uv.x;
     vertices[i++] = vert.uv.y;
-    vertices[i++] = this.vramPos.x;
-    vertices[i++] = this.vramPos.y;
+    vertices[i++] = makeTpage(this.vramPos.x, this.vramPos.y, this.bpp, this.translucency);
     if(vert.clut == null) {
-      vertices[i++] = this.clut.x;
-      vertices[i++] = this.clut.y;
+      vertices[i++] = makeClut(this.clut.x, this.clut.y);
     } else {
-      vertices[i++] = vert.clut.x;
-      vertices[i++] = vert.clut.y;
+      vertices[i++] = makeClut(vert.clut.x, vert.clut.y);
     }
-    vertices[i++] = this.bpp != null ? this.bpp.ordinal() : 0;
     vertices[i++] = vert.colour.x;
     vertices[i++] = vert.colour.y;
     vertices[i++] = vert.colour.z;
@@ -194,10 +192,6 @@ public class PolyBuilder {
     mesh.attribute(meshIndex, meshOffset, CLUT_SIZE, VERTEX_SIZE);
     meshIndex++;
     meshOffset += CLUT_SIZE;
-
-    mesh.attribute(meshIndex, meshOffset, BPP_SIZE, VERTEX_SIZE);
-    meshIndex++;
-    meshOffset += BPP_SIZE;
 
     mesh.attribute(meshIndex, meshOffset, COLOUR_SIZE, VERTEX_SIZE);
     meshIndex++;

@@ -1,5 +1,6 @@
 package legend.core.opengl;
 
+import legend.game.types.Translucency;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -9,15 +10,23 @@ public class TmdShaderOptions implements ShaderOptions<TmdShaderOptions> {
   private final Shader<TmdShaderOptions>.UniformVec2 uvOffsetUniform;
   private final Shader<TmdShaderOptions>.UniformVec2 clutUniform;
   private final Shader<TmdShaderOptions>.UniformVec2 tpageUniform;
+  private final Shader<TmdShaderOptions>.UniformFloat translucency;
   private final Shader<TmdShaderOptions>.UniformFloat discardTranslucency;
+  private final Shader<TmdShaderOptions>.UniformInt tmdTranslucency;
+  private final Shader<TmdShaderOptions>.UniformInt ctmdFlags;
+  private final Shader<TmdShaderOptions>.UniformVec3 battleColour;
 
-  public TmdShaderOptions(final Shader<TmdShaderOptions>.UniformFloat modelIndex, final Shader<TmdShaderOptions>.UniformVec3 colourUniform, final Shader<TmdShaderOptions>.UniformVec2 uvOffsetUniform, final Shader<TmdShaderOptions>.UniformVec2 clutUniform, final Shader<TmdShaderOptions>.UniformVec2 tpageUniform, final Shader<TmdShaderOptions>.UniformFloat discardTranslucency) {
+  public TmdShaderOptions(final Shader<TmdShaderOptions>.UniformFloat modelIndex, final Shader<TmdShaderOptions>.UniformVec3 colourUniform, final Shader<TmdShaderOptions>.UniformVec2 uvOffsetUniform, final Shader<TmdShaderOptions>.UniformVec2 clutUniform, final Shader<TmdShaderOptions>.UniformVec2 tpageUniform, final Shader<TmdShaderOptions>.UniformFloat translucency, final Shader<TmdShaderOptions>.UniformFloat discardTranslucency, final Shader<TmdShaderOptions>.UniformInt tmdTranslucency, final Shader<TmdShaderOptions>.UniformInt ctmdFlags, final Shader<TmdShaderOptions>.UniformVec3 battleColour) {
     this.modelIndex = modelIndex;
     this.colourUniform = colourUniform;
     this.uvOffsetUniform = uvOffsetUniform;
     this.clutUniform = clutUniform;
     this.tpageUniform = tpageUniform;
+    this.translucency = translucency;
     this.discardTranslucency = discardTranslucency;
+    this.tmdTranslucency = tmdTranslucency;
+    this.ctmdFlags = ctmdFlags;
+    this.battleColour = battleColour;
   }
 
   public TmdShaderOptions modelIndex(final float modelIndex) {
@@ -42,6 +51,31 @@ public class TmdShaderOptions implements ShaderOptions<TmdShaderOptions> {
 
   public TmdShaderOptions tpage(final Vector2f tpage) {
     this.tpageUniform.set(tpage);
+    return this;
+  }
+
+  public TmdShaderOptions opaque() {
+    this.translucency.set(0);
+    return this;
+  }
+
+  public TmdShaderOptions translucency(final Translucency translucency) {
+    this.translucency.set(translucency.ordinal() + 1);
+    return this;
+  }
+
+  public TmdShaderOptions tmdTranslucency(final int translucency) {
+    this.tmdTranslucency.set(translucency);
+    return this;
+  }
+
+  public TmdShaderOptions ctmdFlags(final int flags) {
+    this.ctmdFlags.set(flags);
+    return this;
+  }
+
+  public TmdShaderOptions battleColour(final Vector3f colour) {
+    this.battleColour.set(colour);
     return this;
   }
 

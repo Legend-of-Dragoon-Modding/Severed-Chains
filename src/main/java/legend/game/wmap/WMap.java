@@ -418,7 +418,8 @@ public class WMap extends EngineState {
           .lightDirection(lightDirectionMatrix_800c34e8)
           .lightColour(lightColourMatrix_800c3508)
           .backgroundColour(GTE.backgroundColour)
-          .screenspaceOffset(0, screenOffsetY);
+          .screenspaceOffset(0, screenOffsetY)
+          .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11);
       }
     }
 
@@ -1917,7 +1918,7 @@ public class WMap extends EngineState {
           }
           this.mapState_800c6798.pathDots.transforms.transfer.add(intersectionPoint).y -= 1.0f;
 
-          final RenderEngine.QueuedModel model = RENDERER.queueModel(this.mapState_800c6798.pathDots.dots, this.mapState_800c6798.pathDots.transforms)
+          final RenderEngine.QueuedModel<?> model = RENDERER.queueModel(this.mapState_800c6798.pathDots.dots, this.mapState_800c6798.pathDots.transforms)
             .vertices(bigDotStateIndex * 4, 4);
 
           //LAB_800d7df0
@@ -1975,7 +1976,7 @@ public class WMap extends EngineState {
                 .scale(0.25f);
               this.mapState_800c6798.pathDots.transforms.transfer.add(pathPoint.x, pathPoint.y, pathPoint.z).y -= 1.0f;
 
-              final RenderEngine.QueuedModel model = RENDERER.queueModel(this.mapState_800c6798.pathDots.dots, this.mapState_800c6798.pathDots.transforms)
+              final RenderEngine.QueuedModel<?> model = RENDERER.queueModel(this.mapState_800c6798.pathDots.dots, this.mapState_800c6798.pathDots.transforms)
                 .vertices(12, 4);
 
               //LAB_800d87fc

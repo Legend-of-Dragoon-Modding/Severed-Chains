@@ -12,7 +12,7 @@ public class SpellAndItemMenuA4 {
 
   public short menuState_00;
   /** ushort */
-  public int _02;
+  public int flags_02;
   /** ushort */
   public int x_04;
   /** ushort */
@@ -30,9 +30,9 @@ public class SpellAndItemMenuA4 {
   /** ushort */
   public int _0e;
   /** ushort */
-  public int _10;
+  public int width_10;
   /** ushort */
-  public int _12;
+  public int height_12;
   /** ushort */
   public int _14;
   /** ushort */
@@ -119,15 +119,15 @@ public class SpellAndItemMenuA4 {
   @Method(0x800f4964L)
   public void clear() {
     this.menuState_00 = 0;
-    this._02 = 0;
+    this.flags_02 = 0;
     this.x_04 = 0;
     this.y_06 = 0;
     this.player_08 = null;
     this.menuType_0a = 0;
     this._0c = 0;
     this._0e = 0;
-    this._10 = 0;
-    this._12 = 0;
+    this.width_10 = 0;
+    this.height_12 = 0;
     this._14 = 0;
     this._16 = 0x1000;
     this.textX_18 = 0;

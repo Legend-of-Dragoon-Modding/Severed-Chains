@@ -3,9 +3,11 @@ package legend.core.opengl;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import legend.core.MathHelper;
+import legend.core.gpu.Bpp;
 import legend.game.types.LodString;
 
-import static legend.core.opengl.TmdObjLoader.BPP_SIZE;
+import static legend.core.MathHelper.makeClut;
+import static legend.core.MathHelper.makeTpage;
 import static legend.core.opengl.TmdObjLoader.CLUT_SIZE;
 import static legend.core.opengl.TmdObjLoader.COLOUR_SIZE;
 import static legend.core.opengl.TmdObjLoader.FLAGS_SIZE;
@@ -99,7 +101,7 @@ public class TextBuilder {
   public TextObj build() {
     int vertexSize = POS_SIZE;
     vertexSize += NORM_SIZE;
-    vertexSize += UV_SIZE + TPAGE_SIZE + CLUT_SIZE + BPP_SIZE;
+    vertexSize += UV_SIZE + TPAGE_SIZE + CLUT_SIZE;
     vertexSize += COLOUR_SIZE;
     vertexSize += FLAGS_SIZE;
 
@@ -210,10 +212,6 @@ public class TextBuilder {
     meshIndex++;
     meshOffset += CLUT_SIZE;
 
-    mesh.attribute(meshIndex, meshOffset, BPP_SIZE, vertexSize);
-    meshIndex++;
-    meshOffset += BPP_SIZE;
-
     mesh.attribute(meshIndex, meshOffset, COLOUR_SIZE, vertexSize);
     meshIndex++;
     meshOffset += COLOUR_SIZE;
@@ -240,11 +238,8 @@ public class TextBuilder {
     vertices[offset++] = 0.0f; //
     vertices[offset++] = u;
     vertices[offset++] = v;
-    vertices[offset++] = 832; // clx
-    vertices[offset++] = 256; // cly
-    vertices[offset++] = 832; // tpx
-    vertices[offset++] = 480; // tpy
-    vertices[offset++] = 0; // bpp
+    vertices[offset++] = makeTpage(832, 256, Bpp.BITS_4, null);
+    vertices[offset++] = makeClut(832, 480);
     vertices[offset++] = r;
     vertices[offset++] = g;
     vertices[offset++] = b;

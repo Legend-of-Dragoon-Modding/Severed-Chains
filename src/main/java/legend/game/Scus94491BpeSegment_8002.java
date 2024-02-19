@@ -511,29 +511,6 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80020fd0
   }
 
-  @Method(0x80021258L)
-  public static void renderDobj2(final ModelPart10 dobj2) {
-    if(engineState_8004dd20 == EngineStateEnum.SUBMAP_05) {
-      //LAB_800212b0
-      Renderer.renderDobj2(dobj2, false, 0);
-      return;
-    }
-
-    if(engineState_8004dd20 == EngineStateEnum.COMBAT_06) {
-      //LAB_800212a0
-      Renderer.renderDobj2(dobj2, true, 0);
-      return;
-    }
-
-    //LAB_8002128c
-    if(engineState_8004dd20 == EngineStateEnum.WORLD_MAP_08) {
-      //LAB_800212c0
-      Renderer.renderDobj2(dobj2, false, 0);
-    }
-
-    //LAB_800212c8
-  }
-
   @Method(0x800212d8L)
   public static void applyKeyframe(final Model124 model) {
     //LAB_80021320

@@ -139,7 +139,6 @@ import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.playXaAudio;
 import static legend.game.Scus94491BpeSegment_8002.rand;
-import static legend.game.Scus94491BpeSegment_8002.renderDobj2;
 import static legend.game.Scus94491BpeSegment_8003.GetClut;
 import static legend.game.Scus94491BpeSegment_8003.GsGetLw;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
@@ -511,7 +510,10 @@ public final class SEffe {
     RENDERER.queueModel(obj, sp0x10)
       .lightDirection(lightDirectionMatrix_800c34e8)
       .lightColour(lightColourMatrix_800c3508)
-      .backgroundColour(GTE.backgroundColour);
+      .backgroundColour(GTE.backgroundColour)
+      .ctmdFlags(0x20 | ((dobj2.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0))
+      .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
+      .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
 
     //LAB_800de528
   }
@@ -4695,7 +4697,7 @@ public final class SEffe {
         zOffset_1f8003e8 = 0;
         tmdGp0Tpage_1f8003ec = 2;
 
-        renderDobj2(dobj2);
+        Renderer.renderDobj2(dobj2, false, 0);
       }
     }
 
@@ -8222,7 +8224,10 @@ public final class SEffe {
         RENDERER.queueModel(deffEffect.obj, sp0x10)
           .lightDirection(lightDirectionMatrix_800c34e8)
           .lightColour(lightColourMatrix_800c3508)
-          .backgroundColour(GTE.backgroundColour);
+          .backgroundColour(GTE.backgroundColour)
+          .ctmdFlags((dobj2.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
+          .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
+          .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
       } else {
         //LAB_80118370
         renderTmdSpriteEffect(deffEffect.tmd_08, deffEffect.obj, data.params_10, sp0x10);

@@ -6,13 +6,13 @@ import org.joml.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
 
-import static legend.core.opengl.TmdObjLoader.BPP_SIZE;
 import static legend.core.opengl.TmdObjLoader.CLUT_SIZE;
 import static legend.core.opengl.TmdObjLoader.COLOUR_SIZE;
 import static legend.core.opengl.TmdObjLoader.FLAGS_SIZE;
 import static legend.core.opengl.TmdObjLoader.NORM_SIZE;
 import static legend.core.opengl.TmdObjLoader.POS_SIZE;
 import static legend.core.opengl.TmdObjLoader.TPAGE_SIZE;
+import static legend.core.opengl.TmdObjLoader.TRANSLUCENT_FLAG;
 import static legend.core.opengl.TmdObjLoader.UV_SIZE;
 import static org.lwjgl.opengl.GL11C.GL_LINE_LOOP;
 import static org.lwjgl.opengl.GL11C.GL_LINE_STRIP;
@@ -39,7 +39,7 @@ public class LineBuilder {
 
   public LineBuilder translucency(final Translucency translucency) {
     this.translucency = translucency;
-    this.flags |= TmdObjLoader.TRANSLUCENCY_FLAG << translucency.ordinal();
+    this.flags |= TRANSLUCENT_FLAG;
     return this;
   }
 
@@ -52,7 +52,7 @@ public class LineBuilder {
   public MeshObj build() {
     int vertexSize = POS_SIZE;
     vertexSize += NORM_SIZE;
-    vertexSize += UV_SIZE + TPAGE_SIZE + CLUT_SIZE + BPP_SIZE;
+    vertexSize += UV_SIZE + TPAGE_SIZE + CLUT_SIZE;
     vertexSize += COLOUR_SIZE;
     vertexSize += FLAGS_SIZE;
 
@@ -88,10 +88,6 @@ public class LineBuilder {
     mesh.attribute(meshIndex, meshOffset, CLUT_SIZE, vertexSize);
     meshIndex++;
     meshOffset += CLUT_SIZE;
-
-    mesh.attribute(meshIndex, meshOffset, BPP_SIZE, vertexSize);
-    meshIndex++;
-    meshOffset += BPP_SIZE;
 
     mesh.attribute(meshIndex, meshOffset, COLOUR_SIZE, vertexSize);
     meshIndex++;
