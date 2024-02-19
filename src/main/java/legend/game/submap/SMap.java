@@ -13,8 +13,11 @@ import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.gte.TmdObjTable1c;
 import legend.core.memory.Method;
+import legend.core.opengl.Obj;
 import legend.core.opengl.PolyBuilder;
+import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
+import legend.core.opengl.TmdObjLoader;
 import legend.game.EngineState;
 import legend.game.EngineStateEnum;
 import legend.game.fmv.Fmv;
@@ -232,6 +235,7 @@ public class SMap extends EngineState {
   }
   private boolean hasSavePoint_800d5620;
   private final Vector3f savePointPos_800d5622 = new Vector3f();
+  private Obj savepointObj;
 
   private final SavePointRenderData44[] savePoint_800d5630 = new SavePointRenderData44[32];
   {
@@ -4379,6 +4383,13 @@ public class SMap extends EngineState {
     final Vector2f sp0x50 = new Vector2f();
     final GsCOORDINATE2 coord2 = new GsCOORDINATE2();
 
+    if(this.savepointObj != null) {
+      this.savepointObj.delete();
+      this.savepointObj = null;
+    }
+
+    final QuadBuilder builder = new QuadBuilder("Savepoint Blobs");
+
     this.hasSavePoint_800d5620 = script.params_20[0].get() != 0;
     GsInitCoordinate2(null, coord2);
 
@@ -4405,29 +4416,51 @@ public class SMap extends EngineState {
       }
 
       //LAB_800f1a34
-      final float a3 = (struct.vert0_00.x + struct.vert3_18.x) / 2.0f;
-      final float t0 = (struct.vert0_00.y + struct.vert3_18.y) / 2.0f;
-      final float a2 = (struct.vert0_00.x - struct.vert3_18.x) / 2.0f;
+      final float x = (struct.vert0_00.x + struct.vert3_18.x) / 2.0f;
+      final float y = (struct.vert0_00.y + struct.vert3_18.y) / 2.0f;
+      final float halfW = (struct.vert0_00.x - struct.vert3_18.x) / 2.0f;
 
-      final float x0 = a3 - a2;
+      final float x0 = x - halfW;
       struct.vert0_00.x = x0;
       struct.vert2_10.x = x0;
-      final float y0 = t0 - a2 - sp0x48.x;
+      final float y0 = y - halfW - sp0x48.x;
       struct.vert0_00.y = y0;
       struct.vert1_08.y = y0;
-      final float x1 = a3 + a2;
+      final float x1 = x + halfW;
       struct.vert1_08.x = x1;
       struct.vert3_18.x = x1;
-      final float y1 = t0 + a2 - sp0x48.x;
+      final float y1 = y + halfW - sp0x48.x;
       struct.vert2_10.y = y1;
       struct.vert3_18.y = y1;
 
       //LAB_800f1b04
       struct.screenOffsetX_20 = this.screenOffset_800cb568.x;
       struct.screenOffsetY_24 = this.screenOffset_800cb568.y;
+
+      builder
+        .add()
+        .bpp(Bpp.of(this.texPages_800d6050[5] >>> 7 * 0b11))
+        .translucency(Translucency.B_PLUS_F)
+        .clut((this.cluts_800d6068[5] & 0b111111) * 16, this.cluts_800d6068[5] >>> 6)
+        .vramPos((this.texPages_800d6050[5] & 0b1111) * 64, (this.texPages_800d6050[5] & 0b10000) != 0 ? 256 : 0)
+        .posSize(x1 - x0, y1 - y0)
+        .uvSize(31, 31)
+        .uv(160, 64);
     }
 
     PopMatrix();
+
+    builder
+      .add()
+      .bpp(Bpp.of(this.texPages_800d6050[4] >>> 7 * 0b11))
+      .translucency(Translucency.B_PLUS_F)
+      .clut((this.cluts_800d6068[4] & 0b111111) * 16, this.cluts_800d6068[4] >>> 6)
+      .vramPos((this.texPages_800d6050[4] & 0b1111) * 64, (this.texPages_800d6050[4] & 0b10000) != 0 ? 256 : 0)
+      .posSize(6.0f, 6.0f)
+      .uvSize(7.0f, 7.0f)
+      .uv(176, 48);
+
+    this.savepointObj = builder.build();
 
     return FlowControl.CONTINUE;
   }
@@ -4797,6 +4830,7 @@ public class SMap extends EngineState {
   @Method(0x800f2788L)
   private void initSavePoint() {
     initModel(this.savePointModel_800d5eb0, this.savepointTmd, this.savepointAnimation);
+    TmdObjLoader.fromModel("Savepoint", this.savePointModel_800d5eb0);
     this.savePoint_800d5598[0].rotation_28 = 0.0f;
     this.savePoint_800d5598[0].colour_34 = 0.3125f;
     this.savePoint_800d5598[1].rotation_28 = 0.0f;
@@ -4850,10 +4884,6 @@ public class SMap extends EngineState {
 
       final float x0 = offsetX + s0.vert0_00.x;
       final float y0 = offsetY + s0.vert0_00.y;
-      final float x1 = offsetX + s0.vert1_08.x;
-      final float y1 = offsetY + s0.vert1_08.y;
-      final float x2 = offsetX + s0.vert2_10.x;
-      final float y2 = offsetY + s0.vert2_10.y;
       final float x3 = offsetX + s0.vert3_18.x;
       final float y3 = offsetY + s0.vert3_18.y;
 
@@ -4889,21 +4919,10 @@ public class SMap extends EngineState {
         s0.z_40++;
       }
 
-      GPU.queueCommand(s0.z_40, new GpuCommandPoly(4)
-        .bpp(Bpp.of(this.texPages_800d6050[5] >>> 7 * 0b11))
-        .translucent(Translucency.B_PLUS_F)
-        .monochrome((int)(s0.colour_34 * 255.0f))
-        .clut((this.cluts_800d6068[5] & 0b111111) * 16, this.cluts_800d6068[5] >>> 6)
-        .vramPos((this.texPages_800d6050[5] & 0b1111) * 64, (this.texPages_800d6050[5] & 0b10000) != 0 ? 256 : 0)
-        .pos(0, x0, y0)
-        .uv(0, 160, 64)
-        .pos(1, x1, y1)
-        .uv(1, 191, 64)
-        .pos(2, x2, y2)
-        .uv(2, 160, 95)
-        .pos(3, x3, y3)
-        .uv(3, 191, 95)
-      );
+      s0.transforms.transfer.set(GPU.getOffsetX() + x0, GPU.getOffsetY() + y0, s0.z_40 * 4.0f);
+      RENDERER.queueOrthoModel(this.savepointObj, s0.transforms)
+        .vertices(i * 4, 4)
+        .monochrome(s0.colour_34);
     }
 
     final float sp80 = (minX - maxX) / 2.0f;
@@ -4949,33 +4968,14 @@ public class SMap extends EngineState {
       for(int s4 = 0; s4 < 4; s4++) {
         final SavePointRenderData44 struct = this.savePoint_800d5630[fp + s4];
 
-        final GpuCommandPoly cmd = new GpuCommandPoly(4)
-          .bpp(Bpp.of(this.texPages_800d6050[4] >>> 7 * 0b11))
-          .translucent(Translucency.B_PLUS_F)
-          .monochrome((int)(struct.colour_34 * 255.0f))
-          .clut((this.cluts_800d6068[4] & 0b111111) * 16, this.cluts_800d6068[4] >>> 6)
-          .vramPos((this.texPages_800d6050[4] & 0b1111) * 64, (this.texPages_800d6050[4] & 0b10000) != 0 ? 256 : 0)
-          .pos(0, struct.vert0_00.x, struct.vert0_00.y)
-          .pos(1, struct.vert0_00.x + 6.0f, struct.vert0_00.y)
-          .pos(2, struct.vert0_00.x, struct.vert0_00.y + 6.0f)
-          .pos(3, struct.vert0_00.x + 6.0f, struct.vert0_00.y + 6.0f);
+        struct.transforms.transfer.set(GPU.getOffsetX() + struct.vert0_00.x, GPU.getOffsetY() + struct.vert0_00.y, 164.0f);
+        final RenderEngine.QueuedModel<?> queuedModel = RENDERER.queueOrthoModel(this.savepointObj, struct.transforms)
+          .vertices(8, 4)
+          .monochrome(struct.colour_34);
 
-        if(s4 % 3 == 0) {
-          //LAB_800f30d8
-          cmd
-            .uv(0, 176, 48)
-            .uv(1, 183, 48)
-            .uv(2, 176, 55)
-            .uv(3, 183, 55);
-        } else {
-          cmd
-            .uv(0, 184, 48)
-            .uv(1, 191, 48)
-            .uv(2, 184, 55)
-            .uv(3, 191, 55);
+        if(s4 % 3 != 0) {
+          queuedModel.uvOffset(8, 0);
         }
-
-        GPU.queueCommand(41, cmd);
       }
 
       struct0.rotation_28 += MathHelper.psxDegToRad(this.savePointFloatiesRotations_800d6c88[fp]);
@@ -5241,6 +5241,11 @@ public class SMap extends EngineState {
   @Method(0x800f3b3cL)
   private void deallocateSavePoint() {
     this.hasSavePoint_800d5620 = false;
+
+    if(this.savepointObj != null) {
+      this.savepointObj.delete();
+      this.savepointObj = null;
+    }
   }
 
   @Method(0x800f3c98L)
