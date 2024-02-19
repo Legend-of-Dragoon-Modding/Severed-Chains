@@ -465,11 +465,11 @@ public class RenderEngine {
         }
 
         RENDERER.setProjectionMode(ProjectionMode._3D);
-        this.renderPool(this.modelPool);
+        this.renderPool(this.modelPool, true);
         this.renderShaderPool();
 
         RENDERER.setProjectionMode(ProjectionMode._2D);
-        this.renderPool(this.orthoPool);
+        this.renderPool(this.orthoPool, false);
 
         RENDERER.setProjectionMode(ProjectionMode._3D);
         this.renderPoolTranslucent(this.modelPool);
@@ -554,7 +554,7 @@ public class RenderEngine {
     }
   }
 
-  private void renderPool(final QueuePool<QueuedModel<VoidShaderOptions>> pool) {
+  private void renderPool(final QueuePool<QueuedModel<VoidShaderOptions>> pool, final boolean backFaceCulling) {
     if(pool.isEmpty()) {
       return;
     }
@@ -567,9 +567,14 @@ public class RenderEngine {
     glDepthMask(true);
 
     glDisable(GL_BLEND);
-    glEnable(GL_CULL_FACE);
 
-    boolean backfaceCulling = true;
+    if(backFaceCulling) {
+      glEnable(GL_CULL_FACE);
+    } else {
+      glDisable(GL_CULL_FACE);
+    }
+
+    boolean modelBackFaceCulling = true;
 
     this.tmdShader.use();
     this.tmdShaderOptions.discardMode(1);
@@ -614,10 +619,10 @@ public class RenderEngine {
       }
 
       if(entry.shouldRender(null)) {
-        if(backfaceCulling != entry.obj.useBackfaceCulling()) {
-          backfaceCulling = entry.obj.useBackfaceCulling();
+        if(backFaceCulling && modelBackFaceCulling != entry.obj.useBackfaceCulling()) {
+          modelBackFaceCulling = entry.obj.useBackfaceCulling();
 
-          if(backfaceCulling) {
+          if(modelBackFaceCulling) {
             glEnable(GL_CULL_FACE);
           } else {
             glDisable(GL_CULL_FACE);
@@ -637,8 +642,8 @@ public class RenderEngine {
           if(entry.shouldRender(translucency)) {
             this.tmdShaderOptions.translucency(translucency);
 
-            if(backfaceCulling) {
-              backfaceCulling = false;
+            if(backFaceCulling && modelBackFaceCulling) {
+              modelBackFaceCulling = false;
               glDisable(GL_CULL_FACE);
             }
 
