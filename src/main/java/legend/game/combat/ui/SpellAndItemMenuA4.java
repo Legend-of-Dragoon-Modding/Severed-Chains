@@ -30,9 +30,9 @@ public class SpellAndItemMenuA4 {
   /** ushort */
   public int _0e;
   /** ushort */
-  public int _10;
+  public int width_10;
   /** ushort */
-  public int _12;
+  public int height_12;
   /** ushort */
   public int _14;
   /** ushort */
@@ -126,8 +126,8 @@ public class SpellAndItemMenuA4 {
     this.menuType_0a = 0;
     this._0c = 0;
     this._0e = 0;
-    this._10 = 0;
-    this._12 = 0;
+    this.width_10 = 0;
+    this.height_12 = 0;
     this._14 = 0;
     this._16 = 0x1000;
     this.textX_18 = 0;

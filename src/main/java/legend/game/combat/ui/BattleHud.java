@@ -1410,8 +1410,8 @@ public class BattleHud {
     this.spellAndItemMenu_800c6b60.menuType_0a = (short)menuType;
     this.spellAndItemMenu_800c6b60._0c = 0x20;
     this.spellAndItemMenu_800c6b60._0e = 0x2b;
-    this.spellAndItemMenu_800c6b60._10 = 0;
-    this.spellAndItemMenu_800c6b60._12 = 0;
+    this.spellAndItemMenu_800c6b60.width_10 = 0;
+    this.spellAndItemMenu_800c6b60.height_12 = 0;
     this.spellAndItemMenu_800c6b60._14 = 0x1;
     this.spellAndItemMenu_800c6b60._16 = 0x1000;
     this.spellAndItemMenu_800c6b60.textX_18 = 0;
@@ -1475,8 +1475,8 @@ public class BattleHud {
       case 1 -> {
         this.spellAndItemMenu_800c6b60._90 = 0;
         this.spellAndItemMenu_800c6b60._a0 = 0;
-        this.spellAndItemMenu_800c6b60._12 = 0;
-        this.spellAndItemMenu_800c6b60._10 = 0;
+        this.spellAndItemMenu_800c6b60.height_12 = 0;
+        this.spellAndItemMenu_800c6b60.width_10 = 0;
 
         if(this.spellAndItemMenu_800c6b60.menuType_0a == 0) {
           this.spellAndItemMenu_800c6b60.listScroll_24 = this.spellAndItemMenu_800c6b60._26;
@@ -1821,18 +1821,18 @@ public class BattleHud {
       }
 
       case 7 -> {
-        if(this.spellAndItemMenu_800c6b60.menuType_0a != 0) {
-          s0 = 0x80;
+        if(this.spellAndItemMenu_800c6b60.menuType_0a == 1) {
+          s0 = 128;
         } else {
-          s0 = 0xba;
+          s0 = 186;
         }
 
         this.spellAndItemMenu_800c6b60.menuState_00 = 2;
         playSound(0, 4, 0, 0, (short)0, (short)0);
-        this.spellAndItemMenu_800c6b60._12 = 0x52;
-        this.spellAndItemMenu_800c6b60._10 = s0;
+        this.spellAndItemMenu_800c6b60.width_10 = s0;
+        this.spellAndItemMenu_800c6b60.height_12 = 82;
         this.spellAndItemMenu_800c6b60.textX_18 = (short)(this.spellAndItemMenu_800c6b60.x_04 - s0 / 2 + 9);
-        v0 = (this.spellAndItemMenu_800c6b60.y_06 - this.spellAndItemMenu_800c6b60._12) - 16;
+        v0 = (this.spellAndItemMenu_800c6b60.y_06 - this.spellAndItemMenu_800c6b60.height_12) - 16;
         this.spellAndItemMenu_800c6b60._1a = (short)v0;
         this.spellAndItemMenu_800c6b60._20 = (short)v0;
         this.spellAndItemMenu_800c6b60.flags_02 |= 0xb;
@@ -1842,7 +1842,7 @@ public class BattleHud {
         }
 
         //LAB_800f5588
-        if(this.spellAndItemMenu_800c6b60.menuType_0a != 0) {
+        if(this.spellAndItemMenu_800c6b60.menuType_0a == 1) {
           this.spellAndItemMenu_800c6b60.itemOrSpellId_1c = (short)this.getItemOrSpellId();
           this.spellAndItemMenu_800c6b60.player_08.setActiveSpell(this.spellAndItemMenu_800c6b60.itemOrSpellId_1c);
           this.addFloatingNumber(0, 1, 0, this.spellAndItemMenu_800c6b60.player_08.spell_94.mp_06, 280, 135, 0, 1);
@@ -1854,8 +1854,8 @@ public class BattleHud {
         this.spellAndItemMenu_800c6b60.itemTargetType_800c6b68 = 0;
         this.spellAndItemMenu_800c6b60._a0 = -1;
         this.spellAndItemMenu_800c6b60.menuState_00 = 9;
-        this.spellAndItemMenu_800c6b60._12 = 0;
-        this.spellAndItemMenu_800c6b60._10 = 0;
+        this.spellAndItemMenu_800c6b60.height_12 = 0;
+        this.spellAndItemMenu_800c6b60.width_10 = 0;
         this.spellAndItemMenu_800c6b60.flags_02 &= 0xfffc;
         this.clearFloatingNumber(0);
       }
@@ -1872,6 +1872,11 @@ public class BattleHud {
 
         //LAB_800f568c
         this.spellAndItemMenu_800c6b60.clear();
+
+        if(this.battleUiItemSpellList != null) {
+          this.battleUiItemSpellList.delete();
+          this.battleUiItemSpellList = null;
+        }
       }
     }
 
@@ -2085,11 +2090,11 @@ public class BattleHud {
       if((menu.flags_02 & 0x2) != 0) {
         //LAB_800f5ee8
         //Item menu
-        final int a2 = menu._10 + 6;
-        final int a3 = menu._12 + 17;
+        final int w = menu.width_10 + 6;
+        final int h = menu.height_12 + 17;
 
         if(this.battleUiItemSpellList == null) {
-          this.battleUiItemSpellList = new UiBox("Battle UI Item/Spell List", menu.x_04 - a2 / 2, menu.y_06 - a3, a2, a3);
+          this.battleUiItemSpellList = new UiBox("Battle UI Item/Spell List", menu.x_04 - w / 2, menu.y_06 - h, w, h);
         }
 
         this.battleUiItemSpellList.render(Config.changeBattleRgb() ? Config.getBattleRgb() : Config.defaultUiColour);
