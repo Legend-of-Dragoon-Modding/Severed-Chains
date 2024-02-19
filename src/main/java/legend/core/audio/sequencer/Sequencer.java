@@ -70,11 +70,12 @@ public final class Sequencer {
   private float mainVolumeLeft = 0.5f;
   private float mainVolumeRight = 0.5f;
   private Fading fading = Fading.NONE;
-  private int fadeInVolume;
-  private int fadeOutVolumeLeft;
-  private int fadeOutVolumeRight;
+  private float fadeInVolume;
+  private float fadeOutVolumeLeft;
+  private float fadeOutVolumeRight;
   private int fadeTime;
   private int fadeCounter;
+  private int effectsOverTimeCounter;
 
   private boolean volumeChanging;
   private int newVolume;
@@ -134,9 +135,14 @@ public final class Sequencer {
 
       this.tickSequence();
 
-      this.handleVolumeChanging();
+      this.effectsOverTimeCounter++;
+      if(this.effectsOverTimeCounter >= 735) {
+        this.handleVolumeChanging();
 
-      this.handleFadeInOut();
+        this.handleFadeInOut();
+
+        this.effectsOverTimeCounter = 0;
+      }
 
       this.voiceOutputBuffer[0] = 0;
       this.voiceOutputBuffer[1] = 0;
@@ -145,13 +151,13 @@ public final class Sequencer {
       this.voiceReverbBuffer[1] = 0;
 
       for(final Voice voice : this.voices) {
-        voice.tick(this.voiceOutputBuffer, this.voiceReverbBuffer);
+        voice.tick(this.voiceOutputBuffer, this.voiceReverbBuffer, this.effectsOverTimeCounter == 0);
       }
 
       this.reverb.processReverb(this.voiceReverbBuffer[0] / 32_768f, this.voiceReverbBuffer[1] / 32_768f);
 
-      this.outputBuffer[sample] = (short)MathHelper.clamp((int)((this.voiceOutputBuffer[0] + (this.reverb.getOutputLeft() * this.reverbVolumeLeft)) * this.mainVolumeLeft), -0x8000, 0x7fff);
-      this.outputBuffer[sample + 1] = (short)MathHelper.clamp((int)((this.voiceOutputBuffer[1] + (this.reverb.getOutputRight() * this.reverbVolumeRight)) * this.mainVolumeRight), -0x8000, 0x7fff);
+      this.outputBuffer[sample] = (short)MathHelper.clamp((int)((this.voiceOutputBuffer[0] + this.reverb.getOutputLeft() * this.reverbVolumeLeft * 0x8000) * this.mainVolumeLeft), -0x8000, 0x7fff);
+      this.outputBuffer[sample + 1] = (short)MathHelper.clamp((int)((this.voiceOutputBuffer[1] + this.reverb.getOutputRight() * this.reverbVolumeRight * 0x8000) * this.mainVolumeRight), -0x8000, 0x7fff);
     }
 
     this.bufferOutput();
@@ -430,7 +436,7 @@ public final class Sequencer {
     this.backgroundMusic.setTempo(tempoChange.getTempo());
   }
 
-  private void setReverbConfig(final ReverbConfig config) {
+  public void setReverbConfig(final ReverbConfig config) {
     this.reverb.setConfig(config);
   }
 
@@ -484,33 +490,36 @@ public final class Sequencer {
   }
 
   public void setMainVolume(final int left, final int right) {
-    this.mainVolumeLeft = left >= 0x80 ? 1 : left / 254f;
+    this.mainVolumeLeft = left >= 0x80 ? 1 : left / 256f;
 
-    this.mainVolumeRight = right >= 0x80 ? 1 : right / 254f;
+    this.mainVolumeRight = right >= 0x80 ? 1 : right / 256f;
   }
 
   private void handleFadeInOut() {
-    if(this.fadeTime == 0) {
+    if(this.fading == Fading.NONE) {
+      return;
+    }
+
+    if(this.fadeCounter >= this.fadeTime) {
+      this.fading = Fading.NONE;
+      this.fadeCounter = 0;
       return;
     }
 
     switch(this.fading) {
       case FADE_IN -> {
-        final int volume = (this.fadeInVolume * this.fadeCounter) / this.fadeTime;
+        final float volume = (this.fadeInVolume * this.fadeCounter) / this.fadeTime;
         this.fadeCounter++;
-        this.setMainVolume(volume, volume);
+        this.mainVolumeLeft = volume;
+        this.mainVolumeRight = volume;
       }
       case FADE_OUT -> {
-        final int volumeLeft = (this.fadeOutVolumeLeft * (this.fadeTime - this.fadeCounter)) / this.fadeTime;
-        final int volumeRight = (this.fadeOutVolumeRight * (this.fadeTime - this.fadeCounter)) / this.fadeTime;
+        final float volumeLeft = (this.fadeOutVolumeLeft * (this.fadeTime - this.fadeCounter)) / this.fadeTime;
+        final float volumeRight = (this.fadeOutVolumeRight * (this.fadeTime - this.fadeCounter)) / this.fadeTime;
         this.fadeCounter++;
-        this.setMainVolume(volumeLeft, volumeRight);
+        this.mainVolumeLeft = volumeLeft;
+        this.mainVolumeRight = volumeRight;
       }
-    }
-
-    if(this.fadeCounter > this.fadeTime) {
-      this.fading = Fading.NONE;
-      this.fadeCounter = 0;
     }
   }
 
@@ -537,14 +546,16 @@ public final class Sequencer {
 
   public void fadeIn(final int time, final int volume) {
     this.fadeTime = time;
-    this.fadeInVolume = volume;
+    this.fadeInVolume = volume / 256f;
+    this.fadeCounter = 0;
     this.fading = Fading.FADE_IN;
   }
 
   public void fadeOut(final int time) {
     this.fadeTime = time;
-    this.fadeOutVolumeLeft = (int)(this.mainVolumeLeft * 0x7e);
-    this.fadeOutVolumeRight = (int)(this.mainVolumeRight * 0x7e);
+    this.fadeOutVolumeLeft = this.mainVolumeLeft;
+    this.fadeOutVolumeRight = this.mainVolumeRight;
+    this.fadeCounter = 0;
     this.fading = Fading.FADE_OUT;
   }
 
@@ -568,11 +579,15 @@ public final class Sequencer {
 
   public void startSequence() {
     this.playing = true;
+    this.effectsOverTimeCounter = 0;
   }
 
   public void stopSequence() {
     this.playing = false;
     alSourceStop(this.sourceId);
+    this.volumeChanging = false;
+    this.volumeChangingTimeRemaining = 0;
+    this.volumeChangingTimeTotal = 0;
 
     for(final Voice voice : this.voices) {
       voice.clear();
@@ -615,6 +630,20 @@ public final class Sequencer {
     this.volumeChangingTimeRemaining = time;
 
     return this.oldVolume;
+  }
+
+  public int getVolumeOverTimeFlags() {
+    int flags = 0;
+
+    if(this.volumeChanging) {
+      if(this.newVolume < this.oldVolume) {
+        flags |= 0x4;
+      } else {
+        flags |= 0x8;
+      }
+    }
+
+    return flags;
   }
 
   public boolean isPlaying() {

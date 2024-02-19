@@ -4,6 +4,7 @@ import legend.core.DebugHelper;
 import legend.core.audio.opus.XaPlayer;
 import legend.core.audio.sequencer.Sequencer;
 import legend.core.audio.sequencer.assets.BackgroundMusic;
+import legend.game.sound.ReverbConfig;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -174,5 +175,12 @@ public final class AudioThread implements Runnable {
 
   public synchronized boolean isMusicPlaying() {
     return this.sequencer.isPlaying();
+  }
+  public synchronized void setReverb(final ReverbConfig config) {
+    this.sequencer.setReverbConfig(config);
+  }
+
+  public synchronized int getSequenceVolumeOverTimeFlags() {
+    return this.sequencer.getVolumeOverTimeFlags();
   }
 }

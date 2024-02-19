@@ -1,6 +1,7 @@
 package legend.game;
 
 import legend.core.MathHelper;
+import legend.core.audio.AudioThread;
 import legend.core.memory.Method;
 import legend.core.spu.Voice;
 import legend.game.combat.Battle;
@@ -554,6 +555,7 @@ public final class Scus94491BpeSegment_8004 {
       SPU.setReverbMode(0);
       SPU.enableReverb();
       SPU.setReverb(reverbConfigs_80059f7c[type - 1].config_02);
+      AUDIO_THREAD.setReverb(reverbConfigs_80059f7c[type - 1].config_02);
       return;
     }
 
@@ -573,7 +575,7 @@ public final class Scus94491BpeSegment_8004 {
     if(soundEnv_800c6630.reverbType_34 != 0 && left < 0x80 && right < 0x80) {
       //LAB_8004c5d0
       SPU.setReverbVolume(left << 8, right << 8);
-      AUDIO_THREAD.setReverbVolume(left << 8, right << 8);
+      AUDIO_THREAD.setReverbVolume(left, right);
     }
 
     //LAB_8004c5d8
@@ -912,24 +914,25 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004d52cL)
-  public static int getSequenceFlags(final SequenceData124 sequenceData) {
+  public static int getSequenceFlags(@Nullable final SequenceData124 sequenceData) {
     int flags = 0;
 
-    if(sequenceData.musicPlaying_028) {
+    if(sequenceData != null) {
+      throw new RuntimeException("getSequenceFlags 0x8004d52cL sequence not null");
+    }
+
+    if(AUDIO_THREAD.isMusicPlaying()) {
       flags |= 0x1;
     }
 
+    // TODO I have no idea what this is.
+    /*
     if(sequenceData._0e8) {
       flags |= 0x2;
     }
+    */
 
-    if(sequenceData.volumeIsChanging_03c) {
-      if(!sequenceData.volumeIsDecreasing_03a) {
-        flags |= 0x4;
-      } else {
-        flags |= 0x8;
-      }
-    }
+    flags |= AUDIO_THREAD.getSequenceVolumeOverTimeFlags();
 
     final SoundEnv44 soundEnv = soundEnv_800c6630;
 

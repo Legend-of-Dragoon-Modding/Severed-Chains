@@ -60,12 +60,14 @@ final class Voice {
     this.counter = new VoiceCounter(interpolationBitDepth);
   }
 
-  void tick(final int[] output, final int[] reverb) {
+  void tick(final int[] output, final int[] reverb, final boolean effectsOverTime) {
     if(!this.used) {
       return;
     }
 
-    this.handleModulation();
+    if(effectsOverTime) {
+      this.handleModulation();
+    }
 
     this.adsrEnvelope.tick();
 

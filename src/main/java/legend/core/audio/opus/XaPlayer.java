@@ -4,7 +4,6 @@ import legend.game.unpacker.FileData;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.util.opus.OpusFile;
 
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 
@@ -64,6 +63,7 @@ public final class XaPlayer {
     this.opusFileData = BufferUtils.createByteBuffer(fileData.size());
     this.opusFileData.put(fileData.data());
     this.opusFileData.rewind();
+    this.samplesRead = 0;
 
     this.opusFile = OpusFile.op_open_memory(this.opusFileData, null);
 
