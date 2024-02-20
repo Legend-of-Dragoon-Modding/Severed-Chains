@@ -34,7 +34,7 @@ public final class XaPlayer {
   private ShortBuffer pcmBuffer;
 
   /** Use powers of 2 to avoid % operator */
-  private static final int BUFFER_COUNT = 4;
+  private static final int BUFFER_COUNT = 8;
   private final int[] buffers = new int[BUFFER_COUNT];
   private int bufferIndex;
   private final int sourceId;
@@ -95,7 +95,7 @@ public final class XaPlayer {
       return false;
     }
 
-    return alGetSourcei(this.sourceId, AL_BUFFERS_QUEUED) < 4;
+    return alGetSourcei(this.sourceId, AL_BUFFERS_QUEUED) < 6;
   }
 
   public void tick() {

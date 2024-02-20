@@ -62,7 +62,7 @@ public final class Sequencer {
   private float reverbVolumeRight = 0x3000 / 32_768f;
 
   /** Use powers of 2 to avoid % operator */
-  private static final int BUFFER_COUNT = 4;
+  private static final int BUFFER_COUNT = 8;
   private final int[] buffers = new int[BUFFER_COUNT];
   private int bufferIndex;
   private final int sourceId;
@@ -172,7 +172,7 @@ public final class Sequencer {
       return false;
     }
 
-    return alGetSourcei(this.sourceId, AL_BUFFERS_QUEUED) < 4;
+    return alGetSourcei(this.sourceId, AL_BUFFERS_QUEUED) < 6;
   }
 
   private void clearFinishedVoices() {
