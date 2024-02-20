@@ -2,6 +2,8 @@ package legend.core.audio.sequencer.assets;
 
 import legend.game.unpacker.FileData;
 
+import javax.annotation.Nullable;
+
 public final class SoundFont {
   private final Instrument[] instruments;
 
@@ -21,7 +23,12 @@ public final class SoundFont {
     }
   }
 
+  @Nullable
   Instrument getInstrument(final int index) {
+    if(index >= this.instruments.length || index < 0) {
+      return null;
+    }
+
     return this.instruments[index];
   }
 }
