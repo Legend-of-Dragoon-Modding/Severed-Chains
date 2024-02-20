@@ -189,8 +189,10 @@ public final class BackgroundMusic {
     }
   }
 
-  public void rewind() {
+  public boolean rewind() {
     this.sequencePosition = 0;
+
+    return this.repeat;
   }
 
   public boolean handleRepeat() {

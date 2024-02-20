@@ -168,7 +168,7 @@ public final class Sequencer {
   }
 
   public boolean canBuffer() {
-    if(!this.playing || this.backgroundMusic == null) {
+    if(!this.playing) {
       return false;
     }
 
@@ -446,7 +446,9 @@ public final class Sequencer {
   }
 
   private void endOfTrack(final EndOfTrack endOfTrack) {
-    this.backgroundMusic.rewind();
+    if(!this.backgroundMusic.rewind()) {
+      this.backgroundMusic = null;
+    }
   }
 
   public void processBuffers() {
