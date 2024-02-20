@@ -1,4 +1,4 @@
-#version 420 core
+#version 330 core
 
 // shader inputs
 smooth in vec2 vertUv;
