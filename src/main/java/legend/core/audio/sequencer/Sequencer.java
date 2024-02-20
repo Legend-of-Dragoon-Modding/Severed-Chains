@@ -578,9 +578,11 @@ public final class Sequencer {
   }
 
   public void startSequence() {
-    this.playing = true;
-    this.effectsOverTimeCounter = 0;
-    this.samplesToProcess = 0;
+    if(!this.playing) {
+      this.playing = true;
+      this.effectsOverTimeCounter = 0;
+      this.samplesToProcess = 0;
+    }
   }
 
   public void stopSequence() {
