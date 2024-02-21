@@ -554,6 +554,12 @@ public final class Sequencer {
   }
 
   public void fadeOut(final int time) {
+    if(!this.playing) {
+      this.mainVolumeLeft = 0;
+      this.mainVolumeRight = 0;
+      return;
+    }
+
     this.fadeTime = time;
     this.fadeOutVolumeLeft = this.mainVolumeLeft;
     this.fadeOutVolumeRight = this.mainVolumeRight;
@@ -593,6 +599,10 @@ public final class Sequencer {
     this.volumeChanging = false;
     this.volumeChangingTimeRemaining = 0;
     this.volumeChangingTimeTotal = 0;
+
+    this.fading = Fading.NONE;
+    this.fadeCounter = 0;
+    this.fadeTime = 0;
 
     for(final Voice voice : this.voices) {
       voice.clear();

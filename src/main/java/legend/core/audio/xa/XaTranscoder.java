@@ -100,7 +100,7 @@ public class XaTranscoder {
         this.encodeOpusData();
       }
 
-      transformations.addNode(node.fullPath + '\\' + track + ".opus", new FileData(this.opusFile.toBytes()));
+      transformations.addNode(node.fullPath + '/' + track + ".opus", new FileData(this.opusFile.toBytes()));
     }
 
     Opus.opus_encoder_destroy(this.encoder);

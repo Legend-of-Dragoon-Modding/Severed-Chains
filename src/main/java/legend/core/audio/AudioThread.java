@@ -134,6 +134,7 @@ public final class AudioThread implements Runnable {
   }
 
   public synchronized void setMainVolume(final int left, final int right) {
+    LOGGER.info("Setting main volume to %.2f, %.2f", left / 256f, right / 256f);
     this.sequencer.setMainVolume(left, right);
   }
 
@@ -142,10 +143,12 @@ public final class AudioThread implements Runnable {
   }
 
   public synchronized int setSequenceVolume(final int volume) {
+    LOGGER.info("Setting sequence volume to %.2f", volume / 128f);
     return this.sequencer.setSequenceVolume(volume);
   }
 
   public synchronized int changeSequenceVolumeOverTime(final int volume, final int time) {
+    LOGGER.info("Setting sequence volume to %.2f over %.2fs", volume / 128f, time / 60f);
     return this.sequencer.changeSequenceVolumeOverTime(volume, time);
   }
 
@@ -154,18 +157,22 @@ public final class AudioThread implements Runnable {
   }
 
   public synchronized void fadeIn(final int time, final int volume) {
+    LOGGER.info("Fading in to %.2f for %.2fs", volume / 256f, time / 60f);
     this.sequencer.fadeIn(time, volume);
   }
 
   public synchronized void fadeOut(final int time) {
+    LOGGER.info("Fading out for %.2fs", time / 60f);
     this.sequencer.fadeOut(time);
   }
 
   public synchronized void startSequence() {
+    LOGGER.info("Starting sequence");
     this.sequencer.startSequence();
   }
 
   public synchronized void stopSequence() {
+    LOGGER.info("Stopping sequence");
     this.sequencer.stopSequence();
   }
 
