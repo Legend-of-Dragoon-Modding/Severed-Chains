@@ -85,7 +85,11 @@ public final class BackgroundMusic {
     }
 
     for(int i = 0; i < this.breathControls.length; i++) {
-      this.breathControls[i] = sshd.slice(subfileOffsets[2] + sshd.readUShort(2 + i * 2 + subfileOffsets[2]), 0x40).getBytes();
+      final int relativeOffset = sshd.readShort(2 + i * 2 + subfileOffsets[2]);
+
+      if(relativeOffset != -1) {
+        this.breathControls[i] = sshd.slice(subfileOffsets[2] + relativeOffset, 0x40).getBytes();
+      }
     }
   }
 

@@ -19,6 +19,8 @@ public final class SoundTest {
 
     audioThread.loadBackgroundMusic(bgm);
 
+    audioThread.startSequence();
+
     DebugHelper.sleep(SECONDS * 1000);
 
     audioThread.stop();
