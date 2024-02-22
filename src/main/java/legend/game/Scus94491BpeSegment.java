@@ -2519,10 +2519,9 @@ public final class Scus94491BpeSegment {
         case 0xd -> 697;
         case 0xe -> 698;
         case 0xf -> 699;
-        case 0x13 -> 732;
         case 0x56 -> 700;
         case 0x58 -> 701;
-        default -> -1;
+        default -> parseMelbuVictory(stageData.musicIndex_04 & 0x1f);
       };
 
       loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x4000);
@@ -2545,6 +2544,14 @@ public final class Scus94491BpeSegment {
     }
 
     loadMonsterSounds();
+  }
+
+  private static int parseMelbuVictory(final int musicIndex) {
+    if (musicIndex == 0x13) {
+      return 732;
+    }
+
+    return -1;
   }
 
   public static String getCharacterName(final int id) {
