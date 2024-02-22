@@ -95,7 +95,9 @@ public final class AudioThread implements Runnable {
       final boolean canXaBuffer = this.xaPlayer.canBuffer();
 
       if(canBgmBuffer) {
-        this.sequencer.tick();
+        synchronized(this) {
+          this.sequencer.tick();
+        }
       }
 
       if(canXaBuffer) {
