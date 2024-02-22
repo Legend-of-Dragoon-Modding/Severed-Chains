@@ -38,6 +38,7 @@ lod-core.config.quick_text.label=Quick Text
 lod-core.config.auto_text.label=Automatic Text Advance
 lod-core.config.save_anywhere.label=Save Anywhere
 lod-core.config.disable_status_effects.label=Disable Status Effects
+lod-core.config.enemy_hp_bars.label=Enemy HP Bars
 
 lod-core.keybind.help=Press DEL when done
 lod-core.keybind.missing_input=Missing required input

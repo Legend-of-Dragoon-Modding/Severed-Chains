@@ -1,16 +1,23 @@
 package legend.game.combat.bent;
 
+import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.game.characters.Element;
 import legend.game.characters.ElementSet;
+import legend.game.characters.VitalsStat;
 import legend.game.combat.types.AttackType;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptFile;
+import legend.game.scripting.ScriptState;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
+import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.RENDERER;
 import static legend.game.combat.Battle.applyBuffOrDebuff;
 import static legend.game.combat.Battle.applyMagicDamageMultiplier;
 import static legend.game.combat.Battle.spellStats_800fa0b8;
+import static legend.game.combat.SEffe.transformToScreenSpace;
 
 public class MonsterBattleEntity extends BattleEntity27c {
   public Element displayElement_1c;
@@ -99,6 +106,53 @@ public class MonsterBattleEntity extends BattleEntity27c {
     //LAB_800f87d0
     //LAB_800f8844
     return matk * matk * 5 / target.getEffectiveMagicDefence();
+  }
+
+  @Override
+  protected void bentRenderer(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
+    super.bentRenderer(state, bent);
+
+    if((state.storage_44[7] & 0xa11) == 0 && CONFIG.getConfig(CoreMod.ENEMY_HP_BARS_CONFIG.get())) {
+      final VitalsStat stat = bent.stats.getStat(CoreMod.HP_STAT.get());
+      final float hp = (float)stat.getCurrent() / stat.getMax();
+
+      if(hp != 0.0f) {
+        final float r;
+        final float g;
+        final float b;
+        if(hp <= 0.25f) {
+          r = 0.85f;
+          g = 0.0f;
+          b = 0.0f;
+        } else if(hp <= 0.5f) {
+          r = 0.85f;
+          g = 0.85f;
+          b = 0.0f;
+        } else {
+          r = 0.0f;
+          g = 0.0f;
+          b = 0.85f;
+        }
+
+        final Vector2f screenspace = new Vector2f();
+        if(transformToScreenSpace(screenspace, this.model_148.coord2_14.coord.transfer) != 0) {
+          final MV transforms = new MV();
+          transforms.transfer.set(screenspace.x - 13.0f, screenspace.y + 7.0f, 124.0f);
+          transforms.scaling(26.0f, 4.0f, 1.0f);
+          RENDERER
+            .queueOrthoModel(RENDERER.opaqueQuad, transforms)
+            .screenspaceOffset(160.0f, 120.0f)
+            .monochrome(0.0f);
+
+          transforms.transfer.set(screenspace.x - 12.0f, screenspace.y + 8.0f, 120.0f);
+          transforms.scaling(24.0f * hp, 2.0f, 1.0f);
+          RENDERER
+            .queueOrthoModel(RENDERER.opaqueQuad, transforms)
+            .screenspaceOffset(160.0f, 120.0f)
+            .colour(r, g, b);
+        }
+      }
+    }
   }
 
   @Override

@@ -580,7 +580,7 @@ public abstract class BattleEntity27c extends BattleObject {
   }
 
   @Method(0x800cafb4L)
-  private void bentTicker(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
+  protected void bentTicker(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
     if((state.storage_44[7] & 0x211) == 0) {
       applyModelRotationAndScale(this.model_148);
 
@@ -594,7 +594,7 @@ public abstract class BattleEntity27c extends BattleObject {
   }
 
   @Method(0x800cb024L)
-  private void bentRenderer(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
+  protected void bentRenderer(final ScriptState<? extends BattleEntity27c> state, final BattleEntity27c bent) {
     if((state.storage_44[7] & 0x211) == 0) {
       this.renderBttlModel(this.model_148);
     }
