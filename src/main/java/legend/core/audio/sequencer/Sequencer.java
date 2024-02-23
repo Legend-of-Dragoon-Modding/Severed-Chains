@@ -98,8 +98,8 @@ public final class Sequencer {
 
     this.stereo = stereo;
 
-    if(interpolationBitDepth > 12) {
-      throw new IllegalArgumentException("Interpolation Bit Depth must be less or equal to 12");
+    if(interpolationBitDepth > LookupTables.VOICE_COUNTER_BIT_PRECISION) {
+      throw new IllegalArgumentException("Interpolation Bit Depth must be less or equal to %d".formatted(LookupTables.VOICE_COUNTER_BIT_PRECISION));
     }
 
     final LookupTables lookupTables = new LookupTables(interpolationBitDepth);

@@ -1,7 +1,8 @@
 package legend.core.audio.sequencer;
 
 final class LookupTables {
-  private static final int BASE_SAMPLE_RATE = 0x1000;
+  public static final int VOICE_COUNTER_BIT_PRECISION = 24;
+  private static final int BASE_SAMPLE_RATE = 1 << VOICE_COUNTER_BIT_PRECISION;
   private final int[] sampleRates = new int[64 * 12];
   private final float[][] interpolationWeights;
   private final int[] pan = {
