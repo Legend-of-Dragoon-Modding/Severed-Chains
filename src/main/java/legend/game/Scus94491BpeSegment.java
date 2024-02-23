@@ -2977,7 +2977,7 @@ public final class Scus94491BpeSegment {
 
   @ScriptDescription("Load a music package")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "musicIndex", description = "The music index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "dontStartSequence", description = "If set, the sequence doesn't start after loading")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "dontStartSequence", description = "If true, the sequence will not be started automatically")
   @Method(0x8001f450L)
   public static FlowControl scriptLoadMusicPackage(final RunningScript<?> script) {
     unloadSoundFile(8);
@@ -2990,7 +2990,7 @@ public final class Scus94491BpeSegment {
 
   @ScriptDescription("Loads sounds for the final battle")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "battleProgress", description = "The current stage of the multi-stage final fight (0-3)")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "dontStartSequence", description = "If set, the sequence doesn't start after loading")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "dontStartSequence", description = "If true, the sequence will not be started automatically")
   @Method(0x8001f560L)
   public static FlowControl scriptLoadFinalBattleSounds(final RunningScript<?> script) {
     unloadSoundFile(8);
@@ -3003,7 +3003,7 @@ public final class Scus94491BpeSegment {
 
   @ScriptDescription("Loads sounds for a cutscene")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "cutsceneIndex", description = "The cutscene index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "dontStartSequence", description = "If set, the sequence doesn't start after loading")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.BOOL, name = "dontStartSequence", description = "If true, the sequence will not be started automatically")
   @Method(0x8001f674L)
   public static FlowControl scriptLoadCutsceneSounds(final RunningScript<?> script) {
     unloadSoundFile(8);
@@ -3028,7 +3028,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001f810L)
-  public static void loadExtraSoundbanks() {
+  public static void loadExtraSoundbanks(final boolean startSequence) {
     final String[] files = new String[soundFiles_800bcf80[11].numberOfExtraSoundbanks_18];
 
     //LAB_8001f860
@@ -3036,26 +3036,28 @@ public final class Scus94491BpeSegment {
       files[extraSoundbankIndex] = Integer.toString(musicFileIndex_800bd0fc + extraSoundbankIndex + 1);
     }
 
-    loadDrgnFiles(0, Scus94491BpeSegment::extraSoundbanksLoaded, files);
+    loadDrgnFiles(0, f -> extraSoundbanksLoaded(f, startSequence), files);
 
     //LAB_8001f8b4
     musicLoaded_800bd782 = true;
   }
 
-  private static void extraSoundbanksLoaded(final List<FileData> files) {
+  private static void extraSoundbanksLoaded(final List<FileData> files, final boolean startSequence) {
     int offset = 0x2_1f70 + soundFiles_800bcf80[11].spuRamOffset_14;
     for(final FileData file : files) {
       SPU.directWrite(offset, file.getBytes());
       offset += file.size();
     }
 
-    startMusicSequence(currentSequenceData_800bd0f8);
+    if(startSequence) {
+      startMusicSequence(currentSequenceData_800bd0f8);
+    }
+
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_ff7f);
   }
 
   @Method(0x8001fa18L)
   public static void FUN_8001fa18() {
-    startMusicSequence(currentSequenceData_800bd0f8);
     sssqTempo_800bd104 = sssqGetTempo(currentSequenceData_800bd0f8) * sssqTempoScale_800bd100;
     sssqSetTempo(currentSequenceData_800bd0f8, sssqTempo_800bd104 >> 8);
 
