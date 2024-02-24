@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 final class Reverberizer {
   private final Reverb reverb = new Reverb();
-  private final float[] reverbWorkArea = new float[0x40_000];
+  private final float[] reverbWorkArea = new float[0x2_0000];
   private int reverbCurrentAddress;
 
   private float outputLeft;

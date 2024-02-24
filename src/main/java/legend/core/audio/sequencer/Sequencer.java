@@ -28,6 +28,7 @@ import org.apache.logging.log4j.MarkerManager;
 import java.util.HashMap;
 import java.util.Map;
 
+import static legend.core.audio.AudioThread.ACTUAL_SAMPLE_RATE;
 import static legend.game.Scus94491BpeSegment_8005.reverbConfigs_80059f7c;
 import static org.lwjgl.openal.AL10.AL_BUFFERS_PROCESSED;
 import static org.lwjgl.openal.AL10.AL_BUFFERS_QUEUED;
@@ -48,6 +49,7 @@ import static org.lwjgl.openal.AL10.alSourceUnqueueBuffers;
 public final class Sequencer {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
   private static final Marker SEQUENCER_MARKER = MarkerManager.getMarker("SEQUENCER");
+  private static final int EFFECT_OVER_TIME_SAMPLES = ACTUAL_SAMPLE_RATE / 60;
   // TODO switch between mono and stereo
   private final boolean stereo;
   private final Voice[] voices;
@@ -90,11 +92,11 @@ public final class Sequencer {
   private boolean playing;
 
   public Sequencer(final int frequency, final boolean stereo, final int voiceCount, final int interpolationBitDepth) {
-    if(44_100 % frequency != 0) {
+    if(ACTUAL_SAMPLE_RATE % frequency != 0) {
       throw new IllegalArgumentException("Sample Rate (44_100) is not divisible by frequency");
     }
 
-    this.outputBuffer = new short[(44_100 / frequency) * 2];
+    this.outputBuffer = new short[(ACTUAL_SAMPLE_RATE / frequency) * 2];
 
     this.stereo = stereo;
 
@@ -136,7 +138,7 @@ public final class Sequencer {
       this.tickSequence();
 
       this.effectsOverTimeCounter++;
-      if(this.effectsOverTimeCounter >= 735) {
+      if(this.effectsOverTimeCounter >= EFFECT_OVER_TIME_SAMPLES) {
         this.handleVolumeChanging();
 
         this.handleFadeInOut();
@@ -464,7 +466,7 @@ public final class Sequencer {
 
   private void bufferOutput() {
     final int bufferId = this.buffers[this.bufferIndex++];
-    alBufferData(bufferId, AL_FORMAT_STEREO16, this.outputBuffer, 44_100);
+    alBufferData(bufferId, AL_FORMAT_STEREO16, this.outputBuffer, ACTUAL_SAMPLE_RATE);
     alSourceQueueBuffers(this.sourceId, bufferId);
     this.bufferIndex &= BUFFER_COUNT - 1;
   }

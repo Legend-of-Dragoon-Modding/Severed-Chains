@@ -7,7 +7,11 @@ import legend.game.unpacker.Unpacker;
 
 import java.util.List;
 
+import static legend.core.audio.AudioThread.ACTUAL_SAMPLE_RATE;
+
+
 public final class BackgroundMusic {
+  private static final double TEMPO_TICKS = ACTUAL_SAMPLE_RATE * 60;
   private final int songId;
 
   private int volume;
@@ -127,7 +131,7 @@ public final class BackgroundMusic {
   }
 
   public void setTempo(final int tempo) {
-    this.samplesPerTick = 2_646_000d / (tempo * this.tickPerQuarterNote);
+    this.samplesPerTick = TEMPO_TICKS / (tempo * this.tickPerQuarterNote);
   }
 
   public double getSamplesPerTick() {

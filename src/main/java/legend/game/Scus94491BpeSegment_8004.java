@@ -384,7 +384,7 @@ public final class Scus94491BpeSegment_8004 {
     final SoundEnv44 soundEnv = soundEnv_800c6630;
 
     //LAB_8004b8ac
-    soundEnv.playingSoundsUpperBound_03 = 8;
+    soundEnv.playingSoundsUpperBound_03 = 20;
     soundEnv._00 = 0;
     soundEnv._0d = 0;
     soundEnv.ticksPerSecond_42 = 60;

@@ -1,8 +1,10 @@
 package legend.core.audio.sequencer;
 
+import static legend.core.audio.AudioThread.SAMPLE_RATE_RATIO;
+
 final class LookupTables {
   public static final int VOICE_COUNTER_BIT_PRECISION = 24;
-  private static final int BASE_SAMPLE_RATE = 1 << VOICE_COUNTER_BIT_PRECISION;
+  private static final double BASE_SAMPLE_RATE_VALUE = (1 << VOICE_COUNTER_BIT_PRECISION) * SAMPLE_RATE_RATIO;
   private final int[] sampleRates = new int[64 * 12];
   private final float[][] interpolationWeights;
   private final int[] pan = {
@@ -45,7 +47,7 @@ final class LookupTables {
 
   LookupTables(final int interpolationBitDepth) {
     for(int i = 0; i < this.sampleRates.length; i++) {
-      this.sampleRates[i] = (int)Math.round(BASE_SAMPLE_RATE * Math.pow(2, i / (double)this.sampleRates.length));
+      this.sampleRates[i] = (int)Math.round(BASE_SAMPLE_RATE_VALUE * Math.pow(2, i / (double)this.sampleRates.length));
     }
 
     final int interpolationStep = 1 << interpolationBitDepth;
