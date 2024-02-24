@@ -39,12 +39,13 @@ import legend.game.sound.SoundFileIndices;
 import legend.game.sound.SpuStruct08;
 import legend.game.sound.Sshd;
 import legend.game.sound.Sssq;
+import legend.game.types.BattleUiParts;
 import legend.game.types.CharacterData2c;
 import legend.game.types.Flags;
 import legend.game.types.McqHeader;
 import legend.game.types.OverlayStruct;
-import legend.game.types.Struct0e;
-import legend.game.types.Struct10;
+import legend.game.types.BattleReportOverlay0e;
+import legend.game.types.BattleReportOverlayList10;
 import legend.game.types.TextboxBorderMetrics0c;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
@@ -87,7 +88,7 @@ import static legend.game.Scus94491BpeSegment_8003.GsSwapDispBuff;
 import static legend.game.Scus94491BpeSegment_8003.setDrawOffset;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004._8004dd48;
-import static legend.game.Scus94491BpeSegment_8004._8004f658;
+import static legend.game.Scus94491BpeSegment_8004.battleReportOverlayLists_8004f658;
 import static legend.game.Scus94491BpeSegment_8004._8004f6e4;
 import static legend.game.Scus94491BpeSegment_8004.battleStartDelayTicks_8004f6ec;
 import static legend.game.Scus94491BpeSegment_8004.changeSequenceVolumeOverTime;
@@ -193,7 +194,9 @@ public final class Scus94491BpeSegment {
   public static BattlePreloadedEntities_18cb0 battlePreloadedEntities_1f8003f4;
   public static float projectionPlaneDistance_1f8003f8;
 
-  public static final int[] levelUpUs_8001032c = {0xc8, 0xd0, 0xd8, 0xd0, 0xc8, 0xe0, 0xe8, 0xf0};
+  public static final BattleUiParts battleUiParts = new BattleUiParts();
+
+  public static final int[] levelUpUs_8001032c = {200, 208, 216, 208, 200, 224, 232, 240};
   public static final int[] levelUpOffsets_80010334 = {8, 8, 8, 8, 15, 8, 8, 0};
 
   public static final Rect4i[] rectArray28_80010770 = {
@@ -1220,50 +1223,19 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x80018a5cL)
-  public static void renderButtonPressHudElement(final int x, final int y, final int leftU, final int topV, final int rightU, final int bottomV, final int clutOffset, @Nullable final Translucency transMode, final int brightness, final int widthStretch, final int heightStretch) {
+  public static void renderButtonPressHudElement(final int x, final int y, final int leftU, final int topV, final int rightU, final int bottomV, final int packedClut, @Nullable final Translucency transMode, final int brightness, final float widthScale, final float heightScale) {
     final int w = Math.abs(rightU - leftU);
     final int h = Math.abs(bottomV - topV);
 
-    final GpuCommandPoly cmd = new GpuCommandPoly(4)
-      .monochrome(brightness);
+    final float left = x + w / 2.0f;
+    final float top = y + h / 2.0f;
+    final float offsetX = w * widthScale / 2.0f;
+    final float offsetY = h * heightScale / 2.0f;
 
-    if(transMode != null) {
-      cmd.translucent(transMode);
-    }
-
-    //LAB_80018b38
-    if(widthStretch != 0x1000 || heightStretch != 0x1000) {
-      //LAB_80018b90
-      final int left = x + w / 2;
-      final int top = y + h / 2;
-      final int offsetX = w * widthStretch / 2 >> 12;
-      final int offsetY = h * heightStretch / 2 >> 12;
-
-      cmd
-        .pos(0, left - offsetX, top - offsetY)
-        .pos(1, left + offsetX, top - offsetY)
-        .pos(2, left - offsetX, top + offsetY)
-        .pos(3, left + offsetX, top + offsetY);
-    } else {
-      //LAB_80018c38
-      cmd
-        .pos(0, x, y)
-        .pos(1, x + w, y)
-        .pos(2, x, y + h)
-        .pos(3, x + w, y + h);
-    }
-
-    //LAB_80018c60
-    cmd
-      .uv(0, leftU, topV)
-      .uv(1, rightU, topV)
-      .uv(2, leftU, bottomV)
-      .uv(3, rightU, bottomV);
-
-    final int clutOffsetX = clutOffset / 16;
-    final int clutOffsetY = clutOffset % 16;
-    final int clutY;
+    final int clutOffsetX = packedClut / 16;
+    final int clutOffsetY = packedClut % 16;
     final int clutX;
+    final int clutY;
     if(clutOffsetX >= 4) {
       clutX = clutOffsetX * 16 + 832;
       clutY = clutOffsetY + 304;
@@ -1272,190 +1244,187 @@ public final class Scus94491BpeSegment {
       clutY = clutOffsetY + 496;
     }
 
-    //LAB_80018cf0
-    cmd
+    final GpuCommandPoly cmd = new GpuCommandPoly(4)
       .bpp(Bpp.BITS_4)
       .clut(clutX & 0x3f0, clutY)
-      .vramPos(704, 256);
+      .vramPos(704, 256)
+      .monochrome(brightness)
+      .pos(0, left - offsetX, top - offsetY)
+      .pos(1, left + offsetX, top - offsetY)
+      .pos(2, left - offsetX, top + offsetY)
+      .pos(3, left + offsetX, top + offsetY)
+      .uv(0, leftU, topV)
+      .uv(1, rightU, topV)
+      .uv(2, leftU, bottomV)
+      .uv(3, rightU, bottomV);
+
+    if(transMode != null) {
+      cmd.translucent(transMode);
+    }
 
     GPU.queueCommand(2, cmd);
   }
 
   @Method(0x80018d60L)
-  public static void renderButtonPressHudTexturedRect(final int x, final int y, final int u, final int v, final int width, final int height, final int clutOffset, @Nullable final Translucency transMode, final int brightness, final int stretch) {
-    renderButtonPressHudElement(x, y, u, v, u + width, v + height, clutOffset, transMode, brightness, stretch, stretch);
+  public static void renderButtonPressHudTexturedRect(final int x, final int y, final int u, final int v, final int width, final int height, final int packedClut, @Nullable final Translucency transMode, final int brightness, final float scale) {
+    renderButtonPressHudElement(x, y, u, v, u + width, v + height, packedClut, transMode, brightness, scale, scale);
   }
 
   @Method(0x80018decL)
-  public static void renderDivineDragoonAdditionPressIris(final int x, final int y, final int u, final int v, final int width, final int height, final int clutOffset, @Nullable final Translucency transMode, final int brightness, final int widthStretch, final int heightStretch) {
-    renderButtonPressHudElement(x, y, u, v, u + width, v + height, clutOffset, transMode, brightness, widthStretch, heightStretch);
+  public static void renderDivineDragoonAdditionPressIris(final int x, final int y, final int u, final int v, final int width, final int height, final int packedClut, @Nullable final Translucency transMode, final int brightness, final float widthScale, final float heightScale) {
+    renderButtonPressHudElement(x, y, u, v, u + width, v + height, packedClut, transMode, brightness, widthScale, heightScale);
   }
 
   @Method(0x80018e84L)
-  public static void FUN_80018e84() {
+  public static void drawBattleReportOverlays() {
     final int[] sp0x30 = {0x42, 0x43, 0x02000802, 0x000a0406}; // These last two entries must be wrong but they might be unused cause I don't see anything wrong
 
     //LAB_80018f04
-    Struct10 s1 = _8004f658;
-    while(s1 != null) {
+    BattleReportOverlayList10 current = battleReportOverlayLists_8004f658;
+    while(current != null) {
       do {
-        s1._03--;
+        current.ticksRemaining_03--;
 
-        if(s1._03 != 0) {
+        if(current.ticksRemaining_03 != 0) {
           break;
         }
 
-        if(s1.next_08 == null) {
+        if(current.next_08 == null) {
           //LAB_80018f48
-          _8004f658 = s1.prev_0c;
+          battleReportOverlayLists_8004f658 = current.prev_0c;
         } else {
           //LAB_80018f50
-          s1.next_08.prev_0c = null;
+          current.next_08.prev_0c = null;
         }
 
         //LAB_80018f54
-        final Struct10 s0 = s1.prev_0c;
+        final BattleReportOverlayList10 list = current.prev_0c;
 
-        if(s0 != null) {
-          if(s1.next_08 == null) {
-            s0.next_08 = null;
-            _8004f658 = s1.prev_0c;
+        if(list != null) {
+          if(current.next_08 == null) {
+            list.next_08 = null;
+            battleReportOverlayLists_8004f658 = current.prev_0c;
           } else {
             //LAB_80018f84
-            s1.prev_0c.next_08 = s1.next_08;
-            s1.next_08.prev_0c = s1.prev_0c;
+            current.prev_0c.next_08 = current.next_08;
+            current.next_08.prev_0c = current.prev_0c;
           }
         }
 
         //LAB_80018fa0
-        if(s0 == null) {
+        if(list == null) {
           return;
         }
-        s1 = s0;
+        current = list;
       } while(true);
 
       //LAB_80018fd0
       //LAB_80018fd4
-      for(int s2 = 0; s2 < 8; s2++) {
-        final Struct0e s0 = s1.ptr_04[s2];
+      for(int overlayIndex = 0; overlayIndex < 8; overlayIndex++) {
+        final BattleReportOverlay0e overlay = current.overlays_04[overlayIndex];
 
-        s0._08++;
+        overlay.negaticks_08++;
 
-        if(s0._08 >= 0) {
-          final int v1 = s0.clutAndTranslucency_0c >>> 8 & 0xf;
+        if(overlay.negaticks_08 >= 0) {
+          final int v1 = overlay.clutAndTranslucency_0c >>> 8 & 0xf;
 
           if(v1 == 0) {
             //LAB_80019040
-            s0._09--;
+            overlay._09--;
 
-            if(s0._04 != 0) {
-              s0._04 -= 0x492;
-              s0._06 -= 0x492;
+            if(overlay.widthScale_04 != 0) {
+              overlay.widthScale_04 -= 0x492;
+              overlay.heightScale_06 -= 0x492;
             } else {
               //LAB_80019084
-              s0.clutAndTranslucency_0c &= 0x8fff;
+              overlay.clutAndTranslucency_0c &= 0x8fff;
             }
 
             //LAB_80019094
-            if(s0._09 == 0) {
-              s0.clutAndTranslucency_0c &= 0x7fff;
-              s0._08 = 0;
-              s0.clutAndTranslucency_0c &= 0xf0ff;
-              s0.clutAndTranslucency_0c |= ((s0.clutAndTranslucency_0c >>> 8 & 0xf) + 1 & 0xf) << 8;
+            if(overlay._09 == 0) {
+              overlay.clutAndTranslucency_0c &= 0x7fff;
+              overlay.negaticks_08 = 0;
+              overlay.clutAndTranslucency_0c &= 0xf0ff;
+              overlay.clutAndTranslucency_0c |= ((overlay.clutAndTranslucency_0c >>> 8 & 0xf) + 1 & 0xf) << 8;
             }
           } else if(v1 == 1) {
             //LAB_800190d4
-            s0.clutAndTranslucency_0c = sp0x30[s0.clutAndTranslucency_0c >>> 15];
+            overlay.clutAndTranslucency_0c = sp0x30[overlay.clutAndTranslucency_0c >>> 15];
 
-            if(s0._08 == 10) {
-              s0._09 = (byte)(simpleRand() % 10 + 2);
-              s0.clutAndTranslucency_0c &= 0xf0ff;
-              s0.clutAndTranslucency_0c |= ((s0.clutAndTranslucency_0c >>> 8 & 0xf) + 1 & 0xf) << 8;
+            if(overlay.negaticks_08 == 10) {
+              overlay._09 = (byte)(simpleRand() % 10 + 2);
+              overlay.clutAndTranslucency_0c &= 0xf0ff;
+              overlay.clutAndTranslucency_0c |= ((overlay.clutAndTranslucency_0c >>> 8 & 0xf) + 1 & 0xf) << 8;
             }
             //LAB_80019028
           } else if(v1 == 2) {
             //LAB_80019164
-            s0._09--;
+            overlay._09--;
 
-            if(s0._09 == 0) {
+            if(overlay._09 == 0) {
               //LAB_80019180
-              s0._09 = 8;
-              s0.clutAndTranslucency_0c &= 0xf0ff;
-              s0.clutAndTranslucency_0c |= ((s0.clutAndTranslucency_0c >>> 8 & 0xf) + 1 & 0xf) << 8;
+              overlay._09 = 8;
+              overlay.clutAndTranslucency_0c &= 0xf0ff;
+              overlay.clutAndTranslucency_0c |= ((overlay.clutAndTranslucency_0c >>> 8 & 0xf) + 1 & 0xf) << 8;
             }
           } else if(v1 == 3) {
             //LAB_800191b8
-            s0._09--;
+            overlay._09--;
 
-            if((s0._09 & 0x1) != 0) {
-              s0.y_02++;
+            if((overlay._09 & 0x1) != 0) {
+              overlay.y_02++;
             }
 
             //LAB_800191e4
-            s0._06 -= 0x200;
+            overlay.heightScale_06 -= 0x200;
 
-            if(s0._09 == 0) {
-              s0._08 = -100;
+            if(overlay._09 == 0) {
+              overlay.negaticks_08 = -100;
             }
           }
 
-          //LAB_80019208
-          renderButtonPressHudElement(
-            s0.x_00,
-            s0.y_02,
-            s0.u_0b,
-            64,
-            s0.u_0b + 7,
-            79,
-            s0.clutAndTranslucency_0c,
-            Translucency.of((s0.clutAndTranslucency_0c >>> 12 & 0x7) - 1),
-            0xff,
-            s0._04 + 0x1000,
-            s0._06 + 0x1000
-          );
+          battleUiParts.queueLevelUp(overlay);
         }
       }
 
-      s1 = s1.prev_0c;
+      current = current.prev_0c;
     }
 
     //LAB_800192b4
   }
 
   @Method(0x800192d8L)
-  public static void drawLevelUp(int x, final int y) {
-    final Struct10 s0 = new Struct10();
-    s0._00 = 0x61;
-    s0._01 = 0x6c;
-    s0._02 = 0x64;
-    s0._03 = 0x34;
-    s0.prev_0c = _8004f658;
+  public static void addLevelUpOverlay(int x, final int y) {
+    final BattleReportOverlayList10 s0 = new BattleReportOverlayList10();
+    s0.ticksRemaining_03 = 52;
+    s0.prev_0c = battleReportOverlayLists_8004f658;
 
     if(s0.prev_0c != null) {
       s0.prev_0c.next_08 = s0;
     }
 
     //LAB_800193b4
-    _8004f658 = s0;
+    battleReportOverlayLists_8004f658 = s0;
 
     //LAB_800193dc
     for(int i = 0; i < 8; i++) {
-      final Struct0e v1 = s0.ptr_04[i];
-      v1.x_00 = (short)(x - 6);
-      v1.y_02 = (short)(y - 16);
-      v1._04 = 0x1ffe;
-      v1._06 = 0x1ffe;
-      v1._08 = (byte)~i;
-      v1._09 = (byte)(20 - i);
-      v1.u_0b = levelUpUs_8001032c[i];
-      v1.clutAndTranslucency_0c = 0x204a;
+      final BattleReportOverlay0e overlay = s0.overlays_04[i];
+      overlay.x_00 = x - 6;
+      overlay.y_02 = y - 16;
+      overlay.widthScale_04 = 0x1ffe;
+      overlay.heightScale_06 = 0x1ffe;
+      overlay.negaticks_08 = (byte)~i;
+      overlay._09 = (byte)(20 - i);
+//      overlay.u_0b = levelUpUs_8001032c[i];
+      overlay.letterIndex = i;
+      overlay.clutAndTranslucency_0c = 0x204a;
       x += levelUpOffsets_80010334[i];
     }
   }
 
   @Method(0x80019470L)
   public static void FUN_80019470() {
-    _8004f658 = null;
+    battleReportOverlayLists_8004f658 = null;
   }
 
   @Method(0x80019500L)

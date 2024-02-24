@@ -61,6 +61,7 @@ import static legend.game.SItem.meruXpTable_801137cc;
 import static legend.game.SItem.mirandaXpTable_80113aa8;
 import static legend.game.SItem.roseXpTable_801139b4;
 import static legend.game.SItem.shanaXpTable_80113aa8;
+import static legend.game.Scus94491BpeSegment.battleUiParts;
 import static legend.game.Scus94491BpeSegment.gameLoop;
 import static legend.game.Scus94491BpeSegment.startSound;
 import static legend.game.Scus94491BpeSegment_8002.initTextboxGeometry;
@@ -410,6 +411,7 @@ public final class GameEngine {
       }
 
       initTextboxGeometry();
+      battleUiParts.init();
       startSound();
       gameLoop();
       Fmv.playCurrentFmv(0, EngineStateEnum.TITLE_02);

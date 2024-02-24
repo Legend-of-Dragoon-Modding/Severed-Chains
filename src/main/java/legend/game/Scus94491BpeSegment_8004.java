@@ -20,14 +20,12 @@ import legend.game.sound.SssqReader;
 import legend.game.sound.Sssqish;
 import legend.game.sound.VolumeRamp;
 import legend.game.submap.SMap;
-import legend.game.submap.SubmapMusic08;
 import legend.game.title.GameOver;
 import legend.game.title.NewGame;
 import legend.game.title.Ttle;
 import legend.game.types.ItemStats0c;
-import legend.game.types.MoonMusic08;
 import legend.game.types.OverlayStruct;
-import legend.game.types.Struct10;
+import legend.game.types.BattleReportOverlayList10;
 import legend.game.unpacker.FileData;
 import legend.game.wmap.WMap;
 import org.apache.logging.log4j.LogManager;
@@ -221,7 +219,7 @@ public final class Scus94491BpeSegment_8004 {
   public static final int[] additionCounts_8004f5c0 = {7, 5, 0, 4, 6, 5, 5, 3, 0, 0};
 
   public static final ScriptFile doNothingScript_8004f650 = new ScriptFile("Do nothing", new int[] {0x4, 0x1});
-  public static Struct10 _8004f658;
+  public static BattleReportOverlayList10 battleReportOverlayLists_8004f658;
 
   public static int _8004f6e4 = -1;
 

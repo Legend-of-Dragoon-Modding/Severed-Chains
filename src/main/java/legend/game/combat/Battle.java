@@ -4377,7 +4377,7 @@ public class Battle extends EngineState {
 
       //LAB_800d3e5c
       //LAB_800d3e7c
-      additionStruct.addition_02 = addition;
+      additionStruct.additionId_02 = addition;
       additionStruct.length_08 = additionName.length();
       additionStruct.positionMovement_0c = 120;
       additionStruct.renderer_14 = additionStruct::renderAdditionNameChar;
@@ -4425,14 +4425,14 @@ public class Battle extends EngineState {
       state.loadScriptFile(doNothingScript_8004f650);
       state.setTicker((s, effect) -> s1.tickSpTextEffect(s, this._800faa94));
 
-      s1._08 = s2;
-      s1._1c = this._800faa90 << 8;
+      s1.value_08 = s2;
+      s1.destX_1c = this._800faa90 << 8;
 
       if(s3 == 1) {
         this._800faa92 = 0;
         this._800faa94 = s3;
         s1._01 = 0;
-        s1._1c = 0xffff6e00;
+        s1.destX_1c = 0xffff6e00;
         this._800faa90 = -146;
       } else {
         //LAB_800d4470
@@ -4441,15 +4441,15 @@ public class Battle extends EngineState {
       }
 
       //LAB_800d448c
-      s1._2c = (s1._1c - s1._0c) / 14;
+      s1.stepX_2c = (s1.destX_1c - s1.x_0c) / 14;
 
       //LAB_800d44dc
       for(int i = 0; i < 8; i++) {
-        s1.charArray_3c[i]._00 = s1._0c;
-        s1.charArray_3c[i]._04 = s1._10;
+        s1.charArray_3c[i].x_00 = s1.x_0c;
+        s1.charArray_3c[i].y_04 = s1.y_10;
       }
 
-      final int strLen = String.valueOf(s1._08).length();
+      final int strLen = String.valueOf(s1.value_08).length();
 
       final int v1;
       if(s1._01 == 0) {
@@ -4459,7 +4459,7 @@ public class Battle extends EngineState {
       }
 
       //LAB_800d453c
-      this._800faa90 = (s1._1c >> 8) + v1 * 8 - 3;
+      this._800faa90 = (s1.destX_1c >> 8) + v1 * 8 - 3;
     }
 
     script.params_20[1].set(0);

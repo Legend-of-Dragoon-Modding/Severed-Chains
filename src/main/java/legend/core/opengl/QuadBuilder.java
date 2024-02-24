@@ -34,6 +34,10 @@ public class QuadBuilder {
     this.name = name;
   }
 
+  public int currentQuadIndex() {
+    return this.quads.size();
+  }
+
   public QuadBuilder add() {
     this.current = new Quad();
     this.quads.add(this.current);
