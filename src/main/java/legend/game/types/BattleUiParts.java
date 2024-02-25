@@ -15,6 +15,11 @@ import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.levelUpUs_8001032c;
 import static legend.game.combat.Battle.asciiTable_800fa788;
 import static legend.game.combat.Battle.buttonPressHudMetrics_800faaa0;
+import static legend.game.combat.SEffe.daddyHudMeterDimensions_800fb82c;
+import static legend.game.combat.SEffe.daddyHudMeterOffsets_800fb804;
+import static legend.game.combat.SEffe.daddyHudMeterUvs_800fb818;
+import static legend.game.combat.SEffe.perfectDaddyGlyphUs_80119fbc;
+import static legend.game.combat.SEffe.perfectDaddyGlyphVs_80119fc4;
 
 public class BattleUiParts {
   private Obj obj;
@@ -25,6 +30,16 @@ public class BattleUiParts {
   private int pointsVert;
   private int textVert;
   private int buttonVert;
+  private int daddyMeterVert;
+  private int daddyFrameVert;
+  private int daddyArrowVert;
+  private int daddyDarkEyeVert;
+  private int daddyFlatCenterVert;
+  private int daddyEyeFlashVert;
+  private int daddyDivineIrisVert;
+  private int daddyStarVert;
+  private int daddyButtonGlowVert;
+  private int daddyPerfectVert;
 
   public void init() {
     final QuadBuilder builder = new QuadBuilder("Battle UI Parts");
@@ -89,6 +104,119 @@ public class BattleUiParts {
       }
     }
 
+    this.daddyFrameVert = builder.currentQuadIndex() * 4;
+
+    // Frame top portion
+    builder
+      .add()
+      .bpp(Bpp.BITS_4)
+      .translucency(Translucency.B_PLUS_F)
+      .size(64, 48)
+      .pos(0.0f, 0.0f, 10.0f)
+      .uv(160, 192);
+
+    // Frame bottom portion
+    builder
+      .add()
+      .bpp(Bpp.BITS_4)
+      .translucency(Translucency.B_PLUS_F)
+      .size(42, 8)
+      .pos(8.0f, 48.0f, 10.0f)
+      .uv(200, 80);
+
+    this.daddyArrowVert = builder.currentQuadIndex() * 4;
+
+    builder
+      .add()
+      .bpp(Bpp.BITS_4)
+      .translucency(Translucency.B_PLUS_F)
+      .size(8, 24)
+      .pos(32.0f, -4.0f, 0.0f)
+      .uv(152, 208);
+
+    this.daddyDarkEyeVert = builder.currentQuadIndex() * 4;
+
+    builder
+      .add()
+      .bpp(Bpp.BITS_4)
+      .translucency(Translucency.B_PLUS_F)
+      .size(31, 31)
+      .pos(18.0f, 16.0f, 8.0f)
+      .uv(224, 208);
+
+    this.daddyFlatCenterVert = builder.currentQuadIndex() * 4;
+
+    builder
+      .add()
+      .bpp(Bpp.BITS_4)
+      .translucency(Translucency.B_PLUS_F)
+      .size(40, 40)
+      .pos(17.0f, 14.0f, 9.0f)
+      .uv(112, 200);
+
+    this.daddyMeterVert = builder.currentQuadIndex() * 4;
+
+    for(int i = 0; i < 5; i++) {
+      builder
+        .add()
+        .bpp(Bpp.BITS_4)
+        .translucency(Translucency.B_PLUS_F)
+        .size(daddyHudMeterDimensions_800fb82c[i][0], daddyHudMeterDimensions_800fb82c[i][1])
+        .pos(daddyHudMeterOffsets_800fb804[i][0], daddyHudMeterOffsets_800fb804[i][1], 0.0f)
+        .uv(daddyHudMeterUvs_800fb818[i][0], daddyHudMeterUvs_800fb818[i][1]);
+    }
+
+    this.daddyEyeFlashVert = builder.currentQuadIndex() * 4;
+
+    builder
+      .add()
+      .bpp(Bpp.BITS_4)
+      .translucency(Translucency.B_PLUS_F)
+      .size(31, 31)
+      .pos(18.0f, 16.0f, 2.0f)
+      .uv(224, 208);
+
+    this.daddyDivineIrisVert = builder.currentQuadIndex() * 4;
+
+    builder
+      .add()
+      .bpp(Bpp.BITS_4)
+      .translucency(Translucency.B_PLUS_F)
+      .size(31, 31)
+      .pos(23.0f, 21.0f, 1.0f)
+      .uv(232, 120);
+
+    this.daddyStarVert = builder.currentQuadIndex() * 4;
+
+    builder
+      .add()
+      .bpp(Bpp.BITS_4)
+      .translucency(Translucency.B_PLUS_F)
+      .size(16, 16)
+      .pos(0.0f, 0.0f, 0.0f)
+      .uv(128, 64);
+
+    this.daddyButtonGlowVert = builder.currentQuadIndex() * 4;
+
+    builder
+      .add()
+      .bpp(Bpp.BITS_4)
+      .translucency(Translucency.B_PLUS_F)
+      .size(23, 23)
+      .pos(-2.0f, -5.0f, 0.0f)
+      .uv(232, 120);
+
+    this.daddyPerfectVert = builder.currentQuadIndex() * 4;
+
+    for(int i = 0; i < 8; i++) {
+      builder
+        .add()
+        .bpp(Bpp.BITS_4)
+        .translucency(Translucency.B_PLUS_F)
+        .size(8, 16)
+        .uv(perfectDaddyGlyphUs_80119fbc[i], perfectDaddyGlyphVs_80119fc4[i]);
+    }
+
     this.obj = builder.build();
     this.obj.persistent = true;
   }
@@ -132,6 +260,47 @@ public class BattleUiParts {
     this.queue(this.buttonVert + index * 4, x, y, w, h, metrics.packedClut_05, translucency, brightness, widthScale, heightScale);
   }
 
+  public void queueDaddyFrame(final int x, final int y, final int packedClut, @Nullable final Translucency translucency, final int brightness) {
+    this.queue(this.daddyFrameVert, x, y, 0, 0, packedClut, translucency, brightness, 1.0f, 1.0f);
+    this.queue(this.daddyFrameVert + 4, x, y, 0, 0, packedClut, translucency, brightness, 1.0f, 1.0f);
+  }
+
+  public void queueDaddyArrow(final int x, final int y, final int packedClut, @Nullable final Translucency translucency, final int brightness) {
+    this.queue(this.daddyArrowVert, x, y, 0, 0, packedClut, translucency, brightness, 1.0f, 1.0f);
+  }
+
+  public void queueDaddyDarkEye(final int x, final int y, final int packedClut, @Nullable final Translucency translucency, final int brightness) {
+    this.queue(this.daddyDarkEyeVert, x, y, 0, 0, packedClut, translucency, brightness, 1.0f, 1.0f);
+  }
+
+  public void queueDaddyFlatCenter(final int x, final int y, final int packedClut, @Nullable final Translucency translucency, final int brightness) {
+    this.queue(this.daddyFlatCenterVert, x, y, 0, 0, packedClut, translucency, brightness, 1.0f, 1.0f);
+  }
+
+  public void queueDaddyMeter(final int index, final int x, final int y, final int packedClut, @Nullable final Translucency translucency, final int brightness) {
+    this.queue(this.daddyMeterVert + index * 4, x, y, 0, 0, packedClut, translucency, brightness, 1.0f, 1.0f);
+  }
+
+  public void queueDaddyEyeFlash(final int x, final int y, final int packedClut, @Nullable final Translucency translucency, final int brightness) {
+    this.queue(this.daddyEyeFlashVert, x, y, 0, 0, packedClut, translucency, brightness, 1.0f, 1.0f);
+  }
+
+  public void queueDaddyDivineIris(final int x, final int y) {
+    this.queue(this.daddyDivineIrisVert, x, y, 0, 0, 0xc, Translucency.B_PLUS_F, 0x80, 0.5f, 1.5f);
+  }
+
+  public void queueDaddyStar(final int x, final int y, final int packedClut, @Nullable final Translucency translucency, final int brightness) {
+    this.queue(this.daddyStarVert, x, y, 0, 0, packedClut, translucency, brightness, 1.0f, 1.0f);
+  }
+
+  public void queueDaddyButtonGlow(final int x, final int y, final int brightness, final float widthScale, final float heightScale) {
+    this.queue(this.daddyButtonGlowVert, x, y, 23, 23, 0xc, Translucency.B_PLUS_F, brightness, widthScale, heightScale);
+  }
+
+  public void queueDaddyPerfect(final int index, final int x, final int y, final int brightness) {
+    this.queue(this.daddyPerfectVert + index * 4, x, y, 8, 16, 0x29, Translucency.B_PLUS_F, brightness, 1.0f, 1.0f);
+  }
+
   public void queue(final int vertexIndex, final int x, final int y, final int w, final int h, final int packedClut, @Nullable final Translucency transMode, final int brightness, final float widthScale, final float heightScale) {
     final float left = x + w / 2.0f;
     final float top = y + h / 2.0f;
@@ -156,7 +325,7 @@ public class BattleUiParts {
       .vertices(vertexIndex, 4)
       .clutOverride(clutX & 0x3f0, clutY)
       .tpageOverride(704, 256)
-      .monochrome(brightness / 255.0f)
+      .monochrome(brightness / 128.0f)
       .translucency(transMode);
   }
 }
