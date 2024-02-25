@@ -36,7 +36,7 @@ public class AdditionNameTextEffect1c {
         break;
       } else if(chr == 0) {
         //LAB_800d3860
-        charIndex = 0x5b;
+        charIndex = 91;
         break;
       }
 

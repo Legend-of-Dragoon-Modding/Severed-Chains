@@ -13,6 +13,7 @@ import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.levelUpUs_8001032c;
+import static legend.game.combat.Battle.asciiTable_800fa788;
 import static legend.game.combat.Battle.buttonPressHudMetrics_800faaa0;
 
 public class BattleUiParts {
@@ -60,7 +61,7 @@ public class BattleUiParts {
 
     this.textVert = builder.currentQuadIndex() * 4;
 
-    for(int i = 0; i < 65; i++) {
+    for(int i = 0; i < asciiTable_800fa788.length; i++) {
       builder
         .add()
         .bpp(Bpp.BITS_4)
