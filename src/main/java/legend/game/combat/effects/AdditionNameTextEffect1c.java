@@ -5,10 +5,9 @@ import legend.core.memory.types.TriConsumer;
 import legend.game.scripting.ScriptState;
 import legend.game.types.Translucency;
 
-import static legend.game.Scus94491BpeSegment.renderButtonPressHudTexturedRect;
+import static legend.game.Scus94491BpeSegment.battleUiParts;
 import static legend.game.combat.Battle.additionNames_800fa8d4;
 import static legend.game.combat.Battle.asciiTable_800fa788;
-import static legend.game.combat.SEffe.FUN_800d3f98;
 
 public class AdditionNameTextEffect1c {
   /** ushort */
@@ -19,7 +18,7 @@ public class AdditionNameTextEffect1c {
   public int length_08;
   /** ubyte */
   public int positionMovement_0c;
-  public int _10;
+  public int totalSp_10;
   public TriConsumer<AdditionCharEffectData0c, Integer, Integer> renderer_14;
   public AdditionCharEffectData0c[] ptr_18;
 
@@ -44,7 +43,7 @@ public class AdditionNameTextEffect1c {
     }
 
     //LAB_800d3864
-    renderButtonPressHudTexturedRect(x, y, charIndex % 21 * 12 & 0xfc, charIndex / 21 * 12 + 144 & 0xfc, 12, 12, 0xa, Translucency.B_PLUS_F, brightness, 1.0f);
+    battleUiParts.queueLetter(charIndex, x, y, 0xa, Translucency.B_PLUS_F, brightness, 1.0f, 1.0f);
   }
 
   @Method(0x800d3a20L)
@@ -53,9 +52,7 @@ public class AdditionNameTextEffect1c {
   }
 
   @Method(0x800d3a64L)
-  public void renderAdditionNameEffect(final AdditionCharEffectData0c effect, final int brightness, final int charIndex) {
-    final String sp0x18 = String.valueOf(this._10);
-
+  public void renderAdditionSpGain(final AdditionCharEffectData0c effect, final int brightness, final int charIndex) {
     int s4;
     if(this.ticks_04 < 25) {
       s4 = this.ticks_04 & 1;
@@ -67,18 +64,18 @@ public class AdditionNameTextEffect1c {
     //LAB_800d3ac4
     for(; s4 >= 0; s4--) {
       int x = effect.position_04;
+      int sp = this.totalSp_10;
 
       //LAB_800d3ad4
-      for(int i = 0; i < sp0x18.length(); i++) {
-        FUN_800d3f98(x, effect.offsetY_06, sp0x18.charAt(i) - 0x30, 41, brightness);
+      while(sp > 0) {
+        final int digit = sp % 10;
+        battleUiParts.queueBigNumber(digit, x, effect.offsetY_06, 0x29, Translucency.B_PLUS_F, brightness, 1.0f, 1.0f);
+        sp /= 10;
         x += 8;
       }
 
       //LAB_800d3b08
-      FUN_800d3f98(x     , effect.offsetY_06, 0x0d, 41, brightness);
-      FUN_800d3f98(x +  8, effect.offsetY_06, 0x0e, 41, brightness);
-      FUN_800d3f98(x + 16, effect.offsetY_06, 0x0f, 41, brightness);
-      FUN_800d3f98(x + 24, effect.offsetY_06, 0x10, 41, brightness);
+      battleUiParts.queuePoints(x, effect.offsetY_06, 0x29, Translucency.B_PLUS_F, brightness, 1.0f, 1.0f);
     }
 
     //LAB_800d3b98

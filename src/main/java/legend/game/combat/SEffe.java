@@ -459,8 +459,8 @@ public final class SEffe {
   }
 
   @Method(0x800d3f98L)
-  public static void FUN_800d3f98(final int x, final int y, final int a2, final int packedClut, final int brightness) {
-    renderButtonPressHudTexturedRect(x, y, a2 * 8 + 16 & 0xf8, 40, 8, 16, packedClut, Translucency.B_PLUS_F, brightness, 1.0f);
+  public static void drawBigChar(final int x, final int y, final int index, final int packedClut, final int brightness) {
+    renderButtonPressHudTexturedRect(x, y, index * 8 + 16 & 0xf8, 40, 8, 16, packedClut, Translucency.B_PLUS_F, brightness, 1.0f);
   }
 
   /** used renderCtmd */

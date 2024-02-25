@@ -6,7 +6,7 @@ import org.joml.Math;
 
 import java.util.Arrays;
 
-import static legend.game.combat.SEffe.FUN_800d3f98;
+import static legend.game.combat.SEffe.drawBigChar;
 
 public class SpTextEffect40 {
   public boolean movingY_00 = true;
@@ -93,20 +93,20 @@ public class SpTextEffect40 {
         y = charArray[i].y_04 >> 8;
 
         if(this._01 != 0) {
-          FUN_800d3f98(x, y, 10, packedClut, brightness & 0xff);
+          drawBigChar(x, y, 10, packedClut, brightness & 0xff);
           x += 8;
         }
 
         //LAB_800d4224
         //LAB_800d423c
         for(int charIndex = 0; charIndex < str.length(); charIndex++) {
-          FUN_800d3f98(x, y, str.charAt(charIndex) - 0x30, packedClut, brightness & 0xff);
+          drawBigChar(x, y, str.charAt(charIndex) - 0x30, packedClut, brightness & 0xff);
           x += 8;
         }
 
         //LAB_800d4274
-        FUN_800d3f98(x - 2, y, 11, packedClut, brightness & 0xff);
-        FUN_800d3f98(x + 4, y, 12, packedClut, brightness & 0xff);
+        drawBigChar(x - 2, y, 11, packedClut, brightness & 0xff);
+        drawBigChar(x + 4, y, 12, packedClut, brightness & 0xff);
       }
       //LAB_800d42c0
     }

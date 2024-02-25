@@ -18,6 +18,9 @@ public class BattleUiParts {
   private final MV mv = new MV();
 
   private int levelUpVert;
+  private int bigNumberVert;
+  private int pointsVert;
+  private int textVert;
 
   public void init() {
     final QuadBuilder builder = new QuadBuilder("Battle UI Parts");
@@ -32,8 +35,47 @@ public class BattleUiParts {
         .uv(u, 64);
     }
 
+    this.bigNumberVert = builder.currentQuadIndex() * 4;
+
+    for(int i = 0; i < 10; i++) {
+      builder
+        .add()
+        .bpp(Bpp.BITS_4)
+        .translucency(Translucency.B_PLUS_F)
+        .size(8, 16)
+        .uv(16 + i * 8, 40);
+    }
+
+    this.pointsVert = builder.currentQuadIndex() * 4;
+
+    builder
+      .add()
+      .bpp(Bpp.BITS_4)
+      .translucency(Translucency.B_PLUS_F)
+      .size(32, 16)
+      .uv(120, 40);
+
+    this.textVert = builder.currentQuadIndex() * 4;
+
+    for(int i = 0; i < 65; i++) {
+      builder
+        .add()
+        .bpp(Bpp.BITS_4)
+        .translucency(Translucency.B_PLUS_F)
+        .size(12, 12)
+        .uv(i % 21 * 12, 144 + i / 21 * 12);
+    }
+
     this.obj = builder.build();
     this.obj.persistent = true;
+  }
+
+  public void queueBigNumber(final int digit, final int x, final int y, final int packedClut, @Nullable final Translucency translucency, final int brightness, final float widthScale, final float heightScale) {
+    this.queue(this.bigNumberVert + digit * 4, x, y, 8, 16, packedClut, translucency, brightness, widthScale, heightScale);
+  }
+
+  public void queuePoints(final int x, final int y, final int packedClut, @Nullable final Translucency translucency, final int brightness, final float widthScale, final float heightScale) {
+    this.queue(this.pointsVert, x, y, 8, 16, packedClut, translucency, brightness, widthScale, heightScale);
   }
 
   public void queueLevelUp(final BattleReportOverlay0e overlay) {
@@ -46,6 +88,10 @@ public class BattleUiParts {
       0xff,
       overlay.widthScale_04 / (float)0x1000 + 1.0f,
       overlay.heightScale_06 / (float)0x1000 + 1.0f);
+  }
+
+  public void queueLetter(final int index, final int x, final int y, final int packedClut, @Nullable final Translucency translucency, final int brightness, final float widthScale, final float heightScale) {
+    this.queue(this.textVert + index * 4, x, y, 12, 12, packedClut, translucency, brightness, widthScale, heightScale);
   }
 
   public void queue(final int vertexIndex, final int x, final int y, final int w, final int h, final int packedClut, @Nullable final Translucency transMode, final int brightness, final float widthScale, final float heightScale) {
@@ -72,10 +118,7 @@ public class BattleUiParts {
       .vertices(vertexIndex, 4)
       .clutOverride(clutX & 0x3f0, clutY)
       .tpageOverride(704, 256)
-      .monochrome(brightness / 255.0f);
-
-    if(transMode != null) {
-      model.translucency(transMode);
-    }
+      .monochrome(brightness / 255.0f)
+      .translucency(transMode);
   }
 }

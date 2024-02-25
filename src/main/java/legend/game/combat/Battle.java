@@ -4469,26 +4469,26 @@ public class Battle extends EngineState {
   }
 
   @ScriptDescription("Allocates an addition name effect manager")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p0")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "totalSp", description = "The amount of SP gained from this addition")
   @Method(0x800d4580L)
   public FlowControl scriptAllocateAdditionNameEffect(final RunningScript<?> script) {
-    final int s2 = script.params_20[0].get();
-    if(s2 != -1) {
+    final int totalSp = script.params_20[0].get();
+    if(totalSp != -1) {
       final AdditionNameTextEffect1c s0 = new AdditionNameTextEffect1c();
       final ScriptState<AdditionNameTextEffect1c> state = SCRIPTS.allocateScriptState("AdditionScriptData1c", s0);
       state.loadScriptFile(doNothingScript_8004f650);
       state.setTicker((s, effect) -> s0.tickAdditionNameEffect(s, this._800faa9d));
       s0.ptr_18 = new AdditionCharEffectData0c[] {new AdditionCharEffectData0c()};
       s0.positionMovement_0c = 40;
-      s0.renderer_14 = s0::renderAdditionNameEffect;
+      s0.renderer_14 = s0::renderAdditionSpGain;
       s0.length_08 = 1;
-      s0._10 = s2;
+      s0.totalSp_10 = totalSp;
       final AdditionCharEffectData0c struct = s0.ptr_18[0];
       struct.scrolling_00 = 1;
       struct.dupes_02 = 8;
       struct.position_04 = -160;
       struct.offsetY_06 = 96;
-      struct.offsetX_08 = 144 - (String.valueOf(s2).length() + 4) * 8;
+      struct.offsetX_08 = 144 - (String.valueOf(totalSp).length() + 4) * 8;
       struct.offsetY_0a = 96;
     }
 

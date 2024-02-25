@@ -43,7 +43,6 @@ void main() {
 
   gl_FragDepth += depthOffset;
 
-  //TODO implement uniform lighting
   bool ctmd = (ctmdFlags & 0x20) != 0;
   bool uniformLit = (ctmdFlags & 0x10) != 0;
   bool translucent = (vertFlags & 0x8) != 0 || (ctmdFlags & 0x2) != 0;
