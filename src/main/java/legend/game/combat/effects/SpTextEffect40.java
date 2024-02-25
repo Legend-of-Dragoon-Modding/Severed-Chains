@@ -1,5 +1,6 @@
 package legend.game.combat.effects;
 
+import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.game.scripting.ScriptState;
 import legend.game.types.Translucency;
@@ -77,7 +78,6 @@ public class SpTextEffect40 {
 
     charArray[0].x_00 = this.x_0c;
     charArray[0].y_04 = this.y_10;
-    final String str = Integer.toString(this.value_08);
     int brightness = this.brightness_02;
     final int darkeningStep = (brightness & 0xff) >>> 3;
     final int packedClut = this._01 + 0x21 & 0xff;
@@ -101,12 +101,14 @@ public class SpTextEffect40 {
         //LAB_800d4224
         //LAB_800d423c
         int value = this.value_08;
-        for(int charIndex = 0; charIndex < str.length(); charIndex++) {
+        final int digitCount = MathHelper.digitCount(value);
+        for(int charIndex = 0; charIndex < digitCount; charIndex++) {
           final int chr = value % 10;
-          battleUiParts.queueBigNumber(chr, x, y, packedClut, Translucency.B_PLUS_F, brightness, 1.0f, 1.0f);
+          battleUiParts.queueBigNumber(chr, x + (digitCount - charIndex - 1) * 8, y, packedClut, Translucency.B_PLUS_F, brightness, 1.0f, 1.0f);
           value /= 10;
-          x += 8;
         }
+
+        x += digitCount * 8;
 
         //LAB_800d4274
         battleUiParts.queueBigNumber(11, x - 2, y, packedClut, Translucency.B_PLUS_F, brightness, 1.0f, 1.0f);

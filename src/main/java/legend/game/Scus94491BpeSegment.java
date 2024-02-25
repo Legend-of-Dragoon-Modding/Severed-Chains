@@ -1226,59 +1226,6 @@ public final class Scus94491BpeSegment {
     //LAB_80018a4c
   }
 
-  @Method(0x80018a5cL)
-  public static void renderButtonPressHudElement(final int x, final int y, final int leftU, final int topV, final int rightU, final int bottomV, final int packedClut, @Nullable final Translucency transMode, final int brightness, final float widthScale, final float heightScale) {
-    final int w = Math.abs(rightU - leftU);
-    final int h = Math.abs(bottomV - topV);
-
-    final float left = x + w / 2.0f;
-    final float top = y + h / 2.0f;
-    final float offsetX = w * widthScale / 2.0f;
-    final float offsetY = h * heightScale / 2.0f;
-
-    final int clutOffsetX = packedClut / 16;
-    final int clutOffsetY = packedClut % 16;
-    final int clutX;
-    final int clutY;
-    if(clutOffsetX >= 4) {
-      clutX = clutOffsetX * 16 + 832;
-      clutY = clutOffsetY + 304;
-    } else {
-      clutX = clutOffsetX * 16 + 704;
-      clutY = clutOffsetY + 496;
-    }
-
-    final GpuCommandPoly cmd = new GpuCommandPoly(4)
-      .bpp(Bpp.BITS_4)
-      .clut(clutX & 0x3f0, clutY)
-      .vramPos(704, 256)
-      .monochrome(brightness)
-      .pos(0, left - offsetX, top - offsetY)
-      .pos(1, left + offsetX, top - offsetY)
-      .pos(2, left - offsetX, top + offsetY)
-      .pos(3, left + offsetX, top + offsetY)
-      .uv(0, leftU, topV)
-      .uv(1, rightU, topV)
-      .uv(2, leftU, bottomV)
-      .uv(3, rightU, bottomV);
-
-    if(transMode != null) {
-      cmd.translucent(transMode);
-    }
-
-    GPU.queueCommand(2, cmd);
-  }
-
-  @Method(0x80018d60L)
-  public static void renderButtonPressHudTexturedRect(final int x, final int y, final int u, final int v, final int width, final int height, final int packedClut, @Nullable final Translucency transMode, final int brightness, final float scale) {
-    renderButtonPressHudElement(x, y, u, v, u + width, v + height, packedClut, transMode, brightness, scale, scale);
-  }
-
-  @Method(0x80018decL)
-  public static void renderDivineDragoonAdditionPressIris(final int x, final int y, final int u, final int v, final int width, final int height, final int packedClut, @Nullable final Translucency transMode, final int brightness, final float widthScale, final float heightScale) {
-    renderButtonPressHudElement(x, y, u, v, u + width, v + height, packedClut, transMode, brightness, widthScale, heightScale);
-  }
-
   @Method(0x80018e84L)
   public static void drawBattleReportOverlays() {
     final int[] sp0x30 = {0x42, 0x43, 0x02000802, 0x000a0406}; // These last two entries must be wrong but they might be unused cause I don't see anything wrong
