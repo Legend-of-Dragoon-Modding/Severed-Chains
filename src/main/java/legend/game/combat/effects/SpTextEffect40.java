@@ -2,11 +2,12 @@ package legend.game.combat.effects;
 
 import legend.core.memory.Method;
 import legend.game.scripting.ScriptState;
+import legend.game.types.Translucency;
 import org.joml.Math;
 
 import java.util.Arrays;
 
-import static legend.game.combat.SEffe.drawBigChar;
+import static legend.game.Scus94491BpeSegment.battleUiParts;
 
 public class SpTextEffect40 {
   public boolean movingY_00 = true;
@@ -93,20 +94,23 @@ public class SpTextEffect40 {
         y = charArray[i].y_04 >> 8;
 
         if(this._01 != 0) {
-          drawBigChar(x, y, 10, packedClut, brightness & 0xff);
+          battleUiParts.queueBigNumber(10, x, y, packedClut, Translucency.B_PLUS_F, brightness, 1.0f, 1.0f);
           x += 8;
         }
 
         //LAB_800d4224
         //LAB_800d423c
+        int value = this.value_08;
         for(int charIndex = 0; charIndex < str.length(); charIndex++) {
-          drawBigChar(x, y, str.charAt(charIndex) - 0x30, packedClut, brightness & 0xff);
+          final int chr = value % 10;
+          battleUiParts.queueBigNumber(chr, x, y, packedClut, Translucency.B_PLUS_F, brightness, 1.0f, 1.0f);
+          value /= 10;
           x += 8;
         }
 
         //LAB_800d4274
-        drawBigChar(x - 2, y, 11, packedClut, brightness & 0xff);
-        drawBigChar(x + 4, y, 12, packedClut, brightness & 0xff);
+        battleUiParts.queueBigNumber(11, x - 2, y, packedClut, Translucency.B_PLUS_F, brightness, 1.0f, 1.0f);
+        battleUiParts.queueBigNumber(12, x + 4, y, packedClut, Translucency.B_PLUS_F, brightness, 1.0f, 1.0f);
       }
       //LAB_800d42c0
     }

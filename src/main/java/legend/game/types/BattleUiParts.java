@@ -37,7 +37,7 @@ public class BattleUiParts {
 
     this.bigNumberVert = builder.currentQuadIndex() * 4;
 
-    for(int i = 0; i < 10; i++) {
+    for(int i = 0; i < 13; i++) {
       builder
         .add()
         .bpp(Bpp.BITS_4)
@@ -70,6 +70,7 @@ public class BattleUiParts {
     this.obj.persistent = true;
   }
 
+  /** Also includes +, S, P as indices 10, 11, 12 */
   public void queueBigNumber(final int digit, final int x, final int y, final int packedClut, @Nullable final Translucency translucency, final int brightness, final float widthScale, final float heightScale) {
     this.queue(this.bigNumberVert + digit * 4, x, y, 8, 16, packedClut, translucency, brightness, widthScale, heightScale);
   }

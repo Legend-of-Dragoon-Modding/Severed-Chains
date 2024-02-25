@@ -458,11 +458,6 @@ public final class SEffe {
     translation.set(transformMatrix.transfer);
   }
 
-  @Method(0x800d3f98L)
-  public static void drawBigChar(final int x, final int y, final int index, final int packedClut, final int brightness) {
-    renderButtonPressHudTexturedRect(x, y, index * 8 + 16 & 0xf8, 40, 8, 16, packedClut, Translucency.B_PLUS_F, brightness, 1.0f);
-  }
-
   /** used renderCtmd */
   @Method(0x800de3f4L)
   public static void renderTmdSpriteEffect(final TmdObjTable1c objTable, final Obj obj, final EffectManagerParams<?> effectParams, final MV transforms) {
