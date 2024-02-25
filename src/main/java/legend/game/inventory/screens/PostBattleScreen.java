@@ -23,10 +23,10 @@ import static legend.game.SItem.menuAssetsLoaded;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderItemIcon;
 import static legend.game.SItem.renderText;
-import static legend.game.Scus94491BpeSegment.FUN_80018e84;
+import static legend.game.Scus94491BpeSegment.drawBattleReportOverlays;
 import static legend.game.Scus94491BpeSegment.FUN_80019470;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
-import static legend.game.Scus94491BpeSegment.drawLevelUp;
+import static legend.game.Scus94491BpeSegment.addLevelUpOverlay;
 import static legend.game.Scus94491BpeSegment.loadDrgnFileSync;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
@@ -292,7 +292,7 @@ public class PostBattleScreen extends MenuScreen {
           //LAB_8010dd90
           this.inventoryMenuState_800bdc28 = MenuState.DRAGOON_LEVEL_UPS_10;
         } else if(this.levelsGained_8011e1c8[this.levelUpCharId_8011e170] != 0) {
-          drawLevelUp(-80, 44);
+          addLevelUpOverlay(-80, 44);
           playSound(9);
           this.inventoryMenuState_800bdc28 = MenuState.SECONDARY_LEVEL_UPS_9;
         } else {
@@ -800,14 +800,14 @@ public class PostBattleScreen extends MenuScreen {
 
         if(this.levelsGained_8011e1c8[i] != 0) {
           this.levelsGained_8011e1c8[i] = 0;
-          drawLevelUp(72, y2);
+          addLevelUpOverlay(72, y2);
           playSound(9);
         }
 
         //LAB_8010ea44
         if(this.dragoonLevelsGained_8011e1d8[i] != 0) {
           this.dragoonLevelsGained_8011e1d8[i] = 0;
-          drawLevelUp(72, y3);
+          addLevelUpOverlay(72, y3);
           playSound(9);
         }
       }
@@ -839,7 +839,7 @@ public class PostBattleScreen extends MenuScreen {
 
     //LAB_8010ebb0
     uploadRenderables();
-    FUN_80018e84();
+    drawBattleReportOverlays();
   }
 
   @Method(0x8010ebecL)
