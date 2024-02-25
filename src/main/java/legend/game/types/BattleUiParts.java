@@ -5,6 +5,7 @@ import legend.core.gpu.Bpp;
 import legend.core.gte.MV;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
+import legend.game.combat.effects.ButtonPressHudMetrics06;
 
 import javax.annotation.Nullable;
 
@@ -12,6 +13,7 @@ import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.levelUpUs_8001032c;
+import static legend.game.combat.Battle.buttonPressHudMetrics_800faaa0;
 
 public class BattleUiParts {
   private Obj obj;
@@ -21,6 +23,7 @@ public class BattleUiParts {
   private int bigNumberVert;
   private int pointsVert;
   private int textVert;
+  private int buttonVert;
 
   public void init() {
     final QuadBuilder builder = new QuadBuilder("Battle UI Parts");
@@ -66,6 +69,25 @@ public class BattleUiParts {
         .uv(i % 21 * 12, 144 + i / 21 * 12);
     }
 
+    this.buttonVert = builder.currentQuadIndex() * 4;
+
+    for(final ButtonPressHudMetrics06 metrics : buttonPressHudMetrics_800faaa0) {
+      builder
+        .add()
+        .bpp(Bpp.BITS_4)
+        .translucency(Translucency.B_PLUS_F)
+        .uv(metrics.u_01, metrics.v_02);
+
+      if(metrics.hudElementType_00 == 0) {
+        builder.size(metrics.wOrRightU_03, metrics.hOrBottomV_04);
+      } else {
+        final int w = metrics.wOrRightU_03 - metrics.u_01;
+        final int h = metrics.hOrBottomV_04 - metrics.v_02;
+        builder.posSize(Math.abs(w), Math.abs(h));
+        builder.uvSize(w, h);
+      }
+    }
+
     this.obj = builder.build();
     this.obj.persistent = true;
   }
@@ -93,6 +115,20 @@ public class BattleUiParts {
 
   public void queueLetter(final int index, final int x, final int y, final int packedClut, @Nullable final Translucency translucency, final int brightness, final float widthScale, final float heightScale) {
     this.queue(this.textVert + index * 4, x, y, 12, 12, packedClut, translucency, brightness, widthScale, heightScale);
+  }
+
+  public void queueButton(final int index, final int x, final int y, @Nullable final Translucency translucency, final int brightness, final float widthScale, final float heightScale) {
+    final ButtonPressHudMetrics06 metrics = buttonPressHudMetrics_800faaa0[index];
+
+    int w = metrics.wOrRightU_03;
+    int h = metrics.hOrBottomV_04;
+
+    if(metrics.hudElementType_00 == 1) {
+      w -= metrics.u_01;
+      h -= metrics.v_02;
+    }
+
+    this.queue(this.buttonVert + index * 4, x, y, w, h, metrics.packedClut_05, translucency, brightness, widthScale, heightScale);
   }
 
   public void queue(final int vertexIndex, final int x, final int y, final int w, final int h, final int packedClut, @Nullable final Translucency transMode, final int brightness, final float widthScale, final float heightScale) {
