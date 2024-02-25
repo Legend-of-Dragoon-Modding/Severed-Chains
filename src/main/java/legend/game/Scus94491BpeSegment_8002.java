@@ -3,7 +3,6 @@ package legend.game;
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
-import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
@@ -43,7 +42,6 @@ import legend.game.sound.QueuedSound28;
 import legend.game.sound.SoundFile;
 import legend.game.submap.SubmapEnvState;
 import legend.game.tim.Tim;
-import legend.game.tmd.Renderer;
 import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.ActiveStatsa0;
 import legend.game.types.CContainer;
@@ -1449,22 +1447,16 @@ public final class Scus94491BpeSegment_8002 {
         for(int metricsIndex = 0; metricsIndex < metricses.length; metricsIndex++) {
           final RenderableMetrics14 metrics = metricses[metricsIndex];
 
-          final GpuCommandPoly cmd = new GpuCommandPoly(4)
-            .monochrome(0x80);
-
           final float x1;
-          final float x2;
           final float width;
           if(MathHelper.flEq(renderable.widthScale, 1.0f)) {
             if(metrics.widthScale_10 < 0) {
               width = -metrics.width_08;
-              x2 = renderable.x_40 + metrics.x_02 - centreX;
-              x1 = x2 + metrics.width_08;
+              x1 = renderable.x_40 + metrics.x_02 - centreX + metrics.width_08;
             } else {
               //LAB_80023f20
               width = metrics.width_08;
               x1 = renderable.x_40 + metrics.x_02 - centreX;
-              x2 = x1 + metrics.width_08;
             }
           } else {
             //LAB_80023f40
@@ -1475,30 +1467,25 @@ public final class Scus94491BpeSegment_8002 {
             final float scaledWidth = Math.abs(metrics.width_08 * widthScale);
             if(metrics.widthScale_10 < 0) {
               width = -scaledWidth;
-              x2 = renderable.x_40 + metrics.width_08 / 2.0f + metrics.x_02 - centreX - scaledWidth / 2.0f;
-              x1 = x2 + scaledWidth;
+              x1 = renderable.x_40 + metrics.width_08 / 2.0f + metrics.x_02 - centreX - scaledWidth / 2.0f + scaledWidth;
             } else {
               //LAB_80023fb4
               width = scaledWidth;
               x1 = renderable.x_40 + metrics.width_08 / 2.0f + metrics.x_02 - centreX - scaledWidth / 2.0f;
-              x2 = x1 + scaledWidth;
             }
           }
 
           //LAB_80023fe4
           final float y1;
-          final float y2;
           final float height;
           if(MathHelper.flEq(renderable.heightScale_38, 1.0f)) {
             if(metrics.heightScale_12 < 0) {
               height = -metrics.height_0a;
-              y2 = renderable.y_44 + metrics.y_03 - 120.0f;
-              y1 = y2 + metrics.height_0a;
+              y1 = renderable.y_44 + metrics.y_03 - 120.0f + metrics.height_0a;
             } else {
               //LAB_80024024
               height = metrics.height_0a;
               y1 = renderable.y_44 + metrics.y_03 - 120.0f;
-              y2 = y1 + metrics.height_0a;
             }
           } else {
             //LAB_80024044
@@ -1509,45 +1496,21 @@ public final class Scus94491BpeSegment_8002 {
             final float scaledHeight = Math.abs(metrics.height_0a * heightScale);
             if(metrics.heightScale_12 < 0) {
               height = -scaledHeight;
-              y2 = renderable.y_44 + metrics.height_0a / 2.0f + metrics.y_03 - scaledHeight / 2.0f - 120.0f;
-              y1 = y2 + scaledHeight;
+              y1 = renderable.y_44 + metrics.height_0a / 2.0f + metrics.y_03 - scaledHeight / 2.0f - 120.0f + scaledHeight;
             } else {
               //LAB_800240b8
               height = scaledHeight;
               y1 = renderable.y_44 + metrics.height_0a / 2.0f + metrics.y_03 - scaledHeight / 2.0f - 120.0f;
-              y2 = y1 + scaledHeight;
             }
           }
 
           //LAB_800240e8
-          cmd.pos(0, x1 + renderable.baseX, y1 + renderable.baseY + renderable.heightCut);
-          cmd.pos(1, x2 + renderable.baseX, y1 + renderable.baseY + renderable.heightCut);
-          cmd.pos(2, x1 + renderable.baseX, y2 + renderable.baseY);
-          cmd.pos(3, x2 + renderable.baseX, y2 + renderable.baseY);
-
           //LAB_80024144
           //LAB_800241b4
-          cmd.uv(0, metrics.u_00, metrics.v_01 + renderable.heightCut);
-          cmd.uv(1, metrics.u_00 + metrics.textureWidth, metrics.v_01 + renderable.heightCut);
-          cmd.uv(2, metrics.u_00, metrics.v_01 + metrics.textureHeight);
-          cmd.uv(3, metrics.u_00 + metrics.textureWidth, metrics.v_01 + metrics.textureHeight);
-
           final int clut = renderable.clut_30 != 0 ? renderable.clut_30 : metrics.clut_04 & 0x7fff;
-          cmd.clut((clut & 0b111111) * 16, clut >>> 6);
-
-          //LAB_80024214
           final int tpage = renderable.tpage_2c != 0 ? metrics.tpage_06 & 0x60 | renderable.tpage_2c : metrics.tpage_06 & 0x7f;
 
-          cmd.vramPos((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0);
-          cmd.bpp(Bpp.of(tpage >>> 7 & 0b11));
-
-          if((metrics.clut_04 & 0x8000) != 0) {
-            cmd.translucent(Translucency.of(tpage >>> 5 & 0b11));
-          }
-
           //LAB_8002424c
-          GPU.queueCommand(renderable.z_3c, cmd);
-
           if(renderable.uiType_20.obj != null) {
             final MV transforms = new MV();
             transforms.scaling(width, height, 1.0f);
