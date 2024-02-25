@@ -1,5 +1,6 @@
 package legend.game.combat.effects;
 
+import legend.core.MathHelper;
 import legend.core.memory.Method;
 import legend.core.memory.types.TriConsumer;
 import legend.game.scripting.ScriptState;
@@ -65,14 +66,16 @@ public class AdditionNameTextEffect1c {
     for(; s4 >= 0; s4--) {
       int x = effect.position_04;
       int sp = this.totalSp_10;
+      final int digitCount = MathHelper.digitCount(sp);
 
       //LAB_800d3ad4
-      while(sp > 0) {
+      for(int i = 0; i < digitCount; i++) {
         final int digit = sp % 10;
-        battleUiParts.queueBigNumber(digit, x, effect.offsetY_06, 0x29, Translucency.B_PLUS_F, brightness, 1.0f, 1.0f);
+        battleUiParts.queueBigNumber(digit, x + (digitCount - i - 1) * 8, effect.offsetY_06, 0x29, Translucency.B_PLUS_F, brightness, 1.0f, 1.0f);
         sp /= 10;
-        x += 8;
       }
+
+      x += digitCount * 8;
 
       //LAB_800d3b08
       battleUiParts.queuePoints(x, effect.offsetY_06, 0x29, Translucency.B_PLUS_F, brightness, 1.0f, 1.0f);
