@@ -54,8 +54,8 @@ public final class Sequencer {
   private final boolean stereo;
   private final Voice[] voices;
   private int playingVoices;
-  private final int[] voiceOutputBuffer = new int[2];
-  private final int[] voiceReverbBuffer = new int[2];
+  private final float[] voiceOutputBuffer = new float[2];
+  private final float[] voiceReverbBuffer = new float[2];
   // TODO consider making this variable length for mono, but it might be better to simply always playback as stereo, just with down mixing
   private final short[] outputBuffer;
 

@@ -7,30 +7,29 @@ final class AdsrEnvelope {
   private AdsrPhase[] phases;
   private Phase phase;
   private int currentLevel;
+  private float currentLevelF;
   private int counter;
+  private int cycleAmount;
 
   void tick() {
-    if(this.counter > 0) {
-      this.counter--;
-      return;
-    }
-
     if(this.phase == Phase.Off) {
       return;
     }
 
+    if((this.counter >> 30) == 0) {
+      this.counter += this.cycleAmount;
+      return;
+    }
+
     final AdsrPhase phase = this.phases[this.phase.value];
-    final int step = phase.getStep();
-    final int shift = phase.getShift();
+    int adsrStep = phase.getAdsrStep();
     final int target = phase.getTarget();
     final boolean isDecreasing = phase.isDecreasing();
     final boolean isExponential = phase.isExponential();
 
-    int adsrCycles = 1 << Math.max(0, shift - 11);
-    int adsrStep = step << Math.max(0, 11 - shift);
 
     if(isExponential && !isDecreasing && this.currentLevel > 0x6000) {
-      adsrCycles *= 4;
+      this.cycleAmount = phase.getAdsrCounter() >> 2;
     }
 
     if(isExponential && isDecreasing) {
@@ -38,31 +37,40 @@ final class AdsrEnvelope {
     }
 
     this.currentLevel = MathHelper.clamp(this.currentLevel + adsrStep, isDecreasing ? target : 0, isDecreasing ? 0x7fff : target);
-
-    this.counter = adsrCycles;
+    this.currentLevelF = this.currentLevel / 32768.0f;
 
     final boolean nextPhase = this.currentLevel == target;
 
     if(nextPhase) {
       this.phase = this.phase.next(isDecreasing);
-      this.counter = 0;
+      if(this.phase != Phase.Off) {
+        final AdsrPhase newPhase = this.phases[this.phase.value];
+        this.cycleAmount = newPhase.getAdsrCounter();
+      }
+
+      return;
     }
+
+    this.counter -= 1 << 30;
   }
 
   void load(final AdsrPhase[] phases) {
-    this.counter = 0;
+    this.counter = 1 << 30;
+    this.cycleAmount = phases[0].getAdsrCounter();
     this.currentLevel = 0;
+    this.currentLevelF = 0.0f;
     this.phase = Phase.Attack;
     this.phases = phases;
   }
 
-  int getCurrentLevel() {
-    return this.currentLevel;
+  float getCurrentLevel() {
+    return this.currentLevelF;
   }
 
   void keyOff() {
     this.phase = Phase.Release;
-    this.counter = 0;
+    this.counter = 1 << 30;
+    this.cycleAmount = this.phases[3].getAdsrCounter();
   }
 
   boolean isFinished() {

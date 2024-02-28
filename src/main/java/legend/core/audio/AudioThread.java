@@ -27,7 +27,7 @@ public final class AudioThread implements Runnable {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
   private static final Marker SEQUENCER_MARKER = MarkerManager.getMarker("AUDIO_THREAD");
   public static final int BASE_SAMPLE_RATE = 44_100;
-  public static final int ACTUAL_SAMPLE_RATE = 44_100;
+  public static final int ACTUAL_SAMPLE_RATE = 48_000;
   public static final double SAMPLE_RATE_RATIO = BASE_SAMPLE_RATE / (double) ACTUAL_SAMPLE_RATE;
   public static final double SAMPLE_RATE_MULTIPLIER = ACTUAL_SAMPLE_RATE / (double) BASE_SAMPLE_RATE;
 

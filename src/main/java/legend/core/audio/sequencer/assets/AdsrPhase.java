@@ -1,30 +1,26 @@
 package legend.core.audio.sequencer.assets;
 
+import static legend.core.audio.AudioThread.SAMPLE_RATE_RATIO;
+
 public final class AdsrPhase {
   private final int target;
-  private final int shift;
-  private final int step;
   private final boolean isDecreasing;
   private final boolean isExponential;
 
+  private final int adsrCounter;
+  private final int adsrStep;
+
   AdsrPhase(final int target, final int shift, final int step, final boolean isDecreasing, final boolean isExponential) {
     this.target = target;
-    this.shift = shift;
-    this.step = step;
     this.isDecreasing = isDecreasing;
     this.isExponential = isExponential;
+
+    this.adsrStep = step << Math.max(0, 11 - shift);
+    this.adsrCounter = (int)Math.round((1 << Math.min(30, 41 - shift)) * SAMPLE_RATE_RATIO);
   }
 
   public int getTarget() {
     return this.target;
-  }
-
-  public int getShift() {
-    return this.shift;
-  }
-
-  public int getStep() {
-    return this.step;
   }
 
   public boolean isDecreasing() {
@@ -33,6 +29,13 @@ public final class AdsrPhase {
 
   public boolean isExponential() {
     return this.isExponential;
+  }
+
+  public int getAdsrStep() {
+    return this.adsrStep;
+  }
+  public int getAdsrCounter() {
+    return this.adsrCounter;
   }
 
   static AdsrPhase[] getPhases(final int lo, final int hi) {

@@ -60,7 +60,7 @@ final class Voice {
     this.counter = new VoiceCounter(interpolationBitDepth);
   }
 
-  void tick(final int[] output, final int[] reverb, final boolean effectsOverTime) {
+  void tick(final float[] output, final float[] reverb, final boolean effectsOverTime) {
     if(!this.used) {
       return;
     }
@@ -71,10 +71,10 @@ final class Voice {
 
     this.adsrEnvelope.tick();
 
-    final int sample = (this.sampleVoice() * this.adsrEnvelope.getCurrentLevel()) >> 15;
+    final float sample = this.sampleVoice() * this.adsrEnvelope.getCurrentLevel();
 
-    final int left = (int)(sample * this.volumeLeft);
-    final int right = (int)(sample * this.volumeRight);
+    final float left = sample * this.volumeLeft;
+    final float right = sample * this.volumeRight;
 
     output[0] += left;
     output[1] += right;
