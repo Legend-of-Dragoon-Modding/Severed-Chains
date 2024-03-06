@@ -1504,7 +1504,7 @@ public class Battle extends EngineState {
       return;
     }
 
-    if(Unpacker.getLoadingFileCount() == 0 && battleState_8006e398.hasBents() && !this.combatDisabled_800c66b9 && this.FUN_800c7da8()) {
+    if(Unpacker.getLoadingFileCount() == 0 && battleState_8006e398.hasBents() && !this.combatDisabled_800c66b9 && this.needToSelectTurn()) {
       vsyncMode_8007a3b8 = 3;
       this.mcqColour_800fa6dc = 0x80;
       this.currentTurnBent_800c66c8.storage_44[7] &= 0xffff_efff;
@@ -1558,7 +1558,7 @@ public class Battle extends EngineState {
   }
 
   @Method(0x800c7da8L)
-  public boolean FUN_800c7da8() {
+  public boolean needToSelectTurn() {
     //LAB_800c7dd8
     for(int i = 0; i < battleState_8006e398.getAllBentCount(); i++) {
       if((battleState_8006e398.allBents_e0c[i].storage_44[7] & 0x408) != 0) {

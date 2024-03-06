@@ -169,6 +169,12 @@ public class DebuggerController {
   @FXML
   public Spinner<Integer> textBoxTransparencyMode;
 
+  @FXML
+  public Button server;
+
+  @FXML
+  public Button client;
+
   public void initialize() {
     this.encounterId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
     this.mapId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
@@ -661,5 +667,15 @@ public class DebuggerController {
   @FXML
   private void setTextBoxTransparencyMode() {
     Config.setTextBoxTransparencyMode(this.textBoxTransparencyMode.getValue());
+  }
+
+  @FXML
+  private void serverClicked(final ActionEvent event) throws Exception {
+    new ServerUi().start(new Stage());
+  }
+
+  @FXML
+  private void clientClicked(final ActionEvent event) throws Exception {
+    new ClientUi().start(new Stage());
   }
 }
