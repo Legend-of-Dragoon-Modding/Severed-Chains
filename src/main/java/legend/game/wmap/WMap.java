@@ -4220,7 +4220,9 @@ public class WMap extends EngineState {
         break;
 
       case END_MOVEMENT_8:
-        this.wmapLocationPromptPopup.deallocate();
+        if(this.wmapLocationPromptPopup != null) {
+          this.wmapLocationPromptPopup.deallocate();
+        }
         this.mapTransitionState_800c68a4 = MapTransitionState.INIT_0;
         this.mapState_800c6798.disableInput_d0 = false;
         this.mapState_800c6798.shortForceMovementMode_d4 = ForcedMovementMode.NONE_0;
