@@ -62,16 +62,18 @@ public class ServerUiController implements BattleServerListener {
     });
   }
 
+  private NetServer server;
+
   public void hostClicked(final ActionEvent event) {
     try {
-      final NetServer server = new NetServer();
+      this.server = new NetServer();
       final int port = Integer.parseInt(this.txtPort.getText());
 
       System.out.println("Hosting server on port " + port);
 
       new Thread(() -> {
         try {
-          server.listen(port, this);
+          this.server.listen(port, this);
         } catch(final InterruptedException e) {
           throw new RuntimeException(e);
         }
@@ -104,16 +106,24 @@ public class ServerUiController implements BattleServerListener {
       gameState_800babc8.facing_4dd = wmap.mapState_800c6798.facing_1c;
       wmap.wmapState_800bb10c = WmapState.TRANSITION_TO_BATTLE_8;
     }
+
+    for(final ListItem connection : this.connections) {
+      final ByteBuf buf = connection.ctx.alloc().buffer(0x8);
+      buf.writeInt(1);
+      buf.writeInt(encounterId_800bb0f8);
+      connection.ctx.writeAndFlush(buf);
+      buf.release();
+    }
   }
 
   @Override
   public void clientConnected(final ChannelHandlerContext ctx) {
-    this.connections.add(new ListItem(ctx.name()));
+    this.connections.add(new ListItem(ctx));
   }
 
   @Override
   public void clientDisconnected(final ChannelHandlerContext ctx) {
-    this.connections.removeIf(e -> e.name.equals(ctx.name()));
+    this.connections.removeIf(e -> e.ctx == ctx);
   }
 
   @Override
@@ -123,11 +133,11 @@ public class ServerUiController implements BattleServerListener {
 
   private static class ListItem {
     private final StringProperty prop = new SimpleStringProperty(this, "name");
-    private final String name;
+    private final ChannelHandlerContext ctx;
 
-    public ListItem(final String name) {
-      this.name = name;
-      this.prop.set(name);
+    public ListItem(final ChannelHandlerContext ctx) {
+      this.ctx = ctx;
+      this.prop.set(ctx.name());
     }
 
     public String getName() {
