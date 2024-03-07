@@ -8,6 +8,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.LengthFieldPrepender;
 
 public class NetServer {
   public void listen(final int port, final BattleServerListener listener) throws InterruptedException {
@@ -20,8 +21,8 @@ public class NetServer {
         .channel(NioServerSocketChannel.class)
         .childHandler(new ChannelInitializer<SocketChannel>() {
           @Override
-          public void initChannel(final SocketChannel ch) throws Exception {
-            ch.pipeline().addLast(new BattleServerHandler(listener));
+          public void initChannel(final SocketChannel ch) {
+            ch.pipeline().addLast(new LengthFieldPrepender(2, 0), new PacketEncoder(), new BattleServerHandler(listener));
           }
         })
         .option(ChannelOption.SO_BACKLOG, 128)

@@ -20,16 +20,8 @@ import javafx.scene.control.cell.TextFieldListCell;
 import javafx.util.StringConverter;
 import legend.game.net.BattleServerListener;
 import legend.game.net.NetServer;
-import legend.game.submap.SMap;
-import legend.game.wmap.DirectionalPathSegmentData08;
-import legend.game.wmap.WMap;
-import legend.game.wmap.WmapState;
 
-import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
-import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
-import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
-import static legend.game.wmap.WmapStatics.directionalPathSegmentData_800f2248;
 
 public class ServerUiController implements BattleServerListener {
   @FXML
@@ -89,6 +81,7 @@ public class ServerUiController implements BattleServerListener {
 
   @FXML
   private void startEncounter(final ActionEvent event) {
+/*
     if(currentEngineState_8004dd04 instanceof final SMap smap) {
       smap.submap.generateEncounter();
       encounterId_800bb0f8 = this.encounterId.getValue();
@@ -110,13 +103,15 @@ public class ServerUiController implements BattleServerListener {
       gameState_800babc8.facing_4dd = wmap.mapState_800c6798.facing_1c;
       wmap.wmapState_800bb10c = WmapState.TRANSITION_TO_BATTLE_8;
     }
+*/
 
     for(final ListItem connection : this.connections) {
-      final ByteBuf buf = connection.ctx.alloc().buffer(0x8);
-      buf.writeInt(1);
-      buf.writeInt(encounterId_800bb0f8);
-      buf.writeInt(battleStage_800bb0f4);
-      connection.ctx.writeAndFlush(buf);
+//      final ByteBuf buf = connection.ctx.alloc().buffer(0x8);
+//      buf.writeInt(1);
+//      buf.writeInt(encounterId_800bb0f8);
+//      buf.writeInt(battleStage_800bb0f4);
+//      connection.ctx.writeAndFlush(buf);
+      connection.ctx.writeAndFlush(gameState_800babc8);
     }
   }
 

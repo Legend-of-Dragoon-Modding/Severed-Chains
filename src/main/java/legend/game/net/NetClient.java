@@ -8,6 +8,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 
 import java.util.function.Consumer;
 
@@ -23,7 +24,7 @@ public class NetClient {
       b.handler(new ChannelInitializer<SocketChannel>() {
         @Override
         public void initChannel(final SocketChannel ch) throws Exception {
-          ch.pipeline().addLast(new BattleClientHandler(listener));
+          ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(1024 * 8, 0, 2, 0, 2), new PacketDecoder(), new BattleClientHandler(listener));
         }
       });
 
