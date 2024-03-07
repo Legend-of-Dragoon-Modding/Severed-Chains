@@ -3,6 +3,7 @@ package legend.game.debugger;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.CharsetUtil;
+import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -13,6 +14,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.util.StringConverter;
@@ -60,6 +62,8 @@ public class ServerUiController implements BattleServerListener {
       });
       return cell;
     });
+
+    this.encounterId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
   }
 
   private NetServer server;
@@ -111,19 +115,19 @@ public class ServerUiController implements BattleServerListener {
       final ByteBuf buf = connection.ctx.alloc().buffer(0x8);
       buf.writeInt(1);
       buf.writeInt(encounterId_800bb0f8);
+      buf.writeInt(battleStage_800bb0f4);
       connection.ctx.writeAndFlush(buf);
-      buf.release();
     }
   }
 
   @Override
   public void clientConnected(final ChannelHandlerContext ctx) {
-    this.connections.add(new ListItem(ctx));
+    Platform.runLater(() -> this.connections.add(new ListItem(ctx)));
   }
 
   @Override
   public void clientDisconnected(final ChannelHandlerContext ctx) {
-    this.connections.removeIf(e -> e.ctx == ctx);
+    Platform.runLater(() -> this.connections.removeIf(e -> e.ctx == ctx));
   }
 
   @Override

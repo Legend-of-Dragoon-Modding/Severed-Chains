@@ -60,25 +60,21 @@ public class ClientUiController implements BattleClientListener {
     switch(packet) {
       case 1 -> {
         final int encounterId = buf.readInt();
+        final int stageId = buf.readInt();
         if(currentEngineState_8004dd04 instanceof final SMap smap) {
           smap.submap.generateEncounter();
           encounterId_800bb0f8 = encounterId;
+          battleStage_800bb0f4 = stageId;
           smap.mapTransition(-1, 0);
         } else if(currentEngineState_8004dd04 instanceof final WMap wmap) {
           encounterId_800bb0f8 = encounterId;
           final DirectionalPathSegmentData08 directionalPathSegment = directionalPathSegmentData_800f2248[wmap.mapState_800c6798.directionalPathIndex_12];
-
-          if(directionalPathSegment.battleStage_04 == -1) {
-            battleStage_800bb0f4 = 1;
-          } else {
-            battleStage_800bb0f4 = directionalPathSegment.battleStage_04;
-          }
-
           gameState_800babc8.directionalPathIndex_4de = wmap.mapState_800c6798.directionalPathIndex_12;
           gameState_800babc8.pathIndex_4d8 = wmap.mapState_800c6798.pathIndex_14;
           gameState_800babc8.dotIndex_4da = wmap.mapState_800c6798.dotIndex_16;
           gameState_800babc8.dotOffset_4dc = wmap.mapState_800c6798.dotOffset_18;
           gameState_800babc8.facing_4dd = wmap.mapState_800c6798.facing_1c;
+          battleStage_800bb0f4 = stageId;
           wmap.wmapState_800bb10c = WmapState.TRANSITION_TO_BATTLE_8;
         }
       }
