@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.Tuple;
+import legend.core.audio.xa.XaTranscoder;
 import legend.game.Scus94491BpeSegment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -120,6 +121,8 @@ public final class Unpacker {
     transformers.put(Unpacker::playerScriptDamageCapsDiscriminator, Unpacker::playerScriptDamageCapsTransformer);
     transformers.put(Unpacker::enemyScriptDamageCapDiscriminator, Unpacker::enemyAndItemScriptDamageCapPatcher);
     transformers.put(Unpacker::itemScriptDamageCapDiscriminator, Unpacker::enemyAndItemScriptDamageCapPatcher);
+
+    transformers.put(Unpacker::xaDiscriminator, Unpacker::xaTransformer);
   }
 
   private static final List<Transformer> postTransformers = new ArrayList<>();
@@ -1174,6 +1177,14 @@ public final class Unpacker {
     transformations.addNode("shadow.anim", node.data.slice(0x51c, 0x28));
     transformations.addNode("shadow.tim", getTimSize(node.data.slice(0x544)));
     transformations.addNode("font.tim", getTimSize(node.data.slice(0xb6744)));
+  }
+
+  private static boolean xaDiscriminator(final PathNode node, final Set<String> flags) {
+    return node.fullPath.endsWith(".XA");
+  }
+
+  private static void xaTransformer(final PathNode node, final Transformations transformations, final Set<String> flags) {
+    XaTranscoder.transform(node, transformations);
   }
 
   private static FileData getTimSize(final FileData data) {

@@ -1,6 +1,7 @@
 package legend.game;
 
 import legend.core.MathHelper;
+import legend.core.audio.AudioThread;
 import legend.core.memory.Method;
 import legend.core.spu.Voice;
 import legend.game.combat.Battle;
@@ -39,6 +40,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.SEQUENCER;
 import static legend.core.GameEngine.SPU;
 import static legend.game.Scus94491BpeSegment_8005.reverbConfigs_80059f7c;
@@ -368,31 +370,11 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004b1e8L)
   public static int changeSequenceVolumeOverTime(final SequenceData124 sequenceData, final int transitionTime, final int channel, final int newVolume) {
-    final int ret;
-    if(channel == -1) {
-      sssqReader_800c667c = sequenceData.sssqReader_010;
-      sequenceData.volumeChange_03e[0].used_0a = true;
-      sequenceData.volumeChange_03e[0].newValue_0c = newVolume;
-      sequenceData.volumeChange_03e[0].remainingTime_0e = transitionTime;
-      sequenceData.volumeChange_03e[0].totalTime_10 = transitionTime;
-      sequenceData.volumeChange_03e[0].oldValue_12 = sssqReader_800c667c.baseVolume();
-
-      ret = sssqReader_800c667c.baseVolume();
-    } else {
-      //LAB_8004b268
-      sssqChannelInfo_800C6680 = sequenceData.sssqReader_010.channelInfo(channel);
-      sequenceData.volumeChange_03e[channel].used_00 = true;
-      sequenceData.volumeChange_03e[channel].newValue_02 = newVolume;
-      sequenceData.volumeChange_03e[channel].remainingTime_04 = transitionTime;
-      sequenceData.volumeChange_03e[channel].totalTime_06 = transitionTime;
-      sequenceData.volumeChange_03e[channel].oldValue_08 = sssqChannelInfo_800C6680.volume_03;
-
-      ret = sssqChannelInfo_800C6680.volume_03;
+    if(channel != -1) {
+      throw new RuntimeException("Per channel volume change detected!");
     }
 
-    //LAB_8004b2b8
-    sequenceData.volumeIsChanging_03c = true;
-    return ret;
+    return AUDIO_THREAD.changeSequenceVolumeOverTime(newVolume, transitionTime);
   }
 
   @Method(0x8004b834L)
@@ -400,7 +382,7 @@ public final class Scus94491BpeSegment_8004 {
     final SoundEnv44 soundEnv = soundEnv_800c6630;
 
     //LAB_8004b8ac
-    soundEnv.playingSoundsUpperBound_03 = 8;
+    soundEnv.playingSoundsUpperBound_03 = 20;
     soundEnv._00 = 0;
     soundEnv._0d = 0;
     soundEnv.ticksPerSecond_42 = 60;
@@ -571,6 +553,7 @@ public final class Scus94491BpeSegment_8004 {
       SPU.setReverbMode(0);
       SPU.enableReverb();
       SPU.setReverb(reverbConfigs_80059f7c[type - 1].config_02);
+      AUDIO_THREAD.setReverb(reverbConfigs_80059f7c[type - 1].config_02);
       return;
     }
 
@@ -578,6 +561,8 @@ public final class Scus94491BpeSegment_8004 {
     SPU.clearKeyOn();
     SPU.setReverbVolume(0, 0);
     SPU.disableReverb();
+    // TODO DisableReverb (might not be necessary, since we are not actually ticking??)
+    AUDIO_THREAD.setReverbVolume(0, 0);
   }
 
   /**
@@ -588,6 +573,7 @@ public final class Scus94491BpeSegment_8004 {
     if(soundEnv_800c6630.reverbType_34 != 0 && left < 0x80 && right < 0x80) {
       //LAB_8004c5d0
       SPU.setReverbVolume(left << 8, right << 8);
+      AUDIO_THREAD.setReverbVolume(left, right);
     }
 
     //LAB_8004c5d8
@@ -623,9 +609,13 @@ public final class Scus94491BpeSegment_8004 {
       return -1;
     }
 
-    if(sequenceData == null || !sequenceData.musicLoaded_027) {
+    if(sequenceData == null) {
+      return AUDIO_THREAD.setSequenceVolume(volume);
+    }
+
+    if( !sequenceData.musicLoaded_027) {
       // This is normal
-//      assert false : "Error";
+      //      assert false : "Error";
       return -1;
     }
 
@@ -723,12 +713,15 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     setMainVolume(0, 0);
+    AUDIO_THREAD.setMainVolume(0, 0);
     soundEnv.fadingIn_2a = true;
     soundEnv.fadeTime_2c = fadeTime;
     soundEnv.fadeInVol_2e = maxVol;
 
     //LAB_8004cd30
     //LAB_8004cd34
+
+    AUDIO_THREAD.fadeIn(fadeTime, maxVol);
     return 0;
   }
 
@@ -739,6 +732,8 @@ public final class Scus94491BpeSegment_8004 {
       soundEnv_800c6630.fadeTime_2c = fadeTime;
       soundEnv_800c6630.fadeOutVolL_30 = SPU.getMainVolumeLeft() >>> 8;
       soundEnv_800c6630.fadeOutVolR_32 = SPU.getMainVolumeRight() >>> 8;
+
+      AUDIO_THREAD.fadeOut(fadeTime);
       return 0;
     }
 
@@ -747,26 +742,23 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004cf8cL)
-  public static void startMusicSequence(final SequenceData124 sequenceData) {
-    final PlayableSound0c playableSound = sequenceData.playableSound_020;
-
-    sshdPtr_800c4ac0 = playableSound.sshdPtr_04;
-
-    if(sequenceData.musicLoaded_027) {
-      if(sshdPtr_800c4ac0.hasSubfile(0)) {
-        if(playableSound.used_00) {
-          sequenceData.musicPlaying_028 = true;
-          sequenceData._0e8 = false;
-        }
-      }
+  public static void startMusicSequence(@Nullable final SequenceData124 sequenceData) {
+    if(sequenceData != null) {
+      throw new RuntimeException("startMusicSequence 0x8004cf8cL sequence not null");
     }
 
-    //LAB_8004d02c
-    sequenceData._018 = false;
+    AUDIO_THREAD.startSequence();
   }
 
   @Method(0x8004d034L)
   public static void stopMusicSequence(final SequenceData124 sequenceData, final int mode) {
+    if(sequenceData == null) {
+      //TODO implement different modes
+      AUDIO_THREAD.stopSequence();
+
+      return;
+    }
+
     boolean resetAdsr = false;
     final PlayableSound0c playableSound = sequenceData.playableSound_020;
     final Sshd sshd = playableSound.sshdPtr_04;
@@ -865,35 +857,31 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004d2fcL)
-  public static int startSequenceAndChangeVolumeOverTime(final SequenceData124 sequenceData, final short transitionTime, final short newVolume) {
-    sssqReader_800c667c = sequenceData.sssqReader_010;
-
-    int ret = -1;
-
+  public static int startSequenceAndChangeVolumeOverTime(@Nullable final SequenceData124 sequenceData, final short transitionTime, final short newVolume) {
     if(transitionTime >= 0x100 || newVolume >= 0x80) {
       throw new IllegalArgumentException("Invalid transitionTime or newVolume");
     }
 
-    if(!sequenceData.musicPlaying_028) {
-      //LAB_8004d3b0
-      setSequenceVolume(sequenceData, 0);
-      startMusicSequence(sequenceData);
-      sequenceData.volumeIsDecreasing_03a = false;
-
-      //LAB_8004d3c8
-      ret = changeSequenceVolumeOverTime(sequenceData, transitionTime, -1, newVolume);
-    } else if(sequenceData.musicPlaying_028 && sequenceData.sssqReader_010.baseVolume() < newVolume) {
-      sequenceData.volumeIsDecreasing_03a = false;
-      ret = changeSequenceVolumeOverTime(sequenceData, transitionTime, -1, newVolume);
+    if(sequenceData != null) {
+      throw new RuntimeException("startSequenceAndChangeVolumeOverTime 0x8004d2fcL sequenceData not null");
     }
 
-    //LAB_8004d3f4
-    //LAB_8004d3f8
-    return ret;
+    final int volume = AUDIO_THREAD.changeSequenceVolumeOverTime(newVolume, transitionTime);
+
+    if(!AUDIO_THREAD.isMusicPlaying()) {
+      AUDIO_THREAD.setSequenceVolume(0);
+      AUDIO_THREAD.startSequence();
+    }
+
+    return volume;
   }
 
   @Method(0x8004d41cL)
-  public static int changeSequenceVolumeOverTime(final SequenceData124 sequenceData, final int transitionTime, final int newVolume) {
+  public static int changeSequenceVolumeOverTime(@Nullable final SequenceData124 sequenceData, final int transitionTime, final int newVolume) {
+    if(sequenceData != null) {
+      throw new RuntimeException("changeSequenceVolumeOverTime 0x8004d41cL sequence data not null.");
+    }
+
     assert (short)transitionTime >= 0;
     assert (short)newVolume >= 0;
 
@@ -908,17 +896,7 @@ public final class Scus94491BpeSegment_8004 {
       return -1;
     }
 
-    if(!sequenceData.musicPlaying_028) {
-      return -1;
-    }
-
-    if(newVolume == 0) {
-      sequenceData.volumeIsDecreasing_03a = true;
-    }
-
-    //LAB_8004d48c
-    //LAB_8004d4a4
-    return changeSequenceVolumeOverTime(sequenceData, transitionTime, -1, newVolume);
+    return AUDIO_THREAD.changeSequenceVolumeOverTime(newVolume, transitionTime);
   }
 
   @Method(0x8004d4b4L)
@@ -934,24 +912,25 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x8004d52cL)
-  public static int getSequenceFlags(final SequenceData124 sequenceData) {
+  public static int getSequenceFlags(@Nullable final SequenceData124 sequenceData) {
     int flags = 0;
 
-    if(sequenceData.musicPlaying_028) {
+    if(sequenceData != null) {
+      throw new RuntimeException("getSequenceFlags 0x8004d52cL sequence not null");
+    }
+
+    if(AUDIO_THREAD.isMusicPlaying()) {
       flags |= 0x1;
     }
 
+    // TODO I have no idea what this is.
+    /*
     if(sequenceData._0e8) {
       flags |= 0x2;
     }
+    */
 
-    if(sequenceData.volumeIsChanging_03c) {
-      if(!sequenceData.volumeIsDecreasing_03a) {
-        flags |= 0x4;
-      } else {
-        flags |= 0x8;
-      }
-    }
+    flags |= AUDIO_THREAD.getSequenceVolumeOverTimeFlags();
 
     final SoundEnv44 soundEnv = soundEnv_800c6630;
 

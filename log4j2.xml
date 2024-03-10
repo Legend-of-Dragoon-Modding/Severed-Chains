@@ -12,7 +12,9 @@
         <MarkerFilter marker="CONTROLLER_VERBOSE" onMatch="DENY" onMismatch="NEUTRAL" />
         <MarkerFilter marker="CAMERA" onMatch="DENY" onMismatch="NEUTRAL"/>
         <MarkerFilter marker="SPU" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
-        <MarkerFilter marker="SEQUENCER" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="AUDIO_THREAD" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="SEQUENCER" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="VOICE" onMatch="DENY" onMismatch="NEUTRAL"/>
         <MarkerFilter marker="SEQUENCE" onMatch="DENY" onMismatch="NEUTRAL"/>
         <MarkerFilter marker="DISASSEMBLY" onMatch="DENY" onMismatch="NEUTRAL"/>
       </Filters>
@@ -28,7 +30,9 @@
         <MarkerFilter marker="CONTROLLER_VERBOSE" onMatch="DENY" onMismatch="NEUTRAL" />
         <MarkerFilter marker="CAMERA" onMatch="DENY" onMismatch="NEUTRAL"/>
         <MarkerFilter marker="SPU" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
-        <MarkerFilter marker="SEQUENCER" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="AUDIO_THREAD" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="SEQUENCER" onMatch="DENY" onMismatch="NEUTRAL"/>
+        <MarkerFilter marker="VOICE" onMatch="DENY" onMismatch="NEUTRAL"/>
         <MarkerFilter marker="SEQUENCE" onMatch="DENY" onMismatch="NEUTRAL"/>
         <MarkerFilter marker="DISASSEMBLY" onMatch="ACCEPT" onMismatch="NEUTRAL"/>
       </Filters>

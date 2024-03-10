@@ -1,5 +1,6 @@
 package legend.core;
 
+import legend.core.audio.AudioThread;
 import legend.core.gpu.Gpu;
 import legend.core.gte.Gte;
 import legend.core.opengl.Mesh;
@@ -101,9 +102,11 @@ public final class GameEngine {
   public static final Gte GTE;
   public static final Gpu GPU;
   public static final Spu SPU;
+  public static final AudioThread AUDIO_THREAD;
 
   public static final Thread hardwareThread;
   public static final Thread spuThread;
+  public static final Thread openalThread;
 
   public static boolean legacyUi;
 
@@ -121,11 +124,14 @@ public final class GameEngine {
     GTE = new Gte();
     GPU = new Gpu();
     SPU = new Spu();
+    AUDIO_THREAD = new AudioThread(100, true, 24, 9);
 
     hardwareThread = Thread.currentThread();
     hardwareThread.setName("Hardware");
     spuThread = new Thread(SPU);
     spuThread.setName("SPU");
+    openalThread = new Thread(AUDIO_THREAD);
+    openalThread.setName("OPEN_AL");
   }
 
   private static final Object LOCK = new Object();
@@ -401,6 +407,7 @@ public final class GameEngine {
 
     RENDERER.usePs1Gpu = true;
     spuThread.start();
+    openalThread.start();
 
     synchronized(LOCK) {
       Input.init();
