@@ -22,6 +22,7 @@ import org.legendofdragoon.modloader.Mod;
 import org.legendofdragoon.modloader.events.EventListener;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
+import java.util.Locale;
 import java.util.Map;
 
 import static legend.game.SItem.equipmentStats_80111ff0;
@@ -40,7 +41,7 @@ import static legend.game.combat.Battle.spellStats_800fa0b8;
 public class LodMod {
   public static final String MOD_ID = "lod";
 
-  private static final Slugify slug = Slugify.builder().underscoreSeparator(true).customReplacement("'", "").customReplacement("-", "_").build();
+  private static final Slugify slug = Slugify.builder().locale(Locale.US).underscoreSeparator(true).customReplacement("'", "").customReplacement("-", "_").build();
 
   public static RegistryId id(final String entryId) {
     return new RegistryId(MOD_ID, entryId);
@@ -94,7 +95,6 @@ public class LodMod {
       }
 
       if(!name.isEmpty()) {
-        System.out.println(name + " = " + id(slug.slugify(name)));
         final Equipment equipment = event.register(id(slug.slugify(name)), Equipment.fromFile(name, itemDescriptions_80117a10[equipmentId].get(), itemPrices_80114310[equipmentId], Unpacker.loadFile("equipment/%d.deqp".formatted(equipmentId))));
         equipmentIdMap.put(equipmentId, equipment.getRegistryId());
         idEquipmentMap.put(equipment.getRegistryId(), equipmentId);
