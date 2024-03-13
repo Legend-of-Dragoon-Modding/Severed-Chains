@@ -11,87 +11,85 @@ import java.nio.charset.StandardCharsets;
 
 import static legend.core.GameEngine.REGISTRIES;
 
-public class GameStatePacket implements Packet<GameState52c> {
-  public static int ID = 1;
+public class GameStatePacket {
+  public final GameState52c state;
 
-  @Override
-  public int id() {
-    return ID;
+  public GameStatePacket(final GameState52c state) {
+    this.state = state;
   }
 
-  @Override
-  public void write(final ByteBuf buf, final GameState52c state) {
-    buf.writeInt(state._04);
+  public static void serialize(final GameStatePacket packet, final ByteBuf buf) {
+    buf.writeInt(packet.state._04);
 
-    buf.writeInt(state.scriptData_08.length);
-    for(final int scriptData : state.scriptData_08) {
+    buf.writeInt(packet.state.scriptData_08.length);
+    for(final int scriptData : packet.state.scriptData_08) {
       buf.writeInt(scriptData);
     }
 
-    buf.writeInt(state.charIds_88.length);
-    for(final int charId : state.charIds_88) {
+    buf.writeInt(packet.state.charIds_88.length);
+    for(final int charId : packet.state.charIds_88) {
       buf.writeInt(charId);
     }
 
-    buf.writeInt(state.gold_94);
-    buf.writeInt(state.chapterIndex_98);
-    buf.writeInt(state.stardust_9c);
-    buf.writeInt(state.timestamp_a0);
-    buf.writeInt(state.submapScene_a4);
-    buf.writeInt(state.submapCut_a8);
-    buf.writeInt(state._b0);
-    buf.writeInt(state._b4);
-    buf.writeInt(state._b8);
+    buf.writeInt(packet.state.gold_94);
+    buf.writeInt(packet.state.chapterIndex_98);
+    buf.writeInt(packet.state.stardust_9c);
+    buf.writeInt(packet.state.timestamp_a0);
+    buf.writeInt(packet.state.submapScene_a4);
+    buf.writeInt(packet.state.submapCut_a8);
+    buf.writeInt(packet.state._b0);
+    buf.writeInt(packet.state._b4);
+    buf.writeInt(packet.state._b8);
 
-    buf.writeInt(state.scriptFlags2_bc.count());
-    for(int i = 0; i < state.scriptFlags2_bc.count(); i++) {
-      buf.writeInt(state.scriptFlags2_bc.getRaw(i));
+    buf.writeInt(packet.state.scriptFlags2_bc.count());
+    for(int i = 0; i < packet.state.scriptFlags2_bc.count(); i++) {
+      buf.writeInt(packet.state.scriptFlags2_bc.getRaw(i));
     }
 
-    buf.writeInt(state.scriptFlags1_13c.count());
-    for(int i = 0; i < state.scriptFlags1_13c.count(); i++) {
-      buf.writeInt(state.scriptFlags1_13c.getRaw(i));
+    buf.writeInt(packet.state.scriptFlags1_13c.count());
+    for(int i = 0; i < packet.state.scriptFlags1_13c.count(); i++) {
+      buf.writeInt(packet.state.scriptFlags1_13c.getRaw(i));
     }
 
-    buf.writeInt(state.wmapFlags_15c.count());
-    for(int i = 0; i < state.wmapFlags_15c.count(); i++) {
-      buf.writeInt(state.wmapFlags_15c.getRaw(i));
+    buf.writeInt(packet.state.wmapFlags_15c.count());
+    for(int i = 0; i < packet.state.wmapFlags_15c.count(); i++) {
+      buf.writeInt(packet.state.wmapFlags_15c.getRaw(i));
     }
 
-    buf.writeInt(state.visitedLocations_17c.count());
-    for(int i = 0; i < state.visitedLocations_17c.count(); i++) {
-      buf.writeInt(state.visitedLocations_17c.getRaw(i));
+    buf.writeInt(packet.state.visitedLocations_17c.count());
+    for(int i = 0; i < packet.state.visitedLocations_17c.count(); i++) {
+      buf.writeInt(packet.state.visitedLocations_17c.getRaw(i));
     }
 
-    buf.writeInt(state.goods_19c.length);
-    for(final int goods : state.goods_19c) {
+    buf.writeInt(packet.state.goods_19c.length);
+    for(final int goods : packet.state.goods_19c) {
       buf.writeInt(goods);
     }
 
-    buf.writeInt(state._1a4.length);
-    for(final int _1a4 : state._1a4) {
+    buf.writeInt(packet.state._1a4.length);
+    for(final int _1a4 : packet.state._1a4) {
       buf.writeInt(_1a4);
     }
 
-    buf.writeInt(state.chestFlags_1c4.length);
-    for(final int chestFlags : state.chestFlags_1c4) {
+    buf.writeInt(packet.state.chestFlags_1c4.length);
+    for(final int chestFlags : packet.state.chestFlags_1c4) {
       buf.writeInt(chestFlags);
     }
 
-    buf.writeInt(state.equipment_1e8.size());
-    for(final Equipment equipment : state.equipment_1e8) {
+    buf.writeInt(packet.state.equipment_1e8.size());
+    for(final Equipment equipment : packet.state.equipment_1e8) {
       buf.writeInt(equipment.getRegistryId().toString().length());
       buf.writeCharSequence(equipment.getRegistryId().toString(), StandardCharsets.US_ASCII);
     }
 
-    buf.writeInt(state.items_2e9.size());
-    for(final Item item : state.items_2e9) {
+    buf.writeInt(packet.state.items_2e9.size());
+    for(final Item item : packet.state.items_2e9) {
       buf.writeInt(item.getRegistryId().toString().length());
       buf.writeCharSequence(item.getRegistryId().toString(), StandardCharsets.US_ASCII);
     }
 
-    buf.writeInt(state.charData_32c.length);
-    for(final CharacterData2c charData : state.charData_32c) {
+    buf.writeInt(packet.state.charData_32c.length);
+    for(final CharacterData2c charData : packet.state.charData_32c) {
       buf.writeInt(charData.xp_00);
       buf.writeInt(charData.partyFlags_04);
       buf.writeInt(charData.hp_08);
@@ -121,18 +119,17 @@ public class GameStatePacket implements Packet<GameState52c> {
       }
     }
 
-    buf.writeInt(state.pathIndex_4d8);
-    buf.writeInt(state.dotIndex_4da);
-    buf.writeFloat(state.dotOffset_4dc);
-    buf.writeInt(state.facing_4dd);
-    buf.writeInt(state.directionalPathIndex_4de);
-    buf.writeBoolean(state.vibrationEnabled_4e1);
-    buf.writeBoolean(state.indicatorsDisabled_4e3);
-    buf.writeBoolean(state.isOnWorldMap_4e4);
+    buf.writeInt(packet.state.pathIndex_4d8);
+    buf.writeInt(packet.state.dotIndex_4da);
+    buf.writeFloat(packet.state.dotOffset_4dc);
+    buf.writeInt(packet.state.facing_4dd);
+    buf.writeInt(packet.state.directionalPathIndex_4de);
+    buf.writeBoolean(packet.state.vibrationEnabled_4e1);
+    buf.writeBoolean(packet.state.indicatorsDisabled_4e3);
+    buf.writeBoolean(packet.state.isOnWorldMap_4e4);
   }
 
-  @Override
-  public GameState52c read(final ByteBuf buf) {
+  public static GameStatePacket deserialize(final ByteBuf buf) {
     final GameState52c state = new GameState52c();
 
     state._04 = buf.readInt();
@@ -251,6 +248,6 @@ public class GameStatePacket implements Packet<GameState52c> {
     state.indicatorsDisabled_4e3 = buf.readBoolean();
     state.isOnWorldMap_4e4 = buf.readBoolean();
 
-    return state;
+    return new GameStatePacket(state);
   }
 }

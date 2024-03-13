@@ -2,23 +2,26 @@ package legend.game.net;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import legend.game.types.GameState52c;
-
-import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class BattleClientHandler extends ChannelInboundHandlerAdapter {
-  private final BattleClientListener listener;
+  private static final Logger LOGGER = LogManager.getFormatterLogger(BattleClientHandler.class);
 
-  public BattleClientHandler(final BattleClientListener listener) {
+  private final BattleClientListener listener;
+  private final PacketManager<ClientContext> packetManager;
+
+  public BattleClientHandler(final BattleClientListener listener, final PacketManager<ClientContext> packetManager) {
     this.listener = listener;
+    this.packetManager = packetManager;
   }
 
   @Override
   public void channelRead(final ChannelHandlerContext ctx, final Object msg) {
-    gameState_800babc8 = (GameState52c)msg;
-//    final ByteBuf buf = (ByteBuf)msg;
-//    this.listener.packetReceived(buf);
-//    buf.release();
+    final PacketManager<ClientContext> packetManager = this.packetManager;
+
+    LOGGER.debug("Got client packet %s", msg.getClass());
+    packetManager.handle(msg, new ClientContext());
   }
 
   @Override

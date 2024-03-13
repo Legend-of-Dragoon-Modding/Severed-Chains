@@ -19,6 +19,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.util.StringConverter;
 import legend.game.net.BattleServerListener;
+import legend.game.net.GameStatePacket;
 import legend.game.net.NetServer;
 
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -111,7 +112,7 @@ public class ServerUiController implements BattleServerListener {
 //      buf.writeInt(encounterId_800bb0f8);
 //      buf.writeInt(battleStage_800bb0f4);
 //      connection.ctx.writeAndFlush(buf);
-      connection.ctx.writeAndFlush(gameState_800babc8);
+      connection.ctx.writeAndFlush(new GameStatePacket(gameState_800babc8));
     }
   }
 
