@@ -193,7 +193,9 @@ public class GameStatePacket {
     state.equipment_1e8.clear();
     for(int i = 0; i < equipmentLen; i++) {
       final int idLen = buf.readInt();
-      final Equipment equipment = REGISTRIES.equipment.getEntry(buf.readCharSequence(idLen, StandardCharsets.US_ASCII).toString()).get();
+      final String id = buf.readCharSequence(idLen, StandardCharsets.US_ASCII).toString();
+      System.out.println(id);
+      final Equipment equipment = REGISTRIES.equipment.getEntry(id).get();
       state.equipment_1e8.add(equipment);
     }
 
@@ -201,7 +203,9 @@ public class GameStatePacket {
     state.items_2e9.clear();
     for(int i = 0; i < itemsLen; i++) {
       final int idLen = buf.readInt();
-      final Item item = REGISTRIES.items.getEntry(buf.readCharSequence(idLen, StandardCharsets.US_ASCII).toString()).get();
+      final String id = buf.readCharSequence(idLen, StandardCharsets.US_ASCII).toString();
+      System.out.println(id);
+      final Item item = REGISTRIES.items.getEntry(id).get();
       state.items_2e9.add(item);
     }
 
@@ -222,7 +226,9 @@ public class GameStatePacket {
       charData.equipment_14.clear();
       for(int i = 0; i < charEquipmentLen; i++) {
         final int idLen = buf.readInt();
-        final Equipment equipment = REGISTRIES.equipment.getEntry(buf.readCharSequence(idLen, StandardCharsets.US_ASCII).toString()).get();
+        final String id = buf.readCharSequence(idLen, StandardCharsets.US_ASCII).toString();
+        System.out.println(id);
+        final Equipment equipment = REGISTRIES.equipment.getEntry(id).get();
         charData.equipment_14.put(EquipmentSlot.fromLegacy(i), equipment);
       }
 
