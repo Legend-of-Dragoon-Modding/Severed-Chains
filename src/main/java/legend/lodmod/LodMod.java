@@ -94,6 +94,7 @@ public class LodMod {
       }
 
       if(!name.isEmpty()) {
+        System.out.println(name + " = " + id(slug.slugify(name)));
         final Equipment equipment = event.register(id(slug.slugify(name)), Equipment.fromFile(name, itemDescriptions_80117a10[equipmentId].get(), itemPrices_80114310[equipmentId], Unpacker.loadFile("equipment/%d.deqp".formatted(equipmentId))));
         equipmentIdMap.put(equipmentId, equipment.getRegistryId());
         idEquipmentMap.put(equipment.getRegistryId(), equipmentId);
