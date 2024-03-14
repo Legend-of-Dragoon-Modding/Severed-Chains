@@ -8,11 +8,9 @@ import org.apache.logging.log4j.Logger;
 public class BattleClientHandler extends ChannelInboundHandlerAdapter {
   private static final Logger LOGGER = LogManager.getFormatterLogger(BattleClientHandler.class);
 
-  private final BattleClientListener listener;
   private final PacketManager<ClientContext> packetManager;
 
-  public BattleClientHandler(final BattleClientListener listener, final PacketManager<ClientContext> packetManager) {
-    this.listener = listener;
+  public BattleClientHandler(final PacketManager<ClientContext> packetManager) {
     this.packetManager = packetManager;
   }
 
