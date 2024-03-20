@@ -137,6 +137,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
+import static legend.core.GameEngine.BATTLE_CONTROLLER;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
@@ -1517,6 +1518,7 @@ public class Battle extends EngineState {
           this.forcedTurnBent_800c66bc.storage_44[7] = this.forcedTurnBent_800c66bc.storage_44[7] & 0xffff_ffdf | 0x1008;
           this.currentTurnBent_800c66c8 = this.forcedTurnBent_800c66bc;
           EVENTS.postEvent(new BattleEntityTurnEvent<>(this.forcedTurnBent_800c66bc));
+          BATTLE_CONTROLLER.startTurn(this.forcedTurnBent_800c66bc);
         } else { // Take regular turns
           //LAB_800c7ce8
           if(battleState_8006e398.hasAliveMonsters()) { // Monsters alive, calculate next bent turn
@@ -1524,6 +1526,7 @@ public class Battle extends EngineState {
             this.currentTurnBent_800c66c8 = battleState_8006e398.getCurrentTurnBent();
             this.currentTurnBent_800c66c8.storage_44[7] |= 0x1008;
             EVENTS.postEvent(new BattleEntityTurnEvent<>(this.currentTurnBent_800c66c8));
+            BATTLE_CONTROLLER.startTurn(this.currentTurnBent_800c66c8);
 
             //LAB_800c7d74
           } else { // Monsters dead
@@ -3256,6 +3259,10 @@ public class Battle extends EngineState {
 
       script.scriptState_04.storage_44[7] &= 0xffff_efff;
       this.currentDisplayableIconsBitset_800c675c = displayableIconsBitset;
+    }
+
+    if(!BATTLE_CONTROLLER.canTakeAction()) {
+      return FlowControl.CONTINUE;
     }
 
     //LAB_800ccaec

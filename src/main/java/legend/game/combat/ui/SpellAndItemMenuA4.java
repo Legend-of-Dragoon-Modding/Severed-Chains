@@ -22,6 +22,7 @@ public class SpellAndItemMenuA4 {
    * <ol start="0">
    *   <li>Items</li>
    *   <li>Spells</li>
+   *   <li>Additions</li>
    * </ol>
    */
   public short menuType_0a;

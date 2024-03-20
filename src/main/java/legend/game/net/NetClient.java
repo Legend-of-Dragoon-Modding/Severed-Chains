@@ -10,12 +10,14 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
+import legend.game.combat.ClientBattleController;
 import legend.game.submap.SMap;
 import legend.game.wmap.WMap;
 import legend.game.wmap.WmapState;
 
 import java.util.function.Consumer;
 
+import static legend.core.GameEngine.BATTLE_CONTROLLER;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
@@ -43,6 +45,11 @@ public class NetClient {
           battleStage_800bb0f4 = packet.stageId;
           wmap.wmapState_800bb10c = WmapState.TRANSITION_TO_BATTLE_8;
         }
+
+        BATTLE_CONTROLLER = new ClientBattleController(this, packet.charSlot);
+      });
+      registrar.register(StartTurnPacket.class, StartTurnPacket::serialize, StartTurnPacket::deserialize, (packet, context) -> {
+        ((ClientBattleController)BATTLE_CONTROLLER).startTurn(packet.bentId);
       });
     });
   }

@@ -19,7 +19,7 @@ public class BattleClientHandler extends ChannelInboundHandlerAdapter {
     final PacketManager<ClientContext> packetManager = this.packetManager;
 
     LOGGER.debug("Got client packet %s", msg.getClass());
-    packetManager.handle(msg, new ClientContext());
+    packetManager.handle(msg, new ClientContext(ctx));
   }
 
   @Override

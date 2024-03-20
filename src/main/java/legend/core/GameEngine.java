@@ -18,6 +18,8 @@ import legend.core.spu.Spu;
 import legend.core.ui.ScreenStack;
 import legend.game.EngineStateEnum;
 import legend.game.Scus94491BpeSegment_8002;
+import legend.game.combat.BattleController;
+import legend.game.combat.LocalBattleController;
 import legend.game.fmv.Fmv;
 import legend.game.input.Input;
 import legend.game.saves.ConfigCollection;
@@ -106,6 +108,8 @@ public final class GameEngine {
   public static final Thread spuThread;
 
   public static boolean legacyUi;
+
+  public static BattleController BATTLE_CONTROLLER = new LocalBattleController();
 
   static {
     try {
