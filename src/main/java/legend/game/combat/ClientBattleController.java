@@ -1,6 +1,7 @@
 package legend.game.combat;
 
 import legend.game.combat.bent.BattleEntity27c;
+import legend.game.net.ActionPacket;
 import legend.game.net.BattleAction;
 import legend.game.net.NetClient;
 import legend.game.scripting.ScriptState;
@@ -26,6 +27,7 @@ public class ClientBattleController implements BattleController {
     System.out.println("Starting turn " + this.currentBent.name);
   }
 
+  @Override
   public void handleAction(final BattleAction action) {
     this.action = action;
   }
@@ -37,7 +39,7 @@ public class ClientBattleController implements BattleController {
 
   @Override
   public void action(final BattleAction action) {
-
+    this.client.send(new ActionPacket(action));
   }
 
   @Override
@@ -47,6 +49,8 @@ public class ClientBattleController implements BattleController {
 
   @Override
   public BattleAction getAction() {
-    return this.action;
+    final BattleAction action = this.action;
+    this.action = null;
+    return action;
   }
 }

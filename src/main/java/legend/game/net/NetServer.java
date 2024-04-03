@@ -13,17 +13,19 @@ import io.netty.handler.codec.LengthFieldPrepender;
 
 public class NetServer {
   private final PacketManager<ServerContext> packetManager;
+  private BattleServerListener listener;
 
   public NetServer() {
     this.packetManager = new PacketManager<ServerContext>(registrar -> {
       registrar.register(GameStatePacket.class, GameStatePacket::serialize, GameStatePacket::deserialize);
       registrar.register(StartBattlePacket.class, StartBattlePacket::serialize, StartBattlePacket::deserialize);
       registrar.register(StartTurnPacket.class, StartTurnPacket::serialize, StartTurnPacket::deserialize);
-      registrar.register(ActionPacket.class, ActionPacket::serialize, ActionPacket::deserialize);
+      registrar.register(ActionPacket.class, ActionPacket::serialize, ActionPacket::deserialize, (packet, ctx) -> this.listener.handleAction(ctx, packet));
     });
   }
 
   public void listen(final int port, final BattleServerListener listener) throws InterruptedException {
+    this.listener = listener;
     final EventLoopGroup bossGroup = new NioEventLoopGroup();
     final EventLoopGroup workerGroup = new NioEventLoopGroup();
 
@@ -37,7 +39,7 @@ public class NetServer {
             ch.pipeline().addLast(
               new LengthFieldPrepender(2, 0), new Encoder(channel -> NetServer.this.packetManager),
               new LengthFieldBasedFrameDecoder(1024 * 8, 0, 2, 0, 2), new Decoder(channel -> NetServer.this.packetManager),
-              new BattleServerHandler(listener));
+              new BattleServerHandler(listener, NetServer.this.packetManager));
           }
         })
         .option(ChannelOption.SO_BACKLOG, 128)

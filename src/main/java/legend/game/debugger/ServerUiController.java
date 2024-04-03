@@ -1,8 +1,6 @@
 package legend.game.debugger;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.util.CharsetUtil;
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.beans.property.SimpleStringProperty;
@@ -19,9 +17,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.util.StringConverter;
 import legend.game.combat.ServerBattleController;
+import legend.game.net.ActionPacket;
 import legend.game.net.BattleServerListener;
 import legend.game.net.GameStatePacket;
 import legend.game.net.NetServer;
+import legend.game.net.ServerContext;
 import legend.game.net.StartBattlePacket;
 import legend.game.submap.SMap;
 import legend.game.wmap.DirectionalPathSegmentData08;
@@ -138,8 +138,13 @@ public class ServerUiController implements BattleServerListener {
   }
 
   @Override
-  public void packetReceived(final ChannelHandlerContext ctx, final ByteBuf buf) {
-    System.out.println(buf.toString(CharsetUtil.US_ASCII));
+  public void handleAction(final ServerContext ctx, final ActionPacket packet) {
+    BATTLE_CONTROLLER.handleAction(packet.action);
+    for(final var connection : this.connections) {
+      if(connection.ctx != ctx.ctx) {
+        connection.ctx.writeAndFlush(connection);
+      }
+    }
   }
 
   private static class ListItem {

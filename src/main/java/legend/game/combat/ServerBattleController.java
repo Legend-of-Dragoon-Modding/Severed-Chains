@@ -17,6 +17,9 @@ public class ServerBattleController implements BattleController {
 
   private ScriptState<? extends BattleEntity27c> currentBent;
 
+  /** Actions sent from another client */
+  private BattleAction action;
+
   public ServerBattleController(final NetServer server) {
     this.server = server;
   }
@@ -53,7 +56,14 @@ public class ServerBattleController implements BattleController {
   }
 
   @Override
+  public void handleAction(final BattleAction action) {
+    this.action = action;
+  }
+
+  @Override
   public BattleAction getAction() {
-    return null;
+    final BattleAction action = this.action;
+    this.action = null;
+    return action;
   }
 }

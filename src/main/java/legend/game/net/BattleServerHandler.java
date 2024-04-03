@@ -1,14 +1,15 @@
 package legend.game.net;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
 public class BattleServerHandler extends ChannelInboundHandlerAdapter {
   private final BattleServerListener listener;
+  private final PacketManager<ServerContext> packetManager;
 
-  public BattleServerHandler(final BattleServerListener listener) {
+  public BattleServerHandler(final BattleServerListener listener, final PacketManager<ServerContext> packetManager) {
     this.listener = listener;
+    this.packetManager = packetManager;
   }
 
   @Override
@@ -25,9 +26,7 @@ public class BattleServerHandler extends ChannelInboundHandlerAdapter {
 
   @Override
   public void channelRead(final ChannelHandlerContext ctx, final Object msg) {
-    final ByteBuf buf = (ByteBuf)msg;
-    this.listener.packetReceived(ctx, buf);
-    buf.release();
+    this.packetManager.handle(msg, new ServerContext(ctx));
   }
 
   @Override

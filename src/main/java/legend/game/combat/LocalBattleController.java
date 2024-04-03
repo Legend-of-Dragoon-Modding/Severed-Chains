@@ -21,6 +21,11 @@ public class LocalBattleController implements BattleController {
   }
 
   @Override
+  public void handleAction(final BattleAction action) {
+
+  }
+
+  @Override
   public BattleAction getAction() {
     return null;
   }

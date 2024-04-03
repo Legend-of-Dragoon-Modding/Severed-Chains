@@ -8,5 +8,6 @@ public interface BattleController {
   void startTurn(final ScriptState<? extends BattleEntity27c> bent);
   void action(final BattleAction action);
   boolean canTakeAction();
+  void handleAction(final BattleAction action);
   BattleAction getAction();
 }

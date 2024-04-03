@@ -1,6 +1,7 @@
 package legend.game.net;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -25,6 +26,7 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 
 public class NetClient {
   private final PacketManager<ClientContext> packetManager;
+  private Channel channel;
 
   public NetClient() {
     this.packetManager = new PacketManager<ClientContext>(registrar -> {
@@ -52,7 +54,7 @@ public class NetClient {
         ((ClientBattleController)BATTLE_CONTROLLER).startTurn(packet.bentId);
       });
       registrar.register(ActionPacket.class, ActionPacket::serialize, ActionPacket::deserialize, (packet, context) -> {
-        ((ClientBattleController)BATTLE_CONTROLLER).handleAction(packet.action);
+        BATTLE_CONTROLLER.handleAction(packet.action);
       });
     });
   }
@@ -77,6 +79,7 @@ public class NetClient {
 
       // Start the client.
       final ChannelFuture f = b.connect(host, port).sync();
+      this.channel = f.channel();
 
       logger.accept("Connected");
 
@@ -85,5 +88,9 @@ public class NetClient {
     } finally {
       workerGroup.shutdownGracefully();
     }
+  }
+
+  public void send(final Object packet) {
+    this.channel.writeAndFlush(packet);
   }
 }
