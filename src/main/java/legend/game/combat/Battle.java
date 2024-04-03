@@ -3262,10 +3262,6 @@ public class Battle extends EngineState {
       this.currentDisplayableIconsBitset_800c675c = displayableIconsBitset;
     }
 
-    if(!BATTLE_CONTROLLER.canTakeAction()) {
-      return FlowControl.PAUSE_AND_REWIND;
-    }
-
     //LAB_800ccaec
     this.hud.toggleHighlight(true);
 
@@ -3274,6 +3270,11 @@ public class Battle extends EngineState {
       this.hud.toggleHighlight(false);
       script.params_20[2].set(action.id - 1);
       return FlowControl.CONTINUE;
+    }
+
+    if(!BATTLE_CONTROLLER.canTakeAction()) {
+      this.hud.toggleHighlight(false);
+      return FlowControl.PAUSE_AND_REWIND;
     }
 
     final int selectedAction = this.hud.tickAndRender();

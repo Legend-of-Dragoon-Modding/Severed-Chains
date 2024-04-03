@@ -7,6 +7,7 @@ import legend.game.net.NetClient;
 import legend.game.scripting.ScriptState;
 
 import static legend.core.GameEngine.SCRIPTS;
+import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 
 public class ClientBattleController implements BattleController {
   private final NetClient client;
@@ -23,7 +24,10 @@ public class ClientBattleController implements BattleController {
   }
 
   public void startTurn(final int bentId) {
+    ((Battle)currentEngineState_8004dd04).currentTurnBent_800c66c8.storage_44[7] &= ~0x1008;
     this.currentBent = SCRIPTS.getState(bentId, BattleEntity27c.class);
+    this.currentBent.storage_44[7] |= 0x1008;
+    ((Battle)currentEngineState_8004dd04).currentTurnBent_800c66c8 = this.currentBent;
     System.out.println("Starting turn " + this.currentBent.name);
   }
 
