@@ -120,9 +120,10 @@ public class ServerUiController implements BattleServerListener {
 
     int i = 1;
     for(final ListItem connection : this.connections) {
-      controller.addPlayer(i++, connection.ctx);
+      controller.addPlayer(i, connection.ctx);
       connection.ctx.writeAndFlush(new GameStatePacket(gameState_800babc8));
       connection.ctx.writeAndFlush(new StartBattlePacket(encounterId_800bb0f8, battleStage_800bb0f4, i));
+      i++;
     }
   }
 

@@ -4,6 +4,8 @@ import io.netty.channel.ChannelHandlerContext;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import legend.game.combat.bent.BattleEntity27c;
+import legend.game.net.ActionPacket;
+import legend.game.net.BattleAction;
 import legend.game.net.NetServer;
 import legend.game.net.StartTurnPacket;
 import legend.game.scripting.ScriptState;
@@ -38,7 +40,20 @@ public class ServerBattleController implements BattleController {
   }
 
   @Override
+  public void action(final BattleAction action) {
+    final ActionPacket packet = new ActionPacket(action);
+    for(final ChannelHandlerContext player : this.players.values()) {
+      player.writeAndFlush(packet);
+    }
+  }
+
+  @Override
   public boolean canTakeAction() {
     return this.isMe(this.currentBent.innerStruct_00.charSlot_276);
+  }
+
+  @Override
+  public BattleAction getAction() {
+    return null;
   }
 }

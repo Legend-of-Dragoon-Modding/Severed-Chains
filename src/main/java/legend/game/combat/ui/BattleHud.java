@@ -31,6 +31,7 @@ import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.BattleDescriptionEvent;
 import legend.game.modding.events.battle.StatDisplayEvent;
 import legend.game.modding.events.inventory.RepeatItemReturnEvent;
+import legend.game.net.BattleAction;
 import legend.game.scripting.ScriptState;
 import legend.game.types.LodString;
 import legend.game.types.Translucency;
@@ -44,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static legend.core.GameEngine.BATTLE_CONTROLLER;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.REGISTRIES;
@@ -2413,18 +2415,18 @@ public class BattleHud {
           if((selectedIconFlag & 0x80) != 0) {
             playSound(0, 3, 0, 0, (short)0, (short)0);
           } else {
-            selectedIconFlag = selectedIconFlag & 0xf;
-            if(selectedIconFlag == 0x5) {
+            selectedIconFlag &= 0xf;
+            if(selectedIconFlag == 5) {
               this.prepareItemList();
 
               if(this.combatItems_800c6988.isEmpty()) {
                 playSound(0, 3, 0, 0, (short)0, (short)0);
               } else {
                 playSound(0, 2, 0, 0, (short)0, (short)0);
-                selectedAction = this.battleMenu_800c6c34.iconFlags_10[this.battleMenu_800c6c34.selectedIcon_22] & 0xf;
+                selectedAction = selectedIconFlag;
               }
               //LAB_800f6790
-            } else if(selectedIconFlag == 0x3L) {
+            } else if(selectedIconFlag == 3) {
               //LAB_800f67b8
               //LAB_800f67d8
               //LAB_800f67f4
@@ -2440,13 +2442,17 @@ public class BattleHud {
                 playSound(0, 3, 0, 0, (short)0, (short)0);
               } else {
                 playSound(0, 2, 0, 0, (short)0, (short)0);
-                selectedAction = this.battleMenu_800c6c34.iconFlags_10[this.battleMenu_800c6c34.selectedIcon_22] & 0xf;
+                selectedAction = selectedIconFlag;
               }
             } else {
               //LAB_800f6858
               //LAB_800f6860
               playSound(0, 2, 0, 0, (short)0, (short)0);
-              selectedAction = this.battleMenu_800c6c34.iconFlags_10[this.battleMenu_800c6c34.selectedIcon_22] & 0xf;
+              selectedAction = selectedIconFlag;
+
+              switch(selectedAction) {
+                case 1 -> BATTLE_CONTROLLER.action(BattleAction.DEFEND);
+              }
             }
           }
           //LAB_800f6898

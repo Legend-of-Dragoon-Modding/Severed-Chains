@@ -1,6 +1,7 @@
 package legend.game.combat;
 
 import legend.game.combat.bent.BattleEntity27c;
+import legend.game.net.BattleAction;
 import legend.game.scripting.ScriptState;
 
 public class LocalBattleController implements BattleController {
@@ -10,7 +11,17 @@ public class LocalBattleController implements BattleController {
   }
 
   @Override
+  public void action(final BattleAction action) {
+
+  }
+
+  @Override
   public boolean canTakeAction() {
     return true;
+  }
+
+  @Override
+  public BattleAction getAction() {
+    return null;
   }
 }

@@ -85,6 +85,12 @@ public class BattleMenuStruct58 {
   public short iconCount_0e;
   /**
    * <ul>
+   *   <li>1 - defend</li>
+   *   <li>2 - dragoon</li>
+   *   <li>4 - attack</li>
+   *   <li>5 - item</li>
+   *   <li>6 - run</li>
+   *   <li>7 - special</li>
    *   <li>0x80 - disabled</li>
    * </ul>
    */

@@ -18,6 +18,8 @@ public class NetServer {
     this.packetManager = new PacketManager<ServerContext>(registrar -> {
       registrar.register(GameStatePacket.class, GameStatePacket::serialize, GameStatePacket::deserialize);
       registrar.register(StartBattlePacket.class, StartBattlePacket::serialize, StartBattlePacket::deserialize);
+      registrar.register(StartTurnPacket.class, StartTurnPacket::serialize, StartTurnPacket::deserialize);
+      registrar.register(ActionPacket.class, ActionPacket::serialize, ActionPacket::deserialize);
     });
   }
 

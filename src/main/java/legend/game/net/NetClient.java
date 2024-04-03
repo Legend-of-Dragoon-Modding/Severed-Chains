@@ -51,6 +51,9 @@ public class NetClient {
       registrar.register(StartTurnPacket.class, StartTurnPacket::serialize, StartTurnPacket::deserialize, (packet, context) -> {
         ((ClientBattleController)BATTLE_CONTROLLER).startTurn(packet.bentId);
       });
+      registrar.register(ActionPacket.class, ActionPacket::serialize, ActionPacket::deserialize, (packet, context) -> {
+        ((ClientBattleController)BATTLE_CONTROLLER).handleAction(packet.action);
+      });
     });
   }
 

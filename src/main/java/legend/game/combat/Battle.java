@@ -94,6 +94,7 @@ import legend.game.modding.events.battle.BattleEntityTurnEvent;
 import legend.game.modding.events.battle.BattleStartedEvent;
 import legend.game.modding.events.battle.EnemyRewardsEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
+import legend.game.net.BattleAction;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
@@ -3262,11 +3263,18 @@ public class Battle extends EngineState {
     }
 
     if(!BATTLE_CONTROLLER.canTakeAction()) {
-      return FlowControl.CONTINUE;
+      return FlowControl.PAUSE_AND_REWIND;
     }
 
     //LAB_800ccaec
     this.hud.toggleHighlight(true);
+
+    final BattleAction action = BATTLE_CONTROLLER.getAction();
+    if(action != null) {
+      this.hud.toggleHighlight(false);
+      script.params_20[2].set(action.id - 1);
+      return FlowControl.CONTINUE;
+    }
 
     final int selectedAction = this.hud.tickAndRender();
     if(selectedAction == 0) {
