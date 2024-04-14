@@ -195,6 +195,7 @@ public class BattleHud {
   private UiBox battleUiSpellList;
   private UiBox battleUiItemDescription;
   private Obj spBars;
+  private final MV spBarTransforms = new MV();
 
   public BattleHud(final Battle battle) {
     this.battle = battle;
@@ -749,11 +750,10 @@ public class BattleHud {
                   .build();
               }
 
-              final MV transforms = new MV();
-              transforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 31.0f);
-              transforms.scaling(right - left, bottom - top, 31.0f);
+              spBarTransforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 1.0f);
+              spBarTransforms.scaling(right - left, bottom - top, 1.0f);
 
-              RENDERER.queueOrthoModel(this.spBars, transforms).colour(spBarColours[0] / 255.0f, spBarColours[1] / 255.0f, spBarColours[2] / 255.0f);
+              RENDERER.queueOrthoModel(this.spBars, spBarTransforms).colour(spBarColours[0] / 255.0f, spBarColours[1] / 255.0f, spBarColours[2] / 255.0f);
             }
 
             //SP border
