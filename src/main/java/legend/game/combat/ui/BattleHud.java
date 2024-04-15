@@ -196,6 +196,7 @@ public class BattleHud {
   private UiBox battleUiItemDescription;
   private Obj spBars;
   private final MV spBarTransforms = new MV();
+  private final MV lineTransforms = new MV();
 
   public BattleHud(final Battle battle) {
     this.battle = battle;
@@ -750,7 +751,7 @@ public class BattleHud {
                   .build();
               }
 
-              spBarTransforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 1.0f);
+              spBarTransforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 31.0f);
               spBarTransforms.scaling(right - left, bottom - top, 1.0f);
 
               RENDERER.queueOrthoModel(this.spBars, spBarTransforms).colour(spBarColours[0] / 255.0f, spBarColours[1] / 255.0f, spBarColours[2] / 255.0f);
@@ -3014,15 +3015,14 @@ public class BattleHud {
 
   @Method(0x800f9ee8L)
   private void drawLine(final int x1, final int y1, final int x2, final int y2, final int r, final int g, final int b, final boolean translucent) {
-    final MV transforms = new MV();
-    transforms.transfer.set(GPU.getOffsetX() + x1, GPU.getOffsetY() + y1, 31.0f);
-    transforms.scaling(x2 - x1 + 1, y2 - y1 + 1, 31.0f);
+    lineTransforms.transfer.set(GPU.getOffsetX() + x1, GPU.getOffsetY() + y1, 31.0f);
+    lineTransforms.scaling(x2 - x1 + 1, y2 - y1 + 1, 1.0f);
 
     if(translucent) {
-      RENDERER.queueOrthoModel(RENDERER.plainQuads.get(Translucency.B_PLUS_F), transforms)
+      RENDERER.queueOrthoModel(RENDERER.plainQuads.get(Translucency.B_PLUS_F), lineTransforms)
         .colour(r / 255.0f, g / 255.0f, b / 255.0f);
     } else {
-      RENDERER.queueOrthoModel(RENDERER.opaqueQuad, transforms)
+      RENDERER.queueOrthoModel(RENDERER.opaqueQuad, lineTransforms)
         .colour(r / 255.0f, g / 255.0f, b / 255.0f);
     }
   }
