@@ -4,7 +4,6 @@ import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
-import legend.core.gpu.GpuCommandLine;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
@@ -195,6 +194,9 @@ public class BattleHud {
   private UiBox battleUiItemSpellList;
   private UiBox battleUiSpellList;
   private UiBox battleUiItemDescription;
+  private Obj spBars;
+  private final MV spBarTransforms = new MV();
+  private final MV lineTransforms = new MV();
 
   public BattleHud(final Battle battle) {
     this.battle = battle;
@@ -737,23 +739,22 @@ public class BattleHud {
               final int right = left + spBarW;
               final int bottom = top + 3;
 
-              final GpuCommandPoly cmd = new GpuCommandPoly(4)
-                .pos(0, left, top)
-                .pos(1, right, top)
-                .pos(2, left, bottom)
-                .pos(3, right, bottom);
-
               final int[] spBarColours = spBarColours_800c6f04[spBarIndex];
 
-              cmd
-                .rgb(0, spBarColours[0], spBarColours[1], spBarColours[2])
-                .rgb(1, spBarColours[0], spBarColours[1], spBarColours[2]);
+              if(this.spBars == null) {
+                this.spBars = new QuadBuilder("SPBar")
+                  .monochrome(0, 229.0f / 255.0f)
+                  .monochrome(1, 133.0f / 255.0f)
+                  .monochrome(2, 229.0f / 255.0f)
+                  .monochrome(3, 133.0f / 255.0f)
+                  .size(1, 1)
+                  .build();
+              }
 
-              cmd
-                .rgb(2, spBarColours[3], spBarColours[4], spBarColours[5])
-                .rgb(3, spBarColours[3], spBarColours[4], spBarColours[5]);
+              spBarTransforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 31.0f);
+              spBarTransforms.scaling(right - left, bottom - top, 1.0f);
 
-              GPU.queueCommand(31, cmd);
+              RENDERER.queueOrthoModel(this.spBars, spBarTransforms).colour(spBarColours[0] / 255.0f, spBarColours[1] / 255.0f, spBarColours[2] / 255.0f);
             }
 
             //SP border
@@ -3014,17 +3015,16 @@ public class BattleHud {
 
   @Method(0x800f9ee8L)
   private void drawLine(final int x1, final int y1, final int x2, final int y2, final int r, final int g, final int b, final boolean translucent) {
-    final GpuCommandLine cmd = new GpuCommandLine()
-      .rgb(0, r, g, b)
-      .rgb(1, r, g, b)
-      .pos(0, x1, y1)
-      .pos(1, x2, y2);
+    lineTransforms.transfer.set(GPU.getOffsetX() + x1, GPU.getOffsetY() + y1, 31.0f);
+    lineTransforms.scaling(x2 - x1 + 1, y2 - y1 + 1, 1.0f);
 
     if(translucent) {
-      cmd.translucent(Translucency.B_PLUS_F);
+      RENDERER.queueOrthoModel(RENDERER.plainQuads.get(Translucency.B_PLUS_F), lineTransforms)
+        .colour(r / 255.0f, g / 255.0f, b / 255.0f);
+    } else {
+      RENDERER.queueOrthoModel(RENDERER.opaqueQuad, lineTransforms)
+        .colour(r / 255.0f, g / 255.0f, b / 255.0f);
     }
-
-    GPU.queueCommand(31, cmd);
   }
 
   @Method(0x800fa068L)
@@ -3056,6 +3056,11 @@ public class BattleHud {
     if(this.battleUiItemDescription != null) {
       this.battleUiItemDescription.delete();
       this.battleUiItemDescription = null;
+    }
+
+    if(this.spBars != null) {
+      this.spBars.delete();
+      this.spBars = null;
     }
   }
 
