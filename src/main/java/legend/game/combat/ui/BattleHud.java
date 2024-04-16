@@ -1325,16 +1325,18 @@ public class BattleHud {
 
             if((digit.flags_00 & 0x8000) != 0) {
               //LAB_800f3ec0
-              num.transforms.transfer.set(digit.x_0e + num.x_1c, digit.y_10 + num.y_20, 28.0f);
-              RENDERER.queueOrthoModel(digit.obj, num.transforms)
-                .colour(num.colour);
+              for(int s3 = 1; s3 < 3; s3++) {
+                num.transforms.transfer.set(digit.x_0e + num.x_1c, digit.y_10 + num.y_20, 28.0f);
+                RENDERER.queueOrthoModel(digit.obj, num.transforms)
+                  .colour(num.colour);
 
-              if((num.state_00 & 97) == 0) {
-                //LAB_800f4118
-                break;
+                if((num.state_00 & 97) == 0) {
+                  //LAB_800f4118
+                  break;
+                }
+
+                //LAB_800f4110
               }
-
-              //LAB_800f4110
             }
           }
         }
