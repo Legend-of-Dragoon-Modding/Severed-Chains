@@ -827,7 +827,7 @@ public final class Scus94491BpeSegment {
 
     final String[] paths = new String[files.length];
     for(int i = 0; i < files.length; i++) {
-      paths[i] = "SECT/DRGN%d.BIN/%s".formatted(drgnBinIndex, files[i]);
+      paths[i] = "SECT/DRGN" + drgnBinIndex + ".BIN/" + files[i];
     }
 
     Unpacker.loadFiles(onCompletion, paths);
@@ -849,7 +849,7 @@ public final class Scus94491BpeSegment {
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading DRGN%d %s from %s.%s(%s:%d)", drgnBinIndex, file, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    Unpacker.loadFile("SECT/DRGN%d.BIN/%s".formatted(drgnBinIndex, file), onCompletion);
+    Unpacker.loadFile("SECT/DRGN" + drgnBinIndex + ".BIN/" + file, onCompletion);
   }
 
   public static void loadDrgnFileSync(int drgnBinIndex, final String file, final Consumer<FileData> onCompletion) {
@@ -860,7 +860,7 @@ public final class Scus94491BpeSegment {
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading DRGN%d %s from %s.%s(%s:%d)", drgnBinIndex, file, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    onCompletion.accept(Unpacker.loadFile("SECT/DRGN%d.BIN/%s".formatted(drgnBinIndex, file)));
+    onCompletion.accept(Unpacker.loadFile("SECT/DRGN" + drgnBinIndex + ".BIN/" + file));
   }
 
   public static void loadDrgnDir(int drgnBinIndex, final int directory, final Consumer<List<FileData>> onCompletion) {
@@ -871,7 +871,7 @@ public final class Scus94491BpeSegment {
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading DRGN%d dir %d from %s.%s(%s:%d)", drgnBinIndex, directory, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    Unpacker.loadDirectory("SECT/DRGN%d.BIN/%d".formatted(drgnBinIndex, directory), onCompletion);
+    Unpacker.loadDirectory("SECT/DRGN" + drgnBinIndex + ".BIN/" + directory, onCompletion);
   }
 
   public static void loadDrgnDirSync(int drgnBinIndex, final String directory, final Consumer<List<FileData>> onCompletion) {
@@ -882,7 +882,7 @@ public final class Scus94491BpeSegment {
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading DRGN%d dir %s from %s.%s(%s:%d)", drgnBinIndex, directory, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    onCompletion.accept(Unpacker.loadDirectory("SECT/DRGN%d.BIN/%s".formatted(drgnBinIndex, directory)));
+    onCompletion.accept(Unpacker.loadDirectory("SECT/DRGN" + drgnBinIndex + ".BIN/" + directory));
   }
 
   public static void loadDrgnDirSync(int drgnBinIndex, final int directory, final Consumer<List<FileData>> onCompletion) {
@@ -893,7 +893,7 @@ public final class Scus94491BpeSegment {
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading DRGN%d dir %d from %s.%s(%s:%d)", drgnBinIndex, directory, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    onCompletion.accept(Unpacker.loadDirectory("SECT/DRGN%d.BIN/%d".formatted(drgnBinIndex, directory)));
+    onCompletion.accept(Unpacker.loadDirectory("SECT/DRGN" + drgnBinIndex + ".BIN/" + directory));
   }
 
   public static void loadDrgnDir(int drgnBinIndex, final String directory, final Consumer<List<FileData>> onCompletion) {
@@ -904,7 +904,7 @@ public final class Scus94491BpeSegment {
     final StackWalker.StackFrame frame = DebugHelper.getCallerFrame();
     LOGGER.info("Loading DRGN%d dir %s from %s.%s(%s:%d)", drgnBinIndex, directory, frame.getClassName(), frame.getMethodName(), frame.getFileName(), frame.getLineNumber());
 
-    Unpacker.loadDirectory("SECT/DRGN%d.BIN/%s".formatted(drgnBinIndex, directory), onCompletion);
+    Unpacker.loadDirectory("SECT/DRGN" + drgnBinIndex + ".BIN/" + directory, onCompletion);
   }
 
   @ScriptDescription("Does nothing")

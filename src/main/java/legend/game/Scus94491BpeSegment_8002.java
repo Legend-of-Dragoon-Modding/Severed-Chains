@@ -277,7 +277,7 @@ public final class Scus94491BpeSegment_8002 {
       file.charId_02 = -1;
       file.used_00 = false;
 
-      if(Unpacker.exists("SECT/DRGN0.BIN/%d/%d".formatted(fileIndex, monsterSlot))) {
+      if(Unpacker.exists("SECT/DRGN0.BIN/" + fileIndex + '/' + monsterSlot)) {
         final int finalMonsterSlot = monsterSlot;
         loadDrgnDir(0, fileIndex + "/" + monsterSlot, files -> FUN_8001d51c(files, "Monster slot %d (file %d) (replaced)".formatted(finalMonsterSlot, fileIndex), finalMonsterSlot));
       }
@@ -1051,7 +1051,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x800232dcL)
   public static int takeItem(final int itemSlot) {
     if(itemSlot >= gameState_800babc8.items_2e9.size()) {
-      LOGGER.warn("Tried to take item index %d (out of bounds)".formatted(itemSlot));
+      LOGGER.warn("Tried to take item index %d (out of bounds)", itemSlot);
       return 0xff;
     }
 
@@ -1079,7 +1079,7 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x800233d8L)
   public static int takeEquipment(final int equipmentIndex) {
     if(equipmentIndex >= gameState_800babc8.equipment_1e8.size()) {
-      LOGGER.warn("Tried to take equipment index %d (out of bounds)".formatted(equipmentIndex));
+      LOGGER.warn("Tried to take equipment index %d (out of bounds)", equipmentIndex);
       return 0xff;
     }
 
