@@ -23,8 +23,8 @@ public final class Finderator {
   private static void processDrgnBin(final int num) throws NoSuchAlgorithmException, IOException {
     final MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
 
-    final Path drgnBin = Path.of("./files/SECT/DRGN2%d.BIN".formatted(num));
-    final List<FileData> dirs = Unpacker.loadDirectory("SECT/DRGN2%d.BIN".formatted(num));
+    final Path drgnBin = Path.of("./files/SECT/DRGN2" + num + ".BIN");
+    final List<FileData> dirs = Unpacker.loadDirectory("SECT/DRGN2" + num + ".BIN");
 
     final Map<String, List<String>> modelHashes = new HashMap<>();
     final Map<String, List<String>> animHashes = new HashMap<>();
@@ -33,15 +33,15 @@ public final class Finderator {
       final Path dirPath = drgnBin.resolve(Integer.toString(dirIndex * 3 + 2));
 
       if(Files.isDirectory(dirPath)) {
-        final List<FileData> modelsAndAnims = Unpacker.loadDirectory("SECT/DRGN2%d.BIN/%d".formatted(num, dirIndex * 3 + 2));
+        final List<FileData> modelsAndAnims = Unpacker.loadDirectory("SECT/DRGN2" + num + ".BIN/" + (dirIndex * 3 + 2));
 
         for(int sobjIndex = 0; sobjIndex < modelsAndAnims.size() / 33; sobjIndex++) {
           final String modelHash = hashToString(sha1.digest(modelsAndAnims.get(sobjIndex * 33).getBytes()));
-          modelHashes.computeIfAbsent(modelHash, k -> new ArrayList<>()).add("SECT/DRGN2%d.BIN/%d/%d".formatted(num, dirIndex * 3 + 2, sobjIndex * 33));
+          modelHashes.computeIfAbsent(modelHash, k -> new ArrayList<>()).add("SECT/DRGN2" + num + ".BIN/" + (dirIndex * 3 + 2) + '/' + sobjIndex * 33);
 
           for(int animIndex = 0; animIndex < 32; animIndex++) {
             final String animHash = hashToString(sha1.digest(modelsAndAnims.get(sobjIndex * 33 + animIndex + 1).getBytes()));
-            animHashes.computeIfAbsent(animHash, k -> new ArrayList<>()).add("SECT/DRGN2%d.BIN/%d/%d".formatted(num, dirIndex * 3 + 2, sobjIndex * 33 + animIndex + 1));
+            animHashes.computeIfAbsent(animHash, k -> new ArrayList<>()).add("SECT/DRGN2" + num + ".BIN/" + (dirIndex * 3 + 2) + '/' + (sobjIndex * 33 + animIndex + 1));
           }
         }
       }

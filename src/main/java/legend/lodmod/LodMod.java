@@ -60,12 +60,12 @@ public class LodMod {
       }
 
       if(itemStats_8004f2ac[itemId] == null) {
-        itemStats_8004f2ac[itemId] = ItemStats0c.fromFile(name, itemDescriptions_80117a10[itemId + 0xc0].get(), itemCombatDescriptions_80051758[itemId].get(), Unpacker.loadFile("items/%d.ditm".formatted(itemId)));
+        itemStats_8004f2ac[itemId] = ItemStats0c.fromFile(name, itemDescriptions_80117a10[itemId + 0xc0].get(), itemCombatDescriptions_80051758[itemId].get(), Unpacker.loadFile("items/" + itemId + ".ditm"));
       }
 
       final Item item;
       if(itemId != 0x1f) { // Charm Potion
-        item = FileBasedItem.fromFile(name, itemDescriptions_80117a10[itemId + 0xc0].get(), itemCombatDescriptions_80051758[itemId].get(), itemPrices_80114310[itemId + 192], Unpacker.loadFile("items/%d.ditm".formatted(itemId)));
+        item = FileBasedItem.fromFile(name, itemDescriptions_80117a10[itemId + 0xc0].get(), itemCombatDescriptions_80051758[itemId].get(), itemPrices_80114310[itemId + 192], Unpacker.loadFile("items/" + itemId + ".ditm"));
       } else {
         item = new CharmPotionItem(name, itemDescriptions_80117a10[itemId + 0xc0].get(), itemCombatDescriptions_80051758[itemId].get(), itemPrices_80114310[itemId + 192]);
       }
@@ -90,11 +90,11 @@ public class LodMod {
       final String name = itemNames_8011972c[equipmentId].get();
 
       if(equipmentStats_80111ff0[equipmentId] == null) {
-        equipmentStats_80111ff0[equipmentId] = EquipmentStats1c.fromFile(name, itemDescriptions_80117a10[equipmentId].get(), Unpacker.loadFile("equipment/%d.deqp".formatted(equipmentId)));
+        equipmentStats_80111ff0[equipmentId] = EquipmentStats1c.fromFile(name, itemDescriptions_80117a10[equipmentId].get(), Unpacker.loadFile("equipment/" + equipmentId + ".deqp"));
       }
 
       if(!name.isEmpty()) {
-        final Equipment equipment = event.register(id(slug.slugify(name)), Equipment.fromFile(name, itemDescriptions_80117a10[equipmentId].get(), itemPrices_80114310[equipmentId], Unpacker.loadFile("equipment/%d.deqp".formatted(equipmentId))));
+        final Equipment equipment = event.register(id(slug.slugify(name)), Equipment.fromFile(name, itemDescriptions_80117a10[equipmentId].get(), itemPrices_80114310[equipmentId], Unpacker.loadFile("equipment/" + equipmentId + ".deqp")));
         equipmentIdMap.put(equipmentId, equipment.getRegistryId());
         idEquipmentMap.put(equipment.getRegistryId(), equipmentId);
       }
@@ -107,7 +107,7 @@ public class LodMod {
       if(spellStats_800fa0b8[spellId] == null) {
         final String name = spellId < 84 ? spells_80052734[spellId].get() : "Spell " + spellId;
         final String desc = spellId < 84 ? spellCombatDescriptions_80052018[spellId].get() : "";
-        spellStats_800fa0b8[spellId] = SpellStats0c.fromFile(name, desc, Unpacker.loadFile("spells/%d.dspl".formatted(spellId)));
+        spellStats_800fa0b8[spellId] = SpellStats0c.fromFile(name, desc, Unpacker.loadFile("spells/" + spellId + ".dspl"));
       }
     }
   }
