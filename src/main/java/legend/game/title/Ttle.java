@@ -2,7 +2,6 @@ package legend.game.title;
 
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
-import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.Rect4i;
 import legend.core.gpu.VramTexture;
 import legend.core.gpu.VramTextureSingle;
@@ -104,6 +103,7 @@ public class Ttle extends EngineState {
   private Obj trademarkObj;
   private Obj menuTextObj;
   private Obj copyrightObj;
+  private Obj flashObj;
 
   private VramTexture backgroundTexture;
   private VramTexture[] backgroundPalettes;
@@ -266,6 +266,15 @@ public class Ttle extends EngineState {
       .size(368.0f, 32.0f)
       .uvSize(1.0f, 1.0f)
       .bpp(Bpp.BITS_24)
+      .translucency(Translucency.B_PLUS_F)
+      .build();
+
+    this.flashObj = new QuadBuilder("Flash")
+      .bpp(Bpp.BITS_24)
+      .pos(0.0f, 0.0f, 20.0f)
+      .size(368.0f, 240.0f)
+      .uv(0.0f, 1.0f)
+      .uvSize(1.0f, -1.0f)
       .translucency(Translucency.B_PLUS_F)
       .build();
 
@@ -1017,15 +1026,9 @@ public class Ttle extends EngineState {
     //LAB_800cba90
     final int colour = rsin(this.logoFlashColour) * 160 >> 12;
 
-    // GP0.66 Textured quad, variable size, translucent, blended
-    final GpuCommandQuad cmd = new GpuCommandQuad()
-      .translucent(Translucency.B_PLUS_F)
-      .bpp(Bpp.BITS_15)
-      .monochrome(colour)
-      .pos(-192, -120, 384, 240)
-      .texture(GPU.getDisplayBuffer());
-
-    GPU.queueCommand(5, cmd);
+    RENDERER.queueOrthoModel(this.flashObj)
+      .texture(RENDERER.getLastFrame())
+      .monochrome(colour / 128.0f);
 
     if(this.logoFlashColour == 0x800) {
       this.logoFlashStage = 2;
