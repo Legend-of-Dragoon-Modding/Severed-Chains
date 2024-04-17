@@ -110,6 +110,7 @@ public final class Texture {
     }
   }
 
+  private static final List<Texture> texList = new ArrayList<>();
   private static final int[] currentTextures = new int[32];
 
   final int id;
@@ -150,6 +151,8 @@ public final class Texture {
         mipmaps.forEach(MipmapBuilder::use);
       }
     }
+
+    texList.add(this);
   }
 
   public void data(final int x, final int y, final int w, final int h, final ByteBuffer data) {
@@ -183,11 +186,6 @@ public final class Texture {
   }
 
   public void use(final int activeTexture) {
-    if(this.deleted) {
-      LOGGER.warn("Tried to use texture %d after it was deleted", this.id);
-      return;
-    }
-
     if(currentTextures[activeTexture] != this.id) {
       currentTextures[activeTexture] = this.id;
       glActiveTexture(GL_TEXTURE0 + activeTexture);
@@ -201,7 +199,21 @@ public final class Texture {
 
   public void delete() {
     this.deleted = true;
+  }
+
+  private void performDelete() {
     glDeleteTextures(this.id);
+  }
+
+  public static void deleteTextures() {
+    for(int i = texList.size() - 1; i >= 0; i--) {
+      final Texture tex = texList.get(i);
+
+      if(tex.deleted) {
+        tex.performDelete();
+        texList.remove(i);
+      }
+    }
   }
 
   public static class Builder {

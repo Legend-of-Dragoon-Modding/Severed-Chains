@@ -26,6 +26,7 @@ smooth out float depthOffset;
 uniform vec2 clutOverride;
 uniform vec2 tpageOverride;
 uniform float modelIndex;
+uniform float translucency;
 uniform int ctmdFlags;
 uniform vec3 battleColour;
 
@@ -70,7 +71,7 @@ void main() {
   vertFlags = int(inFlags);
   bool ctmd = (ctmdFlags & 0x20) != 0;
   bool uniformLit = (ctmdFlags & 0x10) != 0;
-  bool translucent = (vertFlags & 0x8) != 0 || (ctmdFlags & 0x2) != 0;
+  bool translucent = (vertFlags & 0x8) != 0 || (ctmdFlags & 0x2) != 0 || translucency != 0;
   bool coloured = (vertFlags & 0x4) != 0;
   bool textured = (vertFlags & 0x2) != 0;
   bool lit = (vertFlags & 0x1) != 0;
@@ -78,7 +79,6 @@ void main() {
   ModelTransforms t = modelTransforms[int(modelIndex)];
   Light l = lights[int(modelIndex)];
 
-  // Lit
   if(textured && translucent && !lit && (ctmd || uniformLit)) {
     vertColour.rgb = inColour.rgb * battleColour.rgb;
   } else if(lit) {

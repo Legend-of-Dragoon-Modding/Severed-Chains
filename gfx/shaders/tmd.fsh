@@ -45,7 +45,7 @@ void main() {
 
   bool ctmd = (ctmdFlags & 0x20) != 0;
   bool uniformLit = (ctmdFlags & 0x10) != 0;
-  bool translucent = (vertFlags & 0x8) != 0 || (ctmdFlags & 0x2) != 0;
+  bool translucent = (vertFlags & 0x8) != 0 || (ctmdFlags & 0x2) != 0 || translucency != 0;
   bool textured = (vertFlags & 0x2) != 0;
   outColour = vertColour;
 
@@ -66,7 +66,7 @@ void main() {
       // Pull actual pixel colour from CLUT
       texColour = texelFetch(tex24, ivec2(vertClut.x + p, vertClut.y), 0);
     } else {
-      texColour = texture(tex24, vertUv);
+      texColour = texture(tex24, vertUv + uvOffset);
     }
 
     // Discard if (0, 0, 0)

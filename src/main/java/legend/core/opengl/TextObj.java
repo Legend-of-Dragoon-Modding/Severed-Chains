@@ -33,10 +33,7 @@ public class TextObj extends Obj {
   }
 
   @Override
-  public void delete() {
-    if(!this.deleted) {
-      super.delete();
-      this.mesh.delete();
-    }
+  public void performDelete() {
+    this.mesh.delete();
   }
 }
