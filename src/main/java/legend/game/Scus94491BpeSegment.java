@@ -13,9 +13,11 @@ import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.GpuCommandSetMaskBit;
 import legend.core.gpu.Rect4i;
+import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.opengl.MatrixStack;
 import legend.core.opengl.Obj;
+import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.ScissorStack;
 import legend.core.spu.Voice;
 import legend.game.combat.Battle;
@@ -1929,14 +1931,31 @@ public final class Scus94491BpeSegment {
     //LAB_8001b53c
   }
 
+  /** To determine if we need to rebuild the quad because the UVs changed */
+  private static float dissolveDisplayWidth;
+  private static Obj dissolveSquare;
+  private static final MV dissolveTransforms = new MV();
+
   @Method(0x8001b54cL)
   public static void renderCombatDissolveEffect() {
+    if(dissolveSquare == null) {
+      dissolveSquare = new QuadBuilder("Dissolve Square")
+        .bpp(Bpp.BITS_24)
+        .translucency(Translucency.HALF_B_PLUS_HALF_F)
+        .size(8.0f, 8.0f)
+        .uv(0.0f, 8.0f / 240.0f)
+        .uvSize(7.0f / dissolveDisplayWidth, -8.0f / 240.0f)
+        .build();
+
+      dissolveSquare.persistent = true;
+    }
+
     renderBattleStartingBorders();
 
     battleDissolveTicks += vsyncMode_8007a3b8;
 
-    final int sp10 = -displayWidth_1f8003e0 / 2;
-    final int sp14 = -displayHeight_1f8003e4 / 2;
+    final int sp10 = 0;
+    final int sp14 = 0;
 
     if((battleDissolveTicks & 0x1) == 0) {
       final int a0 = displayHeight_1f8003e4 / 8;
@@ -1993,6 +2012,12 @@ public final class Scus94491BpeSegment {
 
             //LAB_8001b868
             GPU.queueCommand(6, cmd);
+
+            dissolveTransforms.transfer.set(left, top, 24.0f);
+            RENDERER.queueOrthoModel(dissolveSquare, dissolveTransforms)
+              .uvOffset((float)u / dissolveDisplayWidth, (240.0f - v) / 240.0f)
+              .texture(RENDERER.getLastFrame())
+              .monochrome((dissolveDarkening_800bd700.brightnessAccumulator_08 >> 8) / 128.0f);
           }
 
           sp2c += 8;
@@ -2023,6 +2048,8 @@ public final class Scus94491BpeSegment {
     GPU.queueCommand(6, new GpuCommandQuad().monochrome(1).pos(right - 4, top, 36, height));
   }
 
+  private static final MV darkeningTransforms = new MV();
+
   /** The game doesn't continue rendering when battles are loading, this basically continues rendering the last frame that was rendered, but slightly darker each time */
   @Method(0x8001bbccL)
   public static void renderBattleStartingScreenDarkening(final int x, final int y) {
@@ -2041,6 +2068,12 @@ public final class Scus94491BpeSegment {
       .uv(3, 384, 240)
       .texture(GPU.getDisplayBuffer())
     );
+
+    darkeningTransforms.transfer.set(0.0f, 0.0f, 25.0f);
+    darkeningTransforms.scaling(dissolveDisplayWidth, 240.0f, 1.0f);
+    RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, darkeningTransforms)
+      .texture(RENDERER.getLastFrame())
+      .monochrome(MathHelper.clamp((int)(dissolveDarkening_800bd700.brightnessAccumulator_08 * 1.1f) >> 8, 0x80 - 2 * vsyncMode_8007a3b8, 0x80) / 128.0f);
   }
 
   @Method(0x8001c4ecL)
@@ -2059,6 +2092,12 @@ public final class Scus94491BpeSegment {
     clearGreen_800bb104 = 0;
     clearBlue_800babc0 = 0;
     _8004f6e4 = 1;
+    dissolveDisplayWidth = RENDERER.getProjectionSize().x;
+
+    if(dissolveSquare != null) {
+      dissolveSquare.delete();
+      dissolveSquare = null;
+    }
   }
 
   @Method(0x8001c594L)

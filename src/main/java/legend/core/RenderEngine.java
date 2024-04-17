@@ -1,5 +1,6 @@
 package legend.core;
 
+import legend.core.gpu.Bpp;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
 import legend.core.opengl.BasicCamera;
@@ -189,6 +190,8 @@ public class RenderEngine {
   // Line box (reticles)
   public Obj lineBox;
   public Obj lineBoxBPlusF;
+  // Render buffer
+  public Obj renderBufferQuad;
 
   private int width;
   private int height;
@@ -422,6 +425,14 @@ public class RenderEngine {
       .build();
     this.lineBoxBPlusF.persistent = true;
 
+    this.renderBufferQuad = new QuadBuilder("Render buffer")
+      .bpp(Bpp.BITS_24)
+      .size(1.0f, 1.0f)
+      .uv(0.0f, 1.0f)
+      .uvSize(1.0f, -1.0f)
+      .build();
+    this.renderBufferQuad.persistent = true;
+
     this.window.events.onDraw(() -> {
       this.pre();
 
@@ -516,6 +527,10 @@ public class RenderEngine {
       }
 
       this.renderBufferIndex = (this.renderBufferIndex + 1) % RENDER_BUFFER_COUNT;
+
+      // Delete stuff marked for deletion
+      Obj.deleteObjects();
+      Texture.deleteTextures();
 
       this.fps = 1_000_000_000.0f / (System.nanoTime() - this.lastFrame);
       this.lastFrame = System.nanoTime();
@@ -989,6 +1004,8 @@ public class RenderEngine {
       return;
     }
 
+    LOGGER.info("Resizing window to %dx%d", width, height);
+
     this.width = width;
     this.height = height;
 
@@ -1307,7 +1324,7 @@ public class RenderEngine {
     }
 
     public boolean shouldRender(@Nullable final Translucency translucency) {
-      return this.hasTranslucency && this.translucency == translucency || (this.ctmdFlags & 0x2) != 0 && translucency != null && this.tmdTranslucency == translucency.ordinal() || this.obj.shouldRender(translucency);
+      return this.hasTranslucency && this.translucency == translucency || (this.ctmdFlags & 0x2) != 0 && translucency != null && this.tmdTranslucency == translucency.ordinal() || !this.hasTranslucency && this.obj.shouldRender(translucency);
     }
 
     private void storeTransforms(final int modelIndex, final FloatBuffer transforms2Buffer, final FloatBuffer lightingBuffer) {

@@ -41,10 +41,6 @@ public class MeshObj extends Obj {
 
   @Override
   public boolean shouldRender(@Nullable final Translucency translucency) {
-    if(this.deleted) {
-      return false;
-    }
-
     if(translucency == null) {
       return this.meshes[0] != null;
     }
@@ -75,14 +71,10 @@ public class MeshObj extends Obj {
   }
 
   @Override
-  public void delete() {
-    if(!this.deleted) {
-      super.delete();
-
-      for(final Mesh mesh : this.meshes) {
-        if(mesh != null) {
-          mesh.delete();
-        }
+  protected void performDelete() {
+    for(final Mesh mesh : this.meshes) {
+      if(mesh != null) {
+        mesh.delete();
       }
     }
   }

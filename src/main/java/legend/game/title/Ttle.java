@@ -103,7 +103,7 @@ public class Ttle extends EngineState {
   private Obj trademarkObj;
   private Obj menuTextObj;
   private Obj copyrightObj;
-  private Obj flashObj;
+  private final MV flashTransforms = new MV();
 
   private VramTexture backgroundTexture;
   private VramTexture[] backgroundPalettes;
@@ -266,15 +266,6 @@ public class Ttle extends EngineState {
       .size(368.0f, 32.0f)
       .uvSize(1.0f, 1.0f)
       .bpp(Bpp.BITS_24)
-      .translucency(Translucency.B_PLUS_F)
-      .build();
-
-    this.flashObj = new QuadBuilder("Flash")
-      .bpp(Bpp.BITS_24)
-      .pos(0.0f, 0.0f, 20.0f)
-      .size(368.0f, 240.0f)
-      .uv(0.0f, 1.0f)
-      .uvSize(1.0f, -1.0f)
       .translucency(Translucency.B_PLUS_F)
       .build();
 
@@ -1026,8 +1017,11 @@ public class Ttle extends EngineState {
     //LAB_800cba90
     final int colour = rsin(this.logoFlashColour) * 160 >> 12;
 
-    RENDERER.queueOrthoModel(this.flashObj)
+    this.flashTransforms.transfer.set(0.0f, 0.0f, 30.0f);
+    this.flashTransforms.scaling(368.0f, 240.0f, 1.0f);
+    RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, this.flashTransforms)
       .texture(RENDERER.getLastFrame())
+      .translucency(Translucency.B_PLUS_F)
       .monochrome(colour / 128.0f);
 
     if(this.logoFlashColour == 0x800) {
