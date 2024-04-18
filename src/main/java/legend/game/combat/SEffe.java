@@ -283,13 +283,13 @@ public final class SEffe {
 
   /**
    * <ol start="0">
-   *   <li>{@link SEffe#FUN_8010b594}</li>
+   *   <li>{@link SEffe#renderImagoInstantDeathCapture}</li>
    *   <li>{@link SEffe#renderScreenCapture}</li>
    * </ol>
    */
   private static final TriConsumer<EffectManagerData6c<EffectManagerParams.VoidType>, ScreenCaptureEffect1c, MV>[] screenCaptureRenderers_80119fec = new TriConsumer[2];
   static {
-    screenCaptureRenderers_80119fec[0] = SEffe::FUN_8010b594;
+    screenCaptureRenderers_80119fec[0] = SEffe::renderImagoInstantDeathCapture;
     screenCaptureRenderers_80119fec[1] = SEffe::renderScreenCapture;
   }
 
@@ -3739,10 +3739,8 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  /** TODO This is the second screen capture function, usage currently unknown */
   @Method(0x8010b594L)
-  public static void FUN_8010b594(final EffectManagerData6c<EffectManagerParams.VoidType> manager, final ScreenCaptureEffect1c effect, final MV transforms) {
-    int v1;
+  public static void renderImagoInstantDeathCapture(final EffectManagerData6c<EffectManagerParams.VoidType> manager, final ScreenCaptureEffect1c effect, final MV transforms) {
     int a0;
     int a1;
 
@@ -3788,13 +3786,13 @@ public final class SEffe {
             vert0.y = (a0 - 1) * effect.screenspaceH_14 / 2.0f;
             vert1.y = a0 * effect.screenspaceH_14 / 2.0f;
             vert2.y = vert1.y;
-            a0 = (i >> 1) * 64;
-            v1 = (i & 0x1) * 32;
+            final int u = (i >> 1) * 64;
+            final int v = (i & 0x1) * 32;
 
             cmd
-              .uv(0, a0, v1 + effect.captureW_04 / 4 - 1)
-              .uv(1, v1, a0 + effect.captureH_08 / 2 - 1)
-              .uv(2, v1 + effect.captureW_04 / 4 - 1, a0 + effect.captureH_08 / 2 - 1);
+              .uv(0, u, v + effect.captureW_04 / 4 - 1)
+              .uv(1, v, u + effect.captureH_08 / 2 - 1)
+              .uv(2, v + effect.captureW_04 / 4 - 1, u + effect.captureH_08 / 2 - 1);
           } else {
             //LAB_8010b8c8
             a0 = i & 0x3;
@@ -3803,15 +3801,15 @@ public final class SEffe {
             vert2.z = (a0 - 1) * effect.screenspaceW_10 / 4.0f;
             a0 = i >> 2;
             vert0.y = (a0 - 1) * effect.screenspaceH_14 / 2.0f;
-            v1 = (i & 1) * 32;
-            a0 = (i >> 1) * 64;
             vert2.y = a0 * effect.screenspaceH_14 / 2.0f;
             vert1.y = vert2.y;
+            final int u = (i & 1) * 32;
+            final int v = (i >> 1) * 64;
 
             cmd
-              .uv(0, v1, a0)
-              .uv(1, v1, a0 + effect.captureH_08 / 2 - 1)
-              .uv(2, v1 + effect.captureW_04 / 4 - 1, a0 + effect.captureH_08 / 2 - 1);
+              .uv(0, u, v)
+              .uv(1, u, v + effect.captureH_08 / 2 - 1)
+              .uv(2, u + effect.captureW_04 / 4 - 1, v + effect.captureH_08 / 2 - 1);
           }
 
           //LAB_8010b9a4
