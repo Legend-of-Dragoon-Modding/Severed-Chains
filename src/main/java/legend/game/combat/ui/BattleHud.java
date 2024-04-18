@@ -1679,10 +1679,10 @@ public class BattleHud {
             //LAB_800f517c
             this.clearFloatingNumber(0);
           } else {
+            final ActiveStatsa0 stats = stats_800be5f8[player.charId_272];
             playSound(0, 2, 0, 0, (short)0, (short)0);
             player.combatant_144.mrg_04 = null;
             gameState_800babc8.charData_32c[player.charId_272].selectedAddition_19 = additionOffsets_8004f5ac[player.charId_272] + this.spellAndItemMenu_800c6b60.itemOrSpellId_1c;
-            final ActiveStatsa0 stats = stats_800be5f8[player.charId_272];
             loadCharacterStats();
             player.additionSpMultiplier_11a = stats.additionSpMultiplier_9e;
             player.additionDamageMultiplier_11c = stats.additionDamageMultiplier_9f;
