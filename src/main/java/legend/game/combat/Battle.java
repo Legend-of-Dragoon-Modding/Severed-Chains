@@ -1350,7 +1350,7 @@ public class Battle extends EngineState {
       battleState_8006e398.addPlayer(state);
     }
 
-    this.PlayerBattleEntityStatsInit();
+    this.initPlayerBattleEntityStats();
 
     pregameLoadingStage_800bb10c++;
   }
@@ -7640,7 +7640,7 @@ public class Battle extends EngineState {
   }
 
   @Method(0x800ef28cL)
-  public void PlayerBattleEntityStatsInit() {
+  public void initPlayerBattleEntityStats() {
     loadCharacterStats();
     characterStatsLoaded_800be5d0 = true;
 
