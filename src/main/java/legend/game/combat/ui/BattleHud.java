@@ -4,7 +4,6 @@ import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
-import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
@@ -31,6 +30,7 @@ import legend.game.modding.events.battle.BattleDescriptionEvent;
 import legend.game.modding.events.battle.StatDisplayEvent;
 import legend.game.modding.events.inventory.RepeatItemReturnEvent;
 import legend.game.scripting.ScriptState;
+import legend.game.types.ActiveStatsa0;
 import legend.game.types.LodString;
 import legend.game.types.Translucency;
 import legend.lodmod.LodMod;
@@ -65,6 +65,7 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
 import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
+import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.combat.Battle.additionNames_800fa8d4;
 import static legend.game.combat.Battle.melbuStageToMonsterNameIndices_800c6f30;
@@ -1666,10 +1667,9 @@ public class BattleHud {
             this.spellAndItemMenu_800c6b60.itemTargetAll_800c69c8 = (player.item_d4.target_00 & 0x2) != 0;
           } else if(this.spellAndItemMenu_800c6b60.menuType_0a == 1) {
             //LAB_800f5134
-            final PlayerBattleEntity caster = this.spellAndItemMenu_800c6b60.player_08;
-            caster.setActiveSpell(this.spellAndItemMenu_800c6b60.itemOrSpellId_1c);
+            player.setActiveSpell(this.spellAndItemMenu_800c6b60.itemOrSpellId_1c);
 
-            if(caster.stats.getStat(CoreMod.MP_STAT.get()).getCurrent() < caster.spell_94.mp_06) {
+            if(player.stats.getStat(CoreMod.MP_STAT.get()).getCurrent() < player.spell_94.mp_06) {
               //LAB_800f5160
               //LAB_800f5168
               playSound(0, 3, 0, 0, (short)0, (short)0);
@@ -1679,10 +1679,13 @@ public class BattleHud {
             //LAB_800f517c
             this.clearFloatingNumber(0);
           } else {
+            final ActiveStatsa0 stats = stats_800be5f8[player.charId_272];
             playSound(0, 2, 0, 0, (short)0, (short)0);
             player.combatant_144.mrg_04 = null;
             gameState_800babc8.charData_32c[player.charId_272].selectedAddition_19 = additionOffsets_8004f5ac[player.charId_272] + this.spellAndItemMenu_800c6b60.itemOrSpellId_1c;
             loadCharacterStats();
+            player.additionSpMultiplier_11a = stats.additionSpMultiplier_9e;
+            player.additionDamageMultiplier_11c = stats.additionDamageMultiplier_9f;
             loadAdditions();
             this.battle.loadAttackAnimations(player.combatant_144);
             this.spellAndItemMenu_800c6b60.menuState_00 = 8;
