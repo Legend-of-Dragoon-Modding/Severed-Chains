@@ -4969,7 +4969,7 @@ public class Battle extends EngineState {
 
   @Method(0x800e4674L)
   public Vector3f FUN_800e4674(final Vector3f out, final Vector3f rotation) {
-    return out.set(0.0f, 0.0f, 1.0f).mul(new Matrix3f().rotationZYX(rotation.z, rotation.y, rotation.z));
+    return out.set(0.0f, 0.0f, 1.0f).mul(new Matrix3f().rotationZYX(rotation.z, rotation.y, rotation.x));
   }
 
   @Method(0x800e46c8L)
@@ -4982,8 +4982,8 @@ public class Battle extends EngineState {
     a0.light_00.r_0c = 0.5f;
     a0.light_00.g_0d = 0.5f;
     a0.light_00.b_0e = 0.5f;
-    a0._10._00 = 0;
-    a0._4c._00 = 0;
+    a0._10.typeAndFlags_00 = 0;
+    a0._4c.typeAndFlags_00 = 0;
 
     //LAB_800e4720
     this.lights_800c692c[1].clear();
@@ -5001,7 +5001,7 @@ public class Battle extends EngineState {
   public void setLightDirection(final int lightIndex, final float x, final float y, final float z) {
     final BttlLightStruct84 light = this.lights_800c692c[lightIndex];
     light.light_00.direction_00.set(x, y, z);
-    light._10._00 = 0;
+    light._10.typeAndFlags_00 = 0;
   }
 
   @ScriptDescription("Sets the battle light direction")
@@ -5035,7 +5035,7 @@ public class Battle extends EngineState {
     this.FUN_800e4674(rotation, new Vector3f(x, y, z));
     final BttlLightStruct84 light = this.lights_800c692c[lightIndex];
     light.light_00.direction_00.set(rotation);
-    light._10._00 = 0;
+    light._10.typeAndFlags_00 = 0;
   }
 
   @ScriptDescription("Unknown, sets the battle light direction using the vector (0, 0, 1) rotated by ZYX")
@@ -5077,7 +5077,7 @@ public class Battle extends EngineState {
     final int index = script.params_20[1].get();
     if(index != -1) {
       //LAB_800e49c0
-      if(index > 0 && index - 1 < 3) {
+      if(index >= 1 && index <= 3) {
         this.FUN_800e45c0(rotation, this.lights_800c692c[index - 1].light_00.direction_00);
       } else {
         //LAB_800e49f4
@@ -5096,7 +5096,7 @@ public class Battle extends EngineState {
     this.FUN_800e4674(direction, rotation);
     final BttlLightStruct84 light = this.lights_800c692c[script.params_20[0].get()];
     light.light_00.direction_00.set(direction);
-    light._10._00 = 0;
+    light._10.typeAndFlags_00 = 0;
     return FlowControl.CONTINUE;
   }
 
@@ -5113,7 +5113,7 @@ public class Battle extends EngineState {
     this.FUN_800e45c0(sp0x10, this.lights_800c692c[script.params_20[0].get()].light_00.direction_00);
 
     final Vector3f s0;
-    if(s1 - 1 < 3) {
+    if(s1 >= 1 && s1 <= 3) {
       s0 = new Vector3f();
       this.FUN_800e45c0(s0, this.lights_800c692c[s1 - 1].light_00.direction_00);
     } else {
@@ -5135,7 +5135,7 @@ public class Battle extends EngineState {
     light.light_00.r_0c = r;
     light.light_00.g_0d = g;
     light.light_00.b_0e = b;
-    light._4c._00 = 0;
+    light._4c.typeAndFlags_00 = 0;
   }
 
   @ScriptDescription("Sets the battle light colour")
@@ -5199,7 +5199,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
   @Method(0x800e4dfcL)
   public FlowControl FUN_800e4dfc(final RunningScript<?> script) {
-    this.lights_800c692c[script.params_20[0].get()]._10._00 = 0;
+    this.lights_800c692c[script.params_20[0].get()]._10.typeAndFlags_00 = 0;
     return FlowControl.CONTINUE;
   }
 
@@ -5207,7 +5207,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
   @Method(0x800e4e2cL)
   public FlowControl FUN_800e4e2c(final RunningScript<?> script) {
-    return this.lights_800c692c[script.params_20[0].get()]._10._00 != 0 ? FlowControl.PAUSE_AND_REWIND : FlowControl.CONTINUE;
+    return this.lights_800c692c[script.params_20[0].get()]._10.typeAndFlags_00 != 0 ? FlowControl.PAUSE_AND_REWIND : FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Unknown, related to battle lights")
@@ -5215,7 +5215,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "out")
   @Method(0x800e4e64L)
   public FlowControl FUN_800e4e64(final RunningScript<?> script) {
-    script.params_20[1].set(this.lights_800c692c[script.params_20[0].get()]._10._00);
+    script.params_20[1].set(this.lights_800c692c[script.params_20[0].get()]._10.typeAndFlags_00);
     return FlowControl.CONTINUE;
   }
 
@@ -5231,17 +5231,17 @@ public class Battle extends EngineState {
     final int ticks = script.params_20[4].get();
     final BttlLightStruct84Sub38 t0 = light._10;
 
-    t0._00 = 0;
-    t0.angleAndColour_04.set(light.light_00.direction_00);
-    t0.vec_28.set(MathHelper.psxDegToRad(script.params_20[1].get()), MathHelper.psxDegToRad(script.params_20[2].get()), MathHelper.psxDegToRad(script.params_20[3].get()));
+    t0.typeAndFlags_00 = 0;
+    t0.directionOrColour_04.set(light.light_00.direction_00);
+    t0.directionOrColourDest_28.set(MathHelper.psxDegToRad(script.params_20[1].get()), MathHelper.psxDegToRad(script.params_20[2].get()), MathHelper.psxDegToRad(script.params_20[3].get()));
     t0.ticksRemaining_34 = ticks;
 
     if(ticks > 0) {
-      t0.vec_10.x = (t0.vec_28.x - t0.angleAndColour_04.x) / ticks;
-      t0.vec_10.y = (t0.vec_28.y - t0.angleAndColour_04.y) / ticks;
-      t0.vec_10.z = (t0.vec_28.z - t0.angleAndColour_04.z) / ticks;
-      t0.vec_1c.zero();
-      t0._00 = 0xa001;
+      t0.directionOrColourSpeed_10.x = (t0.directionOrColourDest_28.x - t0.directionOrColour_04.x) / ticks;
+      t0.directionOrColourSpeed_10.y = (t0.directionOrColourDest_28.y - t0.directionOrColour_04.y) / ticks;
+      t0.directionOrColourSpeed_10.z = (t0.directionOrColourDest_28.z - t0.directionOrColour_04.z) / ticks;
+      t0.directionOrColourAcceleration_1c.zero();
+      t0.typeAndFlags_00 = 0xa001;
     }
 
     //LAB_800e4f98
@@ -5265,19 +5265,19 @@ public class Battle extends EngineState {
     final BttlLightStruct84 light = this.lights_800c692c[script.params_20[0].get()];
     final Vector3f sp0x10 = new Vector3f();
     this.FUN_800e45c0(sp0x10, light.light_00.direction_00);
-    light._10._00 = 0;
+    light._10.typeAndFlags_00 = 0;
 
     final BttlLightStruct84Sub38 a3 = light._10;
-    a3.angleAndColour_04.set(sp0x10);
-    a3.vec_28.set(x, y, z);
+    a3.directionOrColour_04.set(sp0x10);
+    a3.directionOrColourDest_28.set(x, y, z);
     a3.ticksRemaining_34 = ticks;
 
     if(ticks > 0) {
-      a3.vec_1c.zero();
-      a3.vec_10.x = (x - a3.angleAndColour_04.x) / ticks;
-      a3.vec_10.y = (y - a3.angleAndColour_04.y) / ticks;
-      a3.vec_10.z = (z - a3.angleAndColour_04.z) / ticks;
-      a3._00 = 0xc001;
+      a3.directionOrColourAcceleration_1c.zero();
+      a3.directionOrColourSpeed_10.x = (x - a3.directionOrColour_04.x) / ticks;
+      a3.directionOrColourSpeed_10.y = (y - a3.directionOrColour_04.y) / ticks;
+      a3.directionOrColourSpeed_10.z = (z - a3.directionOrColour_04.z) / ticks;
+      a3.typeAndFlags_00 = 0xc001;
     }
 
     //LAB_800e50c0
@@ -5305,27 +5305,27 @@ public class Battle extends EngineState {
     this.FUN_800e45c0(sp0x10, this.lights_800c692c[lightIndex].light_00.direction_00);
 
     final BttlLightStruct84Sub38 s0 = this.lights_800c692c[lightIndex]._10;
-    s0._00 = 0;
-    s0.angleAndColour_04.set(sp0x10);
+    s0.typeAndFlags_00 = 0;
+    s0.directionOrColour_04.set(sp0x10);
 
-    if(lightOrBentIndex > 0 && lightOrBentIndex < 4) {
+    if(lightOrBentIndex >= 1 && lightOrBentIndex <= 3) {
       final Vector3f sp0x18 = new Vector3f();
       this.FUN_800e45c0(sp0x18, this.lights_800c692c[lightOrBentIndex - 1].light_00.direction_00);
-      s0.vec_28.set(sp0x18);
+      s0.directionOrColourDest_28.set(sp0x18);
     } else {
       //LAB_800e51e8
       final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[lightOrBentIndex].innerStruct_00;
-      s0.vec_28.set(bent.model_148.coord2_14.transforms.rotate);
+      s0.directionOrColourDest_28.set(bent.model_148.coord2_14.transforms.rotate);
     }
 
     //LAB_800e522c
     s0.ticksRemaining_34 = ticks;
-    s0.vec_28.add(x, y, z);
+    s0.directionOrColourDest_28.add(x, y, z);
 
     if(ticks > 0) {
-      s0._00 = 0xc001;
-      s0.vec_10.set(s0.vec_28).sub(s0.angleAndColour_04).div(ticks);
-      s0.vec_1c.zero();
+      s0.typeAndFlags_00 = 0xc001;
+      s0.directionOrColourSpeed_10.set(s0.directionOrColourDest_28).sub(s0.directionOrColour_04).div(ticks);
+      s0.directionOrColourAcceleration_1c.zero();
     }
 
     //LAB_800e52c8
@@ -5348,10 +5348,10 @@ public class Battle extends EngineState {
     this.FUN_800e45c0(sp0x10, light.light_00.direction_00);
 
     final BttlLightStruct84Sub38 v1 = light._10;
-    v1._00 = 0x4001;
-    v1.angleAndColour_04.set(sp0x10);
-    v1.vec_10.set(script.params_20[1].get() / (float)0x1000, script.params_20[2].get() / (float)0x1000, script.params_20[3].get() / (float)0x1000);
-    v1.vec_1c.set(script.params_20[4].get() / (float)0x1000, script.params_20[5].get() / (float)0x1000, script.params_20[6].get() / (float)0x1000);
+    v1.typeAndFlags_00 = 0x4001;
+    v1.directionOrColour_04.set(sp0x10);
+    v1.directionOrColourSpeed_10.set(script.params_20[1].get() / (float)0x1000, script.params_20[2].get() / (float)0x1000, script.params_20[3].get() / (float)0x1000);
+    v1.directionOrColourAcceleration_1c.set(script.params_20[4].get() / (float)0x1000, script.params_20[5].get() / (float)0x1000, script.params_20[6].get() / (float)0x1000);
     return FlowControl.CONTINUE;
   }
 
@@ -5367,13 +5367,13 @@ public class Battle extends EngineState {
     this.FUN_800e45c0(sp0x10, light.light_00.direction_00);
 
     final BttlLightStruct84Sub38 a0_0 = light._10;
-    a0_0._00 = 0x4002;
+    a0_0.typeAndFlags_00 = 0x4002;
     light.scriptIndex_48 = bentIndex;
 
     final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[bentIndex].innerStruct_00;
-    a0_0.angleAndColour_04.set(sp0x10).sub(bent.model_148.coord2_14.transforms.rotate);
-    a0_0.vec_10.zero();
-    a0_0.vec_1c.zero();
+    a0_0.directionOrColour_04.set(sp0x10).sub(bent.model_148.coord2_14.transforms.rotate);
+    a0_0.directionOrColourSpeed_10.zero();
+    a0_0.directionOrColourAcceleration_1c.zero();
     return FlowControl.CONTINUE;
   }
 
@@ -5381,7 +5381,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
   @Method(0x800e54f8L)
   public FlowControl FUN_800e54f8(final RunningScript<?> script) {
-    this.lights_800c692c[script.params_20[0].get()]._4c._00 = 0;
+    this.lights_800c692c[script.params_20[0].get()]._4c.typeAndFlags_00 = 0;
     return FlowControl.CONTINUE;
   }
 
@@ -5389,7 +5389,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "lightIndex", description = "The light index")
   @Method(0x800e5528L)
   public FlowControl FUN_800e5528(final RunningScript<?> script) {
-    return this.lights_800c692c[script.params_20[0].get()]._4c._00 != 0 ? FlowControl.PAUSE_AND_REWIND : FlowControl.CONTINUE;
+    return this.lights_800c692c[script.params_20[0].get()]._4c.typeAndFlags_00 != 0 ? FlowControl.PAUSE_AND_REWIND : FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Unknown, related to battle lights")
@@ -5397,7 +5397,7 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "value")
   @Method(0x800e5560L)
   public FlowControl FUN_800e5560(final RunningScript<?> script) {
-    script.params_20[1].set(this.lights_800c692c[script.params_20[0].get()]._4c._00);
+    script.params_20[1].set(this.lights_800c692c[script.params_20[0].get()]._4c.typeAndFlags_00);
     return FlowControl.CONTINUE;
   }
 
@@ -5413,17 +5413,17 @@ public class Battle extends EngineState {
     final int ticks = script.params_20[4].get();
 
     final BttlLightStruct84Sub38 t0 = light._4c;
-    t0._00 = 0;
-    t0.angleAndColour_04.x = light.light_00.r_0c;
-    t0.angleAndColour_04.y = light.light_00.g_0d;
-    t0.angleAndColour_04.z = light.light_00.b_0e;
-    t0.vec_28.set(script.params_20[1].get() / (float)0x80, script.params_20[2].get() / (float)0x80, script.params_20[3].get() / (float)0x80);
+    t0.typeAndFlags_00 = 0;
+    t0.directionOrColour_04.x = light.light_00.r_0c;
+    t0.directionOrColour_04.y = light.light_00.g_0d;
+    t0.directionOrColour_04.z = light.light_00.b_0e;
+    t0.directionOrColourDest_28.set(script.params_20[1].get() / (float)0x80, script.params_20[2].get() / (float)0x80, script.params_20[3].get() / (float)0x80);
     t0.ticksRemaining_34 = ticks;
 
     if(ticks > 0) {
-      t0.vec_1c.zero();
-      t0.vec_10.set(t0.vec_28).sub(t0.angleAndColour_04).div(ticks);
-      t0._00 = 0x8001;
+      t0.directionOrColourAcceleration_1c.zero();
+      t0.directionOrColourSpeed_10.set(t0.directionOrColourDest_28).sub(t0.directionOrColour_04).div(ticks);
+      t0.typeAndFlags_00 = 0x8001;
     }
 
     //LAB_800e5694
@@ -5442,13 +5442,13 @@ public class Battle extends EngineState {
   public FlowControl FUN_800e569c(final RunningScript<?> script) {
     final BttlLightStruct84 light = this.lights_800c692c[script.params_20[0].get()];
     final BttlLightStruct84Sub38 v1 = light._4c;
-    v1._00 = 0;
-    v1.angleAndColour_04.set(light.light_00.r_0c, light.light_00.g_0d, light.light_00.b_0e);
-    v1.vec_10.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
-    v1.vec_1c.set(script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get());
+    v1.typeAndFlags_00 = 0;
+    v1.directionOrColour_04.set(light.light_00.r_0c, light.light_00.g_0d, light.light_00.b_0e);
+    v1.directionOrColourSpeed_10.set(script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get());
+    v1.directionOrColourAcceleration_1c.set(script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get());
 
     if(v1.ticksRemaining_34 > 0) {
-      v1._00 = 0x1;
+      v1.typeAndFlags_00 = 0x1;
     }
 
     //LAB_800e5760
@@ -5482,24 +5482,24 @@ public class Battle extends EngineState {
       a1.light_00.b_0e = a0.lightColour_0a.z / (float)0x100;
 
       if(a0.x_06 != 0 || a0.y_08 != 0) {
-        a1._10._00 = 0x3;
-        a1._10.angleAndColour_04.set(a1.light_00.direction_00);
-        a1._10.vec_10.set(a0.x_06, a0.y_08, 0);
+        a1._10.typeAndFlags_00 = 0x3;
+        a1._10.directionOrColour_04.set(a1.light_00.direction_00);
+        a1._10.directionOrColourSpeed_10.set(a0.x_06, a0.y_08, 0);
       } else {
         //LAB_800e58cc
-        a1._10._00 = 0;
+        a1._10.typeAndFlags_00 = 0;
       }
 
       //LAB_800e58d0
       if(a0.y_12 != 0) {
-        a1._4c._00 = 0x3;
-        a1._4c.angleAndColour_04.set(a1.light_00.r_0c, a1.light_00.g_0d, a1.light_00.b_0e);
-        a1._4c.vec_10.set(a0._0d.x / (float)0x100, a0._0d.y / (float)0x100, a0._0d.z / (float)0x100);
-        a1._4c.vec_28.x = a0.x_10;
-        a1._4c.vec_28.y = a0.y_12;
+        a1._4c.typeAndFlags_00 = 0x3;
+        a1._4c.directionOrColour_04.set(a1.light_00.r_0c, a1.light_00.g_0d, a1.light_00.b_0e);
+        a1._4c.directionOrColourSpeed_10.set(a0._0d.x / (float)0x100, a0._0d.y / (float)0x100, a0._0d.z / (float)0x100);
+        a1._4c.directionOrColourDest_28.x = a0.x_10;
+        a1._4c.directionOrColourDest_28.y = a0.y_12;
       } else {
         //LAB_800e5944
-        a1._4c._00 = 0;
+        a1._4c.typeAndFlags_00 = 0;
       }
 
       //LAB_800e5948
@@ -5565,45 +5565,45 @@ public class Battle extends EngineState {
       final BttlLightStruct84 light = this.lights_800c692c[i];
       final BttlLightStruct84Sub38 a2 = light._10;
 
-      int v1 = a2._00 & 0xff;
-      if(v1 == 1) {
+      int type = a2.typeAndFlags_00 & 0xff;
+      if(type == 1) {
         //LAB_800e5c50
-        a2.vec_10.add(a2.vec_1c);
-        a2.angleAndColour_04.add(a2.vec_10);
+        a2.directionOrColourSpeed_10.add(a2.directionOrColourAcceleration_1c);
+        a2.directionOrColour_04.add(a2.directionOrColourSpeed_10);
 
-        if((a2._00 & 0x8000) != 0) {
+        if((a2.typeAndFlags_00 & 0x8000) != 0) {
           a2.ticksRemaining_34--;
 
           if(a2.ticksRemaining_34 <= 0) {
-            a2._00 = 0;
-            a2.angleAndColour_04.set(a2.vec_28);
+            a2.typeAndFlags_00 = 0;
+            a2.directionOrColour_04.set(a2.directionOrColourDest_28);
           }
         }
 
         //LAB_800e5cf4
-        if((a2._00 & 0x2000) != 0) {
-          light.light_00.direction_00.set(a2.angleAndColour_04);
+        if((a2.typeAndFlags_00 & 0x2000) != 0) {
+          light.light_00.direction_00.set(a2.directionOrColour_04);
           //LAB_800e5d40
-        } else if((a2._00 & 0x4000) != 0) {
+        } else if((a2.typeAndFlags_00 & 0x4000) != 0) {
           final Vector3f sp0x18 = new Vector3f();
-          sp0x18.set(a2.angleAndColour_04);
+          sp0x18.set(a2.directionOrColour_04);
           this.FUN_800e4674(light.light_00.direction_00, sp0x18);
         }
-      } else if(v1 == 2) {
+      } else if(type == 2) {
         //LAB_800e5bf0
         final Vector3f sp0x10 = new Vector3f();
         final BattleEntity27c bent = (BattleEntity27c)scriptStatePtrArr_800bc1c0[light.scriptIndex_48].innerStruct_00;
-        sp0x10.set(bent.model_148.coord2_14.transforms.rotate).add(a2.angleAndColour_04);
+        sp0x10.set(bent.model_148.coord2_14.transforms.rotate).add(a2.directionOrColour_04);
         this.FUN_800e4674(light.light_00.direction_00, sp0x10);
-      } else if(v1 == 3) {
+      } else if(type == 3) {
         //LAB_800e5bdc
         //LAB_800e5d6c
         final Vector3f sp0x18 = new Vector3f();
 
         final int ticks = this.lightTicks_800c6928 & 0xfff;
-        sp0x18.x = a2.angleAndColour_04.x + a2.vec_10.x * ticks;
-        sp0x18.y = a2.angleAndColour_04.y + a2.vec_10.y * ticks;
-        sp0x18.z = a2.angleAndColour_04.z + a2.vec_10.z * ticks;
+        sp0x18.x = a2.directionOrColour_04.x + a2.directionOrColourSpeed_10.x * ticks;
+        sp0x18.y = a2.directionOrColour_04.y + a2.directionOrColourSpeed_10.y * ticks;
+        sp0x18.z = a2.directionOrColour_04.z + a2.directionOrColourSpeed_10.z * ticks;
 
         //LAB_800e5dcc
         this.FUN_800e4674(light.light_00.direction_00, sp0x18);
@@ -5611,33 +5611,33 @@ public class Battle extends EngineState {
 
       //LAB_800e5dd4
       final BttlLightStruct84Sub38 s0 = light._4c;
-      v1 = s0._00 & 0xff;
-      if(v1 == 1) {
+      type = s0.typeAndFlags_00 & 0xff;
+      if(type == 1) {
         //LAB_800e5df4
-        s0.vec_10.add(s0.vec_1c);
-        s0.angleAndColour_04.add(s0.vec_10);
+        s0.directionOrColourSpeed_10.add(s0.directionOrColourAcceleration_1c);
+        s0.directionOrColour_04.add(s0.directionOrColourSpeed_10);
 
-        if((s0._00 & 0x8000) != 0) {
+        if((s0.typeAndFlags_00 & 0x8000) != 0) {
           s0.ticksRemaining_34--;
 
           if(s0.ticksRemaining_34 <= 0) {
-            s0._00 = 0;
-            s0.angleAndColour_04.set(s0.vec_28);
+            s0.typeAndFlags_00 = 0;
+            s0.directionOrColour_04.set(s0.directionOrColourDest_28);
           }
         }
 
         //LAB_800e5e90
-        this.lights_800c692c[i].light_00.r_0c = s0.angleAndColour_04.x;
-        this.lights_800c692c[i].light_00.g_0d = s0.angleAndColour_04.y;
-        this.lights_800c692c[i].light_00.b_0e = s0.angleAndColour_04.z;
-      } else if(v1 == 3) {
+        this.lights_800c692c[i].light_00.r_0c = s0.directionOrColour_04.x;
+        this.lights_800c692c[i].light_00.g_0d = s0.directionOrColour_04.y;
+        this.lights_800c692c[i].light_00.b_0e = s0.directionOrColour_04.z;
+      } else if(type == 3) {
         //LAB_800e5ed0
-        final float theta = MathHelper.cos((this.lightTicks_800c6928 / (float)0x1000 + s0.vec_28.x) % s0.vec_28.y / s0.vec_28.y);
+        final float theta = MathHelper.cos((this.lightTicks_800c6928 / (float)0x1000 + s0.directionOrColourDest_28.x) % s0.directionOrColourDest_28.y / s0.directionOrColourDest_28.y);
         final float ratioA = 1.0f + theta;
         final float ratioB = 1.0f - theta;
-        this.lights_800c692c[i].light_00.r_0c = (s0.angleAndColour_04.x * ratioA + s0.vec_10.x * ratioB) / 2.0f;
-        this.lights_800c692c[i].light_00.g_0d = (s0.angleAndColour_04.y * ratioA + s0.vec_10.y * ratioB) / 2.0f;
-        this.lights_800c692c[i].light_00.b_0e = (s0.angleAndColour_04.z * ratioA + s0.vec_10.z * ratioB) / 2.0f;
+        this.lights_800c692c[i].light_00.r_0c = (s0.directionOrColour_04.x * ratioA + s0.directionOrColourSpeed_10.x * ratioB) / 2.0f;
+        this.lights_800c692c[i].light_00.g_0d = (s0.directionOrColour_04.y * ratioA + s0.directionOrColourSpeed_10.y * ratioB) / 2.0f;
+        this.lights_800c692c[i].light_00.b_0e = (s0.directionOrColour_04.z * ratioA + s0.directionOrColourSpeed_10.z * ratioB) / 2.0f;
       }
 
       //LAB_800e5fb8
