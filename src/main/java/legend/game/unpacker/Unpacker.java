@@ -817,7 +817,7 @@ public final class Unpacker {
     transformations.addNode("characters/miranda/xp", node.data.slice(0x18330, 61 * 4));
 
     for(int i = 0; i < 192; i++) {
-      transformations.addNode("equipment/%d.deqp".formatted(i), node.data.slice(0x16878 + i * 0x1c, 0x1c));
+      transformations.addNode("equipment/" + i + ".deqp", node.data.slice(0x16878 + i * 0x1c, 0x1c));
     }
   }
 
@@ -831,7 +831,7 @@ public final class Unpacker {
     transformations.addNode(node);
 
     for(int i = 0; i < 128; i++) {
-      transformations.addNode("spells/%d.dspl".formatted(i), node.data.slice(0x33a30 + i * 0xc, 0xc));
+      transformations.addNode("spells/" + i + ".dspl", node.data.slice(0x33a30 + i * 0xc, 0xc));
     }
   }
 
@@ -1077,9 +1077,9 @@ public final class Unpacker {
     for(int charId = 0; charId < 9; charId++) {
       final String charName = getCharacterName(charId).toLowerCase();
 
-      if(node.fullPath.startsWith("SECT/DRGN0.BIN/%d".formatted(3993 + charId * 2))) {
+      if(node.fullPath.startsWith("SECT/DRGN0.BIN/" + (3993 + charId * 2))) {
         transformations.addNode("characters/%s/textures/combat".formatted(charName), node.data);
-      } else if(node.fullPath.startsWith("SECT/DRGN0.BIN/%d".formatted(3994 + charId * 2))) {
+      } else if(node.fullPath.startsWith("SECT/DRGN0.BIN/" + (3994 + charId * 2))) {
         transformations.addNode("characters/%s/models/combat/%s".formatted(charName, node.fullPath.substring(node.fullPath.lastIndexOf('/') + 1)), node.data);
       }
     }
@@ -1099,9 +1099,9 @@ public final class Unpacker {
     for(int charId = 0; charId < 10; charId++) {
       final String charName = getCharacterName(charId).toLowerCase();
 
-      if(node.fullPath.startsWith("SECT/DRGN0.BIN/%d".formatted(4011 + charId * 2))) {
+      if(node.fullPath.startsWith("SECT/DRGN0.BIN/" + (4011 + charId * 2))) {
         transformations.addNode("characters/%s/textures/dragoon".formatted(charName), node.data);
-      } else if(node.fullPath.startsWith("SECT/DRGN0.BIN/%d".formatted(4012 + charId * 2))) {
+      } else if(node.fullPath.startsWith("SECT/DRGN0.BIN/" + (4012 + charId * 2))) {
         transformations.addNode("characters/%s/models/dragoon/%s".formatted(charName, node.fullPath.substring(node.fullPath.lastIndexOf('/') + 1)), node.data);
       }
     }
@@ -1170,7 +1170,7 @@ public final class Unpacker {
 
   private static void lodEngineExtractor(final PathNode node, final Transformations transformations, final Set<String> flags) {
     for(int i = 0; i < 64; i++) {
-      transformations.addNode("items/%d.ditm".formatted(i), node.data.slice(0x3f2ac + i * 0xc, 0xc));
+      transformations.addNode("items/" + i + ".ditm", node.data.slice(0x3f2ac + i * 0xc, 0xc));
     }
 
     transformations.addNode("shadow.ctmd", node.data.slice(0x3d0, 0x14c));

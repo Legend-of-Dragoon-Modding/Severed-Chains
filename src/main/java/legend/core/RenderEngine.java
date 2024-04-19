@@ -1,5 +1,6 @@
 package legend.core;
 
+import legend.core.gpu.Bpp;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
 import legend.core.opengl.BasicCamera;
@@ -170,11 +171,13 @@ public class RenderEngine {
 
   public static final ShaderType<VoidShaderOptions> SCREEN_SHADER = new ShaderType<>(options -> loadShader("post", "screen", options), shader -> () -> VoidShaderOptions.INSTANCE);
 
+  private static final int RENDER_BUFFER_COUNT = 2;
   private Shader<TmdShaderOptions> tmdShader;
   private TmdShaderOptions tmdShaderOptions;
-  private FrameBuffer opaqueFrameBuffer;
-  private Texture opaqueTexture;
+  private final FrameBuffer[] renderBuffers = new FrameBuffer[RENDER_BUFFER_COUNT];
+  private final Texture[] renderTextures = new Texture[RENDER_BUFFER_COUNT];
   private Texture depthTexture;
+  private int renderBufferIndex;
 
   // Text
   public Obj chars;
@@ -187,6 +190,8 @@ public class RenderEngine {
   // Line box (reticles)
   public Obj lineBox;
   public Obj lineBoxBPlusF;
+  // Render buffer
+  public Obj renderBufferQuad;
 
   private int width;
   private int height;
@@ -316,6 +321,10 @@ public class RenderEngine {
     }
   }
 
+  public Texture getLastFrame() {
+    return this.renderTextures[Math.floorMod(this.renderBufferIndex - 1, RENDER_BUFFER_COUNT)];
+  }
+
   public void init() {
     this.camera2d = new BasicCamera(0.0f, 0.0f);
     this.camera3d = new QuaternionCamera(0.0f, 0.0f, 0.0f);
@@ -416,6 +425,14 @@ public class RenderEngine {
       .build();
     this.lineBoxBPlusF.persistent = true;
 
+    this.renderBufferQuad = new QuadBuilder("Render buffer")
+      .bpp(Bpp.BITS_24)
+      .size(1.0f, 1.0f)
+      .uv(0.0f, 1.0f)
+      .uvSize(1.0f, -1.0f)
+      .build();
+    this.renderBufferQuad.persistent = true;
+
     this.window.events.onDraw(() -> {
       this.pre();
 
@@ -455,7 +472,7 @@ public class RenderEngine {
           this.needsSorting = false;
         }
 
-        this.opaqueFrameBuffer.bind();
+        this.renderBuffers[this.renderBufferIndex].bind();
         this.clear();
 
         // Gross hack bro
@@ -491,7 +508,7 @@ public class RenderEngine {
         screenShader.use();
 
         // draw final screen quad
-        this.opaqueTexture.use();
+        this.renderTextures[this.renderBufferIndex].use();
         postQuad.draw();
 
         // If we don't unbind the framebuffer textures, window resizing will crash since it has to resize the framebuffer
@@ -508,6 +525,12 @@ public class RenderEngine {
         this.modelPool.reset();
         this.shaderPool.reset();
       }
+
+      this.renderBufferIndex = (this.renderBufferIndex + 1) % RENDER_BUFFER_COUNT;
+
+      // Delete stuff marked for deletion
+      Obj.deleteObjects();
+      Texture.deleteTextures();
 
       this.fps = 1_000_000_000.0f / (System.nanoTime() - this.lastFrame);
       this.lastFrame = System.nanoTime();
@@ -981,6 +1004,8 @@ public class RenderEngine {
       return;
     }
 
+    LOGGER.info("Resizing window to %dx%d", width, height);
+
     this.width = width;
     this.height = height;
 
@@ -989,23 +1014,24 @@ public class RenderEngine {
     // Projections
     this.updateProjections();
 
-    // Order-independent translucency
-    if(this.opaqueTexture != null) {
-      this.opaqueTexture.delete();
+    for(int i = 0; i < this.renderTextures.length; i++) {
+      if(this.renderTextures[i] != null) {
+        this.renderTextures[i].delete();
+      }
+
+      this.renderTextures[i] = Texture.create(builder -> {
+        builder.size(width, height);
+        builder.internalFormat(GL_RGBA16F);
+        builder.dataFormat(GL_RGBA);
+        builder.dataType(GL_HALF_FLOAT);
+        builder.magFilter(GL_LINEAR);
+        builder.minFilter(GL_LINEAR);
+      });
     }
 
     if(this.depthTexture != null) {
       this.depthTexture.delete();
     }
-
-    this.opaqueTexture = Texture.create(builder -> {
-      builder.size(width, height);
-      builder.internalFormat(GL_RGBA16F);
-      builder.dataFormat(GL_RGBA);
-      builder.dataType(GL_HALF_FLOAT);
-      builder.magFilter(GL_LINEAR);
-      builder.minFilter(GL_LINEAR);
-    });
 
     this.depthTexture = Texture.create(builder -> {
       builder.size(width, height);
@@ -1014,10 +1040,18 @@ public class RenderEngine {
       builder.dataType(GL_FLOAT);
     });
 
-    this.opaqueFrameBuffer = FrameBuffer.create(builder -> {
-      builder.attachment(this.opaqueTexture, GL_COLOR_ATTACHMENT0);
-      builder.attachment(this.depthTexture, GL_DEPTH_ATTACHMENT);
-    });
+
+    for(int i = 0; i < this.renderBuffers.length; i++) {
+      if(this.renderBuffers[i] != null) {
+        this.renderBuffers[i].delete();
+      }
+
+      final int finalI = i;
+      this.renderBuffers[i] = FrameBuffer.create(builder -> {
+        builder.attachment(this.renderTextures[finalI], GL_COLOR_ATTACHMENT0);
+        builder.attachment(this.depthTexture, GL_DEPTH_ATTACHMENT);
+      });
+    }
   }
 
   private void onMouseMove(final Window window, final double x, final double y) {
@@ -1290,7 +1324,7 @@ public class RenderEngine {
     }
 
     public boolean shouldRender(@Nullable final Translucency translucency) {
-      return this.hasTranslucency && this.translucency == translucency || (this.ctmdFlags & 0x2) != 0 && translucency != null && this.tmdTranslucency == translucency.ordinal() || this.obj.shouldRender(translucency);
+      return this.hasTranslucency && this.translucency == translucency || (this.ctmdFlags & 0x2) != 0 && translucency != null && this.tmdTranslucency == translucency.ordinal() || !this.hasTranslucency && this.obj.shouldRender(translucency);
     }
 
     private void storeTransforms(final int modelIndex, final FloatBuffer transforms2Buffer, final FloatBuffer lightingBuffer) {

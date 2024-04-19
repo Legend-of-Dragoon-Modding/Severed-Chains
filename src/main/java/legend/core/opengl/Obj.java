@@ -30,7 +30,19 @@ public abstract class Obj {
 
   public void delete() {
     this.deleted = true;
-    objList.remove(this);
+  }
+
+  protected abstract void performDelete();
+
+  public static void deleteObjects() {
+    for(int i = objList.size() - 1; i >= 0; i--) {
+      final Obj obj = objList.get(i);
+
+      if(obj.deleted) {
+        obj.performDelete();
+        objList.remove(i);
+      }
+    }
   }
 
   public static void clearObjList(final boolean clearPersistent) {
@@ -43,6 +55,7 @@ public abstract class Obj {
         }
 
         obj.delete();
+        objList.remove(i);
       }
     }
   }

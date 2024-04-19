@@ -2,7 +2,6 @@ package legend.game.title;
 
 import legend.core.MathHelper;
 import legend.core.gpu.Bpp;
-import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.Rect4i;
 import legend.core.gpu.VramTexture;
 import legend.core.gpu.VramTextureSingle;
@@ -104,6 +103,7 @@ public class Ttle extends EngineState {
   private Obj trademarkObj;
   private Obj menuTextObj;
   private Obj copyrightObj;
+  private final MV flashTransforms = new MV();
 
   private VramTexture backgroundTexture;
   private VramTexture[] backgroundPalettes;
@@ -1017,15 +1017,12 @@ public class Ttle extends EngineState {
     //LAB_800cba90
     final int colour = rsin(this.logoFlashColour) * 160 >> 12;
 
-    // GP0.66 Textured quad, variable size, translucent, blended
-    final GpuCommandQuad cmd = new GpuCommandQuad()
-      .translucent(Translucency.B_PLUS_F)
-      .bpp(Bpp.BITS_15)
-      .monochrome(colour)
-      .pos(-192, -120, 384, 240)
-      .texture(GPU.getDisplayBuffer());
-
-    GPU.queueCommand(5, cmd);
+    this.flashTransforms.transfer.set(0.0f, 0.0f, 30.0f);
+    this.flashTransforms.scaling(368.0f, 240.0f, 1.0f);
+    RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, this.flashTransforms)
+      .texture(RENDERER.getLastFrame())
+      .translucency(Translucency.B_PLUS_F)
+      .monochrome(colour / 128.0f);
 
     if(this.logoFlashColour == 0x800) {
       this.logoFlashStage = 2;

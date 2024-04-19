@@ -15,6 +15,7 @@ import static org.lwjgl.opengl.GL30C.GL_RENDERBUFFER;
 import static org.lwjgl.opengl.GL30C.glBindFramebuffer;
 import static org.lwjgl.opengl.GL30C.glBindRenderbuffer;
 import static org.lwjgl.opengl.GL30C.glCheckFramebufferStatus;
+import static org.lwjgl.opengl.GL30C.glDeleteRenderbuffers;
 import static org.lwjgl.opengl.GL30C.glFramebufferRenderbuffer;
 import static org.lwjgl.opengl.GL30C.glFramebufferTexture2D;
 import static org.lwjgl.opengl.GL30C.glGenFramebuffers;
@@ -68,6 +69,10 @@ public class FrameBuffer {
     }
 
     unbind();
+  }
+
+  public void delete() {
+    glDeleteRenderbuffers(this.id);
   }
 
   public void bind() {

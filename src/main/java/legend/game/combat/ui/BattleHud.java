@@ -4,8 +4,6 @@ import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
-import legend.core.gpu.GpuCommandLine;
-import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.opengl.Obj;
@@ -32,6 +30,7 @@ import legend.game.modding.events.battle.BattleDescriptionEvent;
 import legend.game.modding.events.battle.StatDisplayEvent;
 import legend.game.modding.events.inventory.RepeatItemReturnEvent;
 import legend.game.scripting.ScriptState;
+import legend.game.types.ActiveStatsa0;
 import legend.game.types.LodString;
 import legend.game.types.Translucency;
 import legend.lodmod.LodMod;
@@ -66,6 +65,7 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
 import static legend.game.Scus94491BpeSegment_800b.press_800bee94;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
+import static legend.game.Scus94491BpeSegment_800b.stats_800be5f8;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.combat.Battle.additionNames_800fa8d4;
 import static legend.game.combat.Battle.melbuStageToMonsterNameIndices_800c6f30;
@@ -195,6 +195,9 @@ public class BattleHud {
   private UiBox battleUiItemSpellList;
   private UiBox battleUiSpellList;
   private UiBox battleUiItemDescription;
+  private Obj spBars;
+  private final MV spBarTransforms = new MV();
+  private final MV lineTransforms = new MV();
 
   public BattleHud(final Battle battle) {
     this.battle = battle;
@@ -737,23 +740,22 @@ public class BattleHud {
               final int right = left + spBarW;
               final int bottom = top + 3;
 
-              final GpuCommandPoly cmd = new GpuCommandPoly(4)
-                .pos(0, left, top)
-                .pos(1, right, top)
-                .pos(2, left, bottom)
-                .pos(3, right, bottom);
-
               final int[] spBarColours = spBarColours_800c6f04[spBarIndex];
 
-              cmd
-                .rgb(0, spBarColours[0], spBarColours[1], spBarColours[2])
-                .rgb(1, spBarColours[0], spBarColours[1], spBarColours[2]);
+              if(this.spBars == null) {
+                this.spBars = new QuadBuilder("SPBar")
+                  .monochrome(0, 229.0f / 255.0f)
+                  .monochrome(1, 133.0f / 255.0f)
+                  .monochrome(2, 229.0f / 255.0f)
+                  .monochrome(3, 133.0f / 255.0f)
+                  .size(1, 1)
+                  .build();
+              }
 
-              cmd
-                .rgb(2, spBarColours[3], spBarColours[4], spBarColours[5])
-                .rgb(3, spBarColours[3], spBarColours[4], spBarColours[5]);
+              spBarTransforms.transfer.set(GPU.getOffsetX() + left, GPU.getOffsetY() + top, 31.0f);
+              spBarTransforms.scaling(right - left, bottom - top, 1.0f);
 
-              GPU.queueCommand(31, cmd);
+              RENDERER.queueOrthoModel(this.spBars, spBarTransforms).colour(spBarColours[0] / 255.0f, spBarColours[1] / 255.0f, spBarColours[2] / 255.0f);
             }
 
             //SP border
@@ -1324,16 +1326,18 @@ public class BattleHud {
 
             if((digit.flags_00 & 0x8000) != 0) {
               //LAB_800f3ec0
-              num.transforms.transfer.set(digit.x_0e + num.x_1c, digit.y_10 + num.y_20, 28.0f);
-              RENDERER.queueOrthoModel(digit.obj, num.transforms)
-                .colour(num.colour);
+              for(int s3 = 1; s3 < 3; s3++) {
+                num.transforms.transfer.set(digit.x_0e + num.x_1c, digit.y_10 + num.y_20, 28.0f);
+                RENDERER.queueOrthoModel(digit.obj, num.transforms)
+                  .colour(num.colour);
 
-              if((num.state_00 & 97) == 0) {
-                //LAB_800f4118
-                break;
+                if((num.state_00 & 97) == 0) {
+                  //LAB_800f4118
+                  break;
+                }
+
+                //LAB_800f4110
               }
-
-              //LAB_800f4110
             }
           }
         }
@@ -1665,10 +1669,9 @@ public class BattleHud {
             this.spellAndItemMenu_800c6b60.itemTargetAll_800c69c8 = (player.item_d4.target_00 & 0x2) != 0;
           } else if(this.spellAndItemMenu_800c6b60.menuType_0a == 1) {
             //LAB_800f5134
-            final PlayerBattleEntity caster = this.spellAndItemMenu_800c6b60.player_08;
-            caster.setActiveSpell(this.spellAndItemMenu_800c6b60.itemOrSpellId_1c);
+            player.setActiveSpell(this.spellAndItemMenu_800c6b60.itemOrSpellId_1c);
 
-            if(caster.stats.getStat(CoreMod.MP_STAT.get()).getCurrent() < caster.spell_94.mp_06) {
+            if(player.stats.getStat(CoreMod.MP_STAT.get()).getCurrent() < player.spell_94.mp_06) {
               //LAB_800f5160
               //LAB_800f5168
               playSound(0, 3, 0, 0, (short)0, (short)0);
@@ -1678,10 +1681,13 @@ public class BattleHud {
             //LAB_800f517c
             this.clearFloatingNumber(0);
           } else {
+            final ActiveStatsa0 stats = stats_800be5f8[player.charId_272];
             playSound(0, 2, 0, 0, (short)0, (short)0);
             player.combatant_144.mrg_04 = null;
             gameState_800babc8.charData_32c[player.charId_272].selectedAddition_19 = additionOffsets_8004f5ac[player.charId_272] + this.spellAndItemMenu_800c6b60.itemOrSpellId_1c;
             loadCharacterStats();
+            player.additionSpMultiplier_11a = stats.additionSpMultiplier_9e;
+            player.additionDamageMultiplier_11c = stats.additionDamageMultiplier_9f;
             loadAdditions();
             this.battle.loadAttackAnimations(player.combatant_144);
             this.spellAndItemMenu_800c6b60.menuState_00 = 8;
@@ -3014,17 +3020,16 @@ public class BattleHud {
 
   @Method(0x800f9ee8L)
   private void drawLine(final int x1, final int y1, final int x2, final int y2, final int r, final int g, final int b, final boolean translucent) {
-    final GpuCommandLine cmd = new GpuCommandLine()
-      .rgb(0, r, g, b)
-      .rgb(1, r, g, b)
-      .pos(0, x1, y1)
-      .pos(1, x2, y2);
+    lineTransforms.transfer.set(GPU.getOffsetX() + x1, GPU.getOffsetY() + y1, 31.0f);
+    lineTransforms.scaling(x2 - x1 + 1, y2 - y1 + 1, 1.0f);
 
     if(translucent) {
-      cmd.translucent(Translucency.B_PLUS_F);
+      RENDERER.queueOrthoModel(RENDERER.plainQuads.get(Translucency.B_PLUS_F), lineTransforms)
+        .colour(r / 255.0f, g / 255.0f, b / 255.0f);
+    } else {
+      RENDERER.queueOrthoModel(RENDERER.opaqueQuad, lineTransforms)
+        .colour(r / 255.0f, g / 255.0f, b / 255.0f);
     }
-
-    GPU.queueCommand(31, cmd);
   }
 
   @Method(0x800fa068L)
@@ -3056,6 +3061,11 @@ public class BattleHud {
     if(this.battleUiItemDescription != null) {
       this.battleUiItemDescription.delete();
       this.battleUiItemDescription = null;
+    }
+
+    if(this.spBars != null) {
+      this.spBars.delete();
+      this.spBars = null;
     }
   }
 
