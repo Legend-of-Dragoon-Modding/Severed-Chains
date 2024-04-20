@@ -85,7 +85,9 @@ public final class AudioThread implements Runnable {
     while(this.running) {
       while(this.paused) {
         try {
-          this.wait();
+          synchronized(this) {
+            this.wait();
+          }
         } catch(final InterruptedException ignored) { }
       }
 
@@ -126,7 +128,10 @@ public final class AudioThread implements Runnable {
   public void stop() {
     this.paused = false;
     this.running = false;
-    this.notify();
+
+    synchronized(this) {
+      this.notify();
+    }
   }
 
   public void loadBackgroundMusic(final BackgroundMusic backgroundMusic) {
