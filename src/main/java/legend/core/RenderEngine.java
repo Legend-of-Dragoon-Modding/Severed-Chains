@@ -54,12 +54,16 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
+import static legend.core.MathHelper.PI;
+import static legend.core.MathHelper.clamp;
+import static legend.core.MathHelper.put3x4;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F10;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F11;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F5;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F9;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_M;
@@ -238,6 +242,7 @@ public class RenderEngine {
   private boolean paused;
   private boolean frameAdvanceSingle;
   private boolean frameAdvance;
+  private boolean reloadShaders;
 
   public void setProjectionSize(final float width, final float height) {
     this.projectionWidth = width;
@@ -535,6 +540,17 @@ public class RenderEngine {
       this.fps = 1_000_000_000.0f / (System.nanoTime() - this.lastFrame);
       this.lastFrame = System.nanoTime();
       this.vsyncCount += 60.0d * Config.getGameSpeedMultiplier() / this.window.getFpsLimit();
+
+      if(this.reloadShaders) {
+        this.reloadShaders = false;
+        LOGGER.info("Reloading shaders");
+
+        try {
+          ShaderManager.reload();
+        } catch(final IOException e) {
+          LOGGER.error("Failed to reload shaders", e);
+        }
+      }
 
       if(this.movingLeft) {
         this.camera3d.strafe(-MOVE_SPEED * 200);
@@ -959,7 +975,7 @@ public class RenderEngine {
 
   public void updateProjections() {
     if(legacyMode != 0) {
-      this.perspectiveProjection.setPerspectiveLH(MathHelper.PI / 4.0f, (float)this.width / this.height, 0.1f, 500.0f);
+      this.perspectiveProjection.setPerspectiveLH(PI / 4.0f, (float)this.width / this.height, 0.1f, 500.0f);
       this.orthographicProjection.setOrtho2D(0.0f, this.width, this.height, 0.0f);
       return;
     }
@@ -1065,7 +1081,7 @@ public class RenderEngine {
       this.yaw += (x - this.lastX) * MOUSE_SPEED;
       this.pitch += (this.lastY - y) * MOUSE_SPEED;
 
-      this.pitch = MathHelper.clamp(this.pitch, -MathHelper.PI / 2, MathHelper.PI / 2);
+      this.pitch = clamp(this.pitch, -PI / 2, PI / 2);
 
       this.lastX = x;
       this.lastY = y;
@@ -1103,6 +1119,8 @@ public class RenderEngine {
         case 1 -> System.out.println("Switched to legacy rendering");
         case 2 -> System.out.println("Switched to VRAM rendering");
       }
+    } else if(key == GLFW_KEY_F5) {
+      this.reloadShaders = true;
     } else if(key == GLFW_KEY_F11) {
       this.togglePause = !this.togglePause;
     } else if(key == GLFW_KEY_F9) {
@@ -1333,7 +1351,7 @@ public class RenderEngine {
 
       if(this.lightUsed) {
         this.lightDirection.get(modelIndex * 32, lightingBuffer);
-        this.lightColour.get(modelIndex * 32 + 16, lightingBuffer);
+        put3x4(this.lightColour, modelIndex * 32 + 16, lightingBuffer);
         this.backgroundColour.get(modelIndex * 32 + 28, lightingBuffer);
       }
     }

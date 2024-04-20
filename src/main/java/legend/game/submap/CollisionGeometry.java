@@ -243,7 +243,20 @@ public class CollisionGeometry {
       // top of each other (like in Kazas) you could get stuck on one at a very different depth
       if(!checkSteepness || collisionInfo.flatEnoughToWalkOn_01) {
         // Calculate the Y position of the geometry at the given point
-        final float primitiveY = -(this.normals_08[collisionPrimitiveIndex].x * x + this.normals_08[collisionPrimitiveIndex].z * z + collisionInfo._08) / this.normals_08[collisionPrimitiveIndex].y;
+
+        // IMPORTANT NOTE:
+        // If the primitive is perfectly vertical (i.e. a ladder), then the Y normal will be 0, breaking
+        // the calculation. In this case, we can not calculate the Y position for any XZ coordinate because
+        // the XZ plane is infinitely small. We have to instead assume that the primitive extends up and
+        // down to infinity, and ignore the Y check altogether, falling back to only the XZ check.
+        // This was a fix for #1077
+        final float primitiveY;
+        if(this.normals_08[collisionPrimitiveIndex].y != 0.0f) {
+          primitiveY = -(this.normals_08[collisionPrimitiveIndex].x * x + this.normals_08[collisionPrimitiveIndex].z * z + collisionInfo._08) / this.normals_08[collisionPrimitiveIndex].y;
+        } else {
+          primitiveY = y;
+        }
+
         if(Math.abs(primitiveY - y) < 50.0f) {
           //LAB_800e9078
           //LAB_800e90a0

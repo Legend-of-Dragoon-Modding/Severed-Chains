@@ -42,13 +42,13 @@ import legend.game.sound.SoundFileIndices;
 import legend.game.sound.SpuStruct08;
 import legend.game.sound.Sshd;
 import legend.game.sound.Sssq;
+import legend.game.types.BattleReportOverlay0e;
+import legend.game.types.BattleReportOverlayList10;
 import legend.game.types.BattleUiParts;
 import legend.game.types.CharacterData2c;
 import legend.game.types.Flags;
 import legend.game.types.McqHeader;
 import legend.game.types.OverlayStruct;
-import legend.game.types.BattleReportOverlay0e;
-import legend.game.types.BattleReportOverlayList10;
 import legend.game.types.TextboxBorderMetrics0c;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
@@ -92,8 +92,8 @@ import static legend.game.Scus94491BpeSegment_8003.GsSwapDispBuff;
 import static legend.game.Scus94491BpeSegment_8003.setDrawOffset;
 import static legend.game.Scus94491BpeSegment_8003.setProjectionPlaneDistance;
 import static legend.game.Scus94491BpeSegment_8004._8004dd48;
-import static legend.game.Scus94491BpeSegment_8004.battleReportOverlayLists_8004f658;
 import static legend.game.Scus94491BpeSegment_8004._8004f6e4;
+import static legend.game.Scus94491BpeSegment_8004.battleReportOverlayLists_8004f658;
 import static legend.game.Scus94491BpeSegment_8004.battleStartDelayTicks_8004f6ec;
 import static legend.game.Scus94491BpeSegment_8004.changeSequenceVolumeOverTime;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
@@ -175,7 +175,8 @@ import static legend.game.Scus94491BpeSegment_800c.sequenceData_800c4ac8;
 import static legend.game.combat.environment.StageData.stageData_80109a98;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_F5;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
+import static org.lwjgl.glfw.GLFW.GLFW_MOD_CONTROL;
 
 public final class Scus94491BpeSegment {
   private Scus94491BpeSegment() { }
@@ -382,7 +383,7 @@ public final class Scus94491BpeSegment {
         }
       }
 
-      if(key == GLFW_KEY_F5 && currentEngineState_8004dd04 instanceof final Battle battle) {
+      if((mods & GLFW_MOD_CONTROL) != 0 && key == GLFW_KEY_W && currentEngineState_8004dd04 instanceof final Battle battle) {
         battle.endBattle();
       }
     });
