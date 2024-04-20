@@ -54,15 +54,20 @@ public final class AudioThread implements Runnable {
     final String defaultDeviceName = alcGetString(0, ALC_DEFAULT_DEVICE_SPECIFIER);
     this.audioDevice = alcOpenDevice(defaultDeviceName);
 
-    final int[] attributes = {0};
-    this.audioContext = alcCreateContext(this.audioDevice, attributes);
-    alcMakeContextCurrent(this.audioContext);
+    if(this.audioDevice != 0) {
+      final int[] attributes = {0};
+      this.audioContext = alcCreateContext(this.audioDevice, attributes);
+      alcMakeContextCurrent(this.audioContext);
 
-    final ALCCapabilities alcCapabilities = ALC.createCapabilities(this.audioDevice);
-    final ALCapabilities alCapabilities = AL.createCapabilities(alcCapabilities);
+      final ALCCapabilities alcCapabilities = ALC.createCapabilities(this.audioDevice);
+      final ALCapabilities alCapabilities = AL.createCapabilities(alcCapabilities);
 
-    if(!alCapabilities.OpenAL10) {
-      LOGGER.warn("Device does not support OpenAL10. Disabling audio.");
+      if(!alCapabilities.OpenAL10) {
+        LOGGER.warn("Device does not support OpenAL10. Disabling audio.");
+        this.disabled = true;
+      }
+    } else {
+      LOGGER.warn("No audio device present. Disabling audio.");
       this.disabled = true;
     }
 
