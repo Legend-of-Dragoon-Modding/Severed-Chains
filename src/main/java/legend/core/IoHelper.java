@@ -106,9 +106,15 @@ public final class IoHelper {
     return buffer.array();
   }
 
+  private static final CRC32 crc32 = new CRC32();
+
   public static int crc32(final Path file) throws IOException {
-    final CRC32 crc32 = new CRC32();
-    crc32.update(Files.readAllBytes(file));
+    return crc32(Files.readAllBytes(file));
+  }
+
+  public static int crc32(final byte[] data) {
+    crc32.reset();
+    crc32.update(data);
     return (int)crc32.getValue();
   }
 

@@ -414,7 +414,6 @@ public class Battle extends EngineState {
   public final int[] monsterBents_800c6b78 = new int[9];
   private int monsterCount_800c6b9c;
 
-  /** Uhh, contains the monsters that Melbu summons during his fight...? */
   public final LodString[] melbuMonsterNames_800c6ba8 = new LodString[3];
 
   public final List<Item> usedRepeatItems_800c6c3c = new ArrayList<>();
@@ -1249,7 +1248,7 @@ public class Battle extends EngineState {
     startFadeEffect(4, 30);
 
     battleFlags_800bc960 |= 0x20;
-    battleState_8006e398.stageProgression_eec = 0;
+    battleState_8006e398.battlePhase_eec = 0;
 
     this.clearCombatants();
     this.clearCurrentDisplayableItems();
@@ -1357,7 +1356,7 @@ public class Battle extends EngineState {
 
   @Method(0x800c791cL)
   public void loadEncounterAssets() {
-    this.loadEnemyTextures(2625 + encounterId_800bb0f8);
+    this.loadEnemyTextures();
 
     //LAB_800fc030
     for(int i = 0; i < this.combatantCount_800c66a0; i++) {
@@ -1398,9 +1397,18 @@ public class Battle extends EngineState {
 
   /** Pulled from S_ITEM */
   @Method(0x800fc3c0L)
-  public void loadEnemyTextures(final int fileIndex) {
-    // Example file: 2856
-    loadDrgnDir(0, fileIndex, this::enemyTexturesLoadedCallback);
+  public void loadEnemyTextures() {
+    for(int i = 0; i < this.combatantCount_800c66a0; i++) {
+      final CombatantStruct1a8 a0 = this.getCombatant(i);
+
+      if(a0.charSlot_19c >= 0) {
+        continue;
+      }
+
+      final int enemyIndex = a0.charIndex_1a2 & 0x1ff;
+
+      loadFile("monsters/%d/textures/combat".formatted(enemyIndex), files -> this.loadCombatantTim(a0, files));
+    }
   }
 
   /** Pulled from S_ITEM */

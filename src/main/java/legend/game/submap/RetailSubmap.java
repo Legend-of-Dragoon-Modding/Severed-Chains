@@ -45,6 +45,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import static legend.core.Async.allLoaded;
+import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
@@ -1300,7 +1301,7 @@ public class RetailSubmap extends Submap {
     }
 
     //LAB_8001b408
-    return -1;
+    return AUDIO_THREAD.getSongId();
   }
 
   @Method(0x8001c60cL)
@@ -1371,7 +1372,7 @@ public class RetailSubmap extends Submap {
     }
 
     //LAB_8001c7ec
-    if(!currentSequenceData_800bd0f8.musicPlaying_028) {
+    if(currentSequenceData_800bd0f8 == null || !currentSequenceData_800bd0f8.musicPlaying_028) {
       return -2;
     }
 

@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.Tuple;
+import legend.core.audio.xa.XaTranscoder;
 import legend.game.Scus94491BpeSegment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -54,10 +55,11 @@ public final class Unpacker {
 
   private static final Pattern ROOT_MRG = Pattern.compile("^SECT/DRGN0\\.BIN/\\d{4}/\\d+$");
   private static final Pattern DRGN0_FILE = Pattern.compile("^SECT/DRGN0.BIN/\\d+/.*");
+  private static final Pattern DRGN0_SUBFILE = Pattern.compile("^SECT/DRGN0.BIN/\\d+/\\d");
   private static final Pattern ITEM_SCRIPT = Pattern.compile("^SECT/DRGN0.BIN/\\d+/1.*");
 
   /** Update this any time we make a breaking change */
-  private static final int VERSION = 3;
+  private static final int VERSION = 4;
 
   static {
     System.setProperty("log4j.skipJansi", "false");
@@ -81,6 +83,11 @@ public final class Unpacker {
    */
   private static final Map<Discriminator, Transformer> transformers = new LinkedHashMap<>();
   static {
+    // This has to happen before MRG
+    transformers.put(Unpacker::monsterSfxDiscriminator, Unpacker::monsterSfxTransformer);
+    transformers.put(Unpacker::battlePhaseSfxDiscriminator, Unpacker::battlePhaseSfxTransformer);
+    transformers.put(Unpacker::monsterTextureDiscriminator, Unpacker::monsterTextureTransformer);
+
     transformers.put(Unpacker::decompressDiscriminator, Unpacker::decompress);
     transformers.put(Unpacker::mrgDiscriminator, Unpacker::unmrg);
     transformers.put(Unpacker::deffDiscriminator, Unpacker::undeff);
@@ -120,6 +127,8 @@ public final class Unpacker {
     transformers.put(Unpacker::playerScriptDamageCapsDiscriminator, Unpacker::playerScriptDamageCapsTransformer);
     transformers.put(Unpacker::enemyScriptDamageCapDiscriminator, Unpacker::enemyAndItemScriptDamageCapPatcher);
     transformers.put(Unpacker::itemScriptDamageCapDiscriminator, Unpacker::enemyAndItemScriptDamageCapPatcher);
+
+    transformers.put(Unpacker::xaDiscriminator, Unpacker::xaTransformer);
   }
 
   private static final List<Transformer> postTransformers = new ArrayList<>();
@@ -1161,6 +1170,248 @@ public final class Unpacker {
     transformations.addNode(node);
   }
 
+  private static boolean monsterSfxDiscriminator(final PathNode node, final Set<String> flags) {
+    if(DRGN0_SUBFILE.matcher(node.fullPath).matches()) {
+      final int fileId = Integer.parseInt(node.fullPath, 15, node.fullPath.indexOf('/', 16), 10);
+
+      return fileId >= 778 && fileId <= 1289;
+    }
+
+    return false;
+  }
+
+  private static void monsterSfxTransformer(final PathNode node, final Transformations transformations, final Set<String> flags) {
+    final int slash = node.fullPath.indexOf('/', 16);
+    final int fileId = Integer.parseInt(node.fullPath, 15, slash, 10);
+    final int index = Integer.parseInt(node.fullPath, slash + 1, node.fullPath.length(), 10);
+
+    final int[] monsters = battleAssetIdentifier(fileId - 778);
+
+    if(monsters!= null && index < monsters.length && monsters[index] != -1) {
+      transformations.addNode("monsters/" + monsters[index] + "/sounds/", node.data);
+    }
+  }
+
+  private static boolean monsterTextureDiscriminator(final PathNode node, final Set<String> flags) {
+    if(DRGN0_SUBFILE.matcher(node.fullPath).matches()) {
+      final int fileId = Integer.parseInt(node.fullPath, 15, node.fullPath.indexOf('/', 16), 10);
+
+      return fileId >= 2625 && fileId <= 3136;
+    }
+
+    return false;
+  }
+
+  private static void monsterTextureTransformer(final PathNode node, final Transformations transformations, final Set<String> flags) {
+    final int slash = node.fullPath.indexOf('/', 16);
+    final int fileId = Integer.parseInt(node.fullPath, 15, slash, 10);
+    final int index = Integer.parseInt(node.fullPath, slash + 1, node.fullPath.length(), 10);
+
+    final int[] monsters = battleAssetIdentifier(fileId - 2625);
+
+    if(monsters != null && index < monsters.length && monsters[index] != -1) {
+      transformations.addNode("monsters/" + monsters[index] + "/textures/combat", node.data);
+    }
+  }
+
+  private static int[] battleAssetIdentifier(final int encounterId) {
+    return switch(encounterId) {
+      case 6 -> new int[] {21, 24};
+      case 9 -> new int[] {8, 38};
+      case 16 -> new int[] {0, 59};
+      case 18 -> new int[] {27, 45};
+      case 23 -> new int[] {94};
+      case 24 -> new int[] {13};
+      case 25 -> new int[] {46, 64};
+      case 28 -> new int[] {104, 148};
+      case 35 -> new int[] {4, 28};
+      case 36 -> new int[] {22};
+      case 38 -> new int[] {68};
+      case 42 -> new int[] {92};
+      case 47 -> new int[] {33, 150};
+      case 49 -> new int[] {100, 146};
+      case 53 -> new int[] {88};
+      case 57 -> new int[] {90, 115};
+      case 58 -> new int[] {19, 35};
+      case 60 -> new int[] {66};
+      case 67 -> new int[] {15, 107};
+      case 68 -> new int[] {55, 58};
+      case 70 -> new int[] {87};
+      case 71 -> new int[] {124};
+      case 87 -> new int[] {1, 69};
+      case 82 -> new int[] {99};
+      case 83 -> new int[] {108};
+      case 76 -> new int[] {136};
+      case 77 -> new int[] {137};
+      case 78 -> new int[] {138};
+      case 89 -> new int[] {26};
+      case 92 -> new int[] {16};
+      case 95 -> new int[] {52, 106};
+      case 96 -> new int[] {14, 29};
+      case 106 -> new int[] {79, 83};
+      case 109 -> new int[] {82, 109};
+      case 124 -> new int[] {12};
+      case 127 -> new int[] {91, 110};
+      case 129 -> new int[] {23, 76};
+      case 132 -> new int[] {51};
+      case 138 -> new int[] {53, 95};
+      case 139 -> new int[] {73, 117};
+      case 143 -> new int[] {2};
+      case 146 -> new int[] {30, 111};
+      case 149 -> new int[] {43, 44};
+      case 152 -> new int[] {112};
+      case 154 -> new int[] {37};
+      case 157 -> new int[] {6, 113};
+      case 159 -> new int[] {96};
+      case 161 -> new int[] {48};
+      case 162 -> new int[] {114};
+      case 168 -> new int[] {5, 32};
+      case 177 -> new int[] {25, 49};
+      case 179 -> new int[] {56, 144};
+      case 183 -> new int[] {20};
+      case 186 -> new int[] {31, 57};
+      case 188 -> new int[] {50, 116};
+      case 196 -> new int[] {39, 47};
+      case 197 -> new int[] {41, 63};
+      case 198 -> new int[] {65};
+      case 208 -> new int[] {11, 67, 93};
+      case 232 -> new int[] {72};
+      case 235 -> new int[] {60, 75};
+      case 236 -> new int[] {9, 121};
+      case 244 -> new int[] {118};
+      case 245 -> new int[] {40, 97};
+      case 247 -> new int[] {80, 122};
+      case 252 -> new int[] {10};
+      case 256 -> new int[] {78, 125};
+      case 257 -> new int[] {101, 152};
+      case 259 -> new int[] {84};
+      case 266 -> new int[] {7, 98};
+      case 264 -> new int[] {126};
+      case 267 -> new int[] {62, 77};
+      case 282 -> new int[] {127};
+      case 291 -> new int[] {54};
+      case 292 -> new int[] {139};
+      case 298 -> new int[] {42};
+      case 307 -> new int[] {120};
+      case 309 -> new int[] {34, 81};
+      case 312 -> new int[] {71};
+      case 314 -> new int[] {123, 128};
+      case 384 -> new int[] {256, 257};
+      case 385 -> new int[] {258, 273};
+      case 386 -> new int[] {259, 260, 261};
+      case 387 -> new int[] {262, 263, 264};
+      case 388 -> new int[] {265};
+      case 389 -> new int[] {266};
+      case 390 -> new int[] {267, 268};
+      case 391 -> new int[] {269};
+      case 392 -> new int[] {270, 277};
+      case 393 -> new int[] {275, 287};
+      case 394 -> new int[] {283, 284, 285};
+      case 395 -> new int[] {288, 289, 290};
+      case 396 -> new int[] {293};
+      case 397 -> new int[] {279, 294};
+      case 398 -> new int[] {295};
+      case 399 -> new int[] {296};
+      case 400 -> new int[] {297};
+      case 401 -> new int[] {298};
+      case 402 -> new int[] {274, 299};
+      case 403 -> new int[] {300, 301};
+      case 404 -> new int[] {302};
+      case 405 -> new int[] {303};
+      case 406 -> new int[] {304};
+      case 407 -> new int[] {305};
+      case 408 -> new int[] {308, 309, 310};
+      case 409 -> new int[] {311, 312, 313};
+      case 410 -> new int[] {316, 317, 318};
+      case 411 -> new int[] {320, 321, 322};
+      case 412 -> new int[] {325, 326, 327};
+      case 413 -> new int[] {329};
+      case 414 -> new int[] {332};
+      case 415 -> new int[] {333, 334};
+      case 416 -> new int[] {335};
+      case 417 -> new int[] {340, 341};
+      case 418 -> new int[] {339, 343};
+      case 420 -> new int[] {342, 344};
+      case 421 -> new int[] {345};
+      case 422 -> new int[] {346, 347, 348};
+      case 423 -> new int[] {349, 350, 351};
+      case 424 -> new int[] {355, 356, 357};
+      case 430 -> new int[] {360, 361, 362};
+      case 431 -> new int[] {363, 364};
+      case 432 -> new int[] {365, 366};
+      case 433 -> new int[] {368, 369, 370};
+      case 434 -> new int[] {371};
+      case 435 -> new int[] {373, 374};
+      case 436 -> new int[] {375};
+      case 437 -> new int[] {378, 380};
+      case 438 -> new int[] {376, 377, 381};
+      case 439 -> new int[] {382};
+      case 442 -> new int[] {386, 387};
+      case 443 -> new int[] {388, 389};
+      case 444 -> new int[] {390};
+      case 445 -> new int[] {391, 392};
+      case 446 -> new int[] {393, 394, 395};
+      case 447 -> new int[] {352, 383};
+      case 448 -> new int[] {353, 384};
+      case 449 -> new int[] {354, 385};
+      case 450 -> new int[] {254};
+      case 451 -> new int[] {253};
+      case 452 -> new int[] {255};
+      case 453 -> new int[] {18, 86, 154};
+      case 456 -> new int[] {89};
+      case 457 -> new int[] {3, 61};
+      case 458 -> new int[] {36, 119};
+      case 461 -> new int[] {102};
+      case 462 -> new int[] {336, 337, 338};
+      case 471 -> new int[] {130};
+      case 474 -> new int[] {74, 157};
+      case 479 -> new int[] {131, 132};
+      case 480 -> new int[] {17, 103};
+      case 483 -> new int[] {129, 133};
+      case 484 -> new int[] {105, -1};
+      case 486 -> new int[] {134};
+      case 487 -> new int[] {-1, 135};
+      case 488 -> new int[] {70, 85};
+      default -> null;
+    };
+  }
+
+  private static boolean battlePhaseSfxDiscriminator(final PathNode node, final Set<String> flags) {
+    if(DRGN0_FILE.matcher(node.fullPath).matches()) {
+      final int fileId = Integer.parseInt(node.fullPath, 15, node.fullPath.indexOf('/', 16), 10);
+
+      return fileId >= 1290 && fileId <= 1297;
+    }
+
+    return false;
+  }
+
+  private static void battlePhaseSfxTransformer(final PathNode node, final Transformations transformations, final Set<String> flags) {
+    final int fileId = Integer.parseInt(node.fullPath, 15, node.fullPath.indexOf('/', 16), 10);
+
+    final String entity;
+    if(node.fullPath.endsWith("mrg")) {
+      entity = "mrg";
+    } else {
+      entity = node.fullPath.substring(node.fullPath.indexOf('/', 16) + 1);
+    }
+
+    final String path;
+    switch(fileId) {
+      case 1290 -> path = "monsters/phases/doel/0/" + entity;
+      case 1291 -> path = "monsters/phases/doel/1/" + entity;
+      case 1292 -> path = "monsters/phases/melbu/0/" + entity;
+      case 1293 -> path = "monsters/phases/melbu/1/" + entity;
+      case 1294 -> path = "monsters/phases/melbu/4/" + entity;
+      case 1295 -> path = "monsters/phases/melbu/6/" + entity;
+      case 1296 -> path = "monsters/phases/zackwell/0/" + entity;
+      case 1297 -> path = "monsters/phases/zackwell/1/" + entity;
+      default -> throw new IllegalArgumentException("Unknown battle phase file " + fileId);
+    }
+
+    transformations.addNode(path, node.data);
+  }
+
   private static boolean lodEngineDiscriminator(final PathNode node, final Set<String> flags) {
     return "lod_engine".equals(node.fullPath);
   }
@@ -1174,6 +1425,14 @@ public final class Unpacker {
     transformations.addNode("shadow.anim", node.data.slice(0x51c, 0x28));
     transformations.addNode("shadow.tim", getTimSize(node.data.slice(0x544)));
     transformations.addNode("font.tim", getTimSize(node.data.slice(0xb6744)));
+  }
+
+  private static boolean xaDiscriminator(final PathNode node, final Set<String> flags) {
+    return node.fullPath.endsWith(".XA");
+  }
+
+  private static void xaTransformer(final PathNode node, final Transformations transformations, final Set<String> flags) {
+    XaTranscoder.transform(node, transformations);
   }
 
   private static FileData getTimSize(final FileData data) {

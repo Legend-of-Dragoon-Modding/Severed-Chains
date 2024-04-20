@@ -14,7 +14,6 @@ import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.game.combat.types.EnemyDrop;
-import legend.game.fmv.Fmv;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.Equipment;
@@ -84,6 +83,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
@@ -103,6 +103,7 @@ import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
+import static legend.game.Scus94491BpeSegment.loadDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFileSync;
 import static legend.game.Scus94491BpeSegment.rectArray28_80010770;
@@ -272,14 +273,28 @@ public final class Scus94491BpeSegment_8002 {
     soundBufferOffset = 0;
 
     final int fileIndex = 1290 + script.params_20[0].get();
+
+    final String path;
+    switch(fileIndex) {
+      case 1290 -> path = "monsters/phases/doel/0";
+      case 1291 -> path = "monsters/phases/doel/1";
+      case 1292 -> path = "monsters/phases/melbu/0";
+      case 1293 -> path = "monsters/phases/melbu/1";
+      case 1294 -> path = "monsters/phases/melbu/4";
+      case 1295 -> path = "monsters/phases/melbu/6";
+      case 1296 -> path = "monsters/phases/zackwell/0";
+      case 1297 -> path = "monsters/phases/zackwell/1";
+      default -> throw new IllegalArgumentException("Unknown battle phase file index " + fileIndex);
+    }
+
     for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
       final SoundFile file = soundFiles_800bcf80[monsterSoundFileIndices_800500e8[monsterSlot]];
       file.charId_02 = -1;
       file.used_00 = false;
 
-      if(Unpacker.exists("SECT/DRGN0.BIN/" + fileIndex + '/' + monsterSlot)) {
+      if(Unpacker.exists(path + '/' + monsterSlot)) {
         final int finalMonsterSlot = monsterSlot;
-        loadDrgnDir(0, fileIndex + "/" + monsterSlot, files -> FUN_8001d51c(files, "Monster slot %d (file %d) (replaced)".formatted(finalMonsterSlot, fileIndex), finalMonsterSlot));
+        loadDir(path + '/' + monsterSlot, files -> FUN_8001d51c(files, "Monster slot %d (file %s) (replaced)".formatted(finalMonsterSlot, path), finalMonsterSlot));
       }
     }
 
@@ -4048,11 +4063,7 @@ public final class Scus94491BpeSegment_8002 {
       LOGGER.info("Playing XA archive %d file %d", xaArchiveIndex, xaFileIndex);
 
       //LAB_8002c448
-      //TODO don't do this.
-      new Thread(() -> Fmv.playXa(xaArchiveIndex, xaFileIndex)).start();
-//      final CdlLOC pos = CdlFILE_800bb4c8.get((int)MEMORY.ref(2, v1).offset(xaArchiveIndex * 0x8L).getSigned()).pos;
-
-//      CDROM.playXaAudio(pos, 1, xaFileIndex, () -> _800bf0cf.setu(0));
+      AUDIO_THREAD.loadXa(Unpacker.loadFile("XA/LODXA0%d.XA/%d.opus".formatted(xaArchiveIndex, xaFileIndex)));
       _800bf0cf = 4;
     }
 

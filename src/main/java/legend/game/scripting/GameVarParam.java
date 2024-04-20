@@ -68,7 +68,7 @@ public class GameVarParam extends Param {
       case 36 -> battleState_8006e398.monsterBents_e50[0] != null ? battleState_8006e398.monsterBents_e50[0].index : -1;
       case 37 -> battleState_8006e398.getMonsterCount();
       case 38 -> CONFIG.getConfig(CoreMod.TRANSFORMATION_MODE_CONFIG.get()).ordinal();
-      case 39 -> battleState_8006e398.stageProgression_eec;
+      case 39 -> battleState_8006e398.battlePhase_eec;
       case 40 -> Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928.size();
       case 41 -> throw new RuntimeException("Not implemented"); //Scus94491BpeSegment_800b.itemsDroppedByEnemies_800bc928.get(0);
       case 42 -> ((Battle)currentEngineState_8004dd04).forcedTurnBent_800c66bc != null ? ((Battle)currentEngineState_8004dd04).forcedTurnBent_800c66bc.index : -1;
@@ -199,7 +199,7 @@ public class GameVarParam extends Param {
       case 36 -> battleState_8006e398.monsterBents_e50[0] = (ScriptState<MonsterBattleEntity>)scriptStatePtrArr_800bc1c0[val];
 //      case 37 -> battleState_8006e398.monsterCount_800c6768 = val;
       case 38 -> CONFIG.setConfig(CoreMod.TRANSFORMATION_MODE_CONFIG.get(), TransformationMode.values()[val]);
-      case 39 -> battleState_8006e398.stageProgression_eec = val;
+      case 39 -> battleState_8006e398.battlePhase_eec = val;
       case 40, 41 -> throw new RuntimeException("Not supported"); // Dropped item list size, dropped item 0
       case 42 -> ((Battle)currentEngineState_8004dd04).forcedTurnBent_800c66bc = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[val];
       case 43 -> Scus94491BpeSegment_800b.encounterId_800bb0f8 = val;
