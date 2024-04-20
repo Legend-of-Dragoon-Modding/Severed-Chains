@@ -14,7 +14,6 @@ import legend.core.memory.Method;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.game.combat.types.EnemyDrop;
-import legend.game.fmv.Fmv;
 import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.Equipment;
@@ -277,15 +276,15 @@ public final class Scus94491BpeSegment_8002 {
 
     final String path;
     switch(fileIndex) {
-      case 1290 -> path = "monsters/fightStages/Doel/0";
-      case 1291 -> path = "monsters/fightStages/Doel/1";
-      case 1292 -> path = "monsters/fightStages/Melbu/0";
-      case 1293 -> path = "monsters/fightStages/Melbu/1";
-      case 1294 -> path = "monsters/fightStages/Melbu/4";
-      case 1295 -> path = "monsters/fightStages/Melbu/6";
-      case 1296 -> path = "monsters/fightStages/Zackwell/0";
-      case 1297 -> path = "monsters/fightStages/Zackwell/1";
-      default -> path = "monsters/fightStages/unknown";
+      case 1290 -> path = "monsters/phases/doel/0";
+      case 1291 -> path = "monsters/phases/doel/1";
+      case 1292 -> path = "monsters/phases/melbu/0";
+      case 1293 -> path = "monsters/phases/melbu/1";
+      case 1294 -> path = "monsters/phases/melbu/4";
+      case 1295 -> path = "monsters/phases/melbu/6";
+      case 1296 -> path = "monsters/phases/zackwell/0";
+      case 1297 -> path = "monsters/phases/zackwell/1";
+      default -> throw new IllegalArgumentException("Unknown battle phase file index " + fileIndex);
     }
 
     for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {

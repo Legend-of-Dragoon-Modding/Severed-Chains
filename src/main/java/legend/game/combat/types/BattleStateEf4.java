@@ -324,7 +324,7 @@ public class BattleStateEf4 {
 
   // nodart code no longer uses this
 //  public final Pointer<PartyPermutation08> partyPermutation_ee8;
-  public int stageProgression_eec;
+  public int battlePhase_eec;
   public int _ef0;
 
   private int aliveBentCount_800c669c;

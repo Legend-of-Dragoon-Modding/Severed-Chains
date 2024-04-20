@@ -2856,9 +2856,9 @@ public class BattleHud {
   private LodString getTargetEnemyName(final BattleEntity27c target, final LodString targetName) {
     // Seems to be special-case handling to replace Tentacle, since the Melbu fight has more enemies than the engine can handle
     if(target.charId_272 == 0x185) {
-      final int stageProgression = battleState_8006e398.stageProgression_eec;
+      final int stageProgression = battleState_8006e398.battlePhase_eec;
       if(stageProgression == 0 || stageProgression == 4 || stageProgression == 6) {
-        return this.battle.melbuMonsterNames_800c6ba8[melbuStageToMonsterNameIndices_800c6f30[battleState_8006e398.stageProgression_eec]];
+        return this.battle.melbuMonsterNames_800c6ba8[melbuStageToMonsterNameIndices_800c6f30[battleState_8006e398.battlePhase_eec]];
       }
     }
 

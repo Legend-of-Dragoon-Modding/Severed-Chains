@@ -414,7 +414,6 @@ public class Battle extends EngineState {
   public final int[] monsterBents_800c6b78 = new int[9];
   private int monsterCount_800c6b9c;
 
-  /** Uhh, contains the monsters that Melbu summons during his fight...? */
   public final LodString[] melbuMonsterNames_800c6ba8 = new LodString[3];
 
   public final List<Item> usedRepeatItems_800c6c3c = new ArrayList<>();
@@ -1249,7 +1248,7 @@ public class Battle extends EngineState {
     startFadeEffect(4, 30);
 
     battleFlags_800bc960 |= 0x20;
-    battleState_8006e398.stageProgression_eec = 0;
+    battleState_8006e398.battlePhase_eec = 0;
 
     this.clearCombatants();
     this.clearCurrentDisplayableItems();

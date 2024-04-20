@@ -2260,9 +2260,9 @@ public final class Scus94491BpeSegment {
   public static void loadMonsterSounds() {
     final int encounterId = encounterId_800bb0f8;
     switch(encounterId) {
-      case 390 -> loadFightStageSounds("Doel", 0);
-      case 431 -> loadFightStageSounds("Zackwell", 0);
-      case 443 -> loadFightStageSounds("Melbu", 0);
+      case 390 -> loadBattlePhaseSounds("doel", 0);
+      case 431 -> loadBattlePhaseSounds("zackwell", 0);
+      case 443 -> loadBattlePhaseSounds("melbu", 0);
       default -> loadEncounterSounds(encounterId);
     }
   }
@@ -2270,9 +2270,9 @@ public final class Scus94491BpeSegment {
   @Method(0x8001d2d8L)
   public static void loadMonsterSoundsWithPhases() {
     switch(encounterId_800bb0f8) {
-      case 390 -> loadFightStageSounds("Doel", battleState_8006e398.stageProgression_eec);
-      case 431 -> loadFightStageSounds("Zackwell", battleState_8006e398.stageProgression_eec);
-      case 443 -> loadFightStageSounds("Melbu", battleState_8006e398.stageProgression_eec);
+      case 390 -> loadBattlePhaseSounds("doel", battleState_8006e398.battlePhase_eec);
+      case 431 -> loadBattlePhaseSounds("zackwell", battleState_8006e398.battlePhase_eec);
+      case 443 -> loadBattlePhaseSounds("melbu", battleState_8006e398.battlePhase_eec);
       default -> loadEncounterSounds(encounterId_800bb0f8);
     }
   }
@@ -2280,7 +2280,7 @@ public final class Scus94491BpeSegment {
   public static int soundBufferOffset;
 
   /** TODO this isn't thread-safe */
-  private static void loadFightStageSounds(final String boss, final int stage) {
+  private static void loadBattlePhaseSounds(final String boss, final int phase) {
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x10);
     soundBufferOffset = 0;
 
@@ -2289,9 +2289,9 @@ public final class Scus94491BpeSegment {
       file.charId_02 = -1;
       file.used_00 = false;
 
-      if(Unpacker.exists("monsters/fightStages/%s/%d/%d".formatted(boss, stage, monsterSlot))) {
+      if(Unpacker.exists("monsters/phases/%s/%d/%d".formatted(boss, phase, monsterSlot))) {
         final int finalMonsterSlot = monsterSlot;
-        loadDir("monsters/fightStages/%s/%d/%d".formatted(boss, stage, monsterSlot), files -> FUN_8001d51c(files, "Monster slot %d (file %s/%d)".formatted(finalMonsterSlot, boss, stage), finalMonsterSlot));
+        loadDir("monsters/phases/%s/%d/%d".formatted(boss, phase, monsterSlot), files -> FUN_8001d51c(files, "Monster slot %d (file %s/%d)".formatted(finalMonsterSlot, boss, phase), finalMonsterSlot));
       }
     }
 
