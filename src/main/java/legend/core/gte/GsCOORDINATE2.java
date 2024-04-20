@@ -12,7 +12,7 @@ public class GsCOORDINATE2 {
     this.flg = other.flg;
     this.coord.set(other.coord);
     this.workm.set(other.workm);
-    this.transforms = other.transforms;
+    this.transforms.set(other.transforms);
     this.super_ = other.super_;
     this.sub = other.sub;
     return this;
