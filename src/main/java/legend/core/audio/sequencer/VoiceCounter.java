@@ -3,7 +3,8 @@ package legend.core.audio.sequencer;
 import static legend.core.audio.sequencer.LookupTables.VOICE_COUNTER_BIT_PRECISION;
 
 final class VoiceCounter {
-  //TODO verify this is actually correct for other values
+  //TODO verify this is actually correct for other values in case we want to change
+  //     the window size. This should be a generic solution but it wasn't verified.
   private final static int START_OFFSET = ((Voice.EMPTY.length) / 2 + 1) << VOICE_COUNTER_BIT_PRECISION;
   private final static int CLEAR_AND = (1 << VOICE_COUNTER_BIT_PRECISION) - 1;
   private int counter = START_OFFSET;

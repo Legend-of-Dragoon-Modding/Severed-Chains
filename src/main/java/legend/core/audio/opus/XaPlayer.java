@@ -45,7 +45,7 @@ public final class XaPlayer {
 
   public XaPlayer(final int frequency) {
     if(48_000 % frequency != 0) {
-      throw new IllegalArgumentException("Sample Rate (44_100) is not divisible by frequency");
+      throw new IllegalArgumentException("Sample Rate (44_800) is not divisible by frequency");
     }
 
     this.samplesPerTick = 48_000 / frequency;

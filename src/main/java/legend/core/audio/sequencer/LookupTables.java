@@ -76,10 +76,10 @@ final class LookupTables {
 
   float getPan(final int value, final boolean left) {
     if(left) {
-      return this.pan[127 - value] / 128f;
+      return this.pan[127 - value] / 128.0f;
     }
 
-    return this.pan[value] / 128f;
+    return this.pan[value] / 128.0f;
   }
 
   int mergePan(final int pan1, final int pan2) {

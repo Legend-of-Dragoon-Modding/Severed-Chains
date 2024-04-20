@@ -1,9 +1,14 @@
 package legend.core.audio.opus;
 
+import legend.core.IoHelper;
+import legend.core.MathHelper;
+
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static legend.core.IoHelper.crc32;
 
 /**
  * Ogg Page as defined by <a href="https://datatracker.ietf.org/doc/html/rfc3533#section-6">RFC3533</a>
@@ -96,8 +101,7 @@ final class OggPage {
     }
 
     final byte[] data = bos.toByteArray();
-
-    System.arraycopy(int2Bytes(getCrc(data)), 0x0, data, 0x16, 0x4);
+    MathHelper.set(data, 0x16, 0x4, crc32(data));
 
     return data;
   }
@@ -137,36 +141,5 @@ final class OggPage {
     output[7] = (byte)(value >>> 56);
 
     return output;
-  }
-
-  private static final int CRC_POLYNOMIAL = 0x04c11db7;
-  private static final int[] CRC_TABLE = new int[256];
-  static {
-    int crc;
-    for (int i = 0; i < 256; i++) {
-      crc = i << 24;
-      for (int j = 0; j < 8; j++) {
-        if ((crc & 0x80000000) != 0) {
-          crc = ((crc << 1) ^ CRC_POLYNOMIAL);
-        } else {
-          crc <<= 1;
-        }
-      }
-      CRC_TABLE[i] = crc;
-    }
-  }
-
-  private static int getCrc(final byte[] data) {
-    int crc = 0;
-    int x = 0;
-    int y = 0;
-
-    for(final byte b : data) {
-      x = crc << 8;
-      y = CRC_TABLE[(((crc >>> 24) & 0xff) ^ (b & 0xff))];
-      crc = x ^ y;
-    }
-
-    return crc;
   }
 }

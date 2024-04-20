@@ -12,7 +12,7 @@ final class AdsrEnvelope {
   private int cycleAmount;
 
   void tick() {
-    if(this.phase == Phase.Off) {
+    if(this.phase == Phase.OFF) {
       return;
     }
 
@@ -43,7 +43,7 @@ final class AdsrEnvelope {
 
     if(nextPhase) {
       this.phase = this.phase.next(isDecreasing);
-      if(this.phase != Phase.Off) {
+      if(this.phase != Phase.OFF) {
         final AdsrPhase newPhase = this.phases[this.phase.value];
         this.cycleAmount = newPhase.getAdsrCounter();
       }
@@ -59,7 +59,7 @@ final class AdsrEnvelope {
     this.cycleAmount = phases[0].getAdsrCounter();
     this.currentLevel = 0;
     this.currentLevelF = 0.0f;
-    this.phase = Phase.Attack;
+    this.phase = Phase.ATTACK;
     this.phases = phases;
   }
 
@@ -68,21 +68,21 @@ final class AdsrEnvelope {
   }
 
   void keyOff() {
-    this.phase = Phase.Release;
+    this.phase = Phase.RELEASE;
     this.counter = 1 << 30;
     this.cycleAmount = this.phases[3].getAdsrCounter();
   }
 
   boolean isFinished() {
-    return this.phase == Phase.Off;
+    return this.phase == Phase.OFF;
   }
 
   private enum Phase {
-    Attack(0),
-    Decay(1),
-    Sustain(2),
-    Release(3),
-    Off(-1);
+    ATTACK(0),
+    DECAY(1),
+    SUSTAIN(2),
+    RELEASE(3),
+    OFF(-1);
 
     private final int value;
 
@@ -92,10 +92,10 @@ final class AdsrEnvelope {
 
     private Phase next(final boolean isDecreasing) {
       return switch(this.value) {
-        case 0 -> Decay;
-        case 1 -> Sustain;
-        case 2 -> isDecreasing ? Off : Sustain;
-        default -> Off;
+        case 0 -> DECAY;
+        case 1 -> SUSTAIN;
+        case 2 -> isDecreasing ? OFF : SUSTAIN;
+        default -> OFF;
       };
     }
   }

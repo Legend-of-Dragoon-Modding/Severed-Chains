@@ -16,10 +16,12 @@ public final class KeyOn implements Command, Key {
     this.deltaTime = deltaTime;
   }
 
+  @Override
   public Channel getChannel() {
     return this.channel;
   }
 
+  @Override
   public int getNote() {
     return this.note;
   }

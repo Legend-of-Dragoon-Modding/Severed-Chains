@@ -165,7 +165,6 @@ public final class Sequencer {
     this.bufferOutput();
 
     // Restart playback if stopped
-
     this.play();
   }
 
@@ -494,9 +493,9 @@ public final class Sequencer {
   }
 
   public void setMainVolume(final int left, final int right) {
-    this.mainVolumeLeft = left >= 0x80 ? 1 : left / 256f;
+    this.mainVolumeLeft = left >= 0x80 ? 1 : left / 256.0f;
 
-    this.mainVolumeRight = right >= 0x80 ? 1 : right / 256f;
+    this.mainVolumeRight = right >= 0x80 ? 1 : right / 256.0f;
   }
 
   private void handleFadeInOut() {
@@ -550,7 +549,7 @@ public final class Sequencer {
 
   public void fadeIn(final int time, final int volume) {
     this.fadeTime = time;
-    this.fadeInVolume = volume / 256f;
+    this.fadeInVolume = volume / 256.0f;
     this.fadeCounter = 0;
     this.fading = Fading.FADE_IN;
   }

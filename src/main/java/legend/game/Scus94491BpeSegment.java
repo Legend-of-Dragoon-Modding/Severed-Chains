@@ -41,7 +41,6 @@ import legend.game.sound.SoundFile;
 import legend.game.sound.SoundFileIndices;
 import legend.game.sound.SpuStruct08;
 import legend.game.sound.Sshd;
-import legend.game.sound.Sssq;
 import legend.game.types.BattleReportOverlay0e;
 import legend.game.types.BattleReportOverlayList10;
 import legend.game.types.BattleUiParts;
@@ -100,7 +99,6 @@ import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.engineStateFunctions_8004e29c;
 import static legend.game.Scus94491BpeSegment_8004.engineStateOnceLoaded_8004dd24;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
-import static legend.game.Scus94491BpeSegment_8004.freeSequence;
 import static legend.game.Scus94491BpeSegment_8004.gameStateOverlays_8004dbc0;
 import static legend.game.Scus94491BpeSegment_8004.getSequenceFlags;
 import static legend.game.Scus94491BpeSegment_8004.height_8004dd34;
@@ -115,10 +113,8 @@ import static legend.game.Scus94491BpeSegment_8004.setSoundSequenceVolume;
 import static legend.game.Scus94491BpeSegment_8004.simpleRandSeed_8004dd44;
 import static legend.game.Scus94491BpeSegment_8004.sssqFadeIn;
 import static legend.game.Scus94491BpeSegment_8004.sssqFadeOut;
-import static legend.game.Scus94491BpeSegment_8004.sssqGetTempo;
 import static legend.game.Scus94491BpeSegment_8004.sssqSetReverbType;
 import static legend.game.Scus94491BpeSegment_8004.sssqSetReverbVolume;
-import static legend.game.Scus94491BpeSegment_8004.sssqSetTempo;
 import static legend.game.Scus94491BpeSegment_8004.sssqUnloadPlayableSound;
 import static legend.game.Scus94491BpeSegment_8004.startMusicSequence;
 import static legend.game.Scus94491BpeSegment_8004.startPitchShiftedSound;
@@ -166,7 +162,6 @@ import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800b.sequenceVolume_800bd108;
 import static legend.game.Scus94491BpeSegment_800b.soundFiles_800bcf80;
 import static legend.game.Scus94491BpeSegment_800b.sssqTempoScale_800bd100;
-import static legend.game.Scus94491BpeSegment_800b.sssqTempo_800bd104;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 import static legend.game.Scus94491BpeSegment_800b.tickCount_800bb0fc;
 import static legend.game.Scus94491BpeSegment_800b.victoryMusic;
@@ -1424,7 +1419,6 @@ public final class Scus94491BpeSegment {
     switch(engineState_8004dd20) {
       case TITLE_02 -> {
         setMainVolume(0x7f, 0x7f);
-        AUDIO_THREAD.setMainVolume(0x7f, 0x7f);
         sssqResetStuff();
         FUN_8001aa90();
 
@@ -1730,7 +1724,6 @@ public final class Scus94491BpeSegment {
   @Method(0x8001af00L)
   public static void startEncounterSounds() {
     AUDIO_THREAD.loadBackgroundMusic(victoryMusic);
-
     AUDIO_THREAD.startSequence();
   }
 
@@ -1804,7 +1797,6 @@ public final class Scus94491BpeSegment {
   @Method(0x8001b14cL)
   public static FlowControl scriptSetMainVolume(final RunningScript<?> script) {
     setMainVolume((short)script.params_20[0].get(), (short)script.params_20[1].get());
-    AUDIO_THREAD.setMainVolume((short)script.params_20[0].get(), (short)script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
@@ -2503,7 +2495,7 @@ public final class Scus94491BpeSegment {
   }
 
   private static int parseMelbuVictory(final int musicIndex) {
-    if (musicIndex == 0x13) {
+    if(musicIndex == 0x13) {
       return 732;
     }
 
@@ -2983,60 +2975,20 @@ public final class Scus94491BpeSegment {
     loadDrgnDir(0, fileIndex, files -> musicPackageLoadedCallback(files, fileIndex, true));
   }
 
-  @Method(0x8001f810L)
-  public static void loadExtraSoundbanks(final boolean startSequence) {
-    final String[] files = new String[soundFiles_800bcf80[11].numberOfExtraSoundbanks_18];
-
-    //LAB_8001f860
-    for(int extraSoundbankIndex = 0; extraSoundbankIndex < soundFiles_800bcf80[11].numberOfExtraSoundbanks_18; extraSoundbankIndex++) {
-      files[extraSoundbankIndex] = Integer.toString(musicFileIndex_800bd0fc + extraSoundbankIndex + 1);
-    }
-
-    loadDrgnFiles(0, f -> extraSoundbanksLoaded(f, startSequence), files);
-
-    //LAB_8001f8b4
-    musicLoaded_800bd782 = true;
-  }
-
-  private static void extraSoundbanksLoaded(final List<FileData> files, final boolean startSequence) {
-    int offset = 0x2_1f70 + soundFiles_800bcf80[11].spuRamOffset_14;
-    for(final FileData file : files) {
-      SPU.directWrite(offset, file.getBytes());
-      offset += file.size();
-    }
-
-    if(startSequence) {
-      startMusicSequence(currentSequenceData_800bd0f8);
-    }
-
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_ff7f);
-  }
-
-  @Method(0x8001fa18L)
-  public static void FUN_8001fa18() {
-    sssqTempo_800bd104 = sssqGetTempo(currentSequenceData_800bd0f8) * sssqTempoScale_800bd100;
-    sssqSetTempo(currentSequenceData_800bd0f8, sssqTempo_800bd104 >> 8);
-
-    musicLoaded_800bd782 = true;
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_ff7f);
-  }
-
   @Method(0x8001fb44L)
   public static void FUN_8001fb44(final List<FileData> files, final int fileIndex, final int victoryType) {
     final BackgroundMusic bgm = new BackgroundMusic(files, fileIndex);
     bgm.setVolume(40);
 
-    final Consumer<List<FileData>> callback = victoryFiles -> loadVictoryMusic(victoryFiles, bgm);
+    loadDrgnDir(0, victoryType, victoryFiles -> loadVictoryMusic(victoryFiles, bgm));
 
-    loadDrgnDir(0, victoryType, callback);
-
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_bfff);
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x4000);
 
     AUDIO_THREAD.loadBackgroundMusic(bgm);
 
     _800bd0f0 = 2;
 
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_ff7f);
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & ~0x80);
 
     AUDIO_THREAD.startSequence();
 
@@ -3045,34 +2997,7 @@ public final class Scus94491BpeSegment {
 
   private static void loadVictoryMusic(final List<FileData> files, final BackgroundMusic battleMusic) {
     victoryMusic = battleMusic.createVictoryMusic(files);
-
     victoryMusic.setVolume(40);
-  }
-
-  @Method(0x8001fc54L)
-  public static void FUN_8001fc54() {
-    throw new RuntimeException("Not yet implemented");
-  }
-
-  @Method(0x8001fcf4L)
-  public static void loadEncounterSoundEffects(final int fileIndex) {
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x4000);
-    // Example file: 700
-    loadDrgnDir(0, fileIndex, Scus94491BpeSegment::encounterSoundEffectsLoaded);
-  }
-
-  @Method(0x8001fd4cL)
-  public static void encounterSoundEffectsLoaded(final List<FileData> files) {
-    final EncounterSoundEffects10 encounterSoundEffects = encounterSoundEffects_800bd610;
-    encounterSoundEffects._00 = 2;
-
-    encounterSoundEffects.unknown = files.get(0).readUShort(0);
-    encounterSoundEffects.soundFileIndex = files.get(1).readUShort(0);
-    encounterSoundEffects.sssq_08 = new Sssq(files.get(2));
-
-    Scus94491BpeSegment_8004.setSequenceVolume(encounterSoundEffects.sequenceData_0c, 40);
-    encounterSoundEffects._00 = 2;
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_bfff);
   }
 
   @ScriptDescription("Load some kind of audio package")

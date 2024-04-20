@@ -25,7 +25,7 @@ import static org.lwjgl.openal.ALC10.alcOpenDevice;
 
 public final class AudioThread implements Runnable {
   private static final Logger LOGGER = LogManager.getFormatterLogger();
-  private static final Marker SEQUENCER_MARKER = MarkerManager.getMarker("AUDIO_THREAD");
+  private static final Marker AUDIO_THREAD_MARKER = MarkerManager.getMarker("AUDIO_THREAD");
   public static final int BASE_SAMPLE_RATE = 44_100;
   public static final int ACTUAL_SAMPLE_RATE = 48_000;
   public static final double SAMPLE_RATE_RATIO = BASE_SAMPLE_RATE / (double) ACTUAL_SAMPLE_RATE;
@@ -62,7 +62,7 @@ public final class AudioThread implements Runnable {
     final ALCapabilities alCapabilities = AL.createCapabilities(alcCapabilities);
 
     if(!alCapabilities.OpenAL10) {
-      LOGGER.warn(SEQUENCER_MARKER, "Device does not support OpenAL10. Disabling audio.");
+      LOGGER.warn("Device does not support OpenAL10. Disabling audio.");
       this.disabled = true;
     }
 
@@ -86,26 +86,28 @@ public final class AudioThread implements Runnable {
       while(this.paused) {
         try {
           this.wait();
-        } catch(InterruptedException e) {
-
-        }
+        } catch(final InterruptedException ignored) { }
       }
+
       final long time = System.nanoTime();
 
-      this.sequencer.processBuffers();
-      this.xaPlayer.processBuffers();
+      final boolean canBgmBuffer;
+      final boolean canXaBuffer;
 
-      final boolean canBgmBuffer = this.sequencer.canBuffer();
-      final boolean canXaBuffer = this.xaPlayer.canBuffer();
+      synchronized(this) {
+        this.sequencer.processBuffers();
+        this.xaPlayer.processBuffers();
 
-      if(canBgmBuffer) {
-        synchronized(this) {
+        canBgmBuffer = this.sequencer.canBuffer();
+        canXaBuffer = this.xaPlayer.canBuffer();
+
+        if(canBgmBuffer) {
           this.sequencer.tick();
         }
-      }
 
-      if(canXaBuffer) {
-        this.xaPlayer.tick();
+        if(canXaBuffer) {
+          this.xaPlayer.tick();
+        }
       }
 
       if(!canBgmBuffer && !canXaBuffer) {
@@ -121,79 +123,118 @@ public final class AudioThread implements Runnable {
     alcCloseDevice(this.audioDevice);
   }
 
-  public synchronized void stop() {
+  public void stop() {
     this.paused = false;
     this.running = false;
     this.notify();
   }
 
-  public synchronized void loadBackgroundMusic(final BackgroundMusic backgroundMusic) {
-    this.sequencer.loadBackgroundMusic(backgroundMusic);
+  public void loadBackgroundMusic(final BackgroundMusic backgroundMusic) {
+    synchronized(this) {
+      this.sequencer.loadBackgroundMusic(backgroundMusic);
+    }
   }
 
-  public synchronized int getSongId() {
-    return this.sequencer.getSongId();
+  public int getSongId() {
+    synchronized(this) {
+      return this.sequencer.getSongId();
+    }
   }
 
-  public synchronized void unloadMusic() {
-    this.sequencer.unloadMusic();
+  public void unloadMusic() {
+    synchronized(this) {
+      this.sequencer.unloadMusic();
+    }
   }
 
-  public synchronized void setMainVolume(final int left, final int right) {
-    LOGGER.info("Setting main volume to %.2f, %.2f", left / 256f, right / 256f);
-    this.sequencer.setMainVolume(left, right);
+  public void setMainVolume(final int left, final int right) {
+    LOGGER.info(AUDIO_THREAD_MARKER, "Setting main volume to %.2f, %.2f", left / 256.0f, right / 256.0f);
+
+    synchronized(this) {
+      this.sequencer.setMainVolume(left, right);
+    }
   }
 
-  public synchronized int getSequenceVolume() {
-    return this.sequencer.getSequenceVolume();
+  public int getSequenceVolume() {
+    synchronized(this) {
+      return this.sequencer.getSequenceVolume();
+    }
   }
 
-  public synchronized int setSequenceVolume(final int volume) {
-    LOGGER.info("Setting sequence volume to %.2f", volume / 128f);
-    return this.sequencer.setSequenceVolume(volume);
+  public int setSequenceVolume(final int volume) {
+    LOGGER.info(AUDIO_THREAD_MARKER, "Setting sequence volume to %.2f", volume / 128.0f);
+
+    synchronized(this) {
+      return this.sequencer.setSequenceVolume(volume);
+    }
   }
 
-  public synchronized int changeSequenceVolumeOverTime(final int volume, final int time) {
-    LOGGER.info("Setting sequence volume to %.2f over %.2fs", volume / 128f, time / 60f);
-    return this.sequencer.changeSequenceVolumeOverTime(volume, time);
+  public int changeSequenceVolumeOverTime(final int volume, final int time) {
+    LOGGER.info(AUDIO_THREAD_MARKER, "Setting sequence volume to %.2f over %.2fs", volume / 128.0f, time / 60.0f);
+
+    synchronized(this) {
+      return this.sequencer.changeSequenceVolumeOverTime(volume, time);
+    }
   }
 
-  public synchronized void setReverbVolume(final int left, final int right) {
-    this.sequencer.setReverbVolume(left, right);
+  public void setReverbVolume(final int left, final int right) {
+    synchronized(this) {
+      this.sequencer.setReverbVolume(left, right);
+    }
   }
 
-  public synchronized void fadeIn(final int time, final int volume) {
-    LOGGER.info("Fading in to %.2f for %.2fs", volume / 256f, time / 60f);
-    this.sequencer.fadeIn(time, volume);
+  public void fadeIn(final int time, final int volume) {
+    LOGGER.info(AUDIO_THREAD_MARKER, "Fading in to %.2f for %.2fs", volume / 256.0f, time / 60.0f);
+
+    synchronized(this) {
+      this.sequencer.fadeIn(time, volume);
+    }
   }
 
-  public synchronized void fadeOut(final int time) {
-    LOGGER.info("Fading out for %.2fs", time / 60f);
-    this.sequencer.fadeOut(time);
+  public void fadeOut(final int time) {
+    LOGGER.info(AUDIO_THREAD_MARKER, "Fading out for %.2fs", time / 60.0f);
+
+    synchronized(this) {
+      this.sequencer.fadeOut(time);
+    }
   }
 
-  public synchronized void startSequence() {
-    LOGGER.info("Starting sequence");
-    this.sequencer.startSequence();
+  public void startSequence() {
+    LOGGER.info(AUDIO_THREAD_MARKER, "Starting sequence");
+
+    synchronized(this) {
+      this.sequencer.startSequence();
+    }
   }
 
-  public synchronized void stopSequence() {
-    LOGGER.info("Stopping sequence");
-    this.sequencer.stopSequence();
+  public void stopSequence() {
+    LOGGER.info(AUDIO_THREAD_MARKER, "Stopping sequence");
+
+    synchronized(this) {
+      this.sequencer.stopSequence();
+    }
   }
 
-  public synchronized void loadXa(final FileData fileData) {
-    this.xaPlayer.loadXa(fileData);
+  public void loadXa(final FileData fileData) {
+    synchronized(this) {
+      this.xaPlayer.loadXa(fileData);
+    }
   }
 
-  public synchronized boolean isMusicPlaying() {
-    return this.sequencer.isPlaying();
+  public boolean isMusicPlaying() {
+    synchronized(this) {
+      return this.sequencer.isPlaying();
+    }
   }
-  public synchronized void setReverb(final ReverbConfig config) {
-    this.sequencer.setReverbConfig(config);
+  public void setReverb(final ReverbConfig config) {
+    synchronized(this) {
+      this.sequencer.setReverbConfig(config);
+    }
   }
 
-  public synchronized int getSequenceVolumeOverTimeFlags() {
-    return this.sequencer.getVolumeOverTimeFlags();
+  public int getSequenceVolumeOverTimeFlags() {
+    synchronized(this) {
+      return this.sequencer.getVolumeOverTimeFlags();
+    }
   }
 }

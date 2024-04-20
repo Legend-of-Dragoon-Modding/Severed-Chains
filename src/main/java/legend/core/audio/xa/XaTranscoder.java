@@ -50,7 +50,7 @@ public class XaTranscoder {
 
   private XaTranscoder(final int channels) {
     this.channels = channels;
-    this.encoder = Opus.opus_encoder_create(48000, channels, Opus.OPUS_APPLICATION_AUDIO, null);
+    this.encoder = Opus.opus_encoder_create(48_000, channels, Opus.OPUS_APPLICATION_AUDIO, null);
     Opus.opus_encoder_ctl(this.encoder, Opus.OPUS_SET_BITRATE(128_000));
 
     this.sourceBuffer[0] = new short[XA_ADPCM_BLOCK_SIZE * (3 - this.channels) + EMPTY.length];
@@ -82,7 +82,7 @@ public class XaTranscoder {
 
       this.reset();
 
-      this.opusFile = new OpusFile((byte)this.channels, PRE_SKIP, 37800);
+      this.opusFile = new OpusFile((byte)this.channels, PRE_SKIP, 37_800);
       this.opusFile.addComment("tracknumber=%d".formatted(track + 1));
       this.opusFile.addComment("totaltracks=%d".formatted(interleaveMode));
       this.opusFile.addComment("album=" + node.fullPath);

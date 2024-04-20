@@ -113,8 +113,8 @@ final class Voice {
     }
 
     // The other branch probably doesn't matter for bgm. But let's throw here, just in case
-    if((this.breath & 0xfff) == 0x78) {
-      throw new RuntimeException("BREATH 0x78");
+    if((this.breath & 0xfff) == 120) {
+      throw new RuntimeException("BREATH 120");
     }
 
     this.breathControlPosition += this.breath & 0xfff;
@@ -145,7 +145,7 @@ final class Voice {
     this.instrument = instrument;
     this.layer = layer;
     this.note = note;
-    this.velocityVolume = velocityVolume / 128f;
+    this.velocityVolume = velocityVolume / 128.0f;
     this.pitchBendMultiplier = this.layer.isPitchBendMultiplierFromInstrument() ? this.instrument.getPitchBendMultiplier() : this.layer.getPitchBendMultiplier();
     this.breathControls = breathControls;
     this.breath = this.channel.getBreath();
@@ -195,7 +195,7 @@ final class Voice {
     this.breath = 0;
     this.breathControlIndex = 0;
     this.breathControlPosition = 0;
-    this.priority = VoicePriority.Low;
+    this.priority = VoicePriority.LOW;
     System.arraycopy(EMPTY, 0, this.samples, 28, EMPTY.length);
   }
 
@@ -213,7 +213,7 @@ final class Voice {
   }
 
   boolean isLowPriority() {
-    return this.priority == VoicePriority.Low;
+    return this.priority == VoicePriority.LOW;
   }
 
   int getPriorityOrder() {

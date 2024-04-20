@@ -1,27 +1,27 @@
 package legend.core.audio.sequencer;
 
 enum VoicePriority {
-  Low,
-  Medium,
-  High;
+  LOW,
+  MEDIUM,
+  HIGH;
 
   static VoicePriority getPriority(final boolean layerPriority, final int channelPriority) {
     if(!layerPriority) {
-      return Low;
+      return LOW;
     }
 
     if(channelPriority != 0x7f) {
-      return Medium;
+      return MEDIUM;
     }
 
-    return High;
+    return HIGH;
   }
 
   static VoicePriority decreasePriority(final VoicePriority priority) {
-    if(priority == High) {
-      return Medium;
+    if(priority == HIGH) {
+      return MEDIUM;
     }
 
-    return Low;
+    return LOW;
   }
 }

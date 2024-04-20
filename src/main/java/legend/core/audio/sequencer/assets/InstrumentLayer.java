@@ -32,13 +32,13 @@ public final class InstrumentLayer {
     this.sixtyFourths = data.readByte(0x03) * 4;
     this.soundBankEntry = soundBank.getEntry(data.readUShort(0x04) * 8);
     this.adsr = AdsrPhase.getPhases(data.readUShort(0x06), data.readUShort(0x08));
-    this.lockedVolume = data.readUByte(0x0A);
-    this.volume = data.readUByte(0x0B) / 128f;
-    this.pan = data.readUByte(0x0C);
-    this.pitchBendMultiplier = data.readUByte(0x0D);
-    this.breathControlIndex = data.readUByte(0x0E);
+    this.lockedVolume = data.readUByte(0x0a);
+    this.volume = data.readUByte(0x0b) / 128.0f;
+    this.pan = data.readUByte(0x0c);
+    this.pitchBendMultiplier = data.readUByte(0x0d);
+    this.breathControlIndex = data.readUByte(0x0e);
 
-    final int flags = data.readUByte(0x0F);
+    final int flags = data.readUByte(0x0f);
     this.highPriority = (flags & 0x01) != 0;
     this.noise = (flags & 0x02) != 0;
     this.pitchBendMultiplierFromInstrument = (flags & 0x10) != 0;

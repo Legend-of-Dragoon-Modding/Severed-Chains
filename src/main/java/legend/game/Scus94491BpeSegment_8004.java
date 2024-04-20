@@ -1,7 +1,6 @@
 package legend.game;
 
 import legend.core.MathHelper;
-import legend.core.audio.AudioThread;
 import legend.core.memory.Method;
 import legend.core.spu.Voice;
 import legend.game.combat.Battle;
@@ -24,9 +23,9 @@ import legend.game.submap.SMap;
 import legend.game.title.GameOver;
 import legend.game.title.NewGame;
 import legend.game.title.Ttle;
+import legend.game.types.BattleReportOverlayList10;
 import legend.game.types.ItemStats0c;
 import legend.game.types.OverlayStruct;
-import legend.game.types.BattleReportOverlayList10;
 import legend.game.unpacker.FileData;
 import legend.game.wmap.WMap;
 import org.apache.logging.log4j.LogManager;
@@ -581,6 +580,8 @@ public final class Scus94491BpeSegment_8004 {
 
   @Method(0x8004c894L)
   public static void setMainVolume(final int left, final int right) {
+    AUDIO_THREAD.setMainVolume(left, right);
+
     final int l;
     if((left & 0x80) != 0) {
       l = (left << 7) + 0x7fff;
@@ -713,7 +714,6 @@ public final class Scus94491BpeSegment_8004 {
     }
 
     setMainVolume(0, 0);
-    AUDIO_THREAD.setMainVolume(0, 0);
     soundEnv.fadingIn_2a = true;
     soundEnv.fadeTime_2c = fadeTime;
     soundEnv.fadeInVol_2e = maxVol;
@@ -744,18 +744,18 @@ public final class Scus94491BpeSegment_8004 {
   @Method(0x8004cf8cL)
   public static void startMusicSequence(@Nullable final SequenceData124 sequenceData) {
     if(sequenceData != null) {
-      throw new RuntimeException("startMusicSequence 0x8004cf8cL sequence not null");
+      throw new RuntimeException("startMusicSequence sequence not null");
     }
 
     AUDIO_THREAD.startSequence();
   }
 
   @Method(0x8004d034L)
-  public static void stopMusicSequence(final SequenceData124 sequenceData, final int mode) {
+  public static void stopMusicSequence(@Nullable final SequenceData124 sequenceData, final int mode) {
+    // This will be null for music sequences since we don't use it anymore
     if(sequenceData == null) {
       //TODO implement different modes
       AUDIO_THREAD.stopSequence();
-
       return;
     }
 

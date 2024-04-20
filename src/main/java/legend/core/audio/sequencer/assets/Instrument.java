@@ -21,13 +21,13 @@ public final class Instrument {
     final int upperBoundByte = data.readUByte(0x00);
     this.type = Type.getType(upperBoundByte);
 
-    final int layerCount = this.type == Type.SFX ? (data.size() - 8) / 16 : (upperBoundByte & 0x7F) + 1;
+    final int layerCount = this.type == Type.SFX ? (data.size() - 8) / 16 : (upperBoundByte & 0x7f) + 1;
     this.layers = new InstrumentLayer[layerCount];
     for(int layer = 0; layer < this.layers.length; layer++) {
       this.layers[layer] = new InstrumentLayer(data.slice(8 + layer * 16, 16), soundBank);
     }
 
-    this.volume = data.readUByte(0x01) / 128f;
+    this.volume = data.readUByte(0x01) / 128.0f;
     this.pan = data.readUByte(0x02);
     // 0x03 unused
     this.pitchBendMultiplier = data.readUByte(0x04);
@@ -47,7 +47,7 @@ public final class Instrument {
       if(layer.canPlayNote(note)) {
         layers.add(layer);
 
-        if(this.type == Type.Standard) {
+        if(this.type == Type.STANDARD) {
           return layers;
         }
       }
@@ -73,20 +73,20 @@ public final class Instrument {
   }
 
   private enum Type {
-    Standard,
-    MultiLayer,
+    STANDARD,
+    MULTILAYER,
     SFX;
 
     private static Type getType(final int upperBoundByte) {
-      if(upperBoundByte == 0xFF) {
+      if(upperBoundByte == 0xff) {
         return Type.SFX;
       }
 
       if((upperBoundByte & 0x80) != 0) {
-        return Type.MultiLayer;
+        return Type.MULTILAYER;
       }
 
-      return Type.Standard;
+      return Type.STANDARD;
     }
   }
 }

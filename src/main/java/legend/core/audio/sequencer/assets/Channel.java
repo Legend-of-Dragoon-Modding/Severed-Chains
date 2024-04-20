@@ -101,8 +101,6 @@ public final class Channel {
     this.breath = breath;
   }
 
-
-
   public float getAdjustedVolume() {
     return this.adjustedVolume;
   }
@@ -110,5 +108,4 @@ public final class Channel {
   public void setAdjustedVolume(final int adjustedVolume) {
     this.adjustedVolume = adjustedVolume;
   }
-
 }
