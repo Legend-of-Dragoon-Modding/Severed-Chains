@@ -11,7 +11,7 @@ import org.apache.logging.log4j.MarkerManager;
 import javax.annotation.Nullable;
 
 final class Voice {
-  private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Logger LOGGER = LogManager.getFormatterLogger(Voice.class);
   private static final Marker VOICE_MARKER = MarkerManager.getMarker("VOICE");
   static final short[] EMPTY = {0, 0, 0};
 

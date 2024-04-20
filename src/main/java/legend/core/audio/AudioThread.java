@@ -24,7 +24,7 @@ import static org.lwjgl.openal.ALC10.alcMakeContextCurrent;
 import static org.lwjgl.openal.ALC10.alcOpenDevice;
 
 public final class AudioThread implements Runnable {
-  private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Logger LOGGER = LogManager.getFormatterLogger(AudioThread.class);
   private static final Marker AUDIO_THREAD_MARKER = MarkerManager.getMarker("AUDIO_THREAD");
   public static final int BASE_SAMPLE_RATE = 44_100;
   public static final int ACTUAL_SAMPLE_RATE = 48_000;

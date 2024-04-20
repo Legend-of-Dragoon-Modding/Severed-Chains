@@ -47,7 +47,7 @@ import static org.lwjgl.openal.AL10.alSourceStop;
 import static org.lwjgl.openal.AL10.alSourceUnqueueBuffers;
 
 public final class Sequencer {
-  private static final Logger LOGGER = LogManager.getFormatterLogger();
+  private static final Logger LOGGER = LogManager.getFormatterLogger(Sequencer.class);
   private static final Marker SEQUENCER_MARKER = MarkerManager.getMarker("SEQUENCER");
   private static final int EFFECT_OVER_TIME_SAMPLES = ACTUAL_SAMPLE_RATE / 60;
   // TODO switch between mono and stereo
