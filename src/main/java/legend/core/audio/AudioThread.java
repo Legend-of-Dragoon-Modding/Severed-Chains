@@ -67,6 +67,7 @@ public final class AudioThread implements Runnable {
         this.disabled = true;
       }
     } else {
+      this.audioContext = 0;
       LOGGER.warn("No audio device present. Disabling audio.");
       this.disabled = true;
     }
