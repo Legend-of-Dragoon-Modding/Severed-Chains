@@ -104,6 +104,7 @@ import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
+import static legend.game.Scus94491BpeSegment.loadDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFileSync;
 import static legend.game.Scus94491BpeSegment.rectArray28_80010770;
@@ -273,14 +274,28 @@ public final class Scus94491BpeSegment_8002 {
     soundBufferOffset = 0;
 
     final int fileIndex = 1290 + script.params_20[0].get();
+
+    final String path;
+    switch(fileIndex) {
+      case 1290 -> path = "monsters/fightStages/Doel/0";
+      case 1291 -> path = "monsters/fightStages/Doel/1";
+      case 1292 -> path = "monsters/fightStages/Melbu/0";
+      case 1293 -> path = "monsters/fightStages/Melbu/1";
+      case 1294 -> path = "monsters/fightStages/Melbu/4";
+      case 1295 -> path = "monsters/fightStages/Melbu/6";
+      case 1296 -> path = "monsters/fightStages/Zackwell/0";
+      case 1297 -> path = "monsters/fightStages/Zackwell/1";
+      default -> path = "monsters/fightStages/unknown";
+    }
+
     for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
       final SoundFile file = soundFiles_800bcf80[monsterSoundFileIndices_800500e8[monsterSlot]];
       file.charId_02 = -1;
       file.used_00 = false;
 
-      if(Unpacker.exists("SECT/DRGN0.BIN/" + fileIndex + '/' + monsterSlot)) {
+      if(Unpacker.exists(path + '/' + monsterSlot)) {
         final int finalMonsterSlot = monsterSlot;
-        loadDrgnDir(0, fileIndex + "/" + monsterSlot, files -> FUN_8001d51c(files, "Monster slot %d (file %d) (replaced)".formatted(finalMonsterSlot, fileIndex), finalMonsterSlot));
+        loadDir(path + '/' + monsterSlot, files -> FUN_8001d51c(files, "Monster slot %d (file %s) (replaced)".formatted(finalMonsterSlot, path), finalMonsterSlot));
       }
     }
 

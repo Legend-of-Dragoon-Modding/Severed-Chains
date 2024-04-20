@@ -24,6 +24,7 @@ import legend.core.spu.Voice;
 import legend.game.combat.Battle;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.environment.BattlePreloadedEntities_18cb0;
+import legend.game.combat.environment.EncounterData38;
 import legend.game.combat.environment.StageData2c;
 import legend.game.debugger.Debugger;
 import legend.game.inventory.WhichMenu;
@@ -2243,7 +2244,7 @@ public final class Scus94491BpeSegment {
       }
     } else if(type == 1) {
       //LAB_8001d164
-      FUN_8001d2d8();
+      loadMonsterSoundsWithPhases();
     } else if(type == 2) {
       //LAB_8001d174
       loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x40);
@@ -2258,75 +2259,28 @@ public final class Scus94491BpeSegment {
   @Method(0x8001d1c4L)
   public static void loadMonsterSounds() {
     final int encounterId = encounterId_800bb0f8;
-    final int fileIndex;
-    if(encounterId == 390) { // Doel
-      //LAB_8001d21c
-      fileIndex = 1290;
-    } else if(encounterId == 431) { // Zackwell
-      //LAB_8001d244
-      fileIndex = 1296;
-      //LAB_8001d208
-    } else if(encounterId == 443) { // Melbu
-      //LAB_8001d270
-      fileIndex = 1292;
-    } else {
-      //LAB_8001d298
-      fileIndex = 778 + encounterId_800bb0f8;
+    switch(encounterId) {
+      case 390 -> loadFightStageSounds("Doel", 0);
+      case 431 -> loadFightStageSounds("Zackwell", 0);
+      case 443 -> loadFightStageSounds("Melbu", 0);
+      default -> loadEncounterSounds(encounterId);
     }
-
-    //LAB_8001d2c0
-    // Example file: 1017
-    loadMonsterSounds(fileIndex);
   }
 
   @Method(0x8001d2d8L)
-  public static void FUN_8001d2d8() {
-    if(encounterId_800bb0f8 == 390) { // Doel
-      //LAB_8001d330
-      if(battleState_8006e398.stageProgression_eec == 0) {
-        loadMonsterSounds(1290);
-      } else {
-        //LAB_8001d370
-        loadMonsterSounds(1291);
-      }
-      //LAB_8001d31c
-    } else if(encounterId_800bb0f8 == 431) { // Zackwell
-      //LAB_8001d394
-      if(battleState_8006e398.stageProgression_eec == 0) {
-        loadMonsterSounds(1296);
-      } else {
-        //LAB_8001d3d0
-        loadMonsterSounds(1297);
-      }
-    } else if(encounterId_800bb0f8 == 443) { // Melbu
-      //LAB_8001d3f8
-      final int stageProgression = battleState_8006e398.stageProgression_eec;
-      if(stageProgression == 0) {
-        //LAB_8001d43c
-        loadMonsterSounds(1292);
-        //LAB_8001d424
-      } else if(stageProgression == 1) {
-        //LAB_8001d464
-        loadMonsterSounds(1293);
-      } else if(stageProgression == 4) {
-        //LAB_8001d490
-        loadMonsterSounds(1294);
-      } else if(stageProgression == 6) {
-        //LAB_8001d4b8
-        loadMonsterSounds(1295);
-      }
-    } else {
-      //LAB_8001d4dc
-      loadMonsterSounds(778 + encounterId_800bb0f8);
+  public static void loadMonsterSoundsWithPhases() {
+    switch(encounterId_800bb0f8) {
+      case 390 -> loadFightStageSounds("Doel", battleState_8006e398.stageProgression_eec);
+      case 431 -> loadFightStageSounds("Zackwell", battleState_8006e398.stageProgression_eec);
+      case 443 -> loadFightStageSounds("Melbu", battleState_8006e398.stageProgression_eec);
+      default -> loadEncounterSounds(encounterId_800bb0f8);
     }
-
-    //LAB_8001d50c
   }
 
   public static int soundBufferOffset;
 
   /** TODO this isn't thread-safe */
-  private static void loadMonsterSounds(final int fileIndex) {
+  private static void loadFightStageSounds(final String boss, final int stage) {
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x10);
     soundBufferOffset = 0;
 
@@ -2335,11 +2289,39 @@ public final class Scus94491BpeSegment {
       file.charId_02 = -1;
       file.used_00 = false;
 
-      if(Unpacker.exists("SECT/DRGN0.BIN/%d/%d".formatted(fileIndex, monsterSlot))) {
+      if(Unpacker.exists("monsters/fightStages/%s/%d/%d".formatted(boss, stage, monsterSlot))) {
         final int finalMonsterSlot = monsterSlot;
-        loadDrgnDir(0, fileIndex + "/" + monsterSlot, files -> FUN_8001d51c(files, "Monster slot %d (file %d)".formatted(finalMonsterSlot, fileIndex), finalMonsterSlot));
+        loadDir("monsters/fightStages/%s/%d/%d".formatted(boss, stage, monsterSlot), files -> FUN_8001d51c(files, "Monster slot %d (file %s/%d)".formatted(finalMonsterSlot, boss, stage), finalMonsterSlot));
       }
     }
+
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_ffef);
+  }
+
+  /** TODO this isn't thread-safe */
+  private static void loadEncounterSounds(final int encounterId) {
+    loadedDrgnFiles_800bcf78.updateAndGet(val -> val | 0x10);
+    soundBufferOffset = 0;
+
+    loadFile("encounters", file -> {
+      final EncounterData38 encounterData = new EncounterData38(file.getBytes(), encounterId * 0x38);;
+      final short[] monsterIds = encounterData.enemyIndices_00;
+
+      //TODO this is kinda dirty
+      for(int monsterSlot = 0; monsterSlot < 4; monsterSlot++) {
+        final SoundFile soundFile = soundFiles_800bcf80[monsterSoundFileIndices_800500e8[monsterSlot]];
+        soundFile.charId_02 = -1;
+        soundFile.used_00 = false;
+
+        if((monsterSlot >= monsterIds.length) || (monsterIds[monsterSlot] == -1)) {
+          continue;
+        }
+
+        final int finalMonsterSlot = monsterSlot;
+        loadDir("monsters/" + monsterIds[monsterSlot] + "/sounds", files -> FUN_8001d51c(files, "Monster slot %d (file %d)".formatted(finalMonsterSlot, monsterIds[finalMonsterSlot]), finalMonsterSlot));
+      }
+
+    });
 
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_ffef);
   }
