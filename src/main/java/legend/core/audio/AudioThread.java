@@ -62,21 +62,21 @@ public final class AudioThread implements Runnable {
       final ALCCapabilities alcCapabilities = ALC.createCapabilities(this.audioDevice);
       final ALCapabilities alCapabilities = AL.createCapabilities(alcCapabilities);
 
-      if(!alCapabilities.OpenAL10) {
-        LOGGER.warn("Device does not support OpenAL10. Disabling audio.");
-        this.disabled = true;
+      if(alCapabilities.OpenAL10) {
+        this.stereo = stereo;
+        this.sequencer = new Sequencer(this.frequency, this.stereo, voiceCount, interpolationBitDepth);
+        this.xaPlayer = new XaPlayer(this.frequency);
+        return;
       }
     } else {
       this.audioContext = 0;
-      LOGGER.warn("No audio device present. Disabling audio.");
-      this.disabled = true;
     }
 
-    this.stereo = stereo;
-
-    this.sequencer = new Sequencer(this.frequency, this.stereo, voiceCount, interpolationBitDepth);
-
-    this.xaPlayer = new XaPlayer(this.frequency);
+    LOGGER.warn("Device does not support OpenAL10. Disabling audio.");
+    this.disabled = true;
+    this.stereo = false;
+    this.sequencer = null;
+    this.xaPlayer = null;
   }
 
   @Override
@@ -141,111 +141,156 @@ public final class AudioThread implements Runnable {
   }
 
   public void loadBackgroundMusic(final BackgroundMusic backgroundMusic) {
-    synchronized(this) {
-      this.sequencer.loadBackgroundMusic(backgroundMusic);
+    if(this.sequencer != null) {
+      synchronized(this) {
+        this.sequencer.loadBackgroundMusic(backgroundMusic);
+      }
     }
   }
 
   public int getSongId() {
-    synchronized(this) {
-      return this.sequencer.getSongId();
+    if(this.sequencer != null) {
+      synchronized(this) {
+        return this.sequencer.getSongId();
+      }
+    } else {
+      return 0;
     }
   }
 
   public void unloadMusic() {
-    synchronized(this) {
-      this.sequencer.unloadMusic();
+    if(this.sequencer != null) {
+      synchronized(this) {
+        this.sequencer.unloadMusic();
+      }
     }
   }
 
   public void setMainVolume(final int left, final int right) {
     LOGGER.info(AUDIO_THREAD_MARKER, "Setting main volume to %.2f, %.2f", left / 256.0f, right / 256.0f);
 
-    synchronized(this) {
-      this.sequencer.setMainVolume(left, right);
+    if(this.sequencer != null) {
+      synchronized(this) {
+        this.sequencer.setMainVolume(left, right);
+      }
     }
   }
 
   public int getSequenceVolume() {
-    synchronized(this) {
-      return this.sequencer.getSequenceVolume();
+    if(this.sequencer != null) {
+      synchronized(this) {
+        return this.sequencer.getSequenceVolume();
+      }
+    } else {
+      return 0;
     }
   }
 
   public int setSequenceVolume(final int volume) {
     LOGGER.info(AUDIO_THREAD_MARKER, "Setting sequence volume to %.2f", volume / 128.0f);
 
-    synchronized(this) {
-      return this.sequencer.setSequenceVolume(volume);
+    if(this.sequencer != null) {
+      synchronized(this) {
+        return this.sequencer.setSequenceVolume(volume);
+      }
+    } else {
+      return 0;
     }
   }
 
   public int changeSequenceVolumeOverTime(final int volume, final int time) {
     LOGGER.info(AUDIO_THREAD_MARKER, "Setting sequence volume to %.2f over %.2fs", volume / 128.0f, time / 60.0f);
 
-    synchronized(this) {
-      return this.sequencer.changeSequenceVolumeOverTime(volume, time);
+    if(this.sequencer != null) {
+      synchronized(this) {
+        return this.sequencer.changeSequenceVolumeOverTime(volume, time);
+      }
+    } else {
+      return 0;
     }
   }
 
   public void setReverbVolume(final int left, final int right) {
-    synchronized(this) {
-      this.sequencer.setReverbVolume(left, right);
+    if(this.sequencer != null) {
+      synchronized(this) {
+        this.sequencer.setReverbVolume(left, right);
+      }
     }
   }
 
   public void fadeIn(final int time, final int volume) {
     LOGGER.info(AUDIO_THREAD_MARKER, "Fading in to %.2f for %.2fs", volume / 256.0f, time / 60.0f);
 
-    synchronized(this) {
-      this.sequencer.fadeIn(time, volume);
+    if(this.sequencer != null) {
+      synchronized(this) {
+        this.sequencer.fadeIn(time, volume);
+      }
     }
   }
 
   public void fadeOut(final int time) {
     LOGGER.info(AUDIO_THREAD_MARKER, "Fading out for %.2fs", time / 60.0f);
 
-    synchronized(this) {
-      this.sequencer.fadeOut(time);
+    if(this.sequencer != null) {
+      synchronized(this) {
+        this.sequencer.fadeOut(time);
+      }
     }
   }
 
   public void startSequence() {
     LOGGER.info(AUDIO_THREAD_MARKER, "Starting sequence");
 
-    synchronized(this) {
-      this.sequencer.startSequence();
+    if(this.sequencer != null) {
+      synchronized(this) {
+        this.sequencer.startSequence();
+      }
     }
   }
 
   public void stopSequence() {
     LOGGER.info(AUDIO_THREAD_MARKER, "Stopping sequence");
 
-    synchronized(this) {
-      this.sequencer.stopSequence();
+    if(this.sequencer != null) {
+      synchronized(this) {
+        this.sequencer.stopSequence();
+      }
     }
   }
 
   public void loadXa(final FileData fileData) {
-    synchronized(this) {
-      this.xaPlayer.loadXa(fileData);
+    if(this.xaPlayer != null) {
+      synchronized(this) {
+        this.xaPlayer.loadXa(fileData);
+      }
     }
   }
 
   public boolean isMusicPlaying() {
-    synchronized(this) {
-      return this.sequencer.isPlaying();
+    if(this.sequencer != null) {
+      synchronized(this) {
+        return this.sequencer.isPlaying();
+      }
+    } else {
+      return false;
     }
   }
+
   public void setReverb(final ReverbConfig config) {
-    synchronized(this) {
-      this.sequencer.setReverbConfig(config);
+    if(this.sequencer != null) {
+      synchronized(this) {
+        this.sequencer.setReverbConfig(config);
+      }
     }
   }
 
   public int getSequenceVolumeOverTimeFlags() {
-    synchronized(this) {
-      return this.sequencer.getVolumeOverTimeFlags();
+    if(this.sequencer != null) {
+      synchronized(this) {
+        return this.sequencer.getVolumeOverTimeFlags();
+      }
+    } else {
+      return 0;
     }
   }
 }
