@@ -101,8 +101,7 @@ final class OggPage {
     }
 
     final byte[] data = bos.toByteArray();
-    MathHelper.set(data, 0x16, 0x4, crc32(data));
-
+    MathHelper.set(data, 0x16, 0x4, getCrc(data));
     return data;
   }
 
@@ -141,5 +140,36 @@ final class OggPage {
     output[7] = (byte)(value >>> 56);
 
     return output;
+  }
+
+  private static final int CRC_POLYNOMIAL = 0x4c11db7;
+  private static final int[] CRC_TABLE = new int[256];
+  static {
+    int crc;
+    for (int i = 0; i < 256; i++) {
+      crc = i << 24;
+      for (int j = 0; j < 8; j++) {
+        if ((crc & 0x80000000) != 0) {
+          crc = ((crc << 1) ^ CRC_POLYNOMIAL);
+        } else {
+          crc <<= 1;
+        }
+      }
+      CRC_TABLE[i] = crc;
+    }
+  }
+
+  private static int getCrc(final byte[] data) {
+    int crc = 0;
+    int x = 0;
+    int y = 0;
+
+    for(final byte b : data) {
+      x = crc << 8;
+      y = CRC_TABLE[(((crc >>> 24) & 0xff) ^ (b & 0xff))];
+      crc = x ^ y;
+    }
+
+    return crc;
   }
 }
