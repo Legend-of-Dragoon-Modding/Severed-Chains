@@ -1,10 +1,14 @@
 package legend.core.audio.opus;
 
 import legend.game.unpacker.FileData;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.system.MemoryStack;
 import org.lwjgl.util.opus.OpusFile;
 
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 
 import static org.lwjgl.openal.AL10.AL_BUFFERS_PROCESSED;
@@ -23,8 +27,11 @@ import static org.lwjgl.openal.AL10.alSourcePlay;
 import static org.lwjgl.openal.AL10.alSourceQueueBuffers;
 import static org.lwjgl.openal.AL10.alSourceStop;
 import static org.lwjgl.openal.AL10.alSourceUnqueueBuffers;
+import static org.lwjgl.system.MemoryStack.stackPush;
 
 public final class XaPlayer {
+  private static final Logger LOGGER = LogManager.getFormatterLogger(XaPlayer.class);
+
   private ByteBuffer opusFileData;
   private long opusFile;
   private int channelCount;
@@ -65,7 +72,14 @@ public final class XaPlayer {
     this.opusFileData.rewind();
     this.samplesRead = 0;
 
-    this.opusFile = OpusFile.op_open_memory(this.opusFileData, null);
+    try(final MemoryStack stack = stackPush()) {
+      final IntBuffer error = stack.mallocInt(1);
+      this.opusFile = OpusFile.op_open_memory(this.opusFileData, error);
+
+      if(error.get(0) != 0) {
+        LOGGER.error("Error opening Opus XA file: 0x%x", error.get(0));
+      }
+    }
 
     final int newChannelCount = OpusFile.op_channel_count(this.opusFile, -1);
 
