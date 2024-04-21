@@ -22,6 +22,7 @@ import org.legendofdragoon.modloader.Mod;
 import org.legendofdragoon.modloader.events.EventListener;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
+import java.util.Locale;
 import java.util.Map;
 
 import static legend.game.SItem.equipmentStats_80111ff0;
@@ -40,7 +41,7 @@ import static legend.game.combat.Battle.spellStats_800fa0b8;
 public class LodMod {
   public static final String MOD_ID = "lod";
 
-  private static final Slugify slug = Slugify.builder().underscoreSeparator(true).customReplacement("'", "").customReplacement("-", "_").build();
+  private static final Slugify slug = Slugify.builder().locale(Locale.US).underscoreSeparator(true).customReplacement("'", "").customReplacement("-", "_").build();
 
   public static RegistryId id(final String entryId) {
     return new RegistryId(MOD_ID, entryId);
