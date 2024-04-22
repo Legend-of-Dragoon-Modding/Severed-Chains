@@ -1407,7 +1407,9 @@ public class Battle extends EngineState {
 
       final int enemyIndex = a0.charIndex_1a2 & 0x1ff;
 
-      loadFile("monsters/%d/textures/combat".formatted(enemyIndex), files -> this.loadCombatantTim(a0, files));
+      if(Unpacker.exists("monsters/%d/textures/combat".formatted(enemyIndex))) {
+        loadFile("monsters/%d/textures/combat".formatted(enemyIndex), files -> this.loadCombatantTim(a0, files));
+      }
     }
   }
 
@@ -2465,6 +2467,10 @@ public class Battle extends EngineState {
 
   @Method(0x800ca75cL)
   public void loadCombatantTim(@Nullable final CombatantStruct1a8 combatant, final FileData timFile) {
+    if(timFile.size() == 0) {
+      return;
+    }
+
     final int vramSlot;
 
     if(combatant != null) {
