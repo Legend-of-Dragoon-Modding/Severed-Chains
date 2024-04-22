@@ -27,6 +27,7 @@ import legend.game.inventory.Item;
 import legend.game.inventory.screens.TextColour;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.BattleDescriptionEvent;
+import legend.game.modding.events.battle.SingleMonsterTargetEvent;
 import legend.game.modding.events.battle.StatDisplayEvent;
 import legend.game.modding.events.inventory.RepeatItemReturnEvent;
 import legend.game.scripting.ScriptState;
@@ -729,7 +730,7 @@ public class BattleHud {
               final int right = left + spBarW;
               final int bottom = top + 3;
 
-              final int[] spBarColours = spBarColours_800c6f04[spBarIndex];
+              final int[] spBarColours = CoreMod.CHARACTER_DATA[player.charId_272].spBarColours[spBarIndex];
 
               if(this.spBars == null) {
                 this.spBars = new QuadBuilder("SPBar")
@@ -804,6 +805,7 @@ public class BattleHud {
             str = this.getTargetEnemyName(monsterBent, this.battle.currentEnemyNames_800c69d0[enemySlot]);
             element = monsterBent.displayElement_1c;
             targetBent = monsterBent;
+            EVENTS.postEvent(new SingleMonsterTargetEvent(monsterBent));
           } else if(menu.targetType_50 == 0) {
             targetBent = battleState_8006e398.playerBents_e40[targetCombatant].innerStruct_00;
             str = playerNames_800fb378[targetBent.charId_272];

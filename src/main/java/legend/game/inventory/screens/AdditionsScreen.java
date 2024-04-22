@@ -2,6 +2,7 @@ package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
 import legend.game.input.InputAction;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.types.MenuAdditionInfo;
 import legend.game.types.Renderable58;
 
@@ -10,7 +11,6 @@ import java.util.Arrays;
 import static legend.game.SItem.FUN_801034cc;
 import static legend.game.SItem.FUN_80104b60;
 import static legend.game.SItem.additionGlyphs_801141e4;
-import static legend.game.SItem.additions_80114070;
 import static legend.game.SItem.additions_8011a064;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.characterCount_8011d7c4;
@@ -25,7 +25,6 @@ import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
 import static legend.game.Scus94491BpeSegment_8002.unloadRenderable;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
-import static legend.game.Scus94491BpeSegment_8005.additionData_80052884;
 import static legend.game.Scus94491BpeSegment_800b.characterIndices_800bdbb8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
@@ -130,13 +129,13 @@ public class AdditionsScreen extends MenuScreen {
           if(allocate) {
             final int level = gameState_800babc8.charData_32c[charIndex].additionLevels_1a[index];
             renderThreeDigitNumber(197, y, level); // Addition level
-            renderThreeDigitNumber(230, y, additionData_80052884[offset].attacks_01); // Number of attacks
-            renderThreeDigitNumber(263, y, additionData_80052884[offset].sp_02[level - 1]); // SP
-            renderThreeDigitNumber(297, y, additionData_80052884[offset].damage_0c * (additions_80114070[offset][level].damageMultiplier_03 + 100) / 100); // Damage
+            renderThreeDigitNumber(230, y, CoreMod.CHARACTER_DATA[charIndex].getAdditionHitCount(i)); // Number of attacks
+            renderThreeDigitNumber(263, y, CoreMod.CHARACTER_DATA[charIndex].getAdditionLevelSP(i, level)); // SP
+            renderThreeDigitNumber(297, y, CoreMod.CHARACTER_DATA[charIndex].getAdditionDamage(i, level)); // Damage
             renderThreeDigitNumber(322, y, gameState_800babc8.charData_32c[charIndex].additionXp_22[index]); // Current XP
 
-            if(level < 5) {
-              renderThreeDigitNumber(342, y, level * 20); // Max XP
+            if(level < CoreMod.MAX_ADDITION_LEVEL) {
+              renderThreeDigitNumber(342, y, level * CoreMod.ADDITIONS_PER_LEVEL); // Max XP
             } else {
               renderCharacter(354, y, 218); // Dash if at max XP
             }

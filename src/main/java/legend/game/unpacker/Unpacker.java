@@ -864,6 +864,42 @@ public final class Unpacker {
     transformations.addNode("characters/rose/xp", node.data.slice(0x1823c, 61 * 4));
     transformations.addNode("characters/shana/xp", node.data.slice(0x18330, 61 * 4));
     transformations.addNode("characters/miranda/xp", node.data.slice(0x18330, 61 * 4));
+    transformations.addNode("characters/kongol/dxp", node.data.slice(0x18426, 6 * 2));
+    transformations.addNode("characters/dart/dxp", node.data.slice(0x18432, 6 * 2));
+    transformations.addNode("characters/haschel/dxp", node.data.slice(0x1843e, 6 * 2));
+    transformations.addNode("characters/meru/dxp", node.data.slice(0x1844a, 6 * 2));
+    transformations.addNode("characters/lavitz/dxp", node.data.slice(0x18456, 6 * 2));
+    transformations.addNode("characters/albert/dxp", node.data.slice(0x18456, 6 * 2));
+    transformations.addNode("characters/rose/dxp", node.data.slice(0x18462, 6 * 2));
+    transformations.addNode("characters/shana/dxp", node.data.slice(0x1846e, 6 * 2));
+    transformations.addNode("characters/miranda/dxp", node.data.slice(0x1846e, 6 * 2));
+    transformations.addNode("characters/kongol/stats", node.data.slice(0x1567c, 61 * 8));
+    transformations.addNode("characters/dart/stats", node.data.slice(0x15864, 61 * 8));
+    transformations.addNode("characters/haschel/stats", node.data.slice(0x15a4c, 61 * 8));
+    transformations.addNode("characters/meru/stats", node.data.slice(0x15c34, 61 * 8));
+    transformations.addNode("characters/lavitz/stats", node.data.slice(0x15e1c, 61 * 8));
+    transformations.addNode("characters/albert/stats", node.data.slice(0x15e1c, 61 * 8));
+    transformations.addNode("characters/rose/stats", node.data.slice(0x16004, 61 * 8));
+    transformations.addNode("characters/shana/stats", node.data.slice(0x161ec, 61 * 8));
+    transformations.addNode("characters/miranda/stats", node.data.slice(0x161ec, 61 * 8));
+    transformations.addNode("characters/kongol/dstats", node.data.slice(0x16404, 6 * 8));
+    transformations.addNode("characters/dart/dstats", node.data.slice(0x16434, 6 * 8));
+    transformations.addNode("characters/haschel/dstats", node.data.slice(0x16464, 6 * 8));
+    transformations.addNode("characters/meru/dstats", node.data.slice(0x16494, 6 * 8));
+    transformations.addNode("characters/lavitz/dstats", node.data.slice(0x164f4, 6 * 8));
+    transformations.addNode("characters/albert/dstats", node.data.slice(0x163d4, 6 * 8));
+    transformations.addNode("characters/rose/dstats", node.data.slice(0x16524, 6 * 8));
+    transformations.addNode("characters/shana/dstats", node.data.slice(0x164c4, 6 * 8));
+    transformations.addNode("characters/miranda/dstats", node.data.slice(0x164c4, 6 * 8));
+    transformations.addNode("characters/dart/additionmultipler", node.data.slice(0x18478, 24 * 7));
+    transformations.addNode("characters/lavitz/additionmultipler", node.data.slice(0x18538, 24 * 5));
+    transformations.addNode("characters/shana/additionmultipler", node.data.slice(0x185b0, 24 * 1));
+    transformations.addNode("characters/rose/additionmultipler", node.data.slice(0x185c8, 24 * 4));
+    transformations.addNode("characters/haschel/additionmultipler", node.data.slice(0x18730, 24 * 6));
+    transformations.addNode("characters/albert/additionmultipler", node.data.slice(0x187d8, 24 * 5));
+    transformations.addNode("characters/meru/additionmultipler", node.data.slice(0x186a0, 24 * 5));
+    transformations.addNode("characters/kongol/additionmultipler", node.data.slice(0x18640, 24 * 3));
+    transformations.addNode("characters/miranda/additionmultipler", node.data.slice(0x185b0, 24 * 1));
 
     for(int i = 0; i < 192; i++) {
       transformations.addNode("equipment/" + i + ".deqp", node.data.slice(0x16878 + i * 0x1c, 0x1c));
@@ -1181,6 +1217,15 @@ public final class Unpacker {
     transformations.addNode(node);
     transformations.addNode("encounters", node.data.slice(0x68d8, 0x7000));
     transformations.addNode("player_combat_script", node.data.slice(0x4, 0x68d4));
+    transformations.addNode("characters/dart/additionhit", node.data.slice(0x12ee0, 16 * 8 * 8));
+    transformations.addNode("characters/lavitz/additionhit", node.data.slice(0x132e0, 16 * 8 * 6));
+    transformations.addNode("characters/rose/additionhit", node.data.slice(0x135e0, 16 * 8 * 5));
+    transformations.addNode("characters/kongol/additionhit", node.data.slice(0x13860, 16 * 8 * 4));
+    transformations.addNode("characters/meru/additionhit", node.data.slice(0x13a60, 16 * 8 * 6));
+    transformations.addNode("characters/haschel/additionhit", node.data.slice(0x13d60, 16 * 8 * 7));
+    transformations.addNode("characters/albert/additionhit", node.data.slice(0x140e0, 16 * 8 * 6));
+    transformations.addNode("characters/shana/additionhit", node.data.slice(0x175fe, 16 * 8 * 1));
+    transformations.addNode("characters/miranda/additionhit", node.data.slice(0x175fe, 16 * 8 * 1));
   }
 
   private static boolean playerScriptDamageCapsDiscriminator(final PathNode node, final Set<String> flags) {

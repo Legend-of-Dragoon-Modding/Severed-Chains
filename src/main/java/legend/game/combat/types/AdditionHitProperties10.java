@@ -19,6 +19,12 @@ public class AdditionHitProperties10 {
   public int framesPostFailure_0e;
   public int overlayStartingFrameOffset_0f;
 
+  public AdditionHitProperties10() {
+    for(int i = 0; i < 16; i++) {
+      this.set(i, 0);
+    }
+  }
+
   public AdditionHitProperties10(final int flags, final int totalFrames, final int overlayHitFrameOffset, final int totalSuccessFrames, final int damageMultiplier, final int spValue, final int audioFile, final int isFinalHit, final int _08, final int _09, final int _0a, final int hitDistanceFromTarget, final int framesToHitPosition, final int _0d, final int framesPostFailure, final int overlayStartingFrameOffset) {
     this.flags_00 = flags;
     this.totalFrames_01 = totalFrames;
@@ -57,6 +63,28 @@ public class AdditionHitProperties10 {
       case 14 -> this.framesPostFailure_0e;
       case 15 -> this.overlayStartingFrameOffset_0f;
       default -> throw new IllegalArgumentException("Invalid property index " + index);
+    };
+  }
+
+  public int set(final int propertyIndex, final int value) {
+    return switch(propertyIndex) {
+      case 0 -> this.flags_00 = value;
+      case 1 -> this.totalFrames_01 = value;
+      case 2 -> this.overlayHitFrameOffset_02 = value;
+      case 3 -> this.totalSuccessFrames_03 = value;
+      case 4 -> this.damageMultiplier_04 = value;
+      case 5 -> this.spValue_05 = value;
+      case 6 -> this.audioFile_06 = value;
+      case 7 -> this.isFinalHit_07 = value;
+      case 8 -> this._08 = value;
+      case 9 -> this._09 = value;
+      case 10 -> this._0a = value;
+      case 11 -> this.hitDistanceFromTarget_0b = value;
+      case 12 -> this.framesToHitPosition_0c = value;
+      case 13 -> this._0d = value;
+      case 14 -> this.framesPostFailure_0e = value;
+      case 15 -> this.overlayStartingFrameOffset_0f = value;
+      default -> throw new IllegalArgumentException("Invalid property index " + propertyIndex);
     };
   }
 }

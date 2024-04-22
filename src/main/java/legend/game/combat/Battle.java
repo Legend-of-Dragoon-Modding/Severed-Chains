@@ -91,6 +91,7 @@ import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.battle.BattleEndedEvent;
 import legend.game.modding.events.battle.BattleEntityTurnEvent;
 import legend.game.modding.events.battle.BattleStartedEvent;
+import legend.game.modding.events.battle.DragoonDEFFLoadedEvent;
 import legend.game.modding.events.battle.EnemyRewardsEvent;
 import legend.game.modding.events.battle.MonsterStatsEvent;
 import legend.game.scripting.FlowControl;
@@ -534,6 +535,7 @@ public class Battle extends EngineState {
   public static final int[] dragoonDeffFlags_800fafec = {
     112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 64, 64,
     64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 20, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112, 112,
+    4, 9, 10, 11, 11, 13, 20, 22, 27, 28, 30, 36, 40, 42, 44, 46, 65, 66, 70, 71, 73, 75, 78, 82, 255, 0, 0, 0, 10, 67, 69, 70, 70, 70, 255, 0, 93, 94, 95, 25, 52, 255, 255
   };
   public static final int[] dragoonDeffsWithExtraTims_800fb040 = {4, 9, 10, 11, 11, 13, 20, 22, 27, 28, 30, 36, 40, 42, 44, 46, 65, 66, 70, 71, 73, 75, 78, 82};
   /**
@@ -3502,12 +3504,12 @@ public class Battle extends EngineState {
 
       //LAB_800cd240
       //LAB_800cd288
-      while(charData.additionLevels_1a[additionIndex] < 5 && additionXp >= charData.additionLevels_1a[additionIndex] * 20) {
+      while(charData.additionLevels_1a[additionIndex] < CoreMod.MAX_ADDITION_LEVEL && additionXp >= (charData.additionLevels_1a[additionIndex]) * CoreMod.ADDITIONS_PER_LEVEL) {
         charData.additionLevels_1a[additionIndex]++;
       }
 
       //LAB_800cd2ac
-      int nonMaxedAdditions = additionCounts_8004f5c0[charIndex];
+      int nonMaxedAdditions = CoreMod.CHARACTER_DATA[charIndex].getNonMaxedAdditions(charIndex);
       int lastNonMaxAdditionIndex = -1;
 
       // Find the first addition that isn't already maxed out
@@ -5830,6 +5832,7 @@ public class Battle extends EngineState {
       loadDrgnFile(0, 4140 + index * 2 + "/1", file -> {
         LOGGER.info(DEFF, "Loading DEFF script");
         this._800c6938.script_14 = new ScriptFile(4140 + index * 2 + "/1", file.getBytes());
+        EVENTS.postEvent(new DragoonDEFFLoadedEvent(4140 + index * 2));
       });
     });
     this.deffLoadingStage_800fafe8 = 1;

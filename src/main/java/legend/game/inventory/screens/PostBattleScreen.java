@@ -9,6 +9,7 @@ import legend.core.opengl.QuadBuilder;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.inventory.WhichMenu;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.types.Renderable58;
 import legend.game.types.Translucency;
 
@@ -483,7 +484,7 @@ public class PostBattleScreen extends MenuScreen {
     this.pendingXp_8011e180[charIndex] -= cappedPendingXp;
 
     //LAB_8010cd30
-    while(gameState_800babc8.charData_32c[charIndex].xp_00 >= getXpToNextLevel(charIndex) && gameState_800babc8.charData_32c[charIndex].level_12 < 60) {
+    while(gameState_800babc8.charData_32c[charIndex].xp_00 >= getXpToNextLevel(charIndex) && gameState_800babc8.charData_32c[charIndex].level_12 < CoreMod.MAX_CHARACTER_LEVEL) {
       gameState_800babc8.charData_32c[charIndex].level_12++;
 
       this.levelsGained_8011e1c8[charSlot]++;
@@ -510,7 +511,7 @@ public class PostBattleScreen extends MenuScreen {
 
       //LAB_8010ceb0
       //LAB_8010cecc
-      while(gameState_800babc8.charData_32c[charIndex].dlevelXp_0e >= dragoonXpRequirements_800fbbf0[charIndex][gameState_800babc8.charData_32c[charIndex].dlevel_13 + 1] && gameState_800babc8.charData_32c[charIndex].dlevel_13 < 5) {
+      while(gameState_800babc8.charData_32c[charIndex].dlevelXp_0e >= CoreMod.CHARACTER_DATA[charIndex].dxpTable[gameState_800babc8.charData_32c[charIndex].dlevel_13] && CoreMod.CHARACTER_DATA[charIndex].dxpTable[gameState_800babc8.charData_32c[charIndex].dlevel_13] > 0) {
         loadCharacterStats();
         final int[] spellIndices = new int[8];
         final int spellCount = getUnlockedDragoonSpells(spellIndices, charIndex);
@@ -789,7 +790,7 @@ public class PostBattleScreen extends MenuScreen {
       this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(xp) - 114), y + 40, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       this.drawNextLevelXp(x + 84, y + 40, xp);
 
-      final int dxp = dragoonXpRequirements_800fbbf0[charId][gameState_800babc8.charData_32c[charId].dlevel_13 + 1];
+      final int dxp = CoreMod.CHARACTER_DATA[charId].dxpTable[gameState_800babc8.charData_32c[charId].dlevel_13];
       this.drawSixDigitNumber(x + 76 - this.getXpWidth(dxp), y + 52, gameState_800babc8.charData_32c[charId].dlevelXp_0e);
       this.drawGlyph(0x22, 0x22, x - (this.getXpWidth(dxp) - 114), y + 52, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       this.drawNextLevelXp(x + 84, y + 52, dxp);

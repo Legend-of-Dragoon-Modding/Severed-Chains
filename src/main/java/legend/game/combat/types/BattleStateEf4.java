@@ -122,7 +122,7 @@ public class BattleStateEf4 {
   /** Used in player combat script */
   public int _290;
   /** Indexed by char slot */
-  public final int[] _294 = new int[3];
+  public final int[] dragoonTurns_294 = new int[3];
   public int _2a0;
   public int _2a4;
   public int _2a8;
