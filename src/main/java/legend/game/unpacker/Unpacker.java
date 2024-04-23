@@ -54,8 +54,8 @@ public final class Unpacker {
   private static final int PVD_SECTOR = 16;
 
   private static final Pattern ROOT_MRG = Pattern.compile("^SECT/DRGN0\\.BIN/\\d{4}/\\d+$");
-  private static final Pattern DRGN0_FILE = Pattern.compile("^SECT/DRGN0.BIN/\\d");
-  private static final Pattern DRGN0_SUBFILE = Pattern.compile("^SECT/DRGN0.BIN/\\d+/\\d");
+  private static final Pattern DRGN0_FILE = Pattern.compile("^SECT/DRGN0.BIN/\\d+/.*");
+  private static final Pattern DRGN0_SUBFILE = Pattern.compile("^SECT/DRGN0.BIN/\\d+/\\d+");
   private static final Pattern ITEM_SCRIPT = Pattern.compile("^SECT/DRGN0.BIN/\\d+/1.*");
 
   /** Update this any time we make a breaking change */
@@ -1036,7 +1036,7 @@ public final class Unpacker {
   }
 
   private static boolean playerCombatSoundEffectsDiscriminator(final PathNode node, final Set<String> flags) {
-    if(DRGN0_SUBFILE.matcher(node.fullPath).matches()) {
+    if(DRGN0_FILE.matcher(node.fullPath).matches()) {
       final int fileId = Integer.parseInt(node.fullPath, 15, node.fullPath.indexOf('/', 16), 10);
 
       return fileId >= 752 && fileId <= 772;
@@ -1070,7 +1070,7 @@ public final class Unpacker {
   }
 
   private static boolean playerCombatModelsAndTexturesDiscriminator(final PathNode node, final Set<String> flags) {
-    if(DRGN0_SUBFILE.matcher(node.fullPath).matches()) {
+    if(DRGN0_FILE.matcher(node.fullPath).matches()) {
       final int fileId = Integer.parseInt(node.fullPath, 15, node.fullPath.indexOf('/', 16), 10);
 
       return fileId >= 3993 && fileId <= 4010 && (!node.fullPath.endsWith("mrg") || fileId % 2 == 0);
@@ -1092,7 +1092,7 @@ public final class Unpacker {
   }
 
   private static boolean dragoonCombatModelsAndTexturesDiscriminator(final PathNode node, final Set<String> flags) {
-    if(DRGN0_SUBFILE.matcher(node.fullPath).matches()) {
+    if(DRGN0_FILE.matcher(node.fullPath).matches()) {
       final int fileId = Integer.parseInt(node.fullPath, 15, node.fullPath.indexOf('/', 16), 10);
 
       return fileId >= 4011 && fileId <= 4030 && (!node.fullPath.endsWith("mrg") || fileId % 2 == 0);
@@ -1114,7 +1114,7 @@ public final class Unpacker {
   }
 
   private static boolean skipPartyPermutationsDiscriminator(final PathNode node, final Set<String> flags) {
-    if(DRGN0_SUBFILE.matcher(node.fullPath).matches()) {
+    if(DRGN0_FILE.matcher(node.fullPath).matches()) {
       final int fileId = Integer.parseInt(node.fullPath, 15, node.fullPath.indexOf('/', 16), 10);
 
       return fileId >= 3537 && fileId <= 3592;
@@ -1377,7 +1377,7 @@ public final class Unpacker {
   }
 
   private static boolean battlePhaseSfxDiscriminator(final PathNode node, final Set<String> flags) {
-    if(DRGN0_SUBFILE.matcher(node.fullPath).matches()) {
+    if(DRGN0_FILE.matcher(node.fullPath).matches()) {
       final int fileId = Integer.parseInt(node.fullPath, 15, node.fullPath.indexOf('/', 16), 10);
 
       return fileId >= 1290 && fileId <= 1297;
