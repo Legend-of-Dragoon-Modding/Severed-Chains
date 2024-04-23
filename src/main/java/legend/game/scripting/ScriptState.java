@@ -33,7 +33,7 @@ public class ScriptState<T> {
   private static final Marker SCRIPT_MARKER = MarkerManager.getMarker("SCRIPT");
 
   private final ScriptManager manager;
-  final RunningScript<T> context = new RunningScript<>(this);
+  public final RunningScript<T> context = new RunningScript<>(this);
 
   /** This script's index */
   public final int index;
@@ -123,6 +123,8 @@ public class ScriptState<T> {
   public float _f4;
   public int ui_fc;
 
+  private boolean paused;
+
   public static <T> Class<ScriptState<T>> classFor(final Class<T> cls) {
     return (Class<ScriptState<T>>)(Class<?>)ScriptState.class;
   }
@@ -172,6 +174,18 @@ public class ScriptState<T> {
       this.tempTicker_10 = callback;
       this.storage_44[7] |= 0x400_0000;
     }
+  }
+
+  public void pause() {
+    this.paused = true;
+  }
+
+  public void resume() {
+    this.paused = false;
+  }
+
+  public boolean isPaused() {
+    return this.paused;
   }
 
   void tick() {
@@ -313,7 +327,7 @@ public class ScriptState<T> {
   }
 
   void executeFrame() {
-    if((this.storage_44[7] & 0x12_0000) == 0) {
+    if((this.storage_44[7] & 0x12_0000) == 0 && !this.paused) {
       this.context.commandOffset_0c = this.offset_18;
       this.context.opOffset_08 = this.offset_18;
 
@@ -487,7 +501,7 @@ public class ScriptState<T> {
         }
 
         Arrays.fill(this.context.params_20, null);
-      } while(ret == FlowControl.CONTINUE);
+      } while(ret == FlowControl.CONTINUE && !this.paused);
 
       //LAB_800165f4
       this.offset_18 = this.context.opOffset_08;
