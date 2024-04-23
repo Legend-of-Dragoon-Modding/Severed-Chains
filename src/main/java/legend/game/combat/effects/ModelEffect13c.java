@@ -120,7 +120,7 @@ public class ModelEffect13c implements Effect {
   }
 
   @Method(0x800ea3f8L)
-  public void FUN_800ea3f8(final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state, final EffectManagerData6c<EffectManagerParams.AnimType> manager) {
+  public void modelEffectTicker(final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state, final EffectManagerData6c<EffectManagerParams.AnimType> manager) {
     final MV sp0x10 = new MV();
     calculateEffectTransforms(sp0x10, manager);
 
@@ -140,7 +140,7 @@ public class ModelEffect13c implements Effect {
   }
 
   @Method(0x800ea510L)
-  public void FUN_800ea510(final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state, final EffectManagerData6c<EffectManagerParams.AnimType> manager) {
+  public void modelEffectRenderer(final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state, final EffectManagerData6c<EffectManagerParams.AnimType> manager) {
     final ModelEffect13c effect = (ModelEffect13c)manager.effect_44;
     if(manager.params_10.flags_00 >= 0) {
       if((manager.params_10.flags_00 & 0x40) == 0) {

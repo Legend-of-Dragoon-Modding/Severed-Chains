@@ -807,7 +807,7 @@ public class Battle extends EngineState {
     functions[570] = SEffe::scriptAddRotationScalerAttachmentTowardsPointTicks;
     functions[571] = SEffe::scriptAddRotationScalerAttachmentTowardsPointDistance;
     functions[572] = SEffe::FUN_80115600; // no-op
-    functions[573] = this::FUN_800e9f68;
+    functions[573] = this::scriptAllocateClonedModelEffect;
     functions[574] = SEffe::scriptLoadEffectModelAnimation;
     functions[575] = SEffe::scriptAddScaleScalerAttachment;
     functions[576] = SEffe::scriptAddScaleScalerMultiplicativeAttachmentTicks;
@@ -6442,8 +6442,8 @@ public class Battle extends EngineState {
     final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state = allocateEffectManager(
       animatedTmdType.name,
       script.scriptState_04,
-      effect::FUN_800ea3f8,
-      effect::FUN_800ea510,
+      effect::modelEffectTicker,
+      effect::modelEffectRenderer,
       null,
       effect,
       new EffectManagerParams.AnimType()
@@ -6488,8 +6488,8 @@ public class Battle extends EngineState {
     final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state = allocateEffectManager(
       animatedTmdType.name,
       script.scriptState_04,
-      effect::FUN_800ea3f8,
-      effect::FUN_800ea510,
+      effect::modelEffectTicker,
+      effect::modelEffectRenderer,
       null,
       effect,
       new EffectManagerParams.AnimType()
@@ -6513,7 +6513,7 @@ public class Battle extends EngineState {
   }
 
   @Method(0x800e9ae4L)
-  public void FUN_800e9ae4(final Model124 model, final BattleStage a1) {
+  public void copyBattleStageModel(final Model124 model, final BattleStage a1) {
     model.coord2_14.set(a1.coord2_558);
     model.coord2_14.transforms.set(a1.param_5a8);
 
@@ -6555,7 +6555,7 @@ public class Battle extends EngineState {
   }
 
   @Method(0x800e9db4L)
-  public void FUN_800e9db4(final Model124 model1, final Model124 model2) {
+  public void copyModel(final Model124 model1, final Model124 model2) {
     //LAB_800e9dd8
     model1.set(model2);
 
@@ -6569,20 +6569,20 @@ public class Battle extends EngineState {
     }
   }
 
-  @ScriptDescription("Allocates an effect manager for an unknown purpose")
+  @ScriptDescription("Allocates an effect manager for a cloned model")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "effectIndex", description = "The new effect manager's index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "cloneId", description = "Battle entity ID or flag 0x700_0000 to clone battle stage model")
   @Method(0x800e9f68L)
-  public FlowControl FUN_800e9f68(final RunningScript<? extends BattleObject> script) {
-    final int s2 = script.params_20[1].get();
+  public FlowControl scriptAllocateClonedModelEffect(final RunningScript<? extends BattleObject> script) {
+    final int id = script.params_20[1].get();
 
     final ModelEffect13c s0 = new ModelEffect13c("Script " + script.scriptState_04.index);
 
     final ScriptState<EffectManagerData6c<EffectManagerParams.AnimType>> state = allocateEffectManager(
-      "Unknown (FUN_800e9f68, s2 = 0x%x)".formatted(s2),
+      (id & 0x700_0000) != 0 ? "Cloned battle stage model" : "Cloned bent model %d".formatted(id),
       script.scriptState_04,
-      s0::FUN_800ea3f8,
-      s0::FUN_800ea510,
+      s0::modelEffectTicker,
+      s0::modelEffectRenderer,
       null,
       s0,
       new EffectManagerParams.AnimType()
@@ -6597,11 +6597,11 @@ public class Battle extends EngineState {
     s0.anim_0c = null;
     s0.model_134 = s0.model_10;
 
-    if((s2 & 0xff00_0000) == 0x700_0000) {
-      this.FUN_800e9ae4(s0.model_10, battlePreloadedEntities_1f8003f4.stage_963c);
+    if((id & 0xff00_0000) == 0x700_0000) {
+      this.copyBattleStageModel(s0.model_10, battlePreloadedEntities_1f8003f4.stage_963c);
     } else {
       //LAB_800ea030
-      this.FUN_800e9db4(s0.model_10, ((BattleEntity27c)scriptStatePtrArr_800bc1c0[s2].innerStruct_00).model_148);
+      this.copyModel(s0.model_10, ((BattleEntity27c)scriptStatePtrArr_800bc1c0[id].innerStruct_00).model_148);
     }
 
     //LAB_800ea04c
