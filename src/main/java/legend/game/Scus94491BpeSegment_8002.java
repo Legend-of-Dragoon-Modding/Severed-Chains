@@ -1,6 +1,7 @@
 package legend.game;
 
 import legend.core.MathHelper;
+import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
 import legend.core.gpu.Rect4i;
@@ -1531,11 +1532,15 @@ public final class Scus94491BpeSegment_8002 {
             transforms.scaling(width, height, 1.0f);
             transforms.transfer.set(x1 + renderable.baseX + centreX - 8 + (width < 0 ? 1.0f : 0.0f), y1 + renderable.baseY + 120.0f + (height < 0 ? 1.0f : 0.0f), renderable.z_3c * 4.0f - Math.lerp(0.0f, 3.9f, (metricsIndex + 1.0f) / metricses.length));
 
-            RENDERER
+            final RenderEngine.QueuedModel<?> model = RENDERER
               .queueOrthoModel(renderable.uiType_20.obj, transforms)
               .vertices(metrics.vertexStart, 4)
               .tpageOverride((tpage & 0b1111) * 64, (tpage & 0b10000) != 0 ? 256 : 0)
               .clutOverride((clut & 0b111111) * 16, clut >>> 6);
+
+            if((metrics.clut_04 & 0x8000) != 0) {
+              model.translucency(Translucency.of(tpage >>> 5 & 0b11));
+            }
           }
         }
       }
