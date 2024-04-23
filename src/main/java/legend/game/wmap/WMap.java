@@ -3480,7 +3480,7 @@ public class WMap extends EngineState {
   /** Some kind of full-screen effect during the Wingly teleportation between Aglis and Zenebatos */
   @Method(0x800e3304L)
   private void renderFastTravelScreenDistortionEffect() {
-    fastTravelTransforms.transfer.set(0.0f, 0.0f, 1.0f);
+    fastTravelTransforms.transfer.set(0.0f, 0.0f, 20.0f);
     fastTravelTransforms.scaling(320.0f, 240.0f, 1.0f);
 
     RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, fastTravelTransforms)
