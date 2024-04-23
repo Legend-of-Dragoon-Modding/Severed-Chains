@@ -4,7 +4,6 @@ import legend.core.MathHelper;
 import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
-import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
@@ -367,6 +366,7 @@ public class WMap extends EngineState {
 
   private WmapPromptPopup wmapLocationPromptPopup;
   private WmapPromptPopup coolonPromptPopup;
+  private final MV fastTravelTransforms = new MV();
   /** Temporary solution until text refactoring */
   private final String[] startLabelNames = new String[8];
   private final float[] startLabelXs = new float[8];
@@ -3480,15 +3480,12 @@ public class WMap extends EngineState {
   /** Some kind of full-screen effect during the Wingly teleportation between Aglis and Zenebatos */
   @Method(0x800e3304L)
   private void renderFastTravelScreenDistortionEffect() {
-    final GpuCommandQuad cmd = new GpuCommandQuad()
-      .bpp(Bpp.BITS_15)
-      .translucent(Translucency.HALF_B_PLUS_HALF_F)
-      .vramPos(0, 0)
-      .monochrome(0x80)
-      .pos(-160, -120, 320, 240)
-      .texture(GPU.getDisplayBuffer());
+    fastTravelTransforms.transfer.set(0.0f, 0.0f, 20.0f);
+    fastTravelTransforms.scaling(320.0f, 240.0f, 1.0f);
 
-    GPU.queueCommand(5, cmd);
+    RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, fastTravelTransforms)
+      .texture(RENDERER.getLastFrame())
+      .translucency(Translucency.HALF_B_PLUS_HALF_F);
   }
 
   @Method(0x800e367cL)
