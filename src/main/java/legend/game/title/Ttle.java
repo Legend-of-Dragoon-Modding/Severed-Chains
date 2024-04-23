@@ -134,6 +134,11 @@ public class Ttle extends EngineState {
   }
 
   @Override
+  public boolean allowsWidescreen() {
+    return false;
+  }
+
+  @Override
   @Method(0x800c7798L)
   public void tick() {
     switch(this.loadingStage) {
@@ -577,7 +582,7 @@ public class Ttle extends EngineState {
     }
 
     if(this._800c6728 != 1) {
-      this.menuIdleTime += 2;
+//      this.menuIdleTime += 2;
 
       if(this.menuIdleTime > 1680) {
         this.loadingStage = 6;
@@ -951,7 +956,7 @@ public class Ttle extends EngineState {
   @Method(0x800cb728L)
   private void renderMenuLogoFire() {
     final Vector3f rotation = new Vector3f(0.0f, -MathHelper.TWO_PI / 2.0f, 0.0f);
-    final Vector3f scale = new Vector3f(0.743f, 1.0f, 1.0f);
+    final Vector3f scale = new Vector3f(0.8544922f, 1.0f, 1.0f);
 
     if(!this.logoFireInitialized) {
       this.logoFireInitialized = true;
@@ -980,7 +985,7 @@ public class Ttle extends EngineState {
 
       RENDERER.queueModel(this._800c66d0.dobj2s_00[i].obj, lw)
         .monochrome(this.flameColour / 128.0f)
-        .screenspaceOffset(9.75f, 0.5f)
+        .screenspaceOffset(8.0f, 0.0f)
         .lightDirection(lightDirectionMatrix_800c34e8)
         .lightColour(lightColourMatrix_800c3508)
         .backgroundColour(GTE.backgroundColour);
