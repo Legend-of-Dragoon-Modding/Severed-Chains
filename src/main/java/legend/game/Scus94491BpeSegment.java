@@ -2321,7 +2321,9 @@ public final class Scus94491BpeSegment {
         }
 
         final int finalMonsterSlot = monsterSlot;
-        loadDir("monsters/" + monsterIds[monsterSlot] + "/sounds", files -> FUN_8001d51c(files, "Monster slot %d (file %d)".formatted(finalMonsterSlot, monsterIds[finalMonsterSlot]), finalMonsterSlot));
+        if(Unpacker.exists("monsters/" + monsterIds[monsterSlot] + "/sounds")) {
+          loadDir("monsters/" + monsterIds[monsterSlot] + "/sounds", files -> FUN_8001d51c(files, "Monster slot %d (file %d)".formatted(finalMonsterSlot, monsterIds[finalMonsterSlot]), finalMonsterSlot));
+        }
       }
 
     });
