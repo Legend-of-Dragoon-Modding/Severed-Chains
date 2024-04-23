@@ -761,8 +761,11 @@ public final class Scus94491BpeSegment {
 
   @Method(0x80013c3cL)
   public static void drawFullScreenRect(final int colour, final Translucency transMode) {
-    fullScreenEffect_800bb140.transforms.scaling(displayWidth_1f8003e0, displayHeight_1f8003e4, 1.0f);
-    fullScreenEffect_800bb140.transforms.transfer.set(0.0f, 0.0f, 120.0f);
+    // Make sure effect fills the whole screen
+    final float fullWidth = Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4);
+    final float extraWidth = fullWidth - displayWidth_1f8003e0;
+    fullScreenEffect_800bb140.transforms.scaling(fullWidth, displayHeight_1f8003e4, 1.0f);
+    fullScreenEffect_800bb140.transforms.transfer.set(-extraWidth / 2, 0.0f, 120.0f);
 
     RENDERER.queueOrthoModel(RENDERER.plainQuads.get(transMode), fullScreenEffect_800bb140.transforms)
       .monochrome(colour / 255.0f);
