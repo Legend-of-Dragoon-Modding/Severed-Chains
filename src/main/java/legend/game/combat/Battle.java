@@ -273,7 +273,6 @@ public class Battle extends EngineState {
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
    *   <li>{@link #loadStageAndControllerScripts}</li>
-   *   <li>{@link #uploadBattleStageToGpu}</li>
    *   <li>{@link #initializeViewportAndCamera}</li>
    *   <li>{@link Scus94491BpeSegment#nextLoadingStage}</li>
    *   <li>{@link Scus94491BpeSegment#waitForFilesToLoad}</li>
@@ -308,7 +307,6 @@ public class Battle extends EngineState {
     Scus94491BpeSegment::waitForFilesToLoad,
     Scus94491BpeSegment::waitForFilesToLoad,
     this::loadStageAndControllerScripts,
-    this::uploadBattleStageToGpu,
     this::initializeViewportAndCamera,
     Scus94491BpeSegment::nextLoadingStage,
     Scus94491BpeSegment::waitForFilesToLoad,
@@ -1208,20 +1206,6 @@ public class Battle extends EngineState {
     this.loadStage(battleStage_800bb0f4);
     this.loadStageDataAndControllerScripts();
     pregameLoadingStage_800bb10c++;
-  }
-
-  public void uploadBattleStageToGpu() {
-    if(this.stageHasModel_800c66b8) {
-      final BattleStage stage = battlePreloadedEntities_1f8003f4.stage_963c;
-
-      for(int i = 0; i < stage.dobj2s_00.length; i++) {
-        if(stage.tmd_5d0.objTable[i] != null) {
-          stage.dobj2s_00[i].obj = TmdObjLoader.fromObjTable("BattleStage (obj " + i + ')', stage.tmd_5d0.objTable[i]);
-        }
-      }
-
-      pregameLoadingStage_800bb10c++;
-    }
   }
 
   @Method(0x800c76a0L)
@@ -7287,6 +7271,10 @@ public class Battle extends EngineState {
       final ModelPart10 part = stage.dobj2s_00[i];
 
       if((partBit & stage.flags_5e4) == 0) {
+        if(stage.tmd_5d0.objTable[i] != null && stage.dobj2s_00[i].obj == null) {
+          stage.dobj2s_00[i].obj = TmdObjLoader.fromObjTable("BattleStage (obj " + i + ')', stage.tmd_5d0.objTable[i]);
+        }
+
         final MV ls = new MV();
         final MV lw = new MV();
         GsGetLws(part.coord2_04, lw, ls);
