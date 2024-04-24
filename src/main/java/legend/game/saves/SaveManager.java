@@ -112,6 +112,13 @@ public final class SaveManager {
     try(final Stream<Path> stream = Files.list(this.dir)) {
       return stream
         .filter(Files::isDirectory)
+        .filter(path -> {
+          try(final Stream<Path> children = Files.list(path)) {
+            return children.anyMatch(child -> child.toString().endsWith(".dsav"));
+          } catch(final IOException e) {
+            throw new RuntimeException(e);
+          }
+        })
         .sorted(Comparator.comparingLong((final Path path) -> {
           try(final Stream<Path> children = this.childrenSortedByDate(path)) {
             return children
