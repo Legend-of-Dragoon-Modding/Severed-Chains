@@ -496,15 +496,6 @@ public class BattleHud {
         displayStats.y_02 = y;
       }
 
-      if(Input.pressedThisFrame(InputAction.BUTTON_NORTH)) {
-        if(additionCounts_8004f5c0[this.battle.currentTurnBent_800c66c8.innerStruct_00.charId_272] != 0) {
-          playSound(0, 2, 0, 0, (short)0, (short)0);
-          this.initSpellAndItemMenu((PlayerBattleEntity)this.battle.currentTurnBent_800c66c8.innerStruct_00, 2);
-        } else {
-          playSound(0, 40, 0, 0, (short)0, (short)0);
-        }
-      }
-
       //LAB_800efd00
       this.tickFloatingNumbers();
       this.handleSpellAndItemMenu();
@@ -2410,7 +2401,14 @@ public class BattleHud {
           break;
         }
 
-        //TODO handle triangle here
+        if(Input.pressedThisFrame(InputAction.BUTTON_NORTH)) {
+          if(additionCounts_8004f5c0[this.battle.currentTurnBent_800c66c8.innerStruct_00.charId_272] != 0) {
+            playSound(0, 2, 0, 0, (short)0, (short)0);
+            this.initSpellAndItemMenu((PlayerBattleEntity)this.battle.currentTurnBent_800c66c8.innerStruct_00, 2);
+          } else {
+            playSound(0, 40, 0, 0, (short)0, (short)0);
+          }
+        }
 
         // Input for pressing X on menu bar
         //LAB_800f671c
