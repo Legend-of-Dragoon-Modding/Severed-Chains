@@ -2582,12 +2582,12 @@ public class BattleHud {
 
       //LAB_800f6fc8
       // Draw red glow underneath selected menu item
-      this.battleMenu_800c6c34.transforms.transfer.set(this.battleMenu_800c6c34.highlightX0_28, this.battleMenu_800c6c34.highlightY_2a, 124.0f);
+      this.battleMenu_800c6c34.transforms.transfer.set(this.battleMenu_800c6c34.highlightX0_28, this.battleMenu_800c6c34.highlightY_2a, 123.9f);
       RENDERER.queueOrthoModel(this.battleMenu_800c6c34.highlight, this.battleMenu_800c6c34.transforms)
         .monochrome(this.battleMenu_800c6c34.colour_2c / 255.0f);
 
       if((this.battleMenu_800c6c34.highlightState_02 & 0x1) != 0) {
-        this.battleMenu_800c6c34.transforms.transfer.set(this.battleMenu_800c6c34.highlightX1_3c, this.battleMenu_800c6c34.highlightY_2a, 124.0f);
+        this.battleMenu_800c6c34.transforms.transfer.set(this.battleMenu_800c6c34.highlightX1_3c, this.battleMenu_800c6c34.highlightY_2a, 123.9f);
         RENDERER.queueOrthoModel(this.battleMenu_800c6c34.highlight, this.battleMenu_800c6c34.transforms)
           .monochrome(Math.max(0, (0x80 - this.battleMenu_800c6c34.colour_2c) / 255.0f));
       }
@@ -2609,13 +2609,13 @@ public class BattleHud {
 
         if(this.battleMenu_800c6c34.selectedIcon_22 == iconIndex && this.battleMenu_800c6c34.renderSelectedIconText_40) {
           // Selected combat menu icon text
-          this.battleMenu_800c6c34.transforms.transfer.set(menuElementBaseX, this.battleMenu_800c6c34.y_08, 124.0f);
+          this.battleMenu_800c6c34.transforms.transfer.set(menuElementBaseX, this.battleMenu_800c6c34.y_08, 123.9f);
           RENDERER.queueOrthoModel(this.battleMenu_800c6c34.actionIconTextObj[iconId], this.battleMenu_800c6c34.transforms);
         }
 
         // Combat menu icons
         //LAB_800f6d70
-        this.battleMenu_800c6c34.transforms.transfer.set(menuElementBaseX, menuElementBaseY, 124.0f);
+        this.battleMenu_800c6c34.transforms.transfer.set(menuElementBaseX, menuElementBaseY, 123.9f);
 
         if((this.battleMenu_800c6c34.iconFlags_10[iconIndex] & 0xf) != 0x2) {
           RENDERER.queueOrthoModel(this.battleMenu_800c6c34.actionIconObj[iconId][iconState], this.battleMenu_800c6c34.transforms);
@@ -2632,7 +2632,7 @@ public class BattleHud {
         }
 
         if((this.battleMenu_800c6c34.iconFlags_10[iconIndex] & 0x80) != 0) {
-          this.battleMenu_800c6c34.transforms.transfer.set(menuElementBaseX, this.battleMenu_800c6c34.y_08 - 16, 124.0f);
+          this.battleMenu_800c6c34.transforms.transfer.set(menuElementBaseX, this.battleMenu_800c6c34.y_08 - 16, 123.8f);
           RENDERER.queueOrthoModel(this.battleMenu_800c6c34.actionDisabledObj, this.battleMenu_800c6c34.transforms);
         }
 
