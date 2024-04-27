@@ -436,6 +436,8 @@ public class PostBattleScreen extends MenuScreen {
         whichMenu_800bdc38 = WhichMenu.UNLOAD_POST_COMBAT_REPORT_30;
         textZ_800bdf00 = 13;
 
+        this.deleteResultsScreenObjects();
+
         menuStack.popScreen();
         break;
     }
@@ -568,7 +570,6 @@ public class PostBattleScreen extends MenuScreen {
       .rgb(2, 0.0f, 20.0f / 255.0f, 80.0f / 255.0f)
       .monochrome(3, 0.0f)
       .build();
-    resultsBackgroundObj[0].persistent = true;
 
     resultsBackgroundObj[1] = new QuadBuilder("Results Screen Portrait Shadow")
       .size(1.0f, 1.0f)
@@ -577,7 +578,6 @@ public class PostBattleScreen extends MenuScreen {
       .monochrome(1, 0.0f)
       .monochrome(3, 0.0f)
       .build();
-    resultsBackgroundObj[1].persistent = true;
 
     resultsBackgroundObj[2] = new QuadBuilder("Results Screen Addition Background")
       .size(1.0f, 1.0f)
@@ -586,7 +586,6 @@ public class PostBattleScreen extends MenuScreen {
       .rgb(1, 73.0f / 255.0f, 35.0f / 255.0f, 0.0f)
       .rgb(3, 73.0f / 255.0f, 35.0f / 255.0f, 0.0f)
       .build();
-    resultsBackgroundObj[2].persistent = true;
 
     resultsBackgroundObj[3] = new QuadBuilder("Results Screen Addition Border")
       .size(1.0f, 1.0f)
@@ -595,7 +594,6 @@ public class PostBattleScreen extends MenuScreen {
       .rgb(2, 1.0f, 122.0f / 255.0f, 0.0f)
       .rgb(3, 1.0f, 122.0f / 255.0f, 0.0f)
       .build();
-    resultsBackgroundObj[3].persistent = true;
 
     resultsBackgroundObj[4] = new QuadBuilder("Results Screen Spell Background")
       .size(1.0f, 1.0f)
@@ -604,7 +602,6 @@ public class PostBattleScreen extends MenuScreen {
       .rgb(1, 0.0f, 38.0f / 255.0f, 72.0f / 255.0f)
       .rgb(3, 0.0f, 38.0f / 255.0f, 72.0f / 255.0f)
       .build();
-    resultsBackgroundObj[4].persistent = true;
 
     resultsBackgroundObj[5] = new QuadBuilder("Results Screen Spell Border")
       .size(1.0f, 1.0f)
@@ -613,7 +610,6 @@ public class PostBattleScreen extends MenuScreen {
       .monochrome(1, 0.0f)
       .monochrome(3, 0.0f)
       .build();
-    resultsBackgroundObj[5].persistent = true;
   }
 
   @Method(0x8010d078L)
@@ -943,6 +939,12 @@ public class PostBattleScreen extends MenuScreen {
 
     //LAB_8010d60c
     return additionId;
+  }
+
+  private void deleteResultsScreenObjects() {
+    for(int i = 0; i < resultsBackgroundObj.length; i++) {
+      resultsBackgroundObj[i].delete();
+    }
   }
 
   private enum MenuState {
