@@ -943,7 +943,9 @@ public class PostBattleScreen extends MenuScreen {
 
   private void deleteResultsScreenObjects() {
     for(int i = 0; i < resultsBackgroundObj.length; i++) {
-      resultsBackgroundObj[i].delete();
+      if(resultsBackgroundObj[i] != null) {
+        resultsBackgroundObj[i].delete();
+      }
     }
   }
 
