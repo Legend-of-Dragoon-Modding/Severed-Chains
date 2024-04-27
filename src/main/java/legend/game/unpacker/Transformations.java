@@ -1,14 +1,17 @@
 package legend.game.unpacker;
 
 import java.util.Queue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Transformations {
   private final PathNode root;
   private final Queue<PathNode> transformationQueue;
+  private final AtomicInteger remaining = new AtomicInteger();
 
   public Transformations(final PathNode root, final Queue<PathNode> transformationQueue) {
     this.root = root;
     this.transformationQueue = transformationQueue;
+    this.remaining.set(transformationQueue.size());
   }
 
   public PathNode poll() {
@@ -17,10 +20,16 @@ public class Transformations {
     }
   }
 
+  public int getRemaining() {
+    return this.remaining.get();
+  }
+
+  public void decrementRemaining() {
+    this.remaining.decrementAndGet();
+  }
+
   public boolean isEmpty() {
-    synchronized(this.transformationQueue) {
-      return this.transformationQueue.isEmpty();
-    }
+    return this.remaining.get() == 0;
   }
 
   public void addNode(final PathNode node) {
@@ -28,6 +37,8 @@ public class Transformations {
   }
 
   public void addNode(final String fullPath, final FileData data) {
+    this.remaining.incrementAndGet();
+
     synchronized(this.transformationQueue) {
       final PathNode node = this.insert(fullPath, data);
       this.transformationQueue.add(node);
@@ -39,6 +50,8 @@ public class Transformations {
   }
 
   public PathNode addChild(final PathNode parent, final String pathSegment, final FileData data) {
+    this.remaining.incrementAndGet();
+
     synchronized(this.transformationQueue) {
       final PathNode node = this.insert(parent.fullPath + '/' + pathSegment, data);
       this.transformationQueue.add(node);

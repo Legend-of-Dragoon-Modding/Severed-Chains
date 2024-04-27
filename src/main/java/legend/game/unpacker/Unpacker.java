@@ -2,6 +2,7 @@ package legend.game.unpacker;
 
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import legend.core.DebugHelper;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
 import legend.core.Tuple;
@@ -36,7 +37,6 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -46,6 +46,7 @@ import static legend.game.Scus94491BpeSegment.getCharacterName;
 
 public final class Unpacker {
   private static final Pattern MRG_ENTRY = Pattern.compile("[=;]");
+  private static final Pattern DRGN_BIN = Pattern.compile("^DRGN(?:0|1|2[1234])?.BIN$");
 
   private Unpacker() { }
 
@@ -387,18 +388,25 @@ public final class Unpacker {
 
         final Transformations transformations = new Transformations(files, transformationQueue);
         final Set<String> flags = Collections.synchronizedSet(new HashSet<>());
-        final AtomicInteger activeThreads = new AtomicInteger();
-        final Object lock = new Object();
 
-        // Submit queued files to the executor in batches of 100
-        executeInParallel(activeThreads, lock, () -> {
-          int i = 0;
-          PathNode nodeToTransform;
-          while(i < 100 && (nodeToTransform = transformations.poll()) != null) {
-            transform(nodeToTransform, transformations, flags);
-            i++;
+        try(final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
+          executor.execute(() -> {
+            while(!transformations.isEmpty()) {
+              statusListener.accept("Transforming %d files...".formatted(transformations.getRemaining()));
+              DebugHelper.sleep(50);
+            }
+          });
+
+          while(!transformations.isEmpty()) {
+            final PathNode nodeToTransform = transformations.poll();
+
+            if(nodeToTransform != null) {
+              EXECUTOR.execute(() -> transform(nodeToTransform, transformations, flags));
+            } else {
+              DebugHelper.sleep(0);
+            }
           }
-        }, () -> !transformationQueue.isEmpty());
+        }
 
         LOGGER.info("Leaf transformations completed in %fs", (System.nanoTime() - leafTransformTime) / 1_000_000_000.0f);
 
@@ -415,18 +423,26 @@ public final class Unpacker {
         files.flatten(all);
 
         final long writeTime = System.nanoTime();
-        LOGGER.info("Writing %d files...", all.size());
 
-        executeInParallel(activeThreads, lock, () -> {
-          statusListener.accept("Writing %d files...".formatted(all.size()));
+        try(final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
+          final AtomicInteger remaining = new AtomicInteger(all.size());
 
-          int i = 0;
+          executor.execute(() -> {
+            while(remaining.get() > 0) {
+              statusListener.accept("Writing %d files...".formatted(remaining.get()));
+              DebugHelper.sleep(50);
+            }
+          });
+
           PathNode node;
-          while(i < 100 && (node = all.poll()) != null) {
-            writeFile(node);
-            i++;
+          while((node = all.poll()) != null) {
+            final PathNode finalNode = node;
+            executor.execute(() -> {
+              writeFile(finalNode);
+              remaining.decrementAndGet();
+            });
           }
-        }, () -> !all.isEmpty());
+        }
 
         LOGGER.info("Files written in %fs", (System.nanoTime() - writeTime) / 1_000_000_000.0f);
 
@@ -440,27 +456,6 @@ public final class Unpacker {
     } catch(final Throwable e) {
       throw new UnpackerException(e);
     }
-  }
-
-  private static void executeInParallel(final AtomicInteger activeThreads, final Object lock, final Runnable action, final BooleanSupplier condition) throws InterruptedException {
-    do {
-      if(activeThreads.get() >= availableProcessors) {
-        synchronized(lock) {
-          lock.wait(100);
-        }
-      } else {
-        activeThreads.incrementAndGet();
-
-        EXECUTOR.execute(() -> {
-          action.run();
-          activeThreads.decrementAndGet();
-
-          synchronized(lock) {
-            lock.notifyAll();
-          }
-        });
-      }
-    } while(condition.getAsBoolean() || activeThreads.get() > 0);
   }
 
   private static int getUnpackVersion() throws IOException {
@@ -671,6 +666,8 @@ public final class Unpacker {
         break;
       }
     }
+
+    transformations.decrementRemaining();
   }
 
   private static boolean decompressDiscriminator(final PathNode node, final Set<String> flags) {
@@ -693,7 +690,7 @@ public final class Unpacker {
   }
 
   private static void unmrg(final PathNode node, final Transformations transformations, final Set<String> flags) {
-    final MrgArchive archive = new MrgArchive(node.data, node.pathSegment.matches("^DRGN(?:0|1|2[1234])?.BIN$"));
+    final MrgArchive archive = new MrgArchive(node.data, DRGN_BIN.matcher(node.pathSegment).matches());
 
     if(archive.getCount() == 0) {
       transformations.addNode(node.fullPath, EMPTY_DIRECTORY_SENTINEL);
