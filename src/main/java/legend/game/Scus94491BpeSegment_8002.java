@@ -1688,8 +1688,15 @@ public final class Scus94491BpeSegment_8002 {
     final int[] indexOffsets = {0, 20, 22, 24, 26};
 
     //LAB_80024e88
-    for(int i = 0; i < files.size(); i++) {
-      final FileData data = files.get(i);
+    for(int i = 0; i < 5; i++) {
+      final FileData data;
+
+      // Load first 3 files from the start of the array and last 2 files from the end (JP has a bunch of ??? files in the middle)
+      if(i < 3) {
+        data = files.get(i);
+      } else {
+        data = files.get(i - 5 + files.size());
+      }
 
       if(data.size() != 0) {
         final Tim tim = new Tim(data);

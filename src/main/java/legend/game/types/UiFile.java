@@ -5,11 +5,24 @@ import legend.game.unpacker.FileData;
 public record UiFile(UiType uiElements_0000, UiType itemIcons_c6a4, UiType portraits_cfac, UiType _d2d8) {
   public static UiFile fromFile(final FileData data) {
     final UiType uiElements_0000 = UiType.fromFile(data);
-    final UiType itemIcons_c6a4 = UiType.fromFile(data.slice(0xc6a4));
-    final UiType portraits_cfac = UiType.fromFile(data.slice(0xcfac));
-    final UiType _d2d8 = UiType.fromFile(data.slice(0xd2d8));
+    final int uiElementsSize = calculateSize(uiElements_0000);
+    final UiType itemIcons_c6a4 = UiType.fromFile(data.slice(uiElementsSize));
+    final int itemIconsSize = calculateSize(itemIcons_c6a4);
+    final UiType portraits_cfac = UiType.fromFile(data.slice(uiElementsSize + itemIconsSize));
+    final int portraitsSize = calculateSize(portraits_cfac);
+    final UiType _d2d8 = UiType.fromFile(data.slice(uiElementsSize + itemIconsSize + portraitsSize));
 
     return new UiFile(uiElements_0000, itemIcons_c6a4, portraits_cfac, _d2d8);
+  }
+
+  private static int calculateSize(final UiType type) {
+    int size = 0x8 + type.entries_08.length * 0x8;
+
+    for(final UiPart part : type.entries_08) {
+      size += 0x8 + part.metrics_00().length * 0x14;
+    }
+
+    return size;
   }
 
   public void delete() {

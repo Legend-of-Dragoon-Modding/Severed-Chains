@@ -295,31 +295,62 @@ public class Ttle extends EngineState {
    */
   @Method(0x800c7af0L)
   private void menuTexturesMrgLoaded(final List<FileData> files) {
-    this.backgroundTexture = stitchVertical(
-      textureFromTim(new Tim(files.get(0))),
-      textureFromTim(new Tim(files.get(1)))
-    );
+    final Path menu = Paths.get("gfx", "ui", "5718_3.png");
 
-    this.backgroundPalettes = palettesFromTim(new Tim(files.get(0)));
+    if(files.size() == 11) { // US
+      this.backgroundTexture = stitchVertical(
+        textureFromTim(new Tim(files.get(0))),
+        textureFromTim(new Tim(files.get(1)))
+      );
 
-    this.logoTexture = textureFromTim(new Tim(files.get(2)));
-    this.logoPalettes = palettesFromTim(new Tim(files.get(2)));
+      this.backgroundPalettes = palettesFromTim(new Tim(files.get(0)));
 
-    this.menuTextTexture = textureFromPngOneChannelBlue(Paths.get("gfx", "ui", "5718_3.png"));
-    this.menuTextPalettes = palettesFromTim(new Tim(files.get(3)));
+      this.logoTexture = textureFromTim(new Tim(files.get(2)));
+      this.logoPalettes = palettesFromTim(new Tim(files.get(2)));
 
-    this.tmTexture = textureFromTim(new Tim(files.get(4)));
-    this.tmPalettes = palettesFromTim(new Tim(files.get(4)));
+      this.menuTextTexture = textureFromPngOneChannelBlue(menu);
+      this.menuTextPalettes = palettesFromTim(new Tim(files.get(3)));
 
-    this.copyrightTexture = stitchHorizontal(
-      textureFromTim(new Tim(files.get(5))),
-      textureFromTim(new Tim(files.get(6)))
-    );
+      this.tmTexture = textureFromTim(new Tim(files.get(4)));
+      this.tmPalettes = palettesFromTim(new Tim(files.get(4)));
 
-    this.copyrightPalettes = palettesFromTim(new Tim(files.get(5)));
+      this.copyrightTexture = stitchHorizontal(
+        textureFromTim(new Tim(files.get(5))),
+        textureFromTim(new Tim(files.get(6)))
+      );
 
-    for(int i = 7; i < 11; i++) {
-      new Tim(files.get(i)).uploadToGpu();
+      this.copyrightPalettes = palettesFromTim(new Tim(files.get(5)));
+
+      for(int i = 7; i < 11; i++) {
+        new Tim(files.get(i)).uploadToGpu();
+      }
+    } else if(files.size() == 15) { // JP
+      this.backgroundTexture = stitchVertical(
+        textureFromTim(new Tim(files.get(11))),
+        textureFromTim(new Tim(files.get(12)))
+      );
+
+      this.backgroundPalettes = palettesFromTim(new Tim(files.get(11)));
+
+      this.logoTexture = textureFromTim(new Tim(files.get(10)));
+      this.logoPalettes = palettesFromTim(new Tim(files.get(10)));
+
+      this.menuTextTexture = textureFromPngOneChannelBlue(menu);
+      this.menuTextPalettes = palettesFromTim(new Tim(files.get(9)));
+
+      this.tmTexture = textureFromTim(new Tim(files.get(13)));
+      this.tmPalettes = palettesFromTim(new Tim(files.get(13)));
+
+      this.copyrightTexture = stitchHorizontal(
+        textureFromTim(new Tim(files.get(14))),
+        textureFromTim(new Tim(files.get(14)))
+      );
+
+      this.copyrightPalettes = palettesFromTim(new Tim(files.get(14)));
+
+      for(int i = 1; i < 5; i++) {
+        new Tim(files.get(i)).uploadToGpu();
+      }
     }
 
     this.texturesLoaded = true;

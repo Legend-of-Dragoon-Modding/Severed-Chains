@@ -49,9 +49,10 @@ public final class Unpacker {
 
   private Unpacker() { }
 
-  private static final String[] DISK_IDS = {"SCUS94491", "SCUS94584", "SCUS94585", "SCUS94586"};
+  private static final String[] DISK_IDS = {"SCPS10119", "SCPS10120", "SCPS10121", "SCPS10122"};
   private static final List<String> OTHER_REGION_IDS = List.of("SCES03043", "SCES13043", "SCES23043", "SCES33043", "SCES03044", "SCES13044", "SCES23044", "SCES33044", "SCES03045", "SCES13045", "SCES23045", "SCES33045", "SCES03046", "SCES13046", "SCES23046", "SCES33046", "SCES03047", "SCES13047", "SCES23047", "SCES33047", "SCPS10119", "SCPS10120", "SCPS10121", "SCPS10122", "SCPS45461", "SCPS45462", "SCPS45463", "SCPS45464");
   private static final int PVD_SECTOR = 16;
+  private static String loadedId;
 
   private static final Pattern ROOT_MRG = Pattern.compile("^SECT/DRGN0\\.BIN/\\d{4}/\\d+$");
   private static final Pattern DRGN0_FILE = Pattern.compile("^SECT/DRGN0.BIN/\\d+/.*");
@@ -563,6 +564,10 @@ public final class Unpacker {
 
     for(int i = 0; i < DISK_IDS.length; i++) {
       if(DISK_IDS[i].equals(readId)) {
+        if(i == 0) {
+          loadedId = DISK_IDS[i].substring(0, 4) + '_' + DISK_IDS[i].substring(4, 7) + '.' + DISK_IDS[i].substring(7);
+        }
+
         return new Tuple<>(reader, i);
       }
     }
@@ -733,7 +738,7 @@ public final class Unpacker {
   }
 
   private static boolean engineOverlayDiscriminator(final PathNode node, final Set<String> flags) {
-    return "SCUS_944.91".equals(node.pathSegment) && !flags.contains(node.pathSegment);
+    return loadedId.equals(node.pathSegment) && !flags.contains(node.pathSegment);
   }
 
   private static void engineOverlayExtractor(final PathNode node, final Transformations transformations, final Set<String> flags) {
@@ -1413,18 +1418,51 @@ public final class Unpacker {
   }
 
   private static boolean lodEngineDiscriminator(final PathNode node, final Set<String> flags) {
-    return "lod_engine".equals(node.fullPath);
+    return "lod_engine".equals(node.fullPath) && !flags.contains(node.pathSegment);
   }
 
   private static void lodEngineExtractor(final PathNode node, final Transformations transformations, final Set<String> flags) {
+    flags.add(node.pathSegment);
+
+    // Calculate a rough offset based on the first US pointer
+    final int offset = node.data.readInt(0) - 0x800c6688;
+
     for(int i = 0; i < 64; i++) {
-      transformations.addNode("items/" + i + ".ditm", node.data.slice(0x3f2ac + i * 0xc, 0xc));
+      transformations.addNode("items/" + i + ".ditm", node.data.slice(offset + 0x3f2ac + i * 0xc, 0xc));
     }
 
-    transformations.addNode("shadow.ctmd", node.data.slice(0x3d0, 0x14c));
-    transformations.addNode("shadow.anim", node.data.slice(0x51c, 0x28));
-    transformations.addNode("shadow.tim", getTimSize(node.data.slice(0x544)));
-    transformations.addNode("font.tim", getTimSize(node.data.slice(0xb6744)));
+    final int shadowCtmdAddr = locateNearbyCode(node.data, 0x3d0, 0xc, 0x0, 0x0, 0x41, 0x0, 0x1);
+    final int shadowCtmdSize = 0x14c;
+    final int shadowAnimSize = 0x28;
+
+    transformations.addNode(node);
+    transformations.addNode("shadow.ctmd", node.data.slice(shadowCtmdAddr, shadowCtmdSize));
+    transformations.addNode("shadow.anim", node.data.slice(shadowCtmdAddr + shadowCtmdSize, shadowAnimSize));
+    transformations.addNode("shadow.tim", getTimSize(node.data.slice(shadowCtmdAddr + shadowCtmdSize + shadowAnimSize)));
+    transformations.addNode("font.tim", getTimSize(node.data.slice(offset + 0xb6744)));
+  }
+
+  private static int locateNearbyCode(final FileData data, final int offset, final int... code) {
+    for(int i = 0; i < 20; i++) {
+      // Oscillate back and forth between positive and negative
+      final int i2 = (i / 2 * (int)Math.signum(i % 2 - 0.5f)) * 0x4;
+
+      if(codeMatches(data, offset + i2, code)) {
+        return offset + i2;
+      }
+    }
+
+    return -1;
+  }
+
+  private static boolean codeMatches(final FileData data, final int offset, final int... code) {
+    for(int i = 0; i < code.length; i++) {
+      if(data.readInt(offset + i * 0x4) != code[i]) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   private static boolean xaDiscriminator(final PathNode node, final Set<String> flags) {
