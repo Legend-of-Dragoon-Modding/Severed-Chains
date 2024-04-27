@@ -614,45 +614,47 @@ public class PostBattleScreen extends MenuScreen {
 
   @Method(0x8010d078L)
   private void drawResultsBackground(int x, int y, final int w, final int h, final int type) {
-    x -= 8;
-    //y += 120;
+    if(resultsBackgroundObj[type - 1] != null) {
+      x -= 8;
+      //y += 120;
 
-    final int z;
-    switch(type) {
-      case 1 -> { //Background gradient
-        z = 36;
+      final int z;
+      switch(type) {
+        case 1 -> { //Background gradient
+          z = 36;
+        }
+
+        case 2 -> { //Character portrait shadow
+          z = 36;
+        }
+
+        case 3 -> { //Addition background
+          z = 34;
+        }
+
+        case 4 -> { //Addition border
+          z = 35;
+        }
+
+        case 5 -> { //Spell background
+          z = 34;
+        }
+
+        case 6 -> { //Spell border
+          z = 35;
+        }
+
+        default -> z = 0;
       }
 
-      case 2 -> { //Character portrait shadow
-        z = 36;
-      }
+      //LAB_8010d2c4
+      resultsBackgroundTransforms.transfer.set(x, y, z * 4);
+      resultsBackgroundTransforms.scaling(w, h, 1);
 
-      case 3 -> { //Addition background
-        z = 34;
-      }
+      RENDERER.queueOrthoModel(resultsBackgroundObj[type - 1], resultsBackgroundTransforms);
 
-      case 4 -> { //Addition border
-        z = 35;
-      }
-
-      case 5 -> { //Spell background
-        z = 34;
-      }
-
-      case 6 -> { //Spell border
-        z = 35;
-      }
-
-      default -> z = 0;
+      //LAB_8010d318
     }
-
-    //LAB_8010d2c4
-    resultsBackgroundTransforms.transfer.set(x, y, z * 4);
-    resultsBackgroundTransforms.scaling(w, h, 1);
-
-    RENDERER.queueOrthoModel(resultsBackgroundObj[type - 1], resultsBackgroundTransforms);
-
-    //LAB_8010d318
   }
 
   @Method(0x8010e114L)
