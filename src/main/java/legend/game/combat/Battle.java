@@ -679,17 +679,17 @@ public class Battle extends EngineState {
 
     functions[352] = this::scriptSetModelPartVisibility;
     functions[353] = this::scriptCopyVram;
-    functions[354] = this::FUN_800cd468;
-    functions[355] = this::FUN_800cd4b0;
-    functions[356] = this::FUN_800cd4f0;
+    functions[354] = this::scriptLoadGlobalAsset;
+    functions[355] = this::scriptWaitGlobalAssetAllocation;
+    functions[356] = this::scriptDeallocateGlobalAsset;
     functions[357] = this::scriptAddCombatant;
     functions[358] = this::scriptDeallocateAndRemoveCombatant;
     functions[359] = this::FUN_800cda78;
     functions[360] = this::scriptAllocateBent;
-    functions[361] = this::FUN_800cd740;
+    functions[361] = this::scriptLoadModelToCombatantFromGlobalAssets;
     functions[362] = this::FUN_800cd7a8;
-    functions[363] = this::FUN_800cd810;
-    functions[364] = this::FUN_800cd8a4;
+    functions[363] = this::scriptLoadAnimToCombatantFromGlobalAssetsOrDeallocate;
+    functions[364] = this::scriptLoadTextureToCombatantFromGlobalAssets;
     functions[365] = this::scriptGetBentNobj;
     functions[366] = this::scriptDeallocateCombatant;
     functions[367] = this::scriptStopRenderingStage;
@@ -2009,7 +2009,7 @@ public class Battle extends EngineState {
     //LAB_800c9238
     for(int i = 0; i < 32; i++) {
       if(combatant.assets_14[i] != null && combatant.assets_14[i]._09 != 0) {
-        this.FUN_800c9c7c(combatant, i);
+        this.deallocateCombatantAnimation(combatant, i);
       }
 
       //LAB_800c9254
@@ -2171,7 +2171,7 @@ public class Battle extends EngineState {
         for(int animIndex = 0; animIndex < 32; animIndex++) {
           if(files.get(32 + animIndex).hasVirtualSize()) {
             if(combatant.assets_14[animIndex] != null && combatant.assets_14[animIndex]._09 != 0) {
-              this.FUN_800c9c7c(combatant, animIndex);
+              this.deallocateCombatantAnimation(combatant, animIndex);
             }
 
             //LAB_800c9974
@@ -2188,7 +2188,7 @@ public class Battle extends EngineState {
       for(int animIndex = 0; animIndex < 32; animIndex++) {
         if(files.get(animIndex).hasVirtualSize()) {
           if(combatant.assets_14[animIndex] != null && combatant.assets_14[animIndex]._09 != 0) {
-            this.FUN_800c9c7c(combatant, animIndex);
+            this.deallocateCombatantAnimation(combatant, animIndex);
           }
 
           //LAB_800c9a18
@@ -2215,7 +2215,7 @@ public class Battle extends EngineState {
     CombatantAsset0c s3 = combatant.assets_14[animIndex];
 
     if(s3 != null) {
-      this.FUN_800c9c7c(combatant, animIndex);
+      this.deallocateCombatantAnimation(combatant, animIndex);
     }
 
     //LAB_800c9b28
@@ -2281,7 +2281,7 @@ public class Battle extends EngineState {
   }
 
   @Method(0x800c9c7cL)
-  public void FUN_800c9c7c(final CombatantStruct1a8 combatant, final int animIndex) {
+  public void deallocateCombatantAnimation(final CombatantStruct1a8 combatant, final int animIndex) {
     final CombatantAsset0c asset = combatant.assets_14[animIndex];
 
     if(asset != null) {
@@ -2312,9 +2312,9 @@ public class Battle extends EngineState {
   }
 
   @Method(0x800c9db8L)
-  public void FUN_800c9db8(final CombatantStruct1a8 combatant, final int animIndex, final int a2) {
-    this.FUN_800c9c7c(combatant, animIndex);
-    this.FUN_800c9a80(null, 3, a2, combatant, animIndex);
+  public void loadAnimationIntoCombatant(final CombatantStruct1a8 combatant, final int animIndex, final int assetIndex) {
+    this.deallocateCombatantAnimation(combatant, animIndex);
+    this.FUN_800c9a80(null, 3, assetIndex, combatant, animIndex);
   }
 
   @Method(0x800c9e10L)
@@ -2414,7 +2414,7 @@ public class Battle extends EngineState {
     for(int i = 0; i < 32; i++) {
       if(combatant.assets_14[i] instanceof CombatantAsset0c.AnimType && combatant.assets_14[i].type_0a == 2 || combatant.assets_14[i] instanceof CombatantAsset0c.TimType) {
         //LAB_800ca4c0
-        this.FUN_800c9c7c(combatant, i);
+        this.deallocateCombatantAnimation(combatant, i);
       }
 
       //LAB_800ca4cc
@@ -3581,28 +3581,28 @@ public class Battle extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, something to do with loading files")
+  @ScriptDescription("Loads a global asset")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "drgnIndex", description = "The DRGN#.BIN index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "fileIndex", description = "The file index")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "index", description = "The output battleState_8006e398._580 array index")
   @Method(0x800cd468L)
-  public FlowControl FUN_800cd468(final RunningScript<?> script) {
+  public FlowControl scriptLoadGlobalAsset(final RunningScript<?> script) {
     script.params_20[2].set(battleState_8006e398.loadGlobalAsset(script.params_20[0].get(), script.params_20[1].get()));
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, something to do with loading files, may wait until the file is loaded")
+  @ScriptDescription("Waits until global asset is allocated")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The battleState_8006e398._580 array index")
   @Method(0x800cd4b0L)
-  public FlowControl FUN_800cd4b0(final RunningScript<?> script) {
+  public FlowControl scriptWaitGlobalAssetAllocation(final RunningScript<?> script) {
     final BattleAsset08 v0 = battleState_8006e398.getGlobalAsset(script.params_20[0].get());
     return v0.state_04 == 1 ? FlowControl.PAUSE_AND_REWIND : FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, something to do with loading files, may clear the file entry")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The battleState_8006e398._580 array index")
+  @ScriptDescription("Deallocates a global asset")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The input battleState_8006e398._580 array index")
   @Method(0x800cd4f0L)
-  public FlowControl FUN_800cd4f0(final RunningScript<?> script) {
+  public FlowControl scriptDeallocateGlobalAsset(final RunningScript<?> script) {
     battleState_8006e398.deallocateGlobalAsset(script.params_20[0].get());
     return FlowControl.CONTINUE;
   }
@@ -3650,11 +3650,11 @@ public class Battle extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, related to combatants")
+  @ScriptDescription("Sets global asset index of a model for combatant")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "combatantIndex", description = "The combatant index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The input battleState_8006e398._580 array index")
   @Method(0x800cd740L)
-  public FlowControl FUN_800cd740(final RunningScript<?> script) {
+  public FlowControl scriptLoadModelToCombatantFromGlobalAssets(final RunningScript<?> script) {
     final BattleAsset08 v0 = battleState_8006e398.getGlobalAsset(script.params_20[0].get());
 
     if(v0.state_04 == 1) {
@@ -3686,36 +3686,36 @@ public class Battle extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, related to combatants")
+  @ScriptDescription("Loads animation from global assets into combatant assets or deallocates an animation from combatant")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "combatantIndex", description = "The combatant index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p2")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "animIndex", description = "Combatant's assets_14 index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The input battleState_8006e398._580 array index")
   @Method(0x800cd810L)
-  public FlowControl FUN_800cd810(final RunningScript<?> script) {
-    final int s0 = script.params_20[2].get();
+  public FlowControl scriptLoadAnimToCombatantFromGlobalAssetsOrDeallocate(final RunningScript<?> script) {
+    final int assetIndex = script.params_20[2].get();
 
-    if(s0 >= 0) {
+    if(assetIndex >= 0) {
       //LAB_800cd85c
-      final BattleAsset08 v0 = battleState_8006e398.getGlobalAsset(s0);
+      final BattleAsset08 v0 = battleState_8006e398.getGlobalAsset(assetIndex);
 
       if(v0.state_04 == 1) {
         return FlowControl.PAUSE_AND_REWIND;
       }
 
-      this.FUN_800c9db8(this.combatants_8005e398[script.params_20[0].get()], script.params_20[1].get(), s0);
+      this.loadAnimationIntoCombatant(this.combatants_8005e398[script.params_20[0].get()], script.params_20[1].get(), assetIndex);
     } else {
-      this.FUN_800c9c7c(this.combatants_8005e398[script.params_20[0].get()], script.params_20[1].get());
+      this.deallocateCombatantAnimation(this.combatants_8005e398[script.params_20[0].get()], script.params_20[1].get());
     }
 
     //LAB_800cd890
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, related to combatant textures")
+  @ScriptDescription("Loads a texture from global assets to combatant")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "combatantIndex", description = "The combatant index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "p1")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "index", description = "The input battleState_8006e398._580 array index")
   @Method(0x800cd8a4L)
-  public FlowControl FUN_800cd8a4(final RunningScript<?> script) {
+  public FlowControl scriptLoadTextureToCombatantFromGlobalAssets(final RunningScript<?> script) {
     final BattleAsset08 a1 = battleState_8006e398.getGlobalAsset(script.params_20[1].get());
 
     if(a1.state_04 == 1) {
