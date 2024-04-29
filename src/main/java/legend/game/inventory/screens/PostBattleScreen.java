@@ -2,8 +2,12 @@ package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
 import legend.core.gpu.GpuCommandPoly;
+import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.memory.types.IntRef;
+import legend.core.opengl.MeshObj;
+import legend.core.opengl.Obj;
+import legend.core.opengl.QuadBuilder;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.inventory.WhichMenu;
@@ -12,6 +16,7 @@ import legend.game.types.Renderable58;
 import legend.game.types.Translucency;
 
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.RENDERER;
 import static legend.game.SItem.additions_8011a064;
 import static legend.game.SItem.cacheCharacterSlots;
 import static legend.game.SItem.dragoonXpRequirements_800fbbf0;
@@ -25,7 +30,6 @@ import static legend.game.SItem.renderItemIcon;
 import static legend.game.SItem.renderText;
 import static legend.game.Scus94491BpeSegment.drawBattleReportOverlays;
 import static legend.game.Scus94491BpeSegment.FUN_80019470;
-import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.addLevelUpOverlay;
 import static legend.game.Scus94491BpeSegment.loadDrgnFileSync;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
@@ -77,6 +81,9 @@ public class PostBattleScreen extends MenuScreen {
   private MenuState inventoryMenuState_800bdc28 = MenuState.INIT_0;
   private MenuState confirmDest_800bdc30;
 
+  private final MeshObj[] resultsBackgroundObj = new MeshObj[6];
+  private final MV resultsBackgroundTransforms = new MV();
+
   @Method(0x8010d614L)
   @Override
   protected void render() {
@@ -95,6 +102,7 @@ public class PostBattleScreen extends MenuScreen {
         loadDrgnFileSync(0, 6666, data -> menuAssetsLoaded(data, 1));
         textZ_800bdf00 = 33;
         this.inventoryMenuState_800bdc28 = MenuState.WAIT_FOR_UI_FILE_TO_LOAD_1;
+        this.initResultBackgrounds();
         break;
 
       case WAIT_FOR_UI_FILE_TO_LOAD_1:
@@ -428,16 +436,17 @@ public class PostBattleScreen extends MenuScreen {
         whichMenu_800bdc38 = WhichMenu.UNLOAD_POST_COMBAT_REPORT_30;
         textZ_800bdf00 = 13;
 
+        this.deleteResultsScreenObjects();
+
         menuStack.popScreen();
         break;
     }
 
     //LAB_8010e09c
     //LAB_8010e0a0
-    this.FUN_8010d078(166,  22, 136, 192, 1);
-    this.FUN_8010d078( 14,  22, 144, 120, 1);
-    this.FUN_8010d078( 14, 150, 144,  64, 1);
-    this.FUN_8010d078( 0,    0, 240, 240, 0);
+    this.drawResultsBackground(166,  22, 136, 192, 1);
+    this.drawResultsBackground( 14,  22, 144, 120, 1);
+    this.drawResultsBackground( 14, 150, 144,  64, 1);
   }
 
   /**
@@ -552,97 +561,100 @@ public class PostBattleScreen extends MenuScreen {
     this.confirmDest_800bdc30 = nextMenuState;
   }
 
+  private void initResultBackgrounds() {
+    this.resultsBackgroundObj[0] = new QuadBuilder("Results Screen Background")
+      .size(1.0f, 1.0f)
+      .translucency(Translucency.HALF_B_PLUS_HALF_F)
+      .monochrome(0, 128.0f / 255.0f)
+      .rgb(1, 0.0f, 20.0f / 255.0f, 80.0f / 255.0f)
+      .rgb(2, 0.0f, 20.0f / 255.0f, 80.0f / 255.0f)
+      .monochrome(3, 0.0f)
+      .build();
+
+    this.resultsBackgroundObj[1] = new QuadBuilder("Results Screen Portrait Shadow")
+      .size(1.0f, 1.0f)
+      .monochrome(0, 127.0f / 255.0f)
+      .monochrome(2, 127.0f / 255.0f)
+      .monochrome(1, 0.0f)
+      .monochrome(3, 0.0f)
+      .build();
+
+    this.resultsBackgroundObj[2] = new QuadBuilder("Results Screen Addition Background")
+      .size(1.0f, 1.0f)
+      .rgb(0, 1.0f, 122.0f / 255.0f, 0.0f)
+      .rgb(2, 1.0f, 122.0f / 255.0f, 0.0f)
+      .rgb(1, 73.0f / 255.0f, 35.0f / 255.0f, 0.0f)
+      .rgb(3, 73.0f / 255.0f, 35.0f / 255.0f, 0.0f)
+      .build();
+
+    this.resultsBackgroundObj[3] = new QuadBuilder("Results Screen Addition Border")
+      .size(1.0f, 1.0f)
+      .rgb(0, 1.0f, 122.0f / 255.0f, 0.0f)
+      .rgb(1, 1.0f, 122.0f / 255.0f, 0.0f)
+      .rgb(2, 1.0f, 122.0f / 255.0f, 0.0f)
+      .rgb(3, 1.0f, 122.0f / 255.0f, 0.0f)
+      .build();
+
+    this.resultsBackgroundObj[4] = new QuadBuilder("Results Screen Spell Background")
+      .size(1.0f, 1.0f)
+      .rgb(0, 0.0f, 132.0f / 255.0f, 254.0f / 255.0f)
+      .rgb(2, 0.0f, 132.0f / 255.0f, 254.0f / 255.0f)
+      .rgb(1, 0.0f, 38.0f / 255.0f, 72.0f / 255.0f)
+      .rgb(3, 0.0f, 38.0f / 255.0f, 72.0f / 255.0f)
+      .build();
+
+    this.resultsBackgroundObj[5] = new QuadBuilder("Results Screen Spell Border")
+      .size(1.0f, 1.0f)
+      .monochrome(0, 127.0f / 255.0f)
+      .monochrome(2, 127.0f / 255.0f)
+      .monochrome(1, 0.0f)
+      .monochrome(3, 0.0f)
+      .build();
+  }
+
   @Method(0x8010d078L)
-  private void FUN_8010d078(int x, int y, final int w, final int h, final int type) {
-    x -= 8 + displayWidth_1f8003e0 / 2;
-    y -= 120;
+  private void drawResultsBackground(int x, int y, final int w, final int h, final int type) {
+    if(this.resultsBackgroundObj[type - 1] != null) {
+      x -= 8;
+      //y += 120;
 
-    final GpuCommandPoly cmd = new GpuCommandPoly(4)
-      .pos(0, x, y)
-      .pos(1, x + w, y)
-      .pos(2, x, y + h)
-      .pos(3, x + w, y + h);
+      final int z;
+      switch(type) {
+        case 1 -> { //Background gradient
+          z = 36;
+        }
 
-    final int z;
-    switch(type) {
-      case 0 -> {
-        z = 36;
+        case 2 -> { //Character portrait shadow
+          z = 36;
+        }
 
-        cmd
-          .rgb(0, 0, 0, 1)
-          .rgb(1, 0, 0, 1)
-          .rgb(2, 0, 0, 1)
-          .rgb(3, 0, 0, 1);
+        case 3 -> { //Addition background
+          z = 34;
+        }
+
+        case 4 -> { //Addition border
+          z = 35;
+        }
+
+        case 5 -> { //Spell background
+          z = 34;
+        }
+
+        case 6 -> { //Spell border
+          z = 35;
+        }
+
+        default -> z = 0;
       }
 
-      case 1 -> {
-        z = 36;
+      //LAB_8010d2c4
+      this.resultsBackgroundTransforms.transfer.set(x, y, z * 4);
+      this.resultsBackgroundTransforms.scaling(w, h, 1);
 
-        cmd
-          .translucent(Translucency.HALF_B_PLUS_HALF_F)
-          .rgb(0, 0x80, 0x80, 0x80)
-          .rgb(1,    0, 0x14, 0x50)
-          .rgb(2,    0, 0x14, 0x50)
-          .rgb(3,    0,    0,    0);
-      }
+      RENDERER.queueOrthoModel(this.resultsBackgroundObj[type - 1], this.resultsBackgroundTransforms);
 
-      case 2 -> {
-        z = 36;
-
-        cmd
-          .monochrome(0, 0x7f)
-          .monochrome(1, 0x7f)
-          .monochrome(2, 0)
-          .monochrome(3, 0);
-      }
-
-      case 3 -> {
-        z = 34;
-
-        cmd
-          .rgb(0, 0xff, 0x7a, 0)
-          .rgb(1, 0xff, 0x7a, 0)
-          .rgb(2, 0x49, 0x23, 0)
-          .rgb(3, 0x49, 0x23, 0);
-      }
-
-      case 4 -> {
-        z = 35;
-
-        cmd
-          .rgb(0, 0xff, 0x7a, 0)
-          .rgb(1, 0xff, 0x7a, 0)
-          .rgb(2, 0xff, 0x7a, 0)
-          .rgb(3, 0xff, 0x7a, 0);
-      }
-
-      case 5 -> {
-        z = 34;
-
-        cmd
-          .rgb(0, 0, 0x84, 0xfe)
-          .rgb(1, 0, 0x84, 0xfe)
-          .rgb(2, 0, 0x26, 0x48)
-          .rgb(3, 0, 0x26, 0x48);
-      }
-
-      case 6 -> {
-        z = 35;
-
-        cmd
-          .monochrome(0, 0x7f)
-          .monochrome(1, 0x7f)
-          .monochrome(2, 0)
-          .monochrome(3, 0);
-      }
-
-      default -> z = 0;
+      //LAB_8010d318
     }
-
-    //LAB_8010d2c4
-    GPU.queueCommand(z, cmd);
-
-    //LAB_8010d318
   }
 
   @Method(0x8010e114L)
@@ -654,7 +666,7 @@ public class PostBattleScreen extends MenuScreen {
 
     final int glyph = charPortraitGlyphs_800fbc9c[charId];
     final Renderable58 renderable = this.drawGlyph(glyph, glyph, x, y, 704, characterPortraitVs_800fbc88[charId]);
-    renderable.z_3c = 35;
+    renderable.z_3c = 36;
 
     //LAB_8010e1f0
     return renderable;
@@ -753,7 +765,7 @@ public class PostBattleScreen extends MenuScreen {
   @Method(0x8010e708L)
   private void drawChar(final int x, final int y, final int charId) {
     if(charId != -1) {
-      this.FUN_8010d078(x + 1, y + 5, 24, 32, 2);
+      this.drawResultsBackground(x + 1, y + 5, 24, 32, 2);
       this.drawCharPortrait(x - 1, y + 4, charId).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       this.drawGlyph(_800fbca8[charId], _800fbca8[charId], x + 32, y + 4, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
       this.drawGlyph(0x3b, 0x3b, x + 30, y + 16, 736, 497).flags_00 |= Renderable58.FLAG_DELETE_AFTER_RENDER;
@@ -884,8 +896,8 @@ public class PostBattleScreen extends MenuScreen {
 
   @Method(0x8010d398L)
   private void renderAdditionUnlocked(final int x, final int y, final int additionIndex, final int height) {
-    this.FUN_8010d078(x, y + 20 - height, 134, (height + 1) * 2, 4);
-    this.FUN_8010d078(x + 1, y + 20 - height + 1, 132, height * 2, 3);
+    this.drawResultsBackground(x, y + 20 - height, 134, (height + 1) * 2, 4);
+    this.drawResultsBackground(x + 1, y + 20 - height + 1, 132, height * 2, 3);
 
     if(height >= 20) {
       Scus94491BpeSegment_8002.renderText(additions_8011a064[additionIndex], x - 4, y + 6, TextColour.WHITE, 0);
@@ -897,8 +909,8 @@ public class PostBattleScreen extends MenuScreen {
 
   @Method(0x8010d498L)
   private void renderSpellUnlocked(final int x, final int y, final int spellIndex, final int height) {
-    this.FUN_8010d078(x, y + 20 - height, 134, (height + 1) * 2, 6); // New spell border
-    this.FUN_8010d078(x + 1, y + 20 - height + 1, 132, height * 2, 5); // New spell background
+    this.drawResultsBackground(x, y + 20 - height, 134, (height + 1) * 2, 6); // New spell border
+    this.drawResultsBackground(x + 1, y + 20 - height + 1, 132, height * 2, 5); // New spell background
 
     if(height >= 20) {
       Scus94491BpeSegment_8002.renderText(new LodString(spellStats_800fa0b8[spellIndex].name), x - 4, y + 6, TextColour.WHITE, 0);
@@ -929,6 +941,15 @@ public class PostBattleScreen extends MenuScreen {
 
     //LAB_8010d60c
     return additionId;
+  }
+
+  private void deleteResultsScreenObjects() {
+    for(int i = 0; i < this.resultsBackgroundObj.length; i++) {
+      if(this.resultsBackgroundObj[i] != null) {
+        this.resultsBackgroundObj[i].delete();
+        this.resultsBackgroundObj[i] = null;
+      }
+    }
   }
 
   private enum MenuState {
