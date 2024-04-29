@@ -562,7 +562,7 @@ public class PostBattleScreen extends MenuScreen {
   }
 
   private void initResultBackgrounds() {
-    resultsBackgroundObj[0] = new QuadBuilder("Results Screen Background")
+    this.resultsBackgroundObj[0] = new QuadBuilder("Results Screen Background")
       .size(1.0f, 1.0f)
       .translucency(Translucency.HALF_B_PLUS_HALF_F)
       .monochrome(0, 128.0f / 255.0f)
@@ -571,7 +571,7 @@ public class PostBattleScreen extends MenuScreen {
       .monochrome(3, 0.0f)
       .build();
 
-    resultsBackgroundObj[1] = new QuadBuilder("Results Screen Portrait Shadow")
+    this.resultsBackgroundObj[1] = new QuadBuilder("Results Screen Portrait Shadow")
       .size(1.0f, 1.0f)
       .monochrome(0, 127.0f / 255.0f)
       .monochrome(2, 127.0f / 255.0f)
@@ -579,7 +579,7 @@ public class PostBattleScreen extends MenuScreen {
       .monochrome(3, 0.0f)
       .build();
 
-    resultsBackgroundObj[2] = new QuadBuilder("Results Screen Addition Background")
+    this.resultsBackgroundObj[2] = new QuadBuilder("Results Screen Addition Background")
       .size(1.0f, 1.0f)
       .rgb(0, 1.0f, 122.0f / 255.0f, 0.0f)
       .rgb(2, 1.0f, 122.0f / 255.0f, 0.0f)
@@ -587,7 +587,7 @@ public class PostBattleScreen extends MenuScreen {
       .rgb(3, 73.0f / 255.0f, 35.0f / 255.0f, 0.0f)
       .build();
 
-    resultsBackgroundObj[3] = new QuadBuilder("Results Screen Addition Border")
+    this.resultsBackgroundObj[3] = new QuadBuilder("Results Screen Addition Border")
       .size(1.0f, 1.0f)
       .rgb(0, 1.0f, 122.0f / 255.0f, 0.0f)
       .rgb(1, 1.0f, 122.0f / 255.0f, 0.0f)
@@ -595,7 +595,7 @@ public class PostBattleScreen extends MenuScreen {
       .rgb(3, 1.0f, 122.0f / 255.0f, 0.0f)
       .build();
 
-    resultsBackgroundObj[4] = new QuadBuilder("Results Screen Spell Background")
+    this.resultsBackgroundObj[4] = new QuadBuilder("Results Screen Spell Background")
       .size(1.0f, 1.0f)
       .rgb(0, 0.0f, 132.0f / 255.0f, 254.0f / 255.0f)
       .rgb(2, 0.0f, 132.0f / 255.0f, 254.0f / 255.0f)
@@ -603,7 +603,7 @@ public class PostBattleScreen extends MenuScreen {
       .rgb(3, 0.0f, 38.0f / 255.0f, 72.0f / 255.0f)
       .build();
 
-    resultsBackgroundObj[5] = new QuadBuilder("Results Screen Spell Border")
+    this.resultsBackgroundObj[5] = new QuadBuilder("Results Screen Spell Border")
       .size(1.0f, 1.0f)
       .monochrome(0, 127.0f / 255.0f)
       .monochrome(2, 127.0f / 255.0f)
@@ -614,7 +614,7 @@ public class PostBattleScreen extends MenuScreen {
 
   @Method(0x8010d078L)
   private void drawResultsBackground(int x, int y, final int w, final int h, final int type) {
-    if(resultsBackgroundObj[type - 1] != null) {
+    if(this.resultsBackgroundObj[type - 1] != null) {
       x -= 8;
       //y += 120;
 
@@ -648,10 +648,10 @@ public class PostBattleScreen extends MenuScreen {
       }
 
       //LAB_8010d2c4
-      resultsBackgroundTransforms.transfer.set(x, y, z * 4);
-      resultsBackgroundTransforms.scaling(w, h, 1);
+      this.resultsBackgroundTransforms.transfer.set(x, y, z * 4);
+      this.resultsBackgroundTransforms.scaling(w, h, 1);
 
-      RENDERER.queueOrthoModel(resultsBackgroundObj[type - 1], resultsBackgroundTransforms);
+      RENDERER.queueOrthoModel(this.resultsBackgroundObj[type - 1], this.resultsBackgroundTransforms);
 
       //LAB_8010d318
     }
@@ -944,10 +944,10 @@ public class PostBattleScreen extends MenuScreen {
   }
 
   private void deleteResultsScreenObjects() {
-    for(int i = 0; i < resultsBackgroundObj.length; i++) {
-      if(resultsBackgroundObj[i] != null) {
-        resultsBackgroundObj[i].delete();
-        resultsBackgroundObj[i] = null;
+    for(int i = 0; i < this.resultsBackgroundObj.length; i++) {
+      if(this.resultsBackgroundObj[i] != null) {
+        this.resultsBackgroundObj[i].delete();
+        this.resultsBackgroundObj[i] = null;
       }
     }
   }
