@@ -4,7 +4,7 @@ import legend.core.MathHelper;
 import legend.core.audio.opus.OpusFile;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.PathNode;
-import legend.game.unpacker.Transformations;
+import legend.game.unpacker.TransformationState;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.util.opus.Opus;
 
@@ -60,13 +60,13 @@ public class XaTranscoder {
     this.opusOutputBuffer = BufferUtils.createByteBuffer(OPUS_OUTPUT_BUFFER_SIZE * this.channels);
   }
 
-  public static void transform(final PathNode node, final Transformations transformations) {
+  public static void transform(final PathNode node, final TransformationState transformations) {
     final XaTranscoder transcoder = new XaTranscoder(node.fullPath.endsWith("3.XA") ? 2 : 1);
 
     transcoder.transcode(node, transformations);
   }
 
-  private void transcode(final PathNode node, final Transformations transformations) {
+  private void transcode(final PathNode node, final TransformationState transformations) {
     final int interleaveMode = node.fullPath.endsWith("3.XA") ? 4 : 16;
     final int sectorCount = node.data.size() / 0x930;
     final int channelSectorCount = sectorCount / interleaveMode;

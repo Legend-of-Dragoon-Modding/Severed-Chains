@@ -46,7 +46,7 @@ public final class CtmdTransformer {
     return (node.data.readInt(containerOffset + 0x10) & 0x2) != 0;
   }
 
-  public static void ctmdTransformer(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  public static void ctmdTransformer(final PathNode node, final TransformationState transformations, final Set<String> flags) {
     final int containerOffset = node.data.readInt(0xc);
     int nextOffset = node.data.readInt(0x10);
 

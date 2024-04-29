@@ -12,7 +12,7 @@ public final class SubmapPxlTransformer {
 
   private static final Logger LOGGER = LogManager.getFormatterLogger(SubmapPxlTransformer.class);
 
-  public static void transform(final PathNode root, final Transformations transformations, final Set<String> flags) {
+  public static void transform(final PathNode root, final TransformationState transformations, final Set<String> flags) {
     for(int drgnIndex = 1; drgnIndex <= 4; drgnIndex++) {
       final PathNode drgn = root.children.get("SECT").children.get("DRGN2" + drgnIndex + ".BIN");
 
@@ -57,7 +57,7 @@ public final class SubmapPxlTransformer {
     return new int[] {-1, -1};
   }
 
-  private static void process(final PathNode submapCutAssets, final int[] highResTextureIndices, final Transformations transformations) {
+  private static void process(final PathNode submapCutAssets, final int[] highResTextureIndices, final TransformationState transformations) {
     final PathNode textures = transformations.addChild(submapCutAssets, "textures", null);
 
     final String[] mrg = loadMrg(submapCutAssets);

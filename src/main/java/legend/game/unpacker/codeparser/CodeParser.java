@@ -1,5 +1,7 @@
 package legend.game.unpacker.codeparser;
 
+import legend.game.unpacker.FileData;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -10,11 +12,13 @@ public class CodeParser {
     this.actions = Arrays.asList(actions);
   }
 
-  public void parse() {
-    final ParserState state = new ParserState();
+  public int parse(final FileData data, final int offset) throws CodeParserException {
+    final ParserState state = new ParserState(data, offset);
 
     for(final Action action : this.actions) {
       action.perform(state);
     }
+
+    return state.offset;
   }
 }

@@ -8,6 +8,13 @@ import legend.core.MathHelper;
 import legend.core.Tuple;
 import legend.core.audio.xa.XaTranscoder;
 import legend.game.Scus94491BpeSegment;
+import legend.game.unpacker.codeparser.AdvanceAction;
+import legend.game.unpacker.codeparser.CodeParser;
+import legend.game.unpacker.codeparser.CodeParserException;
+import legend.game.unpacker.codeparser.FollowJalAction;
+import legend.game.unpacker.codeparser.FollowLuiAddPointerAction;
+import legend.game.unpacker.codeparser.FollowPointerAction;
+import legend.game.unpacker.codeparser.LocateCodeAction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -386,7 +393,7 @@ public final class Unpacker {
         final long leafTransformTime = System.nanoTime();
         LOGGER.info("Performing leaf transformations...");
 
-        final Transformations transformations = new Transformations(files, transformationQueue);
+        final TransformationState transformations = new TransformationState(files, transformationQueue);
         final Set<String> flags = Collections.synchronizedSet(new HashSet<>());
 
         try(final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
@@ -651,7 +658,7 @@ public final class Unpacker {
     }
   }
 
-  private static void transform(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void transform(final PathNode node, final TransformationState transformations, final Set<String> flags) {
     if(shouldStop) {
       throw new UnpackerStoppedRuntimeException("Unpacking cancelled");
     }
@@ -681,7 +688,7 @@ public final class Unpacker {
     return node.data.size() >= 8 && node.data.readInt(0x4) == 0x1a455042;
   }
 
-  private static void decompress(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void decompress(final PathNode node, final TransformationState transformations, final Set<String> flags) {
     transformations.replaceNode(node, new FileData(Unpacker.decompress(node.data)));
   }
 
@@ -689,7 +696,7 @@ public final class Unpacker {
     return node.data.size() >= 8 && node.data.readInt(0x0) == MrgArchive.MAGIC;
   }
 
-  private static void unmrg(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void unmrg(final PathNode node, final TransformationState transformations, final Set<String> flags) {
     final MrgArchive archive = new MrgArchive(node.data, DRGN_BIN.matcher(node.pathSegment).matches());
 
     if(archive.getCount() == 0) {
@@ -720,7 +727,7 @@ public final class Unpacker {
     return node.data.size() >= 8 && node.data.readInt(0x0) == 0x46464544;
   }
 
-  private static void undeff(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void undeff(final PathNode node, final TransformationState transformations, final Set<String> flags) {
     final DeffArchive archive = new DeffArchive(node.data);
 
     if(archive.getCount() == 0) {
@@ -738,10 +745,11 @@ public final class Unpacker {
     return loadedId.equals(node.pathSegment) && !flags.contains(node.pathSegment);
   }
 
-  private static void engineOverlayExtractor(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void engineOverlayExtractor(final PathNode node, final TransformationState transformations, final Set<String> flags) {
     flags.add(node.pathSegment);
     transformations.addNode(node);
     transformations.addNode("lod_engine", node.data.slice(0xa00, 0x36228));
+    transformations.entrypoint = node.data.readUInt(0x810);
   }
 
   /**
@@ -756,7 +764,7 @@ public final class Unpacker {
     return ("SECT/DRGN21.BIN/402/3".equals(node.fullPath) || "SECT/DRGN22.BIN/402/3".equals(node.fullPath)) && node.data.size() == 0xee4;
   }
 
-  private static void drgn21_402_3_patcher(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void drgn21_402_3_patcher(final PathNode node, final TransformationState transformations, final Set<String> flags) {
     final byte[] newData = new byte[0x107c];
     node.data.copyFrom(newData);
     newData[0x1078] = 0x49;
@@ -774,7 +782,7 @@ public final class Unpacker {
     return "SECT/DRGN21.BIN/693/0".equals(node.fullPath) && node.data.size() == 0x188;
   }
 
-  private static void drgn21_693_0_patcher(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void drgn21_693_0_patcher(final PathNode node, final TransformationState transformations, final Set<String> flags) {
     final byte[] newData = new byte[0x190];
     node.data.copyFrom(newData);
     MathHelper.set(newData, 0x188, 4, 0xffffffffL);
@@ -792,7 +800,7 @@ public final class Unpacker {
     return "SECT/DRGN0.BIN/142".equals(node.fullPath) && node.data.size() == 0x1f0;
   }
 
-  private static void drgn0_142_animPatcher(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void drgn0_142_animPatcher(final PathNode node, final TransformationState transformations, final Set<String> flags) {
     final byte[] newData = new byte[node.data.size() + 0xc * 2 * 2]; // 2 objects, 2 keyframes, 0xc table pitch
     final byte[] frame = {0x0e, (byte)0xe0, (byte)0xfe, (byte)0xde, (byte)0xff, (byte)0x9d, 0x1d, 0x00, 0x28, 0x03, (byte)0xcb, 0x00};
     // Note: we only create data for object 21, object 22 can be all 0's since it's not visible
@@ -810,7 +818,7 @@ public final class Unpacker {
     return "OVL/S_ITEM.OV_".equals(node.fullPath) && !flags.contains(node.fullPath);
   }
 
-  private static void equipmentAndXpExtractor(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void equipmentAndXpExtractor(final PathNode node, final TransformationState transformations, final Set<String> flags) {
     flags.add(node.fullPath);
 
     transformations.addNode(node);
@@ -833,7 +841,7 @@ public final class Unpacker {
     return "OVL/BTTL.OV_".equals(node.fullPath) && !flags.contains(node.fullPath);
   }
 
-  private static void spellsExtractor(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void spellsExtractor(final PathNode node, final TransformationState transformations, final Set<String> flags) {
     flags.add(node.fullPath);
 
     transformations.addNode(node);
@@ -847,7 +855,7 @@ public final class Unpacker {
     return "OVL/SMAP.OV_".equals(node.fullPath) && !flags.contains("SMAP");
   }
 
-  private static void smapAssetExtractor(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void smapAssetExtractor(final PathNode node, final TransformationState transformations, final Set<String> flags) {
     flags.add("SMAP");
 
     transformations.addNode(node);
@@ -884,7 +892,7 @@ public final class Unpacker {
     return "SECT/DRGN0.BIN/5546/1".equals(node.fullPath) && node.data.size() == 0x721c;
   }
 
-  private static void drgn0_5546_1_patcher(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void drgn0_5546_1_patcher(final PathNode node, final TransformationState transformations, final Set<String> flags) {
     final byte[] newData = new byte[0x7284];
     final int jump = 0x0000_0140;
     final byte[] address1 = {(byte)0x97, 0x0a, 0x00, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00};
@@ -937,7 +945,7 @@ public final class Unpacker {
     return "SECT/DRGN0.BIN/3667/16".equals(node.fullPath) && node.data.size() == 0x538;
   }
 
-  private static void drgn0_3667_16_animPatcher(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void drgn0_3667_16_animPatcher(final PathNode node, final TransformationState transformations, final Set<String> flags) {
     transformations.replaceNode(node, new FileData(patchAnimation(node.data, 11)));
   }
 
@@ -948,7 +956,7 @@ public final class Unpacker {
     return "SECT/DRGN0.BIN/3667/17".equals(node.fullPath) && node.data.size() == 0x178;
   }
 
-  private static void drgn0_3667_17_animPatcher(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void drgn0_3667_17_animPatcher(final PathNode node, final TransformationState transformations, final Set<String> flags) {
     transformations.replaceNode(node, new FileData(patchAnimation(node.data, 11)));
   }
 
@@ -959,7 +967,7 @@ public final class Unpacker {
     return "SECT/DRGN0.BIN/3750/16".equals(node.fullPath) && node.data.size() == 0x538;
   }
 
-  private static void drgn0_3750_16_animPatcher(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void drgn0_3750_16_animPatcher(final PathNode node, final TransformationState transformations, final Set<String> flags) {
     transformations.replaceNode(node, new FileData(patchAnimation(node.data, 11)));
   }
 
@@ -990,7 +998,7 @@ public final class Unpacker {
     return node.fullPath.startsWith("SECT/DRGN1.BIN/") && !flags.contains(node.fullPath);
   }
 
-  private static void enemyAndItemScriptDamageCapPatcher(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void enemyAndItemScriptDamageCapPatcher(final PathNode node, final TransformationState transformations, final Set<String> flags) {
     flags.add(node.fullPath);
 
     for(int i = 0; i < node.data.size(); i += 4) {
@@ -1032,7 +1040,7 @@ public final class Unpacker {
     return "SECT/DRGN1.BIN/343".equals(node.fullPath) && node.data.size() == 0x3ab4 && node.data.readByte(0x3a70) == 0x8;
   }
 
-  private static void drgn1_343_patcher(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void drgn1_343_patcher(final PathNode node, final TransformationState transformations, final Set<String> flags) {
     node.data.writeByte(0x3a70, 0x3);
     transformations.addNode(node);
   }
@@ -1047,7 +1055,7 @@ public final class Unpacker {
     return false;
   }
 
-  private static void playerCombatSoundEffectsTransformer(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void playerCombatSoundEffectsTransformer(final PathNode node, final TransformationState transformations, final Set<String> flags) {
     final String end = node.fullPath.substring(node.fullPath.lastIndexOf('/') + 1);
 
     if(node.fullPath.startsWith("SECT/DRGN0.BIN/752/0/")) {
@@ -1081,7 +1089,7 @@ public final class Unpacker {
     return false;
   }
 
-  private static void playerCombatModelsAndTexturesTransformer(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void playerCombatModelsAndTexturesTransformer(final PathNode node, final TransformationState transformations, final Set<String> flags) {
     for(int charId = 0; charId < 9; charId++) {
       final String charName = getCharacterName(charId).toLowerCase();
 
@@ -1103,7 +1111,7 @@ public final class Unpacker {
     return false;
   }
 
-  private static void dragoonCombatModelsAndTexturesTransformer(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void dragoonCombatModelsAndTexturesTransformer(final PathNode node, final TransformationState transformations, final Set<String> flags) {
     for(int charId = 0; charId < 10; charId++) {
       final String charName = getCharacterName(charId).toLowerCase();
 
@@ -1125,7 +1133,7 @@ public final class Unpacker {
     return false;
   }
 
-  private static void skipPartyPermutationsTransformer(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void skipPartyPermutationsTransformer(final PathNode node, final TransformationState transformations, final Set<String> flags) {
 
   }
 
@@ -1134,7 +1142,7 @@ public final class Unpacker {
     return "OVL/S_BTLD.OV_".equals(node.fullPath) && !flags.contains(node.fullPath);
   }
 
-  private static void extractBtldDataTransformer(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void extractBtldDataTransformer(final PathNode node, final TransformationState transformations, final Set<String> flags) {
     flags.add(node.fullPath);
 
     transformations.addNode(node);
@@ -1146,7 +1154,7 @@ public final class Unpacker {
     return "player_combat_script".equals(node.fullPath) && node.data.readInt(4) != MrgArchive.MAGIC && !flags.contains(node.fullPath);
   }
 
-  private static void playerScriptDamageCapsTransformer(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void playerScriptDamageCapsTransformer(final PathNode node, final TransformationState transformations, final Set<String> flags) {
     flags.add(node.fullPath);
 
     node.data.writeInt(0x9f0, 999999999);
@@ -1162,7 +1170,7 @@ public final class Unpacker {
     return "SECT/DRGN0.BIN/6666".equals(node.fullPath) && node.data.readByte(0x24a8) != 0;
   }
 
-  private static void uiPatcherTransformer(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void uiPatcherTransformer(final PathNode node, final TransformationState transformations, final Set<String> flags) {
     // Remove the baked-in slashes in the fractions for character cards
     for(int i = 0; i < 3; i++) {
       node.data.writeByte(0x24a8 + i * 0x14, 0);
@@ -1182,7 +1190,7 @@ public final class Unpacker {
     return false;
   }
 
-  private static void monsterSfxTransformer(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void monsterSfxTransformer(final PathNode node, final TransformationState transformations, final Set<String> flags) {
     final int slash = node.fullPath.indexOf('/', 16);
     final int fileId = Integer.parseInt(node.fullPath, 15, slash, 10);
     final int index = Integer.parseInt(node.fullPath, slash + 1, node.fullPath.length(), 10);
@@ -1204,7 +1212,7 @@ public final class Unpacker {
     return false;
   }
 
-  private static void monsterTextureTransformer(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void monsterTextureTransformer(final PathNode node, final TransformationState transformations, final Set<String> flags) {
     final int slash = node.fullPath.indexOf('/', 16);
     final int fileId = Integer.parseInt(node.fullPath, 15, slash, 10);
     final int index = Integer.parseInt(node.fullPath, slash + 1, node.fullPath.length(), 10);
@@ -1388,7 +1396,7 @@ public final class Unpacker {
     return false;
   }
 
-  private static void battlePhaseSfxTransformer(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void battlePhaseSfxTransformer(final PathNode node, final TransformationState transformations, final Set<String> flags) {
     final int fileId = Integer.parseInt(node.fullPath, 15, node.fullPath.indexOf('/', 16), 10);
 
     final String entity;
@@ -1418,8 +1426,190 @@ public final class Unpacker {
     return "lod_engine".equals(node.fullPath) && !flags.contains(node.pathSegment);
   }
 
-  private static void lodEngineExtractor(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void lodEngineExtractor(final PathNode node, final TransformationState transformations, final Set<String> flags) {
     flags.add(node.pathSegment);
+
+    final CodeParser locateGameInit = new CodeParser(
+      new AdvanceAction(0x84), // Advance to a block a few words before the jump to mainBpe
+      LocateCodeAction.builder() // Ensure we are where we expect to be
+        .op(0x03a0_f021)
+        .op(0x3c1f_0000, 0xffff_0000)
+        .op(0x8fff_0000, 0xffff_0000)
+        .op(0x0000_0000)
+        .op(0x0c00_0000, 0xfc00_0000)
+        .build(),
+      new AdvanceAction(0x10), // Advance to the jump to mainBpe
+      new FollowJalAction(0x1_0000), // Follow the jump
+      LocateCodeAction.builder() // Ensure we are where we expect to be
+        .op(0x27bd_ffe8)
+        .op(0xafbf_0010)
+        .op(0x0c00_0000, 0xfc00_0000)
+        .op(0x0000_0000)
+        .op(0x0c00_0000, 0xfc00_0000)
+        .build(),
+      new AdvanceAction(0x10), // Advance to the jump to gameInit
+      new FollowJalAction(0x1_0000) // Follow the jump
+    );
+
+    final CodeParser locateGameLoop = new CodeParser(
+      new AdvanceAction(0x84), // Advance to a block a few words before the jump to mainBpe
+      LocateCodeAction.builder() // Ensure we are where we expect to be
+        .op(0x03a0_f021)
+        .op(0x3c1f_0000, 0xffff_0000)
+        .op(0x8fff_0000, 0xffff_0000)
+        .op(0x0000_0000)
+        .op(0x0c00_0000, 0xfc00_0000)
+        .build(),
+      new AdvanceAction(0x10), // Advance to the jump to mainBpe
+      new FollowJalAction(0x1_0000), // Follow the jump
+      new AdvanceAction(0x10),
+      LocateCodeAction.builder() // Ensure we are where we expect to be
+        .op(0x0000_0000)
+        .op(0x0c00_0000, 0xfc00_0000)
+        .op(0x0000_0000)
+        .op(0x0c00_0000, 0xfc00_0000)
+        .op(0x0000_0000)
+        .op(0x27bd_ffd0) // JP has an extra method call, so we have to anchor to the first op in the next method
+        .build(),
+      new AdvanceAction(0xc), // Advance to the jump to gameLoop
+      new FollowJalAction(0x1_0000) // Follow the jump
+    );
+
+    final CodeParser locateShadow = new CodeParser(
+      new AdvanceAction(0x1d4),
+      LocateCodeAction.builder()
+        .op(0x3442_0000, 0xffff_0000)
+        .op(0x00a0_2021)
+        .op(0x0c00_0000, 0xfc00_0000)
+        .op(0x0045_2823)
+        .op(0x0c00_0000, 0xfc00_0000)
+        .build(),
+      new AdvanceAction(0x10),
+      new FollowJalAction(0x1_0000),
+      new AdvanceAction(0x160),
+      LocateCodeAction.builder()
+        .op(0x3c10_0000, 0xffff_0000)
+        .op(0x2610_0000, 0xffff_0000)
+        .op(0x0200_2021)
+        .op(0x3c05_0000, 0xffff_0000)
+        .op(0x24a5_0000, 0xffff_0000)
+        .build(),
+      new AdvanceAction(0xc),
+      new FollowLuiAddPointerAction(0x1_0000)
+    );
+
+    final CodeParser locateFont = new CodeParser(
+      new AdvanceAction(0x1ac),
+      LocateCodeAction.builder()
+        .op(0x0c00_0000, 0xfc00_0000)
+        .op(0xac40_0000, 0xffff_0000)
+        .op(0x0c00_0000, 0xfc00_0000)
+        .op(0x0000_0000)
+        .op(0x0c00_0000, 0xfc00_0000)
+        .build(),
+      new AdvanceAction(0x10),
+      new FollowJalAction(0x1_0000),
+      LocateCodeAction.builder()
+        .op(0x27bd_ffb8)
+        .op(0xafbf_0040)
+        .op(0xafb1_003c)
+        .op(0xafb0_0038)
+        .op(0x3c04_0000, 0xffff_0000)
+        .op(0x2484_0000, 0xffff_0000)
+        .build(),
+      new AdvanceAction(0x10),
+      new FollowLuiAddPointerAction(0x1_0000)
+    );
+
+    final CodeParser locateItems = new CodeParser(
+      LocateCodeAction.builder() // Not much to anchor to here, we'll just hope for the best
+        .op(0x27bd_ffe8)
+        .op(0xafb0_0010)
+        .op(0x3c10_0000, 0xffff_0000)
+        .op(0xafbf_0014)
+        .op(0x0c00_0000, 0xfc00_0000)
+        .op(0x0000_0000)
+        .op(0x0c00_0000, 0xfc00_0000)
+        .op(0x0000_0000)
+        .op(0x0c00_0000, 0xfc00_0000)
+        .op(0x0000_0000)
+        .op(0x0c00_0000, 0xfc00_0000)
+        .op(0x0000_0000)
+        .op(0x0c00_0000, 0xfc00_0000)
+        .op(0x0000_0000)
+        .op(0x0c00_0000, 0xfc00_0000)
+        .op(0x0000_0000)
+        .op(0x0c00_0000, 0xfc00_0000)
+        .op(0x0000_0000)
+        .build(),
+      new AdvanceAction(0x40),
+      new FollowJalAction(0x1_0000), // executeLoadersAndScripts
+      new AdvanceAction(0x10),
+      LocateCodeAction.builder()
+        .op(0x1040_000e)
+        .op(0x3c02_0000, 0xffff_0000)
+        .op(0x3c03_0000, 0xffff_0000)
+        .op(0x8c42_0000, 0xffff_0000)
+        .build(),
+      new AdvanceAction(0x4),
+      new FollowLuiAddPointerAction(0x1_0000, 0, 2),
+      new AdvanceAction(0x60),
+      new FollowPointerAction(0x1_0000), // FUN_80018658
+      new AdvanceAction(0x14),
+      LocateCodeAction.builder()
+        .op(0x2402_0001)
+        .op(0xa502_0008)
+        .op(0xad1d_0004)
+        .op(0x0100_e821)
+        .op(0x0c00_0000, 0xfc00_0000)
+        .build(),
+      new AdvanceAction(0x14),
+      new FollowJalAction(0x1_0000), // tickBattle
+      new AdvanceAction(0x24),
+      LocateCodeAction.builder()
+        .op(0x3c03_0000, 0xffff_0000)
+        .op(0x3c02_0000, 0xffff_0000)
+        .op(0x8c42_0000, 0xffff_0000)
+        .op(0x2463_0000, 0xffff_0000)
+        .build(),
+      new FollowLuiAddPointerAction(0x1_0000, 0, 3),
+      new AdvanceAction(0x74),
+      new FollowPointerAction(0x1_0000),
+      new AdvanceAction(0xc),
+      LocateCodeAction.builder()
+        .op(0x8e22_0000, 0xffff_0000)
+        .op(0xafbf_0018)
+        .op(0x1040_0003)
+        .op(0xafb0_0010)
+        .op(0x0c00_0000, 0xfc00_0000)
+        .build(),
+      new AdvanceAction(0x10),
+      new FollowJalAction(0x1_0000),
+      new AdvanceAction(0x274),
+      LocateCodeAction.builder()
+        .op(0x2442_0001)
+        .op(0x0c00_0000, 0xfc00_0000)
+        .op(0xac62_0000, 0xffff_0000)
+        .op(0x0800_0000, 0xffff_0000)
+        .op(0x0000_0000)
+        .op(0x0c00_0000, 0xfc00_0000)
+        .build(),
+      new AdvanceAction(0x14),
+      new FollowJalAction(0x1_0000)
+    );
+
+    final int shadowAddr;
+    final int fontAddr;
+    try {
+      final int gameInitAddr = locateGameInit.parse(node.data, (int)(transformations.entrypoint - 0x8001_0000L));
+      final int gameLoopAddr = locateGameLoop.parse(node.data, (int)(transformations.entrypoint - 0x8001_0000L));
+      shadowAddr = locateShadow.parse(node.data, gameInitAddr);
+      fontAddr = locateFont.parse(node.data, gameInitAddr) - 0x4;
+    } catch(final CodeParserException e) {
+      throw new RuntimeException(e);
+    }
+
+    if(true)throw new RuntimeException("aaaaaa");
 
     // Calculate a rough offset based on the first US pointer
     final int offset = node.data.readInt(0) - 0x800c6688;
@@ -1428,45 +1618,21 @@ public final class Unpacker {
       transformations.addNode("items/" + i + ".ditm", node.data.slice(offset + 0x3f2ac + i * 0xc, 0xc));
     }
 
-    final int shadowCtmdAddr = locateNearbyCode(node.data, 0x3d0, 0xc, 0x0, 0x0, 0x41, 0x0, 0x1);
     final int shadowCtmdSize = 0x14c;
     final int shadowAnimSize = 0x28;
 
     transformations.addNode(node);
-    transformations.addNode("shadow.ctmd", node.data.slice(shadowCtmdAddr, shadowCtmdSize));
-    transformations.addNode("shadow.anim", node.data.slice(shadowCtmdAddr + shadowCtmdSize, shadowAnimSize));
-    transformations.addNode("shadow.tim", getTimSize(node.data.slice(shadowCtmdAddr + shadowCtmdSize + shadowAnimSize)));
-    transformations.addNode("font.tim", getTimSize(node.data.slice(offset + 0xb6744)));
-  }
-
-  private static int locateNearbyCode(final FileData data, final int offset, final int... code) {
-    for(int i = 0; i < 20; i++) {
-      // Oscillate back and forth between positive and negative
-      final int i2 = (i / 2 * (int)Math.signum(i % 2 - 0.5f)) * 0x4;
-
-      if(codeMatches(data, offset + i2, code)) {
-        return offset + i2;
-      }
-    }
-
-    return -1;
-  }
-
-  private static boolean codeMatches(final FileData data, final int offset, final int... code) {
-    for(int i = 0; i < code.length; i++) {
-      if(data.readInt(offset + i * 0x4) != code[i]) {
-        return false;
-      }
-    }
-
-    return true;
+    transformations.addNode("shadow.ctmd", node.data.slice(shadowAddr, shadowCtmdSize));
+    transformations.addNode("shadow.anim", node.data.slice(shadowAddr + shadowCtmdSize, shadowAnimSize));
+    transformations.addNode("shadow.tim", getTimSize(node.data.slice(shadowAddr + shadowCtmdSize + shadowAnimSize)));
+    transformations.addNode("font.tim", getTimSize(node.data.slice(fontAddr)));
   }
 
   private static boolean xaDiscriminator(final PathNode node, final Set<String> flags) {
     return node.fullPath.endsWith(".XA");
   }
 
-  private static void xaTransformer(final PathNode node, final Transformations transformations, final Set<String> flags) {
+  private static void xaTransformer(final PathNode node, final TransformationState transformations, final Set<String> flags) {
     XaTranscoder.transform(node, transformations);
   }
 
@@ -1629,6 +1795,6 @@ public final class Unpacker {
 
   @FunctionalInterface
   public interface Transformer {
-    void transform(final PathNode node, final Transformations transformations, final Set<String> flags);
+    void transform(final PathNode node, final TransformationState transformations, final Set<String> flags);
   }
 }

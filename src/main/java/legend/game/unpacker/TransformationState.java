@@ -3,12 +3,14 @@ package legend.game.unpacker;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Transformations {
+public class TransformationState {
   private final PathNode root;
   private final Queue<PathNode> transformationQueue;
   private final AtomicInteger remaining = new AtomicInteger();
 
-  public Transformations(final PathNode root, final Queue<PathNode> transformationQueue) {
+  public long entrypoint;
+
+  public TransformationState(final PathNode root, final Queue<PathNode> transformationQueue) {
     this.root = root;
     this.transformationQueue = transformationQueue;
     this.remaining.set(transformationQueue.size());
