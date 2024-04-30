@@ -1,12 +1,11 @@
 package legend.game.inventory.screens;
 
+import legend.core.Config;
 import legend.core.MathHelper;
-import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.memory.types.IntRef;
 import legend.core.opengl.MeshObj;
-import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.combat.types.EnemyDrop;
@@ -15,7 +14,6 @@ import legend.game.types.LodString;
 import legend.game.types.Renderable58;
 import legend.game.types.Translucency;
 
-import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.SItem.additions_8011a064;
 import static legend.game.SItem.cacheCharacterSlots;
@@ -81,7 +79,7 @@ public class PostBattleScreen extends MenuScreen {
   private MenuState inventoryMenuState_800bdc28 = MenuState.INIT_0;
   private MenuState confirmDest_800bdc30;
 
-  private final MeshObj[] resultsBackgroundObj = new MeshObj[6];
+  private final MeshObj[] resultsBackgroundObj = new MeshObj[7];
   private final MV resultsBackgroundTransforms = new MV();
 
   @Method(0x8010d614L)
@@ -444,9 +442,9 @@ public class PostBattleScreen extends MenuScreen {
 
     //LAB_8010e09c
     //LAB_8010e0a0
-    this.drawResultsBackground(166,  22, 136, 192, 1);
-    this.drawResultsBackground( 14,  22, 144, 120, 1);
-    this.drawResultsBackground( 14, 150, 144,  64, 1);
+    this.drawResultsBackground(166,  22, 136, 192, Config.resultsScreenColour() ? 7 : 1);
+    this.drawResultsBackground( 14,  22, 144, 120, Config.resultsScreenColour() ? 7 : 1);
+    this.drawResultsBackground( 14, 150, 144,  64, Config.resultsScreenColour() ? 7 : 1);
   }
 
   /**
@@ -610,6 +608,32 @@ public class PostBattleScreen extends MenuScreen {
       .monochrome(1, 0.0f)
       .monochrome(3, 0.0f)
       .build();
+
+    setResultsScreenColouredBackground();
+  }
+
+  private void setResultsScreenColouredBackground() {
+    final int rgb1 = Config.getResultsScreenRgb(0);
+    final int rgb2 = Config.getResultsScreenRgb(1);
+    final int rgb3 = Config.getResultsScreenRgb(2);
+    final int rgb4 = Config.getResultsScreenRgb(3);
+
+    if(this.resultsBackgroundObj[6] != null) {
+      this.resultsBackgroundObj[6].delete();
+      this.resultsBackgroundObj[6] = null;
+    }
+
+    this.resultsBackgroundObj[6] = new QuadBuilder("Results Screen Background Coloured")
+      .size(1.0f, 1.0f)
+      .translucency(Translucency.of(Config.getResultsScreenTransparencyMode()))
+      .monochrome(0, 128.0f / 255.0f)
+      .rgb(0, (rgb1 & 0xff) / 255.0f, (rgb1 >> 8 & 0xff) / 255.0f, (rgb1 >> 16 & 0xff) / 255.0f)
+      .rgb(1, (rgb2 & 0xff) / 255.0f, (rgb2 >> 8 & 0xff) / 255.0f, (rgb2 >> 16 & 0xff) / 255.0f)
+      .rgb(2, (rgb3 & 0xff) / 255.0f, (rgb3 >> 8 & 0xff) / 255.0f, (rgb3 >> 16 & 0xff) / 255.0f)
+      .rgb(3, (rgb4 & 0xff) / 255.0f, (rgb4 >> 8 & 0xff) / 255.0f, (rgb4 >> 16 & 0xff) / 255.0f)
+      .build();
+
+    Config.setResultsScreenColourChange(false);
   }
 
   @Method(0x8010d078L)
@@ -642,6 +666,14 @@ public class PostBattleScreen extends MenuScreen {
 
         case 6 -> { //Spell border
           z = 35;
+        }
+
+        case 7 -> { //Background gradient
+          z = 36;
+
+          if(Config.getResultsScreenColourChange()) {
+            setResultsScreenColouredBackground();
+          }
         }
 
         default -> z = 0;

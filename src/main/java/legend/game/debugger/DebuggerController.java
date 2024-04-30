@@ -10,6 +10,7 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.stage.Stage;
 import legend.core.Config;
+import legend.game.Scus94491BpeSegment_8002;
 import legend.game.combat.AdditionMode;
 import legend.game.combat.SEffe;
 import legend.game.modding.coremod.CoreMod;
@@ -24,6 +25,7 @@ import org.legendofdragoon.modloader.events.EventListener;
 
 import static legend.core.GameEngine.CONFIG;
 import static legend.core.GameEngine.EVENTS;
+import static legend.game.Scus94491BpeSegment_8002.setTextBoxColour;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8005.submapCut_80052c30;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
@@ -113,12 +115,6 @@ public class DebuggerController {
   @FXML
   public CheckBox textBoxColour;
   @FXML
-  public RadioButton textBoxBase;
-  @FXML
-  public RadioButton textBoxHorizontal;
-  @FXML
-  public RadioButton textBoxVertical;
-  @FXML
   public Spinner<Integer> textBox1R;
   @FXML
   public Spinner<Integer> textBox1G;
@@ -143,31 +139,35 @@ public class DebuggerController {
   @FXML
   public Spinner<Integer> textBox4B;
   @FXML
-  public Spinner<Integer> textBox5R;
-  @FXML
-  public Spinner<Integer> textBox5G;
-  @FXML
-  public Spinner<Integer> textBox5B;
-  @FXML
-  public Spinner<Integer> textBox6R;
-  @FXML
-  public Spinner<Integer> textBox6G;
-  @FXML
-  public Spinner<Integer> textBox6B;
-  @FXML
-  public Spinner<Integer> textBox7R;
-  @FXML
-  public Spinner<Integer> textBox7G;
-  @FXML
-  public Spinner<Integer> textBox7B;
-  @FXML
-  public Spinner<Integer> textBox8R;
-  @FXML
-  public Spinner<Integer> textBox8G;
-  @FXML
-  public Spinner<Integer> textBox8B;
-  @FXML
   public Spinner<Integer> textBoxTransparencyMode;
+  @FXML
+  public CheckBox resultsScreenColour;
+  @FXML
+  public Spinner<Integer> resultsScreen1R;
+  @FXML
+  public Spinner<Integer> resultsScreen1G;
+  @FXML
+  public Spinner<Integer> resultsScreen1B;
+  @FXML
+  public Spinner<Integer> resultsScreen2R;
+  @FXML
+  public Spinner<Integer> resultsScreen2G;
+  @FXML
+  public Spinner<Integer> resultsScreen2B;
+  @FXML
+  public Spinner<Integer> resultsScreen3R;
+  @FXML
+  public Spinner<Integer> resultsScreen3G;
+  @FXML
+  public Spinner<Integer> resultsScreen3B;
+  @FXML
+  public Spinner<Integer> resultsScreen4R;
+  @FXML
+  public Spinner<Integer> resultsScreen4G;
+  @FXML
+  public Spinner<Integer> resultsScreen4B;
+  @FXML
+  public Spinner<Integer> resultsScreenTransparencyMode;
 
   public void initialize() {
     this.encounterId.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, Integer.MAX_VALUE, 0));
@@ -206,33 +206,21 @@ public class DebuggerController {
     this.textBox4R.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getTextBoxRgb(3) & 0xff)));
     this.textBox4G.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(3) >> 8) & 0xff)));
     this.textBox4B.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(3) >> 16) & 0xff)));
-    this.textBox5R.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getTextBoxRgb(4) & 0xff)));
-    this.textBox5G.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(4) >> 8) & 0xff)));
-    this.textBox5B.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(4) >> 16) & 0xff)));
-    this.textBox6R.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getTextBoxRgb(5) & 0xff)));
-    this.textBox6G.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(5) >> 8) & 0xff)));
-    this.textBox6B.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(5) >> 16) & 0xff)));
-    this.textBox7R.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getTextBoxRgb(6) & 0xff)));
-    this.textBox7G.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(6) >> 8) & 0xff)));
-    this.textBox7B.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(6) >> 16) & 0xff)));
-    this.textBox8R.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getTextBoxRgb(7) & 0xff)));
-    this.textBox8G.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(7) >> 8) & 0xff)));
-    this.textBox8B.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getTextBoxRgb(7) >> 16) & 0xff)));
     this.textBoxTransparencyMode.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, Config.getTextBoxTransparencyMode()));
-
-    if(Config.getTextBoxColourMode() == 0) {
-      this.textBoxBase.setSelected(true);
-      this.textBoxHorizontal.setSelected(false);
-      this.textBoxVertical.setSelected(false);
-    } else if(Config.getTextBoxColourMode() == 1) {
-      this.textBoxBase.setSelected(false);
-      this.textBoxHorizontal.setSelected(true);
-      this.textBoxVertical.setSelected(false);
-    } else if(Config.getTextBoxColourMode() == 2) {
-      this.textBoxBase.setSelected(false);
-      this.textBoxHorizontal.setSelected(false);
-      this.textBoxVertical.setSelected(true);
-    }
+    this.resultsScreenColour.setSelected(Config.resultsScreenColour());
+    this.resultsScreen1R.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getResultsScreenRgb(0) & 0xff)));
+    this.resultsScreen1G.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getResultsScreenRgb(0) >> 8) & 0xff)));
+    this.resultsScreen1B.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getResultsScreenRgb(0) >> 16) & 0xff)));
+    this.resultsScreen2R.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getResultsScreenRgb(1) & 0xff)));
+    this.resultsScreen2G.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getResultsScreenRgb(1) >> 8) & 0xff)));
+    this.resultsScreen2B.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getResultsScreenRgb(1) >> 16) & 0xff)));
+    this.resultsScreen3R.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getResultsScreenRgb(2) & 0xff)));
+    this.resultsScreen3G.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getResultsScreenRgb(2) >> 8) & 0xff)));
+    this.resultsScreen3B.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getResultsScreenRgb(2) >> 16) & 0xff)));
+    this.resultsScreen4R.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, (Config.getResultsScreenRgb(3) & 0xff)));
+    this.resultsScreen4G.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getResultsScreenRgb(3) >> 8) & 0xff)));
+    this.resultsScreen4B.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 255, ((Config.getResultsScreenRgb(3) >> 16) & 0xff)));
+    this.resultsScreenTransparencyMode.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, Config.getResultsScreenTransparencyMode()));
 
     EVENTS.register(this);
   }
@@ -495,23 +483,8 @@ public class DebuggerController {
   }
 
   @FXML
-  private void setTextBoxRadio(final ActionEvent event) {
-    if((event.toString().contains("textBoxBase"))) {
-      this.textBoxBase.setSelected(true);
-      this.textBoxHorizontal.setSelected(false);
-      this.textBoxVertical.setSelected(false);
-      Config.setTextBoxColourMode(0);
-    } else if (event.toString().contains("textBoxHorizontal")) {
-      this.textBoxBase.setSelected(false);
-      this.textBoxHorizontal.setSelected(true);
-      this.textBoxVertical.setSelected(false);
-      Config.setTextBoxColourMode(1);
-    } else if (event.toString().contains("textBoxVertical")) {
-      this.textBoxBase.setSelected(false);
-      this.textBoxHorizontal.setSelected(false);
-      this.textBoxVertical.setSelected(true);
-      Config.setTextBoxColourMode(2);
-    }
+  private void toggleResultsScreenColour(final ActionEvent event) {
+    Config.toggleResultsScreenColour();
   }
 
   @FXML
@@ -587,79 +560,84 @@ public class DebuggerController {
   }
 
   @FXML
-  private void setTextBox5() {
-    final byte[] rgbArray = {
-      this.textBox5R.getValueFactory().getValue().byteValue(),
-      this.textBox5G.getValueFactory().getValue().byteValue(),
-      this.textBox5B.getValueFactory().getValue().byteValue(),
-      (byte)0x00,
-    };
-
-    final int rgb =
-      (0xff & rgbArray[3]) << 24 |
-        (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8 |
-        0xff & rgbArray[0];
-
-    Config.setTextBoxRgb(4, rgb);
-  }
-
-  @FXML
-  private void setTextBox6() {
-    final byte[] rgbArray = {
-      this.textBox6R.getValueFactory().getValue().byteValue(),
-      this.textBox6G.getValueFactory().getValue().byteValue(),
-      this.textBox6B.getValueFactory().getValue().byteValue(),
-      (byte)0x00,
-    };
-
-    final int rgb =
-      (0xff & rgbArray[3]) << 24 |
-        (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8 |
-        0xff & rgbArray[0];
-
-    Config.setTextBoxRgb(5, rgb);
-  }
-
-  @FXML
-  private void setTextBox7() {
-    final byte[] rgbArray = {
-      this.textBox7R.getValueFactory().getValue().byteValue(),
-      this.textBox7G.getValueFactory().getValue().byteValue(),
-      this.textBox7B.getValueFactory().getValue().byteValue(),
-      (byte)0x00,
-    };
-
-    final int rgb =
-      (0xff & rgbArray[3]) << 24 |
-        (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8 |
-        0xff & rgbArray[0];
-
-    Config.setTextBoxRgb(6, rgb);
-  }
-
-  @FXML
-  private void setTextBox8() {
-    final byte[] rgbArray = {
-      this.textBox8R.getValueFactory().getValue().byteValue(),
-      this.textBox8G.getValueFactory().getValue().byteValue(),
-      this.textBox8B.getValueFactory().getValue().byteValue(),
-      (byte)0x00,
-    };
-
-    final int rgb =
-      (0xff & rgbArray[3]) << 24 |
-        (0xff & rgbArray[2]) << 16 |
-        (0xff & rgbArray[1]) << 8 |
-        0xff & rgbArray[0];
-
-    Config.setTextBoxRgb(7, rgb);
-  }
-
-  @FXML
   private void setTextBoxTransparencyMode() {
     Config.setTextBoxTransparencyMode(this.textBoxTransparencyMode.getValue());
+  }
+
+  @FXML
+  private void setResultsScreen1() {
+    final byte[] rgbArray = {
+      this.resultsScreen1R.getValueFactory().getValue().byteValue(),
+      this.resultsScreen1G.getValueFactory().getValue().byteValue(),
+      this.resultsScreen1B.getValueFactory().getValue().byteValue(),
+      (byte)0x00,
+    };
+
+    final int rgb =
+      (0xff & rgbArray[3]) << 24 |
+        (0xff & rgbArray[2]) << 16 |
+        (0xff & rgbArray[1]) << 8 |
+        0xff & rgbArray[0];
+
+    Config.setResultsScreenRgb(0, rgb);
+  }
+
+  @FXML
+  private void setResultsScreen2() {
+    final byte[] rgbArray = {
+      this.resultsScreen2R.getValueFactory().getValue().byteValue(),
+      this.resultsScreen2G.getValueFactory().getValue().byteValue(),
+      this.resultsScreen2B.getValueFactory().getValue().byteValue(),
+      (byte)0x00,
+    };
+
+    final int rgb =
+      (0xff & rgbArray[3]) << 24 |
+        (0xff & rgbArray[2]) << 16 |
+        (0xff & rgbArray[1]) << 8 |
+        0xff & rgbArray[0];
+
+    Config.setResultsScreenRgb(1, rgb);
+  }
+
+  @FXML
+  private void setResultsScreen3() {
+    final byte[] rgbArray = {
+      this.resultsScreen3R.getValueFactory().getValue().byteValue(),
+      this.resultsScreen3G.getValueFactory().getValue().byteValue(),
+      this.resultsScreen3B.getValueFactory().getValue().byteValue(),
+      (byte)0x00,
+    };
+
+    final int rgb =
+      (0xff & rgbArray[3]) << 24 |
+        (0xff & rgbArray[2]) << 16 |
+        (0xff & rgbArray[1]) << 8 |
+        0xff & rgbArray[0];
+
+    Config.setResultsScreenRgb(2, rgb);
+  }
+
+  @FXML
+  private void setResultsScreen4() {
+    final byte[] rgbArray = {
+      this.resultsScreen4R.getValueFactory().getValue().byteValue(),
+      this.resultsScreen4G.getValueFactory().getValue().byteValue(),
+      this.resultsScreen4B.getValueFactory().getValue().byteValue(),
+      (byte)0x00,
+    };
+
+    final int rgb =
+      (0xff & rgbArray[3]) << 24 |
+        (0xff & rgbArray[2]) << 16 |
+        (0xff & rgbArray[1]) << 8 |
+        0xff & rgbArray[0];
+
+    Config.setResultsScreenRgb(3, rgb);
+  }
+
+  @FXML
+  private void setResultsScreenTransparencyMode() {
+    Config.setResultsScreenTransparencyMode(this.resultsScreenTransparencyMode.getValue());
   }
 }

@@ -26,6 +26,9 @@ public final class Config {
   private static final Vector3f uiColour = new Vector3f();
   public static final Vector3f defaultUiColour = new Vector3f(0.0f, 0x29 / 255.0f, 0x9f / 255.0f);
 
+  private static boolean textBoxColourChange = false;
+  private static boolean resultsScreenColourChange = false;
+
   static {
     properties.setProperty("window_width", "640");
     properties.setProperty("window_height", "480");
@@ -58,19 +61,21 @@ public final class Config {
     properties.setProperty("textbox_colour4_r", "0");
     properties.setProperty("textbox_colour4_g", "0");
     properties.setProperty("textbox_colour4_b", "0");
-    properties.setProperty("textbox_colour5_r", "0");
-    properties.setProperty("textbox_colour5_g", "0");
-    properties.setProperty("textbox_colour5_b", "0");
-    properties.setProperty("textbox_colour6_r", "0");
-    properties.setProperty("textbox_colour6_g", "0");
-    properties.setProperty("textbox_colour6_b", "0");
-    properties.setProperty("textbox_colour7_r", "0");
-    properties.setProperty("textbox_colour7_g", "0");
-    properties.setProperty("textbox_colour7_b", "0");
-    properties.setProperty("textbox_colour8_r", "0");
-    properties.setProperty("textbox_colour8_g", "0");
-    properties.setProperty("textbox_colour8_b", "0");
     properties.setProperty("textbox_transparency_mode", "0");
+    properties.setProperty("results_screen_colour", "false");
+    properties.setProperty("results_screen_colour1_r", "0");
+    properties.setProperty("results_screen_colour1_g", "0");
+    properties.setProperty("results_screen_colour1_b", "0");
+    properties.setProperty("results_screen_colour2_r", "0");
+    properties.setProperty("results_screen_colour2_g", "0");
+    properties.setProperty("results_screen_colour2_b", "0");
+    properties.setProperty("results_screen_colour3_r", "0");
+    properties.setProperty("results_screen_colour3_g", "0");
+    properties.setProperty("results_screen_colour3_b", "0");
+    properties.setProperty("results_screen_colour4_r", "0");
+    properties.setProperty("results_screen_colour4_g", "0");
+    properties.setProperty("results_screen_colour4_b", "0");
+    properties.setProperty("results_screen_transparency_mode", "0");
   }
 
   private static int gameSpeedMultiplier = 1;
@@ -133,19 +138,20 @@ public final class Config {
     final int g = readInt("battle_ui_g", 0, 0, 255);
     final int b = readInt("battle_ui_b", 0, 0, 255);
 
-    return uiColour.set(r / 255.0f, g / 255.0f, b / 255.0f);
+    return uiColour.set(b / 255.0f, g / 255.0f, r / 255.0f);
   }
 
   public static void setBattleRgb(final int rgb) {
     final int[] rgbArray = {
+      ((rgb >> 24) & 0xff),
       ((rgb >> 16) & 0xff),
       ((rgb >> 8) & 0xff),
       (rgb & 0xff)
     };
 
-    properties.setProperty("battle_ui_r", String.valueOf(rgbArray[2]));
-    properties.setProperty("battle_ui_g", String.valueOf(rgbArray[1]));
-    properties.setProperty("battle_ui_b", String.valueOf(rgbArray[0]));
+    properties.setProperty("battle_ui_r", String.valueOf(rgbArray[3]));
+    properties.setProperty("battle_ui_g", String.valueOf(rgbArray[2]));
+    properties.setProperty("battle_ui_b", String.valueOf(rgbArray[1]));
     properties.setProperty("battle_ui_colour_change", "true");
   }
 
@@ -252,6 +258,7 @@ public final class Config {
     properties.setProperty("textbox_colour" + textbox + "_r", String.valueOf(rgbArray[3]));
     properties.setProperty("textbox_colour" + textbox + "_g", String.valueOf(rgbArray[2]));
     properties.setProperty("textbox_colour" + textbox + "_b", String.valueOf(rgbArray[1]));
+    setTextBoxColourChange(true);
   }
 
   public static int getTextBoxTransparencyMode() {
@@ -260,6 +267,70 @@ public final class Config {
 
   public static void setTextBoxTransparencyMode(final int value) {
     properties.setProperty("textbox_transparency_mode", String.valueOf(value));
+    setTextBoxColourChange(true);
+  }
+
+  public static boolean getTextBoxColourChange() {
+    return textBoxColourChange;
+  }
+
+  public static void setTextBoxColourChange(final boolean state) {
+    textBoxColourChange = state;
+  }
+
+  public static int getResultsScreenRgb(final int vertex) {
+    final int[] rgbArray = {
+      readInt("results_screen_colour" + vertex + "_r", 0, 0, 255),
+      readInt("results_screen_colour" + vertex + "_g", 0, 0, 255),
+      readInt("results_screen_colour" + vertex + "_b", 0, 0, 255),
+      0x00,
+    };
+
+    return (
+      (0xff & rgbArray[3]) << 24 |
+        (0xff & rgbArray[2]) << 16 |
+        (0xff & rgbArray[1]) << 8 |
+        0xff & rgbArray[0]
+    );
+  }
+
+  public static void setResultsScreenRgb(final int vertex, final int rgb) {
+    final int[] rgbArray = {
+      ((rgb >> 24) & 0xff),
+      ((rgb >> 16) & 0xff),
+      ((rgb >> 8) & 0xff),
+      (rgb & 0xff)
+    };
+
+    properties.setProperty("results_screen_colour" + vertex + "_r", String.valueOf(rgbArray[3]));
+    properties.setProperty("results_screen_colour" + vertex + "_g", String.valueOf(rgbArray[2]));
+    properties.setProperty("results_screen_colour" + vertex + "_b", String.valueOf(rgbArray[1]));
+    setResultsScreenColourChange(true);
+  }
+
+  public static int getResultsScreenTransparencyMode() {
+    return readInt("results_screen_transparency_mode", 0, 0, 10);
+  }
+
+  public static void setResultsScreenTransparencyMode(final int value) {
+    properties.setProperty("results_screen_transparency_mode", String.valueOf(value));
+    setResultsScreenColourChange(true);
+  }
+
+  public static boolean resultsScreenColour() {
+    return readBool("results_screen_colour", false);
+  }
+
+  public static void toggleResultsScreenColour() {
+    properties.setProperty("results_screen_colour", String.valueOf(!resultsScreenColour()));
+  }
+
+  public static boolean getResultsScreenColourChange() {
+    return resultsScreenColourChange;
+  }
+
+  public static void setResultsScreenColourChange(final boolean state) {
+    resultsScreenColourChange = state;
   }
 
   private static int readInt(final String key, final int defaultVal, final int min, final int max) {

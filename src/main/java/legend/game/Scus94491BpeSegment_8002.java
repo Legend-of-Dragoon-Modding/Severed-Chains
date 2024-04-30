@@ -1,5 +1,6 @@
 package legend.game;
 
+import legend.core.Config;
 import legend.core.MathHelper;
 import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
@@ -172,6 +173,7 @@ public final class Scus94491BpeSegment_8002 {
 
   private static Obj textboxBackgroundObj;
   private static final Obj[] textboxBorderObjs = new Obj[8];
+  private static Obj textboxBackgroundColouredObj;
 
   /** One per animation frame */
   private static final Obj[] textboxArrowObjs = new Obj[7];
@@ -1899,6 +1901,32 @@ public final class Scus94491BpeSegment_8002 {
       .size(1.0f, 12.0f)
       .build();
     textboxSelectionObj.persistent = true;
+
+    setTextBoxColour();
+  }
+
+  public static void setTextBoxColour() {
+    final int rgb1 = Config.getTextBoxRgb(0);
+    final int rgb2 = Config.getTextBoxRgb(1);
+    final int rgb3 = Config.getTextBoxRgb(2);
+    final int rgb4 = Config.getTextBoxRgb(3);
+
+    if(textboxBackgroundColouredObj != null) {
+      textboxBackgroundColouredObj.delete();
+      textboxBackgroundColouredObj = null;
+    }
+
+    textboxBackgroundColouredObj = new QuadBuilder("TextboxColouredBackground")
+      .translucency(Translucency.of(Config.getTextBoxTransparencyMode()))
+      .pos(-1.0f, -1.0f, 0.0f)
+      .size(2.0f, 2.0f)
+      .rgb(0, (rgb1 & 0xff) / 255.0f, (rgb1 >> 8 & 0xff) / 255.0f, (rgb1 >> 16 & 0xff) / 255.0f)
+      .rgb(1, (rgb2 & 0xff) / 255.0f, (rgb2 >> 8 & 0xff) / 255.0f, (rgb2 >> 16 & 0xff) / 255.0f)
+      .rgb(2, (rgb3 & 0xff) / 255.0f, (rgb3 >> 8 & 0xff) / 255.0f, (rgb3 >> 16 & 0xff) / 255.0f)
+      .rgb(3, (rgb4 & 0xff) / 255.0f, (rgb4 >> 8 & 0xff) / 255.0f, (rgb4 >> 16 & 0xff) / 255.0f)
+      .build();
+
+    Config.setTextBoxColourChange(false);
   }
 
   /** Deallocate textbox used in yellow-name textboxes and combat effect popups, maybe others */
@@ -2128,7 +2156,15 @@ public final class Scus94491BpeSegment_8002 {
           textbox.updateBorder = true;
         }
 
-        RENDERER.queueOrthoModel(textboxBackgroundObj, textbox.backgroundTransforms);
+        if(Config.textBoxColour() && textboxBackgroundColouredObj != null) {
+          if(Config.getTextBoxColourChange()) {
+            setTextBoxColour();
+          }
+          RENDERER.queueOrthoModel(textboxBackgroundColouredObj, textbox.backgroundTransforms)
+            .colour(1.0f, 1.0f, 1.0f );
+        } else {
+          RENDERER.queueOrthoModel(textboxBackgroundObj, textbox.backgroundTransforms);
+        }
 
         if(textbox.renderBorder_06) {
           renderTextboxBorder(textboxIndex, textbox.x_14 - textbox.width_1c, textbox.y_16 - textbox.height_1e, textbox.x_14 + textbox.width_1c, textbox.y_16 + textbox.height_1e);
