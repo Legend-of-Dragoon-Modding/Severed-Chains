@@ -55,20 +55,20 @@ public class LodMod {
   @EventListener
   public static void registerItems(final ItemRegistryEvent event) {
     for(int itemId = 0; itemId < itemStats_8004f2ac.length; itemId++) {
-      String name = itemNames_8011972c[itemId + 0xc0].get();
+      String name = itemNames_8011972c[itemId + 0xc0];
       if(name.isEmpty()) {
         name = "Item " + itemId;
       }
 
       if(itemStats_8004f2ac[itemId] == null) {
-        itemStats_8004f2ac[itemId] = ItemStats0c.fromFile(name, itemDescriptions_80117a10[itemId + 0xc0].get(), itemCombatDescriptions_80051758[itemId].get(), Unpacker.loadFile("items/" + itemId + ".ditm"));
+        itemStats_8004f2ac[itemId] = ItemStats0c.fromFile(name, itemDescriptions_80117a10[itemId + 0xc0], itemCombatDescriptions_80051758[itemId], Unpacker.loadFile("items/" + itemId + ".ditm"));
       }
 
       final Item item;
       if(itemId != 0x1f) { // Charm Potion
-        item = FileBasedItem.fromFile(name, itemDescriptions_80117a10[itemId + 0xc0].get(), itemCombatDescriptions_80051758[itemId].get(), itemPrices_80114310[itemId + 192], Unpacker.loadFile("items/" + itemId + ".ditm"));
+        item = FileBasedItem.fromFile(name, itemDescriptions_80117a10[itemId + 0xc0], itemCombatDescriptions_80051758[itemId], itemPrices_80114310[itemId + 192], Unpacker.loadFile("items/" + itemId + ".ditm"));
       } else {
-        item = new CharmPotionItem(name, itemDescriptions_80117a10[itemId + 0xc0].get(), itemCombatDescriptions_80051758[itemId].get(), itemPrices_80114310[itemId + 192]);
+        item = new CharmPotionItem(name, itemDescriptions_80117a10[itemId + 0xc0], itemCombatDescriptions_80051758[itemId], itemPrices_80114310[itemId + 192]);
       }
 
       event.register(id(slug.slugify(name)), item);
@@ -88,14 +88,14 @@ public class LodMod {
     idEquipmentMap.clear();
 
     for(int equipmentId = 0; equipmentId < equipmentStats_80111ff0.length; equipmentId++) {
-      final String name = itemNames_8011972c[equipmentId].get();
+      final String name = itemNames_8011972c[equipmentId];
 
       if(equipmentStats_80111ff0[equipmentId] == null) {
-        equipmentStats_80111ff0[equipmentId] = EquipmentStats1c.fromFile(name, itemDescriptions_80117a10[equipmentId].get(), Unpacker.loadFile("equipment/" + equipmentId + ".deqp"));
+        equipmentStats_80111ff0[equipmentId] = EquipmentStats1c.fromFile(name, itemDescriptions_80117a10[equipmentId], Unpacker.loadFile("equipment/" + equipmentId + ".deqp"));
       }
 
       if(!name.isEmpty()) {
-        final Equipment equipment = event.register(id(slug.slugify(name)), Equipment.fromFile(name, itemDescriptions_80117a10[equipmentId].get(), itemPrices_80114310[equipmentId], Unpacker.loadFile("equipment/" + equipmentId + ".deqp")));
+        final Equipment equipment = event.register(id(slug.slugify(name)), Equipment.fromFile(name, itemDescriptions_80117a10[equipmentId], itemPrices_80114310[equipmentId], Unpacker.loadFile("equipment/" + equipmentId + ".deqp")));
         equipmentIdMap.put(equipmentId, equipment.getRegistryId());
         idEquipmentMap.put(equipment.getRegistryId(), equipmentId);
       }
@@ -106,8 +106,8 @@ public class LodMod {
   public static void registerSpells(final SpellRegistryEvent event) {
     for(int spellId = 0; spellId < spellStats_800fa0b8.length; spellId++) {
       if(spellStats_800fa0b8[spellId] == null) {
-        final String name = spellId < 84 ? spells_80052734[spellId].get() : "Spell " + spellId;
-        final String desc = spellId < 84 ? spellCombatDescriptions_80052018[spellId].get() : "";
+        final String name = spellId < 84 ? spells_80052734[spellId] : "Spell " + spellId;
+        final String desc = spellId < 84 ? spellCombatDescriptions_80052018[spellId] : "";
         spellStats_800fa0b8[spellId] = SpellStats0c.fromFile(name, desc, Unpacker.loadFile("spells/" + spellId + ".dspl"));
       }
     }

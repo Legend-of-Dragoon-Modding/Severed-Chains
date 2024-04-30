@@ -17,6 +17,8 @@ import static legend.core.opengl.TmdObjLoader.UV_SIZE;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class LegacyTextBuilder {
+  private static final int CHAR_COUNT = 0x100;
+
   private final String name;
 
   public LegacyTextBuilder(final String name) {
@@ -44,11 +46,11 @@ public class LegacyTextBuilder {
 
   private int setVertices(int offset, final float[] vertices, final int chr) {
     final int u = (chr & 0xf) * 16;
-    final int v = chr / 16 * 12;
+    final int v = chr / 16 * 16;
     offset = this.setVertex(offset, vertices, 0.0f,  0.0f, u, v);
-    offset = this.setVertex(offset, vertices, 0.0f, 12.0f, u, v + 12.0f);
+    offset = this.setVertex(offset, vertices, 0.0f, 16.0f, u, v + 16.0f);
     offset = this.setVertex(offset, vertices, 8.0f,  0.0f, u + 8.0f, v);
-    offset = this.setVertex(offset, vertices, 8.0f, 12.0f, u + 8.0f, v + 12.0f);
+    offset = this.setVertex(offset, vertices, 8.0f, 16.0f, u + 8.0f, v + 16.0f);
     return offset;
   }
 
@@ -60,13 +62,13 @@ public class LegacyTextBuilder {
     vertexSize += COLOUR_SIZE;
     vertexSize += FLAGS_SIZE;
 
-    final float[] vertices = new float[0x56 * 4 * vertexSize];
+    final float[] vertices = new float[CHAR_COUNT * 4 * vertexSize];
     int offset = 0;
-    for(int chr = 0; chr < 0x56; chr++) {
+    for(int chr = 0; chr < CHAR_COUNT; chr++) {
       offset = this.setVertices(offset, vertices, chr);
     }
 
-    final Mesh mesh = new Mesh(GL_TRIANGLE_STRIP, vertices, 0x56 * 4);
+    final Mesh mesh = new Mesh(GL_TRIANGLE_STRIP, vertices, CHAR_COUNT * 4);
 
     mesh.attribute(0, 0L, 3, vertexSize);
 

@@ -1,21 +1,17 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
-import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.memory.types.IntRef;
 import legend.core.opengl.MeshObj;
-import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.game.Scus94491BpeSegment_8002;
 import legend.game.combat.types.EnemyDrop;
 import legend.game.inventory.WhichMenu;
-import legend.game.types.LodString;
 import legend.game.types.Renderable58;
 import legend.game.types.Translucency;
 
-import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.RENDERER;
 import static legend.game.SItem.additions_8011a064;
 import static legend.game.SItem.cacheCharacterSlots;
@@ -28,9 +24,9 @@ import static legend.game.SItem.menuAssetsLoaded;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderItemIcon;
 import static legend.game.SItem.renderText;
-import static legend.game.Scus94491BpeSegment.drawBattleReportOverlays;
 import static legend.game.Scus94491BpeSegment.FUN_80019470;
 import static legend.game.Scus94491BpeSegment.addLevelUpOverlay;
+import static legend.game.Scus94491BpeSegment.drawBattleReportOverlays;
 import static legend.game.Scus94491BpeSegment.loadDrgnFileSync;
 import static legend.game.Scus94491BpeSegment.resizeDisplay;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
@@ -62,8 +58,8 @@ import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 import static legend.game.combat.Battle.spellStats_800fa0b8;
 
 public class PostBattleScreen extends MenuScreen {
-  private static final LodString NEW_ADDITION = new LodString("New Addition");
-  private static final LodString SPELL_UNLOCKED = new LodString("Spell Unlocked");
+  private static final String NEW_ADDITION = "New Addition";
+  private static final String SPELL_UNLOCKED = "Spell Unlocked";
 
   private static final int[] characterPortraitVs_800fbc88 = {0x1f0, 0x1f2, 0x1f1, 0x1f3, 0x1f4, 0x1f5, 0x1f6, 0x1f7, 0x1f8};
   private static final int[] charPortraitGlyphs_800fbc9c = {0xd, 0xf, 0xe, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15};
@@ -839,7 +835,7 @@ public class PostBattleScreen extends MenuScreen {
     //LAB_8010eae0
     for(final EnemyDrop enemyDrop : itemsDroppedByEnemies_800bc928) {
       renderItemIcon(enemyDrop.icon, 18, y1, 0x8);
-      renderText(new LodString(enemyDrop.name), 28, y2, TextColour.WHITE);
+      renderText(enemyDrop.name, 28, y2, TextColour.WHITE);
 
       //LAB_8010eb38
       y2 += 16;
@@ -913,7 +909,7 @@ public class PostBattleScreen extends MenuScreen {
     this.drawResultsBackground(x + 1, y + 20 - height + 1, 132, height * 2, 5); // New spell background
 
     if(height >= 20) {
-      Scus94491BpeSegment_8002.renderText(new LodString(spellStats_800fa0b8[spellIndex].name), x - 4, y + 6, TextColour.WHITE, 0);
+      Scus94491BpeSegment_8002.renderText(spellStats_800fa0b8[spellIndex].name, x - 4, y + 6, TextColour.WHITE, 0);
       Scus94491BpeSegment_8002.renderText(SPELL_UNLOCKED, x - 4, y + 20, TextColour.WHITE, 0);
     }
 

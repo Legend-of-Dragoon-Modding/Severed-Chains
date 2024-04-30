@@ -5,7 +5,6 @@ import legend.game.input.InputAction;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.InputPropagation;
 import legend.game.inventory.screens.TextColour;
-import legend.game.types.LodString;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -363,7 +362,7 @@ public class ListBox<T> extends Control {
 
   public class Entry extends Control {
     public final T data;
-    private LodString lodString;
+    private String string;
     private TextColour colour;
 
     public Entry(final T data) {
@@ -372,7 +371,7 @@ public class ListBox<T> extends Control {
     }
 
     private void updateText(final TextColour colour) {
-      this.lodString = new LodString(ListBox.this.entryToString.apply(this.data));
+      this.string = ListBox.this.entryToString.apply(this.data);
       this.colour = colour;
     }
 
@@ -380,7 +379,7 @@ public class ListBox<T> extends Control {
     protected void render(final int x, final int y) {
       final int oldZ = textZ_800bdf00;
       textZ_800bdf00 = this.getZ() - 1;
-      renderText(this.lodString, x + 28, y + 3, this.colour);
+      renderText(this.string, x + 28, y + 3, this.colour);
       textZ_800bdf00 = oldZ;
 
       if(ListBox.this.entryToIcon != null) {

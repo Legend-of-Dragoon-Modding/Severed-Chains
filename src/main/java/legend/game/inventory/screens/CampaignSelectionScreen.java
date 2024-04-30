@@ -12,7 +12,6 @@ import legend.game.modding.events.gamestate.GameLoadedEvent;
 import legend.game.saves.Campaign;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
-import legend.game.types.LodString;
 import legend.game.types.MessageBoxResult;
 
 import java.nio.file.Path;
@@ -100,7 +99,7 @@ public class CampaignSelectionScreen extends MenuScreen {
     if(missingMods.isEmpty()) {
       loadGameScreen.run();
     } else {
-      menuStack.pushScreen(new MessageBoxScreen(new LodString("Missing mods, continue?"), 2, result -> {
+      menuStack.pushScreen(new MessageBoxScreen("Missing mods, continue?", 2, result -> {
         if(result == MessageBoxResult.YES) {
           loadGameScreen.run();
         }
@@ -110,7 +109,7 @@ public class CampaignSelectionScreen extends MenuScreen {
 
   @Override
   protected void render() {
-    SItem.renderCentredText(new LodString("Campaigns"), 188, 10, TextColour.BROWN);
+    SItem.renderCentredText("Campaigns", 188, 10, TextColour.BROWN);
   }
 
   private void menuEscape() {

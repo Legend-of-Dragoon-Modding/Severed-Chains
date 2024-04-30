@@ -2,14 +2,11 @@ package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
 import legend.game.input.InputAction;
-import legend.game.types.LodString;
 import legend.game.types.MessageBox20;
 import legend.game.types.MessageBoxResult;
 
 import java.util.function.Consumer;
 
-import static legend.game.SItem.No_8011c214;
-import static legend.game.SItem.Yes_8011c20c;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.messageBox;
 import static legend.game.SItem.setMessageBoxOptions;
@@ -21,11 +18,11 @@ public class MessageBoxScreen extends MenuScreen {
   private final Consumer<MessageBoxResult> onResult;
   private MessageBoxResult result;
 
-  public MessageBoxScreen(final LodString text, final int type, final Consumer<MessageBoxResult> onResult) {
-    this(text, Yes_8011c20c, No_8011c214, type, onResult);
+  public MessageBoxScreen(final String text, final int type, final Consumer<MessageBoxResult> onResult) {
+    this(text, "Yes", "No", type, onResult);
   }
 
-  public MessageBoxScreen(final LodString text, final LodString yes, final LodString no, final int type, final Consumer<MessageBoxResult> onResult) {
+  public MessageBoxScreen(final String text, final String yes, final String no, final int type, final Consumer<MessageBoxResult> onResult) {
     setMessageBoxText(this.messageBox, text, type);
     setMessageBoxOptions(this.messageBox, yes, no);
     this.onResult = onResult;

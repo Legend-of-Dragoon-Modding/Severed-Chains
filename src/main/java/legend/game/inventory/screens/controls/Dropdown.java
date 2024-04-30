@@ -6,7 +6,6 @@ import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.InputPropagation;
 import legend.game.inventory.screens.MenuScreen;
 import legend.game.inventory.screens.TextColour;
-import legend.game.types.LodString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +20,6 @@ public class Dropdown extends Control {
   private final Brackets highlight;
 
   private final List<String> options = new ArrayList<>();
-  private final List<LodString> optionsLod = new ArrayList<>();
   private int hoverIndex;
   private int selectedIndex = -1;
 
@@ -68,14 +66,12 @@ public class Dropdown extends Control {
 
   public void clearOptions() {
     this.options.clear();
-    this.optionsLod.clear();
     this.panel.setHeight(18);
     this.selectedIndex = -1;
   }
 
   public void addOption(final String option) {
     this.options.add(option);
-    this.optionsLod.add(new LodString(option));
     this.panel.setHeight(18 + this.options.size() * 16);
 
     if(this.selectedIndex == -1) {
@@ -158,7 +154,7 @@ public class Dropdown extends Control {
     if(!this.options.isEmpty()) {
       final int oldZ = textZ_800bdf00;
       textZ_800bdf00 = this.background.getZ() - 1;
-      renderText(this.optionsLod.get(this.selectedIndex), x + 4, y + (this.getHeight() - 11) / 2 + 1, TextColour.BROWN);
+      renderText(this.options.get(this.selectedIndex), x + 4, y + (this.getHeight() - 11) / 2 + 1, TextColour.BROWN);
       textZ_800bdf00 = oldZ;
     }
   }
@@ -195,7 +191,7 @@ public class Dropdown extends Control {
       textZ_800bdf00 = Dropdown.this.panel.getZ() - 1;
 
       for(int i = 0; i < Dropdown.this.options.size(); i++) {
-        renderText(new LodString(Dropdown.this.options.get(i)), Dropdown.this.panel.getX() + 10, Dropdown.this.panel.getY() + 10 + i * 16, TextColour.BROWN);
+        renderText(Dropdown.this.options.get(i), Dropdown.this.panel.getX() + 10, Dropdown.this.panel.getY() + 10 + i * 16, TextColour.BROWN);
       }
 
       textZ_800bdf00 = oldZ;

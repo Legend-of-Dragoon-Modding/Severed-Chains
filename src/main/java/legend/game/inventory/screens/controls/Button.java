@@ -4,7 +4,6 @@ import legend.game.input.InputAction;
 import legend.game.inventory.screens.Control;
 import legend.game.inventory.screens.InputPropagation;
 import legend.game.inventory.screens.TextColour;
-import legend.game.types.LodString;
 
 import static legend.game.SItem.renderCentredText;
 import static legend.game.Scus94491BpeSegment_8002.playSound;
@@ -13,7 +12,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
 public class Button extends Control {
   private final Highlight hover;
-  private LodString text;
+  private String text;
   private TextColour textColour = TextColour.BROWN;
 
   public Button(final String text) {
@@ -32,16 +31,12 @@ public class Button extends Control {
     this.hover.setZ(z);
   }
 
-  public LodString getText() {
+  public String getText() {
     return this.text;
   }
 
-  public void setText(final LodString text) {
-    this.text = text;
-  }
-
   public void setText(final String text) {
-    this.text = new LodString(text);
+    this.text = text;
   }
 
   public TextColour getTextColour() {

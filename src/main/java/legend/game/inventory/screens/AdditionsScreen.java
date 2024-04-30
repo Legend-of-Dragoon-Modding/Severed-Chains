@@ -2,7 +2,6 @@ package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
 import legend.game.input.InputAction;
-import legend.game.types.LodString;
 import legend.game.types.MenuAdditionInfo;
 import legend.game.types.Renderable58;
 
@@ -32,7 +31,7 @@ import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
 public class AdditionsScreen extends MenuScreen {
-  private static final LodString Addition_cannot_be_used_8011c340 = new LodString("Additions cannot be used");
+  private static final String Addition_cannot_be_used_8011c340 = "Additions cannot be used";
 
   private int loadingStage;
   private double scrollAccumulator;

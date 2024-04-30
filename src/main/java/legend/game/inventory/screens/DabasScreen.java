@@ -1,7 +1,6 @@
 package legend.game.inventory.screens;
 
 import legend.core.MathHelper;
-import legend.core.memory.Method;
 import legend.game.DabasManager;
 import legend.game.input.InputAction;
 import legend.game.inventory.Equipment;
@@ -9,7 +8,6 @@ import legend.game.inventory.InventoryEntry;
 import legend.game.inventory.Item;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.types.DabasData100;
-import legend.game.types.LodString;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.MessageBox20;
@@ -32,9 +30,9 @@ import static legend.game.SItem.renderEightDigitNumber;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderItemIcon;
 import static legend.game.SItem.renderMenuItems;
+import static legend.game.SItem.renderString;
 import static legend.game.SItem.renderText;
 import static legend.game.SItem.setMessageBoxText;
-import static legend.game.SItem.textLength;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.allocateRenderable;
@@ -50,13 +48,13 @@ import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 
 public class DabasScreen extends MenuScreen {
-  private static final LodString DigDabas_8011d04c = new LodString("Diiig Dabas!");
-  private static final LodString AcquiredGold_8011cdd4 = new LodString("Acquired Gold");
-  private static final LodString AcquiredItems_8011d050 = new LodString("Acquired Items");
-  private static final LodString SpecialItem_8011d054 = new LodString("Special Item");
-  private static final LodString Take_8011d058 = new LodString("Take");
-  private static final LodString Discard_8011d05c = new LodString("Discard");
-  private static final LodString NextDig_8011d064 = new LodString("Next Dig");
+  private static final String DigDabas_8011d04c = "Diiig Dabas!";
+  private static final String AcquiredGold_8011cdd4 = "Acquired Gold";
+  private static final String AcquiredItems_8011d050 = "Acquired Items";
+  private static final String SpecialItem_8011d054 = "Special Item";
+  private static final String Take_8011d058 = "Take";
+  private static final String Discard_8011d05c = "Discard";
+  private static final String NextDig_8011d064 = "Next Dig";
 
   private int loadingStage;
 
@@ -255,7 +253,7 @@ public class DabasScreen extends MenuScreen {
     }
 
     if(equipmentCount != 0 && gameState_800babc8.equipment_1e8.size() + equipmentCount >= 0x100 || itemCount != 0 && gameState_800babc8.items_2e9.size() + itemCount > CONFIG.getConfig(CoreMod.INVENTORY_SIZE_CONFIG.get())) {
-      menuStack.pushScreen(new MessageBoxScreen(new LodString("Dabas has more items\nthan you can hold"), 0, result -> {}));
+      menuStack.pushScreen(new MessageBoxScreen("Dabas has more items\nthan you can hold", 0, result -> {}));
       return;
     }
 
@@ -282,7 +280,7 @@ public class DabasScreen extends MenuScreen {
 
     dabasData.specialItem_2c = 0;
 
-    setMessageBoxText(this.messageBox_8011dc90, new LodString(TAKE_RESPONSES[ThreadLocalRandom.current().nextInt(TAKE_RESPONSES.length)]), 0x1);
+    setMessageBoxText(this.messageBox_8011dc90, TAKE_RESPONSES[ThreadLocalRandom.current().nextInt(TAKE_RESPONSES.length)], 0x1);
     this.renderable2 = null;
     this.loadingStage = 3;
   }
@@ -301,7 +299,7 @@ public class DabasScreen extends MenuScreen {
     this.menuItems.clear();
     this.specialItem = null;
 
-    menuStack.pushScreen(new MessageBoxScreen(new LodString(DISCARD_RESPONSES[ThreadLocalRandom.current().nextInt(DISCARD_RESPONSES.length)]), 0, result -> this.loadingStage = 2));
+    menuStack.pushScreen(new MessageBoxScreen(DISCARD_RESPONSES[ThreadLocalRandom.current().nextInt(DISCARD_RESPONSES.length)], 0, result -> this.loadingStage = 2));
   }
 
   private void newDig() {
@@ -315,7 +313,7 @@ public class DabasScreen extends MenuScreen {
     dabasData.specialItem_2c = 0;
     this.newDigEnabled = false;
 
-    menuStack.pushScreen(new MessageBoxScreen(new LodString(NEW_DIG_RESPONSES[ThreadLocalRandom.current().nextInt(NEW_DIG_RESPONSES.length)]), 0, result -> this.loadingStage = 2));
+    menuStack.pushScreen(new MessageBoxScreen(NEW_DIG_RESPONSES[ThreadLocalRandom.current().nextInt(NEW_DIG_RESPONSES.length)], 0, result -> this.loadingStage = 2));
   }
 
   @Override
@@ -355,7 +353,7 @@ public class DabasScreen extends MenuScreen {
         if(this.hasItems || this.gold != 0) {
           playSound(2);
 
-          menuStack.pushScreen(new MessageBoxScreen(new LodString("Take items from Dabas?"), 2, result -> {
+          menuStack.pushScreen(new MessageBoxScreen("Take items from Dabas?", 2, result -> {
             if(result == MessageBoxResult.YES) {
               this.takeItems();
             }
@@ -369,7 +367,7 @@ public class DabasScreen extends MenuScreen {
         if(this.hasItems) {
           playSound(2);
 
-          menuStack.pushScreen(new MessageBoxScreen(new LodString("Discard items?"), 2, result -> {
+          menuStack.pushScreen(new MessageBoxScreen("Discard items?", 2, result -> {
             if(result == MessageBoxResult.YES) {
               this.discardItems();
             }
@@ -383,7 +381,7 @@ public class DabasScreen extends MenuScreen {
         if(this.newDigEnabled) {
           playSound(2);
 
-          menuStack.pushScreen(new MessageBoxScreen(new LodString("Begin new expedition?"), 2, result -> {
+          menuStack.pushScreen(new MessageBoxScreen("Begin new expedition?", 2, result -> {
             if(result == MessageBoxResult.YES) {
               this.newDig();
             }
@@ -611,69 +609,21 @@ public class DabasScreen extends MenuScreen {
 
     if(this.specialItem != null) {
       renderItemIcon(this.specialItem.getIcon(), 198, 192, 0x8);
-      renderText(new LodString(this.specialItem.getName()), 214, 194, TextColour.BROWN);
+      renderText(this.specialItem.getName(), 214, 194, TextColour.BROWN);
     }
 
     //LAB_80103390
-    renderString(16, 178, selectedSlot, false);
+    renderString(16, 178, MENU_DESCRIPTIONS[selectedSlot], false);
   }
 
   private int getDabasMenuY(final int slot) {
     return 57 + slot * 14;
   }
 
-  @Method(0x80109074L)
-  public static void renderString(final int x, final int y, final int stringIndex, final boolean allocate) {
-    if(allocate) {
-      allocateUiElement(0x5b, 0x5b, x, y);
-    }
-
-    //LAB_801090e0
-    //LAB_8010914c
-    LodString s0 = MENU_DESCRIPTIONS[stringIndex];
-
-    //LAB_80109160
-    //LAB_80109168
-    //LAB_80109188
-    for(int i = 0; i < 4; i++) {
-      int s4 = 0;
-      final int len = Math.min(textLength(s0), 20);
-      final LodString s3 = new LodString(len + 1);
-
-      //LAB_801091bc
-      //LAB_801091cc
-      int a1;
-      for(a1 = 0; a1 < len; a1++) {
-        if(s0.charAt(a1) == 0xa1ffL) {
-          //LAB_8010924c
-          s4 = 1;
-          break;
-        }
-
-        s3.charAt(a1, s0.charAt(a1));
-      }
-
-      //LAB_801091fc
-      s3.charAt(a1, 0xa0ff);
-
-      renderText(s3, x + 2, y + i * 14 + 4, TextColour.BROWN);
-
-      if(textLength(s3) > len) {
-        //LAB_80109270
-        break;
-      }
-
-      //LAB_80109254
-      s0 = s0.slice(textLength(s3) + s4);
-    }
-
-    //LAB_80109284
-  }
-
-  private static final LodString[] MENU_DESCRIPTIONS = {
-    new LodString("Send gold and items\nDabas has found to\nthe main game."),
-    new LodString("Delete items from\nthe Pocket Station."),
-    new LodString("Leave for the\nnext adventure."),
+  private static final String[] MENU_DESCRIPTIONS = {
+    "Send gold and items\nDabas has found to\nthe main game.",
+    "Delete items from\nthe Pocket Station.",
+    "Leave for the\nnext adventure.",
   };
 
   private static final String[] TAKE_RESPONSES = {

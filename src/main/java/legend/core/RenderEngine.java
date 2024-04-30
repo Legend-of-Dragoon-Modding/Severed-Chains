@@ -1265,6 +1265,7 @@ public class RenderEngine {
       return this;
     }
 
+    /** Note: origin is bottom-left corner */
     public QueuedModel<Options> scissor(final int x, final int y, final int w, final int h) {
       this.scissor.set(x, y, w, h);
       return this;

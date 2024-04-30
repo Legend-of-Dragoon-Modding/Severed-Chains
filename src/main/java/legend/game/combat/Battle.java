@@ -112,7 +112,6 @@ import legend.game.types.CContainer;
 import legend.game.types.CContainerSubfile2;
 import legend.game.types.CharacterData2c;
 import legend.game.types.Keyframe0c;
-import legend.game.types.LodString;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
 import legend.game.types.SpellStats0c;
@@ -405,14 +404,14 @@ public class Battle extends EngineState {
     Arrays.setAll(this.dragoonSpells_800c6960, i -> new DragoonSpells09());
   }
 
-  public final LodString[] currentEnemyNames_800c69d0 = new LodString[9];
+  public final String[] currentEnemyNames_800c69d0 = new String[9];
 
   public Element dragoonSpaceElement_800c6b64;
 
   public final int[] monsterBents_800c6b78 = new int[9];
   private int monsterCount_800c6b9c;
 
-  public final LodString[] melbuMonsterNames_800c6ba8 = new LodString[3];
+  public final String[] melbuMonsterNames_800c6ba8 = new String[3];
 
   public final List<Item> usedRepeatItems_800c6c3c = new ArrayList<>();
 

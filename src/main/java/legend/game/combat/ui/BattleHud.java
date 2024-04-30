@@ -31,7 +31,6 @@ import legend.game.modding.events.battle.StatDisplayEvent;
 import legend.game.modding.events.inventory.RepeatItemReturnEvent;
 import legend.game.scripting.ScriptState;
 import legend.game.types.ActiveStatsa0;
-import legend.game.types.LodString;
 import legend.game.types.Translucency;
 import legend.lodmod.LodMod;
 import org.joml.Vector2f;
@@ -51,7 +50,6 @@ import static legend.game.SItem.loadCharacterStats;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
 import static legend.game.Scus94491BpeSegment.playSound;
-import static legend.game.Scus94491BpeSegment_8002.intToStr;
 import static legend.game.Scus94491BpeSegment_8002.takeItemId;
 import static legend.game.Scus94491BpeSegment_8002.textWidth;
 import static legend.game.Scus94491BpeSegment_8004.additionCounts_8004f5c0;
@@ -100,15 +98,15 @@ public class BattleHud {
   private static final int[] battleHudYOffsets_800fb198 = {46, 208, -128, 0};
 
   /** Targeting ("All allies", "All players", "All") */
-  private static final LodString[] targeting_800fb36c = { new LodString("All allies"), new LodString("All enemies"), new LodString("All") };
-  public static final LodString[] playerNames_800fb378 = {
-    new LodString("Dart"), new LodString("Lavitz"), new LodString("Shana"), new LodString("Rose"), new LodString("Haschel"),
-    new LodString("Albert"), new LodString("Meru"), new LodString("Kongol"), new LodString("Miranda"), new LodString("DivinDGDart"),
+  private static final String[] targeting_800fb36c = { "All allies", "All enemies", "All" };
+  public static final String[] playerNames_800fb378 = {
+    "Dart", "Lavitz", "Shana", "Rose", "Haschel",
+    "Albert", "Meru", "Kongol", "Miranda", "DivinDGDart",
   };
   /** Poisoned, Dispirited, Weapon blocked, Stunned, Fearful, Confused, Bewitched, Petrified */
-  private static final LodString[] ailments_800fb3a0 = {
-    new LodString("Poisoned"), new LodString("Dispirited"), new LodString("Weapon blocked"), new LodString("Stunned"), new LodString("Fearful"),
-    new LodString("Confused"), new LodString("Bewitched"), new LodString("Petrified"),
+  private static final String[] ailments_800fb3a0 = {
+    "Poisoned", "Dispirited", "Weapon blocked", "Stunned", "Fearful",
+    "Confused", "Bewitched", "Petrified",
   };
 
   private static final NameAndPortraitDisplayMetrics0c[] hudNameAndPortraitMetrics_800fb444 = {
@@ -781,7 +779,7 @@ public class BattleHud {
       if(menu.displayTargetArrowAndName_4c) {
         this.drawTargetArrow(menu.targetType_50, menu.combatantIndex_54);
         final int targetCombatant = menu.combatantIndex_54;
-        LodString str;
+        String str;
         Element element;
         if(targetCombatant == -1) {  // Target all
           str = targeting_800fb36c[menu.targetType_50];
@@ -1939,10 +1937,6 @@ public class BattleHud {
     //LAB_800f58a4
     int sp7c = 0;
 
-    final LodString sp0x18 = new LodString(18);
-    final LodString sp0x40 = new LodString(5);
-    final LodString itemCount = new LodString(12);
-
     //LAB_800f58e0
     for(int spellSlot = 0; spellSlot < menu.count_22; spellSlot++) {
       if(y1 >= sp68) {
@@ -1950,54 +1944,15 @@ public class BattleHud {
       }
 
       TextColour textColour = TextColour.WHITE;
-      final LodString name;
+      final String name;
+      final String itemCount = (char)0x11d + String.valueOf(this.combatItems_800c6988.get(sp7c).count);
       if(type == 0) {
         //LAB_800f5918
-        name = new LodString(this.combatItems_800c6988.get(sp7c).item.getName());
-        intToStr(this.combatItems_800c6988.get(sp7c).count, itemCount);
-
-        //LAB_800f5968
-        int i;
-        for(i = 0; ; i++) {
-          sp0x18.charAt(i, name.charAt(i));
-          if(name.charAt(i) == 0xa0ff) {
-            break;
-          }
-        }
-
-        //LAB_800f5990
-        //LAB_800f59a4
-        for(; i < 16; i++) {
-          sp0x18.charAt(i, 0);
-        }
-
-        //LAB_800f59bc
-        if(this.combatItems_800c6988.get(sp7c).count < 10) {
-          sp0x18.charAt(i, 0);
-          i++;
-        }
-
-        //LAB_800f59e8
-        sp0x18.charAt(i, 0xa0ff);
-        sp0x40.charAt(0, 0xe);
-
-        //LAB_800f5a10
-        int n;
-        for(n = 0; n < 2; n++) {
-          final int chr = itemCount.charAt(n);
-          if(chr == 0xa0ff) {
-            break;
-          }
-
-          sp0x40.charAt(n + 1, chr);
-        }
-
-        //LAB_800f5a38
-        sp0x40.charAt(n + 1, 0xa0ff);
+        name = this.combatItems_800c6988.get(sp7c).item.getName();
       } else if(type == 1) {
         //LAB_800f5a4c
         int spellId = this.battle.dragoonSpells_800c6960[menu.player_08.charSlot_276].spellIndex_01[spellSlot];
-        name = new LodString(spellStats_800fa0b8[spellId].name);
+        name = spellStats_800fa0b8[spellId].name;
 
         if(menu.player_08.charId_272 == 8) { // Miranda
           if(spellId == 65) {
@@ -2023,7 +1978,7 @@ public class BattleHud {
           textColour = TextColour.GREY;
         }
       } else if(type == 2) {
-        name = new LodString(this.combatAdditions.get(sp7c));
+        name = this.combatAdditions.get(sp7c);
       } else {
         throw new RuntimeException("Undefined s3");
       }
@@ -2046,7 +2001,7 @@ public class BattleHud {
         Scus94491BpeSegment_8002.renderText(name, menu.textX_18, y1, textColour, trim);
 
         if(type == 0) {
-          Scus94491BpeSegment_8002.renderText(sp0x40, menu.textX_18 + 128, y1, textColour, trim);
+          Scus94491BpeSegment_8002.renderText(itemCount, menu.textX_18 + 128, y1, textColour, trim);
         }
       } else if(y2 < y1 + 12) {
         if((menu.flags_02 & 0x4) != 0) {
@@ -2059,7 +2014,7 @@ public class BattleHud {
         Scus94491BpeSegment_8002.renderText(name, menu.textX_18, y2, textColour, trim);
 
         if(type == 0) {
-          Scus94491BpeSegment_8002.renderText(sp0x40, menu.textX_18 + 128, y2, textColour, trim);
+          Scus94491BpeSegment_8002.renderText(itemCount, menu.textX_18 + 128, y2, textColour, trim);
         }
       }
 
@@ -2851,7 +2806,7 @@ public class BattleHud {
   }
 
   @Method(0x800f8568L)
-  private LodString getTargetEnemyName(final BattleEntity27c target, final LodString targetName) {
+  private String getTargetEnemyName(final BattleEntity27c target, final String targetName) {
     // Seems to be special-case handling to replace Tentacle, since the Melbu fight has more enemies than the engine can handle
     if(target.charId_272 == 0x185) {
       final int stageProgression = battleState_8006e398.battlePhase_eec;
@@ -2910,15 +2865,14 @@ public class BattleHud {
    */
   @Method(0x800f8ac4L)
   private void renderText(final int textType, final int textIndex, final int x, final int y) {
-    final LodString str;
+    final String str;
     if(textType == 4) {
-      str = new LodString(itemStats_8004f2ac[textIndex].combatDescription);
+      str = itemStats_8004f2ac[textIndex].combatDescription;
     } else if(textType == 5) {
-      str = new LodString(spellStats_800fa0b8[textIndex].combatDescription);
+      str = spellStats_800fa0b8[textIndex].combatDescription;
     } else if(textType == 6) {
-      final SpellAndItemMenuA4 menu = this.spellAndItemMenu_800c6b60;
-      final int additionOffset = additionOffsets_8004f5ac[menu.player_08.charId_272];
-      str = new LodString(additionNames_800fa8d4[additionOffset + textIndex]);
+      final int additionOffset = additionOffsets_8004f5ac[this.spellAndItemMenu_800c6b60.player_08.charId_272];
+      str = additionNames_800fa8d4[additionOffset + textIndex];
     } else {
       throw new IllegalArgumentException("Only supports textType 4/5");
     }

@@ -8,7 +8,6 @@ import legend.game.inventory.screens.controls.Glyph;
 import legend.game.inventory.screens.controls.SaveCard;
 import legend.game.saves.Campaign;
 import legend.game.saves.SavedGame;
-import legend.game.types.LodString;
 import legend.game.types.MessageBoxResult;
 
 import java.util.function.Consumer;
@@ -54,10 +53,10 @@ public class LoadGameScreen extends MenuScreen {
   private void onSelection(final SavedGame save) {
     if(save.isValid()) {
       playSound(2);
-      menuStack.pushScreen(new MessageBoxScreen(new LodString("Load this save?"), 2, result -> this.onMessageboxResult(result, save)));
+      menuStack.pushScreen(new MessageBoxScreen("Load this save?", 2, result -> this.onMessageboxResult(result, save)));
     } else {
       playSound(4);
-      menuStack.pushScreen(new MessageBoxScreen(new LodString("This save cannot be loaded"), 0, result -> { }));
+      menuStack.pushScreen(new MessageBoxScreen("This save cannot be loaded", 0, result -> { }));
     }
   }
 
@@ -69,7 +68,7 @@ public class LoadGameScreen extends MenuScreen {
 
   @Override
   protected void render() {
-    SItem.renderCentredText(new LodString("Load Game"), 188, 10, TextColour.BROWN);
+    SItem.renderCentredText("Load Game", 188, 10, TextColour.BROWN);
   }
 
   private void menuEscape() {

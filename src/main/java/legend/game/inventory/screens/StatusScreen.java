@@ -1,10 +1,8 @@
 package legend.game.inventory.screens;
 
 import legend.game.input.InputAction;
-import legend.game.types.LodString;
 
 import static legend.game.SItem.FUN_801034cc;
-import static legend.game.SItem.spellMp_80114290;
 import static legend.game.SItem.allocateUiElement;
 import static legend.game.SItem.characterCount_8011d7c4;
 import static legend.game.SItem.characterStatusGlyphs_801141a4;
@@ -16,6 +14,7 @@ import static legend.game.SItem.renderCharacterStats;
 import static legend.game.SItem.renderGlyphs;
 import static legend.game.SItem.renderText;
 import static legend.game.SItem.renderThreeDigitNumber;
+import static legend.game.SItem.spellMp_80114290;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment_8002.deallocateRenderables;
 import static legend.game.Scus94491BpeSegment_8002.getUnlockedDragoonSpells;
@@ -118,7 +117,7 @@ public class StatusScreen extends MenuScreen {
         //LAB_80109370
         final int spellIndex = spellIndices[i];
         if(spellIndex != -1) {
-          renderText(new LodString(spellStats_800fa0b8[spellIndex].name), 210, 125 + i * 14, TextColour.BROWN);
+          renderText(spellStats_800fa0b8[spellIndex].name, 210, 125 + i * 14, TextColour.BROWN);
 
           if(allocate) {
             renderThreeDigitNumber(342, 128 + i * 14, spellMp_80114290[spellIndex]);

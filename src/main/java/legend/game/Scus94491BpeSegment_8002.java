@@ -97,7 +97,6 @@ import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.SItem.menuAssetsLoaded;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderMenus;
-import static legend.game.SItem.textLength;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
 import static legend.game.Scus94491BpeSegment.FUN_8001d51c;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
@@ -1540,6 +1539,10 @@ public final class Scus94491BpeSegment_8002 {
 
             if((metrics.clut_04 & 0x8000) != 0) {
               model.translucency(Translucency.of(tpage >>> 5 & 0b11));
+            }
+
+            if(renderable.heightCut != 0) {
+              model.scissor((int)transforms.transfer.x, (int)(transforms.transfer.y + renderable.heightCut + 4), (int)width, renderable.heightCut);
             }
           }
         }
@@ -3427,96 +3430,49 @@ public final class Scus94491BpeSegment_8002 {
   private static final MV textTransforms = new MV();
 
   /**
-   * @param trim Positive trims top, negative trims bottom
+   * @param trim Negative trims top, positive trims bottom
    */
   @Method(0x80029300L)
-  public static void renderText(final LodString text, final float x, float y, final TextColour colour, int trim) {
-    final int length = textLength(text);
-
+  public static void renderText(final String text, final float x, float y, final TextColour colour, int trim) {
     trim = MathHelper.clamp(trim, -12, 12);
 
     if(trim != 0) {
       LOGGER.warn("Trim not supported yet");
     }
 
-    int lineIndex = 0;
     int glyphNudge = 0;
 
-    for(int i = 0; i < length; i++) {
-      final int c = text.charAt(i);
+    for(int i = 0; i < text.length(); i++) {
+      final char c = text.charAt(i);
 
-      if(c == 0xa1ff) {
-        lineIndex = 0;
-        glyphNudge = 0;
-        y += 12;
-      } else {
-        if(lineIndex == 0) {
+      if(c != ' ') {
+        if(c == '\n') {
           glyphNudge = 0;
+          y += 12;
+        } else {
+          textTransforms.transfer.set(x + glyphNudge, y, textZ_800bdf00 * 4.0f);
+
+          if(trim < 0) {
+            textTransforms.transfer.y += trim;
+          }
+
+          final RenderEngine.QueuedModel<?> model = RENDERER.queueOrthoModel(RENDERER.chars, textTransforms)
+            .texture(RENDERER.textTexture)
+            .vertices((c - 33) * 4, 4)
+            .colour(colour.r / 255.0f, colour.g / 255.0f, colour.b / 255.0f);
+
+          if(trim != 0) {
+            if(trim < 0) {
+              model.scissor(0, (int)y + 12 + trim, displayWidth_1f8003e0, 12 + trim);
+            } else {
+              model.scissor(0, (int)y + 12 - trim, displayWidth_1f8003e0, 12);
+            }
+          }
         }
-
-        if(c == 0x45) { // m
-          glyphNudge -= 1;
-        } else if(c == 0x2) { // .
-          glyphNudge -= 2;
-        } else if(c >= 0x5 && c < 0x7) { // ?, !
-          glyphNudge -= 3;
-        }
-
-        textTransforms.transfer.set(x + lineIndex * 8 - glyphNudge, y, textZ_800bdf00 * 4.0f);
-        RENDERER.queueOrthoModel(RENDERER.chars, textTransforms)
-          .texture(RENDERER.textTexture)
-          .vertices(c * 4, 4)
-          .colour(colour.r / 255.0f, colour.g / 255.0f, colour.b / 255.0f);
-
-        glyphNudge += switch(c) {
-          case 0x5, 0x23, 0x24, 0x2a, 0x37, 0x38, 0x3a, 0x3b, 0x3c, 0x3d, 0x3f, 0x40, 0x43, 0x46, 0x47, 0x48, 0x49, 0x4a, 0x4b, 0x4d, 0x4e, 0x51, 0x52 -> 1;
-          case 0x2, 0x8, 0x3e, 0x4c -> 2;
-          case 0xb, 0xc, 0x42 -> 3;
-          case 0x1, 0x3, 0x4, 0x9, 0x16, 0x41, 0x44 -> 4;
-          case 0x6, 0x27 -> 5;
-          default -> 0;
-        };
-
-        lineIndex++;
       }
+
+      glyphNudge += charWidth(c);
     }
-  }
-
-  @Method(0x800297a0L)
-  public static LodString intToStr(int val, final LodString out) {
-    final LodString tmp = new LodString(11);
-
-    //LAB_800297b4
-    for(int i = 0; i < 11; i++) {
-      tmp.charAt(i, 0xa0ff);
-      out.charAt(i, 0xa0ff);
-    }
-
-    int divisor = 1_000_000_000;
-
-    //LAB_8002980c
-    for(int i = 0; i < 10; i++) {
-      tmp.charAt(i, digits_80052b40[val / divisor].charAt(0));
-      val %= divisor;
-      divisor /= 10;
-    }
-
-    //LAB_80029888
-    int a1;
-    for(a1 = 0; a1 < 9; a1++) {
-      if(tmp.charAt(a1) != 0x15) { // 0
-        break;
-      }
-    }
-
-    //LAB_800298b8
-    //LAB_800298c4
-    for(int a2 = 0; a1 < 10 && a2 < 8; a1++, a2++) {
-      out.charAt(a2, tmp.charAt(a1));
-    }
-
-    //LAB_80029914
-    return out;
   }
 
   @Method(0x80029920L)
@@ -3901,9 +3857,10 @@ public final class Scus94491BpeSegment_8002 {
     final int nudge = switch(chr) {
       case '?', 'E', 'F', 'L', 'Y', 'Z', 'b', 'c', 'd', 'e', 'g', 'h', 'k', 'n', 'o', 'p', 'q', 'r', 's', 'u', 'v', 'y', 'z' -> 1;
       case '.', '/', 'f', 't' -> 2;
-      case '(', ')', 'j' -> 3;
+      case '!', '(', ')', 'j' -> 3;
       case ',', '·', ':', '\'', '1', 'i', 'l' -> 4;
-      case '!', 'I' -> 5;
+      case 'I' -> 5;
+      case '\n' -> 8;
       default -> 0;
     };
 

@@ -4455,7 +4455,7 @@ public class WMap extends EngineState {
     final String[] lines = NEWLINE.split(text);
 
     for(int i = 0; i < lines.length; i++) {
-      final LodString line = new LodString(lines[i]);
+      final String line = lines[i];
       final int textWidth = textWidth(line);
       renderText(line, x - textWidth / 2.0f, y + i * 12, colour, trim);
       renderText(line, x - textWidth / 2.0f + 1, y + i * 12 + 1, TextColour.BLACK, trim);

@@ -13,7 +13,6 @@ import legend.game.modding.events.gamestate.NewGameEvent;
 import legend.game.saves.ConfigStorage;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.types.GameState52c;
-import legend.game.types.LodString;
 
 import java.nio.file.Path;
 import java.util.EnumSet;
@@ -77,7 +76,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     final Button startGame = this.addRow("", new Button("Start Game"));
     startGame.onPressed(() -> {
       if(SAVES.campaignExists(this.campaignName.getText())) {
-        menuStack.pushScreen(new MessageBoxScreen(new LodString("Campaign name already\nin use"), 0, result1 -> { }));
+        menuStack.pushScreen(new MessageBoxScreen("Campaign name already\nin use", 0, result1 -> { }));
       } else {
         this.unload = true;
       }

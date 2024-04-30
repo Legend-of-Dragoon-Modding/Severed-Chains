@@ -6,7 +6,6 @@ import legend.game.inventory.Equipment;
 import legend.game.inventory.InventoryEntry;
 import legend.game.inventory.Item;
 import legend.game.inventory.WhichMenu;
-import legend.game.types.LodString;
 import legend.game.types.MenuEntries;
 import legend.game.types.MenuEntryStruct04;
 import legend.game.types.MessageBoxResult;
@@ -40,11 +39,11 @@ import static legend.game.Scus94491BpeSegment_800b.uiFile_800bdc3c;
 import static legend.game.Scus94491BpeSegment_800b.whichMenu_800bdc38;
 
 public class TooManyItemsScreen extends MenuScreen {
-  private static final LodString This_item_cannot_be_thrown_away_8011c2a8 = new LodString("This item cannot\nbe thrown away");
-  private static final LodString Acquired_item_8011c2f8 = new LodString("Acquired item");
-  private static final LodString Armed_item_8011c314 = new LodString("Armed item");
-  private static final LodString Used_item_8011c32c = new LodString("Used item");
-  private static final LodString Press_to_sort_8011d024 = new LodString("Press  to sort");
+  private static final String This_item_cannot_be_thrown_away_8011c2a8 = "This item cannot\nbe thrown away";
+  private static final String Acquired_item_8011c2f8 = "Acquired item";
+  private static final String Armed_item_8011c314 = "Armed item";
+  private static final String Used_item_8011c32c = "Used item";
+  private static final String Press_to_sort_8011d024 = "Press  to sort";
 
   private MenuState menuState = MenuState._1;
   private double scrollAccumulator;
@@ -97,7 +96,7 @@ public class TooManyItemsScreen extends MenuScreen {
       }
 
       case _4 -> {
-        menuStack.pushScreen(new MessageBoxScreen(new LodString("Too many items. Replace?"), 2, result -> this.menuState = result == MessageBoxResult.YES ? MenuState._6 : MenuState._10));
+        menuStack.pushScreen(new MessageBoxScreen("Too many items. Replace?", 2, result -> this.menuState = result == MessageBoxResult.YES ? MenuState._6 : MenuState._10));
         this.menuState = MenuState._5;
       }
 
@@ -161,7 +160,7 @@ public class TooManyItemsScreen extends MenuScreen {
       case _10 -> {
         this.FUN_8010fd80(false, this.droppedItems.get(this.dropIndex).item_00, this.invIndex, this.invScroll, 0);
 
-        menuStack.pushScreen(new MessageBoxScreen(new LodString("Discard extra items?"), 2, result -> {
+        menuStack.pushScreen(new MessageBoxScreen("Discard extra items?", 2, result -> {
           if(result == MessageBoxResult.YES) {
             for(final MenuEntryStruct04<InventoryEntry> item : this.droppedItems) {
               if(item.item_00 instanceof final Equipment equipment && !equipment.canBeDiscarded()) {
