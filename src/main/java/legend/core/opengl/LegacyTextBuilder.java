@@ -30,9 +30,9 @@ public class LegacyTextBuilder {
     vertices[offset++] = 0.0f;
     vertices[offset++] = 0.0f;
     vertices[offset++] = 0.0f;
-    vertices[offset++] = u;
-    vertices[offset++] = v;
-    vertices[offset++] = makeTpage(832, 256, Bpp.BITS_4, null);
+    vertices[offset++] = u / 256.0f;
+    vertices[offset++] = v / 256.0f;
+    vertices[offset++] = makeTpage(832, 256, Bpp.BITS_24, null);
     vertices[offset++] = makeClut(832, 480);
     vertices[offset++] = 1.0f; // r
     vertices[offset++] = 1.0f; // g

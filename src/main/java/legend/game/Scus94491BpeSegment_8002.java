@@ -3464,6 +3464,7 @@ public final class Scus94491BpeSegment_8002 {
 
         textTransforms.transfer.set(x + lineIndex * 8 - glyphNudge, y, textZ_800bdf00 * 4.0f);
         RENDERER.queueOrthoModel(RENDERER.chars, textTransforms)
+          .texture(RENDERER.textTexture)
           .vertices(c * 4, 4)
           .colour(colour.r / 255.0f, colour.g / 255.0f, colour.b / 255.0f);
 

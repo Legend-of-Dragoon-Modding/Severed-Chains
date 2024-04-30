@@ -39,6 +39,7 @@ import org.lwjgl.BufferUtils;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.FloatBuffer;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -184,6 +185,7 @@ public class RenderEngine {
   private int renderBufferIndex;
 
   // Text
+  public Texture textTexture;
   public Obj chars;
   // Plain quads
   public final Map<Translucency, Obj> plainQuads = new EnumMap<>(Translucency.class);
@@ -375,6 +377,7 @@ public class RenderEngine {
     postQuad.attribute(1, 2L, 2, 4);
 
     // Build text quads
+    this.textTexture = Texture.png(Path.of("./gfx/fonts/ingame.png"));
     this.chars = new LegacyTextBuilder("Text Characters").build();
     this.chars.persistent = true;
 
