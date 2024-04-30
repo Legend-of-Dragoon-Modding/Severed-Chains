@@ -3318,7 +3318,8 @@ public final class Scus94491BpeSegment_8002 {
           textboxText.transforms.identity();
           textboxText.transforms.transfer.set(GPU.getOffsetX() + (int)x, GPU.getOffsetY() + (int)y - scrollH, textboxText.z_0c * 4.0f);
           RENDERER.queueOrthoModel(RENDERER.chars, textboxText.transforms)
-            .vertices(chr.char_06 * 4, 4)
+            .texture(RENDERER.textTexture)
+            .vertices((LodString.fromLodChar(chr.char_06) - 33) * 4, 4)
             .colour(chr.colour_04.r / 255.0f, chr.colour_04.g / 255.0f, chr.colour_04.b / 255.0f)
             .scissor(GPU.getOffsetX() + (int)x, GPU.getOffsetY() + (int)y + height, 8, height);
         }
