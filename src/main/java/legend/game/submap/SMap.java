@@ -2285,9 +2285,9 @@ public class SMap extends EngineState {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
     sobj.ambientColourEnabled_1c8 = true;
     sobj.ambientColour_1ca.set(
-      (script.params_20[1].get() & 0xffff) / 4096.0f,
-      (script.params_20[2].get() & 0xffff) / 4096.0f,
-      (script.params_20[3].get() & 0xffff) / 4096.0f
+      (short)script.params_20[1].get() / 4096.0f,
+      (short)script.params_20[2].get() / 4096.0f,
+      (short)script.params_20[3].get() / 4096.0f
     );
     return FlowControl.CONTINUE;
   }
