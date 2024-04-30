@@ -38,6 +38,7 @@ import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 import static org.lwjgl.opengl.GL11C.glDisable;
+import static org.lwjgl.opengl.GL11C.glViewport;
 
 public final class Fmv {
   private Fmv() { }
@@ -473,6 +474,7 @@ public final class Fmv {
 
       FrameBuffer.unbind();
       RENDERER.setProjectionMode(ProjectionMode._2D);
+      glViewport(0, 0, RENDERER.window().getWidth(), RENDERER.window().getHeight());
 
       identity.get(transforms2Buffer);
       transforms2Uniform.set(transforms2Buffer);

@@ -13,6 +13,7 @@ import legend.core.opengl.Mesh;
 import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.QuaternionCamera;
+import legend.core.opengl.Resolution;
 import legend.core.opengl.Shader;
 import legend.core.opengl.ShaderManager;
 import legend.core.opengl.ShaderOptions;
@@ -86,6 +87,7 @@ import static org.lwjgl.opengl.GL11C.GL_LESS;
 import static org.lwjgl.opengl.GL11C.GL_LINE;
 import static org.lwjgl.opengl.GL11C.GL_LINEAR;
 import static org.lwjgl.opengl.GL11C.GL_LINE_SMOOTH;
+import static org.lwjgl.opengl.GL11C.GL_NEAREST;
 import static org.lwjgl.opengl.GL11C.GL_RGBA;
 import static org.lwjgl.opengl.GL11C.GL_SCISSOR_TEST;
 import static org.lwjgl.opengl.GL11C.GL_STENCIL_BUFFER_BIT;
@@ -254,6 +256,14 @@ public class RenderEngine {
 
   public Vector2f getProjectionSize() {
     return new Vector2f(this.projectionWidth, this.projectionHeight);
+  }
+
+  public float getRenderWidth() {
+    return this.width;
+  }
+
+  public float getRenderHeight() {
+    return this.height;
   }
 
   public void setProjectionDepth(final float depth) {
@@ -516,6 +526,7 @@ public class RenderEngine {
         screenShader.use();
 
         // draw final screen quad
+        glViewport(0, 0, this.window.getWidth(), this.window.getHeight());
         this.renderTextures[this.renderBufferIndex].use();
         postQuad.draw();
 
@@ -1018,6 +1029,10 @@ public class RenderEngine {
     }
   }
 
+  public void updateResolution() {
+    this.onResize(this.window, this.window.getWidth(), this.window.getHeight());
+  }
+
   private void onResize(final Window window, final int width, final int height) {
     if(width == 0 && height == 0) {
       return;
@@ -1025,10 +1040,16 @@ public class RenderEngine {
 
     LOGGER.info("Resizing window to %dx%d", width, height);
 
-    this.width = width;
-    this.height = height;
+    final Resolution res = CONFIG.getConfig(CoreMod.RESOLUTION_CONFIG.get());
+    if(res == Resolution.NATIVE) {
+      this.width = width;
+      this.height = height;
+    } else {
+      this.width = (int)((float)res.verticalResolution / height * width);
+      this.height = res.verticalResolution;
+    }
 
-    glLineWidth(Math.max(1, height / 480.0f));
+    glLineWidth(Math.max(1, this.height / 480.0f));
 
     // Projections
     this.updateProjections();
@@ -1039,11 +1060,11 @@ public class RenderEngine {
       }
 
       this.renderTextures[i] = Texture.create(builder -> {
-        builder.size(width, height);
+        builder.size(this.width, this.height);
         builder.internalFormat(GL_RGBA16F);
         builder.dataFormat(GL_RGBA);
         builder.dataType(GL_HALF_FLOAT);
-        builder.magFilter(GL_LINEAR);
+        builder.magFilter(GL_NEAREST);
         builder.minFilter(GL_LINEAR);
       });
     }
@@ -1053,7 +1074,7 @@ public class RenderEngine {
     }
 
     this.depthTexture = Texture.create(builder -> {
-      builder.size(width, height);
+      builder.size(this.width, this.height);
       builder.internalFormat(GL_DEPTH_COMPONENT);
       builder.dataFormat(GL_DEPTH_COMPONENT);
       builder.dataType(GL_FLOAT);

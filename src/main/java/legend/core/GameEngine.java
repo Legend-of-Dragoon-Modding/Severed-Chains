@@ -75,6 +75,7 @@ import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 import static org.lwjgl.opengl.GL11C.glBlendFunc;
 import static org.lwjgl.opengl.GL11C.glDisable;
 import static org.lwjgl.opengl.GL11C.glEnable;
+import static org.lwjgl.opengl.GL11C.glViewport;
 
 public final class GameEngine {
   private GameEngine() { }
@@ -491,6 +492,7 @@ public final class GameEngine {
 
   private static void renderIntro() {
     RENDERER.setProjectionMode(ProjectionMode._2D);
+    glViewport(0, 0, RENDERER.window().getWidth(), RENDERER.window().getHeight());
 
     final long deltaMs = (System.nanoTime() - time) / 1_000_000;
 

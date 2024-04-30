@@ -163,7 +163,7 @@ public class Gpu {
         avg += this.fps[i];
       }
 
-      RENDERER.window().setTitle("Legend of Dragoon - FPS: %.2f/%d scale: %.2f res: %dx%d".formatted(avg / fpsLimit, fpsLimit, RENDERER.window().getHeight() / 240.0f, this.displayTexture.width, this.displayTexture.height));
+      RENDERER.window().setTitle("Legend of Dragoon - FPS: %.2f/%d scale: %.2f res: %dx%d".formatted(avg / fpsLimit, fpsLimit, RENDERER.getRenderHeight() / 240.0f, this.displayTexture.width, this.displayTexture.height));
     }
   }
 

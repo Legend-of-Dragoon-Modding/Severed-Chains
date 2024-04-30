@@ -11,6 +11,14 @@ lod-core.config.receive_input_on_inactive_window.label=Receive Input on Inactive
 lod-core.config.allow_widescreen.label=Allow Widescreen When Possible
 lod-core.config.high_quality_projection.label=Use High Quality Projection When Possible
 lod-core.config.fullscreen.label=Fullscreen
+lod-core.config.resolution.label=Resolution
+lod-core.config.resolution.ORIGINAL=240p (original)
+lod-core.config.resolution._480=480p
+lod-core.config.resolution._720=720p
+lod-core.config.resolution._1080=1080p
+lod-core.config.resolution._4K=4K
+lod-core.config.resolution._8K=8K
+lod-core.config.resolution.NATIVE=Native (window size)
 
 # Campaign config
 lod-core.config.indicator_mode.label=Indicator Mode
