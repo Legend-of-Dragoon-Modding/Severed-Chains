@@ -1925,6 +1925,7 @@ public final class Scus94491BpeSegment_8002 {
       .rgb(2, (rgb3 & 0xff) / 255.0f, (rgb3 >> 8 & 0xff) / 255.0f, (rgb3 >> 16 & 0xff) / 255.0f)
       .rgb(3, (rgb4 & 0xff) / 255.0f, (rgb4 >> 8 & 0xff) / 255.0f, (rgb4 >> 16 & 0xff) / 255.0f)
       .build();
+    textboxBackgroundColouredObj.persistent = true;
 
     Config.setTextBoxColourChange(false);
   }
