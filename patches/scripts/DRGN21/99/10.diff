@@ -1,0 +1,34 @@
+--- original
++++ modified
+@@ -193,24 +193,20 @@
+ 
+ ; SUBROUTINE
+ JMP_2a0_0:
++call SMap::scriptSetModelRotate, stor[0], 0x0, 0xb34, 0x0 ; scriptIndex, x, y, z
++call SMap::scriptSelfLoadSobjModelAndAnimation, 0x2 ; objectIndex
+ call SMap::scriptSelfSetSobjHidden, 0x0 ; value
+-mov 0xa00, stor[24] ; source, dest
+-call SMap::scriptSetAmbientColour, stor[0], stor[24], stor[24], stor[24] ; sobjIndex, r, g, b
+-mov 0x1400, stor[24] ; source, dest
+-mov 0x1800, stor[25] ; source, dest
+-call SMap::scriptScaleXyz, stor[0], stor[24], stor[25], stor[24] ; sobjIndex, x, y, z
++call SMap::scriptSelfToggleAnimationDisabled, 0x1 ; disabled
++wait 0x6 ; frames
++call SMap::scriptSelfToggleAnimationDisabled, 0x0 ; disabled
+ return
+ 
+ ; SUBROUTINE
+ JMP_2a0_1:
+-call SMap::scriptSelfLoadSobjModelAndAnimation, 0x4 ; objectIndex
++call SMap::scriptSelfLoadSobjModelAndAnimation, 0x2 ; objectIndex
+ call SMap::scriptSelfSetSobjHidden, 0x0 ; value
+-mov 0xa00, stor[24] ; source, dest
+-call SMap::scriptSetAmbientColour, stor[0], stor[24], stor[24], stor[24] ; sobjIndex, r, g, b
+-mov 0x1600, stor[24] ; source, dest
+-mov 0x1a00, stor[25] ; source, dest
+-call SMap::scriptScaleXyz, stor[0], stor[24], stor[25], stor[24] ; sobjIndex, x, y, z
+ call SMap::scriptSetModelPosition, stor[0], 0xffffff0e, 0xffffffb6, 0xffffff62 ; scriptIndex, x, y, z
++call SMap::scriptSetModelRotate, stor[0], 0x0, 0xc5a, 0x0 ; scriptIndex, x, y, z
+ return
+ 
+ ; SUBROUTINE
