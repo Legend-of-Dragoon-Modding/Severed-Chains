@@ -3437,10 +3437,6 @@ public final class Scus94491BpeSegment_8002 {
   public static void renderText(final String text, final float x, float y, final TextColour colour, int trim) {
     trim = MathHelper.clamp(trim, -12, 12);
 
-    if(trim != 0) {
-      LOGGER.warn("Trim not supported yet");
-    }
-
     int glyphNudge = 0;
 
     for(int i = 0; i < text.length(); i++) {

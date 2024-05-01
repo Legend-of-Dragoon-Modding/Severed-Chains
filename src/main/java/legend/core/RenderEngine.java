@@ -633,8 +633,8 @@ public class RenderEngine {
     this.tmdShaderOptions.discardMode(1);
 
     final boolean widescreen = this.allowWidescreen && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get());
-    final float w = this.window.getWidth() / this.projectionWidth;
-    final float h = this.window.getHeight() / this.projectionHeight;
+    final float w = this.width / this.projectionWidth;
+    final float h = this.height / this.projectionHeight;
 
     for(int i = 0; i < pool.size(); i++) {
       final int modelIndex = i & 0x7f;
@@ -665,9 +665,9 @@ public class RenderEngine {
         glEnable(GL_SCISSOR_TEST);
 
         if(widescreen) {
-          glScissor((int)((entry.scissor.x + this.widescreenOrthoOffsetX) * h * (320.0f / this.projectionWidth)), this.window.getHeight() - (int)(entry.scissor.y * h), (int)(entry.scissor.w * h * (320.0f / this.projectionWidth)), (int)(entry.scissor.h * h));
+          glScissor((int)((entry.scissor.x + this.widescreenOrthoOffsetX) * h * (320.0f / this.projectionWidth)), this.height - (int)(entry.scissor.y * h), (int)(entry.scissor.w * h * (320.0f / this.projectionWidth)), (int)(entry.scissor.h * h));
         } else {
-          glScissor((int)((entry.scissor.x + this.widescreenOrthoOffsetX) * w), this.window.getHeight() - (int)(entry.scissor.y * h), (int)(entry.scissor.w * w), (int)(entry.scissor.h * h));
+          glScissor((int)((entry.scissor.x + this.widescreenOrthoOffsetX) * w), this.height - (int)(entry.scissor.y * h), (int)(entry.scissor.w * w), (int)(entry.scissor.h * h));
         }
       }
 
