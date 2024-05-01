@@ -1,0 +1,40 @@
+--- original
++++ modified
+@@ -2,18 +2,31 @@
+ ENTRYPOINT_0:
+ mov var[65], stor[23] ; source, dest
+ incr stor[stor[stor[0], 23], 8] ; operand
+-call SMap::scriptSelfLoadSobjAnimation, 0x0 ; animIndex
++call SMap::scriptSelfLoadSobjModelAndAnimation, 0x6 ; objectIndex
+ call SMap::scriptSelfSetSobjHidden, 0x0 ; value
+ call SMap::FUN_800df530, 0x1 ; value
+ call SMap::scriptEnableShadow, stor[0] ; sobjIndex
++call SMap::scriptSetModelPosition, stor[0], 0xffffff31, 0x0, 0xfffffecd ; scriptIndex, x, y, z
++call SMap::scriptSetModelRotate, stor[0], 0x0, 0x800, 0x0 ; scriptIndex, x, y, z
+ jmp_table stor[stor[stor[0], 23], 31], inl[:LABEL_1] ; index, table
+ 
+ ; SUBROUTINE TABLE
+ LABEL_1:
+ rel :JMP_44_0
+-rel :JMP_44_0
++rel :JMP_44_1
+ JMP_44_0:
+-call SMap::scriptSetModelPosition, stor[0], 0xffffff31, 0x0, 0xfffffeb4 ; scriptIndex, x, y, z
+-call SMap::scriptSetModelRotate, stor[0], 0x0, 0x800, 0x0 ; scriptIndex, x, y, z
+-call SMap::scriptSetAmbientColour, stor[0], 0x1000, 0x1000, 0x1000 ; sobjIndex, r, g, b
+-rewind
++mov 0x1, stor[25] ; source, dest
++LABEL_2:
++call Scus94491BpeSegment::scriptReadGlobalFlag1, 0x63, stor[24] ; flag, value
++jmp_cmp ==, stor[24], stor[25], inl[:LABEL_3] ; operand, left, right, addr
++yield
++jmp inl[:LABEL_2] ; addr
++
++LABEL_3:
++call SMap::scriptSelfToggleAnimationDisabled, stor[25] ; disabled
++mov 0x0, stor[25] ; source, dest
++jmp_cmp ==, stor[24], 0x1, inl[:LABEL_2] ; operand, left, right, addr
++
++JMP_44_1:
++yield
++jmp inl[:JMP_44_1] ; addr

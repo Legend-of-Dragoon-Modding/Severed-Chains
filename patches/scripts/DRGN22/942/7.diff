@@ -1,0 +1,24 @@
+--- original
++++ modified
+@@ -168,6 +168,10 @@
+ LABEL_18:
+ call SMap::scriptSetModelPosition, stor[0], 0xffffffbd, 0x0, 0xffffff8e ; scriptIndex, x, y, z
+ call SMap::scriptSelfSetSobjHidden, 0x0 ; value
++call SMap::scriptSelfLoadSobjAnimation, 0x8 ; animIndex
++call SMap::scriptSelfToggleAnimationDisabled, 0x0 ; disabled
++wait 0x8
++call SMap::scriptSelfToggleAnimationDisabled, 0x1 ; disabled
+ yield
+ LABEL_19:
+ return
+@@ -239,10 +243,6 @@
+ 
+ ; SUBROUTINE
+ JMP_470_1:
+-call SMap::scriptSelfLoadSobjModelAndAnimation, 0xb ; objectIndex
+-call SMap::scriptSetModelRotate, stor[0], 0x0, 0x0, 0x0 ; scriptIndex, x, y, z
+-mov 0x1350, stor[24] ; source, dest
+-call SMap::scriptSetAmbientColour, stor[0], stor[24], stor[24], stor[24] ; sobjIndex, r, g, b
+ return
+ 
+ ; SUBROUTINE
