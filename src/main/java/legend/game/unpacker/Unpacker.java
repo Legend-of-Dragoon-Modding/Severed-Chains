@@ -130,6 +130,9 @@ public final class Unpacker {
     transformers.put(Unpacker::itemScriptDamageCapDiscriminator, Unpacker::enemyAndItemScriptDamageCapPatcher);
 
     transformers.put(Unpacker::xaDiscriminator, Unpacker::xaTransformer);
+
+    // Lang extractors
+    transformers.put(TranslationTransformer::discriminator, TranslationTransformer::transformer);
   }
 
   private static final List<Transformer> postTransformers = new ArrayList<>();
@@ -655,10 +658,14 @@ public final class Unpacker {
       final var discriminator = entry.getKey();
       final var transformer = entry.getValue();
 
-      if(discriminator.matches(node, flags)) {
-        node.parent.children.remove(node.pathSegment);
-        transformer.transform(node, transformations, flags);
-        break;
+      try {
+        if(discriminator.matches(node, flags)) {
+          node.parent.children.remove(node.pathSegment);
+          transformer.transform(node, transformations, flags);
+          break;
+        }
+      } catch(final Exception e) {
+        LOGGER.error("Failed to transform " + node.fullPath, e);
       }
     }
 
