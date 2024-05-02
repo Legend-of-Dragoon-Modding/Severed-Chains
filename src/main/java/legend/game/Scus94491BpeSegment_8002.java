@@ -3316,7 +3316,16 @@ public final class Scus94491BpeSegment_8002 {
           final int height = 12 - scrollH;
 
           textboxText.transforms.identity();
-          textboxText.transforms.transfer.set(GPU.getOffsetX() + (int)x, GPU.getOffsetY() + (int)y - scrollH, textboxText.z_0c * 4.0f);
+          textboxText.transforms.transfer.set(GPU.getOffsetX() + (int)x + 1, GPU.getOffsetY() + (int)y - scrollH + 1, (textboxText.z_0c + 1) * 4.0f);
+          RENDERER.queueOrthoModel(RENDERER.chars, textboxText.transforms)
+            .texture(RENDERER.textTexture)
+            .vertices((LodString.fromLodChar(chr.char_06) - 33) * 4, 4)
+            .monochrome(0.0f)
+            .scissor(GPU.getOffsetX() + (int)x, GPU.getOffsetY() + (int)y + height, 8, height);
+
+          textboxText.transforms.transfer.x--;
+          textboxText.transforms.transfer.y--;
+          textboxText.transforms.transfer.z -= 4.0f;
           RENDERER.queueOrthoModel(RENDERER.chars, textboxText.transforms)
             .texture(RENDERER.textTexture)
             .vertices((LodString.fromLodChar(chr.char_06) - 33) * 4, 4)
