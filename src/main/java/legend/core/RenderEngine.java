@@ -1311,6 +1311,11 @@ public class RenderEngine {
     public QueuedModel<Options> translucency(final Translucency translucency) {
       this.translucency = translucency;
       this.hasTranslucency = true;
+
+      if(translucency == Translucency.HALF_B_PLUS_HALF_F) {
+        RenderEngine.this.needsSorting = true;
+      }
+
       return this;
     }
 
