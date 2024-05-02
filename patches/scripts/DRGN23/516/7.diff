@@ -1,0 +1,22 @@
+--- original
++++ modified
+@@ -51,7 +51,9 @@
+ ENTRYPOINT_13:
+ ENTRYPOINT_14:
+ ENTRYPOINT_15:
+-call SMap::scriptSelfLoadSobjAnimation, 0x0 ; animIndex
++call SMap::scriptSelfLoadSobjAnimation, 0x8 ; animIndex
++wait 0x8
++call SMap::scriptSelfToggleAnimationDisabled, 0x1 ; disabled
+ mov var[65], stor[23] ; source, dest
+ incr stor[stor[stor[0], 23], 8] ; operand
+ gosub inl[:LABEL_16] ; addr
+@@ -72,8 +74,6 @@
+ call SMap::scriptSelfSetSobjFlag, 0x1, 0x1 ; bitIndex, value
+ call SMap::scriptSetModelPosition, stor[0], 0xfffffe70, 0xffffff41, 0xfffff630 ; scriptIndex, x, y, z
+ call SMap::scriptSetModelRotate, stor[0], 0x0, 0x800, 0x0 ; scriptIndex, x, y, z
+-mov 0x1350, stor[24] ; source, dest
+-call SMap::scriptSetAmbientColour, stor[0], stor[24], stor[24], stor[24] ; sobjIndex, r, g, b
+ return
+ 
+ ; SUBROUTINE
