@@ -1,0 +1,25 @@
+--- original
++++ modified
+@@ -120,12 +120,7 @@
+ call SMap::FUN_800df530, 0x1 ; value
+ call SMap::scriptSelfSetSobjFlag, 0x1, 0x1 ; bitIndex, value
+ call SMap::scriptSetModelPosition, stor[0], 0xfffffeef, 0x0, 0xfffffed5 ; scriptIndex, x, y, z
+-call SMap::scriptSetModelRotate, stor[0], 0xf00, 0x800, 0x0 ; scriptIndex, x, y, z
+-call SMap::scriptSelfLoadSobjAnimation, 0x0 ; animIndex
+-call SMap::scriptSetModelRotate, stor[0], 0xf00, 0x800, 0x0 ; scriptIndex, x, y, z
+-call SMap::scriptScaleXyz, stor[0], 0xc00, 0x1300, 0xc00 ; sobjIndex, x, y, z
+-mov 0xf00, stor[24] ; source, dest
+-call SMap::scriptSetAmbientColour, stor[0], stor[24], stor[24], stor[24] ; sobjIndex, r, g, b
++call SMap::scriptSetModelRotate, stor[0], 0x0, 0xc00, 0x0 ; scriptIndex, x, y, z
+ return
+ 
+ ; SUBROUTINE TABLE
+@@ -137,8 +132,6 @@
+ 
+ ; SUBROUTINE
+ JMP_2d4_0:
+-mov 0x4, stor[24] ; source, dest
+-gosub inl[:LABEL_22] ; addr
+ return
+ 
+ ; SUBROUTINE
