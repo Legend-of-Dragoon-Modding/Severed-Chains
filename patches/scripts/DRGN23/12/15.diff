@@ -1,0 +1,10 @@
+--- original
++++ modified
+@@ -117,7 +117,6 @@
+ call SMap::scriptSelfSetSobjHidden, 0x1 ; value
+ call SMap::scriptSetModelPosition, stor[0], 0x32, 0xffffff9c, 0xffffffa7 ; scriptIndex, x, y, z
+ call SMap::scriptSetModelRotate, stor[0], 0x0, 0x980, 0x0 ; scriptIndex, x, y, z
+-call SMap::scriptSetAmbientColour, stor[0], 0x1b00, 0x1b00, 0x1b00 ; sobjIndex, r, g, b
+ gosub_table stor[stor[stor[0], 23], 31], inl[:LABEL_18] ; index, table
+ return
+ 

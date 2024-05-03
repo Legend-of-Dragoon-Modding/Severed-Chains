@@ -1,0 +1,20 @@
+--- original
++++ modified
+@@ -240,7 +240,6 @@
+ call SMap::scriptSelfSetSobjFlag, 0x1, 0x1 ; bitIndex, value
+ call SMap::scriptSetModelPosition, stor[0], 0x92, 0xffffff9c, 0xae ; scriptIndex, x, y, z
+ call SMap::scriptSetModelRotate, stor[0], 0x0, 0xa80, 0x0 ; scriptIndex, x, y, z
+-call SMap::scriptSetAmbientColour, stor[0], 0x1c00, 0x1c00, 0x1c00 ; sobjIndex, r, g, b
+ gosub_table stor[stor[stor[0], 23], 31], inl[:LABEL_18] ; index, table
+ return
+ 
+@@ -274,8 +273,8 @@
+ 
+ ; SUBROUTINE TABLE
+ LABEL_27:
+-rel :JMP_4e0_0
+ rel :JMP_4e0_1
++rel :JMP_4e0_1
+ rel :JMP_4e0_2
+ rel :JMP_4e0_3
+ rel :JMP_4e0_4

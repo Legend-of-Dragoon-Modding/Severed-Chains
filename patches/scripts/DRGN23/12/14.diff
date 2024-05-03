@@ -1,0 +1,21 @@
+--- original
++++ modified
+@@ -90,8 +90,6 @@
+ call SMap::scriptSelfSetSobjHidden, 0x1 ; value
+ call SMap::scriptSetModelPosition, stor[0], 0xe4, 0xffffff9c, 0xfffffff0 ; scriptIndex, x, y, z
+ call SMap::scriptSetModelRotate, stor[0], 0x0, 0x800, 0x0 ; scriptIndex, x, y, z
+-call SMap::scriptSetAmbientColour, stor[0], 0x1600, 0x1600, 0x1600 ; sobjIndex, r, g, b
+-call SMap::scriptScaleXyz, stor[0], 0x1000, 0x1400, 0x1000 ; sobjIndex, x, y, z
+ gosub_table stor[stor[stor[0], 23], 31], inl[:LABEL_18] ; index, table
+ return
+ 
+@@ -127,8 +125,8 @@
+ 
+ ; SUBROUTINE TABLE
+ LABEL_27:
+-rel :JMP_2b4_0
+ rel :JMP_2b4_1
++rel :JMP_2b4_1
+ rel :JMP_2b4_2
+ rel :JMP_2b4_3
+ rel :JMP_2b4_4
