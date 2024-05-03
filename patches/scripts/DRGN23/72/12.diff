@@ -1,0 +1,11 @@
+--- original
++++ modified
+@@ -91,8 +91,6 @@
+ call SMap::scriptSetModelPosition, stor[0], 0xfffffef0, 0x0, 0x31b ; scriptIndex, x, y, z
+ call SMap::scriptSetModelRotate, stor[0], 0x0, 0x0, 0x0 ; scriptIndex, x, y, z
+ gosub inl[:LABEL_14] ; addr
+-call SMap::scriptEnableSobjFlatLight, stor[0], 0x80, 0x80, 0x80 ; sobjIndex, r, g, b
+-call SMap::scriptScaleUniform, stor[0], 0x1400 ; sobjIndex, scale
+ return
+ 
+ ; SUBROUTINE

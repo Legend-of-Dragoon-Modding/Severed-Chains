@@ -1,0 +1,13 @@
+--- original
++++ modified
+@@ -35,10 +35,8 @@
+ JMP_58_0:
+ call SMap::FUN_800df530, 0x1 ; value
+ call SMap::scriptSelfSetSobjHidden, 0x0 ; value
+-call SMap::scriptEnableSobjFlatLight, stor[0], 0x80, 0x80, 0x80 ; sobjIndex, r, g, b
+ call SMap::scriptSetModelPosition, stor[0], 0x150, 0xffffffec, 0x158 ; scriptIndex, x, y, z
+ call SMap::scriptSetModelRotate, stor[0], 0x0, 0x300, 0x0 ; scriptIndex, x, y, z
+-call SMap::scriptScaleUniform, stor[0], 0x1400 ; sobjIndex, scale
+ call SMap::scriptSetModelZOffset, stor[0], 0x1ff ; sobjIndex, offset
+ return
+ 
