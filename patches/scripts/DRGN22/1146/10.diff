@@ -1,0 +1,8 @@
+--- original
++++ modified
+@@ -203,5 +203,4 @@
+ call SMap::scriptSetModelPosition, stor[0], 0x17d, 0x0, 0xffffff1c ; scriptIndex, x, y, z
+ call SMap::scriptSetModelRotate, stor[0], 0x0, 0xfffffc00, 0x0 ; scriptIndex, x, y, z
+ call SMap::scriptSelfLoadSobjModelAndAnimation, 0x8 ; objectIndex
+-call SMap::scriptSetAmbientColour, stor[0], 0xe00, 0x1100, 0x1000 ; sobjIndex, r, g, b
+ rewind

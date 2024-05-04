@@ -1,0 +1,81 @@
+--- original
++++ modified
+@@ -36,10 +36,8 @@
+ jmp_cmp ==, 0xffffffff, stor[28], inl[:LABEL_11] ; operand, left, right, addr
+ jmp_cmp ==, 0xfffffffe, stor[28], inl[:LABEL_12] ; operand, left, right, addr
+ call SMap::scriptSelfToggleAnimationDisabled, 0x0 ; disabled
+-call SMap::scriptSelfLoadSobjAnimation, stor[28] ; animIndex
+ call SMap::scriptSelfFacePoint, stor[24], stor[25], stor[26] ; x, y, z
+ wait stor[31] ; frames
+-call SMap::scriptSelfLoadSobjAnimation, 0x0 ; animIndex
+ jmp inl[:LABEL_13] ; addr
+ LABEL_11:
+ mov stor[31], stor[24] ; source, dest
+@@ -103,7 +101,6 @@
+ call SMap::scriptSetModelPosition, stor[0], 0xe1, 0xffffffd2, 0xfffffe61 ; scriptIndex, x, y, z
+ call SMap::scriptSetModelRotate, stor[0], 0x0, 0x0, 0x0 ; scriptIndex, x, y, z
+ call SMap::scriptDisableShadow, stor[0] ; sobjIndex
+-call SMap::scriptSetAmbientColour, stor[0], 0x1000, 0x1000, 0x1000 ; sobjIndex, r, g, b
+ LABEL_18:
+ mov 0x300, stor[24] ; source, dest
+ mov 0xc, stor[25] ; source, dest
+@@ -114,6 +111,7 @@
+ mov 0xfffffe3f, stor[26] ; source, dest
+ mov 0x2, stor[27] ; source, dest
+ mov 0x0, stor[28] ; source, dest
++call SMap::scriptSelfLoadSobjAnimation, 0x1 ; animIndex
+ gosub inl[:LABEL_9] ; addr
+ mov 0x29, stor[24] ; source, dest
+ mov 0xffffffde, stor[25] ; source, dest
+@@ -121,6 +119,7 @@
+ mov 0x2, stor[27] ; source, dest
+ mov 0x0, stor[28] ; source, dest
+ gosub inl[:LABEL_9] ; addr
++call SMap::scriptSelfLoadSobjAnimation, 0x0 ; animIndex
+ mov 0x50, stor[24] ; source, dest
+ wait stor[24] ; frames
+ mov 0xa80, stor[24] ; source, dest
+@@ -132,6 +131,7 @@
+ mov 0xfffffe3f, stor[26] ; source, dest
+ mov 0x2, stor[27] ; source, dest
+ mov 0x0, stor[28] ; source, dest
++call SMap::scriptSelfLoadSobjAnimation, 0x1 ; animIndex
+ gosub inl[:LABEL_9] ; addr
+ mov 0xe1, stor[24] ; source, dest
+ mov 0xffffffd2, stor[25] ; source, dest
+@@ -139,11 +139,28 @@
+ mov 0x2, stor[27] ; source, dest
+ mov 0x0, stor[28] ; source, dest
+ gosub inl[:LABEL_9] ; addr
+-mov 0x28, stor[24] ; source, dest
+-wait stor[24] ; frames
+-mov 0x63, stor[24] ; source, dest
++call SMap::scriptSelfLoadSobjAnimation, 0x0 ; animIndex
++mov 0x50, stor[24] ; source, dest
++jmp inl[:LABEL_19] ; addr
++
++LABEL_19:
+ mov 0x0, stor[25] ; source, dest
+-gosub inl[:LABEL_14] ; addr
+-mov 0x28, stor[24] ; source, dest
+-wait stor[24] ; frames
+-jmp inl[:LABEL_18] ; addr
++LABEL_20:
++jmp_cmp <=, stor[24], stor[25], inl[:LABEL_18] ; operand, left, right, addr
++incr stor[25] ; operand
++call Scus94491BpeSegment::scriptReadGlobalFlag1, 0x63, stor[26] ; flag, value
++jmp_cmp <=, 0x1, stor[26], inl[:LABEL_21] ; operand, left, right, addr
++yield
++jmp inl[:LABEL_20] ; addr
++
++LABEL_21:
++call SMap::scriptSelfToggleAnimationDisabled, 0x1 ; disabled
++LABEL_22:
++call Scus94491BpeSegment::scriptReadGlobalFlag1, 0x63, stor[26] ; flag, value
++jmp_cmp ==, 0x0, stor[26], inl[:LABEL_23] ; operand, left, right, addr
++yield
++jmp inl[:LABEL_22] ; addr
++
++LABEL_23:
++call SMap::scriptSelfToggleAnimationDisabled, 0x0 ; disabled
++jmp inl[:LABEL_19] ; addr
