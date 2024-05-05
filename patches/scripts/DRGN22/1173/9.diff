@@ -1,0 +1,10 @@
+--- original
++++ modified
+@@ -15,7 +15,6 @@
+ JMP_44_0:
+ call SMap::scriptSetModelPosition, stor[0], 0x177, 0x0, 0xffffff0c ; scriptIndex, x, y, z
+ call SMap::scriptSetModelRotate, stor[0], 0x0, 0x880, 0x0 ; scriptIndex, x, y, z
+-call SMap::scriptSetAmbientColour, stor[0], 0x1000, 0x1000, 0x1000 ; sobjIndex, r, g, b
+ rewind
+ JMP_44_1:
+ call SMap::scriptSelfSetSobjHidden, 0x1 ; value
