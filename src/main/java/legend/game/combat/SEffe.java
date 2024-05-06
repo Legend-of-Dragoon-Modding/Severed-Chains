@@ -1044,7 +1044,7 @@ public final class SEffe {
 
     RENDERER
       .queueModel(shadow.modelParts_00[0].obj, lw)
-      .depthOffset(-0.0001f)
+      .depthOffset(shadow.zOffset_a0 * 4.0f)
       .lightDirection(lightDirectionMatrix_800c34e8)
       .lightColour(lightColourMatrix_800c3508)
       .backgroundColour(GTE.backgroundColour);

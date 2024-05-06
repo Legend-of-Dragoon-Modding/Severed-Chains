@@ -939,6 +939,7 @@ public class SMap extends EngineState {
     RENDERER
       .queueModel(modelPart.obj, lw)
       .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
+      .depthOffset(model.zOffset_a0)
       .lightDirection(lightDirectionMatrix_800c34e8)
       .lightColour(lightColourMatrix_800c3508)
       .backgroundColour(GTE.backgroundColour);
@@ -969,6 +970,7 @@ public class SMap extends EngineState {
 
           final RenderEngine.QueuedModel<?> queue = RENDERER.queueModel(dobj2.obj, lw)
             .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
+            .depthOffset(model.zOffset_a0)
             .lightDirection(lightDirectionMatrix_800c34e8)
             .lightColour(lightColourMatrix_800c3508)
             .backgroundColour(GTE.backgroundColour)

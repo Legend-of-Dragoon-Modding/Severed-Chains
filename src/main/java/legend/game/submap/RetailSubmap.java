@@ -1190,6 +1190,11 @@ public class RetailSubmap extends Submap {
         RENDERER
           .queueOrthoModel(metrics.obj, this.backgroundTransforms)
           .texture(this.foregroundTextures[i]);
+
+//        final int oldZ = textZ_800bdf00;
+//        textZ_800bdf00 = 4;
+//        renderCentredText(Integer.toHexString(metrics.flags_22), (int)(metrics.offsetX_1c + metrics.w_18 / 2.0f + this.backgroundTransforms.transfer.x), (int)(metrics.offsetY_1e + metrics.h_1a / 2.0f + this.backgroundTransforms.transfer.y), TextColour.WHITE);
+//        textZ_800bdf00 = oldZ;
       }
     }
 
@@ -1286,6 +1291,7 @@ public class RetailSubmap extends Submap {
 
       RENDERER.queueModel(dobj2.obj, matrix, lw)
         .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
+        .depthOffset(model.zOffset_a0)
         .lightDirection(lightDirectionMatrix_800c34e8)
         .lightColour(lightColourMatrix_800c3508)
         .backgroundColour(GTE.backgroundColour)

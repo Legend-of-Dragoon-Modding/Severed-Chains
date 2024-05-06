@@ -36,12 +36,10 @@ layout(location = 0) out vec4 outColour;
 void main() {
   // Linearize depth for perspective transforms so that we can render ortho models at specific depths
   if(projectionMode == 2) {
-    gl_FragDepth = (depth - znear) * zdiffInv;
+    gl_FragDepth = (depth - znear + depthOffset) * zdiffInv;
   } else {
     gl_FragDepth = gl_FragCoord.z;
   }
-
-  gl_FragDepth += depthOffset;
 
   bool ctmd = (ctmdFlags & 0x20) != 0;
   bool uniformLit = (ctmdFlags & 0x10) != 0;

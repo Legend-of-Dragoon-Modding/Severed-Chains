@@ -7319,7 +7319,8 @@ public class Battle extends EngineState {
             .lightColour(lightColourMatrix_800c3508)
             .backgroundColour(GTE.backgroundColour)
             .ctmdFlags((part.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
-            .battleColour(this._800c6930.colour_00);
+            .battleColour(this._800c6930.colour_00)
+            .depthOffset(stage.z_5e8 * 4.0f);
         }
       }
 
