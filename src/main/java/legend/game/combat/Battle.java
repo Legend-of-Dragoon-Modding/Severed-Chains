@@ -4614,7 +4614,23 @@ public class Battle extends EngineState {
       y = MathHelper.psxDegToRad(y);
     }
 
-    this.camera_800c67f0.FUN_800db084(script.params_20[0].get(), x, y, z, SCRIPTS.getObject(script.params_20[4].get(), BattleObject.class));
+    // Three Executioners instakill sends a bad param for scriptIndex (0xc8), but this param isn't used for the camera function they're calling so we can just pass null
+    // File 5316/1[addr 0x4078]
+    // Parameters:
+    //   Op param: 0x22
+    //   0: script[0x1029] 0x0
+    //   1: script[0x102b] 0xfff59900
+    //   2: script[0x102d] 0xfff8f300
+    //   3: script[0x102e] 0x0
+    //   4: script[0x102f] 0xc8
+    final BattleObject bobj;
+    if(script.params_20[4].get() < 72) {
+      bobj = SCRIPTS.getObject(script.params_20[4].get(), BattleObject.class);
+    } else {
+      bobj = null;
+    }
+
+    this.camera_800c67f0.FUN_800db084(script.params_20[0].get(), x, y, z, bobj);
     return FlowControl.CONTINUE;
   }
 
