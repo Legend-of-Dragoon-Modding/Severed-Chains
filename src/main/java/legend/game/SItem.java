@@ -803,7 +803,9 @@ public final class SItem {
   @Method(0x80103cc4L)
   public static void renderText(final String text, final int x, final int y, final TextColour colour) {
     final TextColour shadowColour;
-    if(colour == TextColour.LIME) {
+    if(colour == TextColour.WHITE) {
+      shadowColour = TextColour.BLACK;
+    } else if(colour == TextColour.LIME) {
       //LAB_80103d18
       shadowColour = TextColour.GREEN;
     } else if(colour == TextColour.MIDDLE_BROWN) {
