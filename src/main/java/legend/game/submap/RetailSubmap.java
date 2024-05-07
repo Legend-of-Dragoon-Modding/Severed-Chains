@@ -16,6 +16,7 @@ import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
 import legend.core.opengl.TmdObjLoader;
+import legend.game.modding.events.submap.SubmapAnimatedOverlayTextureEvent;
 import legend.game.modding.events.submap.SubmapEnvironmentTextureEvent;
 import legend.game.modding.events.submap.SubmapObjectTextureEvent;
 import legend.game.scripting.ScriptFile;
@@ -149,6 +150,7 @@ public class RetailSubmap extends Submap {
   private Obj backgroundObj;
   private final MV backgroundTransforms = new MV();
   private Texture[] foregroundTextures;
+  private Texture animatedOverlayTexture;
   private final Int2ObjectMap<Consumer<Texture.Builder>> sobjTextureOverrides = new Int2ObjectOpenHashMap<>();
 
   public RetailSubmap(final int cut, final NewRootStruct newRoot, final Vector2f screenOffset, final CollisionGeometry collisionGeometry) {
@@ -497,6 +499,9 @@ public class RetailSubmap extends Submap {
     }
 
     GPU.uploadData15(new Rect4i(1008, 256, submapCutTexture.getImageRect().w, submapCutTexture.getImageRect().h), submapCutTexture.getImageData());
+
+    final SubmapAnimatedOverlayTextureEvent event = EVENTS.postEvent(new SubmapAnimatedOverlayTextureEvent(drgnBinIndex_800bc058, this.cut));
+    this.animatedOverlayTexture = event.texture;
 
     // The submap cut model is rendered without using the camera matrix, so we multiply its transforms
     // by the inverse of the camera matrix to cancel out the camera multiplication in the shader
@@ -1260,7 +1265,11 @@ public class RetailSubmap extends Submap {
     }
 
     if(this.submapModel_800d4bf8.modelParts_00[0].obj == null) {
-      TmdObjLoader.fromModel("Submap model", this.submapModel_800d4bf8);
+      if(this.animatedOverlayTexture != null) {
+        TmdObjLoader.fromModel("Submap model", this.submapModel_800d4bf8, this.animatedOverlayTexture.width, this.animatedOverlayTexture.height);
+      } else {
+        TmdObjLoader.fromModel("Submap model", this.submapModel_800d4bf8);
+      }
     }
 
     this.submapModel_800d4bf8.coord2_14.coord.transfer.zero();
@@ -1284,12 +1293,16 @@ public class RetailSubmap extends Submap {
 
       GsGetLw(dobj2.coord2_04, lw);
 
-      RENDERER.queueModel(dobj2.obj, matrix, lw)
+      final RenderEngine.QueuedModel<?> queued = RENDERER.queueModel(dobj2.obj, matrix, lw)
         .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
         .lightDirection(lightDirectionMatrix_800c34e8)
         .lightColour(lightColourMatrix_800c3508)
         .backgroundColour(GTE.backgroundColour)
         .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11);
+
+      if(this.animatedOverlayTexture != null) {
+        queued.texture(this.animatedOverlayTexture);
+      }
     }
     //LAB_800eef0c
   }
