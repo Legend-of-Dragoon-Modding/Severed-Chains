@@ -500,9 +500,6 @@ public class RetailSubmap extends Submap {
 
     GPU.uploadData15(new Rect4i(1008, 256, submapCutTexture.getImageRect().w, submapCutTexture.getImageRect().h), submapCutTexture.getImageData());
 
-    final SubmapAnimatedOverlayTextureEvent event = EVENTS.postEvent(new SubmapAnimatedOverlayTextureEvent(drgnBinIndex_800bc058, this.cut));
-    this.animatedOverlayTexture = event.texture;
-
     // The submap cut model is rendered without using the camera matrix, so we multiply its transforms
     // by the inverse of the camera matrix to cancel out the camera multiplication in the shader
     final Matrix4f inverseW2s = new Matrix4f(worldToScreenMatrix_800c3548).setTranslation(worldToScreenMatrix_800c3548.transfer)
@@ -1265,6 +1262,9 @@ public class RetailSubmap extends Submap {
     }
 
     if(this.submapModel_800d4bf8.modelParts_00[0].obj == null) {
+      final SubmapAnimatedOverlayTextureEvent event = EVENTS.postEvent(new SubmapAnimatedOverlayTextureEvent(drgnBinIndex_800bc058, this.cut));
+      this.animatedOverlayTexture = event.texture;
+
       if(this.animatedOverlayTexture != null) {
         TmdObjLoader.fromModel("Submap model", this.submapModel_800d4bf8, this.animatedOverlayTexture.width, this.animatedOverlayTexture.height);
       } else {
