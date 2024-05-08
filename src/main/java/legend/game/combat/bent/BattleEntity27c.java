@@ -644,8 +644,7 @@ public abstract class BattleEntity27c extends BattleObject {
             .backgroundColour(GTE.backgroundColour)
             .ctmdFlags((part.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
             .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
-            .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00)
-            .depthOffset(model.zOffset_a0 * 4.0f);
+            .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
         }
       }
     }

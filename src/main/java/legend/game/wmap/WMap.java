@@ -27,7 +27,6 @@ import legend.game.submap.EncounterRateMode;
 import legend.game.tim.Tim;
 import legend.game.types.CContainer;
 import legend.game.types.GsF_LIGHT;
-import legend.game.types.LodString;
 import legend.game.types.McqHeader;
 import legend.game.types.Model124;
 import legend.game.types.TextboxState;
@@ -2062,10 +2061,10 @@ public class WMap extends EngineState {
       if(this.mapState_800c6798.continent_00 != Continent.ENDINESS_7) {
         //LAB_800d91cc
         if(mapTerrainTmdIndices_800ef194[this.mapState_800c6798.continent_00.continentNum] == i || mapFrameTmdIndices_800ef19c[this.mapState_800c6798.continent_00.continentNum] == i) {
-          zOffset_1f8003e8 = 500; // background models
+//          zOffset_1f8003e8 = 500; // background models
         } else {
           //LAB_800d9204
-          zOffset_1f8003e8 = 100; // location models
+//          zOffset_1f8003e8 = 100; // location models
         }
       }
 

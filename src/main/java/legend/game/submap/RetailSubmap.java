@@ -1291,7 +1291,6 @@ public class RetailSubmap extends Submap {
 
       RENDERER.queueModel(dobj2.obj, matrix, lw)
         .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
-        .depthOffset(model.zOffset_a0)
         .lightDirection(lightDirectionMatrix_800c34e8)
         .lightColour(lightColourMatrix_800c3508)
         .backgroundColour(GTE.backgroundColour)

@@ -55,7 +55,7 @@ public class MV extends Matrix3f {
     out.transfer.add(vx, vy, vz);
 
     other.mul(this, out);
-    return this;
+    return out;
   }
 
   /** Rotate with parallel translation */

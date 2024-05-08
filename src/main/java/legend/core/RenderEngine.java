@@ -59,6 +59,8 @@ import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.PI;
 import static legend.core.MathHelper.clamp;
 import static legend.core.MathHelper.put3x4;
+import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
+import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
@@ -845,6 +847,7 @@ public class RenderEngine {
     final QueuedModel<VoidShaderOptions> entry = this.modelPool.acquire();
     entry.reset();
     entry.obj = obj;
+    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
     return entry;
   }
 
@@ -858,6 +861,7 @@ public class RenderEngine {
     entry.obj = obj;
     entry.transforms.set(mv).setTranslation(mv.transfer);
     entry.lightTransforms.set(entry.transforms);
+    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
     return entry;
   }
 
@@ -871,6 +875,7 @@ public class RenderEngine {
     entry.obj = obj;
     entry.transforms.set(mv).setTranslation(mv.transfer);
     entry.lightTransforms.set(lightMv).setTranslation(lightMv.transfer);
+    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
     return entry;
   }
 
@@ -884,6 +889,7 @@ public class RenderEngine {
     entry.obj = obj;
     entry.transforms.set(mv);
     entry.lightTransforms.set(entry.transforms);
+    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
     return entry;
   }
 
@@ -897,6 +903,7 @@ public class RenderEngine {
     entry.obj = obj;
     entry.transforms.set(mv);
     entry.lightTransforms.set(lightMv).setTranslation(lightMv.transfer);
+    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
     return entry;
   }
 
@@ -913,6 +920,7 @@ public class RenderEngine {
     entry.reset();
     entry.transforms.setTranslation(this.widescreenOrthoOffsetX, 0.0f, 0.0f);
     entry.obj = obj;
+    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
     return entry;
   }
 
@@ -930,6 +938,7 @@ public class RenderEngine {
     entry.obj = obj;
     entry.transforms.set(mv).setTranslation(mv.transfer.x + this.widescreenOrthoOffsetX, mv.transfer.y, mv.transfer.z);
     entry.lightTransforms.set(entry.transforms);
+    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
     return entry;
   }
 
@@ -943,6 +952,7 @@ public class RenderEngine {
     entry.obj = obj;
     entry.shader = ShaderManager.getShader(shaderType);
     entry.shaderOptions = entry.shader.makeOptions();
+    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
     return entry;
   }
 
@@ -958,6 +968,7 @@ public class RenderEngine {
     entry.shaderOptions = entry.shader.makeOptions();
     entry.transforms.set(mv).setTranslation(mv.transfer);
     entry.lightTransforms.set(entry.transforms);
+    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
     return entry;
   }
 
