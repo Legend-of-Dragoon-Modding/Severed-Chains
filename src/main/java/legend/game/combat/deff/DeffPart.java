@@ -1,8 +1,8 @@
 package legend.game.combat.deff;
 
 import legend.core.gpu.Rect4i;
-import legend.game.types.CContainer;
-import legend.game.types.TmdAnimationFile;
+import legend.game.models.CContainer;
+import legend.game.models.TmdAnimationFile;
 import legend.game.unpacker.FileData;
 
 import java.util.List;

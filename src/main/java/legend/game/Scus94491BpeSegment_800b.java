@@ -21,7 +21,7 @@ import legend.game.types.GameState52c;
 import legend.game.types.GsRVIEW2;
 import legend.game.types.InventoryMenuState;
 import legend.game.types.McqHeader;
-import legend.game.types.Model124;
+import legend.game.models.Model124;
 import legend.game.types.Renderable58;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;

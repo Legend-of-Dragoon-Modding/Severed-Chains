@@ -4,7 +4,7 @@ import legend.core.gte.MV;
 import legend.game.sound.ReverbConfig;
 import legend.game.sound.ReverbConfigAndLocation;
 import legend.game.submap.SubmapEnvState;
-import legend.game.tmd.UvAdjustmentMetrics14;
+import legend.game.models.UvAdjustmentMetrics14;
 import legend.game.types.AdditionData0e;
 import legend.game.types.LodString;
 

@@ -1,4 +1,4 @@
 @ParametersAreNonnullByDefault
-package legend.game.tmd;
+package legend.game.models;
 
 import javax.annotation.ParametersAreNonnullByDefault;

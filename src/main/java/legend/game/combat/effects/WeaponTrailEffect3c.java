@@ -7,7 +7,7 @@ import legend.core.memory.Method;
 import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.types.BattleObject;
 import legend.game.scripting.ScriptState;
-import legend.game.types.Model124;
+import legend.game.models.Model124;
 import legend.game.types.Translucency;
 import org.joml.Math;
 import org.joml.Vector2f;

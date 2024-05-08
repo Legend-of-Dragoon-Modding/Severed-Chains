@@ -1,7 +1,7 @@
 package legend.game.wmap;
 
-import legend.game.types.CContainer;
-import legend.game.types.TmdAnimationFile;
+import legend.game.models.CContainer;
+import legend.game.models.TmdAnimationFile;
 
 public class PlayerModelTmdFileData {
   public CContainer extendedTmd_00;

@@ -1,7 +1,7 @@
 package legend.game.submap;
 
 import legend.core.opengl.Texture;
-import legend.game.types.Model124;
+import legend.game.models.Model124;
 import org.joml.Vector3f;
 
 import static legend.game.submap.AttachedSobjEffect.AttachedSobjEffectData40;

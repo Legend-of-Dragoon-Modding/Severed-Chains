@@ -1,4 +1,4 @@
-package legend.game.tmd;
+package legend.game.models;
 
 import legend.core.IoHelper;
 import legend.core.gpu.Bpp;

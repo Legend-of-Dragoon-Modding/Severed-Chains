@@ -1,8 +1,8 @@
 package legend.game.submap;
 
-import legend.game.types.CContainer;
+import legend.game.models.CContainer;
 import legend.game.scripting.ScriptFile;
-import legend.game.types.TmdAnimationFile;
+import legend.game.models.TmdAnimationFile;
 
 import java.util.ArrayList;
 import java.util.List;

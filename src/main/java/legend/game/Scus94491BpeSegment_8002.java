@@ -32,6 +32,10 @@ import legend.game.inventory.screens.TextColour;
 import legend.game.inventory.screens.TooManyItemsScreen;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.modding.events.inventory.TakeItemEvent;
+import legend.game.models.CContainer;
+import legend.game.models.Model124;
+import legend.game.models.TmdAnimationFile;
+import legend.game.models.UvAdjustmentMetrics14;
 import legend.game.saves.ConfigStorageLocation;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
@@ -42,18 +46,14 @@ import legend.game.sound.QueuedSound28;
 import legend.game.sound.SoundFile;
 import legend.game.submap.SubmapEnvState;
 import legend.game.tim.Tim;
-import legend.game.tmd.UvAdjustmentMetrics14;
 import legend.game.types.ActiveStatsa0;
-import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
 import legend.game.types.InventoryMenuState;
 import legend.game.types.LodString;
 import legend.game.types.MagicStuff08;
 import legend.game.types.MenuEntryStruct04;
-import legend.game.types.Model124;
 import legend.game.types.Renderable58;
 import legend.game.types.RenderableMetrics14;
-import legend.game.types.SmallerStruct;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxArrow0c;
 import legend.game.types.TextboxBorderMetrics0c;
@@ -62,8 +62,6 @@ import legend.game.types.TextboxState;
 import legend.game.types.TextboxText84;
 import legend.game.types.TextboxTextState;
 import legend.game.types.TextboxType;
-import legend.game.types.TmdAnimationFile;
-import legend.game.types.TmdSubExtension;
 import legend.game.types.Translucency;
 import legend.game.types.UiPart;
 import legend.game.types.UiType;
@@ -335,21 +333,21 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_8002079c
     model.tpage_108 = (int)((cContainer.tmdPtr_00.id & 0xffff_0000L) >>> 11); // LOD uses the upper 16 bits of TMD IDs as tpage (sans VRAM X/Y)
 
-    if(cContainer.ptr_08 != null) {
-      model.ptr_a8 = cContainer.ptr_08;
+    if(cContainer.textureAnimationFile_08 != null) {
+      model.textureAnimationFile_a8 = cContainer.textureAnimationFile_08;
 
       //LAB_800207d4
       for(int i = 0; i < 7; i++) {
-        model.animationMetrics_d0[i] = model.ptr_a8._00[i];
-        FUN_8002246c(model, i);
+        model.textureAnimation_d0[i] = model.textureAnimationFile_a8.animations_00[i];
+        initTextureAnimation(model, i);
       }
     } else {
       //LAB_80020818
-      model.ptr_a8 = null;
+      model.textureAnimationFile_a8 = null;
 
       //LAB_80020828
       for(int i = 0; i < 7; i++) {
-        model.animationMetrics_d0[i] = null;
+        model.textureAnimation_d0[i] = null;
       }
     }
 
@@ -394,13 +392,8 @@ public final class Scus94491BpeSegment_8002 {
     //LAB_80020bf0
     // Only apply texture animations for the keyframe of the middle interpolation frame
     if(model.subFrameIndex == 0 || model.subFrameIndex == framesPerKeyframe / 2) {
-      if(model.smallerStructPtr_a4 != null) {
-        //LAB_800da138
-        for(int i = 0; i < 4; i++) {
-          if(model.smallerStructPtr_a4.uba_04[i]) {
-            animateSubmapModelClut(model, i);
-          }
-        }
+      if(model.clutAnimation_a4 != null) {
+        model.clutAnimation_a4.apply(model);
       }
 
       for(int i = 0; i < 7; i++) {
@@ -438,49 +431,6 @@ public final class Scus94491BpeSegment_8002 {
     }
     //LAB_80020e98
     //LAB_80020ea8
-  }
-
-  /** (pulled from SMAP) Used in pre-Melbu submap cutscene, Prairie, new game Rose cutscene (animates the cloud flicker by changing CLUT, pretty sure this is CLUT animation) */
-  @Method(0x800dde70L)
-  private static void animateSubmapModelClut(final Model124 model, final int index) {
-    final SmallerStruct smallerStruct = model.smallerStructPtr_a4;
-
-    if(smallerStruct.tmdSubExtensionArr_20[index] == null) {
-      smallerStruct.uba_04[index] = false;
-    } else {
-      //LAB_800ddeac
-      final int x = model.uvAdjustments_9d.clutX;
-      final int y = model.uvAdjustments_9d.clutY;
-
-      final TmdSubExtension v = smallerStruct.tmdSubExtensionArr_20[index];
-      int a1 = 0;
-
-      //LAB_800ddef8
-      for(int i = 0; i < smallerStruct.sa_08[index]; i++) {
-        a1 += 2;
-      }
-
-      //LAB_800ddf08
-      final int sourceYOffset = v.sa_04[a1];
-      a1++;
-
-      smallerStruct.sa_10[index]++;
-
-      if(smallerStruct.sa_10[index] == v.sa_04[a1]) {
-        smallerStruct.sa_10[index] = 0;
-
-        if(v.sa_04[a1 + 1] == -1) {
-          smallerStruct.sa_08[index] = 0;
-        } else {
-          //LAB_800ddf70
-          smallerStruct.sa_08[index]++;
-        }
-      }
-
-      //LAB_800ddf8c
-      GPU.queueCommand(1, new GpuCommandCopyVramToVram(x, y + sourceYOffset, x, y + smallerStruct.sa_18[index], 16, 1));
-    }
-    //LAB_800ddff4
   }
 
   @Method(0x80020ed8L)
@@ -663,7 +613,7 @@ public final class Scus94491BpeSegment_8002 {
    */
   @Method(0x80022018L)
   public static void animateModelTextures(final Model124 model, final int index) {
-    if(model.animationMetrics_d0[index] == null) {
+    if(model.textureAnimation_d0[index] == null) {
       model.animateTextures_ec[index] = false;
       return;
     }
@@ -685,11 +635,11 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       int metricsIndex = 0;
-      model.usArr_ba[index] = model.animationMetrics_d0[index][metricsIndex++] & 0x7fff;
-      final int destX = model.animationMetrics_d0[index][metricsIndex++] + vramX;
-      final int destY = model.animationMetrics_d0[index][metricsIndex++] + vramY;
-      final short w = (short)(model.animationMetrics_d0[index][metricsIndex++] / 4);
-      final short h = model.animationMetrics_d0[index][metricsIndex++];
+      model.usArr_ba[index] = model.textureAnimation_d0[index][metricsIndex++] & 0x7fff;
+      final int destX = model.textureAnimation_d0[index][metricsIndex++] + vramX;
+      final int destY = model.textureAnimation_d0[index][metricsIndex++] + vramY;
+      final short w = (short)(model.textureAnimation_d0[index][metricsIndex++] / 4);
+      final short h = model.textureAnimation_d0[index][metricsIndex++];
 
       //LAB_80022154
       for(int i = 0; i < model.usArr_ac[index]; i++) {
@@ -697,14 +647,14 @@ public final class Scus94491BpeSegment_8002 {
       }
 
       //LAB_80022164
-      final short x2 = (short)(model.animationMetrics_d0[index][metricsIndex++] + vramX);
-      final short y2 = (short)(model.animationMetrics_d0[index][metricsIndex++] + vramY);
+      final short x2 = (short)(model.textureAnimation_d0[index][metricsIndex++] + vramX);
+      final short y2 = (short)(model.textureAnimation_d0[index][metricsIndex++] + vramY);
 
       GPU.queueCommand(1, new GpuCommandCopyVramToVram(x2, y2, destX & 0xffff, destY & 0xffff, w, h));
 
       model.usArr_ac[index]++;
 
-      final int v1 = model.animationMetrics_d0[index][metricsIndex];
+      final int v1 = model.textureAnimation_d0[index][metricsIndex];
       if(v1 == -2) {
         model.animateTextures_ec[index] = false;
         model.usArr_ac[index] = 0;
@@ -720,12 +670,12 @@ public final class Scus94491BpeSegment_8002 {
 
     //LAB_80022208
     int metricsIndex = 1;
-    final int x = model.animationMetrics_d0[index][metricsIndex++] + vramX;
-    final int y = model.animationMetrics_d0[index][metricsIndex++] + vramY;
-    final int w = model.animationMetrics_d0[index][metricsIndex++] / 4;
-    int h = model.animationMetrics_d0[index][metricsIndex++];
-    final int copyMode = model.animationMetrics_d0[index][metricsIndex++];
-    int secondaryYOffsetH = model.animationMetrics_d0[index][metricsIndex];
+    final int x = model.textureAnimation_d0[index][metricsIndex++] + vramX;
+    final int y = model.textureAnimation_d0[index][metricsIndex++] + vramY;
+    final int w = model.textureAnimation_d0[index][metricsIndex++] / 4;
+    int h = model.textureAnimation_d0[index][metricsIndex++];
+    final int copyMode = model.textureAnimation_d0[index][metricsIndex++];
+    int secondaryYOffsetH = model.textureAnimation_d0[index][metricsIndex];
 
     if((model.usArr_ac[index] & 0xf) != 0) {
       model.usArr_ac[index]--;
@@ -761,23 +711,23 @@ public final class Scus94491BpeSegment_8002 {
   }
 
   @Method(0x8002246cL)
-  public static void FUN_8002246c(final Model124 model, final int index) {
-    if(model.animationMetrics_d0[index] == null) {
+  public static void initTextureAnimation(final Model124 model, final int index) {
+    if(model.textureAnimation_d0[index] == null) {
       model.animateTextures_ec[index] = false;
       return;
     }
 
     //LAB_80022490
     model.usArr_ac[index] = 0;
-    model.usArr_ba[index] = model.animationMetrics_d0[index][0] & 0x3fff;
+    model.usArr_ba[index] = model.textureAnimation_d0[index][0] & 0x3fff;
 
     //LAB_800224d0
-    model.animateTextures_ec[index] = (model.animationMetrics_d0[index][0] & 0x8000) != 0;
+    model.animateTextures_ec[index] = (model.textureAnimation_d0[index][0] & 0x8000) != 0;
 
     //LAB_800224d8
-    if((model.animationMetrics_d0[index][0] & 0x4000) != 0) {
+    if((model.textureAnimation_d0[index][0] & 0x4000) != 0) {
       model.usArr_ba[index] = 0x5678;
-      model.usArr_ac[index] = model.animationMetrics_d0[index][6];
+      model.usArr_ac[index] = model.textureAnimation_d0[index][6];
       model.animateTextures_ec[index] = true;
     }
 

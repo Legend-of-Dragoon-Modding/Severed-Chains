@@ -21,13 +21,13 @@ import legend.game.modding.events.submap.SubmapEnvironmentTextureEvent;
 import legend.game.modding.events.submap.SubmapObjectTextureEvent;
 import legend.game.scripting.ScriptFile;
 import legend.game.tim.Tim;
-import legend.game.tmd.UvAdjustmentMetrics14;
-import legend.game.types.CContainer;
+import legend.game.models.UvAdjustmentMetrics14;
+import legend.game.models.CContainer;
 import legend.game.types.GsRVIEW2;
-import legend.game.types.Model124;
+import legend.game.models.Model124;
 import legend.game.types.MoonMusic08;
 import legend.game.types.NewRootStruct;
-import legend.game.types.TmdAnimationFile;
+import legend.game.models.TmdAnimationFile;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
@@ -62,6 +62,7 @@ import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
+import static legend.game.Scus94491BpeSegment_8002.adjustModelUvs;
 import static legend.game.Scus94491BpeSegment_8002.animateModel;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
@@ -150,7 +151,6 @@ public class RetailSubmap extends Submap {
   private Obj backgroundObj;
   private final MV backgroundTransforms = new MV();
   private Texture[] foregroundTextures;
-  private Texture animatedOverlayTexture;
   private final Int2ObjectMap<Consumer<Texture.Builder>> sobjTextureOverrides = new Int2ObjectOpenHashMap<>();
 
   public RetailSubmap(final int cut, final NewRootStruct newRoot, final Vector2f screenOffset, final CollisionGeometry collisionGeometry) {
@@ -1262,11 +1262,13 @@ public class RetailSubmap extends Submap {
     }
 
     if(this.submapModel_800d4bf8.modelParts_00[0].obj == null) {
-      final SubmapAnimatedOverlayTextureEvent event = EVENTS.postEvent(new SubmapAnimatedOverlayTextureEvent(drgnBinIndex_800bc058, this.cut));
-      this.animatedOverlayTexture = event.texture;
+      final SubmapAnimatedOverlayTextureEvent event = EVENTS.postEvent(new SubmapAnimatedOverlayTextureEvent(drgnBinIndex_800bc058, this.cut, this.submapModel_800d4bf8));
+      this.submapModel_800d4bf8.texture = event.texture;
 
-      if(this.animatedOverlayTexture != null) {
-        TmdObjLoader.fromModel("Submap model", this.submapModel_800d4bf8, this.animatedOverlayTexture.width, this.animatedOverlayTexture.height);
+      if(this.submapModel_800d4bf8.texture != null) {
+        this.submapModel_800d4bf8.uvAdjustments_9d = UvAdjustmentMetrics14.PNG;
+        adjustModelUvs(this.submapModel_800d4bf8);
+        TmdObjLoader.fromModel("Submap model", this.submapModel_800d4bf8, 64 / 4, 128);
       } else {
         TmdObjLoader.fromModel("Submap model", this.submapModel_800d4bf8);
       }
@@ -1293,16 +1295,13 @@ public class RetailSubmap extends Submap {
 
       GsGetLw(dobj2.coord2_04, lw);
 
-      final RenderEngine.QueuedModel<?> queued = RENDERER.queueModel(dobj2.obj, matrix, lw)
+      RENDERER.queueModel(dobj2.obj, matrix, lw)
         .screenspaceOffset(GPU.getOffsetX() + GTE.getScreenOffsetX() - 184, GPU.getOffsetY() + GTE.getScreenOffsetY() - 120)
         .lightDirection(lightDirectionMatrix_800c34e8)
         .lightColour(lightColourMatrix_800c3508)
         .backgroundColour(GTE.backgroundColour)
-        .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11);
-
-      if(this.animatedOverlayTexture != null) {
-        queued.texture(this.animatedOverlayTexture);
-      }
+        .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
+        .texture(model.texture);
     }
     //LAB_800eef0c
   }

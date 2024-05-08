@@ -4,7 +4,7 @@ import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.opengl.MeshObj;
 import legend.core.opengl.Obj;
-import legend.game.types.Model124;
+import legend.game.models.Model124;
 import legend.game.unpacker.FileData;
 import org.joml.Vector3f;
 
@@ -69,9 +69,9 @@ public class WMapModelAndAnimData258 {
     DESCENT_12(12),
     RESTORE_DART_NEG_1(-1),
     ;
-    
+
     public final int state;
-    
+
     CoolonWarpState(final int state) {
       this.state = state;
     }

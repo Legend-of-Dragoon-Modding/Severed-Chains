@@ -1,7 +1,8 @@
-package legend.game.types;
+package legend.game.models;
 
 import legend.core.memory.Method;
 import legend.game.combat.deff.Anim;
+import legend.game.types.Keyframe0c;
 import legend.game.unpacker.FileData;
 
 import static legend.game.Scus94491BpeSegment_8002.applyInterpolationFrame;

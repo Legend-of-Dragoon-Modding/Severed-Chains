@@ -1,4 +1,4 @@
-package legend.game.tmd;
+package legend.game.models;
 
 public class Vertex {
   public int vertexIndex;

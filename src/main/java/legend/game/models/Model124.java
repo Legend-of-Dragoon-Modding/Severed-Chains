@@ -1,10 +1,11 @@
-package legend.game.types;
+package legend.game.models;
 
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.ModelPart10;
+import legend.core.opengl.Texture;
 import legend.game.combat.deff.Cmb;
 import legend.game.combat.deff.Lmb;
-import legend.game.tmd.UvAdjustmentMetrics14;
+import legend.game.types.Keyframe0c;
 import org.joml.Vector3f;
 
 import java.util.Arrays;
@@ -50,10 +51,10 @@ public class Model124 {
   public boolean disableInterpolation_a2;
   /** ubyte */
   public int ub_a3;
-  /** Pointer to an address on the linked list, 0x30 bytes long, contains data copied from {@link CContainer#ext_04} */
-  public SmallerStruct smallerStructPtr_a4;
-  /** Pointer to the subfile pointed to by {@link CContainer#ptr_08} */
-  public CContainerSubfile2 ptr_a8;
+  /** Pointer to an address on the linked list, 0x30 bytes long, contains data copied from {@link CContainer#clutAnimationFile_04} */
+  public ClutAnimation30 clutAnimation_a4;
+  /** Pointer to the subfile pointed to by {@link CContainer#textureAnimationFile_08} */
+  public TextureAnimationFile textureAnimationFile_a8;
   /** ushort */
   public final int[] usArr_ac = new int[7];
   /** ushort */
@@ -67,7 +68,7 @@ public class Model124 {
   /** byte */
   public int modelPartWithShadowIndex_cd;
 
-  public final short[][] animationMetrics_d0 = new short[7][];
+  public final short[][] textureAnimation_d0 = new short[7][];
   /** ubyte */
   public final boolean[] animateTextures_ec = new boolean[7];
 
@@ -79,8 +80,46 @@ public class Model124 {
   public final Vector3f shadowSize_10c = new Vector3f();
   public final Vector3f shadowOffset_118 = new Vector3f();
 
+  public Texture texture;
+
   public Model124(final String name) {
     this.name = name;
+  }
+
+  public void set(final Model124 other) {
+    this.modelParts_00 = other.modelParts_00;
+    this.anim_08 = other.anim_08;
+    this.coord2_14.set(other.coord2_14);
+    this.keyframes_90 = other.keyframes_90;
+    this.currentKeyframe_94 = other.currentKeyframe_94;
+    this.partCount_98 = other.partCount_98;
+    this.totalFrames_9a = other.totalFrames_9a;
+    this.animationState_9c = other.animationState_9c;
+    this.uvAdjustments_9d = other.uvAdjustments_9d;
+    this.remainingFrames_9e = other.remainingFrames_9e;
+    this.zOffset_a0 = other.zOffset_a0;
+    this.disableInterpolation_a2 = other.disableInterpolation_a2;
+    this.ub_a3 = other.ub_a3;
+    this.clutAnimation_a4 = other.clutAnimation_a4;
+    this.textureAnimationFile_a8 = other.textureAnimationFile_a8;
+    System.arraycopy(other.usArr_ac, 0, this.usArr_ac, 0, 7);
+    System.arraycopy(other.usArr_ba, 0, this.usArr_ba, 0, 7);
+    this.shadowType_cc = other.shadowType_cc;
+    this.modelPartWithShadowIndex_cd = other.modelPartWithShadowIndex_cd;
+    System.arraycopy(other.textureAnimation_d0, 0, this.textureAnimation_d0, 0, 7);
+    System.arraycopy(other.animateTextures_ec, 0, this.animateTextures_ec, 0, 7);
+    this.partInvisible_f4 = other.partInvisible_f4;
+    this.tpage_108 = other.tpage_108;
+    this.shadowSize_10c.set(other.shadowSize_10c);
+    this.shadowOffset_118.set(other.shadowOffset_118);
+  }
+
+  public void deleteModelParts() {
+    if(this.modelParts_00 != null) {
+      for(final ModelPart10 part : this.modelParts_00) {
+        part.delete();
+      }
+    }
   }
 
   @Override
@@ -132,42 +171,6 @@ public class Model124 {
     @Override
     public void apply(final int animationTicks) {
       this.lmb_00.apply(Model124.this, animationTicks);
-    }
-  }
-
-  public void set(final Model124 other) {
-    this.modelParts_00 = other.modelParts_00;
-    this.anim_08 = other.anim_08;
-    this.coord2_14.set(other.coord2_14);
-    this.keyframes_90 = other.keyframes_90;
-    this.currentKeyframe_94 = other.currentKeyframe_94;
-    this.partCount_98 = other.partCount_98;
-    this.totalFrames_9a = other.totalFrames_9a;
-    this.animationState_9c = other.animationState_9c;
-    this.uvAdjustments_9d = other.uvAdjustments_9d;
-    this.remainingFrames_9e = other.remainingFrames_9e;
-    this.zOffset_a0 = other.zOffset_a0;
-    this.disableInterpolation_a2 = other.disableInterpolation_a2;
-    this.ub_a3 = other.ub_a3;
-    this.smallerStructPtr_a4 = other.smallerStructPtr_a4;
-    this.ptr_a8 = other.ptr_a8;
-    System.arraycopy(other.usArr_ac, 0, this.usArr_ac, 0, 7);
-    System.arraycopy(other.usArr_ba, 0, this.usArr_ba, 0, 7);
-    this.shadowType_cc = other.shadowType_cc;
-    this.modelPartWithShadowIndex_cd = other.modelPartWithShadowIndex_cd;
-    System.arraycopy(other.animationMetrics_d0, 0, this.animationMetrics_d0, 0, 7);
-    System.arraycopy(other.animateTextures_ec, 0, this.animateTextures_ec, 0, 7);
-    this.partInvisible_f4 = other.partInvisible_f4;
-    this.tpage_108 = other.tpage_108;
-    this.shadowSize_10c.set(other.shadowSize_10c);
-    this.shadowOffset_118.set(other.shadowOffset_118);
-  }
-
-  public void deleteModelParts() {
-    if(this.modelParts_00 != null) {
-      for(final ModelPart10 part : this.modelParts_00) {
-        part.delete();
-      }
     }
   }
 }

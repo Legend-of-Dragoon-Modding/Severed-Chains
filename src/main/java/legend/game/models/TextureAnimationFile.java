@@ -1,14 +1,14 @@
-package legend.game.types;
+package legend.game.models;
 
 import it.unimi.dsi.fastutil.shorts.ShortArrayList;
 import it.unimi.dsi.fastutil.shorts.ShortList;
 import legend.game.unpacker.FileData;
 
-public class CContainerSubfile2 {
+public class TextureAnimationFile {
   /** Sometimes 7, sometimes 10 elements */
-  public final short[][] _00 = new short[10][];
+  public final short[][] animations_00 = new short[10][];
 
-  public CContainerSubfile2(final FileData data, final int count) {
+  public TextureAnimationFile(final FileData data, final int count) {
     for(int i = 0; i < count; i++) {
       final int subOffset = data.readInt(i * 0x4);
 
@@ -23,7 +23,7 @@ public class CContainerSubfile2 {
         }
       }
 
-      this._00[i] = shorts.toShortArray();
+      this.animations_00[i] = shorts.toShortArray();
     }
   }
 }

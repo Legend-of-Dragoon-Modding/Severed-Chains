@@ -22,10 +22,10 @@ import legend.game.modding.events.RenderEvent;
 import legend.game.submap.SMap;
 import legend.game.submap.SubmapObject;
 import legend.game.submap.SubmapObject210;
-import legend.game.tmd.UvAdjustmentMetrics14;
-import legend.game.types.CContainer;
-import legend.game.types.Model124;
-import legend.game.types.TmdAnimationFile;
+import legend.game.models.UvAdjustmentMetrics14;
+import legend.game.models.CContainer;
+import legend.game.models.Model124;
+import legend.game.models.TmdAnimationFile;
 import org.legendofdragoon.modloader.events.EventListener;
 
 import static legend.core.GameEngine.EVENTS;

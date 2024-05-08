@@ -25,6 +25,10 @@ import legend.game.input.Input;
 import legend.game.input.InputAction;
 import legend.game.inventory.WhichMenu;
 import legend.game.modding.coremod.CoreMod;
+import legend.game.models.CContainer;
+import legend.game.models.ClutAnimation30;
+import legend.game.models.Model124;
+import legend.game.models.TmdAnimationFile;
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.Param;
 import legend.game.scripting.RunningScript;
@@ -38,19 +42,15 @@ import legend.game.types.AnimatedSprite08;
 import legend.game.types.AnmFile;
 import legend.game.types.AnmSpriteGroup;
 import legend.game.types.AnmSpriteMetrics14;
-import legend.game.types.CContainer;
 import legend.game.types.CharacterData2c;
 import legend.game.types.GsF_LIGHT;
 import legend.game.types.LodString;
-import legend.game.types.Model124;
 import legend.game.types.NewRootStruct;
 import legend.game.types.ShopStruct40;
-import legend.game.types.SmallerStruct;
 import legend.game.types.Textbox4c;
 import legend.game.types.TextboxChar08;
 import legend.game.types.TextboxText84;
 import legend.game.types.TextboxType;
-import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.unpacker.Unpacker;
 import org.joml.Math;
@@ -82,7 +82,6 @@ import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment.tmdGp0Tpage_1f8003ec;
 import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
 import static legend.game.Scus94491BpeSegment_8002.FUN_800218f0;
-import static legend.game.Scus94491BpeSegment_8002.FUN_8002246c;
 import static legend.game.Scus94491BpeSegment_8002.FUN_8002a9c0;
 import static legend.game.Scus94491BpeSegment_8002.animateModel;
 import static legend.game.Scus94491BpeSegment_8002.applyModelRotationAndScale;
@@ -91,6 +90,7 @@ import static legend.game.Scus94491BpeSegment_8002.clearTextbox;
 import static legend.game.Scus94491BpeSegment_8002.clearTextboxText;
 import static legend.game.Scus94491BpeSegment_8002.initModel;
 import static legend.game.Scus94491BpeSegment_8002.initObjTable2;
+import static legend.game.Scus94491BpeSegment_8002.initTextureAnimation;
 import static legend.game.Scus94491BpeSegment_8002.loadAndRenderMenus;
 import static legend.game.Scus94491BpeSegment_8002.loadModelStandardAnimation;
 import static legend.game.Scus94491BpeSegment_8002.prepareObjTable2;
@@ -521,9 +521,9 @@ public class SMap extends EngineState {
     functions[680] = this::scriptSobjMoveAlongArc;
     functions[681] = this::scriptCheckSobjCollision;
     functions[682] = this::FUN_800e0148;
-    functions[683] = this::FUN_800e01bc;
+    functions[683] = this::scriptEnableModelClutAnimation;
     functions[684] = this::scriptEnableTextureAnimation;
-    functions[685] = this::FUN_800e0204;
+    functions[685] = this::scriptDisableModelClutAnimation;
     functions[686] = this::scriptDisableTextureAnimation;
     functions[687] = this::FUN_800e02c0;
     functions[688] = this::scriptAttachCameraToSobj;
@@ -992,50 +992,44 @@ public class SMap extends EngineState {
   @Override
   @Method(0x800de004L)
   public void modelLoaded(final Model124 model, final CContainer cContainer) {
-    if(cContainer.ext_04 == null) {
-      //LAB_800de120
-      model.smallerStructPtr_a4 = null;
-      return;
-    }
+    if(cContainer.clutAnimationFile_04 != null) {
+      final ClutAnimation30 clutAnimation = new ClutAnimation30();
+      clutAnimation.tmdExt_00 = cContainer.clutAnimationFile_04;
 
-    final SmallerStruct smallerStruct = new SmallerStruct();
-    model.smallerStructPtr_a4 = smallerStruct;
+      //LAB_800de05c
+      for(int i = 0; i < 4; i++) {
+        clutAnimation.tmdSubExtensionArr_20[i] = clutAnimation.tmdExt_00.tmdSubExtensionArr_00[i];
 
-    smallerStruct.tmdExt_00 = cContainer.ext_04;
-
-    //LAB_800de05c
-    for(int i = 0; i < 4; i++) {
-      smallerStruct.tmdSubExtensionArr_20[i] = smallerStruct.tmdExt_00.tmdSubExtensionArr_00[i];
-
-      if(smallerStruct.tmdSubExtensionArr_20[i] == null) {
-        smallerStruct.uba_04[i] = false;
-      } else {
-        smallerStruct.sa_08[i] = 0;
-        smallerStruct.sa_10[i] = 0;
-        smallerStruct.sa_18[i] = smallerStruct.tmdSubExtensionArr_20[i].s_02;
-        smallerStruct.uba_04[i] = smallerStruct.sa_18[i] != -1;
+        if(clutAnimation.tmdSubExtensionArr_20[i] == null) {
+          clutAnimation.enabled_04[i] = false;
+        } else {
+          clutAnimation.sa_08[i] = 0;
+          clutAnimation.sa_10[i] = 0;
+          clutAnimation.destYOffset_18[i] = clutAnimation.tmdSubExtensionArr_20[i].s_02;
+          clutAnimation.enabled_04[i] = clutAnimation.destYOffset_18[i] != -1;
+        }
       }
 
-      //LAB_800de108
+      model.clutAnimation_a4 = clutAnimation;
+    } else {
+      model.clutAnimation_a4 = null;
     }
-
-    //LAB_800de124
   }
 
   @Method(0x800de138L)
-  private void FUN_800de138(final Model124 model, final int index) {
-    final SmallerStruct smallerStruct = model.smallerStructPtr_a4;
+  private void enableModelClutAnimation(final Model124 model, final int index) {
+    final ClutAnimation30 clutAnimation = model.clutAnimation_a4;
 
-    if(smallerStruct.tmdSubExtensionArr_20[index] == null) {
-      smallerStruct.uba_04[index] = false;
+    if(clutAnimation.tmdSubExtensionArr_20[index] == null) {
+      clutAnimation.enabled_04[index] = false;
       return;
     }
 
     //LAB_800de164
-    smallerStruct.sa_08[index] = 0;
-    smallerStruct.sa_10[index] = 0;
-    smallerStruct.sa_18[index] = smallerStruct.tmdSubExtensionArr_20[index].s_02;
-    smallerStruct.uba_04[index] = smallerStruct.sa_18[index] != -1;
+    clutAnimation.sa_08[index] = 0;
+    clutAnimation.sa_10[index] = 0;
+    clutAnimation.destYOffset_18[index] = clutAnimation.tmdSubExtensionArr_20[index].s_02;
+    clutAnimation.enabled_04[index] = clutAnimation.destYOffset_18[index] != -1;
   }
 
   @ScriptDescription("Moves the player")
@@ -2021,23 +2015,23 @@ public class SMap extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Something related to texture animation")
+  @ScriptDescription("Enable a model's CLUT animation")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "animatedTextureIndex", description = "The animated texture index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "animatedClutIndex", description = "The animated clut index")
   @Method(0x800e01bcL)
-  private FlowControl FUN_800e01bc(final RunningScript<?> script) {
+  private FlowControl scriptEnableModelClutAnimation(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    this.FUN_800de138(sobj.model_00, script.params_20[1].get());
+    this.enableModelClutAnimation(sobj.model_00, script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Something related to texture animation")
+  @ScriptDescription("Disable a model's CLUT animation")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "The SubmapObject210 script index")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "animatedTextureIndex", description = "The animated texture index")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "animatedClutIndex", description = "The animated clut index")
   @Method(0x800e0204L)
-  private FlowControl FUN_800e0204(final RunningScript<?> script) {
+  private FlowControl scriptDisableModelClutAnimation(final RunningScript<?> script) {
     final SubmapObject210 sobj = (SubmapObject210)scriptStatePtrArr_800bc1c0[script.params_20[0].get()].innerStruct_00;
-    sobj.model_00.smallerStructPtr_a4.uba_04[script.params_20[1].get()] = false;
+    sobj.model_00.clutAnimation_a4.enabled_04[script.params_20[1].get()] = false;
     return FlowControl.CONTINUE;
   }
 
@@ -2458,39 +2452,39 @@ public class SMap extends EngineState {
 
     Arrays.setAll(model.modelParts_00, i -> new ModelPart10());
 
-    if(cContainer.ext_04 != null) {
-      final SmallerStruct smallerStruct = new SmallerStruct();
-      model.smallerStructPtr_a4 = smallerStruct;
-      smallerStruct.tmdExt_00 = cContainer.ext_04;
+    if(cContainer.clutAnimationFile_04 != null) {
+      final ClutAnimation30 clutAnimation = new ClutAnimation30();
+      clutAnimation.tmdExt_00 = cContainer.clutAnimationFile_04;
 
       //LAB_800e0e28
       for(int i = 0; i < 4; i++) {
-        smallerStruct.tmdSubExtensionArr_20[i] = smallerStruct.tmdExt_00.tmdSubExtensionArr_00[i];
-        this.FUN_800de138(model, i);
+        clutAnimation.tmdSubExtensionArr_20[i] = clutAnimation.tmdExt_00.tmdSubExtensionArr_00[i];
+        this.enableModelClutAnimation(model, i);
       }
+
+      model.clutAnimation_a4 = clutAnimation;
     } else {
-      //LAB_800e0e70
-      model.smallerStructPtr_a4 = null;
+      model.clutAnimation_a4 = null;
     }
 
     //LAB_800e0e74
     model.tpage_108 = (int)((cContainer.tmdPtr_00.id & 0xffff_0000L) >> 11);
 
-    if(cContainer.ptr_08 != null) {
-      model.ptr_a8 = cContainer.ptr_08;
+    if(cContainer.textureAnimationFile_08 != null) {
+      model.textureAnimationFile_a8 = cContainer.textureAnimationFile_08;
 
       //LAB_800e0eac
       for(int i = 0; i < 7; i++) {
-        model.animationMetrics_d0[i] = model.ptr_a8._00[i];
-        FUN_8002246c(model, i);
+        model.textureAnimation_d0[i] = model.textureAnimationFile_a8.animations_00[i];
+        initTextureAnimation(model, i);
       }
     } else {
       //LAB_800e0ef0
-      model.ptr_a8 = null;
+      model.textureAnimationFile_a8 = null;
 
       //LAB_800e0f00
       for(int i = 0; i < 7; i++) {
-        model.animationMetrics_d0[i] = null;
+        model.textureAnimation_d0[i] = null;
       }
     }
 

@@ -2,8 +2,8 @@ package legend.game;
 
 import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
-import legend.game.types.CContainer;
-import legend.game.types.Model124;
+import legend.game.models.CContainer;
+import legend.game.models.Model124;
 
 import java.util.function.Function;
 

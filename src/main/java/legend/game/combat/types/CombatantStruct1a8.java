@@ -3,7 +3,7 @@ package legend.game.combat.types;
 import legend.core.memory.Method;
 import legend.game.inventory.InventoryEntry;
 import legend.game.scripting.ScriptFile;
-import legend.game.types.CContainer;
+import legend.game.models.CContainer;
 import legend.game.unpacker.FileData;
 
 import java.util.ArrayList;

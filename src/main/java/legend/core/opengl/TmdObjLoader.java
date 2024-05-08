@@ -6,9 +6,9 @@ import legend.core.gpu.Bpp;
 import legend.core.gte.ModelPart10;
 import legend.core.gte.Tmd;
 import legend.core.gte.TmdObjTable1c;
-import legend.game.tmd.Polygon;
-import legend.game.tmd.Vertex;
-import legend.game.types.Model124;
+import legend.game.models.Polygon;
+import legend.game.models.Vertex;
+import legend.game.models.Model124;
 import legend.game.types.Translucency;
 import org.joml.Vector3f;
 

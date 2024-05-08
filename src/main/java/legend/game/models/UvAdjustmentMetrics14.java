@@ -1,4 +1,4 @@
-package legend.game.tmd;
+package legend.game.models;
 
 import legend.core.MathHelper;
 import legend.core.gte.TmdObjTable1c;

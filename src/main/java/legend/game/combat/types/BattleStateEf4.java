@@ -9,7 +9,7 @@ import legend.game.combat.types.battlestate.SpecialEffects20;
 import legend.game.combat.types.battlestate.Status04;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.scripting.ScriptState;
-import legend.game.types.TmdAnimationFile;
+import legend.game.models.TmdAnimationFile;
 import legend.game.unpacker.FileData;
 
 import java.util.Arrays;

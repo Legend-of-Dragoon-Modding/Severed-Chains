@@ -4,7 +4,7 @@ import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.ModelPart10;
 import legend.core.gte.Tmd;
 import legend.core.gte.Transforms;
-import legend.game.types.CContainerSubfile2;
+import legend.game.models.TextureAnimationFile;
 import legend.game.types.Keyframe0c;
 
 public class BattleStage {
@@ -31,7 +31,7 @@ public class BattleStage {
   /** short */
   public int z_5e8;
 
-  public CContainerSubfile2 _5ec;
+  public TextureAnimationFile _5ec;
   public final short[][] _5f0 = new short[10][];
   /** ubyte */
   public final int[] _618 = new int[10];

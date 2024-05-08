@@ -1,6 +1,6 @@
 package legend.game.wmap;
 
-import legend.game.tmd.UvAdjustmentMetrics14;
+import legend.game.models.UvAdjustmentMetrics14;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 

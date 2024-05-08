@@ -1208,7 +1208,7 @@ public class RenderEngine {
     private int vertexCount;
 
     private final Texture[] textures = new Texture[32];
-    private boolean texturesUsed;
+    private int texturesUsed;
 
     private Translucency translucency;
     private boolean hasTranslucency;
@@ -1298,13 +1298,21 @@ public class RenderEngine {
       return this;
     }
 
-    public QueuedModel<Options> texture(final Texture texture, final int textureUnit) {
-      this.textures[textureUnit] = texture;
-      this.texturesUsed = true;
+    public QueuedModel<Options> texture(@Nullable final Texture texture, final int textureUnit) {
+      if(this.textures[textureUnit] != texture) {
+        if(this.textures[textureUnit] == null) {
+          this.texturesUsed++;
+        } else if(texture == null) {
+          this.texturesUsed--;
+        }
+
+        this.textures[textureUnit] = texture;
+      }
+
       return this;
     }
 
-    public QueuedModel<Options> texture(final Texture texture) {
+    public QueuedModel<Options> texture(@Nullable final Texture texture) {
       return this.texture(texture, 0);
     }
 
@@ -1348,7 +1356,7 @@ public class RenderEngine {
       this.vertexCount = 0;
       Arrays.fill(this.textures, null);
       this.hasTranslucency = false;
-      this.texturesUsed = false;
+      this.texturesUsed = 0;
       this.lightUsed = false;
       this.tmdTranslucency = 0;
       this.ctmdFlags = 0;
@@ -1356,7 +1364,7 @@ public class RenderEngine {
     }
 
     private void useTexture() {
-      if(this.texturesUsed) {
+      if(this.texturesUsed != 0) {
         for(int i = 0; i < this.textures.length; i++) {
           if(this.textures[i] != null) {
             this.textures[i].use(i);

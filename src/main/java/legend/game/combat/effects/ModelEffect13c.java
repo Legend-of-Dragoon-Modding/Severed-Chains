@@ -7,9 +7,9 @@ import legend.game.combat.Battle;
 import legend.game.combat.deff.Anim;
 import legend.game.combat.deff.DeffPart;
 import legend.game.scripting.ScriptState;
-import legend.game.tmd.Renderer;
-import legend.game.types.CContainer;
-import legend.game.types.Model124;
+import legend.game.models.Renderer;
+import legend.game.models.CContainer;
+import legend.game.models.Model124;
 
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;

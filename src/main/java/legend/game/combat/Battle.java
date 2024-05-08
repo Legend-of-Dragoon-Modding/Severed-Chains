@@ -105,17 +105,17 @@ import legend.game.sound.QueuedSound28;
 import legend.game.sound.SoundFile;
 import legend.game.sound.SpuStruct08;
 import legend.game.tim.Tim;
-import legend.game.tmd.Renderer;
-import legend.game.tmd.UvAdjustmentMetrics14;
+import legend.game.models.Renderer;
+import legend.game.models.UvAdjustmentMetrics14;
 import legend.game.types.ActiveStatsa0;
-import legend.game.types.CContainer;
-import legend.game.types.CContainerSubfile2;
+import legend.game.models.CContainer;
+import legend.game.models.TextureAnimationFile;
 import legend.game.types.CharacterData2c;
 import legend.game.types.Keyframe0c;
 import legend.game.types.McqHeader;
-import legend.game.types.Model124;
+import legend.game.models.Model124;
 import legend.game.types.SpellStats0c;
-import legend.game.types.TmdAnimationFile;
+import legend.game.models.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
@@ -6541,10 +6541,10 @@ public class Battle extends EngineState {
     model.zOffset_a0 = 0x200;
     model.disableInterpolation_a2 = false;
     model.ub_a3 = 0;
-    model.smallerStructPtr_a4 = null;
+    model.clutAnimation_a4 = null;
     model.remainingFrames_9e = a1.remainingFrames_5e2;
     model.subFrameIndex = 0;
-    model.ptr_a8 = a1._5ec;
+    model.textureAnimationFile_a8 = a1._5ec;
 
     //LAB_800e9c0c
     for(int i = 0; i < 7; i++) {
@@ -7019,12 +7019,12 @@ public class Battle extends EngineState {
 
   @Method(0x800eb308L)
   public void addCContainerTextureAnimationAttachments(final EffectManagerData6c<?> manager, final CContainer cContainer, final DeffPart.TextureInfo[] textureInfo) {
-    if(cContainer.ptr_08 != null) {
-      final CContainerSubfile2 s2 = cContainer.ptr_08;
+    if(cContainer.textureAnimationFile_08 != null) {
+      final TextureAnimationFile s2 = cContainer.textureAnimationFile_08;
 
       //LAB_800eb348
       for(int s1 = 0; s1 < 7; s1++) {
-        final short[] s0 = s2._00[s1];
+        final short[] s0 = s2.animations_00[s1];
 
         if((s0[0] & 0x4000) != 0) {
           final TextureAnimationAttachment1c sub = manager.addAttachment(10, 0, this::tickTextureAnimationAttachment, new TextureAnimationAttachment1c());
@@ -7165,12 +7165,12 @@ public class Battle extends EngineState {
 
     stage.tmd_5d0 = extTmd.tmdPtr_00.tmd;
 
-    if(extTmd.ptr_08 != null) {
-      stage._5ec = extTmd.ptr_08;
+    if(extTmd.textureAnimationFile_08 != null) {
+      stage._5ec = extTmd.textureAnimationFile_08;
 
       //LAB_800eba38
       for(int i = 0; i < 10; i++) {
-        stage._5f0[i] = stage._5ec._00[i];
+        stage._5f0[i] = stage._5ec.animations_00[i];
         this.FUN_800ec86c(stage, i);
       }
     } else {

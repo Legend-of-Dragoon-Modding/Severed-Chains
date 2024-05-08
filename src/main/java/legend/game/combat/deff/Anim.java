@@ -1,6 +1,6 @@
 package legend.game.combat.deff;
 
-import legend.game.types.Model124;
+import legend.game.models.Model124;
 import legend.game.unpacker.FileData;
 
 public abstract class Anim {

@@ -2,7 +2,7 @@ package legend.game.combat.deff;
 
 import legend.core.gte.MV;
 import legend.core.memory.Method;
-import legend.game.types.Model124;
+import legend.game.models.Model124;
 import legend.game.unpacker.FileData;
 import org.joml.Math;
 import org.joml.Vector3f;

@@ -3,7 +3,7 @@ package legend.game.submap;
 import legend.core.gpu.Rect4i;
 import legend.game.tim.Tim;
 import legend.game.scripting.ScriptFile;
-import legend.game.tmd.UvAdjustmentMetrics14;
+import legend.game.models.UvAdjustmentMetrics14;
 
 import java.util.ArrayList;
 import java.util.List;

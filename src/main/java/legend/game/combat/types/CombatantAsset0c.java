@@ -1,6 +1,6 @@
 package legend.game.combat.types;
 
-import legend.game.types.TmdAnimationFile;
+import legend.game.models.TmdAnimationFile;
 import legend.game.unpacker.FileData;
 
 /** A union type, see type property to tell which type it is */

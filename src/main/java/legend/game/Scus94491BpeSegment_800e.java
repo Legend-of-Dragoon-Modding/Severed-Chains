@@ -4,9 +4,9 @@ import legend.core.gpu.Rect4i;
 import legend.core.gte.ModelPart10;
 import legend.core.memory.Method;
 import legend.game.tim.Tim;
-import legend.game.tmd.UvAdjustmentMetrics14;
-import legend.game.types.CContainer;
-import legend.game.types.TmdAnimationFile;
+import legend.game.models.UvAdjustmentMetrics14;
+import legend.game.models.CContainer;
+import legend.game.models.TmdAnimationFile;
 import legend.game.unpacker.Unpacker;
 
 import java.util.Arrays;
