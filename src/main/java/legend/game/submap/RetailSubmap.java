@@ -16,18 +16,19 @@ import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
 import legend.core.opengl.TmdObjLoader;
+import legend.game.modding.events.submap.RenderSubmapModelEvent;
 import legend.game.modding.events.submap.SubmapAnimatedOverlayTextureEvent;
 import legend.game.modding.events.submap.SubmapEnvironmentTextureEvent;
 import legend.game.modding.events.submap.SubmapObjectTextureEvent;
+import legend.game.models.CContainer;
+import legend.game.models.Model124;
+import legend.game.models.TmdAnimationFile;
+import legend.game.models.UvAdjustmentMetrics14;
 import legend.game.scripting.ScriptFile;
 import legend.game.tim.Tim;
-import legend.game.models.UvAdjustmentMetrics14;
-import legend.game.models.CContainer;
 import legend.game.types.GsRVIEW2;
-import legend.game.models.Model124;
 import legend.game.types.MoonMusic08;
 import legend.game.types.NewRootStruct;
-import legend.game.models.TmdAnimationFile;
 import legend.game.unpacker.FileData;
 import legend.game.unpacker.Unpacker;
 import org.apache.logging.log4j.LogManager;
@@ -142,6 +143,7 @@ public class RetailSubmap extends Submap {
   private TmdAnimationFile submapCutAnim;
 
   private final Model124 submapModel_800d4bf8 = new Model124("Submap");
+  private final RenderSubmapModelEvent renderSubmapModelEvent = new RenderSubmapModelEvent(this.submapModel_800d4bf8);
 
   private boolean _800f7f0c;
 
@@ -1284,6 +1286,8 @@ public class RetailSubmap extends Submap {
 
   @Method(0x800eee48L)
   private void renderSubmapModel(final Model124 model, final Matrix4f matrix) {
+    EVENTS.postEvent(this.renderSubmapModelEvent);
+
     zOffset_1f8003e8 = model.zOffset_a0;
     tmdGp0Tpage_1f8003ec = model.tpage_108;
 
