@@ -542,7 +542,7 @@ public class RetailSubmap extends Submap {
       // sobj 16 uses the submap overlay texture
       if(pxlIndex == 16) {
         this.uvAdjustments.add(new UvAdjustmentMetrics14(pxlIndex + 1, 1008, 256));
-        continue ;
+        continue;
       }
 
       final Tim tim = this.pxls.get(pxlIndex);
@@ -588,11 +588,15 @@ public class RetailSubmap extends Submap {
   }
 
   private void loadTextures() {
+    final Set<Tim> visited = new HashSet<>();
+
     for(final UvAdjustmentMetrics14 uvAdjustment : this.uvAdjustments) {
       if(uvAdjustment.index != 0) {
         final Tim tim = this.pxls.get(uvAdjustment.index - 1);
 
-        if(tim != null) {
+        if(tim != null && !visited.contains(tim)) {
+          visited.add(tim);
+
           final Rect4i imageRect = tim.getImageRect();
           final Rect4i clutRect = tim.getClutRect();
 
