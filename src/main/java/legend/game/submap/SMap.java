@@ -3179,7 +3179,7 @@ public class SMap extends EngineState {
   @Method(0x800e49f0L)
   private boolean hasPlayerMoved(final MV mat) {
     //LAB_800e4a44
-    final boolean moved = !flEq(this.prevPlayerPos_800c6ab0.x, mat.transfer.x) || !flEq(this.prevPlayerPos_800c6ab0.y, mat.transfer.y) || !flEq(this.prevPlayerPos_800c6ab0.z, mat.transfer.z) || this.sobjs_800c6880[0].innerStruct_00.interpMovementTicksTotal != 0;
+    final boolean moved = !flEq(this.prevPlayerPos_800c6ab0.x, mat.transfer.x) || !flEq(this.prevPlayerPos_800c6ab0.y, mat.transfer.y) || !flEq(this.prevPlayerPos_800c6ab0.z, mat.transfer.z);
 
     //LAB_800e4a4c
     final EncounterRateMode mode = CONFIG.getConfig(CoreMod.ENCOUNTER_RATE_CONFIG.get());
