@@ -3179,12 +3179,12 @@ public class SMap extends EngineState {
   @Method(0x800e49f0L)
   private boolean hasPlayerMoved(final MV mat) {
     //LAB_800e4a44
-    final boolean moved = !flEq(this.prevPlayerPos_800c6ab0.x, mat.transfer.x) || !flEq(this.prevPlayerPos_800c6ab0.y, mat.transfer.y) || !flEq(this.prevPlayerPos_800c6ab0.z, mat.transfer.z);
+    final boolean moved = !flEq(this.prevPlayerPos_800c6ab0.x, mat.transfer.x) || !flEq(this.prevPlayerPos_800c6ab0.y, mat.transfer.y) || !flEq(this.prevPlayerPos_800c6ab0.z, mat.transfer.z) || this.sobjs_800c6880[0].innerStruct_00.interpMovementTicksTotal != 0;
 
     //LAB_800e4a4c
     final EncounterRateMode mode = CONFIG.getConfig(CoreMod.ENCOUNTER_RATE_CONFIG.get());
 
-    final float dist = mode.modifyDistance(this.prevPlayerPos_800c6ab0.x - mat.transfer.x + (this.prevPlayerPos_800c6ab0.z - mat.transfer.z));
+    final float dist = mode.modifyDistance(this.prevPlayerPos_800c6ab0.x - mat.transfer.x + (this.prevPlayerPos_800c6ab0.z - mat.transfer.z)) * (2 / vsyncMode_8007a3b8);
 
     if(dist < 9.0f) {
       //LAB_800e4a98
@@ -3228,7 +3228,7 @@ public class SMap extends EngineState {
 
     this.encounterAccumulator_800c6ae8 += Math.round(this.submap.getEncounterRate() * this.encounterMultiplier_800c6abc);
 
-    if(this.encounterAccumulator_800c6ae8 <= 0x1400) {
+    if(this.encounterAccumulator_800c6ae8 <= 0x1400 * (3 - vsyncMode_8007a3b8)) {
       return false;
     }
 
@@ -5150,12 +5150,12 @@ public class SMap extends EngineState {
   private int getEncounterTriangleColour() {
     final int acc = this.encounterAccumulator_800c6ae8;
 
-    if(acc <= 0xa00) {
+    if(acc <= 0xa00 * (3 - vsyncMode_8007a3b8)) {
       return 0;
     }
 
     //LAB_800f3a20
-    if(acc <= 0xf00) {
+    if(acc <= 0xf00 * (3 - vsyncMode_8007a3b8)) {
       //LAB_800f3a40
       return 1;
     }
