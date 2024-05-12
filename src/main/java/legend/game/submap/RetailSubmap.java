@@ -1104,7 +1104,7 @@ public class RetailSubmap extends Submap {
       * for sobj translations. For each sobj, the sobj translation is multiplied by the local WtS z vector of
       * the current cutout and added to the cutout's screen z to get the z delta value. These values are used
       * to determine which sobjs are in front of and behind the current cutout. If all sobjs are either in front
-      * or behind, the cutout z is set to aa value relative to the sobj with the min/max screen depth. If there
+      * or behind, the cutout z is set to a value relative to the sobj with the min/max screen depth. If there
       * are sobjs both in front and behind, the cutout position is averaged between the ends of the sobj depth
       * range if either of the range ends fall outside the EnvironmentalRenderingMetrics24 struct's z value
       * (Observed that sometimes max can end up lower than min?); otherwise, it uses the struct's z value.
