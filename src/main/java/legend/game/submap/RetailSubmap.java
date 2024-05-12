@@ -16,7 +16,6 @@ import legend.core.opengl.Obj;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.Texture;
 import legend.core.opengl.TmdObjLoader;
-import legend.game.inventory.screens.TextColour;
 import legend.game.modding.events.submap.SubmapEnvironmentTextureEvent;
 import legend.game.modding.events.submap.SubmapObjectTextureEvent;
 import legend.game.scripting.ScriptFile;
@@ -51,7 +50,6 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.SItem.renderCentredText;
 import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
@@ -86,7 +84,6 @@ import static legend.game.Scus94491BpeSegment_800b.projectionPlaneDistance_800bd
 import static legend.game.Scus94491BpeSegment_800b.rview2_800bd7e8;
 import static legend.game.Scus94491BpeSegment_800b.soundFiles_800bcf80;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
-import static legend.game.Scus94491BpeSegment_800b.textZ_800bdf00;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
 import static legend.game.Scus94491BpeSegment_800c.worldToScreenMatrix_800c3548;
@@ -996,8 +993,17 @@ public class RetailSubmap extends Submap {
     this.maxSobj_800cbd64 = this.objects.size();
   }
 
+  /**
+   * Mode:
+   * <ul>
+   *   <li>0 - Static overlay depth from struct</li>
+   *   <li>1 - Overlay depth calculated to relative sobj positions</li>
+   *   <li>2 - Scripted static overlay depth (within bounds)</li>
+   *   <li>5 - Doesn't appear to do anything because the values set only used if zFlags are set to 0x4000</li>
+   * </ul>
+   */
   @Method(0x800e7728L)
-  public int FUN_800e7728(final int mode, final int foregroundTextureIndex, int z) {
+  public int setEnvironmentOverlayDepthModeAndZ(final int mode, final int foregroundTextureIndex, int z) {
     final int textureIndex = this.envBackgroundTextureCount_800cb57c + foregroundTextureIndex;
 
     if(mode == 1 && foregroundTextureIndex == -1) {
@@ -1211,10 +1217,10 @@ public class RetailSubmap extends Submap {
           .queueOrthoModel(metrics.obj, this.backgroundTransforms)
           .texture(this.foregroundTextures[i]);
 
-        final int oldZ = textZ_800bdf00;
-        textZ_800bdf00 = 4;
-        renderCentredText(Integer.toHexString(i), (int)(metrics.offsetX_1c + metrics.w_18 / 2.0f + this.backgroundTransforms.transfer.x), (int)(metrics.offsetY_1e + metrics.h_1a / 2.0f + this.backgroundTransforms.transfer.y), TextColour.WHITE);
-        textZ_800bdf00 = oldZ;
+        // final int oldZ = textZ_800bdf00;
+        // textZ_800bdf00 = 4;
+        // renderCentredText(Integer.toHexString(metrics.zFlags_22), (int)(metrics.offsetX_1c + metrics.w_18 / 2.0f + this.backgroundTransforms.transfer.x), (int)(metrics.offsetY_1e + metrics.h_1a / 2.0f + this.backgroundTransforms.transfer.y), TextColour.WHITE);
+        // textZ_800bdf00 = oldZ;
       }
     }
     //LAB_800e7ed0

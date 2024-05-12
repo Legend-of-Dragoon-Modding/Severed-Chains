@@ -470,7 +470,7 @@ public class SMap extends EngineState {
     functions[263] = this::scriptSetEnvForegroundPosition;
     functions[264] = this::scriptSetModeParamForNextCallToScriptSetCameraOffsetOrHideSubmapForegroundObject;
     functions[265] = this::scriptGetSetEncountersDisabled;
-    functions[266] = this::FUN_800e6aa0;
+    functions[266] = this::scriptSetEnvironmentOverlayDepthModeAndZ;
     functions[267] = this::scriptGetCollisionPrimitivePos;
     functions[268] = this::FUN_800e6bd8;
     functions[269] = this::FUN_800e6be0;
@@ -4064,14 +4064,14 @@ public class SMap extends EngineState {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Unknown, related to environment foreground overlays")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "The mode (maybe layering mode?)")
+  @ScriptDescription("Sets depth mode for overlay, along with new z-value when needed.")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "mode", description = "The layering/depth mode")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "overlayIndex", description = "The overlay index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "The new Z position (only applies in modes 2 and 5")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "out", description = "The overlay's Z position")
   @Method(0x800e6aa0L)
-  private FlowControl FUN_800e6aa0(final RunningScript<?> script) {
-    script.params_20[3].set(((RetailSubmap)this.submap).FUN_800e7728(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get()));
+  private FlowControl scriptSetEnvironmentOverlayDepthModeAndZ(final RunningScript<?> script) {
+    script.params_20[3].set(((RetailSubmap)this.submap).setEnvironmentOverlayDepthModeAndZ(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get()));
     return FlowControl.CONTINUE;
   }
 
