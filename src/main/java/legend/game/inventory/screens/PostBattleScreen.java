@@ -672,7 +672,7 @@ public class PostBattleScreen extends MenuScreen {
           z = 36;
 
           if(Config.getResultsScreenColourChange()) {
-            setResultsScreenColouredBackground();
+            this.setResultsScreenColouredBackground();
           }
         }
 
