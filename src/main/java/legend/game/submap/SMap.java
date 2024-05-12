@@ -185,7 +185,7 @@ public class SMap extends EngineState {
   private int smapTicks_800c6ae0;
   /** Note: a negative value for some reason, counts up to 0 */
   private int ticksUntilEncountersAreEnabled_800c6ae4;
-  public int encounterAccumulator_800c6ae8;
+  public float encounterAccumulator_800c6ae8;
   private final List<CountdownLatch> latchList_800c6aec = new ArrayList<>();
 
   private int currentSubmapScene_800caaf8;
@@ -3226,9 +3226,9 @@ public class SMap extends EngineState {
       return false;
     }
 
-    this.encounterAccumulator_800c6ae8 += Math.round(this.submap.getEncounterRate() * this.encounterMultiplier_800c6abc);
+    this.encounterAccumulator_800c6ae8 += this.submap.getEncounterRate() * this.encounterMultiplier_800c6abc * vsyncMode_8007a3b8 / 2.0f;
 
-    if(this.encounterAccumulator_800c6ae8 <= 0x1400 * (3 - vsyncMode_8007a3b8)) {
+    if(this.encounterAccumulator_800c6ae8 <= 0x1400) {
       return false;
     }
 
@@ -5148,14 +5148,14 @@ public class SMap extends EngineState {
 
   @Method(0x800f3a00L)
   private int getEncounterTriangleColour() {
-    final int acc = this.encounterAccumulator_800c6ae8;
+    final int acc = (int)this.encounterAccumulator_800c6ae8;
 
-    if(acc <= 0xa00 * (3 - vsyncMode_8007a3b8)) {
+    if(acc <= 0xa00) {
       return 0;
     }
 
     //LAB_800f3a20
-    if(acc <= 0xf00 * (3 - vsyncMode_8007a3b8)) {
+    if(acc <= 0xf00) {
       //LAB_800f3a40
       return 1;
     }
