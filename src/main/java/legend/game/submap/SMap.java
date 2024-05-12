@@ -3228,7 +3228,7 @@ public class SMap extends EngineState {
 
     this.encounterAccumulator_800c6ae8 += Math.round(this.submap.getEncounterRate() * this.encounterMultiplier_800c6abc);
 
-    if(this.encounterAccumulator_800c6ae8 <= 0x1400 * (3 - vsyncMode_8007a3b8)) {
+    if(this.encounterAccumulator_800c6ae8 <= 0x1400) {
       return false;
     }
 
