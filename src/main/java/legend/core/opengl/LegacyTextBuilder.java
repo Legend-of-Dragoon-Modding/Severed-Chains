@@ -99,6 +99,6 @@ public class LegacyTextBuilder {
 
     final Mesh[] meshes = new Mesh[Translucency.values().length + 1];
     meshes[0] = mesh;
-    return new MeshObj(this.name, meshes);
+    return new MeshObj(this.name, meshes, true);
   }
 }

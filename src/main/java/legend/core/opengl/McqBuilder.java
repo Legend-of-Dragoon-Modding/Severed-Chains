@@ -154,7 +154,7 @@ public class McqBuilder {
       meshes[this.translucency.ordinal() + 1] = mesh;
     }
 
-    return new MeshObj(this.name, meshes);
+    return new MeshObj(this.name, meshes, true);
   }
 
   private int setVertices(final float[] vertices, int offset, final float x, final float y, final float u, final float v, final float w, final float h, final int clx, final int cly, final int tpx, final int tpy) {

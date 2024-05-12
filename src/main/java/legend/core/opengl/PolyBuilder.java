@@ -16,6 +16,7 @@ import static legend.core.opengl.TmdObjLoader.COLOUR_SIZE;
 import static legend.core.opengl.TmdObjLoader.FLAGS_SIZE;
 import static legend.core.opengl.TmdObjLoader.NORM_SIZE;
 import static legend.core.opengl.TmdObjLoader.POS_SIZE;
+import static legend.core.opengl.TmdObjLoader.TEXTURED_FLAG;
 import static legend.core.opengl.TmdObjLoader.TPAGE_SIZE;
 import static legend.core.opengl.TmdObjLoader.TRANSLUCENT_FLAG;
 import static legend.core.opengl.TmdObjLoader.UV_SIZE;
@@ -207,7 +208,7 @@ public class PolyBuilder {
       meshes[this.translucency.ordinal() + 1] = mesh;
     }
 
-    return new MeshObj(this.name, meshes);
+    return new MeshObj(this.name, meshes, (this.flags & TEXTURED_FLAG) != 0);
   }
 
   private static class Vertex {

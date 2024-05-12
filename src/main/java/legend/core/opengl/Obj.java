@@ -64,6 +64,7 @@ public abstract class Obj {
     return true;
   }
 
+  public abstract boolean hasTexture();
   public abstract boolean hasTranslucency();
   public abstract boolean shouldRender(@Nullable final Translucency translucency);
   public abstract void render(final int startVertex, final int vertexCount);
