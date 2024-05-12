@@ -85,8 +85,8 @@ public class ScriptLiveDebuggerController {
         this.btnResume.setDisable(true);
         this.btnStep.setDisable(true);
       }
-      //TODO
-      int[] arr = {};
+
+      final int[] arr = {};
       this.tokens = this.disassembler.disassemble(state.scriptPtr_14.data, arr);
     }
   }
