@@ -13,7 +13,7 @@ public class EnvironmentFile {
   public int allTextureCount_14;
   public int backgroundTextureCount_15;
   public int foregroundTextureCount_16;
-  public final EnvironmentStruct[] environments_18;
+  public final EnvironmentTextureMetrics24[] environments_18;
 
   public EnvironmentFile(final FileData data) {
     this.viewpoint_00 = data.readSvec3_0(0x0, new Vector3f());
@@ -23,7 +23,7 @@ public class EnvironmentFile {
     this.allTextureCount_14 = data.readUByte(0x14);
     this.backgroundTextureCount_15 = data.readUByte(0x15);
     this.foregroundTextureCount_16 = data.readUByte(0x16);
-    this.environments_18 = new EnvironmentStruct[this.allTextureCount_14];
-    Arrays.setAll(this.environments_18, i -> new EnvironmentStruct(data.slice(0x18 + i * 0x24)));
+    this.environments_18 = new EnvironmentTextureMetrics24[this.allTextureCount_14];
+    Arrays.setAll(this.environments_18, i -> new EnvironmentTextureMetrics24(data.slice(0x18 + i * 0x24)));
   }
 }

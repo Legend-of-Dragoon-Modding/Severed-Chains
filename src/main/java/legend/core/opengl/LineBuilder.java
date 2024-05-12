@@ -103,6 +103,6 @@ public class LineBuilder {
       meshes[this.translucency.ordinal() + 1] = mesh;
     }
 
-    return new MeshObj(this.name, meshes);
+    return new MeshObj(this.name, meshes, false);
   }
 }
