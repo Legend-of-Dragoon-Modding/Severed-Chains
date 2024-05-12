@@ -2162,7 +2162,7 @@ public final class Scus94491BpeSegment_8002 {
             setTextBoxColour();
           }
           RENDERER.queueOrthoModel(textboxBackgroundColouredObj, textbox.backgroundTransforms)
-            .colour(1.0f, 1.0f, 1.0f );
+            .colour(1.0f, 1.0f, 1.0f);
         } else {
           RENDERER.queueOrthoModel(textboxBackgroundObj, textbox.backgroundTransforms);
         }
