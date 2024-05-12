@@ -59,6 +59,8 @@ import static legend.core.GameEngine.RENDERER;
 import static legend.core.MathHelper.PI;
 import static legend.core.MathHelper.clamp;
 import static legend.core.MathHelper.put3x4;
+import static legend.game.Scus94491BpeSegment.zOffset_1f8003e8;
+import static legend.game.Scus94491BpeSegment.zShift_1f8003c4;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
@@ -845,6 +847,7 @@ public class RenderEngine {
     final QueuedModel<VoidShaderOptions> entry = this.modelPool.acquire();
     entry.reset();
     entry.obj = obj;
+    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
     return entry;
   }
 
@@ -858,6 +861,7 @@ public class RenderEngine {
     entry.obj = obj;
     entry.transforms.set(mv).setTranslation(mv.transfer);
     entry.lightTransforms.set(entry.transforms);
+    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
     return entry;
   }
 
@@ -871,6 +875,7 @@ public class RenderEngine {
     entry.obj = obj;
     entry.transforms.set(mv).setTranslation(mv.transfer);
     entry.lightTransforms.set(lightMv).setTranslation(lightMv.transfer);
+    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
     return entry;
   }
 
@@ -884,6 +889,7 @@ public class RenderEngine {
     entry.obj = obj;
     entry.transforms.set(mv);
     entry.lightTransforms.set(entry.transforms);
+    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
     return entry;
   }
 
@@ -897,6 +903,7 @@ public class RenderEngine {
     entry.obj = obj;
     entry.transforms.set(mv);
     entry.lightTransforms.set(lightMv).setTranslation(lightMv.transfer);
+    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
     return entry;
   }
 
@@ -913,6 +920,7 @@ public class RenderEngine {
     entry.reset();
     entry.transforms.setTranslation(this.widescreenOrthoOffsetX, 0.0f, 0.0f);
     entry.obj = obj;
+    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
     return entry;
   }
 
@@ -930,6 +938,7 @@ public class RenderEngine {
     entry.obj = obj;
     entry.transforms.set(mv).setTranslation(mv.transfer.x + this.widescreenOrthoOffsetX, mv.transfer.y, mv.transfer.z);
     entry.lightTransforms.set(entry.transforms);
+    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
     return entry;
   }
 
@@ -943,6 +952,7 @@ public class RenderEngine {
     entry.obj = obj;
     entry.shader = ShaderManager.getShader(shaderType);
     entry.shaderOptions = entry.shader.makeOptions();
+    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
     return entry;
   }
 
@@ -958,6 +968,7 @@ public class RenderEngine {
     entry.shaderOptions = entry.shader.makeOptions();
     entry.transforms.set(mv).setTranslation(mv.transfer);
     entry.lightTransforms.set(entry.transforms);
+    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
     return entry;
   }
 
@@ -1211,8 +1222,9 @@ public class RenderEngine {
     private boolean texturesUsed;
 
     private Translucency translucency;
-    private boolean hasTranslucency;
+    private boolean hasTranslucencyOverride;
 
+    private boolean isTmd;
     private int tmdTranslucency;
     private int ctmdFlags;
     private final Vector3f battleColour = new Vector3f();
@@ -1310,16 +1322,23 @@ public class RenderEngine {
 
     public QueuedModel<Options> translucency(final Translucency translucency) {
       this.translucency = translucency;
-      this.hasTranslucency = true;
+      this.hasTranslucencyOverride = true;
+
+      if(translucency == Translucency.HALF_B_PLUS_HALF_F) {
+        RenderEngine.this.needsSorting = true;
+      }
+
       return this;
     }
 
     public QueuedModel<Options> ctmdFlags(final int ctmdFlags) {
+      this.isTmd = true;
       this.ctmdFlags = ctmdFlags;
       return this;
     }
 
     public QueuedModel<Options> tmdTranslucency(final int tmdTranslucency) {
+      this.isTmd = true;
       this.tmdTranslucency = tmdTranslucency;
       return this;
     }
@@ -1342,7 +1361,7 @@ public class RenderEngine {
       this.scissor.set(0, 0, 0, 0);
       this.vertexCount = 0;
       Arrays.fill(this.textures, null);
-      this.hasTranslucency = false;
+      this.hasTranslucencyOverride = false;
       this.texturesUsed = false;
       this.lightUsed = false;
       this.tmdTranslucency = 0;
@@ -1362,12 +1381,24 @@ public class RenderEngine {
       }
     }
 
+    public boolean isUniformLit() {
+      return (this.ctmdFlags & 0x10) != 0;
+    }
+
     public boolean hasTranslucency() {
-      return this.hasTranslucency || (this.ctmdFlags & 0x2) != 0 || this.obj.hasTranslucency();
+      return this.hasTranslucencyOverride || (this.ctmdFlags & 0x2) != 0 || this.obj.hasTranslucency();
     }
 
     public boolean shouldRender(@Nullable final Translucency translucency) {
-      return this.hasTranslucency && this.translucency == translucency || (this.ctmdFlags & 0x2) != 0 && translucency != null && this.tmdTranslucency == translucency.ordinal() || !this.hasTranslucency && this.obj.shouldRender(translucency);
+      if(this.isTmd && this.hasTranslucency() && (!this.obj.hasTexture() || this.isUniformLit())) {
+        return translucency != null && this.tmdTranslucency == translucency.ordinal();
+      }
+
+      return
+        this.hasTranslucencyOverride && this.translucency == translucency ||
+        (this.ctmdFlags & 0x2) != 0 && translucency != null && this.tmdTranslucency == translucency.ordinal() ||
+        !this.hasTranslucencyOverride && this.obj.shouldRender(translucency)
+      ;
     }
 
     private void storeTransforms(final int modelIndex, final FloatBuffer transforms2Buffer, final FloatBuffer lightingBuffer) {
@@ -1382,7 +1413,7 @@ public class RenderEngine {
     }
 
     private void render(final Translucency translucency) {
-      if(this.hasTranslucency || (this.ctmdFlags & 0x2) != 0) {
+      if(this.hasTranslucencyOverride || (this.ctmdFlags & 0x2) != 0 || this.isTmd && this.obj.hasTranslucency() && (!this.obj.hasTexture() || this.isUniformLit())) {
         // Translucency override
         this.obj.render(this.startVertex, this.vertexCount);
       } else {

@@ -21,8 +21,8 @@ public class EnvironmentRenderingMetrics24 {
   /** Part of the render Y calculation */
   public int offsetY_1e;
   public int z_20;
-  /** Flags, but lower 0x3fff is Z? Flags 0x4000 and 0x8000 seen */
-  public int flags_22;
+  /** Cutout Z mode (and sometimes value); Mode 1 = 0x4000, Mode 2 = 0x8000; lower 0x3fff are sometimes Z */
+  public int zFlags_22;
 
   public Obj obj;
 }

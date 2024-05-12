@@ -359,7 +359,7 @@ public class BattleCamera {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d53e4L)
-  public void FUN_800d53e4(final float x, final float y, final float z, final int initialStepZ, final int finalStepZ, final int stepType, final BattleObject bobj) {
+  public void FUN_800d53e4(final float x, final float y, final float z, final float initialStepZ, final float finalStepZ, final int stepType, final BattleObject bobj) {
     final float dx = x - this.rview2_00.viewpoint_00.x;
     final float dy = y - this.rview2_00.viewpoint_00.y;
     final float dz = z - this.rview2_00.viewpoint_00.z;
@@ -750,7 +750,7 @@ public class BattleCamera {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d7790L)
-  public void FUN_800d7790(final float x, final float y, final float z, final int initialStepZ, final int finalStepZ, final int stepType, final BattleObject bobj) {
+  public void FUN_800d7790(final float x, final float y, final float z, final float initialStepZ, final float finalStepZ, final int stepType, final BattleObject bobj) {
     final float dx = x - this.rview2_00.refpoint_0c.x;
     final float dy = y - this.rview2_00.refpoint_0c.y;
     final float dz = z - this.rview2_00.refpoint_0c.z;
@@ -764,7 +764,7 @@ public class BattleCamera {
     this.refpointTicksRemaining_5c = (int)(this.vec_60.z * 2.0f / (finalStepZ + initialStepZ));
 
     if(this.refpointTicksRemaining_5c > 0) {
-      this.stepZAcceleration_40 = (finalStepZ - initialStepZ) / (float)this.refpointTicksRemaining_5c;
+      this.stepZAcceleration_40 = (finalStepZ - initialStepZ) / this.refpointTicksRemaining_5c;
     } else {
       this.stepZAcceleration_40 = -1;
     }
@@ -776,7 +776,7 @@ public class BattleCamera {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d7920L)
-  public void FUN_800d7920(final float x, final float y, final float z, final int initialStepZ, final int finalStepZ, final int stepType, final BattleObject bobj) {
+  public void FUN_800d7920(final float x, final float y, final float z, final float initialStepZ, final float finalStepZ, final int stepType, final BattleObject bobj) {
     this.refpointAngleX_38 = this.calculateCameraValue(true, 1, 0, null);
     this.refpointAngleY_44 = this.calculateCameraValue(true, 1, 1, null);
     this.refpointDeltaMagnitude_2c = this.calculateCameraValue(true, 1, 2, null);
@@ -793,7 +793,7 @@ public class BattleCamera {
 
     if(this.refpointTicksRemaining_5c > 0) {
       this.stepZ_30 = this.calculateDifference(2, this.refpointDeltaMagnitude_2c, z, 0) / this.refpointTicksRemaining_5c;
-      this.stepZAcceleration_70 = (finalStepZ - initialStepZ) / (float)this.refpointTicksRemaining_5c;
+      this.stepZAcceleration_70 = (finalStepZ - initialStepZ) / this.refpointTicksRemaining_5c;
     } else {
       this.stepZ_30 = -1;
       this.stepZAcceleration_70 = -1;
@@ -806,7 +806,7 @@ public class BattleCamera {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d7aecL)
-  public void FUN_800d7aec(final float x, final float y, final float z, final int initialStepZ, final int finalStepZ, final int stepType, final BattleObject bobj) {
+  public void FUN_800d7aec(final float x, final float y, final float z, final float initialStepZ, final float finalStepZ, final int stepType, final BattleObject bobj) {
     this.refpointBaseTranslation_20.x = this.calculateCameraValue(true, 2, 0, null);
     this.refpointBaseTranslation_20.y = this.calculateCameraValue(true, 2, 1, null);
     this.refpointBaseTranslation_20.z = this.calculateCameraValue(true, 2, 2, null);
@@ -823,7 +823,7 @@ public class BattleCamera {
     this.refpointTicksRemaining_5c = (int)(this.vec_60.z * 2.0f / (finalStepZ + initialStepZ));
 
     if(this.refpointTicksRemaining_5c > 0) {
-      this.stepZAcceleration_40 = (finalStepZ - initialStepZ) / (float)this.refpointTicksRemaining_5c;
+      this.stepZAcceleration_40 = (finalStepZ - initialStepZ) / this.refpointTicksRemaining_5c;
     } else {
       this.stepZAcceleration_40 = -1;
     }
@@ -835,7 +835,7 @@ public class BattleCamera {
    * @param z 8-bit fixed-point
    */
   @Method(0x800d7cdcL)
-  public void FUN_800d7cdc(final float x, final float y, final float z, final int initialStepZ, final int finalStepZ, final int stepType, final BattleObject bobj) {
+  public void FUN_800d7cdc(final float x, final float y, final float z, final float initialStepZ, final float finalStepZ, final int stepType, final BattleObject bobj) {
     this.refpointAngleX_38 = this.calculateCameraValue(true, 3, 0, null);
     this.refpointAngleY_44 = this.calculateCameraValue(true, 3, 1, null);
     this.refpointDeltaMagnitude_2c = this.calculateCameraValue(true, 3, 2, null);
@@ -852,7 +852,7 @@ public class BattleCamera {
 
     if(this.refpointTicksRemaining_5c > 0) {
       this.stepZ_30 = this.calculateDifference(2, this.refpointDeltaMagnitude_2c, z, 0) / this.refpointTicksRemaining_5c;
-      this.stepZAcceleration_70 = (finalStepZ - initialStepZ) / (float)this.refpointTicksRemaining_5c;
+      this.stepZAcceleration_70 = (finalStepZ - initialStepZ) / this.refpointTicksRemaining_5c;
     } else {
       this.stepZ_30 = -1;
       this.stepZAcceleration_70 = -1;
@@ -1034,11 +1034,11 @@ public class BattleCamera {
 
     GsSetRefView2L(this.rview2_00);
     this.wobbleCamera();
-    this.FUN_800d8fe0();
+    this.tickProjectionPlaneChange();
   }
 
   @Method(0x800d8fe0L)
-  public void FUN_800d8fe0() {
+  public void tickProjectionPlaneChange() {
     if(this.projectionPlaneChanging_118 && this.projectionPlaneChangeFrames_108 == 0) {
       setProjectionPlaneDistance(this.projectionPlaneDistance_100);
       this.projectionPlaneChanging_118 = false;
@@ -1984,8 +1984,8 @@ public class BattleCamera {
    * @param z 8-bit fixed-point
    */
   @Method(0x800db714L)
-  public void FUN_800db714(final int callbackIndex, final float x, final float y, final float z, final int initialStepZ, final int finalStepZ, final int stepType, final BattleObject bobj) {
-    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac1c, FUN index=%d, x=%f, y=%f, z=%f, initialStepZ=%d, finalStepZ=%d, stepType=%d, bobj=%s", callbackIndex, x, y, z, initialStepZ, finalStepZ, stepType, bobj);
+  public void FUN_800db714(final int callbackIndex, final float x, final float y, final float z, final float initialStepZ, final float finalStepZ, final int stepType, final BattleObject bobj) {
+    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac1c, FUN index=%d, x=%f, y=%f, z=%f, initialStepZ=%f, finalStepZ=%f, stepType=%d, bobj=%s", callbackIndex, x, y, z, initialStepZ, finalStepZ, stepType, bobj);
     this._800fac1c[callbackIndex].accept(x, y, z, initialStepZ, finalStepZ, stepType, bobj);
     this.viewpointCallbackIndex_fc = callbackIndex;
     this.viewpointMoving_122 = true;
@@ -1997,8 +1997,8 @@ public class BattleCamera {
    * @param z 8-bit fixed-point
    */
   @Method(0x800db828L)
-  public void FUN_800db828(final int callbackIndex, final float x, final float y, final float z, final int initialStepZ, final int finalStepZ, final int stepType, final BattleObject bobj) {
-    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac7c, FUN index=%d, x=%f, y=%f, z=%f, initialStepZ=%d, finalStepZ=%d, stepType=%d, scriptIndex=%d", callbackIndex, x, y, z, initialStepZ, finalStepZ, stepType, bobj);
+  public void FUN_800db828(final int callbackIndex, final float x, final float y, final float z, final float initialStepZ, final float finalStepZ, final int stepType, final BattleObject bobj) {
+    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac7c, FUN index=%d, x=%f, y=%f, z=%f, initialStepZ=%f, finalStepZ=%f, stepType=%d, scriptIndex=%d", callbackIndex, x, y, z, initialStepZ, finalStepZ, stepType, bobj);
     this._800fac7c[callbackIndex].accept(x, y, z, initialStepZ, finalStepZ, stepType, bobj);
     this.refpointCallbackIndex_88 = callbackIndex;
     this.refpointMoving_123 = true;
@@ -2653,7 +2653,7 @@ public class BattleCamera {
    *   <li>{@link #FUN_800d5cf4}</li>
    * </ol>
    */
-  private final CameraSeptParamCallback[] _800fac1c = new CameraSeptParamCallback[8];
+  private final CameraStepParamCallback[] _800fac1c = new CameraStepParamCallback[8];
   {
     this._800fac1c[0] = this::FUN_800d53e4;
     this._800fac1c[1] = null;
@@ -2722,7 +2722,7 @@ public class BattleCamera {
    *   <li>{@link #FUN_800d80a0}</li>
    * </ol>
    */
-  private final CameraSeptParamCallback[] _800fac7c = new CameraSeptParamCallback[8];
+  private final CameraStepParamCallback[] _800fac7c = new CameraStepParamCallback[8];
   {
     this._800fac7c[0] = this::FUN_800d7790;
     this._800fac7c[1] = this::FUN_800d7920;

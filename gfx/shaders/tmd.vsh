@@ -129,6 +129,10 @@ void main() {
     if(z != 0) {
       gl_Position.xy *= zfar / z;
     }
+
+    if(t.screenOffset.z != 0) {
+      gl_Position.z += t.screenOffset.z;
+    }
   }
 
   gl_Position.xy += t.screenOffset.xy;

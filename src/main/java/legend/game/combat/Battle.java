@@ -4575,7 +4575,23 @@ public class Battle extends EngineState {
       y = MathHelper.psxDegToRad(y);
     }
 
-    this.camera_800c67f0.FUN_800dac70(script.params_20[0].get(), x, y, z, SCRIPTS.getObject(script.params_20[4].get(), BattleObject.class));
+    // Three Executioners instakill sends a bad param for scriptIndex (0xa0), but this param isn't used for the camera function they're calling so we can just pass null
+    // File 5316/1[addr 0x4078]
+    // Parameters:
+    //   Op param: 0x21
+    //   0: script[0x1021] 0x0
+    //   1: script[0x1023] 0xffe8e600
+    //   2: script[0x1025] 0xfff76300
+    //   3: script[0x1026] 0x0
+    //   4: script[0x1027] 0xa0
+    final BattleObject bobj;
+    if(script.params_20[4].get() < 72) {
+      bobj = SCRIPTS.getObject(script.params_20[4].get(), BattleObject.class);
+    } else {
+      bobj = null;
+    }
+
+    this.camera_800c67f0.FUN_800dac70(script.params_20[0].get(), x, y, z, bobj);
     return FlowControl.CONTINUE;
   }
 
@@ -4598,7 +4614,23 @@ public class Battle extends EngineState {
       y = MathHelper.psxDegToRad(y);
     }
 
-    this.camera_800c67f0.FUN_800db084(script.params_20[0].get(), x, y, z, SCRIPTS.getObject(script.params_20[4].get(), BattleObject.class));
+    // Three Executioners instakill sends a bad param for scriptIndex (0xc8), but this param isn't used for the camera function they're calling so we can just pass null
+    // File 5316/1[addr 0x4078]
+    // Parameters:
+    //   Op param: 0x22
+    //   0: script[0x1029] 0x0
+    //   1: script[0x102b] 0xfff59900
+    //   2: script[0x102d] 0xfff8f300
+    //   3: script[0x102e] 0x0
+    //   4: script[0x102f] 0xc8
+    final BattleObject bobj;
+    if(script.params_20[4].get() < 72) {
+      bobj = SCRIPTS.getObject(script.params_20[4].get(), BattleObject.class);
+    } else {
+      bobj = null;
+    }
+
+    this.camera_800c67f0.FUN_800db084(script.params_20[0].get(), x, y, z, bobj);
     return FlowControl.CONTINUE;
   }
 
@@ -4657,8 +4689,8 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "8-bit fixed-point position")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "initialStepZ")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "finalStepZ")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "initialStepZ, 8-bit fixed-point")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "finalStepZ, 8-bit fixed-point")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepType", description = "Two 2-bit packed values for X and Y respectively")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "Only used in some modes, the scripted object used in calculations")
   @Method(0x800db688L)
@@ -4666,14 +4698,18 @@ public class Battle extends EngineState {
     float x = script.params_20[1].get() / (float)0x100;
     float y = script.params_20[2].get() / (float)0x100;
     final float z = script.params_20[3].get() / (float)0x100;
+    float initialStepZ = script.params_20[4].get() / (float)0x100;
+    float finalStepZ = script.params_20[5].get() / (float)0x100;
 
     // Odd funcs operate on angles
     if((script.params_20[0].get() & 1) != 0) {
       x = MathHelper.psxDegToRad(x);
       y = MathHelper.psxDegToRad(y);
+      initialStepZ = MathHelper.psxDegToRad(initialStepZ);
+      finalStepZ = MathHelper.psxDegToRad(finalStepZ);
     }
 
-    this.camera_800c67f0.FUN_800db714(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), SCRIPTS.getObject(script.params_20[7].get(), BattleObject.class));
+    this.camera_800c67f0.FUN_800db714(script.params_20[0].get(), x, y, z, initialStepZ, finalStepZ, script.params_20[6].get(), SCRIPTS.getObject(script.params_20[7].get(), BattleObject.class));
     return FlowControl.CONTINUE;
   }
 
@@ -4682,8 +4718,8 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "x", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "y", description = "If mode is even, 8-bit fixed-point position; if odd, PSX degree angle")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "z", description = "8-bit fixed-point position")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "initialStepZ")
-  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "finalStepZ")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "initialStepZ, 8-bit fixed-point")
+  @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "finalStepZ, 8-bit fixed-point")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "stepType", description = "Two 2-bit packed values for X and Y respectively")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scriptIndex", description = "Only used in some modes, the scripted object used in calculations")
   @Method(0x800db79cL)
@@ -4691,14 +4727,18 @@ public class Battle extends EngineState {
     float x = script.params_20[1].get() / (float)0x100;
     float y = script.params_20[2].get() / (float)0x100;
     final float z = script.params_20[3].get() / (float)0x100;
+    float initialStepZ = script.params_20[4].get() / (float)0x100;
+    float finalStepZ = script.params_20[5].get() / (float)0x100;
 
     // Odd funcs operate on angles
     if((script.params_20[0].get() & 1) != 0) {
       x = MathHelper.psxDegToRad(x);
       y = MathHelper.psxDegToRad(y);
+      initialStepZ = MathHelper.psxDegToRad(initialStepZ);
+      finalStepZ = MathHelper.psxDegToRad(finalStepZ);
     }
 
-    this.camera_800c67f0.FUN_800db828(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get(), SCRIPTS.getObject(script.params_20[7].get(), BattleObject.class));
+    this.camera_800c67f0.FUN_800db828(script.params_20[0].get(), x, y, z, initialStepZ, finalStepZ, script.params_20[6].get(), SCRIPTS.getObject(script.params_20[7].get(), BattleObject.class));
     return FlowControl.CONTINUE;
   }
 
@@ -4717,14 +4757,16 @@ public class Battle extends EngineState {
     float x = script.params_20[1].get() / (float)0x100;
     float y = script.params_20[2].get() / (float)0x100;
     final float z = script.params_20[3].get() / (float)0x100;
+    float stepZ = script.params_20[6].get() / (float)0x100;
 
     // Odd funcs operate on angles
     if((script.params_20[0].get() & 1) != 0) {
       x = MathHelper.psxDegToRad(x);
       y = MathHelper.psxDegToRad(y);
+      stepZ = MathHelper.psxDegToRad(stepZ);
     }
 
-    this.camera_800c67f0.FUN_800db950(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get() / (float)0x100, script.params_20[7].get(), SCRIPTS.getObject(script.params_20[8].get(), BattleObject.class));
+    this.camera_800c67f0.FUN_800db950(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), stepZ, script.params_20[7].get(), SCRIPTS.getObject(script.params_20[8].get(), BattleObject.class));
     return FlowControl.CONTINUE;
   }
 
@@ -4743,14 +4785,16 @@ public class Battle extends EngineState {
     float x = script.params_20[1].get() / (float)0x100;
     float y = script.params_20[2].get() / (float)0x100;
     final float z = script.params_20[3].get() / (float)0x100;
+    float stepZ = script.params_20[6].get() / (float)0x100;
 
     // Odd funcs operate on angles
     if((script.params_20[0].get() & 1) != 0) {
       x = MathHelper.psxDegToRad(x);
       y = MathHelper.psxDegToRad(y);
+      stepZ = MathHelper.psxDegToRad(stepZ);
     }
 
-    this.camera_800c67f0.FUN_800dba80(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), script.params_20[6].get() / (float)0x100, script.params_20[7].get(), SCRIPTS.getObject(script.params_20[8].get(), BattleObject.class));
+    this.camera_800c67f0.FUN_800dba80(script.params_20[0].get(), x, y, z, script.params_20[4].get(), script.params_20[5].get(), stepZ, script.params_20[7].get(), SCRIPTS.getObject(script.params_20[8].get(), BattleObject.class));
     return FlowControl.CONTINUE;
   }
 

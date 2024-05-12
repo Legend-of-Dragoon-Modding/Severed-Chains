@@ -105,6 +105,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.joml.Math;
+import org.joml.Matrix3f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
@@ -477,6 +478,11 @@ public final class SEffe {
     if((effectParams.flags_00 & 0x400_0000) == 0) {
       sp0x10.rotationXYZ(effectParams.rot_10);
       sp0x10.scaleLocal(effectParams.scale_16);
+
+      // Transform override is already in screenspace so we need to un-transform it
+      if(RenderEngine.legacyMode == 0) {
+        sp0x10.mul(worldToScreenMatrix_800c3548.invert(new Matrix3f()));
+      }
     }
 
     //LAB_800de4a8
@@ -1044,7 +1050,6 @@ public final class SEffe {
 
     RENDERER
       .queueModel(shadow.modelParts_00[0].obj, lw)
-      .depthOffset(-0.0001f)
       .lightDirection(lightDirectionMatrix_800c34e8)
       .lightColour(lightColourMatrix_800c3508)
       .backgroundColour(GTE.backgroundColour);
@@ -5890,8 +5895,8 @@ public final class SEffe {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex1", description = "The first battle object script index")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "bobjIndex2", description = "The second battle object script index")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "x", description = "The X angle (12-bit fixed-point)")
-  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y angle (12-bit fixed-point)")
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "z", description = "The Z angle (12-bit fixed-point)")
+  @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The Y angle (12-bit fixed-point)")
   @Method(0x80112900L)
   public static FlowControl scriptGetRelativeAngleBetweenBobjs(final RunningScript<?> script) {
     final Vector3f rot = new Vector3f();
