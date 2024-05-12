@@ -8,6 +8,7 @@ import legend.core.MathHelper;
 import legend.core.Tuple;
 import legend.core.audio.xa.XaTranscoder;
 import legend.game.Scus94491BpeSegment;
+import legend.game.unpacker.sobj2.SobjTransformer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -136,6 +137,7 @@ public final class Unpacker {
   static {
     // Convert submap PXLs into individual TIMs
     postTransformers.add(SubmapPxlTransformer::transform);
+    postTransformers.add(SobjTransformer::transform);
   }
 
   private static Consumer<String> statusListener = status -> { };

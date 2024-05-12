@@ -201,17 +201,17 @@ public class RetailSubmap extends Submap {
       final int expectedCount = cutFileIndex == 0 ? 1 : 2;
 
       // Load sobj assets
-      final List<FileData> assets = new ArrayList<>();
+//      final List<FileData> assets = new ArrayList<>();
       final List<FileData> scripts = new ArrayList<>();
-      final List<FileData> textures = new ArrayList<>();
+//      final List<FileData> textures = new ArrayList<>();
       final AtomicInteger assetsCount = new AtomicInteger();
 
-      final Runnable prepareSobjs = () -> this.prepareSobjs(assets, scripts, textures);
+      final Runnable prepareSobjs = () -> this.prepareSobjs(drgnIndex.get(), fileIndex.get() + 1, scripts);
       final Runnable prepareSobjsAndComplete = () -> allLoaded(loadedCount, expectedCount, prepareSobjs, onLoaded);
 
-      loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 1, files -> allLoaded(assetsCount, 3, () -> assets.addAll(files), prepareSobjsAndComplete));
-      loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 2, files -> allLoaded(assetsCount, 3, () -> scripts.addAll(files), prepareSobjsAndComplete));
-      Unpacker.loadDirectory("SECT/DRGN" + (20 + drgnIndex.get()) + ".BIN/" + (fileIndex.get() + 1) + "/textures", files -> allLoaded(assetsCount, 3, () -> textures.addAll(files), prepareSobjsAndComplete));
+//      loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 1, files -> allLoaded(assetsCount, 3, () -> assets.addAll(files), prepareSobjsAndComplete));
+      loadDrgnDir(drgnIndex.get() + 2, fileIndex.get() + 2, files -> allLoaded(assetsCount, 1, () -> scripts.addAll(files), prepareSobjsAndComplete));
+//      Unpacker.loadDirectory("SECT/DRGN" + (20 + drgnIndex.get()) + ".BIN/" + (fileIndex.get() + 1) + "/textures", files -> allLoaded(assetsCount, 3, () -> textures.addAll(files), prepareSobjsAndComplete));
 
       // Load 3D overlay
       if(cutFileIndex != 0) {
@@ -415,6 +415,51 @@ public class RetailSubmap extends Submap {
   @Override
   public boolean isReturningToSameMapAfterBattle() {
     return submapCutBeforeBattle_80052c3c == this.cut;
+  }
+
+  private void prepareSobjs(final int drgnIndex, final int fileIndex, final List<FileData> scripts) {
+    LOGGER.info("Submap cut %d preparing sobjs", this.cut);
+
+    final int objCount = scripts.size() - 2;
+
+    this.script = new ScriptFile("Submap controller", scripts.get(0).getBytes());
+
+    for(int sobjIndex = 0; sobjIndex < objCount; sobjIndex++) {
+      final SubmapObject sobj = new SubmapObject();
+
+      final byte[] scriptData = scripts.get(sobjIndex + 1).getBytes();
+      sobj.script = new ScriptFile("Submap object %d (DRGN2%d/%d/%d)".formatted(sobjIndex, drgnIndex, fileIndex + 1, sobjIndex), scriptData);
+
+      final String path = "SECT/DRGN2%d.BIN/%d/%d".formatted(drgnIndex, fileIndex, sobjIndex);
+
+      final FileData modelRefFile = Unpacker.loadFile(path + "/model");
+      final String modelPath = modelRefFile.readFixedLengthAscii(0x0, modelRefFile.size());
+      sobj.model = new CContainer("Submap object %d (%s)".formatted(sobjIndex, modelPath), Unpacker.loadFile("submap_objects/%s/model".formatted(modelPath)));
+
+      final FileData animationsRefFile = Unpacker.loadFile(path + "/animations");
+      final String[] animationPaths = animationsRefFile.readFixedLengthAscii(0x0, animationsRefFile.size()).split("\n");
+
+      for(final String animationPath : animationPaths) {
+        final String[] pathSplit = animationPath.split("=");
+
+        if(pathSplit.length == 2) {
+          sobj.animations.add(new TmdAnimationFile(Unpacker.loadFile("submap_objects/%s/animations/%s".formatted(modelPath, pathSplit[1]))));
+
+        } else {
+          sobj.animations.add(null);
+        }
+      }
+
+      final FileData textureRefFile = Unpacker.loadFile(path + "/texture");
+      final String texturePath = textureRefFile.readFixedLengthAscii(0x0, textureRefFile.size());
+      this.pxls.add(new Tim(Unpacker.loadFile("submap_objects/%s/textures/%s".formatted(modelPath, texturePath))));
+
+      this.objects.add(sobj);
+    }
+
+    this.loadTextureOverrides();
+    this.calculateTextureLocations();
+    this.loadTextures();
   }
 
   private void prepareSobjs(final List<FileData> assets, final List<FileData> scripts, final List<FileData> textures) {
