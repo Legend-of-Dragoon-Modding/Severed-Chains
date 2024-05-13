@@ -5,7 +5,6 @@ import legend.core.MathHelper;
 import legend.core.Random;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
-import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
@@ -147,6 +146,8 @@ import static legend.game.Scus94491BpeSegment.FUN_80013404;
 import static legend.game.Scus94491BpeSegment.battlePreloadedEntities_1f8003f4;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
+import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
+import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
 import static legend.game.Scus94491BpeSegment.getCharacterName;
 import static legend.game.Scus94491BpeSegment.getLoadedDrgnFiles;
 import static legend.game.Scus94491BpeSegment.loadDeffSounds;
@@ -3974,11 +3975,15 @@ public class Battle extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "translucency", description = "The translucency mode")
   @Method(0x800cef00L)
   public FlowControl scriptRenderColouredQuad(final RunningScript<?> script) {
-    GPU.queueCommand(30, new GpuCommandQuad()
-      .translucent(Translucency.of(script.params_20[3].get() + 1))
-      .rgb(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get())
-      .pos(-160, -120, 320, 280)
-    );
+    // Make sure effect fills the whole screen
+    final float fullWidth = java.lang.Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4);
+    final float extraWidth = fullWidth - displayWidth_1f8003e0;
+    fullScreenEffect_800bb140.transforms.scaling(fullWidth, displayHeight_1f8003e4, 1.0f);
+    fullScreenEffect_800bb140.transforms.transfer.set(-extraWidth / 2, 0.0f, 120.0f);
+
+    //LAB_800139c4
+    RENDERER.queueOrthoModel(RENDERER.plainQuads.get(Translucency.of(script.params_20[3].get() + 1)), fullScreenEffect_800bb140.transforms)
+      .colour(script.params_20[0].get() / 255.0f, script.params_20[1].get() / 255.0f, script.params_20[2].get() / 255.0f);
 
     return FlowControl.CONTINUE;
   }

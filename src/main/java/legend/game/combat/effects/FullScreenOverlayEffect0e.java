@@ -1,11 +1,13 @@
 package legend.game.combat.effects;
 
-import legend.core.gpu.GpuCommandQuad;
 import legend.core.memory.Method;
 import legend.game.scripting.ScriptState;
 import legend.game.types.Translucency;
 
-import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.RENDERER;
+import static legend.game.Scus94491BpeSegment.displayHeight_1f8003e4;
+import static legend.game.Scus94491BpeSegment.displayWidth_1f8003e0;
+import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 
 public class FullScreenOverlayEffect0e implements Effect {
   private int r_00;
@@ -40,10 +42,15 @@ public class FullScreenOverlayEffect0e implements Effect {
 
   @Method(0x800ceb28L)
   public void renderFullScreenOverlay(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
-    GPU.queueCommand(30, new GpuCommandQuad()
-      .translucent(Translucency.of(manager.params_10.flags_00 >>> 28 & 0b11))
-      .rgb(this.r_00 >> 8, this.g_02 >> 8, this.b_04 >> 8)
-      .pos(-160, -120, 320, 280)
-    );
+    // Make sure effect fills the whole screen
+    final float fullWidth = Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4);
+    final float extraWidth = fullWidth - displayWidth_1f8003e0;
+    fullScreenEffect_800bb140.transforms.scaling(fullWidth, displayHeight_1f8003e4, 1.0f);
+    fullScreenEffect_800bb140.transforms.transfer.set(-extraWidth / 2, 0.0f, 120.0f);
+
+    //LAB_800139c4
+    RENDERER.queueOrthoModel(RENDERER.opaqueQuad, fullScreenEffect_800bb140.transforms)
+      .translucency(Translucency.of(manager.params_10.flags_00 >>> 28 & 0b11))
+      .colour((this.r_00 >> 8) / 255.0f, (this.g_02 >> 8) / 255.0f, (this.b_04 >> 8) / 255.0f);
   }
 }

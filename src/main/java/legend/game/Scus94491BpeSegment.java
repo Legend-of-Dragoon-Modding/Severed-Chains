@@ -2007,23 +2007,7 @@ public final class Scus94491BpeSegment {
             final int top = sp14 + v + s2 + sp24;
 
             //LAB_8001b734
-            final GpuCommandPoly cmd = new GpuCommandPoly(4)
-              .bpp(Bpp.BITS_15)
-              .translucent(Translucency.HALF_B_PLUS_HALF_F)
-              .monochrome(dissolveDarkening_800bd700.brightnessAccumulator_08 >> 8)
-              .pos(0, left, top)
-              .pos(1, left + 8, top)
-              .pos(2, left, top + 8)
-              .pos(3, left + 8, top + 8)
-              .uv(0, u, v)
-              .uv(1, u + 7, v)
-              .uv(2, u, v + 8)
-              .uv(3, u + 7, v + 8)
-              .texture(GPU.getDisplayBuffer());
-
             //LAB_8001b868
-            GPU.queueCommand(6, cmd);
-
             dissolveTransforms.transfer.set(left, top, 24.0f);
             RENDERER.queueOrthoModel(dissolveSquare, dissolveTransforms)
               .uvOffset((float)u / dissolveDisplayWidth, (240.0f - v) / 240.0f)
@@ -2065,20 +2049,6 @@ public final class Scus94491BpeSegment {
   @Method(0x8001bbccL)
   public static void renderBattleStartingScreenDarkening(final int x, final int y) {
     renderBattleStartingBorders();
-
-    GPU.queueCommand(6, new GpuCommandPoly(4)
-      .bpp(Bpp.BITS_15)
-      .monochrome(MathHelper.clamp((int)(dissolveDarkening_800bd700.brightnessAccumulator_08 * 1.1f) >> 8, 0x80 - 2 * vsyncMode_8007a3b8, 0x80))
-      .pos(0, x, y)
-      .pos(1, x + 384, y)
-      .pos(2, x, y + displayHeight_1f8003e4 - 1)
-      .pos(3, x + 384, y + displayHeight_1f8003e4 - 1)
-      .uv(0, 0, 0)
-      .uv(1, 384, 0)
-      .uv(2, 0, 240)
-      .uv(3, 384, 240)
-      .texture(GPU.getDisplayBuffer())
-    );
 
     darkeningTransforms.transfer.set(0.0f, 0.0f, 25.0f);
     darkeningTransforms.scaling(dissolveDisplayWidth, 240.0f, 1.0f);
