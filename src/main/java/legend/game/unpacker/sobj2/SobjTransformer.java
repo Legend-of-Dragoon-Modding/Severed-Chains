@@ -1,5 +1,7 @@
 package legend.game.unpacker.sobj2;
 
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
@@ -21,6 +23,8 @@ public final class SobjTransformer {
   private static final Logger LOGGER = LogManager.getFormatterLogger(legend.game.unpacker.sobj.SobjTransformer.class);
 
   public static void transform(final PathNode root, final Transformations transformations, final Set<String> flags) {
+    // TODO load names on partial unpack
+
     final Long2ObjectOpenHashMap<SobjModel> sobjModelMap = new Long2ObjectOpenHashMap<>();
     final DrgnSobjPack[] drgnSobjPacks = new DrgnSobjPack[4];
     final XXH3State xxhash = XXHash.XXH3_createState();
@@ -81,7 +85,9 @@ public final class SobjTransformer {
 
       final SobjTexture texture = processSobjTexture(sobj, texturesNode, sobjTextureMrg, model, drgnIndex, folderIndex, textureDeletions, xxhash);
 
-      final SobjAnimation[] animations = processSobjAnimations(sobj, folderNode, sobjAssetsMgr, model, drgnIndex, folderIndex, modelAndAnimationDeletions, xxhash);
+      final int placeholderAnimationIndex = findPlaceholderAnimation(sobjAssetsMgr);
+
+      final SobjAnimation[] animations = processSobjAnimations(sobj, folderNode, sobjAssetsMgr, model, placeholderAnimationIndex, drgnIndex, folderIndex, modelAndAnimationDeletions, xxhash);
 
       sobjs[sobj] = new Sobj(model, texture, animations);
     }
@@ -118,7 +124,7 @@ public final class SobjTransformer {
     return model.processTexture(textureNode, hash, textureRealIndex, drgnIndex, folderIndex, deletions);
   }
 
-  private static SobjAnimation[] processSobjAnimations(final int sobjIndex, final PathNode folderNode, final String[] mrg, final SobjModel model, final int drgnIdex, final int folderIndex, final IntSet deletions, final XXH3State xxhash) {
+  private static SobjAnimation[] processSobjAnimations(final int sobjIndex, final PathNode folderNode, final String[] mrg, final SobjModel model, final int placeholderAnimation, final int drgnIdex, final int folderIndex, final IntSet deletions, final XXH3State xxhash) {
     final SobjAnimation[] animations = new SobjAnimation[32];
 
     final int modelIndex = sobjIndex * 33;
@@ -127,7 +133,7 @@ public final class SobjTransformer {
     for(int animation = 0; animation < 32; animation++) {
       final int animationRealIndex = getRealFileIndex(mrg[sobjIndex * 33 + animation + 1]);
 
-      if(!animationInRange(animationRealIndex, modelIndex, realModelIndex)) {
+      if(!animationInRange(animationRealIndex, modelIndex, realModelIndex, placeholderAnimation)) {
         continue;
       }
 
@@ -190,8 +196,43 @@ public final class SobjTransformer {
     }
   }
 
-  private static boolean animationInRange(final int animationRealIndex, final int modelIndex, final int modelRealIndex) {
-    return (animationRealIndex > modelIndex && animationRealIndex < modelIndex + 33) || (animationRealIndex > modelRealIndex && animationRealIndex < modelRealIndex + 33);
+  private static boolean animationInRange(final int animationRealIndex, final int modelIndex, final int modelRealIndex, final int placeholderAnimation) {
+    if((animationRealIndex > modelIndex && animationRealIndex < modelIndex + 33) || (animationRealIndex > modelRealIndex && animationRealIndex < modelRealIndex + 33)) {
+      return true;
+    }
+
+    return animationRealIndex != placeholderAnimation;
+  }
+
+  private static int findPlaceholderAnimation(final String[] mrg) {
+    final Int2IntOpenHashMap map = new Int2IntOpenHashMap();
+
+    for(int line = 1; line < mrg.length; line++) {
+      if(line % 33 == 0) {
+        continue;
+      }
+
+      final int key = getRealFileIndex(mrg[line]);
+
+      if(map.containsKey(key)) {
+        final int count = map.get(key) + 1;
+        map.put(key, count);
+      } else {
+        map.put(key, 1);
+      }
+    }
+
+    int count = 0;
+    int position = -1;
+
+    for(final Int2IntMap.Entry entry : map.int2IntEntrySet()) {
+      if(count < entry.getIntValue()) {
+        position = entry.getIntKey();
+        count = entry.getIntValue();
+      }
+    }
+
+    return position;
   }
 
   private static void moveUniqueNodes(final Long2ObjectOpenHashMap<SobjModel> models, final Transformations transformations) {

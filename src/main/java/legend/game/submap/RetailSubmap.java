@@ -446,7 +446,8 @@ public class RetailSubmap extends Submap {
           sobj.animations.add(new TmdAnimationFile(Unpacker.loadFile("submap_objects/%s/animations/%s".formatted(modelPath, pathSplit[1]))));
 
         } else {
-          sobj.animations.add(null);
+          sobj.animations.add(sobj.animations.getFirst());
+//          sobj.animations.add(null);
         }
       }
 
