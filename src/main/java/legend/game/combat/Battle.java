@@ -4147,7 +4147,7 @@ public class Battle extends EngineState {
       script.scriptState_04,
       null,
       effect::renderProjectileHitEffect,
-      null,
+      effect::deallocate,
       effect
     );
 
