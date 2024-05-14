@@ -1961,8 +1961,6 @@ public final class Scus94491BpeSegment {
       dissolveSquare.persistent = true;
     }
 
-    renderBattleStartingBorders();
-
     battleDissolveTicks += vsyncMode_8007a3b8;
 
     final int sp10 = 0;
@@ -2028,28 +2026,11 @@ public final class Scus94491BpeSegment {
     renderBattleStartingScreenDarkening(sp10, sp14);
   }
 
-  @Method(0x8001b92cL)
-  public static void renderBattleStartingBorders() {
-    final int width = displayWidth_1f8003e0;
-    final int height = displayHeight_1f8003e4;
-    final int left = -width / 2;
-    final int right = width / 2;
-    final int top = -height / 2;
-    final int bottom = height / 2;
-
-    GPU.queueCommand(6, new GpuCommandQuad().monochrome(1).pos(left - 32, top - 32, width + 64, 36));
-    GPU.queueCommand(6, new GpuCommandQuad().monochrome(1).pos(left - 32, bottom - 4, width + 64, 36));
-    GPU.queueCommand(6, new GpuCommandQuad().monochrome(1).pos(left - 32, top, 36, height));
-    GPU.queueCommand(6, new GpuCommandQuad().monochrome(1).pos(right - 4, top, 36, height));
-  }
-
   private static final MV darkeningTransforms = new MV();
 
   /** The game doesn't continue rendering when battles are loading, this basically continues rendering the last frame that was rendered, but slightly darker each time */
   @Method(0x8001bbccL)
   public static void renderBattleStartingScreenDarkening(final int x, final int y) {
-    renderBattleStartingBorders();
-
     darkeningTransforms.transfer.set(0.0f, 0.0f, 25.0f);
     darkeningTransforms.scaling(dissolveDisplayWidth, 240.0f, 1.0f);
     RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, darkeningTransforms)
