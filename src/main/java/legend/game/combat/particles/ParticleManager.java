@@ -3,7 +3,6 @@ package legend.game.combat.particles;
 import legend.core.MathHelper;
 import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
-import legend.core.gpu.GpuCommandLine;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gte.MV;
@@ -14,6 +13,7 @@ import legend.core.memory.Method;
 import legend.core.memory.types.QuadConsumer;
 import legend.core.memory.types.TriConsumer;
 import legend.core.opengl.Obj;
+import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.combat.Battle;
@@ -29,6 +29,7 @@ import legend.game.tmd.Renderer;
 import legend.game.types.CContainer;
 import legend.game.types.Translucency;
 import org.joml.Math;
+import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -64,6 +65,7 @@ import static legend.game.combat.SEffe.allocateEffectManager;
 import static legend.game.combat.SEffe.getModelObjectTranslation;
 import static legend.game.combat.SEffe.rotateAndTranslateEffect;
 import static legend.game.combat.SEffe.scriptGetScriptedObjectPos;
+import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
 public class ParticleManager {
   private static final short[] particleSubCounts_800fb794 = {0, 0, 4, 0, 8, 0, 16, 0, 0, 0, 1, 0, 2, 0, 4, 0, 3, 0, 5, 0};
@@ -73,6 +75,8 @@ public class ParticleManager {
   private ParticleEffectData98 lastParticle_8011a010;
 
   private final BattleCamera camera;
+
+  private final Matrix4f transforms = new Matrix4f();
 
   public ParticleManager(final BattleCamera camera) {
     this.camera = camera;
@@ -156,13 +160,22 @@ public class ParticleManager {
   @Method(0x800fce10L)
   private void renderLineParticles(final EffectManagerData6c<EffectManagerParams.ParticleType> manager, final ParticleMetrics48 particleMetrics) {
     if(particleMetrics.flags_00 >= 0) {
-      GPU.queueCommand((particleMetrics.z_04 + manager.params_10.z_22) / 4.0f, new GpuCommandLine()
-        .translucent(Translucency.B_PLUS_F)
-        .rgb(0, (int)(particleMetrics.colour0_40.x * 0xff), (int)(particleMetrics.colour0_40.y * 0xff), (int)(particleMetrics.colour0_40.z * 0xff))
-        .rgb(1, (int)(particleMetrics.colour1_44.x * 0xff), (int)(particleMetrics.colour1_44.y * 0xff), (int)(particleMetrics.colour1_44.z * 0xff))
-        .pos(0, particleMetrics.x0_08, particleMetrics.y0_10)
-        .pos(1, particleMetrics.x1_0c, particleMetrics.y1_14)
-      );
+      final Obj obj = new PolyBuilder("Line particle", GL_TRIANGLES)
+        .translucency(Translucency.B_PLUS_F)
+        .addVertex(0.0f, 0.0f, 0.0f)
+        .rgb(particleMetrics.colour0_40)
+        .addVertex(1.0f, 0.0f, 0.0f)
+        .rgb(particleMetrics.colour0_40)
+        .addVertex(0.0f, 1.0f, 0.0f)
+        .rgb(particleMetrics.colour1_44)
+        .addVertex(1.0f, 1.0f, 0.0f)
+        .rgb(particleMetrics.colour1_44)
+        .build();
+
+      RENDERER.queueLine(obj, this.transforms, particleMetrics.z_04 + manager.params_10.z_22, particleMetrics.p0, particleMetrics.p1)
+        .screenspaceOffset(GPU.getOffsetX(), GPU.getOffsetY());
+
+      obj.delete(); // Mark for deletion after this frame
     }
     //LAB_800fcf08
   }
@@ -1081,10 +1094,7 @@ public class ParticleManager {
           final Vector3f stepColour = new Vector3f();
           stepColour.set(colour).div(effect.countParticleSub_54);
 
-          final Vector2f ref1 = new Vector2f();
-          float z = FUN_800cfc20(particle.managerRotation_68, particle.managerTranslation_2c, particle.subParticlePositionsArray_44[0], ref1) / 4;
-          particleMetrics.x0_08 = ref1.x;
-          particleMetrics.y0_10 = ref1.y;
+          float z = FUN_800cfc20(particle.managerRotation_68, particle.managerTranslation_2c, particle.subParticlePositionsArray_44[0], particleMetrics.p0) / 4;
 
           if(z + manager.params_10.z_22 >= 0xa0) {
             if(z + manager.params_10.z_22 >= 0xffe) {
@@ -1100,13 +1110,9 @@ public class ParticleManager {
               colour.sub(stepColour);
               particleMetrics.colour1_44.set(colour.x, colour.y, colour.z);
 
-              final Vector2f ref2 = new Vector2f();
-              FUN_800cfc20(particle.managerRotation_68, particle.managerTranslation_2c, particle.subParticlePositionsArray_44[k], ref2);
-              particleMetrics.x1_0c = ref2.x;
-              particleMetrics.y1_14 = ref2.y;
+              FUN_800cfc20(particle.managerRotation_68, particle.managerTranslation_2c, particle.subParticlePositionsArray_44[k], particleMetrics.p1);
               this.lineParticleRenderers_801197c0[effect.subParticleType_60 - 2].accept(manager, particleMetrics);
-              particleMetrics.x0_08 = particleMetrics.x1_0c;
-              particleMetrics.y0_10 = particleMetrics.y1_14;
+              particleMetrics.p0.set(particleMetrics.p1);
             }
             //LAB_800fdcc8
           }
