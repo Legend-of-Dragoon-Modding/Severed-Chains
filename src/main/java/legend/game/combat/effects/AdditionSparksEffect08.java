@@ -1,21 +1,28 @@
 package legend.game.combat.effects;
 
-import legend.core.gpu.GpuCommandLine;
 import legend.core.memory.Method;
+import legend.core.opengl.Obj;
+import legend.core.opengl.PolyBuilder;
 import legend.game.scripting.ScriptState;
 import legend.game.types.Translucency;
+import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.RENDERER;
 import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.combat.SEffe.getRelativeOffset;
 import static legend.game.combat.SEffe.rotateAndTranslateEffect;
 import static legend.game.combat.SEffe.transformWorldspaceToScreenspace;
+import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class AdditionSparksEffect08 implements Effect {
   /** ubyte */
   private final int count_00;
   private final AdditionSparksEffectInstance4c[] instances_04;
+
+  private Obj spark;
+  private final Matrix4f transforms = new Matrix4f();
 
   public AdditionSparksEffect08(final int count, final int distance, final int ticks, final int r, final int g, final int b) {
     this.count_00 = count;
@@ -55,6 +62,19 @@ public class AdditionSparksEffect08 implements Effect {
 
   @Method(0x800d0a30L)
   public void renderAdditionSparks(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
+    if(this.spark == null) {
+      this.spark = new PolyBuilder("Addition spark", GL_TRIANGLE_STRIP)
+        .addVertex(0.0f, 0.0f, 0.0f)
+        .monochrome(1.0f)
+        .addVertex(1.0f, 0.0f, 0.0f)
+        .monochrome(1.0f)
+        .addVertex(0.0f, 1.0f, 0.0f)
+        .monochrome(0.5f)
+        .addVertex(1.0f, 1.0f, 0.0f)
+        .monochrome(0.5f)
+        .build();
+    }
+
     //LAB_800d0a7c
     float s7 = 0;
     for(int i = 0; i < this.count_00; i++) {
@@ -96,15 +116,14 @@ public class AdditionSparksEffect08 implements Effect {
             a3 = 0xffe - s7;
           }
 
-          final GpuCommandLine cmd = new GpuCommandLine()
-            .translucent(Translucency.B_PLUS_F)
-            .rgb(0, inst.r_40 >>> 8, inst.g_42 >>> 8, inst.b_44 >>> 8)
-            .rgb(1, inst.r_40 >>> 9, inst.g_42 >>> 9, inst.b_44 >>> 9)
-            .pos(0, start.x, start.y)
-            .pos(1, end.x, end.y);
-
           //LAB_800d0c84
-          GPU.queueCommand((s7 + a3) / 4.0f, cmd);
+          start.x += GPU.getOffsetX();
+          start.y += GPU.getOffsetY();
+          end.x += GPU.getOffsetX();
+          end.y += GPU.getOffsetY();
+          RENDERER.queueLine(this.spark, this.transforms, s7 + a3, start, end)
+            .translucency(Translucency.B_PLUS_F)
+            .colour((inst.r_40 >>> 8) / 256.0f, (inst.g_42 >>> 8) / 256.0f, (inst.b_44 >>> 8) / 256.0f);
         }
 
         //LAB_800d0ca0
@@ -120,5 +139,12 @@ public class AdditionSparksEffect08 implements Effect {
 
     //LAB_800d0d10
     //LAB_800d0d94
+  }
+
+  public void deallocate(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> effect) {
+    if(this.spark != null) {
+      this.spark.delete();
+      this.spark = null;
+    }
   }
 }

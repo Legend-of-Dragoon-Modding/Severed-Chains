@@ -8,7 +8,6 @@ import legend.core.gpu.Bpp;
 import legend.core.gpu.Gpu;
 import legend.core.gpu.GpuCommand;
 import legend.core.gpu.GpuCommandCopyDisplayBufferToVram;
-import legend.core.gpu.GpuCommandLine;
 import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.GpuCommandSetMaskBit;
@@ -24,6 +23,7 @@ import legend.core.memory.Method;
 import legend.core.memory.types.QuadConsumer;
 import legend.core.memory.types.TriConsumer;
 import legend.core.opengl.Obj;
+import legend.core.opengl.PolyBuilder;
 import legend.core.opengl.QuadBuilder;
 import legend.core.opengl.TmdObjLoader;
 import legend.game.combat.bent.BattleEntity27c;
@@ -161,6 +161,7 @@ import static legend.game.combat.Battle.melbuStageIndices_800fb064;
 import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.combat.Battle.stageDarkeningClutWidth_800c695c;
 import static legend.game.combat.Battle.stageDarkening_800c6958;
+import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public final class SEffe {
   private SEffe() { }
@@ -3123,16 +3124,31 @@ public final class SEffe {
     final RainEffect08 effect = (RainEffect08)data.effect_44;
     final RaindropEffect0c[] rainArray = effect.raindropArray_04;
 
+    if(effect.obj == null) {
+      effect.obj = new PolyBuilder("Rain effect", GL_TRIANGLE_STRIP)
+        .addVertex(0.0f, 0.0f, 0.0f)
+        .monochrome(0.0f)
+        .addVertex(1.0f, 0.0f, 0.0f)
+        .monochrome(0.0f)
+        .addVertex(0.0f, 1.0f, 0.0f)
+        .monochrome(1.0f)
+        .addVertex(1.0f, 1.0f, 0.0f)
+        .monochrome(1.0f)
+        .build();
+    }
+
     //LAB_80108e84
     for(int i = 0; i < effect.count_00; i++) {
-      if(Math.abs(Math.abs(rainArray[i].y0_04 + rainArray[i].x0_02) - Math.abs(rainArray[i].y1_08 + rainArray[i].x1_06)) <= 180) {
-        GPU.queueCommand(30, new GpuCommandLine()
-          .translucent(Translucency.of(data.params_10.flags_00 >>> 28 & 3))
-          .monochrome(0, 0)
-          .rgb(1, data.params_10.colour_1c.x, data.params_10.colour_1c.y, data.params_10.colour_1c.z)
-          .pos(0, rainArray[i].x1_06 - 256, rainArray[i].y1_08 - 128)
-          .pos(1, rainArray[i].x0_02 - 256, rainArray[i].y0_04 - 128)
-        );
+      if(Math.abs(Math.abs(rainArray[i].pos0_02.y + rainArray[i].pos0_02.x) - Math.abs(rainArray[i].pos1_06.y + rainArray[i].pos1_06.x)) <= 180) {
+        final float offsetX = GPU.getOffsetX() - 256;
+        final float offsetY = GPU.getOffsetY() - 128;
+        rainArray[i].pos0_02.add(offsetX, offsetY);
+        rainArray[i].pos1_06.add(offsetX, offsetY);
+        RENDERER.queueLine(effect.obj, effect.transforms, 120.0f, rainArray[i].pos1_06, rainArray[i].pos0_02)
+          .translucency(Translucency.of(data.params_10.flags_00 >>> 28 & 0x3))
+          .colour(data.params_10.colour_1c.x / 255.0f, data.params_10.colour_1c.y / 255.0f, data.params_10.colour_1c.z / 255.0f);
+        rainArray[i].pos0_02.sub(offsetX, offsetY);
+        rainArray[i].pos1_06.sub(offsetX, offsetY);
       }
       //LAB_80108f6c
     }
@@ -3146,14 +3162,23 @@ public final class SEffe {
 
     //LAB_80109038
     for(int i = 0; i < effect.count_00; i++) {
-      final int endpointShiftX = (int)(MathHelper.sin(data.params_10.rot_10.x) * 32.0f * data.params_10.scale_16.x * rainArray[i].angleModifier_0a);
-      final int endpointShiftY = (int)(MathHelper.cos(data.params_10.rot_10.x) * 32.0f * data.params_10.scale_16.x * rainArray[i].angleModifier_0a);
-      rainArray[i].x1_06 = rainArray[i].x0_02;
-      rainArray[i].y1_08 = rainArray[i].y0_04;
-      rainArray[i].x0_02 = rainArray[i].x0_02 + endpointShiftX & 0x1ff;
-      rainArray[i].y0_04 = rainArray[i].y0_04 + endpointShiftY & 0xff;
+      final int endpointShiftX = (int)(MathHelper.sin(data.params_10.rot_10.x) * 32.0f * data.params_10.scale_16.x * rainArray[i].speed_0a);
+      final int endpointShiftY = (int)(MathHelper.cos(data.params_10.rot_10.x) * 32.0f * data.params_10.scale_16.x * rainArray[i].speed_0a);
+      rainArray[i].pos1_06.x = rainArray[i].pos0_02.x;
+      rainArray[i].pos1_06.y = rainArray[i].pos0_02.y;
+      rainArray[i].pos0_02.x = (rainArray[i].pos0_02.x + endpointShiftX) % 512;
+      rainArray[i].pos0_02.y = (rainArray[i].pos0_02.y + endpointShiftY) % 256;
     }
     //LAB_80109110
+  }
+
+  public static void deallocateRainEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
+    final RainEffect08 effect = (RainEffect08)data.effect_44;
+
+    if(effect.obj != null) {
+      effect.obj.delete();
+      effect.obj = null;
+    }
   }
 
   @ScriptDescription("Allocates a rain effect")
@@ -3167,7 +3192,7 @@ public final class SEffe {
       script.scriptState_04,
       SEffe::tickRainEffect,
       SEffe::renderRainEffect,
-      null,
+      SEffe::deallocateRainEffect,
       new RainEffect08(count)
     );
 
@@ -3179,9 +3204,9 @@ public final class SEffe {
     final RaindropEffect0c[] rainArray = effect.raindropArray_04;
     for(int i = 0; i < count; i++) {
       rainArray[i]._00 = 1;
-      rainArray[i].x0_02 = (short)seed_800fa754.nextInt(513);
-      rainArray[i].y0_04 = (short)seed_800fa754.nextInt(257);
-      rainArray[i].angleModifier_0a = seed_800fa754.nextFloat(MathHelper.PI * 1.5f) + MathHelper.PI / 2.0f;
+      rainArray[i].pos0_02.x = (short)seed_800fa754.nextInt(513);
+      rainArray[i].pos0_02.y = (short)seed_800fa754.nextInt(257);
+      rainArray[i].speed_0a = seed_800fa754.nextFloat(0.75f) + 0.25f;
     }
 
     //LAB_80109328

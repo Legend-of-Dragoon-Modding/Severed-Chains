@@ -547,11 +547,13 @@ public class RenderEngine {
         this.shaderPool.reset();
       }
 
-      this.renderBufferIndex = (this.renderBufferIndex + 1) % RENDER_BUFFER_COUNT;
+      if(!this.paused) {
+        this.renderBufferIndex = (this.renderBufferIndex + 1) % RENDER_BUFFER_COUNT;
 
-      // Delete stuff marked for deletion
-      Obj.deleteObjects();
-      Texture.deleteTextures();
+        // Delete stuff marked for deletion
+        Obj.deleteObjects();
+        Texture.deleteTextures();
+      }
 
       this.fps = 1_000_000_000.0f / (System.nanoTime() - this.lastFrame);
       this.lastFrame = System.nanoTime();
@@ -786,6 +788,28 @@ public class RenderEngine {
     }
   }
 
+  /**
+   * @param transforms Matrix used for transforms, contents will be overwritten
+   */
+  public QueuedModel<?> queueLine(final Matrix4f transforms, final float z, final Vector2f p0, final Vector2f p1) {
+    return this.queueLine(RENDERER.opaqueQuad, transforms, z, p0, p1);
+  }
+
+  /**
+   * @param transforms Matrix used for transforms, contents will be overwritten
+   */
+  public QueuedModel<?> queueLine(final Obj obj, final Matrix4f transforms, final float z, final Vector2f p0, final Vector2f p1) {
+    final float dx = p0.x - p1.x;
+    final float dy = p0.y - p1.y;
+    final float angle = MathHelper.HALF_PI + MathHelper.atan2(dy, dx);
+    final float length = (float)Math.sqrt(dx * dx + dy * dy);
+
+    transforms.translation(p0.x, p0.y, z);
+    transforms.rotateZ(angle);
+    transforms.scale(1.0f, length, 1.0f);
+    return RENDERER.queueOrthoModel(obj, transforms);
+  }
+
   public void setProjectionMode(final ProjectionMode projectionMode) {
     final boolean highQualityProjection = this.allowHighQualityProjection && CONFIG.getConfig(CoreMod.HIGH_QUALITY_PROJECTION_CONFIG.get());
 
@@ -937,6 +961,24 @@ public class RenderEngine {
     entry.reset();
     entry.obj = obj;
     entry.transforms.set(mv).setTranslation(mv.transfer.x + this.widescreenOrthoOffsetX, mv.transfer.y, mv.transfer.z);
+    entry.lightTransforms.set(entry.transforms);
+    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
+    return entry;
+  }
+
+  public QueuedModel<VoidShaderOptions> queueOrthoModel(final Obj obj, final Matrix4f transforms) {
+    if(obj == null) {
+      throw new IllegalArgumentException("obj is null");
+    }
+
+    if(obj.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
+      this.needsSorting = true;
+    }
+
+    final QueuedModel<VoidShaderOptions> entry = this.orthoPool.acquire();
+    entry.reset();
+    entry.obj = obj;
+    entry.transforms.set(transforms);
     entry.lightTransforms.set(entry.transforms);
     entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
     return entry;
