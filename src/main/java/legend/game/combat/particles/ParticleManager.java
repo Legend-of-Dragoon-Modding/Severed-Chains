@@ -77,6 +77,7 @@ public class ParticleManager {
   private final BattleCamera camera;
 
   private final Matrix4f transforms = new Matrix4f();
+  private final MV mv = new MV();
 
   public ParticleManager(final BattleCamera camera) {
     this.camera = camera;
@@ -1163,6 +1164,10 @@ public class ParticleManager {
             .rgb((int)(colour.x * 0xff), (int)(colour.y * 0xff), (int)(colour.z * 0xff))
             .pos(ref.x, ref.y, 1, 1)
           );
+
+          this.mv.transfer.set(ref.x + GPU.getOffsetX(), ref.y + GPU.getOffsetY(), z + manager.params_10.z_22);
+          RENDERER.queueOrthoModel(RENDERER.opaqueQuad, this.mv)
+            .colour(colour);
         }
       }
       //LAB_800fdfcc
