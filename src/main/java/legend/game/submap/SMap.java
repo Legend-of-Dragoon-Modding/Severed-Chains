@@ -6,8 +6,6 @@ import legend.core.MathHelper;
 import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandCopyVramToVram;
-import legend.core.gpu.GpuCommandLine;
-import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
@@ -54,6 +52,7 @@ import legend.game.types.TmdAnimationFile;
 import legend.game.types.Translucency;
 import legend.game.unpacker.Unpacker;
 import org.joml.Math;
+import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -2607,23 +2606,23 @@ public class SMap extends EngineState {
 
     if((sobj.flags_190 & 0x200_0000) != 0 || (sobj.flags_190 & 0x800_0000) != 0) {
       this.transformCollisionVertices(model, sobj.collisionSizeHorizontal_1a0, 0, v0, v1);
-      this.queueCollisionRectPacket(v0, v1, 0x800000);
+      this.queueCollisionRectPacket(v0, v1, 0.0f, 0.0f, 0.5f);
     }
 
     if((sobj.flags_190 & 0x20_0000) != 0 || (sobj.flags_190 & 0x80_0000) != 0) {
       this.transformCollisionVertices(model, sobj.collisionSizeHorizontal_1ac, sobj.collisionReach_1b4, v0, v1);
-      this.queueCollisionRectPacket(v0, v1, 0x8000);
+      this.queueCollisionRectPacket(v0, v1, 0.0f, 0.5f, 0.0f);
     }
 
     if(this.sobjs_800c6880[0] == state) {
       this.transformCollisionVertices(model, sobj.playerCollisionSizeHorizontal_1b8, sobj.playerCollisionReach_1c0, v0, v1);
-      this.queueCollisionRectPacket(v0, v1, 0x80);
+      this.queueCollisionRectPacket(v0, v1, 0.5f, 0.0f, 0.0f);
     }
 
     if(sobj.us_170 != 0) {
       this.transformVertex(v0, sobj.model_00.coord2_14.coord.transfer);
       this.transformVertex(v1, sobj.movementDestination_138);
-      this.queueMovementLinePacket(v0, v1, 0x800080);
+      this.queueMovementLinePacket(v0, v1, 0.5f, 0.0f, 0.5f);
     }
   }
 
@@ -2643,24 +2642,29 @@ public class SMap extends EngineState {
     this.transformVertex(v1, coord.add(size, 0.0f, size));
   }
 
-  private void queueCollisionRectPacket(final Vector2f v0, final Vector2f v1, final int colour) {
-    GPU.queueCommand(37, new GpuCommandPoly(4)
-      .translucent(Translucency.B_PLUS_F)
-      .rgb(colour)
-      .pos(0, v0.x, v0.y)
-      .pos(1, v1.x, v0.y)
-      .pos(2, v0.x, v1.y)
-      .pos(3, v1.x, v1.y)
-    );
+  private void queueCollisionRectPacket(final Vector2f v0, final Vector2f v1, final float r, final float g, final float b) {
+    final Obj obj = new PolyBuilder("Sobj collision", GL_TRIANGLE_STRIP)
+      .translucency(Translucency.B_PLUS_F)
+      .addVertex(v0.x, v0.y, 0.0f)
+      .rgb(r, g, b)
+      .addVertex(v1.x, v0.y, 0.0f)
+      .rgb(r, g, b)
+      .addVertex(v0.x, v1.y, 0.0f)
+      .rgb(r, g, b)
+      .addVertex(v1.x, v1.y, 0.0f)
+      .rgb(r, g, b)
+      .build();
+    final MV transforms = new MV();
+    transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 148.0f);
+    RENDERER.queueOrthoModel(obj, transforms);
+    obj.delete();
   }
 
-  private void queueMovementLinePacket(final Vector2f v0, final Vector2f v1, final int colour) {
-    GPU.queueCommand(37, new GpuCommandLine()
-      .translucent(Translucency.B_PLUS_F)
-      .rgb(colour)
-      .pos(0, v0.x, v0.y)
-      .pos(1, v1.x, v1.y)
-    );
+  private void queueMovementLinePacket(final Vector2f v0, final Vector2f v1, final float r, final float g, final float b) {
+    RENDERER.queueLine(new Matrix4f(), 148.0f, v0, v1)
+      .translucency(Translucency.B_PLUS_F)
+      .colour(r, g, b)
+      .screenspaceOffset(GPU.getOffsetX(), GPU.getOffsetY());
   }
 
   @Method(0x800e123cL)
