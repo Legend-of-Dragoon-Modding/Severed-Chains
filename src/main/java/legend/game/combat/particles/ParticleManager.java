@@ -4,7 +4,6 @@ import legend.core.MathHelper;
 import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.GpuCommandPoly;
-import legend.core.gpu.GpuCommandQuad;
 import legend.core.gte.MV;
 import legend.core.gte.ModelPart10;
 import legend.core.gte.TmdObjTable1c;
@@ -1159,12 +1158,6 @@ public class ParticleManager {
           }
 
           //LAB_800fdf44
-          // gp0 command 68h, which is an opaque dot (1x1)
-          GPU.queueCommand((z + manager.params_10.z_22) / 4.0f, new GpuCommandQuad()
-            .rgb((int)(colour.x * 0xff), (int)(colour.y * 0xff), (int)(colour.z * 0xff))
-            .pos(ref.x, ref.y, 1, 1)
-          );
-
           this.mv.transfer.set(ref.x + GPU.getOffsetX(), ref.y + GPU.getOffsetY(), z + manager.params_10.z_22);
           RENDERER.queueOrthoModel(RENDERER.opaqueQuad, this.mv)
             .colour(colour);
