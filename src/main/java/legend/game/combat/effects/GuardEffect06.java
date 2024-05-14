@@ -1,19 +1,23 @@
 package legend.game.combat.effects;
 
 import legend.core.MathHelper;
-import legend.core.gpu.GpuCommandLine;
-import legend.core.gpu.GpuCommandPoly;
+import legend.core.gte.MV;
 import legend.core.memory.Method;
+import legend.core.opengl.Obj;
+import legend.core.opengl.PolyBuilder;
 import legend.game.scripting.ScriptState;
 import legend.game.types.Translucency;
 import org.joml.Math;
+import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import java.util.Arrays;
 
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.RENDERER;
 import static legend.game.combat.SEffe.transformWorldspaceToScreenspace;
+import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 
 public class GuardEffect06 implements Effect {
   private static final GuardEffectMetrics04[] guardEffectMetrics_800fa76c = {
@@ -29,6 +33,8 @@ public class GuardEffect06 implements Effect {
   public int _00 = 1;
   public int _02;
   public short _04;
+
+  private final MV transforms = new MV();
 
   @Method(0x800d2810L)
   public void renderGuardEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
@@ -60,76 +66,72 @@ public class GuardEffect06 implements Effect {
 
     //LAB_800d2a80
     //LAB_800d2a9c
-    for(int i = 0; i < 5; i++) {
-      float managerZ = manager.params_10.z_22;
-      final float totalZ = effectZ + managerZ;
-      if(totalZ >= 0xa0) {
-        if(totalZ >= 0xffe) {
-          managerZ = 0xffe - effectZ;
-        }
+    float managerZ = manager.params_10.z_22;
+    final float totalZ = effectZ + managerZ;
+    if(totalZ >= 0xa0) {
+      if(totalZ >= 0xffe) {
+        managerZ = 0xffe - effectZ;
+      }
 
+      final PolyBuilder builder = new PolyBuilder("Guard effect", GL_TRIANGLES)
+        .translucency(Translucency.B_PLUS_F);
+
+      for(int i = 0; i < 5; i++) {
         //LAB_800d2bc0
         // Main part of shield effect
-        GPU.queueCommand((effectZ + managerZ) / 4.0f, new GpuCommandPoly(3)
-          .translucent(Translucency.B_PLUS_F)
-          .pos(0, pos[i + 1].x, pos[i + 1].y)
-          .pos(1, pos[i + 2].x, pos[i + 2].y)
-          .pos(2, pos[0    ].x, pos[0    ].y)
-          .rgb(0, manager.params_10.colour_1c)
-          .rgb(1, manager.params_10.colour_1c)
-          .monochrome(2, r)
-        );
-      }
-    }
-
-    //LAB_800d2c78
-    int s6 = 0x1000;
-    r = manager.params_10.colour_1c.x;
-    g = manager.params_10.colour_1c.y;
-    b = manager.params_10.colour_1c.z;
-    final int stepR = r >>> 2;
-    final int stepG = g >>> 2;
-    final int stepB = b >>> 2;
-
-    //LAB_800d2cfc
-    int baseX = 0;
-    for(int i = 0; i < 4; i++) {
-      s6 = s6 + this._04 / 4;
-      baseX = (int)(baseX + manager.params_10.scale_16.x * 0x1000 / 4);
-      r = r - stepR;
-      g = g - stepG;
-      b = b - stepB;
-
-      //LAB_800d2d4c
-      for(int n = 1; n < 7; n++) {
-        guardEffectMetrics = guardEffectMetrics_800fa76c[n];
-        translation.x = baseX + manager.params_10.trans_04.x;
-        translation.y = guardEffectMetrics.y_02 * manager.params_10.scale_16.y * s6 / 0x1000 + manager.params_10.trans_04.y;
-        translation.z = guardEffectMetrics.z_00 * manager.params_10.scale_16.z * s6 / 0x1000 + manager.params_10.trans_04.z;
-        effectZ = transformWorldspaceToScreenspace(translation, pos[n]) / 4.0f;
+        builder
+          .addVertex(pos[i + 1].x, pos[i + 1].y, 0.0f)
+          .rgb(manager.params_10.colour_1c.x / 256.0f, manager.params_10.colour_1c.y / 256.0f, manager.params_10.colour_1c.z / 256.0f)
+          .addVertex(pos[i + 2].x, pos[i + 2].y, 0.0f)
+          .rgb(manager.params_10.colour_1c.x / 256.0f, manager.params_10.colour_1c.y / 256.0f, manager.params_10.colour_1c.z / 256.0f)
+          .addVertex(pos[    0].x, pos[    0].y, 0.0f)
+          .monochrome(r / 256.0f);
       }
 
-      //LAB_800d2e20
-      for(int n = 0; n < 5; n++) {
-        float managerZ = manager.params_10.z_22;
-        final float totalZ = effectZ + managerZ;
-        if(totalZ >= 0xa0) {
-          if(totalZ >= 0xffe) {
-            managerZ = 0xffe - effectZ;
-          }
+      final Obj obj = builder.build();
+      this.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), effectZ + managerZ);
+      RENDERER.queueOrthoModel(obj, this.transforms);
+      obj.delete(); // Mark for deletion after this frame
 
+      //LAB_800d2c78
+      int s6 = 0x1000;
+      r = manager.params_10.colour_1c.x;
+      g = manager.params_10.colour_1c.y;
+      b = manager.params_10.colour_1c.z;
+      final int stepR = r >>> 2;
+      final int stepG = g >>> 2;
+      final int stepB = b >>> 2;
+
+      //LAB_800d2cfc
+      int baseX = 0;
+      for(int i = 0; i < 4; i++) {
+        s6 = s6 + this._04 / 4;
+        baseX = (int)(baseX + manager.params_10.scale_16.x * 0x1000 / 4);
+        r = r - stepR;
+        g = g - stepG;
+        b = b - stepB;
+
+        //LAB_800d2d4c
+        for(int n = 1; n < 7; n++) {
+          guardEffectMetrics = guardEffectMetrics_800fa76c[n];
+          translation.x = baseX + manager.params_10.trans_04.x;
+          translation.y = guardEffectMetrics.y_02 * manager.params_10.scale_16.y * s6 / 0x1000 + manager.params_10.trans_04.y;
+          translation.z = guardEffectMetrics.z_00 * manager.params_10.scale_16.z * s6 / 0x1000 + manager.params_10.trans_04.z;
+          effectZ = transformWorldspaceToScreenspace(translation, pos[n]) / 4.0f;
+        }
+
+        //LAB_800d2e20
+        for(int n = 0; n < 5; n++) {
           //LAB_800d2ee8
           // Radiant lines of shield effect
-          GPU.queueCommand((effectZ + managerZ) / 4.0f, new GpuCommandLine()
-            .translucent(Translucency.B_PLUS_F)
-            .pos(0, pos[n + 1].x, pos[n + 1].y)
-            .pos(1, pos[n + 2].x, pos[n + 2].y)
-            .rgb(r, g, b)
-          );
+          RENDERER.queueLine(new Matrix4f(), effectZ + managerZ, pos[n + 1], pos[n + 2])
+            .translucency(Translucency.B_PLUS_F)
+            .colour(r / 256.0f, g / 256.0f, b / 256.0f)
+            .screenspaceOffset(GPU.getOffsetX(), GPU.getOffsetY());
         }
-      }
 
-      //LAB_800d2fa4
+        //LAB_800d2fa4
+      }
     }
   }
 }

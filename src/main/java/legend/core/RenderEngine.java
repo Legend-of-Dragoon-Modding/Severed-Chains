@@ -804,7 +804,7 @@ public class RenderEngine {
     final float angle = MathHelper.HALF_PI + MathHelper.atan2(dy, dx);
     final float length = (float)Math.sqrt(dx * dx + dy * dy);
 
-    transforms.translation(p0.x, p0.y, z);
+    transforms.translation(p0.x + this.widescreenOrthoOffsetX, p0.y, z);
     transforms.rotateZ(angle);
     transforms.scale(1.0f, length, 1.0f);
     return RENDERER.queueOrthoModel(obj, transforms);
@@ -966,6 +966,7 @@ public class RenderEngine {
     return entry;
   }
 
+  /** NOTE: you have to add widescreenOrthoOffsetX yourself */
   public QueuedModel<VoidShaderOptions> queueOrthoModel(final Obj obj, final Matrix4f transforms) {
     if(obj == null) {
       throw new IllegalArgumentException("obj is null");
