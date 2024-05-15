@@ -1,17 +1,22 @@
 package legend.game.combat.effects;
 
-import legend.core.gpu.GpuCommandPoly;
+import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.memory.types.QuadConsumer;
+import legend.core.opengl.Obj;
+import legend.core.opengl.PolyBuilder;
 import legend.game.scripting.ScriptState;
 import legend.game.types.Translucency;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import static legend.core.GameEngine.GPU;
+import static legend.core.GameEngine.RENDERER;
 import static legend.game.Scus94491BpeSegment.rcos;
 import static legend.game.Scus94491BpeSegment.rsin;
 import static legend.game.combat.SEffe.FUN_800cfb14;
+import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class RadialGradientEffect14 implements Effect {
   private final int circleSubdivisionModifier_00;
@@ -40,15 +45,21 @@ public class RadialGradientEffect14 implements Effect {
   @Method(0x800d1d3cL)
   private void renderDiscGradientEffect(final EffectManagerData6c<EffectManagerParams.RadialGradientType> manager, final int angle, final Vector2f[] vertices, final Translucency translucency) {
     if(manager.params_10.flags_00 >= 0) {
-      GPU.queueCommand((this.z_04 + manager.params_10.z_22) / 4.0f, new GpuCommandPoly(3)
-        .translucent(translucency)
-        .rgb(0, manager.params_10.colour_1c)
-        .rgb(1, this.r_0c, this.g_0d, this.b_0e)
-        .rgb(2, this.r_0c, this.g_0d, this.b_0e)
-        .pos(0, vertices[0].x, vertices[0].y)
-        .pos(1, vertices[1].x, vertices[1].y)
-        .pos(2, vertices[2].x, vertices[2].y)
-      );
+      final Obj obj = new PolyBuilder("Ring gradient triangle", GL_TRIANGLES)
+        .translucency(translucency)
+        .addVertex(vertices[0].x, vertices[0].y, 0.0f)
+        .rgb(manager.params_10.colour_1c.x / 255.0f, manager.params_10.colour_1c.y / 255.0f, manager.params_10.colour_1c.z / 255.0f)
+        .addVertex(vertices[1].x, vertices[1].y, 0.0f)
+        .rgb(this.r_0c / 255.0f, this.g_0d / 255.0f, this.b_0e / 255.0f)
+        .addVertex(vertices[2].x, vertices[2].y, 0.0f)
+        .rgb(this.r_0c / 255.0f, this.g_0d / 255.0f, this.b_0e / 255.0f)
+        .build();
+
+      final MV transforms = new MV();
+      transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), this.z_04 + manager.params_10.z_22);
+      RENDERER.queueOrthoModel(obj, transforms);
+
+      obj.delete(); // Mark for deletion after this frame
     }
 
     //LAB_800d1e70
@@ -65,8 +76,8 @@ public class RadialGradientEffect14 implements Effect {
     if(manager.params_10.flags_00 >= 0) {
       //TODO why does rsin/rcos not have to be >> 12?
       final Vector3f sp0x20 = new Vector3f(
-        rcos(angle) * (manager.params_10.scale_16.x / this.scaleModifier_01 + (manager.params_10.size_28 >> 12)),
-        rsin(angle) * (manager.params_10.scale_16.y / this.scaleModifier_01 + (manager.params_10.size_28 >> 12)),
+        rcos(angle) * (manager.params_10.scale_16.x / this.scaleModifier_01 + manager.params_10.size_28 / 4096.0f),
+        rsin(angle) * (manager.params_10.scale_16.y / this.scaleModifier_01 + manager.params_10.size_28 / 4096.0f),
         manager.params_10.z_2c
       );
 
@@ -75,25 +86,31 @@ public class RadialGradientEffect14 implements Effect {
 
       //TODO why does rsin/rcos not have to be >> 12?
       final Vector3f sp0x30 = new Vector3f(
-        rcos(angle + this.angleStep_08) * (manager.params_10.scale_16.x / this.scaleModifier_01 + (manager.params_10.size_28 >> 12)),
-        rsin(angle + this.angleStep_08) * (manager.params_10.scale_16.y / this.scaleModifier_01 + (manager.params_10.size_28 >> 12)),
+        rcos(angle + this.angleStep_08) * (manager.params_10.scale_16.x / this.scaleModifier_01 + manager.params_10.size_28 / 4096.0f),
+        rsin(angle + this.angleStep_08) * (manager.params_10.scale_16.y / this.scaleModifier_01 + manager.params_10.size_28 / 4096.0f),
         manager.params_10.z_2c
       );
 
       final Vector2f screenVert1 = new Vector2f();
       FUN_800cfb14(manager, sp0x30, screenVert1);
 
-      GPU.queueCommand((this.z_04 + manager.params_10.z_22) / 4.0f, new GpuCommandPoly(4)
-        .translucent(translucency)
-        .rgb(0, manager.params_10.colour_1c)
-        .rgb(1, manager.params_10.colour_1c)
-        .rgb(2, this.r_0c, this.g_0d, this.b_0e)
-        .rgb(3, this.r_0c, this.g_0d, this.b_0e)
-        .pos(0, screenVert0.x, screenVert0.y)
-        .pos(1, screenVert1.x, screenVert1.y)
-        .pos(2, vertices[1].x, vertices[1].y)
-        .pos(3, vertices[2].x, vertices[2].y)
-      );
+      final Obj obj = new PolyBuilder("Ring gradient quad", GL_TRIANGLE_STRIP)
+        .translucency(translucency)
+        .addVertex(screenVert0.x, screenVert0.y, 0.0f)
+        .rgb(manager.params_10.colour_1c.x / 255.0f, manager.params_10.colour_1c.y / 255.0f, manager.params_10.colour_1c.z / 255.0f)
+        .addVertex(screenVert1.x, screenVert1.y, 0.0f)
+        .rgb(manager.params_10.colour_1c.x / 255.0f, manager.params_10.colour_1c.y / 255.0f, manager.params_10.colour_1c.z / 255.0f)
+        .addVertex(vertices[1].x, vertices[1].y, 0.0f)
+        .rgb(this.r_0c / 255.0f, this.g_0d / 255.0f, this.b_0e / 255.0f)
+        .addVertex(vertices[2].x, vertices[2].y, 0.0f)
+        .rgb(this.r_0c / 255.0f, this.g_0d / 255.0f, this.b_0e / 255.0f)
+        .build();
+
+      final MV transforms = new MV();
+      transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), this.z_04 + manager.params_10.z_22);
+      RENDERER.queueOrthoModel(obj, transforms);
+
+      obj.delete(); // Mark for deletion after this frame
     }
 
     //LAB_800d2460

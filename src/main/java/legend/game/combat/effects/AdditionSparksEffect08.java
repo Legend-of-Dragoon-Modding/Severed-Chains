@@ -123,7 +123,7 @@ public class AdditionSparksEffect08 implements Effect {
           end.y += GPU.getOffsetY();
           RENDERER.queueLine(this.spark, this.transforms, s7 + a3, start, end)
             .translucency(Translucency.B_PLUS_F)
-            .colour((inst.r_40 >>> 8) / 256.0f, (inst.g_42 >>> 8) / 256.0f, (inst.b_44 >>> 8) / 256.0f);
+            .colour((inst.r_40 >>> 8) / 255.0f, (inst.g_42 >>> 8) / 255.0f, (inst.b_44 >>> 8) / 255.0f);
         }
 
         //LAB_800d0ca0

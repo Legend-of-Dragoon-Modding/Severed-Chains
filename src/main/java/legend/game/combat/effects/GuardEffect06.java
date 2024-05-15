@@ -81,11 +81,11 @@ public class GuardEffect06 implements Effect {
         // Main part of shield effect
         builder
           .addVertex(pos[i + 1].x, pos[i + 1].y, 0.0f)
-          .rgb(manager.params_10.colour_1c.x / 256.0f, manager.params_10.colour_1c.y / 256.0f, manager.params_10.colour_1c.z / 256.0f)
+          .rgb(manager.params_10.colour_1c.x / 255.0f, manager.params_10.colour_1c.y / 255.0f, manager.params_10.colour_1c.z / 255.0f)
           .addVertex(pos[i + 2].x, pos[i + 2].y, 0.0f)
-          .rgb(manager.params_10.colour_1c.x / 256.0f, manager.params_10.colour_1c.y / 256.0f, manager.params_10.colour_1c.z / 256.0f)
+          .rgb(manager.params_10.colour_1c.x / 255.0f, manager.params_10.colour_1c.y / 255.0f, manager.params_10.colour_1c.z / 255.0f)
           .addVertex(pos[    0].x, pos[    0].y, 0.0f)
-          .monochrome(r / 256.0f);
+          .monochrome(r / 255.0f);
       }
 
       final Obj obj = builder.build();
@@ -126,7 +126,7 @@ public class GuardEffect06 implements Effect {
           // Radiant lines of shield effect
           RENDERER.queueLine(new Matrix4f(), effectZ + managerZ, pos[n + 1], pos[n + 2])
             .translucency(Translucency.B_PLUS_F)
-            .colour(r / 256.0f, g / 256.0f, b / 256.0f)
+            .colour(r / 255.0f, g / 255.0f, b / 255.0f)
             .screenspaceOffset(GPU.getOffsetX(), GPU.getOffsetY());
         }
 

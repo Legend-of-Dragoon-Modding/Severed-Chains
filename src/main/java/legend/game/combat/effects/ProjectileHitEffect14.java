@@ -129,7 +129,7 @@ public class ProjectileHitEffect14 implements Effect {
             //LAB_800d0444
             RENDERER.queueLine(this.obj, this.transforms, s1_0 + a2_0, screenVert[0], screenVert[1])
               .translucency(Translucency.B_PLUS_F)
-              .colour((s4.r_34 >>> 8) / 256.0f, (s4.g_36 >>> 8) / 256.0f, (s4.b_38 >>> 8) / 256.0f)
+              .colour((s4.r_34 >>> 8) / 255.0f, (s4.g_36 >>> 8) / 255.0f, (s4.b_38 >>> 8) / 255.0f)
               .screenspaceOffset(GPU.getOffsetX(), GPU.getOffsetY());
           }
 
