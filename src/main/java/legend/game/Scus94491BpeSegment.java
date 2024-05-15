@@ -11,7 +11,6 @@ import legend.core.audio.sequencer.assets.BackgroundMusic;
 import legend.core.gpu.Bpp;
 import legend.core.gpu.Gpu;
 import legend.core.gpu.GpuCommandPoly;
-import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.GpuCommandSetMaskBit;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.MV;
@@ -1132,64 +1131,6 @@ public final class Scus94491BpeSegment {
     }
 
     GPU.uploadData15(new Rect4i(x, y, mcq.vramWidth_08, mcq.vramHeight_0a), mcq.imageData);
-  }
-
-  @Method(0x8001814cL)
-  public static void renderMcq(final McqHeader mcq, final int vramOffsetX, final int vramOffsetY, int x, int y, final int z, final int colour) {
-    final int width = mcq.screenWidth_14;
-    final int height = mcq.screenHeight_16;
-    int clutX = mcq.clutX_0c + vramOffsetX;
-    int clutY = mcq.clutY_0e + vramOffsetY;
-    int u = mcq.u_10 + vramOffsetX;
-    int v = mcq.v_12 + vramOffsetY;
-    int vramX = u & 0x3c0;
-    final int vramY = v & 0x100;
-    u = u * 4 & 0xfc;
-
-    if(mcq.magic_00 == McqHeader.MAGIC_2) {
-      x += mcq.screenOffsetX_28;
-      y += mcq.screenOffsetY_2a;
-    }
-
-    //LAB_800181e4
-    //LAB_80018350
-    //LAB_8001836c
-    for(int chunkX = 0; chunkX < width; chunkX += 16) {
-      //LAB_80018380
-      for(int chunkY = 0; chunkY < height; chunkY += 16) {
-        GPU.queueCommand(z, new GpuCommandQuad()
-          .bpp(Bpp.BITS_4)
-          .clut(clutX, clutY)
-          .vramPos(vramX, vramY)
-          .monochrome(colour)
-          .pos(x + chunkX, y + chunkY, 16, 16)
-          .uv(u, v)
-        );
-
-        v = v + 16 & 0xf0;
-
-        if(v == 0) {
-          u = u + 16 & 0xf0;
-
-          if(u == 0) {
-            vramX = vramX + 64;
-          }
-        }
-
-        //LAB_80018434
-        clutY = clutY + 1 & 0xff;
-
-        if(clutY == 0) {
-          clutX = clutX + 16;
-        }
-
-        //LAB_80018444
-        clutY = clutY | vramY;
-      }
-    }
-
-    //LAB_80018464
-    //LAB_8001846c
   }
 
   @Method(0x80018508L)
