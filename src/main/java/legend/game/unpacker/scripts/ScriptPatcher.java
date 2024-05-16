@@ -120,10 +120,12 @@ public class ScriptPatcher {
     }
     Files.copy(sourcePath,destPath);
   }
+
   private void restoreFile(ScriptPatch cachedPatch) throws IOException {
     final Path sourcePath = this.filesDir.resolve(cachedPatch.sourceFile);
     final Path backupPath = this.cacheDir.resolve("backups").resolve(cachedPatch.sourceFile);
     Files.move(backupPath,sourcePath,StandardCopyOption.REPLACE_EXISTING);
+
     Path currentPath = backupPath.getParent();
     while(!currentPath.equals(this.cacheDir.resolve("backups"))) {
       if(Objects.requireNonNull(currentPath.toFile().listFiles()).length == 0) {
