@@ -18,6 +18,7 @@ import org.legendofdragoon.scripting.tokens.Script;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Objects;
@@ -75,7 +76,7 @@ public class ScriptPatcher {
       }
     }
 
-    // Unpatch any patches that have been deleted
+    // Restore any patches that have been deleted
     for(final ScriptPatch cachedPatch : cacheList) {
       if(this.patches.getPatchForScript(cachedPatch.sourceFile) == null) {
         LOGGER.info("Restoring %s...", cachedPatch.sourceFile);
@@ -114,7 +115,7 @@ public class ScriptPatcher {
   private void backupFile(final String scriptPath) throws IOException {
     final Path sourcePath = this.filesDir.resolve(scriptPath);
     final Path destPath = this.cacheDir.resolve("backups").resolve(scriptPath);
-    if(!Files.exists(destPath.getParent())){
+    if(!Files.exists(destPath.getParent())) {
       Files.createDirectories(destPath.getParent());
     }
     Files.copy(sourcePath,destPath);
@@ -122,12 +123,10 @@ public class ScriptPatcher {
   private void restoreFile(ScriptPatch cachedPatch) throws IOException {
     final Path sourcePath = this.filesDir.resolve(cachedPatch.sourceFile);
     final Path backupPath = this.cacheDir.resolve("backups").resolve(cachedPatch.sourceFile);
-    Files.delete(sourcePath);
-    Files.copy(backupPath,sourcePath);
-    Files.delete(backupPath);
+    Files.move(backupPath,sourcePath,StandardCopyOption.REPLACE_EXISTING);
     Path currentPath = backupPath.getParent();
-    while(!currentPath.equals(this.cacheDir.resolve("backups"))){
-      if(Objects.requireNonNull(currentPath.toFile().listFiles()).length == 0){
+    while(!currentPath.equals(this.cacheDir.resolve("backups"))) {
+      if(Objects.requireNonNull(currentPath.toFile().listFiles()).length == 0) {
         Files.delete(currentPath);
       }
       currentPath = currentPath.getParent();
