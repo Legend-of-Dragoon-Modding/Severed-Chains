@@ -4,6 +4,7 @@ import legend.core.GameEngine;
 import legend.game.i18n.I18n;
 import legend.game.input.InputAction;
 import legend.game.inventory.screens.controls.Background;
+import legend.game.saves.ConfigCategory;
 import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigStorageLocation;
@@ -20,7 +21,7 @@ import static legend.game.Scus94491BpeSegment_8002.playSound;
 public class OptionsScreen extends VerticalLayoutScreen {
   private final Runnable unload;
 
-  public OptionsScreen(final ConfigCollection config, final Set<ConfigStorageLocation> validLocations, final Runnable unload) {
+  public OptionsScreen(final ConfigCollection config, final Set<ConfigStorageLocation> validLocations, final ConfigCategory category, final Runnable unload) {
     deallocateRenderables(0xff);
     startFadeEffect(2, 10);
 
@@ -31,7 +32,11 @@ public class OptionsScreen extends VerticalLayoutScreen {
     final Map<RegistryId, String> translations = new HashMap<>();
 
     for(final RegistryId configId : GameEngine.REGISTRIES.config) {
-      translations.put(configId, I18n.translate(configId.modId() + ".config." + configId.entryId() + ".label"));
+      final ConfigEntry<?> entry = GameEngine.REGISTRIES.config.getEntry(configId).get();
+
+      if(entry.category == category) {
+        translations.put(configId, I18n.translate(configId.modId() + ".config." + configId.entryId() + ".label"));
+      }
     }
 
     translations.entrySet().stream()

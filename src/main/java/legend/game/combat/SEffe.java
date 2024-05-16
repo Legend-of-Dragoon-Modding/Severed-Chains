@@ -618,41 +618,24 @@ public final class SEffe {
 
     if(z >= 40) {
       //LAB_800e7610
-      GTE.setTransforms(finalTransform);
-
-      GTE.setVertex(0, spriteEffect.x_04 * 64, spriteEffect.y_06 * 64, 0);
-      GTE.setVertex(1, (spriteEffect.x_04 + spriteEffect.w_08) * 64, spriteEffect.y_06 * 64, 0);
-      GTE.setVertex(2, spriteEffect.x_04 * 64, (spriteEffect.y_06 + spriteEffect.h_0a) * 64, 0);
-      GTE.perspectiveTransformTriangle();
-      final float sx0 = GTE.getScreenX(0);
-      final float sy0 = GTE.getScreenY(0);
-      final float sx1 = GTE.getScreenX(1);
-      final float sy1 = GTE.getScreenY(1);
-      final float sx2 = GTE.getScreenX(2);
-      final float sy2 = GTE.getScreenY(2);
-
-      GTE.perspectiveTransform((spriteEffect.x_04 + spriteEffect.w_08) * 64, (spriteEffect.y_06 + spriteEffect.h_0a) * 64, 0);
-      final float sx3 = GTE.getScreenX(2);
-      final float sy3 = GTE.getScreenY(2);
-
-      final GpuCommandPoly cmd = new GpuCommandPoly(4)
+      final QuadBuilder builder = new QuadBuilder("Sprite")
         .clut(spriteEffect.clutX_10, spriteEffect.clutY_12)
         .vramPos((spriteEffect.tpage_0c & 0b1111) * 64, (spriteEffect.tpage_0c & 0b10000) != 0 ? 256 : 0)
-        .rgb(spriteEffect.r_14, spriteEffect.g_15, spriteEffect.b_16)
-        .pos(0, sx0, sy0)
-        .pos(1, sx1, sy1)
-        .pos(2, sx2, sy2)
-        .pos(3, sx3, sy3)
-        .uv(0, spriteEffect.u_0e, spriteEffect.v_0f)
-        .uv(1, spriteEffect.u_0e + spriteEffect.w_08, spriteEffect.v_0f)
-        .uv(2, spriteEffect.u_0e, spriteEffect.v_0f + spriteEffect.h_0a)
-        .uv(3, spriteEffect.u_0e + spriteEffect.w_08, spriteEffect.v_0f + spriteEffect.h_0a);
+        .rgb(spriteEffect.r_14 / 255.0f, spriteEffect.g_15 / 255.0f, spriteEffect.b_16 / 255.0f)
+        .pos(spriteEffect.x_04 * 64.0f, spriteEffect.y_06 * 64.0f, 0.0f)
+        .posSize(spriteEffect.w_08 * 64.0f, spriteEffect.h_0a * 64.0f)
+        .uv(spriteEffect.u_0e, spriteEffect.v_0f)
+        .uvSize(spriteEffect.w_08, spriteEffect.h_0a);
 
       if((spriteEffect.flags_00 >>> 30 & 1) != 0) {
-        cmd.translucent(Translucency.of(spriteEffect.flags_00 >>> 28 & 0b11));
+        builder.translucency(Translucency.of(spriteEffect.flags_00 >>> 28 & 0b11));
       }
 
-      GPU.queueCommand(z / 4.0f, cmd);
+      final Obj obj = builder.build();
+      obj.delete(); // Mark for deletion after this frame
+
+      RENDERER.queueModel(obj, transformMatrix)
+        .screenspaceOffset(GPU.getOffsetX(), GPU.getOffsetY());
     }
     //LAB_800e7930
   }

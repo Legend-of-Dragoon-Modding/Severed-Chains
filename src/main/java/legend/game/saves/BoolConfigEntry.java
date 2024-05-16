@@ -5,10 +5,11 @@ import legend.game.inventory.screens.controls.Label;
 
 /** Convenience class for simple enum-backed configs */
 public class BoolConfigEntry extends ConfigEntry<Boolean> {
-  public BoolConfigEntry(final boolean defaultValue, final ConfigStorageLocation storageLocation) {
+  public BoolConfigEntry(final boolean defaultValue, final ConfigStorageLocation storageLocation, final ConfigCategory category) {
     super(
       defaultValue,
       storageLocation,
+      category,
       BoolConfigEntry::serialize,
       bytes -> deserialize(bytes, defaultValue)
     );

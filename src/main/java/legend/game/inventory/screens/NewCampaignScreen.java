@@ -55,7 +55,7 @@ public class NewCampaignScreen extends VerticalLayoutScreen {
     this.campaignName.setZ(35);
 
     this.addRow("", new Button("Options")).onPressed(() ->
-      SItem.menuStack.pushScreen(new OptionsScreen(CONFIG, EnumSet.allOf(ConfigStorageLocation.class), () -> {
+      SItem.menuStack.pushScreen(new OptionsCategoryScreen(CONFIG, EnumSet.allOf(ConfigStorageLocation.class), () -> {
         startFadeEffect(2, 10);
         SItem.menuStack.popScreen();
 

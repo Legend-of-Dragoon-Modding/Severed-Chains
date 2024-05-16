@@ -4,6 +4,7 @@ import legend.core.DebugHelper;
 import legend.core.audio.opus.XaPlayer;
 import legend.core.audio.sequencer.Sequencer;
 import legend.core.audio.sequencer.assets.BackgroundMusic;
+import legend.game.modding.coremod.CoreMod;
 import legend.game.sound.ReverbConfig;
 import legend.game.unpacker.FileData;
 import org.apache.logging.log4j.LogManager;
@@ -14,14 +15,18 @@ import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALC;
 import org.lwjgl.openal.ALCCapabilities;
 import org.lwjgl.openal.ALCapabilities;
+import org.lwjgl.openal.ALUtil;
 
-import static org.lwjgl.openal.ALC10.ALC_DEFAULT_DEVICE_SPECIFIER;
+import java.util.List;
+
+import static legend.core.GameEngine.CONFIG;
+import static org.lwjgl.openal.ALC10.ALC_DEVICE_SPECIFIER;
 import static org.lwjgl.openal.ALC10.alcCloseDevice;
 import static org.lwjgl.openal.ALC10.alcCreateContext;
 import static org.lwjgl.openal.ALC10.alcDestroyContext;
-import static org.lwjgl.openal.ALC10.alcGetString;
 import static org.lwjgl.openal.ALC10.alcMakeContextCurrent;
 import static org.lwjgl.openal.ALC10.alcOpenDevice;
+import static org.lwjgl.openal.ALC11.ALC_ALL_DEVICES_SPECIFIER;
 
 public final class AudioThread implements Runnable {
   private static final Logger LOGGER = LogManager.getFormatterLogger(AudioThread.class);
@@ -31,17 +36,27 @@ public final class AudioThread implements Runnable {
   public static final double SAMPLE_RATE_RATIO = BASE_SAMPLE_RATE / (double) ACTUAL_SAMPLE_RATE;
   public static final double SAMPLE_RATE_MULTIPLIER = ACTUAL_SAMPLE_RATE / (double) BASE_SAMPLE_RATE;
 
-  private final long audioContext;
-  private final long audioDevice;
   private final int nanosPerTick;
   private final int frequency;
+  private long audioContext;
+  private long audioDevice;
   private final boolean stereo;
-  private final Sequencer sequencer;
-  private final XaPlayer xaPlayer;
+  private final int voiceCount;
+  private final int interpolationBitDepth;
+  private Sequencer sequencer;
+  private XaPlayer xaPlayer;
 
   private boolean running;
   private boolean paused;
   private boolean disabled;
+
+  public static List<String> getDevices() {
+    if(ALC.getCapabilities().ALC_ENUMERATE_ALL_EXT) {
+      return ALUtil.getStringList(0, ALC_ALL_DEVICES_SPECIFIER);
+    }
+
+    return ALUtil.getStringList(0, ALC_DEVICE_SPECIFIER);
+  }
 
   public AudioThread(final int frequency, final boolean stereo, final int voiceCount, final int interpolationBitDepth) {
     if(1_000_000_000 % frequency != 0) {
@@ -50,9 +65,22 @@ public final class AudioThread implements Runnable {
 
     this.frequency = frequency;
     this.nanosPerTick = 1_000_000_000 / this.frequency;
+    this.stereo = stereo;
+    this.voiceCount = voiceCount;
+    this.interpolationBitDepth = interpolationBitDepth;
+  }
 
-    final String defaultDeviceName = alcGetString(0, ALC_DEFAULT_DEVICE_SPECIFIER);
-    this.audioDevice = alcOpenDevice(defaultDeviceName);
+  public void init() {
+    final String currentDevice = CONFIG.getConfig(CoreMod.AUDIO_DEVICE.get());
+    final List<String> devices = getDevices();
+
+    if(devices.contains(currentDevice)) {
+      this.audioDevice = alcOpenDevice(currentDevice);
+    } else if(!devices.isEmpty()) {
+      this.audioDevice = alcOpenDevice(devices.getFirst());
+    } else {
+      this.audioDevice = 0;
+    }
 
     if(this.audioDevice != 0) {
       final int[] attributes = {0};
@@ -63,8 +91,7 @@ public final class AudioThread implements Runnable {
       final ALCapabilities alCapabilities = AL.createCapabilities(alcCapabilities);
 
       if(alCapabilities.OpenAL10) {
-        this.stereo = stereo;
-        this.sequencer = new Sequencer(this.frequency, this.stereo, voiceCount, interpolationBitDepth);
+        this.sequencer = new Sequencer(this.frequency, this.stereo, this.voiceCount, this.interpolationBitDepth);
         this.xaPlayer = new XaPlayer(this.frequency);
         return;
       }
@@ -74,7 +101,6 @@ public final class AudioThread implements Runnable {
 
     LOGGER.warn("Device does not support OpenAL10. Disabling audio.");
     this.disabled = true;
-    this.stereo = false;
     this.sequencer = null;
     this.xaPlayer = null;
   }
@@ -153,9 +179,8 @@ public final class AudioThread implements Runnable {
       synchronized(this) {
         return this.sequencer.getSongId();
       }
-    } else {
-      return 0;
     }
+    return 0;
   }
 
   public void unloadMusic() {
@@ -181,9 +206,8 @@ public final class AudioThread implements Runnable {
       synchronized(this) {
         return this.sequencer.getSequenceVolume();
       }
-    } else {
-      return 0;
     }
+    return 0;
   }
 
   public int setSequenceVolume(final int volume) {
@@ -193,9 +217,8 @@ public final class AudioThread implements Runnable {
       synchronized(this) {
         return this.sequencer.setSequenceVolume(volume);
       }
-    } else {
-      return 0;
     }
+    return 0;
   }
 
   public int changeSequenceVolumeOverTime(final int volume, final int time) {
@@ -205,9 +228,8 @@ public final class AudioThread implements Runnable {
       synchronized(this) {
         return this.sequencer.changeSequenceVolumeOverTime(volume, time);
       }
-    } else {
-      return 0;
     }
+    return 0;
   }
 
   public void setReverbVolume(final int left, final int right) {
@@ -271,9 +293,8 @@ public final class AudioThread implements Runnable {
       synchronized(this) {
         return this.sequencer.isPlaying();
       }
-    } else {
-      return false;
     }
+    return false;
   }
 
   public void setReverb(final ReverbConfig config) {
@@ -289,8 +310,7 @@ public final class AudioThread implements Runnable {
       synchronized(this) {
         return this.sequencer.getVolumeOverTimeFlags();
       }
-    } else {
-      return 0;
     }
+    return 0;
   }
 }
