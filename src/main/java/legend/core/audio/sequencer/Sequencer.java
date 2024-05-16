@@ -63,7 +63,6 @@ public final class Sequencer {
   private float reverbVolumeLeft = 0x3000 / 32_768f;
   private float reverbVolumeRight = 0x3000 / 32_768f;
 
-  /** Use powers of 2 to avoid % operator */
   private static final int BUFFER_COUNT = 8;
   private final int[] buffers = new int[BUFFER_COUNT];
   private int bufferIndex;
@@ -115,6 +114,7 @@ public final class Sequencer {
     this.sourceId = alGenSources();
 
     alGenBuffers(this.buffers);
+    this.bufferIndex = this.buffers.length - 1;
 
     this.addCommandCallback(KeyOn.class, this::keyOn);
     this.addCommandCallback(KeyOff.class, this::keyOff);
@@ -457,17 +457,14 @@ public final class Sequencer {
 
     for(int buffer = 0; buffer < processedBufferCount; buffer++) {
       final int processedBufferName = alSourceUnqueueBuffers(this.sourceId);
-      alDeleteBuffers(processedBufferName);
+      this.buffers[++this.bufferIndex] = processedBufferName;
     }
-
-    alGenBuffers(this.buffers);
   }
 
   private void bufferOutput() {
-    final int bufferId = this.buffers[this.bufferIndex++];
+    final int bufferId = this.buffers[this.bufferIndex--];
     alBufferData(bufferId, AL_FORMAT_STEREO16, this.outputBuffer, ACTUAL_SAMPLE_RATE);
     alSourceQueueBuffers(this.sourceId, bufferId);
-    this.bufferIndex &= BUFFER_COUNT - 1;
   }
 
   private void play() {

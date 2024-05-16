@@ -40,7 +40,6 @@ public final class XaPlayer {
   private short[] pcm;
   private ShortBuffer pcmBuffer;
 
-  /** Use powers of 2 to avoid % operator */
   private static final int BUFFER_COUNT = 8;
   private final int[] buffers = new int[BUFFER_COUNT];
   private int bufferIndex;
@@ -64,6 +63,7 @@ public final class XaPlayer {
 
     this.sourceId = alGenSources();
     alGenBuffers(this.buffers);
+    this.bufferIndex = this.buffers.length - 1;
   }
 
   public void loadXa(final FileData fileData) {
@@ -125,10 +125,8 @@ public final class XaPlayer {
 
     for(int buffer = 0; buffer < processedBufferCount; buffer++) {
       final int processedBufferName = alSourceUnqueueBuffers(this.sourceId);
-      alDeleteBuffers(processedBufferName);
+      this.buffers[++this.bufferIndex] = processedBufferName;
     }
-
-    alGenBuffers(this.buffers);
   }
 
   private void readFile() {
@@ -172,10 +170,9 @@ public final class XaPlayer {
   }
 
   private void bufferOutput() {
-    final int bufferId = this.buffers[this.bufferIndex++];
+    final int bufferId = this.buffers[this.bufferIndex--];
     alBufferData(bufferId, this.format, this.pcm, 48_000);
     alSourceQueueBuffers(this.sourceId, bufferId);
-    this.bufferIndex &= BUFFER_COUNT - 1;
   }
 
   private void play() {
