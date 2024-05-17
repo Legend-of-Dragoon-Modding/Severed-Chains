@@ -37,7 +37,6 @@ import legend.game.scripting.FlowControl;
 import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
 import legend.game.scripting.ScriptParam;
-import legend.game.sound.EncounterSoundEffects10;
 import legend.game.sound.QueuedSound28;
 import legend.game.sound.SoundFile;
 import legend.game.submap.SubmapEnvState;
@@ -97,7 +96,6 @@ import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.SItem.menuAssetsLoaded;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderMenus;
-import static legend.game.Scus94491BpeSegment.stopCurrentMusicSequence;
 import static legend.game.Scus94491BpeSegment.FUN_8001d51c;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
@@ -112,13 +110,13 @@ import static legend.game.Scus94491BpeSegment.soundBufferOffset;
 import static legend.game.Scus94491BpeSegment.startFadeEffect;
 import static legend.game.Scus94491BpeSegment.startMenuMusic;
 import static legend.game.Scus94491BpeSegment.stopAndResetSoundsAndSequences;
+import static legend.game.Scus94491BpeSegment.stopCurrentMusicSequence;
 import static legend.game.Scus94491BpeSegment.stopMenuMusic;
 import static legend.game.Scus94491BpeSegment.textboxBorderMetrics_800108b0;
 import static legend.game.Scus94491BpeSegment.unloadSoundFile;
 import static legend.game.Scus94491BpeSegment_8003.GsInitCoordinate2;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8004.engineState_8004dd20;
-import static legend.game.Scus94491BpeSegment_8004.freeSequence;
 import static legend.game.Scus94491BpeSegment_8004.stopMusicSequence;
 import static legend.game.Scus94491BpeSegment_8005.collidedPrimitiveIndex_80052c38;
 import static legend.game.Scus94491BpeSegment_8005.digits_80052b40;
@@ -137,7 +135,6 @@ import static legend.game.Scus94491BpeSegment_800b._800bd7ac;
 import static legend.game.Scus94491BpeSegment_800b._800bd7b0;
 import static legend.game.Scus94491BpeSegment_800b._800bf0cf;
 import static legend.game.Scus94491BpeSegment_800b.characterStatsLoaded_800be5d0;
-import static legend.game.Scus94491BpeSegment_800b.encounterSoundEffects_800bd610;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.input_800bee90;
 import static legend.game.Scus94491BpeSegment_800b.inventoryMenuState_800bdc28;
@@ -188,7 +185,7 @@ public final class Scus94491BpeSegment_8002 {
     unloadSoundFile(5);
     unloadSoundFile(6);
     unloadSoundFile(8);
-    unloadEncounterSoundEffects();
+    stopMusicSequence();
   }
 
   @ScriptDescription("Stops and unloads all music and sound sequences")
@@ -201,7 +198,7 @@ public final class Scus94491BpeSegment_8002 {
     unloadSoundFile(5);
     unloadSoundFile(6);
     unloadSoundFile(8);
-    unloadEncounterSoundEffects();
+    stopMusicSequence();
     return FlowControl.CONTINUE;
   }
 
@@ -210,20 +207,6 @@ public final class Scus94491BpeSegment_8002 {
   @Method(0x8002013cL)
   public static FlowControl scriptUnuseCharSoundFile(final RunningScript<?> script) {
     throw new RuntimeException("Not implemented");
-  }
-
-  @Method(0x800201c8L)
-  public static void unloadEncounterSoundEffects() {
-    final EncounterSoundEffects10 encounterSoundEffects = encounterSoundEffects_800bd610;
-
-    if(encounterSoundEffects._00 != 0) {
-      stopMusicSequence(encounterSoundEffects.sequenceData_0c, 1);
-      freeSequence(encounterSoundEffects.sequenceData_0c);
-      encounterSoundEffects.sssq_08 = null;
-      encounterSoundEffects._00 = 0;
-    }
-
-    //LAB_80020220
   }
 
   @ScriptDescription("Stops and unloads the encounter's sound effects")

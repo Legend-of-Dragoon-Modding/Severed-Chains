@@ -5,8 +5,6 @@ import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
 import legend.game.sound.Instrument;
 import legend.game.sound.InstrumentLayer10;
-import legend.game.sound.InstrumentsSubfile;
-import legend.game.sound.PatchList;
 import legend.game.sound.PlayableSound0c;
 import legend.game.sound.PlayingNote66;
 import legend.game.sound.SequenceData124;
@@ -49,11 +47,9 @@ public final class Scus94491BpeSegment_800c {
   /** 0x5f4 bytes long */
   public static final Queue<PlayableSound0c> playableSounds_800c43d0 = new LinkedList<>();
 
-  public static InstrumentsSubfile instruments_800c4aa8;
   public static Sssqish sssqish_800c4aa8;
   public static VolumeRamp volumeRamp_800c4ab0;
   public static WaveformList waveforms_800c4ab8;
-  public static PatchList patchList_800c4abc;
   public static Sshd sshdPtr_800c4ac0;
   /** One per loaded sequence */
   public static final SequenceData124[] sequenceData_800c4ac8 = new SequenceData124[24];

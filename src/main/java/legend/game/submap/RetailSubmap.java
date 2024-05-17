@@ -74,7 +74,6 @@ import static legend.game.Scus94491BpeSegment_8005.submapEnvState_80052c44;
 import static legend.game.Scus94491BpeSegment_8005.submapMusic_80050068;
 import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.battleStage_800bb0f4;
-import static legend.game.Scus94491BpeSegment_800b.currentSequenceData_800bd0f8;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
@@ -1402,7 +1401,7 @@ public class RetailSubmap extends Submap {
     }
 
     //LAB_8001c7ec
-    if(currentSequenceData_800bd0f8 == null || !currentSequenceData_800bd0f8.musicPlaying_028) {
+    if(AUDIO_THREAD.isMusicPlaying()) {
       return -2;
     }
 

@@ -34,7 +34,6 @@ import legend.game.scripting.RunningScript;
 import legend.game.scripting.ScriptDescription;
 import legend.game.scripting.ScriptParam;
 import legend.game.scripting.ScriptState;
-import legend.game.sound.EncounterSoundEffects10;
 import legend.game.sound.PlayableSound0c;
 import legend.game.sound.QueuedSound28;
 import legend.game.sound.SoundFile;
@@ -82,7 +81,6 @@ import static legend.game.Scus94491BpeSegment_8002.rand;
 import static legend.game.Scus94491BpeSegment_8002.renderTextboxes;
 import static legend.game.Scus94491BpeSegment_8002.renderUi;
 import static legend.game.Scus94491BpeSegment_8002.sssqResetStuff;
-import static legend.game.Scus94491BpeSegment_8002.unloadEncounterSoundEffects;
 import static legend.game.Scus94491BpeSegment_8003.GsInitGraph;
 import static legend.game.Scus94491BpeSegment_8003.GsSetDrawBuffClip;
 import static legend.game.Scus94491BpeSegment_8003.GsSetDrawBuffOffset;
@@ -104,7 +102,7 @@ import static legend.game.Scus94491BpeSegment_8004.getSequenceFlags;
 import static legend.game.Scus94491BpeSegment_8004.height_8004dd34;
 import static legend.game.Scus94491BpeSegment_8004.initSpu;
 import static legend.game.Scus94491BpeSegment_8004.loadSshdAndSoundbank;
-import static legend.game.Scus94491BpeSegment_8004.loadSssq;
+import static legend.game.Scus94491BpeSegment_8004.pauseMusicSequence;
 import static legend.game.Scus94491BpeSegment_8004.previousEngineState_8004dd28;
 import static legend.game.Scus94491BpeSegment_8004.reinitOrderingTableBits_8004dd38;
 import static legend.game.Scus94491BpeSegment_8004.setMainVolume;
@@ -116,7 +114,6 @@ import static legend.game.Scus94491BpeSegment_8004.sssqFadeOut;
 import static legend.game.Scus94491BpeSegment_8004.sssqSetReverbType;
 import static legend.game.Scus94491BpeSegment_8004.sssqSetReverbVolume;
 import static legend.game.Scus94491BpeSegment_8004.sssqUnloadPlayableSound;
-import static legend.game.Scus94491BpeSegment_8004.startMusicSequence;
 import static legend.game.Scus94491BpeSegment_8004.startPitchShiftedSound;
 import static legend.game.Scus94491BpeSegment_8004.startRegularSound;
 import static legend.game.Scus94491BpeSegment_8004.startSequenceAndChangeVolumeOverTime;
@@ -143,23 +140,19 @@ import static legend.game.Scus94491BpeSegment_800b.battleDissolveTicks;
 import static legend.game.Scus94491BpeSegment_800b.battleFlags_800bc960;
 import static legend.game.Scus94491BpeSegment_800b.clearBlue_800babc0;
 import static legend.game.Scus94491BpeSegment_800b.clearGreen_800bb104;
-import static legend.game.Scus94491BpeSegment_800b.currentSequenceData_800bd0f8;
 import static legend.game.Scus94491BpeSegment_800b.dissolveDarkening_800bd700;
 import static legend.game.Scus94491BpeSegment_800b.drgnBinIndex_800bc058;
 import static legend.game.Scus94491BpeSegment_800b.encounterId_800bb0f8;
-import static legend.game.Scus94491BpeSegment_800b.encounterSoundEffects_800bd610;
 import static legend.game.Scus94491BpeSegment_800b.fullScreenEffect_800bb140;
 import static legend.game.Scus94491BpeSegment_800b.gameState_800babc8;
 import static legend.game.Scus94491BpeSegment_800b.loadedDrgnFiles_800bcf78;
 import static legend.game.Scus94491BpeSegment_800b.loadingNewGameState_800bdc34;
-import static legend.game.Scus94491BpeSegment_800b.musicFileIndex_800bd0fc;
 import static legend.game.Scus94491BpeSegment_800b.musicLoaded_800bd782;
 import static legend.game.Scus94491BpeSegment_800b.playingSoundsBackup_800bca78;
 import static legend.game.Scus94491BpeSegment_800b.postCombatMainCallbackIndex_800bc91c;
 import static legend.game.Scus94491BpeSegment_800b.pregameLoadingStage_800bb10c;
 import static legend.game.Scus94491BpeSegment_800b.queuedSounds_800bd110;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
-import static legend.game.Scus94491BpeSegment_800b.sequenceVolume_800bd108;
 import static legend.game.Scus94491BpeSegment_800b.soundFiles_800bcf80;
 import static legend.game.Scus94491BpeSegment_800b.sssqTempoScale_800bd100;
 import static legend.game.Scus94491BpeSegment_800b.submapId_800bd808;
@@ -1166,7 +1159,7 @@ public final class Scus94491BpeSegment {
     if(Unpacker.getLoadingFileCount() == 0) {
       //LAB_800189e4
       //LAB_800189e8
-      unloadEncounterSoundEffects();
+      stopMusicSequence();
       pregameLoadingStage_800bb10c = 0;
       vsyncMode_8007a3b8 = 2;
       engineStateOnceLoaded_8004dd24 = postCombatMainCallbackIndex_800bc91c;
@@ -1347,8 +1340,6 @@ public final class Scus94491BpeSegment {
     for(int i = 0; i < 13; i++) {
       soundFiles_800bcf80[i].used_00 = false;
     }
-
-    encounterSoundEffects_800bd610._00 = 0;
 
     sssqTempoScale_800bd100 = 0x100;
   }
@@ -1635,7 +1626,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001ada0L)
   public static void startCurrentMusicSequence() {
-    startMusicSequence(currentSequenceData_800bd0f8);
+    AUDIO_THREAD.startSequence();
   }
 
   @ScriptDescription("Starts the current music sequence")
@@ -1645,14 +1636,14 @@ public final class Scus94491BpeSegment {
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Stops the current music sequence")
+  @ScriptDescription("Toggles whether the current music sequence is paused")
   @Method(0x8001ae18L)
   public static FlowControl scriptToggleMusicSequencePause(final RunningScript<?> script) {
-    stopMusicSequence(currentSequenceData_800bd0f8, 2);
+    pauseMusicSequence();
     return FlowControl.CONTINUE;
   }
 
-  @ScriptDescription("Stops the current music sequence")
+  @ScriptDescription("Toggles whether the current music sequence is paused")
   @Method(0x8001ae68L)
   public static FlowControl scriptToggleMusicSequencePause2(final RunningScript<?> script) {
     return scriptToggleMusicSequencePause(script);
@@ -1661,7 +1652,7 @@ public final class Scus94491BpeSegment {
   @Method(0x8001ae90L)
   public static void stopCurrentMusicSequence() {
     if(_800bd0f0 == 2) {
-      stopMusicSequence(currentSequenceData_800bd0f8, 0);
+      stopMusicSequence();
     }
   }
 
@@ -1761,8 +1752,7 @@ public final class Scus94491BpeSegment {
 
   @Method(0x8001b1a8L)
   public static void setSequenceVolume(final int volume) {
-    Scus94491BpeSegment_8004.setSequenceVolume(currentSequenceData_800bd0f8, volume);
-    sequenceVolume_800bd108 = volume;
+    Scus94491BpeSegment_8004.setSequenceVolume(null, volume);
   }
 
   @ScriptDescription("Gets the sequence volume")
@@ -1809,8 +1799,7 @@ public final class Scus94491BpeSegment {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "volume", description = "The volume once the fade in has finished")
   @Method(0x8001b2acL)
   public static FlowControl scriptStartSequenceAndChangeVolumeOverTime(final RunningScript<?> script) {
-    startSequenceAndChangeVolumeOverTime(currentSequenceData_800bd0f8, (short)script.params_20[0].get(), (short)script.params_20[1].get());
-    sequenceVolume_800bd108 = script.params_20[1].get();
+    startSequenceAndChangeVolumeOverTime((short)script.params_20[0].get(), (short)script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
@@ -1827,8 +1816,7 @@ public final class Scus94491BpeSegment {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "volume", description = "The volume once the fade in has finished")
   @Method(0x8001b33cL)
   public static FlowControl scriptChangeSequenceVolumeOverTime(final RunningScript<?> script) {
-    changeSequenceVolumeOverTime(currentSequenceData_800bd0f8, (short)script.params_20[0].get(), (short)script.params_20[1].get());
-    sequenceVolume_800bd108 = script.params_20[1].get();
+    changeSequenceVolumeOverTime((short)script.params_20[0].get(), (short)script.params_20[1].get());
     return FlowControl.CONTINUE;
   }
 
@@ -1836,7 +1824,7 @@ public final class Scus94491BpeSegment {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "flags", description = "The current sequence's flags")
   @Method(0x8001b3a0L)
   public static FlowControl scriptGetSequenceFlags(final RunningScript<?> script) {
-    script.params_20[0].set(getSequenceFlags(currentSequenceData_800bd0f8));
+    script.params_20[0].set(getSequenceFlags());
     return FlowControl.CONTINUE;
   }
 
@@ -2302,10 +2290,8 @@ public final class Scus94491BpeSegment {
   @Method(0x8001dabcL)
   public static void musicPackageLoadedCallback(final List<FileData> files, final int fileIndex, final boolean startSequence) {
     LOGGER.info("Music package %d loaded", fileIndex);
-    musicFileIndex_800bd0fc = fileIndex;
 
     AUDIO_THREAD.loadBackgroundMusic(new BackgroundMusic(files, fileIndex));
-
     AUDIO_THREAD.setSequenceVolume(40);
 
     if(startSequence) {
@@ -2316,17 +2302,6 @@ public final class Scus94491BpeSegment {
     loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_ff7f);
 
     _800bd0f0 = 2;
-  }
-
-  @Method(0x8001ddd8L)
-  public static void FUN_8001ddd8() {
-    final EncounterSoundEffects10 encounterSoundEffects = encounterSoundEffects_800bd610;
-
-    AUDIO_THREAD.startSequence();
-    encounterSoundEffects._00 = 2;
-    encounterSoundEffects.sequenceData_0c = loadSssq(soundFiles_800bcf80[encounterSoundEffects.soundFileIndex].playableSound_10, encounterSoundEffects.sssq_08);
-    musicLoaded_800bd782 = true;
-    loadedDrgnFiles_800bcf78.updateAndGet(val -> val & 0xffff_ff7f);
   }
 
   @Method(0x8001de84L)
@@ -2340,7 +2315,7 @@ public final class Scus94491BpeSegment {
     final StageData2c stageData = stageData_80109a98[encounterId_800bb0f8];
 
     if(stageData.musicIndex_04 != 0xff) {
-      unloadEncounterSoundEffects();
+      stopMusicSequence();
 
       // Pulled this up from below since the methods below queue files which are now loaded synchronously. This code would therefore run before the files were loaded.
       //LAB_8001df8c
@@ -2430,7 +2405,7 @@ public final class Scus94491BpeSegment {
       }
     } else {
       //LAB_8001e160
-      unloadEncounterSoundEffects();
+      stopMusicSequence();
       unloadSoundFile(8);
 
       currentEngineState_8004dd04.restoreMusicAfterMenu();

@@ -15,7 +15,7 @@ public class PlayingNote66 {
   public boolean modulationEnabled_14;
   public int modulation_16;
   public int _18;
-  public boolean isPolyphonicKeyPressure_1a;
+
   public int _1c;
   public int maxKeyRange_1e;
   public int minKeyRange_20;
@@ -70,7 +70,6 @@ public class PlayingNote66 {
     this.modulationEnabled_14 = false;
     this.modulation_16 = 0;
     this._18 = 0;
-    this.isPolyphonicKeyPressure_1a = false;
     this._1c = 0;
     this.maxKeyRange_1e = 0;
     this.minKeyRange_20 = 0;
