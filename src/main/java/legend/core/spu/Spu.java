@@ -2,16 +2,15 @@ package legend.core.spu;
 
 import legend.core.DebugHelper;
 import legend.core.MathHelper;
+import legend.core.audio.GenericSource;
 import legend.game.sound.ReverbConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.SourceDataLine;
+import static legend.core.GameEngine.AUDIO_THREAD;
+import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
 
 public class Spu implements Runnable {
   private static final Logger LOGGER = LogManager.getFormatterLogger(Spu.class);
@@ -20,9 +19,9 @@ public class Spu implements Runnable {
   private static final int NANOS_PER_TICK = 1_000_000_000 / 50;
   private static final int SAMPLES_PER_TICK = 44_100 / 50;
 
-  private SourceDataLine sound;
+  private GenericSource source;
 
-  private final byte[] spuOutput = new byte[SAMPLES_PER_TICK * 4];
+  private final short[] spuOutput = new short[SAMPLES_PER_TICK * 2];
   private final byte[] ram = new byte[512 * 1024]; // 0x8_0000
   private final float[] reverbWorkArea = new float[0x4_0000];
   public final Voice[] voices = new Voice[24];
@@ -47,15 +46,6 @@ public class Spu implements Runnable {
   private boolean running;
 
   public Spu() {
-    try {
-      this.sound = AudioSystem.getSourceDataLine(new AudioFormat(44100, 16, 2, true, false));
-      this.sound.open();
-      this.sound.start();
-    } catch(final LineUnavailableException|IllegalArgumentException e) {
-      LOGGER.error("Failed to start audio", e);
-      this.sound = null;
-    }
-
     for(int i = 0; i < this.voices.length; i++) {
       this.voices[i] = new Voice(i);
     }
@@ -81,6 +71,10 @@ public class Spu implements Runnable {
     for(int i = 0; i < sampleRates.length; i++) {
       sampleRates[i] = (int)Math.round(0x1000 * Math.pow(2, i / (double)sampleRates.length));
     }
+  }
+
+  public void init() {
+    this.source = AUDIO_THREAD.addSource(new GenericSource(AL_FORMAT_STEREO16, 44100));
   }
 
   @Override
@@ -195,15 +189,11 @@ public class Spu implements Runnable {
         sumRight = MathHelper.clamp(sumRight, -0x8000, 0x7fff) * (short)this.mainVolumeR >> 15;
 
         //Add to samples bytes to output list
-        this.spuOutput[dataIndex++] = (byte)sumLeft;
-        this.spuOutput[dataIndex++] = (byte)(sumLeft >> 8);
-        this.spuOutput[dataIndex++] = (byte)sumRight;
-        this.spuOutput[dataIndex++] = (byte)(sumRight >> 8);
+        this.spuOutput[dataIndex++] = (short)sumLeft;
+        this.spuOutput[dataIndex++] = (short)sumRight;
       }
 
-      if(this.sound != null) {
-        this.sound.write(this.spuOutput, 0, this.spuOutput.length);
-      }
+      this.source.bufferOutput(this.spuOutput);
     }
   }
 

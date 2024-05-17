@@ -243,6 +243,7 @@ public final class GameEngine {
     ConfigStorage.loadConfig(CONFIG, ConfigStorageLocation.GLOBAL, Path.of("config.dcnf"));
 
     AUDIO_THREAD.init();
+    SPU.init();
     RENDERER.init();
     RENDERER.events().onShutdown(Unpacker::shutdownLoader);
     GPU.init();
