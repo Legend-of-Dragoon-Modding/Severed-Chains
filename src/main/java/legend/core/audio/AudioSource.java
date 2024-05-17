@@ -16,20 +16,26 @@ import static org.lwjgl.openal.AL10.alSourceStop;
 import static org.lwjgl.openal.AL10.alSourceUnqueueBuffers;
 
 public abstract class AudioSource {
-  private static final int BUFFER_COUNT = 8;
-  private final int[] buffers = new int[BUFFER_COUNT];
+  private final int[] buffers;
   private int bufferIndex;
   private final int sourceId;
 
   private boolean playing;
 
-  public AudioSource() {
+  public AudioSource(final int bufferCount) {
     this.sourceId = alGenSources();
+
+    this.buffers = new int[bufferCount];
     alGenBuffers(this.buffers);
     this.bufferIndex = this.buffers.length - 1;
   }
 
-  public abstract void tick();
+  public void tick() {
+    // Restart playback if stopped
+    if(this.isPlaying()) {
+      this.play();
+    }
+  }
 
   public boolean canBuffer() {
     if(!this.playing) {

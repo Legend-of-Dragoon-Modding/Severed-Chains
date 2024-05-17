@@ -72,7 +72,7 @@ public final class Sequencer extends AudioSource {
   private int samplesToProcess;
 
   public Sequencer(final int frequency, final boolean stereo, final int voiceCount, final int interpolationBitDepth) {
-    super();
+    super(8);
 
     if(ACTUAL_SAMPLE_RATE % frequency != 0) {
       throw new IllegalArgumentException("Sample Rate (44_100) is not divisible by frequency");
@@ -143,8 +143,7 @@ public final class Sequencer extends AudioSource {
 
     this.bufferOutput(AL_FORMAT_STEREO16, this.outputBuffer, ACTUAL_SAMPLE_RATE);
 
-    // Restart playback if stopped
-    this.play();
+    super.tick();
   }
 
   private void clearFinishedVoices() {

@@ -112,6 +112,11 @@ public final class AudioThread implements Runnable {
     return source;
   }
 
+  public void removeSource(final AudioSource source) {
+    source.destroy();
+    this.sources.remove(source);
+  }
+
   @Override
   public void run() {
     if(this.disabled) {
@@ -135,7 +140,8 @@ public final class AudioThread implements Runnable {
       boolean canBuffer = false;
 
       synchronized(this) {
-        for(final AudioSource source : this.sources) {
+        for(int i = 0; i < this.sources.size(); i++) {
+          final AudioSource source = this.sources.get(i);
           source.processBuffers();
 
           final boolean sourceCanBuffer = source.canBuffer();
@@ -154,8 +160,10 @@ public final class AudioThread implements Runnable {
       }
     }
 
-    this.sequencer.destroy();
-    this.xaPlayer.destroy();
+    for(final AudioSource source : this.sources) {
+      source.destroy();
+    }
+
     alcDestroyContext(this.audioContext);
     alcCloseDevice(this.audioDevice);
   }
