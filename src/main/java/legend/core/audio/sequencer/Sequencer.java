@@ -109,6 +109,7 @@ public final class Sequencer extends AudioSource {
     this.addCommandCallback(EndOfTrack.class, this::endOfTrack);
   }
 
+  @Override
   public void tick() {
     for(int sample = 0; sample < this.outputBuffer.length; sample += 2) {
       this.clearFinishedVoices();

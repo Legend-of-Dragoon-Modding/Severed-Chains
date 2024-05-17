@@ -85,6 +85,7 @@ public final class XaPlayer extends AudioSource {
     }
   }
 
+  @Override
   public void tick() {
     this.readFile();
     this.bufferOutput(this.format, this.pcm, 48_000);

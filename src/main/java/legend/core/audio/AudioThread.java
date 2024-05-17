@@ -17,6 +17,7 @@ import org.lwjgl.openal.ALCCapabilities;
 import org.lwjgl.openal.ALCapabilities;
 import org.lwjgl.openal.ALUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static legend.core.GameEngine.CONFIG;
@@ -45,6 +46,7 @@ public final class AudioThread implements Runnable {
   private final int interpolationBitDepth;
   private Sequencer sequencer;
   private XaPlayer xaPlayer;
+  private final List<AudioSource> sources = new ArrayList<>();
 
   private boolean running;
   private boolean paused;
@@ -91,8 +93,8 @@ public final class AudioThread implements Runnable {
       final ALCapabilities alCapabilities = AL.createCapabilities(alcCapabilities);
 
       if(alCapabilities.OpenAL10) {
-        this.sequencer = new Sequencer(this.frequency, this.stereo, this.voiceCount, this.interpolationBitDepth);
-        this.xaPlayer = new XaPlayer(this.frequency);
+        this.sequencer = this.addSource(new Sequencer(this.frequency, this.stereo, this.voiceCount, this.interpolationBitDepth));
+        this.xaPlayer = this.addSource(new XaPlayer(this.frequency));
         return;
       }
     } else {
@@ -103,6 +105,11 @@ public final class AudioThread implements Runnable {
     this.disabled = true;
     this.sequencer = null;
     this.xaPlayer = null;
+  }
+
+  public <T extends AudioSource> T addSource(final T source) {
+    this.sources.add(source);
+    return source;
   }
 
   @Override
@@ -125,26 +132,22 @@ public final class AudioThread implements Runnable {
 
       final long time = System.nanoTime();
 
-      final boolean canBgmBuffer;
-      final boolean canXaBuffer;
+      boolean canBuffer = false;
 
       synchronized(this) {
-        this.sequencer.processBuffers();
-        this.xaPlayer.processBuffers();
+        for(final AudioSource source : this.sources) {
+          source.processBuffers();
 
-        canBgmBuffer = this.sequencer.canBuffer();
-        canXaBuffer = this.xaPlayer.canBuffer();
+          final boolean sourceCanBuffer = source.canBuffer();
+          canBuffer = canBuffer || sourceCanBuffer;
 
-        if(canBgmBuffer) {
-          this.sequencer.tick();
-        }
-
-        if(canXaBuffer) {
-          this.xaPlayer.tick();
+          if(sourceCanBuffer) {
+            source.tick();
+          }
         }
       }
 
-      if(!canBgmBuffer && !canXaBuffer) {
+      if(!canBuffer) {
         final long interval = System.nanoTime() - time;
         final int toSleep = (int)(Math.max(0, this.nanosPerTick - interval) / 1_000_000);
         DebugHelper.sleep(toSleep);

@@ -29,6 +29,8 @@ public abstract class AudioSource {
     this.bufferIndex = this.buffers.length - 1;
   }
 
+  public abstract void tick();
+
   public boolean canBuffer() {
     if(!this.playing) {
       return false;
