@@ -16,6 +16,7 @@ public class AudioDeviceConfig extends ConfigEntry<String> {
     this.setEditControl((current, gameState) -> {
       final Dropdown dropdown = new Dropdown();
       dropdown.onSelection(index -> gameState.setConfig(this, dropdown.getSelectedOption()));
+      dropdown.addOption("<default>");
 
       for(final String device : AudioThread.getDevices()) {
         dropdown.addOption(device);
