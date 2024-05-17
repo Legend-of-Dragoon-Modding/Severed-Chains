@@ -17,7 +17,7 @@ public class SequenceData124 {
   /** Can either be a full SSSQ file, or just a sequence */
   public SssqReader sssqReader_010;
 
-  public boolean _018;
+  public boolean musicStopped_018;
 
   /** ubyte */
   public int startingInstrument_01e;
@@ -66,7 +66,7 @@ public class SequenceData124 {
   /** ubyte */
   public boolean soundEnded_0e7;
   /** ubyte */
-  public boolean _0e8;
+  public boolean musicPaused_0e8;
   /** ushort */
   public boolean pitchShifted_0e9;
   /** ushort */

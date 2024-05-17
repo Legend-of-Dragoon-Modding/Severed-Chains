@@ -179,9 +179,9 @@ public final class Scus94491BpeSegment_8004 {
 
     scriptSubFunctions_8004e29c[240] = Scus94491BpeSegment::scriptStopSoundsAndSequences;
     scriptSubFunctions_8004e29c[241] = Scus94491BpeSegment::scriptStartCurrentMusicSequence;
-    scriptSubFunctions_8004e29c[242] = Scus94491BpeSegment::scriptStopCurrentMusicSequence;
-    scriptSubFunctions_8004e29c[243] = Scus94491BpeSegment::scriptStopCurrentMusicSequence2;
-    scriptSubFunctions_8004e29c[244] = Scus94491BpeSegment::FUN_8001aec8;
+    scriptSubFunctions_8004e29c[242] = Scus94491BpeSegment::scriptToggleMusicSequencePause;
+    scriptSubFunctions_8004e29c[243] = Scus94491BpeSegment::scriptToggleMusicSequencePause2;
+    scriptSubFunctions_8004e29c[244] = Scus94491BpeSegment::scriptStopCurrentMusicSequence;
     scriptSubFunctions_8004e29c[245] = Scus94491BpeSegment::scriptStartEncounterSounds;
     scriptSubFunctions_8004e29c[246] = Scus94491BpeSegment::scriptStopEncounterSounds;
     scriptSubFunctions_8004e29c[247] = Scus94491BpeSegment::scriptStopEncounterSounds2;
@@ -750,16 +750,29 @@ public final class Scus94491BpeSegment_8004 {
     AUDIO_THREAD.startSequence();
   }
 
+  /**
+   * @param mode <ul>
+   *               <li>0 - stops music</li>
+   *               <li>1 - stops music and resets ADSR</li>
+   *               <li>2 - toggles pause</li>
+   *             </ul>
+   */
   @Method(0x8004d034L)
   public static void stopMusicSequence(@Nullable final SequenceData124 sequenceData, final int mode) {
     // This will be null for music sequences since we don't use it anymore
     if(sequenceData == null) {
-      //TODO implement different modes
-      AUDIO_THREAD.stopSequence();
+      if(mode == 0 || mode == 1) {
+        AUDIO_THREAD.stopSequence();
+      } else if(mode == 2) {
+        if(AUDIO_THREAD.isMusicPlaying()) {
+          AUDIO_THREAD.stopSequence();
+        } else {
+          AUDIO_THREAD.startSequence();
+        }
+      }
       return;
     }
 
-    boolean resetAdsr = false;
     final PlayableSound0c playableSound = sequenceData.playableSound_020;
     final Sshd sshd = playableSound.sshdPtr_04;
 
@@ -769,50 +782,29 @@ public final class Scus94491BpeSegment_8004 {
       // Retail NPE when transitioning from combat into post-combat scene (happens after Kongol I and Divine Dragon)
       if(sshd != null && sshd.hasSubfile(0)) {
         if(playableSound.used_00) {
-          boolean stopNotes = false;
+          boolean stopNotes = true;
+          boolean resetAdsr = false;
 
-          if(mode == 0) {
-            //LAB_8004d13c
+          if(mode == 0 || mode == 1) {
             sequenceData.sssqReader_010.jump(0x110);
             sequenceData.musicPlaying_028 = false;
-            sequenceData._018 = true;
-            sequenceData._0e8 = false;
+            sequenceData.musicStopped_018 = true;
+            sequenceData.musicPaused_0e8 = false;
             sequenceData.repeatCounter_035 = 0;
-            stopNotes = true;
-          } else if(mode == 1) {
-            //LAB_8004d134
+          }
+
+          if(mode == 1) {
             resetAdsr = true;
+          }
 
-            //LAB_8004d13c
-            sequenceData.sssqReader_010.jump(0x110);
-            sequenceData.musicPlaying_028 = false;
-            sequenceData._018 = true;
-            sequenceData._0e8 = false;
-            sequenceData.repeatCounter_035 = 0;
-            stopNotes = true;
-            //LAB_8004d11c
-          } else if(mode == 2) {
-            //LAB_8004d154
+          if(mode == 2) {
             if(sequenceData.musicPlaying_028) {
               sequenceData.musicPlaying_028 = false;
-              sequenceData._0e8 = true;
-              stopNotes = true;
-              //LAB_8004d170
-            } else if(sequenceData._018) {
-              stopNotes = true;
-            } else {
+              sequenceData.musicPaused_0e8 = true;
+            } else if(!sequenceData.musicStopped_018) {
               sequenceData.musicPlaying_028 = true;
-              sequenceData._0e8 = false;
-            }
-          } else if(mode == 3) {
-            //LAB_8004d188
-            if(sequenceData.musicPlaying_028) {
-              //LAB_8004d1b4
-              sequenceData.musicPlaying_028 = false;
-              sequenceData._0e8 = true;
-            } else if(!sequenceData._018) {
-              sequenceData.musicPlaying_028 = true;
-              sequenceData._0e8 = false;
+              sequenceData.musicPaused_0e8 = false;
+              stopNotes = false;
             }
           }
 

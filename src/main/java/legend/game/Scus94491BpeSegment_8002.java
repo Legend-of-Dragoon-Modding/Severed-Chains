@@ -97,7 +97,7 @@ import static legend.game.SItem.magicStuff_80111d20;
 import static legend.game.SItem.menuAssetsLoaded;
 import static legend.game.SItem.menuStack;
 import static legend.game.SItem.renderMenus;
-import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
+import static legend.game.Scus94491BpeSegment.stopCurrentMusicSequence;
 import static legend.game.Scus94491BpeSegment.FUN_8001d51c;
 import static legend.game.Scus94491BpeSegment.centreScreenX_1f8003dc;
 import static legend.game.Scus94491BpeSegment.centreScreenY_1f8003de;
@@ -241,7 +241,7 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x80020308L)
   public static void FUN_80020308() {
-    FUN_8001ae90();
+    stopCurrentMusicSequence();
     stopAndResetSoundsAndSequences();
     unloadSoundFile(1);
     unloadSoundFile(3);

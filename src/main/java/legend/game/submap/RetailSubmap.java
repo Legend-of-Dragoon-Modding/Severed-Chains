@@ -50,7 +50,7 @@ import static legend.core.GameEngine.EVENTS;
 import static legend.core.GameEngine.GPU;
 import static legend.core.GameEngine.GTE;
 import static legend.core.GameEngine.RENDERER;
-import static legend.game.Scus94491BpeSegment.FUN_8001ae90;
+import static legend.game.Scus94491BpeSegment.stopCurrentMusicSequence;
 import static legend.game.Scus94491BpeSegment.loadDrgnDir;
 import static legend.game.Scus94491BpeSegment.loadDrgnFile;
 import static legend.game.Scus94491BpeSegment.loadMusicPackage;
@@ -270,7 +270,7 @@ public class RetailSubmap extends Submap {
   public void startMusic() {
     final int musicIndex = this.getSubmapMusicChange();
     if(musicIndex == -1) {
-      FUN_8001ae90();
+      stopCurrentMusicSequence();
       musicLoaded_800bd782 = true;
     } else if(musicIndex == -2) {
       startCurrentMusicSequence();

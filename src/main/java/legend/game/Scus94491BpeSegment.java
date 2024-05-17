@@ -1647,19 +1647,19 @@ public final class Scus94491BpeSegment {
 
   @ScriptDescription("Stops the current music sequence")
   @Method(0x8001ae18L)
-  public static FlowControl scriptStopCurrentMusicSequence(final RunningScript<?> script) {
+  public static FlowControl scriptToggleMusicSequencePause(final RunningScript<?> script) {
     stopMusicSequence(currentSequenceData_800bd0f8, 2);
     return FlowControl.CONTINUE;
   }
 
   @ScriptDescription("Stops the current music sequence")
   @Method(0x8001ae68L)
-  public static FlowControl scriptStopCurrentMusicSequence2(final RunningScript<?> script) {
-    return scriptStopCurrentMusicSequence(script);
+  public static FlowControl scriptToggleMusicSequencePause2(final RunningScript<?> script) {
+    return scriptToggleMusicSequencePause(script);
   }
 
   @Method(0x8001ae90L)
-  public static void FUN_8001ae90() {
+  public static void stopCurrentMusicSequence() {
     if(_800bd0f0 == 2) {
       stopMusicSequence(currentSequenceData_800bd0f8, 0);
     }
@@ -1667,8 +1667,8 @@ public final class Scus94491BpeSegment {
 
   @ScriptDescription("Stops the current music sequence if 800bd0f0 is 2")
   @Method(0x8001aec8L)
-  public static FlowControl FUN_8001aec8(final RunningScript<?> script) {
-    FUN_8001ae90();
+  public static FlowControl scriptStopCurrentMusicSequence(final RunningScript<?> script) {
+    stopCurrentMusicSequence();
     return FlowControl.CONTINUE;
   }
 
