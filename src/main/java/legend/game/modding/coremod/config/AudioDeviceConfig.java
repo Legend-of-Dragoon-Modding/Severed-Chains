@@ -4,9 +4,11 @@ import legend.core.IoHelper;
 import legend.core.audio.AudioThread;
 import legend.game.inventory.screens.controls.Dropdown;
 import legend.game.saves.ConfigCategory;
+import legend.game.saves.ConfigCollection;
 import legend.game.saves.ConfigEntry;
 import legend.game.saves.ConfigStorageLocation;
 
+import static legend.core.GameEngine.AUDIO_THREAD;
 import static legend.core.GameEngine.CONFIG;
 
 public class AudioDeviceConfig extends ConfigEntry<String> {
@@ -28,6 +30,12 @@ public class AudioDeviceConfig extends ConfigEntry<String> {
 
       return dropdown;
     });
+  }
+
+  @Override
+  public void onChange(final ConfigCollection configCollection, final String oldValue, final String newValue) {
+    super.onChange(configCollection, oldValue, newValue);
+    AUDIO_THREAD.reinit();
   }
 
   private static byte[] serialize(final String val) {

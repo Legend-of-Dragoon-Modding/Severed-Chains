@@ -1,7 +1,6 @@
 package legend.core.audio;
 
 import static org.lwjgl.openal.AL10.AL_BUFFERS_PROCESSED;
-import static org.lwjgl.openal.AL10.AL_BUFFERS_QUEUED;
 import static org.lwjgl.openal.AL10.AL_PLAYING;
 import static org.lwjgl.openal.AL10.AL_SOURCE_STATE;
 import static org.lwjgl.openal.AL10.alBufferData;
@@ -18,14 +17,18 @@ import static org.lwjgl.openal.AL10.alSourceUnqueueBuffers;
 public abstract class AudioSource {
   private final int[] buffers;
   private int bufferIndex;
-  private final int sourceId;
+  private int sourceId;
 
   private boolean playing;
 
   public AudioSource(final int bufferCount) {
+    this.buffers = new int[bufferCount];
+    this.init();
+  }
+
+  void init() {
     this.sourceId = alGenSources();
 
-    this.buffers = new int[bufferCount];
     alGenBuffers(this.buffers);
     this.bufferIndex = this.buffers.length - 1;
   }
@@ -42,7 +45,7 @@ public abstract class AudioSource {
       return false;
     }
 
-    return alGetSourcei(this.sourceId, AL_BUFFERS_QUEUED) < 6;
+    return this.bufferIndex >= 0;
   }
 
   public void processBuffers() {

@@ -25,9 +25,11 @@ import static org.lwjgl.openal.ALC10.ALC_DEVICE_SPECIFIER;
 import static org.lwjgl.openal.ALC10.alcCloseDevice;
 import static org.lwjgl.openal.ALC10.alcCreateContext;
 import static org.lwjgl.openal.ALC10.alcDestroyContext;
+import static org.lwjgl.openal.ALC10.alcGetInteger;
 import static org.lwjgl.openal.ALC10.alcMakeContextCurrent;
 import static org.lwjgl.openal.ALC10.alcOpenDevice;
 import static org.lwjgl.openal.ALC11.ALC_ALL_DEVICES_SPECIFIER;
+import static org.lwjgl.openal.EXTDisconnect.ALC_CONNECTED;
 
 public final class AudioThread implements Runnable {
   private static final Logger LOGGER = LogManager.getFormatterLogger(AudioThread.class);
@@ -52,6 +54,9 @@ public final class AudioThread implements Runnable {
   private boolean paused;
   private boolean disabled;
 
+  private ALCapabilities alCapabilities;
+  private ALCCapabilities alcCapabilities;
+
   public static List<String> getDevices() {
     if(ALC.getCapabilities().ALC_ENUMERATE_ALL_EXT) {
       return ALUtil.getStringList(0, ALC_ALL_DEVICES_SPECIFIER);
@@ -73,28 +78,41 @@ public final class AudioThread implements Runnable {
   }
 
   public void init() {
-    final String currentDevice = CONFIG.getConfig(CoreMod.AUDIO_DEVICE.get());
-    final List<String> devices = getDevices();
+    this.initInternal();
+    this.addDefaultSources();
+  }
 
-    if(devices.contains(currentDevice)) {
-      this.audioDevice = alcOpenDevice(currentDevice);
-    } else if(!devices.isEmpty()) {
-      this.audioDevice = alcOpenDevice(devices.getFirst());
-    } else {
-      this.audioDevice = 0;
+  public void reinit() {
+    final boolean[] playing = new boolean[this.sources.size()];
+    for(int i = 0; i < this.sources.size(); i++) {
+      playing[i] = this.sources.get(i).isPlaying();
     }
+
+    this.destroy();
+    this.initInternal();
+
+    for(int i = 0; i < this.sources.size(); i++) {
+      final AudioSource source = this.sources.get(i);
+      source.init();
+
+      if(playing[i]) {
+        source.setPlaying(true);
+      }
+    }
+  }
+
+  private void initInternal() {
+    this.openDevice();
 
     if(this.audioDevice != 0) {
       final int[] attributes = {0};
       this.audioContext = alcCreateContext(this.audioDevice, attributes);
       alcMakeContextCurrent(this.audioContext);
 
-      final ALCCapabilities alcCapabilities = ALC.createCapabilities(this.audioDevice);
-      final ALCapabilities alCapabilities = AL.createCapabilities(alcCapabilities);
+      this.alcCapabilities = ALC.createCapabilities(this.audioDevice);
+      this.alCapabilities = AL.createCapabilities(this.alcCapabilities);
 
-      if(alCapabilities.OpenAL10) {
-        this.sequencer = this.addSource(new Sequencer(this.frequency, this.stereo, this.voiceCount, this.interpolationBitDepth));
-        this.xaPlayer = this.addSource(new XaPlayer(this.frequency));
+      if(this.alCapabilities.OpenAL10) {
         return;
       }
     } else {
@@ -105,6 +123,33 @@ public final class AudioThread implements Runnable {
     this.disabled = true;
     this.sequencer = null;
     this.xaPlayer = null;
+  }
+
+  private void destroy() {
+    for(final AudioSource source : this.sources) {
+      source.destroy();
+    }
+
+    alcDestroyContext(this.audioContext);
+    alcCloseDevice(this.audioDevice);
+  }
+
+  private void openDevice() {
+    final String currentDevice = CONFIG.getConfig(CoreMod.AUDIO_DEVICE.get());
+    final List<String> devices = getDevices();
+
+    if(devices.contains(currentDevice)) {
+      this.audioDevice = alcOpenDevice(currentDevice);
+    } else if(!devices.isEmpty()) {
+      this.audioDevice = alcOpenDevice(devices.getFirst());
+    } else {
+      this.audioDevice = 0;
+    }
+  }
+
+  private void addDefaultSources() {
+    this.sequencer = this.addSource(new Sequencer(this.frequency, this.stereo, this.voiceCount, this.interpolationBitDepth));
+    this.xaPlayer = this.addSource(new XaPlayer(this.frequency));
   }
 
   public <T extends AudioSource> T addSource(final T source) {
@@ -140,6 +185,15 @@ public final class AudioThread implements Runnable {
       boolean canBuffer = false;
 
       synchronized(this) {
+        if(this.alcCapabilities.ALC_EXT_disconnect) {
+          final int connected = alcGetInteger(this.audioDevice, ALC_CONNECTED);
+
+          if(connected == 0) {
+            LOGGER.warn("Audio device changed, re-init");
+            this.reinit();
+          }
+        }
+
         for(int i = 0; i < this.sources.size(); i++) {
           final AudioSource source = this.sources.get(i);
           source.processBuffers();
@@ -160,12 +214,7 @@ public final class AudioThread implements Runnable {
       }
     }
 
-    for(final AudioSource source : this.sources) {
-      source.destroy();
-    }
-
-    alcDestroyContext(this.audioContext);
-    alcCloseDevice(this.audioDevice);
+    this.destroy();
   }
 
   public void stop() {

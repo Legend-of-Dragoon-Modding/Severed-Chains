@@ -307,7 +307,9 @@ public final class Fmv {
             decodedXaAdpcm[i] >>= 1;
           }
 
-          source.bufferOutput(decodedXaAdpcm);
+          if(source.canBuffer()) {
+            source.bufferOutput(decodedXaAdpcm);
+          }
         }
       }
 
