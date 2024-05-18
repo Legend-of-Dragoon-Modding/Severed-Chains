@@ -189,7 +189,7 @@ public final class AudioThread implements Runnable {
           final int connected = alcGetInteger(this.audioDevice, ALC_CONNECTED);
 
           if(connected == 0) {
-            LOGGER.warn("Audio device changed, re-init");
+            LOGGER.warn("Audio device changed, re-initializing");
             this.reinit();
           }
         }
