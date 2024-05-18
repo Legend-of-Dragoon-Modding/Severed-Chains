@@ -83,20 +83,24 @@ public final class AudioThread implements Runnable {
   }
 
   public void reinit() {
-    final boolean[] playing = new boolean[this.sources.size()];
-    for(int i = 0; i < this.sources.size(); i++) {
-      playing[i] = this.sources.get(i).isPlaying();
-    }
+    LOGGER.info("Reinitializing audio");
 
-    this.destroy();
-    this.initInternal();
+    synchronized(this) {
+      final boolean[] playing = new boolean[this.sources.size()];
+      for(int i = 0; i < this.sources.size(); i++) {
+        playing[i] = this.sources.get(i).isPlaying();
+      }
 
-    for(int i = 0; i < this.sources.size(); i++) {
-      final AudioSource source = this.sources.get(i);
-      source.init();
+      this.destroy();
+      this.initInternal();
 
-      if(playing[i]) {
-        source.setPlaying(true);
+      for(int i = 0; i < this.sources.size(); i++) {
+        final AudioSource source = this.sources.get(i);
+        source.init();
+
+        if(playing[i]) {
+          source.setPlaying(true);
+        }
       }
     }
   }
@@ -189,7 +193,7 @@ public final class AudioThread implements Runnable {
           final int connected = alcGetInteger(this.audioDevice, ALC_CONNECTED);
 
           if(connected == 0) {
-            LOGGER.warn("Audio device changed, re-initializing");
+            LOGGER.warn("Audio device lost");
             this.reinit();
           }
         }
