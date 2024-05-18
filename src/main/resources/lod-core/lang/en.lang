@@ -28,6 +28,7 @@ lod-core.config.resolution._4K=4K
 lod-core.config.resolution._8K=8K
 lod-core.config.resolution.NATIVE=Native (window size)
 lod-core.config.audio_device.label=Audio Device
+lod-core.config.music_volume.label=Music Volume
 
 # Campaign config
 lod-core.config.indicator_mode.label=Indicator Mode

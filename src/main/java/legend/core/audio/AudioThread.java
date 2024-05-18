@@ -139,7 +139,7 @@ public final class AudioThread implements Runnable {
   }
 
   private void openDevice() {
-    final String currentDevice = CONFIG.getConfig(CoreMod.AUDIO_DEVICE.get());
+    final String currentDevice = CONFIG.getConfig(CoreMod.AUDIO_DEVICE_CONFIG.get());
     final List<String> devices = getDevices();
 
     if(devices.contains(currentDevice)) {
@@ -164,6 +164,10 @@ public final class AudioThread implements Runnable {
   public void removeSource(final AudioSource source) {
     source.destroy();
     this.sources.remove(source);
+  }
+
+  public Sequencer getSequencer() {
+    return this.sequencer;
   }
 
   @Override

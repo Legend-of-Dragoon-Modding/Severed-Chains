@@ -50,8 +50,9 @@ public final class Sequencer extends AudioSource {
   private float reverbVolumeLeft = 0x3000 / 32_768f;
   private float reverbVolumeRight = 0x3000 / 32_768f;
 
-  private float mainVolumeLeft = 0.5f;
-  private float mainVolumeRight = 0.5f;
+  private float playerVolume = 1.0f;
+  private float engineVolumeLeft = 0.5f;
+  private float engineVolumeRight = 0.5f;
   private Fading fading = Fading.NONE;
   private float fadeInVolume;
   private float fadeOutVolumeLeft;
@@ -109,6 +110,10 @@ public final class Sequencer extends AudioSource {
     this.addCommandCallback(EndOfTrack.class, this::endOfTrack);
   }
 
+  public void setVolume(final float volume) {
+    this.playerVolume = volume;
+  }
+
   @Override
   public void tick() {
     for(int sample = 0; sample < this.outputBuffer.length; sample += 2) {
@@ -137,8 +142,8 @@ public final class Sequencer extends AudioSource {
 
       this.reverb.processReverb(this.voiceReverbBuffer[0] / 32_768f, this.voiceReverbBuffer[1] / 32_768f);
 
-      this.outputBuffer[sample] = (short)MathHelper.clamp((int)((this.voiceOutputBuffer[0] + this.reverb.getOutputLeft() * this.reverbVolumeLeft * 0x8000) * this.mainVolumeLeft), -0x8000, 0x7fff);
-      this.outputBuffer[sample + 1] = (short)MathHelper.clamp((int)((this.voiceOutputBuffer[1] + this.reverb.getOutputRight() * this.reverbVolumeRight * 0x8000) * this.mainVolumeRight), -0x8000, 0x7fff);
+      this.outputBuffer[sample    ] = (short)MathHelper.clamp((int)((this.voiceOutputBuffer[0] + this.reverb.getOutputLeft()  * this.reverbVolumeLeft  * 0x8000) * this.engineVolumeLeft  * this.playerVolume), -0x8000, 0x7fff);
+      this.outputBuffer[sample + 1] = (short)MathHelper.clamp((int)((this.voiceOutputBuffer[1] + this.reverb.getOutputRight() * this.reverbVolumeRight * 0x8000) * this.engineVolumeRight * this.playerVolume), -0x8000, 0x7fff);
     }
 
     this.bufferOutput(AL_FORMAT_STEREO16, this.outputBuffer, ACTUAL_SAMPLE_RATE);
@@ -423,8 +428,8 @@ public final class Sequencer extends AudioSource {
   }
 
   public void setMainVolume(final int left, final int right) {
-    this.mainVolumeLeft = left >= 0x80 ? 1 : left / 256.0f;
-    this.mainVolumeRight = right >= 0x80 ? 1 : right / 256.0f;
+    this.engineVolumeLeft = left >= 0x80 ? 1 : left / 256.0f;
+    this.engineVolumeRight = right >= 0x80 ? 1 : right / 256.0f;
   }
 
   private void handleFadeInOut() {
@@ -442,15 +447,15 @@ public final class Sequencer extends AudioSource {
       case FADE_IN -> {
         final float volume = (this.fadeInVolume * this.fadeCounter) / this.fadeTime;
         this.fadeCounter++;
-        this.mainVolumeLeft = volume;
-        this.mainVolumeRight = volume;
+        this.engineVolumeLeft = volume;
+        this.engineVolumeRight = volume;
       }
       case FADE_OUT -> {
         final float volumeLeft = (this.fadeOutVolumeLeft * (this.fadeTime - this.fadeCounter)) / this.fadeTime;
         final float volumeRight = (this.fadeOutVolumeRight * (this.fadeTime - this.fadeCounter)) / this.fadeTime;
         this.fadeCounter++;
-        this.mainVolumeLeft = volumeLeft;
-        this.mainVolumeRight = volumeRight;
+        this.engineVolumeLeft = volumeLeft;
+        this.engineVolumeRight = volumeRight;
       }
     }
   }
@@ -485,14 +490,14 @@ public final class Sequencer extends AudioSource {
 
   public void fadeOut(final int time) {
     if(!this.isPlaying()) {
-      this.mainVolumeLeft = 0;
-      this.mainVolumeRight = 0;
+      this.engineVolumeLeft = 0;
+      this.engineVolumeRight = 0;
       return;
     }
 
     this.fadeTime = time;
-    this.fadeOutVolumeLeft = this.mainVolumeLeft;
-    this.fadeOutVolumeRight = this.mainVolumeRight;
+    this.fadeOutVolumeLeft = this.engineVolumeLeft;
+    this.fadeOutVolumeRight = this.engineVolumeRight;
     this.fadeCounter = 0;
     this.fading = Fading.FADE_OUT;
   }
