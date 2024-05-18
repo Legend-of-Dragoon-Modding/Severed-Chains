@@ -1,7 +1,6 @@
 package legend.game.submap;
 
 import legend.core.gpu.Bpp;
-import legend.core.gpu.GpuCommandPoly;
 import legend.core.gte.MV;
 import legend.core.memory.Method;
 import legend.core.opengl.MeshObj;
@@ -39,6 +38,7 @@ import static legend.game.Scus94491BpeSegment_8007.vsyncMode_8007a3b8;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 import static legend.game.Scus94491BpeSegment_800c.lightColourMatrix_800c3508;
 import static legend.game.Scus94491BpeSegment_800c.lightDirectionMatrix_800c34e8;
+import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public class AttachedSobjEffect {
@@ -55,6 +55,7 @@ public class AttachedSobjEffect {
   private Obj tmdDust;
   private MeshObj footprints;
   private MeshObj quadDust;
+  private final MV transforms = new MV();
 
   // TODO Still need to implement law pod trail in opengl, but requires custom shader
 
@@ -303,12 +304,12 @@ public class AttachedSobjEffect {
         GTE.perspectiveTransform(-trailData.width_08, 0.0f, 0.0f);
         newVerts.vert0_00.x = GTE.getScreenX(2);
         newVerts.vert0_00.y = GTE.getScreenY(2);
-        segment.z_20 = GTE.getScreenZ(3) / 4.0f;
+        segment.z_20 = GTE.getScreenZ(3);
 
         GTE.perspectiveTransform(trailData.width_08, 0.0f, 0.0f);
         newVerts.vert1_08.x = GTE.getScreenX(2);
         newVerts.vert1_08.y = GTE.getScreenY(2);
-        segment.z_20 = GTE.getScreenZ(3) / 4.0f;
+        segment.z_20 = GTE.getScreenZ(3);
         PopMatrix();
 
         segment.tick_00 = 0;
@@ -459,21 +460,26 @@ public class AttachedSobjEffect {
 
   @Method(0x800f0970L)
   private void renderLawPodTrail(final float screenOffsetX, final float screenOffsetY) {
+    float averageZ = 0.0f;
+    int countZ = 0;
+    for(int i = 0; i < this.lawPodTrail_800d4f90.size(); i++) {
+      final LawPodTrailSegment34 segment = this.lawPodTrail_800d4f90.get(i);
+      if(segment.tick_00 <= segment.trailData_2c.maxTicks_06) {
+        averageZ += segment.z_20;
+        countZ++;
+      }
+    }
+
+    averageZ /= countZ;
+
+    final PolyBuilder builder = new PolyBuilder("Law pod trail", GL_TRIANGLES);
+
     //LAB_800f09c0
     for(int i = 0; i < this.lawPodTrail_800d4f90.size(); i++) {
       final LawPodTrailSegment34 segment = this.lawPodTrail_800d4f90.get(i);
       final LawPodTrailData18 trailData = segment.trailData_2c;
       if(segment.tick_00 <= trailData.maxTicks_06) {
-        final int tpage = segment.tpage_04;
-
         //LAB_800f0b04
-        final GpuCommandPoly cmd = new GpuCommandPoly(4)
-          .translucent(Translucency.of(tpage >>> 5 & 0b11))
-          .pos(0, screenOffsetX + segment.originVerts01_24.vert0_00.x, screenOffsetY + segment.originVerts01_24.vert0_00.y)
-          .pos(1, screenOffsetX + segment.originVerts01_24.vert1_08.x, screenOffsetY + segment.originVerts01_24.vert1_08.y)
-          .pos(2, screenOffsetX + segment.endpointVerts23_28.vert0_00.x, screenOffsetY + segment.endpointVerts23_28.vert0_00.y)
-          .pos(3, screenOffsetX + segment.endpointVerts23_28.vert1_08.x, screenOffsetY + segment.endpointVerts23_28.vert1_08.y);
-
         if(segment.tick_00 > trailData.fadeDelay_02 - 1) {
           //LAB_800f0d0c
           segment.colour_14.sub(segment.colourStep_08);
@@ -483,18 +489,35 @@ public class AttachedSobjEffect {
         }
 
         //LAB_800f0d18
-        cmd.rgb((int)(segment.colour_14.x * 255), (int)(segment.colour_14.y * 255), (int)(segment.colour_14.z * 255));
-        GPU.queueCommand(segment.z_20, cmd);
+
+        builder
+          .translucency(Translucency.of(segment.tpage_04 >>> 5 & 0b11))
+          .addVertex(segment.originVerts01_24.vert0_00.x, segment.originVerts01_24.vert0_00.y, segment.z_20 - averageZ)
+          .rgb(segment.colour_14)
+          .addVertex(segment.originVerts01_24.vert1_08.x, segment.originVerts01_24.vert1_08.y, segment.z_20 - averageZ)
+          .rgb(segment.colour_14)
+          .addVertex(segment.endpointVerts23_28.vert0_00.x, segment.endpointVerts23_28.vert0_00.y, segment.z_20 - averageZ)
+          .rgb(segment.colour_14)
+          .addVertex(segment.originVerts01_24.vert1_08.x, segment.originVerts01_24.vert1_08.y, segment.z_20 - averageZ)
+          .rgb(segment.colour_14)
+          .addVertex(segment.endpointVerts23_28.vert0_00.x, segment.endpointVerts23_28.vert0_00.y, segment.z_20 - averageZ)
+          .rgb(segment.colour_14)
+          .addVertex(segment.endpointVerts23_28.vert1_08.x, segment.endpointVerts23_28.vert1_08.y, segment.z_20 - averageZ)
+          .rgb(segment.colour_14)
+        ;
 
         segment.tick_00++;
       } else {
         segment.free();
         trailData.countSegments_01--;
       }
-      //LAB_800f0d68
     }
-    //LAB_800f0d74
-    //LAB_800f0dc8
+
+    final Obj obj = builder.build();
+    obj.delete();
+
+    this.transforms.transfer.set(GPU.getOffsetX() + screenOffsetX, GPU.getOffsetY() + screenOffsetY, averageZ);
+    RENDERER.queueOrthoModel(obj, this.transforms);
   }
 
   @Method(0x800f0440L)
