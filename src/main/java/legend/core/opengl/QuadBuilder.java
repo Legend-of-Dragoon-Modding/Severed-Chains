@@ -100,6 +100,7 @@ public class QuadBuilder {
   public QuadBuilder uvSize(final float w, final float h) {
     this.addFirstQuad();
     this.current.uvSize.set(w, h);
+    this.flags |= TmdObjLoader.TEXTURED_FLAG;
     return this;
   }
 
