@@ -235,6 +235,7 @@ public class RenderEngine {
   private final QueuePool<QueuedModel<VoidShaderOptions>> modelPool = new QueuePool<>(QueuedModel::new);
   private final QueuePool<QueuedModel<VoidShaderOptions>> orthoPool = new QueuePool<>(QueuedModel::new);
   private final QueuePool<QueuedModel> shaderPool = new QueuePool<>(QueuedModel::new);
+  private final QueuePool<QueuedModel> shaderOrthoPool = new QueuePool<>(QueuedModel::new);
   private final Vector3f tempColour = new Vector3f();
   private boolean needsSorting;
 
@@ -476,6 +477,7 @@ public class RenderEngine {
         this.modelPool.reset();
         this.orthoPool.reset();
         this.shaderPool.reset();
+        this.shaderOrthoPool.reset();
         this.renderCallback.run();
         if(this.frameAdvanceSingle) {
           this.frameAdvanceSingle = false;
@@ -503,10 +505,11 @@ public class RenderEngine {
 
         RENDERER.setProjectionMode(ProjectionMode._3D);
         this.renderPool(this.modelPool, true);
-        this.renderShaderPool();
+        this.renderShaderPool(this.shaderPool);
 
         RENDERER.setProjectionMode(ProjectionMode._2D);
         this.renderPool(this.orthoPool, false);
+        this.renderShaderPool(this.shaderOrthoPool);
 
         RENDERER.setProjectionMode(ProjectionMode._3D);
         this.renderPoolTranslucent(this.modelPool);
@@ -540,11 +543,13 @@ public class RenderEngine {
           this.modelPool.reset();
           this.orthoPool.reset();
           this.shaderPool.reset();
+          this.shaderOrthoPool.reset();
         }
       } else if(!this.paused) {
         this.orthoPool.reset();
         this.modelPool.reset();
         this.shaderPool.reset();
+        this.shaderOrthoPool.reset();
       }
 
       if(!this.paused) {
@@ -596,12 +601,28 @@ public class RenderEngine {
     });
   }
 
-  private void renderShaderPool() {
+  private void renderShaderPool(final QueuePool<QueuedModel> pool) {
     glDisable(GL_CULL_FACE);
-    glEnable(GL_BLEND);
+    glDisable(GL_BLEND);
 
-    for(int i = 0; i < this.shaderPool.size(); i++) {
-      final QueuedModel<?> entry = this.shaderPool.get(i);
+    Translucency currentTrans = null;
+
+    for(int i = 0; i < pool.size(); i++) {
+      final QueuedModel<?> entry = pool.get(i);
+
+      if(entry.hasTranslucency()) {
+        if(currentTrans == null) {
+          glEnable(GL_BLEND);
+        }
+
+        if(currentTrans != entry.translucency) {
+          currentTrans = entry.translucency;
+          currentTrans.setGlState();
+        }
+      } else if(currentTrans != null) {
+        currentTrans = null;
+        glDisable(GL_BLEND);
+      }
 
       entry.useTexture();
 
@@ -1005,6 +1026,22 @@ public class RenderEngine {
     }
 
     final QueuedModel<Options> entry = this.shaderPool.acquire();
+    entry.reset();
+    entry.obj = obj;
+    entry.shader = ShaderManager.getShader(shaderType);
+    entry.shaderOptions = entry.shader.makeOptions();
+    entry.transforms.set(mv).setTranslation(mv.transfer);
+    entry.lightTransforms.set(entry.transforms);
+    entry.depthOffset(zOffset_1f8003e8 * (1 << zShift_1f8003c4));
+    return entry;
+  }
+
+  public <Options extends ShaderOptions<Options>> QueuedModel<Options> queueOrthoModel(final Obj obj, final MV mv, final ShaderType<Options> shaderType) {
+    if(obj == null) {
+      throw new IllegalArgumentException("obj is null");
+    }
+
+    final QueuedModel<Options> entry = this.shaderOrthoPool.acquire();
     entry.reset();
     entry.obj = obj;
     entry.shader = ShaderManager.getShader(shaderType);
