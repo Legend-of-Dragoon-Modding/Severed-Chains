@@ -161,6 +161,7 @@ import static legend.game.combat.Battle.melbuStageIndices_800fb064;
 import static legend.game.combat.Battle.seed_800fa754;
 import static legend.game.combat.Battle.stageDarkeningClutWidth_800c695c;
 import static legend.game.combat.Battle.stageDarkening_800c6958;
+import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
 
 public final class SEffe {
@@ -258,15 +259,15 @@ public final class SEffe {
 
   /**
    * <ol start="0">
-   *   <li>{@link SEffe#FUN_80109358}</li>
-   *   <li>{@link SEffe#FUN_80109358}</li>
+   *   <li>{@link SEffe#renderScreenDistortionWaveEffect}</li>
+   *   <li>{@link SEffe#renderScreenDistortionWaveEffect}</li>
    *   <li>{@link SEffe#renderScreenDistortionBlurEffect}</li>
    * </ol>
    */
   private static final BiConsumer<ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>>, EffectManagerData6c<EffectManagerParams.VoidType>>[] screenDistortionEffectRenderers_80119fd4 = new BiConsumer[3];
   static {
-    screenDistortionEffectRenderers_80119fd4[0] = SEffe::FUN_80109358;
-    screenDistortionEffectRenderers_80119fd4[1] = SEffe::FUN_80109358;
+    screenDistortionEffectRenderers_80119fd4[0] = SEffe::renderScreenDistortionWaveEffect;
+    screenDistortionEffectRenderers_80119fd4[1] = SEffe::renderScreenDistortionWaveEffect;
     screenDistortionEffectRenderers_80119fd4[2] = SEffe::renderScreenDistortionBlurEffect;
   }
   /**
@@ -3197,56 +3198,86 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
+  /** Used in burning wave, psych bomb */
   @Method(0x80109358L)
-  public static void FUN_80109358(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
-    final ScreenDistortionEffectData08 sp48 = (ScreenDistortionEffectData08)data.effect_44;
+  public static void renderScreenDistortionWaveEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
+    final ScreenDistortionEffectData08 effect = (ScreenDistortionEffectData08)data.effect_44;
 
     // Dunno why these actually need to be truncated instead of fractions, but it breaks the effect otherwise
-    final float sp30 = (int)(data.params_10.scale_16.x * 0x1000) >> 8;
-    final float sp2c = (int)(data.params_10.scale_16.y * 0x1000) >> 11;
-    final float sp38 = (int)(data.params_10.scale_16.z * 0x1000) * 15 >> 9;
+    final float multiplierX = (int)(data.params_10.scale_16.x * 0x1000) >> 8;
+    final float multiplierHeight = (int)(data.params_10.scale_16.y * 0x1000) >> 11;
+    final float rowLimit = (int)(data.params_10.scale_16.z * 0x1000) * 15 >> 9;
+
+    final float inverseScreenHeight = 1.0f / 240.0f;
+
+    final PolyBuilder builder = new PolyBuilder("Wave effect", GL_TRIANGLES)
+      .bpp(Bpp.BITS_24)
+      .translucency(Translucency.of(data.params_10.flags_00 >>> 28 & 0x3));
 
     //LAB_801093f0
-    for(int s3 = 1; s3 >= -1; s3 -= 2) {
-      final float angle = sp48.angle_00;
-      float angle1 = angle;
-      float angle2 = angle;
-      float s5 = s3 == 1 ? 0.0f : -1.0f;
-      int sp40 = s3 == 1 ? 120 : 119;
+    // whichHalf: 1 = bottom, -1 = top
+    for(int whichHalf = 1; whichHalf >= -1; whichHalf -= 2) {
+      float angle1 = effect.angle_00;
+      float angle2 = effect.angle_00;
+      float rowOffset = whichHalf == 1 ? 0.0f : -1.0f;
+      int v = whichHalf == 1 ? 120 : 119;
 
       //LAB_80109430
       //LAB_8010944c
-      while(s3 == -1 && s5 > -sp38 || s3 == 1 && s5 < sp38) {
-        float s2 = MathHelper.sin(angle1) * sp2c + 1.0f + sp2c;
+      while(whichHalf == -1 && rowOffset > -rowLimit || whichHalf == 1 && rowOffset < rowLimit) {
+        float height = (MathHelper.sin(angle1) + 1.0f) * multiplierHeight + 1.0f;
 
-        if((int)s2 == 0.0f) {
-          s2 = 1.0f;
+        if((int)height == 0.0f) {
+          height = 1.0f;
         }
 
         //LAB_8010949c
         //LAB_801094b8
-        for(int s6 = 0; s6 < (int)s2; s6++) {
-          final int x = (int)(MathHelper.sin(angle2) * sp30);
-          final int y = (int)(s5 + s6 * s3);
+        for(int row = 0; row < (int)height; row++) {
+          final int x = (int)(MathHelper.sin(angle2) * multiplierX);
+          final int y = (int)(row * whichHalf + rowOffset);
 
-          GPU.queueCommand(30, new GpuCommandQuad()
-            .bpp(Bpp.BITS_15)
-            .translucent(Translucency.of(data.params_10.flags_00 >>> 28 & 3))
-            .rgb(data.params_10.colour_1c)
-            .pos(-160 - x, y, 320, 1)
-            .uv(0, sp40)
-            .texture(GPU.getDisplayBuffer())
-          );
+          addLineToEffect(builder, GPU.getOffsetX() - 160.0f - x, GPU.getOffsetY() + y, 1.0f - v * inverseScreenHeight, data.params_10.colour_1c.x / 255.0f, data.params_10.colour_1c.y / 255.0f, data.params_10.colour_1c.z / 255.0f);
 
-          angle2 += s3 * 0.05f;
+          angle2 += whichHalf * 0.05f;
         }
 
         //LAB_80109678
-        angle1 += s2 * 0.05f;
-        sp40 += s3;
-        s5 += s2 * s3;
+        angle1 += height * 0.05f;
+        v += whichHalf;
+        rowOffset += height * whichHalf;
       }
     }
+
+    final MV transforms = new MV();
+    transforms.transfer.z = 120.0f;
+
+    final Obj obj = builder.build();
+    obj.delete();
+    RENDERER.queueOrthoModel(obj, transforms)
+      .texture(RENDERER.getLastFrame());
+  }
+
+  private static void addLineToEffect(final PolyBuilder builder, final float x, final float y, final float v, final float r, final float g, final float b) {
+    builder
+      .addVertex(0.0f, y, 0.0f)
+      .uv(x / 320.0f, v)
+      .rgb(r, g, b)
+      .addVertex(320.0f, y, 0.0f)
+      .uv(x / 320.0f + 1.0f, v)
+      .rgb(r, g, b)
+      .addVertex(0.0f, y + 1.0f, 0.0f)
+      .uv(x / 320.0f, v - 1.0f / 240.0f)
+      .rgb(r, g, b)
+      .addVertex(320.0f, y, 0.0f)
+      .uv(x / 320.0f + 1.0f, v)
+      .rgb(r, g, b)
+      .addVertex(0.0f, y + 1.0f, 0.0f)
+      .uv(x / 320.0f, v - 1.0f / 240.0f)
+      .rgb(r, g, b)
+      .addVertex(320.0f, y + 1.0f, 0.0f)
+      .uv(x / 320.0f + 1.0f, v - 1.0f / 240.0f)
+      .rgb(r, g, b);
   }
 
   @Method(0x801097e0L)
