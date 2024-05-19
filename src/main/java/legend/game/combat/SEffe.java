@@ -9,7 +9,6 @@ import legend.core.gpu.Gpu;
 import legend.core.gpu.GpuCommand;
 import legend.core.gpu.GpuCommandCopyDisplayBufferToVram;
 import legend.core.gpu.GpuCommandPoly;
-import legend.core.gpu.GpuCommandQuad;
 import legend.core.gpu.GpuCommandSetMaskBit;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
@@ -3249,12 +3248,12 @@ public final class SEffe {
       }
     }
 
-    final MV transforms = new MV();
-    transforms.transfer.z = 120.0f;
+    effect.transforms.identity();
+    effect.transforms.transfer.z = 120.0f;
 
     final Obj obj = builder.build();
     obj.delete();
-    RENDERER.queueOrthoModel(obj, transforms)
+    RENDERER.queueOrthoModel(obj, effect.transforms)
       .texture(RENDERER.getLastFrame());
   }
 
@@ -3282,13 +3281,15 @@ public final class SEffe {
 
   @Method(0x801097e0L)
   public static void renderScreenDistortionBlurEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
-    GPU.queueCommand(30, new GpuCommandQuad()
-      .bpp(Bpp.BITS_15)
-      .translucent(Translucency.of(data.params_10.flags_00 >>> 28 & 3))
-      .rgb(data.params_10.colour_1c)
-      .pos(-160, -120, 320, 240)
-      .texture(GPU.getDisplayBuffer())
-    );
+    final ScreenDistortionEffectData08 effect = (ScreenDistortionEffectData08)data.effect_44;
+
+    effect.transforms.scaling(320.0f, 240.0f, 1.0f);
+    effect.transforms.transfer.z = 120.0f;
+
+    RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, effect.transforms)
+      .translucency(Translucency.of(data.params_10.flags_00 >>> 28 & 0x3))
+      .colour(data.params_10.colour_1c.x / 255.0f, data.params_10.colour_1c.y / 255.0f, data.params_10.colour_1c.z / 255.0f)
+      .texture(RENDERER.getLastFrame());
   }
 
   @Method(0x80109a4cL)
