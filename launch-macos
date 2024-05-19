@@ -10,4 +10,4 @@ then
   ./download-java
 fi
 
-"$JAVA" -XstartOnFirstThread -cp "libs/*:lod-game-@version@.jar" legend.game.Main -Xmx2G -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma
+"$JAVA" -XstartOnFirstThread -Djoml.fastmath -Djoml.sinLookup -Djoml.useMathFma -cp "libs/*:lod-game-@version@.jar" legend.game.Main -Xmx2G
