@@ -157,13 +157,17 @@ public final class AudioThread implements Runnable {
   }
 
   public <T extends AudioSource> T addSource(final T source) {
-    this.sources.add(source);
-    return source;
+    synchronized(this) {
+      this.sources.add(source);
+      return source;
+    }
   }
 
   public void removeSource(final AudioSource source) {
-    source.destroy();
-    this.sources.remove(source);
+    synchronized(this) {
+      source.destroy();
+      this.sources.remove(source);
+    }
   }
 
   public Sequencer getSequencer() {

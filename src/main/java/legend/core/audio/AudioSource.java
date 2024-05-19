@@ -53,22 +53,27 @@ public abstract class AudioSource {
 
     for(int buffer = 0; buffer < processedBufferCount; buffer++) {
       final int processedBufferName = alSourceUnqueueBuffers(this.sourceId);
-      this.buffers[++this.bufferIndex] = processedBufferName;
+
+      synchronized(this) {
+        this.buffers[++this.bufferIndex] = processedBufferName;
+      }
     }
   }
 
   protected void bufferOutput(final int format, final short[] buffer, final int sampleRate) {
-    final int bufferId = this.buffers[this.bufferIndex--];
+    final int bufferId;
+    synchronized(this) {
+      bufferId = this.buffers[this.bufferIndex--];
+    }
+
     alBufferData(bufferId, format, buffer, sampleRate);
     alSourceQueueBuffers(this.sourceId, bufferId);
   }
 
   protected void play() {
-    if(alGetSourcei(this.sourceId, AL_SOURCE_STATE) == AL_PLAYING) {
-      return;
+    if(alGetSourcei(this.sourceId, AL_SOURCE_STATE) != AL_PLAYING) {
+      alSourcePlay(this.sourceId);
     }
-
-    alSourcePlay(this.sourceId);
   }
 
   protected void stop() {
