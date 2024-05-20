@@ -4596,9 +4596,9 @@ public final class SEffe {
     final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state = allocateEffectManager(
       "StarChildrenMeteorEffect10",
       script.scriptState_04,
-      SEffe::tickStarChildrenMeteorEffect,
-      SEffe::renderStarChildrenMeteorEffect,
-      null,
+      StarChildrenMeteorEffect10::tickStarChildrenMeteorEffect,
+      StarChildrenMeteorEffect10::renderStarChildrenMeteorEffect,
+      StarChildrenMeteorEffect10::destructor,
       new StarChildrenMeteorEffect10(meteorCount)
     );
 
@@ -4641,87 +4641,6 @@ public final class SEffe {
     //LAB_8010e2b0
     script.params_20[0].set(state.index);
     return FlowControl.CONTINUE;
-  }
-
-  @Method(0x8010e2fcL)
-  public static void renderStarChildrenMeteorEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
-    final StarChildrenMeteorEffect10 meteorEffect = (StarChildrenMeteorEffect10)manager.effect_44;
-    final int flags = manager.params_10.flags_00;
-    final int tpage = (meteorEffect.metrics_04.v_02 & 0x100) >>> 4 | (meteorEffect.metrics_04.u_00 & 0x3ff) >>> 6;
-    final int vramX = (tpage & 0b1111) * 64;
-    final int vramY = (tpage & 0b10000) != 0 ? 256 : 0;
-    final int leftU = (meteorEffect.metrics_04.u_00 & 0x3f) * 4;
-    final int rightU = leftU + meteorEffect.metrics_04.w_04;
-    final int bottomV = meteorEffect.metrics_04.v_02;
-    final int topV = bottomV + meteorEffect.metrics_04.h_05;
-    final int clutX = meteorEffect.metrics_04.clut_06 << 4 & 0x3ff;
-    final int clutY = meteorEffect.metrics_04.clut_06 >>> 6 & 0x1ff;
-    final int r = manager.params_10.colour_1c.x;
-    final int g = manager.params_10.colour_1c.y;
-    final int b = manager.params_10.colour_1c.z;
-    final StarChildrenMeteorEffectInstance10[] meteorArray = meteorEffect.meteorArray_0c;
-
-    //LAB_8010e414
-    for(int i = 0; i < meteorEffect.count_00; i++) {
-      final StarChildrenMeteorEffectInstance10 meteor = meteorArray[i];
-
-      final int w = (int)(meteor.scaleW_0c * meteorEffect.metrics_04.w_04);
-      final int h = (int)(meteor.scaleH_0e * meteorEffect.metrics_04.h_05);
-      final int x = meteor.centerOffsetX_02 - w / 2;
-      final int y = meteor.centerOffsetY_04 - h / 2;
-
-      final GpuCommandPoly cmd = new GpuCommandPoly(4)
-        .bpp(Bpp.BITS_4)
-        .clut(clutX, clutY)
-        .vramPos(vramX, vramY)
-        .rgb(r, g, b)
-        .pos(0, x, y)
-        .pos(1, x + w, y)
-        .pos(2, x, y + h)
-        .pos(3, x + w, y + h)
-        .uv(0, leftU, bottomV)
-        .uv(1, rightU, bottomV)
-        .uv(2, leftU, topV)
-        .uv(3, rightU, topV);
-
-      if((flags >>> 30 & 1) != 0) {
-        cmd.translucent(Translucency.of(flags >>> 28 & 0b11));
-      }
-
-      GPU.queueCommand(30, cmd);
-      //LAB_8010e678
-    }
-    //LAB_8010e694
-  }
-
-  @Method(0x8010e6b0L)
-  public static void tickStarChildrenMeteorEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
-    final StarChildrenMeteorEffect10 meteorEffect = (StarChildrenMeteorEffect10)manager.effect_44;
-
-    //LAB_8010e6ec
-    final StarChildrenMeteorEffectInstance10[] meteorArray = meteorEffect.meteorArray_0c;
-    for(int i = 0; i < meteorEffect.count_00; i++) {
-      final StarChildrenMeteorEffectInstance10 meteor = meteorArray[i];
-      meteor.centerOffsetX_02 += (short)(MathHelper.sin(manager.params_10.rot_10.x) * 32 * manager.params_10.scale_16.x * meteor.scale_0a);
-      meteor.centerOffsetY_04 += (short)(MathHelper.cos(manager.params_10.rot_10.x) * 32 * manager.params_10.scale_16.x * meteor.scale_0a);
-
-      if(meteor.scale_0a * 120 + 50 < meteor.centerOffsetY_04) {
-        meteor.centerOffsetY_04 = -120;
-        meteor.centerOffsetX_02 = rand() % 321 - 160;
-      }
-
-      //LAB_8010e828
-      final int centerOffsetX = meteor.centerOffsetX_02;
-      if(centerOffsetX > 160) {
-        meteor.centerOffsetX_02 = -160;
-        //LAB_8010e848
-      } else if(centerOffsetX < -160) {
-        //LAB_8010e854
-        meteor.centerOffsetX_02 = 160;
-      }
-      //LAB_8010e860
-    }
-    //LAB_8010e87c
   }
 
   @ScriptDescription("Allocates a Moon Light stars effect")
