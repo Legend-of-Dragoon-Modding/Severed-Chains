@@ -1628,11 +1628,15 @@ public class Battle extends EngineState {
       this.updateGameStateAndDeallocateMenu();
       this.setStageHasNoModel();
 
-      for(int i = 0; i < battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00.length; i++) {
-        if(battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].obj != null) {
-          battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].obj.delete();
-          battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].obj = null;
+      if(battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00 != null) {
+        for(int i = 0; i < battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00.length; i++) {
+          if(battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].obj != null) {
+            battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].obj.delete();
+            battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00[i].obj = null;
+          }
         }
+
+        battlePreloadedEntities_1f8003f4.stage_963c.dobj2s_00 = null;
       }
 
       if(battlePreloadedEntities_1f8003f4.skyboxObj != null) {
