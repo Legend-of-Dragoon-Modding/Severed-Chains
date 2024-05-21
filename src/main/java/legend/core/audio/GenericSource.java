@@ -5,7 +5,7 @@ public class GenericSource extends AudioSource {
   private final int sampleRate;
 
   public GenericSource(final int format, final int sampleRate) {
-    super(8);
+    super(16);
     this.format = format;
     this.sampleRate = sampleRate;
     this.setPlaying(true);
