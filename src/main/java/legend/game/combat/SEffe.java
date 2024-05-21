@@ -640,60 +640,6 @@ public final class SEffe {
     //LAB_800e7930
   }
 
-  /**
-   * Renderer for some kind of effect sprites like those in HUD DEFF.
-   * Used for example for sprite effect overlays on red glow in Death Dimension.
-   */
-  @Method(0x800e7944L)
-  public static void FUN_800e7944(final GenericSpriteEffect24 spriteEffect, final Vector3f translation, final int zMod) {
-    if(spriteEffect.flags_00 >= 0) { // No errors
-      final Vector3f finalTranslation = new Vector3f();
-      translation.mul(worldToScreenMatrix_800c3548, finalTranslation);
-      finalTranslation.add(worldToScreenMatrix_800c3548.transfer);
-
-      final float x0 = MathHelper.safeDiv(finalTranslation.x * projectionPlaneDistance_1f8003f8, finalTranslation.z);
-      final float y0 = MathHelper.safeDiv(finalTranslation.y * projectionPlaneDistance_1f8003f8, finalTranslation.z);
-
-      // zMod needs to be ignored in z check or poly positions will overflow at low z values
-      float z = zMod + finalTranslation.z / 4.0f;
-      if(finalTranslation.z / 4.0f >= 40 && z >= 40) {
-        if(z > 0x3ff8) {
-          z = 0x3ff8;
-        }
-
-        //LAB_800e7a38
-        final float zDepth = MathHelper.safeDiv(projectionPlaneDistance_1f8003f8 * 0x1000 / 4.0f, finalTranslation.z / 4.0f);
-        final float x1 = spriteEffect.x_04 * spriteEffect.scaleX_1c / 8 * zDepth / 8;
-        final float x2 = x1 + spriteEffect.w_08 * spriteEffect.scaleX_1c / 8 * zDepth / 8;
-        final float y1 = spriteEffect.y_06 * spriteEffect.scaleY_1e / 8 * zDepth / 8;
-        final float y2 = y1 + spriteEffect.h_0a * spriteEffect.scaleY_1e / 8 * zDepth / 8;
-        final float sin = MathHelper.sin(spriteEffect.angle_20);
-        final float cos = MathHelper.cos(spriteEffect.angle_20);
-
-        final GpuCommandPoly cmd = new GpuCommandPoly(4)
-          .clut(spriteEffect.clutX_10, spriteEffect.clutY_12)
-          .vramPos((spriteEffect.tpage_0c & 0b1111) * 64, (spriteEffect.tpage_0c & 0b10000) != 0 ? 256 : 0)
-          .rgb(spriteEffect.r_14, spriteEffect.g_15, spriteEffect.b_16)
-          .pos(0, x0 + x1 * cos - y1 * sin, y0 + x1 * sin + y1 * cos)
-          .pos(1, x0 + x2 * cos - y1 * sin, y0 + x2 * sin + y1 * cos)
-          .pos(2, x0 + x1 * cos - y2 * sin, y0 + x1 * sin + y2 * cos)
-          .pos(3, x0 + x2 * cos - y2 * sin, y0 + x2 * sin + y2 * cos)
-          .uv(0, spriteEffect.u_0e, spriteEffect.v_0f)
-          .uv(1, spriteEffect.w_08 + spriteEffect.u_0e - 1, spriteEffect.v_0f)
-          .uv(2, spriteEffect.u_0e, spriteEffect.h_0a + spriteEffect.v_0f - 1)
-          .uv(3, spriteEffect.w_08 + spriteEffect.u_0e - 1, spriteEffect.h_0a + spriteEffect.v_0f - 1);
-
-        if((spriteEffect.flags_00 & 0x4000_0000) != 0) {
-          cmd.translucent(Translucency.of(spriteEffect.flags_00 >>> 28 & 0b11));
-        }
-
-        GPU.queueCommand(z / 4.0f, cmd);
-      }
-    }
-
-    //LAB_800e7d8c
-  }
-
   @Method(0x800e7dbcL)
   public static float transformToScreenSpace(final Vector2f out, final Vector3f translation) {
     final Vector3f transformed = new Vector3f();
@@ -846,11 +792,6 @@ public final class SEffe {
     //LAB_800e8fb8
   }
 
-  @Method(0x800e7ea4L)
-  public static void renderGenericSpriteAtZOffset0(final GenericSpriteEffect24 spriteEffect, final Vector3f translation) {
-    FUN_800e7944(spriteEffect, translation, 0);
-  }
-
   /** Considers all parents */
   @Method(0x800e8594L)
   public static void calculateEffectTransforms(final MV transformMatrix, final EffectManagerData6c<?> manager) {
@@ -947,7 +888,8 @@ public final class SEffe {
         FUN_800e75ac(spriteEffect, transformMatrix);
       } else {
         //LAB_800e9574
-        FUN_800e7944(spriteEffect, transformMatrix.transfer, managerInner.z_22);
+        spriteEffect.render(transformMatrix.transfer, managerInner.z_22);
+        spriteEffect.delete();
       }
     }
     //LAB_800e9580
@@ -4375,18 +4317,7 @@ public final class SEffe {
   @Method(0x8010d5b4L)
   public static void renderWsDragoonTransformationFeathersEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
     final WsDragoonTransformationFeathersEffect14 effect = (WsDragoonTransformationFeathersEffect14)manager.effect_44;
-    final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24();
-
-    spriteEffect.flags_00 = manager.params_10.flags_00;
-    spriteEffect.x_04 = (short)(-effect.width_0a / 2);
-    spriteEffect.y_06 = (short)(-effect.height_0c / 2);
-    spriteEffect.w_08 = effect.width_0a;
-    spriteEffect.h_0a = effect.height_0c;
-    spriteEffect.tpage_0c = (effect.v_08 & 0x100) >>> 4 | (effect.u_06 & 0x3ff) >>> 6;
-    spriteEffect.u_0e = (effect.u_06 & 0x3f) * 4;
-    spriteEffect.v_0f = effect.v_08;
-    spriteEffect.clutX_10 = effect.clut_0e << 4 & 0x3ff;
-    spriteEffect.clutY_12 = effect.clut_0e >>> 6 & 0x1ff;
+    final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24(manager.params_10.flags_00, -effect.width_0a / 2, -effect.height_0c / 2, effect.width_0a, effect.height_0c, (effect.v_08 & 0x100) >>> 4 | (effect.u_06 & 0x3ff) >>> 6, effect.clut_0e << 4 & 0x3ff, effect.clut_0e >>> 6 & 0x1ff, (effect.u_06 & 0x3f) * 4, effect.v_08);
 
     final Vector3f translation = new Vector3f();
 
@@ -4411,7 +4342,8 @@ public final class SEffe {
         spriteEffect.scaleY_1e = manager.params_10.scale_16.y;
         spriteEffect.angle_20 = feather.spriteAngle_6e;
         translation.set(feather.translation_08).add(manager.params_10.trans_04);
-        renderGenericSpriteAtZOffset0(spriteEffect, translation);
+        spriteEffect.render(translation);
+        spriteEffect.delete();
       }
     }
   }
@@ -4712,18 +4644,7 @@ public final class SEffe {
   @Method(0x8010ec08L)
   public static void renderMoonlightStarsEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> manager) {
     final MoonlightStarsEffect18 starEffect = (MoonlightStarsEffect18)manager.effect_44;
-
-    final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24();
-    spriteEffect.flags_00 = manager.params_10.flags_00;
-    spriteEffect.x_04 = (short)(-starEffect.metrics_04.w_04 / 2);
-    spriteEffect.y_06 = (short)(-starEffect.metrics_04.h_05 / 2);
-    spriteEffect.w_08 = starEffect.metrics_04.w_04;
-    spriteEffect.h_0a = starEffect.metrics_04.h_05;
-    spriteEffect.tpage_0c = (starEffect.metrics_04.v_02 & 0x100) >>> 4 | (starEffect.metrics_04.u_00 & 0x3ff) >>> 6;
-    spriteEffect.u_0e = (starEffect.metrics_04.u_00 & 0x3f) << 2;
-    spriteEffect.v_0f = starEffect.metrics_04.v_02;
-    spriteEffect.clutX_10 = starEffect.metrics_04.clut_06 << 4 & 0x3ff;
-    spriteEffect.clutY_12 = starEffect.metrics_04.clut_06 >>> 6 & 0x1ff;
+    final GenericSpriteEffect24 spriteEffect = new GenericSpriteEffect24(manager.params_10.flags_00, -starEffect.metrics_04.w_04 / 2, -starEffect.metrics_04.h_05 / 2, starEffect.metrics_04.w_04, starEffect.metrics_04.h_05, (starEffect.metrics_04.v_02 & 0x100) >>> 4 | (starEffect.metrics_04.u_00 & 0x3ff) >>> 6, starEffect.metrics_04.clut_06 << 4 & 0x3ff, starEffect.metrics_04.clut_06 >>> 6 & 0x1ff, (starEffect.metrics_04.u_00 & 0x3f) << 2, starEffect.metrics_04.v_02);
 
     final Vector3f translation = new Vector3f();
 
@@ -4743,7 +4664,8 @@ public final class SEffe {
       spriteEffect.scaleY_1e = manager.params_10.scale_16.y;
       spriteEffect.angle_20 = manager.params_10.rot_10.x;
       translation.set(manager.params_10.trans_04).add(star.translation_04);
-      renderGenericSpriteAtZOffset0(spriteEffect, translation);
+      spriteEffect.render(translation);
+      spriteEffect.delete();
     }
 
     //LAB_8010edac

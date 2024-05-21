@@ -4315,7 +4315,7 @@ public class Battle extends EngineState {
       script.scriptState_04,
       deathEffect::monsterDeathEffectTicker,
       deathEffect::monsterDeathEffectRenderer,
-      null,
+      deathEffect::destructor,
       deathEffect
     );
 
