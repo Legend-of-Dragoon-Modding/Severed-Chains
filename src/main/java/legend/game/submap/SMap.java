@@ -3999,8 +3999,8 @@ public class SMap extends EngineState {
   @ScriptParam(direction = ScriptParam.Direction.OUT, type = ScriptParam.Type.INT, name = "y", description = "The camera Y offset")
   @Method(0x800e68b4L)
   private FlowControl scriptGetCameraOffset(final RunningScript<?> script) {
-    script.params_20[0].set((int)this.screenOffset_800cb568.x);
-    script.params_20[1].set((int)this.screenOffset_800cb568.y);
+    script.params_20[0].set((int)this.screenOffsetDest.x);
+    script.params_20[1].set((int)this.screenOffsetDest.y);
     return FlowControl.CONTINUE;
   }
 
