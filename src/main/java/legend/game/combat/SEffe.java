@@ -3180,6 +3180,8 @@ public final class SEffe {
     final float multiplierHeight = (int)(data.params_10.scale_16.y * 0x1000) >> 11;
     final float rowLimit = (int)(data.params_10.scale_16.z * 0x1000) * 15 >> 9;
 
+    final float fullWidth = Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4);
+    final float extraWidth = fullWidth - displayWidth_1f8003e0;
     final float inverseScreenHeight = 1.0f / 240.0f;
 
     final PolyBuilder builder = new PolyBuilder("Wave effect", GL_TRIANGLES)
@@ -3221,8 +3223,8 @@ public final class SEffe {
       }
     }
 
-    effect.transforms.identity();
-    effect.transforms.transfer.z = 120.0f;
+    effect.transforms.scaling(fullWidth, 1.0f, 1.0f);
+    effect.transforms.transfer.set(-extraWidth / 2, 0.0f, 120.0f);
 
     final Obj obj = builder.build();
     obj.delete();
@@ -3235,19 +3237,19 @@ public final class SEffe {
       .addVertex(0.0f, y, 0.0f)
       .uv(x / 320.0f, v)
       .rgb(r, g, b)
-      .addVertex(320.0f, y, 0.0f)
+      .addVertex(1.0f, y, 0.0f)
       .uv(x / 320.0f + 1.0f, v)
       .rgb(r, g, b)
       .addVertex(0.0f, y + 1.0f, 0.0f)
       .uv(x / 320.0f, v - 1.0f / 240.0f)
       .rgb(r, g, b)
-      .addVertex(320.0f, y, 0.0f)
+      .addVertex(1.0f, y, 0.0f)
       .uv(x / 320.0f + 1.0f, v)
       .rgb(r, g, b)
       .addVertex(0.0f, y + 1.0f, 0.0f)
       .uv(x / 320.0f, v - 1.0f / 240.0f)
       .rgb(r, g, b)
-      .addVertex(320.0f, y + 1.0f, 0.0f)
+      .addVertex(1.0f, y + 1.0f, 0.0f)
       .uv(x / 320.0f + 1.0f, v - 1.0f / 240.0f)
       .rgb(r, g, b);
   }
@@ -3256,12 +3258,15 @@ public final class SEffe {
   public static void renderScreenDistortionBlurEffect(final ScriptState<EffectManagerData6c<EffectManagerParams.VoidType>> state, final EffectManagerData6c<EffectManagerParams.VoidType> data) {
     final ScreenDistortionEffectData08 effect = (ScreenDistortionEffectData08)data.effect_44;
 
-    effect.transforms.scaling(320.0f, 240.0f, 1.0f);
-    effect.transforms.transfer.z = 120.0f;
+    // Make sure effect fills the whole screen
+    final float fullWidth = Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4);
+    final float extraWidth = fullWidth - displayWidth_1f8003e0;
+    effect.transforms.scaling(fullWidth, displayHeight_1f8003e4, 1.0f);
+    effect.transforms.transfer.set(-extraWidth / 2, 0.0f, 120.0f);
 
     RENDERER.queueOrthoModel(RENDERER.renderBufferQuad, effect.transforms)
       .translucency(Translucency.of(data.params_10.flags_00 >>> 28 & 0x3))
-      .colour(data.params_10.colour_1c.x / 255.0f, data.params_10.colour_1c.y / 255.0f, data.params_10.colour_1c.z / 255.0f)
+      .colour(data.params_10.colour_1c.x / 128.0f, data.params_10.colour_1c.y / 128.0f, data.params_10.colour_1c.z / 128.0f)
       .texture(RENDERER.getLastFrame());
   }
 
