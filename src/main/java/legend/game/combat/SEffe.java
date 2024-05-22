@@ -1239,19 +1239,20 @@ public final class SEffe {
    * @param xy 4 vertices (note: data was originally passed in as ints so you need to change the calling code)
    */
   @Method(0x80102f7cL)
-  public static void renderSegmentGradient(final Vector3i colour1, final Vector3i colour2, final Vector2f[] xy, final float a3, final int a4, final Translucency translucency) {
-    final GpuCommandPoly cmd = new GpuCommandPoly(4)
-      .translucent(translucency)
-      .pos(0, xy[0].x, xy[0].y)
-      .pos(1, xy[1].x, xy[1].y)
-      .pos(2, xy[2].x, xy[2].y)
-      .pos(3, xy[3].x, xy[3].y)
-      .monochrome(0, 0)
-      .rgb(1, colour2.x >>> 8, colour2.y >>> 8, colour2.z >>> 8)
-      .monochrome(2, 0)
-      .rgb(3, colour1.x >>> 8, colour1.y >>> 8, colour1.z >>> 8);
-
-    GPU.queueCommand((a3 + a4) / 4.0f, cmd);
+  public static void renderSegmentGradient(final PolyBuilder builder, final Vector3i colour1, final Vector3i colour2, final Vector2f[] xy, final float a3, final int a4, final Translucency translucency) {
+    builder
+      .addVertex(xy[0].x, xy[0].y, a3 + a4)
+      .monochrome(0.0f)
+      .addVertex(xy[1].x, xy[1].y, a3 + a4)
+      .rgb((colour2.x >>> 8) / 255.0f, (colour2.y >>> 8) / 255.0f, (colour2.z >>> 8) / 255.0f)
+      .addVertex(xy[2].x, xy[2].y, a3 + a4)
+      .monochrome(0.0f)
+      .addVertex(xy[1].x, xy[1].y, a3 + a4)
+      .rgb((colour2.x >>> 8) / 255.0f, (colour2.y >>> 8) / 255.0f, (colour2.z >>> 8) / 255.0f)
+      .addVertex(xy[2].x, xy[2].y, a3 + a4)
+      .monochrome(0.0f)
+      .addVertex(xy[3].x, xy[3].y, a3 + a4)
+      .rgb((colour1.x >>> 8) / 255.0f, (colour1.y >>> 8) / 255.0f, (colour1.z >>> 8) / 255.0f);
   }
 
   /**
@@ -1291,6 +1292,11 @@ public final class SEffe {
     final Vector2f refOuterOriginA = new Vector2f();
     final Vector2f lastSegmentRef = new Vector2f();
     final Vector2f refOuterOriginB = new Vector2f();
+
+    final Translucency translucency = Translucency.of(manager.params_10.flags_00 >>> 28 & 0x3);
+
+    final PolyBuilder builder = new PolyBuilder("Electricity effect type 0", GL_TRIANGLES)
+      .translucency(translucency);
 
     //LAB_80103200
     //LAB_8010322c
@@ -1341,8 +1347,6 @@ public final class SEffe {
             zMod = 0xffe - manager.params_10.z_22;
           }
 
-          final Translucency translucency = Translucency.of(manager.params_10.flags_00 >>> 28 & 3);
-
           //LAB_80103574
           //LAB_80103594
           for(int segmentNum = 0; segmentNum < electricEffect.boltSegmentCount_28 - 1; segmentNum++) {
@@ -1375,16 +1379,13 @@ public final class SEffe {
               }
 
               //LAB_80103834
-              final GpuCommandPoly cmd = new GpuCommandPoly(3)
-                .translucent(translucency)
-                .pos(0, baseX0, baseY0)
-                .pos(1, centerLineOriginX, centerLineOriginY)
-                .pos(2, baseX2, baseY2)
-                .monochrome(0, baseColour >>> 9)
-                .monochrome(1, baseColour >>> 8)
-                .monochrome(2, baseColour >>> 9);
-
-              GPU.queueCommand((manager.params_10.z_22 + zMod) / 4.0f, cmd);
+              builder
+                .addVertex(baseX0, baseY0, manager.params_10.z_22 + zMod)
+                .monochrome((baseColour >>> 9) / 255.0f)
+                .addVertex(centerLineOriginX, centerLineOriginY, manager.params_10.z_22 + zMod)
+                .monochrome((baseColour >>> 8) / 255.0f)
+                .addVertex(baseX2, baseY2, manager.params_10.z_22 + zMod)
+                .monochrome((baseColour >>> 9) / 255.0f);
             }
 
             //LAB_80103994
@@ -1393,23 +1394,23 @@ public final class SEffe {
 
             vertexArray[0].set(outerEndpointXa, outerEndpointYa);
             vertexArray[2].set(refOuterOriginA);
-            renderSegmentGradient(currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, zMod, manager.params_10.z_22, translucency);
+            renderSegmentGradient(builder, currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, zMod, manager.params_10.z_22, translucency);
 
             vertexArray[0].x = (vertexArray[0].x - vertexArray[1].x) / manager.params_10.sizeDivisor_30 + vertexArray[1].x;
             vertexArray[0].y = (vertexArray[0].y - vertexArray[1].y) / manager.params_10.sizeDivisor_30 + vertexArray[1].y;
             vertexArray[2].x = (vertexArray[2].x - vertexArray[3].x) / manager.params_10.sizeDivisor_30 + vertexArray[3].x;
             vertexArray[2].y = (vertexArray[2].y - vertexArray[3].y) / manager.params_10.sizeDivisor_30 + vertexArray[3].y;
-            renderSegmentGradient(currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, zMod, manager.params_10.z_22, translucency);
+            renderSegmentGradient(builder, currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, zMod, manager.params_10.z_22, translucency);
 
             vertexArray[0].set(outerEndpointXb, outerEndpointYb);
             vertexArray[2].set(refOuterOriginB);
-            renderSegmentGradient(currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, zMod, manager.params_10.z_22, translucency);
+            renderSegmentGradient(builder, currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, zMod, manager.params_10.z_22, translucency);
 
             vertexArray[0].x = (vertexArray[0].x - vertexArray[1].x) / manager.params_10.sizeDivisor_30 + vertexArray[1].x;
             vertexArray[0].y = (vertexArray[0].y - vertexArray[1].y) / manager.params_10.sizeDivisor_30 + vertexArray[1].y;
             vertexArray[2].x = (vertexArray[2].x - vertexArray[3].x) / manager.params_10.sizeDivisor_30 + vertexArray[3].x;
             vertexArray[2].y = (vertexArray[2].y - vertexArray[3].y) / manager.params_10.sizeDivisor_30 + vertexArray[3].y;
-            renderSegmentGradient(currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, zMod, manager.params_10.z_22, translucency);
+            renderSegmentGradient(builder, currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, zMod, manager.params_10.z_22, translucency);
 
             refOuterOriginA.set(outerEndpointXa, outerEndpointYa);
             refOuterOriginB.set(outerEndpointXb, outerEndpointYb);
@@ -1421,6 +1422,14 @@ public final class SEffe {
           //LAB_80103ca0
         }
       }
+    }
+
+    if(builder.count() != 0) {
+      final Obj obj = builder.build();
+      obj.delete();
+
+      electricEffect.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 0.0f);
+      RENDERER.queueOrthoModel(obj, electricEffect.transforms);
     }
   }
 
@@ -1457,6 +1466,11 @@ public final class SEffe {
       electricEffect.frameNum_2a = electricEffect.frameNum_2a + 1 & 0x1f;
       final boolean effectShouldRender = (manager.params_10.shouldRenderFrameBits_24 >> electricEffect.frameNum_2a & 0x1) == 0;
 
+      final Translucency translucency = Translucency.of(manager.params_10.flags_00 >>> 28 & 0x3);
+
+      final PolyBuilder builder = new PolyBuilder("Lightning effect type 1", GL_TRIANGLES)
+        .translucency(translucency);
+
       //LAB_80103f18
       //LAB_80103f44
       for(int i = 0; i < electricEffect.boltCount_00; i++) {
@@ -1486,19 +1500,17 @@ public final class SEffe {
         }
 
         //LAB_801040d0
-        final float boltLengthX = segmentArray[segmentNum - 1].x_00 - segmentArray[0].x_00;
-        final float boltLengthY = segmentArray[segmentNum - 1].y_04 - segmentArray[0].y_04;
-        final float angle = -MathHelper.atan2(boltLengthX, boltLengthY);
-        final float sin = MathHelper.sin(angle);
-        final float cos = MathHelper.cosFromSin(sin, angle);
-        float currentSegmentScale = bolt.boltSegments_10[0].scaleMultiplier_28 * manager.params_10.scale_16.x;
-        float outerOriginXa = segmentArray[0].x_00 + cos * currentSegmentScale;
-        float outerOriginYa = segmentArray[0].y_04 + sin * currentSegmentScale;
-        float outerOriginXb = segmentArray[0].x_00 - cos * currentSegmentScale;
-        float outerOriginYb = segmentArray[0].y_04 - sin * currentSegmentScale;
-
         if(effectShouldRender) {
-          final Translucency translucency = Translucency.of(manager.params_10.flags_00 >>> 28 & 3);
+          final float boltLengthX = segmentArray[segmentNum - 1].x_00 - segmentArray[0].x_00;
+          final float boltLengthY = segmentArray[segmentNum - 1].y_04 - segmentArray[0].y_04;
+          final float angle = -MathHelper.atan2(boltLengthX, boltLengthY);
+          final float sin = MathHelper.sin(angle);
+          final float cos = MathHelper.cosFromSin(sin, angle);
+          float currentSegmentScale = bolt.boltSegments_10[0].scaleMultiplier_28 * manager.params_10.scale_16.x;
+          float outerOriginXa = segmentArray[0].x_00 + cos * currentSegmentScale;
+          float outerOriginYa = segmentArray[0].y_04 + sin * currentSegmentScale;
+          float outerOriginXb = segmentArray[0].x_00 - cos * currentSegmentScale;
+          float outerOriginYb = segmentArray[0].y_04 - sin * currentSegmentScale;
 
           final float z = manager.params_10.z_22 + bolt.sz3_0c;
           if(z >= 0xa0) {
@@ -1534,25 +1546,25 @@ public final class SEffe {
                 vertexArray[0].y = outerEndpointYa;
                 vertexArray[2].x = outerOriginXa;
                 vertexArray[2].y = outerOriginYa;
-                renderSegmentGradient(currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
+                renderSegmentGradient(builder, currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
 
                 vertexArray[0].x = (vertexArray[0].x - vertexArray[1].x) / manager.params_10.sizeDivisor_30 + vertexArray[1].x;
                 vertexArray[0].y = (vertexArray[0].y - vertexArray[1].y) / manager.params_10.sizeDivisor_30 + vertexArray[1].y;
                 vertexArray[2].x = (vertexArray[2].x - vertexArray[3].x) / manager.params_10.sizeDivisor_30 + vertexArray[3].x;
                 vertexArray[2].y = (vertexArray[2].y - vertexArray[3].y) / manager.params_10.sizeDivisor_30 + vertexArray[3].y;
-                renderSegmentGradient(currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
+                renderSegmentGradient(builder, currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
 
                 vertexArray[0].x = outerEndpointXb;
                 vertexArray[0].y = outerEndpointYb;
                 vertexArray[2].x = outerOriginXb;
                 vertexArray[2].y = outerOriginYb;
-                renderSegmentGradient(currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
+                renderSegmentGradient(builder, currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
 
                 vertexArray[0].x = (vertexArray[0].x - vertexArray[1].x) / manager.params_10.sizeDivisor_30 + vertexArray[1].x;
                 vertexArray[0].y = (vertexArray[0].y - vertexArray[1].y) / manager.params_10.sizeDivisor_30 + vertexArray[1].y;
                 vertexArray[2].x = (vertexArray[2].x - vertexArray[3].x) / manager.params_10.sizeDivisor_30 + vertexArray[3].x;
                 vertexArray[2].y = (vertexArray[2].y - vertexArray[3].y) / manager.params_10.sizeDivisor_30 + vertexArray[3].y;
-                renderSegmentGradient(currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
+                renderSegmentGradient(builder, currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
 
                 outerOriginXa = outerEndpointXa;
                 outerOriginYa = outerEndpointYa;
@@ -1584,18 +1596,18 @@ public final class SEffe {
                   vertexArray[1].x = centerLineEndpointX + 1;
                   vertexArray[2].x = centerLineOriginX - currentSegmentScale;
                   vertexArray[3].x = centerLineOriginX + 1;
-                  renderSegmentGradient(currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
+                  renderSegmentGradient(builder, currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
                   vertexArray[0].x = centerLineEndpointX - nextSegmentQuarterScale;
                   vertexArray[2].x = centerLineOriginX - currentSegmentQuarterScale;
-                  renderSegmentGradient(currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
+                  renderSegmentGradient(builder, currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
                   vertexArray[0].x = centerLineEndpointX + nextSegmentScale;
                   vertexArray[1].x = centerLineEndpointX;
                   vertexArray[2].x = centerLineOriginX + currentSegmentScale;
                   vertexArray[3].x = centerLineOriginX;
-                  renderSegmentGradient(currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
+                  renderSegmentGradient(builder, currentSegment.outerColour_16, nextSegment.outerColour_16, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
                   vertexArray[0].x = centerLineEndpointX + nextSegmentQuarterScale;
                   vertexArray[2].x = centerLineOriginX + currentSegmentQuarterScale;
-                  renderSegmentGradient(currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
+                  renderSegmentGradient(builder, currentSegment.innerColour_10, nextSegment.innerColour_10, vertexArray, bolt.sz3_0c, manager.params_10.z_22, translucency);
 
                   centerLineOriginX = centerLineEndpointX;
                   centerLineOriginY = centerLineEndpointY;
@@ -1607,9 +1619,15 @@ public final class SEffe {
           }
         }
       }
-      //LAB_8010490c
+
+      if(effectShouldRender) {
+        final Obj obj = builder.build();
+        obj.delete();
+
+        electricEffect.transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 0.0f);
+        RENDERER.queueOrthoModel(obj, electricEffect.transforms);
+      }
     }
-    //LAB_8010491c
   }
 
   @Method(0x801049d4L)
@@ -1847,7 +1865,10 @@ public final class SEffe {
     Arrays.setAll(sp0x18, n -> new Vector2f());
 
     //LAB_8010575c
-    final Translucency translucency = Translucency.of(data._10 >>> 28 & 3);
+    final Translucency translucency = Translucency.of(data._10 >>> 28 & 0x3);
+
+    final PolyBuilder builder = new PolyBuilder("Thunder arrow effect", GL_TRIANGLES)
+      .translucency(translucency);
 
     for(int s7 = 0; s7 < data.count_00; s7++) {
       //LAB_8010577c
@@ -1863,20 +1884,26 @@ public final class SEffe {
         sp0x18[2].y = s4_1.y_02;
         sp0x18[3].x = s4_1.x_00 + 1.0f;
         sp0x18[3].y = s4_1.y_02;
-        renderSegmentGradient(s4_1.colour_0a, s4_2.colour_0a, sp0x18, data.z_14, data._08, translucency);
+        renderSegmentGradient(builder, s4_1.colour_0a, s4_2.colour_0a, sp0x18, data.z_14, data._08, translucency);
         sp0x18[0].x = s4_2.x_00 - s4_2.size_1c / 3.0f;
         sp0x18[2].x = s4_1.x_00 - s4_1.size_1c / 3.0f;
-        renderSegmentGradient(s4_1.colour_04, s4_2.colour_04, sp0x18, data.z_14, data._08, translucency);
+        renderSegmentGradient(builder, s4_1.colour_04, s4_2.colour_04, sp0x18, data.z_14, data._08, translucency);
         sp0x18[0].x = s4_2.x_00 + s4_2.size_1c;
         sp0x18[1].x = s4_2.x_00;
         sp0x18[2].x = s4_1.x_00 + s4_1.size_1c;
         sp0x18[3].x = s4_1.x_00;
-        renderSegmentGradient(s4_1.colour_0a, s4_2.colour_0a, sp0x18, data.z_14, data._08, translucency);
+        renderSegmentGradient(builder, s4_1.colour_0a, s4_2.colour_0a, sp0x18, data.z_14, data._08, translucency);
         sp0x18[0].x = s4_2.x_00 + s4_2.size_1c / 3.0f;
         sp0x18[2].x = s4_1.x_00 + s4_1.size_1c / 3.0f;
-        renderSegmentGradient(s4_1.colour_04, s4_2.colour_04, sp0x18, data.z_14, data._08, translucency);
+        renderSegmentGradient(builder, s4_1.colour_04, s4_2.colour_04, sp0x18, data.z_14, data._08, translucency);
       }
     }
+
+    final Obj obj = builder.build();
+    obj.delete();
+
+    data.transforms.set(GPU.getOffsetX(), GPU.getOffsetY(), 0.0f);
+    RENDERER.queueOrthoModel(obj, data.transforms);
 
     //LAB_801059c8
   }

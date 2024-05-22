@@ -45,6 +45,10 @@ public class PolyBuilder {
     this.type = glType;
   }
 
+  public int count() {
+    return this.vertices.size();
+  }
+
   public PolyBuilder addVertex(final Vector3f pos) {
     this.current = new Vertex(pos.x, pos.y, pos.z);
     this.vertices.add(this.current);

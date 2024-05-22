@@ -1,5 +1,6 @@
 package legend.game.combat.effects;
 
+import legend.core.gte.MV;
 import legend.core.memory.types.QuadConsumer;
 
 import java.util.Arrays;
@@ -41,6 +42,8 @@ public class ElectricityEffect38 implements Effect {
   public QuadConsumer<EffectManagerData6c<EffectManagerParams.ElectricityType>, ElectricityEffect38, LightningBoltEffect14, Integer> callback_2c;
 
   public LightningBoltEffect14[] bolts_34;
+
+  public final MV transforms = new MV();
 
   public ElectricityEffect38(final int boltCount, final int boltSegmentCount) {
     this.boltCount_00 = boltCount;
