@@ -119,10 +119,10 @@ public class McqBuilder {
 
     final Mesh mesh = new Mesh(GL_TRIANGLES, vertices, indices);
 
-    mesh.attribute(0, 0L, 3, vertexSize);
+    mesh.attribute(0, 0L, POS_SIZE, vertexSize);
 
     int meshIndex = 1;
-    int meshOffset = 3;
+    int meshOffset = POS_SIZE;
 
     mesh.attribute(meshIndex, meshOffset, NORM_SIZE, vertexSize);
     meshIndex++;
@@ -169,6 +169,7 @@ public class McqBuilder {
     vertices[offset++] = x;
     vertices[offset++] = y;
     vertices[offset++] = 0.0f; // z
+    vertices[offset++] = 0.0f; // Vertex index, only used for VDF
     vertices[offset++] = 0.0f; // \
     vertices[offset++] = 0.0f; // | normals
     vertices[offset++] = 0.0f; // /

@@ -505,13 +505,17 @@ public final class SEffe {
     zMax_1f8003cc = oldZMax;
     zMin = oldZMin;
 
-    RENDERER.queueModel(obj, sp0x10)
+    final RenderEngine.QueuedModel<?> model = RENDERER.queueModel(obj, sp0x10)
       .lightDirection(lightDirectionMatrix_800c34e8)
       .lightColour(lightColourMatrix_800c3508)
       .backgroundColour(GTE.backgroundColour)
       .ctmdFlags(0x20 | ((dobj2.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0))
       .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
       .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
+
+    if(objTable.vdf != null) {
+      model.vdf(objTable.vdf);
+    }
 
     //LAB_800de528
   }
@@ -3270,31 +3274,6 @@ public final class SEffe {
     return FlowControl.CONTINUE;
   }
 
-  @Method(0x80109b44L)
-  public static void applyVertexDifferenceAnimation(final ScriptState<VertexDifferenceAnimation18> state, final VertexDifferenceAnimation18 animation) {
-    animation.ticksRemaining_00--;
-
-    if(animation.ticksRemaining_00 < 0) {
-      state.deallocateWithChildren();
-      return;
-    }
-
-    //LAB_80109b7c
-    //LAB_80109b90
-    for(int i = 0; i < animation.vertexCount_08; i++) {
-      final Vector3f source = animation.sourceVertices_0c[i];
-      final Vector3f current = animation.currentState_10[i];
-      final Vector3f previous = animation.previousState_14[i];
-      previous.add(current);
-      current.x += current.x * animation.embiggener_04;
-      current.y += current.y * animation.embiggener_04;
-      current.z += current.z * animation.embiggener_04;
-      source.set(previous);
-    }
-
-    //LAB_80109ce0
-  }
-
   /** Kubila demon frog, Lloyd's cape, Selebus' strapple and zambo hands, Grand Jewel heal, etc. */
   @ScriptDescription("Allocates a vertex difference animation for an effect")
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "effectIndex", description = "The effect index")
@@ -3303,7 +3282,7 @@ public final class SEffe {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "scale", description = "How much to grow each frame")
   @Method(0x80109d30L)
   public static FlowControl scriptAllocateVertexDifferenceAnimation(final RunningScript<?> script) {
-    final int ticksRemaining = script.params_20[2].get();
+    final int ticks = script.params_20[2].get();
     final float embiggener = script.params_20[3].get() / (float)0x100;
 
     final EffectManagerData6c<?> sourceState = SCRIPTS.getObject(script.params_20[0].get(), EffectManagerData6c.class);
@@ -3312,37 +3291,39 @@ public final class SEffe {
     final ScriptState<VertexDifferenceAnimation18> state = SCRIPTS.allocateScriptState("Vertex difference animation source %d (%s), diff %d (%s)".formatted(sourceState.myScriptState_0e.index, sourceState.name, diffState.myScriptState_0e.index, diffState.name), new VertexDifferenceAnimation18());
 
     state.loadScriptFile(doNothingScript_8004f650);
-    state.setTicker(SEffe::applyVertexDifferenceAnimation);
+    state.setTicker(VertexDifferenceAnimation18::applyVertexDifferenceAnimation);
     final DeffTmdRenderer14 source = (DeffTmdRenderer14)sourceState.effect_44;
     final DeffTmdRenderer14 diff = (DeffTmdRenderer14)diffState.effect_44;
     final TmdObjTable1c sourceModel = source.tmd_08;
     final TmdObjTable1c diffModel = diff.tmd_08;
     final VertexDifferenceAnimation18 animation = state.innerStruct_00;
-    animation.ticksRemaining_00 = ticksRemaining;
+    animation.tmd = sourceModel;
+    animation.tmd.vdf = sourceModel.vert_top_00;
+    animation.ticksRemaining_00 = ticks;
     animation.embiggener_04 = embiggener;
     animation.vertexCount_08 = sourceModel.n_vert_04;
     animation.sourceVertices_0c = sourceModel.vert_top_00;
-    animation.currentState_10 = new Vector3f[sourceModel.n_vert_04];
-    animation.previousState_14 = new Vector3f[sourceModel.n_vert_04];
-    Arrays.setAll(animation.currentState_10, i -> new Vector3f());
-    Arrays.setAll(animation.previousState_14, i -> new Vector3f());
+    animation.step_10 = new Vector3f[sourceModel.n_vert_04];
+    animation.current_14 = new Vector3f[sourceModel.n_vert_04];
+    Arrays.setAll(animation.step_10, i -> new Vector3f());
+    Arrays.setAll(animation.current_14, i -> new Vector3f());
     // Set unused static _8011a030 to 1
 
     //LAB_80109e78
     for(int i = 0; i < sourceModel.n_vert_04; i++) {
       final Vector3f sourceVertex = sourceModel.vert_top_00[i];
-      animation.previousState_14[i].set(sourceVertex);
+      animation.current_14[i].set(sourceVertex);
     }
 
     //LAB_80109ecc
     //LAB_80109ee4
     for(int i = 0; i < animation.vertexCount_08; i++) {
-      final Vector3f diffVertex = diffModel.vert_top_00[i];
-      final Vector3f previous = animation.previousState_14[i];
-      final Vector3f current = animation.currentState_10[i];
-      current.x = (diffVertex.x - previous.x) / ticksRemaining;
-      current.y = (diffVertex.y - previous.y) / ticksRemaining;
-      current.z = (diffVertex.z - previous.z) / ticksRemaining;
+      final Vector3f dest = diffModel.vert_top_00[i];
+      final Vector3f src = animation.current_14[i];
+      final Vector3f step = animation.step_10[i];
+      step.x = (dest.x - src.x) / ticks;
+      step.y = (dest.y - src.y) / ticks;
+      step.z = (dest.z - src.z) / ticks;
     }
 
     //LAB_80109f90
@@ -7942,13 +7923,17 @@ public final class SEffe {
         zMax_1f8003cc = oldZMax;
         zMin = oldZMin;
 
-        RENDERER.queueModel(deffEffect.obj, sp0x10)
+        final RenderEngine.QueuedModel<?> model = RENDERER.queueModel(deffEffect.obj, sp0x10)
           .lightDirection(lightDirectionMatrix_800c34e8)
           .lightColour(lightColourMatrix_800c3508)
           .backgroundColour(GTE.backgroundColour)
           .ctmdFlags((dobj2.attribute_00 & 0x4000_0000) != 0 ? 0x12 : 0x0)
           .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11)
           .battleColour(((Battle)currentEngineState_8004dd04)._800c6930.colour_00);
+
+        if(deffEffect.tmd_08.vdf != null) {
+          model.vdf(deffEffect.tmd_08.vdf);
+        }
       } else {
         //LAB_80118370
         renderTmdSpriteEffect(deffEffect.tmd_08, deffEffect.obj, data.params_10, sp0x10);

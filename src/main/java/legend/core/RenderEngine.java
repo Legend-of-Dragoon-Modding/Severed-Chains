@@ -126,12 +126,14 @@ public class RenderEngine {
   private Shader.UniformBuffer transforms2Uniform;
   private Shader.UniformBuffer lightUniform;
   private Shader.UniformBuffer projectionUniform;
+  private Shader.UniformBuffer vdfUniform;
   private final Matrix4f perspectiveProjection = new Matrix4f();
   private final Matrix4f orthographicProjection = new Matrix4f();
   private final FloatBuffer transformsBuffer = BufferUtils.createFloatBuffer(4 * 4 * 2);
   private final FloatBuffer transforms2Buffer = BufferUtils.createFloatBuffer((4 * 4 + 4) * 128);
   private final FloatBuffer lightBuffer = BufferUtils.createFloatBuffer((4 * 4 + 3 * 4 + 4) * 128); // 3*4 since glsl std140 means mat3's are basically 3 vec4s
   private final FloatBuffer projectionBuffer = BufferUtils.createFloatBuffer(4);
+  private final FloatBuffer vdfBuffer = BufferUtils.createFloatBuffer(4 * 1024);
 
   public static final ShaderType<SimpleShaderOptions> SIMPLE_SHADER = new ShaderType<>(
     options -> loadShader("simple", "simple", options),
@@ -164,6 +166,7 @@ public class RenderEngine {
       shader.bindUniformBlock("transforms2", Shader.UniformBuffer.TRANSFORM2);
       shader.bindUniformBlock("lighting", Shader.UniformBuffer.LIGHTING);
       shader.bindUniformBlock("projectionInfo", Shader.UniformBuffer.PROJECTION_INFO);
+      shader.bindUniformBlock("vdf", Shader.UniformBuffer.VDF);
       final Shader<TmdShaderOptions>.UniformFloat modelIndex = shader.new UniformFloat("modelIndex");
       final Shader<TmdShaderOptions>.UniformVec3 recolour = shader.new UniformVec3("recolour");
       final Shader<TmdShaderOptions>.UniformVec2 uvOffset = shader.new UniformVec2("uvOffset");
@@ -174,7 +177,8 @@ public class RenderEngine {
       final Shader<TmdShaderOptions>.UniformInt tmdTranslucency = shader.new UniformInt("tmdTranslucency");
       final Shader<TmdShaderOptions>.UniformInt ctmdFlags = shader.new UniformInt("ctmdFlags");
       final Shader<TmdShaderOptions>.UniformVec3 battleColour = shader.new UniformVec3("battleColour");
-      return () -> new TmdShaderOptions(modelIndex, recolour, uvOffset, clutOverride, tpageOverride, translucency, discardTranslucency, tmdTranslucency, ctmdFlags, battleColour);
+      final Shader<TmdShaderOptions>.UniformInt useVdf = shader.new UniformInt("useVdf");
+      return () -> new TmdShaderOptions(modelIndex, recolour, uvOffset, clutOverride, tpageOverride, translucency, discardTranslucency, tmdTranslucency, ctmdFlags, battleColour, useVdf);
     }
   );
 
@@ -375,6 +379,7 @@ public class RenderEngine {
     this.transforms2Uniform = ShaderManager.addUniformBuffer("transforms2", new Shader.UniformBuffer((long)this.transforms2Buffer.capacity() * Float.BYTES, Shader.UniformBuffer.TRANSFORM2));
     this.lightUniform = ShaderManager.addUniformBuffer("lighting", new Shader.UniformBuffer((long)this.lightBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.LIGHTING));
     this.projectionUniform = ShaderManager.addUniformBuffer("projectionInfo", new Shader.UniformBuffer((long)this.projectionBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.PROJECTION_INFO));
+    this.vdfUniform = ShaderManager.addUniformBuffer("vdf", new Shader.UniformBuffer((long)this.vdfBuffer.capacity() * Float.BYTES, Shader.UniformBuffer.VDF));
 
     final Mesh postQuad = new Mesh(GL_TRIANGLES, new float[] {
       -1.0f, -1.0f,  0.0f, 0.0f,
@@ -684,6 +689,14 @@ public class RenderEngine {
       this.tmdShaderOptions.ctmdFlags(entry.ctmdFlags);
       this.tmdShaderOptions.tmdTranslucency(entry.tmdTranslucency);
       this.tmdShaderOptions.battleColour(entry.battleColour);
+
+      if(entry.vdf != null) {
+        this.tmdShaderOptions.useVdf(true);
+        this.setVdf(entry.vdf);
+      } else {
+        this.tmdShaderOptions.useVdf(false);
+      }
+
       boolean updated = false;
 
       if(entry.scissor.w != 0) {
@@ -780,6 +793,14 @@ public class RenderEngine {
         this.tmdShaderOptions.ctmdFlags(entry.ctmdFlags);
         this.tmdShaderOptions.tmdTranslucency(entry.tmdTranslucency);
         this.tmdShaderOptions.battleColour(entry.battleColour);
+
+        if(entry.vdf != null) {
+          this.tmdShaderOptions.useVdf(true);
+          this.setVdf(entry.vdf);
+        } else {
+          this.tmdShaderOptions.useVdf(false);
+        }
+
         entry.useTexture();
 
         if(entry.shouldRender(Translucency.HALF_B_PLUS_HALF_F)) {
@@ -1052,6 +1073,14 @@ public class RenderEngine {
     return entry;
   }
 
+  private void setVdf(final Vector3f[] vertices) {
+    for(int i = 0; i < vertices.length; i++) {
+      vertices[i].get(i * 0x4, this.vdfBuffer);
+    }
+
+    this.vdfUniform.set(this.vdfBuffer);
+  }
+
   private void pre() {
     glViewport(0, 0, (int)(this.width * this.window.getScale()), (int)(this.height * this.window.getScale()));
 
@@ -1309,6 +1338,8 @@ public class RenderEngine {
     private int ctmdFlags;
     private final Vector3f battleColour = new Vector3f();
 
+    private Vector3f[] vdf;
+
     public Options options() {
       return this.shaderOptions;
     }
@@ -1428,6 +1459,11 @@ public class RenderEngine {
       return this;
     }
 
+    public QueuedModel<Options> vdf(final Vector3f[] vdf) {
+      this.vdf = vdf;
+      return this;
+    }
+
     private void reset() {
       this.shader = null;
       this.shaderOptions = null;
@@ -1447,6 +1483,7 @@ public class RenderEngine {
       this.tmdTranslucency = 0;
       this.ctmdFlags = 0;
       this.battleColour.zero();
+      this.vdf = null;
     }
 
     private void useTexture() {

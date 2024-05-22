@@ -145,6 +145,7 @@ public class PolyBuilder {
     vertices[i++] = vert.pos.x;
     vertices[i++] = vert.pos.y;
     vertices[i++] = vert.pos.z;
+    vertices[i++] = 0.0f; // Vertex index, only used for VDF
     vertices[i++] = 0.0f;
     vertices[i++] = 0.0f;
     vertices[i++] = 0.0f;
@@ -173,10 +174,10 @@ public class PolyBuilder {
 
     final Mesh mesh = new Mesh(this.type, vertices, this.vertices.size());
 
-    mesh.attribute(0, 0L, 3, VERTEX_SIZE);
+    mesh.attribute(0, 0L, POS_SIZE, VERTEX_SIZE);
 
     int meshIndex = 1;
-    int meshOffset = 3;
+    int meshOffset = POS_SIZE;
 
     mesh.attribute(meshIndex, meshOffset, NORM_SIZE, VERTEX_SIZE);
     meshIndex++;

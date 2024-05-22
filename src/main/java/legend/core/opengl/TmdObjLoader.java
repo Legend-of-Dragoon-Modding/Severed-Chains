@@ -18,7 +18,7 @@ import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
 public final class TmdObjLoader {
   private TmdObjLoader() { }
 
-  public static final int POS_SIZE = 3;
+  public static final int POS_SIZE = 4;
   public static final int NORM_SIZE = 3;
   public static final int UV_SIZE = 2;
   public static final int COLOUR_SIZE = 4;
@@ -199,6 +199,7 @@ public final class TmdObjLoader {
           vertices[vertexOffsets[translucencyIndex]++] = pos.x;
           vertices[vertexOffsets[translucencyIndex]++] = pos.y;
           vertices[vertexOffsets[translucencyIndex]++] = pos.z;
+          vertices[vertexOffsets[translucencyIndex]++] = vertex.vertexIndex;
 
           if(lit) {
             final Vector3f normal;
@@ -282,10 +283,10 @@ public final class TmdObjLoader {
       if(vertexOffsets[i] != 0) {
         final Mesh mesh = new Mesh(GL_TRIANGLES, allVertices[i], allIndices[i]);
 
-        mesh.attribute(0, 0L, 3, vertexSize);
+        mesh.attribute(0, 0L, POS_SIZE, vertexSize);
 
         int meshIndex = 1;
-        int meshOffset = 3;
+        int meshOffset = POS_SIZE;
 
         mesh.attribute(meshIndex, meshOffset, NORM_SIZE, vertexSize);
         meshIndex++;
