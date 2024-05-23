@@ -153,6 +153,7 @@ import static legend.game.wmap.WmapStatics.teleportationLocations_800ef6c8;
 import static legend.game.wmap.WmapStatics.tmdUvAdjustmentMetrics_800eee48;
 import static legend.game.wmap.WmapStatics.waterClutYs_800ef348;
 import static legend.game.wmap.WmapStatics.wmapDestinationMarkers_800f5a6c;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 
 public class WMap extends EngineState {
   private enum WorldMapState {
@@ -3288,6 +3289,13 @@ public class WMap extends EngineState {
     GsGetLs(modelAndAnimData.tmdRendering_08.coord2s_04[0], transforms);
     GTE.setTransforms(transforms);
 
+    final PolyBuilder builder = new PolyBuilder("Queen Fury wake", GL_TRIANGLES);
+    builder
+      .bpp(Bpp.BITS_4)
+      .translucency(Translucency.B_PLUS_F)
+      .clut(1008, waterClutYs_800ef348[(int)modelAndAnimData.clutYIndex_28])
+      .vramPos(448, 0);
+
     //LAB_800e1ccc
     for(int i = 0; i < 39; i++) {
       //LAB_800e1ce8
@@ -3297,12 +3305,12 @@ public class WMap extends EngineState {
       vertex1.set(pos0);
 
       int baseColour = 256 - colourScaleFactor.get() * 256 / 40;
-      final int r0 = baseColour * 96 / 256;
-      final int g0 = baseColour * 96 / 256;
-      final int b0 = baseColour * 96 / 256;
-      final int r1 = 0;
-      final int g1 = baseColour / 8;
-      final int b1 = baseColour * 96 / 256;
+      final float r0 = baseColour * 96 / 65536.0f;
+      final float g0 = baseColour * 96 / 65536.0f;
+      final float b0 = baseColour * 96 / 65536.0f;
+      final float r1 = 0;
+      final float g1 = baseColour / 2048.0f;
+      final float b1 = baseColour * 96 / 65536.0f;
 
       this.getQueenFuryWakeMetrics(i + 1, spread1, pos1, colourScaleFactor, deltaScaleFactor);
       spread1.mul(deltaScaleFactor.get());
@@ -3310,12 +3318,12 @@ public class WMap extends EngineState {
       vertex3.set(pos1);
 
       baseColour = 256 - colourScaleFactor.get() * 256 / 40;
-      final int r2 = baseColour * 96 / 256;
-      final int g2 = baseColour * 96 / 256;
-      final int b2 = baseColour * 96 / 256;
-      final int r3 = 0;
-      final int g3 = baseColour / 8;
-      final int b3 = baseColour * 96 / 256;
+      final float r2 = baseColour * 96 / 65536.0f;
+      final float g2 = baseColour * 96 / 65536.0f;
+      final float b2 = baseColour * 96 / 65536.0f;
+      final float r3 = 0;
+      final float g3 = baseColour / 2048.0f;
+      final float b3 = baseColour * 96 / 65536.0f;
 
       final Vector2f sxyz0 = new Vector2f();
       final Vector2f sxyz1 = new Vector2f();
@@ -3325,15 +3333,35 @@ public class WMap extends EngineState {
       float z = RotTransPers4(vertex0, vertex1, vertex2, vertex3, sxyz0, sxyz1, sxyz2, sxyz3);
 
       if(z >= 3 && z < orderingTableSize_1f8003c8) {
+        builder
+          .addVertex(sxyz0.x, sxyz0.y, z)
+          .uv(0, 0)
+          .rgb(r0, g0, b0)
+          .addVertex(sxyz1.x, sxyz1.y, z)
+          .uv(64, 0)
+          .rgb(r1, g1, b1)
+          .addVertex(sxyz2.x, sxyz2.y, z)
+          .uv(0, 64)
+          .rgb(r2, g2, b2)
+          .addVertex(sxyz1.x, sxyz1.y, z)
+          .uv(64, 0)
+          .rgb(r1, g1, b1)
+          .addVertex(sxyz2.x, sxyz2.y, z)
+          .uv(0, 64)
+          .rgb(r2, g2, b2)
+          .addVertex(sxyz3.x, sxyz3.y, z)
+          .uv(64, 64)
+          .rgb(r3, g3, b3);
+
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
           .bpp(Bpp.BITS_4)
           .translucent(Translucency.B_PLUS_F)
           .clut(1008, waterClutYs_800ef348[(int)modelAndAnimData.clutYIndex_28])
           .vramPos(448, 0)
-          .rgb(0, r0, g0, b0)
-          .rgb(1, r1, g1, b1)
-          .rgb(2, r2, g2, b2)
-          .rgb(3, r3, g3, b3)
+          .rgb(0, (int)(r0 * 255.0f), (int)(g0 * 255.0f), (int)(b0 * 255.0f))
+          .rgb(1, (int)(r1 * 255.0f), (int)(g1 * 255.0f), (int)(b1 * 255.0f))
+          .rgb(2, (int)(r2 * 255.0f), (int)(g2 * 255.0f), (int)(b2 * 255.0f))
+          .rgb(3, (int)(r3 * 255.0f), (int)(g3 * 255.0f), (int)(b3 * 255.0f))
           .uv(0,  0,  0)
           .uv(1, 63,  0)
           .uv(2,  0, 63)
@@ -3352,15 +3380,35 @@ public class WMap extends EngineState {
       z = RotTransPers4(vertex0, vertex1, vertex2, vertex3, sxyz0, sxyz1, sxyz2, sxyz3);
 
       if(z >= 3 && z < orderingTableSize_1f8003c8) {
+        builder
+          .addVertex(sxyz0.x, sxyz0.y, z)
+          .uv(0, 0)
+          .rgb(r0, g0, b0)
+          .addVertex(sxyz1.x, sxyz1.y, z)
+          .uv(64, 0)
+          .rgb(r1, g1, b1)
+          .addVertex(sxyz2.x, sxyz2.y, z)
+          .uv(0, 64)
+          .rgb(r2, g2, b2)
+          .addVertex(sxyz1.x, sxyz1.y, z)
+          .uv(64, 0)
+          .rgb(r1, g1, b1)
+          .addVertex(sxyz2.x, sxyz2.y, z)
+          .uv(0, 64)
+          .rgb(r2, g2, b2)
+          .addVertex(sxyz3.x, sxyz3.y, z)
+          .uv(64, 64)
+          .rgb(r3, g3, b3);
+
         final GpuCommandPoly cmd = new GpuCommandPoly(4)
           .bpp(Bpp.BITS_4)
           .translucent(Translucency.B_PLUS_F)
           .clut(1008, waterClutYs_800ef348[(int)modelAndAnimData.clutYIndex_28])
           .vramPos(448, 0)
-          .rgb(0, r0, g0, b0)
-          .rgb(1, r1, g1, b1)
-          .rgb(2, r2, g2, b2)
-          .rgb(3, r3, g3, b3)
+          .rgb(0, (int)(r0 * 255.0f), (int)(g0 * 255.0f), (int)(b0 * 255.0f))
+          .rgb(1, (int)(r1 * 255.0f), (int)(g1 * 255.0f), (int)(b1 * 255.0f))
+          .rgb(2, (int)(r2 * 255.0f), (int)(g2 * 255.0f), (int)(b2 * 255.0f))
+          .rgb(3, (int)(r3 * 255.0f), (int)(g3 * 255.0f), (int)(b3 * 255.0f))
           .uv(0,  0,  0)
           .uv(1, 63,  0)
           .uv(2,  0, 63)
@@ -3373,6 +3421,12 @@ public class WMap extends EngineState {
         GPU.queueCommand(orderingTableSize_1f8003c8 - 4, cmd); // ship port wake
       }
     }
+
+    final Obj obj = builder.build();
+    obj.delete();
+
+    transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 0);
+    RENDERER.queueOrthoModel(obj, transforms);
 
     //LAB_800e2770
     //LAB_800e2774
