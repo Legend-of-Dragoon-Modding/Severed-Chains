@@ -152,5 +152,5 @@ void main() {
   vertUv = inUv;
 
   depth = gl_Position.z;
-  depthOffset = t.screenOffset.z;
+  depthOffset = t.screenOffset.z * zdiffInv;
 }
