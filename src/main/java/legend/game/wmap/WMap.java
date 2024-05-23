@@ -3,7 +3,6 @@ package legend.game.wmap;
 import legend.core.MathHelper;
 import legend.core.RenderEngine;
 import legend.core.gpu.Bpp;
-import legend.core.gpu.GpuCommandPoly;
 import legend.core.gpu.Rect4i;
 import legend.core.gte.GsCOORDINATE2;
 import legend.core.gte.MV;
@@ -135,9 +134,7 @@ import static legend.game.wmap.WmapStatics.encounterIds_800ef364;
 import static legend.game.wmap.WmapStatics.inputAngleModifierAtPathIntersection_800f021c;
 import static legend.game.wmap.WmapStatics.loadWait;
 import static legend.game.wmap.WmapStatics.locations_800f0e34;
-import static legend.game.wmap.WmapStatics.mapFrameTmdIndices_800ef19c;
 import static legend.game.wmap.WmapStatics.mapPositions_800ef1a8;
-import static legend.game.wmap.WmapStatics.mapTerrainTmdIndices_800ef194;
 import static legend.game.wmap.WmapStatics.negativeDirectionMovementMask_800f0210;
 import static legend.game.wmap.WmapStatics.pathDotPosArr_800f591c;
 import static legend.game.wmap.WmapStatics.pathSegmentLengths_800f5810;
@@ -399,7 +396,6 @@ public class WMap extends EngineState {
   private void renderWmapModel(final Model124 model, final float depthOffset) {
     final MV lw = new MV();
 
-    zOffset_1f8003e8 = model.zOffset_a0;
     tmdGp0Tpage_1f8003ec = model.tpage_108;
 
     //LAB_800c92c8
@@ -2060,16 +2056,6 @@ public class WMap extends EngineState {
       final Vector3f rotation = this.modelAndAnimData_800c66a8.tmdRendering_08.rotations_08[i];
 
       //LAB_800d9180
-      if(this.mapState_800c6798.continent_00 != Continent.ENDINESS_7) {
-        //LAB_800d91cc
-        if(mapTerrainTmdIndices_800ef194[this.mapState_800c6798.continent_00.continentNum] == i || mapFrameTmdIndices_800ef19c[this.mapState_800c6798.continent_00.continentNum] == i) {
-//          zOffset_1f8003e8 = 500; // background models
-        } else {
-          //LAB_800d9204
-//          zOffset_1f8003e8 = 100; // location models
-        }
-      }
-
       //LAB_800d9210
       this.rotateCoord2(rotation, coord2);
 
@@ -3334,6 +3320,7 @@ public class WMap extends EngineState {
 
       float z = RotTransPers4(vertex0, vertex1, vertex2, vertex3, sxyz0, sxyz1, sxyz2, sxyz3);
 
+      // ship starboard wake
       if(z >= 3 && z < orderingTableSize_1f8003c8) {
         builder
           .addVertex(sxyz0.x, sxyz0.y, z * 4.0f)
@@ -3354,26 +3341,6 @@ public class WMap extends EngineState {
           .addVertex(sxyz3.x, sxyz3.y, z * 4.0f)
           .uv(64, 64)
           .rgb(r3, g3, b3);
-
-        final GpuCommandPoly cmd = new GpuCommandPoly(4)
-          .bpp(Bpp.BITS_4)
-          .translucent(Translucency.B_PLUS_F)
-          .clut(1008, waterClutYs_800ef348[(int)modelAndAnimData.clutYIndex_28])
-          .vramPos(448, 0)
-          .rgb(0, (int)(r0 * 255.0f), (int)(g0 * 255.0f), (int)(b0 * 255.0f))
-          .rgb(1, (int)(r1 * 255.0f), (int)(g1 * 255.0f), (int)(b1 * 255.0f))
-          .rgb(2, (int)(r2 * 255.0f), (int)(g2 * 255.0f), (int)(b2 * 255.0f))
-          .rgb(3, (int)(r3 * 255.0f), (int)(g3 * 255.0f), (int)(b3 * 255.0f))
-          .uv(0,  0,  0)
-          .uv(1, 63,  0)
-          .uv(2,  0, 63)
-          .uv(3, 63, 63)
-          .pos(0, sxyz0.x, sxyz0.y)
-          .pos(1, sxyz1.x, sxyz1.y)
-          .pos(2, sxyz2.x, sxyz2.y)
-          .pos(3, sxyz3.x, sxyz3.y);
-
-        GPU.queueCommand(orderingTableSize_1f8003c8 - 4, cmd); // ship starboard wake
       }
 
       //LAB_800e2440
@@ -3381,6 +3348,7 @@ public class WMap extends EngineState {
       vertex2.set(pos1).sub(spread1);
       z = RotTransPers4(vertex0, vertex1, vertex2, vertex3, sxyz0, sxyz1, sxyz2, sxyz3);
 
+      // ship port wake
       if(z >= 3 && z < orderingTableSize_1f8003c8) {
         builder
           .addVertex(sxyz0.x, sxyz0.y, z * 4.0f)
@@ -3401,26 +3369,6 @@ public class WMap extends EngineState {
           .addVertex(sxyz3.x, sxyz3.y, z * 4.0f)
           .uv(64, 64)
           .rgb(r3, g3, b3);
-
-        final GpuCommandPoly cmd = new GpuCommandPoly(4)
-          .bpp(Bpp.BITS_4)
-          .translucent(Translucency.B_PLUS_F)
-          .clut(1008, waterClutYs_800ef348[(int)modelAndAnimData.clutYIndex_28])
-          .vramPos(448, 0)
-          .rgb(0, (int)(r0 * 255.0f), (int)(g0 * 255.0f), (int)(b0 * 255.0f))
-          .rgb(1, (int)(r1 * 255.0f), (int)(g1 * 255.0f), (int)(b1 * 255.0f))
-          .rgb(2, (int)(r2 * 255.0f), (int)(g2 * 255.0f), (int)(b2 * 255.0f))
-          .rgb(3, (int)(r3 * 255.0f), (int)(g3 * 255.0f), (int)(b3 * 255.0f))
-          .uv(0,  0,  0)
-          .uv(1, 63,  0)
-          .uv(2,  0, 63)
-          .uv(3, 63, 63)
-          .pos(0, sxyz0.x, sxyz0.y)
-          .pos(1, sxyz1.x, sxyz1.y)
-          .pos(2, sxyz2.x, sxyz2.y)
-          .pos(3, sxyz3.x, sxyz3.y);
-
-        GPU.queueCommand(orderingTableSize_1f8003c8 - 4, cmd); // ship port wake
       }
     }
 
