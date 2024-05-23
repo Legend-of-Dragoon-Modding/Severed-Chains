@@ -1480,6 +1480,7 @@ public class RenderEngine {
       this.hasTranslucencyOverride = false;
       this.texturesUsed = false;
       this.lightUsed = false;
+      this.isTmd = false;
       this.tmdTranslucency = 0;
       this.ctmdFlags = 0;
       this.battleColour.zero();
