@@ -396,7 +396,7 @@ public class WMap extends EngineState {
   }
 
   @Method(0x800c925cL)
-  private void renderWmapModel(final Model124 model) {
+  private void renderWmapModel(final Model124 model, final float depthOffset) {
     final MV lw = new MV();
 
     zOffset_1f8003e8 = model.zOffset_a0;
@@ -419,6 +419,7 @@ public class WMap extends EngineState {
           .lightColour(lightColourMatrix_800c3508)
           .backgroundColour(GTE.backgroundColour)
           .screenspaceOffset(0, screenOffsetY)
+          .depthOffset(depthOffset)
           .tmdTranslucency(tmdGp0Tpage_1f8003ec >>> 5 & 0b11);
       }
     }
@@ -3034,7 +3035,8 @@ public class WMap extends EngineState {
 
     //LAB_800e04fc
     modelAndAnimData.models_0c[modelAndAnimData.modelIndex_1e4].zOffset_a0 = 78;
-    this.renderWmapModel(modelAndAnimData.models_0c[modelAndAnimData.modelIndex_1e4]);
+    final float depthOffset = modelAndAnimData.modelIndex_1e4 == 1 ? -10 : 78;
+    this.renderWmapModel(modelAndAnimData.models_0c[modelAndAnimData.modelIndex_1e4], depthOffset);
     GTE.setBackgroundColour(this.wmapCameraAndLights19c0_800c66b0.ambientLight_14c.x, this.wmapCameraAndLights19c0_800c66b0.ambientLight_14c.y, this.wmapCameraAndLights19c0_800c66b0.ambientLight_14c.z);
     this.handlePlayerMovement();
     this.updatePlayerModelPosition();
@@ -3334,22 +3336,22 @@ public class WMap extends EngineState {
 
       if(z >= 3 && z < orderingTableSize_1f8003c8) {
         builder
-          .addVertex(sxyz0.x, sxyz0.y, z)
+          .addVertex(sxyz0.x, sxyz0.y, z * 4.0f)
           .uv(0, 0)
           .rgb(r0, g0, b0)
-          .addVertex(sxyz1.x, sxyz1.y, z)
+          .addVertex(sxyz1.x, sxyz1.y, z * 4.0f)
           .uv(64, 0)
           .rgb(r1, g1, b1)
-          .addVertex(sxyz2.x, sxyz2.y, z)
+          .addVertex(sxyz2.x, sxyz2.y, z * 4.0f)
           .uv(0, 64)
           .rgb(r2, g2, b2)
-          .addVertex(sxyz1.x, sxyz1.y, z)
+          .addVertex(sxyz1.x, sxyz1.y, z * 4.0f)
           .uv(64, 0)
           .rgb(r1, g1, b1)
-          .addVertex(sxyz2.x, sxyz2.y, z)
+          .addVertex(sxyz2.x, sxyz2.y, z * 4.0f)
           .uv(0, 64)
           .rgb(r2, g2, b2)
-          .addVertex(sxyz3.x, sxyz3.y, z)
+          .addVertex(sxyz3.x, sxyz3.y, z * 4.0f)
           .uv(64, 64)
           .rgb(r3, g3, b3);
 
@@ -3381,22 +3383,22 @@ public class WMap extends EngineState {
 
       if(z >= 3 && z < orderingTableSize_1f8003c8) {
         builder
-          .addVertex(sxyz0.x, sxyz0.y, z)
+          .addVertex(sxyz0.x, sxyz0.y, z * 4.0f)
           .uv(0, 0)
           .rgb(r0, g0, b0)
-          .addVertex(sxyz1.x, sxyz1.y, z)
+          .addVertex(sxyz1.x, sxyz1.y, z * 4.0f)
           .uv(64, 0)
           .rgb(r1, g1, b1)
-          .addVertex(sxyz2.x, sxyz2.y, z)
+          .addVertex(sxyz2.x, sxyz2.y, z * 4.0f)
           .uv(0, 64)
           .rgb(r2, g2, b2)
-          .addVertex(sxyz1.x, sxyz1.y, z)
+          .addVertex(sxyz1.x, sxyz1.y, z * 4.0f)
           .uv(64, 0)
           .rgb(r1, g1, b1)
-          .addVertex(sxyz2.x, sxyz2.y, z)
+          .addVertex(sxyz2.x, sxyz2.y, z * 4.0f)
           .uv(0, 64)
           .rgb(r2, g2, b2)
-          .addVertex(sxyz3.x, sxyz3.y, z)
+          .addVertex(sxyz3.x, sxyz3.y, z * 4.0f)
           .uv(64, 64)
           .rgb(r3, g3, b3);
 
@@ -3425,8 +3427,9 @@ public class WMap extends EngineState {
     final Obj obj = builder.build();
     obj.delete();
 
+    transforms.identity();
     transforms.transfer.set(GPU.getOffsetX(), GPU.getOffsetY(), 0);
-    RENDERER.queueOrthoModel(obj, transforms);
+    RENDERER.queueOrthoModel(obj, transforms).depthOffset(-4);
 
     //LAB_800e2770
     //LAB_800e2774

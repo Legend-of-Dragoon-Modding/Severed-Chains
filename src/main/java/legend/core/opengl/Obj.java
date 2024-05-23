@@ -23,7 +23,6 @@ public abstract class Obj {
   }
 
   public Obj(final String name) {
-    System.out.println("Allocated " + name);
     this.name = name;
     objList.add(this);
   }
