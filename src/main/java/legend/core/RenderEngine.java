@@ -75,6 +75,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_TAB;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
+import static org.lwjgl.glfw.GLFW.GLFW_MOD_CONTROL;
 import static org.lwjgl.glfw.GLFW.GLFW_MOD_SHIFT;
 import static org.lwjgl.opengl.GL11C.GL_BLEND;
 import static org.lwjgl.opengl.GL11C.GL_COLOR_BUFFER_BIT;
@@ -1277,7 +1278,7 @@ public class RenderEngine {
       }
     }
 
-    if(key == GLFW_KEY_M) {
+    if(key == GLFW_KEY_M && (mods & GLFW_MOD_CONTROL) != 0) {
       this.allowMovement = !this.allowMovement;
       LOGGER.info("Allow movement: %b", this.allowMovement);
 
