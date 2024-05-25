@@ -660,7 +660,7 @@ public final class Bttl_800d {
     if(manager._10.flags_00 >= 0) {
       final VECTOR sp0x20 = new VECTOR().set(
         rcos(angle) * (manager._10.scale_16.getX() / effect.scaleModifier_01.get() + manager._10._28) >> 12,
-        rsin(angle) * (manager._10.scale_16.getY() / effect.scaleModifier_01.get() + manager._10._28) >> 12, // X is correct
+        rsin(angle) * (manager._10.scale_16.getY() / effect.scaleModifier_01.get() + manager._10._28) >> 12,
         manager._10._2c
       );
 
@@ -1946,7 +1946,7 @@ public final class Bttl_800d {
     final int s0 = FUN_800dcfb8(1, cam._b8, a1, a6 >> 2 & 3) >> 8;
     FUN_800dcfb8(2, cam._a0, a2, 0); //TODO this method just returns a value, should it be used in the same way as the two calls above?
     cam._d0 = a3;
-    cam._d4 = ratan2(s0, s1) & 0xfff << 8;
+    cam._d4 = (ratan2(s0, s1) & 0xfff) << 8;
     cam._d8 = 0;
     cam._dc = SquareRoot0(s1 * s1 + s0 * s0) << 8;
     final int s3;
@@ -3511,7 +3511,7 @@ public final class Bttl_800d {
 
   @Method(0x800db828L)
   public static void FUN_800db828(final int callbackIndex, final int x, final int y, final int z, final int a4, final int a5, final int a6, final int a7) {
-    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac7c, FUN index=%d, x=%d, y=%d, z=%d, a4=%d, a5=%d, a6=%d, a7=%d, script index=%d", callbackIndex, x, y, z, a4, a5, a6, a7);
+    LOGGER.info(CAMERA, "[CAMERA] Array=_800fac7c, FUN index=%d, x=%d, y=%d, z=%d, a4=%d, a5=%d, a6=%d, a7=%d", callbackIndex, x, y, z, a4, a5, a6, a7);
     _800fac7c.offset(callbackIndex * 0x4L).deref(4).call(x, y, z, a4, a5, a6, a7);
     final BattleCamera cam = camera_800c67f0;
     cam.callbackIndex_88 = callbackIndex;

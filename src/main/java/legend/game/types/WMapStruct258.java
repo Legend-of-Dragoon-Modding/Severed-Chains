@@ -25,8 +25,8 @@ public class WMapStruct258 {
   /** TODO ptr */
   public long imageData_30;
   public final GsCOORDINATE2 coord2_34 = new GsCOORDINATE2();
-  public final VECTOR vec_84 = new VECTOR();
-  public final VECTOR vec_94 = new VECTOR();
+  public final VECTOR prevPlayerPos_84 = new VECTOR();
+  public final VECTOR currPlayerPos_94 = new VECTOR();
   public final SVECTOR rotation_a4 = new SVECTOR();
   public int currentAnimIndex_ac;
   public int animIndex_b0;
@@ -59,15 +59,15 @@ public class WMapStruct258 {
   public int coolonWarpIndex_222;
   /** ubyte */
   public int _223;
-  public UnboundedArrayRef<VECTOR> vecs_224;
-  public UnboundedArrayRef<VECTOR> vecs_228;
+  public UnboundedArrayRef<VECTOR> wakeSpreadsArray_224;
+  public UnboundedArrayRef<VECTOR> shipPositionsArray_228;
   /** TODO pointer */
-  public long ptr_22c;
-  public int _230;
-  public int _234;
-  public int _238;
-  public int _23c;
-  public int _240;
+  public long wakeSegmentNumArray_22c;
+  public int currShipPositionIndex_230;
+  public int prevShipPositionIndex_234;
+  public int shipPositionsCount_238;
+  public int wakeSegmentStride_23c;
+  public int tickNum_240;
   /** byte */
   public int _244;
 

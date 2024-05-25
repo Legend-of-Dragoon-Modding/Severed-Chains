@@ -989,7 +989,7 @@ public final class Scus94491BpeSegment_8004 {
   }
 
   @Method(0x80040e40L)
-  public static void FUN_80040e40(final VECTOR a0, final VECTOR a1, final VECTOR out) {
+  public static void crossProduct(final VECTOR a0, final VECTOR a1, final VECTOR out) {
     final long t5 = CPU.CFC2(0);
     final long t6 = CPU.CFC2(2);
     final long t7 = CPU.CFC2(4);

@@ -1580,13 +1580,13 @@ public final class Scus94491BpeSegment_8003 {
   }
 
   @Method(0x8003ea80L)
-  public static void FUN_8003ea80(final VECTOR a0, final VECTOR a1) {
-    a1.set(a0);
-    FUN_8003eae0(a1.x, a1.y, a1.z);
+  public static void NormalizeVector(final VECTOR in, final VECTOR out) {
+    out.set(in);
+    NormalizeVector(out.x, out.y, out.z);
   }
 
   @Method(0x8003eae0L)
-  public static void FUN_8003eae0(final IntRef t0, final IntRef t1, final IntRef t2) {
+  public static void NormalizeVector(final IntRef t0, final IntRef t1, final IntRef t2) {
     // Fix retail bug where inputs can all be 0. Would result in negative array index.
     if(t0.get() == 0 && t1.get() == 0 && t2.get() == 0) {
       return;
@@ -1658,21 +1658,21 @@ public final class Scus94491BpeSegment_8003 {
     CPU.CTC2(v0, 0);
     CPU.CTC2(v1, 2);
     CPU.CTC2(a2, 4);
-    FUN_8003eae0(t0Ref, t1Ref, t2Ref);
+    NormalizeVector(t0Ref, t1Ref, t2Ref);
     a1.set(0, (short)t0Ref.get());
     a1.set(1, (short)t1Ref.get());
     a1.set(2, (short)t2Ref.get());
     t0Ref.set((int)CPU.MFC2(0));
     t1Ref.set((int)CPU.MFC2(1));
     t2Ref.set((int)CPU.MFC2(2));
-    FUN_8003eae0(t0Ref, t1Ref, t2Ref);
+    NormalizeVector(t0Ref, t1Ref, t2Ref);
     a1.set(3, (short)t0Ref.get());
     a1.set(4, (short)t1Ref.get());
     a1.set(5, (short)t2Ref.get());
     t0Ref.set((int)t7);
     t1Ref.set((int)t8);
     t2Ref.set((int)t9);
-    FUN_8003eae0(t0Ref, t1Ref, t2Ref);
+    NormalizeVector(t0Ref, t1Ref, t2Ref);
     a1.set(6, (short)t0Ref.get());
     a1.set(7, (short)t1Ref.get());
     a1.set(8, (short)t2Ref.get());
