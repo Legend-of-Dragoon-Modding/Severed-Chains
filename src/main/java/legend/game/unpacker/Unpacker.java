@@ -2,6 +2,7 @@ package legend.game.unpacker;
 
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import legend.core.Config;
 import legend.core.DebugHelper;
 import legend.core.IoHelper;
 import legend.core.MathHelper;
@@ -37,6 +38,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -388,9 +390,11 @@ public final class Unpacker {
         final Transformations transformations = new Transformations(files, transformationQueue);
         final Set<String> flags = Collections.synchronizedSet(new HashSet<>());
 
+        final AtomicReference<Throwable> transformationThrowable = new AtomicReference<>();
+
         try(final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
           executor.execute(() -> {
-            while(!transformations.isEmpty()) {
+            while(!transformations.isEmpty() && transformationThrowable.get() == null) {
               statusListener.accept("Transforming %d files...".formatted(transformations.getRemaining()));
               DebugHelper.sleep(50);
             }
@@ -400,11 +404,29 @@ public final class Unpacker {
             final PathNode nodeToTransform = transformations.poll();
 
             if(nodeToTransform != null) {
-              EXECUTOR.execute(() -> transform(nodeToTransform, transformations, flags));
+              executor.execute(() -> {
+                try {
+                  transform(nodeToTransform, transformations, flags);
+                } catch(final Throwable t) {
+                  transformationThrowable.set(t);
+                }
+              });
             } else {
               DebugHelper.sleep(0);
             }
+
+            // Won't catch everything since it's set async
+            if(transformationThrowable.get() != null) {
+              throw transformationThrowable.get();
+            }
           }
+
+          LOGGER.info("Transformations finished");
+        }
+
+        // Check again after the executor has shut down
+        if(transformationThrowable.get() != null) {
+          throw transformationThrowable.get();
         }
 
         LOGGER.info("Leaf transformations completed in %fs", (System.nanoTime() - leafTransformTime) / 1_000_000_000.0f);
@@ -450,10 +472,22 @@ public final class Unpacker {
 
       statusListener.accept("");
       LOGGER.info("Files unpacked in %fs", (System.nanoTime() - start) / 1_000_000_000.0f);
+    } catch(final OutOfMemoryError e) {
+      LOGGER.info("Ran out of memory while unpacking, switching to low memory unpacker. Please restart the game.");
+      statusListener.accept("Ran out of memory while unpacking, switching to low memory unpacker. Please restart the game.");
+
+      Config.enableLowMemoryUnpacker();
+      try {
+        Config.save();
+      } catch(final IOException ex) {
+        throw new RuntimeException("Failed to switch to low memory unpacker", ex);
+      }
     } catch(final UnpackerException e) {
       throw e;
     } catch(final Throwable e) {
       throw new UnpackerException(e);
+    } finally {
+      FileBackedFileData.closeAll();
     }
   }
 
@@ -611,7 +645,7 @@ public final class Unpacker {
     }
   }
 
-  private static void populateInitialFileTree(final DirectoryEntry root, final String path, final PathNode parent, final Queue<PathNode> transformationQueue) {
+  private static void populateInitialFileTree(final DirectoryEntry root, final String path, final PathNode parent, final Queue<PathNode> transformationQueue) throws IOException {
     final String filename = path + root.name();
 
     if(!root.isDirectory()) {
@@ -639,9 +673,21 @@ public final class Unpacker {
     }
   }
 
-  private static FileData readFile(final String filename, final DirectoryEntry entry) {
+  private static FileData readFile(final String filename, final DirectoryEntry entry) throws IOException {
     synchronized(entry.reader()) {
       final byte[] fileData = entry.reader().readSectors(entry.sector(), entry.length(), filename.endsWith(".IKI") || filename.endsWith(".XA"));
+
+      if(Config.lowMemoryUnpacker()) {
+        final Path path = ROOT.resolve("tmp").resolve(filename);
+
+        if(!Files.exists(path)) {
+          Files.createDirectories(path.getParent());
+          Files.write(path, fileData);
+        }
+
+        return new FileBackedFileData(path, 0, fileData.length);
+      }
+
       return new FileData(fileData);
     }
   }
@@ -1461,7 +1507,7 @@ public final class Unpacker {
       Files.createDirectories(path.getParent());
 
       try(final OutputStream writer = Files.newOutputStream(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
-        writer.write(node.data.data(), node.data.offset(), node.data.size());
+        node.data.write(writer);
       }
     } catch(final IOException ex) {
       throw new UnpackerException(ex);

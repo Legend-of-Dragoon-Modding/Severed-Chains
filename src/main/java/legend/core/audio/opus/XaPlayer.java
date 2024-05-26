@@ -47,7 +47,7 @@ public final class XaPlayer extends AudioSource {
 
   public void loadXa(final FileData fileData) {
     this.opusFileData = BufferUtils.createByteBuffer(fileData.size());
-    this.opusFileData.put(fileData.data());
+    this.opusFileData.put(fileData.getBytes());
     this.opusFileData.rewind();
     this.samplesRead = 0;
 

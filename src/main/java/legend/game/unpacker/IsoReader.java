@@ -68,7 +68,7 @@ public class IsoReader {
         this.read(sectorData);
 
         if(data == null) {
-          sectorSize = raw || ((sectorData[16 + 2] >>> 5) & 1) != 0 ? 0x930 : 0x800;
+          sectorSize = raw || ((sectorData[16 + 2] >>> 5) & 1) != 0 ? 0x930 : 0x800; // Form2
           data = new byte[raw ? sectorSize * sectorCount : length];
         }
 

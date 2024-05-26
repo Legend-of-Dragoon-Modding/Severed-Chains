@@ -7,10 +7,26 @@ import org.joml.Vector3f;
 import org.joml.Vector3i;
 import org.legendofdragoon.modloader.registries.RegistryId;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-public record FileData(byte[] data, int offset, int size, int virtualSize, int realFileIndex) {
+public class FileData {
+  private final byte[] data;
+  private final int offset;
+  private final int size;
+  private final int virtualSize;
+  private final int realFileIndex;
+
+  public FileData(final byte[] data, final int offset, final int size, final int virtualSize, final int realFileIndex) {
+    this.data = data;
+    this.offset = offset;
+    this.size = size;
+    this.virtualSize = virtualSize;
+    this.realFileIndex = realFileIndex;
+  }
+
   public static FileData virtual(final FileData real, final int virtualSize, final int realFileIndex) {
     return new FileData(real.data, real.offset, real.data.length, virtualSize, realFileIndex);
   }
@@ -23,7 +39,9 @@ public record FileData(byte[] data, int offset, int size, int virtualSize, int r
     this(data, offset, size, size, -1);
   }
 
-  /** Not a virtual file and larger than zero bytes */
+  /**
+   * Not a virtual file and larger than zero bytes
+   */
   public boolean real() {
     return this.realFileIndex == -1 && this.size != 0;
   }
@@ -42,7 +60,9 @@ public record FileData(byte[] data, int offset, int size, int virtualSize, int r
     return this.slice(offset, this.size - offset);
   }
 
-  /** Returns the original array if this file is the only thing it represents */
+  /**
+   * Returns the original array if this file is the only thing it represents
+   */
   public byte[] getBytes() {
     if(this.offset == 0 && this.size == this.data.length) {
       return this.data;
@@ -76,8 +96,7 @@ public record FileData(byte[] data, int offset, int size, int virtualSize, int r
   }
 
   public int readUByte(final int offset) {
-    this.checkBounds(offset, 1);
-    return this.data[this.offset + offset] & 0xff;
+    return this.readByte(offset) & 0xff;
   }
 
   public short readShort(final int offset) {
@@ -91,8 +110,7 @@ public record FileData(byte[] data, int offset, int size, int virtualSize, int r
   }
 
   public int readUShort(final int offset) {
-    this.checkBounds(offset, 2);
-    return (int)MathHelper.get(this.data, this.offset + offset, 2);
+    return this.readShort(offset) & 0xffff;
   }
 
   public int readInt(final int offset) {
@@ -105,14 +123,8 @@ public record FileData(byte[] data, int offset, int size, int virtualSize, int r
     MathHelper.set(this.data, this.offset + offset, 4, val);
   }
 
-  public int readInt24(final int offset) {
-    this.checkBounds(offset, 3);
-    return (int)MathHelper.get(this.data, this.offset + offset, 3) << 8 >> 8;
-  }
-
   public long readUInt(final int offset) {
-    this.checkBounds(offset, 4);
-    return MathHelper.get(this.data, this.offset + offset, 4);
+    return this.readInt(offset) & 0xffff_ffffL;
   }
 
   public void writeAscii(final int offset, final String val) {
@@ -210,5 +222,17 @@ public record FileData(byte[] data, int offset, int size, int virtualSize, int r
     if(offset + size > this.size) {
       throw new IndexOutOfBoundsException("Read end " + (offset + size) + " out of bounds " + this.size);
     }
+  }
+
+  public void write(final OutputStream out) throws IOException {
+    out.write(this.data, this.offset, this.size);
+  }
+
+  public int size() {
+    return this.size;
+  }
+
+  public int realFileIndex() {
+    return this.realFileIndex;
   }
 }
