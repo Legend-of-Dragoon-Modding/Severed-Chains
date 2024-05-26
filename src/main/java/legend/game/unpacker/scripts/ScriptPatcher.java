@@ -20,6 +20,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -65,13 +67,19 @@ public class ScriptPatcher {
     final ScriptPatchList cacheList = this.loadPatchList(this.cacheDir.resolve("scripts.csv"));
 
     boolean changed = false;
+    final List<ScriptPatch> failedPatches = new ArrayList<>();
     // Apply new or changed patches
     for(final ScriptPatch patch : this.patches) {
       final ScriptPatch cachedPatch = cacheList.getPatchForScript(patch.sourceFile);
 
       if(cachedPatch == null || crc32(this.cacheDir.resolve(cachedPatch.patchFile)) != crc32(this.patchesDir.resolve(patch.patchFile))) {
         LOGGER.info("Patching %s...", patch.sourceFile);
-        this.patchFile(patch);
+        try{
+          this.patchFile(patch);
+        }catch(final PatchFailedException error){
+          LOGGER.error("Patch failed for script: %s", patch.patchFile);
+          failedPatches.add(patch);
+        }
         changed = true;
       }
     }
@@ -88,6 +96,28 @@ public class ScriptPatcher {
     // Cache changes
     if(changed) {
       FileUtils.copyDirectory(this.patchesDir.toFile(), this.cacheDir.toFile());
+    }
+
+    if(!failedPatches.isEmpty()){
+      final Path scriptsPath = this.cacheDir.resolve("scripts.csv");
+      final List<String> lines = Files.readAllLines(scriptsPath);
+
+      final Iterator<String> lineIterator = lines.iterator();
+      while (lineIterator.hasNext()) {
+        final String line = lineIterator.next();
+        final Iterator<ScriptPatch> patchIterator = failedPatches.iterator();
+        while (patchIterator.hasNext()) {
+          final ScriptPatch patch = patchIterator.next();
+          final String targetText = patch.sourceFile + ',' + patch.patchFile;
+          if (Objects.equals(line, targetText)) {
+            patchIterator.remove();
+            lineIterator.remove();
+            break;
+          }
+        }
+      }
+
+      Files.write(scriptsPath, lines);
     }
   }
 
@@ -111,7 +141,11 @@ public class ScriptPatcher {
 
     Files.write(sourceFile, recompiledSource, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
   }
-
+  private void restoreAllFiles(final List<ScriptPatch> successfulPatches) throws IOException{
+    for(final ScriptPatch patch : successfulPatches){
+      this.backupFile(patch.sourceFile);
+    }
+  }
   private void backupFile(final String scriptPath) throws IOException {
     final Path sourcePath = this.filesDir.resolve(scriptPath);
     final Path destPath = this.cacheDir.resolve("backups").resolve(scriptPath);
@@ -121,7 +155,7 @@ public class ScriptPatcher {
     Files.copy(sourcePath,destPath);
   }
 
-  private void restoreFile(ScriptPatch cachedPatch) throws IOException {
+  private void restoreFile(final ScriptPatch cachedPatch) throws IOException {
     final Path sourcePath = this.filesDir.resolve(cachedPatch.sourceFile);
     final Path backupPath = this.cacheDir.resolve("backups").resolve(cachedPatch.sourceFile);
     Files.move(backupPath,sourcePath,StandardCopyOption.REPLACE_EXISTING);
