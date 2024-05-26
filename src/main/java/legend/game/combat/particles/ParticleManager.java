@@ -895,9 +895,9 @@ public class ParticleManager {
       particle.g_86 -= particle.stepG_8c;
       particle.b_88 -= particle.stepB_8e;
     } else {
-      particle.r_84 = manager.params_10.colour_1c.x / (float)0xff;
-      particle.g_86 = manager.params_10.colour_1c.y / (float)0xff;
-      particle.b_88 = manager.params_10.colour_1c.z / (float)0xff;
+      particle.r_84 = manager.params_10.colour_1c.x / 128.0f;
+      particle.g_86 = manager.params_10.colour_1c.y / 128.0f;
+      particle.b_88 = manager.params_10.colour_1c.z / 128.0f;
     }
 
     //LAB_800fd26c
@@ -1235,7 +1235,7 @@ public class ParticleManager {
         }
 
         //LAB_800fe300
-        MathHelper.clamp(colour.add(colourMod), 0.0f, 0.5f);
+        MathHelper.clamp(colour.add(colourMod), 0.0f, 1.0f);
 
         final GpuCommandPoly cmd1 = new GpuCommandPoly(4)
           .clut((effect.clut_5c & 0b111111) * 16, effect.clut_5c >>> 6)
