@@ -405,10 +405,10 @@ public final class Scus94491BpeSegment {
 
       SCREENS.render(RENDERER, matrixStack, scissorStack);
 
-      SCRIPTS.tick();
+      final boolean scriptsTicked = SCRIPTS.tick();
 
       if(currentEngineState_8004dd04 != null) {
-        currentEngineState_8004dd04.postScriptTick();
+        currentEngineState_8004dd04.postScriptTick(scriptsTicked);
       }
 
       tickAndRenderTransitionIntoBattle();

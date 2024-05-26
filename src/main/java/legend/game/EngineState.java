@@ -14,7 +14,7 @@ public abstract class EngineState {
   public abstract void tick();
 
   /** Runs after scripts are ticked */
-  public void postScriptTick() {
+  public void postScriptTick(final boolean scriptsTicked) {
 
   }
 

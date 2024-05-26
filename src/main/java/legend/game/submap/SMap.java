@@ -791,7 +791,7 @@ public class SMap extends EngineState {
 
   /** Pulled from BPE segment */
   @Method(0x8002aae8L)
-  private void renderEnvironmentAndHandleTransitions() {
+  private void renderEnvironmentAndHandleTransitions(final boolean scriptsTicked) {
     switch(submapEnvState_80052c44) {
       case RENDER_AND_CHECK_TRANSITIONS_0:
         this.renderEnvironment();
@@ -807,9 +807,12 @@ public class SMap extends EngineState {
         //LAB_8002abdc
         //LAB_8002abe0
         // Handle map transitions
-        final int collisionAndTransitionInfo = this.collisionGeometry_800cbe08.getCollisionAndTransitionInfo(collidedPrimitiveIndex_80052c38);
-        if((collisionAndTransitionInfo & 0x10) != 0) {
-          this.mapTransition(collisionAndTransitionInfo >>> 22, collisionAndTransitionInfo >>> 16 & 0x3f);
+        // Transitions by collisions must be handled only if scripts were ticked due to some edge cases (GH#1195)
+        if(scriptsTicked) {
+          final int collisionAndTransitionInfo = this.collisionGeometry_800cbe08.getCollisionAndTransitionInfo(collidedPrimitiveIndex_80052c38);
+          if((collisionAndTransitionInfo & 0x10) != 0) {
+            this.mapTransition(collisionAndTransitionInfo >>> 22, collisionAndTransitionInfo >>> 16 & 0x3f);
+          }
         }
         break;
 
@@ -3934,9 +3937,9 @@ public class SMap extends EngineState {
 
   /** Has to be done after scripts are ticked since the camera is attached to a sobj and it would use the position from the previous frame */
   @Override
-  public void postScriptTick() {
+  public void postScriptTick(final boolean scriptsTicked) {
     //LAB_80020f20
-    this.renderEnvironmentAndHandleTransitions();
+    this.renderEnvironmentAndHandleTransitions(scriptsTicked);
     this.setIndicatorStatusAndResetIndicatorTickCountOnReenable();
 
     if(this.screenOffsetTicks < this.screenOffsetTicksTotal) {
