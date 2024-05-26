@@ -10,14 +10,21 @@ import legend.game.combat.bent.BattleEntity27c;
 import legend.game.combat.bent.MonsterBattleEntity;
 import legend.game.combat.bent.PlayerBattleEntity;
 import legend.game.combat.effects.TransformationMode;
+import legend.game.inventory.Equipment;
+import legend.game.inventory.InventoryEntry;
+import legend.game.inventory.Item;
 import legend.game.modding.coremod.CoreMod;
 import legend.game.submap.SMap;
 import legend.game.submap.SubmapObject210;
+import legend.lodmod.LodMod;
 
 import static legend.core.GameEngine.CONFIG;
+import static legend.core.GameEngine.REGISTRIES;
 import static legend.core.GameEngine.SCRIPTS;
 import static legend.game.Scus94491BpeSegment_8004.currentEngineState_8004dd04;
 import static legend.game.Scus94491BpeSegment_8006.battleState_8006e398;
+import static legend.game.Scus94491BpeSegment_800b.equipmentOverflow;
+import static legend.game.Scus94491BpeSegment_800b.itemOverflow;
 import static legend.game.Scus94491BpeSegment_800b.scriptStatePtrArr_800bc1c0;
 
 public class GameVarParam extends Param {
@@ -200,7 +207,20 @@ public class GameVarParam extends Param {
 //      case 37 -> battleState_8006e398.monsterCount_800c6768 = val;
       case 38 -> CONFIG.setConfig(CoreMod.TRANSFORMATION_MODE_CONFIG.get(), TransformationMode.values()[val]);
       case 39 -> battleState_8006e398.battlePhase_eec = val;
-      case 40, 41 -> throw new RuntimeException("Not supported"); // Dropped item list size, dropped item 0
+      case 40 -> {
+        // When given items on submaps (Sapphire Pin from Dabas, Psych Bomb from Savan), if you have a full inventory it'll
+        // set the dropped items to 1, add the item to the drops list, and open the "Too Many Items" screen. We ignore the
+        // size and simply add the drop to the list if var[41] is set.
+      }
+      case 41 -> {
+        final InventoryEntry invEntry = val < 192 ? REGISTRIES.equipment.getEntry(LodMod.equipmentIdMap.get(val)).get() : REGISTRIES.items.getEntry(LodMod.itemIdMap.get(val - 192)).get();
+
+        if(invEntry instanceof final Equipment equipment) {
+          equipmentOverflow.add(equipment);
+        } else if(invEntry instanceof final Item item) {
+          itemOverflow.add(item);
+        }
+      }
       case 42 -> ((Battle)currentEngineState_8004dd04).forcedTurnBent_800c66bc = (ScriptState<BattleEntity27c>)scriptStatePtrArr_800bc1c0[val];
       case 43 -> Scus94491BpeSegment_800b.encounterId_800bb0f8 = val;
       case 44 -> ((Battle)currentEngineState_8004dd04)._800c6748 = val;
