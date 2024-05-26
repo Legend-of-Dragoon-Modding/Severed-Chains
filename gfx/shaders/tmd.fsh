@@ -38,7 +38,7 @@ void main() {
   if(projectionMode == 2) {
     gl_FragDepth = (depth - znear) * zdiffInv + depthOffset;
   } else {
-    gl_FragDepth = gl_FragCoord.z + depthOffset;
+    gl_FragDepth = gl_FragCoord.z;
   }
 
   bool ctmd = (ctmdFlags & 0x20) != 0;

@@ -141,10 +141,12 @@ void main() {
     if(z != 0) {
       gl_Position.xy *= zfar / z;
     }
+  }
 
-    if(t.screenOffset.z != 0) {
-      gl_Position.z += t.screenOffset.z;
-    }
+  if(projectionMode == 2) { // High quality projection
+    depthOffset = t.screenOffset.z * zdiffInv; // Depth is computed in the fragment shader
+  } else if(t.screenOffset.z != 0) {
+    gl_Position.z += t.screenOffset.z;
   }
 
   gl_Position.xy += t.screenOffset.xy;
@@ -152,5 +154,4 @@ void main() {
   vertUv = inUv;
 
   depth = gl_Position.z;
-  depthOffset = t.screenOffset.z * zdiffInv;
 }
