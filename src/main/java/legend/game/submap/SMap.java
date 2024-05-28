@@ -59,7 +59,9 @@ import org.joml.Vector3f;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 import static legend.core.GameEngine.CONFIG;
@@ -2799,6 +2801,8 @@ public class SMap extends EngineState {
         this.submapControllerState_800c6740 = submapController;
         submapController.loadScriptFile(this.submap.script);
 
+        final Set<CContainer> visited = new HashSet<>();
+
         //LAB_800e1b20
         //LAB_800e1b54
         for(int i = 0; i < this.sobjCount_800c6730; i++) {
@@ -2813,9 +2817,13 @@ public class SMap extends EngineState {
           state.loadScriptFile(obj.script);
 
           final Model124 model = state.innerStruct_00.model_00;
-          model.uvAdjustments_9d = this.submap.uvAdjustments.get(i);
-
           final CContainer tmd = this.submap.objects.get(i).model;
+
+          if(!visited.contains(tmd)) {
+            model.uvAdjustments_9d = this.submap.uvAdjustments.get(i);
+            visited.add(tmd);
+          }
+
           final TmdAnimationFile anim = obj.animations.get(0);
           initModel(model, tmd, anim);
 
