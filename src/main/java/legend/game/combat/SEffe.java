@@ -3180,7 +3180,14 @@ public final class SEffe {
     final float multiplierHeight = (int)(data.params_10.scale_16.y * 0x1000) >> 11;
     final float rowLimit = (int)(data.params_10.scale_16.z * 0x1000) * 15 >> 9;
 
-    final float fullWidth = Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4);
+    final boolean widescreen = RENDERER.allowWidescreen && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get());
+    final float fullWidth;
+    if(widescreen) {
+      fullWidth = Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4);
+    } else {
+      fullWidth = displayWidth_1f8003e0;
+    }
+
     final float extraWidth = fullWidth - displayWidth_1f8003e0;
     final float inverseScreenHeight = 1.0f / 240.0f;
 
@@ -3259,7 +3266,14 @@ public final class SEffe {
     final ScreenDistortionEffectData08 effect = (ScreenDistortionEffectData08)data.effect_44;
 
     // Make sure effect fills the whole screen
-    final float fullWidth = Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4);
+    final boolean widescreen = RENDERER.allowWidescreen && CONFIG.getConfig(CoreMod.ALLOW_WIDESCREEN_CONFIG.get());
+    final float fullWidth;
+    if(widescreen) {
+      fullWidth = Math.max(displayWidth_1f8003e0, RENDERER.window().getWidth() / (float)RENDERER.window().getHeight() * displayHeight_1f8003e4);
+    } else {
+      fullWidth = displayWidth_1f8003e0;
+    }
+
     final float extraWidth = fullWidth - displayWidth_1f8003e0;
     effect.transforms.scaling(fullWidth, displayHeight_1f8003e4, 1.0f);
     effect.transforms.transfer.set(-extraWidth / 2, 0.0f, 120.0f);
