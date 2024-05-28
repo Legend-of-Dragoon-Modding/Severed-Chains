@@ -32,7 +32,8 @@ public class ScriptManager {
   /** Accumulates joypad repeat on script engine off frames */
   public int joypadRepeat;
 
-  public void tick() {
+  public boolean tick() {
+    boolean ticked = false;
     this.joypadInput |= input_800bee90;
     this.joypadPress |= press_800bee94;
     this.joypadRepeat |= repeat_800bee98;
@@ -43,6 +44,8 @@ public class ScriptManager {
       this.joypadInput = 0;
       this.joypadPress = 0;
       this.joypadRepeat = 0;
+
+      ticked = true;
     }
 
     this.executeScriptTickers();
@@ -50,6 +53,7 @@ public class ScriptManager {
     this.executeScriptRenderers();
 
     this.currentTicks = (this.currentTicks + 1) % this.framesPerTick;
+    return ticked;
   }
 
   /** When running at higher frame rates, the number of frames to wait before ticking the script engine */
