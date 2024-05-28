@@ -1390,7 +1390,7 @@ public final class Scus94491BpeSegment {
    * @param soundIndex 1: up/down, 2: choose menu option, 3: ...
    */
   @Method(0x80019a60L)
-  public static void playSound(final int soundFileIndex, final int soundIndex, final long a2, final long a3, final short initialDelay, final short repeatDelay) {
+  public static void playSound(final int soundFileIndex, final int soundIndex, final int a2, final int a3, final int initialDelay, final int repeatDelay) {
     final SoundFile soundFile = soundFiles_800bcf80[soundFileIndex];
 
     if(!soundFile.used_00 || soundFile.playableSound_10 == null) {
@@ -1551,7 +1551,7 @@ public final class Scus94491BpeSegment {
   }
 
   @Method(0x8001a714L)
-  public static void playSound(final int type, final SoundFile soundFile, final int soundIndex, final QueuedSound28 playingSound, final PlayableSound0c playableSound, final SoundFileIndices soundFileIndices, final int a6, final short pitchShiftVolRight, final short pitchShiftVolLeft, final short pitch, final short repeatDelay, final short initialDelay, @Nullable final BattleEntity27c bent) {
+  public static void playSound(final int type, final SoundFile soundFile, final int soundIndex, final QueuedSound28 playingSound, final PlayableSound0c playableSound, final SoundFileIndices soundFileIndices, final int a6, final short pitchShiftVolRight, final short pitchShiftVolLeft, final short pitch, final int repeatDelay, final int initialDelay, @Nullable final BattleEntity27c bent) {
     playingSound.type_00 = type;
     playingSound.bent_04 = bent;
     playingSound.soundFile_08 = soundFile;
@@ -1595,7 +1595,7 @@ public final class Scus94491BpeSegment {
   @ScriptParam(direction = ScriptParam.Direction.IN, type = ScriptParam.Type.INT, name = "repeatDelay", description = "The delay before a sound repeats")
   @Method(0x8001ab34L)
   public static FlowControl scriptPlaySound(final RunningScript<?> script) {
-    playSound(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), (short)script.params_20[4].get(), (short)script.params_20[5].get());
+    playSound(script.params_20[0].get(), script.params_20[1].get(), script.params_20[2].get(), script.params_20[3].get(), script.params_20[4].get() * currentEngineState_8004dd04.tickMultiplier(), script.params_20[5].get() * currentEngineState_8004dd04.tickMultiplier());
     return FlowControl.CONTINUE;
   }
 
