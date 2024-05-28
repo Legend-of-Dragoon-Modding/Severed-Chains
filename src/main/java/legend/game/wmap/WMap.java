@@ -3192,7 +3192,7 @@ public class WMap extends EngineState {
 
       //LAB_800e1210
       if(modelIndex == 1) {
-        if(((int)(tickCount_800bb0fc / (3.0f / vsyncMode_8007a3b8)) & 0x3) == 0) {
+        if(tickCount_800bb0fc % (4 * this.tickMultiplier()) == 0) {
           playSound(0xc, 0, 0, 0, (short)0, (short)0);
         }
       }
