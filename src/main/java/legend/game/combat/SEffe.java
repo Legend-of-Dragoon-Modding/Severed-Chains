@@ -964,8 +964,8 @@ public final class SEffe {
     //LAB_800ec370
     shadow.zOffset_a0 = model.zOffset_a0 + 16;
     shadow.coord2_14.transforms.scale.set(model.shadowSize_10c.x).div(4.0f);
-    shadow.coord2_14.coord.rotationXYZ(shadow.coord2_14.transforms.rotate);
-    shadow.coord2_14.coord.scaleLocal(shadow.coord2_14.transforms.scale);
+    shadow.coord2_14.coord.scaling(shadow.coord2_14.transforms.scale);
+    shadow.coord2_14.coord.rotateXYZ(shadow.coord2_14.transforms.rotate);
     shadow.coord2_14.flg = 0;
 
     final GsCOORDINATE2 coord2 = shadow.modelParts_00[0].coord2_04;

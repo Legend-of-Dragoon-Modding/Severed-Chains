@@ -924,8 +924,8 @@ public class SMap extends EngineState {
     shadowModel_800bda10.zOffset_a0 = model.zOffset_a0 + 16;
     shadowModel_800bda10.coord2_14.transforms.scale.set(model.shadowSize_10c).div(64.0f);
 
-    shadowModel_800bda10.coord2_14.coord.rotationXYZ(shadowModel_800bda10.coord2_14.transforms.rotate);
-    shadowModel_800bda10.coord2_14.coord.scaleLocal(shadowModel_800bda10.coord2_14.transforms.scale);
+    shadowModel_800bda10.coord2_14.coord.scaling(shadowModel_800bda10.coord2_14.transforms.scale);
+    shadowModel_800bda10.coord2_14.coord.rotateXYZ(shadowModel_800bda10.coord2_14.transforms.rotate);
     shadowModel_800bda10.coord2_14.coord.transfer.set(model.shadowOffset_118);
 
     final ModelPart10 modelPart = shadowModel_800bda10.modelParts_00[0];

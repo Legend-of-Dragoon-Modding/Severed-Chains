@@ -537,8 +537,8 @@ public final class Scus94491BpeSegment_8002 {
 
   @Method(0x800214bcL)
   public static void applyModelRotationAndScale(final Model124 model) {
-    model.coord2_14.coord.rotationXYZ(model.coord2_14.transforms.rotate);
-    model.coord2_14.coord.scale(model.coord2_14.transforms.scale);
+    model.coord2_14.coord.scaling(model.coord2_14.transforms.scale);
+    model.coord2_14.coord.rotateXYZ(model.coord2_14.transforms.rotate);
     model.coord2_14.flg = 0;
   }
 
@@ -633,8 +633,8 @@ public final class Scus94491BpeSegment_8002 {
       dobj2.coord2_04.transforms.scale.set(1.0f, 1.0f, 1.0f);
       dobj2.coord2_04.transforms.trans.set(1.0f, 1.0f, 1.0f);
 
-      dobj2.coord2_04.coord.rotationXYZ(dobj2.coord2_04.transforms.rotate);
-      dobj2.coord2_04.coord.scaleLocal(dobj2.coord2_04.transforms.scale);
+      dobj2.coord2_04.coord.scaling(dobj2.coord2_04.transforms.scale);
+      dobj2.coord2_04.coord.rotateXYZ(dobj2.coord2_04.transforms.rotate);
       dobj2.coord2_04.coord.transfer.set(dobj2.coord2_04.transforms.trans);
     }
 
