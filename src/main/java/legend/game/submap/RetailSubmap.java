@@ -727,6 +727,8 @@ public class RetailSubmap extends Submap {
         builder.dataType(GL_UNSIGNED_INT_8_8_8_8_REV);
       });
 
+      final int[] fullBackground = new int[this.backgroundRect.w * this.backgroundRect.h];
+
       // Arrange the segments of the background textures into one texture
       for(int i = 0; i < this.envBackgroundTextureCount_800cb57c; i++) {
         if(tims[i] != null) {
@@ -744,8 +746,20 @@ public class RetailSubmap extends Submap {
             }
           }
 
+          for(int y = 0; y < rect.h; y++) {
+            System.arraycopy(data, y * rect.w, fullBackground, (rect.y + y) * this.backgroundRect.w + rect.x, rect.w);
+          }
+
           this.backgroundTexture.data(metrics.offsetX_1c - this.backgroundRect.x, metrics.offsetY_1e - this.backgroundRect.y, rect.w, rect.h, data);
         }
+      }
+
+      try {
+        final Path path = Path.of("./dump/" + drgnBinIndex_800bc058 + '/' + this.cut + "/background.png");
+        Files.createDirectories(path.getParent());
+        VramTextureSingle.dumpToFile(this.backgroundRect, fullBackground, path, true);
+      } catch(final IOException e) {
+        throw new RuntimeException(e);
       }
     }
 

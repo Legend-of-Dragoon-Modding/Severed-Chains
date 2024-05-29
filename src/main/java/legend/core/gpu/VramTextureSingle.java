@@ -121,7 +121,7 @@ public class VramTextureSingle extends VramTexture {
     return this.createOpenglTexture(palette, new Rect4i(0, 0, this.rect.w, this.rect.h));
   }
 
-  public static void dumpToFile(final Rect4i rect, final int[] data, final Path path, boolean convert15To24) {
+  public static void dumpToFile(final Rect4i rect, final int[] data, final Path path, final boolean convert15To24) {
     final BufferedImage image = new BufferedImage(rect.w(), rect.h(), BufferedImage.TYPE_INT_ARGB);
 
     final int[] newData;
